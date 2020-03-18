@@ -2,153 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 21F08189FE3
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 16:44:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CEC33189FEB
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 16:46:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727065AbgCRPoD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Mar 2020 11:44:03 -0400
-Received: from mail-qk1-f196.google.com ([209.85.222.196]:43340 "EHLO
-        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726877AbgCRPoD (ORCPT
-        <rfc822;Linux-kernel@vger.kernel.org>);
-        Wed, 18 Mar 2020 11:44:03 -0400
-Received: by mail-qk1-f196.google.com with SMTP id x18so19305626qki.10
-        for <Linux-kernel@vger.kernel.org>; Wed, 18 Mar 2020 08:44:01 -0700 (PDT)
+        id S1726984AbgCRPqb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Mar 2020 11:46:31 -0400
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:42095 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726864AbgCRPqa (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Mar 2020 11:46:30 -0400
+Received: by mail-ot1-f66.google.com with SMTP id a2so5119121otq.9
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Mar 2020 08:46:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=rT40cecCHxpNI8dib7IN8ZvHL9ABQbvv9Z12Olg7CGM=;
-        b=nNnKXZf1OWMaTETbhEZTXsv5fRoDFWRJCqtaoaQruZhYhwlFUHQC+v76ef5SRXaPVN
-         kevPWFzikBLRJ0qMhGz+bItU3YXgxNEM6C5sQZC3VOHd4YOJvLF4NC+lT5vGBPYi1q4H
-         DmNfvmwvST7XjAvmQqPgmJYMEpGi8m+lEA29lweQVFcpfOf0SZa5jCVVre6aL3Ma4MoM
-         UUe0AIomwuS8uayj6MokY9iSr6pAQzErPOXDRKIdGeA7rVVn+FKCJ8rCsTxOyUyp1Mo3
-         4JDOa9fQC+8XEHHfd5vwbRL4b6wRowQcXyiQuLSX2ikm0tHsWVFiMA+0AgDyvGMIv28C
-         wPIw==
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=id6fBYRzTbPVezHvRzigBUZtyyZNpNKX7bIyeQ3xLJM=;
+        b=ZqY5AWHXrV9Z2i8Ua3vsaXc3to2MTtBlwtEXOAVw9RupFkSH1bX6L0cTqQDlwqErWb
+         eomul9v2lD950rkiS2a3jZwWiAsWjYXZrR8M08zA59FVXYUq2pYVkUxqdViqpwow6hhW
+         FoMJAtslfTAk3nhnW2Vn9bjp2QrldSTw0/1RUEf+XHEPlzHVg8d2h67gK9F5UPDdogwi
+         F3cRlXyOuE51QSLJaSnfl8ECEjYS9ZWxtkwcx/YH/PTOxO/A1sk9G67aTh5bQqmoJa5V
+         1enPYeqqN2ThSayKVcx8K7gywVPMjaaRznUF+j7FWO5+TRBcx8VpnA4b0TZLaBDDXVe4
+         UfUQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=rT40cecCHxpNI8dib7IN8ZvHL9ABQbvv9Z12Olg7CGM=;
-        b=m4ZgrfkcR8dgzFEwjAbEAekdYWI2aAasqzClnMfSeo5QHmD0wY9ZXf0p9rki3PbQtc
-         vFBvfsNikHlDHWMCeTBicDGxnQeGD0cOmmBE0X/w0aFi9bW27IOxsBGfWP96HRrUB6IG
-         Zg3TEGR4Q9yG106TMAUy9V4bJdZHtCWqBtZLWvOUI3xKTIvQZR2tLbXrEU10EfpArMm3
-         0HRhbWPTIqIB0E8lFLtBp7vSzHwf1Wc82sK3VNV0j8Nitl/nzzw05Ejc/dXBtQaNgxgl
-         Fic5bOSj3hUzlkEOLIWMbtdLGqFitDat8kV9YAMC253mfJr7m7vDP+t621QXTDpFQIQL
-         E6gA==
-X-Gm-Message-State: ANhLgQ2QE90+cusvEr/yy3vCob5srYnlYr2lTkGyFkZ9ziwWp6iKOLwd
-        knd14w+LKUI58XeCAMNOoR4=
-X-Google-Smtp-Source: ADFU+vst9c9J0hbpeLijRPXB8Ok5fTUStYb4qaRZf6FTo8M8QhsDOChEyumQRgW9YVlN51OMqU95ow==
-X-Received: by 2002:a37:aa54:: with SMTP id t81mr4943275qke.234.1584546241169;
-        Wed, 18 Mar 2020 08:44:01 -0700 (PDT)
-Received: from quaco.ghostprotocols.net ([179.97.37.151])
-        by smtp.gmail.com with ESMTPSA id x37sm5029415qtc.90.2020.03.18.08.44.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Mar 2020 08:44:00 -0700 (PDT)
-From:   Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
-X-Google-Original-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
-        id 7AD49404E4; Wed, 18 Mar 2020 12:43:58 -0300 (-03)
-Date:   Wed, 18 Mar 2020 12:43:58 -0300
-To:     Jin Yao <yao.jin@linux.intel.com>
-Cc:     jolsa@kernel.org, peterz@infradead.org, mingo@redhat.com,
-        alexander.shishkin@linux.intel.com, Linux-kernel@vger.kernel.org,
-        ak@linux.intel.com, kan.liang@intel.com, yao.jin@intel.com
-Subject: Re: [PATCH v5 2/3] perf report: Support interactive annotation of
- code without symbols
-Message-ID: <20200318154358.GH11531@kernel.org>
-References: <20200227043939.4403-1-yao.jin@linux.intel.com>
- <20200227043939.4403-3-yao.jin@linux.intel.com>
- <20200318154206.GG11531@kernel.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=id6fBYRzTbPVezHvRzigBUZtyyZNpNKX7bIyeQ3xLJM=;
+        b=DXk+9Gsy+HesOL8u0Ff/TF6boyMcZXyyG3eQYRqrxHWGbpNzmxUhBm9og4NU2l2NmA
+         xhuTZsEQleg4UyDF9Lx7QGj4OAvCNS0qpb9MKfHHlhqgSv87ICr5Y+kUm44uoM6Hp+JK
+         uPbtwLqDONv2tRnBu9zD6yxQX5kHy4WT9yo3LWCoTvtlvIKeZ/IIoUudu3ZUYsMJIIW7
+         EChdkuUisUSn8LNUQrnnm5wS2LXPIWBZIrBnZoREQ2dgkhLl2DyY91wUkczoW56fxuBS
+         2At3hFgoiVCPgE3T7xiBvlW0XsfyytFyJBsNXdNAxplVdebGsGsPb+joDETMa89PEgOh
+         pzZQ==
+X-Gm-Message-State: ANhLgQ3mtAnr/hHcIIxWZdOqsjXSRDpFoyO6wMcJ/xf3p/9vJ8Fg87dw
+        bMDGuewRDNVELj+nh77DzoyeTGentS/LfpzmEwvgSQ==
+X-Google-Smtp-Source: ADFU+vvX20CIlM83oLPc+apgYzRAvWB4Y3fF6uDgiS0UN5JGeqEbtOLb0rxc9QNhm7ohNQlk5lyNBFi0+55SbHMyakg=
+X-Received: by 2002:a05:6830:193:: with SMTP id q19mr4286283ota.164.1584546389617;
+ Wed, 18 Mar 2020 08:46:29 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20200318154206.GG11531@kernel.org>
-X-Url:  http://acmel.wordpress.com
+References: <20200317205643.1028398-1-daniel.vetter@ffwll.ch>
+In-Reply-To: <20200317205643.1028398-1-daniel.vetter@ffwll.ch>
+From:   Sumit Semwal <sumit.semwal@linaro.org>
+Date:   Wed, 18 Mar 2020 21:16:17 +0530
+Message-ID: <CAO_48GH1YkA4mvjyQ=88VRrDPc4Kh8fiFsm-MOaNFfWhhaxfbw@mail.gmail.com>
+Subject: Re: [PATCH] MAINTAINERS: Better regex for dma_buf|fence|resv
+To:     Daniel Vetter <daniel.vetter@ffwll.ch>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        "open list:DMA BUFFER SHARING FRAMEWORK" 
+        <linux-media@vger.kernel.org>,
+        DRI mailing list <dri-devel@lists.freedesktop.org>,
+        Linaro MM SIG <linaro-mm-sig@lists.linaro.org>,
+        Joe Perches <joe@perches.com>, Sam Ravnborg <sam@ravnborg.org>,
+        Daniel Vetter <daniel.vetter@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Wed, Mar 18, 2020 at 12:42:06PM -0300, Arnaldo Carvalho de Melo escreveu:
-> Em Thu, Feb 27, 2020 at 12:39:38PM +0800, Jin Yao escreveu:
-> > For perf report on stripped binaries it is currently impossible to do
-> > annotation. The annotation state is all tied to symbols, but there are
-> > either no symbols, or symbols are not covering all the code.
-> > 
-> > We should support the annotation functionality even without symbols.
-> > 
-> > This patch fakes a symbol and the symbol name is the string of address.
-> > After that, we just follow current annotation working flow.
-> > 
-> > For example,
-> > 
-> > 1. perf report
-> > 
-> > Overhead  Command  Shared Object     Symbol
-> >   20.67%  div      libc-2.27.so      [.] __random_r
-> >   17.29%  div      libc-2.27.so      [.] __random
-> >   10.59%  div      div               [.] 0x0000000000000628
-> >    9.25%  div      div               [.] 0x0000000000000612
-> >    6.11%  div      div               [.] 0x0000000000000645
-> > 
-> > 2. Select the line of "10.59%  div      div               [.] 0x0000000000000628" and ENTER.
-> > 
-> > Annotate 0x0000000000000628
-> > Zoom into div thread
-> > Zoom into div DSO (use the 'k' hotkey to zoom directly into the kernel)
-> > Browse map details
-> > Run scripts for samples of symbol [0x0000000000000628]
-> > Run scripts for all samples
-> > Switch to another data file in PWD
-> > Exit
-> > 
-> > 3. Select the "Annotate 0x0000000000000628" and ENTER.
-> > 
-> > Percent│
-> >        │
-> >        │
-> >        │     Disassembly of section .text:
-> >        │
-> >        │     0000000000000628 <.text+0x68>:
-> >        │       divsd %xmm4,%xmm0
-> >        │       divsd %xmm3,%xmm1
-> >        │       movsd (%rsp),%xmm2
-> >        │       addsd %xmm1,%xmm0
-> >        │       addsd %xmm2,%xmm0
-> >        │       movsd %xmm0,(%rsp)
-> > 
-> > Now we can see the dump of object starting from 0x628.
-> 
-> Testing this I noticed this discrepancy when using 'o' in the annotate
-> view to see the address columns:
-> 
-> Samples: 10K of event 'cycles', 4000 Hz, Event count (approx.): 7738221585
-> 0x0000000000ea8b97  /usr/libexec/gcc/x86_64-redhat-linux/9/cc1 [Percent: local period]
-> Percent│                                                                                                                                                                                                                                                  ▒
->        │                                                                                                                                                                                                                                                  ▒
->        │                                                                                                                                                                                                                                                  ▒
->        │        Disassembly of section .text:                                                                                                                                                                                                             ▒
->        │                                                                                                                                                                                                                                                  ◆
->        │        00000000012a8b97 <linemap_get_expansion_line@@Base+0x227>:                                                                                                                                                                                ▒
->        │12a8b97:   cmp     %rax,(%rdi)                                                                                                                                                                                                                    ▒
->        │12a8b9a: ↓ je      12a8ba0 <linemap_get_expansion_line@@Base+0x230>                                                                                                                                                                               ▒
->        │12a8b9c:   xor     %eax,%eax                                                                                                                                                                                                                      ▒
->        │12a8b9e: ← retq                                                                                                                                                                                                                                   ▒
->        │12a8b9f:   nop                                                                                                                                                                                                                                    ▒
->        │12a8ba0:   mov     0x8(%rsi),%edx
-> 
-> 
-> 
->  See that 0x0000000000ea8b97 != 12a8b97
-> 
-> How can we explain that?
+Hello Daniel,
 
-On another machine, in 'perf top', its ok, the same address appears on
-the second line and in the first line in the disassembled code.
+Thanks for the patch.
 
-I'm applying the patch,
+On Wed, 18 Mar 2020 at 02:26, Daniel Vetter <daniel.vetter@ffwll.ch> wrote:
+>
+> We're getting some random other stuff that we're not really interested
+> in, so match only word boundaries. Also avoid the capture group while
+> at it.
+>
+> Suggested by Joe Perches.
+>
+> Cc: linux-media@vger.kernel.org
+> Cc: dri-devel@lists.freedesktop.org
+> Cc: linaro-mm-sig@lists.linaro.org
+> Cc: Joe Perches <joe@perches.com>
+> Cc: Sumit Semwal <sumit.semwal@linaro.org>
+> Cc: Sam Ravnborg <sam@ravnborg.org>
+> Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
 
-- Arnaldo
+Acked-by: Sumit Semwal <sumit.semwal@linaro.org>
+> ---
+> v2: No single quotes in MAINTAINERS (Joe)
+> v3: Fix typo in commit message (Sam)
+> ---
+>  MAINTAINERS | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 3005be638c2c..ed6088a01bfe 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -5025,7 +5025,7 @@ F:        include/linux/dma-buf*
+>  F:     include/linux/reservation.h
+>  F:     include/linux/*fence.h
+>  F:     Documentation/driver-api/dma-buf.rst
+> -K:     dma_(buf|fence|resv)
+> +K:     \bdma_(?:buf|fence|resv)\b
+>  T:     git git://anongit.freedesktop.org/drm/drm-misc
+>
+>  DMA-BUF HEAPS FRAMEWORK
+> --
+> 2.25.1
+>
