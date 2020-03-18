@@ -2,103 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 770DE18A12D
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 18:09:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2DB5B18A110
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 18:02:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726856AbgCRRJs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Mar 2020 13:09:48 -0400
-Received: from mga17.intel.com ([192.55.52.151]:47863 "EHLO mga17.intel.com"
+        id S1726961AbgCRRCt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Mar 2020 13:02:49 -0400
+Received: from mga03.intel.com ([134.134.136.65]:13839 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726638AbgCRRJr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Mar 2020 13:09:47 -0400
-IronPort-SDR: OQNm875sGHGJo1GkhcBUt4PmbW5Fu3wp5uKCOlwkTS27mjLV3yK1Uwy2GDYGhTTBfgE0+2jJuh
- OhNhATXCcVXQ==
+        id S1726638AbgCRRCs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Mar 2020 13:02:48 -0400
+IronPort-SDR: GW29u5MqL4Q8TtV2DWHAvHtSWbFdDCJfe1XKgdYVSbJN22Yc/+XM7KNr8Dm4aXAINDi256qQpf
+ Dxz2kSePep/Q==
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Mar 2020 10:09:47 -0700
-IronPort-SDR: f481HSyPpRKmelyJY/WmmDt+1dK/TzPlXi0k4IiiQ42LSybYx8Elt3v99cWghv3fAev4dnIUPd
- sqTW+JHWkLTw==
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Mar 2020 10:02:41 -0700
+IronPort-SDR: lvUm8X+7IdYPGh9PtUcxWuWLT07MuzXrRMbkxoFh+siGmQn+69FHUjG/Eogg9Axe8F5cIsxP9w
+ y4hOLekTV9tA==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.70,568,1574150400"; 
-   d="scan'208";a="418019258"
-Received: from nali1-mobl3.amr.corp.intel.com (HELO [10.255.33.194]) ([10.255.33.194])
-  by orsmga005.jf.intel.com with ESMTP; 18 Mar 2020 10:09:45 -0700
-Subject: Re: [PATCH 1/2] ASoC: qcom: sdm845: handle soundwire stream
-To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        broonie@kernel.org
-Cc:     alsa-devel@alsa-project.org, lgirdwood@gmail.com, perex@perex.cz,
-        linux-kernel@vger.kernel.org, vkoul@kernel.org
-References: <20200317095351.15582-1-srinivas.kandagatla@linaro.org>
- <20200317095351.15582-2-srinivas.kandagatla@linaro.org>
- <8daeeb26-851b-8311-30f5-5d285ccbc255@linux.intel.com>
- <69c72f5a-e72e-b7b3-90cb-a7354dcb175d@linaro.org>
- <cbc6cc9b-24f5-8c2a-b60d-b5dab08c128e@linux.intel.com>
- <fcf845bd-9803-ab04-d2a9-c258ddfcc972@linaro.org>
-From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Message-ID: <c8738ecf-727f-2063-8aa0-46fc1c338383@linux.intel.com>
-Date:   Wed, 18 Mar 2020 11:53:59 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+   d="scan'208";a="244885698"
+Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.202])
+  by orsmga003.jf.intel.com with ESMTP; 18 Mar 2020 10:02:41 -0700
+Date:   Wed, 18 Mar 2020 10:02:41 -0700
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     Paolo Bonzini <pbonzini@redhat.com>
+Cc:     Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Ben Gardon <bgardon@google.com>,
+        Junaid Shahid <junaids@google.com>,
+        Liran Alon <liran.alon@oracle.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        John Haxby <john.haxby@oracle.com>,
+        Miaohe Lin <linmiaohe@huawei.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>
+Subject: Re: [PATCH v2 31/32] KVM: nVMX: Don't flush TLB on nested VM
+ transition with EPT enabled
+Message-ID: <20200318170241.GJ24357@linux.intel.com>
+References: <20200317045238.30434-1-sean.j.christopherson@intel.com>
+ <20200317045238.30434-32-sean.j.christopherson@intel.com>
+ <97f91b27-65ac-9187-6b60-184e1562d228@redhat.com>
+ <20200317182251.GD12959@linux.intel.com>
+ <218d4dbd-20f1-5bf8-ca44-c53dd9345dab@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <fcf845bd-9803-ab04-d2a9-c258ddfcc972@linaro.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <218d4dbd-20f1-5bf8-ca44-c53dd9345dab@redhat.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, Mar 18, 2020 at 11:36:04AM +0100, Paolo Bonzini wrote:
+> On 17/03/20 19:22, Sean Christopherson wrote:
+> > On Tue, Mar 17, 2020 at 06:18:37PM +0100, Paolo Bonzini wrote:
+> >> On 17/03/20 05:52, Sean Christopherson wrote:
+> >>> diff --git a/arch/x86/kvm/vmx/nested.c b/arch/x86/kvm/vmx/nested.c
+> >>> index d816f1366943..a77eab5b0e8a 100644
+> >>> --- a/arch/x86/kvm/vmx/nested.c
+> >>> +++ b/arch/x86/kvm/vmx/nested.c
+> >>> @@ -1123,7 +1123,7 @@ static int nested_vmx_load_cr3(struct kvm_vcpu *vcpu, unsigned long cr3, bool ne
+> >>>  	}
+> >>>  
+> >>>  	if (!nested_ept)
+> >>> -		kvm_mmu_new_cr3(vcpu, cr3, false);
+> >>> +		kvm_mmu_new_cr3(vcpu, cr3, enable_ept);
+> >>
+> >> Even if enable_ept == false, we could have already scheduled or flushed
+> >> the TLB soon due to one of 1) nested_vmx_transition_tlb_flush 2)
+> >> vpid_sync_context in prepare_vmcs02 3) the processor doing it for
+> >> !enable_vpid.
+> >>
+> >> So for !enable_ept only KVM_REQ_MMU_SYNC is needed, not
+> >> KVM_REQ_TLB_FLUSH_CURRENT I think.  Worth adding a TODO?
+> > 
+> > Now that you point it out, I think it makes sense to unconditionally pass
+> > %true here, i.e. rely 100% on nested_vmx_transition_tlb_flush() to do the
+> > right thing.
+> 
+> Why doesn't it need KVM_REQ_MMU_SYNC either?
 
+Hmm, so if L1 is using VPID, we're ok without a sync.  Junaid's INVVPID
+patch earlier in this series ensures cached roots won't retain unsync'd
+SPTEs when L1 does INVVPID.  If L1 doesn't flush L2's TLB on VM-Entry, it
+can't expect L2 to recognize changes in the PTEs since the last INVVPID.
 
-On 3/18/20 10:57 AM, Srinivas Kandagatla wrote:
-> 
-> 
-> On 18/03/2020 15:26, Pierre-Louis Bossart wrote:
->>
->> Same comment, how does the notion of cpu_dai come in the picture for a 
->> SoundWire dailink?
->> Would you mind listing what the components of the dailinks are?
-> 
-> dais that I was referring here are all codec dais from backend-dai.
-> 
-> Device tree entries from
-> https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/arch/arm64/boot/dts/qcom/sdm845-db845c.dts?h=next-20200318#n538 
-> 
-> 
-> 
-> Frontend-dai:
->      mm1-dai-link {
->          link-name = "MultiMedia1";
->          cpu {
->              sound-dai = <&q6asmdai  MSM_FRONTEND_DAI_MULTIMEDIA1>;
->          };
->      };
-> 
-> Backend-dai:
->      slim-dai-link {
->          link-name = "SLIM Playback";
->          cpu {
->              sound-dai = <&q6afedai SLIMBUS_0_RX>;
->          };
-> 
->          platform {
->              sound-dai = <&q6routing>;
->          };
-> 
->          codec {
->              sound-dai =  <&left_spkr>, <&right_spkr>, <&swm 0>, 
-> <&wcd9340 0>;
->          };
+Per Intel's SDM, INVLPG (and INVPCID) are only required to invalidate
+entries for the current VPID, i.e. virtual VPID=0 when executed by L1.
 
-Thanks, I didn't realize this and now understand your point.
+  Operations that architecturally invalidate entries in the TLBs or
+  paging-structure caches independent of VMX operation (e.g., the INVLPG and
+  INVPCID instructions) invalidate linear mappings and combined mappings.
+  They are required to do so only for the current VPID.
+                             ^^^^^^^^^^^^^^^^^^^^^^^^^
 
-I guess that means we've officially stretched the limits of the DPCM 
-model though, lumping all codec dais from separate devices into the same 
-'backend' doesn't seem like a very good path forward, we'd really need a 
-notion of domain to represent such bridges.
+If L1 isn't using VPID and L0 isn't using EPT, then a sync is required as
+L1 would expect PTE changes to be recognized without an explicit INVLPG
+prior to VM-Ennter.
 
-For now for the series
+So something like this?
 
-Reviewed-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+	if (!nested_ept)
+		kvm_mmu_new_cr3(vcpu, cr3, enable_ept ||
+					   nested_cpu_has_vpid(vmcs12));
+
+The KVM_REQ_TLB_FLUSH_CURRENT request would be redundant with
+nested_vmx_transition_tlb_flush() when VPID is enabled, and is a (big) nop
+when VPID is disabled.  In either case the overhead is negligible.  Ideally
+this logic would tie into nested_vmx_transition_tlb_flush() in some way,
+but making that happen may be wishful thinking.
+
+> All this should be in a comment as well, of course.
+
+Heh, in hindsight that's painfully obvious.
