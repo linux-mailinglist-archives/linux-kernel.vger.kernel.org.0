@@ -2,67 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D7D04189FFD
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 16:54:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 91D9A18A011
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 17:00:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727175AbgCRPyP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Mar 2020 11:54:15 -0400
-Received: from mga14.intel.com ([192.55.52.115]:50380 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726473AbgCRPyP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Mar 2020 11:54:15 -0400
-IronPort-SDR: dftVKVfMsgcCgoEaZUyRKqpsupQjKXkQkKliPLverLxhck2s7hzzWyeaqKvotVEu4+B8e7QbUQ
- g3SkeFz4ro6A==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Mar 2020 08:54:15 -0700
-IronPort-SDR: Tjc3uIEmX3dQplYupWc5eSXp2BpVa6M28ayGV6FutVzKT/33/6CL3Y7l8bOV783m+C9pZZEp/l
- /8430xvsEc1A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,568,1574150400"; 
-   d="scan'208";a="233880826"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
-  by orsmga007.jf.intel.com with ESMTP; 18 Mar 2020 08:54:12 -0700
-Received: from andy by smile with local (Exim 4.93)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1jEb1K-00Anye-UL; Wed, 18 Mar 2020 17:54:14 +0200
-Date:   Wed, 18 Mar 2020 17:54:14 +0200
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Lukas Wunner <lukas@wunner.de>
-Cc:     Heiko Stuebner <heiko@sntech.de>, gregkh@linuxfoundation.org,
-        jslaby@suse.com, matwey.kornilov@gmail.com,
-        linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/7] serial: 8250: Add rs485 emulation to 8250_dw
-Message-ID: <20200318155414.GR1922688@smile.fi.intel.com>
-References: <20200318142640.982763-1-heiko@sntech.de>
- <20200318144320.GL1922688@smile.fi.intel.com>
- <20200318153754.dctd4q7e2fodeqsw@wunner.de>
+        id S1727089AbgCRQA1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Mar 2020 12:00:27 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:52592 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726765AbgCRQA1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Mar 2020 12:00:27 -0400
+Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id A2418FC2FB6FF7DC0FC8;
+        Wed, 18 Mar 2020 23:59:49 +0800 (CST)
+Received: from localhost.localdomain (10.69.192.58) by
+ DGGEMS408-HUB.china.huawei.com (10.3.19.208) with Microsoft SMTP Server id
+ 14.3.487.0; Wed, 18 Mar 2020 23:59:39 +0800
+From:   John Garry <john.garry@huawei.com>
+To:     <xuwei5@huawei.com>, <arnd@arndb.de>
+CC:     <okaya@kernel.org>, <bhelgaas@google.com>,
+        <linux-kernel@vger.kernel.org>, <linux-arch@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linuxarm@huawei.com>,
+        <olof@lixom.net>, <jiaxun.yang@flygoat.com>,
+        "John Garry" <john.garry@huawei.com>
+Subject: [PATCH 0/3] io.h, logic_pio: Allow barriers for inX() and outX() be overridden
+Date:   Wed, 18 Mar 2020 23:55:32 +0800
+Message-ID: <1584546935-75393-1-git-send-email-john.garry@huawei.com>
+X-Mailer: git-send-email 2.8.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200318153754.dctd4q7e2fodeqsw@wunner.de>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Type: text/plain
+X-Originating-IP: [10.69.192.58]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 18, 2020 at 04:37:54PM +0100, Lukas Wunner wrote:
-> On Wed, Mar 18, 2020 at 04:43:20PM +0200, Andy Shevchenko wrote:
-> > On Wed, Mar 18, 2020 at 03:26:33PM +0100, Heiko Stuebner wrote:
-> > > This series tries to revive the work of Giulio Benetti from 2018 [0]
-> > > which seemed to have stalled at that time.
-> 
-> Oh dear. :-(  This needs a rebase on current tty-next.
+Since commits a7851aa54c0c ("io: change outX() to have their own IO
+barrier overrides") and 87fe2d543f81 ("io: change inX() to have their own
+IO barrier overrides"), the outX() and inX() functions have memory
+barriers which can be overridden per-arch.
 
-That's what I was thinking when browsed thru the content, and thus commented in
-the same way to this cover letter :-)
+However, under CONFIG_INDIRECT_PIO, logic_pio defines its own version of
+inX() and outX(), which still use readb et al. For these, the barrier
+after a raw read is weaker than it otherwise would be. 
 
-Thank you for looking into this.
+This series generates consistent behaviour for logic_pio, by defining
+generic _inX() and _outX() in asm-generic/io.h, and using those in
+logic_pio. Generic _inX() and _outX() have per-arch overrideable
+barriers.
+
+The topic was discussed there originally:
+https://lore.kernel.org/lkml/2e80d7bc-32a0-cc40-00a9-8a383a1966c2@huawei.com/
+
+A small tidy-up patch is included.
+
+I hope that series can go through the arm-soc tree, as with other recent
+logic_pio changes.
+
+John Garry (3):
+  io: Provide _inX() and _outX()
+  logic_pio: Improve macro argument name
+  logic_pio: Use _inX() and _outX()
+
+ include/asm-generic/io.h | 64 +++++++++++++++++++++++++++++++++---------------
+ lib/logic_pio.c          | 22 ++++++++---------
+ 2 files changed, 55 insertions(+), 31 deletions(-)
 
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.12.3
 
