@@ -2,133 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3F10618AE1E
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 09:11:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B55F18AE25
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 09:14:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726793AbgCSILN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 04:11:13 -0400
-Received: from mout-p-202.mailbox.org ([80.241.56.172]:43130 "EHLO
-        mout-p-202.mailbox.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725601AbgCSILN (ORCPT
+        id S1726895AbgCSIOn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 04:14:43 -0400
+Received: from mout-u-204.mailbox.org ([91.198.250.253]:21842 "EHLO
+        mout-u-204.mailbox.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726151AbgCSIOk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 04:11:13 -0400
-Received: by mout-p-202.mailbox.org (Postfix, from userid 51)
-        id 48jfk71G2BzQlGs; Thu, 19 Mar 2020 08:10:17 +0000 (UTC)
+        Thu, 19 Mar 2020 04:14:40 -0400
+X-Greylist: delayed 507 seconds by postgrey-1.27 at vger.kernel.org; Thu, 19 Mar 2020 04:14:39 EDT
+Received: by mout-u-204.mailbox.org (Postfix, from userid 51)
+        id 48jfcM4JnmzQlG0; Thu, 19 Mar 2020 08:05:18 +0000 (UTC)
 Received: from smtp2.mailbox.org (smtp2.mailbox.org [80.241.60.241])
         (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
         (No client certificate requested)
-        by mout-p-202.mailbox.org (Postfix) with ESMTPS id 48hb5f6dqzzQlGj;
-        Tue, 17 Mar 2020 15:24:22 +0100 (CET)
+        by mout-u-204.mailbox.org (Postfix) with ESMTPS id 48jGln33z3zQlFx;
+        Wed, 18 Mar 2020 18:11:17 +0100 (CET)
 X-Virus-Scanned: amavisd-new at heinlein-support.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gorani.run; s=MBO0001;
+        t=1584551476;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=rjeQJtst2T6i2m2bmZKswd/k9BXvMflb7UrV/wjEqqA=;
+        b=xESSd49PLCdfXlqlQWuJ+m4wfH0gYPY4nAy0F2G3ZYImoo0HugUoRXJVig5pRYeeeqrvhc
+        PxKCJ6Z1g05HxUHMF6Vjh1rx9JtYgEQ6zAOqZwtqtyPhHhZ1QiNWpD2nt76YGR9HjZnc7D
+        4XtPN0QmKyRe/gMmVy5m9F07e5iU/I0iqD6DaFyJJgNZf59AjByqNn+rLr5Rwneuubcp99
+        Rw3S9SIaMhEAk68OmLaj5W4fHr69yhOLSVFKaTTNFJCyB0jJT9aAhUBOrkt35fFqXrvunZ
+        5lPXEbqeIVegUx10nJlGqZwthV7sOP0Y1wfGnGzpX2VmT+xbiqseuVPWCOcaHQ==
 Received: from smtp2.mailbox.org ([80.241.60.241])
-        by spamfilter04.heinlein-hosting.de (spamfilter04.heinlein-hosting.de [80.241.56.122]) (amavisd-new, port 10030)
-        with ESMTP id zRiPUP04n628; Tue, 17 Mar 2020 15:24:19 +0100 (CET)
-Date:   Wed, 18 Mar 2020 01:23:50 +1100
-From:   Aleksa Sarai <cyphar@cyphar.com>
-To:     "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>
-Cc:     Adrian Reber <areber@redhat.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Pavel Emelyanov <ovzxemul@gmail.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Dmitry Safonov <0x7f454c46@gmail.com>,
-        Andrei Vagin <avagin@gmail.com>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Radostin Stoyanov <rstoyanov1@gmail.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Cyrill Gorcunov <gorcunov@openvz.org>,
+        by spamfilter01.heinlein-hosting.de (spamfilter01.heinlein-hosting.de [80.241.56.115]) (amavisd-new, port 10030)
+        with ESMTP id dDnmRVvElgnL; Wed, 18 Mar 2020 18:11:14 +0100 (CET)
+From:   Sungbo Eo <mans0n@gorani.run>
+To:     linux-oxnas@groups.io, Linus Walleij <linus.walleij@linaro.org>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Linux API <linux-api@vger.kernel.org>
-Subject: Re: clone3: allow creation of time namespace with offset
-Message-ID: <20200317142350.ssraami3a4vnk5po@yavin>
-References: <20200317083043.226593-1-areber@redhat.com>
- <CAKgNAkh7=2Noyn0o3880xbbi4w5oiwqs9ibTYLtheqzxne3mbQ@mail.gmail.com>
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <maz@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc:     Sungbo Eo <mans0n@gorani.run>,
+        Neil Armstrong <narmstrong@baylibre.com>
+Subject: [PATCH] irqchip/versatile-fpga: Handle chained IRQs properly
+Date:   Thu, 19 Mar 2020 02:09:04 +0900
+Message-Id: <20200318170904.1461278-1-mans0n@gorani.run>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="iakfd3bjzr4y3tmr"
-Content-Disposition: inline
-In-Reply-To: <CAKgNAkh7=2Noyn0o3880xbbi4w5oiwqs9ibTYLtheqzxne3mbQ@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Enclose the chained handler with chained_irq_{enter,exit}(), so that the
+muxed interrupts get properly acked.
 
---iakfd3bjzr4y3tmr
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This patch also fixes a reboot bug on OX820 SoC, where the jiffies timer
+interrupt is never acked. The kernel waits a clock tick forever in
+calibrate_delay_converge(), which leads to a boot hang.
 
-On 2020-03-17, Michael Kerrisk (man-pages) <mtk.manpages@gmail.com> wrote:
-> [CC +=3D linux-api; please CC on future versions]
->=20
-> On Tue, 17 Mar 2020 at 09:32, Adrian Reber <areber@redhat.com> wrote:
-> > Requiring nanoseconds as well as seconds for two clocks during clone3()
-> > means that it would require 4 additional members to 'struct clone_args':
-> >
-> >         __aligned_u64 tls;
-> >         __aligned_u64 set_tid;
-> >         __aligned_u64 set_tid_size;
-> > +       __aligned_u64 boottime_offset_seconds;
-> > +       __aligned_u64 boottime_offset_nanoseconds;
-> > +       __aligned_u64 monotonic_offset_seconds;
-> > +       __aligned_u64 monotonic_offset_nanoseconds;
-> >  };
-> >
-> > To avoid four additional members to 'struct clone_args' this patchset
-> > uses another approach:
-> >
-> >         __aligned_u64 tls;
-> >         __aligned_u64 set_tid;
-> >         __aligned_u64 set_tid_size;
-> > +       __aligned_u64 timens_offset;
-> > +       __aligned_u64 timens_offset_size;
-> >  };
-> >
-> > timens_offset is a pointer to an array just as previously done with
-> > set_tid and timens_offset_size is the size of the array.
-> >
-> > The timens_offset array is expected to contain a struct like this:
-> >
-> > struct set_timens_offset {
-> >        int clockid;
-> >        struct timespec val;
-> > };
-> >
-> > This way it is possible to pass the information of multiple clocks with
-> > seconds and nanonseconds to clone3().
-> >
-> > To me this seems the better approach, but I am not totally convinced
-> > that it is the right thing. If there are other ideas how to pass two
-> > clock offsets with seconds and nanonseconds to clone3() I would be happy
-> > to hear other ideas.
+Signed-off-by: Sungbo Eo <mans0n@gorani.run>
+Cc: Neil Armstrong <narmstrong@baylibre.com>
+---
+ drivers/irqchip/irq-versatile-fpga.c | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
-While I agree this does make the API cleaner, I am a little worried that
-it risks killing some of the ideas we discussed for seccomp deep
-inspection. In particular, having a pointer to variable-sized data
-inside the struct means that now the cBPF program can't just be given a
-copy of the struct data from userspace to check.
+diff --git a/drivers/irqchip/irq-versatile-fpga.c b/drivers/irqchip/irq-versatile-fpga.c
+index 928858dada75..08faab2fec3e 100644
+--- a/drivers/irqchip/irq-versatile-fpga.c
++++ b/drivers/irqchip/irq-versatile-fpga.c
+@@ -6,6 +6,7 @@
+ #include <linux/irq.h>
+ #include <linux/io.h>
+ #include <linux/irqchip.h>
++#include <linux/irqchip/chained_irq.h>
+ #include <linux/irqchip/versatile-fpga.h>
+ #include <linux/irqdomain.h>
+ #include <linux/module.h>
+@@ -68,12 +69,15 @@ static void fpga_irq_unmask(struct irq_data *d)
+ 
+ static void fpga_irq_handle(struct irq_desc *desc)
+ {
++	struct irq_chip *chip = irq_desc_get_chip(desc);
+ 	struct fpga_irq_data *f = irq_desc_get_handler_data(desc);
+ 	u32 status = readl(f->base + IRQ_STATUS);
+ 
++	chained_irq_enter(chip, desc);
++
+ 	if (status == 0) {
+ 		do_bad_IRQ(desc);
+-		return;
++		goto out;
+ 	}
+ 
+ 	do {
+@@ -82,6 +86,9 @@ static void fpga_irq_handle(struct irq_desc *desc)
+ 		status &= ~(1 << irq);
+ 		generic_handle_irq(irq_find_mapping(f->domain, irq));
+ 	} while (status);
++
++out:
++	chained_irq_exit(chip, desc);
+ }
+ 
+ /*
+-- 
+2.25.1
 
-I'm sure it's a solveable problem (and it was one we were bound to run
-into at some point), it'll just mean we'll need a more complicated way
-of filtering such syscalls.
-
---=20
-Aleksa Sarai
-Senior Software Engineer (Containers)
-SUSE Linux GmbH
-<https://www.cyphar.com/>
-
---iakfd3bjzr4y3tmr
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQSxZm6dtfE8gxLLfYqdlLljIbnQEgUCXnDdcwAKCRCdlLljIbnQ
-EkDfAP4oqBtz79HrO5K84v1Oc+8BJnHtioYyEbAw6bApHUzizwEA/y+FnNZfg354
-lxpGstBAS/4Qjyki4qqo9BOYoQimPwI=
-=qITz
------END PGP SIGNATURE-----
-
---iakfd3bjzr4y3tmr--
