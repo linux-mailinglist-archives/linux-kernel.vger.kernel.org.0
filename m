@@ -2,53 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6DCC118A387
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 21:12:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 866C218A392
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 21:14:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727122AbgCRUMB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Mar 2020 16:12:01 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:35685 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726647AbgCRUMB (ORCPT
+        id S1726933AbgCRUOT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Mar 2020 16:14:19 -0400
+Received: from smtprelay0236.hostedemail.com ([216.40.44.236]:41578 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726733AbgCRUOT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Mar 2020 16:12:01 -0400
-Received: by mail-lj1-f193.google.com with SMTP id u12so28587611ljo.2
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Mar 2020 13:11:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=lm1QAgPbIMGNFjr1hUN2+SfO8MIYTxxJtFHbkC9Id28=;
-        b=YQdLgK8UoBk3dQ3VtRVYHg+exZ795xukSZj1NzCefm8BMQti3HA+c2KqtPjHpkd++b
-         RSKoiuQJdgKEzB8odoiHL0BlkphTThdOHhJZLl2QBZXqMv9CsRCY0Uts7OOuUF/+qwZH
-         x5prkFmi0Uv+HkOfWv8BpK4hSpS42VECt5YPJAZZxSNzQHKh19QydR+fd+WziiiB3Tdo
-         EUEDAeFsE1vurWKIYfVKhd+ax3/XSafKHfPjHBHxlYIoc7w5AJduadLhdd1WSSc3/Ygp
-         V5/ymZmMssOKfmznvp+M8zYu+GeV7z4tl7mbYu7li06dACrQ4t5zGQhZ8Oxduno3bnBW
-         D8lw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=lm1QAgPbIMGNFjr1hUN2+SfO8MIYTxxJtFHbkC9Id28=;
-        b=dAvAq2daUVzyXCUvBECcO8dulAxyvv7f9THdYeVb+BKyGx7YxVTiElnI1oQdw+UNs2
-         uB/oQElxsbevZN9Xk4AeUkJqRbwcPRbMyCr6reC4XdwfGvEyP2x7V9iJmq2S3dDSyDdR
-         fmmaetTypiF8T//Jko/pFsr4cEBUqcrHyGgNlXwCrekgXC0SC1CYrdi1heRxHkd9zpUI
-         MJ5OlodCx5u1dkoEZk3CJ0YLuQvGwDvJLqPOHNk5GFh+RgcdGCYnIhyAWhfdCphsvmAY
-         Xa85bZtgsKxG/bpPwFDv04a5qxskstnPZwwm3KEYceosa16jhtVf44Y1c7O5ne4IuOW7
-         IXAQ==
-X-Gm-Message-State: ANhLgQ33vgrhChjbH0NasA7fdxBBlrp/CAl8lPUyHOpjKTPKJLPLuJlu
-        qhY5XojDcCUl93PpZfHwPqUlVCWUwSuCFfB56lM=
-X-Google-Smtp-Source: ADFU+vsP7fhOXZEAOXIKuyoQe3h715l8mYeL1/qoE7+T9RDBHDi6bJlu+TLBPCnDCdRZTHPcpdFzdfx/QXJstNmJy3w=
-X-Received: by 2002:a2e:9a50:: with SMTP id k16mr3482898ljj.164.1584562318513;
- Wed, 18 Mar 2020 13:11:58 -0700 (PDT)
-MIME-Version: 1.0
-References: <1584558186-23373-1-git-send-email-orson.unisoc@gmail.com> <CAHp75VezrovVaHOdKoxXvvHr0v7uRT8tJoHLh9BoJYedj=hjHQ@mail.gmail.com>
-In-Reply-To: <CAHp75VezrovVaHOdKoxXvvHr0v7uRT8tJoHLh9BoJYedj=hjHQ@mail.gmail.com>
-From:   Orson Zhai <orsonzhai@gmail.com>
-Date:   Thu, 19 Mar 2020 04:11:45 +0800
-Message-ID: <CA+H2tpFj1_3wf9w8uHimi_=vrGXi_u21dU1m3+OKA0ZHmO=WRQ@mail.gmail.com>
-Subject: Re: [RFC PATCH] dynamic_debug: Add config option of DYNAMIC_DEBUG_CORE
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>
+        Wed, 18 Mar 2020 16:14:19 -0400
+Received: from smtprelay.hostedemail.com (10.5.19.251.rfc1918.com [10.5.19.251])
+        by smtpgrave02.hostedemail.com (Postfix) with ESMTP id 09F541800D655
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Mar 2020 20:14:18 +0000 (UTC)
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay08.hostedemail.com (Postfix) with ESMTP id 2E1CD182CED28;
+        Wed, 18 Mar 2020 20:14:17 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,,RULES_HIT:41:355:379:599:973:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1537:1561:1593:1594:1711:1714:1730:1747:1777:1792:2393:2553:2559:2562:2828:3138:3139:3140:3141:3142:3622:3867:3872:4321:5007:6120:6742:10004:10400:10848:11232:11658:11914:12297:12740:12760:12895:13069:13311:13357:13439:14659:21080:21627:30054:30060:30090:30091,0,RBL:none,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:1,LUA_SUMMARY:none
+X-HE-Tag: rock72_41de1d86e501b
+X-Filterd-Recvd-Size: 1894
+Received: from XPS-9350 (unknown [172.58.30.155])
+        (Authenticated sender: joe@perches.com)
+        by omf09.hostedemail.com (Postfix) with ESMTPA;
+        Wed, 18 Mar 2020 20:14:12 +0000 (UTC)
+Message-ID: <44514354dd77cc512c3c048deff3de313ed3ff50.camel@perches.com>
+Subject: Re: [RFC PATCH] dynamic_debug: Add config option of
+ DYNAMIC_DEBUG_CORE
+From:   Joe Perches <joe@perches.com>
+To:     Orson Zhai <orsonzhai@gmail.com>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>
 Cc:     Orson Zhai <orson.unisoc@gmail.com>,
         Jason Baron <jbaron@akamai.com>,
         Andrew Morton <akpm@linux-foundation.org>,
@@ -65,88 +48,26 @@ Cc:     Orson Zhai <orson.unisoc@gmail.com>,
         Mark Rutland <mark.rutland@arm.com>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Android Kernel Team <kernel-team@android.com>
-Content-Type: text/plain; charset="UTF-8"
+Date:   Wed, 18 Mar 2020 13:12:21 -0700
+In-Reply-To: <CA+H2tpFj1_3wf9w8uHimi_=vrGXi_u21dU1m3+OKA0ZHmO=WRQ@mail.gmail.com>
+References: <1584558186-23373-1-git-send-email-orson.unisoc@gmail.com>
+         <CAHp75VezrovVaHOdKoxXvvHr0v7uRT8tJoHLh9BoJYedj=hjHQ@mail.gmail.com>
+         <CA+H2tpFj1_3wf9w8uHimi_=vrGXi_u21dU1m3+OKA0ZHmO=WRQ@mail.gmail.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.34.1-2 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 19, 2020 at 3:23 AM Andy Shevchenko
-<andy.shevchenko@gmail.com> wrote:
->
-> On Wed, Mar 18, 2020 at 9:04 PM Orson Zhai <orson.unisoc@gmail.com> wrote:
-> >
-> > There is the requirement from new Android that kernel image (GKI) and
-> > kernel modules are supposed to be built at differnet places. Some people
-> > want to enable dynamic debug for kernel modules only but not for kernel
-> > image itself with the consideration of binary size increased or more
-> > memory being used.
-> >
-> > By this patch, dynamic debug is divided into core part (the defination of
-> > functions) and macro replacement part. We can only have the core part to
-> > be built-in and do not have to activate the debug output from kenrel image.
-> >
->
-> There are few grammar typos in above...
+On Thu, 2020-03-19 at 04:11 +0800, Orson Zhai wrote:
+> On Thu, Mar 19, 2020 at 3:23 AM Andy Shevchenko
+[]
+> > Highly recommend to ask somebody to do proof read.
+> Sorry again.
 
-I am very sorry about this. I though check-patch would remind me, but
-it seems not. I'll check this carefully next time.
-
-> >  config DYNAMIC_DEBUG
-> >         bool "Enable dynamic printk() support"
-> >         default n
->
-> > -       depends on PRINTK
-> > -       depends on DEBUG_FS
->
-> You may not touch this. By removing them you effectively removed
-> dependencies :-(
-
-OK. I thought dependencies it could be inherited from the selected one.
-But I believe you are right. It's not necessary to be removed.
-I will add it back at next version.
+It's an RFC, no real need to be sorry, many eyeballs etc...
 
 
->
-> > +       select DYNAMIC_DEBUG_CORE
-> >         help
-> >
-> >           Compiles debug level messages into the kernel, which would not
-> > @@ -164,6 +163,21 @@ config DYNAMIC_DEBUG
-> >           See Documentation/admin-guide/dynamic-debug-howto.rst for additional
-> >           information.
-> >
-> > +config DYNAMIC_DEBUG_CORE
-> > +       bool "Enable core functions of dynamic debug support"
-> > +       depends on PRINTK
-> > +       depends on DEBUG_FS
-> > +       help
-> > +         Enable this option to build ddebug_* and __dynamic_* routines
-> > +         into kernel. If you want enable whole dynamic debug features,
-> > +         select CONFIG_DYNAMIC_DEBUG directly and this option will be
-> > +         automatically selected.
-> > +
-> > +         This option is selected when you want to enable dynamic debug
->
-> > +         for kernel modules only but not for the kernel base. Especailly
->
-> Typo.
-
-Will be fixed next version.
-
->
-> > +         in the case that kernel modules are built out of the place where
-> > +         kernel base is built.
->
-> Highly recommend to ask somebody to do proof read.
-
-Sorry again.
-
-Thanks for your review.
-
-Best Regards,
--Orson
->
-> --
-> With Best Regards,
-> Andy Shevchenko
