@@ -2,65 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2EB1418974D
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 09:35:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7BBBC189750
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 09:35:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727459AbgCRIfX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Mar 2020 04:35:23 -0400
-Received: from comms.puri.sm ([159.203.221.185]:55288 "EHLO comms.puri.sm"
+        id S1727492AbgCRIf1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Mar 2020 04:35:27 -0400
+Received: from comms.puri.sm ([159.203.221.185]:55306 "EHLO comms.puri.sm"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726550AbgCRIfW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Mar 2020 04:35:22 -0400
+        id S1727387AbgCRIf0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Mar 2020 04:35:26 -0400
 Received: from localhost (localhost [127.0.0.1])
-        by comms.puri.sm (Postfix) with ESMTP id 33C99DFBC8;
-        Wed, 18 Mar 2020 01:35:22 -0700 (PDT)
+        by comms.puri.sm (Postfix) with ESMTP id 8065BDFFBF;
+        Wed, 18 Mar 2020 01:35:26 -0700 (PDT)
 Received: from comms.puri.sm ([127.0.0.1])
         by localhost (comms.puri.sm [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id nDDoW9hT1CA6; Wed, 18 Mar 2020 01:35:21 -0700 (PDT)
+        with ESMTP id M3qdoT-6_6FE; Wed, 18 Mar 2020 01:35:25 -0700 (PDT)
 From:   Martin Kepplinger <martin.kepplinger@puri.sm>
 To:     balbi@kernel.org, robh@kernel.org
 Cc:     gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         Martin Kepplinger <martin.kepplinger@puri.sm>
-Subject: [PATCH 1/2] usb: dwc3: support continuous runtime PM with dual role
-Date:   Wed, 18 Mar 2020 09:35:07 +0100
-Message-Id: <20200318083508.20781-1-martin.kepplinger@puri.sm>
+Subject: [PATCH 2/2] dt-bindings: usb: dwc3: add optional extcon description
+Date:   Wed, 18 Mar 2020 09:35:08 +0100
+Message-Id: <20200318083508.20781-2-martin.kepplinger@puri.sm>
+In-Reply-To: <20200318083508.20781-1-martin.kepplinger@puri.sm>
+References: <20200318083508.20781-1-martin.kepplinger@puri.sm>
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The DRD module calls dwc3_set_mode() on role switches, i.e. when a device is
-being pugged in. In order to support continuous runtime power management when
-plugging in / unplugging a cable, we need to call pm_runtime_get() in this path.
+the dwc3 drd module already hooks up an extcon device if described in DT.
 
 Signed-off-by: Martin Kepplinger <martin.kepplinger@puri.sm>
 ---
- drivers/usb/dwc3/core.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ Documentation/devicetree/bindings/usb/dwc3.txt | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/usb/dwc3/core.c b/drivers/usb/dwc3/core.c
-index edc17155cb2b..7743c4de82e9 100644
---- a/drivers/usb/dwc3/core.c
-+++ b/drivers/usb/dwc3/core.c
-@@ -196,11 +196,16 @@ void dwc3_set_mode(struct dwc3 *dwc, u32 mode)
- {
- 	unsigned long flags;
+diff --git a/Documentation/devicetree/bindings/usb/dwc3.txt b/Documentation/devicetree/bindings/usb/dwc3.txt
+index 9946ff9ba735..9aa0cefbf5f6 100644
+--- a/Documentation/devicetree/bindings/usb/dwc3.txt
++++ b/Documentation/devicetree/bindings/usb/dwc3.txt
+@@ -31,6 +31,8 @@ Exception for clocks:
+     "xlnx,zynqmp-dwc3"
  
-+	pm_runtime_get(dwc->dev);
-+
- 	spin_lock_irqsave(&dwc->lock, flags);
- 	dwc->desired_dr_role = mode;
- 	spin_unlock_irqrestore(&dwc->lock, flags);
- 
- 	queue_work(system_freezable_wq, &dwc->drd_work);
-+
-+	pm_runtime_mark_last_busy(dwc->dev);
-+	pm_runtime_put_autosuspend(dwc->dev);
- }
- 
- u32 dwc3_core_fifo_space(struct dwc3_ep *dep, u8 type)
+ Optional properties:
++ - extcon: phandle for the extcon device dwc3 DRD uses to detect
++   connect/disconnect events.
+  - usb-phy : array of phandle for the PHY device.  The first element
+    in the array is expected to be a handle to the USB2/HS PHY and
+    the second element is expected to be a handle to the USB3/SS PHY
 -- 
 2.20.1
 
