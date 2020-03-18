@@ -2,115 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2893C18A0CA
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 17:44:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0246C18A0D4
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 17:46:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727116AbgCRQok (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Mar 2020 12:44:40 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:22926 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726954AbgCRQoj (ORCPT
+        id S1727188AbgCRQqw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Mar 2020 12:46:52 -0400
+Received: from conssluserg-02.nifty.com ([210.131.2.81]:26361 "EHLO
+        conssluserg-02.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726623AbgCRQqw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Mar 2020 12:44:39 -0400
-Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 02IGdkPo112185
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Mar 2020 12:44:38 -0400
-Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2yupjt1tc0-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Mar 2020 12:44:38 -0400
-Received: from localhost
-        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <schnelle@linux.ibm.com>;
-        Wed, 18 Mar 2020 16:44:36 -0000
-Received: from b06avi18878370.portsmouth.uk.ibm.com (9.149.26.194)
-        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 18 Mar 2020 16:44:32 -0000
-Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
-        by b06avi18878370.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 02IGiVSv28246434
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 18 Mar 2020 16:44:32 GMT
-Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id DC9B05204E;
-        Wed, 18 Mar 2020 16:44:31 +0000 (GMT)
-Received: from tuxmaker.boeblingen.de.ibm.com (unknown [9.152.85.9])
-        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id A2BAF5204F;
-        Wed, 18 Mar 2020 16:44:31 +0000 (GMT)
-From:   Niklas Schnelle <schnelle@linux.ibm.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Saeed Mahameed <saeedm@mellanox.com>,
-        Leon Romanovsky <leon@kernel.org>,
-        Eran Ben Elisha <eranbe@mellanox.com>,
-        Moshe Shemesh <moshe@mellanox.com>,
-        Niklas Schnelle <schnelle@linux.ibm.com>
-Subject: [RFC 1/1] net/mlx5: Fix failing fw tracer allocation on s390
-Date:   Wed, 18 Mar 2020 17:44:31 +0100
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200318164431.85948-1-schnelle@linux.ibm.com>
-References: <20200318164431.85948-1-schnelle@linux.ibm.com>
-X-TM-AS-GCONF: 00
-x-cbid: 20031816-0016-0000-0000-000002F34EDE
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 20031816-0017-0000-0000-00003356D4D2
-Message-Id: <20200318164431.85948-2-schnelle@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.645
- definitions=2020-03-18_07:2020-03-18,2020-03-18 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=3 bulkscore=0
- impostorscore=0 phishscore=0 clxscore=1015 malwarescore=0 adultscore=0
- mlxlogscore=999 lowpriorityscore=0 spamscore=0 priorityscore=1501
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2003020000 definitions=main-2003180075
+        Wed, 18 Mar 2020 12:46:52 -0400
+Received: from mail-vk1-f169.google.com (mail-vk1-f169.google.com [209.85.221.169]) (authenticated)
+        by conssluserg-02.nifty.com with ESMTP id 02IGkKke007213;
+        Thu, 19 Mar 2020 01:46:21 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-02.nifty.com 02IGkKke007213
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1584549981;
+        bh=ZIyPyMCFN95hAks0AnT9gItSXBj23EHbKCT5HL+/mr4=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=Y6lt+gUtzQD0ptN4+XSv6AAPsoY3wL2eoCMFeIYsUJJ7I8xrz2qpTW0R7GoOfyZge
+         9EReA0ZtkwrhezpeBWlGydBc2qkj4+i6Kfa2UmPbXRW8y5iVHwEFzsu6WxV3M3kuQQ
+         zIJnlPUptK3PkfhVaTLv7d+Y9G5C+inTBhoVDMVZbDF9FTlWAH/mwc83KfAEsKLt03
+         GbY+qs2Oh/XM9tZ4hycFHpjc+sVv9959QW+296nYm8GBsIgQCN6PExMY7FEndvZuCU
+         tS0nc5trCqY77m7HUpEYB6hRrLipZt2SxW7MPplJrdj65FrGf8ukh+gYLcwajuZYpV
+         R6FBWmKrZswYg==
+X-Nifty-SrcIP: [209.85.221.169]
+Received: by mail-vk1-f169.google.com with SMTP id k63so7263284vka.7;
+        Wed, 18 Mar 2020 09:46:20 -0700 (PDT)
+X-Gm-Message-State: ANhLgQ08fBydaLFAhQV2svTYFrczCHCTgVMphEOUVw4nhLNyvEX4U04d
+        fPO9G1S5RTVRW2BaX7AZrsDIDCSCrqpCtXZH5Ow=
+X-Google-Smtp-Source: ADFU+vskxkxaLQzDACLuAo9WpP/KcvhIZDNPG0hj7I7WrJKoJueWHAXQzcHS75fKDztyW2M+2jAeBvLNKmRbSNLY+XA=
+X-Received: by 2002:a1f:8cce:: with SMTP id o197mr4151405vkd.66.1584549979672;
+ Wed, 18 Mar 2020 09:46:19 -0700 (PDT)
+MIME-Version: 1.0
+References: <20200318103416.29067-1-yangx.jy@cn.fujitsu.com>
+In-Reply-To: <20200318103416.29067-1-yangx.jy@cn.fujitsu.com>
+From:   Masahiro Yamada <masahiroy@kernel.org>
+Date:   Thu, 19 Mar 2020 01:45:43 +0900
+X-Gmail-Original-Message-ID: <CAK7LNASHOuzZ5aU3fJRyODchDk1FUPrXFW-j_zDxNcviELnGeg@mail.gmail.com>
+Message-ID: <CAK7LNASHOuzZ5aU3fJRyODchDk1FUPrXFW-j_zDxNcviELnGeg@mail.gmail.com>
+Subject: Re: [PATCH v2] modpost: Get proper section index by get_secindex()
+ instead of st_shndx
+To:     Xiao Yang <yangx.jy@cn.fujitsu.com>
+Cc:     Michal Marek <michal.lkml@markovi.net>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On s390 FORCE_MAX_ZONEORDER is 9 instead of 11, thus a larger kzalloc()
-allocation as done for the firmware tracer will always fail.
+On Wed, Mar 18, 2020 at 7:39 PM Xiao Yang <yangx.jy@cn.fujitsu.com> wrote:
+>
+> (uint16_t) st_shndx is limited to 65535(i.e. SHN_XINDEX) so sym_get_data() gets
+> wrong section index by st_shndx if requested symbol contains extended section
+> index that is more than 65535.  In this case, we need to get proper section index
+> by .symtab_shndx section.
+>
+> Module.symvers generated by building kernel with "-ffunction-sections -fdata-sections"
+> shows the issue.
+>
+> Fixes: 56067812d5b0 ("kbuild: modversions: add infrastructure for emitting relative CRCs")
+> Fixes: e84f9fbbece1 ("modpost: refactor namespace_from_kstrtabns() to not hard-code section name")
+> Reviewed-by: Masahiro Yamada <masahiroy@kernel.org>
+> Signed-off-by: Xiao Yang <yangx.jy@cn.fujitsu.com>
+> ---
 
-Looking at mlx5_fw_tracer_save_trace(), it is actually the driver itself
-that copies the debug data into the trace array and there is no need for
-the allocation to be contiguous in physical memory. We can therefor use
-kvzalloc() instead of kzalloc() and get rid of the large contiguous
-allcoation.
+Applied to linux-kbuild/fixes.
+Thanks.
 
-Signed-off-by: Niklas Schnelle <schnelle@linux.ibm.com>
----
- drivers/net/ethernet/mellanox/mlx5/core/diag/fw_tracer.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/net/ethernet/mellanox/mlx5/core/diag/fw_tracer.c b/drivers/net/ethernet/mellanox/mlx5/core/diag/fw_tracer.c
-index 94d7b69a95c7..eb2e57ff08a6 100644
---- a/drivers/net/ethernet/mellanox/mlx5/core/diag/fw_tracer.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/diag/fw_tracer.c
-@@ -935,7 +935,7 @@ struct mlx5_fw_tracer *mlx5_fw_tracer_create(struct mlx5_core_dev *dev)
- 		return NULL;
- 	}
- 
--	tracer = kzalloc(sizeof(*tracer), GFP_KERNEL);
-+	tracer = kvzalloc(sizeof(*tracer), GFP_KERNEL);
- 	if (!tracer)
- 		return ERR_PTR(-ENOMEM);
- 
-@@ -982,7 +982,7 @@ struct mlx5_fw_tracer *mlx5_fw_tracer_create(struct mlx5_core_dev *dev)
- 	tracer->dev = NULL;
- 	destroy_workqueue(tracer->work_queue);
- free_tracer:
--	kfree(tracer);
-+	kvfree(tracer);
- 	return ERR_PTR(err);
- }
- 
-@@ -1061,7 +1061,7 @@ void mlx5_fw_tracer_destroy(struct mlx5_fw_tracer *tracer)
- 	mlx5_fw_tracer_destroy_log_buf(tracer);
- 	flush_workqueue(tracer->work_queue);
- 	destroy_workqueue(tracer->work_queue);
--	kfree(tracer);
-+	kvfree(tracer);
- }
- 
- static int fw_tracer_event(struct notifier_block *nb, unsigned long action, void *data)
+
+
+>  scripts/mod/modpost.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+>
+> diff --git a/scripts/mod/modpost.c b/scripts/mod/modpost.c
+> index 7edfdb2f4497..1ce22896f3d8 100644
+> --- a/scripts/mod/modpost.c
+> +++ b/scripts/mod/modpost.c
+> @@ -308,7 +308,8 @@ static const char *sec_name(struct elf_info *elf, int secindex)
+>
+>  static void *sym_get_data(const struct elf_info *info, const Elf_Sym *sym)
+>  {
+> -       Elf_Shdr *sechdr = &info->sechdrs[sym->st_shndx];
+> +       unsigned int secindex = get_secindex(info, sym);
+> +       Elf_Shdr *sechdr = &info->sechdrs[secindex];
+>         unsigned long offset;
+>
+>         offset = sym->st_value;
+> --
+> 2.21.0
+>
+>
+>
+
+
 -- 
-2.17.1
-
+Best Regards
+Masahiro Yamada
