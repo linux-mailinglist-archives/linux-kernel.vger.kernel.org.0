@@ -2,354 +2,287 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9098B18A378
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 21:06:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 90DB818A380
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 21:10:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727133AbgCRUGZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Mar 2020 16:06:25 -0400
-Received: from mail-db8eur05olkn2048.outbound.protection.outlook.com ([40.92.89.48]:16482
-        "EHLO EUR05-DB8-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726647AbgCRUGZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Mar 2020 16:06:25 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=eiFV7O/nVkhWNmhGTpzUM1huv96+wm8dFSvCf+XOdEt0N960FaZ2tKU9Vw0hHiqI8ZNpiRVxRHyVanCoyP3OIN+9mA9oe38K7vcscs6MxcZ3WLFfJlGGfYJErAU1xrD2kvycW0pB4i1OjCpMb720nbeYI4Or1HeAJMlKkiDtjR/e6ghxbifXtPegJLOi+2uqevlLNTvkxx2qtvMw1PrnTs0YL7DE2VyxKUNPqsBscLZ5yjKE/d6t4yAoluLP10UEETn541i0Sr0H1LzYarAf4Gc2i/xAh50fQdhslA1DjTEBO57RvPjp7PJgiNmUEhIYf6r5egAEm0jkulY5GqSYRw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=zI5O/+zHKMbfx3iXEEaQahEwmPuPrNkBk3+/CFHOCNQ=;
- b=Q91/JRyu8M+HI6XSaKtANgAqKohSuSD/ZuHOA5hwx8zI70FfgGRSe9L/ZIaWKsjcbGXl03fdCg38LbaasZUE+a01nO7CjkG3QexNZ67TJhmb1WJn5Y34MSlHP6Dv5rBa4tE4+FI2gG8FXCYzSV+GFZgQDqnnPDeF0rIGGkrjqh+ilkzQqkQxqxk0SK84zLTAaUY4fgy3HQVbyO1gRQm3Q3QWyZRCHPdA2ykQipRdIbPYRqLxmmXWB6o9qpn5nk/DK9V/dQ/weuTBfZt3ZDAbmpSc8k6p6dBbIY+ZZvqlVOD3C+mmH+I0ut4C79/3n5cSMZVpyq8HIriKGjRE017UTg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=hotmail.de; dmarc=pass action=none header.from=hotmail.de;
- dkim=pass header.d=hotmail.de; arc=none
-Received: from DB8EUR05FT032.eop-eur05.prod.protection.outlook.com
- (2a01:111:e400:fc0f::39) by
- DB8EUR05HT115.eop-eur05.prod.protection.outlook.com (2a01:111:e400:fc0f::282)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2814.13; Wed, 18 Mar
- 2020 20:06:19 +0000
-Received: from AM6PR03MB5170.eurprd03.prod.outlook.com (10.233.238.52) by
- DB8EUR05FT032.mail.protection.outlook.com (10.233.238.240) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2814.13 via Frontend Transport; Wed, 18 Mar 2020 20:06:19 +0000
-X-IncomingTopHeaderMarker: OriginalChecksum:A5F450A44368847AE12DC651CF28CCBC705207EE2A79F7A5EA66F5FF6EDC7590;UpperCasedChecksum:FDDD9A4A2F4EAF49B8F6A5E706428C163BE54E690EEA2FAC0252BB2E9079C31D;SizeAsReceived:10363;Count:50
-Received: from AM6PR03MB5170.eurprd03.prod.outlook.com
- ([fe80::1956:d274:cab3:b4dd]) by AM6PR03MB5170.eurprd03.prod.outlook.com
- ([fe80::1956:d274:cab3:b4dd%6]) with mapi id 15.20.2835.017; Wed, 18 Mar 2020
- 20:06:19 +0000
-Subject: Re: [PATCH v3 5/5] exec: Add a exec_update_mutex to replace
- cred_guard_mutex
-To:     Kirill Tkhai <ktkhai@virtuozzo.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     Christian Brauner <christian.brauner@ubuntu.com>,
-        Kees Cook <keescook@chromium.org>,
-        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        Andrei Vagin <avagin@gmail.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Yuyang Du <duyuyang@gmail.com>,
-        David Hildenbrand <david@redhat.com>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Anshuman Khandual <anshuman.khandual@arm.com>,
-        David Howells <dhowells@redhat.com>,
-        James Morris <jamorris@linux.microsoft.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Shakeel Butt <shakeelb@google.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Christian Kellner <christian@kellner.me>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        "Dmitry V. Levin" <ldv@altlinux.org>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>,
-        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>
-References: <AM6PR03MB5170EB4427BF5C67EE98FF09E4E60@AM6PR03MB5170.eurprd03.prod.outlook.com>
- <AM6PR03MB517053AED7DC89F7C0704B7DE4E50@AM6PR03MB5170.eurprd03.prod.outlook.com>
- <AM6PR03MB51703B44170EAB4626C9B2CAE4E20@AM6PR03MB5170.eurprd03.prod.outlook.com>
- <87tv32cxmf.fsf_-_@x220.int.ebiederm.org>
- <87v9ne5y4y.fsf_-_@x220.int.ebiederm.org>
- <87zhcq4jdj.fsf_-_@x220.int.ebiederm.org>
- <f37a5d68-9674-533f-ee9c-a49174605710@virtuozzo.com>
- <87d09hn4kt.fsf@x220.int.ebiederm.org>
- <dbce35c7-c060-cfd8-bde1-98fd9a0747a9@virtuozzo.com>
- <87lfo5lju6.fsf@x220.int.ebiederm.org>
- <AM6PR03MB5170E9E71B9F84330B098BADE4FA0@AM6PR03MB5170.eurprd03.prod.outlook.com>
- <6002ac56-025a-d50f-e89d-1bf42a072323@virtuozzo.com>
- <AM6PR03MB5170353DF3575FF7742BB155E4FB0@AM6PR03MB5170.eurprd03.prod.outlook.com>
- <532ce6a3-f0df-e3e4-6966-473c608246e1@virtuozzo.com>
- <AM6PR03MB51705D8A5631B53844CE447CE4F60@AM6PR03MB5170.eurprd03.prod.outlook.com>
- <13c4d333-9c33-8036-3142-dac22c392c60@virtuozzo.com>
-From:   Bernd Edlinger <bernd.edlinger@hotmail.de>
-Message-ID: <AM6PR03MB5170110A5D332DD0C1AC929FE4F70@AM6PR03MB5170.eurprd03.prod.outlook.com>
-Date:   Wed, 18 Mar 2020 21:06:16 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
-In-Reply-To: <13c4d333-9c33-8036-3142-dac22c392c60@virtuozzo.com>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: ZR0P278CA0001.CHEP278.PROD.OUTLOOK.COM
- (2603:10a6:910:16::11) To AM6PR03MB5170.eurprd03.prod.outlook.com
- (2603:10a6:20b:ca::23)
-X-Microsoft-Original-Message-ID: <964a3c95-a155-e576-0df4-8f7f4ee312ec@hotmail.de>
+        id S1727046AbgCRUKh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Mar 2020 16:10:37 -0400
+Received: from mail-vs1-f67.google.com ([209.85.217.67]:42780 "EHLO
+        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726871AbgCRUKg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Mar 2020 16:10:36 -0400
+Received: by mail-vs1-f67.google.com with SMTP id i25so24035vsq.9
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Mar 2020 13:10:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=deicxPfTPIgTvqDWUgB6URC9CH6HcGABwiA2ln5QVsQ=;
+        b=VhOm5g8vgPzKXgB1wxBrfDRHebq6hpAgVw1slq3jmk/AEcsv6D3PyCqQGBR12NtWJF
+         hnYmbthIJ7zUw2d4PM53OlROlAZ/HPO4l51c0lEpcQyKwwE4kUg2Tx4tFM5W48l0JpjT
+         BR68pIYwnvW24eISPw74viaADRr5xnB5UlIl8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=deicxPfTPIgTvqDWUgB6URC9CH6HcGABwiA2ln5QVsQ=;
+        b=E/iATs0gFHylIkjFu5M4rR3Xid63mONNLgcRvzIItNfhkhy/1DNn/4etO800t/tdHM
+         oj4B/4ikB73T8IO+sq6/AqrDZnTz0Jq7zFfG6CgwpTtdNOoZsrhowGjMemjlH+jxAFC7
+         ipD9rHEOBdkibgprmAvgugG6qnp1nG05oOJRyNBJtnVgtkloZhQwZvRE8W6hqFb+Q/5p
+         R7EGrszxUiqpWB1Bbg63QL6Gm4aZoWrdDCnqY7uqXC+dEV/I6DnJN+YnlNbyJX0u+toa
+         bsZHd5nEi/6XG/+RM3AfEUzBTlXj6QABdES0lx6VtyGrkfn0BMZCSlWZyGM79pvzSLfg
+         bxUw==
+X-Gm-Message-State: ANhLgQ0WhGQ8HnG+I+o4CcCezFoWfQSKjpeViv/awdMsMCsdmKH5K85J
+        S+t1Jb/H3fKHSUsN3KFBFby6aoVfw38=
+X-Google-Smtp-Source: ADFU+vscZgj6btnZI7oS7rpp+T52SCiedmmZURjSyCSt1xmtay//D657UdRwnrGEq00LEBtVy2aV2g==
+X-Received: by 2002:a67:2ecf:: with SMTP id u198mr4744131vsu.29.1584562234561;
+        Wed, 18 Mar 2020 13:10:34 -0700 (PDT)
+Received: from mail-ua1-f53.google.com (mail-ua1-f53.google.com. [209.85.222.53])
+        by smtp.gmail.com with ESMTPSA id m82sm9183vke.53.2020.03.18.13.10.33
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 18 Mar 2020 13:10:33 -0700 (PDT)
+Received: by mail-ua1-f53.google.com with SMTP id o16so9992966uap.6
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Mar 2020 13:10:33 -0700 (PDT)
+X-Received: by 2002:ab0:2881:: with SMTP id s1mr4346871uap.8.1584562232303;
+ Wed, 18 Mar 2020 13:10:32 -0700 (PDT)
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from [192.168.1.101] (92.77.140.102) by ZR0P278CA0001.CHEP278.PROD.OUTLOOK.COM (2603:10a6:910:16::11) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2835.15 via Frontend Transport; Wed, 18 Mar 2020 20:06:17 +0000
-X-Microsoft-Original-Message-ID: <964a3c95-a155-e576-0df4-8f7f4ee312ec@hotmail.de>
-X-TMN:  [0dPL4fh7b39Ul+6z6DMnFoUM2Fd0BtYc]
-X-MS-PublicTrafficType: Email
-X-IncomingHeaderCount: 50
-X-EOPAttributedMessage: 0
-X-MS-Office365-Filtering-Correlation-Id: 04254cf8-b319-4d1a-cd0e-08d7cb77d26f
-X-MS-TrafficTypeDiagnostic: DB8EUR05HT115:
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: WUZYQxJFGXjtilDpOJRTNon03s3wAdvBmI0GI0Yd1A0nlR1Z+0CtQUdo+QI1YmIo1AffoFcE+a2zacfjde7hnSVNea4HHVoZ/zAPoSi7XTHtqMGojoc/RwpNhCoijCKcXDEw9ne27iibr8VNPQH4aA/lX4fdSO7jxZUG7qIMwBs3cveps89FhcVqLLxhQohZ/sgrlI44aL5HlWN68DWZtBZ6xqhWhJeX2t+khYqWLA4=
-X-MS-Exchange-AntiSpam-MessageData: qbcceBAennu07vTpLoBErxnpDaU9t6axwsuhBrjStPcJe0bCMBgS21Av1652jQDmygiOSshjohEWKAsQqsn0CyopiQRLUP3Wo1U3fOXVUoufNFPtxE7FYfyPpNJuhMRmpxMHDu70TlS7ghewto7eig==
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 04254cf8-b319-4d1a-cd0e-08d7cb77d26f
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Mar 2020 20:06:19.4039
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-FromEntityHeader: Internet
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB8EUR05HT115
+References: <20200317133653.v2.1.I752ebdcfd5e8bf0de06d66e767b8974932b3620e@changeid>
+ <158448096503.88485.8894151453752608519@swboyd.mtv.corp.google.com>
+ <CAD=FV=U+c4GZU1p3xYT3t=0Q2cLFxoiM=vqc8SsxOKehxbZPXw@mail.gmail.com> <158451865253.88485.11351400745937437114@swboyd.mtv.corp.google.com>
+In-Reply-To: <158451865253.88485.11351400745937437114@swboyd.mtv.corp.google.com>
+From:   Doug Anderson <dianders@chromium.org>
+Date:   Wed, 18 Mar 2020 13:10:20 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=WzaOk1S+oXPa5JT9HMC_t19xdpSQmiQdEhtxUTcaDVQg@mail.gmail.com>
+Message-ID: <CAD=FV=WzaOk1S+oXPa5JT9HMC_t19xdpSQmiQdEhtxUTcaDVQg@mail.gmail.com>
+Subject: Re: [PATCH v2] spi: spi-geni-qcom: Speculative fix of "nobody cared"
+ about interrupt
+To:     Stephen Boyd <swboyd@chromium.org>
+Cc:     Mark Brown <broonie@kernel.org>,
+        Alok Chauhan <alokc@codeaurora.org>, skakit@codeaurora.org,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Girish Mahadevan <girishm@codeaurora.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-spi <linux-spi@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 3/18/20 1:22 PM, Kirill Tkhai wrote:
-> On 18.03.2020 00:53, Bernd Edlinger wrote:
->> On 3/17/20 9:56 AM, Kirill Tkhai wrote:
->>> On 14.03.2020 12:11, Bernd Edlinger wrote:
->>>> The cred_guard_mutex is problematic.  The cred_guard_mutex is held
->>>> over the userspace accesses as the arguments from userspace are read.
->>>> The cred_guard_mutex is held of PTRACE_EVENT_EXIT as the the other
->>>> threads are killed.  The cred_guard_mutex is held over
->>>> "put_user(0, tsk->clear_child_tid)" in exit_mm().
->>>>
->>>> Any of those can result in deadlock, as the cred_guard_mutex is held
->>>> over a possible indefinite userspace waits for userspace.
->>>>
->>>> Add exec_update_mutex that is only held over exec updating process
->>>> with the new contents of exec, so that code that needs not to be
->>>> confused by exec changing the mm and the cred in ways that can not
->>>> happen during ordinary execution of a process.
->>>>
->>>> The plan is to switch the users of cred_guard_mutex to
->>>> exec_udpate_mutex one by one.  This lets us move forward while still
->>>> being careful and not introducing any regressions.
->>>>
->>>> Link: https://lore.kernel.org/lkml/20160921152946.GA24210@dhcp22.suse.cz/
->>>> Link: https://lore.kernel.org/lkml/AM6PR03MB5170B06F3A2B75EFB98D071AE4E60@AM6PR03MB5170.eurprd03.prod.outlook.com/
->>>> Link: https://lore.kernel.org/linux-fsdevel/20161102181806.GB1112@redhat.com/
->>>> Link: https://lore.kernel.org/lkml/20160923095031.GA14923@redhat.com/
->>>> Link: https://lore.kernel.org/lkml/20170213141452.GA30203@redhat.com/
->>>> Ref: 45c1a159b85b ("Add PTRACE_O_TRACEVFORKDONE and PTRACE_O_TRACEEXIT facilities.")
->>>> Ref: 456f17cd1a28 ("[PATCH] user-vm-unlock-2.5.31-A2")
->>>> Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
->>>> Signed-off-by: Bernd Edlinger <bernd.edlinger@hotmail.de>
->>>> ---
->>>>  fs/exec.c                    | 17 ++++++++++++++---
->>>>  include/linux/binfmts.h      |  8 +++++++-
->>>>  include/linux/sched/signal.h |  9 ++++++++-
->>>>  init/init_task.c             |  1 +
->>>>  kernel/fork.c                |  1 +
->>>>  5 files changed, 31 insertions(+), 5 deletions(-)
->>>>
->>>> v3: this update fixes lock-order and adds an explicit data member in linux_binprm
->>>>
->>>> diff --git a/fs/exec.c b/fs/exec.c
->>>> index d820a72..11974a1 100644
->>>> --- a/fs/exec.c
->>>> +++ b/fs/exec.c
->>>> @@ -1014,12 +1014,17 @@ static int exec_mmap(struct mm_struct *mm)
->>>>  {
->>>>  	struct task_struct *tsk;
->>>>  	struct mm_struct *old_mm, *active_mm;
->>>> +	int ret;
->>>>  
->>>>  	/* Notify parent that we're no longer interested in the old VM */
->>>>  	tsk = current;
->>>>  	old_mm = current->mm;
->>>>  	exec_mm_release(tsk, old_mm);
->>>>  
->>>> +	ret = mutex_lock_killable(&tsk->signal->exec_update_mutex);
->>>> +	if (ret)
->>>> +		return ret;
->>>> +
->>>>  	if (old_mm) {
->>>>  		sync_mm_rss(old_mm);
->>>>  		/*
->>>> @@ -1031,9 +1036,11 @@ static int exec_mmap(struct mm_struct *mm)
->>>>  		down_read(&old_mm->mmap_sem);
->>>>  		if (unlikely(old_mm->core_state)) {
->>>>  			up_read(&old_mm->mmap_sem);
->>>> +			mutex_unlock(&tsk->signal->exec_update_mutex);
->>>>  			return -EINTR;
->>>>  		}
->>>>  	}
->>>> +
->>>>  	task_lock(tsk);
->>>>  	active_mm = tsk->active_mm;
->>>>  	membarrier_exec_mmap(mm);
->>>> @@ -1288,11 +1295,12 @@ int flush_old_exec(struct linux_binprm * bprm)
->>>>  		goto out;
->>>>  
->>>>  	/*
->>>> -	 * After clearing bprm->mm (to mark that current is using the
->>>> -	 * prepared mm now), we have nothing left of the original
->>>> +	 * After setting bprm->called_exec_mmap (to mark that current is
->>>> +	 * using the prepared mm now), we have nothing left of the original
->>>>  	 * process. If anything from here on returns an error, the check
->>>>  	 * in search_binary_handler() will SEGV current.
->>>>  	 */
->>>> +	bprm->called_exec_mmap = 1;
->>>
->>> The two below is non-breaking pair:
->>>
->>> exec_mmap(bprm->mm);
->>> bprm->called_exec_mmap = 1;
->>>
->>> Why not move this into exec_mmap(), so nobody definitely inserts something
->>> between them?
->>>
->>
->> Hmm, could be done, but then I would probably need a different name than
->> "called_exec_mmap".
->>
->> How about adding a nice function comment to exec_mmap that calls out the
->> changed behaviour that the exec_update_mutex is taken unless the function
->> fails?
-> 
-> Not sure, I understand correct.
-> 
-> Could you post this like a small patch hunk (on top of anything you want)?
-> 
+Hi,
 
-I was thinking of something like that:
+On Wed, Mar 18, 2020 at 1:04 AM Stephen Boyd <swboyd@chromium.org> wrote:
+>
+> > * Most of the cases I saw of the "nobody cared" for geni-spi was on a
+> > mostly idle system (presumably still doing periodic SPI transactions
+> > to the EC, though).  It seems weird that one of these other interrupts
+> > would suddenly fire.  It seems more likely that we just happened to
+> > win a race of some sort.
+>
+> Sure, I'm mostly interested in understanding what that race is. I think
+> it is something like cur_mcmd being stale when it's tested in the irq
+> handler because the IO access triggers the irq before mas->cur_mcmd can
+> be updated due to out of order execution. Nothing stops
+> spi_geni_set_cs() from being reordered like this, especially because
+> there isn't any sort of barrier besides the compiler barrier of asm
+> volatile inside geni_set_setup_m_cmd():
+>
+>   CPU0 (device write overtakes CPU)  CPU1
+>   ----                               ----
+>   mas->cur_mcmd = CMD_NONE;
+>   geni_se_setup_m_cmd(...)
+>                                      geni_spi_isr()
+>                                       <tests cur_mcmd and it's still NONE>
+>   mas->cur_mcmd = CMD_CS;
 
---- a/fs/exec.c
-+++ b/fs/exec.c
-@@ -1010,6 +1010,11 @@ ssize_t read_code(struct file *file, unsigned long addr, 
- }
- EXPORT_SYMBOL(read_code);
- 
-+/*
-+ * Maps the mm_struct mm into the current task struct.
-+ * On success, this function returns with the mutex
-+ * exec_update_mutex locked.
-+ */
- static int exec_mmap(struct mm_struct *mm)
- {
-        struct task_struct *tsk;
+This is my assumption about what must have happened, yes.  I have no
+proof, though.
 
 
->> Bernd.
->>
->>
->>>>  	bprm->mm = NULL;
->>>>  
->>>>  #ifdef CONFIG_POSIX_TIMERS
->>>> @@ -1438,6 +1446,8 @@ static void free_bprm(struct linux_binprm *bprm)
->>>>  {
->>>>  	free_arg_pages(bprm);
->>>>  	if (bprm->cred) {
->>>> +		if (bprm->called_exec_mmap)
->>>> +			mutex_unlock(&current->signal->exec_update_mutex);
->>>>  		mutex_unlock(&current->signal->cred_guard_mutex);
->>>>  		abort_creds(bprm->cred);
->>>>  	}
->>>> @@ -1487,6 +1497,7 @@ void install_exec_creds(struct linux_binprm *bprm)
->>>>  	 * credentials; any time after this it may be unlocked.
->>>>  	 */
->>>>  	security_bprm_committed_creds(bprm);
->>>> +	mutex_unlock(&current->signal->exec_update_mutex);
->>>>  	mutex_unlock(&current->signal->cred_guard_mutex);
->>>>  }
->>>>  EXPORT_SYMBOL(install_exec_creds);
->>>> @@ -1678,7 +1689,7 @@ int search_binary_handler(struct linux_binprm *bprm)
->>>>  
->>>>  		read_lock(&binfmt_lock);
->>>>  		put_binfmt(fmt);
->>>> -		if (retval < 0 && !bprm->mm) {
->>>> +		if (retval < 0 && bprm->called_exec_mmap) {
->>>>  			/* we got to flush_old_exec() and failed after it */
->>>>  			read_unlock(&binfmt_lock);
->>>>  			force_sigsegv(SIGSEGV);
->>>> diff --git a/include/linux/binfmts.h b/include/linux/binfmts.h
->>>> index b40fc63..a345d9f 100644
->>>> --- a/include/linux/binfmts.h
->>>> +++ b/include/linux/binfmts.h
->>>> @@ -44,7 +44,13 @@ struct linux_binprm {
->>>>  		 * exec has happened. Used to sanitize execution environment
->>>>  		 * and to set AT_SECURE auxv for glibc.
->>>>  		 */
->>>> -		secureexec:1;
->>>> +		secureexec:1,
->>>> +		/*
->>>> +		 * Set by flush_old_exec, when exec_mmap has been called.
->>>> +		 * This is past the point of no return, when the
->>>> +		 * exec_update_mutex has been taken.
->>>> +		 */
->>>> +		called_exec_mmap:1;
->>>>  #ifdef __alpha__
->>>>  	unsigned int taso:1;
->>>>  #endif
->>>> diff --git a/include/linux/sched/signal.h b/include/linux/sched/signal.h
->>>> index 8805025..a29df79 100644
->>>> --- a/include/linux/sched/signal.h
->>>> +++ b/include/linux/sched/signal.h
->>>> @@ -224,7 +224,14 @@ struct signal_struct {
->>>>  
->>>>  	struct mutex cred_guard_mutex;	/* guard against foreign influences on
->>>>  					 * credential calculations
->>>> -					 * (notably. ptrace) */
->>>> +					 * (notably. ptrace)
->>>> +					 * Deprecated do not use in new code.
->>>> +					 * Use exec_update_mutex instead.
->>>> +					 */
->>>> +	struct mutex exec_update_mutex;	/* Held while task_struct is being
->>>> +					 * updated during exec, and may have
->>>> +					 * inconsistent permissions.
->>>> +					 */
->>>>  } __randomize_layout;
->>>>  
->>>>  /*
->>>> diff --git a/init/init_task.c b/init/init_task.c
->>>> index 9e5cbe5..bd403ed 100644
->>>> --- a/init/init_task.c
->>>> +++ b/init/init_task.c
->>>> @@ -26,6 +26,7 @@
->>>>  	.multiprocess	= HLIST_HEAD_INIT,
->>>>  	.rlim		= INIT_RLIMITS,
->>>>  	.cred_guard_mutex = __MUTEX_INITIALIZER(init_signals.cred_guard_mutex),
->>>> +	.exec_update_mutex = __MUTEX_INITIALIZER(init_signals.exec_update_mutex),
->>>>  #ifdef CONFIG_POSIX_TIMERS
->>>>  	.posix_timers = LIST_HEAD_INIT(init_signals.posix_timers),
->>>>  	.cputimer	= {
->>>> diff --git a/kernel/fork.c b/kernel/fork.c
->>>> index 8642530..036b692 100644
->>>> --- a/kernel/fork.c
->>>> +++ b/kernel/fork.c
->>>> @@ -1594,6 +1594,7 @@ static int copy_signal(unsigned long clone_flags, struct task_struct *tsk)
->>>>  	sig->oom_score_adj_min = current->signal->oom_score_adj_min;
->>>>  
->>>>  	mutex_init(&sig->cred_guard_mutex);
->>>> +	mutex_init(&sig->exec_update_mutex);
->>>>  
->>>>  	return 0;
->>>>  }
->>>>
->>>
-> 
+> > > > +       /* Check for spurious interrupt */
+> > > > +       if (!m_irq) {
+> > > > +               ret = IRQ_NONE;
+> > > > +               goto exit;
+> > >
+> > > I ask because it could be simplified by reading the status and then
+> > > immediately returning IRQ_NONE if no bits are set without having to do
+> > > the lock/unlock dance. And does writing 0 to the irq clear register do
+> > > anything?
+> >
+> > Sure.  I'll move it if you want.  It felt nicer to just keep the whole
+> > thing under lock so I didn't have to think about whether it mattered.
+> > ...and anyone else looking at it didn't need to think about if it
+> > mattered, too.  It it is very easy to say that it doesn't _hurt_ to
+> > have it under lock other than having one extra memory read under lock.
+> > ...and presumably the case where the optimization matters is
+> > incredibly rare (a spurious interrupt) and we just spent a whole lot
+> > of cycles calling the interrupt handler to begin with for this
+> > spurious interrupt.
+> >
+> > I would have a hard time believing that a write of 0 to a "write 1 to
+> > clear" register would have any impact.  It would be a pretty bad
+> > hardware design...
+>
+> This is a writel to a device so it may take some time for the memory
+> barrier to drain any other writes with the full memory barrier in there.
+> Not sure if we care about getting super high performance here but that's
+> a concern.
+
+Right, but I guess the spurious interrupt case wasn't one I'm
+optimizing for.  ...and if it's a real problem we should figure out
+how to avoid so many spurious interrupts.  Presumably all the overhead
+that the Linux kernel did to call our interrupt handler in the first
+place is much more serious.
+
+
+> > So I guess in summary, I'm not planning to spin for any of these
+> > things unless you really insist or you say I'm wrong about something
+> > above or someone else says my opinions are the wrong opinions.
+> >
+>
+> Why do we need such large locking areas?
+
+We probably don't, but it's unlikely to matter at all and the large
+locking areas mean we don't have to spend time thinking about it.
+It's super clear that the locking is safe.
+
+
+In general there shouldn't be tons of downside to have large locking
+areas because there shouldn't be contention for this lock.  As you
+said, much of this is synchronized at higher levels, so mostly we're
+just worried about synchronizing with our interrupt handler and one
+would hope the interrupt handler wasn't firing at times we don't
+expect.
+
+...but I guess there is the downside that local interrupts are fully
+disabled for this whole large locking area and that does feel like
+something that might be worth optimizing for...
+
+
+In theory we _could_ just have a lock around updating 'cur_mcmd' and
+kicking off the transfer.  That would make sure that 'cur_mcmd' was
+definitely updated by the time the interrupt fired.  It feels at least
+a little awkward to me, though, because there is more shared state
+between the interrupt handler and the functions kicking off the
+transfers and we're really just using the lock as a poor man's memory
+barrier, but maybe it's OK.  I can give a shot at this approach if it
+feels viable to you.
+
+
+> Why can't we remove the enum
+> software tracking stuff and look at mas->cur_xfer to figure out if a cs
+> change is happening or not? I suppose mas->cur_xfer could be stale, so
+> we need to make sure that is modified and checked under a lock, and then
+> mas->rx_rem_bytes/tx_rem_bytes also need to be under a lock because
+> they're modified inside and outside the irq handler, but otherwise I
+> don't see any need to hold the lock over the register reads/writes. Most
+> other things are synchronized with the completions or in higher layers
+> of the SPI core.
+
+In general it's a big-ish change to code that's largely already tested
+and that (IMO) it makes readability slightly worse.  It can be worth
+it to make big changes for big gain, but I don't see it here.  It
+might have a slight performance boost, but seems like premature
+optimization since there's no evidence that the existing performance
+(even after my big locking patch) is a problem.
+
+If we want to go forward with your suggestion, I'd have to spend more
+time thinking about the cancel/abort cases, especially, which I'm not
+sure how to test super well.  Specifically does cancel/abort cause the
+"done" bit to be set?  If so your new code will finalize the current
+transfer, but the old code didn't.  I have no idea if this matters.
+You also removed the spinlock from handle_fifo_timeout() and I don't
+know if (for instance) it was important to clear the TX watermark
+register after firing off the abort command but before the interrupt
+handler could run.  It also doesn't necessarily appear that
+reinit_completion() has any safety, so is there some chance that the
+interrupt could fire and we'd still have the re-init pending on our
+side, then clear "done" back to zero after the interrupt handler
+completed us?
+
+...one extra thing to think about with all this is that (I think)
+handle_fifo_timeout() will be called if someone kicks off a SPI
+transfer and then hits "Ctrl-C" partway.  In this case
+spi_transfer_wait() will return -EINTR and I think that will change
+the chip select and then call "handle_err".  I have no idea if that
+works well today, but I have a feeling it will be harder to get right
+without an extra state variable.
+
+
+> I do wonder if we need to hold the lock again when we update the rx/tx
+> remaining bytes counter but I can't convince myself that the irq can run
+> on another CPU in parallel with the CPU that ran the irq first. That
+> seems impossible given that the interrupt would have to come again and
+> the irq controller would need to send it to a different CPU at the same
+> time. We should only need to grab the lock to make sure that cur_xfer
+> and remaining bytes is published by the CPU triggering the rx/tx
+> transfers and then assume the irq handler code is synchronous with
+> itself.
+
+At least needs a comment?
+
+...but even with a comment, what exactly are you gaining here by
+making me and all future readers of the code think about this?  One of
+your main goals here is to eliminate the need to have the spin lock
+locked for the whole of the IRQ handler, right?  If we're in the
+interrupt handler, local interrupts are already off, right?  That
+means that the only thing you can gain (in terms of speed) by
+decreasing the number of lines "under lock" is that you could allow
+someone else trying to get the same lock to run sooner.  As you've
+pointed out, there's already a lot of synchronization at higher
+layers, and many of the arguments you make are assuming that the other
+code isn't running anyway.
+
+So this overall seems like trying to shorten the amount of time that
+the lock is held just for the sheer principle of having spin locks
+held for the fewest lines of code, but not for any real gain?
+
+To get into micro-optimizations, too, I will also say that having fine
+grained locking in the interrupt handler also will lead to more than
+one call to spin_lock() per IRQ.  I put traces in and I often saw "rx"
+and "cmd_done" fall together and both separately lock in your code.
+In general isn't reducing the number of calls to spin_lock() (which I
+think has some overhead) more important?
+
+
+> -       if ((m_irq & M_CMD_CANCEL_EN) || (m_irq & M_CMD_ABORT_EN)) {
+> -               mas->cur_mcmd = CMD_NONE;
+> +       /* Wake up spi_geni_set_cs() or handle_fifo_timeout() */
+> +       if (cs_change || (m_irq & M_CMD_CANCEL_EN) || (m_irq & M_CMD_ABORT_EN))
+>                 complete(&mas->xfer_done);
+> -       }
+>
+>         writel(m_irq, se->base + SE_GENI_M_IRQ_CLEAR);
+> -       spin_unlock_irqrestore(&mas->lock, flags);
+> +
+
+It doesn't feel legit to release the spinlock before this writel().
+Once you complete(), can't (in theory) another transfer kick off on
+another CPU, and then cause an interrupt to fire?  You'd be clearing
+someone else's interrupt, perhaps?  Maybe this actually happens in
+handle_fifo_timeout() which (after your patch) waits for the
+completion and then immediate (with no locking) fires off an abort.
+
+As an aisde and unrelated to your change, I never like it when
+interrupt handler clear their IRQ bits at the end anyway because it
+always feels like a race.  The only time you clear at the end is if
+you have "latched level" interrupts (interrupts that are latched but
+will continually re-assert unless the thing that caused them goes
+away).  I have no idea of these bits are "latched level", but it feels
+unlikely.
+
+
+NOTE: I didn't do a complete review of your patch because (I think) I
+already found a few issues and am still not convinced it's a good use
+of time to fully re-architect the control flow of this driver.  If you
+still think this is something we need to do, I will try to make time
+to work through all the corner cases in my head and try my best to
+make sure there are no weird memory-ordering issues, but I can't
+promise I won't miss anything.
+
+
+-Doug
