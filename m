@@ -2,35 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 607B318A492
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 21:55:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5E67018A494
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 21:55:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727996AbgCRUys (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Mar 2020 16:54:48 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54596 "EHLO mail.kernel.org"
+        id S1728069AbgCRUyx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Mar 2020 16:54:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54790 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727977AbgCRUyp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Mar 2020 16:54:45 -0400
+        id S1728031AbgCRUyv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Mar 2020 16:54:51 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 743A22173E;
-        Wed, 18 Mar 2020 20:54:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 19FA8208FE;
+        Wed, 18 Mar 2020 20:54:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584564885;
-        bh=pCcuB+pWkl42Rhm34auNydPrvo+nVOHuntQjPPkv8N0=;
+        s=default; t=1584564890;
+        bh=CamO4UEFcXfw9TeICbbmIbQ1M6RNs/sXyPRb67bcy08=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tHpTrIw/ohUUD58W+TZkBjTO2yP8sRN/Btro6FSLybAkW5zHuyQ4WqX9MyXm8gxCn
-         Jzxuru+C/bGkT1FD1B6q2FPdhAIE3TGDzTH0eWldzpVPrunFmbAuIMBG20Y/Z7invw
-         heLjSIhRJPwmnfFx1OViI7QIaw8iH269BBZOaRuo=
+        b=o98BJprnaqdBUbYrQNnJwLrv31nGzhXMZM7hJbWV2ULbpGOpk7YN4NCv7HnI2r7N2
+         zGwCN5XX9Wsw/qFtQngdLE2u5C2MxPjJANf4cv2BH00qxDTmg4MReFYn5jiqYMHoiy
+         SoJ7gMv1Ls0HLMEeLhCAmuYtV3Y6gjXFtU1NSZFc=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Julian Wiedmann <jwi@linux.ibm.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>, linux-s390@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.4 54/73] s390/qeth: handle error when backing RX buffer
-Date:   Wed, 18 Mar 2020 16:53:18 -0400
-Message-Id: <20200318205337.16279-54-sashal@kernel.org>
+Cc:     Nicolas Cavallari <nicolas.cavallari@green-communications.fr>,
+        Johannes Berg <johannes.berg@intel.com>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.4 59/73] mac80211: Do not send mesh HWMP PREQ if HWMP is disabled
+Date:   Wed, 18 Mar 2020 16:53:23 -0400
+Message-Id: <20200318205337.16279-59-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200318205337.16279-1-sashal@kernel.org>
 References: <20200318205337.16279-1-sashal@kernel.org>
@@ -43,59 +44,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Julian Wiedmann <jwi@linux.ibm.com>
+From: Nicolas Cavallari <nicolas.cavallari@green-communications.fr>
 
-[ Upstream commit 17413852804d7e86e6f0576cca32c1541817800e ]
+[ Upstream commit ba32679cac50c38fdf488296f96b1f3175532b8e ]
 
-qeth_init_qdio_queues() fills the RX ring with an initial set of
-RX buffers. If qeth_init_input_buffer() fails to back one of the RX
-buffers with memory, we need to bail out and report the error.
+When trying to transmit to an unknown destination, the mesh code would
+unconditionally transmit a HWMP PREQ even if HWMP is not the current
+path selection algorithm.
 
-Fixes: 4a71df50047f ("qeth: new qeth device driver")
-Signed-off-by: Julian Wiedmann <jwi@linux.ibm.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Nicolas Cavallari <nicolas.cavallari@green-communications.fr>
+Link: https://lore.kernel.org/r/20200305140409.12204-1-cavallar@lri.fr
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/s390/net/qeth_core_main.c | 13 +++++++++----
- 1 file changed, 9 insertions(+), 4 deletions(-)
+ net/mac80211/mesh_hwmp.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/s390/net/qeth_core_main.c b/drivers/s390/net/qeth_core_main.c
-index ac8ad951a4203..fe70e9875bde0 100644
---- a/drivers/s390/net/qeth_core_main.c
-+++ b/drivers/s390/net/qeth_core_main.c
-@@ -2633,12 +2633,12 @@ static int qeth_init_input_buffer(struct qeth_card *card,
- 		buf->rx_skb = netdev_alloc_skb(card->dev,
- 					       QETH_RX_PULL_LEN + ETH_HLEN);
- 		if (!buf->rx_skb)
--			return 1;
-+			return -ENOMEM;
+diff --git a/net/mac80211/mesh_hwmp.c b/net/mac80211/mesh_hwmp.c
+index d699833703819..38a0383dfbcfa 100644
+--- a/net/mac80211/mesh_hwmp.c
++++ b/net/mac80211/mesh_hwmp.c
+@@ -1152,7 +1152,8 @@ int mesh_nexthop_resolve(struct ieee80211_sub_if_data *sdata,
+ 		}
  	}
  
- 	pool_entry = qeth_find_free_buffer_pool_entry(card);
- 	if (!pool_entry)
--		return 1;
-+		return -ENOBUFS;
+-	if (!(mpath->flags & MESH_PATH_RESOLVING))
++	if (!(mpath->flags & MESH_PATH_RESOLVING) &&
++	    mesh_path_sel_is_hwmp(sdata))
+ 		mesh_queue_preq(mpath, PREQ_Q_F_START);
  
- 	/*
- 	 * since the buffer is accessed only from the input_tasklet
-@@ -2670,10 +2670,15 @@ int qeth_init_qdio_queues(struct qeth_card *card)
- 	/* inbound queue */
- 	qdio_reset_buffers(card->qdio.in_q->qdio_bufs, QDIO_MAX_BUFFERS_PER_Q);
- 	memset(&card->rx, 0, sizeof(struct qeth_rx));
-+
- 	qeth_initialize_working_pool_list(card);
- 	/*give only as many buffers to hardware as we have buffer pool entries*/
--	for (i = 0; i < card->qdio.in_buf_pool.buf_count - 1; ++i)
--		qeth_init_input_buffer(card, &card->qdio.in_q->bufs[i]);
-+	for (i = 0; i < card->qdio.in_buf_pool.buf_count - 1; i++) {
-+		rc = qeth_init_input_buffer(card, &card->qdio.in_q->bufs[i]);
-+		if (rc)
-+			return rc;
-+	}
-+
- 	card->qdio.in_q->next_buf_to_init =
- 		card->qdio.in_buf_pool.buf_count - 1;
- 	rc = do_QDIO(CARD_DDEV(card), QDIO_FLAG_SYNC_INPUT, 0, 0,
+ 	if (skb_queue_len(&mpath->frame_queue) >= MESH_FRAME_QUEUE_LEN)
 -- 
 2.20.1
 
