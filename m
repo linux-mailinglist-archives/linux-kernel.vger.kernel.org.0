@@ -2,66 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 53870189F9C
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 16:28:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0610F189F69
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 16:14:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726988AbgCRP2V (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Mar 2020 11:28:21 -0400
-Received: from mga09.intel.com ([134.134.136.24]:57410 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726856AbgCRP2V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Mar 2020 11:28:21 -0400
-IronPort-SDR: Z+OfYx5ruojyuP59E5vMSymw1PS8+LgVfFZSrz5VZYU7hgL21zTbHmHJkslQuF0enWE5G0Q8PD
- vBoI1nvzH0lQ==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Mar 2020 08:28:20 -0700
-IronPort-SDR: g95JJKA7+7TG6WKZl/SiDDh/sHxUBdTx6vEJqHelvUjXtuVFfJIGubIXgY3vru0vjeqq0pZ4xU
- JHQ6NHbONJfg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,568,1574150400"; 
-   d="scan'208";a="417985182"
-Received: from nali1-mobl3.amr.corp.intel.com (HELO [10.255.33.194]) ([10.255.33.194])
-  by orsmga005.jf.intel.com with ESMTP; 18 Mar 2020 08:28:19 -0700
-Subject: Re: snd_hda_intel/sst-acpi sound breakage on suspend/resume since
- 5.6-rc1
-To:     Dominik Brodowski <linux@dominikbrodowski.net>,
-        Keyon Jie <yang.jie@linux.intel.com>
-Cc:     cezary.rojewski@intel.com, alsa-devel@alsa-project.org,
-        curtis@malainey.com, linux-kernel@vger.kernel.org, tiwai@suse.com,
-        liam.r.girdwood@linux.intel.com, broonie@kernel.org
-References: <20200318063022.GA116342@light.dominikbrodowski.net>
- <41d0b2b5-6014-6fab-b6a2-7a7dbc4fe020@linux.intel.com>
- <20200318123930.GA2433@light.dominikbrodowski.net>
-From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Message-ID: <d7a357c5-54af-3e69-771c-d7ea83c6fbb7@linux.intel.com>
-Date:   Wed, 18 Mar 2020 10:13:54 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        id S1727171AbgCRPOh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Mar 2020 11:14:37 -0400
+Received: from us-smtp-delivery-74.mimecast.com ([216.205.24.74]:40664 "EHLO
+        us-smtp-delivery-74.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727035AbgCRPOg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Mar 2020 11:14:36 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1584544475;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=rDahFV9TPWnSHYGEo4pu2LmiluREcgL9pHQHEehqYmE=;
+        b=OixeC8J5rWvPM1HvR4PADk47xq4+qPr5lrz4KoHSeL30EOX9RKsD7nfzdj1wrhdV5wxf5B
+        u5IDcKW6ceyVQdpR1XWgAWqwJqYwzTISc/dgEiEWMBKjNfTMAvrYrmzkfEFt8OB5y+tCEB
+        g/ag96fPTgyi4laZED0PaMe6mluUgsY=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-115-zLovBwwuOPCXLkjvjN2tvw-1; Wed, 18 Mar 2020 11:14:34 -0400
+X-MC-Unique: zLovBwwuOPCXLkjvjN2tvw-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 97683107ACC7;
+        Wed, 18 Mar 2020 15:14:31 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-113-126.rdu2.redhat.com [10.10.113.126])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 0851A5C1D8;
+        Wed, 18 Mar 2020 15:14:25 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <e47bef56-9271-93e0-0e59-c77c253babea@redhat.com>
+References: <e47bef56-9271-93e0-0e59-c77c253babea@redhat.com> <20200317194140.6031-5-longman@redhat.com> <20200317194140.6031-1-longman@redhat.com> <2832139.1584520054@warthog.procyon.org.uk>
+To:     Waiman Long <longman@redhat.com>
+Cc:     dhowells@redhat.com,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>, keyrings@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-integrity@vger.kernel.org, netdev@vger.kernel.org,
+        linux-afs@lists.infradead.org, Sumit Garg <sumit.garg@linaro.org>,
+        Jerry Snitselaar <jsnitsel@redhat.com>,
+        Roberto Sassu <roberto.sassu@huawei.com>,
+        Eric Biggers <ebiggers@google.com>,
+        Chris von Recklinghausen <crecklin@redhat.com>
+Subject: Re: [PATCH v4 4/4] KEYS: Avoid false positive ENOMEM error on key read
 MIME-Version: 1.0
-In-Reply-To: <20200318123930.GA2433@light.dominikbrodowski.net>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <2866041.1584544464.1@warthog.procyon.org.uk>
+Date:   Wed, 18 Mar 2020 15:14:24 +0000
+Message-ID: <2866042.1584544464@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Waiman Long <longman@redhat.com> wrote:
 
+> Doing this is micro-optimization. As the keys subsystem is that
+> performance critical, do we need to do that to save a cycle or two while
+> making the code a bit harder to read?
 
->>> While 5.5.x works fine, mainline as of ac309e7744be (v5.6-rc6+) causes me
->>> some sound-related trouble: after boot, the sound works fine -- but once I
->>> suspend and resume my broadwell-based XPS13, I need to switch to headphone
->>> and back to speaker to hear something. But what I hear isn't music but
->>> garbled output.
+It was more sort of a musing comment.  Feel free to ignore it.  kvfree()
+doesn't do this.
 
-It's my understanding that the use of the haswell driver is opt-in for 
-Dell XPS13 9343. When we run the SOF driver on this device, we have to 
-explicitly bypass an ACPI quirk that forces HDAudio to be used:
-
-https://github.com/thesofproject/linux/commit/944b6a2d620a556424ed4195c8428485fcb6c2bd
-
-Have you tried to run in plain vanilla HDAudio mode?
+David
 
