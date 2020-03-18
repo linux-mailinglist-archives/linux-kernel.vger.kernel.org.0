@@ -2,69 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 05FA6189CCC
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 14:22:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BE4A7189CDC
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 14:23:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727122AbgCRNWF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Mar 2020 09:22:05 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:50676 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726842AbgCRNWD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Mar 2020 09:22:03 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=LsaypGAZUnvAI1TZE+OGrR3tMl8GKyFuC70m1IycQNA=; b=T4iITJqnadHlmlSJpBn5jtzZwK
-        EzaLFBc0f+O8PturchX46yaJqKhjP7hrvD9WXHhjZFRjyOyCFAnLIXWxivPcoCqkJ5P3orQ2S0drT
-        JcSFFwdD0BiETUuaMZ6rqGbGsFtQGOLcPwi4w0zJIDS8yqpwOFpGjTqf5u99sERe68TitlJtqn/Le
-        fQHD6nS0KQj5veWSleRivuK7y3hZq5iB4uooCcPaKcLLVmNDkbZX88Q/LFf7E0VH/UOiKDr3GTeqG
-        2JCMvHkgyeLanV1WUuZNiUxsE0BQlvi1PhHYVBSVu8w8AlYN4HhHT2RkEKLJKiUJ5GFlc/OlebDMw
-        0A43DIvw==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jEYe0-0003Lk-6u; Wed, 18 Mar 2020 13:22:00 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        id S1727230AbgCRNWo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Mar 2020 09:22:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34220 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727222AbgCRNWo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Mar 2020 09:22:44 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id B30EB3010CC;
-        Wed, 18 Mar 2020 14:21:58 +0100 (CET)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id A46C02B4EBA0B; Wed, 18 Mar 2020 14:21:58 +0100 (CET)
-Date:   Wed, 18 Mar 2020 14:21:58 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     tglx@linutronix.de, jpoimboe@redhat.com
-Cc:     linux-kernel@vger.kernel.org, x86@kernel.org, mhiramat@kernel.org,
-        mbenes@suse.cz, brgerst@gmail.com
-Subject: Re: [PATCH v2 16/19] objtool: Implement noinstr validation
-Message-ID: <20200318132158.GI20730@hirez.programming.kicks-ass.net>
-References: <20200317170234.897520633@infradead.org>
- <20200317170910.730949374@infradead.org>
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 00DA32076F;
+        Wed, 18 Mar 2020 13:22:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1584537763;
+        bh=CKEreA8CUxYmEbiSZgNzqX5KgmCpM63Ng+o18LXBl38=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=JorCG4C+ZGySiVuSu/z2+zdsj8FFbdzJ/Mp1MEZsbo/dyOHhwA/+Mw/1buc1hJZkx
+         lOo2bzLYuiL6RFah4WngRMZW5fEq0OyfOlc8GblgkDZG5603FFUj+eWm4DEUKSAsZi
+         joOSh8U3p8fA7Jx9In9dBPuZhzY5YPFNM1LDPeWI=
+Date:   Wed, 18 Mar 2020 14:22:41 +0100
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Mike Leach <mike.leach@linaro.org>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 01/13] coresight: cti: Initial CoreSight CTI Driver
+Message-ID: <20200318132241.GB2789508@kroah.com>
+References: <20200309161748.31975-1-mathieu.poirier@linaro.org>
+ <20200309161748.31975-2-mathieu.poirier@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200317170910.730949374@infradead.org>
+In-Reply-To: <20200309161748.31975-2-mathieu.poirier@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 17, 2020 at 06:02:50PM +0100, Peter Zijlstra wrote:
-> +static int validate_vmlinux_functions(struct objtool_file *file)
+On Mon, Mar 09, 2020 at 10:17:36AM -0600, Mathieu Poirier wrote:
+> From: Mike Leach <mike.leach@linaro.org>
+> 
+> This introduces a baseline CTI driver and associated configuration files.
+> 
+> Uses the platform agnostic naming standard for CoreSight devices, along
+> with a generic platform probing method that currently supports device
+> tree descriptions, but allows for the ACPI bindings to be added once these
+> have been defined for the CTI devices.
+> 
+> Driver will probe for the device on the AMBA bus, and load the CTI driver
+> on CoreSight ID match to CTI IDs in tables.
+> 
+> Initial sysfs support for enable / disable provided.
+> 
+> Default CTI interconnection data is generated based on hardware
+> register signal counts, with no additional connection information.
+> 
+> Signed-off-by: Mike Leach <mike.leach@linaro.org>
+> Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+> Reviewed-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+> Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+
+You didn't cc: all of them to get review comments?  I've added it
+above...
+
+And signed-off-by implies reviewed-by.
+
+> +/* basic attributes */
+> +static ssize_t enable_show(struct device *dev,
+> +			   struct device_attribute *attr,
+> +			   char *buf)
 > +{
-> +	struct section *sec;
+> +	int enable_req;
+> +	bool enabled, powered;
+> +	struct cti_drvdata *drvdata = dev_get_drvdata(dev->parent);
+> +	ssize_t size = 0;
 > +
-> +	sec = find_section_by_name(file->elf, ".noinstr.text");
-> +	if (!sec) {
-> +		WARN("No .noinstr.text section");
-> +		return -1;
+> +	enable_req = atomic_read(&drvdata->config.enable_req_count);
+> +	spin_lock(&drvdata->spinlock);
+> +	powered = drvdata->config.hw_powered;
+> +	enabled = drvdata->config.hw_enabled;
+> +	spin_unlock(&drvdata->spinlock);
+> +
+> +	if (powered) {
+> +		size = scnprintf(buf, PAGE_SIZE, "cti %s; powered;\n",
+> +				 enabled ? "enabled" : "disabled");
+> +	} else {
+> +		size = scnprintf(buf, PAGE_SIZE, "cti %s; unpowered;\n",
+> +				 enable_req ? "enable req" : "disabled");
 
-And that is a little too agressive, seeing how the current x86_64 kernel
-does not include it. I made it a silent exit for now, so as not to break
-the build (with patch 20/19 added on).
+sysfs files should never need scnprintf() as you "know" a single value
+will fit into a PAGE_SIZE.
 
->  	}
->  
-> +	return validate_sec_functions(file, sec);
-> +}
+And shouldn't this just be a single value, this looks like it is 2
+values in one line, that then needs to be parsed, is that to be
+expected?
+
+Where is the documentation for this new sysfs file?
+
+> +const struct attribute_group *coresight_cti_groups[] = {
+> +	&coresight_cti_group,
+> +	NULL,
+> +};
+
+ATTRIBUTE_GROUPS()?
+
+> +static struct amba_driver cti_driver = {
+> +	.drv = {
+> +		.name	= "coresight-cti",
+> +		.owner = THIS_MODULE,
+
+Aren't amba drivers smart enough to set this properly on their own?
+{sigh}
+
+greg k-h
