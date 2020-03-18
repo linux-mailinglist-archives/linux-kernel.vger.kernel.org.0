@@ -2,234 +2,213 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 667CF18961E
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 08:07:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F28A0189622
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 08:08:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727283AbgCRHHm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Mar 2020 03:07:42 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:40254 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726473AbgCRHHl (ORCPT
+        id S1727380AbgCRHIS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Mar 2020 03:08:18 -0400
+Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:33622 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726452AbgCRHIR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Mar 2020 03:07:41 -0400
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: eballetbo)
-        with ESMTPSA id 3DB422924A1
-From:   Enric Balletbo i Serra <enric.balletbo@collabora.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Collabora Kernel ML <kernel@collabora.com>,
-        Andrzej Hajda <a.hajda@samsung.com>, icenowy@aosc.io,
-        anarsoul@gmail.com, Neil Armstrong <narmstrong@baylibre.com>,
-        matthias.bgg@gmail.com, drinkcat@chromium.org, hsinyi@chromium.org,
-        megous@megous.com, Lee Jones <lee.jones@linaro.org>
-Subject: [PATCH v4 2/4] mfd: anx7688: Add driver for Analogix ANX7688 chip
-Date:   Wed, 18 Mar 2020 08:07:28 +0100
-Message-Id: <20200318070730.4012371-2-enric.balletbo@collabora.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200318070730.4012371-1-enric.balletbo@collabora.com>
-References: <20200318070730.4012371-1-enric.balletbo@collabora.com>
+        Wed, 18 Mar 2020 03:08:17 -0400
+Received: from pps.filterd (m0001303.ppops.net [127.0.0.1])
+        by m0001303.ppops.net (8.16.0.42/8.16.0.42) with SMTP id 02I77ugL011162;
+        Wed, 18 Mar 2020 00:07:57 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : references : in-reply-to : content-type : content-id
+ : content-transfer-encoding : mime-version; s=facebook;
+ bh=lU1GbP5Z2ENq0QKBY42Q1YpfdK1OQ+XdkxO+xcXTZeU=;
+ b=LBDzEwjGjBy9Btp8LaXzJsiuljkZV2r4JHE3DQwtEkIiVVTzXh4EWdxSmhAKSnTvPUwV
+ 2cwHUYx0DtCnM2xf5SmubfCpPZE/c+4eRk4kHk3C7zbzFemmMbZcEIK7jofV4kg4A0Ao
+ TtSWlTEqxLB+F5WHIj3ZNaDeEKoffqo2hSM= 
+Received: from maileast.thefacebook.com ([163.114.130.16])
+        by m0001303.ppops.net with ESMTP id 2yu7ynhgp0-2
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+        Wed, 18 Mar 2020 00:07:56 -0700
+Received: from NAM04-BN3-obe.outbound.protection.outlook.com (100.104.31.183)
+ by o365-in.thefacebook.com (100.104.36.100) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1847.3; Wed, 18 Mar 2020 00:07:44 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=j1fph4Cz09MIuRI+Z9A72yoFQapzWrptW5agcyfHgjEjnKVPZO84mibtkUkiJFufjDGZoljBeJMLGHdN8je9XkUBSmuB/ge9no5cfSosnninCOHRvfuJ/+5QszvoJ834JPWagzpQM9TkxSOabLkImH9D/qM5lsdTw4J/9LOIGd34Q3Gmr0K7ah7Pnf7eO/dUpD40JliXDY99b2JQwF4ql9CGL0xVjg6MzKurPOdXn2Uu+u1vLyqOL9dtlluqqx3lgrzUAGjQgMFm3zbOk305huP7dhrvW3xM+4lxFarMgfocyYa4Ydo4QlZKvvpWpDoCIIIpZCzaFMaAoV/hgCp18A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=lU1GbP5Z2ENq0QKBY42Q1YpfdK1OQ+XdkxO+xcXTZeU=;
+ b=mz3kly6UUEnuriS6XMwkvyf77W4yyy6njUEVsQAPH92NN0VXZc2WW2RNVuLY+hQcz/c5wkm3Akex4OANdOFNWv0EXKF/BQ794y2BjVQXl6/izlWcGSdgy6z0sNPOgr7kkrvVmNN8XLgyS9apgKY8SDGR4ZP6iezqzmQDQSTB+WMvNAZ7/w6+qEEz8CzSaqsV/6Q4I+HuJS/IB30sj8uYx+G0qLAEN7rKk8wQ4zqusTDDYwfub4ojFf1hb0crh35NqT0mcx782H84uEYBeEEWob8QyVCOcRGI4lgBmOz2vatNzQOD3Fdb7ygU6vXv0iW49G+7mL3xbJuXwA4pou7U4A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=fb.com; dmarc=pass action=none header.from=fb.com; dkim=pass
+ header.d=fb.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
+ s=selector2-fb-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=lU1GbP5Z2ENq0QKBY42Q1YpfdK1OQ+XdkxO+xcXTZeU=;
+ b=Kt8d/DruDiWfXHj+kE9d02N4lbQHPEZXcrRJckttglclE69Ob1jjx9bocrKOmMo6JsvtKtiZlkf7VZboLhCrICJK6Cga6SWppMLaiYhy1GN/2qZQJVq3FDYyoK7Z5HrAhyloc0butW2BAEEdvQvCqHC2QLbgl2NcYprjP1YCrJ8=
+Received: from MW3PR15MB3882.namprd15.prod.outlook.com (2603:10b6:303:49::11)
+ by MW3PR15MB4009.namprd15.prod.outlook.com (2603:10b6:303:51::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2814.14; Wed, 18 Mar
+ 2020 07:07:30 +0000
+Received: from MW3PR15MB3882.namprd15.prod.outlook.com
+ ([fe80::c570:6c46:cc47:5ca5]) by MW3PR15MB3882.namprd15.prod.outlook.com
+ ([fe80::c570:6c46:cc47:5ca5%5]) with mapi id 15.20.2814.021; Wed, 18 Mar 2020
+ 07:07:29 +0000
+From:   Song Liu <songliubraving@fb.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+CC:     linux-kernel <linux-kernel@vger.kernel.org>,
+        Kernel Team <Kernel-team@fb.com>,
+        Andi Kleen <andi@firstfloor.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH v2] perf/core: install cgroup events to correct cpuctx
+Thread-Topic: [PATCH v2] perf/core: install cgroup events to correct cpuctx
+Thread-Index: AQHV0V1Eb2FOWrPLeESAdNuK47ZqO6f5iwUAgEHpoACAEtBmgA==
+Date:   Wed, 18 Mar 2020 07:07:29 +0000
+Message-ID: <7BA78C8F-9D71-4BDB-BCCE-3036DCF3C653@fb.com>
+References: <20200122195027.2112449-1-songliubraving@fb.com>
+ <20200124091552.GB14914@hirez.programming.kicks-ass.net>
+ <83AF3F97-7F98-4D52-A230-F04A0AB67284@fb.com>
+In-Reply-To: <83AF3F97-7F98-4D52-A230-F04A0AB67284@fb.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-mailer: Apple Mail (2.3608.60.0.2.5)
+x-originating-ip: [2620:10d:c090:400::5:424]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 1842994f-2030-40a0-dcfc-08d7cb0b05dd
+x-ms-traffictypediagnostic: MW3PR15MB4009:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <MW3PR15MB4009E6664E24DF991A2A6CABB3F70@MW3PR15MB4009.namprd15.prod.outlook.com>
+x-fb-source: Internal
+x-ms-oob-tlc-oobclassifiers: OLM:5516;
+x-forefront-prvs: 03468CBA43
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(396003)(39860400002)(376002)(136003)(346002)(199004)(6486002)(4326008)(36756003)(2906002)(76116006)(478600001)(6512007)(71200400001)(33656002)(186003)(86362001)(5660300002)(2616005)(81156014)(8936002)(81166006)(66946007)(8676002)(64756008)(66476007)(66446008)(66556008)(6916009)(54906003)(53546011)(316002)(6506007);DIR:OUT;SFP:1102;SCL:1;SRVR:MW3PR15MB4009;H:MW3PR15MB3882.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;
+received-spf: None (protection.outlook.com: fb.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: EoWly4Egnfcd11IyR62K1HoKZDUfSGQAI5hKM1pghe4x8SGPYGxxB/HeUSElqPP4ojoZNnru1zOhvYG4a+mLN1gDEdTq0RHHEXyRfebYu26XVbqAhpkFkFeTIuAwxa4IvgwfiB2VwPfQihCKTB8oFe0n13uvnPuoM8/9u7MTTftpI1efL68YQrrNlemwE4tQtjmwgJTDIwj+VkaOa0N+SHS60q/sAmdmMMIg5CEhi9/Fn3cXiTkIJuffz6cemy9jve86Eg+mcs4w+o96dQ3RzwjAU1QojJEthodfm9m9a63AK0xF+qhpSd9Sfo55pLFoGA/FOjBnfpkvZXISw5mME3F5FcZKCOGGQxfqE/zw0/Xou6hLFG6cfhxHDIZ+2xWDVeWZg61O2KAfh7RHa8QkU+of652dACRzQCqPYwJw/FNpb5wTxscAHt/c4a7HjtBd
+x-ms-exchange-antispam-messagedata: 6UadMJkC/x6fhnBGq8OlPFwTMtCY3DEv3Yu1Q5kA6iUwDRK3oc6gsWNMWzN38wyD/oSU5vcf/9eGYYUoB6f/Aa9zGLr6irYxkOVHukPcKbn4qb9uhxnnvisUjPND7d0QqMwjeU2pxDSvgBcNjeR9rjkTp2Sjrk5LHLtPIuHOhNirQTeb0G4PbJBKerCu9Rmg
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <6C2345A7209DC74497BFB909908B47CC@namprd15.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1842994f-2030-40a0-dcfc-08d7cb0b05dd
+X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Mar 2020 07:07:29.8474
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 4LomyPXm5htWw6MXXRTjdfR/9dC7u3QJPfzcJNDnvvxvLbbxC4O2v5Nu+vCJrJOjjIQONLiUa9CfhMrnwaq0/g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW3PR15MB4009
+X-OriginatorOrg: fb.com
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.645
+ definitions=2020-03-18_02:2020-03-17,2020-03-18 signatures=0
+X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 lowpriorityscore=0
+ suspectscore=0 bulkscore=0 impostorscore=0 adultscore=0 mlxlogscore=999
+ clxscore=1015 mlxscore=0 spamscore=0 malwarescore=0 priorityscore=1501
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2003020000 definitions=main-2003180035
+X-FB-Internal: deliver
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The ANX7688 chip is a Type-C Port Controller, HDMI to DP converter and
-USB-C mux between USB 3.0 lanes and the DP output.
+Hi Peter,=20
 
-For our use case a big part of the chip, like power supplies, control
-gpios and usb-c parts are managed by an Embedded Controller, hence,
-this is its simplest form of it. Other users of this chip might
-introduce new functionalities as per their requirements.
+> On Mar 5, 2020, at 11:48 PM, Song Liu <songliubraving@fb.com> wrote:
+>=20
+>=20
+>=20
+>> On Jan 24, 2020, at 1:15 AM, Peter Zijlstra <peterz@infradead.org> wrote=
+:
+>>=20
+>> On Wed, Jan 22, 2020 at 11:50:27AM -0800, Song Liu wrote:
+>>> cgroup events are always installed in the cpuctx. However, when it is n=
+ot
+>>> installed via IPI, list_update_cgroup_event() adds it to cpuctx of curr=
+ent
+>>> CPU, which triggers the following with CONFIG_DEBUG_LIST:
+>>>=20
+>>=20
+>>> [   31.777570] list_add double add: new=3Dffff888ff7cf0db0, prev=3Dffff=
+888ff7ce82f0, next=3Dffff888ff7cf0db0.
+>>=20
+>>> To reproduce this, we can simply run:
+>>> perf stat -e cs -a &
+>>> perf stat -e cs -G anycgroup
+>>>=20
+>>> Fix this by installing it to cpuctx that contains event->ctx, and the
+>>> proper cgrp_cpuctx_list.
+>>>=20
+>>> Fixes: db0503e4f675 ("perf/core: Optimize perf_install_in_event()")
+>>> Suggested-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+>>> Cc: Andi Kleen <andi@firstfloor.org>
+>>> Cc: Peter Zijlstra (Intel) <peterz@infradead.org>
+>>> Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+>>> Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
+>>> Cc: Jiri Olsa <jolsa@redhat.com>
+>>> Cc: Namhyung Kim <namhyung@kernel.org>
+>>> Cc: Thomas Gleixner <tglx@linutronix.de>
+>>> Signed-off-by: Song Liu <songliubraving@fb.com>
+>>=20
+>> Thanks!
+>=20
+> I just realized this won't fully fix the problem, because later in=20
+> list_update_cgroup_event() we use "current":
+>=20
+> 	struct perf_cgroup *cgrp =3D perf_cgroup_from_task(current, ctx);
 
-Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
----
+Could you please share your thoughts on this? I think we cannot use current
+in list_update_cgroup_event(), unless we call it on the target CPU.=20
 
-Changes in v4: None
-Changes in v3: None
-Changes in v2: None
+Thanks,
+Song
 
- drivers/mfd/Kconfig         | 11 +++++
- drivers/mfd/Makefile        |  1 +
- drivers/mfd/anx7688.c       | 87 +++++++++++++++++++++++++++++++++++++
- include/linux/mfd/anx7688.h | 39 +++++++++++++++++
- 4 files changed, 138 insertions(+)
- create mode 100644 drivers/mfd/anx7688.c
- create mode 100644 include/linux/mfd/anx7688.h
 
-diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
-index 2b203290e7b9..ac4ef4f20518 100644
---- a/drivers/mfd/Kconfig
-+++ b/drivers/mfd/Kconfig
-@@ -51,6 +51,17 @@ config MFD_ACT8945A
- 	  linear regulators, along with a complete ActivePath battery
- 	  charger.
- 
-+config MFD_ANX7688
-+	tristate "Analogix ANX7688"
-+	select MFD_CORE
-+	select REGMAP_I2C
-+	depends on I2C && OF
-+	help
-+	  Support the ANX7688 from Analogix. This device features a USB
-+	  Type-C Port Controller (TCPC), and HDMI to DP converter, and
-+	  USB-C mux between USB 3.0 lanes and the DP output of the
-+	  embedded converter.
-+
- config MFD_SUN4I_GPADC
- 	tristate "Allwinner sunxi platforms' GPADC MFD driver"
- 	select MFD_CORE
-diff --git a/drivers/mfd/Makefile b/drivers/mfd/Makefile
-index b83f172545e1..4c6ca8a7d260 100644
---- a/drivers/mfd/Makefile
-+++ b/drivers/mfd/Makefile
-@@ -9,6 +9,7 @@ obj-$(CONFIG_MFD_88PM800)	+= 88pm800.o 88pm80x.o
- obj-$(CONFIG_MFD_88PM805)	+= 88pm805.o 88pm80x.o
- obj-$(CONFIG_MFD_ACT8945A)	+= act8945a.o
- obj-$(CONFIG_MFD_SM501)		+= sm501.o
-+obj-$(CONFIG_MFD_ANX7688)	+= anx7688.o
- obj-$(CONFIG_MFD_ASIC3)		+= asic3.o tmio_core.o
- obj-$(CONFIG_ARCH_BCM2835)	+= bcm2835-pm.o
- obj-$(CONFIG_MFD_BCM590XX)	+= bcm590xx.o
-diff --git a/drivers/mfd/anx7688.c b/drivers/mfd/anx7688.c
-new file mode 100644
-index 000000000000..fab7ed410c46
---- /dev/null
-+++ b/drivers/mfd/anx7688.c
-@@ -0,0 +1,87 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * HDMI to USB Type-C Bridge and Port Controller with MUX
-+ *
-+ * Copyright 2020 Google LLC
-+ */
-+
-+#include <linux/i2c.h>
-+#include <linux/gpio/consumer.h>
-+#include <linux/mfd/anx7688.h>
-+#include <linux/module.h>
-+#include <linux/of_platform.h>
-+#include <linux/regulator/consumer.h>
-+#include <linux/regmap.h>
-+
-+static const struct regmap_config anx7688_regmap_config = {
-+	.reg_bits = 8,
-+	.val_bits = 8,
-+};
-+
-+static int anx7688_i2c_probe(struct i2c_client *client)
-+{
-+	struct device *dev = &client->dev;
-+	struct anx7688 *anx7688;
-+	u16 vendor, device;
-+	u8 buffer[4];
-+	int ret;
-+
-+	anx7688 = devm_kzalloc(dev, sizeof(*anx7688), GFP_KERNEL);
-+	if (!anx7688)
-+		return -ENOMEM;
-+
-+	anx7688->client = client;
-+	i2c_set_clientdata(client, anx7688);
-+
-+	anx7688->regmap = devm_regmap_init_i2c(client, &anx7688_regmap_config);
-+
-+	/* Read both vendor and device id (4 bytes). */
-+	ret = regmap_bulk_read(anx7688->regmap, ANX7688_VENDOR_ID_REG,
-+			       buffer, 4);
-+	if (ret) {
-+		dev_err(dev, "Failed to read chip vendor/device id\n");
-+		return ret;
-+	}
-+
-+	vendor = (u16)buffer[1] << 8 | buffer[0];
-+	device = (u16)buffer[3] << 8 | buffer[2];
-+	if (vendor != ANX7688_VENDOR_ID || device != ANX7688_DEVICE_ID) {
-+		dev_err(dev, "Invalid vendor/device id %04x/%04x\n",
-+			vendor, device);
-+		return -ENODEV;
-+	}
-+
-+	ret = regmap_bulk_read(anx7688->regmap, ANX7688_FW_VERSION_REG,
-+			       buffer, 2);
-+	if (ret) {
-+		dev_err(&client->dev, "Failed to read firmware version\n");
-+		return ret;
-+	}
-+
-+	anx7688->fw_version = (u16)buffer[0] << 8 | buffer[1];
-+	dev_info(dev, "ANX7688 firwmare version 0x%04x\n",
-+		 anx7688->fw_version);
-+
-+	return devm_of_platform_populate(dev);
-+}
-+
-+static const struct of_device_id anx7688_match_table[] = {
-+	{ .compatible = "analogix,anx7688", },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, anx7688_match_table);
-+
-+static struct i2c_driver anx7688_driver = {
-+	.probe_new = anx7688_i2c_probe,
-+	.driver = {
-+		.name = "anx7688",
-+		.of_match_table = anx7688_match_table,
-+	},
-+};
-+
-+module_i2c_driver(anx7688_driver);
-+
-+MODULE_DESCRIPTION("HDMI to USB Type-C Bridge and Port Controller with MUX driver");
-+MODULE_AUTHOR("Nicolas Boichat <drinkcat@chromium.org>");
-+MODULE_AUTHOR("Enric Balletbo i Serra <enric.balletbo@collabora.com>");
-+MODULE_LICENSE("GPL");
-diff --git a/include/linux/mfd/anx7688.h b/include/linux/mfd/anx7688.h
-new file mode 100644
-index 000000000000..f2760856f045
---- /dev/null
-+++ b/include/linux/mfd/anx7688.h
-@@ -0,0 +1,39 @@
-+/* SPDX-License-Identifier: GPL-2.0-only */
-+/*
-+ * HDMI to USB Type-C Bridge and Port Controller with MUX
-+ *
-+ * Copyright 2020 Google LLC
-+ */
-+#ifndef __LINUX_MFD_ANX7688_H
-+#define __LINUX_MFD_ANX7688_H
-+
-+#include <linux/types.h>
-+
-+/* Register addresses */
-+#define ANX7688_VENDOR_ID_REG		0x00
-+#define ANX7688_DEVICE_ID_REG		0x02
-+
-+#define ANX7688_FW_VERSION_REG		0x80
-+
-+#define ANX7688_DP_BANDWIDTH_REG	0x85
-+#define ANX7688_DP_LANE_COUNT_REG	0x86
-+
-+#define ANX7688_VENDOR_ID		0x1f29
-+#define ANX7688_DEVICE_ID		0x7688
-+
-+/* First supported firmware version (0.85) */
-+#define ANX7688_MINIMUM_FW_VERSION	0x0085
-+
-+struct gpio_desc;
-+struct i2c_client;
-+struct regulator;
-+struct regmap;
-+
-+struct anx7688 {
-+	struct i2c_client *client;
-+	struct regmap *regmap;
-+
-+	u16 fw_version;
-+};
-+
-+#endif /* __LINUX_MFD_ANX7688_H */
--- 
-2.25.1
+>=20
+> I don't have a good idea to fix this cleanly. How about we just use IPI=20
+> to install cgroup events (like v1):
+>=20
+> diff --git a/kernel/events/core.c b/kernel/events/core.c
+> index a1f8bde19b56..36e8fe27e2a1 100644
+> --- a/kernel/events/core.c
+> +++ b/kernel/events/core.c
+> @@ -2682,14 +2682,18 @@ perf_install_in_context(struct perf_event_context=
+ *ctx,
+> 	smp_store_release(&event->ctx, ctx);
+>=20
+> 	/*
+> -	 * perf_event_attr::disabled events will not run and can be initialized
+> -	 * without IPI. Except when this is the first event for the context, in
+> -	 * that case we need the magic of the IPI to set ctx->is_active.
+> +	 * perf_event_attr::disabled events will not run and can be
+> +	 * initialized without IPI. Except:
+> +	 *   1. when this is the first event for the context, in that case
+> +	 *      we need the magic of the IPI to set ctx->is_active;
+> +	 *   2. cgroup event in OFF state, because it is installed in the
+> +	 *      cpuctx.
+> 	 *
+> 	 * The IOC_ENABLE that is sure to follow the creation of a disabled
+> 	 * event will issue the IPI and reprogram the hardware.
+> 	 */
+> -	if (__perf_effective_state(event) =3D=3D PERF_EVENT_STATE_OFF && ctx->n=
+r_events) {
+> +	if (__perf_effective_state(event) =3D=3D PERF_EVENT_STATE_OFF &&
+> +	    !is_cgroup_event(event) && ctx->nr_events) {
+> 		raw_spin_lock_irq(&ctx->lock);
+> 		if (ctx->task =3D=3D TASK_TOMBSTONE) {
+> 			raw_spin_unlock_irq(&ctx->lock);
+>=20
+> Thanks,
+> Song
+>=20
+>=20
+>=20
 
