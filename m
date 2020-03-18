@@ -2,242 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AE62C1896B3
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 09:11:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DCA8A1896A6
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 09:10:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727471AbgCRILo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Mar 2020 04:11:44 -0400
-Received: from mga06.intel.com ([134.134.136.31]:45010 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726553AbgCRILn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Mar 2020 04:11:43 -0400
-IronPort-SDR: 2RCuIKgF+v8VSDbcY24ERL+NUSbtmeCCeFUFCmHuaE95FG1SQKTkRLrqYwRuXHlF6UlrlC7c6p
- 74gm0AkSJAfQ==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Mar 2020 01:11:42 -0700
-IronPort-SDR: ruYsY1LggO6imESNzN/XV+egM3Mw0bbzuolBsu0q09pzD4qKn6cTxMk3rCjEov7+xxl9pvpnoQ
- dAFGfdSZ7/qA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,566,1574150400"; 
-   d="scan'208";a="263308687"
-Received: from yilunxu-optiplex-7050.sh.intel.com (HELO localhost) ([10.239.159.141])
-  by orsmga002.jf.intel.com with ESMTP; 18 Mar 2020 01:11:41 -0700
-Date:   Wed, 18 Mar 2020 16:09:30 +0800
-From:   Xu Yilun <yilun.xu@intel.com>
-To:     Wu Hao <hao.wu@intel.com>
-Cc:     mdf@kernel.org, linux-fpga@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Luwei Kang <luwei.kang@intel.com>
-Subject: Re: [PATCH v2 2/7] fpga: dfl: pci: add irq info for feature devices
-  enumeration
-Message-ID: <20200318080930.GA2474@yilunxu-OptiPlex-7050>
-References: <1584332222-26652-1-git-send-email-yilun.xu@intel.com>
- <1584332222-26652-3-git-send-email-yilun.xu@intel.com>
- <20200318063001.GA32440@hao-dev>
+        id S1727331AbgCRIKH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Mar 2020 04:10:07 -0400
+Received: from mail-io1-f66.google.com ([209.85.166.66]:36109 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725298AbgCRIKG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Mar 2020 04:10:06 -0400
+Received: by mail-io1-f66.google.com with SMTP id d15so23986735iog.3
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Mar 2020 01:10:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=YXUayrHOPCJzF/6FJoY+BFEj3UMjmlbmnbZlPdkq6Po=;
+        b=pgzbRt/reLTxd85HZ30lCVjELDNH9uycFJL3DJEFaKEB4p9NYustgyiOUAru6uWokT
+         KI/F9LITN3XPzA7Hix1Bo5Kq1oH8I9u7saEJqACjSa8VP+P7nkpINUwi7jxAWD6K4CNJ
+         vQOkhkvXrfBiMHt9EyVawr+UOjGLjnJ/9yMeKb6MDNXLm8i19ya5cJU+qY9xF99Omoas
+         qBq1oi26LxtSVWRiI7FOXmaUq7KF+D/ioNFopm5Bs5ePKqM6mVJ1W9iVIrnwN5ojUTuU
+         w3zqG/TXVPYrLW2zsd2Rg85DQ0lKTp1K09boKVZDyP6OAd882v6yqAvxx9/1dX90r1tf
+         ijVg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=YXUayrHOPCJzF/6FJoY+BFEj3UMjmlbmnbZlPdkq6Po=;
+        b=Bf4Ke42yy4r+jsbWQkpvumwHATGql8Ry31nfyti2HPbGgGYkC2CqOVXC13YCJ9cC6o
+         QsRY449uXOBl9EvBJUNHjS0Iyxa0d8xMXkhS9r6Qb0v6a6uTri6xjW343mvK8foRztaK
+         Jct1Gjv13IPPzj8uWXsW8kfV5TzevoWEv6cdI2bdKocLqKiiP515tvbeOgch0xWUHO+T
+         +2ofdyHnOUZbwABfvRc1rRmLFEiAZPsDUU5d+XDbmiRJsgTByEyHkipC+vWf0BmON78z
+         MOwGDKTCscSSM3QTsWW1RVxecf1h7EJmLghjnt0IiRGxYX3uXmvrRQWUDkP01xrdfBn8
+         kbsQ==
+X-Gm-Message-State: ANhLgQ01obCDYnpYQT04mk9Q8zLf0X4RuSNHziBNne7j59d5YTXlsMZ+
+        U3WHekO9PkAJedBLWAudVeztPtg4JjHRsLL2Tos=
+X-Google-Smtp-Source: ADFU+vtGaqToi+tepJgBsiJW6SjUf+4rCoDpemJXpl7GqXhJtz7305Sug3Xc0GMfFtuEBRvOt1afdJSJ/Ji7A3ARPyo=
+X-Received: by 2002:a6b:c813:: with SMTP id y19mr2610596iof.125.1584519005895;
+ Wed, 18 Mar 2020 01:10:05 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200318063001.GA32440@hao-dev>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+References: <1584343103-13896-1-git-send-email-hqjagain@gmail.com>
+ <20200317170243.GR2363188@phenom.ffwll.local> <CAJRQjofSWYR--4V_4zmp6K9WVtqShdzpGuH1VFBPvHpViGYH5g@mail.gmail.com>
+ <CAKMK7uG8v7cYUwqTJTgYGfC8LEZtczTZ5a+Z4NcRnbFVBcG4Fw@mail.gmail.com>
+In-Reply-To: <CAKMK7uG8v7cYUwqTJTgYGfC8LEZtczTZ5a+Z4NcRnbFVBcG4Fw@mail.gmail.com>
+From:   Qiujun Huang <hqjagain@gmail.com>
+Date:   Wed, 18 Mar 2020 16:09:55 +0800
+Message-ID: <CAJRQjodZegs-9GE8ypkAiU2gC_x=tAYvOz-_dseOyiDvfMApUA@mail.gmail.com>
+Subject: Re: [PATCH RESEND] drm/lease: fix potential race in fill_object_idr
+To:     Daniel Vetter <daniel@ffwll.ch>
+Cc:     Marco Elver <elver@google.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Dave Airlie <airlied@linux.ie>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 18, 2020 at 02:30:01PM +0800, Wu Hao wrote:
-> On Mon, Mar 16, 2020 at 12:16:57PM +0800, Xu Yilun wrote:
-> > Some DFL FPGA PCIe cards (e.g. Intel FPGA Programmable Acceleration
-> > Card) support MSI-X based interrupts. This patch allows PCIe driver
-> > to prepare and pass interrupt resources to DFL via enumeration API.
-> > These interrupt resources could then be assigned to actual features
-> > which use them.
-> > 
-> > Signed-off-by: Luwei Kang <luwei.kang@intel.com>
-> > Signed-off-by: Wu Hao <hao.wu@intel.com>
-> > Signed-off-by: Xu Yilun <yilun.xu@intel.com>
-> > ----
-> > v2: put irq resources init code inside cce_enumerate_feature_dev()
-> >     Some minor changes for Hao's comments.
-> > ---
-> >  drivers/fpga/dfl-pci.c | 78 ++++++++++++++++++++++++++++++++++++++++++++------
-> >  1 file changed, 69 insertions(+), 9 deletions(-)
-> > 
-> > diff --git a/drivers/fpga/dfl-pci.c b/drivers/fpga/dfl-pci.c
-> > index 5387550..0b1ee7d 100644
-> > --- a/drivers/fpga/dfl-pci.c
-> > +++ b/drivers/fpga/dfl-pci.c
-> > @@ -39,6 +39,28 @@ static void __iomem *cci_pci_ioremap_bar(struct pci_dev *pcidev, int bar)
-> >  	return pcim_iomap_table(pcidev)[bar];
-> >  }
-> >  
-> > +static int cci_pci_alloc_irq(struct pci_dev *pcidev)
-> > +{
-> > +	int nvec = pci_msix_vec_count(pcidev);
-> > +	int ret;
-> > +
-> > +	if (nvec <= 0) {
-> > +		dev_dbg(&pcidev->dev, "fpga interrupt not supported\n");
-> > +		return 0;
-> > +	}
-> > +
-> > +	ret = pci_alloc_irq_vectors(pcidev, nvec, nvec, PCI_IRQ_MSIX);
-> > +	if (ret < 0)
-> > +		return ret;
-> > +
-> > +	return nvec;
-> > +}
-> > +
-> > +static void cci_pci_free_irq(struct pci_dev *pcidev)
-> > +{
-> > +	pci_free_irq_vectors(pcidev);
-> > +}
-> > +
-> >  /* PCI Device ID */
-> >  #define PCIE_DEVICE_ID_PF_INT_5_X	0xBCBD
-> >  #define PCIE_DEVICE_ID_PF_INT_6_X	0xBCC0
-> > @@ -78,17 +100,33 @@ static void cci_remove_feature_devs(struct pci_dev *pcidev)
-> >  
-> >  	/* remove all children feature devices */
-> >  	dfl_fpga_feature_devs_remove(drvdata->cdev);
-> > +	cci_pci_free_irq(pcidev);
-> > +}
-> > +
-> > +static int *cci_pci_create_irq_table(struct pci_dev *pcidev, unsigned int nvec)
-> > +{
-> > +	unsigned int i;
-> > +	int *table;
-> > +
-> > +	table = kcalloc(nvec, sizeof(int), GFP_KERNEL);
-> > +	if (table) {
-> > +		for (i = 0; i < nvec; i++)
-> > +			table[i] = pci_irq_vector(pcidev, i);
-> > +	}
-> > +
-> > +	return table;
-> >  }
-> >  
-> >  /* enumerate feature devices under pci device */
-> >  static int cci_enumerate_feature_devs(struct pci_dev *pcidev)
-> >  {
-> >  	struct cci_drvdata *drvdata = pci_get_drvdata(pcidev);
-> > +	int port_num, bar, i, nvec, ret = 0;
-> >  	struct dfl_fpga_enum_info *info;
-> >  	struct dfl_fpga_cdev *cdev;
-> >  	resource_size_t start, len;
-> > -	int port_num, bar, i, ret = 0;
-> >  	void __iomem *base;
-> > +	int *irq_table;
-> >  	u32 offset;
-> >  	u64 v;
-> >  
-> > @@ -97,11 +135,32 @@ static int cci_enumerate_feature_devs(struct pci_dev *pcidev)
-> >  	if (!info)
-> >  		return -ENOMEM;
-> >  
-> > +	/* add irq info for enumeration if the device support irq */
-> > +	nvec = cci_pci_alloc_irq(pcidev);
-> > +	if (nvec < 0) {
-> > +		dev_err(&pcidev->dev, "Fail to alloc irq %d.\n", nvec);
-> > +		ret = nvec;
-> > +		goto enum_info_free_exit;
-> 
-> Hm... seems that it failed directly, different with dfl framework which is still
-> trying to enable feature without interrupts. should we keep it the same?
+On Wed, Mar 18, 2020 at 3:34 PM Daniel Vetter <daniel@ffwll.ch> wrote:
+>
+> On Tue, Mar 17, 2020 at 11:33 PM Qiujun Huang <hqjagain@gmail.com> wrote:
+> >
+> > On Wed, Mar 18, 2020 at 1:02 AM Daniel Vetter <daniel@ffwll.ch> wrote:
+> > >
+> > > On Mon, Mar 16, 2020 at 03:18:23PM +0800, Qiujun Huang wrote:
+> > > > We should hold idr_mutex for idr_alloc.
+> > > >
+> > > > Signed-off-by: Qiujun Huang <hqjagain@gmail.com>
+> > >
+> > > I've not seen the first version of this anywhere in my inbox, not sure
+> > > where that got lost.
+> > >
+> > > Anyway, this seems like a false positive - I'm assuming this was caught
+> > > with KCSAN. The commit message really should mention that.
+> > >
+> > > fill_object_idr creates the idr, which yes is only access later on under
+> > > the idr_mutex. But here it's not yet visible to any other thread, and
+> > > hence lockless access is safe and correct.
+> >
+> > Agree that.
+>
+> Do you know what the recommended annotation for kcsan false positives
+> like this should be? Adding kcsan author Marco.
 
-I think we don't have to keep same criteria for dfl bus driver & dfl
-framework. They are different modules, and they fail with different reasons.
+Actually it's not reported by kcsan. I found idr_alloc isn't safe for
+parallel modifications,
+and I didn't understand it's a exclusive path here.  :)
 
-For DFL framework, we treat irq as add-on support. If DFL specifies
-irq for a sub feature but dfl bus driver didn't provide irq table entry,
-we just skip it. So dfl bus device doesn't have to support every irq
-for each sub feature with irq capability.
-
-For PCI driver, I see there are several reasons for pci_alloc_irq_vectors()
-fail, some are parameters input error, some are HW error on PCI config space,
-some are out of memory... I think it's better we error out for these
-unexpected errors.
-
-> 
-> > +	}
-> > +
-> > +	if (nvec) {
-> 
-> This can be else or else if ?
-
-This can be else if.
-
-> 
-> > +		irq_table = cci_pci_create_irq_table(pcidev, nvec);
-> > +		if (!irq_table) {
-> > +			ret = -ENOMEM;
-> > +			goto error_free_irq;
-> > +		}
-> > +
-> > +		ret = dfl_fpga_enum_info_add_irq(info, nvec, irq_table);
-> > +		kfree(irq_table);
-> > +		if (ret)
-> > +			goto error_free_irq;
-> > +	}
-> > +
-> >  	/* start to find Device Feature List from Bar 0 */
-> >  	base = cci_pci_ioremap_bar(pcidev, 0);
-> >  	if (!base) {
-> >  		ret = -ENOMEM;
-> > -		goto enum_info_free_exit;
-> > +		goto error_free_irq;
-> >  	}
-> >  
-> >  	/*
-> > @@ -154,7 +213,7 @@ static int cci_enumerate_feature_devs(struct pci_dev *pcidev)
-> >  		dfl_fpga_enum_info_add_dfl(info, start, len, base);
-> >  	} else {
-> >  		ret = -ENODEV;
-> > -		goto enum_info_free_exit;
-> > +		goto error_free_irq;
-> >  	}
-> >  
-> >  	/* start enumeration with prepared enumeration information */
-> > @@ -162,11 +221,14 @@ static int cci_enumerate_feature_devs(struct pci_dev *pcidev)
-> >  	if (IS_ERR(cdev)) {
-> >  		dev_err(&pcidev->dev, "Enumeration failure\n");
-> >  		ret = PTR_ERR(cdev);
-> > -		goto enum_info_free_exit;
-> > +		goto error_free_irq;
-> >  	}
-> >  
-> >  	drvdata->cdev = cdev;
-> >  
-> > +error_free_irq:
-> 
-> could you please use a similar style label here as below?
-
-Yes let me change it.
-
-> 
-> Thanks
-> Hao
-> 
-> > +	if (ret)
-> > +		cci_pci_free_irq(pcidev);
-> >  enum_info_free_exit:
-> >  	dfl_fpga_enum_info_free(info);
-> >  
-> > @@ -211,12 +273,10 @@ int cci_pci_probe(struct pci_dev *pcidev, const struct pci_device_id *pcidevid)
-> >  	}
-> >  
-> >  	ret = cci_enumerate_feature_devs(pcidev);
-> > -	if (ret) {
-> > -		dev_err(&pcidev->dev, "enumeration failure %d.\n", ret);
-> > -		goto disable_error_report_exit;
-> > -	}
-> > +	if (!ret)
-> > +		return ret;
-> >  
-> > -	return ret;
-> > +	dev_err(&pcidev->dev, "enumeration failure %d.\n", ret);
-> >  
-> >  disable_error_report_exit:
-> >  	pci_disable_pcie_error_reporting(pcidev);
-> > -- 
-> > 2.7.4
+> -Daniel
+> --
+> Daniel Vetter
+> Software Engineer, Intel Corporation
+> +41 (0) 79 365 57 48 - http://blog.ffwll.ch
