@@ -2,103 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0E19C189E19
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 15:42:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ACECE189E34
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 15:45:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726872AbgCROmD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Mar 2020 10:42:03 -0400
-Received: from us-smtp-delivery-74.mimecast.com ([63.128.21.74]:38378 "EHLO
-        us-smtp-delivery-74.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726704AbgCROmD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Mar 2020 10:42:03 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1584542521;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=T7kBegBwWcEdb3wj4I7SyRaROqMrOxZ30lybsvlhbDs=;
-        b=h8UR69SXKDY4t+rFDD7bmkVsh1Bp7zssvFRFRVUDCpa2fZ2ADZNoSUZ6pzFVy3SFL3fRUG
-        0hJgIJOlP+f0MN3Pa+Xtyos/3R7DbfQo1OKG/XZKqJcZfFmXq6zXa1KPIlmU2TvMSSbFYH
-        9R6RUicaKCDY5t9XxuLqcHPzeRHu5P4=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-362-pO2FWBMJMNunXEjOqVSYpA-1; Wed, 18 Mar 2020 10:42:00 -0400
-X-MC-Unique: pO2FWBMJMNunXEjOqVSYpA-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1726813AbgCROpw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Mar 2020 10:45:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57796 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726308AbgCROpv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Mar 2020 10:45:51 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id B7D2BA1361;
-        Wed, 18 Mar 2020 14:41:57 +0000 (UTC)
-Received: from localhost (ovpn-12-66.pek2.redhat.com [10.72.12.66])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 6FBE160BFB;
-        Wed, 18 Mar 2020 14:41:48 +0000 (UTC)
-Date:   Wed, 18 Mar 2020 22:41:46 +0800
-From:   Baoquan He <bhe@redhat.com>
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     David Hildenbrand <david@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linuxppc-dev@lists.ozlabs.org,
-        linux-hyperv@vger.kernel.org,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Yumei Huang <yuhuang@redhat.com>,
-        Igor Mammedov <imammedo@redhat.com>,
-        Eduardo Habkost <ehabkost@redhat.com>,
-        Milan Zamazal <mzamazal@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Oscar Salvador <osalvador@suse.de>,
-        Paul Mackerras <paulus@samba.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        Wei Liu <wei.liu@kernel.org>,
-        Wei Yang <richard.weiyang@gmail.com>
-Subject: Re: [PATCH v2 0/8] mm/memory_hotplug: allow to specify a default
- online_type
-Message-ID: <20200318144146.GE30899@MiWiFi-R3L-srv>
-References: <20200317104942.11178-1-david@redhat.com>
- <20200318130517.GC30899@MiWiFi-R3L-srv>
- <20200318135408.GP21362@dhcp22.suse.cz>
+        by mail.kernel.org (Postfix) with ESMTPSA id AF5C320714;
+        Wed, 18 Mar 2020 14:45:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1584542751;
+        bh=ZQkQoIgg/xqhZVGUaTIFz/2fg+YFJ3FuYTecjDyDUso=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=OfEKCu4CPRb2sAstSeiCqvxyvbWIMZh0wfec5kMJHltA0kmN4BmbkqjB3rSh9boTP
+         Im97KyzEF9niiA0VOxKg96tuq5mKiw0EKNRpt5P0lrV7lqhwVC8Cs3tyNkysxDWADJ
+         hzcqndB4g8l7LBqj8j//VRUdMaWN/k3y/dex250s=
+Date:   Wed, 18 Mar 2020 15:42:46 +0100
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc:     arnd@arndb.de, smohanad@codeaurora.org, jhugo@codeaurora.org,
+        kvalo@codeaurora.org, bjorn.andersson@linaro.org,
+        hemantk@codeaurora.org, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org
+Subject: Re: [PATCH v3 14/16] net: qrtr: Add MHI transport layer
+Message-ID: <20200318144246.GA2859404@kroah.com>
+References: <20200220095854.4804-1-manivannan.sadhasivam@linaro.org>
+ <20200220095854.4804-15-manivannan.sadhasivam@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200318135408.GP21362@dhcp22.suse.cz>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+In-Reply-To: <20200220095854.4804-15-manivannan.sadhasivam@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/18/20 at 02:54pm, Michal Hocko wrote:
-> On Wed 18-03-20 21:05:17, Baoquan He wrote:
-> > On 03/17/20 at 11:49am, David Hildenbrand wrote:
-> > > Distributions nowadays use udev rules ([1] [2]) to specify if and
-> > > how to online hotplugged memory. The rules seem to get more complex with
-> > > many special cases. Due to the various special cases,
-> > > CONFIG_MEMORY_HOTPLUG_DEFAULT_ONLINE cannot be used. All memory hotplug
-> > > is handled via udev rules.
-> > > 
-> > > Everytime we hotplug memory, the udev rule will come to the same
-> > > conclusion. Especially Hyper-V (but also soon virtio-mem) add a lot of
-> > > memory in separate memory blocks and wait for memory to get onlined by user
-> > > space before continuing to add more memory blocks (to not add memory faster
-> > > than it is getting onlined). This of course slows down the whole memory
-> > > hotplug process.
-> > > 
-> > > To make the job of distributions easier and to avoid udev rules that get
-> > > more and more complicated, let's extend the mechanism provided by
-> > > - /sys/devices/system/memory/auto_online_blocks
-> > > - "memhp_default_state=" on the kernel cmdline
-> > > to be able to specify also "online_movable" as well as "online_kernel"
-> > 
-> > This patch series looks good, thanks. Since Andrew has merged it to -mm again,
-> > I won't add my Reviewed-by to bother. 
+On Thu, Feb 20, 2020 at 03:28:52PM +0530, Manivannan Sadhasivam wrote:
+> MHI is the transport layer used for communicating to the external modems.
+> Hence, this commit adds MHI transport layer support to QRTR for
+> transferring the QMI messages over IPC Router.
 > 
-> JFYI, Andrew usually adds R-b or A-b tags as they are posted.
+> Cc: "David S. Miller" <davem@davemloft.net>
+> Cc: netdev@vger.kernel.org
+> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> ---
+>  net/qrtr/Kconfig  |   7 ++
+>  net/qrtr/Makefile |   2 +
+>  net/qrtr/mhi.c    | 209 ++++++++++++++++++++++++++++++++++++++++++++++
+>  3 files changed, 218 insertions(+)
+>  create mode 100644 net/qrtr/mhi.c
 
-Got it, thanks for telling.
+I stopped here in this series, as I do not feel comfortable merging
+stuff under net/.
 
+Can you get some review by the networking developers and then I will be
+ok with taking it through my tree.
+
+thanks,
+
+greg k-h
