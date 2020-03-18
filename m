@@ -2,57 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C6F901894D7
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 05:23:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AB4151894E0
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 05:27:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726881AbgCREXK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Mar 2020 00:23:10 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:35600 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726227AbgCREXJ (ORCPT
+        id S1726722AbgCRE1D (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Mar 2020 00:27:03 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:44638 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726250AbgCRE1D (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Mar 2020 00:23:09 -0400
-Received: from localhost (unknown [IPv6:2601:601:9f00:477::3d5])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id AA6031475D4D7;
-        Tue, 17 Mar 2020 21:23:08 -0700 (PDT)
-Date:   Tue, 17 Mar 2020 21:23:07 -0700 (PDT)
-Message-Id: <20200317.212307.1874233849204792506.davem@davemloft.net>
-To:     rayagonda.kokatanur@broadcom.com
-Cc:     andrew@lunn.ch, f.fainelli@gmail.com, hkallweit1@gmail.com,
-        linux@armlinux.org.uk, rjui@broadcom.com, sbranden@broadcom.com,
-        bcm-kernel-feedback-list@broadcom.com,
-        arun.parameswaran@broadcom.com, netdev@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 1/1] net: phy: mdio-mux-bcm-iproc: check
- clk_prepare_enable() return value
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20200317.212127.2045455292795972153.davem@davemloft.net>
-References: <20200317045435.29975-1-rayagonda.kokatanur@broadcom.com>
-        <20200317.212127.2045455292795972153.davem@davemloft.net>
-X-Mailer: Mew version 6.8 on Emacs 26.1
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
+        Wed, 18 Mar 2020 00:27:03 -0400
+Received: by mail-pg1-f194.google.com with SMTP id 37so12935017pgm.11
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Mar 2020 21:27:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=5hQqpSvt4tC1ihG/h6rOXKsZco8EGDS57uVaABs5Le8=;
+        b=jkHBtYzvhoglTRpv8FIvWUG1DiqqLYXPKxhZV2s2u/ECys5cNUub5EMaQiEN0fSxyZ
+         6ZWxl+i2i9+jvb26DEbLyueO+Oz7femIGgayHCiqm+TL7MuREo9NyKVHuvfjjrIBW1yV
+         zd2mi+gdahuqchxUqDeAqiiIFzfudI3QqtKTSep2DThD4cu5aii4SOt6ycbS8KvhRqSj
+         aAL+KkEkNqUXB2a/hxVpBZaw0tmDPAD3yuc0VDjV1gqzBHcljWEHYSNfVduv8/FUkzsj
+         9uY0PxmdVqk3GsnUdthJfLSDwzCpf6QLGIG1HXkA1v1loK5ety8WUcvzosjvPuW5lG8N
+         Jm6g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=5hQqpSvt4tC1ihG/h6rOXKsZco8EGDS57uVaABs5Le8=;
+        b=RpoJBoH1MLq07HigaSN/IiYrT/jj4Mc0FfLEd3m1oR1SwjjCRFYTSEd4KKsJYVfB6I
+         bcELSQE5EiOdpuTWekr5A8Jda9aNn+D9ekN3671APaEXt9d1XDptJy/Rsq7Jsn/R7K0g
+         W5Olr41BlVRbg+Y0+ePco1gd3mQ9YrC+z3lRS54EIF6RTrgdeaSYo6TT4YgMHnQMrw8B
+         A7Uvz9P9ujf/HqujiFidUKxUESc4AZu/xtBZV1uYQP2TWSDWar8FkIK6i+GQdPq9P1tp
+         rpisCQrJIFfYmSqd48zHhoJbf2Ttd3md5Pq14TNb1h49yve1ITCe2wIA8MGwZ45k5uCf
+         VG9A==
+X-Gm-Message-State: ANhLgQ25l1B79IMq+0tLkWhxNDBxcUEHg6r528ClG5aRxheZPYhL51NU
+        36EoOZ85ZiofMnrGlCoCk1TqPGjp
+X-Google-Smtp-Source: ADFU+vuEqeBjNJTai5hfGuGalMaXMFOYwL2YIKQ432GnBQqykUaK8C7+PoU2vhjSjm3AY9Npbkd6Ww==
+X-Received: by 2002:a63:7e49:: with SMTP id o9mr2776478pgn.80.1584505620617;
+        Tue, 17 Mar 2020 21:27:00 -0700 (PDT)
+Received: from [10.80.50.61] ([203.205.141.39])
+        by smtp.gmail.com with ESMTPSA id h4sm4400087pfo.87.2020.03.17.21.26.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 17 Mar 2020 21:27:00 -0700 (PDT)
+Subject: Re: [PATCH] mm: Fix a comment typo
+To:     James Bottomley <James.Bottomley@HansenPartnership.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <0783042a-244c-0c2e-091d-e7002718d73f@gmail.com>
+ <1584503945.15565.23.camel@HansenPartnership.com>
+From:   brookxu <brookxu.cn@gmail.com>
+Message-ID: <ac5e1482-a943-d7c0-b80d-d9f671031be8@gmail.com>
+Date:   Wed, 18 Mar 2020 12:26:59 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:68.0) Gecko/20100101
+ Thunderbird/68.6.0
+MIME-Version: 1.0
+In-Reply-To: <1584503945.15565.23.camel@HansenPartnership.com>
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Tue, 17 Mar 2020 21:23:09 -0700 (PDT)
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: David Miller <davem@davemloft.net>
-Date: Tue, 17 Mar 2020 21:21:27 -0700 (PDT)
+Thank you very much for your reply, it should be my misunderstanding, thanks again~
 
-> From: Rayagonda Kokatanur <rayagonda.kokatanur@broadcom.com>
-> Date: Tue, 17 Mar 2020 10:24:35 +0530
-> 
->> Check clk_prepare_enable() return value.
->> 
->> Fixes: 2c7230446bc9 ("net: phy: Add pm support to Broadcom iProc mdio mux driver")
->> Signed-off-by: Rayagonda Kokatanur <rayagonda.kokatanur@broadcom.com>
-> 
-> Applied.
-
-I also queued this up for -stable as well.
+James Bottomley wrote on 2020/3/18 11:59:
+> On Wed, 2020-03-18 at 11:42 +0800, brookxu wrote:
+>> Signed-off-by: Chunguang Xu <brookxu@tencent.com>
+>>
+>> ---
+>>  mm/page-writeback.c | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/mm/page-writeback.c b/mm/page-writeback.c
+>> index 2caf780..2acf754 100644
+>> --- a/mm/page-writeback.c
+>> +++ b/mm/page-writeback.c
+>> @@ -1271,7 +1271,7 @@ static void wb_update_dirty_ratelimit(struct
+>> dirty_throttle_control *dtc,
+>>       */
+>>  
+>>      /*
+>> -     * dirty_ratelimit will follow balanced_dirty_ratelimit iff
+>> +     * dirty_ratelimit will follow balanced_dirty_ratelimit if
+> Are you sure it's a mistake? iff means if and only if which would be
+> reasonable unless the condition is only implies.
+>  
+> James
+>
