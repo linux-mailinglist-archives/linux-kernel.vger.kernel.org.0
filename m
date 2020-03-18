@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B377318A623
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 22:06:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 06C2918A626
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 22:06:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727973AbgCRUyo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Mar 2020 16:54:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54452 "EHLO mail.kernel.org"
+        id S1728569AbgCRVGG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Mar 2020 17:06:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54474 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727950AbgCRUym (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Mar 2020 16:54:42 -0400
+        id S1727960AbgCRUyn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Mar 2020 16:54:43 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 199C8208E0;
-        Wed, 18 Mar 2020 20:54:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 400FA208DB;
+        Wed, 18 Mar 2020 20:54:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584564881;
-        bh=fCNfBvEj8FxR11jKzYU+guYTmGDCT7dasMbitXaR4R0=;
+        s=default; t=1584564883;
+        bh=D8b8a7WrXA/GjADo5nzuC7SUzmHlHAizf/wjGu4r3mg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gJGy7/R7qHbCazNYWG2tii+/UlomRi6MvG7Wnkn8EYRF6JJbojlVZFIa20mcogQo5
-         oL9T0v0MhZyyi91kRln5yuoE8l+DoyVuWhG9kgwlt2TDEiURTOw2xUeO+TOxiYG393
-         zpkUEG3jadliCv/8cV16s03qWuI4lBzb2cGUaBFY=
+        b=lBvfavq/6hKJoEr6YOWQ0Ca7G+3sWX8/OeKyxxmUEgHT16myaptD5LvDwDR6s263p
+         ZZo5cniXAf2kGhtTzxQzQlXBSOICP4b4MDojdttvpbM0Vvwf4pFsZwDMYcRXyf1DK6
+         QEduoIuNn5+98ZfPhSNHJJqZV/HGhmT+2PQ344Fk=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Qian Cai <cai@lca.pw>, Lu Baolu <baolu.lu@linux.intel.com>,
-        Joerg Roedel <jroedel@suse.de>,
-        Sasha Levin <sashal@kernel.org>,
-        iommu@lists.linux-foundation.org
-Subject: [PATCH AUTOSEL 5.4 51/73] iommu/vt-d: Silence RCU-list debugging warnings
-Date:   Wed, 18 Mar 2020 16:53:15 -0400
-Message-Id: <20200318205337.16279-51-sashal@kernel.org>
+Cc:     Hamish Martin <hamish.martin@alliedtelesis.co.nz>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        Sasha Levin <sashal@kernel.org>, linux-i2c@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.4 52/73] i2c: gpio: suppress error on probe defer
+Date:   Wed, 18 Mar 2020 16:53:16 -0400
+Message-Id: <20200318205337.16279-52-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200318205337.16279-1-sashal@kernel.org>
 References: <20200318205337.16279-1-sashal@kernel.org>
@@ -44,70 +44,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Qian Cai <cai@lca.pw>
+From: Hamish Martin <hamish.martin@alliedtelesis.co.nz>
 
-[ Upstream commit f5152416528c2295f35dd9c9bd4fb27c4032413d ]
+[ Upstream commit 3747cd2efe7ecb9604972285ab3f60c96cb753a8 ]
 
-Similar to the commit 02d715b4a818 ("iommu/vt-d: Fix RCU list debugging
-warnings"), there are several other places that call
-list_for_each_entry_rcu() outside of an RCU read side critical section
-but with dmar_global_lock held. Silence those false positives as well.
+If a GPIO we are trying to use is not available and we are deferring
+the probe, don't output an error message.
+This seems to have been the intent of commit 05c74778858d
+("i2c: gpio: Add support for named gpios in DT") but the error was
+still output due to not checking the updated 'retdesc'.
 
- drivers/iommu/intel-iommu.c:4288 RCU-list traversed in non-reader section!!
- 1 lock held by swapper/0/1:
-  #0: ffffffff935892c8 (dmar_global_lock){+.+.}, at: intel_iommu_init+0x1ad/0xb97
-
- drivers/iommu/dmar.c:366 RCU-list traversed in non-reader section!!
- 1 lock held by swapper/0/1:
-  #0: ffffffff935892c8 (dmar_global_lock){+.+.}, at: intel_iommu_init+0x125/0xb97
-
- drivers/iommu/intel-iommu.c:5057 RCU-list traversed in non-reader section!!
- 1 lock held by swapper/0/1:
-  #0: ffffffffa71892c8 (dmar_global_lock){++++}, at: intel_iommu_init+0x61a/0xb13
-
-Signed-off-by: Qian Cai <cai@lca.pw>
-Acked-by: Lu Baolu <baolu.lu@linux.intel.com>
-Signed-off-by: Joerg Roedel <jroedel@suse.de>
+Fixes: 05c74778858d ("i2c: gpio: Add support for named gpios in DT")
+Signed-off-by: Hamish Martin <hamish.martin@alliedtelesis.co.nz>
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/iommu/dmar.c | 3 ++-
- include/linux/dmar.h | 6 ++++--
- 2 files changed, 6 insertions(+), 3 deletions(-)
+ drivers/i2c/busses/i2c-gpio.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/iommu/dmar.c b/drivers/iommu/dmar.c
-index 7196cabafb252..6ec5da4d028f9 100644
---- a/drivers/iommu/dmar.c
-+++ b/drivers/iommu/dmar.c
-@@ -363,7 +363,8 @@ dmar_find_dmaru(struct acpi_dmar_hardware_unit *drhd)
- {
- 	struct dmar_drhd_unit *dmaru;
+diff --git a/drivers/i2c/busses/i2c-gpio.c b/drivers/i2c/busses/i2c-gpio.c
+index 3a9e840a35466..a4a6825c87583 100644
+--- a/drivers/i2c/busses/i2c-gpio.c
++++ b/drivers/i2c/busses/i2c-gpio.c
+@@ -348,7 +348,7 @@ static struct gpio_desc *i2c_gpio_get_desc(struct device *dev,
+ 	if (ret == -ENOENT)
+ 		retdesc = ERR_PTR(-EPROBE_DEFER);
  
--	list_for_each_entry_rcu(dmaru, &dmar_drhd_units, list)
-+	list_for_each_entry_rcu(dmaru, &dmar_drhd_units, list,
-+				dmar_rcu_check())
- 		if (dmaru->segment == drhd->segment &&
- 		    dmaru->reg_base_addr == drhd->address)
- 			return dmaru;
-diff --git a/include/linux/dmar.h b/include/linux/dmar.h
-index a7cf3599d9a1c..e0d52e9358c9c 100644
---- a/include/linux/dmar.h
-+++ b/include/linux/dmar.h
-@@ -73,11 +73,13 @@ extern struct list_head dmar_drhd_units;
- 	list_for_each_entry_rcu(drhd, &dmar_drhd_units, list)
+-	if (ret != -EPROBE_DEFER)
++	if (PTR_ERR(retdesc) != -EPROBE_DEFER)
+ 		dev_err(dev, "error trying to get descriptor: %d\n", ret);
  
- #define for_each_active_drhd_unit(drhd)					\
--	list_for_each_entry_rcu(drhd, &dmar_drhd_units, list)		\
-+	list_for_each_entry_rcu(drhd, &dmar_drhd_units, list,		\
-+				dmar_rcu_check())			\
- 		if (drhd->ignored) {} else
- 
- #define for_each_active_iommu(i, drhd)					\
--	list_for_each_entry_rcu(drhd, &dmar_drhd_units, list)		\
-+	list_for_each_entry_rcu(drhd, &dmar_drhd_units, list,		\
-+				dmar_rcu_check())			\
- 		if (i=drhd->iommu, drhd->ignored) {} else
- 
- #define for_each_iommu(i, drhd)						\
+ 	return retdesc;
 -- 
 2.20.1
 
