@@ -2,76 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 27F391893EA
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 03:10:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6E3EB1893E0
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 03:05:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727316AbgCRCJ7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Mar 2020 22:09:59 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:35432 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726229AbgCRCJ6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Mar 2020 22:09:58 -0400
-Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id B3438517F73A5BFE45DC;
-        Wed, 18 Mar 2020 10:09:49 +0800 (CST)
-Received: from localhost.localdomain.localdomain (10.175.113.25) by
- DGGEMS407-HUB.china.huawei.com (10.3.19.207) with Microsoft SMTP Server id
- 14.3.487.0; Wed, 18 Mar 2020 10:09:42 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     Mat Martineau <mathew.j.martineau@linux.intel.com>,
-        Matthieu Baerts <matthieu.baerts@tessares.net>,
-        <pabeni@redhat.com>, "David S . Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>
-CC:     YueHaibing <yuehaibing@huawei.com>, <netdev@vger.kernel.org>,
-        <mptcp@lists.01.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH net-next] mptcp: Remove set but not used variable 'can_ack'
-Date:   Wed, 18 Mar 2020 02:01:57 +0000
-Message-ID: <20200318020157.178956-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.20.1
+        id S1727239AbgCRCFl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Mar 2020 22:05:41 -0400
+Received: from bilbo.ozlabs.org ([203.11.71.1]:42701 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726871AbgCRCFl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Mar 2020 22:05:41 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 48htfp56vwz9sNg;
+        Wed, 18 Mar 2020 13:05:38 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1584497139;
+        bh=ODSzlO0kO5hWcTZeHNNs9tVOUUI5xO0GzBFK5kFt5/E=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=HUjlpHPwdybPdv0+gf/57bWMC30tGK5rYLCvx1CbKgusB/GCWuCVoS8TJqxZu4Q8d
+         LZVTnZAgdfr1wlw525WTsFZZC4YP5I8tw1s+/Kv9iqq+GCX90VI0w59Osk15Y4zSI8
+         0xq4woXAcA9d3y1zWdwIuxZJ8T8xLx+JTeuxMVFs1hDOkCldG0oPxAc3CmPCvhZONm
+         thnXdT6qeHI+Mp1BFmz326IXFTWFi3bw4flvnaUdgB5DNxvBmS/8HpzD/rYqtyqLvO
+         5Uq1BPi5OCtobyFeXGQWDhVlPvZ/ntpETqgBowdTFX6M2ftvFtuc/J5v9U06/Nn7JG
+         zBhjXUt3G3wow==
+Date:   Wed, 18 Mar 2020 13:05:31 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Doug Ledford <dledford@redhat.com>,
+        Jason Gunthorpe <jgg@mellanox.com>
+Cc:     Leon Romanovsky <leon@kernel.org>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Saeed Mahameed <saeedm@mellanox.com>
+Subject: Re: linux-next: build warning after merge of the mlx5-next tree
+Message-ID: <20200318130531.1df149c7@canb.auug.org.au>
+In-Reply-To: <20200316103913.659d3a5e@canb.auug.org.au>
+References: <20200316103913.659d3a5e@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type:   text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
-X-Originating-IP: [10.175.113.25]
-X-CFilter-Loop: Reflected
+Content-Type: multipart/signed; boundary="Sig_/4RF4C6asXy+CYm2goqxefSy";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fixes gcc '-Wunused-but-set-variable' warning:
+--Sig_/4RF4C6asXy+CYm2goqxefSy
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-net/mptcp/options.c: In function 'mptcp_established_options_dss':
-net/mptcp/options.c:338:7: warning:
- variable 'can_ack' set but not used [-Wunused-but-set-variable]
+Hi all,
 
-commit dc093db5cc05 ("mptcp: drop unneeded checks")
-leave behind this unused, remove it.
+On Mon, 16 Mar 2020 10:39:13 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+>
+> Hi all,
+>=20
+> After merging the mlx5-next tree, today's linux-next build (x86_64
+> allmodconfig) produced this warning:
+>=20
+> In file included from include/linux/printk.h:331,
+>                  from include/linux/kernel.h:15,
+>                  from drivers/net/ethernet/mellanox/mlx5/core/mr.c:33:
+> drivers/net/ethernet/mellanox/mlx5/core/mr.c: In function 'mlx5_core_crea=
+te_mkey':
+> include/linux/dynamic_debug.h:157:25: warning: 'key' may be used uninitia=
+lized in this function [-Wmaybe-uninitialized]
+>   157 |  _dynamic_func_call(fmt,__dynamic_dev_dbg,   \
+>       |                         ^~~~~~~~~~~~~~~~~
+> drivers/net/ethernet/mellanox/mlx5/core/mr.c:47:5: note: 'key' was declar=
+ed here
+>    47 |  u8 key;
+>       |     ^~~
+>=20
+> Probably introduced by commit
+>=20
+>   fc6a9f86f08a ("{IB,net}/mlx5: Assign mkey variant in mlx5_ib only")
 
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- net/mptcp/options.c | 2 --
- 1 file changed, 2 deletions(-)
+This warning now appears in the rdma tree.
 
-diff --git a/net/mptcp/options.c b/net/mptcp/options.c
-index 63c8ee49cef2..8ba34950241c 100644
---- a/net/mptcp/options.c
-+++ b/net/mptcp/options.c
-@@ -335,7 +335,6 @@ static bool mptcp_established_options_dss(struct sock *sk, struct sk_buff *skb,
- 	struct mptcp_sock *msk;
- 	unsigned int ack_size;
- 	bool ret = false;
--	bool can_ack;
- 	u8 tcp_fin;
- 
- 	if (skb) {
-@@ -364,7 +363,6 @@ static bool mptcp_established_options_dss(struct sock *sk, struct sk_buff *skb,
- 	/* passive sockets msk will set the 'can_ack' after accept(), even
- 	 * if the first subflow may have the already the remote key handy
- 	 */
--	can_ack = true;
- 	opts->ext_copy.use_ack = 0;
- 	msk = mptcp_sk(subflow->conn);
- 	if (!READ_ONCE(msk->can_ack)) {
+--=20
+Cheers,
+Stephen Rothwell
 
+--Sig_/4RF4C6asXy+CYm2goqxefSy
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
+-----BEGIN PGP SIGNATURE-----
 
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl5xgesACgkQAVBC80lX
+0Gw/YQgAoRxC9pa50M/cNJWv3ZI9Hk7i1j2lgpe16D+mPWcF7wo1qQoY+U45EWfG
+Rxcx84wGr0xZen1LEor0L42jwxYZt4+EvZU65PIZtbHMwuNqjNJTnPsYyVkZnowu
+WSnOe5zjNI6DKqL5Rh5aABGLek08zccLhprP5iBmeVliuxyRqK0ThwMThzP02f28
+6Wnc3V6DQM1Gppczpn3eH4q0WGWXigIW77oI/9SuZ+pSQtXPa5o2beANQY2U0Ofw
+GKgtZsRXDHERwH2XyeWp42M4YUMnXXFPYItnB001Oxfx22+KRd0KkSi2IypOqscv
+88F6mdht1ORR4StPgz4ApeM1bGKHaw==
+=apSN
+-----END PGP SIGNATURE-----
+
+--Sig_/4RF4C6asXy+CYm2goqxefSy--
