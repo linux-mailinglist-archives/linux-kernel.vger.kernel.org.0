@@ -2,82 +2,56 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6895F18997A
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 11:32:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D343518995C
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 11:31:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727889AbgCRKcO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Mar 2020 06:32:14 -0400
-Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:7107 "EHLO
-        hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727572AbgCRKcL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Mar 2020 06:32:11 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5e71f89d0000>; Wed, 18 Mar 2020 03:31:57 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Wed, 18 Mar 2020 03:32:10 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Wed, 18 Mar 2020 03:32:10 -0700
-Received: from HQMAIL111.nvidia.com (172.20.187.18) by HQMAIL109.nvidia.com
- (172.20.187.15) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 18 Mar
- 2020 10:32:10 +0000
-Received: from rnnvemgw01.nvidia.com (10.128.109.123) by HQMAIL111.nvidia.com
- (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
- Transport; Wed, 18 Mar 2020 10:32:10 +0000
-Received: from nkristam-ubuntu.nvidia.com (Not Verified[10.19.67.128]) by rnnvemgw01.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5e71f8a60007>; Wed, 18 Mar 2020 03:32:09 -0700
-From:   Nagarjuna Kristam <nkristam@nvidia.com>
-To:     <kishon@ti.com>, <robh+dt@kernel.org>, <thierry.reding@gmail.com>,
-        <jonathanh@nvidia.com>, <balbi@kernel.org>,
-        <gregkh@linuxfoundation.org>
-CC:     <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-tegra@vger.kernel.org>, <linux-usb@vger.kernel.org>,
-        <jckuo@nvidia.com>, Nagarjuna Kristam <nkristam@nvidia.com>
-Subject: [PATCH V1 8/8] phy: tegra: xusb: Enable charger detect for Tegra210
-Date:   Wed, 18 Mar 2020 16:01:07 +0530
-Message-ID: <1584527467-8058-9-git-send-email-nkristam@nvidia.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1584527467-8058-1-git-send-email-nkristam@nvidia.com>
-References: <1584527467-8058-1-git-send-email-nkristam@nvidia.com>
-X-NVConfidentiality: public
+        id S1727722AbgCRKbU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Mar 2020 06:31:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34748 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726310AbgCRKbU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Mar 2020 06:31:20 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D52682076C;
+        Wed, 18 Mar 2020 10:31:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1584527478;
+        bh=tJ4oKEOOtpPOFz1OYzH8DIDwy/jLLY6VQW/bPkvikXU=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=nmD4queGKXREyQnnNBB4xY9Kzm2KXu3vZXW1/m9XTBQNE+3ejS2KAIR6/g1lBI8/v
+         SUogO04+x/h/+WI/EUZ8TY82R5oG/o2c/oMduIBn3G2oKIqgxficse1g4g73opzIrJ
+         0HPwuRwacTTPCb9Y8kkIzGLFuVRRu5w2k5C/dWq0=
+Date:   Wed, 18 Mar 2020 11:31:16 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        stable@vger.kernel.org
+Subject: Re: [GIT PULL 5/6] intel_th: Fix user-visible error codes
+Message-ID: <20200318103116.GC2183221@kroah.com>
+References: <20200317062215.15598-1-alexander.shishkin@linux.intel.com>
+ <20200317062215.15598-6-alexander.shishkin@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1584527517; bh=uv1fkuSad4kBCRwzQTXQF9RBAm7wcOWJwqJqYeh9Dgk=;
-        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
-         In-Reply-To:References:X-NVConfidentiality:MIME-Version:
-         Content-Type;
-        b=nlt9uEKHAIpz95lJP5LapcrgBgt5MBTTN31/B/CCweamN7BYeJg/1YQjP7JCYAh5Y
-         2debWzIoQcLnjabTZ2I6ojb/mckNczHj0CevzfXvM3qP6P9C8oZrZ80JdIjiYCBTcC
-         lehWiEekdhTX0y5KOV4IjSCm/QSTZ4ZXDNT5z6+ulN9+V995YBDfLSWpoGLkYFi2hx
-         IhiQJj+Y4fK858j0g0bJ74UYf7FEMBuT0OYefiO46tKfmnVIyt8tyfhRJrOHWrM/zO
-         7UIu0yDPg7sgSu6kYUi9y8PVkhhVGYRWAX7jzVM3ZypC+dExD1eCby9lV4B6DC8YOT
-         qUr3iAfDx9Dww==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200317062215.15598-6-alexander.shishkin@linux.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Tegra210 SoC supports charger detect, set corresponding soc flag.
+On Tue, Mar 17, 2020 at 08:22:14AM +0200, Alexander Shishkin wrote:
+> There are a few places in the driver that end up returning ENOTSUPP to
+> the user, replace those with EINVAL.
+> 
+> Signed-off-by: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+> Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> Fixes: ba82664c134ef ("intel_th: Add Memory Storage Unit driver")
+> Cc: stable@vger.kernel.org # v4.4+
+> ---
+>  drivers/hwtracing/intel_th/msu.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
 
-Signed-off-by: Nagarjuna Kristam <nkristam@nvidia.com>
----
- drivers/phy/tegra/xusb-tegra210.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/phy/tegra/xusb-tegra210.c b/drivers/phy/tegra/xusb-tegra210.c
-index 93517b1..4c8cb0a 100644
---- a/drivers/phy/tegra/xusb-tegra210.c
-+++ b/drivers/phy/tegra/xusb-tegra210.c
-@@ -2347,6 +2347,7 @@ const struct tegra_xusb_padctl_soc tegra210_xusb_padctl_soc = {
- 	.supply_names = tegra210_xusb_padctl_supply_names,
- 	.num_supplies = ARRAY_SIZE(tegra210_xusb_padctl_supply_names),
- 	.need_fake_usb3_port = true,
-+	.charger_detect = true,
- };
- EXPORT_SYMBOL_GPL(tegra210_xusb_padctl_soc);
- 
--- 
-2.7.4
-
+Same here, for 5.6
