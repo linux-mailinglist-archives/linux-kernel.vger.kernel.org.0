@@ -2,35 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0325418A67E
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 22:09:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1F81918A66E
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 22:08:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727957AbgCRVIm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Mar 2020 17:08:42 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53218 "EHLO mail.kernel.org"
+        id S1728270AbgCRVIT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Mar 2020 17:08:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53360 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727453AbgCRUx7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Mar 2020 16:53:59 -0400
+        id S1727525AbgCRUyD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Mar 2020 16:54:03 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2A1EC20B1F;
-        Wed, 18 Mar 2020 20:53:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D0C71208D5;
+        Wed, 18 Mar 2020 20:54:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584564838;
-        bh=LOpwmiK83qi8XIvAAVhYA1val7Qvb9HzWBWoIYbpGSw=;
+        s=default; t=1584564842;
+        bh=YISAl4STIRfh0lU8xT8j9z3QKHY1zJtpEpkCanQb0lw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=of5/YPdIG5i/9VkhiKvW5dtMB53ylYILYOleO60LOUthqTwBXr1McLb3qabRC2GIP
-         qpsQNH/gnCkKjHHI0mD7n8njG+mb1bj8SlPJnCnhrkA+lVU9o8h40DroYIuRy/LZxC
-         ywvmYRGzZ/xyev5BvsYz5tWfBk2ShQfuGEhnc80I=
+        b=K+OY45TA8tk10M7xh11yBzQk/zTpXKfDrUin5mxiV6K2wxWpTlFhQriFa+/6/KfSo
+         2p9Jnttn9f1jRMt2RhG2o1Omh8MGIHcZIYlLOWXoN5+Np/25/J9NpK6M61adrvFWyd
+         ZZXug15XjaC+fkw2+2wMFFc2oef1vWfTaSnpN6mY=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Jakub Kicinski <kuba@kernel.org>, Jiri Pirko <jiri@mellanox.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.4 18/73] team: add missing attribute validation for port ifindex
-Date:   Wed, 18 Mar 2020 16:52:42 -0400
-Message-Id: <20200318205337.16279-18-sashal@kernel.org>
+Cc:     Jakub Kicinski <kuba@kernel.org>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
+        Sasha Levin <sashal@kernel.org>,
+        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
+        netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.4 21/73] netfilter: nft_payload: add missing attribute validation for payload csum flags
+Date:   Wed, 18 Mar 2020 16:52:45 -0400
+Message-Id: <20200318205337.16279-21-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200318205337.16279-1-sashal@kernel.org>
 References: <20200318205337.16279-1-sashal@kernel.org>
@@ -45,32 +47,31 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Jakub Kicinski <kuba@kernel.org>
 
-[ Upstream commit dd25cb272ccce4db67dc8509278229099e4f5e99 ]
+[ Upstream commit 9d6effb2f1523eb84516e44213c00f2fd9e6afff ]
 
-Add missing attribute validation for TEAM_ATTR_OPTION_PORT_IFINDEX
+Add missing attribute validation for NFTA_PAYLOAD_CSUM_FLAGS
 to the netlink policy.
 
-Fixes: 80f7c6683fe0 ("team: add support for per-port options")
+Fixes: 1814096980bb ("netfilter: nft_payload: layer 4 checksum adjustment for pseudoheader fields")
 Signed-off-by: Jakub Kicinski <kuba@kernel.org>
-Reviewed-by: Jiri Pirko <jiri@mellanox.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/team/team.c | 1 +
+ net/netfilter/nft_payload.c | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/drivers/net/team/team.c b/drivers/net/team/team.c
-index ca70a1d840eb3..44dd26a62a6d3 100644
---- a/drivers/net/team/team.c
-+++ b/drivers/net/team/team.c
-@@ -2240,6 +2240,7 @@ team_nl_option_policy[TEAM_ATTR_OPTION_MAX + 1] = {
- 	[TEAM_ATTR_OPTION_CHANGED]		= { .type = NLA_FLAG },
- 	[TEAM_ATTR_OPTION_TYPE]			= { .type = NLA_U8 },
- 	[TEAM_ATTR_OPTION_DATA]			= { .type = NLA_BINARY },
-+	[TEAM_ATTR_OPTION_PORT_IFINDEX]		= { .type = NLA_U32 },
+diff --git a/net/netfilter/nft_payload.c b/net/netfilter/nft_payload.c
+index 5cb2d8908d2a5..0e3bfbc26e790 100644
+--- a/net/netfilter/nft_payload.c
++++ b/net/netfilter/nft_payload.c
+@@ -121,6 +121,7 @@ static const struct nla_policy nft_payload_policy[NFTA_PAYLOAD_MAX + 1] = {
+ 	[NFTA_PAYLOAD_LEN]		= { .type = NLA_U32 },
+ 	[NFTA_PAYLOAD_CSUM_TYPE]	= { .type = NLA_U32 },
+ 	[NFTA_PAYLOAD_CSUM_OFFSET]	= { .type = NLA_U32 },
++	[NFTA_PAYLOAD_CSUM_FLAGS]	= { .type = NLA_U32 },
  };
  
- static int team_nl_cmd_noop(struct sk_buff *skb, struct genl_info *info)
+ static int nft_payload_init(const struct nft_ctx *ctx,
 -- 
 2.20.1
 
