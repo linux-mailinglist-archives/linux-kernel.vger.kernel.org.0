@@ -2,72 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F10341895F3
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 07:42:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BA5FB189607
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 07:53:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727043AbgCRGmR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Mar 2020 02:42:17 -0400
-Received: from us-smtp-delivery-74.mimecast.com ([216.205.24.74]:25484 "EHLO
-        us-smtp-delivery-74.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726478AbgCRGmQ (ORCPT
+        id S1727240AbgCRGxV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Mar 2020 02:53:21 -0400
+Received: from mail-qk1-f195.google.com ([209.85.222.195]:37184 "EHLO
+        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727004AbgCRGxU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Mar 2020 02:42:16 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1584513736;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=PPs09uZ6i6ElWTAW3541z8pnB9L17d/mtUgzs6Ul94Q=;
-        b=TyFmmsmH0tlW5FuCWxxYhXZKddGjK+H7jlT9Zord1OQq10FYqLAID5YCmRhGgjvUcPErRN
-        3Ol/3pmnR4PwhC+sshaOOFFlilnagaO1WNgJhIRQm+EqkuzlaQgTBc0+ajJzob27V1p2dF
-        NXpkraDfJW6JEbIDRsWBXtFg1bLZUdg=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-403-WhmNS_73OdaTi778wON5Sw-1; Wed, 18 Mar 2020 02:42:14 -0400
-X-MC-Unique: WhmNS_73OdaTi778wON5Sw-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 8B23A8017CC;
-        Wed, 18 Mar 2020 06:42:12 +0000 (UTC)
-Received: from sirius.home.kraxel.org (ovpn-112-49.ams2.redhat.com [10.36.112.49])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id C1D487E323;
-        Wed, 18 Mar 2020 06:42:11 +0000 (UTC)
-Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
-        id 2070717444; Wed, 18 Mar 2020 07:42:11 +0100 (CET)
-Date:   Wed, 18 Mar 2020 07:42:11 +0100
-From:   Gerd Hoffmann <kraxel@redhat.com>
-To:     dri-devel@lists.freedesktop.org, marmarek@invisiblethingslab.com,
-        David Airlie <airlied@linux.ie>,
-        "open list:DRM DRIVER FOR BOCHS VIRTUAL GPU" 
-        <virtualization@lists.linux-foundation.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3] drm/bochs: downgrade pci_request_region failure from
- error to warning
-Message-ID: <20200318064211.rg5s4sgrnqhht3f4@sirius.home.kraxel.org>
-References: <20200313084152.2734-1-kraxel@redhat.com>
- <20200317164941.GP2363188@phenom.ffwll.local>
+        Wed, 18 Mar 2020 02:53:20 -0400
+Received: by mail-qk1-f195.google.com with SMTP id z25so32142196qkj.4;
+        Tue, 17 Mar 2020 23:53:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=JIUU945tjKWn7G+uWGg7eqG/veZ5KU9jtb/2ZLYG2SI=;
+        b=orY+w5pWV/Z1rru//L4oMZleR46ybigSk519t/NT8ODjrzqN0iKGY3fsIKy0xLTzl5
+         IdNL50paLXTeHOk1UkqSXfvvdBCttWbGLY1+X7t8IzKo0HiALm8kp44W1BnqEnyDq542
+         8v5+DrK1CFN0pw+hyMwxOq+r34zRq9vYC93MaKCg0WbZYMgpPJIIMF+C5ceKrhzmFfk+
+         JrLVTwwxaiaMGcz6A2a3hK0fS5Ll73JDzeAK6F22skgeKcrrBQj5jAfpfv0xM1vQzKe7
+         /F7F8W4EY64HQtj8stzqxZjWxrfXm8F1VpP/7cwq6ksWlcsiwGEHMNX8nvBrCwQeIjsF
+         vDcg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=JIUU945tjKWn7G+uWGg7eqG/veZ5KU9jtb/2ZLYG2SI=;
+        b=tT8ztU3VKy57TaHTQmNvI594aBtzwAov+nGacP+UvLheO9+iRaYZ2xka92QN/XQOyn
+         WleAOG54Y3ekzzOPS+v8MsH+yl3CeenxkTeaWN4XIiX8CibmgoewRw4C3DPJWfk4sB6i
+         8qwCU4Kc4wgDz5o3QADyP9j7LiKz7Mw6JyJbvUDU7rnV25Qj51rAjLkCYoYjKE6agDAE
+         mcMc2yXVK+G1VpW7INKySJbW5YEhy/YwK/U4T0Y8wTOBDYx8594uPNnl861TY5KTOIvb
+         phQ/quSmm7CWuLPMx6cgC433wU2wZiyQN3A/heZB/u+ZTLNuuiXwfImGFIQmuAOjlMbf
+         SpOg==
+X-Gm-Message-State: ANhLgQ0NVtIjtdOC434/aCZq26qjTEcTxEYn97cW1533PViGTQ/zzmis
+        H8nN9rSmsCCM88GUAOD54oQpVlEqi9/1ZXat3Eg=
+X-Google-Smtp-Source: ADFU+vtGP9Ty7kCO4ONv73Nr7zNugirXg12VP1u3w7C+Ufpy9fPM+R053oz02WmqvcBe3SLlJ4igFy4Zf9q7wIDZHqE=
+X-Received: by 2002:a25:dc07:: with SMTP id y7mr3949038ybe.48.1584514399393;
+ Tue, 17 Mar 2020 23:53:19 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200317164941.GP2363188@phenom.ffwll.local>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+References: <cover.1578560282.git.benchuanggli@gmail.com> <9f861920380df9d7a6d52c905fc47643eb25f33f.1578560282.git.benchuanggli@gmail.com>
+ <add27a04-e018-d050-4d42-4fb5c532df8c@intel.com>
+In-Reply-To: <add27a04-e018-d050-4d42-4fb5c532df8c@intel.com>
+From:   Ben Chuang <benchuanggli@gmail.com>
+Date:   Wed, 18 Mar 2020 14:53:08 +0800
+Message-ID: <CACT4zj-M-BJKSwDNA7dRa88N8A4PBoX0GnMZiSMKum4GGiTiFA@mail.gmail.com>
+Subject: Re: [RFC PATCH v2 3/6] mmc: host: Add UHS-II support in host layer
+To:     Adrian Hunter <adrian.hunter@intel.com>
+Cc:     Ulf Hansson <ulf.hansson@linaro.org>,
+        linux-mmc <linux-mmc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        greg.tu@genesyslogic.com.tw,
+        Ben Chuang <ben.chuang@genesyslogic.com.tw>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 17, 2020 at 05:49:41PM +0100, Daniel Vetter wrote:
-> On Fri, Mar 13, 2020 at 09:41:52AM +0100, Gerd Hoffmann wrote:
-> > Shutdown of firmware framebuffer has a bunch of problems.  Because
-> > of this the framebuffer region might still be reserved even after
-> > drm_fb_helper_remove_conflicting_pci_framebuffers() returned.
-> 
-> Is that still the fbdev lifetime fun where the cleanup might be delayed if
-> the char device node is still open?
+On Tue, Mar 17, 2020 at 4:18 PM Adrian Hunter <adrian.hunter@intel.com> wrote:
+>
+> On 9/01/20 11:14 am, Ben Chuang wrote:
+> > From: Ben Chuang <ben.chuang@genesyslogic.com.tw>
+> >
+> > Add UHS-II support in host layer
+>
+> Split host layer changes from sdhci changes.
+>
+> >
+> > Reported-by: kbuild test robot <lkp@intel.com>
+>
+> Drop "Reported-by: kbuild test robot <lkp@intel.com>"
+>
+> > Signed-off-by: Ben Chuang <ben.chuang@genesyslogic.com.tw>
+> > ---
+> >  drivers/mmc/host/Makefile                  |   1 +
+> >  drivers/mmc/host/{sdhci.c => sdhci-core.c} | 276 ++++++--
+> >  drivers/mmc/host/sdhci-milbeaut.c          |   4 +-
+> >  drivers/mmc/host/sdhci-of-arasan.c         |   4 +-
+> >  drivers/mmc/host/sdhci-of-at91.c           |   4 +-
+> >  drivers/mmc/host/sdhci-omap.c              |   2 +-
+> >  drivers/mmc/host/sdhci-pci-core.c          |   4 +-
+> >  drivers/mmc/host/sdhci-pxav3.c             |   4 +-
+> >  drivers/mmc/host/sdhci-uhs2.c              | 751 +++++++++++++++++++++
+> >  drivers/mmc/host/sdhci-uhs2.h              |  34 +
+> >  drivers/mmc/host/sdhci-xenon.c             |   4 +-
+> >  drivers/mmc/host/sdhci.h                   | 284 +++++++-
+> >  drivers/mmc/host/sdhci_am654.c             |   4 +-
+> >  include/linux/mmc/uhs2.h                   | 270 ++++++++
+> >  14 files changed, 1583 insertions(+), 63 deletions(-)
+> >  rename drivers/mmc/host/{sdhci.c => sdhci-core.c} (94%)
+> >  create mode 100644 drivers/mmc/host/sdhci-uhs2.c
+> >  create mode 100644 drivers/mmc/host/sdhci-uhs2.h
+> >  create mode 100644 include/linux/mmc/uhs2.h
+>
+> Please make sdhci-uhs2 a module and do not rename sdhci.c.
+>
+> References in sdhci.c to sdhci-uhs2.c will need to be enclosed by
+> #if IS_REACHABLE(CONFIG_SDHCI_UHS2)
+>
+> Move all UHS-II definitions into sdhci-uhs2.h.  Things that are for V4 but
+> not necessarily UHS-II can be in sdhci.h
+>
+> Make the set_power parameter change into a separate patch
+>
+> Fix all spelling mistakes
+>
+> Make comment style correct.
+>
+> Review all checkpatch warnings and checks (i.e. --strict option)
+>
+> If possible provide a link to a tree that contains the patches.
+>
+> Re-base on Ulf's next branch
+>
+> The patch set could use an overview of how UHS-II is different from regular SD.
+>
+> In other patches there are a bunch of memory allocations on the I/O path.
+> That is a problem.  Memory needed should be allocated in advance.
 
-Yes.
-
-cheers,
-  Gerd
-
+Thanks for your comments and guidance.
+There seems to be a lot of work to do. I will do my best to meet these.
