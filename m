@@ -2,153 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E5F5118A2D2
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 20:04:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 63EF818A2D0
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 20:03:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726954AbgCRTEQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Mar 2020 15:04:16 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:46741 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726506AbgCRTEP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Mar 2020 15:04:15 -0400
-Received: by mail-pl1-f195.google.com with SMTP id r3so3541712pls.13
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Mar 2020 12:04:15 -0700 (PDT)
+        id S1726795AbgCRTDa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Mar 2020 15:03:30 -0400
+Received: from mail-qk1-f193.google.com ([209.85.222.193]:33482 "EHLO
+        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726619AbgCRTDa (ORCPT
+        <rfc822;Linux-kernel@vger.kernel.org>);
+        Wed, 18 Mar 2020 15:03:30 -0400
+Received: by mail-qk1-f193.google.com with SMTP id p6so1862756qkm.0
+        for <Linux-kernel@vger.kernel.org>; Wed, 18 Mar 2020 12:03:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=9sJyPIS9MqiGD0DkB/0XejsZsmuSIXG8S6Q+9dvyB0E=;
-        b=i146djn3/XFsXRqyCdh52CCACkJdrCMQ4DY2IU9cmSWFAg7wmi3yuFfQXSGy11xx63
-         Ex7oICQ2hMFta1eTmsejUjSNbUEBlnpI8Fv2dvySf5tmBbCd/EzgdhcPVJFxPIlriQJd
-         chXKEOzl1rzrZpwhPVz4zw9Va2rFqzlczu9/rVi2s0f8lFCDjIWtcfrey+SKHfrpHpDJ
-         +fQroK0d4W6tEpmI2sccXQ0rXse1JQuzBHiwyOuDXcqOsUKkkDDguZj03PGYADTJJBrB
-         rM55iVC55h9iLUNM+dgwgnpl1e5iaNnGlLIqU/4ScQeFPJnpZN3ajXrotLu659R/7Dkn
-         VnCg==
+        h=from:date:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=qOkhE330vtZ1e69iIjVyr/Ge6ASbGdm5Spx+kHks238=;
+        b=O0WeEkyfPOxGtBLwVh4hKvrSGmbQCPXprY/DvgQlOThx/LSPfzg1rntvKlORo+QPtu
+         PqTKG1LOj0HUbpIIm9dLSockzbHvp/pqbhexb3vCvo2xwuzht5/Ykccr9Vj5n+F54765
+         rRBWRPHoycQrjkB6NfI/O6Dp/vwQADmW2Zk3612gHSpn+SZH4WG8OKRRRAWf7VQhIxxG
+         g3BUOPZb6ib1FmV0i82w3duJbxEIsLenmL8EaRlc01YnBQ1R2WCEWghXCSEu1Vx8JVSW
+         R/71NTF6YNIREygT3+Nv/3pMkow1HLtDccbFnTgsDczLJWMngxdo6N785QBDn7MxAYLC
+         XM+A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=9sJyPIS9MqiGD0DkB/0XejsZsmuSIXG8S6Q+9dvyB0E=;
-        b=LlqZFfW3UdNXwEcea8MeOFNNZTLF457ViTes1cY5C7i8kQXfwuPRMB39jBNE1/+0kZ
-         5UhFphKzgnRm77yU2WrqRmZWpu+uTRxkJhVd3jjxSuyKsZw6DywCE5rVXFOtAg0f61Zy
-         qaMDdRbGic9r2jHAAhlTSmnpl9jvFdh+MnQb7EDr3vz299U/i5ACNbzpXyHECRtsoRDT
-         22z2l3RJq80oLszKLCHvFpP0L5d4bqSBr8BHvVKGydnCx1RHvCbFiv0UGv9Uk6gBdX3l
-         /8sn9QAMzQCu2h6AXhPaKuBEe026ZilWMrqW2j1vVpsZKcfOYb2KznrpYG0q6ecgNhLQ
-         dS2A==
-X-Gm-Message-State: ANhLgQ3fKpe5pjdcrNpljLbhcO9BaMt6zu6dBj6j18gxYXh/qxB9ePSB
-        FMLDqpjOMEyTyMugVuMOrkY=
-X-Google-Smtp-Source: ADFU+vsHoAUXbycPZi4v06uuQqoaoVPe6Uvo02jHlgFXB3NOurpeZ+/f9VeTMFabv0G/mNEIyUHZEg==
-X-Received: by 2002:a17:90b:f16:: with SMTP id br22mr5821444pjb.170.1584558254608;
-        Wed, 18 Mar 2020 12:04:14 -0700 (PDT)
-Received: from lenovo.spreadtrum.com ([117.18.48.82])
-        by smtp.gmail.com with ESMTPSA id e126sm7267968pfa.122.2020.03.18.12.04.08
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Wed, 18 Mar 2020 12:04:13 -0700 (PDT)
-From:   Orson Zhai <orson.unisoc@gmail.com>
-To:     Jason Baron <jbaron@akamai.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Changbin Du <changbin.du@intel.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Shuah Khan <skhan@linuxfoundation.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Brendan Higgins <brendanhiggins@google.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Ard Biesheuvel <ardb@kernel.org>,
-        Gary Hook <Gary.Hook@amd.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        David Gow <davidgow@google.com>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc:     orsonzhai@gmail.com, linux-kernel@vger.kernel.org,
-        kernel-team@android.com, Orson Zhai <orson.unisoc@gmail.com>
-Subject: [RFC PATCH] dynamic_debug: Add config option of DYNAMIC_DEBUG_CORE
-Date:   Thu, 19 Mar 2020 03:03:06 +0800
-Message-Id: <1584558186-23373-1-git-send-email-orson.unisoc@gmail.com>
-X-Mailer: git-send-email 2.7.4
+        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=qOkhE330vtZ1e69iIjVyr/Ge6ASbGdm5Spx+kHks238=;
+        b=d7Ft2f0Ihg3azy/CbKTez0hREIMGS1/Vy5ANJ39TpwgpG5UntYeHcSaWmR/0JJnEkq
+         R2EMGhOXXxBsUlwxP0M7t0JYx3TgSOk3hnGYMu+aVDEnV92HvUKPcEFjVTmzTbVRsvo/
+         Sqd/H13S2Rq2SydyPattd1msLcm8dbeuvOorSzqZxTgGzOTmjHms8Xz322GMYMkvh7dc
+         yQuFx1y5p4eJJhppKU4dVUvLC1MrPzPrFMUiJWbJ3O6SzUixzAKl4N4HLAsm1XoyoEDq
+         9wRIlNB8SZevVZUxUncgPeZhYY0HwXQCwedFSxj7aSocucImDvuSlA6RYjEturZ2RSpb
+         XLKw==
+X-Gm-Message-State: ANhLgQ2P+a4U5PXDLI+YLRqsuxzFx7xxjjELC3xYMLS1EpFqHSU8YoxU
+        TP83LZU9ElIfcmdDo+iTW7c=
+X-Google-Smtp-Source: ADFU+vsZeLgurK+E3emu21GqR1m+596NrqeASgWZ0y2527cKcca9MSEAd2Mzmhs0YodrjtreGPBX8w==
+X-Received: by 2002:a37:490:: with SMTP id 138mr5805842qke.378.1584558207764;
+        Wed, 18 Mar 2020 12:03:27 -0700 (PDT)
+Received: from quaco.ghostprotocols.net ([179.97.37.151])
+        by smtp.gmail.com with ESMTPSA id 18sm4706998qkk.84.2020.03.18.12.03.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 18 Mar 2020 12:03:27 -0700 (PDT)
+From:   Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
+X-Google-Original-From: Arnaldo Carvalho de Melo <acme@kernel.org>
+Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
+        id 58472404E4; Wed, 18 Mar 2020 16:03:25 -0300 (-03)
+Date:   Wed, 18 Mar 2020 16:03:25 -0300
+To:     Jin Yao <yao.jin@linux.intel.com>
+Cc:     jolsa@kernel.org, peterz@infradead.org, mingo@redhat.com,
+        alexander.shishkin@linux.intel.com, Linux-kernel@vger.kernel.org,
+        ak@linux.intel.com, kan.liang@intel.com, yao.jin@intel.com
+Subject: Re: [PATCH v7 0/3] perf report: Support sorting by a given event in
+ group
+Message-ID: <20200318190325.GO11531@kernel.org>
+References: <20200220013616.19916-1-yao.jin@linux.intel.com>
+ <20200318190116.GN11531@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200318190116.GN11531@kernel.org>
+X-Url:  http://acmel.wordpress.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There is the requirement from new Android that kernel image (GKI) and
-kernel modules are supposed to be built at differnet places. Some people
-want to enable dynamic debug for kernel modules only but not for kernel
-image itself with the consideration of binary size increased or more
-memory being used.
+Em Wed, Mar 18, 2020 at 04:01:16PM -0300, Arnaldo Carvalho de Melo escreveu:
+> Em Thu, Feb 20, 2020 at 09:36:13AM +0800, Jin Yao escreveu:
+> > When performing "perf report --group", it shows the event group information
+> > together. By default, the output is sorted by the first event in group.
+> > It would be nice for user to select any event for sorting.
+> > 
+> > The patch 1/3 introduces a new option "--group-sort-idx" to sort the
+> > output by the event at the index n in event group.
+> > 
+> > The patch 2/3 creates a new key K_RELOAD to reload the browser.
+> > 
+> > The patch 3/3 supports hotkeys in browser to select a event to
+> > sort.
+> 
+> Thanks, applied.
 
-By this patch, dynamic debug is divided into core part (the defination of
-functions) and macro replacement part. We can only have the core part to
-be built-in and do not have to activate the debug output from kenrel image.
+Doesn't work with 'perf top', should, investigating,
 
-Signed-off-by: Orson Zhai <orson.unisoc@gmail.com>
----
- include/linux/dynamic_debug.h |  2 +-
- lib/Kconfig.debug             | 18 ++++++++++++++++--
- lib/Makefile                  |  2 +-
- 3 files changed, 18 insertions(+), 4 deletions(-)
+- Arnaldo
+ 
+> - Arnaldo
+>  
+> >  v7:
+> >  ---
+> >  v6 was posted two months ago and all comments were fixed.
+> > 
+> >  v7 just rebases to perf/core, no other change.
+> > 
+> > Jin Yao (3):
+> >   perf report: Change sort order by a specified event in group
+> >   perf report: Support a new key to reload the browser
+> >   perf report: support hotkey to let user select any event for sorting
+> > 
+> >  tools/perf/Documentation/perf-report.txt |   5 ++
+> >  tools/perf/builtin-report.c              |  16 +++-
+> >  tools/perf/ui/browsers/hists.c           |  29 ++++++-
+> >  tools/perf/ui/hist.c                     | 104 +++++++++++++++++++----
+> >  tools/perf/ui/keysyms.h                  |   1 +
+> >  tools/perf/util/hist.h                   |   1 +
+> >  tools/perf/util/symbol_conf.h            |   1 +
+> >  7 files changed, 138 insertions(+), 19 deletions(-)
+> > 
+> > -- 
+> > 2.17.1
+> > 
+> 
+> -- 
+> 
+> - Arnaldo
 
-diff --git a/include/linux/dynamic_debug.h b/include/linux/dynamic_debug.h
-index 4cf02ec..abcd5fd 100644
---- a/include/linux/dynamic_debug.h
-+++ b/include/linux/dynamic_debug.h
-@@ -48,7 +48,7 @@ struct _ddebug {
- 
- 
- 
--#if defined(CONFIG_DYNAMIC_DEBUG)
-+#if defined(CONFIG_DYNAMIC_DEBUG_CORE)
- int ddebug_add_module(struct _ddebug *tab, unsigned int n,
- 				const char *modname);
- extern int ddebug_remove_module(const char *mod_name);
-diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
-index 69def4a..78a7256 100644
---- a/lib/Kconfig.debug
-+++ b/lib/Kconfig.debug
-@@ -97,8 +97,7 @@ config BOOT_PRINTK_DELAY
- config DYNAMIC_DEBUG
- 	bool "Enable dynamic printk() support"
- 	default n
--	depends on PRINTK
--	depends on DEBUG_FS
-+	select DYNAMIC_DEBUG_CORE
- 	help
- 
- 	  Compiles debug level messages into the kernel, which would not
-@@ -164,6 +163,21 @@ config DYNAMIC_DEBUG
- 	  See Documentation/admin-guide/dynamic-debug-howto.rst for additional
- 	  information.
- 
-+config DYNAMIC_DEBUG_CORE
-+	bool "Enable core functions of dynamic debug support"
-+	depends on PRINTK
-+	depends on DEBUG_FS
-+	help
-+	  Enable this option to build ddebug_* and __dynamic_* routines
-+	  into kernel. If you want enable whole dynamic debug features,
-+	  select CONFIG_DYNAMIC_DEBUG directly and this option will be
-+	  automatically selected.
-+
-+	  This option is selected when you want to enable dynamic debug
-+	  for kernel modules only but not for the kernel base. Especailly
-+	  in the case that kernel modules are built out of the place where
-+	  kernel base is built.
-+
- config SYMBOLIC_ERRNAME
- 	bool "Support symbolic error names in printf"
- 	default y if PRINTK
-diff --git a/lib/Makefile b/lib/Makefile
-index 611872c..2096d83 100644
---- a/lib/Makefile
-+++ b/lib/Makefile
-@@ -183,7 +183,7 @@ lib-$(CONFIG_GENERIC_BUG) += bug.o
- 
- obj-$(CONFIG_HAVE_ARCH_TRACEHOOK) += syscall.o
- 
--obj-$(CONFIG_DYNAMIC_DEBUG) += dynamic_debug.o
-+obj-$(CONFIG_DYNAMIC_DEBUG_CORE) += dynamic_debug.o
- obj-$(CONFIG_SYMBOLIC_ERRNAME) += errname.o
- 
- obj-$(CONFIG_NLATTR) += nlattr.o
 -- 
-2.7.4
 
+- Arnaldo
