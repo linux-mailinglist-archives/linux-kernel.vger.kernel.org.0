@@ -2,86 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 09F6818990A
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 11:16:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 472DC189915
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 11:17:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727558AbgCRKQT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Mar 2020 06:16:19 -0400
-Received: from mail2.protonmail.ch ([185.70.40.22]:35756 "EHLO
-        mail2.protonmail.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726733AbgCRKQS (ORCPT
+        id S1727605AbgCRKRW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Mar 2020 06:17:22 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:34953 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727041AbgCRKRV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Mar 2020 06:16:18 -0400
-Date:   Wed, 18 Mar 2020 10:16:07 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=emersion.fr;
-        s=protonmail; t=1584526575;
-        bh=01MHuTHqNXmoKioUDGcRkUpZS1pvvS0nJPIk9ir/Q0Y=;
-        h=Date:To:From:Cc:Reply-To:Subject:In-Reply-To:References:
-         Feedback-ID:From;
-        b=Do8UytcvmJJ8nANDCqp720vh0trtOLOccnZxDiiYcjdYwVY7VHb35kATIoegxJAOB
-         q/m9/c9sSBh8waQIyHnmNZNQkI3C8bVg+CvoDVPdQOsFZ2PlRfziGvAHWiRGCCb0Qs
-         G/Hzl5QJG+zYF6yuj5v0kslrUDUA52c7rIlw9CEA=
-To:     Christian Brauner <christian.brauner@ubuntu.com>
-From:   Simon Ser <contact@emersion.fr>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "oleg@redhat.com" <oleg@redhat.com>,
-        "christian@brauner.io" <christian@brauner.io>,
-        "ebiederm@xmission.com" <ebiederm@xmission.com>
-Reply-To: Simon Ser <contact@emersion.fr>
-Subject: Re: SO_PEERCRED and pidfd
-Message-ID: <WuCKXl7CWZrfvKTWuYiwL6tkPq2YgA_j1lyVVczFB48s8ozWz_setJou9JO-VqsL2kJtRV8r4yOvyQhI5LsdCdIaSKYZpY1_9Bf3DwpQIMg=@emersion.fr>
-In-Reply-To: <20200317181843.iq3jaboqid2xfktv@wittgenstein>
-References: <go0RLOS7_DdxyAmfrDR38QPUloZuUtiFdXe2Ey3EkGGuvmW7z18Dvt4fY1qZ1k-Y75-YZSxqVWnZpWRGN7TZ6OPbDczfL7HI25bXLIYq1y4=@emersion.fr>
- <20200317181843.iq3jaboqid2xfktv@wittgenstein>
-Feedback-ID: FsVprHBOgyvh0T8bxcZ0CmvJCosWkwVUg658e_lOUQMnA9qynD8O1lGeniuBDfPSkDAUuhiKfOIXUZBfarMyvA==:Ext:ProtonMail
+        Wed, 18 Mar 2020 06:17:21 -0400
+Received: by mail-wm1-f68.google.com with SMTP id m3so2602912wmi.0;
+        Wed, 18 Mar 2020 03:17:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=H1EcxEfJM49avse1S2eIURNhiFA3z+ms1VeEZrzjwZo=;
+        b=d9GVXd7A+zm3/unbzuaX7CJe8B6oWEJRw+AxrHUCpCFDd81d8XWPSiUvAmeAoJNYm0
+         ZVZhJ/FmDvvqqYzaGmV3Gv6tFvigfoo4Mmk9cHKssyEXX0iHzDrD6T4Dxgl+dcqaW/V2
+         q3EOeQHiGIIxvgwkbwwGJSsOev25jfisRaItl+UGdrpgDwkrpFWr1opeqOqGqoIMsHdx
+         Ckpz9sSJPxc2v1KkyXMaOfEHVmfsjIRkHKlTSurm4QkgRNErzr4wJdpu0O23BO0jfizp
+         U/GGS0WFTBlmWCNlIkWDEz7Qj6ebbiQnGCOihy7C7oW4xxZMhKGliCmqDuvZk+SwGZxd
+         wHOw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=H1EcxEfJM49avse1S2eIURNhiFA3z+ms1VeEZrzjwZo=;
+        b=dYOQyr9WZ2UWNF0E614/nLV276nd9QZXS79d/X/xPFWULqUBrzPKysKZ9l47TeDOMQ
+         PprcIuHbVRzhBhSNpPcO3Qy1PtxI09xP4IoTifeRxoJfCGS7JiIbqOy5thp/cLJq5Lzq
+         1rXtpIHk22ucOQ6VAW1fheJYdM2WapOvY1kjhwP/XtQE0zuGzkSmmB/eKwIgU5+vvGm6
+         EVIzuzYiIvcY/+b/ay16Ucis2B0xrtvYkLnPpAMgzzKTO83DoJdaYKwWZYTL3ust+Toe
+         tqoej3+ML+DvP73V4KTT7PpbQqMrL+nboFCfq36xAcQ8jkJyIpSD/kdE+o+00tS2TdEw
+         rvWg==
+X-Gm-Message-State: ANhLgQ1JAEckCv5TQP9nL0PnLMN01lJMZDyF2q01gZ0T7woCiU6PouwH
+        Yh5DIKYCRHSSeyYGBRKyXMHD5N0MOA7zVX+uvsdWfA==
+X-Google-Smtp-Source: ADFU+vu50GxlzsJlMPTfvmSeWgwJl4UJQOc8H4AxuzLJ3PtQNJCYc/ZJ9Cgtq7nUhgAU+Oom6rijjQtlReLkmpvwr6A=
+X-Received: by 2002:a7b:c92a:: with SMTP id h10mr4368871wml.26.1584526639622;
+ Wed, 18 Mar 2020 03:17:19 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+References: <20200318083120.13805-1-zhang.lyra@gmail.com> <20200318083120.13805-2-zhang.lyra@gmail.com>
+ <CADBw62rSE+MrQB_HSOwVNos_W=x-mHMEuVrZN=jU0Yt1KXFGvw@mail.gmail.com>
+ <CADBw62pWhA8n5rAgX2Hud06k9cvF9b3KDfZmH7oX1HEz=MWzYA@mail.gmail.com> <20200318101340.GA2081481@kroah.com>
+In-Reply-To: <20200318101340.GA2081481@kroah.com>
+From:   Chunyan Zhang <zhang.lyra@gmail.com>
+Date:   Wed, 18 Mar 2020 18:16:43 +0800
+Message-ID: <CAAfSe-t7e0Cd3Lm_x9u=OhuBBtTexx3+qyg-+F71LK=C1V5pNA@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] serial: sprd: cleanup the sprd_port for error case
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Baolin Wang <baolin.wang7@gmail.com>, Jiri Slaby <jslaby@suse.com>,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Chunyan Zhang <chunyan.zhang@unisoc.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-1.2 required=7.0 tests=ALL_TRUSTED,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF shortcircuit=no
-        autolearn=disabled version=3.4.4
-X-Spam-Checker-Version: SpamAssassin 3.4.4 (2020-01-24) on mail.protonmail.ch
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tuesday, March 17, 2020 7:18 PM, Christian Brauner <christian.brauner@ub=
-untu.com> wrote:
-
-> On Tue, Mar 17, 2020 at 05:54:47PM +0000, Simon Ser wrote:
+On Wed, 18 Mar 2020 at 18:13, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
 >
-> > Hi all,
-> > I'm a Wayland developer and I've been working on protocol security,
-> > which involves identifying the process on the other end of a Unix
-> > socket [1]. This is already done by e.g. D-Bus via the PID, however
-> > this is racy [2].
-> > Getting the PID is done via SO_PEERCRED. Would there be interest in
-> > adding a way to get a pidfd out of a Unix socket to fix the race?
+> On Wed, Mar 18, 2020 at 06:06:05PM +0800, Baolin Wang wrote:
+> > On Wed, Mar 18, 2020 at 5:16 PM Baolin Wang <baolin.wang7@gmail.com> wr=
+ote:
+> > >
+> > > On Wed, Mar 18, 2020 at 4:31 PM Chunyan Zhang <zhang.lyra@gmail.com> =
+wrote:
+> > > >
+> > > > From: Chunyan Zhang <chunyan.zhang@unisoc.com>
+> > > >
+> > > > It would be better to cleanup the sprd_port for the device before
+> > > > return error.
+> > > >
+> > > > Signed-off-by: Chunyan Zhang <chunyan.zhang@unisoc.com>
+> > > > ---
+> > > >  drivers/tty/serial/sprd_serial.c | 4 +++-
+> > > >  1 file changed, 3 insertions(+), 1 deletion(-)
+> > > >
+> > > > diff --git a/drivers/tty/serial/sprd_serial.c b/drivers/tty/serial/=
+sprd_serial.c
+> > > > index 9f8c14ff6454..54477de9822f 100644
+> > > > --- a/drivers/tty/serial/sprd_serial.c
+> > > > +++ b/drivers/tty/serial/sprd_serial.c
+> > > > @@ -1204,8 +1204,10 @@ static int sprd_probe(struct platform_device=
+ *pdev)
+> > > >         up->has_sysrq =3D IS_ENABLED(CONFIG_SERIAL_SPRD_CONSOLE);
+> > > >
+> > > >         ret =3D sprd_clk_init(up);
+> > > > -       if (ret)
+> > > > +       if (ret) {
+> > > > +               sprd_port[index] =3D NULL;
+> > >
+> > > =E5=A6=82=E6=9E=9C=E6=88=91=E4=BB=AC=E5=BC=BA=E5=88=B6=E4=BD=BF=E7=94=
+=A8alias, =E5=88=99=E8=BF=99=E9=87=8C=E5=BA=94=E8=AF=A5=E4=B9=9F=E6=97=A0=
+=E9=9C=80=E6=B8=85=E9=99=A4=E4=BA=86=EF=BC=8C=E5=9B=A0=E4=B8=BA=E4=B8=80=E8=
+=BF=9Bprobe=E5=B0=B1=E4=BC=9A=E7=BB=99=E5=AE=83=E9=87=8D=E6=96=B0=E8=B5=8B=
+=E5=80=BC=E3=80=82 =E8=BF=98=E6=98=AF=E6=88=91=E6=BC=8F=E4=BA=86=E4=BB=80=
+=E4=B9=88=EF=BC=9F
+> >
+> > Sorry, please ignore my previsous comment. I made a stupid mistake
+> > when talking with Chunyan.
+> >
+> > So what I mean is we should not add this clean up, cause we will
+> > always get the correct index with aliases, and it will be overlapped
+> > when probing again.
 >
-> Puh, I knew this would happen. I've been asked to add this feature by
-> the systemd people as well and also at a conference last year. And
-> honestly, I don't know yet. pidfds right now are mostly about
-> guaranteeing (stable) identity and they come with the necessary
-> restrictions in place to prevent shenanigans (such as signaling across
-> pid namespaces a restriction I'd like to lift at some point). But I
-> have been thinking about attaching some capability like features to
-> pidfds soon as that has been an even more frequent request. At that
-> point having them receivable this way might be problematic unless we put
-> restrictions in place.
+> So ignore this patch and only take patch 1/2?  If so, can I get your
+> acked-by for it?
 
-Wouldn't this new mechanism just be an atomic getsockopt+pidfd_open?
-(It would make sure the process is still alive of course.)
+Hi Greg,
 
-Can you elaborate wrt. capabilities? I'm not sure I understand what
-that means.
+There's something I need to modify on 1/2 as well, I will send the
+whole patch-set later, please ignore these two patches.
 
-> I would like to go through codepaths for SO_PEERCRED as I don't have
-> them in my head and so can't really say something definitely about this
-> just now.
-> (From the top of my head it seems that if we were to do this it might
-> need to be a separate SO_* flag? Mainly so people don't suddenly receive
-> fds they didn't expect.)
+Sorry for the noise!
 
-Yeah, this would need to be either a separate SO_* flag or a completely
-different thing to prevent surprises.
+Thanks,
+Chunyan
+
+>
+> thanks,
+>
+> greg k-h
