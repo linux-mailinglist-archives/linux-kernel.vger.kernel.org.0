@@ -2,41 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3AD9918A5B1
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 22:03:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9DFCB18A59D
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 22:02:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728460AbgCRVDR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Mar 2020 17:03:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56184 "EHLO mail.kernel.org"
+        id S1727144AbgCRUzt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Mar 2020 16:55:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56248 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728359AbgCRUzl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Mar 2020 16:55:41 -0400
+        id S1728420AbgCRUzo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Mar 2020 16:55:44 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 620AC208E0;
-        Wed, 18 Mar 2020 20:55:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A96B720BED;
+        Wed, 18 Mar 2020 20:55:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584564941;
-        bh=Mvf0nlAPOIsBi6bXbdEjMKe94UpF17RxnZ9l1Xzf/ag=;
+        s=default; t=1584564943;
+        bh=FWsmFzMQ/sS1qgsZvfWpRuNBoguZ6P0zBx2PZK6IJv0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hdid3Yv4vDnPO5apwlycxxfJvbgAzmvl0FK/Jb9ZO38wfCakKTcwN6hxJXVPxEk0Q
-         nSL6OkCUlf/xEonR5UVILaObuLuBegSw2w7kpFeJu4jyxOiwDtMRvWoEFn7Zj2MuFG
-         eW4EzoqTmq26ULqfQEpbOh+HYGe5B3IC4BmZR2As=
+        b=Z+pIyildjqARsh4yF03ajwJb9ia51qRAkKLg7Bp7xh8z6YAeFYwMg0qFQqeCkilTa
+         0BRFiWXebnT7lOuBf40y8BDPXYBoyD9PP6u6gOIU936bqOie+VARkNHEHhpc6mrIDA
+         5ZTiddse5aWu5Lvue74F/91RoQsnejRX9VzqXYYE=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Mahesh Bandewar <maheshb@google.com>,
-        Eric Dumazet <edumazet@google.com>,
+Cc:     Eric Dumazet <edumazet@google.com>,
+        Mahesh Bandewar <maheshb@google.com>,
         "David S . Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 26/37] ipvlan: don't deref eth hdr before checking it's set
-Date:   Wed, 18 Mar 2020 16:54:58 -0400
-Message-Id: <20200318205509.17053-26-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 28/37] ipvlan: do not use cond_resched_rcu() in ipvlan_process_multicast()
+Date:   Wed, 18 Mar 2020 16:55:00 -0400
+Message-Id: <20200318205509.17053-28-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200318205509.17053-1-sashal@kernel.org>
 References: <20200318205509.17053-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 X-stable: review
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
@@ -45,57 +44,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Mahesh Bandewar <maheshb@google.com>
+From: Eric Dumazet <edumazet@google.com>
 
-[ Upstream commit ad8192767c9f9cf97da57b9ffcea70fb100febef ]
+[ Upstream commit afe207d80a61e4d6e7cfa0611a4af46d0ba95628 ]
 
-IPvlan in L3 mode discards outbound multicast packets but performs
-the check before ensuring the ether-header is set or not. This is
-an error that Eric found through code browsing.
+Commit e18b353f102e ("ipvlan: add cond_resched_rcu() while
+processing muticast backlog") added a cond_resched_rcu() in a loop
+using rcu protection to iterate over slaves.
 
-Fixes: 2ad7bf363841 (“ipvlan: Initial check-in of the IPVLAN driver.”)
-Signed-off-by: Mahesh Bandewar <maheshb@google.com>
-Reported-by: Eric Dumazet <edumazet@google.com>
+This is breaking rcu rules, so lets instead use cond_resched()
+at a point we can reschedule
+
+Fixes: e18b353f102e ("ipvlan: add cond_resched_rcu() while processing muticast backlog")
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Cc: Mahesh Bandewar <maheshb@google.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ipvlan/ipvlan_core.c | 18 ++++++++++--------
- 1 file changed, 10 insertions(+), 8 deletions(-)
+ drivers/net/ipvlan/ipvlan_core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/net/ipvlan/ipvlan_core.c b/drivers/net/ipvlan/ipvlan_core.c
-index 1a8132eb2a3ec..9b5aaafea1549 100644
+index 6fe24721e4856..40ac60904c8dd 100644
 --- a/drivers/net/ipvlan/ipvlan_core.c
 +++ b/drivers/net/ipvlan/ipvlan_core.c
-@@ -504,19 +504,21 @@ static int ipvlan_process_outbound(struct sk_buff *skb)
- 	struct ethhdr *ethh = eth_hdr(skb);
- 	int ret = NET_XMIT_DROP;
+@@ -282,7 +282,6 @@ void ipvlan_process_multicast(struct work_struct *work)
+ 			}
+ 			ipvlan_count_rx(ipvlan, len, ret == NET_RX_SUCCESS, true);
+ 			local_bh_enable();
+-			cond_resched_rcu();
+ 		}
+ 		rcu_read_unlock();
  
--	/* In this mode we dont care about multicast and broadcast traffic */
--	if (is_multicast_ether_addr(ethh->h_dest)) {
--		pr_debug_ratelimited("Dropped {multi|broad}cast of type=[%x]\n",
--				     ntohs(skb->protocol));
--		kfree_skb(skb);
--		goto out;
--	}
--
- 	/* The ipvlan is a pseudo-L2 device, so the packets that we receive
- 	 * will have L2; which need to discarded and processed further
- 	 * in the net-ns of the main-device.
- 	 */
- 	if (skb_mac_header_was_set(skb)) {
-+		/* In this mode we dont care about
-+		 * multicast and broadcast traffic */
-+		if (is_multicast_ether_addr(ethh->h_dest)) {
-+			pr_debug_ratelimited(
-+				"Dropped {multi|broad}cast of type=[%x]\n",
-+				ntohs(skb->protocol));
-+			kfree_skb(skb);
-+			goto out;
-+		}
-+
- 		skb_pull(skb, sizeof(*ethh));
- 		skb->mac_header = (typeof(skb->mac_header))~0U;
- 		skb_reset_network_header(skb);
+@@ -299,6 +298,7 @@ void ipvlan_process_multicast(struct work_struct *work)
+ 		}
+ 		if (dev)
+ 			dev_put(dev);
++		cond_resched();
+ 	}
+ }
+ 
 -- 
 2.20.1
 
