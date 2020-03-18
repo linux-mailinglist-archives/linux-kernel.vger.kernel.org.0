@@ -2,79 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 216D818A015
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 17:00:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 928A518A01B
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 17:01:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727113AbgCRQAt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Mar 2020 12:00:49 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:57744 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726765AbgCRQAs (ORCPT
+        id S1727178AbgCRQBM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Mar 2020 12:01:12 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:45736 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726817AbgCRQBL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Mar 2020 12:00:48 -0400
-Received: from localhost ([127.0.0.1] helo=vostro.local)
-        by Galois.linutronix.de with esmtp (Exim 4.80)
-        (envelope-from <john.ogness@linutronix.de>)
-        id 1jEb7G-0007Tj-3p; Wed, 18 Mar 2020 17:00:22 +0100
-From:   John Ogness <john.ogness@linutronix.de>
-To:     Eugeniu Rosca <roscaeugeniu@gmail.com>
-Cc:     linux-kernel@vger.kernel.org, Petr Mladek <pmladek@suse.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Jisheng Zhang <Jisheng.Zhang@synaptics.com>,
-        Valdis Kletnieks <valdis.kletnieks@vt.edu>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Andrew Gabbasov <andrew_gabbasov@mentor.com>,
-        Dirk Behme <dirk.behme@de.bosch.com>,
-        Eugeniu Rosca <erosca@de.adit-jv.com>
-Subject: Re: [RFC PATCH 2/3] printk: add console_verbose_{start,end}
-References: <20200315170903.17393-1-erosca@de.adit-jv.com>
-        <20200315170903.17393-3-erosca@de.adit-jv.com>
-Date:   Wed, 18 Mar 2020 17:00:20 +0100
-In-Reply-To: <20200315170903.17393-3-erosca@de.adit-jv.com> (Eugeniu Rosca's
-        message of "Sun, 15 Mar 2020 18:09:02 +0100")
-Message-ID: <87o8stmz57.fsf@linutronix.de>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/23.4 (gnu/linux)
+        Wed, 18 Mar 2020 12:01:11 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <colin.king@canonical.com>)
+        id 1jEb80-0007pL-EG; Wed, 18 Mar 2020 16:01:08 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Felipe Balbi <felipe.balbi@linux.intel.com>,
+        linux-usb@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] usb: cdns3: fix spelling mistake "wrapperr" -> "wrapper"
+Date:   Wed, 18 Mar 2020 16:01:08 +0000
+Message-Id: <20200318160108.267403-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2020-03-15, Eugeniu Rosca <roscaeugeniu@gmail.com> wrote:
-> diff --git a/include/linux/printk.h b/include/linux/printk.h
-> index 1e6108b8d15f..14755ef7b017 100644
-> --- a/include/linux/printk.h
-> +++ b/include/linux/printk.h
-> @@ -3,6 +3,7 @@
->  #define __KERNEL_PRINTK__
->  
->  #include <stdarg.h>
-> +#include <linux/atomic.h>
->  #include <linux/init.h>
->  #include <linux/kern_levels.h>
->  #include <linux/linkage.h>
-> @@ -77,6 +78,15 @@ static inline void console_verbose(void)
->  		console_loglevel = CONSOLE_LOGLEVEL_MOTORMOUTH;
->  }
->  
-> +#ifdef CONFIG_PRINTK
-> +extern atomic_t ignore_loglevel;
-> +static inline void console_verbose_start(void) { atomic_inc(&ignore_loglevel); }
-> +static inline void console_verbose_end(void) { atomic_dec(&ignore_loglevel); }
+From: Colin Ian King <colin.king@canonical.com>
 
-To be compatible with console_verbose() semantics, this should also
-respect console_loglevel=0. Perhaps by updating
-suppress_message_printing() to be something like:
+There is a spelling mistake in the module description. Fix it.
 
-static bool suppress_message_printing(int level)
-{
-        return (!console_loglevel ||
-                (level >= console_loglevel && !ignore_loglevel));
-}
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/usb/cdns3/cdns3-pci-wrap.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-John Ogness
+diff --git a/drivers/usb/cdns3/cdns3-pci-wrap.c b/drivers/usb/cdns3/cdns3-pci-wrap.c
+index b0a29efe7d31..deeea618ba33 100644
+--- a/drivers/usb/cdns3/cdns3-pci-wrap.c
++++ b/drivers/usb/cdns3/cdns3-pci-wrap.c
+@@ -201,4 +201,4 @@ MODULE_DEVICE_TABLE(pci, cdns3_pci_ids);
+ 
+ MODULE_AUTHOR("Pawel Laszczak <pawell@cadence.com>");
+ MODULE_LICENSE("GPL v2");
+-MODULE_DESCRIPTION("Cadence USBSS PCI wrapperr");
++MODULE_DESCRIPTION("Cadence USBSS PCI wrapper");
+-- 
+2.25.1
+
