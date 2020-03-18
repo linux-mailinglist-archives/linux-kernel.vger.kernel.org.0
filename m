@@ -2,195 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A6FED189781
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 10:00:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6A0BC189785
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 10:02:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727408AbgCRJAj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Mar 2020 05:00:39 -0400
-Received: from ma-dnext03.denso.co.jp ([133.192.181.78]:44480 "EHLO
-        ma-dnext03.denso.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726523AbgCRJAi (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Mar 2020 05:00:38 -0400
-Received: from grdma01h.denso.co.jp (unknown [133.192.24.24])
-        by ma-dnext03.denso.co.jp (Postfix) with ESMTP id 3117A5D024C;
-        Wed, 18 Mar 2020 18:00:36 +0900 (JST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=adit-jv.com;
-        s=jpadit-jvmail2011; t=1584522036;
-        bh=MJNLb+QUlzHddJJCWYqXFByLkk81A4pksiBWvdYtaZM=;
-        h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-         Content-Type:Content-Transfer-Encoding:In-Reply-To;
-        b=8TueuV3cLIbWFLV7WdQnl/jc8S05NMxWUWR4FaAmWLAglFfr6sTsgFKQ3L4XLcFOL
-         wUfDIc+YAdRXTAAUmpWzbs6VmLrn6/c3qezoor1sSc0HcYrtnMCwRGo+iXnkkzJqAF
-         uqMsi1Q73gisa4aUm+AZWg5pM+Ls3Y3SbTrK72dPG9A2Q+FRiT4RI/324+cy3NFFHK
-         w+wJ0Oq2fZoCeg8RST4F1IB/y4MacAftLXCZyt4U8piydnOk42qEzTlirWt9rZ5QUa
-         3shjvKZ8YtdQNvec3Q49CocZ7vF/TmutteOKiliMYBeOvsFD8IfHgtND309NBv2K4y
-         TaWY1vUfWsgow==
-Received: by grdma01h.denso.co.jp (Postfix, from userid 0)
-        id 2E0F8C04E05; Wed, 18 Mar 2020 18:00:36 +0900 (JST)
-Received: from smtp0.denso.co.jp [133.192.24.87] 
-         by grdma01h. with ESMTP id UAA15964;
-         Wed, 18 Mar 2020 18:00:36 +0900
-Received: from ky0exch01.adit-jv.com ([10.71.113.8])
-        by smtp00.denso.co.jp (MOS 4.4.7-GA)
-        with ESMTP id FNI36647;
-        Wed, 18 Mar 2020 18:00:34 +0900
-Received: from jp-u0004 (10.71.112.120) by ky0exch01.adit-jv.com (10.71.113.8)
- with Microsoft SMTP Server (TLS) id 14.3.487.0; Wed, 18 Mar 2020 18:00:34
- +0900
-Date:   Wed, 18 Mar 2020 18:00:29 +0900
-From:   Suresh Udipi <sudipi@jp.adit-jv.com>
-To:     Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
-CC:     Suresh Udipi <sudipi@jp.adit-jv.com>, <akiyama@nds-osk.co.jp>,
-        <efriedrich@de.adit-jv.com>, <erosca@de.adit-jv.com>,
-        <hverkuil-cisco@xs4all.nl>, <jacopo+renesas@jmondi.org>,
-        <laurent.pinchart@ideasonboard.com>,
-        <linux-kernel@vger.kernel.org>, <linux-media@vger.kernel.org>,
-        <linux-renesas-soc@vger.kernel.org>, <mrodin@de.adit-jv.com>,
-        <securitycheck@denso.co.jp>
-Subject: Re: [PATCH v2] [RFC] rcar-vin: rcar-csi2: Correct the selection of
- hsfreqrange
-Message-ID: <20200318090029.GA22842@jp-u0004>
-References: <20200316130247.GA2258968@oden.dyn.berto.se>
- <1584428905-21560-1-git-send-email-sudipi@jp.adit-jv.com>
- <20200317103756.GC2496015@oden.dyn.berto.se>
+        id S1727447AbgCRJB7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Mar 2020 05:01:59 -0400
+Received: from foss.arm.com ([217.140.110.172]:47076 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726523AbgCRJB7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Mar 2020 05:01:59 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A10E631B;
+        Wed, 18 Mar 2020 02:01:58 -0700 (PDT)
+Received: from [10.37.12.57] (unknown [10.37.12.57])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 31F5D3F52E;
+        Wed, 18 Mar 2020 02:01:57 -0700 (PDT)
+Subject: Re: [PATCH v5 00/13] SCMI Notifications Core Support
+To:     Cristian Marussi <cristian.marussi@arm.com>,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc:     sudeep.holla@arm.com, james.quinlan@broadcom.com,
+        Jonathan.Cameron@Huawei.com
+References: <20200316150334.47463-1-cristian.marussi@arm.com>
+From:   Lukasz Luba <lukasz.luba@arm.com>
+Message-ID: <e51598b5-2c7b-56f2-4426-9cce3d5d3d52@arm.com>
+Date:   Wed, 18 Mar 2020 09:01:55 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20200317103756.GC2496015@oden.dyn.berto.se>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Originating-IP: [10.71.112.120]
+In-Reply-To: <20200316150334.47463-1-cristian.marussi@arm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 17, 2020 at 11:37:56AM +0100, Niklas Söderlund wrote:
-> Hi Suresh,
-> 
-> Thanks for your work.
-> 
-> On 2020-03-17 16:08:25 +0900, Suresh Udipi wrote:
-> > hsfreqrange should be chosen based on the calculated mbps which
-> > is closer to the default bit rate  and within the range as per
-> > table[1]. But current calculation always selects first value which
-> > is greater than or equal to the calculated mbps which may lead
-> > to chosing a wrong range in some cases.
-> > 
-> > For example for 360 mbps for H3/M3N
-> > Existing logic selects
-> > Calculated value 360Mbps : Default 400Mbps Range [368.125 -433.125 mbps]
-> > 
-> > This hsfreqrange is out of range.
-> > 
-> > The logic is changed to get the default value which is closest to the
-> > calculated value [1]
-> > 
-> > Calculated value 360Mbps : Default 350Mbps  Range [320.625 -380.625 mpbs]
-> > 
-> > [1] specs r19uh0105ej0200-r-car-3rd-generation.pdf [Table 25.9]
-> > 
-> > There is one exectpion value 227Mbps, which may cause out of
-> > range.
-> 
-> Then something else is needed I think :-)
-> 
-> I liked v1 of this RFC more, where you added a u16 min and max to struct 
-> rcsi2_mbps_reg. I think that is the right solution.
-> 
-> What I tried to express in my review of v1 was
-> 
-> - You should remove the mbps member from struct rcsi2_mbps_reg.
-> - Update the walk of the array in rcsi2_set_phypll() so that it finds 
->   the first entry where the calculated target value is between min and 
->   max and use the reg setting for that entry.
-> 
-> Would that solution make sens too you? Sorry if I expressed myself a but 
-> muddy in v1 about this.
- 
-Thank you for your feedback. Checking the range make more sense.
+Hi Cristian,
 
-We can further optimize it, by checking only the Max range value.
-
-- Remove mbps and min member from struct rcsi2_mbps_reg.
-- Update the walk of the array in rcsi2_set_phypll() so that it finds
-  the first entry where the calculated bit rate is less than the max.
-
-Lower bit rates less than 80Mbps 
-like 48Mbps(Raspberry pi camera 640x480 connected to Kingfisher)
-can also be supported by selecting the lowest default bit rate 80Mbps
-as done before this fix.
-
-Please let me know your opinion on the same.
-Meanwhile iam working on creating the patch, test it and update the same.
-> > 
-> > Fixes: 769afd212b16 ("media: rcar-csi2: add Renesas R-Car MIPI CSI-2 receiver driver")
-> > 
-> > Signed-off-by: Suresh Udipi <sudipi@jp.adit-jv.com>
-> > Signed-off-by: Kazuyoshi Akiyama <akiyama@nds-osk.co.jp>
-> > ---
-> > Changes in v2:
-> >   - Added the boundary check for the maximum bit rate.
-> >   
-> >   - Simplified the logic by remmoving range check 
-> >     as only the closest default value covers most 
-> >     of the use cases.
-> > 
-> >   - Aligning the commit message based on the above change
-> > 
-> >  drivers/media/platform/rcar-vin/rcar-csi2.c | 18 +++++++++++++-----
-> >  1 file changed, 13 insertions(+), 5 deletions(-)
-> > 
-> > diff --git a/drivers/media/platform/rcar-vin/rcar-csi2.c b/drivers/media/platform/rcar-vin/rcar-csi2.c
-> > index faa9fb2..6573625 100644
-> > --- a/drivers/media/platform/rcar-vin/rcar-csi2.c
-> > +++ b/drivers/media/platform/rcar-vin/rcar-csi2.c
-> > @@ -199,6 +199,7 @@ static const struct rcsi2_mbps_reg phtw_mbps_v3m_e3[] = {
-> >  /* PHY Frequency Control */
-> >  #define PHYPLL_REG			0x68
-> >  #define PHYPLL_HSFREQRANGE(n)		((n) << 16)
-> > +#define PHYPLL_HSFREQRANGE_MAX		1500
-> >  
-> >  static const struct rcsi2_mbps_reg hsfreqrange_h3_v3h_m3n[] = {
-> >  	{ .mbps =   80, .reg = 0x00 },
-> > @@ -431,16 +432,23 @@ static int rcsi2_wait_phy_start(struct rcar_csi2 *priv)
-> >  static int rcsi2_set_phypll(struct rcar_csi2 *priv, unsigned int mbps)
-> >  {
-> >  	const struct rcsi2_mbps_reg *hsfreq;
-> > +	const struct rcsi2_mbps_reg *hsfreq_prev = NULL;
-> >  
-> > -	for (hsfreq = priv->info->hsfreqrange; hsfreq->mbps != 0; hsfreq++)
-> > -		if (hsfreq->mbps >= mbps)
-> > -			break;
-> > -
-> > -	if (!hsfreq->mbps) {
-> > +	if (mbps > PHYPLL_HSFREQRANGE_MAX) {
-> >  		dev_err(priv->dev, "Unsupported PHY speed (%u Mbps)", mbps);
-> >  		return -ERANGE;
-> >  	}
-> >  
-> > +	for (hsfreq = priv->info->hsfreqrange; hsfreq->mbps != 0; hsfreq++) {
-> > +		if (hsfreq->mbps >= mbps)
-> > +			break;
-> > +		hsfreq_prev = hsfreq;
-> > +	}
-> > +
-> > +	if (hsfreq_prev &&
-> > +	    ((mbps - hsfreq_prev->mbps) <= (hsfreq->mbps - mbps)))
-> > +		hsfreq = hsfreq_prev;
-> > +
-> >  	rcsi2_write(priv, PHYPLL_REG, PHYPLL_HSFREQRANGE(hsfreq->reg));
-> >  
-> >  	return 0;
-> > -- 
-> > 2.7.4
-> > 
+On 3/16/20 3:03 PM, Cristian Marussi wrote:
+> Hi all,
 > 
-> -- 
-> Regards,
-> Niklas Söderlund
+> this series wants to introduce SCMI Notification Support, built on top of
+> the standard Kernel notification chain subsystem.
+> 
+> At initialization time each SCMI Protocol takes care to register with the
+> new SCMI notification core the set of its own events which it intends to
+> support.
+> 
+> Using the API exposed via scmi_handle.notify_ops a Kernel user can register
+> its own notifier_t callback (via a notifier_block as usual) against any
+> registered event as identified by the tuple:
+> 
+> 		(proto_id, event_id, src_id)
+> 
+> where src_id represents a generic source identifier which is protocol
+> dependent like domain_id, performance_id, sensor_id and so forth.
+> (users can anyway do NOT provide any src_id, and subscribe instead to ALL
+>   the existing (if any) src_id sources for that proto_id/evt_id combination)
+> 
+> Each of the above tuple-specified event will be served on its own dedicated
+> blocking notification chain, dynamically allocated on-demand when at least
+> one user has shown interest on that event.
+> 
+> Upon a notification delivery all the users' registered notifier_t callbacks
+> will be in turn invoked and fed with the event_id as @action param and a
+> generated custom per-event struct _report as @data param.
+> (as in include/linux/scmi_protocol.h)
+> 
+> The final step of notification delivery via users' callback invocation is
+> instead delegated to a pool of deferred workers (Kernel cmwq): each
+> SCMI protocol has its own dedicated worker and dedicated queue to push
+> events from the rx ISR to the worker.
+> 
 
--- 
-Best Regards,
-Suresh Udipi.
+Could you give an example how the notification would be delivered
+further to the upper layers, like hwmon driver, cpufreq or thermal?
+For example, for sensor protocol which delivers event
+SENSOR_TRIP_POINT_EVENT indicating a trip point was crossed.
+
+Would it be possible for:
+drivers/hwmon/scmi-hwmon.c
+to get this temperature events like an interrupt?
+
+I couldn't find it in the implementation of the registered handlers.
+
+Regards,
+Lukasz
