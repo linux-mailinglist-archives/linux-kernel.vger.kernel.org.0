@@ -2,112 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7DB1B189660
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 08:58:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 99A871896C0
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 09:21:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726786AbgCRH6D (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Mar 2020 03:58:03 -0400
-Received: from us-smtp-delivery-74.mimecast.com ([216.205.24.74]:31338 "EHLO
-        us-smtp-delivery-74.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726452AbgCRH6D (ORCPT
+        id S1727324AbgCRIVd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Mar 2020 04:21:33 -0400
+Received: from mo-csw1115.securemx.jp ([210.130.202.157]:46442 "EHLO
+        mo-csw.securemx.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726513AbgCRIVc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Mar 2020 03:58:03 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1584518282;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=M+gEIOPX0qxekH1F68Wzhr3e0fXNU3XzPM40JRdqWi4=;
-        b=VbOU5SP/qntIzpvAc/v9gJRHdkCdp0O/NCub8TrqrKOzPcj8jBToSK2pGyam3yNMBaHpEX
-        B+CsOa9NzjaPkhwVUupbIJmFoAeQs2YBjp4AzJMIVPjdmuYmpUDQIqaNnr7nbZt84b4JE4
-        SlMJ5pX+fXQRpfqG5R0ArCyk+amBCPI=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-405--CZxqHtdP8mzhzeWXm1rTg-1; Wed, 18 Mar 2020 03:57:56 -0400
-X-MC-Unique: -CZxqHtdP8mzhzeWXm1rTg-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id E37D613F6;
-        Wed, 18 Mar 2020 07:57:54 +0000 (UTC)
-Received: from krava (unknown [10.40.195.82])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 4D5855D9E5;
-        Wed, 18 Mar 2020 07:57:50 +0000 (UTC)
-Date:   Wed, 18 Mar 2020 08:57:43 +0100
-From:   Jiri Olsa <jolsa@redhat.com>
-To:     John Garry <john.garry@huawei.com>
-Cc:     peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
-        mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
-        namhyung@kernel.org, will@kernel.org, ak@linux.intel.com,
-        linuxarm@huawei.com, linux-kernel@vger.kernel.org,
-        james.clark@arm.com, qiangqing.zhang@nxp.com
-Subject: Re: [PATCH v2 0/7] perf test pmu-events case
-Message-ID: <20200318075743.GA821557@krava>
-References: <1584442939-8911-1-git-send-email-john.garry@huawei.com>
+        Wed, 18 Mar 2020 04:21:32 -0400
+Received: by mo-csw.securemx.jp (mx-mo-csw1115) id 02I8L2fm010762; Wed, 18 Mar 2020 17:21:02 +0900
+X-Iguazu-Qid: 2wHI1scKEP6Un1aFpV
+X-Iguazu-QSIG: v=2; s=0; t=1584519662; q=2wHI1scKEP6Un1aFpV; m=tYEeYQOfbv0NS8WQPefQvNX9sqJ7svQnh+4MDaVVJEk=
+Received: from imx2.toshiba.co.jp (imx2.toshiba.co.jp [106.186.93.51])
+        by relay.securemx.jp (mx-mr1113) id 02I8L0Dp028359;
+        Wed, 18 Mar 2020 17:21:01 +0900
+Received: from enc01.localdomain ([106.186.93.100])
+        by imx2.toshiba.co.jp  with ESMTP id 02I8bJ4b003726;
+        Wed, 18 Mar 2020 17:37:19 +0900 (JST)
+Received: from hop001.toshiba.co.jp ([133.199.164.63])
+        by enc01.localdomain  with ESMTP id 02I8L0KQ016170;
+        Wed, 18 Mar 2020 17:21:00 +0900
+Subject: Re: [PATCH v4 0/2] mtd: spinand: toshiba: Support for new Kioxia
+ Serial NAND
+To:     Miquel Raynal <miquel.raynal@bootlin.com>
+Cc:     vigneshr@ti.com, linux-kernel@vger.kernel.org,
+        linux-mtd@lists.infradead.org
+References: <cover.1583834323.git.ytc-mb-yfuruyama7@kioxia.com>
+ <20200311165011.63a3d82e@xps13>
+From:   Yoshio Furuyama <ytc-mb-yfuruyama7@kioxia.com>
+X-TSB-HOP: ON
+Message-ID: <42e02e2c-ee61-1b0d-5d8e-3a512c042151@kioxia.com>
+Date:   Wed, 18 Mar 2020 14:40:47 +0900
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1584442939-8911-1-git-send-email-john.garry@huawei.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+In-Reply-To: <20200311165011.63a3d82e@xps13>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 17, 2020 at 07:02:12PM +0800, John Garry wrote:
 
-SNIP
+On 2020/03/12 0:50, Miquel Raynal wrote:
+> Hi Yoshio,
+>
+> Yoshio Furuyama <ytc-mb-yfuruyama7@kioxia.com> wrote on Wed, 11 Mar
+> 2020 10:47:04 +0900:
+>
+>> First patch is to rename function name becase of add new device.
+>> Second patch is to supprot for new device.
+>>
+>> Yoshio Furuyama (2):
+>>    mtd: spinand: toshiba: Rename function name to change suffix and
+>>      prefix (8Gbit)
+>>    mtd: spinand: toshiba: Support for new Kioxia Serial NAND
+>>
+>>   drivers/mtd/nand/spi/toshiba.c | 173 +++++++++++++++++++++++++++++++----------
+>>   1 file changed, 130 insertions(+), 43 deletions(-)
+>>
+> I am very sorry but actually I had issues applying all your patches not
+> because they were not based on v5.6-rc1, but because since then I
+> applied a patch changing the detection that changed the content of a
+> lot of structures (including in Toshiba's driver).
+>
+> Can you please rebase again on top of the current nand/next? I am very
+> sorry for this extra work, this is my mistake.
 
-> $ tools/perf/perf test -vv 10
-> 
-> 10: PMU events                                            :
-> --- start ---
-> test child forked, pid 26610
-> testing event table bp_l1_btb_correct: pass
-> testing event table bp_l2_btb_correct: pass
-> testing event table segment_reg_loads.any: pass
-> testing event table dispatch_blocked.any: pass
-> testing event table eist_trans: pass
-> testing event table uncore_hisi_ddrc.flux_wcmd: pass
-> testing event table unc_cbo_xsnp_response.miss_eviction: pass
-> Using CPUID GenuineIntel-6-3D-4
-> intel_pt default config: tsc,pt,branch
-> skipping testing PMU breakpoint
-> testing aliases PMU uncore_cbox_1: matched event unc_cbo_xsnp_response.miss_eviction
-> testing PMU uncore_cbox_1 aliases: pass
-> testing aliases PMU cpu: matched event bp_l1_btb_correct
-> testing aliases PMU cpu: matched event bp_l2_btb_correct
-> testing aliases PMU cpu: matched event segment_reg_loads.any
-> testing aliases PMU cpu: matched event dispatch_blocked.any
-> testing aliases PMU cpu: matched event eist_trans
-> testing PMU cpu aliases: pass
-> skipping testing PMU software
-> skipping testing PMU intel_bts
-> testing aliases PMU uncore_cbox_0: matched event unc_cbo_xsnp_response.miss_eviction
-> testing PMU uncore_cbox_0 aliases: pass
-> skipping testing PMU tracepoint
-> test child finished with 0
-> ---- end ----
-> PMU events: Ok
-> 
-> 
-> Changes since v1:
-> - Verify event table in generated pmu-events.c, in addition to verifying
->   aliases
-> - Don't create separate table for test events, but include as a "testcpu"
-> 
-> John Garry (7):
->   perf jevents: Add some test events
->   perf jevents: Support test events folder
->   perf pmu: Refactor pmu_add_cpu_aliases()
->   perf test: Add pmu-events test
->   perf pmu: Add is_pmu_core()
->   perf pmu: Make pmu_uncore_alias_match() public
->   perf test: Test pmu-events aliases
+Thanks comment.         I will revise rev (V5) next week.
 
-Acked-by: Jiri Olsa <jolsa@redhat.com>
+BR
 
-thanks a lot!
-
-jirka
-
+> Head should be:
+>
+> 	a5d53ad26a8b ("mtd: rawnand: brcmnand: Add support for flash-edu for dma transfers")
+>
+> And the culprit commit is:
+>
+> 	f1541773af49 ("mtd: spinand: rework detect procedure for different READ_ID operation")
+>
+> Thanks,
+> Miquèl
+>
+>
+>
