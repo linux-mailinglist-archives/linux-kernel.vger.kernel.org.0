@@ -2,90 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3E961189443
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 04:06:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2B88318943A
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 04:01:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726730AbgCRDGA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Mar 2020 23:06:00 -0400
-Received: from m17618.mail.qiye.163.com ([59.111.176.18]:5484 "EHLO
-        m17618.mail.qiye.163.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726250AbgCRDGA (ORCPT
+        id S1726647AbgCRDBW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Mar 2020 23:01:22 -0400
+Received: from mail-qk1-f194.google.com ([209.85.222.194]:34034 "EHLO
+        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726229AbgCRDBV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Mar 2020 23:06:00 -0400
-X-Greylist: delayed 548 seconds by postgrey-1.27 at vger.kernel.org; Tue, 17 Mar 2020 23:05:58 EDT
-Received: from ubuntu.localdomain (unknown [58.251.74.226])
-        by m17618.mail.qiye.163.com (Hmail) with ESMTPA id 0A6584E177F;
-        Wed, 18 Mar 2020 10:56:45 +0800 (CST)
-From:   Li Tao <tao.li@vivo.com>
-To:     Felipe Balbi <balbi@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>,
-        Sergey Organov <sorganov@gmail.com>, Li Tao <tao.li@vivo.com>,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     wenhu.wang@vivo.com
-Subject: [PATCH] usb: gadget: serial: Fixed KASAN null-ptr-deref in tty_wakeup
-Date:   Wed, 18 Mar 2020 10:56:01 +0800
-Message-Id: <20200318025606.2058-1-tao.li@vivo.com>
-X-Mailer: git-send-email 2.17.1
-X-HM-Spam-Status: e1kfGhgUHx5ZQUtXWQgYFAkeWUFZTlVCQ0pLS0tPSUhPSEpPWVdZKFlBSE
-        83V1ktWUFJV1kJDhceCFlBWTU0KTY6NyQpLjc#WQY+
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6MhA6Nio4Mjg1PDQiOAo0IRwv
-        DAoKFD9VSlVKTkNPTktLSUtMTktJVTMWGhIXVQ8aFFUXEjsNEg0UVRgUFkVZV1kSC1lBWU5DVUlO
-        SlVMT1VJSU1ZV1kIAVlBSEpIQzcG
-X-HM-Tid: 0a70eb9267399376kuws0a6584e177f
+        Tue, 17 Mar 2020 23:01:21 -0400
+Received: by mail-qk1-f194.google.com with SMTP id f3so36436699qkh.1
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Mar 2020 20:01:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=massaru-org.20150623.gappssmtp.com; s=20150623;
+        h=message-id:subject:from:to:cc:date:in-reply-to:references
+         :user-agent:mime-version:content-transfer-encoding;
+        bh=ydkM02gA1lv2jXZ+vVnjGn/g5VzXdwCSm+r9ur1CJPs=;
+        b=IHTT0YwYPoS8iMmX0qpmgTqBgRe4WcF01YbL2TEUEwWqZdjOAZwHvbArCyepsxfcs0
+         5RhcvvUs+1Nhtw8Q6FHiVx6OPM4knOtgscqJG4CCaIjYfENTn8BQGSfU8HnjNQ0Au5q5
+         fCJ1bE1qbheMPOHu5Rx+kKtWBcbtX1E1cUtDYKEmYlLrkxgQNFYTrzM5p90radr5v1Do
+         uKvdEWktYiutwnbjOklODkdp0T+wqHzG0jkZ1uC+yH67D/mYvJ0vRtYBv6vLNZnQN5rh
+         lsF+ZTSX4PkQQneVutZwIkM59OL6A9ALmdJbMV/E2fIKiRfxHbcRzHn0n78WLUHNuXvy
+         MMcg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:user-agent:mime-version:content-transfer-encoding;
+        bh=ydkM02gA1lv2jXZ+vVnjGn/g5VzXdwCSm+r9ur1CJPs=;
+        b=CBQNntlOGHV/85BqyW8AkFXV94kABTVi75DBDICr8eRuLvb4zB5dc+jjeKMa/SF4cD
+         sXzLQ+QVa7QWLSgCqa9Q2exw0xBH2ZCCJB62Vq67ZiAVlVHRqk3H6UboJ7NV20nnC14V
+         0ZWA0AA2ZTQ4/zAofoT3LFWtGfE3MWZNWafL26N6ytorr+z9qnTJFcv4eBdwpQVK536n
+         p5AZPN2X9y/fA8gIXl4/G8y1w1l0rqJ1S4Ov9san85e46FTbtF/sdPoFwXLxgt5OUnIa
+         h0OHRG+4FsZaK8Nnafk670c4ZBlkDiuv3uiwP4axgo0oRCqdTRd/P36Dtlx1WXIlHI+U
+         xmbw==
+X-Gm-Message-State: ANhLgQ3AHSzc6ZA9FVNzlXHUmHW+juddIsLrtse1wgK8ApZuBVPfeAqM
+        GzE0FuJYK3xosBhrq+Ha4jRnuQ==
+X-Google-Smtp-Source: ADFU+vvoBQmPUjD+nO2M86aMQl7VYth980jIKigj6jVHrMsul9eZMS8ExL6RHyTxp/EV9PKXlpRWrQ==
+X-Received: by 2002:a37:6244:: with SMTP id w65mr2061863qkb.350.1584500480945;
+        Tue, 17 Mar 2020 20:01:20 -0700 (PDT)
+Received: from bbking.lan ([2804:14c:4a5:36c::cd2])
+        by smtp.gmail.com with ESMTPSA id i4sm3478217qtr.41.2020.03.17.20.01.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 17 Mar 2020 20:01:20 -0700 (PDT)
+Message-ID: <3ffd63b480b47aa572a9f95ba620eb4d0ce93f34.camel@massaru.org>
+Subject: Re: [PATCH 2/2] xarray: Add missing blank line after declaration
+From:   Vitor Massaru Iha <vitor@massaru.org>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-kernel-mentees@lists.linuxfoundation.org,
+        skhan@linuxfoundation.org
+Date:   Wed, 18 Mar 2020 00:01:17 -0300
+In-Reply-To: <20200318015553.GG22433@bombadil.infradead.org>
+References: <cover.1584494902.git.vitor@massaru.org>
+         <7efa62f727eb176341fc0cdfcd47c890ff424451.1584494902.git.vitor@massaru.org>
+         <20200318015553.GG22433@bombadil.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.32.5 (3.32.5-1.fc30) 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The port->port.tty maybe reset as NULL, If gs_close() was invoked
-unexpectedly during running gserial_connect().
+Hi Matthew,
 
-BUG: KASAN: null-ptr-deref in tty_wakeup+0x1c/0x84
-Call trace:
-[<0000000095c3c837>] dump_backtrace+0x0/0x6d4
-[<0000000047726bb8>] show_stack+0x18/0x20
-[<00000000bedb4c1e>] --dump_stack+0x20/0x28
-[<00000000722f2e2a>] dump_stack+0x84/0xb0
-[<00000000325683d4>] kasan_report_error+0x178/0x1e4
-[<0000000053079998>] kasan_report_error+0x0/0x1e4
-[<00000000b6d33afa>] --asan_load8+0x150/0x15c
-[<00000000188745b8>] tty_wakeup+0x1c/0x84
-[<0000000064f6dd21>] gs_start_io+0xd0/0x11c
-[<0000000063d67b6c>] gserial_connect+0x15c/0x1b0
-[<00000000faf7c0f9>] dm_set_alt+0xa8/0x190
-[<000000008deb1909>] composite_setup+0xde4/0x1edc
-[<00000000792ee16d>] android_setup+0x210/0x294
-[<00000000ab32ef30>] dwc3_ep0_delegate_req+0x48/0x68
-[<0000000054e26fd2>] dwc3_ep0_interrupt+0xf2c/0x16fc
-[<0000000050cb2262>] dwc3_interrupt+0x464/0x1f44
-[<00000000fdcaa6e9>] --handle_irq_event_percpu+0x184/0x398
-[<000000003b24ff56>] handle_irq_event_percpu+0xa0/0x134
-[<00000000aedda5ee>] handle_irq_event+0x60/0xa0
-[<000000005f51a570>] handle_fasteoi_irq+0x23c/0x31c
-[<000000008db2608d>] generic_handle_irq+0x70/0xa4
-[<00000000098683fc>] --handle_domain_irq+0x84/0xe0
-[<000000008ed23b46>] gic_handle_irq+0x98/0xb8
+On Tue, 2020-03-17 at 18:55 -0700, Matthew Wilcox wrote:
+> On Tue, Mar 17, 2020 at 10:43:03PM -0300, Vitor Massaru Iha wrote:
+> > @@ -1624,6 +1624,7 @@ static inline unsigned int
+> > xas_find_chunk(struct xa_state *xas, bool advance,
+> >  	if (XA_CHUNK_SIZE == BITS_PER_LONG) {
+> >  		if (offset < XA_CHUNK_SIZE) {
+> >  			unsigned long data = *addr & (~0UL << offset);
+> > +
+> >  			if (data)
+> >  				return __ffs(data);
+> >  		}
+> 
+> Do you seriously think this makes the function in any way more
+> legible?
 
-Signed-off-by: Li Tao <tao.li@vivo.com>
----
- drivers/usb/gadget/function/u_serial.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Sorry. I was in doubt whether it would actually improve. I did some
+research in older patches and I found something like this.
 
-diff --git a/drivers/usb/gadget/function/u_serial.c b/drivers/usb/gadget/function/u_serial.c
-index 8167d379e115..3c109a8f9ec4 100644
---- a/drivers/usb/gadget/function/u_serial.c
-+++ b/drivers/usb/gadget/function/u_serial.c
-@@ -565,7 +565,8 @@ static int gs_start_io(struct gs_port *port)
- 		gs_start_tx(port);
- 		/* Unblock any pending writes into our circular buffer, in case
- 		 * we didn't in gs_start_tx() */
--		tty_wakeup(port->port.tty);
-+		if (port->port.tty)
-+			tty_wakeup(port->port.tty);
- 	} else {
- 		gs_free_requests(ep, head, &port->read_allocated);
- 		gs_free_requests(port->port_usb->in, &port->write_pool,
--- 
-2.17.1
+
 
