@@ -2,78 +2,130 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ED89718A3E6
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 21:44:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DCF5A18A3ED
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 21:45:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727022AbgCRUn7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Mar 2020 16:43:59 -0400
-Received: from mga04.intel.com ([192.55.52.120]:21315 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726647AbgCRUn7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Mar 2020 16:43:59 -0400
-IronPort-SDR: h5LTaqX+TF5IyvHijae6FwuSsiAxqZr1GpuhdMCZaxMthmsBzCzMisDxUIGqQM2J+sv4AI5Q63
- c1yG+I+xyg6w==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Mar 2020 13:43:58 -0700
-IronPort-SDR: hnAFtkem/0RpY0/6OofqBa2ypUL03MUicEUJuekqAX1X0jwCOC/oEcgHrsZwVtv8Sgd57+FRBi
- a0SRj1QCHxsw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,568,1574150400"; 
-   d="scan'208";a="238294014"
-Received: from crojewsk-mobl1.ger.corp.intel.com (HELO [10.249.155.222]) ([10.249.155.222])
-  by fmsmga008.fm.intel.com with ESMTP; 18 Mar 2020 13:43:55 -0700
-Subject: Re: snd_hda_intel/sst-acpi sound breakage on suspend/resume since
- 5.6-rc1
-To:     Dominik Brodowski <linux@dominikbrodowski.net>
-Cc:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Keyon Jie <yang.jie@linux.intel.com>,
-        alsa-devel@alsa-project.org, curtis@malainey.com,
-        linux-kernel@vger.kernel.org, tiwai@suse.com,
-        liam.r.girdwood@linux.intel.com, broonie@kernel.org
-References: <20200318063022.GA116342@light.dominikbrodowski.net>
- <41d0b2b5-6014-6fab-b6a2-7a7dbc4fe020@linux.intel.com>
- <20200318123930.GA2433@light.dominikbrodowski.net>
- <d7a357c5-54af-3e69-771c-d7ea83c6fbb7@linux.intel.com>
- <20200318162029.GA3999@light.dominikbrodowski.net>
- <e49eec28-2037-f5db-e75b-9eadf6180d81@intel.com>
- <20200318192213.GA2987@light.dominikbrodowski.net>
-From:   Cezary Rojewski <cezary.rojewski@intel.com>
-Message-ID: <b352a46b-8a66-8235-3622-23e561d3728c@intel.com>
-Date:   Wed, 18 Mar 2020 21:43:54 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.6.0
+        id S1726897AbgCRUpc convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 18 Mar 2020 16:45:32 -0400
+Received: from us-smtp-2.mimecast.com ([205.139.110.61]:25266 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726647AbgCRUpb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Mar 2020 16:45:31 -0400
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-284-kcuabduPOgCQd7eUPJdaaA-1; Wed, 18 Mar 2020 16:45:27 -0400
+X-MC-Unique: kcuabduPOgCQd7eUPJdaaA-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 0D5B5800D5E;
+        Wed, 18 Mar 2020 20:45:26 +0000 (UTC)
+Received: from krava.redhat.com (unknown [10.40.192.164])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id D7F035C545;
+        Wed, 18 Mar 2020 20:45:23 +0000 (UTC)
+From:   Jiri Olsa <jolsa@kernel.org>
+To:     Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc:     lkml <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Michael Petlan <mpetlan@redhat.com>
+Subject: [PATCH] perf tools: Unify a bit the build directory output
+Date:   Wed, 18 Mar 2020 21:45:22 +0100
+Message-Id: <20200318204522.1200981-1-jolsa@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20200318192213.GA2987@light.dominikbrodowski.net>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: kernel.org
+Content-Type: text/plain; charset=WINDOWS-1252
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2020-03-18 20:22, Dominik Brodowski wrote:
-> On Wed, Mar 18, 2020 at 07:27:58PM +0100, Cezary Rojewski wrote:
+Removing the extra 'SUBDIR' line from clean and doc build
+output. Because it's annoying.. ;-)
 
->>
->> Due to pandemic I'm working remotely and right now won't be able to test
->> audio quality so focusing on the stream==NULL issue. And thus we got to help
->> each other out : )
-> 
-> Sure, and thanks for taking a look at this!
-> 
->> Could you verify issue reproduces on 5.6.0-rc1 on your machine?
-> 
-> It reproduces on 5.6.0-rc1 + i915-bugfix. I'm trying to bisect it further in
-> the background, but that may take quite some time.
-> 
+Before:
+  $ make clean
+  ...
+  SUBDIR   Documentation
+  CLEAN    Documentation
 
-Could you checkout v5.6-rc1 with following commit reverted:
-	ASoC: Intel: broadwell: change cpu_dai and platform components for SOF
+After:
+  $ make clean
+  ...
+  CLEAN    Documentation
 
-For my working v5.6-rc1 commit id is: 
-64df6afa0dab5eda95cc4cc2269e3d4e83b6b6ce.
+Before:
+  $ make doc
+  BUILD:   Doing 'make -j8' parallel build
+  SUBDIR   Documentation
+  ASCIIDOC perf-stat.html
+  ...
 
-Czarek
+After:
+  $ make doc
+  BUILD:   Doing 'make -j8' parallel build
+  ASCIIDOC perf-stat.html
+  ...
+
+Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+---
+ tools/perf/Makefile.perf | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
+
+diff --git a/tools/perf/Makefile.perf b/tools/perf/Makefile.perf
+index 3eda9d4b88e7..a02aca9b21f4 100644
+--- a/tools/perf/Makefile.perf
++++ b/tools/perf/Makefile.perf
+@@ -231,6 +231,7 @@ TRACE_EVENT_DIR = $(srctree)/tools/lib/traceevent/
+ BPF_DIR         = $(srctree)/tools/lib/bpf/
+ SUBCMD_DIR      = $(srctree)/tools/lib/subcmd/
+ LIBPERF_DIR     = $(srctree)/tools/lib/perf/
++DOC_DIR         = $(srctree)/tools/perf/Documentation/
+ 
+ # Set FEATURE_TESTS to 'all' so all possible feature checkers are executed.
+ # Without this setting the output feature dump file misses some features, for
+@@ -792,7 +793,6 @@ $(LIBSUBCMD): FORCE
+ 	$(Q)$(MAKE) -C $(SUBCMD_DIR) O=$(OUTPUT) $(OUTPUT)libsubcmd.a
+ 
+ $(LIBSUBCMD)-clean:
+-	$(call QUIET_CLEAN, libsubcmd)
+ 	$(Q)$(MAKE) -C $(SUBCMD_DIR) O=$(OUTPUT) clean
+ 
+ help:
+@@ -832,7 +832,7 @@ INSTALL_DOC_TARGETS += quick-install-doc quick-install-man quick-install-html
+ 
+ # 'make doc' should call 'make -C Documentation all'
+ $(DOC_TARGETS):
+-	$(QUIET_SUBDIR0)Documentation $(QUIET_SUBDIR1) $(@:doc=all)
++	$(Q)$(MAKE) -C $(DOC_DIR) O=$(OUTPUT) $(@:doc=all)
+ 
+ TAG_FOLDERS= . ../lib ../include
+ TAG_FILES= ../../include/uapi/linux/perf_event.h
+@@ -959,7 +959,7 @@ install-python_ext:
+ 
+ # 'make install-doc' should call 'make -C Documentation install'
+ $(INSTALL_DOC_TARGETS):
+-	$(QUIET_SUBDIR0)Documentation $(QUIET_SUBDIR1) $(@:-doc=)
++	$(Q)$(MAKE) -C $(DOC_DIR) O=$(OUTPUT) $(@:-doc=)
+ 
+ ### Cleaning rules
+ 
+@@ -1008,7 +1008,8 @@ clean:: $(LIBTRACEEVENT)-clean $(LIBAPI)-clean $(LIBBPF)-clean $(LIBSUBCMD)-clea
+ 		$(OUTPUT)$(rename_flags_array) \
+ 		$(OUTPUT)$(arch_errno_name_array) \
+ 		$(OUTPUT)$(sync_file_range_arrays)
+-	$(QUIET_SUBDIR0)Documentation $(QUIET_SUBDIR1) clean
++	$(call QUIET_CLEAN, Documentation) \
++	$(MAKE) -C $(DOC_DIR) O=$(OUTPUT) clean >/dev/null
+ 
+ #
+ # To provide FEATURE-DUMP into $(FEATURE_DUMP_COPY)
+-- 
+2.25.1
+
