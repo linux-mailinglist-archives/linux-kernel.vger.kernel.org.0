@@ -2,36 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 49BFD18A611
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 22:05:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BD2A518A606
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 22:05:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728043AbgCRUyw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Mar 2020 16:54:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54766 "EHLO mail.kernel.org"
+        id S1728088AbgCRUyy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Mar 2020 16:54:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54844 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728005AbgCRUyu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Mar 2020 16:54:50 -0400
+        id S1728055AbgCRUyw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Mar 2020 16:54:52 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EB485208DB;
-        Wed, 18 Mar 2020 20:54:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 52833208CA;
+        Wed, 18 Mar 2020 20:54:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584564889;
-        bh=eZ+Gpdfwi9pPSJke0P4s2gg5wBXTOVRai36dhbep4O0=;
+        s=default; t=1584564892;
+        bh=Hk5pv84QE4SnB0YDYtWGXEVu35VXUvqE0EZBpfhvqL8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GBuJyFDIY8gf9sr4zGTXHZojZWSo4xLpHZGE36tE5hWQOVTusy1tZEqN/G4TAxM31
-         W1aZL86KTXqGCRPhKw9rpmlsC1ET68OjKvMpXO/jpodIgVh7EIr25gCyh2KkLNV3nD
-         GKP7sEmyvbcFdWKOo11pbcu2/vLlEKU7VNOJLIkA=
+        b=y59gheGjjVPjUokJNAHK9rNM5Q/ULyBtq/lq0QKwD72zH8e3/HAOjtx5lUtJGVUz8
+         EzAFOGblXwr0WUJ+pTgkDWS3BG7OI8kagrbWYc4GZHZrEwOTchBU/3zqjc+8iSni4e
+         WIkNksChUJrKev6bdZIGQXfbqzVwFhDLi3ksd3bE=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Jakub Kicinski <kuba@kernel.org>,
-        Johannes Berg <johannes.berg@intel.com>,
-        Sasha Levin <sashal@kernel.org>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.4 58/73] nl80211: add missing attribute validation for channel switch
-Date:   Wed, 18 Mar 2020 16:53:22 -0400
-Message-Id: <20200318205337.16279-58-sashal@kernel.org>
+Cc:     Christoph Hellwig <hch@lst.de>,
+        "Artem S . Tashkinov" <aros@gmx.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.4 60/73] driver code: clarify and fix platform device DMA mask allocation
+Date:   Wed, 18 Mar 2020 16:53:24 -0400
+Message-Id: <20200318205337.16279-60-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200318205337.16279-1-sashal@kernel.org>
 References: <20200318205337.16279-1-sashal@kernel.org>
@@ -44,34 +46,138 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jakub Kicinski <kuba@kernel.org>
+From: Christoph Hellwig <hch@lst.de>
 
-[ Upstream commit 5cde05c61cbe13cbb3fa66d52b9ae84f7975e5e6 ]
+[ Upstream commit e3a36eb6dfaeea8175c05d5915dcf0b939be6dab ]
 
-Add missing attribute validation for NL80211_ATTR_OPER_CLASS
-to the netlink policy.
+This does three inter-related things to clarify the usage of the
+platform device dma_mask field. In the process, fix the bug introduced
+by cdfee5623290 ("driver core: initialize a default DMA mask for
+platform device") that caused Artem Tashkinov's laptop to not boot with
+newer Fedora kernels.
 
-Fixes: 1057d35ede5d ("cfg80211: introduce TDLS channel switch commands")
-Signed-off-by: Jakub Kicinski <kuba@kernel.org>
-Link: https://lore.kernel.org/r/20200303051058.4089398-4-kuba@kernel.org
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+This does:
+
+ - First off, rename the field to "platform_dma_mask" to make it
+   greppable.
+
+   We have way too many different random fields called "dma_mask" in
+   various data structures, where some of them are actual masks, and
+   some of them are just pointers to the mask. And the structures all
+   have pointers to each other, or embed each other inside themselves,
+   and "pdev" sometimes means "platform device" and sometimes it means
+   "PCI device".
+
+   So to make it clear in the code when you actually use this new field,
+   give it a unique name (it really should be something even more unique
+   like "platform_device_dma_mask", since it's per platform device, not
+   per platform, but that gets old really fast, and this is unique
+   enough in context).
+
+   To further clarify when the field gets used, initialize it when we
+   actually start using it with the default value.
+
+ - Then, use this field instead of the random one-off allocation in
+   platform_device_register_full() that is now unnecessary since we now
+   already have a perfectly fine allocation for it in the platform
+   device structure.
+
+ - The above then allows us to fix the actual bug, where the error path
+   of platform_device_register_full() would unconditionally free the
+   platform device DMA allocation with 'kfree()'.
+
+   That kfree() was dont regardless of whether the allocation had been
+   done earlier with the (now removed) kmalloc, or whether
+   setup_pdev_dma_masks() had already been used and the dma_mask pointer
+   pointed to the mask that was part of the platform device.
+
+It seems most people never triggered the error path, or only triggered
+it from a call chain that set an explicit pdevinfo->dma_mask value (and
+thus caused the unnecessary allocation that was "cleaned up" in the
+error path) before calling platform_device_register_full().
+
+Robin Murphy points out that in Artem's case the wdat_wdt driver failed
+in platform_device_add(), and that was the one that had called
+platform_device_register_full() with pdevinfo.dma_mask = 0, and would
+have caused that kfree() of pdev.dma_mask corrupting the heap.
+
+A later unrelated kmalloc() then oopsed due to the heap corruption.
+
+Fixes: cdfee5623290 ("driver core: initialize a default DMA mask for platform device")
+Reported-bisected-and-tested-by:  Artem S. Tashkinov <aros@gmx.com>
+Reviewed-by: Robin Murphy <robin.murphy@arm.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Christoph Hellwig <hch@lst.de>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/wireless/nl80211.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/base/platform.c         | 25 ++++++-------------------
+ include/linux/platform_device.h |  2 +-
+ 2 files changed, 7 insertions(+), 20 deletions(-)
 
-diff --git a/net/wireless/nl80211.c b/net/wireless/nl80211.c
-index f0c6c522964c2..321c132747ce7 100644
---- a/net/wireless/nl80211.c
-+++ b/net/wireless/nl80211.c
-@@ -564,6 +564,7 @@ const struct nla_policy nl80211_policy[NUM_NL80211_ATTR] = {
- 		NLA_POLICY_MAX(NLA_U8, IEEE80211_NUM_UPS - 1),
- 	[NL80211_ATTR_ADMITTED_TIME] = { .type = NLA_U16 },
- 	[NL80211_ATTR_SMPS_MODE] = { .type = NLA_U8 },
-+	[NL80211_ATTR_OPER_CLASS] = { .type = NLA_U8 },
- 	[NL80211_ATTR_MAC_MASK] = {
- 		.type = NLA_EXACT_LEN_WARN,
- 		.len = ETH_ALEN
+diff --git a/drivers/base/platform.c b/drivers/base/platform.c
+index 60386a32208ff..604a461848c98 100644
+--- a/drivers/base/platform.c
++++ b/drivers/base/platform.c
+@@ -335,10 +335,10 @@ static void setup_pdev_dma_masks(struct platform_device *pdev)
+ {
+ 	if (!pdev->dev.coherent_dma_mask)
+ 		pdev->dev.coherent_dma_mask = DMA_BIT_MASK(32);
+-	if (!pdev->dma_mask)
+-		pdev->dma_mask = DMA_BIT_MASK(32);
+-	if (!pdev->dev.dma_mask)
+-		pdev->dev.dma_mask = &pdev->dma_mask;
++	if (!pdev->dev.dma_mask) {
++		pdev->platform_dma_mask = DMA_BIT_MASK(32);
++		pdev->dev.dma_mask = &pdev->platform_dma_mask;
++	}
+ };
+ 
+ /**
+@@ -634,20 +634,8 @@ struct platform_device *platform_device_register_full(
+ 	pdev->dev.of_node_reused = pdevinfo->of_node_reused;
+ 
+ 	if (pdevinfo->dma_mask) {
+-		/*
+-		 * This memory isn't freed when the device is put,
+-		 * I don't have a nice idea for that though.  Conceptually
+-		 * dma_mask in struct device should not be a pointer.
+-		 * See http://thread.gmane.org/gmane.linux.kernel.pci/9081
+-		 */
+-		pdev->dev.dma_mask =
+-			kmalloc(sizeof(*pdev->dev.dma_mask), GFP_KERNEL);
+-		if (!pdev->dev.dma_mask)
+-			goto err;
+-
+-		kmemleak_ignore(pdev->dev.dma_mask);
+-
+-		*pdev->dev.dma_mask = pdevinfo->dma_mask;
++		pdev->platform_dma_mask = pdevinfo->dma_mask;
++		pdev->dev.dma_mask = &pdev->platform_dma_mask;
+ 		pdev->dev.coherent_dma_mask = pdevinfo->dma_mask;
+ 	}
+ 
+@@ -672,7 +660,6 @@ struct platform_device *platform_device_register_full(
+ 	if (ret) {
+ err:
+ 		ACPI_COMPANION_SET(&pdev->dev, NULL);
+-		kfree(pdev->dev.dma_mask);
+ 		platform_device_put(pdev);
+ 		return ERR_PTR(ret);
+ 	}
+diff --git a/include/linux/platform_device.h b/include/linux/platform_device.h
+index f2688404d1cd7..569f446502bed 100644
+--- a/include/linux/platform_device.h
++++ b/include/linux/platform_device.h
+@@ -24,7 +24,7 @@ struct platform_device {
+ 	int		id;
+ 	bool		id_auto;
+ 	struct device	dev;
+-	u64		dma_mask;
++	u64		platform_dma_mask;
+ 	u32		num_resources;
+ 	struct resource	*resource;
+ 
 -- 
 2.20.1
 
