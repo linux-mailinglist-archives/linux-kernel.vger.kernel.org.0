@@ -2,98 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9BF3018A2ED
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 20:08:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7425418A2F8
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 20:11:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727070AbgCRTIx convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 18 Mar 2020 15:08:53 -0400
-Received: from mga09.intel.com ([134.134.136.24]:11075 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726638AbgCRTIx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Mar 2020 15:08:53 -0400
-IronPort-SDR: IV9MTEfVauHWmjjwcLWLFZyn2NLX+XPqm64yzigO9/zqY64/IOqRiq+6LWY8EoE442LoUEuYZ+
- W2RuVNFwgHWw==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Mar 2020 12:08:52 -0700
-IronPort-SDR: 1RER0b8WJ7uU8DuvOk4osBuYh5geyIp5mdkP0hKFt4oJVO/AlYK3IcBZB5ceYDANHUrVwjG6Uo
- Z88VEin0fhfw==
-X-IronPort-AV: E=Sophos;i="5.70,568,1574150400"; 
-   d="scan'208";a="418055805"
-Received: from gkern-mobl.ger.corp.intel.com (HELO localhost) ([10.252.54.69])
-  by orsmga005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Mar 2020 12:08:47 -0700
-From:   Jani Nikula <jani.nikula@linux.intel.com>
-To:     Guru Das Srinagesh <gurus@codeaurora.org>,
-        linux-pwm@vger.kernel.org
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Uwe =?utf-8?Q?Kleine-K?= =?utf-8?Q?=C3=B6nig?= 
-        <uwe@kleine-koenig.org>,
-        Subbaraman Narayanamurthy <subbaram@codeaurora.org>,
-        linux-kernel@vger.kernel.org,
-        Guru Das Srinagesh <gurus@codeaurora.org>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Chris Wilson <chris@chris-wilson.co.uk>,
-        Ville =?utf-8?B?U3lyasOkbMOk?= <ville.syrjala@linux.intel.com>,
-        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-Subject: Re: [PATCH v9 01/11] drm/i915: Use 64-bit division macro
-In-Reply-To: <19661821c8eb32291e72ec091c267f915c365c52.1584473399.git.gurus@codeaurora.org>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <cover.1584473399.git.gurus@codeaurora.org> <19661821c8eb32291e72ec091c267f915c365c52.1584473399.git.gurus@codeaurora.org>
-Date:   Wed, 18 Mar 2020 21:08:45 +0200
-Message-ID: <87h7yleb0i.fsf@intel.com>
+        id S1727047AbgCRTLV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Mar 2020 15:11:21 -0400
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:39206 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726647AbgCRTLU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Mar 2020 15:11:20 -0400
+Received: by mail-ot1-f66.google.com with SMTP id r2so11324085otn.6
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Mar 2020 12:11:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=YEcNvKoxRLNncmofEeVv4yeDWdrbk4dUuTY3/HM5SJg=;
+        b=lkxzxSmPoiFVrjW+D44Nlzoy7Y9BTyZ6PQpCllGw154b100MP5WuWaOD8/idtKRdN1
+         eW54dVH6b4J85Yh7iKi6bJJfbSelvRDFyXBx3wyvx0oFFus1AOlmctj2Z5JvbyIEHHUZ
+         /Jr09tDhinfXqXBq2oebzgol6mVeYcC+UyXyTHDzlp5RJD7V8dU38+VbiMAZuPGG6YF9
+         hvBVYwDFqmUd6ydHL8N8g88fq/GSAzaTFW8j6JuF/V3UyExsBxHJS4eMrACrNI4o5nLl
+         sC+7J1xx3mn9ikCZuhxsvKAh6qOSY243TaGZYevQ1VsO2EVhb25BOP3Gwdm7RCayZFKz
+         QIhA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=YEcNvKoxRLNncmofEeVv4yeDWdrbk4dUuTY3/HM5SJg=;
+        b=ZMnDtyIU4L1RoYSYQs1Gt4kckZ3UcOgmyOzEEVmuQBkDcF6j/z3C/U7nMBCdp3blL0
+         cfeb1cNC0L2QLoYCUVW5HUlIFwLKm2zcCNxSMFtCkEW4X6NmNJ0KOFikL6VccNPHbHGO
+         kZTSQSthOJOL+PaL4HSb2BvyyoSj96Fkk33kOunKbNGXuUXuidDMoJT920r5eF0Dkk61
+         XSVu5UuDJbPR3HrB0wD09sZYFaa9lUL+BNgbY1lesE5zfuQqAypYSnEZxMgXQsCtl5+d
+         G39QAMnHSTdtkc6ycYcS8YxW3YNj3NSM3qHQZMUJWlocmkrD6UmXZ+qGGF1u33qkMMs5
+         b/pQ==
+X-Gm-Message-State: ANhLgQ168M5RfNXVtMSe03FBgBavvqyzDx8uD2dxVlceC1NjQn82tr+n
+        EUecw73qJvbAfoB6HOdkxK5EzYAaIxwXl0sUPR2YqA==
+X-Google-Smtp-Source: ADFU+vuQqQyKYY3GzReouxvk6jJyqQUm+Irep1pzseE+uxctbZi52pzI8VMFuxyNWh599gkbGFQoVDq1JwgQY4XyDz8=
+X-Received: by 2002:a9d:6186:: with SMTP id g6mr5088006otk.236.1584558679434;
+ Wed, 18 Mar 2020 12:11:19 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
+References: <20200317065452.236670-1-saravanak@google.com>
+In-Reply-To: <20200317065452.236670-1-saravanak@google.com>
+From:   Saravana Kannan <saravanak@google.com>
+Date:   Wed, 18 Mar 2020 12:10:43 -0700
+Message-ID: <CAGETcx-uZ3YJHCYqFm3so8-woTvL3SSDY2deNonthTetcE+mXQ@mail.gmail.com>
+Subject: Re: [PATCH v1 0/6] Fix device links functional breakage in 4.19.99
+To:     stable <stable@vger.kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>,
+        Matthias Brugger <matthias.bgg@gmail.com>
+Cc:     Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        "moderated list:ARM/Mediatek SoC support" 
+        <linux-mediatek@lists.infradead.org>,
+        Android Kernel Team <kernel-team@android.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 17 Mar 2020, Guru Das Srinagesh <gurus@codeaurora.org> wrote:
-> Since the PWM framework is switching struct pwm_state.duty_cycle's
-> datatype to u64, prepare for this transition by using DIV_ROUND_UP_ULL
-> to handle a 64-bit dividend.
+On Mon, Mar 16, 2020 at 11:54 PM Saravana Kannan <saravanak@google.com> wrote:
 >
-> Cc: Jani Nikula <jani.nikula@linux.intel.com>
-> Cc: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
-> Cc: David Airlie <airlied@linux.ie>
-> Cc: Daniel Vetter <daniel@ffwll.ch>
-> Cc: Chris Wilson <chris@chris-wilson.co.uk>
-> Cc: "Ville Syrjälä" <ville.syrjala@linux.intel.com>
-> Cc: intel-gfx@lists.freedesktop.org
-> Cc: dri-devel@lists.freedesktop.org
-> Cc: Rodrigo Vivi <rodrigo.vivi@intel.com>
-> Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+> As mentioned in an earlier email thread [1], 4.19.99 broke the ability
+> to create stateful and stateless device links between the same set of
+> devices when it pulled in a valid bug fix [2]. While the fix was valid,
+> it removes a functionality that was present before the bug fix.
 >
-> Signed-off-by: Guru Das Srinagesh <gurus@codeaurora.org>
-
-Reviewed-by: Jani Nikula <jani.nikula@intel.com>
-
-Also ack for merging this via whichever tree you prefer; please let me
-know if you want me to take this via drm-intel.
-
-> ---
->  drivers/gpu/drm/i915/display/intel_panel.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> This patch series attempts to fix that by pulling in more patches from
+> upstream. I've just done compilation testing so far. But wanted to send
+> out a v1 to see if this patch list was acceptable before I fixed up the
+> commit text format to match what's needed for stable mailing list.
 >
-> diff --git a/drivers/gpu/drm/i915/display/intel_panel.c b/drivers/gpu/drm/i915/display/intel_panel.c
-> index bc14e9c..843cac1 100644
-> --- a/drivers/gpu/drm/i915/display/intel_panel.c
-> +++ b/drivers/gpu/drm/i915/display/intel_panel.c
-> @@ -1868,7 +1868,7 @@ static int pwm_setup_backlight(struct intel_connector *connector,
->  
->  	panel->backlight.min = 0; /* 0% */
->  	panel->backlight.max = 100; /* 100% */
-> -	panel->backlight.level = DIV_ROUND_UP(
-> +	panel->backlight.level = DIV_ROUND_UP_ULL(
->  				 pwm_get_duty_cycle(panel->backlight.pwm) * 100,
->  				 CRC_PMIC_PWM_PERIOD_NS);
->  	panel->backlight.enabled = panel->backlight.level != 0;
+> Some of the patches are new functionality, but for a first pass, it was
+> easier to pull these in than try and fix the conflicts. If these patches
+> are okay to pull into stable, then all I need to do is fix the commit
+> text.
 
--- 
-Jani Nikula, Intel Open Source Graphics Center
+I took a closer look at all the patches. Everyone of them is a bug fix
+except Patch 4/6. But Patch 4/6 is a fairly minimal change and I think
+it's easier/cleaner to just pick it up too instead of trying to
+resolve merge conflicts in the stable branch.
+
+1/6 - Fixes what appears to be a memory leak bug in upstream.
+2/6 - Fixes error in initial state of the device link if it's created
+under some circumstances.
+3/6 - Fixes a ref count bug in upstream. Looks like it can lead to memory leaks?
+4/6 - Adds a minor feature to kick off a probe attempt of a consumer
+5/6 - Fixes the break in functionality that happened in 4.19.99
+6/6 - Fixes bug in 5/6 (upstream bug)
+
+Greg
+
+Do these patches look okay for you to pull into 4.19 stable? If so,
+please let me know if you need me to send v2 with commit fix up.
+
+The only fix up needed is to these patches at this point is changing
+"(cherry picked from commit ...)" with "[ Upstream commit ... ]". The
+SHAs themselves are the correct SHAs from upstream.
+
+Thanks,
+Saravana
