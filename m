@@ -2,100 +2,127 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 97BB418A924
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 00:20:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B163718A92A
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 00:22:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727363AbgCRXTx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Mar 2020 19:19:53 -0400
-Received: from out30-133.freemail.mail.aliyun.com ([115.124.30.133]:51619 "EHLO
-        out30-133.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726619AbgCRXTx (ORCPT
+        id S1727193AbgCRXWo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Mar 2020 19:22:44 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:42586 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726619AbgCRXWo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Mar 2020 19:19:53 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R201e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01f04452;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=7;SR=0;TI=SMTPD_---0Tt-L-mT_1584573582;
-Received: from localhost(mailfrom:yang.shi@linux.alibaba.com fp:SMTPD_---0Tt-L-mT_1584573582)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Thu, 19 Mar 2020 07:19:49 +0800
-From:   Yang Shi <yang.shi@linux.alibaba.com>
-To:     kirill.shutemov@linux.intel.com, hughd@google.com,
-        aarcange@redhat.com, akpm@linux-foundation.org
-Cc:     yang.shi@linux.alibaba.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] mm: khugepaged: fix potential page state corruption
-Date:   Thu, 19 Mar 2020 07:19:42 +0800
-Message-Id: <1584573582-116702-1-git-send-email-yang.shi@linux.alibaba.com>
-X-Mailer: git-send-email 1.8.3.1
+        Wed, 18 Mar 2020 19:22:44 -0400
+Received: from pendragon.ideasonboard.com (81-175-216-236.bb.dnainternet.fi [81.175.216.236])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 97FC55F;
+        Thu, 19 Mar 2020 00:22:41 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1584573761;
+        bh=1QAaixOPnCwRw0nvHVWpdyGWaxWNnlcsHJ49Rt5k58U=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=oE6t/vXko3yx5XAp9J589i8nmC888tp0v4tRNpiAWr96RdlwpAmyPgSnKB6ylZ3Ed
+         KCyszDJ5PVG8nNuo9n3ParRafUZPjU/cytzUaXu726C2RtCCbBFPU/TxL+ESM52ohX
+         G6UZkWgj7t41IP17PvvPQAychsPHRSDWPCPYrEyI=
+Date:   Thu, 19 Mar 2020 01:22:36 +0200
+From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To:     "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Cc:     Mark Rutland <mark.rutland@arm.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Fabio Estevam <festevam@gmail.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Ezequiel Garcia <ezequiel@collabora.com>,
+        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org" 
+        <linux-renesas-soc@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>
+Subject: Re: [PATCH v3 3/4] media: i2c: ov5645: Set maximum leverage of
+ external clock frequency to 24480000
+Message-ID: <20200318232236.GJ24538@pendragon.ideasonboard.com>
+References: <1584133954-6953-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <1584133954-6953-4-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20200313212345.GM4751@pendragon.ideasonboard.com>
+ <OSBPR01MB359079EAA32E0DCBF63C6886AAFA0@OSBPR01MB3590.jpnprd01.prod.outlook.com>
+ <CA+V-a8t-rA-6AmZry63QeXN6pvGWVtcEEuHaDA1jsS-x+30oiQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CA+V-a8t-rA-6AmZry63QeXN6pvGWVtcEEuHaDA1jsS-x+30oiQ@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When khugepaged collapses anonymous pages, the base pages would be freed
-via pagevec or free_page_and_swap_cache().  But, the anonymous page may
-be added back to LRU, then it might result in the below race:
+Hi Prabhakar,
 
-	CPU A				CPU B
-khugepaged:
-  unlock page
-  putback_lru_page
-    add to lru
-				page reclaim:
-				  isolate this page
-				  try_to_unmap
-  page_remove_rmap <-- corrupt _mapcount
+On Wed, Mar 18, 2020 at 10:41:57PM +0000, Lad, Prabhakar wrote:
+> On Fri, Mar 13, 2020 at 9:31 PM Prabhakar Mahadev Lad wrote:
+> > On 13 March 2020 21:24, Laurent Pinchart wrote:
+> >> On Fri, Mar 13, 2020 at 09:12:33PM +0000, Lad Prabhakar wrote:
+> >>> While testing on Renesas RZ/G2E platform, noticed the clock frequency
+> >>> to be 24242424 as a result the probe failed. However increasing the
+> >>> maximum leverage of external clock frequency to 24480000 fixes this
+> >>> issue. Since this difference is small enough and is insignificant set
+> >>> the same in the driver.
+> >>>
+> >>> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> >>> ---
+> >>>  drivers/media/i2c/ov5645.c | 6 ++++--
+> >>>  1 file changed, 4 insertions(+), 2 deletions(-)
+> >>>
+> >>> diff --git a/drivers/media/i2c/ov5645.c b/drivers/media/i2c/ov5645.c
+> >>> index 4fbabf3..b49359b 100644
+> >>> --- a/drivers/media/i2c/ov5645.c
+> >>> +++ b/drivers/media/i2c/ov5645.c
+> >>> @@ -1107,8 +1107,10 @@ static int ov5645_probe(struct i2c_client *client)
+> >>>  }
+> >>>
+> >>>  xclk_freq = clk_get_rate(ov5645->xclk);
+> >>> -/* external clock must be 24MHz, allow 1% tolerance */
+> >>> -if (xclk_freq < 23760000 || xclk_freq > 24240000) {
+> >>> +/* external clock must be 24MHz, allow a minimum 1% and a
+> >> maximum of 2%
+> >>> + * tolerance
+> >>
+> >> So where do these numbers come from ? I understand that 2% is what you
+> >> need to make your clock fit in the range, but why -1%/+2% instead of -
+> >> 2%/+2% ? And why not 2.5 or 3% ? The sensor datasheet documents the
+> >> range of supported xvclk frequencies to be 6MHz to 54MHz. I understand
+> >> that PLL parameters depend on the clock frequency, but could they be
+> >> calculated instead of hardcoded, to avoid requiring an exact 24MHz input
+> >> frequency ?
+> >>
+> > To be honest I don't have the datasheet for ov5645, the flyer says 6-54Mhz but the
+> > logs/comment says 24Mhz.
+> >
+> Comparing to ov5640 datasheet [1] (which I am assuming might be
+> similar to ov5645),
 
-It looks nothing would prevent the pages from isolating by reclaimer.
+Let's assume this to be the case, I see no reason not to :-)
 
-The other problem is the page's active or unevictable flag might be
-still set when freeing the page via free_page_and_swap_cache().  The
-putback_lru_page() would not clear those two flags if the pages are
-released via pagevec, it sounds nothing prevents from isolating active
-or unevictable pages.
+> this change should affect the driver.
 
-However I didn't really run into these problems, just in theory by visual
-inspection.
+How do you mean ?
 
-And, it also seems unnecessary to have the pages add back to LRU again since
-they are about to be freed when reaching this point.  So, clearing active
-and unevictable flags, unlocking and dropping refcount from isolate
-instead of calling putback_lru_page() as what page cache collapse does.
+> [1] https://cdn.sparkfun.com/datasheets/Sensors/LightImaging/OV5640_datasheet.pdf
+> 
+> >>> + */
+> >>> +if (xclk_freq < 23760000 || xclk_freq > 24480000) {
+> >>>  dev_err(dev, "external clock frequency %u is not supported\n",
+> >>>  xclk_freq);
+> >>>  return -EINVAL;
 
-Cc: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-Cc: Hugh Dickins <hughd@google.com>
-Cc: Andrea Arcangeli <aarcange@redhat.com>
-Signed-off-by: Yang Shi <yang.shi@linux.alibaba.com>
----
- mm/khugepaged.c | 10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
-
-diff --git a/mm/khugepaged.c b/mm/khugepaged.c
-index b679908..f42fa4e 100644
---- a/mm/khugepaged.c
-+++ b/mm/khugepaged.c
-@@ -673,7 +673,6 @@ static void __collapse_huge_page_copy(pte_t *pte, struct page *page,
- 			src_page = pte_page(pteval);
- 			copy_user_highpage(page, src_page, address, vma);
- 			VM_BUG_ON_PAGE(page_mapcount(src_page) != 1, src_page);
--			release_pte_page(src_page);
- 			/*
- 			 * ptl mostly unnecessary, but preempt has to
- 			 * be disabled to update the per-cpu stats
-@@ -687,6 +686,15 @@ static void __collapse_huge_page_copy(pte_t *pte, struct page *page,
- 			pte_clear(vma->vm_mm, address, _pte);
- 			page_remove_rmap(src_page, false);
- 			spin_unlock(ptl);
-+
-+			dec_node_page_state(src_page,
-+				NR_ISOLATED_ANON + page_is_file_cache(src_page));
-+			ClearPageActive(src_page);
-+			ClearPageUnevictable(src_page);
-+			unlock_page(src_page);
-+			/* Drop refcount from isolate */
-+			put_page(src_page);
-+
- 			free_page_and_swap_cache(src_page);
- 		}
- 	}
 -- 
-1.8.3.1
+Regards,
 
+Laurent Pinchart
