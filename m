@@ -2,240 +2,195 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 050F11897B6
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 10:15:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A6FED189781
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 10:00:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727503AbgCRJPe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Mar 2020 05:15:34 -0400
-Received: from mga17.intel.com ([192.55.52.151]:7367 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727113AbgCRJPd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Mar 2020 05:15:33 -0400
-IronPort-SDR: h80wbmJgEQtgY3IiJrR6+dCI6CeVDscX7tQdrsaFnU+Zq8Bm72nlP4iMsolie90nHopLvu7Io1
- J2EQn/YdDEpg==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Mar 2020 02:15:32 -0700
-IronPort-SDR: t0n0N9Rb6hjyZ/6StG8DNDrxu56ikUlGASs8jBOdg/hug7WIbn1+S/vbj2nmnPMY4pVQtussNN
- 48tFJTyUoXJQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,566,1574150400"; 
-   d="scan'208";a="391378387"
-Received: from hao-dev.bj.intel.com (HELO localhost) ([10.238.157.65])
-  by orsmga004.jf.intel.com with ESMTP; 18 Mar 2020 02:15:30 -0700
-Date:   Wed, 18 Mar 2020 16:54:26 +0800
-From:   Wu Hao <hao.wu@intel.com>
-To:     Xu Yilun <yilun.xu@intel.com>
-Cc:     mdf@kernel.org, linux-fpga@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Luwei Kang <luwei.kang@intel.com>
-Subject: Re: [PATCH v2 4/7] fpga: dfl: afu: add interrupt support for error
- reporting
-Message-ID: <20200318085426.GA12088@hao-dev>
-References: <1584332222-26652-1-git-send-email-yilun.xu@intel.com>
- <1584332222-26652-5-git-send-email-yilun.xu@intel.com>
+        id S1727408AbgCRJAj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Mar 2020 05:00:39 -0400
+Received: from ma-dnext03.denso.co.jp ([133.192.181.78]:44480 "EHLO
+        ma-dnext03.denso.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726523AbgCRJAi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Mar 2020 05:00:38 -0400
+Received: from grdma01h.denso.co.jp (unknown [133.192.24.24])
+        by ma-dnext03.denso.co.jp (Postfix) with ESMTP id 3117A5D024C;
+        Wed, 18 Mar 2020 18:00:36 +0900 (JST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=adit-jv.com;
+        s=jpadit-jvmail2011; t=1584522036;
+        bh=MJNLb+QUlzHddJJCWYqXFByLkk81A4pksiBWvdYtaZM=;
+        h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+         Content-Type:Content-Transfer-Encoding:In-Reply-To;
+        b=8TueuV3cLIbWFLV7WdQnl/jc8S05NMxWUWR4FaAmWLAglFfr6sTsgFKQ3L4XLcFOL
+         wUfDIc+YAdRXTAAUmpWzbs6VmLrn6/c3qezoor1sSc0HcYrtnMCwRGo+iXnkkzJqAF
+         uqMsi1Q73gisa4aUm+AZWg5pM+Ls3Y3SbTrK72dPG9A2Q+FRiT4RI/324+cy3NFFHK
+         w+wJ0Oq2fZoCeg8RST4F1IB/y4MacAftLXCZyt4U8piydnOk42qEzTlirWt9rZ5QUa
+         3shjvKZ8YtdQNvec3Q49CocZ7vF/TmutteOKiliMYBeOvsFD8IfHgtND309NBv2K4y
+         TaWY1vUfWsgow==
+Received: by grdma01h.denso.co.jp (Postfix, from userid 0)
+        id 2E0F8C04E05; Wed, 18 Mar 2020 18:00:36 +0900 (JST)
+Received: from smtp0.denso.co.jp [133.192.24.87] 
+         by grdma01h. with ESMTP id UAA15964;
+         Wed, 18 Mar 2020 18:00:36 +0900
+Received: from ky0exch01.adit-jv.com ([10.71.113.8])
+        by smtp00.denso.co.jp (MOS 4.4.7-GA)
+        with ESMTP id FNI36647;
+        Wed, 18 Mar 2020 18:00:34 +0900
+Received: from jp-u0004 (10.71.112.120) by ky0exch01.adit-jv.com (10.71.113.8)
+ with Microsoft SMTP Server (TLS) id 14.3.487.0; Wed, 18 Mar 2020 18:00:34
+ +0900
+Date:   Wed, 18 Mar 2020 18:00:29 +0900
+From:   Suresh Udipi <sudipi@jp.adit-jv.com>
+To:     Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
+CC:     Suresh Udipi <sudipi@jp.adit-jv.com>, <akiyama@nds-osk.co.jp>,
+        <efriedrich@de.adit-jv.com>, <erosca@de.adit-jv.com>,
+        <hverkuil-cisco@xs4all.nl>, <jacopo+renesas@jmondi.org>,
+        <laurent.pinchart@ideasonboard.com>,
+        <linux-kernel@vger.kernel.org>, <linux-media@vger.kernel.org>,
+        <linux-renesas-soc@vger.kernel.org>, <mrodin@de.adit-jv.com>,
+        <securitycheck@denso.co.jp>
+Subject: Re: [PATCH v2] [RFC] rcar-vin: rcar-csi2: Correct the selection of
+ hsfreqrange
+Message-ID: <20200318090029.GA22842@jp-u0004>
+References: <20200316130247.GA2258968@oden.dyn.berto.se>
+ <1584428905-21560-1-git-send-email-sudipi@jp.adit-jv.com>
+ <20200317103756.GC2496015@oden.dyn.berto.se>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="utf-8"
 Content-Disposition: inline
-In-Reply-To: <1584332222-26652-5-git-send-email-yilun.xu@intel.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200317103756.GC2496015@oden.dyn.berto.se>
 User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Originating-IP: [10.71.112.120]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 16, 2020 at 12:16:59PM +0800, Xu Yilun wrote:
-> Error reporting interrupt is very useful to notify users that some
-> errors are detected by the hardware. Once users are notified, they
-> could query hardware logged error states, no need to continuously
-> poll on these states.
+On Tue, Mar 17, 2020 at 11:37:56AM +0100, Niklas Söderlund wrote:
+> Hi Suresh,
 > 
-> This patch follows the common DFL interrupt notification and handling
-> mechanism, implements two ioctl commands below for user to query
-> number of irqs supported, and set/unset interrupt triggers.
+> Thanks for your work.
 > 
->  Ioctls:
->  * DFL_FPGA_PORT_ERR_GET_IRQ_NUM
->    get the number of irqs, which is used to determine whether/how many
->    interrupts error reporting feature supports.
+> On 2020-03-17 16:08:25 +0900, Suresh Udipi wrote:
+> > hsfreqrange should be chosen based on the calculated mbps which
+> > is closer to the default bit rate  and within the range as per
+> > table[1]. But current calculation always selects first value which
+> > is greater than or equal to the calculated mbps which may lead
+> > to chosing a wrong range in some cases.
+> > 
+> > For example for 360 mbps for H3/M3N
+> > Existing logic selects
+> > Calculated value 360Mbps : Default 400Mbps Range [368.125 -433.125 mbps]
+> > 
+> > This hsfreqrange is out of range.
+> > 
+> > The logic is changed to get the default value which is closest to the
+> > calculated value [1]
+> > 
+> > Calculated value 360Mbps : Default 350Mbps  Range [320.625 -380.625 mpbs]
+> > 
+> > [1] specs r19uh0105ej0200-r-car-3rd-generation.pdf [Table 25.9]
+> > 
+> > There is one exectpion value 227Mbps, which may cause out of
+> > range.
 > 
->  * DFL_FPGA_PORT_ERR_SET_IRQ
->    set/unset given eventfds as error interrupt triggers.
+> Then something else is needed I think :-)
 > 
-> Signed-off-by: Luwei Kang <luwei.kang@intel.com>
-> Signed-off-by: Wu Hao <hao.wu@intel.com>
-> Signed-off-by: Xu Yilun <yilun.xu@intel.com>
-> ----
-> v2: use DFL_FPGA_PORT_ERR_GET_IRQ_NUM instead of
->     DFL_FPGA_PORT_ERR_GET_INFO
->     Delete flag field for DFL_FPGA_PORT_ERR_SET_IRQ param
-> ---
->  drivers/fpga/dfl-afu-error.c  | 64 +++++++++++++++++++++++++++++++++++++++++++
->  drivers/fpga/dfl-afu-main.c   |  4 +++
->  include/uapi/linux/fpga-dfl.h | 29 ++++++++++++++++++++
->  3 files changed, 97 insertions(+)
+> I liked v1 of this RFC more, where you added a u16 min and max to struct 
+> rcsi2_mbps_reg. I think that is the right solution.
 > 
-> diff --git a/drivers/fpga/dfl-afu-error.c b/drivers/fpga/dfl-afu-error.c
-> index c1467ae..4d478b2f 100644
-> --- a/drivers/fpga/dfl-afu-error.c
-> +++ b/drivers/fpga/dfl-afu-error.c
-> @@ -15,6 +15,7 @@
->   */
->  
->  #include <linux/uaccess.h>
-> +#include <linux/fpga-dfl.h>
->  
->  #include "dfl-afu.h"
->  
-> @@ -219,6 +220,68 @@ static void port_err_uinit(struct platform_device *pdev,
->  	afu_port_err_mask(&pdev->dev, true);
->  }
->  
-> +static long
-> +port_err_get_num_irqs(struct platform_device *pdev,
-> +		      struct dfl_feature *feature, unsigned long arg)
-> +{
-> +	if (copy_to_user((void __user *)arg, &feature->nr_irqs,
-> +			 sizeof(feature->nr_irqs)))
-> +		return -EFAULT;
+> What I tried to express in my review of v1 was
+> 
+> - You should remove the mbps member from struct rcsi2_mbps_reg.
+> - Update the walk of the array in rcsi2_set_phypll() so that it finds 
+>   the first entry where the calculated target value is between min and 
+>   max and use the reg setting for that entry.
+> 
+> Would that solution make sens too you? Sorry if I expressed myself a but 
+> muddy in v1 about this.
+ 
+Thank you for your feedback. Checking the range make more sense.
 
-maybe use put_user is simpler here.
+We can further optimize it, by checking only the Max range value.
 
-> +
-> +	return 0;
-> +}
-> +
-> +static long port_err_set_irq(struct platform_device *pdev,
-> +			     struct dfl_feature *feature, unsigned long arg)
-> +{
-> +	struct dfl_feature_platform_data *pdata = dev_get_platdata(&pdev->dev);
-> +	struct dfl_fpga_irq_set hdr;
-> +	s32 *fds;
-> +	long ret;
-> +
-> +	if (!feature->nr_irqs)
-> +		return -ENOENT;
-> +
-> +	if (copy_from_user(&hdr, (void __user *)arg, sizeof(hdr)))
-> +		return -EFAULT;
-> +
-> +	if (!hdr.count || (hdr.start + hdr.count > feature->nr_irqs) ||
-> +	    (hdr.start + hdr.count < hdr.start))
-> +		return -EINVAL;
-> +
-> +	fds = memdup_user((void __user *)(arg + sizeof(hdr)),
-> +			  hdr.count * sizeof(s32));
-> +	if (IS_ERR(fds))
-> +		return PTR_ERR(fds);
-> +
-> +	mutex_lock(&pdata->lock);
-> +	ret = dfl_fpga_set_irq_triggers(feature, hdr.start, hdr.count, fds);
-> +	mutex_unlock(&pdata->lock);
-> +
-> +	kfree(fds);
-> +	return ret;
-> +}
-> +
-> +static long
-> +port_err_ioctl(struct platform_device *pdev, struct dfl_feature *feature,
-> +	       unsigned int cmd, unsigned long arg)
-> +{
-> +	long ret = -ENODEV;
-> +
-> +	switch (cmd) {
-> +	case DFL_FPGA_PORT_ERR_GET_IRQ_NUM:
-> +		ret = port_err_get_num_irqs(pdev, feature, arg);
-> +		break;
-> +	case DFL_FPGA_PORT_ERR_SET_IRQ:
-> +		ret = port_err_set_irq(pdev, feature, arg);
-> +		break;
-> +	default:
-> +		dev_dbg(&pdev->dev, "%x cmd not handled", cmd);
-> +	}
-> +
-> +	return ret;
-> +}
-> +
->  const struct dfl_feature_id port_err_id_table[] = {
->  	{.id = PORT_FEATURE_ID_ERROR,},
->  	{0,}
-> @@ -227,4 +290,5 @@ const struct dfl_feature_id port_err_id_table[] = {
->  const struct dfl_feature_ops port_err_ops = {
->  	.init = port_err_init,
->  	.uinit = port_err_uinit,
-> +	.ioctl = port_err_ioctl,
->  };
-> diff --git a/drivers/fpga/dfl-afu-main.c b/drivers/fpga/dfl-afu-main.c
-> index 435bde4..fc8b9cf 100644
-> --- a/drivers/fpga/dfl-afu-main.c
-> +++ b/drivers/fpga/dfl-afu-main.c
-> @@ -577,6 +577,7 @@ static int afu_release(struct inode *inode, struct file *filp)
->  {
->  	struct platform_device *pdev = filp->private_data;
->  	struct dfl_feature_platform_data *pdata;
-> +	struct dfl_feature *feature;
->  
->  	dev_dbg(&pdev->dev, "Device File Release\n");
->  
-> @@ -586,6 +587,9 @@ static int afu_release(struct inode *inode, struct file *filp)
->  	dfl_feature_dev_use_end(pdata);
->  
->  	if (!dfl_feature_dev_use_count(pdata)) {
-> +		dfl_fpga_dev_for_each_feature(pdata, feature)
-> +			dfl_fpga_set_irq_triggers(feature, 0,
-> +						  feature->nr_irqs, NULL);
->  		__port_reset(pdev);
->  		afu_dma_region_destroy(pdata);
->  	}
-> diff --git a/include/uapi/linux/fpga-dfl.h b/include/uapi/linux/fpga-dfl.h
-> index ec70a0746..ced859d 100644
-> --- a/include/uapi/linux/fpga-dfl.h
-> +++ b/include/uapi/linux/fpga-dfl.h
-> @@ -151,6 +151,35 @@ struct dfl_fpga_port_dma_unmap {
->  
->  #define DFL_FPGA_PORT_DMA_UNMAP		_IO(DFL_FPGA_MAGIC, DFL_PORT_BASE + 4)
->  
-> +/**
-> + * DFL_FPGA_PORT_ERR_GET_IRQ_NUM - _IOR(DFL_FPGA_MAGIC, DFL_PORT_BASE + 5,
-> + *								__u32 num_irqs)
-> + *
-> + * Get the number of irqs supported by the fpga port error reporting private
-> + * feature.
-> + * Return: 0 on success, -errno on failure.
-> + */
-> +#define DFL_FPGA_PORT_ERR_GET_IRQ_NUM	_IOR(DFL_FPGA_MAGIC,	\
-> +					     DFL_PORT_BASE + 5, __u32)
-> +
-> +/**
-> + * DFL_FPGA_PORT_ERR_SET_IRQ - _IOW(DFL_FPGA_MAGIC, DFL_PORT_BASE + 6,
-> + *						struct dfl_fpga_irq_set)
-> + *
-> + * Set fpga port error reporting interrupt trigger if evtfds[n] is valid.
-> + * Unset related interrupt trigger if evtfds[n] is a NULL or negative value.
+- Remove mbps and min member from struct rcsi2_mbps_reg.
+- Update the walk of the array in rcsi2_set_phypll() so that it finds
+  the first entry where the calculated bit rate is less than the max.
 
-Looks like the code only unset trigger if fd < 0, right?
+Lower bit rates less than 80Mbps 
+like 48Mbps(Raspberry pi camera 640x480 connected to Kingfisher)
+can also be supported by selecting the lowest default bit rate 80Mbps
+as done before this fix.
 
-> + * Return: 0 on success, -errno on failure.
-> + */
-> +struct dfl_fpga_irq_set {
-> +	__u32 start;		/* First irq number */
-
-Sounds a little confusing, what about index of the first irq?
-
-
-Thanks
-Hao
-
-> +	__u32 count;		/* The number of eventfd handler */
-> +	__s32 evtfds[];		/* Eventfd handler */
-> +};
-> +
-> +#define DFL_FPGA_PORT_ERR_SET_IRQ	_IOW(DFL_FPGA_MAGIC,	\
-> +					     DFL_PORT_BASE + 6,	\
-> +					     struct dfl_fpga_irq_set)
-> +
->  /* IOCTLs for FME file descriptor */
->  
->  /**
+Please let me know your opinion on the same.
+Meanwhile iam working on creating the patch, test it and update the same.
+> > 
+> > Fixes: 769afd212b16 ("media: rcar-csi2: add Renesas R-Car MIPI CSI-2 receiver driver")
+> > 
+> > Signed-off-by: Suresh Udipi <sudipi@jp.adit-jv.com>
+> > Signed-off-by: Kazuyoshi Akiyama <akiyama@nds-osk.co.jp>
+> > ---
+> > Changes in v2:
+> >   - Added the boundary check for the maximum bit rate.
+> >   
+> >   - Simplified the logic by remmoving range check 
+> >     as only the closest default value covers most 
+> >     of the use cases.
+> > 
+> >   - Aligning the commit message based on the above change
+> > 
+> >  drivers/media/platform/rcar-vin/rcar-csi2.c | 18 +++++++++++++-----
+> >  1 file changed, 13 insertions(+), 5 deletions(-)
+> > 
+> > diff --git a/drivers/media/platform/rcar-vin/rcar-csi2.c b/drivers/media/platform/rcar-vin/rcar-csi2.c
+> > index faa9fb2..6573625 100644
+> > --- a/drivers/media/platform/rcar-vin/rcar-csi2.c
+> > +++ b/drivers/media/platform/rcar-vin/rcar-csi2.c
+> > @@ -199,6 +199,7 @@ static const struct rcsi2_mbps_reg phtw_mbps_v3m_e3[] = {
+> >  /* PHY Frequency Control */
+> >  #define PHYPLL_REG			0x68
+> >  #define PHYPLL_HSFREQRANGE(n)		((n) << 16)
+> > +#define PHYPLL_HSFREQRANGE_MAX		1500
+> >  
+> >  static const struct rcsi2_mbps_reg hsfreqrange_h3_v3h_m3n[] = {
+> >  	{ .mbps =   80, .reg = 0x00 },
+> > @@ -431,16 +432,23 @@ static int rcsi2_wait_phy_start(struct rcar_csi2 *priv)
+> >  static int rcsi2_set_phypll(struct rcar_csi2 *priv, unsigned int mbps)
+> >  {
+> >  	const struct rcsi2_mbps_reg *hsfreq;
+> > +	const struct rcsi2_mbps_reg *hsfreq_prev = NULL;
+> >  
+> > -	for (hsfreq = priv->info->hsfreqrange; hsfreq->mbps != 0; hsfreq++)
+> > -		if (hsfreq->mbps >= mbps)
+> > -			break;
+> > -
+> > -	if (!hsfreq->mbps) {
+> > +	if (mbps > PHYPLL_HSFREQRANGE_MAX) {
+> >  		dev_err(priv->dev, "Unsupported PHY speed (%u Mbps)", mbps);
+> >  		return -ERANGE;
+> >  	}
+> >  
+> > +	for (hsfreq = priv->info->hsfreqrange; hsfreq->mbps != 0; hsfreq++) {
+> > +		if (hsfreq->mbps >= mbps)
+> > +			break;
+> > +		hsfreq_prev = hsfreq;
+> > +	}
+> > +
+> > +	if (hsfreq_prev &&
+> > +	    ((mbps - hsfreq_prev->mbps) <= (hsfreq->mbps - mbps)))
+> > +		hsfreq = hsfreq_prev;
+> > +
+> >  	rcsi2_write(priv, PHYPLL_REG, PHYPLL_HSFREQRANGE(hsfreq->reg));
+> >  
+> >  	return 0;
+> > -- 
+> > 2.7.4
+> > 
+> 
 > -- 
-> 2.7.4
+> Regards,
+> Niklas Söderlund
+
+-- 
+Best Regards,
+Suresh Udipi.
