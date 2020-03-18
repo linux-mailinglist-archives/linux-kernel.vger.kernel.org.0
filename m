@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0FAB618A5E7
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 22:04:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8569718A5E6
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 22:04:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728423AbgCRVEh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Mar 2020 17:04:37 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55612 "EHLO mail.kernel.org"
+        id S1728981AbgCRVE0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Mar 2020 17:04:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55680 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728257AbgCRUzR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Mar 2020 16:55:17 -0400
+        id S1728274AbgCRUzU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Mar 2020 16:55:20 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DDA5F208E4;
-        Wed, 18 Mar 2020 20:55:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 39AD52098B;
+        Wed, 18 Mar 2020 20:55:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584564916;
-        bh=8gWxQB1hy2Rs45/USgNRR4m1Ti7GPXXLLt/ZXidVBr0=;
+        s=default; t=1584564920;
+        bh=ovwxs5KHo8EPOuJNmZo9thQmHIr+MGi/gA5XTsvX/qY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gPE6kgigtu1BukX5TZmv3drvh2TSwTekEpAwY/i9zB58kex8uVL9r1iQHiZ1/abrh
-         iGbs/2eDvY6xUZsCIKdQXZrUvB8bqT+CvaDiOfgZZ3IZg9T/kBEZXfH6Y9WDHZ7nS1
-         4TC1mCGE6uZA3e5EN/IQBNtCFfDC7+iFqsD2eI58=
+        b=QCpcOxossPHf9zf/+vQS0IHTIybAowOkAymPjJGJc3ti0hsh5FJzGv4V7kg0YuJea
+         RsfWMHGzt9BZX1PG9pVq5UkJC1bCMjfxM/hFCrJGo3Sa1q4wCIQilGYyRfFam0x4V6
+         xdGdVrMN5xCRnesa0CpVoAmzHPtPlop8XTUrXiOE=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Scott Mayhew <smayhew@redhat.com>,
-        Dave Wysochanski <dwysocha@redhat.com>,
-        Anna Schumaker <Anna.Schumaker@Netapp.com>,
-        Sasha Levin <sashal@kernel.org>, linux-nfs@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 05/37] nfs: add minor version to nfs_server_key for fscache
-Date:   Wed, 18 Mar 2020 16:54:37 -0400
-Message-Id: <20200318205509.17053-5-sashal@kernel.org>
+Cc:     Vasundhara Volam <vasundhara-v.volam@broadcom.com>,
+        Michael Chan <michael.chan@broadcom.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 08/37] bnxt_en: reinitialize IRQs when MTU is modified
+Date:   Wed, 18 Mar 2020 16:54:40 -0400
+Message-Id: <20200318205509.17053-8-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200318205509.17053-1-sashal@kernel.org>
 References: <20200318205509.17053-1-sashal@kernel.org>
@@ -44,74 +44,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Scott Mayhew <smayhew@redhat.com>
+From: Vasundhara Volam <vasundhara-v.volam@broadcom.com>
 
-[ Upstream commit 55dee1bc0d72877b99805e42e0205087e98b9edd ]
+[ Upstream commit a9b952d267e59a3b405e644930f46d252cea7122 ]
 
-An NFS client that mounts multiple exports from the same NFS
-server with higher NFSv4 versions disabled (i.e. 4.2) and without
-forcing a specific NFS version results in fscache index cookie
-collisions and the following messages:
-[  570.004348] FS-Cache: Duplicate cookie detected
+MTU changes may affect the number of IRQs so we must call
+bnxt_close_nic()/bnxt_open_nic() with the irq_re_init parameter
+set to true.  The reason is that a larger MTU may require
+aggregation rings not needed with smaller MTU.  We may not be
+able to allocate the required number of aggregation rings and
+so we reduce the number of channels which will change the number
+of IRQs.  Without this patch, it may crash eventually in
+pci_disable_msix() when the IRQs are not properly unwound.
 
-Each nfs_client structure should have its own fscache index cookie,
-so add the minorversion to nfs_server_key.
-
-Link: https://bugzilla.kernel.org/show_bug.cgi?id=200145
-Signed-off-by: Scott Mayhew <smayhew@redhat.com>
-Signed-off-by: Dave Wysochanski <dwysocha@redhat.com>
-Signed-off-by: Anna Schumaker <Anna.Schumaker@Netapp.com>
+Fixes: c0c050c58d84 ("bnxt_en: New Broadcom ethernet driver.")
+Signed-off-by: Vasundhara Volam <vasundhara-v.volam@broadcom.com>
+Signed-off-by: Michael Chan <michael.chan@broadcom.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/nfs/client.c     | 1 +
- fs/nfs/fscache.c    | 2 ++
- fs/nfs/nfs4client.c | 1 -
- 3 files changed, 3 insertions(+), 1 deletion(-)
+ drivers/net/ethernet/broadcom/bnxt/bnxt.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/fs/nfs/client.c b/fs/nfs/client.c
-index 0a2b59c1ecb3d..07c5ddd5d6d50 100644
---- a/fs/nfs/client.c
-+++ b/fs/nfs/client.c
-@@ -157,6 +157,7 @@ struct nfs_client *nfs_alloc_client(const struct nfs_client_initdata *cl_init)
- 	if ((clp = kzalloc(sizeof(*clp), GFP_KERNEL)) == NULL)
- 		goto error_0;
+diff --git a/drivers/net/ethernet/broadcom/bnxt/bnxt.c b/drivers/net/ethernet/broadcom/bnxt/bnxt.c
+index c19d0eabeb526..911cea2e5aa58 100644
+--- a/drivers/net/ethernet/broadcom/bnxt/bnxt.c
++++ b/drivers/net/ethernet/broadcom/bnxt/bnxt.c
+@@ -8097,13 +8097,13 @@ static int bnxt_change_mtu(struct net_device *dev, int new_mtu)
+ 	struct bnxt *bp = netdev_priv(dev);
  
-+	clp->cl_minorversion = cl_init->minorversion;
- 	clp->cl_nfs_mod = cl_init->nfs_mod;
- 	if (!try_module_get(clp->cl_nfs_mod->owner))
- 		goto error_dealloc;
-diff --git a/fs/nfs/fscache.c b/fs/nfs/fscache.c
-index a7bc4e0494f92..6f45b1a957397 100644
---- a/fs/nfs/fscache.c
-+++ b/fs/nfs/fscache.c
-@@ -35,6 +35,7 @@ static DEFINE_SPINLOCK(nfs_fscache_keys_lock);
- struct nfs_server_key {
- 	struct {
- 		uint16_t	nfsversion;		/* NFS protocol version */
-+		uint32_t	minorversion;		/* NFSv4 minor version */
- 		uint16_t	family;			/* address family */
- 		__be16		port;			/* IP port */
- 	} hdr;
-@@ -59,6 +60,7 @@ void nfs_fscache_get_client_cookie(struct nfs_client *clp)
+ 	if (netif_running(dev))
+-		bnxt_close_nic(bp, false, false);
++		bnxt_close_nic(bp, true, false);
  
- 	memset(&key, 0, sizeof(key));
- 	key.hdr.nfsversion = clp->rpc_ops->version;
-+	key.hdr.minorversion = clp->cl_minorversion;
- 	key.hdr.family = clp->cl_addr.ss_family;
+ 	dev->mtu = new_mtu;
+ 	bnxt_set_ring_params(bp);
  
- 	switch (clp->cl_addr.ss_family) {
-diff --git a/fs/nfs/nfs4client.c b/fs/nfs/nfs4client.c
-index 86991bcfbeb12..faaabbedc891d 100644
---- a/fs/nfs/nfs4client.c
-+++ b/fs/nfs/nfs4client.c
-@@ -210,7 +210,6 @@ struct nfs_client *nfs4_alloc_client(const struct nfs_client_initdata *cl_init)
- 	INIT_LIST_HEAD(&clp->cl_ds_clients);
- 	rpc_init_wait_queue(&clp->cl_rpcwaitq, "NFS client");
- 	clp->cl_state = 1 << NFS4CLNT_LEASE_EXPIRED;
--	clp->cl_minorversion = cl_init->minorversion;
- 	clp->cl_mvops = nfs_v4_minor_ops[cl_init->minorversion];
- 	clp->cl_mig_gen = 1;
- #if IS_ENABLED(CONFIG_NFS_V4_1)
+ 	if (netif_running(dev))
+-		return bnxt_open_nic(bp, false, false);
++		return bnxt_open_nic(bp, true, false);
+ 
+ 	return 0;
+ }
 -- 
 2.20.1
 
