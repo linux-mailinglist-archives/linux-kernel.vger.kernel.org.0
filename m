@@ -2,97 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 02649189485
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 04:33:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3AE0618947F
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 04:31:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727224AbgCRDdm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Mar 2020 23:33:42 -0400
-Received: from inva020.nxp.com ([92.121.34.13]:37626 "EHLO inva020.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726229AbgCRDdm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Mar 2020 23:33:42 -0400
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 772C71A104F;
-        Wed, 18 Mar 2020 04:33:40 +0100 (CET)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id E95E61A1050;
-        Wed, 18 Mar 2020 04:33:32 +0100 (CET)
-Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 8E1A5402C1;
-        Wed, 18 Mar 2020 11:33:23 +0800 (SGT)
-From:   Anson Huang <Anson.Huang@nxp.com>
-To:     mturquette@baylibre.com, sboyd@kernel.org, shawnguo@kernel.org,
-        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
-        allison@lohutok.net, gustavo@embeddedor.com,
-        kstewart@linuxfoundation.org, tglx@linutronix.de,
-        abel.vesa@nxp.com, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc:     Linux-imx@nxp.com
-Subject: [PATCH] clk: imx: clk-pllv3: Use readl_poll_timeout() for PLL lock wait
-Date:   Wed, 18 Mar 2020 11:26:44 +0800
-Message-Id: <1584502004-11349-1-git-send-email-Anson.Huang@nxp.com>
-X-Mailer: git-send-email 2.7.4
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1726682AbgCRDbL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Mar 2020 23:31:11 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:46448 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726250AbgCRDbL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Mar 2020 23:31:11 -0400
+Received: by mail-wr1-f68.google.com with SMTP id w16so12034022wrv.13
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Mar 2020 20:31:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=aIT1zTK9Ocso7RE9WeFEQk5SlR5xoNixSCclsbBUu/g=;
+        b=KNcCj7O6ttPqHHD/f7f7kRJ38s/SgzALF5DtpnS4WUODbYaxIrhIBM0SjK0Z5AUbKP
+         ScckZfkZgdubMBTtD5LbY5NXhEjFj/+3IWV5ERArTHilG/ew6N7rfmOoKJIWCBnQxfCq
+         01XZzw+9njVxiksAXjjEY9I9S+x0aSqE9iDRU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=aIT1zTK9Ocso7RE9WeFEQk5SlR5xoNixSCclsbBUu/g=;
+        b=oOjTlU5fM/knPCo28ztx9mw426IvAeo5vEO3DtLaOwPuqQnBUx/ZVEPDdkkjGDIO3G
+         ZX3OJoUTab2MtNs+FRm5TzR5sIrNkO5SXEZD8QzcbLtSir9gDGC0BpJSbWsHqTlTwvWB
+         PD98WTWqQstJcdhIAzbSQ5b71QwdduP995t9/BNR+k0tnM2ogzKPT17n2KjizsvM6C66
+         zktmT1reNDB/588r3N+jhqKjsuC1oNBmGusQOp4Y9xW901XrIdGgR7gmi7N9xEtaFm7Q
+         m/4jy6BoUB+NfXPoSgk7NaPRKYHGze9nyilCGgQ6BBLM1buggrKk9eSveGiugAlZQ8ba
+         VY/g==
+X-Gm-Message-State: ANhLgQ3P79hv8ctaWhpt5VRNACC0x01yUhGSCV9CR9At7A+L0fqi6vSQ
+        Zf1L26ePakmdoBLqg/rf+x0itEwaaIw=
+X-Google-Smtp-Source: ADFU+vtjwQwj07nqkkP9fnyM9t9FFpQz/6TzwQOv7Zkq7ebdg6DdlCtiR27htOncCjU47DmsYY+M+w==
+X-Received: by 2002:a5d:488c:: with SMTP id g12mr2669622wrq.67.1584502267780;
+        Tue, 17 Mar 2020 20:31:07 -0700 (PDT)
+Received: from rayagonda.dhcp.broadcom.net ([192.19.234.250])
+        by smtp.gmail.com with ESMTPSA id f17sm7664084wrj.28.2020.03.17.20.31.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 17 Mar 2020 20:31:06 -0700 (PDT)
+From:   Rayagonda Kokatanur <rayagonda.kokatanur@broadcom.com>
+To:     Jassi Brar <jassisinghbrar@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org,
+        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>
+Cc:     Rayagonda Kokatanur <rayagonda.kokatanur@broadcom.com>
+Subject: [PATCH v2 1/1] maillbox: bcm-flexrm-mailbox: handle cmpl_pool dma allocation failure
+Date:   Wed, 18 Mar 2020 09:00:55 +0530
+Message-Id: <20200318033055.5335-1-rayagonda.kokatanur@broadcom.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use readl_poll_timeout() for PLL lock wait which can simplify the
-code a lot.
+Handle 'cmpl_pool' dma memory allocation failure.
 
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+Fixes: a9a9da47f8e6 ("mailbox: no need to check return value of debugfs_create functions")
+Signed-off-by: Rayagonda Kokatanur <rayagonda.kokatanur@broadcom.com>
 ---
- drivers/clk/imx/clk-pllv3.c | 16 +++++-----------
- 1 file changed, 5 insertions(+), 11 deletions(-)
+Changes from v1:
+- Address code review comments from Tyler Hicks,
+  Add missing Fixes tag.
 
-diff --git a/drivers/clk/imx/clk-pllv3.c b/drivers/clk/imx/clk-pllv3.c
-index df91a82..3dfa9c3 100644
---- a/drivers/clk/imx/clk-pllv3.c
-+++ b/drivers/clk/imx/clk-pllv3.c
-@@ -7,6 +7,7 @@
- #include <linux/clk-provider.h>
- #include <linux/delay.h>
- #include <linux/io.h>
-+#include <linux/iopoll.h>
- #include <linux/slab.h>
- #include <linux/jiffies.h>
- #include <linux/err.h>
-@@ -25,6 +26,8 @@
- #define IMX7_ENET_PLL_POWER	(0x1 << 5)
- #define IMX7_DDR_PLL_POWER	(0x1 << 20)
+ drivers/mailbox/bcm-flexrm-mailbox.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/mailbox/bcm-flexrm-mailbox.c b/drivers/mailbox/bcm-flexrm-mailbox.c
+index 8ee9db274802..bee33abb5308 100644
+--- a/drivers/mailbox/bcm-flexrm-mailbox.c
++++ b/drivers/mailbox/bcm-flexrm-mailbox.c
+@@ -1599,6 +1599,7 @@ static int flexrm_mbox_probe(struct platform_device *pdev)
+ 					  1 << RING_CMPL_ALIGN_ORDER, 0);
+ 	if (!mbox->cmpl_pool) {
+ 		ret = -ENOMEM;
++		goto fail_destroy_bd_pool;
+ 	}
  
-+#define PLL_LOCK_TIMEOUT	10000
-+
- /**
-  * struct clk_pllv3 - IMX PLL clock version 3
-  * @clk_hw:	 clock source
-@@ -53,23 +56,14 @@ struct clk_pllv3 {
- 
- static int clk_pllv3_wait_lock(struct clk_pllv3 *pll)
- {
--	unsigned long timeout = jiffies + msecs_to_jiffies(10);
- 	u32 val = readl_relaxed(pll->base) & pll->power_bit;
- 
- 	/* No need to wait for lock when pll is not powered up */
- 	if ((pll->powerup_set && !val) || (!pll->powerup_set && val))
- 		return 0;
- 
--	/* Wait for PLL to lock */
--	do {
--		if (readl_relaxed(pll->base) & BM_PLL_LOCK)
--			break;
--		if (time_after(jiffies, timeout))
--			break;
--		usleep_range(50, 500);
--	} while (1);
--
--	return readl_relaxed(pll->base) & BM_PLL_LOCK ? 0 : -ETIMEDOUT;
-+	return readl_poll_timeout(pll->base, val, val & BM_PLL_LOCK, 500,
-+				  PLL_LOCK_TIMEOUT);
- }
- 
- static int clk_pllv3_prepare(struct clk_hw *hw)
+ 	/* Allocate platform MSIs for each ring */
+@@ -1661,6 +1662,7 @@ static int flexrm_mbox_probe(struct platform_device *pdev)
+ 	platform_msi_domain_free_irqs(dev);
+ fail_destroy_cmpl_pool:
+ 	dma_pool_destroy(mbox->cmpl_pool);
++fail_destroy_bd_pool:
+ 	dma_pool_destroy(mbox->bd_pool);
+ fail:
+ 	return ret;
 -- 
-2.7.4
+2.17.1
 
