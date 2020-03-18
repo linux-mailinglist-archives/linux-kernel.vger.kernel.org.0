@@ -2,112 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C808518A868
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 23:40:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B53AC18A870
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 23:41:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727350AbgCRWjw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Mar 2020 18:39:52 -0400
-Received: from mga06.intel.com ([134.134.136.31]:41336 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726777AbgCRWju (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Mar 2020 18:39:50 -0400
-IronPort-SDR: 16vwUxItd219oym/u9uvTyHEr+eEG2ECLFxyN89lVOd0dthG9sPvLDxLr0OQC2uUIuQSHIwH6y
- ndoE5swUfJPQ==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Mar 2020 15:39:49 -0700
-IronPort-SDR: OIZt4/Bulq5VM9kt6gz93SuZccv60eWXlc2inejhm2wUCfLxduTFCDDxrd8BuexZGUz7Mwo9Py
- fiNQdjwwpBsw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,569,1574150400"; 
-   d="scan'208";a="355843989"
-Received: from mbeldzik-mobl.ger.corp.intel.com (HELO localhost) ([10.252.55.127])
-  by fmsmga001.fm.intel.com with ESMTP; 18 Mar 2020 15:39:39 -0700
-Date:   Thu, 19 Mar 2020 00:39:37 +0200
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Sean Christopherson <sean.j.christopherson@intel.com>
-Cc:     Nathaniel McCallum <npmccallum@redhat.com>,
-        linux-kernel@vger.kernel.org, x86@kernel.org,
-        linux-sgx@vger.kernel.org, akpm@linux-foundation.org,
-        dave.hansen@intel.com, Neil Horman <nhorman@redhat.com>,
-        "Huang, Haitao" <haitao.huang@intel.com>,
-        andriy.shevchenko@linux.intel.com, tglx@linutronix.de,
-        "Svahn, Kai" <kai.svahn@intel.com>, bp@alien8.de,
-        Josh Triplett <josh@joshtriplett.org>, luto@kernel.org,
-        kai.huang@intel.com, David Rientjes <rientjes@google.com>,
-        cedric.xing@intel.com, Patrick Uiterwijk <puiterwijk@redhat.com>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Jethro Beekman <jethro@fortanix.com>,
-        Connor Kuehl <ckuehl@redhat.com>,
-        Harald Hoyer <harald@redhat.com>,
-        Lily Sturmann <lsturman@redhat.com>
-Subject: Re: [PATCH v28 21/22] x86/vdso: Implement a vDSO for Intel SGX
- enclave call
-Message-ID: <20200318223937.GC52244@linux.intel.com>
-References: <20200303233609.713348-1-jarkko.sakkinen@linux.intel.com>
- <20200303233609.713348-22-jarkko.sakkinen@linux.intel.com>
- <CAOASepPi4byhQ21hngsSx8tosCC-xa=y6r4j=pWo2MZGeyhi4Q@mail.gmail.com>
- <20200315012523.GC208715@linux.intel.com>
- <CAOASepP9GeTEqs1DSfPiSm9ER0whj9qwSc46ZiNj_K4dMekOfQ@mail.gmail.com>
- <94ce05323c4de721c4a6347223885f2ad9f541af.camel@linux.intel.com>
- <CAOASepM1pp1emPwSdFcaRkZfFm6sNmwPCJH+iFMiaJpFjU0VxQ@mail.gmail.com>
- <5dc2ec4bc9433f9beae824759f411c32b45d4b74.camel@linux.intel.com>
- <20200316225322.GJ24267@linux.intel.com>
+        id S1727403AbgCRWkr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Mar 2020 18:40:47 -0400
+Received: from mail-io1-f65.google.com ([209.85.166.65]:32782 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726795AbgCRWkr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Mar 2020 18:40:47 -0400
+Received: by mail-io1-f65.google.com with SMTP id o127so295443iof.0;
+        Wed, 18 Mar 2020 15:40:46 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=sNmWTWISSY3HxnGdq3YlFpG87OzVoepE1NIhZFHW6Vg=;
+        b=Dd5pLMyjVNfBimEg2D9VA0zt8/yznPgyK9Lo5mVftDF2IzTLB798EqYEyh0yaVPZuv
+         2eIKCNeNED5UkHLsx/Rx30uHd1m1Zgc/Qdhp8O1LvoNWb3ZF8slTmbfyvbyM8ncjtBI6
+         ylJ3jFtjQ1X3z8TZqLWVJyrJS6EX48vECwS9UHTft/wmcGyymoc9Vc5RwmgpeNje9JKg
+         A0DkFds4X874h5nWBvOLEt6G8fLusazswXCuIOCjKPpcFWiktAA+tDvzB+VJCGag2Fco
+         j7K7HXybcBGM8DLHrNqzXlEG69b+IAYWvC9W1F/uqmbzuuqXOlvRKFR/H2lDt6TU03Iw
+         HSYQ==
+X-Gm-Message-State: ANhLgQ22tp7wyVNiayUXeeNSJOzvktFn/x0bV4v4gZ569XJlac3oh+nN
+        2+Tqb65I5Aw191jV8yX7xw==
+X-Google-Smtp-Source: ADFU+vueJ8UutJsifakMHvpGq04AYZ7HzoPPa9jyc6D+mpX3xmSiVDrOgMu8lAqgI6eznnw6v065Ag==
+X-Received: by 2002:a5d:980f:: with SMTP id a15mr34849iol.203.1584571246003;
+        Wed, 18 Mar 2020 15:40:46 -0700 (PDT)
+Received: from rob-hp-laptop ([64.188.179.250])
+        by smtp.gmail.com with ESMTPSA id b62sm101487ilb.1.2020.03.18.15.40.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 18 Mar 2020 15:40:44 -0700 (PDT)
+Received: (nullmailer pid 2596 invoked by uid 1000);
+        Wed, 18 Mar 2020 22:40:42 -0000
+Date:   Wed, 18 Mar 2020 16:40:42 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Dinh Nguyen <dinguyen@kernel.org>
+Cc:     linux-clk@vger.kernel.org, dinguyen@kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        sboyd@kernel.org, mturquette@baylibre.com, robh+dt@kernel.org,
+        mark.rutland@arm.com
+Subject: Re: [PATCHv3 4/5] dt-bindings: documentation: add clock bindings
+ information for Agilex
+Message-ID: <20200318224042.GA32101@bogus>
+References: <20200317161022.11181-1-dinguyen@kernel.org>
+ <20200317161022.11181-5-dinguyen@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200316225322.GJ24267@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <20200317161022.11181-5-dinguyen@kernel.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 16, 2020 at 03:53:22PM -0700, Sean Christopherson wrote:
-> Yes and no.   If we wanted to minimize the amount of wrapping around the
-> vDSO's ENCLU then we wouldn't have the exit handler shenanigans in the
-> first place.  The whole process has been about balancing the wants of each
-> use case against the overall quality of the API and code.
+On Tue, 17 Mar 2020 11:10:21 -0500, Dinh Nguyen wrote:
+> Document the Agilex clock bindings, and add the clock header file. The
+> clock header is an enumeration of all the different clocks on the Agilex
+> platform.
+> 
+> Signed-off-by: Dinh Nguyen <dinguyen@kernel.org>
+> ---
+> v3: address comments from Stephen Boyd
+>     fix build error(tab removed in line 37)
+>     renamed to intel,agilex.yaml
+> v2: convert original document to YAML
+> ---
+>  .../bindings/clock/intel,agilex.yaml          | 36 ++++++++++
+>  include/dt-bindings/clock/agilex-clock.h      | 70 +++++++++++++++++++
+>  2 files changed, 106 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/intel,agilex.yaml
+>  create mode 100644 include/dt-bindings/clock/agilex-clock.h
+> 
 
-Minimizing is not something that happens in a void. Given the user base
-for the SDK having the handler was a necessity. Otherwise, we would not
-have that handler in the first place.
+My bot found errors running 'make dt_binding_check' on your patch:
 
-> Up until Nathaniel joined the party, the only stakeholder in terms of the
-> exit handler was the Intel SDK.  There was a general consensus to pass
-> registers as-is when there isn't a strong reason to do otherwise.  Note
-> that Nathaniel has also expressed approval of that approach.
+Error: Documentation/devicetree/bindings/clock/intel,agilex.example.dts:17.3-4 syntax error
+FATAL ERROR: Unable to parse input tree
+scripts/Makefile.lib:311: recipe for target 'Documentation/devicetree/bindings/clock/intel,agilex.example.dt.yaml' failed
+make[1]: *** [Documentation/devicetree/bindings/clock/intel,agilex.example.dt.yaml] Error 1
+Makefile:1262: recipe for target 'dt_binding_check' failed
+make: *** [dt_binding_check] Error 2
 
-OK, great.
-
-> The major benefits being that the vDSO would be callable from C and that
-> the kernel could define a legitimate prototype instead of a frankenstein
-> prototype that's half assembly and half C.  For me, those are significant
-
-I was not aware that there was a plot to make it callable by C.
-
-OK, so right now
-
-A. @leaf =  %eax
-B. @tcs = 8(%rsp)
-C. @e = 0x10(%rsp)
-D. @handler = 0x18(%rsp)
-
-On x86-64 Linux C calling convention means DI/SI/DX/CX type of thing.
-
-So what is the thing that we are referring to C calling convetion in
-this email discussion?
-
-> benefits and well worth the extra MOV, PUSH and POP.  For some use cases
-> it would eliminate the need for an assembly wrapper.  For runtimes that
-> need an assembly wrapper for whatever reason, it's probably still a win as
-> a well designed runtime can avoid register shuffling in the wrapper.  And
-> if there is a runtime that isn't covered by the above, it's at worst an
-> extra MOV.
-
-Is it cool if I rip of the documentation from vsgx_enter_enclave.S and
-move it to Documentation/ ? It is nasty to keep and update it where it
-is right now. How it is right now, it is destined to rotten.
-
-/Jarkko
+See https://patchwork.ozlabs.org/patch/1256630
+Please check and re-submit.
