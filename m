@@ -2,114 +2,145 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A103C189C04
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 13:32:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A49FF189C0E
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 13:38:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726757AbgCRMcH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Mar 2020 08:32:07 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:35738 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726530AbgCRMcG (ORCPT
+        id S1726781AbgCRMiG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Mar 2020 08:38:06 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:42112 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726647AbgCRMiG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Mar 2020 08:32:06 -0400
-Received: by mail-wm1-f66.google.com with SMTP id m3so3127465wmi.0
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Mar 2020 05:32:05 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=K+CS+21zAUZ2xO+PTmoIDEUvzM3H5I3+5QSeJVuTL7A=;
-        b=jmDumcedJMfB18TQyqMZ6nv4TKrVMCMV83epaD/JF380LyIVWyTt2lI8KwglvOlj1I
-         TN5jJC4nUoR+ESgHctcFjzYkw8tXf5ChJOiTbw5OyaJBZXTXSKIHzK7GdlaGTx/iG9ds
-         RiyWUwKgtvJMVGMFpblRzaBhW3gKzG8NISI/8vT1UqEo06fkEdiGtfssPKhfouArudtg
-         BzotpM2bOtp5d4Cc10uAEvyU1vyXpjjvSeF1mzZhHHhNrLEJfwfmhrWzJLi9dZ5mkFfR
-         yoxRLvDobaaXLlIuQY6rLJfGgaYabysz/TUj0NCOa7JMcCm96676RqoFvHNz3bsIV5MO
-         K2kw==
-X-Gm-Message-State: ANhLgQ3F8/f4wmIoNUA+UgCPe5Q34zmwOnz1ioNKfvGJTyqK+DoWgXRH
-        c3pqljtpNHUR/O7QnXhAJPc=
-X-Google-Smtp-Source: ADFU+vuAQsgX66PrkR6JCtqUCcdlrkbBb7+WbC0oVYs93TcsdO4r5YEBTFxFaosH22KxzSgv7jDmXA==
-X-Received: by 2002:a1c:68c2:: with SMTP id d185mr5133224wmc.150.1584534724510;
-        Wed, 18 Mar 2020 05:32:04 -0700 (PDT)
-Received: from localhost (ip-37-188-180-89.eurotel.cz. [37.188.180.89])
-        by smtp.gmail.com with ESMTPSA id u17sm9248479wrm.43.2020.03.18.05.32.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Mar 2020 05:32:03 -0700 (PDT)
-Date:   Wed, 18 Mar 2020 13:32:02 +0100
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Roman Gushchin <guro@fb.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        kernel-team@fb.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mm: memcg: make memory.oom.group tolerable to task
- migration
-Message-ID: <20200318123202.GL21362@dhcp22.suse.cz>
-References: <20200316223510.3176148-1-guro@fb.com>
+        Wed, 18 Mar 2020 08:38:06 -0400
+Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 02ICXrwq004205
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Mar 2020 08:38:05 -0400
+Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2yu7wcr9s6-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Mar 2020 08:38:05 -0400
+Received: from localhost
+        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <ravi.bangoria@linux.ibm.com>;
+        Wed, 18 Mar 2020 12:38:02 -0000
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
+        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 18 Mar 2020 12:37:59 -0000
+Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 02ICbvuv48365752
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 18 Mar 2020 12:37:57 GMT
+Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 996C45204F;
+        Wed, 18 Mar 2020 12:37:57 +0000 (GMT)
+Received: from [9.199.38.35] (unknown [9.199.38.35])
+        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id 9D80B52052;
+        Wed, 18 Mar 2020 12:35:52 +0000 (GMT)
+Subject: Re: [PATCH 13/15] powerpc/watchpoint: Don't allow concurrent perf and
+ ptrace events
+To:     Christophe Leroy <christophe.leroy@c-s.fr>
+Cc:     mpe@ellerman.id.au, mikey@neuling.org, apopple@linux.ibm.com,
+        paulus@samba.org, npiggin@gmail.com,
+        naveen.n.rao@linux.vnet.ibm.com, peterz@infradead.org,
+        jolsa@kernel.org, oleg@redhat.com, fweisbec@gmail.com,
+        mingo@kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-kernel@vger.kernel.org,
+        Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+References: <20200309085806.155823-1-ravi.bangoria@linux.ibm.com>
+ <20200309085806.155823-14-ravi.bangoria@linux.ibm.com>
+ <673cf087-1422-84b3-e3bc-13c4dd491414@c-s.fr>
+From:   Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+Date:   Wed, 18 Mar 2020 18:05:44 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200316223510.3176148-1-guro@fb.com>
+In-Reply-To: <673cf087-1422-84b3-e3bc-13c4dd491414@c-s.fr>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 20031812-0020-0000-0000-000003B67BA4
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 20031812-0021-0000-0000-0000220EE50B
+Message-Id: <ee92b133-c5f8-0191-a4b0-858794ebe69a@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.645
+ definitions=2020-03-18_05:2020-03-18,2020-03-18 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 spamscore=0
+ clxscore=1015 priorityscore=1501 phishscore=0 suspectscore=0
+ lowpriorityscore=0 mlxlogscore=999 impostorscore=0 adultscore=0 mlxscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2003020000 definitions=main-2003180061
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 16-03-20 15:35:10, Roman Gushchin wrote:
-> If a task is getting moved out of the OOMing cgroup, it might
-> result in unexpected OOM killings if memory.oom.group is used
-> anywhere in the cgroup tree.
-> 
-> Imagine the following example:
-> 
->           A (oom.group = 1)
->          / \
->   (OOM) B   C
-> 
-> Let's say B's memory.max is exceeded and it's OOMing. The OOM killer
-> selects a task in B as a victim, but someone asynchronously moves
-> the task into C. mem_cgroup_get_oom_group() will iterate over all
-> ancestors of C up to the root cgroup. In theory it had to stop
-> at the oom_domain level - the memory cgroup which is OOMing.
-> But because B is not an ancestor of C, it's not happening.
-> Instead it chooses A (because it's oom.group is set), and kills
-> all tasks in A. This behavior is wrong because the OOM happened in B,
-> so there is no reason to kill anything outside.
-> 
-> Fix this by checking it the memory cgroup to which the task belongs
-> is a descendant of the oom_domain. If not, memory.oom.group should
-> be ignored, and the OOM killer should kill only the victim task.
-> 
-> Signed-off-by: Roman Gushchin <guro@fb.com>
-> Reported-by: Dan Schatzberg <dschatzberg@fb.com>
 
-After the follow up discussion I do agree that this should be sufficient
-for now.
-Acked-by: Michal Hocko <mhocko@suse.com>
 
-> ---
->  mm/memcontrol.c | 8 ++++++++
->  1 file changed, 8 insertions(+)
+On 3/17/20 4:38 PM, Christophe Leroy wrote:
 > 
-> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-> index daa399be4688..d8c4b7aa4e73 100644
-> --- a/mm/memcontrol.c
-> +++ b/mm/memcontrol.c
-> @@ -1930,6 +1930,14 @@ struct mem_cgroup *mem_cgroup_get_oom_group(struct task_struct *victim,
->  	if (memcg == root_mem_cgroup)
->  		goto out;
->  
-> +	/*
-> +	 * If the victim task has been asynchronously moved to a different
-> +	 * memory cgroup, we might end up killing tasks outside oom_domain.
-> +	 * In this case it's better to ignore memory.group.oom.
-> +	 */
-> +	if (unlikely(!mem_cgroup_is_descendant(memcg, oom_domain)))
-> +		goto out;
-> +
->  	/*
->  	 * Traverse the memory cgroup hierarchy from the victim task's
->  	 * cgroup up to the OOMing cgroup (or root) to find the
-> -- 
-> 2.24.1
+> 
+> Le 09/03/2020 à 09:58, Ravi Bangoria a écrit :
+>> ptrace and perf watchpoints on powerpc behaves differently. Ptrace
+> 
+> On the 8xx, ptrace generates signal after executing the instruction.
 
--- 
-Michal Hocko
-SUSE Labs
+8xx logic is unchanged. I should have mentioned "Book3s DAWR".
+
+> 
+>> watchpoint works in one-shot mode and generates signal before executing
+>> instruction. It's ptrace user's job to single-step the instruction and
+>> re-enable the watchpoint. OTOH, in case of perf watchpoint, kernel
+>> emulates/single-steps the instruction and then generates event. If perf
+>> and ptrace creates two events with same or overlapping address ranges,
+>> it's ambiguous to decide who should single-step the instruction. Because
+>> of this issue ptrace and perf event can't coexist when the address range
+>> overlaps.
+> 
+> Ok, and then ? What's the purpose of this (big) patch ?
+
+Don't allow perf and ptrace watchpoint at the same time if their address
+range overlaps.
+
+...
+
+>> +struct breakpoint {
+>> +    struct list_head list;
+>> +    struct perf_event *bp;
+>> +    bool ptrace_bp;
+>> +};
+> 
+> Don't we have an equivalent struct already ?
+
+No. Using this we track percpu and perthread watchpoints for both perf and
+ptrace. This problems is powerpc(DAWR) specific and thus we need to hook arch
+specific logic in watchopint installation/uninstallation path.
+
+...
+
+>> +static bool bp_addr_range_overlap(struct perf_event *bp1, struct perf_event *bp2)
+>> +{
+>> +    __u64 bp1_saddr, bp1_eaddr, bp2_saddr, bp2_eaddr;
+>> +
+>> +    bp1_saddr = bp1->attr.bp_addr & ~HW_BREAKPOINT_ALIGN;
+>> +    bp1_eaddr = (bp1->attr.bp_addr + bp1->attr.bp_len - 1) | HW_BREAKPOINT_ALIGN;
+>> +    bp2_saddr = bp2->attr.bp_addr & ~HW_BREAKPOINT_ALIGN;
+>> +    bp2_eaddr = (bp2->attr.bp_addr + bp2->attr.bp_len - 1) | HW_BREAKPOINT_ALIGN;
+>> +
+>> +    return (bp1_saddr <= bp2_eaddr && bp1_eaddr >= bp2_saddr);
+> 
+> Would be better with something like (HW_BREAKPOINT_SIZE needs to be defined).
+> 
+>      bp1_saddr = ALIGN_DOWN(bp1->attr.bp_addr, HW_BREAKPOINT_SIZE);
+>      bp1_eaddr = ALIGN(bp1->attr.bp_addr, HW_BREAKPOINT_SIZE);
+>      bp2_saddr = ALIGN_DOWN(bp2->attr.bp_addr, HW_BREAKPOINT_SIZE);
+>      bp2_eaddr = ALIGN(bp2->attr.bp_addr, HW_BREAKPOINT_SIZE);
+> 
+>      return (bp1_saddr < bp2_eaddr && bp1_eaddr > bp2_saddr);
+
+Ok.
+
+Thanks,
+Ravi
+
