@@ -2,48 +2,48 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CAED618A1D6
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 18:44:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4B64418A1D7
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 18:44:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727262AbgCRRnH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Mar 2020 13:43:07 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:40057 "EHLO
+        id S1727273AbgCRRnI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Mar 2020 13:43:08 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:41050 "EHLO
         mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727241AbgCRRnG (ORCPT
+        with ESMTP id S1727234AbgCRRnH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Mar 2020 13:43:06 -0400
-Received: by mail-wr1-f68.google.com with SMTP id f3so24566001wrw.7
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Mar 2020 10:43:05 -0700 (PDT)
+        Wed, 18 Mar 2020 13:43:07 -0400
+Received: by mail-wr1-f68.google.com with SMTP id h9so2737639wrc.8
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Mar 2020 10:43:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=OLEdaXjtX2QvHFSvAxOKprkBjwmITNNowmzF7dtiz/s=;
-        b=mQjz/15GRRq88EJYvE0kMHybmWXH8Xj60dhiU5eD9Rfk0AhEh0M7o+nfRndV3f+nYd
-         WF8dK4Bn6fmO+5rHWJhEwVHtZsTV0GHiTDAiJn7LeZXRamhfrcJWkelHRxC18mzJasG8
-         8+kH9GfE4DgRVTONcCxAZAstaX1EAEPdCCjAhRBD/qi5jKTsba2kZh6zShA2DzkxonvO
-         xoNJoU2AClEKAqOEa5gRCRrqISdUI5LJFoNrq5PXSDRQi+DGE0EygM5ofOGAeqk8juNL
-         Vk30bQT4JnEvODf2k6Il9U2G6Ed+7YkQaKoNeA3aBNMYY3Xs9Qd3s4Fs4qUoQOVpgwsP
-         PwRA==
+        bh=LnAT0cbyFmhoBQ00Ga1dspfG4naptUEJD59/Qz0lOxU=;
+        b=PRRCKzf4bNfaTiGfWH6QKQv/dvGuLgHqvuvaV4gJcjkcxy2TykA6vkfuE/9hnW5nFy
+         2C5jDZXp2cSPSeVa2h3zd+QwRPt4Aslz1Yt2dY5K3rm3bSJ3WN+ZwzMlNuJZRnLHLd5G
+         MFY7QL0QVaxtIadyGNDpQHg1bLXXYKNL0c71NGQk+XkNrg2hpz1leQ/zVZV73wyUmAVf
+         68gdoIW4mlGnNyiXLvf5nWVhSNsb/IccqAPNXpCYlq/rNKRVzZnW74eI+6npP1WQuyAa
+         VcKudz8wE01E22QZoM7HfT8JPlUm/NEiKWRN/1QXmY17419evX78ww3/L+gekT97xd8q
+         PfQg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=OLEdaXjtX2QvHFSvAxOKprkBjwmITNNowmzF7dtiz/s=;
-        b=NzfVQC2BsthfNv7/zaJKVczFLB/RQyOuJ37YpzumkSVKeDq5y/E3dKBsLghImzQcRz
-         KAA99PxtYxJtZbKPFL0YsMxiPzm5gm611ITXJ9rUAM6hxp0Ue85OxxMylrwqCUfjqDHO
-         2lCAlGpIX7XVXeJZj1sSiEZoj5QdhmPH8FjY9wuH6fmXr7tfY09JJTJySQtkR3kVMC+D
-         vUCG1Y7sJKQj/IOyB+61DWjjleB+QMdHzG/TgWEGbidAp7iHyOucgU7X3dNHB7fos3HI
-         jpTMpO1BIe1eOn9doqeFOpksQEk1ypkZb54Wp7r4EcGxFalthmBLbHAWDdMaDk8RVy25
-         z+kA==
-X-Gm-Message-State: ANhLgQ1p70CgMvPsXxMTy4tuk7S7t3+EDKCw95Vm6qPq85QrDx///Xak
-        usDzsCLJGKnEcVhnqkn5pUfATQ==
-X-Google-Smtp-Source: ADFU+vtrXDCNxqZAb1paHCpQ+8ecsai5Blo9z2pHfrC1Pris7MF8wb9y6tQKc9tzR2XpIF3JHbEHag==
-X-Received: by 2002:a5d:6a8d:: with SMTP id s13mr6677670wru.11.1584553384489;
-        Wed, 18 Mar 2020 10:43:04 -0700 (PDT)
+        bh=LnAT0cbyFmhoBQ00Ga1dspfG4naptUEJD59/Qz0lOxU=;
+        b=GryDGjx95IlKftZfezr0F01zngvM5Tg9j6ZXjOWlPoo+jGLaUGPLq6+/ntqIVEbihy
+         A5lADWPFInrwrzb7PCy7owJiZZZwundVCb9wPVMhrBv/OduSjXUXm2KmIUcg81UZUrU0
+         FJpMAPKrWMHfvv9Uap8YoiOwUsP7GXrGV2CGDN8xdrH2Dsm1bS1nlMfmh9giUlCVu7/r
+         IdU2ZMA55SjBQqoudMyJO50Jf4KxolzjQEFBdDasES8tnV9/9kYIX90PXKgY0padLjQV
+         Dp89WR3OCfvLFpeFpDaLiOkntfecqs8ggdFfcfu4pPkXB93FoFKt+OnRyIMKvIk89iS2
+         mW7w==
+X-Gm-Message-State: ANhLgQ2x8p0CtOvAc0P7TK6kkClgRN1/A1wf0gZMCY2TIQl1NYmEIzhP
+        /euMJDD70m5nKVZvPSwxreSIUA==
+X-Google-Smtp-Source: ADFU+vsd/NKHL4FhKagu2tXjW/yjB1glAeG3sSXkBnkwpLQzrlhtGiCdZpNzuliExWPaVJQE7Mu50w==
+X-Received: by 2002:a5d:55c7:: with SMTP id i7mr6954159wrw.252.1584553386183;
+        Wed, 18 Mar 2020 10:43:06 -0700 (PDT)
 Received: from mai.imgcgcw.net ([2a01:e34:ed2f:f020:5d64:ea6:49bd:69d7])
-        by smtp.gmail.com with ESMTPSA id r3sm3787212wrm.35.2020.03.18.10.43.03
+        by smtp.gmail.com with ESMTPSA id r3sm3787212wrm.35.2020.03.18.10.43.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Mar 2020 10:43:03 -0700 (PDT)
+        Wed, 18 Mar 2020 10:43:05 -0700 (PDT)
 From:   Daniel Lezcano <daniel.lezcano@linaro.org>
 To:     tglx@linutronix.de
 Cc:     linux-kernel@vger.kernel.org, Anson Huang <Anson.Huang@nxp.com>,
@@ -54,9 +54,9 @@ Cc:     linux-kernel@vger.kernel.org, Anson Huang <Anson.Huang@nxp.com>,
         NXP Linux Team <linux-imx@nxp.com>,
         linux-arm-kernel@lists.infradead.org (moderated list:ARM/FREESCALE IMX
         / MXC ARM ARCHITECTURE)
-Subject: [PATCH 19/21] clocksource/drivers/imx-tpm: Remove unused includes
-Date:   Wed, 18 Mar 2020 18:41:29 +0100
-Message-Id: <20200318174131.20582-19-daniel.lezcano@linaro.org>
+Subject: [PATCH 20/21] clocksource/drivers/imx-sysctr: Remove unused includes
+Date:   Wed, 18 Mar 2020 18:41:30 +0100
+Message-Id: <20200318174131.20582-20-daniel.lezcano@linaro.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200318174131.20582-1-daniel.lezcano@linaro.org>
 References: <e6cd8adf-60df-437a-003f-58e3403e4697@linaro.org>
@@ -72,24 +72,24 @@ There is nothing in use from of_address.h/of_irq.h, remove them.
 
 Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
 Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-Link: https://lore.kernel.org/r/1584412549-18354-1-git-send-email-Anson.Huang@nxp.com
+Link: https://lore.kernel.org/r/1584413713-7376-1-git-send-email-Anson.Huang@nxp.com
 ---
- drivers/clocksource/timer-imx-tpm.c | 2 --
+ drivers/clocksource/timer-imx-sysctr.c | 2 --
  1 file changed, 2 deletions(-)
 
-diff --git a/drivers/clocksource/timer-imx-tpm.c b/drivers/clocksource/timer-imx-tpm.c
-index c1d52d5264c2..6334a35fdc2f 100644
---- a/drivers/clocksource/timer-imx-tpm.c
-+++ b/drivers/clocksource/timer-imx-tpm.c
-@@ -8,8 +8,6 @@
- #include <linux/clocksource.h>
- #include <linux/delay.h>
+diff --git a/drivers/clocksource/timer-imx-sysctr.c b/drivers/clocksource/timer-imx-sysctr.c
+index b7c80a368a1b..18b90fc56bfc 100644
+--- a/drivers/clocksource/timer-imx-sysctr.c
++++ b/drivers/clocksource/timer-imx-sysctr.c
+@@ -4,8 +4,6 @@
+ 
  #include <linux/interrupt.h>
+ #include <linux/clockchips.h>
 -#include <linux/of_address.h>
 -#include <linux/of_irq.h>
- #include <linux/sched_clock.h>
  
  #include "timer-of.h"
+ 
 -- 
 2.17.1
 
