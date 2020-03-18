@@ -2,86 +2,65 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6392618A8AA
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 23:55:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8944618A8BA
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 23:57:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727191AbgCRWz0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Mar 2020 18:55:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:32918 "EHLO mail.kernel.org"
+        id S1726912AbgCRW5f (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Mar 2020 18:57:35 -0400
+Received: from muru.com ([72.249.23.125]:60764 "EHLO muru.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726704AbgCRWz0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Mar 2020 18:55:26 -0400
-Received: from sol.localdomain (c-107-3-166-239.hsd1.ca.comcast.net [107.3.166.239])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8A5102076E;
-        Wed, 18 Mar 2020 22:55:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584572125;
-        bh=78Nf4mARvPIs7QGbl8xZIjkTrHpzmUqX/N3OWsROUFg=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=y/yyeu0KjeBpTQqqCv1PFKdv55ktqgLTSmEXO5irmyLXS71aUYAG1mjOihAnCYUdL
-         l7pyu2J4XhuK90TIpPEnrc/BOzluT7PfUOARLf+sxaevAi2NHHCMLHuo4gd7auejY7
-         4G/MsL+aEXd+Z5nEpftvxRVbZxuVrqgy+I+r+kPY=
-Date:   Wed, 18 Mar 2020 15:55:24 -0700
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Jessica Yu <jeyu@kernel.org>
-Cc:     Sasha Levin <sashal@kernel.org>, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>,
-        stable@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jeff Vander Stoep <jeffv@google.com>,
-        Kees Cook <keescook@chromium.org>, NeilBrown <neilb@suse.com>
-Subject: Re: [PATCH v3 2/5] fs/filesystems.c: downgrade user-reachable
- WARN_ONCE() to pr_warn_once()
-Message-ID: <20200318225524.GE2334@sol.localdomain>
-References: <20200314213426.134866-3-ebiggers@kernel.org>
- <20200317223028.6840A20738@mail.kernel.org>
- <20200318150926.GA4144@linux-8ccs>
+        id S1726647AbgCRW5f (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Mar 2020 18:57:35 -0400
+Received: from hillo.muru.com (localhost [127.0.0.1])
+        by muru.com (Postfix) with ESMTP id 1462D80B6;
+        Wed, 18 Mar 2020 22:58:20 +0000 (UTC)
+From:   Tony Lindgren <tony@atomide.com>
+To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc:     linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-omap@vger.kernel.org,
+        Arthur Demchenkov <spinal.by@gmail.com>,
+        Merlijn Wajer <merlijn@wizzup.org>,
+        Pavel Machek <pavel@ucw.cz>,
+        Sebastian Reichel <sre@kernel.org>, ruleh <ruleh@gmx.de>
+Subject: [PATCHv3 0/3] Lost key-up interrupt handling for omap4-keypad
+Date:   Wed, 18 Mar 2020 15:57:24 -0700
+Message-Id: <20200318225727.29327-1-tony@atomide.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200318150926.GA4144@linux-8ccs>
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 18, 2020 at 04:09:26PM +0100, Jessica Yu wrote:
-> +++ Sasha Levin [17/03/20 22:30 +0000]:
-> > Hi
-> > 
-> > [This is an automated email]
-> > 
-> > This commit has been processed because it contains a -stable tag.
-> > The stable tag indicates that it's relevant for the following trees: all
-> > 
-> > The bot has tested the following trees: v5.5.9, v5.4.25, v4.19.109, v4.14.173, v4.9.216, v4.4.216.
-> > 
-> > v5.5.9: Build OK!
-> > v5.4.25: Build OK!
-> > v4.19.109: Build OK!
-> > v4.14.173: Build OK!
-> > v4.9.216: Failed to apply! Possible dependencies:
-> >    41124db869b7 ("fs: warn in case userspace lied about modprobe return")
-> > 
-> > v4.4.216: Failed to apply! Possible dependencies:
-> >    41124db869b7 ("fs: warn in case userspace lied about modprobe return")
-> > 
-> > 
-> > NOTE: The patch will not be queued to stable trees until it is upstream.
-> > 
-> > How should we proceed with this patch?
-> 
-> Since commit 41124db869b7 was introduced v4.13, I guess we should
-> change the stable tag to:
-> 
-> Cc: stable@vger.kernel.org # v4.13+
-> 
+Hi all,
 
-It should use:
+This series updates omap4-keypad to disable unused long interrupts, and
+implements the missing parts for the lost key-up interrupt quirk as
+described in the silicon errata pdf.
 
- Fixes: 41124db869b7 ("fs: warn in case userspace lied about modprobe return")
- Cc: <stable@vger.kernel.org> # v4.13+
+Regards,
 
-I'll add it.
+Tony
+
+
+Changes since v2:
+
+- Drop bogus level change, that already comes from device tree
+
+- Scan keyboard in two phases and simplify using a bitmask
+
+- Use mod_delayed_work and cancel_delayed_work_sync for the quirk
+
+
+Tony Lindgren (3):
+  Input: omap4-keypad - disable unused long interrupts
+  Input: omap4-keypad - Scan keys in two phases and simplify with
+    bitmask
+  Input: omap4-keypad - check state again for lost key-up interrupts
+
+ drivers/input/keyboard/omap4-keypad.c | 124 ++++++++++++++++++++------
+ 1 file changed, 95 insertions(+), 29 deletions(-)
+
+-- 
+2.25.1
