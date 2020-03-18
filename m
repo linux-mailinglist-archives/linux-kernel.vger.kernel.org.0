@@ -2,37 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BF87918A62D
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 22:06:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B377318A623
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 22:06:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727952AbgCRVGQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Mar 2020 17:06:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54370 "EHLO mail.kernel.org"
+        id S1727973AbgCRUyo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Mar 2020 16:54:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54452 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727932AbgCRUyk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Mar 2020 16:54:40 -0400
+        id S1727950AbgCRUym (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Mar 2020 16:54:42 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B3B5E2098B;
-        Wed, 18 Mar 2020 20:54:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 199C8208E0;
+        Wed, 18 Mar 2020 20:54:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584564879;
-        bh=XWR/c2mFyUnFBcN4ZvpH7CqF7hzlvBkCtiq0tbgxXLk=;
+        s=default; t=1584564881;
+        bh=fCNfBvEj8FxR11jKzYU+guYTmGDCT7dasMbitXaR4R0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=uTxgcdKCYwAqUCwZO2VGhTMd1SAQR2KhziCNccTbRIXKYq/pZZbokU5k0yx2bH2Vy
-         CKiKdkTfdKML+FlTNB61/Sn8K/EPVVQ1rzp7DEnsVRfy511zmJDS+QWyEdZCnmLZyA
-         5oI90SmyCPj9S05Og6rAl4QUnxgAPbWUAaw5AC4M=
+        b=gJGy7/R7qHbCazNYWG2tii+/UlomRi6MvG7Wnkn8EYRF6JJbojlVZFIa20mcogQo5
+         oL9T0v0MhZyyi91kRln5yuoE8l+DoyVuWhG9kgwlt2TDEiURTOw2xUeO+TOxiYG393
+         zpkUEG3jadliCv/8cV16s03qWuI4lBzb2cGUaBFY=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Martin Volf <martin.volf.42@gmail.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        Sasha Levin <sashal@kernel.org>, linux-i2c@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.4 49/73] i2c: i801: Do not add ICH_RES_IO_SMI for the iTCO_wdt device
-Date:   Wed, 18 Mar 2020 16:53:13 -0400
-Message-Id: <20200318205337.16279-49-sashal@kernel.org>
+Cc:     Qian Cai <cai@lca.pw>, Lu Baolu <baolu.lu@linux.intel.com>,
+        Joerg Roedel <jroedel@suse.de>,
+        Sasha Levin <sashal@kernel.org>,
+        iommu@lists.linux-foundation.org
+Subject: [PATCH AUTOSEL 5.4 51/73] iommu/vt-d: Silence RCU-list debugging warnings
+Date:   Wed, 18 Mar 2020 16:53:15 -0400
+Message-Id: <20200318205337.16279-51-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200318205337.16279-1-sashal@kernel.org>
 References: <20200318205337.16279-1-sashal@kernel.org>
@@ -45,137 +44,70 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
+From: Qian Cai <cai@lca.pw>
 
-[ Upstream commit 04bbb97d1b732b2d197f103c5818f5c214a4cf81 ]
+[ Upstream commit f5152416528c2295f35dd9c9bd4fb27c4032413d ]
 
-Martin noticed that nct6775 driver does not load properly on his system
-in v5.4+ kernels. The issue was bisected to commit b84398d6d7f9 ("i2c:
-i801: Use iTCO version 6 in Cannon Lake PCH and beyond") but it is
-likely not the culprit because the faulty code has been in the driver
-already since commit 9424693035a5 ("i2c: i801: Create iTCO device on
-newer Intel PCHs"). So more likely some commit that added PCI IDs of
-recent chipsets made the driver to create the iTCO_wdt device on Martins
-system.
+Similar to the commit 02d715b4a818 ("iommu/vt-d: Fix RCU list debugging
+warnings"), there are several other places that call
+list_for_each_entry_rcu() outside of an RCU read side critical section
+but with dmar_global_lock held. Silence those false positives as well.
 
-The issue was debugged to be PCI configuration access to the PMC device
-that is not present. This returns all 1's when read and this caused the
-iTCO_wdt driver to accidentally request resourses used by nct6775.
+ drivers/iommu/intel-iommu.c:4288 RCU-list traversed in non-reader section!!
+ 1 lock held by swapper/0/1:
+  #0: ffffffff935892c8 (dmar_global_lock){+.+.}, at: intel_iommu_init+0x1ad/0xb97
 
-It turns out that the SMI resource is only required for some ancient
-systems, not the ones supported by this driver. For this reason do not
-populate the SMI resource at all and drop all the related code. The
-driver now always populates the main I/O resource and only in case of SPT
-(Intel Sunrisepoint) compatible devices it adds another resource for the
-NO_REBOOT bit. These two resources are of different types so
-platform_get_resource() used by the iTCO_wdt driver continues to find
-the both resources at index 0.
+ drivers/iommu/dmar.c:366 RCU-list traversed in non-reader section!!
+ 1 lock held by swapper/0/1:
+  #0: ffffffff935892c8 (dmar_global_lock){+.+.}, at: intel_iommu_init+0x125/0xb97
 
-Link: https://lore.kernel.org/linux-hwmon/CAM1AHpQ4196tyD=HhBu-2donSsuogabkfP03v1YF26Q7_BgvgA@mail.gmail.com/
-Fixes: 9424693035a5 ("i2c: i801: Create iTCO device on newer Intel PCHs")
-[wsa: complete fix needs all of http://patchwork.ozlabs.org/project/linux-i2c/list/?series=160959&state=*]
-Reported-by: Martin Volf <martin.volf.42@gmail.com>
-Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
-Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
+ drivers/iommu/intel-iommu.c:5057 RCU-list traversed in non-reader section!!
+ 1 lock held by swapper/0/1:
+  #0: ffffffffa71892c8 (dmar_global_lock){++++}, at: intel_iommu_init+0x61a/0xb13
+
+Signed-off-by: Qian Cai <cai@lca.pw>
+Acked-by: Lu Baolu <baolu.lu@linux.intel.com>
+Signed-off-by: Joerg Roedel <jroedel@suse.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/i2c/busses/i2c-i801.c | 45 ++++++++++-------------------------
- 1 file changed, 12 insertions(+), 33 deletions(-)
+ drivers/iommu/dmar.c | 3 ++-
+ include/linux/dmar.h | 6 ++++--
+ 2 files changed, 6 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/i2c/busses/i2c-i801.c b/drivers/i2c/busses/i2c-i801.c
-index f1c714acc2806..3ff6fbd79b127 100644
---- a/drivers/i2c/busses/i2c-i801.c
-+++ b/drivers/i2c/busses/i2c-i801.c
-@@ -129,11 +129,6 @@
- #define TCOBASE		0x050
- #define TCOCTL		0x054
- 
--#define ACPIBASE		0x040
--#define ACPIBASE_SMI_OFF	0x030
--#define ACPICTRL		0x044
--#define ACPICTRL_EN		0x080
--
- #define SBREG_BAR		0x10
- #define SBREG_SMBCTRL		0xc6000c
- #define SBREG_SMBCTRL_DNV	0xcf000c
-@@ -1544,7 +1539,7 @@ i801_add_tco_spt(struct i801_priv *priv, struct pci_dev *pci_dev,
- 		pci_bus_write_config_byte(pci_dev->bus, devfn, 0xe1, hidden);
- 	spin_unlock(&p2sb_spinlock);
- 
--	res = &tco_res[ICH_RES_MEM_OFF];
-+	res = &tco_res[1];
- 	if (pci_dev->device == PCI_DEVICE_ID_INTEL_DNV_SMBUS)
- 		res->start = (resource_size_t)base64_addr + SBREG_SMBCTRL_DNV;
- 	else
-@@ -1554,7 +1549,7 @@ i801_add_tco_spt(struct i801_priv *priv, struct pci_dev *pci_dev,
- 	res->flags = IORESOURCE_MEM;
- 
- 	return platform_device_register_resndata(&pci_dev->dev, "iTCO_wdt", -1,
--					tco_res, 3, &spt_tco_platform_data,
-+					tco_res, 2, &spt_tco_platform_data,
- 					sizeof(spt_tco_platform_data));
- }
- 
-@@ -1567,17 +1562,16 @@ static struct platform_device *
- i801_add_tco_cnl(struct i801_priv *priv, struct pci_dev *pci_dev,
- 		 struct resource *tco_res)
+diff --git a/drivers/iommu/dmar.c b/drivers/iommu/dmar.c
+index 7196cabafb252..6ec5da4d028f9 100644
+--- a/drivers/iommu/dmar.c
++++ b/drivers/iommu/dmar.c
+@@ -363,7 +363,8 @@ dmar_find_dmaru(struct acpi_dmar_hardware_unit *drhd)
  {
--	return platform_device_register_resndata(&pci_dev->dev, "iTCO_wdt", -1,
--					tco_res, 2, &cnl_tco_platform_data,
--					sizeof(cnl_tco_platform_data));
-+	return platform_device_register_resndata(&pci_dev->dev,
-+			"iTCO_wdt", -1, tco_res, 1, &cnl_tco_platform_data,
-+			sizeof(cnl_tco_platform_data));
- }
+ 	struct dmar_drhd_unit *dmaru;
  
- static void i801_add_tco(struct i801_priv *priv)
- {
--	u32 base_addr, tco_base, tco_ctl, ctrl_val;
- 	struct pci_dev *pci_dev = priv->pci_dev;
--	struct resource tco_res[3], *res;
--	unsigned int devfn;
-+	struct resource tco_res[2], *res;
-+	u32 tco_base, tco_ctl;
+-	list_for_each_entry_rcu(dmaru, &dmar_drhd_units, list)
++	list_for_each_entry_rcu(dmaru, &dmar_drhd_units, list,
++				dmar_rcu_check())
+ 		if (dmaru->segment == drhd->segment &&
+ 		    dmaru->reg_base_addr == drhd->address)
+ 			return dmaru;
+diff --git a/include/linux/dmar.h b/include/linux/dmar.h
+index a7cf3599d9a1c..e0d52e9358c9c 100644
+--- a/include/linux/dmar.h
++++ b/include/linux/dmar.h
+@@ -73,11 +73,13 @@ extern struct list_head dmar_drhd_units;
+ 	list_for_each_entry_rcu(drhd, &dmar_drhd_units, list)
  
- 	/* If we have ACPI based watchdog use that instead */
- 	if (acpi_has_watchdog())
-@@ -1592,30 +1586,15 @@ static void i801_add_tco(struct i801_priv *priv)
- 		return;
+ #define for_each_active_drhd_unit(drhd)					\
+-	list_for_each_entry_rcu(drhd, &dmar_drhd_units, list)		\
++	list_for_each_entry_rcu(drhd, &dmar_drhd_units, list,		\
++				dmar_rcu_check())			\
+ 		if (drhd->ignored) {} else
  
- 	memset(tco_res, 0, sizeof(tco_res));
--
--	res = &tco_res[ICH_RES_IO_TCO];
--	res->start = tco_base & ~1;
--	res->end = res->start + 32 - 1;
--	res->flags = IORESOURCE_IO;
--
- 	/*
--	 * Power Management registers.
-+	 * Always populate the main iTCO IO resource here. The second entry
-+	 * for NO_REBOOT MMIO is filled by the SPT specific function.
- 	 */
--	devfn = PCI_DEVFN(PCI_SLOT(pci_dev->devfn), 2);
--	pci_bus_read_config_dword(pci_dev->bus, devfn, ACPIBASE, &base_addr);
--
--	res = &tco_res[ICH_RES_IO_SMI];
--	res->start = (base_addr & ~1) + ACPIBASE_SMI_OFF;
--	res->end = res->start + 3;
-+	res = &tco_res[0];
-+	res->start = tco_base & ~1;
-+	res->end = res->start + 32 - 1;
- 	res->flags = IORESOURCE_IO;
+ #define for_each_active_iommu(i, drhd)					\
+-	list_for_each_entry_rcu(drhd, &dmar_drhd_units, list)		\
++	list_for_each_entry_rcu(drhd, &dmar_drhd_units, list,		\
++				dmar_rcu_check())			\
+ 		if (i=drhd->iommu, drhd->ignored) {} else
  
--	/*
--	 * Enable the ACPI I/O space.
--	 */
--	pci_bus_read_config_dword(pci_dev->bus, devfn, ACPICTRL, &ctrl_val);
--	ctrl_val |= ACPICTRL_EN;
--	pci_bus_write_config_dword(pci_dev->bus, devfn, ACPICTRL, ctrl_val);
--
- 	if (priv->features & FEATURE_TCO_CNL)
- 		priv->tco_pdev = i801_add_tco_cnl(priv, pci_dev, tco_res);
- 	else
+ #define for_each_iommu(i, drhd)						\
 -- 
 2.20.1
 
