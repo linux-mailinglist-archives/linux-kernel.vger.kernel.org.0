@@ -2,96 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 55266189ABD
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 12:35:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AA68F189ABE
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 12:35:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727225AbgCRLfC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Mar 2020 07:35:02 -0400
-Received: from foss.arm.com ([217.140.110.172]:48736 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726855AbgCRLfB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Mar 2020 07:35:01 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id F3CFF1FB;
-        Wed, 18 Mar 2020 04:35:00 -0700 (PDT)
-Received: from e107158-lin.cambridge.arm.com (e107158-lin.cambridge.arm.com [10.1.195.21])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1DB4A3F534;
-        Wed, 18 Mar 2020 04:34:59 -0700 (PDT)
-Date:   Wed, 18 Mar 2020 11:34:56 +0000
-From:   Qais Yousef <qais.yousef@arm.com>
-To:     Josh Don <joshdon@google.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Li Zefan <lizefan@huawei.com>, Tejun Heo <tj@kernel.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        cgroups@vger.kernel.org, Paul Turner <pjt@google.com>
-Subject: Re: [PATCH v2] sched/cpuset: distribute tasks within affinity masks
-Message-ID: <20200318113456.3h64jpyb6xiczhcj@e107158-lin.cambridge.arm.com>
-References: <20200311010113.136465-1-joshdon@google.com>
- <20200311140533.pclgecwhbpqzyrks@e107158-lin.cambridge.arm.com>
- <20200317192401.GE20713@hirez.programming.kicks-ass.net>
- <CABk29NuAYvkqNmZZ6cjZBC6=hv--2siPPjZG-BUpNewxm02O6A@mail.gmail.com>
+        id S1727346AbgCRLfW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Mar 2020 07:35:22 -0400
+Received: from mail-io1-f66.google.com ([209.85.166.66]:33186 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726855AbgCRLfW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Mar 2020 07:35:22 -0400
+Received: by mail-io1-f66.google.com with SMTP id o127so12057181iof.0
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Mar 2020 04:35:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:sender:from:date:message-id:subject:to
+         :content-transfer-encoding;
+        bh=toQgd/BbAOWzQ6Hdl5KAXkvOW9lbMbuLWlPhhtalYGk=;
+        b=hpCIkdrEyzDcFP+h5/mK2ArNMXVLkPl4K70sWZg4Nq4izhb4lqofUzfu1L1JfatmPd
+         XC8ylM1ONlSnFQw2luJXFXzODjYJJiIaYy+UmMY4CXpc75bDz1PddlZaFKvHQ54Db0v/
+         bAveNJ8MmFEIBKhndcvgYugyfxOdjRx+qM8w3LYNgDUle9ktY7OTMQYCWszTRgHUs3lI
+         VtPdK96kwKrYoJfoSI7uR1tcBufFmpt6yPs6QhQrHnA/zo9sBKBZue1RN61enoflOC8U
+         SAt9lvz9gAd+TLQqvbTwmDX5l7E5cCXQ8q8xJ/zjKZtof6iPhYFxRXX+xg0DVgDpmemQ
+         4aXw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:sender:from:date
+         :message-id:subject:to:content-transfer-encoding;
+        bh=toQgd/BbAOWzQ6Hdl5KAXkvOW9lbMbuLWlPhhtalYGk=;
+        b=h46NpO4l6J7wpM2rn30xZuQ4/bi8+JCxyHiF0Prtv4CeLoN3JN1ASN6OLuK10YQLhH
+         pQVxZPHO+yJyrlBxNwsRExe++XUsqlniLfRXh4EKvqIITeB2702sVz8RmUNScfh7hcTQ
+         Z6BxSQ62iWGNHkXsAuvHc+NYM50v8zszRHq5GuOjL4WtQsWOyUpUnksRavLSQBSMcI0/
+         WNNT5+XOmRP3xKyLz2O1E+g9DgPN0R2oeuIxqE9cq/oAv/PKM1mJA0I3P/q5/3SjhL2Q
+         68a6V7RmbWs0Psi6dpnGV/6SfBadutzJ/HO6VYwPSwW4iDL8ZwvYjDPzN7Iy42HN+HXA
+         tNxA==
+X-Gm-Message-State: ANhLgQ1eII5DqDPuDa8KYvXwAEPxuxr4x1z01VPGZBTBrmOMb6wTuocm
+        HfKcia++WfKVF9FMnKZe0xB+rl93sHNh4avK26c=
+X-Google-Smtp-Source: ADFU+vuABrDzlpBkuR8DWIbG+2GloUj344dZjp2PdAMdl6mxuEc5TI+DAQMRvJSFn2f4pdMkiN3vCEHNY36e7+d2+Uo=
+X-Received: by 2002:a02:3443:: with SMTP id z3mr4043718jaz.7.1584531320380;
+ Wed, 18 Mar 2020 04:35:20 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CABk29NuAYvkqNmZZ6cjZBC6=hv--2siPPjZG-BUpNewxm02O6A@mail.gmail.com>
-User-Agent: NeoMutt/20171215
+Reply-To: sebastient766@gmail.com
+Received: by 2002:a5d:964e:0:0:0:0:0 with HTTP; Wed, 18 Mar 2020 04:35:19
+ -0700 (PDT)
+From:   =?UTF-8?B?TXIuU8OpYmFzdGllbiBUb25p?= <sebastient766@gmail.com>
+Date:   Wed, 18 Mar 2020 04:35:19 -0700
+X-Google-Sender-Auth: so6tm45GlBRU_Xxhb8Y51F58_-Q
+Message-ID: <CAPqrW29c1=vK0cgtR--U-nxqUpOL0WEqPLPkRcGiq8gUisgynQ@mail.gmail.com>
+Subject: VERY URGENT
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/17/20 14:35, Josh Don wrote:
-> On Wed, Mar 11, 2020 at 7:05 AM Qais Yousef <qais.yousef@arm.com> wrote:
-> >
-> > This actually helps me fix a similar problem I faced in RT [1]. If multiple RT
-> > tasks wakeup at the same time we get a 'thundering herd' issue where they all
-> > end up going to the same CPU, just to be pushed out again.
-> >
-> > Beside this will help fix another problem for RT tasks fitness, which is
-> > a manifestation of the problem above. If two tasks wake up at the same time and
-> > they happen to run on a little cpu (but request to run on a big one), one of
-> > them will end up being migrated because find_lowest_rq() will return the first
-> > cpu in the mask for both tasks.
-> >
-> > I tested the API (not the change in sched/core.c) and it looks good to me.
-> 
-> Nice, glad that the API already has another use case. Thanks for taking a look.
-> 
-> > nit: cpumask_first_and() is better here?
-> 
-> Yea, I would also prefer to use it, but the definition of
-> cpumask_first_and() follows this section, as it itself uses
-> cpumask_next_and().
-> 
-> > It might be a good idea to split the API from the user too.
-> 
-> Not sure what you mean by this, could you clarify?
+FROM MR.S=C3=89BASTIEN TONI
+AUDIT& ACCOUNT MANAGER
+BANK OF AFRICA (B.O.A)
+OUAGADOUGOU BURKINA FASO
+WEST AFRICA.
 
-I meant it'd be a good idea to split the cpumask API into its own patch and
-have a separate patch for the user in sched/core.c. But that was a small nit.
-If the user (in sched/core.c) somehow introduces a regression, reverting it
-separately should be trivial.
+Dear Friend,
 
-Thanks
+With due respect, I have decided to contact you on
+abusinesstransaction  that will be beneficial to both of us. At the
+bank last account and  auditing evaluation, my staffs came across an
+old account which was being maintained by a foreign client who we
+learn was among the deceased passengers of motor accident on
+November.2003, the deceased was unable to run this account since his
+death. Theaccount has  remained dormant without the knowledge of his
+family since it was put in a  safe deposit account in the bank for
+future investment by the client.
 
---
-Qais Yousef
+Since his demise, even the members of his family haven't applied for
+claims  over this fund and it has been in the safe deposit account
+until I  discovered that it cannot be claimed since our client
+isaforeign national and we are sure that he has no next of kin here to
+file claims over the money. As the director of the department, this
+discovery was brought to my office so as to decide what is to bedone.I
+ decided to seek ways through which to transfer this money out of the
+bank  and
+out of the country too.
 
-> 
-> On Tue, Mar 17, 2020 at 12:24 PM Peter Zijlstra <peterz@infradead.org> wrote:
-> >
-> > > Anyway, for the API.
-> > >
-> > > Reviewed-by: Qais Yousef <qais.yousef@arm.com>
-> > > Tested-by: Qais Yousef <qais.yousef@arm.com>
-> >
-> > Thanks guys!
-> 
-> Thanks Peter, any other comments or are you happy with merging this patch as-is?
+The total amount in the account is 18.6 million with my positions as
+staffs  of the bank, I am handicapped because I cannot operate foreign
+accounts and  cannot lay bonafide claim over this money. The client
+was a foreign  national and you will only be asked to act as his next
+of kin and I will  supply you with all the necessary information and
+bank data to assist you in being able to transfer this money to any
+bank of your  choice where this money could be transferred into.The
+total sum will be shared as follows: 50% for me, 50% for you and
+expenses incidental occur  during the transfer will be incur by both
+of us. The transfer is risk free on both sides hence you are going to
+follow my instruction till the fund  transfer to your account. Since I
+work in this bank that is why you should  be confident in the success
+of this transaction because you will be updated with information as at
+when desired.
+
+I will wish you to keep this transaction secret and confidential as I
+am  hoping to retire with my share of this money at the end of
+transaction  which will be when this money is safety in your account.
+I will then come over to your country for sharing according to the
+previously agreed percentages. You might even have to advise me on
+possibilities of investment in your country or elsewhere of our
+choice. May  God help you to help me to a restive retirement,Amen,And
+You have to  contact me through my private e-mail
+at(sebastient766@gmail.com)Please for further information and inquires
+feel free to contact me back immediately for more explanation and
+better  understanding I want you to assure me your capability of
+handling this  project with trust by providing me your following
+information details such as:
+
+(1)NAME..............
+(2)AGE:................
+(3)SEX:.....................
+(4)PHONE NUMBER:.................
+(5)OCCUPATION:.....................
+(6)YOUR COUNTRY:.....................
+
+Yours sincerely,
+Mr.S=C3=A9bastien Toni
