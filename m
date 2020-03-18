@@ -2,143 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 54DDF18A65D
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 22:07:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EA91A18A680
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 22:09:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728261AbgCRVHw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Mar 2020 17:07:52 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:39885 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727089AbgCRVHs (ORCPT
+        id S1728314AbgCRVIq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Mar 2020 17:08:46 -0400
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:34002 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727453AbgCRVIo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Mar 2020 17:07:48 -0400
-Received: by mail-pf1-f193.google.com with SMTP id d25so145374pfn.6
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Mar 2020 14:07:48 -0700 (PDT)
+        Wed, 18 Mar 2020 17:08:44 -0400
+Received: by mail-ed1-f65.google.com with SMTP id i24so28837338eds.1
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Mar 2020 14:08:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=UnW3oRxVQHnYvwZ2+HCKUVYxiIim+eBLvaQELpxrRqU=;
-        b=qN4+WX6llXdXg7OP2ngw/tmuSenPNNwNDboXm8R0BqN7TKq6AnxLkKLG8Q99y9IZ6T
-         YDfO8JIUTC9v2tBafpZVOOd0JFYHC0mDB+lxnynMKQQLixMFCn9aOM1p/8pLBMWijDoE
-         rLQazFqDavwllYsf3wPN4aql2BpoZjato+DcTWKqNtpooKdE/nwFO0dcUImcroRCILJO
-         aPVcdVsQK6Yfq1FM6t0YjsW0hhvgLZRy2qsN7Ze0/hX0uJaqnU3valz6jPspG792A5BE
-         UiFdDU6CdJPC5k87CYj8sMC2aAKdppbSCjkh0rgWDLetIMv33zXhdzo2jCnPehDY1cV5
-         BkdA==
+        bh=WatAKLuqZtZlRLQCbRzYpTXRz9maWKDE4hUEG0f7NDw=;
+        b=KblwfDmtszqt/poiiBnkGj80+eqtrRyKNLWAFKJyI2lM8X5PpTIHIUIc65zJhoEnEF
+         WjcKc+bfilJdpRhIjI1m71RTPdnfUYwaMNgrlZfogSYuI3TKBJzAzVhAyAtHoPrdVKGp
+         DLDa+hQ2FiF/ZRAW6YOkmNlRuau5tixJsAn5jRDu0LNFpGvf4mGlYW9x2j+4ybOULNy7
+         eW1S/z/G2JKD/YF0c0IywP5jL7tjCmAMSfYHwjw2Mgd+8lo0HY2apy//ZlP3q1BuFweg
+         kxv1DBMAmhdBV9qGqhU7t4qHJxKuYe+4PrnuMPBj6LktzBpmvLYwxL6iqDAV7QAmJ5iL
+         I9pg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=UnW3oRxVQHnYvwZ2+HCKUVYxiIim+eBLvaQELpxrRqU=;
-        b=LeQv+CQR1CA3yBjacjIw8zpclyTBe6zRabo9E/Cg/+m8Ok/qCnXdcaPN6amUc4zzNw
-         9NzTXwTy6+j9mOqTubA2nYwtHhbR52LnEOKl3HzU134hxRAnhRORVYwd81smaSxj40ke
-         gCxad6U73EwkMjyO6NP7sw9Ln2Owj3S07KwjCgMKQQsGEQ7oZvAsnDrVgSElyR+SQrBf
-         +f/yRcIfKlOFfiprhJ55ZI34DwE3P07L54cp5Q8jXZNcpp1X2g2yKWuIP74E2Wi2apOl
-         mLl+uft+JYx7W6zS6uZV0dSYWX6Aw8OxdaiZPpALodB+da3rOdHp/MA51SNum1hxmD1V
-         L1Gw==
-X-Gm-Message-State: ANhLgQ0ma8KqHX8+HlMOaORhMUXoq9us+X8k5NblCvUH2diTXJkmuq7l
-        fAy88TyqdgTpzzQ8knMCGltEgbpuqHXC6vmh/dv2Yg==
-X-Google-Smtp-Source: ADFU+vtrCbWLsD9Kl2sgpRCLWJgG9WETEekWUwb95aIHCLvQp5JpBJCHYMAZGw01/Hcy77aG8jAmyFceFlIcLkd5Les=
-X-Received: by 2002:aa7:8b54:: with SMTP id i20mr215129pfd.39.1584565667463;
- Wed, 18 Mar 2020 14:07:47 -0700 (PDT)
+        bh=WatAKLuqZtZlRLQCbRzYpTXRz9maWKDE4hUEG0f7NDw=;
+        b=X67DQeySnDVxmjjncuXMapKprOOfVh21JXDqRcbM3zEu3mJ3i/tXc0o1WzYDw1tqZK
+         4Xz+nftrOqDDMy6RhlD3d0MGLWqcYpGfTKBdivUVghAtBiXvaKYb0NGQDJmq7IWttEeG
+         4rwXsM15WvZ4cSdfF4bvZnJu4g8X2L4RfJJbGTzXp12wWu6VSUp2joBqF0q12k8XvxmF
+         IOBZv9rMjRO5lx+uuGk/8KPeDG+SzOiJHtCzdI+jMvzlEbDL4s+dbLEYd36CaTg1S5TH
+         yfaVc+AJXhUf1NQZo9CubRWKr6oNwR3OTnZ+01CeTHMJCDORFs2zPBSTL4RnFifTUqbG
+         PIgw==
+X-Gm-Message-State: ANhLgQ1SzhBw5UEM9emXsyn/CGBlq9iUAvxEfgLRTUOVdldnmtZspRUA
+        yNPc8Av2e29mhsJnsbmMZYFHICoI4N2U1xcue/fl
+X-Google-Smtp-Source: ADFU+vvbYGHqEIZHFDpAJYIn0BKyhX1aU7rGbDTvr2tbcPYmEgbd2Lwck7tUApGNIqLuzMQYQdyQBqa6eqOf1oPvVLM=
+X-Received: by 2002:aa7:d051:: with SMTP id n17mr5727973edo.196.1584565722903;
+ Wed, 18 Mar 2020 14:08:42 -0700 (PDT)
 MIME-Version: 1.0
-References: <20200318002500.52471-1-natechancellor@gmail.com> <20200318210408.4113-1-natechancellor@gmail.com>
-In-Reply-To: <20200318210408.4113-1-natechancellor@gmail.com>
-From:   Nick Desaulniers <ndesaulniers@google.com>
-Date:   Wed, 18 Mar 2020 14:07:34 -0700
-Message-ID: <CAKwvOdmjzemFW9jF-CW1RhLJJbMvFO_NrPUeyi=rdLNVZURsfw@mail.gmail.com>
-Subject: Re: [PATCH v2] drm/amdgpu: Remove unnecessary variable shadow in gfx_v9_0_rlcg_wreg
-To:     Nathan Chancellor <natechancellor@gmail.com>
-Cc:     Alex Deucher <alexander.deucher@amd.com>,
-        "David (ChunMing) Zhou" <David1.Zhou@amd.com>,
-        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
-        amd-gfx list <amd-gfx@lists.freedesktop.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        clang-built-linux <clang-built-linux@googlegroups.com>,
-        Joe Perches <joe@perches.com>
+References: <cover.1577736799.git.rgb@redhat.com> <6452955c1e038227a5cd169f689f3fd3db27513f.1577736799.git.rgb@redhat.com>
+ <CAHC9VhRkH=YEjAY6dJJHSp934grHnf=O4RiqLu3U8DzdVQOZkg@mail.gmail.com>
+ <20200130192753.n7jjrshbhrczjzoe@madcap2.tricolour.ca> <CAHC9VhSVN3mNb5enhLR1hY+ekiAyiYWbehrwd_zN7kz13dF=1w@mail.gmail.com>
+ <20200205235056.e5365xtgz7rbese2@madcap2.tricolour.ca> <CAHC9VhTM6MDHLcBfwJ_9DCroG0VA-meO770ihjn1sVy6=0JrHw@mail.gmail.com>
+ <20200312205147.plxs4czjeuu4davj@madcap2.tricolour.ca> <CAHC9VhTqWdXMsbSbsWJzRRvVbSaaFBmnFFsVutM7XSx5NT_FJA@mail.gmail.com>
+ <20200314224203.ncyx3rgwwe6zet4e@madcap2.tricolour.ca>
+In-Reply-To: <20200314224203.ncyx3rgwwe6zet4e@madcap2.tricolour.ca>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Wed, 18 Mar 2020 17:08:31 -0400
+Message-ID: <CAHC9VhTy2ou-vadeMjgTaw-T9mW+nBjbqapA7RSW3EFNJ44JLw@mail.gmail.com>
+Subject: Re: [PATCH ghak90 V8 13/16] audit: track container nesting
+To:     Richard Guy Briggs <rgb@redhat.com>
+Cc:     nhorman@tuxdriver.com, linux-api@vger.kernel.org,
+        containers@lists.linux-foundation.org,
+        LKML <linux-kernel@vger.kernel.org>, dhowells@redhat.com,
+        Linux-Audit Mailing List <linux-audit@redhat.com>,
+        netfilter-devel@vger.kernel.org, ebiederm@xmission.com,
+        simo@redhat.com, netdev@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, Eric Paris <eparis@parisplace.org>,
+        mpatel@redhat.com, Serge Hallyn <serge@hallyn.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 18, 2020 at 2:05 PM Nathan Chancellor
-<natechancellor@gmail.com> wrote:
->
-> clang warns:
->
-> drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c:754:6: warning: variable 'shadow'
-> is used uninitialized whenever 'if' condition is
-> false [-Wsometimes-uninitialized]
->         if (offset == grbm_cntl || offset == grbm_idx)
->             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c:757:6: note: uninitialized use
-> occurs here
->         if (shadow) {
->             ^~~~~~
-> drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c:754:2: note: remove the 'if' if
-> its condition is always true
->         if (offset == grbm_cntl || offset == grbm_idx)
->         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c:738:13: note: initialize the
-> variable 'shadow' to silence this warning
->         bool shadow;
->                    ^
->                     = 0
-> 1 warning generated.
->
-> shadow is only assigned in one condition and used as the condition for
-> another if statement; combine the two if statements and remove shadow
-> to make the code cleaner and resolve this warning.
->
-> Fixes: 2e0cc4d48b91 ("drm/amdgpu: revise RLCG access path")
-> Link: https://github.com/ClangBuiltLinux/linux/issues/936
-> Suggested-by: Joe Perches <joe@perches.com>
-> Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
-> Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-> ---
->
-> v1 -> v2:
->
-> * Remove shadow altogether, as suggested by Joe Perches.
-> * Add Nick's Reviewed-by, as I assume it still stands.
+On Sat, Mar 14, 2020 at 6:42 PM Richard Guy Briggs <rgb@redhat.com> wrote:
+> On 2020-03-13 12:47, Paul Moore wrote:
 
-yep, thanks
+...
 
+> > It has been a while since I last looked at the patchset, but my
+> > concern over the prefered use of the ACID number vs the ACID object is
+> > that the number offers no reuse protection where the object does.  I
+> > really would like us to use the object everywhere it is possible.
 >
->  drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c | 6 +-----
->  1 file changed, 1 insertion(+), 5 deletions(-)
->
-> diff --git a/drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c b/drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c
-> index 7bc2486167e7..496b9edca3c3 100644
-> --- a/drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c
-> +++ b/drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c
-> @@ -735,7 +735,6 @@ void gfx_v9_0_rlcg_wreg(struct amdgpu_device *adev, u32 offset, u32 v)
->         static void *spare_int;
->         static uint32_t grbm_cntl;
->         static uint32_t grbm_idx;
-> -       bool shadow;
->
->         scratch_reg0 = adev->rmmio + (adev->reg_offset[GC_HWIP][0][mmSCRATCH_REG0_BASE_IDX] + mmSCRATCH_REG0)*4;
->         scratch_reg1 = adev->rmmio + (adev->reg_offset[GC_HWIP][0][mmSCRATCH_REG1_BASE_IDX] + mmSCRATCH_REG1)*4;
-> @@ -751,10 +750,7 @@ void gfx_v9_0_rlcg_wreg(struct amdgpu_device *adev, u32 offset, u32 v)
->                 return;
->         }
->
-> -       if (offset == grbm_cntl || offset == grbm_idx)
-> -               shadow = true;
-> -
-> -       if (shadow) {
-> +       if (offset == grbm_cntl || offset == grbm_idx) {
->                 if (offset  == grbm_cntl)
->                         writel(v, scratch_reg2);
->                 else if (offset == grbm_idx)
-> --
-> 2.26.0.rc1
->
+> Ok, so I take it from this that I go ahead with the dual format since
+> the wrapper funciton to convert from object to ID strips away object
+> information negating any benefit of favouring the object pointer.  I'll
+> look at the remaining calls that use a contid (rather than contobj) and
+> convert all that I can over to storing an object using the dual counters
+> that track process exits versus signal2 and trace references.
 
+Well, as I said in the other thread, I'm not sure we need a full two
+counters; I think one counter and a simple flag should suffice.
+Otherwise that sounds good for the next iteration.
 
 -- 
-Thanks,
-~Nick Desaulniers
+paul moore
+www.paul-moore.com
