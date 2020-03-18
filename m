@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7E87018A699
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 22:09:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 43A4618A676
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 22:09:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727787AbgCRVJT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Mar 2020 17:09:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53006 "EHLO mail.kernel.org"
+        id S1727434AbgCRUx4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Mar 2020 16:53:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53116 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727345AbgCRUxu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Mar 2020 16:53:50 -0400
+        id S1727401AbgCRUxy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Mar 2020 16:53:54 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E09EA2098B;
-        Wed, 18 Mar 2020 20:53:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 68F0620B1F;
+        Wed, 18 Mar 2020 20:53:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584564829;
-        bh=2RbZQy9o2JoKpR7NM7jBOBCn95Y96OZN0YzOzbE9UTg=;
+        s=default; t=1584564833;
+        bh=mH63WqY6iqTQFRbb7BCVuLKv9l/wXRtMK2ais8FKfrs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hVY1rJx3QxeFiNNYsbZZgTDpBK3kBFycySW6SKTDAEM2lK240vAW6LrB51TH3aCaG
-         tC7D5YNhCLP+kopCQ2EoxVGPlJCvKTunKayn4RjcKvmzL2KPVetWlxQhjiKrJNmNfX
-         95LnT73nNQ5H+AXT54s4MUu7r+dEcqYpWzbaNCIc=
+        b=xNjykw4TNnG8wkJTwADTPiUJyiRnBfYJhVycWa9gvLFoeMsXh5+jHCfhXgfKALmqj
+         3qivIufs64MXtEGe0QDfGYl9f7ScSulHR6NGD6/pfxAxlVAjREm4jtOo5giVlQMMoq
+         dvbFkq85GgmQu7gCTUdjTpkiRXC/T6hQazSWft9s=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Russell King <rmk+kernel@armlinux.org.uk>,
-        Andrew Lunn <andrew@lunn.ch>,
+Cc:     Edwin Peer <edwin.peer@broadcom.com>,
+        Michael Chan <michael.chan@broadcom.com>,
         "David S . Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.4 10/73] net: dsa: mv88e6xxx: fix lockup on warm boot
-Date:   Wed, 18 Mar 2020 16:52:34 -0400
-Message-Id: <20200318205337.16279-10-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.4 13/73] bnxt_en: fix error handling when flashing from file
+Date:   Wed, 18 Mar 2020 16:52:37 -0400
+Message-Id: <20200318205337.16279-13-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200318205337.16279-1-sashal@kernel.org>
 References: <20200318205337.16279-1-sashal@kernel.org>
@@ -44,56 +44,96 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Russell King <rmk+kernel@armlinux.org.uk>
+From: Edwin Peer <edwin.peer@broadcom.com>
 
-[ Upstream commit 0395823b8d9a4d87bd1bf74359123461c2ae801b ]
+[ Upstream commit 22630e28f9c2b55abd217869cc0696def89f2284 ]
 
-If the switch is not hardware reset on a warm boot, interrupts can be
-left enabled, and possibly pending. This will cause us to enter an
-infinite loop trying to service an interrupt we are unable to handle,
-thereby preventing the kernel from booting.
+After bnxt_hwrm_do_send_message() was updated to return standard error
+codes in a recent commit, a regression in bnxt_flash_package_from_file()
+was introduced.  The return value does not properly reflect all
+possible firmware errors when calling firmware to flash the package.
 
-Ensure that the global 2 interrupt sources are disabled before we claim
-the parent interrupt.
+Fix it by consolidating all errors in one local variable rc instead
+of having 2 variables for different errors.
 
-Observed on the ZII development revision B and C platforms with
-reworked serdes support, and using reboot -f to reboot the platform.
-
-Fixes: dc30c35be720 ("net: dsa: mv88e6xxx: Implement interrupt support.")
-Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+Fixes: d4f1420d3656 ("bnxt_en: Convert error code in firmware message response to standard code.")
+Signed-off-by: Edwin Peer <edwin.peer@broadcom.com>
+Signed-off-by: Michael Chan <michael.chan@broadcom.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/dsa/mv88e6xxx/global2.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ .../net/ethernet/broadcom/bnxt/bnxt_ethtool.c | 24 +++++++++----------
+ 1 file changed, 11 insertions(+), 13 deletions(-)
 
-diff --git a/drivers/net/dsa/mv88e6xxx/global2.c b/drivers/net/dsa/mv88e6xxx/global2.c
-index bdbb72fc20ede..6240976679e1e 100644
---- a/drivers/net/dsa/mv88e6xxx/global2.c
-+++ b/drivers/net/dsa/mv88e6xxx/global2.c
-@@ -1083,6 +1083,13 @@ int mv88e6xxx_g2_irq_setup(struct mv88e6xxx_chip *chip)
- {
- 	int err, irq, virq;
+diff --git a/drivers/net/ethernet/broadcom/bnxt/bnxt_ethtool.c b/drivers/net/ethernet/broadcom/bnxt/bnxt_ethtool.c
+index ece70f61c89a2..cfa647d5b44db 100644
+--- a/drivers/net/ethernet/broadcom/bnxt/bnxt_ethtool.c
++++ b/drivers/net/ethernet/broadcom/bnxt/bnxt_ethtool.c
+@@ -2005,8 +2005,8 @@ static int bnxt_flash_package_from_file(struct net_device *dev,
+ 	struct hwrm_nvm_install_update_output *resp = bp->hwrm_cmd_resp_addr;
+ 	struct hwrm_nvm_install_update_input install = {0};
+ 	const struct firmware *fw;
+-	int rc, hwrm_err = 0;
+ 	u32 item_len;
++	int rc = 0;
+ 	u16 index;
  
-+	chip->g2_irq.masked = ~0;
-+	mv88e6xxx_reg_lock(chip);
-+	err = mv88e6xxx_g2_int_mask(chip, ~chip->g2_irq.masked);
-+	mv88e6xxx_reg_unlock(chip);
-+	if (err)
-+		return err;
-+
- 	chip->g2_irq.domain = irq_domain_add_simple(
- 		chip->dev->of_node, 16, 0, &mv88e6xxx_g2_irq_domain_ops, chip);
- 	if (!chip->g2_irq.domain)
-@@ -1092,7 +1099,6 @@ int mv88e6xxx_g2_irq_setup(struct mv88e6xxx_chip *chip)
- 		irq_create_mapping(chip->g2_irq.domain, irq);
+ 	bnxt_hwrm_fw_set_time(bp);
+@@ -2050,15 +2050,14 @@ static int bnxt_flash_package_from_file(struct net_device *dev,
+ 			memcpy(kmem, fw->data, fw->size);
+ 			modify.host_src_addr = cpu_to_le64(dma_handle);
  
- 	chip->g2_irq.chip = mv88e6xxx_g2_irq_chip;
--	chip->g2_irq.masked = ~0;
+-			hwrm_err = hwrm_send_message(bp, &modify,
+-						     sizeof(modify),
+-						     FLASH_PACKAGE_TIMEOUT);
++			rc = hwrm_send_message(bp, &modify, sizeof(modify),
++					       FLASH_PACKAGE_TIMEOUT);
+ 			dma_free_coherent(&bp->pdev->dev, fw->size, kmem,
+ 					  dma_handle);
+ 		}
+ 	}
+ 	release_firmware(fw);
+-	if (rc || hwrm_err)
++	if (rc)
+ 		goto err_exit;
  
- 	chip->device_irq = irq_find_mapping(chip->g1_irq.domain,
- 					    MV88E6XXX_G1_STS_IRQ_DEVICE);
+ 	if ((install_type & 0xffff) == 0)
+@@ -2067,20 +2066,19 @@ static int bnxt_flash_package_from_file(struct net_device *dev,
+ 	install.install_type = cpu_to_le32(install_type);
+ 
+ 	mutex_lock(&bp->hwrm_cmd_lock);
+-	hwrm_err = _hwrm_send_message(bp, &install, sizeof(install),
+-				      INSTALL_PACKAGE_TIMEOUT);
+-	if (hwrm_err) {
++	rc = _hwrm_send_message(bp, &install, sizeof(install),
++				INSTALL_PACKAGE_TIMEOUT);
++	if (rc) {
+ 		u8 error_code = ((struct hwrm_err_output *)resp)->cmd_err;
+ 
+ 		if (resp->error_code && error_code ==
+ 		    NVM_INSTALL_UPDATE_CMD_ERR_CODE_FRAG_ERR) {
+ 			install.flags |= cpu_to_le16(
+ 			       NVM_INSTALL_UPDATE_REQ_FLAGS_ALLOWED_TO_DEFRAG);
+-			hwrm_err = _hwrm_send_message(bp, &install,
+-						      sizeof(install),
+-						      INSTALL_PACKAGE_TIMEOUT);
++			rc = _hwrm_send_message(bp, &install, sizeof(install),
++						INSTALL_PACKAGE_TIMEOUT);
+ 		}
+-		if (hwrm_err)
++		if (rc)
+ 			goto flash_pkg_exit;
+ 	}
+ 
+@@ -2092,7 +2090,7 @@ static int bnxt_flash_package_from_file(struct net_device *dev,
+ flash_pkg_exit:
+ 	mutex_unlock(&bp->hwrm_cmd_lock);
+ err_exit:
+-	if (hwrm_err == -EACCES)
++	if (rc == -EACCES)
+ 		bnxt_print_admin_err(bp);
+ 	return rc;
+ }
 -- 
 2.20.1
 
