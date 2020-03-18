@@ -2,35 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2760B18A4A1
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 21:55:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4386E18A4BB
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 21:57:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728227AbgCRUzN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Mar 2020 16:55:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55480 "EHLO mail.kernel.org"
+        id S1728281AbgCRUzU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Mar 2020 16:55:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55588 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728214AbgCRUzM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Mar 2020 16:55:12 -0400
+        id S1728243AbgCRUzQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Mar 2020 16:55:16 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E25FE208E4;
-        Wed, 18 Mar 2020 20:55:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 827BB21473;
+        Wed, 18 Mar 2020 20:55:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584564911;
-        bh=V4XcCi4zI+m4Y89ggKKf+m+BzhB6paEjnpHJR1dUQbY=;
-        h=From:To:Cc:Subject:Date:From;
-        b=CZLyyrZdXbnBL0Ra4FUCOyjQjnDP85Yv0Ct8ndGon4Y2wEmDEklb7RZjVR0L6vOsi
-         bwL+NcsUzl/x0eeaXefvxoxPP8ecs37DH35KNx85h3pKWRsqCo/p1DgKi9yIXKOMKS
-         OojtKtS/rB8fRygMUml+rZtpOrf5kHsyVKbAsfDM=
+        s=default; t=1584564915;
+        bh=bONTE9QdEECJ7irBIRK7fX137XpPZQEhsAzh0W8JQ/4=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=mW+jkdajYXJf7POKeafghH/hpsXktWMSsj/+4xrU5uqk8Fb4JdZaGgjf4+qpWJQS6
+         VDXcLgKNVrHfFmGnjOYT/9DQsBsDawm9r9yrJLAVcVRt7N38WP9Hngd9myFBABVacz
+         P3YidteIk+B3oKNrrSGyFTO6qGJw32J8Or37Wa30=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Vasily Averin <vvs@virtuozzo.com>, Tejun Heo <tj@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, cgroups@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 01/37] cgroup-v1: cgroup_pidlist_next should update position index
-Date:   Wed, 18 Mar 2020 16:54:33 -0400
-Message-Id: <20200318205509.17053-1-sashal@kernel.org>
+Cc:     Nicolas Belin <nbelin@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Sasha Levin <sashal@kernel.org>, linux-gpio@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-amlogic@lists.infradead.org
+Subject: [PATCH AUTOSEL 4.19 04/37] pinctrl: meson-gxl: fix GPIOX sdio pins
+Date:   Wed, 18 Mar 2020 16:54:36 -0400
+Message-Id: <20200318205509.17053-4-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20200318205509.17053-1-sashal@kernel.org>
+References: <20200318205509.17053-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -40,58 +46,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vasily Averin <vvs@virtuozzo.com>
+From: Nicolas Belin <nbelin@baylibre.com>
 
-[ Upstream commit db8dd9697238be70a6b4f9d0284cd89f59c0e070 ]
+[ Upstream commit dc7a06b0dbbafac8623c2b7657e61362f2f479a7 ]
 
-if seq_file .next fuction does not change position index,
-read after some lseek can generate unexpected output.
+In the gxl driver, the sdio cmd and clk pins are inverted. It has not caused
+any issue so far because devices using these pins always take both pins
+so the resulting configuration is OK.
 
- # mount | grep cgroup
- # dd if=/mnt/cgroup.procs bs=1  # normal output
-...
-1294
-1295
-1296
-1304
-1382
-584+0 records in
-584+0 records out
-584 bytes copied
-
-dd: /mnt/cgroup.procs: cannot skip to specified offset
-83  <<< generates end of last line
-1383  <<< ... and whole last line once again
-0+1 records in
-0+1 records out
-8 bytes copied
-
-dd: /mnt/cgroup.procs: cannot skip to specified offset
-1386  <<< generates last line anyway
-0+1 records in
-0+1 records out
-5 bytes copied
-
-https://bugzilla.kernel.org/show_bug.cgi?id=206283
-Signed-off-by: Vasily Averin <vvs@virtuozzo.com>
-Signed-off-by: Tejun Heo <tj@kernel.org>
+Fixes: 0f15f500ff2c ("pinctrl: meson: Add GXL pinctrl definitions")
+Reviewed-by: Jerome Brunet <jbrunet@baylibre.com>
+Signed-off-by: Nicolas Belin <nbelin@baylibre.com>
+Link: https://lore.kernel.org/r/1582204512-7582-1-git-send-email-nbelin@baylibre.com
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/cgroup/cgroup-v1.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/pinctrl/meson/pinctrl-meson-gxl.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/kernel/cgroup/cgroup-v1.c b/kernel/cgroup/cgroup-v1.c
-index 51063e7a93c28..c9628b9a41d23 100644
---- a/kernel/cgroup/cgroup-v1.c
-+++ b/kernel/cgroup/cgroup-v1.c
-@@ -501,6 +501,7 @@ static void *cgroup_pidlist_next(struct seq_file *s, void *v, loff_t *pos)
- 	 */
- 	p++;
- 	if (p >= end) {
-+		(*pos)++;
- 		return NULL;
- 	} else {
- 		*pos = *p;
+diff --git a/drivers/pinctrl/meson/pinctrl-meson-gxl.c b/drivers/pinctrl/meson/pinctrl-meson-gxl.c
+index 0c0a5018102b0..22ddb238e17c5 100644
+--- a/drivers/pinctrl/meson/pinctrl-meson-gxl.c
++++ b/drivers/pinctrl/meson/pinctrl-meson-gxl.c
+@@ -153,8 +153,8 @@ static const unsigned int sdio_d0_pins[]	= { GPIOX_0 };
+ static const unsigned int sdio_d1_pins[]	= { GPIOX_1 };
+ static const unsigned int sdio_d2_pins[]	= { GPIOX_2 };
+ static const unsigned int sdio_d3_pins[]	= { GPIOX_3 };
+-static const unsigned int sdio_cmd_pins[]	= { GPIOX_4 };
+-static const unsigned int sdio_clk_pins[]	= { GPIOX_5 };
++static const unsigned int sdio_clk_pins[]	= { GPIOX_4 };
++static const unsigned int sdio_cmd_pins[]	= { GPIOX_5 };
+ static const unsigned int sdio_irq_pins[]	= { GPIOX_7 };
+ 
+ static const unsigned int nand_ce0_pins[]	= { BOOT_8 };
 -- 
 2.20.1
 
