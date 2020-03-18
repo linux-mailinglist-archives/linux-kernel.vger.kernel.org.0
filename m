@@ -2,40 +2,47 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E4FE1189F65
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 16:13:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 53870189F9C
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 16:28:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727141AbgCRPNs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Mar 2020 11:13:48 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39766 "EHLO mail.kernel.org"
+        id S1726988AbgCRP2V (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Mar 2020 11:28:21 -0400
+Received: from mga09.intel.com ([134.134.136.24]:57410 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726866AbgCRPNs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Mar 2020 11:13:48 -0400
-Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 11F6F20757;
-        Wed, 18 Mar 2020 15:13:46 +0000 (UTC)
-Date:   Wed, 18 Mar 2020 11:13:45 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-        Peter Wu <peter@lekensteyn.nl>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Tom Zanussi <zanussi@kernel.org>,
-        Shuah Khan <shuahkhan@gmail.com>
-Subject: [RFC][PATCH 12/11] selftest/ftrace: Fix function trigger test to
- handle trace not disabling the tracer
-Message-ID: <20200318111345.0516642e@gandalf.local.home>
-In-Reply-To: <20200317213222.421100128@goodmis.org>
-References: <20200317213222.421100128@goodmis.org>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1726856AbgCRP2V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Mar 2020 11:28:21 -0400
+IronPort-SDR: Z+OfYx5ruojyuP59E5vMSymw1PS8+LgVfFZSrz5VZYU7hgL21zTbHmHJkslQuF0enWE5G0Q8PD
+ vBoI1nvzH0lQ==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Mar 2020 08:28:20 -0700
+IronPort-SDR: g95JJKA7+7TG6WKZl/SiDDh/sHxUBdTx6vEJqHelvUjXtuVFfJIGubIXgY3vru0vjeqq0pZ4xU
+ JHQ6NHbONJfg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,568,1574150400"; 
+   d="scan'208";a="417985182"
+Received: from nali1-mobl3.amr.corp.intel.com (HELO [10.255.33.194]) ([10.255.33.194])
+  by orsmga005.jf.intel.com with ESMTP; 18 Mar 2020 08:28:19 -0700
+Subject: Re: snd_hda_intel/sst-acpi sound breakage on suspend/resume since
+ 5.6-rc1
+To:     Dominik Brodowski <linux@dominikbrodowski.net>,
+        Keyon Jie <yang.jie@linux.intel.com>
+Cc:     cezary.rojewski@intel.com, alsa-devel@alsa-project.org,
+        curtis@malainey.com, linux-kernel@vger.kernel.org, tiwai@suse.com,
+        liam.r.girdwood@linux.intel.com, broonie@kernel.org
+References: <20200318063022.GA116342@light.dominikbrodowski.net>
+ <41d0b2b5-6014-6fab-b6a2-7a7dbc4fe020@linux.intel.com>
+ <20200318123930.GA2433@light.dominikbrodowski.net>
+From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Message-ID: <d7a357c5-54af-3e69-771c-d7ea83c6fbb7@linux.intel.com>
+Date:   Wed, 18 Mar 2020 10:13:54 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20200318123930.GA2433@light.dominikbrodowski.net>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -43,36 +50,18 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
-From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
 
-The ftrace selftest "ftrace - test for function traceon/off triggers"
-enables all events and reads the trace file. Now that the trace file does
-not disable tracing, and will attempt to continually read new data that is
-added, the selftest gets stuck reading the trace file. This is because the
-data added to the trace file will fill up quicker than the reading of it.
+>>> While 5.5.x works fine, mainline as of ac309e7744be (v5.6-rc6+) causes me
+>>> some sound-related trouble: after boot, the sound works fine -- but once I
+>>> suspend and resume my broadwell-based XPS13, I need to switch to headphone
+>>> and back to speaker to hear something. But what I hear isn't music but
+>>> garbled output.
 
-By only enabling scheduling events, the read can keep up with the writes.
-Instead of enabling all events, only enable the scheduler events.
+It's my understanding that the use of the haswell driver is opt-in for 
+Dell XPS13 9343. When we run the SOF driver on this device, we have to 
+explicitly bypass an ACPI quirk that forces HDAudio to be used:
 
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
----
- .../selftests/ftrace/test.d/ftrace/func_traceonoff_triggers.tc  | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+https://github.com/thesofproject/linux/commit/944b6a2d620a556424ed4195c8428485fcb6c2bd
 
-diff --git a/tools/testing/selftests/ftrace/test.d/ftrace/func_traceonoff_triggers.tc b/tools/testing/selftests/ftrace/test.d/ftrace/func_traceonoff_triggers.tc
-index 0c04282d33dd..1947387fe976 100644
---- a/tools/testing/selftests/ftrace/test.d/ftrace/func_traceonoff_triggers.tc
-+++ b/tools/testing/selftests/ftrace/test.d/ftrace/func_traceonoff_triggers.tc
-@@ -41,7 +41,7 @@ fi
- 
- echo '** ENABLE EVENTS'
- 
--echo 1 > events/enable
-+echo 1 > events/sched/enable
- 
- echo '** ENABLE TRACING'
- enable_tracing
--- 
-2.20.1
-
+Have you tried to run in plain vanilla HDAudio mode?
 
