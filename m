@@ -2,149 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4115F189CB8
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 14:18:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0B8E0189CBA
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 14:18:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727014AbgCRNSZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Mar 2020 09:18:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60002 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726740AbgCRNSZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Mar 2020 09:18:25 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        id S1727052AbgCRNSx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Mar 2020 09:18:53 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:49944 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726740AbgCRNSx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Mar 2020 09:18:53 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=e8OZlUYt9NpXE+7IhSvgOVwhKJLbPwn1osPXL9X+zfc=; b=aQBnpb9cyipV3JxWUZBjkUXvVs
+        sodm3NbVUN2mcqx+vxN2ASzBcdncGr+NbwpIwlWTA9O05gFZq+u1VIOR6O7AIoIB6uqtM208Cdeho
+        EvRU/Wf5kAjYf2uhaRthHbqhitBHGLcbj9rTzvTgLnxMo8YzGgshbOgY3gXHMywiRMoulwsNwx9Gg
+        ijJbE1xGJ8kENC0XYnZZyU9eaci/nDjxT90EM8dYoLR/bYqN/khxjs6hBwrX4k29LNLflKp1aOWaf
+        6nkjLjqX2bMc2uS97JQb6bJHT4l2FZ9ay3Usb/sDb5rD+kgHeiSHOu8D7ylzouOVhoqLTqfCjm9V6
+        Np4I0Glg==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jEYat-0001cq-SQ; Wed, 18 Mar 2020 13:18:48 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DE42220768;
-        Wed, 18 Mar 2020 13:18:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584537504;
-        bh=aUGyqTKA5hfG5n2z9i2CNgp/54hZegNuW8F7Ze1TW5w=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Y9oZVQVnpxVULOg3RGf6NiAye0DIn2rRsAkn5peJSOgZHhXQeyED5i+8YsCwpgHcz
-         irENiKSIHsgvGcO1BpcVr3qeKVbRLj4iClEGte2zNHT1SDhFTjnEPCoRh40U63SAur
-         Ers4QWZsoS95whsZOwL4fBfDXbam/VOYhJtZJv6Y=
-Date:   Wed, 18 Mar 2020 14:18:21 +0100
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 02/13] coresight: cti: Add sysfs coresight mgmt register
- access
-Message-ID: <20200318131821.GA2789508@kroah.com>
-References: <20200309161748.31975-1-mathieu.poirier@linaro.org>
- <20200309161748.31975-3-mathieu.poirier@linaro.org>
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id A199B30047A;
+        Wed, 18 Mar 2020 14:18:45 +0100 (CET)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 762B82B4EBEA3; Wed, 18 Mar 2020 14:18:45 +0100 (CET)
+Date:   Wed, 18 Mar 2020 14:18:45 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     tglx@linutronix.de, jpoimboe@redhat.com
+Cc:     linux-kernel@vger.kernel.org, x86@kernel.org, mhiramat@kernel.org,
+        mbenes@suse.cz, brgerst@gmail.com
+Subject: [RFC][PATCH v2 20/19] kbuild/objtool: Add objtool-vmlinux.o pass
+Message-ID: <20200318131845.GG20730@hirez.programming.kicks-ass.net>
+References: <20200317170234.897520633@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200309161748.31975-3-mathieu.poirier@linaro.org>
+In-Reply-To: <20200317170234.897520633@infradead.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 09, 2020 at 10:17:37AM -0600, Mathieu Poirier wrote:
-> From: Mike Leach <mike.leach@linaro.org>
-> 
-> Adds sysfs access to the coresight management registers.
-> 
-> Signed-off-by: Mike Leach <mike.leach@linaro.org>
-> Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-> Reviewed-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-> [Fixed abbreviation in title]
-> Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-> ---
->  .../hwtracing/coresight/coresight-cti-sysfs.c | 53 +++++++++++++++++++
->  drivers/hwtracing/coresight/coresight-priv.h  |  1 +
->  2 files changed, 54 insertions(+)
-> 
-> diff --git a/drivers/hwtracing/coresight/coresight-cti-sysfs.c b/drivers/hwtracing/coresight/coresight-cti-sysfs.c
-> index a832b8c6b866..507f8eb487fe 100644
-> --- a/drivers/hwtracing/coresight/coresight-cti-sysfs.c
-> +++ b/drivers/hwtracing/coresight/coresight-cti-sysfs.c
-> @@ -62,11 +62,64 @@ static struct attribute *coresight_cti_attrs[] = {
->  	NULL,
->  };
->  
-> +/* register based attributes */
-> +
-> +/* macro to access RO registers with power check only (no enable check). */
-> +#define coresight_cti_reg(name, offset)			\
-> +static ssize_t name##_show(struct device *dev,				\
-> +			   struct device_attribute *attr, char *buf)	\
-> +{									\
-> +	struct cti_drvdata *drvdata = dev_get_drvdata(dev->parent);	\
-> +	u32 val = 0;							\
-> +	pm_runtime_get_sync(dev->parent);				\
-> +	spin_lock(&drvdata->spinlock);					\
-> +	if (drvdata->config.hw_powered)					\
-> +		val = readl_relaxed(drvdata->base + offset);		\
-> +	spin_unlock(&drvdata->spinlock);				\
-> +	pm_runtime_put_sync(dev->parent);				\
-> +	return scnprintf(buf, PAGE_SIZE, "0x%x\n", val);		\
-> +}									\
-> +static DEVICE_ATTR_RO(name)
-> +
-> +/* coresight management registers */
-> +coresight_cti_reg(devaff0, CTIDEVAFF0);
-> +coresight_cti_reg(devaff1, CTIDEVAFF1);
-> +coresight_cti_reg(authstatus, CORESIGHT_AUTHSTATUS);
-> +coresight_cti_reg(devarch, CORESIGHT_DEVARCH);
-> +coresight_cti_reg(devid, CORESIGHT_DEVID);
-> +coresight_cti_reg(devtype, CORESIGHT_DEVTYPE);
-> +coresight_cti_reg(pidr0, CORESIGHT_PERIPHIDR0);
-> +coresight_cti_reg(pidr1, CORESIGHT_PERIPHIDR1);
-> +coresight_cti_reg(pidr2, CORESIGHT_PERIPHIDR2);
-> +coresight_cti_reg(pidr3, CORESIGHT_PERIPHIDR3);
-> +coresight_cti_reg(pidr4, CORESIGHT_PERIPHIDR4);
-> +
-> +static struct attribute *coresight_cti_mgmt_attrs[] = {
-> +	&dev_attr_devaff0.attr,
-> +	&dev_attr_devaff1.attr,
-> +	&dev_attr_authstatus.attr,
-> +	&dev_attr_devarch.attr,
-> +	&dev_attr_devid.attr,
-> +	&dev_attr_devtype.attr,
-> +	&dev_attr_pidr0.attr,
-> +	&dev_attr_pidr1.attr,
-> +	&dev_attr_pidr2.attr,
-> +	&dev_attr_pidr3.attr,
-> +	&dev_attr_pidr4.attr,
-> +	NULL,
-> +};
-> +
->  static const struct attribute_group coresight_cti_group = {
->  	.attrs = coresight_cti_attrs,
->  };
->  
-> +static const struct attribute_group coresight_cti_mgmt_group = {
-> +	.attrs = coresight_cti_mgmt_attrs,
-> +	.name = "mgmt",
-> +};
-> +
->  const struct attribute_group *coresight_cti_groups[] = {
->  	&coresight_cti_group,
-> +	&coresight_cti_mgmt_group,
->  	NULL,
->  };
-> diff --git a/drivers/hwtracing/coresight/coresight-priv.h b/drivers/hwtracing/coresight/coresight-priv.h
-> index 82e563cdc879..aba6b789c969 100644
-> --- a/drivers/hwtracing/coresight/coresight-priv.h
-> +++ b/drivers/hwtracing/coresight/coresight-priv.h
-> @@ -22,6 +22,7 @@
->  #define CORESIGHT_CLAIMCLR	0xfa4
->  #define CORESIGHT_LAR		0xfb0
->  #define CORESIGHT_LSR		0xfb4
-> +#define CORESIGHT_DEVARCH	0xfbc
->  #define CORESIGHT_AUTHSTATUS	0xfb8
->  #define CORESIGHT_DEVID		0xfc8
->  #define CORESIGHT_DEVTYPE	0xfcc
-> -- 
-> 2.20.1
-> 
 
-I do not see any Documentation/ABI/ entries for these new sysfs files,
-did I miss it somehow?  I can't take new sysfs code without
-documentation.
+This seems to 'work', must be perfect etc..
 
-thanks,
+---
 
-greg k-h
+Subject: kbuild/objtool: Add objtool-vmlinux.o pass
+From: Peter Zijlstra <peterz@infradead.org>
+Date: Wed Mar 18 13:33:54 CET 2020
+
+Now that objtool is capable of processing vmlinux.o and actually has
+something useful to do there, (conditionally) add it to the final link
+pass.
+
+This will increase build time by a few seconds.
+
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+---
+ lib/Kconfig.debug       |    5 +++++
+ scripts/link-vmlinux.sh |   24 ++++++++++++++++++++++++
+ 2 files changed, 29 insertions(+)
+
+--- a/lib/Kconfig.debug
++++ b/lib/Kconfig.debug
+@@ -379,6 +379,11 @@ config STACK_VALIDATION
+ 	  For more information, see
+ 	  tools/objtool/Documentation/stack-validation.txt.
+ 
++config VMLINUX_VALIDATION
++	bool
++	depends on STACK_VALIDATION && DEBUG_ENTRY && !PARAVIRT
++	default y
++
+ config DEBUG_FORCE_WEAK_PER_CPU
+ 	bool "Force weak per-cpu definitions"
+ 	depends on DEBUG_KERNEL
+--- a/scripts/link-vmlinux.sh
++++ b/scripts/link-vmlinux.sh
+@@ -55,6 +55,29 @@ modpost_link()
+ 	${LD} ${KBUILD_LDFLAGS} -r -o ${1} ${objects}
+ }
+ 
++objtool_link()
++{
++	local objtoolopt;
++
++	if [ -n "${CONFIG_VMLINUX_VALIDATION}" ]; then
++		objtoolopt="check"
++		if [ -n "${CONFIG_FRAME_POINTER}" ]; then
++			objtoolopt="${objtoolopt} --no-fp"
++		fi
++		if [ -n "${CONFIG_GCOV_KERNEL}" ]; then
++			objtoolopt="${objtoolopt} --no-unreachable"
++		fi
++		if [ -n "${CONFIG_RETPOLINE}" ]; then
++			objtoolopt="${objtoolopt} --retpoline"
++		fi
++		if [ -n "${CONFIG_X86_SMAP}" ]; then
++			objtoolopt="${objtoolopt} --uaccess"
++		fi
++		info OBJTOOL ${1}
++		tools/objtool/objtool ${objtoolopt} ${1}
++	fi
++}
++
+ # Link of vmlinux
+ # ${1} - output file
+ # ${2}, ${3}, ... - optional extra .o files
+@@ -244,6 +267,7 @@ ${MAKE} -f "${srctree}/scripts/Makefile.
+ #link vmlinux.o
+ info LD vmlinux.o
+ modpost_link vmlinux.o
++objtool_link vmlinux.o
+ 
+ # modpost vmlinux.o to check for section mismatches
+ ${MAKE} -f "${srctree}/scripts/Makefile.modpost" MODPOST_VMLINUX=1
