@@ -2,105 +2,170 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B563D18A8A4
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 23:54:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6232618A8AE
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 23:55:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726912AbgCRWyS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Mar 2020 18:54:18 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60500 "EHLO mail.kernel.org"
+        id S1727283AbgCRWze (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Mar 2020 18:55:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33200 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726619AbgCRWyS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Mar 2020 18:54:18 -0400
-Received: from sol.localdomain (c-107-3-166-239.hsd1.ca.comcast.net [107.3.166.239])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1726704AbgCRWze (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Mar 2020 18:55:34 -0400
+Received: from mail-qk1-f172.google.com (mail-qk1-f172.google.com [209.85.222.172])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2A95820767;
-        Wed, 18 Mar 2020 22:54:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DB16620767;
+        Wed, 18 Mar 2020 22:55:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584572057;
-        bh=2npaGP9myWXWoLNaPv4jAYfc7RYFPXKtndA7b70voqE=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=bDYdMKyb9v7DCaGd0DcQ6ZvuzY0GEVpi+j5YTgMAp7NVLBpuQFxeoCxaRTmOAAhzi
-         4szIBzFegXbg9z3kHpzfTk0zNp2aw0G86W7Z4vGsWd6Tw9cHTdqpHzIbkKcItLqKlE
-         jnE1dzcQni33XlgHrhOtYe03Cuib3Q6eJyC0sbk8=
-Date:   Wed, 18 Mar 2020 15:54:15 -0700
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Jessica Yu <jeyu@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Alexei Starovoitov <ast@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jeff Vander Stoep <jeffv@google.com>,
-        Kees Cook <keescook@chromium.org>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        NeilBrown <neilb@suse.com>, stable@vger.kernel.org
-Subject: Re: [PATCH v3 2/5] fs/filesystems.c: downgrade user-reachable
- WARN_ONCE() to pr_warn_once()
-Message-ID: <20200318225415.GD2334@sol.localdomain>
-References: <20200314213426.134866-1-ebiggers@kernel.org>
- <20200314213426.134866-3-ebiggers@kernel.org>
- <20200318154315.GB4144@linux-8ccs>
+        s=default; t=1584572133;
+        bh=uTyNAhR02/lueaTrSpsEtzvYiAwF0pB5xc/FKKpl73o=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=ro+4MZPj8/lr9itNf5dBH8a0rGlg1/wfIPWd62qVHcJMz5O10Y3Mue4fJROANWR2M
+         d9Id+B6QYs3dyhoYst2vuOUd2TWEt+ABTNjT89wpllcLEIOsJgqknKRgSJf4HGNAhX
+         +I2/h5ahnh8tO9lM4ZKnPS35fNMJ5ZBu0SkyHzks=
+Received: by mail-qk1-f172.google.com with SMTP id z25so199267qkj.4;
+        Wed, 18 Mar 2020 15:55:32 -0700 (PDT)
+X-Gm-Message-State: ANhLgQ36jYfueqEy5UxYViMD1YiHbousaFRN8I7EmfobmxjrBDQLcRoq
+        i/P/Y9JyL1JbOjNlXKxd+DR+D2i3Fspg7glRmQ==
+X-Google-Smtp-Source: ADFU+vvCBiYODaoYfbldWLW9rUsXW8+xYy7ob9N5BeJKkvAFoqoJHOy2oWFdT1cWnjoHpZxefKYgPbVzCXJcCqWfkKI=
+X-Received: by 2002:a37:393:: with SMTP id 141mr196155qkd.393.1584572131923;
+ Wed, 18 Mar 2020 15:55:31 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200318154315.GB4144@linux-8ccs>
+References: <20200317163555.18107-1-jbx6244@gmail.com>
+In-Reply-To: <20200317163555.18107-1-jbx6244@gmail.com>
+From:   Rob Herring <robh+dt@kernel.org>
+Date:   Wed, 18 Mar 2020 16:55:20 -0600
+X-Gmail-Original-Message-ID: <CAL_Jsq+0M1n7M1EjnJhum9Sn30FEb3ux4agJSa1KhNwUxv4THg@mail.gmail.com>
+Message-ID: <CAL_Jsq+0M1n7M1EjnJhum9Sn30FEb3ux4agJSa1KhNwUxv4THg@mail.gmail.com>
+Subject: Re: [RFC PATCH 1/2] dt-bindings: sram: convert rockchip-pmu-sram
+ bindings to yaml
+To:     Johan Jonker <jbx6244@gmail.com>
+Cc:     "heiko@sntech.de" <heiko@sntech.de>, devicetree@vger.kernel.org,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 18, 2020 at 04:43:15PM +0100, Jessica Yu wrote:
-> +++ Eric Biggers [14/03/20 14:34 -0700]:
-> > From: Eric Biggers <ebiggers@google.com>
-> > 
-> > After request_module(), nothing is stopping the module from being
-> > unloaded until someone takes a reference to it via try_get_module().
-> > 
-> > The WARN_ONCE() in get_fs_type() is thus user-reachable, via userspace
-> > running 'rmmod' concurrently.
-> > 
-> > Since WARN_ONCE() is for kernel bugs only, not for user-reachable
-> > situations, downgrade this warning to pr_warn_once().
-> > 
-> > Acked-by: Luis Chamberlain <mcgrof@kernel.org>
-> > Cc: stable@vger.kernel.org
-> > Cc: Alexei Starovoitov <ast@kernel.org>
-> > Cc: Andrew Morton <akpm@linux-foundation.org>
-> > Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> > Cc: Jeff Vander Stoep <jeffv@google.com>
-> > Cc: Jessica Yu <jeyu@kernel.org>
-> > Cc: Kees Cook <keescook@chromium.org>
-> > Cc: NeilBrown <neilb@suse.com>
-> > Signed-off-by: Eric Biggers <ebiggers@google.com>
-> > ---
-> > fs/filesystems.c | 4 +++-
-> > 1 file changed, 3 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/fs/filesystems.c b/fs/filesystems.c
-> > index 77bf5f95362da..90b8d879fbaf3 100644
-> > --- a/fs/filesystems.c
-> > +++ b/fs/filesystems.c
-> > @@ -272,7 +272,9 @@ struct file_system_type *get_fs_type(const char *name)
-> > 	fs = __get_fs_type(name, len);
-> > 	if (!fs && (request_module("fs-%.*s", len, name) == 0)) {
-> > 		fs = __get_fs_type(name, len);
-> > -		WARN_ONCE(!fs, "request_module fs-%.*s succeeded, but still no fs?\n", len, name);
-> > +		if (!fs)
-> > +			pr_warn_once("request_module fs-%.*s succeeded, but still no fs?\n",
-> > +				     len, name);
-> 
-> Hm, what was the rationale for warning only once again? It might be useful
-> for debugging issues to see each instance of request_module() failure
-> (and with which fs). However, I don't have a concrete use case to
-> support this argument, so:
-> 
-> Reviewed-by: Jessica Yu <jeyu@kernel.org>
+On Tue, Mar 17, 2020 at 10:36 AM Johan Jonker <jbx6244@gmail.com> wrote:
+>
+> Current dts files with 'rockchip-pmu-sram' compatible nodes
+> are manually verified. In order to automate this process
+> rockchip-pmu-sram.txt has to be converted to yaml.
+>
+> A check with the command below gives for example this error:
+>
+> arch/arm/boot/dts/rk3288-evb-act8846.dt.yaml: sram@ff700000:
+> compatible:0:
+> 'rockchip,rk3288-pmu-sram' was expected
+> arch/arm/boot/dts/rk3288-evb-act8846.dt.yaml: sram@ff700000:
+> compatible:
+> ['mmio-sram'] is too short
+>
+> Fix this error by adding an extra 'mmio-sram' compatible and
+> 'if then' structure to filter yaml warnings.
 
-This was discussed on v2, see
-https://lkml.kernel.org/lkml/20200313010053.GS11244@42.do-not-panic.com/.
-If the warning triggers, then it indicates a broken modprobe program.
-Printing the warning multiple times wouldn't really add any new information.
+Seems to me you should fix the .dts file. If we adjust schemas to make
+dts files pass, then what is the point of the schemas?
 
-And in any case, it's printed once both before and after this patch.
+> make ARCH=arm dtbs_check
+> DT_SCHEMA_FILES=Documentation/devicetree/bindings/sram/
+> rockchip-pmu-sram.yaml
 
-- Eric
+Until recent changes in linux-next now, this is not sufficient as all
+examples are not checked against all schemas.
+
+> Signed-off-by: Johan Jonker <jbx6244@gmail.com>
+> ---
+>  .../devicetree/bindings/sram/rockchip-pmu-sram.txt | 16 --------
+>  .../bindings/sram/rockchip-pmu-sram.yaml           | 46 ++++++++++++++++++++++
+>  2 files changed, 46 insertions(+), 16 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/sram/rockchip-pmu-sram.txt
+>  create mode 100644 Documentation/devicetree/bindings/sram/rockchip-pmu-sram.yaml
+>
+> diff --git a/Documentation/devicetree/bindings/sram/rockchip-pmu-sram.txt b/Documentation/devicetree/bindings/sram/rockchip-pmu-sram.txt
+> deleted file mode 100644
+> index 6b42fda30..000000000
+> --- a/Documentation/devicetree/bindings/sram/rockchip-pmu-sram.txt
+> +++ /dev/null
+> @@ -1,16 +0,0 @@
+> -Rockchip SRAM for pmu:
+> -------------------------------
+> -
+> -The sram of pmu is used to store the function of resume from maskrom(the 1st
+> -level loader). This is a common use of the "pmu-sram" because it keeps power
+> -even in low power states in the system.
+> -
+> -Required node properties:
+> -- compatible : should be "rockchip,rk3288-pmu-sram"
+> -- reg : physical base address and the size of the registers window
+> -
+> -Example:
+> -       sram@ff720000 {
+> -               compatible = "rockchip,rk3288-pmu-sram", "mmio-sram";
+> -               reg = <0xff720000 0x1000>;
+> -       };
+> diff --git a/Documentation/devicetree/bindings/sram/rockchip-pmu-sram.yaml b/Documentation/devicetree/bindings/sram/rockchip-pmu-sram.yaml
+> new file mode 100644
+> index 000000000..bb72e4f53
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/sram/rockchip-pmu-sram.yaml
+> @@ -0,0 +1,46 @@
+> +# SPDX-License-Identifier: GPL-2.0
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/sram/rockchip-pmu-sram.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Rockchip SRAM for pmu
+> +
+> +description:
+> +  The sram of pmu is used to store the function of resume from maskrom(the 1st
+> +  level loader). This is a common use of the "pmu-sram" because it keeps power
+> +  even in low power states in the system.
+> +
+> +maintainers:
+> +  - Heiko Stuebner <heiko@sntech.de>
+> +
+> +# The extra 'mmio-sram' compatible and 'if then' structure is needed
+> +# to filter yaml warnings.
+> +properties:
+> +  compatible:
+> +    oneOf:
+> +      - const: mmio-sram
+> +      - items:
+> +        - const: rockchip,rk3288-pmu-sram
+
+We've been just adding the compatibles to the common sram.yaml for the
+simple cases like this.
+
+
+> +        - const: mmio-sram
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +if:
+> +  properties:
+> +    compatible:
+> +      contains:
+> +        const: rockchip,rk3288-pmu-sram
+> +
+> +then:
+> +  required:
+> +    - compatible
+> +    - reg
+> +
+> +examples:
+> +  - |
+> +    pmu_sram: sram@ff720000 {
+> +      compatible = "rockchip,rk3288-pmu-sram", "mmio-sram";
+> +      reg = <0xff720000 0x1000>;
+> +    };
+> --
+> 2.11.0
+>
