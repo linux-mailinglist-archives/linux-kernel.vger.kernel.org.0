@@ -2,49 +2,48 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2ACBF189330
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 01:42:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1C26318933F
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 01:43:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727450AbgCRAmn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Mar 2020 20:42:43 -0400
-Received: from us-smtp-delivery-74.mimecast.com ([216.205.24.74]:49623 "EHLO
+        id S1727534AbgCRAmu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Mar 2020 20:42:50 -0400
+Received: from us-smtp-delivery-74.mimecast.com ([63.128.21.74]:29548 "EHLO
         us-smtp-delivery-74.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727408AbgCRAmm (ORCPT
+        by vger.kernel.org with ESMTP id S1727262AbgCRAmq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Mar 2020 20:42:42 -0400
+        Tue, 17 Mar 2020 20:42:46 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1584492161;
+        s=mimecast20190719; t=1584492165;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=q13VZYlzLtolpKOuigDLfvkLF77EfuwXW+oKeY0ztNU=;
-        b=IOZCCIZ7J3WghgDVPDYTm/8QkTH+/6r5snm1H4q7HKoqEylnQvLUkvSkvP9JU8Ou8aHd2O
-        xlzSoT9vvaYemeJgQ/YWIt+RzR38Wsfyu7VVORxjObtGYJL2GMjP+qEkmup7sD8Idi6asn
-        TessLZSJI+boA2YZAjwGW+Ba+C+Kdpg=
+        bh=xxjWKp4eSSSGnZvC4kR091RQqoE0RigqfNFBzIWnlyI=;
+        b=RvCLfokSo+eRUgZoYfiO3CZsDoltqq8TSXDDrib8iUWdfu+PYO5stpLSl6oQGsrZgc/a8Z
+        PRUoDiHkibyEpmU3xa1e+a1MHrs0jtjTHqfM/bcBcq+WQYyfJ51YJPlVVDXsL06G+pCNq+
+        eaK5p+MZVV1OePIBCcaCfH/CUcH861I=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-287-Caiap6T9PPK0j0SbTUbZKQ-1; Tue, 17 Mar 2020 20:42:39 -0400
-X-MC-Unique: Caiap6T9PPK0j0SbTUbZKQ-1
+ us-mta-232-xMaJolXOPpaxC3Ja2791Jw-1; Tue, 17 Mar 2020 20:42:42 -0400
+X-MC-Unique: xMaJolXOPpaxC3Ja2791Jw-1
 Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 406E01005509;
-        Wed, 18 Mar 2020 00:42:38 +0000 (UTC)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id CAA2A8014CD;
+        Wed, 18 Mar 2020 00:42:40 +0000 (UTC)
 Received: from whitewolf.redhat.com (ovpn-113-173.rdu2.redhat.com [10.10.113.173])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 181E060BE0;
-        Wed, 18 Mar 2020 00:42:37 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id A11D660BE0;
+        Wed, 18 Mar 2020 00:42:39 +0000 (UTC)
 From:   Lyude Paul <lyude@redhat.com>
 To:     nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org
 Cc:     Ben Skeggs <bskeggs@redhat.com>, David Airlie <airlied@linux.ie>,
         Daniel Vetter <daniel@ffwll.ch>,
         Ilia Mirkin <imirkin@alum.mit.edu>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 4/9] drm/nouveau/kms/nv50-: Fix disabling dithering
-Date:   Tue, 17 Mar 2020 20:41:01 -0400
-Message-Id: <20200318004159.235623-5-lyude@redhat.com>
+        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+        Gerd Hoffmann <kraxel@redhat.com>, linux-kernel@vger.kernel.org
+Subject: [PATCH 5/9] drm/nouveau/kms/nv50-: s/harm/armh/g
+Date:   Tue, 17 Mar 2020 20:41:02 -0400
+Message-Id: <20200318004159.235623-6-lyude@redhat.com>
 In-Reply-To: <20200318004159.235623-1-lyude@redhat.com>
 References: <20200318004159.235623-1-lyude@redhat.com>
 MIME-Version: 1.0
@@ -55,56 +54,58 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-While we expose the ability to turn off hardware dithering for nouveau,
-we actually make the mistake of turning it on anyway, due to
-dithering_depth containing a non-zero value if our dithering depth isn't
-also set to 6 bpc.
+We refer to the armed hardware assembly as armh elsewhere in nouveau, so
+fix the naming here to make it consistent.
 
-So, fix it by never enabling dithering when it's disabled.
+This patch contains no functional changes.
 
 Signed-off-by: Lyude Paul <lyude@redhat.com>
 ---
- drivers/gpu/drm/nouveau/dispnv50/head.c | 24 +++++++++++++-----------
- 1 file changed, 13 insertions(+), 11 deletions(-)
+ drivers/gpu/drm/nouveau/dispnv50/wndw.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/gpu/drm/nouveau/dispnv50/head.c b/drivers/gpu/drm/no=
-uveau/dispnv50/head.c
-index e29ea40e7c33..72bc3bce396a 100644
---- a/drivers/gpu/drm/nouveau/dispnv50/head.c
-+++ b/drivers/gpu/drm/nouveau/dispnv50/head.c
-@@ -84,18 +84,20 @@ nv50_head_atomic_check_dither(struct nv50_head_atom *=
-armh,
- {
- 	u32 mode =3D 0x00;
+diff --git a/drivers/gpu/drm/nouveau/dispnv50/wndw.c b/drivers/gpu/drm/no=
+uveau/dispnv50/wndw.c
+index bb737f9281e6..39cca8eaa066 100644
+--- a/drivers/gpu/drm/nouveau/dispnv50/wndw.c
++++ b/drivers/gpu/drm/nouveau/dispnv50/wndw.c
+@@ -397,7 +397,7 @@ nv50_wndw_atomic_check(struct drm_plane *plane, struc=
+t drm_plane_state *state)
+ 	struct nv50_wndw *wndw =3D nv50_wndw(plane);
+ 	struct nv50_wndw_atom *armw =3D nv50_wndw_atom(wndw->plane.state);
+ 	struct nv50_wndw_atom *asyw =3D nv50_wndw_atom(state);
+-	struct nv50_head_atom *harm =3D NULL, *asyh =3D NULL;
++	struct nv50_head_atom *armh =3D NULL, *asyh =3D NULL;
+ 	bool modeset =3D false;
+ 	int ret;
 =20
--	if (asyc->dither.mode =3D=3D DITHERING_MODE_AUTO) {
--		if (asyh->base.depth > asyh->or.bpc * 3)
--			mode =3D DITHERING_MODE_DYNAMIC2X2;
--	} else {
--		mode =3D asyc->dither.mode;
--	}
-+	if (asyc->dither.mode) {
-+		if (asyc->dither.mode =3D=3D DITHERING_MODE_AUTO) {
-+			if (asyh->base.depth > asyh->or.bpc * 3)
-+				mode =3D DITHERING_MODE_DYNAMIC2X2;
-+		} else {
-+			mode =3D asyc->dither.mode;
-+		}
+@@ -418,9 +418,9 @@ nv50_wndw_atomic_check(struct drm_plane *plane, struc=
+t drm_plane_state *state)
 =20
--	if (asyc->dither.depth =3D=3D DITHERING_DEPTH_AUTO) {
--		if (asyh->or.bpc >=3D 8)
--			mode |=3D DITHERING_DEPTH_8BPC;
--	} else {
--		mode |=3D asyc->dither.depth;
-+		if (asyc->dither.depth =3D=3D DITHERING_DEPTH_AUTO) {
-+			if (asyh->or.bpc >=3D 8)
-+				mode |=3D DITHERING_DEPTH_8BPC;
-+		} else {
-+			mode |=3D asyc->dither.depth;
-+		}
+ 	/* Fetch assembly state for the head the window used to belong to. */
+ 	if (armw->state.crtc) {
+-		harm =3D nv50_head_atom_get(asyw->state.state, armw->state.crtc);
+-		if (IS_ERR(harm))
+-			return PTR_ERR(harm);
++		armh =3D nv50_head_atom_get(asyw->state.state, armw->state.crtc);
++		if (IS_ERR(armh))
++			return PTR_ERR(armh);
  	}
 =20
- 	asyh->dither.enable =3D mode;
+ 	/* LUT configuration can potentially cause the window to be disabled. *=
+/
+@@ -444,8 +444,8 @@ nv50_wndw_atomic_check(struct drm_plane *plane, struc=
+t drm_plane_state *state)
+ 		asyh->wndw.mask |=3D BIT(wndw->id);
+ 	} else
+ 	if (armw->visible) {
+-		nv50_wndw_atomic_check_release(wndw, asyw, harm);
+-		harm->wndw.mask &=3D ~BIT(wndw->id);
++		nv50_wndw_atomic_check_release(wndw, asyw, armh);
++		armh->wndw.mask &=3D ~BIT(wndw->id);
+ 	} else {
+ 		return 0;
+ 	}
 --=20
 2.24.1
 
