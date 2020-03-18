@@ -2,55 +2,55 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4EFDB18A1DD
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 18:44:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 86E4C18A1CB
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 18:43:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727301AbgCRRnc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Mar 2020 13:43:32 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:50272 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727146AbgCRRmr (ORCPT
+        id S1727189AbgCRRmv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Mar 2020 13:42:51 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:40643 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727152AbgCRRmu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Mar 2020 13:42:47 -0400
-Received: by mail-wm1-f67.google.com with SMTP id z13so4456554wml.0
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Mar 2020 10:42:47 -0700 (PDT)
+        Wed, 18 Mar 2020 13:42:50 -0400
+Received: by mail-wm1-f65.google.com with SMTP id z12so4357920wmf.5
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Mar 2020 10:42:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=SdyZ/iE1KuzKCZWd0UKsOK5F1hQIou+7IXJbWcjGLjU=;
-        b=Tqr5awGLn/cvttCrMJ+rBzEmAKJiZ1bdhuqiXYXJzLZ4VYpj9b4luhpO1R5hquY3Nd
-         XDB/KmGOjMUeB8emgkdv275ut8/fxhOII9ixOmXngHYoQ6FyvQGdLncAMI7LmMCLiK9C
-         mRvIz6l+slrzfHPeJRzcwShtyGx3GILFkkalQvYSEWIlHa3M4aS/jBwsULuU3Eik9d94
-         8WtDVocZrrOFW5vybSJ3xm8Qp3A3i9+oIZmzkE4nfhIGaid/xYFpF11cVR+d6qP3K/b9
-         lsS0tEVvltekLgJB3WNueomouqcdb8cu56pCPfbnlMi1awb26VY1yld7Ww6hi0k025lF
-         TF7Q==
+        bh=HnFDyu+bqN/T6zaniZEXcMr32LKFRq1enTNFpCP4Q04=;
+        b=K67tpfAUKbMoV2koVIXIpMjwt5tEFoSbo/DIHeBK/fWp8i7wAqh3N+TkPGsX3gPgsV
+         nFoYm8RwK2tLxNyBOFjYxwqhFHNsRUisHxOQK+vWM1+CfJaMugPNXBmoHGtPlba+izJ+
+         Ift6mWkBT2qLd8mX0nJhczK4V4RDitPrguFTZ13xw74JxhdTSuCyHaR1i7qBrN35i//8
+         AyyiuGfnRCFRrsVFPVk+UcRpe+CuHAokVSPbWic3roN7eCXJ0akqBkTyAnY53/7D5ODu
+         OscTN02R87RR9nwGEcqWq7IrzJTledRkQ9DVMyj2MZ/DZAKeqcwMfJ38gAEBnsos71zp
+         Lx1Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=SdyZ/iE1KuzKCZWd0UKsOK5F1hQIou+7IXJbWcjGLjU=;
-        b=SaC8P3r7KkhN6V/18h7L8n/5Dq5Q7QT4tP85xpHqNsFURrydSHmPXbnDvlQ8vkDSm3
-         WvZwO35Ng2a6F/85jBEu7AlYOL5DGHR9Bbdd8RT0pCYQ2wZdj5ObPGoYBvebpWPF8j5q
-         pXJy5Ni+0RMp3v4xCqQSvo+oAcbZ8WfljRo8oWPLl2TxYJ5Zf4A/b90RQqfouL+swwjQ
-         3ySR6AsXcU8UaMQds9xBWTYJ5xgdbBRo3QNKxoySr0JKx1R1KBKWhAkvfmvoZfPsOXQz
-         tiJH6UcES3wcdUxWXKiJpCOta5oBsPPDovi11MhjtbzotXuuRoEtv+Ms2Q1ShSkPjYmD
-         bs6g==
-X-Gm-Message-State: ANhLgQ2PoIBXxzGd3RSjEh5L3RQwfS2uPiP9ANlf68j/DsvJNw7eHusv
-        CaKFkUoAv4SaIrgpPQSxSr3I9g==
-X-Google-Smtp-Source: ADFU+vsrcvs9OL0q0l1ZCsKFMY3BVvxBTTa8NhDzokqDTVCQUbDL3NOJCobtj5llTttmrSLWfWsCWA==
-X-Received: by 2002:a7b:c5cd:: with SMTP id n13mr6273526wmk.172.1584553366463;
-        Wed, 18 Mar 2020 10:42:46 -0700 (PDT)
+        bh=HnFDyu+bqN/T6zaniZEXcMr32LKFRq1enTNFpCP4Q04=;
+        b=TS4xYd0vicFmaNya8wKQ6IsF2nkZYqaVSg1t2IuvgZ4b9Q55LQSgpuJ1gf4F297sjn
+         fNxmFM0J88c1fMaH/JhnVkWT/MLgFIg0P2RUXkT/Bghba4AmDCbGEXgk7LF/k2siIEAb
+         R39jeRyU8Ui7OO8+7rp81Ue71uYAp9InzY6Fgc6PKKrR/ri9JtpXV5HI00TpYKzaeTX3
+         1c3bq9JHL4mo7nHF+2guoCfsogtV3Io14Ji4a9X1pP1JAQ0PbYG7F/XRHgHFtKt4OXHf
+         q8h2d6pcCvSILdhWO4vlnWz7NqdsuV0J2JtfSozAZBEVb+PTipoNLMcyRts/Ff085Kb2
+         bmKg==
+X-Gm-Message-State: ANhLgQ1bQqXatYTXUmFufT7gzDw1AoRMhbIbsSl9KtJYA0GDAbBcuhLd
+        r+FzuO4QTR/XKW8MAlab6itx74ZDImE=
+X-Google-Smtp-Source: ADFU+vsKfHYGfDw6iV2Bg6By9IpmEZ8h/mJpbNTNQgFhdFdq9qSd1CnlxUVe3F96luINcsTqGkMyRg==
+X-Received: by 2002:a1c:9904:: with SMTP id b4mr6301036wme.34.1584553368216;
+        Wed, 18 Mar 2020 10:42:48 -0700 (PDT)
 Received: from mai.imgcgcw.net ([2a01:e34:ed2f:f020:5d64:ea6:49bd:69d7])
-        by smtp.gmail.com with ESMTPSA id r3sm3787212wrm.35.2020.03.18.10.42.44
+        by smtp.gmail.com with ESMTPSA id r3sm3787212wrm.35.2020.03.18.10.42.46
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Mar 2020 10:42:45 -0700 (PDT)
+        Wed, 18 Mar 2020 10:42:47 -0700 (PDT)
 From:   Daniel Lezcano <daniel.lezcano@linaro.org>
 To:     tglx@linutronix.de
-Cc:     linux-kernel@vger.kernel.org,
-        Claudiu Beznea <claudiu.beznea@microchip.com>
-Subject: [PATCH 12/21] clocksource/drivers/timer-microchip-pit64b: Fix rate for gck
-Date:   Wed, 18 Mar 2020 18:41:22 +0100
-Message-Id: <20200318174131.20582-12-daniel.lezcano@linaro.org>
+Cc:     linux-kernel@vger.kernel.org, Lokesh Vutla <lokeshvutla@ti.com>,
+        Tony Lindgren <tony@atomide.com>
+Subject: [PATCH 13/21] clocksource/drivers/timer-ti-dm: Convert to SPDX identifier
+Date:   Wed, 18 Mar 2020 18:41:23 +0100
+Message-Id: <20200318174131.20582-13-daniel.lezcano@linaro.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200318174131.20582-1-daniel.lezcano@linaro.org>
 References: <e6cd8adf-60df-437a-003f-58e3403e4697@linaro.org>
@@ -60,32 +60,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Claudiu Beznea <claudiu.beznea@microchip.com>
+From: Lokesh Vutla <lokeshvutla@ti.com>
 
-Generic clock rate needs to be set in case it was selected as timer clock
-source in mchp_pit64b_init_mode(). Otherwise it will be enabled with wrong
-rate.
+Use SPDX-License-Identifier instead of a verbose license text.
 
-Fixes: 625022a5f160 ("clocksource/drivers/timer-microchip-pit64b: Add Microchip PIT64B support")
-Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
+Signed-off-by: Lokesh Vutla <lokeshvutla@ti.com>
+Acked-by: Tony Lindgren <tony@atomide.com>
 Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-Link: https://lore.kernel.org/r/1584352376-32585-1-git-send-email-claudiu.beznea@microchip.com
+Link: https://lore.kernel.org/r/20200305082715.15861-2-lokeshvutla@ti.com
 ---
- drivers/clocksource/timer-microchip-pit64b.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/clocksource/timer-ti-dm.c | 19 +------------------
+ 1 file changed, 1 insertion(+), 18 deletions(-)
 
-diff --git a/drivers/clocksource/timer-microchip-pit64b.c b/drivers/clocksource/timer-microchip-pit64b.c
-index bd63d3484838..59e11ca8ee73 100644
---- a/drivers/clocksource/timer-microchip-pit64b.c
-+++ b/drivers/clocksource/timer-microchip-pit64b.c
-@@ -264,6 +264,7 @@ static int __init mchp_pit64b_init_mode(struct mchp_pit64b_timer *timer,
+diff --git a/drivers/clocksource/timer-ti-dm.c b/drivers/clocksource/timer-ti-dm.c
+index 269a994d6a99..c0e9e9978cdd 100644
+--- a/drivers/clocksource/timer-ti-dm.c
++++ b/drivers/clocksource/timer-ti-dm.c
+@@ -1,3 +1,4 @@
++// SPDX-License-Identifier: GPL-2.0+
+ /*
+  * linux/arch/arm/plat-omap/dmtimer.c
+  *
+@@ -15,24 +16,6 @@
+  *
+  * Copyright (C) 2009 Texas Instruments
+  * Added OMAP4 support - Santosh Shilimkar <santosh.shilimkar@ti.com>
+- *
+- * This program is free software; you can redistribute it and/or modify it
+- * under the terms of the GNU General Public License as published by the
+- * Free Software Foundation; either version 2 of the License, or (at your
+- * option) any later version.
+- *
+- * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED
+- * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+- * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+- * NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT,
+- * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+- * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+- * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+- *
+- * You should have received a copy of the  GNU General Public License along
+- * with this program; if not, write  to the Free Software Foundation, Inc.,
+- * 675 Mass Ave, Cambridge, MA 02139, USA.
+  */
  
- 	if (!best_diff) {
- 		timer->mode |= MCHP_PIT64B_MR_SGCLK;
-+		clk_set_rate(timer->gclk, gclk_round);
- 		goto done;
- 	}
- 
+ #include <linux/clk.h>
 -- 
 2.17.1
 
