@@ -2,56 +2,25 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C9CAD189BA4
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 13:07:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C11A8189BBA
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 13:13:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726797AbgCRMHT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Mar 2020 08:07:19 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:34385 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726631AbgCRMHT (ORCPT
+        id S1726776AbgCRMNb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Mar 2020 08:13:31 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:36359 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726638AbgCRMNa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Mar 2020 08:07:19 -0400
-Received: by mail-lj1-f195.google.com with SMTP id s13so26719921ljm.1
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Mar 2020 05:07:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=xYab8ZW+PzDc+v6CkQlUDWiUUOqkPWlNCzzCEJq5HBA=;
-        b=O7ZK+pBCI02kadu9Tg3PJiG8b+B1hbYLAI16gxTbPDPDW/oE47ma/pZ+zAn97+Q0tw
-         JhaCTePf0EuSGmRNpq0NGpKmknV7sMTGGz/+/MfLAeNS0A590eZ5gbJ+1I7kmxLrwg5P
-         gzMIBq6PsRtNl56wTlY70rAdn6SlcNTN0+G49HMHWHqaKZN6K2Woe6GQJlwk261of23J
-         TL2dfE1nCXTStvzZQFQjJZ/Shm3ItQErhvdC96l7P+U81Zb5fcqvvYa0DyUzv4Bj6/hY
-         L4UdReiOsLUbj+lr7gSMqZDaoHRJz18yYRZo7Y05GHTBU9N88uJp0mhC71fnRJRj/dv+
-         1lbg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=xYab8ZW+PzDc+v6CkQlUDWiUUOqkPWlNCzzCEJq5HBA=;
-        b=J1Mq+2UxuMQLRq6WyiCblfaXcrZPe6uUfxDeH5kGyevpxPti3duSKx2wLoTiRgYRwJ
-         CKIvMLmfgMDDwu4c9I0MyxmBADFM8eJSJ2mqvXNwYoJ3WVWX7gGELyUBgKayuevs5J6X
-         nU7pcMtkxd5//gMu8CMO6+XGC5o96Bn1mUoSG+4trCBhNvY/AmRe7XCW0Sq110xDMkz+
-         FOKBs9pEyZwbZvy9y4VLJg9iOxbozy1RZ7TGcGtTRKXZ/f7Yakz67AiTo2OlsUH7lGhG
-         ouuTlZuoPPXEZEiHwwAfasOEnfpPkLG2szrhdfFhOh45Wv7PkUDwrEsqBjuwO2oLk1Qd
-         WjMQ==
-X-Gm-Message-State: ANhLgQ0RzQYWKo6n8WI40OUZicNVEuaE2mB47u7iqZ4e/PFAlmUz0FdX
-        zRo4OgtYVaIxgFPa7GbruXg=
-X-Google-Smtp-Source: ADFU+vvcRi8/WKUppPguFMSbYMLEM1JH1gassiXBwvucPGIUsaTBMlH+Zng/+OHUfBv72PBSOA84mw==
-X-Received: by 2002:a05:651c:8d:: with SMTP id 13mr2123878ljq.256.1584533237368;
-        Wed, 18 Mar 2020 05:07:17 -0700 (PDT)
-Received: from uranus.localdomain ([5.18.171.94])
-        by smtp.gmail.com with ESMTPSA id t6sm3020529lfk.91.2020.03.18.05.07.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Mar 2020 05:07:16 -0700 (PDT)
-Received: by uranus.localdomain (Postfix, from userid 1000)
-        id AB495461840; Wed, 18 Mar 2020 15:07:15 +0300 (MSK)
-Date:   Wed, 18 Mar 2020 15:07:15 +0300
-From:   Cyrill Gorcunov <gorcunov@gmail.com>
-To:     Christian Brauner <christian.brauner@ubuntu.com>
-Cc:     Adrian Reber <areber@redhat.com>,
-        Eric Biederman <ebiederm@xmission.com>,
+        Wed, 18 Mar 2020 08:13:30 -0400
+Received: from ip5f5bf7ec.dynamic.kabel-deutschland.de ([95.91.247.236] helo=wittgenstein)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <christian.brauner@ubuntu.com>)
+        id 1jEXZW-0001wI-9u; Wed, 18 Mar 2020 12:13:18 +0000
+Date:   Wed, 18 Mar 2020 13:13:17 +0100
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     Adrian Reber <areber@redhat.com>
+Cc:     Eric Biederman <ebiederm@xmission.com>,
         Pavel Emelyanov <ovzxemul@gmail.com>,
         Oleg Nesterov <oleg@redhat.com>,
         Dmitry Safonov <0x7f454c46@gmail.com>,
@@ -60,33 +29,89 @@ Cc:     Adrian Reber <areber@redhat.com>,
         Radostin Stoyanov <rstoyanov1@gmail.com>,
         Michael Kerrisk <mtk.manpages@gmail.com>,
         Arnd Bergmann <arnd@arndb.de>,
+        Cyrill Gorcunov <gorcunov@openvz.org>,
         Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH 1/4] ns: prepare time namespace for clone3()
-Message-ID: <20200318120715.GR27301@uranus>
+Subject: Re: [PATCH 2/4] clone3: allow creation of time namespace with offset
+Message-ID: <20200318121317.2vyfyqj223sx5ybq@wittgenstein>
 References: <20200317083043.226593-1-areber@redhat.com>
- <20200317083043.226593-2-areber@redhat.com>
- <20200318105747.GP27301@uranus>
- <20200318111726.u2r3ghymexyng5nn@wittgenstein>
- <20200318112814.GQ27301@uranus>
- <20200318115731.3vn7cjchunk2bqoe@wittgenstein>
- <20200318115800.p4rsqua6tglydulu@wittgenstein>
+ <20200317083043.226593-3-areber@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20200318115800.p4rsqua6tglydulu@wittgenstein>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+In-Reply-To: <20200317083043.226593-3-areber@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 18, 2020 at 12:58:00PM +0100, Christian Brauner wrote:
-> > > 
-> > > I see, thanks for info! So I think we could swap the members.
-> > 
-> > Yeah, _if_ we go with a version of this struct we definitely need to
-> > ensure proper padding/alignment!
+On Tue, Mar 17, 2020 at 09:30:42AM +0100, Adrian Reber wrote:
+> This extends clone3() to support the time namespace via CLONE_NEWTIME.
+> In addition to creating a new process in a new time namespace this
+> allows setting the clock offset in the newly created time namspace.
 > 
-> Input/ideas totally welcome of course!
+> The time namespace allows to set an offset for two clocks.
+> CLOCK_MONOTONIC and CLOCK_BOOTTIME.
+> 
+> This clone3() extension also offers setting both offsets through the
+> newly introduced clone_args members timens_offset and
+> timens_offset_size.
+> 
+> timens_offset:      Pointer to an array of clock offsets for the
+>                     newly created process in a time namespaces.
+>                     This requires that a new time namespace has been
+>                     requested via CLONE_NEWTIME. It is only possible
+>                     to set an offset for CLOCK_MONOTONIC and
+>                     CLOCK_BOOTTIME. The array can therefore never
+>                     have more than two elements.
+>                     clone3() expects the array to contain the
+>                     following struct:
+>                     struct set_timens_offset {
+>                             int clockid;
+>                             struct timespec val;
+>                     };
+> 
+> timens_offset_size: This defines the size of the array referenced
+>                     in timens_offset. Currently this is limited
+>                     to two elements.
+> 
+> To create a new process using clone3() in a new time namespace with
+> clock offsets, something like this can be used:
+> 
+>   struct set_timens_offset timens_offset[2];
+> 
+>   timens_offset[0].clockid = CLOCK_BOOTTIME;
+>   timens_offset[0].val.tv_sec = -1000;
+>   timens_offset[0].val.tv_nsec = 42;
+>   timens_offset[1].clockid = CLOCK_MONOTONIC;
+>   timens_offset[1].val.tv_sec = 1000000;
+>   timens_offset[1].val.tv_nsec = 37;
+> 
+>   struct _clone_args args = {
+>     .flags = CLONE_NEWTIME,
+>     .timens_offset = ptr_to_u64(timens_offset),
+>     .timens_offset_size = 2;
+>   };
 
-I'll try to take a look once time permit, but no promises though.
+In all honesty, this would be a terrible API and I think we need to come
+up with something better than this. I don't want to pass down an array
+of structs and in general would like to avoid this array + size pattern.
+That pattern kinda made sense for the pid array because of pid
+namespaces being nested but not for this case, I think. Also, why
+require the additional clockid argument here? That makes sense for
+clock_settime() and clock_gettime() but here we could just do:
+
+struct timens {
+	struct timespec clock_bootime;
+	struct timespec clock_monotonic;
+};
+
+no? And since you need to expose that struct in a header somewhere
+anyway you can version it by size just like clone_args. So the kernel
+can apply the same pattern to be backwards compatible that we have with
+struct clone_args and for openat2()'s struct open_how via
+copy_struct_from_user. Then you only need one additional pointer in
+struct clone_args.
+
+What do we think?
+
+Christian
