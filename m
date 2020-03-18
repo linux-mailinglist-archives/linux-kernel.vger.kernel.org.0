@@ -2,83 +2,126 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EC5101898DF
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 11:06:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 27B881898E1
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 11:06:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727450AbgCRKGJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Mar 2020 06:06:09 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:53082 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726310AbgCRKGJ (ORCPT
+        id S1727621AbgCRKGU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Mar 2020 06:06:20 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:45826 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727567AbgCRKGT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Mar 2020 06:06:09 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Transfer-Encoding
-        :Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-        Sender:Reply-To:Content-ID:Content-Description;
-        bh=oeX/U7LNtTyv34aedyCBCFenLXcS/Ck0VLdrkWlIrOc=; b=PmkRSXY61j+9pWhknleICVd7mB
-        OjIOnzdjoJP+CTsBkAwM/caLiAMTRw6ye2t6+rQVNvuT5M6rifUc3hxf1+SkGhxWKkZ7mfDFlGCiK
-        Ced1mI8ebnQ0fIQbHZ8k3aRcR/LSRaZyfIhLgIsnrDsnpzIqW4bZQgEi+WWKfcE1166GDK8CeWehc
-        nyEmniz5Lb4gx6WfeKbgVs9Mqd47GYFBlAZ2sI5CFMAV3Xywk20d0hlXPSyiHtlaGu4LR6pnIlLWC
-        309c3bFhFSAOCZx/ZuNKgrfFUmf1/dxlWxoqcjReoIojC2FQQna54F8ImaB9vuJgFAEwh+VlZYACx
-        4zV6SIXA==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jEVaN-0002aO-89; Wed, 18 Mar 2020 10:06:03 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 9765030047A;
-        Wed, 18 Mar 2020 11:06:00 +0100 (CET)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 811FC20C4A223; Wed, 18 Mar 2020 11:06:00 +0100 (CET)
-Date:   Wed, 18 Mar 2020 11:06:00 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Josh Poimboeuf <jpoimboe@redhat.com>
-Cc:     tglx@linutronix.de, linux-kernel@vger.kernel.org, x86@kernel.org,
-        mhiramat@kernel.org, mbenes@suse.cz, brgerst@gmail.com
-Subject: Re: [PATCH v2 16/19] objtool: Implement noinstr validation
-Message-ID: <20200318100600.GD20730@hirez.programming.kicks-ass.net>
-References: <20200317170234.897520633@infradead.org>
- <20200317170910.730949374@infradead.org>
- <20200317210008.bda4c542b5lu7juf@treble>
- <20200318090309.GC20730@hirez.programming.kicks-ass.net>
+        Wed, 18 Mar 2020 06:06:19 -0400
+Received: by mail-lj1-f194.google.com with SMTP id y17so5068075ljk.12;
+        Wed, 18 Mar 2020 03:06:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=UuCiA8JKhRxaU1nLZdyXYMY0WuhHIeJMRu3FGvnQdSM=;
+        b=bSFa5v9vO4RjCyH/6Vr2naUreh5OZEwd5SePZgCRxdeVYaBRcWvQQuAdnSzzJieoje
+         nz+8SE39jpEk99LZDX/cUSp/D2I+Wvk6T5h0x2nrqyG2tufOUaNijtYNUsWSzChYB+N9
+         MLnGgePUc5Hu9f4NAJSao2ptBoin6YijFnKgAJQsjL/OEzaQNqk8dcMnAe3HVWrFb+R6
+         TF7fdJeWUPFyTr8s7obI/AXg8saysTYNx60bt406QgSlLO/fF/Q0j+vVRvsaBE+KDJpV
+         eevwa3fth5e9/rjYsdNar1gY8auBnsZIka1MbxzDUkphX2yEAIdEBQkYdp/IKn1iu9fh
+         pWhw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=UuCiA8JKhRxaU1nLZdyXYMY0WuhHIeJMRu3FGvnQdSM=;
+        b=Z8JqQYz2CW57PGRy6yvj/PwCuDCb6dYUdtufWSp2tyfgCLt6ghA4gvFFsyMATsjjqs
+         X2oZyGyt+TWJbrodqbBEVsmiJN70mcR0PniiWDfVvvNj0ZHlzJ8+up7eYCR0xYqTxCfL
+         y6fpraVsbmbTK/J8+wRU/my3iKRAzHXOCXbdyg2tQjo8+rkeNQMKxggQ3ZrkLmrNaTGt
+         LurDas+xIe0Wvlp6nM1wy33pLd67BgoJ7/usAOatNklVPYANgJsVze6Rrim0o9CTEE6T
+         uP6sLxcwthbAd/BIcFX+v1o6irfmRVRMLAJfsB7NMd/1RvWbXICeDEZHAQoQ8sHvYHIi
+         5N8A==
+X-Gm-Message-State: ANhLgQ0q/B1sfQAEXMYIOpC/kcPMOdTOJP0yKBcDqyzn/dcw8MTRLSS7
+        KljBmBZIq+dgjEL5PwVXDklJZQ3vD3CfD114KljPkA==
+X-Google-Smtp-Source: ADFU+vsWwudt5eBWhr1rdGzWz7OwMzIpgdwbcYNNFSs/xQf4x4vDrVPfehvhcrXI3LciCmahO/qRZp85gldSZlaTD3c=
+X-Received: by 2002:a2e:3a11:: with SMTP id h17mr1935816lja.110.1584525976990;
+ Wed, 18 Mar 2020 03:06:16 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20200318090309.GC20730@hirez.programming.kicks-ass.net>
+References: <20200318083120.13805-1-zhang.lyra@gmail.com> <20200318083120.13805-2-zhang.lyra@gmail.com>
+ <CADBw62rSE+MrQB_HSOwVNos_W=x-mHMEuVrZN=jU0Yt1KXFGvw@mail.gmail.com>
+In-Reply-To: <CADBw62rSE+MrQB_HSOwVNos_W=x-mHMEuVrZN=jU0Yt1KXFGvw@mail.gmail.com>
+From:   Baolin Wang <baolin.wang7@gmail.com>
+Date:   Wed, 18 Mar 2020 18:06:05 +0800
+Message-ID: <CADBw62pWhA8n5rAgX2Hud06k9cvF9b3KDfZmH7oX1HEz=MWzYA@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] serial: sprd: cleanup the sprd_port for error case
+To:     Chunyan Zhang <zhang.lyra@gmail.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Chunyan Zhang <chunyan.zhang@unisoc.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 18, 2020 at 10:03:09AM +0100, Peter Zijlstra wrote:
-> On Tue, Mar 17, 2020 at 04:00:08PM -0500, Josh Poimboeuf wrote:
-> > On Tue, Mar 17, 2020 at 06:02:50PM +0100, Peter Zijlstra wrote:
+On Wed, Mar 18, 2020 at 5:16 PM Baolin Wang <baolin.wang7@gmail.com> wrote:
+>
+> On Wed, Mar 18, 2020 at 4:31 PM Chunyan Zhang <zhang.lyra@gmail.com> wrot=
+e:
+> >
+> > From: Chunyan Zhang <chunyan.zhang@unisoc.com>
+> >
+> > It would be better to cleanup the sprd_port for the device before
+> > return error.
+> >
+> > Signed-off-by: Chunyan Zhang <chunyan.zhang@unisoc.com>
+> > ---
+> >  drivers/tty/serial/sprd_serial.c | 4 +++-
+> >  1 file changed, 3 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/tty/serial/sprd_serial.c b/drivers/tty/serial/sprd=
+_serial.c
+> > index 9f8c14ff6454..54477de9822f 100644
+> > --- a/drivers/tty/serial/sprd_serial.c
+> > +++ b/drivers/tty/serial/sprd_serial.c
+> > @@ -1204,8 +1204,10 @@ static int sprd_probe(struct platform_device *pd=
+ev)
+> >         up->has_sysrq =3D IS_ENABLED(CONFIG_SERIAL_SPRD_CONSOLE);
+> >
+> >         ret =3D sprd_clk_init(up);
+> > -       if (ret)
+> > +       if (ret) {
+> > +               sprd_port[index] =3D NULL;
+>
+> =E5=A6=82=E6=9E=9C=E6=88=91=E4=BB=AC=E5=BC=BA=E5=88=B6=E4=BD=BF=E7=94=A8a=
+lias, =E5=88=99=E8=BF=99=E9=87=8C=E5=BA=94=E8=AF=A5=E4=B9=9F=E6=97=A0=E9=9C=
+=80=E6=B8=85=E9=99=A4=E4=BA=86=EF=BC=8C=E5=9B=A0=E4=B8=BA=E4=B8=80=E8=BF=9B=
+probe=E5=B0=B1=E4=BC=9A=E7=BB=99=E5=AE=83=E9=87=8D=E6=96=B0=E8=B5=8B=E5=80=
+=BC=E3=80=82 =E8=BF=98=E6=98=AF=E6=88=91=E6=BC=8F=E4=BA=86=E4=BB=80=E4=B9=
+=88=EF=BC=9F
 
-> > > @@ -46,5 +49,9 @@ int cmd_check(int argc, const char **arg
-> > >  
-> > >  	objname = argv[0];
-> > >  
-> > > +	s = strstr(objname, "vmlinux.o");
-> > > +	if (s && !s[9])
-> > > +		vmlinux = true;
-> > > +
-> > 
-> > I think this would be slightly cleaner:
-> > 
-> > 	if (!strcmp(basename(objname), "vmlinux.o"))
-> > 		vmlinux = true;
-> 
-> Ah, indeed. I totally forgot userspace coding it seems..
+Sorry, please ignore my previsous comment. I made a stupid mistake
+when talking with Chunyan.
 
-Of course that doesn't compile... someone went overboard with const.
+So what I mean is we should not add this clean up, cause we will
+always get the correct index with aliases, and it will be overlapped
+when probing again.
 
-For some obscure reason, the stupid thing even thinks that:
-
-  note: expected ‘const char **’ but argument is of type ‘char **’
-
-is a warning and then -Werror's on it. That's bloody insane.
+>
+>
+> >                 return ret;
+> > +       }
+> >
+> >         res =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> >         up->membase =3D devm_ioremap_resource(&pdev->dev, res);
+> > --
+> > 2.20.1
+> >
+>
+>
+> --
+> Baolin Wang
 
 
+
+--
+Baolin Wang
