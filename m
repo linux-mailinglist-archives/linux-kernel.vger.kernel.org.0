@@ -2,143 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0CF6218A2FF
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 20:13:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 37A2918A302
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 20:14:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726946AbgCRTNE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Mar 2020 15:13:04 -0400
-Received: from smtp13.smtpout.orange.fr ([80.12.242.135]:25980 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726733AbgCRTNE (ORCPT
+        id S1727064AbgCRTN7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Mar 2020 15:13:59 -0400
+Received: from mail-io1-f50.google.com ([209.85.166.50]:43273 "EHLO
+        mail-io1-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726619AbgCRTN6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Mar 2020 15:13:04 -0400
-Received: from localhost.localdomain ([93.22.36.95])
-        by mwinf5d72 with ME
-        id FvCu22009239p2M03vCuqv; Wed, 18 Mar 2020 20:12:57 +0100
-X-ME-Helo: localhost.localdomain
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Wed, 18 Mar 2020 20:12:57 +0100
-X-ME-IP: 93.22.36.95
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     vkoul@kernel.org, dan.j.williams@intel.com, peter.ujfalusi@ti.com,
-        grygorii.strashko@ti.com
-Cc:     dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH V2] dmaengine: ti: k3-udma-glue: Fix an error handling path in 'k3_udma_glue_cfg_rx_flow()'
-Date:   Wed, 18 Mar 2020 20:12:09 +0100
-Message-Id: <20200318191209.1267-1-christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.20.1
+        Wed, 18 Mar 2020 15:13:58 -0400
+Received: by mail-io1-f50.google.com with SMTP id n21so26097829ioo.10
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Mar 2020 12:13:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=tSJww9Z+wt5Z9Xn77VWgqIlhOoz7PLwBH1L5SgYZ3LM=;
+        b=bX1vaYCPPB+3hM5IVwpSxpiwzeFNin8sOnyWNNukPjTxaOJVKUXxyjAgiDzEyfVe+h
+         1BDTrfV3KvpphPOsLLKjxbnoiyuCk9Of+znC0Ud79tixSrxJ8LEPC3K0TfOgAXH5o/Se
+         aW4TbGghUl/qsP5mLo+Ef6Kyl0dJuFpSCoYzpaxHYAHAvDkLKLwPOKRgZ2/u2vDsHo30
+         MV45Egr04OdgQXHRvUYEPgE8uAuwD6+5nbURK6tqZ+0Oy5be6np4K7sRFk8Vpr8jHo0+
+         MSLXOqKHxOV1cfAYNaxIumOb0w4d1wovXdnVrlH+1aciO1ZhkBB9gqMTJoG0lvQtnC5N
+         QLaQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=tSJww9Z+wt5Z9Xn77VWgqIlhOoz7PLwBH1L5SgYZ3LM=;
+        b=fkb6Y4Ww2xaLa/cHUes4+ycnpK63tzKku04GTRpmI8ugBtgUsSSpWuWD5kNfCTZXgH
+         47PfQ74CQmQpa5JCzcmWLfSnhq4+9hqJ/EziLsGN8ZE9CiUxGn3cjueeck0i6m/1dYay
+         7ZOmQr1yON8pAiS9AO/VKVHn18DPn5BBVs1yezWcYOm0n8q5BpqJYANGsAvJqC9WHjWf
+         y8mXyUstCwlA8J3AxFE0CL3L8cuoroaFKBjuDqJZzec67KDdME3NtSBhb2TzdnD5QNaf
+         Ra22z8kvIMk+CE0dh2mEwk6CkYI6PjGi3DHNPZsgYWMDn1euEOFY5oz3DVb5205bURYW
+         QU1A==
+X-Gm-Message-State: ANhLgQ0j0U2zDjSrM6HPB6xVxhCVxuzvOffXN6bGzwtORLrRyjPN833D
+        7d0fXZt3KFIppdMSauXgdkFMdw==
+X-Google-Smtp-Source: ADFU+vvxmOapBlydA+ixonR+vNYzcQ/Pqk4YMTaIcjCPOcsTiWrhK/t3R9pQW2Mpy4FH2QS+sTGdbQ==
+X-Received: by 2002:a5d:894a:: with SMTP id b10mr2381488iot.38.1584558837246;
+        Wed, 18 Mar 2020 12:13:57 -0700 (PDT)
+Received: from google.com ([2620:15c:183:200:855f:8919:84a7:4794])
+        by smtp.gmail.com with ESMTPSA id u3sm2341022iob.45.2020.03.18.12.13.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 18 Mar 2020 12:13:56 -0700 (PDT)
+Date:   Wed, 18 Mar 2020 13:13:53 -0600
+From:   Ross Zwisler <zwisler@google.com>
+To:     Curtis Malainey <cujomalainey@google.com>
+Cc:     Dominik Brodowski <linux@dominikbrodowski.net>,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        Cezary Rojewski <cezary.rojewski@intel.com>,
+        ALSA development <alsa-devel@alsa-project.org>,
+        Keyon Jie <yang.jie@linux.intel.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Takashi Iwai <tiwai@suse.com>,
+        Liam Girdwood <liam.r.girdwood@linux.intel.com>,
+        Mark Brown <broonie@kernel.org>
+Subject: Re: snd_hda_intel/sst-acpi sound breakage on suspend/resume since
+ 5.6-rc1
+Message-ID: <20200318191353.GA13459@google.com>
+References: <20200318063022.GA116342@light.dominikbrodowski.net>
+ <41d0b2b5-6014-6fab-b6a2-7a7dbc4fe020@linux.intel.com>
+ <20200318123930.GA2433@light.dominikbrodowski.net>
+ <d7a357c5-54af-3e69-771c-d7ea83c6fbb7@linux.intel.com>
+ <20200318162029.GA3999@light.dominikbrodowski.net>
+ <d974b46b-2899-03c2-0e98-88237f23f1e2@linux.intel.com>
+ <20200318171912.GA6203@light.dominikbrodowski.net>
+ <CAOReqxjmUCGX18y_XW_sjcU2xWha_+wJ7L+SuzJ5ZrOddCfZkw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAOReqxjmUCGX18y_XW_sjcU2xWha_+wJ7L+SuzJ5ZrOddCfZkw@mail.gmail.com>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-All but one error handling paths in the 'k3_udma_glue_cfg_rx_flow()'
-function 'goto err' and call 'k3_udma_glue_release_rx_flow()'.
+On Wed, Mar 18, 2020 at 10:25:32AM -0700, Curtis Malainey wrote:
+> +Ross Zwisler <zwisler@google.com>
+> Do we have any BDW boards that use the rt286 codec? I can't recall any.
+> Also I never saw this issue, did you?
 
-This not correct because this function has a 'channel->flows_ready--;' at
-the end, but 'flows_ready' has not been incremented here, when we branch to
-the error handling path.
+No, I'm not aware of any Chrome OS BDW boards that use rt286.
+Samus uses rt5677.
 
-In order to keep a correct value in 'flows_ready', un-roll
-'k3_udma_glue_release_rx_flow()', simplify it, add some labels and branch
-at the correct places when an error is detected.
-
-Doing so, we also NULLify 'flow->udma_rflow' in a path that was lacking it.
-
-Fixes: d70241913413 ("dmaengine: ti: k3-udma: Add glue layer for non DMAengine user")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-V2: adjust subject
-    direct return in the first error handling path
----
- drivers/dma/ti/k3-udma-glue.c | 30 ++++++++++++++++++++----------
- 1 file changed, 20 insertions(+), 10 deletions(-)
-
-diff --git a/drivers/dma/ti/k3-udma-glue.c b/drivers/dma/ti/k3-udma-glue.c
-index dbccdc7c0ed5..890573eb1625 100644
---- a/drivers/dma/ti/k3-udma-glue.c
-+++ b/drivers/dma/ti/k3-udma-glue.c
-@@ -578,12 +578,12 @@ static int k3_udma_glue_cfg_rx_flow(struct k3_udma_glue_rx_channel *rx_chn,
- 	if (IS_ERR(flow->udma_rflow)) {
- 		ret = PTR_ERR(flow->udma_rflow);
- 		dev_err(dev, "UDMAX rflow get err %d\n", ret);
--		goto err;
-+		return ret;
- 	}
- 
- 	if (flow->udma_rflow_id != xudma_rflow_get_id(flow->udma_rflow)) {
--		xudma_rflow_put(rx_chn->common.udmax, flow->udma_rflow);
--		return -ENODEV;
-+		ret = -ENODEV;
-+		goto err_rflow_put;
- 	}
- 
- 	/* request and cfg rings */
-@@ -592,7 +592,7 @@ static int k3_udma_glue_cfg_rx_flow(struct k3_udma_glue_rx_channel *rx_chn,
- 	if (!flow->ringrx) {
- 		ret = -ENODEV;
- 		dev_err(dev, "Failed to get RX ring\n");
--		goto err;
-+		goto err_rflow_put;
- 	}
- 
- 	flow->ringrxfdq = k3_ringacc_request_ring(rx_chn->common.ringacc,
-@@ -600,19 +600,19 @@ static int k3_udma_glue_cfg_rx_flow(struct k3_udma_glue_rx_channel *rx_chn,
- 	if (!flow->ringrxfdq) {
- 		ret = -ENODEV;
- 		dev_err(dev, "Failed to get RXFDQ ring\n");
--		goto err;
-+		goto err_ringrx_free;
- 	}
- 
- 	ret = k3_ringacc_ring_cfg(flow->ringrx, &flow_cfg->rx_cfg);
- 	if (ret) {
- 		dev_err(dev, "Failed to cfg ringrx %d\n", ret);
--		goto err;
-+		goto err_ringrxfdq_free;
- 	}
- 
- 	ret = k3_ringacc_ring_cfg(flow->ringrxfdq, &flow_cfg->rxfdq_cfg);
- 	if (ret) {
- 		dev_err(dev, "Failed to cfg ringrxfdq %d\n", ret);
--		goto err;
-+		goto err_ringrxfdq_free;
- 	}
- 
- 	if (rx_chn->remote) {
-@@ -662,7 +662,7 @@ static int k3_udma_glue_cfg_rx_flow(struct k3_udma_glue_rx_channel *rx_chn,
- 	if (ret) {
- 		dev_err(dev, "flow%d config failed: %d\n", flow->udma_rflow_id,
- 			ret);
--		goto err;
-+		goto err_ringrxfdq_free;
- 	}
- 
- 	rx_chn->flows_ready++;
-@@ -670,8 +670,17 @@ static int k3_udma_glue_cfg_rx_flow(struct k3_udma_glue_rx_channel *rx_chn,
- 		flow->udma_rflow_id, rx_chn->flows_ready);
- 
- 	return 0;
--err:
--	k3_udma_glue_release_rx_flow(rx_chn, flow_idx);
-+
-+err_ringrxfdq_free:
-+	k3_ringacc_ring_free(flow->ringrxfdq);
-+
-+err_ringrx_free:
-+	k3_ringacc_ring_free(flow->ringrx);
-+
-+err_rflow_put:
-+	xudma_rflow_put(rx_chn->common.udmax, flow->udma_rflow);
-+	flow->udma_rflow = NULL;
-+
- 	return ret;
- }
- 
--- 
-2.20.1
-
+I haven't seen this issue, no.
