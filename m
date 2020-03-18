@@ -2,64 +2,239 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9E18B18A301
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 20:13:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ACF2218A2E7
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 20:08:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726961AbgCRTNv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Mar 2020 15:13:51 -0400
-Received: from mr85p00im-hyfv06021301.me.com ([17.58.23.188]:36227 "EHLO
-        mr85p00im-hyfv06021301.me.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726619AbgCRTNv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Mar 2020 15:13:51 -0400
-X-Greylist: delayed 365 seconds by postgrey-1.27 at vger.kernel.org; Wed, 18 Mar 2020 15:13:51 EDT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=me.com; s=1a1hai;
-        t=1584558466; bh=W59Q3IPZStTRzJwL89Y5ugagdGKYOmdfb4lMadn5858=;
-        h=Date:From:To:Subject:Message-ID:Content-Type;
-        b=AnPqBJmG/gxtXlxn6ikbZ2lUFHd4lUdRyszLf66hRwppzIMevNhJu34ZqVHam1Q70
-         jSEzKskcyyzibosxKvojqCElJ41tkusxHzPodSkoHZh19opy4AwNWgyU52KVSIfhHg
-         h3GMVOneegyr9/HDJg5Q1mHiz9f5PMJ4t7O/8ljXavAUhhJ4sbs97ltPpTp9zdmS0O
-         AXm+0NNIeDeK5HiAipwPbDPXbv9+IlOx+xXp25qwXjwm5zFBC2cF3D9H01L3RyZDXa
-         j1L5DWZ5NJxyeQf4j/A5JzjeAYwxf+HnKzcVhQpGCX5/mcREK6eVSgmujAm4rCMUGa
-         sRhpJVn0oVs2Q==
-Received: from shwetrath.localdomain (unknown [66.199.8.131])
-        by mr85p00im-hyfv06021301.me.com (Postfix) with ESMTPSA id 6847B403FB;
-        Wed, 18 Mar 2020 19:07:45 +0000 (UTC)
-Date:   Wed, 18 Mar 2020 15:07:43 -0400
-From:   Vijay Thakkar <vijaythakkar@me.com>
-To:     Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Kim Phillips <kim.phillips@amd.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Martin =?utf-8?B?TGnFoWth?= <mliska@suse.cz>,
-        Jon Grimm <jon.grimm@amd.com>, linux-kernel@vger.kernel.org,
-        linux-perf-users@vger.kernel.org
-Subject: Re: [PATCH v5 2/3] perf vendor events amd: add Zen2 events
-Message-ID: <20200318190743.GA307603@shwetrath.localdomain>
-References: <20200316225238.150154-1-vijaythakkar@me.com>
- <20200316225238.150154-3-vijaythakkar@me.com>
- <20200318142057.GD11531@kernel.org>
- <20200318152112.GA231037@shwetrath.localdomain>
- <20200318155245.GJ11531@kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200318155245.GJ11531@kernel.org>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2020-03-18_07:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=1 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 clxscore=1015 mlxscore=0
- mlxlogscore=890 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1908290000 definitions=main-2003180086
+        id S1727014AbgCRTIC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Mar 2020 15:08:02 -0400
+Received: from foss.arm.com ([217.140.110.172]:53574 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726506AbgCRTIC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Mar 2020 15:08:02 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 62B021FB;
+        Wed, 18 Mar 2020 12:08:01 -0700 (PDT)
+Received: from localhost (unknown [10.37.6.21])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D94A83F67D;
+        Wed, 18 Mar 2020 12:08:00 -0700 (PDT)
+Date:   Wed, 18 Mar 2020 19:07:59 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     Martin Fuzzey <martin.fuzzey@flowbird.group>
+Cc:     Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org,
+        Mark Brown <broonie@kernel.org>, support.opensource@diasemi.com
+Subject: Applied "regulator: da9063: fix suspend" to the regulator tree
+In-Reply-To:  <1584461691-14344-1-git-send-email-martin.fuzzey@flowbird.group>
+Message-Id:  <applied-1584461691-14344-1-git-send-email-martin.fuzzey@flowbird.group>
+X-Patchwork-Hint: ignore
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Okay, should be updated now in the v6 series. Sorry for the last minute
-change, and thanks for your patience.
+The patch
 
--Vijay
+   regulator: da9063: fix suspend
+
+has been applied to the regulator tree at
+
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From 99f75ce6661993b8ba7ae0c94e95cb25454fdf1e Mon Sep 17 00:00:00 2001
+From: Martin Fuzzey <martin.fuzzey@flowbird.group>
+Date: Tue, 17 Mar 2020 17:14:26 +0100
+Subject: [PATCH] regulator: da9063: fix suspend
+
+The .set_suspend_enable() and .set_suspend_disable() methods are not
+supposed to immediately change the regulator state but just indicated
+if the regulator should be enabled or disabled when standby mode is
+entered (by a hardware signal).
+
+However currently they set control the SEL bits in the DVC registers,
+which causes the voltage to change to immediately between the "A"
+(normal) and "B" (standby) values as programmed and does nothing for
+the enable state...
+
+This means that "regulator-on-in-suspend" does not work (the regulator
+is switched off when the PMIC enters standby mode on the hardware
+signal) and, potentially, depending on the A and B voltage
+configurations the voltage could be incorrectly changed *before*
+actually entering suspend.
+
+The right bit to use for the functionality is the "CONF" bit in the
+"CONT" register.
+The detailed register description says "Sequencer target state"
+for this bit which is not very clear but the functional description
+is clearer.
+
+>From 5.1.5 System Enable:
+
+	De-asserting SYS_EN (changing from active to passive state)
+	clears control SYSTEM_EN  which triggers a power down sequence
+	into hibernate/standby mode
+	...
+	With the exception of supplies that have the xxxx_CONF control
+	bit asserted, all regulators in power domains POWER1, POWER, and
+	SYSTEM are sequentially disabled in reverse order.
+	Regulators with the <x>_CONF bit set remain on but change the
+	active voltage controlregisters from V<x>_A to V<x>_B
+	(if V<x>_B is notalready selected).
+
+Signed-off-by: Martin Fuzzey <martin.fuzzey@flowbird.group>
+Link: https://lore.kernel.org/r/1584461691-14344-1-git-send-email-martin.fuzzey@flowbird.group
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ drivers/regulator/da9063-regulator.c | 20 ++------------------
+ 1 file changed, 2 insertions(+), 18 deletions(-)
+
+diff --git a/drivers/regulator/da9063-regulator.c b/drivers/regulator/da9063-regulator.c
+index 2aceb3b7afc2..46b7301efcd6 100644
+--- a/drivers/regulator/da9063-regulator.c
++++ b/drivers/regulator/da9063-regulator.c
+@@ -100,6 +100,7 @@ struct da9063_regulator_info {
+ 	.desc.vsel_mask = DA9063_V##regl_name##_MASK, \
+ 	.desc.linear_min_sel = DA9063_V##regl_name##_BIAS, \
+ 	.sleep = BFIELD(DA9063_REG_V##regl_name##_A, DA9063_LDO_SL), \
++	.suspend = BFIELD(DA9063_REG_##regl_name##_CONT, DA9063_LDO_CONF), \
+ 	.suspend_sleep = BFIELD(DA9063_REG_V##regl_name##_B, DA9063_LDO_SL), \
+ 	.suspend_vsel_reg = DA9063_REG_V##regl_name##_B
+ 
+@@ -124,6 +125,7 @@ struct da9063_regulator_info {
+ 	.desc.vsel_mask = DA9063_VBUCK_MASK, \
+ 	.desc.linear_min_sel = DA9063_VBUCK_BIAS, \
+ 	.sleep = BFIELD(DA9063_REG_V##regl_name##_A, DA9063_BUCK_SL), \
++	.suspend = BFIELD(DA9063_REG_##regl_name##_CONT, DA9063_BUCK_CONF), \
+ 	.suspend_sleep = BFIELD(DA9063_REG_V##regl_name##_B, DA9063_BUCK_SL), \
+ 	.suspend_vsel_reg = DA9063_REG_V##regl_name##_B, \
+ 	.mode = BFIELD(DA9063_REG_##regl_name##_CFG, DA9063_BUCK_MODE_MASK)
+@@ -465,42 +467,36 @@ static const struct da9063_regulator_info da9063_regulator_info[] = {
+ 			    da9063_buck_a_limits,
+ 			    DA9063_REG_BUCK_ILIM_C, DA9063_BCORE1_ILIM_MASK),
+ 		DA9063_BUCK_COMMON_FIELDS(BCORE1),
+-		.suspend = BFIELD(DA9063_REG_DVC_1, DA9063_VBCORE1_SEL),
+ 	},
+ 	{
+ 		DA9063_BUCK(DA9063, BCORE2, 300, 10, 1570,
+ 			    da9063_buck_a_limits,
+ 			    DA9063_REG_BUCK_ILIM_C, DA9063_BCORE2_ILIM_MASK),
+ 		DA9063_BUCK_COMMON_FIELDS(BCORE2),
+-		.suspend = BFIELD(DA9063_REG_DVC_1, DA9063_VBCORE2_SEL),
+ 	},
+ 	{
+ 		DA9063_BUCK(DA9063, BPRO, 530, 10, 1800,
+ 			    da9063_buck_a_limits,
+ 			    DA9063_REG_BUCK_ILIM_B, DA9063_BPRO_ILIM_MASK),
+ 		DA9063_BUCK_COMMON_FIELDS(BPRO),
+-		.suspend = BFIELD(DA9063_REG_DVC_1, DA9063_VBPRO_SEL),
+ 	},
+ 	{
+ 		DA9063_BUCK(DA9063, BMEM, 800, 20, 3340,
+ 			    da9063_buck_b_limits,
+ 			    DA9063_REG_BUCK_ILIM_A, DA9063_BMEM_ILIM_MASK),
+ 		DA9063_BUCK_COMMON_FIELDS(BMEM),
+-		.suspend = BFIELD(DA9063_REG_DVC_1, DA9063_VBMEM_SEL),
+ 	},
+ 	{
+ 		DA9063_BUCK(DA9063, BIO, 800, 20, 3340,
+ 			    da9063_buck_b_limits,
+ 			    DA9063_REG_BUCK_ILIM_A, DA9063_BIO_ILIM_MASK),
+ 		DA9063_BUCK_COMMON_FIELDS(BIO),
+-		.suspend = BFIELD(DA9063_REG_DVC_2, DA9063_VBIO_SEL),
+ 	},
+ 	{
+ 		DA9063_BUCK(DA9063, BPERI, 800, 20, 3340,
+ 			    da9063_buck_b_limits,
+ 			    DA9063_REG_BUCK_ILIM_B, DA9063_BPERI_ILIM_MASK),
+ 		DA9063_BUCK_COMMON_FIELDS(BPERI),
+-		.suspend = BFIELD(DA9063_REG_DVC_1, DA9063_VBPERI_SEL),
+ 	},
+ 	{
+ 		DA9063_BUCK(DA9063, BCORES_MERGED, 300, 10, 1570,
+@@ -508,7 +504,6 @@ static const struct da9063_regulator_info da9063_regulator_info[] = {
+ 			    DA9063_REG_BUCK_ILIM_C, DA9063_BCORE1_ILIM_MASK),
+ 		/* BCORES_MERGED uses the same register fields as BCORE1 */
+ 		DA9063_BUCK_COMMON_FIELDS(BCORE1),
+-		.suspend = BFIELD(DA9063_REG_DVC_1, DA9063_VBCORE1_SEL),
+ 	},
+ 	{
+ 		DA9063_BUCK(DA9063, BMEM_BIO_MERGED, 800, 20, 3340,
+@@ -516,21 +511,17 @@ static const struct da9063_regulator_info da9063_regulator_info[] = {
+ 			    DA9063_REG_BUCK_ILIM_A, DA9063_BMEM_ILIM_MASK),
+ 		/* BMEM_BIO_MERGED uses the same register fields as BMEM */
+ 		DA9063_BUCK_COMMON_FIELDS(BMEM),
+-		.suspend = BFIELD(DA9063_REG_DVC_1, DA9063_VBMEM_SEL),
+ 	},
+ 	{
+ 		DA9063_LDO(DA9063, LDO3, 900, 20, 3440),
+-		.suspend = BFIELD(DA9063_REG_DVC_1, DA9063_VLDO3_SEL),
+ 		.oc_event = BFIELD(DA9063_REG_STATUS_D, DA9063_LDO3_LIM),
+ 	},
+ 	{
+ 		DA9063_LDO(DA9063, LDO7, 900, 50, 3600),
+-		.suspend = BFIELD(DA9063_REG_LDO7_CONT, DA9063_VLDO7_SEL),
+ 		.oc_event = BFIELD(DA9063_REG_STATUS_D, DA9063_LDO7_LIM),
+ 	},
+ 	{
+ 		DA9063_LDO(DA9063, LDO8, 900, 50, 3600),
+-		.suspend = BFIELD(DA9063_REG_LDO8_CONT, DA9063_VLDO8_SEL),
+ 		.oc_event = BFIELD(DA9063_REG_STATUS_D, DA9063_LDO8_LIM),
+ 	},
+ 	{
+@@ -539,36 +530,29 @@ static const struct da9063_regulator_info da9063_regulator_info[] = {
+ 	},
+ 	{
+ 		DA9063_LDO(DA9063, LDO11, 900, 50, 3600),
+-		.suspend = BFIELD(DA9063_REG_LDO11_CONT, DA9063_VLDO11_SEL),
+ 		.oc_event = BFIELD(DA9063_REG_STATUS_D, DA9063_LDO11_LIM),
+ 	},
+ 
+ 	/* The following LDOs are present only on DA9063, not on DA9063L */
+ 	{
+ 		DA9063_LDO(DA9063, LDO1, 600, 20, 1860),
+-		.suspend = BFIELD(DA9063_REG_DVC_1, DA9063_VLDO1_SEL),
+ 	},
+ 	{
+ 		DA9063_LDO(DA9063, LDO2, 600, 20, 1860),
+-		.suspend = BFIELD(DA9063_REG_DVC_1, DA9063_VLDO2_SEL),
+ 	},
+ 	{
+ 		DA9063_LDO(DA9063, LDO4, 900, 20, 3440),
+-		.suspend = BFIELD(DA9063_REG_DVC_2, DA9063_VLDO4_SEL),
+ 		.oc_event = BFIELD(DA9063_REG_STATUS_D, DA9063_LDO4_LIM),
+ 	},
+ 	{
+ 		DA9063_LDO(DA9063, LDO5, 900, 50, 3600),
+-		.suspend = BFIELD(DA9063_REG_LDO5_CONT, DA9063_VLDO5_SEL),
+ 	},
+ 	{
+ 		DA9063_LDO(DA9063, LDO6, 900, 50, 3600),
+-		.suspend = BFIELD(DA9063_REG_LDO6_CONT, DA9063_VLDO6_SEL),
+ 	},
+ 
+ 	{
+ 		DA9063_LDO(DA9063, LDO10, 900, 50, 3600),
+-		.suspend = BFIELD(DA9063_REG_LDO10_CONT, DA9063_VLDO10_SEL),
+ 	},
+ };
+ 
+-- 
+2.20.1
+
