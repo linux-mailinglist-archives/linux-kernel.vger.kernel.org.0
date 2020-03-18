@@ -2,40 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4AA5B18A4CE
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 21:57:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0374E18A4DF
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 21:57:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727356AbgCRUz5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Mar 2020 16:55:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56348 "EHLO mail.kernel.org"
+        id S1728601AbgCRU4Z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Mar 2020 16:56:25 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56710 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728465AbgCRUzt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Mar 2020 16:55:49 -0400
+        id S1726858AbgCRU4B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Mar 2020 16:56:01 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3D1F520A8B;
-        Wed, 18 Mar 2020 20:55:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0646320BED;
+        Wed, 18 Mar 2020 20:55:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584564949;
-        bh=686YRKAd4tXgH5ZOv46xNnA79jrJmQXA57XHnRANPoQ=;
+        s=default; t=1584564960;
+        bh=hvwALjSpKoynKhiNQhcQrr2uB1Vf0tnBZy5zFLdjeNY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=cJ9jcOzzcOqdhtFCcecw/wRZpR/4JP8pI9nzZ/aNddrYKiw7RyCdKekdkJ+E5DRrj
-         66vLEA6ktvyOQIlluPL1UePuJTHxq5pOMCHM8pJGEWBalwpQYNFqFQgyqcU6uj0nmu
-         L1QUg9AUajLfSTqcs6YFzRZINX/Yn4jdG48940ak=
+        b=RyD0xRTeHS2LkmboLiBJUJ8MB6TD/OctojKpOlH+t32oEnyFAqPqETYiY9iLJDLvm
+         iiqRlC81yc0ktiw9yLxNQk3YcRWaMUQW/KNlcDqO9Wu7gQSKr0Qh3SfToqmhNNXLjo
+         WuXgabQ94l5sgYbyKrJaP2nxWtN+IQgl/evh2EZE=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Nathan Chancellor <natechancellor@gmail.com>,
-        Madalin Bucur <madalin.bucur@oss.nxp.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org,
-        clang-built-linux@googlegroups.com
-Subject: [PATCH AUTOSEL 4.19 33/37] dpaa_eth: Remove unnecessary boolean expression in dpaa_get_headroom
-Date:   Wed, 18 Mar 2020 16:55:05 -0400
-Message-Id: <20200318205509.17053-33-sashal@kernel.org>
+Cc:     Charles Keepax <ckeepax@opensource.cirrus.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Sasha Levin <sashal@kernel.org>, linux-gpio@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 04/28] pinctrl: core: Remove extra kref_get which blocks hogs being freed
+Date:   Wed, 18 Mar 2020 16:55:31 -0400
+Message-Id: <20200318205555.17447-4-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200318205509.17053-1-sashal@kernel.org>
-References: <20200318205509.17053-1-sashal@kernel.org>
+In-Reply-To: <20200318205555.17447-1-sashal@kernel.org>
+References: <20200318205555.17447-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -45,55 +43,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nathan Chancellor <natechancellor@gmail.com>
+From: Charles Keepax <ckeepax@opensource.cirrus.com>
 
-[ Upstream commit 7395f62d95aafacdb9bd4996ec2f95b4a655d7e6 ]
+[ Upstream commit aafd56fc79041bf36f97712d4b35208cbe07db90 ]
 
-Clang warns:
+kref_init starts with the reference count at 1, which will be balanced
+by the pinctrl_put in pinctrl_unregister. The additional kref_get in
+pinctrl_claim_hogs will increase this count to 2 and cause the hogs to
+not get freed when pinctrl_unregister is called.
 
-drivers/net/ethernet/freescale/dpaa/dpaa_eth.c:2860:9: warning:
-converting the result of '?:' with integer constants to a boolean always
-evaluates to 'true' [-Wtautological-constant-compare]
-        return DPAA_FD_DATA_ALIGNMENT ? ALIGN(headroom,
-               ^
-drivers/net/ethernet/freescale/dpaa/dpaa_eth.c:131:34: note: expanded
-from macro 'DPAA_FD_DATA_ALIGNMENT'
-\#define DPAA_FD_DATA_ALIGNMENT  (fman_has_errata_a050385() ? 64 : 16)
-                                 ^
-1 warning generated.
-
-This was exposed by commit 3c68b8fffb48 ("dpaa_eth: FMan erratum A050385
-workaround") even though it appears to have been an issue since the
-introductory commit 9ad1a3749333 ("dpaa_eth: add support for DPAA
-Ethernet") since DPAA_FD_DATA_ALIGNMENT has never been able to be zero.
-
-Just replace the whole boolean expression with the true branch, as it is
-always been true.
-
-Link: https://github.com/ClangBuiltLinux/linux/issues/928
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-Reviewed-by: Madalin Bucur <madalin.bucur@oss.nxp.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: 6118714275f0 ("pinctrl: core: Fix pinctrl_register_and_init() with pinctrl_enable()")
+Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+Link: https://lore.kernel.org/r/20200228154142.13860-1-ckeepax@opensource.cirrus.com
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/freescale/dpaa/dpaa_eth.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/pinctrl/core.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/freescale/dpaa/dpaa_eth.c b/drivers/net/ethernet/freescale/dpaa/dpaa_eth.c
-index d7736c9c6339a..4b21ae27a9fde 100644
---- a/drivers/net/ethernet/freescale/dpaa/dpaa_eth.c
-+++ b/drivers/net/ethernet/freescale/dpaa/dpaa_eth.c
-@@ -2764,9 +2764,7 @@ static inline u16 dpaa_get_headroom(struct dpaa_buffer_layout *bl)
- 	headroom = (u16)(bl->priv_data_size + DPAA_PARSE_RESULTS_SIZE +
- 		DPAA_TIME_STAMP_SIZE + DPAA_HASH_RESULTS_SIZE);
+diff --git a/drivers/pinctrl/core.c b/drivers/pinctrl/core.c
+index c55517312485d..08ea74177de29 100644
+--- a/drivers/pinctrl/core.c
++++ b/drivers/pinctrl/core.c
+@@ -2031,7 +2031,6 @@ static int pinctrl_claim_hogs(struct pinctrl_dev *pctldev)
+ 		return PTR_ERR(pctldev->p);
+ 	}
  
--	return DPAA_FD_DATA_ALIGNMENT ? ALIGN(headroom,
--					      DPAA_FD_DATA_ALIGNMENT) :
--					headroom;
-+	return ALIGN(headroom, DPAA_FD_DATA_ALIGNMENT);
- }
- 
- static int dpaa_eth_probe(struct platform_device *pdev)
+-	kref_get(&pctldev->p->users);
+ 	pctldev->hog_default =
+ 		pinctrl_lookup_state(pctldev->p, PINCTRL_STATE_DEFAULT);
+ 	if (IS_ERR(pctldev->hog_default)) {
 -- 
 2.20.1
 
