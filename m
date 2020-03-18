@@ -2,154 +2,246 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1A98F1896C1
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 09:21:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4F00A189766
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 09:48:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727366AbgCRIVf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Mar 2020 04:21:35 -0400
-Received: from mailout4.samsung.com ([203.254.224.34]:60661 "EHLO
-        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726666AbgCRIVe (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Mar 2020 04:21:34 -0400
-Received: from epcas1p3.samsung.com (unknown [182.195.41.47])
-        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20200318082131epoutp04353de6bca66e8f5357abadf2e1e25128~9WEOhTAqS1316113161epoutp04I
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Mar 2020 08:21:31 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20200318082131epoutp04353de6bca66e8f5357abadf2e1e25128~9WEOhTAqS1316113161epoutp04I
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1584519691;
-        bh=K81bm+DDzznDrTE0b/mo3qm3kll5lhB+L+37w1NPXyA=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=bkCkc4wUu308dhRY/eQtyst5M2CNPevCNc1McxEScmwXeQRmSQopfj5mOZnZCXZJQ
-         zFp2HGxIxtWO2wOHNyZUXmiYLMkue0FDEeCWaC+GbaP9nDSTvMrEyWLIlaLdjFrrfR
-         ETZdJ2lQ5fLcvuNeSRPK3HX0U7EzQV1+dLmT77gY=
-Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
-        epcas1p4.samsung.com (KnoxPortal) with ESMTP id
-        20200318082130epcas1p4f026be42e545d70af0f991829565f22a~9WEOCreUx2636426364epcas1p4P;
-        Wed, 18 Mar 2020 08:21:30 +0000 (GMT)
-Received: from epsmges1p2.samsung.com (unknown [182.195.40.153]) by
-        epsnrtp4.localdomain (Postfix) with ESMTP id 48j30R3dYCzMqYkr; Wed, 18 Mar
-        2020 08:21:27 +0000 (GMT)
-Received: from epcas1p2.samsung.com ( [182.195.41.46]) by
-        epsmges1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-        53.E4.04140.10AD17E5; Wed, 18 Mar 2020 17:21:22 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-        epcas1p4.samsung.com (KnoxPortal) with ESMTPA id
-        20200318082121epcas1p46a354e562e55f1c113b67c38f843ec72~9WEFNkijF1824418244epcas1p4r;
-        Wed, 18 Mar 2020 08:21:21 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20200318082121epsmtrp2d75b24a14016d9a4981e75220935358d~9WEFM2HDJ0190601906epsmtrp2g;
-        Wed, 18 Mar 2020 08:21:21 +0000 (GMT)
-X-AuditID: b6c32a36-fa3ff7000000102c-93-5e71da01d4e5
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        89.7C.04024.10AD17E5; Wed, 18 Mar 2020 17:21:21 +0900 (KST)
-Received: from [10.113.221.102] (unknown [10.113.221.102]) by
-        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20200318082121epsmtip24507d49d585c36b6afcae3aaa240c086~9WEFALijS0977509775epsmtip2v;
-        Wed, 18 Mar 2020 08:21:21 +0000 (GMT)
-Subject: Re: [PATCH] extcon: Mark extcon_get_edev_name() function as
- exported symbol
-To:     Mayank Rana <mrana@codeaurora.org>, myungjoo.ham@samsung.com
-Cc:     linux-kernel@vger.kernel.org, jackp@codeaurora.org
-From:   Chanwoo Choi <cw00.choi@samsung.com>
-Organization: Samsung Electronics
-Message-ID: <1ce81e60-8d71-de92-1295-93f9a59d0ada@samsung.com>
-Date:   Wed, 18 Mar 2020 17:30:09 +0900
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:59.0) Gecko/20100101
-        Thunderbird/59.0
+        id S1727355AbgCRIsb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Mar 2020 04:48:31 -0400
+Received: from mga03.intel.com ([134.134.136.65]:41491 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726390AbgCRIsa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Mar 2020 04:48:30 -0400
+IronPort-SDR: EH15nAsQQfP88mFQTQYmWVkjMCpJxa4eOU94gPSv+t62BXNiswvUO/B256wzxXEm9cS5x4Nan4
+ 1Y9iAPdFytew==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Mar 2020 01:48:29 -0700
+IronPort-SDR: iWGgfi8dzcAeXj/O/iJ5mKk0o8Y9y2Vrrkvbizc8NmceTp8Dd5q1+6QjXQOYXWyB+hm2W/QLP4
+ 6zGRhvYlpSYQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,566,1574150400"; 
+   d="scan'208";a="279669477"
+Received: from hao-dev.bj.intel.com (HELO localhost) ([10.238.157.65])
+  by fmsmga002.fm.intel.com with ESMTP; 18 Mar 2020 01:48:27 -0700
+Date:   Wed, 18 Mar 2020 16:27:23 +0800
+From:   Wu Hao <hao.wu@intel.com>
+To:     Xu Yilun <yilun.xu@intel.com>
+Cc:     mdf@kernel.org, linux-fpga@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Luwei Kang <luwei.kang@intel.com>
+Subject: Re: [PATCH v2 3/7] fpga: dfl: introduce interrupt trigger setting API
+Message-ID: <20200318082723.GA15276@hao-dev>
+References: <1584332222-26652-1-git-send-email-yilun.xu@intel.com>
+ <1584332222-26652-4-git-send-email-yilun.xu@intel.com>
 MIME-Version: 1.0
-In-Reply-To: <1584389672-9195-1-git-send-email-mrana@codeaurora.org>
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupkk+LIzCtJLcpLzFFi42LZdlhTT5fpVmGcQddCRov25xfYLC7vmsNm
-        0XPyILPF7cYVbA4sHpf7epk8+rasYvT4vEkugDkq2yYjNTEltUghNS85PyUzL91WyTs43jne
-        1MzAUNfQ0sJcSSEvMTfVVsnFJ0DXLTMHaJuSQlliTilQKCCxuFhJ386mKL+0JFUhI7+4xFYp
-        tSAlp8CyQK84Mbe4NC9dLzk/18rQwMDIFKgwITtj8pnbbAV7uCvOLl7K2MC4ibOLkZNDQsBE
-        4tjml8wgtpDADkaJppkZXYxcQPYnRok7PbcYIZxvjBJn5+5ggunYsPsdM0RiL6PEnuv9LBDt
-        7xklWpvAxgoLhEl8nfQbqIGDQ0TAQWJTRyZImFnATGL3+btsIDabgJbE/hc3wGx+AUWJqz8e
-        M4KU8wrYSdyb5QgSZhFQldhz4zVYiSjQxJPbWhhBbF4BQYmTM5+AbeUUcJGY/uY4O8R4cYlb
-        T+YzQdjyEtvfzgE7U0LgDJvEkv0foO53kbh4dCUjhC0s8er4FnYIW0ri87u9bBB2tcTKk0fY
-        IJo7GCW27L/ACpEwlti/dDLYX8wCmhLrd+lDhBUldv6eywixmE/i3dceVpASCQFeiY42IYgS
-        ZYnLD+5CnSApsbi9k20Co9IsJO/MQvLCLCQvzEJYtoCRZRWjWGpBcW56arFhgRFyVG9iBCdD
-        LbMdjIvO+RxiFOBgVOLh5dhQECfEmlhWXJl7iFGCg1lJhHdxYX6cEG9KYmVValF+fFFpTmrx
-        IUZTYGhPZJYSTc4HJuq8knhDUyNjY2MLE0MzU0NDJXHeqddz4oQE0hNLUrNTUwtSi2D6mDg4
-        pRoY9+3aU+f/sKN64p9423nxMi9f/r0vK8xe2uy2R7cq6m6c/esTDEks2ZY9F69Yr7VSWG/S
-        FHtqTmz+syJ5bfVupSlJgrzlF1aXtU8KPDrjiGTRxPKWV8ETItbv3bUhi/HqFvtzC3ZkmX53
-        jb9TfTaLV3Xiw69XzFY+vxRj3hyzr6abu82qqGy7EktxRqKhFnNRcSIAZVRtGJwDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrKLMWRmVeSWpSXmKPExsWy7bCSvC7jrcI4g1e3BS3an19gs7i8aw6b
-        Rc/Jg8wWtxtXsDmweFzu62Xy6NuyitHj8ya5AOYoLpuU1JzMstQifbsErozJZ26zFezhrji7
-        eCljA+Mmzi5GTg4JAROJDbvfMXcxcnEICexmlNg25xgzREJSYtrFo0A2B5AtLHH4cDFEzVtG
-        icnLDrOD1AgLhEnsnn6MCaRGRMBBYlNHJkiYWcBMYvf5u2wQ9dMZJRoXfGQDSbAJaEnsf3ED
-        zOYXUJS4+uMxI0gvr4CdxL1ZjiBhFgFViT03XoOViAKN37nkMROIzSsgKHFy5hMWEJtTwEVi
-        +pvj7BC71CX+zLvEDGGLS9x6Mp8JwpaX2P52DvMERuFZSNpnIWmZhaRlFpKWBYwsqxglUwuK
-        c9Nziw0LDPNSy/WKE3OLS/PS9ZLzczcxgiNDS3MH4+Ul8YcYBTgYlXh4EzYVxAmxJpYVV+Ye
-        YpTgYFYS4V1cmB8nxJuSWFmVWpQfX1Sak1p8iFGag0VJnPdp3rFIIYH0xJLU7NTUgtQimCwT
-        B6dUA6P62V9lYbyRcxzZZywO31C2w/3C1v+Pp38tuee67K3YdbkTUieKDD50KUcG3ruqvlWh
-        devhnf68m4JqTFJMZT7f1JxZozSJ6eK1Du6Yy+3/dmvPu17c8O7s/UvRdZKs318HHc61VOi8
-        4uNqevliUXzsy6madxtn9KoKnFr4/GKXSORz4dqlL9yUWIozEg21mIuKEwHO0s4YiAIAAA==
-X-CMS-MailID: 20200318082121epcas1p46a354e562e55f1c113b67c38f843ec72
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: SVC_REQ_APPROVE
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20200316201450epcas1p3a20b0db35d64af8f50925079ca5fabf6
-References: <CGME20200316201450epcas1p3a20b0db35d64af8f50925079ca5fabf6@epcas1p3.samsung.com>
-        <1584389672-9195-1-git-send-email-mrana@codeaurora.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1584332222-26652-4-git-send-email-yilun.xu@intel.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 3/17/20 5:14 AM, Mayank Rana wrote:
-> extcon_get_edev_name() function provides client driver to request
-> extcon dev's name. If extcon driver and client driver are compiled
-> as loadable modules, extcon_get_edev_name() function symbol is not
-> visible to client driver. Hence mark extcon_find_edev_name() function
-> as exported symbol.
+On Mon, Mar 16, 2020 at 12:16:58PM +0800, Xu Yilun wrote:
+> FPGA user applications may be interested in interrupts generated by
+> DFL features. For example, users can implement their own FPGA
+> logics with interrupts enabled in AFU (Accelerated Function Unit,
+> dynamic region of DFL based FPGA). So user applications need to be
+> notified to handle these interrupts.
 > 
-> Signed-off-by: Mayank Rana <mrana@codeaurora.org>
+> In order to allow userspace applications to monitor interrupts,
+> driver requires userspace to provide eventfds as interrupt
+> notification channels. Applications then poll/select on the eventfds
+> to get notified.
+> 
+> This patch introduces a generic helper function for sub features to
+> do eventfds binding with given interrupts.
+> 
+> Signed-off-by: Luwei Kang <luwei.kang@intel.com>
+> Signed-off-by: Wu Hao <hao.wu@intel.com>
+> Signed-off-by: Xu Yilun <yilun.xu@intel.com>
+> ----
+> v2: use unsigned int instead of int for irq array indexes in
+>     dfl_fpga_set_irq_triggers()
+>     Improves comments for NULL fds param in dfl_fpga_set_irq_triggers()
 > ---
->  drivers/extcon/extcon.c | 1 +
->  include/linux/extcon.h  | 5 +++++
->  2 files changed, 6 insertions(+)
+>  drivers/fpga/dfl.c | 95 ++++++++++++++++++++++++++++++++++++++++++++++++++++++
+>  drivers/fpga/dfl.h | 11 +++++++
+>  2 files changed, 106 insertions(+)
 > 
-> diff --git a/drivers/extcon/extcon.c b/drivers/extcon/extcon.c
-> index e055893..2dfbfec 100644
-> --- a/drivers/extcon/extcon.c
-> +++ b/drivers/extcon/extcon.c
-> @@ -1406,6 +1406,7 @@ const char *extcon_get_edev_name(struct extcon_dev *edev)
->  {
->  	return !edev ? NULL : edev->name;
->  }
-> +EXPORT_SYMBOL_GPL(extcon_get_edev_name);
+> diff --git a/drivers/fpga/dfl.c b/drivers/fpga/dfl.c
+> index 28e2cd8..8dcc4e2 100644
+> --- a/drivers/fpga/dfl.c
+> +++ b/drivers/fpga/dfl.c
+> @@ -535,6 +535,7 @@ static int build_info_commit_dev(struct build_feature_devs_info *binfo)
+>  		int i;
 >  
->  static int __init extcon_class_init(void)
->  {
-> diff --git a/include/linux/extcon.h b/include/linux/extcon.h
-> index 1b1d77e..fd183fb 100644
-> --- a/include/linux/extcon.h
-> +++ b/include/linux/extcon.h
-> @@ -286,6 +286,11 @@ static inline struct extcon_dev *extcon_get_edev_by_phandle(struct device *dev,
->  {
->  	return ERR_PTR(-ENODEV);
+>  		/* save resource information for each feature */
+> +		feature->dev = fdev;
+>  		feature->id = finfo->fid;
+>  		feature->resource_index = index;
+>  		feature->ioaddr = finfo->ioaddr;
+> @@ -1385,6 +1386,100 @@ int dfl_fpga_cdev_config_ports_vf(struct dfl_fpga_cdev *cdev, int num_vfs)
 >  }
-> +
-> +static inline const char *extcon_get_edev_name(struct extcon_dev *edev)
+>  EXPORT_SYMBOL_GPL(dfl_fpga_cdev_config_ports_vf);
+>  
+> +static irqreturn_t dfl_irq_handler(int irq, void *arg)
 > +{
-> +	return NULL;
+> +	struct eventfd_ctx *trigger = arg;
+> +
+> +	eventfd_signal(trigger, 1);
+> +	return IRQ_HANDLED;
 > +}
->  #endif /* CONFIG_EXTCON */
+> +
+> +static int do_set_irq_trigger(struct dfl_feature *feature, unsigned int idx,
+> +			      int fd)
+> +{
+> +	struct platform_device *pdev = feature->dev;
+> +	struct eventfd_ctx *trigger;
+> +	int irq, ret;
+> +
+> +	if (idx >= feature->nr_irqs)
+> +		return -EINVAL;
+> +
+> +	irq = feature->irq_ctx[idx].irq;
+> +
+> +	if (feature->irq_ctx[idx].trigger) {
+> +		free_irq(irq, feature->irq_ctx[idx].trigger);
+> +		kfree(feature->irq_ctx[idx].name);
+> +		eventfd_ctx_put(feature->irq_ctx[idx].trigger);
+> +		feature->irq_ctx[idx].trigger = NULL;
+> +	}
+> +
+> +	if (fd < 0)
+> +		return 0;
+> +
+> +	feature->irq_ctx[idx].name =
+> +		kasprintf(GFP_KERNEL, "fpga-irq[%u](%s-%llx)", idx,
+> +			  dev_name(&pdev->dev),
+> +			  (unsigned long long)feature->id);
+> +	if (!feature->irq_ctx[idx].name)
+> +		return -ENOMEM;
+> +
+> +	trigger = eventfd_ctx_fdget(fd);
+> +	if (IS_ERR(trigger)) {
+> +		ret = PTR_ERR(trigger);
+> +		goto free_name;
+> +	}
+> +
+> +	ret = request_irq(irq, dfl_irq_handler, 0,
+> +			  feature->irq_ctx[idx].name, trigger);
+> +	if (!ret) {
+> +		feature->irq_ctx[idx].trigger = trigger;
+> +		return ret;
+> +	}
+> +
+> +	eventfd_ctx_put(trigger);
+> +free_name:
+> +	kfree(feature->irq_ctx[idx].name);
+> +
+> +	return ret;
+> +}
+> +
+> +/**
+> + * dfl_fpga_set_irq_triggers - set eventfd triggers for dfl feature interrupts
+> + *
+> + * @feature: dfl sub feature.
+> + * @start: start of irq index in this dfl sub feature.
+> + * @count: number of irqs.
+> + * @fds: eventfds to bind with irqs.
+> + *
+> + * Bind given eventfds with irqs in this dfl sub feature. Use NULL or negative
+> + * fds as parameter to unbind irqs.
+
+It seems that it accepts valid fds and invalid fds (negative) in the same table
+pointed by fds ptr, righ? Could we also add this into description as well?
+
+> + *
+> + * Return: 0 on success, negative error code otherwise.
+> + */
+> +int dfl_fpga_set_irq_triggers(struct dfl_feature *feature, unsigned int start,
+> +			      unsigned int count, int32_t *fds)
+> +{
+> +	unsigned int i, j;
+> +	int ret = 0;
+> +
+> +	if (start + count < start || start + count > feature->nr_irqs)
+> +		return -EINVAL;
+> +
+> +	for (i = 0, j = start; i < count && !ret; i++, j++) {
+> +		int fd = fds ? fds[i] : -1;
+> +
+> +		ret = do_set_irq_trigger(feature, j, fd);
+> +	}
+
+could we just replace j with start + i?
+
+other places look good to me.
+
+Hao
+
+> +
+> +	if (ret) {
+> +		for (--j; j >= start; j--)
+> +			do_set_irq_trigger(feature, j, -1);
+> +	}
+> +
+> +	return ret;
+> +}
+> +EXPORT_SYMBOL_GPL(dfl_fpga_set_irq_triggers);
+> +
+>  static void __exit dfl_fpga_exit(void)
+>  {
+>  	dfl_chardev_uinit();
+> diff --git a/drivers/fpga/dfl.h b/drivers/fpga/dfl.h
+> index 6a498cd..6b60077 100644
+> --- a/drivers/fpga/dfl.h
+> +++ b/drivers/fpga/dfl.h
+> @@ -24,6 +24,8 @@
+>  #include <linux/slab.h>
+>  #include <linux/uuid.h>
+>  #include <linux/fpga/fpga-region.h>
+> +#include <linux/interrupt.h>
+> +#include <linux/eventfd.h>
 >  
->  /*
-> 
-
-Applied it. Thanks.
-
--- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+>  /* maximum supported number of ports */
+>  #define MAX_DFL_FPGA_PORT_NUM 4
+> @@ -213,14 +215,19 @@ struct dfl_feature_driver {
+>   * struct dfl_feature_irq_ctx - dfl private feature interrupt context
+>   *
+>   * @irq: Linux IRQ number of this interrupt.
+> + * @trigger: eventfd context to signal when interrupt happens.
+> + * @name: irq name needed when requesting irq.
+>   */
+>  struct dfl_feature_irq_ctx {
+>  	int irq;
+> +	struct eventfd_ctx *trigger;
+> +	char *name;
+>  };
+>  
+>  /**
+>   * struct dfl_feature - sub feature of the feature devices
+>   *
+> + * @dev: ptr to pdev of the feature device which has the sub feature.
+>   * @id: sub feature id.
+>   * @resource_index: each sub feature has one mmio resource for its registers.
+>   *		    this index is used to find its mmio resource from the
+> @@ -231,6 +238,7 @@ struct dfl_feature_irq_ctx {
+>   * @ops: ops of this sub feature.
+>   */
+>  struct dfl_feature {
+> +	struct platform_device *dev;
+>  	u64 id;
+>  	int resource_index;
+>  	void __iomem *ioaddr;
+> @@ -506,4 +514,7 @@ int dfl_fpga_cdev_release_port(struct dfl_fpga_cdev *cdev, int port_id);
+>  int dfl_fpga_cdev_assign_port(struct dfl_fpga_cdev *cdev, int port_id);
+>  void dfl_fpga_cdev_config_ports_pf(struct dfl_fpga_cdev *cdev);
+>  int dfl_fpga_cdev_config_ports_vf(struct dfl_fpga_cdev *cdev, int num_vf);
+> +
+> +int dfl_fpga_set_irq_triggers(struct dfl_feature *feature, unsigned int start,
+> +			      unsigned int count, int32_t *fds);
+>  #endif /* __FPGA_DFL_H */
+> -- 
+> 2.7.4
