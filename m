@@ -2,423 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6D81518A37C
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 21:07:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8696218A38F
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 21:13:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726930AbgCRUHs convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 18 Mar 2020 16:07:48 -0400
-Received: from mga12.intel.com ([192.55.52.136]:42973 "EHLO mga12.intel.com"
+        id S1726893AbgCRUNr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Mar 2020 16:13:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56714 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726647AbgCRUHs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Mar 2020 16:07:48 -0400
-IronPort-SDR: M4cvOJhmKrOoB+W7R5IyB793IkAHAVfJN08so+uIF9yAFzAVi9y5c8pFXJ/nIbWmhyfx6QOgCj
- ietzsBQrGZtA==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Mar 2020 13:07:47 -0700
-IronPort-SDR: dCFBzEmBgG54nIn0WpzJir46FPYGnp4lICxbvllHLiOvOzapA3RHsYCY1YAWu4IvOvJuIo/udO
- KFvH4oxeCQ4w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,568,1574150400"; 
-   d="scan'208";a="324289601"
-Received: from jacob-builder.jf.intel.com (HELO jacob-builder) ([10.7.199.155])
-  by orsmga001.jf.intel.com with ESMTP; 18 Mar 2020 13:07:46 -0700
-Date:   Wed, 18 Mar 2020 13:13:27 -0700
-From:   Jacob Pan <jacob.jun.pan@linux.intel.com>
-To:     iommu@lists.linux-foundation.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        "Lu Baolu" <baolu.lu@linux.intel.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        David Woodhouse <dwmw2@infradead.org>
-Cc:     "Yi Liu" <yi.l.liu@intel.com>,
-        "Tian, Kevin" <kevin.tian@intel.com>,
-        Raj Ashok <ashok.raj@intel.com>,
-        Jean-Philippe Brucker <jean-philippe@linaro.com>,
-        Eric Auger <eric.auger@redhat.com>,
-        Dave Jiang <dave.jiang@intel.com>,
-        jacob.jun.pan@linux.intel.com
-Subject: Re: [PATCH 2/2] iommu/vt-d: Replace intel SVM APIs with generic SVA
- APIs
-Message-ID: <20200318131327.5f5e6600@jacob-builder>
-In-Reply-To: <1582586797-61697-4-git-send-email-jacob.jun.pan@linux.intel.com>
-References: <1582586797-61697-1-git-send-email-jacob.jun.pan@linux.intel.com>
-        <1582586797-61697-4-git-send-email-jacob.jun.pan@linux.intel.com>
-Organization: OTC
-X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
+        id S1726733AbgCRUNq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Mar 2020 16:13:46 -0400
+Received: from mail-qk1-f175.google.com (mail-qk1-f175.google.com [209.85.222.175])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1432020780
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Mar 2020 20:13:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1584562426;
+        bh=4COnoFw4zZTTnD0icQvz2MrvlZlhqnrg/n8Iz1/EMx4=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=hG3NmuBEg/VNJF/IzasJRv+KrhKn+chfwwim8Zb9QBC6PEP9RK7WhXO6Ozcvpoajp
+         o2uT+sbqXtoNk9wLw4UdvfiYnCrwx6H8PzyQgeaPmwR321fVuj+8CQWqgSHLDO71Kn
+         CsyL8chkBDdoLaUByLk+zYQ6P3dQ0+H8ur6eIKAc=
+Received: by mail-qk1-f175.google.com with SMTP id s11so29804831qks.8
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Mar 2020 13:13:46 -0700 (PDT)
+X-Gm-Message-State: ANhLgQ0OLz2Jg3oHXYPj31/DpUOijaAdDw0GhEI2Ey+E02Dj3u4f6hfK
+        b+VxKf5V/6M19VpY5YDlg1w2JZnCE66tAYgvpGlTYw==
+X-Google-Smtp-Source: ADFU+vv74xrkhSks5Z1lN+CW1yz6xICk4LN6UCwfLkqXNiod5pEmiZcGPF75Cr+JQKJXgdsr8mOh0nXsoF/xtGiZ/nA=
+X-Received: by 2002:a37:634d:: with SMTP id x74mr6249300qkb.254.1584562425124;
+ Wed, 18 Mar 2020 13:13:45 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+References: <20200313110258.94A0668C4E@verein.lst.de> <20200317221743.GD20788@willie-the-truck>
+In-Reply-To: <20200317221743.GD20788@willie-the-truck>
+From:   Ard Biesheuvel <ardb@kernel.org>
+Date:   Wed, 18 Mar 2020 16:13:33 -0400
+X-Gmail-Original-Message-ID: <CAKv+Gu9_gV0aVwa2QG7jgaR71bTz12vs386R9uPjdQTtm0HcUw@mail.gmail.com>
+Message-ID: <CAKv+Gu9_gV0aVwa2QG7jgaR71bTz12vs386R9uPjdQTtm0HcUw@mail.gmail.com>
+Subject: Re: [Patch][Fix] crypto: arm{,64} neon: memzero_explicit aes-cbc key
+To:     Will Deacon <will@kernel.org>
+Cc:     Torsten Duwe <duwe@lst.de>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        Russell King <linux@armlinux.org.uk>,
+        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
+        <linux-crypto@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Just a gentle reminder, any comments?
+On Tue, 17 Mar 2020 at 18:17, Will Deacon <will@kernel.org> wrote:
+>
+> [+Ard]
+>
+> On Fri, Mar 13, 2020 at 12:02:58PM +0100, Torsten Duwe wrote:
+> > From: Torsten Duwe <duwe@suse.de>
+> >
+> > At function exit, do not leave the expanded key in the rk struct
+> > which got allocated on the stack.
+> >
+> > Signed-off-by: Torsten Duwe <duwe@suse.de>
+> > ---
+> > Another small fix from our FIPS evaluation. I hope you don't mind I merged
+> > arm32 and arm64 into one patch -- this is really simple.
+> > --- a/arch/arm/crypto/aes-neonbs-glue.c
+> > +++ b/arch/arm/crypto/aes-neonbs-glue.c
+> > @@ -138,6 +138,7 @@ static int aesbs_cbc_setkey(struct crypto_skcipher *tfm, const u8 *in_key,
+> >       kernel_neon_begin();
+> >       aesbs_convert_key(ctx->key.rk, rk.key_enc, ctx->key.rounds);
+> >       kernel_neon_end();
+> > +     memzero_explicit(&rk, sizeof(rk));
+> >
+> >       return crypto_cipher_setkey(ctx->enc_tfm, in_key, key_len);
+> >  }
+> > diff --git a/arch/arm64/crypto/aes-neonbs-glue.c b/arch/arm64/crypto/aes-neonbs-glue.c
+> > index e3e27349a9fe..c0b980503643 100644
+> > --- a/arch/arm64/crypto/aes-neonbs-glue.c
+> > +++ b/arch/arm64/crypto/aes-neonbs-glue.c
+> > @@ -151,6 +151,7 @@ static int aesbs_cbc_setkey(struct crypto_skcipher *tfm, const u8 *in_key,
+> >       kernel_neon_begin();
+> >       aesbs_convert_key(ctx->key.rk, rk.key_enc, ctx->key.rounds);
+> >       kernel_neon_end();
+> > +     memzero_explicit(&rk, sizeof(rk));
+> >
+> >       return 0;
+> >  }
+>
+> I'm certainly not a crypto person, but this looks sensible to me and I
+> couldn't find any other similar stack variable usage under
+> arch/arm64/crypto/ at a quick glance.
+>
+> Acked-by: Will Deacon <will@kernel.org>
+>
 
-Thanks,
-
-Jacob
-
-On Mon, 24 Feb 2020 15:26:37 -0800
-Jacob Pan <jacob.jun.pan@linux.intel.com> wrote:
-
-> This patch is an initial step to replace Intel SVM code with the
-> following IOMMU SVA ops:
-> intel_svm_bind_mm() => iommu_sva_bind_device()
-> intel_svm_unbind_mm() => iommu_sva_unbind_device()
-> intel_svm_is_pasid_valid() => iommu_sva_get_pasid()
-> 
-> The features below will continue to work but are not included in this
-> patch in that they are handled mostly within the IOMMU subsystem.
-> - IO page fault
-> - mmu notifier
-> 
-> Consolidation of the above will come after merging generic IOMMU sva
-> code[1]. There should not be any changes needed for SVA users such as
-> accelerator device drivers during this time.
-> 
-> [1] http://jpbrucker.net/sva/
-> 
-> Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
-> ---
->  drivers/iommu/intel-iommu.c |   3 ++
->  drivers/iommu/intel-svm.c   | 123
-> ++++++++++++++++++++++++--------------------
-> include/linux/intel-iommu.h |   7 +++ include/linux/intel-svm.h   |
-> 85 ------------------------------ 4 files changed, 78 insertions(+),
-> 140 deletions(-)
-> 
-> diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
-> index 5eca6e10d2a4..ccfa5adfd06d 100644
-> --- a/drivers/iommu/intel-iommu.c
-> +++ b/drivers/iommu/intel-iommu.c
-> @@ -6475,6 +6475,9 @@ const struct iommu_ops intel_iommu_ops = {
->  	.cache_invalidate	= intel_iommu_sva_invalidate,
->  	.sva_bind_gpasid	= intel_svm_bind_gpasid,
->  	.sva_unbind_gpasid	= intel_svm_unbind_gpasid,
-> +	.sva_bind		= intel_svm_bind,
-> +	.sva_unbind		= intel_svm_unbind,
-> +	.sva_get_pasid		= intel_svm_get_pasid,
->  #endif
->  };
->  
-> diff --git a/drivers/iommu/intel-svm.c b/drivers/iommu/intel-svm.c
-> index 1d7a95372f8c..35d949513728 100644
-> --- a/drivers/iommu/intel-svm.c
-> +++ b/drivers/iommu/intel-svm.c
-> @@ -516,13 +516,14 @@ int intel_svm_unbind_gpasid(struct device *dev,
-> int pasid) return ret;
->  }
->  
-> -int intel_svm_bind_mm(struct device *dev, int *pasid, int flags,
-> struct svm_dev_ops *ops) +/* Caller must hold pasid_mutex, mm
-> reference */ +static int intel_svm_bind_mm(struct device *dev, int
-> flags, struct svm_dev_ops *ops,
-> +		      struct mm_struct *mm, struct intel_svm_dev
-> **sd) {
->  	struct intel_iommu *iommu = intel_svm_device_to_iommu(dev);
->  	struct device_domain_info *info;
->  	struct intel_svm_dev *sdev;
->  	struct intel_svm *svm = NULL;
-> -	struct mm_struct *mm = NULL;
->  	int pasid_max;
->  	int ret;
->  
-> @@ -539,16 +540,15 @@ int intel_svm_bind_mm(struct device *dev, int
-> *pasid, int flags, struct svm_dev_ } else
->  		pasid_max = 1 << 20;
->  
-> +	/* Bind supervisor PASID shuld have mm = NULL */
->  	if (flags & SVM_FLAG_SUPERVISOR_MODE) {
-> -		if (!ecap_srs(iommu->ecap))
-> +		if (!ecap_srs(iommu->ecap) || mm) {
-> +			pr_err("Supervisor PASID with user provided
-> mm.\n"); return -EINVAL;
-> -	} else if (pasid) {
-> -		mm = get_task_mm(current);
-> -		BUG_ON(!mm);
-> +		}
->  	}
->  
-> -	mutex_lock(&pasid_mutex);
-> -	if (pasid && !(flags & SVM_FLAG_PRIVATE_PASID)) {
-> +	if (!(flags & SVM_FLAG_PRIVATE_PASID)) {
->  		struct intel_svm *t;
->  
->  		list_for_each_entry(t, &global_svm_list, list) {
-> @@ -586,9 +586,7 @@ int intel_svm_bind_mm(struct device *dev, int
-> *pasid, int flags, struct svm_dev_ sdev->dev = dev;
->  
->  	ret = intel_iommu_enable_pasid(iommu, dev);
-> -	if (ret || !pasid) {
-> -		/* If they don't actually want to assign a PASID,
-> this is
-> -		 * just an enabling check/preparation. */
-> +	if (ret) {
->  		kfree(sdev);
->  		goto out;
->  	}
-> @@ -688,18 +686,17 @@ int intel_svm_bind_mm(struct device *dev, int
-> *pasid, int flags, struct svm_dev_ }
->  	}
->  	list_add_rcu(&sdev->list, &svm->devs);
-> -
-> - success:
-> -	*pasid = svm->pasid;
-> +success:
-> +	sdev->pasid = svm->pasid;
-> +	sdev->sva.dev = dev;
-> +	if (sd)
-> +		*sd = sdev;
->  	ret = 0;
->   out:
-> -	mutex_unlock(&pasid_mutex);
-> -	if (mm)
-> -		mmput(mm);
->  	return ret;
->  }
-> -EXPORT_SYMBOL_GPL(intel_svm_bind_mm);
->  
-> +/* Caller must hold pasid_mutex */
->  int intel_svm_unbind_mm(struct device *dev, int pasid)
->  {
->  	struct intel_svm_dev *sdev;
-> @@ -707,7 +704,6 @@ int intel_svm_unbind_mm(struct device *dev, int
-> pasid) struct intel_svm *svm;
->  	int ret = -EINVAL;
->  
-> -	mutex_lock(&pasid_mutex);
->  	iommu = intel_svm_device_to_iommu(dev);
->  	if (!iommu)
->  		goto out;
-> @@ -753,45 +749,9 @@ int intel_svm_unbind_mm(struct device *dev, int
-> pasid) break;
->  	}
->   out:
-> -	mutex_unlock(&pasid_mutex);
->  
->  	return ret;
->  }
-> -EXPORT_SYMBOL_GPL(intel_svm_unbind_mm);
-> -
-> -int intel_svm_is_pasid_valid(struct device *dev, int pasid)
-> -{
-> -	struct intel_iommu *iommu;
-> -	struct intel_svm *svm;
-> -	int ret = -EINVAL;
-> -
-> -	mutex_lock(&pasid_mutex);
-> -	iommu = intel_svm_device_to_iommu(dev);
-> -	if (!iommu)
-> -		goto out;
-> -
-> -	svm = ioasid_find(NULL, pasid, NULL);
-> -	if (!svm)
-> -		goto out;
-> -
-> -	if (IS_ERR(svm)) {
-> -		ret = PTR_ERR(svm);
-> -		goto out;
-> -	}
-> -	/* init_mm is used in this case */
-> -	if (!svm->mm)
-> -		ret = 1;
-> -	else if (atomic_read(&svm->mm->mm_users) > 0)
-> -		ret = 1;
-> -	else
-> -		ret = 0;
-> -
-> - out:
-> -	mutex_unlock(&pasid_mutex);
-> -
-> -	return ret;
-> -}
-> -EXPORT_SYMBOL_GPL(intel_svm_is_pasid_valid);
->  
->  /* Page request queue descriptor */
->  struct page_req_dsc {
-> @@ -984,3 +944,56 @@ static irqreturn_t prq_event_thread(int irq,
-> void *d) 
->  	return IRQ_RETVAL(handled);
->  }
-> +
-> +#define to_intel_svm_dev(handle) container_of(handle, struct
-> intel_svm_dev, sva) +struct iommu_sva *
-> +intel_svm_bind(struct device *dev, struct mm_struct *mm, void
-> *drvdata) +{
-> +	struct iommu_sva *sva = ERR_PTR(-EINVAL);
-> +	struct intel_svm_dev *sdev = NULL;
-> +	int flags = 0;
-> +	int ret;
-> +
-> +	/*
-> +	 * TODO: Consolidate with generic iommu-sva bind after it is
-> merged.
-> +	 * It will require shared SVM data structures, i.e. combine
-> io_mm
-> +	 * and intel_svm etc.
-> +	 */
-> +	if (drvdata)
-> +		flags = *(int *)drvdata;
-> +	mutex_lock(&pasid_mutex);
-> +	ret = intel_svm_bind_mm(dev, flags, NULL, mm, &sdev);
-> +	if (ret)
-> +		sva = ERR_PTR(ret);
-> +	else if (sdev)
-> +		sva = &sdev->sva;
-> +	else
-> +		WARN(!sdev, "SVM bind succeeded with no sdev!\n");
-> +
-> +	mutex_unlock(&pasid_mutex);
-> +
-> +	return sva;
-> +}
-> +
-> +void intel_svm_unbind(struct iommu_sva *sva)
-> +{
-> +	struct intel_svm_dev *sdev;
-> +
-> +	mutex_lock(&pasid_mutex);
-> +	sdev = to_intel_svm_dev(sva);
-> +	intel_svm_unbind_mm(sdev->dev, sdev->pasid);
-> +	mutex_unlock(&pasid_mutex);
-> +}
-> +
-> +int intel_svm_get_pasid(struct iommu_sva *sva)
-> +{
-> +	struct intel_svm_dev *sdev;
-> +	int pasid;
-> +
-> +	mutex_lock(&pasid_mutex);
-> +	sdev = to_intel_svm_dev(sva);
-> +	pasid = sdev->pasid;
-> +	mutex_unlock(&pasid_mutex);
-> +
-> +	return pasid;
-> +}
-> diff --git a/include/linux/intel-iommu.h b/include/linux/intel-iommu.h
-> index 37cfd35b7ccf..044493a11dce 100644
-> --- a/include/linux/intel-iommu.h
-> +++ b/include/linux/intel-iommu.h
-> @@ -702,6 +702,11 @@ extern int intel_svm_finish_prq(struct
-> intel_iommu *iommu); extern int intel_svm_bind_gpasid(struct
-> iommu_domain *domain, struct device *dev, struct
-> iommu_gpasid_bind_data *data); extern int
-> intel_svm_unbind_gpasid(struct device *dev, int pasid); +extern
-> struct iommu_sva * +intel_svm_bind(struct device *dev, struct
-> mm_struct *mm, void *drvdata); +extern void intel_svm_unbind(struct
-> iommu_sva *handle); +extern int intel_svm_get_pasid(struct iommu_sva
-> *handle); +
->  struct svm_dev_ops;
->  
->  struct intel_svm_dev {
-> @@ -709,6 +714,8 @@ struct intel_svm_dev {
->  	struct rcu_head rcu;
->  	struct device *dev;
->  	struct svm_dev_ops *ops;
-> +	struct iommu_sva sva;
-> +	int pasid;
->  	int users;
->  	u16 did;
->  	u16 dev_iotlb:1;
-> diff --git a/include/linux/intel-svm.h b/include/linux/intel-svm.h
-> index a2c189ad0b01..fb7e786d8877 100644
-> --- a/include/linux/intel-svm.h
-> +++ b/include/linux/intel-svm.h
-> @@ -62,89 +62,4 @@ struct svm_dev_ops {
->   */
->  #define SVM_FLAG_GUEST_PASID	(1<<3)
->  
-> -#ifdef CONFIG_INTEL_IOMMU_SVM
-> -
-> -/**
-> - * intel_svm_bind_mm() - Bind the current process to a PASID
-> - * @dev:	Device to be granted access
-> - * @pasid:	Address for allocated PASID
-> - * @flags:	Flags. Later for requesting supervisor mode, etc.
-> - * @ops:	Callbacks to device driver
-> - *
-> - * This function attempts to enable PASID support for the given
-> device.
-> - * If the @pasid argument is non-%NULL, a PASID is allocated for
-> access
-> - * to the MM of the current process.
-> - *
-> - * By using a %NULL value for the @pasid argument, this function can
-> - * be used to simply validate that PASID support is available for the
-> - * given device — i.e. that it is behind an IOMMU which has the
-> - * requisite support, and is enabled.
-> - *
-> - * Page faults are handled transparently by the IOMMU code, and there
-> - * should be no need for the device driver to be involved. If a page
-> - * fault cannot be handled (i.e. is an invalid address rather than
-> - * just needs paging in), then the page request will be completed by
-> - * the core IOMMU code with appropriate status, and the device itself
-> - * can then report the resulting fault to its driver via whatever
-> - * mechanism is appropriate.
-> - *
-> - * Multiple calls from the same process may result in the same PASID
-> - * being re-used. A reference count is kept.
-> - */
-> -extern int intel_svm_bind_mm(struct device *dev, int *pasid, int
-> flags,
-> -			     struct svm_dev_ops *ops);
-> -
-> -/**
-> - * intel_svm_unbind_mm() - Unbind a specified PASID
-> - * @dev:	Device for which PASID was allocated
-> - * @pasid:	PASID value to be unbound
-> - *
-> - * This function allows a PASID to be retired when the device no
-> - * longer requires access to the address space of a given process.
-> - *
-> - * If the use count for the PASID in question reaches zero, the
-> - * PASID is revoked and may no longer be used by hardware.
-> - *
-> - * Device drivers are required to ensure that no access (including
-> - * page requests) is currently outstanding for the PASID in question,
-> - * before calling this function.
-> - */
-> -extern int intel_svm_unbind_mm(struct device *dev, int pasid);
-> -
-> -/**
-> - * intel_svm_is_pasid_valid() - check if pasid is valid
-> - * @dev:	Device for which PASID was allocated
-> - * @pasid:	PASID value to be checked
-> - *
-> - * This function checks if the specified pasid is still valid. A
-> - * valid pasid means the backing mm is still having a valid user.
-> - * For kernel callers init_mm is always valid. for other mm, if
-> mm->mm_users
-> - * is non-zero, it is valid.
-> - *
-> - * returns -EINVAL if invalid pasid, 0 if pasid ref count is invalid
-> - * 1 if pasid is valid.
-> - */
-> -extern int intel_svm_is_pasid_valid(struct device *dev, int pasid);
-> -
-> -#else /* CONFIG_INTEL_IOMMU_SVM */
-> -
-> -static inline int intel_svm_bind_mm(struct device *dev, int *pasid,
-> -				    int flags, struct svm_dev_ops
-> *ops) -{
-> -	return -ENOSYS;
-> -}
-> -
-> -static inline int intel_svm_unbind_mm(struct device *dev, int pasid)
-> -{
-> -	BUG();
-> -}
-> -
-> -static int intel_svm_is_pasid_valid(struct device *dev, int pasid)
-> -{
-> -	return -EINVAL;
-> -}
-> -#endif /* CONFIG_INTEL_IOMMU_SVM */
-> -
-> -#define intel_svm_available(dev) (!intel_svm_bind_mm((dev), NULL, 0,
-> NULL)) -
->  #endif /* __INTEL_SVM_H__ */
-
-[Jacob Pan]
+Acked-by: Ard Biesheuvel <ardb@kernel.org>
