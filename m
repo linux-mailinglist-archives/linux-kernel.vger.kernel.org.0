@@ -2,159 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 32747189B6B
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 12:55:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AB0EF189B75
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 12:56:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727249AbgCRLzG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Mar 2020 07:55:06 -0400
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:42700 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726643AbgCRLzG (ORCPT
+        id S1726785AbgCRL4l (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Mar 2020 07:56:41 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:35424 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726631AbgCRL4l (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Mar 2020 07:55:06 -0400
-Received: by mail-lf1-f67.google.com with SMTP id t21so20092255lfe.9;
-        Wed, 18 Mar 2020 04:55:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=7sJXjz6gA9YtOP+RJlI1J0evhNx2dtZTEe/jmIpCCm4=;
-        b=qEOicsMBm1kdi7OaUN327SYh4tb81EoMqC3qyUwuZZnUkIDg8fLcb855vscWLcnfIl
-         AUtIPJXr+dIL/DzoMDO5E5JUGJjjFG/qWXToRZxBwTnQjR1okgEYm8swEzKhsWRGJKW2
-         UHfI0UHganKw5rNJFeYXcS9JIhLKYkNDeWLa4syScdkJ+ry1FzUqIoMgrX6oyB6qjimX
-         cl1CfIU08queHC+8Pl3Q2px+qcZ+YSqE5CnMDt86Loi10puttMVO/zhPSvKwOLEp3BXs
-         atYEQPwuMvVLyMIQsVinU0AHDv0rdSpeN4BwoWl8+RdUHc55Hc/VnjDjyk5l9v6BgbUz
-         lW2w==
-X-Gm-Message-State: ANhLgQ3b6J0MvDpQqabyJdnkgae/c4dFAvouBa3yi2EgWu8BQ6HmTSoQ
-        tf517AmK22ydRmwJsZstOyvtLwnF
-X-Google-Smtp-Source: ADFU+vvfxQ6GnE6kuOTm/THwxhnjVqNcrjXtge7LtlFjAz/hwwfOS7vsAbCPRbHG0gaPERkYHsyFwQ==
-X-Received: by 2002:ac2:5473:: with SMTP id e19mr2702157lfn.24.1584532503372;
-        Wed, 18 Mar 2020 04:55:03 -0700 (PDT)
-Received: from localhost.localdomain (dc7t7ryyyyyyyyyyyyybt-3.rev.dnainternet.fi. [2001:14ba:16e1:b700::3])
-        by smtp.gmail.com with ESMTPSA id a18sm4145783ljn.85.2020.03.18.04.55.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Mar 2020 04:55:02 -0700 (PDT)
-Date:   Wed, 18 Mar 2020 13:54:55 +0200
-From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-To:     matti.vaittinen@fi.rohmeurope.com, mazziesaccount@gmail.com
-Cc:     Sebastian Reichel <sre@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
-        linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Markus Laine <markus.laine@fi.rohmeurope.com>,
-        Mikko Mutanen <mikko.mutanen@fi.rohmeurope.com>
-Subject: [PATCH v5 9/9] power: supply: Fix Kconfig help text indentiation
-Message-ID: <9d0b68790885d32b108c8ad75a793c8c92ba8420.1584468798.git.matti.vaittinen@fi.rohmeurope.com>
-References: <cover.1584468798.git.matti.vaittinen@fi.rohmeurope.com>
+        Wed, 18 Mar 2020 07:56:41 -0400
+Received: from ip5f5bf7ec.dynamic.kabel-deutschland.de ([95.91.247.236] helo=wittgenstein)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <christian.brauner@ubuntu.com>)
+        id 1jEXJN-0008Cd-TD; Wed, 18 Mar 2020 11:56:38 +0000
+Date:   Wed, 18 Mar 2020 12:56:37 +0100
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     Simon Ser <contact@emersion.fr>
+Cc:     "ebiederm@xmission.com" <ebiederm@xmission.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "oleg\\@redhat.com" <oleg@redhat.com>,
+        "christian\\@brauner.io" <christian@brauner.io>
+Subject: Re: SO_PEERCRED and pidfd
+Message-ID: <20200318115637.qffmwvtr4uqanyvc@wittgenstein>
+References: <go0RLOS7_DdxyAmfrDR38QPUloZuUtiFdXe2Ey3EkGGuvmW7z18Dvt4fY1qZ1k-Y75-YZSxqVWnZpWRGN7TZ6OPbDczfL7HI25bXLIYq1y4=@emersion.fr>
+ <87d09akduh.fsf@x220.int.ebiederm.org>
+ <1Q35NFfgidxjWwXdBPA4EBehI5cyiQ2g47PjP_twMt_AlhcwWIzFK45Dyaw0bKT1KHPsbUAOXbfpvZODuRSd19LVI0tPBPsVblfSYy_YZEg=@emersion.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <cover.1584468798.git.matti.vaittinen@fi.rohmeurope.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+In-Reply-To: <1Q35NFfgidxjWwXdBPA4EBehI5cyiQ2g47PjP_twMt_AlhcwWIzFK45Dyaw0bKT1KHPsbUAOXbfpvZODuRSd19LVI0tPBPsVblfSYy_YZEg=@emersion.fr>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Indent the help text as explained in
-Documentation/process/coding-style.rst
+On Wed, Mar 18, 2020 at 10:31:00AM +0000, Simon Ser wrote:
+> On Tuesday, March 17, 2020 7:58 PM, <ebiederm@xmission.com> wrote:
+> 
+> > Simon Ser contact@emersion.fr writes:
+> >
+> > > Hi all,
+> > > I'm a Wayland developer and I've been working on protocol security,
+> > > which involves identifying the process on the other end of a Unix
+> > > socket 1. This is already done by e.g. D-Bus via the PID, however
+> > > this is racy 2.
+> > > Getting the PID is done via SO_PEERCRED. Would there be interest in
+> > > adding a way to get a pidfd out of a Unix socket to fix the race?
+> >
+> > I think we are passing a struct pid through the socket metadata.
+> > So it should be technically feasible.
+> >
+> > However it does come with some long term mainteance costs.
+> >
+> > The big question is what is a pid being used for when being passed.
+> > Last I looked most of the justifications for using metadata like that
+> > with unix domain sockets led to patterns of trust that were also
+> > exploitable.
+> >
+> > Looking at the proposale in 1 even if you have race free access
+> > to /proc/<pid>/exe using pidfds it is possible to change /proc/<pid>/exe
+> > to be anything you can map so that seems to be an example of a problem.
+> 
+> /proc/<pid>/exe is a symlink. It doesn't seem like it's possible to
+> unlink it and re-link it to something else (fails with EPERM).
+> 
+> Is there a way to do this?
 
-Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
----
+Not while the process is running afaik. Given the right permission there
+are some tricks you can do to overwrite the host binary and trick
+someone into rexecuting itself and thus the ovewritten binary (There's
+been an exploit in runC around this which Aleksa and I fixed a while
+back.) but as long as the process is running you can't overwrite it
+(unless there are bugs).
 
-I just learned the help text in Kconfigs should be indented by two
-spaces. I fixed this for BD99954 as suggested by Randy and decided
-that I could do this for few other entries as well while I was at
-it anyways.
+> 
+> > So it would be very nice to see a use case spelled out where
+> > the pid reuse race mattered, and that trusting a pid makes sense.
+> 
+> The use-case is identifying which process is at the other end of the
+> socket. Once the process is identified, security rules can be applied.
+> For instance a Wayland compositor might give access to a
+> screen capture interface if the program is a trusted screen shooter.
+> 
+> Some want to get the full path to the executable, and read the
+> /proc/<pid>/exe symlink. Some want to read a special file created at
+> the root of the process' file system namespace, and access
+> /proc/<pid>/root.
 
- drivers/power/supply/Kconfig | 24 ++++++++++++------------
- 1 file changed, 12 insertions(+), 12 deletions(-)
+You can translate solely from a pidfd to a pid and then open /proc/<pid>
+and verify that the directory you just opened referes to the same
+process as the pidfd. That's illustrated in a sample program I wrote.
+It's located in the kernel sources at:
 
-diff --git a/drivers/power/supply/Kconfig b/drivers/power/supply/Kconfig
-index af96d7fa56b1..f606ba069e4e 100644
---- a/drivers/power/supply/Kconfig
-+++ b/drivers/power/supply/Kconfig
-@@ -415,7 +415,7 @@ config CHARGER_PCF50633
- 	tristate "NXP PCF50633 MBC"
- 	depends on MFD_PCF50633
- 	help
--	 Say Y to include support for NXP PCF50633 Main Battery Charger.
-+	  Say Y to include support for NXP PCF50633 Main Battery Charger.
- 
- config BATTERY_RX51
- 	tristate "Nokia RX-51 (N900) battery driver"
-@@ -609,15 +609,15 @@ config CHARGER_TPS65090
- 	tristate "TPS65090 battery charger driver"
- 	depends on MFD_TPS65090
- 	help
--	 Say Y here to enable support for battery charging with TPS65090
--	 PMIC chips.
-+	  Say Y here to enable support for battery charging with TPS65090
-+	  PMIC chips.
- 
- config CHARGER_TPS65217
- 	tristate "TPS65217 battery charger driver"
- 	depends on MFD_TPS65217
- 	help
--	 Say Y here to enable support for battery charging with TPS65217
--	 PMIC chips.
-+	  Say Y here to enable support for battery charging with TPS65217
-+	  PMIC chips.
- 
- config BATTERY_GAUGE_LTC2941
- 	tristate "LTC2941/LTC2943 Battery Gauge Driver"
-@@ -671,16 +671,16 @@ config CHARGER_SC2731
- 	tristate "Spreadtrum SC2731 charger driver"
- 	depends on MFD_SC27XX_PMIC || COMPILE_TEST
- 	help
--	 Say Y here to enable support for battery charging with SC2731
--	 PMIC chips.
-+	  Say Y here to enable support for battery charging with SC2731
-+	  PMIC chips.
- 
- config FUEL_GAUGE_SC27XX
- 	tristate "Spreadtrum SC27XX fuel gauge driver"
- 	depends on MFD_SC27XX_PMIC || COMPILE_TEST
- 	depends on IIO
- 	help
--	 Say Y here to enable support for fuel gauge with SC27XX
--	 PMIC chips.
-+	  Say Y here to enable support for fuel gauge with SC27XX
-+	  PMIC chips.
- 
- config CHARGER_UCS1002
- 	tristate "Microchip UCS1002 USB Port Power Controller"
-@@ -698,9 +698,9 @@ config CHARGER_BD70528
- 	select LINEAR_RANGES
- 	default n
- 	help
--	 Say Y here to enable support for getting battery status
--	 information and altering charger configurations from charger
--	 block of the ROHM BD70528 Power Management IC.
-+	  Say Y here to enable support for getting battery status
-+	  information and altering charger configurations from charger
-+	  block of the ROHM BD70528 Power Management IC.
- 
- config CHARGER_BD99954
- 	tristate "ROHM bd99954 charger driver"
--- 
-2.21.0
+samples/pidfd/pidfd_metadata.c
 
+specifically the pidfd_metadata_fd() helper.
 
--- 
-Matti Vaittinen, Linux device drivers
-ROHM Semiconductors, Finland SWDC
-Kiviharjunlenkki 1E
-90220 OULU
-FINLAND
-
-~~~ "I don't think so," said Rene Descartes. Just then he vanished ~~~
-Simon says - in Latin please.
-~~~ "non cogito me" dixit Rene Descarte, deinde evanescavit ~~~
-Thanks to Simon Glass for the translation =] 
+If you only have the pidfd and want to know the pid of the process you
+can translate from the fd's fdinfo file to the pid. That's e.g. how
+systemd is doing it too. See
+https://github.com/systemd/systemd/blob/06ae8800d0bd9f8b01df7443daec37f90708bd84/src/basic/process-util.c#L1499
+If the process has already exited _and_ been reaped fdinfo will show -1
+as pid. The format of the fdinfo file matches the output for the Pid:
+and NSpid: fields in the /prop/<pid>/status file.
