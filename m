@@ -2,93 +2,153 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EA91A18A680
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 22:09:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 033FE18A6C8
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 22:12:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728314AbgCRVIq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Mar 2020 17:08:46 -0400
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:34002 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727453AbgCRVIo (ORCPT
+        id S1726912AbgCRVMP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Mar 2020 17:12:15 -0400
+Received: from mail-qk1-f195.google.com ([209.85.222.195]:41126 "EHLO
+        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726747AbgCRVMP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Mar 2020 17:08:44 -0400
-Received: by mail-ed1-f65.google.com with SMTP id i24so28837338eds.1
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Mar 2020 14:08:43 -0700 (PDT)
+        Wed, 18 Mar 2020 17:12:15 -0400
+Received: by mail-qk1-f195.google.com with SMTP id s11so30105269qks.8
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Mar 2020 14:12:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=WatAKLuqZtZlRLQCbRzYpTXRz9maWKDE4hUEG0f7NDw=;
-        b=KblwfDmtszqt/poiiBnkGj80+eqtrRyKNLWAFKJyI2lM8X5PpTIHIUIc65zJhoEnEF
-         WjcKc+bfilJdpRhIjI1m71RTPdnfUYwaMNgrlZfogSYuI3TKBJzAzVhAyAtHoPrdVKGp
-         DLDa+hQ2FiF/ZRAW6YOkmNlRuau5tixJsAn5jRDu0LNFpGvf4mGlYW9x2j+4ybOULNy7
-         eW1S/z/G2JKD/YF0c0IywP5jL7tjCmAMSfYHwjw2Mgd+8lo0HY2apy//ZlP3q1BuFweg
-         kxv1DBMAmhdBV9qGqhU7t4qHJxKuYe+4PrnuMPBj6LktzBpmvLYwxL6iqDAV7QAmJ5iL
-         I9pg==
+        d=gmail.com; s=20161025;
+        h=from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=cgdLXJV9Sew53vIF33iiBl+FIn8SK13ILaQIFn0dtRs=;
+        b=A7yCOddTAxvmu3ZfcKABXAyalCetbzNFo1PbYvf5Vtok/l619b+6aE4phQmb6ehGD1
+         ZtIKODXEJeJciqA82Ej7MDWt90U5ideGjywnFmDKJpP/BYrT19DMp/WL3FgwidHr3Ane
+         oLqqwxTcUPg9NNber5HLvEu62Pco2vtYgaDWhssgl5Wp7Zee1rHtgRNRKpjf8uA7MhD5
+         ycFY06PNxhOKFxc+KnCrYHQzsJBg2BL52yIzzLsmyZIfQkSYPIXG24oCL0JqMD6oEDMK
+         aPDiwRGh1T+N8d5Sqyq7I7xa9xf+DuBBmWb8FbvLPfHOaRMDF+O7P3Mvb2KPt1Fdx1Zr
+         KYCg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=WatAKLuqZtZlRLQCbRzYpTXRz9maWKDE4hUEG0f7NDw=;
-        b=X67DQeySnDVxmjjncuXMapKprOOfVh21JXDqRcbM3zEu3mJ3i/tXc0o1WzYDw1tqZK
-         4Xz+nftrOqDDMy6RhlD3d0MGLWqcYpGfTKBdivUVghAtBiXvaKYb0NGQDJmq7IWttEeG
-         4rwXsM15WvZ4cSdfF4bvZnJu4g8X2L4RfJJbGTzXp12wWu6VSUp2joBqF0q12k8XvxmF
-         IOBZv9rMjRO5lx+uuGk/8KPeDG+SzOiJHtCzdI+jMvzlEbDL4s+dbLEYd36CaTg1S5TH
-         yfaVc+AJXhUf1NQZo9CubRWKr6oNwR3OTnZ+01CeTHMJCDORFs2zPBSTL4RnFifTUqbG
-         PIgw==
-X-Gm-Message-State: ANhLgQ1SzhBw5UEM9emXsyn/CGBlq9iUAvxEfgLRTUOVdldnmtZspRUA
-        yNPc8Av2e29mhsJnsbmMZYFHICoI4N2U1xcue/fl
-X-Google-Smtp-Source: ADFU+vvbYGHqEIZHFDpAJYIn0BKyhX1aU7rGbDTvr2tbcPYmEgbd2Lwck7tUApGNIqLuzMQYQdyQBqa6eqOf1oPvVLM=
-X-Received: by 2002:aa7:d051:: with SMTP id n17mr5727973edo.196.1584565722903;
- Wed, 18 Mar 2020 14:08:42 -0700 (PDT)
+        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=cgdLXJV9Sew53vIF33iiBl+FIn8SK13ILaQIFn0dtRs=;
+        b=LVkdILX9oh7kuKWItgfVN6eMFqX1a87KLwWrJORyB8KtF2LMHLlpgENHsuvt18vbID
+         5xCBHTcjEGbyh80JMBOw6lB3TsJnq94o/GqlkZqNtxIaQXv3LBPJk/EXueztwuX224Re
+         SV79LP/bk0HfceNsAihDalRBJnLuq1nLrJ1lOm5RG3WHUv07Z1Xim1GfHJNc98Uk4UJ3
+         NNIXZNG6juLcUaiZ8ELILuRcwtJ9LALocgJVAYG8bTc/9JzcQEMoCW77J3db51zd0FMj
+         Iu8g2zwhURt12X0Pd/JYo2VfEyQb0lC/e6eLOGUyBYCE/1X2k/Mxm0A5fHjoBkrMXOFB
+         OAbg==
+X-Gm-Message-State: ANhLgQ3ZmviIEz4/1/4ISe568FVQwjnnl3vB70ROzRTolAQDEy84D08u
+        mizL6w6aPvvALPEnBEofxQo=
+X-Google-Smtp-Source: ADFU+vu1iw2ZSFt5GSelwBEMi5Omquzp5UhqGTINJpM8WwES6bFo3XFbBKyvQ9hZDg1Za30NhXHynA==
+X-Received: by 2002:a05:620a:12d5:: with SMTP id e21mr6134610qkl.226.1584565933729;
+        Wed, 18 Mar 2020 14:12:13 -0700 (PDT)
+Received: from fd42afb33d44.ufabc.int.br ([177.104.48.2])
+        by smtp.gmail.com with ESMTPSA id x188sm128304qka.53.2020.03.18.14.12.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 18 Mar 2020 14:12:13 -0700 (PDT)
+From:   Camylla Goncalves Cantanheide <c.cantanheide@gmail.com>
+To:     gregkh@linuxfoundation.org, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org, lkcamp@lists.libreplanetbr.org
+Subject: [PATCH v2] staging: rtl8192u: Corrects 'Avoid CamelCase' for variables
+Date:   Wed, 18 Mar 2020 21:12:05 +0000
+Message-Id: <20200318211205.188-1-c.cantanheide@gmail.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-References: <cover.1577736799.git.rgb@redhat.com> <6452955c1e038227a5cd169f689f3fd3db27513f.1577736799.git.rgb@redhat.com>
- <CAHC9VhRkH=YEjAY6dJJHSp934grHnf=O4RiqLu3U8DzdVQOZkg@mail.gmail.com>
- <20200130192753.n7jjrshbhrczjzoe@madcap2.tricolour.ca> <CAHC9VhSVN3mNb5enhLR1hY+ekiAyiYWbehrwd_zN7kz13dF=1w@mail.gmail.com>
- <20200205235056.e5365xtgz7rbese2@madcap2.tricolour.ca> <CAHC9VhTM6MDHLcBfwJ_9DCroG0VA-meO770ihjn1sVy6=0JrHw@mail.gmail.com>
- <20200312205147.plxs4czjeuu4davj@madcap2.tricolour.ca> <CAHC9VhTqWdXMsbSbsWJzRRvVbSaaFBmnFFsVutM7XSx5NT_FJA@mail.gmail.com>
- <20200314224203.ncyx3rgwwe6zet4e@madcap2.tricolour.ca>
-In-Reply-To: <20200314224203.ncyx3rgwwe6zet4e@madcap2.tricolour.ca>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Wed, 18 Mar 2020 17:08:31 -0400
-Message-ID: <CAHC9VhTy2ou-vadeMjgTaw-T9mW+nBjbqapA7RSW3EFNJ44JLw@mail.gmail.com>
-Subject: Re: [PATCH ghak90 V8 13/16] audit: track container nesting
-To:     Richard Guy Briggs <rgb@redhat.com>
-Cc:     nhorman@tuxdriver.com, linux-api@vger.kernel.org,
-        containers@lists.linux-foundation.org,
-        LKML <linux-kernel@vger.kernel.org>, dhowells@redhat.com,
-        Linux-Audit Mailing List <linux-audit@redhat.com>,
-        netfilter-devel@vger.kernel.org, ebiederm@xmission.com,
-        simo@redhat.com, netdev@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, Eric Paris <eparis@parisplace.org>,
-        mpatel@redhat.com, Serge Hallyn <serge@hallyn.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Mar 14, 2020 at 6:42 PM Richard Guy Briggs <rgb@redhat.com> wrote:
-> On 2020-03-13 12:47, Paul Moore wrote:
+The variables of function setKey triggered a 'Avoid CamelCase'
+warning from checkpatch.pl. This patch renames these
+variables to correct this warning.
 
-...
+Signed-off-by: Camylla Goncalves Cantanheide <c.cantanheide@gmail.com>
+---
+ drivers/staging/rtl8192u/r8192U_core.c | 52 +++++++++++++-------------
+ 1 file changed, 26 insertions(+), 26 deletions(-)
 
-> > It has been a while since I last looked at the patchset, but my
-> > concern over the prefered use of the ACID number vs the ACID object is
-> > that the number offers no reuse protection where the object does.  I
-> > really would like us to use the object everywhere it is possible.
->
-> Ok, so I take it from this that I go ahead with the dual format since
-> the wrapper funciton to convert from object to ID strips away object
-> information negating any benefit of favouring the object pointer.  I'll
-> look at the remaining calls that use a contid (rather than contobj) and
-> convert all that I can over to storing an object using the dual counters
-> that track process exits versus signal2 and trace references.
-
-Well, as I said in the other thread, I'm not sure we need a full two
-counters; I think one counter and a simple flag should suffice.
-Otherwise that sounds good for the next iteration.
-
+diff --git a/drivers/staging/rtl8192u/r8192U_core.c b/drivers/staging/rtl8192u/r8192U_core.c
+index 93a15d57e..3aa87296d 100644
+--- a/drivers/staging/rtl8192u/r8192U_core.c
++++ b/drivers/staging/rtl8192u/r8192U_core.c
+@@ -4877,50 +4877,50 @@ void EnableHWSecurityConfig8192(struct net_device *dev)
+ 	write_nic_byte(dev, SECR,  SECR_value);
+ }
+ 
+-void setKey(struct net_device *dev, u8 EntryNo, u8 KeyIndex, u16 KeyType,
+-	    u8 *MacAddr, u8 DefaultKey, u32 *KeyContent)
++void setKey(struct net_device *dev, u8 entry_no, u8 key_idx, u16 key_type,
++	    u8 *mac_addr, u8 default_key, u32 *key_content)
+ {
+-	u32 TargetCommand = 0;
+-	u32 TargetContent = 0;
+-	u16 usConfig = 0;
++	u32 target_cmd = 0;
++	u32 content = 0;
++	u16 config = 0;
+ 	u8 i;
+ 
+-	if (EntryNo >= TOTAL_CAM_ENTRY)
++	if (entry_no >= TOTAL_CAM_ENTRY)
+ 		RT_TRACE(COMP_ERR, "cam entry exceeds in %s\n", __func__);
+ 
+ 	RT_TRACE(COMP_SEC,
+ 		 "====>to %s, dev:%p, EntryNo:%d, KeyIndex:%d, KeyType:%d, MacAddr%pM\n",
+-		 __func__, dev, EntryNo, KeyIndex, KeyType, MacAddr);
++		 __func__, dev, entry_no, key_idx, key_type, mac_addr);
+ 
+-	if (DefaultKey)
+-		usConfig |= BIT(15) | (KeyType << 2);
++	if (default_key)
++		config |= BIT(15) | (key_type << 2);
+ 	else
+-		usConfig |= BIT(15) | (KeyType << 2) | KeyIndex;
++		config |= BIT(15) | (key_type << 2) | key_idx;
+ 
+ 	for (i = 0; i < CAM_CONTENT_COUNT; i++) {
+-		TargetCommand  = i + CAM_CONTENT_COUNT * EntryNo;
+-		TargetCommand |= BIT(31) | BIT(16);
++		target_cmd  = i + CAM_CONTENT_COUNT * entry_no;
++		target_cmd |= BIT(31) | BIT(16);
+ 
+ 		if (i == 0) { /* MAC|Config */
+-			TargetContent = (u32)(*(MacAddr + 0)) << 16 |
+-					(u32)(*(MacAddr + 1)) << 24 |
+-					(u32)usConfig;
++			content = (u32)(*(mac_addr + 0)) << 16 |
++					(u32)(*(mac_addr + 1)) << 24 |
++					(u32)config;
+ 
+-			write_nic_dword(dev, WCAMI, TargetContent);
+-			write_nic_dword(dev, RWCAM, TargetCommand);
++			write_nic_dword(dev, WCAMI, content);
++			write_nic_dword(dev, RWCAM, target_cmd);
+ 		} else if (i == 1) { /* MAC */
+-			TargetContent = (u32)(*(MacAddr + 2))	 |
+-					(u32)(*(MacAddr + 3)) <<  8 |
+-					(u32)(*(MacAddr + 4)) << 16 |
+-					(u32)(*(MacAddr + 5)) << 24;
+-			write_nic_dword(dev, WCAMI, TargetContent);
+-			write_nic_dword(dev, RWCAM, TargetCommand);
++			content = (u32)(*(mac_addr + 2))	 |
++					(u32)(*(mac_addr + 3)) <<  8 |
++					(u32)(*(mac_addr + 4)) << 16 |
++					(u32)(*(mac_addr + 5)) << 24;
++			write_nic_dword(dev, WCAMI, content);
++			write_nic_dword(dev, RWCAM, target_cmd);
+ 		} else {
+ 			/* Key Material */
+-			if (KeyContent) {
++			if (key_content) {
+ 				write_nic_dword(dev, WCAMI,
+-						*(KeyContent + i - 2));
+-				write_nic_dword(dev, RWCAM, TargetCommand);
++						*(key_content + i - 2));
++				write_nic_dword(dev, RWCAM, target_cmd);
+ 			}
+ 		}
+ 	}
 -- 
-paul moore
-www.paul-moore.com
+2.20.1
+
