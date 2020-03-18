@@ -2,126 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D7F1B1898EF
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 11:10:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E1C111898FA
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 11:10:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727503AbgCRKKO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Mar 2020 06:10:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52994 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726733AbgCRKKN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Mar 2020 06:10:13 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4BF2120768;
-        Wed, 18 Mar 2020 10:10:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584526212;
-        bh=NGAukJ+3Nmmxnzl16xW5wI96d5RF3onz8IR/ReVAjHo=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=XcSuvV7Md+YK8Gf6tvrlo7AcBNA2D086+W51Am5qGEnEwuSd92PdqPgVsQrezzgGq
-         lOK8xGEaZuuLtBalvRfUbfB/H0DqXC+3iv/I+2sPzxlYMPQoqpvjvcDlLKsm7GP7/A
-         1/PBA/H50A5hIE5OS9dJOceeunzguK1XBoWlWJKY=
-Date:   Wed, 18 Mar 2020 11:10:10 +0100
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Dejin Zheng <zhengdejin5@gmail.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Minas Harutyunyan <hminas@synopsys.com>,
-        Mathias Nyman <mathias.nyman@intel.com>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Thierry Reding <treding@nvidia.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Winkler, Tomas" <tomas.winkler@intel.com>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        USB list <linux-usb@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3 1/5] drivers: provide
- devm_platform_get_and_ioremap_resource()
-Message-ID: <20200318101010.GA2061266@kroah.com>
-References: <20200315140525.21780-1-zhengdejin5@gmail.com>
- <20200315140525.21780-2-zhengdejin5@gmail.com>
- <20200317192051.GA1520272@kroah.com>
- <CAMuHMdVK0Gpw6A=CfF+5nw4hHz9UCtSoXwF9_UThAK4E+mQBWg@mail.gmail.com>
+        id S1727659AbgCRKKn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Mar 2020 06:10:43 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:52156 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726310AbgCRKKm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Mar 2020 06:10:42 -0400
+Received: by mail-wm1-f68.google.com with SMTP id c187so1240229wme.1
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Mar 2020 03:10:42 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:autocrypt
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=FPQ5osnkg/HoY+TfdL7F+oUq1R09ELZh/2W0X/IdEWM=;
+        b=lN6vgKIY/PNcLocORpGpncAF73DefTsojjnrc0JNMXu3NTt/+SRZnpRqdWddUoiS+o
+         gVbwOi4JsMJARIY8aDH/6HYRtAOQUOJcxhEtJD1nWTO/Q0Oe1Q5vrhqgGrUwLqPCsgvZ
+         DKok91zEmbVZVwzC/um9bgvLEdrzRGfRjQKsXOxPfVi9lFwbDV0ZEuUV3tNJ418JpJsG
+         uycwWdnWH1i/es+FyQ3D0fA/8BY8SComWYX8eVjO9elO4a/GwMJepv5PKSwcbi7PpgaI
+         i1Uv6gk1Qa7UH8QbCmPiZ4nrVWJqm/h/cLekeQYMpWiWR8Spof0/DmnxizexSEfxi962
+         aBAQ==
+X-Gm-Message-State: ANhLgQ3LJ/Fumu/IK7I1+88z7CtDheVgzkb4Xb/90q4GEj6GM185PtGz
+        7mC0LPc4hWeRUTa0Qsr4UmU=
+X-Google-Smtp-Source: ADFU+vt5jLSujl/oZI8dD/y4Eng93u0/Y3mAAVvSk7ykgxDapqO0OoQPOtPPhVm0Q+U1cnZkVGZ+Kg==
+X-Received: by 2002:a7b:c218:: with SMTP id x24mr4557128wmi.48.1584526241535;
+        Wed, 18 Mar 2020 03:10:41 -0700 (PDT)
+Received: from ?IPv6:2a0b:e7c0:0:107::49? ([2a0b:e7c0:0:107::49])
+        by smtp.gmail.com with ESMTPSA id d21sm8638297wrb.51.2020.03.18.03.10.39
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 18 Mar 2020 03:10:40 -0700 (PDT)
+Subject: Re: [PATCH] vt: vt_ioctl: fix VT_DISALLOCATE freeing in-use virtual
+ console
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Eric Biggers <ebiggers@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        Eric Dumazet <edumazet@google.com>,
+        Nicolas Pitre <nico@fluxnic.net>,
+        Alan Cox <gnomes@lxorguk.ukuu.org.uk>
+References: <0000000000006663de0598d25ab1@google.com>
+ <20200224071247.283098-1-ebiggers@kernel.org>
+ <8fb00b38-abd0-6895-3ad2-85a6f05ee6cf@suse.com>
+ <20200224081913.GA299238@sol.localdomain> <20200302212306.GA78660@gmail.com>
+ <20200318100612.GA2044908@kroah.com>
+From:   Jiri Slaby <jslaby@suse.cz>
+Autocrypt: addr=jslaby@suse.cz; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <ced58bef-31ac-7f4e-ffed-ccbcde7b7bb6@suse.cz>
+Date:   Wed, 18 Mar 2020 11:10:39 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdVK0Gpw6A=CfF+5nw4hHz9UCtSoXwF9_UThAK4E+mQBWg@mail.gmail.com>
+In-Reply-To: <20200318100612.GA2044908@kroah.com>
+Content-Type: text/plain; charset=iso-8859-2
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 17, 2020 at 08:35:16PM +0100, Geert Uytterhoeven wrote:
-> Hi Greg,
+On 18. 03. 20, 11:06, Greg Kroah-Hartman wrote:
+>> Jiri, can you explain what you meant here?  I don't see how your suggestion
+>> would solve the problem.
+>>
+>> Greg, any opinion?
 > 
-> On Tue, Mar 17, 2020 at 8:20 PM Greg KH <gregkh@linuxfoundation.org> wrote:
-> > On Sun, Mar 15, 2020 at 10:05:21PM +0800, Dejin Zheng wrote:
-> > > Since commit "drivers: provide devm_platform_ioremap_resource()",
-> > > it was wrap platform_get_resource() and devm_ioremap_resource() as
-> > > single helper devm_platform_ioremap_resource(). but now, many drivers
-> > > still used platform_get_resource() and devm_ioremap_resource()
-> > > together in the kernel tree. The reason can not be replaced is they
-> > > still need use the resource variables obtained by platform_get_resource().
-> > > so provide this helper.
-> > >
-> > > Suggested-by: Geert Uytterhoeven <geert@linux-m68k.org>
-> > > Suggested-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-> > > Signed-off-by: Dejin Zheng <zhengdejin5@gmail.com>
-> > > ---
-> > > v2 -> v3:
-> > >       - rename the function to
-> > >         devm_platform_get_and_ioremap_resource() by Sergei's suggestion.
-> > >       - make the last parameter res as optional by Geert's suggestion.
-> > >
-> > > v1 -> v2:
-> > >       - No change.
-> > >
-> > >  drivers/base/platform.c         | 22 ++++++++++++++++++++++
-> > >  include/linux/platform_device.h |  3 +++
-> > >  2 files changed, 25 insertions(+)
-> > >
-> > > diff --git a/drivers/base/platform.c b/drivers/base/platform.c
-> > > index 7fa654f1288b..9f6a78f79235 100644
-> > > --- a/drivers/base/platform.c
-> > > +++ b/drivers/base/platform.c
-> > > @@ -62,6 +62,28 @@ struct resource *platform_get_resource(struct platform_device *dev,
-> > >  EXPORT_SYMBOL_GPL(platform_get_resource);
-> > >
-> > >  #ifdef CONFIG_HAS_IOMEM
-> > > +/**
-> > > + * devm_platform_get_and_ioremap_resource - call devm_ioremap_resource() for a
-> > > + *                                       platform device and get resource
-> > > + *
-> > > + * @pdev: platform device to use both for memory resource lookup as well as
-> > > + *        resource management
-> > > + * @index: resource index
-> > > + * @res: get the resource
-> > > + */
-> > > +void __iomem *
-> > > +devm_platform_get_and_ioremap_resource(struct platform_device *pdev,
-> > > +                             unsigned int index, struct resource **res)
-> > > +{
-> > > +     struct resource *r;
-> > > +
-> > > +     r = platform_get_resource(pdev, IORESOURCE_MEM, index);
-> > > +     if (res)
-> > > +             *res = r;
-> >
-> > What happens if that call fails?  Shouldn't that be checked?
-> 
-> Then devm_ioremap_resource() will print an error message, and return
-> an error.
-> It's designed to be pipelined that way, so you have to check for an error
-> only once.
+> I'll defer to Jiri here :)
 
-Ok, thanks.  Can I get an ack/reviewed-by for this series then?
+Heh, thanks.
 
-thanks,
+I started looking into this yesterday, but was interrupted by other
+tasks. Stay tuned.
 
-greg k-h
+regards,
+-- 
+js
+suse labs
