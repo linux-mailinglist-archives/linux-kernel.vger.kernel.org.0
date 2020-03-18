@@ -2,155 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BD1B818A0B1
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 17:38:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0532818A0BE
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 17:39:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727401AbgCRQij (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Mar 2020 12:38:39 -0400
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:48811 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727244AbgCRQii (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Mar 2020 12:38:38 -0400
-Received: from pps.filterd (m0046037.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 02IGHbtb020610;
-        Wed, 18 Mar 2020 17:38:32 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : subject : to : cc
- : references : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=STMicroelectronics;
- bh=NRNvpny+eWOCNOPinfnZBTKVTNomHJASQiqSmkj08tk=;
- b=df74hTquu0tY3/u4I6IfThldZm5Dt4eNfFMACSfDBqUjlbOuhV5WBZvID7D+eVE4SA9w
- 83h4ZnKG+TgVW8d5WfRK/Jp3Cv7lLBU1YU3b+S0sP1sueXQJDTSjDvxYGsHEFc2S9XKL
- tY7sHwHzuMiw3+6zwz5PtG05lDjErui33Ed5HW9P99MuzB5o5PlnTHM61xVf8MWaM9sG
- RYXOMwXVpKHgQOPlwU+qvBH628GCUnuqmt+LN1+SWdp2+sHwehla9m915I4eflOHhnuX
- uBuC5o+gSXmLzq3V1q4KwQX9QGNUF+wIAuJnTJJg23mC/pFYWIIUvUMETXXYMPVcU0cI lQ== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 2yu8etcy09-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 18 Mar 2020 17:38:32 +0100
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 0A61D100034;
-        Wed, 18 Mar 2020 17:38:31 +0100 (CET)
-Received: from Webmail-eu.st.com (sfhdag3node1.st.com [10.75.127.7])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id EEFFD2BF9DA;
-        Wed, 18 Mar 2020 17:38:30 +0100 (CET)
-Received: from lmecxl0889.lme.st.com (10.75.127.50) by SFHDAG3NODE1.st.com
- (10.75.127.7) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 18 Mar
- 2020 17:38:30 +0100
-From:   Arnaud POULIQUEN <arnaud.pouliquen@st.com>
-Subject: Re: [PATCH 2/2] remoteproc: Fix and restore the parenting hierarchy
- for vdev
-To:     Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Suman Anna <s-anna@ti.com>
-CC:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Loic Pallardy <loic.pallardy@st.com>,
-        Tero Kristo <t-kristo@ti.com>,
-        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20200305224108.21351-1-s-anna@ti.com>
- <20200305224108.21351-3-s-anna@ti.com> <20200317180530.GA1801@xps15>
-Message-ID: <76772d98-93d9-e559-01b8-ba7d4d1cc1eb@st.com>
-Date:   Wed, 18 Mar 2020 17:38:29 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        id S1727281AbgCRQjn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Mar 2020 12:39:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50006 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727065AbgCRQjn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Mar 2020 12:39:43 -0400
+Received: from sol.localdomain (c-107-3-166-239.hsd1.ca.comcast.net [107.3.166.239])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 21FB420752;
+        Wed, 18 Mar 2020 16:39:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1584549582;
+        bh=s7WMtHtSTQ/I40uZ0Ao4FX1zsUCtsqMIlS7BJUgnrA4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=1XIxQCe2V1xPHNA+48U2QVBvhUcatTUYkKBIqnkevbdWIstMkS8YNMwMCG9JpXsln
+         TGgtf3cTfrr90X+yPorLc2e+1cvcAFLM3jD+fuE80UYN9NNrDJH/JDCKlF79AhAd10
+         6cP8jP0h4PhFG+VovC391qQjtj0gTBEcOpelPSDg=
+Date:   Wed, 18 Mar 2020 09:39:40 -0700
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk
+Cc:     glider@google.com, arnd@arndb.de, gregkh@linuxfoundation.org,
+        linux-kernel@vger.kernel.org, rafael@kernel.org,
+        syzbot+fcab69d1ada3e8d6f06b@syzkaller.appspotmail.com,
+        syzkaller-bugs@googlegroups.com
+Subject: Re: [PATCH] libfs: fix infoleak in simple_attr_read()
+Message-ID: <20200318163940.GB2334@sol.localdomain>
+References: <CAG_fn=WvVp7Nxm5E+1dYs4guMYUV8D1XZEt_AZFF6rAQEbbAeg@mail.gmail.com>
+ <20200308023849.988264-1-ebiggers@kernel.org>
+ <20200313164511.GB907@sol.localdomain>
 MIME-Version: 1.0
-In-Reply-To: <20200317180530.GA1801@xps15>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.75.127.50]
-X-ClientProxiedBy: SFHDAG7NODE2.st.com (10.75.127.20) To SFHDAG3NODE1.st.com
- (10.75.127.7)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.645
- definitions=2020-03-18_07:2020-03-18,2020-03-18 signatures=0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200313164511.GB907@sol.localdomain>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Suman, Mathieu,
-
-On 3/17/20 7:05 PM, Mathieu Poirier wrote:
-> Hi Suman,
+On Fri, Mar 13, 2020 at 09:45:11AM -0700, Eric Biggers wrote:
+> On Sat, Mar 07, 2020 at 06:38:49PM -0800, Eric Biggers wrote:
+> > From: Eric Biggers <ebiggers@google.com>
+> > 
+> > Reading from a debugfs file at a nonzero position, without first reading
+> > at position 0, leaks uninitialized memory to userspace.
+> > 
+> > It's a bit tricky to do this, since lseek() and pread() aren't allowed
+> > on these files, and write() doesn't update the position on them.  But
+> > writing to them with splice() *does* update the position:
+> > 
+> > 	#define _GNU_SOURCE 1
+> > 	#include <fcntl.h>
+> > 	#include <stdio.h>
+> > 	#include <unistd.h>
+> > 	int main()
+> > 	{
+> > 		int pipes[2], fd, n, i;
+> > 		char buf[32];
+> > 
+> > 		pipe(pipes);
+> > 		write(pipes[1], "0", 1);
+> > 		fd = open("/sys/kernel/debug/fault_around_bytes", O_RDWR);
+> > 		splice(pipes[0], NULL, fd, NULL, 1, 0);
+> > 		n = read(fd, buf, sizeof(buf));
+> > 		for (i = 0; i < n; i++)
+> > 			printf("%02x", buf[i]);
+> > 		printf("\n");
+> > 	}
+> > 
+> > Output:
+> > 	5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a30
+> > 
+> > Fix the infoleak by making simple_attr_read() always fill
+> > simple_attr::get_buf if it hasn't been filled yet.
+> > 
+> > Reported-by: syzbot+fcab69d1ada3e8d6f06b@syzkaller.appspotmail.com
+> > Reported-by: Alexander Potapenko <glider@google.com>
+> > Fixes: acaefc25d21f ("[PATCH] libfs: add simple attribute files")
+> > Cc: stable@vger.kernel.org
+> > Signed-off-by: Eric Biggers <ebiggers@google.com>
+> > ---
+> >  fs/libfs.c | 8 +++++---
+> >  1 file changed, 5 insertions(+), 3 deletions(-)
+> > 
+> > diff --git a/fs/libfs.c b/fs/libfs.c
+> > index c686bd9caac6..3759fbacf522 100644
+> > --- a/fs/libfs.c
+> > +++ b/fs/libfs.c
+> > @@ -891,7 +891,7 @@ int simple_attr_open(struct inode *inode, struct file *file,
+> >  {
+> >  	struct simple_attr *attr;
+> >  
+> > -	attr = kmalloc(sizeof(*attr), GFP_KERNEL);
+> > +	attr = kzalloc(sizeof(*attr), GFP_KERNEL);
+> >  	if (!attr)
+> >  		return -ENOMEM;
+> >  
+> > @@ -931,9 +931,11 @@ ssize_t simple_attr_read(struct file *file, char __user *buf,
+> >  	if (ret)
+> >  		return ret;
+> >  
+> > -	if (*ppos) {		/* continued read */
+> > +	if (*ppos && attr->get_buf[0]) {
+> > +		/* continued read */
+> >  		size = strlen(attr->get_buf);
+> > -	} else {		/* first read */
+> > +	} else {
+> > +		/* first read */
+> >  		u64 val;
+> >  		ret = attr->get(attr->data, &val);
+> >  		if (ret)
+> > -- 
+> > 2.25.1
 > 
-> On Thu, Mar 05, 2020 at 04:41:08PM -0600, Suman Anna wrote:
->> The commit 086d08725d34 ("remoteproc: create vdev subdevice with specific
->> dma memory pool") has introduced a new vdev subdevice for each vdev
->> declared in the firmware resource table and made it as the parent for the
->> created virtio rpmsg devices instead of the previous remoteproc device.
->> This changed the overall parenting hierarchy for the rpmsg devices, which
->> were children of virtio devices, and does not allow the corresponding
->> rpmsg drivers to retrieve the parent rproc device through the
->> rproc_get_by_child() API.
->>
->> Fix this by restoring the remoteproc device as the parent. The new vdev
->> subdevice can continue to inherit the DMA attributes from the remoteproc's
->> parent device (actual platform device).
->>
->> Fixes: 086d08725d34 ("remoteproc: create vdev subdevice with specific dma memory pool")
->> Signed-off-by: Suman Anna <s-anna@ti.com>
->> ---
->>  drivers/remoteproc/remoteproc_core.c | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
->> index 097f33e4f1f3..ba18f32bd0c4 100644
->> --- a/drivers/remoteproc/remoteproc_core.c
->> +++ b/drivers/remoteproc/remoteproc_core.c
->> @@ -510,7 +510,7 @@ static int rproc_handle_vdev(struct rproc *rproc, struct fw_rsc_vdev *rsc,
->>  
->>  	/* Initialise vdev subdevice */
->>  	snprintf(name, sizeof(name), "vdev%dbuffer", rvdev->index);
->> -	rvdev->dev.parent = rproc->dev.parent;
->> +	rvdev->dev.parent = &rproc->dev;
+> Any comments on this?  Al, seems this is something you should pick up?
 > 
-> I can see how it would not be possible to retrieve the parent rproc device since
-> rvdev->dev.parent was set to be platform device...
+> - Eric
 
-In rpmsg_virtio_bus.c [1] the vdev buffers are allocated in a memory region using a dma_alloc_coherent
-So the buffers are allocated in the platform driver memory region if declared, else in the default memory region. 
-
-According to  086d08725d34 ("remoteproc: create vdev subdevice with specific dma memory pool"),
-A patch has been integrated in rpmsg framework:  d999b622fcfb3 ("rpmsg: virtio: allocate buffer from parent")
-
--	bufs_va = dma_alloc_coherent(vdev->dev.parent->parent,
-+	bufs_va = dma_alloc_coherent(vdev->dev.parent,
-
-So in term of parent-child relationchip the Loic's patches seem coherent, and don't affect parenting hierarchy
-for the rpmsg bus.
-
-So It seems to me that this patch breaks the relationship between the rpmsg bus
-and the rproc platform driver, at least concerning the buffer allocation.
-But on the other side this patch doesn't introduce regression for rpmsg bus on my platform... 
-
-I probably missed something important because i can not figure out how this patch don't introduce regression.
-Can the rproc->dev inherits from the rproc platform device in term of memory regions?
-
-[1]: https://elixir.bootlin.com/linux/latest/source/drivers/rpmsg/virtio_rpmsg_bus.c#L915
-[2]: https://lkml.org/lkml/2018/11/30/180
-
-> 
-> I wonder how the original change didn't blow up sysmon_probe() and potentially
-> other out-of-tree users of rproc_get_by_child().  It would be nice to have
-> someone from the QCOM team test your patch.
-
-You are right the rproc platform device is now the grand parent of a rpmsg device, while before it was the parent.
-Anyway, does it makes sense to have this kind of dependency between rpmsg device and rproc device?
-The fix could be done in the rpmsg device that would be rproc dependent (if out-of-tree).  
-The alternative could be to declare the rpmsg device in device tree as child of the rproc platform device...
-
-Regards,
-Arnaud
-
-> 
->>  	rvdev->dev.dma_pfn_offset = rproc->dev.parent->dma_pfn_offset;
->>  	rvdev->dev.release = rproc_rvdev_release;
->>  	dev_set_name(&rvdev->dev, "%s#%s", dev_name(rvdev->dev.parent), name);
-> 
-> Be mindful there might be fallouts from applying this patch since it does change
-> the location of the vdev under /sys/device/platform/ .
-> 
-> Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-> 
->> -- 
->> 2.23.0
->>
+Ping.
