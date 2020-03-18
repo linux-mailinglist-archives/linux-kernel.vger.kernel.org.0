@@ -2,124 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 11249189C7B
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 14:02:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 064A4189C85
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 14:06:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726913AbgCRNCv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Mar 2020 09:02:51 -0400
-Received: from esa1.mentor.iphmx.com ([68.232.129.153]:23793 "EHLO
-        esa1.mentor.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726638AbgCRNCv (ORCPT
+        id S1726976AbgCRNFz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Mar 2020 09:05:55 -0400
+Received: from us-smtp-delivery-74.mimecast.com ([216.205.24.74]:52327 "EHLO
+        us-smtp-delivery-74.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726821AbgCRNFy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Mar 2020 09:02:51 -0400
-IronPort-SDR: VN2W5FDW5IzeIApCYsQpKfsEb9uaG+u+Mu2F3u4+xj6myHXB7ISHEGBwp6XBYzcC2ze7mt6XbU
- oOjoGUiYwtRbIW1gUvilsBg715TCMT/3cNPcV5rJ3dvZbViAO65rhje/9d5f3y0vJR0xD+KkDD
- 8ijjjyVwAHKGE+LA1r/3xSl8WwjsBXiDdwkv+/fQ2ijkHo0sx71AGz9JZtfuw9D63/bw5MvCz9
- prlRGDpf7AZYTqjMzHCG0Sgc776UC0e9r8GkIRf45RszzSA3EuFGyyYfPF7RYdo+dJG6Rf5ykr
- H94=
-X-IronPort-AV: E=Sophos;i="5.70,567,1574150400"; 
-   d="scan'208";a="48803579"
-Received: from orw-gwy-02-in.mentorg.com ([192.94.38.167])
-  by esa1.mentor.iphmx.com with ESMTP; 18 Mar 2020 05:02:50 -0800
-IronPort-SDR: VOewRTdBF2YEGobwY6tYStdtlGoMq4v9FtnEeJskrsApWCEBGxSF6H1rCOwuBx/STrJDy9a27P
- EP0qvFfF3O2UIoi/y+GqslvgEhMk+tJGEi4Mmi79UypYOeJw7vrJdQvQVO+VozbhFn0IIfGDTN
- 6CJcMgEpJ4+iix3DA0w7EoTQhnUrVXmXrYHcXMjO6fjeY01D1/ip8rxVmjuCZ2+QoNIpIXcR52
- 3tiMEmc3eolg6ArjYINFE1qPHi9EaKysY3vrt74x/PNjHQDypo/aPyi9yOO50ICgroYeU8dogY
- Vi8=
-Subject: Re: [PATCH v7 03/48] Input: atmel_mxt_ts - only read messages in
- mxt_acquire_irq() when necessary
-To:     Dmitry Osipenko <digetx@gmail.com>, <jikos@kernel.org>,
-        <benjamin.tissoires@redhat.com>, <rydberg@bitmath.org>,
-        <dmitry.torokhov@gmail.com>, <nick@shmanahar.org>,
-        <bsz@semihalf.com>
-CC:     <linux-input@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <erosca@de.adit-jv.com>, <Andrew_Gabbasov@mentor.com>
-References: <20200212084218.32344-1-jiada_wang@mentor.com>
- <20200212084218.32344-4-jiada_wang@mentor.com>
- <8ea1244b-f045-df34-b6b2-2b812ab6dee4@gmail.com>
-From:   "Wang, Jiada" <jiada_wang@mentor.com>
-Message-ID: <e586b057-1ec1-896e-374e-dba743709806@mentor.com>
-Date:   Wed, 18 Mar 2020 22:02:36 +0900
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        Wed, 18 Mar 2020 09:05:54 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1584536753;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=rEc/Fi0HtCRksr3RR+jEtjuBFNtDmtlrQKs7EcBkpIE=;
+        b=WbSvw57DAGiLcl9VcxAaQ+2mRPv0PpUkrhVaZv5VwIzqlnPIaWtTp3+xnSYmrdxeTkWqGt
+        MouyxnN2SaFzMz3oqfY+6CmOx77/p/ku4jCVVJUw+pyMuiBKoAUOYjKFNn1IL5j3cVE74d
+        a9zZU00Rzcnyp6bCCCT2RnV7j0CKJ/E=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-319-Fx28kn8nP7-AcMX5JfSHgA-1; Wed, 18 Mar 2020 09:05:50 -0400
+X-MC-Unique: Fx28kn8nP7-AcMX5JfSHgA-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 61AF8107B7DD;
+        Wed, 18 Mar 2020 13:05:46 +0000 (UTC)
+Received: from localhost (ovpn-12-66.pek2.redhat.com [10.72.12.66])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 637AA67265;
+        Wed, 18 Mar 2020 13:05:20 +0000 (UTC)
+Date:   Wed, 18 Mar 2020 21:05:17 +0800
+From:   Baoquan He <bhe@redhat.com>
+To:     David Hildenbrand <david@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linuxppc-dev@lists.ozlabs.org, linux-hyperv@vger.kernel.org,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Yumei Huang <yuhuang@redhat.com>,
+        Igor Mammedov <imammedo@redhat.com>,
+        Eduardo Habkost <ehabkost@redhat.com>,
+        Milan Zamazal <mzamazal@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Michal Hocko <mhocko@kernel.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Oscar Salvador <osalvador@suse.de>,
+        Paul Mackerras <paulus@samba.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        Wei Liu <wei.liu@kernel.org>,
+        Wei Yang <richard.weiyang@gmail.com>
+Subject: Re: [PATCH v2 0/8] mm/memory_hotplug: allow to specify a default
+ online_type
+Message-ID: <20200318130517.GC30899@MiWiFi-R3L-srv>
+References: <20200317104942.11178-1-david@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <8ea1244b-f045-df34-b6b2-2b812ab6dee4@gmail.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: svr-orw-mbx-02.mgc.mentorg.com (147.34.90.202) To
- svr-orw-mbx-01.mgc.mentorg.com (147.34.90.201)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200317104942.11178-1-david@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Dmitry
+On 03/17/20 at 11:49am, David Hildenbrand wrote:
+> Distributions nowadays use udev rules ([1] [2]) to specify if and
+> how to online hotplugged memory. The rules seem to get more complex with
+> many special cases. Due to the various special cases,
+> CONFIG_MEMORY_HOTPLUG_DEFAULT_ONLINE cannot be used. All memory hotplug
+> is handled via udev rules.
+> 
+> Everytime we hotplug memory, the udev rule will come to the same
+> conclusion. Especially Hyper-V (but also soon virtio-mem) add a lot of
+> memory in separate memory blocks and wait for memory to get onlined by user
+> space before continuing to add more memory blocks (to not add memory faster
+> than it is getting onlined). This of course slows down the whole memory
+> hotplug process.
+> 
+> To make the job of distributions easier and to avoid udev rules that get
+> more and more complicated, let's extend the mechanism provided by
+> - /sys/devices/system/memory/auto_online_blocks
+> - "memhp_default_state=" on the kernel cmdline
+> to be able to specify also "online_movable" as well as "online_kernel"
 
-On 2020/03/18 7:44, Dmitry Osipenko wrote:
-> 12.02.2020 11:41, Jiada Wang пишет:
->> From: Nick Dyer <nick.dyer@itdev.co.uk>
->>
->> The workaround of reading all messages until an invalid is received is a
->> way of forcing the CHG line high, which means that when using
->> edge-triggered interrupts the interrupt can be acquired.
->>
->> With level-triggered interrupts the workaround is unnecessary.
->>
->> Also, most recent maXTouch chips have a feature called RETRIGEN which, when
->> enabled, reasserts the interrupt line every cycle if there are messages
->> waiting. This also makes the workaround unnecessary.
->>
->> Note: the RETRIGEN feature is only in some firmware versions/chips, it's
->> not valid simply to enable the bit.
-> 
-> ...
->> +static int mxt_check_retrigen(struct mxt_data *data)
->> +{
->> +	struct i2c_client *client = data->client;
->> +	int error;
->> +	int val;
->> +
->> +	data->use_retrigen_workaround = false;
->> +
->> +	if (irq_get_trigger_type(data->irq) & IRQF_TRIGGER_LOW)
->> +		return 0;
->> +
->> +	if (data->T18_address) {
->> +		error = __mxt_read_reg(client,
->> +				       data->T18_address + MXT_COMMS_CTRL,
->> +				       1, &val);
->> +		if (error)
->> +			return error;
->> +
->> +		if (val & MXT_COMMS_RETRIGEN)
->> +			return 0;
->> +	}
->> +
->> +	dev_warn(&client->dev, "Enabling RETRIGEN workaround\n");
->> +	data->use_retrigen_workaround = true;
->> +	return 0;
->> +}
-> 
-> Hello Jiada,
-> 
-> I'm seeing "Enabling RETRIGEN workaround" message with the following
-> device-tree entry:
-> 
-> touchscreen@4c {
-> 	compatible = "atmel,maxtouch";
-> 	reg = <0x4c>;
-> 
-> 	interrupt-parent = <&gpio>;
-> 	interrupts = <TEGRA_GPIO(V, 6) IRQ_TYPE_LEVEL_LOW>;
-> 
-> 	reset-gpios = <&gpio TEGRA_GPIO(Q, 7) GPIO_ACTIVE_HIGH>;
-> };
-> 
-> This happens because data->irq is NULL. Please fix it, thanks in advance.
-Thanks for reporting this issue,
-I will fix this issue in v8 patch-set
+This patch series looks good, thanks. Since Andrew has merged it to -mm again,
+I won't add my Reviewed-by to bother. 
 
-Thanks,
-Jiada
-> 
+Hi David, Vitaly
+
+There are several things unclear to me.
+
+So, these improved interfaces are used to alleviate the burden of the 
+existing udev rules, or try to replace it? As you know, we have been
+using udev rules to interact between kernel and user space on bare metal,
+and guests who want to hot add/remove.
+
+And also the OOM issue in hyperV when onlining pages after adding memory
+block. I am not a virt devel expert, could this happen on bare metal
+system?
+
+Thanks
+Baoquan
+
