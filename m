@@ -2,85 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 66F0C18A3E1
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 21:43:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5E2B818A3EF
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 21:47:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726961AbgCRUnT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Mar 2020 16:43:19 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:42300 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726647AbgCRUnT (ORCPT
+        id S1726943AbgCRUrR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Mar 2020 16:47:17 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:58398 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726647AbgCRUrR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Mar 2020 16:43:19 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=oGlJP/cmQF74W01lZDvZS2p/EZnU4amRSfPq9wPSqKo=; b=ailZOps1Hhs1hW9bDTEgiRDWay
-        CJaNiGMFz4rag/E5zoMPMrXJVbBheUXhO7RccSK4AV+GYXMvZp1TQpPdKOQg3uNLxYEJlLwRsCTM+
-        nKOIhFRw2txYwRbdizMlmUIn2hv3t5pC21BLzulGFujEoKwF41BmkKdxa2GPyN29LLagPA1Lmf8bb
-        m9tPny7VpgDE4h+KjSZiicn9PT+e3HIFefRBBO1Yn2MhCIVxrlSpDnCQWccDXK5zpRxN/vZwDJHq1
-        YrMu/+R2vKajEMh0A6yprxRp1r/6pvIFegrnLpOk8elrcEqHQAuLd2E5vLBvS7blnSDNFMdWu0O7I
-        BCc+obkg==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jEfWm-0003uQ-Jb; Wed, 18 Mar 2020 20:43:00 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id C0A9530047A;
-        Wed, 18 Mar 2020 21:42:57 +0100 (CET)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id B29452038CEEB; Wed, 18 Mar 2020 21:42:57 +0100 (CET)
-Date:   Wed, 18 Mar 2020 21:42:57 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Kim Phillips <kim.phillips@amd.com>
-Cc:     Stephane Eranian <eranian@google.com>,
-        Ingo Molnar <mingo@kernel.org>, Ingo Molnar <mingo@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>, Jiri Olsa <jolsa@redhat.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Michael Petlan <mpetlan@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, x86 <x86@kernel.org>
-Subject: Re: [PATCH 1/3 v2] perf/amd/uncore: Prepare L3 thread mask code for
- Family 19h support
-Message-ID: <20200318204257.GL20730@hirez.programming.kicks-ass.net>
-References: <20200313231024.17601-1-kim.phillips@amd.com>
- <CABPqkBS8TUMTEz_motpd+8xK599tLXAonUHwp-CWMyU2RhcbQg@mail.gmail.com>
- <2581de5a-969b-93c7-0565-2eef51717900@amd.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2581de5a-969b-93c7-0565-2eef51717900@amd.com>
+        Wed, 18 Mar 2020 16:47:17 -0400
+Received: from p5de0bf0b.dip0.t-ipconnect.de ([93.224.191.11] helo=nanos.tec.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1jEfaG-00065g-VF; Wed, 18 Mar 2020 21:46:37 +0100
+Received: from nanos.tec.linutronix.de (localhost [IPv6:::1])
+        by nanos.tec.linutronix.de (Postfix) with ESMTP id 0CF59101161;
+        Wed, 18 Mar 2020 21:46:35 +0100 (CET)
+Message-Id: <20200318204302.693307984@linutronix.de>
+User-Agent: quilt/0.65
+Date:   Wed, 18 Mar 2020 21:43:02 +0100
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     LKML <linux-kernel@vger.kernel.org>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Ingo Molnar <mingo@kernel.org>, Will Deacon <will@kernel.org>,
+        "Paul E . McKenney" <paulmck@kernel.org>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        Kurt Schwemmer <kurt.schwemmer@microsemi.com>,
+        Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
+        Felipe Balbi <balbi@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-usb@vger.kernel.org, Kalle Valo <kvalo@codeaurora.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        Oleg Nesterov <oleg@redhat.com>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Arnd Bergmann <arnd@arndb.de>, linuxppc-dev@lists.ozlabs.org
+Subject: [patch V2 00/15] Lock ordering documentation and annotation for lockdep
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 18, 2020 at 09:46:41AM -0500, Kim Phillips wrote:
+This is the second version of this work. The first one can be found here:
 
-> > But this does not work with the cpumask programmed for the amd_l3 PMU. This mask
-> > shows, as it should, one CPU/CCX. So that means that when I do:
-> > 
-> > $ perf stat -a amd_l3/event=llc_event/
-> > 
-> > This only collects on the CPUs listed in the cpumask: 0,4,8,12 ....
-> > That means that L3 events generated by the other CPUs on the CCX are
-> > not monitored.
-> > I can easily see the problem by pinning a memory bound program to
-> > CPU64, for instance.
-> 
-> Right, the higher level code calls the driver with a single cpu==0
-> call if the perf tool is invoked with a simple -a style system-wide.
-> If the tool is invoked with supplemental switches to -a, like -C 0-255,
-> and -A, the driver gets called multiple times with all the unique cpu
-> values.  The latter is the expected invocation style when measuring
-> a benchmark pinned on a subset of cpus, i.e., when evaluating
-> the driver, and is the more deterministic behaviour for the driver
-> to have, given it cannot tell the difference otherwise.
+   https://lore.kernel.org/r/20200313174701.148376-1-bigeasy@linutronix.de
 
-That seems to suggest it is all horribly broken.
+Changes since V1:
+
+  - Split the PCI/switchtec patch (picked up the fix from Logan) and
+    reworked the change log.
+
+  - Addressed Linus feedback vs. completions.
+
+    Most of the places which had open coded completion variants have been
+    analysed and fixed up to use the regular interfaces.
+
+    The PS3 one got converted by Peter Zijlstra to rcu_wait().
+
+    Add explanation in the change log why swait actually fits the
+    completion semantics.
+
+  - Addressed Randys feedback on documentation
+
+Thanks,
+
+	tglx
+
