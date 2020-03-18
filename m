@@ -2,204 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 03A7D189D18
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 14:36:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AE8C6189D28
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 14:39:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726962AbgCRNgb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Mar 2020 09:36:31 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37344 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726777AbgCRNga (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Mar 2020 09:36:30 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 59AC420774;
-        Wed, 18 Mar 2020 13:36:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584538588;
-        bh=gLmKwIgKSmCrplDshX3y+IGw0PE0LxDrFt/DCEBxXjs=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=zGaBOO4+xpBSYAAQ/UJsNB0SxSxV8SnlT4VS0RM9M+df3P6npTCBJuMgF5cJPAuLP
-         6JI62qXCFctFbpjUospbeIPZLwe46H9vi9Nhie34SNsxuwBfLdk3j5yD/C3gbHh0Vo
-         gVYzWnYeuIFubNhyDEuw5mNwJFTiq2O328fSaqKE=
-Date:   Wed, 18 Mar 2020 14:36:26 +0100
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc:     arnd@arndb.de, smohanad@codeaurora.org, jhugo@codeaurora.org,
-        kvalo@codeaurora.org, bjorn.andersson@linaro.org,
-        hemantk@codeaurora.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 03/16] bus: mhi: core: Add support for registering MHI
- client drivers
-Message-ID: <20200318133626.GA2801580@kroah.com>
-References: <20200220095854.4804-1-manivannan.sadhasivam@linaro.org>
- <20200220095854.4804-4-manivannan.sadhasivam@linaro.org>
+        id S1726961AbgCRNjA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Mar 2020 09:39:00 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:52093 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726730AbgCRNi7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Mar 2020 09:38:59 -0400
+Received: by mail-wm1-f67.google.com with SMTP id c187so2117533wme.1
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Mar 2020 06:38:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google;
+        h=date:from:to:cc:subject:message-id:mail-followup-to:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=6R5xf9NqTS0jMDexNFwg03hIQwJWepjqVTqQml3+25g=;
+        b=PmLTKI+jZxj3t3dDPkHpXoEBiwtAI3ewtlXoBbpkAp+ImmLqcN8JC5QH7GPvRKLcPQ
+         +xOBx6iL47cZLqOw1xytvO34OdPn8T8YR3OiTiEnuRpQta9BzxuhKNSukZ9T/BIrdA1N
+         SYdLIlQuiwpi5pfQT+xJTLa+Zh7KNkvRsSHcE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to;
+        bh=6R5xf9NqTS0jMDexNFwg03hIQwJWepjqVTqQml3+25g=;
+        b=iY5e84bR1lQhlcuf3hcDt4L4dKWdj8HC3082eSNHtI5O8f8EjUXXVAuNBBQncknp5d
+         fSiqXwPU/D5mLhaf+eSZNtuZEDBdsviB5+nPGcUJz0o/9ZLRq4w2sqwJ9b0vNNCeBDRj
+         3ZVJrBVO3FIGx8/gEug5pS4wba3mDG7bW+KYtfVJUAo01TbjkJ44LkbAAF0H9D4f+d8V
+         RerDHjPiut8d8RAg366NeosCOPJ/sCw9AH/ym5Exy4mqbaMSF/cktVQaQ1z6CD2AncvS
+         Af8TkBZU/0V2DR6e2ZRuMZAHKsSmWu/WlNf2Amd8aXEcEOQUul5nA0GbhE4FNGazO02V
+         bg9w==
+X-Gm-Message-State: ANhLgQ1Fq8xlGtwxhzzJYdMc5103954qgabQMyJ7QgbZXtggN3wAb3OW
+        XKtkNbb+FF4F36ttyUhQXcb8RQ==
+X-Google-Smtp-Source: ADFU+vuUYj/OYML10zdOHlJ4Njc9aninKsXTvMVWhceXQ6IvYDvu1robtZJWgU11PbUN4ofmJi563Q==
+X-Received: by 2002:a05:600c:2319:: with SMTP id 25mr5364849wmo.106.1584538735341;
+        Wed, 18 Mar 2020 06:38:55 -0700 (PDT)
+Received: from phenom.ffwll.local ([2a02:168:57f4:0:efd0:b9e5:5ae6:c2fa])
+        by smtp.gmail.com with ESMTPSA id j11sm2065580wrt.14.2020.03.18.06.38.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 18 Mar 2020 06:38:54 -0700 (PDT)
+Date:   Wed, 18 Mar 2020 14:38:52 +0100
+From:   Daniel Vetter <daniel@ffwll.ch>
+To:     Qiujun Huang <hqjagain@gmail.com>
+Cc:     daniel@ffwll.ch, maarten.lankhorst@linux.intel.com,
+        mripard@kernel.org, airlied@linux.ie,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        anenbupt@gmail.com
+Subject: Re: [PATCH v2] drm/lease: fix WARNING in idr_destroy
+Message-ID: <20200318133852.GU2363188@phenom.ffwll.local>
+Mail-Followup-To: Qiujun Huang <hqjagain@gmail.com>,
+        maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+        airlied@linux.ie, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org, anenbupt@gmail.com
+References: <1584518030-4173-1-git-send-email-hqjagain@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200220095854.4804-4-manivannan.sadhasivam@linaro.org>
+In-Reply-To: <1584518030-4173-1-git-send-email-hqjagain@gmail.com>
+X-Operating-System: Linux phenom 5.3.0-3-amd64 
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 20, 2020 at 03:28:41PM +0530, Manivannan Sadhasivam wrote:
-> This commit adds support for registering MHI client drivers with the
-> MHI stack. MHI client drivers binds to one or more MHI devices inorder
-> to sends and receive the upper-layer protocol packets like IP packets,
-> modem control messages, and diagnostics messages over MHI bus.
+On Wed, Mar 18, 2020 at 03:53:50PM +0800, Qiujun Huang wrote:
+> drm_lease_create takes ownership of leases. And leases will be released
+> by drm_master_put.
 > 
-> This is based on the patch submitted by Sujeev Dias:
-> https://lkml.org/lkml/2018/7/9/987
+> drm_master_put
+>     ->drm_master_destroy
+>             ->idr_destroy
 > 
-> Signed-off-by: Sujeev Dias <sdias@codeaurora.org>
-> Signed-off-by: Siddartha Mohanadoss <smohanad@codeaurora.org>
-> [mani: splitted and cleaned up for upstream]
-> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> Reviewed-by: Jeffrey Hugo <jhugo@codeaurora.org>
-> Tested-by: Jeffrey Hugo <jhugo@codeaurora.org>
+> So we needn't call idr_destroy again.
+> 
+> Reported-and-tested-by: syzbot+05835159fe322770fe3d@syzkaller.appspotmail.com
+> Signed-off-by: Qiujun Huang <hqjagain@gmail.com>
+
+Thanks for the respin, and I've also seen the syzbot confirmation, so all
+great.
+
+Merged to -fixes with a cc: stable.
+-Daniel
+
 > ---
->  drivers/bus/mhi/core/init.c | 149 ++++++++++++++++++++++++++++++++++++
->  include/linux/mhi.h         |  39 ++++++++++
->  2 files changed, 188 insertions(+)
+>  drivers/gpu/drm/drm_lease.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
 > 
-> diff --git a/drivers/bus/mhi/core/init.c b/drivers/bus/mhi/core/init.c
-> index 6f24c21284ec..12e386862b3f 100644
-> --- a/drivers/bus/mhi/core/init.c
-> +++ b/drivers/bus/mhi/core/init.c
-> @@ -374,8 +374,157 @@ struct mhi_device *mhi_alloc_device(struct mhi_controller *mhi_cntrl)
->  	return mhi_dev;
->  }
+> diff --git a/drivers/gpu/drm/drm_lease.c b/drivers/gpu/drm/drm_lease.c
+> index b481caf..825abe3 100644
+> --- a/drivers/gpu/drm/drm_lease.c
+> +++ b/drivers/gpu/drm/drm_lease.c
+> @@ -542,10 +542,12 @@ int drm_mode_create_lease_ioctl(struct drm_device *dev,
+>  	}
 >  
-> +static int mhi_driver_probe(struct device *dev)
-> +{
-> +	struct mhi_device *mhi_dev = to_mhi_device(dev);
-> +	struct mhi_controller *mhi_cntrl = mhi_dev->mhi_cntrl;
-> +	struct device_driver *drv = dev->driver;
-> +	struct mhi_driver *mhi_drv = to_mhi_driver(drv);
-> +	struct mhi_event *mhi_event;
-> +	struct mhi_chan *ul_chan = mhi_dev->ul_chan;
-> +	struct mhi_chan *dl_chan = mhi_dev->dl_chan;
-> +
-> +	if (ul_chan) {
-> +		/*
-> +		 * If channel supports LPM notifications then status_cb should
-> +		 * be provided
-> +		 */
-> +		if (ul_chan->lpm_notify && !mhi_drv->status_cb)
-> +			return -EINVAL;
-> +
-> +		/* For non-offload channels then xfer_cb should be provided */
-> +		if (!ul_chan->offload_ch && !mhi_drv->ul_xfer_cb)
-> +			return -EINVAL;
-> +
-> +		ul_chan->xfer_cb = mhi_drv->ul_xfer_cb;
-> +	}
-> +
-> +	if (dl_chan) {
-> +		/*
-> +		 * If channel supports LPM notifications then status_cb should
-> +		 * be provided
-> +		 */
-> +		if (dl_chan->lpm_notify && !mhi_drv->status_cb)
-> +			return -EINVAL;
-> +
-> +		/* For non-offload channels then xfer_cb should be provided */
-> +		if (!dl_chan->offload_ch && !mhi_drv->dl_xfer_cb)
-> +			return -EINVAL;
-> +
-> +		mhi_event = &mhi_cntrl->mhi_event[dl_chan->er_index];
-> +
-> +		/*
-> +		 * If the channel event ring is managed by client, then
-> +		 * status_cb must be provided so that the framework can
-> +		 * notify pending data
-> +		 */
-> +		if (mhi_event->cl_manage && !mhi_drv->status_cb)
-> +			return -EINVAL;
-> +
-> +		dl_chan->xfer_cb = mhi_drv->dl_xfer_cb;
-> +	}
-> +
-> +	/* Call the user provided probe function */
-> +	return mhi_drv->probe(mhi_dev, mhi_dev->id);
-> +}
-> +
-> +static int mhi_driver_remove(struct device *dev)
-> +{
-> +	struct mhi_device *mhi_dev = to_mhi_device(dev);
-> +	struct mhi_driver *mhi_drv = to_mhi_driver(dev->driver);
-> +	struct mhi_chan *mhi_chan;
-> +	enum mhi_ch_state ch_state[] = {
-> +		MHI_CH_STATE_DISABLED,
-> +		MHI_CH_STATE_DISABLED
-> +	};
-> +	int dir;
-> +
-> +	/* Skip if it is a controller device */
-> +	if (mhi_dev->dev_type == MHI_DEVICE_CONTROLLER)
-> +		return 0;
-> +
-> +	/* Reset both channels */
-> +	for (dir = 0; dir < 2; dir++) {
-> +		mhi_chan = dir ? mhi_dev->ul_chan : mhi_dev->dl_chan;
-> +
-> +		if (!mhi_chan)
-> +			continue;
-> +
-> +		/* Wake all threads waiting for completion */
-> +		write_lock_irq(&mhi_chan->lock);
-> +		mhi_chan->ccs = MHI_EV_CC_INVALID;
-> +		complete_all(&mhi_chan->completion);
-> +		write_unlock_irq(&mhi_chan->lock);
-> +
-> +		/* Set the channel state to disabled */
-> +		mutex_lock(&mhi_chan->mutex);
-> +		write_lock_irq(&mhi_chan->lock);
-> +		ch_state[dir] = mhi_chan->ch_state;
-> +		mhi_chan->ch_state = MHI_CH_STATE_SUSPENDED;
-> +		write_unlock_irq(&mhi_chan->lock);
-> +
-> +		mutex_unlock(&mhi_chan->mutex);
-> +	}
-> +
-> +	mhi_drv->remove(mhi_dev);
-> +
-> +	/* De-init channel if it was enabled */
-> +	for (dir = 0; dir < 2; dir++) {
-> +		mhi_chan = dir ? mhi_dev->ul_chan : mhi_dev->dl_chan;
-> +
-> +		if (!mhi_chan)
-> +			continue;
-> +
-> +		mutex_lock(&mhi_chan->mutex);
-> +
-> +		mhi_chan->ch_state = MHI_CH_STATE_DISABLED;
-> +
-> +		mutex_unlock(&mhi_chan->mutex);
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +int mhi_driver_register(struct mhi_driver *mhi_drv)
-> +{
-> +	struct device_driver *driver = &mhi_drv->driver;
-> +
-> +	if (!mhi_drv->probe || !mhi_drv->remove)
-> +		return -EINVAL;
-> +
-> +	driver->bus = &mhi_bus_type;
-> +	driver->probe = mhi_driver_probe;
-> +	driver->remove = mhi_driver_remove;
-> +
-> +	return driver_register(driver);
-> +}
-> +EXPORT_SYMBOL_GPL(mhi_driver_register);
+>  	DRM_DEBUG_LEASE("Creating lease\n");
+> +	/* lessee will take the ownership of leases */
+>  	lessee = drm_lease_create(lessor, &leases);
+>  
+>  	if (IS_ERR(lessee)) {
+>  		ret = PTR_ERR(lessee);
+> +		idr_destroy(&leases);
+>  		goto out_leases;
+>  	}
+>  
+> @@ -580,7 +582,6 @@ int drm_mode_create_lease_ioctl(struct drm_device *dev,
+>  
+>  out_leases:
+>  	put_unused_fd(fd);
+> -	idr_destroy(&leases);
+>  
+>  	DRM_DEBUG_LEASE("drm_mode_create_lease_ioctl failed: %d\n", ret);
+>  	return ret;
+> -- 
+> 1.8.3.1
+> 
 
-You don't care about module owners of the driver?  Odd :(
-
-(hint, you probably should...)
-
-greg k-h
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
