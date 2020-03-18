@@ -2,94 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 04F5A189B86
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 13:04:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0E70E189B8E
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 13:04:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726730AbgCRMEB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Mar 2020 08:04:01 -0400
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:40271 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726616AbgCRMEA (ORCPT
+        id S1726840AbgCRMEX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Mar 2020 08:04:23 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:57787 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726740AbgCRMEW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Mar 2020 08:04:00 -0400
-Received: by mail-ot1-f66.google.com with SMTP id e19so4113614otj.7
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Mar 2020 05:04:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ON8aSc7ZZcAQyUZHAW9VI1gG1tyQ24ZFYQEruz9gWo0=;
-        b=itOjqh2g1ZkLQELaM5IsOxGDSehkAZSmi4DU42VdIH9j47wwlmETry1dzPBv5Eu2Zj
-         UBrRvqDq//rX8EWY0EYa5W22keh9vNNZ6QfRfXs9wNVLj3m+oVUy+1kR5iwdtSvRMTIN
-         jfxQrRsJZC8t7HWZiYa5fJWWEbQIr2BxkaQoIO0Ft/OWzSNud9Ugf8EDv1d2Z3Ky3oR2
-         8j3Ji1FQIzWvwqWLi8Iq+UwJGEdkSHGiR68rVWH41xtsSTBJQsdMvG8n60TLEmPX8THN
-         r45sSugLCWzpjIc6GHDjOxbH5a7YqjDx2Jy4Sfo/ekFeFcfNC96IyDXkUnueg/39MMcH
-         szZg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ON8aSc7ZZcAQyUZHAW9VI1gG1tyQ24ZFYQEruz9gWo0=;
-        b=RcrgwcwUyagol0WcNDxwIf6Ux2gjNsXBbC12rGHRzfTJPU6X6V0uZFs1ZJC1ucv9Kx
-         iU775I9AXz9ns5JCVXBNwuD6gzhhVQbumkvy156EGk7jS2+/ounyIPgog4f6n/AxOjzL
-         V29XUsg78MJPxE5+jnEETlOgGkEm8fQkGHL2CJOSeFmw4dF3fLTnHMUeXnJU8503abW4
-         Hw5tZYI5uFz7tkN4y/NvwJlRy63kBel3LlYZ7/CN7ntWGCkN21O5tijPUGukZNiKdd3z
-         9a/Oq9Ooa2Tu03hzEvvbLZ3jCcy5/D+6SkcSyl7jW5ByaQNHdJFwJqvpW5WnDI+kaSEv
-         qVfA==
-X-Gm-Message-State: ANhLgQ2lb9vMnJ5nTfNunogDYID3gIChp0YgiPFwFLeY2AJDqnPAyzFi
-        KFO7INCW7Di7+34l0trGTWhIEzc2PUhe0tvT5D+13g==
-X-Google-Smtp-Source: ADFU+vsWQ+o1R/VBSQJ1XYliOSPlCQgT3ZFST7kCA8+qMaRb8f2/sFxzTZdgRhJSWh6L7H0D/CX1fqXT4OmreAQGI8A=
-X-Received: by 2002:a9d:6b1a:: with SMTP id g26mr3442844otp.2.1584533039830;
- Wed, 18 Mar 2020 05:03:59 -0700 (PDT)
+        Wed, 18 Mar 2020 08:04:22 -0400
+Received: from dude.hi.pengutronix.de ([2001:67c:670:100:1d::7])
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ore@pengutronix.de>)
+        id 1jEXQW-00018a-2E; Wed, 18 Mar 2020 13:04:00 +0100
+Received: from ore by dude.hi.pengutronix.de with local (Exim 4.92)
+        (envelope-from <ore@pengutronix.de>)
+        id 1jEXQT-0001JU-RT; Wed, 18 Mar 2020 13:03:57 +0100
+From:   Oleksij Rempel <o.rempel@pengutronix.de>
+To:     Mark Rutland <mark.rutland@arm.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Shawn Guo <shawnguo@kernel.org>
+Cc:     Oleksij Rempel <o.rempel@pengutronix.de>,
+        devicetree@vger.kernel.org, Fabio Estevam <festevam@gmail.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>
+Subject: [PATCH v1 1/6] dt-bindings: vendor-prefixes: Add an entry for Protonic Holland
+Date:   Wed, 18 Mar 2020 13:03:49 +0100
+Message-Id: <20200318120354.4989-1-o.rempel@pengutronix.de>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-References: <1584343103-13896-1-git-send-email-hqjagain@gmail.com>
- <20200317170243.GR2363188@phenom.ffwll.local> <CAJRQjofSWYR--4V_4zmp6K9WVtqShdzpGuH1VFBPvHpViGYH5g@mail.gmail.com>
- <CAKMK7uG8v7cYUwqTJTgYGfC8LEZtczTZ5a+Z4NcRnbFVBcG4Fw@mail.gmail.com>
-In-Reply-To: <CAKMK7uG8v7cYUwqTJTgYGfC8LEZtczTZ5a+Z4NcRnbFVBcG4Fw@mail.gmail.com>
-From:   Marco Elver <elver@google.com>
-Date:   Wed, 18 Mar 2020 13:03:48 +0100
-Message-ID: <CANpmjNNaBqV2jPcM9p_dB4KEUJDTcRd+V_LyD=tejSRG4DBAeg@mail.gmail.com>
-Subject: Re: [PATCH RESEND] drm/lease: fix potential race in fill_object_idr
-To:     Daniel Vetter <daniel@ffwll.ch>
-Cc:     Qiujun Huang <hqjagain@gmail.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Dave Airlie <airlied@linux.ie>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::7
+X-SA-Exim-Mail-From: ore@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 18 Mar 2020 at 08:34, Daniel Vetter <daniel@ffwll.ch> wrote:
->
-> On Tue, Mar 17, 2020 at 11:33 PM Qiujun Huang <hqjagain@gmail.com> wrote:
-> >
-> > On Wed, Mar 18, 2020 at 1:02 AM Daniel Vetter <daniel@ffwll.ch> wrote:
-> > >
-> > > On Mon, Mar 16, 2020 at 03:18:23PM +0800, Qiujun Huang wrote:
-> > > > We should hold idr_mutex for idr_alloc.
-> > > >
-> > > > Signed-off-by: Qiujun Huang <hqjagain@gmail.com>
-> > >
-> > > I've not seen the first version of this anywhere in my inbox, not sure
-> > > where that got lost.
-> > >
-> > > Anyway, this seems like a false positive - I'm assuming this was caught
-> > > with KCSAN. The commit message really should mention that.
-> > >
-> > > fill_object_idr creates the idr, which yes is only access later on under
-> > > the idr_mutex. But here it's not yet visible to any other thread, and
-> > > hence lockless access is safe and correct.
-> >
-> > Agree that.
->
-> Do you know what the recommended annotation for kcsan false positives
-> like this should be? Adding kcsan author Marco.
+Add "prt" entry for Protonic Holland: https://www.protonic.nl/en/
 
-AFAIK KCSAN has not reported this, so I think there is nothing to do here.
+Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+---
+ Documentation/devicetree/bindings/vendor-prefixes.yaml | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Thanks,
--- Marco
+diff --git a/Documentation/devicetree/bindings/vendor-prefixes.yaml b/Documentation/devicetree/bindings/vendor-prefixes.yaml
+index 9e67944bec9c..a0d3214187a5 100644
+--- a/Documentation/devicetree/bindings/vendor-prefixes.yaml
++++ b/Documentation/devicetree/bindings/vendor-prefixes.yaml
+@@ -775,6 +775,8 @@ patternProperties:
+     description: Primux Trading, S.L.
+   "^probox2,.*":
+     description: PROBOX2 (by W2COMP Co., Ltd.)
++  "^prt,.*":
++    description: Protonic Holland
+   "^pulsedlight,.*":
+     description: PulsedLight, Inc
+   "^purism,.*":
+-- 
+2.25.1
+
