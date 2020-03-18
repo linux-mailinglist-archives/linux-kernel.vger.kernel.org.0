@@ -2,103 +2,67 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4072E189FF7
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 16:53:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D7D04189FFD
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 16:54:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727140AbgCRPxT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Mar 2020 11:53:19 -0400
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:34265 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726473AbgCRPxT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Mar 2020 11:53:19 -0400
-Received: by mail-oi1-f196.google.com with SMTP id j5so10234311oij.1
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Mar 2020 08:53:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=/EsTMXwx4kqSqfiOJ+5VqxPy8ESW5kmMEvWmLUqRM04=;
-        b=P9ymWRwzUtq3KgWOv+H7Pij9fdoc090XCS4OPxI9A1QLtCEKaCE0cbmT4EYt3eDtCA
-         sb2dGnxnhqks0HWZ2ytr3VS8zMUcYfLKcIHEA9PbfqWjyRXfMwvq+5eqQXlSIW8W7DPU
-         BawYthbfaq3FoiLzwKCXiAw3J1amj2PcUSsDmvftnx0MJyWPGWH6Cr0DP+O2wJSO9WV8
-         JBJr1ILAo0xSr2VJcQVP2A9j4DLWMFiLIep3rETwXfcXbulb7bH5K9kGiW1Gk0idGUJU
-         c55Wnogd3bxGL9X742NwMMBylQNk5i+sAOuUYe/Lv4W+N7fnnBhIJMkdHG+GIXnH7Gia
-         ++Sg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=/EsTMXwx4kqSqfiOJ+5VqxPy8ESW5kmMEvWmLUqRM04=;
-        b=BZZVnh5ueBegEiKGEyGo27v8x/2j8u/N/YZXLaUmih5g248O8MgtSr1jjZh28zZ7z7
-         chvpB/eGjjCAN448sJOTCwaIKi9oXQEgGTLEoZn7JowpxJudq4aILnvOKUDQswVhZPmy
-         adeBB7T9/0IvAliuM+5QXd0inZPIl0zncuM1B5/YfQrsELmxM6bKYZo1oCnVV00f+GgZ
-         eci/4ZWASBFG+p/F9At+qbPZBjT0Lf1Lv3DzjJcSypd+UT1IVOpWg0poXSqn8LkmFW0o
-         n0AEKjToQO3Xzabnt4iiOUk22/2gg46A24phanalIBQ2OqNLUsrz5M7xchAf6r0JVEhf
-         JuHA==
-X-Gm-Message-State: ANhLgQ1pIHlr2n6o/wyuWT6x5FTFSPO9Nc5pbCSWNMOP+IFJppobvqfO
-        mqfA+P/PFBpK+QXSNowDCiJgmOoNhaCCgYBWP0u2xQ==
-X-Google-Smtp-Source: ADFU+vutWXljLwy4LQhxFZY3HNaRb6NFkXajAdj6p1EAqEqrSw29FuzWdXXrb9ZA8cxm0hL7zE3UOGk1lBceIzIXLe0=
-X-Received: by 2002:a05:6808:90f:: with SMTP id w15mr3813640oih.0.1584546798751;
- Wed, 18 Mar 2020 08:53:18 -0700 (PDT)
+        id S1727175AbgCRPyP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Mar 2020 11:54:15 -0400
+Received: from mga14.intel.com ([192.55.52.115]:50380 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726473AbgCRPyP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Mar 2020 11:54:15 -0400
+IronPort-SDR: dftVKVfMsgcCgoEaZUyRKqpsupQjKXkQkKliPLverLxhck2s7hzzWyeaqKvotVEu4+B8e7QbUQ
+ g3SkeFz4ro6A==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Mar 2020 08:54:15 -0700
+IronPort-SDR: Tjc3uIEmX3dQplYupWc5eSXp2BpVa6M28ayGV6FutVzKT/33/6CL3Y7l8bOV783m+C9pZZEp/l
+ /8430xvsEc1A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,568,1574150400"; 
+   d="scan'208";a="233880826"
+Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
+  by orsmga007.jf.intel.com with ESMTP; 18 Mar 2020 08:54:12 -0700
+Received: from andy by smile with local (Exim 4.93)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1jEb1K-00Anye-UL; Wed, 18 Mar 2020 17:54:14 +0200
+Date:   Wed, 18 Mar 2020 17:54:14 +0200
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Lukas Wunner <lukas@wunner.de>
+Cc:     Heiko Stuebner <heiko@sntech.de>, gregkh@linuxfoundation.org,
+        jslaby@suse.com, matwey.kornilov@gmail.com,
+        linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/7] serial: 8250: Add rs485 emulation to 8250_dw
+Message-ID: <20200318155414.GR1922688@smile.fi.intel.com>
+References: <20200318142640.982763-1-heiko@sntech.de>
+ <20200318144320.GL1922688@smile.fi.intel.com>
+ <20200318153754.dctd4q7e2fodeqsw@wunner.de>
 MIME-Version: 1.0
-References: <20200317061522.12685-1-rayagonda.kokatanur@broadcom.com>
- <20200317061522.12685-3-rayagonda.kokatanur@broadcom.com> <CAPcyv4j1BJStqSZvbNdjHs0RoSWWtk06ieQAXOUwJCjP8mqBLQ@mail.gmail.com>
- <CAHO=5PE9SLg2O1fp5YUp0Z0sbNfKNiu5kGXBRtHmGyXRW5w3pg@mail.gmail.com>
-In-Reply-To: <CAHO=5PE9SLg2O1fp5YUp0Z0sbNfKNiu5kGXBRtHmGyXRW5w3pg@mail.gmail.com>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Wed, 18 Mar 2020 08:53:07 -0700
-Message-ID: <CAPcyv4j3Q6n8sj=ATtDL0cpHvMqZPaBxuZ13pgUsvhXWqDh1BA@mail.gmail.com>
-Subject: Re: [PATCH v1 2/2] async_tx: fix possible negative array indexing
-To:     Rayagonda Kokatanur <rayagonda.kokatanur@broadcom.com>
-Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S . Miller" <davem@davemloft.net>,
-        Allison Randal <allison@lohutok.net>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-crypto <linux-crypto@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200318153754.dctd4q7e2fodeqsw@wunner.de>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 18, 2020 at 12:17 AM Rayagonda Kokatanur
-<rayagonda.kokatanur@broadcom.com> wrote:
->
-> On Tue, Mar 17, 2020 at 11:06 PM Dan Williams <dan.j.williams@intel.com> wrote:
-> >
-> > On Mon, Mar 16, 2020 at 11:16 PM Rayagonda Kokatanur
-> > <rayagonda.kokatanur@broadcom.com> wrote:
-> > >
-> > > Fix possible negative array index read in __2data_recov_5() function.
-> > >
-> > > Signed-off-by: Rayagonda Kokatanur <rayagonda.kokatanur@broadcom.com>
-> > > ---
-> > >  crypto/async_tx/async_raid6_recov.c | 2 +-
-> > >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > >
-> > > diff --git a/crypto/async_tx/async_raid6_recov.c b/crypto/async_tx/async_raid6_recov.c
-> > > index 33f2a8f8c9f4..9cd016cb2d09 100644
-> > > --- a/crypto/async_tx/async_raid6_recov.c
-> > > +++ b/crypto/async_tx/async_raid6_recov.c
-> > > @@ -206,7 +206,7 @@ __2data_recov_5(int disks, size_t bytes, int faila, int failb,
-> > >                 good_srcs++;
-> > >         }
-> > >
-> > > -       if (good_srcs > 1)
-> > > +       if ((good_srcs > 1) || (good < 0))
-> > >                 return NULL;
-> >
-> > Read the code again, I don't see how this can happen.
->
-> This case can happen and it is reported by coverity tool.
-> In the for loop , the condition "if (blocks[i] == NULL)" true all the
-> time then variable 'good' will be -1.
+On Wed, Mar 18, 2020 at 04:37:54PM +0100, Lukas Wunner wrote:
+> On Wed, Mar 18, 2020 at 04:43:20PM +0200, Andy Shevchenko wrote:
+> > On Wed, Mar 18, 2020 at 03:26:33PM +0100, Heiko Stuebner wrote:
+> > > This series tries to revive the work of Giulio Benetti from 2018 [0]
+> > > which seemed to have stalled at that time.
+> 
+> Oh dear. :-(  This needs a rebase on current tty-next.
 
-Just because coverity reports it does not make it true. Please go read
-the full call path that gets us to this call and identify how all
-entries in blocks[] could be NULL. Hint, the answer is in how
-async_raid6_2data_recov() calls __2data_recov_5().
+That's what I was thinking when browsed thru the content, and thus commented in
+the same way to this cover letter :-)
+
+Thank you for looking into this.
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
