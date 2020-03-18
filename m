@@ -2,103 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CE69C189AA1
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 12:31:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AE015189AB8
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 12:34:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727721AbgCRLa7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Mar 2020 07:30:59 -0400
-Received: from mga04.intel.com ([192.55.52.120]:38959 "EHLO mga04.intel.com"
+        id S1727867AbgCRLd4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Mar 2020 07:33:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55496 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726905AbgCRLa7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Mar 2020 07:30:59 -0400
-IronPort-SDR: ZzyFnMHR7HiEs2LZ0RSyp0DwTWU0OfJayrZozXJrjjSLJbotKns75Cl1iwnPoIvXrWDWsAC6fC
- NwBXFSuDXUuQ==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Mar 2020 04:30:59 -0700
-IronPort-SDR: AqkDIx3Td8pH5lRUMP40uX14LJgdxbQfhrwqZgZ/gowI5oYq4d2ljnXqcPC1rysI3qidfEndem
- IkJ6WwNKfPIw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,567,1574150400"; 
-   d="scan'208";a="244796691"
-Received: from mattu-haswell.fi.intel.com (HELO [10.237.72.170]) ([10.237.72.170])
-  by orsmga003.jf.intel.com with ESMTP; 18 Mar 2020 04:30:54 -0700
-Subject: Re: [PATCH v3 2/5] usb: host: xhci-plat: convert to
- devm_platform_get_and_ioremap_resource
-To:     Dejin Zheng <zhengdejin5@gmail.com>, gregkh@linuxfoundation.org,
-        rafael@kernel.org, hminas@synopsys.com, mathias.nyman@intel.com,
-        bgolaszewski@baylibre.com, arnd@arndb.de,
-        jeffrey.t.kirsher@intel.com, hdegoede@redhat.com,
-        treding@nvidia.com, tglx@linutronix.de, tomas.winkler@intel.com,
-        suzuki.poulose@arm.com, sergei.shtylyov@cogentembedded.com,
-        geert@linux-m68k.org, linux-usb@vger.kernel.org
+        id S1726855AbgCRLdz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Mar 2020 07:33:55 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 997FD20770;
+        Wed, 18 Mar 2020 11:33:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1584531235;
+        bh=SF1DNPR0enBSgKdBirdWsoRW6WTJoFq4zX3quBESlEg=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=iwyGiktsFUXhYejTsU/95UA6kvb1z/WXWGqDZhn/33VHFdV58Wg6GWpkwgGEwIySw
+         /xeCN4IYDyQ2S0/G0BvqUr+fZ0TIup4aE2g/DEguMysi6uWmt/G9QTekzAEYAzqq39
+         PAlT6r3jFYXoV2xXMAW1f4tR9bG6/RB2gtbxIbuI=
+Date:   Wed, 18 Mar 2020 12:33:52 +0100
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Qiang Su <suqiang4@huawei.com>
 Cc:     linux-kernel@vger.kernel.org
-References: <20200315140525.21780-1-zhengdejin5@gmail.com>
- <20200315140525.21780-3-zhengdejin5@gmail.com>
-From:   Mathias Nyman <mathias.nyman@linux.intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=mathias.nyman@linux.intel.com; prefer-encrypt=mutual; keydata=
- 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 fiD/
-Message-ID: <e030c889-302f-7893-e5bd-139056e7c2d8@linux.intel.com>
-Date:   Wed, 18 Mar 2020 13:33:23 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+Subject: Re: [PATCH V2] UIO: make maximum memory and port regions configurable
+Message-ID: <20200318113352.GA2365557@kroah.com>
+References: <20200307081008.26848-1-suqiang4@huawei.com>
 MIME-Version: 1.0
-In-Reply-To: <20200315140525.21780-3-zhengdejin5@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200307081008.26848-1-suqiang4@huawei.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 15.3.2020 16.05, Dejin Zheng wrote:
-> Use devm_platform_get_and_ioremap_resource() to simplify code, which
-> contains platform_get_resource() and devm_ioremap_resource(), it also
-> get the resource for use by the following code.
+On Sat, Mar 07, 2020 at 04:10:08PM +0800, Qiang Su wrote:
+> Now each uio device can only support 5 memory regions and
+> 5 port regions. It is far from enough for some big system.
+> On the other hand, the hard-coded style is not flexible.
 > 
-> Signed-off-by: Dejin Zheng <zhengdejin5@gmail.com>
+> Consider the marco is used as array index, so a range for
+> the config is set in menuconfig. The range is set as 1 to 512.
+> The default value is still set as 5 to keep consistent with
+> current code.
+> 
+> Signed-off-by: Qiang Su <suqiang4@huawei.com>
+> Reported-by: kbuild test robot <lkp@intel.com>
+> ---
+> Changes since v1:
+> - also make port regions configurable in menuconfig.
+> - fix kbuild errors.
+> ---
+>  drivers/uio/Kconfig        | 18 ++++++++++++++++++
+>  include/linux/uio_driver.h |  4 ++--
+>  2 files changed, 20 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/uio/Kconfig b/drivers/uio/Kconfig
+> index 202ee81cfc2b..cee7d93cfea2 100644
+> --- a/drivers/uio/Kconfig
+> +++ b/drivers/uio/Kconfig
+> @@ -165,4 +165,22 @@ config UIO_HV_GENERIC
+>  	  to network and storage devices from userspace.
+>  
+>  	  If you compile this as a module, it will be called uio_hv_generic.
+> +
+> +config MAX_UIO_MAPS
+> +	depends on UIO
+> +	int "Maximum of memory nodes each uio device support(1-512)"
+> +	range 1 512
+> +	default 5
+> +	help
+> +	  make the max number of memory regions in uio device configurable.
+> +
+> +config MAX_UIO_PORT_REGIONS
+> +	depends on UIO
+> +	int "Maximum of port regions each uio device support(1-512)"
+> +	range 1 512
+> +	default 5
+> +	help
+> +	  make the max number of port regions in uio device configurable.
 
-Acked-by: Mathias Nyman <mathias.nyman@linux.intel.com>
+
+Can you provide a lot more information in these help texts?  Explain why
+you would ever want to change these values, and that if you do not
+understand, just take the default ones.
+
+Or, better yet, can we just make these values dynamic and grow as needed
+by the system?  Why are they "fixed"?
+
+thanks,
+
+greg k-h
