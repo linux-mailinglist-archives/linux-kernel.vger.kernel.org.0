@@ -2,136 +2,128 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2DE3018A1A9
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 18:39:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DE7F618A1B0
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 18:39:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726765AbgCRRjE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Mar 2020 13:39:04 -0400
-Received: from us-smtp-delivery-74.mimecast.com ([216.205.24.74]:36056 "EHLO
-        us-smtp-delivery-74.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726730AbgCRRjE (ORCPT
+        id S1726864AbgCRRjt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Mar 2020 13:39:49 -0400
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:39026 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726809AbgCRRjt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Mar 2020 13:39:04 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1584553143;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=8ltahyOOW3gyw5hu5HKZgwII4enLzMRUQpOYTS+Rs5s=;
-        b=FklvOzYNTibxE2f3qRFgl6lzhNdmIMG1/6tXEXjOVfcImOTElNrwxi/xaPxeoCqcg9AmWW
-        i65SramMglYPHbUetvxm5SqE7NCNBglgd7xR5l4uBJGH2cfT22Ip3WuGBeXVzheqXZPdwk
-        4TyoKobv8qZyAk+UNpbEmr76pwEKhwg=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-491-7Yh2A9MDPK-8RXclp1KZ-A-1; Wed, 18 Mar 2020 13:39:01 -0400
-X-MC-Unique: 7Yh2A9MDPK-8RXclp1KZ-A-1
-Received: by mail-wr1-f69.google.com with SMTP id i18so1619566wrx.17
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Mar 2020 10:39:01 -0700 (PDT)
+        Wed, 18 Mar 2020 13:39:49 -0400
+Received: by mail-oi1-f195.google.com with SMTP id d63so26646863oig.6
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Mar 2020 10:39:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=kHYLZgvsf1hWg7wss08IWO7NiACgg0ycsHnQwwOGC/o=;
+        b=JBORuCypw8sBksHmM30bDIzjuQ7RWsVH6HMT8e5ZaAVU7E8G6gkLWQXlEXXe77DKFQ
+         MEA/XkeQop3sDtmPEZQHtrMj94AdEeN8yd8hg/I1C9cRQ6xjEE8qLKRT47rl3r+tzT40
+         6BsMYAkcZL536h8DRosc6/sOuEC/CAYbvmnqVZon/PlG100ssTNQ+6FH/8RzYwLGTpqu
+         rYSGNJL2N+7JGsIO7iIdNQIE8oK+Ss3njal+LQtaT1wlGTgK5+rBFdPMv9J8LObp45tO
+         tW5A2oDc//SHWgrjawQAy0iImOIi+JvH9jJRtWWByCfhxeehscEF31ycY5u8kMsPUM6o
+         FIZw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=8ltahyOOW3gyw5hu5HKZgwII4enLzMRUQpOYTS+Rs5s=;
-        b=Hfeb+GmZg6GzmfsrCRaoc5H8Ti0pDI67qohVbYuz92bkLTqdfAoChiFOaWUEJgpRoe
-         ZCmtDwWqRQaCEb9jQV4bu6lN9lLVm15DjM9nPmdNiM1nzBMuYmBL87Zt+9Yd0JJWpe8B
-         qcyCdQiUPMnZ382W/xlfym37CoWn8KV3SGjCSjtHOCiW0/sOOZXTdQbnCIleL/WvLoGc
-         BGYuZAS5OjsxAq1zCVdRklBK+9U4uS+3kIJ58IL02NKRJGqInTcAe1Mmh/fY9fI2gUEU
-         cur0Mzo98dekwO3JNfJeV0HdiuzW1fjKDmeIuRKNg7t4gEg0lGSXFGJGTe1Ze7XJ6Pri
-         YorQ==
-X-Gm-Message-State: ANhLgQ3KqhVViQnSP+DsLGKx+zaaEwEP8sGA4LubDQmKYsUc3s3HUCgK
-        S3iKM0hzG6xnIgh4fbJ9qVvGU7i483G4bJ/G6PNL1BaRyV+bw39fhyW5NVamq7q/icx+c7oyCEL
-        Ao0myC3g4Q8QeJp6MTcKwJqGs
-X-Received: by 2002:a05:600c:24c:: with SMTP id 12mr6260263wmj.119.1584553140438;
-        Wed, 18 Mar 2020 10:39:00 -0700 (PDT)
-X-Google-Smtp-Source: ADFU+vuYkHCYYMA4Xp4XlBoTwsVoafCfvFQAPbXylg2R+kbEgu+F7kEaGahXtLtVFBCfm2S5tlQlBQ==
-X-Received: by 2002:a05:600c:24c:: with SMTP id 12mr6260237wmj.119.1584553140189;
-        Wed, 18 Mar 2020 10:39:00 -0700 (PDT)
-Received: from [192.168.178.58] ([151.21.15.43])
-        by smtp.gmail.com with ESMTPSA id r3sm3775498wrm.35.2020.03.18.10.38.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 18 Mar 2020 10:38:59 -0700 (PDT)
-Subject: Re: [PATCH v2 31/32] KVM: nVMX: Don't flush TLB on nested VM
- transition with EPT enabled
-To:     Sean Christopherson <sean.j.christopherson@intel.com>
-Cc:     Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Ben Gardon <bgardon@google.com>,
-        Junaid Shahid <junaids@google.com>,
-        Liran Alon <liran.alon@oracle.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        John Haxby <john.haxby@oracle.com>,
-        Miaohe Lin <linmiaohe@huawei.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>
-References: <20200317045238.30434-1-sean.j.christopherson@intel.com>
- <20200317045238.30434-32-sean.j.christopherson@intel.com>
- <97f91b27-65ac-9187-6b60-184e1562d228@redhat.com>
- <20200317182251.GD12959@linux.intel.com>
- <218d4dbd-20f1-5bf8-ca44-c53dd9345dab@redhat.com>
- <20200318170241.GJ24357@linux.intel.com>
- <3c3a4d9b-b213-dfc0-2857-a975e9c20770@redhat.com>
- <20200318172614.GK24357@linux.intel.com>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Message-ID: <7661081d-6276-6176-dbbb-700aeec656b8@redhat.com>
-Date:   Wed, 18 Mar 2020 18:38:56 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=kHYLZgvsf1hWg7wss08IWO7NiACgg0ycsHnQwwOGC/o=;
+        b=Pn44vQZl9UzkWZ4Kw1+0gvgIOPqPEJ3ENuJRRMJy4p0LWG/P7GJtwCkKMp0LL3Nxz4
+         nApIWM6gz/OCUXolPD5mqLwJre/78FNH/eQv4Ki6oUFonDMHSs/Ev/bImSK5Wj+vZZ90
+         Xb7646X88uRoSlU3mnSEcydvW0wgQEadfK2hRH6O9g3ixP16OACbkCXz9GnZuS8nvFfQ
+         Rdo4g7XWt16aS0XAU2qbga7RZnLw30FtOLft+ybeKXHyHQrUtAHNKUSvAYTfiqMW8D+P
+         T/wGjzAdJGOJCiH7QQEyfJivjbc2isXePS90zbdoiydhIo6ev0W0Pyo1z5rwG9h33hUV
+         YzvQ==
+X-Gm-Message-State: ANhLgQ2dExFNicGvbpiRsHq1h0mvcns338QdIM8h2J66rqubV6hjCobl
+        KXqQALQnyGDcKfCa2x9JVLQ7aiwiWoPK9A4u64HkPQ==
+X-Google-Smtp-Source: ADFU+vv61FyRVYmaA9PTdDt51tbofJ336O0XLQe2BKgEmzbR6+s801/WV/yc2hI80eFyXV6kWzP+gw13nONTF6vPPUI=
+X-Received: by 2002:a05:6808:495:: with SMTP id z21mr4194137oid.149.1584553188875;
+ Wed, 18 Mar 2020 10:39:48 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20200318172614.GK24357@linux.intel.com>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <158318759687.2216124.4684754859068906007.stgit@dwillia2-desk3.amr.corp.intel.com>
+ <158318760361.2216124.13612198312947463590.stgit@dwillia2-desk3.amr.corp.intel.com>
+ <CAPcyv4hjgNruY84Kr9S5HZ6P03fNcPcmL7H2DN19Z+CbPZ7d+Q@mail.gmail.com> <CAJZ5v0heWeS1iZqHEZ5RB2a=UJbUQF0zAjeFfTa9qBxvQ193=w@mail.gmail.com>
+In-Reply-To: <CAJZ5v0heWeS1iZqHEZ5RB2a=UJbUQF0zAjeFfTa9qBxvQ193=w@mail.gmail.com>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Wed, 18 Mar 2020 10:39:37 -0700
+Message-ID: <CAPcyv4hH55e-tm7erJGm_jVn4gWigQfVPSAUu-DBC4XkF+WZHg@mail.gmail.com>
+Subject: Re: [PATCH 1/5] ACPI: NUMA: Add 'nohmat' option
+To:     "Rafael J. Wysocki" <rafael@kernel.org>
+Cc:     Linux ACPI <linux-acpi@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 18/03/20 18:26, Sean Christopherson wrote:
->>>
->>> 	if (!nested_ept)
->>> 		kvm_mmu_new_cr3(vcpu, cr3, enable_ept ||
->>> 					   nested_cpu_has_vpid(vmcs12));
->>
->> ... which is exactly nested_has_guest_tlb_tag(vcpu).  Well, not exactly
->> but it's a bug in your code above. :)
+On Wed, Mar 18, 2020 at 1:24 AM Rafael J. Wysocki <rafael@kernel.org> wrote:
 >
-> I don't think it's a bug, it's intentionally different.  When enable_ept=0,
-> nested_has_guest_tlb_tag() returns true if and only if L1 has enabled VPID
-> for L2 *and* L2 has been assigned a unique VPID by L0.
-> 
-> For sync purposes, whether or not L2 has been assigned a unique VPID is
-> irrelevant.  L0 needs to invalidate TLB entries to prevent resuing L1's
-> entries (assuming L1 has been assigned a VPID), but L0 doesn't need to sync
-> SPTEs because L2 doesn't expect them to be refreshed.
-                ^^
-                L1
+> On Wed, Mar 18, 2020 at 1:09 AM Dan Williams <dan.j.williams@intel.com> wrote:
+> >
+> > On Mon, Mar 2, 2020 at 2:36 PM Dan Williams <dan.j.williams@intel.com> wrote:
+> > >
+> > > Disable parsing of the HMAT for debug, to workaround broken platform
+> > > instances, or cases where it is otherwise not wanted.
+> >
+> > Rafael, any heartburn with this change to the numa= option?
+> >
+> > ...as I look at this I realize I failed to also update
+> > Documentation/x86/x86_64/boot-options.rst, will fix.
+>
+> Thanks!
+>
+> Apart from this just a minor nit below.
+>
+> > >
+> > > Cc: x86@kernel.org
+> > > Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+> > > Cc: Dave Hansen <dave.hansen@linux.intel.com>
+> > > Cc: Andy Lutomirski <luto@kernel.org>
+> > > Cc: Peter Zijlstra <peterz@infradead.org>
+> > > Cc: Thomas Gleixner <tglx@linutronix.de>
+> > > Cc: Ingo Molnar <mingo@redhat.com>
+> > > Cc: Borislav Petkov <bp@alien8.de>
+> > > Cc: "H. Peter Anvin" <hpa@zytor.com>
+> > > Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+> > > ---
+> > >  arch/x86/mm/numa.c       |    4 ++++
+> > >  drivers/acpi/numa/hmat.c |    3 ++-
+> > >  include/acpi/acpi_numa.h |    1 +
+> > >  3 files changed, 7 insertions(+), 1 deletion(-)
+> > >
+> > > diff --git a/arch/x86/mm/numa.c b/arch/x86/mm/numa.c
+> > > index 59ba008504dc..22de2e2610c1 100644
+> > > --- a/arch/x86/mm/numa.c
+> > > +++ b/arch/x86/mm/numa.c
+> > > @@ -44,6 +44,10 @@ static __init int numa_setup(char *opt)
+> > >  #ifdef CONFIG_ACPI_NUMA
+> > >         if (!strncmp(opt, "noacpi", 6))
+> > >                 acpi_numa = -1;
+> > > +#ifdef CONFIG_ACPI_HMAT
+> > > +       if (!strncmp(opt, "nohmat", 6))
+> > > +               hmat_disable = 1;
+> > > +#endif
+>
+> I wonder if IS_ENABLED() would work here?
 
-Yes you're right.  So I would say keep your code, but we can simplify
-the comment.  Something like:
+I took a look. hmat_disable, acpi_numa, and numa_emu_cmdline() are in
+other compilation units. I could wrap writing those variables with
+helper functions, and change numa_emu_cmdline(), to compile away when
+their respective configuration options are not present.
 
-/*
- * We can skip the TLB flush if we have EPT enabled (because...)  and
- * also if L1 is using VPID, because then it doesn't expect SPTEs for L2
- * to be refreshed.
- *
- * This is almost the same as nested_has_guest_tlb_tag(vcpu), but here
- * we don't care if L2 has been assigned a unique VPID; L1 doesn't know,
- * and will nevertheless do INVVPID to avoid reuse of stale page
- * table entries.
- */
-
-Nevertheless it's scary in that this is a potential attack vector for
-reusing stale L0 SPTEs, so we should make sure it's all properly commented.
-
-Thanks,
-
-Paolo
-
->> It completely makes sense to use that as the third argument, and while a
->> comment is still needed it will be much smaller.
-> Ya, agreed.
-> 
-
+Should we do that in general to have a touch point to report "you
+specified an option that is invalid for your current kernel
+configuration"? I'm happy to do that as a follow-on if you think it's
+worthwhile.
