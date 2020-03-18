@@ -2,99 +2,67 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DCA8A1896A6
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 09:10:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0DAA91896CB
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 09:23:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727331AbgCRIKH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Mar 2020 04:10:07 -0400
-Received: from mail-io1-f66.google.com ([209.85.166.66]:36109 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725298AbgCRIKG (ORCPT
+        id S1727340AbgCRIXI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Mar 2020 04:23:08 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:50829 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727041AbgCRIXI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Mar 2020 04:10:06 -0400
-Received: by mail-io1-f66.google.com with SMTP id d15so23986735iog.3
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Mar 2020 01:10:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=YXUayrHOPCJzF/6FJoY+BFEj3UMjmlbmnbZlPdkq6Po=;
-        b=pgzbRt/reLTxd85HZ30lCVjELDNH9uycFJL3DJEFaKEB4p9NYustgyiOUAru6uWokT
-         KI/F9LITN3XPzA7Hix1Bo5Kq1oH8I9u7saEJqACjSa8VP+P7nkpINUwi7jxAWD6K4CNJ
-         vQOkhkvXrfBiMHt9EyVawr+UOjGLjnJ/9yMeKb6MDNXLm8i19ya5cJU+qY9xF99Omoas
-         qBq1oi26LxtSVWRiI7FOXmaUq7KF+D/ioNFopm5Bs5ePKqM6mVJ1W9iVIrnwN5ojUTuU
-         w3zqG/TXVPYrLW2zsd2Rg85DQ0lKTp1K09boKVZDyP6OAd882v6yqAvxx9/1dX90r1tf
-         ijVg==
+        Wed, 18 Mar 2020 04:23:08 -0400
+Received: by mail-wm1-f67.google.com with SMTP id z13so2164054wml.0
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Mar 2020 01:23:07 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=YXUayrHOPCJzF/6FJoY+BFEj3UMjmlbmnbZlPdkq6Po=;
-        b=Bf4Ke42yy4r+jsbWQkpvumwHATGql8Ry31nfyti2HPbGgGYkC2CqOVXC13YCJ9cC6o
-         QsRY449uXOBl9EvBJUNHjS0Iyxa0d8xMXkhS9r6Qb0v6a6uTri6xjW343mvK8foRztaK
-         Jct1Gjv13IPPzj8uWXsW8kfV5TzevoWEv6cdI2bdKocLqKiiP515tvbeOgch0xWUHO+T
-         +2ofdyHnOUZbwABfvRc1rRmLFEiAZPsDUU5d+XDbmiRJsgTByEyHkipC+vWf0BmON78z
-         MOwGDKTCscSSM3QTsWW1RVxecf1h7EJmLghjnt0IiRGxYX3uXmvrRQWUDkP01xrdfBn8
-         kbsQ==
-X-Gm-Message-State: ANhLgQ01obCDYnpYQT04mk9Q8zLf0X4RuSNHziBNne7j59d5YTXlsMZ+
-        U3WHekO9PkAJedBLWAudVeztPtg4JjHRsLL2Tos=
-X-Google-Smtp-Source: ADFU+vtGaqToi+tepJgBsiJW6SjUf+4rCoDpemJXpl7GqXhJtz7305Sug3Xc0GMfFtuEBRvOt1afdJSJ/Ji7A3ARPyo=
-X-Received: by 2002:a6b:c813:: with SMTP id y19mr2610596iof.125.1584519005895;
- Wed, 18 Mar 2020 01:10:05 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=u1Vg0mBLvEo3DD8HGaqtItvQ6lzE59walEAWqglake0=;
+        b=iwgJSpDTnLWgPGlIafKKXkISo2ettNMoVsYX1VmWBKmuthXkzNBRDrJt27iICh8DyX
+         8Zb5nyPqUYZSEs5Cnl4wzsevuoWXldMYvcKQZLFeiU/X6qRzpHIY2y/2RivVCfpokiti
+         ecKl61GPlgnLR7lWUt3QtjDQWvblnYhFV8sHPNRTRoGtZnqzGsvkI0Rv+VN5sbOzSZdp
+         5nPawOENPGWDfoKDi4ddFoPxloKfkSEvY7LahmnVUOzuh9Q6F7ZHq1tlxISHVyiDarjt
+         X2xwikwJ4ANY7XQenNxC+NpL6RAiXhvXuCwPphZ4cAFBLzeSZAd4IDce/HXlVQZDtIPM
+         m4CQ==
+X-Gm-Message-State: ANhLgQ3FNt+wEKmdWU7VTTJfqIHBNZtmJdZx+zT2mCd5FFkRKh+PKpaG
+        sZB81tR9xud5mnifS+ZN8VPE2t54
+X-Google-Smtp-Source: ADFU+vv9coRwTHLE3umhggTpYzUH3ioL4391no4/tGzs7VITeqhq16r6w1jTqgWDnBBfQ6gbdU5Wng==
+X-Received: by 2002:a7b:c414:: with SMTP id k20mr3787266wmi.119.1584519352976;
+        Wed, 18 Mar 2020 01:15:52 -0700 (PDT)
+Received: from localhost (ip-37-188-180-89.eurotel.cz. [37.188.180.89])
+        by smtp.gmail.com with ESMTPSA id k3sm508962wmf.16.2020.03.18.01.15.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 18 Mar 2020 01:15:51 -0700 (PDT)
+Date:   Wed, 18 Mar 2020 09:15:51 +0100
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Yang Shi <yang.shi@linux.alibaba.com>, shakeelb@google.com,
+        vbabka@suse.cz, akpm@linux-foundation.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [v3 PATCH 1/2] mm: swap: make page_evictable() inline
+Message-ID: <20200318081551.GC21362@dhcp22.suse.cz>
+References: <1584466971-110029-1-git-send-email-yang.shi@linux.alibaba.com>
+ <20200317190411.GD22433@bombadil.infradead.org>
 MIME-Version: 1.0
-References: <1584343103-13896-1-git-send-email-hqjagain@gmail.com>
- <20200317170243.GR2363188@phenom.ffwll.local> <CAJRQjofSWYR--4V_4zmp6K9WVtqShdzpGuH1VFBPvHpViGYH5g@mail.gmail.com>
- <CAKMK7uG8v7cYUwqTJTgYGfC8LEZtczTZ5a+Z4NcRnbFVBcG4Fw@mail.gmail.com>
-In-Reply-To: <CAKMK7uG8v7cYUwqTJTgYGfC8LEZtczTZ5a+Z4NcRnbFVBcG4Fw@mail.gmail.com>
-From:   Qiujun Huang <hqjagain@gmail.com>
-Date:   Wed, 18 Mar 2020 16:09:55 +0800
-Message-ID: <CAJRQjodZegs-9GE8ypkAiU2gC_x=tAYvOz-_dseOyiDvfMApUA@mail.gmail.com>
-Subject: Re: [PATCH RESEND] drm/lease: fix potential race in fill_object_idr
-To:     Daniel Vetter <daniel@ffwll.ch>
-Cc:     Marco Elver <elver@google.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Dave Airlie <airlied@linux.ie>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200317190411.GD22433@bombadil.infradead.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 18, 2020 at 3:34 PM Daniel Vetter <daniel@ffwll.ch> wrote:
->
-> On Tue, Mar 17, 2020 at 11:33 PM Qiujun Huang <hqjagain@gmail.com> wrote:
-> >
-> > On Wed, Mar 18, 2020 at 1:02 AM Daniel Vetter <daniel@ffwll.ch> wrote:
-> > >
-> > > On Mon, Mar 16, 2020 at 03:18:23PM +0800, Qiujun Huang wrote:
-> > > > We should hold idr_mutex for idr_alloc.
-> > > >
-> > > > Signed-off-by: Qiujun Huang <hqjagain@gmail.com>
-> > >
-> > > I've not seen the first version of this anywhere in my inbox, not sure
-> > > where that got lost.
-> > >
-> > > Anyway, this seems like a false positive - I'm assuming this was caught
-> > > with KCSAN. The commit message really should mention that.
-> > >
-> > > fill_object_idr creates the idr, which yes is only access later on under
-> > > the idr_mutex. But here it's not yet visible to any other thread, and
-> > > hence lockless access is safe and correct.
-> >
-> > Agree that.
->
-> Do you know what the recommended annotation for kcsan false positives
-> like this should be? Adding kcsan author Marco.
+On Tue 17-03-20 12:04:11, Matthew Wilcox wrote:
+[...]
+> In fact, since it's only called by those three files, perhaps it should
+> be in mm/internal.h?  I don't see it becoming a terribly popular function
+> to call outside of the core mm code.
 
-Actually it's not reported by kcsan. I found idr_alloc isn't safe for
-parallel modifications,
-and I didn't understand it's a exclusive path here.  :)
+Agreed. I do not see any strong reasons why anything outside of the core
+MM should care about evictability. So if moving it to internal.h is
+reasonable without too much churn then I would that way.
 
-> -Daniel
-> --
-> Daniel Vetter
-> Software Engineer, Intel Corporation
-> +41 (0) 79 365 57 48 - http://blog.ffwll.ch
+-- 
+Michal Hocko
+SUSE Labs
