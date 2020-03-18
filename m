@@ -2,142 +2,133 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6D608189E3A
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 15:46:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A0C4F189E45
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 15:49:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726926AbgCROqz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Mar 2020 10:46:55 -0400
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:45119 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726877AbgCROqz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Mar 2020 10:46:55 -0400
-Received: by mail-qt1-f193.google.com with SMTP id z8so17453304qto.12
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Mar 2020 07:46:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=eh/Ib4EsyafdGPI0DMwjZV/QaVZ3bLQMWRWBWNBBqHk=;
-        b=Cg+tSaG3i752Nqi49qTaSi53c1mrgc5pDqUcioClwMg0R0IQ5TMF62UtdONDArXJEb
-         83114Ra1HPHiVxPfn+XXIiyhNlfo+9fx4r+Jq8m/X8VZONbMoCEsyYXiqWbIRtmZALPb
-         +VNb5w1nfwNHdeocO7z5XYy7UKRZh1qTdXI3eTnMzO25cFfLQDbJbpoO/NDShf7a2Llj
-         H1KVqdxoQJLkxoSbwt8k7bZqDdRV0nfAkJWKdX+k3cYJ5+6vaJSBQM+943+AGzZVbkt1
-         XFY4PlXjRe0fge7kbP6TIhMd/hqUDEQthsanhRi2L0J6YZC4/pvEMFOSv6LvPmCXf+wY
-         F1fQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=eh/Ib4EsyafdGPI0DMwjZV/QaVZ3bLQMWRWBWNBBqHk=;
-        b=OXp8ht84XiAWepluVOQRk1ie6POpeNJj0lN2WowpPCDKvckXCyBBNK2v0oCoCXFKQu
-         mk1cDpPIDqs30ifoBro5jISDpdL6D+K8fPo2Zi4/AgNY0nsua+J2LXN4UhcRiUiBnmnT
-         XaWvu4+nbq26hVZj7uB9iYRP9lky1jhRHFdW/2ikukocx+cUbgkvN7gm3fmaCHyCYL3c
-         Dm/ZvFoQuL2yxrtpBbYIK3dAGx1NmlcGn2+OqOitGy/q0FGcYiAlXkj92e8CMfPqO7sK
-         xYJob5rLhGsq2XwISmsmiv1IyeirNmW04+lRoioj/WN67TAfvN6A7aIPq/sX9uOaDqCg
-         3dmg==
-X-Gm-Message-State: ANhLgQ02d/NxIHQzLagQ1tutcGPJXHKRaO1Z4VQqWDLl0BfYtb/NrPjy
-        UYBcOcWR0Z3L5YcI0wKe2WQ=
-X-Google-Smtp-Source: ADFU+vvJlT6ur/t6sxwglZqpVQ1AUbmmJHS2fsz6+YJoliw66FGjJ1hkSqwF11aADg7uQFZSxbW0Xw==
-X-Received: by 2002:ac8:6c6:: with SMTP id j6mr4748317qth.231.1584542813294;
-        Wed, 18 Mar 2020 07:46:53 -0700 (PDT)
-Received: from quaco.ghostprotocols.net ([179.97.37.151])
-        by smtp.gmail.com with ESMTPSA id w132sm4161807qkb.96.2020.03.18.07.46.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Mar 2020 07:46:52 -0700 (PDT)
-From:   Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
-X-Google-Original-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
-        id B9C39404E4; Wed, 18 Mar 2020 11:46:49 -0300 (-03)
-Date:   Wed, 18 Mar 2020 11:46:49 -0300
-To:     Jiri Olsa <jolsa@redhat.com>
-Cc:     Leo Yan <leo.yan@linaro.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Allison Randal <allison@lohutok.net>,
-        John Garry <john.garry@huawei.com>,
-        Enrico Weigelt <info@metux.net>, linux-kernel@vger.kernel.org,
-        Mike Leach <mike.leach@linaro.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>,
-        Hendrik Brueckner <brueckner@linux.vnet.ibm.com>,
-        Thomas Richter <tmricht@linux.vnet.ibm.com>
-Subject: Re: [PATCH v3] perf symbols: Consolidate symbol fixup issue
-Message-ID: <20200318144649.GE11531@kernel.org>
-References: <20200306015759.10084-1-leo.yan@linaro.org>
- <20200318110659.GA845874@krava>
+        id S1726789AbgCROti convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 18 Mar 2020 10:49:38 -0400
+Received: from mail-oln040092253062.outbound.protection.outlook.com ([40.92.253.62]:6063
+        "EHLO APC01-SG2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726643AbgCROti (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Mar 2020 10:49:38 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=DmBUq69SK91vYDIg+ewwX420h7/YLCYukeaaOlpifnohIL292QUPYR9XnAvTu6HXKS9WVHnfXKLO7clx9DBXREaX64a8e+c/+VlsHm5NeBUB8tmmdw1ItoHA3n6YM06Y9XTwZH9EcDBanjYm9TajYb+8VpAT7tpl4R4gOBHXY6omhxy/dBU0fkAXj06SX0iAlB3T+a9eMx5b4pqHjDaQLCkiBEYGl4PNGEs9BBW3xA9hCX1bj6fE9I/pq7UAmeG6hStHy09N6gRKDBexEsC2ku6YRyeGADlyn+wdCSFu99u+eSoezq/875/if0D2ZkDQSoTHuN9fGQEkiWyOdNZjYw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=UB5S4PoRNEO/naviICIgEb9IeCCXJmG0UFBbei/hhZw=;
+ b=MpYvLsBpup73Zd10ljeVSBQhsc7RWMswxHvqgBKdgejwZmlfCl+fFCis/wrTxbSI/8iMDr6pr36ixa0q+urINmMAZovYcQPAB789v8DPXAA9oogoEW/1HndV+Qdhd6rt8Typ1QiwUyynm83bbf2q7D4sYY0y3crjcrLYgaPHmgEqtBPzmjwfEQAMpOLFQ0uuufUprLIRZ945VRs1jmS3hYOcQag7GAQSkvpdQT9kGW/BaoCzUkOeydR8WR30dS3ZOh7qFlSokwpXWWamvKpi+9ESBAxKf6Ckks30UpthG/7cHnu1c2eeCfMD+Id2NCNxg8JifBHRdmyvo3UKMJMXpg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+Received: from HK2APC01FT115.eop-APC01.prod.protection.outlook.com
+ (2a01:111:e400:7ebc::34) by
+ HK2APC01HT071.eop-APC01.prod.protection.outlook.com (2a01:111:e400:7ebc::229)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2814.13; Wed, 18 Mar
+ 2020 14:49:33 +0000
+Received: from PSXP216MB0438.KORP216.PROD.OUTLOOK.COM (10.152.248.51) by
+ HK2APC01FT115.mail.protection.outlook.com (10.152.248.194) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2814.13 via Frontend Transport; Wed, 18 Mar 2020 14:49:33 +0000
+Received: from PSXP216MB0438.KORP216.PROD.OUTLOOK.COM
+ ([fe80::a5dc:fc1:6544:5cb2]) by PSXP216MB0438.KORP216.PROD.OUTLOOK.COM
+ ([fe80::a5dc:fc1:6544:5cb2%7]) with mapi id 15.20.2814.021; Wed, 18 Mar 2020
+ 14:49:32 +0000
+Received: from nicholas-dell-linux (2001:44b8:6065:1c:6059:d44:6861:fae2) by SYBPR01CA0009.ausprd01.prod.outlook.com (2603:10c6:10::21) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2835.15 via Frontend Transport; Wed, 18 Mar 2020 14:49:30 +0000
+From:   Nicholas Johnson <nicholas.johnson-opensource@outlook.com.au>
+To:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+CC:     Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Nicholas Johnson <nicholas.johnson-opensource@outlook.com.au>
+Subject: [PATCH v5 0/1] nvmem: Add support for write-only instances, and
+ clean-up
+Thread-Topic: [PATCH v5 0/1] nvmem: Add support for write-only instances, and
+ clean-up
+Thread-Index: AQHV/TRvkGs3/FHPXUWMfTjZCgJYDw==
+Date:   Wed, 18 Mar 2020 14:49:32 +0000
+Message-ID: <PSXP216MB0438BB51FBB5964FAD7E180F80F70@PSXP216MB0438.KORP216.PROD.OUTLOOK.COM>
+Accept-Language: en-AU, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: SYBPR01CA0009.ausprd01.prod.outlook.com (2603:10c6:10::21)
+ To PSXP216MB0438.KORP216.PROD.OUTLOOK.COM (2603:1096:300:d::20)
+x-incomingtopheadermarker: OriginalChecksum:05B4DD883CBE1ACDC5878A3563E8E646E1A5ADBF72365271EF3C52A918781FE2;UpperCasedChecksum:8C4E2E7A042FDC400FE9A1075186D78E27636D9B943F4FCBE02773186BD43537;SizeAsReceived:7732;Count:48
+x-ms-exchange-messagesentrepresentingtype: 1
+x-tmn:  [4n4vUuMLjoSAV6k74+q+as5OvNMzxxpvn7Ml3Rs+MTVOk7pzgcsdy2TyGNA94ilh]
+x-microsoft-original-message-id: <20200318144924.GA10037@nicholas-dell-linux>
+x-ms-publictraffictype: Email
+x-incomingheadercount: 48
+x-eopattributedmessage: 0
+x-ms-office365-filtering-correlation-id: 2269c211-a77e-4f61-d6c0-08d7cb4b9195
+x-ms-exchange-slblob-mailprops: =?us-ascii?Q?EvJfeA36uqIt+ku0zmot2SAHdMiltl7jQUbyMVtxFqThCmq/KqrlJfVIOoki?=
+ =?us-ascii?Q?GGL44Z5j+un9+7rWCNEIWVMlXtsvkepHfgxkXavp5ZopJdhnx3U+2kaR5oEn?=
+ =?us-ascii?Q?8ruUHNgUAeVknETH2otaf7OljgO22FHhhJCtuA9ajuoJiLO+OOwwIjcPGq9f?=
+ =?us-ascii?Q?MtB8G3P8PVd8KV2FRwON2w4V4xHNBfQ21v01w/DltdjGkwfGp7iN1POiLdse?=
+ =?us-ascii?Q?TKofqas8m0fAEnErDqUHqr8O8AZm7QdKEt75BSwnd2KBuXr3vzkFjodgkTMk?=
+ =?us-ascii?Q?/8IJbN0HVvtfI5kSNHZNdc/Xk/YY/s+/CGOmHLuY6dtiO84YLDG4i+UXxbBH?=
+ =?us-ascii?Q?X6IDwSqLVveAMaVP7R3uPnWb7I2gBRHEIRt2/zecOMm1tETLjbv1pCIfTPTm?=
+ =?us-ascii?Q?pCj7grO7QZjue3su+xzKxI26JwFPKd5S/Pw4wcL9oojOG+NV+yviH8dliC97?=
+ =?us-ascii?Q?z31GOatuXV7hlYpW1AWSQ+AossGXsaYDuNoc3i5OAiuwGMw+32WaKM6uODV8?=
+ =?us-ascii?Q?k6hKhx9PUkhbHydCtQBUlh9xt2yaAD9mbfKLUy9neT/6KkoL2PEbvkBkasGU?=
+ =?us-ascii?Q?hx0vx1M53PgStzoJ/+8UJPt9KdGnL8qsk4lFumC/KTHA/Kf++e6vOMKOArry?=
+ =?us-ascii?Q?7+6Cpl7yvpLF3+QVXNbI2twPlwEreEQE8nCDOU5UZtE0ECdme0aWPmhlWtal?=
+ =?us-ascii?Q?lqz8u3fxFfLrKnUyikCguc2kqIJH54voNwhGvvPIFIQM/r1/aIaslYCaZYGP?=
+ =?us-ascii?Q?zQO283j8AhllxZ3TRs8f0MH1NI3SyQ2zijA1gp5SQFOSVx4GDuKCEH81SAhQ?=
+ =?us-ascii?Q?BJNCxZGPIXFyr7xB0YKyUSRwxoRYqx0Mgv3601hknGlPntxpOxXviky06Dje?=
+ =?us-ascii?Q?CY/1jgPr8U8rgHE4vNPq6Ea1XNouHEDIZzd6DD47zsdLBJQNa2eke3n9hpnp?=
+ =?us-ascii?Q?Y3BpLuvEPsMjUOXB9DDbl1ffP16GghzAkBO5Y97X90NYdNKhV+U4Ni3OCn3E?=
+ =?us-ascii?Q?g6RA8HclDhPaEXxe1FwY/0Z/jYzQ2GjY3mVvqeCyEexgwAESEmyQLwZSB08f?=
+ =?us-ascii?Q?RotCrUDI?=
+x-ms-traffictypediagnostic: HK2APC01HT071:
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: 8On3JLaClxdV91OAmGv173LWLDHPQkaDgMi4TkvJY5qMoEhZcG1oVXj4JDKSrpKT3iiEKGNx4PypKR7y5ozBGDLJ/mZN1fNaVg98bN0Zd9NP99KT2GGd+U1nh5vccXWznzpCTRN7UDFYZce5uASaJa974ez/09yrBIs/mW+6DqCnJe5m0GRN41aLshUdNb1BiIl7Oquj6LZg1pi7khRFsry0gLZHj2ehtNCi5dtDZ2g=
+x-ms-exchange-antispam-messagedata: r/JVAuXddVMlOxJmLDaeVKtsUcn77IadR4rLCMZ0g3NKaKtgCNPJTiWojW0ULUz/wlcM+gY3qCH/y4B2RMdKH63DKrlasXiKB4totMVKjbOAnPdhihQSIy095llTasKxxO3/KLwU3O+WckwfeK02kl1ptvWqbF03GRdXo1+Ps1BjRgnIFw1rcaMk2N4c9YXB9vFSSjJ5U8npajRMCXkB4A==
+x-ms-exchange-transport-forked: True
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <910E849CAC3F5B4FBA0E063565F6E7A8@KORP216.PROD.OUTLOOK.COM>
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200318110659.GA845874@krava>
-X-Url:  http://acmel.wordpress.com
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2269c211-a77e-4f61-d6c0-08d7cb4b9195
+X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Mar 2020 14:49:32.6544
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Internet
+X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: HK2APC01HT071
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Wed, Mar 18, 2020 at 12:06:59PM +0100, Jiri Olsa escreveu:
-> On Fri, Mar 06, 2020 at 09:57:58AM +0800, Leo Yan wrote:
-> > After copying Arm64's perf archive with object files and perf.data file
-> > to x86 laptop, the x86's perf kernel symbol resolution fails.  It
-> > outputs 'unknown' for all symbols parsing.
-> > 
-> > This issue is root caused by the function elf__needs_adjust_symbols(),
-> > x86 perf tool uses one weak version, Arm64 (and powerpc) has rewritten
-> > their own version.  elf__needs_adjust_symbols() decides if need to parse
-> > symbols with the relative offset address; but x86 building uses the weak
-> > function which misses to check for the elf type 'ET_DYN', so that it
-> > cannot parse symbols in Arm DSOs due to the wrong result from
-> > elf__needs_adjust_symbols().
-> > 
-> > The DSO parsing should not depend on any specific architecture perf
-> > building; e.g. x86 perf tool can parse Arm and Arm64 DSOs, vice versa.
-> > And confirmed by Naveen N. Rao that powerpc64 kernels are not being
-> > built as ET_DYN anymore and change to ET_EXEC.
-> > 
-> > This patch removes the arch specific functions for Arm64 and powerpc and
-> > changes elf__needs_adjust_symbols() as a common function.
-> > 
-> > In the common elf__needs_adjust_symbols(), it checks an extra condition
-> > 'ET_DYN' for elf header type.  With this fixing, the Arm64 DSO can be
-> > parsed properly with x86's perf tool.
-> > 
-> > Before:
-> > 
-> >   # perf script
-> >   main  3258          1          branches:                 0 [unknown] ([unknown]) => ffff800010c4665c [unknown] ([kernel.kallsyms])
-> >   main  3258          1          branches:  ffff800010c46670 [unknown] ([kernel.kallsyms]) => ffff800010c4eaec [unknown] ([kernel.kallsyms])
-> >   main  3258          1          branches:  ffff800010c4eaec [unknown] ([kernel.kallsyms]) => ffff800010c4eb00 [unknown] ([kernel.kallsyms])
-> >   main  3258          1          branches:  ffff800010c4eb08 [unknown] ([kernel.kallsyms]) => ffff800010c4e780 [unknown] ([kernel.kallsyms])
-> >   main  3258          1          branches:  ffff800010c4e7a0 [unknown] ([kernel.kallsyms]) => ffff800010c4eeac [unknown] ([kernel.kallsyms])
-> >   main  3258          1          branches:  ffff800010c4eebc [unknown] ([kernel.kallsyms]) => ffff800010c4ed80 [unknown] ([kernel.kallsyms])
-> > 
-> > After:
-> > 
-> >   # perf script
-> >   main  3258          1          branches:                 0 [unknown] ([unknown]) => ffff800010c4665c coresight_timeout+0x54 ([kernel.kallsyms])
-> >   main  3258          1          branches:  ffff800010c46670 coresight_timeout+0x68 ([kernel.kallsyms]) => ffff800010c4eaec etm4_enable_hw+0x3cc ([kernel.kallsyms])
-> >   main  3258          1          branches:  ffff800010c4eaec etm4_enable_hw+0x3cc ([kernel.kallsyms]) => ffff800010c4eb00 etm4_enable_hw+0x3e0 ([kernel.kallsyms])
-> >   main  3258          1          branches:  ffff800010c4eb08 etm4_enable_hw+0x3e8 ([kernel.kallsyms]) => ffff800010c4e780 etm4_enable_hw+0x60 ([kernel.kallsyms])
-> >   main  3258          1          branches:  ffff800010c4e7a0 etm4_enable_hw+0x80 ([kernel.kallsyms]) => ffff800010c4eeac etm4_enable+0x2d4 ([kernel.kallsyms])
-> >   main  3258          1          branches:  ffff800010c4eebc etm4_enable+0x2e4 ([kernel.kallsyms]) => ffff800010c4ed80 etm4_enable+0x1a8 ([kernel.kallsyms])
-> > 
-> > v3: Changed to check for ET_DYN across all architectures.
-> > 
-> > v2: Fixed Arm64 and powerpc native building.
-> > 
-> > Reported-by: Mike Leach <mike.leach@linaro.org>
-> > Signed-off-by: Leo Yan <leo.yan@linaro.org>
-> > Reviewed-by: Naveen N. Rao <naveen.n.rao@linux.vnet.ibm.com>
-> 
-> Acked-by: Jiri Olsa <jolsa@redhat.com>
+Hello all,
 
-Thanks, applied.
+Previous version: https://lkml.org/lkml/2020/3/16/1051
 
-- Arnaldo
+Changed since previous version:
+
+- No longer leaking objects such as idr and gpio.
+
+- Got rid of accidental line of diff removing blank line.
+
+- Rebased on top of [0] as requested in [1] - no conflicts, anyway.
+
+[0]
+https://git.kernel.org/pub/scm/linux/kernel/git/srini/nvmem.git/tree/drivers/nvmem/core.c?h=for-next
+
+[1]
+https://lkml.org/lkml/2020/3/18/171
+
+Nicholas Johnson (1):
+  nvmem: Add support for write-only instances
+
+ drivers/nvmem/core.c        | 10 +++++--
+ drivers/nvmem/nvmem-sysfs.c | 56 +++++++++++++++++++++++++++++++------
+ 2 files changed, 56 insertions(+), 10 deletions(-)
+
+-- 
+2.25.1
+
