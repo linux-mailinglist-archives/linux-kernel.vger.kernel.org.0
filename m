@@ -2,220 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BC56E1895FF
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 07:51:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C36371895D5
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 07:30:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727039AbgCRGvI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Mar 2020 02:51:08 -0400
-Received: from mga03.intel.com ([134.134.136.65]:33318 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726553AbgCRGvI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Mar 2020 02:51:08 -0400
-IronPort-SDR: 9/CTZzP1Ax6Thi0Q1Y3Psxq0XP5GZFnm8UqJQmqrF0+Q7IvE7phnEHYO1EUvbNOtlRUSNcrdWj
- XUZQo/wZZMkA==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Mar 2020 23:51:07 -0700
-IronPort-SDR: BurD06B6huYIP6bMhLFlyhippvGzWzQNxajueSgtPCEaqTrYTrG4yOAPvWWFTEkNDRLbqHpDat
- kyurxMZO44lw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,566,1574150400"; 
-   d="scan'208";a="444064165"
-Received: from hao-dev.bj.intel.com (HELO localhost) ([10.238.157.65])
-  by fmsmga005.fm.intel.com with ESMTP; 17 Mar 2020 23:51:05 -0700
-Date:   Wed, 18 Mar 2020 14:30:01 +0800
-From:   Wu Hao <hao.wu@intel.com>
-To:     Xu Yilun <yilun.xu@intel.com>
-Cc:     mdf@kernel.org, linux-fpga@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Luwei Kang <luwei.kang@intel.com>
-Subject: Re: [PATCH v2 2/7] fpga: dfl: pci: add irq info for feature devices
- enumeration
-Message-ID: <20200318063001.GA32440@hao-dev>
-References: <1584332222-26652-1-git-send-email-yilun.xu@intel.com>
- <1584332222-26652-3-git-send-email-yilun.xu@intel.com>
+        id S1727281AbgCRGab (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Mar 2020 02:30:31 -0400
+Received: from isilmar-4.linta.de ([136.243.71.142]:36432 "EHLO
+        isilmar-4.linta.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726802AbgCRGaa (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Mar 2020 02:30:30 -0400
+X-isilmar-external: YES
+X-isilmar-external: YES
+X-isilmar-external: YES
+X-isilmar-external: YES
+X-isilmar-external: YES
+X-isilmar-external: YES
+X-isilmar-external: YES
+X-isilmar-external: YES
+X-isilmar-external: YES
+Received: from light.dominikbrodowski.net (brodo.linta [10.1.0.102])
+        by isilmar-4.linta.de (Postfix) with ESMTPSA id 06012200ADE;
+        Wed, 18 Mar 2020 06:30:28 +0000 (UTC)
+Received: by light.dominikbrodowski.net (Postfix, from userid 1000)
+        id 42A1820821; Wed, 18 Mar 2020 07:30:22 +0100 (CET)
+Date:   Wed, 18 Mar 2020 07:30:22 +0100
+From:   Dominik Brodowski <linux@dominikbrodowski.net>
+To:     cezary.rojewski@intel.com, pierre-louis.bossart@linux.intel.com,
+        liam.r.girdwood@linux.intel.com, yang.jie@linux.intel.com,
+        broonie@kernel.org, perex@perex.cz, tiwai@suse.com
+Cc:     alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
+Subject: snd_hda_intel/sst-acpi sound breakage on suspend/resume since 5.6-rc1
+Message-ID: <20200318063022.GA116342@light.dominikbrodowski.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1584332222-26652-3-git-send-email-yilun.xu@intel.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 16, 2020 at 12:16:57PM +0800, Xu Yilun wrote:
-> Some DFL FPGA PCIe cards (e.g. Intel FPGA Programmable Acceleration
-> Card) support MSI-X based interrupts. This patch allows PCIe driver
-> to prepare and pass interrupt resources to DFL via enumeration API.
-> These interrupt resources could then be assigned to actual features
-> which use them.
-> 
-> Signed-off-by: Luwei Kang <luwei.kang@intel.com>
-> Signed-off-by: Wu Hao <hao.wu@intel.com>
-> Signed-off-by: Xu Yilun <yilun.xu@intel.com>
-> ----
-> v2: put irq resources init code inside cce_enumerate_feature_dev()
->     Some minor changes for Hao's comments.
-> ---
->  drivers/fpga/dfl-pci.c | 78 ++++++++++++++++++++++++++++++++++++++++++++------
->  1 file changed, 69 insertions(+), 9 deletions(-)
-> 
-> diff --git a/drivers/fpga/dfl-pci.c b/drivers/fpga/dfl-pci.c
-> index 5387550..0b1ee7d 100644
-> --- a/drivers/fpga/dfl-pci.c
-> +++ b/drivers/fpga/dfl-pci.c
-> @@ -39,6 +39,28 @@ static void __iomem *cci_pci_ioremap_bar(struct pci_dev *pcidev, int bar)
->  	return pcim_iomap_table(pcidev)[bar];
->  }
->  
-> +static int cci_pci_alloc_irq(struct pci_dev *pcidev)
-> +{
-> +	int nvec = pci_msix_vec_count(pcidev);
-> +	int ret;
-> +
-> +	if (nvec <= 0) {
-> +		dev_dbg(&pcidev->dev, "fpga interrupt not supported\n");
-> +		return 0;
-> +	}
-> +
-> +	ret = pci_alloc_irq_vectors(pcidev, nvec, nvec, PCI_IRQ_MSIX);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	return nvec;
-> +}
-> +
-> +static void cci_pci_free_irq(struct pci_dev *pcidev)
-> +{
-> +	pci_free_irq_vectors(pcidev);
-> +}
-> +
->  /* PCI Device ID */
->  #define PCIE_DEVICE_ID_PF_INT_5_X	0xBCBD
->  #define PCIE_DEVICE_ID_PF_INT_6_X	0xBCC0
-> @@ -78,17 +100,33 @@ static void cci_remove_feature_devs(struct pci_dev *pcidev)
->  
->  	/* remove all children feature devices */
->  	dfl_fpga_feature_devs_remove(drvdata->cdev);
-> +	cci_pci_free_irq(pcidev);
-> +}
-> +
-> +static int *cci_pci_create_irq_table(struct pci_dev *pcidev, unsigned int nvec)
-> +{
-> +	unsigned int i;
-> +	int *table;
-> +
-> +	table = kcalloc(nvec, sizeof(int), GFP_KERNEL);
-> +	if (table) {
-> +		for (i = 0; i < nvec; i++)
-> +			table[i] = pci_irq_vector(pcidev, i);
-> +	}
-> +
-> +	return table;
->  }
->  
->  /* enumerate feature devices under pci device */
->  static int cci_enumerate_feature_devs(struct pci_dev *pcidev)
->  {
->  	struct cci_drvdata *drvdata = pci_get_drvdata(pcidev);
-> +	int port_num, bar, i, nvec, ret = 0;
->  	struct dfl_fpga_enum_info *info;
->  	struct dfl_fpga_cdev *cdev;
->  	resource_size_t start, len;
-> -	int port_num, bar, i, ret = 0;
->  	void __iomem *base;
-> +	int *irq_table;
->  	u32 offset;
->  	u64 v;
->  
-> @@ -97,11 +135,32 @@ static int cci_enumerate_feature_devs(struct pci_dev *pcidev)
->  	if (!info)
->  		return -ENOMEM;
->  
-> +	/* add irq info for enumeration if the device support irq */
-> +	nvec = cci_pci_alloc_irq(pcidev);
-> +	if (nvec < 0) {
-> +		dev_err(&pcidev->dev, "Fail to alloc irq %d.\n", nvec);
-> +		ret = nvec;
-> +		goto enum_info_free_exit;
+Hi!
 
-Hm... seems that it failed directly, different with dfl framework which is still
-trying to enable feature without interrupts. should we keep it the same?
+While 5.5.x works fine, mainline as of ac309e7744be (v5.6-rc6+) causes me
+some sound-related trouble: after boot, the sound works fine -- but once I
+suspend and resume my broadwell-based XPS13, I need to switch to headphone
+and back to speaker to hear something. But what I hear isn't music but
+garbled output.
 
-> +	}
-> +
-> +	if (nvec) {
+A few dmesg snippets from v5.6-rc6-9-gac309e7744be which might be of
+interest. I've highlighted the lines differing from v.5.5.x which might be
+of special interest:
 
-This can be else or else if ?
+	...
+	snd_hda_intel 0000:00:03.0: enabling device (0000 -> 0002)
+	usbcore: registered new interface driver snd-usb-audio
+	snd_hda_intel 0000:00:03.0: bound 0000:00:02.0 (ops i915_audio_component_bind_ops)
+	input: HDA Intel HDMI HDMI/DP,pcm=3 as /devices/pci0000:00/0000:00:03.0/sound/card0/input13
+	input: HDA Intel HDMI HDMI/DP,pcm=7 as /devices/pci0000:00/0000:00:03.0/sound/card0/input14
+	input: HDA Intel HDMI HDMI/DP,pcm=8 as /devices/pci0000:00/0000:00:03.0/sound/card0/input15
+	input: HDA Intel HDMI HDMI/DP,pcm=9 as /devices/pci0000:00/0000:00:03.0/sound/card0/input16
+	input: HDA Intel HDMI HDMI/DP,pcm=10 as /devices/pci0000:00/0000:00:03.0/sound/card0/input17
+	Console: switching to colour frame buffer device 240x67
+!!!	sst-acpi INT3438:00: WARN: Device release is not defined so it is not safe to unbind this driver while in use
+	i915 0000:00:02.0: fb0: i915drmfb frame buffer device
+	sst-acpi INT3438:00: DesignWare DMA Controller, 8 channels
+	psmouse serio1: synaptics: Unable to query device: -5
+	haswell-pcm-audio haswell-pcm-audio: Direct firmware load for intel/IntcPP01.bin failed with error -2
+	haswell-pcm-audio haswell-pcm-audio: fw image intel/IntcPP01.bin not available(-2)
+	haswell-pcm-audio haswell-pcm-audio: FW loaded, mailbox readback FW info: type 01, - version: 00.00, build 77, source commit id: 876ac6906f31a43b6772b23c7c983ce9dcb18a19
+	rt286 i2c-INT343A:00: ASoC: sink widget DMIC1 overwritten
+	rt286 i2c-INT343A:00: ASoC: source widget DMIC1 overwritten
+	broadwell-audio broadwell-audio: snd-soc-dummy-dai <-> System Pin mapping ok
+	broadwell-audio broadwell-audio: snd-soc-dummy-dai <-> Offload0 Pin mapping ok
+	broadwell-audio broadwell-audio: snd-soc-dummy-dai <-> Offload1 Pin mapping ok
+	broadwell-audio broadwell-audio: snd-soc-dummy-dai <-> Loopback Pin mapping ok
+	broadwell-audio broadwell-audio: rt286-aif1 <-> snd-soc-dummy-dai mapping ok
+	input: broadwell-rt286 Headset as /devices/pci0000:00/INT3438:00/broadwell-audio/sound/card1/input18
+	...
+	ALSA device list:
+	  #0: HDA Intel HDMI at 0xf7218000 irq 48
+	  #1: DellInc.-XPS139343--0TM99H
+	...
+!!!	haswell-pcm-audio haswell-pcm-audio: warning: stream is NULL, no stream to reset, ignore it.
+!!!	haswell-pcm-audio haswell-pcm-audio: warning: stream is NULL, no stream to free, ignore it.
 
-> +		irq_table = cci_pci_create_irq_table(pcidev, nvec);
-> +		if (!irq_table) {
-> +			ret = -ENOMEM;
-> +			goto error_free_irq;
-> +		}
-> +
-> +		ret = dfl_fpga_enum_info_add_irq(info, nvec, irq_table);
-> +		kfree(irq_table);
-> +		if (ret)
-> +			goto error_free_irq;
-> +	}
-> +
->  	/* start to find Device Feature List from Bar 0 */
->  	base = cci_pci_ioremap_bar(pcidev, 0);
->  	if (!base) {
->  		ret = -ENOMEM;
-> -		goto enum_info_free_exit;
-> +		goto error_free_irq;
->  	}
->  
->  	/*
-> @@ -154,7 +213,7 @@ static int cci_enumerate_feature_devs(struct pci_dev *pcidev)
->  		dfl_fpga_enum_info_add_dfl(info, start, len, base);
->  	} else {
->  		ret = -ENODEV;
-> -		goto enum_info_free_exit;
-> +		goto error_free_irq;
->  	}
->  
->  	/* start enumeration with prepared enumeration information */
-> @@ -162,11 +221,14 @@ static int cci_enumerate_feature_devs(struct pci_dev *pcidev)
->  	if (IS_ERR(cdev)) {
->  		dev_err(&pcidev->dev, "Enumeration failure\n");
->  		ret = PTR_ERR(cdev);
-> -		goto enum_info_free_exit;
-> +		goto error_free_irq;
->  	}
->  
->  	drvdata->cdev = cdev;
->  
-> +error_free_irq:
+(these last two messages already are printed a couple of time after boot, and then
+again during a suspend/resume cycle. On v.5.5.y, there are similar messages
+"no context buffer need to restore!"). Everything is built-in, no modules
+are loaded.
 
-could you please use a similar style label here as below?
+Unfortunately, I cannot bisect this issue easily -- i915 was broken for
+quite some time on this system[*], prohibiting boot...
 
-Thanks
-Hao
+Thanks for taking a look at this issue!
 
-> +	if (ret)
-> +		cci_pci_free_irq(pcidev);
->  enum_info_free_exit:
->  	dfl_fpga_enum_info_free(info);
->  
-> @@ -211,12 +273,10 @@ int cci_pci_probe(struct pci_dev *pcidev, const struct pci_device_id *pcidevid)
->  	}
->  
->  	ret = cci_enumerate_feature_devs(pcidev);
-> -	if (ret) {
-> -		dev_err(&pcidev->dev, "enumeration failure %d.\n", ret);
-> -		goto disable_error_report_exit;
-> -	}
-> +	if (!ret)
-> +		return ret;
->  
-> -	return ret;
-> +	dev_err(&pcidev->dev, "enumeration failure %d.\n", ret);
->  
->  disable_error_report_exit:
->  	pci_disable_pcie_error_reporting(pcidev);
-> -- 
-> 2.7.4
+	Dominik
+
+
+[*] https://gitlab.freedesktop.org/drm/intel/issues/1151
