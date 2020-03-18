@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C7BBC18A46C
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 21:54:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 44AF918A46D
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 21:54:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727698AbgCRUyQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Mar 2020 16:54:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53610 "EHLO mail.kernel.org"
+        id S1727751AbgCRUyS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Mar 2020 16:54:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53694 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727610AbgCRUyO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Mar 2020 16:54:14 -0400
+        id S1727686AbgCRUyQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Mar 2020 16:54:16 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A1A9421841;
-        Wed, 18 Mar 2020 20:54:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E28B020724;
+        Wed, 18 Mar 2020 20:54:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584564853;
-        bh=rzO4Wfq1pgO3m0SkYQiQbx9f4kvzwkiAV1A9ruyWszE=;
+        s=default; t=1584564855;
+        bh=QaVZu7oeE9kvody+R9vApzpKSF+e7ayYBfps5bhprrE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bGdRJx7gNI7Y34GesYO9lFvaMsM2nHSbpOjfEIb7z4R3M+qXnkbfdY6BgAH3uqfWW
-         SwtNtUYfaVeO4qGky8zn6axy5SBagZ+KpBDcCOUw/Ts2BGA7BfJTuoQvnrRfVWPxwx
-         MHANFUscBVc2U/Mtj7qgpUgzilmeQ4Zlh728MA2g=
+        b=2KSWENdodRdEmCvQzj2FS+6fpCtvp+97D2H27mXJBmNQ6XlIovCbOzIBzPdlfItAx
+         ULnNI6gCIkgl4FKI4eu6F1R9gB2uLo9+0DWYYJWZyjsuxQkdhYttroX846VfGsd2nm
+         tekFwKRaLCmOavkwNtOUBHFu8DxbkHOmuc9zdazY=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Jann Horn <jannh@google.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Sasha Levin <sashal@kernel.org>, linux-fsdevel@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.4 30/73] futex: Fix inode life-time issue
-Date:   Wed, 18 Mar 2020 16:52:54 -0400
-Message-Id: <20200318205337.16279-30-sashal@kernel.org>
+Cc:     Madalin Bucur <madalin.bucur@nxp.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.4 32/73] dt-bindings: net: FMan erratum A050385
+Date:   Wed, 18 Mar 2020 16:52:56 -0400
+Message-Id: <20200318205337.16279-32-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200318205337.16279-1-sashal@kernel.org>
 References: <20200318205337.16279-1-sashal@kernel.org>
@@ -44,230 +44,87 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Peter Zijlstra <peterz@infradead.org>
+From: Madalin Bucur <madalin.bucur@nxp.com>
 
-[ Upstream commit 8019ad13ef7f64be44d4f892af9c840179009254 ]
+[ Upstream commit 26d5bb9e4c4b541c475751e015072eb2cbf70d15 ]
 
-As reported by Jann, ihold() does not in fact guarantee inode
-persistence. And instead of making it so, replace the usage of inode
-pointers with a per boot, machine wide, unique inode identifier.
+FMAN DMA read or writes under heavy traffic load may cause FMAN
+internal resource leak; thus stopping further packet processing.
 
-This sequence number is global, but shared (file backed) futexes are
-rare enough that this should not become a performance issue.
+The FMAN internal queue can overflow when FMAN splits single
+read or write transactions into multiple smaller transactions
+such that more than 17 AXI transactions are in flight from FMAN
+to interconnect. When the FMAN internal queue overflows, it can
+stall further packet processing. The issue can occur with any one
+of the following three conditions:
 
-Reported-by: Jann Horn <jannh@google.com>
-Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+  1. FMAN AXI transaction crosses 4K address boundary (Errata
+     A010022)
+  2. FMAN DMA address for an AXI transaction is not 16 byte
+     aligned, i.e. the last 4 bits of an address are non-zero
+  3. Scatter Gather (SG) frames have more than one SG buffer in
+     the SG list and any one of the buffers, except the last
+     buffer in the SG list has data size that is not a multiple
+     of 16 bytes, i.e., other than 16, 32, 48, 64, etc.
+
+With any one of the above three conditions present, there is
+likelihood of stalled FMAN packet processing, especially under
+stress with multiple ports injecting line-rate traffic.
+
+To avoid situations that stall FMAN packet processing, all of the
+above three conditions must be avoided; therefore, configure the
+system with the following rules:
+
+  1. Frame buffers must not span a 4KB address boundary, unless
+     the frame start address is 256 byte aligned
+  2. All FMAN DMA start addresses (for example, BMAN buffer
+     address, FD[address] + FD[offset]) are 16B aligned
+  3. SG table and buffer addresses are 16B aligned and the size
+     of SG buffers are multiple of 16 bytes, except for the last
+     SG buffer that can be of any size.
+
+Additional workaround notes:
+- Address alignment of 64 bytes is recommended for maximally
+efficient system bus transactions (although 16 byte alignment is
+sufficient to avoid the stall condition)
+- To support frame sizes that are larger than 4K bytes, there are
+two options:
+  1. Large single buffer frames that span a 4KB page boundary can
+     be converted into SG frames to avoid transaction splits at
+     the 4KB boundary,
+  2. Align the large single buffer to 256B address boundaries,
+     ensure that the frame address plus offset is 256B aligned.
+- If software generated SG frames have buffers that are unaligned
+and with random non-multiple of 16 byte lengths, before
+transmitting such frames via FMAN, frames will need to be copied
+into a new single buffer or multiple buffer SG frame that is
+compliant with the three rules listed above.
+
+Signed-off-by: Madalin Bucur <madalin.bucur@nxp.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/inode.c            |  1 +
- include/linux/fs.h    |  1 +
- include/linux/futex.h | 17 +++++----
- kernel/futex.c        | 89 ++++++++++++++++++++++++++-----------------
- 4 files changed, 65 insertions(+), 43 deletions(-)
+ Documentation/devicetree/bindings/net/fsl-fman.txt | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/fs/inode.c b/fs/inode.c
-index 96d62d97694ef..c5267a4db0f5e 100644
---- a/fs/inode.c
-+++ b/fs/inode.c
-@@ -137,6 +137,7 @@ int inode_init_always(struct super_block *sb, struct inode *inode)
- 	inode->i_sb = sb;
- 	inode->i_blkbits = sb->s_blocksize_bits;
- 	inode->i_flags = 0;
-+	atomic64_set(&inode->i_sequence, 0);
- 	atomic_set(&inode->i_count, 1);
- 	inode->i_op = &empty_iops;
- 	inode->i_fop = &no_open_fops;
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 0b4d8fc79e0f3..06668379109e3 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -698,6 +698,7 @@ struct inode {
- 		struct rcu_head		i_rcu;
- 	};
- 	atomic64_t		i_version;
-+	atomic64_t		i_sequence; /* see futex */
- 	atomic_t		i_count;
- 	atomic_t		i_dio_count;
- 	atomic_t		i_writecount;
-diff --git a/include/linux/futex.h b/include/linux/futex.h
-index 5cc3fed27d4c2..b70df27d7e85c 100644
---- a/include/linux/futex.h
-+++ b/include/linux/futex.h
-@@ -31,23 +31,26 @@ struct task_struct;
+diff --git a/Documentation/devicetree/bindings/net/fsl-fman.txt b/Documentation/devicetree/bindings/net/fsl-fman.txt
+index 299c0dcd67db4..1316f0aec0cf3 100644
+--- a/Documentation/devicetree/bindings/net/fsl-fman.txt
++++ b/Documentation/devicetree/bindings/net/fsl-fman.txt
+@@ -110,6 +110,13 @@ PROPERTIES
+ 		Usage: required
+ 		Definition: See soc/fsl/qman.txt and soc/fsl/bman.txt
  
- union futex_key {
- 	struct {
-+		u64 i_seq;
- 		unsigned long pgoff;
--		struct inode *inode;
--		int offset;
-+		unsigned int offset;
- 	} shared;
- 	struct {
-+		union {
-+			struct mm_struct *mm;
-+			u64 __tmp;
-+		};
- 		unsigned long address;
--		struct mm_struct *mm;
--		int offset;
-+		unsigned int offset;
- 	} private;
- 	struct {
-+		u64 ptr;
- 		unsigned long word;
--		void *ptr;
--		int offset;
-+		unsigned int offset;
- 	} both;
- };
- 
--#define FUTEX_KEY_INIT (union futex_key) { .both = { .ptr = NULL } }
-+#define FUTEX_KEY_INIT (union futex_key) { .both = { .ptr = 0ULL } }
- 
- #ifdef CONFIG_FUTEX
- enum {
-diff --git a/kernel/futex.c b/kernel/futex.c
-index afbf928d6a6b0..07ab324885ac0 100644
---- a/kernel/futex.c
-+++ b/kernel/futex.c
-@@ -429,7 +429,7 @@ static void get_futex_key_refs(union futex_key *key)
- 
- 	switch (key->both.offset & (FUT_OFF_INODE|FUT_OFF_MMSHARED)) {
- 	case FUT_OFF_INODE:
--		ihold(key->shared.inode); /* implies smp_mb(); (B) */
-+		smp_mb();		/* explicit smp_mb(); (B) */
- 		break;
- 	case FUT_OFF_MMSHARED:
- 		futex_get_mm(key); /* implies smp_mb(); (B) */
-@@ -463,7 +463,6 @@ static void drop_futex_key_refs(union futex_key *key)
- 
- 	switch (key->both.offset & (FUT_OFF_INODE|FUT_OFF_MMSHARED)) {
- 	case FUT_OFF_INODE:
--		iput(key->shared.inode);
- 		break;
- 	case FUT_OFF_MMSHARED:
- 		mmdrop(key->private.mm);
-@@ -505,6 +504,46 @@ futex_setup_timer(ktime_t *time, struct hrtimer_sleeper *timeout,
- 	return timeout;
- }
- 
-+/*
-+ * Generate a machine wide unique identifier for this inode.
-+ *
-+ * This relies on u64 not wrapping in the life-time of the machine; which with
-+ * 1ns resolution means almost 585 years.
-+ *
-+ * This further relies on the fact that a well formed program will not unmap
-+ * the file while it has a (shared) futex waiting on it. This mapping will have
-+ * a file reference which pins the mount and inode.
-+ *
-+ * If for some reason an inode gets evicted and read back in again, it will get
-+ * a new sequence number and will _NOT_ match, even though it is the exact same
-+ * file.
-+ *
-+ * It is important that match_futex() will never have a false-positive, esp.
-+ * for PI futexes that can mess up the state. The above argues that false-negatives
-+ * are only possible for malformed programs.
-+ */
-+static u64 get_inode_sequence_number(struct inode *inode)
-+{
-+	static atomic64_t i_seq;
-+	u64 old;
++- fsl,erratum-a050385
++		Usage: optional
++		Value type: boolean
++		Definition: A boolean property. Indicates the presence of the
++		erratum A050385 which indicates that DMA transactions that are
++		split can result in a FMan lock.
 +
-+	/* Does the inode already have a sequence number? */
-+	old = atomic64_read(&inode->i_sequence);
-+	if (likely(old))
-+		return old;
-+
-+	for (;;) {
-+		u64 new = atomic64_add_return(1, &i_seq);
-+		if (WARN_ON_ONCE(!new))
-+			continue;
-+
-+		old = atomic64_cmpxchg_relaxed(&inode->i_sequence, 0, new);
-+		if (old)
-+			return old;
-+		return new;
-+	}
-+}
-+
- /**
-  * get_futex_key() - Get parameters which are the keys for a futex
-  * @uaddr:	virtual address of the futex
-@@ -517,9 +556,15 @@ futex_setup_timer(ktime_t *time, struct hrtimer_sleeper *timeout,
-  *
-  * The key words are stored in @key on success.
-  *
-- * For shared mappings, it's (page->index, file_inode(vma->vm_file),
-- * offset_within_page).  For private mappings, it's (uaddr, current->mm).
-- * We can usually work out the index without swapping in the page.
-+ * For shared mappings (when @fshared), the key is:
-+ *   ( inode->i_sequence, page->index, offset_within_page )
-+ * [ also see get_inode_sequence_number() ]
-+ *
-+ * For private mappings (or when !@fshared), the key is:
-+ *   ( current->mm, address, 0 )
-+ *
-+ * This allows (cross process, where applicable) identification of the futex
-+ * without keeping the page pinned for the duration of the FUTEX_WAIT.
-  *
-  * lock_page() might sleep, the caller should not hold a spinlock.
-  */
-@@ -659,8 +704,6 @@ get_futex_key(u32 __user *uaddr, int fshared, union futex_key *key, enum futex_a
- 		key->private.mm = mm;
- 		key->private.address = address;
+ =============================================================================
+ FMan MURAM Node
  
--		get_futex_key_refs(key); /* implies smp_mb(); (B) */
--
- 	} else {
- 		struct inode *inode;
- 
-@@ -692,40 +735,14 @@ get_futex_key(u32 __user *uaddr, int fshared, union futex_key *key, enum futex_a
- 			goto again;
- 		}
- 
--		/*
--		 * Take a reference unless it is about to be freed. Previously
--		 * this reference was taken by ihold under the page lock
--		 * pinning the inode in place so i_lock was unnecessary. The
--		 * only way for this check to fail is if the inode was
--		 * truncated in parallel which is almost certainly an
--		 * application bug. In such a case, just retry.
--		 *
--		 * We are not calling into get_futex_key_refs() in file-backed
--		 * cases, therefore a successful atomic_inc return below will
--		 * guarantee that get_futex_key() will still imply smp_mb(); (B).
--		 */
--		if (!atomic_inc_not_zero(&inode->i_count)) {
--			rcu_read_unlock();
--			put_page(page);
--
--			goto again;
--		}
--
--		/* Should be impossible but lets be paranoid for now */
--		if (WARN_ON_ONCE(inode->i_mapping != mapping)) {
--			err = -EFAULT;
--			rcu_read_unlock();
--			iput(inode);
--
--			goto out;
--		}
--
- 		key->both.offset |= FUT_OFF_INODE; /* inode-based key */
--		key->shared.inode = inode;
-+		key->shared.i_seq = get_inode_sequence_number(inode);
- 		key->shared.pgoff = basepage_index(tail);
- 		rcu_read_unlock();
- 	}
- 
-+	get_futex_key_refs(key); /* implies smp_mb(); (B) */
-+
- out:
- 	put_page(page);
- 	return err;
 -- 
 2.20.1
 
