@@ -2,551 +2,283 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F3BF818A1AE
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 18:39:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3DBE818A1A8
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 18:38:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726842AbgCRRjM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Mar 2020 13:39:12 -0400
-Received: from mail-wm1-f74.google.com ([209.85.128.74]:34031 "EHLO
-        mail-wm1-f74.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726820AbgCRRjL (ORCPT
+        id S1726704AbgCRRix (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Mar 2020 13:38:53 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:40006 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726506AbgCRRix (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Mar 2020 13:39:11 -0400
-Received: by mail-wm1-f74.google.com with SMTP id z26so1331194wmk.1
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Mar 2020 10:39:09 -0700 (PDT)
+        Wed, 18 Mar 2020 13:38:53 -0400
+Received: by mail-wm1-f68.google.com with SMTP id z12so4344051wmf.5
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Mar 2020 10:38:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
-         :cc;
-        bh=rK1ITrqRONL3mQZw4XYYSSwqWEyHadP5oWedteETYsk=;
-        b=q+g51GD00VnlhmvRzXc/On8KILqXVgidRUQfkl63AXfg1tDlQyZ5jQB222wfsCCaZo
-         TMC75Kr5caRBqiXayDReQkWhD5N8vNrOuOgUya7IUs89QRmV6oM+PMS5gWV0IbIDdKTc
-         2ZMdUzYe8lZKt9MIkm3KHM75diULuZYBBgf7nWk0ZxnFdms0TpUnsSdHo6MVJZ9n+f7+
-         pUMlkmq0X2i17n1Q/NiY5AI1ek+RUQU0VB5KtwyURk5mWrPxUaj9YxIOkoS6OswOfreW
-         i+39KPhPjlx3tVr3iBbL0ZtuZqXPgtiMBLhMH8htqcXmsRq5+0zpOy1xiopoBGI8rl7+
-         0tyg==
+        d=linaro.org; s=google;
+        h=from:autocrypt:to:cc:subject:message-id:date:user-agent
+         :mime-version:content-language:content-transfer-encoding;
+        bh=AKNM+u4tFTDVzydrvk84DIfrMpJTc417JXmPwG7RBb0=;
+        b=p9YlGBNdGxZQio4WtosEf3HduBi/ENY6P4nSfz/+csfCH9mlN3lSi4927XUjv7R0FW
+         aHpzOoQmH7C2UxjlSdIRtpjeL9U6NjgqoUGLSDd+AtfhdW46XKnlz9Xy+0GbSDvlmktz
+         rKf3SXO3YkvrVHE7Hus0OHYrcXtfJVhxgl9G9RkinTFvJcnJngeTT9VnycuSeSgVK4/U
+         bkwNa0EaaAZNvjFyPqtuDNdNcYWpWFkdAPJ0sy8WiwJEAreVhwrwWMwCXGi7SZbIqHs1
+         sM97hpIRiHdejlCcl+vwWDiXP1xfn3FvJX/hszkAejqeL56wEp0pvQmHCx+wf1HP5wzn
+         zkdg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=rK1ITrqRONL3mQZw4XYYSSwqWEyHadP5oWedteETYsk=;
-        b=a8yfjvgoNPR0xwZ8/muboCHEWHF6EAx6GPdaJB1x7W+1BgZAwzg652O+xIzeA8Tkym
-         ndAoZgAd58wZayQFqd528eBiq4XoQ1UhxLmNvhBrQOC5+bCw0OnGzKUeFR4KTOI3zpBq
-         XTnbaVo1lh7upbKXvf//0pg1Lz6C5AQlfntZmGREfSd0Xj4KVNYSn4wB3Rkzh5rfNdt1
-         sNoprNlwGtYaD0l2vsP4mNIO6rrJzR+dhaK9g19d96uxPgL4EmG+NwPIQnGLSqsYxB4+
-         GXFCGKoXjb5xv9bMWP5s/Z1Dk7URbvBa35pCYHLRXpObS1VXcjbECZ7jx+YmgoHJkSrt
-         558A==
-X-Gm-Message-State: ANhLgQ29Ye/sBy3YYsO4DM4YswlqvtcMMJf0pjhOA+kCLge3Sm6HW4Ry
-        EeMg8rpt82Z2j92IK19w5wgtZhJAiA==
-X-Google-Smtp-Source: ADFU+vtDaWQnhBTFo4DZE4Ctzoif7elggQLLd6tU3iGyQuY/vyazTQNQpmeqI2V0bQZl8o8mLWKX/8uiKA==
-X-Received: by 2002:a5d:522f:: with SMTP id i15mr6500780wra.231.1584553148835;
- Wed, 18 Mar 2020 10:39:08 -0700 (PDT)
-Date:   Wed, 18 Mar 2020 18:38:45 +0100
-In-Reply-To: <20200318173845.220793-1-elver@google.com>
-Message-Id: <20200318173845.220793-2-elver@google.com>
-Mime-Version: 1.0
-References: <20200318173845.220793-1-elver@google.com>
-X-Mailer: git-send-email 2.25.1.481.gfbce0eb801-goog
-Subject: [PATCH 2/2] kcsan: Avoid blocking producers in prepare_report()
-From:   Marco Elver <elver@google.com>
-To:     elver@google.com
-Cc:     paulmck@kernel.org, dvyukov@google.com, glider@google.com,
-        andreyknvl@google.com, cai@lca.pw, kasan-dev@googlegroups.com,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:autocrypt:to:cc:subject:message-id:date
+         :user-agent:mime-version:content-language:content-transfer-encoding;
+        bh=AKNM+u4tFTDVzydrvk84DIfrMpJTc417JXmPwG7RBb0=;
+        b=Y4EZvT7CawctNa/om3yARwE7g7KLb4A4zqrr7eoLV5ndiZ0L97SGJq9TbutuVVwJgn
+         8DdJzYXOo4lcQzBWleb9ezSrwuIvhycaHYbVzgeFnYc03typmMTPiKRQ7JkGsNDtdrND
+         0JQeDXWC3aB2kDemMcn9ZseSVdn8Z6cj4tlmyrj2rLDM5y2RysDfEZRlGnmJT/HdlEbn
+         MgneFyVWPSxRgVLEHBqZk9PIV/YrmysBTslkPeNEjrOe0AVR4AQ6YCZ2fDkrJYMYLGXg
+         pIpjuC+JPH7ZJyI62V7h+f4RQ7sxbjbyX6HuoMKO30ocN1tBw3cmyRURuwhcvrcSGVVR
+         IPvg==
+X-Gm-Message-State: ANhLgQ1uJOkHWbKWhPAVQaQkCBVahH4gbCoXNNOBT8aUeW8hNL00fNzz
+        Mho7rmYlvIfXy7GfFWA+C+0B7g==
+X-Google-Smtp-Source: ADFU+vv4cTBCkZd7IMohtBSAg1jnlEkZsSz+DOS0iaxyjqwKMhhENU8EPyFl3xYfDW4umPdi3fkVMQ==
+X-Received: by 2002:a7b:c414:: with SMTP id k20mr6241301wmi.119.1584553130878;
+        Wed, 18 Mar 2020 10:38:50 -0700 (PDT)
+Received: from ?IPv6:2a01:e34:ed2f:f020:5d64:ea6:49bd:69d7? ([2a01:e34:ed2f:f020:5d64:ea6:49bd:69d7])
+        by smtp.googlemail.com with ESMTPSA id j6sm5319276wrx.85.2020.03.18.10.38.48
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 18 Mar 2020 10:38:50 -0700 (PDT)
+From:   Daniel Lezcano <daniel.lezcano@linaro.org>
+Autocrypt: addr=daniel.lezcano@linaro.org; prefer-encrypt=mutual; keydata=
+ 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
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     Anson Huang <anson.huang@nxp.com>,
+        Lokesh Vutla <lokeshvutla@ti.com>,
+        afzal mohammed <afzal.mohd.ma@gmail.com>,
+        Zhou Yanjie <zhouyanjie@wanyeetech.com>,
+        Suman Anna <s-anna@ti.com>,
+        Maarten ter Huurne <maarten@treewalker.org>,
+        Joel Stanley <joel@jms.id.au>, matheus@castello.eng.br,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Tony Lindgren <tony@atomide.com>
+Subject: [GIT PULL] timer drivers for v5.7
+Message-ID: <e6cd8adf-60df-437a-003f-58e3403e4697@linaro.org>
+Date:   Wed, 18 Mar 2020 18:38:48 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-To avoid deadlock in case watchers can be interrupted, we need to ensure
-that producers of the struct other_info can never be blocked by an
-unrelated consumer. (Likely to occur with KCSAN_INTERRUPT_WATCHER.)
 
-There are several cases that can lead to this scenario, for example:
+Hi Thomas,
 
-	1. A watchpoint A was set up by task T1, but interrupted by
-	   interrupt I1. Some other thread (task or interrupt) finds
-	   watchpoint A consumes it, and sets other_info. Then I1 also
-	   finds some unrelated watchpoint B, consumes it, but is blocked
-	   because other_info is in use. T1 cannot consume other_info
-	   because I1 never returns -> deadlock.
+here is the new material for v5.7.
 
-	2. A watchpoint A was set up by task T1, but interrupted by
-	   interrupt I1, which also sets up a watchpoint B. Some other
-	   thread finds watchpoint A, and consumes it and sets up
-	   other_info with its information. Similarly some other thread
-	   finds watchpoint B and consumes it, but is then blocked because
-	   other_info is in use. When I1 continues it sees its watchpoint
-	   was consumed, and that it must wait for other_info, which
-	   currently contains information to be consumed by T1. However, T1
-	   cannot unblock other_info because I1 never returns -> deadlock.
+It merges an immutable branch available for pwm on TI as asked by Tony
+Lindgren.
 
-To avoid this, we need to ensure that producers of struct other_info
-always have a usable other_info entry. This is obviously not the case
-with only a single instance of struct other_info, as concurrent
-producers must wait for the entry to be released by some consumer (which
-may be locked up as illustrated above).
+	https://lkml.org/lkml/2020/3/16/411
 
-While it would be nice if producers could simply call kmalloc() and
-append their instance of struct other_info to a list, we are very
-limited in this code path: since KCSAN can instrument the allocators
-themselves, calling kmalloc() could lead to deadlock or corrupted
-allocator state.
+The following changes since commit 5fb1c2a5bbf79ccca8d17cf97f66085be5808027:
 
-Since producers of the struct other_info will always succeed at
-try_consume_watchpoint(), preceding the call into kcsan_report(), we
-know that the particular watchpoint slot cannot simply be reused or
-consumed by another potential other_info producer. If we move removal of
-a watchpoint after reporting (by the consumer of struct other_info), we
-can see a consumed watchpoint as a held lock on elements of other_info,
-if we create a one-to-one mapping of a watchpoint to an other_info
-element.
+  posix-timers: Pass lockdep expression to RCU lists (2020-02-17
+20:12:19 +0100)
 
-Therefore, the simplest solution is to create an array of struct
-other_info that is as large as the watchpoints array in core.c, and pass
-the watchpoint index to kcsan_report() for producers and consumers, and
-change watchpoints to be removed after reporting is done.
+are available in the Git repository at:
 
-With a default config on a 64-bit system, the array other_infos consumes
-~37KiB. For most systems today this is not a problem. On smaller memory
-constrained systems, the config value CONFIG_KCSAN_NUM_WATCHPOINTS can
-be reduced appropriately.
+  https://git.linaro.org/people/daniel.lezcano/linux.git tags/timers-v5.7
 
-Overall, this change is a simplification of the prepare_report() code,
-and makes some of the checks (such as checking if at least one access is
-a write) redundant.
+for you to fetch changes up to 4f41fe386a94639cd9a1831298d4f85db5662f1e:
 
-Tested:
-$ tools/testing/selftests/rcutorture/bin/kvm.sh \
-	--cpus 12 --duration 10 --kconfig "CONFIG_DEBUG_INFO=y \
-	CONFIG_KCSAN=y CONFIG_KCSAN_ASSUME_PLAIN_WRITES_ATOMIC=n \
-	CONFIG_KCSAN_REPORT_VALUE_CHANGE_ONLY=n \
-	CONFIG_KCSAN_REPORT_ONCE_IN_MS=100000 CONFIG_KCSAN_VERBOSE=y \
-	CONFIG_KCSAN_INTERRUPT_WATCHER=y CONFIG_PROVE_LOCKING=y" \
-	--configs TREE03
-=> No longer hangs and runs to completion as expected.
+  clocksource/drivers/timer-probe: Avoid creating dead devices
+(2020-03-17 13:10:07 +0100)
 
-Reported-by: Paul E. McKenney <paulmck@kernel.org>
-Signed-off-by: Marco Elver <elver@google.com>
----
- kernel/kcsan/core.c   |  31 ++++--
- kernel/kcsan/kcsan.h  |   3 +-
- kernel/kcsan/report.c | 212 ++++++++++++++++++++----------------------
- 3 files changed, 124 insertions(+), 122 deletions(-)
+----------------------------------------------------------------
+- Avoid creating dead devices by flagging the driver with OF_POPULATED
+  in order to prevent the platform to create another device (Saravana
+Kannan)
 
-diff --git a/kernel/kcsan/core.c b/kernel/kcsan/core.c
-index f1c38620e3cf..4d8ea0fca5f1 100644
---- a/kernel/kcsan/core.c
-+++ b/kernel/kcsan/core.c
-@@ -69,7 +69,6 @@ static DEFINE_PER_CPU(struct kcsan_ctx, kcsan_cpu_ctx) = {
-  *   slot=9:  [10, 11,  9]
-  *   slot=63: [64, 65, 63]
-  */
--#define NUM_SLOTS (1 + 2*KCSAN_CHECK_ADJACENT)
- #define SLOT_IDX(slot, i) (slot + ((i + KCSAN_CHECK_ADJACENT) % NUM_SLOTS))
- 
- /*
-@@ -171,12 +170,16 @@ try_consume_watchpoint(atomic_long_t *watchpoint, long encoded_watchpoint)
- 	return atomic_long_try_cmpxchg_relaxed(watchpoint, &encoded_watchpoint, CONSUMED_WATCHPOINT);
- }
- 
--/*
-- * Return true if watchpoint was not touched, false if consumed.
-- */
--static inline bool remove_watchpoint(atomic_long_t *watchpoint)
-+/* Return true if watchpoint was not touched, false if already consumed. */
-+static inline bool consume_watchpoint(atomic_long_t *watchpoint)
- {
--	return atomic_long_xchg_relaxed(watchpoint, INVALID_WATCHPOINT) != CONSUMED_WATCHPOINT;
-+	return atomic_long_xchg_relaxed(watchpoint, CONSUMED_WATCHPOINT) != CONSUMED_WATCHPOINT;
-+}
-+
-+/* Remove the watchpoint -- its slot may be reused after. */
-+static inline void remove_watchpoint(atomic_long_t *watchpoint)
-+{
-+	atomic_long_set(watchpoint, INVALID_WATCHPOINT);
- }
- 
- static __always_inline struct kcsan_ctx *get_ctx(void)
-@@ -322,7 +325,8 @@ static noinline void kcsan_found_watchpoint(const volatile void *ptr,
- 
- 	if (consumed) {
- 		kcsan_report(ptr, size, type, KCSAN_VALUE_CHANGE_MAYBE,
--			     KCSAN_REPORT_CONSUMED_WATCHPOINT);
-+			     KCSAN_REPORT_CONSUMED_WATCHPOINT,
-+			     watchpoint - watchpoints);
- 	} else {
- 		/*
- 		 * The other thread may not print any diagnostics, as it has
-@@ -470,7 +474,7 @@ kcsan_setup_watchpoint(const volatile void *ptr, size_t size, int type)
- 		value_change = KCSAN_VALUE_CHANGE_TRUE;
- 
- 	/* Check if this access raced with another. */
--	if (!remove_watchpoint(watchpoint)) {
-+	if (!consume_watchpoint(watchpoint)) {
- 		/*
- 		 * Depending on the access type, map a value_change of MAYBE to
- 		 * TRUE (always report) or FALSE (never report).
-@@ -500,7 +504,8 @@ kcsan_setup_watchpoint(const volatile void *ptr, size_t size, int type)
- 		if (is_assert && value_change == KCSAN_VALUE_CHANGE_TRUE)
- 			kcsan_counter_inc(KCSAN_COUNTER_ASSERT_FAILURES);
- 
--		kcsan_report(ptr, size, type, value_change, KCSAN_REPORT_RACE_SIGNAL);
-+		kcsan_report(ptr, size, type, value_change, KCSAN_REPORT_RACE_SIGNAL,
-+			     watchpoint - watchpoints);
- 	} else if (value_change == KCSAN_VALUE_CHANGE_TRUE) {
- 		/* Inferring a race, since the value should not have changed. */
- 
-@@ -510,9 +515,15 @@ kcsan_setup_watchpoint(const volatile void *ptr, size_t size, int type)
- 
- 		if (IS_ENABLED(CONFIG_KCSAN_REPORT_RACE_UNKNOWN_ORIGIN) || is_assert)
- 			kcsan_report(ptr, size, type, KCSAN_VALUE_CHANGE_TRUE,
--				     KCSAN_REPORT_RACE_UNKNOWN_ORIGIN);
-+				     KCSAN_REPORT_RACE_UNKNOWN_ORIGIN,
-+				     watchpoint - watchpoints);
- 	}
- 
-+	/*
-+	 * Remove watchpoint; must be after reporting, since the slot may be
-+	 * reused after this point.
-+	 */
-+	remove_watchpoint(watchpoint);
- 	kcsan_counter_dec(KCSAN_COUNTER_USED_WATCHPOINTS);
- out_unlock:
- 	if (!kcsan_interrupt_watcher)
-diff --git a/kernel/kcsan/kcsan.h b/kernel/kcsan/kcsan.h
-index 6630dfe32f31..763d6d08d94b 100644
---- a/kernel/kcsan/kcsan.h
-+++ b/kernel/kcsan/kcsan.h
-@@ -12,6 +12,7 @@
- 
- /* The number of adjacent watchpoints to check. */
- #define KCSAN_CHECK_ADJACENT 1
-+#define NUM_SLOTS (1 + 2*KCSAN_CHECK_ADJACENT)
- 
- extern unsigned int kcsan_udelay_task;
- extern unsigned int kcsan_udelay_interrupt;
-@@ -136,6 +137,6 @@ enum kcsan_report_type {
-  */
- extern void kcsan_report(const volatile void *ptr, size_t size, int access_type,
- 			 enum kcsan_value_change value_change,
--			 enum kcsan_report_type type);
-+			 enum kcsan_report_type type, int watchpoint_idx);
- 
- #endif /* _KERNEL_KCSAN_KCSAN_H */
-diff --git a/kernel/kcsan/report.c b/kernel/kcsan/report.c
-index de234d1c1b3d..ae0a383238ea 100644
---- a/kernel/kcsan/report.c
-+++ b/kernel/kcsan/report.c
-@@ -30,9 +30,7 @@ struct access_info {
- 
- /*
-  * Other thread info: communicated from other racing thread to thread that set
-- * up the watchpoint, which then prints the complete report atomically. Only
-- * need one struct, as all threads should to be serialized regardless to print
-- * the reports, with reporting being in the slow-path.
-+ * up the watchpoint, which then prints the complete report atomically.
-  */
- struct other_info {
- 	struct access_info	ai;
-@@ -59,7 +57,11 @@ struct other_info {
- 	struct task_struct	*task;
- };
- 
--static struct other_info other_infos[1];
-+/*
-+ * To never block any producers of struct other_info, we need as many elements
-+ * as we have watchpoints (upper bound on concurrent races to report).
-+ */
-+static struct other_info other_infos[CONFIG_KCSAN_NUM_WATCHPOINTS + NUM_SLOTS-1];
- 
- /*
-  * Information about reported races; used to rate limit reporting.
-@@ -96,10 +98,11 @@ struct report_time {
- static struct report_time report_times[REPORT_TIMES_SIZE];
- 
- /*
-- * This spinlock protects reporting and other_info, since other_info is usually
-- * required when reporting.
-+ * Spinlock serializing report generation, and access to @other_infos. Although
-+ * it could make sense to have a finer-grained locking story for @other_infos,
-+ * report generation needs to be serialized either way, so not much is gained.
-  */
--static DEFINE_SPINLOCK(report_lock);
-+static DEFINE_RAW_SPINLOCK(report_lock);
- 
- /*
-  * Checks if the race identified by thread frames frame1 and frame2 has
-@@ -395,9 +398,13 @@ static bool print_report(enum kcsan_value_change value_change,
- static void release_report(unsigned long *flags, struct other_info *other_info)
- {
- 	if (other_info)
--		other_info->ai.ptr = NULL; /* Mark for reuse. */
-+		/*
-+		 * Use size to denote valid/invalid, since KCSAN entirely
-+		 * ignores 0-sized accesses.
-+		 */
-+		other_info->ai.size = 0;
- 
--	spin_unlock_irqrestore(&report_lock, *flags);
-+	raw_spin_unlock_irqrestore(&report_lock, *flags);
- }
- 
- /*
-@@ -435,14 +442,14 @@ static void set_other_info_task_blocking(unsigned long *flags,
- 			 */
- 			set_current_state(TASK_UNINTERRUPTIBLE);
- 		}
--		spin_unlock_irqrestore(&report_lock, *flags);
-+		raw_spin_unlock_irqrestore(&report_lock, *flags);
- 		/*
- 		 * We cannot call schedule() since we also cannot reliably
- 		 * determine if sleeping here is permitted -- see in_atomic().
- 		 */
- 
- 		udelay(1);
--		spin_lock_irqsave(&report_lock, *flags);
-+		raw_spin_lock_irqsave(&report_lock, *flags);
- 		if (timeout-- < 0) {
- 			/*
- 			 * Abort. Reset @other_info->task to NULL, since it
-@@ -454,128 +461,107 @@ static void set_other_info_task_blocking(unsigned long *flags,
- 			break;
- 		}
- 		/*
--		 * If @ptr nor @current matches, then our information has been
--		 * consumed and we may continue. If not, retry.
-+		 * If invalid, or @ptr nor @current matches, then @other_info
-+		 * has been consumed and we may continue. If not, retry.
- 		 */
--	} while (other_info->ai.ptr == ai->ptr && other_info->task == current);
-+	} while (other_info->ai.size && other_info->ai.ptr == ai->ptr &&
-+		 other_info->task == current);
- 	if (is_running)
- 		set_current_state(TASK_RUNNING);
- }
- 
--/*
-- * Depending on the report type either sets other_info and returns false, or
-- * acquires the matching other_info and returns true. If other_info is not
-- * required for the report type, simply acquires report_lock and returns true.
-- */
--static bool prepare_report(unsigned long *flags, enum kcsan_report_type type,
--			   const struct access_info *ai, struct other_info *other_info)
-+/* Populate @other_info; requires that the provided @other_info not in use. */
-+static void prepare_report_producer(unsigned long *flags,
-+				    const struct access_info *ai,
-+				    struct other_info *other_info)
- {
--	if (type != KCSAN_REPORT_CONSUMED_WATCHPOINT &&
--	    type != KCSAN_REPORT_RACE_SIGNAL) {
--		/* other_info not required; just acquire report_lock */
--		spin_lock_irqsave(&report_lock, *flags);
--		return true;
--	}
-+	raw_spin_lock_irqsave(&report_lock, *flags);
- 
--retry:
--	spin_lock_irqsave(&report_lock, *flags);
-+	/*
-+	 * The same @other_infos entry cannot be used concurrently, because
-+	 * there is a one-to-one mapping to watchpoint slots (@watchpoints in
-+	 * core.c), and a watchpoint is only released for reuse after reporting
-+	 * is done by the consumer of @other_info. Therefore, it is impossible
-+	 * for another concurrent prepare_report_producer() to set the same
-+	 * @other_info, and are guaranteed exclusivity for the @other_infos
-+	 * entry pointed to by @other_info.
-+	 *
-+	 * To check this property holds, size should never be non-zero here,
-+	 * because every consumer of struct other_info resets size to 0 in
-+	 * release_report().
-+	 */
-+	WARN_ON(other_info->ai.size);
- 
--	switch (type) {
--	case KCSAN_REPORT_CONSUMED_WATCHPOINT:
--		if (other_info->ai.ptr)
--			break; /* still in use, retry */
-+	other_info->ai = *ai;
-+	other_info->num_stack_entries = stack_trace_save(other_info->stack_entries, NUM_STACK_ENTRIES, 2);
- 
--		other_info->ai = *ai;
--		other_info->num_stack_entries = stack_trace_save(other_info->stack_entries, NUM_STACK_ENTRIES, 1);
-+	if (IS_ENABLED(CONFIG_KCSAN_VERBOSE))
-+		set_other_info_task_blocking(flags, ai, other_info);
- 
--		if (IS_ENABLED(CONFIG_KCSAN_VERBOSE))
--			set_other_info_task_blocking(flags, ai, other_info);
-+	raw_spin_unlock_irqrestore(&report_lock, *flags);
-+}
- 
--		spin_unlock_irqrestore(&report_lock, *flags);
-+/* Awaits producer to fill @other_info and then returns. */
-+static bool prepare_report_consumer(unsigned long *flags,
-+				    const struct access_info *ai,
-+				    struct other_info *other_info)
-+{
- 
--		/*
--		 * The other thread will print the summary; other_info may now
--		 * be consumed.
--		 */
--		return false;
-+	raw_spin_lock_irqsave(&report_lock, *flags);
-+	while (!other_info->ai.size) { /* Await valid @other_info. */
-+		raw_spin_unlock_irqrestore(&report_lock, *flags);
-+		cpu_relax();
-+		raw_spin_lock_irqsave(&report_lock, *flags);
-+	}
- 
--	case KCSAN_REPORT_RACE_SIGNAL:
--		if (!other_info->ai.ptr)
--			break; /* no data available yet, retry */
-+	/* Should always have a matching access based on watchpoint encoding. */
-+	if (WARN_ON(!matching_access((unsigned long)other_info->ai.ptr & WATCHPOINT_ADDR_MASK, other_info->ai.size,
-+				     (unsigned long)ai->ptr & WATCHPOINT_ADDR_MASK, ai->size)))
-+		goto discard;
- 
-+	if (!matching_access((unsigned long)other_info->ai.ptr, other_info->ai.size,
-+			     (unsigned long)ai->ptr, ai->size)) {
- 		/*
--		 * First check if this is the other_info we are expecting, i.e.
--		 * matches based on how watchpoint was encoded.
-+		 * If the actual accesses to not match, this was a false
-+		 * positive due to watchpoint encoding.
- 		 */
--		if (!matching_access((unsigned long)other_info->ai.ptr & WATCHPOINT_ADDR_MASK, other_info->ai.size,
--				     (unsigned long)ai->ptr & WATCHPOINT_ADDR_MASK, ai->size))
--			break; /* mismatching watchpoint, retry */
--
--		if (!matching_access((unsigned long)other_info->ai.ptr, other_info->ai.size,
--				     (unsigned long)ai->ptr, ai->size)) {
--			/*
--			 * If the actual accesses to not match, this was a false
--			 * positive due to watchpoint encoding.
--			 */
--			kcsan_counter_inc(KCSAN_COUNTER_ENCODING_FALSE_POSITIVES);
--
--			/* discard this other_info */
--			release_report(flags, other_info);
--			return false;
--		}
-+		kcsan_counter_inc(KCSAN_COUNTER_ENCODING_FALSE_POSITIVES);
-+		goto discard;
-+	}
- 
--		if (!((ai->access_type | other_info->ai.access_type) & KCSAN_ACCESS_WRITE)) {
--			/*
--			 * While the address matches, this is not the other_info
--			 * from the thread that consumed our watchpoint, since
--			 * neither this nor the access in other_info is a write.
--			 * It is invalid to continue with the report, since we
--			 * only have information about reads.
--			 *
--			 * This can happen due to concurrent races on the same
--			 * address, with at least 4 threads. To avoid locking up
--			 * other_info and all other threads, we have to consume
--			 * it regardless.
--			 *
--			 * A concrete case to illustrate why we might lock up if
--			 * we do not consume other_info:
--			 *
--			 *   We have 4 threads, all accessing the same address
--			 *   (or matching address ranges). Assume the following
--			 *   watcher and watchpoint consumer pairs:
--			 *   write1-read1, read2-write2. The first to populate
--			 *   other_info is write2, however, write1 consumes it,
--			 *   resulting in a report of write1-write2. This report
--			 *   is valid, however, now read1 populates other_info;
--			 *   read2-read1 is an invalid conflict, yet, no other
--			 *   conflicting access is left. Therefore, we must
--			 *   consume read1's other_info.
--			 *
--			 * Since this case is assumed to be rare, it is
--			 * reasonable to omit this report: one of the other
--			 * reports includes information about the same shared
--			 * data, and at this point the likelihood that we
--			 * re-report the same race again is high.
--			 */
--			release_report(flags, other_info);
--			return false;
--		}
-+	return true;
- 
--		/* Matching access in other_info. */
--		return true;
-+discard:
-+	release_report(flags, other_info);
-+	return false;
-+}
- 
-+/*
-+ * Depending on the report type either sets @other_info and returns false, or
-+ * awaits @other_info and returns true. If @other_info is not required for the
-+ * report type, simply acquires @report_lock and returns true.
-+ */
-+static noinline bool prepare_report(unsigned long *flags,
-+				    enum kcsan_report_type type,
-+				    const struct access_info *ai,
-+				    struct other_info *other_info)
-+{
-+	switch (type) {
-+	case KCSAN_REPORT_CONSUMED_WATCHPOINT:
-+		prepare_report_producer(flags, ai, other_info);
-+		return false;
-+	case KCSAN_REPORT_RACE_SIGNAL:
-+		return prepare_report_consumer(flags, ai, other_info);
- 	default:
--		BUG();
-+		/* @other_info not required; just acquire @report_lock. */
-+		raw_spin_lock_irqsave(&report_lock, *flags);
-+		return true;
- 	}
--
--	spin_unlock_irqrestore(&report_lock, *flags);
--
--	goto retry;
- }
- 
- void kcsan_report(const volatile void *ptr, size_t size, int access_type,
- 		  enum kcsan_value_change value_change,
--		  enum kcsan_report_type type)
-+		  enum kcsan_report_type type, int watchpoint_idx)
- {
- 	unsigned long flags = 0;
- 	const struct access_info ai = {
-@@ -586,7 +572,11 @@ void kcsan_report(const volatile void *ptr, size_t size, int access_type,
- 		.cpu_id		= raw_smp_processor_id()
- 	};
- 	struct other_info *other_info = type == KCSAN_REPORT_RACE_UNKNOWN_ORIGIN
--					? NULL : &other_infos[0];
-+					? NULL : &other_infos[watchpoint_idx];
-+
-+	kcsan_disable_current();
-+	if (WARN_ON(watchpoint_idx < 0 || watchpoint_idx >= ARRAY_SIZE(other_infos)))
-+		goto out;
- 
- 	/*
- 	 * With TRACE_IRQFLAGS, lockdep's IRQ trace state becomes corrupted if
-@@ -596,7 +586,6 @@ void kcsan_report(const volatile void *ptr, size_t size, int access_type,
- 	 */
- 	lockdep_off();
- 
--	kcsan_disable_current();
- 	if (prepare_report(&flags, type, &ai, other_info)) {
- 		/*
- 		 * Never report if value_change is FALSE, only if we it is
-@@ -611,7 +600,8 @@ void kcsan_report(const volatile void *ptr, size_t size, int access_type,
- 
- 		release_report(&flags, other_info);
- 	}
--	kcsan_enable_current();
- 
- 	lockdep_on();
-+out:
-+	kcsan_enable_current();
- }
+- Remove unused includes from imx family drivers (Anson Huang)
+
+- timer-dm-ti rework to prepare for pwm and suspend support (Lokesh Vutla)
+
+- Fix the rate for the global clock on the pit64b (Claudiu Beznea)
+
+- Fix timer-cs5535 by requesting an irq with non-NULL dev_id (Afzal
+Mohammed)
+
+- Replace setup_irq() by request_irq() (Afzal Mohammed)
+
+- Add support for the TCU of X1000 (Zhou Yanjie)
+
+- Drop the bogus omap_dm_timer_of_set_source() function (Suman Anna)
+
+- Do not update the counter when updating the period in order to
+  prevent a disruption when the pwm is used (Lokesh Vutla)
+
+- Improve owl_timer_init() failure messages (Matheus Castello)
+
+- Add driver for the Ingenic JZ47xx OST (Maarten ter Huurne)
+
+- Pass the interrupt and the shutdown callbacks in the init function
+  for ast2600 support (Joel Stanley)
+
+- Add the ast2600 compatible string for the fttmr010 (Joel Stanley)
+
+----------------------------------------------------------------
+Anson Huang (2):
+      clocksource/drivers/imx-tpm: Remove unused includes
+      clocksource/drivers/imx-sysctr: Remove unused includes
+
+Claudiu Beznea (1):
+      clocksource/drivers/timer-microchip-pit64b: Fix rate for gck
+
+Daniel Lezcano (1):
+      Merge branch 'timers/drivers/timer-ti-dm' into timers/drivers/next
+
+Joel Stanley (3):
+      clocksource/drivers/fttmr010: Parametrise shutdown
+      clocksource/drivers/fttmr010: Set interrupt and shutdown
+      dt-bindings: fttmr010: Add ast2600 compatible
+
+Lokesh Vutla (6):
+      clocksource/drivers/timer-ti-dm: Do not update counter on updating
+the period
+      clocksource/drivers/timer-ti-dm: Convert to SPDX identifier
+      clocksource/drivers/timer-ti-dm: Implement cpu_pm notifier for
+context save and restore
+      clocksource/drivers/timer-ti-dm: Do not update counter on updating
+the period
+      clocksource/drivers/timer-ti-dm: Add support to get pwm current status
+      clocksource/drivers/timer-ti-dm: Enable autoreload in set_pwm
+
+Maarten ter Huurne (1):
+      clocksource: Add driver for the Ingenic JZ47xx OST
+
+Matheus Castello (1):
+      clocksource/drivers/owl: Improve owl_timer_init fail messages
+
+Saravana Kannan (1):
+      clocksource/drivers/timer-probe: Avoid creating dead devices
+
+Suman Anna (1):
+      clocksource/drivers/timer-ti-dm: Drop bogus
+omap_dm_timer_of_set_source()
+
+Tony Lindgren (1):
+      clocksource/drivers/timer-ti-dm: Prepare for using cpuidle
+
+afzal mohammed (2):
+      clocksource: Replace setup_irq() by request_irq()
+      clocksource/drivers/timer-cs5535: Request irq with non-NULL dev_id
+
+周琰杰 (Zhou Yanjie) (2):
+      dt-bindings: timer: Add X1000 bindings.
+      clocksource/drivers/ingenic: Add support for TCU of X1000
+
+ .../devicetree/bindings/timer/faraday,fttmr010.txt |   1 +
+ .../devicetree/bindings/timer/ingenic,tcu.txt      |   1 +
+ drivers/clocksource/Kconfig                        |   8 +
+ drivers/clocksource/Makefile                       |   1 +
+ drivers/clocksource/bcm2835_timer.c                |   8 +-
+ drivers/clocksource/bcm_kona_timer.c               |  10 +-
+ drivers/clocksource/dw_apb_timer.c                 |  11 +-
+ drivers/clocksource/exynos_mct.c                   |  12 +-
+ drivers/clocksource/ingenic-ost.c                  | 189 ++++++++++++++++++
+ drivers/clocksource/ingenic-timer.c                |   3 +-
+ drivers/clocksource/mxs_timer.c                    |  10 +-
+ drivers/clocksource/nomadik-mtu.c                  |  11 +-
+ drivers/clocksource/samsung_pwm_timer.c            |  12 +-
+ drivers/clocksource/timer-atlas7.c                 |  50 +++--
+ drivers/clocksource/timer-cs5535.c                 |   9 +-
+ drivers/clocksource/timer-efm32.c                  |  10 +-
+ drivers/clocksource/timer-fsl-ftm.c                |  10 +-
+ drivers/clocksource/timer-fttmr010.c               |  68 +++++--
+ drivers/clocksource/timer-imx-gpt.c                |  10 +-
+ drivers/clocksource/timer-imx-sysctr.c             |   2 -
+ drivers/clocksource/timer-imx-tpm.c                |   2 -
+ drivers/clocksource/timer-integrator-ap.c          |  11 +-
+ drivers/clocksource/timer-meson6.c                 |  11 +-
+ drivers/clocksource/timer-microchip-pit64b.c       |   1 +
+ drivers/clocksource/timer-orion.c                  |   9 +-
+ drivers/clocksource/timer-owl.c                    |  15 +-
+ drivers/clocksource/timer-prima2.c                 |  14 +-
+ drivers/clocksource/timer-probe.c                  |   2 +
+ drivers/clocksource/timer-pxa.c                    |  10 +-
+ drivers/clocksource/timer-sp804.c                  |  11 +-
+ drivers/clocksource/timer-ti-dm.c                  | 217
++++++++++++----------
+ drivers/clocksource/timer-u300.c                   |   9 +-
+ drivers/clocksource/timer-vf-pit.c                 |  10 +-
+ drivers/clocksource/timer-vt8500.c                 |  11 +-
+ drivers/clocksource/timer-zevio.c                  |  13 +-
+ drivers/pwm/pwm-omap-dmtimer.c                     |   8 +-
+ include/clocksource/timer-ti-dm.h                  |   4 +-
+ include/linux/dw_apb_timer.h                       |   1 -
+ include/linux/platform_data/dmtimer-omap.h         |   6 +-
+ 39 files changed, 471 insertions(+), 330 deletions(-)
+ create mode 100644 drivers/clocksource/ingenic-ost.c
+
+
 -- 
-2.25.1.481.gfbce0eb801-goog
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
 
