@@ -2,114 +2,61 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C49C81893EF
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 03:15:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8E0291893F5
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 03:18:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727296AbgCRCPU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Mar 2020 22:15:20 -0400
-Received: from out4436.biz.mail.alibaba.com ([47.88.44.36]:14807 "EHLO
-        out4436.biz.mail.alibaba.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726229AbgCRCPT (ORCPT
+        id S1727290AbgCRCSM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Mar 2020 22:18:12 -0400
+Received: from mail-ua1-f54.google.com ([209.85.222.54]:37768 "EHLO
+        mail-ua1-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726229AbgCRCSL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Mar 2020 22:15:19 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R121e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e07488;MF=yun.wang@linux.alibaba.com;NM=1;PH=DS;RN=9;SR=0;TI=SMTPD_---0Tsv6iJu_1584497715;
-Received: from testdeMacBook-Pro.local(mailfrom:yun.wang@linux.alibaba.com fp:SMTPD_---0Tsv6iJu_1584497715)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Wed, 18 Mar 2020 10:15:16 +0800
-To:     Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-        "open list:SCHEDULER" <linux-kernel@vger.kernel.org>
-From:   =?UTF-8?B?546L6LSH?= <yun.wang@linux.alibaba.com>
-Subject: [PATCH v2] sched: avoid scale real weight down to zero
-Message-ID: <38e8e212-59a1-64b2-b247-b6d0b52d8dc1@linux.alibaba.com>
-Date:   Wed, 18 Mar 2020 10:15:15 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:68.0)
- Gecko/20100101 Thunderbird/68.4.2
+        Tue, 17 Mar 2020 22:18:11 -0400
+Received: by mail-ua1-f54.google.com with SMTP id h32so8881588uah.4
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Mar 2020 19:18:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=xFrUk2+Eyc785NzJHh9AqDzcXv9ntwKnSngSFLs9xi8=;
+        b=n5hHTwBBcpJ/DhiJ0y8sCfIgYABNVBKH+0R/SfE9l8BL8B5xMBfnI6YgjR+wzsREdg
+         Hgsi8cQ6SdUDcqH0HpZ7ZJ67OKpMsMH0iTFZzh4MJjCen0flpUrX/zws3ntTEcH3XXp7
+         GXLRJAOQNwDuWHO8wvg93grbYyIdVENi2148n+NNDOHKcSsRHsO7fZTSanfyosCHNvQZ
+         ho7lwFCZzwrFdG3on0rp20Ad9R5pixgMRkqHDn3h58eqNkt0StT0Bnf69gI64mBGmP04
+         hqqfBtvhInWfW98uHKzrUEovWInbdNv8VcfPIHWTukTcdbrAhJ/vV/qf1O2hNJO0giIj
+         x9mQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=xFrUk2+Eyc785NzJHh9AqDzcXv9ntwKnSngSFLs9xi8=;
+        b=UsoNg8ZzdscmndIJxlVp3SBoIx4VQfEKtHzwRCKOiApJuYLPfLd3ju32G4BUb3lbAv
+         om+6mDdWr1D8El+MpLUuNs2zKvpyf1j9Ro/8As2AhADqCgmECbyZH4d5j46zpZNI3f4f
+         PjpauYAjVjxp9ZHInrDdmzBWT8dvPufwR/zRcglHLWtAGRdX0m6hT5yNb5IDxfIsIgsL
+         V9In6u5263e4QjOTLK379ilYTbvsyRNSgPwGYX7FIndi8d8LfLh+Z0yRHGgh2E3eYe/E
+         PK+3VmPXX6h1IoLKx7WVIiG6O6Sma0tmf0kIW/ZFCsRZUIGAg+E49aVrcLeoJivN1I6F
+         GoIQ==
+X-Gm-Message-State: ANhLgQ2u99zuvcrPXhHMeisUQ1mMU09trcFdAtcX017/k2HgMeeZY3u2
+        1OMxd8965Wuh5wppU9GnJ7PT9eswzjWfKWISoAw=
+X-Google-Smtp-Source: ADFU+vv+fzarl6HBXznz/RGpx9z4idfZfOZzHi1dpALbSJXjR4Y7T1Fg9qqnf5RDzv0ldp9Sv0R8L8WCGa99rVX2bHs=
+X-Received: by 2002:ab0:2e91:: with SMTP id f17mr1402878uaa.22.1584497890758;
+ Tue, 17 Mar 2020 19:18:10 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <0000000000002e20b9059fee8a94@google.com>
+In-Reply-To: <0000000000002e20b9059fee8a94@google.com>
+From:   Qiujun Huang <anenbupt@gmail.com>
+Date:   Wed, 18 Mar 2020 10:17:59 +0800
+Message-ID: <CADG63jBhCBf6r8vfT6kCwh7shYHKsuGH=Mx8D+hDxO0C3Urjqw@mail.gmail.com>
+Subject: Re: WARNING in idr_destroy
+To:     syzbot <syzbot+05835159fe322770fe3d@syzkaller.appspotmail.com>
+Cc:     airlied@linux.ie, Daniel Vetter <daniel@ffwll.ch>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+        syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-During our testing, we found a case that shares no longer
-working correctly, the cgroup topology is like:
-
-  /sys/fs/cgroup/cpu/A		(shares=102400)
-  /sys/fs/cgroup/cpu/A/B	(shares=2)
-  /sys/fs/cgroup/cpu/A/B/C	(shares=1024)
-
-  /sys/fs/cgroup/cpu/D		(shares=1024)
-  /sys/fs/cgroup/cpu/D/E	(shares=1024)
-  /sys/fs/cgroup/cpu/D/E/F	(shares=1024)
-
-The same benchmark is running in group C & F, no other tasks are
-running, the benchmark is capable to consumed all the CPUs.
-
-We suppose the group C will win more CPU resources since it could
-enjoy all the shares of group A, but it's F who wins much more.
-
-The reason is because we have group B with shares as 2, since
-A->cfs_rq.load.weight == B->se.load.weight == B->shares/nr_cpus,
-so A->cfs_rq.load.weight become very small.
-
-And in calc_group_shares() we calculate shares as:
-
-  load = max(scale_load_down(cfs_rq->load.weight), cfs_rq->avg.load_avg);
-  shares = (tg_shares * load) / tg_weight;
-
-Since the 'cfs_rq->load.weight' is too small, the load become 0
-after scale down, although 'tg_shares' is 102400, shares of the se
-which stand for group A on root cfs_rq become 2.
-
-While the se of D on root cfs_rq is far more bigger than 2, so it
-wins the battle.
-
-Thus when scale_load_down() scale real weight down to 0, it's no
-longer telling the real story, the caller will have the wrong
-information and the calculation will be buggy.
-
-This patch add check in scale_load_down(), so the real weight will
-be >= MIN_SHARES after scale, after applied the group C wins as
-expected.
-
-Cc: Ben Segall <bsegall@google.com>
-Reviewed-by: Vincent Guittot <vincent.guittot@linaro.org>
-Suggested-by: Peter Zijlstra <peterz@infradead.org>
-Signed-off-by: Michael Wang <yun.wang@linux.alibaba.com>
----
-v2:
-  * replace MIN_SHARE with 2UL to cover CONFIG_FAIR_GROUP_SCHED=n case
-
- kernel/sched/sched.h | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
-
-diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index 2a0caf394dd4..9bca26bd60d9 100644
---- a/kernel/sched/sched.h
-+++ b/kernel/sched/sched.h
-@@ -118,7 +118,13 @@ extern long calc_load_fold_active(struct rq *this_rq, long adjust);
- #ifdef CONFIG_64BIT
- # define NICE_0_LOAD_SHIFT	(SCHED_FIXEDPOINT_SHIFT + SCHED_FIXEDPOINT_SHIFT)
- # define scale_load(w)		((w) << SCHED_FIXEDPOINT_SHIFT)
--# define scale_load_down(w)	((w) >> SCHED_FIXEDPOINT_SHIFT)
-+# define scale_load_down(w) \
-+({ \
-+	unsigned long __w = (w); \
-+	if (__w) \
-+		__w = max(2UL, __w >> SCHED_FIXEDPOINT_SHIFT); \
-+	__w; \
-+})
- #else
- # define NICE_0_LOAD_SHIFT	(SCHED_FIXEDPOINT_SHIFT)
- # define scale_load(w)		(w)
--- 
-2.14.4.44.g2045bb6
-
+#syz test: https://github.com/hqj/hqjagain_test.git idr_destroy
