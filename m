@@ -2,29 +2,29 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 89911189DD4
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 15:27:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 94AEF189DC6
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 15:27:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727225AbgCRO1V (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Mar 2020 10:27:21 -0400
-Received: from gloria.sntech.de ([185.11.138.130]:37362 "EHLO gloria.sntech.de"
+        id S1727160AbgCRO1C (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Mar 2020 10:27:02 -0400
+Received: from gloria.sntech.de ([185.11.138.130]:37366 "EHLO gloria.sntech.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726971AbgCRO1A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Mar 2020 10:27:00 -0400
+        id S1726973AbgCRO1B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Mar 2020 10:27:01 -0400
 Received: from [94.134.91.63] (helo=phil.fritz.box)
         by gloria.sntech.de with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
         (Exim 4.89)
         (envelope-from <heiko@sntech.de>)
-        id 1jEZeo-0004YX-VA; Wed, 18 Mar 2020 15:26:55 +0100
+        id 1jEZep-0004YX-BN; Wed, 18 Mar 2020 15:26:55 +0100
 From:   Heiko Stuebner <heiko@sntech.de>
 To:     gregkh@linuxfoundation.org
 Cc:     jslaby@suse.com, andriy.shevchenko@linux.intel.com,
         matwey.kornilov@gmail.com, linux-serial@vger.kernel.org,
         linux-kernel@vger.kernel.org, heiko@sntech.de,
         Heiko Stuebner <heiko.stuebner@theobroma-systems.com>
-Subject: [PATCH 4/7] serial: 8250: Start rs485 after registering port if rs485 is enabled in probe
-Date:   Wed, 18 Mar 2020 15:26:37 +0100
-Message-Id: <20200318142640.982763-5-heiko@sntech.de>
+Subject: [PATCH 5/7] serial: 8250: handle DTR in rs485 emulation
+Date:   Wed, 18 Mar 2020 15:26:38 +0100
+Message-Id: <20200318142640.982763-6-heiko@sntech.de>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20200318142640.982763-1-heiko@sntech.de>
 References: <20200318142640.982763-1-heiko@sntech.de>
@@ -37,41 +37,54 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Heiko Stuebner <heiko.stuebner@theobroma-systems.com>
 
-Before registering a port 8250 drivers may read devicetree information
-regarding rs485 emulation, but starting the em485 emulation at that point
-would only keep the em485 structure in the template uart port.
+While in a lot of cases only RTS is needed as DE signal, sometimes the
+RE signals is to be controlled separately, as DTR pin.
 
-Also at that point before the port is registered possible gpios for
-rts/dtr are not acquired yet as well.
-
-So simply check after acquiring the port if the rs485-enable flag is set
-and start the config callback in that case.
+So add necessary control functions for it.
 
 Signed-off-by: Heiko Stuebner <heiko.stuebner@theobroma-systems.com>
 ---
- drivers/tty/serial/8250/8250_core.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ drivers/tty/serial/8250/8250_port.c | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-diff --git a/drivers/tty/serial/8250/8250_core.c b/drivers/tty/serial/8250/8250_core.c
-index e682390ce0de..beab1c22b34d 100644
---- a/drivers/tty/serial/8250/8250_core.c
-+++ b/drivers/tty/serial/8250/8250_core.c
-@@ -1068,6 +1068,15 @@ int serial8250_register_8250_port(struct uart_8250_port *up)
- 		if (up->dl_write)
- 			uart->dl_write = up->dl_write;
- 
-+		if (uart->port.rs485_config &&
-+		    (uart->port.rs485.flags & SER_RS485_ENABLED)) {
-+			dev_dbg(uart->port.dev, "starting in rs485 mode\n");
-+			ret = uart->port.rs485_config(&uart->port,
-+						      &uart->port.rs485);
-+			if (ret < 0)
-+				goto out_unlock;
-+		}
+diff --git a/drivers/tty/serial/8250/8250_port.c b/drivers/tty/serial/8250/8250_port.c
+index 3d1d8490bc42..f8e5c096ed51 100644
+--- a/drivers/tty/serial/8250/8250_port.c
++++ b/drivers/tty/serial/8250/8250_port.c
+@@ -572,6 +572,10 @@ static inline void serial8250_em485_rts_after_send(struct uart_8250_port *p)
+ 		mcr &= ~UART_MCR_RTS;
+ 		p->port.mctrl &= ~TIOCM_RTS;
+ 	}
 +
- 		if (uart->port.type != PORT_8250_CIR) {
- 			if (serial8250_isa_config != NULL)
- 				serial8250_isa_config(0, &uart->port,
++	mcr |= UART_MCR_DTR;
++	p->port.mctrl |= TIOCM_DTR;
++
+ 	serial8250_out_MCR(p, mcr);
+ }
+ 
+@@ -1558,6 +1562,13 @@ static inline void start_tx_rs485(struct uart_port *port)
+ 	em485->active_timer = NULL;
+ 
+ 	mcr = serial8250_in_MCR(up);
++
++	/* in rx_during_tx mode keep DTR active, to receive data */
++	if (up->port.rs485.flags & SER_RS485_RX_DURING_TX)
++		mcr |= UART_MCR_DTR;
++	else
++		mcr &= ~UART_MCR_DTR;
++
+ 	if (!!(up->port.rs485.flags & SER_RS485_RTS_ON_SEND) !=
+ 	    !!(mcr & UART_MCR_RTS)) {
+ 		if (up->port.rs485.flags & SER_RS485_RTS_ON_SEND)
+@@ -1572,6 +1583,8 @@ static inline void start_tx_rs485(struct uart_port *port)
+ 					 up->port.rs485.delay_rts_before_send);
+ 			return;
+ 		}
++	} else {
++		serial8250_out_MCR(up, mcr);
+ 	}
+ 
+ 	__start_tx(port);
 -- 
 2.24.1
 
