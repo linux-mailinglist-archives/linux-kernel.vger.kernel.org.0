@@ -2,36 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D879818A48F
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 21:55:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D68E618A491
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 21:55:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727959AbgCRUyn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Mar 2020 16:54:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54432 "EHLO mail.kernel.org"
+        id S1727988AbgCRUyq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Mar 2020 16:54:46 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54528 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727900AbgCRUyl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Mar 2020 16:54:41 -0400
+        id S1727968AbgCRUyo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Mar 2020 16:54:44 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E5733208DB;
-        Wed, 18 Mar 2020 20:54:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 607F4208E0;
+        Wed, 18 Mar 2020 20:54:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584564880;
-        bh=AqybkAQCXbqhHLf2TkeCxzL7ipFFyXCzQaXNsy22Bl4=;
+        s=default; t=1584564884;
+        bh=St995Wd1RmOD++GY9bUxVb2UFud/otFNFnRTSJ7OFns=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0YPELvgOqPxu1M4Im0bjao73Qmt42AWplPvMSuD12Lf4Fly1BCISfAfkYLhcbdUWi
-         3FGqngmjenr1I0vGjnGCGv1DkqbEz37v6EBcpdGBS/Uj3j/M9MaI2GeDCbtqzbJrVm
-         XDmfA0k1fRJ+cRC4p+Jh0H0VWyvrejOHLCH7eaZ4=
+        b=QVV7HQgw6WFxJZHpShz4BvF2s1NzA4nxs2cPpoEAS4h1CygWakUHF8qmRbYTc+eZ1
+         3tgzUqhHlSkZR3PREs4oNR8xUemjccO/o9fxeJM8foMuIgobuvOVI15n070pgon4CL
+         YtmshjsbzeemIPTPmWgh0qgmVjmZWqFPTQVNf8bk=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Qian Cai <cai@lca.pw>, Lu Baolu <baolu.lu@linux.intel.com>,
-        Joerg Roedel <jroedel@suse.de>,
-        Sasha Levin <sashal@kernel.org>,
-        iommu@lists.linux-foundation.org
-Subject: [PATCH AUTOSEL 5.4 50/73] iommu/vt-d: Fix RCU-list bugs in intel_iommu_init()
-Date:   Wed, 18 Mar 2020 16:53:14 -0400
-Message-Id: <20200318205337.16279-50-sashal@kernel.org>
+Cc:     Julian Wiedmann <jwi@linux.ibm.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>, linux-s390@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.4 53/73] s390/qeth: don't reset default_out_queue
+Date:   Wed, 18 Mar 2020 16:53:17 -0400
+Message-Id: <20200318205337.16279-53-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200318205337.16279-1-sashal@kernel.org>
 References: <20200318205337.16279-1-sashal@kernel.org>
@@ -44,79 +43,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Qian Cai <cai@lca.pw>
+From: Julian Wiedmann <jwi@linux.ibm.com>
 
-[ Upstream commit 2d48ea0efb8887ebba3e3720bb5b738aced4e574 ]
+[ Upstream commit 240c1948491b81cfe40f84ea040a8f2a4966f101 ]
 
-There are several places traverse RCU-list without holding any lock in
-intel_iommu_init(). Fix them by acquiring dmar_global_lock.
+When an OSA device in prio-queue setup is reduced to 1 TX queue due to
+HW restrictions, we reset its the default_out_queue to 0.
 
- WARNING: suspicious RCU usage
- -----------------------------
- drivers/iommu/intel-iommu.c:5216 RCU-list traversed in non-reader section!!
+In the old code this was needed so that qeth_get_priority_queue() gets
+the queue selection right. But with proper multiqueue support we already
+reduced dev->real_num_tx_queues to 1, and so the stack puts all traffic
+on txq 0 without even calling .ndo_select_queue.
 
- other info that might help us debug this:
+Thus we can preserve the user's configuration, and apply it if the OSA
+device later re-gains support for multiple TX queues.
 
- rcu_scheduler_active = 2, debug_locks = 1
- no locks held by swapper/0/1.
-
- Call Trace:
-  dump_stack+0xa0/0xea
-  lockdep_rcu_suspicious+0x102/0x10b
-  intel_iommu_init+0x947/0xb13
-  pci_iommu_init+0x26/0x62
-  do_one_initcall+0xfe/0x500
-  kernel_init_freeable+0x45a/0x4f8
-  kernel_init+0x11/0x139
-  ret_from_fork+0x3a/0x50
- DMAR: Intel(R) Virtualization Technology for Directed I/O
-
-Fixes: d8190dc63886 ("iommu/vt-d: Enable DMA remapping after rmrr mapped")
-Signed-off-by: Qian Cai <cai@lca.pw>
-Acked-by: Lu Baolu <baolu.lu@linux.intel.com>
-Signed-off-by: Joerg Roedel <jroedel@suse.de>
+Fixes: 73dc2daf110f ("s390/qeth: add TX multiqueue support for OSA devices")
+Signed-off-by: Julian Wiedmann <jwi@linux.ibm.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/iommu/intel-iommu.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/s390/net/qeth_core_main.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
-index 760a242d0801d..9b3d169c6ff53 100644
---- a/drivers/iommu/intel-iommu.c
-+++ b/drivers/iommu/intel-iommu.c
-@@ -5023,6 +5023,7 @@ int __init intel_iommu_init(void)
+diff --git a/drivers/s390/net/qeth_core_main.c b/drivers/s390/net/qeth_core_main.c
+index b727d1e34523e..ac8ad951a4203 100644
+--- a/drivers/s390/net/qeth_core_main.c
++++ b/drivers/s390/net/qeth_core_main.c
+@@ -1244,7 +1244,6 @@ static int qeth_osa_set_output_queues(struct qeth_card *card, bool single)
+ 	if (count == 1)
+ 		dev_info(&card->gdev->dev, "Priority Queueing not supported\n");
  
- 	init_iommu_pm_ops();
- 
-+	down_read(&dmar_global_lock);
- 	for_each_active_iommu(iommu, drhd) {
- 		iommu_device_sysfs_add(&iommu->iommu, NULL,
- 				       intel_iommu_groups,
-@@ -5030,6 +5031,7 @@ int __init intel_iommu_init(void)
- 		iommu_device_set_ops(&iommu->iommu, &intel_iommu_ops);
- 		iommu_device_register(&iommu->iommu);
- 	}
-+	up_read(&dmar_global_lock);
- 
- 	bus_set_iommu(&pci_bus_type, &intel_iommu_ops);
- 	if (si_domain && !hw_pass_through)
-@@ -5040,7 +5042,6 @@ int __init intel_iommu_init(void)
- 	down_read(&dmar_global_lock);
- 	if (probe_acpi_namespace_devices())
- 		pr_warn("ACPI name space devices didn't probe correctly\n");
--	up_read(&dmar_global_lock);
- 
- 	/* Finally, we enable the DMA remapping hardware. */
- 	for_each_iommu(iommu, drhd) {
-@@ -5049,6 +5050,8 @@ int __init intel_iommu_init(void)
- 
- 		iommu_disable_protect_mem_regions(iommu);
- 	}
-+	up_read(&dmar_global_lock);
-+
- 	pr_info("Intel(R) Virtualization Technology for Directed I/O\n");
- 
- 	intel_iommu_enabled = 1;
+-	card->qdio.default_out_queue = single ? 0 : QETH_DEFAULT_QUEUE;
+ 	card->qdio.no_out_queues = count;
+ 	return 0;
+ }
 -- 
 2.20.1
 
