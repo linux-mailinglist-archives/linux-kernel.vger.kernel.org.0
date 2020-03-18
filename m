@@ -2,37 +2,34 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1858B18A464
+	by mail.lfdr.de (Postfix) with ESMTP id 8C9A518A465
 	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 21:54:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727587AbgCRUyK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Mar 2020 16:54:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53450 "EHLO mail.kernel.org"
+        id S1727611AbgCRUyL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Mar 2020 16:54:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53508 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727499AbgCRUyG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Mar 2020 16:54:06 -0400
+        id S1727562AbgCRUyI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Mar 2020 16:54:08 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 52986208D5;
-        Wed, 18 Mar 2020 20:54:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BA5BA208E4;
+        Wed, 18 Mar 2020 20:54:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584564845;
-        bh=pP25dGs0qhPsHPBXaWMxCr5rU29q+GM9TmYMhLNGNRo=;
+        s=default; t=1584564847;
+        bh=0geW2N5yklwjKb6rivq1v7IxgkL4xJnOpRV3pgTthvg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KUaTo3h/95WXMDdtJpYOjslsR/ew40Sr7zbk3eybodczlnQLZilUGtpFdQrAPRgMk
-         9eB/Czm4X04Ym4ND2gX2ND63C1PblYnViKfpT1Xaxs5JBoCWYmFNxRLktwL0yekAYn
-         ri0eEr0t21CYMrJ5ltaBjPlbJ+x5RXa4YcHcjxIs=
+        b=WP39XUgrySw46+NnDtGuF3S5N0/h7hM+2w0wipJ4OzloiEwWsG6C0GN/NKJ7qZKb6
+         L9ROFnGf2hR+DRhjDOpxTHZU9rZqnSclx8rRh/tXymKAQWAz8ntk0+LTpROrA1HgFM
+         ZtO3OIuEMV31o8/hWhwEjotYxnMonACcQq+o1FFQ=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Jonas Gorski <jonas.gorski@gmail.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH AUTOSEL 5.4 23/73] net: phy: bcm63xx: fix OOPS due to missing driver name
-Date:   Wed, 18 Mar 2020 16:52:47 -0400
-Message-Id: <20200318205337.16279-23-sashal@kernel.org>
+Cc:     Tycho Andersen <tycho@tycho.ws>, Tejun Heo <tj@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, cgroups@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.4 25/73] cgroup1: don't call release_agent when it is ""
+Date:   Wed, 18 Mar 2020 16:52:49 -0400
+Message-Id: <20200318205337.16279-25-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200318205337.16279-1-sashal@kernel.org>
 References: <20200318205337.16279-1-sashal@kernel.org>
@@ -45,78 +42,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jonas Gorski <jonas.gorski@gmail.com>
+From: Tycho Andersen <tycho@tycho.ws>
 
-[ Upstream commit 43de81b0601df7d7988d3f5617ee0987df65c883 ]
+[ Upstream commit 2e5383d7904e60529136727e49629a82058a5607 ]
 
-719655a14971 ("net: phy: Replace phy driver features u32 with link_mode
-bitmap") was a bit over-eager and also removed the second phy driver's
-name, resulting in a nasty OOPS on registration:
+Older (and maybe current) versions of systemd set release_agent to "" when
+shutting down, but do not set notify_on_release to 0.
 
-[    1.319854] CPU 0 Unable to handle kernel paging request at virtual address 00000000, epc == 804dd50c, ra == 804dd4f0
-[    1.330859] Oops[#1]:
-[    1.333138] CPU: 0 PID: 1 Comm: swapper/0 Not tainted 5.4.22 #0
-[    1.339217] $ 0   : 00000000 00000001 87ca7f00 805c1874
-[    1.344590] $ 4   : 00000000 00000047 00585000 8701f800
-[    1.349965] $ 8   : 8701f800 804f4a5c 00000003 64726976
-[    1.355341] $12   : 00000001 00000000 00000000 00000114
-[    1.360718] $16   : 87ca7f80 00000000 00000000 80639fe4
-[    1.366093] $20   : 00000002 00000000 806441d0 80b90000
-[    1.371470] $24   : 00000000 00000000
-[    1.376847] $28   : 87c1e000 87c1fda0 80b90000 804dd4f0
-[    1.382224] Hi    : d1c8f8da
-[    1.385180] Lo    : 5518a480
-[    1.388182] epc   : 804dd50c kset_find_obj+0x3c/0x114
-[    1.393345] ra    : 804dd4f0 kset_find_obj+0x20/0x114
-[    1.398530] Status: 10008703 KERNEL EXL IE
-[    1.402833] Cause : 00800008 (ExcCode 02)
-[    1.406952] BadVA : 00000000
-[    1.409913] PrId  : 0002a075 (Broadcom BMIPS4350)
-[    1.414745] Modules linked in:
-[    1.417895] Process swapper/0 (pid: 1, threadinfo=(ptrval), task=(ptrval), tls=00000000)
-[    1.426214] Stack : 87cec000 80630000 80639370 80640658 80640000 80049af4 80639fe4 8063a0d8
-[    1.434816]         8063a0d8 802ef078 00000002 00000000 806441d0 80b90000 8063a0d8 802ef114
-[    1.443417]         87cea0de 87c1fde0 00000000 804de488 87cea000 8063a0d8 8063a0d8 80334e48
-[    1.452018]         80640000 8063984c 80639bf4 00000000 8065de48 00000001 8063a0d8 80334ed0
-[    1.460620]         806441d0 80b90000 80b90000 802ef164 8065dd70 80620000 80b90000 8065de58
-[    1.469222]         ...
-[    1.471734] Call Trace:
-[    1.474255] [<804dd50c>] kset_find_obj+0x3c/0x114
-[    1.479141] [<802ef078>] driver_find+0x1c/0x44
-[    1.483665] [<802ef114>] driver_register+0x74/0x148
-[    1.488719] [<80334e48>] phy_driver_register+0x9c/0xd0
-[    1.493968] [<80334ed0>] phy_drivers_register+0x54/0xe8
-[    1.499345] [<8001061c>] do_one_initcall+0x7c/0x1f4
-[    1.504374] [<80644ed8>] kernel_init_freeable+0x1d4/0x2b4
-[    1.509940] [<804f4e24>] kernel_init+0x10/0xf8
-[    1.514502] [<80018e68>] ret_from_kernel_thread+0x14/0x1c
-[    1.520040] Code: 1060000c  02202025  90650000 <90810000> 24630001  14250004  24840001  14a0fffb  90650000
-[    1.530061]
-[    1.531698] ---[ end trace d52f1717cd29bdc8 ]---
+Since 64e90a8acb85 ("Introduce STATIC_USERMODEHELPER to mediate
+call_usermodehelper()"), we filter out such calls when the user mode helper
+path is "". However, when used in conjunction with an actual (i.e. non "")
+STATIC_USERMODEHELPER, the path is never "", so the real usermode helper
+will be called with argv[0] == "".
 
-Fix it by readding the name.
+Let's avoid this by not invoking the release_agent when it is "".
 
-Fixes: 719655a14971 ("net: phy: Replace phy driver features u32 with link_mode bitmap")
-Signed-off-by: Jonas Gorski <jonas.gorski@gmail.com>
-Acked-by: Florian Fainelli <f.fainelli@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Tycho Andersen <tycho@tycho.ws>
+Signed-off-by: Tejun Heo <tj@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/phy/bcm63xx.c | 1 +
- 1 file changed, 1 insertion(+)
+ kernel/cgroup/cgroup-v1.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/phy/bcm63xx.c b/drivers/net/phy/bcm63xx.c
-index 23f1958ba6ad4..459fb2069c7e0 100644
---- a/drivers/net/phy/bcm63xx.c
-+++ b/drivers/net/phy/bcm63xx.c
-@@ -73,6 +73,7 @@ static struct phy_driver bcm63xx_driver[] = {
- 	/* same phy as above, with just a different OUI */
- 	.phy_id		= 0x002bdc00,
- 	.phy_id_mask	= 0xfffffc00,
-+	.name		= "Broadcom BCM63XX (2)",
- 	/* PHY_BASIC_FEATURES */
- 	.flags		= PHY_IS_INTERNAL,
- 	.config_init	= bcm63xx_config_init,
+diff --git a/kernel/cgroup/cgroup-v1.c b/kernel/cgroup/cgroup-v1.c
+index 2db582706ec5c..f684c82efc2ea 100644
+--- a/kernel/cgroup/cgroup-v1.c
++++ b/kernel/cgroup/cgroup-v1.c
+@@ -784,7 +784,7 @@ void cgroup1_release_agent(struct work_struct *work)
+ 
+ 	pathbuf = kmalloc(PATH_MAX, GFP_KERNEL);
+ 	agentbuf = kstrdup(cgrp->root->release_agent_path, GFP_KERNEL);
+-	if (!pathbuf || !agentbuf)
++	if (!pathbuf || !agentbuf || !strlen(agentbuf))
+ 		goto out;
+ 
+ 	spin_lock_irq(&css_set_lock);
 -- 
 2.20.1
 
