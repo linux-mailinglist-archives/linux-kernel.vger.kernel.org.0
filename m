@@ -2,108 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C9874189812
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 10:41:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 390BC189817
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 10:42:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727552AbgCRJlr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Mar 2020 05:41:47 -0400
-Received: from mga09.intel.com ([134.134.136.24]:32288 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726994AbgCRJlr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Mar 2020 05:41:47 -0400
-IronPort-SDR: mUEOjIbPACRYj1nzmCBLTuxLmJibW9swawMSSt7jE05SUMMReCnJWlXX95nfK5ZfEVR1J5S2B1
- oJlA3cuowBfQ==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Mar 2020 02:41:46 -0700
-IronPort-SDR: ORroYAM1KHIe5G6nl1CYBrtbrzPa8jYhFyIQ6qqrD+QGHGs+Q8O/LQlNvfrX8z0P0CccpA88s0
- Om4sJrb4I/Sw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,566,1574150400"; 
-   d="scan'208";a="248117273"
-Received: from crojewsk-mobl1.ger.corp.intel.com (HELO [10.249.155.222]) ([10.249.155.222])
-  by orsmga006.jf.intel.com with ESMTP; 18 Mar 2020 02:41:43 -0700
-Subject: Re: snd_hda_intel/sst-acpi sound breakage on suspend/resume since
- 5.6-rc1
-To:     Dominik Brodowski <linux@dominikbrodowski.net>, tiwai@suse.com
-Cc:     pierre-louis.bossart@linux.intel.com,
-        liam.r.girdwood@linux.intel.com, yang.jie@linux.intel.com,
-        broonie@kernel.org, perex@perex.cz, alsa-devel@alsa-project.org,
-        linux-kernel@vger.kernel.org
-References: <20200318063022.GA116342@light.dominikbrodowski.net>
-From:   Cezary Rojewski <cezary.rojewski@intel.com>
-Message-ID: <66c719b3-a66e-6a9f-fab8-721ba48d7ad8@intel.com>
-Date:   Wed, 18 Mar 2020 10:41:42 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        id S1727581AbgCRJmX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Mar 2020 05:42:23 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:36734 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726994AbgCRJmX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Mar 2020 05:42:23 -0400
+Received: by mail-wm1-f65.google.com with SMTP id g62so2460439wme.1
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Mar 2020 02:42:22 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=ljtseRed9kkl1p0LldSZEtHZ23CStZbRjiW3J11/rXg=;
+        b=oJn+BGjGXGXSSPNpPKMNPXWGrT/w5tTU/FjilRJXEmdETT9UBg+kn0YL/PILwnrpY7
+         DgDI2LqjY/qH6fwjda7IKItg8lkO0imLN4Ip68O58SFltjfSyt0mLf2slVs3V/yP1guV
+         9p49JxfzRxd+Nt+9Prm35YctH5b4GC5ZYougLjKhG9jns8ksw+vD2zUf2frl1dHekXcT
+         94xsQ7yzP4aajzce4k2pEOnwZ4sOvyQCxyHntFACsYa3lmTi9JyTudRMtxq2d54vp+oR
+         Tk87oM1zxZEllj5VY3XnBwCWfnpGWejuKxu98X6112kgIWOD5ly/Fx9iH/6+0yMg3N/a
+         3V0w==
+X-Gm-Message-State: ANhLgQ2qlRWsg+vvpV6bee8i2wfcDk8GwvdRNk4EGiyoeLKIGjcopazA
+        y+P/PvthgOkkvYg0M7+uw8k=
+X-Google-Smtp-Source: ADFU+vvP3LS0LaEjrw/WAD9Qk7RHGbGtBAt4Jjsh8GMY5tqbX5OV2LjVXH2YVK16i3+uApOFqMuWmg==
+X-Received: by 2002:a1c:491:: with SMTP id 139mr4410440wme.21.1584524541504;
+        Wed, 18 Mar 2020 02:42:21 -0700 (PDT)
+Received: from localhost (ip-37-188-180-89.eurotel.cz. [37.188.180.89])
+        by smtp.gmail.com with ESMTPSA id q9sm2636789wmg.41.2020.03.18.02.42.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 18 Mar 2020 02:42:20 -0700 (PDT)
+Date:   Wed, 18 Mar 2020 10:42:19 +0100
+From:   Michal Hocko <mhocko@kernel.org>
+To:     David Rientjes <rientjes@google.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Robert Kolchmeyer <rkolchmeyer@google.com>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [patch v2] mm, oom: prevent soft lockup on memcg oom for UP
+ systems
+Message-ID: <20200318094219.GE21362@dhcp22.suse.cz>
+References: <8395df04-9b7a-0084-4bb5-e430efe18b97@i-love.sakura.ne.jp>
+ <alpine.DEB.2.21.2003161648370.47327@chino.kir.corp.google.com>
+ <202003170318.02H3IpSx047471@www262.sakura.ne.jp>
+ <alpine.DEB.2.21.2003162107580.97351@chino.kir.corp.google.com>
+ <alpine.DEB.2.21.2003171752030.115787@chino.kir.corp.google.com>
 MIME-Version: 1.0
-In-Reply-To: <20200318063022.GA116342@light.dominikbrodowski.net>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <alpine.DEB.2.21.2003171752030.115787@chino.kir.corp.google.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2020-03-18 07:30, Dominik Brodowski wrote:
-> Hi!
+On Tue 17-03-20 17:55:04, David Rientjes wrote:
+> When a process is oom killed as a result of memcg limits and the victim
+> is waiting to exit, nothing ends up actually yielding the processor back
+> to the victim on UP systems with preemption disabled.  Instead, the
+> charging process simply loops in memcg reclaim and eventually soft
+> lockups.
+
+It seems that my request to describe the setup got ignored. Sigh.
+
+> Memory cgroup out of memory: Killed process 808 (repro) total-vm:41944kB, 
+> anon-rss:35344kB, file-rss:504kB, shmem-rss:0kB, UID:0 pgtables:108kB 
+> oom_score_adj:0
+> watchdog: BUG: soft lockup - CPU#0 stuck for 23s! [repro:806]
+> CPU: 0 PID: 806 Comm: repro Not tainted 5.6.0-rc5+ #136
+> RIP: 0010:shrink_lruvec+0x4e9/0xa40
+> ...
+> Call Trace:
+>  shrink_node+0x40d/0x7d0
+>  do_try_to_free_pages+0x13f/0x470
+>  try_to_free_mem_cgroup_pages+0x16d/0x230
+>  try_charge+0x247/0xac0
+>  mem_cgroup_try_charge+0x10a/0x220
+>  mem_cgroup_try_charge_delay+0x1e/0x40
+>  handle_mm_fault+0xdf2/0x15f0
+>  do_user_addr_fault+0x21f/0x420
+>  page_fault+0x2f/0x40
 > 
-> While 5.5.x works fine, mainline as of ac309e7744be (v5.6-rc6+) causes me
-> some sound-related trouble: after boot, the sound works fine -- but once I
-> suspend and resume my broadwell-based XPS13, I need to switch to headphone
-> and back to speaker to hear something. But what I hear isn't music but
-> garbled output.
+> Make sure that once the oom killer has been called that we forcibly yield 
+> if current is not the chosen victim regardless of priority to allow for 
+> memory freeing.  The same situation can theoretically occur in the page 
+> allocator, so do this after dropping oom_lock there as well.
+
+I would have prefered the cond_resched solution proposed previously but
+I can live with this as well. I would just ask to add more information
+to the changelog. E.g.
+"
+We used to have a short sleep after the oom handling but 9bfe5ded054b
+("mm, oom: remove sleep from under oom_lock") has removed it because
+sleep inside the oom_lock is dangerous. This patch restores the sleep
+outside of the lock.
+"
+> Suggested-by: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+> Tested-by: Robert Kolchmeyer <rkolchmeyer@google.com>
+> Cc: stable@vger.kernel.org
+> Signed-off-by: David Rientjes <rientjes@google.com>
+> ---
+>  mm/memcontrol.c | 2 ++
+>  mm/page_alloc.c | 2 ++
+>  2 files changed, 4 insertions(+)
 > 
-> A few dmesg snippets from v5.6-rc6-9-gac309e7744be which might be of
-> interest. I've highlighted the lines differing from v.5.5.x which might be
-> of special interest:
-> 
+> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+> --- a/mm/memcontrol.c
+> +++ b/mm/memcontrol.c
+> @@ -1576,6 +1576,8 @@ static bool mem_cgroup_out_of_memory(struct mem_cgroup *memcg, gfp_t gfp_mask,
+>  	 */
+>  	ret = should_force_charge() || out_of_memory(&oc);
+>  	mutex_unlock(&oom_lock);
+> +	if (!fatal_signal_pending(current))
+> +		schedule_timeout_killable(1);
 
-Thank you for the report, Dominik. You definitely got our attention.
+Check for fatal_signal_pending is redundant.
 
-I've checked the market: Dell XPS 13 9343, yes? Once you confirm model 
-id, I'll order a piece immediately to our site.
-
-In regard to logs, thanks for highlighting important lines. Build is of 
-'rc' so bugs can still be in plenty - any reason for switching to 
-cutting-edge kernel on production stuff? Our CI didn't detect any 
-anomalies yet as it is running on 5.5.
-
-I'll direct your ticket on todays meeting. On the first look, issue 
-seems to be connected with recent changes to /drivers/dma/dmaengine.c. 
-DesignWare DMA controller drv - which HSW/BDW makes use of - might not 
-have been updated accordingly. Will dig further on that.
-
-One more, just to make it clear for the rest of the viewers:
-
- > 	haswell-pcm-audio haswell-pcm-audio: Direct firmware load for 
-intel/IntcPP01.bin failed with error -2
- > 	haswell-pcm-audio haswell-pcm-audio: fw image intel/IntcPP01.bin not 
-available(-2)
-
-Back in the ancient days of DSP (HSW/BDW are actually the very first 
-audio DSP hws for Intel) topology was part of FW - SW could not 
-configure it and probably that's why library IntcPP01 is attempted to be 
-loaded on every boot, even if it's not part of configuration for given 
-hw. Maybe we could make it quieter though..
-
-> 
-> (these last two messages already are printed a couple of time after boot, and then
-> again during a suspend/resume cycle. On v.5.5.y, there are similar messages
-> "no context buffer need to restore!"). Everything is built-in, no modules
-> are loaded.
-> 
-> Unfortunately, I cannot bisect this issue easily -- i915 was broken for
-> quite some time on this system[*], prohibiting boot...
-
-Hmm, sounds like that issue is quite old. DSP for Haswell and Broadwell 
-is available for I2S devices only, so this relates directly to legacy 
-HDA driver. Compared to Skylake+, HDAudio controller for older platforms 
-is found within GPU. My advice is to notify the DRM guys about this issue.
-
-Takashi, are you aware of problems with HDMI on HSW/ BDW or should I 
-just loop Jani and other DRM peps here?
-
-Czarek
+-- 
+Michal Hocko
+SUSE Labs
