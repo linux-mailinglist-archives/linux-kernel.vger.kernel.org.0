@@ -2,41 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C840A18A448
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 21:53:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DD0B818A44B
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 21:53:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726954AbgCRUx0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Mar 2020 16:53:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52244 "EHLO mail.kernel.org"
+        id S1727112AbgCRUxa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Mar 2020 16:53:30 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52296 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726619AbgCRUxZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Mar 2020 16:53:25 -0400
+        id S1726894AbgCRUx0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Mar 2020 16:53:26 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 19E8420775;
-        Wed, 18 Mar 2020 20:53:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 36EC420724;
+        Wed, 18 Mar 2020 20:53:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584564804;
-        bh=/ijMBUVOAd1AwPp1HZkRJKEm3Cv2b9QjgAdRy3XoOeY=;
+        s=default; t=1584564805;
+        bh=rRNLqGDe4Hh9VMNxMXiXDvn4zvX3xSXrJ2j8vKZEdL4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=M+T+B1dUvfgGjXJwpc4YkCku8kmRRt0hz+yHOBcdB82c/5VtHcum4yXZPOD2HVXlE
-         avgHbYgbMv4NApm7hH/7ETShxZIctLWwCQbIrK36ORko5OZE5kHZIGejsmBM6BBljx
-         nIZYmIUjFGHCtSVboV91CzIrbnQZYshkzF97gjPg=
+        b=vC4ytYBFLDVWKAqBMv1QVIPSr6hqii9qKgtApNOCWFaw+T7NxBLQcGf12oSwixEK1
+         XquXGk4+woE8W7sf5NoKd8EiYnWF6xjOjcD7g2HTler+UxC+zjHCVqp3iRiq04B6Rd
+         BthlzDu/w3U9Vt1sbPimLWfI2Bq4bAj+yFBI+If8=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     =?UTF-8?q?Michal=20Koutn=C3=BD?= <mkoutny@suse.com>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Tejun Heo <tj@kernel.org>, Sasha Levin <sashal@kernel.org>,
-        cgroups@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.5 02/84] cgroup: Iterate tasks that did not finish do_exit()
-Date:   Wed, 18 Mar 2020 16:51:59 -0400
-Message-Id: <20200318205321.16066-2-sashal@kernel.org>
+Cc:     Dan Moulding <dmoulding@me.com>, Kalle Valo <kvalo@codeaurora.org>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.5 03/84] iwlwifi: mvm: Do not require PHY_SKU NVM section for 3168 devices
+Date:   Wed, 18 Mar 2020 16:52:00 -0400
+Message-Id: <20200318205321.16066-3-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200318205321.16066-1-sashal@kernel.org>
 References: <20200318205321.16066-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 X-stable: review
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
@@ -45,101 +43,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Michal Koutný <mkoutny@suse.com>
+From: Dan Moulding <dmoulding@me.com>
 
-[ Upstream commit 9c974c77246460fa6a92c18554c3311c8c83c160 ]
+[ Upstream commit a9149d243f259ad8f02b1e23dfe8ba06128f15e1 ]
 
-PF_EXITING is set earlier than actual removal from css_set when a task
-is exitting. This can confuse cgroup.procs readers who see no PF_EXITING
-tasks, however, rmdir is checking against css_set membership so it can
-transitionally fail with EBUSY.
+The logic for checking required NVM sections was recently fixed in
+commit b3f20e098293 ("iwlwifi: mvm: fix NVM check for 3168
+devices"). However, with that fixed the else is now taken for 3168
+devices and within the else clause there is a mandatory check for the
+PHY_SKU section. This causes the parsing to fail for 3168 devices.
 
-Fix this by listing tasks that weren't unlinked from css_set active
-lists.
-It may happen that other users of the task iterator (without
-CSS_TASK_ITER_PROCS) spot a PF_EXITING task before cgroup_exit(). This
-is equal to the state before commit c03cd7738a83 ("cgroup: Include dying
-leaders with live threads in PROCS iterations") but it may be reviewed
-later.
+The PHY_SKU section is really only mandatory for the IWL_NVM_EXT
+layout (the phy_sku parameter of iwl_parse_nvm_data is only used when
+the NVM type is IWL_NVM_EXT). So this changes the PHY_SKU section
+check so that it's only mandatory for IWL_NVM_EXT.
 
-Reported-by: Suren Baghdasaryan <surenb@google.com>
-Fixes: c03cd7738a83 ("cgroup: Include dying leaders with live threads in PROCS iterations")
-Signed-off-by: Michal Koutný <mkoutny@suse.com>
-Signed-off-by: Tejun Heo <tj@kernel.org>
+Fixes: b3f20e098293 ("iwlwifi: mvm: fix NVM check for 3168 devices")
+Signed-off-by: Dan Moulding <dmoulding@me.com>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- include/linux/cgroup.h |  1 +
- kernel/cgroup/cgroup.c | 23 ++++++++++++++++-------
- 2 files changed, 17 insertions(+), 7 deletions(-)
+ drivers/net/wireless/intel/iwlwifi/mvm/nvm.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/include/linux/cgroup.h b/include/linux/cgroup.h
-index d7ddebd0cdec2..e75d2191226b9 100644
---- a/include/linux/cgroup.h
-+++ b/include/linux/cgroup.h
-@@ -62,6 +62,7 @@ struct css_task_iter {
- 	struct list_head		*mg_tasks_head;
- 	struct list_head		*dying_tasks_head;
- 
-+	struct list_head		*cur_tasks_head;
- 	struct css_set			*cur_cset;
- 	struct css_set			*cur_dcset;
- 	struct task_struct		*cur_task;
-diff --git a/kernel/cgroup/cgroup.c b/kernel/cgroup/cgroup.c
-index 30892c4759b49..fb25d56586583 100644
---- a/kernel/cgroup/cgroup.c
-+++ b/kernel/cgroup/cgroup.c
-@@ -4405,12 +4405,16 @@ static void css_task_iter_advance_css_set(struct css_task_iter *it)
+diff --git a/drivers/net/wireless/intel/iwlwifi/mvm/nvm.c b/drivers/net/wireless/intel/iwlwifi/mvm/nvm.c
+index 46128a2a9c6e1..e98ce380c7b91 100644
+--- a/drivers/net/wireless/intel/iwlwifi/mvm/nvm.c
++++ b/drivers/net/wireless/intel/iwlwifi/mvm/nvm.c
+@@ -308,7 +308,8 @@ iwl_parse_nvm_sections(struct iwl_mvm *mvm)
  		}
- 	} while (!css_set_populated(cset) && list_empty(&cset->dying_tasks));
  
--	if (!list_empty(&cset->tasks))
-+	if (!list_empty(&cset->tasks)) {
- 		it->task_pos = cset->tasks.next;
--	else if (!list_empty(&cset->mg_tasks))
-+		it->cur_tasks_head = &cset->tasks;
-+	} else if (!list_empty(&cset->mg_tasks)) {
- 		it->task_pos = cset->mg_tasks.next;
--	else
-+		it->cur_tasks_head = &cset->mg_tasks;
-+	} else {
- 		it->task_pos = cset->dying_tasks.next;
-+		it->cur_tasks_head = &cset->dying_tasks;
-+	}
- 
- 	it->tasks_head = &cset->tasks;
- 	it->mg_tasks_head = &cset->mg_tasks;
-@@ -4468,10 +4472,14 @@ static void css_task_iter_advance(struct css_task_iter *it)
- 		else
- 			it->task_pos = it->task_pos->next;
- 
--		if (it->task_pos == it->tasks_head)
-+		if (it->task_pos == it->tasks_head) {
- 			it->task_pos = it->mg_tasks_head->next;
--		if (it->task_pos == it->mg_tasks_head)
-+			it->cur_tasks_head = it->mg_tasks_head;
-+		}
-+		if (it->task_pos == it->mg_tasks_head) {
- 			it->task_pos = it->dying_tasks_head->next;
-+			it->cur_tasks_head = it->dying_tasks_head;
-+		}
- 		if (it->task_pos == it->dying_tasks_head)
- 			css_task_iter_advance_css_set(it);
- 	} else {
-@@ -4490,11 +4498,12 @@ static void css_task_iter_advance(struct css_task_iter *it)
- 			goto repeat;
- 
- 		/* and dying leaders w/o live member threads */
--		if (!atomic_read(&task->signal->live))
-+		if (it->cur_tasks_head == it->dying_tasks_head &&
-+		    !atomic_read(&task->signal->live))
- 			goto repeat;
- 	} else {
- 		/* skip all dying ones */
--		if (task->flags & PF_EXITING)
-+		if (it->cur_tasks_head == it->dying_tasks_head)
- 			goto repeat;
- 	}
- }
+ 		/* PHY_SKU section is mandatory in B0 */
+-		if (!mvm->nvm_sections[NVM_SECTION_TYPE_PHY_SKU].data) {
++		if (mvm->trans->cfg->nvm_type == IWL_NVM_EXT &&
++		    !mvm->nvm_sections[NVM_SECTION_TYPE_PHY_SKU].data) {
+ 			IWL_ERR(mvm,
+ 				"Can't parse phy_sku in B0, empty sections\n");
+ 			return NULL;
 -- 
 2.20.1
 
