@@ -2,97 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AE015189AB8
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 12:34:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 55266189ABD
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 12:35:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727867AbgCRLd4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Mar 2020 07:33:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55496 "EHLO mail.kernel.org"
+        id S1727225AbgCRLfC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Mar 2020 07:35:02 -0400
+Received: from foss.arm.com ([217.140.110.172]:48736 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726855AbgCRLdz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Mar 2020 07:33:55 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 997FD20770;
-        Wed, 18 Mar 2020 11:33:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584531235;
-        bh=SF1DNPR0enBSgKdBirdWsoRW6WTJoFq4zX3quBESlEg=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=iwyGiktsFUXhYejTsU/95UA6kvb1z/WXWGqDZhn/33VHFdV58Wg6GWpkwgGEwIySw
-         /xeCN4IYDyQ2S0/G0BvqUr+fZ0TIup4aE2g/DEguMysi6uWmt/G9QTekzAEYAzqq39
-         PAlT6r3jFYXoV2xXMAW1f4tR9bG6/RB2gtbxIbuI=
-Date:   Wed, 18 Mar 2020 12:33:52 +0100
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Qiang Su <suqiang4@huawei.com>
-Cc:     linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V2] UIO: make maximum memory and port regions configurable
-Message-ID: <20200318113352.GA2365557@kroah.com>
-References: <20200307081008.26848-1-suqiang4@huawei.com>
+        id S1726855AbgCRLfB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Mar 2020 07:35:01 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id F3CFF1FB;
+        Wed, 18 Mar 2020 04:35:00 -0700 (PDT)
+Received: from e107158-lin.cambridge.arm.com (e107158-lin.cambridge.arm.com [10.1.195.21])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1DB4A3F534;
+        Wed, 18 Mar 2020 04:34:59 -0700 (PDT)
+Date:   Wed, 18 Mar 2020 11:34:56 +0000
+From:   Qais Yousef <qais.yousef@arm.com>
+To:     Josh Don <joshdon@google.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Li Zefan <lizefan@huawei.com>, Tejun Heo <tj@kernel.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        cgroups@vger.kernel.org, Paul Turner <pjt@google.com>
+Subject: Re: [PATCH v2] sched/cpuset: distribute tasks within affinity masks
+Message-ID: <20200318113456.3h64jpyb6xiczhcj@e107158-lin.cambridge.arm.com>
+References: <20200311010113.136465-1-joshdon@google.com>
+ <20200311140533.pclgecwhbpqzyrks@e107158-lin.cambridge.arm.com>
+ <20200317192401.GE20713@hirez.programming.kicks-ass.net>
+ <CABk29NuAYvkqNmZZ6cjZBC6=hv--2siPPjZG-BUpNewxm02O6A@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20200307081008.26848-1-suqiang4@huawei.com>
+In-Reply-To: <CABk29NuAYvkqNmZZ6cjZBC6=hv--2siPPjZG-BUpNewxm02O6A@mail.gmail.com>
+User-Agent: NeoMutt/20171215
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Mar 07, 2020 at 04:10:08PM +0800, Qiang Su wrote:
-> Now each uio device can only support 5 memory regions and
-> 5 port regions. It is far from enough for some big system.
-> On the other hand, the hard-coded style is not flexible.
+On 03/17/20 14:35, Josh Don wrote:
+> On Wed, Mar 11, 2020 at 7:05 AM Qais Yousef <qais.yousef@arm.com> wrote:
+> >
+> > This actually helps me fix a similar problem I faced in RT [1]. If multiple RT
+> > tasks wakeup at the same time we get a 'thundering herd' issue where they all
+> > end up going to the same CPU, just to be pushed out again.
+> >
+> > Beside this will help fix another problem for RT tasks fitness, which is
+> > a manifestation of the problem above. If two tasks wake up at the same time and
+> > they happen to run on a little cpu (but request to run on a big one), one of
+> > them will end up being migrated because find_lowest_rq() will return the first
+> > cpu in the mask for both tasks.
+> >
+> > I tested the API (not the change in sched/core.c) and it looks good to me.
 > 
-> Consider the marco is used as array index, so a range for
-> the config is set in menuconfig. The range is set as 1 to 512.
-> The default value is still set as 5 to keep consistent with
-> current code.
+> Nice, glad that the API already has another use case. Thanks for taking a look.
 > 
-> Signed-off-by: Qiang Su <suqiang4@huawei.com>
-> Reported-by: kbuild test robot <lkp@intel.com>
-> ---
-> Changes since v1:
-> - also make port regions configurable in menuconfig.
-> - fix kbuild errors.
-> ---
->  drivers/uio/Kconfig        | 18 ++++++++++++++++++
->  include/linux/uio_driver.h |  4 ++--
->  2 files changed, 20 insertions(+), 2 deletions(-)
+> > nit: cpumask_first_and() is better here?
 > 
-> diff --git a/drivers/uio/Kconfig b/drivers/uio/Kconfig
-> index 202ee81cfc2b..cee7d93cfea2 100644
-> --- a/drivers/uio/Kconfig
-> +++ b/drivers/uio/Kconfig
-> @@ -165,4 +165,22 @@ config UIO_HV_GENERIC
->  	  to network and storage devices from userspace.
->  
->  	  If you compile this as a module, it will be called uio_hv_generic.
-> +
-> +config MAX_UIO_MAPS
-> +	depends on UIO
-> +	int "Maximum of memory nodes each uio device support(1-512)"
-> +	range 1 512
-> +	default 5
-> +	help
-> +	  make the max number of memory regions in uio device configurable.
-> +
-> +config MAX_UIO_PORT_REGIONS
-> +	depends on UIO
-> +	int "Maximum of port regions each uio device support(1-512)"
-> +	range 1 512
-> +	default 5
-> +	help
-> +	  make the max number of port regions in uio device configurable.
+> Yea, I would also prefer to use it, but the definition of
+> cpumask_first_and() follows this section, as it itself uses
+> cpumask_next_and().
+> 
+> > It might be a good idea to split the API from the user too.
+> 
+> Not sure what you mean by this, could you clarify?
 
+I meant it'd be a good idea to split the cpumask API into its own patch and
+have a separate patch for the user in sched/core.c. But that was a small nit.
+If the user (in sched/core.c) somehow introduces a regression, reverting it
+separately should be trivial.
 
-Can you provide a lot more information in these help texts?  Explain why
-you would ever want to change these values, and that if you do not
-understand, just take the default ones.
+Thanks
 
-Or, better yet, can we just make these values dynamic and grow as needed
-by the system?  Why are they "fixed"?
+--
+Qais Yousef
 
-thanks,
-
-greg k-h
+> 
+> On Tue, Mar 17, 2020 at 12:24 PM Peter Zijlstra <peterz@infradead.org> wrote:
+> >
+> > > Anyway, for the API.
+> > >
+> > > Reviewed-by: Qais Yousef <qais.yousef@arm.com>
+> > > Tested-by: Qais Yousef <qais.yousef@arm.com>
+> >
+> > Thanks guys!
+> 
+> Thanks Peter, any other comments or are you happy with merging this patch as-is?
