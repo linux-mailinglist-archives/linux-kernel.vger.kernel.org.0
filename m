@@ -2,125 +2,159 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 390BC189817
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 10:42:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AC3FD189832
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 10:44:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727581AbgCRJmX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Mar 2020 05:42:23 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:36734 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726994AbgCRJmX (ORCPT
+        id S1727706AbgCRJoN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Mar 2020 05:44:13 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:15294 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727695AbgCRJoL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Mar 2020 05:42:23 -0400
-Received: by mail-wm1-f65.google.com with SMTP id g62so2460439wme.1
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Mar 2020 02:42:22 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=ljtseRed9kkl1p0LldSZEtHZ23CStZbRjiW3J11/rXg=;
-        b=oJn+BGjGXGXSSPNpPKMNPXWGrT/w5tTU/FjilRJXEmdETT9UBg+kn0YL/PILwnrpY7
-         DgDI2LqjY/qH6fwjda7IKItg8lkO0imLN4Ip68O58SFltjfSyt0mLf2slVs3V/yP1guV
-         9p49JxfzRxd+Nt+9Prm35YctH5b4GC5ZYougLjKhG9jns8ksw+vD2zUf2frl1dHekXcT
-         94xsQ7yzP4aajzce4k2pEOnwZ4sOvyQCxyHntFACsYa3lmTi9JyTudRMtxq2d54vp+oR
-         Tk87oM1zxZEllj5VY3XnBwCWfnpGWejuKxu98X6112kgIWOD5ly/Fx9iH/6+0yMg3N/a
-         3V0w==
-X-Gm-Message-State: ANhLgQ2qlRWsg+vvpV6bee8i2wfcDk8GwvdRNk4EGiyoeLKIGjcopazA
-        y+P/PvthgOkkvYg0M7+uw8k=
-X-Google-Smtp-Source: ADFU+vvP3LS0LaEjrw/WAD9Qk7RHGbGtBAt4Jjsh8GMY5tqbX5OV2LjVXH2YVK16i3+uApOFqMuWmg==
-X-Received: by 2002:a1c:491:: with SMTP id 139mr4410440wme.21.1584524541504;
-        Wed, 18 Mar 2020 02:42:21 -0700 (PDT)
-Received: from localhost (ip-37-188-180-89.eurotel.cz. [37.188.180.89])
-        by smtp.gmail.com with ESMTPSA id q9sm2636789wmg.41.2020.03.18.02.42.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Mar 2020 02:42:20 -0700 (PDT)
-Date:   Wed, 18 Mar 2020 10:42:19 +0100
-From:   Michal Hocko <mhocko@kernel.org>
-To:     David Rientjes <rientjes@google.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Robert Kolchmeyer <rkolchmeyer@google.com>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [patch v2] mm, oom: prevent soft lockup on memcg oom for UP
- systems
-Message-ID: <20200318094219.GE21362@dhcp22.suse.cz>
-References: <8395df04-9b7a-0084-4bb5-e430efe18b97@i-love.sakura.ne.jp>
- <alpine.DEB.2.21.2003161648370.47327@chino.kir.corp.google.com>
- <202003170318.02H3IpSx047471@www262.sakura.ne.jp>
- <alpine.DEB.2.21.2003162107580.97351@chino.kir.corp.google.com>
- <alpine.DEB.2.21.2003171752030.115787@chino.kir.corp.google.com>
+        Wed, 18 Mar 2020 05:44:11 -0400
+Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 02I9XUnE025036
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Mar 2020 05:44:10 -0400
+Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2yu8br9fa9-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Mar 2020 05:44:09 -0400
+Received: from localhost
+        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <ravi.bangoria@linux.ibm.com>;
+        Wed, 18 Mar 2020 09:44:07 -0000
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
+        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 18 Mar 2020 09:44:02 -0000
+Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 02I9i1mA59441288
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 18 Mar 2020 09:44:01 GMT
+Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 5779152052;
+        Wed, 18 Mar 2020 09:44:01 +0000 (GMT)
+Received: from [9.203.170.80] (unknown [9.203.170.80])
+        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id B804952065;
+        Wed, 18 Mar 2020 09:43:10 +0000 (GMT)
+Subject: Re: [PATCH 10/15] powerpc/watchpoint: Use loop for
+ thread_struct->ptrace_bps
+To:     Christophe Leroy <christophe.leroy@c-s.fr>
+Cc:     mpe@ellerman.id.au, mikey@neuling.org, apopple@linux.ibm.com,
+        paulus@samba.org, npiggin@gmail.com,
+        naveen.n.rao@linux.vnet.ibm.com, peterz@infradead.org,
+        jolsa@kernel.org, oleg@redhat.com, fweisbec@gmail.com,
+        mingo@kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-kernel@vger.kernel.org,
+        Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+References: <20200309085806.155823-1-ravi.bangoria@linux.ibm.com>
+ <20200309085806.155823-11-ravi.bangoria@linux.ibm.com>
+ <0eeeac90-b5e3-722b-2d2c-bb95c81d851a@c-s.fr>
+From:   Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+Date:   Wed, 18 Mar 2020 15:13:01 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.21.2003171752030.115787@chino.kir.corp.google.com>
+In-Reply-To: <0eeeac90-b5e3-722b-2d2c-bb95c81d851a@c-s.fr>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 20031809-0016-0000-0000-000002F31937
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 20031809-0017-0000-0000-000033569D96
+Message-Id: <a52ef8d3-b27b-d48d-b0ab-c9b41209a6ca@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.645
+ definitions=2020-03-18_03:2020-03-17,2020-03-18 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 mlxscore=0
+ lowpriorityscore=0 adultscore=0 priorityscore=1501 bulkscore=0
+ suspectscore=0 malwarescore=0 mlxlogscore=999 spamscore=0 phishscore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2003020000 definitions=main-2003180048
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 17-03-20 17:55:04, David Rientjes wrote:
-> When a process is oom killed as a result of memcg limits and the victim
-> is waiting to exit, nothing ends up actually yielding the processor back
-> to the victim on UP systems with preemption disabled.  Instead, the
-> charging process simply loops in memcg reclaim and eventually soft
-> lockups.
-
-It seems that my request to describe the setup got ignored. Sigh.
-
-> Memory cgroup out of memory: Killed process 808 (repro) total-vm:41944kB, 
-> anon-rss:35344kB, file-rss:504kB, shmem-rss:0kB, UID:0 pgtables:108kB 
-> oom_score_adj:0
-> watchdog: BUG: soft lockup - CPU#0 stuck for 23s! [repro:806]
-> CPU: 0 PID: 806 Comm: repro Not tainted 5.6.0-rc5+ #136
-> RIP: 0010:shrink_lruvec+0x4e9/0xa40
-> ...
-> Call Trace:
->  shrink_node+0x40d/0x7d0
->  do_try_to_free_pages+0x13f/0x470
->  try_to_free_mem_cgroup_pages+0x16d/0x230
->  try_charge+0x247/0xac0
->  mem_cgroup_try_charge+0x10a/0x220
->  mem_cgroup_try_charge_delay+0x1e/0x40
->  handle_mm_fault+0xdf2/0x15f0
->  do_user_addr_fault+0x21f/0x420
->  page_fault+0x2f/0x40
+>> @@ -1628,6 +1628,9 @@ int copy_thread_tls(unsigned long clone_flags, unsigned long usp,
+>>       void (*f)(void);
+>>       unsigned long sp = (unsigned long)task_stack_page(p) + THREAD_SIZE;
+>>       struct thread_info *ti = task_thread_info(p);
+>> +#ifdef CONFIG_HAVE_HW_BREAKPOINT
+>> +    int i;
+>> +#endif
 > 
-> Make sure that once the oom killer has been called that we forcibly yield 
-> if current is not the chosen victim regardless of priority to allow for 
-> memory freeing.  The same situation can theoretically occur in the page 
-> allocator, so do this after dropping oom_lock there as well.
-
-I would have prefered the cond_resched solution proposed previously but
-I can live with this as well. I would just ask to add more information
-to the changelog. E.g.
-"
-We used to have a short sleep after the oom handling but 9bfe5ded054b
-("mm, oom: remove sleep from under oom_lock") has removed it because
-sleep inside the oom_lock is dangerous. This patch restores the sleep
-outside of the lock.
-"
-> Suggested-by: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-> Tested-by: Robert Kolchmeyer <rkolchmeyer@google.com>
-> Cc: stable@vger.kernel.org
-> Signed-off-by: David Rientjes <rientjes@google.com>
-> ---
->  mm/memcontrol.c | 2 ++
->  mm/page_alloc.c | 2 ++
->  2 files changed, 4 insertions(+)
+> Could we avoid all those #ifdefs ?
 > 
-> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-> --- a/mm/memcontrol.c
-> +++ b/mm/memcontrol.c
-> @@ -1576,6 +1576,8 @@ static bool mem_cgroup_out_of_memory(struct mem_cgroup *memcg, gfp_t gfp_mask,
->  	 */
->  	ret = should_force_charge() || out_of_memory(&oc);
->  	mutex_unlock(&oom_lock);
-> +	if (!fatal_signal_pending(current))
-> +		schedule_timeout_killable(1);
+> I think if we make p->thread.ptrace_bps[] exist all the time, with a size of 0 when CONFIG_HAVE_HW_BREAKPOINT is not set, then we can drop a lot of #ifdefs.
 
-Check for fatal_signal_pending is redundant.
+Hmm.. what you are saying seems possible. But IMO it should be done as
+independent series. Will work on it.
 
--- 
-Michal Hocko
-SUSE Labs
+> 
+>>       klp_init_thread_info(p);
+>> @@ -1687,7 +1690,8 @@ int copy_thread_tls(unsigned long clone_flags, unsigned long usp,
+>>       p->thread.ksp_limit = (unsigned long)end_of_stack(p);
+>>   #endif
+>>   #ifdef CONFIG_HAVE_HW_BREAKPOINT
+>> -    p->thread.ptrace_bps[0] = NULL;
+>> +    for (i = 0; i < nr_wp_slots(); i++)
+>> +        p->thread.ptrace_bps[i] = NULL;
+>>   #endif
+>>       p->thread.fp_save_area = NULL;
+>> diff --git a/arch/powerpc/kernel/ptrace.c b/arch/powerpc/kernel/ptrace.c
+>> index f6d7955fc61e..e2651f86d56f 100644
+>> --- a/arch/powerpc/kernel/ptrace.c
+>> +++ b/arch/powerpc/kernel/ptrace.c
+> 
+> You'll have to rebase all this on the series https://patchwork.ozlabs.org/project/linuxppc-dev/list/?series=161356 which is about to go into powerpc-next
+
+Sure. Thanks for heads up.
+
+> 
+>> @@ -2829,6 +2829,19 @@ static int set_dac_range(struct task_struct *child,
+>>   }
+>>   #endif /* CONFIG_PPC_ADV_DEBUG_DAC_RANGE */
+>> +#ifdef CONFIG_HAVE_HW_BREAKPOINT
+>> +static int empty_ptrace_bp(struct thread_struct *thread)
+>> +{
+>> +    int i;
+>> +
+>> +    for (i = 0; i < nr_wp_slots(); i++) {
+>> +        if (!thread->ptrace_bps[i])
+>> +            return i;
+>> +    }
+>> +    return -1;
+>> +}
+>> +#endif
+> 
+> What does this function do exactly ? I seems to do more than what its name suggests.
+
+It finds an empty breakpoint in ptrace_bps[]. But yeah, function name is
+misleading. I'll rename it to find_empty_ptrace_bp().
+
+...
+
+>> @@ -2979,10 +2993,10 @@ static long ppc_del_hwdebug(struct task_struct *child, long data)
+>>           return -EINVAL;
+>>   #ifdef CONFIG_HAVE_HW_BREAKPOINT
+>> -    bp = thread->ptrace_bps[0];
+>> +    bp = thread->ptrace_bps[data - 1];
+> 
+> Is data checked somewhere to ensure it is not out of boundaries ? Or are we sure it is always within ?
+
+Yes. it's checked. See patch #9:
+
+   @@ -2955,7 +2975,7 @@ static long ppc_del_hwdebug(struct task_struct *child, long data)
+    	}
+    	return rc;
+    #else
+   -	if (data != 1)
+   +	if (data < 1 || data > nr_wp_slots())
+    		return -EINVAL;
+    
+    #ifdef CONFIG_HAVE_HW_BREAKPOINT
+
+Thanks,
+Ravi
+
