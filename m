@@ -2,169 +2,287 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 85B4E189BE0
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 13:22:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 86906189BE8
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 13:23:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726752AbgCRMWY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Mar 2020 08:22:24 -0400
-Received: from lhrrgout.huawei.com ([185.176.76.210]:2573 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726619AbgCRMWY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Mar 2020 08:22:24 -0400
-Received: from LHREML712-CAH.china.huawei.com (unknown [172.18.7.108])
-        by Forcepoint Email with ESMTP id C98881FDEC3ADA6D060B;
-        Wed, 18 Mar 2020 12:22:22 +0000 (GMT)
-Received: from lhreml724-chm.china.huawei.com (10.201.108.75) by
- LHREML712-CAH.china.huawei.com (10.201.108.35) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Wed, 18 Mar 2020 12:22:22 +0000
-Received: from [127.0.0.1] (10.47.11.44) by lhreml724-chm.china.huawei.com
- (10.201.108.75) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1713.5; Wed, 18 Mar
- 2020 12:22:21 +0000
-Subject: Re: [PATCH v3 2/2] irqchip/gic-v3-its: Balance initial LPI affinity
- across CPUs
-To:     Marc Zyngier <maz@kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>
-CC:     chenxiang <chenxiang66@hisilicon.com>,
-        Zhou Wang <wangzhou1@hisilicon.com>,
-        Ming Lei <ming.lei@redhat.com>,
-        Jason Cooper <jason@lakedaemon.net>,
+        id S1726851AbgCRMXZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Mar 2020 08:23:25 -0400
+Received: from relay.sw.ru ([185.231.240.75]:57384 "EHLO relay.sw.ru"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726619AbgCRMXY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Mar 2020 08:23:24 -0400
+Received: from [192.168.15.253]
+        by relay.sw.ru with esmtp (Exim 4.92.3)
+        (envelope-from <ktkhai@virtuozzo.com>)
+        id 1jEXiG-0005hk-C4; Wed, 18 Mar 2020 15:22:20 +0300
+Subject: Re: [PATCH v3 5/5] exec: Add a exec_update_mutex to replace
+ cred_guard_mutex
+To:     Bernd Edlinger <bernd.edlinger@hotmail.de>,
+        "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     Christian Brauner <christian.brauner@ubuntu.com>,
+        Kees Cook <keescook@chromium.org>,
+        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
         Thomas Gleixner <tglx@linutronix.de>,
-        "luojiaxing@huawei.com" <luojiaxing@huawei.com>
-References: <20200316115433.9017-1-maz@kernel.org>
- <20200316115433.9017-3-maz@kernel.org>
-From:   John Garry <john.garry@huawei.com>
-Message-ID: <d3a6435b-bc1f-e518-6461-2ebff72bbc59@huawei.com>
-Date:   Wed, 18 Mar 2020 12:22:09 +0000
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.2
+        Oleg Nesterov <oleg@redhat.com>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Andrei Vagin <avagin@gmail.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Yuyang Du <duyuyang@gmail.com>,
+        David Hildenbrand <david@redhat.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Anshuman Khandual <anshuman.khandual@arm.com>,
+        David Howells <dhowells@redhat.com>,
+        James Morris <jamorris@linux.microsoft.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Shakeel Butt <shakeelb@google.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Christian Kellner <christian@kellner.me>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        "Dmitry V. Levin" <ldv@altlinux.org>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>,
+        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>
+References: <AM6PR03MB5170EB4427BF5C67EE98FF09E4E60@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <87r1y8dqqz.fsf@x220.int.ebiederm.org>
+ <AM6PR03MB517053AED7DC89F7C0704B7DE4E50@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <AM6PR03MB51703B44170EAB4626C9B2CAE4E20@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <87tv32cxmf.fsf_-_@x220.int.ebiederm.org>
+ <87v9ne5y4y.fsf_-_@x220.int.ebiederm.org>
+ <87zhcq4jdj.fsf_-_@x220.int.ebiederm.org>
+ <f37a5d68-9674-533f-ee9c-a49174605710@virtuozzo.com>
+ <87d09hn4kt.fsf@x220.int.ebiederm.org>
+ <dbce35c7-c060-cfd8-bde1-98fd9a0747a9@virtuozzo.com>
+ <87lfo5lju6.fsf@x220.int.ebiederm.org>
+ <AM6PR03MB5170E9E71B9F84330B098BADE4FA0@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <6002ac56-025a-d50f-e89d-1bf42a072323@virtuozzo.com>
+ <AM6PR03MB5170353DF3575FF7742BB155E4FB0@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <532ce6a3-f0df-e3e4-6966-473c608246e1@virtuozzo.com>
+ <AM6PR03MB51705D8A5631B53844CE447CE4F60@AM6PR03MB5170.eurprd03.prod.outlook.com>
+From:   Kirill Tkhai <ktkhai@virtuozzo.com>
+Message-ID: <13c4d333-9c33-8036-3142-dac22c392c60@virtuozzo.com>
+Date:   Wed, 18 Mar 2020 15:22:19 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-In-Reply-To: <20200316115433.9017-3-maz@kernel.org>
-Content-Type: text/plain; charset="utf-8"; format=flowed
+In-Reply-To: <AM6PR03MB51705D8A5631B53844CE447CE4F60@AM6PR03MB5170.eurprd03.prod.outlook.com>
+Content-Type: text/plain; charset=windows-1252
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.47.11.44]
-X-ClientProxiedBy: lhreml721-chm.china.huawei.com (10.201.108.72) To
- lhreml724-chm.china.huawei.com (10.201.108.75)
-X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I may have an idea about this:
-irq 196, cpu list 0-31, effective list 82
+On 18.03.2020 00:53, Bernd Edlinger wrote:
+> On 3/17/20 9:56 AM, Kirill Tkhai wrote:
+>> On 14.03.2020 12:11, Bernd Edlinger wrote:
+>>> The cred_guard_mutex is problematic.  The cred_guard_mutex is held
+>>> over the userspace accesses as the arguments from userspace are read.
+>>> The cred_guard_mutex is held of PTRACE_EVENT_EXIT as the the other
+>>> threads are killed.  The cred_guard_mutex is held over
+>>> "put_user(0, tsk->clear_child_tid)" in exit_mm().
+>>>
+>>> Any of those can result in deadlock, as the cred_guard_mutex is held
+>>> over a possible indefinite userspace waits for userspace.
+>>>
+>>> Add exec_update_mutex that is only held over exec updating process
+>>> with the new contents of exec, so that code that needs not to be
+>>> confused by exec changing the mm and the cred in ways that can not
+>>> happen during ordinary execution of a process.
+>>>
+>>> The plan is to switch the users of cred_guard_mutex to
+>>> exec_udpate_mutex one by one.  This lets us move forward while still
+>>> being careful and not introducing any regressions.
+>>>
+>>> Link: https://lore.kernel.org/lkml/20160921152946.GA24210@dhcp22.suse.cz/
+>>> Link: https://lore.kernel.org/lkml/AM6PR03MB5170B06F3A2B75EFB98D071AE4E60@AM6PR03MB5170.eurprd03.prod.outlook.com/
+>>> Link: https://lore.kernel.org/linux-fsdevel/20161102181806.GB1112@redhat.com/
+>>> Link: https://lore.kernel.org/lkml/20160923095031.GA14923@redhat.com/
+>>> Link: https://lore.kernel.org/lkml/20170213141452.GA30203@redhat.com/
+>>> Ref: 45c1a159b85b ("Add PTRACE_O_TRACEVFORKDONE and PTRACE_O_TRACEEXIT facilities.")
+>>> Ref: 456f17cd1a28 ("[PATCH] user-vm-unlock-2.5.31-A2")
+>>> Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
+>>> Signed-off-by: Bernd Edlinger <bernd.edlinger@hotmail.de>
+>>> ---
+>>>  fs/exec.c                    | 17 ++++++++++++++---
+>>>  include/linux/binfmts.h      |  8 +++++++-
+>>>  include/linux/sched/signal.h |  9 ++++++++-
+>>>  init/init_task.c             |  1 +
+>>>  kernel/fork.c                |  1 +
+>>>  5 files changed, 31 insertions(+), 5 deletions(-)
+>>>
+>>> v3: this update fixes lock-order and adds an explicit data member in linux_binprm
+>>>
+>>> diff --git a/fs/exec.c b/fs/exec.c
+>>> index d820a72..11974a1 100644
+>>> --- a/fs/exec.c
+>>> +++ b/fs/exec.c
+>>> @@ -1014,12 +1014,17 @@ static int exec_mmap(struct mm_struct *mm)
+>>>  {
+>>>  	struct task_struct *tsk;
+>>>  	struct mm_struct *old_mm, *active_mm;
+>>> +	int ret;
+>>>  
+>>>  	/* Notify parent that we're no longer interested in the old VM */
+>>>  	tsk = current;
+>>>  	old_mm = current->mm;
+>>>  	exec_mm_release(tsk, old_mm);
+>>>  
+>>> +	ret = mutex_lock_killable(&tsk->signal->exec_update_mutex);
+>>> +	if (ret)
+>>> +		return ret;
+>>> +
+>>>  	if (old_mm) {
+>>>  		sync_mm_rss(old_mm);
+>>>  		/*
+>>> @@ -1031,9 +1036,11 @@ static int exec_mmap(struct mm_struct *mm)
+>>>  		down_read(&old_mm->mmap_sem);
+>>>  		if (unlikely(old_mm->core_state)) {
+>>>  			up_read(&old_mm->mmap_sem);
+>>> +			mutex_unlock(&tsk->signal->exec_update_mutex);
+>>>  			return -EINTR;
+>>>  		}
+>>>  	}
+>>> +
+>>>  	task_lock(tsk);
+>>>  	active_mm = tsk->active_mm;
+>>>  	membarrier_exec_mmap(mm);
+>>> @@ -1288,11 +1295,12 @@ int flush_old_exec(struct linux_binprm * bprm)
+>>>  		goto out;
+>>>  
+>>>  	/*
+>>> -	 * After clearing bprm->mm (to mark that current is using the
+>>> -	 * prepared mm now), we have nothing left of the original
+>>> +	 * After setting bprm->called_exec_mmap (to mark that current is
+>>> +	 * using the prepared mm now), we have nothing left of the original
+>>>  	 * process. If anything from here on returns an error, the check
+>>>  	 * in search_binary_handler() will SEGV current.
+>>>  	 */
+>>> +	bprm->called_exec_mmap = 1;
+>>
+>> The two below is non-breaking pair:
+>>
+>> exec_mmap(bprm->mm);
+>> bprm->called_exec_mmap = 1;
+>>
+>> Why not move this into exec_mmap(), so nobody definitely inserts something
+>> between them?
+>>
+> 
+> Hmm, could be done, but then I would probably need a different name than
+> "called_exec_mmap".
+> 
+> How about adding a nice function comment to exec_mmap that calls out the
+> changed behaviour that the exec_update_mutex is taken unless the function
+> fails?
 
-Just going back to comment on the code:
+Not sure, I understand correct.
 
-> +/*
-> + * As suggested by Thomas Gleixner in:
-> + * https://lore.kernel.org/r/87h80q2aoc.fsf@nanos.tec.linutronix.de
-> + */
-> +static int its_select_cpu(struct irq_data *d,
-> +			  const struct cpumask *aff_mask)
-> +{
-> +	struct its_device *its_dev = irq_data_get_irq_chip_data(d);
-> +	cpumask_var_t tmpmask;
-> +	int cpu, node;
-> +
-> +	if (!alloc_cpumask_var(&tmpmask, GFP_KERNEL))
-> +		return -ENOMEM;
-> +
-> +	node = its_dev->its->numa_node;
-> +
-> +	if (!irqd_affinity_is_managed(d)) {
-> +		/* First try the NUMA node */
-> +		if (node != NUMA_NO_NODE) {
-> +			/*
-> +			 * Try the intersection of the affinity mask and the
-> +			 * node mask (and the online mask, just to be safe).
-> +			 */
-> +			cpumask_and(tmpmask, cpumask_of_node(node), aff_mask);
-> +			cpumask_and(tmpmask, tmpmask, cpu_online_mask);
-> +
-> +			/* If that doesn't work, try the nodemask itself */
+Could you post this like a small patch hunk (on top of anything you want)?
 
-So if tmpmsk is empty...
+> Bernd.
+> 
+> 
+>>>  	bprm->mm = NULL;
+>>>  
+>>>  #ifdef CONFIG_POSIX_TIMERS
+>>> @@ -1438,6 +1446,8 @@ static void free_bprm(struct linux_binprm *bprm)
+>>>  {
+>>>  	free_arg_pages(bprm);
+>>>  	if (bprm->cred) {
+>>> +		if (bprm->called_exec_mmap)
+>>> +			mutex_unlock(&current->signal->exec_update_mutex);
+>>>  		mutex_unlock(&current->signal->cred_guard_mutex);
+>>>  		abort_creds(bprm->cred);
+>>>  	}
+>>> @@ -1487,6 +1497,7 @@ void install_exec_creds(struct linux_binprm *bprm)
+>>>  	 * credentials; any time after this it may be unlocked.
+>>>  	 */
+>>>  	security_bprm_committed_creds(bprm);
+>>> +	mutex_unlock(&current->signal->exec_update_mutex);
+>>>  	mutex_unlock(&current->signal->cred_guard_mutex);
+>>>  }
+>>>  EXPORT_SYMBOL(install_exec_creds);
+>>> @@ -1678,7 +1689,7 @@ int search_binary_handler(struct linux_binprm *bprm)
+>>>  
+>>>  		read_lock(&binfmt_lock);
+>>>  		put_binfmt(fmt);
+>>> -		if (retval < 0 && !bprm->mm) {
+>>> +		if (retval < 0 && bprm->called_exec_mmap) {
+>>>  			/* we got to flush_old_exec() and failed after it */
+>>>  			read_unlock(&binfmt_lock);
+>>>  			force_sigsegv(SIGSEGV);
+>>> diff --git a/include/linux/binfmts.h b/include/linux/binfmts.h
+>>> index b40fc63..a345d9f 100644
+>>> --- a/include/linux/binfmts.h
+>>> +++ b/include/linux/binfmts.h
+>>> @@ -44,7 +44,13 @@ struct linux_binprm {
+>>>  		 * exec has happened. Used to sanitize execution environment
+>>>  		 * and to set AT_SECURE auxv for glibc.
+>>>  		 */
+>>> -		secureexec:1;
+>>> +		secureexec:1,
+>>> +		/*
+>>> +		 * Set by flush_old_exec, when exec_mmap has been called.
+>>> +		 * This is past the point of no return, when the
+>>> +		 * exec_update_mutex has been taken.
+>>> +		 */
+>>> +		called_exec_mmap:1;
+>>>  #ifdef __alpha__
+>>>  	unsigned int taso:1;
+>>>  #endif
+>>> diff --git a/include/linux/sched/signal.h b/include/linux/sched/signal.h
+>>> index 8805025..a29df79 100644
+>>> --- a/include/linux/sched/signal.h
+>>> +++ b/include/linux/sched/signal.h
+>>> @@ -224,7 +224,14 @@ struct signal_struct {
+>>>  
+>>>  	struct mutex cred_guard_mutex;	/* guard against foreign influences on
+>>>  					 * credential calculations
+>>> -					 * (notably. ptrace) */
+>>> +					 * (notably. ptrace)
+>>> +					 * Deprecated do not use in new code.
+>>> +					 * Use exec_update_mutex instead.
+>>> +					 */
+>>> +	struct mutex exec_update_mutex;	/* Held while task_struct is being
+>>> +					 * updated during exec, and may have
+>>> +					 * inconsistent permissions.
+>>> +					 */
+>>>  } __randomize_layout;
+>>>  
+>>>  /*
+>>> diff --git a/init/init_task.c b/init/init_task.c
+>>> index 9e5cbe5..bd403ed 100644
+>>> --- a/init/init_task.c
+>>> +++ b/init/init_task.c
+>>> @@ -26,6 +26,7 @@
+>>>  	.multiprocess	= HLIST_HEAD_INIT,
+>>>  	.rlim		= INIT_RLIMITS,
+>>>  	.cred_guard_mutex = __MUTEX_INITIALIZER(init_signals.cred_guard_mutex),
+>>> +	.exec_update_mutex = __MUTEX_INITIALIZER(init_signals.exec_update_mutex),
+>>>  #ifdef CONFIG_POSIX_TIMERS
+>>>  	.posix_timers = LIST_HEAD_INIT(init_signals.posix_timers),
+>>>  	.cputimer	= {
+>>> diff --git a/kernel/fork.c b/kernel/fork.c
+>>> index 8642530..036b692 100644
+>>> --- a/kernel/fork.c
+>>> +++ b/kernel/fork.c
+>>> @@ -1594,6 +1594,7 @@ static int copy_signal(unsigned long clone_flags, struct task_struct *tsk)
+>>>  	sig->oom_score_adj_min = current->signal->oom_score_adj_min;
+>>>  
+>>>  	mutex_init(&sig->cred_guard_mutex);
+>>> +	mutex_init(&sig->exec_update_mutex);
+>>>  
+>>>  	return 0;
+>>>  }
+>>>
+>>
 
-> +			if (cpumask_empty(tmpmask))
-> +				cpumask_and(tmpmask, cpumask_of_node(node), cpu_online_mask);
-
-  now the tmpmask may have no intersection with the aff_mask...
-
-> +
-> +			cpu = cpumask_pick_least_loaded(d, tmpmask);
-> +			if (cpu < nr_cpu_ids)
-> +				goto out;
-> +
-> +			/* If we can't cross sockets, give up */
-> +			if ((its_dev->its->flags & ITS_FLAGS_WORKAROUND_CAVIUM_23144))
-> +				goto out;
-> +
-> +			/* If the above failed, expand the search */
-> +		}
-
-SNIP
-
-> +out:
-> +	free_cpumask_var(tmpmask);
-> +
-> +	pr_debug("IRQ%d -> %*pbl CPU%d\n", d->irq, cpumask_pr_args(aff_mask), cpu);
-> +	return cpu;
-> +}
-> +
->   static int its_set_affinity(struct irq_data *d, const struct cpumask *mask_val,
->   			    bool force)
->   {
-> -	unsigned int cpu;
-> -	const struct cpumask *cpu_mask = cpu_online_mask;
->   	struct its_device *its_dev = irq_data_get_irq_chip_data(d);
->   	struct its_collection *target_col;
->   	u32 id = its_get_event_id(d);
-> +	int cpu;
->   
->   	/* A forwarded interrupt should use irq_set_vcpu_affinity */
->   	if (irqd_is_forwarded_to_vcpu(d))
->   		return -EINVAL;
->   
-> -       /* lpi cannot be routed to a redistributor that is on a foreign node */
-> -	if (its_dev->its->flags & ITS_FLAGS_WORKAROUND_CAVIUM_23144) {
-> -		if (its_dev->its->numa_node >= 0) {
-> -			cpu_mask = cpumask_of_node(its_dev->its->numa_node);
-> -			if (!cpumask_intersects(mask_val, cpu_mask))
-> -				return -EINVAL;
-> -		}
-> -	}
-> -
-> -	cpu = cpumask_any_and(mask_val, cpu_mask);
-> +	if (!force)
-> +		cpu = its_select_cpu(d, mask_val);
-> +	else
-> +		cpu = cpumask_pick_least_loaded(d, mask_val);
->   
-> -	if (cpu >= nr_cpu_ids)
-> +	if (cpu < 0 || cpu >= nr_cpu_ids)
->   		return -EINVAL;
-
-Annotate missing code:
-
-	if (cpu < 0 || cpu >= nr_cpu_ids)
-		return -EINVAL;
-
-	if (cpu != its_dev->event_map.col_map[id]) {
-		its_inc_lpi_count(d, cpu);
-		its_dec_lpi_count(d, its_dev->event_map.col_map[id]);
-		target_col = &its_dev->its->collections[cpu];
-		its_send_movi(its_dev, target_col, id);
-		its_dev->event_map.col_map[id] = cpu;
-		irq_data_update_effective_affinity(d, cpumask_of(cpu));
-	}
-
-So cpu may not be a member of mask_val. Hence the inconsistency of the 
-affinity list and effective affinity. We could just drop the AND of the 
-ITS node mask in its_select_cpu().
-
-Anyway, I don't think that this should stop us testing.
-
-Cheers,
-John
