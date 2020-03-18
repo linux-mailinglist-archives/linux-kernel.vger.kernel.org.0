@@ -2,68 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 39FAB18A365
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 20:58:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9AF0418A367
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 20:58:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726855AbgCRT6F (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Mar 2020 15:58:05 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:37714 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726647AbgCRT6E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Mar 2020 15:58:04 -0400
-Received: from zn.tnic (p200300EC2F0B450051E70FD0A142DE40.dip0.t-ipconnect.de [IPv6:2003:ec:2f0b:4500:51e7:fd0:a142:de40])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 9DBDA1EC0985;
-        Wed, 18 Mar 2020 20:58:03 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1584561483;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=lJ3lAL2e7UJQ2cm2VDUW2t8k97NFcKqCK7YFFba7WNg=;
-        b=IGeCLBMHFi/SWWFfusiiyWLLJPuXCPQnYm09f4c9tGeDWtsaNyhQalmDX94zXIgtq+hSdc
-        Xvb+pGHRUbGWYfVb4fMWN2ul6Dv6yWJlr2dC6pPnM4vO5KrQu+PeNMdo9kf1mRrO0Nbfh4
-        8pEOkb20OpPkLYw03d41p7NTctNamr8=
-Date:   Wed, 18 Mar 2020 20:58:04 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     gilad kleinman <dkgs1998@gmail.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] x86/module: Fixed bug allowing invalid relocation
- addresses.
-Message-ID: <20200318195803.GE4377@zn.tnic>
-References: <20200314213626.30936-1-dkgs1998@gmail.com>
- <20200316125824.GB12561@hirez.programming.kicks-ass.net>
- <CAOQ9fa-i3mW2jQ2P=+34Feh9sZzaqDFKHau9GrgEWR9d26AqDg@mail.gmail.com>
+        id S1726943AbgCRT6t (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Mar 2020 15:58:49 -0400
+Received: from mail-qk1-f196.google.com ([209.85.222.196]:40772 "EHLO
+        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726596AbgCRT6t (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Mar 2020 15:58:49 -0400
+Received: by mail-qk1-f196.google.com with SMTP id j2so28142052qkl.7
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Mar 2020 12:58:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:sender:from:date:message-id:subject:to
+         :content-transfer-encoding;
+        bh=YsdhKynHKsKmlHYucSr1P08i71+OZWK6BPpzPIl6xWs=;
+        b=L/w1cU431Ikwp82TIylDXgL45HV8DU3tzz/cY6ARJPJ1OFR/JjYNgDh+K1StlgubNV
+         T4fx32BeJGRev0ayHzYdMCbo9Ui6JDtRgZyV+RB1GcUYIqZZSz3E7YTNdKVN+uWY42zY
+         Z5zuDniSuGwv3xL11Lb9HJKiaTtiN/1SExSJ+PS8MDbB/mJhSYmDp0WhtPTNlkOsy7O9
+         ETqKBfCzTQgG2IZFu9W/HwB3lHLR0ry+7N1fM28P/55/EvhVsaMnEKmVROS5U/bWCQRH
+         ndhQDhUBHF6zvUHnduLBY1OjJp7lZLuMgxcZwt8Kpqo/gQCQ3LCHOrNGJ9XHUllk33Wn
+         pelA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:sender:from:date:message-id:subject
+         :to:content-transfer-encoding;
+        bh=YsdhKynHKsKmlHYucSr1P08i71+OZWK6BPpzPIl6xWs=;
+        b=kyB4QjZfW4WsCFoM8HK93h0JRj/c5VYSEDRfCB2nR2yCEDyg43D+5WMpXaBGexTTPc
+         OzkpQSiCpumF/yU1RcFZx3dWW7ZSbSUGDzcJl4HR/5SkCmUQPzQJBjc9sJozXR1iy+uG
+         8RNax2oGPnt4PatY050xJQDUsQ/SVGsL0pWLIXjqdEo3g2QsBQmmuO/zPHiZNk47Wshs
+         OUYecJh/xyZtbKcq/fPSAujxWgY5T51qCFhLAnflXuxcgFh0cub+2tNDuyrrFb3ErDoq
+         W94+Y1spQBHh76TK7yl4+/6ZznVmFFN7iJsYtI/g9EEUlXFsZIBB73mzJ3EDY2xsvhha
+         h8hw==
+X-Gm-Message-State: ANhLgQ0E/PMJehn/SxmwfEUccSfCCanlFamHHqi5ZEHq6aoqqHZ3Gs3h
+        BcnZB/3R2E0Aeqvc80dPfJ6UiW9x2+CGruR5d8c=
+X-Google-Smtp-Source: ADFU+vuh1XpX5ozsgi3Vzu1bN/HAS59rg1nH8AsEkKRdK8bCbmTYg1DeEY9Butq3T0npsZZvw2fjqmU8n+PClxeXLrM=
+X-Received: by 2002:a05:6902:6c6:: with SMTP id m6mr5997297ybt.402.1584561527995;
+ Wed, 18 Mar 2020 12:58:47 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAOQ9fa-i3mW2jQ2P=+34Feh9sZzaqDFKHau9GrgEWR9d26AqDg@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Received: by 2002:a25:9b45:0:0:0:0:0 with HTTP; Wed, 18 Mar 2020 12:58:46
+ -0700 (PDT)
+From:   Mrs Nicole Marois <nicolemarois6@gmail.com>
+Date:   Wed, 18 Mar 2020 12:58:46 -0700
+X-Google-Sender-Auth: vOvgllQrpWk53DC9IbbvdQwoiKk
+Message-ID: <CAMyQztGCsoTLpeJqN607WKoDUt5ss9kQ-SWqadY4Xavnc9SVpA@mail.gmail.com>
+Subject: I'AM SUFFERING FROM CANCER OF THE HEART
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 18, 2020 at 09:40:47PM +0200, gilad kleinman wrote:
-> When you load a bad module and the kernel crashes -- the panic message will
-> usually be related to the module and easily traced back. If you load a
-> module with a bad relocation table (because of a bit-flip \ bad toolchain),
+I'AM SUFFERING FROM CANCER OF THE HEART
 
-First of all, please do not top-post.
 
-Then, if you're worried about corrupted module text, we have
-CONFIG_MODULE_SIG which verifies previously signed modules. AFAICT, that
-should take care of the issue you're talking about here.
+Dear Friend.
 
-Thx.
 
--- 
-Regards/Gruss,
-    Boris.
+Greetings to you in the name of the Lord God Almighty am MRS. NICOLE
+MAROIS From (Paris) France, but am based in Burkina Faso Africa for
+eight years now as a business woman dealing on gold exportation and
+cotton Sales. But I have been suffering from this deadly disease
+called cancer for long and the doctor just said I have just few days
+to leave. I know it will be difficult for you to believe my story now,
+but this is the situation I found myself in, it=E2=80=99s not my desire to =
+be
+on a sick bed today but God knows best,
 
-https://people.kernel.org/tglx/notes-about-netiquette
+Now that I am about to end the race like this, without any family
+Members and no child. I have $5.8 Million US DOLLARS in BANK OF AFRICA
+(B.O.A) Burkina Faso it=E2=80=99s all my life savings, I instructed the Ban=
+k
+to give it to St Andrews Missionary and Home Kizito Orphanage in
+Burkina Faso. But my mind is not at rest because i do not trust them,
+I am writing this letter now through the help of my computer beside my
+sick bed.
+
+I will instruct the bank to transfer this fund to you as a foreigner
+but you have to promise me that you will take 40 Percent(%) of the
+total money for your personal use While 60 Percent (%) of the money
+will go to charity, Orphanages and less Privileges" people in the
+street and helping the Needed. I grew up as an Orphan and I don't have
+anybody as my family member, just to Endeavour that the house of God
+is maintained. Am doing this so that God will forgive my sins and
+accept my soul because these sicknesses have suffered me so much.
+
+As soon as I receive your reply I shall give you the contact of the
+bank and I will also instruct my Bank Manger to issue you an authority
+letter that will prove you the present beneficiary of the money in the
+bank that is if you assure me that you will act accordingly as I
+Stated herein.
+
+
+I look forward to getting a reply from you.
+
+Thanks and God bless you,
+
+MRS Mrs NICOLE MAROIS.
