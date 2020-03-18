@@ -2,199 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BF89B18A90B
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 00:10:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 80B5318A90E
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 00:14:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727191AbgCRXJr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Mar 2020 19:09:47 -0400
-Received: from muru.com ([72.249.23.125]:60846 "EHLO muru.com"
+        id S1726869AbgCRXNw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Mar 2020 19:13:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40224 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727283AbgCRXJq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Mar 2020 19:09:46 -0400
-Received: from hillo.muru.com (localhost [127.0.0.1])
-        by muru.com (Postfix) with ESMTP id 5EA3981AC;
-        Wed, 18 Mar 2020 23:10:31 +0000 (UTC)
-From:   Tony Lindgren <tony@atomide.com>
-To:     Nick Dyer <nick@shmanahar.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc:     Henrik Rydberg <rydberg@bitmath.org>,
-        Arthur Demchenkov <spinal.by@gmail.com>,
-        Ivaylo Dimitrov <ivo.g.dimitrov.75@gmail.com>,
-        Merlijn Wajer <merlijn@wizzup.org>,
-        Pavel Machek <pavel@ucw.cz>,
-        Sebastian Reichel <sre@kernel.org>,
-        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-omap@vger.kernel.org
-Subject: [PATCH 3/3] Input: atmel_mxt_ts - use runtime PM autosuspend for idle config
-Date:   Wed, 18 Mar 2020 16:09:38 -0700
-Message-Id: <20200318230938.31573-3-tony@atomide.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200318230938.31573-1-tony@atomide.com>
-References: <20200318230938.31573-1-tony@atomide.com>
+        id S1726619AbgCRXNv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Mar 2020 19:13:51 -0400
+Received: from localhost (mobile-166-175-186-165.mycingular.net [166.175.186.165])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id DD2C92076C;
+        Wed, 18 Mar 2020 23:13:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1584573231;
+        bh=oFy9zaUxFZZJmaRDFLzCKtAEprfj3oqdBpvxcG2rk8k=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:From;
+        b=DzpZj5+8msW57avSvGgNIEAwIntQcyPVC0z0zfdOwSqCS4B8BIynnP/AjLzlVp87e
+         WmAel2zgAp0zu8KDdv9CPTxak6CuSCSIAHsuESHXVqryOJB7C5lUAUbPreMfNkpWHE
+         HrHEks/wwnAvs2pS0qX4q58qMpUYAEPdtDIps/eY=
+Date:   Wed, 18 Mar 2020 18:13:49 -0500
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Andrew Maier <andrew.maier@eideticom.com>
+Cc:     linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+        logang@deltatee.com
+Subject: Re: [PATCH v2] PCI/P2PDMA: Add the remaining Intel Sky Lake-E root
+ ports to the whitelist
+Message-ID: <20200318231349.GA3278@google.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200207221219.4309-1-andrew.maier@eideticom.com>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Let's enable runtime PM autosuspend with a default value of 600 ms and
-switch to idle power config for runtime_suspend. The autosuspend timeout
-can also be configured also via userspace with value of -1 disabling the
-autosuspend.
+On Fri, Feb 07, 2020 at 03:12:19PM -0700, Andrew Maier wrote:
+> Add the three remaining Intel Sky Lake-E host root ports to the
+> whitelist of p2pdma.
+> 
+> P2P has been tested and is working on this system.
+> 
+> Signed-off-by: Andrew Maier <andrew.maier@eideticom.com>
 
-Let's only allow autosuspend if MXT_SUSPEND_T9_CTRL is not configured for
-suspend_mode as MXT_SUSPEND_T9_CTRL mode powers off the controller.
+Applied with Logan's reviewed-by to pci/p2pdma for v5.7, thanks!
 
-Signed-off-by: Tony Lindgren <tony@atomide.com>
----
- drivers/input/touchscreen/atmel_mxt_ts.c | 76 ++++++++++++++++++++----
- 1 file changed, 66 insertions(+), 10 deletions(-)
-
-diff --git a/drivers/input/touchscreen/atmel_mxt_ts.c b/drivers/input/touchscreen/atmel_mxt_ts.c
---- a/drivers/input/touchscreen/atmel_mxt_ts.c
-+++ b/drivers/input/touchscreen/atmel_mxt_ts.c
-@@ -1140,21 +1140,26 @@ static irqreturn_t mxt_process_messages(struct mxt_data *data)
- static irqreturn_t mxt_interrupt(int irq, void *dev_id)
- {
- 	struct mxt_data *data = dev_id;
-+	irqreturn_t ret = IRQ_HANDLED;
- 
- 	if (data->in_bootloader) {
- 		/* bootloader state transition completion */
- 		complete(&data->bl_completion);
--		return IRQ_HANDLED;
-+		goto out_done;
- 	}
- 
- 	if (!data->object_table)
--		return IRQ_HANDLED;
-+		goto out_done;
- 
--	if (data->T44_address) {
--		return mxt_process_messages_t44(data);
--	} else {
--		return mxt_process_messages(data);
--	}
-+	if (data->T44_address)
-+		ret = mxt_process_messages_t44(data);
-+	else
-+		ret = mxt_process_messages(data);
-+
-+out_done:
-+	pm_runtime_mark_last_busy(&data->client->dev);
-+
-+	return ret;
- }
- 
- static int mxt_t6_command(struct mxt_data *data, u16 cmd_offset,
-@@ -2957,6 +2962,16 @@ static int mxt_input_open(struct input_dev *input_dev)
- 		return error;
- 	}
- 
-+	/*
-+	 * Prevent autoidle if MXT_SUSPEND_T9_CTRL is the default as it will
-+	 * power off the controller. Balanced inmxt_input_close().
-+	 */
-+	if (data->suspend_mode == MXT_SUSPEND_T9_CTRL)
-+		pm_runtime_get(dev);
-+
-+	pm_runtime_mark_last_busy(dev);
-+	pm_runtime_put_autosuspend(dev);
-+
- 	return 0;
- }
- 
-@@ -2964,8 +2979,21 @@ static void mxt_input_close(struct input_dev *input_dev)
- {
- 	struct mxt_data *data = input_get_drvdata(input_dev);
- 	struct device *dev = &data->client->dev;
-+	int error;
- 
--	pm_runtime_put_sync(dev);
-+	/* Release extra usage count for MXT_SUSPEND_T9_CTRL done in open */
-+	if (data->suspend_mode == MXT_SUSPEND_T9_CTRL)
-+		pm_runtime_put(dev);
-+
-+	/* Wake the device so autosuspend sees correct input_dev->users */
-+	error = pm_runtime_get_sync(dev);
-+	if (error < 0) {
-+		pm_runtime_put_noidle(dev);
-+		return;
-+	}
-+
-+	pm_runtime_mark_last_busy(dev);
-+	pm_runtime_put_autosuspend(dev);
- }
- 
- static int mxt_parse_device_properties(struct mxt_data *data)
-@@ -3099,6 +3127,14 @@ static int mxt_probe(struct i2c_client *client, const struct i2c_device_id *id)
- 	}
- 
- 	pm_runtime_enable(dev);
-+	pm_runtime_use_autosuspend(dev);
-+	pm_runtime_set_autosuspend_delay(dev, 600);
-+	error = pm_runtime_get_sync(dev);
-+	if (error < 0) {
-+		pm_runtime_put_noidle(dev);
-+		return error;
-+	}
-+
- 
- 	error = mxt_initialize(data);
- 	if (error)
-@@ -3111,9 +3147,14 @@ static int mxt_probe(struct i2c_client *client, const struct i2c_device_id *id)
- 		goto err_disable;
- 	}
- 
-+	pm_runtime_mark_last_busy(dev);
-+	pm_runtime_put_autosuspend(dev);
-+
- 	return 0;
- 
- err_disable:
-+	pm_runtime_dont_use_autosuspend(dev);
-+	pm_runtime_put_sync(dev);
- 	pm_runtime_disable(dev);
- 	mxt_free_input_device(data);
- 	mxt_free_object_table(data);
-@@ -3124,12 +3165,24 @@ static int mxt_remove(struct i2c_client *client)
- {
- 	struct mxt_data *data = i2c_get_clientdata(client);
- 	struct device *dev = &data->client->dev;
-+	int active;
-+
-+	/* Attempt to change controller suspend mode to disable on remove */
-+	active = pm_runtime_get_sync(dev);
-+	if (active < 0)
-+		pm_runtime_put_noidle(dev);
-+	else
-+		data->suspend_mode = MXT_SUSPEND_T9_CTRL;
-+
-+	pm_runtime_dont_use_autosuspend(dev);
-+	if (active >= 0)
-+		pm_runtime_put_sync(dev);
-+	pm_runtime_disable(dev);
- 
- 	disable_irq(data->irq);
- 	sysfs_remove_group(&client->dev.kobj, &mxt_attr_group);
- 	mxt_free_input_device(data);
- 	mxt_free_object_table(data);
--	pm_runtime_disable(dev);
- 
- 	return 0;
- }
-@@ -3152,7 +3205,10 @@ static int __maybe_unused mxt_runtime_suspend(struct device *dev)
- 
- 	case MXT_SUSPEND_DEEP_SLEEP:
- 	default:
--		mxt_set_t7_power_cfg(data, MXT_POWER_CFG_DEEPSLEEP);
-+		if (input_dev->users)
-+			mxt_set_t7_power_cfg(data, MXT_POWER_CFG_IDLE);
-+		else
-+			mxt_set_t7_power_cfg(data, MXT_POWER_CFG_DEEPSLEEP);
- 		break;
- 	}
- 
--- 
-2.25.1
+> ---
+> Resending this as I rebased it onto the latest patches.
+>  drivers/pci/p2pdma.c | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/drivers/pci/p2pdma.c b/drivers/pci/p2pdma.c
+> index 9a8a38384121..b73b10bce0df 100644
+> --- a/drivers/pci/p2pdma.c
+> +++ b/drivers/pci/p2pdma.c
+> @@ -291,6 +291,9 @@ static const struct pci_p2pdma_whitelist_entry {
+>  	{PCI_VENDOR_ID_INTEL,	0x2f01, REQ_SAME_HOST_BRIDGE},
+>  	/* Intel SkyLake-E */
+>  	{PCI_VENDOR_ID_INTEL,	0x2030, 0},
+> +	{PCI_VENDOR_ID_INTEL,	0x2031, 0},
+> +	{PCI_VENDOR_ID_INTEL,	0x2032, 0},
+> +	{PCI_VENDOR_ID_INTEL,	0x2033, 0},
+>  	{PCI_VENDOR_ID_INTEL,	0x2020, 0},
+>  	{}
+>  };
+> -- 
+> 2.17.1
+> 
