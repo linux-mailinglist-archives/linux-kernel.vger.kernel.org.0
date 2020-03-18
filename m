@@ -2,101 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 09166189F9E
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 16:28:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A278F189F98
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 16:27:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727135AbgCRP20 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Mar 2020 11:28:26 -0400
-Received: from mga09.intel.com ([134.134.136.24]:57410 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726856AbgCRP2Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Mar 2020 11:28:25 -0400
-IronPort-SDR: IW4kkBh5jYk0Yjc90q7dM3pWANifmshJsWOuZHI6w1Oy4Dcgdrbe2MAVSwSk1UgZzqZzXgeonD
- xnkG8ovF+3Vg==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Mar 2020 08:28:25 -0700
-IronPort-SDR: G42k5j9C+Udeti2e8o0QxUDv4p9YSyXsUyVWRcMeC8ssQM82hCw3eerjprY4E8Jg44CfvLbpHS
- NC3hIwhi0zZg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,568,1574150400"; 
-   d="scan'208";a="417985195"
-Received: from nali1-mobl3.amr.corp.intel.com (HELO [10.255.33.194]) ([10.255.33.194])
-  by orsmga005.jf.intel.com with ESMTP; 18 Mar 2020 08:28:24 -0700
-Subject: Re: [PATCH 1/2] ASoC: qcom: sdm845: handle soundwire stream
-To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        broonie@kernel.org
-Cc:     alsa-devel@alsa-project.org, lgirdwood@gmail.com, perex@perex.cz,
-        linux-kernel@vger.kernel.org, vkoul@kernel.org
-References: <20200317095351.15582-1-srinivas.kandagatla@linaro.org>
- <20200317095351.15582-2-srinivas.kandagatla@linaro.org>
- <8daeeb26-851b-8311-30f5-5d285ccbc255@linux.intel.com>
- <69c72f5a-e72e-b7b3-90cb-a7354dcb175d@linaro.org>
-From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Message-ID: <cbc6cc9b-24f5-8c2a-b60d-b5dab08c128e@linux.intel.com>
-Date:   Wed, 18 Mar 2020 10:26:47 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
-MIME-Version: 1.0
-In-Reply-To: <69c72f5a-e72e-b7b3-90cb-a7354dcb175d@linaro.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        id S1727069AbgCRP04 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Mar 2020 11:26:56 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:51380 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726495AbgCRP04 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Mar 2020 11:26:56 -0400
+Received: by mail-wm1-f67.google.com with SMTP id c187so2594141wme.1
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Mar 2020 08:26:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id;
+        bh=fUfuRt6oxx3leUSmTuFPTrK4xKpBYnjQ93vBCHZXuX4=;
+        b=yLuS9F0cGTZf9LZ1iiqPC6GpTTIeAz/SdSMaqzBeaoFjiZTkLhttnSF5/UX9uxO/s4
+         zmXVfiQx3/3rL0NhiRvSYMHersb3dTK0dbQJza45dcefD1AYPZsJdteBj4/wKpBb6iNp
+         he2QnvxW608PCtN1yMMSKi+eQKl8Q11uPgXYZhSpQ4AwJEnfofzf5gtcHGU/c1/GfFc5
+         NNoCHiQr6YYwmIwVbd/pEAPyxSUgpIbSYeYdpNHBY3LzGB4O8S7lUFjkGdfzRlxn9kCG
+         E4LxEPkyKxcc4LdEp9zylpgGly0tFMHCGlSdIQr+ZLV6x7wlrH2x5bbFcDoA8rqGGmz9
+         lezA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=fUfuRt6oxx3leUSmTuFPTrK4xKpBYnjQ93vBCHZXuX4=;
+        b=tq7U+Th7UGKFTfZjd5V9AlyVSciMtlNpt8cZwx+YfE0kLYJXM29t02Jq3Cm+pA9SKD
+         koN3+uyAAnVL+3fYAe/M1W/LF+XwXMBLNSNc92cbn3Rv7v9G9o2vrHzFMMinS4jIP8Z5
+         u7r/UWfHx5JvV3KlptGRfsP0iKm56xIBabJdcKHMlWNG3hsh3GyYYEkHSg+3CGQOSq2A
+         cF9usyZG7paiFCt16VcVZBYd0AUPqVA4tDY+y4TlNEGzCmhf1y1ik7u8JzG00R1Ql4cw
+         xHrekOoO3LVyRz30Mj1CIybK02jaWFHCdtvBgDhAlhYeDee1VR6lh1NvRhc2kOwF/kGd
+         1m4Q==
+X-Gm-Message-State: ANhLgQ1UuU/7PW4b3kSyJ0fWu/RFGO3xzPLxoF4+eBDHqaiq0MePSJUV
+        IW0jp97w2gIdUaAkudD+IwoMVQ==
+X-Google-Smtp-Source: ADFU+vuSq9fGIwkaFfnv935xJPaLgRcrUkBfhGJ7wvIjJMqb87bDFa+H+3A+EDj1ksKv7CDpms2YmQ==
+X-Received: by 2002:a05:600c:2c06:: with SMTP id q6mr5622975wmg.52.1584545214448;
+        Wed, 18 Mar 2020 08:26:54 -0700 (PDT)
+Received: from localhost.localdomain ([51.15.160.169])
+        by smtp.googlemail.com with ESMTPSA id h15sm9390552wrw.97.2020.03.18.08.26.53
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Wed, 18 Mar 2020 08:26:53 -0700 (PDT)
+From:   Corentin Labbe <clabbe@baylibre.com>
+To:     a.zummo@towertech.it, alexandre.belloni@bootlin.com,
+        torvalds@linux-foundation.org
+Cc:     linux-kernel@vger.kernel.org, linux-rtc@vger.kernel.org,
+        Corentin Labbe <clabbe@baylibre.com>,
+        stable <stable@vger.kernel.org>
+Subject: [PATCH] rtc: max8907: add missing select REGMAP_IRQ
+Date:   Wed, 18 Mar 2020 15:26:49 +0000
+Message-Id: <1584545209-20433-1-git-send-email-clabbe@baylibre.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+I have hit the following build error:
+armv7a-hardfloat-linux-gnueabi-ld: drivers/rtc/rtc-max8907.o: in function `max8907_rtc_probe':
+rtc-max8907.c:(.text+0x400): undefined reference to `regmap_irq_get_virq'
 
+max8907 should select REGMAP_IRQ
 
->>>       for_each_rtd_codec_dais(rtd, i, codec_dai) {
->>> +        sruntime = snd_soc_dai_get_sdw_stream(codec_dai,
->>> +                              substream->stream);
->>> +        if (sruntime != ERR_PTR(-ENOTSUPP))
->>> +            pdata->sruntime[cpu_dai->id] = sruntime;
->>> +        else
->>> +            pdata->sruntime[cpu_dai->id] = NULL;
->>> +
->>
->> Can you explain this part?
->> The get_sdw_stream() is supposed to return what was set by 
->> set_sdw_stream(), so if it's not supported isn't this an error?
-> 
-> In this case its not an error because we have
-> totally 3 codecs in this path.
-> One wcd934x Slimbus codec and two wsa881x Soundwire Codec.
-> 
-> wcd934x codec side will return ENOTSUPP which is not an error.
+Fixes: 94c01ab6d7544 ("rtc: add MAX8907 RTC driver")
+Cc: stable <stable@vger.kernel.org>
+Signed-off-by: Corentin Labbe <clabbe@baylibre.com>
+---
+ drivers/rtc/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-I must admit I am quite confused here.
-After reading your response, I thought this was a case of codec-to-codec 
-dailink, but then you also have a notion of cpu_dai?
+diff --git a/drivers/rtc/Kconfig b/drivers/rtc/Kconfig
+index 7d6cb60ee010..6c99156cbe57 100644
+--- a/drivers/rtc/Kconfig
++++ b/drivers/rtc/Kconfig
+@@ -327,6 +327,7 @@ config RTC_DRV_MAX6900
+ config RTC_DRV_MAX8907
+ 	tristate "Maxim MAX8907"
+ 	depends on MFD_MAX8907 || COMPILE_TEST
++	select REGMAP_IRQ
+ 	help
+ 	  If you say yes here you will get support for the
+ 	  RTC of Maxim MAX8907 PMIC.
+-- 
+2.24.1
 
->>
->>>           ret = snd_soc_dai_get_channel_map(codec_dai,
->>>                   &tx_ch_cnt, tx_ch, &rx_ch_cnt, rx_ch);
->>> @@ -425,8 +437,65 @@ static void  sdm845_snd_shutdown(struct 
->>> snd_pcm_substream *substream)
->>>       }
->>>   }
->>> +static int sdm845_snd_prepare(struct snd_pcm_substream *substream)
->>> +{
->>> +    struct snd_soc_pcm_runtime *rtd = substream->private_data;
->>> +    struct sdm845_snd_data *data = snd_soc_card_get_drvdata(rtd->card);
->>> +    struct snd_soc_dai *cpu_dai = rtd->cpu_dai;
->>> +    struct sdw_stream_runtime *sruntime = data->sruntime[cpu_dai->id];
->>> +    int ret;
->>> +
->>> +    if (!sruntime)
->>> +        return 0;
->>
->> same here, isn't this an error?
-> 
-> These callbacks are used for other dais aswell in this case
-> HDMI, Slimbus and Soundwire, so sruntime being null is not treated as 
-> error.
-
-Same comment, how does the notion of cpu_dai come in the picture for a 
-SoundWire dailink?
-Would you mind listing what the components of the dailinks are?
