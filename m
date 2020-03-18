@@ -2,185 +2,142 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4EDB718A733
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 22:42:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DC5DF18A73A
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 22:42:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727238AbgCRVl6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Mar 2020 17:41:58 -0400
-Received: from foss.arm.com ([217.140.110.172]:55322 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726777AbgCRVl5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Mar 2020 17:41:57 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1E5AFFEC;
-        Wed, 18 Mar 2020 14:41:57 -0700 (PDT)
-Received: from localhost (unknown [10.37.6.21])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 965A73F67D;
-        Wed, 18 Mar 2020 14:41:56 -0700 (PDT)
-Date:   Wed, 18 Mar 2020 21:41:55 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Olivier Moysan <olivier.moysan@st.com>
-Cc:     alexandre.torgue@st.com, alsa-devel@alsa-project.org,
-        broonie@kernel.org, lgirdwood@gmail.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        Mark Brown <broonie@kernel.org>, olivier.moysan@st.com,
-        perex@perex.cz, tiwai@suse.com
-Subject: Applied "ASoC: stm32: spdifrx: manage rebind issue" to the asoc tree
-In-Reply-To:  <20200318144125.9163-3-olivier.moysan@st.com>
-Message-Id:  <applied-20200318144125.9163-3-olivier.moysan@st.com>
-X-Patchwork-Hint: ignore
+        id S1727310AbgCRVmm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Mar 2020 17:42:42 -0400
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:36543 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727283AbgCRVmm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Mar 2020 17:42:42 -0400
+Received: by mail-ed1-f67.google.com with SMTP id b18so10944edu.3
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Mar 2020 14:42:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=wywIpBmnfonP+SMsK60nELfMnC1movwf9uyeVdD853s=;
+        b=T6mq9rK5P4XpQWpFfgAiIKi3lH6pQ6GrbiqcMaiWfr84rHUjaBgAPLyvhXpYETE4kf
+         hcDCkpv1bWurwcrlC+pdyLmJ7HjGj+jJTTPLOsi6OPDpp0OhaCzlySAOEoFzgwsLyNve
+         riGrdxe9qj9V/sK9YGkwAhJvugJjcnoZunY6ijk+/FC40Niqe/7YKhSYc/e0cJNueFZ6
+         MLKmmruNYdIFErSAF28rG/44y7aci8x84AylNieoqtKWrsl83QneKNR/oymmyR1uTUtV
+         2im+8o6LX4BTBghxmI4mwpR0taGPa67j5MS5vEGJtUTSOhmOUdMg9kiIEOBCoyS9T79h
+         wuYQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=wywIpBmnfonP+SMsK60nELfMnC1movwf9uyeVdD853s=;
+        b=TEF4YU10AmCv8ocwNAQEQ6L8+ubuCwnIKJ8LHVR0BWdPQOoKdMtYUm2aW5N+hN95pA
+         3eBIwlRdoO5LVnqSOEb0dzpU4Tz8jZzycOdoJ/JOzRDjeGlu98zSxz/Jdn+GQPWvduvT
+         /q44qR9e84bO7pDWyGQCQAKy7BnmQYzHj7ajLj/3Fn0fM+Tc1bvIAJ7bbfONU4Ir98FI
+         KMoD4yizxa9ZhryYuqDqudUw4i54fCvHAA9zHUPt1l8kM1DrqUFEEqLQ4JT90USZRfbH
+         9W2xfX1T7n8IXo5ZH3XuPHtVlQ99SlJspL/MvaolIZQVRXWgpRbblJ9XW7qKlTG2aJi0
+         s8Nw==
+X-Gm-Message-State: ANhLgQ1/qnCvA/zz++h/t9vnN6Lomuj49ABVre28msyBoOAONyqYKPgd
+        ycHK0zTKUlnpqhIpSAJ/md4+6EeqAPcvutYP2PZ3
+X-Google-Smtp-Source: ADFU+vsFfxpWZoWPoQfNzQoKkFTZAgqPPLMBHZEXieGrsLv/NxY4XpzprF2kknyaJZWIiPi4S6FHLOmCkd5dO3fhL3E=
+X-Received: by 2002:aa7:dd01:: with SMTP id i1mr5988476edv.164.1584567759671;
+ Wed, 18 Mar 2020 14:42:39 -0700 (PDT)
+MIME-Version: 1.0
+References: <cover.1577736799.git.rgb@redhat.com> <20200204231454.oxa7pyvuxbj466fj@madcap2.tricolour.ca>
+ <CAHC9VhQquokw+7UOU=G0SsD35UdgmfysVKCGCE87JVaoTkbisg@mail.gmail.com>
+ <3142237.YMNxv0uec1@x2> <CAHC9VhTiCHQbp2SwK0Xb1QgpUZxOQ26JKKPsVGT0ZvMqx28oPQ@mail.gmail.com>
+ <CAHC9VhS09b_fM19tn7pHZzxfyxcHnK+PJx80Z9Z1hn8-==4oLA@mail.gmail.com>
+ <20200312193037.2tb5f53yeisfq4ta@madcap2.tricolour.ca> <CAHC9VhQoVOzy_b9W6h+kmizKr1rPkC4cy5aYoKT2i0ZgsceNDg@mail.gmail.com>
+ <20200313185900.y44yvrfm4zxa5lfk@madcap2.tricolour.ca> <CAHC9VhR2zCCE5bjH75rSwfLC7TJGFj4RBnrtcOoUiqVp9q5TaA@mail.gmail.com>
+ <20200318212630.mw2geg4ykhnbtr3k@madcap2.tricolour.ca>
+In-Reply-To: <20200318212630.mw2geg4ykhnbtr3k@madcap2.tricolour.ca>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Wed, 18 Mar 2020 17:42:28 -0400
+Message-ID: <CAHC9VhRYvGAru3aOMwWKCCWDktS+2pGr+=vV4SjHW_0yewD98A@mail.gmail.com>
+Subject: Re: [PATCH ghak90 V8 07/16] audit: add contid support for signalling
+ the audit daemon
+To:     Richard Guy Briggs <rgb@redhat.com>
+Cc:     Steve Grubb <sgrubb@redhat.com>, linux-audit@redhat.com,
+        nhorman@tuxdriver.com, linux-api@vger.kernel.org,
+        containers@lists.linux-foundation.org,
+        LKML <linux-kernel@vger.kernel.org>, dhowells@redhat.com,
+        netfilter-devel@vger.kernel.org, ebiederm@xmission.com,
+        simo@redhat.com, netdev@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, Eric Paris <eparis@parisplace.org>,
+        mpatel@redhat.com, Serge Hallyn <serge@hallyn.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch
+On Wed, Mar 18, 2020 at 5:27 PM Richard Guy Briggs <rgb@redhat.com> wrote:
+> On 2020-03-18 16:56, Paul Moore wrote:
+> > On Fri, Mar 13, 2020 at 2:59 PM Richard Guy Briggs <rgb@redhat.com> wrote:
+> > > On 2020-03-13 12:29, Paul Moore wrote:
+> > > > On Thu, Mar 12, 2020 at 3:30 PM Richard Guy Briggs <rgb@redhat.com> wrote:
+> > > > > On 2020-02-13 16:44, Paul Moore wrote:
+> > > > > > This is a bit of a thread-hijack, and for that I apologize, but
+> > > > > > another thought crossed my mind while thinking about this issue
+> > > > > > further ... Once we support multiple auditd instances, including the
+> > > > > > necessary record routing and duplication/multiple-sends (the host
+> > > > > > always sees *everything*), we will likely need to find a way to "trim"
+> > > > > > the audit container ID (ACID) lists we send in the records.  The
+> > > > > > auditd instance running on the host/initns will always see everything,
+> > > > > > so it will want the full container ACID list; however an auditd
+> > > > > > instance running inside a container really should only see the ACIDs
+> > > > > > of any child containers.
+> > > > >
+> > > > > Agreed.  This should be easy to check and limit, preventing an auditd
+> > > > > from seeing any contid that is a parent of its own contid.
+> > > > >
+> > > > > > For example, imagine a system where the host has containers 1 and 2,
+> > > > > > each running an auditd instance.  Inside container 1 there are
+> > > > > > containers A and B.  Inside container 2 there are containers Y and Z.
+> > > > > > If an audit event is generated in container Z, I would expect the
+> > > > > > host's auditd to see a ACID list of "1,Z" but container 1's auditd
+> > > > > > should only see an ACID list of "Z".  The auditd running in container
+> > > > > > 2 should not see the record at all (that will be relatively
+> > > > > > straightforward).  Does that make sense?  Do we have the record
+> > > > > > formats properly designed to handle this without too much problem (I'm
+> > > > > > not entirely sure we do)?
+> > > > >
+> > > > > I completely agree and I believe we have record formats that are able to
+> > > > > handle this already.
+> > > >
+> > > > I'm not convinced we do.  What about the cases where we have a field
+> > > > with a list of audit container IDs?  How do we handle that?
+> > >
+> > > I don't understand the problem.  (I think you crossed your 1/2 vs
+> > > A/B/Y/Z in your example.) ...
+> >
+> > It looks like I did, sorry about that.
+> >
+> > > ... Clarifying the example above, if as you
+> > > suggest an event happens in container Z, the hosts's auditd would report
+> > >         Z,^2
+> > > and the auditd in container 2 would report
+> > >         Z,^2
+> > > but if there were another auditd running in container Z it would report
+> > >         Z
+> > > while the auditd in container 1 or A/B would see nothing.
+> >
+> > Yes.  My concern is how do we handle this to minimize duplicating and
+> > rewriting the records?  It isn't so much about the format, although
+> > the format is a side effect.
+>
+> Are you talking about caching, or about divulging more information than
+> necessary or even information leaks?  Or even noticing that records that
+> need to be generated to two audit daemons share the same contid field
+> values and should be generated at the same time or information shared
+> between them?  I'd see any of these as optimizations that don't affect
+> the api.
 
-   ASoC: stm32: spdifrx: manage rebind issue
+Imagine a record is generated in a container which has more than one
+auditd in it's ancestry that should receive this record, how do we
+handle that without completely killing performance?  That's my
+concern.  If you've already thought up a plan for this - excellent,
+please share :)
 
-has been applied to the asoc tree at
-
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From 794df9448edb55978e50372f083aeedade1b2844 Mon Sep 17 00:00:00 2001
-From: Olivier Moysan <olivier.moysan@st.com>
-Date: Wed, 18 Mar 2020 15:41:24 +0100
-Subject: [PATCH] ASoC: stm32: spdifrx: manage rebind issue
-
-The commit e894efef9ac7 ("ASoC: core: add support to card rebind")
-allows to rebind the sound card after a rebind of one of its component.
-With this commit, the sound card is actually rebound,
-but may be no more functional.
-
-Corrections:
-- Call snd_dmaengine_pcm_register() before snd_soc_register_component().
-- Call snd_dmaengine_pcm_unregister() and snd_soc_unregister_component()
-explicitly from SPDFIRX driver.
-
-Signed-off-by: Olivier Moysan <olivier.moysan@st.com>
-Link: https://lore.kernel.org/r/20200318144125.9163-3-olivier.moysan@st.com
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- sound/soc/stm/stm32_spdifrx.c | 62 ++++++++++++++++++-----------------
- 1 file changed, 32 insertions(+), 30 deletions(-)
-
-diff --git a/sound/soc/stm/stm32_spdifrx.c b/sound/soc/stm/stm32_spdifrx.c
-index 49766afdae61..ae7a0f46a6fb 100644
---- a/sound/soc/stm/stm32_spdifrx.c
-+++ b/sound/soc/stm/stm32_spdifrx.c
-@@ -944,6 +944,22 @@ static int stm32_spdifrx_parse_of(struct platform_device *pdev,
- 	return 0;
- }
- 
-+static int stm32_spdifrx_remove(struct platform_device *pdev)
-+{
-+	struct stm32_spdifrx_data *spdifrx = platform_get_drvdata(pdev);
-+
-+	if (spdifrx->ctrl_chan)
-+		dma_release_channel(spdifrx->ctrl_chan);
-+
-+	if (spdifrx->dmab)
-+		snd_dma_free_pages(spdifrx->dmab);
-+
-+	snd_dmaengine_pcm_unregister(&pdev->dev);
-+	snd_soc_unregister_component(&pdev->dev);
-+
-+	return 0;
-+}
-+
- static int stm32_spdifrx_probe(struct platform_device *pdev)
- {
- 	struct stm32_spdifrx_data *spdifrx;
-@@ -995,25 +1011,27 @@ static int stm32_spdifrx_probe(struct platform_device *pdev)
- 	udelay(2);
- 	reset_control_deassert(rst);
- 
--	ret = devm_snd_soc_register_component(&pdev->dev,
--					      &stm32_spdifrx_component,
--					      stm32_spdifrx_dai,
--					      ARRAY_SIZE(stm32_spdifrx_dai));
--	if (ret)
--		return ret;
--
--	ret = stm32_spdifrx_dma_ctrl_register(&pdev->dev, spdifrx);
--	if (ret)
--		goto error;
--
- 	pcm_config = &stm32_spdifrx_pcm_config;
--	ret = devm_snd_dmaengine_pcm_register(&pdev->dev, pcm_config, 0);
-+	ret = snd_dmaengine_pcm_register(&pdev->dev, pcm_config, 0);
- 	if (ret) {
- 		if (ret != -EPROBE_DEFER)
- 			dev_err(&pdev->dev, "PCM DMA register error %d\n", ret);
--		goto error;
-+		return ret;
- 	}
- 
-+	ret = snd_soc_register_component(&pdev->dev,
-+					 &stm32_spdifrx_component,
-+					 stm32_spdifrx_dai,
-+					 ARRAY_SIZE(stm32_spdifrx_dai));
-+	if (ret) {
-+		snd_dmaengine_pcm_unregister(&pdev->dev);
-+		return ret;
-+	}
-+
-+	ret = stm32_spdifrx_dma_ctrl_register(&pdev->dev, spdifrx);
-+	if (ret)
-+		goto error;
-+
- 	ret = regmap_read(spdifrx->regmap, STM32_SPDIFRX_IDR, &idr);
- 	if (ret)
- 		goto error;
-@@ -1029,27 +1047,11 @@ static int stm32_spdifrx_probe(struct platform_device *pdev)
- 	return ret;
- 
- error:
--	if (!IS_ERR(spdifrx->ctrl_chan))
--		dma_release_channel(spdifrx->ctrl_chan);
--	if (spdifrx->dmab)
--		snd_dma_free_pages(spdifrx->dmab);
-+	stm32_spdifrx_remove(pdev);
- 
- 	return ret;
- }
- 
--static int stm32_spdifrx_remove(struct platform_device *pdev)
--{
--	struct stm32_spdifrx_data *spdifrx = platform_get_drvdata(pdev);
--
--	if (spdifrx->ctrl_chan)
--		dma_release_channel(spdifrx->ctrl_chan);
--
--	if (spdifrx->dmab)
--		snd_dma_free_pages(spdifrx->dmab);
--
--	return 0;
--}
--
- MODULE_DEVICE_TABLE(of, stm32_spdifrx_ids);
- 
- #ifdef CONFIG_PM_SLEEP
 -- 
-2.20.1
-
+paul moore
+www.paul-moore.com
