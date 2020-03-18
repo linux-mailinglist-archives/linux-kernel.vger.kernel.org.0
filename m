@@ -2,41 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D2223189AB0
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 12:32:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EF78E189AB7
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 12:33:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727797AbgCRLcz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Mar 2020 07:32:55 -0400
-Received: from smtp-fw-33001.amazon.com ([207.171.190.10]:42483 "EHLO
-        smtp-fw-33001.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726855AbgCRLcy (ORCPT
+        id S1727827AbgCRLdo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Mar 2020 07:33:44 -0400
+Received: from smtp-fw-2101.amazon.com ([72.21.196.25]:55731 "EHLO
+        smtp-fw-2101.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726855AbgCRLdo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Mar 2020 07:32:54 -0400
+        Wed, 18 Mar 2020 07:33:44 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
   d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1584531174; x=1616067174;
+  t=1584531225; x=1616067225;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version;
-  bh=IIweUbJ6ywSxmEcEsqVWoNZ/WqTFK20tUG13PKDxXU8=;
-  b=SlpBCYgOcuiVX8O+xraTgbBjl8ei7tsivi8p6D047Zp5yP6uYJyYGGPx
-   +IhlVEtIcd3bDXVmtvrH5iwOFpZll7+Mf7eKHa+nSqgnlkn8jgaa9fxpZ
-   myAY+duIJzAr09FGNQFJCmrcQAKfKgmhhLBYzAm8rURdn+A4BM2ID59r9
-   E=;
-IronPort-SDR: ETsYFwWCXdqiKtV6jfvVJ1un7t8wySL4whgPWQh+9JbcrMmEtsPTXOPvBfEhrozL4akLUT1+Cz
- xz06oDSJsiKw==
+  bh=s0AfyZ6CiQ6AzJS05n/GM916ac2WmoGpXpoaffAKTPY=;
+  b=p3saGtPpSuoKmxTvO2FY2vQN4+/PEK2FPefK6Isvl6by1wbVpSuNkGSL
+   M+BRY0DiwW4yJ8WToUOdseEwRCL1aedhYjbtDp26Pve7WyVMMv+pTxTH9
+   UcHpK877UyKeT5cZnHvudOnKE6OKWzbpivORQVfvW0f2DinqZDqPb+bFG
+   s=;
+IronPort-SDR: ODNl+8upXqZPtYW0Y6p5MvnEOupndjxY/OoQ+9dHBo6dRPKg+lr3MHLx3F8aevk1QFZqwDrqGv
+ WT5HT4ca0wAQ==
 X-IronPort-AV: E=Sophos;i="5.70,567,1574121600"; 
-   d="scan'208";a="33271215"
-Received: from sea32-co-svc-lb4-vlan3.sea.corp.amazon.com (HELO email-inbound-relay-1e-27fb8269.us-east-1.amazon.com) ([10.47.23.38])
-  by smtp-border-fw-out-33001.sea14.amazon.com with ESMTP; 18 Mar 2020 11:32:51 +0000
-Received: from EX13MTAUEA002.ant.amazon.com (iad55-ws-svc-p15-lb9-vlan3.iad.amazon.com [10.40.159.166])
-        by email-inbound-relay-1e-27fb8269.us-east-1.amazon.com (Postfix) with ESMTPS id 428FFA0333;
-        Wed, 18 Mar 2020 11:32:40 +0000 (UTC)
+   d="scan'208";a="22002595"
+Received: from iad12-co-svc-p1-lb1-vlan2.amazon.com (HELO email-inbound-relay-1a-7d76a15f.us-east-1.amazon.com) ([10.43.8.2])
+  by smtp-border-fw-out-2101.iad2.amazon.com with ESMTP; 18 Mar 2020 11:33:44 +0000
+Received: from EX13MTAUEA002.ant.amazon.com (iad55-ws-svc-p15-lb9-vlan2.iad.amazon.com [10.40.159.162])
+        by email-inbound-relay-1a-7d76a15f.us-east-1.amazon.com (Postfix) with ESMTPS id BA158A26C4;
+        Wed, 18 Mar 2020 11:33:33 +0000 (UTC)
 Received: from EX13D31EUA001.ant.amazon.com (10.43.165.15) by
  EX13MTAUEA002.ant.amazon.com (10.43.61.77) with Microsoft SMTP Server (TLS)
- id 15.0.1236.3; Wed, 18 Mar 2020 11:32:40 +0000
+ id 15.0.1236.3; Wed, 18 Mar 2020 11:33:32 +0000
 Received: from u886c93fd17d25d.ant.amazon.com (10.43.161.235) by
  EX13D31EUA001.ant.amazon.com (10.43.165.15) with Microsoft SMTP Server (TLS)
- id 15.0.1497.2; Wed, 18 Mar 2020 11:32:26 +0000
+ id 15.0.1497.2; Wed, 18 Mar 2020 11:33:14 +0000
 From:   SeongJae Park <sjpark@amazon.com>
 To:     <akpm@linux-foundation.org>
 CC:     SeongJae Park <sjpark@amazon.de>, <Jonathan.Cameron@Huawei.com>,
@@ -53,9 +53,9 @@ CC:     SeongJae Park <sjpark@amazon.de>, <Jonathan.Cameron@Huawei.com>,
         <yang.shi@linux.alibaba.com>, <ying.huang@intel.com>,
         <linux-mm@kvack.org>, <linux-doc@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>
-Subject: [PATCH v7 07/15] mm/damon: Implement callbacks
-Date:   Wed, 18 Mar 2020 12:27:14 +0100
-Message-ID: <20200318112722.30143-8-sjpark@amazon.com>
+Subject: [PATCH v7 08/15] mm/damon: Implement access pattern recording
+Date:   Wed, 18 Mar 2020 12:27:15 +0100
+Message-ID: <20200318112722.30143-9-sjpark@amazon.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200318112722.30143-1-sjpark@amazon.com>
 References: <20200318112722.30143-1-sjpark@amazon.com>
@@ -71,53 +71,203 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: SeongJae Park <sjpark@amazon.de>
 
-This commit implements callbacks for DAMON.  Using this, DAMON users can
-install their callbacks for each step of the access monitoring so that
-they can do something interesting with the monitored access patterns
-online.  For example, callbacks can report the monitored patterns to
-users or do some access pattern based memory management such as
-proactive reclamations or access pattern based THP promotions/demotions
-decision makings.
+This commit implements the recording feature of DAMON. If this feature
+is enabled, DAMON writes the monitored access patterns in its binary
+format into a file which specified by the user. This is already able to
+be implemented by each user using the callbacks.  However, as the
+recording is expected to be used widely, this commit implements the
+feature in the DAMON, for more convenience and efficiency.
 
 Signed-off-by: SeongJae Park <sjpark@amazon.de>
 ---
- include/linux/damon.h | 4 ++++
- mm/damon.c            | 4 ++++
- 2 files changed, 8 insertions(+)
+ include/linux/damon.h |   7 +++
+ mm/damon.c            | 120 ++++++++++++++++++++++++++++++++++++++++--
+ 2 files changed, 124 insertions(+), 3 deletions(-)
 
 diff --git a/include/linux/damon.h b/include/linux/damon.h
-index 64e327400749..cad3ee3d78db 100644
+index cad3ee3d78db..47fb0ec03030 100644
 --- a/include/linux/damon.h
 +++ b/include/linux/damon.h
-@@ -56,6 +56,10 @@ struct damon_ctx {
- 	struct rnd_state rndseed;
+@@ -50,6 +50,11 @@ struct damon_ctx {
+ 	struct timespec64 last_aggregation;
+ 	struct timespec64 last_regions_update;
  
- 	struct list_head tasks_list;	/* 'damon_task' objects */
++	unsigned char *rbuf;
++	unsigned int rbuf_len;
++	unsigned int rbuf_offset;
++	char *rfile_path;
 +
-+	/* callbacks */
-+	void (*sample_cb)(struct damon_ctx *context);
-+	void (*aggregate_cb)(struct damon_ctx *context);
- };
+ 	struct task_struct *kdamond;
+ 	struct mutex kdamond_lock;
  
- int damon_set_pids(struct damon_ctx *ctx, unsigned long *pids, ssize_t nr_pids);
+@@ -66,6 +71,8 @@ int damon_set_pids(struct damon_ctx *ctx, unsigned long *pids, ssize_t nr_pids);
+ int damon_set_attrs(struct damon_ctx *ctx, unsigned long sample_int,
+ 		unsigned long aggr_int, unsigned long regions_update_int,
+ 		unsigned long min_nr_reg, unsigned long max_nr_reg);
++int damon_set_recording(struct damon_ctx *ctx,
++				unsigned int rbuf_len, char *rfile_path);
+ int damon_start(struct damon_ctx *ctx);
+ int damon_stop(struct damon_ctx *ctx);
+ 
 diff --git a/mm/damon.c b/mm/damon.c
-index 535337529d20..2e8af1ce4389 100644
+index 2e8af1ce4389..59d49b0990cf 100644
 --- a/mm/damon.c
 +++ b/mm/damon.c
-@@ -787,9 +787,13 @@ static int kdamond_fn(void *data)
- 			}
- 			mmput(mm);
- 		}
-+		if (ctx->sample_cb)
-+			ctx->sample_cb(ctx);
+@@ -41,6 +41,8 @@
+ #define damon_for_each_task_safe(ctx, t, next) \
+ 	list_for_each_entry_safe(t, next, &(ctx)->tasks_list, list)
  
- 		if (kdamond_aggregate_interval_passed(ctx)) {
- 			kdamond_merge_regions(ctx, max_nr_accesses / 10);
-+			if (ctx->aggregate_cb)
-+				ctx->aggregate_cb(ctx);
- 			kdamond_reset_aggregated(ctx);
- 			kdamond_split_regions(ctx);
- 		}
++#define MAX_RFILE_PATH_LEN	256
++
+ /* Get a random number in [l, r) */
+ #define damon_rand(ctx, l, r) (l + prandom_u32_state(&ctx->rndseed) % (r - l))
+ 
+@@ -523,16 +525,81 @@ static bool kdamond_aggregate_interval_passed(struct damon_ctx *ctx)
+ }
+ 
+ /*
+- * Reset the aggregated monitoring results
++ * Flush the content in the result buffer to the result file
++ */
++static void damon_flush_rbuffer(struct damon_ctx *ctx)
++{
++	ssize_t sz;
++	loff_t pos;
++	struct file *rfile;
++
++	while (ctx->rbuf_offset) {
++		pos = 0;
++		rfile = filp_open(ctx->rfile_path, O_CREAT | O_RDWR | O_APPEND,
++				0644);
++		if (IS_ERR(rfile)) {
++			pr_err("Cannot open the result file %s\n",
++					ctx->rfile_path);
++			return;
++		}
++
++		sz = kernel_write(rfile, ctx->rbuf, ctx->rbuf_offset, &pos);
++		filp_close(rfile, NULL);
++
++		ctx->rbuf_offset -= sz;
++	}
++}
++
++/*
++ * Write a data into the result buffer
++ */
++static void damon_write_rbuf(struct damon_ctx *ctx, void *data, ssize_t size)
++{
++	if (!ctx->rbuf_len || !ctx->rbuf)
++		return;
++	if (ctx->rbuf_offset + size > ctx->rbuf_len)
++		damon_flush_rbuffer(ctx);
++
++	memcpy(&ctx->rbuf[ctx->rbuf_offset], data, size);
++	ctx->rbuf_offset += size;
++}
++
++/*
++ * Flush the aggregated monitoring results to the result buffer
++ *
++ * Stores current tracking results to the result buffer and reset 'nr_accesses'
++ * of each regions.  The format for the result buffer is as below:
++ *
++ *   <time> <number of tasks> <array of task infos>
++ *
++ *   task info: <pid> <number of regions> <array of region infos>
++ *   region info: <start address> <end address> <nr_accesses>
+  */
+ static void kdamond_reset_aggregated(struct damon_ctx *c)
+ {
+ 	struct damon_task *t;
+-	struct damon_region *r;
++	struct timespec64 now;
++	unsigned int nr;
++
++	ktime_get_coarse_ts64(&now);
++
++	damon_write_rbuf(c, &now, sizeof(struct timespec64));
++	nr = nr_damon_tasks(c);
++	damon_write_rbuf(c, &nr, sizeof(nr));
+ 
+ 	damon_for_each_task(c, t) {
+-		damon_for_each_region(r, t)
++		struct damon_region *r;
++
++		damon_write_rbuf(c, &t->pid, sizeof(t->pid));
++		nr = nr_damon_regions(t);
++		damon_write_rbuf(c, &nr, sizeof(nr));
++		damon_for_each_region(r, t) {
++			damon_write_rbuf(c, &r->vm_start, sizeof(r->vm_start));
++			damon_write_rbuf(c, &r->vm_end, sizeof(r->vm_end));
++			damon_write_rbuf(c, &r->nr_accesses,
++					sizeof(r->nr_accesses));
+ 			r->nr_accesses = 0;
++		}
+ 	}
+ }
+ 
+@@ -803,6 +870,7 @@ static int kdamond_fn(void *data)
+ 
+ 		usleep_range(ctx->sample_interval, ctx->sample_interval + 1);
+ 	}
++	damon_flush_rbuffer(ctx);
+ 	damon_for_each_task(ctx, t) {
+ 		damon_for_each_region_safe(r, next, t)
+ 			damon_destroy_region(r);
+@@ -910,6 +978,52 @@ int damon_set_pids(struct damon_ctx *ctx, unsigned long *pids, ssize_t nr_pids)
+ 	return 0;
+ }
+ 
++/*
++ * damon_set_recording() - Set attributes for the recording.
++ * @ctx:	target kdamond context
++ * @rbuf_len:	length of the result buffer
++ * @rfile_path:	path to the monitor result files
++ *
++ * Setting 'rbuf_len' 0 disables recording.
++ *
++ * This function should not be called while the kdamond is running.
++ *
++ * Return: 0 on success, negative error code otherwise.
++ */
++int damon_set_recording(struct damon_ctx *ctx,
++				unsigned int rbuf_len, char *rfile_path)
++{
++	size_t rfile_path_len;
++
++	if (rbuf_len > 4 * 1024 * 1024) {
++		pr_err("too long (>%d) result buffer length\n",
++				4 * 1024 * 1024);
++		return -EINVAL;
++	}
++	rfile_path_len = strnlen(rfile_path, MAX_RFILE_PATH_LEN);
++	if (rfile_path_len >= MAX_RFILE_PATH_LEN) {
++		pr_err("too long (>%d) result file path %s\n",
++				MAX_RFILE_PATH_LEN, rfile_path);
++		return -EINVAL;
++	}
++	ctx->rbuf_len = rbuf_len;
++	kfree(ctx->rbuf);
++	kfree(ctx->rfile_path);
++	ctx->rfile_path = NULL;
++	if (!rbuf_len) {
++		ctx->rbuf = NULL;
++	} else {
++		ctx->rbuf = kvmalloc(rbuf_len, GFP_KERNEL);
++		if (!ctx->rbuf)
++			return -ENOMEM;
++	}
++	ctx->rfile_path = kmalloc(rfile_path_len + 1, GFP_KERNEL);
++	if (!ctx->rfile_path)
++		return -ENOMEM;
++	strncpy(ctx->rfile_path, rfile_path, rfile_path_len + 1);
++	return 0;
++}
++
+ /*
+  * damon_set_attrs() - Set attributes for the monitoring.
+  * @ctx:		monitoring context
 -- 
 2.17.1
 
