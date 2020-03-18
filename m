@@ -2,144 +2,217 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B15D11895DA
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 07:33:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 154151895EB
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 07:35:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727224AbgCRGdn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Mar 2020 02:33:43 -0400
-Received: from mail-eopbgr700059.outbound.protection.outlook.com ([40.107.70.59]:38177
-        "EHLO NAM04-SN1-obe.outbound.protection.outlook.com"
+        id S1727290AbgCRGfb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Mar 2020 02:35:31 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:37890 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726478AbgCRGdm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Mar 2020 02:33:42 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=n50VMFgH3Shz4NGwGVgjz5PmJT74gvBFe/ry47YxC7DHUx7Ibd5ZBa6901TlbQJe+YXcv+cQ1KdAXEw7tO8klzPOHEwyBTvlfRbvAJY24AkNWmjYbwd0eyMsqrj98dLCsKrI8AKIG+5mCIrWDUwwGZxjs9sB51Uu5EbhkZa9KpuGVXDrZLFQ6PBTrzjSVT47r8butixDIXV0E/Is5wrlg9/iI7BA3J90M1UCH6bgnSnX7SN1KNlYDrxNQQzI2/q2eaF87FbZfcc8+cQ7py427o73lCATNXty2kxLPczAQVh/mFSTDMcpCDTD32GaDFzrc4tdl/mywF6nLhRrIumXQQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=w04c/3tOf92t6L/TOjaruS/dXSLXiKGPYNLFYSrBw3U=;
- b=B29csWoq1Kb4OJMuSVXIfuFMEJVM4PdpF+HWVQgab6dVxIQsEnZX/rwz2i3h2xC0fAdLH4NqpsLHN8WpgAY9hlQ3ItixuISM/DOsdPSON+MFInI+w6Qp58EdgpvrQMGhkJZZcvi9u7ttKbiUnf9eFanB+/CXW0U6dIgrgoXltJbTg06z/MOpNTuaRqj52vXRLmckb295Dp12ErUmBDnV7jcX/1VDBJbMro/k4oLmryL92SO+eFiIvM/QbjU/E2mAwLi9eF7BE04aIkE31tIGkS1l34cHzFDerf7b/aMDPuuGXFnKS9OTmYsuWZF/Oe7qRRRvYfVx7Dw6FGkSMu3uhA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=windriver.com; dmarc=pass action=none
- header.from=windriver.com; dkim=pass header.d=windriver.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=windriversystems.onmicrosoft.com;
- s=selector2-windriversystems-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=w04c/3tOf92t6L/TOjaruS/dXSLXiKGPYNLFYSrBw3U=;
- b=iJfnktd49EocqPOJTDbtaMifxAIFmDslq/Nd1b1DHeNPwTNOPHSpFR50jhZhySxvpwLwxWvCKgMsXI3CTe3gOjAugeYTY7GsSuLWdLAMAj/hcwj3kkmWEYLrFpcg0S61iszaY965mnU/yXcCu9BN3y9rw9xwLXVizJf1Ipi5KXs=
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=Zhe.He@windriver.com; 
-Received: from SN6PR11MB3360.namprd11.prod.outlook.com (2603:10b6:805:c8::30)
- by SN6PR11MB2767.namprd11.prod.outlook.com (2603:10b6:805:5a::26) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2814.22; Wed, 18 Mar
- 2020 06:33:39 +0000
-Received: from SN6PR11MB3360.namprd11.prod.outlook.com
- ([fe80::d852:181d:278b:ba9d]) by SN6PR11MB3360.namprd11.prod.outlook.com
- ([fe80::d852:181d:278b:ba9d%5]) with mapi id 15.20.2814.021; Wed, 18 Mar 2020
- 06:33:39 +0000
-Subject: Re: disk revalidation updates and OOM
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     jack@suse.cz, Jens Axboe <axboe@kernel.dk>,
-        viro@zeniv.linux.org.uk, bvanassche@acm.org, keith.busch@intel.com,
-        tglx@linutronix.de, mwilck@suse.com, yuyufen@huawei.com,
-        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <93b395e6-5c3f-0157-9572-af0f9094dbd7@windriver.com>
- <20200310074018.GB26381@lst.de>
- <75865e17-48f8-a63a-3a29-f995115ffcfc@windriver.com>
- <20200310162647.GA6361@lst.de>
- <f48683d9-7854-ba5f-da3a-7ef987a539b8@windriver.com>
- <20200311155458.GA24376@lst.de>
- <18bbb6cd-578e-5ead-f2cd-a8a01db17e29@windriver.com>
- <20200316113746.GA15930@lst.de>
- <4215351e-89ac-4969-1d52-e2ff5c064d7d@windriver.com>
- <20200317124244.GA12316@lst.de>
-From:   He Zhe <zhe.he@windriver.com>
-Message-ID: <d6feccb0-6dfc-22e6-1e3d-e6bd8562e5eb@windriver.com>
-Date:   Wed, 18 Mar 2020 14:33:28 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
-In-Reply-To: <20200317124244.GA12316@lst.de>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-ClientProxiedBy: HK0PR01CA0054.apcprd01.prod.exchangelabs.com
- (2603:1096:203:a6::18) To SN6PR11MB3360.namprd11.prod.outlook.com
- (2603:10b6:805:c8::30)
+        id S1726478AbgCRGfb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Mar 2020 02:35:31 -0400
+Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 687BA464783BCDA51C81;
+        Wed, 18 Mar 2020 14:35:13 +0800 (CST)
+Received: from [127.0.0.1] (10.173.222.27) by DGGEMS410-HUB.china.huawei.com
+ (10.3.19.210) with Microsoft SMTP Server id 14.3.487.0; Wed, 18 Mar 2020
+ 14:35:07 +0800
+Subject: Re: [PATCH v5 20/23] KVM: arm64: GICv4.1: Plumb SGI implementation
+ selection in the distributor
+To:     Marc Zyngier <maz@kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <kvmarm@lists.cs.columbia.edu>, <kvm@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+CC:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Robert Richter <rrichter@marvell.com>,
+        "Thomas Gleixner" <tglx@linutronix.de>,
+        Eric Auger <eric.auger@redhat.com>,
+        "James Morse" <james.morse@arm.com>,
+        Julien Thierry <julien.thierry.kdev@gmail.com>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>
+References: <20200304203330.4967-1-maz@kernel.org>
+ <20200304203330.4967-21-maz@kernel.org>
+From:   Zenghui Yu <yuzenghui@huawei.com>
+Message-ID: <72832f51-bbde-8502-3e03-189ac20a0143@huawei.com>
+Date:   Wed, 18 Mar 2020 14:34:59 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.0
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from [128.224.162.175] (60.247.85.82) by HK0PR01CA0054.apcprd01.prod.exchangelabs.com (2603:1096:203:a6::18) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2835.17 via Frontend Transport; Wed, 18 Mar 2020 06:33:34 +0000
-X-Originating-IP: [60.247.85.82]
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: d287d5d0-378f-4ac3-25eb-08d7cb064b1b
-X-MS-TrafficTypeDiagnostic: SN6PR11MB2767:
-X-Microsoft-Antispam-PRVS: <SN6PR11MB27676458180C82F69CCF7DC58FF70@SN6PR11MB2767.namprd11.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:9508;
-X-Forefront-PRVS: 03468CBA43
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(136003)(376002)(396003)(366004)(346002)(39850400004)(199004)(2906002)(53546011)(86362001)(6486002)(26005)(36756003)(52116002)(16526019)(186003)(31686004)(15650500001)(66946007)(956004)(5660300002)(4326008)(2616005)(7416002)(478600001)(6666004)(6706004)(31696002)(316002)(66476007)(8936002)(81166006)(8676002)(81156014)(6916009)(66556008)(16576012)(78286006);DIR:OUT;SFP:1101;SCL:1;SRVR:SN6PR11MB2767;H:SN6PR11MB3360.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;
-Received-SPF: None (protection.outlook.com: windriver.com does not designate
- permitted sender hosts)
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: U9ZWk9Oe4J6rJM6s389qmsBSes4VvvR1/oXKGiMWMpdgjaFbqj1ja4yCWPRQ8l+0T3q46PUqtsDCy0V7AB76vlb9lrikmtZgDjFGT0kGYs3olNXwuiKhYNsjJl8QSk0daXqfL3BmbcYhz7D7tLTy22d3z08Pzu+qrc087SHpfRVg6Vb/syMyY1ktcnpILp1Zt4MJtphiaUwHaIvDIlX6MjpSiM4mChCSn+Ns2RbZkme10XDmEpgapmAO5juvuIMcl/4l/kuqT+44FJmEClWyl1DVEvtgw8YVpYN0ofJiUNF2Zvzwj+7aIx6BUdzhB82jFyd+0OOZGhpQwTlTAedyoq3jYmsb5PrTYDMKJiu+LxvwmpG0lmsLPitj119aMxNksZADiQpQan2fkhlJEAGSBvWPzetYT0M0HHDwbds7pDHjTEk3jABPMlt7OrVPw090MfZBNwwZyfcTxeeIHM9rHFe6KckBkPcdRl0zjUdlyFFi4Q8Q7g7Dv1YFuh+MdtEE+d2CVK8P9hNBnwkHxzLRFO9RsF7m0i5WIrWdJHKTs1o=
-X-MS-Exchange-AntiSpam-MessageData: HaRE2citDk1aMpQdHE851HvOIoOH+W+N2HIds2maVmLtPakIqrWKAnKK2YIuIsLWIsf3eLbjf4u2W1Ozvgj+pqON1Obw6NJqhrXM5pMDg/7c+A7IdxIAwPgmNc31ilC25U1utcqR8aEUHtvR3UX3pQ==
-X-OriginatorOrg: windriver.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d287d5d0-378f-4ac3-25eb-08d7cb064b1b
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Mar 2020 06:33:39.0884
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 8ddb2873-a1ad-4a18-ae4e-4644631433be
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 7kKNQvi7MvbkweSNlmyL+PeZhQ298kaxF9k9AeW19+Aa3ZzL5S3AXHbrYDTSVhfmVqJpGp4KD2Xt/FnkYXLs9w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR11MB2767
+In-Reply-To: <20200304203330.4967-21-maz@kernel.org>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.173.222.27]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Marc,
+
+On 2020/3/5 4:33, Marc Zyngier wrote:
+> The GICv4.1 architecture gives the hypervisor the option to let
+> the guest choose whether it wants the good old SGIs with an
+> active state, or the new, HW-based ones that do not have one.
+> 
+> For this, plumb the configuration of SGIs into the GICv3 MMIO
+> handling, present the GICD_TYPER2.nASSGIcap to the guest,
+> and handle the GICD_CTLR.nASSGIreq setting.
+> 
+> In order to be able to deal with the restore of a guest, also
+> apply the GICD_CTLR.nASSGIreq setting at first run so that we
+> can move the restored SGIs to the HW if that's what the guest
+> had selected in a previous life.
+
+I'm okay with the restore path.  But it seems that we still fail to
+save the pending state of vSGI - software pending_latch of HW-based
+vSGIs will not be updated (and always be false) because we directly
+inject them through ITS, so vgic_v3_uaccess_read_pending() can't
+tell the correct pending state to user-space (the correct one should
+be latched in HW).
+
+It would be good if we can sync the hardware state into pending_latch
+at an appropriate time (just before save), but not sure if we can...
+
+> 
+> Signed-off-by: Marc Zyngier <maz@kernel.org>
+> ---
+>   virt/kvm/arm/vgic/vgic-mmio-v3.c | 48 ++++++++++++++++++++++++++++++--
+>   virt/kvm/arm/vgic/vgic-v3.c      |  2 ++
+>   2 files changed, 48 insertions(+), 2 deletions(-)
+> 
+> diff --git a/virt/kvm/arm/vgic/vgic-mmio-v3.c b/virt/kvm/arm/vgic/vgic-mmio-v3.c
+> index de89da76a379..442f3b8c2559 100644
+> --- a/virt/kvm/arm/vgic/vgic-mmio-v3.c
+> +++ b/virt/kvm/arm/vgic/vgic-mmio-v3.c
+> @@ -3,6 +3,7 @@
+>    * VGICv3 MMIO handling functions
+>    */
+>   
+> +#include <linux/bitfield.h>
+>   #include <linux/irqchip/arm-gic-v3.h>
+>   #include <linux/kvm.h>
+>   #include <linux/kvm_host.h>
+> @@ -70,6 +71,8 @@ static unsigned long vgic_mmio_read_v3_misc(struct kvm_vcpu *vcpu,
+>   		if (vgic->enabled)
+>   			value |= GICD_CTLR_ENABLE_SS_G1;
+>   		value |= GICD_CTLR_ARE_NS | GICD_CTLR_DS;
+> +		if (kvm_vgic_global_state.has_gicv4_1 && vgic->nassgireq)
+
+Looking at how we handle the GICD_CTLR.nASSGIreq setting, I think
+"nassgireq==true" already indicates "has_gicv4_1==true".  So this
+can be simplified.
+
+But I wonder that should we use nassgireq to *only* keep track what
+the guest had written into the GICD_CTLR.nASSGIreq.  If not, we may
+lose the guest-request bit after migration among hosts with different
+has_gicv4_1 settings.
 
 
-On 3/17/20 8:42 PM, Christoph Hellwig wrote:
-> On Tue, Mar 17, 2020 at 04:50:11PM +0800, He Zhe wrote:
->>>> With my build fix applied, the issue is triggered since 142fe8f.
->>>> And I can see the endless loop of invalidate and revalidate...
->>> Thanks.  Can you test the patch below that restores the previous
->>> rather odd behavior of not clearing the capacity to 0 if partition
->>> scanning is not enabled?
->> This fixes the issue. I also validated it on v5.6-rc6.
-> Can you check this slight variant that only skips the capacity
-> change for removable devices given that IIRC you reported the problem
-> with a legacy ide-cd device?
+The remaining patches all look good to me :-). I will wait for you to
+confirm these two concerns.
 
-Tested. This also works.
 
-Zhe
+Thanks,
+Zenghui
 
->
->
-> diff --git a/fs/block_dev.c b/fs/block_dev.c
-> index 69bf2fb6f7cd..3212ac85d493 100644
-> --- a/fs/block_dev.c
-> +++ b/fs/block_dev.c
-> @@ -1520,10 +1520,14 @@ int bdev_disk_changed(struct block_device *bdev, bool invalidate)
->  	if (ret)
->  		return ret;
->  
-> -	if (invalidate)
-> -		set_capacity(disk, 0);
-> -	else if (disk->fops->revalidate_disk)
-> -		disk->fops->revalidate_disk(disk);
-> +	if (invalidate) {
-> +		if (!(disk->flags & GENHD_FL_REMOVABLE) ||
-> +		    disk_part_scan_enabled(disk))
-> +			set_capacity(disk, 0);
-> +	} else {
-> +		if (disk->fops->revalidate_disk)
-> +			disk->fops->revalidate_disk(disk);
+> +			value |= GICD_CTLR_nASSGIreq;
+>   		break;
+>   	case GICD_TYPER:
+>   		value = vgic->nr_spis + VGIC_NR_PRIVATE_IRQS;
+> @@ -81,6 +84,10 @@ static unsigned long vgic_mmio_read_v3_misc(struct kvm_vcpu *vcpu,
+>   			value |= (INTERRUPT_ID_BITS_SPIS - 1) << 19;
+>   		}
+>   		break;
+> +	case GICD_TYPER2:
+> +		if (kvm_vgic_global_state.has_gicv4_1)
+> +			value = GICD_TYPER2_nASSGIcap;
+> +		break;
+>   	case GICD_IIDR:
+>   		value = (PRODUCT_ID_KVM << GICD_IIDR_PRODUCT_ID_SHIFT) |
+>   			(vgic->implementation_rev << GICD_IIDR_REVISION_SHIFT) |
+> @@ -98,17 +105,43 @@ static void vgic_mmio_write_v3_misc(struct kvm_vcpu *vcpu,
+>   				    unsigned long val)
+>   {
+>   	struct vgic_dist *dist = &vcpu->kvm->arch.vgic;
+> -	bool was_enabled = dist->enabled;
+>   
+>   	switch (addr & 0x0c) {
+> -	case GICD_CTLR:
+> +	case GICD_CTLR: {
+> +		bool was_enabled, is_hwsgi;
+> +
+> +		mutex_lock(&vcpu->kvm->lock);
+> +
+> +		was_enabled = dist->enabled;
+> +		is_hwsgi = dist->nassgireq;
+> +
+>   		dist->enabled = val & GICD_CTLR_ENABLE_SS_G1;
+>   
+> +		/* Not a GICv4.1? No HW SGIs */
+> +		if (!kvm_vgic_global_state.has_gicv4_1)
+> +			val &= ~GICD_CTLR_nASSGIreq;
+> +
+> +		/* Dist stays enabled? nASSGIreq is RO */
+> +		if (was_enabled && dist->enabled) {
+> +			val &= ~GICD_CTLR_nASSGIreq;
+> +			val |= FIELD_PREP(GICD_CTLR_nASSGIreq, is_hwsgi);
+> +		}
+> +
+> +		/* Switching HW SGIs? */
+> +		dist->nassgireq = val & GICD_CTLR_nASSGIreq;
+> +		if (is_hwsgi != dist->nassgireq)
+> +			vgic_v4_configure_vsgis(vcpu->kvm);
+> +
+>   		if (!was_enabled && dist->enabled)
+>   			vgic_kick_vcpus(vcpu->kvm);
+> +
+> +		mutex_unlock(&vcpu->kvm->lock);
+>   		break;
 > +	}
->  
->  	check_disk_size_change(disk, bdev, !invalidate);
->  
+>   	case GICD_TYPER:
+> +	case GICD_TYPER2:
+>   	case GICD_IIDR:
+> +		/* This is at best for documentation purposes... */
+>   		return;
+>   	}
+>   }
+> @@ -117,10 +150,21 @@ static int vgic_mmio_uaccess_write_v3_misc(struct kvm_vcpu *vcpu,
+>   					   gpa_t addr, unsigned int len,
+>   					   unsigned long val)
+>   {
+> +	struct vgic_dist *dist = &vcpu->kvm->arch.vgic;
+> +
+>   	switch (addr & 0x0c) {
+>   	case GICD_IIDR:
+>   		if (val != vgic_mmio_read_v3_misc(vcpu, addr, len))
+>   			return -EINVAL;
+> +		return 0;
+> +	case GICD_CTLR:
+> +		/* Not a GICv4.1? No HW SGIs */
+> +		if (!kvm_vgic_global_state.has_gicv4_1)
+> +			val &= ~GICD_CTLR_nASSGIreq;
+> +
+> +		dist->enabled = val & GICD_CTLR_ENABLE_SS_G1;
+> +		dist->nassgireq = val & GICD_CTLR_nASSGIreq;
+> +		return 0;
+>   	}
+>   
+>   	vgic_mmio_write_v3_misc(vcpu, addr, len, val);
+> diff --git a/virt/kvm/arm/vgic/vgic-v3.c b/virt/kvm/arm/vgic/vgic-v3.c
+> index 1bc09b523486..2c9fc13e2c59 100644
+> --- a/virt/kvm/arm/vgic/vgic-v3.c
+> +++ b/virt/kvm/arm/vgic/vgic-v3.c
+> @@ -540,6 +540,8 @@ int vgic_v3_map_resources(struct kvm *kvm)
+>   		goto out;
+>   	}
+>   
+> +	if (kvm_vgic_global_state.has_gicv4_1)
+> +		vgic_v4_configure_vsgis(kvm);
+>   	dist->ready = true;
+>   
+>   out:
+> 
 
