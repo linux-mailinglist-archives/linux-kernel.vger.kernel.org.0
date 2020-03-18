@@ -2,65 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 441EB189B69
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 12:55:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 363C9189B6E
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 12:55:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727239AbgCRLy4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Mar 2020 07:54:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35230 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726643AbgCRLyz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Mar 2020 07:54:55 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 622CD20772;
-        Wed, 18 Mar 2020 11:54:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584532494;
-        bh=vog5jmqIjkgcCbl6H/fzs7vG/KRa87L6309/v2uXLmg=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Na1jsHhb8csDiM3dBjnzZmuz+N+26R0vSZ86fWmREdnGAB4HGA2NBCC6S53DM0nw4
-         FcwmizkX3yiGSLZQXZ4UWTLZwP/3vWBr2hMl4B55hBy6mbP7fFp1eM1Q9nKGCMBp/v
-         4PRO9wr9DnDjZHx69Nrz5eds7DM4CuCL2XTKR0Y0=
-Date:   Wed, 18 Mar 2020 12:54:52 +0100
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Jolly Shah <jolly.shah@xilinx.com>
-Cc:     ard.biesheuvel@linaro.org, mingo@kernel.org,
-        matt@codeblueprint.co.uk, sudeep.holla@arm.com,
-        hkallweit1@gmail.com, keescook@chromium.org,
-        dmitry.torokhov@gmail.com, michal.simek@xilinx.com,
-        rajanv@xilinx.com, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 00/24] firmware: xilinx: Add xilinx specific sysfs
- interface
-Message-ID: <20200318115452.GA2491827@kroah.com>
-References: <1583538452-1992-1-git-send-email-jolly.shah@xilinx.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1583538452-1992-1-git-send-email-jolly.shah@xilinx.com>
+        id S1727272AbgCRLz0 convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 18 Mar 2020 07:55:26 -0400
+Received: from coyote.holtmann.net ([212.227.132.17]:57313 "EHLO
+        mail.holtmann.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726638AbgCRLz0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Mar 2020 07:55:26 -0400
+Received: from [192.168.1.91] (p4FEFC5A7.dip0.t-ipconnect.de [79.239.197.167])
+        by mail.holtmann.org (Postfix) with ESMTPSA id B5C2FCECF3;
+        Wed, 18 Mar 2020 13:04:54 +0100 (CET)
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (Mac OS X Mail 13.0 \(3608.60.0.2.5\))
+Subject: Re: [PATCH] Bluetooth: Do not cancel advertising when starting a scan
+From:   Marcel Holtmann <marcel@holtmann.org>
+In-Reply-To: <CAO1O6sdfdVavo9U0UKewbS9YAjCVzdXDYms-OJZNEJVzMmkgMg@mail.gmail.com>
+Date:   Wed, 18 Mar 2020 12:54:54 +0100
+Cc:     Manish Mandlik <mmandlik@google.com>,
+        Yoni Shavit <yshavit@chromium.org>,
+        Alain Michaud <alainm@chromium.org>,
+        Miao-chen Chou <mcchou@chromium.org>,
+        Bluez mailing list <linux-bluetooth@vger.kernel.org>,
+        Dmitry Grinberg <dmitrygr@google.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Johan Hedberg <johan.hedberg@gmail.com>,
+        Network Development <netdev@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Jakub Kicinski <kuba@kernel.org>
+Content-Transfer-Encoding: 8BIT
+Message-Id: <F5E108DF-2004-4C52-8A5B-12A392D2416D@holtmann.org>
+References: <20200316224023.1.I002569822232363cfbb5af1f33a293ea390c24c7@changeid>
+ <4DF7C709-1AD3-42FF-A0C2-EF488D82F083@holtmann.org>
+ <CAO1O6sdfdVavo9U0UKewbS9YAjCVzdXDYms-OJZNEJVzMmkgMg@mail.gmail.com>
+To:     Emil Lenngren <emil.lenngren@gmail.com>
+X-Mailer: Apple Mail (2.3608.60.0.2.5)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 06, 2020 at 03:47:08PM -0800, Jolly Shah wrote:
-> This patch series adds xilinx specific sysfs interface for below
-> purposes:
-> - Register access
-> - Set shutdown scope
-> - Set boot health status bit
+Hi Emil,
+
+>>> BlueZ cancels adv when starting a scan, but does not cancel a scan when
+>>> starting to adv. Neither is required, so this brings both to a
+>>> consistent state (of not affecting each other). Some very rare (I've
+>>> never seen one) BT 4.0 chips will fail to do both at once. Even this is
+>>> ok since the command that will fail will be the second one, and thus the
+>>> common sense logic of first-come-first-served is preserved for BLE
+>>> requests.
+>>> 
+>>> Signed-off-by: Dmitry Grinberg <dmitrygr@google.com>
+>>> Signed-off-by: Manish Mandlik <mmandlik@google.com>
+>>> ---
+>>> 
+>>> net/bluetooth/hci_request.c | 17 -----------------
+>>> 1 file changed, 17 deletions(-)
+>> 
+>> patch has been applied to bluetooth-next tree.
+>> 
+>> If you know the controller that doesn’t support this, can we blacklist that one and just disable advertising (peripheral mode) for that controller.
 > 
-> Also this patch series removes eemi ops and adds API
-> corresponding to each eemi ops.
+> Can't the "LE Supported States" be inspected instead to figure out
+> what simultaneous capabilities are supported? It seems a bit rough to
+> always assume the worst.
 
-I've applied the first 19 patches here, they looked good, thanks for
-doing that work, makes things a lot more "obvious" as to what is going
-on here.
+if there are not false-positives, then yes, by all means. However my statement still applies. If a controller can do scanning and advertising at the same time, we should just not indicate support for peripheral mode.
 
-The rest, please see my review comments and redo.
+Regards
 
-thanks,
+Marcel
 
-greg k-h
