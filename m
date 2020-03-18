@@ -2,76 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BB63C189917
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 11:17:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EC5101898DF
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 11:06:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727637AbgCRKRl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Mar 2020 06:17:41 -0400
-Received: from mga14.intel.com ([192.55.52.115]:21179 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727503AbgCRKRl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Mar 2020 06:17:41 -0400
-IronPort-SDR: gffmtxI7C6Fj+5FwShjeN+lPYmdXTwDgWbXBuvU3Q4eDfsbBCKMreO4jQccv27vwalQtrqeKUT
- 4haj78V8ke9A==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Mar 2020 03:05:26 -0700
-IronPort-SDR: PVmGYa6s/4SlBw7rAL0UALyV4G0Zc+YoYHVpfMvuAd7hV4GpJ7RsaIQBgu/+YxAA236+zZsEG4
- K2JPwMnApV8w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,566,1574150400"; 
-   d="scan'208";a="248122449"
-Received: from crojewsk-mobl1.ger.corp.intel.com (HELO [10.249.155.222]) ([10.249.155.222])
-  by orsmga006.jf.intel.com with ESMTP; 18 Mar 2020 03:05:22 -0700
-Subject: Re: snd_hda_intel/sst-acpi sound breakage on suspend/resume since
- 5.6-rc1
-To:     Dominik Brodowski <linux@dominikbrodowski.net>
-Cc:     tiwai@suse.com, pierre-louis.bossart@linux.intel.com,
-        liam.r.girdwood@linux.intel.com, yang.jie@linux.intel.com,
-        broonie@kernel.org, perex@perex.cz, alsa-devel@alsa-project.org,
-        linux-kernel@vger.kernel.org
-References: <20200318063022.GA116342@light.dominikbrodowski.net>
- <66c719b3-a66e-6a9f-fab8-721ba48d7ad8@intel.com>
- <20200318095745.GA133849@light.dominikbrodowski.net>
-From:   Cezary Rojewski <cezary.rojewski@intel.com>
-Message-ID: <fafed002-5f7f-dd2b-0787-265da7ec7c7a@intel.com>
-Date:   Wed, 18 Mar 2020 11:05:21 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        id S1727450AbgCRKGJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Mar 2020 06:06:09 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:53082 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726310AbgCRKGJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Mar 2020 06:06:09 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Transfer-Encoding
+        :Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+        Sender:Reply-To:Content-ID:Content-Description;
+        bh=oeX/U7LNtTyv34aedyCBCFenLXcS/Ck0VLdrkWlIrOc=; b=PmkRSXY61j+9pWhknleICVd7mB
+        OjIOnzdjoJP+CTsBkAwM/caLiAMTRw6ye2t6+rQVNvuT5M6rifUc3hxf1+SkGhxWKkZ7mfDFlGCiK
+        Ced1mI8ebnQ0fIQbHZ8k3aRcR/LSRaZyfIhLgIsnrDsnpzIqW4bZQgEi+WWKfcE1166GDK8CeWehc
+        nyEmniz5Lb4gx6WfeKbgVs9Mqd47GYFBlAZ2sI5CFMAV3Xywk20d0hlXPSyiHtlaGu4LR6pnIlLWC
+        309c3bFhFSAOCZx/ZuNKgrfFUmf1/dxlWxoqcjReoIojC2FQQna54F8ImaB9vuJgFAEwh+VlZYACx
+        4zV6SIXA==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jEVaN-0002aO-89; Wed, 18 Mar 2020 10:06:03 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 9765030047A;
+        Wed, 18 Mar 2020 11:06:00 +0100 (CET)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 811FC20C4A223; Wed, 18 Mar 2020 11:06:00 +0100 (CET)
+Date:   Wed, 18 Mar 2020 11:06:00 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Josh Poimboeuf <jpoimboe@redhat.com>
+Cc:     tglx@linutronix.de, linux-kernel@vger.kernel.org, x86@kernel.org,
+        mhiramat@kernel.org, mbenes@suse.cz, brgerst@gmail.com
+Subject: Re: [PATCH v2 16/19] objtool: Implement noinstr validation
+Message-ID: <20200318100600.GD20730@hirez.programming.kicks-ass.net>
+References: <20200317170234.897520633@infradead.org>
+ <20200317170910.730949374@infradead.org>
+ <20200317210008.bda4c542b5lu7juf@treble>
+ <20200318090309.GC20730@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-In-Reply-To: <20200318095745.GA133849@light.dominikbrodowski.net>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200318090309.GC20730@hirez.programming.kicks-ass.net>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2020-03-18 10:57, Dominik Brodowski wrote:
->>>
->>> Unfortunately, I cannot bisect this issue easily -- i915 was broken for
->>> quite some time on this system[*], prohibiting boot...
->>
->> Hmm, sounds like that issue is quite old. DSP for Haswell and Broadwell is
->> available for I2S devices only, so this relates directly to legacy HDA
->> driver. Compared to Skylake+, HDAudio controller for older platforms is
->> found within GPU. My advice is to notify the DRM guys about this issue.
->>
->> Takashi, are you aware of problems with HDMI on HSW/ BDW or should I just
->> loop Jani and other DRM peps here?
-> 
-> Well, it works on v5.5, so this issue is not really "quite old" (the "no
-> context buffer need to restore!" message seen there seems harmless).
-> 
-> Thanks again, and best wishes,
-> 	Dominik
-> 
+On Wed, Mar 18, 2020 at 10:03:09AM +0100, Peter Zijlstra wrote:
+> On Tue, Mar 17, 2020 at 04:00:08PM -0500, Josh Poimboeuf wrote:
+> > On Tue, Mar 17, 2020 at 06:02:50PM +0100, Peter Zijlstra wrote:
 
-Was commenting the "i915 was broken for quite some time on this 
-system[*], prohibiting boot...". Unless I misunderstood you, this ain't 
-a DSP driver issue but HDAudio/iDisp one. Essentially, these are two 
-issues you mentioned here.
+> > > @@ -46,5 +49,9 @@ int cmd_check(int argc, const char **arg
+> > >  
+> > >  	objname = argv[0];
+> > >  
+> > > +	s = strstr(objname, "vmlinux.o");
+> > > +	if (s && !s[9])
+> > > +		vmlinux = true;
+> > > +
+> > 
+> > I think this would be slightly cleaner:
+> > 
+> > 	if (!strcmp(basename(objname), "vmlinux.o"))
+> > 		vmlinux = true;
+> 
+> Ah, indeed. I totally forgot userspace coding it seems..
 
-Czarek
+Of course that doesn't compile... someone went overboard with const.
+
+For some obscure reason, the stupid thing even thinks that:
+
+  note: expected ‘const char **’ but argument is of type ‘char **’
+
+is a warning and then -Werror's on it. That's bloody insane.
+
+
