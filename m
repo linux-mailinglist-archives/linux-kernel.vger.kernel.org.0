@@ -2,107 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BFDD3189376
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 02:09:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E5AE618937D
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 02:11:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727264AbgCRBJp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Mar 2020 21:09:45 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41386 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726735AbgCRBJp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Mar 2020 21:09:45 -0400
-Received: from paulmck-ThinkPad-P72.home (50-39-105-78.bvtn.or.frontiernet.net [50.39.105.78])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D4F79206EC;
-        Wed, 18 Mar 2020 01:09:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584493784;
-        bh=TF5F2L72wGR0nXt9ZlZ2Nd+WZZGsYXh1s4urbbJFQqc=;
-        h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-        b=l0zFdQ3ePms6YEnraWfGhRyXGR1QPebf9mfK0dmI4bqli+GxePOjYaBfsA09LwE88
-         15XGe6D/uIx1UwoblFdF4JuELcaH0DTtpuTG/YnvQBq2jBjJ7ekaGzot9bvRRODyN7
-         4fbGkaZOrrqesJXl5v2h6U006EzeCkXBVCph7AKs=
-Received: by paulmck-ThinkPad-P72.home (Postfix, from userid 1000)
-        id AA241352272E; Tue, 17 Mar 2020 18:09:44 -0700 (PDT)
-Date:   Tue, 17 Mar 2020 18:09:44 -0700
-From:   "Paul E. McKenney" <paulmck@kernel.org>
-To:     joel@joelfernandes.org
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        rcu <rcu@vger.kernel.org>, Steven Rostedt <rostedt@goodmis.org>,
-        "Uladzislau Rezki (Sony)" <urezki@gmail.com>
-Subject: Re: [PATCH v2 rcu-dev 1/3] rcuperf: Add ability to increase object
- allocation size
-Message-ID: <20200318010944.GQ3199@paulmck-ThinkPad-P72>
-Reply-To: paulmck@kernel.org
-References: <20200316163228.62068-1-joel@joelfernandes.org>
- <20200317210822.GM3199@paulmck-ThinkPad-P72>
- <20200317214502.GA29184@paulmck-ThinkPad-P72>
- <CAEXW_YQxKfcGf3UgEn_8hdWHdMx09RvD90z6zo=kk-iRinYjng@mail.gmail.com>
- <20200317224820.GP3199@paulmck-ThinkPad-P72>
- <A6C6D60E-9E01-40FC-8396-9F2FF2803E2E@joelfernandes.org>
+        id S1727325AbgCRBLA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Mar 2020 21:11:00 -0400
+Received: from mail-qk1-f193.google.com ([209.85.222.193]:37062 "EHLO
+        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726735AbgCRBLA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Mar 2020 21:11:00 -0400
+Received: by mail-qk1-f193.google.com with SMTP id z25so31211316qkj.4
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Mar 2020 18:10:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=joelfernandes.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=z7eeYy5ulhx+d1mhg7bEsRqN6ya3Xwkc0RHtj8giZaY=;
+        b=oKgU+/EqahKewvjJN9RoBQd8FnOKPFQx6NtcRZJOu+zdcbfTCElQ8m7y4C50KW3/I/
+         dyhLgsXQzo5Wcb9S0n435uB3H0OSg/Ns0nPKatB4rQrEsl8UQZGH9xDxpcI3J5LJ/g8f
+         Nq8ku8R/3b4y5DLSNLx93XuxFZSFqMU2h4OvY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=z7eeYy5ulhx+d1mhg7bEsRqN6ya3Xwkc0RHtj8giZaY=;
+        b=UOVA+3P9g7dHu7vYJVgXtILWHrhsdM2+KFxNr0/r+vM0FwnktVm/mHXcmeSXhiKx08
+         yhtFOco3Wtq9Jbcle6AKyGtnQ0ruE82vexrfYu9Z0H7Ds/xcaMbJbMAS9kJnGc+OzUwV
+         UByTxiKrUxmFyQcAt9QlMeGe6RoftR7njHEfwJ5AwvPnqU8t8dguKVpA/5Le0+HO9yXW
+         8dFOCkVTvM325A1qeN0Zd9IIW2vjwqewIf9feZ8xz/7JK047IceCOYAEr+h5oSpZiyJf
+         epDMIyg5HDZu6IjN8iTikXJXVW1wo5/Gy6pprC+iG+wLiEyJGrqnIUkk5AW/iznUrINP
+         2HFA==
+X-Gm-Message-State: ANhLgQ1dN/ddbdMq4At0BYyCGUs08a83lZre1/9ZNJB4BTdYOQ0AAVKL
+        OHeIwgHsXlBEirPBAhB0v5qqTw==
+X-Google-Smtp-Source: ADFU+vv1aEqzI0khyZkUEThEjrkkfRyGnJdVoH/Pup1ol71yZ5+7d3HsygjfCpmBLEPKVJprtho6qA==
+X-Received: by 2002:a37:8e45:: with SMTP id q66mr1733237qkd.129.1584493859289;
+        Tue, 17 Mar 2020 18:10:59 -0700 (PDT)
+Received: from localhost ([2620:15c:6:12:9c46:e0da:efbf:69cc])
+        by smtp.gmail.com with ESMTPSA id x5sm3402326qti.5.2020.03.17.18.10.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 17 Mar 2020 18:10:58 -0700 (PDT)
+Date:   Tue, 17 Mar 2020 21:10:58 -0400
+From:   Joel Fernandes <joel@joelfernandes.org>
+To:     Tim Chen <tim.c.chen@linux.intel.com>
+Cc:     Julien Desfossez <jdesfossez@digitalocean.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Vineeth Remanan Pillai <vpillai@digitalocean.com>,
+        Aubrey Li <aubrey.intel@gmail.com>,
+        Nishanth Aravamudan <naravamudan@digitalocean.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Paul Turner <pjt@google.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        Dario Faggioli <dfaggioli@suse.com>,
+        =?iso-8859-1?Q?Fr=E9d=E9ric?= Weisbecker <fweisbec@gmail.com>,
+        Kees Cook <keescook@chromium.org>,
+        Greg Kerr <kerrnel@google.com>, Phil Auld <pauld@redhat.com>,
+        Aaron Lu <aaron.lwe@gmail.com>,
+        Valentin Schneider <valentin.schneider@arm.com>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        "Luck, Tony" <tony.luck@intel.com>
+Subject: Re: [RFC PATCH v4 00/19] Core scheduling v4
+Message-ID: <20200318011058.GB111608@google.com>
+References: <20200212230705.GA25315@sinkpad>
+ <29d43466-1e18-6b42-d4d0-20ccde20ff07@linux.intel.com>
+ <CAERHkruG4y8si9FrBp7cZNEdfP7EzxbmYwvdF2EvHLf=mU1mgg@mail.gmail.com>
+ <CANaguZC40mDHfL1H_9AA7H8cyd028t9PQVRqQ3kB4ha8R7hhqg@mail.gmail.com>
+ <CAERHkruPUrOzDjEp1FV3KY20p9CxLAVzKrZNe5QXsCFZdGskzA@mail.gmail.com>
+ <CANaguZBj_x_2+9KwbHCQScsmraC_mHdQB6uRqMTYMmvhBYfv2Q@mail.gmail.com>
+ <20200221232057.GA19671@sinkpad>
+ <20200317005521.GA8244@google.com>
+ <ee268494-c35e-422f-1aaf-baab12191c38@linux.intel.com>
+ <1075ba53-91ed-2138-89b3-60fbfbd80b57@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <A6C6D60E-9E01-40FC-8396-9F2FF2803E2E@joelfernandes.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <1075ba53-91ed-2138-89b3-60fbfbd80b57@linux.intel.com>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 17, 2020 at 07:37:47PM -0400, joel@joelfernandes.org wrote:
-> 
-> 
-> On March 17, 2020 6:48:20 PM EDT, "Paul E. McKenney" <paulmck@kernel.org> wrote:
-> >On Tue, Mar 17, 2020 at 06:30:51PM -0400, Joel Fernandes wrote:
-> >> On Tue, Mar 17, 2020 at 5:45 PM Paul E. McKenney <paulmck@kernel.org>
-> >wrote:
-> >> >
-> >> > On Tue, Mar 17, 2020 at 02:08:22PM -0700, Paul E. McKenney wrote:
-> >> > > On Mon, Mar 16, 2020 at 12:32:26PM -0400, Joel Fernandes (Google)
-> >wrote:
-> >> > > > This allows us to increase memory pressure dynamically using a
-> >new
-> >> > > > rcuperf boot command line parameter called 'rcumult'.
-> >> > > >
-> >> > > > Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
-> >> > >
-> >> > > Applied for testing and review, thank you!
-> >> >
-> >> > But testing did not go far:
-> >> >
-> >> > kernel/rcu/tree.c: In function ‘kfree_rcu_shrink_count’:
-> >> > kernel/rcu/tree.c:3120:16: warning: unused variable ‘flags’
-> >[-Wunused-variable]
-> >> >   unsigned long flags, count = 0;
-> >> 
-> >> I fixed the warning already but did not resend since it was just the
-> >> one unused variable warning. The patches are otherwise good to apply.
-> >> Sorry, and I can resend it soon if you are not reapplying right now.
-> >
-> >So remove "flags, " and all is well?
-> 
-> Yes, that's right. I dropped the lock but forgot to remove it.
+Hi Tim,
 
-Done, thank you!
+On Tue, Mar 17, 2020 at 01:18:45PM -0700, Tim Chen wrote:
+[..] 
+> Did you guys have a chance to try out v5 core scheduler?
+> 
+> > - Joel(ChromeOS) found a deadlock and crash on PREEMPT kernel in the
+> >   coreshed idle balance logic
+> 
+> We did some patches to fix a few stability issues in v4.  I wonder
+> if v5 still has the deadlock that you saw before?
 
-							Thanx, Paul
+I have not yet tested v5. I fixed the RCU-related deadlock in the scheduler
+with this patch sent few days ago:
+https://lore.kernel.org/patchwork/patch/1209561/
 
-> >If so, I can just as easily fix that as take a new series.  But next
-> >time, please give a fella a warning.  ;-)
-> 
-> Will do, my bad. Thank you ;-)
-> 
-> - Joel
-> 
-> >
-> >							Thanx, Paul
-> 
-> -- 
-> Sent from my Android device with K-9 Mail. Please excuse my brevity.
+I'll rebase my tree on v5 soon.
+
+Thanks!
+
+ - Joel
+
