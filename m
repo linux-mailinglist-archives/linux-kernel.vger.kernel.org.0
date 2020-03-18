@@ -2,112 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E6E1118A87B
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 23:44:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 85ED418A884
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 23:44:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727174AbgCRWmK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Mar 2020 18:42:10 -0400
-Received: from mail-eopbgr680074.outbound.protection.outlook.com ([40.107.68.74]:54340
-        "EHLO NAM04-BN3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726647AbgCRWmJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Mar 2020 18:42:09 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=oF3Tt2nlpsL3N8hv/bBrX9Oe1fq3AZs4r4ruGeJSuK7LU/UG2gUB+5y5ULwzsgp+ZbD84lJPr1FYqEUXooEoX1/tUJYqY1LjTb2OyP5s8E4BvKx70ubc1Y0YXKRJGnY/NnenNyfXQOwmnS55FWJTUBznUz2c29MVdV5Hy5JfxQq1/evkfN1EOZz46PJ5XTLX337bFRUOXfT7umIyv0OsZ8ojV+aEvt/eEBE6V/K7XGnCza3PbBj3jwKkYXeK2hVOTCyOrbAa8zsnSWJMAfPLW8NJFfpW9Fs6006hqJ0H4RyMgyDZjxZRh9T93rbCzmKisysQla2D8SNjJTSKeEgAnQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=utB0GjzHmDgaVrKb+YqsjUQmVxd47V/C1anvWpZ1RVw=;
- b=dluwwNMRpCzbTXNo1ph5GMIka+ihlqQN/cmIiRjOxpZo2K2+nZN/Xn8nRkgT2/fjYw7J8+O+yRcwVsdI2Dm8gSWnLsuR3lHjSMKeU3CO/KjGqVCtmcbg9jwxzJTj8/l4H71YHjIJGMQfC2Uxj27GnMDtS8z/S/czyta+uyqPUvanb/EGmvlqMPYc47nXdEmr3E1GeaMvQGb2yp+D7kO5cszjWmxlhYTeA2QipW19aUuv0aXp1FVaFPa20CBBLCqIBkekOCVMDGGuYlbVgpKOEkJGT627/AugxTi05J8ivt8UZxZxwmtXd+GckVXqPBpc49fm0oFvdqhGasBqPbLeNg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=micron.com; dmarc=pass action=none header.from=micron.com;
- dkim=pass header.d=micron.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=micron.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=utB0GjzHmDgaVrKb+YqsjUQmVxd47V/C1anvWpZ1RVw=;
- b=X7xJmXGVt/1z/BJRoH0f+23LvAhuVOK7ZjObgTaabWkjIsz+znvxHob6KjHeRvfNxV9cztUiJaoEGier7fQFOV4xNtaRM6x1J1v0MdWAGM9A2u/KQWsgssBmmB1/en3DDB4mpI+f1zUzEldAtBGapcTMHUQUBCMU6DoZuThr6tk=
-Received: from BN7PR08MB5684.namprd08.prod.outlook.com (2603:10b6:408:35::23)
- by BN7PR08MB5524.namprd08.prod.outlook.com (2603:10b6:408:3d::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2814.18; Wed, 18 Mar
- 2020 22:42:02 +0000
-Received: from BN7PR08MB5684.namprd08.prod.outlook.com
- ([fe80::589d:e16:907b:5135]) by BN7PR08MB5684.namprd08.prod.outlook.com
- ([fe80::589d:e16:907b:5135%5]) with mapi id 15.20.2814.025; Wed, 18 Mar 2020
- 22:42:02 +0000
-From:   "Bean Huo (beanhuo)" <beanhuo@micron.com>
-To:     Stanley Chu <stanley.chu@mediatek.com>,
-        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-        "martin.peter~sen@oracle.com" <martin.peter~sen@oracle.com>,
-        "avri.altman@wdc.com" <avri.altman@wdc.com>,
-        "alim.akhtar@samsung.com" <alim.akhtar@samsung.com>,
-        "jejb@linux.ibm.com" <jejb@linux.ibm.com>,
-        "bvanassche@acm.org" <bvanassche@acm.org>
-CC:     "asutoshd@codeaurora.org" <asutoshd@codeaurora.org>,
-        "cang@codeaurora.org" <cang@codeaurora.org>,
-        "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
-        "linux-mediatek@lists.infradead.org" 
-        <linux-mediatek@lists.infradead.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "kuohong.wang@mediatek.com" <kuohong.wang@mediatek.com>,
-        "peter.wang@mediatek.com" <peter.wang@mediatek.com>,
-        "chun-hung.wu@mediatek.com" <chun-hung.wu@mediatek.com>,
-        "andy.teng@mediatek.com" <andy.teng@mediatek.com>
-Subject: RE: [EXT] [PATCH v7 2/7] scsi: ufs: use an enum for host capabilities
-Thread-Topic: [EXT] [PATCH v7 2/7] scsi: ufs: use an enum for host
- capabilities
-Thread-Index: AQHV/RGm5n2oCL7iW0eIfX+5z/Ar2KhO8i2A
-Date:   Wed, 18 Mar 2020 22:42:01 +0000
-Message-ID: <BN7PR08MB5684E1FE840F0BB1170D7196DBF70@BN7PR08MB5684.namprd08.prod.outlook.com>
-References: <20200318104016.28049-1-stanley.chu@mediatek.com>
- <20200318104016.28049-3-stanley.chu@mediatek.com>
-In-Reply-To: <20200318104016.28049-3-stanley.chu@mediatek.com>
-Accept-Language: en-150, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-dg-ref: PG1ldGE+PGF0IG5tPSJib2R5LnR4dCIgcD0iYzpcdXNlcnNcYmVhbmh1b1xhcHBkYXRhXHJvYW1pbmdcMDlkODQ5YjYtMzJkMy00YTQwLTg1ZWUtNmI4NGJhMjllMzViXG1zZ3NcbXNnLWFjYjJhOWUxLTY5NjktMTFlYS04YjhkLWRjNzE5NjFmOWRkM1xhbWUtdGVzdFxhY2IyYTllMy02OTY5LTExZWEtOGI4ZC1kYzcxOTYxZjlkZDNib2R5LnR4dCIgc3o9IjM1NCIgdD0iMTMyMjkwNDQ5MTg4NTM0OTA2IiBoPSJtVmFaVitxWnVLNXZ5QnFON08wTlNROHZPY3c9IiBpZD0iIiBibD0iMCIgYm89IjEiIGNpPSJjQUFBQUVSSFUxUlNSVUZOQ2dVQUFIQUFBQUI2T2c5dmR2M1ZBY1RqSncyUXpwK254T01uRFpET242Y0FBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUJBQUFCQUFBQTlybW53UUFBQUFBQUFBQUFBQUFBQUE9PSIvPjwvbWV0YT4=
-x-dg-rorf: true
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=beanhuo@micron.com; 
-x-originating-ip: [165.225.86.143]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: f9d7f66a-6a0b-4744-bb6c-08d7cb8d9384
-x-ms-traffictypediagnostic: BN7PR08MB5524:|BN7PR08MB5524:|BN7PR08MB5524:
-x-microsoft-antispam-prvs: <BN7PR08MB552482268B56AC4653244924DBF70@BN7PR08MB5524.namprd08.prod.outlook.com>
-x-ms-exchange-transport-forked: True
-x-ms-oob-tlc-oobclassifiers: OLM:400;
-x-forefront-prvs: 03468CBA43
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(136003)(396003)(39860400002)(366004)(346002)(376002)(199004)(26005)(186003)(71200400001)(9686003)(66476007)(66556008)(66446008)(66946007)(7416002)(52536014)(478600001)(5660300002)(64756008)(33656002)(7696005)(76116006)(558084003)(4326008)(316002)(81166006)(6506007)(54906003)(81156014)(55016002)(8936002)(8676002)(55236004)(110136005)(86362001)(2906002);DIR:OUT;SFP:1101;SCL:1;SRVR:BN7PR08MB5524;H:BN7PR08MB5684.namprd08.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;
-received-spf: None (protection.outlook.com: micron.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: guiT8fKOWQs9WE3rKXdabEVnbNUIfjduYX+nE3/Oiphe7zoIpoQeaAsTR7Xz8beaiXnQ+Tkl1WZ8UKJpkWDbewtrduaEd1Qf7T1sKPV6X3r5TrmriAs8M2i70ijy1sbzoILbCwezhSupUSZ4QKCdYtF6zeZ/hk//PiLfgjJGTHHk/xUjLAUgXHSrO58uDtzgaz55AdQMK993GbsuUmP9+xIWON4IlmKPV9/cXUkXK1MN3a2DVsxzNGfb11jkE6BsTBvP4zUcK1kF7Faj90q2OSN6u+luPyck5fiXmOsuLpZRStg3F4Mb0J7DVjjT/vIYeu9TLRSvyCKYH9ru0XqP+0QrRUnh/bLDYYIEyt5CvEPtakcKqYoXcg5za3VDA6Ce3ySQN/Pj6/Uu6I6UQNlu36eDE5od8Kf+MT1MTan6bhk+A0rzxRJf6REQLLr2tmKr
-x-ms-exchange-antispam-messagedata: A/3xcVKDy024qnL+vmV3jj/TzaxfNnKnX4JBiKDvo/EmhT5hAwyL2PmRayi87+JJATge6tkLpp9MmJ50zK7/MsQ3Smxw4hYn8SEu1YP5z/V6RvJUPFW58hUwKw4GUyrpSNkqv96kcmhYOsJxDh9JMg==
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        id S1727194AbgCRWnw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Mar 2020 18:43:52 -0400
+Received: from mail-io1-f67.google.com ([209.85.166.67]:43474 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726619AbgCRWnv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Mar 2020 18:43:51 -0400
+Received: by mail-io1-f67.google.com with SMTP id n21so234213ioo.10;
+        Wed, 18 Mar 2020 15:43:51 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=UbWcmYV7Yk+Clr9xPUcjHEM8UjChZ0Ube2X+QPUWkcY=;
+        b=YB6lOO8AbfuKsy8r9AReBvsEsfG+nCJb09MQNVF5Qg2GpEfPI6lZldsN0pPKundrUu
+         yUKkQdaTBpKXkTTLwRhwsYMet5iefhYKKlaIcSFHVEbUXYjuZNXc+EQ84W2tM5nIV7Cb
+         993p9Mq2rKOHi3/bvGO6YNw2n5amq5hvvjK7Lmus+4/C6F7qLS7ndpzvS6cWYRlTvQ2i
+         XTzFaq7vdHe2tlVAtLoCdZ9Ng6dDe909YuJzQlhzULCSO9p75ooCliCzNM79vzWhj31e
+         +RKWKK60dGe62dpKah9L+csMZxtpVzVE9sYvyYGYANbaZATDTPeowyx9nHSC8wrWcJ1l
+         0iNA==
+X-Gm-Message-State: ANhLgQ1zkhXGk1bGhQpZDBpPKc+97KaAK9c4VevyzXYDXLCe8YwmF9k3
+        FL44CFU99TQrX5HmB47bZw==
+X-Google-Smtp-Source: ADFU+vuKZ5nQigQX/gmK6fyGJCYz1mOJ8JDdLBfylffuuRMp7AeJ8OWk0BKHi5uLykgsBx99vlqsSw==
+X-Received: by 2002:a02:7787:: with SMTP id g129mr352527jac.29.1584571430672;
+        Wed, 18 Mar 2020 15:43:50 -0700 (PDT)
+Received: from rob-hp-laptop ([64.188.179.250])
+        by smtp.gmail.com with ESMTPSA id w11sm93346ilh.55.2020.03.18.15.43.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 18 Mar 2020 15:43:50 -0700 (PDT)
+Received: (nullmailer pid 7184 invoked by uid 1000);
+        Wed, 18 Mar 2020 22:43:47 -0000
+Date:   Wed, 18 Mar 2020 16:43:47 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Johan Jonker <jbx6244@gmail.com>
+Cc:     heiko@sntech.de, robh+dt@kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH 1/2] dt-bindings: sram: convert rockchip-pmu-sram
+ bindings to yaml
+Message-ID: <20200318224347.GA2792@bogus>
+References: <20200317163555.18107-1-jbx6244@gmail.com>
 MIME-Version: 1.0
-X-OriginatorOrg: micron.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f9d7f66a-6a0b-4744-bb6c-08d7cb8d9384
-X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Mar 2020 22:42:01.9532
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: f38a5ecd-2813-4862-b11b-ac1d563c806f
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 4p9+Z2zZ/+hjA39d8Rw10cDRut1WduQqgEClI1B03EuvdHZXqs6pW2QJGpeahmNoB2juJeuhlFDvEbzyg8ZRZw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN7PR08MB5524
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200317163555.18107-1-jbx6244@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
->=20
-> Signed-off-by: Stanley Chu <stanley.chu@mediatek.com>
-> Reviewed-by: Asutosh Das <asutoshd@codeaurora.org>
-> Reviewed-by: Avri Altman <avri.altman@wdc.com>
-> Reviewed-by: Can Guo <cang@codeaurora.org>
-Reviewed-by: Bean Huo <beanhuo@micron.com>
+On Tue, 17 Mar 2020 17:35:54 +0100, Johan Jonker wrote:
+> Current dts files with 'rockchip-pmu-sram' compatible nodes
+> are manually verified. In order to automate this process
+> rockchip-pmu-sram.txt has to be converted to yaml.
+> 
+> A check with the command below gives for example this error:
+> 
+> arch/arm/boot/dts/rk3288-evb-act8846.dt.yaml: sram@ff700000:
+> compatible:0:
+> 'rockchip,rk3288-pmu-sram' was expected
+> arch/arm/boot/dts/rk3288-evb-act8846.dt.yaml: sram@ff700000:
+> compatible:
+> ['mmio-sram'] is too short
+> 
+> Fix this error by adding an extra 'mmio-sram' compatible and
+> 'if then' structure to filter yaml warnings.
+> 
+> make ARCH=arm dtbs_check
+> DT_SCHEMA_FILES=Documentation/devicetree/bindings/sram/
+> rockchip-pmu-sram.yaml
+> 
+> Signed-off-by: Johan Jonker <jbx6244@gmail.com>
+> ---
+>  .../devicetree/bindings/sram/rockchip-pmu-sram.txt | 16 --------
+>  .../bindings/sram/rockchip-pmu-sram.yaml           | 46 ++++++++++++++++++++++
+>  2 files changed, 46 insertions(+), 16 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/sram/rockchip-pmu-sram.txt
+>  create mode 100644 Documentation/devicetree/bindings/sram/rockchip-pmu-sram.yaml
+> 
+
+My bot found errors running 'make dt_binding_check' on your patch:
+
+/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/sram/rockchip-pmu-sram.example.dt.yaml: sram@ff720000: '#address-cells' is a required property
+/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/sram/rockchip-pmu-sram.example.dt.yaml: sram@ff720000: '#size-cells' is a required property
+/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/sram/rockchip-pmu-sram.example.dt.yaml: sram@ff720000: 'ranges' is a required property
+
+See https://patchwork.ozlabs.org/patch/1256661
+Please check and re-submit.
