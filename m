@@ -2,133 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A78A218A49F
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 21:55:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C51CB18A472
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 21:54:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728216AbgCRUzL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Mar 2020 16:55:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55338 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728199AbgCRUzI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Mar 2020 16:55:08 -0400
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 84781208FE;
-        Wed, 18 Mar 2020 20:55:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584564907;
-        bh=KhXKLg0E5X3GQoOjUX4QuxQP+ZL5Xk6biSK6CjgOnCY=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=n/1xrewfFrG+xnILRqx7wvjB0LWv7rxJRChThxtLe16tjQH6i+Y9GXxDgn6oJr5aL
-         Mn7MXA4FD1/JsznKyd3sfVdfNt3d0eTArDHfzSGiayAv4zXnKlKacNuhzaBzsoc/Fw
-         Hda6Lw7mQQcuQGVoVf++Pttts8DcWWfWa1E+OiwA=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Megha Dey <megha.dey@linux.intel.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Lu Baolu <baolu.lu@linux.intel.com>,
-        Joerg Roedel <jroedel@suse.de>,
-        Sasha Levin <sashal@kernel.org>,
-        iommu@lists.linux-foundation.org
-Subject: [PATCH AUTOSEL 5.4 73/73] iommu/vt-d: Populate debugfs if IOMMUs are detected
-Date:   Wed, 18 Mar 2020 16:53:37 -0400
-Message-Id: <20200318205337.16279-73-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200318205337.16279-1-sashal@kernel.org>
-References: <20200318205337.16279-1-sashal@kernel.org>
+        id S1727795AbgCRUyX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Mar 2020 16:54:23 -0400
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:44057 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727780AbgCRUyU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Mar 2020 16:54:20 -0400
+Received: by mail-qt1-f194.google.com with SMTP id y24so2298142qtv.11
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Mar 2020 13:54:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=hy5qm/HoUUr4+Nf3BF/DCL1M5z8PuuCJBXzeH7Xw+kY=;
+        b=N4LnSddqyjrj35FEVCaWDHim03KW+ZMlw6qB2LGHay3tvrKmDKnOjhDE1BDP5LjjQ3
+         FY6hM5XnjpfTcrJgfZwC9eNgRb2L0XbMHVXs32uIu9T7ragvkTHGOyNnU7Yf2eRdCJE4
+         3I34Il+w8b2WlNqaNKTgy+Yz/V7aplf9yBmx8lUj/sa0pndkwQVgTed31zYlC/Jrht0t
+         p52hIjkurSF/WCqgML1XoV0ubBQi5ua4ZdQ67Bb9l8CNm72Iph64ACpCtzJjzKqgCxTy
+         XqZ9eOArX3AGMRBIKcOZIUimcnYMhYUpq4pe8Jxyj1zVeUKecaMY9CRKdllFXWrv3P6B
+         ygcg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=hy5qm/HoUUr4+Nf3BF/DCL1M5z8PuuCJBXzeH7Xw+kY=;
+        b=eUIdqXMd8c3do/q2CgUF33b2AjilWW+EahDaWA8NnyiHlnoxcFRUV+PEm//Z9jEo27
+         Nu6I0RT3oXLwpeoHE5IqzBVREvA/5nJcoq9oJzWAiJHcD1GQoPhPecuxFY80z8nwE5/1
+         Cl3CKBfzduxW25W+jZs7p17sgCcynnn2IDytwMPebeEUjkWmzpy6nwWW5R5/g3Gvczii
+         5LbvSN5kfhp3Jn7twBVj8cCxS+Fzb4tpn38Ak0rfdpW1t+EV1ynsWX3/PrFZM7Zqevc6
+         QQseA+7hRsEWFcMZ216cWuN6oZIBDUQIoSoekyGDLP7EefGzOQbE24ZI06PzgQ0UDNtG
+         6wmg==
+X-Gm-Message-State: ANhLgQ26eCTwi+aX5AMohAEj0v9mnRE3KEJFpZoq3kVO4aHORMfDYLh2
+        +FgnoQffXYWmIHpFWt7emrRB4Zy2cWQBSMTPt/Y7qw==
+X-Google-Smtp-Source: ADFU+vtmmSWS+aIMzUy5/s+2hhcAShSPdK7KLUDMp6FBmd1LA5Z7u8QejSBWyleiEI9eBwNGxK3e7ELqI7QZGMIbzUo=
+X-Received: by 2002:aed:36a5:: with SMTP id f34mr6299431qtb.57.1584564859557;
+ Wed, 18 Mar 2020 13:54:19 -0700 (PDT)
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+References: <000000000000ae2ab305a123f146@google.com>
+In-Reply-To: <000000000000ae2ab305a123f146@google.com>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Wed, 18 Mar 2020 21:54:07 +0100
+Message-ID: <CACT4Y+a_d=5TNZth0dPov0B7tB5T9bAzWXBj1HjhXdn-=0KOOg@mail.gmail.com>
+Subject: Re: linux-next build error (8)
+To:     syzbot <syzbot+792dec47d693ccdc05a0@syzkaller.appspotmail.com>,
+        "Paul E. McKenney" <paulmck@linux.ibm.com>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Lai Jiangshan <jiangshanlai@gmail.com>,
+        Joel Fernandes <joel@joelfernandes.org>, rcu@vger.kernel.org
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Megha Dey <megha.dey@linux.intel.com>
+On Wed, Mar 18, 2020 at 5:57 PM syzbot
+<syzbot+792dec47d693ccdc05a0@syzkaller.appspotmail.com> wrote:
+>
+> Hello,
+>
+> syzbot found the following crash on:
+>
+> HEAD commit:    47780d78 Add linux-next specific files for 20200318
+> git tree:       linux-next
+> console output: https://syzkaller.appspot.com/x/log.txt?x=14228745e00000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=b68b7b89ad96c62a
+> dashboard link: https://syzkaller.appspot.com/bug?extid=792dec47d693ccdc05a0
+> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+>
+> Unfortunately, I don't have any reproducer for this crash yet.
+>
+> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> Reported-by: syzbot+792dec47d693ccdc05a0@syzkaller.appspotmail.com
+>
+> kernel/rcu/tasks.h:1070:37: error: 'rcu_tasks_rude' undeclared (first use in this function); did you mean 'rcu_tasks_qs'?
 
-[ Upstream commit 1da8347d8505c137fb07ff06bbcd3f2bf37409bc ]
++rcu maintainers
 
-Currently, the intel iommu debugfs directory(/sys/kernel/debug/iommu/intel)
-gets populated only when DMA remapping is enabled (dmar_disabled = 0)
-irrespective of whether interrupt remapping is enabled or not.
-
-Instead, populate the intel iommu debugfs directory if any IOMMUs are
-detected.
-
-Cc: Dan Carpenter <dan.carpenter@oracle.com>
-Fixes: ee2636b8670b1 ("iommu/vt-d: Enable base Intel IOMMU debugfs support")
-Signed-off-by: Megha Dey <megha.dey@linux.intel.com>
-Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
-Signed-off-by: Joerg Roedel <jroedel@suse.de>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/iommu/intel-iommu-debugfs.c | 11 ++++++++++-
- drivers/iommu/intel-iommu.c         |  4 +++-
- 2 files changed, 13 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/iommu/intel-iommu-debugfs.c b/drivers/iommu/intel-iommu-debugfs.c
-index 80378c10dd77a..bdf095e9dbe03 100644
---- a/drivers/iommu/intel-iommu-debugfs.c
-+++ b/drivers/iommu/intel-iommu-debugfs.c
-@@ -281,9 +281,16 @@ static int dmar_translation_struct_show(struct seq_file *m, void *unused)
- {
- 	struct dmar_drhd_unit *drhd;
- 	struct intel_iommu *iommu;
-+	u32 sts;
- 
- 	rcu_read_lock();
- 	for_each_active_iommu(iommu, drhd) {
-+		sts = dmar_readl(iommu->reg + DMAR_GSTS_REG);
-+		if (!(sts & DMA_GSTS_TES)) {
-+			seq_printf(m, "DMA Remapping is not enabled on %s\n",
-+				   iommu->name);
-+			continue;
-+		}
- 		root_tbl_walk(m, iommu);
- 		seq_putc(m, '\n');
- 	}
-@@ -353,6 +360,7 @@ static int ir_translation_struct_show(struct seq_file *m, void *unused)
- 	struct dmar_drhd_unit *drhd;
- 	struct intel_iommu *iommu;
- 	u64 irta;
-+	u32 sts;
- 
- 	rcu_read_lock();
- 	for_each_active_iommu(iommu, drhd) {
-@@ -362,7 +370,8 @@ static int ir_translation_struct_show(struct seq_file *m, void *unused)
- 		seq_printf(m, "Remapped Interrupt supported on IOMMU: %s\n",
- 			   iommu->name);
- 
--		if (iommu->ir_table) {
-+		sts = dmar_readl(iommu->reg + DMAR_GSTS_REG);
-+		if (iommu->ir_table && (sts & DMA_GSTS_IRES)) {
- 			irta = virt_to_phys(iommu->ir_table->base);
- 			seq_printf(m, " IR table address:%llx\n", irta);
- 			ir_tbl_remap_entry_show(m, iommu);
-diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
-index be39363244389..ef38e98b5bceb 100644
---- a/drivers/iommu/intel-iommu.c
-+++ b/drivers/iommu/intel-iommu.c
-@@ -4961,6 +4961,9 @@ int __init intel_iommu_init(void)
- 
- 	down_write(&dmar_global_lock);
- 
-+	if (!no_iommu)
-+		intel_iommu_debugfs_init();
-+
- 	if (no_iommu || dmar_disabled) {
- 		/*
- 		 * We exit the function here to ensure IOMMU's remapping and
-@@ -5056,7 +5059,6 @@ int __init intel_iommu_init(void)
- 	pr_info("Intel(R) Virtualization Technology for Directed I/O\n");
- 
- 	intel_iommu_enabled = 1;
--	intel_iommu_debugfs_init();
- 
- 	return 0;
- 
--- 
-2.20.1
-
+> ---
+> This bug is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+>
+> syzbot will keep track of this bug report. See:
+> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
