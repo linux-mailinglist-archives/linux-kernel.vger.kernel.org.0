@@ -2,61 +2,55 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4B64418A1D7
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 18:44:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6662618A1D9
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 18:44:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727273AbgCRRnI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Mar 2020 13:43:08 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:41050 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727234AbgCRRnH (ORCPT
+        id S1727291AbgCRRnM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Mar 2020 13:43:12 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:35736 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727234AbgCRRnK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Mar 2020 13:43:07 -0400
-Received: by mail-wr1-f68.google.com with SMTP id h9so2737639wrc.8
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Mar 2020 10:43:07 -0700 (PDT)
+        Wed, 18 Mar 2020 13:43:10 -0400
+Received: by mail-wr1-f67.google.com with SMTP id h4so10922217wru.2
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Mar 2020 10:43:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=LnAT0cbyFmhoBQ00Ga1dspfG4naptUEJD59/Qz0lOxU=;
-        b=PRRCKzf4bNfaTiGfWH6QKQv/dvGuLgHqvuvaV4gJcjkcxy2TykA6vkfuE/9hnW5nFy
-         2C5jDZXp2cSPSeVa2h3zd+QwRPt4Aslz1Yt2dY5K3rm3bSJ3WN+ZwzMlNuJZRnLHLd5G
-         MFY7QL0QVaxtIadyGNDpQHg1bLXXYKNL0c71NGQk+XkNrg2hpz1leQ/zVZV73wyUmAVf
-         68gdoIW4mlGnNyiXLvf5nWVhSNsb/IccqAPNXpCYlq/rNKRVzZnW74eI+6npP1WQuyAa
-         VcKudz8wE01E22QZoM7HfT8JPlUm/NEiKWRN/1QXmY17419evX78ww3/L+gekT97xd8q
-         PfQg==
+        bh=UECOqhVXTO4WTSf9+88d/gPF4iTL0TltzwoS0jurVoE=;
+        b=X3InRhONf0y9chdNCyUrwGPBhyZzqitwLnWsrU8JjKupUxbqtkc7V6VC6HcfCXXOft
+         I0PXA8x/CCtdrIUiVr5p1NsD6Y8+0f8opR11H8+ILfj/m7q8NKrc/y/+JiKrwchtw2xz
+         qVbDcHVYC6ugoTW3Bu0l4I84g0EkoJyKniBXIdiQwNHLQuNyTRdzNgaFkxpnhvZPwhYR
+         hPygVET2zKSerO0oSB5EvdxVR5o6FQcBqz08D6y4ON0f/125tAA6qD6MuUzTEM2F5ZgS
+         oDxlfpl6Bkqt0+hfPY/dTx/p3bVSf1e63/dDsh4l5VhLXt476/lLeCfUGTUsXjOn3NvH
+         D9Zw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=LnAT0cbyFmhoBQ00Ga1dspfG4naptUEJD59/Qz0lOxU=;
-        b=GryDGjx95IlKftZfezr0F01zngvM5Tg9j6ZXjOWlPoo+jGLaUGPLq6+/ntqIVEbihy
-         A5lADWPFInrwrzb7PCy7owJiZZZwundVCb9wPVMhrBv/OduSjXUXm2KmIUcg81UZUrU0
-         FJpMAPKrWMHfvv9Uap8YoiOwUsP7GXrGV2CGDN8xdrH2Dsm1bS1nlMfmh9giUlCVu7/r
-         IdU2ZMA55SjBQqoudMyJO50Jf4KxolzjQEFBdDasES8tnV9/9kYIX90PXKgY0padLjQV
-         Dp89WR3OCfvLFpeFpDaLiOkntfecqs8ggdFfcfu4pPkXB93FoFKt+OnRyIMKvIk89iS2
-         mW7w==
-X-Gm-Message-State: ANhLgQ2x8p0CtOvAc0P7TK6kkClgRN1/A1wf0gZMCY2TIQl1NYmEIzhP
-        /euMJDD70m5nKVZvPSwxreSIUA==
-X-Google-Smtp-Source: ADFU+vsd/NKHL4FhKagu2tXjW/yjB1glAeG3sSXkBnkwpLQzrlhtGiCdZpNzuliExWPaVJQE7Mu50w==
-X-Received: by 2002:a5d:55c7:: with SMTP id i7mr6954159wrw.252.1584553386183;
-        Wed, 18 Mar 2020 10:43:06 -0700 (PDT)
+        bh=UECOqhVXTO4WTSf9+88d/gPF4iTL0TltzwoS0jurVoE=;
+        b=iVd4MfeIIhzVGR2xX+o4gdIxnIIh44wahhHd8ezHOTWGwy16tySChlCp563zX4Gp6E
+         HvmG689cb89D0d7hszcdjEG/jPUSP9Pwl8PJVdgvYXcMtTh5Hqdbbpu9gpm+9jHBPExw
+         0YAw8n8DTrXuWK8jJwY2TepH4SUwy5F9XuALEkoAN8T/BZDqvOgYG+cOpX8MZ+NYBBZk
+         Sz1hUvmp3WnkkeWW6I0CWVKg5d+T8O5WWRhnkGO4J7DNPJz8/SntFKLK7VChfX64tADK
+         L2VA/ptq1VfLG+HjTWyUbGLTMMyavLA69yDNKlyxo+df8KO8nRZ5B0j/rT+TH0l5Egtu
+         E7Ew==
+X-Gm-Message-State: ANhLgQ3TfSfAWwEPMGbXoLqxGdiStJ2wCXKT/Yl0TGTUUN0dZJJa3Wqk
+        t/lcQvMFsKNDLjjWXpnod8WOa0hCRZY=
+X-Google-Smtp-Source: ADFU+vud5NUiK1Xg7GRmepVK9v8BtqMIWNpQAcqBlzhe/pCplTvWGIegZBPVKCyD/aLw2elX5DXkaA==
+X-Received: by 2002:a5d:490e:: with SMTP id x14mr7253568wrq.58.1584553387588;
+        Wed, 18 Mar 2020 10:43:07 -0700 (PDT)
 Received: from mai.imgcgcw.net ([2a01:e34:ed2f:f020:5d64:ea6:49bd:69d7])
-        by smtp.gmail.com with ESMTPSA id r3sm3787212wrm.35.2020.03.18.10.43.04
+        by smtp.gmail.com with ESMTPSA id r3sm3787212wrm.35.2020.03.18.10.43.06
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Mar 2020 10:43:05 -0700 (PDT)
+        Wed, 18 Mar 2020 10:43:07 -0700 (PDT)
 From:   Daniel Lezcano <daniel.lezcano@linaro.org>
 To:     tglx@linutronix.de
-Cc:     linux-kernel@vger.kernel.org, Anson Huang <Anson.Huang@nxp.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        linux-arm-kernel@lists.infradead.org (moderated list:ARM/FREESCALE IMX
-        / MXC ARM ARCHITECTURE)
-Subject: [PATCH 20/21] clocksource/drivers/imx-sysctr: Remove unused includes
-Date:   Wed, 18 Mar 2020 18:41:30 +0100
-Message-Id: <20200318174131.20582-20-daniel.lezcano@linaro.org>
+Cc:     linux-kernel@vger.kernel.org,
+        Saravana Kannan <saravanak@google.com>
+Subject: [PATCH 21/21] clocksource/drivers/timer-probe: Avoid creating dead devices
+Date:   Wed, 18 Mar 2020 18:41:31 +0100
+Message-Id: <20200318174131.20582-21-daniel.lezcano@linaro.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200318174131.20582-1-daniel.lezcano@linaro.org>
 References: <e6cd8adf-60df-437a-003f-58e3403e4697@linaro.org>
@@ -66,30 +60,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Anson Huang <Anson.Huang@nxp.com>
+From: Saravana Kannan <saravanak@google.com>
 
-There is nothing in use from of_address.h/of_irq.h, remove them.
+Timer initialization is done during early boot way before the driver
+core starts processing devices and drivers. Timers initialized during
+this early boot period don't really need or use a struct device.
 
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+However, for timers represented as device tree nodes, the struct devices
+are still created and sit around unused and wasting memory. This change
+avoid this by marking the device tree nodes as "populated" if the
+corresponding timer is successfully initialized.
+
+Signed-off-by: Saravana Kannan <saravanak@google.com>
 Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-Link: https://lore.kernel.org/r/1584413713-7376-1-git-send-email-Anson.Huang@nxp.com
+Link: https://lore.kernel.org/r/20200111052125.238212-1-saravanak@google.com
 ---
- drivers/clocksource/timer-imx-sysctr.c | 2 --
- 1 file changed, 2 deletions(-)
+ drivers/clocksource/timer-probe.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/clocksource/timer-imx-sysctr.c b/drivers/clocksource/timer-imx-sysctr.c
-index b7c80a368a1b..18b90fc56bfc 100644
---- a/drivers/clocksource/timer-imx-sysctr.c
-+++ b/drivers/clocksource/timer-imx-sysctr.c
-@@ -4,8 +4,6 @@
+diff --git a/drivers/clocksource/timer-probe.c b/drivers/clocksource/timer-probe.c
+index ee9574da53c0..a10f28d750a9 100644
+--- a/drivers/clocksource/timer-probe.c
++++ b/drivers/clocksource/timer-probe.c
+@@ -27,8 +27,10 @@ void __init timer_probe(void)
  
- #include <linux/interrupt.h>
- #include <linux/clockchips.h>
--#include <linux/of_address.h>
--#include <linux/of_irq.h>
+ 		init_func_ret = match->data;
  
- #include "timer-of.h"
- 
++		of_node_set_flag(np, OF_POPULATED);
+ 		ret = init_func_ret(np);
+ 		if (ret) {
++			of_node_clear_flag(np, OF_POPULATED);
+ 			if (ret != -EPROBE_DEFER)
+ 				pr_err("Failed to initialize '%pOF': %d\n", np,
+ 				       ret);
 -- 
 2.17.1
 
