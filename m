@@ -2,81 +2,157 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C05BF18943D
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 04:02:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B82D218943F
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 04:03:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726738AbgCRDCk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Mar 2020 23:02:40 -0400
-Received: from out30-42.freemail.mail.aliyun.com ([115.124.30.42]:58456 "EHLO
-        out30-42.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726229AbgCRDCk (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Mar 2020 23:02:40 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R131e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e07417;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=7;SR=0;TI=SMTPD_---0TsvBh-R_1584500549;
-Received: from localhost(mailfrom:yang.shi@linux.alibaba.com fp:SMTPD_---0TsvBh-R_1584500549)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Wed, 18 Mar 2020 11:02:37 +0800
-From:   Yang Shi <yang.shi@linux.alibaba.com>
-To:     shakeelb@google.com, vbabka@suse.cz, willy@infradead.org,
-        akpm@linux-foundation.org
-Cc:     yang.shi@linux.alibaba.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: [v4 PATCH 2/2] mm: swap: use smp_mb__after_atomic() to order LRU bit set
-Date:   Wed, 18 Mar 2020 11:02:21 +0800
-Message-Id: <1584500541-46817-2-git-send-email-yang.shi@linux.alibaba.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1584500541-46817-1-git-send-email-yang.shi@linux.alibaba.com>
-References: <1584500541-46817-1-git-send-email-yang.shi@linux.alibaba.com>
+        id S1726802AbgCRDDa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Mar 2020 23:03:30 -0400
+Received: from mail.loongson.cn ([114.242.206.163]:49908 "EHLO loongson.cn"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726229AbgCRDDa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Mar 2020 23:03:30 -0400
+Received: from [10.20.42.124] (unknown [10.20.42.124])
+        by mail.loongson.cn (Coremail) with SMTP id AQAAf9Axf+hxj3Fe9tAbAA--.0S3;
+        Wed, 18 Mar 2020 11:03:14 +0800 (CST)
+Subject: Re: [PATCH RFC 4/4] KVM: MIPS: Define arch-specific
+ kvm_flush_remote_tlbs()
+To:     Peter Xu <peterx@redhat.com>, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org
+References: <20200207223520.735523-1-peterx@redhat.com>
+ <20200207223520.735523-5-peterx@redhat.com>
+Cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        linux-mips@vger.kernel.org, Vitaly Kuznetsov <vkuznets@redhat.com>
+From:   maobibo <maobibo@loongson.cn>
+Message-ID: <e434cbe0-8d1c-c7fe-e169-01268bd4541c@loongson.cn>
+Date:   Wed, 18 Mar 2020 11:03:13 +0800
+User-Agent: Mozilla/5.0 (X11; Linux mips64; rv:45.0) Gecko/20100101
+ Thunderbird/45.4.0
+MIME-Version: 1.0
+In-Reply-To: <20200207223520.735523-5-peterx@redhat.com>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID: AQAAf9Axf+hxj3Fe9tAbAA--.0S3
+X-Coremail-Antispam: 1UD129KBjvJXoWxAFWxWrWkXw4UWFWDWr18AFb_yoW5Zw45pF
+        42y3WDWFW7JrnrWF4xJwnrGrnIqws3WFWUA3Wfta45Xr90qF1DKFZ3Gw4IyrW5JrySq3yS
+        9F15JF15WFZrC37anT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDU0xBIdaVrnRJUUUkmb7Iv0xC_tr1lb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I2
+        0VC2zVCF04k26cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rw
+        A2F7IY1VAKz4vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xII
+        jxv20xvEc7CjxVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_Gr1j6F4UJwA2z4x0Y4
+        vEx4A2jsIEc7CjxVAFwI0_Cr1j6rxdM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVAC
+        Y4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJV
+        W8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7I2V7IY0VAS07AlzVAYIcxG
+        8wCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r
+        1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw1lIxkGc2Ij
+        64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr
+        0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6rW3Jr0E3s1lIxAIcVC2z280aVAFwI0_Jr0_Gr1l
+        IxAIcVC2z280aVCY1x0267AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjxU2rcTDUUUU
+X-CM-SenderInfo: xpdruxter6z05rqj20fqof0/
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Memory barrier is needed after setting LRU bit, but smp_mb() is too
-strong.  Some architectures, i.e. x86, imply memory barrier with atomic
-operations, so replacing it with smp_mb__after_atomic() sounds better,
-which is nop on strong ordered machines, and full memory barriers on
-others.  With this change the vm-scalability cases would perform better
-on x86, I saw total 6% improvement with this patch and previous inline
-fix.
 
-The test data (lru-file-readtwice throughput) against v5.6-rc4:
-	mainline	w/ inline fix	w/ both (adding this)
-	150MB		154MB		159MB
 
-Fixes: 9c4e6b1a7027 ("mm, mlock, vmscan: no more skipping pagevecs")
-Acked-by: Vlastimil Babka <vbabka@suse.cz>
-Reviewed-and-Tested-by: Shakeel Butt <shakeelb@google.com>
-Signed-off-by: Yang Shi <yang.shi@linux.alibaba.com>
----
-v3: * Added Shakeel's review-and-test signature.
-v2: * Solved the comment from Vlastimil and added his Ack.
+On 02/08/2020 06:35 AM, Peter Xu wrote:
+> Select HAVE_KVM_ARCH_TLB_FLUSH_ALL for MIPS to define its own
+> kvm_flush_remote_tlbs().  It's as simple as calling the
+> flush_shadow_all(kvm) hook.  Then replace all the flush_shadow_all()
+> calls to use this KVM generic API to do TLB flush.
+>
+> Signed-off-by: Peter Xu <peterx@redhat.com>
+> ---
+>  arch/mips/kvm/Kconfig |  1 +
+>  arch/mips/kvm/mips.c  | 22 ++++++++++------------
+>  2 files changed, 11 insertions(+), 12 deletions(-)
+>
+> diff --git a/arch/mips/kvm/Kconfig b/arch/mips/kvm/Kconfig
+> index eac25aef21e0..8a06f660d39e 100644
+> --- a/arch/mips/kvm/Kconfig
+> +++ b/arch/mips/kvm/Kconfig
+> @@ -26,6 +26,7 @@ config KVM
+>  	select KVM_MMIO
+>  	select MMU_NOTIFIER
+>  	select SRCU
+> +	select HAVE_KVM_ARCH_TLB_FLUSH_ALL
+>  	---help---
+>  	  Support for hosting Guest kernels.
+>
+> diff --git a/arch/mips/kvm/mips.c b/arch/mips/kvm/mips.c
+> index 1d5e7ffda746..518020b466bf 100644
+> --- a/arch/mips/kvm/mips.c
+> +++ b/arch/mips/kvm/mips.c
+> @@ -194,13 +194,16 @@ int kvm_arch_create_memslot(struct kvm *kvm, struct kvm_memory_slot *slot,
+>  	return 0;
+>  }
+>
+> +void kvm_flush_remote_tlbs(struct kvm *kvm)
+> +{
+> +	kvm_mips_callbacks->flush_shadow_all(kvm);
+> +}
+> +
+Hi Peter,
 
- mm/swap.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Although I do not understand mip VZ fully, however it changes behavior 
+of MIPS VZ, since kvm_flush_remote_tlbs is also called in function 
+kvm_mmu_notifier_change_pte/kvm_mmu_notifier_invalidate_range_start
 
-diff --git a/mm/swap.c b/mm/swap.c
-index cf39d24..74ea08a 100644
---- a/mm/swap.c
-+++ b/mm/swap.c
-@@ -931,7 +931,6 @@ static void __pagevec_lru_add_fn(struct page *page, struct lruvec *lruvec,
- 
- 	VM_BUG_ON_PAGE(PageLRU(page), page);
- 
--	SetPageLRU(page);
- 	/*
- 	 * Page becomes evictable in two ways:
- 	 * 1) Within LRU lock [munlock_vma_page() and __munlock_pagevec()].
-@@ -958,7 +957,8 @@ static void __pagevec_lru_add_fn(struct page *page, struct lruvec *lruvec,
- 	 * looking at the same page) and the evictable page will be stranded
- 	 * in an unevictable LRU.
- 	 */
--	smp_mb();
-+	SetPageLRU(page);
-+	smp_mb__after_atomic();
- 
- 	if (page_evictable(page)) {
- 		lru = page_lru(page);
--- 
-1.8.3.1
+regards
+bibo, mao
+
+>  void kvm_arch_flush_shadow_all(struct kvm *kvm)
+>  {
+>  	/* Flush whole GPA */
+>  	kvm_mips_flush_gpa_pt(kvm, 0, ~0);
+> -
+> -	/* Let implementation do the rest */
+> -	kvm_mips_callbacks->flush_shadow_all(kvm);
+> +	kvm_flush_remote_tlbs(kvm);
+>  }
+>
+>  void kvm_arch_flush_shadow_memslot(struct kvm *kvm,
+> @@ -215,8 +218,7 @@ void kvm_arch_flush_shadow_memslot(struct kvm *kvm,
+>  	/* Flush slot from GPA */
+>  	kvm_mips_flush_gpa_pt(kvm, slot->base_gfn,
+>  			      slot->base_gfn + slot->npages - 1);
+> -	/* Let implementation do the rest */
+> -	kvm_mips_callbacks->flush_shadow_all(kvm);
+> +	kvm_flush_remote_tlbs(kvm);
+>  	spin_unlock(&kvm->mmu_lock);
+>  }
+>
+> @@ -258,7 +260,7 @@ void kvm_arch_commit_memory_region(struct kvm *kvm,
+>  					new->base_gfn + new->npages - 1);
+>  		/* Let implementation do the rest */
+>  		if (needs_flush)
+> -			kvm_mips_callbacks->flush_shadow_all(kvm);
+> +			kvm_flush_remote_tlbs(kvm);
+>  		spin_unlock(&kvm->mmu_lock);
+>  	}
+>  }
+> @@ -1001,9 +1003,7 @@ int kvm_vm_ioctl_get_dirty_log(struct kvm *kvm, struct kvm_dirty_log *log)
+>  	if (flush) {
+>  		slots = kvm_memslots(kvm);
+>  		memslot = id_to_memslot(slots, log->slot);
+> -
+> -		/* Let implementation handle TLB/GVA invalidation */
+> -		kvm_mips_callbacks->flush_shadow_all(kvm);
+> +		kvm_flush_remote_tlbs(kvm);
+>  	}
+>
+>  	mutex_unlock(&kvm->slots_lock);
+> @@ -1024,9 +1024,7 @@ int kvm_vm_ioctl_clear_dirty_log(struct kvm *kvm, struct kvm_clear_dirty_log *lo
+>  	if (flush) {
+>  		slots = kvm_memslots(kvm);
+>  		memslot = id_to_memslot(slots, log->slot);
+> -
+> -		/* Let implementation handle TLB/GVA invalidation */
+> -		kvm_mips_callbacks->flush_shadow_all(kvm);
+> +		kvm_flush_remote_tlbs(kvm);
+>  	}
+>
+>  	mutex_unlock(&kvm->slots_lock);
+>
 
