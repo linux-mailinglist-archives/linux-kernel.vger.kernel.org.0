@@ -2,91 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6A792189AAB
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 12:32:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CE69C189AA1
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 12:31:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727849AbgCRLcU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Mar 2020 07:32:20 -0400
-Received: from foss.arm.com ([217.140.110.172]:48692 "EHLO foss.arm.com"
+        id S1727721AbgCRLa7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Mar 2020 07:30:59 -0400
+Received: from mga04.intel.com ([192.55.52.120]:38959 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726933AbgCRLcT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Mar 2020 07:32:19 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4DC101FB;
-        Wed, 18 Mar 2020 04:32:19 -0700 (PDT)
-Received: from localhost (unknown [10.37.6.21])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C2D853F534;
-        Wed, 18 Mar 2020 04:32:18 -0700 (PDT)
-Date:   Wed, 18 Mar 2020 11:32:17 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Will Deacon <will@kernel.org>
-Cc:     Mark Rutland <mark.rutland@arm.com>,
-        Hongbo Yao <yaohongbo@huawei.com>,
-        linux-kernel@vger.kernel.org, catalin.marinas@arm.com,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [RFC PATCH] arm64: fix the missing ktpi= cmdline check in
- arm64_kernel_unmapped_at_el0()
-Message-ID: <20200318113217.GA4553@sirena.org.uk>
-References: <20200317114708.109283-1-yaohongbo@huawei.com>
- <20200317121050.GH8831@lakrids.cambridge.arm.com>
- <20200317124323.GA16200@willie-the-truck>
- <20200317135719.GH3971@sirena.org.uk>
- <20200317151813.GA16579@willie-the-truck>
- <20200317163638.GI3971@sirena.org.uk>
- <20200317210154.GA19752@willie-the-truck>
+        id S1726905AbgCRLa7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Mar 2020 07:30:59 -0400
+IronPort-SDR: ZzyFnMHR7HiEs2LZ0RSyp0DwTWU0OfJayrZozXJrjjSLJbotKns75Cl1iwnPoIvXrWDWsAC6fC
+ NwBXFSuDXUuQ==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Mar 2020 04:30:59 -0700
+IronPort-SDR: AqkDIx3Td8pH5lRUMP40uX14LJgdxbQfhrwqZgZ/gowI5oYq4d2ljnXqcPC1rysI3qidfEndem
+ IkJ6WwNKfPIw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,567,1574150400"; 
+   d="scan'208";a="244796691"
+Received: from mattu-haswell.fi.intel.com (HELO [10.237.72.170]) ([10.237.72.170])
+  by orsmga003.jf.intel.com with ESMTP; 18 Mar 2020 04:30:54 -0700
+Subject: Re: [PATCH v3 2/5] usb: host: xhci-plat: convert to
+ devm_platform_get_and_ioremap_resource
+To:     Dejin Zheng <zhengdejin5@gmail.com>, gregkh@linuxfoundation.org,
+        rafael@kernel.org, hminas@synopsys.com, mathias.nyman@intel.com,
+        bgolaszewski@baylibre.com, arnd@arndb.de,
+        jeffrey.t.kirsher@intel.com, hdegoede@redhat.com,
+        treding@nvidia.com, tglx@linutronix.de, tomas.winkler@intel.com,
+        suzuki.poulose@arm.com, sergei.shtylyov@cogentembedded.com,
+        geert@linux-m68k.org, linux-usb@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org
+References: <20200315140525.21780-1-zhengdejin5@gmail.com>
+ <20200315140525.21780-3-zhengdejin5@gmail.com>
+From:   Mathias Nyman <mathias.nyman@linux.intel.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=mathias.nyman@linux.intel.com; prefer-encrypt=mutual; keydata=
+ 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 fiD/
+Message-ID: <e030c889-302f-7893-e5bd-139056e7c2d8@linux.intel.com>
+Date:   Wed, 18 Mar 2020 13:33:23 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="a8Wt8u1KmwUX3Y2C"
-Content-Disposition: inline
-In-Reply-To: <20200317210154.GA19752@willie-the-truck>
-X-Cookie: Oh no, not again.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20200315140525.21780-3-zhengdejin5@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 15.3.2020 16.05, Dejin Zheng wrote:
+> Use devm_platform_get_and_ioremap_resource() to simplify code, which
+> contains platform_get_resource() and devm_ioremap_resource(), it also
+> get the resource for use by the following code.
+> 
+> Signed-off-by: Dejin Zheng <zhengdejin5@gmail.com>
 
---a8Wt8u1KmwUX3Y2C
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Tue, Mar 17, 2020 at 09:01:54PM +0000, Will Deacon wrote:
-> On Tue, Mar 17, 2020 at 04:36:38PM +0000, Mark Brown wrote:
-
-> > I'd need to go back and retest to confirm but it looks like always had
-> > the issue that we'd install some nG mappings early even with KPTI
-> > disabled on the command line so your change is just restoring the
-> > previous behaviour and we're no worse than we were before.
-
-> Urgh, this code brings back really bad memories :( :( :(
-
-Tell me about it.
-
-> So I've hacked the following, which appears to work but damn I'd like
-> somebody else to look at this. I also have a nagging feeling that you
-> implemented it like this at some point, but we tried to consolidate things
-> during review.
-
-> Thoughts?
-
-I don't think I did *exactly* this but it's familiar yeah.  It looks
-sensible and I can't think of any problems but that doesn't mean there
-aren't any.
-
---a8Wt8u1KmwUX3Y2C
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl5yBrwACgkQJNaLcl1U
-h9AbqAf/evqpddBA32ry7tRUmR0UzfLjJnQcOzDZJA22veN9vfzgRpCHNAbcKIwd
-Fe0Su8ymJM2h26R94qkUOhy0ZZR3hyVx/4N8DPtKYQMGkj9iixI4zxNbk3DMKyng
-e+6+4+zC2+O+ee2+R7zU081sM9Fw1oAovKckQZ+MQsfF79MUm9d3SaWvI7yIGPau
-VkPkKHpc2Lz355RKv1bxi4hsJ6fIR3ktHCNY3VjZxdVLkjf01OcFmWruzEcoQgRo
-bRZloTMy+lFes2YRJTZMoGElW4rPcC8pJm/b7qLWQJz8L5i3w291N/h6eqd5yGfb
-+X5Pa0pOsZPnZ+ec+gNO8IQLywTehQ==
-=Aee1
------END PGP SIGNATURE-----
-
---a8Wt8u1KmwUX3Y2C--
+Acked-by: Mathias Nyman <mathias.nyman@linux.intel.com>
