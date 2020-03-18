@@ -2,248 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 66B131897EA
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 10:29:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 43AD918979A
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 10:10:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727554AbgCRJ3G (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Mar 2020 05:29:06 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:55055 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726994AbgCRJ3F (ORCPT
+        id S1727420AbgCRJKC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Mar 2020 05:10:02 -0400
+Received: from mail-wr1-f49.google.com ([209.85.221.49]:42107 "EHLO
+        mail-wr1-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726994AbgCRJKC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Mar 2020 05:29:05 -0400
-Received: by mail-wm1-f68.google.com with SMTP id n8so2365960wmc.4
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Mar 2020 02:29:03 -0700 (PDT)
+        Wed, 18 Mar 2020 05:10:02 -0400
+Received: by mail-wr1-f49.google.com with SMTP id v11so29302554wrm.9;
+        Wed, 18 Mar 2020 02:10:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=AcA38RUWjD4dfUYZXxzc2GTaxcgFK1bvdJs75Z0azlM=;
-        b=wlbWwq3rlPYqAMhDbUZqFT7sOv5rRyf8tmem1yYBY9+tBwmRExsVotp/CWNH2nxdfC
-         a75a2hgdG0W6gxizWpuNzSjObmeJtdwgm5Xxjb4wo30OrolEclAioiWSHv2d/pF2Mv62
-         A3zbQoncn9bGo7PnLo8UGDFsm6bbS/rENORdxUHHbVA6qiKZ7GXPzLKDSC6OBKThnK17
-         HpXITHzhPPdyAZ8Hn2Lh99BjwCmJy2CdjQ0chxLbphFI0aqZ/SRtwtj11VhE4CQuVyok
-         GtwvoC43aDgVMOohAMiNYcCXBw2VyDrNuMWKSamf5hkPTD7HeAN5VnGrKPGOh9DFi4yw
-         W8kQ==
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=e28C2S//kHe4jqdKcjRXGdpKD49/Om53s4eGmBh94Do=;
+        b=tIR0IDHBHKC6djjyI1kGXHehoxutDOa482BqmdeOHL/090CxLNG0+GoZCvJ8b7oCSq
+         Sw6uYnWpQN6lw0TIz8Zt7f4dJ/ukGe774ZMKQh4s4Q3DofLKrYQ9xytKXJAInyRF6BVh
+         TKHQ6DxEzVikhnWUK9iEdrz/c1Mkz5UZv7ciP0g2E46GB9TZ4OUZkRhtS7fF9lUqtMVE
+         HpKEauJtfAbIqnWqu7weGcEVP1XhiPuHepKTU8ekZAV010He6AWlN1wq/xfLabtIToO9
+         EowK/bdDL769lDYG8n7P8lWlh1fK5MOZUO6dzCLdQcD4ZohmtI6Q267JfKFKecB+1pEe
+         /SRA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=AcA38RUWjD4dfUYZXxzc2GTaxcgFK1bvdJs75Z0azlM=;
-        b=QVUh8UYXzfu6/iCrh3HlDgiZkqi+9Dxh+i/oFGOrLsxHgtIGhc6AwOXKfkPfrGKlnY
-         ClvbbHpWS3TLze3oEMLAh3EBkYOBJ8GlR+dDTWu5JOaSrkAX5amqmy5WIqBFjCRD0cR4
-         /9cNkVnkX/nk78i7/BWzcKWFWAn3vn6YwC1qQ2q1Ic48h0SFh74mmX+P0ecd/Nbyo1uh
-         R/G7MGGRmJ+R/BkjFWaAsAnjEMa600R6sZfnOHRepkng9v5ayimK3QQmTkYDVetEy46j
-         5GK50N3Qv/iW9i//P2wCkV+lLz+ZQi3J1j9X01XtnMnT6fH6Kmk4F11pmz12H3iKYTUM
-         ArUA==
-X-Gm-Message-State: ANhLgQ1V9dia77oBe1lO8cHYN14u03rkCCu+OqAQ6OCHQ+3RzgMQejuG
-        WmUOOm9tKQaWYJeN237BYjYBrA==
-X-Google-Smtp-Source: ADFU+vuuUroP9hE9YJwpiYYdOTbtStyq6eP2/1JPBPA6C2HbKJMQHM1Z8ACyjZnZPo8+6uHEuVsNMg==
-X-Received: by 2002:a1c:3d6:: with SMTP id 205mr4474263wmd.155.1584523742174;
-        Wed, 18 Mar 2020 02:29:02 -0700 (PDT)
-Received: from [192.168.86.34] (cpc89974-aztw32-2-0-cust43.18-1.cable.virginm.net. [86.30.250.44])
-        by smtp.googlemail.com with ESMTPSA id b4sm3061215wmj.12.2020.03.18.02.29.00
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 18 Mar 2020 02:29:00 -0700 (PDT)
-Subject: Re: [PATCH v4 1/1] nvmem: Add support for write-only instances
-To:     Nicholas Johnson <nicholas.johnson-opensource@outlook.com.au>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>
-References: <PSXP216MB0438A934627303A4A0E2D96280F60@PSXP216MB0438.KORP216.PROD.OUTLOOK.COM>
- <74d0c4a6-a056-ad45-529e-97b117d4e60b@linaro.org>
- <PSXP216MB0438983CAE5B3086B562BFBA80F70@PSXP216MB0438.KORP216.PROD.OUTLOOK.COM>
-From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Message-ID: <f31c6774-198a-32e4-6818-e13d5ff16c85@linaro.org>
-Date:   Wed, 18 Mar 2020 09:28:59 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        bh=e28C2S//kHe4jqdKcjRXGdpKD49/Om53s4eGmBh94Do=;
+        b=uIvEw2zb8ibGgRmeqX49CqM2kDhtuCfSq/pWk8nSP7F49xGu9Ed6l4okOvwQz4Ma5F
+         k2L6OrpKKYmoJbG95dgtqmTs8WHSEpwxyZMvxU1YCQCSNrNl0YAALZqnnCIuJAcHezhb
+         c6TgcCu37YUmPm6wOkC0UPOd7bnWOo5OlrfPqYh8+w6xZ2QttFtxgpB0gE2MoSzZOY5Y
+         tMy8z/IX6U7s4dUMLOMEB2hsF5hyJJhDAbndkfjK4zngXoIe9Cei8GUc/KwiGawbIBYb
+         OY7pAR/HBxoM+tJLEwVmtXwKcjBl86oOunD6o7X62y+fgga+agUhbBoLk2kNf8ECx3Oj
+         Uvow==
+X-Gm-Message-State: ANhLgQ0Mrk3KCIQBkTaLssCxRBuCViwzbmKJPRoMUm8pjn16kG8XXQyF
+        A2qNBdXFQqVaD/+R5cKNMXIrjjPRnYg=
+X-Google-Smtp-Source: ADFU+vutDa5mYogUhh5sFGje8oF34MGpF16NSRZLFE1xAPgVs7vmd/Qon8vHoEsaBXhRvgRehCqsbA==
+X-Received: by 2002:adf:ea03:: with SMTP id q3mr4304859wrm.267.1584522600362;
+        Wed, 18 Mar 2020 02:10:00 -0700 (PDT)
+Received: from localhost.localdomain ([95.77.248.51])
+        by smtp.gmail.com with ESMTPSA id w1sm2823986wmc.11.2020.03.18.02.09.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 18 Mar 2020 02:09:59 -0700 (PDT)
+From:   Alexandru Tachici <tachicialex@gmail.com>
+X-Google-Original-From: Alexandru Tachici <alexandru.tachici@analog.com>
+To:     linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     jic23@kernel.org
+Subject: [PATCH v3 0/6] iio: accel: adxl372: add peak mode
+Date:   Wed, 18 Mar 2020 13:09:54 +0200
+Message-Id: <20200318110958.8621-1-alexandru.tachici@analog.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-In-Reply-To: <PSXP216MB0438983CAE5B3086B562BFBA80F70@PSXP216MB0438.KORP216.PROD.OUTLOOK.COM>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+This series adds the possibility to configure
+the device, from sysfs, to work in peak mode. This enables
+adxl372 to capture only over threshold accelerations.
 
+1. Create sysfs files for falling_period/rising_period
+and thresh_falling_value/thresh_rising_value in events/ dir.
+Set INT1 reg for activity/inactivity and push
+event code in events fifo on irq.
 
-On 18/03/2020 09:17, Nicholas Johnson wrote:
-> On Tue, Mar 17, 2020 at 02:35:44PM +0000, Srinivas Kandagatla wrote:
->>
->>
->> On 17/03/2020 01:01, Nicholas Johnson wrote:
->>> There is at least one real-world use-case for write-only nvmem
->>> instances. Refer to 03cd45d2e219 ("thunderbolt: Prevent crash if
->>> non-active NVMem file is read").
->>>
->>> Add support for write-only nvmem instances by adding attrs for 0200.
->>>
->>> Change nvmem_register() to abort if NULL group is returned from
->>> nvmem_sysfs_get_groups().
->>>
->>> Return NULL from nvmem_sysfs_get_groups() in invalid cases.
->>>
->>> Signed-off-by: Nicholas Johnson <nicholas.johnson-opensource@outlook.com.au>
->>> ---
->>>    drivers/nvmem/core.c        |  9 ++++--
->>>    drivers/nvmem/nvmem-sysfs.c | 56 +++++++++++++++++++++++++++++++------
->>>    2 files changed, 54 insertions(+), 11 deletions(-)
->>>
->>> diff --git a/drivers/nvmem/core.c b/drivers/nvmem/core.c
->>> index ef326f243..95ea9a3b2 100644
->>> --- a/drivers/nvmem/core.c
->>> +++ b/drivers/nvmem/core.c
->>> @@ -373,6 +373,12 @@ struct nvmem_device *nvmem_register(const struct nvmem_config *config)
->>>    	nvmem->type = config->type;
->>>    	nvmem->reg_read = config->reg_read;
->>>    	nvmem->reg_write = config->reg_write;
->>> +	nvmem->dev.groups = nvmem_sysfs_get_groups(nvmem, config);
->>> +	if (!nvmem->dev.groups) {
->>> +		kfree(nvmem);
->>> +		return ERR_PTR(-EINVAL);
->>
->> When I meant leaking here, not just memory but other resources like idr and
->> gpio.
->>
->> You should do something like this:
->>
->> if (!nvmem->dev.groups) {
->> 	ida_simple_remove(&nvmem_ida, nvmem->id);
->> 	gpiod_put(nvmem->wp_gpio);
->> 	kfree(nvmem);
->> 	return ERR_PTR(-EINVAL);
->> }
-> Thanks. I am guessing these are called indirectly when there are other
-> failures (goto err_*). We have ida_simple_remove() in nvmem_release()
-> but I cannot find gpiod_put anywhere in drivers/nvmem.
-Because you are returning here before device intialize, you would need 
-to do the cleanup.
+2. Add additional ABIs in order to explain the
+user that setting values in the events/ sysfs files
+also changes devices behaviour.
 
-Latest changes are available in linux-next or
-https://git.kernel.org/pub/scm/linux/kernel/git/srini/nvmem.git/tree/drivers/nvmem/core.c?h=for-next
+3. Update sysfs docs: renames, added two new
+entries for the activity_detect_event/
+inactivity_detect_event
 
+Alexandru Tachici (3):
+  iio: accel: adxl372: add event interface
+  iio: accel: adxl372: add additional events ABIs
+  iio: accel: adxl372: Update sysfs docs
 
-Please rebase your patches on top of this branch, so its easy for me to 
-apply without conflicts.
+1. Device FIFO can now be set in peak mode and only over the
+threshold accelerations will be stored.
 
---srini
-> 
->>
->>> +	}
->>> +
->>>    	if (!config->no_of_node)
->>>    		nvmem->dev.of_node = config->dev->of_node;
->>> @@ -387,8 +393,6 @@ struct nvmem_device *nvmem_register(const struct nvmem_config *config)
->>>    	nvmem->read_only = device_property_present(config->dev, "read-only") ||
->>>    			   config->read_only || !nvmem->reg_write;
->>> -	nvmem->dev.groups = nvmem_sysfs_get_groups(nvmem, config);
->>> -
->>>    	device_initialize(&nvmem->dev);
->>>    	dev_dbg(&nvmem->dev, "Registering nvmem device %s\n", config->name);
->>> @@ -430,7 +434,6 @@ struct nvmem_device *nvmem_register(const struct nvmem_config *config)
->>>    	device_del(&nvmem->dev);
->>>    err_put_device:
->>>    	put_device(&nvmem->dev);
->>> -
->> unnecessary cleanup here!
-> Sorry, I let this mistake slip, despite checking my work.
-> 
->>
->> Other than that every thing looks good to me!
->>
->>
->> --srini
-> 
-> Cheers,
-> Nicholas
->>
->>>    	return ERR_PTR(rval);
->>>    }
->>>    EXPORT_SYMBOL_GPL(nvmem_register);
->>> diff --git a/drivers/nvmem/nvmem-sysfs.c b/drivers/nvmem/nvmem-sysfs.c
->>> index 9e0c429cd..4ceac8680 100644
->>> --- a/drivers/nvmem/nvmem-sysfs.c
->>> +++ b/drivers/nvmem/nvmem-sysfs.c
->>> @@ -196,16 +196,49 @@ static const struct attribute_group *nvmem_ro_root_dev_groups[] = {
->>>    	NULL,
->>>    };
->>> +/* write only permission, root only */
->>> +static struct bin_attribute bin_attr_wo_root_nvmem = {
->>> +	.attr	= {
->>> +		.name	= "nvmem",
->>> +		.mode	= 0200,
->>> +	},
->>> +	.write	= bin_attr_nvmem_write,
->>> +};
->>> +
->>> +static struct bin_attribute *nvmem_bin_wo_root_attributes[] = {
->>> +	&bin_attr_wo_root_nvmem,
->>> +	NULL,
->>> +};
->>> +
->>> +static const struct attribute_group nvmem_bin_wo_root_group = {
->>> +	.bin_attrs	= nvmem_bin_wo_root_attributes,
->>> +	.attrs		= nvmem_attrs,
->>> +};
->>> +
->>> +static const struct attribute_group *nvmem_wo_root_dev_groups[] = {
->>> +	&nvmem_bin_wo_root_group,
->>> +	NULL,
->>> +};
->>> +
->>>    const struct attribute_group **nvmem_sysfs_get_groups(
->>>    					struct nvmem_device *nvmem,
->>>    					const struct nvmem_config *config)
->>>    {
->>> -	if (config->root_only)
->>> -		return nvmem->read_only ?
->>> -			nvmem_ro_root_dev_groups :
->>> -			nvmem_rw_root_dev_groups;
->>> +	/* Read-only */
->>> +	if (nvmem->reg_read && (!nvmem->reg_write || nvmem->read_only))
->>> +		return config->root_only ?
->>> +			nvmem_ro_root_dev_groups : nvmem_ro_dev_groups;
->>> +
->>> +	/* Read-write */
->>> +	if (nvmem->reg_read && nvmem->reg_write && !nvmem->read_only)
->>> +		return config->root_only ?
->>> +			nvmem_rw_root_dev_groups : nvmem_rw_dev_groups;
->>> +
->>> +	/* Write-only, do not honour request for global writable entry */
->>> +	if (!nvmem->reg_read && nvmem->reg_write && !nvmem->read_only)
->>> +		return config->root_only ? nvmem_wo_root_dev_groups : NULL;
->>> -	return nvmem->read_only ? nvmem_ro_dev_groups : nvmem_rw_dev_groups;
->>> +	return NULL;
->>>    }
->>>    /*
->>> @@ -224,17 +257,24 @@ int nvmem_sysfs_setup_compat(struct nvmem_device *nvmem,
->>>    	if (!config->base_dev)
->>>    		return -EINVAL;
->>> -	if (nvmem->read_only) {
->>> +	if (nvmem->reg_read && (!nvmem->reg_write || nvmem->read_only)) {
->>>    		if (config->root_only)
->>>    			nvmem->eeprom = bin_attr_ro_root_nvmem;
->>>    		else
->>>    			nvmem->eeprom = bin_attr_ro_nvmem;
->>> -	} else {
->>> +	} else if (!nvmem->reg_read && nvmem->reg_write && !nvmem->read_only) {
->>> +		if (config->root_only)
->>> +			nvmem->eeprom = bin_attr_wo_root_nvmem;
->>> +		else
->>> +			return -EINVAL;
->>> +	} else if (nvmem->reg_read && nvmem->reg_write && !nvmem->read_only) {
->>>    		if (config->root_only)
->>>    			nvmem->eeprom = bin_attr_rw_root_nvmem;
->>>    		else
->>>    			nvmem->eeprom = bin_attr_rw_nvmem;
->>> -	}
->>> +	} else
->>> +		return -EINVAL;
->>> +
->>>    	nvmem->eeprom.attr.name = "eeprom";
->>>    	nvmem->eeprom.size = nvmem->size;
->>>    #ifdef CONFIG_DEBUG_LOCK_ALLOC
->>>
+Stefan Popa (1):
+  iio: accel: adxl372: Add support for FIFO peak mode
+
+Changelog v2 -> v3:
+- now use iio_device_claim_direct_mode before setting peak mode
+- if peak mode is enabled and not all axis are enabled, filter out disabled axis
+data before iio_push_to_buffers
+- add events enable attributes: (thresh_rising_en/thresh_falling_en)
+- renamed attr: buffer_peak_mode_enable to hwfifo_peak_mode_enable
+- squashed event interface related commits into one
+
+ .../ABI/testing/sysfs-bus-iio-accel-adxl372   |  30 ++
+ drivers/iio/accel/adxl372.c                   | 345 +++++++++++++++++-
+ 2 files changed, 368 insertions(+), 7 deletions(-)
+ create mode 100644 Documentation/ABI/testing/sysfs-bus-iio-accel-adxl372
+
+-- 
+2.20.1
+
