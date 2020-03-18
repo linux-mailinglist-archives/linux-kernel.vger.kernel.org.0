@@ -2,1188 +2,516 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5CA5418969F
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 09:05:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 214E5189681
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 09:04:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727587AbgCRIFn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Mar 2020 04:05:43 -0400
-Received: from us-smtp-delivery-74.mimecast.com ([63.128.21.74]:25703 "EHLO
-        us-smtp-delivery-74.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727351AbgCRIFm (ORCPT
+        id S1727460AbgCRIET (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Mar 2020 04:04:19 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:33671 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726513AbgCRIER (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Mar 2020 04:05:42 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1584518740;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=OTXf5iBampB9YU0zZlznbWRA23iVCHBixEY6j6n4mh8=;
-        b=B1kWKU8J7jcHtN5dDxpdUB09Ac4aRnfEQDBVYTaJoswfAS8PLa8FOVAdbhRKLQ4iKPYdTc
-        4hFI5KFaCKOu5CRoth5hzeCOH9dxvOkPilgL/uvGdx9f9BllD9v3qDBtmw52N+RATSQYb1
-        O6dSm9zuWFS8GBjAXEH5dWiFhk+rdl4=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-170-1uTyUCh9Nrqjt98qQZrKlg-1; Wed, 18 Mar 2020 04:05:36 -0400
-X-MC-Unique: 1uTyUCh9Nrqjt98qQZrKlg-1
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 3C210DB60;
-        Wed, 18 Mar 2020 08:05:33 +0000 (UTC)
-Received: from jason-ThinkPad-X1-Carbon-6th.redhat.com (ovpn-13-166.pek2.redhat.com [10.72.13.166])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id C9A8519C58;
-        Wed, 18 Mar 2020 08:05:19 +0000 (UTC)
-From:   Jason Wang <jasowang@redhat.com>
-To:     mst@redhat.com, linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org
-Cc:     jgg@mellanox.com, maxime.coquelin@redhat.com,
-        cunming.liang@intel.com, zhihong.wang@intel.com,
-        rob.miller@broadcom.com, xiao.w.wang@intel.com,
-        lingshan.zhu@intel.com, eperezma@redhat.com, lulu@redhat.com,
-        parav@mellanox.com, kevin.tian@intel.com, stefanha@redhat.com,
-        rdunlap@infradead.org, hch@infradead.org, aadam@redhat.com,
-        jiri@mellanox.com, shahafs@mellanox.com, hanand@xilinx.com,
-        mhabets@solarflare.com, gdawar@xilinx.com, saugatm@xilinx.com,
-        vmireyno@marvell.com, Bie Tiwei <tiwei.bie@intel.com>,
-        Jason Wang <jasowang@redhat.com>
-Subject: [PATCH V6 8/8] virtio: Intel IFC VF driver for VDPA
-Date:   Wed, 18 Mar 2020 16:03:27 +0800
-Message-Id: <20200318080327.21958-9-jasowang@redhat.com>
-In-Reply-To: <20200318080327.21958-1-jasowang@redhat.com>
-References: <20200318080327.21958-1-jasowang@redhat.com>
+        Wed, 18 Mar 2020 04:04:17 -0400
+Received: by mail-pf1-f194.google.com with SMTP id n7so13484497pfn.0
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Mar 2020 01:04:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:content-transfer-encoding:in-reply-to:references
+         :subject:from:cc:to:date:message-id:user-agent;
+        bh=i9oNBg/4XLM+F+yVGTcBqwqwo0pspxNABxXhhxd2JUk=;
+        b=LLTlmXsp2gZ/KDu9+CTGrSb5HOdl+js0VBoHOB/qKv5Zc0lAoS3FojlNrMGoVkDP4S
+         Q3idTHteyqHnSjzADi2Wz3OBfDmPjNPv1V3cRTZgzoBRG1qDKjWKC6T2FU8AIwYBGUKO
+         04KczZh9QIXEyCqiY57UowVhmnLKL/pe61aMY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:content-transfer-encoding
+         :in-reply-to:references:subject:from:cc:to:date:message-id
+         :user-agent;
+        bh=i9oNBg/4XLM+F+yVGTcBqwqwo0pspxNABxXhhxd2JUk=;
+        b=k1dCZXaNOf0UARY1YQ+waRA0sGSxSejeYW4oaC5/ROjjB5xcvl5Wv1QP/HnTnVVtsw
+         JaUQ6mToFQ4QxarYI6UxSS2+vlpRdyEpgIorh3daZazzHSrd5lHIoQzd8l6cckvOOHGC
+         Y4PgONFdJ7bRHWPXFeu0Wx1fH+dmuAvqTxpfp/dMYc3A2quKwHtzjXiy5d7YiGD8fMQJ
+         FOvfrEbA3we6mhDe69Mv3vwZQ+SUZ3UwY8OdaPLWuTSJXyp4ymbQc03WB2pmUTv1eqwX
+         bJT5fLywoHrAtCqNv3do7g75HlfRPwGI9IR4JE7miNFNUC31DPi4QkZcofGSqdxam0Co
+         9PlQ==
+X-Gm-Message-State: ANhLgQ26fK7R994BCfjPMMRWOYl8jrugW7MUMw1nKwlTqWvPYB2tWVDe
+        fiup1HmV9jBipfdcUMuSur1Mug==
+X-Google-Smtp-Source: ADFU+vt1mUWCmfnFnh8KUVSNsWJjGuQ4ABfF9W6ocPPaVPAg6ZGgS1Kuer4KXf6DoPTRIFarmlQYyw==
+X-Received: by 2002:a63:2cce:: with SMTP id s197mr3436410pgs.184.1584518654392;
+        Wed, 18 Mar 2020 01:04:14 -0700 (PDT)
+Received: from chromium.org ([2620:15c:202:1:fa53:7765:582b:82b9])
+        by smtp.gmail.com with ESMTPSA id c62sm4833363pfc.136.2020.03.18.01.04.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 18 Mar 2020 01:04:13 -0700 (PDT)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
 Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <CAD=FV=U+c4GZU1p3xYT3t=0Q2cLFxoiM=vqc8SsxOKehxbZPXw@mail.gmail.com>
+References: <20200317133653.v2.1.I752ebdcfd5e8bf0de06d66e767b8974932b3620e@changeid> <158448096503.88485.8894151453752608519@swboyd.mtv.corp.google.com> <CAD=FV=U+c4GZU1p3xYT3t=0Q2cLFxoiM=vqc8SsxOKehxbZPXw@mail.gmail.com>
+Subject: Re: [PATCH v2] spi: spi-geni-qcom: Speculative fix of "nobody cared" about interrupt
+From:   Stephen Boyd <swboyd@chromium.org>
+Cc:     Mark Brown <broonie@kernel.org>,
+        Alok Chauhan <alokc@codeaurora.org>, skakit@codeaurora.org,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Girish Mahadevan <girishm@codeaurora.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-spi <linux-spi@vger.kernel.org>
+To:     Doug Anderson <dianders@chromium.org>
+Date:   Wed, 18 Mar 2020 01:04:12 -0700
+Message-ID: <158451865253.88485.11351400745937437114@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.9
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Zhu Lingshan <lingshan.zhu@intel.com>
+Quoting Doug Anderson (2020-03-17 15:08:45)
+> Hi,
+>=20
+> On Tue, Mar 17, 2020 at 2:36 PM Stephen Boyd <swboyd@chromium.org> wrote:
+> >
+> > > Patch is marked "speculative" because I have no way to reproduce this
+> > > problem, so I'm just hoping this fixes it.  Weakly ordered memory
+> > > makes my brain hurt.
+> >
+> > It could be that. It could also be the poor design of geni_se_init() and
+> > how it enables many interrupts that this driver doesn't look to handle?
+> > Why do we allow the wrapper to enable all those bits in
+> > M_COMMON_GENI_M_IRQ_EN and S_COMMON_GENI_S_IRQ_EN if nobody is going to
+> > handle them?
+>=20
+> It is possible it's related to an interrupt that we don't handle.  Howeve=
+r:
+>=20
+> * IMO having the locking in place is safer anyway.  At some point I
+> read that advice that trying to reason about weakly ordered memory was
+> simply too hard for the average person (even the average kernel
+> developer).  In 99% of the cases you could just use a lock so it's
+> super clear and the performance difference is near zero.
+>=20
+> * Most of the cases I saw of the "nobody cared" for geni-spi was on a
+> mostly idle system (presumably still doing periodic SPI transactions
+> to the EC, though).  It seems weird that one of these other interrupts
+> would suddenly fire.  It seems more likely that we just happened to
+> win a race of some sort.
 
-This commit introduced two layers to drive IFC VF:
+Sure, I'm mostly interested in understanding what that race is. I think
+it is something like cur_mcmd being stale when it's tested in the irq
+handler because the IO access triggers the irq before mas->cur_mcmd can
+be updated due to out of order execution. Nothing stops
+spi_geni_set_cs() from being reordered like this, especially because
+there isn't any sort of barrier besides the compiler barrier of asm
+volatile inside geni_set_setup_m_cmd():
 
-(1) ifcvf_base layer, which handles IFC VF NIC hardware operations and
-    configurations.
+  CPU0 (device write overtakes CPU)  CPU1
+  ----                               ----
+  mas->cur_mcmd =3D CMD_NONE;
+  geni_se_setup_m_cmd(...)
+                                     geni_spi_isr()
+				      <tests cur_mcmd and it's still NONE>
+  mas->cur_mcmd =3D CMD_CS;
 
-(2) ifcvf_main layer, which complies to VDPA bus framework,
-    implemented device operations for VDPA bus, handles device probe,
-    bus attaching, vring operations, etc.
+>=20
+> If nothing else it will suddenly become very obvious after my patch
+> lands because I'll print out the status.
 
-Signed-off-by: Zhu Lingshan <lingshan.zhu@intel.com>
-Signed-off-by: Bie Tiwei <tiwei.bie@intel.com>
-Signed-off-by: Wang Xiao <xiao.w.wang@intel.com>
-Signed-off-by: Jason Wang <jasowang@redhat.com>
----
- drivers/virtio/vdpa/Kconfig            |  10 +
- drivers/virtio/vdpa/Makefile           |   1 +
- drivers/virtio/vdpa/ifcvf/Makefile     |   3 +
- drivers/virtio/vdpa/ifcvf/ifcvf_base.c | 386 +++++++++++++++++++
- drivers/virtio/vdpa/ifcvf/ifcvf_base.h | 133 +++++++
- drivers/virtio/vdpa/ifcvf/ifcvf_main.c | 494 +++++++++++++++++++++++++
- drivers/virtio/virtio_vdpa.c           |   1 +
- 7 files changed, 1028 insertions(+)
- create mode 100644 drivers/virtio/vdpa/ifcvf/Makefile
- create mode 100644 drivers/virtio/vdpa/ifcvf/ifcvf_base.c
- create mode 100644 drivers/virtio/vdpa/ifcvf/ifcvf_base.h
- create mode 100644 drivers/virtio/vdpa/ifcvf/ifcvf_main.c
+Fair enough.
 
-diff --git a/drivers/virtio/vdpa/Kconfig b/drivers/virtio/vdpa/Kconfig
-index 9baa1d8da002..9f0b0fc72514 100644
---- a/drivers/virtio/vdpa/Kconfig
-+++ b/drivers/virtio/vdpa/Kconfig
-@@ -22,4 +22,14 @@ config VDPA_SIM
- 	  to RX. This device is used for testing, prototyping and
- 	  development of vDPA.
+>=20
+>=20
+> That all being said if someone wants to submit a patch to clean up
+> which interrupts are enabled I'd support it.
+
+Great!
+
+>=20
+>=20
+> > > @@ -151,16 +151,19 @@ static void spi_geni_set_cs(struct spi_device *=
+slv, bool set_flag)
+> > >         struct geni_se *se =3D &mas->se;
+> > >         unsigned long time_left;
+> > >
+> > > -       reinit_completion(&mas->xfer_done);
+> > >         pm_runtime_get_sync(mas->dev);
+> > >         if (!(slv->mode & SPI_CS_HIGH))
+> > >                 set_flag =3D !set_flag;
+> > >
+> > > +       spin_lock_irq(&mas->lock);
+> >
+> > Why is this spin_lock_irq() vs. spin_lock_irqsave()? This isn't possible
+> > to be called from somewhere that hasn't changed irq flags?
+>=20
+> See below.
+>=20
+>=20
+> > > +       reinit_completion(&mas->xfer_done);
+> > > +
+> > >         mas->cur_mcmd =3D CMD_CS;
+> > >         if (set_flag)
+> > >                 geni_se_setup_m_cmd(se, SPI_CS_ASSERT, 0);
+> > >         else
+> > >                 geni_se_setup_m_cmd(se, SPI_CS_DEASSERT, 0);
+> > > +       spin_unlock_irq(&mas->lock);
+> >
+> > This will force on interrupts if they were masked.
+>=20
+> I'll change it if you want, but in this function there is already a
+> call to "wait_for_completion_timeout".  That's not gonna be too happy
+> if this function is ever called with interrupts already masked.  Also
+> in this function is pm_runtime_get_sync() which in many cases will
+> sleep (I think we'll end up in geni_se_clks_on() which calls
+> clk_bulk_prepare_enable()).
+>=20
+> In cases where you know for sure that interrupts aren't masked,
+> spin_lock_irq() and spin_unlock_irq() are fine and that's what they're
+> for, no?
+>=20
+>=20
+> > >         time_left =3D wait_for_completion_timeout(&mas->xfer_done, HZ=
+);
+> > >         if (!time_left)
+> > > @@ -307,6 +310,8 @@ static void setup_fifo_xfer(struct spi_transfer *=
+xfer,
+> > >         u32 spi_tx_cfg, len;
+> > >         struct geni_se *se =3D &mas->se;
+> > >
+> > > +       spin_lock_irq(&mas->lock);
+>=20
+> ...and just to answer the same question for here: setup_fifo_xfer() is
+> called from spi_geni_transfer_one() which is our "transfer_one"
+> function.  We don't happen to block anywhere in these functions, but
+> I'm nearly certain you are allowed to block in them.  We actually
+> return a positive number to indicate to the SPI core that we're not
+> doing the blocking ourselves but since the SPI core can't know we were
+> going to do that it has to assume we might block.
+
+Sounds good to not use irq save/restore here. Thanks for confirming.
+
+>=20
+>=20
+> > > @@ -478,13 +485,29 @@ static irqreturn_t geni_spi_isr(int irq, void *=
+data)
+> > >         struct geni_se *se =3D &mas->se;
+> > >         u32 m_irq;
+> > >         unsigned long flags;
+> > > -
+> > > -       if (mas->cur_mcmd =3D=3D CMD_NONE)
+> > > -               return IRQ_NONE;
+> > > +       irqreturn_t ret =3D IRQ_HANDLED;
+> > >
+> > >         spin_lock_irqsave(&mas->lock, flags);
+>=20
+> Ironically the above could probably just be "spin_lock" since this is
+> our interrupt handler.  ;-)  I'll just leave it alone though since
+> what's there now doesn't hurt.
+
+Yes that's another thing that can be done.
+
+>=20
+>=20
+> > >         m_irq =3D readl(se->base + SE_GENI_M_IRQ_STATUS);
+> >
+> > Does this read need to be inside the lock?
+>=20
+> Probably not.  Discussion below.
+>=20
+>=20
+> > > +       /* Check for spurious interrupt */
+> > > +       if (!m_irq) {
+> > > +               ret =3D IRQ_NONE;
+> > > +               goto exit;
+> >
+> > I ask because it could be simplified by reading the status and then
+> > immediately returning IRQ_NONE if no bits are set without having to do
+> > the lock/unlock dance. And does writing 0 to the irq clear register do
+> > anything?
+>=20
+> Sure.  I'll move it if you want.  It felt nicer to just keep the whole
+> thing under lock so I didn't have to think about whether it mattered.
+> ...and anyone else looking at it didn't need to think about if it
+> mattered, too.  It it is very easy to say that it doesn't _hurt_ to
+> have it under lock other than having one extra memory read under lock.
+> ...and presumably the case where the optimization matters is
+> incredibly rare (a spurious interrupt) and we just spent a whole lot
+> of cycles calling the interrupt handler to begin with for this
+> spurious interrupt.
+>=20
+> I would have a hard time believing that a write of 0 to a "write 1 to
+> clear" register would have any impact.  It would be a pretty bad
+> hardware design...
+
+This is a writel to a device so it may take some time for the memory
+barrier to drain any other writes with the full memory barrier in there.
+Not sure if we care about getting super high performance here but that's
+a concern.
+
+>=20
+>=20
+> So I guess in summary, I'm not planning to spin for any of these
+> things unless you really insist or you say I'm wrong about something
+> above or someone else says my opinions are the wrong opinions.
+>=20
+
+Why do we need such large locking areas? Why can't we remove the enum
+software tracking stuff and look at mas->cur_xfer to figure out if a cs
+change is happening or not? I suppose mas->cur_xfer could be stale, so
+we need to make sure that is modified and checked under a lock, and then
+mas->rx_rem_bytes/tx_rem_bytes also need to be under a lock because
+they're modified inside and outside the irq handler, but otherwise I
+don't see any need to hold the lock over the register reads/writes. Most
+other things are synchronized with the completions or in higher layers
+of the SPI core.
+
+I do wonder if we need to hold the lock again when we update the rx/tx
+remaining bytes counter but I can't convince myself that the irq can run
+on another CPU in parallel with the CPU that ran the irq first. That
+seems impossible given that the interrupt would have to come again and
+the irq controller would need to send it to a different CPU at the same
+time. We should only need to grab the lock to make sure that cur_xfer
+and remaining bytes is published by the CPU triggering the rx/tx
+transfers and then assume the irq handler code is synchronous with
+itself.
+
+------8<-----
+diff --git a/drivers/spi/spi-geni-qcom.c b/drivers/spi/spi-geni-qcom.c
+index f0ca7f5ae714..ac7da801a63d 100644
+--- a/drivers/spi/spi-geni-qcom.c
++++ b/drivers/spi/spi-geni-qcom.c
+@@ -64,13 +64,6 @@
+ #define TIMESTAMP_AFTER		BIT(3)
+ #define POST_CMD_DELAY		BIT(4)
 =20
-+config IFCVF
-+	tristate "Intel IFC VF VDPA driver"
-+	depends on VDPA
-+	default n
-+	help
-+	  This kernel module can drive Intel IFC VF NIC to offload
-+	  virtio dataplane traffic to hardware.
-+	  To compile this driver as a module, choose M here: the module will
-+	  be called ifcvf.
-+
- endif # VDPA_MENU
-diff --git a/drivers/virtio/vdpa/Makefile b/drivers/virtio/vdpa/Makefile
-index 3814af8e097b..8bbb686ca7a2 100644
---- a/drivers/virtio/vdpa/Makefile
-+++ b/drivers/virtio/vdpa/Makefile
-@@ -1,3 +1,4 @@
- # SPDX-License-Identifier: GPL-2.0
- obj-$(CONFIG_VDPA) +=3D vdpa.o
- obj-$(CONFIG_VDPA_SIM) +=3D vdpa_sim/
-+obj-$(CONFIG_IFCVF)    +=3D ifcvf/
-diff --git a/drivers/virtio/vdpa/ifcvf/Makefile b/drivers/virtio/vdpa/ifc=
-vf/Makefile
-new file mode 100644
-index 000000000000..d709915995ab
---- /dev/null
-+++ b/drivers/virtio/vdpa/ifcvf/Makefile
-@@ -0,0 +1,3 @@
-+# SPDX-License-Identifier: GPL-2.0
-+obj-$(CONFIG_IFCVF) +=3D ifcvf.o
-+ifcvf-$(CONFIG_IFCVF) +=3D ifcvf_main.o ifcvf_base.o
-diff --git a/drivers/virtio/vdpa/ifcvf/ifcvf_base.c b/drivers/virtio/vdpa=
-/ifcvf/ifcvf_base.c
-new file mode 100644
-index 000000000000..ebfc0453f21a
---- /dev/null
-+++ b/drivers/virtio/vdpa/ifcvf/ifcvf_base.c
-@@ -0,0 +1,386 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Intel IFC VF NIC driver for virtio dataplane offloading
-+ *
-+ * Copyright (C) 2020 Intel Corporation.
-+ *
-+ * Author: Zhu Lingshan <lingshan.zhu@intel.com>
-+ *
-+ */
-+
-+#include "ifcvf_base.h"
-+
-+static inline u8 ifc_ioread8(u8 __iomem *addr)
-+{
-+	return ioread8(addr);
-+}
-+static inline u16 ifc_ioread16 (__le16 __iomem *addr)
-+{
-+	return ioread16(addr);
-+}
-+
-+static inline u32 ifc_ioread32(__le32 __iomem *addr)
-+{
-+	return ioread32(addr);
-+}
-+
-+static inline void ifc_iowrite8(u8 value, u8 __iomem *addr)
-+{
-+	iowrite8(value, addr);
-+}
-+
-+static inline void ifc_iowrite16(u16 value, __le16 __iomem *addr)
-+{
-+	iowrite16(value, addr);
-+}
-+
-+static inline void ifc_iowrite32(u32 value, __le32 __iomem *addr)
-+{
-+	iowrite32(value, addr);
-+}
-+
-+static void ifc_iowrite64_twopart(u64 val,
-+				  __le32 __iomem *lo, __le32 __iomem *hi)
-+{
-+	ifc_iowrite32((u32)val, lo);
-+	ifc_iowrite32(val >> 32, hi);
-+}
-+
-+struct ifcvf_adapter *vf_to_adapter(struct ifcvf_hw *hw)
-+{
-+	return container_of(hw, struct ifcvf_adapter, vf);
-+}
-+
-+static void __iomem *get_cap_addr(struct ifcvf_hw *hw,
-+				  struct virtio_pci_cap *cap)
-+{
-+	struct ifcvf_adapter *ifcvf;
-+	u32 length, offset;
-+	u8 bar;
-+
-+	length =3D le32_to_cpu(cap->length);
-+	offset =3D le32_to_cpu(cap->offset);
-+	bar =3D cap->bar;
-+
-+	ifcvf =3D vf_to_adapter(hw);
-+	if (bar >=3D IFCVF_PCI_MAX_RESOURCE) {
-+		IFCVF_DBG(ifcvf->dev,
-+			  "Invalid bar number %u to get capabilities\n", bar);
-+		return NULL;
-+	}
-+
-+	if (offset + length > hw->mem_resource[bar].len) {
-+		IFCVF_DBG(ifcvf->dev,
-+			  "offset(%u) + len(%u) overflows bar%u to get capabilities\n",
-+			  offset, length, bar);
-+		return NULL;
-+	}
-+
-+	return hw->mem_resource[bar].addr + offset;
-+}
-+
-+static int ifcvf_read_config_range(struct pci_dev *dev,
-+				   uint32_t *val, int size, int where)
-+{
-+	int ret, i;
-+
-+	for (i =3D 0; i < size; i +=3D 4) {
-+		ret =3D pci_read_config_dword(dev, where + i, val + i / 4);
-+		if (ret < 0)
-+			return ret;
-+	}
-+
-+	return 0;
-+}
-+
-+int ifcvf_init_hw(struct ifcvf_hw *hw, struct pci_dev *dev)
-+{
-+	struct virtio_pci_cap cap;
-+	u16 notify_off;
-+	int ret;
-+	u8 pos;
-+	u32 i;
-+
-+	ret =3D pci_read_config_byte(dev, PCI_CAPABILITY_LIST, &pos);
-+	if (ret < 0) {
-+		IFCVF_ERR(&dev->dev, "Failed to read PCI capability list\n");
-+		return -EIO;
-+	}
-+
-+	while (pos) {
-+		ret =3D ifcvf_read_config_range(dev, (u32 *)&cap,
-+					      sizeof(cap), pos);
-+		if (ret < 0) {
-+			IFCVF_ERR(&dev->dev,
-+				  "Failed to get PCI capability at %x\n", pos);
-+			break;
-+		}
-+
-+		if (cap.cap_vndr !=3D PCI_CAP_ID_VNDR)
-+			goto next;
-+
-+		switch (cap.cfg_type) {
-+		case VIRTIO_PCI_CAP_COMMON_CFG:
-+			hw->common_cfg =3D get_cap_addr(hw, &cap);
-+			IFCVF_DBG(&dev->dev, "hw->common_cfg =3D %p\n",
-+				  hw->common_cfg);
-+			break;
-+		case VIRTIO_PCI_CAP_NOTIFY_CFG:
-+			pci_read_config_dword(dev, pos + sizeof(cap),
-+					      &hw->notify_off_multiplier);
-+			hw->notify_bar =3D cap.bar;
-+			hw->notify_base =3D get_cap_addr(hw, &cap);
-+			IFCVF_DBG(&dev->dev, "hw->notify_base =3D %p\n",
-+				  hw->notify_base);
-+			break;
-+		case VIRTIO_PCI_CAP_ISR_CFG:
-+			hw->isr =3D get_cap_addr(hw, &cap);
-+			IFCVF_DBG(&dev->dev, "hw->isr =3D %p\n", hw->isr);
-+			break;
-+		case VIRTIO_PCI_CAP_DEVICE_CFG:
-+			hw->net_cfg =3D get_cap_addr(hw, &cap);
-+			IFCVF_DBG(&dev->dev, "hw->net_cfg =3D %p\n", hw->net_cfg);
-+			break;
-+		}
-+
-+next:
-+		pos =3D cap.cap_next;
-+	}
-+
-+	if (hw->common_cfg =3D=3D NULL || hw->notify_base =3D=3D NULL ||
-+	    hw->isr =3D=3D NULL || hw->net_cfg =3D=3D NULL) {
-+		IFCVF_ERR(&dev->dev, "Incomplete PCI capabilities\n");
-+		return -EIO;
-+	}
-+
-+	for (i =3D 0; i < IFCVF_MAX_QUEUE_PAIRS * 2; i++) {
-+		ifc_iowrite16(i, &hw->common_cfg->queue_select);
-+		notify_off =3D ifc_ioread16(&hw->common_cfg->queue_notify_off);
-+		hw->vring[i].notify_addr =3D hw->notify_base +
-+			notify_off * hw->notify_off_multiplier;
-+	}
-+
-+	hw->lm_cfg =3D hw->mem_resource[IFCVF_LM_BAR].addr;
-+
-+	IFCVF_DBG(&dev->dev,
-+		  "PCI capability mapping: common cfg: %p, notify base: %p\n, isr cfg:=
- %p, device cfg: %p, multiplier: %u\n",
-+		  hw->common_cfg, hw->notify_base, hw->isr,
-+		  hw->net_cfg, hw->notify_off_multiplier);
-+
-+	return 0;
-+}
-+
-+u8 ifcvf_get_status(struct ifcvf_hw *hw)
-+{
-+	return ifc_ioread8(&hw->common_cfg->device_status);
-+}
-+
-+void ifcvf_set_status(struct ifcvf_hw *hw, u8 status)
-+{
-+	ifc_iowrite8(status, &hw->common_cfg->device_status);
-+}
-+
-+void ifcvf_reset(struct ifcvf_hw *hw)
-+{
-+	ifcvf_set_status(hw, 0);
-+	/* flush set_status, make sure VF is stopped, reset */
-+	ifcvf_get_status(hw);
-+}
-+
-+static void ifcvf_add_status(struct ifcvf_hw *hw, u8 status)
-+{
-+	if (status !=3D 0)
-+		status |=3D ifcvf_get_status(hw);
-+
-+	ifcvf_set_status(hw, status);
-+	ifcvf_get_status(hw);
-+}
-+
-+u64 ifcvf_get_features(struct ifcvf_hw *hw)
-+{
-+	struct virtio_pci_common_cfg __iomem *cfg =3D hw->common_cfg;
-+	u32 features_lo, features_hi;
-+
-+	ifc_iowrite32(0, &cfg->device_feature_select);
-+	features_lo =3D ifc_ioread32(&cfg->device_feature);
-+
-+	ifc_iowrite32(1, &cfg->device_feature_select);
-+	features_hi =3D ifc_ioread32(&cfg->device_feature);
-+
-+	return ((u64)features_hi << 32) | features_lo;
-+}
-+
-+void ifcvf_read_net_config(struct ifcvf_hw *hw, u64 offset,
-+			   void *dst, int length)
-+{
-+	u8 old_gen, new_gen, *p;
-+	int i;
-+
-+	WARN_ON(offset + length > sizeof(struct virtio_net_config));
-+	do {
-+		old_gen =3D ifc_ioread8(&hw->common_cfg->config_generation);
-+		p =3D dst;
-+		for (i =3D 0; i < length; i++)
-+			*p++ =3D ifc_ioread8(hw->net_cfg + offset + i);
-+
-+		new_gen =3D ifc_ioread8(&hw->common_cfg->config_generation);
-+	} while (old_gen !=3D new_gen);
-+}
-+
-+void ifcvf_write_net_config(struct ifcvf_hw *hw, u64 offset,
-+			    const void *src, int length)
-+{
-+	const u8 *p;
-+	int i;
-+
-+	p =3D src;
-+	WARN_ON(offset + length > sizeof(struct virtio_net_config));
-+	for (i =3D 0; i < length; i++)
-+		ifc_iowrite8(*p++, hw->net_cfg + offset + i);
-+}
-+
-+static void ifcvf_set_features(struct ifcvf_hw *hw, u64 features)
-+{
-+	struct virtio_pci_common_cfg __iomem *cfg =3D hw->common_cfg;
-+
-+	ifc_iowrite32(0, &cfg->guest_feature_select);
-+	ifc_iowrite32((u32)features, &cfg->guest_feature);
-+
-+	ifc_iowrite32(1, &cfg->guest_feature_select);
-+	ifc_iowrite32(features >> 32, &cfg->guest_feature);
-+}
-+
-+static int ifcvf_config_features(struct ifcvf_hw *hw)
-+{
-+	struct ifcvf_adapter *ifcvf;
-+
-+	ifcvf =3D vf_to_adapter(hw);
-+	ifcvf_set_features(hw, hw->req_features);
-+	ifcvf_add_status(hw, VIRTIO_CONFIG_S_FEATURES_OK);
-+
-+	if (!(ifcvf_get_status(hw) & VIRTIO_CONFIG_S_FEATURES_OK)) {
-+		IFCVF_ERR(ifcvf->dev, "Failed to set FEATURES_OK status\n");
-+		return -EIO;
-+	}
-+
-+	return 0;
-+}
-+
-+u64 ifcvf_get_vq_state(struct ifcvf_hw *hw, u16 qid)
-+{
-+	struct ifcvf_lm_cfg __iomem *ifcvf_lm;
-+	u32 __iomem *avail_idx_addr;
-+	u16 last_avail_idx;
-+	u32 q_pair_id;
-+
-+	ifcvf_lm =3D (struct ifcvf_lm_cfg __iomem *)hw->lm_cfg;
-+	q_pair_id =3D qid / (IFCVF_MAX_QUEUE_PAIRS * 2);
-+	avail_idx_addr =3D &ifcvf_lm->vring_lm_cfg[q_pair_id].idx_addr[qid % 2]=
-;
-+	last_avail_idx =3D ioread16(avail_idx_addr);
-+
-+	return last_avail_idx;
-+}
-+
-+int ifcvf_set_vq_state(struct ifcvf_hw *hw, u16 qid, u64 num)
-+{
-+	struct ifcvf_lm_cfg __iomem *ifcvf_lm;
-+	u32 __iomem *avail_idx_addr;
-+	u32 q_pair_id;
-+
-+	ifcvf_lm =3D (struct ifcvf_lm_cfg __iomem *)hw->lm_cfg;
-+	q_pair_id =3D qid / (IFCVF_MAX_QUEUE_PAIRS * 2);
-+	avail_idx_addr =3D &ifcvf_lm->vring_lm_cfg[q_pair_id].idx_addr[qid % 2]=
-;
-+	hw->vring[qid].last_avail_idx =3D num;
-+	iowrite16(num, avail_idx_addr);
-+
-+	return 0;
-+}
-+
-+static int ifcvf_hw_enable(struct ifcvf_hw *hw)
-+{
-+	struct ifcvf_lm_cfg __iomem *ifcvf_lm;
-+	struct virtio_pci_common_cfg __iomem *cfg;
-+	struct ifcvf_adapter *ifcvf;
-+	u32 i;
-+
-+	ifcvf_lm =3D (struct ifcvf_lm_cfg __iomem *)hw->lm_cfg;
-+	ifcvf =3D vf_to_adapter(hw);
-+	cfg =3D hw->common_cfg;
-+	ifc_iowrite16(IFCVF_MSI_CONFIG_OFF, &cfg->msix_config);
-+
-+	if (ifc_ioread16(&cfg->msix_config) =3D=3D VIRTIO_MSI_NO_VECTOR) {
-+		IFCVF_ERR(ifcvf->dev, "No msix vector for device config\n");
-+		return -EINVAL;
-+	}
-+
-+	for (i =3D 0; i < hw->nr_vring; i++) {
-+		if (!hw->vring[i].ready)
-+			break;
-+
-+		ifc_iowrite16(i, &cfg->queue_select);
-+		ifc_iowrite64_twopart(hw->vring[i].desc, &cfg->queue_desc_lo,
-+				     &cfg->queue_desc_hi);
-+		ifc_iowrite64_twopart(hw->vring[i].avail, &cfg->queue_avail_lo,
-+				      &cfg->queue_avail_hi);
-+		ifc_iowrite64_twopart(hw->vring[i].used, &cfg->queue_used_lo,
-+				     &cfg->queue_used_hi);
-+		ifc_iowrite16(hw->vring[i].size, &cfg->queue_size);
-+		ifc_iowrite16(i + IFCVF_MSI_QUEUE_OFF, &cfg->queue_msix_vector);
-+
-+		if (ifc_ioread16(&cfg->queue_msix_vector) =3D=3D
-+		    VIRTIO_MSI_NO_VECTOR) {
-+			IFCVF_ERR(ifcvf->dev,
-+				  "No msix vector for queue %u\n", i);
-+			return -EINVAL;
-+		}
-+
-+		ifcvf_set_vq_state(hw, i, hw->vring[i].last_avail_idx);
-+		ifc_iowrite16(1, &cfg->queue_enable);
-+	}
-+
-+	return 0;
-+}
-+
-+static void ifcvf_hw_disable(struct ifcvf_hw *hw)
-+{
-+	struct virtio_pci_common_cfg __iomem *cfg;
-+	u32 i;
-+
-+	cfg =3D hw->common_cfg;
-+	ifc_iowrite16(VIRTIO_MSI_NO_VECTOR, &cfg->msix_config);
-+
-+	for (i =3D 0; i < hw->nr_vring; i++) {
-+		ifc_iowrite16(i, &cfg->queue_select);
-+		ifc_iowrite16(VIRTIO_MSI_NO_VECTOR, &cfg->queue_msix_vector);
-+	}
-+
-+	ifc_ioread16(&cfg->queue_msix_vector);
-+}
-+
-+int ifcvf_start_hw(struct ifcvf_hw *hw)
-+{
-+	ifcvf_reset(hw);
-+	ifcvf_add_status(hw, VIRTIO_CONFIG_S_ACKNOWLEDGE);
-+	ifcvf_add_status(hw, VIRTIO_CONFIG_S_DRIVER);
-+
-+	if (ifcvf_config_features(hw) < 0)
-+		return -EINVAL;
-+
-+	if (ifcvf_hw_enable(hw) < 0)
-+		return -EINVAL;
-+
-+	ifcvf_add_status(hw, VIRTIO_CONFIG_S_DRIVER_OK);
-+
-+	return 0;
-+}
-+
-+void ifcvf_stop_hw(struct ifcvf_hw *hw)
-+{
-+	ifcvf_hw_disable(hw);
-+	ifcvf_reset(hw);
-+}
-+
-+void ifcvf_notify_queue(struct ifcvf_hw *hw, u16 qid)
-+{
-+	ifc_iowrite16(qid, hw->vring[qid].notify_addr);
-+}
-diff --git a/drivers/virtio/vdpa/ifcvf/ifcvf_base.h b/drivers/virtio/vdpa=
-/ifcvf/ifcvf_base.h
-new file mode 100644
-index 000000000000..efc61b931aaf
---- /dev/null
-+++ b/drivers/virtio/vdpa/ifcvf/ifcvf_base.h
-@@ -0,0 +1,133 @@
-+/* SPDX-License-Identifier: GPL-2.0-only */
-+/*
-+ * Intel IFC VF NIC driver for virtio dataplane offloading
-+ *
-+ * Copyright (C) 2020 Intel Corporation.
-+ *
-+ * Author: Zhu Lingshan <lingshan.zhu@intel.com>
-+ *
-+ */
-+
-+#ifndef _IFCVF_H_
-+#define _IFCVF_H_
-+
-+#include <linux/pci.h>
-+#include <linux/pci_regs.h>
-+#include <linux/vdpa.h>
-+#include <uapi/linux/virtio_net.h>
-+#include <uapi/linux/virtio_config.h>
-+#include <uapi/linux/virtio_pci.h>
-+
-+#define IFCVF_VENDOR_ID		0x1AF4
-+#define IFCVF_DEVICE_ID		0x1041
-+#define IFCVF_SUBSYS_VENDOR_ID	0x8086
-+#define IFCVF_SUBSYS_DEVICE_ID	0x001A
-+
-+#define IFCVF_SUPPORTED_FEATURES \
-+		((1ULL << VIRTIO_NET_F_MAC)			| \
-+		 (1ULL << VIRTIO_F_ANY_LAYOUT)			| \
-+		 (1ULL << VIRTIO_F_VERSION_1)			| \
-+		 (1ULL << VIRTIO_F_ORDER_PLATFORM)		| \
-+		 (1ULL << VIRTIO_F_IOMMU_PLATFORM)		| \
-+		 (1ULL << VIRTIO_NET_F_MRG_RXBUF))
-+
-+/* Only one queue pair for now. */
-+#define IFCVF_MAX_QUEUE_PAIRS	1
-+
-+#define IFCVF_QUEUE_ALIGNMENT	PAGE_SIZE
-+#define IFCVF_QUEUE_MAX		32768
-+#define IFCVF_MSI_CONFIG_OFF	0
-+#define IFCVF_MSI_QUEUE_OFF	1
-+#define IFCVF_PCI_MAX_RESOURCE	6
-+
-+#define IFCVF_LM_CFG_SIZE		0x40
-+#define IFCVF_LM_RING_STATE_OFFSET	0x20
-+#define IFCVF_LM_BAR			4
-+
-+#define IFCVF_ERR(dev, fmt, ...)	dev_err(dev, fmt, ##__VA_ARGS__)
-+#define IFCVF_DBG(dev, fmt, ...)	dev_dbg(dev, fmt, ##__VA_ARGS__)
-+#define IFCVF_INFO(dev, fmt, ...)	dev_info(dev, fmt, ##__VA_ARGS__)
-+
-+#define ifcvf_private_to_vf(adapter) \
-+	(&((struct ifcvf_adapter *)adapter)->vf)
-+
-+#define IFCVF_MAX_INTR (IFCVF_MAX_QUEUE_PAIRS * 2 + 1)
-+
-+struct ifcvf_pci_mem_resource {
-+	u64      phys_addr;
-+	u64      len;
-+	/* Virtual address, NULL when not mapped. */
-+	void     __iomem *addr;
-+};
-+
-+struct vring_info {
-+	u64 desc;
-+	u64 avail;
-+	u64 used;
-+	u16 size;
-+	u16 last_avail_idx;
-+	bool ready;
-+	void __iomem *notify_addr;
-+	u32 irq;
-+	struct vdpa_callback cb;
-+	char msix_name[256];
-+};
-+
-+struct ifcvf_hw {
-+	u8	__iomem *isr;
-+	/* Live migration */
-+	u8	__iomem	*lm_cfg;
-+	u16	nr_vring;
-+	/* Notification bar number */
-+	u8	notify_bar;
-+	/* Notificaiton bar address */
-+	void	__iomem *notify_base;
-+	u32	notify_off_multiplier;
-+	u64	req_features;
-+	struct	virtio_pci_common_cfg __iomem	*common_cfg;
-+	void  __iomem	*net_cfg;
-+	struct	vring_info vring[IFCVF_MAX_QUEUE_PAIRS * 2];
-+	struct	ifcvf_pci_mem_resource mem_resource[IFCVF_PCI_MAX_RESOURCE];
-+};
-+
-+struct ifcvf_adapter {
-+	struct	device *dev;
-+	int	vectors;
-+	struct	ifcvf_hw vf;
-+	struct	vdpa_device *vdpa_dev;
-+};
-+
-+struct ifcvf_vring_lm_cfg {
-+	u32 idx_addr[2];
-+	u8 reserved[IFCVF_LM_CFG_SIZE - 8];
-+};
-+
-+struct ifcvf_lm_cfg {
-+	u8 reserved[IFCVF_LM_RING_STATE_OFFSET];
-+	struct ifcvf_vring_lm_cfg vring_lm_cfg[IFCVF_MAX_QUEUE_PAIRS];
-+};
-+
-+struct vdpa_ifcvf_dev {
-+	struct class	*vd_class;
-+	struct idr	vd_idr;
-+	struct device	dev;
-+	struct kobject  *devices_kobj;
-+};
-+
-+int ifcvf_init_hw(struct ifcvf_hw *hw, struct pci_dev *dev);
-+int ifcvf_start_hw(struct ifcvf_hw *hw);
-+void ifcvf_stop_hw(struct ifcvf_hw *hw);
-+void ifcvf_notify_queue(struct ifcvf_hw *hw, u16 qid);
-+void ifcvf_read_net_config(struct ifcvf_hw *hw, u64 offset,
-+			   void *dst, int length);
-+void ifcvf_write_net_config(struct ifcvf_hw *hw, u64 offset,
-+			    const void *src, int length);
-+u8 ifcvf_get_status(struct ifcvf_hw *hw);
-+void ifcvf_set_status(struct ifcvf_hw *hw, u8 status);
-+void io_write64_twopart(u64 val, u32 *lo, u32 *hi);
-+void ifcvf_reset(struct ifcvf_hw *hw);
-+u64 ifcvf_get_features(struct ifcvf_hw *hw);
-+u64 ifcvf_get_vq_state(struct ifcvf_hw *hw, u16 qid);
-+int ifcvf_set_vq_state(struct ifcvf_hw *hw, u16 qid, u64 num);
-+struct ifcvf_adapter *vf_to_adapter(struct ifcvf_hw *hw);
-+#endif /* _IFCVF_H_ */
-diff --git a/drivers/virtio/vdpa/ifcvf/ifcvf_main.c b/drivers/virtio/vdpa=
-/ifcvf/ifcvf_main.c
-new file mode 100644
-index 000000000000..52f72d1cbfb8
---- /dev/null
-+++ b/drivers/virtio/vdpa/ifcvf/ifcvf_main.c
-@@ -0,0 +1,494 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Intel IFC VF NIC driver for virtio dataplane offloading
-+ *
-+ * Copyright (C) 2020 Intel Corporation.
-+ *
-+ * Author: Zhu Lingshan <lingshan.zhu@intel.com>
-+ *
-+ */
-+
-+#include <linux/interrupt.h>
-+#include <linux/module.h>
-+#include <linux/pci.h>
-+#include <linux/sysfs.h>
-+#include "ifcvf_base.h"
-+
-+#define VERSION_STRING  "0.1"
-+#define DRIVER_AUTHOR   "Intel Corporation"
-+#define IFCVF_DRIVER_NAME       "ifcvf"
-+
-+static irqreturn_t ifcvf_intr_handler(int irq, void *arg)
-+{
-+	struct vring_info *vring =3D arg;
-+
-+	if (vring->cb.callback)
-+		return vring->cb.callback(vring->cb.private);
-+
-+	return IRQ_HANDLED;
-+}
-+
-+static int ifcvf_start_datapath(void *private)
-+{
-+	struct ifcvf_hw *vf =3D ifcvf_private_to_vf(private);
-+	struct ifcvf_adapter *ifcvf;
-+	u8 status;
-+	int ret;
-+
-+	ifcvf =3D vf_to_adapter(vf);
-+	vf->nr_vring =3D IFCVF_MAX_QUEUE_PAIRS * 2;
-+	ret =3D ifcvf_start_hw(vf);
-+	if (ret < 0) {
-+		status =3D ifcvf_get_status(vf);
-+		status |=3D VIRTIO_CONFIG_S_FAILED;
-+		ifcvf_set_status(vf, status);
-+	}
-+
-+	return ret;
-+}
-+
-+static int ifcvf_stop_datapath(void *private)
-+{
-+	struct ifcvf_hw *vf =3D ifcvf_private_to_vf(private);
-+	int i;
-+
-+	for (i =3D 0; i < IFCVF_MAX_QUEUE_PAIRS * 2; i++)
-+		vf->vring[i].cb.callback =3D NULL;
-+
-+	ifcvf_stop_hw(vf);
-+
-+	return 0;
-+}
-+
-+static void ifcvf_reset_vring(struct ifcvf_adapter *adapter)
-+{
-+	struct ifcvf_hw *vf =3D ifcvf_private_to_vf(adapter);
-+	int i;
-+
-+	for (i =3D 0; i < IFCVF_MAX_QUEUE_PAIRS * 2; i++) {
-+		vf->vring[i].last_avail_idx =3D 0;
-+		vf->vring[i].desc =3D 0;
-+		vf->vring[i].avail =3D 0;
-+		vf->vring[i].used =3D 0;
-+		vf->vring[i].ready =3D 0;
-+		vf->vring[i].cb.callback =3D NULL;
-+		vf->vring[i].cb.private =3D NULL;
-+	}
-+
-+	ifcvf_reset(vf);
-+}
-+
-+static struct ifcvf_hw *vdpa_to_vf(struct vdpa_device *vdpa_dev)
-+{
-+	struct ifcvf_adapter *adapter;
-+	struct ifcvf_hw *vf;
-+
-+	adapter =3D dev_get_drvdata(vdpa_dev->dev.parent);
-+	vf =3D ifcvf_private_to_vf(adapter);
-+
-+	return vf;
-+}
-+
-+static u64 ifcvf_vdpa_get_features(struct vdpa_device *vdpa_dev)
-+{
-+	struct ifcvf_hw *vf =3D vdpa_to_vf(vdpa_dev);
-+	u64 features;
-+
-+	features =3D ifcvf_get_features(vf) & IFCVF_SUPPORTED_FEATURES;
-+
-+	return features;
-+}
-+
-+static int ifcvf_vdpa_set_features(struct vdpa_device *vdpa_dev, u64 fea=
-tures)
-+{
-+	struct ifcvf_hw *vf =3D vdpa_to_vf(vdpa_dev);
-+
-+	vf->req_features =3D features;
-+
-+	return 0;
-+}
-+
-+static u8 ifcvf_vdpa_get_status(struct vdpa_device *vdpa_dev)
-+{
-+	struct ifcvf_hw *vf =3D vdpa_to_vf(vdpa_dev);
-+
-+	return ifcvf_get_status(vf);
-+}
-+
-+static void ifcvf_vdpa_set_status(struct vdpa_device *vdpa_dev, u8 statu=
-s)
-+{
-+	struct ifcvf_adapter *adapter;
-+	struct ifcvf_hw *vf;
-+
-+	vf  =3D vdpa_to_vf(vdpa_dev);
-+	adapter =3D dev_get_drvdata(vdpa_dev->dev.parent);
-+
-+	if (status =3D=3D 0) {
-+		ifcvf_stop_datapath(adapter);
-+		ifcvf_reset_vring(adapter);
-+		return;
-+	}
-+
-+	if (status & VIRTIO_CONFIG_S_DRIVER_OK) {
-+		if (ifcvf_start_datapath(adapter) < 0)
-+			IFCVF_ERR(adapter->dev,
-+				  "Failed to set ifcvf vdpa  status %u\n",
-+				  status);
-+	}
-+
-+	ifcvf_set_status(vf, status);
-+}
-+
-+static u16 ifcvf_vdpa_get_vq_num_max(struct vdpa_device *vdpa_dev)
-+{
-+	return IFCVF_QUEUE_MAX;
-+}
-+
-+static u64 ifcvf_vdpa_get_vq_state(struct vdpa_device *vdpa_dev, u16 qid=
-)
-+{
-+	struct ifcvf_hw *vf =3D vdpa_to_vf(vdpa_dev);
-+
-+	return ifcvf_get_vq_state(vf, qid);
-+}
-+
-+static int ifcvf_vdpa_set_vq_state(struct vdpa_device *vdpa_dev, u16 qid=
-,
-+				   u64 num)
-+{
-+	struct ifcvf_hw *vf =3D vdpa_to_vf(vdpa_dev);
-+
-+	return ifcvf_set_vq_state(vf, qid, num);
-+}
-+
-+static void ifcvf_vdpa_set_vq_cb(struct vdpa_device *vdpa_dev, u16 qid,
-+				 struct vdpa_callback *cb)
-+{
-+	struct ifcvf_hw *vf =3D vdpa_to_vf(vdpa_dev);
-+
-+	vf->vring[qid].cb =3D *cb;
-+}
-+
-+static void ifcvf_vdpa_set_vq_ready(struct vdpa_device *vdpa_dev,
-+				    u16 qid, bool ready)
-+{
-+	struct ifcvf_hw *vf =3D vdpa_to_vf(vdpa_dev);
-+
-+	vf->vring[qid].ready =3D ready;
-+}
-+
-+static bool ifcvf_vdpa_get_vq_ready(struct vdpa_device *vdpa_dev, u16 qi=
-d)
-+{
-+	struct ifcvf_hw *vf =3D vdpa_to_vf(vdpa_dev);
-+
-+	return vf->vring[qid].ready;
-+}
-+
-+static void ifcvf_vdpa_set_vq_num(struct vdpa_device *vdpa_dev, u16 qid,
-+				  u32 num)
-+{
-+	struct ifcvf_hw *vf =3D vdpa_to_vf(vdpa_dev);
-+
-+	vf->vring[qid].size =3D num;
-+}
-+
-+static int ifcvf_vdpa_set_vq_address(struct vdpa_device *vdpa_dev, u16 q=
-id,
-+				     u64 desc_area, u64 driver_area,
-+				     u64 device_area)
-+{
-+	struct ifcvf_hw *vf =3D vdpa_to_vf(vdpa_dev);
-+
-+	vf->vring[qid].desc =3D desc_area;
-+	vf->vring[qid].avail =3D driver_area;
-+	vf->vring[qid].used =3D device_area;
-+
-+	return 0;
-+}
-+
-+static void ifcvf_vdpa_kick_vq(struct vdpa_device *vdpa_dev, u16 qid)
-+{
-+	struct ifcvf_hw *vf =3D vdpa_to_vf(vdpa_dev);
-+
-+	ifcvf_notify_queue(vf, qid);
-+}
-+
-+static u32 ifcvf_vdpa_get_generation(struct vdpa_device *vdpa_dev)
-+{
-+	struct ifcvf_hw *vf =3D vdpa_to_vf(vdpa_dev);
-+
-+	return ioread8(&vf->common_cfg->config_generation);
-+}
-+
-+static u32 ifcvf_vdpa_get_device_id(struct vdpa_device *vdpa_dev)
-+{
-+	return VIRTIO_ID_NET;
-+}
-+
-+static u32 ifcvf_vdpa_get_vendor_id(struct vdpa_device *vdpa_dev)
-+{
-+	return IFCVF_SUBSYS_VENDOR_ID;
-+}
-+
-+static u16 ifcvf_vdpa_get_vq_align(struct vdpa_device *vdpa_dev)
-+{
-+	return IFCVF_QUEUE_ALIGNMENT;
-+}
-+
-+static void ifcvf_vdpa_get_config(struct vdpa_device *vdpa_dev,
-+				  unsigned int offset,
-+				  void *buf, unsigned int len)
-+{
-+	struct ifcvf_hw *vf =3D vdpa_to_vf(vdpa_dev);
-+
-+	WARN_ON(offset + len > sizeof(struct virtio_net_config));
-+	ifcvf_read_net_config(vf, offset, buf, len);
-+}
-+
-+static void ifcvf_vdpa_set_config(struct vdpa_device *vdpa_dev,
-+				  unsigned int offset, const void *buf,
-+				  unsigned int len)
-+{
-+	struct ifcvf_hw *vf =3D vdpa_to_vf(vdpa_dev);
-+
-+	WARN_ON(offset + len > sizeof(struct virtio_net_config));
-+	ifcvf_write_net_config(vf, offset, buf, len);
-+}
-+
-+static void ifcvf_vdpa_set_config_cb(struct vdpa_device *vdpa_dev,
-+				     struct vdpa_callback *cb)
-+{
-+	/* We don't support config interrupt */
-+}
-+
-+/*
-+ * IFCVF currently does't have on-chip IOMMU, so not
-+ * implemented set_map()/dma_map()/dma_unmap()
-+ */
-+static const struct vdpa_config_ops ifc_vdpa_ops =3D {
-+	.get_features	=3D ifcvf_vdpa_get_features,
-+	.set_features	=3D ifcvf_vdpa_set_features,
-+	.get_status	=3D ifcvf_vdpa_get_status,
-+	.set_status	=3D ifcvf_vdpa_set_status,
-+	.get_vq_num_max	=3D ifcvf_vdpa_get_vq_num_max,
-+	.get_vq_state	=3D ifcvf_vdpa_get_vq_state,
-+	.set_vq_state	=3D ifcvf_vdpa_set_vq_state,
-+	.set_vq_cb	=3D ifcvf_vdpa_set_vq_cb,
-+	.set_vq_ready	=3D ifcvf_vdpa_set_vq_ready,
-+	.get_vq_ready	=3D ifcvf_vdpa_get_vq_ready,
-+	.set_vq_num	=3D ifcvf_vdpa_set_vq_num,
-+	.set_vq_address	=3D ifcvf_vdpa_set_vq_address,
-+	.kick_vq	=3D ifcvf_vdpa_kick_vq,
-+	.get_generation	=3D ifcvf_vdpa_get_generation,
-+	.get_device_id	=3D ifcvf_vdpa_get_device_id,
-+	.get_vendor_id	=3D ifcvf_vdpa_get_vendor_id,
-+	.get_vq_align	=3D ifcvf_vdpa_get_vq_align,
-+	.get_config	=3D ifcvf_vdpa_get_config,
-+	.set_config	=3D ifcvf_vdpa_set_config,
-+	.set_config_cb  =3D ifcvf_vdpa_set_config_cb,
-+};
-+
-+static int ifcvf_init_msix(struct ifcvf_adapter *adapter)
-+{
-+	struct pci_dev *pdev =3D to_pci_dev(adapter->dev);
-+	struct ifcvf_hw *vf =3D &adapter->vf;
-+	int vector, i, ret, irq;
-+
-+	ret =3D pci_alloc_irq_vectors(pdev, IFCVF_MAX_INTR,
-+				    IFCVF_MAX_INTR, PCI_IRQ_MSIX);
-+	if (ret < 0) {
-+		IFCVF_ERR(adapter->dev, "Failed to alloc irq vectors\n");
-+		return ret;
-+	}
-+
-+	for (i =3D 0; i < IFCVF_MAX_QUEUE_PAIRS * 2; i++) {
-+		snprintf(vf->vring[i].msix_name, 256, "ifcvf[%s]-%d\n",
-+			 pci_name(pdev), i);
-+		vector =3D i + IFCVF_MSI_QUEUE_OFF;
-+		irq =3D pci_irq_vector(pdev, vector);
-+		vf->vring[i].irq =3D irq;
-+		ret =3D request_irq(irq, ifcvf_intr_handler, 0,
-+				  vf->vring[i].msix_name, &vf->vring[i]);
-+		if (ret) {
-+			IFCVF_ERR(adapter->dev,
-+				  "Failed to request irq for vq %d\n", i);
-+			goto irq_fail;
-+		}
-+	}
-+
-+	return 0;
-+
-+irq_fail:
-+	while (--i >=3D 0) {
-+		free_irq(vf->vring[i].irq, &vf->vring[i]);
-+		vf->vring[i].irq =3D 0;
-+	}
-+
-+	return ret;
-+
-+}
-+
-+static void ifcvf_destroy_adapter(struct ifcvf_adapter *adapter)
-+{
-+	struct ifcvf_hw *vf =3D ifcvf_private_to_vf(adapter);
-+	struct pci_dev *pdev =3D to_pci_dev(adapter->dev);
-+	int i, vector, irq;
-+
-+	for (i =3D 0; i < IFCVF_MAX_QUEUE_PAIRS * 2; i++) {
-+		vector =3D i + IFCVF_MSI_QUEUE_OFF;
-+		irq =3D pci_irq_vector(pdev, vector);
-+		free_irq(irq, &vf->vring[i]);
-+	}
-+}
-+
-+static int ifcvf_vdpa_attach(struct ifcvf_adapter *adapter)
-+{
-+	int ret;
-+
-+	adapter->vdpa_dev  =3D vdpa_alloc_device(adapter->dev, adapter->dev,
-+					       &ifc_vdpa_ops);
-+	if (IS_ERR(adapter->vdpa_dev)) {
-+		IFCVF_ERR(adapter->dev, "Failed to init ifcvf on vdpa bus");
-+		put_device(&adapter->vdpa_dev->dev);
-+		return -ENODEV;
-+	}
-+
-+	ret =3D vdpa_register_device(adapter->vdpa_dev);
-+	if (ret) {
-+		IFCVF_ERR(adapter->dev, "Failed to register ifcvf to vdpa bus");
-+		return ret;
-+	}
-+
-+	return 0;
-+}
-+static void ifcvf_vdpa_detach(struct ifcvf_adapter *adapter)
-+{
-+	vdpa_unregister_device(adapter->vdpa_dev);
-+}
-+
-+static int ifcvf_probe(struct pci_dev *pdev, const struct pci_device_id =
-*id)
-+{
-+	struct device *dev =3D &pdev->dev;
-+	struct ifcvf_adapter *adapter;
-+	struct ifcvf_hw *vf;
-+	int ret, i;
-+
-+	adapter =3D kzalloc(sizeof(struct ifcvf_adapter), GFP_KERNEL);
-+	if (adapter =3D=3D NULL) {
-+		ret =3D -ENOMEM;
-+		goto fail;
-+	}
-+
-+	adapter->dev =3D dev;
-+	pci_set_drvdata(pdev, adapter);
-+	ret =3D pci_enable_device(pdev);
-+	if (ret) {
-+		IFCVF_ERR(adapter->dev, "Failed to enable device\n");
-+		goto free_adapter;
-+	}
-+
-+	ret =3D pci_request_regions(pdev, IFCVF_DRIVER_NAME);
-+	if (ret) {
-+		IFCVF_ERR(adapter->dev, "Failed to request MMIO region\n");
-+		goto disable_device;
-+	}
-+
-+	pci_set_master(pdev);
-+	ret =3D ifcvf_init_msix(adapter);
-+	if (ret) {
-+		IFCVF_ERR(adapter->dev, "Failed to initialize MSI-X\n");
-+		goto free_msix;
-+	}
-+
-+	vf =3D &adapter->vf;
-+	for (i =3D 0; i < IFCVF_PCI_MAX_RESOURCE; i++) {
-+		vf->mem_resource[i].phys_addr =3D pci_resource_start(pdev, i);
-+		vf->mem_resource[i].len =3D pci_resource_len(pdev, i);
-+		if (!vf->mem_resource[i].len) {
-+			vf->mem_resource[i].addr =3D NULL;
-+			continue;
-+		}
-+
-+		vf->mem_resource[i].addr =3D pci_iomap_range(pdev, i, 0,
-+				vf->mem_resource[i].len);
-+		if (!vf->mem_resource[i].addr) {
-+			IFCVF_ERR(adapter->dev,
-+				  "Failed to map IO resource %d\n", i);
-+			ret =3D -EINVAL;
-+			goto free_msix;
-+		}
-+	}
-+
-+	if (ifcvf_init_hw(vf, pdev) < 0) {
-+		ret =3D -EINVAL;
-+		goto destroy_adapter;
-+	}
-+
-+	ret =3D dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(64));
-+	if (ret)
-+		ret =3D dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(32));
-+
-+	if (ret) {
-+		IFCVF_ERR(adapter->dev, "No usable DMA confiugration\n");
-+		ret =3D -EINVAL;
-+		goto destroy_adapter;
-+	}
-+
-+	ret =3D ifcvf_vdpa_attach(adapter);
-+	if (ret)
-+		goto destroy_adapter;
-+
-+	return 0;
-+
-+destroy_adapter:
-+	ifcvf_destroy_adapter(adapter);
-+free_msix:
-+	pci_free_irq_vectors(pdev);
-+	pci_release_regions(pdev);
-+disable_device:
-+	pci_disable_device(pdev);
-+free_adapter:
-+	kfree(adapter);
-+fail:
-+	return ret;
-+}
-+
-+static void ifcvf_remove(struct pci_dev *pdev)
-+{
-+	struct ifcvf_adapter *adapter =3D pci_get_drvdata(pdev);
-+	struct ifcvf_hw *vf;
-+	int i;
-+
-+	ifcvf_vdpa_detach(adapter);
-+	vf =3D &adapter->vf;
-+	for (i =3D 0; i < IFCVF_PCI_MAX_RESOURCE; i++) {
-+		if (vf->mem_resource[i].addr) {
-+			pci_iounmap(pdev, vf->mem_resource[i].addr);
-+			vf->mem_resource[i].addr =3D NULL;
-+		}
-+	}
-+
-+	ifcvf_destroy_adapter(adapter);
-+	pci_free_irq_vectors(pdev);
-+	pci_release_regions(pdev);
-+	pci_disable_device(pdev);
-+	kfree(adapter);
-+}
-+
-+static struct pci_device_id ifcvf_pci_ids[] =3D {
-+	{ PCI_DEVICE_SUB(IFCVF_VENDOR_ID,
-+		IFCVF_DEVICE_ID,
-+		IFCVF_SUBSYS_VENDOR_ID,
-+		IFCVF_SUBSYS_DEVICE_ID) },
-+	{ 0 },
-+};
-+MODULE_DEVICE_TABLE(pci, ifcvf_pci_ids);
-+
-+static struct pci_driver ifcvf_driver =3D {
-+	.name     =3D IFCVF_DRIVER_NAME,
-+	.id_table =3D ifcvf_pci_ids,
-+	.probe    =3D ifcvf_probe,
-+	.remove   =3D ifcvf_remove,
-+};
-+
-+module_pci_driver(ifcvf_driver);
-+
-+MODULE_LICENSE("GPL v2");
-+MODULE_VERSION(VERSION_STRING);
-diff --git a/drivers/virtio/virtio_vdpa.c b/drivers/virtio/virtio_vdpa.c
-index c30eb55030be..de64b88ee7e4 100644
---- a/drivers/virtio/virtio_vdpa.c
-+++ b/drivers/virtio/virtio_vdpa.c
-@@ -362,6 +362,7 @@ static int virtio_vdpa_probe(struct vdpa_device *vdpa=
-)
- 		goto err;
+-enum spi_m_cmd_opcode {
+-	CMD_NONE,
+-	CMD_XFER,
+-	CMD_CS,
+-	CMD_CANCEL,
+-};
+-
+ struct spi_geni_master {
+ 	struct geni_se se;
+ 	struct device *dev;
+@@ -84,8 +77,7 @@ struct spi_geni_master {
+ 	const struct spi_transfer *cur_xfer;
+ 	struct completion xfer_done;
+ 	unsigned int oversampling;
+-	spinlock_t lock;
+-	enum spi_m_cmd_opcode cur_mcmd;
++	spinlock_t lock; /* Protects cur_xfer, {tx,rx}_rem_bytes */
+ 	int irq;
+ };
 =20
- 	vdpa_set_drvdata(vdpa, vd_dev);
-+	dev_info(vd_dev->vdev.dev.parent, "device attached to VDPA bus\n");
+@@ -123,23 +115,18 @@ static void handle_fifo_timeout(struct spi_master *sp=
+i,
+ 				struct spi_message *msg)
+ {
+ 	struct spi_geni_master *mas =3D spi_master_get_devdata(spi);
+-	unsigned long time_left, flags;
++	unsigned long time_left;
+ 	struct geni_se *se =3D &mas->se;
 =20
- 	return 0;
+-	spin_lock_irqsave(&mas->lock, flags);
+ 	reinit_completion(&mas->xfer_done);
+-	mas->cur_mcmd =3D CMD_CANCEL;
+ 	geni_se_cancel_m_cmd(se);
+ 	writel(0, se->base + SE_GENI_TX_WATERMARK_REG);
+-	spin_unlock_irqrestore(&mas->lock, flags);
+ 	time_left =3D wait_for_completion_timeout(&mas->xfer_done, HZ);
+ 	if (time_left)
+ 		return;
 =20
---=20
-2.20.1
-
+-	spin_lock_irqsave(&mas->lock, flags);
+ 	reinit_completion(&mas->xfer_done);
+ 	geni_se_abort_m_cmd(se);
+-	spin_unlock_irqrestore(&mas->lock, flags);
+ 	time_left =3D wait_for_completion_timeout(&mas->xfer_done, HZ);
+ 	if (!time_left)
+ 		dev_err(mas->dev, "Failed to cancel/abort m_cmd\n");
+@@ -157,7 +144,6 @@ static void spi_geni_set_cs(struct spi_device *slv, boo=
+l set_flag)
+ 	if (!(slv->mode & SPI_CS_HIGH))
+ 		set_flag =3D !set_flag;
+=20
+-	mas->cur_mcmd =3D CMD_CS;
+ 	if (set_flag)
+ 		geni_se_setup_m_cmd(se, SPI_CS_ASSERT, 0);
+ 	else
+@@ -307,6 +293,7 @@ static void setup_fifo_xfer(struct spi_transfer *xfer,
+ 	u32 m_cmd =3D 0;
+ 	u32 spi_tx_cfg, len;
+ 	struct geni_se *se =3D &mas->se;
++	unsigned int rx_len =3D 0, tx_len =3D 0;
+=20
+ 	spi_tx_cfg =3D readl(se->base + SE_SPI_TRANS_CFG);
+ 	if (xfer->bits_per_word !=3D mas->cur_bits_per_word) {
+@@ -339,14 +326,14 @@ static void setup_fifo_xfer(struct spi_transfer *xfer,
+ 		writel(m_clk_cfg, se->base + GENI_SER_M_CLK_CFG);
+ 	}
+=20
+-	mas->tx_rem_bytes =3D 0;
+-	mas->rx_rem_bytes =3D 0;
+-	if (xfer->tx_buf && xfer->rx_buf)
+-		m_cmd =3D SPI_FULL_DUPLEX;
+-	else if (xfer->tx_buf)
+-		m_cmd =3D SPI_TX_ONLY;
+-	else if (xfer->rx_buf)
+-		m_cmd =3D SPI_RX_ONLY;
++	if (xfer->tx_buf) {
++		m_cmd |=3D SPI_TX_ONLY;
++		tx_len =3D xfer->len;
++	}
++	if (xfer->rx_buf) {
++		m_cmd |=3D SPI_RX_ONLY;
++		rx_len =3D xfer->len;
++	}
+=20
+ 	spi_tx_cfg &=3D ~CS_TOGGLE;
+=20
+@@ -356,18 +343,17 @@ static void setup_fifo_xfer(struct spi_transfer *xfer,
+ 		len =3D xfer->len / (mas->cur_bits_per_word / BITS_PER_BYTE + 1);
+ 	len &=3D TRANS_LEN_MSK;
+=20
++	spin_lock_irq(&mas->lock);
+ 	mas->cur_xfer =3D xfer;
+-	if (m_cmd & SPI_TX_ONLY) {
+-		mas->tx_rem_bytes =3D xfer->len;
+-		writel(len, se->base + SE_SPI_TX_TRANS_LEN);
+-	}
++	mas->tx_rem_bytes =3D tx_len;
++	mas->rx_rem_bytes =3D rx_len;
++	spin_unlock_irq(&mas->lock);
+=20
+-	if (m_cmd & SPI_RX_ONLY) {
++	if (m_cmd & SPI_TX_ONLY)
++		writel(len, se->base + SE_SPI_TX_TRANS_LEN);
++	if (m_cmd & SPI_RX_ONLY)
+ 		writel(len, se->base + SE_SPI_RX_TRANS_LEN);
+-		mas->rx_rem_bytes =3D xfer->len;
+-	}
+ 	writel(spi_tx_cfg, se->base + SE_SPI_TRANS_CFG);
+-	mas->cur_mcmd =3D CMD_XFER;
+ 	geni_se_setup_m_cmd(se, m_cmd, FRAGMENTATION);
+=20
+ 	/*
+@@ -416,10 +402,12 @@ static void geni_spi_handle_tx(struct spi_geni_master=
+ *mas)
+ 	unsigned int i =3D 0;
+=20
+ 	max_bytes =3D (mas->tx_fifo_depth - mas->tx_wm) * bytes_per_fifo_word;
++	spin_lock(&mas->lock);
+ 	if (mas->tx_rem_bytes < max_bytes)
+ 		max_bytes =3D mas->tx_rem_bytes;
+=20
+ 	tx_buf =3D mas->cur_xfer->tx_buf + mas->cur_xfer->len - mas->tx_rem_bytes;
++	spin_unlock(&mas->lock);
+ 	while (i < max_bytes) {
+ 		unsigned int j;
+ 		unsigned int bytes_to_write;
+@@ -454,10 +442,13 @@ static void geni_spi_handle_rx(struct spi_geni_master=
+ *mas)
+ 		if (rx_last_byte_valid && rx_last_byte_valid < 4)
+ 			rx_bytes -=3D bytes_per_fifo_word - rx_last_byte_valid;
+ 	}
++	spin_lock(&mas->lock);
+ 	if (mas->rx_rem_bytes < rx_bytes)
+ 		rx_bytes =3D mas->rx_rem_bytes;
+=20
+ 	rx_buf =3D mas->cur_xfer->rx_buf + mas->cur_xfer->len - mas->rx_rem_bytes;
++	spin_unlock(&mas->lock);
++
+ 	while (i < rx_bytes) {
+ 		u32 fifo_word =3D 0;
+ 		u8 *fifo_byte =3D (u8 *)&fifo_word;
+@@ -478,13 +469,11 @@ static irqreturn_t geni_spi_isr(int irq, void *data)
+ 	struct spi_geni_master *mas =3D spi_master_get_devdata(spi);
+ 	struct geni_se *se =3D &mas->se;
+ 	u32 m_irq;
+-	unsigned long flags;
++	bool cs_change =3D false;
+=20
+-	if (mas->cur_mcmd =3D=3D CMD_NONE)
+-		return IRQ_NONE;
+-
+-	spin_lock_irqsave(&mas->lock, flags);
+ 	m_irq =3D readl(se->base + SE_GENI_M_IRQ_STATUS);
++	if (!m_irq)
++		return IRQ_NONE;
+=20
+ 	if ((m_irq & M_RX_FIFO_WATERMARK_EN) || (m_irq & M_RX_FIFO_LAST_EN))
+ 		geni_spi_handle_rx(mas);
+@@ -493,39 +482,48 @@ static irqreturn_t geni_spi_isr(int irq, void *data)
+ 		geni_spi_handle_tx(mas);
+=20
+ 	if (m_irq & M_CMD_DONE_EN) {
+-		if (mas->cur_mcmd =3D=3D CMD_XFER)
++		spin_lock(&mas->lock);
++		if (mas->cur_xfer) {
+ 			spi_finalize_current_transfer(spi);
+-		else if (mas->cur_mcmd =3D=3D CMD_CS)
+-			complete(&mas->xfer_done);
+-		mas->cur_mcmd =3D CMD_NONE;
+-		/*
+-		 * If this happens, then a CMD_DONE came before all the Tx
+-		 * buffer bytes were sent out. This is unusual, log this
+-		 * condition and disable the WM interrupt to prevent the
+-		 * system from stalling due an interrupt storm.
+-		 * If this happens when all Rx bytes haven't been received, log
+-		 * the condition.
+-		 * The only known time this can happen is if bits_per_word !=3D 8
+-		 * and some registers that expect xfer lengths in num spi_words
+-		 * weren't written correctly.
+-		 */
+-		if (mas->tx_rem_bytes) {
+-			writel(0, se->base + SE_GENI_TX_WATERMARK_REG);
+-			dev_err(mas->dev, "Premature done. tx_rem =3D %d bpw%d\n",
+-				mas->tx_rem_bytes, mas->cur_bits_per_word);
++			mas->cur_xfer =3D NULL;
++			/*
++			 * If this happens, then a CMD_DONE came before all the
++			 * Tx buffer bytes were sent out. This is unusual, log
++			 * this condition and disable the WM interrupt to
++			 * prevent the system from stalling due an interrupt
++			 * storm.
++			 *
++			 * If this happens when all Rx bytes haven't been
++			 * received, log the condition.
++			 *
++			 * The only known time this can happen is if
++			 * bits_per_word !=3D 8 and some registers that expect
++			 * xfer lengths in num spi_words weren't written
++			 * correctly.
++			 */
++			if (mas->tx_rem_bytes) {
++				writel(0, se->base + SE_GENI_TX_WATERMARK_REG);
++				dev_err(mas->dev, "Premature done. tx_rem =3D %d bpw%d\n",
++					mas->tx_rem_bytes,
++					mas->cur_bits_per_word);
++			}
++			if (mas->rx_rem_bytes) {
++				dev_err(mas->dev, "Premature done. rx_rem =3D %d bpw%d\n",
++					mas->rx_rem_bytes,
++					mas->cur_bits_per_word);
++			}
++		} else {
++			cs_change =3D true;
+ 		}
+-		if (mas->rx_rem_bytes)
+-			dev_err(mas->dev, "Premature done. rx_rem =3D %d bpw%d\n",
+-				mas->rx_rem_bytes, mas->cur_bits_per_word);
++		spin_unlock(&mas->lock);
+ 	}
+=20
+-	if ((m_irq & M_CMD_CANCEL_EN) || (m_irq & M_CMD_ABORT_EN)) {
+-		mas->cur_mcmd =3D CMD_NONE;
++	/* Wake up spi_geni_set_cs() or handle_fifo_timeout() */
++	if (cs_change || (m_irq & M_CMD_CANCEL_EN) || (m_irq & M_CMD_ABORT_EN))
+ 		complete(&mas->xfer_done);
+-	}
+=20
+ 	writel(m_irq, se->base + SE_GENI_M_IRQ_CLEAR);
+-	spin_unlock_irqrestore(&mas->lock, flags);
++
+ 	return IRQ_HANDLED;
+ }
