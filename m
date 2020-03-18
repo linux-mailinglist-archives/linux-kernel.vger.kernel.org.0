@@ -2,152 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C2A1418A3E3
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 21:43:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5330E18A3E8
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 21:44:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727020AbgCRUn3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Mar 2020 16:43:29 -0400
-Received: from mga14.intel.com ([192.55.52.115]:12608 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726647AbgCRUn2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Mar 2020 16:43:28 -0400
-IronPort-SDR: Z5XBmzZupuY2pX0gsQZS1NCjXnDUu17ml90/Ca90Uup0PpF3OvykjqLVmz2tK36FMVYkVwty9P
- JnvbekD/CMVw==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Mar 2020 13:43:24 -0700
-IronPort-SDR: E8lgAwVq5wdZduiyLz5G/pTtWPWcpTbsCS3o1RpV488drpCa3ZPiAo0kzYW+LgabRnEno0nyGZ
- QjNIVZeyMq7Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,568,1574150400"; 
-   d="scan'208";a="263509707"
-Received: from mbeldzik-mobl.ger.corp.intel.com (HELO localhost) ([10.252.55.127])
-  by orsmga002.jf.intel.com with ESMTP; 18 Mar 2020 13:43:20 -0700
-Date:   Wed, 18 Mar 2020 22:43:18 +0200
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     George Wilson <gcwilson@linux.ibm.com>
-Cc:     linux-integrity@vger.kernel.org,
-        Alexey Kardashevskiy <aik@ozlabs.ru>,
-        Stefan Berger <stefanb@linux.ibm.com>,
-        Nayna Jain <nayna@linux.vnet.ibm.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>, linux-kernel@vger.kernel.org,
-        Linh Pham <phaml@us.ibm.com>
-Subject: Re: [PATCH v2] tpm: ibmvtpm: retry on H_CLOSED in tpm_ibmvtpm_send()
-Message-ID: <20200318204318.GA48352@linux.intel.com>
-References: <20200317214600.9561-1-gcwilson@linux.ibm.com>
+        id S1727052AbgCRUoJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Mar 2020 16:44:09 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:37764 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726647AbgCRUoJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Mar 2020 16:44:09 -0400
+Received: by mail-pg1-f196.google.com with SMTP id a32so13469547pga.4
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Mar 2020 13:44:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=suYHs9658zHP4xficEGq5WrBjqIzHfAOzaIFRECzM5Y=;
+        b=n/X1upys3h4rJNYvIw5j6AOUliQjvpmhy+m+9DZtWbYDpENrMWU9gX5OfOPjZCHqCq
+         3N7EyTuBY29aXC98swHoyCoDuXnLG1HE/1H5jXDW/qG1EW1lh3uw7U7CfUWRbfjqOkcL
+         hSX9Of+C0ataFtlnWTZFimXaINj+GxUPy1TZ1osPcSFYCZ/kscC0Ip/qBbdiSN6vpz8B
+         PpgAdT3mzS/u+Sv9CKxeQP2Ut+/oAyg0LMSWhIbEHFuVBW/XOVLB2LgC/R2qCD140Jcm
+         MxM0L8LtdKgiUYTUC3GZ3Oceg48BDmYiFzjjt+SlBqWpTOO5mU17+RKzxJjJStQpV7vw
+         OnTA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=suYHs9658zHP4xficEGq5WrBjqIzHfAOzaIFRECzM5Y=;
+        b=Y5yCH+tGvn+oPBl/3uxueIl1dEYx6kE7feGFQnP6/gr0w9fDREHD5Ol1Fam9A3krpv
+         vTsLvRq5F4UIn49tF1BibBv1zYBS1TT3pb8HQJNLVdM68Cdnt9st3xVc6umFoNOeUr42
+         HNyDnOZrbW+nTe2DtJsSm/OJW+AbC4GOo1rM9Nu4Asd+6Ahr5YU2O7ZYGmrHQ+S0OH8z
+         ScNultlIpo4IqygL/3plqY8rlJSLGLWemJpUqeh3gJJg5mPAXwT6YKXvXqfWOQKiy+eS
+         iX7zXb/9IEJpuQerG1+o97asI6NrZjshKZM0+b3nJKPcN/qaCnsZGYUWDSGxM54cmz02
+         KZdQ==
+X-Gm-Message-State: ANhLgQ1UUbelgtS8um7IVikJIAPHgeh7KaZcvwRtHrWmRuiB/zlvzEOQ
+        XDWkj2OKX8unwO8MSESM0Uvq5Ki73U7Ij7G6uHYBAA==
+X-Google-Smtp-Source: ADFU+vvuYGfe5Sd8RCUOsHGVZHh0QkYvusq8LOKEvmO8g5PG8CN5UlQKq17NQMJwPUgG4KkltVfEVBtrogvoQJfagUE=
+X-Received: by 2002:aa7:8b54:: with SMTP id i20mr116252pfd.39.1584564247262;
+ Wed, 18 Mar 2020 13:44:07 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20200317214600.9561-1-gcwilson@linux.ibm.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20200318002500.52471-1-natechancellor@gmail.com> <3a997f4ee640e607a171a19668f5f5484062116c.camel@perches.com>
+In-Reply-To: <3a997f4ee640e607a171a19668f5f5484062116c.camel@perches.com>
+From:   Nick Desaulniers <ndesaulniers@google.com>
+Date:   Wed, 18 Mar 2020 13:43:54 -0700
+Message-ID: <CAKwvOd=AA8NrqmOR=E7+e6dHEVo3DZwfSuK72DGzHG+X56pB7A@mail.gmail.com>
+Subject: Re: [PATCH] drm/amdgpu: Initialize shadow to false in gfx_v9_0_rlcg_wreg
+To:     Joe Perches <joe@perches.com>
+Cc:     Nathan Chancellor <natechancellor@gmail.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+        "David (ChunMing) Zhou" <David1.Zhou@amd.com>,
+        amd-gfx list <amd-gfx@lists.freedesktop.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        clang-built-linux <clang-built-linux@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 17, 2020 at 05:46:00PM -0400, George Wilson wrote:
-> tpm_ibmvtpm_send() can fail during PowerVM Live Partition Mobility resume
-> with an H_CLOSED return from ibmvtpm_send_crq().  The PAPR says, 'The
-> “partner partition suspended” transport event disables the associated CRQ
-> such that any H_SEND_CRQ hcall() to the associated CRQ returns H_Closed
-> until the CRQ has been explicitly enabled using the H_ENABLE_CRQ hcall.'
-> This patch adds a check in tpm_ibmvtpm_send() for an H_CLOSED return from
-> ibmvtpm_send_crq() and in that case calls tpm_ibmvtpm_resume() and
-> retries the ibmvtpm_send_crq() once.
-> 
-> Reported-by: Linh Pham <phaml@us.ibm.com>
-> Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
-> Signed-off-by: George Wilson <gcwilson@linux.ibm.com>
-> Tested-by: Linh Pham <phaml@us.ibm.com>
+On Wed, Mar 18, 2020 at 1:28 PM Joe Perches <joe@perches.com> wrote:
+>
+> On Tue, 2020-03-17 at 17:25 -0700, Nathan Chancellor wrote:
+> > clang warns:
+> >
+> > drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c:754:6: warning: variable 'shadow'
+> > is used uninitialized whenever 'if' condition is
+> > false [-Wsometimes-uninitialized]
+> >         if (offset == grbm_cntl || offset == grbm_idx)
+> >             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> > drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c:757:6: note: uninitialized use
+> > occurs here
+> >         if (shadow) {
+> >             ^~~~~~
+>
+> Wouldn't it be better to get rid of the shadow variable completely?
 
-I think this should have a fixes tag.
+Yes, much better indeed. Seems it only has one use.
 
 > ---
->  drivers/char/tpm/tpm_ibmvtpm.c | 23 ++++++++++++++++++-----
->  1 file changed, 18 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/char/tpm/tpm_ibmvtpm.c b/drivers/char/tpm/tpm_ibmvtpm.c
-> index 78cc52690177..ba3bd503e080 100644
-> --- a/drivers/char/tpm/tpm_ibmvtpm.c
-> +++ b/drivers/char/tpm/tpm_ibmvtpm.c
-> @@ -1,6 +1,6 @@
->  // SPDX-License-Identifier: GPL-2.0-only
->  /*
-> - * Copyright (C) 2012 IBM Corporation
-> + * Copyright (C) 2012-2020 IBM Corporation
->   *
->   * Author: Ashley Lai <ashleydlai@gmail.com>
->   *
-> @@ -25,6 +25,8 @@
->  #include "tpm.h"
->  #include "tpm_ibmvtpm.h"
->  
-> +static int tpm_ibmvtpm_resume(struct device *dev);
-> +
+>  drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c | 6 +-----
+>  1 file changed, 1 insertion(+), 5 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c b/drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c
+> index 7bc248..496b9e 100644
+> --- a/drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c
+> +++ b/drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c
+> @@ -735,7 +735,6 @@ void gfx_v9_0_rlcg_wreg(struct amdgpu_device *adev, u32 offset, u32 v)
+>         static void *spare_int;
+>         static uint32_t grbm_cntl;
+>         static uint32_t grbm_idx;
+> -       bool shadow;
+>
+>         scratch_reg0 = adev->rmmio + (adev->reg_offset[GC_HWIP][0][mmSCRATCH_REG0_BASE_IDX] + mmSCRATCH_REG0)*4;
+>         scratch_reg1 = adev->rmmio + (adev->reg_offset[GC_HWIP][0][mmSCRATCH_REG1_BASE_IDX] + mmSCRATCH_REG1)*4;
+> @@ -751,10 +750,7 @@ void gfx_v9_0_rlcg_wreg(struct amdgpu_device *adev, u32 offset, u32 v)
+>                 return;
+>         }
+>
+> -       if (offset == grbm_cntl || offset == grbm_idx)
+> -               shadow = true;
+> -
+> -       if (shadow) {
+> +       if (offset == grbm_cntl || offset == grbm_idx) {
+>                 if (offset  == grbm_cntl)
+>                         writel(v, scratch_reg2);
+>                 else if (offset == grbm_idx)
+>
+>
+> --
+> You received this message because you are subscribed to the Google Groups "Clang Built Linux" group.
+> To unsubscribe from this group and stop receiving emails from it, send an email to clang-built-linux+unsubscribe@googlegroups.com.
+> To view this discussion on the web visit https://groups.google.com/d/msgid/clang-built-linux/3a997f4ee640e607a171a19668f5f5484062116c.camel%40perches.com.
 
-Instead, reposition this function before tpm_ibmvtpm_send().
 
->  static const char tpm_ibmvtpm_driver_name[] = "tpm_ibmvtpm";
->  
->  static const struct vio_device_id tpm_ibmvtpm_device_table[] = {
-> @@ -147,6 +149,7 @@ static int tpm_ibmvtpm_send(struct tpm_chip *chip, u8 *buf, size_t count)
->  {
->  	struct ibmvtpm_dev *ibmvtpm = dev_get_drvdata(&chip->dev);
->  	int rc, sig;
-> +	bool retry = true;
 
-Cosmetic: would be nice to have inits when possible in reverse
-Christmas tree order i.e.
-
-	struct ibmvtpm_dev *ibmvtpm = dev_get_drvdata(&chip->dev);
-	bool retry = true;
-	int rc, sig;
-
-It is way more pleasing for the eye when you have to read the source
-code.
-
->  	if (!ibmvtpm->rtce_buf) {
->  		dev_err(ibmvtpm->dev, "ibmvtpm device is not ready\n");
-> @@ -179,18 +182,28 @@ static int tpm_ibmvtpm_send(struct tpm_chip *chip, u8 *buf, size_t count)
->  	 */
->  	ibmvtpm->tpm_processing_cmd = true;
->  
-> +again:
->  	rc = ibmvtpm_send_crq(ibmvtpm->vdev,
->  			IBMVTPM_VALID_CMD, VTPM_TPM_COMMAND,
->  			count, ibmvtpm->rtce_dma_handle);
-> +
-
-A dangling newline character.
-
->  	if (rc != H_SUCCESS) {
-> +		/*
-> +		 * H_CLOSED can be returned after LPM resume.  Call
-> +		 * tpm_ibmvtpm_resume() to re-enable the CRQ then retry
-> +		 * ibmvtpm_send_crq() once before failing.
-> +		 */
-> +		if (rc == H_CLOSED && retry) {
-> +			tpm_ibmvtpm_resume(ibmvtpm->dev);
-> +			retry = false;
-> +			goto again;
-> +		}
->  		dev_err(ibmvtpm->dev, "tpm_ibmvtpm_send failed rc=%d\n", rc);
-> -		rc = 0;
->  		ibmvtpm->tpm_processing_cmd = false;
-> -	} else
-> -		rc = 0;
-> +	}
->  
->  	spin_unlock(&ibmvtpm->rtce_lock);
-> -	return rc;
-> +	return 0;
->  }
->  
->  static void tpm_ibmvtpm_cancel(struct tpm_chip *chip)
-> -- 
-> 2.24.1
-> 
-
-/Jarkko
+-- 
+Thanks,
+~Nick Desaulniers
