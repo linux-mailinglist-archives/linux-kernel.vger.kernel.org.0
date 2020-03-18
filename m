@@ -2,113 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 13715189BB8
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 13:13:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A4118189BBB
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 13:14:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726740AbgCRMN2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Mar 2020 08:13:28 -0400
-Received: from mail-qk1-f195.google.com ([209.85.222.195]:42368 "EHLO
-        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726530AbgCRMN2 (ORCPT
+        id S1726797AbgCRMOS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Mar 2020 08:14:18 -0400
+Received: from mail-vk1-f196.google.com ([209.85.221.196]:41421 "EHLO
+        mail-vk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726631AbgCRMOR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Mar 2020 08:13:28 -0400
-Received: by mail-qk1-f195.google.com with SMTP id e11so38143381qkg.9
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Mar 2020 05:13:27 -0700 (PDT)
+        Wed, 18 Mar 2020 08:14:17 -0400
+Received: by mail-vk1-f196.google.com with SMTP id q8so7001690vka.8
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Mar 2020 05:14:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=j5lq+ZeR1e5BLS61AhHY/9aQpgtc96UUH7xL5gfZlA4=;
-        b=CV/gd6GbNBkHRzX6JGk52Gu52tpr+Ik38xHSjudsHMrtP3GG0SadQ/ERhtDU7kkGsE
-         JgQEcYrOmU5agISimpX5xfwdM8s+z2RYoYxtH+/EZLht/quMchPcvOZnF+aJDxK1JKAB
-         SFIbYlm7RqIlG6Ym6nJ4AM8uWuMtZ2VSK+DVdULVDkU/TE2VLsxbt4PLXTiL1wxEzmHU
-         fMMLDzeinxdeV4YBUU38jrTyYx73QMmbDvX+wK6I+dusQ13+9ddEWjN0pwn+4s3UGI49
-         oIdENEBzAzVDXSq+LsGLqAc6sdMxQzVD6XbuZdzmV/Vid71g52WOdJyziDHTFeDNFdUq
-         rtQA==
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=og0LDHDGJi+jmOmmQp4Rk2H6PUrLgVc6fcIsRCRNLD0=;
+        b=iAeIBdlaaFvGcjmOV9nnbG4Q+ZKQ58q6k1c/nmRUOMcJSdQdGoeupdtrE0kMoc4lpt
+         tEZueJQn3kCsdxcxN9odshFTtplAHptMXbyeDvQnnTC6abmb/DbaTG/Gjk/rjKhu34XH
+         F2ITAgNyF83lzIz/61qEASXmvPCKRW+M9iJ+PbaFQzhZAIZB3yw8fhmgkCI09aEuas4p
+         npdO3N3Ju7my6YLRjznwctZm7KlW4PbyQN6a5kYxyGYntxrnLPxGzzpswV6X9ffChNMZ
+         S4QnHDcw9NCHeG0/8rpOn7HeDWK04qk/2DZsOqiKAaNE6IF1N8/U/0XYPUt7g3do7k6m
+         eh5Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=j5lq+ZeR1e5BLS61AhHY/9aQpgtc96UUH7xL5gfZlA4=;
-        b=jYWnm5frdGrsaj0ecZnbabKXJGh4Tf8vPbaXMKdDS0u1o0m6IriZYYGKsrzN2ELqZA
-         aIScpbiJpQK5jhR1cL+TxNB+Tovvjlg1sH9hygu3pqgTVI1gxu08Ywem8krtzdoxxcwa
-         X3/W/B5gMHiiRHcMn/K234mmotCeKonw5Ur7j+qJoDioKCrpzJWohgQUlMz1kagn3hLz
-         yjzRJuS4WkXphsDeaC6cUksy4lsIowk6doIZwchy0XgMm0sKu7fURghkLkFYqt/2k0j/
-         fdQOfvnhkNbTfrySOZMyH24yJ68P/8DNqn+haHCglwHWo+SbaBa2nQopd3feOZ+1IerL
-         4dBQ==
-X-Gm-Message-State: ANhLgQ1jDBKH9Pxa+9/d+6RdW/b5oB5dQli8SGAjtY6xbJ16aBJDjbde
-        r1tysleLY+OxkEXb3+FfLwtOgQ==
-X-Google-Smtp-Source: ADFU+vs9zNKs2Xu1t6dEyeygPPbCwubyJJzXUvpJUoWsTNJzUZXqoXmlWPE4G/BL5uZuyOnIhMu0ug==
-X-Received: by 2002:a37:aa54:: with SMTP id t81mr3827143qke.234.1584533607354;
-        Wed, 18 Mar 2020 05:13:27 -0700 (PDT)
-Received: from ziepe.ca (hlfxns017vw-142-68-57-212.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.68.57.212])
-        by smtp.gmail.com with ESMTPSA id p25sm312216qkm.97.2020.03.18.05.13.26
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 18 Mar 2020 05:13:26 -0700 (PDT)
-Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
-        (envelope-from <jgg@ziepe.ca>)
-        id 1jEXZe-0003a7-6B; Wed, 18 Mar 2020 09:13:26 -0300
-Date:   Wed, 18 Mar 2020 09:13:26 -0300
-From:   Jason Gunthorpe <jgg@ziepe.ca>
-To:     Qian Cai <cai@lca.pw>
-Cc:     akpm@linux-foundation.org, paulmck@kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mm/mmu_notifier: silence PROVE_RCU_LIST warnings
-Message-ID: <20200318121326.GZ20941@ziepe.ca>
-References: <20200317175640.2047-1-cai@lca.pw>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=og0LDHDGJi+jmOmmQp4Rk2H6PUrLgVc6fcIsRCRNLD0=;
+        b=CTpluNu3EOAFkoNgiePRpoNzLnuVdawsPL/4aUnvuC8Omw1DbswvRYbXBZX0RhpVsA
+         8Iph1WEheF4ac/wCvAajKM833SnOkyXF9wAAEI6+bGdQalI2eoqi+ja5Gr1UvnSokSbu
+         we2N5QwWra2j7iQKkDSc41VhL2Avqg9AFCVcQ8NgRIomq32gJfiuYF6nU/HTK5xKZvby
+         zl0iVrB3C3+MPGQJq/l+gEFNlfexRjXt8qrT8VndABAH+d7KCMsNtwPXcgIUeKeiTqWI
+         ebxz/Np3CD3iTtU8V8ti9v52V0Un7HdKaib+gzdjYNaB+mFt3NSN6RAgCUC0Z2iEIGWB
+         MqLQ==
+X-Gm-Message-State: ANhLgQ1IzsQyAt8XhfSe8yEn+wS+TcX+oA6smfHf7WLMcYC53wYRdN3u
+        BpFzD7fvOJyf5VcyD0LumLX0a0ChNTm3TPKEylWK8/KwWR4=
+X-Google-Smtp-Source: ADFU+vtuxafvF6plHBJVfKJ7U23/fBbB1V91FZHEJpgZp+l9v0FqrX8HUV0TNGlgraDKAKeMO6f2LK/g141VKeZjYYs=
+X-Received: by 2002:a1f:ee05:: with SMTP id m5mr3020614vkh.9.1584533656113;
+ Wed, 18 Mar 2020 05:14:16 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200317175640.2047-1-cai@lca.pw>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <20200225101710.40123-1-yuchao0@huawei.com>
+In-Reply-To: <20200225101710.40123-1-yuchao0@huawei.com>
+From:   Ju Hyung Park <qkrwngud825@gmail.com>
+Date:   Wed, 18 Mar 2020 21:14:04 +0900
+Message-ID: <CAD14+f3pi331-V0gzjtxcMRVaEn3tPacrC20wtRq9+6JY9_HVA@mail.gmail.com>
+Subject: Re: [PATCH v2] f2fs: use kmem_cache pool during inline xattr lookups
+To:     Chao Yu <yuchao0@huawei.com>
+Cc:     Jaegeuk Kim <jaegeuk@kernel.org>,
+        linux-f2fs-devel@lists.sourceforge.net,
+        linux-kernel@vger.kernel.org, Chao Yu <chao@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 17, 2020 at 01:56:40PM -0400, Qian Cai wrote:
-> It is safe to traverse mm->notifier_subscriptions->list either under
-> SRCU read lock or mm->notifier_subscriptions->lock using
-> hlist_for_each_entry_rcu(). Silence the PROVE_RCU_LIST false positives,
-> for example,
-> 
->  WARNING: suspicious RCU usage
->  -----------------------------
->  mm/mmu_notifier.c:484 RCU-list traversed in non-reader section!!
-> 
->  other info that might help us debug this:
-> 
->  rcu_scheduler_active = 2, debug_locks = 1
->  3 locks held by libvirtd/802:
->   #0: ffff9321e3f58148 (&mm->mmap_sem#2){++++}, at: do_mprotect_pkey+0xe1/0x3e0
->   #1: ffffffff91ae6160 (mmu_notifier_invalidate_range_start){+.+.}, at: change_p4d_range+0x5fa/0x800
->   #2: ffffffff91ae6e08 (srcu){....}, at: __mmu_notifier_invalidate_range_start+0x178/0x460
-> 
->  stack backtrace:
->  CPU: 7 PID: 802 Comm: libvirtd Tainted: G          I       5.6.0-rc6-next-20200317+ #2
->  Hardware name: HP ProLiant BL460c Gen8, BIOS I31 11/02/2014
->  Call Trace:
->   dump_stack+0xa4/0xfe
->   lockdep_rcu_suspicious+0xeb/0xf5
->   __mmu_notifier_invalidate_range_start+0x3ff/0x460
->   change_p4d_range+0x746/0x800
->   change_protection+0x1df/0x300
->   mprotect_fixup+0x245/0x3e0
->   do_mprotect_pkey+0x23b/0x3e0
->   __x64_sys_mprotect+0x51/0x70
->   do_syscall_64+0x91/0xae8
->   entry_SYSCALL_64_after_hwframe+0x49/0xb3
-> 
-> Signed-off-by: Qian Cai <cai@lca.pw>
-> ---
->  mm/mmu_notifier.c | 27 ++++++++++++++++++---------
->  1 file changed, 18 insertions(+), 9 deletions(-)
+Hi Chao.
 
-Looks right to me
+I got the time around to test this patch.
+The v2 patch seems to work just fine, and the code looks good.
 
-Reviewed-by: Jason Gunthorpe <jgg@mellanox.com>
+On Tue, Feb 25, 2020 at 7:17 PM Chao Yu <yuchao0@huawei.com> wrote:
+> diff --git a/fs/f2fs/xattr.c b/fs/f2fs/xattr.c
+> index a3360a97e624..e46a10eb0e42 100644
+> --- a/fs/f2fs/xattr.c
+> +++ b/fs/f2fs/xattr.c
+> @@ -23,6 +23,25 @@
+>  #include "xattr.h"
+>  #include "segment.h"
+>
+> +static void *xattr_alloc(struct f2fs_sb_info *sbi, int size, bool *is_inline)
+> +{
+> +       *is_inline = (size == sbi->inline_xattr_slab_size);
 
-This was missed during testing because we don't run with
-PROVE_RCU_LIST enabled
+Would it be meaningless to change this to the following code?
+if (likely(size == sbi->inline_xattr_slab_size))
+    *is_inline = true;
+else
+    *is_inline = false;
 
-Jason
+The above statement seems to be only false during the initial mount
+and the rest(millions) seems to be always true.
+
+Thanks.
