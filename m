@@ -2,89 +2,192 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2B88318943A
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 04:01:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 47D2D18943E
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 04:02:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726647AbgCRDBW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Mar 2020 23:01:22 -0400
-Received: from mail-qk1-f194.google.com ([209.85.222.194]:34034 "EHLO
-        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726229AbgCRDBV (ORCPT
+        id S1726780AbgCRDCn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Mar 2020 23:02:43 -0400
+Received: from out4436.biz.mail.alibaba.com ([47.88.44.36]:22968 "EHLO
+        out4436.biz.mail.alibaba.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726229AbgCRDCm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Mar 2020 23:01:21 -0400
-Received: by mail-qk1-f194.google.com with SMTP id f3so36436699qkh.1
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Mar 2020 20:01:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=massaru-org.20150623.gappssmtp.com; s=20150623;
-        h=message-id:subject:from:to:cc:date:in-reply-to:references
-         :user-agent:mime-version:content-transfer-encoding;
-        bh=ydkM02gA1lv2jXZ+vVnjGn/g5VzXdwCSm+r9ur1CJPs=;
-        b=IHTT0YwYPoS8iMmX0qpmgTqBgRe4WcF01YbL2TEUEwWqZdjOAZwHvbArCyepsxfcs0
-         5RhcvvUs+1Nhtw8Q6FHiVx6OPM4knOtgscqJG4CCaIjYfENTn8BQGSfU8HnjNQ0Au5q5
-         fCJ1bE1qbheMPOHu5Rx+kKtWBcbtX1E1cUtDYKEmYlLrkxgQNFYTrzM5p90radr5v1Do
-         uKvdEWktYiutwnbjOklODkdp0T+wqHzG0jkZ1uC+yH67D/mYvJ0vRtYBv6vLNZnQN5rh
-         lsF+ZTSX4PkQQneVutZwIkM59OL6A9ALmdJbMV/E2fIKiRfxHbcRzHn0n78WLUHNuXvy
-         MMcg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:user-agent:mime-version:content-transfer-encoding;
-        bh=ydkM02gA1lv2jXZ+vVnjGn/g5VzXdwCSm+r9ur1CJPs=;
-        b=CBQNntlOGHV/85BqyW8AkFXV94kABTVi75DBDICr8eRuLvb4zB5dc+jjeKMa/SF4cD
-         sXzLQ+QVa7QWLSgCqa9Q2exw0xBH2ZCCJB62Vq67ZiAVlVHRqk3H6UboJ7NV20nnC14V
-         0ZWA0AA2ZTQ4/zAofoT3LFWtGfE3MWZNWafL26N6ytorr+z9qnTJFcv4eBdwpQVK536n
-         p5AZPN2X9y/fA8gIXl4/G8y1w1l0rqJ1S4Ov9san85e46FTbtF/sdPoFwXLxgt5OUnIa
-         h0OHRG+4FsZaK8Nnafk670c4ZBlkDiuv3uiwP4axgo0oRCqdTRd/P36Dtlx1WXIlHI+U
-         xmbw==
-X-Gm-Message-State: ANhLgQ3AHSzc6ZA9FVNzlXHUmHW+juddIsLrtse1wgK8ApZuBVPfeAqM
-        GzE0FuJYK3xosBhrq+Ha4jRnuQ==
-X-Google-Smtp-Source: ADFU+vvoBQmPUjD+nO2M86aMQl7VYth980jIKigj6jVHrMsul9eZMS8ExL6RHyTxp/EV9PKXlpRWrQ==
-X-Received: by 2002:a37:6244:: with SMTP id w65mr2061863qkb.350.1584500480945;
-        Tue, 17 Mar 2020 20:01:20 -0700 (PDT)
-Received: from bbking.lan ([2804:14c:4a5:36c::cd2])
-        by smtp.gmail.com with ESMTPSA id i4sm3478217qtr.41.2020.03.17.20.01.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Mar 2020 20:01:20 -0700 (PDT)
-Message-ID: <3ffd63b480b47aa572a9f95ba620eb4d0ce93f34.camel@massaru.org>
-Subject: Re: [PATCH 2/2] xarray: Add missing blank line after declaration
-From:   Vitor Massaru Iha <vitor@massaru.org>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-kernel-mentees@lists.linuxfoundation.org,
-        skhan@linuxfoundation.org
-Date:   Wed, 18 Mar 2020 00:01:17 -0300
-In-Reply-To: <20200318015553.GG22433@bombadil.infradead.org>
-References: <cover.1584494902.git.vitor@massaru.org>
-         <7efa62f727eb176341fc0cdfcd47c890ff424451.1584494902.git.vitor@massaru.org>
-         <20200318015553.GG22433@bombadil.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.32.5 (3.32.5-1.fc30) 
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Tue, 17 Mar 2020 23:02:42 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R421e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01f04452;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=7;SR=0;TI=SMTPD_---0TsvBgyf_1584500541;
+Received: from localhost(mailfrom:yang.shi@linux.alibaba.com fp:SMTPD_---0TsvBgyf_1584500541)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Wed, 18 Mar 2020 11:02:29 +0800
+From:   Yang Shi <yang.shi@linux.alibaba.com>
+To:     shakeelb@google.com, vbabka@suse.cz, willy@infradead.org,
+        akpm@linux-foundation.org
+Cc:     yang.shi@linux.alibaba.com, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: [v4 PATCH 1/2] mm: swap: make page_evictable() inline
+Date:   Wed, 18 Mar 2020 11:02:20 +0800
+Message-Id: <1584500541-46817-1-git-send-email-yang.shi@linux.alibaba.com>
+X-Mailer: git-send-email 1.8.3.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Matthew,
+When backporting commit 9c4e6b1a7027 ("mm, mlock, vmscan: no more
+skipping pagevecs") to our 4.9 kernel, our test bench noticed around 10%
+down with a couple of vm-scalability's test cases (lru-file-readonce,
+lru-file-readtwice and lru-file-mmap-read).  I didn't see that much down
+on my VM (32c-64g-2nodes).  It might be caused by the test configuration,
+which is 32c-256g with NUMA disabled and the tests were run in root memcg,
+so the tests actually stress only one inactive and active lru.  It
+sounds not very usual in mordern production environment.
 
-On Tue, 2020-03-17 at 18:55 -0700, Matthew Wilcox wrote:
-> On Tue, Mar 17, 2020 at 10:43:03PM -0300, Vitor Massaru Iha wrote:
-> > @@ -1624,6 +1624,7 @@ static inline unsigned int
-> > xas_find_chunk(struct xa_state *xas, bool advance,
-> >  	if (XA_CHUNK_SIZE == BITS_PER_LONG) {
-> >  		if (offset < XA_CHUNK_SIZE) {
-> >  			unsigned long data = *addr & (~0UL << offset);
-> > +
-> >  			if (data)
-> >  				return __ffs(data);
-> >  		}
-> 
-> Do you seriously think this makes the function in any way more
-> legible?
+That commit did two major changes:
+1. Call page_evictable()
+2. Use smp_mb to force the PG_lru set visible
 
-Sorry. I was in doubt whether it would actually improve. I did some
-research in older patches and I found something like this.
+It looks they contribute the most overhead.  The page_evictable() is a
+function which does function prologue and epilogue, and that was used by
+page reclaim path only.  However, lru add is a very hot path, so it
+sounds better to make it inline.  However, it calls page_mapping() which
+is not inlined either, but the disassemble shows it doesn't do push and
+pop operations and it sounds not very straightforward to inline it.
 
+Other than this, it sounds smp_mb() is not necessary for x86 since
+SetPageLRU is atomic which enforces memory barrier already, replace it
+with smp_mb__after_atomic() in the following patch.
 
+With the two fixes applied, the tests can get back around 5% on that
+test bench and get back normal on my VM.  Since the test bench
+configuration is not that usual and I also saw around 6% up on the
+latest upstream, so it sounds good enough IMHO.
+
+The below is test data (lru-file-readtwice throughput) against the v5.6-rc4:
+	mainline	w/ inline fix
+          150MB            154MB
+
+With this patch the throughput gets 2.67% up.  The data with using
+smp_mb__after_atomic() is showed in the following patch.
+
+Shakeel Butt did the below test:
+
+On a real machine with limiting the 'dd' on a single node and reading 100 GiB
+sparse file (less than a single node).  Just ran a single instance to not
+cause the lru lock contention. The cmdline used is
+"dd if=file-100GiB of=/dev/null bs=4k".  Ran the cmd 10 times with drop_caches
+in between and measured the time it took.
+
+Without patch: 56.64143 +- 0.672 sec
+
+With patches: 56.10 +- 0.21 sec
+
+Fixes: 9c4e6b1a7027 ("mm, mlock, vmscan: no more skipping pagevecs")
+Cc: Matthew Wilcox <willy@infradead.org>
+Reviewed-and-Tested-by: Shakeel Butt <shakeelb@google.com>
+Acked-by: Vlastimil Babka <vbabka@suse.cz>
+Signed-off-by: Yang Shi <yang.shi@linux.alibaba.com>
+---
+v4: * Adopted suggestion from Willy to move page_evictable() to pagemap.h.
+v3: * Fixed the build error reported by lkp.
+    * Added Shakeel's test result and his review-and-test signature.
+v2: * Solved the comments from Willy.
+
+ include/linux/pagemap.h | 29 +++++++++++++++++++++++++----
+ include/linux/swap.h    |  1 -
+ mm/vmscan.c             | 23 -----------------------
+ 3 files changed, 25 insertions(+), 28 deletions(-)
+
+diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
+index ccb14b6..82c2127 100644
+--- a/include/linux/pagemap.h
++++ b/include/linux/pagemap.h
+@@ -70,11 +70,9 @@ static inline void mapping_clear_unevictable(struct address_space *mapping)
+ 	clear_bit(AS_UNEVICTABLE, &mapping->flags);
+ }
+ 
+-static inline int mapping_unevictable(struct address_space *mapping)
++static inline bool mapping_unevictable(struct address_space *mapping)
+ {
+-	if (mapping)
+-		return test_bit(AS_UNEVICTABLE, &mapping->flags);
+-	return !!mapping;
++	return mapping && test_bit(AS_UNEVICTABLE, &mapping->flags);
+ }
+ 
+ static inline void mapping_set_exiting(struct address_space *mapping)
+@@ -118,6 +116,29 @@ static inline void mapping_set_gfp_mask(struct address_space *m, gfp_t mask)
+ 	m->gfp_mask = mask;
+ }
+ 
++/**
++ * page_evictable - test whether a page is evictable
++ * @page: the page to test
++ *
++ * Test whether page is evictable--i.e., should be placed on active/inactive
++ * lists vs unevictable list.
++ *
++ * Reasons page might not be evictable:
++ * (1) page's mapping marked unevictable
++ * (2) page is part of an mlocked VMA
++ *
++ */
++static inline bool page_evictable(struct page *page)
++{
++	bool ret;
++
++	/* Prevent address_space of inode and swap cache from being freed */
++	rcu_read_lock();
++	ret = !mapping_unevictable(page_mapping(page)) && !PageMlocked(page);
++	rcu_read_unlock();
++	return ret;
++}
++
+ void release_pages(struct page **pages, int nr);
+ 
+ /*
+diff --git a/include/linux/swap.h b/include/linux/swap.h
+index 1e99f7a..b835d8d 100644
+--- a/include/linux/swap.h
++++ b/include/linux/swap.h
+@@ -374,7 +374,6 @@ extern unsigned long mem_cgroup_shrink_node(struct mem_cgroup *mem,
+ #define node_reclaim_mode 0
+ #endif
+ 
+-extern int page_evictable(struct page *page);
+ extern void check_move_unevictable_pages(struct pagevec *pvec);
+ 
+ extern int kswapd_run(int nid);
+diff --git a/mm/vmscan.c b/mm/vmscan.c
+index 8763705..855c395 100644
+--- a/mm/vmscan.c
++++ b/mm/vmscan.c
+@@ -4277,29 +4277,6 @@ int node_reclaim(struct pglist_data *pgdat, gfp_t gfp_mask, unsigned int order)
+ }
+ #endif
+ 
+-/*
+- * page_evictable - test whether a page is evictable
+- * @page: the page to test
+- *
+- * Test whether page is evictable--i.e., should be placed on active/inactive
+- * lists vs unevictable list.
+- *
+- * Reasons page might not be evictable:
+- * (1) page's mapping marked unevictable
+- * (2) page is part of an mlocked VMA
+- *
+- */
+-int page_evictable(struct page *page)
+-{
+-	int ret;
+-
+-	/* Prevent address_space of inode and swap cache from being freed */
+-	rcu_read_lock();
+-	ret = !mapping_unevictable(page_mapping(page)) && !PageMlocked(page);
+-	rcu_read_unlock();
+-	return ret;
+-}
+-
+ /**
+  * check_move_unevictable_pages - check pages for evictability and move to
+  * appropriate zone lru list
+-- 
+1.8.3.1
 
