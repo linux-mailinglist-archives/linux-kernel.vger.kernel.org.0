@@ -2,273 +2,134 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9CF4C189B53
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 12:53:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 81E6E189B5F
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 12:54:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727044AbgCRLxV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Mar 2020 07:53:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33836 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726473AbgCRLxV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Mar 2020 07:53:21 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 43BAC2076D;
-        Wed, 18 Mar 2020 11:53:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584532399;
-        bh=m9FmbwR3S9CLC9zLKu9zuaEdpr6gT37kN2ogRUDA0VI=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=HQcKfhLwnK+HV659sYu/fUTj2VTa0miJBbFZrmAzGEIQVIaHNUlRakPsGiufzom7Z
-         PdoL34HsBA5gF5fPzIMLBoyJiI/bgzOeFiRyT7XsSimp9Efcy6KS7by7eyU9tfAwMf
-         VTPlix9VHdwO9q8plCNjWhTohMZl64sXq5vUtwWs=
-Date:   Wed, 18 Mar 2020 12:53:17 +0100
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Jolly Shah <jolly.shah@xilinx.com>
-Cc:     ard.biesheuvel@linaro.org, mingo@kernel.org,
-        matt@codeblueprint.co.uk, sudeep.holla@arm.com,
-        hkallweit1@gmail.com, keescook@chromium.org,
-        dmitry.torokhov@gmail.com, michal.simek@xilinx.com,
-        rajanv@xilinx.com, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, Rajan Vaja <rajan.vaja@xilinx.com>,
-        Stefan Krsmanovic <stefan.krsmanovic@aggios.com>,
-        Jolly Shah <jollys@xilinx.com>,
-        Tejas Patel <tejas.patel@xilinx.com>
-Subject: Re: [PATCH v3 23/24] firmware: xilinx: Add sysfs to set shutdown
- scope
-Message-ID: <20200318115317.GD2472686@kroah.com>
-References: <1583538452-1992-1-git-send-email-jolly.shah@xilinx.com>
- <1583538452-1992-24-git-send-email-jolly.shah@xilinx.com>
+        id S1726989AbgCRLyC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Mar 2020 07:54:02 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:44757 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726473AbgCRLyC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Mar 2020 07:54:02 -0400
+Received: by mail-lj1-f193.google.com with SMTP id w4so11947491lji.11;
+        Wed, 18 Mar 2020 04:53:59 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=zoRPacgUUwB54FwEIycrbe2VmBw2Xek495+jUrdW3CU=;
+        b=aR3mLq/bs2LFEmZT3I3v/BeAe0YGR328LaRGezTzZNfUCqssBnTp8evp7M9utbqVVz
+         SF0ustaMeqhBJFEbtykMaIu9mYQqQ+6Nvh8GwRVPEqw5FYYQdcizQsk3o7QEOLmsVabw
+         FCUIyEu18gqlv5zMGRd5MmCg7N34WzBMiRugpZ3C2gImnzyZH4SKbiDpukTm1ITeb0YL
+         uNHseR17u8VKb7ty209axl4FgTbTTtl4Syfu9Cyq5F0O7Vhd+xpJfR6Ym78u/09Ld+4h
+         q3gt6hMF+V5eXERtnqkFkgDgxwsdhbRh3i504HNPBEwfDTNWlNj5f55gmebYnxPNZrHo
+         gQkw==
+X-Gm-Message-State: ANhLgQ3FaQgZfTqE3qqHG5NbjvMiVvKB73m5QCIkn0Zg8yZA8AU8KdEJ
+        qsCRrQrRlrpk7xQSvEH+VYc=
+X-Google-Smtp-Source: ADFU+vsKuMcCNKGnVfDBAMwhBkb9839wKENBAgAHnM5AAvN2lOnM4rawj/9KXwM9cA/Rli3YM23Frg==
+X-Received: by 2002:a05:651c:233:: with SMTP id z19mr2029033ljn.176.1584532438025;
+        Wed, 18 Mar 2020 04:53:58 -0700 (PDT)
+Received: from localhost.localdomain (dc7t7ryyyyyyyyyyyyybt-3.rev.dnainternet.fi. [2001:14ba:16e1:b700::3])
+        by smtp.gmail.com with ESMTPSA id z5sm4441325lfq.71.2020.03.18.04.53.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 18 Mar 2020 04:53:57 -0700 (PDT)
+Date:   Wed, 18 Mar 2020 13:53:52 +0200
+From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+To:     matti.vaittinen@fi.rohmeurope.com, mazziesaccount@gmail.com
+Cc:     Sebastian Reichel <sre@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+        linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Markus Laine <markus.laine@fi.rohmeurope.com>,
+        Mikko Mutanen <mikko.mutanen@fi.rohmeurope.com>
+Subject: [PATCH v5 7/9] power: supply: add battery parameters
+Message-ID: <a1f8695542773179ffb7327852eea4a21f520649.1584468798.git.matti.vaittinen@fi.rohmeurope.com>
+References: <cover.1584468798.git.matti.vaittinen@fi.rohmeurope.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1583538452-1992-24-git-send-email-jolly.shah@xilinx.com>
+In-Reply-To: <cover.1584468798.git.matti.vaittinen@fi.rohmeurope.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 06, 2020 at 03:47:31PM -0800, Jolly Shah wrote:
-> From: Rajan Vaja <rajan.vaja@xilinx.com>
-> 
-> The Linux shutdown functionality implemented via PSCI system_off does
-> not include an option to set a scope, i.e. which parts of the system to
-> shut down.
-> 
-> This patch creates sysfs that allows to set the shutdown scope for the
-> next shutdown request. When the next shutdown is performed, the platform
-> specific portion of PSCI-system_off can use the chosen shutdown scope.
-> 
-> Signed-off-by: Rajan Vaja <rajan.vaja@xilinx.com>
-> Signed-off-by: Stefan Krsmanovic <stefan.krsmanovic@aggios.com>
-> Signed-off-by: Michal Simek <michal.simek@xilinx.com>
-> Signed-off-by: Jolly Shah <jollys@xilinx.com>
-> Signed-off-by: Tejas Patel <tejas.patel@xilinx.com>
-> Signed-off-by: Jolly Shah <jolly.shah@xilinx.com>
-> ---
->  .../ABI/stable/sysfs-driver-firmware-zynqmp        |  32 +++++
->  drivers/firmware/xilinx/zynqmp.c                   | 150 ++++++++++++++++++++-
->  include/linux/firmware/xlnx-zynqmp.h               |  12 ++
->  3 files changed, 193 insertions(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/ABI/stable/sysfs-driver-firmware-zynqmp b/Documentation/ABI/stable/sysfs-driver-firmware-zynqmp
-> index 7fd6e70..b46ec0c 100644
-> --- a/Documentation/ABI/stable/sysfs-driver-firmware-zynqmp
-> +++ b/Documentation/ABI/stable/sysfs-driver-firmware-zynqmp
-> @@ -48,3 +48,35 @@ Description:
->  		# echo 0xFFFFFFFF 0x1234ABCD > /sys/devices/platform/firmware\:zynqmp-firmware/pggs0
->  
->  Users:		Xilinx
-> +
-> +What:		/sys/devices/platform/firmware\:zynqmp-firmware/shutdown_scope
-> +Date:		March 2020
-> +KernelVersion:	5.6
-> +Contact:	"Jolly Shah" <jollys@xilinx.com>
-> +Description:
-> +		This sysfs interface allows to set the shutdown scope for the
-> +		next shutdown request. When the next shutdown is performed, the
-> +		platform specific portion of PSCI-system_off can use the chosen
-> +		shutdown scope.
-> +
-> +		Following are available shutdown scopes(subtypes):
-> +
-> +		subsystem:	Only the APU along with all of its peripherals
-> +				not used by other processing units will be
-> +				shut down. This may result in the FPD power
-> +				domain being shut down provided that no other
-> +				processing unit uses FPD peripherals or DRAM.
-> +		ps_only:	The complete PS will be shut down, including the
-> +				RPU, PMU, etc.  Only the PL domain (FPGA)
-> +				remains untouched.
-> +		system:		The complete system/device is shut down.
-> +
-> +		Usage:
-> +		# cat /sys/devices/platform/firmware\:zynqmp-firmware/shutdown_scope
-> +		# echo <scope> > /sys/devices/platform/firmware\:zynqmp-firmware/shutdown_scope
-> +
-> +		Example:
-> +		# cat /sys/devices/platform/firmware\:zynqmp-firmware/shutdown_scope
-> +		# echo "subsystem" > /sys/devices/platform/firmware\:zynqmp-firmware/shutdown_scope
-> +
-> +Users:		Xilinx
-> diff --git a/drivers/firmware/xilinx/zynqmp.c b/drivers/firmware/xilinx/zynqmp.c
-> index d3f637b..9caf1cf 100644
-> --- a/drivers/firmware/xilinx/zynqmp.c
-> +++ b/drivers/firmware/xilinx/zynqmp.c
-> @@ -847,6 +847,154 @@ int zynqmp_pm_system_shutdown(const u32 type, const u32 subtype)
->  }
->  
->  /**
-> + * struct zynqmp_pm_shutdown_scope - Struct for shutdown scope
-> + * @subtype:	Shutdown subtype
-> + * @name:	Matching string for scope argument
-> + *
-> + * This struct encapsulates mapping between shutdown scope ID and string.
-> + */
-> +struct zynqmp_pm_shutdown_scope {
-> +	const enum zynqmp_pm_shutdown_subtype subtype;
-> +	const char *name;
-> +};
-> +
-> +static struct zynqmp_pm_shutdown_scope shutdown_scopes[] = {
-> +	[ZYNQMP_PM_SHUTDOWN_SUBTYPE_SUBSYSTEM] = {
-> +		.subtype = ZYNQMP_PM_SHUTDOWN_SUBTYPE_SUBSYSTEM,
-> +		.name = "subsystem",
-> +	},
-> +	[ZYNQMP_PM_SHUTDOWN_SUBTYPE_PS_ONLY] = {
-> +		.subtype = ZYNQMP_PM_SHUTDOWN_SUBTYPE_PS_ONLY,
-> +		.name = "ps_only",
-> +	},
-> +	[ZYNQMP_PM_SHUTDOWN_SUBTYPE_SYSTEM] = {
-> +		.subtype = ZYNQMP_PM_SHUTDOWN_SUBTYPE_SYSTEM,
-> +		.name = "system",
-> +	},
-> +};
-> +
-> +static struct zynqmp_pm_shutdown_scope *selected_scope =
-> +		&shutdown_scopes[ZYNQMP_PM_SHUTDOWN_SUBTYPE_SYSTEM];
-> +
-> +/**
-> + * zynqmp_pm_is_shutdown_scope_valid - Check if shutdown scope string is valid
-> + * @scope_string:	Shutdown scope string
-> + *
-> + * Return:		Return pointer to matching shutdown scope struct from
-> + *			array of available options in system if string is valid,
-> + *			otherwise returns NULL.
-> + */
-> +static struct zynqmp_pm_shutdown_scope*
-> +		zynqmp_pm_is_shutdown_scope_valid(const char *scope_string)
-> +{
-> +	int count;
-> +
-> +	for (count = 0; count < ARRAY_SIZE(shutdown_scopes); count++)
-> +		if (sysfs_streq(scope_string, shutdown_scopes[count].name))
-> +			return &shutdown_scopes[count];
-> +
-> +	return NULL;
-> +}
-> +
-> +/**
-> + * shutdown_scope_show - Show shutdown_scope sysfs attribute
-> + * @device:	Device structure
-> + * @attr:	Device attribute structure
-> + * @buf:	Requested available shutdown_scope attributes string
-> + *
-> + * User-space interface for viewing the available scope options for system
-> + * shutdown. Scope option for next shutdown call is marked with [].
-> + *
-> + * Usage: cat /sys/devices/platform/firmware\:zynqmp-firmware/shutdown_scope
-> + *
-> + * Return:	Number of bytes printed into the buffer.
-> + */
-> +static ssize_t shutdown_scope_show(struct device *device,
-> +				   struct device_attribute *attr,
-> +				   char *buf)
-> +{
-> +	int i;
-> +
-> +	for (i = 0; i < ARRAY_SIZE(shutdown_scopes); i++) {
-> +		if (&shutdown_scopes[i] == selected_scope) {
-> +			strcat(buf, "[");
-> +			strcat(buf, shutdown_scopes[i].name);
-> +			strcat(buf, "]");
-> +		} else {
-> +			strcat(buf, shutdown_scopes[i].name);
-> +		}
-> +		strcat(buf, " ");
-> +	}
-> +	strcat(buf, "\n");
-> +
-> +	return strlen(buf);
-> +}
-> +
-> +/**
-> + * shutdown_scope_store - Store shutdown_scope sysfs attribute
-> + * @device:	Device structure
-> + * @attr:	Device attribute structure
-> + * @buf:	User entered shutdown_scope attribute string
-> + * @count:	Buffer size
-> + *
-> + * User-space interface for setting the scope for the next system shutdown.
-> + * Usage: echo <scope> > /sys/devices/platform/firmware\:zynqmp-firmware/shutdown_scope
-> + *
-> + * The Linux shutdown functionality implemented via PSCI system_off does not
-> + * include an option to set a scope, i.e. which parts of the system to shut
-> + * down.
-> + *
-> + * This API function allows to set the shutdown scope for the next shutdown
-> + * request by passing it to the ATF running in EL3. When the next shutdown
-> + * is performed, the platform specific portion of PSCI-system_off can use
-> + * the chosen shutdown scope.
-> + *
-> + * subsystem:	Only the APU along with all of its peripherals not used by other
-> + *		processing units will be shut down. This may result in the FPD
-> + *		power domain being shut down provided that no other processing
-> + *		unit uses FPD peripherals or DRAM.
-> + * ps_only:	The complete PS will be shut down, including the RPU, PMU, etc.
-> + *		Only the PL domain (FPGA) remains untouched.
-> + * system:	The complete system/device is shut down.
-> + *
-> + * Return:	count argument if request succeeds, the corresponding error
-> + *		code otherwise
-> + */
-> +static ssize_t shutdown_scope_store(struct device *device,
-> +				    struct device_attribute *attr,
-> +				    const char *buf, size_t count)
-> +{
-> +	int ret;
-> +	struct zynqmp_pm_shutdown_scope *scope;
-> +
-> +	scope = zynqmp_pm_is_shutdown_scope_valid(buf);
-> +	if (!scope)
-> +		return -EINVAL;
-> +
-> +	ret = zynqmp_pm_system_shutdown(ZYNQMP_PM_SHUTDOWN_TYPE_SETSCOPE_ONLY,
-> +					scope->subtype);
-> +	if (ret) {
-> +		pr_err("unable to set shutdown scope %s\n", buf);
-> +		return ret;
-> +	}
-> +
-> +	selected_scope = scope;
-> +
-> +	return count;
-> +}
-> +
-> +static DEVICE_ATTR_RW(shutdown_scope);
-> +
-> +static struct attribute *zynqmp_shutdown_scope_attrs[] = {
-> +	&dev_attr_shutdown_scope.attr,
-> +	NULL,
-> +};
-> +
-> +static const struct attribute_group shutdown_scope_attribute_group = {
-> +	.attrs = zynqmp_shutdown_scope_attrs,
-> +};
+Add parsing of new device-tree battery bindings.
 
-ATTRIBUTE_GROUPS()?
+     - trickle-charge-current-microamp
+     - precharge-upper-limit-microvolt
+     - re-charge-voltage-microvolt
+     - over-voltage-threshold-microvolt
 
-thanks,
+Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+---
 
-greg k-h
+No changes since v4
+
+ drivers/power/supply/power_supply_core.c | 8 ++++++++
+ include/linux/power_supply.h             | 4 ++++
+ 2 files changed, 12 insertions(+)
+
+diff --git a/drivers/power/supply/power_supply_core.c b/drivers/power/supply/power_supply_core.c
+index 1a9a9fae73d3..02b37fe6061c 100644
+--- a/drivers/power/supply/power_supply_core.c
++++ b/drivers/power/supply/power_supply_core.c
+@@ -620,10 +620,18 @@ int power_supply_get_battery_info(struct power_supply *psy,
+ 			     &info->voltage_min_design_uv);
+ 	of_property_read_u32(battery_np, "voltage-max-design-microvolt",
+ 			     &info->voltage_max_design_uv);
++	of_property_read_u32(battery_np, "trickle-charge-current-microamp",
++			     &info->tricklecharge_current_ua);
+ 	of_property_read_u32(battery_np, "precharge-current-microamp",
+ 			     &info->precharge_current_ua);
++	of_property_read_u32(battery_np, "precharge-upper-limit-microvolt",
++			     &info->precharge_voltage_max_uv);
+ 	of_property_read_u32(battery_np, "charge-term-current-microamp",
+ 			     &info->charge_term_current_ua);
++	of_property_read_u32(battery_np, "re-charge-voltage-microvolt",
++			     &info->charge_restart_voltage_uv);
++	of_property_read_u32(battery_np, "over-voltage-threshold-microvolt",
++			     &info->overvoltage_limit_uv);
+ 	of_property_read_u32(battery_np, "constant-charge-current-max-microamp",
+ 			     &info->constant_charge_current_max_ua);
+ 	of_property_read_u32(battery_np, "constant-charge-voltage-max-microvolt",
+diff --git a/include/linux/power_supply.h b/include/linux/power_supply.h
+index dcd5a71e6c67..d01322d1ab52 100644
+--- a/include/linux/power_supply.h
++++ b/include/linux/power_supply.h
+@@ -346,8 +346,12 @@ struct power_supply_battery_info {
+ 	int charge_full_design_uah;	    /* microAmp-hours */
+ 	int voltage_min_design_uv;	    /* microVolts */
+ 	int voltage_max_design_uv;	    /* microVolts */
++	int tricklecharge_current_ua;	    /* microAmps */
+ 	int precharge_current_ua;	    /* microAmps */
++	int precharge_voltage_max_uv;	    /* microVolts */
+ 	int charge_term_current_ua;	    /* microAmps */
++	int charge_restart_voltage_uv;	    /* microVolts */
++	int overvoltage_limit_uv;	    /* microVolts */
+ 	int constant_charge_current_max_ua; /* microAmps */
+ 	int constant_charge_voltage_max_uv; /* microVolts */
+ 	int factory_internal_resistance_uohm;   /* microOhms */
+-- 
+2.21.0
+
+
+-- 
+Matti Vaittinen, Linux device drivers
+ROHM Semiconductors, Finland SWDC
+Kiviharjunlenkki 1E
+90220 OULU
+FINLAND
+
+~~~ "I don't think so," said Rene Descartes. Just then he vanished ~~~
+Simon says - in Latin please.
+~~~ "non cogito me" dixit Rene Descarte, deinde evanescavit ~~~
+Thanks to Simon Glass for the translation =] 
