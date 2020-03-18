@@ -2,210 +2,159 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B424D189AC9
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 12:37:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 22D99189ACF
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 12:37:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727327AbgCRLhV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Mar 2020 07:37:21 -0400
-Received: from ja.ssi.bg ([178.16.129.10]:49902 "EHLO ja.ssi.bg"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726933AbgCRLhV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Mar 2020 07:37:21 -0400
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-        by ja.ssi.bg (8.15.2/8.15.2) with ESMTP id 02IBaWel007780;
-        Wed, 18 Mar 2020 13:36:42 +0200
-Date:   Wed, 18 Mar 2020 13:36:32 +0200 (EET)
-From:   Julian Anastasov <ja@ssi.bg>
-To:     Haishuang Yan <yanhaishuang@cmss.chinamobile.com>
-cc:     Simon Horman <horms@verge.net.au>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
-        netdev@vger.kernel.org, lvs-devel@vger.kernel.org,
-        netfilter-devel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] ipvs: optimize tunnel dumps for icmp errors
-In-Reply-To: <1584278741-13944-1-git-send-email-yanhaishuang@cmss.chinamobile.com>
-Message-ID: <alpine.LFD.2.21.2003181333460.4911@ja.home.ssi.bg>
-References: <1584278741-13944-1-git-send-email-yanhaishuang@cmss.chinamobile.com>
-User-Agent: Alpine 2.21 (LFD 202 2017-01-01)
+        id S1727395AbgCRLh5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Mar 2020 07:37:57 -0400
+Received: from mail-db8eur05on2109.outbound.protection.outlook.com ([40.107.20.109]:54880
+        "EHLO EUR05-DB8-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727257AbgCRLh4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Mar 2020 07:37:56 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=lhIoch63e/WAdWEi0ts8UZoMX+k72AcEPHFpRRlFZF5uRUz6N0Y8WJ+GGVwfWTxXK8MOKQZMfbxqJq8UOwN8ZbvCnsvESM7oF8qm0bcSkHTI5oPxbSnSE8G5XZrrZtXfGyBU8LMQFjowAr08D5O0ogRonzTiWNw9nitvOepdMGMcJIL1pfmuWP39Oad5h7eVwyEv5nz7RZxkhXiTOeZUc80MayzC5lcBuoMTxq18foBqSGvDcvzT67KdFOHmlsiHicaEJPV8H9lq2r4kazDe6DlpUTRx0QVrTzsFMkQ1+YHI3uKtyIrylYHKyNlKkx89QEoh4wd+i78cjXSchwAN9w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=SxwTF5BUMkIh39kJR3+9eCrOSkdEZtC/Y5UTBIULKQc=;
+ b=k8/qxT55ismSNjz/+2/Hz3FPYvTUWhKl0kMF1jDOTfG7AqFx28Io21856oSxKwMHzpvWSckL5bhuqoBalL6U316dNtilgGm33n6VdPm7yEP5TItOb2tpgwRhUdV/Ps1PonFCylzf0OA0ftJcbngHouPvk6QvIP/FToZaErxG2PXfQbnHeBkdxm38U1Vkov1ZXw5xzLZ9ZFSdAWzBn3xwgR2lhtcxc3/3pzT8zzAcz0HKwpyKLz6WEAL3R7cEjwpWC8J6/RhjTXPoeetYWET01ED/gecbaz6Wc8zyGEXpX6NJ6Hnd7AG0QwP4Je7C6RIrjpvAnZkEm2ouXU+Fxrq+XQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=toradex.com; dmarc=pass action=none header.from=toradex.com;
+ dkim=pass header.d=toradex.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=toradex.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=SxwTF5BUMkIh39kJR3+9eCrOSkdEZtC/Y5UTBIULKQc=;
+ b=MRcd1aGq99rz7bF/46BFkLLFNivT6EBs4Ot8WKHG0ZpTef/QulRbT+0pdNqxyLc2nFvWFY0W/uTS2k0Or+00GjoY62MA+MK3emhsEOORT7Fzme6lMDG1p0rWYF1xfngDz2mmJkO7j2CN+ZVemXK6XG5faOppOJysTdEhLquM3ng=
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=oleksandr.suvorov@toradex.com; 
+Received: from VI1PR05MB3279.eurprd05.prod.outlook.com (10.170.238.24) by
+ VI1PR05MB6493.eurprd05.prod.outlook.com (20.179.25.83) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2814.22; Wed, 18 Mar 2020 11:37:15 +0000
+Received: from VI1PR05MB3279.eurprd05.prod.outlook.com
+ ([fe80::7cdd:4feb:a8b6:a6d2]) by VI1PR05MB3279.eurprd05.prod.outlook.com
+ ([fe80::7cdd:4feb:a8b6:a6d2%7]) with mapi id 15.20.2814.021; Wed, 18 Mar 2020
+ 11:37:15 +0000
+X-Gm-Message-State: ANhLgQ1iEP6of7LUhN0elNhib0QOdOCQwFhgBLzXdLCDSPS9hVy5LFqC
+        8aWDsmLfXVmhpnE6fXlC1cqX4w0W24AXUTCn4+s=
+X-Google-Smtp-Source: ADFU+vuGXLzGDmoWa0HHKzUwu6x5I91KzQ6WZwRI4nrYXhp5JN2rwL3YkKtGFHjJ/LcWYeaszBJ+6n1Ycnb4P30pQLk=
+X-Received: by 2002:ad4:4e10:: with SMTP id dl16mr3840515qvb.44.1584531431943;
+ Wed, 18 Mar 2020 04:37:11 -0700 (PDT)
+References: <20200317123231.2843297-1-oleksandr.suvorov@toradex.com>
+ <20200317123231.2843297-5-oleksandr.suvorov@toradex.com> <20200317230115.GM2527@pendragon.ideasonboard.com>
+In-Reply-To: <20200317230115.GM2527@pendragon.ideasonboard.com>
+From:   Oleksandr Suvorov <oleksandr.suvorov@toradex.com>
+Date:   Wed, 18 Mar 2020 13:37:00 +0200
+X-Gmail-Original-Message-ID: <CAGgjyvEneCwFM8_tnKfNprqw2qkL_94rpsGF=ZgW-m75JBvegw@mail.gmail.com>
+Message-ID: <CAGgjyvEneCwFM8_tnKfNprqw2qkL_94rpsGF=ZgW-m75JBvegw@mail.gmail.com>
+Subject: Re: [RFC PATCH 4/7] dt-bindings: pwm: add description of PWM polarity
+To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc:     devicetree@vger.kernel.org, linux-pwm@vger.kernel.org,
+        Paul Barker <pbarker@konsulko.com>,
+        =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>,
+        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
+        Igor Opaniuk <igor.opaniuk@toradex.com>,
+        Philippe Schenker <philippe.schenker@toradex.com>,
+        Rob Herring <robh+dt@kernel.org>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+X-ClientProxiedBy: MN2PR18CA0009.namprd18.prod.outlook.com
+ (2603:10b6:208:23c::14) To VI1PR05MB3279.eurprd05.prod.outlook.com
+ (2603:10a6:802:1c::24)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+X-MS-Exchange-MessageSentRepresentingType: 1
+Received: from mail-qv1-f54.google.com (209.85.219.54) by MN2PR18CA0009.namprd18.prod.outlook.com (2603:10b6:208:23c::14) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2814.22 via Frontend Transport; Wed, 18 Mar 2020 11:37:15 +0000
+Received: by mail-qv1-f54.google.com with SMTP id cy12so6743996qvb.7;        Wed, 18 Mar 2020 04:37:15 -0700 (PDT)
+X-Gm-Message-State: ANhLgQ1iEP6of7LUhN0elNhib0QOdOCQwFhgBLzXdLCDSPS9hVy5LFqC
+        8aWDsmLfXVmhpnE6fXlC1cqX4w0W24AXUTCn4+s=
+X-Google-Smtp-Source: ADFU+vuGXLzGDmoWa0HHKzUwu6x5I91KzQ6WZwRI4nrYXhp5JN2rwL3YkKtGFHjJ/LcWYeaszBJ+6n1Ycnb4P30pQLk=
+X-Received: by 2002:ad4:4e10:: with SMTP id dl16mr3840515qvb.44.1584531431943;
+ Wed, 18 Mar 2020 04:37:11 -0700 (PDT)
+X-Gmail-Original-Message-ID: <CAGgjyvEneCwFM8_tnKfNprqw2qkL_94rpsGF=ZgW-m75JBvegw@mail.gmail.com>
+X-Originating-IP: [209.85.219.54]
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: ac37f86f-3b87-4102-5a97-08d7cb30b50b
+X-MS-TrafficTypeDiagnostic: VI1PR05MB6493:
+X-Microsoft-Antispam-PRVS: <VI1PR05MB6493C9C9F423B4F563F89D99F9F70@VI1PR05MB6493.eurprd05.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:4125;
+X-Forefront-PRVS: 03468CBA43
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(4636009)(39850400004)(366004)(136003)(376002)(396003)(346002)(199004)(52116002)(9686003)(44832011)(55446002)(450100002)(5660300002)(186003)(26005)(55236004)(2906002)(42186006)(6666004)(4326008)(54906003)(6862004)(53546011)(316002)(81156014)(81166006)(8676002)(66556008)(8936002)(66946007)(66476007)(86362001)(478600001);DIR:OUT;SFP:1102;SCL:1;SRVR:VI1PR05MB6493;H:VI1PR05MB3279.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;
+Received-SPF: None (protection.outlook.com: toradex.com does not designate
+ permitted sender hosts)
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: HOYJh5/+FoT85ILJE/erSf+vUeNr/4lhaFMnspidW2SSU68D1B90glkSnFQRk6g/V+3ZakEX0yYaF2olxFgAePE3zvBAIO5uYjVYRSqM2EfQly2BIO3tZBYbEcxrmPpFAUmZ3tBUuGOXJOxBMyRIq0PSLOjLJUfYxR5b2I+5W+9YxcDNdBr0XsXuYtMuOj9DYFGZGdwQgQpzts3q0sihkmZkxNCPmDr/aSpjsfUTDs/9Y7p+ALobdohRMDJJzS934Bskg48gqEKIH2n8HYuZ49qB9p8ppMrXvfUjS5CxZhZzeYqbGc5RcGjRR/ycP9u7aVA896gU8OO3Wa6zx2zKHRijtr0C0UdNWAHEzYRFFpnHMmy8PRALaEJ+kaJ+JFZRI7ZTzktiBvHdFFkrQgCfydS9Upb1DHmf4hv8KuinLFWrdACIr461+vqKng72ELNX
+X-MS-Exchange-AntiSpam-MessageData: PucYqdzj5+JFRR5fUB212zRl1fljno6Kn1ggxn5lSNotHSgDZWX62BNwNd2EY53DLn9OOfDdMCn3GtlJdqFJcw5NPIE20lHLwnNFXrWw1Rs6sdKpfrzcJSkSJadOYMokpy/4TVSfSNBEQCuRFVoXmA==
+X-OriginatorOrg: toradex.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ac37f86f-3b87-4102-5a97-08d7cb30b50b
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Mar 2020 11:37:15.4292
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: d9995866-0d9b-4251-8315-093f062abab4
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: rP4LQJUlMP1b6usNMMheJKBu11e+mrs1hFHMpcWbHTrRgY5m48pyaea21qHwSTPHBw/PaQa07uBXi3VETp+4UVtZP7ji0ym50A0tzKKcrjE=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR05MB6493
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, Mar 18, 2020 at 1:02 AM Laurent Pinchart
+<laurent.pinchart@ideasonboard.com> wrote:
+>
+> Hi Oleksandr,
+>
+> Thank you for the patch.
+>
+> On Tue, Mar 17, 2020 at 02:32:28PM +0200, Oleksandr Suvorov wrote:
+> > Move the description of the PWM signal polarity from
+> > <linux/pwm.h>, prepare for removing the polarity
+> > definition from <linux/pwm.h>.
+> >
+> > Signed-off-by: Oleksandr Suvorov <oleksandr.suvorov@toradex.com>
+> > ---
+> >
+> >  include/dt-bindings/pwm/pwm.h | 9 +++++++++
+> >  1 file changed, 9 insertions(+)
+> >
+> > diff --git a/include/dt-bindings/pwm/pwm.h b/include/dt-bindings/pwm/pwm.h
+> > index 6b58caa6385e..c07da2088a61 100644
+> > --- a/include/dt-bindings/pwm/pwm.h
+> > +++ b/include/dt-bindings/pwm/pwm.h
+> > @@ -10,7 +10,16 @@
+> >  #ifndef _DT_BINDINGS_PWM_PWM_H
+> >  #define _DT_BINDINGS_PWM_PWM_H
+> >
+> > +/**
+> > + * a high signal for the duration of the duty-cycle, followed by a low signal
+> > + * for the remainder of the pulse period.
+> > + */
+>
+> Last time I checked, kernedoc didn't support documenting macros (enums
+> are supported).
 
-	Hello,
+That's why I dropped the kerneldoc tags leaving the descriptions only.
 
-On Sun, 15 Mar 2020, Haishuang Yan wrote:
+> >  #define PWM_POLARITY_NORMAL                  0
+> > +
+> > +/**
+> > + * a low signal for the duration of the duty-cycle, followed by a high signal
+> > + * for the remainder of the pulse period.
+> > + */
+> >  #define PWM_POLARITY_INVERTED                        (1 << 0)
+> >
+> >  #endif
+>
+> --
+> Regards,
+>
+> Laurent Pinchart
 
-> After strip GRE/UDP tunnel header for icmp errors, it's better to show
-> "GRE/UDP" instead of "IPIP" in debug message.
-> 
-> Signed-off-by: Haishuang Yan <yanhaishuang@cmss.chinamobile.com>
+-- 
+Best regards
+Oleksandr Suvorov
 
-	Looks good to me, thanks!
-
-Acked-by: Julian Anastasov <ja@ssi.bg>
-
-	Simon, this is for -next kernels...
-
-> ---
-> v2: Fix wrong proto message
-> ---
->  net/netfilter/ipvs/ip_vs_core.c | 46 +++++++++++++++++++++++------------------
->  1 file changed, 26 insertions(+), 20 deletions(-)
-> 
-> diff --git a/net/netfilter/ipvs/ip_vs_core.c b/net/netfilter/ipvs/ip_vs_core.c
-> index 512259f..d2ac530 100644
-> --- a/net/netfilter/ipvs/ip_vs_core.c
-> +++ b/net/netfilter/ipvs/ip_vs_core.c
-> @@ -1661,8 +1661,9 @@ static int ipvs_gre_decap(struct netns_ipvs *ipvs, struct sk_buff *skb,
->  	struct ip_vs_protocol *pp;
->  	struct ip_vs_proto_data *pd;
->  	unsigned int offset, offset2, ihl, verdict;
-> -	bool ipip, new_cp = false;
-> +	bool tunnel, new_cp = false;
->  	union nf_inet_addr *raddr;
-> +	char *outer_proto;
->  
->  	*related = 1;
->  
-> @@ -1703,8 +1704,8 @@ static int ipvs_gre_decap(struct netns_ipvs *ipvs, struct sk_buff *skb,
->  		return NF_ACCEPT; /* The packet looks wrong, ignore */
->  	raddr = (union nf_inet_addr *)&cih->daddr;
->  
-> -	/* Special case for errors for IPIP packets */
-> -	ipip = false;
-> +	/* Special case for errors for IPIP/UDP/GRE tunnel packets */
-> +	tunnel = false;
->  	if (cih->protocol == IPPROTO_IPIP) {
->  		struct ip_vs_dest *dest;
->  
-> @@ -1721,7 +1722,8 @@ static int ipvs_gre_decap(struct netns_ipvs *ipvs, struct sk_buff *skb,
->  		cih = skb_header_pointer(skb, offset, sizeof(_ciph), &_ciph);
->  		if (cih == NULL)
->  			return NF_ACCEPT; /* The packet looks wrong, ignore */
-> -		ipip = true;
-> +		tunnel = true;
-> +		outer_proto = "IPIP";
->  	} else if ((cih->protocol == IPPROTO_UDP ||	/* Can be UDP encap */
->  		    cih->protocol == IPPROTO_GRE) &&	/* Can be GRE encap */
->  		   /* Error for our tunnel must arrive at LOCAL_IN */
-> @@ -1729,16 +1731,19 @@ static int ipvs_gre_decap(struct netns_ipvs *ipvs, struct sk_buff *skb,
->  		__u8 iproto;
->  		int ulen;
->  
-> -		/* Non-first fragment has no UDP header */
-> +		/* Non-first fragment has no UDP/GRE header */
->  		if (unlikely(cih->frag_off & htons(IP_OFFSET)))
->  			return NF_ACCEPT;
->  		offset2 = offset + cih->ihl * 4;
-> -		if (cih->protocol == IPPROTO_UDP)
-> +		if (cih->protocol == IPPROTO_UDP) {
->  			ulen = ipvs_udp_decap(ipvs, skb, offset2, AF_INET,
->  					      raddr, &iproto);
-> -		else
-> +			outer_proto = "UDP";
-> +		} else {
->  			ulen = ipvs_gre_decap(ipvs, skb, offset2, AF_INET,
->  					      raddr, &iproto);
-> +			outer_proto = "GRE";
-> +		}
->  		if (ulen > 0) {
->  			/* Skip IP and UDP/GRE tunnel headers */
->  			offset = offset2 + ulen;
-> @@ -1747,7 +1752,7 @@ static int ipvs_gre_decap(struct netns_ipvs *ipvs, struct sk_buff *skb,
->  						 &_ciph);
->  			if (cih && cih->version == 4 && cih->ihl >= 5 &&
->  			    iproto == IPPROTO_IPIP)
-> -				ipip = true;
-> +				tunnel = true;
->  			else
->  				return NF_ACCEPT;
->  		}
-> @@ -1767,11 +1772,11 @@ static int ipvs_gre_decap(struct netns_ipvs *ipvs, struct sk_buff *skb,
->  		      "Checking incoming ICMP for");
->  
->  	offset2 = offset;
-> -	ip_vs_fill_iph_skb_icmp(AF_INET, skb, offset, !ipip, &ciph);
-> +	ip_vs_fill_iph_skb_icmp(AF_INET, skb, offset, !tunnel, &ciph);
->  	offset = ciph.len;
->  
->  	/* The embedded headers contain source and dest in reverse order.
-> -	 * For IPIP this is error for request, not for reply.
-> +	 * For IPIP/UDP/GRE tunnel this is error for request, not for reply.
->  	 */
->  	cp = INDIRECT_CALL_1(pp->conn_in_get, ip_vs_conn_in_get_proto,
->  			     ipvs, AF_INET, skb, &ciph);
-> @@ -1779,7 +1784,7 @@ static int ipvs_gre_decap(struct netns_ipvs *ipvs, struct sk_buff *skb,
->  	if (!cp) {
->  		int v;
->  
-> -		if (ipip || !sysctl_schedule_icmp(ipvs))
-> +		if (tunnel || !sysctl_schedule_icmp(ipvs))
->  			return NF_ACCEPT;
->  
->  		if (!ip_vs_try_to_schedule(ipvs, AF_INET, skb, pd, &v, &cp, &ciph))
-> @@ -1797,7 +1802,7 @@ static int ipvs_gre_decap(struct netns_ipvs *ipvs, struct sk_buff *skb,
->  		goto out;
->  	}
->  
-> -	if (ipip) {
-> +	if (tunnel) {
->  		__be32 info = ic->un.gateway;
->  		__u8 type = ic->type;
->  		__u8 code = ic->code;
-> @@ -1809,17 +1814,18 @@ static int ipvs_gre_decap(struct netns_ipvs *ipvs, struct sk_buff *skb,
->  			u32 mtu = ntohs(ic->un.frag.mtu);
->  			__be16 frag_off = cih->frag_off;
->  
-> -			/* Strip outer IP and ICMP, go to IPIP header */
-> +			/* Strip outer IP and ICMP, go to IPIP/UDP/GRE header */
->  			if (pskb_pull(skb, ihl + sizeof(_icmph)) == NULL)
-> -				goto ignore_ipip;
-> +				goto ignore_tunnel;
->  			offset2 -= ihl + sizeof(_icmph);
->  			skb_reset_network_header(skb);
-> -			IP_VS_DBG(12, "ICMP for IPIP %pI4->%pI4: mtu=%u\n",
-> -				&ip_hdr(skb)->saddr, &ip_hdr(skb)->daddr, mtu);
-> +			IP_VS_DBG(12, "ICMP for %s %pI4->%pI4: mtu=%u\n",
-> +				  outer_proto, &ip_hdr(skb)->saddr,
-> +				  &ip_hdr(skb)->daddr, mtu);
->  			ipv4_update_pmtu(skb, ipvs->net, mtu, 0, 0);
->  			/* Client uses PMTUD? */
->  			if (!(frag_off & htons(IP_DF)))
-> -				goto ignore_ipip;
-> +				goto ignore_tunnel;
->  			/* Prefer the resulting PMTU */
->  			if (dest) {
->  				struct ip_vs_dest_dst *dest_dst;
-> @@ -1832,11 +1838,11 @@ static int ipvs_gre_decap(struct netns_ipvs *ipvs, struct sk_buff *skb,
->  				mtu -= sizeof(struct iphdr);
->  			info = htonl(mtu);
->  		}
-> -		/* Strip outer IP, ICMP and IPIP, go to IP header of
-> +		/* Strip outer IP, ICMP and IPIP/UDP/GRE, go to IP header of
->  		 * original request.
->  		 */
->  		if (pskb_pull(skb, offset2) == NULL)
-> -			goto ignore_ipip;
-> +			goto ignore_tunnel;
->  		skb_reset_network_header(skb);
->  		IP_VS_DBG(12, "Sending ICMP for %pI4->%pI4: t=%u, c=%u, i=%u\n",
->  			&ip_hdr(skb)->saddr, &ip_hdr(skb)->daddr,
-> @@ -1845,7 +1851,7 @@ static int ipvs_gre_decap(struct netns_ipvs *ipvs, struct sk_buff *skb,
->  		/* ICMP can be shorter but anyways, account it */
->  		ip_vs_out_stats(cp, skb);
->  
-> -ignore_ipip:
-> +ignore_tunnel:
->  		consume_skb(skb);
->  		verdict = NF_STOLEN;
->  		goto out;
-> -- 
-> 1.8.3.1
-
-Regards
-
---
-Julian Anastasov <ja@ssi.bg>
+Toradex AG
+Ebenaustrasse 10 | 6048 Horw | Switzerland | T: +41 41 500 48 00
