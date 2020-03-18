@@ -2,199 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BA9C118A30E
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 20:23:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E2BA118A311
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 20:23:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726877AbgCRTXL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Mar 2020 15:23:11 -0400
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:45106 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726619AbgCRTXL (ORCPT
+        id S1727082AbgCRTXQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Mar 2020 15:23:16 -0400
+Received: from orion.archlinux.org ([88.198.91.70]:43296 "EHLO
+        orion.archlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727027AbgCRTXP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Mar 2020 15:23:11 -0400
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 02IJN6Fs068538;
-        Wed, 18 Mar 2020 14:23:06 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1584559386;
-        bh=4RtGMvb6PsyZbz80Ujo1TfR5IGVyIIByosWZfa6bT9M=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=ryjqA912AaMQMxHHWXayvgB/+P4L1ro/RGMNK0uqa0HIdOvOOeUWCTnsIyu2/yaV2
-         MVpE+BWaZkXLpeYlpX/ae7O/z4LCVM39neAA7XV8i+CgTSm9R+2n6Yu9beXiJhwJTA
-         4Ia0AkQZR/2/TcUE+byHtWZXBWolEivmf1UrvlzE=
-Received: from DFLE106.ent.ti.com (dfle106.ent.ti.com [10.64.6.27])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 02IJN6Yg082709
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 18 Mar 2020 14:23:06 -0500
-Received: from DFLE115.ent.ti.com (10.64.6.36) by DFLE106.ent.ti.com
- (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Wed, 18
- Mar 2020 14:23:06 -0500
-Received: from lelv0327.itg.ti.com (10.180.67.183) by DFLE115.ent.ti.com
- (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Wed, 18 Mar 2020 14:23:06 -0500
-Received: from [10.250.35.147] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id 02IJN5LC053609;
-        Wed, 18 Mar 2020 14:23:05 -0500
-Subject: Re: [PATCH 2/2] remoteproc: Fix and restore the parenting hierarchy
- for vdev
-To:     Arnaud POULIQUEN <arnaud.pouliquen@st.com>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>
-CC:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Loic Pallardy <loic.pallardy@st.com>,
-        Tero Kristo <t-kristo@ti.com>,
-        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20200305224108.21351-1-s-anna@ti.com>
- <20200305224108.21351-3-s-anna@ti.com> <20200317180530.GA1801@xps15>
- <76772d98-93d9-e559-01b8-ba7d4d1cc1eb@st.com>
-From:   Suman Anna <s-anna@ti.com>
-Message-ID: <f08b15c2-639c-2919-e321-a5a5296e8112@ti.com>
-Date:   Wed, 18 Mar 2020 14:23:05 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        Wed, 18 Mar 2020 15:23:15 -0400
+Received: from orion.archlinux.org (localhost [127.0.0.1])
+        by orion.archlinux.org (Postfix) with ESMTP id E11721A33B3EAB;
+        Wed, 18 Mar 2020 19:23:12 +0000 (UTC)
+X-Spam-Checker-Version: SpamAssassin 3.4.4 (2020-01-24) on orion.archlinux.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-1.7 required=5.0 tests=ALL_TRUSTED=-1,BAYES_00=-1,
+        DMARC_FAIL_NONE=0.25,T_DMARC_POLICY_NONE=0.01,T_DMARC_TESTS_FAIL=0.01
+        autolearn=no autolearn_force=no version=3.4.4
+X-Spam-BL-Results: 
+Received: from genesis (unknown [IPv6:2001:8a0:f254:2300:dad6:8c60:8394:88da])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-384) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        (Authenticated sender: ffy00)
+        by orion.archlinux.org (Postfix) with ESMTPSA;
+        Wed, 18 Mar 2020 19:23:11 +0000 (UTC)
+Message-ID: <5404e421520419a8031593179798b95bd0970bd8.camel@archlinux.org>
+Subject: Re: [PATCH] HID: logitech-dj: issue udev change event on device
+ connection
+From:   Filipe =?ISO-8859-1?Q?La=EDns?= <lains@archlinux.org>
+To:     Jiri Kosina <jikos@kernel.org>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Peter Hutterer <peter.hutterer@redhat.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Mario Limonciello <superm1@gmail.com>,
+        Richard Hughes <hughsient@gmail.com>
+In-Reply-To: <20200318161906.3340959-1-lains@archlinux.org>
+References: <20200318161906.3340959-1-lains@archlinux.org>
+Organization: Archlinux
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-ciTeMDtrJBxBOS7lKYqJ"
+Date:   Wed, 18 Mar 2020 19:23:10 +0000
 MIME-Version: 1.0
-In-Reply-To: <76772d98-93d9-e559-01b8-ba7d4d1cc1eb@st.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+User-Agent: Evolution 3.36.0 
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Arnaud,
 
-On 3/18/20 11:38 AM, Arnaud POULIQUEN wrote:
-> Hi Suman, Mathieu,
-> 
-> On 3/17/20 7:05 PM, Mathieu Poirier wrote:
->> Hi Suman,
->>
->> On Thu, Mar 05, 2020 at 04:41:08PM -0600, Suman Anna wrote:
->>> The commit 086d08725d34 ("remoteproc: create vdev subdevice with specific
->>> dma memory pool") has introduced a new vdev subdevice for each vdev
->>> declared in the firmware resource table and made it as the parent for the
->>> created virtio rpmsg devices instead of the previous remoteproc device.
->>> This changed the overall parenting hierarchy for the rpmsg devices, which
->>> were children of virtio devices, and does not allow the corresponding
->>> rpmsg drivers to retrieve the parent rproc device through the
->>> rproc_get_by_child() API.
->>>
->>> Fix this by restoring the remoteproc device as the parent. The new vdev
->>> subdevice can continue to inherit the DMA attributes from the remoteproc's
->>> parent device (actual platform device).
->>>
->>> Fixes: 086d08725d34 ("remoteproc: create vdev subdevice with specific dma memory pool")
->>> Signed-off-by: Suman Anna <s-anna@ti.com>
->>> ---
->>>  drivers/remoteproc/remoteproc_core.c | 2 +-
->>>  1 file changed, 1 insertion(+), 1 deletion(-)
->>>
->>> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
->>> index 097f33e4f1f3..ba18f32bd0c4 100644
->>> --- a/drivers/remoteproc/remoteproc_core.c
->>> +++ b/drivers/remoteproc/remoteproc_core.c
->>> @@ -510,7 +510,7 @@ static int rproc_handle_vdev(struct rproc *rproc, struct fw_rsc_vdev *rsc,
->>>  
->>>  	/* Initialise vdev subdevice */
->>>  	snprintf(name, sizeof(name), "vdev%dbuffer", rvdev->index);
->>> -	rvdev->dev.parent = rproc->dev.parent;
->>> +	rvdev->dev.parent = &rproc->dev;
->>
->> I can see how it would not be possible to retrieve the parent rproc device since
->> rvdev->dev.parent was set to be platform device...
-> 
-> In rpmsg_virtio_bus.c [1] the vdev buffers are allocated in a memory region using a dma_alloc_coherent
-> So the buffers are allocated in the platform driver memory region if declared, else in the default memory region. 
-> 
-> According to  086d08725d34 ("remoteproc: create vdev subdevice with specific dma memory pool"),
-> A patch has been integrated in rpmsg framework:  d999b622fcfb3 ("rpmsg: virtio: allocate buffer from parent")
-> 
-> -	bufs_va = dma_alloc_coherent(vdev->dev.parent->parent,
-> +	bufs_va = dma_alloc_coherent(vdev->dev.parent,
-> 
-> So in term of parent-child relationchip the Loic's patches seem coherent, and don't affect parenting hierarchy
-> for the rpmsg bus.
+--=-ciTeMDtrJBxBOS7lKYqJ
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-So, there are two things w.r.t rpmsg device hierarchy - buffer
-allocations and the overall hierarchy to allow a child rpmsg device to
-be able to retrieve the corresponding rproc. This is done using
-rproc_get_by_child() which walks up the dev parent hierarchy and
-matching the parent device type to rproc_type.
+On Wed, 2020-03-18 at 16:19 +0000, Filipe La=C3=ADns wrote:
+> As discussed in the mailing list:
+>=20
+> > Right now the hid-logitech-dj driver will export one node for each
+> > connected device, even when the device is not connected. That
+> > causes
+> > some trouble because in userspace we don't have have any way to
+> > know if
+> > the device is connected or not, so when we try to communicate, if
+> > the
+> > device is disconnected it will fail.
+>=20
+> The solution reached to solve this issue is to trigger an udev change
+> event when the device connects, this way userspace can just wait on
+> those connections instead of trying to ping the device.
+>=20
+> Signed-off-by: Filipe La=C3=ADns <lains@archlinux.org>
+> ---
+>  drivers/hid/hid-logitech-dj.c | 2 ++
+>  1 file changed, 2 insertions(+)
+>=20
+> diff --git a/drivers/hid/hid-logitech-dj.c b/drivers/hid/hid-
+> logitech-dj.c
+> index 48dff5d6b605..fcd481a0be1f 100644
+> --- a/drivers/hid/hid-logitech-dj.c
+> +++ b/drivers/hid/hid-logitech-dj.c
+> @@ -1464,6 +1464,8 @@ static int logi_dj_dj_event(struct hid_device
+> *hdev,
+>  		if (dj_report-
+> >report_params[CONNECTION_STATUS_PARAM_STATUS] =3D=3D
+>  		    STATUS_LINKLOSS) {
+>  			logi_dj_recv_forward_null_report(djrcv_dev,
+> dj_report);
+> +		} else {
+> +			kobject_uevent(&hdev->dev.kobj, KOBJ_CHANGE);
+>  		}
+>  		break;
+>  	default:
 
-Commit 086d08725d34 adds a new vdevbuffer device with parent as the
-rproc platform device and makes this the parent of the virtio device, so
-the buffer allocations were unchanged just with that commit, but the
-rproc lookup will always fail. The later commit d999b622fcfb3 switches
-the buffer allocation over to the vdevbuffer device, and with rproc
-drivers that added dedicated vdevbuf pools allocates from those pools
-(these were mostly coming from a specific rproc platform device memory
-region index anyway). For those that did not define, this actually
-became the global pool even if the rproc device was using a single
-DMA/CMA pool (patch 1).
+Just noticed I was issuing the udev event on the receiver instead of
+the connected device. I will send a v2.
 
-Please see my cover-letter for an example of the dev hierarchy.
+Filipe La=C3=ADns
 
-> 
-> So It seems to me that this patch breaks the relationship between the rpmsg bus
-> and the rproc platform driver, at least concerning the buffer allocation.
+--=-ciTeMDtrJBxBOS7lKYqJ
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
 
-I am not sure if you were interpreting this patch with or without
-d999b622fcfb3 ("rpmsg: virtio: allocate buffer from parent"). Both of
-the above commits are in 5.1, so I consider this patch to be fixing only
-on 5.1+ kernels and it does use d999b622fcfb3. Buffer allocations after
-this patch without d999b622fcfb3 would try to allocate from rproc device
-which is a pseudo-device and doesn't have any pools defined with it, so
-will allocate from the global pool.
+-----BEGIN PGP SIGNATURE-----
 
-> But on the other side this patch doesn't introduce regression for rpmsg bus on my platform... 
-> 
-> I probably missed something important because i can not figure out how this patch don't introduce regression.
-> Can the rproc->dev inherits from the rproc platform device in term of memory regions?
-> 
-> [1]: https://elixir.bootlin.com/linux/latest/source/drivers/rpmsg/virtio_rpmsg_bus.c#L915
-> [2]: https://lkml.org/lkml/2018/11/30/180
-> 
->>
->> I wonder how the original change didn't blow up sysmon_probe() and potentially
->> other out-of-tree users of rproc_get_by_child().  It would be nice to have
->> someone from the QCOM team test your patch.
-> 
-> You are right the rproc platform device is now the grand parent of a rpmsg device, while before it was the parent.
-> Anyway, does it makes sense to have this kind of dependency between rpmsg device and rproc device?
-> The fix could be done in the rpmsg device that would be rproc dependent (if out-of-tree).
+iQIzBAABCAAdFiEE0jW0leqs33gyftiw+JPGdIFqqV0FAl5ydR4ACgkQ+JPGdIFq
+qV1RJBAAj8gSKs5gc9e2B7HN6c0ThwipBVm0xPCzfKpvXHga7vYi5ouUNcfCxQoo
+wLEbEtbkUWjxh/ooQQEudjA5PBCDIkcjrNpxttxEZuVM2UPrGLYKvnRusV8cCxnR
+o08Rgbx+882R0me5IMl1806TUfF8bPk3bhKXn7pry1sCAl0I2uYJGCoNU17e8DDC
+Q0c8IZg4+Kd1vEOJ9GjmFV4Tx4lX4m8kqZsxZ0Ku0KDdjM4mM9CDAT4Zh0oRfcce
+nfEs2I1w1a/aJRaIAI6VWFgaqXauSA+DTKeS/slit64tLdWhOhL6xbtOqCTqqPgv
+hkDISj8IZ6BDfkTWAp5ttxvm79m9qI7iK8GVX6KqLzBtuFHm1Xm4OnTMLFZMu8vi
+DrfqMrgezkoczFQja8PttcfITJQ/SaKTPt0rgxEXExt0JNDR2cuF1TPNkIaGI3DV
+nRbKN5vRkq66d/BoG4UFHQGHjitUcoZdoo17dd9A5qcM6LXVXi2J4kWHP98aYzxX
+CJmg+k8UlMUO8OuHQQXdAkYjfnZf/uDnxRGaRpfupeCh0PJp8bzBtmVNdhRFLa3s
+Hksu0F75X+Ujx5NtH6RG10iyN9sJtBsvnbJn0iuxeYMEJJIK+3vGfU31E1EqDjtH
+BUII0wcvBB/q9h23bkcIaNW+o7vW764gyEeDUZi0meA5eFEqNP4=
+=gWhb
+-----END PGP SIGNATURE-----
 
-Not sure what you are proposing here, since you cannot retrieve a rproc
-handle. We use this to perform address translations in rpmsg drivers
-since all the addresses are with the rproc device.
-
-> The alternative could be to declare the rpmsg device in device tree as child of the rproc platform device...
-
-And that is completely orthogonal and doesn't solve the current scenario
-where rpmsg devices are created through the virtio-rpmsg bus nameservice
-announcement.
-
-regards
-Suman
-
-
-> 
-> Regards,
-> Arnaud
-> 
->>
->>>  	rvdev->dev.dma_pfn_offset = rproc->dev.parent->dma_pfn_offset;
->>>  	rvdev->dev.release = rproc_rvdev_release;
->>>  	dev_set_name(&rvdev->dev, "%s#%s", dev_name(rvdev->dev.parent), name);
->>
->> Be mindful there might be fallouts from applying this patch since it does change
->> the location of the vdev under /sys/device/platform/ .
->>
->> Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
->>
->>> -- 
->>> 2.23.0
->>>
-
+--=-ciTeMDtrJBxBOS7lKYqJ--
