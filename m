@@ -2,130 +2,62 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DCF5A18A3ED
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 21:45:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 511CE18A43D
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 21:50:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726897AbgCRUpc convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 18 Mar 2020 16:45:32 -0400
-Received: from us-smtp-2.mimecast.com ([205.139.110.61]:25266 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726647AbgCRUpb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Mar 2020 16:45:31 -0400
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-284-kcuabduPOgCQd7eUPJdaaA-1; Wed, 18 Mar 2020 16:45:27 -0400
-X-MC-Unique: kcuabduPOgCQd7eUPJdaaA-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1727069AbgCRUuh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Mar 2020 16:50:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50358 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726747AbgCRUuh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Mar 2020 16:50:37 -0400
+Received: from willie-the-truck (236.31.169.217.in-addr.arpa [217.169.31.236])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 0D5B5800D5E;
-        Wed, 18 Mar 2020 20:45:26 +0000 (UTC)
-Received: from krava.redhat.com (unknown [10.40.192.164])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id D7F035C545;
-        Wed, 18 Mar 2020 20:45:23 +0000 (UTC)
-From:   Jiri Olsa <jolsa@kernel.org>
-To:     Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc:     lkml <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Michael Petlan <mpetlan@redhat.com>
-Subject: [PATCH] perf tools: Unify a bit the build directory output
-Date:   Wed, 18 Mar 2020 21:45:22 +0100
-Message-Id: <20200318204522.1200981-1-jolsa@kernel.org>
+        by mail.kernel.org (Postfix) with ESMTPSA id 28DB320724;
+        Wed, 18 Mar 2020 20:50:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1584564637;
+        bh=RpVUbrA6GLX6oxjlNmWztIMdXN6zWtDhebJqAHQf1+c=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=uoOE98RpOGBl59PNZvCx/Au9i4LC64YKNe98455ND4I6HWKEz9G1qqIvggonNnedD
+         dLXXgSx4gMv0y4BeMSxxI8oJC1jrSz9UVH772yTbtO77WTZ8GQc0V8J6YsKI6Ej165
+         xOes8VhTaE8+5snNexRj2elwnj8NYen9ITpA1eu4=
+Date:   Wed, 18 Mar 2020 20:50:30 +0000
+From:   Will Deacon <will@kernel.org>
+To:     Krishna Reddy <vdumpa@nvidia.com>
+Cc:     joro@8bytes.org, robin.murphy@arm.com,
+        linux-arm-kernel@lists.infradead.org,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+        linux-tegra@vger.kernel.org, treding@nvidia.com, yhsu@nvidia.com,
+        snikam@nvidia.com, praithatha@nvidia.com, talho@nvidia.com,
+        avanbrunt@nvidia.com, bbiswas@nvidia.com, olof@lixom.net,
+        jtukkinen@nvidia.com, mperttunen@nvidia.com, nicolinc@nvidia.com
+Subject: Re: [PATCH v4 0/6] Nvidia Arm SMMUv2 Implementation
+Message-ID: <20200318205030.GA8094@willie-the-truck>
+References: <1572480437-28449-1-git-send-email-vdumpa@nvidia.com>
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: kernel.org
-Content-Type: text/plain; charset=WINDOWS-1252
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1572480437-28449-1-git-send-email-vdumpa@nvidia.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Removing the extra 'SUBDIR' line from clean and doc build
-output. Because it's annoying.. ;-)
+Hi Krishna,
 
-Before:
-  $ make clean
-  ...
-  SUBDIR   Documentation
-  CLEAN    Documentation
+On Wed, Oct 30, 2019 at 05:07:11PM -0700, Krishna Reddy wrote:
+> Changes in v4:
+> Rebased on top of https://git.kernel.org/pub/scm/linux/kernel/git/will/linux.git/ for-joerg/arm-smmu/updates.
+> Updated arm-smmu-nvidia.c to use the tlb_sync implementation hook.
+> Dropped patch that updates arm_smmu_flush_ops for override as it is no longer necessary.
+> 
+> v3 - https://lkml.org/lkml/2019/10/18/1601
+> v2 - https://lkml.org/lkml/2019/9/2/980
+> v1 - https://lkml.org/lkml/2019/8/29/1588
 
-After:
-  $ make clean
-  ...
-  CLEAN    Documentation
+Do you plan to repost this at some point?
 
-Before:
-  $ make doc
-  BUILD:   Doing 'make -j8' parallel build
-  SUBDIR   Documentation
-  ASCIIDOC perf-stat.html
-  ...
-
-After:
-  $ make doc
-  BUILD:   Doing 'make -j8' parallel build
-  ASCIIDOC perf-stat.html
-  ...
-
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
----
- tools/perf/Makefile.perf | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
-
-diff --git a/tools/perf/Makefile.perf b/tools/perf/Makefile.perf
-index 3eda9d4b88e7..a02aca9b21f4 100644
---- a/tools/perf/Makefile.perf
-+++ b/tools/perf/Makefile.perf
-@@ -231,6 +231,7 @@ TRACE_EVENT_DIR = $(srctree)/tools/lib/traceevent/
- BPF_DIR         = $(srctree)/tools/lib/bpf/
- SUBCMD_DIR      = $(srctree)/tools/lib/subcmd/
- LIBPERF_DIR     = $(srctree)/tools/lib/perf/
-+DOC_DIR         = $(srctree)/tools/perf/Documentation/
- 
- # Set FEATURE_TESTS to 'all' so all possible feature checkers are executed.
- # Without this setting the output feature dump file misses some features, for
-@@ -792,7 +793,6 @@ $(LIBSUBCMD): FORCE
- 	$(Q)$(MAKE) -C $(SUBCMD_DIR) O=$(OUTPUT) $(OUTPUT)libsubcmd.a
- 
- $(LIBSUBCMD)-clean:
--	$(call QUIET_CLEAN, libsubcmd)
- 	$(Q)$(MAKE) -C $(SUBCMD_DIR) O=$(OUTPUT) clean
- 
- help:
-@@ -832,7 +832,7 @@ INSTALL_DOC_TARGETS += quick-install-doc quick-install-man quick-install-html
- 
- # 'make doc' should call 'make -C Documentation all'
- $(DOC_TARGETS):
--	$(QUIET_SUBDIR0)Documentation $(QUIET_SUBDIR1) $(@:doc=all)
-+	$(Q)$(MAKE) -C $(DOC_DIR) O=$(OUTPUT) $(@:doc=all)
- 
- TAG_FOLDERS= . ../lib ../include
- TAG_FILES= ../../include/uapi/linux/perf_event.h
-@@ -959,7 +959,7 @@ install-python_ext:
- 
- # 'make install-doc' should call 'make -C Documentation install'
- $(INSTALL_DOC_TARGETS):
--	$(QUIET_SUBDIR0)Documentation $(QUIET_SUBDIR1) $(@:-doc=)
-+	$(Q)$(MAKE) -C $(DOC_DIR) O=$(OUTPUT) $(@:-doc=)
- 
- ### Cleaning rules
- 
-@@ -1008,7 +1008,8 @@ clean:: $(LIBTRACEEVENT)-clean $(LIBAPI)-clean $(LIBBPF)-clean $(LIBSUBCMD)-clea
- 		$(OUTPUT)$(rename_flags_array) \
- 		$(OUTPUT)$(arch_errno_name_array) \
- 		$(OUTPUT)$(sync_file_range_arrays)
--	$(QUIET_SUBDIR0)Documentation $(QUIET_SUBDIR1) clean
-+	$(call QUIET_CLEAN, Documentation) \
-+	$(MAKE) -C $(DOC_DIR) O=$(OUTPUT) clean >/dev/null
- 
- #
- # To provide FEATURE-DUMP into $(FEATURE_DUMP_COPY)
--- 
-2.25.1
-
+Will
