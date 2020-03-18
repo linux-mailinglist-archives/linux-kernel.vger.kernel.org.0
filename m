@@ -2,90 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 93B0318A3C2
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 21:28:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B601818A3DA
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 21:37:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726813AbgCRU2k (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Mar 2020 16:28:40 -0400
-Received: from smtprelay0042.hostedemail.com ([216.40.44.42]:33972 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726663AbgCRU2k (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Mar 2020 16:28:40 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay01.hostedemail.com (Postfix) with ESMTP id 34A63100E7B45;
-        Wed, 18 Mar 2020 20:28:39 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,,RULES_HIT:41:355:379:599:973:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:2393:2559:2562:2828:3138:3139:3140:3141:3142:3352:3622:3865:3866:3867:3871:3872:4321:4605:5007:9592:10004:10400:10848:11473:11657:11658:11914:12043:12048:12296:12297:12438:12555:12683:12740:12760:12895:13069:13311:13357:13439:14110:14659:14721:21080:21451:21627:21990:30054:30091,0,RBL:none,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:1,LUA_SUMMARY:none
-X-HE-Tag: sleep52_2e1ea103be818
-X-Filterd-Recvd-Size: 2672
-Received: from XPS-9350 (unknown [172.58.30.155])
-        (Authenticated sender: joe@perches.com)
-        by omf09.hostedemail.com (Postfix) with ESMTPA;
-        Wed, 18 Mar 2020 20:28:36 +0000 (UTC)
-Message-ID: <3a997f4ee640e607a171a19668f5f5484062116c.camel@perches.com>
-Subject: Re: [PATCH] drm/amdgpu: Initialize shadow to false in
- gfx_v9_0_rlcg_wreg
-From:   Joe Perches <joe@perches.com>
-To:     Nathan Chancellor <natechancellor@gmail.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Christian =?ISO-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-        "David (ChunMing) Zhou" <David1.Zhou@amd.com>
-Cc:     amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, clang-built-linux@googlegroups.com
-Date:   Wed, 18 Mar 2020 13:26:44 -0700
-In-Reply-To: <20200318002500.52471-1-natechancellor@gmail.com>
-References: <20200318002500.52471-1-natechancellor@gmail.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.34.1-2 
+        id S1726866AbgCRUhp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Mar 2020 16:37:45 -0400
+Received: from ns.omicron.at ([212.183.10.25]:53970 "EHLO ns.omicron.at"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726596AbgCRUho (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Mar 2020 16:37:44 -0400
+X-Greylist: delayed 525 seconds by postgrey-1.27 at vger.kernel.org; Wed, 18 Mar 2020 16:37:43 EDT
+Received: from MGW02-ATKLA.omicron.at ([172.25.62.35])
+        by ns.omicron.at (8.15.2/8.15.2) with ESMTPS id 02IKSuVT027520
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 18 Mar 2020 21:28:57 +0100
+DKIM-Filter: OpenDKIM Filter v2.11.0 ns.omicron.at 02IKSuVT027520
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=omicronenergy.com;
+        s=default; t=1584563337;
+        bh=TZ4EahDLI/A01zegYlJj0zs+tkxDyl9TX5N0Nk//S44=;
+        h=From:To:CC:Subject:Date:From;
+        b=AruF/0wjIjJmmgE05JBtlIQsakzGgN4gMj2hNO/uH8c/kQuk1LTO7p+dyikTGrDH5
+         apfDBd36iiSygLaItUAI8r9cScOd15qJS4oBM/JEb0dUx766VjW/aWpd/NVLamuUdp
+         JnV6giHAz2Xh5SEDBO115ZOk0AHJl+M6a+JZGa9A=
+Received: from MGW02-ATKLA.omicron.at (localhost [127.0.0.1])
+        by MGW02-ATKLA.omicron.at (Postfix) with ESMTP id C8614A0141;
+        Wed, 18 Mar 2020 21:28:56 +0100 (CET)
+Received: from MGW01-ATKLA.omicron.at (unknown [172.25.62.34])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by MGW02-ATKLA.omicron.at (Postfix) with ESMTPS id C315AA018C;
+        Wed, 18 Mar 2020 21:28:56 +0100 (CET)
+Received: from EXC03-ATKLA.omicron.at ([172.22.100.188])
+        by MGW01-ATKLA.omicron.at  with ESMTP id 02IKSuYW014882-02IKSuYY014882
+        (version=TLSv1.2 cipher=AES256-SHA256 bits=256 verify=CAFAIL);
+        Wed, 18 Mar 2020 21:28:56 +0100
+Received: from thogra00ll01.omicron.at (172.29.5.144) by
+ EXC03-ATKLA.omicron.at (172.22.100.188) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1713.5; Wed, 18 Mar 2020 21:28:55 +0100
+From:   Thomas Graziadei <thomas.graziadei@omicronenergy.com>
+To:     <linux-kernel@vger.kernel.org>
+CC:     <bigeasy@linutronix.de>, <rostedt@goodmis.org>,
+        <tglx@linutronix.de>, <linux-rt-users@vger.kernel.org>,
+        Thomas Graziadei <thomas.graziadei@omicronenergy.com>
+Subject: [PATCH] powerpc: Fix lazy preemption for powerpc 32bit
+Date:   Wed, 18 Mar 2020 21:26:40 +0100
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Originating-IP: [172.29.5.144]
+X-ClientProxiedBy: EXC04-ATKLA.omicron.at (172.22.100.189) To
+ EXC03-ATKLA.omicron.at (172.22.100.188)
+Message-ID: <0c91d808-b077-408c-b120-99e806efaeb5@EXC03-ATKLA.omicron.at>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2020-03-17 at 17:25 -0700, Nathan Chancellor wrote:
-> clang warns:
-> 
-> drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c:754:6: warning: variable 'shadow'
-> is used uninitialized whenever 'if' condition is
-> false [-Wsometimes-uninitialized]
->         if (offset == grbm_cntl || offset == grbm_idx)
->             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c:757:6: note: uninitialized use
-> occurs here
->         if (shadow) {
->             ^~~~~~
+From: Thomas Graziadei <thomas.graziadei@omicronenergy.com>
 
-Wouldn't it be better to get rid of the shadow variable completely?
+The 32bit powerpc assembler implementation of the lazy preemption
+set the _TIF_PERSYSCALL_MASK on the low word. This could lead to
+modprobe segfaults and a kernel panic - not syncing: Attempt to
+kill init! issue.
+
+Fixed by shifting the mask by 16 bit using andis and lis.
+
+Signed-off-by: Thomas Graziadei <thomas.graziadei@omicronenergy.com>
 ---
- drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c | 6 +-----
- 1 file changed, 1 insertion(+), 5 deletions(-)
+ arch/powerpc/kernel/entry_32.S | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c b/drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c
-index 7bc248..496b9e 100644
---- a/drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c
-+++ b/drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c
-@@ -735,7 +735,6 @@ void gfx_v9_0_rlcg_wreg(struct amdgpu_device *adev, u32 offset, u32 v)
- 	static void *spare_int;
- 	static uint32_t grbm_cntl;
- 	static uint32_t grbm_idx;
--	bool shadow;
+diff --git a/arch/powerpc/kernel/entry_32.S b/arch/powerpc/kernel/entry_32.S
+index 172dfb567c25..ab609d63d644 100644
+--- a/arch/powerpc/kernel/entry_32.S
++++ b/arch/powerpc/kernel/entry_32.S
+@@ -533,12 +533,12 @@ syscall_exit_work:
  
- 	scratch_reg0 = adev->rmmio + (adev->reg_offset[GC_HWIP][0][mmSCRATCH_REG0_BASE_IDX] + mmSCRATCH_REG0)*4;
- 	scratch_reg1 = adev->rmmio + (adev->reg_offset[GC_HWIP][0][mmSCRATCH_REG1_BASE_IDX] + mmSCRATCH_REG1)*4;
-@@ -751,10 +750,7 @@ void gfx_v9_0_rlcg_wreg(struct amdgpu_device *adev, u32 offset, u32 v)
- 		return;
- 	}
+ 1:	stw	r6,RESULT(r1)	/* Save result */
+ 	stw	r3,GPR3(r1)	/* Update return value */
+-2:	andi.	r0,r9,(_TIF_PERSYSCALL_MASK)@h
++2:	andis.	r0,r9,(_TIF_PERSYSCALL_MASK)@h
+ 	beq	4f
  
--	if (offset == grbm_cntl || offset == grbm_idx)
--		shadow = true;
--
--	if (shadow) {
-+	if (offset == grbm_cntl || offset == grbm_idx) {
- 		if (offset  == grbm_cntl)
- 			writel(v, scratch_reg2);
- 		else if (offset == grbm_idx)
-
+ 	/* Clear per-syscall TIF flags if any are set.  */
+ 
+-	li	r11,_TIF_PERSYSCALL_MASK@h
++	lis	r11,(_TIF_PERSYSCALL_MASK)@h
+ 	addi	r12,r2,TI_FLAGS
+ 3:	lwarx	r8,0,r12
+ 	andc	r8,r8,r11
+-- 
+2.17.1
 
