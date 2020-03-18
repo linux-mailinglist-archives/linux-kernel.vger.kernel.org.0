@@ -2,95 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 281E4189A9C
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 12:29:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F020F189A95
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 12:28:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727797AbgCRL3e (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Mar 2020 07:29:34 -0400
-Received: from smtp-fw-9101.amazon.com ([207.171.184.25]:51921 "EHLO
-        smtp-fw-9101.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726964AbgCRL3d (ORCPT
+        id S1727733AbgCRL2T (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Mar 2020 07:28:19 -0400
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:43371 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726586AbgCRL2S (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Mar 2020 07:29:33 -0400
+        Wed, 18 Mar 2020 07:28:18 -0400
+Received: by mail-lf1-f66.google.com with SMTP id n20so16683404lfl.10
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Mar 2020 04:28:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1584530973; x=1616066973;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version;
-  bh=JA2aQZlnEaxp5yQP3+f4dvGiPHN9KB1VJHGZIRRVqdU=;
-  b=bJbqWPqBjB5vafvuQgEBhmHpTnUzUaQSrzQWopS0cHiwm6dK4rLxAUtB
-   6/fWO8gA/aiB2sXOGnKV2SP47HmfoagR/GNOKxDwLSVRalUsOk9xjEM10
-   gTEj+o1QQsxGWvtdP62yI0tl8zW31B0QYk461vvrlYobbbvJVcO44ESLG
-   c=;
-IronPort-SDR: BtpZ7YY1oweq6otGrrEHR3D6EGguH0I4AXG6xgXP9yMfDd/uvcf+ez/206DLaM/RhbLjw8458a
- KR2kLOxxhc9g==
-X-IronPort-AV: E=Sophos;i="5.70,567,1574121600"; 
-   d="scan'208";a="23517231"
-Received: from sea32-co-svc-lb4-vlan3.sea.corp.amazon.com (HELO email-inbound-relay-1a-821c648d.us-east-1.amazon.com) ([10.47.23.38])
-  by smtp-border-fw-out-9101.sea19.amazon.com with ESMTP; 18 Mar 2020 11:29:29 +0000
-Received: from EX13MTAUEA002.ant.amazon.com (iad55-ws-svc-p15-lb9-vlan3.iad.amazon.com [10.40.159.166])
-        by email-inbound-relay-1a-821c648d.us-east-1.amazon.com (Postfix) with ESMTPS id 094BBA29FC;
-        Wed, 18 Mar 2020 11:29:18 +0000 (UTC)
-Received: from EX13D31EUA001.ant.amazon.com (10.43.165.15) by
- EX13MTAUEA002.ant.amazon.com (10.43.61.77) with Microsoft SMTP Server (TLS)
- id 15.0.1236.3; Wed, 18 Mar 2020 11:29:18 +0000
-Received: from u886c93fd17d25d.ant.amazon.com (10.43.161.235) by
- EX13D31EUA001.ant.amazon.com (10.43.165.15) with Microsoft SMTP Server (TLS)
- id 15.0.1497.2; Wed, 18 Mar 2020 11:29:01 +0000
-From:   SeongJae Park <sjpark@amazon.com>
-To:     <akpm@linux-foundation.org>
-CC:     SeongJae Park <sjpark@amazon.de>, <Jonathan.Cameron@Huawei.com>,
-        <aarcange@redhat.com>, <acme@kernel.org>,
-        <alexander.shishkin@linux.intel.com>, <amit@kernel.org>,
-        <brendan.d.gregg@gmail.com>, <brendanhiggins@google.com>,
-        <cai@lca.pw>, <colin.king@canonical.com>, <corbet@lwn.net>,
-        <dwmw@amazon.com>, <jolsa@redhat.com>, <kirill@shutemov.name>,
-        <mark.rutland@arm.com>, <mgorman@suse.de>, <minchan@kernel.org>,
-        <mingo@redhat.com>, <namhyung@kernel.org>, <peterz@infradead.org>,
-        <rdunlap@infradead.org>, <riel@surriel.com>, <rientjes@google.com>,
-        <rostedt@goodmis.org>, <shuah@kernel.org>, <sj38.park@gmail.com>,
-        <vbabka@suse.cz>, <vdavydov.dev@gmail.com>,
-        <yang.shi@linux.alibaba.com>, <ying.huang@intel.com>,
-        <linux-mm@kvack.org>, <linux-doc@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH v7 02/15] mm/page_ext: Export lookup_page_ext() to GPL modules
-Date:   Wed, 18 Mar 2020 12:27:09 +0100
-Message-ID: <20200318112722.30143-3-sjpark@amazon.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200318112722.30143-1-sjpark@amazon.com>
-References: <20200318112722.30143-1-sjpark@amazon.com>
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=cLYM/R1h5w+GOcuz5jjEq4Hd85OEJopjKNWmXG+H+90=;
+        b=qPW0uolji+yS7Bzq20Ze8HcuQ19IaLRQF0ojLqmOLWKSWylxMy17nOqu8GwWza0NjL
+         p1p5AuLsCF3m7sMDHnKMQPLrm79vzb2G3ZbMjPOkizmDHN5W0Fd1NgVuTvDU9PxyyKtV
+         Zw7sV8Y6EwV3n7skiV350VrhR1oNJAaAdCtOFQ+nT7IhJXVrOEgloLW9EP5Autfa0Ux9
+         S4zLKzuLPDOx4VXbYUa/Vopp/g4QraHUchE9/29SmKJ5ho5mjGY3gV3qEf/HcPhbiTpg
+         qL/AOVrjsSQrNxhpvj652VTTY2B72nu3TJVFKR7fMiE76WGPciCV4y7bdXPCIzcQETbT
+         9asg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=cLYM/R1h5w+GOcuz5jjEq4Hd85OEJopjKNWmXG+H+90=;
+        b=oYkUijVzOYAfLxtZjxMrYBdpOiYQx1hpSSKlJ1d1mLxGcI6EtqPJGo6EfmmGzpuASd
+         NuvMFnax755Rgspj1HdpluEP/SAxluz+M3R3eiU5QyH1+gJYsL0taYE2qauB4BrPuy7B
+         3Gp28UtC3EEzUWC7by5q2RlHd1ufeI2FBea4IPT3XmkrXvL+FpW4IaWiWgvBalH6VU0T
+         cD1iRE4ZoMAWstHKl9ue4ArH7wqwwwplhw/xz6sefZQYlxaI66/JZvo5aviKrm+KVY/v
+         5GcsoziBQHRrURqbULiJFHRymwx91fbsFGv/HV1sdrTzbA+vD24qqRpkzvqjWLvQVIuf
+         z4xA==
+X-Gm-Message-State: ANhLgQ213OgZdQtomkTpX8x2yO2YoM42Ae3ZVtQ8xDS1NOIWTst2qAaj
+        MlCX1v+9CqXXap1hA/+m/yw=
+X-Google-Smtp-Source: ADFU+vstEvMOMKalLvAvCKwrSIizTk63jrV6hhjdTL0mGBT0dhx+rr6l/6OfnnlJNMmBDmqOjYNotg==
+X-Received: by 2002:a19:6e0f:: with SMTP id j15mr2648989lfc.76.1584530896236;
+        Wed, 18 Mar 2020 04:28:16 -0700 (PDT)
+Received: from uranus.localdomain ([5.18.171.94])
+        by smtp.gmail.com with ESMTPSA id f8sm4379449lfc.10.2020.03.18.04.28.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 18 Mar 2020 04:28:14 -0700 (PDT)
+Received: by uranus.localdomain (Postfix, from userid 1000)
+        id 87C14461840; Wed, 18 Mar 2020 14:28:14 +0300 (MSK)
+Date:   Wed, 18 Mar 2020 14:28:14 +0300
+From:   Cyrill Gorcunov <gorcunov@gmail.com>
+To:     Christian Brauner <christian.brauner@ubuntu.com>
+Cc:     Adrian Reber <areber@redhat.com>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Pavel Emelyanov <ovzxemul@gmail.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Dmitry Safonov <0x7f454c46@gmail.com>,
+        Andrei Vagin <avagin@gmail.com>, linux-kernel@vger.kernel.org,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Radostin Stoyanov <rstoyanov1@gmail.com>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH 1/4] ns: prepare time namespace for clone3()
+Message-ID: <20200318112814.GQ27301@uranus>
+References: <20200317083043.226593-1-areber@redhat.com>
+ <20200317083043.226593-2-areber@redhat.com>
+ <20200318105747.GP27301@uranus>
+ <20200318111726.u2r3ghymexyng5nn@wittgenstein>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.43.161.235]
-X-ClientProxiedBy: EX13D28UWC001.ant.amazon.com (10.43.162.166) To
- EX13D31EUA001.ant.amazon.com (10.43.165.15)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200318111726.u2r3ghymexyng5nn@wittgenstein>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: SeongJae Park <sjpark@amazon.de>
+On Wed, Mar 18, 2020 at 12:17:26PM +0100, Christian Brauner wrote:
+> On Wed, Mar 18, 2020 at 01:57:47PM +0300, Cyrill Gorcunov wrote:
+> > On Tue, Mar 17, 2020 at 09:30:41AM +0100, Adrian Reber wrote:
+> > ...
+> > > +/*
+> > > + * This structure is used to set the time namespace offset
+> > > + * via /proc as well as via clone3().
+> > > + */
+> > > +struct set_timens_offset {
+> > > +	int			clockid;
+> > > +	struct timespec64	val;
+> > > +};
+> > > +
+> > 
+> > I'm sorry, I didn't follow this series much so can't comment right now.
+> > Still this structure made me a bit wonder -- the @val seems to be 8 byte
+> > aligned and I guess we have a useless pad between these members. If so
+> > can we swap them? Or it is already part of api?
+> 
+> It's not part of the api yet. We're still arguing about how and what we
+> want to pass down.
 
-This commit exports 'lookup_page_ext()' to GPL modules.  This will be
-used by DAMON.
-
-This reverts commit a50179d0e22931032aa56718cd069b0ec74974c6.
----
- mm/page_ext.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/mm/page_ext.c b/mm/page_ext.c
-index 4ade843ff588..71169b45bba9 100644
---- a/mm/page_ext.c
-+++ b/mm/page_ext.c
-@@ -131,6 +131,7 @@ struct page_ext *lookup_page_ext(const struct page *page)
- 					MAX_ORDER_NR_PAGES);
- 	return get_entry(base, index);
- }
-+EXPORT_SYMBOL_GPL(lookup_page_ext);
- 
- static int __init alloc_node_page_ext(int nid)
- {
--- 
-2.17.1
-
+I see, thanks for info! So I think we could swap the members.
