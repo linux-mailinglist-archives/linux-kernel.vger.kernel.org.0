@@ -2,111 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 84308189C48
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 13:50:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 93461189C4F
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 13:52:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726858AbgCRMuG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Mar 2020 08:50:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53830 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726550AbgCRMuG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Mar 2020 08:50:06 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B498620772;
-        Wed, 18 Mar 2020 12:50:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584535805;
-        bh=4sAHYFtjA0FIdYJcOZIot3tUfnyJiT7eyznRhSXxk3Y=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=cIezsSKKuQ3seIdtO7kKrRl5zs5TwtTF7vVaWUEN68+xXAXgxNUrLCElI6m+cYkID
-         rfNxn+j8J42BrRHX2n2rzTy7Y2uTU9phPEFF1Ec7UzSsw+mw+iyO4ULhLtwP2kZf98
-         Q/l5hfHFWMk83eNAWUpAYETxHr296cWmeS/SlDSk=
-Date:   Wed, 18 Mar 2020 13:50:03 +0100
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Rajan Vaja <RAJANV@xilinx.com>
-Cc:     Jolly Shah <JOLLYS@xilinx.com>,
-        "ard.biesheuvel@linaro.org" <ard.biesheuvel@linaro.org>,
-        "mingo@kernel.org" <mingo@kernel.org>,
-        "matt@codeblueprint.co.uk" <matt@codeblueprint.co.uk>,
-        "sudeep.holla@arm.com" <sudeep.holla@arm.com>,
-        "hkallweit1@gmail.com" <hkallweit1@gmail.com>,
-        "keescook@chromium.org" <keescook@chromium.org>,
-        "dmitry.torokhov@gmail.com" <dmitry.torokhov@gmail.com>,
-        Michal Simek <michals@xilinx.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3 20/24] firmware: xilinx: Add APIs to read/write
- GGS/PGGS registers
-Message-ID: <20200318125003.GA2727094@kroah.com>
-References: <1583538452-1992-1-git-send-email-jolly.shah@xilinx.com>
- <1583538452-1992-21-git-send-email-jolly.shah@xilinx.com>
- <20200318115141.GB2472686@kroah.com>
- <BYAPR02MB4055DE6560EFDCFD0EBFD8E2B7F70@BYAPR02MB4055.namprd02.prod.outlook.com>
+        id S1726774AbgCRMw4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Mar 2020 08:52:56 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:26012 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726550AbgCRMw4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Mar 2020 08:52:56 -0400
+Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 02ICXs5D004289
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Mar 2020 08:52:55 -0400
+Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2yu7wcrtmp-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Mar 2020 08:52:55 -0400
+Received: from localhost
+        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <ravi.bangoria@linux.ibm.com>;
+        Wed, 18 Mar 2020 12:52:53 -0000
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
+        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 18 Mar 2020 12:52:48 -0000
+Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 02ICqlFH59768886
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 18 Mar 2020 12:52:47 GMT
+Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 1EC8552057;
+        Wed, 18 Mar 2020 12:52:47 +0000 (GMT)
+Received: from [9.199.38.35] (unknown [9.199.38.35])
+        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id 91F215204E;
+        Wed, 18 Mar 2020 12:52:35 +0000 (GMT)
+Subject: Re: [PATCH 00/15] powerpc/watchpoint: Preparation for more than one
+ watchpoint
+To:     Christophe Leroy <christophe.leroy@c-s.fr>
+Cc:     mpe@ellerman.id.au, mikey@neuling.org, apopple@linux.ibm.com,
+        paulus@samba.org, npiggin@gmail.com,
+        naveen.n.rao@linux.vnet.ibm.com, peterz@infradead.org,
+        jolsa@kernel.org, oleg@redhat.com, fweisbec@gmail.com,
+        mingo@kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-kernel@vger.kernel.org,
+        Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+References: <20200309085806.155823-1-ravi.bangoria@linux.ibm.com>
+ <b7148b91-e3db-d48a-7294-5c18fc801933@c-s.fr>
+From:   Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+Date:   Wed, 18 Mar 2020 18:22:28 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <BYAPR02MB4055DE6560EFDCFD0EBFD8E2B7F70@BYAPR02MB4055.namprd02.prod.outlook.com>
+In-Reply-To: <b7148b91-e3db-d48a-7294-5c18fc801933@c-s.fr>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 20031812-0012-0000-0000-000003932FA3
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 20031812-0013-0000-0000-000021D0120A
+Message-Id: <429c04e9-7267-55a9-a6f9-1fe9b21ae033@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.645
+ definitions=2020-03-18_05:2020-03-18,2020-03-18 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 spamscore=0
+ clxscore=1015 priorityscore=1501 phishscore=0 suspectscore=0
+ lowpriorityscore=0 mlxlogscore=999 impostorscore=0 adultscore=0 mlxscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2003020000 definitions=main-2003180061
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 18, 2020 at 12:41:46PM +0000, Rajan Vaja wrote:
-> Hi Greg,
+
+
+On 3/16/20 8:35 PM, Christophe Leroy wrote:
 > 
-> Thanks for applying patches and review.
 > 
-> Please see my comment inline.
+> Le 09/03/2020 à 09:57, Ravi Bangoria a écrit :
+>> So far, powerpc Book3S code has been written with an assumption of only
+>> one watchpoint. But future power architecture is introducing second
+>> watchpoint register (DAWR). Even though this patchset does not enable
+>> 2nd DAWR, it make the infrastructure ready so that enabling 2nd DAWR
+>> should just be a matter of changing count.
 > 
-> > -----Original Message-----
-> > From: Greg KH <gregkh@linuxfoundation.org>
-> > Sent: 18 March 2020 05:22 PM
-> > To: Jolly Shah <JOLLYS@xilinx.com>
-> > Cc: ard.biesheuvel@linaro.org; mingo@kernel.org; matt@codeblueprint.co.uk;
-> > sudeep.holla@arm.com; hkallweit1@gmail.com; keescook@chromium.org;
-> > dmitry.torokhov@gmail.com; Michal Simek <michals@xilinx.com>; Rajan Vaja
-> > <RAJANV@xilinx.com>; linux-arm-kernel@lists.infradead.org; linux-
-> > kernel@vger.kernel.org; Rajan Vaja <RAJANV@xilinx.com>
-> > Subject: Re: [PATCH v3 20/24] firmware: xilinx: Add APIs to read/write GGS/PGGS
-> > registers
-> > 
-> > CAUTION: This message has originated from an External Source. Please use
-> > proper judgment and caution when opening attachments, clicking links, or
-> > responding to this email.
-> > 
-> > 
-> > On Fri, Mar 06, 2020 at 03:47:28PM -0800, Jolly Shah wrote:
-> > > --- a/include/linux/firmware/xlnx-zynqmp.h
-> > > +++ b/include/linux/firmware/xlnx-zynqmp.h
-> > > @@ -105,6 +105,10 @@ enum pm_ioctl_id {
-> > >       IOCTL_GET_PLL_FRAC_MODE,
-> > >       IOCTL_SET_PLL_FRAC_DATA,
-> > >       IOCTL_GET_PLL_FRAC_DATA,
-> > > +     IOCTL_WRITE_GGS,
-> > > +     IOCTL_READ_GGS,
-> > > +     IOCTL_WRITE_PGGS,
-> > > +     IOCTL_READ_PGGS,
-> > 
-> > You do not have explicit numbers here?  Bold :)
-> [Rajan] Here new IOCTL IDs are continuous so didn't mention explicit number.
+> Some book3s (e300 family for instance, I think G2 as well) already have a DABR2 in addition to DABR.
+> Will this series allow to use it as well ?
 
-Yes, but is that guaranteed by the compiler?  I keep getting conflicting
-advice with that.
+I wasn't aware of that. I'll take a look at their specs and check if they
+can piggyback on this series for 2nd DABR.
 
-> Are asking for adding numbers like below:
-> enum pm_ioctl_id {
->       ...
->       IOCTL_GET_PLL_FRAC_DATA = 11,
->       IOCTL_WRITE_GGS = 12,
->       ....
-> }
+Thanks,
+Ravi
 
-Yes please, especially as your firmware is expecting the explicit values
-here, right?  That way you _know_ everything is correct.
-
-thanks,
-
-greg k-h
