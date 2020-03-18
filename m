@@ -2,144 +2,132 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A2E0118A0BC
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 17:39:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8A84618A099
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Mar 2020 17:38:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727445AbgCRQjF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Mar 2020 12:39:05 -0400
-Received: from us-smtp-delivery-74.mimecast.com ([216.205.24.74]:24422 "EHLO
-        us-smtp-delivery-74.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727438AbgCRQjB (ORCPT
+        id S1727060AbgCRQh5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Mar 2020 12:37:57 -0400
+Received: from mail-io1-f67.google.com ([209.85.166.67]:34292 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727151AbgCRQhz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Mar 2020 12:39:01 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1584549540;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=AXYvTqES3aHnbh5WK0ERpDdm2N38lmJgT6vOPMS+6qc=;
-        b=EhugfvHwrS576gMAmzAcfZoMZi12N3oXqDf9MH2j0W1y4SeMtKZOSCtxO8NXtagvdt46Rb
-        QM9jkWibo514nYOhq0IdUhj2nt+g+SFm3kvyyAYc0duImjCwWvyKLS+UJ42+ZVaKYZ81S1
-        wC5IDmczFYUQkWOqhc40paYBjW9jTxE=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-383-QgdOT8fsMlqOH1epIoUm-Q-1; Wed, 18 Mar 2020 12:38:59 -0400
-X-MC-Unique: QgdOT8fsMlqOH1epIoUm-Q-1
-Received: by mail-wr1-f69.google.com with SMTP id b11so12601412wru.21
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Mar 2020 09:38:59 -0700 (PDT)
+        Wed, 18 Mar 2020 12:37:55 -0400
+Received: by mail-io1-f67.google.com with SMTP id h131so25683400iof.1
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Mar 2020 09:37:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=bHvF/ZlLZRPJNXeX7IQP/GnB5t47oAv5GS/6FYJ6Q04=;
+        b=pnMs6pDb+zpIjQXq19TmUvFaBoN8y/Ut/zX3ynNA5og7jG4tPoyENRWF/qx1nsQrub
+         mDsN/tHH3PWCs70q/+NkM+GC+pdsuRlPrrjKzGPDQjnoM/XKE6Wsa2WZ9c2lL1wSSdm6
+         l6XiL42Wuds0sbVtH3v5N+OKe+AN0bNE94u2BX0nf9T1+f+iQlSFhrmhDkg4rcTidDRp
+         YMxnwRu13jDPOl9YPIO1pI+lcbTWvwq3DMO+fY9qviEIjpRzw/P2ZqOuDmkTSUZrTXH2
+         WEichE5El5mfqpWFU90dLNW9IJIeZAvAmqylWSuIex/TTiOBpNhEq+TQKHp53LAkJvsW
+         qgKA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=AXYvTqES3aHnbh5WK0ERpDdm2N38lmJgT6vOPMS+6qc=;
-        b=R0BCmXtwxsfQzFkVH+FgXy9NBnQne1fiy+BV3Ccv2HhQhR82vT2uRrFRYuasbsN8fX
-         MS8QtiT+m1MB4NWMfqTmDKg4VnMgtjgADLxviuckN9uftGNgSOcJnsbjCuuEkMvfNdh1
-         3LoVnLclmcQUkExEv5NzygiTuhQJGj/Vy03PeRZ/46RS4OWhu5iIV8OkODx/VistW1tf
-         /aAL6g3pLRwqazxKThp31gKKjssOkGpdBGCBaiWEt+Q54C+QKmOk9Mo4PhtUY1iJWhCV
-         dKtcvvh9ltSOJd1CoxNjevFjNtgr9K3+TVY8/tfazJkNK0gPIbzknVslWM8qYA3GaJ5q
-         iLeA==
-X-Gm-Message-State: ANhLgQ3b5BPR09WRwlT7J0yHLWe1XKpWRelgQeB84K9jtQ0q5xpyMvxs
-        aHJ72Yjv66qxBm745SNkjQGnM3DazKtsDVIWHgS7dhzs1bARQ6560wqdU+eTf3rm0CwaHPI1nA3
-        IlJi1cdfdLv/yyWFKtwb2Dq2D
-X-Received: by 2002:a1c:e1c3:: with SMTP id y186mr2853547wmg.151.1584549536321;
-        Wed, 18 Mar 2020 09:38:56 -0700 (PDT)
-X-Google-Smtp-Source: ADFU+vvf6jHChzCHVGdMOyvtc7+g7N7T6FZmb+FCWM4Z/FROv1KPqFvAwxJFpQUoFpljy/m8cbnwVQ==
-X-Received: by 2002:a1c:e1c3:: with SMTP id y186mr2853458wmg.151.1584549535148;
-        Wed, 18 Mar 2020 09:38:55 -0700 (PDT)
-Received: from xz-x1.redhat.com ([2607:9880:19c0:32::2])
-        by smtp.gmail.com with ESMTPSA id a73sm4364843wme.47.2020.03.18.09.38.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Mar 2020 09:38:54 -0700 (PDT)
-From:   Peter Xu <peterx@redhat.com>
-To:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     "Michael S . Tsirkin" <mst@redhat.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Yan Zhao <yan.y.zhao@intel.com>, peterx@redhat.com,
-        "Dr . David Alan Gilbert" <dgilbert@redhat.com>,
-        Christophe de Dinechin <dinechin@redhat.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Jason Wang <jasowang@redhat.com>,
-        Kevin Tian <kevin.tian@intel.com>,
-        Paolo Bonzini <pbonzini@redhat.com>
-Subject: [PATCH v7 14/14] KVM: selftests: Add "-c" parameter to dirty log test
-Date:   Wed, 18 Mar 2020 12:37:20 -0400
-Message-Id: <20200318163720.93929-15-peterx@redhat.com>
-X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200318163720.93929-1-peterx@redhat.com>
-References: <20200318163720.93929-1-peterx@redhat.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=bHvF/ZlLZRPJNXeX7IQP/GnB5t47oAv5GS/6FYJ6Q04=;
+        b=gXgdwS7NmKUZLLHdRu2a2tQ59uUmVUTTPnLLoE5lLegKYkAk0oPtPVFhzUzM2rwg/P
+         BWChZY9pqZ54ZTUtaejHrDOfIT42XcL2GerH01TTiCNGJX5ABILXjIRz2u+zaaT87FqC
+         nuWyZ3eRCRH+o08RwSS68tk6c8AACAoHQHQcTzTArtQYdvuOp/tbEDyi6HSQY+dXUuo/
+         GUiVbon2AftVKgxbVdvN/sFdixWDaY/LGpSrJiOsrn8Rf63UiYWzXOikGE8VQDPX3oz6
+         rXRGWoUh3TNcuHLVNDY76gB/9uGi6jAWHNYd74TcztZKnHOwZCV+pXeEpQgiLbgFg1GX
+         qPYg==
+X-Gm-Message-State: ANhLgQ2A+EOWfU6jSXK9zetL3WSL5T4XHLTZSwfqCZObLIPapINBHfrd
+        L/uZMroo+BJrTOdBWkhEARGa5XIEpTYqSxXsgJAEpg==
+X-Google-Smtp-Source: ADFU+vsGFJMbF7mRySBJfPQfm1jyPRyVaRvWEyc0DDvMwkXAXsoXYYfGEipU9LJ5n7MDTzDYyy1woOb+YG3ak1gl5YA=
+X-Received: by 2002:a05:6602:2ace:: with SMTP id m14mr4603134iov.131.1584549474362;
+ Wed, 18 Mar 2020 09:37:54 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20200305224108.21351-1-s-anna@ti.com> <20200305224108.21351-3-s-anna@ti.com>
+ <20200317180530.GA1801@xps15> <17204b55-2d58-d8cf-e504-6b6969afa987@ti.com>
+In-Reply-To: <17204b55-2d58-d8cf-e504-6b6969afa987@ti.com>
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+Date:   Wed, 18 Mar 2020 10:37:43 -0600
+Message-ID: <CANLsYkzU_X1QfkMZigbNsxu2i2qsaq2oxojBuKR5uYFNXmsHgQ@mail.gmail.com>
+Subject: Re: [PATCH 2/2] remoteproc: Fix and restore the parenting hierarchy
+ for vdev
+To:     Suman Anna <s-anna@ti.com>
+Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Loic Pallardy <loic.pallardy@st.com>,
+        Arnaud Pouliquen <arnaud.pouliquen@st.com>,
+        Tero Kristo <t-kristo@ti.com>,
+        linux-remoteproc <linux-remoteproc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It's only used to override the existing dirty ring size/count.  If
-with a bigger ring count, we test async of dirty ring.  If with a
-smaller ring count, we test ring full code path.  Async is default.
+On Wed, 18 Mar 2020 at 09:00, Suman Anna <s-anna@ti.com> wrote:
+>
+> Hi Mathieu,
+>
+> On 3/17/20 1:05 PM, Mathieu Poirier wrote:
+> > Hi Suman,
+> >
+> > On Thu, Mar 05, 2020 at 04:41:08PM -0600, Suman Anna wrote:
+> >> The commit 086d08725d34 ("remoteproc: create vdev subdevice with specific
+> >> dma memory pool") has introduced a new vdev subdevice for each vdev
+> >> declared in the firmware resource table and made it as the parent for the
+> >> created virtio rpmsg devices instead of the previous remoteproc device.
+> >> This changed the overall parenting hierarchy for the rpmsg devices, which
+> >> were children of virtio devices, and does not allow the corresponding
+> >> rpmsg drivers to retrieve the parent rproc device through the
+> >> rproc_get_by_child() API.
+> >>
+> >> Fix this by restoring the remoteproc device as the parent. The new vdev
+> >> subdevice can continue to inherit the DMA attributes from the remoteproc's
+> >> parent device (actual platform device).
+> >>
+> >> Fixes: 086d08725d34 ("remoteproc: create vdev subdevice with specific dma memory pool")
+> >> Signed-off-by: Suman Anna <s-anna@ti.com>
+> >> ---
+> >>  drivers/remoteproc/remoteproc_core.c | 2 +-
+> >>  1 file changed, 1 insertion(+), 1 deletion(-)
+> >>
+> >> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+> >> index 097f33e4f1f3..ba18f32bd0c4 100644
+> >> --- a/drivers/remoteproc/remoteproc_core.c
+> >> +++ b/drivers/remoteproc/remoteproc_core.c
+> >> @@ -510,7 +510,7 @@ static int rproc_handle_vdev(struct rproc *rproc, struct fw_rsc_vdev *rsc,
+> >>
+> >>      /* Initialise vdev subdevice */
+> >>      snprintf(name, sizeof(name), "vdev%dbuffer", rvdev->index);
+> >> -    rvdev->dev.parent = rproc->dev.parent;
+> >> +    rvdev->dev.parent = &rproc->dev;
+> >
+> > I can see how it would not be possible to retrieve the parent rproc device since
+> > rvdev->dev.parent was set to be platform device...
+> >
+> > I wonder how the original change didn't blow up sysmon_probe() and potentially
+> > other out-of-tree users of rproc_get_by_child().
+>
+> QCOM code uses SMD transport, and not virtio_rpmsg transport, and the
+> parent-child relationship is direct rproc subdevices which are added in
+> their platform drivers directly. This affects only virtio-rpmsg clients.
+> Please see qcom_add_smd_subdev().
 
-It has no use for non-dirty-ring tests.
+Thanks for the clarification, I didn't go that far in my investigation.
 
-Signed-off-by: Peter Xu <peterx@redhat.com>
----
- tools/testing/selftests/kvm/dirty_log_test.c | 13 ++++++++++---
- 1 file changed, 10 insertions(+), 3 deletions(-)
-
-diff --git a/tools/testing/selftests/kvm/dirty_log_test.c b/tools/testing/selftests/kvm/dirty_log_test.c
-index 4b404dfdc2f9..80c42c87265e 100644
---- a/tools/testing/selftests/kvm/dirty_log_test.c
-+++ b/tools/testing/selftests/kvm/dirty_log_test.c
-@@ -168,6 +168,7 @@ static enum log_mode_t host_log_mode_option = LOG_MODE_ALL;
- /* Logging mode for current run */
- static enum log_mode_t host_log_mode;
- static pthread_t vcpu_thread;
-+static uint32_t test_dirty_ring_count = TEST_DIRTY_RING_COUNT;
- 
- /* Only way to pass this to the signal handler */
- static struct kvm_vm *current_vm;
-@@ -250,7 +251,7 @@ static void dirty_ring_create_vm_done(struct kvm_vm *vm)
- 	 * Switch to dirty ring mode after VM creation but before any
- 	 * of the vcpu creation.
- 	 */
--	vm_enable_dirty_ring(vm, TEST_DIRTY_RING_COUNT *
-+	vm_enable_dirty_ring(vm, test_dirty_ring_count *
- 			     sizeof(struct kvm_dirty_gfn));
- }
- 
-@@ -272,7 +273,7 @@ static uint32_t dirty_ring_collect_one(struct kvm_dirty_gfn *dirty_gfns,
- 	uint32_t count = 0;
- 
- 	while (true) {
--		cur = &dirty_gfns[*fetch_index % TEST_DIRTY_RING_COUNT];
-+		cur = &dirty_gfns[*fetch_index % test_dirty_ring_count];
- 		if (!dirty_gfn_is_dirtied(cur))
- 			break;
- 		TEST_ASSERT(cur->slot == slot, "Slot number didn't match: "
-@@ -778,6 +779,9 @@ static void help(char *name)
- 	printf("usage: %s [-h] [-i iterations] [-I interval] "
- 	       "[-p offset] [-m mode]\n", name);
- 	puts("");
-+	printf(" -c: specify dirty ring size, in number of entries\n");
-+	printf("     (only useful for dirty-ring test; default: %"PRIu32")\n",
-+	       TEST_DIRTY_RING_COUNT);
- 	printf(" -i: specify iteration counts (default: %"PRIu64")\n",
- 	       TEST_HOST_LOOP_N);
- 	printf(" -I: specify interval in ms (default: %"PRIu64" ms)\n",
-@@ -833,8 +837,11 @@ int main(int argc, char *argv[])
- 	guest_mode_init(VM_MODE_P40V48_4K, true, true);
- #endif
- 
--	while ((opt = getopt(argc, argv, "hi:I:p:m:M:")) != -1) {
-+	while ((opt = getopt(argc, argv, "c:hi:I:p:m:M:")) != -1) {
- 		switch (opt) {
-+		case 'c':
-+			test_dirty_ring_count = strtol(optarg, NULL, 10);
-+			break;
- 		case 'i':
- 			iterations = strtol(optarg, NULL, 10);
- 			break;
--- 
-2.24.1
-
+>
+> It would be nice to have
+> > someone from the QCOM team test your patch.
+> >
+> >>      rvdev->dev.dma_pfn_offset = rproc->dev.parent->dma_pfn_offset;
+> >>      rvdev->dev.release = rproc_rvdev_release;
+> >>      dev_set_name(&rvdev->dev, "%s#%s", dev_name(rvdev->dev.parent), name);
+> >
+> > Be mindful there might be fallouts from applying this patch since it does change
+> > the location of the vdev under /sys/device/platform/ .
+> >
+> > Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+>
+> Thanks for the review.
+>
+> regards
+> Suman
