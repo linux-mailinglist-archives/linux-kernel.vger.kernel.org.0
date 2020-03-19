@@ -2,204 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 690F818A9A3
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 01:11:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6433318A9AC
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 01:12:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727659AbgCSALg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Mar 2020 20:11:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37168 "EHLO mail.kernel.org"
+        id S1727790AbgCSAMD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Mar 2020 20:12:03 -0400
+Received: from bilbo.ozlabs.org ([203.11.71.1]:49299 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727447AbgCSALH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Mar 2020 20:11:07 -0400
-Received: from paulmck-ThinkPad-P72.home (50-39-105-78.bvtn.or.frontiernet.net [50.39.105.78])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1727321AbgCSALE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Mar 2020 20:11:04 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F270D2098B;
-        Thu, 19 Mar 2020 00:11:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584576667;
-        bh=yQeLNXE8pE+mX3NEX+uIgJ7GV9AeElQkGmvOOqKMGQ4=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GdB5QpzXtrKAjLRLr21LGFn1CS+5lvc8x8kcI56B3wOjwxaRazxiFy6YlayNx0dJr
-         NnuHLoUSb66x8diWqaAf8QdbNKqumQRHC2jdhnPfbjsGGqZA0jDFQGd9VtlrRg/kHs
-         wEMI65f9l8lTwAn8VBDue+DG+PsdUKk26tWA6V0g=
-From:   paulmck@kernel.org
-To:     rcu@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, kernel-team@fb.com, mingo@kernel.org,
-        jiangshanlai@gmail.com, dipankar@in.ibm.com,
-        akpm@linux-foundation.org, mathieu.desnoyers@efficios.com,
-        josh@joshtriplett.org, tglx@linutronix.de, peterz@infradead.org,
-        rostedt@goodmis.org, dhowells@redhat.com, edumazet@google.com,
-        fweisbec@gmail.com, oleg@redhat.com, joel@joelfernandes.org,
-        "Paul E. McKenney" <paulmck@kernel.org>
-Subject: [PATCH RFC v2 tip/core/rcu 15/22] rcutorture: Add torture tests for RCU Tasks Trace
-Date:   Wed, 18 Mar 2020 17:10:53 -0700
-Message-Id: <20200319001100.24917-15-paulmck@kernel.org>
-X-Mailer: git-send-email 2.9.5
-In-Reply-To: <20200319001024.GA28798@paulmck-ThinkPad-P72>
-References: <20200319001024.GA28798@paulmck-ThinkPad-P72>
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 48jS4626w6z9sPk;
+        Thu, 19 Mar 2020 11:11:02 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1584576662;
+        bh=4NeHfuenkCF6u/+kEoesLWlSHw3XkaaPyGQc98hjRGQ=;
+        h=Date:From:To:Cc:Subject:From;
+        b=WDWvPg/wLRHG3UHvKXOZH8kDol+lSTsMmw0hkBGJaT742jX2qdWR8r8HEpRfKiGeU
+         wJdjcRBuTUam5RpR3JdszpnZYzYIlSqleCh0qLceAxD6Mey+RIetnjxEUHDrBelurR
+         F8+zRbC5VcOOhlTksTbrCF1U61NLlQRHlpLMiWsEuOhsqZhBO6mn0S79y/RCc64cdf
+         ohc6P+D10KTCjwkzEsCgay0Jux/CzM13FaXu6cwAeE+s/+WKErUTVfptVc5CecLk0I
+         gD3guZfOcG13qtkc9GYDg33SyBuckEHfSdjQiGfKICPCooc+WDupeoVVdJQbK7hrox
+         w+kIk6MIQZi6Q==
+Date:   Thu, 19 Mar 2020 11:10:53 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     David Miller <davem@davemloft.net>,
+        Networking <netdev@vger.kernel.org>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Arthur Kiyanovski <akiyano@amazon.com>,
+        Noam Dagan <ndagan@amazon.com>,
+        Leon Romanovsky <leonro@mellanox.com>
+Subject: linux-next: manual merge of the net-next tree with the net tree
+Message-ID: <20200319111053.597bd4d1@canb.auug.org.au>
+MIME-Version: 1.0
+Content-Type: multipart/signed; boundary="Sig_/5vHI_Q_c2A6E/.8i+PNP8Go";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Paul E. McKenney" <paulmck@kernel.org>
+--Sig_/5vHI_Q_c2A6E/.8i+PNP8Go
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-This commit adds the definitions required to torture the tracing flavor
-of RCU tasks.
+Hi all,
 
-Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
----
- kernel/rcu/Kconfig.debug                           |  2 +
- kernel/rcu/rcu.h                                   |  1 +
- kernel/rcu/rcutorture.c                            | 44 +++++++++++++++++++++-
- .../selftests/rcutorture/configs/rcu/CFLIST        |  1 +
- .../selftests/rcutorture/configs/rcu/TRACE01       | 10 +++++
- .../selftests/rcutorture/configs/rcu/TRACE01.boot  |  1 +
- 6 files changed, 58 insertions(+), 1 deletion(-)
- create mode 100644 tools/testing/selftests/rcutorture/configs/rcu/TRACE01
- create mode 100644 tools/testing/selftests/rcutorture/configs/rcu/TRACE01.boot
+Today's linux-next merge of the net-next tree got a conflict in:
 
-diff --git a/kernel/rcu/Kconfig.debug b/kernel/rcu/Kconfig.debug
-index b15a3bd..a4db41d 100644
---- a/kernel/rcu/Kconfig.debug
-+++ b/kernel/rcu/Kconfig.debug
-@@ -25,6 +25,7 @@ config RCU_PERF_TEST
- 	select SRCU
- 	select TASKS_RCU
- 	select TASKS_RUDE_RCU
-+	select TASKS_TRACE_RCU
- 	default n
- 	help
- 	  This option provides a kernel module that runs performance
-@@ -43,6 +44,7 @@ config RCU_TORTURE_TEST
- 	select SRCU
- 	select TASKS_RCU
- 	select TASKS_RUDE_RCU
-+	select TASKS_TRACE_RCU
- 	default n
- 	help
- 	  This option provides a kernel module that runs torture tests
-diff --git a/kernel/rcu/rcu.h b/kernel/rcu/rcu.h
-index c574620..72903867 100644
---- a/kernel/rcu/rcu.h
-+++ b/kernel/rcu/rcu.h
-@@ -442,6 +442,7 @@ enum rcutorture_type {
- 	RCU_FLAVOR,
- 	RCU_TASKS_FLAVOR,
- 	RCU_TASKS_RUDE_FLAVOR,
-+	RCU_TASKS_TRACING_FLAVOR,
- 	RCU_TRIVIAL_FLAVOR,
- 	SRCU_FLAVOR,
- 	INVALID_RCU_FLAVOR
-diff --git a/kernel/rcu/rcutorture.c b/kernel/rcu/rcutorture.c
-index 386cd11..bb6daa58 100644
---- a/kernel/rcu/rcutorture.c
-+++ b/kernel/rcu/rcutorture.c
-@@ -45,6 +45,7 @@
- #include <linux/sched/sysctl.h>
- #include <linux/oom.h>
- #include <linux/tick.h>
-+#include <linux/rcupdate_trace.h>
- 
- #include "rcu.h"
- 
-@@ -758,6 +759,45 @@ static struct rcu_torture_ops tasks_rude_ops = {
- 	.name		= "tasks-rude"
- };
- 
-+/*
-+ * Definitions for tracing RCU-tasks torture testing.
-+ */
-+
-+static int tasks_tracing_torture_read_lock(void)
-+{
-+	rcu_read_lock_trace();
-+	return 0;
-+}
-+
-+static void tasks_tracing_torture_read_unlock(int idx)
-+{
-+	rcu_read_unlock_trace();
-+}
-+
-+static void rcu_tasks_tracing_torture_deferred_free(struct rcu_torture *p)
-+{
-+	call_rcu_tasks_trace(&p->rtort_rcu, rcu_torture_cb);
-+}
-+
-+static struct rcu_torture_ops tasks_tracing_ops = {
-+	.ttype		= RCU_TASKS_TRACING_FLAVOR,
-+	.init		= rcu_sync_torture_init,
-+	.readlock	= tasks_tracing_torture_read_lock,
-+	.read_delay	= srcu_read_delay,  /* just reuse srcu's version. */
-+	.readunlock	= tasks_tracing_torture_read_unlock,
-+	.get_gp_seq	= rcu_no_completed,
-+	.deferred_free	= rcu_tasks_tracing_torture_deferred_free,
-+	.sync		= synchronize_rcu_tasks_trace,
-+	.exp_sync	= synchronize_rcu_tasks_trace,
-+	.call		= call_rcu_tasks_trace,
-+	.cb_barrier	= rcu_barrier_tasks_trace,
-+	.fqs		= NULL,
-+	.stats		= NULL,
-+	.irq_capable	= 1,
-+	.slow_gps	= 1,
-+	.name		= "tasks-tracing"
-+};
-+
- static unsigned long rcutorture_seq_diff(unsigned long new, unsigned long old)
- {
- 	if (!cur_ops->gp_diff)
-@@ -1316,6 +1356,7 @@ static bool rcu_torture_one_read(struct torture_random_state *trsp)
- 				  rcu_read_lock_bh_held() ||
- 				  rcu_read_lock_sched_held() ||
- 				  srcu_read_lock_held(srcu_ctlp) ||
-+				  rcu_read_lock_trace_held() ||
- 				  torturing_tasks());
- 	if (p == NULL) {
- 		/* Wait for rcu_torture_writer to get underway */
-@@ -2435,7 +2476,8 @@ rcu_torture_init(void)
- 	int firsterr = 0;
- 	static struct rcu_torture_ops *torture_ops[] = {
- 		&rcu_ops, &rcu_busted_ops, &srcu_ops, &srcud_ops,
--		&busted_srcud_ops, &tasks_ops, &tasks_rude_ops, &trivial_ops,
-+		&busted_srcud_ops, &tasks_ops, &tasks_rude_ops,
-+		&tasks_tracing_ops, &trivial_ops,
- 	};
- 
- 	if (!torture_init_begin(torture_type, verbose))
-diff --git a/tools/testing/selftests/rcutorture/configs/rcu/CFLIST b/tools/testing/selftests/rcutorture/configs/rcu/CFLIST
-index ec0c72f..dfb1817 100644
---- a/tools/testing/selftests/rcutorture/configs/rcu/CFLIST
-+++ b/tools/testing/selftests/rcutorture/configs/rcu/CFLIST
-@@ -15,3 +15,4 @@ TASKS01
- TASKS02
- TASKS03
- RUDE01
-+TRACE01
-diff --git a/tools/testing/selftests/rcutorture/configs/rcu/TRACE01 b/tools/testing/selftests/rcutorture/configs/rcu/TRACE01
-new file mode 100644
-index 0000000..078e2c1
---- /dev/null
-+++ b/tools/testing/selftests/rcutorture/configs/rcu/TRACE01
-@@ -0,0 +1,10 @@
-+CONFIG_SMP=y
-+CONFIG_NR_CPUS=4
-+CONFIG_HOTPLUG_CPU=y
-+CONFIG_PREEMPT_NONE=y
-+CONFIG_PREEMPT_VOLUNTARY=n
-+CONFIG_PREEMPT=n
-+CONFIG_DEBUG_LOCK_ALLOC=y
-+CONFIG_PROVE_LOCKING=y
-+#CHECK#CONFIG_PROVE_RCU=y
-+CONFIG_RCU_EXPERT=y
-diff --git a/tools/testing/selftests/rcutorture/configs/rcu/TRACE01.boot b/tools/testing/selftests/rcutorture/configs/rcu/TRACE01.boot
-new file mode 100644
-index 0000000..9675ad6
---- /dev/null
-+++ b/tools/testing/selftests/rcutorture/configs/rcu/TRACE01.boot
-@@ -0,0 +1 @@
-+rcutorture.torture_type=tasks-tracing
--- 
-2.9.5
+  drivers/net/ethernet/amazon/ena/ena_netdev.c
 
+between commit:
+
+  dfdde1345bc1 ("net: ena: fix continuous keep-alive resets")
+
+from the net tree and commit:
+
+  1a63443afd70 ("net/amazon: Ensure that driver version is aligned to the l=
+inux kernel")
+
+from the net-next tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc drivers/net/ethernet/amazon/ena/ena_netdev.c
+index 4647d7656761,555c7273d712..000000000000
+--- a/drivers/net/ethernet/amazon/ena/ena_netdev.c
++++ b/drivers/net/ethernet/amazon/ena/ena_netdev.c
+@@@ -3486,10 -3473,7 +3483,8 @@@ static int ena_restore_device(struct en
+  		netif_carrier_on(adapter->netdev);
+ =20
+  	mod_timer(&adapter->timer_service, round_jiffies(jiffies + HZ));
+ +	adapter->last_keep_alive_jiffies =3D jiffies;
+- 	dev_err(&pdev->dev,
+- 		"Device reset completed successfully, Driver info: %s\n",
+- 		version);
++ 	dev_err(&pdev->dev, "Device reset completed successfully\n");
+ =20
+  	return rc;
+  err_disable_msix:
+
+--Sig_/5vHI_Q_c2A6E/.8i+PNP8Go
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl5yuI0ACgkQAVBC80lX
+0GxwDQf/Uho6IaGCmfwvaMFtSKnQW6lVYzKQ9v6sVtTjaTch6Vnj4DOGZDMUPN/G
+KaGHYNehY4s4L/jicSCImhMkY7Lm5aFmnDsCLhhjBt93EypyW0KDvNGg9CbwYfjY
+dYr7Ii3RQnhJCxgocnF5HQNxtg2Ssns9m1Ynj2LxTYxN065b9ELGOI56zEUI2bp4
++rxlXgJuG1SeZMXNYj2+FZIpgZM2P8D/CXcgQuhr7Q038YmKQFscdTEoh1Jj6yio
+GH2kNEjMpMjmSnzR+E4So8gTMVyGGEXe6kqtzGgqQq73mM3pfI3x1FCZP/bl62KO
+6LvklCycRNGSyv7JmuMsJYjYEp72NQ==
+=/Xxx
+-----END PGP SIGNATURE-----
+
+--Sig_/5vHI_Q_c2A6E/.8i+PNP8Go--
