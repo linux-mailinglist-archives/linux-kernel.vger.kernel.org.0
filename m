@@ -2,137 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E94AA18B253
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 12:31:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 83D4618B25E
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 12:33:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726926AbgCSLbl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 07:31:41 -0400
-Received: from mail.efficios.com ([167.114.26.124]:45242 "EHLO
-        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726589AbgCSLbl (ORCPT
+        id S1727026AbgCSLdh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 07:33:37 -0400
+Received: from mail27.static.mailgun.info ([104.130.122.27]:37415 "EHLO
+        mail27.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726912AbgCSLdh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 07:31:41 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by mail.efficios.com (Postfix) with ESMTP id 7F11D2770D4;
-        Thu, 19 Mar 2020 07:31:39 -0400 (EDT)
-Received: from mail.efficios.com ([127.0.0.1])
-        by localhost (mail03.efficios.com [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id e4u4qStRjov8; Thu, 19 Mar 2020 07:31:39 -0400 (EDT)
-Received: from localhost (localhost [127.0.0.1])
-        by mail.efficios.com (Postfix) with ESMTP id 0A76C27707A;
-        Thu, 19 Mar 2020 07:31:39 -0400 (EDT)
-DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com 0A76C27707A
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
-        s=default; t=1584617499;
-        bh=33PE+wHkowtO9q6IEzq84nL2/t8zfbrTwvP2Nousw5Y=;
-        h=Date:From:To:Message-ID:MIME-Version;
-        b=Q+vMaB5H1MB713ANUwit7l2CThsKP8JirEhWwLMXRUOQoM2z82UYx0bva+XRyCSJN
-         QJEeysq3BzXiw2vy3R/F2QqElDa6Jt227FjVFvZUxLtTT9coZ7ToKBRByKSoLS62O4
-         F7Fw+ZLVMo8dS0DZitQJ8F5J/le5WNGzGBPUwuT9LtTWBHEC+/SZ9/YQosjXVchx5K
-         lxLdsMqEk1H7Fqi+71/YQuXZcfEl9OX49r6WxShirgNHb8Z7P4p190vamDSm06AcLp
-         ZitDj9SyI8hDWgHc4LOcn4zsiFsgp7TVqdjQLIZQeU8pu9P/ZUFyoUzmcZp3ZI9Wor
-         QyZkXBzpQwjxQ==
-X-Virus-Scanned: amavisd-new at efficios.com
-Received: from mail.efficios.com ([127.0.0.1])
-        by localhost (mail03.efficios.com [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id 6lGsIg_VnFta; Thu, 19 Mar 2020 07:31:38 -0400 (EDT)
-Received: from mail03.efficios.com (mail03.efficios.com [167.114.26.124])
-        by mail.efficios.com (Postfix) with ESMTP id E90C22772C4;
-        Thu, 19 Mar 2020 07:31:38 -0400 (EDT)
-Date:   Thu, 19 Mar 2020 07:31:38 -0400 (EDT)
-From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-To:     paulmck <paulmck@kernel.org>
-Cc:     rcu <rcu@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        kernel-team <kernel-team@fb.com>, Ingo Molnar <mingo@kernel.org>,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        dipankar <dipankar@in.ibm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        rostedt <rostedt@goodmis.org>,
-        David Howells <dhowells@redhat.com>,
-        Eric Dumazet <edumazet@google.com>,
-        fweisbec <fweisbec@gmail.com>, Oleg Nesterov <oleg@redhat.com>,
-        "Joel Fernandes, Google" <joel@joelfernandes.org>
-Message-ID: <1560487611.2836.1584617498827.JavaMail.zimbra@efficios.com>
-In-Reply-To: <20200319001024.GA28798@paulmck-ThinkPad-P72>
-References: <20200312181618.GA21271@paulmck-ThinkPad-P72> <20200319001024.GA28798@paulmck-ThinkPad-P72>
-Subject: Re: [PATCH RFC v2 tip/core/rcu 0/22] Prototype RCU usable from
- idle, exception, offline
+        Thu, 19 Mar 2020 07:33:37 -0400
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1584617616; h=Content-Transfer-Encoding: Content-Type:
+ In-Reply-To: MIME-Version: Date: Message-ID: From: References: Cc: To:
+ Subject: Sender; bh=NtXkDJueiiPlFXmtYg+Cti7ZiR046Y1WCJSdQ1BCU3c=; b=ulemKkSqRA0kgxTMyUaorSmaqxGj8V4lr/vzuxWh3/ymDe8eeVtZqYVnAm881nGdZ6r8uiYm
+ QhpHACk+ODoL2F+cynBd8/UeeRtmnIQ8x/2VaIDg6ip1gBDarthYb87pNcRSrFEf8qIVhEmi
+ vBVVUtAjm+mBgPXzU1v2bXWRk7M=
+X-Mailgun-Sending-Ip: 104.130.122.27
+X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
+ by mxa.mailgun.org with ESMTP id 5e735888.7f70287633b0-smtp-out-n04;
+ Thu, 19 Mar 2020 11:33:28 -0000 (UTC)
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 10774C433D2; Thu, 19 Mar 2020 11:33:28 +0000 (UTC)
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        aws-us-west-2-caf-mail-1.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE
+        autolearn=unavailable autolearn_force=no version=3.4.0
+Received: from [192.168.0.103] (unknown [49.207.61.30])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: rnayak)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 89C53C433CB;
+        Thu, 19 Mar 2020 11:33:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 89C53C433CB
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=rnayak@codeaurora.org
+Subject: Re: [RFC v3 00/10] DDR/L3 Scaling support on SDM845 and SC7180 SoCs
+To:     Viresh Kumar <viresh.kumar@linaro.org>
+Cc:     Sibi Sankar <sibis@codeaurora.org>, sboyd@kernel.org,
+        georgi.djakov@linaro.org, saravanak@google.com, nm@ti.com,
+        bjorn.andersson@linaro.org, agross@kernel.org,
+        david.brown@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        rjw@rjwysocki.net, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org, dianders@chromium.org, mka@chromium.org,
+        vincent.guittot@linaro.org, amit.kucheria@linaro.org,
+        ulf.hansson@linaro.org, linux-kernel-owner@vger.kernel.org
+References: <20200127200350.24465-1-sibis@codeaurora.org>
+ <19cf027ba87ade1b895ea90ac0fedbe2@codeaurora.org>
+ <20200318034243.o2metmggzuah6cqw@vireshk-i7>
+ <f6a7930a-4eaa-6982-88c6-b50773bee9d8@codeaurora.org>
+ <ea4265f3f4b5a439d70d3c80bcc77b7f@codeaurora.org>
+ <20200319102411.oivesngrk7gy7vtw@vireshk-i7>
+ <78d92969-0219-d140-d788-d1b14e643e90@codeaurora.org>
+ <20200319110805.glmuc2qvgcei3mon@vireshk-i7>
+From:   Rajendra Nayak <rnayak@codeaurora.org>
+Message-ID: <53065b03-22d5-fb78-aa6f-e4711b8ffd3b@codeaurora.org>
+Date:   Thu, 19 Mar 2020 17:03:18 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20200319110805.glmuc2qvgcei3mon@vireshk-i7>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [167.114.26.124]
-X-Mailer: Zimbra 8.8.15_GA_3918 (ZimbraWebClient - FF73 (Linux)/8.8.15_GA_3895)
-Thread-Topic: Prototype RCU usable from idle, exception, offline
-Thread-Index: /+aQCcRF3e2v6wZPv8fU+JWQy6IuTg==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
------ On Mar 18, 2020, at 8:10 PM, paulmck paulmck@kernel.org wrote:
 
-> Hello!
-
-Hi Paul,
-
-Thanks for pulling this together! Some comments below (based only on the
-cover message),
-
-[...]
-
-> There are of course downsides.  The grace-period code can send IPIs to
-> CPUs, even when those CPUs are in the idle loop or in nohz_full userspace.
-> However, this version enlists the aid of the context-switch hooks,
-> which eliminates the need for IPIs in context-switch-heavy workloads.
-> It also prohibits sending of IPIs early in the grace period, which
-> provides additional opportunity for the hooks to do their job.  Additional
-> IPI-reduction mechanisms are under development.
-
-I suspect that on nohz_full cpus, at least some use-cases which really care
-about not receiving IPIs will not be doing that many context switches.
-
-What are the possible approaches to have IPI-*elimination* for nohz cpus ?
-
+On 3/19/2020 4:38 PM, Viresh Kumar wrote:
+> On 19-03-20, 16:23, Rajendra Nayak wrote:
+>>
+>>
+>> On 3/19/2020 3:54 PM, Viresh Kumar wrote:
+>> I thought this series indeed is proposing to add that support in OPP core?
+>> a.k.a "[RFC v3 06/10] opp: Allow multiple opp_tables to be mapped to a single device"
+>>
+>> These discussions are stalled for over 2 months now waiting on a response from Saravana.
+>> Viresh, whats the way forward here and how long do we plan on waiting for Saravanas response?
 > 
-> The RCU tasks trace mechanism is based off of RCU tasks rather than
-> SRCU because the latter is more complex and also because the latter
-> uses a CPU-by-CPU approach to tracking quiescent states instead of the
-> task-by-task approach that is needed.  It is in theory possible to
-> mash RCU tasks trace into the Tree SRCU implementation, but there
-> will need to be extremely good reasons for doing so.
+> I agree and I am equally worried about it. So lets clear the air a bit
+> first. Can someone answer following :
+> 
+> - This series depends on the series from Saravana ? Right, so that
+>    needs to get merged/accepted first ?
+> 
+> - If yes, then what is the way forward as Saravana isn't responding
+>    right now ..
 
-I have a hard time buying the "less complexity" argument to justify the
-introduction of yet another flavor of RCU when a close match already
-exists (SRCU).
+sure, I understand there is a dependency, however refusing to review the approach
+(to add multiple OPPS tables per device) that this series is taking because of an outstanding
+question which, if I read it right is "We can not add multiple OPP tables for a single device right now"
+seems odd.
 
-The other argument for this task-based RCU (rather than CPU-by-CPU as
-done by SRCU) is that "a task-by-task approach is needed". What I
-do not get from this explanation is why is such an approach needed ?
-
-Also, another aspect worth discussing here is the use-cases which
-need to be covered by tracing-rcu. Is this specific flavor targeting
-specifically preempt-off use-cases, or is the goal here to target
-use-cases which may trigger major page faults within the read-side
-critical section as well ?
-
-Note that doing task-by-task tracking of tracing-rcu rather than
-cpu-by-cpu is not free: AFAIU it bloats the task struct (always)
-for a use-case which is not always active. My experience with
-tracepoints and asm gotos is that we need to be careful not to
-slow down the common case (kernel running without any tracing
-active, but tracing configured in) if we want to keep distributions
-and end users building kernels with introspection facilities in
-place.
-
-Thanks,
-
-Mathieu
+Its fine if you are not happy with the approach taken here and you can propose something else,
+but it looks inevitable that we would need something like this to be supported (multiple OPP tables per device)
+and hence the request to review the patches.
 
 -- 
-Mathieu Desnoyers
-EfficiOS Inc.
-http://www.efficios.com
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
