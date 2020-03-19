@@ -2,38 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9FA3218B8E1
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 15:12:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0133D18B8DE
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 15:12:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727249AbgCSOLu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 10:11:50 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:32865 "EHLO
+        id S1728177AbgCSOLn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 10:11:43 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:32875 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727982AbgCSOLO (ORCPT
+        with ESMTP id S1727993AbgCSOLQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 10:11:14 -0400
+        Thu, 19 Mar 2020 10:11:16 -0400
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1jEvt5-0002Jx-7U; Thu, 19 Mar 2020 15:11:07 +0100
+        id 1jEvt5-0002Kd-87; Thu, 19 Mar 2020 15:11:07 +0100
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 56D501C22B1;
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id BEB101C22B2;
         Thu, 19 Mar 2020 15:10:54 +0100 (CET)
 Date:   Thu, 19 Mar 2020 14:10:54 -0000
-From:   "tip-bot2 for Steven Rostedt (VMware)" <tip-bot2@linutronix.de>
+From:   "tip-bot2 for Michael Petlan" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: perf/core] tools lib traceevent: Remove extra '\n' in
- print_event_time()
-Cc:     "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
-        Jiri Olsa <jolsa@redhat.com>,
+Subject: [tip: perf/core] libperf: Add counting example
+Cc:     Michael Petlan <mpetlan@redhat.com>, Jiri Olsa <jolsa@redhat.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
         Arnaldo Carvalho de Melo <acme@redhat.com>,
         x86 <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>
-In-Reply-To: <20200303231852.6ab6882f@oasis.local.home>
-References: <20200303231852.6ab6882f@oasis.local.home>
 MIME-Version: 1.0
-Message-ID: <158462705403.28353.16455653786760721281.tip-bot2@tip-bot2>
+Message-ID: <158462705444.28353.17324137810375912960.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -49,50 +48,117 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the perf/core branch of tip:
 
-Commit-ID:     401d61cbd4d4c6b44b2a895ab4073c7f214c096b
-Gitweb:        https://git.kernel.org/tip/401d61cbd4d4c6b44b2a895ab4073c7f214c096b
-Author:        Steven Rostedt (VMware) <rostedt@goodmis.org>
-AuthorDate:    Tue, 03 Mar 2020 23:18:52 -05:00
+Commit-ID:     76ce02651dabee19df018097db4485800e05e177
+Gitweb:        https://git.kernel.org/tip/76ce02651dabee19df018097db4485800e05e177
+Author:        Michael Petlan <mpetlan@redhat.com>
+AuthorDate:    Thu, 27 Feb 2020 20:44:24 +01:00
 Committer:     Arnaldo Carvalho de Melo <acme@redhat.com>
 CommitterDate: Wed, 04 Mar 2020 10:34:10 -03:00
 
-tools lib traceevent: Remove extra '\n' in print_event_time()
+libperf: Add counting example
 
-If the precision of print_event_time() is zero or greater than the
-timestamp, it uses a different format. But that format had an extra new
-line at the end, and caused the output to not look right:
+Current libperf man pages mention file counting.c "coming with libperf package",
+however, the file is missing. Add the file then.
 
-cpus=2
-           sleep-3946  [001]111264306005
-: function:             inotify_inode_queue_event
-           sleep-3946  [001]111264307158
-: function:             __fsnotify_parent
-           sleep-3946  [001]111264307637
-: function:             inotify_dentry_parent_queue_event
-           sleep-3946  [001]111264307989
-: function:             fsnotify
-           sleep-3946  [001]111264308401
-: function:             audit_syscall_exit
-
-Fixes: 38847db9740a ("libtraceevent, perf tools: Changes in tep_print_event_* APIs")
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Link: http://lore.kernel.org/lkml/20200303231852.6ab6882f@oasis.local.home
+Fixes: 81de3bf37a8b ("libperf: Add man pages")
+Signed-off-by: Michael Petlan <mpetlan@redhat.com>
+Acked-by: Jiri Olsa <jolsa@redhat.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+LPU-Reference: 20200227194424.28210-1-mpetlan@redhat.com
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/lib/traceevent/event-parse.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ tools/lib/perf/Documentation/examples/counting.c | 83 +++++++++++++++-
+ 1 file changed, 83 insertions(+)
+ create mode 100644 tools/lib/perf/Documentation/examples/counting.c
 
-diff --git a/tools/lib/traceevent/event-parse.c b/tools/lib/traceevent/event-parse.c
-index beaa8b8..e1bd2a9 100644
---- a/tools/lib/traceevent/event-parse.c
-+++ b/tools/lib/traceevent/event-parse.c
-@@ -5541,7 +5541,7 @@ static void print_event_time(struct tep_handle *tep, struct trace_seq *s,
- 	if (p10 > 1 && p10 < time)
- 		trace_seq_printf(s, "%5llu.%0*llu", time / p10, prec, time % p10);
- 	else
--		trace_seq_printf(s, "%12llu\n", time);
-+		trace_seq_printf(s, "%12llu", time);
- }
- 
- struct print_event_type {
+diff --git a/tools/lib/perf/Documentation/examples/counting.c b/tools/lib/perf/Documentation/examples/counting.c
+new file mode 100644
+index 0000000..6085693
+--- /dev/null
++++ b/tools/lib/perf/Documentation/examples/counting.c
+@@ -0,0 +1,83 @@
++#include <linux/perf_event.h>
++#include <perf/evlist.h>
++#include <perf/evsel.h>
++#include <perf/cpumap.h>
++#include <perf/threadmap.h>
++#include <perf/mmap.h>
++#include <perf/core.h>
++#include <perf/event.h>
++#include <stdio.h>
++#include <unistd.h>
++
++static int libperf_print(enum libperf_print_level level,
++                         const char *fmt, va_list ap)
++{
++	return vfprintf(stderr, fmt, ap);
++}
++
++int main(int argc, char **argv)
++{
++	int count = 100000, err = 0;
++	struct perf_evlist *evlist;
++	struct perf_evsel *evsel;
++	struct perf_thread_map *threads;
++	struct perf_counts_values counts;
++
++	struct perf_event_attr attr1 = {
++		.type        = PERF_TYPE_SOFTWARE,
++		.config      = PERF_COUNT_SW_CPU_CLOCK,
++		.read_format = PERF_FORMAT_TOTAL_TIME_ENABLED|PERF_FORMAT_TOTAL_TIME_RUNNING,
++		.disabled    = 1,
++	};
++	struct perf_event_attr attr2 = {
++		.type        = PERF_TYPE_SOFTWARE,
++		.config      = PERF_COUNT_SW_TASK_CLOCK,
++		.read_format = PERF_FORMAT_TOTAL_TIME_ENABLED|PERF_FORMAT_TOTAL_TIME_RUNNING,
++		.disabled    = 1,
++	};
++
++	libperf_init(libperf_print);
++	threads = perf_thread_map__new_dummy();
++	if (!threads) {
++		fprintf(stderr, "failed to create threads\n");
++		return -1;
++	}
++	perf_thread_map__set_pid(threads, 0, 0);
++	evlist = perf_evlist__new();
++	if (!evlist) {
++		fprintf(stderr, "failed to create evlist\n");
++		goto out_threads;
++	}
++	evsel = perf_evsel__new(&attr1);
++	if (!evsel) {
++		fprintf(stderr, "failed to create evsel1\n");
++		goto out_evlist;
++	}
++	perf_evlist__add(evlist, evsel);
++	evsel = perf_evsel__new(&attr2);
++	if (!evsel) {
++		fprintf(stderr, "failed to create evsel2\n");
++		goto out_evlist;
++	}
++	perf_evlist__add(evlist, evsel);
++	perf_evlist__set_maps(evlist, NULL, threads);
++	err = perf_evlist__open(evlist);
++	if (err) {
++		fprintf(stderr, "failed to open evsel\n");
++		goto out_evlist;
++	}
++	perf_evlist__enable(evlist);
++	while (count--);
++	perf_evlist__disable(evlist);
++	perf_evlist__for_each_evsel(evlist, evsel) {
++		perf_evsel__read(evsel, 0, 0, &counts);
++		fprintf(stdout, "count %llu, enabled %llu, run %llu\n",
++				counts.val, counts.ena, counts.run);
++	}
++	perf_evlist__close(evlist);
++out_evlist:
++	perf_evlist__delete(evlist);
++out_threads:
++	perf_thread_map__put(threads);
++	return err;
++}
