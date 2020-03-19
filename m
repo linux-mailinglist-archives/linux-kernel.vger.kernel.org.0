@@ -2,203 +2,140 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7E89118C050
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 20:29:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6E6C518C067
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 20:30:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727938AbgCST3S (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 15:29:18 -0400
-Received: from mail-qk1-f193.google.com ([209.85.222.193]:38844 "EHLO
-        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727594AbgCST3J (ORCPT
+        id S1728260AbgCSTaJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 15:30:09 -0400
+Received: from us-smtp-delivery-74.mimecast.com ([63.128.21.74]:26314 "EHLO
+        us-smtp-delivery-74.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727192AbgCSTaJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 15:29:09 -0400
-Received: by mail-qk1-f193.google.com with SMTP id h14so4423480qke.5;
-        Thu, 19 Mar 2020 12:29:09 -0700 (PDT)
+        Thu, 19 Mar 2020 15:30:09 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1584646207;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=n7cgCt123/9s5EdM3uN46GsE87oxih4QTqJ6fbmKrSc=;
+        b=GOi3sguxlo61/vamcpAXYeAQVTvCBmtqq18xSMBcf9NhjslU5/ekjXxpN8Q/W6Njt9fit5
+        CNiA6hX+ZsgvooqwJJnwSUdovgnJAdwou1kFHIYWb8C6AkCI+JyQmDtERP9wcjp4tKRpSk
+        dv5yaiLxhkoGU/Lyna/rP6cOxlUvyKM=
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com
+ [209.85.166.70]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-156-D0wIaiu-M96WflHPkixSwg-1; Thu, 19 Mar 2020 15:30:04 -0400
+X-MC-Unique: D0wIaiu-M96WflHPkixSwg-1
+Received: by mail-io1-f70.google.com with SMTP id s66so2690033iod.3
+        for <linux-kernel@vger.kernel.org>; Thu, 19 Mar 2020 12:30:04 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=NGk7Uv+/O2ikybvT2arJQO+plGFIej/aR9Wwj+bPPqM=;
-        b=KHrFDVMFauRhvmPOfw7i7pkJa709Ioa+qNzpI2rVIpGDeY18tudMQfxqr4nDdIq8KR
-         pcMyrcBps1iqjoGdTZ5z9R4Dn8ub/zQ+3pojFb1UvgNNIhWeaJyoTx8pI4IJ46hy/3FF
-         MnmkymGGOxywFG5LjPmZi5lfT+v760mkTtquo9zYVAMJv3QlB/jub98YY7YdqtvJliH+
-         W5UhpW3MgGbqyVgNTuR8em45CZDJtDHOax2T6tRORu51VrrMwN20BMAR3JlTGriJU8/p
-         GbfuMzCEj4cVv2rv5bvR56Cmv7brV4/OpZIPDdKF3NkrisnmnyGDd5r0LuKIq9dTGzd5
-         4NUA==
-X-Gm-Message-State: ANhLgQ08QBmfrWGttbYv5CVARbqt7QKFENzfTYdMES4NBeErEFQ6oK25
-        tGApjq9Q4xpDB/tm3iBUi9s=
-X-Google-Smtp-Source: ADFU+vunSSufb+vK/Rv5oaLgv4fBhZkecOBbA75ZsTD1LDfVmUrPtBqRn3nkSrWaH2DXn0IJa3IFPw==
-X-Received: by 2002:a37:4fd4:: with SMTP id d203mr4758671qkb.249.1584646148579;
-        Thu, 19 Mar 2020 12:29:08 -0700 (PDT)
-Received: from rani.riverdale.lan ([2001:470:1f07:5f3::b55f])
-        by smtp.gmail.com with ESMTPSA id x89sm2292649qtd.43.2020.03.19.12.29.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 19 Mar 2020 12:29:08 -0700 (PDT)
-From:   Arvind Sankar <nivedita@alum.mit.edu>
-To:     Ard Biesheuvel <ardb@kernel.org>
-Cc:     linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 14/14] efi/gop: Allow automatically choosing the best mode
-Date:   Thu, 19 Mar 2020 15:28:55 -0400
-Message-Id: <20200319192855.29876-15-nivedita@alum.mit.edu>
-X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200319192855.29876-1-nivedita@alum.mit.edu>
-References: <20200319192855.29876-1-nivedita@alum.mit.edu>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=n7cgCt123/9s5EdM3uN46GsE87oxih4QTqJ6fbmKrSc=;
+        b=fDqWTpVMuxpUjYUYZbKx4eDEQU2rOJZr1n807fm13U0cRHyrMG/4QJeGcVtMK0ySI7
+         Q0zwXIxIl9FjwGFEj5O2wDxs+MhEueJqH83Ay33JPp59qAIfyCq6w7RizLRUNPN47yn5
+         I/vhVzlHlfwOnCppeLM6LfK08KH/ib/z99Avalt7XfPTQtB+BGwK9Si1Pqp8XSsK776Y
+         bBGZItUV6yGXvtt5gIPzrq2mCNxmdt5hhfNbkbOtgl3MIVXsvAzBaOgHx3i9V9evLAkz
+         u9p+JJjUFBNJOCM4QVBfqwgCYM7ABaNemnNujh52TSriZo+TU5RCWZU8SkvpHU9yTD7P
+         gPIQ==
+X-Gm-Message-State: ANhLgQ3+a9wLZ1zV4YBZy4hKDn7Qyz/PG+U8jhqbKEii+dHckEvMA/WA
+        uDpdVXmar7K+7aDg3O+GrHVGEMiP5V3PWR0PiKlPJmSbg6liUwFnvBp0G/jLwSkeBGDzv9UlCZs
+        oj0FJyKq9uSizgRmhhl1cEN6PP95if5HMVPRGeS0w
+X-Received: by 2002:a92:8c0b:: with SMTP id o11mr4645682ild.135.1584646203370;
+        Thu, 19 Mar 2020 12:30:03 -0700 (PDT)
+X-Google-Smtp-Source: ADFU+vvVShStUfB2AGYam9Btfu27vVxasgER5AsPtAa4PgQ4ohw05qzh/EdsWzM9Dxc2ZTws9ccvB4BhM3f9ny30cf0=
+X-Received: by 2002:a92:9606:: with SMTP id g6mr4691336ilh.119.1584646202385;
+ Thu, 19 Mar 2020 12:30:02 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20200318140605.45273-1-jarod@redhat.com> <8a88d1c8-c6b1-ad85-7971-e6ae8c6fa0e4@gmail.com>
+ <CAKfmpSc0yea5-OfE1rnVdErDTeOza=owbL00QQEaH-M-A6Za7g@mail.gmail.com>
+ <25629.1584564113@famine> <CAKfmpScbzEZAEw=zOEwguQJvr6L2fQiGmAY60SqSBQ_g-+B4tw@mail.gmail.com>
+ <3dbabf42-90e6-4c82-0b84-d1b1a9e8fadf@gmail.com>
+In-Reply-To: <3dbabf42-90e6-4c82-0b84-d1b1a9e8fadf@gmail.com>
+From:   Jarod Wilson <jarod@redhat.com>
+Date:   Thu, 19 Mar 2020 15:29:51 -0400
+Message-ID: <CAKfmpScXTnnz6wQK3OZcqw4aM1PaLnBRfQL769JgyR7tgM-u5A@mail.gmail.com>
+Subject: Re: [PATCH net] ipv6: don't auto-add link-local address to lag ports
+To:     Eric Dumazet <eric.dumazet@gmail.com>
+Cc:     Jay Vosburgh <jay.vosburgh@canonical.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Moshe Levi <moshele@mellanox.com>,
+        Marcelo Ricardo Leitner <mleitner@redhat.com>,
+        Netdev <netdev@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add the ability to automatically pick the highest resolution video mode
-(defined as the product of vertical and horizontal resolution) by using
-a command-line argument of the form
-	video=efifb:auto
+On Thu, Mar 19, 2020 at 1:06 PM Eric Dumazet <eric.dumazet@gmail.com> wrote:
+>
+> On 3/19/20 9:42 AM, Jarod Wilson wrote:
+>
+> > Interesting. We'll keep digging over here, but that's definitely not
+> > working for this particular use case with OVS for whatever reason.
+>
+> I did a quick test and confirmed that my bonding slaves do not have link-local addresses,
+> without anything done to prevent them to appear.
+>
+> You might add a selftest, if you ever find what is the trigger :)
 
-If there are multiple modes with the highest resolution, pick one with
-the highest color depth.
+Okay, have a basic reproducer, courtesy of Marcelo:
 
-Signed-off-by: Arvind Sankar <nivedita@alum.mit.edu>
----
- Documentation/fb/efifb.rst         |  6 +++
- drivers/firmware/efi/libstub/gop.c | 81 +++++++++++++++++++++++++++++-
- 2 files changed, 86 insertions(+), 1 deletion(-)
+# ip link add name bond0 type bond
+# ip link set dev ens2f0np0 master bond0
+# ip link set dev ens2f1np2 master bond0
+# ip link set dev bond0 up
+# ip a s
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN
+group default qlen 1000
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+    inet 127.0.0.1/8 scope host lo
+       valid_lft forever preferred_lft forever
+    inet6 ::1/128 scope host
+       valid_lft forever preferred_lft forever
+2: ens2f0np0: <BROADCAST,MULTICAST,SLAVE,UP,LOWER_UP> mtu 1500 qdisc
+mq master bond0 state UP group default qlen 1000
+    link/ether 00:0f:53:2f:ea:40 brd ff:ff:ff:ff:ff:ff
+5: ens2f1np2: <NO-CARRIER,BROADCAST,MULTICAST,SLAVE,UP> mtu 1500 qdisc
+mq master bond0 state DOWN group default qlen 1000
+    link/ether 00:0f:53:2f:ea:40 brd ff:ff:ff:ff:ff:ff
+11: bond0: <BROADCAST,MULTICAST,MASTER,UP,LOWER_UP> mtu 1500 qdisc
+noqueue state UP group default qlen 1000
+    link/ether 00:0f:53:2f:ea:40 brd ff:ff:ff:ff:ff:ff
+    inet6 fe80::20f:53ff:fe2f:ea40/64 scope link
+       valid_lft forever preferred_lft forever
 
-diff --git a/Documentation/fb/efifb.rst b/Documentation/fb/efifb.rst
-index eca38466487a..519550517fd4 100644
---- a/Documentation/fb/efifb.rst
-+++ b/Documentation/fb/efifb.rst
-@@ -57,4 +57,10 @@ mode=n
-         "rgb" or "bgr" to match specifically those pixel formats, or a number
-         for a mode with matching bits per pixel.
- 
-+auto
-+        The EFI stub will choose the mode with the highest resolution (product
-+        of horizontal and vertical resolution). If there are multiple modes
-+        with the highest resolution, it will choose one with the highest color
-+        depth.
-+
- Edgar Hucek <gimli@dark-green.com>
-diff --git a/drivers/firmware/efi/libstub/gop.c b/drivers/firmware/efi/libstub/gop.c
-index 671f812e0b5a..affdcb6cca9a 100644
---- a/drivers/firmware/efi/libstub/gop.c
-+++ b/drivers/firmware/efi/libstub/gop.c
-@@ -18,7 +18,8 @@
- enum efi_cmdline_option {
- 	EFI_CMDLINE_NONE,
- 	EFI_CMDLINE_MODE_NUM,
--	EFI_CMDLINE_RES
-+	EFI_CMDLINE_RES,
-+	EFI_CMDLINE_AUTO
- };
- 
- static struct {
-@@ -86,6 +87,19 @@ static bool parse_res(char *option, char **next)
- 	return true;
- }
- 
-+static bool parse_auto(char *option, char **next)
-+{
-+	if (!strstarts(option, "auto"))
-+		return false;
-+	option += strlen("auto");
-+	if (*option && *option++ != ',')
-+		return false;
-+	cmdline.option = EFI_CMDLINE_AUTO;
-+
-+	*next = option;
-+	return true;
-+}
-+
- void efi_parse_option_graphics(char *option)
- {
- 	while (*option) {
-@@ -93,6 +107,8 @@ void efi_parse_option_graphics(char *option)
- 			continue;
- 		if (parse_res(option, &option))
- 			continue;
-+		if (parse_auto(option, &option))
-+			continue;
- 
- 		while (*option && *option++ != ',')
- 			;
-@@ -211,6 +227,66 @@ static u32 choose_mode_res(efi_graphics_output_protocol_t *gop)
- 	return cur_mode;
- }
- 
-+static u32 choose_mode_auto(efi_graphics_output_protocol_t *gop)
-+{
-+	efi_status_t status;
-+
-+	efi_graphics_output_protocol_mode_t *mode;
-+	efi_graphics_output_mode_info_t *info;
-+	unsigned long info_size;
-+
-+	u32 max_mode, cur_mode, best_mode, area;
-+	u8 depth;
-+	int pf;
-+	efi_pixel_bitmask_t pi;
-+	u32 m, w, h, a;
-+	u8 d;
-+
-+	mode = efi_table_attr(gop, mode);
-+
-+	cur_mode = efi_table_attr(mode, mode);
-+	max_mode = efi_table_attr(mode, max_mode);
-+
-+	info = efi_table_attr(mode, info);
-+
-+	pf = info->pixel_format;
-+	pi = info->pixel_information;
-+	w  = info->horizontal_resolution;
-+	h  = info->vertical_resolution;
-+
-+	best_mode = cur_mode;
-+	area = w * h;
-+	depth = pixel_bpp(pf, pi);
-+
-+	for (m = 0; m < max_mode; m++) {
-+		status = efi_call_proto(gop, query_mode, m,
-+					&info_size, &info);
-+		if (status != EFI_SUCCESS)
-+			continue;
-+
-+		pf = info->pixel_format;
-+		pi = info->pixel_information;
-+		w  = info->horizontal_resolution;
-+		h  = info->vertical_resolution;
-+
-+		efi_bs_call(free_pool, info);
-+
-+		if (pf == PIXEL_BLT_ONLY || pf >= PIXEL_FORMAT_MAX)
-+			continue;
-+		a = w * h;
-+		if (a < area)
-+			continue;
-+		d = pixel_bpp(pf, pi);
-+		if (a > area || d > depth) {
-+			best_mode = m;
-+			area = a;
-+			depth = d;
-+		}
-+	}
-+
-+	return best_mode;
-+}
-+
- static void set_mode(efi_graphics_output_protocol_t *gop)
- {
- 	efi_graphics_output_protocol_mode_t *mode;
-@@ -225,6 +301,9 @@ static void set_mode(efi_graphics_output_protocol_t *gop)
- 	case EFI_CMDLINE_RES:
- 		new_mode = choose_mode_res(gop);
- 		break;
-+	case EFI_CMDLINE_AUTO:
-+		new_mode = choose_mode_auto(gop);
-+		break;
- 	}
- 
- 	mode = efi_table_attr(gop, mode);
+(above trimmed to relevant entries, obviously)
+
+# sysctl net.ipv6.conf.ens2f0np0.addr_gen_mode=0
+net.ipv6.conf.ens2f0np0.addr_gen_mode = 0
+# sysctl net.ipv6.conf.ens2f1np2.addr_gen_mode=0
+net.ipv6.conf.ens2f1np2.addr_gen_mode = 0
+
+# ip a l ens2f0np0
+2: ens2f0np0: <BROADCAST,MULTICAST,SLAVE,UP,LOWER_UP> mtu 1500 qdisc
+mq master bond0 state UP group default qlen 1000
+    link/ether 00:0f:53:2f:ea:40 brd ff:ff:ff:ff:ff:ff
+    inet6 fe80::20f:53ff:fe2f:ea40/64 scope link tentative
+       valid_lft forever preferred_lft forever
+# ip a l ens2f1np2
+5: ens2f1np2: <NO-CARRIER,BROADCAST,MULTICAST,SLAVE,UP> mtu 1500 qdisc
+mq master bond0 state DOWN group default qlen 1000
+    link/ether 00:0f:53:2f:ea:40 brd ff:ff:ff:ff:ff:ff
+    inet6 fe80::20f:53ff:fe2f:ea40/64 scope link tentative
+       valid_lft forever preferred_lft forever
+
+Looks like addrconf_sysctl_addr_gen_mode() bypasses the original "is
+this a slave interface?" check, and results in an address getting
+added, while w/the proposed patch added, no address gets added.
+
+Looking back through git history again, I see a bunch of 'Fixes:
+d35a00b8e33d ("net/ipv6: allow sysctl to change link-local address
+generation mode")' patches, and I guess that's where this issue was
+also introduced.
+
 -- 
-2.24.1
+Jarod Wilson
+jarod@redhat.com
 
