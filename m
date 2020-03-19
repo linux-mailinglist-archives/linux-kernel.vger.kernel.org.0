@@ -2,168 +2,165 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 73F7518AB7E
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 04:58:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5803D18AB54
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 04:56:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726936AbgCSD6F (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Mar 2020 23:58:05 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:5586 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727031AbgCSD6D (ORCPT
+        id S1726998AbgCSD4k (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Mar 2020 23:56:40 -0400
+Received: from mail-qk1-f196.google.com ([209.85.222.196]:36277 "EHLO
+        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726596AbgCSD4j (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Mar 2020 23:58:03 -0400
-Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 02J3WgXp081704;
-        Wed, 18 Mar 2020 23:57:48 -0400
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2yu98tyf14-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 18 Mar 2020 23:57:48 -0400
-Received: from m0098413.ppops.net (m0098413.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 02J3ok1s144739;
-        Wed, 18 Mar 2020 23:57:48 -0400
-Received: from ppma02dal.us.ibm.com (a.bd.3ea9.ip4.static.sl-reverse.com [169.62.189.10])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2yu98tyf0y-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 18 Mar 2020 23:57:48 -0400
-Received: from pps.filterd (ppma02dal.us.ibm.com [127.0.0.1])
-        by ppma02dal.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id 02J3v0n5000836;
-        Thu, 19 Mar 2020 03:57:47 GMT
-Received: from b01cxnp22036.gho.pok.ibm.com (b01cxnp22036.gho.pok.ibm.com [9.57.198.26])
-        by ppma02dal.us.ibm.com with ESMTP id 2yrpw6y0ku-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 19 Mar 2020 03:57:47 +0000
-Received: from b01ledav004.gho.pok.ibm.com (b01ledav004.gho.pok.ibm.com [9.57.199.109])
-        by b01cxnp22036.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 02J3vkMb3080932
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 19 Mar 2020 03:57:46 GMT
-Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id A2CFA112063;
-        Thu, 19 Mar 2020 03:57:46 +0000 (GMT)
-Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 4D64F112062;
-        Thu, 19 Mar 2020 03:57:43 +0000 (GMT)
-Received: from skywalker.ibmuc.com (unknown [9.199.34.213])
-        by b01ledav004.gho.pok.ibm.com (Postfix) with ESMTP;
-        Thu, 19 Mar 2020 03:57:43 +0000 (GMT)
-From:   "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
-To:     linuxppc-dev@lists.ozlabs.org, mpe@ellerman.id.au,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        kvm-ppc@vger.kernel.org
-Cc:     npiggin@gmail.com, paulus@ozlabs.org, leonardo@linux.ibm.com,
-        kirill@shutemov.name,
-        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
-Subject: [PATCH v2 22/22] powerpc/mm/book3s64: Fix MADV_DONTNEED and parallel page fault race
-Date:   Thu, 19 Mar 2020 09:26:09 +0530
-Message-Id: <20200319035609.158654-23-aneesh.kumar@linux.ibm.com>
-X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200319035609.158654-1-aneesh.kumar@linux.ibm.com>
-References: <20200319035609.158654-1-aneesh.kumar@linux.ibm.com>
+        Wed, 18 Mar 2020 23:56:39 -0400
+Received: by mail-qk1-f196.google.com with SMTP id d11so1165280qko.3
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Mar 2020 20:56:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=OL5W/cXAcaO5++QZJaWBgs8McWwwSxdm+ZdDM1yl8To=;
+        b=HLqJ5V/99EmI9c1QpuWro6BvQeXa3sXgHXMp6UHqO8bf1kE2ciOQxvhgojY9LTcRih
+         On6HWoRo0zYxLLawU9zNURkL48jhgLITm0b9ut781uxGSIafauaMiOq81Ugro9n0zGux
+         AWF2StH00lgs7LHsRjvAaA5nolggOe8jXLd3FPxpSlCRh0dEBR/PQzaJcbbrkJAqFQBK
+         L351nT925WTEDLHVqvZjIURdJWxwfxxPAYR0ldZfzPyGwUkss6Qy2gCWokxyKcewavbJ
+         QmFDatE0Qe7qpzWNf66L82Zsmlvo41RrT5ax5uaIPSdrpfZ7NADgcRlhbKAmIWoo/dAY
+         nSeg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=OL5W/cXAcaO5++QZJaWBgs8McWwwSxdm+ZdDM1yl8To=;
+        b=LhQoPqr/Y4u2QcwgDH8Fo6LLvk+gCvhgIH0OP9hnnWkz89ifxj248EIti3lAkwl4hI
+         6sthVlbcM67sC2BBZ/ff4faT0ZWNBauIuUEiM55mjAPwa7XhjIKC348rLrLDEDSWai9Y
+         etvRn0T22ozOh4QmaJOUt3kYcu2bxEHWyf3kxOfPbBeISDU85BzYYz2nHZcduibEO1J2
+         4+mTup9mG7rwpUxk3vHZZ+SC1j6wNI2SO/Cj9BKgwiawPTVLdl5Croa2/0BCYrydfpH4
+         SM6L46meDnQuDt4Hn7pxMS5QsU6f80A+WMFOhaPp5tqYN7va8aoqIIu4fE3/V6hi+gx4
+         DF+w==
+X-Gm-Message-State: ANhLgQ0dXyLNRK8qq3HQ/ia7gyP4SdAVSxqzTMwwox/elq5l1Z1X7dq8
+        sBRh2cj4py+zclezWzeV/szkwj3F16lFhh+/90VHeg==
+X-Google-Smtp-Source: ADFU+vtWuMfbBkluyYlSkgrzZn6ofaN7osU/iy+ACcP2SEbdBQHxCB1T5qtpRBhN51rasqDRYjEEWh81ofMZAR+u6ow=
+X-Received: by 2002:a25:c482:: with SMTP id u124mr1628208ybf.286.1584590198061;
+ Wed, 18 Mar 2020 20:56:38 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.645
- definitions=2020-03-18_10:2020-03-18,2020-03-18 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 clxscore=1015
- adultscore=0 mlxlogscore=999 suspectscore=0 impostorscore=0 mlxscore=0
- lowpriorityscore=0 malwarescore=0 bulkscore=0 priorityscore=1501
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2003020000 definitions=main-2003190013
+References: <20200316041431.19607-1-irogers@google.com> <20200318104011.GF821557@krava>
+In-Reply-To: <20200318104011.GF821557@krava>
+From:   Ian Rogers <irogers@google.com>
+Date:   Wed, 18 Mar 2020 20:56:26 -0700
+Message-ID: <CAP-5=fXQzLMuv-6EWGdFY1p5oLjV9301k1tkYL+R7qYHQR6wXA@mail.gmail.com>
+Subject: Re: [PATCH] perf parse-events: fix memory leaks found on parse_events
+To:     Jiri Olsa <jolsa@redhat.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Andi Kleen <ak@linux.intel.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Leo Yan <leo.yan@linaro.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        clang-built-linux <clang-built-linux@googlegroups.com>,
+        Stephane Eranian <eranian@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-MADV_DONTNEED holds mmap_sem in read mode and that implies a
-parallel page fault is possible and the kernel can end up with a level 1 PTE
-entry (THP entry) converted to a level 0 PTE entry without flushing
-the THP TLB entry.
+On Wed, Mar 18, 2020 at 3:40 AM Jiri Olsa <jolsa@redhat.com> wrote:
+>
+> On Sun, Mar 15, 2020 at 09:14:31PM -0700, Ian Rogers wrote:
+> > Memory leaks found by applying LLVM's libfuzzer on the parse_events
+> > function.
+> >
+> > Signed-off-by: Ian Rogers <irogers@google.com>
+> > ---
+> >  tools/lib/perf/evlist.c        | 2 ++
+> >  tools/perf/util/parse-events.c | 2 ++
+> >  tools/perf/util/parse-events.y | 3 ++-
+> >  3 files changed, 6 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/tools/lib/perf/evlist.c b/tools/lib/perf/evlist.c
+> > index 5b9f2ca50591..6485d1438f75 100644
+> > --- a/tools/lib/perf/evlist.c
+> > +++ b/tools/lib/perf/evlist.c
+> > @@ -125,8 +125,10 @@ static void perf_evlist__purge(struct perf_evlist *evlist)
+> >  void perf_evlist__exit(struct perf_evlist *evlist)
+> >  {
+> >       perf_cpu_map__put(evlist->cpus);
+> > +     perf_cpu_map__put(evlist->all_cpus);
+>
+> ugh, yes, could you please put it to separate libperf patch?
 
-Most architectures including POWER have issues with kernel instantiating a level
-0 PTE entry while holding level 1 TLB entries.
+Done. https://lkml.org/lkml/2020/3/18/1318
 
-The code sequence I am looking at is
+> >       perf_thread_map__put(evlist->threads);
+> >       evlist->cpus = NULL;
+> > +     evlist->all_cpus = NULL;
+>
+> there's already change adding this waiting on the list:
+>   https://lore.kernel.org/lkml/1583665157-349023-1-git-send-email-zhe.he@windriver.com/
 
-down_read(mmap_sem)                         down_read(mmap_sem)
+I'm not seeing this in perf/core on
+git://git.kernel.org/pub/scm/linux/kernel/git/acme/linux.git
+The previous thread mentions Arnaldo porting it. It is only 1
+statement so I've left it in.
 
-zap_pmd_range()
- zap_huge_pmd()
-  pmd lock held
-  pmd_cleared
-  table details added to mmu_gather
-  pmd_unlock()
-                                         insert a level 0 PTE entry()
+> >       evlist->threads = NULL;
+> >       fdarray__exit(&evlist->pollfd);
+> >  }
+> > diff --git a/tools/perf/util/parse-events.c b/tools/perf/util/parse-events.c
+> > index a14995835d85..997862224292 100644
+> > --- a/tools/perf/util/parse-events.c
+> > +++ b/tools/perf/util/parse-events.c
+> > @@ -1482,6 +1482,8 @@ int parse_events_add_pmu(struct parse_events_state *parse_state,
+> >
+> >               list_for_each_entry_safe(pos, tmp, &config_terms, list) {
+> >                       list_del_init(&pos->list);
+> > +                     if (pos->free_str)
+> > +                             free(pos->val.str);
+>
+> ack, would be nice to have  perf_evsel__free_config_terms generalized
+> to work directly over config terms list, so we'd have only single
+> cleanup function
+>
+> >                       free(pos);
+> >               }
+> >               return -EINVAL;
+> > diff --git a/tools/perf/util/parse-events.y b/tools/perf/util/parse-events.y
+> > index 94f8bcd83582..8212cc771667 100644
+> > --- a/tools/perf/util/parse-events.y
+> > +++ b/tools/perf/util/parse-events.y
+> > @@ -44,7 +44,7 @@ static void free_list_evsel(struct list_head* list_evsel)
+> >
+> >       list_for_each_entry_safe(evsel, tmp, list_evsel, core.node) {
+> >               list_del_init(&evsel->core.node);
+> > -             perf_evsel__delete(evsel);
+> > +             evsel__delete(evsel);
+>
+> ack
+>
+> >       }
+> >       free(list_evsel);
+> >  }
+> > @@ -326,6 +326,7 @@ PE_NAME opt_pmu_config
+> >       }
+> >       parse_events_terms__delete($2);
+> >       parse_events_terms__delete(orig_terms);
+> > +     free(pattern);
+>
+> ack
+>
+> could you please send the separate change for libperf?
+> and synchronize with that other patch mentioned above
 
-tlb_finish_mmu().
+Done-ish. Thanks,
+Ian
 
-Fix this by forcing a tlb flush before releasing pmd lock if this is
-not a fullmm invalidate. We can safely skip this invalidate for
-task exit case (fullmm invalidate) because in that case we are sure
-there can be no parallel fault handlers.
-
-This do change the Qemu guest RAM del/unplug time as below
-
-128 core, 496GB guest:
-
-Without patch:
-munmap start: timer = 196449 ms, PID=6681
-munmap finish: timer = 196488 ms, PID=6681 - delta = 39ms
-
-With patch:
-munmap start: timer = 196345 ms, PID=6879
-munmap finish: timer = 196714 ms, PID=6879 - delta = 369ms
-
-Signed-off-by: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
----
- arch/powerpc/include/asm/book3s/64/pgtable.h |  5 +++++
- arch/powerpc/mm/book3s64/pgtable.c           | 18 ++++++++++++++++++
- 2 files changed, 23 insertions(+)
-
-diff --git a/arch/powerpc/include/asm/book3s/64/pgtable.h b/arch/powerpc/include/asm/book3s/64/pgtable.h
-index 89eb7b350df8..e98cb141d490 100644
---- a/arch/powerpc/include/asm/book3s/64/pgtable.h
-+++ b/arch/powerpc/include/asm/book3s/64/pgtable.h
-@@ -1265,6 +1265,11 @@ static inline pmd_t pmdp_collapse_flush(struct vm_area_struct *vma,
- }
- #define pmdp_collapse_flush pmdp_collapse_flush
- 
-+#define __HAVE_ARCH_PMDP_HUGE_GET_AND_CLEAR_FULL
-+pmd_t pmdp_huge_get_and_clear_full(struct vm_area_struct *vma,
-+				   unsigned long addr,
-+				   pmd_t *pmdp, int full);
-+
- #define __HAVE_ARCH_PGTABLE_DEPOSIT
- static inline void pgtable_trans_huge_deposit(struct mm_struct *mm,
- 					      pmd_t *pmdp, pgtable_t pgtable)
-diff --git a/arch/powerpc/mm/book3s64/pgtable.c b/arch/powerpc/mm/book3s64/pgtable.c
-index 93fc3be41ed9..fefdc7d41040 100644
---- a/arch/powerpc/mm/book3s64/pgtable.c
-+++ b/arch/powerpc/mm/book3s64/pgtable.c
-@@ -112,6 +112,24 @@ pmd_t pmdp_invalidate(struct vm_area_struct *vma, unsigned long address,
- 	return __pmd(old_pmd);
- }
- 
-+pmd_t pmdp_huge_get_and_clear_full(struct vm_area_struct *vma,
-+				   unsigned long addr, pmd_t *pmdp, int full)
-+{
-+	pmd_t pmd;
-+	VM_BUG_ON(addr & ~HPAGE_PMD_MASK);
-+	VM_BUG_ON((pmd_present(*pmdp) && !pmd_trans_huge(*pmdp) &&
-+		   !pmd_devmap(*pmdp)) || !pmd_present(*pmdp));
-+	pmd = pmdp_huge_get_and_clear(vma->vm_mm, addr, pmdp);
-+	/*
-+	 * if it not a fullmm flush, then we can possibly end up converting
-+	 * this PMD pte entry to a regular level 0 PTE by a parallel page fault.
-+	 * Make sure we flush the tlb in this case.
-+	 */
-+	if (!full)
-+		flush_pmd_tlb_range(vma, addr, addr + HPAGE_PMD_SIZE);
-+	return pmd;
-+}
-+
- static pmd_t pmd_set_protbits(pmd_t pmd, pgprot_t pgprot)
- {
- 	return __pmd(pmd_val(pmd) | pgprot_val(pgprot));
--- 
-2.24.1
-
+> thanks,
+> jirka
+>
+> --
+> You received this message because you are subscribed to the Google Groups "Clang Built Linux" group.
+> To unsubscribe from this group and stop receiving emails from it, send an email to clang-built-linux+unsubscribe@googlegroups.com.
+> To view this discussion on the web visit https://groups.google.com/d/msgid/clang-built-linux/20200318104011.GF821557%40krava.
