@@ -2,52 +2,52 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DFDCF18C2D6
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 23:12:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2CB3318C2CA
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 23:12:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727574AbgCSWM2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 18:12:28 -0400
-Received: from mail-wm1-f74.google.com ([209.85.128.74]:57829 "EHLO
-        mail-wm1-f74.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727440AbgCSWL4 (ORCPT
+        id S1727471AbgCSWMB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 18:12:01 -0400
+Received: from mail-ua1-f74.google.com ([209.85.222.74]:46739 "EHLO
+        mail-ua1-f74.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727414AbgCSWL7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 18:11:56 -0400
-Received: by mail-wm1-f74.google.com with SMTP id f9so1571976wme.7
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Mar 2020 15:11:53 -0700 (PDT)
+        Thu, 19 Mar 2020 18:11:59 -0400
+Received: by mail-ua1-f74.google.com with SMTP id 16so1137878uag.13
+        for <linux-kernel@vger.kernel.org>; Thu, 19 Mar 2020 15:11:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=date:in-reply-to:message-id:mime-version:references:subject:from:to
          :cc;
-        bh=YnO147Q8BfuYNBKiEQsszIXKG8E9VejO4ffbcq8Gn6s=;
-        b=vB+ZL9tqVJcAaugYExOK+dJD6+VoZcjwf8huI233jMEi3vlRlVuYfR1w59pAYyeFGq
-         0aurG5XHAmhfR8rO2twUDX/4MryFExVZrl/dJSy5dykP/iCH1PEasHHK5+ss0Ym4bUEM
-         olqhzUpErgFqM91GnmPbCOTR5hvGOqwKcsO712Fjc3akBkUfGXOTkBdTNnMV+rU6BQp3
-         AAXIEM9/rHEXjzHDwq+M+wqVkOrVquJ/6ycsUSTZfqbQdkVCVImonQTDCAGkVxkKalHx
-         E4y+UlMw8USVNIKzX/JBBYaX/q6Ae0Fs7FTSPlDSTtCbUNrqeao2o8okL2/UFXaJkYli
-         QvxA==
+        bh=ld+R5siiu+UwqEtDb2zf/maAwFxPn7jOV9EKhch9NhQ=;
+        b=vi4yd//XT/ycSMaTNHQqhaOLWRGn33ZoH4GU+cE7Gp4hJydy8CkIKJ71fjfYqHiaoq
+         3qyUHWxlOqDPc4jUzTgEvVFzYwBbk6sKcVhdkQVm8rP07jXijGRrptyfiDB5E0CLEg3J
+         NGYp7tysmwQ3rGZWUTBaAn7OUHk+SgQ6WnUMN+F/qZG30yBCuQghffizGGc+rOo7s5SG
+         3LQnqDXks6FYQspWrcYVuSZZNjULqkxKrR8/FgnnNjZwm0BzxrQvrHXc3oZDSybxhttw
+         0LIuSRGeri1Et75dEh4xe6YlRaZoLSPuhZTR+aNNvKzLU+mMQ1yHzHsbsAdsPodMOK/O
+         m9Vw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:in-reply-to:message-id:mime-version
          :references:subject:from:to:cc;
-        bh=YnO147Q8BfuYNBKiEQsszIXKG8E9VejO4ffbcq8Gn6s=;
-        b=LdZS2Wg7EhgegBEQLmTlVbvTETPLmI57PlRawptGuYzviYBsAfOg4lx/vyqTJwasuu
-         RqQcV/ONVeuK1l8uw30nXCrrWLR52crH80HkhUXzZtRbSHRDrmgzwbqoSaGhgqPF8mGq
-         HZMjrcsKSwhBJYUgKu3iA+RSEKwZcMhZe2BxRUUDqwZvcIXaJCLlg1bzxlzfMn+njnvC
-         nPWCg+wy/A0SqSVnab/GjXzZblfSnqOKIRerz21/7zs+PmGv3QZmbtjei7/5C+JCtOj2
-         6K3k/1uyzkZwZUY5Po7fe4YeL8sDkfo/4dKJvdyaVqyHYXPmS1qznoHwggDR+KsAbigF
-         JNHw==
-X-Gm-Message-State: ANhLgQ3oFXuyXQapOVV+y7watq5cJJooefSr81ODAgR3aOmrBwUDgKUC
-        edIUENTEuifemVqQvEiF9I4c/xTE70wTPYPH
-X-Google-Smtp-Source: ADFU+vuhAnTFDp93u9bxNSwjdWx/XQWCDLYMfqinwA2kIZ5a3q7WAgPMw2RqRpTpBZ9kpYOKEBjFQrTOyHIYYPnf
-X-Received: by 2002:adf:97d5:: with SMTP id t21mr6512634wrb.45.1584655912665;
- Thu, 19 Mar 2020 15:11:52 -0700 (PDT)
-Date:   Thu, 19 Mar 2020 23:11:35 +0100
+        bh=ld+R5siiu+UwqEtDb2zf/maAwFxPn7jOV9EKhch9NhQ=;
+        b=QhUZw0TLdO/hOqnJVPjj/+PRn9UrYUPU8veWLvNKD87XRI+ex/3MWyeBMPPEom+zor
+         eWH8BiBxjk3cfGO/RVYaW1PwjQng1NsL2LLzQD4wiHX2Zo766uAuxTyFinajI7hZnw8+
+         O9mjrMDiqADi9psoeJTgtXhP65MCCONQ9cw6owVo6xygg3EriYA9GgwS+3+9x9/vF2fR
+         SNTaxj/CAgq0AvfgIOxhIc8eSlX4Xzqe24U0BRjQD0EUVWl61rGocArJBQ2VWinLgKHq
+         S9su/POP5ZcExRIuxs7TuimKJ0n9vQNvgqVHMzfT4UIK1lmd+WCIl1NDfQFYrjd7ZF+9
+         POLg==
+X-Gm-Message-State: ANhLgQ1tZ9Iuo66aD0KchoLHo6I3Qv3SpucENS6FBRN586aDYzRMnmjh
+        zcAX4o1aT/7+KBildsyV/50f7ii8E1q1sSnc
+X-Google-Smtp-Source: ADFU+vv1mUpuq5PW/oJ6gSyaoeZD4m+C1EOIoJQygnrtzOhMLarXysTNKxk6+S5zvGfSBgotQugAPT6j//2vkVh3
+X-Received: by 2002:a1f:640c:: with SMTP id y12mr4359974vkb.73.1584655916275;
+ Thu, 19 Mar 2020 15:11:56 -0700 (PDT)
+Date:   Thu, 19 Mar 2020 23:11:36 +0100
 In-Reply-To: <cover.1584655448.git.andreyknvl@google.com>
-Message-Id: <6206b80b3810f95bfe1d452de45596609a07b6ea.1584456779.git.andreyknvl@google.com>
+Message-Id: <de0d3d30ff90776a2a509cc34c7c1c7521bda125.1584655448.git.andreyknvl@google.com>
 Mime-Version: 1.0
 References: <cover.1584655448.git.andreyknvl@google.com>
 X-Mailer: git-send-email 2.25.1.696.g5e7596f4ac-goog
-Subject: [PATCH USB] usb: raw_gadget: fix compilation warnings in uapi headers
+Subject: [PATCH v3 2/7] kcov: fix potential use-after-free in kcov_remote_start
 From:   Andrey Konovalov <andreyknvl@google.com>
 To:     Dmitry Vyukov <dvyukov@google.com>
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -56,47 +56,69 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
         Alexander Potapenko <glider@google.com>,
         Marco Elver <elver@google.com>,
-        Andrey Konovalov <andreyknvl@google.com>,
-        "kernelci . org bot" <bot@kernelci.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>
+        Andrey Konovalov <andreyknvl@gmail.com>,
+        Andrey Konovalov <andreyknvl@google.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Mark usb_raw_io_flags_valid() and usb_raw_io_flags_zero() as inline to
-fix the following warnings:
+From: Andrey Konovalov <andreyknvl@gmail.com>
 
-./usr/include/linux/usb/raw_gadget.h:69:12: warning: unused function 'usb_raw_io_flags_valid' [-Wunused-function]
-./usr/include/linux/usb/raw_gadget.h:74:12: warning: unused function 'usb_raw_io_flags_zero' [-Wunused-function]
+If vmalloc() fails in kcov_remote_start() we'll access remote->kcov
+without holding kcov_remote_lock, so remote might potentially be freed
+at that point. Cache kcov pointer in a local variable.
 
-Reported-by: kernelci.org bot <bot@kernelci.org>
-Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
 Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
 ---
- include/uapi/linux/usb/raw_gadget.h | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ kernel/kcov.c | 14 ++++++++------
+ 1 file changed, 8 insertions(+), 6 deletions(-)
 
-diff --git a/include/uapi/linux/usb/raw_gadget.h b/include/uapi/linux/usb/raw_gadget.h
-index 00cbded71061..ea375082b3ac 100644
---- a/include/uapi/linux/usb/raw_gadget.h
-+++ b/include/uapi/linux/usb/raw_gadget.h
-@@ -66,12 +66,12 @@ struct usb_raw_event {
- #define USB_RAW_IO_FLAGS_ZERO	0x0001
- #define USB_RAW_IO_FLAGS_MASK	0x0001
- 
--static int usb_raw_io_flags_valid(__u16 flags)
-+static inline int usb_raw_io_flags_valid(__u16 flags)
+diff --git a/kernel/kcov.c b/kernel/kcov.c
+index f6bd119c9419..cc5900ac2467 100644
+--- a/kernel/kcov.c
++++ b/kernel/kcov.c
+@@ -748,6 +748,7 @@ static const struct file_operations kcov_fops = {
+ void kcov_remote_start(u64 handle)
  {
- 	return (flags & ~USB_RAW_IO_FLAGS_MASK) == 0;
- }
+ 	struct kcov_remote *remote;
++	struct kcov *kcov;
+ 	void *area;
+ 	struct task_struct *t;
+ 	unsigned int size;
+@@ -774,16 +775,17 @@ void kcov_remote_start(u64 handle)
+ 		spin_unlock(&kcov_remote_lock);
+ 		return;
+ 	}
++	kcov = remote->kcov;
+ 	/* Put in kcov_remote_stop(). */
+-	kcov_get(remote->kcov);
+-	t->kcov = remote->kcov;
++	kcov_get(kcov);
++	t->kcov = kcov;
+ 	/*
+ 	 * Read kcov fields before unlock to prevent races with
+ 	 * KCOV_DISABLE / kcov_remote_reset().
+ 	 */
+-	size = remote->kcov->remote_size;
+-	mode = remote->kcov->mode;
+-	sequence = remote->kcov->sequence;
++	size = kcov->remote_size;
++	mode = kcov->mode;
++	sequence = kcov->sequence;
+ 	area = kcov_remote_area_get(size);
+ 	spin_unlock(&kcov_remote_lock);
  
--static int usb_raw_io_flags_zero(__u16 flags)
-+static inline int usb_raw_io_flags_zero(__u16 flags)
- {
- 	return (flags & USB_RAW_IO_FLAGS_ZERO);
- }
+@@ -791,7 +793,7 @@ void kcov_remote_start(u64 handle)
+ 		area = vmalloc(size * sizeof(unsigned long));
+ 		if (!area) {
+ 			t->kcov = NULL;
+-			kcov_put(remote->kcov);
++			kcov_put(kcov);
+ 			return;
+ 		}
+ 	}
 -- 
-2.25.1.481.gfbce0eb801-goog
+2.25.1.696.g5e7596f4ac-goog
 
