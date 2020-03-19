@@ -2,68 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 116FD18B13B
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 11:25:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 87A2818B149
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 11:27:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727101AbgCSKZk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 06:25:40 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:57688 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726767AbgCSKZk (ORCPT
+        id S1727146AbgCSK1E (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 06:27:04 -0400
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:34324 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726802AbgCSK1E (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 06:25:40 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=BIh9xpmYL6wBc1GMSHkXlW6IWHwV1fcXo2svbBsNWG8=; b=hgCqBFjt1RzDhJfs/PfmFkuTJq
-        vrK4ZnXVbMISbps5hxJnRkddvOI4Pwh8ovjAIBs9DPq3+dQFQHdfSmlRbtSQZ2TjFmMkTqngYqUfG
-        QkWshDrMAfwxIY42FFnyMrH5eZ4c3C/8fFhEuiao5oK6osENqSHCxC+Rp7uPu4zbCvY6zahoj5hhV
-        S3I6oUVbJj6rJmSUG0+jdJqn3uT0VjS3qP3Kj+Ygw1Vd+HaxXTVi/sYiVntXO7R25JqXJgEiXFcGo
-        Nhk5cNXGsu3BTmqTOtB/kkpz3dGa6wYzz3btR15/7b+BPY4dw9FceEkvd2iNgNADVZS/HiL15LUgK
-        LTmb+kag==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jEsMq-0006S7-2X; Thu, 19 Mar 2020 10:25:36 +0000
-Date:   Thu, 19 Mar 2020 03:25:36 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     light.hsieh@mediatek.com
-Cc:     ulf.hansson@linaro.org, linux-mediatek@lists.infradead.org,
-        axboe@kernel.dk, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kuohong.wang@mediatek.com,
-        stanley.chu@mediatek.com
-Subject: Re: [PATCH v1 3/3] block: set partition read/write policy according
- to write-protection status
-Message-ID: <20200319102536.GA16757@infradead.org>
-References: <1583290274-5525-1-git-send-email-light.hsieh@mediatek.com>
- <1583290274-5525-4-git-send-email-light.hsieh@mediatek.com>
+        Thu, 19 Mar 2020 06:27:04 -0400
+Received: from pps.filterd (m0046668.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 02JAPFPx031888;
+        Thu, 19 Mar 2020 11:26:55 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-type; s=STMicroelectronics;
+ bh=S2ou1+M3hvPA+NgQvCNpYae8BrEknM8QmlCHsuTCeDk=;
+ b=GgG8LG7RFjnlGFSgyvaAN6ilwh9lf9/aoYDxeQOyw6x19jTK13eZsBImdjOIxnj7HPqT
+ IXxnTx2fbmI0fkEKyIP3Lo2gbOO9E981dJeEBlOVVXjXq/COJlbzD5mjY78NpP6E4oie
+ caEjEWLBOoiXnT/BfLMI5V5mO2RGwdyz70ON3ueJQZr398E7xnHAEIwKAMfY3cGoYEYU
+ 3JMHuy0tYZhO3CUFI8IIMS6u6nc7p7gUk42SMUfKWYtq+dAPSfBOkG25y5+ZmXL2le/V
+ cKtTv4TLHJ5Grp5iZtvm3bvkMhjC6K8i8gwrdCl99AJelT7Idm4c9FZgWDNYBLFQ604g vg== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 2yu6xdhjm9-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 19 Mar 2020 11:26:55 +0100
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 89F09100039;
+        Thu, 19 Mar 2020 11:26:50 +0100 (CET)
+Received: from Webmail-eu.st.com (sfhdag5node3.st.com [10.75.127.15])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 7A9062A5810;
+        Thu, 19 Mar 2020 11:26:50 +0100 (CET)
+Received: from localhost (10.75.127.47) by SFHDAG5NODE3.st.com (10.75.127.15)
+ with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 19 Mar 2020 11:26:49
+ +0100
+From:   Fabrice Gasnier <fabrice.gasnier@st.com>
+To:     <alexandre.torgue@st.com>
+CC:     <jic23@kernel.org>, <robh+dt@kernel.org>,
+        <mcoquelin.stm32@gmail.com>, <mark.rutland@arm.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <fabrice.gasnier@st.com>
+Subject: [PATCH] ARM: dts: stm32: fix a typo for DAC io-channel-cells on stm32h743
+Date:   Thu, 19 Mar 2020 11:26:11 +0100
+Message-ID: <1584613571-10544-1-git-send-email-fabrice.gasnier@st.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1583290274-5525-4-git-send-email-light.hsieh@mediatek.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Type: text/plain
+X-Originating-IP: [10.75.127.47]
+X-ClientProxiedBy: SFHDAG8NODE2.st.com (10.75.127.23) To SFHDAG5NODE3.st.com
+ (10.75.127.15)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.645
+ definitions=2020-03-19_02:2020-03-19,2020-03-19 signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 04, 2020 at 10:51:14AM +0800, light.hsieh@mediatek.com wrote:
-> From: Light Hsieh <light.hsieh@mediatek.com>
-> 
-> For storage device with write-protection support, e.g. eMMC, register
-> check_disk_range_wp() in struct block_device_operations for checking
-> write-protection status. When creating block device for a partition, set
-> read/write policy according to result of check_disk_range_wp() operation
-> (if registered).
-> 
-> Without this patch, ro attribute is not set for created block device of
-> write-protected partition. User perform asynchronous buffered write to
-> such partition won't get immediate error and therefore he won't be awared
-> that write is not actually performed.
-> With this patch, ro attribute is set for created block device of
-> write-protected partition. User perform asynchronous buffered write to
-> such partition will get immediate error and therefore he will be awared.
+Fix a typo on STM32H743 DAC, e.g. s/channels/channel
 
-NAK.  This is complete BS.  Partitions are a complete software concepts
-and idiotic features like a range read only should not interact with it
-at all (and I urge all Linux users to never make use of such broken
-features, so the less support we have for them, the better).
+Fixes: 1536dec45e77 ("ARM: dts: stm32: Add DAC support on stm32h743")
+
+Signed-off-by: Fabrice Gasnier <fabrice.gasnier@st.com>
+---
+ arch/arm/boot/dts/stm32h743.dtsi | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/arch/arm/boot/dts/stm32h743.dtsi b/arch/arm/boot/dts/stm32h743.dtsi
+index 05eb02e..9b7fc68 100644
+--- a/arch/arm/boot/dts/stm32h743.dtsi
++++ b/arch/arm/boot/dts/stm32h743.dtsi
+@@ -180,14 +180,14 @@
+ 
+ 			dac1: dac@1 {
+ 				compatible = "st,stm32-dac";
+-				#io-channels-cells = <1>;
++				#io-channel-cells = <1>;
+ 				reg = <1>;
+ 				status = "disabled";
+ 			};
+ 
+ 			dac2: dac@2 {
+ 				compatible = "st,stm32-dac";
+-				#io-channels-cells = <1>;
++				#io-channel-cells = <1>;
+ 				reg = <2>;
+ 				status = "disabled";
+ 			};
+-- 
+2.7.4
+
