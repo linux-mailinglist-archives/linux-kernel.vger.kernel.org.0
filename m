@@ -2,34 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CD41918B138
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 11:25:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 79EAD18B0BD
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 11:01:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726989AbgCSKZ1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 06:25:27 -0400
-Received: from foss.arm.com ([217.140.110.172]:32906 "EHLO foss.arm.com"
+        id S1726902AbgCSKBY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 06:01:24 -0400
+Received: from mx2.suse.de ([195.135.220.15]:38442 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726825AbgCSKZ0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 06:25:26 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 278EE1045;
-        Thu, 19 Mar 2020 03:25:26 -0700 (PDT)
-Received: from [192.168.1.19] (unknown [172.31.20.19])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E4B503FAB1;
-        Thu, 19 Mar 2020 02:07:32 -0700 (PDT)
-From:   Dietmar Eggemann <dietmar.eggemann@arm.com>
-Subject: Re: [PATCH v2 2/9] sched/debug: Make sd->flags sysctl read-only
-To:     Valentin Schneider <valentin.schneider@arm.com>,
-        linux-kernel@vger.kernel.org
-Cc:     mingo@kernel.org, peterz@infradead.org, vincent.guittot@linaro.org
-References: <20200311181601.18314-1-valentin.schneider@arm.com>
- <20200311181601.18314-3-valentin.schneider@arm.com>
-Message-ID: <4a7fe6ae-3587-4a55-1cf2-c4fe568a5ffa@arm.com>
-Date:   Thu, 19 Mar 2020 10:07:21 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        id S1725601AbgCSKBY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 06:01:24 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 4638CB152;
+        Thu, 19 Mar 2020 10:01:22 +0000 (UTC)
+Subject: Re: [PATCH v2 1/2] x86/xen: Make the boot CPU idle task reliable
+To:     Miroslav Benes <mbenes@suse.cz>
+Cc:     boris.ostrovsky@oracle.com, jgross@suse.com,
+        sstabellini@kernel.org, tglx@linutronix.de, mingo@redhat.com,
+        bp@alien8.de, hpa@zytor.com, jpoimboe@redhat.com,
+        andrew.cooper3@citrix.com, x86@kernel.org,
+        linux-kernel@vger.kernel.org, live-patching@vger.kernel.org,
+        xen-devel@lists.xenproject.org, jslaby@suse.cz
+References: <20200319095606.23627-1-mbenes@suse.cz>
+ <20200319095606.23627-2-mbenes@suse.cz>
+From:   Jan Beulich <jbeulich@suse.com>
+Message-ID: <71c4eeaf-958a-b215-3033-c3e0d74a9cfa@suse.com>
+Date:   Thu, 19 Mar 2020 11:01:21 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.6.0
 MIME-Version: 1.0
-In-Reply-To: <20200311181601.18314-3-valentin.schneider@arm.com>
+In-Reply-To: <20200319095606.23627-2-mbenes@suse.cz>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -38,28 +40,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11.03.20 19:15, Valentin Schneider wrote:
-> Writing to the sysctl of a sched_domain->flags directly updates the value of
-> the field, and goes nowhere near update_top_cache_domain(). This means that
-> the cached domain pointers can end up containing stale data (e.g. the
-> domain pointed to doesn't have the relevant flag set anymore).
+On 19.03.2020 10:56, Miroslav Benes wrote:
+> The unwinder reports the boot CPU idle task's stack on XEN PV as
+> unreliable, which affects at least live patching. There are two reasons
+> for this. First, the task does not follow the x86 convention that its
+> stack starts at the offset right below saved pt_regs. It allows the
+> unwinder to easily detect the end of the stack and verify it. Second,
+> startup_xen() function does not store the return address before jumping
+> to xen_start_kernel() which confuses the unwinder.
 > 
-> Explicit domain walks that check for flags will be affected by
-> the write, but this won't be in sync with the cached pointers which will
-> still point to the domains that were cached at the last sched_domain
-> build.
+> Amend both issues by moving the starting point of initial stack in
+> startup_xen() and storing the return address before the jump, which is
+> exactly what call instruction does.
 > 
-> In other words, writing to this interface is playing a dangerous game. It
-> could be made to trigger an update of the cached sched_domain pointers when
-> written to, but this does not seem to be worth the trouble. Make it
-> read-only.
+> Signed-off-by: Miroslav Benes <mbenes@suse.cz>
+> ---
+>  arch/x86/xen/xen-head.S | 8 ++++++--
+>  1 file changed, 6 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/x86/xen/xen-head.S b/arch/x86/xen/xen-head.S
+> index 1d0cee3163e4..edc776af0e0a 100644
+> --- a/arch/x86/xen/xen-head.S
+> +++ b/arch/x86/xen/xen-head.S
+> @@ -35,7 +35,11 @@ SYM_CODE_START(startup_xen)
+>  	rep __ASM_SIZE(stos)
+>  
+>  	mov %_ASM_SI, xen_start_info
+> -	mov $init_thread_union+THREAD_SIZE, %_ASM_SP
+> +#ifdef CONFIG_X86_64
+> +	mov initial_stack(%rip), %_ASM_SP
+> +#else
+> +	mov pa(initial_stack), %_ASM_SP
+> +#endif
 
-As long as I don't change SD flags for which cached SD pointers exist
-(SD_SHARE_PKG_RESOURCES, SD_NUMA, SD_ASYM_PACKING or
-SD_ASYM_CPUCAPACITY) the write-able interface still could make some sense.
+If you need to distinguish the two anyway, why not use %rsp and
+%esp respectively?
 
-E.g. by enabling SD_BALANCE_WAKE on the fly, I can force !want_affine
-wakees into slow path.
-
-The question is, do people use the writable flags interface to tweak
-select_task_rq_fair() behavior in this regard?
+Jan
