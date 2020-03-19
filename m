@@ -2,87 +2,157 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F046A18B38E
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 13:37:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8137018B392
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 13:38:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727188AbgCSMhy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 08:37:54 -0400
-Received: from elvis.franken.de ([193.175.24.41]:51030 "EHLO elvis.franken.de"
+        id S1727231AbgCSMiO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 08:38:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39816 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727023AbgCSMhy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 08:37:54 -0400
-Received: from uucp (helo=alpha)
-        by elvis.franken.de with local-bsmtp (Exim 3.36 #1)
-        id 1jEuQl-0004K1-03; Thu, 19 Mar 2020 13:37:47 +0100
-Received: by alpha.franken.de (Postfix, from userid 1000)
-        id D7B79C026A; Thu, 19 Mar 2020 13:37:15 +0100 (CET)
-Date:   Thu, 19 Mar 2020 13:37:15 +0100
-From:   Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-To:     bibo mao <maobibo@loongson.cn>
-Cc:     Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paulburton@kernel.org>,
-        Huacai Chen <chenhc@lemote.com>,
-        Jiaxun Yang <jiaxun.yang@flygoat.com>,
-        James Hartley <james.hartley@sondrel.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Enrico Weigelt <info@metux.net>,
-        Allison Randal <allison@lohutok.net>,
-        linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V2] MIPS: Add header files reference with path prefix
-Message-ID: <20200319123715.GC10783@alpha.franken.de>
-References: <1584424994-21922-1-git-send-email-maobibo@loongson.cn>
+        id S1726589AbgCSMiN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 08:38:13 -0400
+Received: from paulmck-ThinkPad-P72.home (50-39-105-78.bvtn.or.frontiernet.net [50.39.105.78])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 82DEA20739;
+        Thu, 19 Mar 2020 12:38:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1584621492;
+        bh=MGIyi6ywD1IeN+3Zs3XfjScHnDNRPdw+xWx620PErQg=;
+        h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+        b=WIq600DCKsGwHQXFnp/jna5HAq2UnQAJeguEU9QsZpi3Cztfg/mSTKLzRPloHSNTs
+         svaItfWL53PonxCzMxk69qiT1Vi2ExZMN2qSbDJuZpQoO6Nz/we5ILTXeajD3Uhhxk
+         J7KxKPzlFxHmKYNS3Ee9IcHjaGDGZ18R7JE8GCZg=
+Received: by paulmck-ThinkPad-P72.home (Postfix, from userid 1000)
+        id 50D1C35227C6; Thu, 19 Mar 2020 05:38:12 -0700 (PDT)
+Date:   Thu, 19 Mar 2020 05:38:12 -0700
+From:   "Paul E. McKenney" <paulmck@kernel.org>
+To:     Hillf Danton <hdanton@sina.com>
+Cc:     rcu@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-team@fb.com, mingo@kernel.org, jiangshanlai@gmail.com,
+        dipankar@in.ibm.com, akpm@linux-foundation.org,
+        mathieu.desnoyers@efficios.com, josh@joshtriplett.org,
+        tglx@linutronix.de, peterz@infradead.org, rostedt@goodmis.org,
+        dhowells@redhat.com, edumazet@google.com, fweisbec@gmail.com,
+        oleg@redhat.com, joel@joelfernandes.org
+Subject: Re: [PATCH RFC v2 tip/core/rcu 03/22] rcutorture: Add flag to
+ produce non-busy-wait task stalls
+Message-ID: <20200319123812.GA3199@paulmck-ThinkPad-P72>
+Reply-To: paulmck@kernel.org
+References: <20200319001024.GA28798@paulmck-ThinkPad-P72>
+ <20200319104614.11444-1-hdanton@sina.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1584424994-21922-1-git-send-email-maobibo@loongson.cn>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <20200319104614.11444-1-hdanton@sina.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 17, 2020 at 02:03:14AM -0400, bibo mao wrote:
-> There are some common header files which are referenced locally
-> with #includenext method, includenext is tricky method and only
-> used on mips platform.
+On Thu, Mar 19, 2020 at 06:46:14PM +0800, Hillf Danton wrote:
 > 
-> This patech removes includenext method, replace it with defailed
-> pathname prefix for header files.
+> On Wed, 18 Mar 2020 17:10:41 -0700
+> > From: "Paul E. McKenney" <paulmck@kernel.org>
+> > 
+> > This commit aids testing of RCU task stall warning messages by adding
+> > an rcutorture.stall_cpu_block module parameter that results in the
+> > induced stall sleeping within the RCU read-side critical section.
+> > Spinning with interrupts disabled is still available via the
+> > rcutorture.stall_cpu_irqsoff module parameter, and specifying neither
+> > of these two module parameters will spin with preemption disabled.
+> > 
+> > Note that sleeping (as opposed to preemption) results in additional
+> > complaints from RCU at context-switch time, so yet more testing.
+> > 
+> > Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
+> > ---
+> >  Documentation/admin-guide/kernel-parameters.txt |  5 +++++
+> >  kernel/rcu/rcutorture.c                         | 15 +++++++++------
+> >  2 files changed, 14 insertions(+), 6 deletions(-)
+> > 
+> > diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+> > index 6d16b78..17eff15 100644
+> > --- a/Documentation/admin-guide/kernel-parameters.txt
+> > +++ b/Documentation/admin-guide/kernel-parameters.txt
+> > @@ -4161,6 +4161,11 @@
+> >  			Duration of CPU stall (s) to test RCU CPU stall
+> >  			warnings, zero to disable.
+> >  
+> > +	rcutorture.stall_cpu_block= [KNL]
+> > +			Sleep while stalling if set.  This will result
+> > +			in warnings from preemptible RCU in addition
+> > +			to any other stall-related activity.
+> > +
+> >  	rcutorture.stall_cpu_holdoff= [KNL]
+> >  			Time to wait (s) after boot before inducing stall.
+> >  
+> > diff --git a/kernel/rcu/rcutorture.c b/kernel/rcu/rcutorture.c
+> > index b3301f3..ada5b91 100644
+> > --- a/kernel/rcu/rcutorture.c
+> > +++ b/kernel/rcu/rcutorture.c
+> > @@ -102,6 +102,7 @@ torture_param(int, stall_cpu, 0, "Stall duration (s), zero to disable.");
+> >  torture_param(int, stall_cpu_holdoff, 10,
+> >  	     "Time to wait before starting stall (s).");
+> >  torture_param(int, stall_cpu_irqsoff, 0, "Disable interrupts while stalling.");
+> > +torture_param(int, stall_cpu_block, 0, "Sleep while stalling.");
+> >  torture_param(int, stat_interval, 60,
+> >  	     "Number of seconds between stats printk()s");
+> >  torture_param(int, stutter, 5, "Number of seconds to run/halt test");
+> > @@ -1599,6 +1600,7 @@ static int rcutorture_booster_init(unsigned int cpu)
+> >   */
+> >  static int rcu_torture_stall(void *args)
+> >  {
+> > +	int idx;
+> >  	unsigned long stop_at;
+> >  
+> >  	VERBOSE_TOROUT_STRING("rcu_torture_stall task started");
+> > @@ -1610,21 +1612,22 @@ static int rcu_torture_stall(void *args)
+> >  	if (!kthread_should_stop()) {
+> >  		stop_at = ktime_get_seconds() + stall_cpu;
+> >  		/* RCU CPU stall is expected behavior in following code. */
+> > -		rcu_read_lock();
+> > +		idx = cur_ops->readlock();
+> >  		if (stall_cpu_irqsoff)
+> >  			local_irq_disable();
+> > -		else
+> > +		else if (!stall_cpu_block)
+> >  			preempt_disable();
+> >  		pr_alert("rcu_torture_stall start on CPU %d.\n",
+> > -			 smp_processor_id());
+> > +			 raw_smp_processor_id());
+> >  		while (ULONG_CMP_LT((unsigned long)ktime_get_seconds(),
+> >  				    stop_at))
+> > -			continue;  /* Induce RCU CPU stall warning. */
+> > +			if (stall_cpu_block)
+> > +				schedule_timeout_uninterruptible(HZ);
 > 
-> This patch passes to compile on all mips platform with defconfig,
-> and is verified on my loongson64 box.
-> 
-> Changes:
-> --------
-> v2:
->   - Fix compiling issue on malta platform
-> 
-> Reported-by: kbuild test robot <lkp@intel.com>
-> Signed-off-by: bibo mao <maobibo@loongson.cn>
-> ---
->  arch/mips/include/asm/mach-ar7/irq.h           | 2 +-
->  arch/mips/include/asm/mach-ath79/irq.h         | 2 +-
->  arch/mips/include/asm/mach-emma2rh/irq.h       | 2 +-
->  arch/mips/include/asm/mach-ip27/irq.h          | 2 +-
->  arch/mips/include/asm/mach-ip30/irq.h          | 2 +-
->  arch/mips/include/asm/mach-lantiq/falcon/irq.h | 2 +-
->  arch/mips/include/asm/mach-lantiq/xway/irq.h   | 2 +-
->  arch/mips/include/asm/mach-lasat/irq.h         | 2 +-
->  arch/mips/include/asm/mach-loongson64/irq.h    | 2 +-
->  arch/mips/include/asm/mach-malta/irq.h         | 2 +-
->  arch/mips/include/asm/mach-pic32/irq.h         | 2 +-
->  arch/mips/include/asm/mach-pistachio/irq.h     | 2 +-
->  arch/mips/include/asm/mach-ralink/irq.h        | 2 +-
->  arch/mips/include/asm/mach-rm/mc146818rtc.h    | 2 +-
->  arch/mips/include/asm/mach-vr41xx/irq.h        | 2 +-
->  arch/mips/include/asm/mach-xilfpga/irq.h       | 2 +-
->  16 files changed, 16 insertions(+), 16 deletions(-)
+> Why is the scheduled-in task so special that it will be running on
+> the current CPU with irq disabled?
 
-Applied to mips-next.
+You lost me on this one.  IRQs are not at all disabled.
 
-Thomas.
+Oh, you mean the _uninterruptible suffix?
 
--- 
-Crap can work. Given enough thrust pigs will fly, but it's not necessarily a
-good idea.                                                [ RFC1925, 2.3 ]
+That only affects accounting during the sleep.  Since this is rcutorture,
+the exact suffix is not all that relevant.  So the current state is that
+rcutorture tends to use _uninterruptible.
+
+Or am I missing your point?
+
+							Thanx, Paul
+
+> >  		if (stall_cpu_irqsoff)
+> >  			local_irq_enable();
+> > -		else
+> > +		else if (!stall_cpu_block)
+> >  			preempt_enable();
+> > -		rcu_read_unlock();
+> > +		cur_ops->readunlock(idx);
+> >  		pr_alert("rcu_torture_stall end.\n");
+> >  	}
+> >  	torture_shutdown_absorb("rcu_torture_stall");
+> > -- 
+> > 2.9.5
+> 
