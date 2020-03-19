@@ -2,134 +2,164 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ECB2718BEDC
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 19:01:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B93B118BEE3
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 19:02:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727252AbgCSSBe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 14:01:34 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:50338 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726934AbgCSSBd (ORCPT
+        id S1727820AbgCSSB4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 14:01:56 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:42080 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727668AbgCSSBz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 14:01:33 -0400
-Received: from pendragon.ideasonboard.com (81-175-216-236.bb.dnainternet.fi [81.175.216.236])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id C8FDFA53;
-        Thu, 19 Mar 2020 19:01:30 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1584640891;
-        bh=J0G9o/JIk2L9YAMrgEYnSflrJ+3mDjoCeRH1I4lPqik=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=l0WeQLfY4oPvGyf+T8Bwr1JXg9rF3wSCsAL/YwHYR/F4V+bPvcMIBVex2/JmFRkPq
-         wH0uwGnyJ0/qvbpO0VFVj+sYnrBU90JDCIx7sBKD7tzafPZrokKyt3pDfmx4om2Nkv
-         yNo/D2bEwfHVQcIjR59Xc9qhUHFpFJvvzC1CHe/o=
-Date:   Thu, 19 Mar 2020 20:01:25 +0200
-From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To:     Alex Riesen <alexander.riesen@cetitec.com>
-Cc:     Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        devel@driverdev.osuosl.org, linux-media@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v2 07/10] dt-bindings: adv748x: add information about
- serial audio interface (I2S/TDM)
-Message-ID: <20200319180125.GJ14585@pendragon.ideasonboard.com>
-References: <cover.1584639664.git.alexander.riesen@cetitec.com>
- <c9ff553f804f178a247dca356306948e971432fb.1584639664.git.alexander.riesen@cetitec.com>
+        Thu, 19 Mar 2020 14:01:55 -0400
+Received: by mail-lj1-f195.google.com with SMTP id q19so3523010ljp.9
+        for <linux-kernel@vger.kernel.org>; Thu, 19 Mar 2020 11:01:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=vL2SDcgsOmgao8cRojxhgVQshxfXv34w3j2acLYfoVU=;
+        b=ltdEHHxwBQSm+gNXJliir9Vl8xP5RC6WjX4jZLSicyPrCnC4A0puXTG6qfDxGGuzkf
+         OyyLfSQJARmbwFaiyLxb/femvoNRIbLkTxlwqfp9XRQT62u7pgvctJghNehhVxLRm3DG
+         D7h3mdDmdozMssHN3uFsq4+ITvcG+2qHT9eZsIvkDmCn4c85YlsOthve2n0/XRO5H0u8
+         Fsibakta4/5VCwc6NhzKeYveEUI2ZNf2U6HrwBp1Fhe/FGQ7giRqUfI2a9qbMqmsuUZK
+         ZLFPgzvKkTfzQtuac/8pjuEosnJF2iMG8PUcsM5vr9R24EL2snnk5T9B8scgYRuTwuXS
+         ZKVg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=vL2SDcgsOmgao8cRojxhgVQshxfXv34w3j2acLYfoVU=;
+        b=Z5ZzLqmWIF/OCESs1wBdmtbsb+jVwZ6rig06doU6R5EH7acIJg9U8UOKb5nph+AVMB
+         5je+cQtZfhg/BB+RZ9FC9g5ltyfxUifrJSPceNLrZm6IVxLv111QbkpLjZNQ+SVOL+lX
+         /cEMoToM3jWWWWVxmFeczy5dTAh9hiZAMYMffrqFGUTU6XJNcluLIUcfKau2dA3DzGAE
+         KAwZ7iNodN4Aglg41y7n1JTC7nZ1UkIGAddcziWl/vjkaQP25wch/czuUVgNVDX8BC+B
+         U23zfYP2ptRawnHOWjsg52CQX6YnBARUz/gAH5fF4YBSWvpV11mcC/DAH6MeOkx8yYGZ
+         TAHg==
+X-Gm-Message-State: ANhLgQ3D+7g91BtcCLr2/FozLtsnyuVjzJC9a6xyOR5b6YpXZiaAoA4P
+        eREutiEDpXkpPg2/wqtMZ1fqjr5oGoqUVigLddILBg==
+X-Google-Smtp-Source: ADFU+vsi1Klgo/S/FdHxIWPK9P9ShlnthCiWV9ZZu6tRuUYnKUIrlQ/qP+es3vWg5zlmvil9LtGmfBtxpp7eEz+zyUY=
+X-Received: by 2002:a05:651c:285:: with SMTP id b5mr2748819ljo.165.1584640912850;
+ Thu, 19 Mar 2020 11:01:52 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <c9ff553f804f178a247dca356306948e971432fb.1584639664.git.alexander.riesen@cetitec.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20200319123928.635114118@linuxfoundation.org>
+In-Reply-To: <20200319123928.635114118@linuxfoundation.org>
+From:   Naresh Kamboju <naresh.kamboju@linaro.org>
+Date:   Thu, 19 Mar 2020 23:31:41 +0530
+Message-ID: <CA+G9fYu-stvngbff5S7oKFBxqBxu0A49bXE6OviwF6=SUxa_Qg@mail.gmail.com>
+Subject: Re: [PATCH 4.9 00/90] 4.9.217-rc1 review
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     open list <linux-kernel@vger.kernel.org>,
+        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
+        lkft-triage@lists.linaro.org,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>,
+        linux- stable <stable@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Guenter Roeck <linux@roeck-us.net>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Alex,
+On Thu, 19 Mar 2020 at 18:41, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> This is the start of the stable review cycle for the 4.9.217 release.
+> There are 90 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Sat, 21 Mar 2020 12:37:04 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-=
+4.9.217-rc1.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
+-rc.git linux-4.9.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
-Thank you for the patch.
+Results from Linaro=E2=80=99s test farm.
+No regressions on arm64, arm, x86_64, and i386.
 
-On Thu, Mar 19, 2020 at 06:42:36PM +0100, Alex Riesen wrote:
-> As the driver has some support for the audio interface of the device,
-> the bindings file should mention it.
+Summary
+------------------------------------------------------------------------
 
-While at it, how about converting the bindings to YAML ? :-) It can of
-course be done on top.
+kernel: 4.9.217-rc1
+git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stab=
+le-rc.git
+git branch: linux-4.9.y
+git commit: 8130ba7a9b6d7bce0ecd428b5d085ea493ff3bd0
+git describe: v4.9.216-91-g8130ba7a9b6d
+Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-4.9-oe/bui=
+ld/v4.9.216-91-g8130ba7a9b6d
 
-> Reviewed-by: Rob Herring <robh@kernel.org>
-> Signed-off-by: Alexander Riesen <alexander.riesen@cetitec.com>
-> ---
->  .../devicetree/bindings/media/i2c/adv748x.txt    | 16 +++++++++++++++-
->  1 file changed, 15 insertions(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/media/i2c/adv748x.txt b/Documentation/devicetree/bindings/media/i2c/adv748x.txt
-> index 4f91686e54a6..7d6db052c294 100644
-> --- a/Documentation/devicetree/bindings/media/i2c/adv748x.txt
-> +++ b/Documentation/devicetree/bindings/media/i2c/adv748x.txt
-> @@ -2,7 +2,9 @@
->  
->  The ADV7481 and ADV7482 are multi format video decoders with an integrated
->  HDMI receiver. They can output CSI-2 on two independent outputs TXA and TXB
-> -from three input sources HDMI, analog and TTL.
-> +from three input sources HDMI, analog and TTL. There is also support for an
-> +I2S compatible interface connected to the audio processor of the HDMI decoder.
+No regressions (compared to build v4.9.216)
 
-s/I2S compatible/I2S-compatible/ ?
+Fixes (compared to build v4.9.216)
 
-> +The interface has TDM capability (8 slots, 32 bits, left or right justified).
->  
->  Required Properties:
->  
-> @@ -16,6 +18,8 @@ Required Properties:
->      slave device on the I2C bus. The main address is mandatory, others are
->      optional and remain at default values if not specified.
->  
-> +  - #clock-cells: must be <0> if the I2S port is used
+Ran 20213 total tests in the following environments and test suites.
 
-Wouldn't it be simpler to set it to 0 unconditionally ?
+Environments
+--------------
+- dragonboard-410c - arm64
+- hi6220-hikey - arm64
+- i386
+- juno-r2 - arm64
+- juno-r2-kasan
+- qemu_arm
+- qemu_arm64
+- qemu_i386
+- qemu_x86_64
+- x15 - arm
+- x86_64
+- x86-kasan
 
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Test Suites
+-----------
+* build
+* install-android-platform-tools-r2600
+* install-android-platform-tools-r2800
+* kselftest
+* kvm-unit-tests
+* libhugetlbfs
+* linux-log-parser
+* ltp-cap_bounds-tests
+* ltp-commands-tests
+* ltp-containers-tests
+* ltp-cpuhotplug-tests
+* ltp-crypto-tests
+* ltp-cve-tests
+* ltp-dio-tests
+* ltp-fcntl-locktests-tests
+* ltp-filecaps-tests
+* ltp-fs-tests
+* ltp-fs_bind-tests
+* ltp-fs_perms_simple-tests
+* ltp-fsx-tests
+* ltp-hugetlb-tests
+* ltp-io-tests
+* ltp-ipc-tests
+* ltp-math-tests
+* ltp-mm-tests
+* ltp-nptl-tests
+* ltp-pty-tests
+* ltp-sched-tests
+* ltp-securebits-tests
+* ltp-syscalls-tests
+* perf
+* v4l2-compliance
+* network-basic-tests
+* spectre-meltdown-checker-test
 
-> +
->  Optional Properties:
->  
->    - interrupt-names: Should specify the interrupts as "intrq1", "intrq2" and/or
-> @@ -47,6 +51,7 @@ are numbered as follows.
->  	  TTL		sink		9
->  	  TXA		source		10
->  	  TXB		source		11
-> +	  I2S		source		12
->  
->  The digital output port nodes, when present, shall contain at least one
->  endpoint. Each of those endpoints shall contain the data-lanes property as
-> @@ -72,6 +77,7 @@ Example:
->  
->  		#address-cells = <1>;
->  		#size-cells = <0>;
-> +		#clock-cells = <0>;
->  
->  		interrupt-parent = <&gpio6>;
->  		interrupt-names = "intrq1", "intrq2";
-> @@ -113,4 +119,12 @@ Example:
->  				remote-endpoint = <&csi20_in>;
->  			};
->  		};
-> +
-> +		port@c {
-> +			reg = <12>;
-> +
-> +			adv7482_i2s: endpoint {
-> +				remote-endpoint = <&i2s_in>;
-> +			};
-> +		};
->  	};
-
--- 
-Regards,
-
-Laurent Pinchart
+--=20
+Linaro LKFT
+https://lkft.linaro.org
