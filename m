@@ -2,78 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A709D18AABA
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 03:37:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 29D7518AAC2
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 03:39:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726840AbgCSChj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Mar 2020 22:37:39 -0400
-Received: from szxga02-in.huawei.com ([45.249.212.188]:3479 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726623AbgCSChi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Mar 2020 22:37:38 -0400
-Received: from DGGEMM403-HUB.china.huawei.com (unknown [172.30.72.57])
-        by Forcepoint Email with ESMTP id 1C37A70826ADA42F216E;
-        Thu, 19 Mar 2020 10:37:35 +0800 (CST)
-Received: from dggeme758-chm.china.huawei.com (10.3.19.104) by
- DGGEMM403-HUB.china.huawei.com (10.3.20.211) with Microsoft SMTP Server (TLS)
- id 14.3.439.0; Thu, 19 Mar 2020 10:37:34 +0800
-Received: from [10.173.219.71] (10.173.219.71) by
- dggeme758-chm.china.huawei.com (10.3.19.104) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.1713.5; Thu, 19 Mar 2020 10:37:34 +0800
-Subject: Re: [PATCH net 1/6] hinic: fix process of long length skb without
- frags
-To:     David Miller <davem@davemloft.net>, <kuba@kernel.org>
-CC:     <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <aviad.krawczyk@huawei.com>, <luoxianjun@huawei.com>,
-        <cloud.wangxiaoyun@huawei.com>, <yin.yinshi@huawei.com>
-References: <20200316005630.9817-1-luobin9@huawei.com>
- <20200316005630.9817-2-luobin9@huawei.com>
- <20200316144408.00797c6f@kicinski-fedora-pc1c0hjn.dhcp.thefacebook.com>
- <20200316.173330.2197524619383790235.davem@davemloft.net>
-From:   "luobin (L)" <luobin9@huawei.com>
-Message-ID: <69cec570-7b7d-f779-3ef3-b7f658f64555@huawei.com>
-Date:   Thu, 19 Mar 2020 10:37:33 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.1
+        id S1726847AbgCSCjw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Mar 2020 22:39:52 -0400
+Received: from smtprelay0185.hostedemail.com ([216.40.44.185]:59100 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726596AbgCSCjw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Mar 2020 22:39:52 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay03.hostedemail.com (Postfix) with ESMTP id A8FEF837F253;
+        Thu, 19 Mar 2020 02:39:50 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,,RULES_HIT:41:355:379:599:800:960:968:973:988:989:1260:1277:1311:1313:1314:1345:1359:1381:1437:1515:1516:1518:1534:1543:1593:1594:1711:1730:1747:1777:1792:1801:2393:2559:2562:2828:3138:3139:3140:3141:3142:3354:3622:3865:3866:3867:3868:3870:3871:3872:3873:3874:4321:4605:5007:6117:7576:7875:7903:8603:9149:10004:10400:10848:11026:11232:11473:11658:11914:12043:12048:12297:12438:12555:12663:12740:12760:12895:12986:13255:13439:14181:14659:14721:21080:21220:21451:21622:21660:30046:30054:30056:30091,0,RBL:none,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:1,LUA_SUMMARY:none
+X-HE-Tag: meal06_55c420e8b4f2c
+X-Filterd-Recvd-Size: 4509
+Received: from XPS-9350 (unknown [172.58.27.183])
+        (Authenticated sender: joe@perches.com)
+        by omf03.hostedemail.com (Postfix) with ESMTPA;
+        Thu, 19 Mar 2020 02:39:49 +0000 (UTC)
+Message-ID: <be55765b11f925f15f338152399923e169a20f53.camel@perches.com>
+Subject: Re: [PATCH -next] mm/hugetlb.c: fix printk format warning for
+ 32-bit phys_addr_t
+From:   Joe Perches <joe@perches.com>
+To:     Randy Dunlap <rdunlap@infradead.org>,
+        Linux MM <linux-mm@kvack.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Date:   Wed, 18 Mar 2020 19:37:58 -0700
+In-Reply-To: <ff8cc527-e02e-4f4b-56cd-a94ac5e527a3@infradead.org>
+References: <b74dcb60-ef35-f06e-de2d-b165ed38036a@infradead.org>
+         <f4f8090c1be1a5a5ca663345751fb39893c89814.camel@perches.com>
+         <ff8cc527-e02e-4f4b-56cd-a94ac5e527a3@infradead.org>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.34.1-2 
 MIME-Version: 1.0
-In-Reply-To: <20200316.173330.2197524619383790235.davem@davemloft.net>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Originating-IP: [10.173.219.71]
-X-ClientProxiedBy: dggeme714-chm.china.huawei.com (10.1.199.110) To
- dggeme758-chm.china.huawei.com (10.3.19.104)
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Ok，I will undo this patch.
+On Wed, 2020-03-18 at 19:11 -0700, Randy Dunlap wrote:
+> On 3/18/20 7:04 PM, Joe Perches wrote:
+> > On Wed, 2020-03-18 at 14:33 -0700, Randy Dunlap wrote:
+> > > From: Randy Dunlap <rdunlap@infradead.org>
+> > > 
+> > > Fix printk format warnings when phys_addr_t is 32 bits, i.e.,
+> > > CONFIG_PHYS_ADDR_T_64BIT is not set/enabled.
+> > []
+> > > ../mm/hugetlb.c:5472:73: note: format string is defined here
+> > >     pr_warn("hugetlb_cma: reservation failed: err %d, node %d, [%llu, %llu)",
+> > >                                                                       ~~~^
+> > []
+> > > --- linux-next-20200318.orig/mm/hugetlb.c
+> > > +++ linux-next-20200318/mm/hugetlb.c
+> > > @@ -5469,8 +5469,10 @@ void __init hugetlb_cma_reserve(int orde
+> > >  					     0, false,
+> > >  					     "hugetlb", &hugetlb_cma[nid]);
+> > >  		if (res) {
+> > > -			pr_warn("hugetlb_cma: reservation failed: err %d, node %d, [%llu, %llu)",
+> > > -				res, nid, PFN_PHYS(min_pfn), PFN_PHYS(max_pfn));
+> > > +			phys_addr_t begpa = PFN_PHYS(min_pfn);
+> > > +			phys_addr_t endpa = PFN_PHYS(max_pfn);
+> > > +			pr_warn("hugetlb_cma: reservation failed: err %d, node %d, [%pap, %pap)",
+> > > +				res, nid, &begpa, &endpa);
+> > 
+> > You might correct the odd use of an open bracket
+> > then close parenthesis and add a new line too
+> 
+> Definitely needs a newline char.
+> 
+> I'm fairly sure that the [begin, end) notation is done on purpose, meaning
+> <begin> is included in the range and <end> is not included in the range.
 
-On 2020/3/17 8:33, David Miller wrote:
-> From: Jakub Kicinski <kuba@kernel.org>
-> Date: Mon, 16 Mar 2020 14:44:08 -0700
->
->> On Mon, 16 Mar 2020 00:56:25 +0000 Luo bin wrote:
->>> -#define MIN_SKB_LEN                     17
->>> +#define MIN_SKB_LEN			17
->>> +#define HINIC_GSO_MAX_SIZE		65536
->>> +	if (unlikely(skb->len > HINIC_GSO_MAX_SIZE && nr_sges == 1)) {
->>> +		txq->txq_stats.frag_len_overflow++;
->>> +		goto skb_error;
->>> +	}
->> I don't think drivers should have to check this condition.
->>
->> We have netdev->gso_max_size which should be initialized to
->>
->> include/linux/netdevice.h:#define GSO_MAX_SIZE          65536
->>
->> in
->>
->> net/core/dev.c: dev->gso_max_size = GSO_MAX_SIZE;
->>
->> Please send a patch to pktgen to uphold the normal stack guarantees.
-> Agreed, the driver should not have to validate this.
-> .
+OK, that seems a pretty obscure and not obvious use of
+interval notation, at least to me. (18 uses treewide ?)
+
+Maybe it could be documented somewhere?
+
+It's an odd pattern to grep.  Maybe I missed some.
+
+$ git grep -P '".*[\[\{]\s*%\d*[ldux]+\s*[/:,\.\-]?\s*%\d*[ldux]+\).*"'
+arch/x86/kernel/alternative.c:  DUMP_BYTES(instr, a->instrlen, "%px: [%d:%d) optimized NOPs: ",
+drivers/clk/qcom/clk-alpha-pll.c:               pr_err("%s: Rounded rate %lu not within range [%lu, %lu)\n",
+fs/ext4/extents_status.c:               printk(KERN_DEBUG " [%u/%u) %llu %x",
+fs/ext4/extents_status.c:                       es_debug("%u cached by [%u/%u) %llu %x\n",
+fs/ext4/extents_status.c:       es_debug("add [%u/%u) %llu %x to extent status tree of inode %lu\n",
+fs/ext4/extents_status.c:                       es_debug("%u cached by [%u/%u)\n",
+fs/ext4/extents_status.c:       es_debug("remove [%u/%u) from extent status tree of inode %lu\n",
+fs/nilfs2/cpfile.c:                       "cannot delete checkpoints: invalid range [%llu, %llu)",
+fs/nilfs2/dat.c:                          "%s: invalid vblocknr = %llu, [%llu, %llu)",
+include/trace/events/ext4.h:    TP_printk("dev %d,%d ino %lu es [%u/%u) mapped %llu status %s",
+include/trace/events/ext4.h:    TP_printk("dev %d,%d ino %lu es [%lld/%lld)",
+include/trace/events/ext4.h:    TP_printk("dev %d,%d ino %lu es [%u/%u) mapped %llu status %s",
+include/trace/events/ext4.h:    TP_printk("dev %d,%d ino %lu found %d [%u/%u) %llu %s",
+include/trace/events/ext4.h:    TP_printk("dev %d,%d ino %lu es [%u/%u) mapped %llu status %s "
+mm/hugetlb.c:                   pr_warn("hugetlb_cma: reservation failed: err %d, node %d, [%llu, %llu)",
+mm/kasan/report.c:              pr_err(" [%lu, %lu) '%s'", offset, offset + size, token);
+mm/page_alloc.c:                pr_info_ratelimited("%s: [%lx, %lx) PFNs busy\n",
+tools/testing/selftests/kvm/demand_paging_test.c:               PER_VCPU_DEBUG("Added VCPU %d with test mem gpa [%lx, %lx)\n",
+
