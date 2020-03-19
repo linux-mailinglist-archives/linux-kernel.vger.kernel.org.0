@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 764A618B55E
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:18:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7EDD618B610
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:24:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729719AbgCSNRx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 09:17:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39448 "EHLO mail.kernel.org"
+        id S1730394AbgCSNXv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 09:23:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49930 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729669AbgCSNRv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 09:17:51 -0400
+        id S1730386AbgCSNXr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 09:23:47 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 710B8214D8;
-        Thu, 19 Mar 2020 13:17:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 22F8521707;
+        Thu, 19 Mar 2020 13:23:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584623869;
-        bh=xpF/oJrCEXUxvt+0y7Lo8jkFhhTZdOsK+QynZE3xPvI=;
+        s=default; t=1584624226;
+        bh=/sOLfcB78ooPON9tkDzlMoGzEbOGHBf9o0sHqQL4E74=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ah+uBNz1up8wfNdCT6E/NSrn03X8495ZUfwetsGiNOrzjOndaxdWrwC20+s9SC91H
-         EEauz5PKX0Q2pmzDafOF7b7OVbWMX7ZZcMMkgaIXAQcwujGpwyoopJtu4z9QImoZ8N
-         GCkrH9FrZj/QY8BY3eoE050HL5Yy6XlfVy0CqGfk=
+        b=a6wjLZQwVxPhnScF2dfBJHWvjYioySBo9jeWsYJYnQrylxjiqmVUQfMqUXpXwcMnJ
+         KgoH3uS2bpt0WwY0pXDwE6dxxDEgPChiiE6qQzPNGQgWc5bLSEWE7cy2ju/j0huH/j
+         PN+vAs7yA0DlCzdQB00pibYlLYvaUmCaHGzXFbCI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kim Phillips <kim.phillips@amd.com>,
-        Borislav Petkov <bp@suse.de>,
-        Peter Zijlstra <peterz@infradead.org>,
+        stable@vger.kernel.org,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
+        Tom Zanussi <zanussi@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 82/99] perf/amd/uncore: Replace manual sampling check with CAP_NO_INTERRUPT flag
+Subject: [PATCH 5.4 22/60] tracing: Fix number printing bug in print_synth_event()
 Date:   Thu, 19 Mar 2020 14:04:00 +0100
-Message-Id: <20200319124005.115184451@linuxfoundation.org>
+Message-Id: <20200319123926.307490100@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.2
-In-Reply-To: <20200319123941.630731708@linuxfoundation.org>
-References: <20200319123941.630731708@linuxfoundation.org>
+In-Reply-To: <20200319123919.441695203@linuxfoundation.org>
+References: <20200319123919.441695203@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,85 +45,89 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kim Phillips <kim.phillips@amd.com>
+From: Tom Zanussi <zanussi@kernel.org>
 
-[ Upstream commit f967140dfb7442e2db0868b03b961f9c59418a1b ]
+[ Upstream commit 784bd0847eda032ed2f3522f87250655a18c0190 ]
 
-Enable the sampling check in kernel/events/core.c::perf_event_open(),
-which returns the more appropriate -EOPNOTSUPP.
+Fix a varargs-related bug in print_synth_event() which resulted in
+strange output and oopses on 32-bit x86 systems. The problem is that
+trace_seq_printf() expects the varargs to match the format string, but
+print_synth_event() was always passing u64 values regardless.  This
+results in unspecified behavior when unpacking with va_arg() in
+trace_seq_printf().
 
-BEFORE:
+Add a function that takes the size into account when calling
+trace_seq_printf().
 
-  $ sudo perf record -a -e instructions,l3_request_g1.caching_l3_cache_accesses true
-  Error:
-  The sys_perf_event_open() syscall returned with 22 (Invalid argument) for event (l3_request_g1.caching_l3_cache_accesses).
-  /bin/dmesg | grep -i perf may provide additional information.
+Before:
 
-With nothing relevant in dmesg.
+  modprobe-1731  [003] ....   919.039758: gen_synth_test: next_pid_field=777(null)next_comm_field=hula hoops ts_ns=1000000 ts_ms=1000 cpu=3(null)my_string_field=thneed my_int_field=598(null)
 
-AFTER:
+After:
 
-  $ sudo perf record -a -e instructions,l3_request_g1.caching_l3_cache_accesses true
-  Error:
-  l3_request_g1.caching_l3_cache_accesses: PMU Hardware doesn't support sampling/overflow-interrupts. Try 'perf stat'
+ insmod-1136  [001] ....    36.634590: gen_synth_test: next_pid_field=777 next_comm_field=hula hoops ts_ns=1000000 ts_ms=1000 cpu=1 my_string_field=thneed my_int_field=598
 
-Fixes: c43ca5091a37 ("perf/x86/amd: Add support for AMD NB and L2I "uncore" counters")
-Signed-off-by: Kim Phillips <kim.phillips@amd.com>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Acked-by: Peter Zijlstra <peterz@infradead.org>
-Cc: stable@vger.kernel.org
-Link: https://lkml.kernel.org/r/20200311191323.13124-1-kim.phillips@amd.com
+Link: http://lkml.kernel.org/r/a9b59eb515dbbd7d4abe53b347dccf7a8e285657.1581720155.git.zanussi@kernel.org
+
+Reported-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Signed-off-by: Tom Zanussi <zanussi@kernel.org>
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/events/amd/uncore.c | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+ kernel/trace/trace_events_hist.c | 32 +++++++++++++++++++++++++++++---
+ 1 file changed, 29 insertions(+), 3 deletions(-)
 
-diff --git a/arch/x86/events/amd/uncore.c b/arch/x86/events/amd/uncore.c
-index baa7e36073f90..604a8558752d1 100644
---- a/arch/x86/events/amd/uncore.c
-+++ b/arch/x86/events/amd/uncore.c
-@@ -193,20 +193,18 @@ static int amd_uncore_event_init(struct perf_event *event)
+diff --git a/kernel/trace/trace_events_hist.c b/kernel/trace/trace_events_hist.c
+index a31be3fce3e8e..6495800fb92a1 100644
+--- a/kernel/trace/trace_events_hist.c
++++ b/kernel/trace/trace_events_hist.c
+@@ -811,6 +811,29 @@ static const char *synth_field_fmt(char *type)
+ 	return fmt;
+ }
  
- 	/*
- 	 * NB and Last level cache counters (MSRs) are shared across all cores
--	 * that share the same NB / Last level cache. Interrupts can be directed
--	 * to a single target core, however, event counts generated by processes
--	 * running on other cores cannot be masked out. So we do not support
--	 * sampling and per-thread events.
-+	 * that share the same NB / Last level cache.  On family 16h and below,
-+	 * Interrupts can be directed to a single target core, however, event
-+	 * counts generated by processes running on other cores cannot be masked
-+	 * out. So we do not support sampling and per-thread events via
-+	 * CAP_NO_INTERRUPT, and we do not enable counter overflow interrupts:
- 	 */
--	if (is_sampling_event(event) || event->attach_state & PERF_ATTACH_TASK)
--		return -EINVAL;
++static void print_synth_event_num_val(struct trace_seq *s,
++				      char *print_fmt, char *name,
++				      int size, u64 val, char *space)
++{
++	switch (size) {
++	case 1:
++		trace_seq_printf(s, print_fmt, name, (u8)val, space);
++		break;
++
++	case 2:
++		trace_seq_printf(s, print_fmt, name, (u16)val, space);
++		break;
++
++	case 4:
++		trace_seq_printf(s, print_fmt, name, (u32)val, space);
++		break;
++
++	default:
++		trace_seq_printf(s, print_fmt, name, val, space);
++		break;
++	}
++}
++
+ static enum print_line_t print_synth_event(struct trace_iterator *iter,
+ 					   int flags,
+ 					   struct trace_event *event)
+@@ -849,10 +872,13 @@ static enum print_line_t print_synth_event(struct trace_iterator *iter,
+ 		} else {
+ 			struct trace_print_flags __flags[] = {
+ 			    __def_gfpflag_names, {-1, NULL} };
++			char *space = (i == se->n_fields - 1 ? "" : " ");
  
- 	/* NB and Last level cache counters do not have usr/os/guest/host bits */
- 	if (event->attr.exclude_user || event->attr.exclude_kernel ||
- 	    event->attr.exclude_host || event->attr.exclude_guest)
- 		return -EINVAL;
+-			trace_seq_printf(s, print_fmt, se->fields[i]->name,
+-					 entry->fields[n_u64],
+-					 i == se->n_fields - 1 ? "" : " ");
++			print_synth_event_num_val(s, print_fmt,
++						  se->fields[i]->name,
++						  se->fields[i]->size,
++						  entry->fields[n_u64],
++						  space);
  
--	/* and we do not enable counter overflow interrupts */
- 	hwc->config = event->attr.config & AMD64_RAW_EVENT_MASK_NB;
- 	hwc->idx = -1;
- 
-@@ -314,6 +312,7 @@ static struct pmu amd_nb_pmu = {
- 	.start		= amd_uncore_start,
- 	.stop		= amd_uncore_stop,
- 	.read		= amd_uncore_read,
-+	.capabilities	= PERF_PMU_CAP_NO_INTERRUPT,
- };
- 
- static struct pmu amd_llc_pmu = {
-@@ -324,6 +323,7 @@ static struct pmu amd_llc_pmu = {
- 	.start		= amd_uncore_start,
- 	.stop		= amd_uncore_stop,
- 	.read		= amd_uncore_read,
-+	.capabilities	= PERF_PMU_CAP_NO_INTERRUPT,
- };
- 
- static struct amd_uncore *amd_uncore_alloc(unsigned int cpu)
+ 			if (strcmp(se->fields[i]->type, "gfp_t") == 0) {
+ 				trace_seq_puts(s, " (");
 -- 
 2.20.1
 
