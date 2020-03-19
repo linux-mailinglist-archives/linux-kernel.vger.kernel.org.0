@@ -2,46 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 55BB518B845
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:43:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C4C9118B715
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:31:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727649AbgCSNm7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 09:42:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39050 "EHLO mail.kernel.org"
+        id S1729866AbgCSNbG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 09:31:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42170 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727137AbgCSNm5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 09:42:57 -0400
+        id S1729842AbgCSNTJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 09:19:09 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 900B420B1F;
-        Thu, 19 Mar 2020 13:42:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 82EB621556;
+        Thu, 19 Mar 2020 13:19:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584625377;
-        bh=C00m90Jdij6F1HqEzf8L4EgeNwUufQvJHwqJ/rsXnFI=;
+        s=default; t=1584623949;
+        bh=TrcHvj+t0zhknyADv/MVGhq72AnAb4DxejAlu6KPi50=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=NsPLpzOoVFfSTr1EFDHg3MaHV7EbYHmcf9YrKjKTOYL+vs+VK7/knaHHvuOWw7jLz
-         gJy4o9LX9sLWt/I6fuNQJsRaptYy+p38CxCaTAzAo8p5HI8bMwvstBpaxDfkD6SsiK
-         +g9xmzgT6Gl5dgpDWVHo/6GpVZcGihebn8sLOAyQ=
+        b=ROSsNHA7MN7fn012yc+M+ZCrVYg4wTRpm4k4UVPpSzxQNkGj4hAcOFxbgJeYv2ap3
+         nMbqILPc/VjNc92ypAuxw9BmNCqyPSu5KtrdbBAaCGnn/BPXoYat9hdp7K3QOYV/0B
+         DbLpYn8qWxS3dhnTtJBcKMU6eCi2XpRk1X8EVBWA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        "Huang, Ying" <ying.huang@intel.com>,
-        Philip Li <philip.li@intel.com>,
-        Andi Kleen <andi.kleen@intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Sasha Levin <sashal@kernel.org>,
-        Feng Tang <feng.tang@intel.com>
-Subject: [PATCH 5.4 36/60] signal: avoid double atomic counter increments for user accounting
-Date:   Thu, 19 Mar 2020 14:04:14 +0100
-Message-Id: <20200319123931.207979837@linuxfoundation.org>
+        stable@vger.kernel.org, Kees Cook <keescook@chromium.org>,
+        Ard Biesheuvel <ardb@kernel.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Russell King <rmk+kernel@armlinux.org.uk>
+Subject: [PATCH 4.14 97/99] ARM: 8958/1: rename missed uaccess .fixup section
+Date:   Thu, 19 Mar 2020 14:04:15 +0100
+Message-Id: <20200319124007.995068803@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.2
-In-Reply-To: <20200319123919.441695203@linuxfoundation.org>
-References: <20200319123919.441695203@linuxfoundation.org>
+In-Reply-To: <20200319123941.630731708@linuxfoundation.org>
+References: <20200319123941.630731708@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -51,125 +45,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Linus Torvalds <torvalds@linux-foundation.org>
+From: Kees Cook <keescook@chromium.org>
 
-[ Upstream commit fda31c50292a5062332fa0343c084bd9f46604d9 ]
+commit f87b1c49bc675da30d8e1e8f4b60b800312c7b90 upstream.
 
-When queueing a signal, we increment both the users count of pending
-signals (for RLIMIT_SIGPENDING tracking) and we increment the refcount
-of the user struct itself (because we keep a reference to the user in
-the signal structure in order to correctly account for it when freeing).
+When the uaccess .fixup section was renamed to .text.fixup, one case was
+missed. Under ld.bfd, the orphaned section was moved close to .text
+(since they share the "ax" bits), so things would work normally on
+uaccess faults. Under ld.lld, the orphaned section was placed outside
+the .text section, making it unreachable.
 
-That turns out to be fairly expensive, because both of them are atomic
-updates, and particularly under extreme signal handling pressure on big
-machines, you can get a lot of cache contention on the user struct.
-That can then cause horrid cacheline ping-pong when you do these
-multiple accesses.
+Link: https://github.com/ClangBuiltLinux/linux/issues/282
+Link: https://bugs.chromium.org/p/chromium/issues/detail?id=1020633#c44
+Link: https://lore.kernel.org/r/nycvar.YSQ.7.76.1912032147340.17114@knanqh.ubzr
+Link: https://lore.kernel.org/lkml/202002071754.F5F073F1D@keescook/
 
-So change the reference counting to only pin the user for the _first_
-pending signal, and to unpin it when the last pending signal is
-dequeued.  That means that when a user sees a lot of concurrent signal
-queuing - which is the only situation when this matters - the only
-atomic access needed is generally the 'sigpending' count update.
+Fixes: c4a84ae39b4a5 ("ARM: 8322/1: keep .text and .fixup regions closer together")
+Cc: stable@vger.kernel.org
+Signed-off-by: Kees Cook <keescook@chromium.org>
+Reviewed-by: Ard Biesheuvel <ardb@kernel.org>
+Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
+Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-This was noticed because of a particularly odd timing artifact on a
-dual-socket 96C/192T Cascade Lake platform: when you get into bad
-contention, on that machine for some reason seems to be much worse when
-the contention happens in the upper 32-byte half of the cacheline.
-
-As a result, the kernel test robot will-it-scale 'signal1' benchmark had
-an odd performance regression simply due to random alignment of the
-'struct user_struct' (and pointed to a completely unrelated and
-apparently nonsensical commit for the regression).
-
-Avoiding the double increments (and decrements on the dequeueing side,
-of course) makes for much less contention and hugely improved
-performance on that will-it-scale microbenchmark.
-
-Quoting Feng Tang:
-
- "It makes a big difference, that the performance score is tripled! bump
-  from original 17000 to 54000. Also the gap between 5.0-rc6 and
-  5.0-rc6+Jiri's patch is reduced to around 2%"
-
-[ The "2% gap" is the odd cacheline placement difference on that
-  platform: under the extreme contention case, the effect of which half
-  of the cacheline was hot was 5%, so with the reduced contention the
-  odd timing artifact is reduced too ]
-
-It does help in the non-contended case too, but is not nearly as
-noticeable.
-
-Reported-and-tested-by: Feng Tang <feng.tang@intel.com>
-Cc: Eric W. Biederman <ebiederm@xmission.com>
-Cc: Huang, Ying <ying.huang@intel.com>
-Cc: Philip Li <philip.li@intel.com>
-Cc: Andi Kleen <andi.kleen@intel.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/signal.c | 23 ++++++++++++++---------
- 1 file changed, 14 insertions(+), 9 deletions(-)
+ arch/arm/lib/copy_from_user.S |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/kernel/signal.c b/kernel/signal.c
-index bcd46f547db39..eea748174ade9 100644
---- a/kernel/signal.c
-+++ b/kernel/signal.c
-@@ -413,27 +413,32 @@ __sigqueue_alloc(int sig, struct task_struct *t, gfp_t flags, int override_rlimi
- {
- 	struct sigqueue *q = NULL;
- 	struct user_struct *user;
-+	int sigpending;
+--- a/arch/arm/lib/copy_from_user.S
++++ b/arch/arm/lib/copy_from_user.S
+@@ -100,7 +100,7 @@ ENTRY(arm_copy_from_user)
  
- 	/*
- 	 * Protect access to @t credentials. This can go away when all
- 	 * callers hold rcu read lock.
-+	 *
-+	 * NOTE! A pending signal will hold on to the user refcount,
-+	 * and we get/put the refcount only when the sigpending count
-+	 * changes from/to zero.
- 	 */
- 	rcu_read_lock();
--	user = get_uid(__task_cred(t)->user);
--	atomic_inc(&user->sigpending);
-+	user = __task_cred(t)->user;
-+	sigpending = atomic_inc_return(&user->sigpending);
-+	if (sigpending == 1)
-+		get_uid(user);
- 	rcu_read_unlock();
+ ENDPROC(arm_copy_from_user)
  
--	if (override_rlimit ||
--	    atomic_read(&user->sigpending) <=
--			task_rlimit(t, RLIMIT_SIGPENDING)) {
-+	if (override_rlimit || likely(sigpending <= task_rlimit(t, RLIMIT_SIGPENDING))) {
- 		q = kmem_cache_alloc(sigqueue_cachep, flags);
- 	} else {
- 		print_dropped_signal(sig);
- 	}
- 
- 	if (unlikely(q == NULL)) {
--		atomic_dec(&user->sigpending);
--		free_uid(user);
-+		if (atomic_dec_and_test(&user->sigpending))
-+			free_uid(user);
- 	} else {
- 		INIT_LIST_HEAD(&q->list);
- 		q->flags = 0;
-@@ -447,8 +452,8 @@ static void __sigqueue_free(struct sigqueue *q)
- {
- 	if (q->flags & SIGQUEUE_PREALLOC)
- 		return;
--	atomic_dec(&q->user->sigpending);
--	free_uid(q->user);
-+	if (atomic_dec_and_test(&q->user->sigpending))
-+		free_uid(q->user);
- 	kmem_cache_free(sigqueue_cachep, q);
- }
- 
--- 
-2.20.1
-
+-	.pushsection .fixup,"ax"
++	.pushsection .text.fixup,"ax"
+ 	.align 0
+ 	copy_abort_preamble
+ 	ldmfd	sp!, {r1, r2, r3}
 
 
