@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B248118B4A6
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:11:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CF96B18B436
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:08:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727560AbgCSNLe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 09:11:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56654 "EHLO mail.kernel.org"
+        id S1727984AbgCSNHm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 09:07:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51476 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727806AbgCSNL1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 09:11:27 -0400
+        id S1727952AbgCSNHk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 09:07:40 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1165220722;
-        Thu, 19 Mar 2020 13:11:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B3A3B20842;
+        Thu, 19 Mar 2020 13:07:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584623486;
-        bh=nOADCBPFTAIRjOeiOmXpOXpC+G5KCw0hroB8KVfhh3o=;
+        s=default; t=1584623260;
+        bh=LPP5v4SZNWrBxVbQHTXg15znv7K1qgCA0w3y/2YNjgA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=wOPgcCdLm3mZexr1F7hvPfmOfYi0qeaPg1HzfET10g31C+QGDKb+1toTzVmqFHgl/
-         K0A0cj6OoA7Iw0HwnKbN+s0kLJKB/rpC78vA8nhoDSBsbcsIzXuCZKeZGF0tfGaqk1
-         hPCGLT2peVUyAsGz/Z6+tAsUIScXk2743mnYa/AM=
+        b=HFZGXipBFIm1C6CA4uua7usvrXBEDH4gmLBLhCVuxpY8uCcDSBkQINdpy2qi8O7KF
+         kY/3IemTwCJGqv77j3ZF8ofGhhhuL4qBv8vXQxIEv6TnMvfQnKEsAPuEA6dBvaCgsp
+         fbBDHBFj4EmXGzbTw0j+LRQEFmuyO+0GR1p7Ts/g=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Mahesh Bandewar <maheshb@google.com>,
-        Eric Dumazet <edumazet@google.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 24/90] ipvlan: dont deref eth hdr before checking its set
+        Sven Eckelmann <sven@narfation.org>,
+        Marek Lindner <mareklindner@neomailbox.ch>,
+        Antonio Quartulli <a@unstable.cc>
+Subject: [PATCH 4.4 42/93] batman-adv: Fix unexpected free of bcast_own on add_if error
 Date:   Thu, 19 Mar 2020 13:59:46 +0100
-Message-Id: <20200319123936.081546659@linuxfoundation.org>
+Message-Id: <20200319123938.445830048@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.2
-In-Reply-To: <20200319123928.635114118@linuxfoundation.org>
-References: <20200319123928.635114118@linuxfoundation.org>
+In-Reply-To: <20200319123924.795019515@linuxfoundation.org>
+References: <20200319123924.795019515@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,54 +44,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Mahesh Bandewar <maheshb@google.com>
+From: Sven Eckelmann <sven@narfation.org>
 
-[ Upstream commit ad8192767c9f9cf97da57b9ffcea70fb100febef ]
+commit f7dcdf5fdbe8fec7670d8f65a5db595c98e0ecab upstream.
 
-IPvlan in L3 mode discards outbound multicast packets but performs
-the check before ensuring the ether-header is set or not. This is
-an error that Eric found through code browsing.
+The function batadv_iv_ogm_orig_add_if allocates new buffers for bcast_own
+and bcast_own_sum. It is expected that these buffers are unchanged in case
+either bcast_own or bcast_own_sum couldn't be resized.
 
-Fixes: 2ad7bf363841 (“ipvlan: Initial check-in of the IPVLAN driver.”)
-Signed-off-by: Mahesh Bandewar <maheshb@google.com>
-Reported-by: Eric Dumazet <edumazet@google.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+But the error handling of this function frees the already resized buffer
+for bcast_own when the allocation of the new bcast_own_sum buffer failed.
+This will lead to an invalid memory access when some code will try to
+access bcast_own.
+
+Instead the resized new bcast_own buffer has to be kept. This will not lead
+to problems because the size of the buffer was only increased and therefore
+no user of the buffer will try to access bytes outside of the new buffer.
+
+Fixes: d0015fdd3d2c ("batman-adv: provide orig_node routing API")
+Signed-off-by: Sven Eckelmann <sven@narfation.org>
+Signed-off-by: Marek Lindner <mareklindner@neomailbox.ch>
+Signed-off-by: Antonio Quartulli <a@unstable.cc>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ipvlan/ipvlan_core.c |   18 ++++++++++--------
- 1 file changed, 10 insertions(+), 8 deletions(-)
+ net/batman-adv/bat_iv_ogm.c |    4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
---- a/drivers/net/ipvlan/ipvlan_core.c
-+++ b/drivers/net/ipvlan/ipvlan_core.c
-@@ -444,19 +444,21 @@ static int ipvlan_process_outbound(struc
- 	struct ethhdr *ethh = eth_hdr(skb);
- 	int ret = NET_XMIT_DROP;
+--- a/net/batman-adv/bat_iv_ogm.c
++++ b/net/batman-adv/bat_iv_ogm.c
+@@ -155,10 +155,8 @@ static int batadv_iv_ogm_orig_add_if(str
+ 	orig_node->bat_iv.bcast_own = data_ptr;
  
--	/* In this mode we dont care about multicast and broadcast traffic */
--	if (is_multicast_ether_addr(ethh->h_dest)) {
--		pr_debug_ratelimited("Dropped {multi|broad}cast of type=[%x]\n",
--				     ntohs(skb->protocol));
--		kfree_skb(skb);
--		goto out;
+ 	data_ptr = kmalloc_array(max_if_num, sizeof(u8), GFP_ATOMIC);
+-	if (!data_ptr) {
+-		kfree(orig_node->bat_iv.bcast_own);
++	if (!data_ptr)
+ 		goto unlock;
 -	}
--
- 	/* The ipvlan is a pseudo-L2 device, so the packets that we receive
- 	 * will have L2; which need to discarded and processed further
- 	 * in the net-ns of the main-device.
- 	 */
- 	if (skb_mac_header_was_set(skb)) {
-+		/* In this mode we dont care about
-+		 * multicast and broadcast traffic */
-+		if (is_multicast_ether_addr(ethh->h_dest)) {
-+			pr_debug_ratelimited(
-+				"Dropped {multi|broad}cast of type=[%x]\n",
-+				ntohs(skb->protocol));
-+			kfree_skb(skb);
-+			goto out;
-+		}
-+
- 		skb_pull(skb, sizeof(*ethh));
- 		skb->mac_header = (typeof(skb->mac_header))~0U;
- 		skb_reset_network_header(skb);
+ 
+ 	memcpy(data_ptr, orig_node->bat_iv.bcast_own_sum,
+ 	       (max_if_num - 1) * sizeof(u8));
 
 
