@@ -2,140 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 19DCD18BC37
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 17:17:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D166818BC3C
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 17:17:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728198AbgCSQRA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 12:17:00 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56644 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728033AbgCSQQ7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 12:16:59 -0400
-Received: from [192.168.1.31] (cpe-70-114-128-244.austin.res.rr.com [70.114.128.244])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9A19B2072C;
-        Thu, 19 Mar 2020 16:16:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584634618;
-        bh=czCpJ8y0zyIMrb16loRBDNoPc3JFCft+Emc2g/RzqIw=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=ggW2ImWE6fut/X+eJIbds8cFs5QEN295nURqqWwE0gnDEHhAHDvdeiUm9/TPSkZnz
-         rZw1syAOYzFSQH5TzOoKFxEX/UPau0CagrKTvHPJOy6ZXf83ZWKZzrSk8RIzVyDRWo
-         Zhx5pdg2W+TdLDZmTr82ex4sk2lN30/NxAD2bGhU=
-Subject: Re: [PATCHv3 4/5] dt-bindings: documentation: add clock bindings
- information for Agilex
-To:     Rob Herring <robh@kernel.org>
-Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, sboyd@kernel.org,
-        mturquette@baylibre.com, robh+dt@kernel.org, mark.rutland@arm.com
-References: <20200317161022.11181-1-dinguyen@kernel.org>
- <20200317161022.11181-5-dinguyen@kernel.org> <20200318224042.GA32101@bogus>
-From:   Dinh Nguyen <dinguyen@kernel.org>
-Autocrypt: addr=dinguyen@kernel.org; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <30180323-3c74-d04a-b715-3b1f655d6a81@kernel.org>
-Date:   Thu, 19 Mar 2020 11:16:56 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        id S1728266AbgCSQRV convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Thu, 19 Mar 2020 12:17:21 -0400
+Received: from relay8-d.mail.gandi.net ([217.70.183.201]:43675 "EHLO
+        relay8-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727700AbgCSQRU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 12:17:20 -0400
+X-Originating-IP: 90.76.143.236
+Received: from localhost (lfbn-tou-1-1075-236.w90-76.abo.wanadoo.fr [90.76.143.236])
+        (Authenticated sender: antoine.tenart@bootlin.com)
+        by relay8-d.mail.gandi.net (Postfix) with ESMTPSA id 0E4F81BF20C;
+        Thu, 19 Mar 2020 16:17:18 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <20200318224042.GA32101@bogus>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8BIT
+In-Reply-To: <20200319160505.GE27807@lunn.ch>
+References: <20200319141958.383626-1-antoine.tenart@bootlin.com> <20200319141958.383626-3-antoine.tenart@bootlin.com> <20200319160505.GE27807@lunn.ch>
+Cc:     davem@davemloft.net, f.fainelli@gmail.com, hkallweit1@gmail.com,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+From:   Antoine Tenart <antoine.tenart@bootlin.com>
+Subject: Re: [PATCH net-next v3 2/2] net: phy: mscc: RGMII skew delay configuration
+To:     Andrew Lunn <andrew@lunn.ch>
+Message-ID: <158463463741.3149.13095217659080007040@kwain>
+Date:   Thu, 19 Mar 2020 17:17:17 +0100
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Rob,
+Hi Andrew,
 
-On 3/18/20 5:40 PM, Rob Herring wrote:
-> On Tue, 17 Mar 2020 11:10:21 -0500, Dinh Nguyen wrote:
->> Document the Agilex clock bindings, and add the clock header file. The
->> clock header is an enumeration of all the different clocks on the Agilex
->> platform.
->>
->> Signed-off-by: Dinh Nguyen <dinguyen@kernel.org>
->> ---
->> v3: address comments from Stephen Boyd
->>     fix build error(tab removed in line 37)
->>     renamed to intel,agilex.yaml
->> v2: convert original document to YAML
->> ---
->>  .../bindings/clock/intel,agilex.yaml          | 36 ++++++++++
->>  include/dt-bindings/clock/agilex-clock.h      | 70 +++++++++++++++++++
->>  2 files changed, 106 insertions(+)
->>  create mode 100644 Documentation/devicetree/bindings/clock/intel,agilex.yaml
->>  create mode 100644 include/dt-bindings/clock/agilex-clock.h
->>
+Quoting Andrew Lunn (2020-03-19 17:05:05)
+> On Thu, Mar 19, 2020 at 03:19:58PM +0100, Antoine Tenart wrote:
+> > This patch adds support for configuring the RGMII skew delays in Rx and
+> > Tx. The Rx and Tx skews are set based on the interface mode. By default
+> > their configuration is set to the default value in hardware (0.2ns);
+> > this means the driver do not rely anymore on the bootloader
+> > configuration.
+> > 
+> > Then based on the interface mode being used, a 2ns delay is added:
+> > - RGMII_ID adds it for both Rx and Tx.
+> > - RGMII_RXID adds it for Rx.
+> > - RGMII_TXID adds it for Tx.
+> > 
+> > Signed-off-by: Antoine Tenart <antoine.tenart@bootlin.com>
+> > ---
+> >  drivers/net/phy/mscc/mscc.h      | 14 ++++++++++++++
+> >  drivers/net/phy/mscc/mscc_main.c | 29 +++++++++++++++++++++++++++++
+> >  2 files changed, 43 insertions(+)
+> > 
+> > diff --git a/drivers/net/phy/mscc/mscc.h b/drivers/net/phy/mscc/mscc.h
+> > index d1b8bbe8acca..25729302714c 100644
+> > --- a/drivers/net/phy/mscc/mscc.h
+> > +++ b/drivers/net/phy/mscc/mscc.h
+> > @@ -161,6 +161,20 @@ enum rgmii_rx_clock_delay {
+> >  /* Extended Page 2 Registers */
+> >  #define MSCC_PHY_CU_PMD_TX_CNTL                16
+> >  
+> > +#define MSCC_PHY_RGMII_SETTINGS                18
+> > +#define RGMII_SKEW_RX_POS              1
+> > +#define RGMII_SKEW_TX_POS              4
+> > +
+> > +/* RGMII skew values, in ns */
+> > +#define VSC8584_RGMII_SKEW_0_2                 0
+> > +#define VSC8584_RGMII_SKEW_0_8                 1
+> > +#define VSC8584_RGMII_SKEW_1_1                 2
+> > +#define VSC8584_RGMII_SKEW_1_7                 3
+> > +#define VSC8584_RGMII_SKEW_2_0                 4
+> > +#define VSC8584_RGMII_SKEW_2_3                 5
+> > +#define VSC8584_RGMII_SKEW_2_6                 6
+> > +#define VSC8584_RGMII_SKEW_3_4                 7
 > 
-> My bot found errors running 'make dt_binding_check' on your patch:
+>   
+> > +static void vsc8584_rgmii_set_skews(struct phy_device *phydev)
+> > +{
+> > +     u32 skew_rx, skew_tx;
+> > +
+> > +     /* We first set the Rx and Tx skews to their default value in h/w
+> > +      * (0.2 ns).
+> > +      */
+> > +     skew_rx = VSC8584_RGMII_SKEW_0_2;
+> > +     skew_tx = VSC8584_RGMII_SKEW_0_2;
 > 
-> Error: Documentation/devicetree/bindings/clock/intel,agilex.example.dts:17.3-4 syntax error
-> FATAL ERROR: Unable to parse input tree
-> scripts/Makefile.lib:311: recipe for target 'Documentation/devicetree/bindings/clock/intel,agilex.example.dt.yaml' failed
-> make[1]: *** [Documentation/devicetree/bindings/clock/intel,agilex.example.dt.yaml] Error 1
-> Makefile:1262: recipe for target 'dt_binding_check' failed
-> make: *** [dt_binding_check] Error 2
-> 
-> See https://patchwork.ozlabs.org/patch/1256630
-> Please check and re-submit.
-> 
+> Does this mean it is impossible to have a skew of 0ns?
 
-I want to be able check these errors locally before sending the next
-version. But I keep getting various errors when I try to "make
-dt_binding_check":
+It seems to be the case, the lowest value this register accepts is 0,
+which means a 0.2ns delay, according to the datasheet. And I'm not
+seeing any register disabling this when RGMII is used.
 
-Traceback (most recent call last):
-  File "/bin/dt-doc-validate", line 15, in <module>
-    import ruamel.yaml
-ImportError: No module named 'ruamel'
-Documentation/devicetree/bindings/Makefile:12: recipe for target
-'Documentation/devicetree/bindings/arm/l2c2x0.example.dts' failed
+Thanks!
+Antoine
 
-
-Do you have a pointer on how to run the dt_binding_check?
-
-Thanks,
-Dinh
+-- 
+Antoine Ténart, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
