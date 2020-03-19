@@ -2,68 +2,160 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2041918AD7C
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 08:48:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2776618ADBF
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 08:57:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726658AbgCSHs3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 03:48:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60526 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725768AbgCSHs3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 03:48:29 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8FA4E20722;
-        Thu, 19 Mar 2020 07:48:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584604109;
-        bh=DpO44T5jLSZKdnEhkl065vGcFlq3vORTR/bjAmB0qzY=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=f7I3czoT7LXJzenE68cfpJA+9lwbm8n0vpJEu647VjqTazfvK7mWmVuKmn+LEBtaZ
-         zFW/IPkHtzbAl8nMFfMTc1KSQCV9sfnkpR0gkGVfWD3LHi4i2uFDlk4SUjn9HByvzi
-         sZbbFlkH5Uhb2BfNNIHQASyyJA/A6uwvQYc0PKI8=
-Date:   Thu, 19 Mar 2020 08:48:26 +0100
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Qiang Su <suqiang4@huawei.com>
-Cc:     linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V3] UIO: make maximum memory and port regions configurable
-Message-ID: <20200319074826.GA3444175@kroah.com>
-References: <20200319073923.51812-1-suqiang4@huawei.com>
+        id S1726825AbgCSH5Y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 03:57:24 -0400
+Received: from mail-vi1eur05on2049.outbound.protection.outlook.com ([40.107.21.49]:6099
+        "EHLO EUR05-VI1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725768AbgCSH5Y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 03:57:24 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=ljCWULdegx1MalgwONbgFI83BIwv7TFJIJoVFemjprXuxYfjE7R5avFJNw44/Vg7BYXKAPjHRGok1JsIQsQn9F3UiFwilDHDcV9+qD7KU35RAzazNu3otyPkvNt2L90Q0RWJK7QCxBZTfZyAbAA3K6+nJMklmNuovEehB0z2weXqt1P4ium2G8IBM4fcr+rN1bRJV2+LyaQ2sYLKEvsDUzssMw5UMvC6k1JV9umXvX+VSd/h6YlwXJavJNlb4UTi+TW+Rrz6jw+CMyyD3lMNrZNV7tI2EgctzSSOYTSP823KG33++VTfbFY9ssOsUbVjLcB9ygLpO4+6rpFvzi2mDw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=TfYC0tiDswtEMx6MuvV2P75/ztzxCNZ6JuOk4Hi8kOI=;
+ b=gGyL04RG7JKk125DE4Q8z84FXnrDzozDg/qz2aMr0rNSzBSpeoK1TQR72dmknOP/nNQRFbNl9yFjHjvG3PjxQSJU2M+wQVVxnedFTHNFDWIr6peOiOYPeqvq77+sx2Xgy94REVldCV2MxlZXcu9CevQ+DvPUsW94EiqV5BNVxPUwIUwmM20UTdJpld3eldFZQzNfMPIwgpGv/RuYROGS/Ab7D5nJNqEFqSok+YPIi69BE2HyetD+G3T18X1rMDmqQQ1xjcnzrqEqvemlkmP2S92pQTlpexrJkPI+MQhiLhX4xTmJKTExop5/LE9X6CKmOUh8eGyjJAEFZ9hRbYfKyQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=TfYC0tiDswtEMx6MuvV2P75/ztzxCNZ6JuOk4Hi8kOI=;
+ b=DfoaqiFk/t2cGhhqF4CVKka+b95HTRdbYNSnK4pk06n1lMCt8w7K1z8bHPmEqwnN2vc36fGRiEfEqXgu4ZWK+TNtnho42wZg4CMDfhvTBGXJyC6FU3FGxu2aBRF10weGnzi7C8QjDtcOfE/Gj2BTYegRNSOgSPH8dRXiPijQpSA=
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=peng.fan@nxp.com; 
+Received: from AM0PR04MB4481.eurprd04.prod.outlook.com (52.135.147.15) by
+ AM0PR04MB5956.eurprd04.prod.outlook.com (20.178.113.87) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2814.16; Thu, 19 Mar 2020 07:57:19 +0000
+Received: from AM0PR04MB4481.eurprd04.prod.outlook.com
+ ([fe80::ad44:6b0d:205d:f8fc]) by AM0PR04MB4481.eurprd04.prod.outlook.com
+ ([fe80::ad44:6b0d:205d:f8fc%7]) with mapi id 15.20.2814.021; Thu, 19 Mar 2020
+ 07:57:19 +0000
+From:   peng.fan@nxp.com
+To:     shawnguo@kernel.org, s.hauer@pengutronix.de,
+        jassisinghbrar@gmail.com, o.rempel@pengutronix.de,
+        leonard.crestez@nxp.com
+Cc:     kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com,
+        Anson.Huang@nxp.com, aisheng.dong@nxp.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Peng Fan <peng.fan@nxp.com>
+Subject: [PATCH V7 0/4] mailbox/firmware: imx: support SCU channel type
+Date:   Thu, 19 Mar 2020 15:49:49 +0800
+Message-Id: <1584604193-2945-1-git-send-email-peng.fan@nxp.com>
+X-Mailer: git-send-email 2.7.4
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SG2PR02CA0118.apcprd02.prod.outlook.com
+ (2603:1096:4:92::34) To AM0PR04MB4481.eurprd04.prod.outlook.com
+ (2603:10a6:208:70::15)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200319073923.51812-1-suqiang4@huawei.com>
+X-MS-Exchange-MessageSentRepresentingType: 1
+Received: from localhost.localdomain (119.31.174.66) by SG2PR02CA0118.apcprd02.prod.outlook.com (2603:1096:4:92::34) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.20.2835.18 via Frontend Transport; Thu, 19 Mar 2020 07:57:15 +0000
+X-Mailer: git-send-email 2.7.4
+X-Originating-IP: [119.31.174.66]
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-HT: Tenant
+X-MS-Office365-Filtering-Correlation-Id: 670f7893-d165-473c-63b6-08d7cbdb25bf
+X-MS-TrafficTypeDiagnostic: AM0PR04MB5956:|AM0PR04MB5956:
+X-MS-Exchange-Transport-Forked: True
+X-Microsoft-Antispam-PRVS: <AM0PR04MB5956FE72AC87321B3694B80E88F40@AM0PR04MB5956.eurprd04.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:2657;
+X-Forefront-PRVS: 0347410860
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(4636009)(136003)(39860400002)(396003)(376002)(346002)(366004)(199004)(26005)(36756003)(86362001)(316002)(2906002)(15650500001)(52116002)(6506007)(66946007)(66476007)(66556008)(9686003)(6512007)(8676002)(8936002)(6486002)(5660300002)(81166006)(478600001)(4326008)(6666004)(81156014)(966005)(2616005)(186003)(16526019)(956004);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB5956;H:AM0PR04MB4481.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;
+Received-SPF: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: ZCmKmWbI+T6EJ0PTiwK3zkNEBjtyDetRANmY2RQtVkcYrx6PGSFils5DcJZsrajvZIETtBfphYYc0O1Sm0AQaRYBhvZN6/70rrRRqO+vfxtFfzvjOb+CT1HD0mAH7PQfOn5LtU4L3NTFOFKQQIUxKziOtEc/3EkMTADpBFh9JgFdA1OL/s/Z/eieCNeoot6jPrJ+58PBqyoixk7AutzjQ7xrTx/D30FfPMZ0kfLkExqOYWywQClvaVRXp+mg7r2CdcKByx7YxDxi2qBhm2Eq3qJz5iDU478VM173OlypgMkyHvVNJsnBfL8GpZDz8WwbU6tKTBoJatynCqhaor9t64oWyq0lsp7YWw+tDP1GOwT2V4COlxsdS12uQAccLGGl8dJ8fm5Qo53p9O64BW82bsKXD8CiNfbT0B5CM5X/xa9RV9lzfVKgiBcRL5VwTbRG2XngHWQQ7c744B/Z9lvYXq9lzS04L25IppAoekR1ZNQ9aiT8VvOYYO+poOFo7gW49EWntG2OKLmQI8v2f9z1rg==
+X-MS-Exchange-AntiSpam-MessageData: Rl/yRLZCLwdHUNn27ySrwqOjm+soKECVu7qlZq8UIL/+/8nmubIFwsgn5+TPsfmtLNbx6g/bmk8qijUmv6cj8IadSJbVFBPFxt9oN3j1SaUV1aq9QRjK2UGLVQmwNIYl16Mnvcvv+QwBpvYdEo6rEA==
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 670f7893-d165-473c-63b6-08d7cbdb25bf
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Mar 2020 07:57:19.0609
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Wref0OrskCtBNLZw5zaTnSavSWj9h4i+GwHexzxo1hW0d+B3IRKO1+/KuSNUml8VUEvAMDc4anVZmsHdQF/muA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB5956
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 19, 2020 at 03:39:23PM +0800, Qiang Su wrote:
-> Now each uio device can only support 5 memory regions and
-> 5 port regions. It may be far from enough for some big system.
-> On the other hand, the hard-coded style is not flexible.
-> So make these values configurable by menuconfig, thus users
-> can easily expand them according to their actual situation.
-> 
-> Consider the marco is used as array index, so a range for
-> the config is set in menuconfig. The range is set as 1 to 512.
-> The default value is still set as 5 to keep consistent with
-> current code.
-> 
-> Signed-off-by: Qiang Su <suqiang4@huawei.com>
-> Reported-by: kbuild test robot <lkp@intel.com>
-> Reviewed-by: Greg KH <gregkh@linuxfoundation.org>
+From: Peng Fan <peng.fan@nxp.com>
 
-What?  No, I did not review this, do not add a tag like that for a patch
-that I have not explicitly given it for.
+V7:
+ Per Leonard's comments, added check for TE/RE
+ Passed test from Leonard's https://github.com/cdleonard/imx-scu-test
 
-And how is the kbuild bot reporting problems that this patch fixes?
-Where is that report?
+V6:
+ Add Oleksij's R-b tag
+ Patch 3/4, per https://www.kernel.org/doc/Documentation/printk-formats.txt
+ should use %zu for printk sizeof
 
-Also, I want this to be dynamic, not static, please do that instead, no
-one rebuilds their kernels for something like this.
+V5:
+ Move imx_mu_dcfg below imx_mu_priv
+ Add init hooks to imx_mu_dcfg
+ drop __packed __aligned
+ Add more debug msg
+ code style cleanup
 
-thanks,
+V4:
+ Drop IMX_MU_TYPE_[GENERIC, SCU]
+ Pack MU chans init to separate function
+ Add separate function for SCU chans init and xlate
+ Add santity check to msg hdr.size
+ Limit SCU MU chans to 6, TX0/RX0/RXDB[0-3]
 
-greg k-h
+V3:
+ Rebase to Shawn's for-next
+ Include fsl,imx8-mu-scu compatible
+ Per Oleksij's comments, introduce generic tx/rx and added scu mu type
+ Check fsl,imx8-mu-scu in firmware driver for fast_ipc
+
+V2:
+ Drop patch 1/3 which added fsl,scu property
+ Force to use scu channel type when machine has node compatible "fsl,imx-scu"
+ Force imx-scu to use fast_ipc
+
+ I not found a generic method to make SCFW message generic enough, SCFW
+ message is not fixed length including TX and RX. And it use TR0/RR0
+ interrupt.
+
+V1:
+Sorry to bind the mailbox/firmware patch together. This is make it
+to understand what changed to support using 1 TX and 1 RX channel
+for SCFW message.
+
+Per i.MX8QXP Reference mannual, there are several message using
+examples. One of them is:
+Passing short messages: Transmit register(s) can be used to pass
+short messages from one to four words in length. For example,
+when a four-word message is desired, only one of the registers
+needs to have its corresponding interrupt enable bit set at the
+receiver side.
+
+This patchset is to using this for SCFW message to replace four TX
+and four RX method.
+
+Peng Fan (4):
+  dt-bindings: mailbox: imx-mu: add SCU MU support
+  mailbox: imx: restructure code to make easy for new MU
+  mailbox: imx: add SCU MU support
+  firmware: imx-scu: Support one TX and one RX
+
+ .../devicetree/bindings/mailbox/fsl,mu.txt         |   2 +
+ drivers/firmware/imx/imx-scu.c                     |  54 +++-
+ drivers/mailbox/imx-mailbox.c                      | 288 +++++++++++++++++----
+ 3 files changed, 281 insertions(+), 63 deletions(-)
+
+
+base-commit: e506dba69a5e9aaff20fd73a108639f84e2c39d9
+-- 
+2.16.4
+
