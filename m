@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A567118B4D6
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:13:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CC95218B462
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:09:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727194AbgCSNNH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 09:13:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59726 "EHLO mail.kernel.org"
+        id S1728319AbgCSNJW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 09:09:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53766 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729060AbgCSNNB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 09:13:01 -0400
+        id S1728301AbgCSNJU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 09:09:20 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A6C8221841;
-        Thu, 19 Mar 2020 13:13:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C16F520722;
+        Thu, 19 Mar 2020 13:09:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584623581;
-        bh=MNISfiGq26FrWPxt9X9i15XovzbjQzDF8bZvT5s9xpc=;
+        s=default; t=1584623360;
+        bh=7XS8OHBApcyUM7SsocyIfhCZel6pYeXzBAVonk65o3c=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=edOhnWkXRnGoDHigGLejfCiWPgScHwXC9cvigATEqnr63Xz87hwlaaLR27cX1XXai
-         l5+Cj24MyODrhnLP1MdAEnwB2TsR0Ve62jhp1mukSeMUJG0jYjJgnahokam1Uu4F2h
-         xeRmSN7ntdpCwWFsY3Ca9DaRj96K2TmdhsS9gwA4=
+        b=ADHoD+/kxiDQcWpY99KxKNmftimW6ttiR2A8pnLrun/rnGi1LbAP7AltP/M5eCPVW
+         834mZeAdVOCtLKXqqCx/2ydDlxsO+R2V9x+P+lkntU7VWATdWGtN76S1ZE6UA2W6sj
+         kYavXkll9fQHFJVXMWQTWHzeQ10Fq1aQxQe8htiU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Sven Eckelmann <sven.eckelmann@openmesh.com>,
+        Sven Eckelmann <sven@narfation.org>,
+        Marek Lindner <mareklindner@neomailbox.ch>,
         Simon Wunderlich <sw@simonwunderlich.de>
-Subject: [PATCH 4.9 58/90] batman-adv: Avoid spurious warnings from bat_v neigh_cmp implementation
-Date:   Thu, 19 Mar 2020 14:00:20 +0100
-Message-Id: <20200319123946.481092472@linuxfoundation.org>
+Subject: [PATCH 4.4 77/93] batman-adv: Prevent duplicated nc_node entry
+Date:   Thu, 19 Mar 2020 14:00:21 +0100
+Message-Id: <20200319123949.150591940@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.2
-In-Reply-To: <20200319123928.635114118@linuxfoundation.org>
-References: <20200319123928.635114118@linuxfoundation.org>
+In-Reply-To: <20200319123924.795019515@linuxfoundation.org>
+References: <20200319123924.795019515@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,66 +44,96 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sven Eckelmann <sven.eckelmann@openmesh.com>
+From: Sven Eckelmann <sven@narfation.org>
 
-commit 6a4bc44b012cbc29c9d824be2c7ab9eac8ee6b6f upstream.
+commit fa122fec8640eb7186ce5a41b83a4c1744ceef8f upstream.
 
-The neighbor compare API implementation for B.A.T.M.A.N. V checks whether
-the neigh_ifinfo for this neighbor on a specific interface exists. A
-warning is printed when it isn't found.
+The function batadv_nc_get_nc_node is responsible for adding new nc_nodes
+to the in_coding_list and out_coding_list. It first checks whether the
+entry already is in the list or not. If it is, then the creation of a new
+entry is aborted.
 
-But it is not called inside a lock which would prevent that this
-information is lost right before batadv_neigh_ifinfo_get. It must therefore
-be expected that batadv_v_neigh_(cmp|is_sob) might not be able to get the
-requested neigh_ifinfo.
+But the lock for the list is only held when the list is really modified.
+This could lead to duplicated entries because another context could create
+an entry with the same key between the check and the list manipulation.
 
-A WARN_ON for such a situation seems not to be appropriate because this
-will only flood the kernel logs. The warnings must therefore be removed.
+The check and the manipulation of the list must therefore be in the same
+locked code section.
 
-Signed-off-by: Sven Eckelmann <sven.eckelmann@openmesh.com>
+Fixes: d56b1705e28c ("batman-adv: network coding - detect coding nodes and remove these after timeout")
+Signed-off-by: Sven Eckelmann <sven@narfation.org>
+Acked-by: Marek Lindner <mareklindner@neomailbox.ch>
 Signed-off-by: Simon Wunderlich <sw@simonwunderlich.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/batman-adv/bat_v.c |    9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
+ net/batman-adv/network-coding.c |   33 +++++++++++++++------------------
+ 1 file changed, 15 insertions(+), 18 deletions(-)
 
---- a/net/batman-adv/bat_v.c
-+++ b/net/batman-adv/bat_v.c
-@@ -19,7 +19,6 @@
- #include "main.h"
+--- a/net/batman-adv/network-coding.c
++++ b/net/batman-adv/network-coding.c
+@@ -828,19 +828,29 @@ static struct batadv_nc_node
+ 	spinlock_t *lock; /* Used to lock list selected by "int in_coding" */
+ 	struct list_head *list;
  
- #include <linux/atomic.h>
--#include <linux/bug.h>
- #include <linux/cache.h>
- #include <linux/errno.h>
- #include <linux/if_ether.h>
-@@ -623,11 +622,11 @@ static int batadv_v_neigh_cmp(struct bat
- 	int ret = 0;
++	/* Select ingoing or outgoing coding node */
++	if (in_coding) {
++		lock = &orig_neigh_node->in_coding_list_lock;
++		list = &orig_neigh_node->in_coding_list;
++	} else {
++		lock = &orig_neigh_node->out_coding_list_lock;
++		list = &orig_neigh_node->out_coding_list;
++	}
++
++	spin_lock_bh(lock);
++
+ 	/* Check if nc_node is already added */
+ 	nc_node = batadv_nc_find_nc_node(orig_node, orig_neigh_node, in_coding);
  
- 	ifinfo1 = batadv_neigh_ifinfo_get(neigh1, if_outgoing1);
--	if (WARN_ON(!ifinfo1))
-+	if (!ifinfo1)
- 		goto err_ifinfo1;
+ 	/* Node found */
+ 	if (nc_node)
+-		return nc_node;
++		goto unlock;
  
- 	ifinfo2 = batadv_neigh_ifinfo_get(neigh2, if_outgoing2);
--	if (WARN_ON(!ifinfo2))
-+	if (!ifinfo2)
- 		goto err_ifinfo2;
+ 	nc_node = kzalloc(sizeof(*nc_node), GFP_ATOMIC);
+ 	if (!nc_node)
+-		return NULL;
++		goto unlock;
  
- 	ret = ifinfo1->bat_v.throughput - ifinfo2->bat_v.throughput;
-@@ -649,11 +648,11 @@ static bool batadv_v_neigh_is_sob(struct
- 	bool ret = false;
+-	if (!atomic_inc_not_zero(&orig_neigh_node->refcount))
+-		goto free;
++	atomic_inc(&orig_neigh_node->refcount);
  
- 	ifinfo1 = batadv_neigh_ifinfo_get(neigh1, if_outgoing1);
--	if (WARN_ON(!ifinfo1))
-+	if (!ifinfo1)
- 		goto err_ifinfo1;
+ 	/* Initialize nc_node */
+ 	INIT_LIST_HEAD(&nc_node->list);
+@@ -848,28 +858,15 @@ static struct batadv_nc_node
+ 	nc_node->orig_node = orig_neigh_node;
+ 	atomic_set(&nc_node->refcount, 2);
  
- 	ifinfo2 = batadv_neigh_ifinfo_get(neigh2, if_outgoing2);
--	if (WARN_ON(!ifinfo2))
-+	if (!ifinfo2)
- 		goto err_ifinfo2;
+-	/* Select ingoing or outgoing coding node */
+-	if (in_coding) {
+-		lock = &orig_neigh_node->in_coding_list_lock;
+-		list = &orig_neigh_node->in_coding_list;
+-	} else {
+-		lock = &orig_neigh_node->out_coding_list_lock;
+-		list = &orig_neigh_node->out_coding_list;
+-	}
+-
+ 	batadv_dbg(BATADV_DBG_NC, bat_priv, "Adding nc_node %pM -> %pM\n",
+ 		   nc_node->addr, nc_node->orig_node->orig);
  
- 	threshold = ifinfo1->bat_v.throughput / 4;
+ 	/* Add nc_node to orig_node */
+-	spin_lock_bh(lock);
+ 	list_add_tail_rcu(&nc_node->list, list);
++unlock:
+ 	spin_unlock_bh(lock);
+ 
+ 	return nc_node;
+-
+-free:
+-	kfree(nc_node);
+-	return NULL;
+ }
+ 
+ /**
 
 
