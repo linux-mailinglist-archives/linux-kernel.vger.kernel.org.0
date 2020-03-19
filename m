@@ -2,85 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B187A18B9CF
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 15:57:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6A1B018B9AE
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 15:46:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727327AbgCSO5o (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 10:57:44 -0400
-Received: from ns.omicron.at ([212.183.10.25]:51274 "EHLO ns.omicron.at"
+        id S1727401AbgCSOqt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 10:46:49 -0400
+Received: from mx2.suse.de ([195.135.220.15]:42876 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726785AbgCSO5o (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 10:57:44 -0400
-X-Greylist: delayed 751 seconds by postgrey-1.27 at vger.kernel.org; Thu, 19 Mar 2020 10:57:43 EDT
-Received: from MGW02-ATKLA.omicron.at ([172.25.62.35])
-        by ns.omicron.at (8.15.2/8.15.2) with ESMTPS id 02JEjAxM014683
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 19 Mar 2020 15:45:10 +0100
-DKIM-Filter: OpenDKIM Filter v2.11.0 ns.omicron.at 02JEjAxM014683
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=omicronenergy.com;
-        s=default; t=1584629110;
-        bh=Z0xImGUqUPyOsNfsdDjs9a2xI4J8OEnVnOO6mlpwpCU=;
-        h=From:To:CC:Subject:Date:References:In-Reply-To:From;
-        b=NRI7ALR0E9zB9/dAt+1bHuh/ci8UGNMVsCrDelzHDHlnYNggoiSzc3nBLEjgzJYvf
-         b0Ye+FjJkyOAbOFOYRU5BEmpTLHEuqb3t8PRDlui60+2oeLO42zbcOPOd9IrB1+bKC
-         lzV3db8AiQQ4kHG950NWO+ElHfsGyN/YFYlfTkY4=
-Received: from MGW02-ATKLA.omicron.at (localhost [127.0.0.1])
-        by MGW02-ATKLA.omicron.at (Postfix) with ESMTP id 7C3C8A01EF;
-        Thu, 19 Mar 2020 15:45:10 +0100 (CET)
-Received: from MGW01-ATKLA.omicron.at (unknown [172.25.62.34])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by MGW02-ATKLA.omicron.at (Postfix) with ESMTPS id 77ECDA01ED;
-        Thu, 19 Mar 2020 15:45:10 +0100 (CET)
-Received: from EXC04-ATKLA.omicron.at ([172.22.100.189])
-        by MGW01-ATKLA.omicron.at  with ESMTP id 02JEjAST007633-02JEjASV007633
-        (version=TLSv1.2 cipher=AES256-SHA256 bits=256 verify=CAFAIL);
-        Thu, 19 Mar 2020 15:45:10 +0100
-Received: from EXC03-ATKLA.omicron.at (172.22.100.188) by
- EXC04-ATKLA.omicron.at (172.22.100.189) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1713.5; Thu, 19 Mar 2020 15:45:09 +0100
-Received: from EXC03-ATKLA.omicron.at ([fe80::1c82:5ed6:8fbc:82bc]) by
- EXC03-ATKLA.omicron.at ([fe80::1c82:5ed6:8fbc:82bc%5]) with mapi id
- 15.01.1713.004; Thu, 19 Mar 2020 15:45:09 +0100
-From:   Thomas Graziadei <thomas.graziadei@omicronenergy.com>
-To:     "'Sebastian Andrzej Siewior'" <bigeasy@linutronix.de>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "rostedt@goodmis.org" <rostedt@goodmis.org>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "linux-rt-users@vger.kernel.org" <linux-rt-users@vger.kernel.org>
-Subject: RE: [PATCH] powerpc: Fix lazy preemption for powerpc 32bit
-Thread-Topic: [PATCH] powerpc: Fix lazy preemption for powerpc 32bit
-Thread-Index: AQHV/WVyTn4Lvv+Gzk2MsIjQn8mCsKhP6MAAgAAUoAA=
-Date:   Thu, 19 Mar 2020 14:45:09 +0000
-Message-ID: <95ef76b973f947fea9044b685e835de2@omicronenergy.com>
-References: <0c91d808-b077-408c-b120-99e806efaeb5@EXC03-ATKLA.omicron.at>
- <20200319142452.dqmkuruts3i6wjyt@linutronix.de>
-In-Reply-To: <20200319142452.dqmkuruts3i6wjyt@linutronix.de>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [172.22.95.180]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        id S1727095AbgCSOqs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 10:46:48 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 0A894AC66;
+        Thu, 19 Mar 2020 14:46:44 +0000 (UTC)
+Date:   Thu, 19 Mar 2020 15:46:42 +0100
+From:   Michal =?iso-8859-1?Q?Such=E1nek?= <msuchanek@suse.de>
+To:     Christophe Leroy <christophe.leroy@c-s.fr>
+Cc:     Andy Shevchenko <andy.shevchenko@gmail.com>,
+        "open list:LINUX FOR POWERPC PA SEMI PWRFICIENT" 
+        <linuxppc-dev@lists.ozlabs.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Rob Herring <robh@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Nayna Jain <nayna@linux.ibm.com>,
+        Eric Richter <erichte@linux.ibm.com>,
+        Claudio Carvalho <cclaudio@linux.ibm.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Hari Bathini <hbathini@linux.ibm.com>,
+        Masahiro Yamada <masahiroy@kernel.org>,
+        Thiago Jung Bauermann <bauerman@linux.ibm.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Valentin Schneider <valentin.schneider@arm.com>,
+        Jordan Niethe <jniethe5@gmail.com>,
+        Michael Neuling <mikey@neuling.org>,
+        Gustavo Luiz Duarte <gustavold@linux.ibm.com>,
+        Allison Randal <allison@lohutok.net>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "linux-fsdevel @ vger . kernel . org --in-reply-to=" 
+        <20200225173541.1549955-1-npiggin@gmail.com>
+Subject: Re: [PATCH v11 4/8] powerpc/perf: consolidate valid_user_sp
+Message-ID: <20200319144642.GL25468@kitsune.suse.cz>
+References: <cover.1584613649.git.msuchanek@suse.de>
+ <1b612025371bb9f2bcce72c700c809ae29e57392.1584613649.git.msuchanek@suse.de>
+ <CAHp75VcMkPeJ6exroipnxvf-7g-C8QbVm0bAnp=rk505_nxySw@mail.gmail.com>
+ <8775f299-be1b-3457-c59d-e4f61d8223e5@c-s.fr>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <8775f299-be1b-3457-c59d-e4f61d8223e5@c-s.fr>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PiBGcm9tOiBTZWJhc3RpYW4gQW5kcnplaiBTaWV3aW9yIFttYWlsdG86YmlnZWFzeUBsaW51dHJv
-bml4LmRlXSANCj4gT24gMjAyMC0wMy0xOCAyMToyNjo0MCBbKzAxMDBdLCBUaG9tYXMgR3Jhemlh
-ZGVpIHdyb3RlOg0KPj4gRnJvbTogVGhvbWFzIEdyYXppYWRlaSA8dGhvbWFzLmdyYXppYWRlaUBv
-bWljcm9uZW5lcmd5LmNvbT4NCj4+IA0KPj4gVGhlIDMyYml0IHBvd2VycGMgYXNzZW1ibGVyIGlt
-cGxlbWVudGF0aW9uIG9mIHRoZSBsYXp5IHByZWVtcHRpb24gc2V0IA0KPj4gdGhlIF9USUZfUEVS
-U1lTQ0FMTF9NQVNLIG9uIHRoZSBsb3cgd29yZC4gVGhpcyBjb3VsZCBsZWFkIHRvIG1vZHByb2Jl
-IA0KPj4gc2VnZmF1bHRzIGFuZCBhIGtlcm5lbCBwYW5pYyAtIG5vdCBzeW5jaW5nOiBBdHRlbXB0
-IHRvIGtpbGwgaW5pdCEgDQo+PiBpc3N1ZS4NCj4+IA0KPj4gRml4ZWQgYnkgc2hpZnRpbmcgdGhl
-IG1hc2sgYnkgMTYgYml0IHVzaW5nIGFuZGlzIGFuZCBsaXMuDQo+DQo+IGJhaC4gVGhhbmsgeW91
-IGZvciBjYXRjaGluZyB0aGlzLg0KPiBTdGlsbCBlNTAwIGJhc2VkIHBvd2VycGMgSSBhc3N1bWU/
-DQoNCldlbGwgdGhhbmtzIGZvciB0aGUgZ3JlYXQgd29yayBhbmQgeWVzIHN0aWxsIGU1MDAgcG93
-ZXJwYyBiYXNlZC4NCg0KPg0KPj4gU2lnbmVkLW9mZi1ieTogVGhvbWFzIEdyYXppYWRlaSA8dGhv
-bWFzLmdyYXppYWRlaUBvbWljcm9uZW5lcmd5LmNvbT4NCj4NCj4gU2ViYXN0aWFuDQoNClRob21h
-cw0K
+On Thu, Mar 19, 2020 at 03:16:03PM +0100, Christophe Leroy wrote:
+> 
+> 
+> Le 19/03/2020 à 14:35, Andy Shevchenko a écrit :
+> > On Thu, Mar 19, 2020 at 1:54 PM Michal Suchanek <msuchanek@suse.de> wrote:
+> > > 
+> > > Merge the 32bit and 64bit version.
+> > > 
+> > > Halve the check constants on 32bit.
+> > > 
+> > > Use STACK_TOP since it is defined.
+> > > 
+> > > Passing is_64 is now redundant since is_32bit_task() is used to
+> > > determine which callchain variant should be used. Use STACK_TOP and
+> > > is_32bit_task() directly.
+> > > 
+> > > This removes a page from the valid 32bit area on 64bit:
+> > >   #define TASK_SIZE_USER32 (0x0000000100000000UL - (1 * PAGE_SIZE))
+> > >   #define STACK_TOP_USER32 TASK_SIZE_USER32
+> > 
+> > ...
+> > 
+> > > +static inline int valid_user_sp(unsigned long sp)
+> > > +{
+> > > +       bool is_64 = !is_32bit_task();
+> > > +
+> > > +       if (!sp || (sp & (is_64 ? 7 : 3)) || sp > STACK_TOP - (is_64 ? 32 : 16))
+> > > +               return 0;
+> > > +       return 1;
+> > > +}
+> > 
+> > Other possibility:
+> 
+> I prefer this one.
+> 
+> > 
+> >    unsigned long align = is_32bit_task() ? 3 : 7;
+> 
+> I would call it mask instead of align
+> 
+> >    unsigned long top = STACK_TOP - (is_32bit_task() ? 16 : 32);
+> > 
+> >    return !(!sp || (sp & align) || sp > top);
+And we can avoid the inversion here as well as in !valid_user_sp(sp) by
+changing to invalid_user_sp.
+
+Thanks
+
+Michal
