@@ -2,152 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9D1C818C015
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 20:07:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 08B9E18C04F
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 20:29:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725787AbgCSTHT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 15:07:19 -0400
-Received: from albireo.enyo.de ([37.24.231.21]:52842 "EHLO albireo.enyo.de"
+        id S1727981AbgCST3U (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 15:29:20 -0400
+Received: from mga05.intel.com ([192.55.52.43]:4273 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727256AbgCSTHR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 15:07:17 -0400
-Received: from [172.17.203.2] (helo=deneb.enyo.de)
-        by albireo.enyo.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        id 1jF0VY-00029N-1A; Thu, 19 Mar 2020 19:07:08 +0000
-Received: from fw by deneb.enyo.de with local (Exim 4.92)
-        (envelope-from <fw@deneb.enyo.de>)
-        id 1jF0UB-00083N-Mg; Thu, 19 Mar 2020 20:05:43 +0100
-From:   Florian Weimer <fw@deneb.enyo.de>
-To:     Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc:     libc-alpha <libc-alpha@sourceware.org>, carlos <carlos@redhat.com>,
-        Rich Felker <dalias@libc.org>,
-        linux-api <linux-api@vger.kernel.org>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Will Deacon <will.deacon@arm.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ben Maurer <bmaurer@fb.com>, Dave Watson <davejwatson@fb.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Paul <paulmck@linux.vnet.ibm.com>, Paul Turner <pjt@google.com>,
-        Joseph Myers <joseph@codesourcery.com>
-Subject: Re: [RFC PATCH glibc 4/8] glibc: Perform rseq(2) registration at C startup and thread creation (v15)
-References: <20200319144110.3733-1-mathieu.desnoyers@efficios.com>
-        <874kukpf9f.fsf@mid.deneb.enyo.de>
-        <2147217200.3240.1584633395285.JavaMail.zimbra@efficios.com>
-        <87r1xo5o2s.fsf@mid.deneb.enyo.de>
-        <1302331358.3965.1584641354569.JavaMail.zimbra@efficios.com>
-        <87sgi4gqhf.fsf@mid.deneb.enyo.de>
-        <1103782439.4046.1584642531222.JavaMail.zimbra@efficios.com>
-        <87k13ggpmf.fsf@mid.deneb.enyo.de>
-        <900536577.4062.1584644126425.JavaMail.zimbra@efficios.com>
-Date:   Thu, 19 Mar 2020 20:05:43 +0100
-In-Reply-To: <900536577.4062.1584644126425.JavaMail.zimbra@efficios.com>
-        (Mathieu Desnoyers's message of "Thu, 19 Mar 2020 14:55:26 -0400
-        (EDT)")
-Message-ID: <87fte4go6w.fsf@mid.deneb.enyo.de>
+        id S1727941AbgCST3S (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 15:29:18 -0400
+IronPort-SDR: bVWigo4Fv7jMZyA8pdsTJL894LCyvB4w8iMEtmVuDfE3IjJ2NMT/eGARjscM85dFS/oo7XS7PB
+ p0fkxyguuBXA==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Mar 2020 12:29:18 -0700
+IronPort-SDR: MQXloGgtmfQmn2lTbl+0WLbHTx9QpCVk0qFlUxv6GOqn/OpUgA3EDvcUSRLeEL1HnuDHbQR4cA
+ TjDyvYis4T+A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,572,1574150400"; 
+   d="scan'208";a="391905475"
+Received: from mallani-mobl.amr.corp.intel.com (HELO [10.255.35.49]) ([10.255.35.49])
+  by orsmga004.jf.intel.com with ESMTP; 19 Mar 2020 12:29:16 -0700
+Subject: Re: snd_hda_intel/sst-acpi sound breakage on suspend/resume since
+ 5.6-rc1
+To:     Cezary Rojewski <cezary.rojewski@intel.com>,
+        Dominik Brodowski <linux@dominikbrodowski.net>
+Cc:     alsa-devel@alsa-project.org, kuninori.morimoto.gx@renesas.com,
+        curtis@malainey.com, tiwai@suse.com,
+        Keyon Jie <yang.jie@linux.intel.com>,
+        linux-kernel@vger.kernel.org, liam.r.girdwood@linux.intel.com,
+        Mark Brown <broonie@kernel.org>
+References: <e49eec28-2037-f5db-e75b-9eadf6180d81@intel.com>
+ <20200318192213.GA2987@light.dominikbrodowski.net>
+ <b352a46b-8a66-8235-3622-23e561d3728c@intel.com>
+ <20200318215218.GA2439@light.dominikbrodowski.net>
+ <e7f4f38d-b53e-8c69-8b23-454718cf92af@intel.com>
+ <20200319130049.GA2244@light.dominikbrodowski.net>
+ <20200319134139.GB3983@sirena.org.uk>
+ <a01359dc-479e-b3e3-37a6-4a9c421d18da@intel.com>
+ <20200319165157.GA2254@light.dominikbrodowski.net>
+ <a7bf2aee-78e7-f905-bcc3-cd21bf16a976@intel.com>
+ <20200319182413.GA3968@light.dominikbrodowski.net>
+ <750f7841-0b95-9fa8-d858-e0bff4d834d5@intel.com>
+From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Message-ID: <f6b7c60a-d99e-c140-31d0-0b56960c3ec9@linux.intel.com>
+Date:   Thu, 19 Mar 2020 14:05:56 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <750f7841-0b95-9fa8-d858-e0bff4d834d5@intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* Mathieu Desnoyers:
 
->> Inside glibc, you can assume __attribute__ support.
->
-> OK, so the _Static_assert () could sit in sys/rseq.h
 
-It requires a C11 compiler.  In this case, you could use _Alignas.
-
->
->> 
->>>>>> The struct rseq/struct rseq_cs definitions
->>>>>> are broken, they should not try to change the alignment.
->>>>>
->>>>> AFAIU, this means we should ideally not have used __attribute__((aligned))
->>>>> in the uapi headers in the first place. Why is it broken ?
->>>> 
->>>> Compilers which are not sufficiently GCC-compatible define
->>>> __attribute__(X) as the empty expansion, so you silently get a
->>>> different ABI.
+On 3/19/20 1:35 PM, Cezary Rojewski wrote:
+> On 2020-03-19 19:24, Dominik Brodowski wrote:
+>> On Thu, Mar 19, 2020 at 06:33:50PM +0100, Cezary Rojewski wrote:
 >>>
->>> It is worth noting that rseq.h is not the only Linux uapi header
->>> which uses __attribute__ ((aligned)), so this ABI problem exists today
->>> anyway for those compilers.
->> 
->> Yuck.  Even with larger-than-16 alignment?
->
-> There are two:
->
-> target_core_user.h
-> 45:#define ALIGN_SIZE 64 /* Should be enough for most CPUs */
-> 58:	__u32 cmd_tail __attribute__((__aligned__(ALIGN_SIZE)));
+>>> Could you confirm the same happens on your machine when revert of 
+>>> mentioned
+>>> patch is not applied ("stream is NULL" messages occur)? Issue may be
+>>> harmless but explained sequence does not look right.
+>>
+>> Indeed, I still see
+>>
+>> haswell-pcm-audio haswell-pcm-audio: warning: stream is NULL, no 
+>> stream to reset, ignore it.
+>> haswell-pcm-audio haswell-pcm-audio: warning: stream is NULL, no 
+>> stream to free, ignore it.
+>> haswell-pcm-audio haswell-pcm-audio: FW loaded, mailbox readback FW 
+>> info: type 01, - version: 00.00, build 77, source commit id: 
+>> 876ac6906f31a43b6772b23c7c983ce9dcb18a19
+>> haswell-pcm-audio haswell-pcm-audio: warning: stream is NULL, no 
+>> stream to reset, ignore it.
+>> haswell-pcm-audio haswell-pcm-audio: warning: stream is NULL, no 
+>> stream to free, ignore it.
+>>
+>> though sounds continues to work.
+>>
+> 
+> Thanks once again for your input and time!
+> 
+> I'll prepare patches for both issues. My guess is haswell-pcm could be 
+> updated to handle 'platform' component param just fine, but it is 
+> probably a change of more than few lines. I'd rather revert non-SOF 
+> broadwell to its previous behavior and start a separate task from there.
 
-That one is tough to figure out:
-
-struct tcmu_mailbox {
-        __u16 version;
-        __u16 flags;
-        __u32 cmdr_off;
-        __u32 cmdr_size;
-
-        __u32 cmd_head;
-
-        /* Updated by user. On its own cacheline */
-        __u32 cmd_tail __attribute__((__aligned__(ALIGN_SIZE)));
-
-} __attribute__((packed));
-
-Apparently, the expectation is that the compiler ignores __attribute__
-((packed) in this context.  Ugh.
-
-> netfilter_bridge/ebtables.h:90:	char data[0] __attribute__ ((aligned (__alignof__(struct ebt_replace))));
-> netfilter_bridge/ebtables.h:132:	unsigned char data[0] __attribute__ ((aligned (__alignof__(struct ebt_replace))));
-> netfilter_bridge/ebtables.h:145:	unsigned char data[0] __attribute__ ((aligned (__alignof__(struct ebt_replace))));
-> netfilter_bridge/ebtables.h:158:	unsigned char data[0] __attribute__ ((aligned (__alignof__(struct ebt_replace))));
-> netfilter_bridge/ebtables.h:191:	unsigned char elems[0] __attribute__ ((aligned (__alignof__(struct ebt_replace))));
-
-I think these values are lower than max_align_t, so uncritical.
-
->>>> There is really no need to specify 32-byte alignment here.  Is not
->>>> even the size of a standard cache line.  It can result in crashes if
->>>> these structs are heap-allocated using malloc, when optimizing for
->>>> AVX2.
->>>
->>> Why would it be valid to allocate those with malloc ? Isn't it the
->>> purpose of posix_memalign() ?
->> 
->> It would not be valid, but I don't think we have diagnostics for C
->> like we have them for C++'s operator new.
->
-> We could at least make an effort to let people know that alignment is
-> required here when allocating struct rseq and struct rseq_cs on the
-> heap by adding some comments to that effect in linux/rseq.h ?
-
-We could use different types on the glibc side, then no special
-programmer action will be needed.
-
->>>>> However, now that it is in the wild, it's a bit late to change that.
->>>> 
->>>> I had forgotten about the alignment crashes.  I think we should
->>>> seriously consider changing the types. 8-(
->>>
->>> I don't think this is an option at this stage given that it is part
->>> of the Linux kernel UAPI. I am not convinced that it is valid at all
->>> to allocate struct rseq or struct rseq_cs with malloc(), because it
->>> does not guarantee any alignment.
->> 
->> The kernel ABI doesn't change.  The kernel cannot use the alignment
->> information anyway.  Userspace struct layout may change in subtle
->> ways, though.
->
-> Considering the amount of pain this can cause in user-space, and because
-> it can break userspace, this is not a UAPI change I am willing to consider.
-> I'm not sure why we are even discussing the possibility of breaking a Linux
-> UAPI considering that those are set in stone.
-
-Again, the kernel interface is NOT affected.  Only if the struct is
-used in a non-top-level fashion across an ABI boundary in userspace.
-I think making the change now is better than dealing with the breakage
-in rseq users when they are built with -mavx2.
+It'd be good to know why a dummy platform component is required though.
