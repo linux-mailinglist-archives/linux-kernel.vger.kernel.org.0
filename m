@@ -2,113 +2,164 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6433318A9AC
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 01:12:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DAB3F18A9A0
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 01:11:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727790AbgCSAMD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Mar 2020 20:12:03 -0400
-Received: from bilbo.ozlabs.org ([203.11.71.1]:49299 "EHLO ozlabs.org"
+        id S1727611AbgCSALe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Mar 2020 20:11:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37136 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727321AbgCSALE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Mar 2020 20:11:04 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        id S1727452AbgCSALI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Mar 2020 20:11:08 -0400
+Received: from paulmck-ThinkPad-P72.home (50-39-105-78.bvtn.or.frontiernet.net [50.39.105.78])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 48jS4626w6z9sPk;
-        Thu, 19 Mar 2020 11:11:02 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1584576662;
-        bh=4NeHfuenkCF6u/+kEoesLWlSHw3XkaaPyGQc98hjRGQ=;
-        h=Date:From:To:Cc:Subject:From;
-        b=WDWvPg/wLRHG3UHvKXOZH8kDol+lSTsMmw0hkBGJaT742jX2qdWR8r8HEpRfKiGeU
-         wJdjcRBuTUam5RpR3JdszpnZYzYIlSqleCh0qLceAxD6Mey+RIetnjxEUHDrBelurR
-         F8+zRbC5VcOOhlTksTbrCF1U61NLlQRHlpLMiWsEuOhsqZhBO6mn0S79y/RCc64cdf
-         ohc6P+D10KTCjwkzEsCgay0Jux/CzM13FaXu6cwAeE+s/+WKErUTVfptVc5CecLk0I
-         gD3guZfOcG13qtkc9GYDg33SyBuckEHfSdjQiGfKICPCooc+WDupeoVVdJQbK7hrox
-         w+kIk6MIQZi6Q==
-Date:   Thu, 19 Mar 2020 11:10:53 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     David Miller <davem@davemloft.net>,
-        Networking <netdev@vger.kernel.org>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Arthur Kiyanovski <akiyano@amazon.com>,
-        Noam Dagan <ndagan@amazon.com>,
-        Leon Romanovsky <leonro@mellanox.com>
-Subject: linux-next: manual merge of the net-next tree with the net tree
-Message-ID: <20200319111053.597bd4d1@canb.auug.org.au>
-MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/5vHI_Q_c2A6E/.8i+PNP8Go";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+        by mail.kernel.org (Postfix) with ESMTPSA id 4D64320B80;
+        Thu, 19 Mar 2020 00:11:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1584576667;
+        bh=CW0LY2uFVZoMzRslEsbQr0QZhSuVsd7+1u2mkTq+h7U=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=hEnMYhFwxrnYPOWokPEc92n89IoOmvM6nwWd+zjilH6KTvJunPt3f/vsdhhKJZHAt
+         OGPRmMMut5iXbgeH5j82gFcGedp9Wm6bI0/f9deQjx6V+61l6toWzRaVib3GLSHaU8
+         7iuyERu/e6vIluvR0oymcArAcpZLQbyzPDCP1Ems=
+From:   paulmck@kernel.org
+To:     rcu@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, kernel-team@fb.com, mingo@kernel.org,
+        jiangshanlai@gmail.com, dipankar@in.ibm.com,
+        akpm@linux-foundation.org, mathieu.desnoyers@efficios.com,
+        josh@joshtriplett.org, tglx@linutronix.de, peterz@infradead.org,
+        rostedt@goodmis.org, dhowells@redhat.com, edumazet@google.com,
+        fweisbec@gmail.com, oleg@redhat.com, joel@joelfernandes.org,
+        "Paul E. McKenney" <paulmck@kernel.org>
+Subject: [PATCH RFC v2 tip/core/rcu 16/22] rcu-tasks: Add stall warnings for RCU Tasks Trace
+Date:   Wed, 18 Mar 2020 17:10:54 -0700
+Message-Id: <20200319001100.24917-16-paulmck@kernel.org>
+X-Mailer: git-send-email 2.9.5
+In-Reply-To: <20200319001024.GA28798@paulmck-ThinkPad-P72>
+References: <20200319001024.GA28798@paulmck-ThinkPad-P72>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/5vHI_Q_c2A6E/.8i+PNP8Go
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+From: "Paul E. McKenney" <paulmck@kernel.org>
 
-Hi all,
+This commit adds RCU CPU stall warnings for RCU Tasks Trace.  These
+dump out any tasks blocking the current grace period, as well as any
+CPUs that have not responded to an IPI request.  This happens in two
+phases, when initially extracting state from the tasks and later when
+waiting for any holdout tasks to check in.
 
-Today's linux-next merge of the net-next tree got a conflict in:
+Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
+---
+ kernel/rcu/tasks.h | 72 +++++++++++++++++++++++++++++++++++++++++++++++++++---
+ 1 file changed, 68 insertions(+), 4 deletions(-)
 
-  drivers/net/ethernet/amazon/ena/ena_netdev.c
+diff --git a/kernel/rcu/tasks.h b/kernel/rcu/tasks.h
+index 24f41ec..e6ef98e 100644
+--- a/kernel/rcu/tasks.h
++++ b/kernel/rcu/tasks.h
+@@ -788,9 +788,41 @@ static void rcu_tasks_trace_postscan(void)
+ 	// Any tasks that exit after this point will set ->trc_reader_checked.
+ }
+ 
++/* Show the state of a task stalling the current RCU tasks trace GP. */
++static void show_stalled_task_trace(struct task_struct *t, bool *firstreport)
++{
++	int cpu;
++
++	if (*firstreport) {
++		pr_err("INFO: rcu_tasks_trace detected stalls on tasks:\n");
++		*firstreport = false;
++	}
++	// FIXME: This should attempt to use try_invoke_on_nonrunning_task().
++	cpu = task_cpu(t);
++	pr_alert("P%d: %c%c%c nesting: %d%c cpu: %d\n",
++		 t->pid,
++		 ".I"[READ_ONCE(t->trc_ipi_to_cpu) > 0],
++		 ".i"[is_idle_task(t)],
++		 ".N"[cpu > 0 && tick_nohz_full_cpu(cpu)],
++		 t->trc_reader_nesting,
++		 " N"[!!t->trc_reader_need_end],
++		 cpu);
++	sched_show_task(t);
++}
++
++/* List stalled IPIs for RCU tasks trace. */
++static void show_stalled_ipi_trace(void)
++{
++	int cpu;
++
++	for_each_possible_cpu(cpu)
++		if (per_cpu(trc_ipi_to_cpu, cpu))
++			pr_alert("\tIPI outstanding to CPU %d\n", cpu);
++}
++
+ /* Do one scan of the holdout list. */
+ static void check_all_holdout_tasks_trace(struct list_head *hop,
+-					  bool ndrpt, bool *frptp)
++					  bool needreport, bool *firstreport)
+ {
+ 	struct task_struct *g, *t;
+ 
+@@ -803,21 +835,53 @@ static void check_all_holdout_tasks_trace(struct list_head *hop,
+ 		// If check succeeded, remove this task from the list.
+ 		if (READ_ONCE(t->trc_reader_checked))
+ 			trc_del_holdout(t);
++		else if (needreport)
++			show_stalled_task_trace(t, firstreport);
++	}
++	if (needreport) {
++		if (firstreport)
++			pr_err("INFO: rcu_tasks_trace detected stalls?\n");
++		show_stalled_ipi_trace();
+ 	}
+ }
+ 
+ /* Wait for grace period to complete and provide ordering. */
+ static void rcu_tasks_trace_postgp(void)
+ {
++	bool firstreport;
++	struct task_struct *g, *t;
++	LIST_HEAD(holdouts);
++	long ret;
++
+ 	// Remove the safety count.
+ 	smp_mb__before_atomic();  // Order vs. earlier atomics
+ 	atomic_dec(&trc_n_readers_need_end);
+ 	smp_mb__after_atomic();  // Order vs. later atomics
+ 
+ 	// Wait for readers.
+-	wait_event_idle_exclusive(trc_wait,
+-				  atomic_read(&trc_n_readers_need_end) == 0);
+-
++	for (;;) {
++		ret = wait_event_idle_exclusive_timeout(
++				trc_wait,
++				atomic_read(&trc_n_readers_need_end) == 0,
++				READ_ONCE(rcu_task_stall_timeout));
++		if (ret)
++			break;  // Count reached zero.
++		for_each_process_thread(g, t) {
++			if (READ_ONCE(t->trc_reader_need_end)) {
++				trc_add_holdout(t, &holdouts);
++			}
++		}
++		firstreport = true;
++		list_for_each_entry_safe(t, g, &holdouts, trc_holdout_list)
++			if (READ_ONCE(t->trc_reader_need_end)) {
++				show_stalled_task_trace(t, &firstreport);
++				trc_del_holdout(t);
++			}
++		if (firstreport)
++			pr_err("INFO: rcu_tasks_trace detected stalls?\n");
++		show_stalled_ipi_trace();
++		pr_err("\t%d holdouts\n", atomic_read(&trc_n_readers_need_end));
++	}
+ 	smp_mb(); // Caller's code must be ordered after wakeup.
+ }
+ 
+-- 
+2.9.5
 
-between commit:
-
-  dfdde1345bc1 ("net: ena: fix continuous keep-alive resets")
-
-from the net tree and commit:
-
-  1a63443afd70 ("net/amazon: Ensure that driver version is aligned to the l=
-inux kernel")
-
-from the net-next tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc drivers/net/ethernet/amazon/ena/ena_netdev.c
-index 4647d7656761,555c7273d712..000000000000
---- a/drivers/net/ethernet/amazon/ena/ena_netdev.c
-+++ b/drivers/net/ethernet/amazon/ena/ena_netdev.c
-@@@ -3486,10 -3473,7 +3483,8 @@@ static int ena_restore_device(struct en
-  		netif_carrier_on(adapter->netdev);
- =20
-  	mod_timer(&adapter->timer_service, round_jiffies(jiffies + HZ));
- +	adapter->last_keep_alive_jiffies =3D jiffies;
-- 	dev_err(&pdev->dev,
-- 		"Device reset completed successfully, Driver info: %s\n",
-- 		version);
-+ 	dev_err(&pdev->dev, "Device reset completed successfully\n");
- =20
-  	return rc;
-  err_disable_msix:
-
---Sig_/5vHI_Q_c2A6E/.8i+PNP8Go
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl5yuI0ACgkQAVBC80lX
-0GxwDQf/Uho6IaGCmfwvaMFtSKnQW6lVYzKQ9v6sVtTjaTch6Vnj4DOGZDMUPN/G
-KaGHYNehY4s4L/jicSCImhMkY7Lm5aFmnDsCLhhjBt93EypyW0KDvNGg9CbwYfjY
-dYr7Ii3RQnhJCxgocnF5HQNxtg2Ssns9m1Ynj2LxTYxN065b9ELGOI56zEUI2bp4
-+rxlXgJuG1SeZMXNYj2+FZIpgZM2P8D/CXcgQuhr7Q038YmKQFscdTEoh1Jj6yio
-GH2kNEjMpMjmSnzR+E4So8gTMVyGGEXe6kqtzGgqQq73mM3pfI3x1FCZP/bl62KO
-6LvklCycRNGSyv7JmuMsJYjYEp72NQ==
-=/Xxx
------END PGP SIGNATURE-----
-
---Sig_/5vHI_Q_c2A6E/.8i+PNP8Go--
