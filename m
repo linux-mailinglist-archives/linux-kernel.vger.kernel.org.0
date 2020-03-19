@@ -2,41 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 55C7A18B5EA
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:23:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1CB1718B5A1
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:20:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730214AbgCSNW1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 09:22:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47674 "EHLO mail.kernel.org"
+        id S1729959AbgCSNUP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 09:20:15 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44064 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730194AbgCSNWY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 09:22:24 -0400
+        id S1727954AbgCSNUN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 09:20:13 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0092820724;
-        Thu, 19 Mar 2020 13:22:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 40906206D7;
+        Thu, 19 Mar 2020 13:20:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584624143;
-        bh=OOrvL+hxe4tsrCV6JNg9MTvSFyZDghtmI19y3UsQ144=;
+        s=default; t=1584624012;
+        bh=tYvsypGV+UX3w5mfR+9EKdJVP9kjPgrchcygUqtHAF8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FDvimmlTfD+7X1GBJwXtou+KoHnp/nlIhGVJP3C21pTTBIMaK8Pmfd0fEOvDnCBRw
-         1kESXg93iq5lOUnamN3xLyJqZSHouxPKSMOquhFbbazzk/MZTrqzOYll+4n1hmikuh
-         Gin3NWq44UHowOK2hx1ggtE81HTlWMGUxRnACq98=
+        b=EGiFKwjOuG6Fs8M2wG417JkiW1V1LjvEIJRtV6AyO7ut0Y8eN2w6HZuibP7DFBelK
+         nZ6KscVyNyLsq1lmxm+eeZ+0RmDdvzEYIiQOWmSDg8jnUF8JcoeBD6ERhr6k9jeMvR
+         MrXUqTL5C731cQU7SJVvVAf8V6Snh+hUgtZObVyI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Bitan Biswas <bbiswas@nvidia.com>,
-        Peter Geis <pgwipeout@gmail.com>,
-        Sowjanya Komatineni <skomatineni@nvidia.com>,
+        stable@vger.kernel.org, Kishon Vijay Abraham I <kishon@ti.com>,
+        Faiz Abbas <faiz_abbas@ti.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
         Ulf Hansson <ulf.hansson@linaro.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 06/60] mmc: sdhci-tegra: Fix busy detection by enabling MMC_CAP_NEED_RSP_BUSY
-Date:   Thu, 19 Mar 2020 14:03:44 +0100
-Message-Id: <20200319123921.203229255@linuxfoundation.org>
+Subject: [PATCH 4.19 03/48] mmc: sdhci-omap: Add platform specific reset callback
+Date:   Thu, 19 Mar 2020 14:03:45 +0100
+Message-Id: <20200319123904.177477126@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.2
-In-Reply-To: <20200319123919.441695203@linuxfoundation.org>
-References: <20200319123919.441695203@linuxfoundation.org>
+In-Reply-To: <20200319123902.941451241@linuxfoundation.org>
+References: <20200319123902.941451241@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,44 +46,87 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ulf Hansson <ulf.hansson@linaro.org>
+From: Faiz Abbas <faiz_abbas@ti.com>
 
-[ Upstream commit d2f8bfa4bff5028bc40ed56b4497c32e05b0178f ]
+[ Upstream commit 5b0d62108b468b13410533c0ceea3821942bf592 ]
 
-It has turned out that the sdhci-tegra controller requires the R1B response,
-for commands that has this response associated with them. So, converting
-from an R1B to an R1 response for a CMD6 for example, leads to problems
-with the HW busy detection support.
+The TRM (SPRUIC2C - January 2017 - Revised May 2018 [1]) forbids
+assertion of data reset while tuning is happening. Implement a
+platform specific callback that takes care of this condition.
 
-Fix this by informing the mmc core about the requirement, via setting the
-host cap, MMC_CAP_NEED_RSP_BUSY.
+[1] http://www.ti.com/lit/pdf/spruic2 Section 25.5.1.2.4
 
-Reported-by: Bitan Biswas <bbiswas@nvidia.com>
-Reported-by: Peter Geis <pgwipeout@gmail.com>
-Suggested-by: Sowjanya Komatineni <skomatineni@nvidia.com>
-Cc: <stable@vger.kernel.org>
-Tested-by: Sowjanya Komatineni <skomatineni@nvidia.com>
-Tested-By: Peter Geis <pgwipeout@gmail.com>
+Acked-by: Kishon Vijay Abraham I <kishon@ti.com>
+Signed-off-by: Faiz Abbas <faiz_abbas@ti.com>
+Acked-by: Adrian Hunter <adrian.hunter@intel.com>
 Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/mmc/host/sdhci-tegra.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/mmc/host/sdhci-omap.c | 20 +++++++++++++++++++-
+ 1 file changed, 19 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
-index 403ac44a73782..a25c3a4d3f6cb 100644
---- a/drivers/mmc/host/sdhci-tegra.c
-+++ b/drivers/mmc/host/sdhci-tegra.c
-@@ -1552,6 +1552,9 @@ static int sdhci_tegra_probe(struct platform_device *pdev)
- 	if (tegra_host->soc_data->nvquirks & NVQUIRK_ENABLE_DDR50)
- 		host->mmc->caps |= MMC_CAP_1_8V_DDR;
+diff --git a/drivers/mmc/host/sdhci-omap.c b/drivers/mmc/host/sdhci-omap.c
+index d02f5cf76b3d1..8a172575bb64f 100644
+--- a/drivers/mmc/host/sdhci-omap.c
++++ b/drivers/mmc/host/sdhci-omap.c
+@@ -115,6 +115,7 @@ struct sdhci_omap_host {
  
-+	/* R1B responses is required to properly manage HW busy detection. */
-+	host->mmc->caps |= MMC_CAP_NEED_RSP_BUSY;
+ 	struct pinctrl		*pinctrl;
+ 	struct pinctrl_state	**pinctrl_state;
++	bool			is_tuning;
+ };
+ 
+ static void sdhci_omap_start_clock(struct sdhci_omap_host *omap_host);
+@@ -326,6 +327,8 @@ static int sdhci_omap_execute_tuning(struct mmc_host *mmc, u32 opcode)
+ 		dcrc_was_enabled = true;
+ 	}
+ 
++	omap_host->is_tuning = true;
 +
- 	tegra_sdhci_parse_dt(host);
+ 	while (phase_delay <= MAX_PHASE_DELAY) {
+ 		sdhci_omap_set_dll(omap_host, phase_delay);
  
- 	tegra_host->power_gpio = devm_gpiod_get_optional(&pdev->dev, "power",
+@@ -363,9 +366,12 @@ static int sdhci_omap_execute_tuning(struct mmc_host *mmc, u32 opcode)
+ 	phase_delay = max_window + 4 * (max_len >> 1);
+ 	sdhci_omap_set_dll(omap_host, phase_delay);
+ 
++	omap_host->is_tuning = false;
++
+ 	goto ret;
+ 
+ tuning_error:
++	omap_host->is_tuning = false;
+ 	dev_err(dev, "Tuning failed\n");
+ 	sdhci_omap_disable_tuning(omap_host);
+ 
+@@ -695,6 +701,18 @@ static void sdhci_omap_set_uhs_signaling(struct sdhci_host *host,
+ 	sdhci_omap_start_clock(omap_host);
+ }
+ 
++void sdhci_omap_reset(struct sdhci_host *host, u8 mask)
++{
++	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
++	struct sdhci_omap_host *omap_host = sdhci_pltfm_priv(pltfm_host);
++
++	/* Don't reset data lines during tuning operation */
++	if (omap_host->is_tuning)
++		mask &= ~SDHCI_RESET_DATA;
++
++	sdhci_reset(host, mask);
++}
++
+ static struct sdhci_ops sdhci_omap_ops = {
+ 	.set_clock = sdhci_omap_set_clock,
+ 	.set_power = sdhci_omap_set_power,
+@@ -703,7 +721,7 @@ static struct sdhci_ops sdhci_omap_ops = {
+ 	.get_min_clock = sdhci_omap_get_min_clock,
+ 	.set_bus_width = sdhci_omap_set_bus_width,
+ 	.platform_send_init_74_clocks = sdhci_omap_init_74_clocks,
+-	.reset = sdhci_reset,
++	.reset = sdhci_omap_reset,
+ 	.set_uhs_signaling = sdhci_omap_set_uhs_signaling,
+ };
+ 
 -- 
 2.20.1
 
