@@ -2,138 +2,150 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 949C118C0B4
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 20:50:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 52DFB18C0C4
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 20:52:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726892AbgCSTuA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 15:50:00 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:41221 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725768AbgCSTuA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 15:50:00 -0400
-Received: by mail-pf1-f194.google.com with SMTP id z65so1968769pfz.8
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Mar 2020 12:49:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=pYVz/q/oYfSRcEW9kuy6vXjgqJxNH9kUoZVwT624bk4=;
-        b=IP+8fN97RRyISsjp13UrNbWub91yoKTrJ+dLi/IFdFwlMeln8RUzPJABNSvRg7oClB
-         4IDElPtf6Zru/hDRJxfOkImoE/cCiAZrwUfBKSF6Khxu4tws9CFZOSqS02HprXba4v5Q
-         48YvYNN/O4/8h1zIZB5nBxGah70564rlEWJtLtYlZnO8HFIlLenjL0hobrKL2mA6UvHm
-         dXW0caDwGhwnvupdjGg57HjhXZlrcFEJRemF04YTcrUJeUR++df5K5mrlLj74xZ6mfUJ
-         qMH5/ZPC/KKas94YUIfeh5x436aeTceIo2Two2AZQWmBRISXkbrw4koErmNvEP75UsAy
-         f1Xg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=pYVz/q/oYfSRcEW9kuy6vXjgqJxNH9kUoZVwT624bk4=;
-        b=iqTKURVYR3Q0veslCCpkT8JfEUPfstVIWw8v6+0YhdBlv12pxK3zzSpadqKPmtQiyO
-         LObbTvlugLBwxxCdcsKMfXnskSdDwpqTDo7hRsJMvDGdB6d8vflM/zic64hqJsgl0cIC
-         UC+Cr+ArIpRoDwNwLhY6YvxEuWX5/BacuR5t6zYbOF7VyM92IhxOta2mDtzeMez514CD
-         R9+QM/JwuorD18I+PKMpvRifd4dck03BUlEl2paKuR5m6zcU+ubRoOsT27cIE506mV2i
-         MMMk7dHJtxNMxdDltQuBQYCw1WWOzDvZNBhTpDJd69uZUbR/F57hqdvFsm5/qOy+SHCS
-         7awg==
-X-Gm-Message-State: ANhLgQ0IB+TddrkoWTBWt334cdeRWGoGWUPAaSc755BdKNPtM+l7JHGu
-        XDBfde379iS3ctjvtum9UjEMmg3O9ks=
-X-Google-Smtp-Source: ADFU+vvlVU94t5LjsSahudUpZjzSkyz8yES5tDVu4tZoZ6z3hwxUvIzmiDn8xe4iH/duCOlp9e8+ag==
-X-Received: by 2002:a63:8c51:: with SMTP id q17mr5094662pgn.320.1584647398261;
-        Thu, 19 Mar 2020 12:49:58 -0700 (PDT)
-Received: from localhost.localdomain ([2601:1c2:680:1319:692:26ff:feda:3a81])
-        by smtp.gmail.com with ESMTPSA id y28sm2989377pgc.69.2020.03.19.12.49.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 19 Mar 2020 12:49:57 -0700 (PDT)
-From:   John Stultz <john.stultz@linaro.org>
-To:     lkml <linux-kernel@vger.kernel.org>
-Cc:     John Stultz <john.stultz@linaro.org>, Todd Kjos <tkjos@google.com>,
-        Saravana Kannan <saravanak@google.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org
-Subject: [PATCH v2] soc: qcom: rpmpd: Allow RPMPD driver to be loaded as a module
-Date:   Thu, 19 Mar 2020 19:49:54 +0000
-Message-Id: <20200319194954.39853-1-john.stultz@linaro.org>
+        id S1727620AbgCSTvw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 15:51:52 -0400
+Received: from mail-eopbgr80052.outbound.protection.outlook.com ([40.107.8.52]:28703
+        "EHLO EUR04-VI1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727252AbgCSTvv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 15:51:51 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=c9D9wYq9Eub2KplHkUla7283hJLpW6bijlrX6hL5doTVQc45KAMLIg15bkOE+1JMeywnr2UpRN7XW+9XeTViCqLNXUpHj+oyCtK1M+z/MLi/IGmaPzBWMT4ew1yTb1yEsd85zTf3bosIwSGRJ2u2Z40YwidM85rx0oJg5zm697kAZ/t43xlRKWQgbzF8BS0ch4rnUz9VnlOYK2ZR/NXrb3BPucAQxIRlEyPawvMyUjXkyNHXuZD6sELHFx7NBlnec/yql1kmovvwZJlv+g/M/fBXlnu8lvxn5u0Ltpq/ioTA4HYMSEWJQCOsDMM7n1AuU7gyj58ekRfKH6MBEVfImw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=s0QTYR+zBU/gPa+yJ0Tvr7AOSy44w97Zi5bWKxRvmcM=;
+ b=nMAOdU+obZMnRpTEhVzUWND78XuSO92T4uVdgnNI3r5UsQM8df7S6NrFyptqgKmoNPBs0Lj7/wgmOClDyeJvXR1TJ3tl+bMZgnyxJ/ZcJ0FxiR3JqE4cZWG5tfFdJDQp3EM6FYIIThBL5pGR2Mb6BhGZm+YqHgpE23qnHo7L0AtxA+reX4GLnhcXJU3/iStkrUtccWzPQlzDwj0R6aGGTI56Fw1xPhCIPiHpdg8nCAHQrjezoyGMHWgQhY5ba3yGu4IRu+st322+OuFjUexDIhtv7oZN1og1tA4/rL4CTjhprpWivEkPKcqNVjVzjdQh6avZi5nwtTIjX8ImjaazLw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
+ dkim=pass header.d=oss.nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
+ s=selector2-NXP1-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=s0QTYR+zBU/gPa+yJ0Tvr7AOSy44w97Zi5bWKxRvmcM=;
+ b=mckwreSivnBDYNQztOZJKanuSCLzdbbv1J6pcLaSpSTrNd2WE01AIoWG3CybpLnPsi+aLA6513w949ASv1Zqodbc5VQ2wFjCIfrGEXhsOW6Udeg5cqy4GmKRhnsk+3rwzf7PNUMCXCur80T1QevnAhtLBhKCc6UQgUJhNKL8VCA=
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=daniel.baluta@oss.nxp.com; 
+Received: from VI1PR0402MB3839.eurprd04.prod.outlook.com (52.134.16.147) by
+ VI1PR0402MB3486.eurprd04.prod.outlook.com (52.134.4.10) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2814.13; Thu, 19 Mar 2020 19:51:46 +0000
+Received: from VI1PR0402MB3839.eurprd04.prod.outlook.com
+ ([fe80::35d0:31bc:91d9:ceb0]) by VI1PR0402MB3839.eurprd04.prod.outlook.com
+ ([fe80::35d0:31bc:91d9:ceb0%7]) with mapi id 15.20.2835.017; Thu, 19 Mar 2020
+ 19:51:46 +0000
+From:   Daniel Baluta <daniel.baluta@oss.nxp.com>
+To:     lgirdwood@gmail.com, broonie@kernel.org
+Cc:     pierre-louis.bossart@linux.intel.com,
+        ranjani.sridharan@linux.intel.com, kai.vehmanen@linux.intel.com,
+        daniel.baluta@gmail.com, linux-imx@nxp.com, shawnguo@kernel.org,
+        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
+        yuehaibing@huawei.com, krzk@kernel.org,
+        linux-kernel@vger.kernel.org, sound-open-firmware@alsa-project.org,
+        alsa-devel@alsa-project.org, linux-arm-kernel@lists.infradead.org,
+        devicetree@vger.kernel.org, robh+dt@kernel.org,
+        Daniel Baluta <daniel.baluta@nxp.com>
+Subject: [PATCH 2/5] ASoC: SOF: imx: fix undefined reference issue
+Date:   Thu, 19 Mar 2020 21:49:54 +0200
+Message-Id: <20200319194957.9569-3-daniel.baluta@oss.nxp.com>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20200319194957.9569-1-daniel.baluta@oss.nxp.com>
+References: <20200319194957.9569-1-daniel.baluta@oss.nxp.com>
+Content-Type: text/plain
+X-ClientProxiedBy: AM0PR07CA0031.eurprd07.prod.outlook.com
+ (2603:10a6:208:ac::44) To VI1PR0402MB3839.eurprd04.prod.outlook.com
+ (2603:10a6:803:21::19)
+MIME-Version: 1.0
+X-MS-Exchange-MessageSentRepresentingType: 1
+Received: from fsr-ub1864-103.ro-buh02.nxp.com (89.37.124.34) by AM0PR07CA0031.eurprd07.prod.outlook.com (2603:10a6:208:ac::44) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2835.12 via Frontend Transport; Thu, 19 Mar 2020 19:51:44 +0000
+X-Mailer: git-send-email 2.17.1
+X-Originating-IP: [89.37.124.34]
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-HT: Tenant
+X-MS-Office365-Filtering-Correlation-Id: 229774bf-87d2-417a-5de8-08d7cc3ef4b1
+X-MS-TrafficTypeDiagnostic: VI1PR0402MB3486:|VI1PR0402MB3486:
+X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
+X-MS-Exchange-Transport-Forked: True
+X-Microsoft-Antispam-PRVS: <VI1PR0402MB3486EC278CF9DE7DEC95A62DB8F40@VI1PR0402MB3486.eurprd04.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:5236;
+X-Forefront-PRVS: 0347410860
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(4636009)(346002)(366004)(39860400002)(396003)(136003)(376002)(199004)(81156014)(8676002)(8936002)(1076003)(81166006)(186003)(26005)(956004)(4326008)(16526019)(2616005)(478600001)(6506007)(316002)(6666004)(2906002)(44832011)(86362001)(66946007)(7416002)(66476007)(6486002)(52116002)(66556008)(6512007)(5660300002);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR0402MB3486;H:VI1PR0402MB3839.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:0;
+Received-SPF: None (protection.outlook.com: oss.nxp.com does not designate
+ permitted sender hosts)
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: 0x3/0y1zVptZ5VA9qcroBbaXRyP/N+MR8+m6i6ByKNImlKPgcYXLSDF472WnW5+4OVM5iafvlHpUF0YIIGI39nPi+coh8cVBQqK0vse5iGKOppUMLsSg5TO+ZZi6k9XbwEcnjf95v2X7eQzUXyaQWjK5S73KgdrB9PQvPmPn0yCea7jVIGRsh96xMflOXPtd3DtSqK80yBHWiEfWlUNBsvhIUrQRv/qB81n/nE29pgFJItUeJPUsMGSuOrZGbopBXJGeN4T+bw/+7K9rjPbAz3fUbjQDTsXoGD6ryXhiDaZ3VARr9rjOSzlVClum00nmy0iyxFq6TGvl+CWMtyqlJyHwxN/t19wBFwxfCBnBVboAQORId3UM74+vNvdOpzPBOgO6r0TIP2ZMoCEWDd8r8zhmiWjDHguCMRR+cV+i/V7SOjN1QdRXNqlZJlGsPngy
+X-MS-Exchange-AntiSpam-MessageData: Aui9wGuY8UX14msPUG1ryqGFXXv6DtS5q6rZz/3SZifeGc2OZqwDR6U32XtQScuEYCaUc12a3CCgoZlS+zAWrPWH8sB1yM8ixZQEQcP1k0BadrmsuTcBRce3g52lUHpQg+XyJlPjcJyJmV0Y1v+uqw==
+X-OriginatorOrg: oss.nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 229774bf-87d2-417a-5de8-08d7cc3ef4b1
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Mar 2020 19:51:46.3326
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 2APgmY5nfmseak7H65WNXth67KgSbWLI5AIWJoT5QJZnVwT/YHjiFRxepYdKtlccDiCqsT3D9UthU7IQlV+WDg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0402MB3486
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch allow the rpmpd driver to be loaded as a permenent
-module. Meaning it can be loaded from a module, but then cannot
-be unloaded.
+From: Daniel Baluta <daniel.baluta@nxp.com>
 
-Ideally, it would include a remove hook and related logic, but
-apparently the genpd code isn't able to track usage and cleaning
-things up? (See: https://lkml.org/lkml/2019/1/24/38)
+make.cross ARCH=mips allyesconfig fails with the following error:
 
-So making it a permenent module at least improves things slightly
-over requiring it to be a built in driver.
+sound/soc/sof/sof-of-dev.o:(.data.sof_of_imx8qxp_desc+0x40): undefined
+reference to `sof_imx8x_ops'.
 
-Feedback would be appreciated!
+This seems to be a Makefile order issue, solve by using the same
+structure as for Intel platforms.
 
-Cc: Todd Kjos <tkjos@google.com>
-Cc: Saravana Kannan <saravanak@google.com>
-Cc: Andy Gross <agross@kernel.org>
-Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Rajendra Nayak <rnayak@codeaurora.org>
-Cc: linux-arm-msm@vger.kernel.org
-Signed-off-by: John Stultz <john.stultz@linaro.org>
+Fixes: f9ad75468453 ("ASoC: SOF: imx: fix reverse CONFIG_SND_SOC_SOF_OF
+dependency")
+Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Signed-off-by: Daniel Baluta <daniel.baluta@nxp.com>
 ---
-v2:
-* Fix MODULE_LICENSE to be GPL v2 as suggested by Bjorn
-* Leave initcall as core_initcall, since that switches to module_initcall
-  only when built as a module, also suggested by Bjorn
-* Add module tags taken from Rajendra's earlier patch
----
- drivers/soc/qcom/Kconfig | 4 ++--
- drivers/soc/qcom/rpmpd.c | 6 ++++++
- 2 files changed, 8 insertions(+), 2 deletions(-)
+ sound/soc/sof/imx/Kconfig | 17 +++++++++++++----
+ 1 file changed, 13 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/soc/qcom/Kconfig b/drivers/soc/qcom/Kconfig
-index d0a73e76d563..af774555b9d2 100644
---- a/drivers/soc/qcom/Kconfig
-+++ b/drivers/soc/qcom/Kconfig
-@@ -123,8 +123,8 @@ config QCOM_RPMHPD
- 	  for the voltage rail.
+diff --git a/sound/soc/sof/imx/Kconfig b/sound/soc/sof/imx/Kconfig
+index 812749064ca8..9586635cf8ab 100644
+--- a/sound/soc/sof/imx/Kconfig
++++ b/sound/soc/sof/imx/Kconfig
+@@ -11,17 +11,26 @@ config SND_SOC_SOF_IMX_TOPLEVEL
  
- config QCOM_RPMPD
--	bool "Qualcomm RPM Power domain driver"
--	depends on QCOM_SMD_RPM=y
-+	tristate "Qualcomm RPM Power domain driver"
-+	depends on QCOM_SMD_RPM
- 	help
- 	  QCOM RPM Power domain driver to support power-domains with
- 	  performance states. The driver communicates a performance state
-diff --git a/drivers/soc/qcom/rpmpd.c b/drivers/soc/qcom/rpmpd.c
-index 2b1834c5609a..22fe94c03e79 100644
---- a/drivers/soc/qcom/rpmpd.c
-+++ b/drivers/soc/qcom/rpmpd.c
-@@ -5,6 +5,7 @@
- #include <linux/init.h>
- #include <linux/kernel.h>
- #include <linux/mutex.h>
-+#include <linux/module.h>
- #include <linux/pm_domain.h>
- #include <linux/of.h>
- #include <linux/of_device.h>
-@@ -226,6 +227,7 @@ static const struct of_device_id rpmpd_match_table[] = {
- 	{ .compatible = "qcom,qcs404-rpmpd", .data = &qcs404_desc },
- 	{ }
- };
-+MODULE_DEVICE_TABLE(of, rpmpd_match_table);
+ if SND_SOC_SOF_IMX_TOPLEVEL
  
- static int rpmpd_send_enable(struct rpmpd *pd, bool enable)
- {
-@@ -422,3 +424,7 @@ static int __init rpmpd_init(void)
- 	return platform_driver_register(&rpmpd_driver);
- }
- core_initcall(rpmpd_init);
++config SND_SOC_SOF_IMX_OF
++	def_tristate SND_SOC_SOF_OF
++	select SND_SOC_SOF_IMX8 if SND_SOC_SOF_IMX8_SUPPORT
++	help
++	  This option is not user-selectable but automagically handled by
++	  'select' statements at a higher level
 +
-+MODULE_DESCRIPTION("Qualcomm Technologies, Inc. RPM Power Domain Driver");
-+MODULE_LICENSE("GPL v2");
-+MODULE_ALIAS("platform:qcom-rpmpd");
+ config SND_SOC_SOF_IMX8_SUPPORT
+ 	bool "SOF support for i.MX8"
+-	depends on IMX_SCU
+-	select IMX_DSP
+ 	help
+ 	  This adds support for Sound Open Firmware for NXP i.MX8 platforms
+ 	  Say Y if you have such a device.
+ 	  If unsure select "N".
+ 
+ config SND_SOC_SOF_IMX8
+-	def_tristate SND_SOC_SOF_OF
+-	depends on SND_SOC_SOF_IMX8_SUPPORT
++	tristate
++	depends on IMX_SCU
++	select IMX_DSP
++	help
++	  This option is not user-selectable but automagically handled by
++	  'select' statements at a higher level
+ 
+ endif ## SND_SOC_SOF_IMX_IMX_TOPLEVEL
 -- 
 2.17.1
 
