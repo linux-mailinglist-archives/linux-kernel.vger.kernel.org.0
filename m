@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 05F2118B576
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:19:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E1F0A18B5D4
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:22:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729830AbgCSNSp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 09:18:45 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41248 "EHLO mail.kernel.org"
+        id S1730141AbgCSNVy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 09:21:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46780 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729808AbgCSNSl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 09:18:41 -0400
+        id S1729693AbgCSNVw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 09:21:52 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4E56B214D8;
-        Thu, 19 Mar 2020 13:18:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3C73F20724;
+        Thu, 19 Mar 2020 13:21:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584623920;
-        bh=7zsWKK3s5PinmuGqxNkDtICp7MXcOf/lRH82lmkbb0M=;
+        s=default; t=1584624111;
+        bh=YAFvu5ij+AyAowyPL31UII9ZhMcFpurD7oRq4jnXm+Q=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VHdXtejWWlPaz7BmtYPaWwicAxPGdk+Q0L7BtiJvEwwCG9tD2C89cxs4B52C5rrhC
-         35YaFDOToY9ET/9AdgQyWQ1CHZ6ei62w7sKl6zuCvZ2Fg5cJWw2m5F21LBQqdV22W9
-         f0jokVnXzJG2nnotFADnr5P21CeMnboUC16bRCvM=
+        b=YcsWdVnN6WAWlhhmCDLLa8MvQTVQqsh39z761m1GlMfQJgIxRicoxiZGdabsWO4rs
+         3JbM8szrBgagVQB3y1vW821flMsgPNmeuop8CKM4lf8iGZkWswAOpU7vmUSaOg0EJo
+         Ok0Lwj/j7BHYHo76fSWO4AbM+06ZgYaCkPIXwlQA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Sven Eckelmann <sven@narfation.org>,
-        Simon Wunderlich <sw@simonwunderlich.de>
-Subject: [PATCH 4.14 71/99] batman-adv: Fix internal interface indices types
+        stable@vger.kernel.org, Mansour Behabadi <mansour@oxplot.com>,
+        Jiri Kosina <jkosina@suse.cz>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.4 11/60] HID: apple: Add support for recent firmware on Magic Keyboards
 Date:   Thu, 19 Mar 2020 14:03:49 +0100
-Message-Id: <20200319124002.861741269@linuxfoundation.org>
+Message-Id: <20200319123922.714871661@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.2
-In-Reply-To: <20200319123941.630731708@linuxfoundation.org>
-References: <20200319123941.630731708@linuxfoundation.org>
+In-Reply-To: <20200319123919.441695203@linuxfoundation.org>
+References: <20200319123919.441695203@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,234 +43,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sven Eckelmann <sven@narfation.org>
+From: Mansour Behabadi <mansour@oxplot.com>
 
-commit f22e08932c2960f29b5e828e745c9f3fb7c1bb86 upstream.
+[ Upstream commit e433be929e63265b7412478eb7ff271467aee2d7 ]
 
-batman-adv uses internal indices for each enabled and active interface.
-It is currently used by the B.A.T.M.A.N. IV algorithm to identifify the
-correct position in the ogm_cnt bitmaps.
+Magic Keyboards with more recent firmware (0x0100) report Fn key differently.
+Without this patch, Fn key may not behave as expected and may not be
+configurable via hid_apple fnmode module parameter.
 
-The type for the number of enabled interfaces (which defines the next
-interface index) was set to char. This type can be (depending on the
-architecture) either signed (limiting batman-adv to 127 active slave
-interfaces) or unsigned (limiting batman-adv to 255 active slave
-interfaces).
-
-This limit was not correctly checked when an interface was enabled and thus
-an overflow happened. This was only catched on systems with the signed char
-type when the B.A.T.M.A.N. IV code tried to resize its counter arrays with
-a negative size.
-
-The if_num interface index was only a s16 and therefore significantly
-smaller than the ifindex (int) used by the code net code.
-
-Both &batadv_hard_iface->if_num and &batadv_priv->num_ifaces must be
-(unsigned) int to support the same number of slave interfaces as the net
-core code. And the interface activation code must check the number of
-active slave interfaces to avoid integer overflows.
-
-Fixes: c6c8fea29769 ("net: Add batman-adv meshing protocol")
-Signed-off-by: Sven Eckelmann <sven@narfation.org>
-Signed-off-by: Simon Wunderlich <sw@simonwunderlich.de>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Mansour Behabadi <mansour@oxplot.com>
+Signed-off-by: Jiri Kosina <jkosina@suse.cz>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/batman-adv/bat_iv_ogm.c     |   24 ++++++++++++++----------
- net/batman-adv/hard-interface.c |    9 +++++++--
- net/batman-adv/originator.c     |    4 ++--
- net/batman-adv/originator.h     |    4 ++--
- net/batman-adv/types.h          |   11 ++++++-----
- 5 files changed, 31 insertions(+), 21 deletions(-)
+ drivers/hid/hid-apple.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/net/batman-adv/bat_iv_ogm.c
-+++ b/net/batman-adv/bat_iv_ogm.c
-@@ -149,7 +149,7 @@ static void batadv_iv_ogm_orig_free(stru
-  * Return: 0 on success, a negative error code otherwise.
-  */
- static int batadv_iv_ogm_orig_add_if(struct batadv_orig_node *orig_node,
--				     int max_if_num)
-+				     unsigned int max_if_num)
+diff --git a/drivers/hid/hid-apple.c b/drivers/hid/hid-apple.c
+index 6ac8becc2372e..d732d1d10cafb 100644
+--- a/drivers/hid/hid-apple.c
++++ b/drivers/hid/hid-apple.c
+@@ -340,7 +340,8 @@ static int apple_input_mapping(struct hid_device *hdev, struct hid_input *hi,
+ 		unsigned long **bit, int *max)
  {
- 	void *data_ptr;
- 	size_t old_size;
-@@ -193,7 +193,8 @@ unlock:
-  */
- static void
- batadv_iv_ogm_drop_bcast_own_entry(struct batadv_orig_node *orig_node,
--				   int max_if_num, int del_if_num)
-+				   unsigned int max_if_num,
-+				   unsigned int del_if_num)
- {
- 	size_t chunk_size;
- 	size_t if_offset;
-@@ -231,7 +232,8 @@ batadv_iv_ogm_drop_bcast_own_entry(struc
-  */
- static void
- batadv_iv_ogm_drop_bcast_own_sum_entry(struct batadv_orig_node *orig_node,
--				       int max_if_num, int del_if_num)
-+				       unsigned int max_if_num,
-+				       unsigned int del_if_num)
- {
- 	size_t if_offset;
- 	void *data_ptr;
-@@ -268,7 +270,8 @@ batadv_iv_ogm_drop_bcast_own_sum_entry(s
-  * Return: 0 on success, a negative error code otherwise.
-  */
- static int batadv_iv_ogm_orig_del_if(struct batadv_orig_node *orig_node,
--				     int max_if_num, int del_if_num)
-+				     unsigned int max_if_num,
-+				     unsigned int del_if_num)
- {
- 	spin_lock_bh(&orig_node->bat_iv.ogm_cnt_lock);
- 
-@@ -302,7 +305,8 @@ static struct batadv_orig_node *
- batadv_iv_ogm_orig_get(struct batadv_priv *bat_priv, const u8 *addr)
- {
- 	struct batadv_orig_node *orig_node;
--	int size, hash_added;
-+	int hash_added;
-+	size_t size;
- 
- 	orig_node = batadv_orig_hash_find(bat_priv, addr);
- 	if (orig_node)
-@@ -890,7 +894,7 @@ batadv_iv_ogm_slide_own_bcast_window(str
- 	u32 i;
- 	size_t word_index;
- 	u8 *w;
--	int if_num;
-+	unsigned int if_num;
- 
- 	for (i = 0; i < hash->size; i++) {
- 		head = &hash->table[i];
-@@ -1020,7 +1024,7 @@ batadv_iv_ogm_orig_update(struct batadv_
- 	struct batadv_neigh_node *tmp_neigh_node = NULL;
- 	struct batadv_neigh_node *router = NULL;
- 	struct batadv_orig_node *orig_node_tmp;
--	int if_num;
-+	unsigned int if_num;
- 	u8 sum_orig, sum_neigh;
- 	u8 *neigh_addr;
- 	u8 tq_avg;
-@@ -1179,7 +1183,7 @@ static bool batadv_iv_ogm_calc_tq(struct
- 	u8 total_count;
- 	u8 orig_eq_count, neigh_rq_count, neigh_rq_inv, tq_own;
- 	unsigned int neigh_rq_inv_cube, neigh_rq_max_cube;
--	int if_num;
-+	unsigned int if_num;
- 	unsigned int tq_asym_penalty, inv_asym_penalty;
- 	unsigned int combined_tq;
- 	unsigned int tq_iface_penalty;
-@@ -1698,9 +1702,9 @@ static void batadv_iv_ogm_process(const
- 
- 	if (is_my_orig) {
- 		unsigned long *word;
--		int offset;
-+		size_t offset;
- 		s32 bit_pos;
--		s16 if_num;
-+		unsigned int if_num;
- 		u8 *weight;
- 
- 		orig_neigh_node = batadv_iv_ogm_orig_get(bat_priv,
---- a/net/batman-adv/hard-interface.c
-+++ b/net/batman-adv/hard-interface.c
-@@ -738,6 +738,11 @@ int batadv_hardif_enable_interface(struc
- 	hard_iface->soft_iface = soft_iface;
- 	bat_priv = netdev_priv(hard_iface->soft_iface);
- 
-+	if (bat_priv->num_ifaces >= UINT_MAX) {
-+		ret = -ENOSPC;
-+		goto err_dev;
-+	}
-+
- 	ret = netdev_master_upper_dev_link(hard_iface->net_dev,
- 					   soft_iface, NULL, NULL);
- 	if (ret)
-@@ -845,7 +850,7 @@ void batadv_hardif_disable_interface(str
- 	batadv_hardif_recalc_extra_skbroom(hard_iface->soft_iface);
- 
- 	/* nobody uses this interface anymore */
--	if (!bat_priv->num_ifaces) {
-+	if (bat_priv->num_ifaces == 0) {
- 		batadv_gw_check_client_stop(bat_priv);
- 
- 		if (autodel == BATADV_IF_CLEANUP_AUTO)
-@@ -881,7 +886,7 @@ batadv_hardif_add_interface(struct net_d
- 	if (ret)
- 		goto free_if;
- 
--	hard_iface->if_num = -1;
-+	hard_iface->if_num = 0;
- 	hard_iface->net_dev = net_dev;
- 	hard_iface->soft_iface = NULL;
- 	hard_iface->if_status = BATADV_IF_NOT_IN_USE;
---- a/net/batman-adv/originator.c
-+++ b/net/batman-adv/originator.c
-@@ -1500,7 +1500,7 @@ int batadv_orig_dump(struct sk_buff *msg
- }
- 
- int batadv_orig_hash_add_if(struct batadv_hard_iface *hard_iface,
--			    int max_if_num)
-+			    unsigned int max_if_num)
- {
- 	struct batadv_priv *bat_priv = netdev_priv(hard_iface->soft_iface);
- 	struct batadv_algo_ops *bao = bat_priv->algo_ops;
-@@ -1535,7 +1535,7 @@ err:
- }
- 
- int batadv_orig_hash_del_if(struct batadv_hard_iface *hard_iface,
--			    int max_if_num)
-+			    unsigned int max_if_num)
- {
- 	struct batadv_priv *bat_priv = netdev_priv(hard_iface->soft_iface);
- 	struct batadv_hashtable *hash = bat_priv->orig_hash;
---- a/net/batman-adv/originator.h
-+++ b/net/batman-adv/originator.h
-@@ -78,9 +78,9 @@ int batadv_orig_seq_print_text(struct se
- int batadv_orig_dump(struct sk_buff *msg, struct netlink_callback *cb);
- int batadv_orig_hardif_seq_print_text(struct seq_file *seq, void *offset);
- int batadv_orig_hash_add_if(struct batadv_hard_iface *hard_iface,
--			    int max_if_num);
-+			    unsigned int max_if_num);
- int batadv_orig_hash_del_if(struct batadv_hard_iface *hard_iface,
--			    int max_if_num);
-+			    unsigned int max_if_num);
- struct batadv_orig_node_vlan *
- batadv_orig_node_vlan_new(struct batadv_orig_node *orig_node,
- 			  unsigned short vid);
---- a/net/batman-adv/types.h
-+++ b/net/batman-adv/types.h
-@@ -155,7 +155,7 @@ enum batadv_hard_iface_wifi_flags {
-  */
- struct batadv_hard_iface {
- 	struct list_head list;
--	s16 if_num;
-+	unsigned int if_num;
- 	char if_status;
- 	u8 num_bcasts;
- 	u32 wifi_flags;
-@@ -1081,7 +1081,7 @@ struct batadv_priv {
- 	atomic_t bcast_seqno;
- 	atomic_t bcast_queue_left;
- 	atomic_t batman_queue_left;
--	char num_ifaces;
-+	unsigned int num_ifaces;
- 	struct kobject *mesh_obj;
- 	struct dentry *debug_dir;
- 	struct hlist_head forw_bat_list;
-@@ -1479,9 +1479,10 @@ struct batadv_algo_neigh_ops {
-  */
- struct batadv_algo_orig_ops {
- 	void (*free)(struct batadv_orig_node *orig_node);
--	int (*add_if)(struct batadv_orig_node *orig_node, int max_if_num);
--	int (*del_if)(struct batadv_orig_node *orig_node, int max_if_num,
--		      int del_if_num);
-+	int (*add_if)(struct batadv_orig_node *orig_node,
-+		      unsigned int max_if_num);
-+	int (*del_if)(struct batadv_orig_node *orig_node,
-+		      unsigned int max_if_num, unsigned int del_if_num);
- #ifdef CONFIG_BATMAN_ADV_DEBUGFS
- 	void (*print)(struct batadv_priv *priv, struct seq_file *seq,
- 		      struct batadv_hard_iface *hard_iface);
+ 	if (usage->hid == (HID_UP_CUSTOM | 0x0003) ||
+-			usage->hid == (HID_UP_MSVENDOR | 0x0003)) {
++			usage->hid == (HID_UP_MSVENDOR | 0x0003) ||
++			usage->hid == (HID_UP_HPVENDOR2 | 0x0003)) {
+ 		/* The fn key on Apple USB keyboards */
+ 		set_bit(EV_REP, hi->input->evbit);
+ 		hid_map_usage_clear(hi, usage, bit, max, EV_KEY, KEY_FN);
+-- 
+2.20.1
+
 
 
