@@ -2,28 +2,28 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4F17E18C15F
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 21:29:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7A6B518C161
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 21:29:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727394AbgCSU3I (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 16:29:08 -0400
+        id S1727411AbgCSU3N (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 16:29:13 -0400
 Received: from mga09.intel.com ([134.134.136.24]:60512 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727318AbgCSU3F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 16:29:05 -0400
-IronPort-SDR: oJlmJ6Y8cWsr9S+CVRXawhtX6qsd/BQXgIPMIYfSVIt4f4fSVehIejMgu1Ji+WjQFkWI2CfWJs
- ZRXeKqL/IPRA==
+        id S1727364AbgCSU3G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 16:29:06 -0400
+IronPort-SDR: gh8WSXLQMD5/GZ0FmtYx2JVsO75938UgZuH2euh2+/sckyFNMySPnHru4n1nfMqqK/M5SJW7NW
+ psPxcC52Ur7g==
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Mar 2020 13:29:03 -0700
-IronPort-SDR: kysinYymoqG1Dl1OE1rZrGxt/JVgihLJDKMaAOU6/TQqZrbgLBb6O2sfSAsgisdQt1XKP7QKuw
- /xFp+oer2aXw==
+  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Mar 2020 13:29:04 -0700
+IronPort-SDR: Aw0IAjZ00auPnBeERmjVX2BLEWCwwtoxHw9KwW45R0250gAtvczMLLyUDahZo3+pr7BzS0Dfix
+ gZM4Ql1Gj2lg==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.70,572,1574150400"; 
-   d="scan'208";a="239031281"
+   d="scan'208";a="239031286"
 Received: from labuser-ice-lake-client-platform.jf.intel.com ([10.54.55.65])
-  by orsmga008.jf.intel.com with ESMTP; 19 Mar 2020 13:29:03 -0700
+  by orsmga008.jf.intel.com with ESMTP; 19 Mar 2020 13:29:04 -0700
 From:   kan.liang@linux.intel.com
 To:     acme@kernel.org, jolsa@redhat.com, peterz@infradead.org,
         mingo@redhat.com, linux-kernel@vger.kernel.org
@@ -32,9 +32,9 @@ Cc:     namhyung@kernel.org, adrian.hunter@intel.com,
         alexey.budankov@linux.intel.com, vitaly.slobodskoy@intel.com,
         pavel.gerasimov@intel.com, mpe@ellerman.id.au, eranian@google.com,
         ak@linux.intel.com, Kan Liang <kan.liang@linux.intel.com>
-Subject: [PATCH V4 16/17] perf c2c: Add option to enable the LBR stitching approach
-Date:   Thu, 19 Mar 2020 13:25:16 -0700
-Message-Id: <20200319202517.23423-17-kan.liang@linux.intel.com>
+Subject: [PATCH V4 17/17] perf hist: Add fast path for duplicate entries check
+Date:   Thu, 19 Mar 2020 13:25:17 -0700
+Message-Id: <20200319202517.23423-18-kan.liang@linux.intel.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200319202517.23423-1-kan.liang@linux.intel.com>
 References: <20200319202517.23423-1-kan.liang@linux.intel.com>
@@ -45,87 +45,116 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Kan Liang <kan.liang@linux.intel.com>
 
-With the LBR stitching approach, the reconstructed LBR call stack
-can break the HW limitation. However, it may reconstruct invalid call
-stacks in some cases, e.g. exception handing such as setjmp/longjmp.
-Also, it may impact the processing time especially when the number of
-samples with stitched LBRs are huge.
+Perf checks the duplicate entries in a callchain before adding an entry.
+However the check is very slow especially with deeper call stack.
+Almost ~50% elapsed time of perf report is spent on the check when the
+call stack is always depth of 32.
 
-Add an option to enable the approach.
+The hist_entry__cmp() is used to compare the new entry with the old
+entries. It will go through all the available sorts in the sort_list,
+and call the specific cmp of each sort, which is very slow.
+Actually, for most cases, there are no duplicate entries in callchain.
+The symbols are usually different. It's much faster to do a quick check
+for symbols first. Only do the full cmp when the symbols are exactly the
+same.
+The quick check is only to check symbols, not dso. Export
+_sort__sym_cmp.
 
-Reviewed-by: Andi Kleen <ak@linux.intel.com>
+ $perf record --call-graph lbr ./tchain_edit_64
+
+ Without the patch
+ $time perf report --stdio
+ real    0m21.142s
+ user    0m21.110s
+ sys     0m0.033s
+
+ With the patch
+ $time perf report --stdio
+ real    0m10.977s
+ user    0m10.948s
+ sys     0m0.027s
+
 Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
 ---
- tools/perf/Documentation/perf-c2c.txt | 11 +++++++++++
- tools/perf/builtin-c2c.c              | 12 ++++++++++++
- 2 files changed, 23 insertions(+)
+ tools/perf/util/hist.c | 23 +++++++++++++++++++++++
+ tools/perf/util/sort.c |  2 +-
+ tools/perf/util/sort.h |  2 ++
+ 3 files changed, 26 insertions(+), 1 deletion(-)
 
-diff --git a/tools/perf/Documentation/perf-c2c.txt b/tools/perf/Documentation/perf-c2c.txt
-index e6150f21267d..2133eb320cb0 100644
---- a/tools/perf/Documentation/perf-c2c.txt
-+++ b/tools/perf/Documentation/perf-c2c.txt
-@@ -111,6 +111,17 @@ REPORT OPTIONS
- --display::
- 	Switch to HITM type (rmt, lcl) to display and sort on. Total HITMs as default.
+diff --git a/tools/perf/util/hist.c b/tools/perf/util/hist.c
+index e74a5acf66d9..311d6d119f3c 100644
+--- a/tools/perf/util/hist.c
++++ b/tools/perf/util/hist.c
+@@ -1057,6 +1057,20 @@ iter_next_cumulative_entry(struct hist_entry_iter *iter,
+ 	return fill_callchain_info(al, node, iter->hide_unresolved);
+ }
  
-+--stitch-lbr::
-+	Show callgraph with stitched LBRs, which may have more complete
-+	callgraph. The perf.data file must have been obtained using
-+	perf c2c record --call-graph lbr.
-+	Disabled by default. In common cases with call stack overflows,
-+	it can recreate better call stacks than the default lbr call stack
-+	output. But this approach is not full proof. There can be cases
-+	where it creates incorrect call stacks from incorrect matches.
-+	The known limitations include exception handing such as
-+	setjmp/longjmp will have calls/returns not match.
++static bool
++hist_entry__fast__sym_diff(struct hist_entry *left,
++			   struct hist_entry *right)
++{
++	struct symbol *sym_l = left->ms.sym;
++	struct symbol *sym_r = right->ms.sym;
 +
- C2C RECORD
- ----------
- The perf c2c record command setup options related to HITM cacheline analysis
-diff --git a/tools/perf/builtin-c2c.c b/tools/perf/builtin-c2c.c
-index 246ac0b4d54f..0d544c4fb4be 100644
---- a/tools/perf/builtin-c2c.c
-+++ b/tools/perf/builtin-c2c.c
-@@ -95,6 +95,7 @@ struct perf_c2c {
- 	bool			 use_stdio;
- 	bool			 stats_only;
- 	bool			 symbol_full;
-+	bool			 stitch_lbr;
- 
- 	/* HITM shared clines stats */
- 	struct c2c_stats	hitm_stats;
-@@ -273,6 +274,9 @@ static int process_sample_event(struct perf_tool *tool __maybe_unused,
- 		return -1;
- 	}
- 
-+	if (c2c.stitch_lbr)
-+		al.thread->lbr_stitch_enable = true;
++	if (!sym_l && !sym_r)
++		return left->ip != right->ip;
 +
- 	ret = sample__resolve_callchain(sample, &callchain_cursor, NULL,
- 					evsel, &al, sysctl_perf_event_max_stack);
- 	if (ret)
-@@ -2601,6 +2605,12 @@ static int setup_callchain(struct evlist *evlist)
- 		}
- 	}
- 
-+	if (c2c.stitch_lbr && (mode != CALLCHAIN_LBR)) {
-+		ui__warning("Can't find LBR callchain. Switch off --stitch-lbr.\n"
-+			    "Please apply --call-graph lbr when recording.\n");
-+		c2c.stitch_lbr = false;
-+	}
++	return !!_sort__sym_cmp(sym_l, sym_r);
++}
 +
- 	callchain_param.record_mode = mode;
- 	callchain_param.min_percent = 0;
- 	return 0;
-@@ -2752,6 +2762,8 @@ static int perf_c2c__report(int argc, const char **argv)
- 	OPT_STRING('c', "coalesce", &coalesce, "coalesce fields",
- 		   "coalesce fields: pid,tid,iaddr,dso"),
- 	OPT_BOOLEAN('f', "force", &symbol_conf.force, "don't complain, do it"),
-+	OPT_BOOLEAN(0, "stitch-lbr", &c2c.stitch_lbr,
-+		    "Enable LBR callgraph stitching approach"),
- 	OPT_PARENT(c2c_options),
- 	OPT_END()
++
+ static int
+ iter_add_next_cumulative_entry(struct hist_entry_iter *iter,
+ 			       struct addr_location *al)
+@@ -1083,6 +1097,7 @@ iter_add_next_cumulative_entry(struct hist_entry_iter *iter,
  	};
+ 	int i;
+ 	struct callchain_cursor cursor;
++	bool fast = hists__has(he_tmp.hists, sym);
+ 
+ 	callchain_cursor_snapshot(&cursor, &callchain_cursor);
+ 
+@@ -1093,6 +1108,14 @@ iter_add_next_cumulative_entry(struct hist_entry_iter *iter,
+ 	 * It's possible that it has cycles or recursive calls.
+ 	 */
+ 	for (i = 0; i < iter->curr; i++) {
++		/*
++		 * For most cases, there are no duplicate entries in callchain.
++		 * The symbols are usually different. Do a quick check for
++		 * symbols first.
++		 */
++		if (fast && hist_entry__fast__sym_diff(he_cache[i], &he_tmp))
++			continue;
++
+ 		if (hist_entry__cmp(he_cache[i], &he_tmp) == 0) {
+ 			/* to avoid calling callback function */
+ 			iter->he = NULL;
+diff --git a/tools/perf/util/sort.c b/tools/perf/util/sort.c
+index e860595576c2..96fd5fb42116 100644
+--- a/tools/perf/util/sort.c
++++ b/tools/perf/util/sort.c
+@@ -234,7 +234,7 @@ static int64_t _sort__addr_cmp(u64 left_ip, u64 right_ip)
+ 	return (int64_t)(right_ip - left_ip);
+ }
+ 
+-static int64_t _sort__sym_cmp(struct symbol *sym_l, struct symbol *sym_r)
++int64_t _sort__sym_cmp(struct symbol *sym_l, struct symbol *sym_r)
+ {
+ 	if (!sym_l || !sym_r)
+ 		return cmp_null(sym_l, sym_r);
+diff --git a/tools/perf/util/sort.h b/tools/perf/util/sort.h
+index 6c862d62d052..c3c3c68cbfdd 100644
+--- a/tools/perf/util/sort.h
++++ b/tools/perf/util/sort.h
+@@ -309,5 +309,7 @@ int64_t
+ sort__daddr_cmp(struct hist_entry *left, struct hist_entry *right);
+ int64_t
+ sort__dcacheline_cmp(struct hist_entry *left, struct hist_entry *right);
++int64_t
++_sort__sym_cmp(struct symbol *sym_l, struct symbol *sym_r);
+ char *hist_entry__srcline(struct hist_entry *he);
+ #endif	/* __PERF_SORT_H */
 -- 
 2.17.1
 
