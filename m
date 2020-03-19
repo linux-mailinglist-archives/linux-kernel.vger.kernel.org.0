@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1F51C18B6A3
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:28:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DD98918B5BC
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:21:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730802AbgCSN0i (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 09:26:38 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54478 "EHLO mail.kernel.org"
+        id S1730067AbgCSNVG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 09:21:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45568 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730785AbgCSN03 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 09:26:29 -0400
+        id S1730043AbgCSNVF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 09:21:05 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D936520658;
-        Thu, 19 Mar 2020 13:26:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7BC9520724;
+        Thu, 19 Mar 2020 13:21:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584624389;
-        bh=PNrmHsCIJfqE4uohYbNXy7WH6tKKMYk92T39QNr6kac=;
+        s=default; t=1584624064;
+        bh=xbfv7AatQ/8gAwDtOYfKEqRPtW1wAwYMUmExtPt3lV4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=EMr/0Z3AVVQaewemIHiRRROk9iE/luLIGKix2NQepKXFmT3PG2Pr2IssuIc+dBcta
-         QU1FZ4ry9TFW4jBkFRZCU+Xg0gEHnnWsr48sTFpaBJwa/u99ARzKkg459rBgGGxS4e
-         H3i3QPuQzj4bJ1JhVXYKqT7FsE0mhaCCu7IpdxmI=
+        b=XocXlM5eaDZeJi80T4WC1xMePw6wp0QK9sk73uNR7VJDThANuashp3fsFjqoJyy8+
+         zUCuZvCndFn0gpDMEpg7fcTG/5wT8up+BdyKtI3xBrfCRDagUDMFi21O5W5hDbFbRs
+         BgnvMvfHotwwq3gxLk8/x8SNsvTq4j66ZQKq6RXs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Luo bin <luobin9@huawei.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.5 45/65] hinic: fix a bug of rss configuration
+        stable@vger.kernel.org, Jann Horn <jannh@google.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.19 45/48] mm: slub: add missing TID bump in kmem_cache_alloc_bulk()
 Date:   Thu, 19 Mar 2020 14:04:27 +0100
-Message-Id: <20200319123940.658382490@linuxfoundation.org>
+Message-Id: <20200319123916.969338281@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.2
-In-Reply-To: <20200319123926.466988514@linuxfoundation.org>
-References: <20200319123926.466988514@linuxfoundation.org>
+In-Reply-To: <20200319123902.941451241@linuxfoundation.org>
+References: <20200319123902.941451241@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,36 +43,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Luo bin <luobin9@huawei.com>
+From: Jann Horn <jannh@google.com>
 
-[ Upstream commit 386d4716fd91869e07c731657f2cde5a33086516 ]
+commit fd4d9c7d0c71866ec0c2825189ebd2ce35bd95b8 upstream.
 
-should use real receive queue number to configure hw rss
-indirect table rather than maximal queue number
+When kmem_cache_alloc_bulk() attempts to allocate N objects from a percpu
+freelist of length M, and N > M > 0, it will first remove the M elements
+from the percpu freelist, then call ___slab_alloc() to allocate the next
+element and repopulate the percpu freelist. ___slab_alloc() can re-enable
+IRQs via allocate_slab(), so the TID must be bumped before ___slab_alloc()
+to properly commit the freelist head change.
 
-Signed-off-by: Luo bin <luobin9@huawei.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Fix it by unconditionally bumping c->tid when entering the slowpath.
+
+Cc: stable@vger.kernel.org
+Fixes: ebe909e0fdb3 ("slub: improve bulk alloc strategy")
+Signed-off-by: Jann Horn <jannh@google.com>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/net/ethernet/huawei/hinic/hinic_main.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ mm/slub.c |    9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-diff --git a/drivers/net/ethernet/huawei/hinic/hinic_main.c b/drivers/net/ethernet/huawei/hinic/hinic_main.c
-index 2411ad270c98e..42d00b049c6e8 100644
---- a/drivers/net/ethernet/huawei/hinic/hinic_main.c
-+++ b/drivers/net/ethernet/huawei/hinic/hinic_main.c
-@@ -356,7 +356,8 @@ static void hinic_enable_rss(struct hinic_dev *nic_dev)
- 	if (!num_cpus)
- 		num_cpus = num_online_cpus();
+--- a/mm/slub.c
++++ b/mm/slub.c
+@@ -3104,6 +3104,15 @@ int kmem_cache_alloc_bulk(struct kmem_ca
  
--	nic_dev->num_qps = min_t(u16, nic_dev->max_qps, num_cpus);
-+	nic_dev->num_qps = hinic_hwdev_num_qps(hwdev);
-+	nic_dev->num_qps = min_t(u16, nic_dev->num_qps, num_cpus);
- 
- 	nic_dev->rss_limit = nic_dev->num_qps;
- 	nic_dev->num_rss = nic_dev->num_qps;
--- 
-2.20.1
-
+ 		if (unlikely(!object)) {
+ 			/*
++			 * We may have removed an object from c->freelist using
++			 * the fastpath in the previous iteration; in that case,
++			 * c->tid has not been bumped yet.
++			 * Since ___slab_alloc() may reenable interrupts while
++			 * allocating memory, we should bump c->tid now.
++			 */
++			c->tid = next_tid(c->tid);
++
++			/*
+ 			 * Invoking slow path likely have side-effect
+ 			 * of re-populating per CPU c->freelist
+ 			 */
 
 
