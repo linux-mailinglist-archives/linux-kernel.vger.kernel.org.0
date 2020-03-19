@@ -2,75 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 08A1118BB78
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 16:46:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7862318BB7D
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 16:48:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727977AbgCSPqu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 11:46:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56402 "EHLO mail.kernel.org"
+        id S1727593AbgCSPsI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 11:48:08 -0400
+Received: from mga01.intel.com ([192.55.52.88]:31964 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727619AbgCSPqu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 11:46:50 -0400
-Received: from mail-yb1-f169.google.com (mail-yb1-f169.google.com [209.85.219.169])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C39D021924;
-        Thu, 19 Mar 2020 15:46:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584632809;
-        bh=YXtJWeRR6Vovu/W2MX39oIxMBSo5ZQ0F3zeEfbi6qaQ=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=HEarTHnydTLvUXh7rMgmQSRm893OK/5bu3axioBkVGQ3M5vQ53iN6GRVsJrq/FmhA
-         pZeIT4HEpRKPw2pdkBguEaDcSWoAl2Gq5MRNmUJLb382GPvqY9eLxFSaLtN92mv9H8
-         WyNfgRKQuCKKgT80y5zGaKRmGJ5cqwmE/JqyIyak=
-Received: by mail-yb1-f169.google.com with SMTP id l17so519072ybq.10;
-        Thu, 19 Mar 2020 08:46:49 -0700 (PDT)
-X-Gm-Message-State: ANhLgQ1X6rGc7qE3EkarjedFDUrvlHIMgMRf+noMyUofsVoUq43/moBT
-        LuopU06mReqoJBzLR3Cx6yXDPkRh1bK+Lwqmbw==
-X-Google-Smtp-Source: ADFU+vtd+SPJ7TSQgni57vrZn7xEo4wgYma5Cj6dlM0fP50Nbgkx5pq2oThg9Le7uMFlq2bBxqeOEDl7QeYH0eoLYKk=
-X-Received: by 2002:a25:f08:: with SMTP id 8mr5301607ybp.377.1584632808916;
- Thu, 19 Mar 2020 08:46:48 -0700 (PDT)
+        id S1726912AbgCSPsI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 11:48:08 -0400
+IronPort-SDR: 9gdBxmL9hnnQaMcQAJLjxnEhTQjbCA/dfCnqYRqXjgIAfQ5Muud0MD6wnxkWtXR8BsqX5DbR/7
+ Jjk79lqYzyMw==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Mar 2020 08:48:07 -0700
+IronPort-SDR: CGTdcGF3z7TQ09hhIoa4PjIUsXi6Tbq+unUG7nuDe2of5JawDCFCSTssDwLvkPSjQcKLQgravP
+ imxwFtrF77Pg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,572,1574150400"; 
+   d="scan'208";a="245198430"
+Received: from crojewsk-mobl1.ger.corp.intel.com (HELO [10.249.128.140]) ([10.249.128.140])
+  by orsmga003.jf.intel.com with ESMTP; 19 Mar 2020 08:48:04 -0700
+Subject: Re: snd_hda_intel/sst-acpi sound breakage on suspend/resume since
+ 5.6-rc1
+To:     Mark Brown <broonie@kernel.org>,
+        Dominik Brodowski <linux@dominikbrodowski.net>
+Cc:     kuninori.morimoto.gx@renesas.com,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        Keyon Jie <yang.jie@linux.intel.com>,
+        alsa-devel@alsa-project.org, curtis@malainey.com,
+        linux-kernel@vger.kernel.org, tiwai@suse.com,
+        liam.r.girdwood@linux.intel.com
+References: <41d0b2b5-6014-6fab-b6a2-7a7dbc4fe020@linux.intel.com>
+ <20200318123930.GA2433@light.dominikbrodowski.net>
+ <d7a357c5-54af-3e69-771c-d7ea83c6fbb7@linux.intel.com>
+ <20200318162029.GA3999@light.dominikbrodowski.net>
+ <e49eec28-2037-f5db-e75b-9eadf6180d81@intel.com>
+ <20200318192213.GA2987@light.dominikbrodowski.net>
+ <b352a46b-8a66-8235-3622-23e561d3728c@intel.com>
+ <20200318215218.GA2439@light.dominikbrodowski.net>
+ <e7f4f38d-b53e-8c69-8b23-454718cf92af@intel.com>
+ <20200319130049.GA2244@light.dominikbrodowski.net>
+ <20200319134139.GB3983@sirena.org.uk>
+From:   Cezary Rojewski <cezary.rojewski@intel.com>
+Message-ID: <a01359dc-479e-b3e3-37a6-4a9c421d18da@intel.com>
+Date:   Thu, 19 Mar 2020 16:48:03 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.6.0
 MIME-Version: 1.0
-References: <CAGWqDJ7AccvoxjKfQJ3GytJ-+u56Bk3rEn0sSYv-zCuBe1brAg@mail.gmail.com>
-In-Reply-To: <CAGWqDJ7AccvoxjKfQJ3GytJ-+u56Bk3rEn0sSYv-zCuBe1brAg@mail.gmail.com>
-From:   Rob Herring <robh@kernel.org>
-Date:   Thu, 19 Mar 2020 09:46:36 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqLz-0myc-PSSaCQWDFXQx+=X9nBSXWsJaGCVqTFn0d5kw@mail.gmail.com>
-Message-ID: <CAL_JsqLz-0myc-PSSaCQWDFXQx+=X9nBSXWsJaGCVqTFn0d5kw@mail.gmail.com>
-Subject: Re: graph connection to node is not bidirectional kernel-5.6.0-rc6
-To:     Vinay Simha B N <simhavcs@gmail.com>
-Cc:     "open list:DRM DRIVER FOR MSM ADRENO GPU" 
-        <freedreno@lists.freedesktop.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20200319134139.GB3983@sirena.org.uk>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 19, 2020 at 1:31 AM Vinay Simha B N <simhavcs@gmail.com> wrote:
->
-> hi,
->
-> I am getting the endpoint' is not bidirectional(d2l_in, dsi0_out)
-> warning in compilation, built boot image works on qcom apq8016-ifc6309
-> board with the dsi->bridge->lvds panel.
-> Because of this warning i cannot create a .yaml documentation examples.
-> Please suggest.
->
-> tc_bridge: bridge@f {
+On 2020-03-19 14:41, Mark Brown wrote:
+> On Thu, Mar 19, 2020 at 02:00:49PM +0100, Dominik Brodowski wrote:
+> 
+>> Have some good news now, namely that a bisect is complete: That pointed to
+>> 1272063a7ee4 ("ASoC: soc-core: care .ignore_suspend for Component suspend");
+>> therefore I've added Kuninori Morimoto to this e-mail thread.
+> 
+> If that's an issue it feels more like a driver bug in that if the driver
+> asked for ignore_suspend then it should expect not to have the suspend
+> callback called.
+> 
 
-             ^^^^^^^^
+Requested for tests with following diff applied:
 
-> arch/arm64/boot/dts/qcom/apq8016-sbc.dtsi:253.28-255.9: Warning
-> (graph_endpoint): /soc/i2c@78b8000/bridge@39/ports/port@0/endpoint:
-
-                                     ^^^^^^^^^
-
-Looks like you have 2 different bridges.
-
-Rob
+diff --git a/sound/soc/intel/boards/broadwell.c 
+b/sound/soc/intel/boards/broadwell.c
+index db7e1e87156d..6ed4c1b0a515 100644
+--- a/sound/soc/intel/boards/broadwell.c
++++ b/sound/soc/intel/boards/broadwell.c
+@@ -212,7 +212,6 @@ static struct snd_soc_dai_link 
+broadwell_rt286_dais[] = {
+                 .init = broadwell_rt286_codec_init,
+                 .dai_fmt = SND_SOC_DAIFMT_I2S | SND_SOC_DAIFMT_NB_NF |
+                         SND_SOC_DAIFMT_CBS_CFS,
+-               .ignore_suspend = 1,
+                 .ignore_pmdown_time = 1,
+                 .be_hw_params_fixup = broadwell_ssp0_fixup,
+                 .ops = &broadwell_rt286_ops,
