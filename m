@@ -2,178 +2,256 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EB9F718B4A9
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:11:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5A18C18B4B7
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:12:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727566AbgCSNLk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 09:11:40 -0400
-Received: from us-smtp-delivery-74.mimecast.com ([63.128.21.74]:29489 "EHLO
-        us-smtp-delivery-74.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727549AbgCSNLg (ORCPT
+        id S1727441AbgCSNMG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 09:12:06 -0400
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:48876 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728821AbgCSNMA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 09:11:36 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1584623495;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=dwfqKsawwlA7QavpNFSxuBUqzZRSHs2EJIIMOQG0ECg=;
-        b=OtlhXdNR3oZrjq9fSNVcUdcpcBu2md4OKqbm0Zvkgp8Hu97JiK52SBNd2VcHb+xoC0cIGQ
-        Go561jsUOYI85yeQuCyu4BSf0VOSkLTbyk6A3fQRZbtZ4h0TGg6KgsjwuY0TOhsVM2jXE7
-        3bYvws4kpfyNGHazjHsr9WXwiV1Nwmc=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-472-jZHvhMY7OgWTkqmVKPZukg-1; Thu, 19 Mar 2020 09:11:29 -0400
-X-MC-Unique: jZHvhMY7OgWTkqmVKPZukg-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 6EAD918B6383;
-        Thu, 19 Mar 2020 13:11:27 +0000 (UTC)
-Received: from x1.home (ovpn-112-162.phx2.redhat.com [10.3.112.162])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 891275C1D8;
-        Thu, 19 Mar 2020 13:11:26 +0000 (UTC)
-Date:   Thu, 19 Mar 2020 07:11:26 -0600
-From:   Alex Williamson <alex.williamson@redhat.com>
-To:     "Tian, Kevin" <kevin.tian@intel.com>
-Cc:     "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "dev@dpdk.org" <dev@dpdk.org>,
-        "mtosatti@redhat.com" <mtosatti@redhat.com>,
-        "thomas@monjalon.net" <thomas@monjalon.net>,
-        "bluca@debian.org" <bluca@debian.org>,
-        "jerinjacobk@gmail.com" <jerinjacobk@gmail.com>,
-        "Richardson, Bruce" <bruce.richardson@intel.com>,
-        "cohuck@redhat.com" <cohuck@redhat.com>
-Subject: Re: [PATCH v3 0/7] vfio/pci: SR-IOV support
-Message-ID: <20200319071126.6f5e1b78@x1.home>
-In-Reply-To: <AADFC41AFE54684AB9EE6CBC0274A5D19D7DAFD5@SHSMSX104.ccr.corp.intel.com>
-References: <158396044753.5601.14804870681174789709.stgit@gimli.home>
-        <AADFC41AFE54684AB9EE6CBC0274A5D19D7DAFD5@SHSMSX104.ccr.corp.intel.com>
-Organization: Red Hat
+        Thu, 19 Mar 2020 09:12:00 -0400
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 02JDBmqj074753;
+        Thu, 19 Mar 2020 08:11:48 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1584623508;
+        bh=bbVbAlz+mY6H/xGlr1K7rl0RJD3b+k/5plvkLwV9JK0=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=TiwLdULmrdDQtTVsRL77Wo9yEBvLIoYkwj6xBlLOvQx+QVGWdv2VE4RISAm48+omu
+         +BAPId0DPVGFtBHkJAhxlRP1kOD454Whau8ChN7xS+7bFoqgin3IQnL6RTDhSiqd6I
+         M+MrbtURN7A22/E7ZfggvQWYH87ldXhNqjI/m0z0=
+Received: from DLEE113.ent.ti.com (dlee113.ent.ti.com [157.170.170.24])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id 02JDBmvl077871;
+        Thu, 19 Mar 2020 08:11:48 -0500
+Received: from DLEE110.ent.ti.com (157.170.170.21) by DLEE113.ent.ti.com
+ (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Thu, 19
+ Mar 2020 08:11:48 -0500
+Received: from lelv0326.itg.ti.com (10.180.67.84) by DLEE110.ent.ti.com
+ (157.170.170.21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Thu, 19 Mar 2020 08:11:48 -0500
+Received: from [192.168.2.6] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id 02JDBjWb006865;
+        Thu, 19 Mar 2020 08:11:45 -0500
+Subject: Re: [PATCH net-next v4 06/11] net: ethernet: ti: introduce
+ am65x/j721e gigabit eth subsystem driver
+To:     Grygorii Strashko <grygorii.strashko@ti.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Tero Kristo <t-kristo@ti.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        netdev <netdev@vger.kernel.org>, Roger Quadros <rogerq@ti.com>,
+        <devicetree@vger.kernel.org>, Jakub Kicinski <kuba@kernel.org>
+CC:     Murali Karicheri <m-karicheri2@ti.com>,
+        Sekhar Nori <nsekhar@ti.com>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>
+References: <20200317072739.23950-1-grygorii.strashko@ti.com>
+ <20200317072739.23950-7-grygorii.strashko@ti.com>
+ <dcd70320-8f1e-dbb5-c275-3b203e9b5851@ti.com>
+ <78bc1ee2-5a56-82e7-229d-52cea8002eec@ti.com>
+From:   Peter Ujfalusi <peter.ujfalusi@ti.com>
+Message-ID: <d789fce6-9911-a602-83ca-eb7cb9bcd48b@ti.com>
+Date:   Thu, 19 Mar 2020 15:11:55 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+In-Reply-To: <78bc1ee2-5a56-82e7-229d-52cea8002eec@ti.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 19 Mar 2020 06:32:25 +0000
-"Tian, Kevin" <kevin.tian@intel.com> wrote:
+Hi Grygorii,
 
-> > From: Alex Williamson <alex.williamson@redhat.com>
-> > Sent: Thursday, March 12, 2020 5:58 AM
-> > 
-> > Only minor tweaks since v2, GET and SET on VFIO_DEVICE_FEATURE are
-> > enforced mutually exclusive except with the PROBE option as suggested
-> > by Connie, the modinfo text has been expanded for the opt-in to enable
-> > SR-IOV support in the vfio-pci driver per discussion with Kevin.
-> > 
-> > I have not incorporated runtime warnings attempting to detect misuse
-> > of SR-IOV or imposed a session lifetime of a VF token, both of which
-> > were significant portions of the discussion of the v2 series.  Both of
-> > these also seem to impose a usage model or make assumptions about VF
-> > resource usage or configuration requirements that don't seem necessary
-> > except for the sake of generating a warning or requiring an otherwise
-> > unnecessary and implicit token reinitialization.  If there are new
-> > thoughts around these or other discussion points, please raise them.
-> > 
-> > Series overview (same as provided with v1):
-> > 
-> > The synopsis of this series is that we have an ongoing desire to drive
-> > PCIe SR-IOV PFs from userspace with VFIO.  There's an immediate need
-> > for this with DPDK drivers and potentially interesting future use
-> > cases in virtualization.  We've been reluctant to add this support
-> > previously due to the dependency and trust relationship between the
-> > VF device and PF driver.  Minimally the PF driver can induce a denial
-> > of service to the VF, but depending on the specific implementation,
-> > the PF driver might also be responsible for moving data between VFs
-> > or have direct access to the state of the VF, including data or state
-> > otherwise private to the VF or VF driver.
-> > 
-> > To help resolve these concerns, we introduce a VF token into the VFIO
-> > PCI ABI, which acts as a shared secret key between drivers.  The
-> > userspace PF driver is required to set the VF token to a known value
-> > and userspace VF drivers are required to provide the token to access
-> > the VF device.  If a PF driver is restarted with VF drivers in use, it
-> > must also provide the current token in order to prevent a rogue
-> > untrusted PF driver from replacing a known driver.  The degree to
-> > which this new token is considered secret is left to the userspace
-> > drivers, the kernel intentionally provides no means to retrieve the
-> > current token.
-> > 
-> > Note that the above token is only required for this new model where
-> > both the PF and VF devices are usable through vfio-pci.  Existing
-> > models of VFIO drivers where the PF is used without SR-IOV enabled
-> > or the VF is bound to a userspace driver with an in-kernel, host PF
-> > driver are unaffected.
-> > 
-> > The latter configuration above also highlights a new inverted scenario
-> > that is now possible, a userspace PF driver with in-kernel VF drivers.
-> > I believe this is a scenario that should be allowed, but should not be
-> > enabled by default.  This series includes code to set a default
-> > driver_override for VFs sourced from a vfio-pci user owned PF, such
-> > that the VFs are also bound to vfio-pci.  This model is compatible
-> > with tools like driverctl and allows the system administrator to
-> > decide if other bindings should be enabled.  The VF token interface
-> > above exists only between vfio-pci PF and VF drivers, once a VF is
-> > bound to another driver, the administrator has effectively pronounced
-> > the device as trusted.  The vfio-pci driver will note alternate
-> > binding in dmesg for logging and debugging purposes.
-> > 
-> > Please review, comment, and test.  The example QEMU implementation
-> > provided with the RFC is still current for this version.  Thanks,
-> > 
-> > Alex  
+On 19/03/2020 15.09, Grygorii Strashko wrote:
 > 
-> The whole series looks good to me:
-> 	Reviewed-by: Kevin Tian <kevin.tian@intel.com>
-
-Thanks!
-
-> and confirm one understanding here, since it is not discussed anywhere. For
-> VM live migration with assigned VF device, it is not necessary to migrate the
-> VF token itself and actually we don't allow userspace to retrieve it. Instead,
-> Qemu just follows whatever token requirement on the dest to open the new
-> VF: could be same or different token as/from src, or even no token if PF
-> driver runs in kernel on dest. I suppose either combination could work, correct?
-
-That's correct.  Thanks,
-
-Alex
-
-> > RFC:
-> > https://lore.kernel.org/lkml/158085337582.9445.17682266437583505502.stg
-> > it@gimli.home/
-> > v1:
-> > https://lore.kernel.org/lkml/158145472604.16827.15751375540102298130.st
-> > git@gimli.home/
-> > v2:
-> > https://lore.kernel.org/lkml/158213716959.17090.8399427017403507114.stg
-> > it@gimli.home/
-> > 
-> > ---
-> > 
-> > Alex Williamson (7):
-> >       vfio: Include optional device match in vfio_device_ops callbacks
-> >       vfio/pci: Implement match ops
-> >       vfio/pci: Introduce VF token
-> >       vfio: Introduce VFIO_DEVICE_FEATURE ioctl and first user
-> >       vfio/pci: Add sriov_configure support
-> >       vfio/pci: Remove dev_fmt definition
-> >       vfio/pci: Cleanup .probe() exit paths
-> > 
-> > 
-> >  drivers/vfio/pci/vfio_pci.c         |  390
-> > +++++++++++++++++++++++++++++++++--
-> >  drivers/vfio/pci/vfio_pci_private.h |   10 +
-> >  drivers/vfio/vfio.c                 |   20 +-
-> >  include/linux/vfio.h                |    4
-> >  include/uapi/linux/vfio.h           |   37 +++
-> >  5 files changed, 433 insertions(+), 28 deletions(-)  
 > 
+> On 19/03/2020 13:46, Peter Ujfalusi wrote:
+>> Hi Grygorii,
+>>
+>> On 17/03/2020 9.27, Grygorii Strashko wrote:
+>>> The TI AM65x/J721E SoCs Gigabit Ethernet Switch subsystem (CPSW2G
+>>> NUSS) has
+>>> two ports - One Ethernet port (port 1) with selectable RGMII and RMII
+>>> interfaces and an internal Communications Port Programming Interface
+>>> (CPPI)
+>>> port (Host port 0) and with ALE in between. It also contains
+>>>   - Management Data Input/Output (MDIO) interface for physical layer
+>>> device
+>>> (PHY) management;
+>>>   - Updated Address Lookup Engine (ALE) module;
+>>>   - (TBD) New version of Common platform time sync (CPTS) module.
+>>>
+>>> On the TI am65x/J721E SoCs CPSW NUSS Ethernet subsystem into device MCU
+>>> domain named MCU_CPSW0.
+>>>
+>>> Host Port 0 CPPI Packet Streaming Interface interface supports 8 TX
+>>> channels and one RX channels operating by TI am654 NAVSS Unified DMA
+>>> Peripheral Root Complex (UDMA-P) controller.
+>>>
+>>> Introduced driver provides standard Linux net_device to user space
+>>> and supports:
+>>>   - ifconfig up/down
+>>>   - MAC address configuration
+>>>   - ethtool operation:
+>>>     --driver
+>>>     --change
+>>>     --register-dump
+>>>     --negotiate phy
+>>>     --statistics
+>>>     --set-eee phy
+>>>     --show-ring
+>>>     --show-channels
+>>>     --set-channels
+>>>   - net_device ioctl mii-control
+>>>   - promisc mode
+>>>
+>>>   - rx checksum offload for non-fragmented IPv4/IPv6 TCP/UDP packets.
+>>>     The CPSW NUSS can verify IPv4/IPv6 TCP/UDP packets checksum and
+>>> fills
+>>>     csum information for each packet in psdata[2] word:
+>>>     - BIT(16) CHECKSUM_ERROR - indicates csum error
+>>>     - BIT(17) FRAGMENT -  indicates fragmented packet
+>>>     - BIT(18) TCP_UDP_N -  Indicates TCP packet was detected
+>>>     - BIT(19) IPV6_VALID,  BIT(20) IPV4_VALID - indicates IPv6/IPv4
+>>> packet
+>>>     - BIT(15, 0) CHECKSUM_ADD - This is the value that was summed
+>>>     during the checksum computation. This value is FFFFh for non
+>>> fragmented
+>>>     IPV4/6 UDP/TCP packets with no checksum error.
+>>>
+>>>     RX csum offload can be disabled:
+>>>      ethtool -K <dev> rx-checksum on|off
+>>>
+>>>   - tx checksum offload support for IPv4/IPv6 TCP/UDP packets (J721E
+>>> only).
+>>>     TX csum HW offload  can be enabled/disabled:
+>>>      ethtool -K <dev> tx-checksum-ip-generic on|off
+>>>
+>>>   - multiq and switch between round robin/prio modes for cppi tx
+>>> queues by
+>>>     using Netdev private flag "p0-rx-ptype-rrobin" to switch between
+>>>     Round Robin and Fixed priority modes:
+>>>      # ethtool --show-priv-flags eth0
+>>>      Private flags for eth0:
+>>>      p0-rx-ptype-rrobin: on
+>>>      # ethtool --set-priv-flags eth0 p0-rx-ptype-rrobin off
+>>>
+>>>     Number of TX DMA channels can be changed using "ethtool -L eth0
+>>> tx <N>".
+>>>
+>>>   - GRO support: the napi_gro_receive() and napi_complete_done() are
+>>> used.
+>>>
+>>> Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
+>>> ---
+>>>   drivers/net/ethernet/ti/Kconfig             |   19 +-
+>>>   drivers/net/ethernet/ti/Makefile            |    3 +
+>>>   drivers/net/ethernet/ti/am65-cpsw-ethtool.c |  747 +++++++
+>>>   drivers/net/ethernet/ti/am65-cpsw-nuss.c    | 1965 +++++++++++++++++++
+>>>   drivers/net/ethernet/ti/am65-cpsw-nuss.h    |  143 ++
+>>>   drivers/net/ethernet/ti/k3-udma-desc-pool.c |  126 ++
+>>>   drivers/net/ethernet/ti/k3-udma-desc-pool.h |   30 +
+>>
+>> I would rather loose the 'udma' from the name and API. It is more like
+>> CPPI5 descriptor pool than UDMA. UDMA is just happen to use CPPI5.
+>> Probably ti-cppi5-desc-pool?
+> 
+> ok. I'll update and re-send
 
+Thank you!
+Probably drop the ti- prefix as well from the filename as it is under a
+ti directory?
+
+>>
+>>>   7 files changed, 3031 insertions(+), 2 deletions(-)
+>>>   create mode 100644 drivers/net/ethernet/ti/am65-cpsw-ethtool.c
+>>>   create mode 100644 drivers/net/ethernet/ti/am65-cpsw-nuss.c
+>>>   create mode 100644 drivers/net/ethernet/ti/am65-cpsw-nuss.h
+>>>   create mode 100644 drivers/net/ethernet/ti/k3-udma-desc-pool.c
+>>>   create mode 100644 drivers/net/ethernet/ti/k3-udma-desc-pool.h
+>>
+>>> diff --git a/drivers/net/ethernet/ti/Kconfig
+>>> b/drivers/net/ethernet/ti/Kconfig
+>>> index 8a6ca16eee3b..89cec778cf2d 100644
+>>> --- a/drivers/net/ethernet/ti/Kconfig
+>>> +++ b/drivers/net/ethernet/ti/Kconfig
+>>> @@ -6,7 +6,7 @@
+>>>   config NET_VENDOR_TI
+>>>       bool "Texas Instruments (TI) devices"
+>>>       default y
+>>> -    depends on PCI || EISA || AR7 || ARCH_DAVINCI || ARCH_OMAP2PLUS
+>>> || ARCH_KEYSTONE
+>>> +    depends on PCI || EISA || AR7 || ARCH_DAVINCI || ARCH_OMAP2PLUS
+>>> || ARCH_KEYSTONE || ARCH_K3
+>>>       ---help---
+>>>         If you have a network (Ethernet) card belonging to this
+>>> class, say Y.
+>>>   @@ -31,7 +31,7 @@ config TI_DAVINCI_EMAC
+>>>     config TI_DAVINCI_MDIO
+>>>       tristate "TI DaVinci MDIO Support"
+>>> -    depends on ARCH_DAVINCI || ARCH_OMAP2PLUS || ARCH_KEYSTONE ||
+>>> COMPILE_TEST
+>>> +    depends on ARCH_DAVINCI || ARCH_OMAP2PLUS || ARCH_KEYSTONE ||
+>>> ARCH_K3 || COMPILE_TEST
+>>>       select PHYLIB
+>>>       ---help---
+>>>         This driver supports TI's DaVinci MDIO module.
+>>> @@ -95,6 +95,21 @@ config TI_CPTS_MOD
+>>>       imply PTP_1588_CLOCK
+>>>       default m
+>>>   +config TI_K3_AM65_CPSW_NUSS
+>>> +    tristate "TI K3 AM654x/J721E CPSW Ethernet driver"
+>>> +    depends on ARCH_K3 && OF && TI_K3_UDMA_GLUE_LAYER
+>>> +    select TI_DAVINCI_MDIO
+>>> +    imply PHY_TI_GMII_SEL
+>>> +    help
+>>> +      This driver supports TI K3 AM654/J721E CPSW2G Ethernet SubSystem.
+>>> +      The two-port Gigabit Ethernet MAC (MCU_CPSW0) subsystem provides
+>>> +      Ethernet packet communication for the device: One Ethernet port
+>>> +      (port 1) with selectable RGMII and RMII interfaces and an
+>>> internal
+>>> +      Communications Port Programming Interface (CPPI) port (port 0).
+>>> +
+>>> +      To compile this driver as a module, choose M here: the module
+>>> +      will be called ti-am65-cpsw-nuss.
+>>> +
+>>>   config TI_KEYSTONE_NETCP
+>>>       tristate "TI Keystone NETCP Core Support"
+>>>       select TI_DAVINCI_MDIO
+>>> diff --git a/drivers/net/ethernet/ti/Makefile
+>>> b/drivers/net/ethernet/ti/Makefile
+>>> index ecf776ad8689..6362a9b0bb8a 100644
+>>> --- a/drivers/net/ethernet/ti/Makefile
+>>> +++ b/drivers/net/ethernet/ti/Makefile
+>>> @@ -23,3 +23,6 @@ obj-$(CONFIG_TI_KEYSTONE_NETCP) += keystone_netcp.o
+>>>   keystone_netcp-y := netcp_core.o cpsw_ale.o
+>>>   obj-$(CONFIG_TI_KEYSTONE_NETCP_ETHSS) += keystone_netcp_ethss.o
+>>>   keystone_netcp_ethss-y := netcp_ethss.o netcp_sgmii.o
+>>> netcp_xgbepcsr.o cpsw_ale.o
+>>> +
+>>> +obj-$(CONFIG_TI_K3_AM65_CPSW_NUSS) += ti-am65-cpsw-nuss.o
+>>> +ti-am65-cpsw-nuss-y := am65-cpsw-nuss.o cpsw_sl.o
+>>> am65-cpsw-ethtool.o cpsw_ale.o k3-udma-desc-pool.o
+>>
+>> Would not be better to have the desc-pool (silent) Kconfig selectable?
+>> The not yet upstream icssg-prueth also needs the same desc-pool library
+>> as cpsw.
+>>
+> 
+> I'd prefer not to add new Kconfig options unless required.
+> This driver simply not work without it, so no Kconfig option for now.
+
+OK, fair enough.
+
+- Péter
+
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
