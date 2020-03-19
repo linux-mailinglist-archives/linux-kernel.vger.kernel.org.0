@@ -2,122 +2,179 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9C58D18BDCD
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 18:17:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8C03218BDD4
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 18:19:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728526AbgCSRRM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 13:17:12 -0400
-Received: from mail-il1-f194.google.com ([209.85.166.194]:41472 "EHLO
-        mail-il1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727556AbgCSRRM (ORCPT
+        id S1728105AbgCSRTs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 13:19:48 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:46272 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727112AbgCSRTs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 13:17:12 -0400
-Received: by mail-il1-f194.google.com with SMTP id l14so2955559ilj.8;
-        Thu, 19 Mar 2020 10:17:11 -0700 (PDT)
+        Thu, 19 Mar 2020 13:19:48 -0400
+Received: by mail-wr1-f66.google.com with SMTP id j17so682429wru.13;
+        Thu, 19 Mar 2020 10:19:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=g2puVLEy6afSLzUcb87vcVA5fc3TX3nJUf9e0Okyxfw=;
-        b=INK5FY4JU9WZQN7v0WeMyVSF0VrQk4T1gnKH7Z7eZE/CF5pIMmhnuF5ojjvw0l/4DI
-         /sE+czy0eVQGHT4WtOqHFcQkqMevU0FM5PUQitLidNvtV6KAnM9NiWKLo010JYNQU5Qh
-         epaszkvezxUIi/XfSxWz0hyv40PCy/UNB4hPTLNLFVSqSLU7K65FLrU68coL0Mno9Srn
-         79hv5y77/B0YdwIuxFdTZk8/OwkjTI8EfFwPl4ErBh9rY9C34BuyXgq77K79d+Lszgtb
-         LWg0NM/Q2iz0yTSCpn7zo8VNiAJ7HNPuz/CXSzK+9b70ExbetZWf+JWrzYfJKgYjFFmq
-         Y5aw==
+        bh=REUrjEbM9E8U0Xs3ZYSD9f/6CBam6/RPzkS7LqotySY=;
+        b=BM0AGY3urbibzhW1gohveGfBaMwlf1jLS7cxM3Vfon/hOn4zTW073R3eyT9eOcUhKY
+         1EUT6cd63hcggxA627cjejHKeGXbdUjQtC8xqJv6f4jLr2haccGtNev9syzT4f5LWANF
+         tA0pUu2GRDS7/jWWJEwWZzOcmSuyMlIthrCT2arIGb4KWhX+IGBdcxSubifbUCr27E8b
+         DAU2G3/VxwINBRs8n3NDbrwxG2TToq0uyZQ5TznKJd1cnXz/pKfBgoM3v4zdDj5wLW3+
+         vHg+hTD8s1ZY94S23UEy4yWxht3QcGogmEwIVrO9DqCmf3jVslGl/YH6YwOQlrceSbiJ
+         sVAA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=g2puVLEy6afSLzUcb87vcVA5fc3TX3nJUf9e0Okyxfw=;
-        b=mccjPG3eSncwAUaDRC/gF1A7k0QmTNRjktaP8iMIufoKHWQQo21cFPMdizlLbjy98O
-         ZhduN5/kLZvE8+AA0px4+AaF9uLZ74aSz7JxPU6dugWPC57wHka70BFWpey+sm6xXn6k
-         7yCwrxdynZ0ux8kg5lPqe8Z1kt2P8SpO+WVcqi9nnbUaTw0S1RS4MbcmC+DZQmg7rjwy
-         Pzr8lWATXMnAgQQ77US8O4No6sLf4VgCOGfmIg07nZ2VAZs/I9KtVjVVRXdz+9z6YIZn
-         t02erKqQrgp+7pF54Kxo7WfjijLIawIE/KfmCsrbnMiWYNP0rEHrYCKCOtoS2XdbY2Sb
-         yutQ==
-X-Gm-Message-State: ANhLgQ3I95a9ITGNJCq7FAvuuzYAHrDyBVpxEybMJjwj1AUK6wRESkeD
-        FNTh1i6swYV5trhX6KKW9/6bWSVJPToerWuAC1W8NU57
-X-Google-Smtp-Source: ADFU+vsFrtCl3nw/cH8PE23Zz0zaNQwxsOKGrtz5qBN+qCE1goDUCx0XmoX0cDrtI52kS3KiPy/h3nANlAzO8mJsV0s=
-X-Received: by 2002:a92:8f53:: with SMTP id j80mr4322003ild.171.1584638230705;
- Thu, 19 Mar 2020 10:17:10 -0700 (PDT)
+        bh=REUrjEbM9E8U0Xs3ZYSD9f/6CBam6/RPzkS7LqotySY=;
+        b=WGnAIOBNoAkRtZnPz7YkQqv8oU24m3IBs4fixVHq72mpo+69kz0EbUiKfuCVKnR7vK
+         tyvzK6EtUsmal/KrjC3ljb7G0Z/YE+xy2z6vq3U+zwQDhr3qnX4Q2q0/R0aCRS8tPcYA
+         ZtwW05+LJ6TQ5Oswy8u5cSM3+yPOLCGNGSgsr6LU4o/So1oCjRdJd04/4YEQyIiPPW9e
+         j05euwUtLZEJlE+FKbsoEcLUCzjlW1oWTYXZnpNgRiKnhUbAiGCnKtQht0wnq+7siVKf
+         S19JdHZVuiTpVy9rUVhYpP9M0EVrONc19lM9M/cyaFeLf5xfFVgXTS/2mf2VCe49Dsco
+         1WvQ==
+X-Gm-Message-State: ANhLgQ1fhRZVDkr1bENht0UxXDHORiLgQkqp2TBHfC2KsKy6I9/wrYEp
+        r/MBrhKed5h3RwsDCIwx659p0ZKeTKAZEsl9Xs0=
+X-Google-Smtp-Source: ADFU+vtt4K7LLALZ400ntXCMXvpvEPIEVS4JD+piZAo5Bk7qwIuVxT+6bOMnViCSjX8yovQFCVEAetBlkIy5tk1qVrQ=
+X-Received: by 2002:a5d:6146:: with SMTP id y6mr5562155wrt.107.1584638384613;
+ Thu, 19 Mar 2020 10:19:44 -0700 (PDT)
 MIME-Version: 1.0
-References: <CAGWqDJ7AccvoxjKfQJ3GytJ-+u56Bk3rEn0sSYv-zCuBe1brAg@mail.gmail.com>
- <CAL_JsqLz-0myc-PSSaCQWDFXQx+=X9nBSXWsJaGCVqTFn0d5kw@mail.gmail.com>
- <CAGWqDJ4yA4ikz5MwQQwW8CAvE_dt16iuvN6cKRL2DdAuw8QWww@mail.gmail.com> <CAL_JsqLU4kEmRnXhQ5+gP-ZisS2Za+s6mNFg4RnMdpDtDRQB3g@mail.gmail.com>
-In-Reply-To: <CAL_JsqLU4kEmRnXhQ5+gP-ZisS2Za+s6mNFg4RnMdpDtDRQB3g@mail.gmail.com>
-From:   Vinay Simha B N <simhavcs@gmail.com>
-Date:   Thu, 19 Mar 2020 22:46:59 +0530
-Message-ID: <CAGWqDJ5O2Lw-=5gHMja0SWVG1ttc_+7ieo-aEf7BRq+W8DGOnA@mail.gmail.com>
-Subject: Re: graph connection to node is not bidirectional kernel-5.6.0-rc6
-To:     Rob Herring <robh@kernel.org>
-Cc:     "open list:DRM DRIVER FOR MSM ADRENO GPU" 
-        <freedreno@lists.freedesktop.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>
+References: <20200319131221.14044-1-david@redhat.com> <20200319131221.14044-8-david@redhat.com>
+In-Reply-To: <20200319131221.14044-8-david@redhat.com>
+From:   Pankaj Gupta <pankaj.gupta.linux@gmail.com>
+Date:   Thu, 19 Mar 2020 18:19:33 +0100
+Message-ID: <CAM9Jb+hBVihQ=TSPoL_WL1tPRnfXTUw=dUw0oGGQkPWWs6gSxw@mail.gmail.com>
+Subject: Re: [PATCH v3 7/8] mm/memory_hotplug: convert memhp_auto_online to
+ store an online_type
+To:     David Hildenbrand <david@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linuxppc-dev@lists.ozlabs.org, linux-hyperv@vger.kernel.org,
+        Wei Yang <richard.weiyang@gmail.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Oscar Salvador <osalvador@suse.de>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Baoquan He <bhe@redhat.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 19, 2020 at 10:36 PM Rob Herring <robh@kernel.org> wrote:
+> ... and rename it to memhp_default_online_type. This is a preparation
+> for more detailed default online behavior.
 >
-> On Thu, Mar 19, 2020 at 9:56 AM Vinay Simha B N <simhavcs@gmail.com> wrote:
-> >
-> > On Thu, Mar 19, 2020 at 9:16 PM Rob Herring <robh@kernel.org> wrote:
-> > >
-> > > On Thu, Mar 19, 2020 at 1:31 AM Vinay Simha B N <simhavcs@gmail.com> wrote:
-> > > >
-> > > > hi,
-> > > >
-> > > > I am getting the endpoint' is not bidirectional(d2l_in, dsi0_out)
-> > > > warning in compilation, built boot image works on qcom apq8016-ifc6309
-> > > > board with the dsi->bridge->lvds panel.
-> > > > Because of this warning i cannot create a .yaml documentation examples.
-> > > > Please suggest.
-> > > >
-> > > > tc_bridge: bridge@f {
-> > >
-> > >              ^^^^^^^^
-> > >
-> > > > arch/arm64/boot/dts/qcom/apq8016-sbc.dtsi:253.28-255.9: Warning
-> > > > (graph_endpoint): /soc/i2c@78b8000/bridge@39/ports/port@0/endpoint:
-> > >
-> > >                                      ^^^^^^^^^
-> > >
-> > > Looks like you have 2 different bridges.
-> > >
-> > i had two bridges, if we disable one bridge also we get the warning
-> >
-> > arch/arm64/boot/dts/qcom/apq8016-sbc.dtsi:333.53-335.35: Warning
-> > (graph_endpoint): /soc/auo,b101xtn01/port/endpoint: graph connection
-> > to node '/soc/i2c@78b8000/bridge@f/ports/port@1/endpoint' is not
-> > bidirectional
+> Reviewed-by: Wei Yang <richard.weiyang@gmail.com>
+> Acked-by: Michal Hocko <mhocko@suse.com>
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: Michal Hocko <mhocko@kernel.org>
+> Cc: Oscar Salvador <osalvador@suse.de>
+> Cc: "Rafael J. Wysocki" <rafael@kernel.org>
+> Cc: Baoquan He <bhe@redhat.com>
+> Cc: Wei Yang <richard.weiyang@gmail.com>
+> Signed-off-by: David Hildenbrand <david@redhat.com>
+> ---
+>  drivers/base/memory.c          | 10 ++++------
+>  include/linux/memory_hotplug.h |  3 ++-
+>  mm/memory_hotplug.c            | 11 ++++++-----
+>  3 files changed, 12 insertions(+), 12 deletions(-)
 >
-> You can't just disable nodes. To switch which bridge is enabled, you
-> already have to modify remote-endpoint at the other end. So the
-> requirement is you have to modify both 'remote-endpoint' properties
-> (or really all 3).
+> diff --git a/drivers/base/memory.c b/drivers/base/memory.c
+> index 8a7f29c0bf97..8d3e16dab69f 100644
+> --- a/drivers/base/memory.c
+> +++ b/drivers/base/memory.c
+> @@ -386,10 +386,8 @@ static DEVICE_ATTR_RO(block_size_bytes);
+>  static ssize_t auto_online_blocks_show(struct device *dev,
+>                                        struct device_attribute *attr, char *buf)
+>  {
+> -       if (memhp_auto_online)
+> -               return sprintf(buf, "online\n");
+> -       else
+> -               return sprintf(buf, "offline\n");
+> +       return sprintf(buf, "%s\n",
+> +                      online_type_to_str[memhp_default_online_type]);
+>  }
 >
-> The other options is if you want both connections described, then you
-> need 2 'endpoint' nodes to connect both bridges.
-even after removing one bridge(dsi2hdmi) in the device tree, currently
-using only one bridge(dsi2lvds), i do still get the compilation warning.
+>  static ssize_t auto_online_blocks_store(struct device *dev,
+> @@ -397,9 +395,9 @@ static ssize_t auto_online_blocks_store(struct device *dev,
+>                                         const char *buf, size_t count)
+>  {
+>         if (sysfs_streq(buf, "online"))
+> -               memhp_auto_online = true;
+> +               memhp_default_online_type = MMOP_ONLINE;
+>         else if (sysfs_streq(buf, "offline"))
+> -               memhp_auto_online = false;
+> +               memhp_default_online_type = MMOP_OFFLINE;
+>         else
+>                 return -EINVAL;
+>
+> diff --git a/include/linux/memory_hotplug.h b/include/linux/memory_hotplug.h
+> index 76f3c617a8ab..6d6f85bb66e9 100644
+> --- a/include/linux/memory_hotplug.h
+> +++ b/include/linux/memory_hotplug.h
+> @@ -118,7 +118,8 @@ extern int arch_add_memory(int nid, u64 start, u64 size,
+>                            struct mhp_params *params);
+>  extern u64 max_mem_size;
+>
+> -extern bool memhp_auto_online;
+> +/* Default online_type (MMOP_*) when new memory blocks are added. */
+> +extern int memhp_default_online_type;
+>  /* If movable_node boot option specified */
+>  extern bool movable_node_enabled;
+>  static inline bool movable_node_is_enabled(void)
+> diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
+> index e21a7d53ade5..4efcf8cb9ac5 100644
+> --- a/mm/memory_hotplug.c
+> +++ b/mm/memory_hotplug.c
+> @@ -67,17 +67,17 @@ void put_online_mems(void)
+>  bool movable_node_enabled = false;
+>
+>  #ifndef CONFIG_MEMORY_HOTPLUG_DEFAULT_ONLINE
+> -bool memhp_auto_online;
+> +int memhp_default_online_type = MMOP_OFFLINE;
+>  #else
+> -bool memhp_auto_online = true;
+> +int memhp_default_online_type = MMOP_ONLINE;
+>  #endif
+>
+>  static int __init setup_memhp_default_state(char *str)
+>  {
+>         if (!strcmp(str, "online"))
+> -               memhp_auto_online = true;
+> +               memhp_default_online_type = MMOP_ONLINE;
+>         else if (!strcmp(str, "offline"))
+> -               memhp_auto_online = false;
+> +               memhp_default_online_type = MMOP_OFFLINE;
+>
+>         return 1;
+>  }
+> @@ -993,6 +993,7 @@ static int check_hotplug_memory_range(u64 start, u64 size)
+>
+>  static int online_memory_block(struct memory_block *mem, void *arg)
+>  {
+> +       mem->online_type = memhp_default_online_type;
+>         return device_online(&mem->dev);
+>  }
+>
+> @@ -1065,7 +1066,7 @@ int __ref add_memory_resource(int nid, struct resource *res)
+>         mem_hotplug_done();
+>
+>         /* online pages if requested */
+> -       if (memhp_auto_online)
+> +       if (memhp_default_online_type != MMOP_OFFLINE)
+>                 walk_memory_blocks(start, size, NULL, online_memory_block);
+>
+>         return ret;
+> --
 
- graph connection
- to node '/soc/i2c@78b8000/bridge@f/ports/port@1/endpoint' is not
-bidirectional
+Acked-by: Pankaj Gupta <pankaj.gupta.linux@gmail.com>
 
-This compilation warning does not cause any problem with the boot image created
-dsi -> dsi2lvds bridge-> lvds panel . Able to get the display properly.
-
-https://github.com/vinaysimhabn/kernel-msm/blob/08e4821646b5c128559c506a5777d8782f1ff79e/Documentation/devicetree/bindings/display/bridge/toshiba%2Ctc358775.yaml
-
-But while creating documentation yaml, it is not allowing to add this examples.
--- 
-regards,
-vinaysimha
+> 2.24.1
+>
+>
