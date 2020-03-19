@@ -2,145 +2,371 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8F0F418BB3E
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 16:38:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9A54A18BB43
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 16:39:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727978AbgCSPiO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 11:38:14 -0400
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:43341 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727521AbgCSPiO (ORCPT
+        id S1728060AbgCSPjQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 11:39:16 -0400
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:33350 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727619AbgCSPjQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 11:38:14 -0400
-Received: by mail-ot1-f65.google.com with SMTP id a6so2766444otb.10
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Mar 2020 08:38:13 -0700 (PDT)
+        Thu, 19 Mar 2020 11:39:16 -0400
+Received: by mail-oi1-f194.google.com with SMTP id r7so3172438oij.0;
+        Thu, 19 Mar 2020 08:39:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cloudflare.com; s=google;
+        d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=seCAy6xYY0ujQIsNH75m2599DrTdig4Y4u9evBOvPIA=;
-        b=Xy4Hv9B1Q/8NsaVAgg5N3Z6vnoVUApM/gVfQN6OhHKjRA8QBEmOawruEKVCVz0LAkt
-         CeJpe/zz4rUmz3J+2o4fdngDWigvxvl51Jn1Wq68BGK8s02vJJkjhxw/SrcJn/aVn83w
-         DGUsdQ4R0giuJKSGh/IMUtDG7szQcVjT6SMV4=
+        bh=xqwcc6S0kuQFa+zD2BqIBFrPckbvb9FXyWKARQ5HTqg=;
+        b=BLaLD9Yz0hSAFFYg1Th1jkWT8RmF3PIPbvMzQhAxGDelmNmYKYpTF3DkkeiXxLViwU
+         ID9NzPhUkyB3oK74xQ25E0p8REnbl1AmMPQlwchV7OxrAr7PpC/13NSiS8VU/N/Emm7e
+         RTXW7mtrwiDPXOuLeD+s3AHTWy8QprfND6dHGpuSJowZ7sr73SulQsN+va8vLxxjY1aG
+         79KUbNwWhzW3v2diT2A+5o4Z1TVJq47ZCSuRKm1EBv1ipKG9AQoyODHzqBa+6LwhYM4K
+         lIlep8iNXkoz0ac8fQ0FJ5dttB1+8h1NuKas105ok7DAllqidkwMCq9uMzPjmjgF0t4L
+         Tm3A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=seCAy6xYY0ujQIsNH75m2599DrTdig4Y4u9evBOvPIA=;
-        b=npNL01n5Mf1DgwaxNA/lAyFNUG/B4v/1TS2yiKkH86m4hypMmBEk5id6FhGw/auemM
-         US0i3PhopQV2wiGgUlnUJYkSL52KLc5JfW6IQeBTfihMdcCZ3LQtJVojofB0UfqW2HSw
-         ELZQTMWKNqyYX7VlicU/lMSW4ivE6t8qAb5oUS6EgODCZmTSMTtF8Z85eo1xUL0sDGew
-         TU/ZbvnV7K51yJyeH8AabjhwkhAqgokIIQMHcDEVhWzTMHnAvC6wrxrDrLUBjClqc4sD
-         ui8ccMO56iDKbICm/O75eKnRVk5uaU/C8g/S7+hmqw2tsDLcJLdPQ24sPeanx5zlBgfT
-         g1Vg==
-X-Gm-Message-State: ANhLgQ1miqeI1SJXHBLC1eP8Dy5QZFyOiqMY6luW72f1gyjMeCV0Nbqr
-        RRYO1sqE2OBcfF8iTriFWJcVMUthrdrRcqMjSS0qPA==
-X-Google-Smtp-Source: ADFU+vub2oGGaZwK6dqB/jd4b8EpyH4/obAagvR+weJB1BPBkFBrFv81Vmk8W+ZBTFzEINX6QykYl8LH1mYocO4UqFc=
-X-Received: by 2002:a9d:6310:: with SMTP id q16mr2598495otk.147.1584632293068;
- Thu, 19 Mar 2020 08:38:13 -0700 (PDT)
+        bh=xqwcc6S0kuQFa+zD2BqIBFrPckbvb9FXyWKARQ5HTqg=;
+        b=FpnpAEwc4737ailpo4WtsNhOrBemBcNH2+uFby8Uo7hgBpzO/7iKxDRk0g/lhrmPbJ
+         lxqhdqUV41CkeDAmT1PFDOqnIG6wfuF+NZ5/hL/wFaCLeYff9tK/hgZSEdjPjfhWURHW
+         Opix9HeA0tMgKCSltIfNWong4UtQWvWUGLKnGcaq81xTLtd4DFLeXEzh3lms6+Vd4orF
+         f4lMsEY3oR/sPWrJbLCDVFAh+r3MD/hhPLIC8EM8RNb1hneoL9/lLUX8MOGC4epKCTKa
+         WzeUrNg2r6ni55V2G/vJWOGsRSKnkKJCDE/fXy1IRs1taDqmOV9PVsJiUKo3afGr42qx
+         6jAg==
+X-Gm-Message-State: ANhLgQ3Qc2VyoTDx0r/MKuZiETt0ONfgTCsD1kbQ/6IQqOjiQaB194TT
+        FMjyt+gHVwYyKQCPLWgVlc94zm1G51Yen5NGl+vmKT07qes=
+X-Google-Smtp-Source: ADFU+vsA6PIhyZl/qGUKPBe9lcqZk7raY3hc/S5FIkkayxMAMmm3MtgJ5tPVkgYE+2ONMQRG9XH2KwUj/e1ILloZiQY=
+X-Received: by 2002:aca:ac89:: with SMTP id v131mr2830122oie.7.1584632352589;
+ Thu, 19 Mar 2020 08:39:12 -0700 (PDT)
 MIME-Version: 1.0
-References: <20200319124631.58432-1-yuehaibing@huawei.com>
-In-Reply-To: <20200319124631.58432-1-yuehaibing@huawei.com>
-From:   Lorenz Bauer <lmb@cloudflare.com>
-Date:   Thu, 19 Mar 2020 15:38:00 +0000
-Message-ID: <CACAyw9_B+qNYHPrDPfYszjOwJbiV92vehT7BA_NGuFtzkj0D0w@mail.gmail.com>
-Subject: Re: [PATCH bpf-next] bpf: tcp: Fix unused function warnings
-To:     YueHaibing <yuehaibing@huawei.com>
-Cc:     Daniel Borkmann <daniel@iogearbox.net>,
-        Jakub Sitnicki <jakub@cloudflare.com>,
-        John Fastabend <john.fastabend@gmail.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Networking <netdev@vger.kernel.org>, bpf <bpf@vger.kernel.org>,
-        linux-kernel@vger.kernel.org
+References: <1584620363-2255-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <1584620363-2255-6-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com> <20200319151035.GC14585@pendragon.ideasonboard.com>
+In-Reply-To: <20200319151035.GC14585@pendragon.ideasonboard.com>
+From:   "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date:   Thu, 19 Mar 2020 15:38:46 +0000
+Message-ID: <CA+V-a8unmH8LskcjNXLum5a=+YkYOj=kZ3oOK6YZGKE2t4qf6w@mail.gmail.com>
+Subject: Re: [PATCH v4 5/5] media: dt-bindings: media: i2c: convert ov5645
+ bindings to json-schema
+To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc:     Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        linux-media <linux-media@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+        LAK <linux-arm-kernel@lists.infradead.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 19 Mar 2020 at 12:47, YueHaibing <yuehaibing@huawei.com> wrote:
->
-> If BPF_STREAM_PARSER is not set, gcc warns:
->
-> net/ipv4/tcp_bpf.c:483:12: warning: 'tcp_bpf_sendpage' defined but not used [-Wunused-function]
-> net/ipv4/tcp_bpf.c:395:12: warning: 'tcp_bpf_sendmsg' defined but not used [-Wunused-function]
-> net/ipv4/tcp_bpf.c:13:13: warning: 'tcp_bpf_stream_read' defined but not used [-Wunused-function]
->
-> Moves the unused functions into the #ifdef
+Hi Laurent,
 
-Thanks for fixing this.
+Thank you for the review.
 
-Reviewed-by: Lorenz Bauer <lmb@cloudflare.com>
+On Thu, Mar 19, 2020 at 3:10 PM Laurent Pinchart
+<laurent.pinchart@ideasonboard.com> wrote:
+>
+> Hi Prabhakar,
+>
+> Thank you for the patch.
+>
+> On Thu, Mar 19, 2020 at 12:19:23PM +0000, Lad Prabhakar wrote:
+> > Convert ov5645 bindings to json-schema.
+>
+> \o/
+>
+:)
 
+> >
+> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > ---
+> >  .../devicetree/bindings/media/i2c/ov5645.txt  |  54 -------
+> >  .../devicetree/bindings/media/i2c/ov5645.yaml | 140 ++++++++++++++++++
+> >  2 files changed, 140 insertions(+), 54 deletions(-)
+> >  delete mode 100644 Documentation/devicetree/bindings/media/i2c/ov5645.txt
+> >  create mode 100644 Documentation/devicetree/bindings/media/i2c/ov5645.yaml
+> >
+> > diff --git a/Documentation/devicetree/bindings/media/i2c/ov5645.txt b/Documentation/devicetree/bindings/media/i2c/ov5645.txt
+> > deleted file mode 100644
+> > index 1c85c78ec58c..000000000000
+> > --- a/Documentation/devicetree/bindings/media/i2c/ov5645.txt
+> > +++ /dev/null
+> > @@ -1,54 +0,0 @@
+> > -* Omnivision 1/4-Inch 5Mp CMOS Digital Image Sensor
+> > -
+> > -The Omnivision OV5645 is a 1/4-Inch CMOS active pixel digital image sensor with
+> > -an active array size of 2592H x 1944V. It is programmable through a serial I2C
+> > -interface.
+> > -
+> > -Required Properties:
+> > -- compatible: Value should be "ovti,ov5645".
+> > -- clocks: Reference to the xclk clock.
+> > -- clock-names: Should be "xclk".
+> > -- enable-gpios: Chip enable GPIO. Polarity is GPIO_ACTIVE_HIGH. This corresponds
+> > -  to the hardware pin PWDNB which is physically active low.
+> > -- reset-gpios: Chip reset GPIO. Polarity is GPIO_ACTIVE_LOW. This corresponds to
+> > -  the hardware pin RESETB.
+> > -- vdddo-supply: Chip digital IO regulator.
+> > -- vdda-supply: Chip analog regulator.
+> > -- vddd-supply: Chip digital core regulator.
+> > -
+> > -The device node must contain one 'port' child node for its digital output
+> > -video port, in accordance with the video interface bindings defined in
+> > -Documentation/devicetree/bindings/media/video-interfaces.txt.
+> > -
+> > -Example:
+> > -
+> > -     &i2c1 {
+> > -             ...
+> > -
+> > -             ov5645: ov5645@3c {
+> > -                     compatible = "ovti,ov5645";
+> > -                     reg = <0x3c>;
+> > -
+> > -                     enable-gpios = <&gpio1 6 GPIO_ACTIVE_HIGH>;
+> > -                     reset-gpios = <&gpio5 20 GPIO_ACTIVE_LOW>;
+> > -                     pinctrl-names = "default";
+> > -                     pinctrl-0 = <&camera_rear_default>;
+> > -
+> > -                     clocks = <&clks 200>;
+> > -                     clock-names = "xclk";
+> > -                     assigned-clocks = <&clks 200>;
+> > -                     assigned-clock-rates = <24000000>;
+> > -
+> > -                     vdddo-supply = <&camera_dovdd_1v8>;
+> > -                     vdda-supply = <&camera_avdd_2v8>;
+> > -                     vddd-supply = <&camera_dvdd_1v2>;
+> > -
+> > -                     port {
+> > -                             ov5645_ep: endpoint {
+> > -                                     clock-lanes = <1>;
+> > -                                     data-lanes = <0 2>;
+> > -                                     remote-endpoint = <&csi0_ep>;
+> > -                             };
+> > -                     };
+> > -             };
+> > -     };
+> > diff --git a/Documentation/devicetree/bindings/media/i2c/ov5645.yaml b/Documentation/devicetree/bindings/media/i2c/ov5645.yaml
+> > new file mode 100644
+> > index 000000000000..4bf58ad210c5
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/media/i2c/ov5645.yaml
+> > @@ -0,0 +1,140 @@
+> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/media/i2c/ov5645.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: Omnivision 1/4-Inch 5Mp CMOS Digital Image Sensor
+>
+> s/Mp/MP/ ?
+>
+OK
+> > +
+> > +maintainers:
+> > +  - Sakari Ailus <sakari.ailus@linux.intel.com>
+> > +  - Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > +
+> > +description: |-
+> > + The Omnivision OV5645 is a 1/4-Inch CMOS active pixel digital image sensor with
+> > + an active array size of 2592H x 1944V. It is programmable through a serial I2C
+> > + interface.
+> > +
+> > +properties:
+> > +  compatible:
+> > +    const: ovti,ov5645
+> > +
+> > +  reg:
+> > +    description: I2C device address
+> > +    maxItems: 1
+> > +
+> > +  clocks:
+> > +    maxItems: 1
+> > +
+> > +  clock-names:
+> > +    items:
+> > +      - const: xclk
+> > +
+> > +  assigned-clocks:
+> > +    maxItems: 1
+> > +
+> > +  assigned-clock-rates:
+> > +     items:
+> > +     - description: Must be 24MHz (24000000).
+>
+> These two properties shouldn't be part of the bindings, they're generic.
+>
+In that case how do we specify whats the expected clock frequency ?
 
+> > +
+> > +  enable-gpios:
+> > +    description: |-
+> > +      Chip enable GPIO. Polarity is GPIO_ACTIVE_HIGH. This corresponds
+> > +      to the hardware pin PWDNB which is physically active low.
 >
-> Reported-by: Hulk Robot <hulkci@huawei.com>
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-> ---
->  net/ipv4/tcp_bpf.c | 28 ++++++++++++++--------------
->  1 file changed, 14 insertions(+), 14 deletions(-)
+> Specifying that the polarity is GPIO_ACTIVE_HIGH is confusing in my
+> opinion. If there's an inverter on the board, you'll need
+> GPIO_ACTIVE_LOW. We could possibly drop the sentence, as all GPIOs in DT
+> are supposed to be active high, but the fact that the GPIO name
+> corresponds to the opposite of the pin probably has to be documented. I
+> have no better wording to propose now I'm afraid, but it needs to be
+> addressed. Maybe Rob or Maxime could help.
 >
-> diff --git a/net/ipv4/tcp_bpf.c b/net/ipv4/tcp_bpf.c
-> index fe7b4fbc31c1..37c91f25cae3 100644
-> --- a/net/ipv4/tcp_bpf.c
-> +++ b/net/ipv4/tcp_bpf.c
-> @@ -10,19 +10,6 @@
->  #include <net/inet_common.h>
->  #include <net/tls.h>
+Agreed, will wait for either Rob/Maxime to comment.
+
+> > +
+> > +  reset-gpios:
+> > +    description: |-
+> > +      Chip reset GPIO. Polarity is GPIO_ACTIVE_LOW. This corresponds to
+> > +      the hardware pin RESETB.
 >
-> -static bool tcp_bpf_stream_read(const struct sock *sk)
-> -{
-> -       struct sk_psock *psock;
-> -       bool empty = true;
-> -
-> -       rcu_read_lock();
-> -       psock = sk_psock(sk);
-> -       if (likely(psock))
-> -               empty = list_empty(&psock->ingress_msg);
-> -       rcu_read_unlock();
-> -       return !empty;
-> -}
-> -
->  static int tcp_bpf_wait_data(struct sock *sk, struct sk_psock *psock,
->                              int flags, long timeo, int *err)
->  {
-> @@ -298,6 +285,20 @@ int tcp_bpf_sendmsg_redir(struct sock *sk, struct sk_msg *msg,
->  }
->  EXPORT_SYMBOL_GPL(tcp_bpf_sendmsg_redir);
+> Here you could just drop the second sentence, or apply the same fix as
+> for enable-gpios.
 >
-> +#ifdef CONFIG_BPF_STREAM_PARSER
-> +static bool tcp_bpf_stream_read(const struct sock *sk)
-> +{
-> +       struct sk_psock *psock;
-> +       bool empty = true;
-> +
-> +       rcu_read_lock();
-> +       psock = sk_psock(sk);
-> +       if (likely(psock))
-> +               empty = list_empty(&psock->ingress_msg);
-> +       rcu_read_unlock();
-> +       return !empty;
-> +}
-> +
->  static int tcp_bpf_send_verdict(struct sock *sk, struct sk_psock *psock,
->                                 struct sk_msg *msg, int *copied, int flags)
->  {
-> @@ -528,7 +529,6 @@ static int tcp_bpf_sendpage(struct sock *sk, struct page *page, int offset,
->         return copied ? copied : err;
->  }
+OK
+
+> > +
+> > +  vdddo-supply:
+> > +    description:
+> > +      Chip digital IO regulator.
 >
-> -#ifdef CONFIG_BPF_STREAM_PARSER
->  enum {
->         TCP_BPF_IPV4,
->         TCP_BPF_IPV6,
+> You can move the description on the same line as the "description:" key.
+> Same below.
+>
+Will fix that.
+
+> > +
+> > +  vdda-supply:
+> > +    description:
+> > +      Chip analog regulator.
+> > +
+> > +  vddd-supply:
+> > +    description:
+> > +      Chip digital core regulator.
+> > +
+> > +  # See ../video-interfaces.txt for more details
+> > +  port:
+> > +    type: object
+> > +    properties:
+> > +      endpoint:
+> > +        type: object
+> > +
+> > +        properties:
+> > +          data-lanes:
+> > +            description: |-
+> > +              The sensor supports two-lane operation.
+> > +              For two-lane operation the property must be set to <1 2>.
+> > +            items:
+> > +              - const: 1
+> > +              - const: 2
+>
+>
+> What if only one lane is wired, does the sensor support that ?
+>
+Comparing with ov5640 datasheet (Assuming its similar to it) the
+sensor can support
+single/dual lane but looking at the driver it only supports dual lane mode atm
+{ OV5645_MIPI_CTRL00, 0x24 },
+
+> > +
+> > +          clock-lanes:
+> > +            description:
+> > +              should be set to <0> (clock lane on hardware lane 0).
+> > +            items:
+> > +              - const: 0
+> > +
+> > +          remote-endpoint: true
+> > +
+> > +        required:
+> > +          - data-lanes
+> > +          - clock-lanes
+> > +          - remote-endpoint
+> > +
+> > +        additionalProperties: false
+> > +
+> > +    additionalProperties: false
+> > +
+> > +required:
+> > +  - compatible
+> > +  - reg
+> > +  - clocks
+> > +  - clock-names
+> > +  - assigned-clocks
+> > +  - assigned-clock-rates
+>
+> Those two properties should be dropped.
+>
+Will do that.
+
+> > +  - enable-gpios
+> > +  - reset-gpios
+>
+> Are the GPIOs mandatory ? What if the signals are hardwired on the board
+> ?
+>
+Yes as per the driver, which needs to be fixed for making these optional :)
+
+> > +  - vdddo-supply
+> > +  - vdda-supply
+> > +  - vddd-supply
+> > +  - port
+> > +
+> > +additionalProperties: false
+> > +
+> > +examples:
+> > +  - |
+> > +    i2c1 {
+>
+> s/i2c1/i2c/
+>
+Will fix that.
+
+Cheers,
+--Prabhakar
+
+> > +        #address-cells = <1>;
+> > +        #size-cells = <0>;
+> > +
+> > +        ov5645: sensor@3c {
+> > +            compatible = "ovti,ov5645";
+> > +            reg = <0x3c>;
+> > +            clocks = <&ov5645_cl>;
+> > +            clock-names = "xclk";
+> > +            assigned-clocks = <&ov5645_cl>;
+> > +            assigned-clock-rates = <24000000>;
+> > +            enable-gpios = <&gpio1 6 /* GPIO_ACTIVE_HIGH */>;
+> > +            reset-gpios = <&gpio5 20 /* GPIO_ACTIVE_LOW */>;
+> > +            vdddo-supply = <&camera_dovdd_1v8>;
+> > +            vdda-supply = <&camera_avdd_2v8>;
+> > +            vddd-supply = <&camera_dvdd_1v2>;
+> > +
+> > +            port {
+> > +                ov5645_0: endpoint {
+> > +                    remote-endpoint = <&csi1_ep>;
+> > +                    clock-lanes = <0>;
+> > +                    data-lanes = <1 2>;
+> > +                };
+> > +            };
+> > +        };
+> > +    };
+> > +
+> > +...
+>
 > --
-> 2.17.1
+> Regards,
 >
->
-
-
---
-Lorenz Bauer  |  Systems Engineer
-6th Floor, County Hall/The Riverside Building, SE1 7PB, UK
-
-www.cloudflare.com
+> Laurent Pinchart
