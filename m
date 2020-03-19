@@ -2,35 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1BD2218B4D7
+	by mail.lfdr.de (Postfix) with ESMTP id 906AC18B4D8
 	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:13:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729094AbgCSNNK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 09:13:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59824 "EHLO mail.kernel.org"
+        id S1729102AbgCSNNL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 09:13:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59998 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729074AbgCSNNE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 09:13:04 -0400
+        id S1729080AbgCSNNH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 09:13:07 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4A66021556;
-        Thu, 19 Mar 2020 13:13:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C83902145D;
+        Thu, 19 Mar 2020 13:13:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584623583;
-        bh=CeS4ZfFNTDnHjmaCoZDg4O8W798qKPZe6yPihomZS+k=;
+        s=default; t=1584623587;
+        bh=FbcZCwOBpIKtkGwLCBFpBHjyL2yg+SCnL9LA0x74+K0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MPatmkjJavrDQZDcZADlac1MWEIi17kyqkJ5p/OIlHoS0tVV6+QkSep8tz9pzUhKX
-         1kADT7lY8ScFVgcBCzoxxZx0V+9RnbMpIXv3VuWgsw7q007Dqye0fNC+To5cUT7sY1
-         JBG+Nz+4BS3C0gV4Q2JTJMP/gKsTmNcasW+HiOlA=
+        b=bQxVryhxiGZeRmnIFFWoaH8q73VoQ3x8ngtgPpNn3tjm5XwdPO3LTnKAEelulBS2C
+         dFN90+u4Ks/LqAfTH7a7KgT5FUHy/J0cqtxjUWt7DxJfr5ulP2DR5YRp3s8aoR5yxD
+         TKSsX5msF0MgSGTMvpBVdTlArXoo9dk8btpGdFT0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Sven Eckelmann <sven.eckelmann@open-mesh.com>,
+        Sven Eckelmann <sven.eckelmann@openmesh.com>,
+        Antonio Quartulli <a@unstable.cc>,
         Simon Wunderlich <sw@simonwunderlich.de>
-Subject: [PATCH 4.9 59/90] batman-adv: Always initialize fragment header priority
-Date:   Thu, 19 Mar 2020 14:00:21 +0100
-Message-Id: <20200319123946.794943115@linuxfoundation.org>
+Subject: [PATCH 4.9 60/90] batman-adv: Fix check of retrieved orig_gw in batadv_v_gw_is_eligible
+Date:   Thu, 19 Mar 2020 14:00:22 +0100
+Message-Id: <20200319123947.111657586@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.2
 In-Reply-To: <20200319123928.635114118@linuxfoundation.org>
 References: <20200319123928.635114118@linuxfoundation.org>
@@ -43,33 +44,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sven Eckelmann <sven.eckelmann@open-mesh.com>
+From: Sven Eckelmann <sven.eckelmann@openmesh.com>
 
-commit fe77d8257c4d838c5976557ddb87bd789f312412 upstream.
+commit 198a62ddffa4a4ffaeb741f642b7b52f2d91ae9b upstream.
 
-The batman-adv unuicast fragment header contains 3 bits for the priority of
-the packet. These bits will be initialized when the skb->priority contains
-a value between 256 and 263. But otherwise, the uninitialized bits from the
-stack will be used.
+The batadv_v_gw_is_eligible function already assumes that orig_node is not
+NULL. But batadv_gw_node_get may have failed to find the originator. It
+must therefore be checked whether the batadv_gw_node_get failed and not
+whether orig_node is NULL to detect this error.
 
-Fixes: c0f25c802b33 ("batman-adv: Include frame priority in fragment header")
-Signed-off-by: Sven Eckelmann <sven.eckelmann@open-mesh.com>
+Fixes: 50164d8f500f ("batman-adv: B.A.T.M.A.N. V - implement GW selection logic")
+Signed-off-by: Sven Eckelmann <sven.eckelmann@openmesh.com>
+Acked-by: Antonio Quartulli <a@unstable.cc>
 Signed-off-by: Simon Wunderlich <sw@simonwunderlich.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/batman-adv/fragmentation.c |    2 ++
- 1 file changed, 2 insertions(+)
+ net/batman-adv/bat_v.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/net/batman-adv/fragmentation.c
-+++ b/net/batman-adv/fragmentation.c
-@@ -484,6 +484,8 @@ int batadv_frag_send_packet(struct sk_bu
- 	 */
- 	if (skb->priority >= 256 && skb->priority <= 263)
- 		frag_header.priority = skb->priority - 256;
-+	else
-+		frag_header.priority = 0;
+--- a/net/batman-adv/bat_v.c
++++ b/net/batman-adv/bat_v.c
+@@ -814,7 +814,7 @@ static bool batadv_v_gw_is_eligible(stru
+ 	}
  
- 	ether_addr_copy(frag_header.orig, primary_if->net_dev->dev_addr);
- 	ether_addr_copy(frag_header.dest, orig_node->orig);
+ 	orig_gw = batadv_gw_node_get(bat_priv, orig_node);
+-	if (!orig_node)
++	if (!orig_gw)
+ 		goto out;
+ 
+ 	if (batadv_v_gw_throughput_get(orig_gw, &orig_throughput) < 0)
 
 
