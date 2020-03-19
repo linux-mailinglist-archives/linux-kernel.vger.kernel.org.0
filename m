@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A930718B7C4
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:35:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0E79018B817
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:38:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728364AbgCSNfw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 09:35:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56160 "EHLO mail.kernel.org"
+        id S1727899AbgCSNHW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 09:07:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50906 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728657AbgCSNLG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 09:11:06 -0400
+        id S1727889AbgCSNHT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 09:07:19 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 898102145D;
-        Thu, 19 Mar 2020 13:11:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1E16620784;
+        Thu, 19 Mar 2020 13:07:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584623466;
-        bh=pEhlFlqcaznmZ930nWnI5ibxyeHWyH36PFKDMxcKpeA=;
+        s=default; t=1584623238;
+        bh=HzLo+Jos6C/IUQ1umLfn9I6FpIiCDS3Vicju/9z1JYE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qLY8IOEM5SoJx17yP3XrXo+viOZk/X4Tbn1o5EN7GYvI2wt/MA7y8iOBnmBDLAlzx
-         1x07cCVlypoAdOc39h01SuVBLZJq+p/Ucjk7zjhB3EaQGizk921voYajopWQdFqHLo
-         93TQRRuUyZhXUqhedON3dJLBtZ9e/YPRcUhEvCzI=
+        b=VNLX0Ao7fkjm5j7brLTmOuPllo2yU5PlAnOV1YExUgupa3JN9Qd6qSnxuFHBbz4ue
+         K9D1husf960+RcKLIi0QEQSLYSXFxphverdGxLjnR0nl/UyPI0Qrp+CmQd22gr5u30
+         nNABBlxDrNIlrdRU8F5hkRO5ttWSmpC9Ywwrfz8E=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
-        stable@kernel.org
-Subject: [PATCH 4.9 35/90] cifs_atomic_open(): fix double-put on late allocation failure
-Date:   Thu, 19 Mar 2020 13:59:57 +0100
-Message-Id: <20200319123939.492409418@linuxfoundation.org>
+        Sven Eckelmann <sven@narfation.org>,
+        Marek Lindner <mareklindner@neomailbox.ch>,
+        Simon Wunderlich <sw@simonwunderlich.de>
+Subject: [PATCH 4.4 54/93] batman-adv: Avoid nullptr dereference in dat after vlan_insert_tag
+Date:   Thu, 19 Mar 2020 13:59:58 +0100
+Message-Id: <20200319123942.039622354@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.2
-In-Reply-To: <20200319123928.635114118@linuxfoundation.org>
-References: <20200319123928.635114118@linuxfoundation.org>
+In-Reply-To: <20200319123924.795019515@linuxfoundation.org>
+References: <20200319123924.795019515@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,66 +44,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Al Viro <viro@zeniv.linux.org.uk>
+From: Sven Eckelmann <sven@narfation.org>
 
-commit d9a9f4849fe0c9d560851ab22a85a666cddfdd24 upstream.
+commit 60154a1e0495ffb8343a95cefe1e874634572fa8 upstream.
 
-several iterations of ->atomic_open() calling conventions ago, we
-used to need fput() if ->atomic_open() failed at some point after
-successful finish_open().  Now (since 2016) it's not needed -
-struct file carries enough state to make fput() work regardless
-of the point in struct file lifecycle and discarding it on
-failure exits in open() got unified.  Unfortunately, I'd missed
-the fact that we had an instance of ->atomic_open() (cifs one)
-that used to need that fput(), as well as the stale comment in
-finish_open() demanding such late failure handling.  Trivially
-fixed...
+vlan_insert_tag can return NULL on errors. The distributed arp table code
+therefore has to check the return value of vlan_insert_tag for NULL before
+it can safely operate on this pointer.
 
-Fixes: fe9ec8291fca "do_last(): take fput() on error after opening to out:"
-Cc: stable@kernel.org # v4.7+
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+Fixes: be1db4f6615b ("batman-adv: make the Distributed ARP Table vlan aware")
+Signed-off-by: Sven Eckelmann <sven@narfation.org>
+Signed-off-by: Marek Lindner <mareklindner@neomailbox.ch>
+Signed-off-by: Simon Wunderlich <sw@simonwunderlich.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- Documentation/filesystems/porting |    7 +++++++
- fs/cifs/dir.c                     |    1 -
- fs/open.c                         |    3 ---
- 3 files changed, 7 insertions(+), 4 deletions(-)
+ net/batman-adv/distributed-arp-table.c |   10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
---- a/Documentation/filesystems/porting
-+++ b/Documentation/filesystems/porting
-@@ -596,3 +596,10 @@ in your dentry operations instead.
- [mandatory]
- 	->rename() has an added flags argument.  Any flags not handled by the
-         filesystem should result in EINVAL being returned.
-+--
-+[mandatory]
-+
-+	[should've been added in 2016] stale comment in finish_open()
-+	nonwithstanding, failure exits in ->atomic_open() instances should
-+	*NOT* fput() the file, no matter what.  Everything is handled by the
-+	caller.
---- a/fs/cifs/dir.c
-+++ b/fs/cifs/dir.c
-@@ -551,7 +551,6 @@ cifs_atomic_open(struct inode *inode, st
- 		if (server->ops->close)
- 			server->ops->close(xid, tcon, &fid);
- 		cifs_del_pending_open(&open);
--		fput(file);
- 		rc = -ENOMEM;
- 	}
+--- a/net/batman-adv/distributed-arp-table.c
++++ b/net/batman-adv/distributed-arp-table.c
+@@ -993,9 +993,12 @@ bool batadv_dat_snoop_outgoing_arp_reque
+ 		if (!skb_new)
+ 			goto out;
  
---- a/fs/open.c
-+++ b/fs/open.c
-@@ -824,9 +824,6 @@ cleanup_file:
-  * the return value of d_splice_alias(), then the caller needs to perform dput()
-  * on it after finish_open().
-  *
-- * On successful return @file is a fully instantiated open file.  After this, if
-- * an error occurs in ->atomic_open(), it needs to clean up with fput().
-- *
-  * Returns zero on success or -errno if the open failed.
-  */
- int finish_open(struct file *file, struct dentry *dentry,
+-		if (vid & BATADV_VLAN_HAS_TAG)
++		if (vid & BATADV_VLAN_HAS_TAG) {
+ 			skb_new = vlan_insert_tag(skb_new, htons(ETH_P_8021Q),
+ 						  vid & VLAN_VID_MASK);
++			if (!skb_new)
++				goto out;
++		}
+ 
+ 		skb_reset_mac_header(skb_new);
+ 		skb_new->protocol = eth_type_trans(skb_new,
+@@ -1073,9 +1076,12 @@ bool batadv_dat_snoop_incoming_arp_reque
+ 	 */
+ 	skb_reset_mac_header(skb_new);
+ 
+-	if (vid & BATADV_VLAN_HAS_TAG)
++	if (vid & BATADV_VLAN_HAS_TAG) {
+ 		skb_new = vlan_insert_tag(skb_new, htons(ETH_P_8021Q),
+ 					  vid & VLAN_VID_MASK);
++		if (!skb_new)
++			goto out;
++	}
+ 
+ 	/* To preserve backwards compatibility, the node has choose the outgoing
+ 	 * format based on the incoming request packet type. The assumption is
 
 
