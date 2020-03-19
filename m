@@ -2,38 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BED3618B441
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:08:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7636A18B4AC
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:11:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728051AbgCSNIA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 09:08:00 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51996 "EHLO mail.kernel.org"
+        id S1728772AbgCSNLo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 09:11:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57150 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728037AbgCSNH6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 09:07:58 -0400
+        id S1728766AbgCSNLn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 09:11:43 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 23D71208DB;
-        Thu, 19 Mar 2020 13:07:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 282582145D;
+        Thu, 19 Mar 2020 13:11:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584623277;
-        bh=CBtoYhL6joQz2ZymCK5pl4zkMbyZKZXLbzyGIGjfOC4=;
+        s=default; t=1584623502;
+        bh=HX5s+h51jDjzlxzf5ICn5BygZR40bVrW6nkSi31hx4I=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=wMkS7EQgfcS0/QO/HliBEYu6hH3Hm/4T7XIwus8C26KNYAfWvh7kRYkdjqfCnYWeJ
-         ZMPH7Dbkf6qspqkBD6NhqcVmi9gMUXbtCVY7MplE53b/5duoYzIi25ig+w84lh27Li
-         BM1uC8NPLl1xkBcV/vJ5xBvkxCEhsone9h2JevgA=
+        b=j2NLZhrYNi60KZzCi4cHZtDYFgiwkXVcM/s+cKLyjzlZxUtDlo3ttV2eWFYdqtcaR
+         fIpz33xhsTQSlrh/Wjk7VEmxwUpLPpdvAMG0WGn9juM3nzhxnWBVr8hYizp1hE7+HO
+         SBiYrVq0WubJYCgyJzsBukjFPJR3/N2w+0S+oGNE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Sven Eckelmann <sven@narfation.org>,
-        Simon Wunderlich <sw@simonwunderlich.de>
-Subject: [PATCH 4.4 67/93] batman-adv: Fix internal interface indices types
+        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        syzbot+1938db17e275e85dc328@syzkaller.appspotmail.com,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.9 49/90] ipv6: restrict IPV6_ADDRFORM operation
 Date:   Thu, 19 Mar 2020 14:00:11 +0100
-Message-Id: <20200319123946.365408520@linuxfoundation.org>
+Message-Id: <20200319123943.639252707@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.2
-In-Reply-To: <20200319123924.795019515@linuxfoundation.org>
-References: <20200319123924.795019515@linuxfoundation.org>
+In-Reply-To: <20200319123928.635114118@linuxfoundation.org>
+References: <20200319123928.635114118@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,204 +45,108 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sven Eckelmann <sven@narfation.org>
+From: Eric Dumazet <edumazet@google.com>
 
-commit f22e08932c2960f29b5e828e745c9f3fb7c1bb86 upstream.
+commit b6f6118901d1e867ac9177bbff3b00b185bd4fdc upstream.
 
-batman-adv uses internal indices for each enabled and active interface.
-It is currently used by the B.A.T.M.A.N. IV algorithm to identifify the
-correct position in the ogm_cnt bitmaps.
+IPV6_ADDRFORM is able to transform IPv6 socket to IPv4 one.
+While this operation sounds illogical, we have to support it.
 
-The type for the number of enabled interfaces (which defines the next
-interface index) was set to char. This type can be (depending on the
-architecture) either signed (limiting batman-adv to 127 active slave
-interfaces) or unsigned (limiting batman-adv to 255 active slave
-interfaces).
+One of the things it does for TCP socket is to switch sk->sk_prot
+to tcp_prot.
 
-This limit was not correctly checked when an interface was enabled and thus
-an overflow happened. This was only catched on systems with the signed char
-type when the B.A.T.M.A.N. IV code tried to resize its counter arrays with
-a negative size.
+We now have other layers playing with sk->sk_prot, so we should make
+sure to not interfere with them.
 
-The if_num interface index was only a s16 and therefore significantly
-smaller than the ifindex (int) used by the code net code.
+This patch makes sure sk_prot is the default pointer for TCP IPv6 socket.
 
-Both &batadv_hard_iface->if_num and &batadv_priv->num_ifaces must be
-(unsigned) int to support the same number of slave interfaces as the net
-core code. And the interface activation code must check the number of
-active slave interfaces to avoid integer overflows.
+syzbot reported :
+BUG: kernel NULL pointer dereference, address: 0000000000000000
+PGD a0113067 P4D a0113067 PUD a8771067 PMD 0
+Oops: 0010 [#1] PREEMPT SMP KASAN
+CPU: 0 PID: 10686 Comm: syz-executor.0 Not tainted 5.6.0-rc2-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+RIP: 0010:0x0
+Code: Bad RIP value.
+RSP: 0018:ffffc9000281fce0 EFLAGS: 00010246
+RAX: 1ffffffff15f48ac RBX: ffffffff8afa4560 RCX: dffffc0000000000
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: ffff8880a69a8f40
+RBP: ffffc9000281fd10 R08: ffffffff86ed9b0c R09: ffffed1014d351f5
+R10: ffffed1014d351f5 R11: 0000000000000000 R12: ffff8880920d3098
+R13: 1ffff1101241a613 R14: ffff8880a69a8f40 R15: 0000000000000000
+FS:  00007f2ae75db700(0000) GS:ffff8880aea00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: ffffffffffffffd6 CR3: 00000000a3b85000 CR4: 00000000001406f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ inet_release+0x165/0x1c0 net/ipv4/af_inet.c:427
+ __sock_release net/socket.c:605 [inline]
+ sock_close+0xe1/0x260 net/socket.c:1283
+ __fput+0x2e4/0x740 fs/file_table.c:280
+ ____fput+0x15/0x20 fs/file_table.c:313
+ task_work_run+0x176/0x1b0 kernel/task_work.c:113
+ tracehook_notify_resume include/linux/tracehook.h:188 [inline]
+ exit_to_usermode_loop arch/x86/entry/common.c:164 [inline]
+ prepare_exit_to_usermode+0x480/0x5b0 arch/x86/entry/common.c:195
+ syscall_return_slowpath+0x113/0x4a0 arch/x86/entry/common.c:278
+ do_syscall_64+0x11f/0x1c0 arch/x86/entry/common.c:304
+ entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x45c429
+Code: ad b6 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 7b b6 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007f2ae75dac78 EFLAGS: 00000246 ORIG_RAX: 0000000000000036
+RAX: 0000000000000000 RBX: 00007f2ae75db6d4 RCX: 000000000045c429
+RDX: 0000000000000001 RSI: 000000000000011a RDI: 0000000000000004
+RBP: 000000000076bf20 R08: 0000000000000038 R09: 0000000000000000
+R10: 0000000020000180 R11: 0000000000000246 R12: 00000000ffffffff
+R13: 0000000000000a9d R14: 00000000004ccfb4 R15: 000000000076bf2c
+Modules linked in:
+CR2: 0000000000000000
+---[ end trace 82567b5207e87bae ]---
+RIP: 0010:0x0
+Code: Bad RIP value.
+RSP: 0018:ffffc9000281fce0 EFLAGS: 00010246
+RAX: 1ffffffff15f48ac RBX: ffffffff8afa4560 RCX: dffffc0000000000
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: ffff8880a69a8f40
+RBP: ffffc9000281fd10 R08: ffffffff86ed9b0c R09: ffffed1014d351f5
+R10: ffffed1014d351f5 R11: 0000000000000000 R12: ffff8880920d3098
+R13: 1ffff1101241a613 R14: ffff8880a69a8f40 R15: 0000000000000000
+FS:  00007f2ae75db700(0000) GS:ffff8880aea00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: ffffffffffffffd6 CR3: 00000000a3b85000 CR4: 00000000001406f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 
-Fixes: c6c8fea29769 ("net: Add batman-adv meshing protocol")
-Signed-off-by: Sven Eckelmann <sven@narfation.org>
-Signed-off-by: Simon Wunderlich <sw@simonwunderlich.de>
-Signed-off-by: Sven Eckelmann <sven@narfation.org>
+Fixes: 604326b41a6f ("bpf, sockmap: convert to generic sk_msg interface")
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Reported-by: syzbot+1938db17e275e85dc328@syzkaller.appspotmail.com
+Cc: Daniel Borkmann <daniel@iogearbox.net>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- net/batman-adv/bat_iv_ogm.c     |   16 +++++++++-------
- net/batman-adv/hard-interface.c |    9 +++++++--
- net/batman-adv/originator.c     |    4 ++--
- net/batman-adv/originator.h     |    4 ++--
- net/batman-adv/types.h          |    8 ++++----
- 5 files changed, 24 insertions(+), 17 deletions(-)
 
---- a/net/batman-adv/bat_iv_ogm.c
-+++ b/net/batman-adv/bat_iv_ogm.c
-@@ -135,7 +135,7 @@ static void batadv_iv_ogm_orig_free(stru
-  * Returns 0 on success, a negative error code otherwise.
-  */
- static int batadv_iv_ogm_orig_add_if(struct batadv_orig_node *orig_node,
--				     int max_if_num)
-+				     unsigned int max_if_num)
- {
- 	void *data_ptr;
- 	size_t old_size;
-@@ -181,7 +181,8 @@ unlock:
-  * Returns 0 on success, a negative error code otherwise.
-  */
- static int batadv_iv_ogm_orig_del_if(struct batadv_orig_node *orig_node,
--				     int max_if_num, int del_if_num)
-+				     unsigned int max_if_num,
-+				     unsigned int del_if_num)
- {
- 	int ret = -ENOMEM;
- 	size_t chunk_size, if_offset;
-@@ -252,7 +253,8 @@ static struct batadv_orig_node *
- batadv_iv_ogm_orig_get(struct batadv_priv *bat_priv, const u8 *addr)
- {
- 	struct batadv_orig_node *orig_node;
--	int size, hash_added;
-+	int hash_added;
-+	size_t size;
- 
- 	orig_node = batadv_orig_hash_find(bat_priv, addr);
- 	if (orig_node)
-@@ -871,7 +873,7 @@ batadv_iv_ogm_slide_own_bcast_window(str
- 	u32 i;
- 	size_t word_index;
- 	u8 *w;
--	int if_num;
-+	unsigned int if_num;
- 
- 	for (i = 0; i < hash->size; i++) {
- 		head = &hash->table[i];
-@@ -982,7 +984,7 @@ batadv_iv_ogm_orig_update(struct batadv_
- 	struct batadv_neigh_node *tmp_neigh_node = NULL;
- 	struct batadv_neigh_node *router = NULL;
- 	struct batadv_orig_node *orig_node_tmp;
--	int if_num;
-+	unsigned int if_num;
- 	u8 sum_orig, sum_neigh;
- 	u8 *neigh_addr;
- 	u8 tq_avg;
-@@ -1647,9 +1649,9 @@ static void batadv_iv_ogm_process(const
- 
- 	if (is_my_orig) {
- 		unsigned long *word;
--		int offset;
-+		size_t offset;
- 		s32 bit_pos;
--		s16 if_num;
-+		unsigned int if_num;
- 		u8 *weight;
- 
- 		orig_neigh_node = batadv_iv_ogm_orig_get(bat_priv,
---- a/net/batman-adv/hard-interface.c
-+++ b/net/batman-adv/hard-interface.c
-@@ -493,6 +493,11 @@ int batadv_hardif_enable_interface(struc
- 	hard_iface->soft_iface = soft_iface;
- 	bat_priv = netdev_priv(hard_iface->soft_iface);
- 
-+	if (bat_priv->num_ifaces >= UINT_MAX) {
-+		ret = -ENOSPC;
-+		goto err_dev;
-+	}
-+
- 	ret = netdev_master_upper_dev_link(hard_iface->net_dev, soft_iface);
- 	if (ret)
- 		goto err_dev;
-@@ -600,7 +605,7 @@ void batadv_hardif_disable_interface(str
- 	batadv_hardif_recalc_extra_skbroom(hard_iface->soft_iface);
- 
- 	/* nobody uses this interface anymore */
--	if (!bat_priv->num_ifaces) {
-+	if (bat_priv->num_ifaces == 0) {
- 		batadv_gw_check_client_stop(bat_priv);
- 
- 		if (autodel == BATADV_IF_CLEANUP_AUTO)
-@@ -656,7 +661,7 @@ batadv_hardif_add_interface(struct net_d
- 	if (ret)
- 		goto free_if;
- 
--	hard_iface->if_num = -1;
-+	hard_iface->if_num = 0;
- 	hard_iface->net_dev = net_dev;
- 	hard_iface->soft_iface = NULL;
- 	hard_iface->if_status = BATADV_IF_NOT_IN_USE;
---- a/net/batman-adv/originator.c
-+++ b/net/batman-adv/originator.c
-@@ -1103,7 +1103,7 @@ out:
- }
- 
- int batadv_orig_hash_add_if(struct batadv_hard_iface *hard_iface,
--			    int max_if_num)
-+			    unsigned int max_if_num)
- {
- 	struct batadv_priv *bat_priv = netdev_priv(hard_iface->soft_iface);
- 	struct batadv_algo_ops *bao = bat_priv->bat_algo_ops;
-@@ -1139,7 +1139,7 @@ err:
- }
- 
- int batadv_orig_hash_del_if(struct batadv_hard_iface *hard_iface,
--			    int max_if_num)
-+			    unsigned int max_if_num)
- {
- 	struct batadv_priv *bat_priv = netdev_priv(hard_iface->soft_iface);
- 	struct batadv_hashtable *hash = bat_priv->orig_hash;
---- a/net/batman-adv/originator.h
-+++ b/net/batman-adv/originator.h
-@@ -67,9 +67,9 @@ void batadv_orig_ifinfo_free_ref(struct
- int batadv_orig_seq_print_text(struct seq_file *seq, void *offset);
- int batadv_orig_hardif_seq_print_text(struct seq_file *seq, void *offset);
- int batadv_orig_hash_add_if(struct batadv_hard_iface *hard_iface,
--			    int max_if_num);
-+			    unsigned int max_if_num);
- int batadv_orig_hash_del_if(struct batadv_hard_iface *hard_iface,
--			    int max_if_num);
-+			    unsigned int max_if_num);
- struct batadv_orig_node_vlan *
- batadv_orig_node_vlan_new(struct batadv_orig_node *orig_node,
- 			  unsigned short vid);
---- a/net/batman-adv/types.h
-+++ b/net/batman-adv/types.h
-@@ -103,7 +103,7 @@ struct batadv_hard_iface_bat_iv {
-  */
- struct batadv_hard_iface {
- 	struct list_head list;
--	s16 if_num;
-+	unsigned int if_num;
- 	char if_status;
- 	struct net_device *net_dev;
- 	u8 num_bcasts;
-@@ -808,7 +808,7 @@ struct batadv_priv {
- 	atomic_t bcast_seqno;
- 	atomic_t bcast_queue_left;
- 	atomic_t batman_queue_left;
--	char num_ifaces;
-+	unsigned int num_ifaces;
- 	struct kobject *mesh_obj;
- 	struct dentry *debug_dir;
- 	struct hlist_head forw_bat_list;
-@@ -1179,9 +1179,9 @@ struct batadv_algo_ops {
- 			       struct batadv_hard_iface *hard_iface);
- 	void (*bat_orig_free)(struct batadv_orig_node *orig_node);
- 	int (*bat_orig_add_if)(struct batadv_orig_node *orig_node,
--			       int max_if_num);
-+			       unsigned int max_if_num);
- 	int (*bat_orig_del_if)(struct batadv_orig_node *orig_node,
--			       int max_if_num, int del_if_num);
-+			       unsigned int max_if_num, unsigned int del_if_num);
- };
- 
- /**
+---
+ net/ipv6/ipv6_sockglue.c |   10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
+
+--- a/net/ipv6/ipv6_sockglue.c
++++ b/net/ipv6/ipv6_sockglue.c
+@@ -184,9 +184,15 @@ static int do_ipv6_setsockopt(struct soc
+ 					retv = -EBUSY;
+ 					break;
+ 				}
+-			} else if (sk->sk_protocol != IPPROTO_TCP)
++			} else if (sk->sk_protocol == IPPROTO_TCP) {
++				if (sk->sk_prot != &tcpv6_prot) {
++					retv = -EBUSY;
++					break;
++				}
++				break;
++			} else {
+ 				break;
+-
++			}
+ 			if (sk->sk_state != TCP_ESTABLISHED) {
+ 				retv = -ENOTCONN;
+ 				break;
 
 
