@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A97FA18B419
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:06:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 66F7118B41C
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:07:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727753AbgCSNGr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 09:06:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50102 "EHLO mail.kernel.org"
+        id S1727769AbgCSNGv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 09:06:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50160 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727731AbgCSNGo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 09:06:44 -0400
+        id S1727749AbgCSNGq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 09:06:46 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7B9C820722;
-        Thu, 19 Mar 2020 13:06:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 05B6620740;
+        Thu, 19 Mar 2020 13:06:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584623203;
-        bh=sAfmogAQI1FrxifR9OmJIT0rXstwAqgQN9rJPMvCB6Q=;
+        s=default; t=1584623206;
+        bh=q390SVG5ckUli8fEFOkZeHkbrMjr8jATJVyyi1c6Buo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LJZ9F9VoGEM0hiBPnEoE1zMnYdNqZabXZPeAPbAsF6Q2NSrnccWTxfzj2agXlaEBm
-         ybFNqkCa4Guk1DWi+zBpeTlqHxsVfcJOsp0elDbkC4KU5emfC2gVZsJ1V71pMiTKAf
-         Ay9PQUyQbJm/AJfS2CbNSCFf0jJYgA7lnc+pQCBI=
+        b=Y4YqPNL7oxnxSoH08tayIRQxbtQs2oOTwBM7wMf8nFbWiKRwHBK55BuZ/OSpGWPDM
+         oJ/+kAfu3H0WXVLiaqTbhaWEvvcGKWlPVJvUfD9BobbuX+r8h5KeY274yjpZpe0d5c
+         fEiPmeDpBsKy+oS94pePyaJKCYNgAtZr30Bfj40U=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Sven Eckelmann <sven.eckelmann@open-mesh.com>,
         Marek Lindner <mareklindner@neomailbox.ch>,
+        Sven Eckelmann <sven@narfation.org>,
         Antonio Quartulli <a@unstable.cc>
-Subject: [PATCH 4.4 43/93] batman-adv: Fix integer overflow in batadv_iv_ogm_calc_tq
-Date:   Thu, 19 Mar 2020 13:59:47 +0100
-Message-Id: <20200319123938.718072127@linuxfoundation.org>
+Subject: [PATCH 4.4 44/93] batman-adv: init neigh node last seen field
+Date:   Thu, 19 Mar 2020 13:59:48 +0100
+Message-Id: <20200319123938.976226957@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.2
 In-Reply-To: <20200319123924.795019515@linuxfoundation.org>
 References: <20200319123924.795019515@linuxfoundation.org>
@@ -44,51 +44,28 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sven Eckelmann <sven.eckelmann@open-mesh.com>
+From: Marek Lindner <mareklindner@neomailbox.ch>
 
-commit d285f52cc0f23564fd61976d43fd5b991b4828f6 upstream.
+commit e48474ed8a217b7f80f2a42bc05352406a06cb67 upstream.
 
-The undefined behavior sanatizer detected an signed integer overflow in a
-setup with near perfect link quality
-
-    UBSAN: Undefined behaviour in net/batman-adv/bat_iv_ogm.c:1246:25
-    signed integer overflow:
-    8713350 * 255 cannot be represented in type 'int'
-
-The problems happens because the calculation of mixed unsigned and signed
-integers resulted in an integer multiplication.
-
-      batadv_ogm_packet::tq (u8 255)
-    * tq_own (u8 255)
-    * tq_asym_penalty (int 134; max 255)
-    * tq_iface_penalty (int 255; max 255)
-
-The tq_iface_penalty, tq_asym_penalty and inv_asym_penalty can just be
-changed to unsigned int because they are not expected to become negative.
-
-Fixes: c039876892e3 ("batman-adv: add WiFi penalty")
-Signed-off-by: Sven Eckelmann <sven.eckelmann@open-mesh.com>
 Signed-off-by: Marek Lindner <mareklindner@neomailbox.ch>
+[sven@narfation.org: fix conflicts with current version]
+Signed-off-by: Sven Eckelmann <sven@narfation.org>
 Signed-off-by: Antonio Quartulli <a@unstable.cc>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/batman-adv/bat_iv_ogm.c |    5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ net/batman-adv/originator.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/net/batman-adv/bat_iv_ogm.c
-+++ b/net/batman-adv/bat_iv_ogm.c
-@@ -1140,9 +1140,10 @@ static int batadv_iv_ogm_calc_tq(struct
- 	u8 total_count;
- 	u8 orig_eq_count, neigh_rq_count, neigh_rq_inv, tq_own;
- 	unsigned int neigh_rq_inv_cube, neigh_rq_max_cube;
--	int tq_asym_penalty, inv_asym_penalty, if_num, ret = 0;
-+	int if_num, ret = 0;
-+	unsigned int tq_asym_penalty, inv_asym_penalty;
- 	unsigned int combined_tq;
--	int tq_iface_penalty;
-+	unsigned int tq_iface_penalty;
+--- a/net/batman-adv/originator.c
++++ b/net/batman-adv/originator.c
+@@ -483,6 +483,7 @@ batadv_neigh_node_new(struct batadv_orig
+ 	ether_addr_copy(neigh_node->addr, neigh_addr);
+ 	neigh_node->if_incoming = hard_iface;
+ 	neigh_node->orig_node = orig_node;
++	neigh_node->last_seen = jiffies;
  
- 	/* find corresponding one hop neighbor */
- 	rcu_read_lock();
+ 	/* extra reference for return */
+ 	atomic_set(&neigh_node->refcount, 2);
 
 
