@@ -2,90 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2170218C03A
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 20:24:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8240518C040
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 20:27:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727389AbgCSTYj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 15:24:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58478 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726934AbgCSTYj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 15:24:39 -0400
-Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1727505AbgCST1F (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 15:27:05 -0400
+Received: from us-smtp-delivery-74.mimecast.com ([63.128.21.74]:53023 "EHLO
+        us-smtp-delivery-74.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726785AbgCST1F (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 15:27:05 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1584646024;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=kFMdMW6Y0NTb1UiLeQfhS+IknCZrq0Eca3UovxCSJQw=;
+        b=Kvsm+3YhC/fyED7oLSVQm5zODj1FAry9rUdHjqhZf5rCOb/1NNJz92Of2pEG+m1yQszDyL
+        2RPDvpRRm/e494h5GWwcsJ3tZWId45FabjMMbaM5+P3D9mRdQdsVaV6eBMVu0qixc77Brh
+        1lNg18kWNwThl3vCEXe1sFa/Uc2qChU=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-342-iUNoR811N_G_WbmuXuK0bA-1; Thu, 19 Mar 2020 15:27:02 -0400
+X-MC-Unique: iUNoR811N_G_WbmuXuK0bA-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BFD2F2071C;
-        Thu, 19 Mar 2020 19:24:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584645878;
-        bh=SJujlLmB/lbY0zgYGhGySbvMnPH8M7hlt4e2GXxIfrQ=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=WahN7/eXtVpfpX70fTnJ/dzOUcszGu3v1Gp9rDj68JoimKkleJz5cY5MeMD0KEdma
-         t/Aj1e+pQygT+MU+OiVCLdDz10ntodUpyt9cuJFo0XGp8hm8rxNOKuIUD+xJiiN5ed
-         aMHAWS6VgolfAGD8E+eAXJdBJzLBI5+7X2cHr6kw=
-Message-ID: <7c10010c3d7745857ee1fba8eb06e7fe047eaa13.camel@kernel.org>
-Subject: Re: [locks] 6d390e4b5d: will-it-scale.per_process_ops -96.6%
- regression
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     NeilBrown <neilb@suse.de>, yangerkun <yangerkun@huawei.com>,
-        kernel test robot <rong.a.chen@intel.com>,
-        LKML <linux-kernel@vger.kernel.org>, lkp@lists.01.org,
-        Bruce Fields <bfields@fieldses.org>,
-        Al Viro <viro@zeniv.linux.org.uk>
-Date:   Thu, 19 Mar 2020 15:24:36 -0400
-In-Reply-To: <CAHk-=wj=UEVBObnZNtSnvX_9afJ3XHBSuXACPbriCBkCUGTHmA@mail.gmail.com>
-References: <20200308140314.GQ5972@shao2-debian>
-         <1bfba96b4bf0d3ca9a18a2bced3ef3a2a7b44dad.camel@kernel.org>
-         <87blp5urwq.fsf@notabene.neil.brown.name>
-         <41c83d34ae4c166f48e7969b2b71e43a0f69028d.camel@kernel.org>
-         <ed73fb5d-ddd5-fefd-67ae-2d786e68544a@huawei.com>
-         <923487db2c9396c79f8e8dd4f846b2b1762635c8.camel@kernel.org>
-         <36c58a6d07b67aac751fca27a4938dc1759d9267.camel@kernel.org>
-         <878sk7vs8q.fsf@notabene.neil.brown.name>
-         <c4ef31a663fbf7a3de349696e9f00f2f5c4ec89a.camel@kernel.org>
-         <875zfbvrbm.fsf@notabene.neil.brown.name>
-         <CAHk-=wg8N4fDRC3M21QJokoU+TQrdnv7HqoaFW-Z-ZT8z_Bi7Q@mail.gmail.com>
-         <0066a9f150a55c13fcc750f6e657deae4ebdef97.camel@kernel.org>
-         <CAHk-=whUgeZGcs5YAfZa07BYKNDCNO=xr4wT6JLATJTpX0bjGg@mail.gmail.com>
-         <87v9nattul.fsf@notabene.neil.brown.name>
-         <CAHk-=wiNoAk8v3GrbK3=q6KRBrhLrTafTmWmAo6-up6Ce9fp6A@mail.gmail.com>
-         <87o8t2tc9s.fsf@notabene.neil.brown.name>
-         <CAHk-=wj5jOYxjZSUNu_jdJ0zafRS66wcD-4H0vpQS=a14rS8jw@mail.gmail.com>
-         <f000e352d9e103b3ade3506aac225920420d2323.camel@kernel.org>
-         <877dznu0pk.fsf@notabene.neil.brown.name>
-         <CAHk-=whYQqtW6B7oPmPr9-PXwyqUneF4sSFE+o3=7QcENstE-g@mail.gmail.com>
-         <b5a1bb4c4494a370f915af479bcdf8b3b351eb6d.camel@kernel.org>
-         <87pndcsxc6.fsf@notabene.neil.brown.name>
-         <ce48ed9e48eda3c0f27d2f417314bd00cb1a68db.camel@kernel.org>
-         <CAHk-=whnqDS0NJtAaArVeYQz3hcU=4Ja3auB1Jvs42eADfUgMQ@mail.gmail.com>
-         <5d7b448858d5a5c01e97aceb45dcadff24d6fc28.camel@kernel.org>
-         <CAHk-=wj=UEVBObnZNtSnvX_9afJ3XHBSuXACPbriCBkCUGTHmA@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.34.4 (3.34.4-1.fc31) 
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id E2DEF1005514;
+        Thu, 19 Mar 2020 19:27:00 +0000 (UTC)
+Received: from krava (unknown [10.40.194.180])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 2D7355D9CA;
+        Thu, 19 Mar 2020 19:26:57 +0000 (UTC)
+Date:   Thu, 19 Mar 2020 20:26:53 +0100
+From:   Jiri Olsa <jolsa@redhat.com>
+To:     Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc:     Jiri Olsa <jolsa@kernel.org>, lkml <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Michael Petlan <mpetlan@redhat.com>
+Subject: Re: [PATCH] perf tools: Unify a bit the build directory output
+Message-ID: <20200319192653.GA1200613@krava>
+References: <20200318204522.1200981-1-jolsa@kernel.org>
+ <20200319182514.GC14841@kernel.org>
+ <20200319185750.GE14841@kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200319185750.GE14841@kernel.org>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2020-03-19 at 12:23 -0700, Linus Torvalds wrote:
-> On Thu, Mar 19, 2020 at 10:52 AM Jeff Layton <jlayton@kernel.org> wrote:
-> > Yangerkun gave me his Reviewed-by and I sent you the most recent version
-> > of the patch yesterday (cc'ing the relevant mailing lists). I left you
-> > as author as the original patch was yours.
+On Thu, Mar 19, 2020 at 03:57:50PM -0300, Arnaldo Carvalho de Melo wrote:
+> Em Thu, Mar 19, 2020 at 03:25:14PM -0300, Arnaldo Carvalho de Melo escreveu:
+> > Em Wed, Mar 18, 2020 at 09:45:22PM +0100, Jiri Olsa escreveu:
+> > > Removing the extra 'SUBDIR' line from clean and doc build
+> > > output. Because it's annoying.. ;-)
+> > > 
+> > > Before:
+> > >   $ make clean
+> > >   ...
+> > >   SUBDIR   Documentation
+> > >   CLEAN    Documentation
+> > > 
+> > > After:
+> > >   $ make clean
+> > >   ...
+> > >   CLEAN    Documentation
 > > 
-> > Let me know if you'd prefer I send a pull request instead.
+> > Thanks, applied to perf/core.
 > 
-> Is that patch the only thing you have pending?
+> Hey, since you're annoyed, how about sending a patch to ditch this one:
 > 
-> If you have other things, send me a pull request, otherwise just let
-> me know and I'll apply the patch directly.
+> make[3]: Nothing to be done for '/tmp/build/perf/plugins/libtraceevent-dynamic-list'.
+> 
+> ? ;-)
 
-That's it for now.
+I'll add it to my 'when annoyed todo list' .. which is getting
+more and more attention in this lock down time ;-)
 
-Thanks,
--- 
-Jeff Layton <jlayton@kernel.org>
+jirka
 
