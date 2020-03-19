@@ -2,173 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E0AFD18BDFA
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 18:27:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6006318BDFF
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 18:27:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728364AbgCSR1O (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 13:27:14 -0400
-Received: from mail-io1-f71.google.com ([209.85.166.71]:39117 "EHLO
-        mail-io1-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726934AbgCSR1N (ORCPT
+        id S1728550AbgCSR1p (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 13:27:45 -0400
+Received: from us-smtp-delivery-74.mimecast.com ([63.128.21.74]:56327 "EHLO
+        us-smtp-delivery-74.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728269AbgCSR1o (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 13:27:13 -0400
-Received: by mail-io1-f71.google.com with SMTP id v13so22436iox.6
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Mar 2020 10:27:11 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=kZsDp4x4c6PvNfWtdDThiADDEhsyb7AvXm9IBnKdaVo=;
-        b=ArMDf2O+w/76YJ4EBP425kA/+VPQ/wCrqxZGpeRWhUSuQazYPy7yZ72JZO0/PkGfrV
-         3Kwwd9O/fuOj2NVruZsUSQztyrV/7uhe7G1mc9M5XPJNujU8vmVOupQRmbzee27q91tp
-         gMdS/GRxyoWcQ7RFhzZo3PIVXwPY+bXyRCONkrON+GTHUU6ZvDa1zftHbwxwqLpsCcGO
-         +5BSLPkDmbJQH4WXs4hjzNHjRqvIZU8cL5ZUERm1HDMP9DSkGXMZW4UlNpDNZPeV8Qr1
-         YCCjeT6o2mSrrzLRN/GEyGxYA6YNkpZqJVTvDl8qil+rczivCQtbE4r2Gnnq+5O/AXCK
-         RStw==
-X-Gm-Message-State: ANhLgQ1fVOCe02XyQejMSxB0+2thTBMLlOMu1acmRyUdYDgGvowxD3Xc
-        iA/GV2oAbU0XfHOA6ntdV4WAZwD3LrvKnG++ljvvpxWp1Ee+
-X-Google-Smtp-Source: ADFU+vsR0izIiTdX6Py/Gn5z7ouRhf0Dz2jtP3lTPqEmsnzFGfZClCTFOyXDb/kLPBmwyJjAGbOi3tbJWcmoJ45YJCJs2VRlU3g+
+        Thu, 19 Mar 2020 13:27:44 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1584638864;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=nLOauL8M9FVaEJHiI8vrCSN5L9Q/vL8MaYK0pNPq4Zs=;
+        b=Ejd+tsKoJc9OjJaj+kI/D/9WpQbQ/meFzFafI22/nH6DEy4yaV9RQek6VOEDJH7doiikhd
+        PZisdEGKpjr8st0YBpDd7wxXDuSSNm+IodxRV8EXEgZh1+Mce3vPNx5PaunMbQvBLSOWt1
+        gY6dY2I2s1c7lM7uEn0vcehX8B/vVKA=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-250-Ykp0k2vZNi68gU2utY-ppQ-1; Thu, 19 Mar 2020 13:27:40 -0400
+X-MC-Unique: Ykp0k2vZNi68gU2utY-ppQ-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 7DED41857BE0;
+        Thu, 19 Mar 2020 17:27:38 +0000 (UTC)
+Received: from gondolin (ovpn-113-188.ams2.redhat.com [10.36.113.188])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 0F5D760BF1;
+        Thu, 19 Mar 2020 17:27:33 +0000 (UTC)
+Date:   Thu, 19 Mar 2020 18:27:30 +0100
+From:   Cornelia Huck <cohuck@redhat.com>
+To:     Alex Williamson <alex.williamson@redhat.com>
+Cc:     kvm@vger.kernel.org, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org, dev@dpdk.org, mtosatti@redhat.com,
+        thomas@monjalon.net, bluca@debian.org, jerinjacobk@gmail.com,
+        bruce.richardson@intel.com, kevin.tian@intel.com
+Subject: Re: [PATCH v3 3/7] vfio/pci: Introduce VF token
+Message-ID: <20200319182730.16f4c476.cohuck@redhat.com>
+In-Reply-To: <158396393244.5601.10297430724964025753.stgit@gimli.home>
+References: <158396044753.5601.14804870681174789709.stgit@gimli.home>
+        <158396393244.5601.10297430724964025753.stgit@gimli.home>
+Organization: Red Hat GmbH
 MIME-Version: 1.0
-X-Received: by 2002:a92:91d0:: with SMTP id e77mr4266826ill.225.1584638831308;
- Thu, 19 Mar 2020 10:27:11 -0700 (PDT)
-Date:   Thu, 19 Mar 2020 10:27:11 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000a3346f05a1387a04@google.com>
-Subject: INFO: trying to register non-static key in prepare_to_wait_event
-From:   syzbot <syzbot+08c9aea900cea24d398d@syzkaller.appspotmail.com>
-To:     benjamin.tissoires@redhat.com, dh.herrmann@googlemail.com,
-        jikos@kernel.org, jkorsnes@cisco.com, jkosina@suse.cz,
-        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On Wed, 11 Mar 2020 15:58:52 -0600
+Alex Williamson <alex.williamson@redhat.com> wrote:
 
-syzbot found the following crash on:
+> If we enable SR-IOV on a vfio-pci owned PF, the resulting VFs are not
+> fully isolated from the PF.  The PF can always cause a denial of service
+> to the VF, even if by simply resetting itself.  The degree to which a PF
+> can access the data passed through a VF or interfere with its operation
+> is dependent on a given SR-IOV implementation.  Therefore we want to
+> avoid a scenario where an existing vfio-pci based userspace driver might
+> assume the PF driver is trusted, for example assigning a PF to one VM
+> and VF to another with some expectation of isolation.  IOMMU grouping
+> could be a solution to this, but imposes an unnecessarily strong
+> relationship between PF and VF drivers if they need to operate with the
+> same IOMMU context.  Instead we introduce a "VF token", which is
+> essentially just a shared secret between PF and VF drivers, implemented
+> as a UUID.
+> 
+> The VF token can be set by a vfio-pci based PF driver and must be known
+> by the vfio-pci based VF driver in order to gain access to the device.
+> This allows the degree to which this VF token is considered secret to be
+> determined by the applications and environment.  For example a VM might
+> generate a random UUID known only internally to the hypervisor while a
+> userspace networking appliance might use a shared, or even well know,
+> UUID among the application drivers.
+> 
+> To incorporate this VF token, the VFIO_GROUP_GET_DEVICE_FD interface is
+> extended to accept key=value pairs in addition to the device name.  This
+> allows us to most easily deny user access to the device without risk
+> that existing userspace drivers assume region offsets, IRQs, and other
+> device features, leading to more elaborate error paths.  The format of
+> these options are expected to take the form:
+> 
+> "$DEVICE_NAME $OPTION1=$VALUE1 $OPTION2=$VALUE2"
+> 
+> Where the device name is always provided first for compatibility and
+> additional options are specified in a space separated list.  The
+> relation between and requirements for the additional options will be
+> vfio bus driver dependent, however unknown or unused option within this
+> schema should return error.  This allow for future use of unknown
+> options as well as a positive indication to the user that an option is
+> used.
+> 
+> An example VF token option would take this form:
+> 
+> "0000:03:00.0 vf_token=2ab74924-c335-45f4-9b16-8569e5b08258"
+> 
+> When accessing a VF where the PF is making use of vfio-pci, the user
+> MUST provide the current vf_token.  When accessing a PF, the user MUST
+> provide the current vf_token IF there are active VF users or MAY provide
+> a vf_token in order to set the current VF token when no VF users are
+> active.  The former requirement assures VF users that an unassociated
+> driver cannot usurp the PF device.  These semantics also imply that a
+> VF token MUST be set by a PF driver before VF drivers can access their
+> device, the default token is random and mechanisms to read the token are
+> not provided in order to protect the VF token of previous users.  Use of
+> the vf_token option outside of these cases will return an error, as
+> discussed above.
+> 
+> Signed-off-by: Alex Williamson <alex.williamson@redhat.com>
+> ---
+>  drivers/vfio/pci/vfio_pci.c         |  198 +++++++++++++++++++++++++++++++++++
+>  drivers/vfio/pci/vfio_pci_private.h |    8 +
+>  2 files changed, 205 insertions(+), 1 deletion(-)
 
-HEAD commit:    5076190d mm: slub: be more careful about the double cmpxch..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=178ca61de00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=9f894bd92023de02
-dashboard link: https://syzkaller.appspot.com/bug?extid=08c9aea900cea24d398d
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=131fbfc3e00000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1186cbe3e00000
+Reviewed-by: Cornelia Huck <cohuck@redhat.com>
 
-The bug was bisected to:
-
-commit 84a4062632462c4320704fcdf8e99e89e94c0aba
-Author: Johan Korsnes <jkorsnes@cisco.com>
-Date:   Fri Jan 17 12:08:36 2020 +0000
-
-    HID: core: increase HID report buffer size to 8KiB
-
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=13aecbe3e00000
-final crash:    https://syzkaller.appspot.com/x/report.txt?x=106ecbe3e00000
-console output: https://syzkaller.appspot.com/x/log.txt?x=17aecbe3e00000
-
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+08c9aea900cea24d398d@syzkaller.appspotmail.com
-Fixes: 84a406263246 ("HID: core: increase HID report buffer size to 8KiB")
-
-INFO: trying to register non-static key.
-the code is fine but needs lockdep annotation.
-turning off the locking correctness validator.
-CPU: 0 PID: 9392 Comm: syz-executor302 Not tainted 5.6.0-rc6-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Call Trace:
- __dump_stack lib/dump_stack.c:77 [inline]
- dump_stack+0x188/0x20d lib/dump_stack.c:118
- assign_lock_key kernel/locking/lockdep.c:880 [inline]
- register_lock_class+0x14c4/0x1540 kernel/locking/lockdep.c:1189
- __lock_acquire+0xfc/0x3ca0 kernel/locking/lockdep.c:3836
- lock_acquire+0x197/0x420 kernel/locking/lockdep.c:4484
- __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
- _raw_spin_lock_irqsave+0x8c/0xbf kernel/locking/spinlock.c:159
- prepare_to_wait_event+0x5b/0x650 kernel/sched/wait.c:280
- uhid_char_read+0x31b/0x6c0 drivers/hid/uhid.c:669
- do_loop_readv_writev fs/read_write.c:714 [inline]
- do_loop_readv_writev fs/read_write.c:701 [inline]
- do_iter_read+0x47f/0x650 fs/read_write.c:935
- vfs_readv+0xf0/0x160 fs/read_write.c:1053
- do_readv+0x279/0x2f0 fs/read_write.c:1090
- do_syscall_64+0xf6/0x7d0 arch/x86/entry/common.c:294
- entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x4458d9
-Code: e8 bc b7 02 00 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 2b 12 fc ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007f0082936da8 EFLAGS: 00000246 ORIG_RAX: 0000000000000013
-RAX: ffffffffffffffda RBX: 00000000006dac28 RCX: 00000000004458d9
-RDX: 0000000000000002 RSI: 0000000020001680 RDI: 0000000000000003
-RBP: 00000000006dac20 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00000000006dac2c
-R13: 0000000020000b40 R14: 00000000004adda8 R15: 20c49ba5e353f7cf
-list_del corruption. prev->next should be ffffc90002197bc0, but was 0000000000000000
-------------[ cut here ]------------
-kernel BUG at lib/list_debug.c:51!
-invalid opcode: 0000 [#1] PREEMPT SMP KASAN
-CPU: 0 PID: 9392 Comm: syz-executor302 Not tainted 5.6.0-rc6-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-RIP: 0010:__list_del_entry_valid.cold+0xf/0x55 lib/list_debug.c:51
-Code: e8 44 93 c9 fd 0f 0b 48 89 f1 48 c7 c7 c0 e6 51 88 4c 89 e6 e8 30 93 c9 fd 0f 0b 48 89 ee 48 c7 c7 60 e8 51 88 e8 1f 93 c9 fd <0f> 0b 4c 89 ea 48 89 ee 48 c7 c7 a0 e7 51 88 e8 0b 93 c9 fd 0f 0b
-RSP: 0018:ffffc90002197a60 EFLAGS: 00010082
-RAX: 0000000000000054 RBX: ffffc90002197ba8 RCX: 0000000000000000
-RDX: 0000000000000000 RSI: ffffffff815c06c1 RDI: fffff52000432f3e
-RBP: ffffc90002197bc0 R08: 0000000000000054 R09: ffffed1015cc45c9
-R10: ffffed1015cc45c8 R11: ffff8880ae622e43 R12: ffff88808d4e11f8
-R13: ffff88808d4e11f8 R14: 0000000000000286 R15: ffffc90002197bc0
-FS:  00007f0082937700(0000) GS:ffff8880ae600000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fc99cd1c000 CR3: 000000009f435000 CR4: 00000000001406f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- __list_del_entry include/linux/list.h:132 [inline]
- list_del_init include/linux/list.h:204 [inline]
- prepare_to_wait_event+0x19c/0x650 kernel/sched/wait.c:294
- uhid_char_read+0x31b/0x6c0 drivers/hid/uhid.c:669
- do_loop_readv_writev fs/read_write.c:714 [inline]
- do_loop_readv_writev fs/read_write.c:701 [inline]
- do_iter_read+0x47f/0x650 fs/read_write.c:935
- vfs_readv+0xf0/0x160 fs/read_write.c:1053
- do_readv+0x279/0x2f0 fs/read_write.c:1090
- do_syscall_64+0xf6/0x7d0 arch/x86/entry/common.c:294
- entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x4458d9
-Code: e8 bc b7 02 00 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 2b 12 fc ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007f0082936da8 EFLAGS: 00000246 ORIG_RAX: 0000000000000013
-RAX: ffffffffffffffda RBX: 00000000006dac28 RCX: 00000000004458d9
-RDX: 0000000000000002 RSI: 0000000020001680 RDI: 0000000000000003
-RBP: 00000000006dac20 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00000000006dac2c
-R13: 0000000020000b40 R14: 00000000004adda8 R15: 20c49ba5e353f7cf
-Modules linked in:
----[ end trace d2f12cae324b95c6 ]---
-RIP: 0010:__list_del_entry_valid.cold+0xf/0x55 lib/list_debug.c:51
-Code: e8 44 93 c9 fd 0f 0b 48 89 f1 48 c7 c7 c0 e6 51 88 4c 89 e6 e8 30 93 c9 fd 0f 0b 48 89 ee 48 c7 c7 60 e8 51 88 e8 1f 93 c9 fd <0f> 0b 4c 89 ea 48 89 ee 48 c7 c7 a0 e7 51 88 e8 0b 93 c9 fd 0f 0b
-RSP: 0018:ffffc90002197a60 EFLAGS: 00010082
-RAX: 0000000000000054 RBX: ffffc90002197ba8 RCX: 0000000000000000
-RDX: 0000000000000000 RSI: ffffffff815c06c1 RDI: fffff52000432f3e
-RBP: ffffc90002197bc0 R08: 0000000000000054 R09: ffffed1015cc45c9
-R10: ffffed1015cc45c8 R11: ffff8880ae622e43 R12: ffff88808d4e11f8
-R13: ffff88808d4e11f8 R14: 0000000000000286 R15: ffffc90002197bc0
-FS:  00007f0082937700(0000) GS:ffff8880ae600000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fc99cd1c000 CR3: 000000009f435000 CR4: 00000000001406f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-
-
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
-syzbot can test patches for this bug, for details see:
-https://goo.gl/tpsmEJ#testing-patches
