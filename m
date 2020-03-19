@@ -2,132 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C1AB518AF57
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 10:15:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5BE4518AEFA
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 10:14:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727720AbgCSJPo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 05:15:44 -0400
-Received: from 8bytes.org ([81.169.241.247]:53168 "EHLO theia.8bytes.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727523AbgCSJOs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 05:14:48 -0400
-Received: by theia.8bytes.org (Postfix, from userid 1000)
-        id BE8C5EE0; Thu, 19 Mar 2020 10:14:28 +0100 (CET)
-From:   Joerg Roedel <joro@8bytes.org>
-To:     x86@kernel.org
-Cc:     hpa@zytor.com, Andy Lutomirski <luto@kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Hellstrom <thellstrom@vmware.com>,
-        Jiri Slaby <jslaby@suse.cz>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Juergen Gross <jgross@suse.com>,
-        Kees Cook <keescook@chromium.org>,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        virtualization@lists.linux-foundation.org,
-        Joerg Roedel <joro@8bytes.org>, Joerg Roedel <jroedel@suse.de>
-Subject: [PATCH 67/70] x86/head/64: Rename start_cpu0
-Date:   Thu, 19 Mar 2020 10:14:04 +0100
-Message-Id: <20200319091407.1481-68-joro@8bytes.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200319091407.1481-1-joro@8bytes.org>
-References: <20200319091407.1481-1-joro@8bytes.org>
+        id S1726987AbgCSJOJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 05:14:09 -0400
+Received: from poy.remlab.net ([94.23.215.26]:55514 "EHLO
+        ns207790.ip-94-23-215.eu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726901AbgCSJOI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 05:14:08 -0400
+Received: from basile.remlab.net (ip6-localhost [IPv6:::1])
+        by ns207790.ip-94-23-215.eu (Postfix) with ESMTP id 437B75FB07;
+        Thu, 19 Mar 2020 10:14:07 +0100 (CET)
+From:   =?UTF-8?q?R=C3=A9mi=20Denis-Courmont?= <remi@remlab.net>
+To:     catalin.marinas@arm.com, will@kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Cc:     mark.rutland@arm.com, james.morse@arm.com,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 1/3] arm64: clean up trampoline vector loads
+Date:   Thu, 19 Mar 2020 11:14:05 +0200
+Message-Id: <20200319091407.51449-1-remi@remlab.net>
+X-Mailer: git-send-email 2.26.0.rc2
+In-Reply-To: <1938400.7m7sAWtiY1@basile.remlab.net>
+References: <1938400.7m7sAWtiY1@basile.remlab.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Joerg Roedel <jroedel@suse.de>
+From: Rémi Denis-Courmont <remi.denis.courmont@huawei.com>
 
-For SEV-ES this entry point will be used for restarting APs after they
-have been offlined. Remove the '0' from the name to reflect that.
+This switches from custom instruction patterns to the regular large
+memory model sequence with ADRP and LDR. In doing so, the ADD
+instruction can be eliminated in the SDEI handler, and the code no
+longer assumes that the trampoline vectors and the vectors address both
+start on a page boundary.
 
-Signed-off-by: Joerg Roedel <jroedel@suse.de>
+Signed-off-by: Rémi Denis-Courmont <remi.denis.courmont@huawei.com>
 ---
- arch/x86/include/asm/cpu.h | 2 +-
- arch/x86/kernel/head_32.S  | 4 ++--
- arch/x86/kernel/head_64.S  | 6 +++---
- arch/x86/kernel/smpboot.c  | 4 ++--
- 4 files changed, 8 insertions(+), 8 deletions(-)
+ arch/arm64/kernel/entry.S | 9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
 
-diff --git a/arch/x86/include/asm/cpu.h b/arch/x86/include/asm/cpu.h
-index adc6cc86b062..00668daf8991 100644
---- a/arch/x86/include/asm/cpu.h
-+++ b/arch/x86/include/asm/cpu.h
-@@ -29,7 +29,7 @@ struct x86_cpu {
- #ifdef CONFIG_HOTPLUG_CPU
- extern int arch_register_cpu(int num);
- extern void arch_unregister_cpu(int);
--extern void start_cpu0(void);
-+extern void start_cpu(void);
- #ifdef CONFIG_DEBUG_HOTPLUG_CPU0
- extern int _debug_hotplug_cpu(int cpu, int action);
+diff --git a/arch/arm64/kernel/entry.S b/arch/arm64/kernel/entry.S
+index e5d4e30ee242..24f828739696 100644
+--- a/arch/arm64/kernel/entry.S
++++ b/arch/arm64/kernel/entry.S
+@@ -805,9 +805,9 @@ alternative_else_nop_endif
+ 2:
+ 	tramp_map_kernel	x30
+ #ifdef CONFIG_RANDOMIZE_BASE
+-	adr	x30, tramp_vectors + PAGE_SIZE
++	adrp	x30, tramp_vectors + PAGE_SIZE
+ alternative_insn isb, nop, ARM64_WORKAROUND_QCOM_FALKOR_E1003
+-	ldr	x30, [x30]
++	ldr	x30, [x30, #:lo12:__entry_tramp_data_start]
+ #else
+ 	ldr	x30, =vectors
  #endif
-diff --git a/arch/x86/kernel/head_32.S b/arch/x86/kernel/head_32.S
-index 3923ab4630d7..1a280152bd10 100644
---- a/arch/x86/kernel/head_32.S
-+++ b/arch/x86/kernel/head_32.S
-@@ -180,12 +180,12 @@ SYM_CODE_END(startup_32)
-  * up already except stack. We just set up stack here. Then call
-  * start_secondary().
-  */
--SYM_FUNC_START(start_cpu0)
-+SYM_FUNC_START(start_cpu)
- 	movl initial_stack, %ecx
- 	movl %ecx, %esp
- 	call *(initial_code)
- 1:	jmp 1b
--SYM_FUNC_END(start_cpu0)
-+SYM_FUNC_END(start_cpu)
+@@ -953,9 +953,8 @@ SYM_CODE_START(__sdei_asm_entry_trampoline)
+ 1:	str	x4, [x1, #(SDEI_EVENT_INTREGS + S_ORIG_ADDR_LIMIT)]
+ 
+ #ifdef CONFIG_RANDOMIZE_BASE
+-	adr	x4, tramp_vectors + PAGE_SIZE
+-	add	x4, x4, #:lo12:__sdei_asm_trampoline_next_handler
+-	ldr	x4, [x4]
++	adrp	x4, tramp_vectors + PAGE_SIZE
++	ldr	x4, [x4, #:lo12:__sdei_asm_trampoline_next_handler]
+ #else
+ 	ldr	x4, =__sdei_asm_handler
  #endif
- 
- /*
-diff --git a/arch/x86/kernel/head_64.S b/arch/x86/kernel/head_64.S
-index c935d6d07393..f2e793213fa7 100644
---- a/arch/x86/kernel/head_64.S
-+++ b/arch/x86/kernel/head_64.S
-@@ -299,15 +299,15 @@ SYM_CODE_END(secondary_startup_64)
- 
- #ifdef CONFIG_HOTPLUG_CPU
- /*
-- * Boot CPU0 entry point. It's called from play_dead(). Everything has been set
-+ * CPU entry point. It's called from play_dead(). Everything has been set
-  * up already except stack. We just set up stack here. Then call
-  * start_secondary() via .Ljump_to_C_code.
-  */
--SYM_CODE_START(start_cpu0)
-+SYM_CODE_START(start_cpu)
- 	UNWIND_HINT_EMPTY
- 	movq	initial_stack(%rip), %rsp
- 	jmp	.Ljump_to_C_code
--SYM_CODE_END(start_cpu0)
-+SYM_CODE_END(start_cpu)
- #endif
- 
- 	/* Both SMP bootup and ACPI suspend change these variables */
-diff --git a/arch/x86/kernel/smpboot.c b/arch/x86/kernel/smpboot.c
-index 69881b2d446c..19aa18f1e307 100644
---- a/arch/x86/kernel/smpboot.c
-+++ b/arch/x86/kernel/smpboot.c
-@@ -1717,7 +1717,7 @@ static inline void mwait_play_dead(void)
- 		 * If NMI wants to wake up CPU0, start CPU0.
- 		 */
- 		if (wakeup_cpu0())
--			start_cpu0();
-+			start_cpu();
- 	}
- }
- 
-@@ -1732,7 +1732,7 @@ void hlt_play_dead(void)
- 		 * If NMI wants to wake up CPU0, start CPU0.
- 		 */
- 		if (wakeup_cpu0())
--			start_cpu0();
-+			start_cpu();
- 	}
- }
- 
 -- 
-2.17.1
+2.26.0.rc2
 
