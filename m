@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 85FAC18B474
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:10:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7078318B408
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:06:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728440AbgCSNJ7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 09:09:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54578 "EHLO mail.kernel.org"
+        id S1727606AbgCSNGM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 09:06:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49240 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728424AbgCSNJ6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 09:09:58 -0400
+        id S1727563AbgCSNGK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 09:06:10 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2340E208D6;
-        Thu, 19 Mar 2020 13:09:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6CCCD20732;
+        Thu, 19 Mar 2020 13:06:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584623397;
-        bh=tIDuFIuCHpKAC0CNL2sqNH/zangInW0CyT/NEaHTTQY=;
+        s=default; t=1584623168;
+        bh=TR6pipZLEliX57JMcvym6sJGsYd66ngAeILcBPDXjC8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZkIOsiknAI4Ducfk+xaNgipLArCFaapH2kKvGk29EU+rmh5czJWcqTRQW+JleK21z
-         35Z531HWUqoHJs0hhlH0JuFg2lvpbP5/Fmpf5YdrB66yE7+ZISu1EEVduMthzjpVjv
-         hP2Dwj0tBRlgtOAZCg9OZ+PuK4QNjmgN73JlPWmY=
+        b=wN8tgut1CMLPIqtnp4zOdTwAktaDGfPzCSUFjFKh3R/FrUrOn15x3gS9IsJyuVHtv
+         Iq1Xhq/3ACPpT2e/5vXYvB8GH/sckJCq/eK+kdK325hHPvI2pZe4qIVAa9SGcQezwb
+         goo122quwHIu/35l5UdhR3GmghPioQgUwJ5en/n8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Jakub Kicinski <kuba@kernel.org>,
-        Stefan Schmidt <stefan@datenfreihafen.org>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 13/90] nl802154: add missing attribute validation for dev_type
+        Johannes Berg <johannes.berg@intel.com>
+Subject: [PATCH 4.4 31/93] nl80211: add missing attribute validation for channel switch
 Date:   Thu, 19 Mar 2020 13:59:35 +0100
-Message-Id: <20200319123932.815020180@linuxfoundation.org>
+Message-Id: <20200319123934.915512433@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.2
-In-Reply-To: <20200319123928.635114118@linuxfoundation.org>
-References: <20200319123928.635114118@linuxfoundation.org>
+In-Reply-To: <20200319123924.795019515@linuxfoundation.org>
+References: <20200319123924.795019515@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,29 +45,30 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Jakub Kicinski <kuba@kernel.org>
 
-[ Upstream commit b60673c4c418bef7550d02faf53c34fbfeb366bf ]
+commit 5cde05c61cbe13cbb3fa66d52b9ae84f7975e5e6 upstream.
 
-Add missing attribute type validation for IEEE802154_ATTR_DEV_TYPE
+Add missing attribute validation for NL80211_ATTR_OPER_CLASS
 to the netlink policy.
 
-Fixes: 90c049b2c6ae ("ieee802154: interface type to be added")
+Fixes: 1057d35ede5d ("cfg80211: introduce TDLS channel switch commands")
 Signed-off-by: Jakub Kicinski <kuba@kernel.org>
-Acked-by: Stefan Schmidt <stefan@datenfreihafen.org>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Link: https://lore.kernel.org/r/20200303051058.4089398-4-kuba@kernel.org
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- net/ieee802154/nl_policy.c |    1 +
+ net/wireless/nl80211.c |    1 +
  1 file changed, 1 insertion(+)
 
---- a/net/ieee802154/nl_policy.c
-+++ b/net/ieee802154/nl_policy.c
-@@ -36,6 +36,7 @@ const struct nla_policy ieee802154_polic
- 	[IEEE802154_ATTR_BAT_EXT] = { .type = NLA_U8, },
- 	[IEEE802154_ATTR_COORD_REALIGN] = { .type = NLA_U8, },
- 	[IEEE802154_ATTR_PAGE] = { .type = NLA_U8, },
-+	[IEEE802154_ATTR_DEV_TYPE] = { .type = NLA_U8, },
- 	[IEEE802154_ATTR_COORD_SHORT_ADDR] = { .type = NLA_U16, },
- 	[IEEE802154_ATTR_COORD_HW_ADDR] = { .type = NLA_HW_ADDR, },
- 	[IEEE802154_ATTR_COORD_PAN_ID] = { .type = NLA_U16, },
+--- a/net/wireless/nl80211.c
++++ b/net/wireless/nl80211.c
+@@ -431,6 +431,7 @@ static const struct nla_policy nl80211_p
+ 	[NL80211_ATTR_USER_PRIO] = { .type = NLA_U8 },
+ 	[NL80211_ATTR_ADMITTED_TIME] = { .type = NLA_U16 },
+ 	[NL80211_ATTR_SMPS_MODE] = { .type = NLA_U8 },
++	[NL80211_ATTR_OPER_CLASS] = { .type = NLA_U8 },
+ 	[NL80211_ATTR_MAC_MASK] = { .len = ETH_ALEN },
+ 	[NL80211_ATTR_WIPHY_SELF_MANAGED_REG] = { .type = NLA_FLAG },
+ 	[NL80211_ATTR_NETNS_FD] = { .type = NLA_U32 },
 
 
