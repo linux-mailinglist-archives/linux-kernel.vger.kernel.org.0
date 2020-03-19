@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D709318B697
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:28:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5AADC18B5BF
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:21:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730606AbgCSN1O (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 09:27:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55332 "EHLO mail.kernel.org"
+        id S1730085AbgCSNVN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 09:21:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45692 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730725AbgCSN1K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 09:27:10 -0400
+        id S1729303AbgCSNVK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 09:21:10 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6FBD021835;
-        Thu, 19 Mar 2020 13:27:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 81664206D7;
+        Thu, 19 Mar 2020 13:21:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584624429;
-        bh=apxNGTTawxO88AhaRt5S23Z7rTLns5Lk95jgyvF3/SA=;
+        s=default; t=1584624070;
+        bh=o2dlzfEgwrTd0nF1WPJZlJJFh/rR8ulQ9jeTQ2xr5Js=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=NnSO92M/k1uoCXnFEJMV8TTq01OPstxiHUsyIw8ZOLKeL4WlhdIxgD1fgZZ4y2TZg
-         axWQYQwiKd8Cyj6bERX6BqmIWdOEDYwlHeSsF3P4h5Xda+4yXVONqQvlVncpQ7KYuF
-         wJMwainYXJ5yd9rU69YfzDLJTTqRwzx8o/KAKcoI=
+        b=1fUrbmggRV0pq3SN132SlC9eMaSGGA4XmAghkFTANcnK6jdug1SK+yZd/XSE2/doe
+         0HMOXdrsF3LIIJpMcckA/WGfYxIexR8UKWXk4QoTTXPPkXN7E+lGNNsg7SEb4YEdQo
+         5VQh2c4yoD2OSnkYy/Q41XxLTrXJYMOB5tW0EKAU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Esben Haabendal <esben@geanix.com>,
+        stable@vger.kernel.org, Taehee Yoo <ap420073@gmail.com>,
         "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.5 29/65] net: ll_temac: Fix race condition causing TX hang
+Subject: [PATCH 4.19 29/48] net: rmnet: fix packet forwarding in rmnet bridge mode
 Date:   Thu, 19 Mar 2020 14:04:11 +0100
-Message-Id: <20200319123935.546705776@linuxfoundation.org>
+Message-Id: <20200319123912.152840364@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.2
-In-Reply-To: <20200319123926.466988514@linuxfoundation.org>
-References: <20200319123926.466988514@linuxfoundation.org>
+In-Reply-To: <20200319123902.941451241@linuxfoundation.org>
+References: <20200319123902.941451241@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,67 +44,59 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Esben Haabendal <esben@geanix.com>
+From: Taehee Yoo <ap420073@gmail.com>
 
-[ Upstream commit 84823ff80f7403752b59e00bb198724100dc611c ]
+[ Upstream commit ad3cc31b599ea80f06b29ebdc18b3a39878a48d6 ]
 
-It is possible that the interrupt handler fires and frees up space in
-the TX ring in between checking for sufficient TX ring space and
-stopping the TX queue in temac_start_xmit. If this happens, the
-queue wake from the interrupt handler will occur before the queue is
-stopped, causing a lost wakeup and the adapter's transmit hanging.
+Packet forwarding is not working in rmnet bridge mode.
+Because when a packet is forwarded, skb_push() for an ethernet header
+is needed. But it doesn't call skb_push().
+So, the ethernet header will be lost.
 
-To avoid this, after stopping the queue, check again whether there is
-sufficient space in the TX ring. If so, wake up the queue again.
+Test commands:
+    modprobe rmnet
+    ip netns add nst
+    ip netns add nst2
+    ip link add veth0 type veth peer name veth1
+    ip link add veth2 type veth peer name veth3
+    ip link set veth1 netns nst
+    ip link set veth3 netns nst2
 
-This is a port of the similar fix in axienet driver,
-commit 7de44285c1f6 ("net: axienet: Fix race condition causing TX hang").
+    ip link add rmnet0 link veth0 type rmnet mux_id 1
+    ip link set veth2 master rmnet0
+    ip link set veth0 up
+    ip link set veth2 up
+    ip link set rmnet0 up
+    ip a a 192.168.100.1/24 dev rmnet0
 
-Fixes: 23ecc4bde21f ("net: ll_temac: fix checksum offload logic")
-Signed-off-by: Esben Haabendal <esben@geanix.com>
+    ip netns exec nst ip link set veth1 up
+    ip netns exec nst ip a a 192.168.100.2/24 dev veth1
+    ip netns exec nst2 ip link set veth3 up
+    ip netns exec nst2 ip a a 192.168.100.3/24 dev veth3
+    ip netns exec nst2 ping 192.168.100.2
+
+Fixes: 60d58f971c10 ("net: qualcomm: rmnet: Implement bridge mode")
+Signed-off-by: Taehee Yoo <ap420073@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/xilinx/ll_temac_main.c | 19 ++++++++++++++++---
- 1 file changed, 16 insertions(+), 3 deletions(-)
+ drivers/net/ethernet/qualcomm/rmnet/rmnet_handlers.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/net/ethernet/xilinx/ll_temac_main.c b/drivers/net/ethernet/xilinx/ll_temac_main.c
-index 21c1b4322ea78..fd578568b3bff 100644
---- a/drivers/net/ethernet/xilinx/ll_temac_main.c
-+++ b/drivers/net/ethernet/xilinx/ll_temac_main.c
-@@ -788,6 +788,9 @@ static void temac_start_xmit_done(struct net_device *ndev)
- 		stat = be32_to_cpu(cur_p->app0);
- 	}
- 
-+	/* Matches barrier in temac_start_xmit */
-+	smp_mb();
+diff --git a/drivers/net/ethernet/qualcomm/rmnet/rmnet_handlers.c b/drivers/net/ethernet/qualcomm/rmnet/rmnet_handlers.c
+index 5177d0f24947f..c9d43bad1e2fc 100644
+--- a/drivers/net/ethernet/qualcomm/rmnet/rmnet_handlers.c
++++ b/drivers/net/ethernet/qualcomm/rmnet/rmnet_handlers.c
+@@ -168,6 +168,9 @@ static int rmnet_map_egress_handler(struct sk_buff *skb,
+ static void
+ rmnet_bridge_handler(struct sk_buff *skb, struct net_device *bridge_dev)
+ {
++	if (skb_mac_header_was_set(skb))
++		skb_push(skb, skb->mac_len);
 +
- 	netif_wake_queue(ndev);
- }
- 
-@@ -830,9 +833,19 @@ temac_start_xmit(struct sk_buff *skb, struct net_device *ndev)
- 	cur_p = &lp->tx_bd_v[lp->tx_bd_tail];
- 
- 	if (temac_check_tx_bd_space(lp, num_frag + 1)) {
--		if (!netif_queue_stopped(ndev))
--			netif_stop_queue(ndev);
--		return NETDEV_TX_BUSY;
-+		if (netif_queue_stopped(ndev))
-+			return NETDEV_TX_BUSY;
-+
-+		netif_stop_queue(ndev);
-+
-+		/* Matches barrier in temac_start_xmit_done */
-+		smp_mb();
-+
-+		/* Space might have just been freed - check again */
-+		if (temac_check_tx_bd_space(lp, num_frag))
-+			return NETDEV_TX_BUSY;
-+
-+		netif_wake_queue(ndev);
- 	}
- 
- 	cur_p->app0 = 0;
+ 	if (bridge_dev) {
+ 		skb->dev = bridge_dev;
+ 		dev_queue_xmit(skb);
 -- 
 2.20.1
 
