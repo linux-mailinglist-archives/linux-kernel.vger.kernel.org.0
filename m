@@ -2,76 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E13DB18B0C0
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 11:01:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 794E818B0C5
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 11:02:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726967AbgCSKBe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 06:01:34 -0400
-Received: from sonic312-25.consmr.mail.ir2.yahoo.com ([77.238.178.96]:42926
-        "EHLO sonic312-25.consmr.mail.ir2.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725767AbgCSKBd (ORCPT
+        id S1727002AbgCSKB5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 06:01:57 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:60207 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726783AbgCSKB5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 06:01:33 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1584612092; bh=7bAj2aTmdt2qZuhBQReQcDKGCSJd8LlC9EcZcjUJr8M=; h=Date:From:Reply-To:Subject:References:From:Subject; b=b4DIOGzB6N3ueDrov3FYiLwLMLy9xmhUlQMzmLzkNLfjW4ZaQwFskoTUj0Eto2AtxgGQ72lWrxvnnULGrAQhTecVLIA15sdvTed6Io9MZ/QH3yzRWOzlzRo243XLh3fOI6SJxQJPBrgSJLJxNVwp+A5za0h3pEVy0ZTOzIi6+FaFNgYpHVnCJlqBWG5WTpHtVMqSB0GyayqycoWpYo/VeAcLhgpDgnL+Z/ql9idP+yVVFNLWk3RtatE9ollYKTVOfUnC9TXA9FWWHbk8QchzCS5n11vl/beDlC3+blnn0e7RcxGmilgHyJB9Sig/6bfl2rHBDCIfWMpXNFjx7HHn/w==
-X-YMail-OSG: XsKmVsAVM1m1_ndx0E9KcHxvxNm88TsqbzjBdLwhYCW3pnU_._fRzGx40mJN15b
- AGakuO5KprAeLZIPi20BarkrKva.7BiJYkJkrPNH7qGQi.nEckRsF9XdfEBDEer0A_8V3bkKeV4v
- PzABkkjI5jcoMUns8UYdf8ggJYNA021mfwHL8nWmXG0nqPNsfDkDAgH_Z0u3cXhqMDqxv28DIcMQ
- vvxRmhFEyLDK6egOJRIFcpgB8CLzGqytMizRS4aU6ujh5LVS7IhZoKpRQqQG8hmzlIhRw.VL7lzq
- ECpD4SG.qKmTsejzbY9AIR6RUp7SYCC8Q.KysRntB84lCR1MUnQ0Rr2_l1mvh6I7pbmCiOowW9jb
- FZvPaqqa5oo50LUQeaXQYZsMaRgu5NJExRkPEOHJbUTCdV5Kx7MEL4cmhJzO0f7cw5XIeZkBELXN
- trYYpSL.wrKfQyvRoN_L9ThOfGdi7sc3gY1BFBxD4jq.6DDA.ePxvWlkrO53mx.ELY7kZZXXiayr
- tw3rIWkHy1mjJw0TMe1rE16TBxZVAyPJeTMXtDsj1EiAXBiifanYfVgGI5sH58_qKFpPum390JRO
- k.LlBIrAcGQ.DOVv26dVmALLbFip7qBKtbLPKG1j6Oe4No8ewGuP._xxw3JqjPiwNDNDkn2JDhnS
- ZgpHIoD9OlooGG8bo4_dfMfdvDz9ls7dwPqROIH_8atCimsQNidH4vjbfHsXoM69Jfzdh8pLQsQY
- 9DQpSbHIZ3f19oBROR4LBmO4aFy75WD5vsI0wapb5Rl_BDdkD8uN35Y6esH4broaUqa.o9XJ6o12
- PSKBUttvsOJy3BjLHWbJdjvy8a0Q7XxClit2AkPr5AeZKi43y3HKhcOtr1tEI0Vdg.ttw1SVwvfM
- bzK1SDs6cpjVnmCV3sAdKZcxZTqErRCQrOk_2TAEYXd67ajNrtLNiPUwSUBVEFcPLSjcfyOqsr_P
- sp8bjlo1c9VCi6Qfh6mTmLhpimJQWXtHpIucar88ipHqDDgRyNI5As0O5TgE6zv_s76fERaLuYTU
- 4E3Bu1TWUtfd._kDQLTS5xiIfwPjeHZTIPlS83A1KtyJB0EdIXlLEHxRe4Zg.esoIrR.91AlV4Wo
- hew2SPbSQqGBJYubCuKQ6gv7b1b5tgeM6CNTgA3C7ncqSpX1ibjyAPS0jDvSODC2pzZlduYYLDVK
- R0B5dbZAQBi0ezvH7eJpFZ.ZknR6kisimhq79B328xnY_W4KuGAZMjqAJTYCneMoJWcHX2d56RNy
- ThZ25FjPQylzxZQKtlWRuuxqSuyP0xg5NXhrNPBu_dKGc1yV.JpvxBnn1G_81RkNWPwmEAD22UmP
- a1w--
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic312.consmr.mail.ir2.yahoo.com with HTTP; Thu, 19 Mar 2020 10:01:32 +0000
-Date:   Thu, 19 Mar 2020 10:01:30 +0000 (UTC)
-From:   Suleiman Abubaker <suleimanabubaker84612@gmail.com>
-Reply-To: suleimanabubaker@mail.com
-Message-ID: <515971425.1359819.1584612090282@mail.yahoo.com>
-Subject: Helo
+        Thu, 19 Mar 2020 06:01:57 -0400
+Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tip-bot2@linutronix.de>)
+        id 1jErzp-0004ya-QK; Thu, 19 Mar 2020 11:01:49 +0100
+Received: from [127.0.1.1] (localhost [IPv6:::1])
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 552141C229F;
+        Thu, 19 Mar 2020 11:01:49 +0100 (CET)
+Date:   Thu, 19 Mar 2020 10:01:49 -0000
+From:   "tip-bot2 for Borislav Petkov" <tip-bot2@linutronix.de>
+Reply-to: linux-kernel@vger.kernel.org
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/urgent] x86/ioremap: Fix CONFIG_EFI=n build
+Cc:     Randy Dunlap <rdunlap@infradead.org>, Borislav Petkov <bp@suse.de>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        <stable@vger.kernel.org>, x86 <x86@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+In-Reply-To: <7561e981-0d9b-d62c-0ef2-ce6007aff1ab@infradead.org>
+References: <7561e981-0d9b-d62c-0ef2-ce6007aff1ab@infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Message-ID: <158461210901.28353.10235841690300952771.tip-bot2@tip-bot2>
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot2.linutronix.de>
+Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-References: <515971425.1359819.1584612090282.ref@mail.yahoo.com>
-X-Mailer: WebService/1.1.15471 YMailNodin Mozilla/5.0 (Windows NT 6.1; rv:74.0) Gecko/20100101 Firefox/74.0
-To:     unlisted-recipients:; (no To-header on input)
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+The following commit has been merged into the x86/urgent branch of tip:
 
+Commit-ID:     870b4333a62e45b0b2000d14b301b7b8b8cad9da
+Gitweb:        https://git.kernel.org/tip/870b4333a62e45b0b2000d14b301b7b8b8cad9da
+Author:        Borislav Petkov <bp@suse.de>
+AuthorDate:    Wed, 18 Mar 2020 19:27:48 +01:00
+Committer:     Borislav Petkov <bp@suse.de>
+CommitterDate: Thu, 19 Mar 2020 10:55:56 +01:00
 
+x86/ioremap: Fix CONFIG_EFI=n build
 
+In order to use efi_mem_type(), one needs CONFIG_EFI enabled. Otherwise
+that function is undefined. Use IS_ENABLED() to check and avoid the
+ifdeffery as the compiler optimizes away the following unreachable code
+then.
 
+Fixes: 985e537a4082 ("x86/ioremap: Map EFI runtime services data as encrypted for SEV")
+Reported-by: Randy Dunlap <rdunlap@infradead.org>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Tested-by: Randy Dunlap <rdunlap@infradead.org>
+Cc: Tom Lendacky <thomas.lendacky@amd.com>
+Cc: <stable@vger.kernel.org>
+Link: https://lkml.kernel.org/r/7561e981-0d9b-d62c-0ef2-ce6007aff1ab@infradead.org
+---
+ arch/x86/mm/ioremap.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-
-Dear Friend,
-
-I am. Mr. Suleiman Abubaker, Manager Auditing and Accountancy Department,Bank of Africa in (B.O.A) Burkina Faso
-
-i am writing to seek for your highly esteemed consent/assistance in a lasting business relationship of mutual benefit involving $18. Million Usd for investment in your country, under a joint venture partnership.
-
-Thank you for accommodating my inquiry, as i look forward to hear from you on this business collaboration and meeting with you soon.
-
-
-(1)Your Full name:..........................
-(2)Your Age.................................
-(3)Occupation:.................................
-(4)Mobile phone number:.....................
-(5)Your Country..........................
-
-Waiting to hear from you.
-
-Your's truly,
-
-Mr. Suleiman Abubaker,
+diff --git a/arch/x86/mm/ioremap.c b/arch/x86/mm/ioremap.c
+index 935a91e..18c637c 100644
+--- a/arch/x86/mm/ioremap.c
++++ b/arch/x86/mm/ioremap.c
+@@ -115,6 +115,9 @@ static void __ioremap_check_other(resource_size_t addr, struct ioremap_desc *des
+ 	if (!sev_active())
+ 		return;
+ 
++	if (!IS_ENABLED(CONFIG_EFI))
++		return;
++
+ 	if (efi_mem_type(addr) == EFI_RUNTIME_SERVICES_DATA)
+ 		desc->flags |= IORES_MAP_ENCRYPTED;
+ }
