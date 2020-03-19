@@ -2,73 +2,132 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7A39118B888
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 15:03:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3E6FA18B88C
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 15:04:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727570AbgCSODX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 10:03:23 -0400
-Received: from cmccmta2.chinamobile.com ([221.176.66.80]:6630 "EHLO
-        cmccmta2.chinamobile.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727518AbgCSODX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 10:03:23 -0400
-Received: from spf.mail.chinamobile.com (unknown[172.16.121.3]) by rmmx-syy-dmz-app08-12008 (RichMail) with SMTP id 2ee85e737b7eb0f-2c830; Thu, 19 Mar 2020 22:02:38 +0800 (CST)
-X-RM-TRANSID: 2ee85e737b7eb0f-2c830
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG: 00000000
-Received: from localhost.localdomain (unknown[223.104.148.93])
-        by rmsmtp-syy-appsvr02-12002 (RichMail) with SMTP id 2ee25e737b7ca46-7189b;
-        Thu, 19 Mar 2020 22:02:38 +0800 (CST)
-X-RM-TRANSID: 2ee25e737b7ca46-7189b
-From:   Tang Bin <tangbin@cmss.chinamobile.com>
-To:     jassisinghbrar@gmail.com
-Cc:     linux-kernel@vger.kernel.org,
-        Tang Bin <tangbin@cmss.chinamobile.com>
-Subject: [PATCH] mailbox:armada-37xx-rwtm:remove duplicate print in armada_37xx_mbox_probe()
-Date:   Thu, 19 Mar 2020 22:03:47 +0800
-Message-Id: <20200319140347.19032-1-tangbin@cmss.chinamobile.com>
-X-Mailer: git-send-email 2.20.1.windows.1
+        id S1727415AbgCSOEU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 10:04:20 -0400
+Received: from mx2.suse.de ([195.135.220.15]:38060 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725787AbgCSOEU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 10:04:20 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 959CDAE63;
+        Thu, 19 Mar 2020 14:04:18 +0000 (UTC)
+Date:   Thu, 19 Mar 2020 15:04:16 +0100
+From:   Michal =?iso-8859-1?Q?Such=E1nek?= <msuchanek@suse.de>
+To:     Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc:     "open list:LINUX FOR POWERPC PA SEMI PWRFICIENT" 
+        <linuxppc-dev@lists.ozlabs.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Rob Herring <robh@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Christophe Leroy <christophe.leroy@c-s.fr>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Nayna Jain <nayna@linux.ibm.com>,
+        Eric Richter <erichte@linux.ibm.com>,
+        Claudio Carvalho <cclaudio@linux.ibm.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Hari Bathini <hbathini@linux.ibm.com>,
+        Masahiro Yamada <masahiroy@kernel.org>,
+        Thiago Jung Bauermann <bauerman@linux.ibm.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Valentin Schneider <valentin.schneider@arm.com>,
+        Jordan Niethe <jniethe5@gmail.com>,
+        Michael Neuling <mikey@neuling.org>,
+        Gustavo Luiz Duarte <gustavold@linux.ibm.com>,
+        Allison Randal <allison@lohutok.net>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "linux-fsdevel @ vger . kernel . org --in-reply-to=" 
+        <20200225173541.1549955-1-npiggin@gmail.com>
+Subject: Re: [PATCH v11 4/8] powerpc/perf: consolidate valid_user_sp
+Message-ID: <20200319140416.GK25468@kitsune.suse.cz>
+References: <cover.1584613649.git.msuchanek@suse.de>
+ <1b612025371bb9f2bcce72c700c809ae29e57392.1584613649.git.msuchanek@suse.de>
+ <CAHp75VcMkPeJ6exroipnxvf-7g-C8QbVm0bAnp=rk505_nxySw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHp75VcMkPeJ6exroipnxvf-7g-C8QbVm0bAnp=rk505_nxySw@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In this function,we don't need dev_err() message because when something
-goes wrong,platform_get_irq() and devm_platform_ioremap_resource() have
-print an error message itself, so we should remove duplicate dev_err().
+On Thu, Mar 19, 2020 at 03:35:03PM +0200, Andy Shevchenko wrote:
+> On Thu, Mar 19, 2020 at 1:54 PM Michal Suchanek <msuchanek@suse.de> wrote:
+> >
+> > Merge the 32bit and 64bit version.
+> >
+> > Halve the check constants on 32bit.
+> >
+> > Use STACK_TOP since it is defined.
+> >
+> > Passing is_64 is now redundant since is_32bit_task() is used to
+> > determine which callchain variant should be used. Use STACK_TOP and
+> > is_32bit_task() directly.
+> >
+> > This removes a page from the valid 32bit area on 64bit:
+> >  #define TASK_SIZE_USER32 (0x0000000100000000UL - (1 * PAGE_SIZE))
+> >  #define STACK_TOP_USER32 TASK_SIZE_USER32
+> 
+> ...
+> 
+> > +static inline int valid_user_sp(unsigned long sp)
+> > +{
+> > +       bool is_64 = !is_32bit_task();
+> > +
+> > +       if (!sp || (sp & (is_64 ? 7 : 3)) || sp > STACK_TOP - (is_64 ? 32 : 16))
+> > +               return 0;
+> > +       return 1;
+> > +}
+> 
+> Perhaps better to read
+> 
+>   if (!sp)
+>     return 0;
+> 
+>   if (is_32bit_task()) {
+>     if (sp & 0x03)
+>       return 0;
+>     if (sp > STACK_TOP - 16)
+>       return 0;
+>   } else {
+>     ...
+>   }
+> 
+>   return 1;
+> 
+> Other possibility:
+> 
+>   unsigned long align = is_32bit_task() ? 3 : 7;
+>   unsigned long top = STACK_TOP - (is_32bit_task() ? 16 : 32);
+> 
+>   return !(!sp || (sp & align) || sp > top);
+Sounds reasonale.
 
-Signed-off-by: Tang Bin <tangbin@cmss.chinamobile.com>
----
- drivers/mailbox/armada-37xx-rwtm-mailbox.c | 8 ++------
- 1 file changed, 2 insertions(+), 6 deletions(-)
+Thanks
 
-diff --git a/drivers/mailbox/armada-37xx-rwtm-mailbox.c b/drivers/mailbox/armada-37xx-rwtm-mailbox.c
-index 02b7b28e6..9f2ce7f03 100644
---- a/drivers/mailbox/armada-37xx-rwtm-mailbox.c
-+++ b/drivers/mailbox/armada-37xx-rwtm-mailbox.c
-@@ -156,16 +156,12 @@ static int armada_37xx_mbox_probe(struct platform_device *pdev)
- 		return -ENOMEM;
- 
- 	mbox->base = devm_platform_ioremap_resource(pdev, 0);
--	if (IS_ERR(mbox->base)) {
--		dev_err(&pdev->dev, "ioremap failed\n");
-+	if (IS_ERR(mbox->base))
- 		return PTR_ERR(mbox->base);
--	}
- 
- 	mbox->irq = platform_get_irq(pdev, 0);
--	if (mbox->irq < 0) {
--		dev_err(&pdev->dev, "Cannot get irq\n");
-+	if (mbox->irq < 0)
- 		return mbox->irq;
--	}
- 
- 	mbox->dev = &pdev->dev;
- 
--- 
-2.20.1.windows.1
-
-
-
+Michal
+> 
+> -- 
+> With Best Regards,
+> Andy Shevchenko
