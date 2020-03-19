@@ -2,107 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 83D4618B25E
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 12:33:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DC5D118B264
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 12:34:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727026AbgCSLdh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 07:33:37 -0400
-Received: from mail27.static.mailgun.info ([104.130.122.27]:37415 "EHLO
-        mail27.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726912AbgCSLdh (ORCPT
+        id S1727112AbgCSLd7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 07:33:59 -0400
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:45730 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727063AbgCSLd5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 07:33:37 -0400
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1584617616; h=Content-Transfer-Encoding: Content-Type:
- In-Reply-To: MIME-Version: Date: Message-ID: From: References: Cc: To:
- Subject: Sender; bh=NtXkDJueiiPlFXmtYg+Cti7ZiR046Y1WCJSdQ1BCU3c=; b=ulemKkSqRA0kgxTMyUaorSmaqxGj8V4lr/vzuxWh3/ymDe8eeVtZqYVnAm881nGdZ6r8uiYm
- QhpHACk+ODoL2F+cynBd8/UeeRtmnIQ8x/2VaIDg6ip1gBDarthYb87pNcRSrFEf8qIVhEmi
- vBVVUtAjm+mBgPXzU1v2bXWRk7M=
-X-Mailgun-Sending-Ip: 104.130.122.27
-X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
- by mxa.mailgun.org with ESMTP id 5e735888.7f70287633b0-smtp-out-n04;
- Thu, 19 Mar 2020 11:33:28 -0000 (UTC)
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 10774C433D2; Thu, 19 Mar 2020 11:33:28 +0000 (UTC)
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        aws-us-west-2-caf-mail-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE
-        autolearn=unavailable autolearn_force=no version=3.4.0
-Received: from [192.168.0.103] (unknown [49.207.61.30])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: rnayak)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 89C53C433CB;
-        Thu, 19 Mar 2020 11:33:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 89C53C433CB
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=rnayak@codeaurora.org
-Subject: Re: [RFC v3 00/10] DDR/L3 Scaling support on SDM845 and SC7180 SoCs
-To:     Viresh Kumar <viresh.kumar@linaro.org>
-Cc:     Sibi Sankar <sibis@codeaurora.org>, sboyd@kernel.org,
-        georgi.djakov@linaro.org, saravanak@google.com, nm@ti.com,
-        bjorn.andersson@linaro.org, agross@kernel.org,
-        david.brown@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        rjw@rjwysocki.net, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, dianders@chromium.org, mka@chromium.org,
-        vincent.guittot@linaro.org, amit.kucheria@linaro.org,
-        ulf.hansson@linaro.org, linux-kernel-owner@vger.kernel.org
-References: <20200127200350.24465-1-sibis@codeaurora.org>
- <19cf027ba87ade1b895ea90ac0fedbe2@codeaurora.org>
- <20200318034243.o2metmggzuah6cqw@vireshk-i7>
- <f6a7930a-4eaa-6982-88c6-b50773bee9d8@codeaurora.org>
- <ea4265f3f4b5a439d70d3c80bcc77b7f@codeaurora.org>
- <20200319102411.oivesngrk7gy7vtw@vireshk-i7>
- <78d92969-0219-d140-d788-d1b14e643e90@codeaurora.org>
- <20200319110805.glmuc2qvgcei3mon@vireshk-i7>
-From:   Rajendra Nayak <rnayak@codeaurora.org>
-Message-ID: <53065b03-22d5-fb78-aa6f-e4711b8ffd3b@codeaurora.org>
-Date:   Thu, 19 Mar 2020 17:03:18 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.6.0
+        Thu, 19 Mar 2020 07:33:57 -0400
+Received: by mail-pl1-f196.google.com with SMTP id b9so931438pls.12
+        for <linux-kernel@vger.kernel.org>; Thu, 19 Mar 2020 04:33:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=oK/5AnAIQtAzwp5LtDPsr0B0YqK3MbYelmVR8oZRePM=;
+        b=S4lPMkx9sAM4YOhfGPGNuTyQk5plJbvRwkvWecLxjItv/X/kJ8I5it2EoQn4PwgX0P
+         XqcyQhaTg0wn+r/h4mhL4moLNQbjYTvb9KRWPZM9yw6TAI4Cce7IqxlK6aZ8HyU7rded
+         fm7cL9Ha7cRqSN0LORxD5Q4pjeqmE1Ls5xSy+998DN/lW8qkKSGjoPMuD7oXIEKvLNcL
+         dlNHuyNoNL5A9o7V1TAu37gvzWl2VXuEnh9w7TESmmnYxoJAYGDtwnx9LhQ9Tm73SS/s
+         RIOtcx7utIJhp9cyayCLOBswZfKC84XeH6qNqSOxbqb4s/vEJPGXY/G317iE4NDPOBwY
+         or/Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=oK/5AnAIQtAzwp5LtDPsr0B0YqK3MbYelmVR8oZRePM=;
+        b=bVETPvnOGvtlWNwTA2RUItqq7A4TRpeZE0v3GICQ9onqlfbFA7RfGmLdc6VUHwKHp7
+         4PbQ0qLbFzAHhfSOvIqxfufwTfTdUG/G/WfE+XYV6eeiySQ+IbKK/HWOS2Lrp9e5V9sc
+         7/dNFE48SluDrk+6FrFUXdDQegenHsRfLpWNGXnZcCWzmOagJtDCg+GQ0XAWKArr+X3q
+         XECpnag8AqsPeLJ4t9ZU+dd/27C0xcjiwW3hiq1BvHt6F23BLocyOkiTCo4+KC/Yi/7o
+         jtKPKf2/MVDyIEiG1DlGUs6gUtxUNTTmxtrMck6BO0eNeTrrTcfJ5utNTMDhnuMeKnLY
+         qPiQ==
+X-Gm-Message-State: ANhLgQ0IMD7HCnfztU59i7ch/jUUlrSS3xnffaGWdHdkOe0Los6LHl8k
+        uQrTLFCriy68zdIprwgKS4K2ACJY7stnTd4lQoU=
+X-Google-Smtp-Source: ADFU+vvXEwXItatFF+HGJsntLDLkJyTdRBfQ3W1H5ImMaexn4WF6EGyR+8+XnyVb/Jhb38q9CNKn2i/t08aibSPdo9g=
+X-Received: by 2002:a17:90a:c482:: with SMTP id j2mr3388270pjt.71.1584617634754;
+ Thu, 19 Mar 2020 04:33:54 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20200319110805.glmuc2qvgcei3mon@vireshk-i7>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Received: by 2002:a17:90a:a501:0:0:0:0 with HTTP; Thu, 19 Mar 2020 04:33:54
+ -0700 (PDT)
+Reply-To: micheasawadogo072@gmail.com
+From:   "Mr.Michea Sawadogo" <honbarrzongoibrahim@gmail.com>
+Date:   Thu, 19 Mar 2020 04:33:54 -0700
+Message-ID: <CAKZhgJTNvYZAbX2o7f3-zD_6S+HfwrfyNcVzCEa44_4YqemqBA@mail.gmail.com>
+Subject: HI
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-On 3/19/2020 4:38 PM, Viresh Kumar wrote:
-> On 19-03-20, 16:23, Rajendra Nayak wrote:
->>
->>
->> On 3/19/2020 3:54 PM, Viresh Kumar wrote:
->> I thought this series indeed is proposing to add that support in OPP core?
->> a.k.a "[RFC v3 06/10] opp: Allow multiple opp_tables to be mapped to a single device"
->>
->> These discussions are stalled for over 2 months now waiting on a response from Saravana.
->> Viresh, whats the way forward here and how long do we plan on waiting for Saravanas response?
-> 
-> I agree and I am equally worried about it. So lets clear the air a bit
-> first. Can someone answer following :
-> 
-> - This series depends on the series from Saravana ? Right, so that
->    needs to get merged/accepted first ?
-> 
-> - If yes, then what is the way forward as Saravana isn't responding
->    right now ..
-
-sure, I understand there is a dependency, however refusing to review the approach
-(to add multiple OPPS tables per device) that this series is taking because of an outstanding
-question which, if I read it right is "We can not add multiple OPP tables for a single device right now"
-seems odd.
-
-Its fine if you are not happy with the approach taken here and you can propose something else,
-but it looks inevitable that we would need something like this to be supported (multiple OPP tables per device)
-and hence the request to review the patches.
-
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
+Hello,
+
+We are here to notify you that the sum of US$2,800,000.00 was
+generated and awarded to you by the United Arab Emirates, and Qatar's
+United Development (UD) under (CBI) Foundation of Burkina Faso, for a
+charity project, The achieve and results of this is to help financial
+problem in the nation.
+
+This award was been selected through the internet, where your e-mail
+address was indicated and notified. The Foundation collect all the
+email addresses of the people that are active online, among the
+Billions of customers who used all those means of Money Transfer, in
+their business transactions. Four people are selected yearly to
+benefit from this promotion and you are one of the Selected Winners.
+
+For your prize contact the Agent: Mr Michea Sawadogo. With this code
+(X220E) His E-mail (micheasawadogo072@gmail.com) he will direct you on what
+to do for the releasing of your prize.
+
+Yours Faithfully,
+Awards Coordinator Mr. Samie Salam,
+Chief executive Jassim Al-Othman.
