@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7E0C118B5C3
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:22:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5512318B622
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:24:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730095AbgCSNVS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 09:21:18 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45892 "EHLO mail.kernel.org"
+        id S1730480AbgCSNYa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 09:24:30 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51244 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730089AbgCSNVQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 09:21:16 -0400
+        id S1730330AbgCSNY2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 09:24:28 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 183A021556;
-        Thu, 19 Mar 2020 13:21:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B201F207FC;
+        Thu, 19 Mar 2020 13:24:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584624075;
-        bh=h++JHvlq0URUaxWR2YFil30omclmOjygV8exSEpksy0=;
+        s=default; t=1584624268;
+        bh=4IvRtb3rTiuw17XBaIXnTOo3FQHO7gh5aQDy2qP9z9o=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dlo/3vPbg66mIOWIkFr+7RsZezMtIa10o81l16xo7i/i5W4nKRbxGZC8FuDWjhybH
-         wq/8DHlX00C07DA1ZhINvOK64looYgL0I612Tm/rDLiXBBP4lILWy504oV1GWD7Aw+
-         4wvxlE5mhDD8b9iKAXVxw25xjeBTqt3+OqG12M/k=
+        b=cWdlLPx86jn/B29bmvTiKk1XKy04wCnrpeYCU/75ad80Se3/DGKqN65OQLKzQFL9X
+         yf23iyIlHW2+4KuzVF1DeNJYx11m7rVioguwpOjE2yLYxD39P39/1HYOs8egIfbeXn
+         a6Maarc3V4ldQGfYEuL0yEwiFN3mK31rylYzOg44=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Guillaume Nault <gnault@redhat.com>,
-        Matteo Croce <mcroce@redhat.com>,
-        Paul Moore <paul@paul-moore.com>,
+        stable@vger.kernel.org, Carl Huang <cjhuang@codeaurora.org>,
+        Wen Gong <wgong@codeaurora.org>,
+        Doug Anderson <dianders@chromium.org>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.19 48/48] ipv4: ensure rcu_read_lock() in cipso_v4_error()
-Date:   Thu, 19 Mar 2020 14:04:30 +0100
-Message-Id: <20200319123917.881764183@linuxfoundation.org>
+Subject: [PATCH 5.4 53/60] net: qrtr: fix len of skb_put_padto in qrtr_node_enqueue
+Date:   Thu, 19 Mar 2020 14:04:31 +0100
+Message-Id: <20200319123936.120009983@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.2
-In-Reply-To: <20200319123902.941451241@linuxfoundation.org>
-References: <20200319123902.941451241@linuxfoundation.org>
+In-Reply-To: <20200319123919.441695203@linuxfoundation.org>
+References: <20200319123919.441695203@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,47 +45,78 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Matteo Croce <mcroce@redhat.com>
+From: Carl Huang <cjhuang@codeaurora.org>
 
-commit 3e72dfdf8227b052393f71d820ec7599909dddc2 upstream.
+commit ce57785bf91b1ceaef4f4bffed8a47dc0919c8da upstream.
 
-Similarly to commit c543cb4a5f07 ("ipv4: ensure rcu_read_lock() in
-ipv4_link_failure()"), __ip_options_compile() must be called under rcu
-protection.
+The len used for skb_put_padto is wrong, it need to add len of hdr.
 
-Fixes: 3da1ed7ac398 ("net: avoid use IPCB in cipso_v4_error")
-Suggested-by: Guillaume Nault <gnault@redhat.com>
-Signed-off-by: Matteo Croce <mcroce@redhat.com>
-Acked-by: Paul Moore <paul@paul-moore.com>
+In qrtr_node_enqueue, local variable size_t len is assign with
+skb->len, then skb_push(skb, sizeof(*hdr)) will add skb->len with
+sizeof(*hdr), so local variable size_t len is not same with skb->len
+after skb_push(skb, sizeof(*hdr)).
+
+Then the purpose of skb_put_padto(skb, ALIGN(len, 4)) is to add add
+pad to the end of the skb's data if skb->len is not aligned to 4, but
+unfortunately it use len instead of skb->len, at this line, skb->len
+is 32 bytes(sizeof(*hdr)) more than len, for example, len is 3 bytes,
+then skb->len is 35 bytes(3 + 32), and ALIGN(len, 4) is 4 bytes, so
+__skb_put_padto will do nothing after check size(35) < len(4), the
+correct value should be 36(sizeof(*hdr) + ALIGN(len, 4) = 32 + 4),
+then __skb_put_padto will pass check size(35) < len(36) and add 1 byte
+to the end of skb's data, then logic is correct.
+
+function of skb_push:
+void *skb_push(struct sk_buff *skb, unsigned int len)
+{
+	skb->data -= len;
+	skb->len  += len;
+	if (unlikely(skb->data < skb->head))
+		skb_under_panic(skb, len, __builtin_return_address(0));
+	return skb->data;
+}
+
+function of skb_put_padto
+static inline int skb_put_padto(struct sk_buff *skb, unsigned int len)
+{
+	return __skb_put_padto(skb, len, true);
+}
+
+function of __skb_put_padto
+static inline int __skb_put_padto(struct sk_buff *skb, unsigned int len,
+				  bool free_on_error)
+{
+	unsigned int size = skb->len;
+
+	if (unlikely(size < len)) {
+		len -= size;
+		if (__skb_pad(skb, len, free_on_error))
+			return -ENOMEM;
+		__skb_put(skb, len);
+	}
+	return 0;
+}
+
+Signed-off-by: Carl Huang <cjhuang@codeaurora.org>
+Signed-off-by: Wen Gong <wgong@codeaurora.org>
+Cc: Doug Anderson <dianders@chromium.org>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/ipv4/cipso_ipv4.c |    7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ net/qrtr/qrtr.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/net/ipv4/cipso_ipv4.c
-+++ b/net/ipv4/cipso_ipv4.c
-@@ -1738,6 +1738,7 @@ void cipso_v4_error(struct sk_buff *skb,
- {
- 	unsigned char optbuf[sizeof(struct ip_options) + 40];
- 	struct ip_options *opt = (struct ip_options *)optbuf;
-+	int res;
+--- a/net/qrtr/qrtr.c
++++ b/net/qrtr/qrtr.c
+@@ -196,7 +196,7 @@ static int qrtr_node_enqueue(struct qrtr
+ 	hdr->size = cpu_to_le32(len);
+ 	hdr->confirm_rx = 0;
  
- 	if (ip_hdr(skb)->protocol == IPPROTO_ICMP || error != -EACCES)
- 		return;
-@@ -1749,7 +1750,11 @@ void cipso_v4_error(struct sk_buff *skb,
+-	skb_put_padto(skb, ALIGN(len, 4));
++	skb_put_padto(skb, ALIGN(len, 4) + sizeof(*hdr));
  
- 	memset(opt, 0, sizeof(struct ip_options));
- 	opt->optlen = ip_hdr(skb)->ihl*4 - sizeof(struct iphdr);
--	if (__ip_options_compile(dev_net(skb->dev), opt, skb, NULL))
-+	rcu_read_lock();
-+	res = __ip_options_compile(dev_net(skb->dev), opt, skb, NULL);
-+	rcu_read_unlock();
-+
-+	if (res)
- 		return;
- 
- 	if (gateway)
+ 	mutex_lock(&node->ep_lock);
+ 	if (node->ep)
 
 
