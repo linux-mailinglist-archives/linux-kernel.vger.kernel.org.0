@@ -2,105 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8D8D218C0F3
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 21:00:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 50B1418C0F6
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 21:02:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727462AbgCSUAp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 16:00:45 -0400
-Received: from imap2.colo.codethink.co.uk ([78.40.148.184]:45002 "EHLO
-        imap2.colo.codethink.co.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726825AbgCSUAp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 16:00:45 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126] helo=xylophone)
-        by imap2.colo.codethink.co.uk with esmtpsa  (Exim 4.92 #3 (Debian))
-        id 1jF1LG-0000uU-Rl; Thu, 19 Mar 2020 20:00:35 +0000
-Message-ID: <7a8c6a752793f0907662c3e9c197c284fc461550.camel@codethink.co.uk>
-Subject: Re: [PATCH 4.19 00/48] 4.19.112-rc1 review
-From:   Ben Hutchings <ben.hutchings@codethink.co.uk>
-To:     Naresh Kamboju <naresh.kamboju@linaro.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Faiz Abbas <faiz_abbas@ti.com>
-Cc:     open list <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
-        lkft-triage@lists.linaro.org,
-        linux- stable <stable@vger.kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Anders Roxell <anders.roxell@linaro.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Thu, 19 Mar 2020 20:00:32 +0000
-In-Reply-To: <CA+G9fYsDw6JEznSHm2X=Wvq1dysGbGa4-VpXJyzKWZQxLMdagw@mail.gmail.com>
-References: <20200319123902.941451241@linuxfoundation.org>
-         <CA+G9fYsDw6JEznSHm2X=Wvq1dysGbGa4-VpXJyzKWZQxLMdagw@mail.gmail.com>
-Organization: Codethink Ltd.
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.30.5-1.1 
+        id S1726975AbgCSUC4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 16:02:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38322 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725747AbgCSUC4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 16:02:56 -0400
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8AE13206D7
+        for <linux-kernel@vger.kernel.org>; Thu, 19 Mar 2020 20:02:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1584648175;
+        bh=Lz6iUmdUUFtwGgC/vfuRKQ4BpFFpCfAxCeA22G6refY=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=0v8K0EmEuvJPMlh3qwqIqEoNdNMDRYzWOhDG8ZHflMbjkX1mE3c39qm2ufoEp7bvk
+         /ZNeZa0nMemahpY0k/3WEKHYWeT85NUSytMAs+6esUPxDIbjfmiB2H2/X/FZdz8ZJL
+         r5orckpzSTjT+duWhyke9cTIP6GY3GnyZiPj+QOU=
+Received: by mail-wr1-f41.google.com with SMTP id w10so4777455wrm.4
+        for <linux-kernel@vger.kernel.org>; Thu, 19 Mar 2020 13:02:55 -0700 (PDT)
+X-Gm-Message-State: ANhLgQ2HPAhvcNM0zP1oWUPAZfYVjqPwduq2G+FJ3IU6wXLSwlPTIOPo
+        rKVeT4Vf8IDxwb/VsFGOq8FFdNL4XMejFsrCMhQSSg==
+X-Google-Smtp-Source: ADFU+vv0pjFJjqLm9+W9pQLQM0AJcDlx7TFtehByST5eabRXhk06kFShIyZpJ7BFdappIgjff7LYwTx1pfxTxuUJCu4=
+X-Received: by 2002:adf:afdb:: with SMTP id y27mr6463654wrd.208.1584648174030;
+ Thu, 19 Mar 2020 13:02:54 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20200319192855.29876-1-nivedita@alum.mit.edu>
+In-Reply-To: <20200319192855.29876-1-nivedita@alum.mit.edu>
+From:   Ard Biesheuvel <ardb@kernel.org>
+Date:   Thu, 19 Mar 2020 16:02:42 -0400
+X-Gmail-Original-Message-ID: <CAKv+Gu9i68KKXwE37kwLuHRVLLbVE+YC_JGog6P-ZtCtbYn4fA@mail.gmail.com>
+Message-ID: <CAKv+Gu9i68KKXwE37kwLuHRVLLbVE+YC_JGog6P-ZtCtbYn4fA@mail.gmail.com>
+Subject: Re: [PATCH 00/14] efi/gop: Refactoring + mode-setting feature
+To:     Arvind Sankar <nivedita@alum.mit.edu>,
+        Hans de Goede <hdegoede@redhat.com>
+Cc:     linux-efi <linux-efi@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2020-03-20 at 01:12 +0530, Naresh Kamboju wrote:
-> On Thu, 19 Mar 2020 at 18:50, Greg Kroah-Hartman
-> <gregkh@linuxfoundation.org> wrote:
-> > This is the start of the stable review cycle for the 4.19.112 release.
-> > There are 48 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
-> > 
-> > Responses should be made by Sat, 21 Mar 2020 12:37:04 +0000.
-> > Anything received after that time might be too late.
-> > 
-> > The whole patch series can be found in one patch at:
-> >         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.19.112-rc1.gz
-> > or in the git tree and branch at:
-> >         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.19.y
-> > and the diffstat can be found below.
-> > 
-> > thanks,
-> > 
-> > greg k-h
-> > 
-> > Faiz Abbas <faiz_abbas@ti.com>
-> >     mmc: sdhci-omap: Fix Tuning procedure for temperatures < -20C
-> > 
-> > Faiz Abbas <faiz_abbas@ti.com>
-> >     mmc: sdhci-omap: Don't finish_mrq() on a command error during tuning
-> 
-> Results from Linaro’s test farm.
-> No regressions on arm64, arm, x86_64, and i386.
-> 
-> NOTE:
-> The arm beagleboard x15 device running stable rc 4.19.112-rc1, 5.4.27-rc1
-> and 5.5.11-rc2 kernel pops up the following messages on console log,
-> Is this a problem ?
+On Thu, 19 Mar 2020 at 15:28, Arvind Sankar <nivedita@alum.mit.edu> wrote:
 >
-> [   15.737765] mmc1: unspecified timeout for CMD6 - use generic
-> [   16.754248] mmc1: unspecified timeout for CMD6 - use generic
-> [   16.842071] mmc1: unspecified timeout for CMD6 - use generic
-> ...
-> [  977.126652] mmc1: unspecified timeout for CMD6 - use generic
-> [  985.449798] mmc1: unspecified timeout for CMD6 - use generic
-[...]
+> This series is against tip:efi/core.
+>
+> Patches 1-9 are small cleanups and refactoring of the code in
+> libstub/gop.c.
+>
+> The rest of the patches add the ability to use a command-line option to
+> switch the gop's display mode.
+>
+> The options supported are:
+> video=efifb:mode=n
+>         Choose a specific mode number
+> video=efifb:<xres>x<yres>[-(rgb|bgr|<bpp>)]
+>         Specify mode by resolution and optionally color depth
+> video=efifb:auto
+>         Let the EFI stub choose the highest resolution mode available.
+>
+> The mode-setting additions increase code size of gop.o by about 3k on
+> x86-64 with EFI_MIXED enabled.
+>
+> Arvind Sankar (14):
+>   efi/gop: Remove redundant current_fb_base
+>   efi/gop: Move check for framebuffer before con_out
+>   efi/gop: Get mode information outside the loop
+>   efi/gop: Factor out locating the gop into a function
+>   efi/gop: Slightly re-arrange logic of find_gop
+>   efi/gop: Move variable declarations into loop block
+>   efi/gop: Use helper macros for populating lfb_base
+>   efi/gop: Use helper macros for find_bits
+>   efi/gop: Remove unreachable code from setup_pixel_info
+>   efi/gop: Add prototypes for query_mode and set_mode
+>   efi/gop: Allow specifying mode number on command line
+>   efi/gop: Allow specifying mode by <xres>x<yres>
+>   efi/gop: Allow specifying depth as well as resolution
+>   efi/gop: Allow automatically choosing the best mode
+>
 
-This warning was introduced by commit 533a6cfe08f9 "mmc: core: Default
-to generic_cmd6_time as timeout in __mmc_switch()".  That should not be
-applied to stable branches; it is not valid without (at least) these
-preparatory changes:
+Thanks for this! I like it a lot.
 
-0c204979c691 mmc: core: Cleanup BKOPS support
-24ed3bd01d6a mmc: core: Specify timeouts for BKOPS and CACHE_FLUSH for eMMC
-ad91619aa9d7 mmc: block: Use generic_cmd6_time when modifying INAND_CMD38_ARG_EXT_CSD
+Adding Hans to cc as he has been working on seamless fb handover.
 
-Ben.
+I will review this somewhere next week.
 
--- 
-Ben Hutchings, Software Developer                         Codethink Ltd
-https://www.codethink.co.uk/                 Dale House, 35 Dale Street
-                                     Manchester, M1 2HF, United Kingdom
-
+>  Documentation/fb/efifb.rst                    |  33 +-
+>  arch/x86/include/asm/efi.h                    |   4 +
+>  .../firmware/efi/libstub/efi-stub-helper.c    |   3 +
+>  drivers/firmware/efi/libstub/efistub.h        |   8 +-
+>  drivers/firmware/efi/libstub/gop.c            | 489 ++++++++++++++----
+>  5 files changed, 428 insertions(+), 109 deletions(-)
+>
+> --
+> 2.24.1
+>
