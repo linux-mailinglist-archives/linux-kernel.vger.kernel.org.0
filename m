@@ -2,35 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 810B518B723
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:31:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B366218B719
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:31:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729758AbgCSNSM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 09:18:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40124 "EHLO mail.kernel.org"
+        id S1729833AbgCSNSr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 09:18:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41350 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729494AbgCSNSK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 09:18:10 -0400
+        id S1729656AbgCSNSo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 09:18:44 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1202521556;
-        Thu, 19 Mar 2020 13:18:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B3ED8206D7;
+        Thu, 19 Mar 2020 13:18:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584623889;
-        bh=smlm/cJ1yG+L/Pnsa2i4WyXPEEueXmy8t9rJyNlk5eU=;
+        s=default; t=1584623924;
+        bh=/tnjJMgvLSGDranwiq8LtGIlbks4hqw1BrVjb+hbWMM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DVQiP4961A94CfiSF7tm/Mp7BijNeiDcY4Ty5UnZhEhOOAh7We+IdR7jvbOEdLfOf
-         IUqs1tIQCRCj5EW+mEubL7147J0/xgMIC/2bhqZ6V0BwBKOyZEW8X5OpMhjOQD3yHZ
-         fEetneFQIsyBgNmRP04ldsdx1zeD6SbDtnrvErqc=
+        b=HRrEqI/KLvHuqxzfMyViKrQcHtT6zMbbChLhQCJYTxYqT0GqRhVwFxPbZDrypcxf5
+         F+eQA52esb+GXpJUgbh0cZM+QsOXZs23ayTxDbWBtDftcmjVm3DCsTB6D/6MWUMtkC
+         aU3r266xpPqRJnxDA49Rncyl/NXAFhDrtJ5N73EE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Matthias Schiffer <mschiffer@universe-factory.net>,
         Sven Eckelmann <sven@narfation.org>,
         Simon Wunderlich <sw@simonwunderlich.de>
-Subject: [PATCH 4.14 70/99] batman-adv: Fix lock for ogm cnt access in batadv_iv_ogm_calc_tq
-Date:   Thu, 19 Mar 2020 14:03:48 +0100
-Message-Id: <20200319124002.387033138@linuxfoundation.org>
+Subject: [PATCH 4.14 72/99] batman-adv: update data pointers after skb_cow()
+Date:   Thu, 19 Mar 2020 14:03:50 +0100
+Message-Id: <20200319124003.112213376@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.2
 In-Reply-To: <20200319123941.630731708@linuxfoundation.org>
 References: <20200319123941.630731708@linuxfoundation.org>
@@ -43,44 +44,64 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sven Eckelmann <sven@narfation.org>
+From: Matthias Schiffer <mschiffer@universe-factory.net>
 
-commit 5ba7dcfe77037b67016263ea597a8b431692ecab upstream.
+commit bc44b78157f621ff2a2618fe287a827bcb094ac4 upstream.
 
-The originator node object orig_neigh_node is used to when accessing the
-bcast_own(_sum) and real_packet_count information. The access to them has
-to be protected with the spinlock in orig_neigh_node.
+batadv_check_unicast_ttvn() calls skb_cow(), so pointers into the SKB data
+must be (re)set after calling it. The ethhdr variable is dropped
+altogether.
 
-But the function uses the lock in orig_node instead. This is incorrect
-because they could be two different originator node objects.
-
-Fixes: 0ede9f41b217 ("batman-adv: protect bit operations to count OGMs with spinlock")
+Fixes: 7cdcf6dddc42 ("batman-adv: add UNICAST_4ADDR packet type")
+Signed-off-by: Matthias Schiffer <mschiffer@universe-factory.net>
 Signed-off-by: Sven Eckelmann <sven@narfation.org>
 Signed-off-by: Simon Wunderlich <sw@simonwunderlich.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/batman-adv/bat_iv_ogm.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ net/batman-adv/routing.c |   10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
---- a/net/batman-adv/bat_iv_ogm.c
-+++ b/net/batman-adv/bat_iv_ogm.c
-@@ -1220,7 +1220,7 @@ static bool batadv_iv_ogm_calc_tq(struct
- 	orig_node->last_seen = jiffies;
+--- a/net/batman-adv/routing.c
++++ b/net/batman-adv/routing.c
+@@ -950,14 +950,10 @@ int batadv_recv_unicast_packet(struct sk
+ 	struct batadv_orig_node *orig_node = NULL, *orig_node_gw = NULL;
+ 	int check, hdr_size = sizeof(*unicast_packet);
+ 	enum batadv_subtype subtype;
+-	struct ethhdr *ethhdr;
+ 	int ret = NET_RX_DROP;
+ 	bool is4addr, is_gw;
  
- 	/* find packet count of corresponding one hop neighbor */
--	spin_lock_bh(&orig_node->bat_iv.ogm_cnt_lock);
-+	spin_lock_bh(&orig_neigh_node->bat_iv.ogm_cnt_lock);
- 	if_num = if_incoming->if_num;
- 	orig_eq_count = orig_neigh_node->bat_iv.bcast_own_sum[if_num];
- 	neigh_ifinfo = batadv_neigh_ifinfo_new(neigh_node, if_outgoing);
-@@ -1230,7 +1230,7 @@ static bool batadv_iv_ogm_calc_tq(struct
- 	} else {
- 		neigh_rq_count = 0;
- 	}
--	spin_unlock_bh(&orig_node->bat_iv.ogm_cnt_lock);
-+	spin_unlock_bh(&orig_neigh_node->bat_iv.ogm_cnt_lock);
+ 	unicast_packet = (struct batadv_unicast_packet *)skb->data;
+-	unicast_4addr_packet = (struct batadv_unicast_4addr_packet *)skb->data;
+-	ethhdr = eth_hdr(skb);
+-
+ 	is4addr = unicast_packet->packet_type == BATADV_UNICAST_4ADDR;
+ 	/* the caller function should have already pulled 2 bytes */
+ 	if (is4addr)
+@@ -977,12 +973,14 @@ int batadv_recv_unicast_packet(struct sk
+ 	if (!batadv_check_unicast_ttvn(bat_priv, skb, hdr_size))
+ 		goto free_skb;
  
- 	/* pay attention to not get a value bigger than 100 % */
- 	if (orig_eq_count > neigh_rq_count)
++	unicast_packet = (struct batadv_unicast_packet *)skb->data;
++
+ 	/* packet for me */
+ 	if (batadv_is_my_mac(bat_priv, unicast_packet->dest)) {
+ 		/* If this is a unicast packet from another backgone gw,
+ 		 * drop it.
+ 		 */
+-		orig_addr_gw = ethhdr->h_source;
++		orig_addr_gw = eth_hdr(skb)->h_source;
+ 		orig_node_gw = batadv_orig_hash_find(bat_priv, orig_addr_gw);
+ 		if (orig_node_gw) {
+ 			is_gw = batadv_bla_is_backbone_gw(skb, orig_node_gw,
+@@ -997,6 +995,8 @@ int batadv_recv_unicast_packet(struct sk
+ 		}
+ 
+ 		if (is4addr) {
++			unicast_4addr_packet =
++				(struct batadv_unicast_4addr_packet *)skb->data;
+ 			subtype = unicast_4addr_packet->subtype;
+ 			batadv_dat_inc_counter(bat_priv, subtype);
+ 
 
 
