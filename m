@@ -2,113 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 90AA718B43A
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:08:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2DE1D18B497
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:11:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727978AbgCSNHp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 09:07:45 -0400
-Received: from foss.arm.com ([217.140.110.172]:34986 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727982AbgCSNHn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 09:07:43 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6DF1A30E;
-        Thu, 19 Mar 2020 06:07:42 -0700 (PDT)
-Received: from [192.168.1.123] (unknown [172.31.20.19])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BAA7B3F534;
-        Thu, 19 Mar 2020 06:07:37 -0700 (PDT)
-Subject: Re: [RFC PATCH 2/2] phy: phy-rockchip-inno-usb2: remove support for
- rockchip, rk3366-usb2phy
-To:     Johan Jonker <jbx6244@gmail.com>, kishon@ti.com
-Cc:     devicetree@vger.kernel.org, heiko@sntech.de,
-        linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org,
-        robh+dt@kernel.org, linux-arm-kernel@lists.infradead.org
-References: <20200318192901.5023-1-jbx6244@gmail.com>
- <20200318192901.5023-2-jbx6244@gmail.com>
-From:   Robin Murphy <robin.murphy@arm.com>
-Message-ID: <233769c3-a44a-0ebd-7a2c-6fab17fb56f2@arm.com>
-Date:   Thu, 19 Mar 2020 13:07:26 +0000
-User-Agent: Mozilla/5.0 (Windows NT 10.0; rv:68.0) Gecko/20100101
- Thunderbird/68.6.0
+        id S1728674AbgCSNLI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 09:11:08 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:40958 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728649AbgCSNLF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 09:11:05 -0400
+Received: by mail-pg1-f195.google.com with SMTP id t24so1248927pgj.7;
+        Thu, 19 Mar 2020 06:11:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=B4nHSl+0pWGmInbe8FQHGu8YA5O/4e10+dn6tS8W63s=;
+        b=gbLWcG94Hw5eFr5F713x2ZHuuzXvDsR7HTPfXMj/bIwF+d8ypI7MQ0pyYwa+09U5TZ
+         NqzDcIq3rhIlQ4m3ktNvDy5fiWpyluuTk2aj13Vrd5xi/rvbzDOTKr5HnOlQqlMtqq2I
+         M30MLa3Mre/tQuTekAAIEmcBZZtLSzzPQpAZxWmDu3aa4Zrs7fadQ+K7/FGUMgA0sb49
+         PyYhYjlIHoob0v7+ijdGrXE0Gm8ie9bwPUlzDJXrH7xRsp8cxgd4KmLEzHO+mBmV/t2S
+         jn7lhWtnvbAEt837OOgOCRB6KtNhzETY7bPO8q91avv2t4qOmYnjaaHLMF7/VWFOygUJ
+         ukTg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=B4nHSl+0pWGmInbe8FQHGu8YA5O/4e10+dn6tS8W63s=;
+        b=Gd/WnK5Id+0kOR8yUmlYcoz0mJ8rcqCJP+ZjVtF0X/hUSsnaLCkO+qvO8hwxO3/8th
+         07OwE9rDhdQ1/KzXEzls8CDoPRTCPxt85rARLfpRxPmSgeohfHU0A5PbfrWT42ZCNTbG
+         YRdSYkGxpF99JLgriqnDWoXIsYyecEQhmXi1/dPOh+lHsSVJ44YrvBQwV/m1kQ174tKA
+         2zqtAKtxYBSuQVZD/tJqFXCrKkgTCsDVPtMSHAwhQ7Cnot3Re9f3C+Q+UNC05TJx7kQu
+         CPjE20pQAcsvxLyH3QY/Lty4lK06hk9riHUIwBpW4SrZwLA6z6kb+Xg6Xykqji9wWnnO
+         QSKA==
+X-Gm-Message-State: ANhLgQ0XUm0vNu0GIZG2vUj7pDaXwWT/eAkoht907q9CN2urT509lFmb
+        8Bm496jgDz1X4L6Eq0Whwt4=
+X-Google-Smtp-Source: ADFU+vu6U87IPTR0D2iW/QPtoCB5nPrRdEyRPfJY+KBcojiba6nAoCyZgW5BQnWhYb7EwcPvHQuD8w==
+X-Received: by 2002:aa7:81c1:: with SMTP id c1mr3943700pfn.236.1584623463897;
+        Thu, 19 Mar 2020 06:11:03 -0700 (PDT)
+Received: from localhost ([216.24.188.11])
+        by smtp.gmail.com with ESMTPSA id lt11sm2087682pjb.2.2020.03.19.06.11.02
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 19 Mar 2020 06:11:03 -0700 (PDT)
+From:   Dejin Zheng <zhengdejin5@gmail.com>
+To:     peppe.cavallaro@st.com, alexandre.torgue@st.com,
+        joabreu@synopsys.com, davem@davemloft.net,
+        mcoquelin.stm32@gmail.com, netdev@vger.kernel.org
+Cc:     linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Dejin Zheng <zhengdejin5@gmail.com>
+Subject: [PATCH] net: stmmac: dwmac_lib: remove unnecessary checks in dwmac_dma_reset()
+Date:   Thu, 19 Mar 2020 21:10:19 +0800
+Message-Id: <20200319131019.12829-1-zhengdejin5@gmail.com>
+X-Mailer: git-send-email 2.25.0
 MIME-Version: 1.0
-In-Reply-To: <20200318192901.5023-2-jbx6244@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Johan,
+it will check the return value of dwmac_dma_reset() in the
+stmmac_init_dma_engine() function and report an error if the
+return value is not zero. so don't need check here.
 
-On 2020-03-18 7:29 pm, Johan Jonker wrote:
-> 'phy-rockchip-inno-usb2.txt' is updated to yaml, whereby
-> the compatible string 'rockchip,rk3366-usb2phy' was removed,
-> because it's not in use by a dts file, so remove support
-> in the code as well.
+Signed-off-by: Dejin Zheng <zhengdejin5@gmail.com>
+---
+ drivers/net/ethernet/stmicro/stmmac/dwmac_lib.c | 7 +------
+ 1 file changed, 1 insertion(+), 6 deletions(-)
 
-Here's a DT using it:
+diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac_lib.c b/drivers/net/ethernet/stmicro/stmmac/dwmac_lib.c
+index 688d36095333..cb87d31a99df 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/dwmac_lib.c
++++ b/drivers/net/ethernet/stmicro/stmmac/dwmac_lib.c
+@@ -16,19 +16,14 @@
+ int dwmac_dma_reset(void __iomem *ioaddr)
+ {
+ 	u32 value = readl(ioaddr + DMA_BUS_MODE);
+-	int err;
+ 
+ 	/* DMA SW reset */
+ 	value |= DMA_BUS_MODE_SFT_RESET;
+ 	writel(value, ioaddr + DMA_BUS_MODE);
+ 
+-	err = readl_poll_timeout(ioaddr + DMA_BUS_MODE, value,
++	return readl_poll_timeout(ioaddr + DMA_BUS_MODE, value,
+ 				 !(value & DMA_BUS_MODE_SFT_RESET),
+ 				 10000, 100000);
+-	if (err)
+-		return -EBUSY;
+-
+-	return 0;
+ }
+ 
+ /* CSR1 enables the transmit DMA to check for new descriptor */
+-- 
+2.25.0
 
-https://github.com/rockchip-linux/kernel/blob/develop-4.4/arch/arm64/boot/dts/rockchip/rk3366.dtsi#L820
-
-Please note that although DT bindings happen to be primarily maintained 
-in the upstream kernel tree at the moment, it is mostly as a consequence 
-of Linux being the source of most active development. Bindings should 
-not be considered to be "owned" by upstream Linux since there are many 
-other consumers, both downstream, and in completely different projects 
-like the BSDs. As far as I'm aware there is still a long-term plan to 
-eventually flip the switch and move maintenance to a standalone repo:
-
-https://git.kernel.org/pub/scm/linux/kernel/git/devicetree/devicetree-rebasing.git
-
-Things like PCI Device IDs and ACPI HIDs aren't even documented as 
-formally as DT bindings, so by the reasoning here we could arguably 
-delete the majority of drivers from the kernel...
-
-Robin.
-
-> Signed-off-by: Johan Jonker <jbx6244@gmail.com>
-> ---
->   drivers/phy/rockchip/phy-rockchip-inno-usb2.c | 20 --------------------
->   1 file changed, 20 deletions(-)
-> 
-> diff --git a/drivers/phy/rockchip/phy-rockchip-inno-usb2.c b/drivers/phy/rockchip/phy-rockchip-inno-usb2.c
-> index 680cc0c88..dcdb5589b 100644
-> --- a/drivers/phy/rockchip/phy-rockchip-inno-usb2.c
-> +++ b/drivers/phy/rockchip/phy-rockchip-inno-usb2.c
-> @@ -1299,25 +1299,6 @@ static const struct rockchip_usb2phy_cfg rk3328_phy_cfgs[] = {
->   	{ /* sentinel */ }
->   };
->   
-> -static const struct rockchip_usb2phy_cfg rk3366_phy_cfgs[] = {
-> -	{
-> -		.reg = 0x700,
-> -		.num_ports	= 2,
-> -		.clkout_ctl	= { 0x0724, 15, 15, 1, 0 },
-> -		.port_cfgs	= {
-> -			[USB2PHY_PORT_HOST] = {
-> -				.phy_sus	= { 0x0728, 15, 0, 0, 0x1d1 },
-> -				.ls_det_en	= { 0x0680, 4, 4, 0, 1 },
-> -				.ls_det_st	= { 0x0690, 4, 4, 0, 1 },
-> -				.ls_det_clr	= { 0x06a0, 4, 4, 0, 1 },
-> -				.utmi_ls	= { 0x049c, 14, 13, 0, 1 },
-> -				.utmi_hstdet	= { 0x049c, 12, 12, 0, 1 }
-> -			}
-> -		},
-> -	},
-> -	{ /* sentinel */ }
-> -};
-> -
->   static const struct rockchip_usb2phy_cfg rk3399_phy_cfgs[] = {
->   	{
->   		.reg		= 0xe450,
-> @@ -1426,7 +1407,6 @@ static const struct of_device_id rockchip_usb2phy_dt_match[] = {
->   	{ .compatible = "rockchip,px30-usb2phy", .data = &rk3328_phy_cfgs },
->   	{ .compatible = "rockchip,rk3228-usb2phy", .data = &rk3228_phy_cfgs },
->   	{ .compatible = "rockchip,rk3328-usb2phy", .data = &rk3328_phy_cfgs },
-> -	{ .compatible = "rockchip,rk3366-usb2phy", .data = &rk3366_phy_cfgs },
->   	{ .compatible = "rockchip,rk3399-usb2phy", .data = &rk3399_phy_cfgs },
->   	{ .compatible = "rockchip,rv1108-usb2phy", .data = &rv1108_phy_cfgs },
->   	{}
-> 
