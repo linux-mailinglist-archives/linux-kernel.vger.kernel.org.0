@@ -2,266 +2,136 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 02B0218B352
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 13:22:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3D40118B327
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 13:19:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727269AbgCSMW1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 08:22:27 -0400
-Received: from relmlor1.renesas.com ([210.160.252.171]:6990 "EHLO
-        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726864AbgCSMW0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 08:22:26 -0400
-X-IronPort-AV: E=Sophos;i="5.70,571,1574089200"; 
-   d="scan'208";a="42339866"
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 19 Mar 2020 21:22:25 +0900
-Received: from localhost.localdomain (unknown [10.226.36.204])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 8C96142ED940;
-        Thu, 19 Mar 2020 21:22:21 +0900 (JST)
-From:   Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
+        id S1727088AbgCSMTn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 08:19:43 -0400
+Received: from mx2.suse.de ([195.135.220.15]:33866 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725787AbgCSMTn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 08:19:43 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 639ABAFDC;
+        Thu, 19 Mar 2020 12:19:40 +0000 (UTC)
+From:   Michal Suchanek <msuchanek@suse.de>
+To:     linuxppc-dev@lists.ozlabs.org
+Cc:     Michal Suchanek <msuchanek@suse.de>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Cc:     linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Lad Prabhakar <prabhakar.csengg@gmail.com>,
-        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH v4 5/5] media: dt-bindings: media: i2c: convert ov5645 bindings to json-schema
-Date:   Thu, 19 Mar 2020 12:19:23 +0000
-Message-Id: <1584620363-2255-6-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1584620363-2255-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
-References: <1584620363-2255-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Rob Herring <robh@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Christophe Leroy <christophe.leroy@c-s.fr>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Nayna Jain <nayna@linux.ibm.com>,
+        Eric Richter <erichte@linux.ibm.com>,
+        Claudio Carvalho <cclaudio@linux.ibm.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Hari Bathini <hbathini@linux.ibm.com>,
+        Masahiro Yamada <masahiroy@kernel.org>,
+        Thiago Jung Bauermann <bauerman@linux.ibm.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Valentin Schneider <valentin.schneider@arm.com>,
+        Jordan Niethe <jniethe5@gmail.com>,
+        Michael Neuling <mikey@neuling.org>,
+        Gustavo Luiz Duarte <gustavold@linux.ibm.com>,
+        Allison Randal <allison@lohutok.net>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: [PATCH v11 0/8] Disable compat cruft on ppc64le v11
+Date:   Thu, 19 Mar 2020 13:19:28 +0100
+Message-Id: <cover.1584620202.git.msuchanek@suse.de>
+X-Mailer: git-send-email 2.23.0
+In-Reply-To: <20200225173541.1549955-1-npiggin@gmail.com>
+References: <20200225173541.1549955-1-npiggin@gmail.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Convert ov5645 bindings to json-schema.
+Less code means less bugs so add a knob to skip the compat stuff.
 
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
----
- .../devicetree/bindings/media/i2c/ov5645.txt  |  54 -------
- .../devicetree/bindings/media/i2c/ov5645.yaml | 140 ++++++++++++++++++
- 2 files changed, 140 insertions(+), 54 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/media/i2c/ov5645.txt
- create mode 100644 Documentation/devicetree/bindings/media/i2c/ov5645.yaml
+Changes in v2: saner CONFIG_COMPAT ifdefs
+Changes in v3:
+ - change llseek to 32bit instead of builing it unconditionally in fs
+ - clanup the makefile conditionals
+ - remove some ifdefs or convert to IS_DEFINED where possible
+Changes in v4:
+ - cleanup is_32bit_task and current_is_64bit
+ - more makefile cleanup
+Changes in v5:
+ - more current_is_64bit cleanup
+ - split off callchain.c 32bit and 64bit parts
+Changes in v6:
+ - cleanup makefile after split
+ - consolidate read_user_stack_32
+ - fix some checkpatch warnings
+Changes in v7:
+ - add back __ARCH_WANT_SYS_LLSEEK to fix build with llseek
+ - remove leftover hunk
+ - add review tags
+Changes in v8:
+ - consolidate valid_user_sp to fix it in the split callchain.c
+ - fix build errors/warnings with PPC64 !COMPAT and PPC32
+Changes in v9:
+ - remove current_is_64bit()
+Chanegs in v10:
+ - rebase, sent together with the syscall cleanup
+Changes in v11:
+ - rebase
+ - add MAINTAINERS pattern for ppc perf
 
-diff --git a/Documentation/devicetree/bindings/media/i2c/ov5645.txt b/Documentation/devicetree/bindings/media/i2c/ov5645.txt
-deleted file mode 100644
-index 1c85c78ec58c..000000000000
---- a/Documentation/devicetree/bindings/media/i2c/ov5645.txt
-+++ /dev/null
-@@ -1,54 +0,0 @@
--* Omnivision 1/4-Inch 5Mp CMOS Digital Image Sensor
--
--The Omnivision OV5645 is a 1/4-Inch CMOS active pixel digital image sensor with
--an active array size of 2592H x 1944V. It is programmable through a serial I2C
--interface.
--
--Required Properties:
--- compatible: Value should be "ovti,ov5645".
--- clocks: Reference to the xclk clock.
--- clock-names: Should be "xclk".
--- enable-gpios: Chip enable GPIO. Polarity is GPIO_ACTIVE_HIGH. This corresponds
--  to the hardware pin PWDNB which is physically active low.
--- reset-gpios: Chip reset GPIO. Polarity is GPIO_ACTIVE_LOW. This corresponds to
--  the hardware pin RESETB.
--- vdddo-supply: Chip digital IO regulator.
--- vdda-supply: Chip analog regulator.
--- vddd-supply: Chip digital core regulator.
--
--The device node must contain one 'port' child node for its digital output
--video port, in accordance with the video interface bindings defined in
--Documentation/devicetree/bindings/media/video-interfaces.txt.
--
--Example:
--
--	&i2c1 {
--		...
--
--		ov5645: ov5645@3c {
--			compatible = "ovti,ov5645";
--			reg = <0x3c>;
--
--			enable-gpios = <&gpio1 6 GPIO_ACTIVE_HIGH>;
--			reset-gpios = <&gpio5 20 GPIO_ACTIVE_LOW>;
--			pinctrl-names = "default";
--			pinctrl-0 = <&camera_rear_default>;
--
--			clocks = <&clks 200>;
--			clock-names = "xclk";
--			assigned-clocks = <&clks 200>;
--			assigned-clock-rates = <24000000>;
--
--			vdddo-supply = <&camera_dovdd_1v8>;
--			vdda-supply = <&camera_avdd_2v8>;
--			vddd-supply = <&camera_dvdd_1v2>;
--
--			port {
--				ov5645_ep: endpoint {
--					clock-lanes = <1>;
--					data-lanes = <0 2>;
--					remote-endpoint = <&csi0_ep>;
--				};
--			};
--		};
--	};
-diff --git a/Documentation/devicetree/bindings/media/i2c/ov5645.yaml b/Documentation/devicetree/bindings/media/i2c/ov5645.yaml
-new file mode 100644
-index 000000000000..4bf58ad210c5
---- /dev/null
-+++ b/Documentation/devicetree/bindings/media/i2c/ov5645.yaml
-@@ -0,0 +1,140 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/media/i2c/ov5645.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Omnivision 1/4-Inch 5Mp CMOS Digital Image Sensor
-+
-+maintainers:
-+  - Sakari Ailus <sakari.ailus@linux.intel.com>
-+  - Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-+
-+description: |-
-+ The Omnivision OV5645 is a 1/4-Inch CMOS active pixel digital image sensor with
-+ an active array size of 2592H x 1944V. It is programmable through a serial I2C
-+ interface.
-+
-+properties:
-+  compatible:
-+    const: ovti,ov5645
-+
-+  reg:
-+    description: I2C device address
-+    maxItems: 1
-+
-+  clocks:
-+    maxItems: 1
-+
-+  clock-names:
-+    items:
-+      - const: xclk
-+
-+  assigned-clocks:
-+    maxItems: 1
-+
-+  assigned-clock-rates:
-+     items:
-+     - description: Must be 24MHz (24000000).
-+
-+  enable-gpios:
-+    description: |-
-+      Chip enable GPIO. Polarity is GPIO_ACTIVE_HIGH. This corresponds
-+      to the hardware pin PWDNB which is physically active low.
-+
-+  reset-gpios:
-+    description: |-
-+      Chip reset GPIO. Polarity is GPIO_ACTIVE_LOW. This corresponds to
-+      the hardware pin RESETB.
-+
-+  vdddo-supply:
-+    description:
-+      Chip digital IO regulator.
-+
-+  vdda-supply:
-+    description:
-+      Chip analog regulator.
-+
-+  vddd-supply:
-+    description:
-+      Chip digital core regulator.
-+
-+  # See ../video-interfaces.txt for more details
-+  port:
-+    type: object
-+    properties:
-+      endpoint:
-+        type: object
-+
-+        properties:
-+          data-lanes:
-+            description: |-
-+              The sensor supports two-lane operation.
-+              For two-lane operation the property must be set to <1 2>.
-+            items:
-+              - const: 1
-+              - const: 2
-+
-+          clock-lanes:
-+            description:
-+              should be set to <0> (clock lane on hardware lane 0).
-+            items:
-+              - const: 0
-+
-+          remote-endpoint: true
-+
-+        required:
-+          - data-lanes
-+          - clock-lanes
-+          - remote-endpoint
-+
-+        additionalProperties: false
-+
-+    additionalProperties: false
-+
-+required:
-+  - compatible
-+  - reg
-+  - clocks
-+  - clock-names
-+  - assigned-clocks
-+  - assigned-clock-rates
-+  - enable-gpios
-+  - reset-gpios
-+  - vdddo-supply
-+  - vdda-supply
-+  - vddd-supply
-+  - port
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    i2c1 {
-+        #address-cells = <1>;
-+        #size-cells = <0>;
-+
-+        ov5645: sensor@3c {
-+            compatible = "ovti,ov5645";
-+            reg = <0x3c>;
-+            clocks = <&ov5645_cl>;
-+            clock-names = "xclk";
-+            assigned-clocks = <&ov5645_cl>;
-+            assigned-clock-rates = <24000000>;
-+            enable-gpios = <&gpio1 6 /* GPIO_ACTIVE_HIGH */>;
-+            reset-gpios = <&gpio5 20 /* GPIO_ACTIVE_LOW */>;
-+            vdddo-supply = <&camera_dovdd_1v8>;
-+            vdda-supply = <&camera_avdd_2v8>;
-+            vddd-supply = <&camera_dvdd_1v2>;
-+
-+            port {
-+                ov5645_0: endpoint {
-+                    remote-endpoint = <&csi1_ep>;
-+                    clock-lanes = <0>;
-+                    data-lanes = <1 2>;
-+                };
-+            };
-+        };
-+    };
-+
-+...
+Michal Suchanek (8):
+  powerpc: Add back __ARCH_WANT_SYS_LLSEEK macro
+  powerpc: move common register copy functions from signal_32.c to
+    signal.c
+  powerpc/perf: consolidate read_user_stack_32
+  powerpc/perf: consolidate valid_user_sp
+  powerpc/64: make buildable without CONFIG_COMPAT
+  powerpc/64: Make COMPAT user-selectable disabled on littleendian by
+    default.
+  powerpc/perf: split callchain.c by bitness
+  MAINTAINERS: perf: Add pattern that matches ppc perf to the perf
+    entry.
+
+ MAINTAINERS                            |   2 +
+ arch/powerpc/Kconfig                   |   5 +-
+ arch/powerpc/include/asm/thread_info.h |   4 +-
+ arch/powerpc/include/asm/unistd.h      |   1 +
+ arch/powerpc/kernel/Makefile           |   6 +-
+ arch/powerpc/kernel/entry_64.S         |   2 +
+ arch/powerpc/kernel/signal.c           | 144 +++++++++-
+ arch/powerpc/kernel/signal_32.c        | 140 ----------
+ arch/powerpc/kernel/syscall_64.c       |   6 +-
+ arch/powerpc/kernel/vdso.c             |   3 +-
+ arch/powerpc/perf/Makefile             |   5 +-
+ arch/powerpc/perf/callchain.c          | 356 +------------------------
+ arch/powerpc/perf/callchain.h          |  20 ++
+ arch/powerpc/perf/callchain_32.c       | 196 ++++++++++++++
+ arch/powerpc/perf/callchain_64.c       | 174 ++++++++++++
+ fs/read_write.c                        |   3 +-
+ 16 files changed, 556 insertions(+), 511 deletions(-)
+ create mode 100644 arch/powerpc/perf/callchain.h
+ create mode 100644 arch/powerpc/perf/callchain_32.c
+ create mode 100644 arch/powerpc/perf/callchain_64.c
+
 -- 
-2.20.1
+2.23.0
 
