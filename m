@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4A3B118B4A8
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:11:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 29DAD18B451
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:08:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728746AbgCSNLi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 09:11:38 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56848 "EHLO mail.kernel.org"
+        id S1727492AbgCSNIk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 09:08:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52860 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727745AbgCSNLc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 09:11:32 -0400
+        id S1728173AbgCSNIh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 09:08:37 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 74E8220722;
-        Thu, 19 Mar 2020 13:11:31 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 22DF12098B;
+        Thu, 19 Mar 2020 13:08:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584623491;
-        bh=c1KzFJe5ugMP3VUC9zUPA27C2lYVFTsHoL03CCM2Mlg=;
+        s=default; t=1584623317;
+        bh=XZcoHT4alxxJ/xeT/x+3XVa9SFNV3yfvrBKNuJtrCB0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=X3cbel7V5xeQMwZMkeShXABzpPdBVahBvTur1Os/MNE9qxKkjeXbwJg0Rw9UBoYUg
-         ly7Scz7nkZlttDW/pbv72VpDdWebPXIvhU6iaBdI9nGvA9ACoSbgQ0nfUXl7PuX5pR
-         J+0arGdgLKOnxZzPCGN/9k8BuIbL1Uo1MHFB74GQ=
+        b=Ijn1XzDGtU0C9QhweFdxpMdJGROrqxveDy6w5qyjnuF55H0z/VpSx7jEB2jsRj3U9
+         bEHXYQD3GpLszn186qYCik21gE7fPWfE348SUOWityMbddED3H7Xfe94/fV8yEphMB
+         IGPnQixvdfA7w0AwJ4V5hKuvxG29/VhAMXUSJGW8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>
-Subject: [PATCH 4.9 37/90] KVM: x86: clear stale x86_emulate_ctxt->intercept value
+        Sven Eckelmann <sven@narfation.org>,
+        Marek Lindner <mareklindner@neomailbox.ch>,
+        Simon Wunderlich <sw@simonwunderlich.de>
+Subject: [PATCH 4.4 55/93] batman-adv: Fix orig_node_vlan leak on orig_node_release
 Date:   Thu, 19 Mar 2020 13:59:59 +0100
-Message-Id: <20200319123940.116286423@linuxfoundation.org>
+Message-Id: <20200319123942.385655818@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.2
-In-Reply-To: <20200319123928.635114118@linuxfoundation.org>
-References: <20200319123928.635114118@linuxfoundation.org>
+In-Reply-To: <20200319123924.795019515@linuxfoundation.org>
+References: <20200319123924.795019515@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,50 +44,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vitaly Kuznetsov <vkuznets@redhat.com>
+From: Sven Eckelmann <sven@narfation.org>
 
-commit 342993f96ab24d5864ab1216f46c0b199c2baf8e upstream.
+commit 33fbb1f3db87ce53da925b3e034b4dd446d483f8 upstream.
 
-After commit 07721feee46b ("KVM: nVMX: Don't emulate instructions in guest
-mode") Hyper-V guests on KVM stopped booting with:
+batadv_orig_node_new uses batadv_orig_node_vlan_new to allocate a new
+batadv_orig_node_vlan and add it to batadv_orig_node::vlan_list. References
+to this list have also to be cleaned when the batadv_orig_node is removed.
 
- kvm_nested_vmexit:    rip fffff802987d6169 reason EPT_VIOLATION info1 181
-    info2 0 int_info 0 int_info_err 0
- kvm_page_fault:       address febd0000 error_code 181
- kvm_emulate_insn:     0:fffff802987d6169: f3 a5
- kvm_emulate_insn:     0:fffff802987d6169: f3 a5 FAIL
- kvm_inj_exception:    #UD (0x0)
-
-"f3 a5" is a "rep movsw" instruction, which should not be intercepted
-at all.  Commit c44b4c6ab80e ("KVM: emulate: clean up initializations in
-init_decode_cache") reduced the number of fields cleared by
-init_decode_cache() claiming that they are being cleared elsewhere,
-'intercept', however, is left uncleared if the instruction does not have
-any of the "slow path" flags (NotImpl, Stack, Op3264, Sse, Mmx, CheckPerm,
-NearBranch, No16 and of course Intercept itself).
-
-Fixes: c44b4c6ab80e ("KVM: emulate: clean up initializations in init_decode_cache")
-Fixes: 07721feee46b ("KVM: nVMX: Don't emulate instructions in guest mode")
-Cc: stable@vger.kernel.org
-Suggested-by: Paolo Bonzini <pbonzini@redhat.com>
-Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
-Reviewed-by: Sean Christopherson <sean.j.christopherson@intel.com>
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+Fixes: 7ea7b4a14275 ("batman-adv: make the TT CRC logic VLAN specific")
+Signed-off-by: Sven Eckelmann <sven@narfation.org>
+Signed-off-by: Marek Lindner <mareklindner@neomailbox.ch>
+Signed-off-by: Simon Wunderlich <sw@simonwunderlich.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- arch/x86/kvm/emulate.c |    1 +
- 1 file changed, 1 insertion(+)
+ net/batman-adv/originator.c |    8 ++++++++
+ 1 file changed, 8 insertions(+)
 
---- a/arch/x86/kvm/emulate.c
-+++ b/arch/x86/kvm/emulate.c
-@@ -5022,6 +5022,7 @@ int x86_decode_insn(struct x86_emulate_c
- 	ctxt->fetch.ptr = ctxt->fetch.data;
- 	ctxt->fetch.end = ctxt->fetch.data + insn_len;
- 	ctxt->opcode_len = 1;
-+	ctxt->intercept = x86_intercept_none;
- 	if (insn_len > 0)
- 		memcpy(ctxt->fetch.data, insn, insn_len);
- 	else {
+--- a/net/batman-adv/originator.c
++++ b/net/batman-adv/originator.c
+@@ -564,6 +564,7 @@ static void batadv_orig_node_release(str
+ 	struct hlist_node *node_tmp;
+ 	struct batadv_neigh_node *neigh_node;
+ 	struct batadv_orig_ifinfo *orig_ifinfo;
++	struct batadv_orig_node_vlan *vlan;
+ 
+ 	spin_lock_bh(&orig_node->neigh_list_lock);
+ 
+@@ -581,6 +582,13 @@ static void batadv_orig_node_release(str
+ 	}
+ 	spin_unlock_bh(&orig_node->neigh_list_lock);
+ 
++	spin_lock_bh(&orig_node->vlan_list_lock);
++	hlist_for_each_entry_safe(vlan, node_tmp, &orig_node->vlan_list, list) {
++		hlist_del_rcu(&vlan->list);
++		batadv_orig_node_vlan_free_ref(vlan);
++	}
++	spin_unlock_bh(&orig_node->vlan_list_lock);
++
+ 	/* Free nc_nodes */
+ 	batadv_nc_purge_orig(orig_node->bat_priv, orig_node, NULL);
+ 
 
 
