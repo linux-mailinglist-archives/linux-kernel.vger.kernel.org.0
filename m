@@ -2,35 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2FC4618B742
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:32:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ADCB718B741
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:32:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729496AbgCSNQG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 09:16:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36192 "EHLO mail.kernel.org"
+        id S1728265AbgCSNQL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 09:16:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36262 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729483AbgCSNQE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 09:16:04 -0400
+        id S1729497AbgCSNQH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 09:16:07 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EFD412098B;
-        Thu, 19 Mar 2020 13:16:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 76BC1216FD;
+        Thu, 19 Mar 2020 13:16:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584623764;
-        bh=N1IvcdAKJkHcF6FqQ5d89QbwvvBcmY/Vecti2b3XLfc=;
+        s=default; t=1584623766;
+        bh=F3E9u0e+OhzeM2fhFFj712/muRznLLR9TG6SMNd/BoM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=iM6NXWH2lC3RkJB5BtlzTAgR6hkPTp4NheCZROuphDmSk9DxV8jA/DAYkQMbbKBFY
-         7T+eOfMbP4okiNi+kCVVnqN8HsgCzl23iMq2URUU74IJbx/LxUT3eEe1sOQIbA3rQl
-         7eOA83dSPVJXAL4eu9LSgXHPmga8G2dhj+vQgjxg=
+        b=WOoydtuBAPkzazbaQd0SxeZfgKUHeHJCQO/dorzOe5MHDgVTWDVdR88/aIsa8RAl+
+         ub7Vx7cqrVd0NSTWPD/VUGdp8FPW+GEk9MX23NJwTP5+/E26k6izdA1X+eNEmvO2Hr
+         T310BST6ptiKVxyR6SQVgzww7PupwXG8HZ6Y2W2A=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
-        stable@kernel.org
-Subject: [PATCH 4.14 46/99] gfs2_atomic_open(): fix O_EXCL|O_CREAT handling on cold dcache
-Date:   Thu, 19 Mar 2020 14:03:24 +0100
-Message-Id: <20200319123955.852659047@linuxfoundation.org>
+        stable@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>
+Subject: [PATCH 4.14 47/99] KVM: x86: clear stale x86_emulate_ctxt->intercept value
+Date:   Thu, 19 Mar 2020 14:03:25 +0100
+Message-Id: <20200319123956.144975540@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.2
 In-Reply-To: <20200319123941.630731708@linuxfoundation.org>
 References: <20200319123941.630731708@linuxfoundation.org>
@@ -43,34 +44,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Al Viro <viro@zeniv.linux.org.uk>
+From: Vitaly Kuznetsov <vkuznets@redhat.com>
 
-commit 21039132650281de06a169cbe8a0f7e5c578fd8b upstream.
+commit 342993f96ab24d5864ab1216f46c0b199c2baf8e upstream.
 
-with the way fs/namei.c:do_last() had been done, ->atomic_open()
-instances needed to recognize the case when existing file got
-found with O_EXCL|O_CREAT, either by falling back to finish_no_open()
-or failing themselves.  gfs2 one didn't.
+After commit 07721feee46b ("KVM: nVMX: Don't emulate instructions in guest
+mode") Hyper-V guests on KVM stopped booting with:
 
-Fixes: 6d4ade986f9c (GFS2: Add atomic_open support)
-Cc: stable@kernel.org # v3.11
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+ kvm_nested_vmexit:    rip fffff802987d6169 reason EPT_VIOLATION info1 181
+    info2 0 int_info 0 int_info_err 0
+ kvm_page_fault:       address febd0000 error_code 181
+ kvm_emulate_insn:     0:fffff802987d6169: f3 a5
+ kvm_emulate_insn:     0:fffff802987d6169: f3 a5 FAIL
+ kvm_inj_exception:    #UD (0x0)
+
+"f3 a5" is a "rep movsw" instruction, which should not be intercepted
+at all.  Commit c44b4c6ab80e ("KVM: emulate: clean up initializations in
+init_decode_cache") reduced the number of fields cleared by
+init_decode_cache() claiming that they are being cleared elsewhere,
+'intercept', however, is left uncleared if the instruction does not have
+any of the "slow path" flags (NotImpl, Stack, Op3264, Sse, Mmx, CheckPerm,
+NearBranch, No16 and of course Intercept itself).
+
+Fixes: c44b4c6ab80e ("KVM: emulate: clean up initializations in init_decode_cache")
+Fixes: 07721feee46b ("KVM: nVMX: Don't emulate instructions in guest mode")
+Cc: stable@vger.kernel.org
+Suggested-by: Paolo Bonzini <pbonzini@redhat.com>
+Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+Reviewed-by: Sean Christopherson <sean.j.christopherson@intel.com>
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/gfs2/inode.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/x86/kvm/emulate.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/fs/gfs2/inode.c
-+++ b/fs/gfs2/inode.c
-@@ -1255,7 +1255,7 @@ static int gfs2_atomic_open(struct inode
- 		if (!(*opened & FILE_OPENED))
- 			return finish_no_open(file, d);
- 		dput(d);
--		return 0;
-+		return excl && (flags & O_CREAT) ? -EEXIST : 0;
- 	}
- 
- 	BUG_ON(d != NULL);
+--- a/arch/x86/kvm/emulate.c
++++ b/arch/x86/kvm/emulate.c
+@@ -5062,6 +5062,7 @@ int x86_decode_insn(struct x86_emulate_c
+ 	ctxt->fetch.ptr = ctxt->fetch.data;
+ 	ctxt->fetch.end = ctxt->fetch.data + insn_len;
+ 	ctxt->opcode_len = 1;
++	ctxt->intercept = x86_intercept_none;
+ 	if (insn_len > 0)
+ 		memcpy(ctxt->fetch.data, insn, insn_len);
+ 	else {
 
 
