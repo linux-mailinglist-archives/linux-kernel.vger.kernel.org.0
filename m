@@ -2,134 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7EE4A18B057
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 10:35:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C50FF18B05C
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 10:36:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726905AbgCSJfB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 05:35:01 -0400
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:45988 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726063AbgCSJfB (ORCPT
+        id S1726955AbgCSJgr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 05:36:47 -0400
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:42537 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726802AbgCSJgq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 05:35:01 -0400
-Received: by mail-lf1-f66.google.com with SMTP id x143so1008837lff.12
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Mar 2020 02:34:58 -0700 (PDT)
+        Thu, 19 Mar 2020 05:36:46 -0400
+Received: by mail-qt1-f196.google.com with SMTP id g16so1176258qtp.9
+        for <linux-kernel@vger.kernel.org>; Thu, 19 Mar 2020 02:36:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=NiDnRV7NI9Khqp9ESuBw2nq/wy1BnLikL2FairlQ1dM=;
-        b=wTjB6gk+bF7Z2p01tu+RH+sASuqFUmpcZ5axQkNFVM6SpdKeLdsjbek3a0Tr6s5MAW
-         K3lZLKJnrtX+Zh/bCVqoRYE2t0dD72o2JsSS5JA1fOOQdjBDrVwVEQ5eoJao+X2WYVnp
-         m8/zowwQfzJzRBo/Ew7IGwsv+3kQ/SueOmiTSJgWcYJ177LRLHbOqomdgiy+OsArnXVl
-         VPI79zA/ZQ3N8IQThu+GgTpRayrnk5fP85XcxINJ3DIvOSHAyd3ntDGGlJeMGVeFTg0o
-         mkELZX3VcaggxH40h/DsLaRY9QCq7YWBa88wfHRwZZ6YA1okOJ5nLzutTcU0h1tPtTnt
-         gTqQ==
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=XXiibj26cwiCy87WU+u2jxQnAx+tvjXXNcEInMJCZoA=;
+        b=OfYbY1e3vgRblH9C7xpvz7qay953QwrzYGoIeAV5tqgyLQ34vh3GJ1HEGvB7aMIqQD
+         XHK/QeFnrjTNVbnmt0cG0VGldiZ1pQX+oH+U9y/EiYmL9GVOZ1w1X1lHhQyQDKHNLmL4
+         wYI61ay8K/XYVEM/UDq2ax/eb2l82mQqS1uyK3IbBgbIB1q5hj7xrugU1xVDUZUrWKcb
+         QF3kBMG6X+SSAoDu5uGfjVRFC2PnNuw+p0uNjolBlmBEmCdChLm+P2AECkxi1mBtrc95
+         Sli/poTowwH9D2AULMz+CHGtm3ewQSgVrv+VbbWRMfy/47T9hqcqayoBVpKMIHLQHY8v
+         m8zQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=NiDnRV7NI9Khqp9ESuBw2nq/wy1BnLikL2FairlQ1dM=;
-        b=dBSRE7psRJzUzS3FJppqsDoOh/sefPrFys35K2JwEVoF9PIaXtxb2JsdKxvNGb6hno
-         8c/8xA+fulCJaRYD/INjL6A84HaQbilOAbTPy09tsr3MomxiQ+aTjo/kulLTRbMIla71
-         yU3mc7hQ9zemZQqqol7SXavxJUt31ISVzVLqo2TVjydd0MdlLSnfrwmWtLAP/STD5xBR
-         zEuTocfh9X9wQ2yySr3NIY508BDUZs7PPecDVEHLfobMA1r4ftaePUunHxjdCYylErem
-         9utLgmOyU/eS9T5utgdT/5L+DcwMTKTr+DUEYiLs7ogOFtyz1n9GKKu7gzK6vVAzSvzs
-         RRMQ==
-X-Gm-Message-State: ANhLgQ3dOPF3DsEIKXkm48ne7M1F0m61sLHSwBP4/w4KNyi7TKG6XRgM
-        cvNT/oYVHk3bn1mXu4SeX+lVRnAdXEgbwg==
-X-Google-Smtp-Source: ADFU+vvZw6a8s0/WaXTKL2RvegLchTpAyeAVtitjQsaDhSDP9dTKxN3/cdu+ckUbmo4K7NlBhDdRww==
-X-Received: by 2002:ac2:54af:: with SMTP id w15mr1569160lfk.17.1584610497710;
-        Thu, 19 Mar 2020 02:34:57 -0700 (PDT)
-Received: from ?IPv6:2a00:1fa0:461c:252e:e50e:a5fa:f432:89e9? ([2a00:1fa0:461c:252e:e50e:a5fa:f432:89e9])
-        by smtp.gmail.com with ESMTPSA id m21sm1066656ljb.89.2020.03.19.02.34.55
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 19 Mar 2020 02:34:56 -0700 (PDT)
-Subject: Re: [PATCH v2] usb: dwc3: support continuous runtime PM with dual
- role
-To:     Martin Kepplinger <martin.kepplinger@puri.sm>, balbi@kernel.org
-Cc:     gregkh@linuxfoundation.org, rogerq@ti.com,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20200319084902.24747-1-martin.kepplinger@puri.sm>
-From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-ID: <7a085229-68a7-d700-1781-14225863a228@cogentembedded.com>
-Date:   Thu, 19 Mar 2020 12:34:47 +0300
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.6.0
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=XXiibj26cwiCy87WU+u2jxQnAx+tvjXXNcEInMJCZoA=;
+        b=hqf7Vc3MmMxiSGMhvznsZTzkzdrPmiTwFhOL5Qv3sQIoq3gE2yS5d+7qO2x8+FbuxG
+         Cf1LjrzTLPta0+WMegSRUAg3qmhkWo3p1O9Kx09XC2FU78BI5XWU4fH7yeqaYtnDY55R
+         u6m9sZkvCbsdoYx5JZ9TnE2RYp4EZe5KwvS+PP7L5/rS/ITGYZuBTIbPDdB89PiVoaEj
+         5j8XRrnRBzEg4YXb1VV400KUaCKMs2cAQRz8MbmDWvHNj++ReM1tSUb86RfATo4kQbpI
+         5cJi2+21cUwhkh5tvk+O43l2b5z3d/0hp8wyYJJS2l8HnIHm666FYITv7MuOwMmqYd6N
+         guFQ==
+X-Gm-Message-State: ANhLgQ2YV+rdHlx+4Yr20wRaJH0viDGQykqIj3QCzjsE2dVATo6hD29A
+        ecK/mM+kx3KUQTIBOo3JiUo2+jhrDCr3Ur6s2Qc=
+X-Google-Smtp-Source: ADFU+vuuxtB31n0jY42YS1VBvIRwbD+G1WYtMio4yMaZ1xA2Oz4S9+hlMrGoEV7sxLAcVsBdgDWsSKBM/l40tP/MTjU=
+X-Received: by 2002:aed:3c42:: with SMTP id u2mr761698qte.162.1584610605601;
+ Thu, 19 Mar 2020 02:36:45 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20200319084902.24747-1-martin.kepplinger@puri.sm>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Received: by 2002:a37:9bce:0:0:0:0:0 with HTTP; Thu, 19 Mar 2020 02:36:45
+ -0700 (PDT)
+Reply-To: idrisomar259@gmail.com
+From:   Idris Omar <dalamimusa77@gmail.com>
+Date:   Thu, 19 Mar 2020 02:36:45 -0700
+Message-ID: <CAB5zUX-BZhz++dn9oCJuTcZ0rTLpDVtpPuNCDNzG291sqkaAuw@mail.gmail.com>
+Subject: Hello,
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello!
+-- 
+Sir / Madam,
 
-On 19.03.2020 11:49, Martin Kepplinger wrote:
+Hi Friend I am the accountant and auditing manager of the
+International Finance Bank Plc bf I want to transfer an abandoned sum
+of 10.5 millions USD  to your account.50% will be for you. No risk
+involved.
 
-> The DRD module calls dwc3_set_mode() on role switches, i.e. when a device is
-> being pugged in. In order to support continuous runtime power management when
+Contact me for more details.
 
-     Plugged? :-)
+Kindly reply me back to my alternative email address (
+idrisomar259@gmail.com  )
 
-> plugging in / unplugging a cable, we need to call pm_runtime_get() in this path.
-> 
-> Signed-off-by: Martin Kepplinger <martin.kepplinger@puri.sm>
-> ---
-> 
-> revision history
-> ----------------
-> v2: move pm_rumtime calls into workqueue (thanks Roger)
->      remove unrelated documentation patch
-> v1: https://lore.kernel.org/linux-usb/ef22f8de-9bfd-c1d5-111c-696f1336dbda@puri.sm/T/
-> 
-> 
->   drivers/usb/dwc3/core.c | 11 ++++++++---
->   1 file changed, 8 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/usb/dwc3/core.c b/drivers/usb/dwc3/core.c
-> index 1d85c42b9c67..0c058b2ac21d 100644
-> --- a/drivers/usb/dwc3/core.c
-> +++ b/drivers/usb/dwc3/core.c
-> @@ -121,17 +121,19 @@ static void __dwc3_set_mode(struct work_struct *work)
->   	if (dwc->dr_mode != USB_DR_MODE_OTG)
->   		return;
->   
-> +	pm_runtime_get(dwc->dev);
+Thanks,
 
-    Not get_sync()
-
-> +
->   	if (dwc->current_dr_role == DWC3_GCTL_PRTCAP_OTG)
->   		dwc3_otg_update(dwc, 0);
->   
->   	if (!dwc->desired_dr_role)
-> -		return;
-> +		goto out;
->   
->   	if (dwc->desired_dr_role == dwc->current_dr_role)
-> -		return;
-> +		goto out;
->   
->   	if (dwc->desired_dr_role == DWC3_GCTL_PRTCAP_OTG && dwc->edev)
-> -		return;
-> +		goto out;
->   
->   	switch (dwc->current_dr_role) {
->   	case DWC3_GCTL_PRTCAP_HOST:
-> @@ -190,6 +192,9 @@ static void __dwc3_set_mode(struct work_struct *work)
->   		break;
->   	}
->   
-> +out:
-> +	pm_runtime_mark_last_busy(dwc->dev);
-> +	pm_runtime_put_autosuspend(dwc->dev);
->   }
->   
->   void dwc3_set_mode(struct dwc3 *dwc, u32 mode)
-
-MBR, Sergei
+Mr Idris Omar
