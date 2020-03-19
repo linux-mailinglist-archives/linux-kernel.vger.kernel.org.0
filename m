@@ -2,374 +2,148 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 38B8F18B78B
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:34:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DA38118B7AD
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:35:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727896AbgCSNeJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 09:34:09 -0400
-Received: from mail-pj1-f67.google.com ([209.85.216.67]:55285 "EHLO
-        mail-pj1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727159AbgCSNeG (ORCPT
+        id S1727806AbgCSNfO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 09:35:14 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:39199 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727320AbgCSNfN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 09:34:06 -0400
-Received: by mail-pj1-f67.google.com with SMTP id np9so1036887pjb.4;
-        Thu, 19 Mar 2020 06:34:05 -0700 (PDT)
+        Thu, 19 Mar 2020 09:35:13 -0400
+Received: by mail-pf1-f195.google.com with SMTP id d25so1441581pfn.6
+        for <linux-kernel@vger.kernel.org>; Thu, 19 Mar 2020 06:35:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=F2L50Kf5vxV4m1X5xHH97b0ZIljM+Ez6EQ+o7n8lyF8=;
-        b=ZkxuJeM+PiMgUQSprSTt3xmHy0tEdg1/l4+eNMox9P0RhnMGk+jkYcJau7WyFNECpy
-         XEk1RMfvkF7QrCPKhMJe62C87fBIaDL09qUFPSQgHwnYNpbdbyshNjwTypGa+/Z1lFOq
-         3sJJO9D9/5KDcyxuu459lkfjelid2j8kXtgQbM6nBJF+iGCx5MVeg+ueEHm0REbR8R7v
-         S8VNw81MpJz7+p79b/DusxX8vxf/xBGUt0gfG2yD4jhJ1lquaZTWrsq3UEiup+IlLNOT
-         LkpUOg+lL7nmr8bC3YbcfQKqc8AfJ8e8YZ+DPPNXtjAySEkBwVEYf0oEgSTSkjxiB8Sn
-         n7YA==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ket5nG48OjRkSmjRLhm6o/GZWaiXnw2ieKQdmnyTlMc=;
+        b=Bh5NyyG1M8gtKQIPrZf/5qLuu0ztHrg/ar6jVL2/WT1taChSOWg/KvzKJbbR0KSYtR
+         XPtaZguXMqGkXBJ3gJyLO7wN+gVjLuV9q3Tz8TwQGSGAjkytzkvd45orPduurhypW4gD
+         yJO04p/sjDB3DsSwi3caCRbP2G4wKsjv3RFhMMrqRyLk1I17Hd7iKJTiXBdaQKPXCmbG
+         /NP1TWBrM/8HPRvMvfpqj8Jq2nmMrWRYtiIF3ldTvwMzZPlyYJxZwNVJiKpxUepjxUOW
+         3Rs27tmyLu3uAw+5+1836CWrZplMOz3sKM7WD7zh+xZEVScIfOCeygBpVOiyZhii8JwD
+         BWgA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=F2L50Kf5vxV4m1X5xHH97b0ZIljM+Ez6EQ+o7n8lyF8=;
-        b=rFRtEVWY+NpquVnqzDyBAbwfmfx7GbLKeme6aFzDnO7kN7grl/BEYBsQu1LAzdAT+z
-         BdWAlz+WO5Q2Kofe2S6ae7oxwd4M41zAsrxOD9CmWPg+l3gJABqnUtrjO9ymsJd07Ebd
-         Q/RQkefwmi2TCnzlnbheux3XnIIgxRupQwaYXuTxg0UKcmJWWPjIIEhtgDTQ9nF8+L9T
-         R//aB77/CUaGGREemOS5JdmXlABC/JQrgQxTntYYczp+sMKX+0BkrEH1QPuC3r+2VEWs
-         DHjIm0rUPgg2Zbcdno/gt0xKCmVOA8MPHGSauTt4u2NKJqwSj9+IxOU69GkniFcxqzyJ
-         0QAQ==
-X-Gm-Message-State: ANhLgQ106K63ApIqQ/rA2DogsF3B3Cpk7ye/eiNTta7PICZ5Tc+3WRJQ
-        xQB996dv1GavXJ5HS1is75g=
-X-Google-Smtp-Source: ADFU+vsTeguCzwnRhAH8BYGxM2n/vHfe0GuP3u1PEvzbPnvVmJWGG6xIWhxyIXiKEZsZR4Qf+wAMDQ==
-X-Received: by 2002:a17:902:444:: with SMTP id 62mr3429788ple.109.1584624844901;
-        Thu, 19 Mar 2020 06:34:04 -0700 (PDT)
-Received: from pek-khao-d2.corp.ad.wrs.com (unknown-105-123.windriver.com. [147.11.105.123])
-        by smtp.gmail.com with ESMTPSA id d23sm2587996pfq.210.2020.03.19.06.33.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 19 Mar 2020 06:34:04 -0700 (PDT)
-Date:   Thu, 19 Mar 2020 21:33:55 +0800
-From:   Kevin Hao <haokexin@gmail.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: Re: [PATCH 5.5 01/65] gpiolib: Add support for the irqdomain which
- doesnt use irq_fwspec as arg
-Message-ID: <20200319133355.GB711692@pek-khao-d2.corp.ad.wrs.com>
-References: <20200319123926.466988514@linuxfoundation.org>
- <20200319123926.902914624@linuxfoundation.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ket5nG48OjRkSmjRLhm6o/GZWaiXnw2ieKQdmnyTlMc=;
+        b=CKTeargNKD5IwJ5jnXtWN8AbXNXw/aefnb0QnfvofwZFj1CoVrC+5IaSTbuG5Cgx6W
+         a7YDTbLe1XamtiXG6540TVMldKMIZaMVfG2Vi3ed8THGrjCH7AiEqHBeNaUAGu+W9Zrw
+         gS7aqScBUIhg2M1ppySat07kM3z/zZ6/2CSyHKQwDyij6Z6qSx6cc5CgDTWkWUW/LU6J
+         xO+Hu0yG9iwGPqQrucwHFIO5v7TxJnlYIQFZwf+19IdGdjSws7mfIueH8CXYOUm+UOgW
+         uEPEpr7yy6lWXQCXWA0XOGUm/0XUtlhPU+8NI6NArNSpfZ02AIyCa69umQyQlNwbwoHU
+         BrKA==
+X-Gm-Message-State: ANhLgQ0h5sL1PyeQVOzw6ATyOTbC/jxbxBpXJ4CAWXyquk783h0ToE3y
+        q+K889i0WCCzbimjsIaSj8EaVOExT9grixMzBYM=
+X-Google-Smtp-Source: ADFU+vvo67RB7PN+1WI5QYtP3PGnTDjr7aFXa63C0L5Ako2i2oQmzaEBTO0AggKTr2A7JzPp7zlA8WyDdxJDa+KRnLs=
+X-Received: by 2002:a63:1c4d:: with SMTP id c13mr3369187pgm.4.1584624911491;
+ Thu, 19 Mar 2020 06:35:11 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="MfFXiAuoTsnnDAfZ"
-Content-Disposition: inline
-In-Reply-To: <20200319123926.902914624@linuxfoundation.org>
+References: <cover.1584613649.git.msuchanek@suse.de> <1b612025371bb9f2bcce72c700c809ae29e57392.1584613649.git.msuchanek@suse.de>
+In-Reply-To: <1b612025371bb9f2bcce72c700c809ae29e57392.1584613649.git.msuchanek@suse.de>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Thu, 19 Mar 2020 15:35:03 +0200
+Message-ID: <CAHp75VcMkPeJ6exroipnxvf-7g-C8QbVm0bAnp=rk505_nxySw@mail.gmail.com>
+Subject: Re: [PATCH v11 4/8] powerpc/perf: consolidate valid_user_sp
+To:     Michal Suchanek <msuchanek@suse.de>
+Cc:     "open list:LINUX FOR POWERPC PA SEMI PWRFICIENT" 
+        <linuxppc-dev@lists.ozlabs.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Rob Herring <robh@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Christophe Leroy <christophe.leroy@c-s.fr>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Nayna Jain <nayna@linux.ibm.com>,
+        Eric Richter <erichte@linux.ibm.com>,
+        Claudio Carvalho <cclaudio@linux.ibm.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Hari Bathini <hbathini@linux.ibm.com>,
+        Masahiro Yamada <masahiroy@kernel.org>,
+        Thiago Jung Bauermann <bauerman@linux.ibm.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Valentin Schneider <valentin.schneider@arm.com>,
+        Jordan Niethe <jniethe5@gmail.com>,
+        Michael Neuling <mikey@neuling.org>,
+        Gustavo Luiz Duarte <gustavold@linux.ibm.com>,
+        Allison Randal <allison@lohutok.net>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "linux-fsdevel @ vger . kernel . org --in-reply-to=" 
+        <20200225173541.1549955-1-npiggin@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Mar 19, 2020 at 1:54 PM Michal Suchanek <msuchanek@suse.de> wrote:
+>
+> Merge the 32bit and 64bit version.
+>
+> Halve the check constants on 32bit.
+>
+> Use STACK_TOP since it is defined.
+>
+> Passing is_64 is now redundant since is_32bit_task() is used to
+> determine which callchain variant should be used. Use STACK_TOP and
+> is_32bit_task() directly.
+>
+> This removes a page from the valid 32bit area on 64bit:
+>  #define TASK_SIZE_USER32 (0x0000000100000000UL - (1 * PAGE_SIZE))
+>  #define STACK_TOP_USER32 TASK_SIZE_USER32
 
---MfFXiAuoTsnnDAfZ
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+...
 
-On Thu, Mar 19, 2020 at 02:03:43PM +0100, Greg Kroah-Hartman wrote:
-> From: Kevin Hao <haokexin@gmail.com>
->=20
-> [ Upstream commit 242587616710576808dc8d7cdf18cfe0d7bf9831 ]
->=20
-> Some gpio's parent irqdomain may not use the struct irq_fwspec as
-> argument, such as msi irqdomain. So rename the callback
-> populate_parent_fwspec() to populate_parent_alloc_arg() and make it
-> allocate and populate the specific struct which is needed by the
-> parent irqdomain.
-
-Hi Greg,
-
-This commit shouldn't go to stable because it is not a bug fix. It is just a
-prerequisite of switching to general GPIOLIB_IRQCHIP for thunderx gpio driv=
-er
-(commit 7a9f4460f74d "gpio: thunderx: Switch to GPIOLIB_IRQCHIP").
-
-Thanks,
-Kevin
-
->=20
-> Signed-off-by: Kevin Hao <haokexin@gmail.com>
-> Link: https://lore.kernel.org/r/20200114082821.14015-3-haokexin@gmail.com
-> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-> Signed-off-by: Sasha Levin <sashal@kernel.org>
-> ---
->  drivers/gpio/gpio-tegra186.c             | 13 +++++--
->  drivers/gpio/gpiolib.c                   | 45 +++++++++++++++---------
->  drivers/pinctrl/qcom/pinctrl-spmi-gpio.c |  2 +-
->  drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c |  2 +-
->  include/linux/gpio/driver.h              | 21 +++++------
->  5 files changed, 49 insertions(+), 34 deletions(-)
->=20
-> diff --git a/drivers/gpio/gpio-tegra186.c b/drivers/gpio/gpio-tegra186.c
-> index 55b43b7ce88db..de241263d4be3 100644
-> --- a/drivers/gpio/gpio-tegra186.c
-> +++ b/drivers/gpio/gpio-tegra186.c
-> @@ -448,17 +448,24 @@ static int tegra186_gpio_irq_domain_translate(struc=
-t irq_domain *domain,
->  	return 0;
->  }
-> =20
-> -static void tegra186_gpio_populate_parent_fwspec(struct gpio_chip *chip,
-> -						 struct irq_fwspec *fwspec,
-> +static void *tegra186_gpio_populate_parent_fwspec(struct gpio_chip *chip,
->  						 unsigned int parent_hwirq,
->  						 unsigned int parent_type)
->  {
->  	struct tegra_gpio *gpio =3D gpiochip_get_data(chip);
-> +	struct irq_fwspec *fwspec;
-> =20
-> +	fwspec =3D kmalloc(sizeof(*fwspec), GFP_KERNEL);
-> +	if (!fwspec)
-> +		return NULL;
+> +static inline int valid_user_sp(unsigned long sp)
+> +{
+> +       bool is_64 = !is_32bit_task();
 > +
-> +	fwspec->fwnode =3D chip->irq.parent_domain->fwnode;
->  	fwspec->param_count =3D 3;
->  	fwspec->param[0] =3D gpio->soc->instance;
->  	fwspec->param[1] =3D parent_hwirq;
->  	fwspec->param[2] =3D parent_type;
-> +
-> +	return fwspec;
->  }
-> =20
->  static int tegra186_gpio_child_to_parent_hwirq(struct gpio_chip *chip,
-> @@ -621,7 +628,7 @@ static int tegra186_gpio_probe(struct platform_device=
- *pdev)
->  	irq->chip =3D &gpio->intc;
->  	irq->fwnode =3D of_node_to_fwnode(pdev->dev.of_node);
->  	irq->child_to_parent_hwirq =3D tegra186_gpio_child_to_parent_hwirq;
-> -	irq->populate_parent_fwspec =3D tegra186_gpio_populate_parent_fwspec;
-> +	irq->populate_parent_alloc_arg =3D tegra186_gpio_populate_parent_fwspec;
->  	irq->child_offset_to_irq =3D tegra186_gpio_child_offset_to_irq;
->  	irq->child_irq_domain_ops.translate =3D tegra186_gpio_irq_domain_transl=
-ate;
->  	irq->handler =3D handle_simple_irq;
-> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-> index 175c6363cf611..cdbaa8bf72f74 100644
-> --- a/drivers/gpio/gpiolib.c
-> +++ b/drivers/gpio/gpiolib.c
-> @@ -2003,7 +2003,7 @@ static int gpiochip_hierarchy_irq_domain_alloc(stru=
-ct irq_domain *d,
->  	irq_hw_number_t hwirq;
->  	unsigned int type =3D IRQ_TYPE_NONE;
->  	struct irq_fwspec *fwspec =3D data;
-> -	struct irq_fwspec parent_fwspec;
-> +	void *parent_arg;
->  	unsigned int parent_hwirq;
->  	unsigned int parent_type;
->  	struct gpio_irq_chip *girq =3D &gc->irq;
-> @@ -2042,24 +2042,21 @@ static int gpiochip_hierarchy_irq_domain_alloc(st=
-ruct irq_domain *d,
->  			    NULL, NULL);
->  	irq_set_probe(irq);
-> =20
-> -	/*
-> -	 * Create a IRQ fwspec to send up to the parent irqdomain:
-> -	 * specify the hwirq we address on the parent and tie it
-> -	 * all together up the chain.
-> -	 */
-> -	parent_fwspec.fwnode =3D d->parent->fwnode;
->  	/* This parent only handles asserted level IRQs */
-> -	girq->populate_parent_fwspec(gc, &parent_fwspec, parent_hwirq,
-> -				     parent_type);
-> +	parent_arg =3D girq->populate_parent_alloc_arg(gc, parent_hwirq, parent=
-_type);
-> +	if (!parent_arg)
-> +		return -ENOMEM;
-> +
->  	chip_info(gc, "alloc_irqs_parent for %d parent hwirq %d\n",
->  		  irq, parent_hwirq);
->  	irq_set_lockdep_class(irq, gc->irq.lock_key, gc->irq.request_key);
-> -	ret =3D irq_domain_alloc_irqs_parent(d, irq, 1, &parent_fwspec);
-> +	ret =3D irq_domain_alloc_irqs_parent(d, irq, 1, parent_arg);
->  	if (ret)
->  		chip_err(gc,
->  			 "failed to allocate parent hwirq %d for hwirq %lu\n",
->  			 parent_hwirq, hwirq);
-> =20
-> +	kfree(parent_arg);
->  	return ret;
->  }
-> =20
-> @@ -2096,8 +2093,8 @@ static int gpiochip_hierarchy_add_domain(struct gpi=
-o_chip *gc)
->  	if (!gc->irq.child_offset_to_irq)
->  		gc->irq.child_offset_to_irq =3D gpiochip_child_offset_to_irq_noop;
-> =20
-> -	if (!gc->irq.populate_parent_fwspec)
-> -		gc->irq.populate_parent_fwspec =3D
-> +	if (!gc->irq.populate_parent_alloc_arg)
-> +		gc->irq.populate_parent_alloc_arg =3D
->  			gpiochip_populate_parent_fwspec_twocell;
-> =20
->  	gpiochip_hierarchy_setup_domain_ops(&gc->irq.child_irq_domain_ops);
-> @@ -2123,27 +2120,43 @@ static bool gpiochip_hierarchy_is_hierarchical(st=
-ruct gpio_chip *gc)
->  	return !!gc->irq.parent_domain;
->  }
-> =20
-> -void gpiochip_populate_parent_fwspec_twocell(struct gpio_chip *chip,
-> -					     struct irq_fwspec *fwspec,
-> +void *gpiochip_populate_parent_fwspec_twocell(struct gpio_chip *chip,
->  					     unsigned int parent_hwirq,
->  					     unsigned int parent_type)
->  {
-> +	struct irq_fwspec *fwspec;
-> +
-> +	fwspec =3D kmalloc(sizeof(*fwspec), GFP_KERNEL);
-> +	if (!fwspec)
-> +		return NULL;
-> +
-> +	fwspec->fwnode =3D chip->irq.parent_domain->fwnode;
->  	fwspec->param_count =3D 2;
->  	fwspec->param[0] =3D parent_hwirq;
->  	fwspec->param[1] =3D parent_type;
-> +
-> +	return fwspec;
->  }
->  EXPORT_SYMBOL_GPL(gpiochip_populate_parent_fwspec_twocell);
-> =20
-> -void gpiochip_populate_parent_fwspec_fourcell(struct gpio_chip *chip,
-> -					      struct irq_fwspec *fwspec,
-> +void *gpiochip_populate_parent_fwspec_fourcell(struct gpio_chip *chip,
->  					      unsigned int parent_hwirq,
->  					      unsigned int parent_type)
->  {
-> +	struct irq_fwspec *fwspec;
-> +
-> +	fwspec =3D kmalloc(sizeof(*fwspec), GFP_KERNEL);
-> +	if (!fwspec)
-> +		return NULL;
-> +
-> +	fwspec->fwnode =3D chip->irq.parent_domain->fwnode;
->  	fwspec->param_count =3D 4;
->  	fwspec->param[0] =3D 0;
->  	fwspec->param[1] =3D parent_hwirq;
->  	fwspec->param[2] =3D 0;
->  	fwspec->param[3] =3D parent_type;
-> +
-> +	return fwspec;
->  }
->  EXPORT_SYMBOL_GPL(gpiochip_populate_parent_fwspec_fourcell);
-> =20
-> diff --git a/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c b/drivers/pinctrl/q=
-com/pinctrl-spmi-gpio.c
-> index 653d1095bfeaf..fe0be8a6ebb7b 100644
-> --- a/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c
-> +++ b/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c
-> @@ -1060,7 +1060,7 @@ static int pmic_gpio_probe(struct platform_device *=
-pdev)
->  	girq->fwnode =3D of_node_to_fwnode(state->dev->of_node);
->  	girq->parent_domain =3D parent_domain;
->  	girq->child_to_parent_hwirq =3D pmic_gpio_child_to_parent_hwirq;
-> -	girq->populate_parent_fwspec =3D gpiochip_populate_parent_fwspec_fource=
-ll;
-> +	girq->populate_parent_alloc_arg =3D gpiochip_populate_parent_fwspec_fou=
-rcell;
->  	girq->child_offset_to_irq =3D pmic_gpio_child_offset_to_irq;
->  	girq->child_irq_domain_ops.translate =3D pmic_gpio_domain_translate;
-> =20
-> diff --git a/drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c b/drivers/pinctrl/q=
-com/pinctrl-ssbi-gpio.c
-> index dca86886b1f99..73d986a903f1b 100644
-> --- a/drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c
-> +++ b/drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c
-> @@ -794,7 +794,7 @@ static int pm8xxx_gpio_probe(struct platform_device *=
-pdev)
->  	girq->fwnode =3D of_node_to_fwnode(pctrl->dev->of_node);
->  	girq->parent_domain =3D parent_domain;
->  	girq->child_to_parent_hwirq =3D pm8xxx_child_to_parent_hwirq;
-> -	girq->populate_parent_fwspec =3D gpiochip_populate_parent_fwspec_fource=
-ll;
-> +	girq->populate_parent_alloc_arg =3D gpiochip_populate_parent_fwspec_fou=
-rcell;
->  	girq->child_offset_to_irq =3D pm8xxx_child_offset_to_irq;
->  	girq->child_irq_domain_ops.translate =3D pm8xxx_domain_translate;
-> =20
-> diff --git a/include/linux/gpio/driver.h b/include/linux/gpio/driver.h
-> index e2480ef94c559..9bb43467ed11d 100644
-> --- a/include/linux/gpio/driver.h
-> +++ b/include/linux/gpio/driver.h
-> @@ -94,16 +94,15 @@ struct gpio_irq_chip {
->  				     unsigned int *parent_type);
-> =20
->  	/**
-> -	 * @populate_parent_fwspec:
-> +	 * @populate_parent_alloc_arg :
->  	 *
-> -	 * This optional callback populates the &struct irq_fwspec for the
-> -	 * parent's IRQ domain. If this is not specified, then
-> +	 * This optional callback allocates and populates the specific struct
-> +	 * for the parent's IRQ domain. If this is not specified, then
->  	 * &gpiochip_populate_parent_fwspec_twocell will be used. A four-cell
->  	 * variant named &gpiochip_populate_parent_fwspec_fourcell is also
->  	 * available.
->  	 */
-> -	void (*populate_parent_fwspec)(struct gpio_chip *chip,
-> -				       struct irq_fwspec *fwspec,
-> +	void *(*populate_parent_alloc_arg)(struct gpio_chip *chip,
->  				       unsigned int parent_hwirq,
->  				       unsigned int parent_type);
-> =20
-> @@ -537,26 +536,22 @@ struct bgpio_pdata {
-> =20
->  #ifdef CONFIG_IRQ_DOMAIN_HIERARCHY
-> =20
-> -void gpiochip_populate_parent_fwspec_twocell(struct gpio_chip *chip,
-> -					     struct irq_fwspec *fwspec,
-> +void *gpiochip_populate_parent_fwspec_twocell(struct gpio_chip *chip,
->  					     unsigned int parent_hwirq,
->  					     unsigned int parent_type);
-> -void gpiochip_populate_parent_fwspec_fourcell(struct gpio_chip *chip,
-> -					      struct irq_fwspec *fwspec,
-> +void *gpiochip_populate_parent_fwspec_fourcell(struct gpio_chip *chip,
->  					      unsigned int parent_hwirq,
->  					      unsigned int parent_type);
-> =20
->  #else
-> =20
-> -static inline void gpiochip_populate_parent_fwspec_twocell(struct gpio_c=
-hip *chip,
-> -						    struct irq_fwspec *fwspec,
-> +static inline void *gpiochip_populate_parent_fwspec_twocell(struct gpio_=
-chip *chip,
->  						    unsigned int parent_hwirq,
->  						    unsigned int parent_type)
->  {
->  }
-> =20
-> -static inline void gpiochip_populate_parent_fwspec_fourcell(struct gpio_=
-chip *chip,
-> -						     struct irq_fwspec *fwspec,
-> +static inline void *gpiochip_populate_parent_fwspec_fourcell(struct gpio=
-_chip *chip,
->  						     unsigned int parent_hwirq,
->  						     unsigned int parent_type)
->  {
-> --=20
-> 2.20.1
->=20
->=20
->=20
+> +       if (!sp || (sp & (is_64 ? 7 : 3)) || sp > STACK_TOP - (is_64 ? 32 : 16))
+> +               return 0;
+> +       return 1;
+> +}
 
---MfFXiAuoTsnnDAfZ
-Content-Type: application/pgp-signature; name="signature.asc"
+Perhaps better to read
 
------BEGIN PGP SIGNATURE-----
+  if (!sp)
+    return 0;
 
-iQEzBAEBCAAdFiEEHc6qFoLCZqgJD98Zk1jtMN6usXEFAl5zdMMACgkQk1jtMN6u
-sXFlQwf/fH0MvS3u14Ky8kR/dDDjcyx34OY5SeD4WlmtCPugd06TX9aYT+yhmk+l
-02E6cj7DC9m2opWBp11PiZ1Ld0lK4OHVCrPoqKeGgknW3IE7Tj14jy+Q4HlP0X1a
-CPDmpOJ890IqXuSWiRj0Vwr8an8Ye5jc8JPyqwQYslO0pOEjVda1FzPWVq+9Wypu
-7E63rXYBmN4XNp0Y9Z1JtJpeKwcRDb/n4rIGzXbTj3MDs27Mu8cv+evL6uMAZChW
-NZMzV1kbVCfHLCuNvvTWEgcNPelLbQK/SB1b1GW9y249QoC2WyUyzLROcmpnrt3z
-e8R2J0ve2kyI9tGAHq2SrCUn05vDeg==
-=Z5p2
------END PGP SIGNATURE-----
+  if (is_32bit_task()) {
+    if (sp & 0x03)
+      return 0;
+    if (sp > STACK_TOP - 16)
+      return 0;
+  } else {
+    ...
+  }
 
---MfFXiAuoTsnnDAfZ--
+  return 1;
+
+Other possibility:
+
+  unsigned long align = is_32bit_task() ? 3 : 7;
+  unsigned long top = STACK_TOP - (is_32bit_task() ? 16 : 32);
+
+  return !(!sp || (sp & align) || sp > top);
+
+-- 
+With Best Regards,
+Andy Shevchenko
