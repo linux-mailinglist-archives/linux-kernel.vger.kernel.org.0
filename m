@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E87DD18B492
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:11:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F30BF18B42B
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:08:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728617AbgCSNK6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 09:10:58 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55882 "EHLO mail.kernel.org"
+        id S1727234AbgCSNHQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 09:07:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50648 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728085AbgCSNKz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 09:10:55 -0400
+        id S1727843AbgCSNHH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 09:07:07 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 21CAE208D6;
-        Thu, 19 Mar 2020 13:10:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8CC4120757;
+        Thu, 19 Mar 2020 13:07:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584623454;
-        bh=5YR9ksqER1KCDt9BykW9hjKGBocOSqjPVyAq4fRMxcY=;
+        s=default; t=1584623227;
+        bh=mEhCeYo5+LyTd6CUmygiuKW71GgnuF7c5fWXGTZcf60=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=TJHpbdooeyajE6qic38YesyRU2uhHL4D+U/OwO71zL9ErMkwd6JOthy2aUmjXkQml
-         HClbqQxnVEzto3P60XbCkoSGtpv2O7YnMsOPoRMiinKhWOPG7PhjOhgeAPl6xYRSs6
-         WaksuAREgJva1UyiD2aSdfxg6lDDBPlopuAK629o=
+        b=jxJ/B30IWwFJ/+1ZK4i0MHui+bnFzAfznoaN2b5HJZqR9ecN2NadjWRd1RCkagREE
+         takREfTGHSJyhB2a4+uVipKFqvYB0U79u8NfJDLrlAZ6AkhkhwXoelazMd/wOJddj8
+         3EKuqQYbK0HF4CQRkfdvIBoBXwt8V1HFHJpCf+dQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
-        Lu Baolu <baolu.lu@linux.intel.com>,
-        Joerg Roedel <jroedel@suse.de>
-Subject: [PATCH 4.9 32/90] iommu/vt-d: quirk_ioat_snb_local_iommu: replace WARN_TAINT with pr_warn + add_taint
-Date:   Thu, 19 Mar 2020 13:59:54 +0100
-Message-Id: <20200319123938.499755537@linuxfoundation.org>
+        Sven Eckelmann <sven@narfation.org>,
+        Marek Lindner <mareklindner@neomailbox.ch>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.4 51/93] batman-adv: Fix ICMP RR ethernet access after skb_linearize
+Date:   Thu, 19 Mar 2020 13:59:55 +0100
+Message-Id: <20200319123941.177718976@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.2
-In-Reply-To: <20200319123928.635114118@linuxfoundation.org>
-References: <20200319123928.635114118@linuxfoundation.org>
+In-Reply-To: <20200319123924.795019515@linuxfoundation.org>
+References: <20200319123924.795019515@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,53 +44,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hans de Goede <hdegoede@redhat.com>
+From: Sven Eckelmann <sven@narfation.org>
 
-commit 81ee85d0462410de8eeeec1b9761941fd6ed8c7b upstream.
+commit 3b55e4422087f9f7b241031d758a0c65584e4297 upstream.
 
-Quoting from the comment describing the WARN functions in
-include/asm-generic/bug.h:
+The skb_linearize may reallocate the skb. This makes the calculated pointer
+for ethhdr invalid. But it the pointer is used later to fill in the RR
+field of the batadv_icmp_packet_rr packet.
 
- * WARN(), WARN_ON(), WARN_ON_ONCE, and so on can be used to report
- * significant kernel issues that need prompt attention if they should ever
- * appear at runtime.
- *
- * Do not use these macros when checking for invalid external inputs
+Instead re-evaluate eth_hdr after the skb_linearize+skb_cow to fix the
+pointer and avoid the invalid read.
 
-The (buggy) firmware tables which the dmar code was calling WARN_TAINT
-for really are invalid external inputs. They are not under the kernel's
-control and the issues in them cannot be fixed by a kernel update.
-So logging a backtrace, which invites bug reports to be filed about this,
-is not helpful.
-
-Fixes: 556ab45f9a77 ("ioat2: catch and recover from broken vtd configurations v6")
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-Acked-by: Lu Baolu <baolu.lu@linux.intel.com>
-Link: https://lore.kernel.org/r/20200309182510.373875-1-hdegoede@redhat.com
-BugLink: https://bugzilla.redhat.com/show_bug.cgi?id=701847
-Signed-off-by: Joerg Roedel <jroedel@suse.de>
+Fixes: da6b8c20a5b8 ("batman-adv: generalize batman-adv icmp packet handling")
+Signed-off-by: Sven Eckelmann <sven@narfation.org>
+Signed-off-by: Marek Lindner <mareklindner@neomailbox.ch>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/iommu/intel-iommu.c |    7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ net/batman-adv/routing.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/iommu/intel-iommu.c
-+++ b/drivers/iommu/intel-iommu.c
-@@ -4085,10 +4085,11 @@ static void quirk_ioat_snb_local_iommu(s
+--- a/net/batman-adv/routing.c
++++ b/net/batman-adv/routing.c
+@@ -359,6 +359,7 @@ int batadv_recv_icmp_packet(struct sk_bu
+ 		if (skb_cow(skb, ETH_HLEN) < 0)
+ 			goto out;
  
- 	/* we know that the this iommu should be at offset 0xa000 from vtbar */
- 	drhd = dmar_find_matched_drhd_unit(pdev);
--	if (WARN_TAINT_ONCE(!drhd || drhd->reg_base_addr - vtbar != 0xa000,
--			    TAINT_FIRMWARE_WORKAROUND,
--			    "BIOS assigned incorrect VT-d unit for Intel(R) QuickData Technology device\n"))
-+	if (!drhd || drhd->reg_base_addr - vtbar != 0xa000) {
-+		pr_warn_once(FW_BUG "BIOS assigned incorrect VT-d unit for Intel(R) QuickData Technology device\n");
-+		add_taint(TAINT_FIRMWARE_WORKAROUND, LOCKDEP_STILL_OK);
- 		pdev->dev.archdata.iommu = DUMMY_DEVICE_DOMAIN_INFO;
-+	}
- }
- DECLARE_PCI_FIXUP_ENABLE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_IOAT_SNB, quirk_ioat_snb_local_iommu);
- 
++		ethhdr = eth_hdr(skb);
+ 		icmph = (struct batadv_icmp_header *)skb->data;
+ 		icmp_packet_rr = (struct batadv_icmp_packet_rr *)icmph;
+ 		if (icmp_packet_rr->rr_cur >= BATADV_RR_LEN)
 
 
