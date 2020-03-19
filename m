@@ -2,100 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 736F218C2D2
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 23:12:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 636CB18C2C8
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 23:12:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727552AbgCSWMR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 18:12:17 -0400
-Received: from mail-wr1-f73.google.com ([209.85.221.73]:40935 "EHLO
-        mail-wr1-f73.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727530AbgCSWMP (ORCPT
+        id S1727456AbgCSWL6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 18:11:58 -0400
+Received: from mail-qv1-f68.google.com ([209.85.219.68]:39480 "EHLO
+        mail-qv1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727414AbgCSWLw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 18:12:15 -0400
-Received: by mail-wr1-f73.google.com with SMTP id d17so1671064wrs.7
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Mar 2020 15:12:14 -0700 (PDT)
+        Thu, 19 Mar 2020 18:11:52 -0400
+Received: by mail-qv1-f68.google.com with SMTP id v38so1955567qvf.6
+        for <linux-kernel@vger.kernel.org>; Thu, 19 Mar 2020 15:11:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
-         :cc;
-        bh=Ec1QNNZB9RdZOPOOrrZEv520YKl8QD3P6+7VUng4a2o=;
-        b=wGNCWsxxzE05P/opJCYnv1N8zFwNt6cTq4ckyZiz9oQ5890qOacNIWKpN7Y++MLt6+
-         +YKxBiZXwSFk1IGTSnQFc06R14nY8UWmBgLdcbf7MdFyRG1MvL6T6rd8RP3yB53TVKyf
-         +Uc3R9oxRBqgWKVz/QSvUAel4ej1J8si1HLNu0Rai083j03ODYzNjaVZf5T0XtF/kjJh
-         LwTg7zhgbj4V9RDUcQo4mmHihgfAC9ymlc6F/1mRhJPaKXIcT7VSTgKS++nhSDDRJStp
-         Lp/miL7zNG4MdaM7dB/m1BK/l18wytSw5UL2GhIyw3LNguhr0wHydS463Cf5gI+Zqiwl
-         CXqg==
+        d=lca.pw; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=pzfdJRx1oF6jiIvR2C9U9rEyO4S41Htu1IVIdua7ZaQ=;
+        b=hzQ9Ozgc3eHqxFwistOuYhvE2qISqi2ldxN1oF5OZ+DuD8DfcdzWGvcgWGprkU23gj
+         1UrAGG5mtmeu8Ny9Y37Kse9f8a4kCaBCz0aSoNkKdnYn3siLeFx6MLWELNnnuT8m1T9H
+         PDJj+UvFUPet3RDP2CoyTlY3ZYUGpcvTeC61TfEbnIh2Pr5n8nI3L0GgHxDdbFjEDZUe
+         6L/mb6aqKD/4IIAJYjdcc/8zO6J3TWS/51gmh7UKYsbEW8n69IZ6EuD6XRdsZqnXxXx5
+         FpkAUkxjm3IpfzXpjj6LUJ20seDXd++BpAQga6H5Ma/swI7kxBSMCEbzGjwVD21aqi4o
+         FEsQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=Ec1QNNZB9RdZOPOOrrZEv520YKl8QD3P6+7VUng4a2o=;
-        b=jP8uRdl71ib7DFh11UPBeUCFPQuMJIeZFjoj4xmQqt15I8AN18xLMyvNg+kiILx8Cd
-         PBIhlVqM2RPMEfcmQnLCM9skP15U3q+3lB2EXkiXmOMm+TJ+04AXbWK4y7LN6FWjTFXF
-         35Z3OpZB7dUjHpy5ltcoX+BS8+E2YdLSBeusluuW/CAziewvZosPM0UP128miLa2mfY4
-         /lb8miGngOqMNltWW9WUEsJsIefx2pfejBHzwqzUdixfPB0/9Po2YYpTNuzVpcYpWMSo
-         yPWIUt8Y3A2ArOK4pQYW9d2e3RP0kmgMhRiUTnWaeNBlh9HIhBWHI/jA5VVJC+AK2F8r
-         LwVg==
-X-Gm-Message-State: ANhLgQ3sM3buPB9X8r2LraXqfcKjY9LjCVd3h8u8jJND6l63hNiM64Eq
-        iWMHbgxpEY6to4/XnW4nSkMWNGuZsCHYpyty
-X-Google-Smtp-Source: ADFU+vushxI8BnYkgZABMFdSfaL5+yV3YI3la2gcdZ5v3T5GugDgvBJQPNjSNj8fkPYEaoYtd6RE48XYpmoP4A7m
-X-Received: by 2002:adf:fe4c:: with SMTP id m12mr6989126wrs.96.1584655933185;
- Thu, 19 Mar 2020 15:12:13 -0700 (PDT)
-Date:   Thu, 19 Mar 2020 23:11:41 +0100
-In-Reply-To: <cover.1584655448.git.andreyknvl@google.com>
-Message-Id: <2821d497ac1cdc0efb5e00df30271e4a67fc8009.1584655448.git.andreyknvl@google.com>
-Mime-Version: 1.0
-References: <cover.1584655448.git.andreyknvl@google.com>
-X-Mailer: git-send-email 2.25.1.696.g5e7596f4ac-goog
-Subject: [PATCH v3 7/7] usb: core: kcov: collect coverage from usb complete callback
-From:   Andrey Konovalov <andreyknvl@google.com>
-To:     Dmitry Vyukov <dvyukov@google.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Alexander Potapenko <glider@google.com>,
-        Marco Elver <elver@google.com>,
-        Andrey Konovalov <andreyknvl@google.com>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=pzfdJRx1oF6jiIvR2C9U9rEyO4S41Htu1IVIdua7ZaQ=;
+        b=kPWAMqIuK6zXnxZuwPM/lBjcOHi4vUxWR+fpZzKm7aRflD0KiLYNnaWLimNjk/g7qc
+         zsOJP7vvSu4RyrZHmHONq64x0d/viwMnfRVhqD/bccIThKFc2bs/EaglRvm8CAvL6vp8
+         8oABwABkIZbxhhhnVkVduARuzNZQ4A94oBhtlHOx7I4iHrz2ekRHvKSRVie24Sp5VNQS
+         p/MflpM94NEMMkLUd9IK3e2jQwsbU3Did9OrN3v7hOl9u+q1yLTTo45zMt1Vkn8gsEw0
+         rTXhCDiEDksuBbJXiGO2w/xG4zwqwJFRrsGQkCQsdZJT4s8NZe1XvFg066UvZIsmtgM/
+         ihEA==
+X-Gm-Message-State: ANhLgQ2xyxlg1o5CuLnzDLV9z/k38Y2fBUWcme2zVXMOvGDl4lcWLOA5
+        7XNkzMgobKU7eM+1X+vS9JetjGF4TkjbcA==
+X-Google-Smtp-Source: ADFU+vtSKBdVdLUNbDulH29r3gYb5+UBaLtQ+hKG13rkQbY88mxT+6kICnVtmSCjJ3pRmBBejOm5fA==
+X-Received: by 2002:a0c:db86:: with SMTP id m6mr5133668qvk.116.1584655908780;
+        Thu, 19 Mar 2020 15:11:48 -0700 (PDT)
+Received: from ovpn-66-200.rdu2.redhat.com (pool-71-184-117-43.bstnma.fios.verizon.net. [71.184.117.43])
+        by smtp.gmail.com with ESMTPSA id m10sm2635693qte.71.2020.03.19.15.11.47
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 19 Mar 2020 15:11:48 -0700 (PDT)
+From:   Qian Cai <cai@lca.pw>
+To:     davem@davemloft.net
+Cc:     alexander.h.duyck@linux.intel.com, kuznet@ms2.inr.ac.ru,
+        kuba@kernel.org, yoshfuji@linux-ipv6.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Qian Cai <cai@lca.pw>
+Subject: [PATCH] ipv4: fix a RCU-list bug in inet_dump_fib()
+Date:   Thu, 19 Mar 2020 18:11:41 -0400
+Message-Id: <20200319221141.8814-1-cai@lca.pw>
+X-Mailer: git-send-email 2.21.0 (Apple Git-122.2)
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds kcov_remote_start/stop() callbacks around the urb
-complete() callback that is executed in softirq context when dummy_hcd
-is in use. As the result, kcov can be used to collect coverage from those
-callbacks, which is used to facilitate coverage-guided fuzzing with
-syzkaller.
+There is a place,
 
-Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
+inet_dump_fib()
+  fib_table_dump
+    fn_trie_dump_leaf()
+      hlist_for_each_entry_rcu()
+
+without rcu_read_lock() triggers a warning,
+
+ WARNING: suspicious RCU usage
+ -----------------------------
+ net/ipv4/fib_trie.c:2216 RCU-list traversed in non-reader section!!
+
+ other info that might help us debug this:
+
+ rcu_scheduler_active = 2, debug_locks = 1
+ 1 lock held by ip/1923:
+  #0: ffffffff8ce76e40 (rtnl_mutex){+.+.}, at: netlink_dump+0xd6/0x840
+
+ Call Trace:
+  dump_stack+0xa1/0xea
+  lockdep_rcu_suspicious+0x103/0x10d
+  fn_trie_dump_leaf+0x581/0x590
+  fib_table_dump+0x15f/0x220
+  inet_dump_fib+0x4ad/0x5d0
+  netlink_dump+0x350/0x840
+  __netlink_dump_start+0x315/0x3e0
+  rtnetlink_rcv_msg+0x4d1/0x720
+  netlink_rcv_skb+0xf0/0x220
+  rtnetlink_rcv+0x15/0x20
+  netlink_unicast+0x306/0x460
+  netlink_sendmsg+0x44b/0x770
+  __sys_sendto+0x259/0x270
+  __x64_sys_sendto+0x80/0xa0
+  do_syscall_64+0x69/0xf4
+  entry_SYSCALL_64_after_hwframe+0x49/0xb3
+
+Signed-off-by: Qian Cai <cai@lca.pw>
 ---
- drivers/usb/core/hcd.c | 3 +++
- 1 file changed, 3 insertions(+)
+ net/ipv4/fib_frontend.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/usb/core/hcd.c b/drivers/usb/core/hcd.c
-index aa45840d8273..de624c47e190 100644
---- a/drivers/usb/core/hcd.c
-+++ b/drivers/usb/core/hcd.c
-@@ -31,6 +31,7 @@
- #include <linux/types.h>
- #include <linux/genalloc.h>
- #include <linux/io.h>
-+#include <linux/kcov.h>
+diff --git a/net/ipv4/fib_frontend.c b/net/ipv4/fib_frontend.c
+index 577db1d50a24..5e441282d647 100644
+--- a/net/ipv4/fib_frontend.c
++++ b/net/ipv4/fib_frontend.c
+@@ -987,6 +987,8 @@ static int inet_dump_fib(struct sk_buff *skb, struct netlink_callback *cb)
+ 	if (filter.flags & RTM_F_PREFIX)
+ 		return skb->len;
  
- #include <linux/phy/phy.h>
- #include <linux/usb.h>
-@@ -1645,7 +1646,9 @@ static void __usb_hcd_giveback_urb(struct urb *urb)
++	rcu_read_lock();
++
+ 	if (filter.table_id) {
+ 		tb = fib_get_table(net, filter.table_id);
+ 		if (!tb) {
+@@ -1004,8 +1006,6 @@ static int inet_dump_fib(struct sk_buff *skb, struct netlink_callback *cb)
+ 	s_h = cb->args[0];
+ 	s_e = cb->args[1];
  
- 	/* pass ownership to the completion handler */
- 	urb->status = status;
-+	kcov_remote_start_usb((u64)urb->dev->bus->busnum);
- 	urb->complete(urb);
-+	kcov_remote_stop();
- 
- 	usb_anchor_resume_wakeups(anchor);
- 	atomic_dec(&urb->use_count);
+-	rcu_read_lock();
+-
+ 	for (h = s_h; h < FIB_TABLE_HASHSZ; h++, s_e = 0) {
+ 		e = 0;
+ 		head = &net->ipv4.fib_table_hash[h];
 -- 
-2.25.1.696.g5e7596f4ac-goog
+2.21.0 (Apple Git-122.2)
 
