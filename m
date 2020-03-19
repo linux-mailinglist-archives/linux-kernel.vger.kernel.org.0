@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1A14B18B824
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:38:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B559018B7C2
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:35:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727878AbgCSNid (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 09:38:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49140 "EHLO mail.kernel.org"
+        id S1728188AbgCSNfh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 09:35:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56788 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727570AbgCSNGG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 09:06:06 -0400
+        id S1727460AbgCSNL3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 09:11:29 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7A807207FC;
-        Thu, 19 Mar 2020 13:06:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9DA012145D;
+        Thu, 19 Mar 2020 13:11:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584623165;
-        bh=NjDtdMyGhV1PjDxXEszjBKSlYA/uWjw5FVglPfxVC6g=;
+        s=default; t=1584623489;
+        bh=FRqt0PLbggXvod56YNjicsvmoqLPvkSus4P+a5VkAKs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Rsw3nNz+aSmqiiYW+cO5hc7CELMWOgdDrPYQS3ML9H32kKHaBQouVMIYsbQscWbKX
-         gJVDDSLtqlbCGCbAj9lSb302Q0XznbSq4ZGjkyCEtExzmec/x9f2GCyDxh2kGDCMmE
-         rJ8QGwEhxmDA1fLPfxPTYLI3sj4l0Fl+tkLELwk4=
+        b=qvpkr+U4w0nlfnoYxfnTl2cu6746gVt1H3aSdEEH0GvLijG9KrAf6be759w5jrEVq
+         4teRWDcAm40O53IlG49InAraYBlo0sg8vA7L8SjQxFyx/iKE8apttNPb9/sqaLPNIM
+         gE1ABlbVkjhry6wcR4dQhYuGyk4kixpD/aK9AvJc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Jakub Kicinski <kuba@kernel.org>,
-        Johannes Berg <johannes.berg@intel.com>
-Subject: [PATCH 4.4 30/93] nl80211: add missing attribute validation for critical protocol indication
-Date:   Thu, 19 Mar 2020 13:59:34 +0100
-Message-Id: <20200319123934.629726211@linuxfoundation.org>
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.9 15/90] net: fq: add missing attribute validation for orphan mask
+Date:   Thu, 19 Mar 2020 13:59:37 +0100
+Message-Id: <20200319123933.398446491@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.2
-In-Reply-To: <20200319123924.795019515@linuxfoundation.org>
-References: <20200319123924.795019515@linuxfoundation.org>
+In-Reply-To: <20200319123928.635114118@linuxfoundation.org>
+References: <20200319123928.635114118@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,31 +45,28 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Jakub Kicinski <kuba@kernel.org>
 
-commit 0e1a1d853ecedc99da9d27f9f5c376935547a0e2 upstream.
+[ Upstream commit 7e6dc03eeb023e18427a373522f1d247b916a641 ]
 
-Add missing attribute validation for critical protocol fields
+Add missing attribute validation for TCA_FQ_ORPHAN_MASK
 to the netlink policy.
 
-Fixes: 5de17984898c ("cfg80211: introduce critical protocol indication from user-space")
+Fixes: 06eb395fa985 ("pkt_sched: fq: better control of DDOS traffic")
 Signed-off-by: Jakub Kicinski <kuba@kernel.org>
-Link: https://lore.kernel.org/r/20200303051058.4089398-2-kuba@kernel.org
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- net/wireless/nl80211.c |    2 ++
- 1 file changed, 2 insertions(+)
+ net/sched/sch_fq.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/net/wireless/nl80211.c
-+++ b/net/wireless/nl80211.c
-@@ -404,6 +404,8 @@ static const struct nla_policy nl80211_p
- 	[NL80211_ATTR_MDID] = { .type = NLA_U16 },
- 	[NL80211_ATTR_IE_RIC] = { .type = NLA_BINARY,
- 				  .len = IEEE80211_MAX_DATA_LEN },
-+	[NL80211_ATTR_CRIT_PROT_ID] = { .type = NLA_U16 },
-+	[NL80211_ATTR_MAX_CRIT_PROT_DURATION] = { .type = NLA_U16 },
- 	[NL80211_ATTR_PEER_AID] = { .type = NLA_U16 },
- 	[NL80211_ATTR_CH_SWITCH_COUNT] = { .type = NLA_U32 },
- 	[NL80211_ATTR_CH_SWITCH_BLOCK_TX] = { .type = NLA_FLAG },
+--- a/net/sched/sch_fq.c
++++ b/net/sched/sch_fq.c
+@@ -697,6 +697,7 @@ static const struct nla_policy fq_policy
+ 	[TCA_FQ_FLOW_MAX_RATE]		= { .type = NLA_U32 },
+ 	[TCA_FQ_BUCKETS_LOG]		= { .type = NLA_U32 },
+ 	[TCA_FQ_FLOW_REFILL_DELAY]	= { .type = NLA_U32 },
++	[TCA_FQ_ORPHAN_MASK]		= { .type = NLA_U32 },
+ 	[TCA_FQ_LOW_RATE_THRESHOLD]	= { .type = NLA_U32 },
+ };
+ 
 
 
