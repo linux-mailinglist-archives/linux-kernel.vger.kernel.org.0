@@ -2,151 +2,374 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2091418B71E
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:31:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 38B8F18B78B
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:34:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729793AbgCSNS1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 09:18:27 -0400
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:34576 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729763AbgCSNSS (ORCPT
+        id S1727896AbgCSNeJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 09:34:09 -0400
+Received: from mail-pj1-f67.google.com ([209.85.216.67]:55285 "EHLO
+        mail-pj1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727159AbgCSNeG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 09:18:18 -0400
-Received: by mail-oi1-f195.google.com with SMTP id j5so2634509oij.1;
-        Thu, 19 Mar 2020 06:18:18 -0700 (PDT)
+        Thu, 19 Mar 2020 09:34:06 -0400
+Received: by mail-pj1-f67.google.com with SMTP id np9so1036887pjb.4;
+        Thu, 19 Mar 2020 06:34:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=qDQpti7t01GpCTV3F9lVKa0JXF79TC4yEbf9DOSPn8g=;
-        b=mcAQ0yZCaJg48cbZ+UPok9xqwUcsLaZsb9fzmjLgeh8zdqkKXz81zq/ILbwNrBso2a
-         MN4btAAs+YQirt8xgKGSVUBCNTD5zHSZMVoAo15X2tUTWsKNcvIDf9ULConjYj0Aprz0
-         bpiQ94KXoh7flze0IXswZPt+qyF2ZmgAi+FL55Ar139q+XJxp4ZasBrKaZYUwGFxD95X
-         tRz65ibnOZuh9KDbSY3lfdkiqYrn9QcbjX/2NHFqETcoSloqNpfMtrf5PdxLbZOgMjA/
-         GFpujd6djm/SWaidRo4GwHfr2sGBvYlPciDOrkswyNdJYyeprCBX+oLvAN4PxdBkODDL
-         lXEA==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=F2L50Kf5vxV4m1X5xHH97b0ZIljM+Ez6EQ+o7n8lyF8=;
+        b=ZkxuJeM+PiMgUQSprSTt3xmHy0tEdg1/l4+eNMox9P0RhnMGk+jkYcJau7WyFNECpy
+         XEk1RMfvkF7QrCPKhMJe62C87fBIaDL09qUFPSQgHwnYNpbdbyshNjwTypGa+/Z1lFOq
+         3sJJO9D9/5KDcyxuu459lkfjelid2j8kXtgQbM6nBJF+iGCx5MVeg+ueEHm0REbR8R7v
+         S8VNw81MpJz7+p79b/DusxX8vxf/xBGUt0gfG2yD4jhJ1lquaZTWrsq3UEiup+IlLNOT
+         LkpUOg+lL7nmr8bC3YbcfQKqc8AfJ8e8YZ+DPPNXtjAySEkBwVEYf0oEgSTSkjxiB8Sn
+         n7YA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=qDQpti7t01GpCTV3F9lVKa0JXF79TC4yEbf9DOSPn8g=;
-        b=NgK+Nb2BDfym+91DR2b7pBSA+2CY96Hu58aoFKaBGWv1hVxUi3LMHUIbeGKzWQfOTX
-         cRj84OuHwjf7BcBJyUZy7/ApEnKoyjIOmlMuRZqm/cZDITEn9aPAzMjmfU3ew1OElFy5
-         V7nXWvK2wOdeyJpgoKWZ39QBV/W3ZI0dmfiuFKR+NCTnxgpXOMNkrOcEmC4GvzxgQz4D
-         6Ze6H/sdKpjGrYDoMC5/BjawN21XX1iTWSsNTCYtIQcVAvWt1YJp9JQdF+XXjgH1RLvH
-         UPzUnfwG1RfHVMSnbserkpdWxnBkCOelT+igAGm8SF9nnWfc7+a+2/9ppZ1JxmmoWd6n
-         tE5A==
-X-Gm-Message-State: ANhLgQ2mBDrS3Luc0AhFr5qD3BrVu8k55A+T7Ghmgudo91RxlO2ImPKb
-        oUCJ9i4Kq1deKpE18kMynHlkL52yCsAat6jNb1A=
-X-Google-Smtp-Source: ADFU+vsS6/XH+ew6MFOJMJjm3XI7q3PIxIoAJ7KFCUkmkMgL0Zaluvh9eiLo/6KcPprvw6aGuxFV0AQaeSh8Jiiw3FI=
-X-Received: by 2002:aca:ac89:: with SMTP id v131mr2290732oie.7.1584623898057;
- Thu, 19 Mar 2020 06:18:18 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=F2L50Kf5vxV4m1X5xHH97b0ZIljM+Ez6EQ+o7n8lyF8=;
+        b=rFRtEVWY+NpquVnqzDyBAbwfmfx7GbLKeme6aFzDnO7kN7grl/BEYBsQu1LAzdAT+z
+         BdWAlz+WO5Q2Kofe2S6ae7oxwd4M41zAsrxOD9CmWPg+l3gJABqnUtrjO9ymsJd07Ebd
+         Q/RQkefwmi2TCnzlnbheux3XnIIgxRupQwaYXuTxg0UKcmJWWPjIIEhtgDTQ9nF8+L9T
+         R//aB77/CUaGGREemOS5JdmXlABC/JQrgQxTntYYczp+sMKX+0BkrEH1QPuC3r+2VEWs
+         DHjIm0rUPgg2Zbcdno/gt0xKCmVOA8MPHGSauTt4u2NKJqwSj9+IxOU69GkniFcxqzyJ
+         0QAQ==
+X-Gm-Message-State: ANhLgQ106K63ApIqQ/rA2DogsF3B3Cpk7ye/eiNTta7PICZ5Tc+3WRJQ
+        xQB996dv1GavXJ5HS1is75g=
+X-Google-Smtp-Source: ADFU+vsTeguCzwnRhAH8BYGxM2n/vHfe0GuP3u1PEvzbPnvVmJWGG6xIWhxyIXiKEZsZR4Qf+wAMDQ==
+X-Received: by 2002:a17:902:444:: with SMTP id 62mr3429788ple.109.1584624844901;
+        Thu, 19 Mar 2020 06:34:04 -0700 (PDT)
+Received: from pek-khao-d2.corp.ad.wrs.com (unknown-105-123.windriver.com. [147.11.105.123])
+        by smtp.gmail.com with ESMTPSA id d23sm2587996pfq.210.2020.03.19.06.33.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 19 Mar 2020 06:34:04 -0700 (PDT)
+Date:   Thu, 19 Mar 2020 21:33:55 +0800
+From:   Kevin Hao <haokexin@gmail.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: Re: [PATCH 5.5 01/65] gpiolib: Add support for the irqdomain which
+ doesnt use irq_fwspec as arg
+Message-ID: <20200319133355.GB711692@pek-khao-d2.corp.ad.wrs.com>
+References: <20200319123926.466988514@linuxfoundation.org>
+ <20200319123926.902914624@linuxfoundation.org>
 MIME-Version: 1.0
-References: <1584133954-6953-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <1584133954-6953-2-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20200319124452.3yfcvq754vi4q2rv@gilmour.lan> <20200319130348.GC4872@pendragon.ideasonboard.com>
-In-Reply-To: <20200319130348.GC4872@pendragon.ideasonboard.com>
-From:   "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date:   Thu, 19 Mar 2020 13:17:51 +0000
-Message-ID: <CA+V-a8s-GZsYuBLyGnzURZfGD42f0c+QEan6FSwb2ew1=7Gj3g@mail.gmail.com>
-Subject: Re: [PATCH v3 1/4] media: dt-bindings: media: i2c: Switch to assigned-clock-rates
-To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc:     Maxime Ripard <maxime@cerno.tech>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, Fabio Estevam <festevam@gmail.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Ezequiel Garcia <ezequiel@collabora.com>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        LAK <linux-arm-kernel@lists.infradead.org>,
-        linux-media <linux-media@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="MfFXiAuoTsnnDAfZ"
+Content-Disposition: inline
+In-Reply-To: <20200319123926.902914624@linuxfoundation.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Laurent,
 
-On Thu, Mar 19, 2020 at 1:04 PM Laurent Pinchart
-<laurent.pinchart@ideasonboard.com> wrote:
->
-> Hi Maxime,
->
-> On Thu, Mar 19, 2020 at 01:44:52PM +0100, Maxime Ripard wrote:
-> > On Fri, Mar 13, 2020 at 09:12:31PM +0000, Lad Prabhakar wrote:
-> > > Use assigned-clock-rates to specify the clock rate. Also mark
-> > > clock-frequency property as deprecated.
-> > >
-> > > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> > > ---
-> > >  Documentation/devicetree/bindings/media/i2c/ov5645.txt | 5 +++--
-> > >  1 file changed, 3 insertions(+), 2 deletions(-)
-> > >
-> > > diff --git a/Documentation/devicetree/bindings/media/i2c/ov5645.txt b/Documentation/devicetree/bindings/media/i2c/ov5645.txt
-> > > index 72ad992..e62fe82 100644
-> > > --- a/Documentation/devicetree/bindings/media/i2c/ov5645.txt
-> > > +++ b/Documentation/devicetree/bindings/media/i2c/ov5645.txt
-> > > @@ -8,7 +8,7 @@ Required Properties:
-> > >  - compatible: Value should be "ovti,ov5645".
-> > >  - clocks: Reference to the xclk clock.
-> > >  - clock-names: Should be "xclk".
-> > > -- clock-frequency: Frequency of the xclk clock.
-> > > +- clock-frequency (deprecated): Frequency of the xclk clock.
-> > >  - enable-gpios: Chip enable GPIO. Polarity is GPIO_ACTIVE_HIGH. This corresponds
-> > >    to the hardware pin PWDNB which is physically active low.
-> > >  - reset-gpios: Chip reset GPIO. Polarity is GPIO_ACTIVE_LOW. This corresponds to
-> > > @@ -37,7 +37,8 @@ Example:
-> > >
-> > >                     clocks = <&clks 200>;
-> > >                     clock-names = "xclk";
-> > > -                   clock-frequency = <24000000>;
-> > > +                   assigned-clocks = <&clks 200>;
-> > > +                   assigned-clock-rates = <24000000>;
-> > >
-> > >                     vdddo-supply = <&camera_dovdd_1v8>;
-> > >                     vdda-supply = <&camera_avdd_2v8>;
-> >
-> > clock-frequency is quite different from assigned-clock-rates though,
-> > semantically speaking. clock-frequency is only about what the clock
-> > frequency is, while assigned-clock-rates will change the rate as well,
-> > and you have no idea how long it will last.
->
-> The driver currently reads the clock-frequency property and then calls
-> clk_set_rate(). I agree tht assigned-clock-rates isn't a panacea, but I
-> think it's less of a hack than what we currently have.
->
-> As discussed on IRC, maybe the best option in this specific case is to
-> drop clock-frequency and assigned-clok-rates, and call clk_set_rate()
-> with a hardcoded frequency of 24MHz in the driver, as that's the only
-> frequency the driver supports.
->
-Does this mean any driver which has a fixed clock requirement shouldn't be a
-DT property and should be just handled by the drivers internally ?
+--MfFXiAuoTsnnDAfZ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Cheers,
---Prabhakar
+On Thu, Mar 19, 2020 at 02:03:43PM +0100, Greg Kroah-Hartman wrote:
+> From: Kevin Hao <haokexin@gmail.com>
+>=20
+> [ Upstream commit 242587616710576808dc8d7cdf18cfe0d7bf9831 ]
+>=20
+> Some gpio's parent irqdomain may not use the struct irq_fwspec as
+> argument, such as msi irqdomain. So rename the callback
+> populate_parent_fwspec() to populate_parent_alloc_arg() and make it
+> allocate and populate the specific struct which is needed by the
+> parent irqdomain.
 
-> > If you want to retrieve that through the clock framework, then just
-> > making clock-frequency optional is enough and falling back to
-> > clk_get_rate on the clocks property already provided is enough.
->
-> --
-> Regards,
->
-> Laurent Pinchart
->
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+Hi Greg,
+
+This commit shouldn't go to stable because it is not a bug fix. It is just a
+prerequisite of switching to general GPIOLIB_IRQCHIP for thunderx gpio driv=
+er
+(commit 7a9f4460f74d "gpio: thunderx: Switch to GPIOLIB_IRQCHIP").
+
+Thanks,
+Kevin
+
+>=20
+> Signed-off-by: Kevin Hao <haokexin@gmail.com>
+> Link: https://lore.kernel.org/r/20200114082821.14015-3-haokexin@gmail.com
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+> Signed-off-by: Sasha Levin <sashal@kernel.org>
+> ---
+>  drivers/gpio/gpio-tegra186.c             | 13 +++++--
+>  drivers/gpio/gpiolib.c                   | 45 +++++++++++++++---------
+>  drivers/pinctrl/qcom/pinctrl-spmi-gpio.c |  2 +-
+>  drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c |  2 +-
+>  include/linux/gpio/driver.h              | 21 +++++------
+>  5 files changed, 49 insertions(+), 34 deletions(-)
+>=20
+> diff --git a/drivers/gpio/gpio-tegra186.c b/drivers/gpio/gpio-tegra186.c
+> index 55b43b7ce88db..de241263d4be3 100644
+> --- a/drivers/gpio/gpio-tegra186.c
+> +++ b/drivers/gpio/gpio-tegra186.c
+> @@ -448,17 +448,24 @@ static int tegra186_gpio_irq_domain_translate(struc=
+t irq_domain *domain,
+>  	return 0;
+>  }
+> =20
+> -static void tegra186_gpio_populate_parent_fwspec(struct gpio_chip *chip,
+> -						 struct irq_fwspec *fwspec,
+> +static void *tegra186_gpio_populate_parent_fwspec(struct gpio_chip *chip,
+>  						 unsigned int parent_hwirq,
+>  						 unsigned int parent_type)
+>  {
+>  	struct tegra_gpio *gpio =3D gpiochip_get_data(chip);
+> +	struct irq_fwspec *fwspec;
+> =20
+> +	fwspec =3D kmalloc(sizeof(*fwspec), GFP_KERNEL);
+> +	if (!fwspec)
+> +		return NULL;
+> +
+> +	fwspec->fwnode =3D chip->irq.parent_domain->fwnode;
+>  	fwspec->param_count =3D 3;
+>  	fwspec->param[0] =3D gpio->soc->instance;
+>  	fwspec->param[1] =3D parent_hwirq;
+>  	fwspec->param[2] =3D parent_type;
+> +
+> +	return fwspec;
+>  }
+> =20
+>  static int tegra186_gpio_child_to_parent_hwirq(struct gpio_chip *chip,
+> @@ -621,7 +628,7 @@ static int tegra186_gpio_probe(struct platform_device=
+ *pdev)
+>  	irq->chip =3D &gpio->intc;
+>  	irq->fwnode =3D of_node_to_fwnode(pdev->dev.of_node);
+>  	irq->child_to_parent_hwirq =3D tegra186_gpio_child_to_parent_hwirq;
+> -	irq->populate_parent_fwspec =3D tegra186_gpio_populate_parent_fwspec;
+> +	irq->populate_parent_alloc_arg =3D tegra186_gpio_populate_parent_fwspec;
+>  	irq->child_offset_to_irq =3D tegra186_gpio_child_offset_to_irq;
+>  	irq->child_irq_domain_ops.translate =3D tegra186_gpio_irq_domain_transl=
+ate;
+>  	irq->handler =3D handle_simple_irq;
+> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+> index 175c6363cf611..cdbaa8bf72f74 100644
+> --- a/drivers/gpio/gpiolib.c
+> +++ b/drivers/gpio/gpiolib.c
+> @@ -2003,7 +2003,7 @@ static int gpiochip_hierarchy_irq_domain_alloc(stru=
+ct irq_domain *d,
+>  	irq_hw_number_t hwirq;
+>  	unsigned int type =3D IRQ_TYPE_NONE;
+>  	struct irq_fwspec *fwspec =3D data;
+> -	struct irq_fwspec parent_fwspec;
+> +	void *parent_arg;
+>  	unsigned int parent_hwirq;
+>  	unsigned int parent_type;
+>  	struct gpio_irq_chip *girq =3D &gc->irq;
+> @@ -2042,24 +2042,21 @@ static int gpiochip_hierarchy_irq_domain_alloc(st=
+ruct irq_domain *d,
+>  			    NULL, NULL);
+>  	irq_set_probe(irq);
+> =20
+> -	/*
+> -	 * Create a IRQ fwspec to send up to the parent irqdomain:
+> -	 * specify the hwirq we address on the parent and tie it
+> -	 * all together up the chain.
+> -	 */
+> -	parent_fwspec.fwnode =3D d->parent->fwnode;
+>  	/* This parent only handles asserted level IRQs */
+> -	girq->populate_parent_fwspec(gc, &parent_fwspec, parent_hwirq,
+> -				     parent_type);
+> +	parent_arg =3D girq->populate_parent_alloc_arg(gc, parent_hwirq, parent=
+_type);
+> +	if (!parent_arg)
+> +		return -ENOMEM;
+> +
+>  	chip_info(gc, "alloc_irqs_parent for %d parent hwirq %d\n",
+>  		  irq, parent_hwirq);
+>  	irq_set_lockdep_class(irq, gc->irq.lock_key, gc->irq.request_key);
+> -	ret =3D irq_domain_alloc_irqs_parent(d, irq, 1, &parent_fwspec);
+> +	ret =3D irq_domain_alloc_irqs_parent(d, irq, 1, parent_arg);
+>  	if (ret)
+>  		chip_err(gc,
+>  			 "failed to allocate parent hwirq %d for hwirq %lu\n",
+>  			 parent_hwirq, hwirq);
+> =20
+> +	kfree(parent_arg);
+>  	return ret;
+>  }
+> =20
+> @@ -2096,8 +2093,8 @@ static int gpiochip_hierarchy_add_domain(struct gpi=
+o_chip *gc)
+>  	if (!gc->irq.child_offset_to_irq)
+>  		gc->irq.child_offset_to_irq =3D gpiochip_child_offset_to_irq_noop;
+> =20
+> -	if (!gc->irq.populate_parent_fwspec)
+> -		gc->irq.populate_parent_fwspec =3D
+> +	if (!gc->irq.populate_parent_alloc_arg)
+> +		gc->irq.populate_parent_alloc_arg =3D
+>  			gpiochip_populate_parent_fwspec_twocell;
+> =20
+>  	gpiochip_hierarchy_setup_domain_ops(&gc->irq.child_irq_domain_ops);
+> @@ -2123,27 +2120,43 @@ static bool gpiochip_hierarchy_is_hierarchical(st=
+ruct gpio_chip *gc)
+>  	return !!gc->irq.parent_domain;
+>  }
+> =20
+> -void gpiochip_populate_parent_fwspec_twocell(struct gpio_chip *chip,
+> -					     struct irq_fwspec *fwspec,
+> +void *gpiochip_populate_parent_fwspec_twocell(struct gpio_chip *chip,
+>  					     unsigned int parent_hwirq,
+>  					     unsigned int parent_type)
+>  {
+> +	struct irq_fwspec *fwspec;
+> +
+> +	fwspec =3D kmalloc(sizeof(*fwspec), GFP_KERNEL);
+> +	if (!fwspec)
+> +		return NULL;
+> +
+> +	fwspec->fwnode =3D chip->irq.parent_domain->fwnode;
+>  	fwspec->param_count =3D 2;
+>  	fwspec->param[0] =3D parent_hwirq;
+>  	fwspec->param[1] =3D parent_type;
+> +
+> +	return fwspec;
+>  }
+>  EXPORT_SYMBOL_GPL(gpiochip_populate_parent_fwspec_twocell);
+> =20
+> -void gpiochip_populate_parent_fwspec_fourcell(struct gpio_chip *chip,
+> -					      struct irq_fwspec *fwspec,
+> +void *gpiochip_populate_parent_fwspec_fourcell(struct gpio_chip *chip,
+>  					      unsigned int parent_hwirq,
+>  					      unsigned int parent_type)
+>  {
+> +	struct irq_fwspec *fwspec;
+> +
+> +	fwspec =3D kmalloc(sizeof(*fwspec), GFP_KERNEL);
+> +	if (!fwspec)
+> +		return NULL;
+> +
+> +	fwspec->fwnode =3D chip->irq.parent_domain->fwnode;
+>  	fwspec->param_count =3D 4;
+>  	fwspec->param[0] =3D 0;
+>  	fwspec->param[1] =3D parent_hwirq;
+>  	fwspec->param[2] =3D 0;
+>  	fwspec->param[3] =3D parent_type;
+> +
+> +	return fwspec;
+>  }
+>  EXPORT_SYMBOL_GPL(gpiochip_populate_parent_fwspec_fourcell);
+> =20
+> diff --git a/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c b/drivers/pinctrl/q=
+com/pinctrl-spmi-gpio.c
+> index 653d1095bfeaf..fe0be8a6ebb7b 100644
+> --- a/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c
+> +++ b/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c
+> @@ -1060,7 +1060,7 @@ static int pmic_gpio_probe(struct platform_device *=
+pdev)
+>  	girq->fwnode =3D of_node_to_fwnode(state->dev->of_node);
+>  	girq->parent_domain =3D parent_domain;
+>  	girq->child_to_parent_hwirq =3D pmic_gpio_child_to_parent_hwirq;
+> -	girq->populate_parent_fwspec =3D gpiochip_populate_parent_fwspec_fource=
+ll;
+> +	girq->populate_parent_alloc_arg =3D gpiochip_populate_parent_fwspec_fou=
+rcell;
+>  	girq->child_offset_to_irq =3D pmic_gpio_child_offset_to_irq;
+>  	girq->child_irq_domain_ops.translate =3D pmic_gpio_domain_translate;
+> =20
+> diff --git a/drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c b/drivers/pinctrl/q=
+com/pinctrl-ssbi-gpio.c
+> index dca86886b1f99..73d986a903f1b 100644
+> --- a/drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c
+> +++ b/drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c
+> @@ -794,7 +794,7 @@ static int pm8xxx_gpio_probe(struct platform_device *=
+pdev)
+>  	girq->fwnode =3D of_node_to_fwnode(pctrl->dev->of_node);
+>  	girq->parent_domain =3D parent_domain;
+>  	girq->child_to_parent_hwirq =3D pm8xxx_child_to_parent_hwirq;
+> -	girq->populate_parent_fwspec =3D gpiochip_populate_parent_fwspec_fource=
+ll;
+> +	girq->populate_parent_alloc_arg =3D gpiochip_populate_parent_fwspec_fou=
+rcell;
+>  	girq->child_offset_to_irq =3D pm8xxx_child_offset_to_irq;
+>  	girq->child_irq_domain_ops.translate =3D pm8xxx_domain_translate;
+> =20
+> diff --git a/include/linux/gpio/driver.h b/include/linux/gpio/driver.h
+> index e2480ef94c559..9bb43467ed11d 100644
+> --- a/include/linux/gpio/driver.h
+> +++ b/include/linux/gpio/driver.h
+> @@ -94,16 +94,15 @@ struct gpio_irq_chip {
+>  				     unsigned int *parent_type);
+> =20
+>  	/**
+> -	 * @populate_parent_fwspec:
+> +	 * @populate_parent_alloc_arg :
+>  	 *
+> -	 * This optional callback populates the &struct irq_fwspec for the
+> -	 * parent's IRQ domain. If this is not specified, then
+> +	 * This optional callback allocates and populates the specific struct
+> +	 * for the parent's IRQ domain. If this is not specified, then
+>  	 * &gpiochip_populate_parent_fwspec_twocell will be used. A four-cell
+>  	 * variant named &gpiochip_populate_parent_fwspec_fourcell is also
+>  	 * available.
+>  	 */
+> -	void (*populate_parent_fwspec)(struct gpio_chip *chip,
+> -				       struct irq_fwspec *fwspec,
+> +	void *(*populate_parent_alloc_arg)(struct gpio_chip *chip,
+>  				       unsigned int parent_hwirq,
+>  				       unsigned int parent_type);
+> =20
+> @@ -537,26 +536,22 @@ struct bgpio_pdata {
+> =20
+>  #ifdef CONFIG_IRQ_DOMAIN_HIERARCHY
+> =20
+> -void gpiochip_populate_parent_fwspec_twocell(struct gpio_chip *chip,
+> -					     struct irq_fwspec *fwspec,
+> +void *gpiochip_populate_parent_fwspec_twocell(struct gpio_chip *chip,
+>  					     unsigned int parent_hwirq,
+>  					     unsigned int parent_type);
+> -void gpiochip_populate_parent_fwspec_fourcell(struct gpio_chip *chip,
+> -					      struct irq_fwspec *fwspec,
+> +void *gpiochip_populate_parent_fwspec_fourcell(struct gpio_chip *chip,
+>  					      unsigned int parent_hwirq,
+>  					      unsigned int parent_type);
+> =20
+>  #else
+> =20
+> -static inline void gpiochip_populate_parent_fwspec_twocell(struct gpio_c=
+hip *chip,
+> -						    struct irq_fwspec *fwspec,
+> +static inline void *gpiochip_populate_parent_fwspec_twocell(struct gpio_=
+chip *chip,
+>  						    unsigned int parent_hwirq,
+>  						    unsigned int parent_type)
+>  {
+>  }
+> =20
+> -static inline void gpiochip_populate_parent_fwspec_fourcell(struct gpio_=
+chip *chip,
+> -						     struct irq_fwspec *fwspec,
+> +static inline void *gpiochip_populate_parent_fwspec_fourcell(struct gpio=
+_chip *chip,
+>  						     unsigned int parent_hwirq,
+>  						     unsigned int parent_type)
+>  {
+> --=20
+> 2.20.1
+>=20
+>=20
+>=20
+
+--MfFXiAuoTsnnDAfZ
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEEHc6qFoLCZqgJD98Zk1jtMN6usXEFAl5zdMMACgkQk1jtMN6u
+sXFlQwf/fH0MvS3u14Ky8kR/dDDjcyx34OY5SeD4WlmtCPugd06TX9aYT+yhmk+l
+02E6cj7DC9m2opWBp11PiZ1Ld0lK4OHVCrPoqKeGgknW3IE7Tj14jy+Q4HlP0X1a
+CPDmpOJ890IqXuSWiRj0Vwr8an8Ye5jc8JPyqwQYslO0pOEjVda1FzPWVq+9Wypu
+7E63rXYBmN4XNp0Y9Z1JtJpeKwcRDb/n4rIGzXbTj3MDs27Mu8cv+evL6uMAZChW
+NZMzV1kbVCfHLCuNvvTWEgcNPelLbQK/SB1b1GW9y249QoC2WyUyzLROcmpnrt3z
+e8R2J0ve2kyI9tGAHq2SrCUn05vDeg==
+=Z5p2
+-----END PGP SIGNATURE-----
+
+--MfFXiAuoTsnnDAfZ--
