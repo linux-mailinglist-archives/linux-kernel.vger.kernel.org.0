@@ -2,105 +2,186 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2BDAF18BC5B
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 17:25:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4719E18BC6F
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 17:28:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728069AbgCSQY5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 12:24:57 -0400
-Received: from us-smtp-delivery-74.mimecast.com ([216.205.24.74]:30380 "EHLO
-        us-smtp-delivery-74.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727577AbgCSQY5 (ORCPT
+        id S1728112AbgCSQ2Z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 12:28:25 -0400
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:57218 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727064AbgCSQ2S (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 12:24:57 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1584635096;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=6aiYGJqqYB7OtONFqTHz/q1w4j91YXMiUtw0onvEckc=;
-        b=bZxxZKE+XPUPlRvl49jgIEt7elMZUH2gYJczfkZ8EoIoxfSeJIV7xu7tEVScolFtOz+hxK
-        3E4LM2PxEpNnV9wjsYWmhf99fTFGrnz2j08xmHeam2Wm50jhww7DfLW7KYEyd9BC0lf6QY
-        NXGpSZ9P0fu2yhT4K1+8Xw6GvYlKGdM=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-81-H1sRllfiPRyXL03huG8-6Q-1; Thu, 19 Mar 2020 12:24:54 -0400
-X-MC-Unique: H1sRllfiPRyXL03huG8-6Q-1
-Received: by mail-wr1-f70.google.com with SMTP id k11so1277744wrq.2
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Mar 2020 09:24:54 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=6aiYGJqqYB7OtONFqTHz/q1w4j91YXMiUtw0onvEckc=;
-        b=F5fS42NmRQr/SFSD4KiqxXv+hANcn9Ffsj+d2SukGlTKqIMB8JN7S66HQeelyt5ods
-         Ubz8anhYVkbhJVMflMFPTmaT4WdREz+QvL537iBZbdZt7teuK4o4+aMmRlYWgcEE17rg
-         B0Qghshuoj9gPq/jPAKERw1jJL+OgiGUnAbHgTOq9XNRDihyqZVgLMjyD1WodObdfHuw
-         IRBGttNV2ysD1ja7L+u62LiRIcSYnlRehby4EzVihpORTOOBgKTQpdMf7D9lwXcQxKa3
-         5PwlmGC2QZUmByPX+eJ6YKBabxrMvTpfGIOn9+v81x8ruHSXMlF/az/QssOHArpVklhu
-         w6gA==
-X-Gm-Message-State: ANhLgQ0P1qeFNYklduKGzqr9Fh+Bl/BelEIacBzG4od8p5LsWnpX/RM1
-        DIn07Fv4VKbVb21J4/dIllc2mH82zYd8eM1dfPZ0/CTPevCc5fduoZ1zGSEppqWrlJbYahJD9mg
-        Ux3wFio9RK7Qx6jw38mh/bRml
-X-Received: by 2002:a5d:6908:: with SMTP id t8mr5390428wru.92.1584635093307;
-        Thu, 19 Mar 2020 09:24:53 -0700 (PDT)
-X-Google-Smtp-Source: ADFU+vtpBLc0nNDpfhkz/RUZ3FdCM6IUwSnyDZFcyfbsP0oZyHeZZFgMBwi09mfhvTHafLFEzBbiIQ==
-X-Received: by 2002:a5d:6908:: with SMTP id t8mr5390399wru.92.1584635093053;
-        Thu, 19 Mar 2020 09:24:53 -0700 (PDT)
-Received: from [192.168.178.58] ([151.21.15.43])
-        by smtp.gmail.com with ESMTPSA id m10sm3724369wmc.24.2020.03.19.09.24.51
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 19 Mar 2020 09:24:52 -0700 (PDT)
-Subject: Re: [PATCH 00/12] SEV Live Migration Patchset.
-To:     Ashish Kalra <ashish.kalra@amd.com>
-Cc:     Andy Lutomirski <luto@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Radim Krcmar <rkrcmar@redhat.com>,
-        Joerg Roedel <joro@8bytes.org>, Borislav Petkov <bp@suse.de>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        David Rientjes <rientjes@google.com>, X86 ML <x86@kernel.org>,
-        kvm list <kvm@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Brijesh Singh <brijesh.singh@amd.com>
-References: <cover.1581555616.git.ashish.kalra@amd.com>
- <CALCETrXE9cWd3TbBZMsAwmSwWpDYFsicLZ=amHLWsvE0burQSw@mail.gmail.com>
- <20200213230916.GB8784@ashkalra_ubuntu_server>
- <CALCETrUQBsof3fMf-Dj7RDJJ9GDdVGNOML_ZyeSmJtcp_LhdPQ@mail.gmail.com>
- <20200217194959.GA14833@ashkalra_ubuntu_server>
- <101d137c-724a-2b79-f865-e7af8135ca86@redhat.com>
- <20200319161831.GA10038@ashkalra_ubuntu_server>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Message-ID: <bffda827-2d9c-a6ae-f811-c6941fe03530@redhat.com>
-Date:   Thu, 19 Mar 2020 17:24:51 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        Thu, 19 Mar 2020 12:28:18 -0400
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 02JGSAZ4026976;
+        Thu, 19 Mar 2020 11:28:10 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1584635290;
+        bh=k6bkA/KJdYJk33YAk4UWI+sIZqfJh9tELgeOYvF7XsQ=;
+        h=From:To:CC:Subject:Date;
+        b=LXcBuV5uoYiWNRuRJ39gVYcOEG5aEnGj64X5zrI75NOJFo3GQqu460bTUHxe9kAFe
+         Nrvb8dJ+URcBcWH5+IglSkN5woeX1BvibUmENjhmnXhlVy6wUs3Bjsp5ai+dfkMDC7
+         1OzTVBmou6alUWMwhMabhk1sK0MpXa2JjF7bXFuk=
+Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id 02JGSA6N093215;
+        Thu, 19 Mar 2020 11:28:10 -0500
+Received: from DFLE110.ent.ti.com (10.64.6.31) by DFLE103.ent.ti.com
+ (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Thu, 19
+ Mar 2020 11:28:10 -0500
+Received: from lelv0326.itg.ti.com (10.180.67.84) by DFLE110.ent.ti.com
+ (10.64.6.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Thu, 19 Mar 2020 11:28:10 -0500
+Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id 02JGS90o109899;
+        Thu, 19 Mar 2020 11:28:09 -0500
+From:   Grygorii Strashko <grygorii.strashko@ti.com>
+To:     Peter Ujfalusi <peter.ujfalusi@ti.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Tero Kristo <t-kristo@ti.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        netdev <netdev@vger.kernel.org>, Roger Quadros <rogerq@ti.com>,
+        <devicetree@vger.kernel.org>, Jakub Kicinski <kuba@kernel.org>
+CC:     Murali Karicheri <m-karicheri2@ti.com>,
+        Sekhar Nori <nsekhar@ti.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        Grygorii Strashko <grygorii.strashko@ti.com>
+Subject: [PATCH net-next v5 00/11] net: ethernet: ti: add networking support for k3 am65x/j721e soc
+Date:   Thu, 19 Mar 2020 18:27:55 +0200
+Message-ID: <20200319162806.25705-1-grygorii.strashko@ti.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-In-Reply-To: <20200319161831.GA10038@ashkalra_ubuntu_server>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 19/03/20 17:18, Ashish Kalra wrote:
->>> For the second case, we have been discussing this internally,
->>> and one option is to extend the KVM capabilites/feature bits to check for this ?
->> You could extend the hypercall to completely block live migration (e.g.
->> a0=a1=~0, a2=0 to unblock or 1 to block).  The KVM_GET_PAGE_ENC_BITMAP
->> ioctl can also return the blocked/unblocked state.
->>
-> Currently i have added a new KVM para feature
-> "KVM_FEATURE_SEV_LIVE_MIGRATION" to indicate host support for the SEV
-> live migration feature and a custom KVM MSR "MSR_KVM_SEV_LIVE_MIG_EN"
-> for the guest to enable SEV live migration. The MSR also has other
-> flags for future SEV live migration extensions.
+Hi
 
-Ok, that would be fine too.  Thanks!
+This v5 series adds basic networking support support TI K3 AM654x/J721E SoC which
+have integrated Gigabit Ethernet MAC (Media Access Controller) into device MCU
+domain and named MCU_CPSW0 (CPSW2G NUSS).
 
-Paolo
+Formally TRMs refer CPSW2G NUSS as two-port Gigabit Ethernet Switch subsystem
+with port 0 being the CPPI DMA host port and port 1 being the external Ethernet
+port, but for 1 external port device it's just Port 0 <-> ALE <-> Port 1 and it's
+rather device with HW filtering capabilities then actually switching device.
+It's expected to have similar devices, but with more external ports.
+
+The new Host port 0 Communications Port Programming Interface (CPPI5) is
+operating by TI AM654x/J721E NAVSS Unified DMA Peripheral Root Complex (UDMA-P)
+controller [1].
+
+The CPSW2G contains below modules for which existing code is re-used:
+ - MAC SL: cpsw_sl.c
+ - Address Lookup Engine (ALE): cpsw_ale.c, basically compatible with K2 66AK2E/G
+ - Management Data Input/Output interface (MDIO): davinci_mdio.c, fully 
+   compatible with TI AM3/4/5 devices
+
+Basic features supported by CPSW2G NUSS driver:
+ - VLAN support, 802.1Q compliant, Auto add port VLAN for untagged frames on
+   ingress, Auto VLAN removal on egress and auto pad to minimum frame size.
+ - multicast filtering
+ - promisc mode
+ - TX multiq support in Round Robin or Fixed priority modes
+ - RX checksum offload for non-fragmented IPv4/IPv6 TCP/UDP packets
+ - TX checksum offload support for IPv4/IPv6 TCP/UDP packets (J721E only).
+
+Features under development:
+ - Support for IEEE 1588 Clock Synchronization. The CPSW2G NUSS includes new
+   version of Common Platform Time Sync (CPTS)
+ - tc-mqprio: priority level Quality Of Service (QOS) support (802.1p)
+ - tc-cbs: Support for Audio/Video Bridging (P802.1Qav/D6.0) HW shapers
+ - tc-taprio: IEEE 802.1Qbv/D2.2 Enhancements for Scheduled Traffic
+ - frame preemption: IEEE P902.3br/D2.0 Interspersing Express Traffic, 802.1Qbu
+ - extended ALE features: classifier/policers, auto-aging
+
+Patches 1-6 are intended for netdev, Patches 7-11 are intended for K3 Platform
+tree and provided here for testing purposes.
+
+Changes in v5:
+ - renamed files k3-udma-desc-pool.*  k3-udma-desc-pool to k3-cppi-desc-pool.*,
+   and API to k3_cppi_desc_pool_* as requested by Peter Ujfalusi <peter.ujfalusi@ti.com>
+ - fixed copy-paste err in am65_cpsw_nuss_ndo_slave_set_rx_mode() which blocked
+   recieving of mcast frames.
+ - added Tested-by: Murali Karicheri <m-karicheri2@ti.com> 
+
+Changes in v4:
+ - fixed minor comments from Jakub Kicinski <kuba@kernel.org>
+ - dependencies resolved: required phy-rmii-sel changes [2] queued for merge
+   except one [3] which is included in this series with Kishon's ask.
+
+Changes in v3:
+ - add ARM64 defconfig changes for testing purposes
+ - fixed DT yaml definition
+ - fixed comments from Jakub Kicinski <kuba@kernel.org>
+
+Changes in v2:
+ - fixed DT yaml definition
+ - fixed comments from David Miller
+
+v4: https://patchwork.ozlabs.org/cover/1256092/
+v3: https://patchwork.ozlabs.org/cover/1254568/
+v2: https://patchwork.ozlabs.org/cover/1250674/
+v1: https://lwn.net/Articles/813087/
+
+TRMs:
+ AM654: http://www.ti.com/lit/ug/spruid7e/spruid7e.pdf
+ J721E: http://www.ti.com/lit/ug/spruil1a/spruil1a.pdf
+
+Preliminary documentation can be found at:
+ http://software-dl.ti.com/processor-sdk-linux/esd/docs/latest/linux/Foundational_Components/Kernel/Kernel_Drivers/Network/K3_CPSW2g.html
+
+[1] https://lwn.net/Articles/808030/
+[2] https://lkml.org/lkml/2020/2/22/100
+[3] https://lkml.org/lkml/2020/3/3/724
+Grygorii Strashko (11):
+  phy: ti: gmii-sel: simplify config dependencies between net drivers
+    and gmii phy
+  net: ethernet: ti: ale: fix seeing unreg mcast packets with promisc
+    and allmulti disabled
+  net: ethernet: ti: ale: add support for mac-only mode
+  net: ethernet: ti: ale: am65: add support for default thread cfg
+  dt-binding: ti: am65x: document mcu cpsw nuss
+  net: ethernet: ti: introduce am65x/j721e gigabit eth subsystem driver
+  arm64: dts: ti: k3-am65-mcu: add cpsw nuss node
+  arm64: dts: k3-am654-base-board: add mcu cpsw nuss pinmux and phy defs
+  arm64: dts: ti: k3-j721e-mcu: add mcu cpsw nuss node
+  arm64: dts: ti: k3-j721e-common-proc-board: add mcu cpsw nuss pinmux
+    and phy defs
+  arm64: defconfig: ti: k3: enable dma and networking
+
+ .../bindings/net/ti,k3-am654-cpsw-nuss.yaml   |  226 ++
+ arch/arm64/boot/dts/ti/k3-am65-mcu.dtsi       |   49 +
+ arch/arm64/boot/dts/ti/k3-am65.dtsi           |    1 +
+ .../arm64/boot/dts/ti/k3-am654-base-board.dts |   42 +
+ .../dts/ti/k3-j721e-common-proc-board.dts     |   43 +
+ .../boot/dts/ti/k3-j721e-mcu-wakeup.dtsi      |   49 +
+ arch/arm64/boot/dts/ti/k3-j721e.dtsi          |    1 +
+ arch/arm64/configs/defconfig                  |    3 +
+ drivers/net/ethernet/ti/Kconfig               |   20 +-
+ drivers/net/ethernet/ti/Makefile              |    3 +
+ drivers/net/ethernet/ti/am65-cpsw-ethtool.c   |  747 +++++++
+ drivers/net/ethernet/ti/am65-cpsw-nuss.c      | 1965 +++++++++++++++++
+ drivers/net/ethernet/ti/am65-cpsw-nuss.h      |  142 ++
+ drivers/net/ethernet/ti/cpsw_ale.c            |   38 +
+ drivers/net/ethernet/ti/cpsw_ale.h            |    4 +
+ drivers/net/ethernet/ti/k3-cppi-desc-pool.c   |  126 ++
+ drivers/net/ethernet/ti/k3-cppi-desc-pool.h   |   30 +
+ drivers/phy/ti/Kconfig                        |    3 -
+ 18 files changed, 3487 insertions(+), 5 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/net/ti,k3-am654-cpsw-nuss.yaml
+ create mode 100644 drivers/net/ethernet/ti/am65-cpsw-ethtool.c
+ create mode 100644 drivers/net/ethernet/ti/am65-cpsw-nuss.c
+ create mode 100644 drivers/net/ethernet/ti/am65-cpsw-nuss.h
+ create mode 100644 drivers/net/ethernet/ti/k3-cppi-desc-pool.c
+ create mode 100644 drivers/net/ethernet/ti/k3-cppi-desc-pool.h
+
+-- 
+2.17.1
 
