@@ -2,142 +2,118 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0343C18AE24
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 09:14:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B6C3818AE2A
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 09:15:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726793AbgCSIOk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 04:14:40 -0400
-Received: from mout-u-204.mailbox.org ([91.198.250.253]:21838 "EHLO
-        mout-u-204.mailbox.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726188AbgCSIOj (ORCPT
+        id S1726366AbgCSIPj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 04:15:39 -0400
+Received: from mout-u-107.mailbox.org ([91.198.250.252]:57542 "EHLO
+        mout-u-107.mailbox.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726901AbgCSIPi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 04:14:39 -0400
-Received: by mout-u-204.mailbox.org (Postfix, from userid 51)
-        id 48jfcM4HJWzQlGP; Thu, 19 Mar 2020 08:05:14 +0000 (UTC)
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [80.241.60.240])
+        Thu, 19 Mar 2020 04:15:38 -0400
+Received: by mout-u-107.mailbox.org (Postfix, from userid 51)
+        id 48jfdc5ZhdzKnvC; Thu, 19 Mar 2020 09:06:40 +0100 (CET)
+Received: from smtp2.mailbox.org (smtp2.mailbox.org [IPv6:2001:67c:2050:105:465:1:2:0])
         (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
         (No client certificate requested)
-        by mout-u-204.mailbox.org (Postfix) with ESMTPS id 48jJHZ6lt0zQlG0;
-        Wed, 18 Mar 2020 19:20:26 +0100 (CET)
+        by mout-u-107.mailbox.org (Postfix) with ESMTPS id 48jWJW00Y7zKp7s;
+        Thu, 19 Mar 2020 03:36:59 +0100 (CET)
 X-Virus-Scanned: amavisd-new at heinlein-support.de
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gorani.run; s=MBO0001;
-        t=1584555625;
+        t=1584585417;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=O7m4lvrIqRs2bqX0fJ398lumr7Ad9ngJFhRhZgfuKUA=;
-        b=h5ay3Dk8OATxLJQjj+ENRkkXBjclmZmucQCN6amcMPzC/kCrPcz++Ro4l6OKO+wETezw8E
-        wm/LEL5Jq8uf24RZWv5i3rWLZyq4CIND+trc+fWbteI/jzEhhZhZW55HlhuiAmYIrunFUl
-        2eVB4rraD9m2oK6edmXFCq4UrrUASgI9X84v68i+pwIfJADMJI8IpxLCVieUUzCTQU9Fdb
-        wZJiNSdC9Dp4kUUWWcPRb0fmjgzaGpN1JdQ1C/Sz8xZGO3z5vTBZ76IqqwDN8vNq3Dbji6
-        mBKvJC1lR8O1LI9YPjkV8Ut2kBtDEHjbhfC28j7rSwrQTYVI+sU3DGi/mmZIvQ==
-Received: from smtp1.mailbox.org ([80.241.60.240])
-        by spamfilter04.heinlein-hosting.de (spamfilter04.heinlein-hosting.de [80.241.56.122]) (amavisd-new, port 10030)
-        with ESMTP id U7p6m9PGs4Mx; Wed, 18 Mar 2020 19:20:24 +0100 (CET)
-Subject: Re: [PATCH] irqchip/versatile-fpga: Handle chained IRQs properly
-To:     Marc Zyngier <maz@kernel.org>
-Cc:     linux-oxnas@groups.io, Linus Walleij <linus.walleij@linaro.org>,
+        bh=ERpvMrK/UaDTvkIoSj6AknzdzJX6Ereus6KjymOIMWM=;
+        b=pNO+MQySdvo4EMik8yKPyOgZHetMjJNsxtHde2yGeduT9VXjz3KNh93+mPFISbax4He/fL
+        ZyJNhfGD+77JFfTfGUQWtXAuUFj7taiIpA4lkGtmjSxWabkKeG+ykH4ofktMsmIbLi4Hre
+        /weoS3vN1K1u/n68+F/Dedma7U42fE7CjWLO89sPcn3U0YoWfgy98LlhcJ1MLDnFzkGSdw
+        XW02TIknUddGC1O1q5QgIAl3DzOtyIiggGR7U6nQBF59SpjPK9J4phcXuKYnnq855MWq2n
+        7tevK0bCqdk2b1wA9kVPVpSLc2S7LRx1Gni9+SR7Va9rzFDH8BCvqWZYZgQP/Q==
+Received: from smtp2.mailbox.org ([80.241.60.241])
+        by gerste.heinlein-support.de (gerste.heinlein-support.de [91.198.250.173]) (amavisd-new, port 10030)
+        with ESMTP id yN29WkZ56Jih; Thu, 19 Mar 2020 03:36:55 +0100 (CET)
+From:   Sungbo Eo <mans0n@gorani.run>
+To:     Linus Walleij <linus.walleij@linaro.org>,
         Thomas Gleixner <tglx@linutronix.de>,
         Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <maz@kernel.org>,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-oxnas@groups.io
+Cc:     Sungbo Eo <mans0n@gorani.run>,
         Neil Armstrong <narmstrong@baylibre.com>
-References: <20200318170904.1461278-1-mans0n@gorani.run>
- <112cdab389aa9cc30189c7aec0baded2@kernel.org>
-From:   Sungbo Eo <mans0n@gorani.run>
-Message-ID: <bdb90bd8-ede1-63d5-816c-57f6bf0417a4@gorani.run>
-Date:   Thu, 19 Mar 2020 03:20:13 +0900
+Subject: [PATCH v2] irqchip/versatile-fpga: Handle chained IRQs properly
+Date:   Thu, 19 Mar 2020 11:34:48 +0900
+Message-Id: <20200319023448.1479701-1-mans0n@gorani.run>
+In-Reply-To: <002b72cab9896fa5ac76a52e0cb503ff@kernel.org>
+References: <002b72cab9896fa5ac76a52e0cb503ff@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <112cdab389aa9cc30189c7aec0baded2@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Marc,
+Enclose the chained handler with chained_irq_{enter,exit}(), so that the
+muxed interrupts get properly acked.
 
-On 2020-03-19 02:48, Marc Zyngier wrote:
-> Hi Sungbo,
-> 
-> On 2020-03-18 17:09, Sungbo Eo wrote:
->> Enclose the chained handler with chained_irq_{enter,exit}(), so that the
->> muxed interrupts get properly acked.
->>
->> This patch also fixes a reboot bug on OX820 SoC, where the jiffies timer
->> interrupt is never acked. The kernel waits a clock tick forever in
->> calibrate_delay_converge(), which leads to a boot hang.
-> 
-> Nice catch.
-> 
->>
->> Signed-off-by: Sungbo Eo <mans0n@gorani.run>
->> Cc: Neil Armstrong <narmstrong@baylibre.com>
->> ---
->>  drivers/irqchip/irq-versatile-fpga.c | 9 ++++++++-
->>  1 file changed, 8 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/irqchip/irq-versatile-fpga.c
->> b/drivers/irqchip/irq-versatile-fpga.c
->> index 928858dada75..08faab2fec3e 100644
->> --- a/drivers/irqchip/irq-versatile-fpga.c
->> +++ b/drivers/irqchip/irq-versatile-fpga.c
->> @@ -6,6 +6,7 @@
->>  #include <linux/irq.h>
->>  #include <linux/io.h>
->>  #include <linux/irqchip.h>
->> +#include <linux/irqchip/chained_irq.h>
->>  #include <linux/irqchip/versatile-fpga.h>
->>  #include <linux/irqdomain.h>
->>  #include <linux/module.h>
->> @@ -68,12 +69,15 @@ static void fpga_irq_unmask(struct irq_data *d)
->>
->>  static void fpga_irq_handle(struct irq_desc *desc)
->>  {
->> +    struct irq_chip *chip = irq_desc_get_chip(desc);
->>      struct fpga_irq_data *f = irq_desc_get_handler_data(desc);
->>      u32 status = readl(f->base + IRQ_STATUS);
->>
->> +    chained_irq_enter(chip, desc);
->> +
-> 
-> It's probably not a big deal, but I'm not fond of starting talking to
-> the muxing irqchip before having done the chained_irq_enter() call.
-> 
-> Moving that read here would probably be safer.
+This patch also fixes a reboot bug on OX820 SoC, where the jiffies timer
+interrupt is never acked. The kernel waits a clock tick forever in
+calibrate_delay_converge(), which leads to a boot hang.
 
-Oops, I missed it. Thanks for pointing it out.
+Fixes: c41b16f8c9d9 ("ARM: integrator/versatile: consolidate FPGA IRQ handling code")
+Signed-off-by: Sungbo Eo <mans0n@gorani.run>
+Cc: Neil Armstrong <narmstrong@baylibre.com>
+---
+v2: moved readl below chained_irq_enter()
+    added Fixes tag
 
-> 
->>      if (status == 0) {
->>          do_bad_IRQ(desc);
->> -        return;
->> +        goto out;
->>      }
->>
->>      do {
->> @@ -82,6 +86,9 @@ static void fpga_irq_handle(struct irq_desc *desc)
->>          status &= ~(1 << irq);
->>          generic_handle_irq(irq_find_mapping(f->domain, irq));
->>      } while (status);
->> +
->> +out:
->> +    chained_irq_exit(chip, desc);
->>  }
->>
->>  /*
-> 
-> Otherwise looks good. If you send it again with the above fixed
-> and a Fixes: tag, I'll queue it.
+ drivers/irqchip/irq-versatile-fpga.c | 12 ++++++++++--
+ 1 file changed, 10 insertions(+), 2 deletions(-)
 
-It seems the handler had been broken from the very beginning. Could you 
-give me a hint on how the tag should be like?
+diff --git a/drivers/irqchip/irq-versatile-fpga.c b/drivers/irqchip/irq-versatile-fpga.c
+index 928858dada75..70e2cfff8175 100644
+--- a/drivers/irqchip/irq-versatile-fpga.c
++++ b/drivers/irqchip/irq-versatile-fpga.c
+@@ -6,6 +6,7 @@
+ #include <linux/irq.h>
+ #include <linux/io.h>
+ #include <linux/irqchip.h>
++#include <linux/irqchip/chained_irq.h>
+ #include <linux/irqchip/versatile-fpga.h>
+ #include <linux/irqdomain.h>
+ #include <linux/module.h>
+@@ -68,12 +69,16 @@ static void fpga_irq_unmask(struct irq_data *d)
+ 
+ static void fpga_irq_handle(struct irq_desc *desc)
+ {
++	struct irq_chip *chip = irq_desc_get_chip(desc);
+ 	struct fpga_irq_data *f = irq_desc_get_handler_data(desc);
+-	u32 status = readl(f->base + IRQ_STATUS);
++	u32 status;
++
++	chained_irq_enter(chip, desc);
+ 
++	status = readl(f->base + IRQ_STATUS);
+ 	if (status == 0) {
+ 		do_bad_IRQ(desc);
+-		return;
++		goto out;
+ 	}
+ 
+ 	do {
+@@ -82,6 +87,9 @@ static void fpga_irq_handle(struct irq_desc *desc)
+ 		status &= ~(1 << irq);
+ 		generic_handle_irq(irq_find_mapping(f->domain, irq));
+ 	} while (status);
++
++out:
++	chained_irq_exit(chip, desc);
+ }
+ 
+ /*
+-- 
+2.25.1
 
-Thanks.
-
-> 
-> Thanks,
-> 
->          M.
