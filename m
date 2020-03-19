@@ -2,101 +2,60 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2DE1D18B497
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:11:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3B15018B4A5
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:11:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728674AbgCSNLI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 09:11:08 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:40958 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728649AbgCSNLF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 09:11:05 -0400
-Received: by mail-pg1-f195.google.com with SMTP id t24so1248927pgj.7;
-        Thu, 19 Mar 2020 06:11:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=B4nHSl+0pWGmInbe8FQHGu8YA5O/4e10+dn6tS8W63s=;
-        b=gbLWcG94Hw5eFr5F713x2ZHuuzXvDsR7HTPfXMj/bIwF+d8ypI7MQ0pyYwa+09U5TZ
-         NqzDcIq3rhIlQ4m3ktNvDy5fiWpyluuTk2aj13Vrd5xi/rvbzDOTKr5HnOlQqlMtqq2I
-         M30MLa3Mre/tQuTekAAIEmcBZZtLSzzPQpAZxWmDu3aa4Zrs7fadQ+K7/FGUMgA0sb49
-         PyYhYjlIHoob0v7+ijdGrXE0Gm8ie9bwPUlzDJXrH7xRsp8cxgd4KmLEzHO+mBmV/t2S
-         jn7lhWtnvbAEt837OOgOCRB6KtNhzETY7bPO8q91avv2t4qOmYnjaaHLMF7/VWFOygUJ
-         ukTg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=B4nHSl+0pWGmInbe8FQHGu8YA5O/4e10+dn6tS8W63s=;
-        b=Gd/WnK5Id+0kOR8yUmlYcoz0mJ8rcqCJP+ZjVtF0X/hUSsnaLCkO+qvO8hwxO3/8th
-         07OwE9rDhdQ1/KzXEzls8CDoPRTCPxt85rARLfpRxPmSgeohfHU0A5PbfrWT42ZCNTbG
-         YRdSYkGxpF99JLgriqnDWoXIsYyecEQhmXi1/dPOh+lHsSVJ44YrvBQwV/m1kQ174tKA
-         2zqtAKtxYBSuQVZD/tJqFXCrKkgTCsDVPtMSHAwhQ7Cnot3Re9f3C+Q+UNC05TJx7kQu
-         CPjE20pQAcsvxLyH3QY/Lty4lK06hk9riHUIwBpW4SrZwLA6z6kb+Xg6Xykqji9wWnnO
-         QSKA==
-X-Gm-Message-State: ANhLgQ0XUm0vNu0GIZG2vUj7pDaXwWT/eAkoht907q9CN2urT509lFmb
-        8Bm496jgDz1X4L6Eq0Whwt4=
-X-Google-Smtp-Source: ADFU+vu6U87IPTR0D2iW/QPtoCB5nPrRdEyRPfJY+KBcojiba6nAoCyZgW5BQnWhYb7EwcPvHQuD8w==
-X-Received: by 2002:aa7:81c1:: with SMTP id c1mr3943700pfn.236.1584623463897;
-        Thu, 19 Mar 2020 06:11:03 -0700 (PDT)
-Received: from localhost ([216.24.188.11])
-        by smtp.gmail.com with ESMTPSA id lt11sm2087682pjb.2.2020.03.19.06.11.02
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 19 Mar 2020 06:11:03 -0700 (PDT)
-From:   Dejin Zheng <zhengdejin5@gmail.com>
-To:     peppe.cavallaro@st.com, alexandre.torgue@st.com,
-        joabreu@synopsys.com, davem@davemloft.net,
-        mcoquelin.stm32@gmail.com, netdev@vger.kernel.org
-Cc:     linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Dejin Zheng <zhengdejin5@gmail.com>
-Subject: [PATCH] net: stmmac: dwmac_lib: remove unnecessary checks in dwmac_dma_reset()
-Date:   Thu, 19 Mar 2020 21:10:19 +0800
-Message-Id: <20200319131019.12829-1-zhengdejin5@gmail.com>
-X-Mailer: git-send-email 2.25.0
+        id S1727477AbgCSNLa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 09:11:30 -0400
+Received: from 8bytes.org ([81.169.241.247]:53810 "EHLO theia.8bytes.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726975AbgCSNL0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 09:11:26 -0400
+Received: by theia.8bytes.org (Postfix, from userid 1000)
+        id 8ECFE1D4; Thu, 19 Mar 2020 14:11:24 +0100 (CET)
+Date:   Thu, 19 Mar 2020 14:11:22 +0100
+From:   Joerg Roedel <joro@8bytes.org>
+To:     Jean-Philippe Brucker <jean-philippe@linaro.org>
+Cc:     iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        virtualization@lists.linux-foundation.org,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Hanjun Guo <guohanjun@huawei.com>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
+        Will Deacon <will@kernel.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Joerg Roedel <jroedel@suse.de>
+Subject: Re: [PATCH 13/15] iommu/qcom: Use accessor functions for iommu
+ private data
+Message-ID: <20200319131122.GS3794@8bytes.org>
+References: <20200310091229.29830-1-joro@8bytes.org>
+ <20200310091229.29830-14-joro@8bytes.org>
+ <20200316155223.GM304669@myrica>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200316155223.GM304669@myrica>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-it will check the return value of dwmac_dma_reset() in the
-stmmac_init_dma_engine() function and report an error if the
-return value is not zero. so don't need check here.
+Hi Jean-Philippe,
 
-Signed-off-by: Dejin Zheng <zhengdejin5@gmail.com>
----
- drivers/net/ethernet/stmicro/stmmac/dwmac_lib.c | 7 +------
- 1 file changed, 1 insertion(+), 6 deletions(-)
+On Mon, Mar 16, 2020 at 04:52:23PM +0100, Jean-Philippe Brucker wrote:
+> Should be:
+> 
+> 	if (!dev_iommu_priv_set(dev))
 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac_lib.c b/drivers/net/ethernet/stmicro/stmmac/dwmac_lib.c
-index 688d36095333..cb87d31a99df 100644
---- a/drivers/net/ethernet/stmicro/stmmac/dwmac_lib.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/dwmac_lib.c
-@@ -16,19 +16,14 @@
- int dwmac_dma_reset(void __iomem *ioaddr)
- {
- 	u32 value = readl(ioaddr + DMA_BUS_MODE);
--	int err;
- 
- 	/* DMA SW reset */
- 	value |= DMA_BUS_MODE_SFT_RESET;
- 	writel(value, ioaddr + DMA_BUS_MODE);
- 
--	err = readl_poll_timeout(ioaddr + DMA_BUS_MODE, value,
-+	return readl_poll_timeout(ioaddr + DMA_BUS_MODE, value,
- 				 !(value & DMA_BUS_MODE_SFT_RESET),
- 				 10000, 100000);
--	if (err)
--		return -EBUSY;
--
--	return 0;
- }
- 
- /* CSR1 enables the transmit DMA to check for new descriptor */
--- 
-2.25.0
+Thanks a lot for your reviews! I made the changes to arm-smmu and the
+qcom driver you requested and will post a new version later today.
 
+Thanks,
+
+	Joerg
