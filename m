@@ -2,116 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D804018B87F
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 15:01:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0893718B8A8
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 15:07:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727652AbgCSOB1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 10:01:27 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:34778 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727138AbgCSOB0 (ORCPT
+        id S1727403AbgCSOH4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 10:07:56 -0400
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:38310 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726936AbgCSOHz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 10:01:26 -0400
-Received: by mail-wr1-f65.google.com with SMTP id z15so3162015wrl.1;
-        Thu, 19 Mar 2020 07:01:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=AKfKixYunr8acU9EKxMbpxcmQFyK603ftvwA9L+/SD4=;
-        b=QfrmVs7plt//YETSc+/owSuFJ61VH3rGKKnCR+Js6F8T2DpMaVMYdMwM6n+fpXMuW1
-         WVeV783ja/9Cmh+El5E2y138kEJko3XDtQIJAl+PjP9VkePmx6y30TIjL9mveADQ2yIw
-         jmwt30GRfG78XnHXqkMj0eCzYi7wIj3LOV6/Vw1exhLRz99JCOFjweCSNKsxUe7SLhCs
-         Fdkdxv1I8DuM0WbmPWcIPC3kLp7SlQIB2Y/kjjCLXxsQ3iovIj0F7OrZaK1GvarikolY
-         U+PxylQWr9CBeA6TkQtltMnx872PB80aFDJGV/NvMZxptQW5zvnwAvTYUnR/XjTlZf9I
-         WVFg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=AKfKixYunr8acU9EKxMbpxcmQFyK603ftvwA9L+/SD4=;
-        b=GdPyujf8UpKT1BLCD6UwtsUZ9OnywGfqB0eXhY/W2jgMh5VyHSGu5l4gFuf5P1LTZ5
-         nikuoJy+/p2DtibI9vDmfmNhSo41UpgEg0Z+sdVVdRmka4GDOZwXE7Z/0AjR3/UTO9Qs
-         mXxRZoel2GKKzDwSsY6RsjVYm302UNBUaj+oLHmCp5VfSV2whu6ooCIzrXxO8arNN5se
-         htW4hjZjWJ66N6RI205iXqXJHkbs56nQfiGPvmXW0AA1yQlPMXNSvPypeIg4j9rSS0Lz
-         lw96+Ghmo9URSjrgvolZy40Ej31DwYiEFBOD8ej1FvpaoY6WALd8CaKsTBymLBXyOHIS
-         DcMQ==
-X-Gm-Message-State: ANhLgQ1ZEGMHIhglXXlDFpJvfJQsO676jvV79P1iP1NhSk4Gwh3Q9LUc
-        hBzekgcbUnCXR1ZgAZrz6+U=
-X-Google-Smtp-Source: ADFU+vu1VD+Vv4fiPbuRPt6ywzDJB+mqX1BMAOsNjxLh7T4rDR50T1cBacWaKUofi38Vf5WIJYmvSQ==
-X-Received: by 2002:adf:db41:: with SMTP id f1mr4684099wrj.247.1584626484738;
-        Thu, 19 Mar 2020 07:01:24 -0700 (PDT)
-Received: from [192.168.2.1] (ip51ccf9cd.speed.planet.nl. [81.204.249.205])
-        by smtp.gmail.com with ESMTPSA id b12sm3471485wro.66.2020.03.19.07.01.21
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 19 Mar 2020 07:01:23 -0700 (PDT)
-Subject: Re: [RFC PATCH 2/2] phy: phy-rockchip-inno-usb2: remove support for
- rockchip, rk3366-usb2phy
-To:     Robin Murphy <robin.murphy@arm.com>, kishon@ti.com
-Cc:     devicetree@vger.kernel.org, heiko@sntech.de,
-        linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org,
-        robh+dt@kernel.org, linux-arm-kernel@lists.infradead.org
-References: <20200318192901.5023-1-jbx6244@gmail.com>
- <20200318192901.5023-2-jbx6244@gmail.com>
- <233769c3-a44a-0ebd-7a2c-6fab17fb56f2@arm.com>
-From:   Johan Jonker <jbx6244@gmail.com>
-Message-ID: <625d2904-458b-1edc-d91c-21614653a274@gmail.com>
-Date:   Thu, 19 Mar 2020 15:01:20 +0100
-User-Agent: Mozilla/5.0 (X11; Linux i686; rv:68.0) Gecko/20100101
+        Thu, 19 Mar 2020 10:07:55 -0400
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 02JE77L3048046;
+        Thu, 19 Mar 2020 09:07:07 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1584626827;
+        bh=F8cnBozYX8/iF9YH+60dq/RPVSZvGKSsyeEtA3GUHiY=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=FUIQinlxjeigNZMn1OTmCITKd7pTLCtLHdjpqObiI5xXQgpEQT2Wo5ZRTHr02bDpR
+         m00TJZbPf6va34eqFVVpqQaBkhh0SQar92NarCwP468LvJ4ZCqMdYD3BJwrdwd2xU5
+         edsOfZgPicfvccrirHYADFMd+WtyTTISsX6abwRc=
+Received: from DLEE100.ent.ti.com (dlee100.ent.ti.com [157.170.170.30])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id 02JE77UJ026756;
+        Thu, 19 Mar 2020 09:07:07 -0500
+Received: from DLEE107.ent.ti.com (157.170.170.37) by DLEE100.ent.ti.com
+ (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Thu, 19
+ Mar 2020 09:07:07 -0500
+Received: from fllv0039.itg.ti.com (10.64.41.19) by DLEE107.ent.ti.com
+ (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Thu, 19 Mar 2020 09:07:07 -0500
+Received: from [10.250.52.63] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id 02JE76v3049010;
+        Thu, 19 Mar 2020 09:07:06 -0500
+Subject: Re: [PATCH] ASoC: tas2562: Fixed incorrect amp_level setting.
+To:     Jonghwan Choi <charlie.jh@kakaocorp.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
+CC:     <alsa-devel@alsa-project.org>, <linux-kernel@vger.kernel.org>
+References: <20200319140043.GA6688@jhbirdchoi-MS-7B79>
+From:   Dan Murphy <dmurphy@ti.com>
+Message-ID: <0b4a59c9-6af7-a34f-fb08-f5200fbe5926@ti.com>
+Date:   Thu, 19 Mar 2020 09:01:24 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.4.1
 MIME-Version: 1.0
-In-Reply-To: <233769c3-a44a-0ebd-7a2c-6fab17fb56f2@arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+In-Reply-To: <20200319140043.GA6688@jhbirdchoi-MS-7B79>
+Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Jonghwan
 
-Some questions.
-Can Rockchip or Heiko explain why we have half finished support in the
-upstream kernel for rk3366? What happened?
-Are any plans to add a rk3366.dtsi?
-How wide spread was the use of rk3366? Products?
-ie. When does support stop?
+On 3/19/20 9:00 AM, Jonghwan Choi wrote:
+> According to the tas2562 datasheet,the bits[5:1] represents the amp_level value.
+> So to set the amp_level value correctly,the shift value should be set to 1.
+>
+> Signed-off-by: Jonghwan Choi <charlie.jh@kakaocorp.com>
+> ---
+>   sound/soc/codecs/tas2562.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/sound/soc/codecs/tas2562.c b/sound/soc/codecs/tas2562.c
+> index be52886a5edb..fb2233ca9103 100644
+> --- a/sound/soc/codecs/tas2562.c
+> +++ b/sound/soc/codecs/tas2562.c
+> @@ -409,7 +409,7 @@ static const struct snd_kcontrol_new vsense_switch =
+>   			1, 1);
+>   
+>   static const struct snd_kcontrol_new tas2562_snd_controls[] = {
+> -	SOC_SINGLE_TLV("Amp Gain Volume", TAS2562_PB_CFG1, 0, 0x1c, 0,
+> +	SOC_SINGLE_TLV("Amp Gain Volume", TAS2562_PB_CFG1, 1, 0x1c, 0,
+>   		       tas2562_dac_tlv),
+>   };
+>   
 
-There's also a rk3368. Is there a need for "rockchip,rk3368-usb2phy"?
 
-We'll keep "rockchip,rk3366-usb2phy" aboard for v2.
+Acked-by: Dan Murphy <dmurphy@ti.com>
 
-Thanks
-
-On 3/19/20 2:07 PM, Robin Murphy wrote:
-> Hi Johan,
-> 
-> On 2020-03-18 7:29 pm, Johan Jonker wrote:
->> 'phy-rockchip-inno-usb2.txt' is updated to yaml, whereby
->> the compatible string 'rockchip,rk3366-usb2phy' was removed,
->> because it's not in use by a dts file, so remove support
->> in the code as well.
-> 
-> Here's a DT using it:
-> 
-> https://github.com/rockchip-linux/kernel/blob/develop-4.4/arch/arm64/boot/dts/rockchip/rk3366.dtsi#L820
-> 
-> 
-> Please note that although DT bindings happen to be primarily maintained
-> in the upstream kernel tree at the moment, it is mostly as a consequence
-> of Linux being the source of most active development. Bindings should
-> not be considered to be "owned" by upstream Linux since there are many
-> other consumers, both downstream, and in completely different projects
-> like the BSDs. As far as I'm aware there is still a long-term plan to
-> eventually flip the switch and move maintenance to a standalone repo:
-> 
-> https://git.kernel.org/pub/scm/linux/kernel/git/devicetree/devicetree-rebasing.git
-> 
-> 
-> Things like PCI Device IDs and ACPI HIDs aren't even documented as
-> formally as DT bindings, so by the reasoning here we could arguably
-> delete the majority of drivers from the kernel...
-> 
-> Robin.
