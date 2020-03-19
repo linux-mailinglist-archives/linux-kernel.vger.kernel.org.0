@@ -2,44 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 93B3E18B5C1
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:22:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4D29918B668
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:27:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729934AbgCSNVP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 09:21:15 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45820 "EHLO mail.kernel.org"
+        id S1730635AbgCSN0o (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 09:26:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54668 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730083AbgCSNVN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 09:21:13 -0400
+        id S1730785AbgCSN0j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 09:26:39 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 76105206D7;
-        Thu, 19 Mar 2020 13:21:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C505B20658;
+        Thu, 19 Mar 2020 13:26:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584624073;
-        bh=UU1CiJv8QNpyvkVa8gz91Hsjp4AYZbOgAmrjiT4G+e0=;
+        s=default; t=1584624398;
+        bh=zca+MAonJ7nC5P8WUOLu6Yk2OA9Lx4YZC0BDMFm2PMo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GoClOY8Cuhzc9TELcHrPY0vVLTg6tncCd9Bka7JGV0MNCkwRC3lIglXFT/1W0Drbp
-         lKxp4BroajiVCA8WDULZinSu3ZFBFmg2aLBI+xzrESwUho0vJA9xN694e+95ZcPPkS
-         cYiaS0xSsoPdnrLCVopRD+LkSz1xmm+n/YTHBhDg=
+        b=kJ7idNXxU+UVfI5xjkSnaAiudjv2W1c16yv+DuWF9n47hp5rKTO8ktkRjS8/b6wHy
+         ZjHpLb5gqGwcw05xHtY5/IYcISyTvXQh8F5i/2p5Cxjvhxjq1qQo56WknSSmMHpFHp
+         Tn23b570bN0xeFTh0tCDwa8m72LLtmM1Y6p6VXEo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Waiman Long <longman@redhat.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-efi@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
-        Chris Wilson <chris@chris-wilson.co.uk>
-Subject: [PATCH 4.19 47/48] efi: Fix debugobjects warning on efi_rts_work
-Date:   Thu, 19 Mar 2020 14:04:29 +0100
-Message-Id: <20200319123917.572389749@linuxfoundation.org>
+        stable@vger.kernel.org, Taehee Yoo <ap420073@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.5 48/65] net: rmnet: fix suspicious RCU usage
+Date:   Thu, 19 Mar 2020 14:04:30 +0100
+Message-Id: <20200319123941.528206596@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.2
-In-Reply-To: <20200319123902.941451241@linuxfoundation.org>
-References: <20200319123902.941451241@linuxfoundation.org>
+In-Reply-To: <20200319123926.466988514@linuxfoundation.org>
+References: <20200319123926.466988514@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -49,49 +44,163 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Waiman Long <longman@redhat.com>
+From: Taehee Yoo <ap420073@gmail.com>
 
-commit ef1491e791308317bb9851a0ad380c4a68b58d54 upstream.
+[ Upstream commit 102210f7664442d8c0ce332c006ea90626df745b ]
 
-The following commit:
+rmnet_get_port() internally calls rcu_dereference_rtnl(),
+which checks RTNL.
+But rmnet_get_port() could be called by packet path.
+The packet path is not protected by RTNL.
+So, the suspicious RCU usage problem occurs.
 
-  9dbbedaa6171 ("efi: Make efi_rts_work accessible to efi page fault handler")
+Test commands:
+    modprobe rmnet
+    ip netns add nst
+    ip link add veth0 type veth peer name veth1
+    ip link set veth1 netns nst
+    ip link add rmnet0 link veth0 type rmnet mux_id 1
+    ip netns exec nst ip link add rmnet1 link veth1 type rmnet mux_id 1
+    ip netns exec nst ip link set veth1 up
+    ip netns exec nst ip link set rmnet1 up
+    ip netns exec nst ip a a 192.168.100.2/24 dev rmnet1
+    ip link set veth0 up
+    ip link set rmnet0 up
+    ip a a 192.168.100.1/24 dev rmnet0
+    ping 192.168.100.2
 
-converted 'efi_rts_work' from an auto variable to a global variable.
-However, when submitting the work, INIT_WORK_ONSTACK() was still used,
-causing the following complaint from debugobjects:
+Splat looks like:
+[  146.630958][ T1174] WARNING: suspicious RCU usage
+[  146.631735][ T1174] 5.6.0-rc1+ #447 Not tainted
+[  146.632387][ T1174] -----------------------------
+[  146.633151][ T1174] drivers/net/ethernet/qualcomm/rmnet/rmnet_config.c:386 suspicious rcu_dereference_check() !
+[  146.634742][ T1174]
+[  146.634742][ T1174] other info that might help us debug this:
+[  146.634742][ T1174]
+[  146.645992][ T1174]
+[  146.645992][ T1174] rcu_scheduler_active = 2, debug_locks = 1
+[  146.646937][ T1174] 5 locks held by ping/1174:
+[  146.647609][ T1174]  #0: ffff8880c31dea70 (sk_lock-AF_INET){+.+.}, at: raw_sendmsg+0xab8/0x2980
+[  146.662463][ T1174]  #1: ffffffff93925660 (rcu_read_lock_bh){....}, at: ip_finish_output2+0x243/0x2150
+[  146.671696][ T1174]  #2: ffffffff93925660 (rcu_read_lock_bh){....}, at: __dev_queue_xmit+0x213/0x2940
+[  146.673064][ T1174]  #3: ffff8880c19ecd58 (&dev->qdisc_running_key#7){+...}, at: ip_finish_output2+0x714/0x2150
+[  146.690358][ T1174]  #4: ffff8880c5796898 (&dev->qdisc_xmit_lock_key#3){+.-.}, at: sch_direct_xmit+0x1e2/0x1020
+[  146.699875][ T1174]
+[  146.699875][ T1174] stack backtrace:
+[  146.701091][ T1174] CPU: 0 PID: 1174 Comm: ping Not tainted 5.6.0-rc1+ #447
+[  146.705215][ T1174] Hardware name: innotek GmbH VirtualBox/VirtualBox, BIOS VirtualBox 12/01/2006
+[  146.706565][ T1174] Call Trace:
+[  146.707102][ T1174]  dump_stack+0x96/0xdb
+[  146.708007][ T1174]  rmnet_get_port.part.9+0x76/0x80 [rmnet]
+[  146.709233][ T1174]  rmnet_egress_handler+0x107/0x420 [rmnet]
+[  146.710492][ T1174]  ? sch_direct_xmit+0x1e2/0x1020
+[  146.716193][ T1174]  rmnet_vnd_start_xmit+0x3d/0xa0 [rmnet]
+[  146.717012][ T1174]  dev_hard_start_xmit+0x160/0x740
+[  146.717854][ T1174]  sch_direct_xmit+0x265/0x1020
+[  146.718577][ T1174]  ? register_lock_class+0x14d0/0x14d0
+[  146.719429][ T1174]  ? dev_watchdog+0xac0/0xac0
+[  146.723738][ T1174]  ? __dev_queue_xmit+0x15fd/0x2940
+[  146.724469][ T1174]  ? lock_acquire+0x164/0x3b0
+[  146.725172][ T1174]  __dev_queue_xmit+0x20c7/0x2940
+[ ... ]
 
-  ODEBUG: object 00000000ed27b500 is NOT on stack 00000000c7d38760, but annotated.
-
-Change the macro to just INIT_WORK() to eliminate the warning.
-
-Signed-off-by: Waiman Long <longman@redhat.com>
-Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Acked-by: Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-efi@vger.kernel.org
-Fixes: 9dbbedaa6171 ("efi: Make efi_rts_work accessible to efi page fault handler")
-Link: http://lkml.kernel.org/r/20181114175544.12860-2-ard.biesheuvel@linaro.org
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Cc: Chris Wilson <chris@chris-wilson.co.uk>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Fixes: ceed73a2cf4a ("drivers: net: ethernet: qualcomm: rmnet: Initial implementation")
+Signed-off-by: Taehee Yoo <ap420073@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/firmware/efi/runtime-wrappers.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/ethernet/qualcomm/rmnet/rmnet_config.c  | 13 ++++++-------
+ drivers/net/ethernet/qualcomm/rmnet/rmnet_config.h  |  2 +-
+ .../net/ethernet/qualcomm/rmnet/rmnet_handlers.c    |  4 ++--
+ 3 files changed, 9 insertions(+), 10 deletions(-)
 
---- a/drivers/firmware/efi/runtime-wrappers.c
-+++ b/drivers/firmware/efi/runtime-wrappers.c
-@@ -62,7 +62,7 @@ struct efi_runtime_work efi_rts_work;
- 	efi_rts_work.status = EFI_ABORTED;				\
- 									\
- 	init_completion(&efi_rts_work.efi_rts_comp);			\
--	INIT_WORK_ONSTACK(&efi_rts_work.work, efi_call_rts);		\
-+	INIT_WORK(&efi_rts_work.work, efi_call_rts);			\
- 	efi_rts_work.arg1 = _arg1;					\
- 	efi_rts_work.arg2 = _arg2;					\
- 	efi_rts_work.arg3 = _arg3;					\
+diff --git a/drivers/net/ethernet/qualcomm/rmnet/rmnet_config.c b/drivers/net/ethernet/qualcomm/rmnet/rmnet_config.c
+index ac58f584190bd..fc68ecdd804bc 100644
+--- a/drivers/net/ethernet/qualcomm/rmnet/rmnet_config.c
++++ b/drivers/net/ethernet/qualcomm/rmnet/rmnet_config.c
+@@ -382,11 +382,10 @@ struct rtnl_link_ops rmnet_link_ops __read_mostly = {
+ 	.fill_info	= rmnet_fill_info,
+ };
+ 
+-/* Needs either rcu_read_lock() or rtnl lock */
+-struct rmnet_port *rmnet_get_port(struct net_device *real_dev)
++struct rmnet_port *rmnet_get_port_rcu(struct net_device *real_dev)
+ {
+ 	if (rmnet_is_real_dev_registered(real_dev))
+-		return rcu_dereference_rtnl(real_dev->rx_handler_data);
++		return rcu_dereference_bh(real_dev->rx_handler_data);
+ 	else
+ 		return NULL;
+ }
+@@ -412,7 +411,7 @@ int rmnet_add_bridge(struct net_device *rmnet_dev,
+ 	struct rmnet_port *port, *slave_port;
+ 	int err;
+ 
+-	port = rmnet_get_port(real_dev);
++	port = rmnet_get_port_rtnl(real_dev);
+ 
+ 	/* If there is more than one rmnet dev attached, its probably being
+ 	 * used for muxing. Skip the briding in that case
+@@ -427,7 +426,7 @@ int rmnet_add_bridge(struct net_device *rmnet_dev,
+ 	if (err)
+ 		return -EBUSY;
+ 
+-	slave_port = rmnet_get_port(slave_dev);
++	slave_port = rmnet_get_port_rtnl(slave_dev);
+ 	slave_port->rmnet_mode = RMNET_EPMODE_BRIDGE;
+ 	slave_port->bridge_ep = real_dev;
+ 
+@@ -445,11 +444,11 @@ int rmnet_del_bridge(struct net_device *rmnet_dev,
+ 	struct net_device *real_dev = priv->real_dev;
+ 	struct rmnet_port *port, *slave_port;
+ 
+-	port = rmnet_get_port(real_dev);
++	port = rmnet_get_port_rtnl(real_dev);
+ 	port->rmnet_mode = RMNET_EPMODE_VND;
+ 	port->bridge_ep = NULL;
+ 
+-	slave_port = rmnet_get_port(slave_dev);
++	slave_port = rmnet_get_port_rtnl(slave_dev);
+ 	rmnet_unregister_real_device(slave_dev, slave_port);
+ 
+ 	netdev_dbg(slave_dev, "removed from rmnet as slave\n");
+diff --git a/drivers/net/ethernet/qualcomm/rmnet/rmnet_config.h b/drivers/net/ethernet/qualcomm/rmnet/rmnet_config.h
+index cd0a6bcbe74ad..0d568dcfd65a1 100644
+--- a/drivers/net/ethernet/qualcomm/rmnet/rmnet_config.h
++++ b/drivers/net/ethernet/qualcomm/rmnet/rmnet_config.h
+@@ -65,7 +65,7 @@ struct rmnet_priv {
+ 	struct rmnet_priv_stats stats;
+ };
+ 
+-struct rmnet_port *rmnet_get_port(struct net_device *real_dev);
++struct rmnet_port *rmnet_get_port_rcu(struct net_device *real_dev);
+ struct rmnet_endpoint *rmnet_get_endpoint(struct rmnet_port *port, u8 mux_id);
+ int rmnet_add_bridge(struct net_device *rmnet_dev,
+ 		     struct net_device *slave_dev,
+diff --git a/drivers/net/ethernet/qualcomm/rmnet/rmnet_handlers.c b/drivers/net/ethernet/qualcomm/rmnet/rmnet_handlers.c
+index 1b74bc1604027..074a8b326c304 100644
+--- a/drivers/net/ethernet/qualcomm/rmnet/rmnet_handlers.c
++++ b/drivers/net/ethernet/qualcomm/rmnet/rmnet_handlers.c
+@@ -184,7 +184,7 @@ rx_handler_result_t rmnet_rx_handler(struct sk_buff **pskb)
+ 		return RX_HANDLER_PASS;
+ 
+ 	dev = skb->dev;
+-	port = rmnet_get_port(dev);
++	port = rmnet_get_port_rcu(dev);
+ 
+ 	switch (port->rmnet_mode) {
+ 	case RMNET_EPMODE_VND:
+@@ -217,7 +217,7 @@ void rmnet_egress_handler(struct sk_buff *skb)
+ 	skb->dev = priv->real_dev;
+ 	mux_id = priv->mux_id;
+ 
+-	port = rmnet_get_port(skb->dev);
++	port = rmnet_get_port_rcu(skb->dev);
+ 	if (!port)
+ 		goto drop;
+ 
+-- 
+2.20.1
+
 
 
