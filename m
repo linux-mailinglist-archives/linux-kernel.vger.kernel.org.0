@@ -2,174 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F331D18B849
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:43:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 62F7E18B80D
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:38:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727695AbgCSNnC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 09:43:02 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39104 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727678AbgCSNnB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 09:43:01 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 239C3208D6;
-        Thu, 19 Mar 2020 13:42:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584625379;
-        bh=C00m90Jdij6F1HqEzf8L4EgeNwUufQvJHwqJ/rsXnFI=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=U3A41GcH8RiWtUUJI0DvEY89KTZfK4DNNLkMzqo2JHrhRo7L7rsszcNvUpD0jwJml
-         nvsmhUU2oAQyqn+ZsEDFe1sKkD5HUwCzNa1LNJdbojHWvXi50jmuC/ce+3+9Ip+9aw
-         xouwA7Q+fTV3c6SsaFiMDYw4wne/Tl1s3JUGXo4k=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        "Huang, Ying" <ying.huang@intel.com>,
-        Philip Li <philip.li@intel.com>,
-        Andi Kleen <andi.kleen@intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Sasha Levin <sashal@kernel.org>,
-        Feng Tang <feng.tang@intel.com>
-Subject: [PATCH 5.5 39/65] signal: avoid double atomic counter increments for user accounting
-Date:   Thu, 19 Mar 2020 14:04:21 +0100
-Message-Id: <20200319123938.858253357@linuxfoundation.org>
-X-Mailer: git-send-email 2.25.2
-In-Reply-To: <20200319123926.466988514@linuxfoundation.org>
-References: <20200319123926.466988514@linuxfoundation.org>
-User-Agent: quilt/0.66
+        id S1727916AbgCSNHY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 09:07:24 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:40625 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727884AbgCSNHT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 09:07:19 -0400
+Received: by mail-wr1-f65.google.com with SMTP id f3so2881414wrw.7;
+        Thu, 19 Mar 2020 06:07:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=IAGVxgGFxdcnCrZTDttJX0fXIuKoP1EiqE+ObCSCHjo=;
+        b=lLruOAFcOCPtYJtR/2ABKWDl4GK0L8S6ks41hHfdvTIVprnzPZ0dsW/CsjdWBeDoOA
+         y4e9xW1mCUTRgZDMSd1z6YvItVTRUc22KeDD7lKgHa4M2me7zTH7EGKTH3XgWKN/hPoa
+         42WKSTdIJrjBxcYgtnU4Z15V6kufmAdZcBaj3Mg0Ub1sMWDA+Vqq6oHV1KY5aCYn3pK6
+         TQcKkLmYsOAWaqaRbYAH3bnUibFiAewm9BpMFOLmEKYrk3gsXp5Vxce593J4prw18Pcm
+         4B/zjRt9OCIMBKneq1rpb3nlGg/yK2YAA3B7isBmVE/QOjumbRA1uYefexsn6esZVYZ9
+         EbXg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=IAGVxgGFxdcnCrZTDttJX0fXIuKoP1EiqE+ObCSCHjo=;
+        b=Ph9Jf55qCpacIRZCpzCbTJ4hoNMdR8KnsJLIXIi4kLX12Y+9udODhQn8Oemhcn2SJf
+         ulChECWrtWPxIzwYafC4v9aG1ZJX+w1i1jjLaY4SKLqtuGHieAkzPoHw4cGBpN4Dvg8a
+         JPCY3OP2Tu0OlIZkSpX5+7ALq95p9aIYi+LKOqgm5YcC8qKCXwls26YB0imUZqYVWVke
+         Y8GuHOMQ0Oxio8OeMf0cFwvlHwTUghSBXnwXFSFtTLQ99T+7dugki9c9Rc723KU6Pm5L
+         QGzRbs4MkouSDk6PzA4uQJaZJZmnXHpkTLE/+3xBJAbI0PFvomrJd+0NJP0rHUtYCOYH
+         E6Xg==
+X-Gm-Message-State: ANhLgQ1ij1jrjnpCQI250xh8eoESsyd+lX6KNKGwQmhuIhcfN5u/gruE
+        2249A4LJfO6iFDLENkfnbOL1nwC8aIzx9FSSr8DqLg==
+X-Google-Smtp-Source: ADFU+vu0myIgsfnN06h6k9VdOZjRHUJdy5H/u1cwR3LYksaqa3YS/NZu4fQSC+iE1nJcbmWbpvYZ4Awnw6S4bqnQFdo=
+X-Received: by 2002:a5d:5092:: with SMTP id a18mr4218509wrt.202.1584623237491;
+ Thu, 19 Mar 2020 06:07:17 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20200316150047.30828-1-andrew.smirnov@gmail.com>
+ <20200316150047.30828-5-andrew.smirnov@gmail.com> <0f5819d6-3485-1d2c-effd-4ae6d54f2498@nxp.com>
+In-Reply-To: <0f5819d6-3485-1d2c-effd-4ae6d54f2498@nxp.com>
+From:   Andrey Smirnov <andrew.smirnov@gmail.com>
+Date:   Thu, 19 Mar 2020 06:07:05 -0700
+Message-ID: <CAHQ1cqHYRA9sg_UCF2pos8fhVJuYejSW08C=Yx0mt8Bsj19Khg@mail.gmail.com>
+Subject: Re: [PATCH v8 4/8] crypto: caam - simplify RNG implementation
+To:     =?UTF-8?Q?Horia_Geant=C4=83?= <horia.geanta@nxp.com>
+Cc:     "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
+        Chris Healy <cphealy@gmail.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Iuliana Prodan <iuliana.prodan@nxp.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        dl-linux-imx <linux-imx@nxp.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Linus Torvalds <torvalds@linux-foundation.org>
+On Tue, Mar 17, 2020 at 2:58 PM Horia Geant=C4=83 <horia.geanta@nxp.com> wr=
+ote:
+>
+> On 3/16/2020 5:01 PM, Andrey Smirnov wrote:
+> > @@ -335,15 +225,18 @@ int caam_rng_init(struct device *ctrldev)
+> >       if (!devres_open_group(ctrldev, caam_rng_init, GFP_KERNEL))
+> >               return -ENOMEM;
+> >
+> > -     ctx =3D devm_kzalloc(ctrldev, sizeof(*ctx), GFP_DMA | GFP_KERNEL)=
+;
+> > +     ctx =3D devm_kzalloc(ctrldev, sizeof(*ctx), GFP_KERNEL);
+> >       if (!ctx)
+> >               return -ENOMEM;
+> >
+> > +     ctx->ctrldev =3D ctrldev;
+> > +
+> >       ctx->rng.name    =3D "rng-caam";
+> >       ctx->rng.init    =3D caam_init;
+> >       ctx->rng.cleanup =3D caam_cleanup;
+> >       ctx->rng.read    =3D caam_read;
+> >       ctx->rng.priv    =3D (unsigned long)ctx;
+> > +     ctx->rng.quality =3D 1024;
+> >
+> Nitpick: setting the quality should be moved to patch
+> "crypto: caam - limit single JD RNG output to maximum of 16 bytes"
+>
 
-[ Upstream commit fda31c50292a5062332fa0343c084bd9f46604d9 ]
+Ugh, looks like I messed this up while making v8. Will fix in v9.
 
-When queueing a signal, we increment both the users count of pending
-signals (for RLIMIT_SIGPENDING tracking) and we increment the refcount
-of the user struct itself (because we keep a reference to the user in
-the signal structure in order to correctly account for it when freeing).
-
-That turns out to be fairly expensive, because both of them are atomic
-updates, and particularly under extreme signal handling pressure on big
-machines, you can get a lot of cache contention on the user struct.
-That can then cause horrid cacheline ping-pong when you do these
-multiple accesses.
-
-So change the reference counting to only pin the user for the _first_
-pending signal, and to unpin it when the last pending signal is
-dequeued.  That means that when a user sees a lot of concurrent signal
-queuing - which is the only situation when this matters - the only
-atomic access needed is generally the 'sigpending' count update.
-
-This was noticed because of a particularly odd timing artifact on a
-dual-socket 96C/192T Cascade Lake platform: when you get into bad
-contention, on that machine for some reason seems to be much worse when
-the contention happens in the upper 32-byte half of the cacheline.
-
-As a result, the kernel test robot will-it-scale 'signal1' benchmark had
-an odd performance regression simply due to random alignment of the
-'struct user_struct' (and pointed to a completely unrelated and
-apparently nonsensical commit for the regression).
-
-Avoiding the double increments (and decrements on the dequeueing side,
-of course) makes for much less contention and hugely improved
-performance on that will-it-scale microbenchmark.
-
-Quoting Feng Tang:
-
- "It makes a big difference, that the performance score is tripled! bump
-  from original 17000 to 54000. Also the gap between 5.0-rc6 and
-  5.0-rc6+Jiri's patch is reduced to around 2%"
-
-[ The "2% gap" is the odd cacheline placement difference on that
-  platform: under the extreme contention case, the effect of which half
-  of the cacheline was hot was 5%, so with the reduced contention the
-  odd timing artifact is reduced too ]
-
-It does help in the non-contended case too, but is not nearly as
-noticeable.
-
-Reported-and-tested-by: Feng Tang <feng.tang@intel.com>
-Cc: Eric W. Biederman <ebiederm@xmission.com>
-Cc: Huang, Ying <ying.huang@intel.com>
-Cc: Philip Li <philip.li@intel.com>
-Cc: Andi Kleen <andi.kleen@intel.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- kernel/signal.c | 23 ++++++++++++++---------
- 1 file changed, 14 insertions(+), 9 deletions(-)
-
-diff --git a/kernel/signal.c b/kernel/signal.c
-index bcd46f547db39..eea748174ade9 100644
---- a/kernel/signal.c
-+++ b/kernel/signal.c
-@@ -413,27 +413,32 @@ __sigqueue_alloc(int sig, struct task_struct *t, gfp_t flags, int override_rlimi
- {
- 	struct sigqueue *q = NULL;
- 	struct user_struct *user;
-+	int sigpending;
- 
- 	/*
- 	 * Protect access to @t credentials. This can go away when all
- 	 * callers hold rcu read lock.
-+	 *
-+	 * NOTE! A pending signal will hold on to the user refcount,
-+	 * and we get/put the refcount only when the sigpending count
-+	 * changes from/to zero.
- 	 */
- 	rcu_read_lock();
--	user = get_uid(__task_cred(t)->user);
--	atomic_inc(&user->sigpending);
-+	user = __task_cred(t)->user;
-+	sigpending = atomic_inc_return(&user->sigpending);
-+	if (sigpending == 1)
-+		get_uid(user);
- 	rcu_read_unlock();
- 
--	if (override_rlimit ||
--	    atomic_read(&user->sigpending) <=
--			task_rlimit(t, RLIMIT_SIGPENDING)) {
-+	if (override_rlimit || likely(sigpending <= task_rlimit(t, RLIMIT_SIGPENDING))) {
- 		q = kmem_cache_alloc(sigqueue_cachep, flags);
- 	} else {
- 		print_dropped_signal(sig);
- 	}
- 
- 	if (unlikely(q == NULL)) {
--		atomic_dec(&user->sigpending);
--		free_uid(user);
-+		if (atomic_dec_and_test(&user->sigpending))
-+			free_uid(user);
- 	} else {
- 		INIT_LIST_HEAD(&q->list);
- 		q->flags = 0;
-@@ -447,8 +452,8 @@ static void __sigqueue_free(struct sigqueue *q)
- {
- 	if (q->flags & SIGQUEUE_PREALLOC)
- 		return;
--	atomic_dec(&q->user->sigpending);
--	free_uid(q->user);
-+	if (atomic_dec_and_test(&q->user->sigpending))
-+		free_uid(q->user);
- 	kmem_cache_free(sigqueue_cachep, q);
- }
- 
--- 
-2.20.1
-
-
-
+Thanks,
+Andrey Smirnov
