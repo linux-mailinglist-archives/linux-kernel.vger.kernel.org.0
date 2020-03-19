@@ -2,41 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6A78918B61E
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:24:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 62AF318B5BD
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:21:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730465AbgCSNYY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 09:24:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50988 "EHLO mail.kernel.org"
+        id S1730075AbgCSNVJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 09:21:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45614 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729892AbgCSNYU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 09:24:20 -0400
+        id S1730043AbgCSNVI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 09:21:08 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 40E5120658;
-        Thu, 19 Mar 2020 13:24:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F20A4206D7;
+        Thu, 19 Mar 2020 13:21:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584624259;
-        bh=Dxey7Q8OdyIqif19MhI4LcJl0lda+wnDI72pKg7H+PI=;
+        s=default; t=1584624067;
+        bh=sYWF8AvnWk2btIK4f5F35II3uns03QA+pOLfSwTEN+4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=x+QHZhEI0Gtu6O5RZJgwcfwZXC25rqSWa996FewyH/xfVuZHHzzjbBhDBfLQp0K8J
-         exsh5PVa9Loauf9RhYwcfauEcMWuBQjJyxXl5KFbguZQC7kQ/+yHACCsWApjVNXnpd
-         mi04AZyfXESzx52M6CCWuU+2s61eZRFEqhED8yYM=
+        b=sctWjZ3bDsQ1njOSxfMzECrhwWoG7Yj2jAwLCBsclH2K/jZGrNXZILxorflSLEdpc
+         jpC2fInvha35eOLq/jAX57fC2dzvjkZ3OUILNmDMDVHJzgA9WLcvui21+L+sjOip0d
+         xcGJBfF9pTvNHDMslVRfOCW+zzTbiReeToFUpfvI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Alexandru-Mihai Maftei <amaftei@solarflare.com>,
-        Martin Habets <mhabets@solarflare.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 50/60] sfc: fix timestamp reconstruction at 16-bit rollover points
+        stable@vger.kernel.org, Chen-Tsung Hsieh <chentsung@chromium.org>,
+        Nicolas Boichat <drinkcat@chromium.org>,
+        Jiri Kosina <jkosina@suse.cz>
+Subject: [PATCH 4.19 46/48] HID: google: add moonball USB id
 Date:   Thu, 19 Mar 2020 14:04:28 +0100
-Message-Id: <20200319123935.284186646@linuxfoundation.org>
+Message-Id: <20200319123917.214841680@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.2
-In-Reply-To: <20200319123919.441695203@linuxfoundation.org>
-References: <20200319123919.441695203@linuxfoundation.org>
+In-Reply-To: <20200319123902.941451241@linuxfoundation.org>
+References: <20200319123902.941451241@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,81 +44,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alex Maftei (amaftei) <amaftei@solarflare.com>
+From: Chen-Tsung Hsieh <chentsung@chromium.org>
 
-[ Upstream commit 23797b98909f34b75fd130369bde86f760db69d0 ]
+commit 58322a1590fc189a8e1e349d309637d4a4942840 upstream.
 
-We can't just use the top bits of the last sync event as they could be
-off-by-one every 65,536 seconds, giving an error in reconstruction of
-65,536 seconds.
+Add 1 additional hammer-like device.
 
-This patch uses the difference in the bottom 16 bits (mod 2^16) to
-calculate an offset that needs to be applied to the last sync event to
-get to the current time.
+Signed-off-by: Chen-Tsung Hsieh <chentsung@chromium.org>
+Reviewed-by: Nicolas Boichat <drinkcat@chromium.org>
+Signed-off-by: Jiri Kosina <jkosina@suse.cz>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-Signed-off-by: Alexandru-Mihai Maftei <amaftei@solarflare.com>
-Acked-by: Martin Habets <mhabets@solarflare.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/sfc/ptp.c | 38 +++++++++++++++++++++++++++++++---
- 1 file changed, 35 insertions(+), 3 deletions(-)
+ drivers/hid/hid-google-hammer.c |    2 ++
+ drivers/hid/hid-ids.h           |    1 +
+ 2 files changed, 3 insertions(+)
 
-diff --git a/drivers/net/ethernet/sfc/ptp.c b/drivers/net/ethernet/sfc/ptp.c
-index af15a737c6756..59b4f16896a81 100644
---- a/drivers/net/ethernet/sfc/ptp.c
-+++ b/drivers/net/ethernet/sfc/ptp.c
-@@ -560,13 +560,45 @@ efx_ptp_mac_nic_to_ktime_correction(struct efx_nic *efx,
- 				    u32 nic_major, u32 nic_minor,
- 				    s32 correction)
- {
-+	u32 sync_timestamp;
- 	ktime_t kt = { 0 };
-+	s16 delta;
+--- a/drivers/hid/hid-google-hammer.c
++++ b/drivers/hid/hid-google-hammer.c
+@@ -125,6 +125,8 @@ static const struct hid_device_id hammer
+ 	{ HID_DEVICE(BUS_USB, HID_GROUP_GENERIC,
+ 		     USB_VENDOR_ID_GOOGLE, USB_DEVICE_ID_GOOGLE_MASTERBALL) },
+ 	{ HID_DEVICE(BUS_USB, HID_GROUP_GENERIC,
++		     USB_VENDOR_ID_GOOGLE, USB_DEVICE_ID_GOOGLE_MOONBALL) },
++	{ HID_DEVICE(BUS_USB, HID_GROUP_GENERIC,
+ 		     USB_VENDOR_ID_GOOGLE, USB_DEVICE_ID_GOOGLE_STAFF) },
+ 	{ HID_DEVICE(BUS_USB, HID_GROUP_GENERIC,
+ 		     USB_VENDOR_ID_GOOGLE, USB_DEVICE_ID_GOOGLE_WAND) },
+--- a/drivers/hid/hid-ids.h
++++ b/drivers/hid/hid-ids.h
+@@ -468,6 +468,7 @@
+ #define USB_DEVICE_ID_GOOGLE_WHISKERS	0x5030
+ #define USB_DEVICE_ID_GOOGLE_MASTERBALL	0x503c
+ #define USB_DEVICE_ID_GOOGLE_MAGNEMITE	0x503d
++#define USB_DEVICE_ID_GOOGLE_MOONBALL	0x5044
  
- 	if (!(nic_major & 0x80000000)) {
- 		WARN_ON_ONCE(nic_major >> 16);
--		/* Use the top bits from the latest sync event. */
--		nic_major &= 0xffff;
--		nic_major |= (last_sync_timestamp_major(efx) & 0xffff0000);
-+
-+		/* Medford provides 48 bits of timestamp, so we must get the top
-+		 * 16 bits from the timesync event state.
-+		 *
-+		 * We only have the lower 16 bits of the time now, but we do
-+		 * have a full resolution timestamp at some point in past. As
-+		 * long as the difference between the (real) now and the sync
-+		 * is less than 2^15, then we can reconstruct the difference
-+		 * between those two numbers using only the lower 16 bits of
-+		 * each.
-+		 *
-+		 * Put another way
-+		 *
-+		 * a - b = ((a mod k) - b) mod k
-+		 *
-+		 * when -k/2 < (a-b) < k/2. In our case k is 2^16. We know
-+		 * (a mod k) and b, so can calculate the delta, a - b.
-+		 *
-+		 */
-+		sync_timestamp = last_sync_timestamp_major(efx);
-+
-+		/* Because delta is s16 this does an implicit mask down to
-+		 * 16 bits which is what we need, assuming
-+		 * MEDFORD_TX_SECS_EVENT_BITS is 16. delta is signed so that
-+		 * we can deal with the (unlikely) case of sync timestamps
-+		 * arriving from the future.
-+		 */
-+		delta = nic_major - sync_timestamp;
-+
-+		/* Recover the fully specified time now, by applying the offset
-+		 * to the (fully specified) sync time.
-+		 */
-+		nic_major = sync_timestamp + delta;
- 
- 		kt = ptp->nic_to_kernel_time(nic_major, nic_minor,
- 					     correction);
--- 
-2.20.1
-
+ #define USB_VENDOR_ID_GOTOP		0x08f2
+ #define USB_DEVICE_ID_SUPER_Q2		0x007f
 
 
