@@ -2,64 +2,210 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 17EF618BC0A
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 17:12:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 256F918BC28
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 17:15:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728212AbgCSQMt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 12:12:49 -0400
-Received: from 8bytes.org ([81.169.241.247]:53926 "EHLO theia.8bytes.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726912AbgCSQMs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 12:12:48 -0400
-Received: by theia.8bytes.org (Postfix, from userid 1000)
-        id 885FC217; Thu, 19 Mar 2020 17:12:47 +0100 (CET)
-Date:   Thu, 19 Mar 2020 17:12:46 +0100
-From:   Joerg Roedel <joro@8bytes.org>
-To:     Andy Lutomirski <luto@kernel.org>
-Cc:     X86 ML <x86@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Hellstrom <thellstrom@vmware.com>,
-        Jiri Slaby <jslaby@suse.cz>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Juergen Gross <jgross@suse.com>,
-        Kees Cook <keescook@chromium.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        kvm list <kvm@vger.kernel.org>,
-        Linux Virtualization <virtualization@lists.linux-foundation.org>,
-        Joerg Roedel <jroedel@suse.de>
-Subject: Re: [PATCH 42/70] x86/sev-es: Support nested #VC exceptions
-Message-ID: <20200319161245.GD5122@8bytes.org>
-References: <20200319091407.1481-1-joro@8bytes.org>
- <20200319091407.1481-43-joro@8bytes.org>
- <CALCETrXiWjALMTcG=92DmMn_H=yR88e0-3cj8CjTAjtjTvBR8w@mail.gmail.com>
+        id S1727898AbgCSQPN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 12:15:13 -0400
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:53970 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727636AbgCSQPM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 12:15:12 -0400
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20200319161510euoutp026b1704d1b9928f8856d7a1ac8e9b7c80~9wLD0MeOn1016710167euoutp02_
+        for <linux-kernel@vger.kernel.org>; Thu, 19 Mar 2020 16:15:10 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20200319161510euoutp026b1704d1b9928f8856d7a1ac8e9b7c80~9wLD0MeOn1016710167euoutp02_
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1584634510;
+        bh=PH4XpAvDTqRnnkexutJQDHffmNTuPS+R8AFy6ym3OEM=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=vcvcXvtZ0abSCDV5pqEpaQzKGOi4w1noRZh0iJRinft5n6kAqAlxXeZgVyNZNjsmA
+         ed3OGumeWAuvn7Z8znSPwkrekb0c0snAq91g02c0u7v6HQtoSjNEc+zblGICeEnxiv
+         bobP1n0GEg7f/drPlw1Fuyi1peRrm/73pXqJTpvQ=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20200319161509eucas1p2afddab88cb58d0c9e5010bb10f3f84ce~9wLDnhj6C0339903399eucas1p27;
+        Thu, 19 Mar 2020 16:15:09 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges3new.samsung.com (EUCPMTA) with SMTP id 23.E1.60698.D8A937E5; Thu, 19
+        Mar 2020 16:15:09 +0000 (GMT)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20200319161509eucas1p168ca3c148f341f23e29d4637a538e17c~9wLDQWr5P0720007200eucas1p1R;
+        Thu, 19 Mar 2020 16:15:09 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20200319161509eusmtrp1c6b0b994825553f20d23c3288fa585dd~9wLDPrUl80891708917eusmtrp1U;
+        Thu, 19 Mar 2020 16:15:09 +0000 (GMT)
+X-AuditID: cbfec7f5-a29ff7000001ed1a-65-5e739a8d0b35
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id 7A.08.07950.D8A937E5; Thu, 19
+        Mar 2020 16:15:09 +0000 (GMT)
+Received: from [106.120.51.71] (unknown [106.120.51.71]) by
+        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20200319161509eusmtip273a87bca46d0e365c4c4666d945b2d29~9wLCxGxdz1186411864eusmtip2i;
+        Thu, 19 Mar 2020 16:15:08 +0000 (GMT)
+Subject: Re: [PATCH v4 03/27] ata: make SATA_PMP option selectable only if
+ any SATA host driver is enabled
+To:     James Bottomley <jejb@linux.ibm.com>
+Cc:     Jens Axboe <axboe@kernel.dk>,
+        Michael Schmitz <schmitzmic@gmail.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Christoph Hellwig <hch@lst.de>, linux-ide@vger.kernel.org,
+        linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org,
+        "Martin K . Petersen" <martin.petersen@oracle.com>
+From:   Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Message-ID: <8b77928f-5985-046c-f760-b50625dbeeb4@samsung.com>
+Date:   Thu, 19 Mar 2020 17:15:07 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+        Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CALCETrXiWjALMTcG=92DmMn_H=yR88e0-3cj8CjTAjtjTvBR8w@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <1584456957.4545.7.camel@linux.ibm.com>
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA01SbUhTYRTu3b279244uc7FDhZGw6IMtZjlxUKMgu6vDPoTgtbUy9R0yq5a
+        +kejTBtFpsZwKJaBuqn5kfkVikzcEMtEf2TL+dX6UFpkVpqotO0q+e85z3mec84Dh8LkQ+Ig
+        Kk2Xw+l1mgwVIcW7bH/Hwh6Y+MTj01Y10+R8SDCfHf0ixtw0LGLqprpEjK1nQcRM9lUTTIOr
+        BWMa7FsipqbYSMZK2F6Tk2Qn3+Sy1qFSxJbVDSJ2pPgPzr56X0Swy58cOLvSEXyJipeeSeEy
+        0vI4fUTMNWnqyq0fWLYz+KZlVF+EusGAJBTQkTDzYhY3ICklpxsRPG1ux4TiF4KN8VWxUKwg
+        sHUaxTsWY4uNFBoNCNz9PdsWN4KRwUrSqwqkM6C5thL3YgV9BLrX55FXhNFmETwb/ugTEXQ0
+        PCqxIC+W0THgmqv3GXD6EHwfLPHhvfQV+Dk3JBY0ATBS5fLxEs8ZlrV5zIsxWgkOV61IwAeg
+        213tuwjoCRJer1Z7FlCe4jxsfUsTIgTCkr2TFPB+GK24jwv65wg2S79um7sRNFRsEYLqNEyP
+        rRPeQRh9FFr7IgT6LHQ0bpLCfH+YcgcIN/hDeZcRE2gZlN6VC+rD0FbfRuysNfSasTKkMu1K
+        ZtqVxrQrjen/3icItyAll8tnajlereNuhPOaTD5Xpw1PzsrsQJ7XGt2y/+5BAxtJVkRTSOUn
+        i73DJ8rFmjw+P9OKgMJUClmY1kPJUjT5BZw+66o+N4PjrWgfhauUMnXdYoKc1mpyuOscl83p
+        d7oiShJUhBKwwuykcqwufdwRQrrVF3XtjStRoaXWHt7JOCHE4LwXV/UyTqp6nGhclM7ET7xV
+        LBTGX/7SyyvssRfWXP3v0nPshqhCNuLcxp7K6E2zMoRsTx3Q8rVT+tsF2dONNZHV5EjrsXSF
+        fHhp+VT8rE1S+8GPUB6UJQcV5Z9cDFbhfKrmRCim5zX/ANwXbrNWAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrKIsWRmVeSWpSXmKPExsVy+t/xe7q9s4rjDM6skrVYfbefzeLZrb1M
+        FitXH2WyWHRjG5PFsR2PmCwu75rDZrH8yVpmi+XH/zFZzG2dzu7A6bFz1l12j8tnSz0OHe5g
+        9Jiw6ACjx8nWbyweu282sHl8fHqLxePzJrkAjig9m6L80pJUhYz84hJbpWhDCyM9Q0sLPSMT
+        Sz1DY/NYKyNTJX07m5TUnMyy1CJ9uwS9jM+NH5gL7spVrDpd1MC4XaKLkZNDQsBEYvraY+xd
+        jFwcQgJLGSWufbjP0sXIAZSQkTi+vgyiRljiz7UuNoia14wSExe8YAZJCAvkSNy8+YEFxBYR
+        0JDY/ushI0gRs8BKJok3W55CdbxllGjp/gLWwSZgJTGxfRUjiM0rYCfx5MEysG4WAVWJdwfa
+        wWxRgQiJwztmQdUISpyc+QQszgl06qofD8HmMAuoS/yZdwnKFpe49WQ+E4QtL7H97RzmCYxC
+        s5C0z0LSMgtJyywkLQsYWVYxiqSWFuem5xYb6RUn5haX5qXrJefnbmIERum2Yz+37GDsehd8
+        iFGAg1GJh3dGW3GcEGtiWXFl7iFGCQ5mJRFe3XSgEG9KYmVValF+fFFpTmrxIUZToOcmMkuJ
+        JucDE0heSbyhqaG5haWhubG5sZmFkjhvh8DBGCGB9MSS1OzU1ILUIpg+Jg5OqQbGbcqCVQoL
+        ufc33RO1EnZWSi8R6jJbbrhtRpNTi3uh66vjYkw8ZzrWnPvbwGreYOs69bbRCl7WvzGH27WU
+        +XxfOU384aB/SKlwwa/HJ3SEtmgstRbutmUrmep77FfV3+zOFbEt1+ZPn2Tz4qie+uamjNn+
+        Zkf/MuxKXu/iwXuHa4+Uz5N7qR+VWIozEg21mIuKEwEFGdgb6AIAAA==
+X-CMS-MailID: 20200319161509eucas1p168ca3c148f341f23e29d4637a538e17c
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20200317144342eucas1p2d73deadcdb4cee860dd610f9f8e26bda
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20200317144342eucas1p2d73deadcdb4cee860dd610f9f8e26bda
+References: <20200317144333.2904-1-b.zolnierkie@samsung.com>
+        <CGME20200317144342eucas1p2d73deadcdb4cee860dd610f9f8e26bda@eucas1p2.samsung.com>
+        <20200317144333.2904-4-b.zolnierkie@samsung.com>
+        <1584456957.4545.7.camel@linux.ibm.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 19, 2020 at 08:46:36AM -0700, Andy Lutomirski wrote:
-> This can't possibly end well.  Maybe have a little percpu list of
-> GHCBs and make sure there are enough for any possible nesting?
 
-Yeah, it is not entirely robust yet. Without NMI nesting the number of
-possible #VC nesting levels should be limited. At least one backup GHCB
-pre-allocated is probably a good idea.
+On 3/17/20 3:55 PM, James Bottomley wrote:
+> On Tue, 2020-03-17 at 15:43 +0100, Bartlomiej Zolnierkiewicz wrote:
+>> There is no reason to expose SATA_PMP config option when no SATA
+>> host drivers are enabled. To fix it add SATA_HOST config option,
+>> make all SATA host drivers select it and finally make SATA_PMP
+>> config options depend on it.
+>>
+>> This also serves as preparation for the future changes which
+>> optimize libata core code size on PATA only setups.
+>>
+>> CC: "James E.J. Bottomley" <jejb@linux.ibm.com>
+>> Reviewed-by: Martin K. Petersen <martin.petersen@oracle.com> # for
+>> SCSI bits
+>> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+>> ---
+>>  drivers/ata/Kconfig         | 40
+>> +++++++++++++++++++++++++++++++++++++
+>>  drivers/scsi/Kconfig        |  1 +
+>>  drivers/scsi/libsas/Kconfig |  1 +
+>>  3 files changed, 42 insertions(+)
+>>
+>> diff --git a/drivers/ata/Kconfig b/drivers/ata/Kconfig
+>> index a6beb2c5a692..ad7760656f71 100644
+>> --- a/drivers/ata/Kconfig
+>> +++ b/drivers/ata/Kconfig
+>> @@ -34,6 +34,9 @@ if ATA
+>>  config ATA_NONSTANDARD
+>>         bool
+>>  
+>> +config SATA_HOST
+>> +	bool
+>> +
+>>  config ATA_VERBOSE_ERROR
+>>  	bool "Verbose ATA error reporting"
+>>  	default y
+>> @@ -73,6 +76,7 @@ config SATA_ZPODD
+>>  
+>>  config SATA_PMP
+>>  	bool "SATA Port Multiplier support"
+>> +	depends on SATA_HOST
+>>  	default y
+>>  	help
+>>  	  This option adds support for SATA Port Multipliers
+>> @@ -85,6 +89,7 @@ comment "Controllers with non-SFF native interface"
+>>  config SATA_AHCI
+>>  	tristate "AHCI SATA support"
+>>  	depends on PCI
+>> +	select SATA_HOST
+>>  	help
+>>  	  This option enables support for AHCI Serial ATA.
+> 
+> This is a bit fragile and not the way Kconfig should be done.  The
+> fragility comes because anyone adding a new host has also to remember
+> to add the select, and there will be no real consequences for not doing
 
-> Also, I admit confusion.  Isn't the GHCB required to be unencrypted?
-> How does that work with kzalloc()?
+People adding the new host driver usually look at the existing Kconfig
+entries before introducing the new one (most probably just copy and then
+modify existing entry) so they should notice that the existing entries
+contain the select.
 
-Yes, but the kzalloc'ed ghcb is just the backup space for the real GHCB,
-which is mapped unencrypted. The contents of the unencrypted GHCB is
-copied to the backup and restored on return, so that the interrupted #VC
-handler finds the GHCB unmodified.
+Also we shouldn't have problem in catching potential select omissions
+during the code review.
 
-Regards,
+Not to mention that the addition of the new ATA host driver is quite
+a rare event nowadays.. ;)
 
-	Joerg
+> so.  The way to get rid of the fragility is to make SATA_HOST a
+> menuconfig option enclosing all the hosts, which makes the patch much
+> smaller as well.  The hint implies you want to separate out all the
+> PATA drivers, which also makes a menuconfig sound like the better
+> option.
+SATA_HOST is not for grouping SATA hosts, it is for core libata
+code to enable SATA support (please see patches #13-26 for details,
+maybe it should have been named ATA_SATA?) and menuconfig usage in
+this case is problematic:
+
+- we have host drivers supporting both SATA and PATA (i.e. ata_piix)
+
+- we have currently host drivers sorted in Kconfig by different 
+  criteria than SATA or PATA support
+
+- I would prefer to avoid making users to have explicitly select
+  SATA_HOST option (right now it gets auto-selected when needed)
+
+- SCSI_SAS_ATA (which also needs to select SATA_HOST) lives in
+  drivers/scsi/libsas/Kconfig so menuconfig will not cover it
+
+> I've also got to say that the problem doesn't seem to be one ... even
+> if some raving lunatic disables all SATA hosts and then enables PMP it
+> doesn't cause any problems does it?
+
+It doesn't cause any real problems (just some dead code being present
+in the kernel image) but this patch is a prerequisite for patches #13-26
+(patch description mentions that this change is needed for the future
+changes which optimize libata core code size on PATA only setups).
+
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
