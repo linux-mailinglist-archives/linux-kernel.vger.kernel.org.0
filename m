@@ -2,56 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8FFC618B983
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 15:37:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C3D6F18B96D
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 15:33:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727620AbgCSOhY convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Thu, 19 Mar 2020 10:37:24 -0400
-Received: from vegas.theobroma-systems.com ([144.76.126.164]:39350 "EHLO
-        mail.theobroma-systems.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727178AbgCSOhX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 10:37:23 -0400
-X-Greylist: delayed 872 seconds by postgrey-1.27 at vger.kernel.org; Thu, 19 Mar 2020 10:37:22 EDT
-Received: from ip5f5a5d2f.dynamic.kabel-deutschland.de ([95.90.93.47]:43774 helo=diego.localnet)
-        by mail.theobroma-systems.com with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <heiko.stuebner@theobroma-systems.com>)
-        id 1jEw4P-0004O5-2t; Thu, 19 Mar 2020 15:22:49 +0100
-From:   Heiko Stuebner <heiko.stuebner@theobroma-systems.com>
-To:     Christoph Muellner <christoph.muellner@theobroma-systems.com>
-Cc:     Kishon Vijay Abraham I <kishon@ti.com>,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org
-Subject: Re: [PATCH] phy: rk-inno-usb2: Decrease verbosity of repeating log.
-Date:   Thu, 19 Mar 2020 15:22:48 +0100
-Message-ID: <2002640.57rdNQtM3Z@diego>
-Organization: Theobroma Systems
-In-Reply-To: <20200319140852.27636-1-christoph.muellner@theobroma-systems.com>
-References: <20200319140852.27636-1-christoph.muellner@theobroma-systems.com>
+        id S1727455AbgCSOc5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 10:32:57 -0400
+Received: from foss.arm.com ([217.140.110.172]:36998 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726795AbgCSOc5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 10:32:57 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E5F1130E;
+        Thu, 19 Mar 2020 07:32:56 -0700 (PDT)
+Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 274703F52E;
+        Thu, 19 Mar 2020 07:32:56 -0700 (PDT)
+Date:   Thu, 19 Mar 2020 14:32:51 +0000
+From:   Mark Rutland <mark.rutland@arm.com>
+To:     Tuan Phan <tuanphan@os.amperecomputing.com>
+Cc:     patches@amperecomputing.com, Will Deacon <will@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] perf: dsu: Allow multiple devices share same IRQ.
+Message-ID: <20200319143250.GA4876@lakrids.cambridge.arm.com>
+References: <1584491176-31358-1-git-send-email-tuanphan@os.amperecomputing.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-Content-Type: text/plain; charset="iso-8859-1"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1584491176-31358-1-git-send-email-tuanphan@os.amperecomputing.com>
+User-Agent: Mutt/1.11.1+11 (2f07cb52) (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am Donnerstag, 19. März 2020, 15:08:52 CET schrieb Christoph Muellner:
-> phy-rockchip-inno-usb2 logs the message
+On Tue, Mar 17, 2020 at 05:26:15PM -0700, Tuan Phan wrote:
+> Add IRQF_SHARED flag when register IRQ such that multiple dsu
+> devices can share same IRQ.
 > 
->   "phy-ff2c0000.syscon:usb2-phy@100.2: charger = INVALID_CHARGER"
+> Signed-off-by: Tuan Phan <tuanphan@os.amperecomputing.com>
+
+I don't think that this makes sense; further I think that this
+highlights that the current driver doesn't support such a configuration
+for other reasons.
+
+A DSU instance can only be accessed from a CPU associated with it, since
+it's accessed via sysregs. The IRQ handler must run on one of those
+CPUs.
+
+To handle that, the DSU PMU driver will need to gain an understanding of
+which CPUs are associated with the instance. As it stands the driver
+seems to assume that there's a single DSU instance, and that all CPUs
+are affine to that same instance.
+
+So NAK to this patch, given the above.
+
+Thanks,
+Mark.
+
+> ---
+>  drivers/perf/arm_dsu_pmu.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> constantly with a frequency of about 1 Hz and a verbosity level
-> of INFO. As this is clearly annoying, this patch decreases
-> the log level to DEBUG.
+> diff --git a/drivers/perf/arm_dsu_pmu.c b/drivers/perf/arm_dsu_pmu.c
+> index 70968c8..2622900 100644
+> --- a/drivers/perf/arm_dsu_pmu.c
+> +++ b/drivers/perf/arm_dsu_pmu.c
+> @@ -700,7 +700,7 @@ static int dsu_pmu_device_probe(struct platform_device *pdev)
+>  	if (!name)
+>  		return -ENOMEM;
+>  	rc = devm_request_irq(&pdev->dev, irq, dsu_pmu_handle_irq,
+> -			      IRQF_NOBALANCING, name, dsu_pmu);
+> +			      IRQF_NOBALANCING | IRQF_SHARED, name, dsu_pmu);
+>  	if (rc) {
+>  		dev_warn(&pdev->dev, "Failed to request IRQ %d\n", irq);
+>  		return rc;
+> -- 
+> 2.7.4
 > 
-> Signed-off-by: Christoph Muellner <christoph.muellner@theobroma-systems.com>
-
-I've noticed these messages in the past as well, but I guess in my short
-test-cycles never got annoyed enough to do something about it, but it's
-nice to see them go away, so
-
-Reviewed-by: Heiko Stuebner <heiko@sntech.de>
-
-
