@@ -2,77 +2,145 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8CE3618B0DD
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 11:05:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9ED7718B0E4
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 11:05:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727146AbgCSKFF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 06:05:05 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:49344 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725601AbgCSKFE (ORCPT
+        id S1727196AbgCSKFX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 06:05:23 -0400
+Received: from us-smtp-delivery-74.mimecast.com ([63.128.21.74]:29782 "EHLO
+        us-smtp-delivery-74.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725768AbgCSKFW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 06:05:04 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=RLVEuHmxmZu2Kjv19dCQm8XyJEDFSZ0VVAjIyaTJTz4=; b=cA/7RqtLr/Y+EQOGncl86ATPPw
-        cweMgFaBjTszA8DTL4VjR0rgeOfXlGi0qJnS7dLZxnnFOHXFmGApyQedYDJCpFL05dhOuRf9c2VLk
-        DTHRzu55zE7JmJ1wGp00p9ECLFsYQewcR9e101lLVz2OgDrrusFhGzhi02k7CifCPaHHkXQIsFF88
-        gFnLBNJ4QSavWSf8Vas3WjQ9VgCyht70rLCAWxZlBoll936eCyRowqIX87sCIe0amQ0xyAmAIlBdz
-        WpwQWFFofp4O3pdqfSndw8O5aM9mJkvdU5aZIpAe87UH3oRDCICxapeQfvqC2A38rFMAM9feWpFM6
-        8fQpZhZQ==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jEs2t-0005hq-Qq; Thu, 19 Mar 2020 10:04:59 +0000
-Date:   Thu, 19 Mar 2020 03:04:59 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        linux-pci@vger.kernel.org,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        netdev@vger.kernel.org, Joel Fernandes <joel@joelfernandes.org>,
-        Will Deacon <will@kernel.org>, Ingo Molnar <mingo@kernel.org>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        "Paul E . McKenney" <paulmck@kernel.org>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        Arnd Bergmann <arnd@arndb.de>, linuxppc-dev@lists.ozlabs.org,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Kurt Schwemmer <kurt.schwemmer@microsemi.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        Felipe Balbi <balbi@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-usb@vger.kernel.org, linux-wireless@vger.kernel.org,
-        Oleg Nesterov <oleg@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: Re: [patch V2 07/15] powerpc/ps3: Convert half completion to rcuwait
-Message-ID: <20200319100459.GA18506@infradead.org>
-References: <20200318204302.693307984@linutronix.de>
- <20200318204408.102694393@linutronix.de>
+        Thu, 19 Mar 2020 06:05:22 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1584612320;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=biS3cShpXl2Aq0UEQn21ymKBE/YmvTY+/p2BtT5ta1k=;
+        b=DaICgVaiolpt7aK7OUJmCWpBw3hPXvtHqKOOiCaau+8ifb0SftcxPfT52aDmk+xVgQayI5
+        on5gxiVfrBrYISHGgRMeUTDMDzMGD5ZREagHeCaf6AXMuP7Tc/BID0X1MtisXs+HExp7nd
+        9s6V4wIl4es47lRP7Yvd4USX+vXqqf8=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-304-AOLXX8Z2MS-jwdbrLnTWvg-1; Thu, 19 Mar 2020 06:05:18 -0400
+X-MC-Unique: AOLXX8Z2MS-jwdbrLnTWvg-1
+Received: by mail-wm1-f69.google.com with SMTP id i24so499139wml.1
+        for <linux-kernel@vger.kernel.org>; Thu, 19 Mar 2020 03:05:18 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=biS3cShpXl2Aq0UEQn21ymKBE/YmvTY+/p2BtT5ta1k=;
+        b=LPtwhcoyKJ1IHyIz2bQ7OCiCuQXYzpHGGs5AMkCAXBPCqpJG2esrIvIR0/mo8sqnQl
+         cZDR5yYZw4A/BxAB7nycZVfs9Sh5B2Hpejz0Y+XEzVHWaRDzKTsp0WxRq1jixtMuKKZM
+         5zNnevmss1Oa5O5NvciTg8lwNA0WnE0l+r+p6taPjKaOUgvVhEyMdW7aZ045T+dKJERv
+         8NKwQK+ytgopZIkPvePj3aoDk3ylPmgjuhuHP2y9w/AzeBYtNvNit9PihDb/I53h2tnn
+         u98fehIG/mN9Jc4DjS/aiVgAnA7xWRcpjuNPQfYSBVQx98YVQNaPr3rMlXwCkb8M4iY0
+         KONw==
+X-Gm-Message-State: ANhLgQ1yShq4WEeCEZpnFpWxoo2H9t0xS64YGMXP3xsE/BUdDA2Yb141
+        tu4/W0KsEYJFStpgiJTWfVzrRODOrab4u6wBrf8uPmqVlTBSqFvlKdP22xIHhCZCLGqflpCP8eW
+        Oig0jLg1bonDfN/I9VQ9Q5JUP
+X-Received: by 2002:a05:600c:2c0f:: with SMTP id q15mr2657228wmg.64.1584612317513;
+        Thu, 19 Mar 2020 03:05:17 -0700 (PDT)
+X-Google-Smtp-Source: ADFU+vteptDrM0Sa4MuQRsMwkR4OkaNbZvD0oN0fqzKGp8th+KLIwNuYkrMPUb6mOK28WU/CULOflA==
+X-Received: by 2002:a05:600c:2c0f:: with SMTP id q15mr2657206wmg.64.1584612317270;
+        Thu, 19 Mar 2020 03:05:17 -0700 (PDT)
+Received: from [192.168.178.58] ([151.21.15.43])
+        by smtp.gmail.com with ESMTPSA id t126sm2628652wmb.27.2020.03.19.03.05.16
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 19 Mar 2020 03:05:16 -0700 (PDT)
+Subject: Re: [PATCH] KVM: nSVM: check for EFER.SVME=1 before entering guest
+To:     Krish Sadhukhan <krish.sadhukhan@oracle.com>,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+References: <1584535300-6571-1-git-send-email-pbonzini@redhat.com>
+ <b5cb03b1-9840-f8f5-843a-1eab680d5e8e@oracle.com>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Message-ID: <6426c98d-d206-aeb7-93fa-da62b77df21a@redhat.com>
+Date:   Thu, 19 Mar 2020 11:05:15 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200318204408.102694393@linutronix.de>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <b5cb03b1-9840-f8f5-843a-1eab680d5e8e@oracle.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 18, 2020 at 09:43:09PM +0100, Thomas Gleixner wrote:
-> The PS3 notification interrupt and kthread use a hacked up completion to
-> communicate. Since we're wanting to change the completion implementation and
-> this is abuse anyway, replace it with a simple rcuwait since there is only ever
-> the one waiter.
+On 18/03/20 19:40, Krish Sadhukhan wrote:
 > 
-> AFAICT the kthread uses TASK_INTERRUPTIBLE to not increase loadavg, kthreads
-> cannot receive signals by default and this one doesn't look different. Use
-> TASK_IDLE instead.
+> On 3/18/20 5:41 AM, Paolo Bonzini wrote:
+>> EFER is set for L2 using svm_set_efer, which hardcodes EFER_SVME to 1
+>> and hides
+>> an incorrect value for EFER.SVME in the L1 VMCB.  Perform the check
+>> manually
+>> to detect invalid guest state.
+>>
+>> Reported-by: Krish Sadhukhan <krish.sadhukhan@oracle.com>
+>> Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+>> ---
+>>   arch/x86/kvm/svm.c | 3 +++
+>>   1 file changed, 3 insertions(+)
+>>
+>> diff --git a/arch/x86/kvm/svm.c b/arch/x86/kvm/svm.c
+>> index 08568ae9f7a1..2125c6ae5951 100644
+>> --- a/arch/x86/kvm/svm.c
+>> +++ b/arch/x86/kvm/svm.c
+>> @@ -3558,6 +3558,9 @@ static bool nested_svm_vmrun_msrpm(struct
+>> vcpu_svm *svm)
+>>     static bool nested_vmcb_checks(struct vmcb *vmcb)
+>>   {
+>> +    if ((vmcb->save.efer & EFER_SVME) == 0)
+>> +        return false;
+>> +
+>>       if ((vmcb->control.intercept & (1ULL << INTERCEPT_VMRUN)) == 0)
+>>           return false;
+>>   
+> 
+> Ah! This now tells me that I forgot the KVM fix that was supposed to
+> accompany my patchset.
 
-I think the right fix here is to jut convert the thing to a threaded
-interrupt handler and kill off the stupid kthread.
+Heh, indeed.  I was puzzled for a second after applying it, then decided
+I would just fix it myself. :)
 
-But I wonder how alive the whole PS3 support is to start with..
+> Do we need this check in software ? I wasn't checking the bit in KVM and
+> instead I was just making sure that L0 sets that bit based on the
+> setting in nested vmcb:
+
+The only effect of the function below over svm_set_efer is to guarantee
+a vmrun error to happen.  Doing the test in nested_vmcb_checks is more
+consistent with other must-be-one bits such as the VMRUN intercept, and
+it's also a smaller patch.
+
+Paolo
+
+> 
+> +static void nested_svm_set_efer(struct kvm_vcpu *vcpu, u64
+> nested_vmcb_efer)
+> +{
+> +       svm_set_efer(vcpu, nested_vmcb_efer);
+> +
+> +       if (!(nested_vmcb_efer & EFER_SVME))
+> +               to_svm(vcpu)->vmcb->save.efer &= ~EFER_SVME;
+> +}
+> +
+>  static int is_external_interrupt(u32 info)
+>  {
+>         info &= SVM_EVTINJ_TYPE_MASK | SVM_EVTINJ_VALID;
+> @@ -3554,7 +3562,7 @@ static void enter_svm_guest_mode(struct vcpu_svm
+> *svm, u64
+>         svm->vmcb->save.gdtr = nested_vmcb->save.gdtr;
+>         svm->vmcb->save.idtr = nested_vmcb->save.idtr;
+>         kvm_set_rflags(&svm->vcpu, nested_vmcb->save.rflags);
+> -       svm_set_efer(&svm->vcpu, nested_vmcb->save.efer);
+> +       nested_svm_set_efer(&svm->vcpu, nested_vmcb->save.efer);
+>         svm_set_cr0(&svm->vcpu, nested_vmcb->save.cr0);
+>         svm_set_cr4(&svm->vcpu, nested_vmcb->save.cr4);
+>         if (npt_enabled) {
+> 
+
