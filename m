@@ -2,232 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4700318B787
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:34:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 16DD018B73C
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:32:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727818AbgCSNdx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 09:33:53 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:44992 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727228AbgCSNNP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 09:13:15 -0400
-Received: by mail-lj1-f196.google.com with SMTP id w4so2378993lji.11
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Mar 2020 06:13:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ragnatech-se.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=lihn5FzD/6idQ4+0vgu8K5La8l3gtXOBL1sBTYbHOu8=;
-        b=UmhrWCo0xu/Iq1kPHHScxdzVFt26NhhlfDA3ZyotUREhHVnpR1ZlE+119e7SXfs/i4
-         S2Px3omtSK1ZeOlrOfuiNEHy9LgQciycw3xEN0+k7OhECVhpAP2SpiUh+j7yY7O8Sct4
-         8fiSr71XyQk3aT2MPv/nmE3kWZhUQk8LBp5y/HgQ9QZdsb9MGrsQHhfrfvouYnRX/lKE
-         RbQRZm41lBjPwKegDkYHW1D34ZO0HEGX8Sdy5QZYUgE+WSnZA7RJU/ws/M0hF3VI9zyx
-         PkNsTAQcL0U8dxztd9Xurhy9wZ0/2h5j+FClMG980PoPp85GgwVkGDLQWODB1rHY0dSC
-         CtLA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=lihn5FzD/6idQ4+0vgu8K5La8l3gtXOBL1sBTYbHOu8=;
-        b=YdLvZnPUsKQYiLPnRsig8pkl7O7nhJ4n5ARDovvkN7hRb+Q069ah21j8pVlbAMswyC
-         h8IGhEeeqz434lBkzUc7fSNDXNgtGhQCHOQidW4aXOail+F6fVe+e0RwyCbEE+SfAzKR
-         Jx23gO+rrao0DMBkWlY/BcHeJ8dNKC6sSXHXAeFEHnZ+rQYL4ScWhBBvVRNyoqpK8CX9
-         atS7dhkqa4XJUba1G33QcEOAxjjWGMLskOjMOKzZc3xDAxzsh1kYPkwpSfk3D/s7c4Sr
-         JopTc3x0lJuwmKMfZ7F+kCaicWcoFgcwrdp0ace8BwgPXgTfv2rYMKT+ZObMQ74w8f2Z
-         Q1TQ==
-X-Gm-Message-State: ANhLgQ0FIqxz6Of/NxDexrkrf6PQyLePooyABR278BgbexY4b0pm6J0h
-        xnUjoG2DPz1RZ7ITbVMDYEWNew==
-X-Google-Smtp-Source: ADFU+vvKmsJWPuEArtXUSGljtHsqGmwv3cSwtVkRt6RHNyyFzpUewTuRsRvpi/ruvaKboBgg/rFQRA==
-X-Received: by 2002:a2e:804b:: with SMTP id p11mr2185641ljg.50.1584623594050;
-        Thu, 19 Mar 2020 06:13:14 -0700 (PDT)
-Received: from localhost (h-200-138.A463.priv.bahnhof.se. [176.10.200.138])
-        by smtp.gmail.com with ESMTPSA id g20sm1523376lfj.88.2020.03.19.06.13.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 19 Mar 2020 06:13:13 -0700 (PDT)
-Date:   Thu, 19 Mar 2020 14:13:12 +0100
-From:   Niklas <niklas.soderlund@ragnatech.se>
-To:     Lad Prabhakar <prabhakar.csengg@gmail.com>
-Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: Re: [PATCH v3 1/2] media: rcar-vin: Add support for
- MEDIA_BUS_FMT_SRGGB8_1X8 format
-Message-ID: <20200319131312.GA3192108@oden.dyn.berto.se>
-References: <20200318170638.18562-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20200318170638.18562-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+        id S1728181AbgCSNbk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 09:31:40 -0400
+Received: from mga01.intel.com ([192.55.52.88]:17575 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729673AbgCSNRj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 09:17:39 -0400
+IronPort-SDR: 4NF+HAzRbU2lcDbFSMKGOyq1U2aJPs6l5SHX6G7R+/eTvI+wJ52k3QrKO/3/hDXd5WQhIHvlTt
+ tL/Hrd4vANjw==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Mar 2020 06:17:39 -0700
+IronPort-SDR: 13+14NwKfODm3LUqECGN0X6N4/JeF1gSWFftIsTQQaHgh6TqEtdjX59Tpkus1Jmuk7BqQuHJLS
+ B3SRkzWbrNrA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,571,1574150400"; 
+   d="scan'208";a="245157334"
+Received: from crojewsk-mobl1.ger.corp.intel.com (HELO [10.249.128.140]) ([10.249.128.140])
+  by orsmga003.jf.intel.com with ESMTP; 19 Mar 2020 06:17:36 -0700
+Subject: Re: snd_hda_intel/sst-acpi sound breakage on suspend/resume since
+ 5.6-rc1
+To:     Dominik Brodowski <linux@dominikbrodowski.net>,
+        kuninori.morimoto.gx@renesas.com
+Cc:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        Keyon Jie <yang.jie@linux.intel.com>,
+        alsa-devel@alsa-project.org, curtis@malainey.com,
+        linux-kernel@vger.kernel.org, tiwai@suse.com,
+        liam.r.girdwood@linux.intel.com, broonie@kernel.org
+References: <20200318063022.GA116342@light.dominikbrodowski.net>
+ <41d0b2b5-6014-6fab-b6a2-7a7dbc4fe020@linux.intel.com>
+ <20200318123930.GA2433@light.dominikbrodowski.net>
+ <d7a357c5-54af-3e69-771c-d7ea83c6fbb7@linux.intel.com>
+ <20200318162029.GA3999@light.dominikbrodowski.net>
+ <e49eec28-2037-f5db-e75b-9eadf6180d81@intel.com>
+ <20200318192213.GA2987@light.dominikbrodowski.net>
+ <b352a46b-8a66-8235-3622-23e561d3728c@intel.com>
+ <20200318215218.GA2439@light.dominikbrodowski.net>
+ <e7f4f38d-b53e-8c69-8b23-454718cf92af@intel.com>
+ <20200319130049.GA2244@light.dominikbrodowski.net>
+From:   Cezary Rojewski <cezary.rojewski@intel.com>
+Message-ID: <4eb2859f-d1a9-e99b-28c3-54a9dc6f9d17@intel.com>
+Date:   Thu, 19 Mar 2020 14:17:35 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20200318170638.18562-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20200319130049.GA2244@light.dominikbrodowski.net>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Prabhakar,
+On 2020-03-19 14:00, Dominik Brodowski wrote:
+> On Wed, Mar 18, 2020 at 11:20:55PM +0100, Cezary Rojewski wrote:
 
-Thanks for your work.
-
-On 2020-03-18 17:06:37 +0000, Lad Prabhakar wrote:
-> Add support for MEDIA_BUS_FMT_SRGGB8_1X8 format in rcar-vin by setting
-> format type to RAW8 in VNMC register and appropriately setting the
-> bpp, bytesperline to enable V4L2_PIX_FMT_SRGGB8.
-
-> For RAW8 format data is transferred by 4-Byte unit so VnIS register is
-> configured accordingly.
+>>
+>> Thanks for quick reply. Revert of said commit fixes stream==NULL issue for
+>> me. See if there were any changes in dmesg.
+>> Will ask technicians to assist me on site tomorrow.
 > 
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> ---
->  drivers/media/platform/rcar-vin/rcar-core.c |  1 +
->  drivers/media/platform/rcar-vin/rcar-dma.c  | 11 ++++++++++-
->  drivers/media/platform/rcar-vin/rcar-v4l2.c |  4 ++++
->  3 files changed, 15 insertions(+), 1 deletion(-)
+> Have some good news now, namely that a bisect is complete: That pointed to
+> 1272063a7ee4 ("ASoC: soc-core: care .ignore_suspend for Component suspend");
+> therefore I've added Kuninori Morimoto to this e-mail thread.
 > 
-> diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
-> index 7440c8965d27..76daf2fe5bcd 100644
-> --- a/drivers/media/platform/rcar-vin/rcar-core.c
-> +++ b/drivers/media/platform/rcar-vin/rcar-core.c
-> @@ -469,6 +469,7 @@ static int rvin_parallel_subdevice_attach(struct rvin_dev *vin,
->  		case MEDIA_BUS_FMT_UYVY8_2X8:
->  		case MEDIA_BUS_FMT_UYVY10_2X10:
->  		case MEDIA_BUS_FMT_RGB888_1X24:
-> +		case MEDIA_BUS_FMT_SRGGB8_1X8:
-
-This is wrong RAW formats are only supported on the CSI-2 interface and 
-not the parallel one. This line shall be dropped.
-
->  			vin->mbus_code = code.code;
->  			vin_dbg(vin, "Found media bus format for %s: %d\n",
->  				subdev->name, vin->mbus_code);
-> diff --git a/drivers/media/platform/rcar-vin/rcar-dma.c b/drivers/media/platform/rcar-vin/rcar-dma.c
-> index 1a30cd036371..ec7b49c0b281 100644
-> --- a/drivers/media/platform/rcar-vin/rcar-dma.c
-> +++ b/drivers/media/platform/rcar-vin/rcar-dma.c
-> @@ -85,6 +85,7 @@
->  #define VNMC_INF_YUV8_BT601	(1 << 16)
->  #define VNMC_INF_YUV10_BT656	(2 << 16)
->  #define VNMC_INF_YUV10_BT601	(3 << 16)
-> +#define VNMC_INF_RAW8		(4 << 16)
->  #define VNMC_INF_YUV16		(5 << 16)
->  #define VNMC_INF_RGB888		(6 << 16)
->  #define VNMC_VUP		(1 << 10)
-> @@ -587,13 +588,14 @@ void rvin_crop_scale_comp(struct rvin_dev *vin)
->  	rvin_write(vin, vin->crop.top, VNSLPRC_REG);
->  	rvin_write(vin, vin->crop.top + vin->crop.height - 1, VNELPRC_REG);
->  
-> -
->  	/* TODO: Add support for the UDS scaler. */
->  	if (vin->info->model != RCAR_GEN3)
->  		rvin_crop_scale_comp_gen2(vin);
->  
->  	fmt = rvin_format_from_pixel(vin, vin->format.pixelformat);
->  	stride = vin->format.bytesperline / fmt->bpp;
-> +	if (vin->format.pixelformat == V4L2_PIX_FMT_SRGGB8)
-> +		stride /= 2;
-
-I'm sorry this makes no sens to me.
-
-- The width of the image is number of pixels in the raw format.
-- In memory each row is either is either RGRGRG... or GBGBGB...
-- The pixel size is 1 byte per pixel.
-- We calculate bytesperline as ALIGN(width, align) * bpp, where align is 
-  how much we need to "adjust" the width to match the VNIS_REG reg 
-  value.  We do this in rvin_format_bytesperline().
-- We then remove bpp from bytesperline and we have a unit in pixels 
-  which is our stride.
-
-I can't see why you need to cut the stride in half. In my view you 
-should add a check for V4L2_PIX_FMT_SRGGB8 in rvin_format_bytesperline() 
-and pick an alignment value that matches the restrictions.
-
-I might miss something, but then I wish to learn.
-
->  	rvin_write(vin, stride, VNIS_REG);
->  }
->  
-> @@ -676,6 +678,9 @@ static int rvin_setup(struct rvin_dev *vin)
->  
->  		input_is_yuv = true;
->  		break;
-> +	case MEDIA_BUS_FMT_SRGGB8_1X8:
-> +		vnmc |= VNMC_INF_RAW8;
-> +		break;
-
-Here and ...
-
->  	default:
->  		break;
->  	}
-> @@ -737,6 +742,9 @@ static int rvin_setup(struct rvin_dev *vin)
->  	case V4L2_PIX_FMT_ABGR32:
->  		dmr = VNDMR_A8BIT(vin->alpha) | VNDMR_EXRGB | VNDMR_DTMD_ARGB;
->  		break;
-> +	case V4L2_PIX_FMT_SRGGB8:
-> +		dmr = 0;
-> +		break;
-
-... here we have a new problem, sorry for not thinking of it before.
-
-Up until now the VIN was capable to convert any of its supported input 
-mbus formats to any of it's supported output pixel formats. With the 
-addition of RAW formats this is no longer true. This new restriction 
-needs to be added to the driver.
-
-Luck has it we can fix ...
-
->  	default:
->  		vin_err(vin, "Invalid pixelformat (0x%x)\n",
->  			vin->format.pixelformat);
-> @@ -1110,6 +1118,7 @@ static int rvin_mc_validate_format(struct rvin_dev *vin, struct v4l2_subdev *sd,
->  	case MEDIA_BUS_FMT_UYVY8_2X8:
->  	case MEDIA_BUS_FMT_UYVY10_2X10:
->  	case MEDIA_BUS_FMT_RGB888_1X24:
-> +	case MEDIA_BUS_FMT_SRGGB8_1X8:
->  		vin->mbus_code = fmt.format.code;
-
-... this here by changes this to
-
-        switch (fmt.format.code) {
-        case MEDIA_BUS_FMT_YUYV8_1X16:
-        case MEDIA_BUS_FMT_UYVY8_1X16:
-        case MEDIA_BUS_FMT_UYVY8_2X8:
-        case MEDIA_BUS_FMT_UYVY10_2X10:
-                break;
-        case MEDIA_BUS_FMT_RGB888_1X24:
-                if (vin->format.pixelformat != V4L2_PIX_FMT_SRGGB8)
-                    return -EPIPE:
-                break;
-        default:
-                return -EPIPE;
-	}
-
-        vin->mbus_code = fmt.format.code;
-
->  		break;
->  	default:
-> diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-> index 5151a3cd8a6e..ca542219e8ae 100644
-> --- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
-> +++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-> @@ -66,6 +66,10 @@ static const struct rvin_video_format rvin_formats[] = {
->  		.fourcc			= V4L2_PIX_FMT_ABGR32,
->  		.bpp			= 4,
->  	},
-> +	{
-> +		.fourcc			= V4L2_PIX_FMT_SRGGB8,
-> +		.bpp			= 1,
-> +	},
->  };
->  
->  const struct rvin_video_format *rvin_format_from_pixel(struct rvin_dev *vin,
-> -- 
-> 2.20.1
+> Additionally, I have tested mainline (v5.6-rc6+ as of 5076190daded) with
+> *both* 64df6afa0dab (which you suggested yesterday) and 1272063a7ee4
+> reverted. And that works like a charm as well.
+> 
+> Hope this helps!
+> 
+> Thanks,
+> 	Dominik
 > 
 
--- 
-Regards,
-Niklas Söderlund
+To make everyone not miss a bit - I believe we had 2 issues here, even 
+though that one may seem harmless from user perspective:
+
+ From IPC logs indeed it looks like a redundant (additional) stream 
+initialization has occurred - said redundant stream is destroyed right 
+after it has been created, and only to be recreated yet again.. Can 
+share the logs if required.
+
+While hw_params() handled doubled init nicely, _reset and _free
+did not (during on pcm_close()) -> secondary invokes attempted to RESET
+and FREE stream despite it being destroyed long ago. With revert of
+patch I had mentioned, no lines:
+
+!!!	haswell-pcm-audio haswell-pcm-audio: warning: stream is NULL, no
+stream to reset, ignore it.
+!!!	haswell-pcm-audio haswell-pcm-audio: warning: stream is NULL, no
+stream to free, ignore it.
+
+should appear.
+
+I'll focus now on the commits you found offending during your bisect. 
+Thank you Dominik!
+
+Czarek
