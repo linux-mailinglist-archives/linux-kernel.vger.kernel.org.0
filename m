@@ -2,47 +2,46 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 04CDE18B908
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 15:13:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4098418B90F
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 15:13:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727755AbgCSOM4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 10:12:56 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:60921 "EHLO
+        id S1728466AbgCSONH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 10:13:07 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:60863 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727751AbgCSOK6 (ORCPT
+        with ESMTP id S1727628AbgCSOKw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 10:10:58 -0400
+        Thu, 19 Mar 2020 10:10:52 -0400
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1jEvsn-00022l-3I; Thu, 19 Mar 2020 15:10:49 +0100
+        id 1jEvsh-00022h-NM; Thu, 19 Mar 2020 15:10:43 +0100
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id B403C1C22A5;
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 4C9A11C22A3;
         Thu, 19 Mar 2020 15:10:43 +0100 (CET)
 Date:   Thu, 19 Mar 2020 14:10:43 -0000
-From:   "tip-bot2 for Leo Yan" <tip-bot2@linutronix.de>
+From:   "tip-bot2 for Ian Rogers" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: perf/core] perf cs-etm: Fix unsigned variable comparison to zero
-Cc:     Leo Yan <leo.yan@linaro.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Mike Leach <mike.leach@linaro.org>,
+Subject: [tip: perf/core] perf doc: Set man page date to last git commit
+Cc:     Ian Rogers <irogers@google.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
         Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
         Jiri Olsa <jolsa@redhat.com>,
         Mark Rutland <mark.rutland@arm.com>,
+        Masanari Iida <standby24x7@gmail.com>,
+        Mukesh Ojha <mojha@codeaurora.org>,
         Namhyung Kim <namhyung@kernel.org>,
         Peter Zijlstra <peterz@infradead.org>,
-        Robert Walker <robert.walker@arm.com>,
-        Suzuki Poulouse <suzuki.poulose@arm.com>,
-        coresight ml <coresight@lists.linaro.org>,
-        linux-arm-kernel@lists.infradead.org,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        x86 <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>
-In-Reply-To: <20200219021811.20067-6-leo.yan@linaro.org>
-References: <20200219021811.20067-6-leo.yan@linaro.org>
+        Stephane Eranian <eranian@google.com>,
+        Thomas Gleixner <tglx@linutronix.de>, x86 <x86@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+In-Reply-To: <20200311052110.23132-1-irogers@google.com>
+References: <20200311052110.23132-1-irogers@google.com>
 MIME-Version: 1.0
-Message-ID: <158462704338.28353.16418800886208337652.tip-bot2@tip-bot2>
+Message-ID: <158462704302.28353.8961321005350335102.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -58,47 +57,78 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the perf/core branch of tip:
 
-Commit-ID:     bc010dd657ee0309276c88ab828b9ad156f75b31
-Gitweb:        https://git.kernel.org/tip/bc010dd657ee0309276c88ab828b9ad156f75b31
-Author:        Leo Yan <leo.yan@linaro.org>
-AuthorDate:    Wed, 19 Feb 2020 10:18:11 +08:00
+Commit-ID:     0c2d041232411c8124136c9497c0e352dcf18baa
+Gitweb:        https://git.kernel.org/tip/0c2d041232411c8124136c9497c0e352dcf18baa
+Author:        Ian Rogers <irogers@google.com>
+AuthorDate:    Tue, 10 Mar 2020 22:21:10 -07:00
 Committer:     Arnaldo Carvalho de Melo <acme@redhat.com>
 CommitterDate: Wed, 11 Mar 2020 10:48:44 -03:00
 
-perf cs-etm: Fix unsigned variable comparison to zero
+perf doc: Set man page date to last git commit
 
-The variable 'offset' in function cs_etm__sample() is u64 type, it's not
-appropriate to check it with 'while (offset > 0)'; this patch changes to
-'while (offset)'.
+Currently the man page dates reflect the date the man pages were built.
+This patch adjusts the date so that the date is when then man page
+last had a commit against it. The date is generated using 'git log'.
 
-Signed-off-by: Leo Yan <leo.yan@linaro.org>
-Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-Reviewed-by: Mike Leach <mike.leach@linaro.org>
+Committer testing:
+
+  $ git log -1 --pretty="format:%cd" --date=short tools/perf/Documentation/perf-top.txt
+  2020-01-14
+
+Before:
+
+  rm -rf /tmp/build/perf
+  mkdir -p /tmp/build/perf
+  make -C tools/perf O=/tmp/build/perf/ install
+  $ date
+  Wed 11 Mar 2020 10:21:19 AM -03
+  $ man perf-top | tail -1
+  perf                    03/11/2020           PERF-TOP(1)
+  $
+
+After:
+
+  rm -rf /tmp/build/perf
+  mkdir -p /tmp/build/perf
+  make -C tools/perf O=/tmp/build/perf/ install
+  $ date
+  $ date
+  Wed 11 Mar 2020 10:24:06 AM -03
+  $ man perf-top | tail -1
+  perf                    2020-01-14           PERF-TOP(1)
+  $
+
+Signed-off-by: Ian Rogers <irogers@google.com>
+Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc: Jiri Olsa <jolsa@redhat.com>
 Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: Masanari Iida <standby24x7@gmail.com>
+Cc: Mukesh Ojha <mojha@codeaurora.org>
 Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Robert Walker <robert.walker@arm.com>
-Cc: Suzuki Poulouse <suzuki.poulose@arm.com>
-Cc: coresight ml <coresight@lists.linaro.org>
-Cc: linux-arm-kernel@lists.infradead.org
-Link: http://lore.kernel.org/lkml/20200219021811.20067-6-leo.yan@linaro.org
+Cc: Stephane Eranian <eranian@google.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Link: http://lore.kernel.org/lkml/20200311052110.23132-1-irogers@google.com
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/util/cs-etm.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ tools/perf/Documentation/Makefile | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/tools/perf/util/cs-etm.c b/tools/perf/util/cs-etm.c
-index 87d9943..62d2f9b 100644
---- a/tools/perf/util/cs-etm.c
-+++ b/tools/perf/util/cs-etm.c
-@@ -962,7 +962,7 @@ static inline u64 cs_etm__instr_addr(struct cs_etm_queue *etmq,
- 	if (packet->isa == CS_ETM_ISA_T32) {
- 		u64 addr = packet->start_addr;
+diff --git a/tools/perf/Documentation/Makefile b/tools/perf/Documentation/Makefile
+index adc5a7e..31824d5 100644
+--- a/tools/perf/Documentation/Makefile
++++ b/tools/perf/Documentation/Makefile
+@@ -295,7 +295,10 @@ $(OUTPUT)%.1 $(OUTPUT)%.5 $(OUTPUT)%.7 : $(OUTPUT)%.xml
+ $(OUTPUT)%.xml : %.txt
+ 	$(QUIET_ASCIIDOC)$(RM) $@+ $@ && \
+ 	$(ASCIIDOC) -b docbook -d manpage \
+-		$(ASCIIDOC_EXTRA) -aperf_version=$(PERF_VERSION) -o $@+ $< && \
++		$(ASCIIDOC_EXTRA) -aperf_version=$(PERF_VERSION) \
++		-aperf_date=$(shell git log -1 --pretty="format:%cd" \
++				--date=short $<) \
++		-o $@+ $< && \
+ 	mv $@+ $@
  
--		while (offset > 0) {
-+		while (offset) {
- 			addr += cs_etm__t32_instr_size(etmq,
- 						       trace_chan_id, addr);
- 			offset--;
+ XSLT = docbook.xsl
