@@ -2,35 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BCD0C18B4F8
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:14:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4587F18B4F9
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:14:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729303AbgCSNO2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 09:14:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33778 "EHLO mail.kernel.org"
+        id S1728496AbgCSNOb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 09:14:31 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33830 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728668AbgCSNOX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 09:14:23 -0400
+        id S1729295AbgCSNO0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 09:14:26 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CCF1F20724;
-        Thu, 19 Mar 2020 13:14:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5794C206D7;
+        Thu, 19 Mar 2020 13:14:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584623663;
-        bh=0/s9hVKRjxrzwrUyyZI3xMqSbNNcp/5rTgGGmXNj35I=;
+        s=default; t=1584623665;
+        bh=3J71idgcuS7F1zoVhJFs+RnAKFrKs7xBL1+eUS1nj1M=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=kLlwkmzBMABhan0wJ0cHLfhCWiCJHMFBqeTSRyvJBtX8UkELZ/9RMFcBdVNZjRThZ
-         Qz4ZOo0dNAwIjwl9thROn5VoLA71cs5AFr3rfcMzG2FcigxSsCn6Q+kfv6frEtKm80
-         NVLV+1JbHZwfzJA4abFB1txMsjhHW59AiX4bFphU=
+        b=W+Qse36g/B2SuGDdm2vqDZip/4gtWGd+1SM91lSKYCN5AW+PYs0NqFTpzKHa47b51
+         ko0eKhXzcXQ7sxVEfeHt5g7KxiXnRUEAJek98xu5X+rqYkvlXRPDRrNCi8rsrlVZAG
+         lbrU26Bc01/IdZnOHCJDUzV+uCmI+gpQr+uWHgY0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, You-Sheng Yang <vicamo.yang@canonical.com>,
+        stable@vger.kernel.org, Derek Shute <Derek.Shute@stratus.com>,
+        Edward Cree <ecree@solarflare.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 12/99] r8152: check disconnect status after long sleep
-Date:   Thu, 19 Mar 2020 14:02:50 +0100
-Message-Id: <20200319123945.203440046@linuxfoundation.org>
+Subject: [PATCH 4.14 13/99] sfc: detach from cb_page in efx_copy_channel()
+Date:   Thu, 19 Mar 2020 14:02:51 +0100
+Message-Id: <20200319123945.560952967@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.2
 In-Reply-To: <20200319123941.630731708@linuxfoundation.org>
 References: <20200319123941.630731708@linuxfoundation.org>
@@ -43,124 +44,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: You-Sheng Yang <vicamo.yang@canonical.com>
+From: Edward Cree <ecree@solarflare.com>
 
-[ Upstream commit d64c7a08034b32c285e576208ae44fc3ba3fa7df ]
+[ Upstream commit 4b1bd9db078f7d5332c8601a2f5bd43cf0458fd4 ]
 
-Dell USB Type C docking WD19/WD19DC attaches additional peripherals as:
+It's a resource, not a parameter, so we can't copy it into the new
+ channel's TX queues, otherwise aliasing will lead to resource-
+ management bugs if the channel is subsequently torn down without
+ being initialised.
 
-  /: Bus 02.Port 1: Dev 1, Class=root_hub, Driver=xhci_hcd/6p, 5000M
-      |__ Port 1: Dev 11, If 0, Class=Hub, Driver=hub/4p, 5000M
-          |__ Port 3: Dev 12, If 0, Class=Hub, Driver=hub/4p, 5000M
-          |__ Port 4: Dev 13, If 0, Class=Vendor Specific Class,
-              Driver=r8152, 5000M
+Before the Fixes:-tagged commit there was a similar bug with
+ tsoh_page, but I'm not sure it's worth doing another fix for such
+ old kernels.
 
-where usb 2-1-3 is a hub connecting all USB Type-A/C ports on the dock.
-
-When hotplugging such dock with additional usb devices already attached on
-it, the probing process may reset usb 2.1 port, therefore r8152 ethernet
-device is also reset. However, during r8152 device init there are several
-for-loops that, when it's unable to retrieve hardware registers due to
-being disconnected from USB, may take up to 14 seconds each in practice,
-and that has to be completed before USB may re-enumerate devices on the
-bus. As a result, devices attached to the dock will only be available
-after nearly 1 minute after the dock was plugged in:
-
-  [ 216.388290] [250] r8152 2-1.4:1.0: usb_probe_interface
-  [ 216.388292] [250] r8152 2-1.4:1.0: usb_probe_interface - got id
-  [ 258.830410] r8152 2-1.4:1.0 (unnamed net_device) (uninitialized): PHY not ready
-  [ 258.830460] r8152 2-1.4:1.0 (unnamed net_device) (uninitialized): Invalid header when reading pass-thru MAC addr
-  [ 258.830464] r8152 2-1.4:1.0 (unnamed net_device) (uninitialized): Get ether addr fail
-
-This happens in, for example, r8153_init:
-
-  static int generic_ocp_read(struct r8152 *tp, u16 index, u16 size,
-			    void *data, u16 type)
-  {
-    if (test_bit(RTL8152_UNPLUG, &tp->flags))
-      return -ENODEV;
-    ...
-  }
-
-  static u16 ocp_read_word(struct r8152 *tp, u16 type, u16 index)
-  {
-    u32 data;
-    ...
-    generic_ocp_read(tp, index, sizeof(tmp), &tmp, type | byen);
-
-    data = __le32_to_cpu(tmp);
-    ...
-    return (u16)data;
-  }
-
-  static void r8153_init(struct r8152 *tp)
-  {
-    ...
-    if (test_bit(RTL8152_UNPLUG, &tp->flags))
-      return;
-
-    for (i = 0; i < 500; i++) {
-      if (ocp_read_word(tp, MCU_TYPE_PLA, PLA_BOOT_CTRL) &
-          AUTOLOAD_DONE)
-        break;
-      msleep(20);
-    }
-    ...
-  }
-
-Since ocp_read_word() doesn't check the return status of
-generic_ocp_read(), and the only exit condition for the loop is to have
-a match in the returned value, such loops will only ends after exceeding
-its maximum runs when the device has been marked as disconnected, which
-takes 500 * 20ms = 10 seconds in theory, 14 in practice.
-
-To solve this long latency another test to RTL8152_UNPLUG flag should be
-added after those 20ms sleep to skip unnecessary loops, so that the device
-probe can complete early and proceed to parent port reset/reprobe process.
-
-This can be reproduced on all kernel versions up to latest v5.6-rc2, but
-after v5.5-rc7 the reproduce rate is dramatically lowered to 1/30 or less
-while it was around 1/2.
-
-Signed-off-by: You-Sheng Yang <vicamo.yang@canonical.com>
+Fixes: e9117e5099ea ("sfc: Firmware-Assisted TSO version 2")
+Suggested-by: Derek Shute <Derek.Shute@stratus.com>
+Signed-off-by: Edward Cree <ecree@solarflare.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/usb/r8152.c |    8 ++++++++
- 1 file changed, 8 insertions(+)
+ drivers/net/ethernet/sfc/efx.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/net/usb/r8152.c
-+++ b/drivers/net/usb/r8152.c
-@@ -2696,6 +2696,8 @@ static u16 r8153_phy_status(struct r8152
- 		}
- 
- 		msleep(20);
-+		if (test_bit(RTL8152_UNPLUG, &tp->flags))
-+			break;
+--- a/drivers/net/ethernet/sfc/efx.c
++++ b/drivers/net/ethernet/sfc/efx.c
+@@ -505,6 +505,7 @@ efx_copy_channel(const struct efx_channe
+ 		if (tx_queue->channel)
+ 			tx_queue->channel = channel;
+ 		tx_queue->buffer = NULL;
++		tx_queue->cb_page = NULL;
+ 		memset(&tx_queue->txd, 0, sizeof(tx_queue->txd));
  	}
  
- 	return data;
-@@ -4055,7 +4057,10 @@ static void r8153_init(struct r8152 *tp)
- 		if (ocp_read_word(tp, MCU_TYPE_PLA, PLA_BOOT_CTRL) &
- 		    AUTOLOAD_DONE)
- 			break;
-+
- 		msleep(20);
-+		if (test_bit(RTL8152_UNPLUG, &tp->flags))
-+			break;
- 	}
- 
- 	data = r8153_phy_status(tp, 0);
-@@ -4170,7 +4175,10 @@ static void r8153b_init(struct r8152 *tp
- 		if (ocp_read_word(tp, MCU_TYPE_PLA, PLA_BOOT_CTRL) &
- 		    AUTOLOAD_DONE)
- 			break;
-+
- 		msleep(20);
-+		if (test_bit(RTL8152_UNPLUG, &tp->flags))
-+			break;
- 	}
- 
- 	data = r8153_phy_status(tp, 0);
 
 
