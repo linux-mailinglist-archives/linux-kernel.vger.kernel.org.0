@@ -2,42 +2,44 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EB4A918B8EA
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 15:12:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D414418B8D1
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 15:11:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728303AbgCSOMM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 10:12:12 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:32838 "EHLO
+        id S1728096AbgCSOLb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 10:11:31 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:32889 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727846AbgCSOLK (ORCPT
+        with ESMTP id S1728051AbgCSOLV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 10:11:10 -0400
+        Thu, 19 Mar 2020 10:11:21 -0400
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1jEvsx-0002CU-7q; Thu, 19 Mar 2020 15:10:59 +0100
+        id 1jEvsz-0002EC-FO; Thu, 19 Mar 2020 15:11:01 +0100
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id D0C301C22A3;
-        Thu, 19 Mar 2020 15:10:49 +0100 (CET)
-Date:   Thu, 19 Mar 2020 14:10:49 -0000
-From:   "tip-bot2 for Jin Yao" <tip-bot2@linutronix.de>
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id F128A1C22A7;
+        Thu, 19 Mar 2020 15:10:50 +0100 (CET)
+Date:   Thu, 19 Mar 2020 14:10:50 -0000
+From:   "tip-bot2 for Jiri Olsa" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: perf/core] perf diff: Use __block_info__cmp() to replace
- block_pair_cmp()
-Cc:     Jin Yao <yao.jin@linux.intel.com>,
+Subject: [tip: perf/core] perf expr: Straighten
+ expr__parse()/expr__find_other() interface
+Cc:     Jiri Olsa <jolsa@kernel.org>, Andi Kleen <ak@linux.intel.com>,
         Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Andi Kleen <ak@linux.intel.com>, Jin Yao <yao.jin@intel.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Kan Liang <kan.liang@linux.intel.com>,
+        John Garry <john.garry@huawei.com>,
+        Kajol Jain <kjain@linux.ibm.com>,
+        Michael Petlan <mpetlan@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
         Peter Zijlstra <peterz@infradead.org>,
+        Ravi Bangoria <ravi.bangoria@linux.ibm.com>,
         Arnaldo Carvalho de Melo <acme@redhat.com>,
         x86 <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>
-In-Reply-To: <20200202141655.32053-3-yao.jin@linux.intel.com>
-References: <20200202141655.32053-3-yao.jin@linux.intel.com>
+In-Reply-To: <20200228093616.67125-5-jolsa@kernel.org>
+References: <20200228093616.67125-5-jolsa@kernel.org>
 MIME-Version: 1.0
-Message-ID: <158462704952.28353.1015195743996021982.tip-bot2@tip-bot2>
+Message-ID: <158462705069.28353.9906239911903408424.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -53,119 +55,124 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the perf/core branch of tip:
 
-Commit-ID:     a8a9f6dc0dbfc0f4f225987abec7eb688f4b2d7e
-Gitweb:        https://git.kernel.org/tip/a8a9f6dc0dbfc0f4f225987abec7eb688f4b2d7e
-Author:        Jin Yao <yao.jin@linux.intel.com>
-AuthorDate:    Sun, 02 Feb 2020 22:16:53 +08:00
+Commit-ID:     0f9b1e124bb29719eb1572db74b7893bd616f938
+Gitweb:        https://git.kernel.org/tip/0f9b1e124bb29719eb1572db74b7893bd616f938
+Author:        Jiri Olsa <jolsa@kernel.org>
+AuthorDate:    Fri, 28 Feb 2020 10:36:15 +01:00
 Committer:     Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitterDate: Mon, 09 Mar 2020 21:43:25 -03:00
+CommitterDate: Mon, 09 Mar 2020 21:43:24 -03:00
 
-perf diff: Use __block_info__cmp() to replace block_pair_cmp()
+perf expr: Straighten expr__parse()/expr__find_other() interface
 
-'perf diff' uses block_pair_cmp() to compare two blocks. But
-block_info__cmp() has the similar functionality and it's a bit more
-complete.
+Now that we have a flex parser we don't need to update the parsed string
+pointer, so the interface can just be passed the pointer to the
+expression instead of a pointer to pointer.
 
-This patch removes block_pair_cmp() and uses __block_info__cmp()
-instead. __block_info__cmp() is wrapped by block_info__cmp() and it
-doesn't receives a perf_hpp_fmt parameter.
-
-Signed-off-by: Jin Yao <yao.jin@linux.intel.com>
+Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+Reviewed-by: Andi Kleen <ak@linux.intel.com>
 Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Jin Yao <yao.jin@intel.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Kan Liang <kan.liang@linux.intel.com>
+Cc: John Garry <john.garry@huawei.com>
+Cc: Kajol Jain <kjain@linux.ibm.com>
+Cc: Michael Petlan <mpetlan@redhat.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Link: http://lore.kernel.org/lkml/20200202141655.32053-3-yao.jin@linux.intel.com
+Cc: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+Link: http://lore.kernel.org/lkml/20200228093616.67125-5-jolsa@kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/builtin-diff.c    | 21 ++-------------------
- tools/perf/util/block-info.c |  9 +++++++--
- tools/perf/util/block-info.h |  2 ++
- 3 files changed, 11 insertions(+), 21 deletions(-)
+ tools/perf/tests/expr.c       | 6 +++---
+ tools/perf/util/expr.c        | 8 ++++----
+ tools/perf/util/expr.h        | 4 ++--
+ tools/perf/util/stat-shadow.c | 4 +---
+ 4 files changed, 10 insertions(+), 12 deletions(-)
 
-diff --git a/tools/perf/builtin-diff.c b/tools/perf/builtin-diff.c
-index c03c36f..5e697cd 100644
---- a/tools/perf/builtin-diff.c
-+++ b/tools/perf/builtin-diff.c
-@@ -572,29 +572,12 @@ static void init_block_hist(struct block_hist *bh)
- 	bh->valid = true;
+diff --git a/tools/perf/tests/expr.c b/tools/perf/tests/expr.c
+index 87843af..755d73c 100644
+--- a/tools/perf/tests/expr.c
++++ b/tools/perf/tests/expr.c
+@@ -10,7 +10,7 @@ static int test(struct parse_ctx *ctx, const char *e, double val2)
+ {
+ 	double val;
+ 
+-	if (expr__parse(&val, ctx, &e))
++	if (expr__parse(&val, ctx, e))
+ 		TEST_ASSERT_VAL("parse test failed", 0);
+ 	TEST_ASSERT_VAL("unexpected value", val == val2);
+ 	return 0;
+@@ -44,11 +44,11 @@ int test__expr(struct test *t __maybe_unused, int subtest __maybe_unused)
+ 		return ret;
+ 
+ 	p = "FOO/0";
+-	ret = expr__parse(&val, &ctx, &p);
++	ret = expr__parse(&val, &ctx, p);
+ 	TEST_ASSERT_VAL("division by zero", ret == 1);
+ 
+ 	p = "BAR/";
+-	ret = expr__parse(&val, &ctx, &p);
++	ret = expr__parse(&val, &ctx, p);
+ 	TEST_ASSERT_VAL("missing operand", ret == 1);
+ 
+ 	TEST_ASSERT_VAL("find other",
+diff --git a/tools/perf/util/expr.c b/tools/perf/util/expr.c
+index b39fd39..45b2553 100644
+--- a/tools/perf/util/expr.c
++++ b/tools/perf/util/expr.c
+@@ -52,9 +52,9 @@ __expr__parse(double *val, struct parse_ctx *ctx, const char *expr,
+ 	return ret;
  }
  
--static int block_pair_cmp(struct hist_entry *a, struct hist_entry *b)
--{
--	struct block_info *bi_a = a->block_info;
--	struct block_info *bi_b = b->block_info;
--	int cmp;
--
--	if (!bi_a->sym || !bi_b->sym)
--		return -1;
--
--	cmp = strcmp(bi_a->sym->name, bi_b->sym->name);
--
--	if ((!cmp) && (bi_a->start == bi_b->start) && (bi_a->end == bi_b->end))
--		return 0;
--
--	return -1;
--}
--
- static struct hist_entry *get_block_pair(struct hist_entry *he,
- 					 struct hists *hists_pair)
+-int expr__parse(double *final_val, struct parse_ctx *ctx, const char **pp)
++int expr__parse(double *final_val, struct parse_ctx *ctx, const char *expr)
  {
- 	struct rb_root_cached *root = hists_pair->entries_in;
- 	struct rb_node *next = rb_first_cached(root);
--	int cmp;
-+	int64_t cmp;
+-	return __expr__parse(final_val, ctx, *pp, EXPR_PARSE);
++	return __expr__parse(final_val, ctx, expr, EXPR_PARSE);
+ }
  
- 	while (next != NULL) {
- 		struct hist_entry *he_pair = rb_entry(next, struct hist_entry,
-@@ -602,7 +585,7 @@ static struct hist_entry *get_block_pair(struct hist_entry *he,
+ static bool
+@@ -71,14 +71,14 @@ already_seen(const char *val, const char *one, const char **other,
+ 	return false;
+ }
  
- 		next = rb_next(&he_pair->rb_node_in);
+-int expr__find_other(const char *p, const char *one, const char ***other,
++int expr__find_other(const char *expr, const char *one, const char ***other,
+ 		     int *num_other)
+ {
+ 	int err, i = 0, j = 0;
+ 	struct parse_ctx ctx;
  
--		cmp = block_pair_cmp(he_pair, he);
-+		cmp = __block_info__cmp(he_pair, he);
- 		if (!cmp)
- 			return he_pair;
+ 	expr__ctx_init(&ctx);
+-	err = __expr__parse(NULL, &ctx, p, EXPR_OTHER);
++	err = __expr__parse(NULL, &ctx, expr, EXPR_OTHER);
+ 	if (err)
+ 		return -1;
+ 
+diff --git a/tools/perf/util/expr.h b/tools/perf/util/expr.h
+index df0a17d..9377538 100644
+--- a/tools/perf/util/expr.h
++++ b/tools/perf/util/expr.h
+@@ -17,8 +17,8 @@ struct parse_ctx {
+ 
+ void expr__ctx_init(struct parse_ctx *ctx);
+ void expr__add_id(struct parse_ctx *ctx, const char *id, double val);
+-int expr__parse(double *final_val, struct parse_ctx *ctx, const char **pp);
+-int expr__find_other(const char *p, const char *one, const char ***other,
++int expr__parse(double *final_val, struct parse_ctx *ctx, const char *expr);
++int expr__find_other(const char *expr, const char *one, const char ***other,
+ 		int *num_other);
+ 
+ #endif
+diff --git a/tools/perf/util/stat-shadow.c b/tools/perf/util/stat-shadow.c
+index 90d23cc..0fd713d 100644
+--- a/tools/perf/util/stat-shadow.c
++++ b/tools/perf/util/stat-shadow.c
+@@ -777,9 +777,7 @@ static void generic_metric(struct perf_stat_config *config,
  	}
-diff --git a/tools/perf/util/block-info.c b/tools/perf/util/block-info.c
-index 5b42146..25f6422 100644
---- a/tools/perf/util/block-info.c
-+++ b/tools/perf/util/block-info.c
-@@ -65,8 +65,7 @@ struct block_info *block_info__new(void)
- 	return bi;
- }
  
--int64_t block_info__cmp(struct perf_hpp_fmt *fmt __maybe_unused,
--			struct hist_entry *left, struct hist_entry *right)
-+int64_t __block_info__cmp(struct hist_entry *left, struct hist_entry *right)
- {
- 	struct block_info *bi_l = left->block_info;
- 	struct block_info *bi_r = right->block_info;
-@@ -91,6 +90,12 @@ int64_t block_info__cmp(struct perf_hpp_fmt *fmt __maybe_unused,
- 	return (int64_t)(bi_r->end - bi_l->end);
- }
- 
-+int64_t block_info__cmp(struct perf_hpp_fmt *fmt __maybe_unused,
-+			struct hist_entry *left, struct hist_entry *right)
-+{
-+	return __block_info__cmp(left, right);
-+}
-+
- static void init_block_info(struct block_info *bi, struct symbol *sym,
- 			    struct cyc_hist *ch, int offset,
- 			    u64 total_cycles)
-diff --git a/tools/perf/util/block-info.h b/tools/perf/util/block-info.h
-index bef0d75..a0fa9fe 100644
---- a/tools/perf/util/block-info.h
-+++ b/tools/perf/util/block-info.h
-@@ -61,6 +61,8 @@ static inline void __block_info__zput(struct block_info **bi)
- 
- #define block_info__zput(bi) __block_info__zput(&bi)
- 
-+int64_t __block_info__cmp(struct hist_entry *left, struct hist_entry *right);
-+
- int64_t block_info__cmp(struct perf_hpp_fmt *fmt __maybe_unused,
- 			struct hist_entry *left, struct hist_entry *right);
+ 	if (!metric_events[i]) {
+-		const char *p = metric_expr;
+-
+-		if (expr__parse(&ratio, &pctx, &p) == 0) {
++		if (expr__parse(&ratio, &pctx, metric_expr) == 0) {
+ 			char *unit;
+ 			char metric_bf[64];
  
