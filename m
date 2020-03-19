@@ -2,40 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CE2A118B542
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:17:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2E53D18B5D0
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:22:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729263AbgCSNQz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 09:16:55 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37528 "EHLO mail.kernel.org"
+        id S1727636AbgCSNVr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 09:21:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46546 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728503AbgCSNQv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 09:16:51 -0400
+        id S1729885AbgCSNVn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 09:21:43 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1715A21835;
-        Thu, 19 Mar 2020 13:16:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1F9E7206D7;
+        Thu, 19 Mar 2020 13:21:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584623811;
-        bh=2vhibI530la2nXP38czFOi1Gon/TlBG9XWRRNIpIJCA=;
+        s=default; t=1584624102;
+        bh=cG8xBS3xZCfN0tOEGRJjaUOF0nL+MWt/juF0Qz+0BpE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IJrmsX+2LYfFu0Gwa8blkupS1rV8nSrVPX8AznEZ8Mq8EgizxOCp8xfBKEwg7IiYA
-         shpqMrLccn1cRKy/clDsDBBQSyhLirGVORRa93ZCSFCUsAG6+gMkbg81qucAmUyM2O
-         5gL6fe4C38Vz94BAENl/o6NLJn3Sorc3BOGrjfm4=
+        b=2HBFfHYfWbgb3OySKWbXZyunskcTf90iHHtJ4PjtPDo2s0TowygfxJ8kzoE6/KJ2q
+         vpA+vsmu/AQTYRxfVBRdQAY1eDqYh+mln4T83GYxppdIyfpm//caWIbA+BivY2FizE
+         uTDXrF2t8rej1bEatw/DoqNdtuEMsTg5eprGvhU0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Lu Baolu <baolu.lu@linux.intel.com>,
-        Zhenzhong Duan <zhenzhong.duan@gmail.com>,
-        Joerg Roedel <jroedel@suse.de>
-Subject: [PATCH 4.14 61/99] iommu/vt-d: Fix the wrong printing in RHSA parsing
+        stable@vger.kernel.org, Florian Westphal <fw@strlen.de>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.4 01/60] netfilter: hashlimit: do not use indirect calls during gc
 Date:   Thu, 19 Mar 2020 14:03:39 +0100
-Message-Id: <20200319124000.098327497@linuxfoundation.org>
+Message-Id: <20200319123919.801650823@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.2
-In-Reply-To: <20200319123941.630731708@linuxfoundation.org>
-References: <20200319123941.630731708@linuxfoundation.org>
+In-Reply-To: <20200319123919.441695203@linuxfoundation.org>
+References: <20200319123919.441695203@linuxfoundation.org>
 User-Agent: quilt/0.66
+X-stable: review
+X-Patchwork-Hint: ignore
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -44,36 +46,76 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Zhenzhong Duan <zhenzhong.duan@gmail.com>
+From: Florian Westphal <fw@strlen.de>
 
-commit b0bb0c22c4db623f2e7b1a471596fbf1c22c6dc5 upstream.
+[ Upstream commit 28b3a4270c0fc064557e409111f2a678e64b6fa7 ]
 
-When base address in RHSA structure doesn't match base address in
-each DRHD structure, the base address in last DRHD is printed out.
+no need, just use a simple boolean to indicate we want to reap all
+entries.
 
-This doesn't make sense when there are multiple DRHD units, fix it
-by printing the buggy RHSA's base address.
-
-Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
-Signed-off-by: Zhenzhong Duan <zhenzhong.duan@gmail.com>
-Fixes: fd0c8894893cb ("intel-iommu: Set a more specific taint flag for invalid BIOS DMAR tables")
-Signed-off-by: Joerg Roedel <jroedel@suse.de>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Florian Westphal <fw@strlen.de>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/iommu/dmar.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/netfilter/xt_hashlimit.c | 22 ++++------------------
+ 1 file changed, 4 insertions(+), 18 deletions(-)
 
---- a/drivers/iommu/dmar.c
-+++ b/drivers/iommu/dmar.c
-@@ -486,7 +486,7 @@ static int dmar_parse_one_rhsa(struct ac
- 	pr_warn(FW_BUG
- 		"Your BIOS is broken; RHSA refers to non-existent DMAR unit at %llx\n"
- 		"BIOS vendor: %s; Ver: %s; Product Version: %s\n",
--		drhd->reg_base_addr,
-+		rhsa->base_address,
- 		dmi_get_system_info(DMI_BIOS_VENDOR),
- 		dmi_get_system_info(DMI_BIOS_VERSION),
- 		dmi_get_system_info(DMI_PRODUCT_VERSION));
+diff --git a/net/netfilter/xt_hashlimit.c b/net/netfilter/xt_hashlimit.c
+index 1b68a131083c2..7a2c4b8408c49 100644
+--- a/net/netfilter/xt_hashlimit.c
++++ b/net/netfilter/xt_hashlimit.c
+@@ -358,21 +358,7 @@ static int htable_create(struct net *net, struct hashlimit_cfg3 *cfg,
+ 	return 0;
+ }
+ 
+-static bool select_all(const struct xt_hashlimit_htable *ht,
+-		       const struct dsthash_ent *he)
+-{
+-	return true;
+-}
+-
+-static bool select_gc(const struct xt_hashlimit_htable *ht,
+-		      const struct dsthash_ent *he)
+-{
+-	return time_after_eq(jiffies, he->expires);
+-}
+-
+-static void htable_selective_cleanup(struct xt_hashlimit_htable *ht,
+-			bool (*select)(const struct xt_hashlimit_htable *ht,
+-				      const struct dsthash_ent *he))
++static void htable_selective_cleanup(struct xt_hashlimit_htable *ht, bool select_all)
+ {
+ 	unsigned int i;
+ 
+@@ -382,7 +368,7 @@ static void htable_selective_cleanup(struct xt_hashlimit_htable *ht,
+ 
+ 		spin_lock_bh(&ht->lock);
+ 		hlist_for_each_entry_safe(dh, n, &ht->hash[i], node) {
+-			if ((*select)(ht, dh))
++			if (time_after_eq(jiffies, dh->expires) || select_all)
+ 				dsthash_free(ht, dh);
+ 		}
+ 		spin_unlock_bh(&ht->lock);
+@@ -396,7 +382,7 @@ static void htable_gc(struct work_struct *work)
+ 
+ 	ht = container_of(work, struct xt_hashlimit_htable, gc_work.work);
+ 
+-	htable_selective_cleanup(ht, select_gc);
++	htable_selective_cleanup(ht, false);
+ 
+ 	queue_delayed_work(system_power_efficient_wq,
+ 			   &ht->gc_work, msecs_to_jiffies(ht->cfg.gc_interval));
+@@ -420,7 +406,7 @@ static void htable_destroy(struct xt_hashlimit_htable *hinfo)
+ {
+ 	cancel_delayed_work_sync(&hinfo->gc_work);
+ 	htable_remove_proc_entry(hinfo);
+-	htable_selective_cleanup(hinfo, select_all);
++	htable_selective_cleanup(hinfo, true);
+ 	kfree(hinfo->name);
+ 	vfree(hinfo);
+ }
+-- 
+2.20.1
+
 
 
