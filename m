@@ -2,41 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 11AD218B564
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:18:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E49D218B613
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:24:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729236AbgCSNSC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 09:18:02 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39754 "EHLO mail.kernel.org"
+        id S1730411AbgCSNX6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 09:23:58 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50214 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729566AbgCSNSA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 09:18:00 -0400
+        id S1729985AbgCSNXz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 09:23:55 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7776920787;
-        Thu, 19 Mar 2020 13:17:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7373B21655;
+        Thu, 19 Mar 2020 13:23:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584623878;
-        bh=+IjVORKh/seQrNgXksEThu2KTYNq7FzrhANnMv4hTSA=;
+        s=default; t=1584624234;
+        bh=3af7f/CO/fTsD3hpWvzuPtjznu2o9Apvd9AMygwOY9o=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=InNqMHn8iRXnULqWvoB23d1O8p3Uujno6DFORxtwqBA3l2/ABPjhRoZdlhdsbR/zD
-         kTsuInKOqhU3bmA6jfHxSJv7jeXEYWLGWJHBj5jkcNF4fzZwNQ+Ovvho/G1WzWkhk4
-         SZntbq147WL01V0koXf9i/iEs2LGUVdDoz1EV1iI=
+        b=apoINyBWGgWm11YMgszUWRrIxGC8CrWYNKZL65AZMOf36rI9es1B5O9Fjkx4imALz
+         y+vZX4+XdXNYXPQGas9R756yYTGz9xSzBSGsd+kmsfHyk5+7PYCvaXnPC4Efaz+3kR
+         Iy3tx7LiaOY40j8qY8pBchYBesCB0sroK7TLMWOA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Kai-Heng Feng <kai.heng.feng@canonical.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        stable@vger.kernel.org, Daniele Palmas <dnlplm@gmail.com>,
+        =?UTF-8?q?Bj=C3=B8rn=20Mork?= <bjorn@mork.no>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 85/99] HID: i2c-hid: add Trekstor Surfbook E11B to descriptor override
+Subject: [PATCH 5.4 25/60] net: usb: qmi_wwan: restore mtu min/max values after raw_ip switch
 Date:   Thu, 19 Mar 2020 14:04:03 +0100
-Message-Id: <20200319124006.078308337@linuxfoundation.org>
+Message-Id: <20200319123927.351958308@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.2
-In-Reply-To: <20200319123941.630731708@linuxfoundation.org>
-References: <20200319123941.630731708@linuxfoundation.org>
+In-Reply-To: <20200319123919.441695203@linuxfoundation.org>
+References: <20200319123919.441695203@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,41 +45,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kai-Heng Feng <kai.heng.feng@canonical.com>
+From: Daniele Palmas <dnlplm@gmail.com>
 
-[ Upstream commit be0aba826c4a6ba5929def1962a90d6127871969 ]
+[ Upstream commit eae7172f8141eb98e64e6e81acc9e9d5b2add127 ]
 
-The Surfbook E11B uses the SIPODEV SP1064 touchpad, which does not supply
-descriptors, so it has to be added to the override list.
+usbnet creates network interfaces with min_mtu = 0 and
+max_mtu = ETH_MAX_MTU.
 
-BugLink: https://bugs.launchpad.net/bugs/1858299
-Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
-Reviewed-by: Hans de Goede <hdegoede@redhat.com>
-Signed-off-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
+These values are not modified by qmi_wwan when the network interface
+is created initially, allowing, for example, to set mtu greater than 1500.
+
+When a raw_ip switch is done (raw_ip set to 'Y', then set to 'N') the mtu
+values for the network interface are set through ether_setup, with
+min_mtu = ETH_MIN_MTU and max_mtu = ETH_DATA_LEN, not allowing anymore to
+set mtu greater than 1500 (error: mtu greater than device maximum).
+
+The patch restores the original min/max mtu values set by usbnet after a
+raw_ip switch.
+
+Signed-off-by: Daniele Palmas <dnlplm@gmail.com>
+Acked-by: Bjørn Mork <bjorn@mork.no>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/hid/i2c-hid/i2c-hid-dmi-quirks.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ drivers/net/usb/qmi_wwan.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/hid/i2c-hid/i2c-hid-dmi-quirks.c b/drivers/hid/i2c-hid/i2c-hid-dmi-quirks.c
-index 10af8585c820d..95052373a8282 100644
---- a/drivers/hid/i2c-hid/i2c-hid-dmi-quirks.c
-+++ b/drivers/hid/i2c-hid/i2c-hid-dmi-quirks.c
-@@ -341,6 +341,14 @@ static const struct dmi_system_id i2c_hid_dmi_desc_override_table[] = {
- 		},
- 		.driver_data = (void *)&sipodev_desc
- 	},
-+	{
-+		.ident = "Trekstor SURFBOOK E11B",
-+		.matches = {
-+			DMI_EXACT_MATCH(DMI_SYS_VENDOR, "TREKSTOR"),
-+			DMI_EXACT_MATCH(DMI_PRODUCT_NAME, "SURFBOOK E11B"),
-+		},
-+		.driver_data = (void *)&sipodev_desc
-+	},
- 	{
- 		.ident = "Direkt-Tek DTLAPY116-2",
- 		.matches = {
+diff --git a/drivers/net/usb/qmi_wwan.c b/drivers/net/usb/qmi_wwan.c
+index 3b7a3b8a5e067..5754bb6ca0eec 100644
+--- a/drivers/net/usb/qmi_wwan.c
++++ b/drivers/net/usb/qmi_wwan.c
+@@ -337,6 +337,9 @@ static void qmi_wwan_netdev_setup(struct net_device *net)
+ 		netdev_dbg(net, "mode: raw IP\n");
+ 	} else if (!net->header_ops) { /* don't bother if already set */
+ 		ether_setup(net);
++		/* Restoring min/max mtu values set originally by usbnet */
++		net->min_mtu = 0;
++		net->max_mtu = ETH_MAX_MTU;
+ 		clear_bit(EVENT_NO_IP_ALIGN, &dev->flags);
+ 		netdev_dbg(net, "mode: Ethernet\n");
+ 	}
 -- 
 2.20.1
 
