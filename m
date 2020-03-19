@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ED5A918B485
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:10:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 79DD318B402
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:06:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727793AbgCSNK2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 09:10:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55214 "EHLO mail.kernel.org"
+        id S1727560AbgCSNGC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 09:06:02 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48950 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728523AbgCSNKZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 09:10:25 -0400
+        id S1727548AbgCSNGA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 09:06:00 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 35BD42145D;
-        Thu, 19 Mar 2020 13:10:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1570E20757;
+        Thu, 19 Mar 2020 13:05:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584623424;
-        bh=jJUYZqV0w3aihbIA7hyyPBRaBtdQxZjgWV0UghJS45A=;
+        s=default; t=1584623159;
+        bh=BtyX3q8zZFhrL4BwDnAymk7B7SD3Y8Qa2VN9pKeAW0E=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0FOeEtJs76t7XEdYrIwmdExM5I45L3UqIJeVuQaJNmH5M55nxba1sAXgouPLG8yHT
-         SEyr4G0Z7YWHdBmF8St1RbchUllkFn2GSA9eXMIdCT88bDTQZlaEoYiqmRm1Y9fGmH
-         pAreSulcALere09tgP4mS6SxZ2x5puxCIikTXYdk=
+        b=c0OOQRzhscn0DtBqiQkeidIj+TXOFKF58OY3G3M+D3AtNajeBxtQJ/YMiDzNgJBAM
+         DT66sUT+QM9lIb1mqrB9F6vUQIBKHx5bBOiPee0vl0XBri8sRqpqpd0eG1CGyt25fO
+         KL/GfKXUOdqC7SCNHDD710scXCx1GFcuyzN/2gy4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, You-Sheng Yang <vicamo.yang@canonical.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 09/90] r8152: check disconnect status after long sleep
-Date:   Thu, 19 Mar 2020 13:59:31 +0100
-Message-Id: <20200319123931.564917852@linuxfoundation.org>
+        stable@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
+        Joerg Roedel <jroedel@suse.de>,
+        Lu Baolu <baolu.lu@linux.intel.com>
+Subject: [PATCH 4.4 28/93] iommu/vt-d: dmar: replace WARN_TAINT with pr_warn + add_taint
+Date:   Thu, 19 Mar 2020 13:59:32 +0100
+Message-Id: <20200319123933.978789756@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.2
-In-Reply-To: <20200319123928.635114118@linuxfoundation.org>
-References: <20200319123928.635114118@linuxfoundation.org>
+In-Reply-To: <20200319123924.795019515@linuxfoundation.org>
+References: <20200319123924.795019515@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,115 +44,100 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: You-Sheng Yang <vicamo.yang@canonical.com>
+From: Hans de Goede <hdegoede@redhat.com>
 
-[ Upstream commit d64c7a08034b32c285e576208ae44fc3ba3fa7df ]
+commit 59833696442c674acbbd297772ba89e7ad8c753d upstream.
 
-Dell USB Type C docking WD19/WD19DC attaches additional peripherals as:
+Quoting from the comment describing the WARN functions in
+include/asm-generic/bug.h:
 
-  /: Bus 02.Port 1: Dev 1, Class=root_hub, Driver=xhci_hcd/6p, 5000M
-      |__ Port 1: Dev 11, If 0, Class=Hub, Driver=hub/4p, 5000M
-          |__ Port 3: Dev 12, If 0, Class=Hub, Driver=hub/4p, 5000M
-          |__ Port 4: Dev 13, If 0, Class=Vendor Specific Class,
-              Driver=r8152, 5000M
+ * WARN(), WARN_ON(), WARN_ON_ONCE, and so on can be used to report
+ * significant kernel issues that need prompt attention if they should ever
+ * appear at runtime.
+ *
+ * Do not use these macros when checking for invalid external inputs
 
-where usb 2-1-3 is a hub connecting all USB Type-A/C ports on the dock.
+The (buggy) firmware tables which the dmar code was calling WARN_TAINT
+for really are invalid external inputs. They are not under the kernel's
+control and the issues in them cannot be fixed by a kernel update.
+So logging a backtrace, which invites bug reports to be filed about this,
+is not helpful.
 
-When hotplugging such dock with additional usb devices already attached on
-it, the probing process may reset usb 2.1 port, therefore r8152 ethernet
-device is also reset. However, during r8152 device init there are several
-for-loops that, when it's unable to retrieve hardware registers due to
-being disconnected from USB, may take up to 14 seconds each in practice,
-and that has to be completed before USB may re-enumerate devices on the
-bus. As a result, devices attached to the dock will only be available
-after nearly 1 minute after the dock was plugged in:
+Some distros, e.g. Fedora, have tools watching for the kernel backtraces
+logged by the WARN macros and offer the user an option to file a bug for
+this when these are encountered. The WARN_TAINT in warn_invalid_dmar()
++ another iommu WARN_TAINT, addressed in another patch, have lead to over
+a 100 bugs being filed this way.
 
-  [ 216.388290] [250] r8152 2-1.4:1.0: usb_probe_interface
-  [ 216.388292] [250] r8152 2-1.4:1.0: usb_probe_interface - got id
-  [ 258.830410] r8152 2-1.4:1.0 (unnamed net_device) (uninitialized): PHY not ready
-  [ 258.830460] r8152 2-1.4:1.0 (unnamed net_device) (uninitialized): Invalid header when reading pass-thru MAC addr
-  [ 258.830464] r8152 2-1.4:1.0 (unnamed net_device) (uninitialized): Get ether addr fail
+This commit replaces the WARN_TAINT("...") calls, with
+pr_warn(FW_BUG "...") + add_taint(TAINT_FIRMWARE_WORKAROUND, ...) calls
+avoiding the backtrace and thus also avoiding bug-reports being filed
+about this against the kernel.
 
-This happens in, for example, r8153_init:
-
-  static int generic_ocp_read(struct r8152 *tp, u16 index, u16 size,
-			    void *data, u16 type)
-  {
-    if (test_bit(RTL8152_UNPLUG, &tp->flags))
-      return -ENODEV;
-    ...
-  }
-
-  static u16 ocp_read_word(struct r8152 *tp, u16 type, u16 index)
-  {
-    u32 data;
-    ...
-    generic_ocp_read(tp, index, sizeof(tmp), &tmp, type | byen);
-
-    data = __le32_to_cpu(tmp);
-    ...
-    return (u16)data;
-  }
-
-  static void r8153_init(struct r8152 *tp)
-  {
-    ...
-    if (test_bit(RTL8152_UNPLUG, &tp->flags))
-      return;
-
-    for (i = 0; i < 500; i++) {
-      if (ocp_read_word(tp, MCU_TYPE_PLA, PLA_BOOT_CTRL) &
-          AUTOLOAD_DONE)
-        break;
-      msleep(20);
-    }
-    ...
-  }
-
-Since ocp_read_word() doesn't check the return status of
-generic_ocp_read(), and the only exit condition for the loop is to have
-a match in the returned value, such loops will only ends after exceeding
-its maximum runs when the device has been marked as disconnected, which
-takes 500 * 20ms = 10 seconds in theory, 14 in practice.
-
-To solve this long latency another test to RTL8152_UNPLUG flag should be
-added after those 20ms sleep to skip unnecessary loops, so that the device
-probe can complete early and proceed to parent port reset/reprobe process.
-
-This can be reproduced on all kernel versions up to latest v5.6-rc2, but
-after v5.5-rc7 the reproduce rate is dramatically lowered to 1/30 or less
-while it was around 1/2.
-
-Signed-off-by: You-Sheng Yang <vicamo.yang@canonical.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: fd0c8894893c ("intel-iommu: Set a more specific taint flag for invalid BIOS DMAR tables")
+Fixes: e625b4a95d50 ("iommu/vt-d: Parse ANDD records")
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+Signed-off-by: Joerg Roedel <jroedel@suse.de>
+Acked-by: Lu Baolu <baolu.lu@linux.intel.com>
+Cc: stable@vger.kernel.org
+Link: https://lore.kernel.org/r/20200309140138.3753-2-hdegoede@redhat.com
+BugLink: https://bugzilla.redhat.com/show_bug.cgi?id=1564895
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/net/usb/r8152.c |    6 ++++++
- 1 file changed, 6 insertions(+)
 
---- a/drivers/net/usb/r8152.c
-+++ b/drivers/net/usb/r8152.c
-@@ -3423,7 +3423,10 @@ static void r8153_init(struct r8152 *tp)
- 		if (ocp_read_word(tp, MCU_TYPE_PLA, PLA_BOOT_CTRL) &
- 		    AUTOLOAD_DONE)
- 			break;
-+
- 		msleep(20);
-+		if (test_bit(RTL8152_UNPLUG, &tp->flags))
-+			break;
- 	}
+---
+ drivers/iommu/dmar.c |   11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
+
+--- a/drivers/iommu/dmar.c
++++ b/drivers/iommu/dmar.c
+@@ -438,12 +438,13 @@ static int __init dmar_parse_one_andd(st
  
- 	for (i = 0; i < 500; i++) {
-@@ -3447,7 +3450,10 @@ static void r8153_init(struct r8152 *tp)
- 		ocp_data = ocp_reg_read(tp, OCP_PHY_STATUS) & PHY_STAT_MASK;
- 		if (ocp_data == PHY_STAT_LAN_ON)
- 			break;
-+
- 		msleep(20);
-+		if (test_bit(RTL8152_UNPLUG, &tp->flags))
-+			break;
+ 	/* Check for NUL termination within the designated length */
+ 	if (strnlen(andd->device_name, header->length - 8) == header->length - 8) {
+-		WARN_TAINT(1, TAINT_FIRMWARE_WORKAROUND,
++		pr_warn(FW_BUG
+ 			   "Your BIOS is broken; ANDD object name is not NUL-terminated\n"
+ 			   "BIOS vendor: %s; Ver: %s; Product Version: %s\n",
+ 			   dmi_get_system_info(DMI_BIOS_VENDOR),
+ 			   dmi_get_system_info(DMI_BIOS_VERSION),
+ 			   dmi_get_system_info(DMI_PRODUCT_VERSION));
++		add_taint(TAINT_FIRMWARE_WORKAROUND, LOCKDEP_STILL_OK);
+ 		return -EINVAL;
  	}
+ 	pr_info("ANDD device: %x name: %s\n", andd->device_number,
+@@ -469,14 +470,14 @@ static int dmar_parse_one_rhsa(struct ac
+ 			return 0;
+ 		}
+ 	}
+-	WARN_TAINT(
+-		1, TAINT_FIRMWARE_WORKAROUND,
++	pr_warn(FW_BUG
+ 		"Your BIOS is broken; RHSA refers to non-existent DMAR unit at %llx\n"
+ 		"BIOS vendor: %s; Ver: %s; Product Version: %s\n",
+ 		drhd->reg_base_addr,
+ 		dmi_get_system_info(DMI_BIOS_VENDOR),
+ 		dmi_get_system_info(DMI_BIOS_VERSION),
+ 		dmi_get_system_info(DMI_PRODUCT_VERSION));
++	add_taint(TAINT_FIRMWARE_WORKAROUND, LOCKDEP_STILL_OK);
  
- 	usb_disable_lpm(tp->udev);
+ 	return 0;
+ }
+@@ -822,14 +823,14 @@ int __init dmar_table_init(void)
+ 
+ static void warn_invalid_dmar(u64 addr, const char *message)
+ {
+-	WARN_TAINT_ONCE(
+-		1, TAINT_FIRMWARE_WORKAROUND,
++	pr_warn_once(FW_BUG
+ 		"Your BIOS is broken; DMAR reported at address %llx%s!\n"
+ 		"BIOS vendor: %s; Ver: %s; Product Version: %s\n",
+ 		addr, message,
+ 		dmi_get_system_info(DMI_BIOS_VENDOR),
+ 		dmi_get_system_info(DMI_BIOS_VERSION),
+ 		dmi_get_system_info(DMI_PRODUCT_VERSION));
++	add_taint(TAINT_FIRMWARE_WORKAROUND, LOCKDEP_STILL_OK);
+ }
+ 
+ static int __ref
 
 
