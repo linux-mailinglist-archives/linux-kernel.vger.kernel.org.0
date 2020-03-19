@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B578918B57E
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:19:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 29BC718B5CB
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:22:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728986AbgCSNTG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 09:19:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42020 "EHLO mail.kernel.org"
+        id S1727407AbgCSNVi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 09:21:38 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46336 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728892AbgCSNTE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 09:19:04 -0400
+        id S1730121AbgCSNVe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 09:21:34 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 88DBA2098B;
-        Thu, 19 Mar 2020 13:19:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8EC8F206D7;
+        Thu, 19 Mar 2020 13:21:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584623944;
-        bh=AmjpSPBj4WtZlzlwhFS7i5lLcqju7uJ94qQo2ibr2BE=;
+        s=default; t=1584624094;
+        bh=GgYsmtbAqbaM/v6kQegw9vNUHsEfuEm0vNWEM9YQB6k=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vNMm3WHAySLY9kvVsQJWWQymH4O8gtmd9k9gcPvv85AtW2HUfNLnilCXKwPp8z2Iw
-         csKlUXpNGEqhGJNlpki4uH4Vt0eOYuvhOqZz4VDCaAzeUDQcI3aQ/BnyIPePguBlof
-         Mj6NOqqP+DEWVYQucees9vQpWq0QgDYHcCcG5UeE=
+        b=HXoEUaLL5+MP1wf/Ym0zIlHOsTD3NWh2DvSey5aYdbciJHKabjYYfp+iAfytZkwyc
+         AhkPJopRBcuHFnroEC7U9kG/S89COd0Apwr7NWQbg0oICG642DF8dWhAR0yxtqjvG5
+         ccC8crsM180AF/n8S7zVSeVZAJgbXogyyqkJAHkA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jann Horn <jannh@google.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.14 98/99] mm: slub: add missing TID bump in kmem_cache_alloc_bulk()
-Date:   Thu, 19 Mar 2020 14:04:16 +0100
-Message-Id: <20200319124008.208357378@linuxfoundation.org>
+        stable@vger.kernel.org, Faiz Abbas <faiz_abbas@ti.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 35/48] mmc: sdhci-omap: Fix Tuning procedure for temperatures < -20C
+Date:   Thu, 19 Mar 2020 14:04:17 +0100
+Message-Id: <20200319123913.982249573@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.2
-In-Reply-To: <20200319123941.630731708@linuxfoundation.org>
-References: <20200319123941.630731708@linuxfoundation.org>
+In-Reply-To: <20200319123902.941451241@linuxfoundation.org>
+References: <20200319123902.941451241@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,46 +44,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jann Horn <jannh@google.com>
+From: Faiz Abbas <faiz_abbas@ti.com>
 
-commit fd4d9c7d0c71866ec0c2825189ebd2ce35bd95b8 upstream.
+[ Upstream commit feb40824d78eac5e48f56498dca941754dff33d7 ]
 
-When kmem_cache_alloc_bulk() attempts to allocate N objects from a percpu
-freelist of length M, and N > M > 0, it will first remove the M elements
-from the percpu freelist, then call ___slab_alloc() to allocate the next
-element and repopulate the percpu freelist. ___slab_alloc() can re-enable
-IRQs via allocate_slab(), so the TID must be bumped before ___slab_alloc()
-to properly commit the freelist head change.
+According to the App note[1] detailing the tuning algorithm, for
+temperatures < -20C, the initial tuning value should be min(largest value
+in LPW - 24, ceil(13/16 ratio of LPW)). The largest value in LPW is
+(max_window + 4 * (max_len - 1)) and not (max_window + 4 * max_len) itself.
+Fix this implementation.
 
-Fix it by unconditionally bumping c->tid when entering the slowpath.
+[1] http://www.ti.com/lit/an/spraca9b/spraca9b.pdf
 
+Fixes: 961de0a856e3 ("mmc: sdhci-omap: Workaround errata regarding SDR104/HS200 tuning failures (i929)")
 Cc: stable@vger.kernel.org
-Fixes: ebe909e0fdb3 ("slub: improve bulk alloc strategy")
-Signed-off-by: Jann Horn <jannh@google.com>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Faiz Abbas <faiz_abbas@ti.com>
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- mm/slub.c |    9 +++++++++
- 1 file changed, 9 insertions(+)
+ drivers/mmc/host/sdhci-omap.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/mm/slub.c
-+++ b/mm/slub.c
-@@ -3123,6 +3123,15 @@ int kmem_cache_alloc_bulk(struct kmem_ca
- 
- 		if (unlikely(!object)) {
- 			/*
-+			 * We may have removed an object from c->freelist using
-+			 * the fastpath in the previous iteration; in that case,
-+			 * c->tid has not been bumped yet.
-+			 * Since ___slab_alloc() may reenable interrupts while
-+			 * allocating memory, we should bump c->tid now.
-+			 */
-+			c->tid = next_tid(c->tid);
-+
-+			/*
- 			 * Invoking slow path likely have side-effect
- 			 * of re-populating per CPU c->freelist
- 			 */
+diff --git a/drivers/mmc/host/sdhci-omap.c b/drivers/mmc/host/sdhci-omap.c
+index 833e13cabd2a8..05ade7a2dd243 100644
+--- a/drivers/mmc/host/sdhci-omap.c
++++ b/drivers/mmc/host/sdhci-omap.c
+@@ -387,7 +387,7 @@ static int sdhci_omap_execute_tuning(struct mmc_host *mmc, u32 opcode)
+ 	 * on temperature
+ 	 */
+ 	if (temperature < -20000)
+-		phase_delay = min(max_window + 4 * max_len - 24,
++		phase_delay = min(max_window + 4 * (max_len - 1) - 24,
+ 				  max_window +
+ 				  DIV_ROUND_UP(13 * max_len, 16) * 4);
+ 	else if (temperature < 20000)
+-- 
+2.20.1
+
 
 
