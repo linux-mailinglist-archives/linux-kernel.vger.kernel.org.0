@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4B66718B57D
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:19:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 43E2818B6B0
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:29:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728339AbgCSNTC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 09:19:02 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41858 "EHLO mail.kernel.org"
+        id S1730294AbgCSNZ7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 09:25:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53688 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728772AbgCSNS6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 09:18:58 -0400
+        id S1730701AbgCSNZy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 09:25:54 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3EC6C206D7;
-        Thu, 19 Mar 2020 13:18:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 095912080C;
+        Thu, 19 Mar 2020 13:25:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584623937;
-        bh=1xGl7mtKgWVKYbda3FBN7iYpXquq8Ownl4t8q/yrI/o=;
+        s=default; t=1584624353;
+        bh=qeSR8s+xjYKgRtoXDhAo+RN2PMmTP5CX+CKt41Yu3xQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=PWjJBYZRtctJP0TA9Oc1LXJTdU4XE61JMjfq80jYmxXAzF6A5HqULZhtM11rKbol4
-         Tb50iB0B+LsYIIvhU9MvpKQZD2e4sBqAO8+zllQ31we0Oi5MqWRSSOhoDAtvkWHlNJ
-         MSuyerEA3blHR8BnGNoNlRRL3APPMRClCWRcPUmg=
+        b=oVVEtO/oWhL0+3XAd7G8LjHxZPicOF1Q5smcJGMq1tlf6WFmq4CnBj0tq+W1cTpB+
+         g6vE1egu07fCd8/EFmIDu0bQ6ikc4BURaaQ8Xe1DfRuNR1fJP1eNSd9RbO+4MNiQT9
+         fMiZwnXpfBFJaALTen1H46U98MV84bBtMxA/a2L8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Sven Eckelmann <sven@narfation.org>,
-        Simon Wunderlich <sw@simonwunderlich.de>
-Subject: [PATCH 4.14 77/99] batman-adv: Fix debugfs path for renamed softif
-Date:   Thu, 19 Mar 2020 14:03:55 +0100
-Message-Id: <20200319124004.312092894@linuxfoundation.org>
+        stable@vger.kernel.org, Paul Burton <paulburton@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.5 14/65] MIPS: Disable VDSO time functionality on microMIPS
+Date:   Thu, 19 Mar 2020 14:03:56 +0100
+Message-Id: <20200319123930.951581514@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.2
-In-Reply-To: <20200319123941.630731708@linuxfoundation.org>
-References: <20200319123941.630731708@linuxfoundation.org>
+In-Reply-To: <20200319123926.466988514@linuxfoundation.org>
+References: <20200319123926.466988514@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,142 +43,64 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sven Eckelmann <sven@narfation.org>
+From: Paul Burton <paulburton@kernel.org>
 
-commit 6da7be7d24b2921f8215473ba7552796dff05fe1 upstream.
+[ Upstream commit 07015d7a103c4420b69a287b8ef4d2535c0f4106 ]
 
-batman-adv is creating special debugfs directories in the init
-net_namespace for each created soft-interface (batadv net_device). But it
-is possible to rename a net_device to a completely different name then the
-original one.
+A check we're about to add to pick up on function calls that depend on
+bogus use of the GOT in the VDSO picked up on instances of such function
+calls in microMIPS builds. Since the code appears genuinely problematic,
+and given the relatively small amount of use & testing that microMIPS
+sees, go ahead & disable the VDSO for microMIPS builds.
 
-It can therefore happen that a user registers a new batadv net_device with
-the name "bat0". batman-adv is then also adding a new directory under
-$debugfs/batman-adv/ with the name "wlan0".
-
-The user then decides to rename this device to "bat1" and registers a
-different batadv device with the name "bat0". batman-adv will then try to
-create a directory with the name "bat0" under $debugfs/batman-adv/ again.
-But there already exists one with this name under this path and thus this
-fails. batman-adv will detect a problem and rollback the registering of
-this device.
-
-batman-adv must therefore take care of renaming the debugfs directories for
-soft-interfaces whenever it detects such a net_device rename.
-
-Fixes: c6c8fea29769 ("net: Add batman-adv meshing protocol")
-Signed-off-by: Sven Eckelmann <sven@narfation.org>
-Signed-off-by: Simon Wunderlich <sw@simonwunderlich.de>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Paul Burton <paulburton@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/batman-adv/debugfs.c        |   24 ++++++++++++++++++++++++
- net/batman-adv/debugfs.h        |    5 +++++
- net/batman-adv/hard-interface.c |   34 ++++++++++++++++++++++++++++------
- 3 files changed, 57 insertions(+), 6 deletions(-)
+ arch/mips/vdso/Makefile | 19 +++++++++++++++++--
+ 1 file changed, 17 insertions(+), 2 deletions(-)
 
---- a/net/batman-adv/debugfs.c
-+++ b/net/batman-adv/debugfs.c
-@@ -421,6 +421,30 @@ out:
- 	return -ENOMEM;
- }
+diff --git a/arch/mips/vdso/Makefile b/arch/mips/vdso/Makefile
+index 96afd73c94e8a..e8585a22b925c 100644
+--- a/arch/mips/vdso/Makefile
++++ b/arch/mips/vdso/Makefile
+@@ -48,6 +48,8 @@ endif
  
-+/**
-+ * batadv_debugfs_rename_meshif() - Fix debugfs path for renamed softif
-+ * @dev: net_device which was renamed
-+ */
-+void batadv_debugfs_rename_meshif(struct net_device *dev)
-+{
-+	struct batadv_priv *bat_priv = netdev_priv(dev);
-+	const char *name = dev->name;
-+	struct dentry *dir;
-+	struct dentry *d;
-+
-+	dir = bat_priv->debug_dir;
-+	if (!dir)
-+		return;
-+
-+	d = debugfs_rename(dir->d_parent, dir, dir->d_parent, name);
-+	if (!d)
-+		pr_err("Can't rename debugfs dir to %s\n", name);
-+}
-+
-+/**
-+ * batadv_debugfs_del_meshif() - Remove interface dependent debugfs entries
-+ * @dev: netdev struct of the soft interface
-+ */
- void batadv_debugfs_del_meshif(struct net_device *dev)
- {
- 	struct batadv_priv *bat_priv = netdev_priv(dev);
---- a/net/batman-adv/debugfs.h
-+++ b/net/batman-adv/debugfs.h
-@@ -29,6 +29,7 @@ struct net_device;
- void batadv_debugfs_init(void);
- void batadv_debugfs_destroy(void);
- int batadv_debugfs_add_meshif(struct net_device *dev);
-+void batadv_debugfs_rename_meshif(struct net_device *dev);
- void batadv_debugfs_del_meshif(struct net_device *dev);
- int batadv_debugfs_add_hardif(struct batadv_hard_iface *hard_iface);
- void batadv_debugfs_rename_hardif(struct batadv_hard_iface *hard_iface);
-@@ -49,6 +50,10 @@ static inline int batadv_debugfs_add_mes
- 	return 0;
- }
+ CFLAGS_REMOVE_vgettimeofday.o = -pg
  
-+static inline void batadv_debugfs_rename_meshif(struct net_device *dev)
-+{
-+}
++DISABLE_VDSO := n
 +
- static inline void batadv_debugfs_del_meshif(struct net_device *dev)
- {
- }
---- a/net/batman-adv/hard-interface.c
-+++ b/net/batman-adv/hard-interface.c
-@@ -955,6 +955,32 @@ void batadv_hardif_remove_interfaces(voi
- 	rtnl_unlock();
- }
+ #
+ # For the pre-R6 code in arch/mips/vdso/vdso.h for locating
+ # the base address of VDSO, the linker will emit a R_MIPS_PC32
+@@ -61,11 +63,24 @@ CFLAGS_REMOVE_vgettimeofday.o = -pg
+ ifndef CONFIG_CPU_MIPSR6
+   ifeq ($(call ld-ifversion, -lt, 225000000, y),y)
+     $(warning MIPS VDSO requires binutils >= 2.25)
+-    obj-vdso-y := $(filter-out vgettimeofday.o, $(obj-vdso-y))
+-    ccflags-vdso += -DDISABLE_MIPS_VDSO
++    DISABLE_VDSO := y
+   endif
+ endif
  
-+/**
-+ * batadv_hard_if_event_softif() - Handle events for soft interfaces
-+ * @event: NETDEV_* event to handle
-+ * @net_dev: net_device which generated an event
-+ *
-+ * Return: NOTIFY_* result
-+ */
-+static int batadv_hard_if_event_softif(unsigned long event,
-+				       struct net_device *net_dev)
-+{
-+	struct batadv_priv *bat_priv;
++#
++# GCC (at least up to version 9.2) appears to emit function calls that make use
++# of the GOT when targeting microMIPS, which we can't use in the VDSO due to
++# the lack of relocations. As such, we disable the VDSO for microMIPS builds.
++#
++ifdef CONFIG_CPU_MICROMIPS
++  DISABLE_VDSO := y
++endif
 +
-+	switch (event) {
-+	case NETDEV_REGISTER:
-+		batadv_sysfs_add_meshif(net_dev);
-+		bat_priv = netdev_priv(net_dev);
-+		batadv_softif_create_vlan(bat_priv, BATADV_NO_FLAGS);
-+		break;
-+	case NETDEV_CHANGENAME:
-+		batadv_debugfs_rename_meshif(net_dev);
-+		break;
-+	}
++ifeq ($(DISABLE_VDSO),y)
++  obj-vdso-y := $(filter-out vgettimeofday.o, $(obj-vdso-y))
++  ccflags-vdso += -DDISABLE_MIPS_VDSO
++endif
 +
-+	return NOTIFY_DONE;
-+}
-+
- static int batadv_hard_if_event(struct notifier_block *this,
- 				unsigned long event, void *ptr)
- {
-@@ -963,12 +989,8 @@ static int batadv_hard_if_event(struct n
- 	struct batadv_hard_iface *primary_if = NULL;
- 	struct batadv_priv *bat_priv;
- 
--	if (batadv_softif_is_valid(net_dev) && event == NETDEV_REGISTER) {
--		batadv_sysfs_add_meshif(net_dev);
--		bat_priv = netdev_priv(net_dev);
--		batadv_softif_create_vlan(bat_priv, BATADV_NO_FLAGS);
--		return NOTIFY_DONE;
--	}
-+	if (batadv_softif_is_valid(net_dev))
-+		return batadv_hard_if_event_softif(event, net_dev);
- 
- 	hard_iface = batadv_hardif_get_by_netdev(net_dev);
- 	if (!hard_iface && (event == NETDEV_REGISTER ||
+ # VDSO linker flags.
+ VDSO_LDFLAGS := \
+ 	-Wl,-Bsymbolic -Wl,--no-undefined -Wl,-soname=linux-vdso.so.1 \
+-- 
+2.20.1
+
 
 
