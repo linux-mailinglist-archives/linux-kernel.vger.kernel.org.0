@@ -2,135 +2,147 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6FA3B18C011
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 20:07:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E263E18C018
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 20:08:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727194AbgCSTHQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 15:07:16 -0400
-Received: from mail-il1-f198.google.com ([209.85.166.198]:53667 "EHLO
-        mail-il1-f198.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725787AbgCSTHP (ORCPT
+        id S1727462AbgCSTI4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 15:08:56 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:37798 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727188AbgCSTI4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 15:07:15 -0400
-Received: by mail-il1-f198.google.com with SMTP id z19so2867310ils.20
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Mar 2020 12:07:14 -0700 (PDT)
+        Thu, 19 Mar 2020 15:08:56 -0400
+Received: by mail-pg1-f196.google.com with SMTP id a32so1765521pga.4
+        for <linux-kernel@vger.kernel.org>; Thu, 19 Mar 2020 12:08:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=zlKmJ2002BFVX2ZXxYBAvMXUqHfOUCBNDSCbpquzDD4=;
+        b=snEHPqIWVHGADR5tx1NSp9UdpaVA8/qSH0Y5/qNyPUv+rOJjSnBcUlIRiOvg5qGYfL
+         Q0tqqT+WC6ncGdFoDlIF7JUnLpTq+8HNiQrPwREwNfEW6ccu1EfFnJGPPdC4QyPRIIkp
+         5RU3tBCF0kyWrOjXuVq9gYlrQdYaJJZ4/ZC7Z9KyzK+xElRq3r8I5gDp8n+sQZ+0W38g
+         9DxL/vlgYcKiUR6T9xbGsce4Mt/ky+5U1OQKf6naER91G1OxbNLCCOJZYSISWKf15TgW
+         FvD6EyKTUeYndw15/zS7RolG/uv7r0CmrelG4NlIXeVSxIqx02wVEeSlC9EqCUFmWboR
+         k5ZA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=JK4j91aQp8xu0adgIRNWGetww6zGg0DWJPZzVkz/f5s=;
-        b=lJpfy6UF4R9+Kh6U5Rbov7lpuV/mkkegwx2I9U6hC9xbW8wpROncO9xE6hkG+TzNGn
-         DV8RmCqKetTU5fIoAPi7+gulI7+s3py/VZKI8ipBRfYT4+XcduMqPnreTucZH6xJsUbr
-         Xj5PFT33+XQZt4qOVtJZNLmjyj80NTsKK34G5EpLIhKO2wvtSCIAhtLL34O/02O80OUN
-         Klr6s7FwYprDDyhwQ9rJjNsBcM4EK6vfkwAIzRa3WiURV9q/p3uInCb8TyYPgcjb/qTw
-         miyeyYvWK1+U8pE4RZusL9E3WeEiesgRl18RST3ulpi3iBwur2GKB+Wxq3N0fxuxNhe1
-         LyhQ==
-X-Gm-Message-State: ANhLgQ0g1fZvjVUo32V5VP0UeEmSVqoiIKI829gbVeNd4lrPIzG+MlJD
-        VcIiW/BQmczWH6syGWQMF7vHWn12hodmzpHniZDeVJy1hhS/
-X-Google-Smtp-Source: ADFU+vtvBsH7etlrl1Zx74wee00IqMfrHha6pAhzcBYU4nKxhFmdO8EF/gSiaAdL5UWYDiwqoAN6Zej/knvSVfttizzdrh8HPPpU
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=zlKmJ2002BFVX2ZXxYBAvMXUqHfOUCBNDSCbpquzDD4=;
+        b=CmCokaSVwCx+YcCAyNI8/JQ/FHdsaTkr/aKekHenEoeLAPEPpVb+G/vjIvC+gzJt1V
+         u+bG8App70S1ewwVg2UrzY/U15Gz0H7Q1fD/FA32dBrJ79rvuED6as/kt84O7plb5TP1
+         LtZaYiLmAi+EmIuUC353esWlWWNSlGFRcNHcs2J3bnDSiZALMXRxo1IWAi25H5gq06cz
+         eqa3y+wVkePoxNepLBFKC3MN1T4fRtT0VWy6aezCUIEVmvEGvq3+jpATXid3egnTbufm
+         jVqeMW3kW4KJ1T7WGY5F1LPx4xUil26Bue8VXOHQNeE0MkDhnE0GV7xsMFRt0mwkgEwf
+         CtCA==
+X-Gm-Message-State: ANhLgQ0ztbqQl8xuOxEPRJYdeSsFqGozrMVbetyS0acQzHwR1cuEA4j6
+        SzuMyAkwPWKrJRKZuGWPZWA4Xw==
+X-Google-Smtp-Source: ADFU+vvbguubW7E6FOD/bR6UAFbsfiXhbysyZNZA0X02MHIz8KIBZKkLDrSYMWTpjPPb3cT9rshHyA==
+X-Received: by 2002:a62:b604:: with SMTP id j4mr5635879pff.93.1584644933964;
+        Thu, 19 Mar 2020 12:08:53 -0700 (PDT)
+Received: from yoga (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id f8sm3151821pfn.2.2020.03.19.12.08.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 19 Mar 2020 12:08:53 -0700 (PDT)
+Date:   Thu, 19 Mar 2020 12:08:51 -0700
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Rob Clark <robdclark@gmail.com>
+Cc:     Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Boris Brezillon <boris.brezillon@collabora.com>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        freedreno <freedreno@lists.freedesktop.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] drm/msm: Don't attempt to attach HDMI bridge twice
+Message-ID: <20200319190851.GB458947@yoga>
+References: <20200319043741.3338842-1-bjorn.andersson@linaro.org>
+ <CAF6AEGtvSZOp48hyrBUzqQLV6+twtuy6k6MLimz6fhC-dqWEVA@mail.gmail.com>
 MIME-Version: 1.0
-X-Received: by 2002:a92:358b:: with SMTP id c11mr4415053ilf.64.1584644834463;
- Thu, 19 Mar 2020 12:07:14 -0700 (PDT)
-Date:   Thu, 19 Mar 2020 12:07:14 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000074219d05a139e082@google.com>
-Subject: general protection fault in sctp_ulpevent_nofity_peer_addr_change
-From:   syzbot <syzbot+3950016bd95c2ca0377b@syzkaller.appspotmail.com>
-To:     davem@davemloft.net, kuba@kernel.org, linux-kernel@vger.kernel.org,
-        linux-sctp@vger.kernel.org, marcelo.leitner@gmail.com,
-        netdev@vger.kernel.org, nhorman@tuxdriver.com,
-        syzkaller-bugs@googlegroups.com, vyasevich@gmail.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAF6AEGtvSZOp48hyrBUzqQLV6+twtuy6k6MLimz6fhC-dqWEVA@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On Thu 19 Mar 11:19 PDT 2020, Rob Clark wrote:
 
-syzbot found the following crash on:
+> On Wed, Mar 18, 2020 at 9:39 PM Bjorn Andersson
+> <bjorn.andersson@linaro.org> wrote:
+> >
+> > With the introduction of '3ef2f119bd3e ("drm/msm: Use
+> > drm_attach_bridge() to attach a bridge to an encoder")' the HDMI bridge
+> > is attached both in msm_hdmi_bridge_init() and later in
+> > msm_hdmi_modeset_init().
+> >
+> > The second attempt fails as the bridge is already attached to the
+> > encoder and the whole process is aborted.
+> >
+> > So instead make msm_hdmi_bridge_init() just initialize the hdmi_bridge
+> > object and let msm_hdmi_modeset_init() attach it later.
+> >
+> > Fixes: 3ef2f119bd3e ("drm/msm: Use drm_attach_bridge() to attach a bridge to an encoder")
+> > Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> 
+> Thanks, I think this should also be solved by:
+> 
+> https://patchwork.freedesktop.org/patch/357331/?series=74611&rev=1
 
-HEAD commit:    5076190d mm: slub: be more careful about the double cmpxch..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=14d2a61de00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=9f894bd92023de02
-dashboard link: https://syzkaller.appspot.com/bug?extid=3950016bd95c2ca0377b
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-userspace arch: i386
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1162bbe3e00000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13c93b45e00000
+Yes, didn't find that when looking yesterday. T-b and R-b.
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+3950016bd95c2ca0377b@syzkaller.appspotmail.com
+Thanks,
+Bjorn
 
-general protection fault, probably for non-canonical address 0xdffffc0000000017: 0000 [#1] PREEMPT SMP KASAN
-KASAN: null-ptr-deref in range [0x00000000000000b8-0x00000000000000bf]
-CPU: 0 PID: 10161 Comm: syz-executor044 Not tainted 5.6.0-rc6-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-RIP: 0010:sctp_ulpevent_nofity_peer_addr_change+0xed/0xa30 net/sctp/ulpevent.c:347
-Code: 03 80 3c 02 00 0f 85 19 08 00 00 48 8b ab a8 00 00 00 48 b8 00 00 00 00 00 fc ff df 48 8d bd bc 00 00 00 48 89 fa 48 c1 ea 03 <0f> b6 14 02 48 89 f8 83 e0 07 83 c0 03 38 d0 7c 08 84 d2 0f 85 70
-RSP: 0018:ffffc900022a7308 EFLAGS: 00010207
-RAX: dffffc0000000000 RBX: ffff888096004150 RCX: 0000000000000000
-RDX: 0000000000000017 RSI: 0000000000000000 RDI: 00000000000000bc
-RBP: 0000000000000000 R08: ffff88809419a500 R09: ffffc900022a7358
-R10: fffff52000454e7a R11: ffffc900022a73d7 R12: 0000000000000000
-R13: 0000000000000004 R14: 0000000000000000 R15: ffff888096004150
-FS:  0000000000000000(0000) GS:ffff8880ae600000(0063) knlGS:000000000935d840
-CS:  0010 DS: 002b ES: 002b CR0: 0000000080050033
-CR2: 0000000020000180 CR3: 0000000093589000 CR4: 00000000001406f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- sctp_assoc_set_primary+0x6c/0x300 net/sctp/associola.c:435
- sctp_assoc_rm_peer+0x77c/0xa40 net/sctp/associola.c:508
- sctp_assoc_update+0x50a/0xe30 net/sctp/associola.c:1116
- sctp_cmd_assoc_update net/sctp/sm_sideeffect.c:836 [inline]
- sctp_cmd_interpreter net/sctp/sm_sideeffect.c:1305 [inline]
- sctp_side_effects net/sctp/sm_sideeffect.c:1185 [inline]
- sctp_do_sm+0x1c57/0x4ed0 net/sctp/sm_sideeffect.c:1156
- sctp_assoc_bh_rcv+0x386/0x6d0 net/sctp/associola.c:1044
- sctp_inq_push+0x1da/0x270 net/sctp/inqueue.c:80
- sctp_backlog_rcv+0x1f3/0x1290 net/sctp/input.c:344
- sk_backlog_rcv include/net/sock.h:963 [inline]
- __release_sock+0x134/0x3a0 net/core/sock.c:2440
- release_sock+0x54/0x1b0 net/core/sock.c:2956
- sctp_wait_for_connect+0x308/0x530 net/sctp/socket.c:9280
- __sctp_connect+0x9d2/0xc70 net/sctp/socket.c:1225
- __sctp_setsockopt_connectx+0x127/0x180 net/sctp/socket.c:1321
- sctp_setsockopt_connectx net/sctp/socket.c:1353 [inline]
- sctp_setsockopt net/sctp/socket.c:4698 [inline]
- sctp_setsockopt+0x15a1/0x7090 net/sctp/socket.c:4655
- compat_sock_common_setsockopt+0xf6/0x120 net/core/sock.c:3165
- __compat_sys_setsockopt+0x15d/0x310 net/compat.c:384
- __do_compat_sys_setsockopt net/compat.c:397 [inline]
- __se_compat_sys_setsockopt net/compat.c:394 [inline]
- __ia32_compat_sys_setsockopt+0xb9/0x150 net/compat.c:394
- do_syscall_32_irqs_on arch/x86/entry/common.c:337 [inline]
- do_fast_syscall_32+0x270/0xe8f arch/x86/entry/common.c:408
- entry_SYSENTER_compat+0x70/0x7f arch/x86/entry/entry_64_compat.S:139
-Modules linked in:
----[ end trace a970df05c462f077 ]---
-RIP: 0010:sctp_ulpevent_nofity_peer_addr_change+0xed/0xa30 net/sctp/ulpevent.c:347
-Code: 03 80 3c 02 00 0f 85 19 08 00 00 48 8b ab a8 00 00 00 48 b8 00 00 00 00 00 fc ff df 48 8d bd bc 00 00 00 48 89 fa 48 c1 ea 03 <0f> b6 14 02 48 89 f8 83 e0 07 83 c0 03 38 d0 7c 08 84 d2 0f 85 70
-RSP: 0018:ffffc900022a7308 EFLAGS: 00010207
-RAX: dffffc0000000000 RBX: ffff888096004150 RCX: 0000000000000000
-RDX: 0000000000000017 RSI: 0000000000000000 RDI: 00000000000000bc
-RBP: 0000000000000000 R08: ffff88809419a500 R09: ffffc900022a7358
-R10: fffff52000454e7a R11: ffffc900022a73d7 R12: 0000000000000000
-R13: 0000000000000004 R14: 0000000000000000 R15: ffff888096004150
-FS:  0000000000000000(0000) GS:ffff8880ae600000(0063) knlGS:000000000935d840
-CS:  0010 DS: 002b ES: 002b CR0: 0000000080050033
-CR2: 0000000020000180 CR3: 0000000093589000 CR4: 00000000001406f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-
-
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-syzbot can test patches for this bug, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+> 
+> BR,
+> -R
+> 
+> > ---
+> >  drivers/gpu/drm/msm/hdmi/hdmi_bridge.c | 19 +++----------------
+> >  1 file changed, 3 insertions(+), 16 deletions(-)
+> >
+> > diff --git a/drivers/gpu/drm/msm/hdmi/hdmi_bridge.c b/drivers/gpu/drm/msm/hdmi/hdmi_bridge.c
+> > index 6e380db9287b..0e103ee1b730 100644
+> > --- a/drivers/gpu/drm/msm/hdmi/hdmi_bridge.c
+> > +++ b/drivers/gpu/drm/msm/hdmi/hdmi_bridge.c
+> > @@ -271,31 +271,18 @@ static const struct drm_bridge_funcs msm_hdmi_bridge_funcs = {
+> >  /* initialize bridge */
+> >  struct drm_bridge *msm_hdmi_bridge_init(struct hdmi *hdmi)
+> >  {
+> > -       struct drm_bridge *bridge = NULL;
+> >         struct hdmi_bridge *hdmi_bridge;
+> > -       int ret;
+> > +       struct drm_bridge *bridge;
+> >
+> >         hdmi_bridge = devm_kzalloc(hdmi->dev->dev,
+> >                         sizeof(*hdmi_bridge), GFP_KERNEL);
+> > -       if (!hdmi_bridge) {
+> > -               ret = -ENOMEM;
+> > -               goto fail;
+> > -       }
+> > +       if (!hdmi_bridge)
+> > +               return ERR_PTR(-ENOMEM);
+> >
+> >         hdmi_bridge->hdmi = hdmi;
+> >
+> >         bridge = &hdmi_bridge->base;
+> >         bridge->funcs = &msm_hdmi_bridge_funcs;
+> >
+> > -       ret = drm_bridge_attach(hdmi->encoder, bridge, NULL, 0);
+> > -       if (ret)
+> > -               goto fail;
+> > -
+> >         return bridge;
+> > -
+> > -fail:
+> > -       if (bridge)
+> > -               msm_hdmi_bridge_destroy(bridge);
+> > -
+> > -       return ERR_PTR(ret);
+> >  }
+> > --
+> > 2.24.0
+> >
