@@ -2,125 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1D66918BD8A
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 18:07:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BF93918BDA4
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 18:10:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728451AbgCSRHD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 13:07:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50266 "EHLO mail.kernel.org"
+        id S1728383AbgCSRKb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 13:10:31 -0400
+Received: from vps0.lunn.ch ([185.16.172.187]:45678 "EHLO vps0.lunn.ch"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727252AbgCSRHC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 13:07:02 -0400
-Received: from localhost (mobile-166-175-186-165.mycingular.net [166.175.186.165])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 71D4C2072D;
-        Thu, 19 Mar 2020 17:07:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584637621;
-        bh=NdR6LVZ2cIsGAen/1ujzdrUs8tOtmmAvYQrgY/mLbXM=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:From;
-        b=fAsoMHdZ+CYuM4c3hgzSAXhoiZ3xbVbN8s2cz7P9jqZcY1HB2yJCvRtzAv8IouYHO
-         LC3dp3VGJ75UAMS0WzOgKBLBc3qum4Xg8DyXU67qvbSw9FVQNq+jdccLoJUC4cY0Oe
-         POScnOpP9mVL6PMYpSsyL0K3elHJk1q6Tes9R0s8=
-Date:   Thu, 19 Mar 2020 12:06:59 -0500
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
-Cc:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Andrew Murray <andrew.murray@arm.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, linux-pci@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org,
-        Masami Hiramatsu <masami.hiramatsu@linaro.org>,
-        Jassi Brar <jaswinder.singh@linaro.org>
-Subject: Re: [PATCH v2 2/2] PCI: uniphier: Add UniPhier PCIe endpoint
- controller support
-Message-ID: <20200319170659.GA158868@google.com>
+        id S1727235AbgCSRKb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 13:10:31 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+        s=20171124; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=97QUluO/9z2nRz1LUzTzwjEEpdtKGGADgdrtcJm2fOA=; b=rMIndAv4X0iMvZD54MRmU04cL9
+        wigGi4hw8VKxK79UiAvPzUG36qw6+8iJqWdy2A4J1EHH/w4iRt2r1IjxGpuXKZdzkVqyLQn1c4PAF
+        FjjmDNkrmn83p2tyiVYaTzWNLYOOPKKOiXvttuCjz4ApHuebPULjbbmMM8A5rUvgbYn4=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.93)
+        (envelope-from <andrew@lunn.ch>)
+        id 1jEygV-000893-QN; Thu, 19 Mar 2020 18:10:19 +0100
+Date:   Thu, 19 Mar 2020 18:10:19 +0100
+From:   Andrew Lunn <andrew@lunn.ch>
+To:     Heiner Kallweit <hkallweit1@gmail.com>
+Cc:     Dejin Zheng <zhengdejin5@gmail.com>, f.fainelli@gmail.com,
+        linux@armlinux.org.uk, davem@davemloft.net, tglx@linutronix.de,
+        broonie@kernel.org, corbet@lwn.net, mchehab+samsung@kernel.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next 3/7] net: phy: introduce
+ phy_read_mmd_poll_timeout macro
+Message-ID: <20200319171019.GJ27807@lunn.ch>
+References: <20200319163910.14733-1-zhengdejin5@gmail.com>
+ <20200319163910.14733-4-zhengdejin5@gmail.com>
+ <c88c0ce1-af42-db67-22bc-92e82bd9efbf@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1584604449-13461-3-git-send-email-hayashi.kunihiko@socionext.com>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+In-Reply-To: <c88c0ce1-af42-db67-22bc-92e82bd9efbf@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 19, 2020 at 04:54:09PM +0900, Kunihiko Hayashi wrote:
-> This introduces specific glue layer for UniPhier platform to support
-> PCIe controller that is based on the DesignWare PCIe core, and
-> this driver supports endpoint mode. This supports for Pro5 SoC only.
+On Thu, Mar 19, 2020 at 05:56:39PM +0100, Heiner Kallweit wrote:
+> On 19.03.2020 17:39, Dejin Zheng wrote:
+> > it is sometimes necessary to poll a phy register by phy_read_mmd()
+> > function until its value satisfies some condition. introduce
+> > phy_read_mmd_poll_timeout() macros that do this.
+> > 
+> > Signed-off-by: Dejin Zheng <zhengdejin5@gmail.com>
+> > ---
+> >  include/linux/phy.h | 4 ++++
+> >  1 file changed, 4 insertions(+)
+> > 
+> > diff --git a/include/linux/phy.h b/include/linux/phy.h
+> > index 36d9dea04016..a30e9008647f 100644
+> > --- a/include/linux/phy.h
+> > +++ b/include/linux/phy.h
+> > @@ -24,6 +24,7 @@
+> >  #include <linux/mod_devicetable.h>
+> >  #include <linux/u64_stats_sync.h>
+> >  #include <linux/irqreturn.h>
+> > +#include <linux/iopoll.h>
+> >  
+> >  #include <linux/atomic.h>
+> >  
+> > @@ -784,6 +785,9 @@ static inline int __phy_modify_changed(struct phy_device *phydev, u32 regnum,
+> >   */
+> >  int phy_read_mmd(struct phy_device *phydev, int devad, u32 regnum);
+> >  
+> > +#define phy_read_mmd_poll_timeout(val, cond, sleep_us, timeout_us, args...) \
+> > +	read_poll_timeout(phy_read_mmd, val, cond, sleep_us, timeout_us, args)
+> > +
+> >  /**
+> >   * __phy_read_mmd - Convenience function for reading a register
+> >   * from an MMD on a given PHY.
+> > 
+> I'm not fully convinced. Usage of the new macro with its lots of
+> parameters makes the code quite hard to read. Therefore I'm also
+> not a big fan of readx_poll_timeout.
 
-Possible alternate text: ("specific glue layer" isn't the usual way to
-describe a driver)
+One issue is that people often implement polling wrong. They don't
+take into account where extra delays can happen, and return -ETIMEOUT
+when in fact the operation was successful. readx_poll_timeout gives us
+a core which is known to be good.
 
-  PCI: uniphier: Add Socionext UniPhier Pro5 SoC endpoint controller driver
+What i don't like here is phy_read_mmd_poll_timeout() takes args... We
+know it should be passed a phydev, and device address and a reg. I
+would prefer these to be explicit parameters. We can then get the
+compiler to check the correct number of parameters are passed.
 
-  Add driver for the Socionext UniPhier Pro5 SoC endpoint controller.
-  This controller is based on the DesignWare PCIe core.
-
-> +/* assertion time of intx in usec */
-
-s/intx/INTx/ to match usage in spec (and in comments below :))
-
-> +#define PCL_INTX_WIDTH_USEC		30
-
-> +struct uniphier_pcie_ep_soc_data {
-> +	bool is_legacy;
-
-I'd prefer "unsigned int is_legacy:1".  See [1].
-
-But AFAICT you actually don't need this at all (yet), since you only
-have a single of_device_id, and it sets "is_legacy = true".  That
-means the *not* legacy code is effectively dead and hasn't been
-tested.
-
-My preference would be to add "is_legacy" and the associated tests
-when you actually *need* them, i.e., when you add support for a
-non-legacy device.
-
-> +static int uniphier_pcie_ep_raise_legacy_irq(struct dw_pcie_ep *ep)
-> +{
-> +	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
-> +	struct uniphier_pcie_ep_priv *priv = to_uniphier_pcie(pci);
-> +	u32 val;
-> +
-> +	/* assert INTx */
-> +	val = readl(priv->base + PCL_APP_INTX);
-> +	val |= PCL_APP_INTX_SYS_INT;
-> +	writel(val, priv->base + PCL_APP_INTX);
-> +
-> +	udelay(PCL_INTX_WIDTH_USEC);
-> +
-> +	/* deassert INTx */
-> +	val = readl(priv->base + PCL_APP_INTX);
-
-Why do you need to read PCL_APP_INTX again here?
-
-> +	val &= ~PCL_APP_INTX_SYS_INT;
-> +	writel(val, priv->base + PCL_APP_INTX);
-> +
-> +	return 0;
-> +}
-
-> +	ret = dw_pcie_ep_init(ep);
-> +	if (ret) {
-> +		dev_err(dev, "Failed to initialize endpoint (%d)\n", ret);
-> +		return ret;
-> +	}
-> +
-> +	return 0;
-
-This is equivalent to:
-
-  ret = dw_pcie_ep_init(ep);
-  if (ret)
-    dev_err(dev, "Failed to initialize endpoint (%d)\n", ret);
-
-  return ret;
-
-> +}
-
-[1] https://lore.kernel.org/linux-fsdevel/CA+55aFzKQ6Pj18TB8p4Yr0M4t+S+BsiHH=BJNmn=76-NcjTj-g@mail.gmail.com/
+      Andrew
