@@ -2,158 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B5BCA18A9E9
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 01:41:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EC18F18AA00
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 01:47:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726879AbgCSAk5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Mar 2020 20:40:57 -0400
-Received: from foss.arm.com ([217.140.110.172]:56876 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726596AbgCSAk5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Mar 2020 20:40:57 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B104931B;
-        Wed, 18 Mar 2020 17:40:56 -0700 (PDT)
-Received: from [10.37.12.148] (unknown [10.37.12.148])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 38AAF3F52E;
-        Wed, 18 Mar 2020 17:40:55 -0700 (PDT)
-Subject: Re: [PATCH 2/2] perf: arm_dsu: Support DSU ACPI devices.
-To:     tuanphan@os.amperecomputing.com
-Cc:     patches@amperecomputing.com, will@kernel.org, mark.rutland@arm.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        sudeep.holla@arm.com
-References: <1584491323-31436-1-git-send-email-tuanphan@os.amperecomputing.com>
-From:   Suzuki K Poulose <suzuki.poulose@arm.com>
-Message-ID: <a571cf7e-c2a5-e8f8-e782-8087249143b0@arm.com>
-Date:   Thu, 19 Mar 2020 00:45:37 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1727108AbgCSArc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Mar 2020 20:47:32 -0400
+Received: from mail-io1-f66.google.com ([209.85.166.66]:42709 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726866AbgCSArb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Mar 2020 20:47:31 -0400
+Received: by mail-io1-f66.google.com with SMTP id q128so484589iof.9
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Mar 2020 17:47:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=joelfernandes.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Nikfs2mITY1YnXregatCfjsnN0VxQx1MLHWWy5mZepo=;
+        b=UyUB0eHGnGw9m1dq+wwqfipb+e49FVRrNMBxA7casT2HN+Z9yLj4EKGNR9lyGbcx55
+         KkQujx6BOLkfj/DMsoWnz4gc8HQgeuNk7J/Ymzcgcr9a3WZRujV1KBRPHVHqxxFqrHsL
+         rC6cZTsbs2NrBW6LkZ8snTeMclPM8M1h3wAvA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Nikfs2mITY1YnXregatCfjsnN0VxQx1MLHWWy5mZepo=;
+        b=bGDjDKyyFtBRVHSbZAIwc6xKvhBL7JaRg3W92Swaal7kdlAlL1vnCncy15pOxq2t2B
+         7gw3pnLxUxAT0a3wZxLIn1HUwsiXv3w+/MWMFhCJb9Gai4/1J97jKYySGlEdwDMRPl0d
+         aK3heSTNlQ3L1HtmsFjBJsCN/+MvVl9svUNV80fhEHavUIm7g4bODmp26MuLihebggT4
+         WThyL2cIu+BKT0ky6iD0+TAi6OvCihLAq6VY12DktChZWagsRsblybQ9VzltLUY7QRMl
+         yzddR830ZpXry4+AdUdCPeAm+pJhg1v2WuVNu/I1rzmunlbi+fr0KcbgF0zp5hiSsZjZ
+         0I8A==
+X-Gm-Message-State: ANhLgQ0wEtcpZxfE0oMOvyVBXH+0vO9aR9LsN1+RZVXutoRGRY/J76Cl
+        krZpDhGfSDFcChZXIE1A/myuyUV1JfrqZCz5lTokVA==
+X-Google-Smtp-Source: ADFU+vsUlxX18RINXbTIKk/71K/n1UmMkxX3JU9OJ9HNcL+q/mSD0Gp2PA3I1g/jz2/K2Yt2Ke+h8g36hOL7IzNEeJg=
+X-Received: by 2002:a02:c85a:: with SMTP id r26mr829137jao.74.1584578849973;
+ Wed, 18 Mar 2020 17:47:29 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <1584491323-31436-1-git-send-email-tuanphan@os.amperecomputing.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20200305003526.GA20601@paulmck-ThinkPad-P72> <20200305081135.yg7wryd3hrqzocrm@linutronix.de>
+In-Reply-To: <20200305081135.yg7wryd3hrqzocrm@linutronix.de>
+From:   Joel Fernandes <joel@joelfernandes.org>
+Date:   Wed, 18 Mar 2020 20:47:18 -0400
+Message-ID: <CAEXW_YSiKrT50mTR1a4tB5x_jQzZKnuAo6JY-Vc5w7r=XLv+OA@mail.gmail.com>
+Subject: Re: RCU use of swait
+To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc:     "Paul E. McKenney" <paulmck@kernel.org>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Lai Jiangshan <jiangshanlai@gmail.com>,
+        Thomas Glexiner <tglx@linutronix.de>,
+        Scott Wood <swood@redhat.com>,
+        Clark Williams <williams@redhat.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        linux-rt-users@vger.kernel.org, rcu <rcu@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On Thu, Mar 5, 2020 at 3:11 AM Sebastian Andrzej Siewior
+<bigeasy@linutronix.de> wrote:
+>
+> On 2020-03-04 16:35:26 [-0800], Paul E. McKenney wrote:
+> > Hello!
+> Hi Paul,
+>
+> > Or is there some other reason why {S,}RCU needs to use swait that I
+> > am forgetting?
+>
+> swait can be used in hardirq-context (on RT) that is in a section within
+> local_irq_save() / raw_spin_lock() and so.
+> wait on the hand uses spinlock_t which can not be used in this context.
+> So if you have no users which fall into that category then you could
+> move back to wait.h.
 
+In RCU, there are some truly-atomic code sections containing an
+swake_upXX() call, which would be considered atomic also on
+PREEMPT_RT, one example is:
 
-Please find my comments below.
+rcu_core() contains an local_irq_{save,restore}() section.
 
-On 03/18/2020 12:28 AM, Tuan Phan wrote:
-> Add support for probing device from ACPI node.
-> Each DSU ACPI node defines "cpus" package which
-> each element is the MPIDR of associated cpu.
-> 
-> Signed-off-by: Tuan Phan <tuanphan@os.amperecomputing.com>
-> ---
->   drivers/perf/arm_dsu_pmu.c | 53 +++++++++++++++++++++++++++++++++++++++-------
->   1 file changed, 45 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/perf/arm_dsu_pmu.c b/drivers/perf/arm_dsu_pmu.c Tua
-> index 2622900..6ef762c 100644
-> --- a/drivers/perf/arm_dsu_pmu.c
-> +++ b/drivers/perf/arm_dsu_pmu.c
-> @@ -11,6 +11,7 @@
->   #define DRVNAME		PMUNAME "_pmu"
->   #define pr_fmt(fmt)	DRVNAME ": " fmt
->   
-> +#include <linux/acpi.h>
->   #include <linux/bitmap.h>
->   #include <linux/bitops.h>
->   #include <linux/bug.h>
-> @@ -603,18 +604,22 @@ static struct dsu_pmu *dsu_pmu_alloc(struct platform_device *pdev)
->   }
->   
->   /**
-> - * dsu_pmu_dt_get_cpus: Get the list of CPUs in the cluster.
-> + * dsu_pmu_get_cpus: Get the list of CPUs in the cluster.
->    */
-> -static int dsu_pmu_dt_get_cpus(struct device_node *dev, cpumask_t *mask)
-> +static int dsu_pmu_get_cpus(struct platform_device *pdev)
->   {
-> +#ifndef CONFIG_ACPI
-> +	/* Get the list of CPUs from device tree */
+        /* No grace period and unregistered callbacks? */
+        if (!rcu_gp_in_progress() &&
+            rcu_segcblist_is_enabled(&rdp->cblist) && !offloaded) {
+                local_irq_save(flags);
+                if (!rcu_segcblist_restempty(&rdp->cblist, RCU_NEXT_READY_TAIL))
+                        rcu_accelerate_cbs_unlocked(rnp, rdp);
+                local_irq_restore(flags);
+        }
 
-What if we have a kernel with both:
+And rcu_accelerate_cbs_unlocked(rnp, rdp) calls rcu_gp_kthread_wake()
+which does an swake_up_one(), so I think we will have to leave it as
+swake_up() the way it is.
 
-CONFIG_OF=y
-CONFIG_ACPI=y
+thanks,
 
-and boot the kernel on a system with DT ? In other words, the decision
-to choose the DT vs ACPI must be runtime decision, not buildtime.
-
-See 
-drivers/hwtracing/coresight/coresight-platform.c:coresight_get_platform_data() 
-for an example.
-
->   	int i = 0, n, cpu;
->   	struct device_node *cpu_node;
-> +	struct dsu_pmu *dsu_pmu =
-> +		(struct dsu_pmu *) platform_get_drvdata(pdev);
->   
-> -	n = of_count_phandle_with_args(dev, "cpus", NULL);
-> +	n = of_count_phandle_with_args(pdev->dev.of_node, "cpus", NULL);
->   	if (n <= 0)
->   		return -ENODEV;
->   	for (; i < n; i++) {
-> -		cpu_node = of_parse_phandle(dev, "cpus", i);
-> +		cpu_node = of_parse_phandle(pdev->dev.of_node, "cpus", i);
->   		if (!cpu_node)
->   			break;
->   		cpu = of_cpu_node_to_id(cpu_node);
-> @@ -626,9 +631,33 @@ static int dsu_pmu_dt_get_cpus(struct device_node *dev, cpumask_t *mask)
->   		 */
->   		if (cpu < 0)
->   			continue;
-> -		cpumask_set_cpu(cpu, mask);
-> +		cpumask_set_cpu(cpu, &dsu_pmu->associated_cpus);
->   	}
->   	return 0;
-> +#else /* CONFIG_ACPI */
-> +	int i, cpu, ret;
-> +	const union acpi_object *obj;
-> +	struct acpi_device *adev = ACPI_COMPANION(&pdev->dev);
-> +	struct dsu_pmu *dsu_pmu =
-> +		(struct dsu_pmu *) platform_get_drvdata(pdev);
-> +
-
-> +	ret = acpi_dev_get_property(adev, "cpus", ACPI_TYPE_ANY, &obj);
-
-Is the binding documented somewhere ?
-
-
-nit: Also, why not :
-	ret = acpi_dev_get_propert(adev, "cpus", ACPI_TYPE_PACKAGE, &obj);
-	if (ret < 0)
-		return ret;
-  ?
-
-
-> +	if (ret < 0)
-> +		return -EINVAL;
-> +
-> +	if (obj->type != ACPI_TYPE_PACKAGE)
-> +		return -EINVAL;
-> +
-> +	for (i = 0; i < obj->package.count; i++) {
-
-
-> +		/* Each element is the MPIDR of associated cpu */
-> +		for_each_possible_cpu(cpu) {
-> +			if (cpu_physical_id(cpu) ==
-> +				obj->package.elements[i].integer.value)
-> +				cpumask_set_cpu(cpu, &dsu_pmu->associated_cpus);
-> +		}
-> +	}
-> +	return 0;
-> +#endif
->   }
->   
-
-Otherwise looks good to me.
-
-Suzuki
+ - Joel
