@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4D46318B5D9
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:22:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5FAB818B584
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:19:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730163AbgCSNWF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 09:22:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47062 "EHLO mail.kernel.org"
+        id S1729851AbgCSNTV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 09:19:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42430 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730154AbgCSNWE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 09:22:04 -0400
+        id S1729863AbgCSNTT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 09:19:19 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E6B332098B;
-        Thu, 19 Mar 2020 13:22:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B04A7206D7;
+        Thu, 19 Mar 2020 13:19:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584624123;
-        bh=57I+7quQKDQmsEDDJITB3L2NMIr5sFzOXq0CxdhIvnc=;
+        s=default; t=1584623958;
+        bh=mtnlBCmHerKf8Q879eLnDJEOQK8W1BiYUPGGqs279ZE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qwmz3Dvlk2UxSJyEQXtu26x9aKYGqbNNJGhObaAa4ZOinaqJ4+SMFvtq0sREk6EYY
-         qugoG/AhhqhszXKLZSEKNJEl6dZzHQEdqBnQFwWUf+spbpN14wVYeEgfGO2z9vPupc
-         CNv9Yi+PhEKpQ1g1370+EmMcwpV9c3CxG5XLeBw8=
+        b=kwEUNkYlxAN6fY+PrrP7IZEGYhvU/qlbfJYsa4d2rA8OCaDX49mUvOX4MeL+vPbUj
+         LIbb7nGGUCb+SjHoKmxQTJeao75FKg1MVSRmfasXJAXAbakuYBnFP50VTCOfsh71sf
+         RhKKcs9TjfK+nVumlaf/tp7WyhrA0Ccpj6zu5k5U=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Paul Burton <paulburton@kernel.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 15/60] MIPS: Disable VDSO time functionality on microMIPS
+        stable@vger.kernel.org, Mansour Behabadi <mansour@oxplot.com>,
+        Jiri Kosina <jkosina@suse.cz>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 11/48] HID: apple: Add support for recent firmware on Magic Keyboards
 Date:   Thu, 19 Mar 2020 14:03:53 +0100
-Message-Id: <20200319123923.868277570@linuxfoundation.org>
+Message-Id: <20200319123906.693185664@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.2
-In-Reply-To: <20200319123919.441695203@linuxfoundation.org>
-References: <20200319123919.441695203@linuxfoundation.org>
+In-Reply-To: <20200319123902.941451241@linuxfoundation.org>
+References: <20200319123902.941451241@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,62 +43,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Paul Burton <paulburton@kernel.org>
+From: Mansour Behabadi <mansour@oxplot.com>
 
-[ Upstream commit 07015d7a103c4420b69a287b8ef4d2535c0f4106 ]
+[ Upstream commit e433be929e63265b7412478eb7ff271467aee2d7 ]
 
-A check we're about to add to pick up on function calls that depend on
-bogus use of the GOT in the VDSO picked up on instances of such function
-calls in microMIPS builds. Since the code appears genuinely problematic,
-and given the relatively small amount of use & testing that microMIPS
-sees, go ahead & disable the VDSO for microMIPS builds.
+Magic Keyboards with more recent firmware (0x0100) report Fn key differently.
+Without this patch, Fn key may not behave as expected and may not be
+configurable via hid_apple fnmode module parameter.
 
-Signed-off-by: Paul Burton <paulburton@kernel.org>
+Signed-off-by: Mansour Behabadi <mansour@oxplot.com>
+Signed-off-by: Jiri Kosina <jkosina@suse.cz>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/mips/vdso/Makefile | 19 +++++++++++++++++--
- 1 file changed, 17 insertions(+), 2 deletions(-)
+ drivers/hid/hid-apple.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/arch/mips/vdso/Makefile b/arch/mips/vdso/Makefile
-index 3fa4bbe1bae53..b6b1eb638fb14 100644
---- a/arch/mips/vdso/Makefile
-+++ b/arch/mips/vdso/Makefile
-@@ -48,6 +48,8 @@ endif
- 
- CFLAGS_REMOVE_vgettimeofday.o = -pg
- 
-+DISABLE_VDSO := n
-+
- #
- # For the pre-R6 code in arch/mips/vdso/vdso.h for locating
- # the base address of VDSO, the linker will emit a R_MIPS_PC32
-@@ -61,11 +63,24 @@ CFLAGS_REMOVE_vgettimeofday.o = -pg
- ifndef CONFIG_CPU_MIPSR6
-   ifeq ($(call ld-ifversion, -lt, 225000000, y),y)
-     $(warning MIPS VDSO requires binutils >= 2.25)
--    obj-vdso-y := $(filter-out vgettimeofday.o, $(obj-vdso-y))
--    ccflags-vdso += -DDISABLE_MIPS_VDSO
-+    DISABLE_VDSO := y
-   endif
- endif
- 
-+#
-+# GCC (at least up to version 9.2) appears to emit function calls that make use
-+# of the GOT when targeting microMIPS, which we can't use in the VDSO due to
-+# the lack of relocations. As such, we disable the VDSO for microMIPS builds.
-+#
-+ifdef CONFIG_CPU_MICROMIPS
-+  DISABLE_VDSO := y
-+endif
-+
-+ifeq ($(DISABLE_VDSO),y)
-+  obj-vdso-y := $(filter-out vgettimeofday.o, $(obj-vdso-y))
-+  ccflags-vdso += -DDISABLE_MIPS_VDSO
-+endif
-+
- # VDSO linker flags.
- VDSO_LDFLAGS := \
- 	-Wl,-Bsymbolic -Wl,--no-undefined -Wl,-soname=linux-vdso.so.1 \
+diff --git a/drivers/hid/hid-apple.c b/drivers/hid/hid-apple.c
+index d0a81a03ddbdd..8ab8f2350bbcd 100644
+--- a/drivers/hid/hid-apple.c
++++ b/drivers/hid/hid-apple.c
+@@ -343,7 +343,8 @@ static int apple_input_mapping(struct hid_device *hdev, struct hid_input *hi,
+ 		unsigned long **bit, int *max)
+ {
+ 	if (usage->hid == (HID_UP_CUSTOM | 0x0003) ||
+-			usage->hid == (HID_UP_MSVENDOR | 0x0003)) {
++			usage->hid == (HID_UP_MSVENDOR | 0x0003) ||
++			usage->hid == (HID_UP_HPVENDOR2 | 0x0003)) {
+ 		/* The fn key on Apple USB keyboards */
+ 		set_bit(EV_REP, hi->input->evbit);
+ 		hid_map_usage_clear(hi, usage, bit, max, EV_KEY, KEY_FN);
 -- 
 2.20.1
 
