@@ -2,99 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5CE7F18C27D
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 22:45:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8E08C18C277
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 22:45:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727296AbgCSVp4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 17:45:56 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:50486 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726619AbgCSVp4 (ORCPT
+        id S1727240AbgCSVpe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 17:45:34 -0400
+Received: from gateway31.websitewelcome.com ([192.185.144.95]:46406 "EHLO
+        gateway31.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725787AbgCSVpe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 17:45:56 -0400
-Received: by mail-wm1-f67.google.com with SMTP id z13so4456640wml.0
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Mar 2020 14:45:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=N4ZopA6jxYwy2PnkatOwlcBFmsjw5EoOzX8MW2R1axk=;
-        b=SCQoUMIyZ8Vbw+wdNtsMzgerp4TLRYoqfv9UdEI8qiiG2yej5r9RHT3QG3KuEakprQ
-         QlVMh79lPcgD52TLIjS02rbPaOmN3pzIWtOjDQSPxBl3MG029b9ZhSqcKGQtfFGgB9Nr
-         ETOO8pn5WfF8KQgR4ayiEWfDyr5kJU4XUyx3ym3e8SbXbUNGaj9HClhMarzLaoYW7kke
-         hO0uQf2m7qGJekB50ULI8hd1uMBqHxhsp47xVxMyyU4Yvj2SKl1kJOhAE6JiDuIpTUO1
-         UHa/VY8gHYgzqbeDGJGM0JDufqHDdIfOMD1dH91pSkZKPythVlpFVPy4QxEPTJDcCXgE
-         HRuw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=N4ZopA6jxYwy2PnkatOwlcBFmsjw5EoOzX8MW2R1axk=;
-        b=j+l4l5/qX0+r7OUJq/r5Cg9svKTuXM7EFRNMLMNDQB3kKCxfu9tYWHbhGTV+6p8zb+
-         ZEAHBwGHs8zUQkh5X6ORq0vf9v0Uc4huqbMyujfemTEcLYx0y+HOZTh0u+z0Uhvljai9
-         kbB9m4t0g+MFa9OhSmpRs5T2wG9dl6S+rA4k4EwsRXbqgThDR6YWwXAAEZzW4pH41LgF
-         mlBZ6kYe3+HW7/xHvRP3pHUUywCbBDIaeUnk7Pv/emsC8F/GNYqLp6/S7gB0rSsEIF5E
-         5e6OaTPCQY4fiiCOFLy56bjDI36FpZZoAmyqZgBb+waG9rC3eBKsC8EBw82qd7BsMT/d
-         aI3Q==
-X-Gm-Message-State: ANhLgQ0GgBWN7cb4+iEbYaygJaUTV44dDxGNU9uS3NcC05ZdOfcktrQn
-        OFc35ppywy0U8knz9gww/jE=
-X-Google-Smtp-Source: ADFU+vuUf/dMXXmerrEFIGVyIYt/t73qo9oj9x54KMu2VIM2+RSkINpbNE8HG8y9a2oI2vKGuxTOsg==
-X-Received: by 2002:a1c:7405:: with SMTP id p5mr6330915wmc.73.1584654354401;
-        Thu, 19 Mar 2020 14:45:54 -0700 (PDT)
-Received: from localhost.localdomain ([2a02:a58:8532:8700:6c17:119f:1ee1:b2f0])
-        by smtp.gmail.com with ESMTPSA id h10sm5360793wrb.24.2020.03.19.14.45.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 19 Mar 2020 14:45:53 -0700 (PDT)
-From:   Ilie Halip <ilie.halip@gmail.com>
-To:     Catalin Marinas <catalin.marinas@arm.com>
-Cc:     Ilie Halip <ilie.halip@gmail.com>, Will Deacon <will@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Sami Tolvanen <samitolvanen@google.com>,
-        Andre Przywara <andre.przywara@arm.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        clang-built-linux@googlegroups.com
-Subject: [PATCH] arm64: alternative: fix build with clang integrated assembler
-Date:   Thu, 19 Mar 2020 23:45:28 +0200
-Message-Id: <20200319214530.2046-1-ilie.halip@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Thu, 19 Mar 2020 17:45:34 -0400
+Received: from cm11.websitewelcome.com (cm11.websitewelcome.com [100.42.49.5])
+        by gateway31.websitewelcome.com (Postfix) with ESMTP id BAF4353
+        for <linux-kernel@vger.kernel.org>; Thu, 19 Mar 2020 16:45:33 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id F2yrjFnyWSl8qF2yrjoSHb; Thu, 19 Mar 2020 16:45:33 -0500
+X-Authority-Reason: nr=8
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
+        Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=WTd7EnKGo4FHnu7wihfWR6l+ZPWeBMrxMRWj0hfozns=; b=iEW0dPXzzTfXLnGkz53SLNDyD3
+        CTTLk+c944hiowrTvKsJ+qJ1lQ4KKtc0l+lDpE+nETILJ/ZLuiv4CIF3Fzc94tRlZSztYKy3spgyS
+        SA1fMFZMgsS0wAWyrsSyU1qstD4dsnU8sIurO1XEqbC2b12X83lhwbbo4nGZeBwIBvQUNPEjJsQkQ
+        xPutaP+4ieTHk1841qOOyViu9TtIJgLUvtoAUZ1vwJLQ0rGOlKP69WSl3kPZ24ddJV2CeyEs5bFKM
+        c8BMHILYtOqOdzIUnxpRvD91hnSXK1Uk65y7Z75KLzqJjvxRT6+IVyndDdJ2N7PxT6ngcjUpAl0Aw
+        bb21qTTQ==;
+Received: from cablelink-189-218-116-241.hosts.intercable.net ([189.218.116.241]:53386 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.92)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1jF2yq-001ks2-2s; Thu, 19 Mar 2020 16:45:32 -0500
+Date:   Thu, 19 Mar 2020 16:45:31 -0500
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <maz@kernel.org>
+Cc:     linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH][next] irqchip: qcom-irq-combiner: Replace zero-length array
+ with flexible-array member
+Message-ID: <20200319214531.GA21326@embeddedor.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.218.116.241
+X-Source-L: No
+X-Exim-ID: 1jF2yq-001ks2-2s
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: cablelink-189-218-116-241.hosts.intercable.net (embeddedor) [189.218.116.241]:53386
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 64
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Building an arm64 defconfig with clang's integrated assembler, this error
-occurs:
-    <instantiation>:2:2: error: unrecognized instruction mnemonic
-     _ASM_EXTABLE 9999b, 9f
-     ^
-    arch/arm64/mm/cache.S:50:1: note: while in macro instantiation
-    user_alt 9f, "dc cvau, x4", "dc civac, x4", 0
-    ^
+The current codebase makes use of the zero-length array language
+extension to the C90 standard, but the preferred mechanism to declare
+variable-length types such as these ones is a flexible array member[1][2],
+introduced in C99:
 
-While GNU as seems fine with case-sensitive macro instantiations, clang
-doesn't, so use the actual macro name (_asm_extable) as in the rest of
-the file.
+struct foo {
+        int stuff;
+        struct boo array[];
+};
 
-Also checked that the generated assembly matches the GCC output.
+By making use of the mechanism above, we will get a compiler warning
+in case the flexible array does not occur last in the structure, which
+will help us prevent some kind of undefined behavior bugs from being
+inadvertently introduced[3] to the codebase from now on.
 
-Fixes: 290622efc76e ("arm64: fix "dc cvau" cache operation on errata-affected core")
-Link: https://github.com/ClangBuiltLinux/linux/issues/924
-Signed-off-by: Ilie Halip <ilie.halip@gmail.com>
+Also, notice that, dynamic memory allocations won't be affected by
+this change:
+
+"Flexible array members have incomplete type, and so the sizeof operator
+may not be applied. As a quirk of the original implementation of
+zero-length arrays, sizeof evaluates to zero."[1]
+
+This issue was found with the help of Coccinelle.
+
+[1] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
+[2] https://github.com/KSPP/linux/issues/21
+[3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
+
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 ---
- arch/arm64/include/asm/alternative.h | 2 +-
+ drivers/irqchip/qcom-irq-combiner.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm64/include/asm/alternative.h b/arch/arm64/include/asm/alternative.h
-index 324e7d5ab37e..5e5dc05d63a0 100644
---- a/arch/arm64/include/asm/alternative.h
-+++ b/arch/arm64/include/asm/alternative.h
-@@ -221,7 +221,7 @@ alternative_endif
+diff --git a/drivers/irqchip/qcom-irq-combiner.c b/drivers/irqchip/qcom-irq-combiner.c
+index abfe59284ff2..aa54bfcb0433 100644
+--- a/drivers/irqchip/qcom-irq-combiner.c
++++ b/drivers/irqchip/qcom-irq-combiner.c
+@@ -33,7 +33,7 @@ struct combiner {
+ 	int                 parent_irq;
+ 	u32                 nirqs;
+ 	u32                 nregs;
+-	struct combiner_reg regs[0];
++	struct combiner_reg regs[];
+ };
  
- .macro user_alt, label, oldinstr, newinstr, cond
- 9999:	alternative_insn "\oldinstr", "\newinstr", \cond
--	_ASM_EXTABLE 9999b, \label
-+	_asm_extable 9999b, \label
- .endm
- 
- /*
+ static inline int irq_nr(u32 reg, u32 bit)
 -- 
-2.17.1
+2.23.0
 
