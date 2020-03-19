@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DB70118B7E3
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:36:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 37DD818B781
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:34:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728277AbgCSNJP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 09:09:15 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53580 "EHLO mail.kernel.org"
+        id S1728361AbgCSNNE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 09:13:04 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59576 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728275AbgCSNJM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 09:09:12 -0400
+        id S1729021AbgCSNM7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 09:12:59 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 122732145D;
-        Thu, 19 Mar 2020 13:09:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0B920215A4;
+        Thu, 19 Mar 2020 13:12:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584623351;
-        bh=JkTM20Kk2R0YWQ3TX/NJ6Uv6Q9HIqDn2yyxbsoFnRzs=;
+        s=default; t=1584623578;
+        bh=JuW9RWEn+7NdyIv+I+mV1pt2r3wYlQSP1gc80Cfe0Yc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=iZ9ZcsgXupHDs8LjHCmMHd7cvSy+r4na2U4RzEzzS9dXKNlhHV7cpIhz2fV2lTk87
-         MAFScz0bIaQxe4mibrXleSuAuNe8r6rcmiVb15rsSsU+wbjiqkZQEMfNSGqw4fPDKV
-         6Av0T9lfrKGdzu56V7nf/ZSD1vIzc27AmQj1neOg=
+        b=uT2ettCYfopRQ7tq7EPljvNCrhI5bVwEcwBJ7DdsD2OdGpGnYaYskoZekozpq2lOE
+         eclDulLtK9+DuT/u1xvFblNbDIa+h9c4SSzv7uBBTqMjkY0OETTo+HdaDVa7Vntcrn
+         rntvld3qJIyTJPYEcgtOB99aT0TQrCEpPpJPOr4g=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Sven Eckelmann <sven@narfation.org>,
+        =?UTF-8?q?Linus=20L=FCssing?= <linus.luessing@c0d3.blue>,
+        Antonio Quartulli <a@unstable.cc>,
         Simon Wunderlich <sw@simonwunderlich.de>
-Subject: [PATCH 4.4 74/93] batman-adv: Fix debugfs path for renamed softif
-Date:   Thu, 19 Mar 2020 14:00:18 +0100
-Message-Id: <20200319123948.301736883@linuxfoundation.org>
+Subject: [PATCH 4.9 57/90] batman-adv: fix TT sync flag inconsistencies
+Date:   Thu, 19 Mar 2020 14:00:19 +0100
+Message-Id: <20200319123945.984996412@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.2
-In-Reply-To: <20200319123924.795019515@linuxfoundation.org>
-References: <20200319123924.795019515@linuxfoundation.org>
+In-Reply-To: <20200319123928.635114118@linuxfoundation.org>
+References: <20200319123928.635114118@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,139 +44,209 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sven Eckelmann <sven@narfation.org>
+From: Linus Lüssing <linus.luessing@c0d3.blue>
 
-commit 6da7be7d24b2921f8215473ba7552796dff05fe1 upstream.
+commit 54e22f265e872ae140755b3318521d400a094605 upstream.
 
-batman-adv is creating special debugfs directories in the init
-net_namespace for each created soft-interface (batadv net_device). But it
-is possible to rename a net_device to a completely different name then the
-original one.
+This patch fixes an issue in the translation table code potentially
+leading to a TT Request + Response storm. The issue may occur for nodes
+involving BLA and an inconsistent configuration of the batman-adv AP
+isolation feature. However, since the new multicast optimizations, a
+single, malformed packet may lead to a mesh-wide, persistent
+Denial-of-Service, too.
 
-It can therefore happen that a user registers a new batadv net_device with
-the name "bat0". batman-adv is then also adding a new directory under
-$debugfs/batman-adv/ with the name "wlan0".
+The issue occurs because nodes are currently OR-ing the TT sync flags of
+all originators announcing a specific MAC address via the
+translation table. When an intermediate node now receives a TT Request
+and wants to answer this on behalf of the destination node, then this
+intermediate node now responds with an altered flag field and broken
+CRC. The next OGM of the real destination will lead to a CRC mismatch
+and triggering a TT Request and Response again.
 
-The user then decides to rename this device to "bat1" and registers a
-different batadv device with the name "bat0". batman-adv will then try to
-create a directory with the name "bat0" under $debugfs/batman-adv/ again.
-But there already exists one with this name under this path and thus this
-fails. batman-adv will detect a problem and rollback the registering of
-this device.
+Furthermore, the OR-ing is currently never undone as long as at least
+one originator announcing the according MAC address remains, leading to
+the potential persistency of this issue.
 
-batman-adv must therefore take care of renaming the debugfs directories for
-soft-interfaces whenever it detects such a net_device rename.
+This patch fixes this issue by storing the flags used in the CRC
+calculation on a a per TT orig entry basis to be able to respond with
+the correct, original flags in an intermediate TT Response for one
+thing. And to be able to correctly unset sync flags once all nodes
+announcing a sync flag vanish for another.
 
-Fixes: c6c8fea29769 ("net: Add batman-adv meshing protocol")
-Signed-off-by: Sven Eckelmann <sven@narfation.org>
+Fixes: e9c00136a475 ("batman-adv: fix tt_global_entries flags update")
+Signed-off-by: Linus Lüssing <linus.luessing@c0d3.blue>
+Acked-by: Antonio Quartulli <a@unstable.cc>
+[sw: typo in commit message]
 Signed-off-by: Simon Wunderlich <sw@simonwunderlich.de>
-Signed-off-by: Sven Eckelmann <sven@narfation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/batman-adv/debugfs.c        |   20 ++++++++++++++++++++
- net/batman-adv/debugfs.h        |    5 +++++
- net/batman-adv/hard-interface.c |   34 ++++++++++++++++++++++++++++------
- 3 files changed, 53 insertions(+), 6 deletions(-)
+ net/batman-adv/translation-table.c |   60 +++++++++++++++++++++++++++++++------
+ net/batman-adv/types.h             |    2 +
+ 2 files changed, 53 insertions(+), 9 deletions(-)
 
---- a/net/batman-adv/debugfs.c
-+++ b/net/batman-adv/debugfs.c
-@@ -581,6 +581,26 @@ out:
- 	return -ENOMEM;
+--- a/net/batman-adv/translation-table.c
++++ b/net/batman-adv/translation-table.c
+@@ -1560,9 +1560,41 @@ batadv_tt_global_entry_has_orig(const st
+ 	return found;
  }
  
 +/**
-+ * batadv_debugfs_rename_meshif() - Fix debugfs path for renamed softif
-+ * @dev: net_device which was renamed
-+ */
-+void batadv_debugfs_rename_meshif(struct net_device *dev)
-+{
-+	struct batadv_priv *bat_priv = netdev_priv(dev);
-+	const char *name = dev->name;
-+	struct dentry *dir;
-+	struct dentry *d;
-+
-+	dir = bat_priv->debug_dir;
-+	if (!dir)
-+		return;
-+
-+	d = debugfs_rename(dir->d_parent, dir, dir->d_parent, name);
-+	if (!d)
-+		pr_err("Can't rename debugfs dir to %s\n", name);
-+}
-+
- void batadv_debugfs_del_meshif(struct net_device *dev)
- {
- 	struct batadv_priv *bat_priv = netdev_priv(dev);
---- a/net/batman-adv/debugfs.h
-+++ b/net/batman-adv/debugfs.h
-@@ -31,6 +31,7 @@ struct net_device;
- void batadv_debugfs_init(void);
- void batadv_debugfs_destroy(void);
- int batadv_debugfs_add_meshif(struct net_device *dev);
-+void batadv_debugfs_rename_meshif(struct net_device *dev);
- void batadv_debugfs_del_meshif(struct net_device *dev);
- int batadv_debugfs_add_hardif(struct batadv_hard_iface *hard_iface);
- void batadv_debugfs_rename_hardif(struct batadv_hard_iface *hard_iface);
-@@ -51,6 +52,10 @@ static inline int batadv_debugfs_add_mes
- 	return 0;
- }
- 
-+static inline void batadv_debugfs_rename_meshif(struct net_device *dev)
-+{
-+}
-+
- static inline void batadv_debugfs_del_meshif(struct net_device *dev)
- {
- }
---- a/net/batman-adv/hard-interface.c
-+++ b/net/batman-adv/hard-interface.c
-@@ -725,6 +725,32 @@ void batadv_hardif_remove_interfaces(voi
- 	rtnl_unlock();
- }
- 
-+/**
-+ * batadv_hard_if_event_softif() - Handle events for soft interfaces
-+ * @event: NETDEV_* event to handle
-+ * @net_dev: net_device which generated an event
++ * batadv_tt_global_sync_flags - update TT sync flags
++ * @tt_global: the TT global entry to update sync flags in
 + *
-+ * Return: NOTIFY_* result
++ * Updates the sync flag bits in the tt_global flag attribute with a logical
++ * OR of all sync flags from any of its TT orig entries.
 + */
-+static int batadv_hard_if_event_softif(unsigned long event,
-+				       struct net_device *net_dev)
++static void
++batadv_tt_global_sync_flags(struct batadv_tt_global_entry *tt_global)
 +{
-+	struct batadv_priv *bat_priv;
++	struct batadv_tt_orig_list_entry *orig_entry;
++	const struct hlist_head *head;
++	u16 flags = BATADV_NO_FLAGS;
 +
-+	switch (event) {
-+	case NETDEV_REGISTER:
-+		batadv_sysfs_add_meshif(net_dev);
-+		bat_priv = netdev_priv(net_dev);
-+		batadv_softif_create_vlan(bat_priv, BATADV_NO_FLAGS);
-+		break;
-+	case NETDEV_CHANGENAME:
-+		batadv_debugfs_rename_meshif(net_dev);
-+		break;
-+	}
++	rcu_read_lock();
++	head = &tt_global->orig_list;
++	hlist_for_each_entry_rcu(orig_entry, head, list)
++		flags |= orig_entry->flags;
++	rcu_read_unlock();
 +
-+	return NOTIFY_DONE;
++	flags |= tt_global->common.flags & (~BATADV_TT_SYNC_MASK);
++	tt_global->common.flags = flags;
 +}
 +
- static int batadv_hard_if_event(struct notifier_block *this,
- 				unsigned long event, void *ptr)
++/**
++ * batadv_tt_global_orig_entry_add - add or update a TT orig entry
++ * @tt_global: the TT global entry to add an orig entry in
++ * @orig_node: the originator to add an orig entry for
++ * @ttvn: translation table version number of this changeset
++ * @flags: TT sync flags
++ */
+ static void
+ batadv_tt_global_orig_entry_add(struct batadv_tt_global_entry *tt_global,
+-				struct batadv_orig_node *orig_node, int ttvn)
++				struct batadv_orig_node *orig_node, int ttvn,
++				u8 flags)
  {
-@@ -733,12 +759,8 @@ static int batadv_hard_if_event(struct n
- 	struct batadv_hard_iface *primary_if = NULL;
- 	struct batadv_priv *bat_priv;
+ 	struct batadv_tt_orig_list_entry *orig_entry;
  
--	if (batadv_softif_is_valid(net_dev) && event == NETDEV_REGISTER) {
--		batadv_sysfs_add_meshif(net_dev);
--		bat_priv = netdev_priv(net_dev);
--		batadv_softif_create_vlan(bat_priv, BATADV_NO_FLAGS);
--		return NOTIFY_DONE;
--	}
-+	if (batadv_softif_is_valid(net_dev))
-+		return batadv_hard_if_event_softif(event, net_dev);
+@@ -1574,7 +1606,8 @@ batadv_tt_global_orig_entry_add(struct b
+ 		 * was added during a "temporary client detection"
+ 		 */
+ 		orig_entry->ttvn = ttvn;
+-		goto out;
++		orig_entry->flags = flags;
++		goto sync_flags;
+ 	}
  
- 	hard_iface = batadv_hardif_get_by_netdev(net_dev);
- 	if (!hard_iface && event == NETDEV_REGISTER)
+ 	orig_entry = kmem_cache_zalloc(batadv_tt_orig_cache, GFP_ATOMIC);
+@@ -1586,6 +1619,7 @@ batadv_tt_global_orig_entry_add(struct b
+ 	batadv_tt_global_size_inc(orig_node, tt_global->common.vid);
+ 	orig_entry->orig_node = orig_node;
+ 	orig_entry->ttvn = ttvn;
++	orig_entry->flags = flags;
+ 	kref_init(&orig_entry->refcount);
+ 
+ 	kref_get(&orig_entry->refcount);
+@@ -1593,6 +1627,8 @@ batadv_tt_global_orig_entry_add(struct b
+ 			   &tt_global->orig_list);
+ 	atomic_inc(&tt_global->orig_list_count);
+ 
++sync_flags:
++	batadv_tt_global_sync_flags(tt_global);
+ out:
+ 	if (orig_entry)
+ 		batadv_tt_orig_list_entry_put(orig_entry);
+@@ -1716,10 +1752,10 @@ static bool batadv_tt_global_add(struct
+ 		}
+ 
+ 		/* the change can carry possible "attribute" flags like the
+-		 * TT_CLIENT_WIFI, therefore they have to be copied in the
++		 * TT_CLIENT_TEMP, therefore they have to be copied in the
+ 		 * client entry
+ 		 */
+-		common->flags |= flags;
++		common->flags |= flags & (~BATADV_TT_SYNC_MASK);
+ 
+ 		/* If there is the BATADV_TT_CLIENT_ROAM flag set, there is only
+ 		 * one originator left in the list and we previously received a
+@@ -1736,7 +1772,8 @@ static bool batadv_tt_global_add(struct
+ 	}
+ add_orig_entry:
+ 	/* add the new orig_entry (if needed) or update it */
+-	batadv_tt_global_orig_entry_add(tt_global_entry, orig_node, ttvn);
++	batadv_tt_global_orig_entry_add(tt_global_entry, orig_node, ttvn,
++					flags & BATADV_TT_SYNC_MASK);
+ 
+ 	batadv_dbg(BATADV_DBG_TT, bat_priv,
+ 		   "Creating new global tt entry: %pM (vid: %d, via %pM)\n",
+@@ -1959,6 +1996,7 @@ batadv_tt_global_dump_subentry(struct sk
+ 			       struct batadv_tt_orig_list_entry *orig,
+ 			       bool best)
+ {
++	u16 flags = (common->flags & (~BATADV_TT_SYNC_MASK)) | orig->flags;
+ 	void *hdr;
+ 	struct batadv_orig_node_vlan *vlan;
+ 	u8 last_ttvn;
+@@ -1988,7 +2026,7 @@ batadv_tt_global_dump_subentry(struct sk
+ 	    nla_put_u8(msg, BATADV_ATTR_TT_LAST_TTVN, last_ttvn) ||
+ 	    nla_put_u32(msg, BATADV_ATTR_TT_CRC32, crc) ||
+ 	    nla_put_u16(msg, BATADV_ATTR_TT_VID, common->vid) ||
+-	    nla_put_u32(msg, BATADV_ATTR_TT_FLAGS, common->flags))
++	    nla_put_u32(msg, BATADV_ATTR_TT_FLAGS, flags))
+ 		goto nla_put_failure;
+ 
+ 	if (best && nla_put_flag(msg, BATADV_ATTR_FLAG_BEST))
+@@ -2602,6 +2640,7 @@ static u32 batadv_tt_global_crc(struct b
+ 				unsigned short vid)
+ {
+ 	struct batadv_hashtable *hash = bat_priv->tt.global_hash;
++	struct batadv_tt_orig_list_entry *tt_orig;
+ 	struct batadv_tt_common_entry *tt_common;
+ 	struct batadv_tt_global_entry *tt_global;
+ 	struct hlist_head *head;
+@@ -2640,8 +2679,9 @@ static u32 batadv_tt_global_crc(struct b
+ 			/* find out if this global entry is announced by this
+ 			 * originator
+ 			 */
+-			if (!batadv_tt_global_entry_has_orig(tt_global,
+-							     orig_node))
++			tt_orig = batadv_tt_global_orig_entry_find(tt_global,
++								   orig_node);
++			if (!tt_orig)
+ 				continue;
+ 
+ 			/* use network order to read the VID: this ensures that
+@@ -2653,10 +2693,12 @@ static u32 batadv_tt_global_crc(struct b
+ 			/* compute the CRC on flags that have to be kept in sync
+ 			 * among nodes
+ 			 */
+-			flags = tt_common->flags & BATADV_TT_SYNC_MASK;
++			flags = tt_orig->flags;
+ 			crc_tmp = crc32c(crc_tmp, &flags, sizeof(flags));
+ 
+ 			crc ^= crc32c(crc_tmp, tt_common->addr, ETH_ALEN);
++
++			batadv_tt_orig_list_entry_put(tt_orig);
+ 		}
+ 		rcu_read_unlock();
+ 	}
+--- a/net/batman-adv/types.h
++++ b/net/batman-adv/types.h
+@@ -1241,6 +1241,7 @@ struct batadv_tt_global_entry {
+  * struct batadv_tt_orig_list_entry - orig node announcing a non-mesh client
+  * @orig_node: pointer to orig node announcing this non-mesh client
+  * @ttvn: translation table version number which added the non-mesh client
++ * @flags: per orig entry TT sync flags
+  * @list: list node for batadv_tt_global_entry::orig_list
+  * @refcount: number of contexts the object is used
+  * @rcu: struct used for freeing in an RCU-safe manner
+@@ -1248,6 +1249,7 @@ struct batadv_tt_global_entry {
+ struct batadv_tt_orig_list_entry {
+ 	struct batadv_orig_node *orig_node;
+ 	u8 ttvn;
++	u8 flags;
+ 	struct hlist_node list;
+ 	struct kref refcount;
+ 	struct rcu_head rcu;
 
 
