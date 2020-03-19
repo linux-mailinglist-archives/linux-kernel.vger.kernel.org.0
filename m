@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6A46E18B4BB
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:12:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9FF3D18B44E
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:08:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728884AbgCSNML (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 09:12:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57904 "EHLO mail.kernel.org"
+        id S1728157AbgCSNIa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 09:08:30 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52550 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728871AbgCSNMJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 09:12:09 -0400
+        id S1727103AbgCSNIY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 09:08:24 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D4FCB214D8;
-        Thu, 19 Mar 2020 13:12:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4FC05208D5;
+        Thu, 19 Mar 2020 13:08:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584623529;
-        bh=OfsedxmK4TPiOPN8/EEvFW/4RJAWEZE+Il8R1ySVLkw=;
+        s=default; t=1584623303;
+        bh=CsQT18CPjTjTSx68+Br9l53FvcOFAGgFl8ji2Gx8FMI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=TPar4gaZeEwjo0UI5sM3Q31pBQstajB5shZXMGU/eThLfei8p59D3VIln9CrCXuDU
-         LVdbsn3X4Wfw/CSTtqyj2CZoCyR6e4OoiJ+LHtOB1TBBskYeG+9RLFmV+gCQkx7T3d
-         L4IKGzPQCEjwXlS60miui9bY1aR9GMQvWxLu/uVg=
+        b=TzrI35XuZsmEumHF7docExG3onYQfYwJLOO8Km6DWEGntn8DOk8payA71RKf16Yq3
+         o8XDG0s3On+OQK2JDyVM+Qjrzqdc+Wtr/5OAQh8BYLI7kaDMuUKhAimzgsAm8BSpEO
+         Wi8zzcRQk0+SyV/5mRJAWZjryoSD9MmOJdunTJh4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Lu Baolu <baolu.lu@linux.intel.com>,
-        Moritz Fischer <mdf@kernel.org>,
-        Yonghyun Hwang <yonghyun@google.com>,
-        Joerg Roedel <jroedel@suse.de>
-Subject: [PATCH 4.9 41/90] iommu/vt-d: Fix a bug in intel_iommu_iova_to_phys() for huge page
-Date:   Thu, 19 Mar 2020 14:00:03 +0100
-Message-Id: <20200319123941.385666053@linuxfoundation.org>
+        Sven Eckelmann <sven@narfation.org>,
+        Antonio Quartulli <a@unstable.cc>,
+        Marek Lindner <mareklindner@neomailbox.ch>,
+        Simon Wunderlich <sw@simonwunderlich.de>
+Subject: [PATCH 4.4 60/93] batman-adv: Fix speedy join in gateway client mode
+Date:   Thu, 19 Mar 2020 14:00:04 +0100
+Message-Id: <20200319123943.958803953@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.2
-In-Reply-To: <20200319123928.635114118@linuxfoundation.org>
-References: <20200319123928.635114118@linuxfoundation.org>
+In-Reply-To: <20200319123924.795019515@linuxfoundation.org>
+References: <20200319123924.795019515@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,41 +45,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yonghyun Hwang <yonghyun@google.com>
+From: Sven Eckelmann <sven@narfation.org>
 
-commit 77a1bce84bba01f3f143d77127b72e872b573795 upstream.
+commit d1fe176ca51fa3cb35f70c1d876d9a090e9befce upstream.
 
-intel_iommu_iova_to_phys() has a bug when it translates an IOVA for a huge
-page onto its corresponding physical address. This commit fixes the bug by
-accomodating the level of page entry for the IOVA and adds IOVA's lower
-address to the physical address.
+Speedy join only works when the received packet is either broadcast or an
+4addr unicast packet. Thus packets converted from broadcast to unicast via
+the gateway handling code have to be converted to 4addr packets to allow
+the receiving gateway server to add the sender address as temporary entry
+to the translation table.
 
-Cc: <stable@vger.kernel.org>
-Acked-by: Lu Baolu <baolu.lu@linux.intel.com>
-Reviewed-by: Moritz Fischer <mdf@kernel.org>
-Signed-off-by: Yonghyun Hwang <yonghyun@google.com>
-Fixes: 3871794642579 ("VT-d: Changes to support KVM")
-Signed-off-by: Joerg Roedel <jroedel@suse.de>
+Not doing it will make the batman-adv gateway server drop the DHCP response
+in many situations because it doesn't yet have the TT entry for the
+destination of the DHCP response.
+
+Fixes: 371351731e9c ("batman-adv: change interface_rx to get orig node")
+Signed-off-by: Sven Eckelmann <sven@narfation.org>
+Acked-by: Antonio Quartulli <a@unstable.cc>
+Signed-off-by: Marek Lindner <mareklindner@neomailbox.ch>
+Signed-off-by: Simon Wunderlich <sw@simonwunderlich.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/iommu/intel-iommu.c |    6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ net/batman-adv/send.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/iommu/intel-iommu.c
-+++ b/drivers/iommu/intel-iommu.c
-@@ -5193,8 +5193,10 @@ static phys_addr_t intel_iommu_iova_to_p
- 	u64 phys = 0;
+--- a/net/batman-adv/send.c
++++ b/net/batman-adv/send.c
+@@ -381,8 +381,8 @@ int batadv_send_skb_via_gw(struct batadv
+ 	struct batadv_orig_node *orig_node;
  
- 	pte = pfn_to_dma_pte(dmar_domain, iova >> VTD_PAGE_SHIFT, &level);
--	if (pte)
--		phys = dma_pte_addr(pte);
-+	if (pte && dma_pte_present(pte))
-+		phys = dma_pte_addr(pte) +
-+			(iova & (BIT_MASK(level_to_offset_bits(level) +
-+						VTD_PAGE_SHIFT) - 1));
- 
- 	return phys;
+ 	orig_node = batadv_gw_get_selected_orig(bat_priv);
+-	return batadv_send_skb_unicast(bat_priv, skb, BATADV_UNICAST, 0,
+-				       orig_node, vid);
++	return batadv_send_skb_unicast(bat_priv, skb, BATADV_UNICAST_4ADDR,
++				       BATADV_P_DATA, orig_node, vid);
  }
+ 
+ void batadv_schedule_bat_ogm(struct batadv_hard_iface *hard_iface)
 
 
