@@ -2,22 +2,22 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C7FA118C262
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 22:38:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A575718C264
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 22:40:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726930AbgCSVin (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 17:38:43 -0400
-Received: from gateway31.websitewelcome.com ([192.185.144.95]:40462 "EHLO
-        gateway31.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725895AbgCSVin (ORCPT
+        id S1727103AbgCSVkM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 17:40:12 -0400
+Received: from gateway22.websitewelcome.com ([192.185.47.144]:45364 "EHLO
+        gateway22.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725768AbgCSVkL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 17:38:43 -0400
-Received: from cm11.websitewelcome.com (cm11.websitewelcome.com [100.42.49.5])
-        by gateway31.websitewelcome.com (Postfix) with ESMTP id E474D2CD8
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Mar 2020 16:38:42 -0500 (CDT)
+        Thu, 19 Mar 2020 17:40:11 -0400
+Received: from cm12.websitewelcome.com (cm12.websitewelcome.com [100.42.49.8])
+        by gateway22.websitewelcome.com (Postfix) with ESMTP id 956339BE8
+        for <linux-kernel@vger.kernel.org>; Thu, 19 Mar 2020 16:40:10 -0500 (CDT)
 Received: from gator4166.hostgator.com ([108.167.133.22])
         by cmsmtp with SMTP
-        id F2sEjFh9gSl8qF2sEjoLWO; Thu, 19 Mar 2020 16:38:42 -0500
+        id F2tejzJ6n1s2xF2tejhgeO; Thu, 19 Mar 2020 16:40:10 -0500
 X-Authority-Reason: nr=8
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
@@ -25,26 +25,27 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
         :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
         List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=8t+GKURvPsiO09P1cerppTv6KLHnl8mv7NQMq1iJcNM=; b=ySM5kIDMuSsDptGkthLtuvRg7z
-        AHjQu993DIg+zVXmTFYBvwUSfH38F8YRbaUBx5nS3bw3OFdIj+ORziSAD/H1MXC9jGyEXALYJp9VM
-        0KR9g9foGdFdFdkHxSXxA0kcDuQTvxRvw83/YgYiyQ6fYR4K/pBegimesX29m9jysPtdFbTJuKpLh
-        Zd91PNJXiVV+VIYpicABw/dQ6FI4ZsrmyJsY8LjNzE2xeUnK2VJxyz5ubdid3gzOLzVgxZxVgoGyy
-        SWZIcIUE43DL0NgOlcxQFjYoVMBKV+K32YzVsCLPvQ7B0u9yVPs2lB5fy1VAAMkw5iW+mFipm1AIq
-        VVe5OPCw==;
-Received: from cablelink-189-218-116-241.hosts.intercable.net ([189.218.116.241]:53364 helo=embeddedor)
+        bh=oA/NJzx0KXN+QumtJADitL2cYB/VD8HJ14U8VnEp9zA=; b=JRnvCmww/9bMYZ7+kD7HHrRpyB
+        7dyWttXY5Z7XmETXNeoPM/TgZfMh9kdhfJVaOqwtO6SSkCy0FWCN7trwktbppOe5YOow9ubVoFZP8
+        H5MjhsO10o/N4CwXVNd1mCbABooStdUjOfZtt8ekPF3Jg/9MTCu1qfnSe2uTMNr6kHsMou6xiaGqt
+        zPOatNuxUDVRgh48lxdGpF9M+TnTCtcSDHdo74KI3dpJPRolopCgmfRtVO2e9X1XhPIcOQd32b9cz
+        yzkk50vpQl20IZtHA1NwK6q2FUxoZws9qhB+gYEo2HsAFfp0z2euLWZeq592hCu6rAmTJ/0FwV/+I
+        ETThXjBQ==;
+Received: from cablelink-189-218-116-241.hosts.intercable.net ([189.218.116.241]:53372 helo=embeddedor)
         by gator4166.hostgator.com with esmtpa (Exim 4.92)
         (envelope-from <gustavo@embeddedor.com>)
-        id 1jF2sC-001gsA-8G; Thu, 19 Mar 2020 16:38:40 -0500
-Date:   Thu, 19 Mar 2020 16:38:39 -0500
+        id 1jF2tc-001i0U-04; Thu, 19 Mar 2020 16:40:08 -0500
+Date:   Thu, 19 Mar 2020 16:40:07 -0500
 From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Ohad Ben-Cohen <ohad@wizery.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Baolin Wang <baolin.wang7@gmail.com>
-Cc:     linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+To:     Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>
+Cc:     linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH][next] hwspinlock: hwspinlock_internal.h: Replace zero-length
- array with flexible-array member
-Message-ID: <20200319213839.GA10669@embeddedor.com>
+Subject: [PATCH][next] hwtracing: stm: stm.h: Replace zero-length array with
+ flexible-array member
+Message-ID: <20200319214007.GA13640@embeddedor.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -57,13 +58,13 @@ X-AntiAbuse: Sender Address Domain - embeddedor.com
 X-BWhitelist: no
 X-Source-IP: 189.218.116.241
 X-Source-L: No
-X-Exim-ID: 1jF2sC-001gsA-8G
+X-Exim-ID: 1jF2tc-001i0U-04
 X-Source: 
 X-Source-Args: 
 X-Source-Dir: 
-X-Source-Sender: cablelink-189-218-116-241.hosts.intercable.net (embeddedor) [189.218.116.241]:53364
+X-Source-Sender: cablelink-189-218-116-241.hosts.intercable.net (embeddedor) [189.218.116.241]:53372
 X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 41
+X-Email-Count: 47
 X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
 X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
@@ -101,22 +102,31 @@ This issue was found with the help of Coccinelle.
 
 Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 ---
- drivers/hwspinlock/hwspinlock_internal.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/hwtracing/stm/stm.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/hwspinlock/hwspinlock_internal.h b/drivers/hwspinlock/hwspinlock_internal.h
-index 9eb6bd020dc7..29892767bb7a 100644
---- a/drivers/hwspinlock/hwspinlock_internal.h
-+++ b/drivers/hwspinlock/hwspinlock_internal.h
-@@ -56,7 +56,7 @@ struct hwspinlock_device {
- 	const struct hwspinlock_ops *ops;
- 	int base_id;
- 	int num_locks;
--	struct hwspinlock lock[0];
-+	struct hwspinlock lock[];
+diff --git a/drivers/hwtracing/stm/stm.h b/drivers/hwtracing/stm/stm.h
+index 3569439d53bb..a9be49fc7a6b 100644
+--- a/drivers/hwtracing/stm/stm.h
++++ b/drivers/hwtracing/stm/stm.h
+@@ -23,7 +23,7 @@ void *stp_policy_node_priv(struct stp_policy_node *pn);
+ 
+ struct stp_master {
+ 	unsigned int	nr_free;
+-	unsigned long	chan_map[0];
++	unsigned long	chan_map[];
  };
  
- static inline int hwlock_to_id(struct hwspinlock *hwlock)
+ struct stm_device {
+@@ -42,7 +42,7 @@ struct stm_device {
+ 	const struct config_item_type		*pdrv_node_type;
+ 	/* master allocation */
+ 	spinlock_t		mc_lock;
+-	struct stp_master	*masters[0];
++	struct stp_master	*masters[];
+ };
+ 
+ #define to_stm_device(_d)				\
 -- 
 2.23.0
 
