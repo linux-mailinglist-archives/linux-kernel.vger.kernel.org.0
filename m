@@ -2,109 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9F3BA18BF05
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 19:06:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3DDF018BF10
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 19:08:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727750AbgCSSGU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 14:06:20 -0400
-Received: from mga17.intel.com ([192.55.52.151]:40562 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726934AbgCSSGU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 14:06:20 -0400
-IronPort-SDR: AO+U2krxO3d2qTWZWe4xfRVG1lzbgSNJFjq8cPmIQb4GT99Oauh9HYISr2JFJzv8xUPFNrmLzO
- qacpu61ZpczQ==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Mar 2020 11:06:19 -0700
-IronPort-SDR: wY9apHSG+efZiE2WRme6pg1PFqdInDc/Vg4Kcb1qPG1gRYuKc41C8aBM/6AAdVksyUT2Yia2PF
- 6C3Xwv9R6LrA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,572,1574150400"; 
-   d="scan'208";a="245239663"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
-  by orsmga003.jf.intel.com with ESMTP; 19 Mar 2020 11:06:16 -0700
-Received: from andy by smile with local (Exim 4.93)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1jEzYg-00B9rN-LQ; Thu, 19 Mar 2020 20:06:18 +0200
-Date:   Thu, 19 Mar 2020 20:06:18 +0200
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     "Kammela, Gayatri" <gayatri.kammela@intel.com>
-Cc:     "platform-driver-x86@vger.kernel.org" 
-        <platform-driver-x86@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Somayaji, Vishwanath" <vishwanath.somayaji@intel.com>,
-        "dvhart@infradead.org" <dvhart@infradead.org>,
-        "Westerberg, Mika" <mika.westerberg@intel.com>,
-        "peterz@infradead.org" <peterz@infradead.org>,
-        "Prestopine, Charles D" <charles.d.prestopine@intel.com>,
-        Chen Zhou <chenzhou10@huawei.com>,
-        "Box, David E" <david.e.box@intel.com>
-Subject: Re: [PATCH v3 0/5] platform/x86: intel_pmc_core: Add bug fixes or
- code
-Message-ID: <20200319180618.GN1922688@smile.fi.intel.com>
-References: <cover.1583093898.git.gayatri.kammela@intel.com>
- <20200302125427.GV1224808@smile.fi.intel.com>
- <BYAPR11MB362421570806431752364CD3F2E70@BYAPR11MB3624.namprd11.prod.outlook.com>
- <BYAPR11MB3624F3CB24817BB8C5AE6C10F2F40@BYAPR11MB3624.namprd11.prod.outlook.com>
+        id S1727417AbgCSSIN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 14:08:13 -0400
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:33175 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726867AbgCSSIM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 14:08:12 -0400
+Received: by mail-ot1-f65.google.com with SMTP id x26so3389951otk.0
+        for <linux-kernel@vger.kernel.org>; Thu, 19 Mar 2020 11:08:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=4Xu0QrQlsjdldwRC1nps46N1nU7pCt/oK3/9Wj8IKiw=;
+        b=awMAcpFJeOrIdWpDHagljBb9cmXwR+Db8v8huGcj82AP2JTD75YhDnQsNzaPBAwyrs
+         Fd16Z6F7NlYKo53tKs5qINZiysrcrCV+YyhpWNbqZ6M9rWNkY7oxALE/JiSq5Qg1TIM9
+         W514th8N91MslC83xfX60HqJlHSzz7NL9PhT0a3pGTM1IpOkuGZIG4cmsobagKg+Rk1s
+         68vFz+vHJFyxpUwPBHmNKo3u3Q8gRHKZi7KLEUbUCsIVMEjJTtFNWW869X1W8rHXMxyX
+         fENIiEyHRFf5HtGQTuviBkpX72JoyG7khwSkr8ZyH6Z8aNWtTOSx3RXGhwmUnbGv7+Iw
+         SgyA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=4Xu0QrQlsjdldwRC1nps46N1nU7pCt/oK3/9Wj8IKiw=;
+        b=OaPGOtvSgsPdyXhJf3ee0bcqWqVRy/3/7L1qxGd1fgvsOJ6GSqCSIYb85DtYg1xPgL
+         i4OrVImQL1NVLfEl8hJ1mfSZmIraILXkqK2yEnAUILNI5WUIbWeOgDxhbrfqKNosEFWw
+         9+y3KicD0errOWbzGa2Exr6UV/2U9u5TBGlorrSSCHgBCR0kOR6hcrP2RWYrvJUUB7yR
+         SAgtmX1nn5E7UKD1Mfh2Dxc4P3JAHieVG+rx9DDflMfDI9Xi557nVXrWb5Cwg1M+0mBa
+         kZPXaOvn5pp1snvFTG26uys+Yt+6UlXyCxHV7ob7hTiSBtzmkoPLyh4NfHecwbv5oiTL
+         GiEw==
+X-Gm-Message-State: ANhLgQ3IkGj5t51ryJNyDZ9j5HYllKnH++NNiD3YO4zaq87h+YpADpzr
+        gTWkFby2ZAOwwHhLghlbQiuYSyQ5bM6W10zbUmQrg5UI
+X-Google-Smtp-Source: ADFU+vuXiZDQ0JtlnLICq8/ImvOKT2+DbBzIkng50geTAep6a7tCMxPkatqLefxRC7OrF3ZYll78Iq+luLrurCWjLpo=
+X-Received: by 2002:a05:6830:150f:: with SMTP id k15mr3149803otp.251.1584641290618;
+ Thu, 19 Mar 2020 11:08:10 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <BYAPR11MB3624F3CB24817BB8C5AE6C10F2F40@BYAPR11MB3624.namprd11.prod.outlook.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20200318173845.220793-1-elver@google.com> <20200319152736.GF3199@paulmck-ThinkPad-P72>
+ <20200319180245.GA17119@paulmck-ThinkPad-P72>
+In-Reply-To: <20200319180245.GA17119@paulmck-ThinkPad-P72>
+From:   Marco Elver <elver@google.com>
+Date:   Thu, 19 Mar 2020 19:07:59 +0100
+Message-ID: <CANpmjNMN_-bfqinOMG9_FakPVYx_Rk7nQ=AdkW8H6sAAdjxZPA@mail.gmail.com>
+Subject: Re: [PATCH 1/2] kcsan: Introduce report access_info and other_info
+To:     "Paul E. McKenney" <paulmck@kernel.org>
+Cc:     Dmitry Vyukov <dvyukov@google.com>,
+        Alexander Potapenko <glider@google.com>,
+        Andrey Konovalov <andreyknvl@google.com>,
+        Qian Cai <cai@lca.pw>, kasan-dev <kasan-dev@googlegroups.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 19, 2020 at 05:57:06PM +0000, Kammela, Gayatri wrote:
-> > -----Original Message-----
-> > From: Kammela, Gayatri
-> > Sent: Monday, March 2, 2020 10:29 AM
-> > To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> > Cc: platform-driver-x86@vger.kernel.org; linux-kernel@vger.kernel.org;
-> > Somayaji, Vishwanath <vishwanath.somayaji@intel.com>;
-> > dvhart@infradead.org; Westerberg, Mika <mika.westerberg@intel.com>;
-> > peterz@infradead.org; Prestopine, Charles D
-> > <charles.d.prestopine@intel.com>; Chen Zhou <chenzhou10@huawei.com>;
-> > Box, David E <david.e.box@intel.com>
-> > Subject: RE: [PATCH v3 0/5] platform/x86: intel_pmc_core: Add bug fixes or
-> > code
-> > 
-> > > -----Original Message-----
-> > > From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> > > Sent: Monday, March 2, 2020 4:54 AM
-> > > To: Kammela, Gayatri <gayatri.kammela@intel.com>
-> > > Cc: platform-driver-x86@vger.kernel.org; linux-kernel@vger.kernel.org;
-> > > Somayaji, Vishwanath <vishwanath.somayaji@intel.com>;
-> > > dvhart@infradead.org; Westerberg, Mika <mika.westerberg@intel.com>;
-> > > peterz@infradead.org; Prestopine, Charles D
-> > > <charles.d.prestopine@intel.com>; Chen Zhou
-> > <chenzhou10@huawei.com>;
-> > > Box, David E <david.e.box@intel.com>
-> > > Subject: Re: [PATCH v3 0/5] platform/x86: intel_pmc_core: Add bug
-> > > fixes or code
+On Thu, 19 Mar 2020 at 19:02, Paul E. McKenney <paulmck@kernel.org> wrote:
+>
+> On Thu, Mar 19, 2020 at 08:27:36AM -0700, Paul E. McKenney wrote:
+> > On Wed, Mar 18, 2020 at 06:38:44PM +0100, Marco Elver wrote:
+> > > Improve readability by introducing access_info and other_info structs,
+> > > and in preparation of the following commit in this series replaces the
+> > > single instance of other_info with an array of size 1.
 > > >
-> > > On Sun, Mar 01, 2020 at 12:44:21PM -0800, Gayatri Kammela wrote:
-> > > > Hi,
-> > > >
-> > > > This patch series consists of bug fixes and code optimization for
-> > > > the series https://patchwork.kernel.org/patch/11365325/
-> > > >
+> > > No functional change intended.
 > > >
-> > > I had applied first four, the fifth requires additional work.
-> > > When send a new version, do it only for last one.
-> > 
-> > Thanks Andy! I will send the 5th patch alone in new version.
-> > 
-> 
-> Hi Andy! I see first 3 patches are merged in for-next branch on 2/28 but not 4th patch. Can you please check? http://git.infradead.org/linux-platform-drivers-x86.git/shortlog/refs/heads/for-next
+> > > Signed-off-by: Marco Elver <elver@google.com>
+> >
+> > Queued both for review and testing, and I am trying it out on one of
+> > the scenarios that proved problematic earlier on.  Thank you!!!
+>
+> And all passed, so looking good!  ;-)
 
+Great, thank you for confirming!
 
-Is it in my review and testing queue?
+Thanks,
+-- Marco
 
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+>                                                         Thanx, Paul
