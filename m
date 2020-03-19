@@ -2,138 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 48C1718AEAC
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 09:48:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 16C1418AEC2
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 09:50:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727360AbgCSIso convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Thu, 19 Mar 2020 04:48:44 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:59807 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727146AbgCSIsF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 04:48:05 -0400
-Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tip-bot2@linutronix.de>)
-        id 1jEqqL-00034J-Ri; Thu, 19 Mar 2020 09:47:58 +0100
-Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 6CB231C229E;
-        Thu, 19 Mar 2020 09:47:54 +0100 (CET)
-Date:   Thu, 19 Mar 2020 08:47:54 -0000
-From:   "tip-bot2 for Joel Stanley" <tip-bot2@linutronix.de>
-Reply-to: linux-kernel@vger.kernel.org
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: timers/core] clocksource/drivers/fttmr010: Parametrise shutdown
-Cc:     clg@kaod.org, Linus Walleij <linus.walleij@linaro.org>,
-        Joel Stanley <joel@jms.id.au>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        x86 <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>
-In-Reply-To: <20191107094218.13210-2-joel@jms.id.au>
-References: <20191107094218.13210-2-joel@jms.id.au>
-MIME-Version: 1.0
-Message-ID: <158460767417.28353.8600794669933114812.tip-bot2@tip-bot2>
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot2.linutronix.de>
-Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8BIT
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+        id S1726979AbgCSIul (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 04:50:41 -0400
+Received: from comms.puri.sm ([159.203.221.185]:33218 "EHLO comms.puri.sm"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725787AbgCSIul (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 04:50:41 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by comms.puri.sm (Postfix) with ESMTP id 79038DFD58;
+        Thu, 19 Mar 2020 01:50:40 -0700 (PDT)
+Received: from comms.puri.sm ([127.0.0.1])
+        by localhost (comms.puri.sm [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id mVIS9R2TCHKD; Thu, 19 Mar 2020 01:50:39 -0700 (PDT)
+From:   Martin Kepplinger <martin.kepplinger@puri.sm>
+To:     balbi@kernel.org
+Cc:     gregkh@linuxfoundation.org, rogerq@ti.com,
+        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Martin Kepplinger <martin.kepplinger@puri.sm>
+Subject: [PATCH v2] usb: dwc3: support continuous runtime PM with dual role
+Date:   Thu, 19 Mar 2020 09:49:02 +0100
+Message-Id: <20200319084902.24747-1-martin.kepplinger@puri.sm>
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following commit has been merged into the timers/core branch of tip:
+The DRD module calls dwc3_set_mode() on role switches, i.e. when a device is
+being pugged in. In order to support continuous runtime power management when
+plugging in / unplugging a cable, we need to call pm_runtime_get() in this path.
 
-Commit-ID:     84fb64c28acd85ae4d29b9c81926bdfa5f1bf25e
-Gitweb:        https://git.kernel.org/tip/84fb64c28acd85ae4d29b9c81926bdfa5f1bf25e
-Author:        Joel Stanley <joel@jms.id.au>
-AuthorDate:    Thu, 07 Nov 2019 20:12:15 +10:30
-Committer:     Daniel Lezcano <daniel.lezcano@linaro.org>
-CommitterDate: Fri, 21 Feb 2020 09:28:38 +01:00
-
-clocksource/drivers/fttmr010: Parametrise shutdown
-
-In preparation for supporting the ast2600 which uses a different method
-to clear bits in the control register, use a callback for performing the
-shutdown sequence.
-
-Reviewed-by: Cédric Le Goater <clg@kaod.org>
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-Signed-off-by: Joel Stanley <joel@jms.id.au>
-Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-Link: https://lore.kernel.org/r/20191107094218.13210-2-joel@jms.id.au
+Signed-off-by: Martin Kepplinger <martin.kepplinger@puri.sm>
 ---
- drivers/clocksource/timer-fttmr010.c | 19 ++++++++-----------
- 1 file changed, 8 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/clocksource/timer-fttmr010.c b/drivers/clocksource/timer-fttmr010.c
-index fadff79..c2d30eb 100644
---- a/drivers/clocksource/timer-fttmr010.c
-+++ b/drivers/clocksource/timer-fttmr010.c
-@@ -97,6 +97,7 @@ struct fttmr010 {
- 	bool is_aspeed;
- 	u32 t1_enable_val;
- 	struct clock_event_device clkevt;
-+	int (*timer_shutdown)(struct clock_event_device *evt);
- #ifdef CONFIG_ARM
- 	struct delay_timer delay_timer;
- #endif
-@@ -140,9 +141,7 @@ static int fttmr010_timer_set_next_event(unsigned long cycles,
- 	u32 cr;
+revision history
+----------------
+v2: move pm_rumtime calls into workqueue (thanks Roger)
+    remove unrelated documentation patch
+v1: https://lore.kernel.org/linux-usb/ef22f8de-9bfd-c1d5-111c-696f1336dbda@puri.sm/T/
+
+
+ drivers/usb/dwc3/core.c | 11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/usb/dwc3/core.c b/drivers/usb/dwc3/core.c
+index 1d85c42b9c67..0c058b2ac21d 100644
+--- a/drivers/usb/dwc3/core.c
++++ b/drivers/usb/dwc3/core.c
+@@ -121,17 +121,19 @@ static void __dwc3_set_mode(struct work_struct *work)
+ 	if (dwc->dr_mode != USB_DR_MODE_OTG)
+ 		return;
  
- 	/* Stop */
--	cr = readl(fttmr010->base + TIMER_CR);
--	cr &= ~fttmr010->t1_enable_val;
--	writel(cr, fttmr010->base + TIMER_CR);
-+	fttmr010->timer_shutdown(evt);
++	pm_runtime_get(dwc->dev);
++
+ 	if (dwc->current_dr_role == DWC3_GCTL_PRTCAP_OTG)
+ 		dwc3_otg_update(dwc, 0);
  
- 	if (fttmr010->is_aspeed) {
- 		/*
-@@ -183,9 +182,7 @@ static int fttmr010_timer_set_oneshot(struct clock_event_device *evt)
- 	u32 cr;
+ 	if (!dwc->desired_dr_role)
+-		return;
++		goto out;
  
- 	/* Stop */
--	cr = readl(fttmr010->base + TIMER_CR);
--	cr &= ~fttmr010->t1_enable_val;
--	writel(cr, fttmr010->base + TIMER_CR);
-+	fttmr010->timer_shutdown(evt);
+ 	if (dwc->desired_dr_role == dwc->current_dr_role)
+-		return;
++		goto out;
  
- 	/* Setup counter start from 0 or ~0 */
- 	writel(0, fttmr010->base + TIMER1_COUNT);
-@@ -211,9 +208,7 @@ static int fttmr010_timer_set_periodic(struct clock_event_device *evt)
- 	u32 cr;
+ 	if (dwc->desired_dr_role == DWC3_GCTL_PRTCAP_OTG && dwc->edev)
+-		return;
++		goto out;
  
- 	/* Stop */
--	cr = readl(fttmr010->base + TIMER_CR);
--	cr &= ~fttmr010->t1_enable_val;
--	writel(cr, fttmr010->base + TIMER_CR);
-+	fttmr010->timer_shutdown(evt);
- 
- 	/* Setup timer to fire at 1/HZ intervals. */
- 	if (fttmr010->is_aspeed) {
-@@ -350,6 +345,8 @@ static int __init fttmr010_common_init(struct device_node *np, bool is_aspeed)
- 				     fttmr010->tick_rate);
+ 	switch (dwc->current_dr_role) {
+ 	case DWC3_GCTL_PRTCAP_HOST:
+@@ -190,6 +192,9 @@ static void __dwc3_set_mode(struct work_struct *work)
+ 		break;
  	}
  
-+	fttmr010->timer_shutdown = fttmr010_timer_shutdown;
-+
- 	/*
- 	 * Setup clockevent timer (interrupt-driven) on timer 1.
- 	 */
-@@ -370,10 +367,10 @@ static int __init fttmr010_common_init(struct device_node *np, bool is_aspeed)
- 	fttmr010->clkevt.features = CLOCK_EVT_FEAT_PERIODIC |
- 		CLOCK_EVT_FEAT_ONESHOT;
- 	fttmr010->clkevt.set_next_event = fttmr010_timer_set_next_event;
--	fttmr010->clkevt.set_state_shutdown = fttmr010_timer_shutdown;
-+	fttmr010->clkevt.set_state_shutdown = fttmr010->timer_shutdown;
- 	fttmr010->clkevt.set_state_periodic = fttmr010_timer_set_periodic;
- 	fttmr010->clkevt.set_state_oneshot = fttmr010_timer_set_oneshot;
--	fttmr010->clkevt.tick_resume = fttmr010_timer_shutdown;
-+	fttmr010->clkevt.tick_resume = fttmr010->timer_shutdown;
- 	fttmr010->clkevt.cpumask = cpumask_of(0);
- 	fttmr010->clkevt.irq = irq;
- 	clockevents_config_and_register(&fttmr010->clkevt,
++out:
++	pm_runtime_mark_last_busy(dwc->dev);
++	pm_runtime_put_autosuspend(dwc->dev);
+ }
+ 
+ void dwc3_set_mode(struct dwc3 *dwc, u32 mode)
+-- 
+2.20.1
+
