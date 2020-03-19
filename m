@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BDB7918B717
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:31:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 95C2418B6F8
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:31:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728617AbgCSNSu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 09:18:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41466 "EHLO mail.kernel.org"
+        id S1728435AbgCSNS7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 09:18:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41718 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729643AbgCSNSr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 09:18:47 -0400
+        id S1727731AbgCSNSy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 09:18:54 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 38856206D7;
-        Thu, 19 Mar 2020 13:18:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A19E52098B;
+        Thu, 19 Mar 2020 13:18:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584623926;
-        bh=4kYPdKmtyljDUwQ9JZEsL/KXY+VsOeZgZEVW+G37tUY=;
+        s=default; t=1584623934;
+        bh=+pU4LulTU4mEYekBOst0ONklTIF3qN/8m0GK1PJ5h18=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YsgIC3Hh/3VBTUMwisnyvdKyKcn9urDkuZIi9c4Ap8poP2zatzaP4fkahzjOUX2PG
-         LkVqTKYpjSmo+iRTyz75KlHyIVdJZIS3R4C+uQBIG8mJXo+c+Gw+ObNYcUrg8qLatq
-         +/QapmyXP9t1+w8YUv7tNw6GFxKDaNkbskK0sZr4=
+        b=vtQrYCAof7De8ao9pktjsSbj3zoaZPC4FoHKsSDhaTkZdTEUj4m0FxBb1/o1x6Inz
+         JvYyDyOYIr3xDs24dcA7drSYu7MctR3IYlWVwdvMZgkngnax9zJ0sM+UtontbxuGr5
+         TrA7sJKZTw3k72Tqxcd2rB/pk6HPhb97DQTeaY2k=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        John Soros <sorosj@gmail.com>,
         Sven Eckelmann <sven@narfation.org>,
-        Antonio Quartulli <a@unstable.cc>,
         Simon Wunderlich <sw@simonwunderlich.de>
-Subject: [PATCH 4.14 73/99] batman-adv: Avoid race in TT TVLV allocator helper
-Date:   Thu, 19 Mar 2020 14:03:51 +0100
-Message-Id: <20200319124003.298772732@linuxfoundation.org>
+Subject: [PATCH 4.14 76/99] batman-adv: Fix debugfs path for renamed hardif
+Date:   Thu, 19 Mar 2020 14:03:54 +0100
+Message-Id: <20200319124004.043668318@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.2
 In-Reply-To: <20200319123941.630731708@linuxfoundation.org>
 References: <20200319123941.630731708@linuxfoundation.org>
@@ -46,76 +46,110 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Sven Eckelmann <sven@narfation.org>
 
-commit 8ba0f9bd3bdea1058c2b2676bec7905724418e40 upstream.
+commit 36dc621ceca1be3ec885aeade5fdafbbcc452a6d upstream.
 
-The functions batadv_tt_prepare_tvlv_local_data and
-batadv_tt_prepare_tvlv_global_data are responsible for preparing a buffer
-which can be used to store the TVLV container for TT and add the VLAN
-information to it.
+batman-adv is creating special debugfs directories in the init
+net_namespace for each valid hard-interface (net_device). But it is
+possible to rename a net_device to a completely different name then the
+original one.
 
-This will be done in three phases:
+It can therefore happen that a user registers a new net_device which gets
+the name "wlan0" assigned by default. batman-adv is also adding a new
+directory under $debugfs/batman-adv/ with the name "wlan0".
 
-1. count the number of VLANs and their entries
-2. allocate the buffer using the counters from the previous step and limits
-   from the caller (parameter tt_len)
-3. insert the VLAN information to the buffer
+The user then decides to rename this device to "wl_pri" and registers a
+different device. The kernel may now decide to use the name "wlan0" again
+for this new device. batman-adv will detect it as a valid net_device and
+tries to create a directory with the name "wlan0" under
+$debugfs/batman-adv/. But there already exists one with this name under
+this path and thus this fails. batman-adv will detect a problem and
+rollback the registering of this device.
 
-The step 1 and 3 operate on a list which contains the VLANs. The access to
-these lists must be protected with an appropriate lock or otherwise they
-might operate on on different entries. This could for example happen when
-another context is adding VLAN entries to this list.
+batman-adv must therefore take care of renaming the debugfs directories
+for hard-interfaces whenever it detects such a net_device rename.
 
-This could lead to a buffer overflow in these functions when enough entries
-were added between step 1 and 3 to the VLAN lists that the buffer room for
-the entries (*tt_change) is smaller then the now required extra buffer for
-new VLAN entries.
-
-Fixes: 7ea7b4a14275 ("batman-adv: make the TT CRC logic VLAN specific")
+Fixes: 5bc7c1eb44f2 ("batman-adv: add debugfs structure for information per interface")
+Reported-by: John Soros <sorosj@gmail.com>
 Signed-off-by: Sven Eckelmann <sven@narfation.org>
-Acked-by: Antonio Quartulli <a@unstable.cc>
 Signed-off-by: Simon Wunderlich <sw@simonwunderlich.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/batman-adv/translation-table.c |    8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ net/batman-adv/debugfs.c        |   22 +++++++++++++++++++++-
+ net/batman-adv/debugfs.h        |    6 ++++++
+ net/batman-adv/hard-interface.c |    3 +++
+ 3 files changed, 30 insertions(+), 1 deletion(-)
 
---- a/net/batman-adv/translation-table.c
-+++ b/net/batman-adv/translation-table.c
-@@ -872,7 +872,7 @@ batadv_tt_prepare_tvlv_global_data(struc
- 	struct batadv_orig_node_vlan *vlan;
- 	u8 *tt_change_ptr;
+--- a/net/batman-adv/debugfs.c
++++ b/net/batman-adv/debugfs.c
+@@ -18,6 +18,7 @@
+ #include "debugfs.h"
+ #include "main.h"
  
--	rcu_read_lock();
-+	spin_lock_bh(&orig_node->vlan_list_lock);
- 	hlist_for_each_entry_rcu(vlan, &orig_node->vlan_list, list) {
- 		num_vlan++;
- 		num_entries += atomic_read(&vlan->tt.num_entries);
-@@ -910,7 +910,7 @@ batadv_tt_prepare_tvlv_global_data(struc
- 	*tt_change = (struct batadv_tvlv_tt_change *)tt_change_ptr;
- 
- out:
--	rcu_read_unlock();
-+	spin_unlock_bh(&orig_node->vlan_list_lock);
- 	return tvlv_len;
++#include <linux/dcache.h>
+ #include <linux/debugfs.h>
+ #include <linux/err.h>
+ #include <linux/errno.h>
+@@ -338,7 +339,26 @@ out:
  }
  
-@@ -946,7 +946,7 @@ batadv_tt_prepare_tvlv_local_data(struct
- 	u8 *tt_change_ptr;
- 	int change_offset;
+ /**
+- * batadv_debugfs_del_hardif - delete the base directory for a hard interface
++ * batadv_debugfs_rename_hardif() - Fix debugfs path for renamed hardif
++ * @hard_iface: hard interface which was renamed
++ */
++void batadv_debugfs_rename_hardif(struct batadv_hard_iface *hard_iface)
++{
++	const char *name = hard_iface->net_dev->name;
++	struct dentry *dir;
++	struct dentry *d;
++
++	dir = hard_iface->debug_dir;
++	if (!dir)
++		return;
++
++	d = debugfs_rename(dir->d_parent, dir, dir->d_parent, name);
++	if (!d)
++		pr_err("Can't rename debugfs dir to %s\n", name);
++}
++
++/**
++ * batadv_debugfs_del_hardif() - delete the base directory for a hard interface
+  *  in debugfs.
+  * @hard_iface: hard interface which is deleted.
+  */
+--- a/net/batman-adv/debugfs.h
++++ b/net/batman-adv/debugfs.h
+@@ -31,6 +31,7 @@ void batadv_debugfs_destroy(void);
+ int batadv_debugfs_add_meshif(struct net_device *dev);
+ void batadv_debugfs_del_meshif(struct net_device *dev);
+ int batadv_debugfs_add_hardif(struct batadv_hard_iface *hard_iface);
++void batadv_debugfs_rename_hardif(struct batadv_hard_iface *hard_iface);
+ void batadv_debugfs_del_hardif(struct batadv_hard_iface *hard_iface);
  
--	rcu_read_lock();
-+	spin_lock_bh(&bat_priv->softif_vlan_list_lock);
- 	hlist_for_each_entry_rcu(vlan, &bat_priv->softif_vlan_list, list) {
- 		num_vlan++;
- 		num_entries += atomic_read(&vlan->tt.num_entries);
-@@ -984,7 +984,7 @@ batadv_tt_prepare_tvlv_local_data(struct
- 	*tt_change = (struct batadv_tvlv_tt_change *)tt_change_ptr;
- 
- out:
--	rcu_read_unlock();
-+	spin_unlock_bh(&bat_priv->softif_vlan_list_lock);
- 	return tvlv_len;
+ #else
+@@ -59,6 +60,11 @@ int batadv_debugfs_add_hardif(struct bat
  }
  
+ static inline
++void batadv_debugfs_rename_hardif(struct batadv_hard_iface *hard_iface)
++{
++}
++
++static inline
+ void batadv_debugfs_del_hardif(struct batadv_hard_iface *hard_iface)
+ {
+ }
+--- a/net/batman-adv/hard-interface.c
++++ b/net/batman-adv/hard-interface.c
+@@ -1017,6 +1017,9 @@ static int batadv_hard_if_event(struct n
+ 		if (batadv_is_wifi_hardif(hard_iface))
+ 			hard_iface->num_bcasts = BATADV_NUM_BCASTS_WIRELESS;
+ 		break;
++	case NETDEV_CHANGENAME:
++		batadv_debugfs_rename_hardif(hard_iface);
++		break;
+ 	default:
+ 		break;
+ 	}
 
 
