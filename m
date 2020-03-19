@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E8E8D18A9A2
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 01:11:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B636D18A99E
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 01:11:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727632AbgCSALf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Mar 2020 20:11:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37102 "EHLO mail.kernel.org"
+        id S1727554AbgCSAL0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Mar 2020 20:11:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37364 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727457AbgCSALI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Mar 2020 20:11:08 -0400
+        id S1727460AbgCSALJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Mar 2020 20:11:09 -0400
 Received: from paulmck-ThinkPad-P72.home (50-39-105-78.bvtn.or.frontiernet.net [50.39.105.78])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F138121473;
-        Thu, 19 Mar 2020 00:11:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4E6A820936;
+        Thu, 19 Mar 2020 00:11:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1584576668;
-        bh=6PDa3XNPXriHi9UAkJzOREHqMAxi01bjS7XS4H73QPc=;
+        bh=5e1JhtBObhM83FnqI56u0a2GoyzfWKhw9h/SO68C39s=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=g8J9U+RVqBznyc+e/Y7SkiQqH08Ehw/RJosGkg6EDJP0JTFvQ3RajGq9+iY8EZIt7
-         5Ih9B3hSQI1KsqWV3s91PQhxuV2uymqp8rZU+wedJ/liacph7Q/jkGOYNtBsPEvwJX
-         K9Dyk0fWFDYurE58m20GHMHi1JsOWNYHNv3VhYm0=
+        b=vO+URMGPBalPHYBA5U6Pkrul4nnY3jv9xFjqPbfEVWX/8XbPXVr2fmVcKVd0dksn9
+         aC9+5qx48m7r4EauJ5uvZyLSWO1yx2l1wwdL9NZgkXQ4ipqilGV+9WCLJB3BDLU7B8
+         ZN4G6meO9K/gtlvBYPYwbjK4sGPg4eia+p2DWRJQ=
 From:   paulmck@kernel.org
 To:     rcu@vger.kernel.org
 Cc:     linux-kernel@vger.kernel.org, kernel-team@fb.com, mingo@kernel.org,
@@ -32,9 +32,9 @@ Cc:     linux-kernel@vger.kernel.org, kernel-team@fb.com, mingo@kernel.org,
         rostedt@goodmis.org, dhowells@redhat.com, edumazet@google.com,
         fweisbec@gmail.com, oleg@redhat.com, joel@joelfernandes.org,
         "Paul E. McKenney" <paulmck@kernel.org>
-Subject: [PATCH RFC v2 tip/core/rcu 18/22] rcu-tasks: Add RCU tasks to rcutorture writer stall output
-Date:   Wed, 18 Mar 2020 17:10:56 -0700
-Message-Id: <20200319001100.24917-18-paulmck@kernel.org>
+Subject: [PATCH RFC v2 tip/core/rcu 19/22] rcu-tasks: Make rcutorture writer stall output include GP state
+Date:   Wed, 18 Mar 2020 17:10:57 -0700
+Message-Id: <20200319001100.24917-19-paulmck@kernel.org>
 X-Mailer: git-send-email 2.9.5
 In-Reply-To: <20200319001024.GA28798@paulmck-ThinkPad-P72>
 References: <20200319001024.GA28798@paulmck-ThinkPad-P72>
@@ -45,124 +45,222 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: "Paul E. McKenney" <paulmck@kernel.org>
 
-This commit adds state for each RCU-tasks flavor to the rcutorture
-writer stall output.  The initial state is minimal, but you have to
-start somewhere.
+This commit adds grace-period state and time to the rcutorture writer
+stall output.
 
 Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
-[ paulmck: Fixes based on feedback from kbuild test robot. ]
 ---
- kernel/rcu/rcu.h        |  1 +
- kernel/rcu/tasks.h      | 45 +++++++++++++++++++++++++++++++++++++++++++--
- kernel/rcu/tree_stall.h |  2 +-
- 3 files changed, 45 insertions(+), 3 deletions(-)
+ kernel/rcu/tasks.h | 77 ++++++++++++++++++++++++++++++++++++++++++++++++++----
+ 1 file changed, 72 insertions(+), 5 deletions(-)
 
-diff --git a/kernel/rcu/rcu.h b/kernel/rcu/rcu.h
-index 72903867..e1089fd 100644
---- a/kernel/rcu/rcu.h
-+++ b/kernel/rcu/rcu.h
-@@ -431,6 +431,7 @@ bool rcu_gp_is_expedited(void);  /* Internal RCU use. */
- void rcu_expedite_gp(void);
- void rcu_unexpedite_gp(void);
- void rcupdate_announce_bootup_oddness(void);
-+void show_rcu_tasks_gp_kthreads(void);
- void rcu_request_urgent_qs_task(struct task_struct *t);
- #endif /* #else #ifdef CONFIG_TINY_RCU */
- 
 diff --git a/kernel/rcu/tasks.h b/kernel/rcu/tasks.h
-index 220f264..1583e45 100644
+index 1583e45..c7f03c9 100644
 --- a/kernel/rcu/tasks.h
 +++ b/kernel/rcu/tasks.h
-@@ -219,6 +219,16 @@ static void __init rcu_tasks_bootup_oddness(void)
+@@ -17,7 +17,7 @@ typedef void (*pregp_func_t)(void);
+ typedef void (*pertask_func_t)(struct task_struct *t, struct list_head *hop);
+ typedef void (*postscan_func_t)(void);
+ typedef void (*holdouts_func_t)(struct list_head *hop, bool ndrpt, bool *frptp);
+-typedef void (*postgp_func_t)(void);
++typedef void (*postgp_func_t)(struct rcu_tasks *rtp);
  
- #endif /* #ifndef CONFIG_TINY_RCU */
+ /**
+  * Definition for a Tasks-RCU-like mechanism.
+@@ -27,6 +27,9 @@ typedef void (*postgp_func_t)(void);
+  * @cbs_lock: Lock protecting callback list.
+  * @kthread_ptr: This flavor's grace-period/callback-invocation kthread.
+  * @gp_func: This flavor's grace-period-wait function.
++ * @gp_state: Grace period's most recent state transition (debugging).
++ * @gp_jiffies: Time of last @gp_state transition.
++ * @gp_start: Most recent grace-period start in jiffies.
+  * @pregp_func: This flavor's pre-grace-period function (optional).
+  * @pertask_func: This flavor's per-task scan function (optional).
+  * @postscan_func: This flavor's post-task scan function (optional).
+@@ -41,6 +44,8 @@ struct rcu_tasks {
+ 	struct rcu_head **cbs_tail;
+ 	struct wait_queue_head cbs_wq;
+ 	raw_spinlock_t cbs_lock;
++	int gp_state;
++	unsigned long gp_jiffies;
+ 	struct task_struct *kthread_ptr;
+ 	rcu_tasks_gp_func_t gp_func;
+ 	pregp_func_t pregp_func;
+@@ -73,10 +78,56 @@ DEFINE_STATIC_SRCU(tasks_rcu_exit_srcu);
+ static int rcu_task_stall_timeout __read_mostly = RCU_TASK_STALL_TIMEOUT;
+ module_param(rcu_task_stall_timeout, int, 0644);
  
-+/* Dump out rcutorture-relevant state common to all RCU-tasks flavors. */
-+static void show_rcu_tasks_generic_gp_kthread(struct rcu_tasks *rtp, char *s)
-+{
-+	pr_info("%s %c%c %s\n",
-+		rtp->kname,
-+		".k"[!!data_race(rtp->kthread_ptr)],
-+		".C"[!!data_race(rtp->cbs_head)],
-+		s);
-+}
++/* RCU tasks grace-period state for debugging. */
++#define RTGS_INIT		 0
++#define RTGS_WAIT_WAIT_CBS	 1
++#define RTGS_WAIT_GP		 2
++#define RTGS_PRE_WAIT_GP	 3
++#define RTGS_SCAN_TASKLIST	 4
++#define RTGS_POST_SCAN_TASKLIST	 5
++#define RTGS_WAIT_SCAN_HOLDOUTS	 6
++#define RTGS_SCAN_HOLDOUTS	 7
++#define RTGS_POST_GP		 8
++#define RTGS_WAIT_READERS	 9
++#define RTGS_INVOKE_CBS		10
++#define RTGS_WAIT_CBS		11
++static const char * const rcu_tasks_gp_state_names[] = {
++	"RTGS_INIT",
++	"RTGS_WAIT_WAIT_CBS",
++	"RTGS_WAIT_GP",
++	"RTGS_PRE_WAIT_GP",
++	"RTGS_SCAN_TASKLIST",
++	"RTGS_POST_SCAN_TASKLIST",
++	"RTGS_WAIT_SCAN_HOLDOUTS",
++	"RTGS_SCAN_HOLDOUTS",
++	"RTGS_POST_GP",
++	"RTGS_WAIT_READERS",
++	"RTGS_INVOKE_CBS",
++	"RTGS_WAIT_CBS",
++};
 +
- #ifdef CONFIG_TASKS_RCU
- 
- ////////////////////////////////////////////////////////////////////////
-@@ -482,7 +492,14 @@ static int __init rcu_spawn_tasks_kthread(void)
- }
- core_initcall(rcu_spawn_tasks_kthread);
- 
--#endif /* #ifdef CONFIG_TASKS_RCU */
-+static void show_rcu_tasks_classic_gp_kthread(void)
-+{
-+	show_rcu_tasks_generic_gp_kthread(&rcu_tasks, "");
-+}
-+
-+#else /* #ifdef CONFIG_TASKS_RCU */
-+static void show_rcu_tasks_classic_gp_kthread(void) { }
-+#endif /* #else #ifdef CONFIG_TASKS_RCU */
- 
- #ifdef CONFIG_TASKS_RUDE_RCU
- 
-@@ -578,7 +595,14 @@ static int __init rcu_spawn_tasks_rude_kthread(void)
- }
- core_initcall(rcu_spawn_tasks_rude_kthread);
- 
--#endif /* #ifdef CONFIG_TASKS_RUDE_RCU */
-+static void show_rcu_tasks_rude_gp_kthread(void)
-+{
-+	show_rcu_tasks_generic_gp_kthread(&rcu_tasks_rude, "");
-+}
-+
-+#else /* #ifdef CONFIG_TASKS_RUDE_RCU */
-+static void show_rcu_tasks_rude_gp_kthread(void) {}
-+#endif /* #else #ifdef CONFIG_TASKS_RUDE_RCU */
- 
  ////////////////////////////////////////////////////////////////////////
  //
-@@ -974,10 +998,27 @@ static int __init rcu_spawn_tasks_trace_kthread(void)
- }
- core_initcall(rcu_spawn_tasks_trace_kthread);
+ // Generic code.
  
-+static void show_rcu_tasks_trace_gp_kthread(void)
++/* Record grace-period phase and time. */
++static void set_tasks_gp_state(struct rcu_tasks *rtp, int newstate)
 +{
-+	char buf[32];
-+
-+	sprintf(buf, "N%d", atomic_read(&trc_n_readers_need_end));
-+	show_rcu_tasks_generic_gp_kthread(&rcu_tasks_trace, buf);
++	rtp->gp_state = newstate;
++	rtp->gp_jiffies = jiffies;
 +}
 +
- #else /* #ifdef CONFIG_TASKS_TRACE_RCU */
- void exit_tasks_rcu_finish_trace(struct task_struct *t) { }
-+static inline void show_rcu_tasks_trace_gp_kthread(void) {}
- #endif /* #else #ifdef CONFIG_TASKS_TRACE_RCU */
- 
-+void show_rcu_tasks_gp_kthreads(void)
++/* Return state name. */
++static const char *tasks_gp_state_getname(struct rcu_tasks *rtp)
 +{
-+	show_rcu_tasks_classic_gp_kthread();
-+	show_rcu_tasks_rude_gp_kthread();
-+	show_rcu_tasks_trace_gp_kthread();
++	int i = data_race(rtp->gp_state); // Let KCSAN detect update races
++	int j = READ_ONCE(i); // Prevent the compiler from reading twice
++
++	if (j >= ARRAY_SIZE(rcu_tasks_gp_state_names))
++		return "???";
++	return rcu_tasks_gp_state_names[j];
 +}
 +
- #else /* #ifdef CONFIG_TASKS_RCU_GENERIC */
- static inline void rcu_tasks_bootup_oddness(void) {}
-+void show_rcu_tasks_gp_kthreads(void) {}
- #endif /* #else #ifdef CONFIG_TASKS_RCU_GENERIC */
-diff --git a/kernel/rcu/tree_stall.h b/kernel/rcu/tree_stall.h
-index e19487d..ec8e985 100644
---- a/kernel/rcu/tree_stall.h
-+++ b/kernel/rcu/tree_stall.h
-@@ -649,7 +649,7 @@ void show_rcu_gp_kthreads(void)
- 		if (rcu_segcblist_is_offloaded(&rdp->cblist))
- 			show_rcu_nocb_state(rdp);
+ // Enqueue a callback for the specified flavor of Tasks RCU.
+ static void call_rcu_tasks_generic(struct rcu_head *rhp, rcu_callback_t func,
+ 				   struct rcu_tasks *rtp)
+@@ -141,15 +192,18 @@ static int __noreturn rcu_tasks_kthread(void *arg)
+ 						 READ_ONCE(rtp->cbs_head));
+ 			if (!rtp->cbs_head) {
+ 				WARN_ON(signal_pending(current));
++				set_tasks_gp_state(rtp, RTGS_WAIT_WAIT_CBS);
+ 				schedule_timeout_interruptible(HZ/10);
+ 			}
+ 			continue;
+ 		}
+ 
+ 		// Wait for one grace period.
++		set_tasks_gp_state(rtp, RTGS_WAIT_GP);
+ 		rtp->gp_func(rtp);
+ 
+ 		/* Invoke the callbacks. */
++		set_tasks_gp_state(rtp, RTGS_INVOKE_CBS);
+ 		while (list) {
+ 			next = list->next;
+ 			local_bh_disable();
+@@ -160,6 +214,8 @@ static int __noreturn rcu_tasks_kthread(void *arg)
+ 		}
+ 		/* Paranoid sleep to keep this from entering a tight loop */
+ 		schedule_timeout_uninterruptible(HZ/10);
++
++		set_tasks_gp_state(rtp, RTGS_WAIT_CBS);
  	}
--	/* sched_show_task(rcu_state.gp_kthread); */
-+	show_rcu_tasks_gp_kthreads();
  }
- EXPORT_SYMBOL_GPL(show_rcu_gp_kthreads);
  
+@@ -222,8 +278,11 @@ static void __init rcu_tasks_bootup_oddness(void)
+ /* Dump out rcutorture-relevant state common to all RCU-tasks flavors. */
+ static void show_rcu_tasks_generic_gp_kthread(struct rcu_tasks *rtp, char *s)
+ {
+-	pr_info("%s %c%c %s\n",
++	pr_info("%s: %s(%d) since %lu %c%c %s\n",
+ 		rtp->kname,
++		tasks_gp_state_getname(rtp),
++		data_race(rtp->gp_state),
++		jiffies - data_race(rtp->gp_jiffies),
+ 		".k"[!!data_race(rtp->kthread_ptr)],
+ 		".C"[!!data_race(rtp->cbs_head)],
+ 		s);
+@@ -243,6 +302,7 @@ static void rcu_tasks_wait_gp(struct rcu_tasks *rtp)
+ 	LIST_HEAD(holdouts);
+ 	int fract;
+ 
++	set_tasks_gp_state(rtp, RTGS_PRE_WAIT_GP);
+ 	rtp->pregp_func();
+ 
+ 	/*
+@@ -251,11 +311,13 @@ static void rcu_tasks_wait_gp(struct rcu_tasks *rtp)
+ 	 * that are not already voluntarily blocked.  Mark these tasks
+ 	 * and make a list of them in holdouts.
+ 	 */
++	set_tasks_gp_state(rtp, RTGS_SCAN_TASKLIST);
+ 	rcu_read_lock();
+ 	for_each_process_thread(g, t)
+ 		rtp->pertask_func(t, &holdouts);
+ 	rcu_read_unlock();
+ 
++	set_tasks_gp_state(rtp, RTGS_POST_SCAN_TASKLIST);
+ 	rtp->postscan_func();
+ 
+ 	/*
+@@ -277,6 +339,7 @@ static void rcu_tasks_wait_gp(struct rcu_tasks *rtp)
+ 			break;
+ 
+ 		/* Slowly back off waiting for holdouts */
++		set_tasks_gp_state(rtp, RTGS_WAIT_SCAN_HOLDOUTS);
+ 		schedule_timeout_interruptible(HZ/fract);
+ 
+ 		if (fract > 1)
+@@ -288,10 +351,12 @@ static void rcu_tasks_wait_gp(struct rcu_tasks *rtp)
+ 			lastreport = jiffies;
+ 		firstreport = true;
+ 		WARN_ON(signal_pending(current));
++		set_tasks_gp_state(rtp, RTGS_SCAN_HOLDOUTS);
+ 		rtp->holdouts_func(&holdouts, needreport, &firstreport);
+ 	}
+ 
+-	rtp->postgp_func();
++	set_tasks_gp_state(rtp, RTGS_POST_GP);
++	rtp->postgp_func(rtp);
+ }
+ 
+ ////////////////////////////////////////////////////////////////////////
+@@ -394,7 +459,7 @@ static void check_all_holdout_tasks(struct list_head *hop,
+ }
+ 
+ /* Finish off the Tasks-RCU grace period. */
+-static void rcu_tasks_postgp(void)
++static void rcu_tasks_postgp(struct rcu_tasks *rtp)
+ {
+ 	/*
+ 	 * Because ->on_rq and ->nvcsw are not guaranteed to have a full
+@@ -871,7 +936,7 @@ static void check_all_holdout_tasks_trace(struct list_head *hop,
+ }
+ 
+ /* Wait for grace period to complete and provide ordering. */
+-static void rcu_tasks_trace_postgp(void)
++static void rcu_tasks_trace_postgp(struct rcu_tasks *rtp)
+ {
+ 	bool firstreport;
+ 	struct task_struct *g, *t;
+@@ -884,6 +949,7 @@ static void rcu_tasks_trace_postgp(void)
+ 	smp_mb__after_atomic();  // Order vs. later atomics
+ 
+ 	// Wait for readers.
++	set_tasks_gp_state(rtp, RTGS_WAIT_READERS);
+ 	for (;;) {
+ 		ret = wait_event_idle_exclusive_timeout(
+ 				trc_wait,
+@@ -891,6 +957,7 @@ static void rcu_tasks_trace_postgp(void)
+ 				READ_ONCE(rcu_task_stall_timeout));
+ 		if (ret)
+ 			break;  // Count reached zero.
++		// Stall warning time, so make a list of the offenders.
+ 		for_each_process_thread(g, t) {
+ 			if (READ_ONCE(t->trc_reader_need_end)) {
+ 				trc_add_holdout(t, &holdouts);
 -- 
 2.9.5
 
