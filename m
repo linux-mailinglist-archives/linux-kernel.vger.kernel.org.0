@@ -2,242 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F204718BF6F
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 19:34:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C0B7D18BF7A
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 19:36:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727364AbgCSSeE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 14:34:04 -0400
-Received: from mail-il1-f195.google.com ([209.85.166.195]:45206 "EHLO
-        mail-il1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725787AbgCSSeE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 14:34:04 -0400
-Received: by mail-il1-f195.google.com with SMTP id m9so3182739ilq.12;
-        Thu, 19 Mar 2020 11:34:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=uPWry8RY6+hi4eAi0Y1bb3DGJuUvwAMEt6jfhx00FwM=;
-        b=K9und+luTVy4/G+VrvPCn7W/giNS7QujmIs4i6w64rJBMAM1i9Khxem4WanFrG/bRd
-         5Rctr0ea0zrn9sZAWlcWhlNlODrT86xCfjp3k9WJsbFl7VqUajLzw7sKau2H8e7KbF+h
-         XETUey7Cnmd4vfHFAKZEKpYEskwok9nWZPMKQvPYYQydNQLRWbHq+KzwjgHp6Uu/ZiYF
-         w30qQFzZdrYiRR+spKr63DEJ2m9QUts8XzT4xogTdLaXXJDzlIYUHzx2ECj3KLoX/mbo
-         pT4BwVXENACa5FqO7UjZ/H1cnbC9neYBFExZ5P1uu4PfzaaK2j/hKr6T8LXsiAZBSueK
-         XPkA==
-X-Gm-Message-State: ANhLgQ0/j8jgc7ENBmLVUAUgGHmyuatKlNhok7P7V2fSuH7gd5KMHRCH
-        BShCOG1X5XAYnOC8eNIuLDW/KrY=
-X-Google-Smtp-Source: ADFU+vs1k4gpcdfKiMfAtAb7CaNrV8yNwy8ti//ggPn+OEJyJsCKN0w4f4f/ANYejiLSsUVzM5ackg==
-X-Received: by 2002:a92:9149:: with SMTP id t70mr4864882ild.114.1584642842382;
-        Thu, 19 Mar 2020 11:34:02 -0700 (PDT)
-Received: from rob-hp-laptop ([64.188.179.250])
-        by smtp.gmail.com with ESMTPSA id z1sm1124712ilq.83.2020.03.19.11.34.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 19 Mar 2020 11:34:01 -0700 (PDT)
-Received: (nullmailer pid 24310 invoked by uid 1000);
-        Thu, 19 Mar 2020 18:33:58 -0000
-Date:   Thu, 19 Mar 2020 12:33:58 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Jitao Shi <jitao.shi@mediatek.com>
-Cc:     Mark Rutland <mark.rutland@arm.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        David Airlie <airlied@linux.ie>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        linux-mediatek@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, srv_heupstream@mediatek.com,
-        yingjoe.chen@mediatek.com, eddie.huang@mediatek.com,
-        cawa.cheng@mediatek.com, bibby.hsieh@mediatek.com,
-        ck.hu@mediatek.com, stonea168@163.com, huijuan.xie@mediatek.com
-Subject: Re: [PATCH v13 4/6] dt-bindings: display: mediatek: convert the
- document format from txt to yaml
-Message-ID: <20200319183358.GA17237@bogus>
-References: <20200311071823.117899-1-jitao.shi@mediatek.com>
- <20200311071823.117899-5-jitao.shi@mediatek.com>
+        id S1727444AbgCSSg3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 14:36:29 -0400
+Received: from albireo.enyo.de ([37.24.231.21]:52338 "EHLO albireo.enyo.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725787AbgCSSg2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 14:36:28 -0400
+Received: from [172.17.203.2] (helo=deneb.enyo.de)
+        by albireo.enyo.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        id 1jF01j-0001Sy-Qw; Thu, 19 Mar 2020 18:36:19 +0000
+Received: from fw by deneb.enyo.de with local (Exim 4.92)
+        (envelope-from <fw@deneb.enyo.de>)
+        id 1jF00G-0006ml-Aj; Thu, 19 Mar 2020 19:34:48 +0100
+From:   Florian Weimer <fw@deneb.enyo.de>
+To:     Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc:     libc-alpha <libc-alpha@sourceware.org>, carlos <carlos@redhat.com>,
+        Rich Felker <dalias@libc.org>,
+        linux-api <linux-api@vger.kernel.org>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Will Deacon <will.deacon@arm.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ben Maurer <bmaurer@fb.com>, Dave Watson <davejwatson@fb.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Paul <paulmck@linux.vnet.ibm.com>, Paul Turner <pjt@google.com>,
+        Joseph Myers <joseph@codesourcery.com>
+Subject: Re: [RFC PATCH glibc 4/8] glibc: Perform rseq(2) registration at C startup and thread creation (v15)
+References: <20200319144110.3733-1-mathieu.desnoyers@efficios.com>
+        <20200319144110.3733-5-mathieu.desnoyers@efficios.com>
+        <874kukpf9f.fsf@mid.deneb.enyo.de>
+        <2147217200.3240.1584633395285.JavaMail.zimbra@efficios.com>
+        <87r1xo5o2s.fsf@mid.deneb.enyo.de>
+        <1302331358.3965.1584641354569.JavaMail.zimbra@efficios.com>
+        <87sgi4gqhf.fsf@mid.deneb.enyo.de>
+        <1103782439.4046.1584642531222.JavaMail.zimbra@efficios.com>
+Date:   Thu, 19 Mar 2020 19:34:48 +0100
+In-Reply-To: <1103782439.4046.1584642531222.JavaMail.zimbra@efficios.com>
+        (Mathieu Desnoyers's message of "Thu, 19 Mar 2020 14:28:51 -0400
+        (EDT)")
+Message-ID: <87k13ggpmf.fsf@mid.deneb.enyo.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200311071823.117899-5-jitao.shi@mediatek.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 11, 2020 at 03:18:21PM +0800, Jitao Shi wrote:
-> Signed-off-by: Jitao Shi <jitao.shi@mediatek.com>
-> ---
->  .../display/mediatek/mediatek,dpi.txt         |  45 --------
->  .../display/mediatek/mediatek,dpi.yaml        | 103 ++++++++++++++++++
->  2 files changed, 103 insertions(+), 45 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/display/mediatek/mediatek,dpi.txt
->  create mode 100644 Documentation/devicetree/bindings/display/mediatek/mediatek,dpi.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/display/mediatek/mediatek,dpi.txt b/Documentation/devicetree/bindings/display/mediatek/mediatek,dpi.txt
-> deleted file mode 100644
-> index 2dfb50a7321e..000000000000
-> --- a/Documentation/devicetree/bindings/display/mediatek/mediatek,dpi.txt
-> +++ /dev/null
-> @@ -1,45 +0,0 @@
-> -Mediatek DPI Device
-> -===================
-> -
-> -The Mediatek DPI function block is a sink of the display subsystem and
-> -provides 8-bit RGB/YUV444 or 8/10/10-bit YUV422 pixel data on a parallel
-> -output bus.
-> -
-> -Required properties:
-> -- compatible: "mediatek,<chip>-dpi"
-> -  the supported chips are mt2701 , mt8173 and mt8183.
-> -- reg: Physical base address and length of the controller's registers
-> -- interrupts: The interrupt signal from the function block.
-> -- clocks: device clocks
-> -  See Documentation/devicetree/bindings/clock/clock-bindings.txt for details.
-> -- clock-names: must contain "pixel", "engine", and "pll"
-> -- port: Output port node with endpoint definitions as described in
-> -  Documentation/devicetree/bindings/graph.txt. This port should be connected
-> -  to the input port of an attached HDMI or LVDS encoder chip.
-> -
-> -Optional properties:
-> -- pinctrl-names: Contain "default" and "sleep".
-> -  pinctrl-names see Documentation/devicetree/bindings/pinctrlpinctrl-bindings.txt
-> -- pclk-sample: refer Documentation/devicetree/bindings/media/video-interfaces.txt.
-> -
-> -Example:
-> -
-> -dpi0: dpi@1401d000 {
-> -	compatible = "mediatek,mt8173-dpi";
-> -	reg = <0 0x1401d000 0 0x1000>;
-> -	interrupts = <GIC_SPI 194 IRQ_TYPE_LEVEL_LOW>;
-> -	clocks = <&mmsys CLK_MM_DPI_PIXEL>,
-> -		 <&mmsys CLK_MM_DPI_ENGINE>,
-> -		 <&apmixedsys CLK_APMIXED_TVDPLL>;
-> -	clock-names = "pixel", "engine", "pll";
-> -	pinctrl-names = "default", "sleep";
-> -	pinctrl-0 = <&dpi_pin_func>;
-> -	pinctrl-1 = <&dpi_pin_idle>;
-> -
-> -	port {
-> -		dpi0_out: endpoint {
-> -			pclk-sample = <0>;
-> -			remote-endpoint = <&hdmi0_in>;
-> -		};
-> -	};
-> -};
-> diff --git a/Documentation/devicetree/bindings/display/mediatek/mediatek,dpi.yaml b/Documentation/devicetree/bindings/display/mediatek/mediatek,dpi.yaml
-> new file mode 100644
-> index 000000000000..d65543e3bf8c
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/display/mediatek/mediatek,dpi.yaml
-> @@ -0,0 +1,103 @@
-> +# SPDX-License-Identifier: GPL-2.0
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/display/mediatek/mediatek,dpi.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: mediatek DPI Controller Device Tree Bindings
-> +
-> +maintainers:
-> +  - CK Hu <ck.hu@mediatek.com>
-> +  - Jitao shi <jitao.shi@mediatek.com>
-> +
-> +description: |
-> +  The Mediatek DPI function block is a sink of the display subsystem and
-> +  provides 8-bit RGB/YUV444 or 8/10/10-bit YUV422 pixel data on a parallel
-> +  output bus.
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - mediatek,mt2701-dpi
-> +      - mediatek,mt8173-dpi
-> +      - mediatek,mt8183-dpi
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +
-> +  clocks:
-> +    items:
-> +      - description: Pixel Clock
-> +      - description: Engine Clock
-> +      - description: DPI PLL
-> +
-> +  clock-names:
-> +    items:
-> +      - const: pixel
-> +      - const: engine
-> +      - const: pll
-> +
-> +  pinctrl-0: true
-> +  pinctrl-1: true
-> +
-> +  pinctrl-names:
-> +    items:
-> +      - const: default
-> +      - const: sleep
-> +
-> +  port@0:
-> +    type: object
-> +    description:
-> +      Output port node with endpoint definitions as described in
-> +      Documentation/devicetree/bindings/graph.txt. This port should be connected
-> +      to the input port of an attached HDMI or LVDS encoder chip.
-> +
-> +    properties:
-> +      endpoint:
-> +        type: object
-> +
-> +        properties:
-> +          pclk-sample:
-> +            items:
-> +            - description: refer Documentation/devicetree/bindings/media/video-interfaces.txt.
+* Mathieu Desnoyers:
 
-This is not an array.
+> ----- On Mar 19, 2020, at 2:16 PM, Florian Weimer fw@deneb.enyo.de wrote:
+>
+>> * Mathieu Desnoyers:
+>> 
+>>>> You also need to add an assert that the compiler supports
+>>>> __attribute__ ((aligned)) because ignoring it produces an
+>>>> ABI-incompatible header.
+>>>
+>>> Are you aware of some helper macro I should use to do this, or
+>>> is it done elsewhere in glibc ?
+>> 
+>> I don't think we have any such GCC-only types yet.  max_align_t is
+>> provided by GCC itself.
+>
+> I was thinking of adding the following to
+>
+> sysdeps/unix/sysv/linux/rseq-internal.h: rseq_register_current_thread()
+>
+> +  /* Ensure the compiler supports __attribute__ ((aligned)).  */
+> +  _Static_assert (__alignof__ (struct rseq_cs) >= 4 * sizeof(uint64_t),
+> +                 "alignment");
+> +  _Static_assert (__alignof__ (struct rseq) >= 4 * sizeof(uint64_t),
+> +                 "alignment");
+> +
 
-Just 'pclk-sample: true' if both values are allowed or 'const: 0|1' if 
-only one value is allowed.
+Something like it would have to go into the *public* header.
 
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - interrupts
-> +  - clocks
-> +  - clock-names
-> +  - port@0
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
-> +    #include <dt-bindings/clock/mt8173-clk.h>
-> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
-> +    #include <dt-bindings/interrupt-controller/irq.h>
-> +    dpi0: dpi@1401d000 {
-> +        compatible = "mediatek,mt8173-dpi";
-> +        reg = <0 0x1401d000 0 0x1000>;
-> +        interrupts = <GIC_SPI 194 IRQ_TYPE_LEVEL_LOW>;
-> +        clocks = <&mmsys CLK_MM_DPI_PIXEL>,
-> +             <&mmsys CLK_MM_DPI_ENGINE>,
-> +             <&apmixedsys CLK_APMIXED_TVDPLL>;
-> +        clock-names = "pixel", "engine", "pll";
-> +        pinctrl-names = "default", "sleep";
-> +        pinctrl-0 = <&dpi_pin_func>;
-> +        pinctrl-1 = <&dpi_pin_idle>;
-> +
-> +        port@0 {
-> +            dpi0_out: endpoint {
-> +                pclk-sample = <0>;
-> +                remote-endpoint = <&hdmi0_in>;
-> +            };
-> +        };
-> +    };
-> +
-> +...
-> -- 
-> 2.21.0
+Inside glibc, you can assume __attribute__ support.
+
+>>>> The struct rseq/struct rseq_cs definitions
+>>>> are broken, they should not try to change the alignment.
+>>>
+>>> AFAIU, this means we should ideally not have used __attribute__((aligned))
+>>> in the uapi headers in the first place. Why is it broken ?
+>> 
+>> Compilers which are not sufficiently GCC-compatible define
+>> __attribute__(X) as the empty expansion, so you silently get a
+>> different ABI.
+>
+> It is worth noting that rseq.h is not the only Linux uapi header
+> which uses __attribute__ ((aligned)), so this ABI problem exists today
+> anyway for those compilers.
+
+Yuck.  Even with larger-than-16 alignment?
+
+>> There is really no need to specify 32-byte alignment here.  Is not
+>> even the size of a standard cache line.  It can result in crashes if
+>> these structs are heap-allocated using malloc, when optimizing for
+>> AVX2.
+>
+> Why would it be valid to allocate those with malloc ? Isn't it the
+> purpose of posix_memalign() ?
+
+It would not be valid, but I don't think we have diagnostics for C
+like we have them for C++'s operator new.
+
+>>> However, now that it is in the wild, it's a bit late to change that.
+>> 
+>> I had forgotten about the alignment crashes.  I think we should
+>> seriously consider changing the types. 8-(
+>
+> I don't think this is an option at this stage given that it is part
+> of the Linux kernel UAPI. I am not convinced that it is valid at all
+> to allocate struct rseq or struct rseq_cs with malloc(), because it
+> does not guarantee any alignment.
+
+The kernel ABI doesn't change.  The kernel cannot use the alignment
+information anyway.  Userspace struct layout may change in subtle
+ways, though.
