@@ -2,253 +2,130 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7BBE618B958
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 15:27:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DFF3118B950
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 15:26:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727513AbgCSO16 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 10:27:58 -0400
-Received: from mga18.intel.com ([134.134.136.126]:23320 "EHLO mga18.intel.com"
+        id S1727339AbgCSO0z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 10:26:55 -0400
+Received: from mga14.intel.com ([192.55.52.115]:29584 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726892AbgCSO16 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 10:27:58 -0400
-IronPort-SDR: TUBp+yhLHzWwWPt6kpKDlhvduHrkjyOk/muPp4HJF/4YDjWtWe+cIIFMHosUIyJQo1x2FYILlm
- DORwirOmxScw==
+        id S1726892AbgCSO0y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 10:26:54 -0400
+IronPort-SDR: jkMZd+2+AWRiqyaOehU72nPQumHw732tr+Et8XJa6erIJ6nQngOhlUlR1hIxFnpfkGN5cZnYjm
+ n6FofFRp/HgA==
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Mar 2020 07:27:57 -0700
-IronPort-SDR: JT368X00JqHy0Akd/MFb/8Xmtdik6vOXbS1d9+dn0fcU5MRfXRjaaowNpLR6nqCbQqF1wotv7M
- uvn/nTmh2IHA==
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Mar 2020 07:26:54 -0700
+IronPort-SDR: 5wTAmaiKMB7UbpfYe+dYHV7dUABogcaNY8bPZRYQ71HS0BVNr9wCzGBPFMG42llbBUh2bSaoNo
+ vUJevmIpj65Q==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.70,571,1574150400"; 
-   d="scan'208";a="291637680"
-Received: from yilunxu-optiplex-7050.sh.intel.com (HELO localhost) ([10.239.159.141])
-  by FMSMGA003.fm.intel.com with ESMTP; 19 Mar 2020 07:27:56 -0700
-Date:   Thu, 19 Mar 2020 22:25:44 +0800
-From:   Xu Yilun <yilun.xu@intel.com>
-To:     Wu Hao <hao.wu@intel.com>
-Cc:     mdf@kernel.org, linux-fpga@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Luwei Kang <luwei.kang@intel.com>
-Subject: Re: [PATCH v2 4/7] fpga: dfl: afu: add interrupt support for error
-  reporting
-Message-ID: <20200319142544.GC2474@yilunxu-OptiPlex-7050>
-References: <1584332222-26652-1-git-send-email-yilun.xu@intel.com>
- <1584332222-26652-5-git-send-email-yilun.xu@intel.com>
- <20200318085426.GA12088@hao-dev>
+   d="scan'208";a="234187796"
+Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
+  by orsmga007.jf.intel.com with ESMTP; 19 Mar 2020 07:26:43 -0700
+Received: from andy by smile with local (Exim 4.93)
+        (envelope-from <andy.shevchenko@gmail.com>)
+        id 1jEw87-00B637-Ar; Thu, 19 Mar 2020 16:26:39 +0200
+Date:   Thu, 19 Mar 2020 16:26:39 +0200
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+To:     Michal =?iso-8859-1?Q?Such=E1nek?= <msuchanek@suse.de>
+Cc:     "open list:LINUX FOR POWERPC PA SEMI PWRFICIENT" 
+        <linuxppc-dev@lists.ozlabs.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Rob Herring <robh@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        Christophe Leroy <christophe.leroy@c-s.fr>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Nayna Jain <nayna@linux.ibm.com>,
+        Eric Richter <erichte@linux.ibm.com>,
+        Claudio Carvalho <cclaudio@linux.ibm.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Hari Bathini <hbathini@linux.ibm.com>,
+        Masahiro Yamada <masahiroy@kernel.org>,
+        Thiago Jung Bauermann <bauerman@linux.ibm.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Valentin Schneider <valentin.schneider@arm.com>,
+        Jordan Niethe <jniethe5@gmail.com>,
+        Michael Neuling <mikey@neuling.org>,
+        Gustavo Luiz Duarte <gustavold@linux.ibm.com>,
+        Allison Randal <allison@lohutok.net>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH v11 8/8] MAINTAINERS: perf: Add pattern that matches ppc
+ perf to the perf entry.
+Message-ID: <20200319142639.GL1922688@smile.fi.intel.com>
+References: <20200225173541.1549955-1-npiggin@gmail.com>
+ <cover.1584620202.git.msuchanek@suse.de>
+ <5cd926191175c4a4a85dc2246adc84bcfac21b1a.1584620202.git.msuchanek@suse.de>
+ <CAHp75VegYhz-hwSUNHbGFB3yiatAWWytwB7Vctf=mCLyCJEy3Q@mail.gmail.com>
+ <20200319140008.GI25468@kitsune.suse.cz>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20200318085426.GA12088@hao-dev>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200319140008.GI25468@kitsune.suse.cz>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 18, 2020 at 04:54:26PM +0800, Wu Hao wrote:
-> On Mon, Mar 16, 2020 at 12:16:59PM +0800, Xu Yilun wrote:
-> > Error reporting interrupt is very useful to notify users that some
-> > errors are detected by the hardware. Once users are notified, they
-> > could query hardware logged error states, no need to continuously
-> > poll on these states.
+On Thu, Mar 19, 2020 at 03:00:08PM +0100, Michal Suchánek wrote:
+> On Thu, Mar 19, 2020 at 03:37:03PM +0200, Andy Shevchenko wrote:
+> > On Thu, Mar 19, 2020 at 2:21 PM Michal Suchanek <msuchanek@suse.de> wrote:
+> > >
+> > > Signed-off-by: Michal Suchanek <msuchanek@suse.de>
+> > > ---
+> > > v10: new patch
+> > > ---
+> > >  MAINTAINERS | 2 ++
+> > >  1 file changed, 2 insertions(+)
+> > >
+> > > diff --git a/MAINTAINERS b/MAINTAINERS
+> > > index bc8dbe4fe4c9..329bf4a31412 100644
+> > > --- a/MAINTAINERS
+> > > +++ b/MAINTAINERS
+> > > @@ -13088,6 +13088,8 @@ F:      arch/*/kernel/*/perf_event*.c
+> > >  F:     arch/*/kernel/*/*/perf_event*.c
+> > >  F:     arch/*/include/asm/perf_event.h
+> > >  F:     arch/*/kernel/perf_callchain.c
+> > > +F:     arch/*/perf/*
+> > > +F:     arch/*/perf/*/*
+> > >  F:     arch/*/events/*
+> > >  F:     arch/*/events/*/*
+> > >  F:     tools/perf/
 > > 
-> > This patch follows the common DFL interrupt notification and handling
-> > mechanism, implements two ioctl commands below for user to query
-> > number of irqs supported, and set/unset interrupt triggers.
-> > 
-> >  Ioctls:
-> >  * DFL_FPGA_PORT_ERR_GET_IRQ_NUM
-> >    get the number of irqs, which is used to determine whether/how many
-> >    interrupts error reporting feature supports.
-> > 
-> >  * DFL_FPGA_PORT_ERR_SET_IRQ
-> >    set/unset given eventfds as error interrupt triggers.
-> > 
-> > Signed-off-by: Luwei Kang <luwei.kang@intel.com>
-> > Signed-off-by: Wu Hao <hao.wu@intel.com>
-> > Signed-off-by: Xu Yilun <yilun.xu@intel.com>
-> > ----
-> > v2: use DFL_FPGA_PORT_ERR_GET_IRQ_NUM instead of
-> >     DFL_FPGA_PORT_ERR_GET_INFO
-> >     Delete flag field for DFL_FPGA_PORT_ERR_SET_IRQ param
-> > ---
-> >  drivers/fpga/dfl-afu-error.c  | 64 +++++++++++++++++++++++++++++++++++++++++++
-> >  drivers/fpga/dfl-afu-main.c   |  4 +++
-> >  include/uapi/linux/fpga-dfl.h | 29 ++++++++++++++++++++
-> >  3 files changed, 97 insertions(+)
-> > 
-> > diff --git a/drivers/fpga/dfl-afu-error.c b/drivers/fpga/dfl-afu-error.c
-> > index c1467ae..4d478b2f 100644
-> > --- a/drivers/fpga/dfl-afu-error.c
-> > +++ b/drivers/fpga/dfl-afu-error.c
-> > @@ -15,6 +15,7 @@
-> >   */
-> >  
-> >  #include <linux/uaccess.h>
-> > +#include <linux/fpga-dfl.h>
-> >  
-> >  #include "dfl-afu.h"
-> >  
-> > @@ -219,6 +220,68 @@ static void port_err_uinit(struct platform_device *pdev,
-> >  	afu_port_err_mask(&pdev->dev, true);
-> >  }
-> >  
-> > +static long
-> > +port_err_get_num_irqs(struct platform_device *pdev,
-> > +		      struct dfl_feature *feature, unsigned long arg)
-> > +{
-> > +	if (copy_to_user((void __user *)arg, &feature->nr_irqs,
-> > +			 sizeof(feature->nr_irqs)))
-> > +		return -EFAULT;
+> > Had you run parse-maintainers.pl?
+> Did not know it exists. The output is:
 > 
-> maybe use put_user is simpler here.
+> scripts/parse-maintainers.pl 
+> Odd non-pattern line '
+> Documentation/devicetree/bindings/media/ti,cal.yaml
+> ' for 'TI VPE/CAL DRIVERS' at scripts/parse-maintainers.pl line 147,
+> <$file> line 16756.
 
-I'll change it.
+It is fixed in media tree and available in linux next as
 
-> 
-> > +
-> > +	return 0;
-> > +}
-> > +
-> > +static long port_err_set_irq(struct platform_device *pdev,
-> > +			     struct dfl_feature *feature, unsigned long arg)
-> > +{
-> > +	struct dfl_feature_platform_data *pdata = dev_get_platdata(&pdev->dev);
-> > +	struct dfl_fpga_irq_set hdr;
-> > +	s32 *fds;
-> > +	long ret;
-> > +
-> > +	if (!feature->nr_irqs)
-> > +		return -ENOENT;
-> > +
-> > +	if (copy_from_user(&hdr, (void __user *)arg, sizeof(hdr)))
-> > +		return -EFAULT;
-> > +
-> > +	if (!hdr.count || (hdr.start + hdr.count > feature->nr_irqs) ||
-> > +	    (hdr.start + hdr.count < hdr.start))
-> > +		return -EINVAL;
-> > +
-> > +	fds = memdup_user((void __user *)(arg + sizeof(hdr)),
-> > +			  hdr.count * sizeof(s32));
-> > +	if (IS_ERR(fds))
-> > +		return PTR_ERR(fds);
-> > +
-> > +	mutex_lock(&pdata->lock);
-> > +	ret = dfl_fpga_set_irq_triggers(feature, hdr.start, hdr.count, fds);
-> > +	mutex_unlock(&pdata->lock);
-> > +
-> > +	kfree(fds);
-> > +	return ret;
-> > +}
-> > +
-> > +static long
-> > +port_err_ioctl(struct platform_device *pdev, struct dfl_feature *feature,
-> > +	       unsigned int cmd, unsigned long arg)
-> > +{
-> > +	long ret = -ENODEV;
-> > +
-> > +	switch (cmd) {
-> > +	case DFL_FPGA_PORT_ERR_GET_IRQ_NUM:
-> > +		ret = port_err_get_num_irqs(pdev, feature, arg);
-> > +		break;
-> > +	case DFL_FPGA_PORT_ERR_SET_IRQ:
-> > +		ret = port_err_set_irq(pdev, feature, arg);
-> > +		break;
-> > +	default:
-> > +		dev_dbg(&pdev->dev, "%x cmd not handled", cmd);
-> > +	}
-> > +
-> > +	return ret;
-> > +}
-> > +
-> >  const struct dfl_feature_id port_err_id_table[] = {
-> >  	{.id = PORT_FEATURE_ID_ERROR,},
-> >  	{0,}
-> > @@ -227,4 +290,5 @@ const struct dfl_feature_id port_err_id_table[] = {
-> >  const struct dfl_feature_ops port_err_ops = {
-> >  	.init = port_err_init,
-> >  	.uinit = port_err_uinit,
-> > +	.ioctl = port_err_ioctl,
-> >  };
-> > diff --git a/drivers/fpga/dfl-afu-main.c b/drivers/fpga/dfl-afu-main.c
-> > index 435bde4..fc8b9cf 100644
-> > --- a/drivers/fpga/dfl-afu-main.c
-> > +++ b/drivers/fpga/dfl-afu-main.c
-> > @@ -577,6 +577,7 @@ static int afu_release(struct inode *inode, struct file *filp)
-> >  {
-> >  	struct platform_device *pdev = filp->private_data;
-> >  	struct dfl_feature_platform_data *pdata;
-> > +	struct dfl_feature *feature;
-> >  
-> >  	dev_dbg(&pdev->dev, "Device File Release\n");
-> >  
-> > @@ -586,6 +587,9 @@ static int afu_release(struct inode *inode, struct file *filp)
-> >  	dfl_feature_dev_use_end(pdata);
-> >  
-> >  	if (!dfl_feature_dev_use_count(pdata)) {
-> > +		dfl_fpga_dev_for_each_feature(pdata, feature)
-> > +			dfl_fpga_set_irq_triggers(feature, 0,
-> > +						  feature->nr_irqs, NULL);
-> >  		__port_reset(pdev);
-> >  		afu_dma_region_destroy(pdata);
-> >  	}
-> > diff --git a/include/uapi/linux/fpga-dfl.h b/include/uapi/linux/fpga-dfl.h
-> > index ec70a0746..ced859d 100644
-> > --- a/include/uapi/linux/fpga-dfl.h
-> > +++ b/include/uapi/linux/fpga-dfl.h
-> > @@ -151,6 +151,35 @@ struct dfl_fpga_port_dma_unmap {
-> >  
-> >  #define DFL_FPGA_PORT_DMA_UNMAP		_IO(DFL_FPGA_MAGIC, DFL_PORT_BASE + 4)
-> >  
-> > +/**
-> > + * DFL_FPGA_PORT_ERR_GET_IRQ_NUM - _IOR(DFL_FPGA_MAGIC, DFL_PORT_BASE + 5,
-> > + *								__u32 num_irqs)
-> > + *
-> > + * Get the number of irqs supported by the fpga port error reporting private
-> > + * feature.
-> > + * Return: 0 on success, -errno on failure.
-> > + */
-> > +#define DFL_FPGA_PORT_ERR_GET_IRQ_NUM	_IOR(DFL_FPGA_MAGIC,	\
-> > +					     DFL_PORT_BASE + 5, __u32)
-> > +
-> > +/**
-> > + * DFL_FPGA_PORT_ERR_SET_IRQ - _IOW(DFL_FPGA_MAGIC, DFL_PORT_BASE + 6,
-> > + *						struct dfl_fpga_irq_set)
-> > + *
-> > + * Set fpga port error reporting interrupt trigger if evtfds[n] is valid.
-> > + * Unset related interrupt trigger if evtfds[n] is a NULL or negative value.
-> 
-> Looks like the code only unset trigger if fd < 0, right?
+d44535cb14c9 ("media: MAINTAINERS: Sort entries in database for TI VPE/CAL")
 
-Yes, will fix it.
+-- 
+With Best Regards,
+Andy Shevchenko
 
-> 
-> > + * Return: 0 on success, -errno on failure.
-> > + */
-> > +struct dfl_fpga_irq_set {
-> > +	__u32 start;		/* First irq number */
-> 
-> Sounds a little confusing, what about index of the first irq?
 
-I'll take this change.
-
-Thanks.
-
-> 
-> 
-> Thanks
-> Hao
-> 
-> > +	__u32 count;		/* The number of eventfd handler */
-> > +	__s32 evtfds[];		/* Eventfd handler */
-> > +};
-> > +
-> > +#define DFL_FPGA_PORT_ERR_SET_IRQ	_IOW(DFL_FPGA_MAGIC,	\
-> > +					     DFL_PORT_BASE + 6,	\
-> > +					     struct dfl_fpga_irq_set)
-> > +
-> >  /* IOCTLs for FME file descriptor */
-> >  
-> >  /**
-> > -- 
-> > 2.7.4
