@@ -2,41 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6B54218B66C
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:27:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4FA4018B6F5
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:30:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730641AbgCSN0u (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 09:26:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54858 "EHLO mail.kernel.org"
+        id S1729946AbgCSNVf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 09:21:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46230 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730825AbgCSN0q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 09:26:46 -0400
+        id S1730120AbgCSNVa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 09:21:30 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 77FBC208C3;
-        Thu, 19 Mar 2020 13:26:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E18B3206D7;
+        Thu, 19 Mar 2020 13:21:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584624405;
-        bh=REpsYXfZCjqkDDB8VV0pmsaiEOHyUa6o40zKlxKoOQc=;
+        s=default; t=1584624089;
+        bh=JwmYO+T78n5hPTS8cxcIzBbs9aFdkcJ8A4d/0YHzVdc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GtZBo1GdNpYoPtkgBteCNinniMcfDNk7ioRyDqnsf5zSDuT+Q99CB88vnVarYomxl
-         uskHIef7o0vhvR4P2vqurEX+Ush2cJBgBwuxzpcNGs8VpdTlyBEKvqK/TjH1NAcu64
-         j1VGJgF1UFx/m+nNk4s0hWiN0L4mBJYWzWOI8rwI=
+        b=QQEYogs7ohzYWNJTc+weCBQ+v1meLT+nPtjgNHlYyk9jcGdM0gsWgDm45Dz1dePPB
+         pJoK7zBQ8VePHWfvpQ0oExKPe/9IK/ZolTiWhFm47jYYGN5a2J7tR5DSggiDyHWcfO
+         5XKFUKgRS3dKljRzczcCoRcIp3sC6SrJvcfdOThQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dongli Zhang <dongli.zhang@oracle.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        "Ewan D. Milne" <emilne@redhat.com>,
-        Ming Lei <ming.lei@redhat.com>, Jens Axboe <axboe@kernel.dk>,
+        stable@vger.kernel.org, Faiz Abbas <faiz_abbas@ti.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.5 33/65] blk-mq: insert passthrough request into hctx->dispatch directly
-Date:   Thu, 19 Mar 2020 14:04:15 +0100
-Message-Id: <20200319123936.847425916@linuxfoundation.org>
+Subject: [PATCH 4.19 34/48] mmc: sdhci-omap: Dont finish_mrq() on a command error during tuning
+Date:   Thu, 19 Mar 2020 14:04:16 +0100
+Message-Id: <20200319123913.644900190@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.2
-In-Reply-To: <20200319123926.466988514@linuxfoundation.org>
-References: <20200319123926.466988514@linuxfoundation.org>
+In-Reply-To: <20200319123902.941451241@linuxfoundation.org>
+References: <20200319123902.941451241@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,179 +45,88 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ming Lei <ming.lei@redhat.com>
+From: Faiz Abbas <faiz_abbas@ti.com>
 
-[ Upstream commit 01e99aeca3979600302913cef3f89076786f32c8 ]
+[ Upstream commit 5c41ea6d52003b5bc77c2a82fd5ca7d480237d89 ]
 
-For some reason, device may be in one situation which can't handle
-FS request, so STS_RESOURCE is always returned and the FS request
-will be added to hctx->dispatch. However passthrough request may
-be required at that time for fixing the problem. If passthrough
-request is added to scheduler queue, there isn't any chance for
-blk-mq to dispatch it given we prioritize requests in hctx->dispatch.
-Then the FS IO request may never be completed, and IO hang is caused.
+commit 5b0d62108b46 ("mmc: sdhci-omap: Add platform specific reset
+callback") skips data resets during tuning operation. Because of this,
+a data error or data finish interrupt might still arrive after a command
+error has been handled and the mrq ended. This ends up with a "mmc0: Got
+data interrupt 0x00000002 even though no data operation was in progress"
+error message.
 
-So passthrough request has to be added to hctx->dispatch directly
-for fixing the IO hang.
+Fix this by adding a platform specific callback for sdhci_irq. Mark the
+mrq as a failure but wait for a data interrupt instead of calling
+finish_mrq().
 
-Fix this issue by inserting passthrough request into hctx->dispatch
-directly together withing adding FS request to the tail of
-hctx->dispatch in blk_mq_dispatch_rq_list(). Actually we add FS request
-to tail of hctx->dispatch at default, see blk_mq_request_bypass_insert().
-
-Then it becomes consistent with original legacy IO request
-path, in which passthrough request is always added to q->queue_head.
-
-Cc: Dongli Zhang <dongli.zhang@oracle.com>
-Cc: Christoph Hellwig <hch@infradead.org>
-Cc: Ewan D. Milne <emilne@redhat.com>
-Signed-off-by: Ming Lei <ming.lei@redhat.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Fixes: 5b0d62108b46 ("mmc: sdhci-omap: Add platform specific reset
+callback")
+Signed-off-by: Faiz Abbas <faiz_abbas@ti.com>
+Acked-by: Adrian Hunter <adrian.hunter@intel.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- block/blk-flush.c    |  2 +-
- block/blk-mq-sched.c | 22 +++++++++++++++-------
- block/blk-mq.c       | 18 +++++++++++-------
- block/blk-mq.h       |  3 ++-
- 4 files changed, 29 insertions(+), 16 deletions(-)
+ drivers/mmc/host/sdhci-omap.c | 38 +++++++++++++++++++++++++++++++++++
+ 1 file changed, 38 insertions(+)
 
-diff --git a/block/blk-flush.c b/block/blk-flush.c
-index 3f977c517960e..5cc775bdb06ac 100644
---- a/block/blk-flush.c
-+++ b/block/blk-flush.c
-@@ -412,7 +412,7 @@ void blk_insert_flush(struct request *rq)
- 	 */
- 	if ((policy & REQ_FSEQ_DATA) &&
- 	    !(policy & (REQ_FSEQ_PREFLUSH | REQ_FSEQ_POSTFLUSH))) {
--		blk_mq_request_bypass_insert(rq, false);
-+		blk_mq_request_bypass_insert(rq, false, false);
- 		return;
- 	}
- 
-diff --git a/block/blk-mq-sched.c b/block/blk-mq-sched.c
-index ca22afd47b3dc..856356b1619e8 100644
---- a/block/blk-mq-sched.c
-+++ b/block/blk-mq-sched.c
-@@ -361,13 +361,19 @@ static bool blk_mq_sched_bypass_insert(struct blk_mq_hw_ctx *hctx,
- 				       bool has_sched,
- 				       struct request *rq)
- {
--	/* dispatch flush rq directly */
--	if (rq->rq_flags & RQF_FLUSH_SEQ) {
--		spin_lock(&hctx->lock);
--		list_add(&rq->queuelist, &hctx->dispatch);
--		spin_unlock(&hctx->lock);
-+	/*
-+	 * dispatch flush and passthrough rq directly
-+	 *
-+	 * passthrough request has to be added to hctx->dispatch directly.
-+	 * For some reason, device may be in one situation which can't
-+	 * handle FS request, so STS_RESOURCE is always returned and the
-+	 * FS request will be added to hctx->dispatch. However passthrough
-+	 * request may be required at that time for fixing the problem. If
-+	 * passthrough request is added to scheduler queue, there isn't any
-+	 * chance to dispatch it given we prioritize requests in hctx->dispatch.
-+	 */
-+	if ((rq->rq_flags & RQF_FLUSH_SEQ) || blk_rq_is_passthrough(rq))
- 		return true;
--	}
- 
- 	if (has_sched)
- 		rq->rq_flags |= RQF_SORTED;
-@@ -391,8 +397,10 @@ void blk_mq_sched_insert_request(struct request *rq, bool at_head,
- 
- 	WARN_ON(e && (rq->tag != -1));
- 
--	if (blk_mq_sched_bypass_insert(hctx, !!e, rq))
-+	if (blk_mq_sched_bypass_insert(hctx, !!e, rq)) {
-+		blk_mq_request_bypass_insert(rq, at_head, false);
- 		goto run;
-+	}
- 
- 	if (e && e->type->ops.insert_requests) {
- 		LIST_HEAD(list);
-diff --git a/block/blk-mq.c b/block/blk-mq.c
-index 323c9cb28066b..329df7986bf60 100644
---- a/block/blk-mq.c
-+++ b/block/blk-mq.c
-@@ -727,7 +727,7 @@ static void blk_mq_requeue_work(struct work_struct *work)
- 		 * merge.
- 		 */
- 		if (rq->rq_flags & RQF_DONTPREP)
--			blk_mq_request_bypass_insert(rq, false);
-+			blk_mq_request_bypass_insert(rq, false, false);
- 		else
- 			blk_mq_sched_insert_request(rq, true, false, false);
- 	}
-@@ -1278,7 +1278,7 @@ bool blk_mq_dispatch_rq_list(struct request_queue *q, struct list_head *list,
- 			q->mq_ops->commit_rqs(hctx);
- 
- 		spin_lock(&hctx->lock);
--		list_splice_init(list, &hctx->dispatch);
-+		list_splice_tail_init(list, &hctx->dispatch);
- 		spin_unlock(&hctx->lock);
- 
- 		/*
-@@ -1629,12 +1629,16 @@ void __blk_mq_insert_request(struct blk_mq_hw_ctx *hctx, struct request *rq,
-  * Should only be used carefully, when the caller knows we want to
-  * bypass a potential IO scheduler on the target device.
-  */
--void blk_mq_request_bypass_insert(struct request *rq, bool run_queue)
-+void blk_mq_request_bypass_insert(struct request *rq, bool at_head,
-+				  bool run_queue)
- {
- 	struct blk_mq_hw_ctx *hctx = rq->mq_hctx;
- 
- 	spin_lock(&hctx->lock);
--	list_add_tail(&rq->queuelist, &hctx->dispatch);
-+	if (at_head)
-+		list_add(&rq->queuelist, &hctx->dispatch);
-+	else
-+		list_add_tail(&rq->queuelist, &hctx->dispatch);
- 	spin_unlock(&hctx->lock);
- 
- 	if (run_queue)
-@@ -1824,7 +1828,7 @@ static blk_status_t __blk_mq_try_issue_directly(struct blk_mq_hw_ctx *hctx,
- 	if (bypass_insert)
- 		return BLK_STS_RESOURCE;
- 
--	blk_mq_request_bypass_insert(rq, run_queue);
-+	blk_mq_request_bypass_insert(rq, false, run_queue);
- 	return BLK_STS_OK;
+diff --git a/drivers/mmc/host/sdhci-omap.c b/drivers/mmc/host/sdhci-omap.c
+index 79ee5fc5a2013..833e13cabd2a8 100644
+--- a/drivers/mmc/host/sdhci-omap.c
++++ b/drivers/mmc/host/sdhci-omap.c
+@@ -801,6 +801,43 @@ void sdhci_omap_reset(struct sdhci_host *host, u8 mask)
+ 	sdhci_reset(host, mask);
  }
  
-@@ -1840,7 +1844,7 @@ static void blk_mq_try_issue_directly(struct blk_mq_hw_ctx *hctx,
++#define CMD_ERR_MASK (SDHCI_INT_CRC | SDHCI_INT_END_BIT | SDHCI_INT_INDEX |\
++		      SDHCI_INT_TIMEOUT)
++#define CMD_MASK (CMD_ERR_MASK | SDHCI_INT_RESPONSE)
++
++static u32 sdhci_omap_irq(struct sdhci_host *host, u32 intmask)
++{
++	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
++	struct sdhci_omap_host *omap_host = sdhci_pltfm_priv(pltfm_host);
++
++	if (omap_host->is_tuning && host->cmd && !host->data_early &&
++	    (intmask & CMD_ERR_MASK)) {
++
++		/*
++		 * Since we are not resetting data lines during tuning
++		 * operation, data error or data complete interrupts
++		 * might still arrive. Mark this request as a failure
++		 * but still wait for the data interrupt
++		 */
++		if (intmask & SDHCI_INT_TIMEOUT)
++			host->cmd->error = -ETIMEDOUT;
++		else
++			host->cmd->error = -EILSEQ;
++
++		host->cmd = NULL;
++
++		/*
++		 * Sometimes command error interrupts and command complete
++		 * interrupt will arrive together. Clear all command related
++		 * interrupts here.
++		 */
++		sdhci_writel(host, intmask & CMD_MASK, SDHCI_INT_STATUS);
++		intmask &= ~CMD_MASK;
++	}
++
++	return intmask;
++}
++
+ static struct sdhci_ops sdhci_omap_ops = {
+ 	.set_clock = sdhci_omap_set_clock,
+ 	.set_power = sdhci_omap_set_power,
+@@ -811,6 +848,7 @@ static struct sdhci_ops sdhci_omap_ops = {
+ 	.platform_send_init_74_clocks = sdhci_omap_init_74_clocks,
+ 	.reset = sdhci_omap_reset,
+ 	.set_uhs_signaling = sdhci_omap_set_uhs_signaling,
++	.irq = sdhci_omap_irq,
+ };
  
- 	ret = __blk_mq_try_issue_directly(hctx, rq, cookie, false, true);
- 	if (ret == BLK_STS_RESOURCE || ret == BLK_STS_DEV_RESOURCE)
--		blk_mq_request_bypass_insert(rq, true);
-+		blk_mq_request_bypass_insert(rq, false, true);
- 	else if (ret != BLK_STS_OK)
- 		blk_mq_end_request(rq, ret);
- 
-@@ -1874,7 +1878,7 @@ void blk_mq_try_issue_list_directly(struct blk_mq_hw_ctx *hctx,
- 		if (ret != BLK_STS_OK) {
- 			if (ret == BLK_STS_RESOURCE ||
- 					ret == BLK_STS_DEV_RESOURCE) {
--				blk_mq_request_bypass_insert(rq,
-+				blk_mq_request_bypass_insert(rq, false,
- 							list_empty(list));
- 				break;
- 			}
-diff --git a/block/blk-mq.h b/block/blk-mq.h
-index eaaca8fc1c287..c0fa34378eb2f 100644
---- a/block/blk-mq.h
-+++ b/block/blk-mq.h
-@@ -66,7 +66,8 @@ int blk_mq_alloc_rqs(struct blk_mq_tag_set *set, struct blk_mq_tags *tags,
-  */
- void __blk_mq_insert_request(struct blk_mq_hw_ctx *hctx, struct request *rq,
- 				bool at_head);
--void blk_mq_request_bypass_insert(struct request *rq, bool run_queue);
-+void blk_mq_request_bypass_insert(struct request *rq, bool at_head,
-+				  bool run_queue);
- void blk_mq_insert_requests(struct blk_mq_hw_ctx *hctx, struct blk_mq_ctx *ctx,
- 				struct list_head *list);
- 
+ static int sdhci_omap_set_capabilities(struct sdhci_omap_host *omap_host)
 -- 
 2.20.1
 
