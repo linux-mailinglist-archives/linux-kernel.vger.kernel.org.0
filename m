@@ -2,270 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C192C18BD40
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 17:59:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2F4DC18BD2A
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 17:57:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728691AbgCSQ62 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 12:58:28 -0400
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:45616 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728624AbgCSQ6Z (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 12:58:25 -0400
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 02JGwKom034154;
-        Thu, 19 Mar 2020 11:58:20 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1584637100;
-        bh=BDh7JDA1u67mI0bzRlP2YIugwKL6tYVjHl2OGCvCnQg=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=Z/Jw0TpGXFmmCbs776tZA+fbAETN9Fzt6s2OJtuGLTR/GGyM3HEaAlBqyIA9TcpVI
-         otP8w2ligXcLCG60fFPcoetqYIrscs27QYAwX2t78CDW4LtbTwuQbSyeaeqO7b4rGY
-         IkOp2Ezo64LONC0FJjLe5fO35uPR4boiReVyNFOw=
-Received: from DFLE113.ent.ti.com (dfle113.ent.ti.com [10.64.6.34])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 02JGwKSg018529
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 19 Mar 2020 11:58:20 -0500
-Received: from DFLE103.ent.ti.com (10.64.6.24) by DFLE113.ent.ti.com
- (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Thu, 19
- Mar 2020 11:58:19 -0500
-Received: from fllv0039.itg.ti.com (10.64.41.19) by DFLE103.ent.ti.com
- (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Thu, 19 Mar 2020 11:58:19 -0500
-Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id 02JGwIVN110016;
-        Thu, 19 Mar 2020 11:58:19 -0500
-From:   Grygorii Strashko <grygorii.strashko@ti.com>
-To:     "David S . Miller" <davem@davemloft.net>,
-        Richard Cochran <richardcochran@gmail.com>,
-        Lokesh Vutla <lokeshvutla@ti.com>,
-        Tony Lindgren <tony@atomide.com>
-CC:     Sekhar Nori <nsekhar@ti.com>,
-        Murali Karicheri <m-karicheri2@ti.com>,
-        netdev <netdev@vger.kernel.org>, <linux-omap@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        Grygorii Strashko <grygorii.strashko@ti.com>
-Subject: [PATCH net-next v2 07/10] net: ethernet: ti: cpts: rework locking
-Date:   Thu, 19 Mar 2020 18:57:59 +0200
-Message-ID: <20200319165802.30898-8-grygorii.strashko@ti.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200319165802.30898-1-grygorii.strashko@ti.com>
-References: <20200319165802.30898-1-grygorii.strashko@ti.com>
+        id S1728329AbgCSQ5h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 12:57:37 -0400
+Received: from foss.arm.com ([217.140.110.172]:39026 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727382AbgCSQ5g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 12:57:36 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 052B930E;
+        Thu, 19 Mar 2020 09:57:36 -0700 (PDT)
+Received: from [10.37.12.142] (unknown [10.37.12.142])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3018C3F305;
+        Thu, 19 Mar 2020 09:57:31 -0700 (PDT)
+Subject: Re: [PATCH v4 18/26] arm64: vdso32: Replace TASK_SIZE_32 check in
+ vgettimeofday
+To:     Andy Lutomirski <luto@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>
+Cc:     linux-arch <linux-arch@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        clang-built-linux <clang-built-linux@googlegroups.com>,
+        "open list:MIPS" <linux-mips@vger.kernel.org>,
+        X86 ML <x86@kernel.org>, Will Deacon <will.deacon@arm.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Russell King <linux@armlinux.org.uk>,
+        Paul Burton <paul.burton@mips.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Mark Salyzyn <salyzyn@android.com>,
+        Kees Cook <keescook@chromium.org>,
+        Peter Collingbourne <pcc@google.com>,
+        Dmitry Safonov <0x7f454c46@gmail.com>,
+        Andrei Vagin <avagin@openvz.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Marc Zyngier <maz@kernel.org>,
+        Mark Rutland <Mark.Rutland@arm.com>,
+        Will Deacon <will@kernel.org>
+References: <20200317122220.30393-1-vincenzo.frascino@arm.com>
+ <20200317122220.30393-19-vincenzo.frascino@arm.com>
+ <20200317143834.GC632169@arrakis.emea.arm.com>
+ <CALCETrVWPNaJMbYoXbnWsALXKrhHMaePOUvY0DmXpvte8Zz9Zw@mail.gmail.com>
+From:   Vincenzo Frascino <vincenzo.frascino@arm.com>
+Message-ID: <78109f4e-c9c7-57b6-079b-c911b6090aa0@arm.com>
+Date:   Thu, 19 Mar 2020 16:58:00 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+In-Reply-To: <CALCETrVWPNaJMbYoXbnWsALXKrhHMaePOUvY0DmXpvte8Zz9Zw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now spinlock is used to synchronize everything which is not required. Add
-mutex and use to sync access to PTP interface and PTP worker and use
-spinlock only to sync FIFO/events processing.
+Hi Andy,
 
-Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
----
- drivers/net/ethernet/ti/cpts.c | 53 +++++++++++++++++++---------------
- drivers/net/ethernet/ti/cpts.h |  3 +-
- 2 files changed, 32 insertions(+), 24 deletions(-)
+On 3/19/20 3:49 PM, Andy Lutomirski wrote:
+> On Tue, Mar 17, 2020 at 7:38 AM Catalin Marinas <catalin.marinas@arm.com> wrote:
+>>
+>> On Tue, Mar 17, 2020 at 12:22:12PM +0000, Vincenzo Frascino wrote:
+>>> diff --git a/arch/arm64/kernel/vdso32/vgettimeofday.c b/arch/arm64/kernel/vdso32/vgettimeofday.c
+>>> index 54fc1c2ce93f..91138077b073 100644
+>>> --- a/arch/arm64/kernel/vdso32/vgettimeofday.c
+>>> +++ b/arch/arm64/kernel/vdso32/vgettimeofday.c
+>>> @@ -8,11 +8,14 @@
+>>>  #include <linux/time.h>
+>>>  #include <linux/types.h>
+>>>
+>>> +#define VALID_CLOCK_ID(x) \
+>>> +     ((x >= 0) && (x < VDSO_BASES))
+>>> +
+>>>  int __vdso_clock_gettime(clockid_t clock,
+>>>                        struct old_timespec32 *ts)
+>>>  {
+>>>       /* The checks below are required for ABI consistency with arm */
+>>> -     if ((u32)ts >= TASK_SIZE_32)
+>>> +     if ((u32)ts > UINTPTR_MAX - sizeof(*ts) + 1)
+>>>               return -EFAULT;
+>>>
+>>>       return __cvdso_clock_gettime32(clock, ts);
+>>
+>> I probably miss something but I can't find the TASK_SIZE check in the
+>> arch/arm/vdso/vgettimeofday.c code. Is this done elsewhere?
+>>
+> 
+> Can you not just remove the TASK_SIZE_32 check entirely?  If you pass
+> a garbage address to the vDSO, you are quite likely to get SIGSEGV.
+> Why does this particular type of error need special handling?
+> 
 
-diff --git a/drivers/net/ethernet/ti/cpts.c b/drivers/net/ethernet/ti/cpts.c
-index 10061e17d7b4..3cfa0f78287b 100644
---- a/drivers/net/ethernet/ti/cpts.c
-+++ b/drivers/net/ethernet/ti/cpts.c
-@@ -99,9 +99,12 @@ static void cpts_purge_txq(struct cpts *cpts)
-  */
- static int cpts_fifo_read(struct cpts *cpts, int match)
- {
-+	struct cpts_event *event;
-+	unsigned long flags;
- 	int i, type = -1;
- 	u32 hi, lo;
--	struct cpts_event *event;
-+
-+	spin_lock_irqsave(&cpts->lock, flags);
- 
- 	for (i = 0; i < CPTS_FIFO_DEPTH; i++) {
- 		if (cpts_fifo_pop(cpts, &hi, &lo))
-@@ -109,7 +112,7 @@ static int cpts_fifo_read(struct cpts *cpts, int match)
- 
- 		if (list_empty(&cpts->pool) && cpts_purge_events(cpts)) {
- 			dev_info(cpts->dev, "cpts: event pool empty\n");
--			return -1;
-+			break;
- 		}
- 
- 		event = list_first_entry(&cpts->pool, struct cpts_event, list);
-@@ -148,6 +151,9 @@ static int cpts_fifo_read(struct cpts *cpts, int match)
- 		if (type == match)
- 			break;
- 	}
-+
-+	spin_unlock_irqrestore(&cpts->lock, flags);
-+
- 	return type == match ? 0 : -1;
- }
- 
-@@ -161,10 +167,15 @@ static u64 cpts_systim_read(const struct cyclecounter *cc)
- static void cpts_update_cur_time(struct cpts *cpts, int match,
- 				 struct ptp_system_timestamp *sts)
- {
-+	unsigned long flags;
-+
-+	/* use spin_lock_irqsave() here as it has to run very fast */
-+	spin_lock_irqsave(&cpts->lock, flags);
- 	ptp_read_system_prets(sts);
- 	cpts_write32(cpts, TS_PUSH, ts_push);
- 	cpts_read32(cpts, ts_push);
- 	ptp_read_system_postts(sts);
-+	spin_unlock_irqrestore(&cpts->lock, flags);
- 
- 	if (cpts_fifo_read(cpts, match) && match != -1)
- 		dev_err(cpts->dev, "cpts: unable to obtain a time stamp\n");
-@@ -174,11 +185,10 @@ static void cpts_update_cur_time(struct cpts *cpts, int match,
- 
- static int cpts_ptp_adjfreq(struct ptp_clock_info *ptp, s32 ppb)
- {
--	u64 adj;
--	u32 diff, mult;
--	int neg_adj = 0;
--	unsigned long flags;
- 	struct cpts *cpts = container_of(ptp, struct cpts, info);
-+	int neg_adj = 0;
-+	u32 diff, mult;
-+	u64 adj;
- 
- 	if (ppb < 0) {
- 		neg_adj = 1;
-@@ -189,25 +199,23 @@ static int cpts_ptp_adjfreq(struct ptp_clock_info *ptp, s32 ppb)
- 	adj *= ppb;
- 	diff = div_u64(adj, 1000000000ULL);
- 
--	spin_lock_irqsave(&cpts->lock, flags);
-+	mutex_lock(&cpts->ptp_clk_mutex);
- 
- 	cpts->mult_new = neg_adj ? mult - diff : mult + diff;
- 
- 	cpts_update_cur_time(cpts, CPTS_EV_PUSH, NULL);
- 
--	spin_unlock_irqrestore(&cpts->lock, flags);
--
-+	mutex_unlock(&cpts->ptp_clk_mutex);
- 	return 0;
- }
- 
- static int cpts_ptp_adjtime(struct ptp_clock_info *ptp, s64 delta)
- {
--	unsigned long flags;
- 	struct cpts *cpts = container_of(ptp, struct cpts, info);
- 
--	spin_lock_irqsave(&cpts->lock, flags);
-+	mutex_lock(&cpts->ptp_clk_mutex);
- 	timecounter_adjtime(&cpts->tc, delta);
--	spin_unlock_irqrestore(&cpts->lock, flags);
-+	mutex_unlock(&cpts->ptp_clk_mutex);
- 
- 	return 0;
- }
-@@ -217,15 +225,14 @@ static int cpts_ptp_gettimeex(struct ptp_clock_info *ptp,
- 			      struct ptp_system_timestamp *sts)
- {
- 	struct cpts *cpts = container_of(ptp, struct cpts, info);
--	unsigned long flags;
- 	u64 ns;
- 
--	spin_lock_irqsave(&cpts->lock, flags);
-+	mutex_lock(&cpts->ptp_clk_mutex);
- 
- 	cpts_update_cur_time(cpts, CPTS_EV_PUSH, sts);
- 
- 	ns = timecounter_read(&cpts->tc);
--	spin_unlock_irqrestore(&cpts->lock, flags);
-+	mutex_unlock(&cpts->ptp_clk_mutex);
- 
- 	*ts = ns_to_timespec64(ns);
- 
-@@ -235,15 +242,14 @@ static int cpts_ptp_gettimeex(struct ptp_clock_info *ptp,
- static int cpts_ptp_settime(struct ptp_clock_info *ptp,
- 			    const struct timespec64 *ts)
- {
--	u64 ns;
--	unsigned long flags;
- 	struct cpts *cpts = container_of(ptp, struct cpts, info);
-+	u64 ns;
- 
- 	ns = timespec64_to_ns(ts);
- 
--	spin_lock_irqsave(&cpts->lock, flags);
-+	mutex_lock(&cpts->ptp_clk_mutex);
- 	timecounter_init(&cpts->tc, &cpts->cc, ns);
--	spin_unlock_irqrestore(&cpts->lock, flags);
-+	mutex_unlock(&cpts->ptp_clk_mutex);
- 
- 	return 0;
- }
-@@ -339,10 +345,9 @@ static long cpts_overflow_check(struct ptp_clock_info *ptp)
- 	unsigned long flags;
- 	u64 ns;
- 
--	spin_lock_irqsave(&cpts->lock, flags);
--	cpts_update_cur_time(cpts, -1, NULL);
--	spin_unlock_irqrestore(&cpts->lock, flags);
-+	mutex_lock(&cpts->ptp_clk_mutex);
- 
-+	cpts_update_cur_time(cpts, -1, NULL);
- 	ns = timecounter_read(&cpts->tc);
- 
- 	cpts_process_events(cpts);
-@@ -356,6 +361,7 @@ static long cpts_overflow_check(struct ptp_clock_info *ptp)
- 	spin_unlock_irqrestore(&cpts->txq.lock, flags);
- 
- 	dev_dbg(cpts->dev, "cpts overflow check at %lld\n", ns);
-+	mutex_unlock(&cpts->ptp_clk_mutex);
- 	return (long)delay;
- }
- 
-@@ -425,8 +431,8 @@ static u64 cpts_find_ts(struct cpts *cpts, struct sk_buff *skb,
- 	u32 mtype_seqid;
- 	u64 ns = 0;
- 
--	spin_lock_irqsave(&cpts->lock, flags);
- 	cpts_fifo_read(cpts, -1);
-+	spin_lock_irqsave(&cpts->lock, flags);
- 	list_for_each_safe(this, next, &cpts->events) {
- 		event = list_entry(this, struct cpts_event, list);
- 		if (event_expired(event)) {
-@@ -703,6 +709,7 @@ struct cpts *cpts_create(struct device *dev, void __iomem *regs,
- 	cpts->dev = dev;
- 	cpts->reg = (struct cpsw_cpts __iomem *)regs;
- 	spin_lock_init(&cpts->lock);
-+	mutex_init(&cpts->ptp_clk_mutex);
- 
- 	ret = cpts_of_parse(cpts, node);
- 	if (ret)
-diff --git a/drivers/net/ethernet/ti/cpts.h b/drivers/net/ethernet/ti/cpts.h
-index 421630049ee7..f16e14d67f5f 100644
---- a/drivers/net/ethernet/ti/cpts.h
-+++ b/drivers/net/ethernet/ti/cpts.h
-@@ -104,7 +104,7 @@ struct cpts {
- 	int rx_enable;
- 	struct ptp_clock_info info;
- 	struct ptp_clock *clock;
--	spinlock_t lock; /* protects time registers */
-+	spinlock_t lock; /* protects fifo/events */
- 	u32 cc_mult; /* for the nominal frequency */
- 	struct cyclecounter cc;
- 	struct timecounter tc;
-@@ -117,6 +117,7 @@ struct cpts {
- 	struct sk_buff_head txq;
- 	u64 cur_timestamp;
- 	u32 mult_new;
-+	struct mutex ptp_clk_mutex; /* sync PTP interface and worker */
- };
- 
- void cpts_rx_timestamp(struct cpts *cpts, struct sk_buff *skb);
+In this particular case the system call and the vDSO library as it stands
+returns -EFAULT on all the architectures that support the vdso library except on
+arm64 compat. The reason why it does not return the correct error code, as I was
+discussing with Catalin, it is because arm64 uses USER_DS (addr_limit set
+happens in arch/arm64/kernel/entry.S), which is defined as (1 << VA_BITS), as
+access_ok() validation even on compat tasks and since arm64 supports up to 52bit
+VA, this does not detect the end of the user address space for a 32 bit task.
+Hence when we fall back on the system call we get the wrong error code out of it.
+
+According to me to have ABI consistency we need this check, but if we say that
+we can make an ABI exception in this case, I am fine with that either if it has
+enough consensus.
+
+Please let me know your thoughts.
+
 -- 
-2.17.1
-
+Regards,
+Vincenzo
