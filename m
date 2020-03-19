@@ -2,72 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E2D5B18AD51
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 08:30:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 99B4818AD57
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 08:31:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727230AbgCSHa1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 03:30:27 -0400
-Received: from sauhun.de ([88.99.104.3]:54514 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725767AbgCSHa1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 03:30:27 -0400
-Received: from localhost (p54B33261.dip0.t-ipconnect.de [84.179.50.97])
-        by pokefinder.org (Postfix) with ESMTPSA id F26B42C08EE;
-        Thu, 19 Mar 2020 08:30:24 +0100 (CET)
-Date:   Thu, 19 Mar 2020 08:30:21 +0100
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     Sasha Levin <sashal@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Martin Volf <martin.volf.42@gmail.com>,
-        Guenter Roeck <linux@roeck-us.net>, linux-i2c@vger.kernel.org
-Subject: Re: [PATCH AUTOSEL 5.4 49/73] i2c: i801: Do not add ICH_RES_IO_SMI
- for the iTCO_wdt device
-Message-ID: <20200319073021.wh2b7kumxgbj5wkf@katana>
-References: <20200318205337.16279-1-sashal@kernel.org>
- <20200318205337.16279-49-sashal@kernel.org>
+        id S1727258AbgCSHbY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 03:31:24 -0400
+Received: from mail-io1-f53.google.com ([209.85.166.53]:44772 "EHLO
+        mail-io1-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725767AbgCSHbX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 03:31:23 -0400
+Received: by mail-io1-f53.google.com with SMTP id v3so1179366iot.11;
+        Thu, 19 Mar 2020 00:31:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:from:date:message-id:subject:to;
+        bh=jomgdCLpahd3FAv2npbYPI8+FQ6XSFwP0NwoJcIKrDI=;
+        b=e73vgvqvEk9vZ1wrZML1M7ZRhdJPyQbn3ASJuasCtdVSk4d6DVOILSLWkLdgCvOFru
+         KpGdOKO0M9xNtv2NLG2c4t+hHkEuPMIL6Ynr1IW61Arfphb9TVvOlNXp3GVgtQjZIfNU
+         pXZr/QdwafVJDpQoEH3YZrlhbnZsamS7APlvzqH7SoF+mvRYQpzSMyGcXIho+f3bA2zx
+         R8YVhjwUboS+zCc9x8oQXTA21BQHDcpWeG8//5Nu16f6UpRY/GogKoI45vMPSYXKPoHX
+         yXkuT2yuc/mWUTGqYCHWUkCdlGVqcTxzJalSJlRNs5WCTGx9lz8KwwRHCQCOdUeyL7eI
+         2X/A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
+        bh=jomgdCLpahd3FAv2npbYPI8+FQ6XSFwP0NwoJcIKrDI=;
+        b=RbpLjpMv+hjG2tgRKQy+Y7aNdsYKcKL2y6KR6jL89kC8r3QgEfCp7X7zTCFT1rk1KW
+         nMLHYKu9tBDe+NTWD96i9YD/BQVWMaJ45piBKuOKpLvOFZYjvQzVSETrKh1PIOdlSFrh
+         JF1APQRTl2EUd+kBpMjtPxUEuxK8ZSTYTKn+Zu3iqfWi5NUJdT2gklD5g2V142bqgRjX
+         rQLkDMMJ2PrjNp+0+83Zact2ZVXFMQsx01oIFBlipK3ncqQVBjD90tL5sAY3g99ROmpk
+         ClSl4ImwekXChmxn0+CnnCSNUJPmnCFjfPFDcX5nuuNR2N3YXWJOgRKS7pHozN31+ov5
+         8IDQ==
+X-Gm-Message-State: ANhLgQ1vFhqRY2TfdyiPJx4mLQ34FyurMxyAsmHGmX11UUM24RQf1VjX
+        ZHI1FNx+qXEn0w7AT/qXiSXMmqci9nWPNY9TZHwtjszL
+X-Google-Smtp-Source: ADFU+vv6bG3YgVuAvhITGXQ3/8y6DKdabygw3bmdHZm6PMcbVAy6NA+GKIaxrmykbd76jG9NytI3zjUmCE1DIZxCIqE=
+X-Received: by 2002:a02:7f44:: with SMTP id r65mr1962710jac.26.1584603082412;
+ Thu, 19 Mar 2020 00:31:22 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="vw6a4yg6vf7n7izb"
-Content-Disposition: inline
-In-Reply-To: <20200318205337.16279-49-sashal@kernel.org>
-User-Agent: NeoMutt/20170113 (1.7.2)
+From:   Vinay Simha B N <simhavcs@gmail.com>
+Date:   Thu, 19 Mar 2020 13:01:10 +0530
+Message-ID: <CAGWqDJ7AccvoxjKfQJ3GytJ-+u56Bk3rEn0sSYv-zCuBe1brAg@mail.gmail.com>
+Subject: graph connection to node is not bidirectional kernel-5.6.0-rc6
+To:     "open list:DRM DRIVER FOR MSM ADRENO GPU" 
+        <freedreno@lists.freedesktop.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+hi,
 
---vw6a4yg6vf7n7izb
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+I am getting the endpoint' is not bidirectional(d2l_in, dsi0_out)
+warning in compilation, built boot image works on qcom apq8016-ifc6309
+board with the dsi->bridge->lvds panel.
+Because of this warning i cannot create a .yaml documentation examples.
+Please suggest.
 
+tc_bridge: bridge@f {
+status = "okay";
+    ports {
+    #address-cells = <1>;
+    #size-cells = <0>;
 
-> [wsa: complete fix needs all of http://patchwork.ozlabs.org/project/linux-i2c/list/?series=160959&state=*]
+    port@0 {
+        reg = <0>;
+        d2l_in: endpoint {
+            remote-endpoint = <&dsi0_out>;
+        };
+    };
+};
 
-Please take care of the line above if you want to backport. I don't
-think the dependencies are suitable for stable, so they don't have the
-stable tag.
+dsi@1a98000 {
+    status = "okay";
+...
+    ports {
+        port@1 {
+            dsi0_out:endpoint {
+                remote-endpoint = <&d2l_in>;
+                data-lanes = <0 1 2 3>;
+            };
+        };
+    };
+};
 
+https://github.com/vinaysimhabn/kernel-msm/blob/1cbd104cca4ebfb111c92e939ca09f82aac00aa1/arch/arm64/boot/dts/qcom/apq8016-sbc.dtsi
+https://github.com/vinaysimhabn/kernel-msm/blob/08e4821646b5c128559c506a5777d8782f1ff79e/Documentation/devicetree/bindings/display/bridge/toshiba%2Ctc358775.yaml
 
---vw6a4yg6vf7n7izb
-Content-Type: application/pgp-signature; name="signature.asc"
+arch/arm64/boot/dts/qcom/apq8016-sbc.dtsi:253.28-255.9: Warning
+(graph_endpoint): /soc/i2c@78b8000/bridge@39/ports/port@0/endpoint:
+graph connection to node
+'/soc/mdss@1a00000/dsi@1a98000/ports/port@1/endpoint' is not
+bidirectional
+arch/arm64/boot/dts/qcom/apq8016-sbc.dtsi:333.53-335.35: Warning
+(graph_endpoint): /soc/auo,b101xtn01/port/endpoint: graph connection
+to node '/soc/i2c@78b8000/bridge@f/ports/port@1/endpoint' is not
+bidirectional
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAl5zH4gACgkQFA3kzBSg
-KbbTpg/8CMJm8JuY0ArAK03GeTDFjfCQeeiV8hUWfXSoThBU5+R050ajL+ETWgaa
-5ZlAE8Lr18FR7j3ukJTDC/GJwkTUN2uarRioLXuogrh5JRoXns72nFSdEqiyhRdS
-n4ESriIrXYfQPrAoInn23ow+rBWVSnYQkHlQF6dxCKYlT6/BOWq6WPkBuU0qfLbx
-BvQkblFwYI/0dbjbBDTJhUIwpSR2tovO6Ewfa17Sm5zYq1oy02eCXam14W1HnWuz
-wbPJX0wOBtsIi6Ky+LtAiKfG0I/FZfa9Um9RaxkeYraY+6FvYAFKtWDRaPGWHbuO
-fhbRRxlN6XwxZZNjh7KGlCQ1q7VHAIbWUk0EWiaTiNR9B+gskTZZmf+teTOp5nT6
-ZxTAwSsEPCz2Lyzr185MpxDUsN0rUMc1HDg9bJYriTuy8jqeRDpQxPrUln6joTuO
-slyJ/rAeLpkonuvwvcgwRV1b2atb5ShNgSbvJ0nkvriuLbxwWAM5hq4gqKZc2iYH
-mMlyc6lg7AsJ7Gm+jWuQ2F6NGvtCOhutGlqeMrWWu0IvJMTPDYekDYb0VNPwfO3C
-WMxZtBc1exC9B4jKZGyW7vSBCb8KXgf+Wcr7fhGgF1GWnQBwVoKJKIxX71gmlorR
-W/uSd3MlauRLsUmlVMJYPS+N5ZF4xpfCT1nT3I5t03insPmc3vg=
-=I2UB
------END PGP SIGNATURE-----
-
---vw6a4yg6vf7n7izb--
+-- 
+regards,
+vinaysimha
