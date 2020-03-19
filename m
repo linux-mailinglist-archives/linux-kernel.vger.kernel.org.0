@@ -2,104 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1D6EC18BC55
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 17:23:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1985918BC58
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 17:24:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727975AbgCSQXe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 12:23:34 -0400
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:39032 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727399AbgCSQXb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 12:23:31 -0400
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 02JGNRSY087050;
-        Thu, 19 Mar 2020 11:23:27 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1584635007;
-        bh=InLyviOkfFOPkDrw3fsPx+IycNhWr/qvF9UvPT91rPQ=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=UWKk46eVJesUFUnliJecoZN01llOhTN+aRKM3g76mu04W7PPR/KuPD4aiszhfEPEk
-         AMU9Qw6+/8lpVNXO9w7x2oIPQabg/4uGF4grRSD/FDtEB/Ds+RPNEXsNVLenczBZEk
-         T4cEoTvgrRA9Kj+5buRnF78J+VpiUILfgh39ss3E=
-Received: from DFLE104.ent.ti.com (dfle104.ent.ti.com [10.64.6.25])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 02JGNR5v096819
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 19 Mar 2020 11:23:27 -0500
-Received: from DFLE112.ent.ti.com (10.64.6.33) by DFLE104.ent.ti.com
- (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Thu, 19
- Mar 2020 11:23:27 -0500
-Received: from lelv0326.itg.ti.com (10.180.67.84) by DFLE112.ent.ti.com
- (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Thu, 19 Mar 2020 11:23:27 -0500
-Received: from lelv0597.itg.ti.com (lelv0597.itg.ti.com [10.181.64.32])
-        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id 02JGNR8w100125;
-        Thu, 19 Mar 2020 11:23:27 -0500
-Received: from localhost ([10.250.86.212])
-        by lelv0597.itg.ti.com (8.14.7/8.14.7) with ESMTP id 02JGNQrH066554;
-        Thu, 19 Mar 2020 11:23:26 -0500
-From:   Suman Anna <s-anna@ti.com>
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Loic Pallardy <loic.pallardy@st.com>
-CC:     Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Arnaud Pouliquen <arnaud.pouliquen@st.com>,
-        Tero Kristo <t-kristo@ti.com>,
-        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Suman Anna <s-anna@ti.com>
-Subject: [PATCH v2 2/2] remoteproc: Fix and restore the parenting hierarchy for vdev
-Date:   Thu, 19 Mar 2020 11:23:21 -0500
-Message-ID: <20200319162321.20632-3-s-anna@ti.com>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20200319162321.20632-1-s-anna@ti.com>
-References: <20200319162321.20632-1-s-anna@ti.com>
+        id S1727867AbgCSQYm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 12:24:42 -0400
+Received: from 8bytes.org ([81.169.241.247]:53948 "EHLO theia.8bytes.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727217AbgCSQYm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 12:24:42 -0400
+Received: by theia.8bytes.org (Postfix, from userid 1000)
+        id 9C464217; Thu, 19 Mar 2020 17:24:40 +0100 (CET)
+Date:   Thu, 19 Mar 2020 17:24:39 +0100
+From:   Joerg Roedel <joro@8bytes.org>
+To:     Andy Lutomirski <luto@kernel.org>
+Cc:     X86 ML <x86@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Hellstrom <thellstrom@vmware.com>,
+        Jiri Slaby <jslaby@suse.cz>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Juergen Gross <jgross@suse.com>,
+        Kees Cook <keescook@chromium.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        kvm list <kvm@vger.kernel.org>,
+        Linux Virtualization <virtualization@lists.linux-foundation.org>,
+        Joerg Roedel <jroedel@suse.de>
+Subject: Re: [PATCH 41/70] x86/sev-es: Add Runtime #VC Exception Handler
+Message-ID: <20200319162439.GE5122@8bytes.org>
+References: <20200319091407.1481-1-joro@8bytes.org>
+ <20200319091407.1481-42-joro@8bytes.org>
+ <CALCETrW9EYi5dzCKNtKkxM18CC4n5BZxTp1=qQ5qZccwstXjzg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CALCETrW9EYi5dzCKNtKkxM18CC4n5BZxTp1=qQ5qZccwstXjzg@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The commit 086d08725d34 ("remoteproc: create vdev subdevice with specific
-dma memory pool") has introduced a new vdev subdevice for each vdev
-declared in the firmware resource table and made it as the parent for the
-created virtio rpmsg devices instead of the previous remoteproc device.
-This changed the overall parenting hierarchy for the rpmsg devices, which
-were children of virtio devices, and does not allow the corresponding
-rpmsg drivers to retrieve the parent rproc device through the
-rproc_get_by_child() API.
+On Thu, Mar 19, 2020 at 08:44:03AM -0700, Andy Lutomirski wrote:
+> On Thu, Mar 19, 2020 at 2:14 AM Joerg Roedel <joro@8bytes.org> wrote:
+> >
+> > From: Tom Lendacky <thomas.lendacky@amd.com>
+> >
+> > Add the handler for #VC exceptions invoked at runtime.
+> 
+> If I read this correctly, this does not use IST.  If that's true, I
+> don't see how this can possibly work.  There at least two nasty cases
+> that come to mind:
+> 
+> 1. SYSCALL followed by NMI.  The NMI IRET hack gets to #VC and we
+> explode.  This is fixable by getting rid of the NMI EFLAGS.TF hack.
 
-Fix this by restoring the remoteproc device as the parent. The new vdev
-subdevice can continue to inherit the DMA attributes from the remoteproc's
-parent device (actual platform device).
+Not an issue in this patch-set, the confusion comes from the fact that I
+left some parts of the single-step-over-iret code in the patch. But it
+is not used. The NMI handling in this patch-set sends the NMI-complete
+message before the IRET, when the kernel is still in a safe environment
+(kernel stack, kernel cr3).
 
-Fixes: 086d08725d34 ("remoteproc: create vdev subdevice with specific dma memory pool")
-Signed-off-by: Suman Anna <s-anna@ti.com>
-Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-Acked-by: Arnaud Pouliquen <arnaud.pouliquen@st.com>
----
-v2: No code changes, picked up review tags
-v1: https://patchwork.kernel.org/patch/11422725/
+> 2. tools/testing/selftests/x86/mov_ss_trap_64.  User code does MOV
+> (addr), SS; SYSCALL, where addr has a data breakpoint.  We get #DB
+> promoted to #VC with no stack.
 
- drivers/remoteproc/remoteproc_core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Also not an issue, as debugging is not supported at the moment in SEV-ES
+guests (hardware has no way yet to save/restore the debug registers
+across #VMEXITs). But this will change with future hardware. If you look
+at the implementation for dr7 read/write events, you see that the dr7
+value is cached and returned, but does not make it to the hardware dr7.
 
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index a9ac1d01e09b..0962855f27fc 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -514,7 +514,7 @@ static int rproc_handle_vdev(struct rproc *rproc, struct fw_rsc_vdev *rsc,
- 
- 	/* Initialise vdev subdevice */
- 	snprintf(name, sizeof(name), "vdev%dbuffer", rvdev->index);
--	rvdev->dev.parent = rproc->dev.parent;
-+	rvdev->dev.parent = &rproc->dev;
- 	rvdev->dev.dma_pfn_offset = rproc->dev.parent->dma_pfn_offset;
- 	rvdev->dev.release = rproc_rvdev_release;
- 	dev_set_name(&rvdev->dev, "%s#%s", dev_name(rvdev->dev.parent), name);
--- 
-2.23.0
+I though about using IST for the #VC handler, but the implications for
+nesting #VC handlers made me decide against it. But for future hardware
+that supports debugging inside SEV-ES guests it will be an issue. I'll
+think about how to fix the problem, it probably has to be IST :(
 
+Regards,
+
+	Joerg
