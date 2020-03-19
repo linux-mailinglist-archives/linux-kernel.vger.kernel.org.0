@@ -2,42 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D4ECD18B600
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:23:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 02EA018B55D
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:18:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730316AbgCSNXO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 09:23:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48982 "EHLO mail.kernel.org"
+        id S1729708AbgCSNRw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 09:17:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39308 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730313AbgCSNXK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 09:23:10 -0400
+        id S1729700AbgCSNRr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 09:17:47 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4F13C20724;
-        Thu, 19 Mar 2020 13:23:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4AFE220724;
+        Thu, 19 Mar 2020 13:17:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584624189;
-        bh=9g2gIbbLljcopMLsa1wpkRfrnY5cLA9djOVfX6VbqYg=;
+        s=default; t=1584623866;
+        bh=7eiIfsE7p81DiDZxWjU7z/ijJxI8NnrOjncNXabmzYA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FR2ctbiNrY3apd3xUcg9lW7/ZKMeB8vO1ze0a194ounXr2w1pB969Q8NCxZRA4awg
-         r9KXj05k4/TGgqa5BtwrOBb/b8JSxE4E0Im+iW2jRdOO5/31ODTVuLTp8RyPsYlLU3
-         hJ0OQFAgw/oFsKUoZIZsQH0zCfvcWMJzvRMhauTg=
+        b=W80sBzlsNaLddtsmukaJj0k6SxgXd2f6T/8JIanslbArs+YB7hGlKQMnJV+LFK4kl
+         OC3J2k5QnkjUmBtF4idDqg1Z9pwuAGJFKTr8vSQBGrKg1AdGRRsGmjYe1kIEzEfcbA
+         F5W4QL0AtFqdwG/6SR+5/RAKaKdDr2GD8ml51gH8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Paul Burton <paulburton@kernel.org>,
-        Ralf Baechle <ralf@linux-mips.org>, linux-mips@vger.kernel.org,
-        clang-built-linux@googlegroups.com, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 20/60] MIPS: vdso: Wrap -mexplicit-relocs in cc-option
-Date:   Thu, 19 Mar 2020 14:03:58 +0100
-Message-Id: <20200319123925.617729599@linuxfoundation.org>
+        syzbot+a98f2016f40b9cd3818a@syzkaller.appspotmail.com,
+        syzbot+ac36b6a33c28a491e929@syzkaller.appspotmail.com,
+        Sven Eckelmann <sven@narfation.org>,
+        Hillf Danton <hdanton@sina.com>,
+        Simon Wunderlich <sw@simonwunderlich.de>
+Subject: [PATCH 4.14 81/99] batman-adv: Dont schedule OGM for disabled interface
+Date:   Thu, 19 Mar 2020 14:03:59 +0100
+Message-Id: <20200319124004.975295259@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.2
-In-Reply-To: <20200319123919.441695203@linuxfoundation.org>
-References: <20200319123919.441695203@linuxfoundation.org>
+In-Reply-To: <20200319123941.630731708@linuxfoundation.org>
+References: <20200319123941.630731708@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,57 +46,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nathan Chancellor <natechancellor@gmail.com>
+From: Sven Eckelmann <sven@narfation.org>
 
-[ Upstream commit 72cf3b3df423c1bbd8fa1056fed009d3a260f8a9 ]
+commit 8e8ce08198de193e3d21d42e96945216e3d9ac7f upstream.
 
-Clang does not support this option and errors out:
+A transmission scheduling for an interface which is currently dropped by
+batadv_iv_ogm_iface_disable could still be in progress. The B.A.T.M.A.N. V
+is simply cancelling the workqueue item in an synchronous way but this is
+not possible with B.A.T.M.A.N. IV because the OGM submissions are
+intertwined.
 
-clang-11: error: unknown argument: '-mexplicit-relocs'
+Instead it has to stop submitting the OGM when it detect that the buffer
+pointer is set to NULL.
 
-Clang does not appear to need this flag like GCC does because the jalr
-check that was added in commit 976c23af3ee5 ("mips: vdso: add build
-time check that no 'jalr t9' calls left") passes just fine with
-
-$ make ARCH=mips CC=clang CROSS_COMPILE=mipsel-linux-gnu- malta_defconfig arch/mips/vdso/
-
-even before commit d3f703c4359f ("mips: vdso: fix 'jalr t9' crash in
-vdso code").
-
--mrelax-pic-calls has been supported since clang 9, which is the
-earliest version that could build a working MIPS kernel, and it is the
-default for clang so just leave it be.
-
-Fixes: d3f703c4359f ("mips: vdso: fix 'jalr t9' crash in vdso code")
-Link: https://github.com/ClangBuiltLinux/linux/issues/890
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
-Tested-by: Nick Desaulniers <ndesaulniers@google.com>
-Signed-off-by: Paul Burton <paulburton@kernel.org>
-Cc: Ralf Baechle <ralf@linux-mips.org>
-Cc: linux-mips@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Cc: clang-built-linux@googlegroups.com
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Reported-by: syzbot+a98f2016f40b9cd3818a@syzkaller.appspotmail.com
+Reported-by: syzbot+ac36b6a33c28a491e929@syzkaller.appspotmail.com
+Fixes: c6c8fea29769 ("net: Add batman-adv meshing protocol")
+Signed-off-by: Sven Eckelmann <sven@narfation.org>
+Cc: Hillf Danton <hdanton@sina.com>
+Signed-off-by: Simon Wunderlich <sw@simonwunderlich.de>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/mips/vdso/Makefile | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/batman-adv/bat_iv_ogm.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/arch/mips/vdso/Makefile b/arch/mips/vdso/Makefile
-index 08c835d48520b..3dcfdee678fb9 100644
---- a/arch/mips/vdso/Makefile
-+++ b/arch/mips/vdso/Makefile
-@@ -29,7 +29,7 @@ endif
- cflags-vdso := $(ccflags-vdso) \
- 	$(filter -W%,$(filter-out -Wa$(comma)%,$(KBUILD_CFLAGS))) \
- 	-O3 -g -fPIC -fno-strict-aliasing -fno-common -fno-builtin -G 0 \
--	-mrelax-pic-calls -mexplicit-relocs \
-+	-mrelax-pic-calls $(call cc-option, -mexplicit-relocs) \
- 	-fno-stack-protector -fno-jump-tables -DDISABLE_BRANCH_PROFILING \
- 	$(call cc-option, -fno-asynchronous-unwind-tables) \
- 	$(call cc-option, -fno-stack-protector)
--- 
-2.20.1
-
+--- a/net/batman-adv/bat_iv_ogm.c
++++ b/net/batman-adv/bat_iv_ogm.c
+@@ -961,6 +961,10 @@ static void batadv_iv_ogm_schedule_buff(
+ 
+ 	lockdep_assert_held(&hard_iface->bat_iv.ogm_buff_mutex);
+ 
++	/* interface already disabled by batadv_iv_ogm_iface_disable */
++	if (!*ogm_buff)
++		return;
++
+ 	/* the interface gets activated here to avoid race conditions between
+ 	 * the moment of activating the interface in
+ 	 * hardif_activate_interface() where the originator mac is set and
 
 
