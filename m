@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4516118B63F
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:25:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 764A618B55E
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:18:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730600AbgCSNZM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 09:25:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52612 "EHLO mail.kernel.org"
+        id S1729719AbgCSNRx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 09:17:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39448 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730592AbgCSNZL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 09:25:11 -0400
+        id S1729669AbgCSNRv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 09:17:51 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5762620B1F;
-        Thu, 19 Mar 2020 13:25:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 710B8214D8;
+        Thu, 19 Mar 2020 13:17:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584624310;
-        bh=MdM4dmvB1NrI3FG6lrkvPkf35G6mA0uFNk6ScnH/2ew=;
+        s=default; t=1584623869;
+        bh=xpF/oJrCEXUxvt+0y7Lo8jkFhhTZdOsK+QynZE3xPvI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=pqzBPi81/1+3wCS07o1wz2SsLX79VvASdikiZh+GQPBrboW1zVVVbX6hOyIs72c7c
-         W0KhQRoicgml7FelRWWg/BCS+E96zShPM+e8/H/7BMZhybbNv7JGqB34BIZfptr7VN
-         /Eob8+x6VbeHGlR+2piiLbrpBhYwddNn3n6tZgUg=
+        b=ah+uBNz1up8wfNdCT6E/NSrn03X8495ZUfwetsGiNOrzjOndaxdWrwC20+s9SC91H
+         EEauz5PKX0Q2pmzDafOF7b7OVbWMX7ZZcMMkgaIXAQcwujGpwyoopJtu4z9QImoZ8N
+         GCkrH9FrZj/QY8BY3eoE050HL5Yy6XlfVy0CqGfk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hanno Zulla <kontakt@hanno.de>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        stable@vger.kernel.org, Kim Phillips <kim.phillips@amd.com>,
+        Borislav Petkov <bp@suse.de>,
+        Peter Zijlstra <peterz@infradead.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.5 18/65] HID: hid-bigbenff: fix race condition for scheduled work during removal
+Subject: [PATCH 4.14 82/99] perf/amd/uncore: Replace manual sampling check with CAP_NO_INTERRUPT flag
 Date:   Thu, 19 Mar 2020 14:04:00 +0100
-Message-Id: <20200319123932.165773859@linuxfoundation.org>
+Message-Id: <20200319124005.115184451@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.2
-In-Reply-To: <20200319123926.466988514@linuxfoundation.org>
-References: <20200319123926.466988514@linuxfoundation.org>
+In-Reply-To: <20200319123941.630731708@linuxfoundation.org>
+References: <20200319123941.630731708@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,59 +45,85 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hanno Zulla <kontakt@hanno.de>
+From: Kim Phillips <kim.phillips@amd.com>
 
-[ Upstream commit 4eb1b01de5b9d8596d6c103efcf1a15cfc1bedf7 ]
+[ Upstream commit f967140dfb7442e2db0868b03b961f9c59418a1b ]
 
-It's possible that there is scheduled work left while the device is
-already being removed, which can cause a kernel crash. Adding a flag
-will avoid this.
+Enable the sampling check in kernel/events/core.c::perf_event_open(),
+which returns the more appropriate -EOPNOTSUPP.
 
-Signed-off-by: Hanno Zulla <kontakt@hanno.de>
-Signed-off-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
+BEFORE:
+
+  $ sudo perf record -a -e instructions,l3_request_g1.caching_l3_cache_accesses true
+  Error:
+  The sys_perf_event_open() syscall returned with 22 (Invalid argument) for event (l3_request_g1.caching_l3_cache_accesses).
+  /bin/dmesg | grep -i perf may provide additional information.
+
+With nothing relevant in dmesg.
+
+AFTER:
+
+  $ sudo perf record -a -e instructions,l3_request_g1.caching_l3_cache_accesses true
+  Error:
+  l3_request_g1.caching_l3_cache_accesses: PMU Hardware doesn't support sampling/overflow-interrupts. Try 'perf stat'
+
+Fixes: c43ca5091a37 ("perf/x86/amd: Add support for AMD NB and L2I "uncore" counters")
+Signed-off-by: Kim Phillips <kim.phillips@amd.com>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Acked-by: Peter Zijlstra <peterz@infradead.org>
+Cc: stable@vger.kernel.org
+Link: https://lkml.kernel.org/r/20200311191323.13124-1-kim.phillips@amd.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/hid/hid-bigbenff.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+ arch/x86/events/amd/uncore.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/hid/hid-bigbenff.c b/drivers/hid/hid-bigbenff.c
-index f8c552b64a899..db6da21ade063 100644
---- a/drivers/hid/hid-bigbenff.c
-+++ b/drivers/hid/hid-bigbenff.c
-@@ -174,6 +174,7 @@ static __u8 pid0902_rdesc_fixed[] = {
- struct bigben_device {
- 	struct hid_device *hid;
- 	struct hid_report *report;
-+	bool removed;
- 	u8 led_state;         /* LED1 = 1 .. LED4 = 8 */
- 	u8 right_motor_on;    /* right motor off/on 0/1 */
- 	u8 left_motor_force;  /* left motor force 0-255 */
-@@ -190,6 +191,9 @@ static void bigben_worker(struct work_struct *work)
- 		struct bigben_device, worker);
- 	struct hid_field *report_field = bigben->report->field[0];
+diff --git a/arch/x86/events/amd/uncore.c b/arch/x86/events/amd/uncore.c
+index baa7e36073f90..604a8558752d1 100644
+--- a/arch/x86/events/amd/uncore.c
++++ b/arch/x86/events/amd/uncore.c
+@@ -193,20 +193,18 @@ static int amd_uncore_event_init(struct perf_event *event)
  
-+	if (bigben->removed)
-+		return;
-+
- 	if (bigben->work_led) {
- 		bigben->work_led = false;
- 		report_field->value[0] = 0x01; /* 1 = led message */
-@@ -304,6 +308,7 @@ static void bigben_remove(struct hid_device *hid)
- {
- 	struct bigben_device *bigben = hid_get_drvdata(hid);
+ 	/*
+ 	 * NB and Last level cache counters (MSRs) are shared across all cores
+-	 * that share the same NB / Last level cache. Interrupts can be directed
+-	 * to a single target core, however, event counts generated by processes
+-	 * running on other cores cannot be masked out. So we do not support
+-	 * sampling and per-thread events.
++	 * that share the same NB / Last level cache.  On family 16h and below,
++	 * Interrupts can be directed to a single target core, however, event
++	 * counts generated by processes running on other cores cannot be masked
++	 * out. So we do not support sampling and per-thread events via
++	 * CAP_NO_INTERRUPT, and we do not enable counter overflow interrupts:
+ 	 */
+-	if (is_sampling_event(event) || event->attach_state & PERF_ATTACH_TASK)
+-		return -EINVAL;
  
-+	bigben->removed = true;
- 	cancel_work_sync(&bigben->worker);
- 	hid_hw_stop(hid);
- }
-@@ -324,6 +329,7 @@ static int bigben_probe(struct hid_device *hid,
- 		return -ENOMEM;
- 	hid_set_drvdata(hid, bigben);
- 	bigben->hid = hid;
-+	bigben->removed = false;
+ 	/* NB and Last level cache counters do not have usr/os/guest/host bits */
+ 	if (event->attr.exclude_user || event->attr.exclude_kernel ||
+ 	    event->attr.exclude_host || event->attr.exclude_guest)
+ 		return -EINVAL;
  
- 	error = hid_parse(hid);
- 	if (error) {
+-	/* and we do not enable counter overflow interrupts */
+ 	hwc->config = event->attr.config & AMD64_RAW_EVENT_MASK_NB;
+ 	hwc->idx = -1;
+ 
+@@ -314,6 +312,7 @@ static struct pmu amd_nb_pmu = {
+ 	.start		= amd_uncore_start,
+ 	.stop		= amd_uncore_stop,
+ 	.read		= amd_uncore_read,
++	.capabilities	= PERF_PMU_CAP_NO_INTERRUPT,
+ };
+ 
+ static struct pmu amd_llc_pmu = {
+@@ -324,6 +323,7 @@ static struct pmu amd_llc_pmu = {
+ 	.start		= amd_uncore_start,
+ 	.stop		= amd_uncore_stop,
+ 	.read		= amd_uncore_read,
++	.capabilities	= PERF_PMU_CAP_NO_INTERRUPT,
+ };
+ 
+ static struct amd_uncore *amd_uncore_alloc(unsigned int cpu)
 -- 
 2.20.1
 
