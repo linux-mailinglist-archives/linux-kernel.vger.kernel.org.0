@@ -2,37 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8838918B75D
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:33:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1FBBE18B75A
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:33:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727352AbgCSNdD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 09:33:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33914 "EHLO mail.kernel.org"
+        id S1727849AbgCSNc5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 09:32:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34210 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729302AbgCSNO2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 09:14:28 -0400
+        id S1728793AbgCSNOn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 09:14:43 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EE77620724;
-        Thu, 19 Mar 2020 13:14:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0EEB9206D7;
+        Thu, 19 Mar 2020 13:14:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584623668;
-        bh=RxU2i+7ozgAdBFVOgCWg0lqlD9c1Uukji2c6jfD6wfA=;
+        s=default; t=1584623683;
+        bh=crAqJyoagg8GitwByqJaPF+YkVcw17OpzZ34+rgPKAk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MkKpH4Y5y691EYoCZDHWPDHIVzJYI01QySiTkMX3LlDwtbYfkg6Q5wIvmusi1Pk1T
-         7fnUhrgOCm+zNutswuuiP4B8S8RztkXR1FAoQLhiBMrnKrBTf/0PwV0v3fIGLYNNBv
-         9d8r+FtkmKwXr9a5gMS8zy2FW6/S0LgY1JECR5aE=
+        b=BAc9z17dUiEaQMMBHNoIjdo1G8Hl00kj3aT8mekmcovwBbxJtZ1ThgbQXmdsKhyjt
+         M6pak0kDMqncBBjyl0KcpV1IAcWYFkfdyzCR8u+1xU7qEAvsYaGHiai9cro/8MKUd1
+         6GO+V1qUXQ/uaPz5O7bk1IAORkabNzHBVv5b+KR8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Vasundhara Volam <vasundhara-v.volam@broadcom.com>,
-        Michael Chan <michael.chan@broadcom.com>,
+        stable@vger.kernel.org, Jakub Kicinski <kuba@kernel.org>,
+        Stefan Schmidt <stefan@datenfreihafen.org>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 14/99] bnxt_en: reinitialize IRQs when MTU is modified
-Date:   Thu, 19 Mar 2020 14:02:52 +0100
-Message-Id: <20200319123945.924942922@linuxfoundation.org>
+Subject: [PATCH 4.14 19/99] nl802154: add missing attribute validation
+Date:   Thu, 19 Mar 2020 14:02:57 +0100
+Message-Id: <20200319123947.442125518@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.2
 In-Reply-To: <20200319123941.630731708@linuxfoundation.org>
 References: <20200319123941.630731708@linuxfoundation.org>
@@ -45,45 +44,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vasundhara Volam <vasundhara-v.volam@broadcom.com>
+From: Jakub Kicinski <kuba@kernel.org>
 
-[ Upstream commit a9b952d267e59a3b405e644930f46d252cea7122 ]
+[ Upstream commit 9322cd7c4af2ccc7fe7c5f01adb53f4f77949e92 ]
 
-MTU changes may affect the number of IRQs so we must call
-bnxt_close_nic()/bnxt_open_nic() with the irq_re_init parameter
-set to true.  The reason is that a larger MTU may require
-aggregation rings not needed with smaller MTU.  We may not be
-able to allocate the required number of aggregation rings and
-so we reduce the number of channels which will change the number
-of IRQs.  Without this patch, it may crash eventually in
-pci_disable_msix() when the IRQs are not properly unwound.
+Add missing attribute validation for several u8 types.
 
-Fixes: c0c050c58d84 ("bnxt_en: New Broadcom ethernet driver.")
-Signed-off-by: Vasundhara Volam <vasundhara-v.volam@broadcom.com>
-Signed-off-by: Michael Chan <michael.chan@broadcom.com>
+Fixes: 2c21d11518b6 ("net: add NL802154 interface for configuration of 802.15.4 devices")
+Signed-off-by: Jakub Kicinski <kuba@kernel.org>
+Acked-by: Stefan Schmidt <stefan@datenfreihafen.org>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/broadcom/bnxt/bnxt.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ net/ieee802154/nl_policy.c |    5 +++++
+ 1 file changed, 5 insertions(+)
 
---- a/drivers/net/ethernet/broadcom/bnxt/bnxt.c
-+++ b/drivers/net/ethernet/broadcom/bnxt/bnxt.c
-@@ -7310,13 +7310,13 @@ static int bnxt_change_mtu(struct net_de
- 	struct bnxt *bp = netdev_priv(dev);
- 
- 	if (netif_running(dev))
--		bnxt_close_nic(bp, false, false);
-+		bnxt_close_nic(bp, true, false);
- 
- 	dev->mtu = new_mtu;
- 	bnxt_set_ring_params(bp);
- 
- 	if (netif_running(dev))
--		return bnxt_open_nic(bp, false, false);
-+		return bnxt_open_nic(bp, true, false);
- 
- 	return 0;
- }
+--- a/net/ieee802154/nl_policy.c
++++ b/net/ieee802154/nl_policy.c
+@@ -30,6 +30,11 @@ const struct nla_policy ieee802154_polic
+ 	[IEEE802154_ATTR_HW_ADDR] = { .type = NLA_HW_ADDR, },
+ 	[IEEE802154_ATTR_PAN_ID] = { .type = NLA_U16, },
+ 	[IEEE802154_ATTR_CHANNEL] = { .type = NLA_U8, },
++	[IEEE802154_ATTR_BCN_ORD] = { .type = NLA_U8, },
++	[IEEE802154_ATTR_SF_ORD] = { .type = NLA_U8, },
++	[IEEE802154_ATTR_PAN_COORD] = { .type = NLA_U8, },
++	[IEEE802154_ATTR_BAT_EXT] = { .type = NLA_U8, },
++	[IEEE802154_ATTR_COORD_REALIGN] = { .type = NLA_U8, },
+ 	[IEEE802154_ATTR_PAGE] = { .type = NLA_U8, },
+ 	[IEEE802154_ATTR_COORD_SHORT_ADDR] = { .type = NLA_U16, },
+ 	[IEEE802154_ATTR_COORD_HW_ADDR] = { .type = NLA_HW_ADDR, },
 
 
