@@ -2,355 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DE82718BB6D
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 16:45:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 791BA18BB79
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 16:46:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728113AbgCSPoe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 11:44:34 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:48204 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727212AbgCSPoe (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 11:44:34 -0400
-Received: from pendragon.ideasonboard.com (81-175-216-236.bb.dnainternet.fi [81.175.216.236])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id A60A6A53;
-        Thu, 19 Mar 2020 16:44:31 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1584632671;
-        bh=hwZnoYroqcsfC5OilM724CM4HxaREyK5LGahL3aJmfU=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=IRODqzXFUr0MVZ9ql1jSz/DFgC4uoHZjBv0SlngeYx6cSAomXNK2bvrQSOuiC1LJ1
-         uMuFWWZGeAJu3E6wLvgO3yUrhJXpXiwHAwEMP2SnqJ+8oju+suv9ksMPMi1zkEwO+/
-         K//I0LAQ7izBCNu6tCNYegUYdYl9xlIL+o71PjZY=
-Date:   Thu, 19 Mar 2020 17:44:26 +0200
-From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To:     "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Cc:     Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        linux-media <linux-media@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-        LAK <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v4 5/5] media: dt-bindings: media: i2c: convert ov5645
- bindings to json-schema
-Message-ID: <20200319154426.GE14585@pendragon.ideasonboard.com>
-References: <1584620363-2255-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <1584620363-2255-6-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20200319151035.GC14585@pendragon.ideasonboard.com>
- <CA+V-a8unmH8LskcjNXLum5a=+YkYOj=kZ3oOK6YZGKE2t4qf6w@mail.gmail.com>
+        id S1728087AbgCSPqx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 11:46:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56426 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727593AbgCSPqu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 11:46:50 -0400
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B886721775
+        for <linux-kernel@vger.kernel.org>; Thu, 19 Mar 2020 15:46:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1584632810;
+        bh=Cn1m0nZsjDiV+FYhoJLlELXGkyDw2CZ03wWFmubUPo8=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=Bqc/DvIBMhIobrqKeilGyFQQIGQMPqcwCCmTWlk+w71Tr24MgghLknOseCQr2FkPP
+         pBg3C82P5fhtl5jsxpscyX3d4WPB7JCK7LxSpLZV3ERaPIqyv15Lp22fOEAUXOW1FA
+         bO74bLqN3aP8k/9PYSX+u66n4JNxAqhw2T2P1Sww=
+Received: by mail-wr1-f53.google.com with SMTP id o12so3118689wrh.11
+        for <linux-kernel@vger.kernel.org>; Thu, 19 Mar 2020 08:46:49 -0700 (PDT)
+X-Gm-Message-State: ANhLgQ2sGBa03C04xGkiWdDNvZFzkMQeBRzkhjPXWlzRWgIu7dMsewVg
+        2AfoaeKeNxya3L+xBeDa7Sy8kw+Yw6SHboh5U9GBtg==
+X-Google-Smtp-Source: ADFU+vtRWY7b1vbCxAUKKJKmAYVxdIrYpSMuMiWvH4H8RWo6SRJpLSPLzDmmHbdXmaoFC1CnppEqPqcDFxLdoNnM7Rk=
+X-Received: by 2002:adf:e883:: with SMTP id d3mr4992846wrm.75.1584632808043;
+ Thu, 19 Mar 2020 08:46:48 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CA+V-a8unmH8LskcjNXLum5a=+YkYOj=kZ3oOK6YZGKE2t4qf6w@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20200319091407.1481-1-joro@8bytes.org> <20200319091407.1481-43-joro@8bytes.org>
+In-Reply-To: <20200319091407.1481-43-joro@8bytes.org>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Thu, 19 Mar 2020 08:46:36 -0700
+X-Gmail-Original-Message-ID: <CALCETrXiWjALMTcG=92DmMn_H=yR88e0-3cj8CjTAjtjTvBR8w@mail.gmail.com>
+Message-ID: <CALCETrXiWjALMTcG=92DmMn_H=yR88e0-3cj8CjTAjtjTvBR8w@mail.gmail.com>
+Subject: Re: [PATCH 42/70] x86/sev-es: Support nested #VC exceptions
+To:     Joerg Roedel <joro@8bytes.org>
+Cc:     X86 ML <x86@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Hellstrom <thellstrom@vmware.com>,
+        Jiri Slaby <jslaby@suse.cz>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Juergen Gross <jgross@suse.com>,
+        Kees Cook <keescook@chromium.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        kvm list <kvm@vger.kernel.org>,
+        Linux Virtualization <virtualization@lists.linux-foundation.org>,
+        Joerg Roedel <jroedel@suse.de>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Prabhakar,
+On Thu, Mar 19, 2020 at 2:14 AM Joerg Roedel <joro@8bytes.org> wrote:
+>
+> From: Joerg Roedel <jroedel@suse.de>
+>
+> Handle #VC exceptions that happen while the GHCB is in use. This can
+> happen when an NMI happens in the #VC exception handler and the NMI
+> handler causes a #VC exception itself. Save the contents of the GHCB
+> when nesting is detected and restore it when the GHCB is no longer
+> used.
+>
+> Signed-off-by: Joerg Roedel <jroedel@suse.de>
+> ---
+>  arch/x86/kernel/sev-es.c | 63 +++++++++++++++++++++++++++++++++++++---
+>  1 file changed, 59 insertions(+), 4 deletions(-)
+>
+> diff --git a/arch/x86/kernel/sev-es.c b/arch/x86/kernel/sev-es.c
+> index 97241d2f0f70..3b7bbc8d841e 100644
+> --- a/arch/x86/kernel/sev-es.c
+> +++ b/arch/x86/kernel/sev-es.c
+> @@ -32,9 +32,57 @@ struct ghcb boot_ghcb_page __bss_decrypted __aligned(PAGE_SIZE);
+>   */
+>  struct ghcb __initdata *boot_ghcb;
+>
+> +struct ghcb_state {
+> +       struct ghcb *ghcb;
+> +};
+> +
+>  /* Runtime GHCB pointers */
+>  static struct ghcb __percpu *ghcb_page;
+>
+> +/*
+> + * Mark the per-cpu GHCB as in-use to detect nested #VC exceptions.
+> + * There is no need for it to be atomic, because nothing is written to the GHCB
+> + * between the read and the write of ghcb_active. So it is safe to use it when a
+> + * nested #VC exception happens before the write.
+> + */
+> +static DEFINE_PER_CPU(bool, ghcb_active);
+> +
+> +static struct ghcb *sev_es_get_ghcb(struct ghcb_state *state)
+> +{
+> +       struct ghcb *ghcb = (struct ghcb *)this_cpu_ptr(ghcb_page);
+> +       bool *active = this_cpu_ptr(&ghcb_active);
+> +
+> +       if (unlikely(*active)) {
+> +               /* GHCB is already in use - save its contents */
+> +
+> +               state->ghcb = kzalloc(sizeof(struct ghcb), GFP_ATOMIC);
+> +               if (!state->ghcb)
+> +                       return NULL;
 
-On Thu, Mar 19, 2020 at 03:38:46PM +0000, Lad, Prabhakar wrote:
-> On Thu, Mar 19, 2020 at 3:10 PM Laurent Pinchart wrote:
-> > On Thu, Mar 19, 2020 at 12:19:23PM +0000, Lad Prabhakar wrote:
-> > > Convert ov5645 bindings to json-schema.
-> >
-> > \o/
->
-> :)
-> 
-> > > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> > > ---
-> > >  .../devicetree/bindings/media/i2c/ov5645.txt  |  54 -------
-> > >  .../devicetree/bindings/media/i2c/ov5645.yaml | 140 ++++++++++++++++++
-> > >  2 files changed, 140 insertions(+), 54 deletions(-)
-> > >  delete mode 100644 Documentation/devicetree/bindings/media/i2c/ov5645.txt
-> > >  create mode 100644 Documentation/devicetree/bindings/media/i2c/ov5645.yaml
-> > >
-> > > diff --git a/Documentation/devicetree/bindings/media/i2c/ov5645.txt b/Documentation/devicetree/bindings/media/i2c/ov5645.txt
-> > > deleted file mode 100644
-> > > index 1c85c78ec58c..000000000000
-> > > --- a/Documentation/devicetree/bindings/media/i2c/ov5645.txt
-> > > +++ /dev/null
-> > > @@ -1,54 +0,0 @@
-> > > -* Omnivision 1/4-Inch 5Mp CMOS Digital Image Sensor
-> > > -
-> > > -The Omnivision OV5645 is a 1/4-Inch CMOS active pixel digital image sensor with
-> > > -an active array size of 2592H x 1944V. It is programmable through a serial I2C
-> > > -interface.
-> > > -
-> > > -Required Properties:
-> > > -- compatible: Value should be "ovti,ov5645".
-> > > -- clocks: Reference to the xclk clock.
-> > > -- clock-names: Should be "xclk".
-> > > -- enable-gpios: Chip enable GPIO. Polarity is GPIO_ACTIVE_HIGH. This corresponds
-> > > -  to the hardware pin PWDNB which is physically active low.
-> > > -- reset-gpios: Chip reset GPIO. Polarity is GPIO_ACTIVE_LOW. This corresponds to
-> > > -  the hardware pin RESETB.
-> > > -- vdddo-supply: Chip digital IO regulator.
-> > > -- vdda-supply: Chip analog regulator.
-> > > -- vddd-supply: Chip digital core regulator.
-> > > -
-> > > -The device node must contain one 'port' child node for its digital output
-> > > -video port, in accordance with the video interface bindings defined in
-> > > -Documentation/devicetree/bindings/media/video-interfaces.txt.
-> > > -
-> > > -Example:
-> > > -
-> > > -     &i2c1 {
-> > > -             ...
-> > > -
-> > > -             ov5645: ov5645@3c {
-> > > -                     compatible = "ovti,ov5645";
-> > > -                     reg = <0x3c>;
-> > > -
-> > > -                     enable-gpios = <&gpio1 6 GPIO_ACTIVE_HIGH>;
-> > > -                     reset-gpios = <&gpio5 20 GPIO_ACTIVE_LOW>;
-> > > -                     pinctrl-names = "default";
-> > > -                     pinctrl-0 = <&camera_rear_default>;
-> > > -
-> > > -                     clocks = <&clks 200>;
-> > > -                     clock-names = "xclk";
-> > > -                     assigned-clocks = <&clks 200>;
-> > > -                     assigned-clock-rates = <24000000>;
-> > > -
-> > > -                     vdddo-supply = <&camera_dovdd_1v8>;
-> > > -                     vdda-supply = <&camera_avdd_2v8>;
-> > > -                     vddd-supply = <&camera_dvdd_1v2>;
-> > > -
-> > > -                     port {
-> > > -                             ov5645_ep: endpoint {
-> > > -                                     clock-lanes = <1>;
-> > > -                                     data-lanes = <0 2>;
-> > > -                                     remote-endpoint = <&csi0_ep>;
-> > > -                             };
-> > > -                     };
-> > > -             };
-> > > -     };
-> > > diff --git a/Documentation/devicetree/bindings/media/i2c/ov5645.yaml b/Documentation/devicetree/bindings/media/i2c/ov5645.yaml
-> > > new file mode 100644
-> > > index 000000000000..4bf58ad210c5
-> > > --- /dev/null
-> > > +++ b/Documentation/devicetree/bindings/media/i2c/ov5645.yaml
-> > > @@ -0,0 +1,140 @@
-> > > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > > +%YAML 1.2
-> > > +---
-> > > +$id: http://devicetree.org/schemas/media/i2c/ov5645.yaml#
-> > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > > +
-> > > +title: Omnivision 1/4-Inch 5Mp CMOS Digital Image Sensor
-> >
-> > s/Mp/MP/ ?
->
-> OK
-> 
-> > > +
-> > > +maintainers:
-> > > +  - Sakari Ailus <sakari.ailus@linux.intel.com>
-> > > +  - Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> > > +
-> > > +description: |-
-> > > + The Omnivision OV5645 is a 1/4-Inch CMOS active pixel digital image sensor with
-> > > + an active array size of 2592H x 1944V. It is programmable through a serial I2C
-> > > + interface.
-> > > +
-> > > +properties:
-> > > +  compatible:
-> > > +    const: ovti,ov5645
-> > > +
-> > > +  reg:
-> > > +    description: I2C device address
-> > > +    maxItems: 1
-> > > +
-> > > +  clocks:
-> > > +    maxItems: 1
-> > > +
-> > > +  clock-names:
-> > > +    items:
-> > > +      - const: xclk
-> > > +
-> > > +  assigned-clocks:
-> > > +    maxItems: 1
-> > > +
-> > > +  assigned-clock-rates:
-> > > +     items:
-> > > +     - description: Must be 24MHz (24000000).
-> >
-> > These two properties shouldn't be part of the bindings, they're generic.
->
-> In that case how do we specify whats the expected clock frequency ?
+This can't possibly end well.  Maybe have a little percpu list of
+GHCBs and make sure there are enough for any possible nesting?
 
-You could specify the frequency range supported by the sensor (6 MHz to
-27 MHz) in the description of the clocks property. The fact that only 24
-MHz is supported is a driver issue, and should not be reflected in the
-DT bindings.
-
-> > > +
-> > > +  enable-gpios:
-> > > +    description: |-
-> > > +      Chip enable GPIO. Polarity is GPIO_ACTIVE_HIGH. This corresponds
-> > > +      to the hardware pin PWDNB which is physically active low.
-> >
-> > Specifying that the polarity is GPIO_ACTIVE_HIGH is confusing in my
-> > opinion. If there's an inverter on the board, you'll need
-> > GPIO_ACTIVE_LOW. We could possibly drop the sentence, as all GPIOs in DT
-> > are supposed to be active high, but the fact that the GPIO name
-> > corresponds to the opposite of the pin probably has to be documented. I
-> > have no better wording to propose now I'm afraid, but it needs to be
-> > addressed. Maybe Rob or Maxime could help.
->
-> Agreed, will wait for either Rob/Maxime to comment.
-> 
-> > > +
-> > > +  reset-gpios:
-> > > +    description: |-
-> > > +      Chip reset GPIO. Polarity is GPIO_ACTIVE_LOW. This corresponds to
-> > > +      the hardware pin RESETB.
-> >
-> > Here you could just drop the second sentence, or apply the same fix as
-> > for enable-gpios.
->
-> OK
-> 
-> > > +
-> > > +  vdddo-supply:
-> > > +    description:
-> > > +      Chip digital IO regulator.
-> >
-> > You can move the description on the same line as the "description:" key.
-> > Same below.
->
-> Will fix that.
-> 
-> > > +
-> > > +  vdda-supply:
-> > > +    description:
-> > > +      Chip analog regulator.
-> > > +
-> > > +  vddd-supply:
-> > > +    description:
-> > > +      Chip digital core regulator.
-> > > +
-> > > +  # See ../video-interfaces.txt for more details
-> > > +  port:
-> > > +    type: object
-> > > +    properties:
-> > > +      endpoint:
-> > > +        type: object
-> > > +
-> > > +        properties:
-> > > +          data-lanes:
-> > > +            description: |-
-> > > +              The sensor supports two-lane operation.
-> > > +              For two-lane operation the property must be set to <1 2>.
-> > > +            items:
-> > > +              - const: 1
-> > > +              - const: 2
-> >
-> > What if only one lane is wired, does the sensor support that ?
->
-> Comparing with ov5640 datasheet (Assuming its similar to it) the
-> sensor can support
-> single/dual lane but looking at the driver it only supports dual lane mode atm
-> { OV5645_MIPI_CTRL00, 0x24 },
-
-That's a driver limitation though, the bindings should support both.
-
-> > > +
-> > > +          clock-lanes:
-> > > +            description:
-> > > +              should be set to <0> (clock lane on hardware lane 0).
-> > > +            items:
-> > > +              - const: 0
-> > > +
-> > > +          remote-endpoint: true
-> > > +
-> > > +        required:
-> > > +          - data-lanes
-> > > +          - clock-lanes
-> > > +          - remote-endpoint
-> > > +
-> > > +        additionalProperties: false
-> > > +
-> > > +    additionalProperties: false
-> > > +
-> > > +required:
-> > > +  - compatible
-> > > +  - reg
-> > > +  - clocks
-> > > +  - clock-names
-> > > +  - assigned-clocks
-> > > +  - assigned-clock-rates
-> >
-> > Those two properties should be dropped.
->
-> Will do that.
-> 
-> > > +  - enable-gpios
-> > > +  - reset-gpios
-> >
-> > Are the GPIOs mandatory ? What if the signals are hardwired on the board
-> > ?
->
-> Yes as per the driver, which needs to be fixed for making these optional :)
-
-We can make them optional in the bindings at a later point, or do so
-already.
-
-> > > +  - vdddo-supply
-> > > +  - vdda-supply
-> > > +  - vddd-supply
-> > > +  - port
-> > > +
-> > > +additionalProperties: false
-> > > +
-> > > +examples:
-> > > +  - |
-> > > +    i2c1 {
-> >
-> > s/i2c1/i2c/
->
-> Will fix that.
-> 
-> > > +        #address-cells = <1>;
-> > > +        #size-cells = <0>;
-> > > +
-> > > +        ov5645: sensor@3c {
-> > > +            compatible = "ovti,ov5645";
-> > > +            reg = <0x3c>;
-> > > +            clocks = <&ov5645_cl>;
-> > > +            clock-names = "xclk";
-> > > +            assigned-clocks = <&ov5645_cl>;
-> > > +            assigned-clock-rates = <24000000>;
-> > > +            enable-gpios = <&gpio1 6 /* GPIO_ACTIVE_HIGH */>;
-> > > +            reset-gpios = <&gpio5 20 /* GPIO_ACTIVE_LOW */>;
-> > > +            vdddo-supply = <&camera_dovdd_1v8>;
-> > > +            vdda-supply = <&camera_avdd_2v8>;
-> > > +            vddd-supply = <&camera_dvdd_1v2>;
-> > > +
-> > > +            port {
-> > > +                ov5645_0: endpoint {
-> > > +                    remote-endpoint = <&csi1_ep>;
-> > > +                    clock-lanes = <0>;
-> > > +                    data-lanes = <1 2>;
-> > > +                };
-> > > +            };
-> > > +        };
-> > > +    };
-> > > +
-> > > +...
-
--- 
-Regards,
-
-Laurent Pinchart
+Also, I admit confusion.  Isn't the GHCB required to be unencrypted?
+How does that work with kzalloc()?
