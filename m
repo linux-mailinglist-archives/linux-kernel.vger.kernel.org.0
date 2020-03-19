@@ -2,39 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A718318B431
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:08:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E741218B49C
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:11:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727954AbgCSNHd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 09:07:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51234 "EHLO mail.kernel.org"
+        id S1728159AbgCSNLT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 09:11:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56436 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727283AbgCSNHb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 09:07:31 -0400
+        id S1728695AbgCSNLR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 09:11:17 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 284FD20788;
-        Thu, 19 Mar 2020 13:07:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3DF52217D8;
+        Thu, 19 Mar 2020 13:11:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584623250;
-        bh=CXO2uhnFYDXcQ/2+gZnXq7HDfKx4gTcFAJjOcphPXME=;
+        s=default; t=1584623476;
+        bh=S6QN/3KE7/L4/R1yADZW96OLCmrcELX878e8rMKYbf8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=osOjVdH0CuNZrNMDTId3vcF807V287GTPPS1WO7gGd07dxWU3El1jAB7Q2q0U/ub2
-         zHmR8S8WkDPyqy7/12Koeu5ahY07GOpm3ihDSazB4tIp8r0mrX8ibYMQXImISzYMz7
-         Et8mFaewxLhCrrp4H+AXstWKvudTHM7IElbG7PIw=
+        b=y4b8HqJAGhYfDib3X/WSa54PsCrODdzm5XWulzStV7qWJ97eAi3SpYbFikF0CoxQI
+         t36zwGVuYrjIMtKZiPVgapywod0cyxaIxDOOSOOQqGLpLTe44lGYvGAI2whDtiU3TG
+         9U47Ib33o07apkNKW3wGhKy66Si2NV/tS1P9IQis=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Sven Eckelmann <sven@narfation.org>,
-        Marek Lindner <mareklindner@neomailbox.ch>,
-        Antonio Quartulli <a@unstable.cc>
-Subject: [PATCH 4.4 39/93] batman-adv: Only put gw_node list reference when removed
+        stable@vger.kernel.org, Per Sundstrom <per.sundstrom@redqube.se>,
+        Jiri Wiesner <jwiesner@suse.com>,
+        Eric Dumazet <edumazet@google.com>,
+        Mahesh Bandewar <maheshb@google.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.9 21/90] ipvlan: do not add hardware address of master to its unicast filter list
 Date:   Thu, 19 Mar 2020 13:59:43 +0100
-Message-Id: <20200319123937.486678083@linuxfoundation.org>
+Message-Id: <20200319123935.258894604@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.2
-In-Reply-To: <20200319123924.795019515@linuxfoundation.org>
-References: <20200319123924.795019515@linuxfoundation.org>
+In-Reply-To: <20200319123928.635114118@linuxfoundation.org>
+References: <20200319123928.635114118@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,48 +46,70 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sven Eckelmann <sven@narfation.org>
+From: Jiri Wiesner <jwiesner@suse.com>
 
-commit c18bdd018e8912ca73ad6c12120b7283b5038875 upstream.
+[ Upstream commit 63aae7b17344d4b08a7d05cb07044de4c0f9dcc6 ]
 
-The batadv_gw_node reference counter in batadv_gw_node_update can only be
-reduced when the list entry was actually removed. Otherwise the reference
-counter may reach zero when batadv_gw_node_update is called from two
-different contexts for the same gw_node but only one context is actually
-removing the entry from the list.
+There is a problem when ipvlan slaves are created on a master device that
+is a vmxnet3 device (ipvlan in VMware guests). The vmxnet3 driver does not
+support unicast address filtering. When an ipvlan device is brought up in
+ipvlan_open(), the ipvlan driver calls dev_uc_add() to add the hardware
+address of the vmxnet3 master device to the unicast address list of the
+master device, phy_dev->uc. This inevitably leads to the vmxnet3 master
+device being forced into promiscuous mode by __dev_set_rx_mode().
 
-The release function for this gw_node is not called inside the list_lock
-spinlock protected region because the function batadv_gw_node_update still
-holds a gw_node reference for the object pointer on the stack. Thus the
-actual release function (when required) will be called only at the end of
-the function.
+Promiscuous mode is switched on the master despite the fact that there is
+still only one hardware address that the master device should use for
+filtering in order for the ipvlan device to be able to receive packets.
+The comment above struct net_device describes the uc_promisc member as a
+"counter, that indicates, that promiscuous mode has been enabled due to
+the need to listen to additional unicast addresses in a device that does
+not implement ndo_set_rx_mode()". Moreover, the design of ipvlan
+guarantees that only the hardware address of a master device,
+phy_dev->dev_addr, will be used to transmit and receive all packets from
+its ipvlan slaves. Thus, the unicast address list of the master device
+should not be modified by ipvlan_open() and ipvlan_stop() in order to make
+ipvlan a workable option on masters that do not support unicast address
+filtering.
 
-Fixes: bd3524c14bd0 ("batman-adv: remove obsolete deleted attribute for gateway node")
-Signed-off-by: Sven Eckelmann <sven@narfation.org>
-Signed-off-by: Marek Lindner <mareklindner@neomailbox.ch>
-Signed-off-by: Antonio Quartulli <a@unstable.cc>
+Fixes: 2ad7bf3638411 ("ipvlan: Initial check-in of the IPVLAN driver")
+Reported-by: Per Sundstrom <per.sundstrom@redqube.se>
+Signed-off-by: Jiri Wiesner <jwiesner@suse.com>
+Reviewed-by: Eric Dumazet <edumazet@google.com>
+Acked-by: Mahesh Bandewar <maheshb@google.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/batman-adv/gateway_client.c |    7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ drivers/net/ipvlan/ipvlan_main.c |    5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
---- a/net/batman-adv/gateway_client.c
-+++ b/net/batman-adv/gateway_client.c
-@@ -527,11 +527,12 @@ void batadv_gw_node_update(struct batadv
- 		 * gets dereferenced.
- 		 */
- 		spin_lock_bh(&bat_priv->gw.list_lock);
--		hlist_del_init_rcu(&gw_node->list);
-+		if (!hlist_unhashed(&gw_node->list)) {
-+			hlist_del_init_rcu(&gw_node->list);
-+			batadv_gw_node_free_ref(gw_node);
-+		}
- 		spin_unlock_bh(&bat_priv->gw.list_lock);
+--- a/drivers/net/ipvlan/ipvlan_main.c
++++ b/drivers/net/ipvlan/ipvlan_main.c
+@@ -217,7 +217,6 @@ static void ipvlan_uninit(struct net_dev
+ static int ipvlan_open(struct net_device *dev)
+ {
+ 	struct ipvl_dev *ipvlan = netdev_priv(dev);
+-	struct net_device *phy_dev = ipvlan->phy_dev;
+ 	struct ipvl_addr *addr;
  
--		batadv_gw_node_free_ref(gw_node);
+ 	if (ipvlan->port->mode == IPVLAN_MODE_L3 ||
+@@ -229,7 +228,7 @@ static int ipvlan_open(struct net_device
+ 	list_for_each_entry(addr, &ipvlan->addrs, anode)
+ 		ipvlan_ht_addr_add(ipvlan, addr);
+ 
+-	return dev_uc_add(phy_dev, phy_dev->dev_addr);
++	return 0;
+ }
+ 
+ static int ipvlan_stop(struct net_device *dev)
+@@ -241,8 +240,6 @@ static int ipvlan_stop(struct net_device
+ 	dev_uc_unsync(phy_dev, dev);
+ 	dev_mc_unsync(phy_dev, dev);
+ 
+-	dev_uc_del(phy_dev, phy_dev->dev_addr);
 -
- 		curr_gw = batadv_gw_get_selected_gw_node(bat_priv);
- 		if (gw_node == curr_gw)
- 			batadv_gw_reselect(bat_priv);
+ 	list_for_each_entry(addr, &ipvlan->addrs, anode)
+ 		ipvlan_ht_addr_del(addr);
+ 
 
 
