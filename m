@@ -2,43 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 927A718B6B1
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:29:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C546218B558
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:18:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730720AbgCSN0B (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 09:26:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53740 "EHLO mail.kernel.org"
+        id S1729697AbgCSNRn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 09:17:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39156 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730515AbgCSNZ5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 09:25:57 -0400
+        id S1729684AbgCSNRm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 09:17:42 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 578FD2080C;
-        Thu, 19 Mar 2020 13:25:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 482F220787;
+        Thu, 19 Mar 2020 13:17:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584624355;
-        bh=5iPR7XCLsazQnaDrcx+zT2BH4J3il51Isf+Aw05JtG4=;
+        s=default; t=1584623861;
+        bh=yWBP8NC1T6Y41kW+SfUswRPelU3dwmrCB55ljXektVM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=V00+g1ReQ5ZN/S2LQRGaxu6CjECtb2pY2qLqmqQStO9M/zo7vl+bjuSiQdu8A32yP
-         ZGoB69yUYBSPk0Dcc97B8VUPv/G949VaOvPGrXMgx4DVltRdhHD6ZAoEJoeMFYZjXw
-         cHNJ+xcNquBqNGl77AlhtjEDZ7XaSmsMXL6aZJeg=
+        b=ybAMsgObQ1WasKfYJ1vml/6w6FRxNK886OW/0b0T+7HZ68fE0P+8rOrbL9spCtp/F
+         pDpMsDaP/ErNU/ol4o50TUP8a+FFE2c/pygtCdZkTM4BCAzH3a2FLMXNTW+ftpjO/w
+         tRDsNg2+VnHdB4LlACpv7Y+cULVEGOyVkaIPY7gA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Victor Kamensky <kamensky@cisco.com>,
-        Paul Burton <paulburton@kernel.org>,
-        linux-mips@vger.kernel.org, Ralf Baechle <ralf@linux-mips.org>,
-        James Hogan <jhogan@kernel.org>,
-        Vincenzo Frascino <vincenzo.frascino@arm.com>,
-        bruce.ashfield@gmail.com, richard.purdie@linuxfoundation.org,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.5 15/65] mips: vdso: add build time check that no jalr t9 calls left
+        Sven Eckelmann <sven@narfation.org>,
+        Simon Wunderlich <sw@simonwunderlich.de>
+Subject: [PATCH 4.14 79/99] batman-adv: Avoid free/alloc race when handling OGM2 buffer
 Date:   Thu, 19 Mar 2020 14:03:57 +0100
-Message-Id: <20200319123931.264495151@linuxfoundation.org>
+Message-Id: <20200319124004.677685811@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.2
-In-Reply-To: <20200319123926.466988514@linuxfoundation.org>
-References: <20200319123926.466988514@linuxfoundation.org>
+In-Reply-To: <20200319123941.630731708@linuxfoundation.org>
+References: <20200319123941.630731708@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -48,67 +43,155 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Victor Kamensky <kamensky@cisco.com>
+From: Sven Eckelmann <sven@narfation.org>
 
-[ Upstream commit 976c23af3ee5bd3447a7bfb6c356ceb4acf264a6 ]
+commit a8d23cbbf6c9f515ed678204ad2962be7c336344 upstream.
 
-vdso shared object cannot have GOT based PIC 'jalr t9' calls
-because nobody set GOT table in vdso. Contributing into vdso
-.o files are compiled in PIC mode and as result for internal
-static functions calls compiler will generate 'jalr t9'
-instructions. Those are supposed to be converted into PC
-relative 'bal' calls by linker when relocation are processed.
+A B.A.T.M.A.N. V virtual interface has an OGM2 packet buffer which is
+initialized using data from the netdevice notifier and other rtnetlink
+related hooks. It is sent regularly via various slave interfaces of the
+batadv virtual interface and in this process also modified (realloced) to
+integrate additional state information via TVLV containers.
 
-Mips global GOT entries do have dynamic relocations and they
-will be caught by cmd_vdso_check Makefile rule. Static PIC
-calls go through mips local GOT entries that do not have
-dynamic relocations. For those 'jalr t9' calls could be present
-but without dynamic relocations and they need to be converted
-to 'bal' calls by linker.
+It must be avoided that the worker item is executed without a common lock
+with the netdevice notifier/rtnetlink helpers. Otherwise it can either
+happen that half modified data is sent out or the functions modifying the
+OGM2 buffer try to access already freed memory regions.
 
-Add additional build time check to make sure that no 'jalr t9'
-slip through because of some toolchain misconfiguration that
-prevents 'jalr t9' to 'bal' conversion.
-
-Signed-off-by: Victor Kamensky <kamensky@cisco.com>
-Signed-off-by: Paul Burton <paulburton@kernel.org>
-Cc: linux-mips@vger.kernel.org
-Cc: Ralf Baechle <ralf@linux-mips.org>
-Cc: James Hogan <jhogan@kernel.org>
-Cc: Vincenzo Frascino <vincenzo.frascino@arm.com>
-Cc: bruce.ashfield@gmail.com
-Cc: richard.purdie@linuxfoundation.org
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Fixes: 0da0035942d4 ("batman-adv: OGMv2 - add basic infrastructure")
+Signed-off-by: Sven Eckelmann <sven@narfation.org>
+Signed-off-by: Simon Wunderlich <sw@simonwunderlich.de>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/mips/vdso/Makefile | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ net/batman-adv/bat_v_ogm.c |   42 ++++++++++++++++++++++++++++++++++--------
+ net/batman-adv/types.h     |    3 +++
+ 2 files changed, 37 insertions(+), 8 deletions(-)
 
-diff --git a/arch/mips/vdso/Makefile b/arch/mips/vdso/Makefile
-index e8585a22b925c..bfb65b2d57c7f 100644
---- a/arch/mips/vdso/Makefile
-+++ b/arch/mips/vdso/Makefile
-@@ -93,12 +93,18 @@ GCOV_PROFILE := n
- UBSAN_SANITIZE := n
- KCOV_INSTRUMENT := n
+--- a/net/batman-adv/bat_v_ogm.c
++++ b/net/batman-adv/bat_v_ogm.c
+@@ -28,6 +28,8 @@
+ #include <linux/kernel.h>
+ #include <linux/kref.h>
+ #include <linux/list.h>
++#include <linux/lockdep.h>
++#include <linux/mutex.h>
+ #include <linux/netdevice.h>
+ #include <linux/random.h>
+ #include <linux/rculist.h>
+@@ -127,14 +129,12 @@ static void batadv_v_ogm_send_to_if(stru
+ }
  
-+# Check that we don't have PIC 'jalr t9' calls left
-+quiet_cmd_vdso_mips_check = VDSOCHK $@
-+      cmd_vdso_mips_check = if $(OBJDUMP) --disassemble $@ | egrep -h "jalr.*t9" > /dev/null; \
-+		       then (echo >&2 "$@: PIC 'jalr t9' calls are not supported"; \
-+			     rm -f $@; /bin/false); fi
+ /**
+- * batadv_v_ogm_send - periodic worker broadcasting the own OGM
+- * @work: work queue item
++ * batadv_v_ogm_send_softif() - periodic worker broadcasting the own OGM
++ *  @bat_priv: the bat priv with all the soft interface information
+  */
+-static void batadv_v_ogm_send(struct work_struct *work)
++static void batadv_v_ogm_send_softif(struct batadv_priv *bat_priv)
+ {
+ 	struct batadv_hard_iface *hard_iface;
+-	struct batadv_priv_bat_v *bat_v;
+-	struct batadv_priv *bat_priv;
+ 	struct batadv_ogm2_packet *ogm_packet;
+ 	struct sk_buff *skb, *skb_tmp;
+ 	unsigned char *ogm_buff;
+@@ -142,8 +142,7 @@ static void batadv_v_ogm_send(struct wor
+ 	u16 tvlv_len = 0;
+ 	int ret;
+ 
+-	bat_v = container_of(work, struct batadv_priv_bat_v, ogm_wq.work);
+-	bat_priv = container_of(bat_v, struct batadv_priv, bat_v);
++	lockdep_assert_held(&bat_priv->bat_v.ogm_buff_mutex);
+ 
+ 	if (atomic_read(&bat_priv->mesh_state) == BATADV_MESH_DEACTIVATING)
+ 		goto out;
+@@ -235,6 +234,23 @@ out:
+ }
+ 
+ /**
++ * batadv_v_ogm_send() - periodic worker broadcasting the own OGM
++ * @work: work queue item
++ */
++static void batadv_v_ogm_send(struct work_struct *work)
++{
++	struct batadv_priv_bat_v *bat_v;
++	struct batadv_priv *bat_priv;
 +
- #
- # Shared build commands.
- #
++	bat_v = container_of(work, struct batadv_priv_bat_v, ogm_wq.work);
++	bat_priv = container_of(bat_v, struct batadv_priv, bat_v);
++
++	mutex_lock(&bat_priv->bat_v.ogm_buff_mutex);
++	batadv_v_ogm_send_softif(bat_priv);
++	mutex_unlock(&bat_priv->bat_v.ogm_buff_mutex);
++}
++
++/**
+  * batadv_v_ogm_iface_enable - prepare an interface for B.A.T.M.A.N. V
+  * @hard_iface: the interface to prepare
+  *
+@@ -260,11 +276,15 @@ void batadv_v_ogm_primary_iface_set(stru
+ 	struct batadv_priv *bat_priv = netdev_priv(primary_iface->soft_iface);
+ 	struct batadv_ogm2_packet *ogm_packet;
  
- quiet_cmd_vdsold_and_vdso_check = LD      $@
--      cmd_vdsold_and_vdso_check = $(cmd_vdsold); $(cmd_vdso_check)
-+      cmd_vdsold_and_vdso_check = $(cmd_vdsold); $(cmd_vdso_check); $(cmd_vdso_mips_check)
++	mutex_lock(&bat_priv->bat_v.ogm_buff_mutex);
+ 	if (!bat_priv->bat_v.ogm_buff)
+-		return;
++		goto unlock;
  
- quiet_cmd_vdsold = VDSO    $@
-       cmd_vdsold = $(CC) $(c_flags) $(VDSO_LDFLAGS) \
--- 
-2.20.1
-
+ 	ogm_packet = (struct batadv_ogm2_packet *)bat_priv->bat_v.ogm_buff;
+ 	ether_addr_copy(ogm_packet->orig, primary_iface->net_dev->dev_addr);
++
++unlock:
++	mutex_unlock(&bat_priv->bat_v.ogm_buff_mutex);
+ }
+ 
+ /**
+@@ -886,6 +906,8 @@ int batadv_v_ogm_init(struct batadv_priv
+ 	atomic_set(&bat_priv->bat_v.ogm_seqno, random_seqno);
+ 	INIT_DELAYED_WORK(&bat_priv->bat_v.ogm_wq, batadv_v_ogm_send);
+ 
++	mutex_init(&bat_priv->bat_v.ogm_buff_mutex);
++
+ 	return 0;
+ }
+ 
+@@ -897,7 +919,11 @@ void batadv_v_ogm_free(struct batadv_pri
+ {
+ 	cancel_delayed_work_sync(&bat_priv->bat_v.ogm_wq);
+ 
++	mutex_lock(&bat_priv->bat_v.ogm_buff_mutex);
++
+ 	kfree(bat_priv->bat_v.ogm_buff);
+ 	bat_priv->bat_v.ogm_buff = NULL;
+ 	bat_priv->bat_v.ogm_buff_len = 0;
++
++	mutex_unlock(&bat_priv->bat_v.ogm_buff_mutex);
+ }
+--- a/net/batman-adv/types.h
++++ b/net/batman-adv/types.h
+@@ -27,6 +27,7 @@
+ #include <linux/compiler.h>
+ #include <linux/if_ether.h>
+ #include <linux/kref.h>
++#include <linux/mutex.h>
+ #include <linux/netdevice.h>
+ #include <linux/netlink.h>
+ #include <linux/sched.h> /* for linux/wait.h */
+@@ -989,12 +990,14 @@ struct batadv_softif_vlan {
+  * @ogm_buff: buffer holding the OGM packet
+  * @ogm_buff_len: length of the OGM packet buffer
+  * @ogm_seqno: OGM sequence number - used to identify each OGM
++ * @ogm_buff_mutex: lock protecting ogm_buff and ogm_buff_len
+  * @ogm_wq: workqueue used to schedule OGM transmissions
+  */
+ struct batadv_priv_bat_v {
+ 	unsigned char *ogm_buff;
+ 	int ogm_buff_len;
+ 	atomic_t ogm_seqno;
++	struct mutex ogm_buff_mutex;
+ 	struct delayed_work ogm_wq;
+ };
+ 
 
 
