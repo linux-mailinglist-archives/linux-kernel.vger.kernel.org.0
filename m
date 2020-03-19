@@ -2,51 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5D4DA18B8B7
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 15:10:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B7D6018B8BE
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 15:11:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727401AbgCSOKe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 10:10:34 -0400
-Received: from 8bytes.org ([81.169.241.247]:53860 "EHLO theia.8bytes.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727141AbgCSOKe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 10:10:34 -0400
-Received: by theia.8bytes.org (Postfix, from userid 1000)
-        id 198871E6; Thu, 19 Mar 2020 15:10:32 +0100 (CET)
-Date:   Thu, 19 Mar 2020 15:10:30 +0100
-From:   Joerg Roedel <joro@8bytes.org>
-To:     Lu Baolu <baolu.lu@linux.intel.com>
-Cc:     ashok.raj@intel.com, jacob.jun.pan@linux.intel.com,
-        kevin.tian@intel.com, iommu@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, Liu Yi L <yi.l.liu@intel.com>
-Subject: Re: [PATCH 1/1] iommu/vt-d: Fix page request descriptor size
-Message-ID: <20200319141029.GB5122@8bytes.org>
-References: <20200317011018.22799-1-baolu.lu@linux.intel.com>
+        id S1727674AbgCSOKx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 10:10:53 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:60811 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726936AbgCSOKs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 10:10:48 -0400
+Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tip-bot2@linutronix.de>)
+        id 1jEvse-0001zI-Hs; Thu, 19 Mar 2020 15:10:40 +0100
+Received: from [127.0.1.1] (localhost [IPv6:::1])
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 09E671C22A3;
+        Thu, 19 Mar 2020 15:10:40 +0100 (CET)
+Date:   Thu, 19 Mar 2020 14:10:39 -0000
+From:   "tip-bot2 for Jiri Olsa" <tip-bot2@linutronix.de>
+Reply-to: linux-kernel@vger.kernel.org
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip: perf/core] perf expr: Fix copy/paste mistake
+Cc:     Jiri Olsa <jolsa@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        Kajol Jain <kjain@linux.ibm.com>,
+        Michael Petlan <mpetlan@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        x86 <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>
+In-Reply-To: <20200315155609.603948-1-jolsa@kernel.org>
+References: <20200315155609.603948-1-jolsa@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200317011018.22799-1-baolu.lu@linux.intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Message-ID: <158462703969.28353.11784055871858151116.tip-bot2@tip-bot2>
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot2.linutronix.de>
+Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 17, 2020 at 09:10:18AM +0800, Lu Baolu wrote:
-> From: Jacob Pan <jacob.jun.pan@linux.intel.com>
-> 
-> Intel VT-d might support PRS (Page Reqest Support) when it's
-> running in the scalable mode. Each page request descriptor
-> occupies 32 bytes and is 32-bytes aligned. The page request
-> descriptor offset mask should be 32-bytes aligned.
-> 
-> Fixes: 5b438f4ba315d ("iommu/vt-d: Support page request in scalable mode")
-> Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
-> Signed-off-by: Liu Yi L <yi.l.liu@intel.com>
-> Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
-> ---
->  drivers/iommu/intel-svm.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+The following commit has been merged into the perf/core branch of tip:
 
-Applied, thanks.
+Commit-ID:     59a08b4b3b1a9374adacd13cd7544c03e5582e0e
+Gitweb:        https://git.kernel.org/tip/59a08b4b3b1a9374adacd13cd7544c03e5582e0e
+Author:        Jiri Olsa <jolsa@kernel.org>
+AuthorDate:    Sun, 15 Mar 2020 16:56:09 +01:00
+Committer:     Arnaldo Carvalho de Melo <acme@redhat.com>
+CommitterDate: Tue, 17 Mar 2020 18:01:40 -03:00
 
+perf expr: Fix copy/paste mistake
+
+Copy/paste leftover from recent refactor.
+
+Fixes: 26226a97724d ("perf expr: Move expr lexer to flex")
+Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Kajol Jain <kjain@linux.ibm.com>
+Cc: Michael Petlan <mpetlan@redhat.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Link: http://lore.kernel.org/lkml/20200315155609.603948-1-jolsa@kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/perf/util/expr.l | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/tools/perf/util/expr.l b/tools/perf/util/expr.l
+index 1928f2a..eaad292 100644
+--- a/tools/perf/util/expr.l
++++ b/tools/perf/util/expr.l
+@@ -79,10 +79,10 @@ symbol		{spec}*{sym}*{spec}*{sym}*
+ 	{
+ 		int start_token;
+ 
+-		start_token = parse_events_get_extra(yyscanner);
++		start_token = expr_get_extra(yyscanner);
+ 
+ 		if (start_token) {
+-			parse_events_set_extra(NULL, yyscanner);
++			expr_set_extra(NULL, yyscanner);
+ 			return start_token;
+ 		}
+ 	}
