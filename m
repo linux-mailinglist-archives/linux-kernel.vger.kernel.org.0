@@ -2,39 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 29DFD18B6DE
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:30:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CD8CC18B661
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:26:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730365AbgCSNXj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 09:23:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49600 "EHLO mail.kernel.org"
+        id S1730614AbgCSN0X (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 09:26:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54238 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730360AbgCSNXf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 09:23:35 -0400
+        id S1730772AbgCSN0T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 09:26:19 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6ADFA21556;
-        Thu, 19 Mar 2020 13:23:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E89DC20658;
+        Thu, 19 Mar 2020 13:26:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584624214;
-        bh=vxseYOJeQCS6fWbwxaaYEYi2MoV+stP5GL0I0dHdpzE=;
+        s=default; t=1584624378;
+        bh=ACVs9EEdSSF2EStts4WvgDFgGjqrcJok/0eJsCLUZM8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2hO1alwnVRWHY5lEeXUYqhw4AnEKmqE+lZz5e6jIXS2OmKQ2dqwCISaFh+spWCo9L
-         L5MNZppUa8LP3rS/nv/vQqemv1jbF4m1WZv9mev+0vUFo8SqinFL5tna1wPNYAjtkC
-         BRQbr3E4kj4+Ona7ALMGxnXTuJ/VoDFIYZIrgGfo=
+        b=B9zzMw/jDUgVFBzoLcbTZYs6ZHiWZSzZzWk9gugrOfn+lrKAL6f+8O0QnQTc8sKmK
+         bAykaYyw51TEZ7bVxgwVrMc6MICPaSfHmCoKauG/z1UGM1Kd+T5TFO/Kj4CmQfX5jN
+         x8Kf0NvqCA0ddySjdAkG2wUMPvEQh6pkeHNlwVjw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Taehee Yoo <ap420073@gmail.com>,
+        stable@vger.kernel.org,
+        Antoine Tenart <antoine.tenart@bootlin.com>,
+        Andrew Lunn <andrew@lunn.ch>,
         "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 45/60] net: rmnet: remove rcu_read_lock in rmnet_force_unassociate_device()
-Date:   Thu, 19 Mar 2020 14:04:23 +0100
-Message-Id: <20200319123933.890081453@linuxfoundation.org>
+Subject: [PATCH 5.5 42/65] net: phy: mscc: fix firmware paths
+Date:   Thu, 19 Mar 2020 14:04:24 +0100
+Message-Id: <20200319123939.770299315@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.2
-In-Reply-To: <20200319123919.441695203@linuxfoundation.org>
-References: <20200319123919.441695203@linuxfoundation.org>
+In-Reply-To: <20200319123926.466988514@linuxfoundation.org>
+References: <20200319123926.466988514@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,93 +46,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Taehee Yoo <ap420073@gmail.com>
+From: Antoine Tenart <antoine.tenart@bootlin.com>
 
-[ Upstream commit c026d970102e9af9958edefb4a015702c6aab636 ]
+[ Upstream commit c87a9d6fc6d555e4981f2ded77d9a8cce950743e ]
 
-The notifier_call() of the slave interface removes rmnet interface with
-unregister_netdevice_queue().
-But, before calling unregister_netdevice_queue(), it acquires
-rcu readlock.
-In the RCU critical section, sleeping isn't be allowed.
-But, unregister_netdevice_queue() internally calls synchronize_net(),
-which would sleep.
-So, suspicious RCU usage warning occurs.
+The firmware paths for the VSC8584 PHYs not not contain the leading
+'microchip/' directory, as used in linux-firmware, resulting in an
+error when probing the driver. This patch fixes it.
 
-Test commands:
-    modprobe rmnet
-    ip link add dummy0 type dummy
-    ip link add dummy1 type dummy
-    ip link add rmnet0 link dummy0 type rmnet mux_id 1
-    ip link set dummy1 master rmnet0
-    ip link del dummy0
-
-Splat looks like:
-[   79.639245][ T1195] =============================
-[   79.640134][ T1195] WARNING: suspicious RCU usage
-[   79.640852][ T1195] 5.6.0-rc1+ #447 Not tainted
-[   79.641657][ T1195] -----------------------------
-[   79.642472][ T1195] ./include/linux/rcupdate.h:273 Illegal context switch in RCU read-side critical section!
-[   79.644043][ T1195]
-[   79.644043][ T1195] other info that might help us debug this:
-[   79.644043][ T1195]
-[   79.645682][ T1195]
-[   79.645682][ T1195] rcu_scheduler_active = 2, debug_locks = 1
-[   79.646980][ T1195] 2 locks held by ip/1195:
-[   79.647629][ T1195]  #0: ffffffffa3cf64f0 (rtnl_mutex){+.+.}, at: rtnetlink_rcv_msg+0x457/0x890
-[   79.649312][ T1195]  #1: ffffffffa39256c0 (rcu_read_lock){....}, at: rmnet_config_notify_cb+0xf0/0x590 [rmnet]
-[   79.651717][ T1195]
-[   79.651717][ T1195] stack backtrace:
-[   79.652650][ T1195] CPU: 3 PID: 1195 Comm: ip Not tainted 5.6.0-rc1+ #447
-[   79.653702][ T1195] Hardware name: innotek GmbH VirtualBox/VirtualBox, BIOS VirtualBox 12/01/2006
-[   79.655037][ T1195] Call Trace:
-[   79.655560][ T1195]  dump_stack+0x96/0xdb
-[   79.656252][ T1195]  ___might_sleep+0x345/0x440
-[   79.656994][ T1195]  synchronize_net+0x18/0x30
-[   79.661132][ T1195]  netdev_rx_handler_unregister+0x40/0xb0
-[   79.666266][ T1195]  rmnet_unregister_real_device+0x42/0xb0 [rmnet]
-[   79.667211][ T1195]  rmnet_config_notify_cb+0x1f7/0x590 [rmnet]
-[   79.668121][ T1195]  ? rmnet_unregister_bridge.isra.6+0xf0/0xf0 [rmnet]
-[   79.669166][ T1195]  ? rmnet_unregister_bridge.isra.6+0xf0/0xf0 [rmnet]
-[   79.670286][ T1195]  ? __module_text_address+0x13/0x140
-[   79.671139][ T1195]  notifier_call_chain+0x90/0x160
-[   79.671973][ T1195]  rollback_registered_many+0x660/0xcf0
-[   79.672893][ T1195]  ? netif_set_real_num_tx_queues+0x780/0x780
-[   79.675091][ T1195]  ? __lock_acquire+0xdfe/0x3de0
-[   79.675825][ T1195]  ? memset+0x1f/0x40
-[   79.676367][ T1195]  ? __nla_validate_parse+0x98/0x1ab0
-[   79.677290][ T1195]  unregister_netdevice_many.part.133+0x13/0x1b0
-[   79.678163][ T1195]  rtnl_delete_link+0xbc/0x100
-[ ... ]
-
-Fixes: ceed73a2cf4a ("drivers: net: ethernet: qualcomm: rmnet: Initial implementation")
-Signed-off-by: Taehee Yoo <ap420073@gmail.com>
+Fixes: a5afc1678044 ("net: phy: mscc: add support for VSC8584 PHY")
+Signed-off-by: Antoine Tenart <antoine.tenart@bootlin.com>
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/qualcomm/rmnet/rmnet_config.c | 2 --
- 1 file changed, 2 deletions(-)
+ drivers/net/phy/mscc.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/ethernet/qualcomm/rmnet/rmnet_config.c b/drivers/net/ethernet/qualcomm/rmnet/rmnet_config.c
-index fc68ecdd804bc..0ad64aa665925 100644
---- a/drivers/net/ethernet/qualcomm/rmnet/rmnet_config.c
-+++ b/drivers/net/ethernet/qualcomm/rmnet/rmnet_config.c
-@@ -230,7 +230,6 @@ static void rmnet_force_unassociate_device(struct net_device *dev)
+diff --git a/drivers/net/phy/mscc.c b/drivers/net/phy/mscc.c
+index d5f8f351d9eff..3e38d15a67c64 100644
+--- a/drivers/net/phy/mscc.c
++++ b/drivers/net/phy/mscc.c
+@@ -310,11 +310,11 @@ enum rgmii_rx_clock_delay {
+ 				BIT(VSC8531_FORCE_LED_OFF) | \
+ 				BIT(VSC8531_FORCE_LED_ON))
  
- 	port = rmnet_get_port_rtnl(dev);
+-#define MSCC_VSC8584_REVB_INT8051_FW		"mscc_vsc8584_revb_int8051_fb48.bin"
++#define MSCC_VSC8584_REVB_INT8051_FW		"microchip/mscc_vsc8584_revb_int8051_fb48.bin"
+ #define MSCC_VSC8584_REVB_INT8051_FW_START_ADDR	0xe800
+ #define MSCC_VSC8584_REVB_INT8051_FW_CRC	0xfb48
  
--	rcu_read_lock();
- 	rmnet_unregister_bridge(dev, port);
+-#define MSCC_VSC8574_REVB_INT8051_FW		"mscc_vsc8574_revb_int8051_29e8.bin"
++#define MSCC_VSC8574_REVB_INT8051_FW		"microchip/mscc_vsc8574_revb_int8051_29e8.bin"
+ #define MSCC_VSC8574_REVB_INT8051_FW_START_ADDR	0x4000
+ #define MSCC_VSC8574_REVB_INT8051_FW_CRC	0x29e8
  
- 	hash_for_each_safe(port->muxed_ep, bkt_ep, tmp_ep, ep, hlnode) {
-@@ -241,7 +240,6 @@ static void rmnet_force_unassociate_device(struct net_device *dev)
- 		kfree(ep);
- 	}
- 
--	rcu_read_unlock();
- 	unregister_netdevice_many(&list);
- 
- 	rmnet_unregister_real_device(real_dev, port);
 -- 
 2.20.1
 
