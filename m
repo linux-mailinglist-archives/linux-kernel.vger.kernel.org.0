@@ -2,79 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 52C3618BDAD
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 18:12:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9E44318BDB7
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 18:12:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728572AbgCSRMR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 13:12:17 -0400
-Received: from mail-il1-f196.google.com ([209.85.166.196]:41727 "EHLO
-        mail-il1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727235AbgCSRMR (ORCPT
+        id S1728619AbgCSRMw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 13:12:52 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:35177 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727564AbgCSRMv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 13:12:17 -0400
-Received: by mail-il1-f196.google.com with SMTP id l14so2938868ilj.8;
-        Thu, 19 Mar 2020 10:12:14 -0700 (PDT)
+        Thu, 19 Mar 2020 13:12:51 -0400
+Received: by mail-lj1-f196.google.com with SMTP id u12so3406951ljo.2
+        for <linux-kernel@vger.kernel.org>; Thu, 19 Mar 2020 10:12:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=mGnzjLPuiF5jh+YmVcnbPs/rygoBzTtr0yQpmvu1C/U=;
+        b=ho5WkQIp7FBmmWnNEs8qarjlXHQ/bMpYIjVlz5diN+cFqHjIA9Cfpaie2yvrq56MzY
+         6TnA04IH3cBRxYREMcsiPUpLCig/QPzuawQ7+ZDABjg2D7iZ5uNSWio6VnyJC48k22lp
+         9sUOw53EsymdqqmachpMBK4cZKv94z+KiqobI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=FuFy53dKsb2fck0JMwy1FXmxdDEmegXgO4r2caNX4Qo=;
-        b=OLXIkvGw3tJqvUSlP6ONTJRWwZsrZTNqk6ywd2Tc1yN0IxBF7yPsMAPHoxyxnikmlD
-         k6HUvjjsy+ZkZLJD/b/5D/ZzNc2TvhBMIqPGkum6U+N2BpqJaYO2YWCiIXX8t2quYGOZ
-         B9l6Ooq3OXIT5mWeiBFzXRAZvXlNl4duwAsxPjXtlWE+mcTA9u9K7PHudhoHCPNWUvQk
-         Uofse2osD0WeUNHdtFcNgXl3faKzC/zItp01dVoSzU8RozIq7eZagGJxGRSYoxCIVztg
-         cqZyoJ1C9aPVJhzITLFfDlk64GzLy/eosDZ+tufTTuO0+bveW6C9TH7gDlPeFlOMdsMw
-         X/Yw==
-X-Gm-Message-State: ANhLgQ2pOWvmbDrF3UeMe3/SuzDmSDS2L73F8j6RUvKLw0eKEwhOaF96
-        aPj8YMdX62qvCUId6tzDgw==
-X-Google-Smtp-Source: ADFU+vs/qjBgZCguu4PgrA7kda0SwMTPsdT6I/2Mcj/b7bYNjpINO1LuIXtpzuRHB/7LUhmdIByVUQ==
-X-Received: by 2002:a92:35db:: with SMTP id c88mr4010676ilf.187.1584637934049;
-        Thu, 19 Mar 2020 10:12:14 -0700 (PDT)
-Received: from rob-hp-laptop ([64.188.179.250])
-        by smtp.gmail.com with ESMTPSA id y8sm937166iot.14.2020.03.19.10.12.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 19 Mar 2020 10:12:13 -0700 (PDT)
-Received: (nullmailer pid 16694 invoked by uid 1000);
-        Thu, 19 Mar 2020 17:12:10 -0000
-Date:   Thu, 19 Mar 2020 11:12:10 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Alim Akhtar <alim.akhtar@samsung.com>
-Cc:     robh+dt@kernel.org, devicetree@vger.kernel.org,
-        linux-scsi@vger.kernel.org, krzk@kernel.org, avri.altman@wdc.com,
-        martin.petersen@oracle.com, kwmad.kim@samsung.com,
-        stanley.chu@mediatek.com, cang@codeaurora.org,
-        linux-samsung-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Alim Akhtar <alim.akhtar@samsung.com>
-Subject: Re: [PATCH v2 1/5] dt-bindings: phy: Document Samsung UFS PHY
- bindings
-Message-ID: <20200319171210.GA14990@bogus>
-References: <20200318111144.39525-1-alim.akhtar@samsung.com>
- <CGME20200318111805epcas5p3e68724d923a07ddd80a45e3316292940@epcas5p3.samsung.com>
- <20200318111144.39525-2-alim.akhtar@samsung.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=mGnzjLPuiF5jh+YmVcnbPs/rygoBzTtr0yQpmvu1C/U=;
+        b=tAr2X2Kmm5+lqNLTdtHFVa8pHx7bxXvSbVEBSRd/lbmxytUxmJBwAUjcGw1znXYuuk
+         XmJY4D67DDys+0oXHfmYTalkSiQ1KWHrsl9KwiIAJ4bsZ5xLuX7GW8V0fiXtl6ldS61N
+         UtDspLakqFtfCb0nL+ldtJdbfO3NY6jeTQD6LSPBu5bHw4B60LYvXHERvxUrct+Wu1gK
+         ybgRSXEiDTGE/C+a6hZcPqcpagDRzBZ8je++h6sFK0z/cy7NG1HIMrTuuH7uJ6LTUyIy
+         Wm2ByadHUlO7bUoPhLEIZGsSG4BU+IOdlSRxVYhtEjRnPXzE024nVUxyZGAaXPDwDDr/
+         pKZg==
+X-Gm-Message-State: ANhLgQ3wwW3+dRmVSR8RyozTrceGLCW708ON5iRlK8bN/e7piy1OLAoR
+        lUl9y7ycLoCpiPO/boSrwiqUlVANYBI=
+X-Google-Smtp-Source: ADFU+vuaxecHxqORHoeSBf9L/bB9ihaY107tqVlV7JMa4E3uxAydEGgsvhtJbL23hCpYI7srAF2gkw==
+X-Received: by 2002:a2e:891a:: with SMTP id d26mr2680621lji.182.1584637967590;
+        Thu, 19 Mar 2020 10:12:47 -0700 (PDT)
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com. [209.85.167.44])
+        by smtp.gmail.com with ESMTPSA id m15sm1851901ljo.8.2020.03.19.10.12.46
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 19 Mar 2020 10:12:46 -0700 (PDT)
+Received: by mail-lf1-f44.google.com with SMTP id t21so2263966lfe.9
+        for <linux-kernel@vger.kernel.org>; Thu, 19 Mar 2020 10:12:46 -0700 (PDT)
+X-Received: by 2002:a19:c7:: with SMTP id 190mr2779646lfa.30.1584637965843;
+ Thu, 19 Mar 2020 10:12:45 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200318111144.39525-2-alim.akhtar@samsung.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20200318204302.693307984@linutronix.de> <20200318204408.521507446@linutronix.de>
+In-Reply-To: <20200318204408.521507446@linutronix.de>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Thu, 19 Mar 2020 10:12:29 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wj3bwUD9=y4Wd6=Dh1Xwib+N3nYuKA=hd3-y+0OUeLcOQ@mail.gmail.com>
+Message-ID: <CAHk-=wj3bwUD9=y4Wd6=Dh1Xwib+N3nYuKA=hd3-y+0OUeLcOQ@mail.gmail.com>
+Subject: Re: [patch V2 11/15] completion: Use simple wait queues
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>, Will Deacon <will@kernel.org>,
+        "Paul E . McKenney" <paulmck@kernel.org>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        Kurt Schwemmer <kurt.schwemmer@microsemi.com>,
+        Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
+        Felipe Balbi <balbi@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-usb@vger.kernel.org, Kalle Valo <kvalo@codeaurora.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        linux-wireless@vger.kernel.org, Netdev <netdev@vger.kernel.org>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 18 Mar 2020 16:41:40 +0530, Alim Akhtar wrote:
-> This patch documents Samsung UFS PHY device tree bindings
-> 
-> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
-> ---
->  .../bindings/phy/samsung,ufs-phy.yaml         | 62 +++++++++++++++++++
->  1 file changed, 62 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/phy/samsung,ufs-phy.yaml
-> 
+On Wed, Mar 18, 2020 at 1:47 PM Thomas Gleixner <tglx@linutronix.de> wrote:
+>
+> There is no semantical or functional change:
 
-My bot found errors running 'make dt_binding_check' on your patch:
+Ack, with just the explanation, I'm no longer objecting to this.
 
-/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/phy/samsung,ufs-phy.example.dt.yaml: example-0: 'ufs-phy@0x15571800' does not match any of the regexes: '.*-names$', '.*-supply$', '^#.*-cells$', '^#[a-zA-Z0-9,+\\-._]{0,63}$', '^[a-zA-Z][a-zA-Z0-9,+\\-._]{0,63}$', '^[a-zA-Z][a-zA-Z0-9,+\\-._]{0,63}@[0-9a-fA-F]+(,[0-9a-fA-F]+)*$', '^__.*__$', 'pinctrl-[0-9]+'
+Plus you fixed and cleaned up the odd usb gadget code separately
+(well, most of it).
 
-See https://patchwork.ozlabs.org/patch/1257427
-Please check and re-submit.
+              Linus
