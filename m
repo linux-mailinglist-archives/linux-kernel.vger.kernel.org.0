@@ -2,243 +2,176 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F1DC118ADC5
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 08:58:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 121E118AD7D
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 08:50:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727003AbgCSH6P (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 03:58:15 -0400
-Received: from mail-eopbgr130045.outbound.protection.outlook.com ([40.107.13.45]:29872
-        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726735AbgCSH6M (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 03:58:12 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=RjwSrYuNqMqgwcguziTKK639e6ajSS8SVbWd6I7YFJwEsFtfjPKi2B5LRdjN7GA+7em9LhDkNeZTMFMlzDAJHE/z0FXxsPuL75FS0phIzHs90WwbidiJ6fZWBNlwO4aOQTkebT3hlsvUEoyzS/vesLZf5aotwqZxEhGcHyaC2NYeE9AniLv/pNdJ8l7vz5Cga3pyh0zZ8yOHOffYqGM9W2tyCcV4GgQf5iazrPtFqHd7mWXbFc2YsnhYDi8rz6PiMQhEWGqruiLFVmQyWU65xtgcOA1M9yXzPphURItWwCLyjMiBwiMViP8uRTGw9HLJMiNDhrhDnQUstuh/7y6PVA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=c7buiXnKm/D+xO/GO2VsXzVG3Yx3wmEXN9nDB+aq8Y8=;
- b=fqydm1YRrSHk4FsQjIEVv/gvabv+iuzKYp68B1pUZ+B5jawjV3c3J7KMkolwLkj7KO6kptBlyC+Fqc+p9ip5jTEtHBWpwL919b3N3tt6b7oJySQOLn8plaK4yXzjwqnzsWE0dOeeUVz6alSxzLD6rQN7eTnGuUlVCb4RLS1UY0aTxk95HXski2Wlz2oFDWyqvDWg6I1zaff/Yl4mKymRL77fgGm/XZK8asNllaCZLUNcZfixIxWKQCvpWjaNvQlqNkrNIVBjnIolFJlC+aD1JdRzgLuBjZK1XVUe3B4nDLw78ilEu/bs2Ogh5OcskYMpPJqQCYWV9VEbZQwSiGZUPA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=c7buiXnKm/D+xO/GO2VsXzVG3Yx3wmEXN9nDB+aq8Y8=;
- b=R4pE8X5kr9qv1BAAESaMMZCF0ApbY1GSPw8/kkU3nKxSlvh/dD3gV4P8AunpgewLCzZ/aQJdcUTiSDmORaxOBFc5jSVpWCD0DzmgwQbroHZ9tdOWLea9gQ8stAvrtF6HXvDZ0pc3y355CAA4HsCl8+/49rcz5GxrHkeDOJUAph0=
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=peng.fan@nxp.com; 
-Received: from AM0PR04MB4481.eurprd04.prod.outlook.com (52.135.147.15) by
- AM0PR04MB5780.eurprd04.prod.outlook.com (20.178.118.92) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2835.18; Thu, 19 Mar 2020 07:57:36 +0000
-Received: from AM0PR04MB4481.eurprd04.prod.outlook.com
- ([fe80::ad44:6b0d:205d:f8fc]) by AM0PR04MB4481.eurprd04.prod.outlook.com
- ([fe80::ad44:6b0d:205d:f8fc%7]) with mapi id 15.20.2814.021; Thu, 19 Mar 2020
- 07:57:36 +0000
-From:   peng.fan@nxp.com
-To:     shawnguo@kernel.org, s.hauer@pengutronix.de,
-        jassisinghbrar@gmail.com, o.rempel@pengutronix.de,
-        leonard.crestez@nxp.com
-Cc:     kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com,
-        Anson.Huang@nxp.com, aisheng.dong@nxp.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Peng Fan <peng.fan@nxp.com>
-Subject: [PATCH V7 4/4] firmware: imx-scu: Support one TX and one RX
-Date:   Thu, 19 Mar 2020 15:49:53 +0800
-Message-Id: <1584604193-2945-5-git-send-email-peng.fan@nxp.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1584604193-2945-1-git-send-email-peng.fan@nxp.com>
-References: <1584604193-2945-1-git-send-email-peng.fan@nxp.com>
-Content-Type: text/plain
-X-ClientProxiedBy: SG2PR02CA0118.apcprd02.prod.outlook.com
- (2603:1096:4:92::34) To AM0PR04MB4481.eurprd04.prod.outlook.com
- (2603:10a6:208:70::15)
+        id S1726525AbgCSHu2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 03:50:28 -0400
+Received: from us-smtp-delivery-74.mimecast.com ([216.205.24.74]:47337 "EHLO
+        us-smtp-delivery-74.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725767AbgCSHu2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 03:50:28 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1584604225;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=1FjOpHO7DVBelpmj+x+16nQtzOUq2HDnloAulowS+9c=;
+        b=UbMUmzy5f7AAaLS37gyPNpzBZ/fUPDzolPvLBO5elu9rUwQr9kh5wwQLG66j3i1NtbeuXu
+        h8OoGRAZi0j4BtaPU4xnwp3Sxm/U7crp5XAFDr3ueWabuikJZtJszecAm2ij/+GL6waecq
+        qoIyo38yOVXBnazs58KbtS57ZVcTNMQ=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-127-bZiPtl6MN6-Z1oAlMHQFdA-1; Thu, 19 Mar 2020 03:50:24 -0400
+X-MC-Unique: bZiPtl6MN6-Z1oAlMHQFdA-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id ED885477;
+        Thu, 19 Mar 2020 07:50:22 +0000 (UTC)
+Received: from kamzik.brq.redhat.com (unknown [10.40.192.208])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 925316EFA7;
+        Thu, 19 Mar 2020 07:50:08 +0000 (UTC)
+Date:   Thu, 19 Mar 2020 08:50:05 +0100
+From:   Andrew Jones <drjones@redhat.com>
+To:     Peter Xu <peterx@redhat.com>
+Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Michael S . Tsirkin" <mst@redhat.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Yan Zhao <yan.y.zhao@intel.com>,
+        "Dr . David Alan Gilbert" <dgilbert@redhat.com>,
+        Christophe de Dinechin <dinechin@redhat.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
+        Kevin Tian <kevin.tian@intel.com>,
+        Paolo Bonzini <pbonzini@redhat.com>
+Subject: Re: [PATCH v7 11/14] KVM: selftests: Introduce after_vcpu_run hook
+ for dirty log test
+Message-ID: <20200319075005.hdddb4xiqzuxcqbn@kamzik.brq.redhat.com>
+References: <20200318163720.93929-1-peterx@redhat.com>
+ <20200318163720.93929-12-peterx@redhat.com>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from localhost.localdomain (119.31.174.66) by SG2PR02CA0118.apcprd02.prod.outlook.com (2603:1096:4:92::34) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.20.2835.18 via Frontend Transport; Thu, 19 Mar 2020 07:57:32 +0000
-X-Mailer: git-send-email 2.7.4
-X-Originating-IP: [119.31.174.66]
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-HT: Tenant
-X-MS-Office365-Filtering-Correlation-Id: bd907a9a-b7c9-4d08-c9e0-08d7cbdb300b
-X-MS-TrafficTypeDiagnostic: AM0PR04MB5780:|AM0PR04MB5780:
-X-MS-Exchange-Transport-Forked: True
-X-Microsoft-Antispam-PRVS: <AM0PR04MB57800951561E41CBAEC008F888F40@AM0PR04MB5780.eurprd04.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:4303;
-X-Forefront-PRVS: 0347410860
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(4636009)(366004)(136003)(346002)(39860400002)(376002)(396003)(199004)(6666004)(66946007)(36756003)(66476007)(6486002)(5660300002)(478600001)(6512007)(9686003)(69590400007)(16526019)(4326008)(81166006)(81156014)(52116002)(6506007)(8676002)(66556008)(316002)(2906002)(8936002)(2616005)(186003)(86362001)(956004)(26005)(83323001);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB5780;H:AM0PR04MB4481.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;
-Received-SPF: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: SKpOXp8fUFYya7fUY+34cP8TqvkZ2rImNGsCZJeb+ZhcOBWGTeFbRdy4+ABo4dsciwrYkSQn1DSIgpkP4TaFO8y2KUU3r11nBZ2clV3ETKnu1Y2E3CigHgKJRa2Rz4TuSJkzX0Or9LIjZ7h2+hk9w2pfSBeXo6fL7nFojvLxFnhbAawSrBV6P6EoXyltDewdl/uE0Y3ms//jfNLPz9hXSsrzVRrgNuJhpe+ypIOQhhTcEQ5daatijAWPv3kYLFgs0jkSrdG3lXTIk6WCQMa3eTk0m5krLlr773qXiG/n7MyK/qMf2Gjtx113KrTT31VGfeCK02nkkjkWUsRpAhXtqHqcEUUSVmw8epfWEe3S/SFqnQB53kxtBpJrmkeKXGyzqZeeYe+OS9TCMSQzVoFalm2pKhu2YTPiUEH7q8TXQg7s7ZqRg4MTntyW3TsOIqc7bWUmlXDXCGRIQYMelBvYiHFVzYKyp+DgvXdMbLQVkSVF13Tg3aeliOLyYuLJzBweGkH9rFXyvh0aQTmeZRkqXw==
-X-MS-Exchange-AntiSpam-MessageData: 6Q/5LCl6M7t4KAoloNX/iC6P8lq4mN0qJxaGXArWgiNWb1RMo5IOMqs+e/aGuoica6HG9fQWJ7EHYld12EZPaeOlTYyItNnd4Vh0VrvRrro98/YdK0XQXHZ5Xn5RmKFnSHRNfTclV1RmCUldzCXNpw==
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: bd907a9a-b7c9-4d08-c9e0-08d7cbdb300b
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Mar 2020 07:57:36.3927
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: MlF+kiLF9lkgYxDEZph8N3/w7jZybQjsIjXh9uS7dI2b7o32+LG/V1Xmugp8z4mTMs3HTYcr926UKClMBtUHuw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB5780
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200318163720.93929-12-peterx@redhat.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Peng Fan <peng.fan@nxp.com>
+On Wed, Mar 18, 2020 at 12:37:17PM -0400, Peter Xu wrote:
+> Provide a hook for the checks after vcpu_run() completes.  Preparation
+> for the dirty ring test because we'll need to take care of another
+> exit reason.
+> 
+> Since at it, drop the pages_count because after all we have a better
+> summary right now with statistics, and clean it up a bit.
+> 
+> Signed-off-by: Peter Xu <peterx@redhat.com>
+> ---
+>  tools/testing/selftests/kvm/dirty_log_test.c | 41 ++++++++++++++------
+>  1 file changed, 30 insertions(+), 11 deletions(-)
+> 
+> diff --git a/tools/testing/selftests/kvm/dirty_log_test.c b/tools/testing/selftests/kvm/dirty_log_test.c
+> index 139ccb550618..94122c2e0185 100644
+> --- a/tools/testing/selftests/kvm/dirty_log_test.c
+> +++ b/tools/testing/selftests/kvm/dirty_log_test.c
+> @@ -178,6 +178,15 @@ static void clear_log_collect_dirty_pages(struct kvm_vm *vm, int slot,
+>  	kvm_vm_clear_dirty_log(vm, slot, bitmap, 0, num_pages);
+>  }
+>  
+> +static void default_after_vcpu_run(struct kvm_vm *vm)
+> +{
+> +	struct kvm_run *run = vcpu_state(vm, VCPU_ID);
+> +
+> +	TEST_ASSERT(get_ucall(vm, VCPU_ID, NULL) == UCALL_SYNC,
+> +		    "Invalid guest sync status: exit_reason=%s\n",
+> +		    exit_reason_str(run->exit_reason));
+> +}
+> +
+>  struct log_mode {
+>  	const char *name;
+>  	/* Return true if this mode is supported, otherwise false */
+> @@ -187,16 +196,20 @@ struct log_mode {
+>  	/* Hook to collect the dirty pages into the bitmap provided */
+>  	void (*collect_dirty_pages) (struct kvm_vm *vm, int slot,
+>  				     void *bitmap, uint32_t num_pages);
+> +	/* Hook to call when after each vcpu run */
+> +	void (*after_vcpu_run)(struct kvm_vm *vm);
+>  } log_modes[LOG_MODE_NUM] = {
+>  	{
+>  		.name = "dirty-log",
+>  		.collect_dirty_pages = dirty_log_collect_dirty_pages,
+> +		.after_vcpu_run = default_after_vcpu_run,
+>  	},
+>  	{
+>  		.name = "clear-log",
+>  		.supported = clear_log_supported,
+>  		.create_vm_done = clear_log_create_vm_done,
+>  		.collect_dirty_pages = clear_log_collect_dirty_pages,
+> +		.after_vcpu_run = default_after_vcpu_run,
+>  	},
+>  };
+>  
+> @@ -247,6 +260,14 @@ static void log_mode_collect_dirty_pages(struct kvm_vm *vm, int slot,
+>  	mode->collect_dirty_pages(vm, slot, bitmap, num_pages);
+>  }
+>  
+> +static void log_mode_after_vcpu_run(struct kvm_vm *vm)
+> +{
+> +	struct log_mode *mode = &log_modes[host_log_mode];
+> +
+> +	if (mode->after_vcpu_run)
+> +		mode->after_vcpu_run(vm);
+> +}
+> +
+>  static void generate_random_array(uint64_t *guest_array, uint64_t size)
+>  {
+>  	uint64_t i;
+> @@ -261,25 +282,23 @@ static void *vcpu_worker(void *data)
+>  	struct kvm_vm *vm = data;
+>  	uint64_t *guest_array;
+>  	uint64_t pages_count = 0;
+> -	struct kvm_run *run;
+> +	struct sigaction sigact;
+>  
+> -	run = vcpu_state(vm, VCPU_ID);
+> +	current_vm = vm;
+> +	vcpu_fd = vcpu_get_fd(vm, VCPU_ID);
 
-Current imx-scu requires four TX and four RX to communicate with
-SCU. This is low efficient and causes lots of mailbox interrupts.
+You don't add this call until 13/14, which means bisection is broken.
+Please test the series with 'git rebase -i -x make'.
 
-With imx-mailbox driver could support one TX to use all four transmit
-registers and one RX to use all four receive registers, imx-scu
-could use one TX and one RX.
 
-Signed-off-by: Peng Fan <peng.fan@nxp.com>
----
-
-V7:
- None
-V6:
- None
-V5:
- None
-V4:
- None
-V3:
- Check mbox fsl,imx8-mu-scu for fast_ipc
-
- drivers/firmware/imx/imx-scu.c | 54 +++++++++++++++++++++++++++++++++---------
- 1 file changed, 43 insertions(+), 11 deletions(-)
-
-diff --git a/drivers/firmware/imx/imx-scu.c b/drivers/firmware/imx/imx-scu.c
-index f71eaa5bf52d..e94a5585b698 100644
---- a/drivers/firmware/imx/imx-scu.c
-+++ b/drivers/firmware/imx/imx-scu.c
-@@ -38,6 +38,7 @@ struct imx_sc_ipc {
- 	struct device *dev;
- 	struct mutex lock;
- 	struct completion done;
-+	bool fast_ipc;
- 
- 	/* temporarily store the SCU msg */
- 	u32 *msg;
-@@ -115,6 +116,7 @@ static void imx_scu_rx_callback(struct mbox_client *c, void *msg)
- 	struct imx_sc_ipc *sc_ipc = sc_chan->sc_ipc;
- 	struct imx_sc_rpc_msg *hdr;
- 	u32 *data = msg;
-+	int i;
- 
- 	if (!sc_ipc->msg) {
- 		dev_warn(sc_ipc->dev, "unexpected rx idx %d 0x%08x, ignore!\n",
-@@ -122,6 +124,19 @@ static void imx_scu_rx_callback(struct mbox_client *c, void *msg)
- 		return;
- 	}
- 
-+	if (sc_ipc->fast_ipc) {
-+		hdr = msg;
-+		sc_ipc->rx_size = hdr->size;
-+		sc_ipc->msg[0] = *data++;
-+
-+		for (i = 1; i < sc_ipc->rx_size; i++)
-+			sc_ipc->msg[i] = *data++;
-+
-+		complete(&sc_ipc->done);
-+
-+		return;
-+	}
-+
- 	if (sc_chan->idx == 0) {
- 		hdr = msg;
- 		sc_ipc->rx_size = hdr->size;
-@@ -147,6 +162,7 @@ static int imx_scu_ipc_write(struct imx_sc_ipc *sc_ipc, void *msg)
- 	struct imx_sc_chan *sc_chan;
- 	u32 *data = msg;
- 	int ret;
-+	int size;
- 	int i;
- 
- 	/* Check size */
-@@ -156,7 +172,8 @@ static int imx_scu_ipc_write(struct imx_sc_ipc *sc_ipc, void *msg)
- 	dev_dbg(sc_ipc->dev, "RPC SVC %u FUNC %u SIZE %u\n", hdr->svc,
- 		hdr->func, hdr->size);
- 
--	for (i = 0; i < hdr->size; i++) {
-+	size = sc_ipc->fast_ipc ? 1 : hdr->size;
-+	for (i = 0; i < size; i++) {
- 		sc_chan = &sc_ipc->chans[i % 4];
- 
- 		/*
-@@ -168,8 +185,10 @@ static int imx_scu_ipc_write(struct imx_sc_ipc *sc_ipc, void *msg)
- 		 * Wait for tx_done before every send to ensure that no
- 		 * queueing happens at the mailbox channel level.
- 		 */
--		wait_for_completion(&sc_chan->tx_done);
--		reinit_completion(&sc_chan->tx_done);
-+		if (!sc_ipc->fast_ipc) {
-+			wait_for_completion(&sc_chan->tx_done);
-+			reinit_completion(&sc_chan->tx_done);
-+		}
- 
- 		ret = mbox_send_message(sc_chan->ch, &data[i]);
- 		if (ret < 0)
-@@ -246,6 +265,8 @@ static int imx_scu_probe(struct platform_device *pdev)
- 	struct imx_sc_chan *sc_chan;
- 	struct mbox_client *cl;
- 	char *chan_name;
-+	struct of_phandle_args args;
-+	int num_channel;
- 	int ret;
- 	int i;
- 
-@@ -253,11 +274,20 @@ static int imx_scu_probe(struct platform_device *pdev)
- 	if (!sc_ipc)
- 		return -ENOMEM;
- 
--	for (i = 0; i < SCU_MU_CHAN_NUM; i++) {
--		if (i < 4)
-+	ret = of_parse_phandle_with_args(pdev->dev.of_node, "mboxes",
-+					 "#mbox-cells", 0, &args);
-+	if (ret)
-+		return ret;
-+
-+	sc_ipc->fast_ipc = of_device_is_compatible(args.np, "fsl,imx8-mu-scu");
-+
-+	num_channel = sc_ipc->fast_ipc ? 2 : SCU_MU_CHAN_NUM;
-+	for (i = 0; i < num_channel; i++) {
-+		if (i < num_channel / 2)
- 			chan_name = kasprintf(GFP_KERNEL, "tx%d", i);
- 		else
--			chan_name = kasprintf(GFP_KERNEL, "rx%d", i - 4);
-+			chan_name = kasprintf(GFP_KERNEL, "rx%d",
-+					      i - num_channel / 2);
- 
- 		if (!chan_name)
- 			return -ENOMEM;
-@@ -269,13 +299,15 @@ static int imx_scu_probe(struct platform_device *pdev)
- 		cl->knows_txdone = true;
- 		cl->rx_callback = imx_scu_rx_callback;
- 
--		/* Initial tx_done completion as "done" */
--		cl->tx_done = imx_scu_tx_done;
--		init_completion(&sc_chan->tx_done);
--		complete(&sc_chan->tx_done);
-+		if (!sc_ipc->fast_ipc) {
-+			/* Initial tx_done completion as "done" */
-+			cl->tx_done = imx_scu_tx_done;
-+			init_completion(&sc_chan->tx_done);
-+			complete(&sc_chan->tx_done);
-+		}
- 
- 		sc_chan->sc_ipc = sc_ipc;
--		sc_chan->idx = i % 4;
-+		sc_chan->idx = i % (num_channel / 2);
- 		sc_chan->ch = mbox_request_channel_byname(cl, chan_name);
- 		if (IS_ERR(sc_chan->ch)) {
- 			ret = PTR_ERR(sc_chan->ch);
--- 
-2.16.4
+> +	memset(&sigact, 0, sizeof(sigact));
+> +	sigact.sa_handler = vcpu_sig_handler;
+> +	sigaction(SIG_IPI, &sigact, NULL);
+>  
+>  	guest_array = addr_gva2hva(vm, (vm_vaddr_t)random_array);
+> -	generate_random_array(guest_array, TEST_PAGES_PER_LOOP);
+>  
+>  	while (!READ_ONCE(host_quit)) {
+> +		generate_random_array(guest_array, TEST_PAGES_PER_LOOP);
+> +		pages_count += TEST_PAGES_PER_LOOP;
+>  		/* Let the guest dirty the random pages */
+>  		ret = _vcpu_run(vm, VCPU_ID);
+>  		TEST_ASSERT(ret == 0, "vcpu_run failed: %d\n", ret);
+> -		if (get_ucall(vm, VCPU_ID, NULL) == UCALL_SYNC) {
+> -			pages_count += TEST_PAGES_PER_LOOP;
+> -			generate_random_array(guest_array, TEST_PAGES_PER_LOOP);
+> -		} else {
+> -			TEST_FAIL("Invalid guest sync status: "
+> -				  "exit_reason=%s\n",
+> -				  exit_reason_str(run->exit_reason));
+> -		}
+> +		log_mode_after_vcpu_run(vm);
+>  	}
+>  
+>  	pr_info("Dirtied %"PRIu64" pages\n", pages_count);
+> -- 
+> 2.24.1
+> 
 
