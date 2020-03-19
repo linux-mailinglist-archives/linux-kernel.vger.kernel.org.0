@@ -2,203 +2,66 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A359818B14E
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 11:27:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ECEB518B15C
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 11:29:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727166AbgCSK1s (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 06:27:48 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52050 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726785AbgCSK1s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 06:27:48 -0400
-Received: from disco-boy.misterjones.org (disco-boy.misterjones.org [51.254.78.96])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F38A5206D7;
-        Thu, 19 Mar 2020 10:27:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584613667;
-        bh=uwoazedwTNP0+xIsOawzejd5iSeA0BwzwkyqJeruVqE=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=RkCD8EU7JV2FdgiasHUyA76NEFCRtSZNlIezGQCI0JeR1C3P0bTgIZMV/jJEofEz+
-         alTAqUt2mV0EkoXDUnrrrSOBx8vcrswnCMUqqAdt4g0BWvgKRVRVA31AjrB/YcAAS1
-         w8HvzmpttbnMQBxq0GkQgopeKhARA/Lh/HsH5ql8=
-Received: from disco-boy.misterjones.org ([51.254.78.96] helo=www.loen.fr)
-        by disco-boy.misterjones.org with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.92)
-        (envelope-from <maz@kernel.org>)
-        id 1jEsOu-00Dua1-W4; Thu, 19 Mar 2020 10:27:45 +0000
+        id S1727219AbgCSK2v (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 06:28:51 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:34510 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726967AbgCSK2r (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 06:28:47 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=gqy+zebrYjBGvhaO6SqPF4xkV6Hd+2qwfnT0NaMfqFw=; b=HxxXR8a33Mlo3LPRSF0OtzifxY
+        nZ01RbqIrsYECyTprO9a4Hg+e3YXhyA4NLOMZ4FamuSC0hPDqUWZOpIL8mW3tSr2/Z84Gd4YWpk/k
+        ik1t+Xy+FiIkf/cgwCAwlt8977GoyAnubuWtzebqXHCQepNE/v5cRD6J4eErvjnLkXVr5YW357D3A
+        v8lJ3EUL21H8uG46NCpPiE+qVvQiTWG69rtNBEkqpaEYQKD3QC7Xd6i7Ed9JiziqTzp/OL4sVtVCR
+        /WkNXcTrYw/IKBMcO36OdHXhXeM8ltAoUckM3cXppBVPB3RnbCjw0BPEuM1rVMPFef1ssjBf3R8Gi
+        RF4NTWzQ==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jEsPT-0007Vs-O0; Thu, 19 Mar 2020 10:28:19 +0000
+Date:   Thu, 19 Mar 2020 03:28:19 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Kirill Tkhai <ktkhai@virtuozzo.com>
+Cc:     axboe@kernel.dk, martin.petersen@oracle.com, bob.liu@oracle.com,
+        darrick.wong@oracle.com, agk@redhat.com, snitzer@redhat.com,
+        dm-devel@redhat.com, song@kernel.org, tytso@mit.edu,
+        adilger.kernel@dilger.ca, Chaitanya.Kulkarni@wdc.com,
+        ming.lei@redhat.com, osandov@fb.com, jthumshirn@suse.de,
+        minwoo.im.dev@gmail.com, damien.lemoal@wdc.com,
+        andrea.parri@amarulasolutions.com, hare@suse.com, tj@kernel.org,
+        ajay.joshi@wdc.com, sagi@grimberg.me, dsterba@suse.com,
+        bvanassche@acm.org, dhowells@redhat.com, asml.silence@gmail.com,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v7 0/6] block: Introduce REQ_ALLOCATE flag for
+ REQ_OP_WRITE_ZEROES
+Message-ID: <20200319102819.GA26418@infradead.org>
+References: <158157930219.111879.12072477040351921368.stgit@localhost.localdomain>
+ <e2b7cbab-d91f-fd7b-de6f-a671caa6f5eb@virtuozzo.com>
+ <69c0b8a4-656f-98c4-eb55-2fd1184f5fc9@virtuozzo.com>
+ <67d63190-c16f-cd26-6b67-641c8943dc3d@virtuozzo.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Thu, 19 Mar 2020 10:27:44 +0000
-From:   Marc Zyngier <maz@kernel.org>
-To:     Auger Eric <eric.auger@redhat.com>
-Cc:     linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu,
-        kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Robert Richter <rrichter@marvell.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Zenghui Yu <yuzenghui@huawei.com>,
-        James Morse <james.morse@arm.com>,
-        Julien Thierry <julien.thierry.kdev@gmail.com>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>
-Subject: Re: [PATCH v5 11/23] irqchip/gic-v4.1: Plumb get/set_irqchip_state
- SGI callbacks
-In-Reply-To: <d6b95eeb-b1c7-802b-e29e-a6c6ecf9ea33@redhat.com>
-References: <20200304203330.4967-1-maz@kernel.org>
- <20200304203330.4967-12-maz@kernel.org>
- <d6b95eeb-b1c7-802b-e29e-a6c6ecf9ea33@redhat.com>
-Message-ID: <6b2fec7cdc53536997edf4db971e1d47@kernel.org>
-X-Sender: maz@kernel.org
-User-Agent: Roundcube Webmail/1.3.10
-X-SA-Exim-Connect-IP: 51.254.78.96
-X-SA-Exim-Rcpt-To: eric.auger@redhat.com, linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, lorenzo.pieralisi@arm.com, jason@lakedaemon.net, rrichter@marvell.com, tglx@linutronix.de, yuzenghui@huawei.com, james.morse@arm.com, julien.thierry.kdev@gmail.com, suzuki.poulose@arm.com
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <67d63190-c16f-cd26-6b67-641c8943dc3d@virtuozzo.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Eric,
-
-On 2020-03-16 21:43, Auger Eric wrote:
-> Hi Marc,
+On Fri, Mar 13, 2020 at 04:08:58PM +0300, Kirill Tkhai wrote:
+> I just don't understand the reason nothing happens :(
+> I see newly-sent patches comes fast into block tree.
+> But there is only silence... I grepped over Documentation,
+> and there is no special rules about block tree. So,
+> it looks like standard rules should be applyable.
 > 
-> On 3/4/20 9:33 PM, Marc Zyngier wrote:
->> To implement the get/set_irqchip_state callbacks (limited to the
->> PENDING state), we have to use a particular set of hacks:
->> 
->> - Reading the pending state is done by using a pair of new 
->> redistributor
->>   registers (GICR_VSGIR, GICR_VSGIPENDR), which allow the 16 
->> interrupts
->>   state to be retrieved.
->> - Setting the pending state is done by generating it as we'd otherwise 
->> do
->>   for a guest (writing to GITS_SGIR).
->> - Clearing the pending state is done by emiting a VSGI command with 
->> the
-> emitting
->>   "clear" bit set.
->> 
->> This requires some interesting locking though:
->> - When talking to the redistributor, we must make sure that the VPE
->>   affinity doesn't change, hence taking the VPE lock.
->> - At the same time, we must ensure that nobody accesses the same
->>   redistributor's GICR_VSGI*R registers for a different VPE, which
-> GICR_VSGIR
->>   would corrupt the reading of the pending bits. We thus take the
->>   per-RD spinlock. Much fun.
->> 
->> Signed-off-by: Marc Zyngier <maz@kernel.org>
->> ---
->>  drivers/irqchip/irq-gic-v3-its.c   | 73 
->> ++++++++++++++++++++++++++++++
->>  include/linux/irqchip/arm-gic-v3.h | 14 ++++++
->>  2 files changed, 87 insertions(+)
->> 
->> diff --git a/drivers/irqchip/irq-gic-v3-its.c 
->> b/drivers/irqchip/irq-gic-v3-its.c
->> index c93f178914ee..fb2b836c31ff 100644
->> --- a/drivers/irqchip/irq-gic-v3-its.c
->> +++ b/drivers/irqchip/irq-gic-v3-its.c
->> @@ -3962,11 +3962,84 @@ static int its_sgi_set_affinity(struct 
->> irq_data *d,
->>  	return -EINVAL;
->>  }
->> 
->> +static int its_sgi_set_irqchip_state(struct irq_data *d,
->> +				     enum irqchip_irq_state which,
->> +				     bool state)
->> +{
->> +	if (which != IRQCHIP_STATE_PENDING)
->> +		return -EINVAL;
->> +
->> +	if (state) {
->> +		struct its_vpe *vpe = irq_data_get_irq_chip_data(d);
->> +		struct its_node *its = find_4_1_its();
->> +		u64 val;
->> +
->> +		val  = FIELD_PREP(GITS_SGIR_VPEID, vpe->vpe_id);
->> +		val |= FIELD_PREP(GITS_SGIR_VINTID, d->hwirq);
->> +		writeq_relaxed(val, its->sgir_base + GITS_SGIR - SZ_128K);
->> +	} else {
->> +		its_configure_sgi(d, true);
->> +	}
->> +
->> +	return 0;
->> +}
->> +
->> +static int its_sgi_get_irqchip_state(struct irq_data *d,
->> +				     enum irqchip_irq_state which, bool *val)
->> +{
->> +	struct its_vpe *vpe = irq_data_get_irq_chip_data(d);
->> +	void __iomem *base;
->> +	unsigned long flags;
->> +	u32 count = 1000000;	/* 1s! */
-> where does it come from? I did not find any info in the spec about this
-> delay.
+> Some comments? Some requests for reworking? Some personal reasons to ignore my patches?
 
-There is no such thing in the spec. However, these timeouts have proven 
-to be
-very useful in detecting broken HW (I'm lucky enough to have such 
-wonders
-at hand...), as well as SW bugs. The ! second value is purely empirical
-(if a whole second is not enough for things to move, they're as good as 
-dead).
-
->> +	u32 status;
->> +	int cpu;
->> +
->> +	if (which != IRQCHIP_STATE_PENDING)
->> +		return -EINVAL;
->> +
->> +	/*
->> +	 * Locking galore! We can race against two different events:
->> +	 *
->> +	 * - Concurent vPE affinity change: we must make sure it cannot
->> +         *   happen, or we'll talk to the wrong redistributor. This 
->> is
->> +         *   identical to what happens with vLPIs.
->> +	 *
->> +	 * - Concurrent VSGIPENDR access: As it involves accessing two
->> +         *   MMIO registers, this must be made atomic one way or 
->> another.
->> +	 */
->> +	cpu = vpe_to_cpuid_lock(vpe, &flags);
->> +	raw_spin_lock(&gic_data_rdist_cpu(cpu)->rd_lock);
->> +	base = gic_data_rdist_cpu(cpu)->rd_base + SZ_128K;
->> +	writel_relaxed(vpe->vpe_id, base + GICR_VSGIR);
->> +	do {
->> +		status = readl_relaxed(base + GICR_VSGIPENDR);
->> +		if (!(status & GICR_VSGIPENDR_BUSY))
->> +			goto out;
->> +
->> +		count--;
->> +		if (!count) {
->> +			pr_err_ratelimited("Unable to get SGI status\n");
->> +			goto out;
->> +		}
->> +		cpu_relax();
->> +		udelay(1);
->> +	} while(count);
->> +
->> +out:
->> +	raw_spin_unlock(&gic_data_rdist_cpu(cpu)->rd_lock);
->> +	vpe_to_cpuid_unlock(vpe, flags);
->> +	*val = !!(status & (1 << d->hwirq));
->> +
->> +	return 0;
-> cascade an error on timeout?
-
-Sure, that's a good idea.
-
-Thanks,
-
-         M.
--- 
-Jazz is not dead. It just smells funny...
+I'm still completely opposed to the magic overloading using a flag.
+That is just a bad design waiting for trouble to happen.
