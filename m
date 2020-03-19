@@ -2,155 +2,139 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8561E18C0BB
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 20:50:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B42FA18C0CE
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 20:52:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727533AbgCSTuv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 15:50:51 -0400
-Received: from gateway30.websitewelcome.com ([192.185.197.25]:37800 "EHLO
-        gateway30.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725747AbgCSTuv (ORCPT
+        id S1727695AbgCSTwb convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Thu, 19 Mar 2020 15:52:31 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:49002 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726785AbgCSTwb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 15:50:51 -0400
-Received: from cm17.websitewelcome.com (cm17.websitewelcome.com [100.42.49.20])
-        by gateway30.websitewelcome.com (Postfix) with ESMTP id B516E13293
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Mar 2020 14:50:48 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id F1BojhLcZAGTXF1Boj7IvB; Thu, 19 Mar 2020 14:50:48 -0500
-X-Authority-Reason: nr=8
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
-        Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=9Wv3jbj7V3+afTv1zkiRc6/kzb45qZM0mlCOpT5a6Vw=; b=GqMq4pnkbHIJSyj16jS/IXGon5
-        AEK/9C5A6VCq+zyljXQCj3ZPDd6r0vwMi+/18RhWGw3wWgiXIa0/QH9fFbUimH8EX8ZLLhraHmjHS
-        snmVD9enTefCRw9Y1O1txFkR4D40WMSnEL8tPoDHUxDhN7oUCGn2s2nRt8huwibaYN9e3Abq9iixp
-        vgWV6VI3P07cp9/Yb2VonQwMzLAI+Z+Hk0o917cOW297KF/7ozJnexvQcsrF1psDNFLBGY1KKeCX7
-        hWb2RYznbyyH9IwB4sr2lBO0J40VD0KxaadhtPCTSakKVqQ0Ir8sROTfJvSFpMYVXvxVfnZ7g6Gwz
-        4kIpaSow==;
-Received: from cablelink-189-218-116-241.hosts.intercable.net ([189.218.116.241]:52652 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.92)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1jF1Bm-000mHI-HG; Thu, 19 Mar 2020 14:50:46 -0500
-Date:   Thu, 19 Mar 2020 14:50:46 -0500
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Dan Williams <dan.j.williams@intel.com>,
-        Vishal Verma <vishal.l.verma@intel.com>,
-        Dave Jiang <dave.jiang@intel.com>,
-        Ira Weiny <ira.weiny@intel.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>
-Cc:     linux-nvdimm@lists.01.org, linux-acpi@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH][next] acpi: nfit.h: Replace zero-length array with
- flexible-array member
-Message-ID: <20200319195046.GA452@embeddedor.com>
+        Thu, 19 Mar 2020 15:52:31 -0400
+Received: from 1.general.jvosburgh.us.vpn ([10.172.68.206] helo=famine.localdomain)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <jay.vosburgh@canonical.com>)
+        id 1jF1DN-0000I7-4o; Thu, 19 Mar 2020 19:52:25 +0000
+Received: by famine.localdomain (Postfix, from userid 1000)
+        id 4A7F3630E4; Thu, 19 Mar 2020 12:52:23 -0700 (PDT)
+Received: from famine (localhost [127.0.0.1])
+        by famine.localdomain (Postfix) with ESMTP id 42A95AC1DD;
+        Thu, 19 Mar 2020 12:52:23 -0700 (PDT)
+From:   Jay Vosburgh <jay.vosburgh@canonical.com>
+To:     Jarod Wilson <jarod@redhat.com>
+cc:     Eric Dumazet <eric.dumazet@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Moshe Levi <moshele@mellanox.com>,
+        Marcelo Ricardo Leitner <mleitner@redhat.com>,
+        Netdev <netdev@vger.kernel.org>,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>
+Subject: Re: [PATCH net] ipv6: don't auto-add link-local address to lag ports
+In-reply-to: <CAKfmpScXTnnz6wQK3OZcqw4aM1PaLnBRfQL769JgyR7tgM-u5A@mail.gmail.com>
+References: <20200318140605.45273-1-jarod@redhat.com> <8a88d1c8-c6b1-ad85-7971-e6ae8c6fa0e4@gmail.com> <CAKfmpSc0yea5-OfE1rnVdErDTeOza=owbL00QQEaH-M-A6Za7g@mail.gmail.com> <25629.1584564113@famine> <CAKfmpScbzEZAEw=zOEwguQJvr6L2fQiGmAY60SqSBQ_g-+B4tw@mail.gmail.com> <3dbabf42-90e6-4c82-0b84-d1b1a9e8fadf@gmail.com> <CAKfmpScXTnnz6wQK3OZcqw4aM1PaLnBRfQL769JgyR7tgM-u5A@mail.gmail.com>
+Comments: In-reply-to Jarod Wilson <jarod@redhat.com>
+   message dated "Thu, 19 Mar 2020 15:29:51 -0400."
+X-Mailer: MH-E 8.6+git; nmh 1.6; GNU Emacs 27.0.50
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.218.116.241
-X-Source-L: No
-X-Exim-ID: 1jF1Bm-000mHI-HG
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: cablelink-189-218-116-241.hosts.intercable.net (embeddedor) [189.218.116.241]:52652
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 11
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <7027.1584647543.1@famine>
+Content-Transfer-Encoding: 8BIT
+Date:   Thu, 19 Mar 2020 12:52:23 -0700
+Message-ID: <7028.1584647543@famine>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The current codebase makes use of the zero-length array language
-extension to the C90 standard, but the preferred mechanism to declare
-variable-length types such as these ones is a flexible array member[1][2],
-introduced in C99:
+Jarod Wilson <jarod@redhat.com> wrote:
 
-struct foo {
-        int stuff;
-        struct boo array[];
-};
+>On Thu, Mar 19, 2020 at 1:06 PM Eric Dumazet <eric.dumazet@gmail.com> wrote:
+>>
+>> On 3/19/20 9:42 AM, Jarod Wilson wrote:
+>>
+>> > Interesting. We'll keep digging over here, but that's definitely not
+>> > working for this particular use case with OVS for whatever reason.
+>>
+>> I did a quick test and confirmed that my bonding slaves do not have link-local addresses,
+>> without anything done to prevent them to appear.
+>>
+>> You might add a selftest, if you ever find what is the trigger :)
+>
+>Okay, have a basic reproducer, courtesy of Marcelo:
+>
+># ip link add name bond0 type bond
+># ip link set dev ens2f0np0 master bond0
+># ip link set dev ens2f1np2 master bond0
+># ip link set dev bond0 up
+># ip a s
+>1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN
+>group default qlen 1000
+>    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+>    inet 127.0.0.1/8 scope host lo
+>       valid_lft forever preferred_lft forever
+>    inet6 ::1/128 scope host
+>       valid_lft forever preferred_lft forever
+>2: ens2f0np0: <BROADCAST,MULTICAST,SLAVE,UP,LOWER_UP> mtu 1500 qdisc
+>mq master bond0 state UP group default qlen 1000
+>    link/ether 00:0f:53:2f:ea:40 brd ff:ff:ff:ff:ff:ff
+>5: ens2f1np2: <NO-CARRIER,BROADCAST,MULTICAST,SLAVE,UP> mtu 1500 qdisc
+>mq master bond0 state DOWN group default qlen 1000
+>    link/ether 00:0f:53:2f:ea:40 brd ff:ff:ff:ff:ff:ff
+>11: bond0: <BROADCAST,MULTICAST,MASTER,UP,LOWER_UP> mtu 1500 qdisc
+>noqueue state UP group default qlen 1000
+>    link/ether 00:0f:53:2f:ea:40 brd ff:ff:ff:ff:ff:ff
+>    inet6 fe80::20f:53ff:fe2f:ea40/64 scope link
+>       valid_lft forever preferred_lft forever
+>
+>(above trimmed to relevant entries, obviously)
+>
+># sysctl net.ipv6.conf.ens2f0np0.addr_gen_mode=0
+>net.ipv6.conf.ens2f0np0.addr_gen_mode = 0
+># sysctl net.ipv6.conf.ens2f1np2.addr_gen_mode=0
+>net.ipv6.conf.ens2f1np2.addr_gen_mode = 0
+>
+># ip a l ens2f0np0
+>2: ens2f0np0: <BROADCAST,MULTICAST,SLAVE,UP,LOWER_UP> mtu 1500 qdisc
+>mq master bond0 state UP group default qlen 1000
+>    link/ether 00:0f:53:2f:ea:40 brd ff:ff:ff:ff:ff:ff
+>    inet6 fe80::20f:53ff:fe2f:ea40/64 scope link tentative
+>       valid_lft forever preferred_lft forever
+># ip a l ens2f1np2
+>5: ens2f1np2: <NO-CARRIER,BROADCAST,MULTICAST,SLAVE,UP> mtu 1500 qdisc
+>mq master bond0 state DOWN group default qlen 1000
+>    link/ether 00:0f:53:2f:ea:40 brd ff:ff:ff:ff:ff:ff
+>    inet6 fe80::20f:53ff:fe2f:ea40/64 scope link tentative
+>       valid_lft forever preferred_lft forever
+>
+>Looks like addrconf_sysctl_addr_gen_mode() bypasses the original "is
+>this a slave interface?" check, and results in an address getting
+>added, while w/the proposed patch added, no address gets added.
 
-By making use of the mechanism above, we will get a compiler warning
-in case the flexible array does not occur last in the structure, which
-will help us prevent some kind of undefined behavior bugs from being
-inadvertently introduced[3] to the codebase from now on.
+	I wonder if this also breaks for the netvsc usage of IFF_SLAVE
+to suppress ipv6 addrconf?  Adding the hyperv maintainers to Cc.
 
-Also, notice that, dynamic memory allocations won't be affected by
-this change:
+	In any event, it looks like addrconf_sysctl_addr_gen_mode()
+calls addrconf_dev_config() directly, which bypasses the IFF_SLAVE check
+in addrconf_notify() that would gate other callers.
 
-"Flexible array members have incomplete type, and so the sizeof operator
-may not be applied. As a quirk of the original implementation of
-zero-length arrays, sizeof evaluates to zero."[1]
+	From my reading, your patch appears to cover a superset of cases
+as compared to the existing IFF_SLAVE test from c2edacf80e15.
 
-This issue was found with the help of Coccinelle.
+>Looking back through git history again, I see a bunch of 'Fixes:
+>d35a00b8e33d ("net/ipv6: allow sysctl to change link-local address
+>generation mode")' patches, and I guess that's where this issue was
+>also introduced.
 
-[1] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
-[2] https://github.com/KSPP/linux/issues/21
-[3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
+	Can the problem be induced via ip link set ... addrgenmode ?
+That functionality predates the sysctl interface, looks like it was
+introduced with
 
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+bc91b0f07ada ipv6: addrconf: implement address generation modes
+
+	-J
+
 ---
- drivers/acpi/nfit/nfit.h | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/acpi/nfit/nfit.h b/drivers/acpi/nfit/nfit.h
-index 24241941181c..af09143ce403 100644
---- a/drivers/acpi/nfit/nfit.h
-+++ b/drivers/acpi/nfit/nfit.h
-@@ -144,32 +144,32 @@ struct nfit_spa {
- 	unsigned long ars_state;
- 	u32 clear_err_unit;
- 	u32 max_ars;
--	struct acpi_nfit_system_address spa[0];
-+	struct acpi_nfit_system_address spa[];
- };
- 
- struct nfit_dcr {
- 	struct list_head list;
--	struct acpi_nfit_control_region dcr[0];
-+	struct acpi_nfit_control_region dcr[];
- };
- 
- struct nfit_bdw {
- 	struct list_head list;
--	struct acpi_nfit_data_region bdw[0];
-+	struct acpi_nfit_data_region bdw[];
- };
- 
- struct nfit_idt {
- 	struct list_head list;
--	struct acpi_nfit_interleave idt[0];
-+	struct acpi_nfit_interleave idt[];
- };
- 
- struct nfit_flush {
- 	struct list_head list;
--	struct acpi_nfit_flush_address flush[0];
-+	struct acpi_nfit_flush_address flush[];
- };
- 
- struct nfit_memdev {
- 	struct list_head list;
--	struct acpi_nfit_memory_map memdev[0];
-+	struct acpi_nfit_memory_map memdev[];
- };
- 
- enum nfit_mem_flags {
--- 
-2.23.0
-
+	-Jay Vosburgh, jay.vosburgh@canonical.com
