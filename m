@@ -2,40 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BB73118B766
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:33:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 11D7918B750
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:33:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729205AbgCSNNt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 09:13:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:32856 "EHLO mail.kernel.org"
+        id S1727607AbgCSNOs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 09:14:48 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34278 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727549AbgCSNNo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 09:13:44 -0400
+        id S1728650AbgCSNOq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 09:14:46 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B460120722;
-        Thu, 19 Mar 2020 13:13:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9362221556;
+        Thu, 19 Mar 2020 13:14:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584623623;
-        bh=h++JHvlq0URUaxWR2YFil30omclmOjygV8exSEpksy0=;
+        s=default; t=1584623686;
+        bh=DqO9/iv8SausIf0ErNujnvWT67yrgKL8xbrVoJGk0T4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jnOTQXdwSSC+cxp/EYKcDGM009C4h7jcsq3rjr8N8RgpjF8Y6YT2U36QT70Nb/ABc
-         ACd8Gs5cLMsb0QxRBATA76VnaQdN/u489V5VNmXE3E6busUroEPoxIhwyNozv00AuF
-         wcc1kJe7D1C9BYL4d84ANopcGGoGZoeXmgT37xC4=
+        b=V0NHZrkqyWc6tuhnhGHvD6VcoYczQ/eM9kkSXbFm3h6xDeX34KiK/CWTQIIyPUN9S
+         OmyLvtJiUYrghkx/NZdqvYn1cSGEKv1717B0ogGUtv8JldF3f633FAlmE9KfgWOPK6
+         TBNXwMzJnPmQ5Ru7brIXQwHemcmp9MNzkKQnVtIc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Guillaume Nault <gnault@redhat.com>,
-        Matteo Croce <mcroce@redhat.com>,
-        Paul Moore <paul@paul-moore.com>,
+        stable@vger.kernel.org, Florian Fainelli <f.fainelli@gmail.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 90/90] ipv4: ensure rcu_read_lock() in cipso_v4_error()
-Date:   Thu, 19 Mar 2020 14:00:52 +0100
-Message-Id: <20200319123955.953025598@linuxfoundation.org>
+Subject: [PATCH 4.14 02/99] net: phy: Avoid multiple suspends
+Date:   Thu, 19 Mar 2020 14:02:40 +0100
+Message-Id: <20200319123942.261617076@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.2
-In-Reply-To: <20200319123928.635114118@linuxfoundation.org>
-References: <20200319123928.635114118@linuxfoundation.org>
+In-Reply-To: <20200319123941.630731708@linuxfoundation.org>
+References: <20200319123941.630731708@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,47 +43,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Matteo Croce <mcroce@redhat.com>
+From: Florian Fainelli <f.fainelli@gmail.com>
 
-commit 3e72dfdf8227b052393f71d820ec7599909dddc2 upstream.
+commit 503ba7c6961034ff0047707685644cad9287c226 upstream.
 
-Similarly to commit c543cb4a5f07 ("ipv4: ensure rcu_read_lock() in
-ipv4_link_failure()"), __ip_options_compile() must be called under rcu
-protection.
+It is currently possible for a PHY device to be suspended as part of a
+network device driver's suspend call while it is still being attached to
+that net_device, either via phy_suspend() or implicitly via phy_stop().
 
-Fixes: 3da1ed7ac398 ("net: avoid use IPCB in cipso_v4_error")
-Suggested-by: Guillaume Nault <gnault@redhat.com>
-Signed-off-by: Matteo Croce <mcroce@redhat.com>
-Acked-by: Paul Moore <paul@paul-moore.com>
+Later on, when the MDIO bus controller get suspended, we would attempt
+to suspend again the PHY because it is still attached to a network
+device.
+
+This is both a waste of time and creates an opportunity for improper
+clock/power management bugs to creep in.
+
+Fixes: 803dd9c77ac3 ("net: phy: avoid suspending twice a PHY")
+Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/ipv4/cipso_ipv4.c |    7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ drivers/net/phy/phy_device.c |    5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
---- a/net/ipv4/cipso_ipv4.c
-+++ b/net/ipv4/cipso_ipv4.c
-@@ -1738,6 +1738,7 @@ void cipso_v4_error(struct sk_buff *skb,
- {
- 	unsigned char optbuf[sizeof(struct ip_options) + 40];
- 	struct ip_options *opt = (struct ip_options *)optbuf;
-+	int res;
+--- a/drivers/net/phy/phy_device.c
++++ b/drivers/net/phy/phy_device.c
+@@ -91,7 +91,7 @@ static bool mdio_bus_phy_may_suspend(str
+ 	 * MDIO bus driver and clock gated at this point.
+ 	 */
+ 	if (!netdev)
+-		return !phydev->suspended;
++		goto out;
  
- 	if (ip_hdr(skb)->protocol == IPPROTO_ICMP || error != -EACCES)
- 		return;
-@@ -1749,7 +1750,11 @@ void cipso_v4_error(struct sk_buff *skb,
+ 	/* Don't suspend PHY if the attached netdev parent may wakeup.
+ 	 * The parent may point to a PCI device, as in tg3 driver.
+@@ -106,7 +106,8 @@ static bool mdio_bus_phy_may_suspend(str
+ 	if (device_may_wakeup(&netdev->dev))
+ 		return false;
  
- 	memset(opt, 0, sizeof(struct ip_options));
- 	opt->optlen = ip_hdr(skb)->ihl*4 - sizeof(struct iphdr);
--	if (__ip_options_compile(dev_net(skb->dev), opt, skb, NULL))
-+	rcu_read_lock();
-+	res = __ip_options_compile(dev_net(skb->dev), opt, skb, NULL);
-+	rcu_read_unlock();
-+
-+	if (res)
- 		return;
+-	return true;
++out:
++	return !phydev->suspended;
+ }
  
- 	if (gateway)
+ static int mdio_bus_phy_suspend(struct device *dev)
 
 
