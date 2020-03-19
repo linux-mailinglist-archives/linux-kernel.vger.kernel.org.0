@@ -2,28 +2,28 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D69EE18C15E
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 21:29:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0144018C162
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 21:29:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727380AbgCSU3G (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 16:29:06 -0400
-Received: from mga09.intel.com ([134.134.136.24]:60510 "EHLO mga09.intel.com"
+        id S1727425AbgCSU3Q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 16:29:16 -0400
+Received: from mga09.intel.com ([134.134.136.24]:60512 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727324AbgCSU3C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 16:29:02 -0400
-IronPort-SDR: Zk7JYHXIhk0AyFiVeEkfzRLbZru9fmHJNDfH67ANNobzO4UNDiUPkV9pmvyF7o3iIRSWtf37Sb
- dtqLoD1Lyx6Q==
+        id S1727340AbgCSU3D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 16:29:03 -0400
+IronPort-SDR: KLbsNsdApC1WyyrRbDFg5gybLpgRvVW8oRPlf1rQvxBLZT1CAWdGQei5zkiXFLm7LhqWooO+zu
+ qleBfQbPWQHg==
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Mar 2020 13:29:01 -0700
-IronPort-SDR: SVGFDoi9uFrO2uApEoMQM/WK8AXtGRHIX4ow0AB6q7MbWtVw5Urf0TAoPD1GCA1XQ4rOARtvEM
- PZgaecle5HNg==
+  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Mar 2020 13:29:02 -0700
+IronPort-SDR: 3Ww4/Kv2LaqHa7ArMexeCE3oycIekTnjr5Qmvj0lBsr72NioK86vSteuTfRV9UVyxK/8/3GMPO
+ JF9L4tvN4uwA==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.70,572,1574150400"; 
-   d="scan'208";a="239031271"
+   d="scan'208";a="239031276"
 Received: from labuser-ice-lake-client-platform.jf.intel.com ([10.54.55.65])
-  by orsmga008.jf.intel.com with ESMTP; 19 Mar 2020 13:29:01 -0700
+  by orsmga008.jf.intel.com with ESMTP; 19 Mar 2020 13:29:02 -0700
 From:   kan.liang@linux.intel.com
 To:     acme@kernel.org, jolsa@redhat.com, peterz@infradead.org,
         mingo@redhat.com, linux-kernel@vger.kernel.org
@@ -32,9 +32,9 @@ Cc:     namhyung@kernel.org, adrian.hunter@intel.com,
         alexey.budankov@linux.intel.com, vitaly.slobodskoy@intel.com,
         pavel.gerasimov@intel.com, mpe@ellerman.id.au, eranian@google.com,
         ak@linux.intel.com, Kan Liang <kan.liang@linux.intel.com>
-Subject: [PATCH V4 14/17] perf script: Add option to enable the LBR stitching approach
-Date:   Thu, 19 Mar 2020 13:25:14 -0700
-Message-Id: <20200319202517.23423-15-kan.liang@linux.intel.com>
+Subject: [PATCH V4 15/17] perf top: Add option to enable the LBR stitching approach
+Date:   Thu, 19 Mar 2020 13:25:15 -0700
+Message-Id: <20200319202517.23423-16-kan.liang@linux.intel.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200319202517.23423-1-kan.liang@linux.intel.com>
 References: <20200319202517.23423-1-kan.liang@linux.intel.com>
@@ -52,80 +52,91 @@ Also, it may impact the processing time especially when the number of
 samples with stitched LBRs are huge.
 
 Add an option to enable the approach.
+The option must be used with --call-graph lbr.
 
 Reviewed-by: Andi Kleen <ak@linux.intel.com>
 Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
 ---
- tools/perf/Documentation/perf-script.txt | 11 +++++++++++
- tools/perf/builtin-script.c              | 12 ++++++++++++
- 2 files changed, 23 insertions(+)
+ tools/perf/Documentation/perf-top.txt |  9 +++++++++
+ tools/perf/builtin-top.c              | 11 +++++++++++
+ tools/perf/util/top.h                 |  1 +
+ 3 files changed, 21 insertions(+)
 
-diff --git a/tools/perf/Documentation/perf-script.txt b/tools/perf/Documentation/perf-script.txt
-index db6a36aac47e..67d5a2c7065b 100644
---- a/tools/perf/Documentation/perf-script.txt
-+++ b/tools/perf/Documentation/perf-script.txt
-@@ -426,6 +426,17 @@ include::itrace.txt[]
- --show-on-off-events::
- 	Show the --switch-on/off events too.
+diff --git a/tools/perf/Documentation/perf-top.txt b/tools/perf/Documentation/perf-top.txt
+index 324b6b53c86b..0648d96981fe 100644
+--- a/tools/perf/Documentation/perf-top.txt
++++ b/tools/perf/Documentation/perf-top.txt
+@@ -310,6 +310,15 @@ Default is to monitor all CPUS.
+ 	go straight to the histogram browser, just like 'perf top' with no events
+ 	explicitely specified does.
  
 +--stitch-lbr::
 +	Show callgraph with stitched LBRs, which may have more complete
-+	callgraph. The perf.data file must have been obtained using
-+	perf record --call-graph lbr.
++	callgraph. The option must be used with --call-graph lbr recording.
 +	Disabled by default. In common cases with call stack overflows,
 +	it can recreate better call stacks than the default lbr call stack
 +	output. But this approach is not full proof. There can be cases
 +	where it creates incorrect call stacks from incorrect matches.
 +	The known limitations include exception handing such as
 +	setjmp/longjmp will have calls/returns not match.
-+
- SEE ALSO
- --------
- linkperf:perf-record[1], linkperf:perf-script-perl[1],
-diff --git a/tools/perf/builtin-script.c b/tools/perf/builtin-script.c
-index 656b347f6dd8..e0ec4a0e7b35 100644
---- a/tools/perf/builtin-script.c
-+++ b/tools/perf/builtin-script.c
-@@ -1687,6 +1687,7 @@ struct perf_script {
- 	bool			show_bpf_events;
- 	bool			allocated;
- 	bool			per_event_dump;
-+	bool			stitch_lbr;
- 	struct evswitch		evswitch;
- 	struct perf_cpu_map	*cpus;
- 	struct perf_thread_map *threads;
-@@ -1913,6 +1914,9 @@ static void process_event(struct perf_script *script,
- 	if (PRINT_FIELD(IP)) {
- 		struct callchain_cursor *cursor = NULL;
  
-+		if (script->stitch_lbr)
-+			al->thread->lbr_stitch_enable = true;
-+
- 		if (symbol_conf.use_callchain && sample->callchain &&
- 		    thread__resolve_callchain(al->thread, &callchain_cursor, evsel,
- 					      sample, NULL, NULL, scripting_max_stack) == 0)
-@@ -3295,6 +3299,12 @@ static void script__setup_sample_type(struct perf_script *script)
- 		else
- 			callchain_param.record_mode = CALLCHAIN_FP;
- 	}
-+
-+	if (script->stitch_lbr && (callchain_param.record_mode != CALLCHAIN_LBR)) {
-+		pr_warning("Can't find LBR callchain. Switch off --stitch-lbr.\n"
-+			   "Please apply --call-graph lbr when recording.\n");
-+		script->stitch_lbr = false;
-+	}
- }
+ INTERACTIVE PROMPTING KEYS
+ --------------------------
+diff --git a/tools/perf/builtin-top.c b/tools/perf/builtin-top.c
+index f6dd1a63f159..aae8282b1fac 100644
+--- a/tools/perf/builtin-top.c
++++ b/tools/perf/builtin-top.c
+@@ -33,6 +33,7 @@
+ #include "util/map.h"
+ #include "util/mmap.h"
+ #include "util/session.h"
++#include "util/thread.h"
+ #include "util/symbol.h"
+ #include "util/synthetic-events.h"
+ #include "util/top.h"
+@@ -766,6 +767,9 @@ static void perf_event__process_sample(struct perf_tool *tool,
+ 	if (machine__resolve(machine, &al, sample) < 0)
+ 		return;
  
- static int process_stat_round_event(struct perf_session *session,
-@@ -3602,6 +3612,8 @@ int cmd_script(int argc, const char **argv)
- 		   "file", "file saving guest os /proc/kallsyms"),
- 	OPT_STRING(0, "guestmodules", &symbol_conf.default_guest_modules,
- 		   "file", "file saving guest os /proc/modules"),
-+	OPT_BOOLEAN('\0', "stitch-lbr", &script.stitch_lbr,
++	if (top->stitch_lbr)
++		al.thread->lbr_stitch_enable = true;
++
+ 	if (!machine->kptr_restrict_warned &&
+ 	    symbol_conf.kptr_restrict &&
+ 	    al.cpumode == PERF_RECORD_MISC_KERNEL) {
+@@ -1543,6 +1547,8 @@ int cmd_top(int argc, const char **argv)
+ 			"number of thread to run event synthesize"),
+ 	OPT_BOOLEAN(0, "namespaces", &opts->record_namespaces,
+ 		    "Record namespaces events"),
++	OPT_BOOLEAN(0, "stitch-lbr", &top.stitch_lbr,
 +		    "Enable LBR callgraph stitching approach"),
- 	OPTS_EVSWITCH(&script.evswitch),
+ 	OPTS_EVSWITCH(&top.evswitch),
  	OPT_END()
  	};
+@@ -1612,6 +1618,11 @@ int cmd_top(int argc, const char **argv)
+ 		}
+ 	}
+ 
++	if (top.stitch_lbr && !(callchain_param.record_mode == CALLCHAIN_LBR)) {
++		pr_err("Error: --stitch-lbr must be used with --call-graph lbr\n");
++		goto out_delete_evlist;
++	}
++
+ 	if (opts->branch_stack && callchain_param.enabled)
+ 		symbol_conf.show_branchflag_count = true;
+ 
+diff --git a/tools/perf/util/top.h b/tools/perf/util/top.h
+index f117d4f4821e..45dc84ddff37 100644
+--- a/tools/perf/util/top.h
++++ b/tools/perf/util/top.h
+@@ -36,6 +36,7 @@ struct perf_top {
+ 	bool		   use_tui, use_stdio;
+ 	bool		   vmlinux_warned;
+ 	bool		   dump_symtab;
++	bool		   stitch_lbr;
+ 	struct hist_entry  *sym_filter_entry;
+ 	struct evsel 	   *sym_evsel;
+ 	struct perf_session *session;
 -- 
 2.17.1
 
