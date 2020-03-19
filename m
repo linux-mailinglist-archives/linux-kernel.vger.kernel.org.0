@@ -2,85 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 017CC18B886
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 15:03:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EFCEA18B88A
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 15:03:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727403AbgCSODJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 10:03:09 -0400
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:39126 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726998AbgCSODI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 10:03:08 -0400
-Received: by mail-qt1-f196.google.com with SMTP id f20so1840290qtq.6
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Mar 2020 07:03:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cmpxchg-org.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=zVUeEVeA4E7oLTV0ECgEEG2/YC9N9vz1pl7acrL5ucE=;
-        b=El9P5SNtEcEMu0/AvqR3cV/68A6G4L9fJEmMnnqpaU4OQ0wcTdBipT8Bjk/L5TvYnK
-         /YL4acdcAJuhnKMNx0cl+WEKziQpCPoY3OjDWtb47SHlI7rduYTGncQtgQnMtTmSc3gb
-         bn25hHomNvKLlQomjdaA2ii9mUxMS9BaOqh8BNJaKHhzw9QuFFuoEPXWF0Y/X3plqVc6
-         X7jn63Dn6pV8Jy3ta1wdTLHyIWH5Qz1KXtVElDpZMM+ljYohZYegpCWNm6tlhJrbyUm3
-         +uxKb16MMa1Uq/lY4C1lh2IgjjujBMM0uU/o/bA7L7iXRo7UzAaPpvKZB0hLC7dOlQRO
-         bWVQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=zVUeEVeA4E7oLTV0ECgEEG2/YC9N9vz1pl7acrL5ucE=;
-        b=cpQgHPIUCsQLfGXqV0GEWbXacDuplfzya/wLTb+w1ViEPMcWzyH6VqxQsDB9/2TwpZ
-         53y6EIX8XdF95wQ/c8wBW2zCPj4kBE19++FJSnso6LVwrt/hQfo30WblWUYihqRed0r8
-         jNOa35h+Z1dC+JLgIHVst+V8Rx9r9aZlRPNn8MSLctvxOog7gg7sprKYZhlHutZS56e2
-         JfDXs2GpwhNcwHG+t9GmsZc05U7cD0MRIsElRtyYkGJvDCG0yVW4Oa61jLqSCwTnhnXH
-         +XDEx9SULbFYdkC6+cZ2QcswamRXA4ByU3bodxNwVdegf2f8Mae6hnyx+7J2gh20rXlF
-         nwow==
-X-Gm-Message-State: ANhLgQ2JnuOi26GWLtrInb/5n5Qf58vF5P85+vZCTVRg6dKHuvCVbylJ
-        WBH9dLn5W3lNAMg/NYRDIhB/uA==
-X-Google-Smtp-Source: ADFU+vtZKpVbkTQfzQCn4rkumgnjQ034QoO/8wsuuQ9OhmtjDnES5ksSY/f2xcgUYW+S7FTVSDWiHQ==
-X-Received: by 2002:ac8:6f19:: with SMTP id g25mr3135902qtv.346.1584626586982;
-        Thu, 19 Mar 2020 07:03:06 -0700 (PDT)
-Received: from localhost ([2620:10d:c091:480::1:a9a9])
-        by smtp.gmail.com with ESMTPSA id p35sm1611812qtk.2.2020.03.19.07.03.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 19 Mar 2020 07:03:06 -0700 (PDT)
-Date:   Thu, 19 Mar 2020 10:03:05 -0400
-From:   Johannes Weiner <hannes@cmpxchg.org>
-To:     Yang Shi <yang.shi@linux.alibaba.com>
-Cc:     shakeelb@google.com, vbabka@suse.cz, willy@infradead.org,
-        akpm@linux-foundation.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [v4 PATCH 2/2] mm: swap: use smp_mb__after_atomic() to order LRU
- bit set
-Message-ID: <20200319140305.GC187654@cmpxchg.org>
-References: <1584500541-46817-1-git-send-email-yang.shi@linux.alibaba.com>
- <1584500541-46817-2-git-send-email-yang.shi@linux.alibaba.com>
+        id S1727674AbgCSODZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 10:03:25 -0400
+Received: from 8bytes.org ([81.169.241.247]:53832 "EHLO theia.8bytes.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726998AbgCSODY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 10:03:24 -0400
+Received: by theia.8bytes.org (Postfix, from userid 1000)
+        id 13DF71D4; Thu, 19 Mar 2020 15:03:23 +0100 (CET)
+Date:   Thu, 19 Mar 2020 15:03:21 +0100
+From:   Joerg Roedel <joro@8bytes.org>
+To:     Lu Baolu <baolu.lu@linux.intel.com>
+Cc:     ashok.raj@intel.com, jacob.jun.pan@linux.intel.com,
+        kevin.tian@intel.com,
+        Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+        Daniel Drake <drake@endlessm.com>,
+        Derrick Jonathan <jonathan.derrick@intel.com>,
+        Jerry Snitselaar <jsnitsel@redhat.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Christoph Hellwig <hch@lst.de>
+Subject: Re: [PATCH v2 2/6] iommu: Configure default domain with
+ def_domain_type
+Message-ID: <20200319140321.GA5122@8bytes.org>
+References: <20200314010705.30711-1-baolu.lu@linux.intel.com>
+ <20200314010705.30711-3-baolu.lu@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1584500541-46817-2-git-send-email-yang.shi@linux.alibaba.com>
+In-Reply-To: <20200314010705.30711-3-baolu.lu@linux.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 18, 2020 at 11:02:21AM +0800, Yang Shi wrote:
-> Memory barrier is needed after setting LRU bit, but smp_mb() is too
-> strong.  Some architectures, i.e. x86, imply memory barrier with atomic
-> operations, so replacing it with smp_mb__after_atomic() sounds better,
-> which is nop on strong ordered machines, and full memory barriers on
-> others.  With this change the vm-scalability cases would perform better
-> on x86, I saw total 6% improvement with this patch and previous inline
-> fix.
-> 
-> The test data (lru-file-readtwice throughput) against v5.6-rc4:
-> 	mainline	w/ inline fix	w/ both (adding this)
-> 	150MB		154MB		159MB
-> 
-> Fixes: 9c4e6b1a7027 ("mm, mlock, vmscan: no more skipping pagevecs")
-> Acked-by: Vlastimil Babka <vbabka@suse.cz>
-> Reviewed-and-Tested-by: Shakeel Butt <shakeelb@google.com>
-> Signed-off-by: Yang Shi <yang.shi@linux.alibaba.com>
+Hi Baolu,
 
-Acked-by: Johannes Weiner <hannes@cmpxchg.org>
+On Sat, Mar 14, 2020 at 09:07:01AM +0800, Lu Baolu wrote:
+> +static int iommu_group_change_def_domain(struct iommu_group *group, int type)
+> +{
+> +	struct group_device *grp_dev, *temp;
+> +	struct iommu_domain *new, *old;
+> +	const struct iommu_ops *ops;
+> +	int ret = 0;
+> +
+> +	if ((type != IOMMU_DOMAIN_IDENTITY && type != IOMMU_DOMAIN_DMA) ||
+> +	    !group->default_domain || type == group->default_domain->type ||
+> +	    !group->default_domain->ops)
+> +		return -EINVAL;
+> +
+> +	if (group->domain != group->default_domain)
+> +		return -EBUSY;
+> +
+> +	iommu_group_ref_get(group);
+> +	old = group->default_domain;
+> +	ops = group->default_domain->ops;
+> +
+> +	/* Allocate a new domain of requested type. */
+> +	new = ops->domain_alloc(type);
+> +	if (!new) {
+> +		ret = -ENOMEM;
+> +		goto domain_out;
+> +	}
+> +	new->type = type;
+> +	new->ops = ops;
+> +	new->pgsize_bitmap = group->default_domain->pgsize_bitmap;
+> +
+> +	group->default_domain = new;
+> +	group->domain = new;
+> +	list_for_each_entry_safe(grp_dev, temp, &group->devices, list) {
+> +		struct device *dev;
+> +
+> +		dev = grp_dev->dev;
+> +		if (device_is_bound(dev)) {
+> +			ret = -EINVAL;
+> +			goto device_out;
+> +		}
+> +
+> +		iommu_group_create_direct_mappings(group, dev);
+> +		ret = __iommu_attach_device(group->domain, dev);
+> +		if (ret)
+> +			goto device_out;
+
+In case of a failure here with a group containing multiple devices, the
+other devices temporarily lose their mappings. Please only do the
+device_is_bound() check in the loop and the actual re-attachment of the
+group with a call to __iommu_attach_group().
+
+Regards,
+
+	Joerg
