@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F30BF18B42B
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:08:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 16AE218B494
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:11:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727234AbgCSNHQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 09:07:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50648 "EHLO mail.kernel.org"
+        id S1728647AbgCSNLD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 09:11:03 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55924 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727843AbgCSNHH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 09:07:07 -0400
+        id S1727939AbgCSNK5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 09:10:57 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8CC4120757;
-        Thu, 19 Mar 2020 13:07:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9716720722;
+        Thu, 19 Mar 2020 13:10:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584623227;
-        bh=mEhCeYo5+LyTd6CUmygiuKW71GgnuF7c5fWXGTZcf60=;
+        s=default; t=1584623457;
+        bh=HcFsNp3XYCBkZR4tEFW8Zcl8QhdgAavIYqCgaU7LXxM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jxJ/B30IWwFJ/+1ZK4i0MHui+bnFzAfznoaN2b5HJZqR9ecN2NadjWRd1RCkagREE
-         takREfTGHSJyhB2a4+uVipKFqvYB0U79u8NfJDLrlAZ6AkhkhwXoelazMd/wOJddj8
-         3EKuqQYbK0HF4CQRkfdvIBoBXwt8V1HFHJpCf+dQ=
+        b=wykKCOntlNuqfaITiDKicII9ml2MWcDULjVh7eocLHY3U+k5TVJVU6io4nRn2JHnp
+         id6tXhFicgpsKjcfvm19Y1ovcY+FpnZKwbdSvYuxXwN4kCgCF6kD0V/RKbW2wPGsLv
+         5f8GPcf5eyq2rEQTbsFPT44c+M6wQ+gRstOuTFdE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Sven Eckelmann <sven@narfation.org>,
-        Marek Lindner <mareklindner@neomailbox.ch>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.4 51/93] batman-adv: Fix ICMP RR ethernet access after skb_linearize
+        stable@vger.kernel.org, Hillf Danton <hdanton@sina.com>,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        Tejun Heo <tj@kernel.org>,
+        Lai Jiangshan <jiangshanlai@gmail.com>
+Subject: [PATCH 4.9 33/90] workqueue: dont use wq_select_unbound_cpu() for bound works
 Date:   Thu, 19 Mar 2020 13:59:55 +0100
-Message-Id: <20200319123941.177718976@linuxfoundation.org>
+Message-Id: <20200319123938.848438391@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.2
-In-Reply-To: <20200319123924.795019515@linuxfoundation.org>
-References: <20200319123924.795019515@linuxfoundation.org>
+In-Reply-To: <20200319123928.635114118@linuxfoundation.org>
+References: <20200319123928.635114118@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,35 +45,61 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sven Eckelmann <sven@narfation.org>
+From: Hillf Danton <hdanton@sina.com>
 
-commit 3b55e4422087f9f7b241031d758a0c65584e4297 upstream.
+commit aa202f1f56960c60e7befaa0f49c72b8fa11b0a8 upstream.
 
-The skb_linearize may reallocate the skb. This makes the calculated pointer
-for ethhdr invalid. But it the pointer is used later to fill in the RR
-field of the batadv_icmp_packet_rr packet.
+wq_select_unbound_cpu() is designed for unbound workqueues only, but
+it's wrongly called when using a bound workqueue too.
 
-Instead re-evaluate eth_hdr after the skb_linearize+skb_cow to fix the
-pointer and avoid the invalid read.
+Fixing this ensures work queued to a bound workqueue with
+cpu=WORK_CPU_UNBOUND always runs on the local CPU.
 
-Fixes: da6b8c20a5b8 ("batman-adv: generalize batman-adv icmp packet handling")
-Signed-off-by: Sven Eckelmann <sven@narfation.org>
-Signed-off-by: Marek Lindner <mareklindner@neomailbox.ch>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Before, that would happen only if wq_unbound_cpumask happened to include
+it (likely almost always the case), or was empty, or we got lucky with
+forced round-robin placement.  So restricting
+/sys/devices/virtual/workqueue/cpumask to a small subset of a machine's
+CPUs would cause some bound work items to run unexpectedly there.
+
+Fixes: ef557180447f ("workqueue: schedule WORK_CPU_UNBOUND work on wq_unbound_cpumask CPUs")
+Cc: stable@vger.kernel.org # v4.5+
+Signed-off-by: Hillf Danton <hdanton@sina.com>
+[dj: massage changelog]
+Signed-off-by: Daniel Jordan <daniel.m.jordan@oracle.com>
+Cc: Tejun Heo <tj@kernel.org>
+Cc: Lai Jiangshan <jiangshanlai@gmail.com>
+Cc: linux-kernel@vger.kernel.org
+Signed-off-by: Tejun Heo <tj@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- net/batman-adv/routing.c |    1 +
- 1 file changed, 1 insertion(+)
 
---- a/net/batman-adv/routing.c
-+++ b/net/batman-adv/routing.c
-@@ -359,6 +359,7 @@ int batadv_recv_icmp_packet(struct sk_bu
- 		if (skb_cow(skb, ETH_HLEN) < 0)
- 			goto out;
+---
+ kernel/workqueue.c |   14 ++++++++------
+ 1 file changed, 8 insertions(+), 6 deletions(-)
+
+--- a/kernel/workqueue.c
++++ b/kernel/workqueue.c
+@@ -1384,14 +1384,16 @@ static void __queue_work(int cpu, struct
+ 	    WARN_ON_ONCE(!is_chained_work(wq)))
+ 		return;
+ retry:
+-	if (req_cpu == WORK_CPU_UNBOUND)
+-		cpu = wq_select_unbound_cpu(raw_smp_processor_id());
+-
+ 	/* pwq which will be used unless @work is executing elsewhere */
+-	if (!(wq->flags & WQ_UNBOUND))
+-		pwq = per_cpu_ptr(wq->cpu_pwqs, cpu);
+-	else
++	if (wq->flags & WQ_UNBOUND) {
++		if (req_cpu == WORK_CPU_UNBOUND)
++			cpu = wq_select_unbound_cpu(raw_smp_processor_id());
+ 		pwq = unbound_pwq_by_node(wq, cpu_to_node(cpu));
++	} else {
++		if (req_cpu == WORK_CPU_UNBOUND)
++			cpu = raw_smp_processor_id();
++		pwq = per_cpu_ptr(wq->cpu_pwqs, cpu);
++	}
  
-+		ethhdr = eth_hdr(skb);
- 		icmph = (struct batadv_icmp_header *)skb->data;
- 		icmp_packet_rr = (struct batadv_icmp_packet_rr *)icmph;
- 		if (icmp_packet_rr->rr_cur >= BATADV_RR_LEN)
+ 	/*
+ 	 * If @work was previously on a different pool, it might still be
 
 
