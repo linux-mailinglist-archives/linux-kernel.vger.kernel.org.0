@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 66F7118B41C
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:07:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 718D018B48A
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:10:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727769AbgCSNGv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 09:06:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50160 "EHLO mail.kernel.org"
+        id S1728566AbgCSNKi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 09:10:38 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55462 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727749AbgCSNGq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 09:06:46 -0400
+        id S1727252AbgCSNKf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 09:10:35 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 05B6620740;
-        Thu, 19 Mar 2020 13:06:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A66BC214D8;
+        Thu, 19 Mar 2020 13:10:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584623206;
-        bh=q390SVG5ckUli8fEFOkZeHkbrMjr8jATJVyyi1c6Buo=;
+        s=default; t=1584623435;
+        bh=0LqicDmr77Al2eNygVgMYr2Fnd3p52bjdgDexKNOop8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Y4YqPNL7oxnxSoH08tayIRQxbtQs2oOTwBM7wMf8nFbWiKRwHBK55BuZ/OSpGWPDM
-         oJ/+kAfu3H0WXVLiaqTbhaWEvvcGKWlPVJvUfD9BobbuX+r8h5KeY274yjpZpe0d5c
-         fEiPmeDpBsKy+oS94pePyaJKCYNgAtZr30Bfj40U=
+        b=FYs1ZOQKuAEnZqHXu+68+WI3i6rCaI6Ishv8PHkg2KSebNuJXEOdjfxSZIqncNTiy
+         zCZkk8HX0OtTFJGa+7CN5TJ6Lh3Ak81/aU2KldqQ+Rofhiwa5iL4jDkYsGxOAPyHgb
+         RVYhlJF1YnNK5uECtyA1h12E6x10phoXBlU8K8z0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Marek Lindner <mareklindner@neomailbox.ch>,
-        Sven Eckelmann <sven@narfation.org>,
-        Antonio Quartulli <a@unstable.cc>
-Subject: [PATCH 4.4 44/93] batman-adv: init neigh node last seen field
+        stable@vger.kernel.org, Jakub Kicinski <kuba@kernel.org>,
+        Fugang Duan <fugang.duan@nxp.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.9 26/90] net: fec: validate the new settings in fec_enet_set_coalesce()
 Date:   Thu, 19 Mar 2020 13:59:48 +0100
-Message-Id: <20200319123938.976226957@linuxfoundation.org>
+Message-Id: <20200319123936.553181277@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.2
-In-Reply-To: <20200319123924.795019515@linuxfoundation.org>
-References: <20200319123924.795019515@linuxfoundation.org>
+In-Reply-To: <20200319123928.635114118@linuxfoundation.org>
+References: <20200319123928.635114118@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,28 +44,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Marek Lindner <mareklindner@neomailbox.ch>
+From: Jakub Kicinski <kuba@kernel.org>
 
-commit e48474ed8a217b7f80f2a42bc05352406a06cb67 upstream.
+[ Upstream commit ab14961d10d02d20767612c78ce148f6eb85bd58 ]
 
-Signed-off-by: Marek Lindner <mareklindner@neomailbox.ch>
-[sven@narfation.org: fix conflicts with current version]
-Signed-off-by: Sven Eckelmann <sven@narfation.org>
-Signed-off-by: Antonio Quartulli <a@unstable.cc>
+fec_enet_set_coalesce() validates the previously set params
+and if they are within range proceeds to apply the new ones.
+The new ones, however, are not validated. This seems backwards,
+probably a copy-paste error?
+
+Compile tested only.
+
+Fixes: d851b47b22fc ("net: fec: add interrupt coalescence feature support")
+Signed-off-by: Jakub Kicinski <kuba@kernel.org>
+Acked-by: Fugang Duan <fugang.duan@nxp.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/batman-adv/originator.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/net/ethernet/freescale/fec_main.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
---- a/net/batman-adv/originator.c
-+++ b/net/batman-adv/originator.c
-@@ -483,6 +483,7 @@ batadv_neigh_node_new(struct batadv_orig
- 	ether_addr_copy(neigh_node->addr, neigh_addr);
- 	neigh_node->if_incoming = hard_iface;
- 	neigh_node->orig_node = orig_node;
-+	neigh_node->last_seen = jiffies;
+--- a/drivers/net/ethernet/freescale/fec_main.c
++++ b/drivers/net/ethernet/freescale/fec_main.c
+@@ -2470,15 +2470,15 @@ fec_enet_set_coalesce(struct net_device
+ 		return -EINVAL;
+ 	}
  
- 	/* extra reference for return */
- 	atomic_set(&neigh_node->refcount, 2);
+-	cycle = fec_enet_us_to_itr_clock(ndev, fep->rx_time_itr);
++	cycle = fec_enet_us_to_itr_clock(ndev, ec->rx_coalesce_usecs);
+ 	if (cycle > 0xFFFF) {
+ 		pr_err("Rx coalesced usec exceed hardware limitation\n");
+ 		return -EINVAL;
+ 	}
+ 
+-	cycle = fec_enet_us_to_itr_clock(ndev, fep->tx_time_itr);
++	cycle = fec_enet_us_to_itr_clock(ndev, ec->tx_coalesce_usecs);
+ 	if (cycle > 0xFFFF) {
+-		pr_err("Rx coalesced usec exceed hardware limitation\n");
++		pr_err("Tx coalesced usec exceed hardware limitation\n");
+ 		return -EINVAL;
+ 	}
+ 
 
 
