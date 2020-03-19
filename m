@@ -2,40 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3594018B5C9
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:22:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 13A8718B575
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:18:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729952AbgCSNVc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 09:21:32 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46106 "EHLO mail.kernel.org"
+        id S1729824AbgCSNSm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 09:18:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41132 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730089AbgCSNVX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 09:21:23 -0400
+        id S1729814AbgCSNSi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 09:18:38 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A819821556;
-        Thu, 19 Mar 2020 13:21:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D5118206D7;
+        Thu, 19 Mar 2020 13:18:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584624083;
-        bh=UGWtmPm+WNKJEuJQoiIL1Ngs1uBanAoxuujyjH7SKi4=;
+        s=default; t=1584623918;
+        bh=1sBIkeTKIfNbKJsAZXXIYq07vCvmoC9l+d3drbBYvkA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hjOk+wrVQlwnYH+OP6oTa8GKBMZiBsJMKwxHpNxv9wif2vzs9L8LOVmbgyvoWqDY+
-         HwJVOZkREcITCbBsS0rK3/6ImfB+J22xcwJrRaC4PB4px7VnjiFpsPcWcv/nTJiDXz
-         wRFX6pofCMcLv5r5EEptDNKQpGvluYhYVAcbu4Kw=
+        b=vtxc4tsOaH+nnK0XKZNk3b4imIUYb+BXHRec05VuJDB1qaN+JPujOZ8znfqttWr+4
+         ritvEVciWxTiGC1z/k3Ty5QumViOUaSk24zuS4w3JoX4aL+GLfoN/C88xhU41B3ikV
+         sKZL5m3noBuQBFQr2UTL/m8Ey+CyJS0Y5flWXMVA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Navid Emamdoost <navid.emamdoost@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 32/48] wimax: i2400: fix memory leak
+        stable@vger.kernel.org, Florian Fainelli <f.fainelli@gmail.com>,
+        Russell King <rmk+kernel@armlinux.org.uk>
+Subject: [PATCH 4.14 96/99] ARM: 8957/1: VDSO: Match ARMv8 timer in cntvct_functional()
 Date:   Thu, 19 Mar 2020 14:04:14 +0100
-Message-Id: <20200319123913.117347888@linuxfoundation.org>
+Message-Id: <20200319124007.803853028@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.2
-In-Reply-To: <20200319123902.941451241@linuxfoundation.org>
-References: <20200319123902.941451241@linuxfoundation.org>
+In-Reply-To: <20200319123941.630731708@linuxfoundation.org>
+References: <20200319123941.630731708@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,34 +43,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Navid Emamdoost <navid.emamdoost@gmail.com>
+From: Florian Fainelli <f.fainelli@gmail.com>
 
-[ Upstream commit 2507e6ab7a9a440773be476141a255934468c5ef ]
+commit 45939ce292b4b11159719faaf60aba7d58d5fe33 upstream.
 
-In i2400m_op_rfkill_sw_toggle cmd buffer should be released along with
-skb response.
+It is possible for a system with an ARMv8 timer to run a 32-bit kernel.
+When this happens we will unconditionally have the vDSO code remove the
+__vdso_gettimeofday and __vdso_clock_gettime symbols because
+cntvct_functional() returns false since it does not match that
+compatibility string.
 
-Signed-off-by: Navid Emamdoost <navid.emamdoost@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Fixes: ecf99a439105 ("ARM: 8331/1: VDSO initialization, mapping, and synchronization")
+Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/net/wimax/i2400m/op-rfkill.c | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm/kernel/vdso.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/net/wimax/i2400m/op-rfkill.c b/drivers/net/wimax/i2400m/op-rfkill.c
-index b0dba35a8ad2a..7c92e8ace9c2f 100644
---- a/drivers/net/wimax/i2400m/op-rfkill.c
-+++ b/drivers/net/wimax/i2400m/op-rfkill.c
-@@ -142,6 +142,7 @@ int i2400m_op_rfkill_sw_toggle(struct wimax_dev *wimax_dev,
- 			"%d\n", result);
- 	result = 0;
- error_cmd:
-+	kfree(cmd);
- 	kfree_skb(ack_skb);
- error_msg_to_dev:
- error_alloc:
--- 
-2.20.1
-
+--- a/arch/arm/kernel/vdso.c
++++ b/arch/arm/kernel/vdso.c
+@@ -104,6 +104,8 @@ static bool __init cntvct_functional(voi
+ 	 */
+ 	np = of_find_compatible_node(NULL, NULL, "arm,armv7-timer");
+ 	if (!np)
++		np = of_find_compatible_node(NULL, NULL, "arm,armv8-timer");
++	if (!np)
+ 		goto out_put;
+ 
+ 	if (of_property_read_bool(np, "arm,cpu-registers-not-fw-configured"))
 
 
