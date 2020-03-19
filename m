@@ -2,19 +2,19 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1A77B18B29F
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 12:53:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1B63B18B29D
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 12:53:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727154AbgCSLxG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 07:53:06 -0400
-Received: from mx2.suse.de ([195.135.220.15]:45178 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726589AbgCSLxA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1727088AbgCSLxA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
         Thu, 19 Mar 2020 07:53:00 -0400
+Received: from mx2.suse.de ([195.135.220.15]:45226 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726912AbgCSLw5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 07:52:57 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 8D1B3AD6C;
-        Thu, 19 Mar 2020 11:52:53 +0000 (UTC)
+        by mx2.suse.de (Postfix) with ESMTP id E6CF6AF33;
+        Thu, 19 Mar 2020 11:52:54 +0000 (UTC)
 From:   Michal Suchanek <msuchanek@suse.de>
 To:     linuxppc-dev@lists.ozlabs.org
 Cc:     Michal Suchanek <msuchanek@suse.de>,
@@ -55,9 +55,9 @@ Cc:     Michal Suchanek <msuchanek@suse.de>,
         linux-kernel@vger.kernel.org,
         "linux-fsdevel @ vger . kernel . org --in-reply-to=" 
         <20200225173541.1549955-1-npiggin@gmail.com>
-Subject: [PATCH v11 2/8] powerpc: move common register copy functions from signal_32.c to signal.c
-Date:   Thu, 19 Mar 2020 12:52:22 +0100
-Message-Id: <52d53402f3f72114dde86654ad048dadac5d7cb0.1584613649.git.msuchanek@suse.de>
+Subject: [PATCH v11 3/8] powerpc/perf: consolidate read_user_stack_32
+Date:   Thu, 19 Mar 2020 12:52:23 +0100
+Message-Id: <184347595442b4ca664613008a09e8cea7188c36.1584613649.git.msuchanek@suse.de>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <cover.1584613649.git.msuchanek@suse.de>
 References: <cover.1584613649.git.msuchanek@suse.de>
@@ -68,324 +68,95 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-These functions are required for 64bit as well.
+There are two almost identical copies for 32bit and 64bit.
+
+The function is used only in 32bit code which will be split out in next
+patch so consolidate to one function.
 
 Signed-off-by: Michal Suchanek <msuchanek@suse.de>
 Reviewed-by: Christophe Leroy <christophe.leroy@c-s.fr>
 ---
- arch/powerpc/kernel/signal.c    | 141 ++++++++++++++++++++++++++++++++
- arch/powerpc/kernel/signal_32.c | 140 -------------------------------
- 2 files changed, 141 insertions(+), 140 deletions(-)
+v6:  new patch
+v8:  move the consolidated function out of the ifdef block.
+v11: rebase on top of def0bfdbd603
+---
+ arch/powerpc/perf/callchain.c | 48 +++++++++++++++++------------------
+ 1 file changed, 24 insertions(+), 24 deletions(-)
 
-diff --git a/arch/powerpc/kernel/signal.c b/arch/powerpc/kernel/signal.c
-index d215f9554553..4b0152108f61 100644
---- a/arch/powerpc/kernel/signal.c
-+++ b/arch/powerpc/kernel/signal.c
-@@ -18,12 +18,153 @@
- #include <linux/syscalls.h>
- #include <asm/hw_breakpoint.h>
- #include <linux/uaccess.h>
-+#include <asm/switch_to.h>
- #include <asm/unistd.h>
- #include <asm/debug.h>
- #include <asm/tm.h>
+diff --git a/arch/powerpc/perf/callchain.c b/arch/powerpc/perf/callchain.c
+index cbc251981209..c9a78c6e4361 100644
+--- a/arch/powerpc/perf/callchain.c
++++ b/arch/powerpc/perf/callchain.c
+@@ -161,18 +161,6 @@ static int read_user_stack_64(unsigned long __user *ptr, unsigned long *ret)
+ 	return read_user_stack_slow(ptr, ret, 8);
+ }
  
- #include "signal.h"
+-static int read_user_stack_32(unsigned int __user *ptr, unsigned int *ret)
+-{
+-	if ((unsigned long)ptr > TASK_SIZE - sizeof(unsigned int) ||
+-	    ((unsigned long)ptr & 3))
+-		return -EFAULT;
+-
+-	if (!probe_user_read(ret, ptr, sizeof(*ret)))
+-		return 0;
+-
+-	return read_user_stack_slow(ptr, ret, 4);
+-}
+-
+ static inline int valid_user_sp(unsigned long sp, int is_64)
+ {
+ 	if (!sp || (sp & 7) || sp > (is_64 ? TASK_SIZE : 0x100000000UL) - 32)
+@@ -277,19 +265,9 @@ static void perf_callchain_user_64(struct perf_callchain_entry_ctx *entry,
+ }
  
-+#ifdef CONFIG_VSX
-+unsigned long copy_fpr_to_user(void __user *to,
-+			       struct task_struct *task)
-+{
-+	u64 buf[ELF_NFPREG];
-+	int i;
-+
-+	/* save FPR copy to local buffer then write to the thread_struct */
-+	for (i = 0; i < (ELF_NFPREG - 1) ; i++)
-+		buf[i] = task->thread.TS_FPR(i);
-+	buf[i] = task->thread.fp_state.fpscr;
-+	return __copy_to_user(to, buf, ELF_NFPREG * sizeof(double));
-+}
-+
-+unsigned long copy_fpr_from_user(struct task_struct *task,
-+				 void __user *from)
-+{
-+	u64 buf[ELF_NFPREG];
-+	int i;
-+
-+	if (__copy_from_user(buf, from, ELF_NFPREG * sizeof(double)))
-+		return 1;
-+	for (i = 0; i < (ELF_NFPREG - 1) ; i++)
-+		task->thread.TS_FPR(i) = buf[i];
-+	task->thread.fp_state.fpscr = buf[i];
-+
+ #else  /* CONFIG_PPC64 */
+-/*
+- * On 32-bit we just access the address and let hash_page create a
+- * HPTE if necessary, so there is no need to fall back to reading
+- * the page tables.  Since this is called at interrupt level,
+- * do_page_fault() won't treat a DSI as a page fault.
+- */
+-static int read_user_stack_32(unsigned int __user *ptr, unsigned int *ret)
++static int read_user_stack_slow(void __user *ptr, void *buf, int nb)
+ {
+-	if ((unsigned long)ptr > TASK_SIZE - sizeof(unsigned int) ||
+-	    ((unsigned long)ptr & 3))
+-		return -EFAULT;
+-
+-	return probe_user_read(ret, ptr, sizeof(*ret));
 +	return 0;
-+}
-+
-+unsigned long copy_vsx_to_user(void __user *to,
-+			       struct task_struct *task)
-+{
-+	u64 buf[ELF_NVSRHALFREG];
-+	int i;
-+
-+	/* save FPR copy to local buffer then write to the thread_struct */
-+	for (i = 0; i < ELF_NVSRHALFREG; i++)
-+		buf[i] = task->thread.fp_state.fpr[i][TS_VSRLOWOFFSET];
-+	return __copy_to_user(to, buf, ELF_NVSRHALFREG * sizeof(double));
-+}
-+
-+unsigned long copy_vsx_from_user(struct task_struct *task,
-+				 void __user *from)
-+{
-+	u64 buf[ELF_NVSRHALFREG];
-+	int i;
-+
-+	if (__copy_from_user(buf, from, ELF_NVSRHALFREG * sizeof(double)))
-+		return 1;
-+	for (i = 0; i < ELF_NVSRHALFREG ; i++)
-+		task->thread.fp_state.fpr[i][TS_VSRLOWOFFSET] = buf[i];
-+	return 0;
-+}
-+
-+#ifdef CONFIG_PPC_TRANSACTIONAL_MEM
-+unsigned long copy_ckfpr_to_user(void __user *to,
-+				  struct task_struct *task)
-+{
-+	u64 buf[ELF_NFPREG];
-+	int i;
-+
-+	/* save FPR copy to local buffer then write to the thread_struct */
-+	for (i = 0; i < (ELF_NFPREG - 1) ; i++)
-+		buf[i] = task->thread.TS_CKFPR(i);
-+	buf[i] = task->thread.ckfp_state.fpscr;
-+	return __copy_to_user(to, buf, ELF_NFPREG * sizeof(double));
-+}
-+
-+unsigned long copy_ckfpr_from_user(struct task_struct *task,
-+					  void __user *from)
-+{
-+	u64 buf[ELF_NFPREG];
-+	int i;
-+
-+	if (__copy_from_user(buf, from, ELF_NFPREG * sizeof(double)))
-+		return 1;
-+	for (i = 0; i < (ELF_NFPREG - 1) ; i++)
-+		task->thread.TS_CKFPR(i) = buf[i];
-+	task->thread.ckfp_state.fpscr = buf[i];
-+
-+	return 0;
-+}
-+
-+unsigned long copy_ckvsx_to_user(void __user *to,
-+				  struct task_struct *task)
-+{
-+	u64 buf[ELF_NVSRHALFREG];
-+	int i;
-+
-+	/* save FPR copy to local buffer then write to the thread_struct */
-+	for (i = 0; i < ELF_NVSRHALFREG; i++)
-+		buf[i] = task->thread.ckfp_state.fpr[i][TS_VSRLOWOFFSET];
-+	return __copy_to_user(to, buf, ELF_NVSRHALFREG * sizeof(double));
-+}
-+
-+unsigned long copy_ckvsx_from_user(struct task_struct *task,
-+					  void __user *from)
-+{
-+	u64 buf[ELF_NVSRHALFREG];
-+	int i;
-+
-+	if (__copy_from_user(buf, from, ELF_NVSRHALFREG * sizeof(double)))
-+		return 1;
-+	for (i = 0; i < ELF_NVSRHALFREG ; i++)
-+		task->thread.ckfp_state.fpr[i][TS_VSRLOWOFFSET] = buf[i];
-+	return 0;
-+}
-+#endif /* CONFIG_PPC_TRANSACTIONAL_MEM */
-+#else
-+inline unsigned long copy_fpr_to_user(void __user *to,
-+				      struct task_struct *task)
-+{
-+	return __copy_to_user(to, task->thread.fp_state.fpr,
-+			      ELF_NFPREG * sizeof(double));
-+}
-+
-+inline unsigned long copy_fpr_from_user(struct task_struct *task,
-+					void __user *from)
-+{
-+	return __copy_from_user(task->thread.fp_state.fpr, from,
-+			      ELF_NFPREG * sizeof(double));
-+}
-+
-+#ifdef CONFIG_PPC_TRANSACTIONAL_MEM
-+inline unsigned long copy_ckfpr_to_user(void __user *to,
-+					 struct task_struct *task)
-+{
-+	return __copy_to_user(to, task->thread.ckfp_state.fpr,
-+			      ELF_NFPREG * sizeof(double));
-+}
-+
-+inline unsigned long copy_ckfpr_from_user(struct task_struct *task,
-+						 void __user *from)
-+{
-+	return __copy_from_user(task->thread.ckfp_state.fpr, from,
-+				ELF_NFPREG * sizeof(double));
-+}
-+#endif /* CONFIG_PPC_TRANSACTIONAL_MEM */
-+#endif
-+
- /* Log an error when sending an unhandled signal to a process. Controlled
-  * through debug.exception-trace sysctl.
-  */
-diff --git a/arch/powerpc/kernel/signal_32.c b/arch/powerpc/kernel/signal_32.c
-index 1b090a76b444..4f96d29a22bf 100644
---- a/arch/powerpc/kernel/signal_32.c
-+++ b/arch/powerpc/kernel/signal_32.c
-@@ -235,146 +235,6 @@ struct rt_sigframe {
- 	int			abigap[56];
- };
+ }
  
--#ifdef CONFIG_VSX
--unsigned long copy_fpr_to_user(void __user *to,
--			       struct task_struct *task)
--{
--	u64 buf[ELF_NFPREG];
--	int i;
--
--	/* save FPR copy to local buffer then write to the thread_struct */
--	for (i = 0; i < (ELF_NFPREG - 1) ; i++)
--		buf[i] = task->thread.TS_FPR(i);
--	buf[i] = task->thread.fp_state.fpscr;
--	return __copy_to_user(to, buf, ELF_NFPREG * sizeof(double));
--}
--
--unsigned long copy_fpr_from_user(struct task_struct *task,
--				 void __user *from)
--{
--	u64 buf[ELF_NFPREG];
--	int i;
--
--	if (__copy_from_user(buf, from, ELF_NFPREG * sizeof(double)))
--		return 1;
--	for (i = 0; i < (ELF_NFPREG - 1) ; i++)
--		task->thread.TS_FPR(i) = buf[i];
--	task->thread.fp_state.fpscr = buf[i];
--
--	return 0;
--}
--
--unsigned long copy_vsx_to_user(void __user *to,
--			       struct task_struct *task)
--{
--	u64 buf[ELF_NVSRHALFREG];
--	int i;
--
--	/* save FPR copy to local buffer then write to the thread_struct */
--	for (i = 0; i < ELF_NVSRHALFREG; i++)
--		buf[i] = task->thread.fp_state.fpr[i][TS_VSRLOWOFFSET];
--	return __copy_to_user(to, buf, ELF_NVSRHALFREG * sizeof(double));
--}
--
--unsigned long copy_vsx_from_user(struct task_struct *task,
--				 void __user *from)
--{
--	u64 buf[ELF_NVSRHALFREG];
--	int i;
--
--	if (__copy_from_user(buf, from, ELF_NVSRHALFREG * sizeof(double)))
--		return 1;
--	for (i = 0; i < ELF_NVSRHALFREG ; i++)
--		task->thread.fp_state.fpr[i][TS_VSRLOWOFFSET] = buf[i];
--	return 0;
--}
--
--#ifdef CONFIG_PPC_TRANSACTIONAL_MEM
--unsigned long copy_ckfpr_to_user(void __user *to,
--				  struct task_struct *task)
--{
--	u64 buf[ELF_NFPREG];
--	int i;
--
--	/* save FPR copy to local buffer then write to the thread_struct */
--	for (i = 0; i < (ELF_NFPREG - 1) ; i++)
--		buf[i] = task->thread.TS_CKFPR(i);
--	buf[i] = task->thread.ckfp_state.fpscr;
--	return __copy_to_user(to, buf, ELF_NFPREG * sizeof(double));
--}
--
--unsigned long copy_ckfpr_from_user(struct task_struct *task,
--					  void __user *from)
--{
--	u64 buf[ELF_NFPREG];
--	int i;
--
--	if (__copy_from_user(buf, from, ELF_NFPREG * sizeof(double)))
--		return 1;
--	for (i = 0; i < (ELF_NFPREG - 1) ; i++)
--		task->thread.TS_CKFPR(i) = buf[i];
--	task->thread.ckfp_state.fpscr = buf[i];
--
--	return 0;
--}
--
--unsigned long copy_ckvsx_to_user(void __user *to,
--				  struct task_struct *task)
--{
--	u64 buf[ELF_NVSRHALFREG];
--	int i;
--
--	/* save FPR copy to local buffer then write to the thread_struct */
--	for (i = 0; i < ELF_NVSRHALFREG; i++)
--		buf[i] = task->thread.ckfp_state.fpr[i][TS_VSRLOWOFFSET];
--	return __copy_to_user(to, buf, ELF_NVSRHALFREG * sizeof(double));
--}
--
--unsigned long copy_ckvsx_from_user(struct task_struct *task,
--					  void __user *from)
--{
--	u64 buf[ELF_NVSRHALFREG];
--	int i;
--
--	if (__copy_from_user(buf, from, ELF_NVSRHALFREG * sizeof(double)))
--		return 1;
--	for (i = 0; i < ELF_NVSRHALFREG ; i++)
--		task->thread.ckfp_state.fpr[i][TS_VSRLOWOFFSET] = buf[i];
--	return 0;
--}
--#endif /* CONFIG_PPC_TRANSACTIONAL_MEM */
--#else
--inline unsigned long copy_fpr_to_user(void __user *to,
--				      struct task_struct *task)
--{
--	return __copy_to_user(to, task->thread.fp_state.fpr,
--			      ELF_NFPREG * sizeof(double));
--}
--
--inline unsigned long copy_fpr_from_user(struct task_struct *task,
--					void __user *from)
--{
--	return __copy_from_user(task->thread.fp_state.fpr, from,
--			      ELF_NFPREG * sizeof(double));
--}
--
--#ifdef CONFIG_PPC_TRANSACTIONAL_MEM
--inline unsigned long copy_ckfpr_to_user(void __user *to,
--					 struct task_struct *task)
--{
--	return __copy_to_user(to, task->thread.ckfp_state.fpr,
--			      ELF_NFPREG * sizeof(double));
--}
--
--inline unsigned long copy_ckfpr_from_user(struct task_struct *task,
--						 void __user *from)
--{
--	return __copy_from_user(task->thread.ckfp_state.fpr, from,
--				ELF_NFPREG * sizeof(double));
--}
--#endif /* CONFIG_PPC_TRANSACTIONAL_MEM */
--#endif
--
+ static inline void perf_callchain_user_64(struct perf_callchain_entry_ctx *entry,
+@@ -312,6 +290,28 @@ static inline int valid_user_sp(unsigned long sp, int is_64)
+ 
+ #endif /* CONFIG_PPC64 */
+ 
++/*
++ * On 32-bit we just access the address and let hash_page create a
++ * HPTE if necessary, so there is no need to fall back to reading
++ * the page tables.  Since this is called at interrupt level,
++ * do_page_fault() won't treat a DSI as a page fault.
++ */
++static int read_user_stack_32(unsigned int __user *ptr, unsigned int *ret)
++{
++	int rc;
++
++	if ((unsigned long)ptr > TASK_SIZE - sizeof(unsigned int) ||
++	    ((unsigned long)ptr & 3))
++		return -EFAULT;
++
++	rc = probe_user_read(ret, ptr, sizeof(*ret));
++
++	if (IS_ENABLED(CONFIG_PPC64) && rc)
++		return read_user_stack_slow(ptr, ret, 4);
++
++	return rc;
++}
++
  /*
-  * Save the current user registers on the user stack.
-  * We only save the altivec/spe registers if the process has used
+  * Layout for non-RT signal frames
+  */
 -- 
 2.23.0
 
