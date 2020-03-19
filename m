@@ -2,136 +2,134 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B954C18BED4
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 18:57:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ECB2718BEDC
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 19:01:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727252AbgCSR5r (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 13:57:47 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:51678 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727009AbgCSR5r (ORCPT
+        id S1727252AbgCSSBe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 14:01:34 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:50338 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726934AbgCSSBd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 13:57:47 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
-        Subject:Sender:Reply-To:Content-ID:Content-Description;
-        bh=k8TW3yHFBtrZYI9aCCu/XMSUcC9QXBVgRxHR3Kex5ls=; b=O/hBjmLMxo7r971x2zhGqShXOg
-        KMJ2Tkon9mJc/xyfiudjOTcl9X8pV20jGWpF+2zt998TwLoOv0xJlAp8Jct/2WtZwofxxIGAQiFau
-        wIUUzgQd3W2URbfFEKKcdxyhWQEwV1cqaibx7kZE+Fctn7bHm4YV9ACuQvWF4cxfD3ltLfegfglUf
-        4qLoc9EDG4TOtzvP4Xp4qvJt5UJTDZOMbhHoJboSVC6lOYICKG/PjMSPQ+TgwlSDVfP8cbj2pYUog
-        g91DKqWi8emKpPipLcElsRfQvcahlP0+8nTA10jYOnpZyDboiHDNJKVdCB1tg0NegkK0jRKEIMLvr
-        TabEKeVg==;
-Received: from [2601:1c0:6280:3f0::19c2]
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jEzQQ-00068Q-Vk; Thu, 19 Mar 2020 17:57:47 +0000
-Subject: Re: [RESEND PATCH] mailbox: Add dummy mailbox API implementation
-To:     Daniel Baluta <daniel.baluta@oss.nxp.com>, jassisinghbrar@gmail.com
-Cc:     leonard.crestez@nxp.com, aisheng.dong@nxp.com, linux-imx@nxp.com,
-        linux-kernel@vger.kernel.org, peng.fan@nxp.com,
-        Daniel Baluta <daniel.baluta@nxp.com>
-References: <20200319174921.18787-1-daniel.baluta@oss.nxp.com>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <d8ce4b21-e737-27ed-bedd-064bee2c7863@infradead.org>
-Date:   Thu, 19 Mar 2020 10:57:45 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        Thu, 19 Mar 2020 14:01:33 -0400
+Received: from pendragon.ideasonboard.com (81-175-216-236.bb.dnainternet.fi [81.175.216.236])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id C8FDFA53;
+        Thu, 19 Mar 2020 19:01:30 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1584640891;
+        bh=J0G9o/JIk2L9YAMrgEYnSflrJ+3mDjoCeRH1I4lPqik=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=l0WeQLfY4oPvGyf+T8Bwr1JXg9rF3wSCsAL/YwHYR/F4V+bPvcMIBVex2/JmFRkPq
+         wH0uwGnyJ0/qvbpO0VFVj+sYnrBU90JDCIx7sBKD7tzafPZrokKyt3pDfmx4om2Nkv
+         yNo/D2bEwfHVQcIjR59Xc9qhUHFpFJvvzC1CHe/o=
+Date:   Thu, 19 Mar 2020 20:01:25 +0200
+From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To:     Alex Riesen <alexander.riesen@cetitec.com>
+Cc:     Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        devel@driverdev.osuosl.org, linux-media@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v2 07/10] dt-bindings: adv748x: add information about
+ serial audio interface (I2S/TDM)
+Message-ID: <20200319180125.GJ14585@pendragon.ideasonboard.com>
+References: <cover.1584639664.git.alexander.riesen@cetitec.com>
+ <c9ff553f804f178a247dca356306948e971432fb.1584639664.git.alexander.riesen@cetitec.com>
 MIME-Version: 1.0
-In-Reply-To: <20200319174921.18787-1-daniel.baluta@oss.nxp.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+In-Reply-To: <c9ff553f804f178a247dca356306948e971432fb.1584639664.git.alexander.riesen@cetitec.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 3/19/20 10:49 AM, Daniel Baluta wrote:
-> From: Daniel Baluta <daniel.baluta@nxp.com>
-> 
-> There are users of mailbox API that could be enabled
-> via COMPILE_TEST without select CONFIG_MAILBOX.
-> 
-> In such cases we got compilation errors, like these:
-> 
-> ld: drivers/firmware/imx/imx-scu.o: in function `imx_scu_probe':
-> imx-scu.c:(.text+0x25e): undefined reference to
-> `mbox_request_channel_byname'
-> ld: drivers/firmware/imx/imx-scu.o: in function `imx_scu_call_rpc':
-> imx-scu.c:(.text+0x4b8): undefined reference to `mbox_send_message'
-> ld: drivers/firmware/imx/imx-scu-irq.o: in function
-> `imx_scu_enable_general_irq_channel':
-> imx-scu-irq.c:(.text+0x34d): undefined reference to
-> `mbox_request_channel_byname'
-> 
-> Fix this by implementing dummy mailbox API when CONFIG_MAILBOX is not
-> set.
-> 
-> Reported-by: Randy Dunlap <rdunlap@infradead.org>
-> Signed-off-by: Daniel Baluta <daniel.baluta@nxp.com>
+Hi Alex,
 
-Acked-by: Randy Dunlap <rdunlap@infradead.org> # build-tested
+Thank you for the patch.
 
-Thanks.
+On Thu, Mar 19, 2020 at 06:42:36PM +0100, Alex Riesen wrote:
+> As the driver has some support for the audio interface of the device,
+> the bindings file should mention it.
 
+While at it, how about converting the bindings to YAML ? :-) It can of
+course be done on top.
+
+> Reviewed-by: Rob Herring <robh@kernel.org>
+> Signed-off-by: Alexander Riesen <alexander.riesen@cetitec.com>
 > ---
-> resend adding Jassi's email
+>  .../devicetree/bindings/media/i2c/adv748x.txt    | 16 +++++++++++++++-
+>  1 file changed, 15 insertions(+), 1 deletion(-)
 > 
->  include/linux/mailbox_client.h | 34 ++++++++++++++++++++++++++++++++++
->  1 file changed, 34 insertions(+)
-> 
-> diff --git a/include/linux/mailbox_client.h b/include/linux/mailbox_client.h
-> index 65229a45590f..ab5d130f0b5c 100644
-> --- a/include/linux/mailbox_client.h
-> +++ b/include/linux/mailbox_client.h
-> @@ -37,6 +37,7 @@ struct mbox_client {
->  	void (*tx_done)(struct mbox_client *cl, void *mssg, int r);
->  };
+> diff --git a/Documentation/devicetree/bindings/media/i2c/adv748x.txt b/Documentation/devicetree/bindings/media/i2c/adv748x.txt
+> index 4f91686e54a6..7d6db052c294 100644
+> --- a/Documentation/devicetree/bindings/media/i2c/adv748x.txt
+> +++ b/Documentation/devicetree/bindings/media/i2c/adv748x.txt
+> @@ -2,7 +2,9 @@
 >  
-> +#ifdef CONFIG_MAILBOX
->  struct mbox_chan *mbox_request_channel_byname(struct mbox_client *cl,
->  					      const char *name);
->  struct mbox_chan *mbox_request_channel(struct mbox_client *cl, int index);
-> @@ -46,4 +47,37 @@ void mbox_client_txdone(struct mbox_chan *chan, int r); /* atomic */
->  bool mbox_client_peek_data(struct mbox_chan *chan); /* atomic */
->  void mbox_free_channel(struct mbox_chan *chan); /* may sleep */
->  
-> +#else
-> +static inline
-> +struct mbox_chan *mbox_request_channel_byname(struct mbox_client *cl,
-> +					      const char *name)
-> +{
-> +	return ERR_PTR(-ENOTSUPP);
-> +}
-> +
-> +static inline
-> +struct mbox_chan *mbox_request_channel(struct mbox_client *cl, int index)
-> +{
-> +	return ERR_PTR(-ENOTSUPP);
-> +}
-> +
-> +static inline int mbox_send_message(struct mbox_chan *chan, void *mssg)
-> +{
-> +	return -ENOTSUPP;
-> +}
-> +
-> +static inline int mbox_flush(struct mbox_chan *chan, unsigned long timeout)
-> +{
-> +	return -ENOTSUPP;
-> +}
-> +
-> +static inline void mbox_client_txdone(struct mbox_chan *chan, int r) { }
-> +
-> +static inline bool mbox_client_peek_data(struct mbox_chan *chan)
-> +{
-> +	return false;
-> +}
-> +
-> +static inline void mbox_free_channel(struct mbox_chan *chan) { }
-> +#endif
->  #endif /* __MAILBOX_CLIENT_H */
-> 
+>  The ADV7481 and ADV7482 are multi format video decoders with an integrated
+>  HDMI receiver. They can output CSI-2 on two independent outputs TXA and TXB
+> -from three input sources HDMI, analog and TTL.
+> +from three input sources HDMI, analog and TTL. There is also support for an
+> +I2S compatible interface connected to the audio processor of the HDMI decoder.
 
+s/I2S compatible/I2S-compatible/ ?
+
+> +The interface has TDM capability (8 slots, 32 bits, left or right justified).
+>  
+>  Required Properties:
+>  
+> @@ -16,6 +18,8 @@ Required Properties:
+>      slave device on the I2C bus. The main address is mandatory, others are
+>      optional and remain at default values if not specified.
+>  
+> +  - #clock-cells: must be <0> if the I2S port is used
+
+Wouldn't it be simpler to set it to 0 unconditionally ?
+
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+> +
+>  Optional Properties:
+>  
+>    - interrupt-names: Should specify the interrupts as "intrq1", "intrq2" and/or
+> @@ -47,6 +51,7 @@ are numbered as follows.
+>  	  TTL		sink		9
+>  	  TXA		source		10
+>  	  TXB		source		11
+> +	  I2S		source		12
+>  
+>  The digital output port nodes, when present, shall contain at least one
+>  endpoint. Each of those endpoints shall contain the data-lanes property as
+> @@ -72,6 +77,7 @@ Example:
+>  
+>  		#address-cells = <1>;
+>  		#size-cells = <0>;
+> +		#clock-cells = <0>;
+>  
+>  		interrupt-parent = <&gpio6>;
+>  		interrupt-names = "intrq1", "intrq2";
+> @@ -113,4 +119,12 @@ Example:
+>  				remote-endpoint = <&csi20_in>;
+>  			};
+>  		};
+> +
+> +		port@c {
+> +			reg = <12>;
+> +
+> +			adv7482_i2s: endpoint {
+> +				remote-endpoint = <&i2s_in>;
+> +			};
+> +		};
+>  	};
 
 -- 
-~Randy
+Regards,
+
+Laurent Pinchart
