@@ -2,123 +2,164 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2E71718BE78
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 18:43:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A490718BE81
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 18:43:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728686AbgCSRmr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 13:42:47 -0400
-Received: from mout.kundenserver.de ([217.72.192.73]:34335 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727009AbgCSRmr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 13:42:47 -0400
-Received: from mail.cetitecgmbh.com ([87.190.42.90]) by
- mrelayeu.kundenserver.de (mreue106 [212.227.15.183]) with ESMTPSA (Nemesis)
- id 1M6m1g-1jDL2206Os-008Nbk; Thu, 19 Mar 2020 18:42:28 +0100
-Received: from pflvmailgateway.corp.cetitec.com (unknown [127.0.0.1])
-        by mail.cetitecgmbh.com (Postfix) with ESMTP id A53C765021B;
-        Thu, 19 Mar 2020 17:42:27 +0000 (UTC)
-X-Virus-Scanned: amavisd-new at cetitec.com
-Received: from mail.cetitecgmbh.com ([127.0.0.1])
-        by pflvmailgateway.corp.cetitec.com (pflvmailgateway.corp.cetitec.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id ueP1BSl6eNCA; Thu, 19 Mar 2020 18:42:27 +0100 (CET)
-Received: from pfwsexchange.corp.cetitec.com (unknown [10.10.1.99])
-        by mail.cetitecgmbh.com (Postfix) with ESMTPS id 5716D64FCB4;
-        Thu, 19 Mar 2020 18:42:27 +0100 (CET)
-Received: from pflmari.corp.cetitec.com (10.8.5.52) by
- PFWSEXCHANGE.corp.cetitec.com (10.10.1.99) with Microsoft SMTP Server (TLS)
- id 15.0.1497.2; Thu, 19 Mar 2020 18:42:27 +0100
-Received: by pflmari.corp.cetitec.com (Postfix, from userid 1000)
-        id AFE738050C; Thu, 19 Mar 2020 18:42:26 +0100 (CET)
-Date:   Thu, 19 Mar 2020 18:42:26 +0100
-From:   Alex Riesen <alexander.riesen@cetitec.com>
-To:     Kieran Bingham <kieran.bingham@ideasonboard.com>
-CC:     Geert Uytterhoeven <geert@linux-m68k.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        "Laurent Pinchart" <laurent.pinchart@ideasonboard.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        <devel@driverdev.osuosl.org>, <linux-media@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-renesas-soc@vger.kernel.org>
-Subject: [PATCH v2 06/10] media: adv748x: only activate DAI if it is
- described in device tree
-Message-ID: <59bbe09aa6e42b3b226b394dc7edf6ac8e385d47.1584639664.git.alexander.riesen@cetitec.com>
-Mail-Followup-To: Alex Riesen <alexander.riesen@cetitec.com>,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        devel@driverdev.osuosl.org, linux-media@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-References: <cover.1584639664.git.alexander.riesen@cetitec.com>
+        id S1728731AbgCSRnI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 13:43:08 -0400
+Received: from mail-eopbgr80045.outbound.protection.outlook.com ([40.107.8.45]:34119
+        "EHLO EUR04-VI1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727253AbgCSRnI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 13:43:08 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=a1D4W0e9d9j5YWVipgd65r2+kd1X8iqisX0/4c1rTsY/+dLeFEYb4Os2NgHC5ZCu/u70IcsXYoT4STx8sLwdzfrVj8bhmlBvZYeTawT3idQyHQsWGppR2TMAV9NMQoyuc7Y+C0A1expgdLtggVQdfuRJwq6KvMKRuweHkNmybEBAvLoYXaD1wzBfxjkcgmKA8337WMj4xrxV5A62DzXN79bGitipmZFAOsjv92BPVV8JtS1r47Agubd8eSjFuFcxbV6sY+yNTS5AgauX2AkZ22p5E348+OHEtRHBLu35WaPFVxaFCOD6uvjkCoIpD7an1y8nHbbeJDjoObkkQc9kvw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Nj8hc9LWlsG/ltZ3AWPCvjhf1ZAou6l637POdDVCkLQ=;
+ b=VJYlnLoR7r2ePk44ok3NHkE1XyuWk03axPLSM1mTTAQkmhZqM5pUVOnIIfaEs+2uqRYOdBe3EBoIECEHtXYDzluqSQ5HArb0FMrtp0SuTZhXdGBQuFrvG7090dTq+g7qQ/FXW3epu7ZbXsBbRhwMgBUuUQxlg/r+vPj2LlgdvjSWRmglRj6Ho5rK/k1Br7CFuBqUvjQNI/3YEloWZjFNIalG48954ZI9NmSgvH7iq4n61mrUKmfR+cL2YFsJH61l9MMaYnyzjnvrjfj224DvAhphd4GUPncBqRD7cDgMFHUqWva1Mp2hRV0Bg9WOCDVXcjuzQ0TO1oKvpFrw5AaXFA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
+ dkim=pass header.d=oss.nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
+ s=selector2-NXP1-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Nj8hc9LWlsG/ltZ3AWPCvjhf1ZAou6l637POdDVCkLQ=;
+ b=M9u7vMU7VmC+VCiQgD21WPamfo77EAVoNpfZw6M5wslVR2E6laxhHqnnXlWFWGwgXGFzYGUJ7a0YCG/ONUouUhIz2VZ1u9aNjX++TRGeWaTCOJg3onWIijJ5BgvANqU83gq8fz0fAHnWhbH+ArNwWdYAcbRDgFWbK0g/TqrIrBM=
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=daniel.baluta@oss.nxp.com; 
+Received: from VI1PR0402MB3839.eurprd04.prod.outlook.com (52.134.16.147) by
+ VI1PR0402MB3646.eurprd04.prod.outlook.com (52.134.13.30) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2835.19; Thu, 19 Mar 2020 17:43:03 +0000
+Received: from VI1PR0402MB3839.eurprd04.prod.outlook.com
+ ([fe80::35d0:31bc:91d9:ceb0]) by VI1PR0402MB3839.eurprd04.prod.outlook.com
+ ([fe80::35d0:31bc:91d9:ceb0%7]) with mapi id 15.20.2835.017; Thu, 19 Mar 2020
+ 17:43:03 +0000
+From:   Daniel Baluta <daniel.baluta@oss.nxp.com>
+To:     rdunlap@infradead.org
+Cc:     leonard.crestez@nxp.com, aisheng.dong@nxp.com, linux-imx@nxp.com,
+        linux-kernel@vger.kernel.org, peng.fan@nxp.com,
+        Daniel Baluta <daniel.baluta@nxp.com>
+Subject: [PATCH] mailbox: Add dummy mailbox API implementation
+Date:   Thu, 19 Mar 2020 19:42:29 +0200
+Message-Id: <20200319174229.18663-1-daniel.baluta@oss.nxp.com>
+X-Mailer: git-send-email 2.17.1
+Content-Type: text/plain
+X-ClientProxiedBy: AM3PR04CA0149.eurprd04.prod.outlook.com (2603:10a6:207::33)
+ To VI1PR0402MB3839.eurprd04.prod.outlook.com (2603:10a6:803:21::19)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <cover.1584639664.git.alexander.riesen@cetitec.com>
-X-Originating-IP: [10.8.5.52]
-X-ClientProxiedBy: PFWSEXCHANGE.corp.cetitec.com (10.10.1.99) To
- PFWSEXCHANGE.corp.cetitec.com (10.10.1.99)
-X-EsetResult: clean, is OK
-X-EsetId: 37303A290D7F536A6D7762
-X-Provags-ID: V03:K1:VN3VMvTICSQ56pLhXQ+DUtZDlCw5I8O1qjE7zi2ANwi99hhSBiK
- VVPuS5wMcnNx7McRoEj9B8jRCdc579FbPXHjiCjOScMXzntsm4/04BS6MkKYoUMEnU+6EuC
- uF3qxQNaKjdQAFuLQ0EnR8XWBizbBwK698Nj4OAc/ImS8EgD6s1vhRN2KDUlIADa8Htm8cw
- v62jBk13uxA37KnZuIFpA==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:sWZv352a1dw=:wyCA91l4uxMeGJNl4U8WL2
- EThfiyxauXiiEsRjCvZBYQ6b317ad8pejS0mPX3h9s1cTuwnMTCihEUQMth/6kSm32CUr1et5
- WJxlW2tLBycN+CEuJODCGG6u7UTy47i2v8EmOIqiog4dC/T7z4VD6d/FKMPf9yg7ExUfRtbZP
- lPUSEXx8/J694eZxE0VyqNPZY9Z6Qp3TfCMwRykpITirzKLHMMWnSlSpesCzIKIyhyRh87zI3
- KpKH4LCCxxE06DH+2lZNJ2K5tGJVlRe65Cmh6wcMyL6JcCB7xf8cu6GoQlWtChwqcwjUwJRid
- /ioq+tWkqeKxnZpi386FzDG6OlSjjC9dIJ7azq++Qdh7TOvEoCGKEbxMxizqTI7vRMwOFQ9NL
- Wq6tLZ2W7AQvzo/tBhpKeOXZoXsd9GRGW8ekP3vadBmSWOqnSABGPdFPD2GCOVVGA6d4YBUz1
- TNbrcEG/dktuKhsZzONNQy1QzrFv5cxHga2G0GRCz1RhBbyKcAL8eysy6iWnNUnZ3a4PdcS8k
- wrRUEFkdmRIPXDaChHIuEEWosdpY7jAreaOsLVj+qRMQIlFl5RIbJigkJvuFMil2V2faTZQt+
- m3Bj+6MR2UUl7MdFrA9EuvWhDg5Gtig1H3isqEV5NfDogfDq2IXQTVxsjDhiaNV6bQVBWVBn6
- BeN7aPU+t+WTg2f21TT5eFtsm2YZKlvflQvjUWEvuCLmYs6qoXjyJxl4g2d3TZxNNE8vvf2ae
- /b+ho/ROeLRDc7ZeRc1PTfy0Mw0NZDfVNaiMqlZbAEUWNssuqh8I1RTEdnGqnCSLnvHUW7rR1
- 8FsCgPBv1EZo4TPrJJ/chz0fRtmjb7oRPdPU7i0B+1PTXIFEBOR7FDSUm/fbi6nIA1OXGAA
+X-MS-Exchange-MessageSentRepresentingType: 1
+Received: from fsr-ub1864-103.ro-buh02.nxp.com (89.37.124.34) by AM3PR04CA0149.eurprd04.prod.outlook.com (2603:10a6:207::33) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2835.18 via Frontend Transport; Thu, 19 Mar 2020 17:43:02 +0000
+X-Mailer: git-send-email 2.17.1
+X-Originating-IP: [89.37.124.34]
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-HT: Tenant
+X-MS-Office365-Filtering-Correlation-Id: a6201f99-be79-4e3c-6142-08d7cc2cf921
+X-MS-TrafficTypeDiagnostic: VI1PR0402MB3646:|VI1PR0402MB3646:
+X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
+X-MS-Exchange-Transport-Forked: True
+X-Microsoft-Antispam-PRVS: <VI1PR0402MB364663C2E37A9E1899BEFCA3B8F40@VI1PR0402MB3646.eurprd04.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:5797;
+X-Forefront-PRVS: 0347410860
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(4636009)(346002)(39860400002)(376002)(136003)(396003)(366004)(199004)(44832011)(956004)(6506007)(52116002)(6486002)(6916009)(81166006)(8936002)(81156014)(86362001)(66946007)(66476007)(6512007)(66556008)(8676002)(316002)(4326008)(2616005)(26005)(2906002)(16526019)(186003)(6666004)(5660300002)(1076003)(478600001)(15650500001);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR0402MB3646;H:VI1PR0402MB3839.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:0;
+Received-SPF: None (protection.outlook.com: oss.nxp.com does not designate
+ permitted sender hosts)
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: RWk8LyCwMi20HigIJJ6Qozx5B+BNDWeqp3adNLDljMn8xo5KH+MpghoYuVrA4CT5B3OE5qL7Gm/hjl/PSwlepz5DBDv+rdAjXkGHE8tTZJW4hMn7b3M3MqXf+JcW+DU/9Ye7EWRsMIls8REZRY5yEPscaYNF/n4ET1mAWgPHBfWwRCa5sNC91RN084rtbVWFdGiT75JtZUKUraHouLQhF4ODMbzhB5Yke31ZdjSUp2hNf1cIKqCVbrl9FwF6IJB9P0fp3GJkSDqvzsLiA9zoxOhWP6QEH2qRCkeQPu0t2hkolZohLFSsjWdJj3BvFb9rsz9F6PQ5Q8SSBlRyBeDhEXCJp358nK4nqEeXVAexkdeGVttBft8v/79Lg8Woeq1RhKaeSuFwzjj/v2sKvRa0rmWdfEJALZPB40KHkcz+KlembZ3myWDhBjp8DKcmhttF
+X-MS-Exchange-AntiSpam-MessageData: 4HyJw0i2MWIpQPqA9wIjLMXgpTMhjI8TScoGG3jlyGSpGiLK54vj60EaI7CaKGJihXo2GQhI3jCrPbfDAbqo9vmU+/1T4WWb9tTW8hm27EtX57epKnbwltFrTVJG99MCPbqCZkRQC0kFsRdN6UPWiw==
+X-OriginatorOrg: oss.nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a6201f99-be79-4e3c-6142-08d7cc2cf921
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Mar 2020 17:43:03.0364
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: uzoacF6ZiX/uU3Twdi3xw37UefJHbDCSpvhW27JTDNk5wEF3OEXDgcurf4xNbuy97AQp0urTozgRRW4vBdOjOw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0402MB3646
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-To avoid setting it up even if the hardware is not actually connected
-to anything physically.
+From: Daniel Baluta <daniel.baluta@nxp.com>
 
-Besides, the bindings explicitly notes that port definitions are
-"optional if they are not connected to anything at the hardware level".
+There are users of mailbox API that could be enabled
+via COMPILE_TEST without select CONFIG_MAILBOX.
 
-Signed-off-by: Alexander Riesen <alexander.riesen@cetitec.com>
+In such cases we got compilation errors, like these:
+
+ld: drivers/firmware/imx/imx-scu.o: in function `imx_scu_probe':
+imx-scu.c:(.text+0x25e): undefined reference to
+`mbox_request_channel_byname'
+ld: drivers/firmware/imx/imx-scu.o: in function `imx_scu_call_rpc':
+imx-scu.c:(.text+0x4b8): undefined reference to `mbox_send_message'
+ld: drivers/firmware/imx/imx-scu-irq.o: in function
+`imx_scu_enable_general_irq_channel':
+imx-scu-irq.c:(.text+0x34d): undefined reference to
+`mbox_request_channel_byname'
+
+Fix this by implementing dummy mailbox API when CONFIG_MAILBOX is not
+set.
+
+Reported-by: Randy Dunlap <rdunlap@infradead.org>
+Signed-off-by: Daniel Baluta <daniel.baluta@nxp.com>
 ---
- drivers/media/i2c/adv748x/adv748x-dai.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ include/linux/mailbox_client.h | 34 ++++++++++++++++++++++++++++++++++
+ 1 file changed, 34 insertions(+)
 
-diff --git a/drivers/media/i2c/adv748x/adv748x-dai.c b/drivers/media/i2c/adv748x/adv748x-dai.c
-index 4775a0c7ed7f..ce3ae7de765c 100644
---- a/drivers/media/i2c/adv748x/adv748x-dai.c
-+++ b/drivers/media/i2c/adv748x/adv748x-dai.c
-@@ -204,6 +204,11 @@ int adv748x_dai_init(struct adv748x_dai *dai)
- 	int ret;
- 	struct adv748x_state *state = adv748x_dai_to_state(dai);
+diff --git a/include/linux/mailbox_client.h b/include/linux/mailbox_client.h
+index 65229a45590f..ab5d130f0b5c 100644
+--- a/include/linux/mailbox_client.h
++++ b/include/linux/mailbox_client.h
+@@ -37,6 +37,7 @@ struct mbox_client {
+ 	void (*tx_done)(struct mbox_client *cl, void *mssg, int r);
+ };
  
-+	if (!state->endpoints[ADV748X_PORT_I2S]) {
-+		adv_info(state, "no I2S port, DAI disabled\n");
-+		ret = 0;
-+		goto fail;
-+	}
- 	dai->mclk = clk_register_fixed_rate(state->dev,
- 					    "adv748x-hdmi-i2s-mclk",
- 					    NULL /* parent_name */,
++#ifdef CONFIG_MAILBOX
+ struct mbox_chan *mbox_request_channel_byname(struct mbox_client *cl,
+ 					      const char *name);
+ struct mbox_chan *mbox_request_channel(struct mbox_client *cl, int index);
+@@ -46,4 +47,37 @@ void mbox_client_txdone(struct mbox_chan *chan, int r); /* atomic */
+ bool mbox_client_peek_data(struct mbox_chan *chan); /* atomic */
+ void mbox_free_channel(struct mbox_chan *chan); /* may sleep */
+ 
++#else
++static inline
++struct mbox_chan *mbox_request_channel_byname(struct mbox_client *cl,
++					      const char *name)
++{
++	return ERR_PTR(-ENOTSUPP);
++}
++
++static inline
++struct mbox_chan *mbox_request_channel(struct mbox_client *cl, int index)
++{
++	return ERR_PTR(-ENOTSUPP);
++}
++
++static inline int mbox_send_message(struct mbox_chan *chan, void *mssg)
++{
++	return -ENOTSUPP;
++}
++
++static inline int mbox_flush(struct mbox_chan *chan, unsigned long timeout)
++{
++	return -ENOTSUPP;
++}
++
++static inline void mbox_client_txdone(struct mbox_chan *chan, int r) { }
++
++static inline bool mbox_client_peek_data(struct mbox_chan *chan)
++{
++	return false;
++}
++
++static inline void mbox_free_channel(struct mbox_chan *chan) { }
++#endif
+ #endif /* __MAILBOX_CLIENT_H */
 -- 
-2.25.1.25.g9ecbe7eb18
-
+2.17.1
 
