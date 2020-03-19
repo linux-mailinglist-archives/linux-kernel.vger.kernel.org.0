@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 612C818B518
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:15:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7A7FF18B522
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:16:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728880AbgCSNPd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 09:15:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35344 "EHLO mail.kernel.org"
+        id S1729475AbgCSNQC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 09:16:02 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36008 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729420AbgCSNP3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 09:15:29 -0400
+        id S1729462AbgCSNP4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 09:15:56 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A486420724;
-        Thu, 19 Mar 2020 13:15:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D0F7420724;
+        Thu, 19 Mar 2020 13:15:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584623729;
-        bh=LwGtMzxaubBnMYxIqHVX2TSfy4YLY5UyzD5VZ0mCWSs=;
+        s=default; t=1584623756;
+        bh=l5cFa6Emn1btZwMRpEet7GN0OLXU861N0lQ98ZxATI4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=EJ9ziQs+srM2/PYhD98h/7IcINsV1rhAiO+eF6FyybIui9UWQSofGHJSQt5NZrdpc
-         60lQ6jfejyQ72vqWrK1vlvynZMX71cO9k9NWysQMf1PlUUAS27QZOTMDYAqp9M3sXC
-         MEmK+no/QCQADQPJYmC+jWklbdzeY/RB7XDUH7sI=
+        b=PeTQwJ6Ar+wFSmHT7JQ2TdxuqNOylhej7IcizGYhvJkKsmx8qPuTflhL8StHhKdpr
+         YQBFEfOvG/CZtsxYWdr38VzGY4ujon5/ffRLpcZK3p0GeVJbcoM6hL/i30ImFuzHr5
+         CL5b1hBv6vY9yHM3e9y38WlAjOWUsAiez4eQVgPE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Mahesh Bandewar <maheshb@google.com>,
+        stable@vger.kernel.org, Paolo Abeni <pabeni@redhat.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 32/99] macvlan: add cond_resched() during multicast processing
-Date:   Thu, 19 Mar 2020 14:03:10 +0100
-Message-Id: <20200319123951.511677378@linuxfoundation.org>
+Subject: [PATCH 4.14 35/99] ipvlan: egress mcast packets are not exceptional
+Date:   Thu, 19 Mar 2020 14:03:13 +0100
+Message-Id: <20200319123952.429268161@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.2
 In-Reply-To: <20200319123941.630731708@linuxfoundation.org>
 References: <20200319123941.630731708@linuxfoundation.org>
@@ -43,40 +43,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Mahesh Bandewar <maheshb@google.com>
+From: Paolo Abeni <pabeni@redhat.com>
 
-[ Upstream commit ce9a4186f9ac475c415ffd20348176a4ea366670 ]
+commit cccc200fcaf04cff4342036a72e51d6adf6c98c1 upstream.
 
-The Rx bound multicast packets are deferred to a workqueue and
-macvlan can also suffer from the same attack that was discovered
-by Syzbot for IPvlan. This solution is not as effective as in
-IPvlan. IPvlan defers all (Tx and Rx) multicast packet processing
-to a workqueue while macvlan does this way only for the Rx. This
-fix should address the Rx codition to certain extent.
+Currently, if IPv6 is enabled on top of an ipvlan device in l3
+mode, the following warning message:
 
-Tx is still suseptible. Tx multicast processing happens when
-.ndo_start_xmit is called, hence we cannot add cond_resched().
-However, it's not that severe since the user which is generating
- / flooding will be affected the most.
+ Dropped {multi|broad}cast of type= [86dd]
 
-Fixes: 412ca1550cbe ("macvlan: Move broadcasts into a work queue")
-Signed-off-by: Mahesh Bandewar <maheshb@google.com>
+is emitted every time that a RS is generated and dmseg is soon
+filled with irrelevant messages. Replace pr_warn with pr_debug,
+to preserve debuggability, without scaring the sysadmin.
+
+Signed-off-by: Paolo Abeni <pabeni@redhat.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/net/macvlan.c |    2 ++
- 1 file changed, 2 insertions(+)
 
---- a/drivers/net/macvlan.c
-+++ b/drivers/net/macvlan.c
-@@ -338,6 +338,8 @@ static void macvlan_process_broadcast(st
- 		if (src)
- 			dev_put(src->dev);
- 		kfree_skb(skb);
-+
-+		cond_resched();
- 	}
- }
+---
+ drivers/net/ipvlan/ipvlan_core.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+--- a/drivers/net/ipvlan/ipvlan_core.c
++++ b/drivers/net/ipvlan/ipvlan_core.c
+@@ -451,8 +451,8 @@ static int ipvlan_process_outbound(struc
  
+ 	/* In this mode we dont care about multicast and broadcast traffic */
+ 	if (is_multicast_ether_addr(ethh->h_dest)) {
+-		pr_warn_ratelimited("Dropped {multi|broad}cast of type= [%x]\n",
+-				    ntohs(skb->protocol));
++		pr_debug_ratelimited("Dropped {multi|broad}cast of type=[%x]\n",
++				     ntohs(skb->protocol));
+ 		kfree_skb(skb);
+ 		goto out;
+ 	}
 
 
