@@ -2,42 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C052C18B91B
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 15:13:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A171918B8F0
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 15:13:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728523AbgCSONV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 10:13:21 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:60814 "EHLO
+        id S1727738AbgCSOK6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 10:10:58 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:60877 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727541AbgCSOKu (ORCPT
+        with ESMTP id S1727668AbgCSOKy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 10:10:50 -0400
+        Thu, 19 Mar 2020 10:10:54 -0400
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1jEvsf-0001zN-5N; Thu, 19 Mar 2020 15:10:41 +0100
+        id 1jEvsf-0001zn-Jf; Thu, 19 Mar 2020 15:10:41 +0100
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id C982F1C22A3;
-        Thu, 19 Mar 2020 15:10:40 +0100 (CET)
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 2B1121C22A4;
+        Thu, 19 Mar 2020 15:10:41 +0100 (CET)
 Date:   Thu, 19 Mar 2020 14:10:40 -0000
 From:   "tip-bot2 for Ian Rogers" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: perf/core] perf tools: Give synthetic mmap events an inode generation
+Subject: [tip: perf/core] perf test: Print if shell directory isn't present
 Cc:     Ian Rogers <irogers@google.com>, Jiri Olsa <jolsa@kernel.org>,
+        Adrian Hunter <adrian.hunter@intel.com>,
         Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Andi Kleen <ak@linux.intel.com>, Leo Yan <leo.yan@linaro.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Namhyung Kim <namhyung@kernel.org>,
         Peter Zijlstra <peterz@infradead.org>,
         Stephane Eranian <eranian@google.com>,
-        clang-built-linux@googlegroups.com,
         Arnaldo Carvalho de Melo <acme@redhat.com>,
         x86 <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>
-In-Reply-To: <20200313053129.131264-1-irogers@google.com>
-References: <20200313053129.131264-1-irogers@google.com>
+In-Reply-To: <20200313005602.45236-1-irogers@google.com>
+References: <20200313005602.45236-1-irogers@google.com>
 MIME-Version: 1.0
-Message-ID: <158462704053.28353.11934701390002464663.tip-bot2@tip-bot2>
+Message-ID: <158462704089.28353.3162161305484344.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -53,134 +54,48 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the perf/core branch of tip:
 
-Commit-ID:     3b7a15b0643d42e4dca78c5aed8f1ad209a3d1ab
-Gitweb:        https://git.kernel.org/tip/3b7a15b0643d42e4dca78c5aed8f1ad209a3d1ab
+Commit-ID:     b2bf6660709c3bdd92d7558f4aa3cf07c0b0dda8
+Gitweb:        https://git.kernel.org/tip/b2bf6660709c3bdd92d7558f4aa3cf07c0b0dda8
 Author:        Ian Rogers <irogers@google.com>
-AuthorDate:    Thu, 12 Mar 2020 22:31:29 -07:00
+AuthorDate:    Thu, 12 Mar 2020 17:56:02 -07:00
 Committer:     Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitterDate: Tue, 17 Mar 2020 18:01:36 -03:00
+CommitterDate: Fri, 13 Mar 2020 15:43:43 -03:00
 
-perf tools: Give synthetic mmap events an inode generation
+perf test: Print if shell directory isn't present
 
-When mmap2 events are synthesized the ino_generation field isn't being
-set leading to uninitialized memory being compared.
-
-Caught with clang's -fsanitize=memory:
-
-==124733==WARNING: MemorySanitizer: use-of-uninitialized-value
-    #0 0x55a96a6a65cc in __dso_id__cmp tools/perf/util/dsos.c:23:6
-    #1 0x55a96a6a81d5 in dso_id__cmp tools/perf/util/dsos.c:38:9
-    #2 0x55a96a6a717f in __dso__cmp_long_name tools/perf/util/dsos.c:74:15
-    #3 0x55a96a6a6c4c in __dsos__findnew_link_by_longname_id tools/perf/util/dsos.c:106:12
-    #4 0x55a96a6a851e in __dsos__findnew_by_longname_id tools/perf/util/dsos.c:178:9
-    #5 0x55a96a6a7798 in __dsos__find_id tools/perf/util/dsos.c:191:9
-    #6 0x55a96a6a7b57 in __dsos__findnew_id tools/perf/util/dsos.c:251:20
-    #7 0x55a96a6a7a57 in dsos__findnew_id tools/perf/util/dsos.c:259:17
-    #8 0x55a96a7776ae in machine__findnew_dso_id tools/perf/util/machine.c:2709:9
-    #9 0x55a96a77dfcf in map__new tools/perf/util/map.c:193:10
-    #10 0x55a96a77240a in machine__process_mmap2_event tools/perf/util/machine.c:1670:8
-    #11 0x55a96a7741a3 in machine__process_event tools/perf/util/machine.c:1882:9
-    #12 0x55a96a6aee39 in perf_event__process tools/perf/util/event.c:454:9
-    #13 0x55a96a87d633 in perf_tool__process_synth_event tools/perf/util/synthetic-events.c:63:9
-    #14 0x55a96a87f131 in perf_event__synthesize_mmap_events tools/perf/util/synthetic-events.c:403:7
-    #15 0x55a96a8815d6 in __event__synthesize_thread tools/perf/util/synthetic-events.c:548:9
-    #16 0x55a96a882bff in __perf_event__synthesize_threads tools/perf/util/synthetic-events.c:681:3
-    #17 0x55a96a881ec2 in perf_event__synthesize_threads tools/perf/util/synthetic-events.c:750:9
-    #18 0x55a96a562b26 in synth_all tools/perf/tests/mmap-thread-lookup.c:136:9
-    #19 0x55a96a5623b1 in mmap_events tools/perf/tests/mmap-thread-lookup.c:174:8
-    #20 0x55a96a561fa0 in test__mmap_thread_lookup tools/perf/tests/mmap-thread-lookup.c:230:2
-    #21 0x55a96a52c182 in run_test tools/perf/tests/builtin-test.c:378:9
-    #22 0x55a96a52afc1 in test_and_print tools/perf/tests/builtin-test.c:408:9
-    #23 0x55a96a52966e in __cmd_test tools/perf/tests/builtin-test.c:603:4
-    #24 0x55a96a52855d in cmd_test tools/perf/tests/builtin-test.c:747:9
-    #25 0x55a96a2844d4 in run_builtin tools/perf/perf.c:312:11
-    #26 0x55a96a282bd0 in handle_internal_command tools/perf/perf.c:364:8
-    #27 0x55a96a284097 in run_argv tools/perf/perf.c:408:2
-    #28 0x55a96a282223 in main tools/perf/perf.c:538:3
-
-  Uninitialized value was stored to memory at
-    #1 0x55a96a6a18f7 in dso__new_id tools/perf/util/dso.c:1230:14
-    #2 0x55a96a6a78ee in __dsos__addnew_id tools/perf/util/dsos.c:233:20
-    #3 0x55a96a6a7bcc in __dsos__findnew_id tools/perf/util/dsos.c:252:21
-    #4 0x55a96a6a7a57 in dsos__findnew_id tools/perf/util/dsos.c:259:17
-    #5 0x55a96a7776ae in machine__findnew_dso_id tools/perf/util/machine.c:2709:9
-    #6 0x55a96a77dfcf in map__new tools/perf/util/map.c:193:10
-    #7 0x55a96a77240a in machine__process_mmap2_event tools/perf/util/machine.c:1670:8
-    #8 0x55a96a7741a3 in machine__process_event tools/perf/util/machine.c:1882:9
-    #9 0x55a96a6aee39 in perf_event__process tools/perf/util/event.c:454:9
-    #10 0x55a96a87d633 in perf_tool__process_synth_event tools/perf/util/synthetic-events.c:63:9
-    #11 0x55a96a87f131 in perf_event__synthesize_mmap_events tools/perf/util/synthetic-events.c:403:7
-    #12 0x55a96a8815d6 in __event__synthesize_thread tools/perf/util/synthetic-events.c:548:9
-    #13 0x55a96a882bff in __perf_event__synthesize_threads tools/perf/util/synthetic-events.c:681:3
-    #14 0x55a96a881ec2 in perf_event__synthesize_threads tools/perf/util/synthetic-events.c:750:9
-    #15 0x55a96a562b26 in synth_all tools/perf/tests/mmap-thread-lookup.c:136:9
-    #16 0x55a96a5623b1 in mmap_events tools/perf/tests/mmap-thread-lookup.c:174:8
-    #17 0x55a96a561fa0 in test__mmap_thread_lookup tools/perf/tests/mmap-thread-lookup.c:230:2
-    #18 0x55a96a52c182 in run_test tools/perf/tests/builtin-test.c:378:9
-    #19 0x55a96a52afc1 in test_and_print tools/perf/tests/builtin-test.c:408:9
-
-  Uninitialized value was stored to memory at
-    #0 0x55a96a7725af in machine__process_mmap2_event tools/perf/util/machine.c:1646:25
-    #1 0x55a96a7741a3 in machine__process_event tools/perf/util/machine.c:1882:9
-    #2 0x55a96a6aee39 in perf_event__process tools/perf/util/event.c:454:9
-    #3 0x55a96a87d633 in perf_tool__process_synth_event tools/perf/util/synthetic-events.c:63:9
-    #4 0x55a96a87f131 in perf_event__synthesize_mmap_events tools/perf/util/synthetic-events.c:403:7
-    #5 0x55a96a8815d6 in __event__synthesize_thread tools/perf/util/synthetic-events.c:548:9
-    #6 0x55a96a882bff in __perf_event__synthesize_threads tools/perf/util/synthetic-events.c:681:3
-    #7 0x55a96a881ec2 in perf_event__synthesize_threads tools/perf/util/synthetic-events.c:750:9
-    #8 0x55a96a562b26 in synth_all tools/perf/tests/mmap-thread-lookup.c:136:9
-    #9 0x55a96a5623b1 in mmap_events tools/perf/tests/mmap-thread-lookup.c:174:8
-    #10 0x55a96a561fa0 in test__mmap_thread_lookup tools/perf/tests/mmap-thread-lookup.c:230:2
-    #11 0x55a96a52c182 in run_test tools/perf/tests/builtin-test.c:378:9
-    #12 0x55a96a52afc1 in test_and_print tools/perf/tests/builtin-test.c:408:9
-    #13 0x55a96a52966e in __cmd_test tools/perf/tests/builtin-test.c:603:4
-    #14 0x55a96a52855d in cmd_test tools/perf/tests/builtin-test.c:747:9
-    #15 0x55a96a2844d4 in run_builtin tools/perf/perf.c:312:11
-    #16 0x55a96a282bd0 in handle_internal_command tools/perf/perf.c:364:8
-    #17 0x55a96a284097 in run_argv tools/perf/perf.c:408:2
-    #18 0x55a96a282223 in main tools/perf/perf.c:538:3
-
-  Uninitialized value was created by a heap allocation
-    #0 0x55a96a22f60d in malloc llvm/llvm-project/compiler-rt/lib/msan/msan_interceptors.cpp:925:3
-    #1 0x55a96a882948 in __perf_event__synthesize_threads tools/perf/util/synthetic-events.c:655:15
-    #2 0x55a96a881ec2 in perf_event__synthesize_threads tools/perf/util/synthetic-events.c:750:9
-    #3 0x55a96a562b26 in synth_all tools/perf/tests/mmap-thread-lookup.c:136:9
-    #4 0x55a96a5623b1 in mmap_events tools/perf/tests/mmap-thread-lookup.c:174:8
-    #5 0x55a96a561fa0 in test__mmap_thread_lookup tools/perf/tests/mmap-thread-lookup.c:230:2
-    #6 0x55a96a52c182 in run_test tools/perf/tests/builtin-test.c:378:9
-    #7 0x55a96a52afc1 in test_and_print tools/perf/tests/builtin-test.c:408:9
-    #8 0x55a96a52966e in __cmd_test tools/perf/tests/builtin-test.c:603:4
-    #9 0x55a96a52855d in cmd_test tools/perf/tests/builtin-test.c:747:9
-    #10 0x55a96a2844d4 in run_builtin tools/perf/perf.c:312:11
-    #11 0x55a96a282bd0 in handle_internal_command tools/perf/perf.c:364:8
-    #12 0x55a96a284097 in run_argv tools/perf/perf.c:408:2
-    #13 0x55a96a282223 in main tools/perf/perf.c:538:3
-
-SUMMARY: MemorySanitizer: use-of-uninitialized-value tools/perf/util/dsos.c:23:6 in __dso_id__cmp
+If the shell test directory isn't present the exit code will be 255 but
+with no error messages printed. Add an error message.
 
 Signed-off-by: Ian Rogers <irogers@google.com>
 Acked-by: Jiri Olsa <jolsa@kernel.org>
+Cc: Adrian Hunter <adrian.hunter@intel.com>
 Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Leo Yan <leo.yan@linaro.org>
 Cc: Mark Rutland <mark.rutland@arm.com>
 Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Stephane Eranian <eranian@google.com>
-Cc: clang-built-linux@googlegroups.com
-Link: http://lore.kernel.org/lkml/20200313053129.131264-1-irogers@google.com
+Link: http://lore.kernel.org/lkml/20200313005602.45236-1-irogers@google.com
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/util/synthetic-events.c | 1 +
- 1 file changed, 1 insertion(+)
+ tools/perf/tests/builtin-test.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/tools/perf/util/synthetic-events.c b/tools/perf/util/synthetic-events.c
-index dd3e6f4..3f28af3 100644
---- a/tools/perf/util/synthetic-events.c
-+++ b/tools/perf/util/synthetic-events.c
-@@ -345,6 +345,7 @@ int perf_event__synthesize_mmap_events(struct perf_tool *tool,
- 			continue;
+diff --git a/tools/perf/tests/builtin-test.c b/tools/perf/tests/builtin-test.c
+index 5f05db7..54d9516 100644
+--- a/tools/perf/tests/builtin-test.c
++++ b/tools/perf/tests/builtin-test.c
+@@ -543,8 +543,11 @@ static int run_shell_tests(int argc, const char *argv[], int i, int width)
+ 		return -1;
  
- 		event->mmap2.ino = (u64)ino;
-+		event->mmap2.ino_generation = 0;
+ 	dir = opendir(st.dir);
+-	if (!dir)
++	if (!dir) {
++		pr_err("failed to open shell test directory: %s\n",
++			st.dir);
+ 		return -1;
++	}
  
- 		/*
- 		 * Just like the kernel, see __perf_event_mmap in kernel/perf_event.c
+ 	for_each_shell_test(dir, st.dir, ent) {
+ 		int curr = i++;
