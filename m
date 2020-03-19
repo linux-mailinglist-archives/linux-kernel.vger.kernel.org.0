@@ -2,41 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 99F8D18B5FB
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:23:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D709318B697
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:28:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730288AbgCSNW5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 09:22:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48594 "EHLO mail.kernel.org"
+        id S1730606AbgCSN1O (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 09:27:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55332 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729066AbgCSNWz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 09:22:55 -0400
+        id S1730725AbgCSN1K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 09:27:10 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0A035206D7;
-        Thu, 19 Mar 2020 13:22:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6FBD021835;
+        Thu, 19 Mar 2020 13:27:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584624174;
-        bh=qByTAWT7bl0J6/edNlwDbsUX9/OFfv2Y7B+vvlVndss=;
+        s=default; t=1584624429;
+        bh=apxNGTTawxO88AhaRt5S23Z7rTLns5Lk95jgyvF3/SA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UAV7GkliWiOZUU1kSEzHPdPGlt9DV52Ta/TOZhpYmjp5V0jq3QV2rEuXDjrDGF/dB
-         LCErvXLenMWzkhqXreHcdjLT9H/LZOVPKUCVEZEpVEz6nzzLbnFVTBc8AoqiZg765h
-         fj+e47UBh1oEDx8gmyO4ADyE7QeEcPQTS7XJ1mqI=
+        b=NnSO92M/k1uoCXnFEJMV8TTq01OPstxiHUsyIw8ZOLKeL4WlhdIxgD1fgZZ4y2TZg
+         axWQYQwiKd8Cyj6bERX6BqmIWdOEDYwlHeSsF3P4h5Xda+4yXVONqQvlVncpQ7KYuF
+         wJMwainYXJ5yd9rU69YfzDLJTTqRwzx8o/KAKcoI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dongli Zhang <dongli.zhang@oracle.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        "Ewan D. Milne" <emilne@redhat.com>,
-        Ming Lei <ming.lei@redhat.com>, Jens Axboe <axboe@kernel.dk>,
+        stable@vger.kernel.org, Esben Haabendal <esben@geanix.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 32/60] blk-mq: insert passthrough request into hctx->dispatch directly
-Date:   Thu, 19 Mar 2020 14:04:10 +0100
-Message-Id: <20200319123929.799017338@linuxfoundation.org>
+Subject: [PATCH 5.5 29/65] net: ll_temac: Fix race condition causing TX hang
+Date:   Thu, 19 Mar 2020 14:04:11 +0100
+Message-Id: <20200319123935.546705776@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.2
-In-Reply-To: <20200319123919.441695203@linuxfoundation.org>
-References: <20200319123919.441695203@linuxfoundation.org>
+In-Reply-To: <20200319123926.466988514@linuxfoundation.org>
+References: <20200319123926.466988514@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,179 +44,67 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ming Lei <ming.lei@redhat.com>
+From: Esben Haabendal <esben@geanix.com>
 
-[ Upstream commit 01e99aeca3979600302913cef3f89076786f32c8 ]
+[ Upstream commit 84823ff80f7403752b59e00bb198724100dc611c ]
 
-For some reason, device may be in one situation which can't handle
-FS request, so STS_RESOURCE is always returned and the FS request
-will be added to hctx->dispatch. However passthrough request may
-be required at that time for fixing the problem. If passthrough
-request is added to scheduler queue, there isn't any chance for
-blk-mq to dispatch it given we prioritize requests in hctx->dispatch.
-Then the FS IO request may never be completed, and IO hang is caused.
+It is possible that the interrupt handler fires and frees up space in
+the TX ring in between checking for sufficient TX ring space and
+stopping the TX queue in temac_start_xmit. If this happens, the
+queue wake from the interrupt handler will occur before the queue is
+stopped, causing a lost wakeup and the adapter's transmit hanging.
 
-So passthrough request has to be added to hctx->dispatch directly
-for fixing the IO hang.
+To avoid this, after stopping the queue, check again whether there is
+sufficient space in the TX ring. If so, wake up the queue again.
 
-Fix this issue by inserting passthrough request into hctx->dispatch
-directly together withing adding FS request to the tail of
-hctx->dispatch in blk_mq_dispatch_rq_list(). Actually we add FS request
-to tail of hctx->dispatch at default, see blk_mq_request_bypass_insert().
+This is a port of the similar fix in axienet driver,
+commit 7de44285c1f6 ("net: axienet: Fix race condition causing TX hang").
 
-Then it becomes consistent with original legacy IO request
-path, in which passthrough request is always added to q->queue_head.
-
-Cc: Dongli Zhang <dongli.zhang@oracle.com>
-Cc: Christoph Hellwig <hch@infradead.org>
-Cc: Ewan D. Milne <emilne@redhat.com>
-Signed-off-by: Ming Lei <ming.lei@redhat.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Fixes: 23ecc4bde21f ("net: ll_temac: fix checksum offload logic")
+Signed-off-by: Esben Haabendal <esben@geanix.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- block/blk-flush.c    |  2 +-
- block/blk-mq-sched.c | 22 +++++++++++++++-------
- block/blk-mq.c       | 18 +++++++++++-------
- block/blk-mq.h       |  3 ++-
- 4 files changed, 29 insertions(+), 16 deletions(-)
+ drivers/net/ethernet/xilinx/ll_temac_main.c | 19 ++++++++++++++++---
+ 1 file changed, 16 insertions(+), 3 deletions(-)
 
-diff --git a/block/blk-flush.c b/block/blk-flush.c
-index b1f0a1ac505c9..5aa6fada22598 100644
---- a/block/blk-flush.c
-+++ b/block/blk-flush.c
-@@ -399,7 +399,7 @@ void blk_insert_flush(struct request *rq)
- 	 */
- 	if ((policy & REQ_FSEQ_DATA) &&
- 	    !(policy & (REQ_FSEQ_PREFLUSH | REQ_FSEQ_POSTFLUSH))) {
--		blk_mq_request_bypass_insert(rq, false);
-+		blk_mq_request_bypass_insert(rq, false, false);
- 		return;
+diff --git a/drivers/net/ethernet/xilinx/ll_temac_main.c b/drivers/net/ethernet/xilinx/ll_temac_main.c
+index 21c1b4322ea78..fd578568b3bff 100644
+--- a/drivers/net/ethernet/xilinx/ll_temac_main.c
++++ b/drivers/net/ethernet/xilinx/ll_temac_main.c
+@@ -788,6 +788,9 @@ static void temac_start_xmit_done(struct net_device *ndev)
+ 		stat = be32_to_cpu(cur_p->app0);
  	}
  
-diff --git a/block/blk-mq-sched.c b/block/blk-mq-sched.c
-index ca22afd47b3dc..856356b1619e8 100644
---- a/block/blk-mq-sched.c
-+++ b/block/blk-mq-sched.c
-@@ -361,13 +361,19 @@ static bool blk_mq_sched_bypass_insert(struct blk_mq_hw_ctx *hctx,
- 				       bool has_sched,
- 				       struct request *rq)
- {
--	/* dispatch flush rq directly */
--	if (rq->rq_flags & RQF_FLUSH_SEQ) {
--		spin_lock(&hctx->lock);
--		list_add(&rq->queuelist, &hctx->dispatch);
--		spin_unlock(&hctx->lock);
-+	/*
-+	 * dispatch flush and passthrough rq directly
-+	 *
-+	 * passthrough request has to be added to hctx->dispatch directly.
-+	 * For some reason, device may be in one situation which can't
-+	 * handle FS request, so STS_RESOURCE is always returned and the
-+	 * FS request will be added to hctx->dispatch. However passthrough
-+	 * request may be required at that time for fixing the problem. If
-+	 * passthrough request is added to scheduler queue, there isn't any
-+	 * chance to dispatch it given we prioritize requests in hctx->dispatch.
-+	 */
-+	if ((rq->rq_flags & RQF_FLUSH_SEQ) || blk_rq_is_passthrough(rq))
- 		return true;
--	}
- 
- 	if (has_sched)
- 		rq->rq_flags |= RQF_SORTED;
-@@ -391,8 +397,10 @@ void blk_mq_sched_insert_request(struct request *rq, bool at_head,
- 
- 	WARN_ON(e && (rq->tag != -1));
- 
--	if (blk_mq_sched_bypass_insert(hctx, !!e, rq))
-+	if (blk_mq_sched_bypass_insert(hctx, !!e, rq)) {
-+		blk_mq_request_bypass_insert(rq, at_head, false);
- 		goto run;
-+	}
- 
- 	if (e && e->type->ops.insert_requests) {
- 		LIST_HEAD(list);
-diff --git a/block/blk-mq.c b/block/blk-mq.c
-index ec791156e9ccd..3c1abab1fdf52 100644
---- a/block/blk-mq.c
-+++ b/block/blk-mq.c
-@@ -761,7 +761,7 @@ static void blk_mq_requeue_work(struct work_struct *work)
- 		 * merge.
- 		 */
- 		if (rq->rq_flags & RQF_DONTPREP)
--			blk_mq_request_bypass_insert(rq, false);
-+			blk_mq_request_bypass_insert(rq, false, false);
- 		else
- 			blk_mq_sched_insert_request(rq, true, false, false);
- 	}
-@@ -1313,7 +1313,7 @@ bool blk_mq_dispatch_rq_list(struct request_queue *q, struct list_head *list,
- 			q->mq_ops->commit_rqs(hctx);
- 
- 		spin_lock(&hctx->lock);
--		list_splice_init(list, &hctx->dispatch);
-+		list_splice_tail_init(list, &hctx->dispatch);
- 		spin_unlock(&hctx->lock);
- 
- 		/*
-@@ -1668,12 +1668,16 @@ void __blk_mq_insert_request(struct blk_mq_hw_ctx *hctx, struct request *rq,
-  * Should only be used carefully, when the caller knows we want to
-  * bypass a potential IO scheduler on the target device.
-  */
--void blk_mq_request_bypass_insert(struct request *rq, bool run_queue)
-+void blk_mq_request_bypass_insert(struct request *rq, bool at_head,
-+				  bool run_queue)
- {
- 	struct blk_mq_hw_ctx *hctx = rq->mq_hctx;
- 
- 	spin_lock(&hctx->lock);
--	list_add_tail(&rq->queuelist, &hctx->dispatch);
-+	if (at_head)
-+		list_add(&rq->queuelist, &hctx->dispatch);
-+	else
-+		list_add_tail(&rq->queuelist, &hctx->dispatch);
- 	spin_unlock(&hctx->lock);
- 
- 	if (run_queue)
-@@ -1863,7 +1867,7 @@ static blk_status_t __blk_mq_try_issue_directly(struct blk_mq_hw_ctx *hctx,
- 	if (bypass_insert)
- 		return BLK_STS_RESOURCE;
- 
--	blk_mq_request_bypass_insert(rq, run_queue);
-+	blk_mq_request_bypass_insert(rq, false, run_queue);
- 	return BLK_STS_OK;
++	/* Matches barrier in temac_start_xmit */
++	smp_mb();
++
+ 	netif_wake_queue(ndev);
  }
  
-@@ -1879,7 +1883,7 @@ static void blk_mq_try_issue_directly(struct blk_mq_hw_ctx *hctx,
+@@ -830,9 +833,19 @@ temac_start_xmit(struct sk_buff *skb, struct net_device *ndev)
+ 	cur_p = &lp->tx_bd_v[lp->tx_bd_tail];
  
- 	ret = __blk_mq_try_issue_directly(hctx, rq, cookie, false, true);
- 	if (ret == BLK_STS_RESOURCE || ret == BLK_STS_DEV_RESOURCE)
--		blk_mq_request_bypass_insert(rq, true);
-+		blk_mq_request_bypass_insert(rq, false, true);
- 	else if (ret != BLK_STS_OK)
- 		blk_mq_end_request(rq, ret);
+ 	if (temac_check_tx_bd_space(lp, num_frag + 1)) {
+-		if (!netif_queue_stopped(ndev))
+-			netif_stop_queue(ndev);
+-		return NETDEV_TX_BUSY;
++		if (netif_queue_stopped(ndev))
++			return NETDEV_TX_BUSY;
++
++		netif_stop_queue(ndev);
++
++		/* Matches barrier in temac_start_xmit_done */
++		smp_mb();
++
++		/* Space might have just been freed - check again */
++		if (temac_check_tx_bd_space(lp, num_frag))
++			return NETDEV_TX_BUSY;
++
++		netif_wake_queue(ndev);
+ 	}
  
-@@ -1913,7 +1917,7 @@ void blk_mq_try_issue_list_directly(struct blk_mq_hw_ctx *hctx,
- 		if (ret != BLK_STS_OK) {
- 			if (ret == BLK_STS_RESOURCE ||
- 					ret == BLK_STS_DEV_RESOURCE) {
--				blk_mq_request_bypass_insert(rq,
-+				blk_mq_request_bypass_insert(rq, false,
- 							list_empty(list));
- 				break;
- 			}
-diff --git a/block/blk-mq.h b/block/blk-mq.h
-index 32c62c64e6c2b..f2075978db500 100644
---- a/block/blk-mq.h
-+++ b/block/blk-mq.h
-@@ -66,7 +66,8 @@ int blk_mq_alloc_rqs(struct blk_mq_tag_set *set, struct blk_mq_tags *tags,
-  */
- void __blk_mq_insert_request(struct blk_mq_hw_ctx *hctx, struct request *rq,
- 				bool at_head);
--void blk_mq_request_bypass_insert(struct request *rq, bool run_queue);
-+void blk_mq_request_bypass_insert(struct request *rq, bool at_head,
-+				  bool run_queue);
- void blk_mq_insert_requests(struct blk_mq_hw_ctx *hctx, struct blk_mq_ctx *ctx,
- 				struct list_head *list);
- 
+ 	cur_p->app0 = 0;
 -- 
 2.20.1
 
