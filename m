@@ -2,52 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EF6E018AA86
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 03:00:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7E27318AA81
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 02:59:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727163AbgCSCAT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Mar 2020 22:00:19 -0400
-Received: from smtprelay0050.hostedemail.com ([216.40.44.50]:53368 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726596AbgCSCAT (ORCPT
+        id S1727108AbgCSB7N (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Mar 2020 21:59:13 -0400
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:38821 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726596AbgCSB7M (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Mar 2020 22:00:19 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay01.hostedemail.com (Postfix) with ESMTP id 00188100E7B40;
-        Thu, 19 Mar 2020 02:00:17 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,,RULES_HIT:41:355:379:599:988:989:1260:1277:1311:1313:1314:1345:1359:1381:1437:1515:1516:1518:1534:1537:1561:1593:1594:1711:1714:1730:1747:1777:1792:2393:2559:2562:2828:3138:3139:3140:3141:3142:3622:3865:3866:3867:4321:5007:6119:7903:8957:10004:10400:10848:11232:11658:11914:12048:12297:12740:12760:12895:13069:13311:13357:13439:14181:14659:21080:21433:21627:30012:30054:30091,0,RBL:none,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:1,LUA_SUMMARY:none
-X-HE-Tag: straw74_1f78e6f50a94d
-X-Filterd-Recvd-Size: 1205
-Received: from XPS-9350 (unknown [172.58.27.183])
-        (Authenticated sender: joe@perches.com)
-        by omf05.hostedemail.com (Postfix) with ESMTPA;
-        Thu, 19 Mar 2020 02:00:16 +0000 (UTC)
-Message-ID: <bb163d6b706a7b07e8b2e1c51b0da72a5923af97.camel@perches.com>
-Subject: Re: [PATCH v2] staging: rtl8192u: Corrects 'Avoid CamelCase' for
- variables
-From:   Joe Perches <joe@perches.com>
-To:     Camylla Goncalves Cantanheide <c.cantanheide@gmail.com>,
-        gregkh@linuxfoundation.org, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org, lkcamp@lists.libreplanetbr.org
-Date:   Wed, 18 Mar 2020 18:58:24 -0700
-In-Reply-To: <20200318211205.188-1-c.cantanheide@gmail.com>
-References: <20200318211205.188-1-c.cantanheide@gmail.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.34.1-2 
+        Wed, 18 Mar 2020 21:59:12 -0400
+Received: by mail-ot1-f66.google.com with SMTP id t28so797552ott.5
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Mar 2020 18:59:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=kQ+8lYTbuo7gMKlfggSjar9t6x0ZwfKKLWy/FGGXtQI=;
+        b=DGK4ptB8KNnEnFHfkrNQfSNomDn3CITlj0ORrlBg2GH7d+MQZ7MSRZJfh0euCMSzOr
+         3yp1RS2puOkpUXmP+f7IHLHx3kB3EJeBVc7ovaGsCqupeitEtw30nabRv/jNFk5G9PJ7
+         YCLCxHS30zj5Y1VvrPFHUP0F81wrb/sFXzldChq2ENmWfQodyeVhp5uxTsKHDssCSBXP
+         YG4RCLNspV4d2VintxEubm9O1YME+00WYB0EVcj+1LrW4i/U08Zu+I+Zg+xpppoYglae
+         vTLP7YAty9G0xbCMzmTvaIuPrm6oMGqchwxEos3eD6o8dmL5ofab+tTjcIe8C2xe0TMN
+         Rj1Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=kQ+8lYTbuo7gMKlfggSjar9t6x0ZwfKKLWy/FGGXtQI=;
+        b=fhKYnpxI/5u4QL27Co8qrpf3KUBzguhfT38hIkUGqyoNkDyb4pRILVsTbl72DVDwvT
+         kUg/MTxYn7s/aHnXgGloqPb//JJeet42G4HwJ7KMGhn23hk1Fb7MQl98vu5otFormDAo
+         iN5TEHjYNcH3oK1a7kheWgEtEr2T3y43I15viAxRKfvMjrSz4rwQVcavakOVIIBNtO3E
+         0UT7hR/J9j0gK+TSN5DoKzU0xUNewKZkBsrTs/dsH0LLQzyflNsGuR4X/pxJnDudO3yy
+         tZL4hPTvE64RfbiPZ6gaDwsT8SJILRC1dJw0qv6LI5KpPdpaFEm4JsRSfl/IgRE82M2L
+         iBEw==
+X-Gm-Message-State: ANhLgQ2gPRbbqJT872Iklqym3OZ5vBUPWyIvuR3GZ18u4SDRc6T4dZor
+        p9SlQbxTxwmbfBaNU501Zlg=
+X-Google-Smtp-Source: ADFU+vuto8y0H0LO70EiGVuUrvWHulp1Xhd/H7x+LQ1t1HBNckuOl9gT5SZsduHFC+yy563ALykZqQ==
+X-Received: by 2002:a9d:450a:: with SMTP id w10mr497928ote.114.1584583151915;
+        Wed, 18 Mar 2020 18:59:11 -0700 (PDT)
+Received: from ubuntu-m2-xlarge-x86 ([2604:1380:4111:8b00::1])
+        by smtp.gmail.com with ESMTPSA id f20sm303167ote.6.2020.03.18.18.59.10
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 18 Mar 2020 18:59:11 -0700 (PDT)
+Date:   Wed, 18 Mar 2020 18:59:09 -0700
+From:   Nathan Chancellor <natechancellor@gmail.com>
+To:     Jason Baron <jbaron@akamai.com>
+Cc:     linux-kernel@vger.kernel.org, clang-built-linux@googlegroups.com,
+        Nick Desaulniers <ndesaulniers@google.com>
+Subject: Re: [PATCH v2] dynamic_debug: Use address-of operator on section
+ symbols
+Message-ID: <20200319015909.GA8292@ubuntu-m2-xlarge-x86>
+References: <20200220051320.10739-1-natechancellor@gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200220051320.10739-1-natechancellor@gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2020-03-18 at 21:12 +0000, Camylla Goncalves Cantanheide wrote:
-> The variables of function setKey triggered a 'Avoid CamelCase'
-> warning from checkpatch.pl. This patch renames these
-> variables to correct this warning.
+On Wed, Feb 19, 2020 at 10:13:20PM -0700, Nathan Chancellor wrote:
+> Clang warns:
+> 
+> ../lib/dynamic_debug.c:1034:24: warning: array comparison always
+> evaluates to false [-Wtautological-compare]
+>         if (__start___verbose == __stop___verbose) {
+>                               ^
+> 1 warning generated.
+> 
+> These are not true arrays, they are linker defined symbols, which are
+> just addresses. Using the address of operator silences the warning and
+> does not change the resulting assembly with either clang/ld.lld or
+> gcc/ld (tested with diff + objdump -Dr).
+> 
+> Link: https://github.com/ClangBuiltLinux/linux/issues/894
+> Suggested-by: Nick Desaulniers <ndesaulniers@google.com>
+> Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+> ---
+> v1 -> v2: https://lore.kernel.org/lkml/20200219045423.54190-5-natechancellor@gmail.com/
+> 
+> * No longer a series because there is no prerequisite patch.
+> * Use address-of operator instead of casting to unsigned long.
+> 
+>  lib/dynamic_debug.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/lib/dynamic_debug.c b/lib/dynamic_debug.c
+> index aae17d9522e5..8f199f403ab5 100644
+> --- a/lib/dynamic_debug.c
+> +++ b/lib/dynamic_debug.c
+> @@ -1031,7 +1031,7 @@ static int __init dynamic_debug_init(void)
+>  	int n = 0, entries = 0, modct = 0;
+>  	int verbose_bytes = 0;
+>  
+> -	if (__start___verbose == __stop___verbose) {
+> +	if (&__start___verbose == &__stop___verbose) {
+>  		pr_warn("_ddebug table is empty in a CONFIG_DYNAMIC_DEBUG build\n");
+>  		return 1;
+>  	}
+> -- 
+> 2.25.1
+> 
 
-Please always try to improve the code for humans to read
-over correcting mindless checkpatch messages.
+Gentle ping for review/acceptance.
 
-
+Cheers,
+Nathan
