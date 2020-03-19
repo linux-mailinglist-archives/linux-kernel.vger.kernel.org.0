@@ -2,94 +2,121 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0CB3B18AD61
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 08:39:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6D35618AD6E
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 08:44:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727238AbgCSHja (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 03:39:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58188 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726589AbgCSHja (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 03:39:30 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B2B2420722;
-        Thu, 19 Mar 2020 07:39:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584603569;
-        bh=B+kuIQBeqbL5y1IBvD1kqR+vLTh4kU6kglLn21OfosA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=slBOoSo8jU7XWJNyt9HMs/D7BU5N4d1RWZrIl/AtrtSC/WcoQIO4czzdaSRiPFznN
-         jR87nNzz6pcQWRv5f/53sFP9ybja1lCun4m25ZukioZGVcLoZgl07Ri1GbYQraNWtn
-         Jy6NBOaOFzZYF0WuHE0s2ki/s3IxdldCRotalTZw=
-Date:   Thu, 19 Mar 2020 08:39:27 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Saravana Kannan <saravanak@google.com>
-Cc:     stable <stable@vger.kernel.org>, Jonathan Corbet <corbet@lwn.net>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        "moderated list:ARM/Mediatek SoC support" 
-        <linux-mediatek@lists.infradead.org>,
-        Android Kernel Team <kernel-team@android.com>
-Subject: Re: [PATCH v1 0/6] Fix device links functional breakage in 4.19.99
-Message-ID: <20200319073927.GA3442166@kroah.com>
-References: <20200317065452.236670-1-saravanak@google.com>
- <CAGETcx-uZ3YJHCYqFm3so8-woTvL3SSDY2deNonthTetcE+mXQ@mail.gmail.com>
+        id S1726623AbgCSHoG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 03:44:06 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:42967 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725767AbgCSHoG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 03:44:06 -0400
+Received: by mail-wr1-f65.google.com with SMTP id v11so1385573wrm.9
+        for <linux-kernel@vger.kernel.org>; Thu, 19 Mar 2020 00:44:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=8G6ZnhC76S+a0nX3uIB0o/UbMU7oc2ekBRk4ZBzMhfk=;
+        b=ZyXeHZ6E9GgI7PQ3/JNJnGVywJvMuyEuNUPHAE0C3Hrsl2fCjTBQSYRPxZzgj0Q12y
+         jUhvnPZ9Y7L1OxpqqPQ5YUEUNzqU6oZFiflxogGT1qYVKz5l4dxn19NQZmF+op4PWyzU
+         3GEZw0OETcFOj7b7dcwEpbqRPQKJPxSo1LoJktwcRrCvHgZPvSr4QqJDRI38ZeedOKe8
+         z1GxWMcugiheSTKebig9iTziBCUOMI/nc8MsUpQBhUMbP5gWe2Ey6L7tllGwfW27pDbJ
+         PPIUhDbHXT1oxzUkqIWFdwVrVnUz9Do/0Qbikeu6Aiyi/2DyZU6BDCfjgN+h2p6qr/KZ
+         PHqg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=8G6ZnhC76S+a0nX3uIB0o/UbMU7oc2ekBRk4ZBzMhfk=;
+        b=Zl34inUEtNVFoYczU/a6mi6HXOqTSpZUh5iihsaLQvj3Ti2EByfzU/odMgc3vgu0Sn
+         +NhlRVuHt6ZpJYyIk+4spu9A+gEkxzaVjptDJhH32dt6N20g0bKmDcinDD89D0XaV34p
+         89DctN8ns6ubSUujPeL8EAZQdUBXb2IkqJ+04IF/sY95lKPrBItAm0x8u5kzl+x4FHSk
+         yrSKZ5GkUq6lgQVebi+aTluvaHTtswWCJftbaGCc5isyCw6w4MFR1SVAtJcnuQGrb4Ni
+         0JRRD+10MGfFDB0A2Kw6vqBGBDw3sv2vhloa28gFIGnDYNry0x5+46+lMRGISe8q/5mZ
+         GTqA==
+X-Gm-Message-State: ANhLgQ30R6ZW8uSCkV0UEUH6HgZSECLeBcG/wMEsmagftNkXAcRfvBcx
+        2kIymJeOTQw0Rm00mh9N5hQhPg==
+X-Google-Smtp-Source: ADFU+vuKr+qEFy31VI/80gx52dPSn4WmMzXMLVRosndQlVFjNAd1HfXNRlss+zm7FNEZsfvLhA0lqg==
+X-Received: by 2002:adf:ec88:: with SMTP id z8mr2431975wrn.61.1584603844041;
+        Thu, 19 Mar 2020 00:44:04 -0700 (PDT)
+Received: from Red ([2a01:cb1d:3d5:a100:2e56:dcff:fed2:c6d6])
+        by smtp.googlemail.com with ESMTPSA id g8sm1925537wmk.26.2020.03.19.00.44.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 19 Mar 2020 00:44:03 -0700 (PDT)
+Date:   Thu, 19 Mar 2020 08:44:01 +0100
+From:   LABBE Corentin <clabbe@baylibre.com>
+To:     thierry.reding@gmail.com, jonathanh@nvidia.com,
+        pgaikwad@nvidia.com, pdeschrijver@nvidia.com,
+        mturquette@baylibre.com, sboyd@kernel.org, axboe@kernel.dk
+Cc:     linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-ide@vger.kernel.org
+Subject: tegra124-jetson-tk1: sata doesnt work since 5.2
+Message-ID: <20200319074401.GA4116@Red>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAGETcx-uZ3YJHCYqFm3so8-woTvL3SSDY2deNonthTetcE+mXQ@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 18, 2020 at 12:10:43PM -0700, Saravana Kannan wrote:
-> On Mon, Mar 16, 2020 at 11:54 PM Saravana Kannan <saravanak@google.com> wrote:
-> >
-> > As mentioned in an earlier email thread [1], 4.19.99 broke the ability
-> > to create stateful and stateless device links between the same set of
-> > devices when it pulled in a valid bug fix [2]. While the fix was valid,
-> > it removes a functionality that was present before the bug fix.
-> >
-> > This patch series attempts to fix that by pulling in more patches from
-> > upstream. I've just done compilation testing so far. But wanted to send
-> > out a v1 to see if this patch list was acceptable before I fixed up the
-> > commit text format to match what's needed for stable mailing list.
-> >
-> > Some of the patches are new functionality, but for a first pass, it was
-> > easier to pull these in than try and fix the conflicts. If these patches
-> > are okay to pull into stable, then all I need to do is fix the commit
-> > text.
-> 
-> I took a closer look at all the patches. Everyone of them is a bug fix
-> except Patch 4/6. But Patch 4/6 is a fairly minimal change and I think
-> it's easier/cleaner to just pick it up too instead of trying to
-> resolve merge conflicts in the stable branch.
-> 
-> 1/6 - Fixes what appears to be a memory leak bug in upstream.
-> 2/6 - Fixes error in initial state of the device link if it's created
-> under some circumstances.
-> 3/6 - Fixes a ref count bug in upstream. Looks like it can lead to memory leaks?
-> 4/6 - Adds a minor feature to kick off a probe attempt of a consumer
-> 5/6 - Fixes the break in functionality that happened in 4.19.99
-> 6/6 - Fixes bug in 5/6 (upstream bug)
-> 
-> Greg
-> 
-> Do these patches look okay for you to pull into 4.19 stable? If so,
-> please let me know if you need me to send v2 with commit fix up.
-> 
-> The only fix up needed is to these patches at this point is changing
-> "(cherry picked from commit ...)" with "[ Upstream commit ... ]". The
-> SHAs themselves are the correct SHAs from upstream.
+Hello
 
-These all look good to me, now all queued up, thanks.
+sata doesnt work on tegra124-jetson-tk1 on next and master and at least since 5.2 (but 5.1 works).
+[    0.492810] +5V_SATA: supplied by +5V_SYS
+[    0.493230] +12V_SATA: supplied by +VDD_MUX
+[    2.088675] tegra-ahci 70027000.sata: 70027000.sata supply ahci not found, using dummy regulator
+[    2.097643] tegra-ahci 70027000.sata: 70027000.sata supply phy not found, using dummy regulator
+[    3.314776] tegra-ahci 70027000.sata: 70027000.sata supply ahci not found, using dummy regulator
+[    3.323658] tegra-ahci 70027000.sata: 70027000.sata supply phy not found, using dummy regulator
+[    5.236964] tegra-ahci 70027000.sata: 70027000.sata supply ahci not found, using dummy regulator
+[    5.245867] tegra-ahci 70027000.sata: 70027000.sata supply phy not found, using dummy regulator
+[    5.254706] tegra-ahci 70027000.sata: 70027000.sata supply target not found, using dummy regulator
+[    5.310270] phy phy-sata.6: phy poweron failed --> -110
+[    5.315604] tegra-ahci 70027000.sata: failed to power on AHCI controller: -110
+[    5.323022] tegra-ahci: probe of 70027000.sata failed with error -110
+[   35.694269] +5V_SATA: disabling
+[   35.697438] +12V_SATA: disabling
 
-greg k-h
+I have bisected this problem:
+git bisect start
+# bad: [22c58fd70ca48a29505922b1563826593b08cc00] Merge tag 'armsoc-soc' of git://git.kernel.org/pub/scm/linux/kernel/git/soc/soc
+git bisect bad 22c58fd70ca48a29505922b1563826593b08cc00
+# good: [67e38f578aaebf34fc1278bbe45a78ee8c73dd33] ARM: ep93xx: move pinctrl interfaces into include/linux/soc
+git bisect good 67e38f578aaebf34fc1278bbe45a78ee8c73dd33
+# good: [80f232121b69cc69a31ccb2b38c1665d770b0710] Merge git://git.kernel.org/pub/scm/linux/kernel/git/davem/net-next
+git bisect good 80f232121b69cc69a31ccb2b38c1665d770b0710
+# good: [e57ccca1ba33e1d92cc3bbf8b6304a46948844b0] Merge tag 'sound-5.2-rc1' of git://git.kernel.org/pub/scm/linux/kernel/git/tiwai/sound
+git bisect good e57ccca1ba33e1d92cc3bbf8b6304a46948844b0
+# bad: [983dfa4b6ee556563f7963348e4e2f97fc8a15b8] Merge tag 'for-linus-5.2-rc1' of ssh://gitolite.kernel.org/pub/scm/linux/kernel/git/rw/uml
+git bisect bad 983dfa4b6ee556563f7963348e4e2f97fc8a15b8
+# good: [8e4ff713ce313dcabbb60e6ede1ffc193e67631f] Merge tag 'rtc-5.2' of git://git.kernel.org/pub/scm/linux/kernel/git/abelloni/linux
+git bisect good 8e4ff713ce313dcabbb60e6ede1ffc193e67631f
+# bad: [b970afcfcabd63cd3832e95db096439c177c3592] Merge tag 'powerpc-5.2-1' of ssh://gitolite.kernel.org/pub/scm/linux/kernel/git/powerpc/linux
+git bisect bad b970afcfcabd63cd3832e95db096439c177c3592
+# bad: [601e6bcc4ef02bda2831d5ac8133947b5edf597b] Merge git://git.kernel.org/pub/scm/linux/kernel/git/davem/net
+git bisect bad 601e6bcc4ef02bda2831d5ac8133947b5edf597b
+# good: [7e9c62bdb41af76974d594da89854a6aba645e58] Merge branches 'clk-sa', 'clk-aspeed', 'clk-samsung', 'clk-ingenic' and 'clk-zynq' into clk-next
+git bisect good 7e9c62bdb41af76974d594da89854a6aba645e58
+# bad: [0caf000817353cfc5db22363ecdac63b83d3a3f9] Merge branch 'clk-ti' into clk-next
+git bisect bad 0caf000817353cfc5db22363ecdac63b83d3a3f9
+# good: [5816b74581b45cf086a84ab14e13354a65e8e22c] Merge branches 'clk-hisi', 'clk-lochnagar', 'clk-allwinner', 'clk-rockchip' and 'clk-qoriq' into clk-next
+git bisect good 5816b74581b45cf086a84ab14e13354a65e8e22c
+# good: [7b4c162e03d47e037f8ee773c3e300eefb599a83] clk: at91: Mark struct clk_range as const
+git bisect good 7b4c162e03d47e037f8ee773c3e300eefb599a83
+# bad: [e71f4d385878671991e200083c7d30eb4ca8e99a] clk: tegra: divider: Mark Memory Controller clock as read-only
+git bisect bad e71f4d385878671991e200083c7d30eb4ca8e99a
+# bad: [924ee3d551c9deb16090230b824988bd37e72aa8] clk: tegra: emc: Don't enable EMC clock manually
+git bisect bad 924ee3d551c9deb16090230b824988bd37e72aa8
+# bad: [40db569d6769ffa3864fd1b89616b1a7323568a8] clk: tegra: Fix PLLM programming on Tegra124+ when PMC overrides divider
+git bisect bad 40db569d6769ffa3864fd1b89616b1a7323568a8
+# bad: [bff1cef5f23afbe49f5ebd766980dc612f5e9d0a] clk: tegra: Don't enable already enabled PLLs
+git bisect bad bff1cef5f23afbe49f5ebd766980dc612f5e9d0a
+# first bad commit: [bff1cef5f23afbe49f5ebd766980dc612f5e9d0a] clk: tegra: Don't enable already enabled PLLs
+
+Basic reverting of this patch is impossible.
+
+Regards
