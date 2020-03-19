@@ -2,39 +2,46 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9FA8A18B71D
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:31:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 55BB518B845
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:43:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729428AbgCSNSg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 09:18:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40956 "EHLO mail.kernel.org"
+        id S1727649AbgCSNm7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 09:42:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39050 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729786AbgCSNSd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 09:18:33 -0400
+        id S1727137AbgCSNm5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 09:42:57 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DD82A206D7;
-        Thu, 19 Mar 2020 13:18:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 900B420B1F;
+        Thu, 19 Mar 2020 13:42:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584623913;
-        bh=XR2Q7N+ULL4qYeXZw4qAUzkKIZ11FxM9mC8lPTKkg7c=;
+        s=default; t=1584625377;
+        bh=C00m90Jdij6F1HqEzf8L4EgeNwUufQvJHwqJ/rsXnFI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Ijcgv5z9n7Mo4+iP52aYrjmuCjRM2x0PMPQQ20pxyU45B/DjNVyqifYtBJuftEcuT
-         c6VCVrMwOvezfPFY1C6yjtp1reqvEvAVfK6sruIIkXSAeePmDWVM6OZNN/pG4tLoH7
-         NBQfERBXFeWGfXnuCmSRqerzGQ/9SyyBBjPqEdhc=
+        b=NsPLpzOoVFfSTr1EFDHg3MaHV7EbYHmcf9YrKjKTOYL+vs+VK7/knaHHvuOWw7jLz
+         gJy4o9LX9sLWt/I6fuNQJsRaptYy+p38CxCaTAzAo8p5HI8bMwvstBpaxDfkD6SsiK
+         +g9xmzgT6Gl5dgpDWVHo/6GpVZcGihebn8sLOAyQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Taehee Yoo <ap420073@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 94/99] net: rmnet: fix NULL pointer dereference in rmnet_newlink()
-Date:   Thu, 19 Mar 2020 14:04:12 +0100
-Message-Id: <20200319124007.436271029@linuxfoundation.org>
+        stable@vger.kernel.org,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        "Huang, Ying" <ying.huang@intel.com>,
+        Philip Li <philip.li@intel.com>,
+        Andi Kleen <andi.kleen@intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Sasha Levin <sashal@kernel.org>,
+        Feng Tang <feng.tang@intel.com>
+Subject: [PATCH 5.4 36/60] signal: avoid double atomic counter increments for user accounting
+Date:   Thu, 19 Mar 2020 14:04:14 +0100
+Message-Id: <20200319123931.207979837@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.2
-In-Reply-To: <20200319123941.630731708@linuxfoundation.org>
-References: <20200319123941.630731708@linuxfoundation.org>
+In-Reply-To: <20200319123919.441695203@linuxfoundation.org>
+References: <20200319123919.441695203@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,80 +51,123 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Taehee Yoo <ap420073@gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
 
-[ Upstream commit 93b5cbfa9636d385126f211dca9efa7e3f683202 ]
+[ Upstream commit fda31c50292a5062332fa0343c084bd9f46604d9 ]
 
-rmnet registers IFLA_LINK interface as a lower interface.
-But, IFLA_LINK could be NULL.
-In the current code, rmnet doesn't check IFLA_LINK.
-So, panic would occur.
+When queueing a signal, we increment both the users count of pending
+signals (for RLIMIT_SIGPENDING tracking) and we increment the refcount
+of the user struct itself (because we keep a reference to the user in
+the signal structure in order to correctly account for it when freeing).
 
-Test commands:
-    modprobe rmnet
-    ip link add rmnet0 type rmnet mux_id 1
+That turns out to be fairly expensive, because both of them are atomic
+updates, and particularly under extreme signal handling pressure on big
+machines, you can get a lot of cache contention on the user struct.
+That can then cause horrid cacheline ping-pong when you do these
+multiple accesses.
 
-Splat looks like:
-[   36.826109][ T1115] general protection fault, probably for non-canonical address 0xdffffc0000000000I
-[   36.838817][ T1115] KASAN: null-ptr-deref in range [0x0000000000000000-0x0000000000000007]
-[   36.839908][ T1115] CPU: 1 PID: 1115 Comm: ip Not tainted 5.6.0-rc1+ #447
-[   36.840569][ T1115] Hardware name: innotek GmbH VirtualBox/VirtualBox, BIOS VirtualBox 12/01/2006
-[   36.841408][ T1115] RIP: 0010:rmnet_newlink+0x54/0x510 [rmnet]
-[   36.841986][ T1115] Code: 83 ec 18 48 c1 e9 03 80 3c 01 00 0f 85 d4 03 00 00 48 8b 6a 28 48 b8 00 00 00 00 00 c
-[   36.843923][ T1115] RSP: 0018:ffff8880b7e0f1c0 EFLAGS: 00010247
-[   36.844756][ T1115] RAX: dffffc0000000000 RBX: ffff8880d14cca00 RCX: 1ffff11016fc1e99
-[   36.845859][ T1115] RDX: 0000000000000000 RSI: ffff8880c3d04000 RDI: 0000000000000004
-[   36.846961][ T1115] RBP: 0000000000000000 R08: ffff8880b7e0f8b0 R09: ffff8880b6ac2d90
-[   36.848020][ T1115] R10: ffffffffc0589a40 R11: ffffed1016d585b7 R12: ffffffff88ceaf80
-[   36.848788][ T1115] R13: ffff8880c3d04000 R14: ffff8880b7e0f8b0 R15: ffff8880c3d04000
-[   36.849546][ T1115] FS:  00007f50ab3360c0(0000) GS:ffff8880da000000(0000) knlGS:0000000000000000
-[   36.851784][ T1115] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[   36.852422][ T1115] CR2: 000055871afe5ab0 CR3: 00000000ae246001 CR4: 00000000000606e0
-[   36.853181][ T1115] Call Trace:
-[   36.853514][ T1115]  __rtnl_newlink+0xbdb/0x1270
-[   36.853967][ T1115]  ? lock_downgrade+0x6e0/0x6e0
-[   36.854420][ T1115]  ? rtnl_link_unregister+0x220/0x220
-[   36.854936][ T1115]  ? lock_acquire+0x164/0x3b0
-[   36.855376][ T1115]  ? is_bpf_image_address+0xff/0x1d0
-[   36.855884][ T1115]  ? rtnl_newlink+0x4c/0x90
-[   36.856304][ T1115]  ? kernel_text_address+0x111/0x140
-[   36.856857][ T1115]  ? __kernel_text_address+0xe/0x30
-[   36.857440][ T1115]  ? unwind_get_return_address+0x5f/0xa0
-[   36.858063][ T1115]  ? create_prof_cpu_mask+0x20/0x20
-[   36.858644][ T1115]  ? arch_stack_walk+0x83/0xb0
-[   36.859171][ T1115]  ? stack_trace_save+0x82/0xb0
-[   36.859710][ T1115]  ? stack_trace_consume_entry+0x160/0x160
-[   36.860357][ T1115]  ? deactivate_slab.isra.78+0x2c5/0x800
-[   36.860928][ T1115]  ? kasan_unpoison_shadow+0x30/0x40
-[   36.861520][ T1115]  ? kmem_cache_alloc_trace+0x135/0x350
-[   36.862125][ T1115]  ? rtnl_newlink+0x4c/0x90
-[   36.864073][ T1115]  rtnl_newlink+0x65/0x90
-[ ... ]
+So change the reference counting to only pin the user for the _first_
+pending signal, and to unpin it when the last pending signal is
+dequeued.  That means that when a user sees a lot of concurrent signal
+queuing - which is the only situation when this matters - the only
+atomic access needed is generally the 'sigpending' count update.
 
-Fixes: ceed73a2cf4a ("drivers: net: ethernet: qualcomm: rmnet: Initial implementation")
-Signed-off-by: Taehee Yoo <ap420073@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+This was noticed because of a particularly odd timing artifact on a
+dual-socket 96C/192T Cascade Lake platform: when you get into bad
+contention, on that machine for some reason seems to be much worse when
+the contention happens in the upper 32-byte half of the cacheline.
+
+As a result, the kernel test robot will-it-scale 'signal1' benchmark had
+an odd performance regression simply due to random alignment of the
+'struct user_struct' (and pointed to a completely unrelated and
+apparently nonsensical commit for the regression).
+
+Avoiding the double increments (and decrements on the dequeueing side,
+of course) makes for much less contention and hugely improved
+performance on that will-it-scale microbenchmark.
+
+Quoting Feng Tang:
+
+ "It makes a big difference, that the performance score is tripled! bump
+  from original 17000 to 54000. Also the gap between 5.0-rc6 and
+  5.0-rc6+Jiri's patch is reduced to around 2%"
+
+[ The "2% gap" is the odd cacheline placement difference on that
+  platform: under the extreme contention case, the effect of which half
+  of the cacheline was hot was 5%, so with the reduced contention the
+  odd timing artifact is reduced too ]
+
+It does help in the non-contended case too, but is not nearly as
+noticeable.
+
+Reported-and-tested-by: Feng Tang <feng.tang@intel.com>
+Cc: Eric W. Biederman <ebiederm@xmission.com>
+Cc: Huang, Ying <ying.huang@intel.com>
+Cc: Philip Li <philip.li@intel.com>
+Cc: Andi Kleen <andi.kleen@intel.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/qualcomm/rmnet/rmnet_config.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ kernel/signal.c | 23 ++++++++++++++---------
+ 1 file changed, 14 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/net/ethernet/qualcomm/rmnet/rmnet_config.c b/drivers/net/ethernet/qualcomm/rmnet/rmnet_config.c
-index 7d8303e45f090..b7df8c1121e35 100644
---- a/drivers/net/ethernet/qualcomm/rmnet/rmnet_config.c
-+++ b/drivers/net/ethernet/qualcomm/rmnet/rmnet_config.c
-@@ -157,6 +157,11 @@ static int rmnet_newlink(struct net *src_net, struct net_device *dev,
- 	int err = 0;
- 	u16 mux_id;
+diff --git a/kernel/signal.c b/kernel/signal.c
+index bcd46f547db39..eea748174ade9 100644
+--- a/kernel/signal.c
++++ b/kernel/signal.c
+@@ -413,27 +413,32 @@ __sigqueue_alloc(int sig, struct task_struct *t, gfp_t flags, int override_rlimi
+ {
+ 	struct sigqueue *q = NULL;
+ 	struct user_struct *user;
++	int sigpending;
  
-+	if (!tb[IFLA_LINK]) {
-+		NL_SET_ERR_MSG_MOD(extack, "link not specified");
-+		return -EINVAL;
-+	}
-+
- 	real_dev = __dev_get_by_index(src_net, nla_get_u32(tb[IFLA_LINK]));
- 	if (!real_dev || !dev)
- 		return -ENODEV;
+ 	/*
+ 	 * Protect access to @t credentials. This can go away when all
+ 	 * callers hold rcu read lock.
++	 *
++	 * NOTE! A pending signal will hold on to the user refcount,
++	 * and we get/put the refcount only when the sigpending count
++	 * changes from/to zero.
+ 	 */
+ 	rcu_read_lock();
+-	user = get_uid(__task_cred(t)->user);
+-	atomic_inc(&user->sigpending);
++	user = __task_cred(t)->user;
++	sigpending = atomic_inc_return(&user->sigpending);
++	if (sigpending == 1)
++		get_uid(user);
+ 	rcu_read_unlock();
+ 
+-	if (override_rlimit ||
+-	    atomic_read(&user->sigpending) <=
+-			task_rlimit(t, RLIMIT_SIGPENDING)) {
++	if (override_rlimit || likely(sigpending <= task_rlimit(t, RLIMIT_SIGPENDING))) {
+ 		q = kmem_cache_alloc(sigqueue_cachep, flags);
+ 	} else {
+ 		print_dropped_signal(sig);
+ 	}
+ 
+ 	if (unlikely(q == NULL)) {
+-		atomic_dec(&user->sigpending);
+-		free_uid(user);
++		if (atomic_dec_and_test(&user->sigpending))
++			free_uid(user);
+ 	} else {
+ 		INIT_LIST_HEAD(&q->list);
+ 		q->flags = 0;
+@@ -447,8 +452,8 @@ static void __sigqueue_free(struct sigqueue *q)
+ {
+ 	if (q->flags & SIGQUEUE_PREALLOC)
+ 		return;
+-	atomic_dec(&q->user->sigpending);
+-	free_uid(q->user);
++	if (atomic_dec_and_test(&q->user->sigpending))
++		free_uid(q->user);
+ 	kmem_cache_free(sigqueue_cachep, q);
+ }
+ 
 -- 
 2.20.1
 
