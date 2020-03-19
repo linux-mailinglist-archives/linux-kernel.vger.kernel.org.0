@@ -2,36 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 47B2A18B767
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:33:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7844F18B841
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:43:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729208AbgCSNNv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 09:13:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:32968 "EHLO mail.kernel.org"
+        id S1727518AbgCSNmv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 09:42:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38796 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727710AbgCSNNs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 09:13:48 -0400
+        id S1726934AbgCSNmt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 09:42:49 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1B28620722;
-        Thu, 19 Mar 2020 13:13:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B2D3D20789;
+        Thu, 19 Mar 2020 13:42:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584623627;
-        bh=fzdg16jit59N7FXifsHK8DKb7NghhFYVaQ6brJqnmTE=;
+        s=default; t=1584625368;
+        bh=WubqlZVM8YQ9YipI+2Z/l0M6QBT3AQxeult3hrJhBw0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gGgTz9uv5N4Rzxyh03YL9PUBjxLedWC/oB0TA26cRsuaoz8cFWYHjs2eHn7sX/rTv
-         haEt/ccnsOAvrZQBwplnCblQvL+LmMmVGihCz5DoEygrgcXuUDeaYEYJe2TWyiTzCd
-         h3JqxN3bCKA/BbPkI6ByA6/6ctTE03vJz4kK/JMQ=
+        b=G2hC8+A83kjWus60Cc3UX59Je7skdvBaKdPbBqpBVInAEqXKxH5lLlsdhLUhuV88y
+         rBBHbevk8NZ5mfVRzOaFZV28VB8aunRQ6Q8KEDrXKDuVLLGWXp6x7f7hD0FpqOYcOR
+         mHdlaBDi8RM0AShQ/pGVz/GskUpQ34tgFYNvxtlg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        =?UTF-8?q?Linus=20L=C3=BCssing?= <linus.luessing@c0d3.blue>,
-        Sven Eckelmann <sven@narfation.org>,
-        Simon Wunderlich <sw@simonwunderlich.de>
-Subject: [PATCH 4.9 77/90] batman-adv: Use explicit tvlv padding for ELP packets
-Date:   Thu, 19 Mar 2020 14:00:39 +0100
-Message-Id: <20200319123952.254552777@linuxfoundation.org>
+        stable@vger.kernel.org,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        "Huang, Ying" <ying.huang@intel.com>,
+        Philip Li <philip.li@intel.com>,
+        Andi Kleen <andi.kleen@intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Sasha Levin <sashal@kernel.org>,
+        Feng Tang <feng.tang@intel.com>
+Subject: [PATCH 4.9 85/90] signal: avoid double atomic counter increments for user accounting
+Date:   Thu, 19 Mar 2020 14:00:47 +0100
+Message-Id: <20200319123954.529107056@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.2
 In-Reply-To: <20200319123928.635114118@linuxfoundation.org>
 References: <20200319123928.635114118@linuxfoundation.org>
@@ -44,61 +51,125 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sven Eckelmann <sven@narfation.org>
+From: Linus Torvalds <torvalds@linux-foundation.org>
 
-commit f4156f9656feac21f4de712fac94fae964c5d402 upstream.
+[ Upstream commit fda31c50292a5062332fa0343c084bd9f46604d9 ]
 
-The announcement messages of batman-adv COMPAT_VERSION 15 have the
-possibility to announce additional information via a dynamic TVLV part.
-This part is optional for the ELP packets and currently not parsed by the
-Linux implementation. Still out-of-tree versions are using it to transport
-things like neighbor hashes to optimize the rebroadcast behavior.
+When queueing a signal, we increment both the users count of pending
+signals (for RLIMIT_SIGPENDING tracking) and we increment the refcount
+of the user struct itself (because we keep a reference to the user in
+the signal structure in order to correctly account for it when freeing).
 
-Since the ELP broadcast packets are smaller than the minimal ethernet
-packet, it often has to be padded. This is often done (as specified in
-RFC894) with octets of zero and thus work perfectly fine with the TVLV
-part (making it a zero length and thus empty). But not all ethernet
-compatible hardware seems to follow this advice. To avoid ambiguous
-situations when parsing the TVLV header, just force the 4 bytes (TVLV
-length + padding) after the required ELP header to zero.
+That turns out to be fairly expensive, because both of them are atomic
+updates, and particularly under extreme signal handling pressure on big
+machines, you can get a lot of cache contention on the user struct.
+That can then cause horrid cacheline ping-pong when you do these
+multiple accesses.
 
-Fixes: d6f94d91f766 ("batman-adv: ELP - adding basic infrastructure")
-Reported-by: Linus Lüssing <linus.luessing@c0d3.blue>
-Signed-off-by: Sven Eckelmann <sven@narfation.org>
-Signed-off-by: Simon Wunderlich <sw@simonwunderlich.de>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+So change the reference counting to only pin the user for the _first_
+pending signal, and to unpin it when the last pending signal is
+dequeued.  That means that when a user sees a lot of concurrent signal
+queuing - which is the only situation when this matters - the only
+atomic access needed is generally the 'sigpending' count update.
+
+This was noticed because of a particularly odd timing artifact on a
+dual-socket 96C/192T Cascade Lake platform: when you get into bad
+contention, on that machine for some reason seems to be much worse when
+the contention happens in the upper 32-byte half of the cacheline.
+
+As a result, the kernel test robot will-it-scale 'signal1' benchmark had
+an odd performance regression simply due to random alignment of the
+'struct user_struct' (and pointed to a completely unrelated and
+apparently nonsensical commit for the regression).
+
+Avoiding the double increments (and decrements on the dequeueing side,
+of course) makes for much less contention and hugely improved
+performance on that will-it-scale microbenchmark.
+
+Quoting Feng Tang:
+
+ "It makes a big difference, that the performance score is tripled! bump
+  from original 17000 to 54000. Also the gap between 5.0-rc6 and
+  5.0-rc6+Jiri's patch is reduced to around 2%"
+
+[ The "2% gap" is the odd cacheline placement difference on that
+  platform: under the extreme contention case, the effect of which half
+  of the cacheline was hot was 5%, so with the reduced contention the
+  odd timing artifact is reduced too ]
+
+It does help in the non-contended case too, but is not nearly as
+noticeable.
+
+Reported-and-tested-by: Feng Tang <feng.tang@intel.com>
+Cc: Eric W. Biederman <ebiederm@xmission.com>
+Cc: Huang, Ying <ying.huang@intel.com>
+Cc: Philip Li <philip.li@intel.com>
+Cc: Andi Kleen <andi.kleen@intel.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/batman-adv/bat_v_elp.c |    8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+ kernel/signal.c | 23 ++++++++++++++---------
+ 1 file changed, 14 insertions(+), 9 deletions(-)
 
---- a/net/batman-adv/bat_v_elp.c
-+++ b/net/batman-adv/bat_v_elp.c
-@@ -335,21 +335,23 @@ out:
-  */
- int batadv_v_elp_iface_enable(struct batadv_hard_iface *hard_iface)
+diff --git a/kernel/signal.c b/kernel/signal.c
+index 57fadbe69c2e6..d90ccbeb909d2 100644
+--- a/kernel/signal.c
++++ b/kernel/signal.c
+@@ -373,27 +373,32 @@ __sigqueue_alloc(int sig, struct task_struct *t, gfp_t flags, int override_rlimi
  {
-+	static const size_t tvlv_padding = sizeof(__be32);
- 	struct batadv_elp_packet *elp_packet;
- 	unsigned char *elp_buff;
- 	u32 random_seqno;
- 	size_t size;
- 	int res = -ENOMEM;
+ 	struct sigqueue *q = NULL;
+ 	struct user_struct *user;
++	int sigpending;
  
--	size = ETH_HLEN + NET_IP_ALIGN + BATADV_ELP_HLEN;
-+	size = ETH_HLEN + NET_IP_ALIGN + BATADV_ELP_HLEN + tvlv_padding;
- 	hard_iface->bat_v.elp_skb = dev_alloc_skb(size);
- 	if (!hard_iface->bat_v.elp_skb)
- 		goto out;
+ 	/*
+ 	 * Protect access to @t credentials. This can go away when all
+ 	 * callers hold rcu read lock.
++	 *
++	 * NOTE! A pending signal will hold on to the user refcount,
++	 * and we get/put the refcount only when the sigpending count
++	 * changes from/to zero.
+ 	 */
+ 	rcu_read_lock();
+-	user = get_uid(__task_cred(t)->user);
+-	atomic_inc(&user->sigpending);
++	user = __task_cred(t)->user;
++	sigpending = atomic_inc_return(&user->sigpending);
++	if (sigpending == 1)
++		get_uid(user);
+ 	rcu_read_unlock();
  
- 	skb_reserve(hard_iface->bat_v.elp_skb, ETH_HLEN + NET_IP_ALIGN);
--	elp_buff = skb_put(hard_iface->bat_v.elp_skb, BATADV_ELP_HLEN);
-+	elp_buff = skb_put(hard_iface->bat_v.elp_skb,
-+			   BATADV_ELP_HLEN + tvlv_padding);
- 	elp_packet = (struct batadv_elp_packet *)elp_buff;
--	memset(elp_packet, 0, BATADV_ELP_HLEN);
-+	memset(elp_packet, 0, BATADV_ELP_HLEN + tvlv_padding);
+-	if (override_rlimit ||
+-	    atomic_read(&user->sigpending) <=
+-			task_rlimit(t, RLIMIT_SIGPENDING)) {
++	if (override_rlimit || likely(sigpending <= task_rlimit(t, RLIMIT_SIGPENDING))) {
+ 		q = kmem_cache_alloc(sigqueue_cachep, flags);
+ 	} else {
+ 		print_dropped_signal(sig);
+ 	}
  
- 	elp_packet->packet_type = BATADV_ELP;
- 	elp_packet->version = BATADV_COMPAT_VERSION;
+ 	if (unlikely(q == NULL)) {
+-		atomic_dec(&user->sigpending);
+-		free_uid(user);
++		if (atomic_dec_and_test(&user->sigpending))
++			free_uid(user);
+ 	} else {
+ 		INIT_LIST_HEAD(&q->list);
+ 		q->flags = 0;
+@@ -407,8 +412,8 @@ static void __sigqueue_free(struct sigqueue *q)
+ {
+ 	if (q->flags & SIGQUEUE_PREALLOC)
+ 		return;
+-	atomic_dec(&q->user->sigpending);
+-	free_uid(q->user);
++	if (atomic_dec_and_test(&q->user->sigpending))
++		free_uid(q->user);
+ 	kmem_cache_free(sigqueue_cachep, q);
+ }
+ 
+-- 
+2.20.1
+
 
 
