@@ -2,214 +2,166 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 68F7118BE6A
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 18:42:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E1D4818BE53
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 18:41:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728621AbgCSRmS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 13:42:18 -0400
-Received: from mout.kundenserver.de ([212.227.126.135]:39493 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728576AbgCSRmP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 13:42:15 -0400
-Received: from mail.cetitecgmbh.com ([87.190.42.90]) by
- mrelayeu.kundenserver.de (mreue009 [212.227.15.167]) with ESMTPSA (Nemesis)
- id 1MryKr-1jbePu2RHx-00nvui; Thu, 19 Mar 2020 18:41:47 +0100
-Received: from pflvmailgateway.corp.cetitec.com (unknown [127.0.0.1])
-        by mail.cetitecgmbh.com (Postfix) with ESMTP id 718EF65021B;
+        id S1728015AbgCSRlq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 13:41:46 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36832 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727034AbgCSRlp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 13:41:45 -0400
+Received: from paulmck-ThinkPad-P72.home (50-39-105-78.bvtn.or.frontiernet.net [50.39.105.78])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 64F902071C;
         Thu, 19 Mar 2020 17:41:44 +0000 (UTC)
-X-Virus-Scanned: amavisd-new at cetitec.com
-Received: from mail.cetitecgmbh.com ([127.0.0.1])
-        by pflvmailgateway.corp.cetitec.com (pflvmailgateway.corp.cetitec.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id dqw4xhgj7N5p; Thu, 19 Mar 2020 18:41:44 +0100 (CET)
-Received: from pfwsexchange.corp.cetitec.com (unknown [10.10.1.99])
-        by mail.cetitecgmbh.com (Postfix) with ESMTPS id 0690264F8ED;
-        Thu, 19 Mar 2020 18:41:44 +0100 (CET)
-Received: from pflmari.corp.cetitec.com (10.8.5.52) by
- PFWSEXCHANGE.corp.cetitec.com (10.10.1.99) with Microsoft SMTP Server (TLS)
- id 15.0.1497.2; Thu, 19 Mar 2020 18:41:44 +0100
-Received: by pflmari.corp.cetitec.com (Postfix, from userid 1000)
-        id 739388050C; Thu, 19 Mar 2020 18:41:43 +0100 (CET)
-Date:   Thu, 19 Mar 2020 18:41:43 +0100
-From:   Alex Riesen <alexander.riesen@cetitec.com>
-To:     Kieran Bingham <kieran.bingham@ideasonboard.com>
-CC:     Geert Uytterhoeven <geert@linux-m68k.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        "Laurent Pinchart" <laurent.pinchart@ideasonboard.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        <devel@driverdev.osuosl.org>, <linux-media@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-renesas-soc@vger.kernel.org>
-Subject: [PATCH v2 01/10] media: adv748x: fix end-of-line terminators in
- diagnostic statements
-Message-ID: <5272d873b4daf8b0bdb8aff81b08ab3508da9567.1584639664.git.alexander.riesen@cetitec.com>
-Mail-Followup-To: Alex Riesen <alexander.riesen@cetitec.com>,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        devel@driverdev.osuosl.org, linux-media@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-References: <cover.1584639664.git.alexander.riesen@cetitec.com>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1584639704;
+        bh=kFYy6eHOfgxXyI8tRZ4ScvOVxBPCqcDs4Bzn7BH7JTw=;
+        h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+        b=NWgmY2/uT/gsgnGfNEWRmgppBPkoJpj21ZwuXmUDal+NRoibXBiJpRVK1E4yRlRwz
+         p5AJddyUhi4nQKIVLXo94ykxKIDJeg8NPwimOOdzWE4WFoVNdJEKk0cmNyFXjWlPNN
+         QgDGU876yWGdVqyMYXRBetUEifdWPKTrAzt81S64=
+Received: by paulmck-ThinkPad-P72.home (Postfix, from userid 1000)
+        id 2F91935226B9; Thu, 19 Mar 2020 10:41:44 -0700 (PDT)
+Date:   Thu, 19 Mar 2020 10:41:44 -0700
+From:   "Paul E. McKenney" <paulmck@kernel.org>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     rcu@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-team@fb.com, mingo@kernel.org, jiangshanlai@gmail.com,
+        dipankar@in.ibm.com, akpm@linux-foundation.org,
+        mathieu.desnoyers@efficios.com, josh@joshtriplett.org,
+        tglx@linutronix.de, peterz@infradead.org, dhowells@redhat.com,
+        edumazet@google.com, fweisbec@gmail.com, oleg@redhat.com,
+        joel@joelfernandes.org
+Subject: Re: [PATCH RFC v2 tip/core/rcu 02/22] rcu: Add per-task state to RCU
+ CPU stall warnings
+Message-ID: <20200319174144.GJ3199@paulmck-ThinkPad-P72>
+Reply-To: paulmck@kernel.org
+References: <20200319001024.GA28798@paulmck-ThinkPad-P72>
+ <20200319001100.24917-2-paulmck@kernel.org>
+ <20200319132731.49b0d020@gandalf.local.home>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <cover.1584639664.git.alexander.riesen@cetitec.com>
-X-Originating-IP: [10.8.5.52]
-X-ClientProxiedBy: PFWSEXCHANGE.corp.cetitec.com (10.10.1.99) To
- PFWSEXCHANGE.corp.cetitec.com (10.10.1.99)
-X-EsetResult: clean, is OK
-X-EsetId: 37303A290D7F536A6D7762
-X-Provags-ID: V03:K1:4ZJC+78LMq1c97WiQD0OVYyKMvI2ohF7vZwBoZBySSHelaCDmeq
- jTulDTZ6oMWVm6JGSPM381luWOIXY0G0Xy5Jxtd8+LkP1J+xMMgMF47U3XO2pC5K8ZA27SY
- u5z3JDR9b4J1zpLbY1EPsQjHQ0Btv7f6oUPcCl/l0Xwv7tkGj2EKFAR7qPWpZRl8zRrMKE4
- pLDCrm3hu+wfQJsKjvp3A==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:ojVJRJsVJU8=:N5P41ydm6kNSZsBBgmqFAA
- uEE2h2JO+yHumdQ9fz1F9A/c5FzikkH18zSopYh0pRURk6Z7xz+RVD3YvK1gatezthfuqIDi1
- 9nIDWA/VFnlEe2MhYIc6VgiaJ6jc6hQP6h63xCqd6lKk/GaWDTRgEt7M6rRPVKavixF92lVRw
- jghXdwG745BXiwwtC86RusvPnHpwEfq6UotmurYqKeZwNWAi2bix/i8Z5qL3wWl9EzPMt1jXy
- COXi0qoQsQwYBIm3S+EDHhmW5n/qgJKQcgxZP4roONapuv6yYYhLi9pvbiZDTj7SXOhwmS9OB
- 4w0cEhx8iDf7B6Sf13irliZfQj0OAMbooAJoTaTrEL9eGowycTt1ljZ8BSWF6L/2evIbu4Rog
- 7oU0hApyfODq7n7izg6L3xJIYUAcpS1fPiKquwgfsa7wX3RSGI8MwMN6XQedhkOCDLvwUxqQh
- ZpDA6p6aH756Jbsevz/O1YIk8iGv6zXmptiQ5J/wU+75c0tY78y7R5wXFbPv0MM8SK/VOfGai
- dIm+jBNxmNdVeTKu3nNbQJjMkfMx4z1DAi+pPQMgt3XNVPBz4BSOU4VHjyEsfNPaHNaYCK5Wq
- FVph8hsp7VEJLAS/milgxzS6UJw/AxVyv+LbTII30H/DuL5GS0/0vfXhac/lir0z7Fz3q4OnC
- XTGBstnL40lvis1QCKTiMpxbC6CzO+57XrIaJr0N8f+N7H7BkqV6O3Q1c/+HpCw9bLpsNqgI8
- WyFHcBMRMa51BKTEXIRmXbJxSBqZ8n4/ry3Qvm2gXsgG1JN6VfM94MofeFm7PRLFz9E/6B3Ba
- FTPjLdLk7yXbaRey6xUmFJzXWS1eBkn+uXGl8QlscgNPKH+A4sS/LGx6jQkwv+3cLIpiZM/
+In-Reply-To: <20200319132731.49b0d020@gandalf.local.home>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Signed-off-by: Alexander Riesen <alexander.riesen@cetitec.com>
----
- drivers/media/i2c/adv748x/adv748x-core.c | 24 ++++++++++++------------
- drivers/media/i2c/adv748x/adv748x-csi2.c |  2 +-
- 2 files changed, 13 insertions(+), 13 deletions(-)
+On Thu, Mar 19, 2020 at 01:27:31PM -0400, Steven Rostedt wrote:
+> On Wed, 18 Mar 2020 17:10:40 -0700
+> paulmck@kernel.org wrote:
+> 
+> > From: "Paul E. McKenney" <paulmck@kernel.org>
+> > 
+> > Currently, an RCU-preempt CPU stall warning simply lists the PIDs of
+> > those tasks holding up the current grace period.  This can be helpful,
+> > but more can be even more helpful.
+> > 
+> > To this end, this commit adds the nesting level, whether the task
+> > things it was preempted in its current RCU read-side critical section,
+> 
+> s/things/thinks/
 
-diff --git a/drivers/media/i2c/adv748x/adv748x-core.c b/drivers/media/i2c/adv748x/adv748x-core.c
-index 23e02ff27b17..c3fb113cef62 100644
---- a/drivers/media/i2c/adv748x/adv748x-core.c
-+++ b/drivers/media/i2c/adv748x/adv748x-core.c
-@@ -623,11 +623,11 @@ static int adv748x_parse_dt(struct adv748x_state *state)
- 
- 	for_each_endpoint_of_node(state->dev->of_node, ep_np) {
- 		of_graph_parse_endpoint(ep_np, &ep);
--		adv_info(state, "Endpoint %pOF on port %d", ep.local_node,
-+		adv_info(state, "Endpoint %pOF on port %d\n", ep.local_node,
- 			 ep.port);
- 
- 		if (ep.port >= ADV748X_PORT_MAX) {
--			adv_err(state, "Invalid endpoint %pOF on port %d",
-+			adv_err(state, "Invalid endpoint %pOF on port %d\n",
- 				ep.local_node, ep.port);
- 
- 			continue;
-@@ -635,7 +635,7 @@ static int adv748x_parse_dt(struct adv748x_state *state)
- 
- 		if (state->endpoints[ep.port]) {
- 			adv_err(state,
--				"Multiple port endpoints are not supported");
-+				"Multiple port endpoints are not supported\n");
- 			continue;
- 		}
- 
-@@ -702,62 +702,62 @@ static int adv748x_probe(struct i2c_client *client)
- 	/* Discover and process ports declared by the Device tree endpoints */
- 	ret = adv748x_parse_dt(state);
- 	if (ret) {
--		adv_err(state, "Failed to parse device tree");
-+		adv_err(state, "Failed to parse device tree\n");
- 		goto err_free_mutex;
- 	}
- 
- 	/* Configure IO Regmap region */
- 	ret = adv748x_configure_regmap(state, ADV748X_PAGE_IO);
- 	if (ret) {
--		adv_err(state, "Error configuring IO regmap region");
-+		adv_err(state, "Error configuring IO regmap region\n");
- 		goto err_cleanup_dt;
- 	}
- 
- 	ret = adv748x_identify_chip(state);
- 	if (ret) {
--		adv_err(state, "Failed to identify chip");
-+		adv_err(state, "Failed to identify chip\n");
- 		goto err_cleanup_dt;
- 	}
- 
- 	/* Configure remaining pages as I2C clients with regmap access */
- 	ret = adv748x_initialise_clients(state);
- 	if (ret) {
--		adv_err(state, "Failed to setup client regmap pages");
-+		adv_err(state, "Failed to setup client regmap pages\n");
- 		goto err_cleanup_clients;
- 	}
- 
- 	/* SW reset ADV748X to its default values */
- 	ret = adv748x_reset(state);
- 	if (ret) {
--		adv_err(state, "Failed to reset hardware");
-+		adv_err(state, "Failed to reset hardware\n");
- 		goto err_cleanup_clients;
- 	}
- 
- 	/* Initialise HDMI */
- 	ret = adv748x_hdmi_init(&state->hdmi);
- 	if (ret) {
--		adv_err(state, "Failed to probe HDMI");
-+		adv_err(state, "Failed to probe HDMI\n");
- 		goto err_cleanup_clients;
- 	}
- 
- 	/* Initialise AFE */
- 	ret = adv748x_afe_init(&state->afe);
- 	if (ret) {
--		adv_err(state, "Failed to probe AFE");
-+		adv_err(state, "Failed to probe AFE\n");
- 		goto err_cleanup_hdmi;
- 	}
- 
- 	/* Initialise TXA */
- 	ret = adv748x_csi2_init(state, &state->txa);
- 	if (ret) {
--		adv_err(state, "Failed to probe TXA");
-+		adv_err(state, "Failed to probe TXA\n");
- 		goto err_cleanup_afe;
- 	}
- 
- 	/* Initialise TXB */
- 	ret = adv748x_csi2_init(state, &state->txb);
- 	if (ret) {
--		adv_err(state, "Failed to probe TXB");
-+		adv_err(state, "Failed to probe TXB\n");
- 		goto err_cleanup_txa;
- 	}
- 
-diff --git a/drivers/media/i2c/adv748x/adv748x-csi2.c b/drivers/media/i2c/adv748x/adv748x-csi2.c
-index 2091cda50935..c43ce5d78723 100644
---- a/drivers/media/i2c/adv748x/adv748x-csi2.c
-+++ b/drivers/media/i2c/adv748x/adv748x-csi2.c
-@@ -72,7 +72,7 @@ static int adv748x_csi2_registered(struct v4l2_subdev *sd)
- 	struct adv748x_state *state = tx->state;
- 	int ret;
- 
--	adv_dbg(state, "Registered %s (%s)", is_txa(tx) ? "TXA":"TXB",
-+	adv_dbg(state, "Registered %s (%s)\n", is_txa(tx) ? "TXA":"TXB",
- 			sd->name);
- 
- 	/*
--- 
-2.25.1.25.g9ecbe7eb18
+I thing that was an excellent catch, thank you!  ;-)
 
+> > whether RCU core has asked this task for a quiescent state, whether the
+> > expedited-grace-period hint is set, and whether the task believes that
+> > it is on the blocked-tasks list (it must be, or it would not be printed,
+> > but if things are broken, best not to take too much for granted).
+> > 
+> > Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
+> > ---
+> >  kernel/rcu/tree_stall.h | 38 ++++++++++++++++++++++++++++++++++++--
+> >  1 file changed, 36 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/kernel/rcu/tree_stall.h b/kernel/rcu/tree_stall.h
+> > index 502b4dd..e19487d 100644
+> > --- a/kernel/rcu/tree_stall.h
+> > +++ b/kernel/rcu/tree_stall.h
+> > @@ -192,14 +192,40 @@ static void rcu_print_detail_task_stall_rnp(struct rcu_node *rnp)
+> >  	raw_spin_unlock_irqrestore_rcu_node(rnp, flags);
+> >  }
+> >  
+> > +// Communicate task state back to the RCU CPU stall warning request.
+> > +struct rcu_stall_chk_rdr {
+> > +	int nesting;
+> > +	union rcu_special rs;
+> > +	bool on_blkd_list;
+> > +};
+> > +
+> > +/*
+> > + * Report out the state of a not-running task that is stalling the
+> > + * current RCU grace period.
+> > + */
+> > +static bool check_slow_task(struct task_struct *t, void *arg)
+> > +{
+> > +	struct rcu_node *rnp;
+> > +	struct rcu_stall_chk_rdr *rscrp = arg;
+> > +
+> > +	if (task_curr(t))
+> > +		return false; // It is running, so decline to inspect it.
+> 
+> Since it can be locked on_rq(), should we report that too?
 
+If it is locked on_rq() but !task_curr(t), it is runnable but not running.
+Because the runqueue lock is held in that case, it cannot start running,
+so the remainder of this function can safely inspect its state.  The
+runqueue locks will supply the required ordering, ensuring a consistent
+snapshot of the task's state.
+
+However, if it is task_curr(t), which implies on_rq() as I understand
+it, the task is running and therefore might be changing its state, and
+doing so without any sort of attention to synchronization.  After all,
+it is the task's private state that it is changing, so we don't want to
+be paying the cost of any synchronization anyway.  Hence the return of
+false above.
+
+Or am I missing your point?
+
+							Thanx, Paul
+
+> -- Steve
+> 
+> > +	rscrp->nesting = t->rcu_read_lock_nesting;
+> > +	rscrp->rs = t->rcu_read_unlock_special;
+> > +	rnp = t->rcu_blocked_node;
+> > +	rscrp->on_blkd_list = !list_empty(&t->rcu_node_entry);
+> > +	return true;
+> > +}
+> > +
+> >  /*
+> >   * Scan the current list of tasks blocked within RCU read-side critical
+> >   * sections, printing out the tid of each.
+> >   */
+> >  static int rcu_print_task_stall(struct rcu_node *rnp)
+> >  {
+> > -	struct task_struct *t;
+> >  	int ndetected = 0;
+> > +	struct rcu_stall_chk_rdr rscr;
+> > +	struct task_struct *t;
+> >  
+> >  	if (!rcu_preempt_blocked_readers_cgp(rnp))
+> >  		return 0;
+> > @@ -208,7 +234,15 @@ static int rcu_print_task_stall(struct rcu_node *rnp)
+> >  	t = list_entry(rnp->gp_tasks->prev,
+> >  		       struct task_struct, rcu_node_entry);
+> >  	list_for_each_entry_continue(t, &rnp->blkd_tasks, rcu_node_entry) {
+> > -		pr_cont(" P%d", t->pid);
+> > +		if (!try_invoke_on_locked_down_task(t, check_slow_task, &rscr))
+> > +			pr_cont(" P%d", t->pid);
+> > +		else
+> > +			pr_cont(" P%d/%d:%c%c%c%c",
+> > +				t->pid, rscr.nesting,
+> > +				".b"[rscr.rs.b.blocked],
+> > +				".q"[rscr.rs.b.need_qs],
+> > +				".e"[rscr.rs.b.exp_hint],
+> > +				".l"[rscr.on_blkd_list]);
+> >  		ndetected++;
+> >  	}
+> >  	pr_cont("\n");
+> 
