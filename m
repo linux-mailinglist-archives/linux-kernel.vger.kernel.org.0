@@ -2,145 +2,152 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7D07E18BC84
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 17:29:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BE51718BC6B
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 17:28:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728532AbgCSQ25 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 12:28:57 -0400
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:39620 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728474AbgCSQ2x (ORCPT
+        id S1727978AbgCSQ2U (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 12:28:20 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:39764 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727416AbgCSQ2T (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 12:28:53 -0400
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 02JGSdxt088650;
-        Thu, 19 Mar 2020 11:28:39 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1584635319;
-        bh=fbU2VeKzCVkSGi4mPYs5aS60Vlnrh8l8Q/P3Y9pn7qI=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=ONfRujteK5YYEUyuhp+s7ip+/flCRqmQGLwCXJLGd/bNaTRBit9MBSNSakHoqEZiY
-         zIz5FQh5vWLFEZFgmougjzEtlZy9gzlcdp3oqDD8B34dw3xiflej5P1H0RfbXEf/qv
-         oDWTM1j/38sIqpftsGAe/Zzmg04P9U6DOo1eSPGE=
-Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 02JGSd99110977
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 19 Mar 2020 11:28:39 -0500
-Received: from DFLE112.ent.ti.com (10.64.6.33) by DFLE103.ent.ti.com
- (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Thu, 19
- Mar 2020 11:28:38 -0500
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DFLE112.ent.ti.com
- (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Thu, 19 Mar 2020 11:28:39 -0500
-Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id 02JGSb2M047871;
-        Thu, 19 Mar 2020 11:28:38 -0500
-From:   Grygorii Strashko <grygorii.strashko@ti.com>
-To:     Peter Ujfalusi <peter.ujfalusi@ti.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Tero Kristo <t-kristo@ti.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        netdev <netdev@vger.kernel.org>, Roger Quadros <rogerq@ti.com>,
-        <devicetree@vger.kernel.org>, Jakub Kicinski <kuba@kernel.org>
-CC:     Murali Karicheri <m-karicheri2@ti.com>,
-        Sekhar Nori <nsekhar@ti.com>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        Grygorii Strashko <grygorii.strashko@ti.com>
-Subject: [PATCH net-next v5 10/11] arm64: dts: ti: k3-j721e-common-proc-board: add mcu cpsw nuss pinmux and phy defs
-Date:   Thu, 19 Mar 2020 18:28:05 +0200
-Message-ID: <20200319162806.25705-11-grygorii.strashko@ti.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200319162806.25705-1-grygorii.strashko@ti.com>
-References: <20200319162806.25705-1-grygorii.strashko@ti.com>
+        Thu, 19 Mar 2020 12:28:19 -0400
+Received: by mail-wr1-f68.google.com with SMTP id h6so3858779wrs.6;
+        Thu, 19 Mar 2020 09:28:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=SPgbvNOx93ZbKq64/B6/Z1gW0+quFKremjRSKVCy664=;
+        b=LFqUgnckFAOA9p+wCjOZ+EhTau2SI0k45PYdANda466lpPHrNJ665SzPzR+aNSKJxB
+         Rwm3nn/XF7a0al/6zmG4QENhSXWyEmxDnpnirHW4YW2XKi/1n/5jYuUl+/xCRq5n4oPC
+         O4XQzz8H4fKscVlPYfA2098A+MPZKS6Xhyf/chTQglAkwcbL4wa4mXMSoWDWgaQ5ZqtA
+         xuFpKp2fRITG0nc1x4ZJniRpm88xs0+d62KmZg2ZGrzTY3bzKNvjXFwmmFWNn8EQsksT
+         91cj7xrLFx3tLg+RklBpueUhbArZ/yDFXB2H44fIiYwTqkkYQ1JP3xjPeG1RGJm1Hurv
+         EXQQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=SPgbvNOx93ZbKq64/B6/Z1gW0+quFKremjRSKVCy664=;
+        b=QXs7c4Z5n/TJ9frAFuk9VmxebokU5ETsFl5AbzrjodejXmcFRQMrBS0V9pu73yzij2
+         W3/CxTp/MSHcrGz8HOer+bLAfg7WRmPgw2R33wAEWS5JP1KbaCGkclJOXmgN3Zb6cXyq
+         8vZ83w+CTVavNIiOh+cK+bdyVB+eOtnT/klr6tYXkDoBpAccejUAITuHnJpOqRNld1F3
+         K7380/xIVTU4yugNwxs56/+H6crYol8PVJBCYHLXp+3cbYARswUF8UUpiSw09iQKPOlk
+         8yuzDCHK2V2ZqAxHVYMQJOx0o1fdLeP/4sul5IrwYbv74Ulj8X5lNybayPKCsu7Lz7XO
+         Buvw==
+X-Gm-Message-State: ANhLgQ1B5oJA1eloo76uEK6/3KfCSM6lGJbXD2v5wk6cJcGG6pw7v2DA
+        wdwHT8x5TBjTokH9yRIES7VrbSCR+zZCuOiQ3Rk=
+X-Google-Smtp-Source: ADFU+vuaZB2YqdQTSwwXNJGT/DzeIMoI6zgsU2pirhzQONlQGEuJaSY7zIUne4g6UI8NM14HSloKXFs1XHhWX101AEo=
+X-Received: by 2002:a5d:56c9:: with SMTP id m9mr5082680wrw.289.1584635297101;
+ Thu, 19 Mar 2020 09:28:17 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+References: <20200319131221.14044-1-david@redhat.com> <20200319131221.14044-2-david@redhat.com>
+In-Reply-To: <20200319131221.14044-2-david@redhat.com>
+From:   Pankaj Gupta <pankaj.gupta.linux@gmail.com>
+Date:   Thu, 19 Mar 2020 17:28:05 +0100
+Message-ID: <CAM9Jb+gD9YWgio5Nod577iH9=HHf8jZFspVHstQ7cyCWzE2PKQ@mail.gmail.com>
+Subject: Re: [PATCH v3 1/8] drivers/base/memory: rename MMOP_ONLINE_KEEP to MMOP_ONLINE
+To:     David Hildenbrand <david@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linuxppc-dev@lists.ozlabs.org, linux-hyperv@vger.kernel.org,
+        Wei Yang <richard.weiyang@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Oscar Salvador <osalvador@suse.de>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Baoquan He <bhe@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The TI J721E EVM base board has TI DP83867 PHY connected to external CPSW
-NUSS Port 1 in rgmii-rxid mode.
+> The name is misleading and it's not really clear what is "kept". Let's just
+> name it like the online_type name we expose to user space ("online").
+>
+> Add some documentation to the types.
+>
+> Reviewed-by: Wei Yang <richard.weiyang@gmail.com>
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: Michal Hocko <mhocko@kernel.org>
+> Cc: Oscar Salvador <osalvador@suse.de>
+> Cc: "Rafael J. Wysocki" <rafael@kernel.org>
+> Cc: Baoquan He <bhe@redhat.com>
+> Cc: Wei Yang <richard.weiyang@gmail.com>
+> Signed-off-by: David Hildenbrand <david@redhat.com>
+> ---
+>  drivers/base/memory.c          | 9 +++++----
+>  include/linux/memory_hotplug.h | 6 +++++-
+>  2 files changed, 10 insertions(+), 5 deletions(-)
+>
+> diff --git a/drivers/base/memory.c b/drivers/base/memory.c
+> index 6448c9ece2cb..8c5ce42c0fc3 100644
+> --- a/drivers/base/memory.c
+> +++ b/drivers/base/memory.c
+> @@ -216,7 +216,7 @@ static int memory_subsys_online(struct device *dev)
+>          * attribute and need to set the online_type.
+>          */
+>         if (mem->online_type < 0)
+> -               mem->online_type = MMOP_ONLINE_KEEP;
+> +               mem->online_type = MMOP_ONLINE;
+>
+>         ret = memory_block_change_state(mem, MEM_ONLINE, MEM_OFFLINE);
+>
+> @@ -251,7 +251,7 @@ static ssize_t state_store(struct device *dev, struct device_attribute *attr,
+>         else if (sysfs_streq(buf, "online_movable"))
+>                 online_type = MMOP_ONLINE_MOVABLE;
+>         else if (sysfs_streq(buf, "online"))
+> -               online_type = MMOP_ONLINE_KEEP;
+> +               online_type = MMOP_ONLINE;
+>         else if (sysfs_streq(buf, "offline"))
+>                 online_type = MMOP_OFFLINE;
+>         else {
+> @@ -262,7 +262,7 @@ static ssize_t state_store(struct device *dev, struct device_attribute *attr,
+>         switch (online_type) {
+>         case MMOP_ONLINE_KERNEL:
+>         case MMOP_ONLINE_MOVABLE:
+> -       case MMOP_ONLINE_KEEP:
+> +       case MMOP_ONLINE:
+>                 /* mem->online_type is protected by device_hotplug_lock */
+>                 mem->online_type = online_type;
+>                 ret = device_online(&mem->dev);
+> @@ -342,7 +342,8 @@ static ssize_t valid_zones_show(struct device *dev,
+>         }
+>
+>         nid = mem->nid;
+> -       default_zone = zone_for_pfn_range(MMOP_ONLINE_KEEP, nid, start_pfn, nr_pages);
+> +       default_zone = zone_for_pfn_range(MMOP_ONLINE, nid, start_pfn,
+> +                                         nr_pages);
+>         strcat(buf, default_zone->name);
+>
+>         print_allowed_zone(buf, nid, start_pfn, nr_pages, MMOP_ONLINE_KERNEL,
+> diff --git a/include/linux/memory_hotplug.h b/include/linux/memory_hotplug.h
+> index 3195d11876ea..3aaf00db224c 100644
+> --- a/include/linux/memory_hotplug.h
+> +++ b/include/linux/memory_hotplug.h
+> @@ -47,9 +47,13 @@ enum {
+>
+>  /* Types for control the zone type of onlined and offlined memory */
+>  enum {
+> +       /* Offline the memory. */
+>         MMOP_OFFLINE = -1,
+> -       MMOP_ONLINE_KEEP,
+> +       /* Online the memory. Zone depends, see default_zone_for_pfn(). */
+> +       MMOP_ONLINE,
+> +       /* Online the memory to ZONE_NORMAL. */
+>         MMOP_ONLINE_KERNEL,
+> +       /* Online the memory to ZONE_MOVABLE. */
+>         MMOP_ONLINE_MOVABLE,
+>  };
+>
+> --
+Looks good to me.
 
-Hence, add pinmux and Ethernet PHY configuration for TI j721e SoC MCU
-Gigabit Ethernet two ports Switch subsystem (CPSW NUSS).
+Acked-by: Pankaj Gupta <pankaj.gupta.linux@gmail.com>
 
-Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
-Tested-by: Murali Karicheri <m-karicheri2@ti.com>
----
- .../dts/ti/k3-j721e-common-proc-board.dts     | 43 +++++++++++++++++++
- 1 file changed, 43 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/ti/k3-j721e-common-proc-board.dts b/arch/arm64/boot/dts/ti/k3-j721e-common-proc-board.dts
-index 7a5c3d4adadd..98e5e17e3ff7 100644
---- a/arch/arm64/boot/dts/ti/k3-j721e-common-proc-board.dts
-+++ b/arch/arm64/boot/dts/ti/k3-j721e-common-proc-board.dts
-@@ -8,6 +8,7 @@
- #include "k3-j721e-som-p0.dtsi"
- #include <dt-bindings/gpio/gpio.h>
- #include <dt-bindings/input/input.h>
-+#include <dt-bindings/net/ti-dp83867.h>
- 
- / {
- 	chosen {
-@@ -128,6 +129,30 @@
- 			J721E_WKUP_IOPAD(0x38, PIN_INPUT, 0) /* (A23) MCU_OSPI1_LBCLKO */
- 		>;
- 	};
-+
-+	mcu_cpsw_pins_default: mcu_cpsw_pins_default {
-+		pinctrl-single,pins = <
-+			J721E_WKUP_IOPAD(0x0058, PIN_OUTPUT, 0) /* MCU_RGMII1_TX_CTL */
-+			J721E_WKUP_IOPAD(0x005c, PIN_INPUT, 0) /* MCU_RGMII1_RX_CTL */
-+			J721E_WKUP_IOPAD(0x0060, PIN_OUTPUT, 0) /* MCU_RGMII1_TD3 */
-+			J721E_WKUP_IOPAD(0x0064, PIN_OUTPUT, 0) /* MCU_RGMII1_TD2 */
-+			J721E_WKUP_IOPAD(0x0068, PIN_OUTPUT, 0) /* MCU_RGMII1_TD1 */
-+			J721E_WKUP_IOPAD(0x006c, PIN_OUTPUT, 0) /* MCU_RGMII1_TD0 */
-+			J721E_WKUP_IOPAD(0x0078, PIN_INPUT, 0) /* MCU_RGMII1_RD3 */
-+			J721E_WKUP_IOPAD(0x007c, PIN_INPUT, 0) /* MCU_RGMII1_RD2 */
-+			J721E_WKUP_IOPAD(0x0080, PIN_INPUT, 0) /* MCU_RGMII1_RD1 */
-+			J721E_WKUP_IOPAD(0x0084, PIN_INPUT, 0) /* MCU_RGMII1_RD0 */
-+			J721E_WKUP_IOPAD(0x0070, PIN_INPUT, 0) /* MCU_RGMII1_TXC */
-+			J721E_WKUP_IOPAD(0x0074, PIN_INPUT, 0) /* MCU_RGMII1_RXC */
-+		>;
-+	};
-+
-+	mcu_mdio_pins_default: mcu_mdio1_pins_default {
-+		pinctrl-single,pins = <
-+			J721E_WKUP_IOPAD(0x008c, PIN_OUTPUT, 0) /* MCU_MDIO0_MDC */
-+			J721E_WKUP_IOPAD(0x0088, PIN_INPUT, 0) /* MCU_MDIO0_MDIO */
-+		>;
-+	};
- };
- 
- &wkup_uart0 {
-@@ -429,3 +454,21 @@
- 		#gpio-cells = <2>;
- 	};
- };
-+
-+&mcu_cpsw {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&mcu_cpsw_pins_default &mcu_mdio_pins_default>;
-+};
-+
-+&davinci_mdio {
-+	phy0: ethernet-phy@0 {
-+		reg = <0>;
-+		ti,rx-internal-delay = <DP83867_RGMIIDCTL_2_00_NS>;
-+		ti,fifo-depth = <DP83867_PHYCR_FIFO_DEPTH_4_B_NIB>;
-+	};
-+};
-+
-+&cpsw_port1 {
-+	phy-mode = "rgmii-rxid";
-+	phy-handle = <&phy0>;
-+};
--- 
-2.17.1
-
+> 2.24.1
+>
+>
