@@ -2,111 +2,68 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 76B8E18B133
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 11:24:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 116FD18B13B
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 11:25:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726785AbgCSKYR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 06:24:17 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:45135 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726765AbgCSKYP (ORCPT
+        id S1727101AbgCSKZk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 06:25:40 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:57688 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726767AbgCSKZk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 06:24:15 -0400
-Received: by mail-pg1-f193.google.com with SMTP id m15so1014239pgv.12
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Mar 2020 03:24:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=ejqis7jZWtiS2ZJTMrRUUKldwFIqOJuqqMCf3220n+4=;
-        b=hMfSKg1AkvvlQME8YGZu9tky0WqVsplrt7JrWxrTqFiKboOzIKmDiLwh38WSiez0Fx
-         vXZMCa3A7gMmUsjJPEhaooP1Ibtae1V2h41wqN/eazLKPEHSNnKKYuQf/0b0+zE5J8Wi
-         0I1L0Tle35xHNWanMkUymga3f0fTvI7mHSCwYYn58YQJAYcyHXN3zU8YKYvpx+e0vH6D
-         kWPR9rMXZVqj3BbI5CqtsWgQ9GYbokoBYeInrFcSgvNOeHJmSS/l1Sledp1LRbZm+RYk
-         mQqtoEoCncsJ7+Xu3Lk5JAWFh3UVJojPdtcpy+wOXJm/sOhMva0WyyI1C8WDvdOBA5JR
-         rxMw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=ejqis7jZWtiS2ZJTMrRUUKldwFIqOJuqqMCf3220n+4=;
-        b=RsfbW4YjDkuIy6iW+F0Vl6aakOR8x1gIYEHtw0u7QalpQP/vY0aSqybrijrP369AoC
-         nPYic5p9cPj5queCQWW4ORnnSgaZFMYi7znip54RWHdJGFqMi00ox/cu3jJu7SA+nvX9
-         DEvsIofjNRc1hm5ZWh3U/ZaCHRLZb4q8r+fCkm+M5VM20lww0W8C55FR+hhAQKdkiDZy
-         jNXKL2v/o0RRy6DCwbUmo9GuMdb1G6sYvFIsWcZX5jjwgNXDS/yzHg3nK0v0xUgVpwiC
-         6bB4LtjRpDat3zmxAH9QZjmCt0ghw+3f+vigUdA0uFtMoCi2PiAzoEqdnmn/z0j2z5i5
-         /2Xg==
-X-Gm-Message-State: ANhLgQ0nO5SlvKINmpjZycGuMr2vTc8bpwo4/azAJHfF6YlWuOqrP70z
-        MAufKngfLKkOAi5WVD4wUiBrcA==
-X-Google-Smtp-Source: ADFU+vsfsrSDZTmHpVU3LAAmj3UlUBy/81zcWkCE3fx118L6TIcuQvcw29TgeFrn42KkMnYAVFhMaQ==
-X-Received: by 2002:aa7:8708:: with SMTP id b8mr3375903pfo.209.1584613454639;
-        Thu, 19 Mar 2020 03:24:14 -0700 (PDT)
-Received: from localhost ([122.171.118.46])
-        by smtp.gmail.com with ESMTPSA id i126sm1850038pfc.105.2020.03.19.03.24.13
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 19 Mar 2020 03:24:13 -0700 (PDT)
-Date:   Thu, 19 Mar 2020 15:54:11 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Sibi Sankar <sibis@codeaurora.org>
-Cc:     Rajendra Nayak <rnayak@codeaurora.org>, sboyd@kernel.org,
-        georgi.djakov@linaro.org, saravanak@google.com, nm@ti.com,
-        bjorn.andersson@linaro.org, agross@kernel.org,
-        david.brown@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        rjw@rjwysocki.net, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, dianders@chromium.org, mka@chromium.org,
-        vincent.guittot@linaro.org, amit.kucheria@linaro.org,
-        ulf.hansson@linaro.org, linux-kernel-owner@vger.kernel.org
-Subject: Re: [RFC v3 00/10] DDR/L3 Scaling support on SDM845 and SC7180 SoCs
-Message-ID: <20200319102411.oivesngrk7gy7vtw@vireshk-i7>
-References: <20200127200350.24465-1-sibis@codeaurora.org>
- <19cf027ba87ade1b895ea90ac0fedbe2@codeaurora.org>
- <20200318034243.o2metmggzuah6cqw@vireshk-i7>
- <f6a7930a-4eaa-6982-88c6-b50773bee9d8@codeaurora.org>
- <ea4265f3f4b5a439d70d3c80bcc77b7f@codeaurora.org>
+        Thu, 19 Mar 2020 06:25:40 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=BIh9xpmYL6wBc1GMSHkXlW6IWHwV1fcXo2svbBsNWG8=; b=hgCqBFjt1RzDhJfs/PfmFkuTJq
+        vrK4ZnXVbMISbps5hxJnRkddvOI4Pwh8ovjAIBs9DPq3+dQFQHdfSmlRbtSQZ2TjFmMkTqngYqUfG
+        QkWshDrMAfwxIY42FFnyMrH5eZ4c3C/8fFhEuiao5oK6osENqSHCxC+Rp7uPu4zbCvY6zahoj5hhV
+        S3I6oUVbJj6rJmSUG0+jdJqn3uT0VjS3qP3Kj+Ygw1Vd+HaxXTVi/sYiVntXO7R25JqXJgEiXFcGo
+        Nhk5cNXGsu3BTmqTOtB/kkpz3dGa6wYzz3btR15/7b+BPY4dw9FceEkvd2iNgNADVZS/HiL15LUgK
+        LTmb+kag==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jEsMq-0006S7-2X; Thu, 19 Mar 2020 10:25:36 +0000
+Date:   Thu, 19 Mar 2020 03:25:36 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     light.hsieh@mediatek.com
+Cc:     ulf.hansson@linaro.org, linux-mediatek@lists.infradead.org,
+        axboe@kernel.dk, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kuohong.wang@mediatek.com,
+        stanley.chu@mediatek.com
+Subject: Re: [PATCH v1 3/3] block: set partition read/write policy according
+ to write-protection status
+Message-ID: <20200319102536.GA16757@infradead.org>
+References: <1583290274-5525-1-git-send-email-light.hsieh@mediatek.com>
+ <1583290274-5525-4-git-send-email-light.hsieh@mediatek.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ea4265f3f4b5a439d70d3c80bcc77b7f@codeaurora.org>
-User-Agent: NeoMutt/20180716-391-311a52
+In-Reply-To: <1583290274-5525-4-git-send-email-light.hsieh@mediatek.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 19-03-20, 15:41, Sibi Sankar wrote:
-> Viresh,
-> Saravana's example does show a device
-> with multiple opp tables but doesn't
-> need multiple opp table support to
-> land though (since it works fine with
-> the current implementation). I am more
-> interested  in understanding your/
-> Stephen's/Saravana's stance on adding
-> multiple opp-table support. Personally
-> I feel its inevitable, since multiple
-> qc drivers using interconnect opp-tables,
-> routinely need vote on multiple paths in
-> a non-trivial manner.
-
-The OPP core doesn't support multiple OPP tables for a device and I
-don't understand how it will. And so I have been waiting for a reply.
-
-> > 
-> > Could you please post a link to the discussion that you are referring to
-> > here?
-> > I looked at a few links posted in the cover letter as dependencies and
-> > it seems
-> > like the discussions are pending for *months* and not weeks but I
-> > might have looked
-> > at the wrong ones.
+On Wed, Mar 04, 2020 at 10:51:14AM +0800, light.hsieh@mediatek.com wrote:
+> From: Light Hsieh <light.hsieh@mediatek.com>
 > 
-> https://lore.kernel.org/lkml/20200114103448.odnvqawnqb3twst5@vireshk-i7/
+> For storage device with write-protection support, e.g. eMMC, register
+> check_disk_range_wp() in struct block_device_operations for checking
+> write-protection status. When creating block device for a partition, set
+> read/write policy according to result of check_disk_range_wp() operation
+> (if registered).
 > 
-> Rajendra,
-> Viresh is referring to ^^ one
+> Without this patch, ro attribute is not set for created block device of
+> write-protected partition. User perform asynchronous buffered write to
+> such partition won't get immediate error and therefore he won't be awared
+> that write is not actually performed.
+> With this patch, ro attribute is set for created block device of
+> write-protected partition. User perform asynchronous buffered write to
+> such partition will get immediate error and therefore he will be awared.
 
-Right, thanks.
-
--- 
-viresh
+NAK.  This is complete BS.  Partitions are a complete software concepts
+and idiotic features like a range read only should not interact with it
+at all (and I urge all Linux users to never make use of such broken
+features, so the less support we have for them, the better).
