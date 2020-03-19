@@ -2,78 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 79EAD18B0BD
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 11:01:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E13DB18B0C0
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 11:01:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726902AbgCSKBY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 06:01:24 -0400
-Received: from mx2.suse.de ([195.135.220.15]:38442 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725601AbgCSKBY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 06:01:24 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 4638CB152;
-        Thu, 19 Mar 2020 10:01:22 +0000 (UTC)
-Subject: Re: [PATCH v2 1/2] x86/xen: Make the boot CPU idle task reliable
-To:     Miroslav Benes <mbenes@suse.cz>
-Cc:     boris.ostrovsky@oracle.com, jgross@suse.com,
-        sstabellini@kernel.org, tglx@linutronix.de, mingo@redhat.com,
-        bp@alien8.de, hpa@zytor.com, jpoimboe@redhat.com,
-        andrew.cooper3@citrix.com, x86@kernel.org,
-        linux-kernel@vger.kernel.org, live-patching@vger.kernel.org,
-        xen-devel@lists.xenproject.org, jslaby@suse.cz
-References: <20200319095606.23627-1-mbenes@suse.cz>
- <20200319095606.23627-2-mbenes@suse.cz>
-From:   Jan Beulich <jbeulich@suse.com>
-Message-ID: <71c4eeaf-958a-b215-3033-c3e0d74a9cfa@suse.com>
-Date:   Thu, 19 Mar 2020 11:01:21 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.6.0
+        id S1726967AbgCSKBe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 06:01:34 -0400
+Received: from sonic312-25.consmr.mail.ir2.yahoo.com ([77.238.178.96]:42926
+        "EHLO sonic312-25.consmr.mail.ir2.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725767AbgCSKBd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 06:01:33 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1584612092; bh=7bAj2aTmdt2qZuhBQReQcDKGCSJd8LlC9EcZcjUJr8M=; h=Date:From:Reply-To:Subject:References:From:Subject; b=b4DIOGzB6N3ueDrov3FYiLwLMLy9xmhUlQMzmLzkNLfjW4ZaQwFskoTUj0Eto2AtxgGQ72lWrxvnnULGrAQhTecVLIA15sdvTed6Io9MZ/QH3yzRWOzlzRo243XLh3fOI6SJxQJPBrgSJLJxNVwp+A5za0h3pEVy0ZTOzIi6+FaFNgYpHVnCJlqBWG5WTpHtVMqSB0GyayqycoWpYo/VeAcLhgpDgnL+Z/ql9idP+yVVFNLWk3RtatE9ollYKTVOfUnC9TXA9FWWHbk8QchzCS5n11vl/beDlC3+blnn0e7RcxGmilgHyJB9Sig/6bfl2rHBDCIfWMpXNFjx7HHn/w==
+X-YMail-OSG: XsKmVsAVM1m1_ndx0E9KcHxvxNm88TsqbzjBdLwhYCW3pnU_._fRzGx40mJN15b
+ AGakuO5KprAeLZIPi20BarkrKva.7BiJYkJkrPNH7qGQi.nEckRsF9XdfEBDEer0A_8V3bkKeV4v
+ PzABkkjI5jcoMUns8UYdf8ggJYNA021mfwHL8nWmXG0nqPNsfDkDAgH_Z0u3cXhqMDqxv28DIcMQ
+ vvxRmhFEyLDK6egOJRIFcpgB8CLzGqytMizRS4aU6ujh5LVS7IhZoKpRQqQG8hmzlIhRw.VL7lzq
+ ECpD4SG.qKmTsejzbY9AIR6RUp7SYCC8Q.KysRntB84lCR1MUnQ0Rr2_l1mvh6I7pbmCiOowW9jb
+ FZvPaqqa5oo50LUQeaXQYZsMaRgu5NJExRkPEOHJbUTCdV5Kx7MEL4cmhJzO0f7cw5XIeZkBELXN
+ trYYpSL.wrKfQyvRoN_L9ThOfGdi7sc3gY1BFBxD4jq.6DDA.ePxvWlkrO53mx.ELY7kZZXXiayr
+ tw3rIWkHy1mjJw0TMe1rE16TBxZVAyPJeTMXtDsj1EiAXBiifanYfVgGI5sH58_qKFpPum390JRO
+ k.LlBIrAcGQ.DOVv26dVmALLbFip7qBKtbLPKG1j6Oe4No8ewGuP._xxw3JqjPiwNDNDkn2JDhnS
+ ZgpHIoD9OlooGG8bo4_dfMfdvDz9ls7dwPqROIH_8atCimsQNidH4vjbfHsXoM69Jfzdh8pLQsQY
+ 9DQpSbHIZ3f19oBROR4LBmO4aFy75WD5vsI0wapb5Rl_BDdkD8uN35Y6esH4broaUqa.o9XJ6o12
+ PSKBUttvsOJy3BjLHWbJdjvy8a0Q7XxClit2AkPr5AeZKi43y3HKhcOtr1tEI0Vdg.ttw1SVwvfM
+ bzK1SDs6cpjVnmCV3sAdKZcxZTqErRCQrOk_2TAEYXd67ajNrtLNiPUwSUBVEFcPLSjcfyOqsr_P
+ sp8bjlo1c9VCi6Qfh6mTmLhpimJQWXtHpIucar88ipHqDDgRyNI5As0O5TgE6zv_s76fERaLuYTU
+ 4E3Bu1TWUtfd._kDQLTS5xiIfwPjeHZTIPlS83A1KtyJB0EdIXlLEHxRe4Zg.esoIrR.91AlV4Wo
+ hew2SPbSQqGBJYubCuKQ6gv7b1b5tgeM6CNTgA3C7ncqSpX1ibjyAPS0jDvSODC2pzZlduYYLDVK
+ R0B5dbZAQBi0ezvH7eJpFZ.ZknR6kisimhq79B328xnY_W4KuGAZMjqAJTYCneMoJWcHX2d56RNy
+ ThZ25FjPQylzxZQKtlWRuuxqSuyP0xg5NXhrNPBu_dKGc1yV.JpvxBnn1G_81RkNWPwmEAD22UmP
+ a1w--
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic312.consmr.mail.ir2.yahoo.com with HTTP; Thu, 19 Mar 2020 10:01:32 +0000
+Date:   Thu, 19 Mar 2020 10:01:30 +0000 (UTC)
+From:   Suleiman Abubaker <suleimanabubaker84612@gmail.com>
+Reply-To: suleimanabubaker@mail.com
+Message-ID: <515971425.1359819.1584612090282@mail.yahoo.com>
+Subject: Helo
 MIME-Version: 1.0
-In-Reply-To: <20200319095606.23627-2-mbenes@suse.cz>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+References: <515971425.1359819.1584612090282.ref@mail.yahoo.com>
+X-Mailer: WebService/1.1.15471 YMailNodin Mozilla/5.0 (Windows NT 6.1; rv:74.0) Gecko/20100101 Firefox/74.0
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 19.03.2020 10:56, Miroslav Benes wrote:
-> The unwinder reports the boot CPU idle task's stack on XEN PV as
-> unreliable, which affects at least live patching. There are two reasons
-> for this. First, the task does not follow the x86 convention that its
-> stack starts at the offset right below saved pt_regs. It allows the
-> unwinder to easily detect the end of the stack and verify it. Second,
-> startup_xen() function does not store the return address before jumping
-> to xen_start_kernel() which confuses the unwinder.
-> 
-> Amend both issues by moving the starting point of initial stack in
-> startup_xen() and storing the return address before the jump, which is
-> exactly what call instruction does.
-> 
-> Signed-off-by: Miroslav Benes <mbenes@suse.cz>
-> ---
->  arch/x86/xen/xen-head.S | 8 ++++++--
->  1 file changed, 6 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/x86/xen/xen-head.S b/arch/x86/xen/xen-head.S
-> index 1d0cee3163e4..edc776af0e0a 100644
-> --- a/arch/x86/xen/xen-head.S
-> +++ b/arch/x86/xen/xen-head.S
-> @@ -35,7 +35,11 @@ SYM_CODE_START(startup_xen)
->  	rep __ASM_SIZE(stos)
->  
->  	mov %_ASM_SI, xen_start_info
-> -	mov $init_thread_union+THREAD_SIZE, %_ASM_SP
-> +#ifdef CONFIG_X86_64
-> +	mov initial_stack(%rip), %_ASM_SP
-> +#else
-> +	mov pa(initial_stack), %_ASM_SP
-> +#endif
 
-If you need to distinguish the two anyway, why not use %rsp and
-%esp respectively?
 
-Jan
+
+
+
+
+Dear Friend,
+
+I am. Mr. Suleiman Abubaker, Manager Auditing and Accountancy Department,Bank of Africa in (B.O.A) Burkina Faso
+
+i am writing to seek for your highly esteemed consent/assistance in a lasting business relationship of mutual benefit involving $18. Million Usd for investment in your country, under a joint venture partnership.
+
+Thank you for accommodating my inquiry, as i look forward to hear from you on this business collaboration and meeting with you soon.
+
+
+(1)Your Full name:..........................
+(2)Your Age.................................
+(3)Occupation:.................................
+(4)Mobile phone number:.....................
+(5)Your Country..........................
+
+Waiting to hear from you.
+
+Your's truly,
+
+Mr. Suleiman Abubaker,
