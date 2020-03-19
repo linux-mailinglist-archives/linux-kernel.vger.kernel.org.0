@@ -2,102 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0F26B18AE2C
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 09:15:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1F0DB18AE36
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 09:17:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726987AbgCSIPn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 04:15:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47166 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726905AbgCSIPn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 04:15:43 -0400
-Received: from willie-the-truck (236.31.169.217.in-addr.arpa [217.169.31.236])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D66F420663;
-        Thu, 19 Mar 2020 08:15:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584605742;
-        bh=LdJipUFyZBF+HWb06ft7tA5xx8pfQFU78elBxzYZlTM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=nGHgshCIeIYyjXviV1KXQzzgZIyEakQRG7TP5KXx+V4qOKEcRm3+dvc9WuVV0h+14
-         x36voC/EuAh3rl/mYHzUrxGeciPHqAiyi2/vt2Zx+wkp7/OoPosTm3hUWpYYe5tsz5
-         cdoU3/vyva6X37aZr3e2/j3RW8sI/VWfPKm4j/5c=
-Date:   Thu, 19 Mar 2020 08:15:37 +0000
-From:   Will Deacon <will@kernel.org>
-To:     Ard Biesheuvel <ardb@kernel.org>
-Cc:     Torsten Duwe <duwe@lst.de>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        Russell King <linux@armlinux.org.uk>,
-        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
-        <linux-crypto@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [Patch][Fix] crypto: arm{,64} neon: memzero_explicit aes-cbc key
-Message-ID: <20200319081536.GA20670@willie-the-truck>
-References: <20200313110258.94A0668C4E@verein.lst.de>
- <20200317221743.GD20788@willie-the-truck>
- <CAKv+Gu9_gV0aVwa2QG7jgaR71bTz12vs386R9uPjdQTtm0HcUw@mail.gmail.com>
+        id S1726877AbgCSIRC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 04:17:02 -0400
+Received: from mout.kundenserver.de ([217.72.192.74]:44423 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726188AbgCSIRC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 04:17:02 -0400
+Received: from mail-qv1-f51.google.com ([209.85.219.51]) by
+ mrelayeu.kundenserver.de (mreue106 [212.227.15.145]) with ESMTPSA (Nemesis)
+ id 1McYTD-1jrCVt0zEr-00d1a5; Thu, 19 Mar 2020 09:17:00 +0100
+Received: by mail-qv1-f51.google.com with SMTP id m2so521131qvu.13;
+        Thu, 19 Mar 2020 01:16:59 -0700 (PDT)
+X-Gm-Message-State: ANhLgQ0MVelGgW9A3MfvnGDpwvgy/q3TmjsMOevt+oecnwlxFWjRnB42
+        S2dt40Ltn611sWKE3JcZ0xOBrnCpl0YPQKwj11E=
+X-Google-Smtp-Source: ADFU+vuvKhUMl9cghqMNKDgltUnhMBNGvVioHmVN2q91+1Ohn7tJEKoVYrbxquHMp8plMgeR0wZ5Qdf0EE9j967FD70=
+X-Received: by 2002:a0c:f647:: with SMTP id s7mr1832971qvm.4.1584605819082;
+ Thu, 19 Mar 2020 01:16:59 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAKv+Gu9_gV0aVwa2QG7jgaR71bTz12vs386R9uPjdQTtm0HcUw@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20200317083043.226593-1-areber@redhat.com> <CAK8P3a2-qQhpRdF0+iVrpp=vEvgwtndQL89CUm_QzoW2QYX1Jw@mail.gmail.com>
+ <20200319081137.GC223854@dcbz.redhat.com>
+In-Reply-To: <20200319081137.GC223854@dcbz.redhat.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Thu, 19 Mar 2020 09:16:43 +0100
+X-Gmail-Original-Message-ID: <CAK8P3a18YySozk6P77JpS58Hbtz=QQmLKw+PrzXbdOwtOQQuJA@mail.gmail.com>
+Message-ID: <CAK8P3a18YySozk6P77JpS58Hbtz=QQmLKw+PrzXbdOwtOQQuJA@mail.gmail.com>
+Subject: Re: clone3: allow creation of time namespace with offset
+To:     Adrian Reber <areber@redhat.com>
+Cc:     Christian Brauner <christian.brauner@ubuntu.com>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Pavel Emelyanov <ovzxemul@gmail.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Dmitry Safonov <0x7f454c46@gmail.com>,
+        Andrei Vagin <avagin@gmail.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Radostin Stoyanov <rstoyanov1@gmail.com>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Cyrill Gorcunov <gorcunov@openvz.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        Linux API <linux-api@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Provags-ID: V03:K1:+GajmnIHBBfa+wnucP62mdW4D0KSk3X5HuJXrapNIX2Pm0HqAVy
+ T87l3rzDqMJGdaKHogrdbdIQt1FedsI0goItnZky84ZVHXfyVgIRphy0cvutrqaJdHwR2Lq
+ J4nGDaDDzHubPhv3M+tkbunOd9knDvrVo17G0WDWm0R6olNu1fvJoGtoupP72UZrT7x6kmx
+ z0jDx9T6khcAMNV4uYXrA==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:7gdf/FqWgSE=:+/s7qhnV4QaCD2FzAuaFxm
+ AAzFdbtxiGhn3PfwVUkXVqErzqPBt1nCWXxLC6/dG/HEhlIuclDxnKBnp90P0T83YXEskcShF
+ xpnA4cdNCerXyT0XinKAAUYpNdgSjToQMLGyBC6n2zSskwFXIFepnWv3PsjrFagkY/Ku92A/d
+ +voIvYfG8V48sV2dhpz1iwB8iIq3ionPsb9BcHbE/1af/0mB2WiBrWVhZH1gCUVvACMdqTQjA
+ FA3UIfh8Bw0ml98bjDzOB8YW1jdsTnNEdq+aAlTpjWywDBWpIQqovpxlUBb0P4KEJ3wc4B1Bv
+ h3LafyAGrgVem/ZX/Dhhvlfdk83uWEvfwG2dhudSaPgeZDQSc2WSNTXwc25zQOg/f9V9bHUIO
+ JAMwJFtfTJCOJ5plvCpvZEJ4On1+xo2JHXDI2E8dX2zkhzJ5IwVLxQtvGPw3FRvwXCxBrh8G+
+ nBBj1oExdaVCZpbOtsnc/vlIxLCi+ItpPvlkggYqEh80pnSvSbK3ZltUWH7oCKEDo6/hdt4Lc
+ 0yzDyt963QBwJiSD1P8aEwCELs4zbX0/D9/ptpKTS2TkcBuI7bZPxMAYxdbpSWm2+9IMZrTTc
+ Qhgi+iQIDXEGi+GzuJtjKrqtttldpL9dJUsno4OWjWqBNu9JKk3uKI51OCDCzM55KWwuLsWTc
+ 9PIiLkjxAUgt3OGefT4G/mQFcsKTiGQuTNBEDtosEdmTxQlSR+B4NcCs9fw0v04B32RZKF7+Z
+ sZAC9iDdc+snPBf0IZH+s9VhxEP3OBbWT9yYvPr5PAXbotkWQwGqCqtBhTlgyHzrLmOWYcr1N
+ TjyeKOjT2HmzRG82yScyt/oAeT70A0+PgRnh4VsSlj7mAj4Yks=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 18, 2020 at 04:13:33PM -0400, Ard Biesheuvel wrote:
-> On Tue, 17 Mar 2020 at 18:17, Will Deacon <will@kernel.org> wrote:
-> >
-> > [+Ard]
-> >
-> > On Fri, Mar 13, 2020 at 12:02:58PM +0100, Torsten Duwe wrote:
-> > > From: Torsten Duwe <duwe@suse.de>
-> > >
-> > > At function exit, do not leave the expanded key in the rk struct
-> > > which got allocated on the stack.
-> > >
-> > > Signed-off-by: Torsten Duwe <duwe@suse.de>
-> > > ---
-> > > Another small fix from our FIPS evaluation. I hope you don't mind I merged
-> > > arm32 and arm64 into one patch -- this is really simple.
-> > > --- a/arch/arm/crypto/aes-neonbs-glue.c
-> > > +++ b/arch/arm/crypto/aes-neonbs-glue.c
-> > > @@ -138,6 +138,7 @@ static int aesbs_cbc_setkey(struct crypto_skcipher *tfm, const u8 *in_key,
-> > >       kernel_neon_begin();
-> > >       aesbs_convert_key(ctx->key.rk, rk.key_enc, ctx->key.rounds);
-> > >       kernel_neon_end();
-> > > +     memzero_explicit(&rk, sizeof(rk));
-> > >
-> > >       return crypto_cipher_setkey(ctx->enc_tfm, in_key, key_len);
-> > >  }
-> > > diff --git a/arch/arm64/crypto/aes-neonbs-glue.c b/arch/arm64/crypto/aes-neonbs-glue.c
-> > > index e3e27349a9fe..c0b980503643 100644
-> > > --- a/arch/arm64/crypto/aes-neonbs-glue.c
-> > > +++ b/arch/arm64/crypto/aes-neonbs-glue.c
-> > > @@ -151,6 +151,7 @@ static int aesbs_cbc_setkey(struct crypto_skcipher *tfm, const u8 *in_key,
-> > >       kernel_neon_begin();
-> > >       aesbs_convert_key(ctx->key.rk, rk.key_enc, ctx->key.rounds);
-> > >       kernel_neon_end();
-> > > +     memzero_explicit(&rk, sizeof(rk));
-> > >
-> > >       return 0;
-> > >  }
-> >
-> > I'm certainly not a crypto person, but this looks sensible to me and I
-> > couldn't find any other similar stack variable usage under
-> > arch/arm64/crypto/ at a quick glance.
-> >
-> > Acked-by: Will Deacon <will@kernel.org>
-> >
-> 
-> Acked-by: Ard Biesheuvel <ardb@kernel.org>
+On Thu, Mar 19, 2020 at 9:11 AM Adrian Reber <areber@redhat.com> wrote:
 
-Cheers, Ard. I'm assuming that Herbert will pick this up via the crypto
-tree.
+> With Arnd's idea of only using nanoseconds, timens_offset would then
+> contain something like this:
+>
+> struct timens_offset {
+>         __aligned_s64 monotonic_offset_ns;
+>         __aligned_s64 boottime_offset_ns;
+> };
+>
+> I kind of prefer adding boottime and monotonic directly to struct clone_args
+>
+>         __aligned_u64 tls;
+>         __aligned_u64 set_tid;
+>         __aligned_u64 set_tid_size;
+> +       __aligned_s64 monotonic_offset_ns;
+> +       __aligned_s64 boottime_offset_ns;
+>  };
 
-Will
+I would also prefer the second approach using two 64-bit integers
+instead of a pointer, as it keeps the interface simpler to implement
+and simpler to interpret by other tools.
+
+      Arnd
