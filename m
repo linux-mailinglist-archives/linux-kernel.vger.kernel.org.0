@@ -2,190 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2933D18B83C
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:42:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 68EFB18B851
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:47:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727383AbgCSNlu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 09:41:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38516 "EHLO mail.kernel.org"
+        id S1727282AbgCSNre (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 09:47:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41068 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726793AbgCSNlu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 09:41:50 -0400
-Received: from devnote2 (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
+        id S1727034AbgCSNre (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 09:47:34 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 29B5320663;
-        Thu, 19 Mar 2020 13:41:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 435452080C;
+        Thu, 19 Mar 2020 13:47:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584625309;
-        bh=OTiOI9NpVgAuHMhA+pe29888F5J5ckdUeAQZInkekaQ=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=FUdGwNLlsVxO3xUB6XATLkNW2L4CKFDFFZ2NuC5jY47TDNKO0AwzaBoO63/wIa70d
-         HGaxGGV+hnyezyBixqb0ro9Rrvm5D+dKmAgAHbtBA0AVy/kR1/pZ+KVh7nGSDbdwKM
-         jf73+Ey2WwxJRUHRj8rOh3i7cyGgufOBMxn3kipg=
-Date:   Thu, 19 Mar 2020 22:41:44 +0900
-From:   Masami Hiramatsu <mhiramat@kernel.org>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     linux-kernel@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-        Peter Wu <peter@lekensteyn.nl>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Tom Zanussi <zanussi@kernel.org>
-Subject: Re: [RFC][PATCH 01/11] tracing: Save off entry when peeking at next
- entry
-Message-Id: <20200319224144.cc16357a3476506fd64ad448@kernel.org>
-In-Reply-To: <20200317213415.722539921@goodmis.org>
-References: <20200317213222.421100128@goodmis.org>
-        <20200317213415.722539921@goodmis.org>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        s=default; t=1584625653;
+        bh=0C8hZU/YxpZVRYqef82R8KCTqT8U8jWoXQOw7dID8a4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=YjIQXGfURrlH08Kx68uk3vGL3vma7uc5UvnvSXjZL+T0WWw4yQ2LjjTQmx6aSXeQ0
+         giDRHsX2Sl+Xwb90KjYe97dQ32dXhOLWiNdYjZ2MuqkefAf9kWySPOIf7pQ7BDK5Kg
+         DAgas/A9ZCo36SmPIOYFER1o2wRyxM3hXd75v1aw=
+Date:   Thu, 19 Mar 2020 14:47:10 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Kevin Hao <haokexin@gmail.com>
+Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: Re: [PATCH 5.5 01/65] gpiolib: Add support for the irqdomain which
+ doesnt use irq_fwspec as arg
+Message-ID: <20200319134710.GA4092809@kroah.com>
+References: <20200319123926.466988514@linuxfoundation.org>
+ <20200319123926.902914624@linuxfoundation.org>
+ <20200319133355.GB711692@pek-khao-d2.corp.ad.wrs.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200319133355.GB711692@pek-khao-d2.corp.ad.wrs.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-On Tue, 17 Mar 2020 17:32:23 -0400
-Steven Rostedt <rostedt@goodmis.org> wrote:
-
-> From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+On Thu, Mar 19, 2020 at 09:33:55PM +0800, Kevin Hao wrote:
+> On Thu, Mar 19, 2020 at 02:03:43PM +0100, Greg Kroah-Hartman wrote:
+> > From: Kevin Hao <haokexin@gmail.com>
+> > 
+> > [ Upstream commit 242587616710576808dc8d7cdf18cfe0d7bf9831 ]
+> > 
+> > Some gpio's parent irqdomain may not use the struct irq_fwspec as
+> > argument, such as msi irqdomain. So rename the callback
+> > populate_parent_fwspec() to populate_parent_alloc_arg() and make it
+> > allocate and populate the specific struct which is needed by the
+> > parent irqdomain.
 > 
-> In order to have the iterator read the buffer even when it's still updating,
-> it requires that the ring buffer iterator saves each event in a separate
-> location outside the ring buffer such that its use is immutable.
+> Hi Greg,
 > 
-> There's one use case that saves off the event returned from the ring buffer
-> interator and calls it again to look at the next event, before going back to
-> use the first event. As the ring buffer iterator will only have a single
-> copy, this use case will no longer be supported.
-> 
-> Instead, have the one use case create its own buffer to store the first
-> event when looking at the next event. This way, when looking at the first
-> event again, it wont be corrupted by the second read.
-> 
-> Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-> ---
->  include/linux/trace_events.h |  2 ++
->  kernel/trace/trace.c         | 27 ++++++++++++++++++++++++++-
->  kernel/trace/trace_output.c  | 15 ++++++---------
->  3 files changed, 34 insertions(+), 10 deletions(-)
-> 
-> diff --git a/include/linux/trace_events.h b/include/linux/trace_events.h
-> index 6c7a10a6d71e..5c6943354049 100644
-> --- a/include/linux/trace_events.h
-> +++ b/include/linux/trace_events.h
-> @@ -85,6 +85,8 @@ struct trace_iterator {
->  	struct mutex		mutex;
->  	struct ring_buffer_iter	**buffer_iter;
->  	unsigned long		iter_flags;
-> +	void			*temp;	/* temp holder */
-> +	unsigned int		temp_size;
->  
->  	/* trace_seq for __print_flags() and __print_symbolic() etc. */
->  	struct trace_seq	tmp_seq;
-> diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-> index 6b11e4e2150c..52425aaf26c2 100644
-> --- a/kernel/trace/trace.c
-> +++ b/kernel/trace/trace.c
-> @@ -3466,7 +3466,31 @@ __find_next_entry(struct trace_iterator *iter, int *ent_cpu,
->  struct trace_entry *trace_find_next_entry(struct trace_iterator *iter,
->  					  int *ent_cpu, u64 *ent_ts)
->  {
-> -	return __find_next_entry(iter, ent_cpu, NULL, ent_ts);
-> +	/* __find_next_entry will reset ent_size */
-> +	int ent_size = iter->ent_size;
-> +	struct trace_entry *entry;
-> +
-> +	/*
-> +	 * The __find_next_entry() may update iter->ent, making
-> +	 * the current iter->ent pointing to stale data.
-> +	 * Need to copy it over.
-> +	 */
+> This commit shouldn't go to stable because it is not a bug fix. It is just a
+> prerequisite of switching to general GPIOLIB_IRQCHIP for thunderx gpio driver
+> (commit 7a9f4460f74d "gpio: thunderx: Switch to GPIOLIB_IRQCHIP").
 
-Is this comment correct? I can not find the code which update
-iter->ent in __find_next_entry() and peek_next_entry().
-Maybe writer updates the "*iter->ent"?
+This seems to be a prerequisite for f98371476f36 ("pinctrl: qcom:
+ssbi-gpio: Fix fwspec parsing bug") to apply properly.  With that
+information, is it ok to keep?
 
-> +	if (iter->ent && iter->ent != iter->temp) {
-> +		if (!iter->temp || iter->temp_size < iter->ent_size) {
-> +			kfree(iter->temp);
-> +			iter->temp = kmalloc(iter->ent_size, GFP_KERNEL);
+thanks,
 
-This can be alloc/free several times on one iteration. Should we
-be so careful about memory consumption for this small piece?
-
-Since the reader will not run in parallel (or very rare case),
-iter->temp can allocate the max entry size at the beginning.
-
-Thank you,
-
-> +			if (!iter->temp)
-> +				return NULL;
-> +		}
-> +		memcpy(iter->temp, iter->ent, iter->ent_size);
-> +		iter->temp_size = iter->ent_size;
-> +		iter->ent = iter->temp;
-> +	}
-> +	entry = __find_next_entry(iter, ent_cpu, NULL, ent_ts);
-> +	/* Put back the original ent_size */
-> +	iter->ent_size = ent_size;
-> +
-> +	return entry;
->  }
->  
->  /* Find the next real entry, and increment the iterator to the next entry */
-> @@ -4344,6 +4368,7 @@ static int tracing_release(struct inode *inode, struct file *file)
->  
->  	mutex_destroy(&iter->mutex);
->  	free_cpumask_var(iter->started);
-> +	kfree(iter->temp);
->  	kfree(iter->trace);
->  	kfree(iter->buffer_iter);
->  	seq_release_private(inode, file);
-> diff --git a/kernel/trace/trace_output.c b/kernel/trace/trace_output.c
-> index e25a7da79c6b..9a121e147102 100644
-> --- a/kernel/trace/trace_output.c
-> +++ b/kernel/trace/trace_output.c
-> @@ -617,22 +617,19 @@ int trace_print_context(struct trace_iterator *iter)
->  
->  int trace_print_lat_context(struct trace_iterator *iter)
->  {
-> +	struct trace_entry *entry, *next_entry;
->  	struct trace_array *tr = iter->tr;
-> -	/* trace_find_next_entry will reset ent_size */
-> -	int ent_size = iter->ent_size;
->  	struct trace_seq *s = &iter->seq;
-> -	u64 next_ts;
-> -	struct trace_entry *entry = iter->ent,
-> -			   *next_entry = trace_find_next_entry(iter, NULL,
-> -							       &next_ts);
->  	unsigned long verbose = (tr->trace_flags & TRACE_ITER_VERBOSE);
-> +	u64 next_ts;
->  
-> -	/* Restore the original ent_size */
-> -	iter->ent_size = ent_size;
-> -
-> +	next_entry = trace_find_next_entry(iter, NULL, &next_ts);
->  	if (!next_entry)
->  		next_ts = iter->ts;
->  
-> +	/* trace_find_next_entry() may change iter->ent */
-> +	entry = iter->ent;
-> +
->  	if (verbose) {
->  		char comm[TASK_COMM_LEN];
->  
-> -- 
-> 2.25.1
-> 
-> 
-
-
--- 
-Masami Hiramatsu <mhiramat@kernel.org>
+greg k-h
