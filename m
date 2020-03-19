@@ -2,179 +2,201 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 899D018C09E
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 20:43:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3AAB918C0AB
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 20:46:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727559AbgCSTnC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 15:43:02 -0400
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:46902 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725817AbgCSTnB (ORCPT
+        id S1726934AbgCSTqG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 15:46:06 -0400
+Received: from mail.efficios.com ([167.114.26.124]:55566 "EHLO
+        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725768AbgCSTqG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 15:43:01 -0400
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 02JJgs3x071693;
-        Thu, 19 Mar 2020 14:42:54 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1584646974;
-        bh=wB4aZvW9cG3UKECKMl7jglc4EJ+CkeQjjqMGcNaKs8E=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=cYgYsAEXcTynDy2ctOINxf0KdzYzEfwRGOOSiUAROBymEjlk0s9lI6Kroqhuo3wRY
-         mInuJnT9RUzUImvo0wDsBIHbm/m0Rc74C5iDzNQmcx3lXZ7mWJRst3h0vFPTL5CqN+
-         q/j7vkvBB0JJnZDizwxYYKJFE7cyBhm1CQR/im/s=
-Received: from DFLE114.ent.ti.com (dfle114.ent.ti.com [10.64.6.35])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 02JJgsoh124146
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 19 Mar 2020 14:42:54 -0500
-Received: from DFLE107.ent.ti.com (10.64.6.28) by DFLE114.ent.ti.com
- (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Thu, 19
- Mar 2020 14:42:54 -0500
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DFLE107.ent.ti.com
- (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Thu, 19 Mar 2020 14:42:53 -0500
-Received: from [192.168.2.6] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id 02JJgpIs004780;
-        Thu, 19 Mar 2020 14:42:52 -0500
-Subject: Re: [PATCH V2] dmaengine: ti: k3-udma-glue: Fix an error handling
- path in 'k3_udma_glue_cfg_rx_flow()'
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        <vkoul@kernel.org>, <dan.j.williams@intel.com>,
-        <grygorii.strashko@ti.com>
-CC:     <dmaengine@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>
-References: <20200318191209.1267-1-christophe.jaillet@wanadoo.fr>
-From:   Peter Ujfalusi <peter.ujfalusi@ti.com>
-Message-ID: <6dbe8b04-a64b-f9c7-e620-a6002045ccb6@ti.com>
-Date:   Thu, 19 Mar 2020 21:43:01 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        Thu, 19 Mar 2020 15:46:06 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by mail.efficios.com (Postfix) with ESMTP id C2FB327AEB7;
+        Thu, 19 Mar 2020 15:46:04 -0400 (EDT)
+Received: from mail.efficios.com ([127.0.0.1])
+        by localhost (mail03.efficios.com [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id N2Sgnom2LQQB; Thu, 19 Mar 2020 15:46:04 -0400 (EDT)
+Received: from localhost (localhost [127.0.0.1])
+        by mail.efficios.com (Postfix) with ESMTP id F13CB27ACEB;
+        Thu, 19 Mar 2020 15:46:03 -0400 (EDT)
+DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com F13CB27ACEB
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
+        s=default; t=1584647164;
+        bh=mPayiUoTJ4CXFxP07c55XGHAyo6rbWCRF8IfmBCmuac=;
+        h=Date:From:To:Message-ID:MIME-Version;
+        b=oAHmm+nJ7bNdAcBo63xyq7h3/sR+93guwx0RGjIl37TheaCNn4bGtv6FM/ZjLXFFP
+         AhsE59Sp1+SnVXfQDelS3SU1Ja2c7u/L+bmz0c7hrdFg8eqsaF97IZRhsuKhPoTMP8
+         KHKfP5EO7MzF467pCek3A61se0nuLZurAwKOzB5oYc8VGEIx/SmD1q66uGer2vKZMs
+         FIjgd7rMe9n+C8FvYlu/FFOe/FcxOuav4Bi+glgwPFaCASsE/dWLpYFeKxvAzAz/Vk
+         tjEJcDH3p1GiFP7BIpBmiY1Iz/s7RCGTgeP6fszTzJ/3sTdKfgDtUsHSHgzmY5qat5
+         nYnvj50hIQvDw==
+X-Virus-Scanned: amavisd-new at efficios.com
+Received: from mail.efficios.com ([127.0.0.1])
+        by localhost (mail03.efficios.com [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id Qy-7PsmrF1sc; Thu, 19 Mar 2020 15:46:03 -0400 (EDT)
+Received: from mail03.efficios.com (mail03.efficios.com [167.114.26.124])
+        by mail.efficios.com (Postfix) with ESMTP id DA19527B0A9;
+        Thu, 19 Mar 2020 15:46:03 -0400 (EDT)
+Date:   Thu, 19 Mar 2020 15:46:03 -0400 (EDT)
+From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+To:     Florian Weimer <fw@deneb.enyo.de>
+Cc:     libc-alpha <libc-alpha@sourceware.org>, carlos <carlos@redhat.com>,
+        Rich Felker <dalias@libc.org>,
+        linux-api <linux-api@vger.kernel.org>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Will Deacon <will.deacon@arm.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ben Maurer <bmaurer@fb.com>, Dave Watson <davejwatson@fb.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Paul <paulmck@linux.vnet.ibm.com>, Paul Turner <pjt@google.com>,
+        Joseph Myers <joseph@codesourcery.com>
+Message-ID: <624584479.4115.1584647163775.JavaMail.zimbra@efficios.com>
+In-Reply-To: <87fte4go6w.fsf@mid.deneb.enyo.de>
+References: <20200319144110.3733-1-mathieu.desnoyers@efficios.com> <87r1xo5o2s.fsf@mid.deneb.enyo.de> <1302331358.3965.1584641354569.JavaMail.zimbra@efficios.com> <87sgi4gqhf.fsf@mid.deneb.enyo.de> <1103782439.4046.1584642531222.JavaMail.zimbra@efficios.com> <87k13ggpmf.fsf@mid.deneb.enyo.de> <900536577.4062.1584644126425.JavaMail.zimbra@efficios.com> <87fte4go6w.fsf@mid.deneb.enyo.de>
+Subject: Re: [RFC PATCH glibc 4/8] glibc: Perform rseq(2) registration at C
+ startup and thread creation (v15)
 MIME-Version: 1.0
-In-Reply-To: <20200318191209.1267-1-christophe.jaillet@wanadoo.fr>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [167.114.26.124]
+X-Mailer: Zimbra 8.8.15_GA_3918 (ZimbraWebClient - FF73 (Linux)/8.8.15_GA_3895)
+Thread-Topic: glibc: Perform rseq(2) registration at C startup and thread creation (v15)
+Thread-Index: poZ7JQ5/Qt1CQs9uPvdRib/AmVGsDg==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Christophe,
+----- On Mar 19, 2020, at 3:05 PM, Florian Weimer fw@deneb.enyo.de wrote:
 
-On 18/03/2020 21.12, Christophe JAILLET wrote:
-> All but one error handling paths in the 'k3_udma_glue_cfg_rx_flow()'
-> function 'goto err' and call 'k3_udma_glue_release_rx_flow()'.
+> * Mathieu Desnoyers:
 > 
-> This not correct because this function has a 'channel->flows_ready--;' at
-> the end, but 'flows_ready' has not been incremented here, when we branch to
-> the error handling path.
+>>> Inside glibc, you can assume __attribute__ support.
+>>
+>> OK, so the _Static_assert () could sit in sys/rseq.h
 > 
-> In order to keep a correct value in 'flows_ready', un-roll
-> 'k3_udma_glue_release_rx_flow()', simplify it, add some labels and branch
-> at the correct places when an error is detected.
-> 
-> Doing so, we also NULLify 'flow->udma_rflow' in a path that was lacking it.
-> 
-> Fixes: d70241913413 ("dmaengine: ti: k3-udma: Add glue layer for non DMAengine user")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
-> V2: adjust subject
->     direct return in the first error handling path
+> It requires a C11 compiler.  In this case, you could use _Alignas.
 
-Thank you!
+How would _Alignas replace:
 
-Acked-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
++_Static_assert (__alignof__ (struct rseq_cs) >= 4 * sizeof(uint64_t),
++                "alignment");
++_Static_assert (__alignof__ (struct rseq) >= 4 * sizeof(uint64_t),
++                "alignment");
 
-> ---
->  drivers/dma/ti/k3-udma-glue.c | 30 ++++++++++++++++++++----------
->  1 file changed, 20 insertions(+), 10 deletions(-)
+?
+
+Moreover, I notice that sys/cdefs.h implements a fallback for _Static_assert
+for cases where it is not supported by the compiler. So I do not think it
+strictly depends on C11 if I include sys/cdefs.h from sys/rseq.h.
+
+>>>>>>> The struct rseq/struct rseq_cs definitions
+>>>>>>> are broken, they should not try to change the alignment.
+>>>>>>
+>>>>>> AFAIU, this means we should ideally not have used __attribute__((aligned))
+>>>>>> in the uapi headers in the first place. Why is it broken ?
+>>>>> 
+>>>>> Compilers which are not sufficiently GCC-compatible define
+>>>>> __attribute__(X) as the empty expansion, so you silently get a
+>>>>> different ABI.
+>>>>
+
+[...]
+
+>>>>> There is really no need to specify 32-byte alignment here.  Is not
+>>>>> even the size of a standard cache line.  It can result in crashes if
+>>>>> these structs are heap-allocated using malloc, when optimizing for
+>>>>> AVX2.
+>>>>
+>>>> Why would it be valid to allocate those with malloc ? Isn't it the
+>>>> purpose of posix_memalign() ?
+>>> 
+>>> It would not be valid, but I don't think we have diagnostics for C
+>>> like we have them for C++'s operator new.
+>>
+>> We could at least make an effort to let people know that alignment is
+>> required here when allocating struct rseq and struct rseq_cs on the
+>> heap by adding some comments to that effect in linux/rseq.h ?
 > 
-> diff --git a/drivers/dma/ti/k3-udma-glue.c b/drivers/dma/ti/k3-udma-glue.c
-> index dbccdc7c0ed5..890573eb1625 100644
-> --- a/drivers/dma/ti/k3-udma-glue.c
-> +++ b/drivers/dma/ti/k3-udma-glue.c
-> @@ -578,12 +578,12 @@ static int k3_udma_glue_cfg_rx_flow(struct k3_udma_glue_rx_channel *rx_chn,
->  	if (IS_ERR(flow->udma_rflow)) {
->  		ret = PTR_ERR(flow->udma_rflow);
->  		dev_err(dev, "UDMAX rflow get err %d\n", ret);
-> -		goto err;
-> +		return ret;
->  	}
->  
->  	if (flow->udma_rflow_id != xudma_rflow_get_id(flow->udma_rflow)) {
-> -		xudma_rflow_put(rx_chn->common.udmax, flow->udma_rflow);
-> -		return -ENODEV;
-> +		ret = -ENODEV;
-> +		goto err_rflow_put;
->  	}
->  
->  	/* request and cfg rings */
-> @@ -592,7 +592,7 @@ static int k3_udma_glue_cfg_rx_flow(struct k3_udma_glue_rx_channel *rx_chn,
->  	if (!flow->ringrx) {
->  		ret = -ENODEV;
->  		dev_err(dev, "Failed to get RX ring\n");
-> -		goto err;
-> +		goto err_rflow_put;
->  	}
->  
->  	flow->ringrxfdq = k3_ringacc_request_ring(rx_chn->common.ringacc,
-> @@ -600,19 +600,19 @@ static int k3_udma_glue_cfg_rx_flow(struct k3_udma_glue_rx_channel *rx_chn,
->  	if (!flow->ringrxfdq) {
->  		ret = -ENODEV;
->  		dev_err(dev, "Failed to get RXFDQ ring\n");
-> -		goto err;
-> +		goto err_ringrx_free;
->  	}
->  
->  	ret = k3_ringacc_ring_cfg(flow->ringrx, &flow_cfg->rx_cfg);
->  	if (ret) {
->  		dev_err(dev, "Failed to cfg ringrx %d\n", ret);
-> -		goto err;
-> +		goto err_ringrxfdq_free;
->  	}
->  
->  	ret = k3_ringacc_ring_cfg(flow->ringrxfdq, &flow_cfg->rxfdq_cfg);
->  	if (ret) {
->  		dev_err(dev, "Failed to cfg ringrxfdq %d\n", ret);
-> -		goto err;
-> +		goto err_ringrxfdq_free;
->  	}
->  
->  	if (rx_chn->remote) {
-> @@ -662,7 +662,7 @@ static int k3_udma_glue_cfg_rx_flow(struct k3_udma_glue_rx_channel *rx_chn,
->  	if (ret) {
->  		dev_err(dev, "flow%d config failed: %d\n", flow->udma_rflow_id,
->  			ret);
-> -		goto err;
-> +		goto err_ringrxfdq_free;
->  	}
->  
->  	rx_chn->flows_ready++;
-> @@ -670,8 +670,17 @@ static int k3_udma_glue_cfg_rx_flow(struct k3_udma_glue_rx_channel *rx_chn,
->  		flow->udma_rflow_id, rx_chn->flows_ready);
->  
->  	return 0;
-> -err:
-> -	k3_udma_glue_release_rx_flow(rx_chn, flow_idx);
-> +
-> +err_ringrxfdq_free:
-> +	k3_ringacc_ring_free(flow->ringrxfdq);
-> +
-> +err_ringrx_free:
-> +	k3_ringacc_ring_free(flow->ringrx);
-> +
-> +err_rflow_put:
-> +	xudma_rflow_put(rx_chn->common.udmax, flow->udma_rflow);
-> +	flow->udma_rflow = NULL;
-> +
->  	return ret;
->  }
->  
+> We could use different types on the glibc side, then no special
+> programmer action will be needed.
+
+Can't this lead to problems when mixing up compile units which have
+been compiled with linux/rseq.h with compile units compiled against
+sys/rseq.h ?
+
+Let me take a step back and try to understand.
+
+So far, there appears to be two scenarios where having a 64-byte
+alignment attribute on struct rseq and struct rseq_cs can cause
+problems:
+
+1) A user-space programmer uses malloc() to dynamically allocate
+   struct rseq or struct rseq_cs, which does not satisfy any of
+   the alignment requirement of the structure. Combining this with
+   compiler expectations that the structure needs to be aligned
+   on 64-byte (e.g. -mavx2) breaks things.
+
+   For this first scenario, I am proposing that we document that
+   the programmer should have used posix_memalign(), which provides
+   the required alignment guarantees.
+
+2) A user-space programmer mixes code compiled with compilers
+   honouring the aligned attribute with other compile units compiled
+   with compilers which discard those GCC extension attributes silently,
+   embeds those into a structure, and get different struct layouts.
+
+   The _Static_assert in sys/rseq.h should detect the case where a
+   compiler is not honouring the aligned attribute, right ?
+
 > 
+>>>>>> However, now that it is in the wild, it's a bit late to change that.
+>>>>> 
+>>>>> I had forgotten about the alignment crashes.  I think we should
+>>>>> seriously consider changing the types. 8-(
+>>>>
+>>>> I don't think this is an option at this stage given that it is part
+>>>> of the Linux kernel UAPI. I am not convinced that it is valid at all
+>>>> to allocate struct rseq or struct rseq_cs with malloc(), because it
+>>>> does not guarantee any alignment.
+>>> 
+>>> The kernel ABI doesn't change.  The kernel cannot use the alignment
+>>> information anyway.  Userspace struct layout may change in subtle
+>>> ways, though.
+>>
+>> Considering the amount of pain this can cause in user-space, and because
+>> it can break userspace, this is not a UAPI change I am willing to consider.
+>> I'm not sure why we are even discussing the possibility of breaking a Linux
+>> UAPI considering that those are set in stone.
+> 
+> Again, the kernel interface is NOT affected.  Only if the struct is
+> used in a non-top-level fashion across an ABI boundary in userspace.
+> I think making the change now is better than dealing with the breakage
+> in rseq users when they are built with -mavx2.
 
-- Péter
+What I am missing is what are the issues that persist once we add proper
+documentation of alignment requirements for heap allocation and a static
+assert to fail early when compiled with a compiler dismissing the
+aligned attribute ?
 
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+As you point out, changing the currently public linux/rseq.h UAPI header
+to remove those attributes ends up breaking user-space in scenarios of
+non-top-level use across ABI boundary. This is not kernel-vs-userspace
+ABI, but an ABI exposed by the kernel which ends up being used to
+coordinate user-space objects within a program. Breaking that does not
+appear to be any more acceptable. As I recall, the hard requirement for
+Linux ABIs is to do not break userspace, period. There is not mention
+of kernel-vs-userspace or userspace-vs-userspace. So if the end result
+of this change is to break user-space, it should not be changed.
+
+Thanks,
+
+Mathieu
+
+-- 
+Mathieu Desnoyers
+EfficiOS Inc.
+http://www.efficios.com
