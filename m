@@ -2,135 +2,245 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9A36218BDFD
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 18:27:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CB5F818BE09
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 18:31:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728421AbgCSR1f (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 13:27:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58094 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727852AbgCSR1f (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 13:27:35 -0400
-Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 028132080C;
-        Thu, 19 Mar 2020 17:27:32 +0000 (UTC)
-Date:   Thu, 19 Mar 2020 13:27:31 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     paulmck@kernel.org
-Cc:     rcu@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-team@fb.com, mingo@kernel.org, jiangshanlai@gmail.com,
-        dipankar@in.ibm.com, akpm@linux-foundation.org,
-        mathieu.desnoyers@efficios.com, josh@joshtriplett.org,
-        tglx@linutronix.de, peterz@infradead.org, dhowells@redhat.com,
-        edumazet@google.com, fweisbec@gmail.com, oleg@redhat.com,
-        joel@joelfernandes.org
-Subject: Re: [PATCH RFC v2 tip/core/rcu 02/22] rcu: Add per-task state to
- RCU CPU stall warnings
-Message-ID: <20200319132731.49b0d020@gandalf.local.home>
-In-Reply-To: <20200319001100.24917-2-paulmck@kernel.org>
-References: <20200319001024.GA28798@paulmck-ThinkPad-P72>
-        <20200319001100.24917-2-paulmck@kernel.org>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1727565AbgCSRbS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 13:31:18 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:53025 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727434AbgCSRbR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 13:31:17 -0400
+Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1jEz0K-0003KX-8i; Thu, 19 Mar 2020 18:30:48 +0100
+Received: from ukl by pty.hi.pengutronix.de with local (Exim 4.89)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1jEz0H-0003li-AB; Thu, 19 Mar 2020 18:30:45 +0100
+Date:   Thu, 19 Mar 2020 18:30:45 +0100
+From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Oleksandr Suvorov <oleksandr.suvorov@toradex.com>,
+        devicetree@vger.kernel.org, linux-pwm@vger.kernel.org,
+        Paul Barker <pbarker@konsulko.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
+        Igor Opaniuk <igor.opaniuk@toradex.com>,
+        Philippe Schenker <philippe.schenker@toradex.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>,
+        Fabio Estevam <festevam@gmail.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Cercueil <paul@crapouillou.net>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Ray Jui <rjui@broadcom.com>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Scott Branden <sbranden@broadcom.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        bcm-kernel-feedback-list@broadcom.com,
+        linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-riscv@lists.infradead.org, linux-rockchip@lists.infradead.org
+Subject: Re: [RFC PATCH 1/7] pwm: rename the PWM_POLARITY_INVERSED enum
+Message-ID: <20200319173045.ystpijvwtyvil2vq@pengutronix.de>
+References: <20200317123231.2843297-1-oleksandr.suvorov@toradex.com>
+ <20200317123231.2843297-2-oleksandr.suvorov@toradex.com>
+ <20200317174043.GA1464607@ulmo>
+ <20200317210042.ryrof3amr7fxp4w5@pengutronix.de>
+ <20200318225953.GA2874972@ulmo>
+ <20200319065039.szhh5dm6v3ejwijd@pengutronix.de>
+ <20200319163700.GA3354541@ulmo>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200319163700.GA3354541@ulmo>
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 18 Mar 2020 17:10:40 -0700
-paulmck@kernel.org wrote:
+Hello,
 
-> From: "Paul E. McKenney" <paulmck@kernel.org>
+On Thu, Mar 19, 2020 at 05:37:00PM +0100, Thierry Reding wrote:
+> On Thu, Mar 19, 2020 at 07:50:39AM +0100, Uwe Kleine-König wrote:
+> > On Wed, Mar 18, 2020 at 11:59:53PM +0100, Thierry Reding wrote:
+> > > On Tue, Mar 17, 2020 at 10:00:42PM +0100, Uwe Kleine-König wrote:
+> > > > Having said this I think (independent of the question if "inversed"
+> > > > exists) using two similar terms for the same thing just results in
+> > > > confusion. I hit that in the past already and I like it being addressed.
+> > > 
+> > > I don't know. It's pretty common to use different words for the same
+> > > thing. They're called synonyms.
+> > 
+> > In literature yes, I agree. In a novel it is annoying to repeat the same
+> > words over and over again and some variation is good. In programming
+> > however the goal is a different one. There the goal should be to be
+> > precise and consistent.
 > 
-> Currently, an RCU-preempt CPU stall warning simply lists the PIDs of
-> those tasks holding up the current grace period.  This can be helpful,
-> but more can be even more helpful.
+> We also need to make sure that things don't break.
+
+And I'm entirely on your side here.
+
+> It's a very bad idea to have a macro with the same name as an enum
+> value for reasons I stated before. I think that's the most important
+> thing here.
+
+You might have missed it, but that's OK for me, too. And note that after
+applying the whole series the enum is gone and so the problem. (First
+hunk of include/linux/pwm.h in patch 5.)
+
+> Also, if inversed is a synonym of inverted, we don't loose any precision
+> at all.
+
+grep doesn't know about synonyms, so if I grep for stuff about inverted
+PWMs in the kernel I completely miss one half as it's called inversed
+there. (Yeah sure, I can also grep for "inversed|inverted", but therefor
+I have to know first that both are used interchangable here.)
+
+That's a bit like a schematic that has "RESET#" in one place and
+"nRESET" in an other. If you stumble about that you wonder if they are
+two different names for the same signal or if they are actually two
+different ones.
+
+Have you ever read a specification that described some property, gave it
+a name and then later used a synonym to describe it? In my eyes that's a
+bad idea.
+
+> All you have to remember is that you're dealing with a device
+> tree constant in one case and an API enumeration in the other.
+
+Everything you need to remember (or learn) about a subsystem makes it
+harder work with it.
+ 
+> So I think the current form is actually more precise, though I guess it
+> could be confusing if you don't care about the difference.
+
+If there is a technical need to have different names that's one thing.
+But using synonyms to differentiate them is not optimal. Then please
+let's have names where looking at the identifier makes it obvious which
+is for the device trees and which for the API enum.
+
+> > > > > And as you noted in the cover letter, there's a conflict between the
+> > > > > macro defined in dt-bindings/pwm/pwm.txt. If they end up being included
+> > > > > in the wrong order you'll get a compile error.
+> > > > 
+> > > > There are also other symbols that exist twice (GPIO_ACTIVE_HIGH was the
+> > > > first to come to my mind). I'm not aware of any problems related to
+> > > > these. What am I missing?
+> > > 
+> > > There's currently no problem, obviously. But if for some reason the
+> > > include files end up being included in a different order (i.e. the
+> > > dt-bindings header is included before linux/pwm.h) then the macro will
+> > > be evaluated and result in something like:
+> > > 
+> > > 	enum pwm_polarity {
+> > > 		PWM_POLARITY_NORMAL,
+> > > 		1,
+> > > 	};
+> > > 
+> > > and that's not valid C, so will cause a build error.
+> > 
+> > I admit I didn't look closely here and I assume you are right. If I
+> > understand Oleksandr right this is only an intermediate step and when
+> > the series is applied completely this issue is gone. Still it might be
+> > worth to improve the series here.
 > 
-> To this end, this commit adds the nesting level, whether the task
-> things it was preempted in its current RCU read-side critical section,
-
-s/things/thinks/
-
-> whether RCU core has asked this task for a quiescent state, whether the
-> expedited-grace-period hint is set, and whether the task believes that
-> it is on the blocked-tasks list (it must be, or it would not be printed,
-> but if things are broken, best not to take too much for granted).
+> 	$ gcc -o /dev/null -x c - <<- EOF
+> 	>     #define PWM_POLARITY_INVERTED (1 << 0)
+> 	>
+> 	>     enum pwm_polarity {
+> 	>         PWM_POLARITY_NORMAL,
+> 	>         PWM_POLARITY_INVERTED,
+> 	>     };
+> 	> EOF
+> 	<stdin>:1:35: error: expected identifier before ‘(’ token
+> 	<stdin>:5:9: note: in expansion of macro ‘PWM_POLARITY_INVERTED’
 > 
-> Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
-> ---
->  kernel/rcu/tree_stall.h | 38 ++++++++++++++++++++++++++++++++++++--
->  1 file changed, 36 insertions(+), 2 deletions(-)
+> Q.E.D.
+
+I don't understand why you proved something here. I didn't doubt this.
+
+> > My original question was about similar problems with GPIO_ACTIVE_HIGH.
+> > Are you aware of problems there?
 > 
-> diff --git a/kernel/rcu/tree_stall.h b/kernel/rcu/tree_stall.h
-> index 502b4dd..e19487d 100644
-> --- a/kernel/rcu/tree_stall.h
-> +++ b/kernel/rcu/tree_stall.h
-> @@ -192,14 +192,40 @@ static void rcu_print_detail_task_stall_rnp(struct rcu_node *rnp)
->  	raw_spin_unlock_irqrestore_rcu_node(rnp, flags);
->  }
->  
-> +// Communicate task state back to the RCU CPU stall warning request.
-> +struct rcu_stall_chk_rdr {
-> +	int nesting;
-> +	union rcu_special rs;
-> +	bool on_blkd_list;
-> +};
-> +
-> +/*
-> + * Report out the state of a not-running task that is stalling the
-> + * current RCU grace period.
-> + */
-> +static bool check_slow_task(struct task_struct *t, void *arg)
-> +{
-> +	struct rcu_node *rnp;
-> +	struct rcu_stall_chk_rdr *rscrp = arg;
-> +
-> +	if (task_curr(t))
-> +		return false; // It is running, so decline to inspect it.
+> The problem exists there equally. We're probably not running into it
+> because drivers don't end up including dt-bindings/gpio/gpio.h and
+> include/linux/gpio/machine.h at the same time. Or they end up always
+> including them in the right order.
 
-Since it can be locked on_rq(), should we report that too?
+Oh, that's worse than I expected. There are two .c files that include
+dt-bindings/gpio/gpio.h:
 
--- Steve
+	drivers/rtc/rtc-omap.c
+	drivers/tty/serial/omap-serial.c
 
-> +	rscrp->nesting = t->rcu_read_lock_nesting;
-> +	rscrp->rs = t->rcu_read_unlock_special;
-> +	rnp = t->rcu_blocked_node;
-> +	rscrp->on_blkd_list = !list_empty(&t->rcu_node_entry);
-> +	return true;
-> +}
-> +
->  /*
->   * Scan the current list of tasks blocked within RCU read-side critical
->   * sections, printing out the tid of each.
->   */
->  static int rcu_print_task_stall(struct rcu_node *rnp)
->  {
-> -	struct task_struct *t;
->  	int ndetected = 0;
-> +	struct rcu_stall_chk_rdr rscr;
-> +	struct task_struct *t;
->  
->  	if (!rcu_preempt_blocked_readers_cgp(rnp))
->  		return 0;
-> @@ -208,7 +234,15 @@ static int rcu_print_task_stall(struct rcu_node *rnp)
->  	t = list_entry(rnp->gp_tasks->prev,
->  		       struct task_struct, rcu_node_entry);
->  	list_for_each_entry_continue(t, &rnp->blkd_tasks, rcu_node_entry) {
-> -		pr_cont(" P%d", t->pid);
-> +		if (!try_invoke_on_locked_down_task(t, check_slow_task, &rscr))
-> +			pr_cont(" P%d", t->pid);
-> +		else
-> +			pr_cont(" P%d/%d:%c%c%c%c",
-> +				t->pid, rscr.nesting,
-> +				".b"[rscr.rs.b.blocked],
-> +				".q"[rscr.rs.b.need_qs],
-> +				".e"[rscr.rs.b.exp_hint],
-> +				".l"[rscr.on_blkd_list]);
->  		ndetected++;
->  	}
->  	pr_cont("\n");
+So the definition isn't even used in the gpio core to parse dt-stuff.
+(And both files don't use any definition of that file :-|)
 
+> For PWM the situation is slightly more complicated because we only have
+> one header for the kernel API, so the likelihood of including it along
+> with the dt-bindings header is increased compared to GPIO.
+
+If a consumer or provider includes the dt-bindings file there is
+something fishy. (Still catching this with a compiler message better
+than "expected identifier before ‘(’ token" would be good.)
+ 
+> > > > > Note that DT bindings are an ABI and can
+> > > > > never change, whereas the enum pwm_polarity is part of a Linux internal
+> > > > > API and doesn't have the same restrictions as an ABI.
+> > > > 
+> > > > I thought only binary device trees (dtb) are supposed to be ABI.
+> > > 
+> > > Yes, the DTB is the ABI. dt-bindings/pwm/pwm.h is used to generate DTBs,
+> > > which basically makes it ABI as well.
+> > 
+> > We disagree here. With this argument you could fix quite some things as
+> > ABI.
+> 
+> I don't understand what you're trying to say.
+
+I don't want to follow your argument that dt-bindings/pwm/pwm.h is ABI
+as well. device tree binaries follow an ABI (similar to machine code),
+but the compiler and the source code (including headers) are not.
+
+> > > Yes, the symbol name may not be part of the ABI, but changing the
+> > > symbol becomes very inconvenient because everyone that depends on it
+> > > would have to change.
+> > 
+> > Oleksandr adapted all in-tree users, so it only affects out-of-tree
+> > users. In my book this is fine.
+> 
+> There used to be a time when it was assumed that eventually device tree
+> sources would live outside of the kernel tree. Given that they are a HW
+> description, they really ought not to be relying on the Linux kernel
+> tree as a way of keeping them consistent. That's really only out of
+> convenience.
+
+The other way round however is fine, isn't it? So use the dt definition
+in the kernel should be ok.
+
+Best regards
+Uwe
+
+-- 
+Pengutronix e.K.                           | Uwe Kleine-König            |
+Industrial Linux Solutions                 | https://www.pengutronix.de/ |
