@@ -2,161 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8707818BBF1
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 17:10:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 02F6A18BC00
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 17:11:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728015AbgCSQKF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 12:10:05 -0400
-Received: from vps.xff.cz ([195.181.215.36]:59430 "EHLO vps.xff.cz"
+        id S1728164AbgCSQLQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 12:11:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49208 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727064AbgCSQKE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 12:10:04 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=megous.com; s=mail;
-        t=1584634202; bh=JE6As6CIZS8cuj7+7+rzHQMv4MweXNHp5Nj8F2f/1sA=;
-        h=Date:From:To:Cc:Subject:References:X-My-GPG-KeyId:From;
-        b=m00v60jzWPKSy4jXWtAUn2BxQ5ECTDL76y74ZABR/+zsxyxNzOa9abxC1yecgnHjx
-         KyWqFQ4mWOj4PlpaJGOWIf7n5O1LgS0Mx1dDT4j3JRi//FLpLhUvc7wcVlo8MsbAN0
-         kGfArbhAbc0qZa9JaF5PXOh0PrQ1KuPwEaZS+Odk=
-Date:   Thu, 19 Mar 2020 17:10:02 +0100
-From:   =?utf-8?Q?Ond=C5=99ej?= Jirman <megous@megous.com>
-To:     Icenowy Zheng <icenowy@aosc.io>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Maxime Ripard <mripard@kernel.org>,
-        Chen-Yu Tsai <wens@csie.org>, dri-devel@lists.freedesktop.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-sunxi@googlegroups.com
-Subject: Re: [linux-sunxi] [PATCH v2 5/5] arm64: allwinner: dts: a64: add
- LCD-related device nodes for PinePhone
-Message-ID: <20200319161002.kmivhr3ouhoyn4bt@core.my.home>
-Mail-Followup-To: =?utf-8?Q?Ond=C5=99ej?= Jirman <megous@megous.com>,
-        Icenowy Zheng <icenowy@aosc.io>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Sam Ravnborg <sam@ravnborg.org>, Rob Herring <robh+dt@kernel.org>,
-        Maxime Ripard <mripard@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-sunxi@googlegroups.com
-References: <20200316133503.144650-1-icenowy@aosc.io>
- <20200316133503.144650-6-icenowy@aosc.io>
- <d32e59aeb8395af1ae7ac2daa1ce985c56c14acc.camel@aosc.io>
+        id S1727436AbgCSQLP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 12:11:15 -0400
+Received: from mail-yb1-f174.google.com (mail-yb1-f174.google.com [209.85.219.174])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3F27E20663;
+        Thu, 19 Mar 2020 16:11:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1584634274;
+        bh=Oq6OzcJ1pRJcVvHx5D+K9KmKO9NwGHb+oIM0SQfrTGs=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=KzU80ZHDeVWY/ZNhn0HPi7cNIDTjzPgDKJdmPAv1jjgRoKscNnggHw5HB5RUHV63q
+         nM9OGEN6mPxLr1rnJjWGSLEv4KZ4vZwUvUUl3MEQTedHm0AGmNV4WMICiZrgqotvpx
+         pnDSIKDyMY+KKWeD9jJFnmHMnh6cA5gnf04e2fGA=
+Received: by mail-yb1-f174.google.com with SMTP id g206so565717ybg.11;
+        Thu, 19 Mar 2020 09:11:14 -0700 (PDT)
+X-Gm-Message-State: ANhLgQ39SFbQHZA5wHLdGEf2uFUaC2C4BFqkZOWehVCu5IaHn9u7t7zh
+        UEAPvJDLkjZ2gmcCepQnpJG1jRKBqAnESBWmog==
+X-Google-Smtp-Source: ADFU+vvLsEep/vx8qHUUkolYGJcIcerwEptFuq/LXBSqDUZWP4P71Gah1wXv8Hn1g+bbgxKGowiIJN9Kj3EiKfBUm/U=
+X-Received: by 2002:a5b:48e:: with SMTP id n14mr6129045ybp.462.1584634273454;
+ Thu, 19 Mar 2020 09:11:13 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <d32e59aeb8395af1ae7ac2daa1ce985c56c14acc.camel@aosc.io>
-X-My-GPG-KeyId: EBFBDDE11FB918D44D1F56C1F9F0A873BE9777ED
- <https://xff.cz/key.txt>
+References: <20200317093922.20785-1-lkundrak@v3.sk> <20200317093922.20785-14-lkundrak@v3.sk>
+In-Reply-To: <20200317093922.20785-14-lkundrak@v3.sk>
+From:   Rob Herring <robh+dt@kernel.org>
+Date:   Thu, 19 Mar 2020 10:11:02 -0600
+X-Gmail-Original-Message-ID: <CAL_Jsq+wG+DTZ8Vxcw=NR2isABGrkoDiBt-uG9+NF6qdWuU62Q@mail.gmail.com>
+Message-ID: <CAL_Jsq+wG+DTZ8Vxcw=NR2isABGrkoDiBt-uG9+NF6qdWuU62Q@mail.gmail.com>
+Subject: Re: [PATCH 13/28] dt-bindings: serial: move Marvell compatible string
+ to 8250 binding doc
+To:     Lubomir Rintel <lkundrak@v3.sk>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <maz@kernel.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Mark Brown <broonie@kernel.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Daniel Mack <daniel@zonque.org>,
+        Haojian Zhuang <haojian.zhuang@gmail.com>,
+        Robert Jarzmik <robert.jarzmik@free.fr>,
+        devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linux I2C <linux-i2c@vger.kernel.org>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        linux-mmc <linux-mmc@vger.kernel.org>,
+        "open list:REAL TIME CLOCK (RTC) SUBSYSTEM" 
+        <linux-rtc@vger.kernel.org>,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
+        linux-spi <linux-spi@vger.kernel.org>,
+        Linux USB List <linux-usb@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 19, 2020 at 10:51:36PM +0800, Icenowy Zheng wrote:
-> 在 2020-03-16星期一的 21:35 +0800，Icenowy Zheng写道：
-> > PinePhone uses PWM backlight and a XBD599 LCD panel over DSI for
-> > display.
-> > 
-> > Add its device nodes.
-> > 
-> > Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
-> > ---
-> > No changes in v2.
-> > 
-> >  .../dts/allwinner/sun50i-a64-pinephone.dtsi   | 37
-> > +++++++++++++++++++
-> >  1 file changed, 37 insertions(+)
-> > 
-> > diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-pinephone.dtsi
-> > b/arch/arm64/boot/dts/allwinner/sun50i-a64-pinephone.dtsi
-> > index cefda145c3c9..96d9150423e0 100644
-> > --- a/arch/arm64/boot/dts/allwinner/sun50i-a64-pinephone.dtsi
-> > +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-pinephone.dtsi
-> > @@ -16,6 +16,15 @@ aliases {
-> >  		serial0 = &uart0;
-> >  	};
-> >  
-> > +	backlight: backlight {
-> > +		compatible = "pwm-backlight";
-> > +		pwms = <&r_pwm 0 50000 PWM_POLARITY_INVERTED>;
-> > +		brightness-levels = <0 16 18 20 22 24 26 29 32 35 38 42
-> > 46 51 56 62 68 75 83 91 100>;
-> 
-> Should I drop the 0 here and replace it with 14?
+On Tue, Mar 17, 2020 at 3:40 AM Lubomir Rintel <lkundrak@v3.sk> wrote:
+>
+> These ports are compatible with NS8250 and handled by the same driver.
+> Get rid of the extra document that fails to document the properties that
+> are actually supported.
+>
+> Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
+> ---
+>  Documentation/devicetree/bindings/serial/8250.txt        | 2 ++
+>  Documentation/devicetree/bindings/serial/mrvl-serial.txt | 4 ----
+>  2 files changed, 2 insertions(+), 4 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/serial/mrvl-serial.txt
 
-Almost all boards in arm/boot/dts start at 0.
+Reviewed-by: Rob Herring <robh@kernel.org>
 
-> I have heard community complaining about setting 0 to brightness make
-> the screen black.
+I'd really like to see 8250.txt converted to schema.
 
-Level 0 (first value in the list) is special, and turns off the backlight:
-
-123         if (brightness > 0) {
-124                 pwm_get_state(pb->pwm, &state);
-125                 state.duty_cycle = compute_duty_cycle(pb, brightness);
-126                 pwm_apply_state(pb->pwm, &state);
-127                 pwm_backlight_power_on(pb);
-128         } else {
-129                 pwm_backlight_power_off(pb);
-130         }
-
-	o.
-
-> (I think in this situation bl_power or blank the DSI panel can still
-> totally shut down the backlight).
-> 
-> > +		default-brightness-level = <15>;
-> > +		enable-gpios = <&pio 7 10 GPIO_ACTIVE_HIGH>; /* PH10 */
-> > +		power-supply = <&reg_ldo_io0>;
-> > +	};
-> > +
-> >  	chosen {
-> >  		stdout-path = "serial0:115200n8";
-> >  	};
-> > @@ -84,6 +93,30 @@ &dai {
-> >  	status = "okay";
-> >  };
-> >  
-> > +&de {
-> > +	status = "okay";
-> > +};
-> > +
-> > +&dphy {
-> > +	status = "okay";
-> > +};
-> > +
-> > +&dsi {
-> > +	vcc-dsi-supply = <&reg_dldo1>;
-> > +	#address-cells = <1>;
-> > +	#size-cells = <0>;
-> > +	status = "okay";
-> > +
-> > +	panel@0 {
-> > +		compatible = "xingbangda,xbd599";
-> > +		reg = <0>;
-> > +		reset-gpios = <&pio 3 23 GPIO_ACTIVE_LOW>; /* PD23 */
-> > +		iovcc-supply = <&reg_dldo2>;
-> > +		vcc-supply = <&reg_ldo_io0>;
-> > +		backlight = <&backlight>;
-> > +	};
-> > +};
-> > +
-> >  &ehci0 {
-> >  	status = "okay";
-> >  };
-> > @@ -188,6 +221,10 @@ &r_pio {
-> >  	 */
-> >  };
-> >  
-> > +&r_pwm {
-> > +	status = "okay";
-> > +};
-> > +
-> >  &r_rsb {
-> >  	status = "okay";
-> >  
-> > -- 
-> > 2.24.1
-> > 
-> 
+Rob
