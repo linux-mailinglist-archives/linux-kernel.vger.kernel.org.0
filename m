@@ -2,41 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6640E18B5A4
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:20:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DB28718B6D2
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:30:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729970AbgCSNUW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 09:20:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44214 "EHLO mail.kernel.org"
+        id S1730233AbgCSNWe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 09:22:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47948 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729691AbgCSNUU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 09:20:20 -0400
+        id S1728266AbgCSNWc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 09:22:32 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 997CA20724;
-        Thu, 19 Mar 2020 13:20:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7A867206D7;
+        Thu, 19 Mar 2020 13:22:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584624019;
-        bh=mNEs1+4xD8aDv52fOUVhufV2W+80jU2ONFX0wpQFf/c=;
+        s=default; t=1584624152;
+        bh=pedXLTfJpQVGrJP7cjM0hvFmyCL6sf5H6VR6PRA7Ru4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=04iIezgcXXKTkRsyAzm4O0zKvoHZKsD1WXD8dsNBWZcKw3CmiyNRgWc0CH/svdb9O
-         nqX3PyD5ewi2nJUN3zakAD/KQoQR7hrpS88XRtw/OE3z2RCS44CyiM+dma5Hb+O++Y
-         xCEE0wAFn2RmrSCfn6FOSff2ID/CuplFXmMsIuU0=
+        b=zLl+vbm/d7CYWVHUOHOmhPQton5rzDMZDy/6Rizm6MRVu8PENE4hbY57KIad1ubcs
+         r5hxyR2jIgS3s3sErbdvLz+all9JUNfBlh38Kqv+yTC4GgellHmJ1cNI15PTdbzovE
+         JFh5CrzlNTyHwqU/y/VhF+qV3NB2sxLdTq6guhnI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Faiz Abbas <faiz_abbas@ti.com>,
-        Borislav Petkov <bp@suse.de>,
-        Adrian Hunter <adrian.hunter@intel.com>,
+        stable@vger.kernel.org,
+        Sowjanya Komatineni <skomatineni@nvidia.com>,
+        Anders Roxell <anders.roxell@linaro.org>,
+        Faiz Abbas <faiz_abbas@ti.com>,
+        Peter Geis <pgwipeout@gmail.com>,
         Ulf Hansson <ulf.hansson@linaro.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 05/48] mmc: host: Fix Kconfig warnings on keystone_defconfig
+Subject: [PATCH 5.4 09/60] mmc: core: Respect MMC_CAP_NEED_RSP_BUSY for erase/trim/discard
 Date:   Thu, 19 Mar 2020 14:03:47 +0100
-Message-Id: <20200319123904.797207216@linuxfoundation.org>
+Message-Id: <20200319123922.147166477@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.2
-In-Reply-To: <20200319123902.941451241@linuxfoundation.org>
-References: <20200319123902.941451241@linuxfoundation.org>
+In-Reply-To: <20200319123919.441695203@linuxfoundation.org>
+References: <20200319123919.441695203@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,45 +48,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Faiz Abbas <faiz_abbas@ti.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
 
-[ Upstream commit 287b1da6a458a30da2e5be745498d31092ebb001 ]
+[ Upstream commit 43cc64e5221cc6741252b64bc4531dd1eefb733d ]
 
-Commit 961de0a856e3 ("mmc: sdhci-omap: Workaround errata regarding
-SDR104/HS200 tuning failures (i929)") added a select on TI_SOC_THERMAL
-for the driver to get temperature for tuning.
+The busy timeout that is computed for each erase/trim/discard operation,
+can become quite long and may thus exceed the host->max_busy_timeout. If
+that becomes the case, mmc_do_erase() converts from using an R1B response
+to an R1 response, as to prevent the host from doing HW busy detection.
 
-However, this causes the following warning on keystone_defconfig because
-keystone does not support TI_SOC_THERMAL:
+However, it has turned out that some hosts requires an R1B response no
+matter what, so let's respect that via checking MMC_CAP_NEED_RSP_BUSY. Note
+that, if the R1B gets enforced, the host becomes fully responsible of
+managing the needed busy timeout, in one way or the other.
 
-"WARNING: unmet direct dependencies detected for TI_SOC_THERMAL"
-
-Fix this by changing the select to imply.
-
-Fixes: 961de0a856e3 ("mmc: sdhci-omap: Workaround errata regarding
-SDR104/HS200 tuning failures (i929)")
-Signed-off-by: Faiz Abbas <faiz_abbas@ti.com>
-Tested-by: Borislav Petkov <bp@suse.de>
-Acked-by: Adrian Hunter <adrian.hunter@intel.com>
+Suggested-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+Cc: <stable@vger.kernel.org>
+Tested-by: Anders Roxell <anders.roxell@linaro.org>
+Tested-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+Tested-by: Faiz Abbas <faiz_abbas@ti.com>
+Tested-By: Peter Geis <pgwipeout@gmail.com>
 Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/mmc/host/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/mmc/core/core.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
-index 79b8ac9cdc744..b7f809aa40c2c 100644
---- a/drivers/mmc/host/Kconfig
-+++ b/drivers/mmc/host/Kconfig
-@@ -936,7 +936,7 @@ config MMC_SDHCI_OMAP
- 	tristate "TI SDHCI Controller Support"
- 	depends on MMC_SDHCI_PLTFM && OF
- 	select THERMAL
--	select TI_SOC_THERMAL
-+	imply TI_SOC_THERMAL
- 	help
- 	  This selects the Secure Digital Host Controller Interface (SDHCI)
- 	  support present in TI's DRA7 SOCs. The controller supports
+diff --git a/drivers/mmc/core/core.c b/drivers/mmc/core/core.c
+index abf8f5eb0a1c8..26644b7ec13e3 100644
+--- a/drivers/mmc/core/core.c
++++ b/drivers/mmc/core/core.c
+@@ -1732,8 +1732,11 @@ static int mmc_do_erase(struct mmc_card *card, unsigned int from,
+ 	 * the erase operation does not exceed the max_busy_timeout, we should
+ 	 * use R1B response. Or we need to prevent the host from doing hw busy
+ 	 * detection, which is done by converting to a R1 response instead.
++	 * Note, some hosts requires R1B, which also means they are on their own
++	 * when it comes to deal with the busy timeout.
+ 	 */
+-	if (card->host->max_busy_timeout &&
++	if (!(card->host->caps & MMC_CAP_NEED_RSP_BUSY) &&
++	    card->host->max_busy_timeout &&
+ 	    busy_timeout > card->host->max_busy_timeout) {
+ 		cmd.flags = MMC_RSP_SPI_R1 | MMC_RSP_R1 | MMC_CMD_AC;
+ 	} else {
 -- 
 2.20.1
 
