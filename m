@@ -2,150 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 77FE818C1EA
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 21:53:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CA40B18C1E2
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 21:53:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727252AbgCSUxa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 16:53:30 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:45128 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727001AbgCSUx0 (ORCPT
+        id S1726950AbgCSUxJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 16:53:09 -0400
+Received: from alexa-out-sd-01.qualcomm.com ([199.106.114.38]:64684 "EHLO
+        alexa-out-sd-01.qualcomm.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725817AbgCSUxI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 16:53:26 -0400
-Received: by mail-lj1-f193.google.com with SMTP id y17so4093271ljk.12;
-        Thu, 19 Mar 2020 13:53:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=AelAVnWjO2TZDh03p+etTscv6DSsKzERqQaVm4gt5ak=;
-        b=O+b78U1nfcIo1RS1tvMDBcfw1TAWJl8cxp7U9EG18YFYrNj7rFftCLsGv4vGoD16zl
-         ERlENrw0DZMt3OUEb1k6c34ZnFMcOKPaHRYJO8GTE1Frw8v2cA2AJ7nYnBKpMm8KhYIJ
-         SAjwQAH6oEW0U3cymxr3mJ+cwLxJxps9uprqBTARG5DC7H2l6oV8kmtXP+UIkHKbhTD4
-         1Fds2SHR+Z8DSOQoRzmbJ80lvmU8YzQWck6/k7EXk7fLFMVqSK+reJc1+m+FjbWFM/qg
-         NJhS7p5w5UBqatUgUpYq3/te5vE3OMofX9UCpIWAJuiaWVENiyDY/4OI0RCkMvLwkdZY
-         e7pA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=AelAVnWjO2TZDh03p+etTscv6DSsKzERqQaVm4gt5ak=;
-        b=k6JJsixkdarXG3C5qYxXLEZlsJBoa5jFrv6qf4uDc8+JQ0Kr74BsGAAtkLeTlMyggy
-         WzFzowI4HVPyl4BrrQ5tih+24nQ+ITu9SIapW9phXtujBWKcEEolM3/UAexMl4K6CNd5
-         t87UjMSsSqLHHEpD54UaizYr7PhvNCLTcWozHCgaddBahgyHAv/Rb0XLtM24aHFrdWul
-         /Wfo5+kNsBEw2eGNbpctlWChbLUejl9XzePi0lG/hvJ7Yg24pmjP28PORfJ3C+tWVQaB
-         haOIuIlKgjM8tk/AjD23jV5JaVNT1GkbC8qs8VGX7i20+lsSgBE0M/P/yaqJLmxpMjo/
-         S1fg==
-X-Gm-Message-State: ANhLgQ1Q6uJ2DG5RCID2Bfq5t9q4rDWEdKjDZDpjayCCtPq8O3MQXWVB
-        oOso5FEDzsVBvl0m/RRa7d7KvfP4
-X-Google-Smtp-Source: ADFU+vuGqzrmTu64yAZAiLe/kEBKHX3Qo3ZT2sTmWEcuAJe02y1rfzDVWSVrc6EH+nC+CGhU7inpjA==
-X-Received: by 2002:a2e:9886:: with SMTP id b6mr3416833ljj.266.1584651203890;
-        Thu, 19 Mar 2020 13:53:23 -0700 (PDT)
-Received: from localhost.localdomain (94-29-39-224.dynamic.spd-mgts.ru. [94.29.39.224])
-        by smtp.gmail.com with ESMTPSA id u10sm2108661ljk.56.2020.03.19.13.53.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 19 Mar 2020 13:53:23 -0700 (PDT)
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
-        Vinod Koul <vkoul@kernel.org>,
-        Dan Williams <dan.j.williams@intel.com>
-Cc:     Wolfram Sang <wsa@the-dreams.de>, linux-i2c@vger.kernel.org,
-        linux-tegra@vger.kernel.org, dmaengine@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v1 2/2] dmaengine: tegra-apb: Improve DMA synchronization
-Date:   Thu, 19 Mar 2020 23:52:28 +0300
-Message-Id: <20200319205228.8883-2-digetx@gmail.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200319205228.8883-1-digetx@gmail.com>
-References: <20200319205228.8883-1-digetx@gmail.com>
+        Thu, 19 Mar 2020 16:53:08 -0400
+Received: from unknown (HELO ironmsg05-sd.qualcomm.com) ([10.53.140.145])
+  by alexa-out-sd-01.qualcomm.com with ESMTP; 19 Mar 2020 13:53:08 -0700
+Received: from gurus-linux.qualcomm.com ([10.46.162.81])
+  by ironmsg05-sd.qualcomm.com with ESMTP; 19 Mar 2020 13:53:07 -0700
+Received: by gurus-linux.qualcomm.com (Postfix, from userid 383780)
+        id E84BE4B82; Thu, 19 Mar 2020 13:53:07 -0700 (PDT)
+Date:   Thu, 19 Mar 2020 13:53:07 -0700
+From:   Guru Das Srinagesh <gurus@codeaurora.org>
+To:     David Laight <David.Laight@ACULAB.COM>
+Cc:     "linux-pwm@vger.kernel.org" <linux-pwm@vger.kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <uwe@kleine-koenig.org>,
+        Subbaraman Narayanamurthy <subbaram@codeaurora.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
+Subject: Re: [PATCH v8 01/12] clk: pwm: Use 64-bit division function
+Message-ID: <20200319205307.GB17255@codeaurora.org>
+References: <cover.1583889178.git.gurus@codeaurora.org>
+ <338966686a673c241905716c90049993e7bb7d6a.1583889178.git.gurus@codeaurora.org>
+ <7506bc2972324fd286dac6327ec73a3a@AcuMS.aculab.com>
+ <20200312020938.GA14827@codeaurora.org>
+ <fea86a43b28f4493abe0826654369513@AcuMS.aculab.com>
+ <20200312190859.GA19605@codeaurora.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200312190859.GA19605@codeaurora.org>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Boot CPU0 always handles DMA interrupts and under some rare circumstances
-it could stuck in uninterruptible state for a significant time (like in a
-case of KASAN + NFS root). In this case sibling CPU, which waits for DMA
-transfer completion, will get a DMA transfer timeout. In order to handle
-this rare condition, interrupt status needs to be polled until interrupt
-is handled.
+On Thu, Mar 12, 2020 at 12:09:12PM -0700, Guru Das Srinagesh wrote:
+> On Thu, Mar 12, 2020 at 09:14:09AM +0000, David Laight wrote:
+> > From: Guru Das Srinagesh
+> > > Sent: 12 March 2020 02:10
+> > > On Wed, Mar 11, 2020 at 04:58:24PM +0000, David Laight wrote:
+> > > > From: Guru Das Srinagesh
+> > > > > Sent: 11 March 2020 01:41
+> > > > >
+> > > > > Since the PWM framework is switching struct pwm_args.period's datatype
+> > > > > to u64, prepare for this transition by using div64_u64 to handle a
+> > > > > 64-bit divisor.
+> > > > >
+> > ...
+> > > > > --- a/drivers/clk/clk-pwm.c
+> > > > > +++ b/drivers/clk/clk-pwm.c
+> > > > > @@ -89,7 +89,7 @@ static int clk_pwm_probe(struct platform_device *pdev)
+> > > > >  	}
+> > > > >
+> > > > >  	if (of_property_read_u32(node, "clock-frequency", &clk_pwm->fixed_rate))
+> > > > > -		clk_pwm->fixed_rate = NSEC_PER_SEC / pargs.period;
+> > > > > +		clk_pwm->fixed_rate = div64_u64(NSEC_PER_SEC, pargs.period);
+> > > >
+> > > > That cannot be needed, a 32 bit division is fine.
+> > > 
+> > > Could you please explain why? I think the use of this function is
+> > > warranted in order to handle the division properly with a 64-bit
+> > > divisor.
+> > ...
+> > > > I'd assign pargs.period to an 'unsigned int' variable
+> > > > prior to the division (I hate casts - been bitten by them in the past.).
+> > > 
+> > > Wouldn't this truncate the 64-bit value? The intention behind this patch
+> > > is to allow the processing of 64-bit values in full.
+> > 
+> > You are dividing a 32bit constant by a value.
+> > If pargs.period is greater than 2^32 the result is zero.
+> 
+> Thanks for the explanation. 
+> 
+> > I think you divide by 'fixed_rate' a bit later on - better not be zero.
+> 
+> Good point, but this issue exists with or without this patch, and fixing
+> it is beyond this patch's scope.
+> 
+> Just to check if this patch can be dropped, I tested out compilation
+> with this patch reverted and there were no errors, so I'm leaning
+> towards dropping this patch unless you have any further comments on how
+> to proceed.
 
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
----
- drivers/dma/tegra20-apb-dma.c | 24 ++++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
+Turns out I couldn't drop this patch after all - kbuild test robot
+complained [1]. Accordingly, I've brought this patch back in my v10
+patchset with the modifications you suggested. Could you kindly review it?
 
-diff --git a/drivers/dma/tegra20-apb-dma.c b/drivers/dma/tegra20-apb-dma.c
-index 26f427e02369..d4a92714740c 100644
---- a/drivers/dma/tegra20-apb-dma.c
-+++ b/drivers/dma/tegra20-apb-dma.c
-@@ -24,6 +24,7 @@
- #include <linux/pm_runtime.h>
- #include <linux/reset.h>
- #include <linux/slab.h>
-+#include <linux/wait.h>
- 
- #include "dmaengine.h"
- 
-@@ -202,6 +203,8 @@ struct tegra_dma_channel {
- 	unsigned int slave_id;
- 	struct dma_slave_config dma_sconfig;
- 	struct tegra_dma_channel_regs channel_reg;
-+
-+	struct wait_queue_head wq;
- };
- 
- /* tegra_dma: Tegra DMA specific information */
-@@ -682,6 +685,7 @@ static irqreturn_t tegra_dma_isr(int irq, void *dev_id)
- 		tdc_write(tdc, TEGRA_APBDMA_CHAN_STATUS, status);
- 		tdc->isr_handler(tdc, false);
- 		tasklet_schedule(&tdc->tasklet);
-+		wake_up_all(&tdc->wq);
- 		spin_unlock(&tdc->lock);
- 		return IRQ_HANDLED;
- 	}
-@@ -798,10 +802,29 @@ static int tegra_dma_terminate_all(struct dma_chan *dc)
- 	return 0;
- }
- 
-+static bool tegra_dma_eoc_interrupt_deasserted(struct tegra_dma_channel *tdc)
-+{
-+	unsigned long flags;
-+	u32 status;
-+
-+	spin_lock_irqsave(&tdc->lock, flags);
-+	status = tdc_read(tdc, TEGRA_APBDMA_CHAN_STATUS);
-+	spin_unlock_irqrestore(&tdc->lock, flags);
-+
-+	return !(status & TEGRA_APBDMA_STATUS_ISE_EOC);
-+}
-+
- static void tegra_dma_synchronize(struct dma_chan *dc)
- {
- 	struct tegra_dma_channel *tdc = to_tegra_dma_chan(dc);
- 
-+	/*
-+	 * CPU, which handles interrupt, could be busy in
-+	 * uninterruptible state, in this case sibling CPU
-+	 * should wait until interrupt is handled.
-+	 */
-+	wait_event(tdc->wq, tegra_dma_eoc_interrupt_deasserted(tdc));
-+
- 	tasklet_kill(&tdc->tasklet);
- }
- 
-@@ -1495,6 +1518,7 @@ static int tegra_dma_probe(struct platform_device *pdev)
- 		tasklet_init(&tdc->tasklet, tegra_dma_tasklet,
- 			     (unsigned long)tdc);
- 		spin_lock_init(&tdc->lock);
-+		init_waitqueue_head(&tdc->wq);
- 
- 		INIT_LIST_HEAD(&tdc->pending_sg_req);
- 		INIT_LIST_HEAD(&tdc->free_sg_req);
--- 
-2.25.1
+[1] https://www.spinics.net/lists/linux-pwm/msg11906.html
 
+Thank you.
+
+Guru Das.
