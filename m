@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EB4D118B405
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:06:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8D3F118B472
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:10:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727579AbgCSNGH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 09:06:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49046 "EHLO mail.kernel.org"
+        id S1728415AbgCSNJy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 09:09:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54444 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727548AbgCSNGD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 09:06:03 -0400
+        id S1728377AbgCSNJv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 09:09:51 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0761220722;
-        Thu, 19 Mar 2020 13:06:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 18F8320789;
+        Thu, 19 Mar 2020 13:09:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584623163;
-        bh=bdEXXqS0SfsFFqlsqir0mBfb/VHPc3nYHPdaexKlG58=;
+        s=default; t=1584623391;
+        bh=O1OxejklrZEJykSJGu3mE7lIoPOU6R/IBRhohna7Urk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=n9MHy+iG65fJ49on7E3gWAHJ+1haVYLWtRBRS/HJ1q8FpgHMRszlMtqfZLcNFUp/4
-         ONzJ16/j1GoqB5coEndZT7vgklm+TFNj9XJ8EesKWBVxskelmfeTDZjShccBX3mglt
-         NmhbS5OJoxhsaLdApUAD9DvSGqnqlZ1nb6msaoqY=
+        b=y/6nx6uAeF/m7sGv5ZojRhkL9caOu42sm4bABnItlXTMdNNU4ol6I6XzFN3vTMVMP
+         +FKnbIjwekO9c5A0xwl9ORHhOkha/edWAbXs9J5he2cEYTCIC5GGOpxnyZc6to3WtJ
+         mi04GFHxXGGZK2gC3xgar0fJ5PiMBqREVzqhwSP4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Lu Baolu <baolu.lu@linux.intel.com>,
-        Moritz Fischer <mdf@kernel.org>,
-        Yonghyun Hwang <yonghyun@google.com>,
-        Joerg Roedel <jroedel@suse.de>
-Subject: [PATCH 4.4 29/93] iommu/vt-d: Fix a bug in intel_iommu_iova_to_phys() for huge page
+        stable@vger.kernel.org, Jakub Kicinski <kuba@kernel.org>,
+        David Ahern <dsahern@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.9 11/90] fib: add missing attribute validation for tun_id
 Date:   Thu, 19 Mar 2020 13:59:33 +0100
-Message-Id: <20200319123934.335068780@linuxfoundation.org>
+Message-Id: <20200319123932.196684572@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.2
-In-Reply-To: <20200319123924.795019515@linuxfoundation.org>
-References: <20200319123924.795019515@linuxfoundation.org>
+In-Reply-To: <20200319123928.635114118@linuxfoundation.org>
+References: <20200319123928.635114118@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,41 +44,30 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yonghyun Hwang <yonghyun@google.com>
+From: Jakub Kicinski <kuba@kernel.org>
 
-commit 77a1bce84bba01f3f143d77127b72e872b573795 upstream.
+[ Upstream commit 4c16d64ea04056f1b1b324ab6916019f6a064114 ]
 
-intel_iommu_iova_to_phys() has a bug when it translates an IOVA for a huge
-page onto its corresponding physical address. This commit fixes the bug by
-accomodating the level of page entry for the IOVA and adds IOVA's lower
-address to the physical address.
+Add missing netlink policy entry for FRA_TUN_ID.
 
-Cc: <stable@vger.kernel.org>
-Acked-by: Lu Baolu <baolu.lu@linux.intel.com>
-Reviewed-by: Moritz Fischer <mdf@kernel.org>
-Signed-off-by: Yonghyun Hwang <yonghyun@google.com>
-Fixes: 3871794642579 ("VT-d: Changes to support KVM")
-Signed-off-by: Joerg Roedel <jroedel@suse.de>
+Fixes: e7030878fc84 ("fib: Add fib rule match on tunnel id")
+Signed-off-by: Jakub Kicinski <kuba@kernel.org>
+Reviewed-by: David Ahern <dsahern@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/iommu/intel-iommu.c |    6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ include/net/fib_rules.h |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/iommu/intel-iommu.c
-+++ b/drivers/iommu/intel-iommu.c
-@@ -5017,8 +5017,10 @@ static phys_addr_t intel_iommu_iova_to_p
- 	u64 phys = 0;
- 
- 	pte = pfn_to_dma_pte(dmar_domain, iova >> VTD_PAGE_SHIFT, &level);
--	if (pte)
--		phys = dma_pte_addr(pte);
-+	if (pte && dma_pte_present(pte))
-+		phys = dma_pte_addr(pte) +
-+			(iova & (BIT_MASK(level_to_offset_bits(level) +
-+						VTD_PAGE_SHIFT) - 1));
- 
- 	return phys;
- }
+--- a/include/net/fib_rules.h
++++ b/include/net/fib_rules.h
+@@ -87,6 +87,7 @@ struct fib_rules_ops {
+ 	[FRA_OIFNAME]	= { .type = NLA_STRING, .len = IFNAMSIZ - 1 }, \
+ 	[FRA_PRIORITY]	= { .type = NLA_U32 }, \
+ 	[FRA_FWMARK]	= { .type = NLA_U32 }, \
++	[FRA_TUN_ID]	= { .type = NLA_U64 }, \
+ 	[FRA_FWMASK]	= { .type = NLA_U32 }, \
+ 	[FRA_TABLE]     = { .type = NLA_U32 }, \
+ 	[FRA_SUPPRESS_PREFIXLEN] = { .type = NLA_U32 }, \
 
 
