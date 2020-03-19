@@ -2,79 +2,135 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4A1F218C2A0
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 22:56:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 99E9D18C2AD
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 23:00:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727331AbgCSV4F (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 17:56:05 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:47300 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725768AbgCSV4E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 17:56:04 -0400
-Received: from zn.tnic (p200300EC2F0A8500B0E932A909542483.dip0.t-ipconnect.de [IPv6:2003:ec:2f0a:8500:b0e9:32a9:954:2483])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 7A85D1EC0C89;
-        Thu, 19 Mar 2020 22:56:02 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1584654962;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=YfJGVGnBP64fSyk+ftKR5j5eZQ9Ktuhf1M9TdCPIhRs=;
-        b=e9dj3MD+giRotpcmRla82kQSwA4d41LFiTUrcfEIz2MPaSUrOvQnzwyT2b4mUVsMLMFTjo
-        lPzQle5Qy6mCh6GjCYMXBkEhFLygsWeZD7moj6z9zmO37ZUObOWmvM9OEt2Xh4OL7aU9Pn
-        INeVcDemY/CueAmJPAUD+i2raOzPH8M=
-Date:   Thu, 19 Mar 2020 22:56:07 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     "Huang2, Wei" <Wei.Huang2@amd.com>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "tony.luck@intel.com" <tony.luck@intel.com>,
-        "Ghannam, Yazen" <Yazen.Ghannam@amd.com>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "hpa@zytor.com" <hpa@zytor.com>,
-        "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "Koralahalli Channabasappa, Smita" 
-        <Smita.KoralahalliChannabasappa@amd.com>
-Subject: Re: [PATCH 1/1] x86/mce/amd: Add PPIN support for AMD MCE
-Message-ID: <20200319215607.GI13073@zn.tnic>
-References: <20200311044409.2717587-1-wei.huang2@amd.com>
- <20200316180829.GP26126@zn.tnic>
- <53d25b8c-dabe-1b91-4d3b-0a223075e42a@amd.com>
- <20200319202134.GG13073@zn.tnic>
- <CY4PR12MB1352F7AED37C67DAECC063E6CFF40@CY4PR12MB1352.namprd12.prod.outlook.com>
- <20200319210909.GH13073@zn.tnic>
- <CY4PR12MB1352B6348409EE4FE3D40086CFF40@CY4PR12MB1352.namprd12.prod.outlook.com>
+        id S1727399AbgCSWAE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 18:00:04 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:45301 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727374AbgCSWAB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 18:00:01 -0400
+Received: by mail-lj1-f194.google.com with SMTP id y17so4276890ljk.12
+        for <linux-kernel@vger.kernel.org>; Thu, 19 Mar 2020 15:00:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=bFyweR87uAdOCEm7xTt713Fc3fncIqKRE+WME6iIOUQ=;
+        b=wNxfuBN+7i3FIFSSR1i3rpA6HWWmv8GltC1J1EWA+g3Mbs1rYEmbYjOh2ytAgr9MvE
+         jBRbMwjZ53gpokr8kRh+j+52ZzA97tBAJGdkzOvUYLOSJ9rXlP9iU3q1VbgbKqjCmQkZ
+         lt3Df891zgxMh58yZRq13rSLtD3p2EIFvuZdmkLwUmvl4cgJ5BjpT4M4fsEcMGQc0NRf
+         Nv+hlYMAsCWQBbz28x54jeMUGktjTkHYBmALTfRyyMolY/UfHZCnGuV2lePrAIgCfUCD
+         xem0d0w8KR5Q/9DRuz4Edu8Q8a4yaBBFtR4hjR2PPnpBcvkeZCieSoQ3PfxnHYxgzn9A
+         V/Ug==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=bFyweR87uAdOCEm7xTt713Fc3fncIqKRE+WME6iIOUQ=;
+        b=iEN02LJXJLD8ue4uxAvAeT9eSsoJPcACTScCoLFpqlEIEjkShLM6J0ypXIj48/bqjN
+         1u+GHxTBI2E2tHMhoWyGyAtJFieaCnvcWgUIgiHFymAms2sHxtd26byLIRIvbTDZTaOj
+         1H0w33jHu2icCuKoJ3WxewVPEN0Ea9KLh/ahG3YyLFf7F0MMs43UkiwFysXLKS6rBGaT
+         LbLOkpiDTYlr/2xcTeCowRk4UIGgQ3/4oYw7yhPiD47lyPio+3Bbbfjv6skCCjW2lqca
+         8Qw5WtOoGHrlFsr/Ks+DWznmC/OvQFiL/EqwbcLBgQuRLwzEfo81kFiL7UGRae9mBKYu
+         zpQg==
+X-Gm-Message-State: ANhLgQ3G1yDE7uAajVsFKsIxHnd/uzEV6BR+dfxLLJSbuin5AFNJOx/k
+        jYFDpWg1o7bb7kTAdDgtiPG5yaNKntD+oTXVec7LWA==
+X-Google-Smtp-Source: ADFU+vu2sZ8HBWaMW/pSwoQOgl3ony6LuKicMRC7Nv865ID8NDs7KA1Je3JT/K2aJsYsD49MnLSl0pe9P8Y3jyoY/7g=
+X-Received: by 2002:a2e:990b:: with SMTP id v11mr3513597lji.243.1584655199510;
+ Thu, 19 Mar 2020 14:59:59 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CY4PR12MB1352B6348409EE4FE3D40086CFF40@CY4PR12MB1352.namprd12.prod.outlook.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20200319123919.441695203@linuxfoundation.org>
+In-Reply-To: <20200319123919.441695203@linuxfoundation.org>
+From:   Naresh Kamboju <naresh.kamboju@linaro.org>
+Date:   Fri, 20 Mar 2020 03:29:47 +0530
+Message-ID: <CA+G9fYvLC7xBuULxhG9yRi+EbUqmQjnS0X+0j-vGpX6XPVskOg@mail.gmail.com>
+Subject: Re: [PATCH 5.4 00/60] 5.4.27-rc1 review
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     open list <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>,
+        lkft-triage@lists.linaro.org,
+        linux- stable <stable@vger.kernel.org>,
+        Jann Horn <jannh@google.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Arnd Bergmann <arnd@arndb.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 19, 2020 at 09:44:48PM +0000, Huang2, Wei wrote:
-> It was from machine_check_poll() ==> mce_gather_info(), right around
-> the invoke of identify_cpu() inside arch/x86/kernel/cpu/common.c file.
+On Thu, 19 Mar 2020 at 18:52, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> This is the start of the stable review cycle for the 5.4.27 release.
+> There are 60 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Sat, 21 Mar 2020 12:37:04 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-=
+5.4.27-rc1.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
+-rc.git linux-5.4.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
-mcheck_cpu_init
-|->__mcheck_cpu_init_generic
-   |-> machine_check_poll
-|->__mcheck_cpu_init_vendor
+Results from Linaro=E2=80=99s test farm.
+This regression is platform specific.
 
-... and the vendor-specific init in __mcheck_cpu_init_vendor() happens
-only *after* it. Oh well.
+On arm64 dragonboard 410c-QC410E* the LT hugemmap05 and
+hackbench test cases started failing on this build and easy to reproduce.
+Where as on other arm64 platforms (juno-r2, nxp-ls2088) these test PASS.
 
-init_amd() it is then.
+These two test case scenario run on independent execution.
 
-Thx.
+Steps to reproduce,
+cd /opt/ltp
+./runltp -s hugemmap05
 
--- 
-Regards/Gruss,
-    Boris.
+cd /opt/ltp/testcases/bin
+./hackbench 50 process 1000
+./hackbench 20 thread 1000
 
-https://people.kernel.org/tglx/notes-about-netiquette
+Test output log:
+--------------------
+hugemmap05.c:89: BROK: mmap((nil),402653184,3,1,6,0) failed: ENOMEM (12)
+tst_safe_sysv_ipc.c:99: BROK: hugemmap05.c:85: shmget(218431587,
+402653184, b80) failed: ENOMEM (12)
+
+Running with 50*40 (=3D=3D 2000) tasks.
+fork() (error: Resource temporarily unavailable)
+Running with 20*40 (=3D=3D 800) tasks.
+pthread_create failed: Resource temporarily unavailable (11)
+
+
+*
+RAM: 1GB LPDDR3 SDRAM @ 533MHz
+CPU: ARM Cortex-A53 Quad-core up to 1.2 GHz per core
+
+https://qa-reports.linaro.org/lkft/linux-stable-rc-5.4-oe/tests/ltp-hugetlb=
+-tests/hugemmap05
+https://qa-reports.linaro.org/lkft/linux-stable-rc-5.4-oe/tests/ltp-sched-t=
+ests/hackbench01
+https://qa-reports.linaro.org/lkft/linux-stable-rc-5.4-oe/tests/ltp-sched-t=
+ests/hackbench02
+
+
+--
+Linaro LKFT
+https://lkft.linaro.org
