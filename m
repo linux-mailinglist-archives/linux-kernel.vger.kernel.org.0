@@ -2,128 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0249418C3EA
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 00:49:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0CBA118C3F9
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 00:54:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727236AbgCSXtR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 19:49:17 -0400
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:42622 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726663AbgCSXtR (ORCPT
+        id S1727228AbgCSXyg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 19:54:36 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:34287 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726663AbgCSXyg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 19:49:17 -0400
-Received: by mail-oi1-f195.google.com with SMTP id 13so4687281oiy.9
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Mar 2020 16:49:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:from:date:message-id:subject:to:cc;
-        bh=O6UYEuu9USYd3Lm4ZwOGt6AHTZhdq8dyDYUaZFKRfAw=;
-        b=R2UpNnFWF9Dcbu0Bjkayq97kdYaixurxyQKhaCoIjtSRcIa919RhSx3VsZsz0dfqw6
-         EgVjfgOsTMDJuVMH0Ig8bmC5VFUyPYxrM7pjaqc4lUKZbXOpHFK6Os5JvTOkxMA40lDY
-         oOk8gbdLw9FI0bNHGs1OOm1Dh8C8keAnChC2meNY4KMWlRfuOtQxr7vZRZ4D2nBE10iy
-         3ManvCKP09sfNk8jbCwmlnhwSnOMwp1caW3vqbfBPUdGR6nkbQZy+WFMLu5ljNoazr5W
-         mMbzX46wOBJ/1l4m1TCfkbswrYRYOaeLs5cMaU9LMWYFMHoUkaSlXy14Kz7+XCaDy6YI
-         SG2w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
-        bh=O6UYEuu9USYd3Lm4ZwOGt6AHTZhdq8dyDYUaZFKRfAw=;
-        b=WUaN3Vgue9ZE7V+GV4iXZtvp89Uh6CNRLpvbTS8N7eAodL9CKyuRsI151hm+kzLJDQ
-         u7F+8NaX//xY6ZUnBS04Tlfyi24mLhywKJStQXhHILbj9xOmSKNtF4L5EWQBaXd/50aK
-         jVlK4/x2pWdr9L44b0FCPY6E18N/u/WpSNGLezmHo6DCFnBsvA6u/2/J4/wO9UVoSCez
-         0ygragx9T5YbqDwbb1oujiynjeFwSrpVCTEBaURsQQdKuNWzjFYwAtFPlt4c360cra0S
-         AYUA7EE+bABK3KTBj3x+IIJwRPvS5OvP+ZCzxcAI8BFOEABSjf9bTZckIB+2gPeQ4Ioe
-         zlIw==
-X-Gm-Message-State: ANhLgQ3HhiBoW8U/+O/Q/tT+RJduwbOh27dYHx1VR8WEy05G0qIVOvaG
-        P/603LA8NESxC6qYbupdqesyxiEQZjgZ900j6J4=
-X-Google-Smtp-Source: ADFU+vuROdl+ozSkhfloI3j/e9o4YsKIhz3pHbuyhzobsGDKP8Fp2eQ0Iy+/WRBhjRMDF7/+lgmkxiQS4v6eXJh7DOg=
-X-Received: by 2002:aca:1e1a:: with SMTP id m26mr4459581oic.39.1584661756692;
- Thu, 19 Mar 2020 16:49:16 -0700 (PDT)
+        Thu, 19 Mar 2020 19:54:36 -0400
+Received: from p5de0bf0b.dip0.t-ipconnect.de ([93.224.191.11] helo=nanos.tec.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1jF4z5-0002E7-Dg; Fri, 20 Mar 2020 00:53:56 +0100
+Received: by nanos.tec.linutronix.de (Postfix, from userid 1000)
+        id 4DD6B100375; Fri, 20 Mar 2020 00:53:49 +0100 (CET)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     Robin Murphy <robin.murphy@arm.com>,
+        Christoph Hellwig <hch@lst.de>,
+        lkml <linux-kernel@vger.kernel.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
+        iommu@lists.linux-foundation.org,
+        Tom Lendacky <thomas.lendacky@amd.com>
+Subject: Re: [PATCH -v2] treewide: Rename "unencrypted" to "decrypted"
+In-Reply-To: <20200319174254.GE13073@zn.tnic>
+References: <20200317111822.GA15609@zn.tnic> <20200319101657.GB13073@zn.tnic> <20200319102011.GA3617@lst.de> <20200319102834.GC13073@zn.tnic> <8d6d3b6c-7e4e-7d9e-3e19-38f7d4477c72@arm.com> <20200319112054.GD13073@zn.tnic> <878sjw5k9u.fsf@nanos.tec.linutronix.de> <20200319174254.GE13073@zn.tnic>
+Date:   Fri, 20 Mar 2020 00:53:49 +0100
+Message-ID: <87pnd752b6.fsf@nanos.tec.linutronix.de>
 MIME-Version: 1.0
-From:   ron minnich <rminnich@gmail.com>
-Date:   Thu, 19 Mar 2020 16:49:05 -0700
-Message-ID: <CAP6exY+LnUXaOVRZUXmi2wajCPZoJVMFFAwbCzN3YywWyhi8ZA@mail.gmail.com>
-Subject: [PATCH 1/1] x86 support for the initrd= command line option
-To:     "H. Peter Anvin" <hpa@zytor.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "maintainer:X86 ARCHITECTURE..." <x86@kernel.org>,
-        mjg59@google.com,
-        lkml - Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In LinuxBoot systems, a kernel and initramfs are loaded into FLASH
-to replace proprietary firmware/BIOS code. Space being at a premium
-on some systems, the kernel and initramfs must be place in whatever
-open corners of the FLASH exist. These corners are not always
-easily used.
+Borislav Petkov <bp@alien8.de> writes:
+> On Thu, Mar 19, 2020 at 06:25:49PM +0100, Thomas Gleixner wrote:
+>> TBH, I don't see how
+>> 
+>> 	if (force_dma_decrypted(dev))
+>> 		set_memory_encrypted((unsigned long)cpu_addr, 1 << page_order);
+>>
+>> makes more sense than the above. It's both non-sensical unless there is
+>
+> 9087c37584fb ("dma-direct: Force unencrypted DMA under SME for certain DMA masks")
 
-For example, on Intel-based UEFI systems, the Management Engine
-(ME) is given half the FLASH, though it uses very little, as little
-as 1.25MiB.  Not only is 2.75MiB of an 8MiB part unused; but
-10.75MiB of a 16MiB part is unused. This space can be recovered by
-a number of tools, e.g. utk and its tighten_me command, and if
-Linux can be told where the space is Linux can load an initrd from
-it.
+Reading the changelog again...
 
-In an ideal case, we would take the space from the ME and add it to
-a FLASH-based filesystem.  While UEFI does have filesystem-like
-structures, this recovered space can only be added to its "file
-system" by rebuilding UEFI from source or writing a UEFI device
-driver. Both these options are impractical in most cases. The space
-can only be referenced as a physical address.
+I have to say that force_dma_unencrypted() makes way more sense in that
+context than force_dma_decrypted(). It still wants a comment.
 
-There is code in the core that allows specification of the initrd
-as a physical address and size, but it is not supported on all
-architectures. This patch adds support for initrd= to the x86.
+Linguistical semantics and correctness matters a lot. Consistency is
+required as well, but not for the price of ambiguous wording.
 
-For debugging and recovery purposes, if initrd= is present in the
-command line, other existing initrd sources should still have
-higher priority. The initramfs in flash might be damaged or
-broken. Hence, it must still be possible to load a kernel and
-initramfs with a conventional bootloader, or even load the
-FLASH-based kernel with a different initramfs; or boot a
-kernel and let it use the initrd in FLASH.
+Thanks,
 
-In support of that priority ordering, this patch sets the ramdisk
-image pointer to phys_initrd_start only if it is not already set;
-and sets ramdisk_size to phys_initrd_size only if it is not already
-set.
+        tglx
 
-It has been tested extensively in LinuxBoot environments.
 
-Signed-off-by: Ronald G. Minnich <rminnich@gmail.com>
----
- arch/x86/kernel/setup.c | 6 ++++++
- 1 file changed, 6 insertions(+)
-
-diff --git a/arch/x86/kernel/setup.c b/arch/x86/kernel/setup.c
-index a74262c71484..1b04ef8ea12d 100644
---- a/arch/x86/kernel/setup.c
-+++ b/arch/x86/kernel/setup.c
-@@ -237,6 +237,9 @@ static u64 __init get_ramdisk_image(void)
-
-     ramdisk_image |= (u64)boot_params.ext_ramdisk_image << 32;
-
-+    if (ramdisk_image == 0) {
-+        ramdisk_image = phys_initrd_start;
-+    }
-     return ramdisk_image;
- }
- static u64 __init get_ramdisk_size(void)
-@@ -245,6 +248,9 @@ static u64 __init get_ramdisk_size(void)
-
-     ramdisk_size |= (u64)boot_params.ext_ramdisk_size << 32;
-
-+    if (ramdisk_size == 0) {
-+        ramdisk_size = phys_initrd_size;
-+    }
-     return ramdisk_size;
- }
-
--- 
-2.17.1
