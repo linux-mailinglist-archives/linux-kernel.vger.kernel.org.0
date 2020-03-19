@@ -2,94 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1152C18B1E0
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 11:58:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5EDA818B22B
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 12:15:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727148AbgCSK6k (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 06:58:40 -0400
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:36988 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726188AbgCSK6j (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 06:58:39 -0400
-Received: by mail-oi1-f195.google.com with SMTP id w13so2204388oih.4
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Mar 2020 03:58:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to
-         :content-transfer-encoding;
-        bh=TIiGFpVE/028TVc4LIohZ13JKmLHwuJSN7eJ4s0UbbY=;
-        b=uidFTHpye1XUmUmSLZ7cgcFXkgX8MzVbhy2kQjqQPYg8QK7TFCRDcpw0rB8I+BFiWv
-         0M2xRoXhEQE2tpZqJGMVacQGF88wK4qMmyqCvKheGqTNdheSgoo6F0Hta5IgCfzuieO/
-         sYKwW8HXsZVKaMxYSgFG9OrYj91r30JVYpnBwiVHuRvhdfhUmt6Nw1ZOxG/Rpt2y/Nqy
-         Y9GCO2uLk+O0KJiGSMJZIHIk05ZkxtiKWoTUAO3TsK/wdyJjhre0vSU5besKewp2Rjm/
-         8NKeeycLus0Y4GgmuQHLdGqsECT6zMojf9ZSjdOSEUyyuQ8y5xGaCNy8egx9m62FPYN7
-         KuhA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to:content-transfer-encoding;
-        bh=TIiGFpVE/028TVc4LIohZ13JKmLHwuJSN7eJ4s0UbbY=;
-        b=tHLLFDgagX/SMgBuQ/Sc+B7SOvjO73khdQ6sg3g5XAxxWorrmW3SxZtyGiq4sJCG7I
-         gnv5zZUDNqwE++G+KXaZG/5IzHtbc1UCPzIqi8a7ZuRkrkNi07UTOjlFb4n1kqsLq3TX
-         rfXeV6ouL0g+HTcwqkmMlFJoYQ/uAePOXmXwZ24EIgMO6sFgE/jhuwT0o9Xmelbi/EyN
-         EP/3uO8pDivTnes4q8BuJrdPk0Y2qOFfgX0C7x6TQIRz1gcRU2NbnqF8oG29PgxBmE4U
-         rRXFiWMJChEcgbqcc8FaafyyuDA5LksLfQS/rVPcXVnASZ6bbuBGerpXc7HJ29eoADIE
-         ATiA==
-X-Gm-Message-State: ANhLgQ3Jg3hiW/tBPZEusRw4/+X1C3AyXOtkEZxbqGlCQ5k5ocVSDra3
-        d9GIhKnKYWloFvPICHH7kihV1fzc2ryn6TqBQHQ=
-X-Google-Smtp-Source: ADFU+vsZsH4IMpUVExvRulQWuHpB8jJ3Ks1S4bMlwlfJ0myDY56NQwRkVYiVbxCA4GV+H09CRf1xbEEHP/SNSKxVtUg=
-X-Received: by 2002:aca:df45:: with SMTP id w66mr1808474oig.76.1584615519045;
- Thu, 19 Mar 2020 03:58:39 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a9d:6d93:0:0:0:0:0 with HTTP; Thu, 19 Mar 2020 03:58:38
- -0700 (PDT)
-Reply-To: mrsnancychristopher8@gmail.com
-From:   " Mrs.Nancy Christopher" <wwunionbfafrica@gmail.com>
-Date:   Thu, 19 Mar 2020 03:58:38 -0700
-Message-ID: <CANiKTzXrc65xq7FomuV=5PbbKBzof8_wa=gcaYy8uO-J2ViSzg@mail.gmail.com>
-Subject: HI
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        id S1727014AbgCSLPb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 07:15:31 -0400
+Received: from foss.arm.com ([217.140.110.172]:33516 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725787AbgCSLP1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 07:15:27 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C9FE3FEC;
+        Thu, 19 Mar 2020 04:15:26 -0700 (PDT)
+Received: from a075553-lin.blr.arm.com (unknown [10.162.16.46])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 275233FA45;
+        Thu, 19 Mar 2020 00:39:32 -0700 (PDT)
+From:   Amit Daniel Kachhap <amit.kachhap@arm.com>
+To:     linux-arm-kernel@lists.infradead.org
+Cc:     kexec@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Bhupesh Sharma <bhsharma@redhat.com>,
+        Vincenzo Frascino <Vincenzo.Frascino@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Amit Daniel Kachhap <amit.kachhap@arm.com>,
+        James Morse <james.morse@arm.com>,
+        Dave Anderson <anderson@redhat.com>
+Subject: [PATCH 1/2] arm64/crash_core: Export KERNELPACMASK in vmcoreinfo
+Date:   Thu, 19 Mar 2020 13:09:10 +0530
+Message-Id: <1584603551-23845-1-git-send-email-amit.kachhap@arm.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---=20
-Dear Beloved,
+ARMv8.3-A mandated feature Pointer Authentication may needs this change.
+If this feature is enabled in the kernel and the hardware supports address
+authentication then the return addresses are signed and stored in the stack
+to prevent ROP kind of attack.
 
-I=E2=80=99m mrs.Nancy Christopher, 69years old affected with breast cancer,
-the wife of late Nancy Christopher,  the
+User tools like "crash" may need the kernel pac mask information to
+generate the correct return address for stacktrace purpose.
 
-Director of High River Gold Mines Ltd Burkina Faso West Africa. I am
-contacting you because of my health
+This patch is similar to commit ec6e822d1a22d0eef ("arm64: expose user PAC
+bit positions via ptrace") which exposes pac mask information via ptrace
+interfaces.
 
-condition,i need a reliable person, who will handle this project
-accordingly, accomplish my heart desire and
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Will Deacon <will@kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: James Morse <james.morse@arm.com>
+Cc: Dave Anderson <anderson@redhat.com>
+Signed-off-by: Amit Daniel Kachhap <amit.kachhap@arm.com>
+---
+ 
+An implementation of this field used by crash tool can be found here [1].
 
-utilize this fund. I have decided to donate the sum Twenty-Five
-Million Two Hundred Thousand United State Dollars
+The patches in this series are based on in-kernel Pointer Authentication
+patches present for-next tree [2].
 
-Only ($25,200,000.00) to Charity Organizations or to support the
-Orphans, Motherless Babies,Less privileged and
+[1]: http://linux-arm.org/git?p=crash-ak.git;a=commit;h=1775c6c33bed9269964719b90064b43a24ce97a5
+[2]: git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-next/kernel-ptrauth
 
-free Medical & Medicine Poor People's around the World since I don t
-have any child and do not want the bank take
+ arch/arm64/include/asm/compiler.h | 3 +++
+ arch/arm64/kernel/crash_core.c    | 4 ++++
+ 2 files changed, 7 insertions(+)
 
-over the fund. I don't really know if i am going to survive this
-stage, therefore if you ready to handle this
+diff --git a/arch/arm64/include/asm/compiler.h b/arch/arm64/include/asm/compiler.h
+index eece20d..32d5900 100644
+--- a/arch/arm64/include/asm/compiler.h
++++ b/arch/arm64/include/asm/compiler.h
+@@ -19,6 +19,9 @@
+ #define __builtin_return_address(val)					\
+ 	(void *)(ptrauth_clear_pac((unsigned long)__builtin_return_address(val)))
+ 
++#else  /* !CONFIG_ARM64_PTR_AUTH */
++#define	ptrauth_user_pac_mask()		0ULL
++#define	ptrauth_kernel_pac_mask()	0ULL
+ #endif /* CONFIG_ARM64_PTR_AUTH */
+ 
+ #endif /* __ASM_COMPILER_H */
+diff --git a/arch/arm64/kernel/crash_core.c b/arch/arm64/kernel/crash_core.c
+index ca4c3e1..25cf2ce 100644
+--- a/arch/arm64/kernel/crash_core.c
++++ b/arch/arm64/kernel/crash_core.c
+@@ -6,6 +6,7 @@
+ 
+ #include <linux/crash_core.h>
+ #include <asm/memory.h>
++#include <asm/pointer_auth.h>
+ 
+ void arch_crash_save_vmcoreinfo(void)
+ {
+@@ -16,4 +17,7 @@ void arch_crash_save_vmcoreinfo(void)
+ 	vmcoreinfo_append_str("NUMBER(PHYS_OFFSET)=0x%llx\n",
+ 						PHYS_OFFSET);
+ 	vmcoreinfo_append_str("KERNELOFFSET=%lx\n", kaslr_offset());
++	vmcoreinfo_append_str("NUMBER(KERNELPACMASK)=0x%llx\n",
++						system_supports_address_auth() ?
++						ptrauth_kernel_pac_mask() : 0);
+ }
+-- 
+2.7.4
 
-project, kindly response so that i will instruct the bank to transfer
-the fund to your account.
-
-Contact my private email only if you are interested
-(mrsnancychristopher8@gmail.com)
-
-Remain blessed in the name of the Lord.
-
-
-Regards
-
-Mrs.Nancy Christopher
