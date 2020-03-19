@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4E21C18B7B5
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:35:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D8DB118B80E
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:38:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728687AbgCSNLL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 09:11:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56206 "EHLO mail.kernel.org"
+        id S1726998AbgCSNiC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 09:38:02 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51056 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728676AbgCSNLI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 09:11:08 -0400
+        id S1727915AbgCSNHY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 09:07:24 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 118E320722;
-        Thu, 19 Mar 2020 13:11:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8EAB120836;
+        Thu, 19 Mar 2020 13:07:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584623468;
-        bh=52y55w0rqNYpPUljx483CSkXB9D/bZmyrc6yu2+pbtg=;
+        s=default; t=1584623244;
+        bh=dhGUR4xatn233XksUDPF0ILpwQzNjiz/U8o9OsPwpEc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LGBJfF+U3DMRBmFcMZpmLp/Z9nn+oOqCZ91BeqvQwhNSxPSOuTjIUOyRzzYJEcbB2
-         avr4i87Y2/9yutPeFlRxb6jCFQHNdbdEaWUjqI/IpUKXGcK3ujnGfV/p8vmSVXLR/G
-         Cs0Aq7aGShMqBU08NhezmZk005bhqINjcbR7de7A=
+        b=PPx468wVRl6BqvyLu+V1UzlXNs0A2Bx7UjFfTISl0+FyCm9SWLCr30fLd0w9RoYnO
+         vHCmcp4wgMRRAd7CYlEuHk8akKv3L4WrxH75166wFtxhFB5NicVB2J2zjKgB10oruj
+         36Ae/ByLtxfo53WOtvL9GnjzuACDdCyPj4HAvYeg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jakub Kicinski <kuba@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 18/90] nfc: add missing attribute validation for SE API
-Date:   Thu, 19 Mar 2020 13:59:40 +0100
-Message-Id: <20200319123934.358273105@linuxfoundation.org>
+        stable@vger.kernel.org, Vladis Dronov <vdronov@redhat.com>,
+        Ard Biesheuvel <ardb@kernel.org>,
+        Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH 4.4 37/93] efi: Add a sanity check to efivar_store_raw()
+Date:   Thu, 19 Mar 2020 13:59:41 +0100
+Message-Id: <20200319123936.603478201@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.2
-In-Reply-To: <20200319123928.635114118@linuxfoundation.org>
-References: <20200319123928.635114118@linuxfoundation.org>
+In-Reply-To: <20200319123924.795019515@linuxfoundation.org>
+References: <20200319123924.795019515@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,30 +44,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jakub Kicinski <kuba@kernel.org>
+From: Vladis Dronov <vdronov@redhat.com>
 
-[ Upstream commit 361d23e41ca6e504033f7e66a03b95788377caae ]
+commit d6c066fda90d578aacdf19771a027ed484a79825 upstream.
 
-Add missing attribute validation for NFC_ATTR_SE_INDEX
-to the netlink policy.
+Add a sanity check to efivar_store_raw() the same way
+efivar_{attr,size,data}_read() and efivar_show_raw() have it.
 
-Fixes: 5ce3f32b5264 ("NFC: netlink: SE API implementation")
-Signed-off-by: Jakub Kicinski <kuba@kernel.org>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Vladis Dronov <vdronov@redhat.com>
+Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Cc: <stable@vger.kernel.org>
+Link: https://lore.kernel.org/r/20200305084041.24053-3-vdronov@redhat.com
+Link: https://lore.kernel.org/r/20200308080859.21568-25-ardb@kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- net/nfc/netlink.c |    1 +
- 1 file changed, 1 insertion(+)
 
---- a/net/nfc/netlink.c
-+++ b/net/nfc/netlink.c
-@@ -62,6 +62,7 @@ static const struct nla_policy nfc_genl_
- 	[NFC_ATTR_LLC_SDP] = { .type = NLA_NESTED },
- 	[NFC_ATTR_FIRMWARE_NAME] = { .type = NLA_STRING,
- 				     .len = NFC_FIRMWARE_NAME_MAXSIZE },
-+	[NFC_ATTR_SE_INDEX] = { .type = NLA_U32 },
- 	[NFC_ATTR_SE_APDU] = { .type = NLA_BINARY },
- 	[NFC_ATTR_VENDOR_DATA] = { .type = NLA_BINARY },
+
+---
+ drivers/firmware/efi/efivars.c |    3 +++
+ 1 file changed, 3 insertions(+)
+
+--- a/drivers/firmware/efi/efivars.c
++++ b/drivers/firmware/efi/efivars.c
+@@ -272,6 +272,9 @@ efivar_store_raw(struct efivar_entry *en
+ 	u8 *data;
+ 	int err;
+ 
++	if (!entry || !buf)
++		return -EINVAL;
++
+ 	if (is_compat()) {
+ 		struct compat_efi_variable *compat;
  
 
 
