@@ -2,173 +2,232 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ADB9F18B78C
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:34:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4700318B787
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:34:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727994AbgCSNeN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 09:34:13 -0400
-Received: from us-smtp-delivery-74.mimecast.com ([216.205.24.74]:28158 "EHLO
-        us-smtp-delivery-74.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729077AbgCSNNH (ORCPT
+        id S1727818AbgCSNdx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 09:33:53 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:44992 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727228AbgCSNNP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 09:13:07 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1584623586;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=Hug7N4Cth2nyuPVB2cR8bkZ13Z+7sswcZX+QhUXG/m0=;
-        b=Yvl+m/Rt7rlR5fCHX3AX0RajDMBYrMQYJjVfQcFliBledpSWYPMYBX8WAfhFXJ0ZvkhA1C
-        +fIxqqrzIaovLDXcYcuym1gr5nOwCn5cF8ZrWoZI1eIuGlWFBrFxbTMLsC9wCdekjdFJ6f
-        /fkQX70poE/j9vQIOgv/+oiS5/4wiq4=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-125-XvjAh0FOMKWQ3YdjQvC3bA-1; Thu, 19 Mar 2020 09:13:02 -0400
-X-MC-Unique: XvjAh0FOMKWQ3YdjQvC3bA-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 8CF5DDBA3;
-        Thu, 19 Mar 2020 13:13:00 +0000 (UTC)
-Received: from t480s.redhat.com (ovpn-114-197.ams2.redhat.com [10.36.114.197])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 0EA0B60BF7;
-        Thu, 19 Mar 2020 13:12:57 +0000 (UTC)
-From:   David Hildenbrand <david@redhat.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     linux-mm@kvack.org, linuxppc-dev@lists.ozlabs.org,
-        linux-hyperv@vger.kernel.org, David Hildenbrand <david@redhat.com>,
-        Wei Yang <richard.weiyang@gmail.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Oscar Salvador <osalvador@suse.de>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Baoquan He <bhe@redhat.com>
-Subject: [PATCH v3 7/8] mm/memory_hotplug: convert memhp_auto_online to store an online_type
-Date:   Thu, 19 Mar 2020 14:12:20 +0100
-Message-Id: <20200319131221.14044-8-david@redhat.com>
-In-Reply-To: <20200319131221.14044-1-david@redhat.com>
-References: <20200319131221.14044-1-david@redhat.com>
+        Thu, 19 Mar 2020 09:13:15 -0400
+Received: by mail-lj1-f196.google.com with SMTP id w4so2378993lji.11
+        for <linux-kernel@vger.kernel.org>; Thu, 19 Mar 2020 06:13:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ragnatech-se.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=lihn5FzD/6idQ4+0vgu8K5La8l3gtXOBL1sBTYbHOu8=;
+        b=UmhrWCo0xu/Iq1kPHHScxdzVFt26NhhlfDA3ZyotUREhHVnpR1ZlE+119e7SXfs/i4
+         S2Px3omtSK1ZeOlrOfuiNEHy9LgQciycw3xEN0+k7OhECVhpAP2SpiUh+j7yY7O8Sct4
+         8fiSr71XyQk3aT2MPv/nmE3kWZhUQk8LBp5y/HgQ9QZdsb9MGrsQHhfrfvouYnRX/lKE
+         RbQRZm41lBjPwKegDkYHW1D34ZO0HEGX8Sdy5QZYUgE+WSnZA7RJU/ws/M0hF3VI9zyx
+         PkNsTAQcL0U8dxztd9Xurhy9wZ0/2h5j+FClMG980PoPp85GgwVkGDLQWODB1rHY0dSC
+         CtLA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=lihn5FzD/6idQ4+0vgu8K5La8l3gtXOBL1sBTYbHOu8=;
+        b=YdLvZnPUsKQYiLPnRsig8pkl7O7nhJ4n5ARDovvkN7hRb+Q069ah21j8pVlbAMswyC
+         h8IGhEeeqz434lBkzUc7fSNDXNgtGhQCHOQidW4aXOail+F6fVe+e0RwyCbEE+SfAzKR
+         Jx23gO+rrao0DMBkWlY/BcHeJ8dNKC6sSXHXAeFEHnZ+rQYL4ScWhBBvVRNyoqpK8CX9
+         atS7dhkqa4XJUba1G33QcEOAxjjWGMLskOjMOKzZc3xDAxzsh1kYPkwpSfk3D/s7c4Sr
+         JopTc3x0lJuwmKMfZ7F+kCaicWcoFgcwrdp0ace8BwgPXgTfv2rYMKT+ZObMQ74w8f2Z
+         Q1TQ==
+X-Gm-Message-State: ANhLgQ0FIqxz6Of/NxDexrkrf6PQyLePooyABR278BgbexY4b0pm6J0h
+        xnUjoG2DPz1RZ7ITbVMDYEWNew==
+X-Google-Smtp-Source: ADFU+vvKmsJWPuEArtXUSGljtHsqGmwv3cSwtVkRt6RHNyyFzpUewTuRsRvpi/ruvaKboBgg/rFQRA==
+X-Received: by 2002:a2e:804b:: with SMTP id p11mr2185641ljg.50.1584623594050;
+        Thu, 19 Mar 2020 06:13:14 -0700 (PDT)
+Received: from localhost (h-200-138.A463.priv.bahnhof.se. [176.10.200.138])
+        by smtp.gmail.com with ESMTPSA id g20sm1523376lfj.88.2020.03.19.06.13.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 19 Mar 2020 06:13:13 -0700 (PDT)
+Date:   Thu, 19 Mar 2020 14:13:12 +0100
+From:   Niklas <niklas.soderlund@ragnatech.se>
+To:     Lad Prabhakar <prabhakar.csengg@gmail.com>
+Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: Re: [PATCH v3 1/2] media: rcar-vin: Add support for
+ MEDIA_BUS_FMT_SRGGB8_1X8 format
+Message-ID: <20200319131312.GA3192108@oden.dyn.berto.se>
+References: <20200318170638.18562-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20200318170638.18562-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200318170638.18562-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-... and rename it to memhp_default_online_type. This is a preparation
-for more detailed default online behavior.
+Hi Prabhakar,
 
-Reviewed-by: Wei Yang <richard.weiyang@gmail.com>
-Acked-by: Michal Hocko <mhocko@suse.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Michal Hocko <mhocko@kernel.org>
-Cc: Oscar Salvador <osalvador@suse.de>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Baoquan He <bhe@redhat.com>
-Cc: Wei Yang <richard.weiyang@gmail.com>
-Signed-off-by: David Hildenbrand <david@redhat.com>
----
- drivers/base/memory.c          | 10 ++++------
- include/linux/memory_hotplug.h |  3 ++-
- mm/memory_hotplug.c            | 11 ++++++-----
- 3 files changed, 12 insertions(+), 12 deletions(-)
+Thanks for your work.
 
-diff --git a/drivers/base/memory.c b/drivers/base/memory.c
-index 8a7f29c0bf97..8d3e16dab69f 100644
---- a/drivers/base/memory.c
-+++ b/drivers/base/memory.c
-@@ -386,10 +386,8 @@ static DEVICE_ATTR_RO(block_size_bytes);
- static ssize_t auto_online_blocks_show(struct device *dev,
- 				       struct device_attribute *attr, char *buf)
- {
--	if (memhp_auto_online)
--		return sprintf(buf, "online\n");
--	else
--		return sprintf(buf, "offline\n");
-+	return sprintf(buf, "%s\n",
-+		       online_type_to_str[memhp_default_online_type]);
- }
-=20
- static ssize_t auto_online_blocks_store(struct device *dev,
-@@ -397,9 +395,9 @@ static ssize_t auto_online_blocks_store(struct device=
- *dev,
- 					const char *buf, size_t count)
- {
- 	if (sysfs_streq(buf, "online"))
--		memhp_auto_online =3D true;
-+		memhp_default_online_type =3D MMOP_ONLINE;
- 	else if (sysfs_streq(buf, "offline"))
--		memhp_auto_online =3D false;
-+		memhp_default_online_type =3D MMOP_OFFLINE;
- 	else
- 		return -EINVAL;
-=20
-diff --git a/include/linux/memory_hotplug.h b/include/linux/memory_hotplu=
-g.h
-index 76f3c617a8ab..6d6f85bb66e9 100644
---- a/include/linux/memory_hotplug.h
-+++ b/include/linux/memory_hotplug.h
-@@ -118,7 +118,8 @@ extern int arch_add_memory(int nid, u64 start, u64 si=
-ze,
- 			   struct mhp_params *params);
- extern u64 max_mem_size;
-=20
--extern bool memhp_auto_online;
-+/* Default online_type (MMOP_*) when new memory blocks are added. */
-+extern int memhp_default_online_type;
- /* If movable_node boot option specified */
- extern bool movable_node_enabled;
- static inline bool movable_node_is_enabled(void)
-diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
-index e21a7d53ade5..4efcf8cb9ac5 100644
---- a/mm/memory_hotplug.c
-+++ b/mm/memory_hotplug.c
-@@ -67,17 +67,17 @@ void put_online_mems(void)
- bool movable_node_enabled =3D false;
-=20
- #ifndef CONFIG_MEMORY_HOTPLUG_DEFAULT_ONLINE
--bool memhp_auto_online;
-+int memhp_default_online_type =3D MMOP_OFFLINE;
- #else
--bool memhp_auto_online =3D true;
-+int memhp_default_online_type =3D MMOP_ONLINE;
- #endif
-=20
- static int __init setup_memhp_default_state(char *str)
- {
- 	if (!strcmp(str, "online"))
--		memhp_auto_online =3D true;
-+		memhp_default_online_type =3D MMOP_ONLINE;
- 	else if (!strcmp(str, "offline"))
--		memhp_auto_online =3D false;
-+		memhp_default_online_type =3D MMOP_OFFLINE;
-=20
- 	return 1;
- }
-@@ -993,6 +993,7 @@ static int check_hotplug_memory_range(u64 start, u64 =
-size)
-=20
- static int online_memory_block(struct memory_block *mem, void *arg)
- {
-+	mem->online_type =3D memhp_default_online_type;
- 	return device_online(&mem->dev);
- }
-=20
-@@ -1065,7 +1066,7 @@ int __ref add_memory_resource(int nid, struct resou=
-rce *res)
- 	mem_hotplug_done();
-=20
- 	/* online pages if requested */
--	if (memhp_auto_online)
-+	if (memhp_default_online_type !=3D MMOP_OFFLINE)
- 		walk_memory_blocks(start, size, NULL, online_memory_block);
-=20
- 	return ret;
---=20
-2.24.1
+On 2020-03-18 17:06:37 +0000, Lad Prabhakar wrote:
+> Add support for MEDIA_BUS_FMT_SRGGB8_1X8 format in rcar-vin by setting
+> format type to RAW8 in VNMC register and appropriately setting the
+> bpp, bytesperline to enable V4L2_PIX_FMT_SRGGB8.
 
+> For RAW8 format data is transferred by 4-Byte unit so VnIS register is
+> configured accordingly.
+> 
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> ---
+>  drivers/media/platform/rcar-vin/rcar-core.c |  1 +
+>  drivers/media/platform/rcar-vin/rcar-dma.c  | 11 ++++++++++-
+>  drivers/media/platform/rcar-vin/rcar-v4l2.c |  4 ++++
+>  3 files changed, 15 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
+> index 7440c8965d27..76daf2fe5bcd 100644
+> --- a/drivers/media/platform/rcar-vin/rcar-core.c
+> +++ b/drivers/media/platform/rcar-vin/rcar-core.c
+> @@ -469,6 +469,7 @@ static int rvin_parallel_subdevice_attach(struct rvin_dev *vin,
+>  		case MEDIA_BUS_FMT_UYVY8_2X8:
+>  		case MEDIA_BUS_FMT_UYVY10_2X10:
+>  		case MEDIA_BUS_FMT_RGB888_1X24:
+> +		case MEDIA_BUS_FMT_SRGGB8_1X8:
+
+This is wrong RAW formats are only supported on the CSI-2 interface and 
+not the parallel one. This line shall be dropped.
+
+>  			vin->mbus_code = code.code;
+>  			vin_dbg(vin, "Found media bus format for %s: %d\n",
+>  				subdev->name, vin->mbus_code);
+> diff --git a/drivers/media/platform/rcar-vin/rcar-dma.c b/drivers/media/platform/rcar-vin/rcar-dma.c
+> index 1a30cd036371..ec7b49c0b281 100644
+> --- a/drivers/media/platform/rcar-vin/rcar-dma.c
+> +++ b/drivers/media/platform/rcar-vin/rcar-dma.c
+> @@ -85,6 +85,7 @@
+>  #define VNMC_INF_YUV8_BT601	(1 << 16)
+>  #define VNMC_INF_YUV10_BT656	(2 << 16)
+>  #define VNMC_INF_YUV10_BT601	(3 << 16)
+> +#define VNMC_INF_RAW8		(4 << 16)
+>  #define VNMC_INF_YUV16		(5 << 16)
+>  #define VNMC_INF_RGB888		(6 << 16)
+>  #define VNMC_VUP		(1 << 10)
+> @@ -587,13 +588,14 @@ void rvin_crop_scale_comp(struct rvin_dev *vin)
+>  	rvin_write(vin, vin->crop.top, VNSLPRC_REG);
+>  	rvin_write(vin, vin->crop.top + vin->crop.height - 1, VNELPRC_REG);
+>  
+> -
+>  	/* TODO: Add support for the UDS scaler. */
+>  	if (vin->info->model != RCAR_GEN3)
+>  		rvin_crop_scale_comp_gen2(vin);
+>  
+>  	fmt = rvin_format_from_pixel(vin, vin->format.pixelformat);
+>  	stride = vin->format.bytesperline / fmt->bpp;
+> +	if (vin->format.pixelformat == V4L2_PIX_FMT_SRGGB8)
+> +		stride /= 2;
+
+I'm sorry this makes no sens to me.
+
+- The width of the image is number of pixels in the raw format.
+- In memory each row is either is either RGRGRG... or GBGBGB...
+- The pixel size is 1 byte per pixel.
+- We calculate bytesperline as ALIGN(width, align) * bpp, where align is 
+  how much we need to "adjust" the width to match the VNIS_REG reg 
+  value.  We do this in rvin_format_bytesperline().
+- We then remove bpp from bytesperline and we have a unit in pixels 
+  which is our stride.
+
+I can't see why you need to cut the stride in half. In my view you 
+should add a check for V4L2_PIX_FMT_SRGGB8 in rvin_format_bytesperline() 
+and pick an alignment value that matches the restrictions.
+
+I might miss something, but then I wish to learn.
+
+>  	rvin_write(vin, stride, VNIS_REG);
+>  }
+>  
+> @@ -676,6 +678,9 @@ static int rvin_setup(struct rvin_dev *vin)
+>  
+>  		input_is_yuv = true;
+>  		break;
+> +	case MEDIA_BUS_FMT_SRGGB8_1X8:
+> +		vnmc |= VNMC_INF_RAW8;
+> +		break;
+
+Here and ...
+
+>  	default:
+>  		break;
+>  	}
+> @@ -737,6 +742,9 @@ static int rvin_setup(struct rvin_dev *vin)
+>  	case V4L2_PIX_FMT_ABGR32:
+>  		dmr = VNDMR_A8BIT(vin->alpha) | VNDMR_EXRGB | VNDMR_DTMD_ARGB;
+>  		break;
+> +	case V4L2_PIX_FMT_SRGGB8:
+> +		dmr = 0;
+> +		break;
+
+... here we have a new problem, sorry for not thinking of it before.
+
+Up until now the VIN was capable to convert any of its supported input 
+mbus formats to any of it's supported output pixel formats. With the 
+addition of RAW formats this is no longer true. This new restriction 
+needs to be added to the driver.
+
+Luck has it we can fix ...
+
+>  	default:
+>  		vin_err(vin, "Invalid pixelformat (0x%x)\n",
+>  			vin->format.pixelformat);
+> @@ -1110,6 +1118,7 @@ static int rvin_mc_validate_format(struct rvin_dev *vin, struct v4l2_subdev *sd,
+>  	case MEDIA_BUS_FMT_UYVY8_2X8:
+>  	case MEDIA_BUS_FMT_UYVY10_2X10:
+>  	case MEDIA_BUS_FMT_RGB888_1X24:
+> +	case MEDIA_BUS_FMT_SRGGB8_1X8:
+>  		vin->mbus_code = fmt.format.code;
+
+... this here by changes this to
+
+        switch (fmt.format.code) {
+        case MEDIA_BUS_FMT_YUYV8_1X16:
+        case MEDIA_BUS_FMT_UYVY8_1X16:
+        case MEDIA_BUS_FMT_UYVY8_2X8:
+        case MEDIA_BUS_FMT_UYVY10_2X10:
+                break;
+        case MEDIA_BUS_FMT_RGB888_1X24:
+                if (vin->format.pixelformat != V4L2_PIX_FMT_SRGGB8)
+                    return -EPIPE:
+                break;
+        default:
+                return -EPIPE;
+	}
+
+        vin->mbus_code = fmt.format.code;
+
+>  		break;
+>  	default:
+> diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+> index 5151a3cd8a6e..ca542219e8ae 100644
+> --- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
+> +++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+> @@ -66,6 +66,10 @@ static const struct rvin_video_format rvin_formats[] = {
+>  		.fourcc			= V4L2_PIX_FMT_ABGR32,
+>  		.bpp			= 4,
+>  	},
+> +	{
+> +		.fourcc			= V4L2_PIX_FMT_SRGGB8,
+> +		.bpp			= 1,
+> +	},
+>  };
+>  
+>  const struct rvin_video_format *rvin_format_from_pixel(struct rvin_dev *vin,
+> -- 
+> 2.20.1
+> 
+
+-- 
+Regards,
+Niklas Söderlund
