@@ -2,135 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8F92218BA4A
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 16:04:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 018FF18BA53
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 16:06:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728647AbgCSPEa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 11:04:30 -0400
-Received: from ms.lwn.net ([45.79.88.28]:33904 "EHLO ms.lwn.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726795AbgCSPE3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 11:04:29 -0400
-Received: from lwn.net (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1727825AbgCSPGX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 11:06:23 -0400
+Received: from us-smtp-delivery-74.mimecast.com ([63.128.21.74]:55139 "EHLO
+        us-smtp-delivery-74.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727103AbgCSPGX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 11:06:23 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1584630382;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=74WKfLExhu1TCeh0PZbO5Glf65zWrT+Fd+frCpLn2rU=;
+        b=C33tuJOEj8Hlasjv69LeiytjxO7tpBAglDwSwHffEaq0xgep7yocdVPEMZOyFKekCcgBUO
+        BMvP4zrm3JZ1oJB8rRDiznKqUwBT5ElmW8IFOsv98XJrUmGbVs6yrQVtYk4F48vVJG62Hx
+        02OKW4QXxy0LFguL6Xk5MI5XTLNgw6g=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-104-jfJBNrxdPtCgGuFEhYASkA-1; Thu, 19 Mar 2020 11:06:06 -0400
+X-MC-Unique: jfJBNrxdPtCgGuFEhYASkA-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by ms.lwn.net (Postfix) with ESMTPSA id DB45F384;
-        Thu, 19 Mar 2020 15:04:27 +0000 (UTC)
-Date:   Thu, 19 Mar 2020 09:04:26 -0600
-From:   Jonathan Corbet <corbet@lwn.net>
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Ingo Molnar <mingo@kernel.org>, Will Deacon <will@kernel.org>,
-        "Paul E . McKenney" <paulmck@kernel.org>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        Kurt Schwemmer <kurt.schwemmer@microsemi.com>,
-        Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
-        Felipe Balbi <balbi@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-usb@vger.kernel.org, Kalle Valo <kvalo@codeaurora.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        Oleg Nesterov <oleg@redhat.com>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Arnd Bergmann <arnd@arndb.de>, linuxppc-dev@lists.ozlabs.org
-Subject: Re: [patch V2 08/15] Documentation: Add lock ordering and nesting
- documentation
-Message-ID: <20200319090426.512510cb@lwn.net>
-In-Reply-To: <20200318204408.211530902@linutronix.de>
-References: <20200318204302.693307984@linutronix.de>
-        <20200318204408.211530902@linutronix.de>
-Organization: LWN.net
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id E5FA3100550E;
+        Thu, 19 Mar 2020 15:06:03 +0000 (UTC)
+Received: from [10.36.113.142] (ovpn-113-142.ams2.redhat.com [10.36.113.142])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 906618D55E;
+        Thu, 19 Mar 2020 15:06:00 +0000 (UTC)
+Subject: Re: [PATCH v5 23/23] KVM: arm64: GICv4.1: Expose HW-based SGIs in
+ debugfs
+To:     Marc Zyngier <maz@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu,
+        kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Robert Richter <rrichter@marvell.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Zenghui Yu <yuzenghui@huawei.com>,
+        James Morse <james.morse@arm.com>,
+        Julien Thierry <julien.thierry.kdev@gmail.com>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>
+References: <20200304203330.4967-1-maz@kernel.org>
+ <20200304203330.4967-24-maz@kernel.org>
+From:   Auger Eric <eric.auger@redhat.com>
+Message-ID: <4cb4c3d4-7b02-bb77-cd7a-c185346b6a2f@redhat.com>
+Date:   Thu, 19 Mar 2020 16:05:58 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200304203330.4967-24-maz@kernel.org>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 18 Mar 2020 21:43:10 +0100
-Thomas Gleixner <tglx@linutronix.de> wrote:
+Hi Marc,
 
-> From: Thomas Gleixner <tglx@linutronix.de>
+On 3/4/20 9:33 PM, Marc Zyngier wrote:
+> The vgic-state debugfs file could do with showing the pending state
+> of the HW-backed SGIs. Plug it into the low-level code.
 > 
-> The kernel provides a variety of locking primitives. The nesting of these
-> lock types and the implications of them on RT enabled kernels is nowhere
-> documented.
-> 
-> Add initial documentation.
-
-...time to add a a couple of nits...:)
-
-> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+> Signed-off-by: Marc Zyngier <maz@kernel.org>
 > ---
-> V2: Addressed review comments from Randy
-> ---
->  Documentation/locking/index.rst     |    1 
->  Documentation/locking/locktypes.rst |  298 ++++++++++++++++++++++++++++++++++++
->  2 files changed, 299 insertions(+)
->  create mode 100644 Documentation/locking/locktypes.rst
+>  virt/kvm/arm/vgic/vgic-debug.c | 14 +++++++++++++-
+>  1 file changed, 13 insertions(+), 1 deletion(-)
 > 
-> --- a/Documentation/locking/index.rst
-> +++ b/Documentation/locking/index.rst
-> @@ -7,6 +7,7 @@ locking
->  .. toctree::
->      :maxdepth: 1
+> diff --git a/virt/kvm/arm/vgic/vgic-debug.c b/virt/kvm/arm/vgic/vgic-debug.c
+> index cc12fe9b2df3..b13a9e3f99dd 100644
+> --- a/virt/kvm/arm/vgic/vgic-debug.c
+> +++ b/virt/kvm/arm/vgic/vgic-debug.c
+> @@ -178,6 +178,8 @@ static void print_irq_state(struct seq_file *s, struct vgic_irq *irq,
+>  			    struct kvm_vcpu *vcpu)
+>  {
+>  	char *type;
+> +	bool pending;
+nit: can be directly initialized to irq->pending_latch
+> +
+>  	if (irq->intid < VGIC_NR_SGIS)
+>  		type = "SGI";
+>  	else if (irq->intid < VGIC_NR_PRIVATE_IRQS)
+> @@ -190,6 +192,16 @@ static void print_irq_state(struct seq_file *s, struct vgic_irq *irq,
+>  	if (irq->intid ==0 || irq->intid == VGIC_NR_PRIVATE_IRQS)
+>  		print_header(s, irq, vcpu);
 >  
-> +    locktypes
->      lockdep-design
->      lockstat
->      locktorture
-> --- /dev/null
-> +++ b/Documentation/locking/locktypes.rst
-> @@ -0,0 +1,298 @@
-> +.. _kernel_hacking_locktypes:
+> +	pending = irq->pending_latch;
+> +	if (irq->hw && vgic_irq_is_sgi(irq->intid)) {
+> +		int err;
 > +
+> +		err = irq_get_irqchip_state(irq->host_irq,
+> +					    IRQCHIP_STATE_PENDING,
+> +					    &pending);
+> +		WARN_ON_ONCE(err);
+> +	}
+> +
+>  	seq_printf(s, "       %s %4d "
+>  		      "    %2d "
+>  		      "%d%d%d%d%d%d%d "
+> @@ -201,7 +213,7 @@ static void print_irq_state(struct seq_file *s, struct vgic_irq *irq,
+>  		      "\n",
+>  			type, irq->intid,
+>  			(irq->target_vcpu) ? irq->target_vcpu->vcpu_id : -1,
+> -			irq->pending_latch,
+> +			pending,
+>  			irq->line_level,
+>  			irq->active,
+>  			irq->enabled,
+> 
+The patch looks good to me but I am now lost about how we retrieve the
+pending stat of other hw mapped interrupts. Looks we use
+irq->pending_latch always. Is that correct?
 
-So ... I vaguely remember that some Thomas guy added a document saying we
-should be putting SPDX tags on our files? :)
+For the patch:
+Reviewed-by: Eric Auger <eric.auger@redhat.com>
 
-> +==========================
-> +Lock types and their rules
-> +==========================
+Thanks
 
-[...]
+Eric
 
-> +PREEMPT_RT caveats
-> +==================
-> +
-> +spinlock_t and rwlock_t
-> +-----------------------
-> +
-> +The substitution of spinlock_t and rwlock_t on PREEMPT_RT enabled kernels
-> +with RT-mutex based implementations has a few implications.
-> +
-> +On a non PREEMPT_RT enabled kernel the following code construct is
-> +perfectly fine::
-> +
-> +   local_irq_disable();
-> +   spin_lock(&lock);
-> +
-> +and fully equivalent to::
-> +
-> +   spin_lock_irq(&lock);
-> +
-> +Same applies to rwlock_t and the _irqsave() suffix variant.
-> +
-> +On a PREEMPT_RT enabled kernel this breaks because the RT-mutex
-> +substitution expects a fully preemptible context.
-> +
-> +The preferred solution is to use :c:func:`spin_lock_irq()` or
-> +:c:func:`spin_lock_irqsave()` and their unlock counterparts.
-
-We don't need (and shouldn't use) :c:func: anymore; just saying
-spin_lock_irq() will cause the Right Things to happen.
-
-Thanks,
-jon
