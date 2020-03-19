@@ -2,285 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C693818B42F
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:08:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 90AA718B43A
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:08:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727937AbgCSNH1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 09:07:27 -0400
-Received: from mga04.intel.com ([192.55.52.120]:29654 "EHLO mga04.intel.com"
+        id S1727978AbgCSNHp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 09:07:45 -0400
+Received: from foss.arm.com ([217.140.110.172]:34986 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727926AbgCSNH0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 09:07:26 -0400
-IronPort-SDR: qDNmv7lKxR3fZXLFbnr5Fa5EofHsdILpvDPBQ7b6fFBxof8+9zCALOrmrQ8MHzgESmit3HTHXY
- ASO7t9hePf8w==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Mar 2020 06:07:25 -0700
-IronPort-SDR: pIVV4Lrxcb5QjZyzfPIkMoT9fDonZN6BNjZHylQRMDbxruHnWRmx4ojY22s8zfqXCb/dtqktZ3
- 4t6WopGZ+rhw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,571,1574150400"; 
-   d="scan'208";a="291621939"
-Received: from linux.intel.com ([10.54.29.200])
-  by FMSMGA003.fm.intel.com with ESMTP; 19 Mar 2020 06:07:25 -0700
-Received: from [10.251.14.105] (kliang2-mobl.ccr.corp.intel.com [10.251.14.105])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by linux.intel.com (Postfix) with ESMTPS id 826DC58058B;
-        Thu, 19 Mar 2020 06:07:23 -0700 (PDT)
-Subject: Re: [PATCH V3 01/17] perf pmu: Add support for PMU capabilities
-To:     Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
-Cc:     jolsa@redhat.com, peterz@infradead.org, mingo@redhat.com,
-        linux-kernel@vger.kernel.org, namhyung@kernel.org,
-        adrian.hunter@intel.com, mathieu.poirier@linaro.org,
-        ravi.bangoria@linux.ibm.com, alexey.budankov@linux.intel.com,
-        vitaly.slobodskoy@intel.com, pavel.gerasimov@intel.com,
-        mpe@ellerman.id.au, eranian@google.com, ak@linux.intel.com
-References: <20200313183319.17739-1-kan.liang@linux.intel.com>
- <20200313183319.17739-2-kan.liang@linux.intel.com>
- <20200318194722.GR11531@kernel.org>
-From:   "Liang, Kan" <kan.liang@linux.intel.com>
-Message-ID: <f7b3a4af-0c74-b032-bc44-b05fff1f7db5@linux.intel.com>
-Date:   Thu, 19 Mar 2020 09:07:21 -0400
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+        id S1727982AbgCSNHn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 09:07:43 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6DF1A30E;
+        Thu, 19 Mar 2020 06:07:42 -0700 (PDT)
+Received: from [192.168.1.123] (unknown [172.31.20.19])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BAA7B3F534;
+        Thu, 19 Mar 2020 06:07:37 -0700 (PDT)
+Subject: Re: [RFC PATCH 2/2] phy: phy-rockchip-inno-usb2: remove support for
+ rockchip, rk3366-usb2phy
+To:     Johan Jonker <jbx6244@gmail.com>, kishon@ti.com
+Cc:     devicetree@vger.kernel.org, heiko@sntech.de,
+        linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org,
+        robh+dt@kernel.org, linux-arm-kernel@lists.infradead.org
+References: <20200318192901.5023-1-jbx6244@gmail.com>
+ <20200318192901.5023-2-jbx6244@gmail.com>
+From:   Robin Murphy <robin.murphy@arm.com>
+Message-ID: <233769c3-a44a-0ebd-7a2c-6fab17fb56f2@arm.com>
+Date:   Thu, 19 Mar 2020 13:07:26 +0000
+User-Agent: Mozilla/5.0 (Windows NT 10.0; rv:68.0) Gecko/20100101
  Thunderbird/68.6.0
 MIME-Version: 1.0
-In-Reply-To: <20200318194722.GR11531@kernel.org>
+In-Reply-To: <20200318192901.5023-2-jbx6244@gmail.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+Content-Language: en-GB
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Johan,
 
+On 2020-03-18 7:29 pm, Johan Jonker wrote:
+> 'phy-rockchip-inno-usb2.txt' is updated to yaml, whereby
+> the compatible string 'rockchip,rk3366-usb2phy' was removed,
+> because it's not in use by a dts file, so remove support
+> in the code as well.
 
-On 3/18/2020 3:47 PM, Arnaldo Carvalho de Melo wrote:
-> Em Fri, Mar 13, 2020 at 11:33:03AM -0700, kan.liang@linux.intel.com escreveu:
->> From: Kan Liang <kan.liang@linux.intel.com>
->>
->> The PMU capabilities information, which is located at
->> /sys/bus/event_source/devices/<dev>/caps, is required by perf tool.
->> For example, the max LBR information is required to stitch LBR call
->> stack.
->>
->> Add perf_pmu__caps_parse() to parse the PMU capabilities information.
->> The information is stored in a list.
->>
->> Add perf_pmu__scan_caps() to scan the capabilities one by one.
->>
->> The following patch will store the capabilities information in perf
->> header.
->>
->> Reviewed-by: Andi Kleen <ak@linux.intel.com>
->> Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
->> ---
->>   tools/perf/util/pmu.c | 98 +++++++++++++++++++++++++++++++++++++++++++
->>   tools/perf/util/pmu.h | 12 ++++++
->>   2 files changed, 110 insertions(+)
->>
->> diff --git a/tools/perf/util/pmu.c b/tools/perf/util/pmu.c
->> index 8b99fd312aae..4cdfbb669567 100644
->> --- a/tools/perf/util/pmu.c
->> +++ b/tools/perf/util/pmu.c
->> @@ -844,6 +844,7 @@ static struct perf_pmu *pmu_lookup(const char *name)
->>   
->>   	INIT_LIST_HEAD(&pmu->format);
->>   	INIT_LIST_HEAD(&pmu->aliases);
->> +	INIT_LIST_HEAD(&pmu->caps);
->>   	list_splice(&format, &pmu->format);
->>   	list_splice(&aliases, &pmu->aliases);
->>   	list_add_tail(&pmu->list, &pmus);
->> @@ -1565,3 +1566,100 @@ int perf_pmu__scan_file(struct perf_pmu *pmu, const char *name, const char *fmt,
->>   	va_end(args);
->>   	return ret;
->>   }
->> +
->> +static int perf_pmu__new_caps(struct list_head *list, char *name, char *value)
->> +{
->> +	struct perf_pmu_caps *caps;
->> +
->> +	caps = zalloc(sizeof(*caps));
->> +	if (!caps)
->> +		return -ENOMEM;
-> 
-> Since there will be a v4 for other reasons, please combine the
-> declaration plus assignment when possible, like above, i.e. make it:
-> 
+Here's a DT using it:
 
-Sure.
+https://github.com/rockchip-linux/kernel/blob/develop-4.4/arch/arm64/boot/dts/rockchip/rk3366.dtsi#L820
 
-> +	struct perf_pmu_caps *caps = zalloc(sizeof(*caps));
-> +
-> +	if (!caps)
-> +		return -ENOMEM;
-> 
->> +
->> +	caps->name = strdup(name);
->> +	if (!caps->name)
->> +		goto free_caps;
->> +	caps->value = strndup(value, strlen(value) - 1);
->> +	if (!caps->value)
->> +		goto free_name;
->> +	list_add_tail(&caps->list, list);
->> +	return 0;
->> +
->> +free_name:
->> +	free(caps->name);
-> 
-> In these cases I think this is preferred:
-> 
-> 	zfree(&caps->name);
+Please note that although DT bindings happen to be primarily maintained 
+in the upstream kernel tree at the moment, it is mostly as a consequence 
+of Linux being the source of most active development. Bindings should 
+not be considered to be "owned" by upstream Linux since there are many 
+other consumers, both downstream, and in completely different projects 
+like the BSDs. As far as I'm aware there is still a long-term plan to 
+eventually flip the switch and move maintenance to a standalone repo:
 
-Sure.
+https://git.kernel.org/pub/scm/linux/kernel/git/devicetree/devicetree-rebasing.git
 
-> 
->> +free_caps:
->> +	free(caps);
->> +
->> +	return -ENOMEM;
->> +}
->> +
->> +/*
->> + * Reading/parsing the given pmu capabilities, which should be located at:
->> + * /sys/bus/event_source/devices/<dev>/caps as sysfs group attributes.
->> + * Return the number of capabilities
->> + */
->> +int perf_pmu__caps_parse(struct perf_pmu *pmu)
->> +{
->> +	struct stat st;
->> +	char caps_path[PATH_MAX];
->> +	const char *sysfs = sysfs__mountpoint();
->> +	DIR *caps_dir;
->> +	struct dirent *evt_ent;
->> +	int nr_caps = 0;
->> +
->> +	if (!sysfs)
->> +		return -1;
->> +
->> +	snprintf(caps_path, PATH_MAX,
->> +		 "%s" EVENT_SOURCE_DEVICE_PATH "%s/caps", sysfs, pmu->name);
->> +
->> +	if (stat(caps_path, &st) < 0)
->> +		return 0;	/* no error if caps does not exist */
->> +
->> +	caps_dir = opendir(caps_path);
->> +	if (!caps_dir)
->> +		return -EINVAL;
->> +
->> +	while ((evt_ent = readdir(caps_dir)) != NULL) {
->> +		char path[PATH_MAX + NAME_MAX + 1];
->> +		char *name = evt_ent->d_name;
->> +		char value[128];
->> +		FILE *file;
->> +
->> +		if (!strcmp(name, ".") || !strcmp(name, ".."))
->> +			continue;
->> +
->> +		snprintf(path, sizeof(path), "%s/%s", caps_path, name);
->> +
->> +		file = fopen(path, "r");
->> +		if (!file)
->> +			break;
-> 
-> I haven't looked at what is in such directories that would justify still
-> returning whatever was read so far when failing to read one of its
-> files, is this sensible? Care to explain a bit why you think so? Looks
-> fishy :-\
+Things like PCI Device IDs and ACPI HIDs aren't even documented as 
+formally as DT bindings, so by the reasoning here we could arguably 
+delete the majority of drivers from the kernel...
 
-There is no dependency among the 'capabilities'. If perf fails to read 
-one, it should not impact others.
-Yes, 'continue' looks better here.
+Robin.
 
-
+> Signed-off-by: Johan Jonker <jbx6244@gmail.com>
+> ---
+>   drivers/phy/rockchip/phy-rockchip-inno-usb2.c | 20 --------------------
+>   1 file changed, 20 deletions(-)
 > 
->> +
->> +		if (!fgets(value, sizeof(value), file) ||
->> +		    (perf_pmu__new_caps(&pmu->caps, name, value) < 0)) {
->> +			fclose(file);
->> +			break;
->> +		}
->> +
->> +		nr_caps++;
->> +		fclose(file);
->> +	}
->> +
->> +	closedir(caps_dir);
->> +
->> +	return nr_caps;
->> +}
->> +
->> +struct perf_pmu_caps *perf_pmu__scan_caps(struct perf_pmu *pmu,
->> +					  struct perf_pmu_caps *caps)
->> +{
->> +	if (!pmu)
->> +		return NULL;
->> +
->> +	if (!caps)
->> +		caps = list_prepare_entry(caps, &pmu->caps, list);
->> +
->> +	list_for_each_entry_continue(caps, &pmu->caps, list)
->> +		return caps;
-> 
-> Why not:
-> 
-> 	return caps ? list_next_entry(caps) : list_first_entry(&pmu->caps, struct perf_pmu_caps, list);
-> 
-> Nah, it'll return the head after the last entry, not NULL, argh.
-> 
-> Anyway, looks like a confusing API :-\
-> 
-> I'll see how it is used in the following patches...
-
-
-As suggested in other thread, I will use list_for_each_entry() to 
-replace in v4.
-
-Thanks,
-Kan
-
-> 
->> +
->> +	return NULL;
->> +}
->> diff --git a/tools/perf/util/pmu.h b/tools/perf/util/pmu.h
->> index 6737e3d5d568..a228e27ae462 100644
->> --- a/tools/perf/util/pmu.h
->> +++ b/tools/perf/util/pmu.h
->> @@ -21,6 +21,12 @@ enum {
->>   
->>   struct perf_event_attr;
->>   
->> +struct perf_pmu_caps {
->> +	char *name;
->> +	char *value;
->> +	struct list_head list;
->> +};
->> +
->>   struct perf_pmu {
->>   	char *name;
->>   	__u32 type;
->> @@ -32,6 +38,7 @@ struct perf_pmu {
->>   	struct perf_cpu_map *cpus;
->>   	struct list_head format;  /* HEAD struct perf_pmu_format -> list */
->>   	struct list_head aliases; /* HEAD struct perf_pmu_alias -> list */
->> +	struct list_head caps;    /* HEAD struct perf_pmu_caps -> list */
->>   	struct list_head list;    /* ELEM */
->>   };
->>   
->> @@ -102,4 +109,9 @@ struct pmu_events_map *perf_pmu__find_map(struct perf_pmu *pmu);
->>   
->>   int perf_pmu__convert_scale(const char *scale, char **end, double *sval);
->>   
->> +int perf_pmu__caps_parse(struct perf_pmu *pmu);
->> +
->> +struct perf_pmu_caps *perf_pmu__scan_caps(struct perf_pmu *pmu,
->> +					  struct perf_pmu_caps *caps);
->> +
->>   #endif /* __PMU_H */
->> -- 
->> 2.17.1
->>
+> diff --git a/drivers/phy/rockchip/phy-rockchip-inno-usb2.c b/drivers/phy/rockchip/phy-rockchip-inno-usb2.c
+> index 680cc0c88..dcdb5589b 100644
+> --- a/drivers/phy/rockchip/phy-rockchip-inno-usb2.c
+> +++ b/drivers/phy/rockchip/phy-rockchip-inno-usb2.c
+> @@ -1299,25 +1299,6 @@ static const struct rockchip_usb2phy_cfg rk3328_phy_cfgs[] = {
+>   	{ /* sentinel */ }
+>   };
+>   
+> -static const struct rockchip_usb2phy_cfg rk3366_phy_cfgs[] = {
+> -	{
+> -		.reg = 0x700,
+> -		.num_ports	= 2,
+> -		.clkout_ctl	= { 0x0724, 15, 15, 1, 0 },
+> -		.port_cfgs	= {
+> -			[USB2PHY_PORT_HOST] = {
+> -				.phy_sus	= { 0x0728, 15, 0, 0, 0x1d1 },
+> -				.ls_det_en	= { 0x0680, 4, 4, 0, 1 },
+> -				.ls_det_st	= { 0x0690, 4, 4, 0, 1 },
+> -				.ls_det_clr	= { 0x06a0, 4, 4, 0, 1 },
+> -				.utmi_ls	= { 0x049c, 14, 13, 0, 1 },
+> -				.utmi_hstdet	= { 0x049c, 12, 12, 0, 1 }
+> -			}
+> -		},
+> -	},
+> -	{ /* sentinel */ }
+> -};
+> -
+>   static const struct rockchip_usb2phy_cfg rk3399_phy_cfgs[] = {
+>   	{
+>   		.reg		= 0xe450,
+> @@ -1426,7 +1407,6 @@ static const struct of_device_id rockchip_usb2phy_dt_match[] = {
+>   	{ .compatible = "rockchip,px30-usb2phy", .data = &rk3328_phy_cfgs },
+>   	{ .compatible = "rockchip,rk3228-usb2phy", .data = &rk3228_phy_cfgs },
+>   	{ .compatible = "rockchip,rk3328-usb2phy", .data = &rk3328_phy_cfgs },
+> -	{ .compatible = "rockchip,rk3366-usb2phy", .data = &rk3366_phy_cfgs },
+>   	{ .compatible = "rockchip,rk3399-usb2phy", .data = &rk3399_phy_cfgs },
+>   	{ .compatible = "rockchip,rv1108-usb2phy", .data = &rv1108_phy_cfgs },
+>   	{}
 > 
