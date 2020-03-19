@@ -2,36 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4C3D818B82F
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:38:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4521F18B831
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:38:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727510AbgCSNFx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 09:05:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48772 "EHLO mail.kernel.org"
+        id S1727570AbgCSNii (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 09:38:38 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48878 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726975AbgCSNFv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 09:05:51 -0400
+        id S1727534AbgCSNF6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 09:05:58 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BB5F120767;
-        Thu, 19 Mar 2020 13:05:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9F60920722;
+        Thu, 19 Mar 2020 13:05:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584623151;
-        bh=adMMLGcqvitOlb6WSgYu/9d69wcN8CQ7NT+4lcaczpI=;
+        s=default; t=1584623157;
+        bh=Q5wpVU1xu8wGACPp+m7pI66Up6viVKtEFbyPFoD1gG0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=y9HNDqFSZHS7YCd8BGUw0RgvQ6Amln4okMeW5hgx5uGjsIIQlCagcDM4lUU8oLRVW
-         v2fbAOJv0NsK2HNlnITkqEpTGFEA9RsA3j/mNjGUph/YzRB+ayKc8tCTO0DgHbbE3X
-         jUrv1iIs5TJmsLeaxo85dGGWzofBMlkCFvGNoUMg=
+        b=gLeUP2ODuUAPelhkbQrnyMa+6VtKEZYPbKdXvaE0VNIF1Z1ennZ7gJZE8LT+4oVvr
+         vfvr0xQqX2XLdPCEugFpNoc3FcFg19/W/BDckDRXyuekKhKVfxfpKmcPw+7HZGdsC8
+         tz/XYEiX8r0TbIsHTtXf1boz/uo5JLyLshtHMUlk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>
-Subject: [PATCH 4.4 25/93] KVM: x86: clear stale x86_emulate_ctxt->intercept value
-Date:   Thu, 19 Mar 2020 13:59:29 +0100
-Message-Id: <20200319123933.022825570@linuxfoundation.org>
+        stable@vger.kernel.org, Vladis Dronov <vdronov@redhat.com>,
+        Ard Biesheuvel <ardb@kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Bob Sanders <bob.sanders@hpe.com>
+Subject: [PATCH 4.4 27/93] efi: Fix a race and a buffer overflow while reading efivars via sysfs
+Date:   Thu, 19 Mar 2020 13:59:31 +0100
+Message-Id: <20200319123933.679048599@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.2
 In-Reply-To: <20200319123924.795019515@linuxfoundation.org>
 References: <20200319123924.795019515@linuxfoundation.org>
@@ -44,50 +45,138 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vitaly Kuznetsov <vkuznets@redhat.com>
+From: Vladis Dronov <vdronov@redhat.com>
 
-commit 342993f96ab24d5864ab1216f46c0b199c2baf8e upstream.
+commit 286d3250c9d6437340203fb64938bea344729a0e upstream.
 
-After commit 07721feee46b ("KVM: nVMX: Don't emulate instructions in guest
-mode") Hyper-V guests on KVM stopped booting with:
+There is a race and a buffer overflow corrupting a kernel memory while
+reading an EFI variable with a size more than 1024 bytes via the older
+sysfs method. This happens because accessing struct efi_variable in
+efivar_{attr,size,data}_read() and friends is not protected from
+a concurrent access leading to a kernel memory corruption and, at best,
+to a crash. The race scenario is the following:
 
- kvm_nested_vmexit:    rip fffff802987d6169 reason EPT_VIOLATION info1 181
-    info2 0 int_info 0 int_info_err 0
- kvm_page_fault:       address febd0000 error_code 181
- kvm_emulate_insn:     0:fffff802987d6169: f3 a5
- kvm_emulate_insn:     0:fffff802987d6169: f3 a5 FAIL
- kvm_inj_exception:    #UD (0x0)
+CPU0:                                CPU1:
+efivar_attr_read()
+  var->DataSize = 1024;
+  efivar_entry_get(... &var->DataSize)
+    down_interruptible(&efivars_lock)
+                                     efivar_attr_read() // same EFI var
+                                       var->DataSize = 1024;
+                                       efivar_entry_get(... &var->DataSize)
+                                         down_interruptible(&efivars_lock)
+    virt_efi_get_variable()
+    // returns EFI_BUFFER_TOO_SMALL but
+    // var->DataSize is set to a real
+    // var size more than 1024 bytes
+    up(&efivars_lock)
+                                         virt_efi_get_variable()
+                                         // called with var->DataSize set
+                                         // to a real var size, returns
+                                         // successfully and overwrites
+                                         // a 1024-bytes kernel buffer
+                                         up(&efivars_lock)
 
-"f3 a5" is a "rep movsw" instruction, which should not be intercepted
-at all.  Commit c44b4c6ab80e ("KVM: emulate: clean up initializations in
-init_decode_cache") reduced the number of fields cleared by
-init_decode_cache() claiming that they are being cleared elsewhere,
-'intercept', however, is left uncleared if the instruction does not have
-any of the "slow path" flags (NotImpl, Stack, Op3264, Sse, Mmx, CheckPerm,
-NearBranch, No16 and of course Intercept itself).
+This can be reproduced by concurrent reading of an EFI variable which size
+is more than 1024 bytes:
 
-Fixes: c44b4c6ab80e ("KVM: emulate: clean up initializations in init_decode_cache")
-Fixes: 07721feee46b ("KVM: nVMX: Don't emulate instructions in guest mode")
-Cc: stable@vger.kernel.org
-Suggested-by: Paolo Bonzini <pbonzini@redhat.com>
-Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
-Reviewed-by: Sean Christopherson <sean.j.christopherson@intel.com>
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+  ts# for cpu in $(seq 0 $(nproc --ignore=1)); do ( taskset -c $cpu \
+  cat /sys/firmware/efi/vars/KEKDefault*/size & ) ; done
+
+Fix this by using a local variable for a var's data buffer size so it
+does not get overwritten.
+
+Fixes: e14ab23dde12b80d ("efivars: efivar_entry API")
+Reported-by: Bob Sanders <bob.sanders@hpe.com> and the LTP testsuite
+Signed-off-by: Vladis Dronov <vdronov@redhat.com>
+Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Cc: <stable@vger.kernel.org>
+Link: https://lore.kernel.org/r/20200305084041.24053-2-vdronov@redhat.com
+Link: https://lore.kernel.org/r/20200308080859.21568-24-ardb@kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/kvm/emulate.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/firmware/efi/efivars.c |   29 ++++++++++++++++++++---------
+ 1 file changed, 20 insertions(+), 9 deletions(-)
 
---- a/arch/x86/kvm/emulate.c
-+++ b/arch/x86/kvm/emulate.c
-@@ -5010,6 +5010,7 @@ int x86_decode_insn(struct x86_emulate_c
- 	ctxt->fetch.ptr = ctxt->fetch.data;
- 	ctxt->fetch.end = ctxt->fetch.data + insn_len;
- 	ctxt->opcode_len = 1;
-+	ctxt->intercept = x86_intercept_none;
- 	if (insn_len > 0)
- 		memcpy(ctxt->fetch.data, insn, insn_len);
- 	else {
+--- a/drivers/firmware/efi/efivars.c
++++ b/drivers/firmware/efi/efivars.c
+@@ -139,13 +139,16 @@ static ssize_t
+ efivar_attr_read(struct efivar_entry *entry, char *buf)
+ {
+ 	struct efi_variable *var = &entry->var;
++	unsigned long size = sizeof(var->Data);
+ 	char *str = buf;
++	int ret;
+ 
+ 	if (!entry || !buf)
+ 		return -EINVAL;
+ 
+-	var->DataSize = 1024;
+-	if (efivar_entry_get(entry, &var->Attributes, &var->DataSize, var->Data))
++	ret = efivar_entry_get(entry, &var->Attributes, &size, var->Data);
++	var->DataSize = size;
++	if (ret)
+ 		return -EIO;
+ 
+ 	if (var->Attributes & EFI_VARIABLE_NON_VOLATILE)
+@@ -172,13 +175,16 @@ static ssize_t
+ efivar_size_read(struct efivar_entry *entry, char *buf)
+ {
+ 	struct efi_variable *var = &entry->var;
++	unsigned long size = sizeof(var->Data);
+ 	char *str = buf;
++	int ret;
+ 
+ 	if (!entry || !buf)
+ 		return -EINVAL;
+ 
+-	var->DataSize = 1024;
+-	if (efivar_entry_get(entry, &var->Attributes, &var->DataSize, var->Data))
++	ret = efivar_entry_get(entry, &var->Attributes, &size, var->Data);
++	var->DataSize = size;
++	if (ret)
+ 		return -EIO;
+ 
+ 	str += sprintf(str, "0x%lx\n", var->DataSize);
+@@ -189,12 +195,15 @@ static ssize_t
+ efivar_data_read(struct efivar_entry *entry, char *buf)
+ {
+ 	struct efi_variable *var = &entry->var;
++	unsigned long size = sizeof(var->Data);
++	int ret;
+ 
+ 	if (!entry || !buf)
+ 		return -EINVAL;
+ 
+-	var->DataSize = 1024;
+-	if (efivar_entry_get(entry, &var->Attributes, &var->DataSize, var->Data))
++	ret = efivar_entry_get(entry, &var->Attributes, &size, var->Data);
++	var->DataSize = size;
++	if (ret)
+ 		return -EIO;
+ 
+ 	memcpy(buf, var->Data, var->DataSize);
+@@ -314,14 +323,16 @@ efivar_show_raw(struct efivar_entry *ent
+ {
+ 	struct efi_variable *var = &entry->var;
+ 	struct compat_efi_variable *compat;
++	unsigned long datasize = sizeof(var->Data);
+ 	size_t size;
++	int ret;
+ 
+ 	if (!entry || !buf)
+ 		return 0;
+ 
+-	var->DataSize = 1024;
+-	if (efivar_entry_get(entry, &entry->var.Attributes,
+-			     &entry->var.DataSize, entry->var.Data))
++	ret = efivar_entry_get(entry, &var->Attributes, &datasize, var->Data);
++	var->DataSize = datasize;
++	if (ret)
+ 		return -EIO;
+ 
+ 	if (is_compat()) {
 
 
