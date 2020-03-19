@@ -2,38 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E1F0A18B5D4
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:22:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D527018B5AB
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:21:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730141AbgCSNVy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 09:21:54 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46780 "EHLO mail.kernel.org"
+        id S1729984AbgCSNUb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 09:20:31 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44474 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729693AbgCSNVw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 09:21:52 -0400
+        id S1729990AbgCSNU2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 09:20:28 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3C73F20724;
-        Thu, 19 Mar 2020 13:21:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5FA922098B;
+        Thu, 19 Mar 2020 13:20:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584624111;
-        bh=YAFvu5ij+AyAowyPL31UII9ZhMcFpurD7oRq4jnXm+Q=;
+        s=default; t=1584624027;
+        bh=kwXXxO4lQVqoPLL4GTqsnhViKHoUIvpi5PW330Izpyo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YcsWdVnN6WAWlhhmCDLLa8MvQTVQqsh39z761m1GlMfQJgIxRicoxiZGdabsWO4rs
-         3JbM8szrBgagVQB3y1vW821flMsgPNmeuop8CKM4lf8iGZkWswAOpU7vmUSaOg0EJo
-         Ok0Lwj/j7BHYHo76fSWO4AbM+06ZgYaCkPIXwlQA=
+        b=Tn2Ck+XlC5n8cgbn4erNw23PfXT4rmS6Y5oKJfiPQUs5oxGIcNICqS/Df0zHk6RYi
+         PU2lwwAwPFs93tD2coqEdvyf08Zi51lfvcP/04yID1iifztICMBifzuPR96APBBKkC
+         f9Pw5S4Hg6jF4xR5Ot1P2GfZhfyZSRigBNdQxsEc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Mansour Behabadi <mansour@oxplot.com>,
-        Jiri Kosina <jkosina@suse.cz>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 11/60] HID: apple: Add support for recent firmware on Magic Keyboards
-Date:   Thu, 19 Mar 2020 14:03:49 +0100
-Message-Id: <20200319123922.714871661@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Sowjanya Komatineni <skomatineni@nvidia.com>,
+        Anders Roxell <anders.roxell@linaro.org>,
+        Faiz Abbas <faiz_abbas@ti.com>,
+        Peter Geis <pgwipeout@gmail.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 08/48] mmc: core: Respect MMC_CAP_NEED_RSP_BUSY for erase/trim/discard
+Date:   Thu, 19 Mar 2020 14:03:50 +0100
+Message-Id: <20200319123905.835973632@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.2
-In-Reply-To: <20200319123919.441695203@linuxfoundation.org>
-References: <20200319123919.441695203@linuxfoundation.org>
+In-Reply-To: <20200319123902.941451241@linuxfoundation.org>
+References: <20200319123902.941451241@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,35 +48,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Mansour Behabadi <mansour@oxplot.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
 
-[ Upstream commit e433be929e63265b7412478eb7ff271467aee2d7 ]
+[ Upstream commit 43cc64e5221cc6741252b64bc4531dd1eefb733d ]
 
-Magic Keyboards with more recent firmware (0x0100) report Fn key differently.
-Without this patch, Fn key may not behave as expected and may not be
-configurable via hid_apple fnmode module parameter.
+The busy timeout that is computed for each erase/trim/discard operation,
+can become quite long and may thus exceed the host->max_busy_timeout. If
+that becomes the case, mmc_do_erase() converts from using an R1B response
+to an R1 response, as to prevent the host from doing HW busy detection.
 
-Signed-off-by: Mansour Behabadi <mansour@oxplot.com>
-Signed-off-by: Jiri Kosina <jkosina@suse.cz>
+However, it has turned out that some hosts requires an R1B response no
+matter what, so let's respect that via checking MMC_CAP_NEED_RSP_BUSY. Note
+that, if the R1B gets enforced, the host becomes fully responsible of
+managing the needed busy timeout, in one way or the other.
+
+Suggested-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+Cc: <stable@vger.kernel.org>
+Tested-by: Anders Roxell <anders.roxell@linaro.org>
+Tested-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+Tested-by: Faiz Abbas <faiz_abbas@ti.com>
+Tested-By: Peter Geis <pgwipeout@gmail.com>
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/hid/hid-apple.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/mmc/core/core.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/hid/hid-apple.c b/drivers/hid/hid-apple.c
-index 6ac8becc2372e..d732d1d10cafb 100644
---- a/drivers/hid/hid-apple.c
-+++ b/drivers/hid/hid-apple.c
-@@ -340,7 +340,8 @@ static int apple_input_mapping(struct hid_device *hdev, struct hid_input *hi,
- 		unsigned long **bit, int *max)
- {
- 	if (usage->hid == (HID_UP_CUSTOM | 0x0003) ||
--			usage->hid == (HID_UP_MSVENDOR | 0x0003)) {
-+			usage->hid == (HID_UP_MSVENDOR | 0x0003) ||
-+			usage->hid == (HID_UP_HPVENDOR2 | 0x0003)) {
- 		/* The fn key on Apple USB keyboards */
- 		set_bit(EV_REP, hi->input->evbit);
- 		hid_map_usage_clear(hi, usage, bit, max, EV_KEY, KEY_FN);
+diff --git a/drivers/mmc/core/core.c b/drivers/mmc/core/core.c
+index 0a74785e575ba..56f7f3600469a 100644
+--- a/drivers/mmc/core/core.c
++++ b/drivers/mmc/core/core.c
+@@ -2043,8 +2043,11 @@ static int mmc_do_erase(struct mmc_card *card, unsigned int from,
+ 	 * the erase operation does not exceed the max_busy_timeout, we should
+ 	 * use R1B response. Or we need to prevent the host from doing hw busy
+ 	 * detection, which is done by converting to a R1 response instead.
++	 * Note, some hosts requires R1B, which also means they are on their own
++	 * when it comes to deal with the busy timeout.
+ 	 */
+-	if (card->host->max_busy_timeout &&
++	if (!(card->host->caps & MMC_CAP_NEED_RSP_BUSY) &&
++	    card->host->max_busy_timeout &&
+ 	    busy_timeout > card->host->max_busy_timeout) {
+ 		cmd.flags = MMC_RSP_SPI_R1 | MMC_RSP_R1 | MMC_CMD_AC;
+ 	} else {
 -- 
 2.20.1
 
