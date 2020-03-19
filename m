@@ -2,38 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1975318B3ED
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:05:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ACCDD18B417
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:06:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727337AbgCSNFS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 09:05:18 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47952 "EHLO mail.kernel.org"
+        id S1727722AbgCSNGk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 09:06:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49992 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726864AbgCSNFR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 09:05:17 -0400
+        id S1727711AbgCSNGj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 09:06:39 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3B06220722;
-        Thu, 19 Mar 2020 13:05:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5CF7F20752;
+        Thu, 19 Mar 2020 13:06:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584623116;
-        bh=RY7e7j606L71J5x/NwXaYVjElJWCPEpcje+RnIAraiE=;
+        s=default; t=1584623198;
+        bh=rsOWAzkzs6JQ9c5lYp5MDkBJ+aQDIqWSJysq3FgoU/c=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bcujtuU2sOpGDKdC3HQpwBjC9i+plm+V1wogUPaDCn9NHhx7f9meDr4dCDmPdA+ZS
-         UKu4CtTt1HdocFlZoesPeK9T56IwOIMfaPVKI6WW63nc0hsRaykK7N3vPQt/RYrGId
-         WyeaairrYczViivvCLKaOrsjc773Z+RV96Gpm0oE=
+        b=h54rN88e+6sR4ZUyEwwH0XDfbz7xpdLjZhBsAyoH/R9X3XCpK5EhWmIC/dEYKMeDa
+         BGZ9SwNVOcyy5lMeLXcFRAiIRpToqjvYpvkHrZ4TR53n4JsWQbsYxE8k3sjhiSOdq/
+         MzWEzPbZVOm4yo0Z3wljeLIlgp7/oRtKWyc1/QUY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Per Sundstrom <per.sundstrom@redqube.se>,
-        Jiri Wiesner <jwiesner@suse.com>,
-        Eric Dumazet <edumazet@google.com>,
-        Mahesh Bandewar <maheshb@google.com>,
+        stable@vger.kernel.org, Paolo Abeni <pabeni@redhat.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.4 13/93] ipvlan: do not add hardware address of master to its unicast filter list
-Date:   Thu, 19 Mar 2020 13:59:17 +0100
-Message-Id: <20200319123929.085773750@linuxfoundation.org>
+Subject: [PATCH 4.4 14/93] ipvlan: egress mcast packets are not exceptional
+Date:   Thu, 19 Mar 2020 13:59:18 +0100
+Message-Id: <20200319123929.405636412@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.2
 In-Reply-To: <20200319123924.795019515@linuxfoundation.org>
 References: <20200319123924.795019515@linuxfoundation.org>
@@ -46,70 +43,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jiri Wiesner <jwiesner@suse.com>
+From: Paolo Abeni <pabeni@redhat.com>
 
-[ Upstream commit 63aae7b17344d4b08a7d05cb07044de4c0f9dcc6 ]
+commit cccc200fcaf04cff4342036a72e51d6adf6c98c1 upstream.
 
-There is a problem when ipvlan slaves are created on a master device that
-is a vmxnet3 device (ipvlan in VMware guests). The vmxnet3 driver does not
-support unicast address filtering. When an ipvlan device is brought up in
-ipvlan_open(), the ipvlan driver calls dev_uc_add() to add the hardware
-address of the vmxnet3 master device to the unicast address list of the
-master device, phy_dev->uc. This inevitably leads to the vmxnet3 master
-device being forced into promiscuous mode by __dev_set_rx_mode().
+Currently, if IPv6 is enabled on top of an ipvlan device in l3
+mode, the following warning message:
 
-Promiscuous mode is switched on the master despite the fact that there is
-still only one hardware address that the master device should use for
-filtering in order for the ipvlan device to be able to receive packets.
-The comment above struct net_device describes the uc_promisc member as a
-"counter, that indicates, that promiscuous mode has been enabled due to
-the need to listen to additional unicast addresses in a device that does
-not implement ndo_set_rx_mode()". Moreover, the design of ipvlan
-guarantees that only the hardware address of a master device,
-phy_dev->dev_addr, will be used to transmit and receive all packets from
-its ipvlan slaves. Thus, the unicast address list of the master device
-should not be modified by ipvlan_open() and ipvlan_stop() in order to make
-ipvlan a workable option on masters that do not support unicast address
-filtering.
+ Dropped {multi|broad}cast of type= [86dd]
 
-Fixes: 2ad7bf3638411 ("ipvlan: Initial check-in of the IPVLAN driver")
-Reported-by: Per Sundstrom <per.sundstrom@redqube.se>
-Signed-off-by: Jiri Wiesner <jwiesner@suse.com>
-Reviewed-by: Eric Dumazet <edumazet@google.com>
-Acked-by: Mahesh Bandewar <maheshb@google.com>
+is emitted every time that a RS is generated and dmseg is soon
+filled with irrelevant messages. Replace pr_warn with pr_debug,
+to preserve debuggability, without scaring the sysadmin.
+
+Signed-off-by: Paolo Abeni <pabeni@redhat.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/net/ipvlan/ipvlan_main.c |    5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
 
---- a/drivers/net/ipvlan/ipvlan_main.c
-+++ b/drivers/net/ipvlan/ipvlan_main.c
-@@ -145,7 +145,6 @@ static void ipvlan_uninit(struct net_dev
- static int ipvlan_open(struct net_device *dev)
- {
- 	struct ipvl_dev *ipvlan = netdev_priv(dev);
--	struct net_device *phy_dev = ipvlan->phy_dev;
- 	struct ipvl_addr *addr;
+---
+ drivers/net/ipvlan/ipvlan_core.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+--- a/drivers/net/ipvlan/ipvlan_core.c
++++ b/drivers/net/ipvlan/ipvlan_core.c
+@@ -432,8 +432,8 @@ static int ipvlan_process_outbound(struc
  
- 	if (ipvlan->port->mode == IPVLAN_MODE_L3)
-@@ -156,7 +155,7 @@ static int ipvlan_open(struct net_device
- 	list_for_each_entry(addr, &ipvlan->addrs, anode)
- 		ipvlan_ht_addr_add(ipvlan, addr);
- 
--	return dev_uc_add(phy_dev, phy_dev->dev_addr);
-+	return 0;
- }
- 
- static int ipvlan_stop(struct net_device *dev)
-@@ -168,8 +167,6 @@ static int ipvlan_stop(struct net_device
- 	dev_uc_unsync(phy_dev, dev);
- 	dev_mc_unsync(phy_dev, dev);
- 
--	dev_uc_del(phy_dev, phy_dev->dev_addr);
--
- 	list_for_each_entry(addr, &ipvlan->addrs, anode)
- 		ipvlan_ht_addr_del(addr);
- 
+ 	/* In this mode we dont care about multicast and broadcast traffic */
+ 	if (is_multicast_ether_addr(ethh->h_dest)) {
+-		pr_warn_ratelimited("Dropped {multi|broad}cast of type= [%x]\n",
+-				    ntohs(skb->protocol));
++		pr_debug_ratelimited("Dropped {multi|broad}cast of type=[%x]\n",
++				     ntohs(skb->protocol));
+ 		kfree_skb(skb);
+ 		goto out;
+ 	}
 
 
