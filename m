@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DFA6818B5A9
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:21:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D883218B639
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:25:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729691AbgCSNU1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 09:20:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44386 "EHLO mail.kernel.org"
+        id S1730584AbgCSNZE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 09:25:04 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52328 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727572AbgCSNUZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 09:20:25 -0400
+        id S1730572AbgCSNZC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 09:25:02 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DEB00206D7;
-        Thu, 19 Mar 2020 13:20:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 72C262080C;
+        Thu, 19 Mar 2020 13:25:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584624025;
-        bh=tyQhYD7L0c6Qy7Pp19sm+Wi3FjaWbpivNpHwnNv5eh0=;
+        s=default; t=1584624301;
+        bh=+ZWBgP1H1PJaYmkcqqo0h/4VC5fxqrnCIWwQ5MstPNY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VI2G2q0c+ABjSHGyo0OvUXgV4BWblcVTqG5FvOiqzeAWi85v6IxMxZ0iELImQHHIH
-         CWgCPP3Q81igqWAtJ7Fc5HeXnOalllT9Qof3zopUPXyTvtMOptLURtWXtQG83RkPr1
-         ng0ZGEhyZAe6gezKZJpCZXPdMkKK0g7hUjUb7EM8=
+        b=VjL0HK8WSQxIJSuGunH9wxmcwAX/V+C07rSnXjyWrBFrGADJ7AfNmBjPAr463hQ+y
+         ws2mefF/5lEK/nx1TO8aD2vzbkXiNh8M2RZNyjALoB9ctPzm10JaJ+e87l1bdySpKl
+         1tPxa5ZY20qUwMTgMIcdbBswR+/ZdREqvjvOAgv8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -30,12 +30,12 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Sowjanya Komatineni <skomatineni@nvidia.com>,
         Ulf Hansson <ulf.hansson@linaro.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 07/48] mmc: core: Respect MMC_CAP_NEED_RSP_BUSY for eMMC sleep command
+Subject: [PATCH 5.5 07/65] mmc: core: Respect MMC_CAP_NEED_RSP_BUSY for eMMC sleep command
 Date:   Thu, 19 Mar 2020 14:03:49 +0100
-Message-Id: <20200319123905.533106814@linuxfoundation.org>
+Message-Id: <20200319123928.582537483@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.2
-In-Reply-To: <20200319123902.941451241@linuxfoundation.org>
-References: <20200319123902.941451241@linuxfoundation.org>
+In-Reply-To: <20200319123926.466988514@linuxfoundation.org>
+References: <20200319123926.466988514@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -69,10 +69,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 5 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/mmc/core/mmc.c b/drivers/mmc/core/mmc.c
-index f1fe446eee666..5ca53e225382d 100644
+index f6912ded652dc..de14b5845f525 100644
 --- a/drivers/mmc/core/mmc.c
 +++ b/drivers/mmc/core/mmc.c
-@@ -1901,9 +1901,12 @@ static int mmc_sleep(struct mmc_host *host)
+@@ -1910,9 +1910,12 @@ static int mmc_sleep(struct mmc_host *host)
  	 * If the max_busy_timeout of the host is specified, validate it against
  	 * the sleep cmd timeout. A failure means we need to prevent the host
  	 * from doing hw busy detection, which is done by converting to a R1
