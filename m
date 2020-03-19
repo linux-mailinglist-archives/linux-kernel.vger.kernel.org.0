@@ -2,32 +2,31 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3E60618B8FE
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 15:13:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 71C1A18B8F8
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 15:13:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728373AbgCSOMe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 10:12:34 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:60973 "EHLO
+        id S1728325AbgCSOMU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 10:12:20 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:32779 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727828AbgCSOLC (ORCPT
+        with ESMTP id S1727892AbgCSOLH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 10:11:02 -0400
+        Thu, 19 Mar 2020 10:11:07 -0400
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1jEvsr-00027B-2i; Thu, 19 Mar 2020 15:10:53 +0100
+        id 1jEvsu-00029Y-8k; Thu, 19 Mar 2020 15:10:56 +0100
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 4DA1A1C22A6;
-        Thu, 19 Mar 2020 15:10:47 +0100 (CET)
-Date:   Thu, 19 Mar 2020 14:10:46 -0000
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 2CAF91C22A8;
+        Thu, 19 Mar 2020 15:10:48 +0100 (CET)
+Date:   Thu, 19 Mar 2020 14:10:47 -0000
 From:   "tip-bot2 for Kan Liang" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: perf/core] perf util: Factor out sysctl__nmi_watchdog_enabled()
-Cc:     Andi Kleen <ak@linux.intel.com>,
-        Kan Liang <kan.liang@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
+Subject: [tip: perf/core] perf jevents: Support metric constraint
+Cc:     Kan Liang <kan.liang@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>, Andi Kleen <ak@linux.intel.com>,
         Jin Yao <yao.jin@linux.intel.com>,
         Mark Rutland <mark.rutland@arm.com>,
         Namhyung Kim <namhyung@kernel.org>,
@@ -35,10 +34,10 @@ Cc:     Andi Kleen <ak@linux.intel.com>,
         Ravi Bangoria <ravi.bangoria@linux.ibm.com>,
         Arnaldo Carvalho de Melo <acme@redhat.com>,
         x86 <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>
-In-Reply-To: <1582581564-184429-4-git-send-email-kan.liang@linux.intel.com>
-References: <1582581564-184429-4-git-send-email-kan.liang@linux.intel.com>
+In-Reply-To: <1582581564-184429-2-git-send-email-kan.liang@linux.intel.com>
+References: <1582581564-184429-2-git-send-email-kan.liang@linux.intel.com>
 MIME-Version: 1.0
-Message-ID: <158462704694.28353.6873127426138751069.tip-bot2@tip-bot2>
+Message-ID: <158462704785.28353.5256831509301618697.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -54,27 +53,20 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the perf/core branch of tip:
 
-Commit-ID:     2a14c1bf017f48a17c8c0ba26a22625363e77cc7
-Gitweb:        https://git.kernel.org/tip/2a14c1bf017f48a17c8c0ba26a22625363e77cc7
+Commit-ID:     03fe02b113888576dc90c3e918d8e1a76b1ceb63
+Gitweb:        https://git.kernel.org/tip/03fe02b113888576dc90c3e918d8e1a76b1ceb63
 Author:        Kan Liang <kan.liang@linux.intel.com>
-AuthorDate:    Mon, 24 Feb 2020 13:59:22 -08:00
+AuthorDate:    Mon, 24 Feb 2020 13:59:20 -08:00
 Committer:     Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitterDate: Tue, 10 Mar 2020 14:46:19 -03:00
+CommitterDate: Tue, 10 Mar 2020 14:43:05 -03:00
 
-perf util: Factor out sysctl__nmi_watchdog_enabled()
+perf jevents: Support metric constraint
 
-The NMI watchdog status is required for metric group constraint
-examination.  Factor out sysctl__nmi_watchdog_enabled() to retrieve the
-NMI watchdog status.
+A new field "MetricConstraint" is introduced in JSON event list.
 
-Users may count more than one metric group each time. If so, the NMI
-watchdog status may be retrieved several times. To reduce the overhead,
-cache the NMI watchdog status.
+Extend jevents to parse the field and save the value in
+metric_constraint.
 
-Replace the NMI watchdog status checking in print_footer() by
-sysctl__nmi_watchdog_enabled().
-
-Suggested-by: Andi Kleen <ak@linux.intel.com>
 Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
 Acked-by: Jiri Olsa <jolsa@redhat.com>
 Cc: Andi Kleen <ak@linux.intel.com>
@@ -83,84 +75,134 @@ Cc: Mark Rutland <mark.rutland@arm.com>
 Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-Link: http://lore.kernel.org/lkml/1582581564-184429-4-git-send-email-kan.liang@linux.intel.com
+Link: http://lore.kernel.org/lkml/1582581564-184429-2-git-send-email-kan.liang@linux.intel.com
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/util/stat-display.c |  6 ++----
- tools/perf/util/util.c         | 18 ++++++++++++++++++
- tools/perf/util/util.h         |  2 ++
- 3 files changed, 22 insertions(+), 4 deletions(-)
+ tools/perf/pmu-events/jevents.c    | 19 +++++++++++++------
+ tools/perf/pmu-events/jevents.h    |  2 +-
+ tools/perf/pmu-events/pmu-events.h |  1 +
+ 3 files changed, 15 insertions(+), 7 deletions(-)
 
-diff --git a/tools/perf/util/stat-display.c b/tools/perf/util/stat-display.c
-index d89cb0d..76c6052 100644
---- a/tools/perf/util/stat-display.c
-+++ b/tools/perf/util/stat-display.c
-@@ -16,6 +16,7 @@
- #include <linux/ctype.h>
- #include "cgroup.h"
- #include <api/fs/fs.h>
-+#include "util.h"
- 
- #define CNTR_NOT_SUPPORTED	"<not supported>"
- #define CNTR_NOT_COUNTED	"<not counted>"
-@@ -1097,7 +1098,6 @@ static void print_footer(struct perf_stat_config *config)
+diff --git a/tools/perf/pmu-events/jevents.c b/tools/perf/pmu-events/jevents.c
+index 079c77b..6d0f61f 100644
+--- a/tools/perf/pmu-events/jevents.c
++++ b/tools/perf/pmu-events/jevents.c
+@@ -323,7 +323,7 @@ static int print_events_table_entry(void *data, char *name, char *event,
+ 				    char *pmu, char *unit, char *perpkg,
+ 				    char *metric_expr,
+ 				    char *metric_name, char *metric_group,
+-				    char *deprecated)
++				    char *deprecated, char *metric_constraint)
  {
- 	double avg = avg_stats(config->walltime_nsecs_stats) / NSEC_PER_SEC;
- 	FILE *output = config->output;
--	int n;
+ 	struct perf_entry_data *pd = data;
+ 	FILE *outfp = pd->outfp;
+@@ -357,6 +357,8 @@ static int print_events_table_entry(void *data, char *name, char *event,
+ 		fprintf(outfp, "\t.metric_group = \"%s\",\n", metric_group);
+ 	if (deprecated)
+ 		fprintf(outfp, "\t.deprecated = \"%s\",\n", deprecated);
++	if (metric_constraint)
++		fprintf(outfp, "\t.metric_constraint = \"%s\",\n", metric_constraint);
+ 	fprintf(outfp, "},\n");
  
- 	if (!config->null_run)
- 		fprintf(output, "\n");
-@@ -1131,9 +1131,7 @@ static void print_footer(struct perf_stat_config *config)
- 	}
- 	fprintf(output, "\n\n");
+ 	return 0;
+@@ -375,6 +377,7 @@ struct event_struct {
+ 	char *metric_name;
+ 	char *metric_group;
+ 	char *deprecated;
++	char *metric_constraint;
+ };
  
--	if (config->print_free_counters_hint &&
--	    sysctl__read_int("kernel/nmi_watchdog", &n) >= 0 &&
--	    n > 0)
-+	if (config->print_free_counters_hint && sysctl__nmi_watchdog_enabled())
- 		fprintf(output,
- "Some events weren't counted. Try disabling the NMI watchdog:\n"
- "	echo 0 > /proc/sys/kernel/nmi_watchdog\n"
-diff --git a/tools/perf/util/util.c b/tools/perf/util/util.c
-index 969ae56..d707c96 100644
---- a/tools/perf/util/util.c
-+++ b/tools/perf/util/util.c
-@@ -55,6 +55,24 @@ int sysctl__max_stack(void)
- 	return sysctl_perf_event_max_stack;
- }
+ #define ADD_EVENT_FIELD(field) do { if (field) {		\
+@@ -422,7 +425,7 @@ static int save_arch_std_events(void *data, char *name, char *event,
+ 				char *desc, char *long_desc, char *pmu,
+ 				char *unit, char *perpkg, char *metric_expr,
+ 				char *metric_name, char *metric_group,
+-				char *deprecated)
++				char *deprecated, char *metric_constraint)
+ {
+ 	struct event_struct *es;
  
-+bool sysctl__nmi_watchdog_enabled(void)
-+{
-+	static bool cached;
-+	static bool nmi_watchdog;
-+	int value;
-+
-+	if (cached)
-+		return nmi_watchdog;
-+
-+	if (sysctl__read_int("kernel/nmi_watchdog", &value) < 0)
-+		return false;
-+
-+	nmi_watchdog = (value > 0) ? true : false;
-+	cached = true;
-+
-+	return nmi_watchdog;
-+}
-+
- bool test_attr__enabled;
+@@ -486,7 +489,7 @@ try_fixup(const char *fn, char *arch_std, char **event, char **desc,
+ 	  char **name, char **long_desc, char **pmu, char **filter,
+ 	  char **perpkg, char **unit, char **metric_expr, char **metric_name,
+ 	  char **metric_group, unsigned long long eventcode,
+-	  char **deprecated)
++	  char **deprecated, char **metric_constraint)
+ {
+ 	/* try to find matching event from arch standard values */
+ 	struct event_struct *es;
+@@ -515,7 +518,7 @@ int json_events(const char *fn,
+ 		      char *pmu, char *unit, char *perpkg,
+ 		      char *metric_expr,
+ 		      char *metric_name, char *metric_group,
+-		      char *deprecated),
++		      char *deprecated, char *metric_constraint),
+ 	  void *data)
+ {
+ 	int err;
+@@ -545,6 +548,7 @@ int json_events(const char *fn,
+ 		char *metric_name = NULL;
+ 		char *metric_group = NULL;
+ 		char *deprecated = NULL;
++		char *metric_constraint = NULL;
+ 		char *arch_std = NULL;
+ 		unsigned long long eventcode = 0;
+ 		struct msrmap *msr = NULL;
+@@ -629,6 +633,8 @@ int json_events(const char *fn,
+ 				addfield(map, &metric_name, "", "", val);
+ 			} else if (json_streq(map, field, "MetricGroup")) {
+ 				addfield(map, &metric_group, "", "", val);
++			} else if (json_streq(map, field, "MetricConstraint")) {
++				addfield(map, &metric_constraint, "", "", val);
+ 			} else if (json_streq(map, field, "MetricExpr")) {
+ 				addfield(map, &metric_expr, "", "", val);
+ 				for (s = metric_expr; *s; s++)
+@@ -670,13 +676,13 @@ int json_events(const char *fn,
+ 					&long_desc, &pmu, &filter, &perpkg,
+ 					&unit, &metric_expr, &metric_name,
+ 					&metric_group, eventcode,
+-					&deprecated);
++					&deprecated, &metric_constraint);
+ 			if (err)
+ 				goto free_strings;
+ 		}
+ 		err = func(data, name, real_event(name, event), desc, long_desc,
+ 			   pmu, unit, perpkg, metric_expr, metric_name,
+-			   metric_group, deprecated);
++			   metric_group, deprecated, metric_constraint);
+ free_strings:
+ 		free(event);
+ 		free(desc);
+@@ -691,6 +697,7 @@ free_strings:
+ 		free(metric_expr);
+ 		free(metric_name);
+ 		free(metric_group);
++		free(metric_constraint);
+ 		free(arch_std);
  
- bool perf_host  = true;
-diff --git a/tools/perf/util/util.h b/tools/perf/util/util.h
-index 9969b8b..f486fdd 100644
---- a/tools/perf/util/util.h
-+++ b/tools/perf/util/util.h
-@@ -29,6 +29,8 @@ size_t hex_width(u64 v);
+ 		if (err)
+diff --git a/tools/perf/pmu-events/jevents.h b/tools/perf/pmu-events/jevents.h
+index 5cda49a..2afc830 100644
+--- a/tools/perf/pmu-events/jevents.h
++++ b/tools/perf/pmu-events/jevents.h
+@@ -8,7 +8,7 @@ int json_events(const char *fn,
+ 				char *pmu,
+ 				char *unit, char *perpkg, char *metric_expr,
+ 				char *metric_name, char *metric_group,
+-				char *deprecated),
++				char *deprecated, char *metric_constraint),
+ 		void *data);
+ char *get_cpu_str(void);
  
- int sysctl__max_stack(void);
+diff --git a/tools/perf/pmu-events/pmu-events.h b/tools/perf/pmu-events/pmu-events.h
+index caeb577..53e76d5 100644
+--- a/tools/perf/pmu-events/pmu-events.h
++++ b/tools/perf/pmu-events/pmu-events.h
+@@ -18,6 +18,7 @@ struct pmu_event {
+ 	const char *metric_name;
+ 	const char *metric_group;
+ 	const char *deprecated;
++	const char *metric_constraint;
+ };
  
-+bool sysctl__nmi_watchdog_enabled(void);
-+
- int fetch_kernel_version(unsigned int *puint,
- 			 char *str, size_t str_sz);
- #define KVER_VERSION(x)		(((x) >> 16) & 0xff)
+ /*
