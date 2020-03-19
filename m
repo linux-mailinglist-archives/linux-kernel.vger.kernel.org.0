@@ -2,121 +2,140 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B963118BC30
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 17:16:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 19DCD18BC37
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 17:17:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728112AbgCSQQt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 12:16:49 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:50301 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727753AbgCSQQt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 12:16:49 -0400
-Received: by mail-wm1-f66.google.com with SMTP id z13so3188934wml.0
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Mar 2020 09:16:47 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=NPTln5B3sexFE9RG59KkUGJksK/x876CRm/hBQhYswk=;
-        b=L1YcBxWiZAGktiM9T/kVvoOaJtYEKE6rkl3mhLVRUhJUu+hVfsvff3hPIWc2FQ8p2z
-         lnOWXMl2XI9dzX1vc0Muk+mrJxsR8rrMyq+DALhHd0Jpb3hD93MO/Rp2lS0relBZYzhX
-         kmIcrSxS/lKNdgBSTY9fbqGAT9HtylTiJe5yowj2hDvobGIir0KBcBp8qdMXA6YxnDX0
-         BeCOiztFKuAsCgiUETLFQkaRDiYgNPAUZuciUczKuKZJEnXeurCmh1AKC4D369JV1oLc
-         NBwbFGVz5b40iUxRrkVNFNDaWqy142738pVuUiL8JXcFA0sooCfdCLH8n2NAdvJJ8FCn
-         r/0Q==
-X-Gm-Message-State: ANhLgQ0laO9zycbTXVuqa0i409kwIwMMKeHUS0NpibD4u0ec8WRUabOE
-        GJG3FkG8c6B9V+fPFyw+XK8=
-X-Google-Smtp-Source: ADFU+vvzMUCkCdznfIsApgN3Ujz0TAy3SkeVhx2NsB1/wICHclRQ1FeLUIegJBP7PW8hFBbOc7gfTg==
-X-Received: by 2002:a05:600c:11:: with SMTP id g17mr4542705wmc.142.1584634606754;
-        Thu, 19 Mar 2020 09:16:46 -0700 (PDT)
-Received: from localhost (ip-37-188-140-107.eurotel.cz. [37.188.140.107])
-        by smtp.gmail.com with ESMTPSA id p16sm3693176wmi.40.2020.03.19.09.16.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 19 Mar 2020 09:16:45 -0700 (PDT)
-Date:   Thu, 19 Mar 2020 17:16:44 +0100
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Roman Gushchin <guro@fb.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        kernel-team@fb.com, linux-kernel@vger.kernel.org,
-        Rik van Riel <riel@surriel.com>,
-        Andreas Schaufler <andreas.schaufler@gmx.de>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Guido =?iso-8859-1?Q?G=FCnther?= <agx@sigxcpu.org>,
-        Naresh Kamboju <naresh.kamboju@linaro.org>
-Subject: Re: [PATCH] mm: hugetlb: fix hugetlb_cma_reserve() if CONFIG_NUMA
- isn't set
-Message-ID: <20200319161644.GH20800@dhcp22.suse.cz>
-References: <20200318153424.3202304-1-guro@fb.com>
- <20200318161625.GR21362@dhcp22.suse.cz>
- <20200318175529.GA6263@carbon.dhcp.thefacebook.com>
+        id S1728198AbgCSQRA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 12:17:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56644 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728033AbgCSQQ7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 12:16:59 -0400
+Received: from [192.168.1.31] (cpe-70-114-128-244.austin.res.rr.com [70.114.128.244])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9A19B2072C;
+        Thu, 19 Mar 2020 16:16:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1584634618;
+        bh=czCpJ8y0zyIMrb16loRBDNoPc3JFCft+Emc2g/RzqIw=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=ggW2ImWE6fut/X+eJIbds8cFs5QEN295nURqqWwE0gnDEHhAHDvdeiUm9/TPSkZnz
+         rZw1syAOYzFSQH5TzOoKFxEX/UPau0CagrKTvHPJOy6ZXf83ZWKZzrSk8RIzVyDRWo
+         Zhx5pdg2W+TdLDZmTr82ex4sk2lN30/NxAD2bGhU=
+Subject: Re: [PATCHv3 4/5] dt-bindings: documentation: add clock bindings
+ information for Agilex
+To:     Rob Herring <robh@kernel.org>
+Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, sboyd@kernel.org,
+        mturquette@baylibre.com, robh+dt@kernel.org, mark.rutland@arm.com
+References: <20200317161022.11181-1-dinguyen@kernel.org>
+ <20200317161022.11181-5-dinguyen@kernel.org> <20200318224042.GA32101@bogus>
+From:   Dinh Nguyen <dinguyen@kernel.org>
+Autocrypt: addr=dinguyen@kernel.org; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <30180323-3c74-d04a-b715-3b1f655d6a81@kernel.org>
+Date:   Thu, 19 Mar 2020 11:16:56 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200318175529.GA6263@carbon.dhcp.thefacebook.com>
+In-Reply-To: <20200318224042.GA32101@bogus>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 18-03-20 10:55:29, Roman Gushchin wrote:
-> On Wed, Mar 18, 2020 at 05:16:25PM +0100, Michal Hocko wrote:
-> > On Wed 18-03-20 08:34:24, Roman Gushchin wrote:
-> > > If CONFIG_NUMA isn't set, there is no need to ensure that
-> > > the hugetlb cma area belongs to a specific numa node.
-> > > 
-> > > min/max_low_pfn can be used for limiting the maximum size
-> > > of the hugetlb_cma area.
-> > > 
-> > > Also for_each_mem_pfn_range() is defined only if
-> > > CONFIG_HAVE_MEMBLOCK_NODE_MAP is set, and on arm (unlike most
-> > > other architectures) it depends on CONFIG_NUMA. This makes the
-> > > build fail if CONFIG_NUMA isn't set.
-> > 
-> > CONFIG_HAVE_MEMBLOCK_NODE_MAP has popped out as a problem several times
-> > already. Is there any real reason we cannot make it unconditional?
-> > Essentially make the functionality always enabled and drop the config?
+Hi Rob,
+
+On 3/18/20 5:40 PM, Rob Herring wrote:
+> On Tue, 17 Mar 2020 11:10:21 -0500, Dinh Nguyen wrote:
+>> Document the Agilex clock bindings, and add the clock header file. The
+>> clock header is an enumeration of all the different clocks on the Agilex
+>> platform.
+>>
+>> Signed-off-by: Dinh Nguyen <dinguyen@kernel.org>
+>> ---
+>> v3: address comments from Stephen Boyd
+>>     fix build error(tab removed in line 37)
+>>     renamed to intel,agilex.yaml
+>> v2: convert original document to YAML
+>> ---
+>>  .../bindings/clock/intel,agilex.yaml          | 36 ++++++++++
+>>  include/dt-bindings/clock/agilex-clock.h      | 70 +++++++++++++++++++
+>>  2 files changed, 106 insertions(+)
+>>  create mode 100644 Documentation/devicetree/bindings/clock/intel,agilex.yaml
+>>  create mode 100644 include/dt-bindings/clock/agilex-clock.h
+>>
 > 
-> It depends on CONFIG_NUMA only on arm, and I really don't know
-> if there is a good justification for it. It not, that will be a much
-> simpler fix.
-
-I have checked the history and the dependency is there since NUMA was
-introduced in arm64. So it would be great to double check with arch
-maintainers.
-
-> > The code below is ugly as hell. Just look at it. You have
-> > for_each_node_state without any ifdefery but the having ifdef
-> > CONFIG_NUMA. That just doesn't make any sense.
+> My bot found errors running 'make dt_binding_check' on your patch:
 > 
-> I don't think it makes no sense:
-> it tries to reserve a cma area on each node (need for_each_node_state()),
-> and it uses the for_each_mem_pfn_range() to get a min and max pfn
-> for each node. With !CONFIG_NUMA the first part is reduced to one
-> iteration and the second part is not required at all.
+> Error: Documentation/devicetree/bindings/clock/intel,agilex.example.dts:17.3-4 syntax error
+> FATAL ERROR: Unable to parse input tree
+> scripts/Makefile.lib:311: recipe for target 'Documentation/devicetree/bindings/clock/intel,agilex.example.dt.yaml' failed
+> make[1]: *** [Documentation/devicetree/bindings/clock/intel,agilex.example.dt.yaml] Error 1
+> Makefile:1262: recipe for target 'dt_binding_check' failed
+> make: *** [dt_binding_check] Error 2
+> 
+> See https://patchwork.ozlabs.org/patch/1256630
+> Please check and re-submit.
+> 
 
-Sure the resulting code logic makes sense. I meant that it doesn't make
-much sense wrt readability. There is a loop over all existing numa nodes
-to have ifdef for NUMA inside the loop. See?
+I want to be able check these errors locally before sending the next
+version. But I keep getting various errors when I try to "make
+dt_binding_check":
 
-> I agree that for_each_mem_pfn_range() here looks quite ugly, but I don't know
-> of a better way to get min/max pfns for a node so early in the boot process.
-> If somebody has any ideas here, I'll appreciate a lot.
+Traceback (most recent call last):
+  File "/bin/dt-doc-validate", line 15, in <module>
+    import ruamel.yaml
+ImportError: No module named 'ruamel'
+Documentation/devicetree/bindings/Makefile:12: recipe for target
+'Documentation/devicetree/bindings/arm/l2c2x0.example.dts' failed
 
-The loop is ok. Maybe we have other memblock API that would be better
-but I am not really aware of it from top of my head. I would stick with
-it. It just sucks that this API depends on HAVE_MEMBLOCK_NODE_MAP and
-that it is not generally available. This is what I am complaining about.
-Just look what kind of dirty hack it made you to create ;)
 
-> I know Rik plans some further improvements here, so the goal for now
-> is to fix the build. If you think that enabling CONFIG_HAVE_MEMBLOCK_NODE_MAP
-> unconditionally is a way to go, I'm fine with it too.
+Do you have a pointer on how to run the dt_binding_check?
 
-This is not the first time HAVE_MEMBLOCK_NODE_MAP has been problematic.
-I might be missing something but I really do not get why do we really
-need it these days. As for !NUMA, I suspect we can make it generate the
-right thing when !NUMA.
--- 
-Michal Hocko
-SUSE Labs
+Thanks,
+Dinh
