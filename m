@@ -2,37 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 084E318AEB5
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 09:49:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D012618AE9C
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 09:48:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727068AbgCSIsA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 04:48:00 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:59712 "EHLO
+        id S1727231AbgCSIsM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 04:48:12 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:59747 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726825AbgCSIry (ORCPT
+        with ESMTP id S1727032AbgCSIr6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 04:47:54 -0400
+        Thu, 19 Mar 2020 04:47:58 -0400
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1jEqqD-0002zL-Rx; Thu, 19 Mar 2020 09:47:50 +0100
+        id 1jEqqH-0002zg-BS; Thu, 19 Mar 2020 09:47:53 +0100
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 86B581C1DC3;
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id D82931C2297;
         Thu, 19 Mar 2020 09:47:49 +0100 (CET)
 Date:   Thu, 19 Mar 2020 08:47:49 -0000
-From:   "tip-bot2 for Tony Lindgren" <tip-bot2@linutronix.de>
+From:   "tip-bot2 for Lokesh Vutla" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: timers/core] clocksource/drivers/timer-ti-dm: Prepare for using cpuidle
-Cc:     Tony Lindgren <tony@atomide.com>,
-        Lokesh Vutla <lokeshvutla@ti.com>,
+Subject: [tip: timers/core] clocksource/drivers/timer-ti-dm: Convert to SPDX
+ identifier
+Cc:     Lokesh Vutla <lokeshvutla@ti.com>,
+        Tony Lindgren <tony@atomide.com>,
         Daniel Lezcano <daniel.lezcano@linaro.org>,
         x86 <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>
-In-Reply-To: <20200305082715.15861-3-lokeshvutla@ti.com>
-References: <20200305082715.15861-3-lokeshvutla@ti.com>
+In-Reply-To: <20200305082715.15861-2-lokeshvutla@ti.com>
+References: <20200305082715.15861-2-lokeshvutla@ti.com>
 MIME-Version: 1.0
-Message-ID: <158460766913.28353.18101835082004521218.tip-bot2@tip-bot2>
+Message-ID: <158460766962.28353.14960534289903363482.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -48,138 +49,56 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the timers/core branch of tip:
 
-Commit-ID:     5e20931c6a750b4b1ea9a2f7b863cc2dd9222ead
-Gitweb:        https://git.kernel.org/tip/5e20931c6a750b4b1ea9a2f7b863cc2dd9222ead
-Author:        Tony Lindgren <tony@atomide.com>
-AuthorDate:    Thu, 05 Mar 2020 13:57:11 +05:30
+Commit-ID:     341e8cba6c32bb7509eabb91619a233b7ae249b9
+Gitweb:        https://git.kernel.org/tip/341e8cba6c32bb7509eabb91619a233b7ae249b9
+Author:        Lokesh Vutla <lokeshvutla@ti.com>
+AuthorDate:    Thu, 05 Mar 2020 13:57:10 +05:30
 Committer:     Daniel Lezcano <daniel.lezcano@linaro.org>
-CommitterDate: Mon, 16 Mar 2020 12:40:21 +01:00
+CommitterDate: Mon, 16 Mar 2020 12:40:14 +01:00
 
-clocksource/drivers/timer-ti-dm: Prepare for using cpuidle
+clocksource/drivers/timer-ti-dm: Convert to SPDX identifier
 
-Let's add runtime_suspend and resume functions and atomic enabled
-flag. This way we can use these when converting to use cpuidle
-for saving and restoring device context.
+Use SPDX-License-Identifier instead of a verbose license text.
 
-And we need to maintain the driver state in the driver as documented
-in "9. Autosuspend, or automatically-delayed suspends" in the
-Documentation/power/runtime_pm.rst document related to using driver
-private lock and races with runtime_suspend().
-
-Signed-off-by: Tony Lindgren <tony@atomide.com>
 Signed-off-by: Lokesh Vutla <lokeshvutla@ti.com>
+Acked-by: Tony Lindgren <tony@atomide.com>
 Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-Link: https://lore.kernel.org/r/20200305082715.15861-3-lokeshvutla@ti.com
+Link: https://lore.kernel.org/r/20200305082715.15861-2-lokeshvutla@ti.com
 ---
- drivers/clocksource/timer-ti-dm.c | 36 +++++++++++++++++++++++++-----
- include/clocksource/timer-ti-dm.h |  1 +-
- 2 files changed, 32 insertions(+), 5 deletions(-)
+ drivers/clocksource/timer-ti-dm.c | 19 +------------------
+ 1 file changed, 1 insertion(+), 18 deletions(-)
 
 diff --git a/drivers/clocksource/timer-ti-dm.c b/drivers/clocksource/timer-ti-dm.c
-index c0e9e99..fe939d1 100644
+index 269a994..c0e9e99 100644
 --- a/drivers/clocksource/timer-ti-dm.c
 +++ b/drivers/clocksource/timer-ti-dm.c
-@@ -491,7 +491,7 @@ __u32 omap_dm_timer_modify_idlect_mask(__u32 inputmask)
+@@ -1,3 +1,4 @@
++// SPDX-License-Identifier: GPL-2.0+
+ /*
+  * linux/arch/arm/plat-omap/dmtimer.c
+  *
+@@ -15,24 +16,6 @@
+  *
+  * Copyright (C) 2009 Texas Instruments
+  * Added OMAP4 support - Santosh Shilimkar <santosh.shilimkar@ti.com>
+- *
+- * This program is free software; you can redistribute it and/or modify it
+- * under the terms of the GNU General Public License as published by the
+- * Free Software Foundation; either version 2 of the License, or (at your
+- * option) any later version.
+- *
+- * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED
+- * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+- * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+- * NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT,
+- * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+- * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+- * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+- *
+- * You should have received a copy of the  GNU General Public License along
+- * with this program; if not, write  to the Free Software Foundation, Inc.,
+- * 675 Mass Ave, Cambridge, MA 02139, USA.
+  */
  
- int omap_dm_timer_trigger(struct omap_dm_timer *timer)
- {
--	if (unlikely(!timer || pm_runtime_suspended(&timer->pdev->dev))) {
-+	if (unlikely(!timer || !atomic_read(&timer->enabled))) {
- 		pr_err("%s: timer not available or enabled.\n", __func__);
- 		return -EINVAL;
- 	}
-@@ -690,7 +690,7 @@ static unsigned int omap_dm_timer_read_status(struct omap_dm_timer *timer)
- {
- 	unsigned int l;
- 
--	if (unlikely(!timer || pm_runtime_suspended(&timer->pdev->dev))) {
-+	if (unlikely(!timer || !atomic_read(&timer->enabled))) {
- 		pr_err("%s: timer not available or enabled.\n", __func__);
- 		return 0;
- 	}
-@@ -702,7 +702,7 @@ static unsigned int omap_dm_timer_read_status(struct omap_dm_timer *timer)
- 
- static int omap_dm_timer_write_status(struct omap_dm_timer *timer, unsigned int value)
- {
--	if (unlikely(!timer || pm_runtime_suspended(&timer->pdev->dev)))
-+	if (unlikely(!timer || !atomic_read(&timer->enabled)))
- 		return -EINVAL;
- 
- 	__omap_dm_timer_write_status(timer, value);
-@@ -712,7 +712,7 @@ static int omap_dm_timer_write_status(struct omap_dm_timer *timer, unsigned int 
- 
- static unsigned int omap_dm_timer_read_counter(struct omap_dm_timer *timer)
- {
--	if (unlikely(!timer || pm_runtime_suspended(&timer->pdev->dev))) {
-+	if (unlikely(!timer || !atomic_read(&timer->enabled))) {
- 		pr_err("%s: timer not iavailable or enabled.\n", __func__);
- 		return 0;
- 	}
-@@ -722,7 +722,7 @@ static unsigned int omap_dm_timer_read_counter(struct omap_dm_timer *timer)
- 
- static int omap_dm_timer_write_counter(struct omap_dm_timer *timer, unsigned int value)
- {
--	if (unlikely(!timer || pm_runtime_suspended(&timer->pdev->dev))) {
-+	if (unlikely(!timer || !atomic_read(&timer->enabled))) {
- 		pr_err("%s: timer not available or enabled.\n", __func__);
- 		return -EINVAL;
- 	}
-@@ -750,6 +750,29 @@ int omap_dm_timers_active(void)
- 	return 0;
- }
- 
-+static int __maybe_unused omap_dm_timer_runtime_suspend(struct device *dev)
-+{
-+	struct omap_dm_timer *timer = dev_get_drvdata(dev);
-+
-+	atomic_set(&timer->enabled, 0);
-+
-+	return 0;
-+}
-+
-+static int __maybe_unused omap_dm_timer_runtime_resume(struct device *dev)
-+{
-+	struct omap_dm_timer *timer = dev_get_drvdata(dev);
-+
-+	atomic_set(&timer->enabled, 1);
-+
-+	return 0;
-+}
-+
-+static const struct dev_pm_ops omap_dm_timer_pm_ops = {
-+	SET_RUNTIME_PM_OPS(omap_dm_timer_runtime_suspend,
-+			   omap_dm_timer_runtime_resume, NULL)
-+};
-+
- static const struct of_device_id omap_timer_match[];
- 
- /**
-@@ -791,6 +814,8 @@ static int omap_dm_timer_probe(struct platform_device *pdev)
- 	if (IS_ERR(timer->io_base))
- 		return PTR_ERR(timer->io_base);
- 
-+	platform_set_drvdata(pdev, timer);
-+
- 	if (dev->of_node) {
- 		if (of_find_property(dev->of_node, "ti,timer-alwon", NULL))
- 			timer->capability |= OMAP_TIMER_ALWON;
-@@ -936,6 +961,7 @@ static struct platform_driver omap_dm_timer_driver = {
- 	.driver = {
- 		.name   = "omap_timer",
- 		.of_match_table = of_match_ptr(omap_timer_match),
-+		.pm = &omap_dm_timer_pm_ops,
- 	},
- };
- 
-diff --git a/include/clocksource/timer-ti-dm.h b/include/clocksource/timer-ti-dm.h
-index 7d9598d..eef5de3 100644
---- a/include/clocksource/timer-ti-dm.h
-+++ b/include/clocksource/timer-ti-dm.h
-@@ -105,6 +105,7 @@ struct omap_dm_timer {
- 	void __iomem	*pend;		/* write pending */
- 	void __iomem	*func_base;	/* function register base */
- 
-+	atomic_t enabled;
- 	unsigned long rate;
- 	unsigned reserved:1;
- 	unsigned posted:1;
+ #include <linux/clk.h>
