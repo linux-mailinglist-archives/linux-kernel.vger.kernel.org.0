@@ -2,42 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3AE8818B641
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:25:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 562A318B593
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:19:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730432AbgCSNZT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 09:25:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52754 "EHLO mail.kernel.org"
+        id S1729930AbgCSNTt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 09:19:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43330 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730605AbgCSNZQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 09:25:16 -0400
+        id S1728503AbgCSNTr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 09:19:47 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 64AB12098B;
-        Thu, 19 Mar 2020 13:25:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2A3E42098B;
+        Thu, 19 Mar 2020 13:19:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584624315;
-        bh=Tkr/6mrr1glEaInkhIb3wjUGtu3WF0DzZoe3urzNmhE=;
+        s=default; t=1584623986;
+        bh=maftcec7q/7Gg+skBb0iIpevHKDV5RwkZc9HnEZIWp4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ubelOgWI6SWwRNjFJKr8nhVUyc4t+U6IYPyk8yfFEsm+mUczZO6GHkKuONfuArz8+
-         1Etx39qGUSVCj7cjzmUXqv6f1QV3Jos77cZIHiWQABSarXIAZZfH1yHT/djw9D3uki
-         AG83i1kRk/57C6OH71U/yNmbGKRHhlA1k8tHpmIM=
+        b=0rEP3si22LQHdSGoyeYRanbYXHFlF3tAZWX/NcirpzIk+a6EwjPQLUApDkwkDdInT
+         IWklAeJmEyUlPgogMg40bpoXfjrd6ltKyYje6odw3ScIAg1QhgutAPNzUyyCFEwy2O
+         POOK59dPCHYCDvhfgkhipvuBxrMz+KrnCXEmxM/I=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Paul Burton <paulburton@kernel.org>,
-        Ralf Baechle <ralf@linux-mips.org>, linux-mips@vger.kernel.org,
-        clang-built-linux@googlegroups.com, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.5 20/65] MIPS: vdso: Wrap -mexplicit-relocs in cc-option
+        stable@vger.kernel.org, Luo bin <luobin9@huawei.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 20/48] hinic: fix a irq affinity bug
 Date:   Thu, 19 Mar 2020 14:04:02 +0100
-Message-Id: <20200319123932.742469978@linuxfoundation.org>
+Message-Id: <20200319123909.403633619@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.2
-In-Reply-To: <20200319123926.466988514@linuxfoundation.org>
-References: <20200319123926.466988514@linuxfoundation.org>
+In-Reply-To: <20200319123902.941451241@linuxfoundation.org>
+References: <20200319123902.941451241@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,55 +44,56 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nathan Chancellor <natechancellor@gmail.com>
+From: Luo bin <luobin9@huawei.com>
 
-[ Upstream commit 72cf3b3df423c1bbd8fa1056fed009d3a260f8a9 ]
+[ Upstream commit 0bff777bd0cba73ad4cd0145696ad284d7e6a99f ]
 
-Clang does not support this option and errors out:
+can not use a local variable as an input parameter of
+irq_set_affinity_hint
 
-clang-11: error: unknown argument: '-mexplicit-relocs'
-
-Clang does not appear to need this flag like GCC does because the jalr
-check that was added in commit 976c23af3ee5 ("mips: vdso: add build
-time check that no 'jalr t9' calls left") passes just fine with
-
-$ make ARCH=mips CC=clang CROSS_COMPILE=mipsel-linux-gnu- malta_defconfig arch/mips/vdso/
-
-even before commit d3f703c4359f ("mips: vdso: fix 'jalr t9' crash in
-vdso code").
-
--mrelax-pic-calls has been supported since clang 9, which is the
-earliest version that could build a working MIPS kernel, and it is the
-default for clang so just leave it be.
-
-Fixes: d3f703c4359f ("mips: vdso: fix 'jalr t9' crash in vdso code")
-Link: https://github.com/ClangBuiltLinux/linux/issues/890
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
-Tested-by: Nick Desaulniers <ndesaulniers@google.com>
-Signed-off-by: Paul Burton <paulburton@kernel.org>
-Cc: Ralf Baechle <ralf@linux-mips.org>
-Cc: linux-mips@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Cc: clang-built-linux@googlegroups.com
+Signed-off-by: Luo bin <luobin9@huawei.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/mips/vdso/Makefile | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/ethernet/huawei/hinic/hinic_hw_qp.h | 1 +
+ drivers/net/ethernet/huawei/hinic/hinic_rx.c    | 5 ++---
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/arch/mips/vdso/Makefile b/arch/mips/vdso/Makefile
-index bfb65b2d57c7f..2cf4b6131d88d 100644
---- a/arch/mips/vdso/Makefile
-+++ b/arch/mips/vdso/Makefile
-@@ -29,7 +29,7 @@ endif
- cflags-vdso := $(ccflags-vdso) \
- 	$(filter -W%,$(filter-out -Wa$(comma)%,$(KBUILD_CFLAGS))) \
- 	-O3 -g -fPIC -fno-strict-aliasing -fno-common -fno-builtin -G 0 \
--	-mrelax-pic-calls -mexplicit-relocs \
-+	-mrelax-pic-calls $(call cc-option, -mexplicit-relocs) \
- 	-fno-stack-protector -fno-jump-tables -DDISABLE_BRANCH_PROFILING \
- 	$(call cc-option, -fno-asynchronous-unwind-tables) \
- 	$(call cc-option, -fno-stack-protector)
+diff --git a/drivers/net/ethernet/huawei/hinic/hinic_hw_qp.h b/drivers/net/ethernet/huawei/hinic/hinic_hw_qp.h
+index 6c84f83ec2831..d46cfd4fbbbc5 100644
+--- a/drivers/net/ethernet/huawei/hinic/hinic_hw_qp.h
++++ b/drivers/net/ethernet/huawei/hinic/hinic_hw_qp.h
+@@ -103,6 +103,7 @@ struct hinic_rq {
+ 
+ 	struct hinic_wq         *wq;
+ 
++	struct cpumask		affinity_mask;
+ 	u32                     irq;
+ 	u16                     msix_entry;
+ 
+diff --git a/drivers/net/ethernet/huawei/hinic/hinic_rx.c b/drivers/net/ethernet/huawei/hinic/hinic_rx.c
+index 06b24a92ed7d4..3467d84d96c39 100644
+--- a/drivers/net/ethernet/huawei/hinic/hinic_rx.c
++++ b/drivers/net/ethernet/huawei/hinic/hinic_rx.c
+@@ -414,7 +414,6 @@ static int rx_request_irq(struct hinic_rxq *rxq)
+ 	struct hinic_hwdev *hwdev = nic_dev->hwdev;
+ 	struct hinic_rq *rq = rxq->rq;
+ 	struct hinic_qp *qp;
+-	struct cpumask mask;
+ 	int err;
+ 
+ 	rx_add_napi(rxq);
+@@ -431,8 +430,8 @@ static int rx_request_irq(struct hinic_rxq *rxq)
+ 	}
+ 
+ 	qp = container_of(rq, struct hinic_qp, rq);
+-	cpumask_set_cpu(qp->q_id % num_online_cpus(), &mask);
+-	return irq_set_affinity_hint(rq->irq, &mask);
++	cpumask_set_cpu(qp->q_id % num_online_cpus(), &rq->affinity_mask);
++	return irq_set_affinity_hint(rq->irq, &rq->affinity_mask);
+ }
+ 
+ static void rx_free_irq(struct hinic_rxq *rxq)
 -- 
 2.20.1
 
