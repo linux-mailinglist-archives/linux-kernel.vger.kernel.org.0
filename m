@@ -2,1006 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7EC9C18B02E
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 10:28:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8C39518B03F
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 10:30:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727067AbgCSJ2V (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 05:28:21 -0400
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:46652 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726589AbgCSJ2T (ORCPT
+        id S1726867AbgCSJaa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 05:30:30 -0400
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:34603 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725767AbgCSJa3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 05:28:19 -0400
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 02J9SDhC011032;
-        Thu, 19 Mar 2020 04:28:13 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1584610093;
-        bh=DYAZUuvKev07hy23v6wfGkALzlpILIeX6l3QsAQ6x1Y=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=HMh5xE4JiBRgJ9kxCaaWILGxqLwvD6+nbfGeSM/re5eYFWzWqeZTSCQLtfZSHpflW
-         /ZWLTB22mC0qYtQiiWyZ2GRNPiEX24nrPBAhjQcC0bc8Lst7cgw1jHMB8ylh2wGzDV
-         0FrNGKg7UtZ6Rfn9yTh1BJGvaDjqy1nSO0S/dGww=
-Received: from DFLE102.ent.ti.com (dfle102.ent.ti.com [10.64.6.23])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 02J9SDVN006106
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 19 Mar 2020 04:28:13 -0500
-Received: from DFLE107.ent.ti.com (10.64.6.28) by DFLE102.ent.ti.com
- (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Thu, 19
- Mar 2020 04:28:12 -0500
-Received: from lelv0327.itg.ti.com (10.180.67.183) by DFLE107.ent.ti.com
- (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Thu, 19 Mar 2020 04:28:12 -0500
-Received: from feketebors.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id 02J9S4er088372;
-        Thu, 19 Mar 2020 04:28:11 -0500
-From:   Peter Ujfalusi <peter.ujfalusi@ti.com>
-To:     <broonie@kernel.org>, <lgirdwood@gmail.com>, <robh+dt@kernel.org>
-CC:     <alsa-devel@alsa-project.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH 3/3] ASoC: ti: Add custom machine driver for j721e EVM (CPB and IVI)
-Date:   Thu, 19 Mar 2020 11:28:15 +0200
-Message-ID: <20200319092815.3776-4-peter.ujfalusi@ti.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200319092815.3776-1-peter.ujfalusi@ti.com>
-References: <20200319092815.3776-1-peter.ujfalusi@ti.com>
+        Thu, 19 Mar 2020 05:30:29 -0400
+Received: by mail-ot1-f65.google.com with SMTP id j16so1686523otl.1;
+        Thu, 19 Mar 2020 02:30:29 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=AjLAxS30AF1MgyZCOHu5quIXHYjW+sHIRF2hWQ/EoKY=;
+        b=VQj6VgOeP822FsFWd1xZ5GxXYl/5DjpjrfC8gPHQT0T46Mv54XN2zZYorufk0SkRIO
+         FuPfSZeU5mQO1Wg0oYQEKxZmzZ3bYzerJ0NVh/LyNP08oKbJMylDfaG0dP0kMm+uffLV
+         qKQ2DUQaCFkvWZFKGPtNICw3sVLWmG+9e51/8NaEOWuml+fsiqct5TX8MC3jVvPIesc/
+         abwLEmJ118le7nHcbWAqTK7yY4cXPri1OWUO8nJU/qmooITnnXCkygj2Z5Wy24bkRGkm
+         bk0o73hNXFx8nce00gDkUYvOfbFum5rdzLhzI8TgW0SQh+RaW4hEjbdcDMlC9rkQ1hua
+         7YmQ==
+X-Gm-Message-State: ANhLgQ2uXYxhDlczLoz8kd9ltflQrZMVcsQEr28hr0LxqhgNJmyWjj+C
+        DFrvITZUC6QYIu8oM9C5LYUJEnGPjFl7pyJmjg0=
+X-Google-Smtp-Source: ADFU+vseHcHbrSk7AUUSo3PUXOKqIYKv1JO1U1cQl24IGfaKOG7YOlKaQmPuIeQBQpYXHZhcR4/LlltnnhLNZHLlPN0=
+X-Received: by 2002:a9d:1d07:: with SMTP id m7mr1419195otm.167.1584610228890;
+ Thu, 19 Mar 2020 02:30:28 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+References: <158318759687.2216124.4684754859068906007.stgit@dwillia2-desk3.amr.corp.intel.com>
+ <158318760361.2216124.13612198312947463590.stgit@dwillia2-desk3.amr.corp.intel.com>
+ <CAPcyv4hjgNruY84Kr9S5HZ6P03fNcPcmL7H2DN19Z+CbPZ7d+Q@mail.gmail.com>
+ <CAJZ5v0heWeS1iZqHEZ5RB2a=UJbUQF0zAjeFfTa9qBxvQ193=w@mail.gmail.com> <CAPcyv4hH55e-tm7erJGm_jVn4gWigQfVPSAUu-DBC4XkF+WZHg@mail.gmail.com>
+In-Reply-To: <CAPcyv4hH55e-tm7erJGm_jVn4gWigQfVPSAUu-DBC4XkF+WZHg@mail.gmail.com>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Thu, 19 Mar 2020 10:30:17 +0100
+Message-ID: <CAJZ5v0hM7d+B9WgxiFKJS3_C1D_wrvnU8kT+85yFLSc_X+ToNA@mail.gmail.com>
+Subject: Re: [PATCH 1/5] ACPI: NUMA: Add 'nohmat' option
+To:     Dan Williams <dan.j.williams@intel.com>
+Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        Linux ACPI <linux-acpi@vger.kernel.org>,
+        X86 ML <x86@kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The audio support on the board is using pcm3168a codec connected to McASP10
-serializers in parallel setup.
-The pcm3168a SCKI clock is coming via the j721e AUDIO_REFCLK2 pin.
-In order to support 48KHz and 44.1KHz family of sampling rates the parent clock
-for AUDIO_REFCLK2 needs to be changed between PLL4 (for 48KHz) and PLL15 (for
-44.1KHz). The same PLLs are used for McASP10's AUXCLK clock via different
-HSDIVIDER.
+On Wed, Mar 18, 2020 at 6:39 PM Dan Williams <dan.j.williams@intel.com> wrote:
+>
+> On Wed, Mar 18, 2020 at 1:24 AM Rafael J. Wysocki <rafael@kernel.org> wrote:
+> >
+> > On Wed, Mar 18, 2020 at 1:09 AM Dan Williams <dan.j.williams@intel.com> wrote:
+> > >
+> > > On Mon, Mar 2, 2020 at 2:36 PM Dan Williams <dan.j.williams@intel.com> wrote:
+> > > >
+> > > > Disable parsing of the HMAT for debug, to workaround broken platform
+> > > > instances, or cases where it is otherwise not wanted.
+> > >
+> > > Rafael, any heartburn with this change to the numa= option?
+> > >
+> > > ...as I look at this I realize I failed to also update
+> > > Documentation/x86/x86_64/boot-options.rst, will fix.
+> >
+> > Thanks!
+> >
+> > Apart from this just a minor nit below.
+> >
+> > > >
+> > > > Cc: x86@kernel.org
+> > > > Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+> > > > Cc: Dave Hansen <dave.hansen@linux.intel.com>
+> > > > Cc: Andy Lutomirski <luto@kernel.org>
+> > > > Cc: Peter Zijlstra <peterz@infradead.org>
+> > > > Cc: Thomas Gleixner <tglx@linutronix.de>
+> > > > Cc: Ingo Molnar <mingo@redhat.com>
+> > > > Cc: Borislav Petkov <bp@alien8.de>
+> > > > Cc: "H. Peter Anvin" <hpa@zytor.com>
+> > > > Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+> > > > ---
+> > > >  arch/x86/mm/numa.c       |    4 ++++
+> > > >  drivers/acpi/numa/hmat.c |    3 ++-
+> > > >  include/acpi/acpi_numa.h |    1 +
+> > > >  3 files changed, 7 insertions(+), 1 deletion(-)
+> > > >
+> > > > diff --git a/arch/x86/mm/numa.c b/arch/x86/mm/numa.c
+> > > > index 59ba008504dc..22de2e2610c1 100644
+> > > > --- a/arch/x86/mm/numa.c
+> > > > +++ b/arch/x86/mm/numa.c
+> > > > @@ -44,6 +44,10 @@ static __init int numa_setup(char *opt)
+> > > >  #ifdef CONFIG_ACPI_NUMA
+> > > >         if (!strncmp(opt, "noacpi", 6))
+> > > >                 acpi_numa = -1;
+> > > > +#ifdef CONFIG_ACPI_HMAT
+> > > > +       if (!strncmp(opt, "nohmat", 6))
+> > > > +               hmat_disable = 1;
+> > > > +#endif
+> >
+> > I wonder if IS_ENABLED() would work here?
+>
+> I took a look. hmat_disable, acpi_numa, and numa_emu_cmdline() are in
+> other compilation units. I could wrap writing those variables with
+> helper functions, and change numa_emu_cmdline(), to compile away when
+> their respective configuration options are not present.
+>
+> Should we do that in general to have a touch point to report "you
+> specified an option that is invalid for your current kernel
+> configuration"? I'm happy to do that as a follow-on if you think it's
+> worthwhile.
 
-Generic card can not be used for the board as we need to switch between
-clock paths for different sampling rate families and also need to change
-the slot_width between 16 and 24 bit audio.
-
-The audio support on the Infotainment Expansion Board consists of McASP0
-connected to two pcm3168a codecs with dedicated set of serializers to each.
-The SCKI for pcm3168a is sourced from j721e AUDIO_REFCLK0 pin.
-It is extending the audio support on the CPB.
-
-Due to the fact that the same PLL4/15 is used by both domains (CPB/IVI)
-there are cross restriction on sampling rates.
-
-The IVI side is represented as multicodec setup.
-
-PCMs available on a plain CPB (no IVI addon):
-hw:0,0 - cpb playback (8 channels)
-hw:0,1 - cpb capture (6 channels)
-
-When the IVI addon is present, additional two PCMs will be present:
-hw:0,2 - ivi multicodec playback (16 channels)
-hw:0,3 - ivi multicodec capture (12 channels)
-
-Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
----
- sound/soc/ti/Kconfig     |   8 +
- sound/soc/ti/Makefile    |   2 +
- sound/soc/ti/j721e-evm.c | 864 +++++++++++++++++++++++++++++++++++++++
- 3 files changed, 874 insertions(+)
- create mode 100644 sound/soc/ti/j721e-evm.c
-
-diff --git a/sound/soc/ti/Kconfig b/sound/soc/ti/Kconfig
-index c5408c129f34..53df545efe0a 100644
---- a/sound/soc/ti/Kconfig
-+++ b/sound/soc/ti/Kconfig
-@@ -219,5 +219,13 @@ config SND_SOC_DM365_VOICE_CODEC_MODULE
- 	  The is an internal symbol needed to ensure that the codec
- 	  and MFD driver can be built as loadable modules if necessary.
- 
-+config SND_SOC_J721E_EVM
-+	tristate "SoC Audio support for j721e EVM"
-+	depends on ARCH_K3_J721E_SOC || COMPILE_TEST
-+	select SND_SOC_PCM3168A_I2C
-+	select SND_SOC_DAVINCI_MCASP
-+	help
-+	  Say Y if you want to add support for SoC audio on j721e Common
-+	  Processor Board and Infotainment expansion board.
- endmenu
- 
-diff --git a/sound/soc/ti/Makefile b/sound/soc/ti/Makefile
-index ea48c6679cc7..a21e5b0061de 100644
---- a/sound/soc/ti/Makefile
-+++ b/sound/soc/ti/Makefile
-@@ -34,6 +34,7 @@ snd-soc-omap-abe-twl6040-objs := omap-abe-twl6040.o
- snd-soc-ams-delta-objs := ams-delta.o
- snd-soc-omap-hdmi-objs := omap-hdmi.o
- snd-soc-osk5912-objs := osk5912.o
-+snd-soc-j721e-evm-objs := j721e-evm.o
- 
- obj-$(CONFIG_SND_SOC_DAVINCI_EVM) += snd-soc-davinci-evm.o
- obj-$(CONFIG_SND_SOC_NOKIA_N810) += snd-soc-n810.o
-@@ -44,3 +45,4 @@ obj-$(CONFIG_SND_SOC_OMAP_ABE_TWL6040) += snd-soc-omap-abe-twl6040.o
- obj-$(CONFIG_SND_SOC_OMAP_AMS_DELTA) += snd-soc-ams-delta.o
- obj-$(CONFIG_SND_SOC_OMAP_HDMI) += snd-soc-omap-hdmi.o
- obj-$(CONFIG_SND_SOC_OMAP_OSK5912) += snd-soc-osk5912.o
-+obj-$(CONFIG_SND_SOC_J721E_EVM) += snd-soc-j721e-evm.o
-diff --git a/sound/soc/ti/j721e-evm.c b/sound/soc/ti/j721e-evm.c
-new file mode 100644
-index 000000000000..7af306ad6c8b
---- /dev/null
-+++ b/sound/soc/ti/j721e-evm.c
-@@ -0,0 +1,864 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ *  Copyright (C) 2020 Texas Instruments Incorporated - http://www.ti.com
-+ *  Author: Peter Ujfalusi <peter.ujfalusi@ti.com>
-+ */
-+
-+#include <linux/clk.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/platform_device.h>
-+
-+#include <sound/core.h>
-+#include <sound/pcm.h>
-+#include <sound/pcm_params.h>
-+#include <sound/soc.h>
-+
-+#include "davinci-mcasp.h"
-+
-+/*
-+ * Maximum number of configuration entries for prefixes:
-+ * CPB: 2 (mcasp10 + codec)
-+ * IVI: 3 (mcasp0 + 2x codec)
-+ */
-+#define J721E_CODEC_CONF_COUNT	5
-+
-+#define J721E_AUDIO_DOMAIN_CPB	0
-+#define J721E_AUDIO_DOMAIN_IVI	1
-+
-+#define J721E_CLK_PARENT_48000	0
-+#define J721E_CLK_PARENT_44100	1
-+
-+#define J721E_MAX_CLK_HSDIV	128
-+#define PCM1368A_MAX_SYSCLK	36864000
-+
-+#define J721E_DAI_FMT		(SND_SOC_DAIFMT_RIGHT_J | \
-+				 SND_SOC_DAIFMT_NB_NF |   \
-+				 SND_SOC_DAIFMT_CBS_CFS)
-+
-+enum j721e_board_type {
-+	J721E_BOARD_CPB = 1,
-+	J721E_BOARD_CPB_IVI,
-+};
-+
-+struct j721e_audio_match_data {
-+	enum j721e_board_type board_type;
-+	int num_links;
-+};
-+
-+static unsigned int ratios_for_pcm3168a[] = {
-+	256,
-+	512,
-+	768,
-+};
-+
-+struct j721e_audio_clocks {
-+	struct clk *target;
-+	struct clk *parent[2];
-+};
-+
-+struct j721e_audio_domain {
-+	struct j721e_audio_clocks codec;
-+	struct j721e_audio_clocks mcasp;
-+	int parent_clk_id;
-+
-+	int active;
-+	unsigned int active_link;
-+	unsigned int rate;
-+};
-+
-+struct j721e_priv {
-+	struct device *dev;
-+	struct snd_soc_card card;
-+	struct snd_soc_dai_link *dai_links;
-+	struct snd_soc_codec_conf codec_conf[J721E_CODEC_CONF_COUNT];
-+	struct snd_interval rate_range;
-+	const struct j721e_audio_match_data *match_data;
-+	u32 pll_rates[2];
-+	unsigned int hsdiv_rates[2];
-+
-+	struct j721e_audio_domain audio_domains[2];
-+
-+	struct mutex mutex;
-+};
-+
-+static const struct snd_soc_dapm_widget j721e_cpb_dapm_widgets[] = {
-+	SND_SOC_DAPM_HP("CPB Stereo HP 1", NULL),
-+	SND_SOC_DAPM_HP("CPB Stereo HP 2", NULL),
-+	SND_SOC_DAPM_HP("CPB Stereo HP 3", NULL),
-+	SND_SOC_DAPM_LINE("CPB Line Out", NULL),
-+	SND_SOC_DAPM_MIC("CPB Stereo Mic 1", NULL),
-+	SND_SOC_DAPM_MIC("CPB Stereo Mic 2", NULL),
-+	SND_SOC_DAPM_LINE("CPB Line In", NULL),
-+};
-+
-+static const struct snd_soc_dapm_route j721e_cpb_dapm_routes[] = {
-+	{"CPB Stereo HP 1", NULL, "codec-1 AOUT1L"},
-+	{"CPB Stereo HP 1", NULL, "codec-1 AOUT1R"},
-+	{"CPB Stereo HP 2", NULL, "codec-1 AOUT2L"},
-+	{"CPB Stereo HP 2", NULL, "codec-1 AOUT2R"},
-+	{"CPB Stereo HP 3", NULL, "codec-1 AOUT3L"},
-+	{"CPB Stereo HP 3", NULL, "codec-1 AOUT3R"},
-+	{"CPB Line Out", NULL, "codec-1 AOUT4L"},
-+	{"CPB Line Out", NULL, "codec-1 AOUT4R"},
-+
-+	{"codec-1 AIN1L", NULL, "CPB Stereo Mic 1"},
-+	{"codec-1 AIN1R", NULL, "CPB Stereo Mic 1"},
-+	{"codec-1 AIN2L", NULL, "CPB Stereo Mic 2"},
-+	{"codec-1 AIN2R", NULL, "CPB Stereo Mic 2"},
-+	{"codec-1 AIN3L", NULL, "CPB Line In"},
-+	{"codec-1 AIN3R", NULL, "CPB Line In"},
-+};
-+
-+static const struct snd_soc_dapm_widget j721e_ivi_codec_a_dapm_widgets[] = {
-+	SND_SOC_DAPM_LINE("IVI A Line Out 1", NULL),
-+	SND_SOC_DAPM_LINE("IVI A Line Out 2", NULL),
-+	SND_SOC_DAPM_LINE("IVI A Line Out 3", NULL),
-+	SND_SOC_DAPM_LINE("IVI A Line Out 4", NULL),
-+	SND_SOC_DAPM_MIC("IVI A Stereo Mic 1", NULL),
-+	SND_SOC_DAPM_MIC("IVI A Stereo Mic 2", NULL),
-+	SND_SOC_DAPM_LINE("IVI A Line In", NULL),
-+};
-+
-+static const struct snd_soc_dapm_route j721e_codec_a_dapm_routes[] = {
-+	{"IVI A Line Out 1", NULL, "codec-a AOUT1L"},
-+	{"IVI A Line Out 1", NULL, "codec-a AOUT1R"},
-+	{"IVI A Line Out 2", NULL, "codec-a AOUT2L"},
-+	{"IVI A Line Out 2", NULL, "codec-a AOUT2R"},
-+	{"IVI A Line Out 3", NULL, "codec-a AOUT3L"},
-+	{"IVI A Line Out 3", NULL, "codec-a AOUT3R"},
-+	{"IVI A Line Out 4", NULL, "codec-a AOUT4L"},
-+	{"IVI A Line Out 4", NULL, "codec-a AOUT4R"},
-+
-+	{"codec-a AIN1L", NULL, "IVI A Stereo Mic 1"},
-+	{"codec-a AIN1R", NULL, "IVI A Stereo Mic 1"},
-+	{"codec-a AIN2L", NULL, "IVI A Stereo Mic 2"},
-+	{"codec-a AIN2R", NULL, "IVI A Stereo Mic 2"},
-+	{"codec-a AIN3L", NULL, "IVI A Line In"},
-+	{"codec-a AIN3R", NULL, "IVI A Line In"},
-+};
-+
-+static const struct snd_soc_dapm_widget j721e_ivi_codec_b_dapm_widgets[] = {
-+	SND_SOC_DAPM_LINE("IVI B Line Out 1", NULL),
-+	SND_SOC_DAPM_LINE("IVI B Line Out 2", NULL),
-+	SND_SOC_DAPM_LINE("IVI B Line Out 3", NULL),
-+	SND_SOC_DAPM_LINE("IVI B Line Out 4", NULL),
-+	SND_SOC_DAPM_MIC("IVI B Stereo Mic 1", NULL),
-+	SND_SOC_DAPM_MIC("IVI B Stereo Mic 2", NULL),
-+	SND_SOC_DAPM_LINE("IVI B Line In", NULL),
-+};
-+
-+static const struct snd_soc_dapm_route j721e_codec_b_dapm_routes[] = {
-+	{"IVI B Line Out 1", NULL, "codec-b AOUT1L"},
-+	{"IVI B Line Out 1", NULL, "codec-b AOUT1R"},
-+	{"IVI B Line Out 2", NULL, "codec-b AOUT2L"},
-+	{"IVI B Line Out 2", NULL, "codec-b AOUT2R"},
-+	{"IVI B Line Out 3", NULL, "codec-b AOUT3L"},
-+	{"IVI B Line Out 3", NULL, "codec-b AOUT3R"},
-+	{"IVI B Line Out 4", NULL, "codec-b AOUT4L"},
-+	{"IVI B Line Out 4", NULL, "codec-b AOUT4R"},
-+
-+	{"codec-b AIN1L", NULL, "IVI B Stereo Mic 1"},
-+	{"codec-b AIN1R", NULL, "IVI B Stereo Mic 1"},
-+	{"codec-b AIN2L", NULL, "IVI B Stereo Mic 2"},
-+	{"codec-b AIN2R", NULL, "IVI B Stereo Mic 2"},
-+	{"codec-b AIN3L", NULL, "IVI B Line In"},
-+	{"codec-b AIN3R", NULL, "IVI B Line In"},
-+};
-+
-+static int j721e_configure_refclk(struct j721e_priv *priv,
-+				  unsigned int audio_domain, unsigned int rate)
-+{
-+	struct j721e_audio_domain *domain = &priv->audio_domains[audio_domain];
-+	unsigned int scki;
-+	int ret = -EINVAL;
-+	int i, clk_id;
-+
-+	if (!(rate % 8000))
-+		clk_id = J721E_CLK_PARENT_48000;
-+	else if (!(rate % 11025))
-+		clk_id = J721E_CLK_PARENT_44100;
-+	else
-+		return ret;
-+
-+	for (i = 0; i < ARRAY_SIZE(ratios_for_pcm3168a); i++) {
-+		scki = ratios_for_pcm3168a[i] * rate;
-+
-+		if (priv->pll_rates[clk_id] / scki <= J721E_MAX_CLK_HSDIV) {
-+			ret = 0;
-+			break;
-+		}
-+	}
-+
-+	if (ret) {
-+		dev_err(priv->dev, "No valid clock configuration for %u Hz\n",
-+			rate);
-+		return ret;
-+	}
-+
-+	if (priv->hsdiv_rates[domain->parent_clk_id] != scki) {
-+		dev_dbg(priv->dev,
-+			"%s configuration for %u Hz: %s, %dxFS (SCKI: %u Hz)\n",
-+			audio_domain == J721E_AUDIO_DOMAIN_CPB ? "CPB" : "IVI",
-+			rate,
-+			clk_id == J721E_CLK_PARENT_48000 ? "PLL4" : "PLL15",
-+			ratios_for_pcm3168a[i], scki);
-+
-+		if (domain->parent_clk_id != clk_id) {
-+			ret = clk_set_parent(domain->codec.target,
-+					     domain->codec.parent[clk_id]);
-+			if (ret)
-+				return ret;
-+
-+			ret = clk_set_parent(domain->mcasp.target,
-+					     domain->mcasp.parent[clk_id]);
-+			if (ret)
-+				return ret;
-+
-+			domain->parent_clk_id = clk_id;
-+		}
-+
-+		ret = clk_set_rate(domain->codec.target, scki);
-+		if (ret) {
-+			dev_err(priv->dev, "codec set rate failed for %u Hz\n",
-+				scki);
-+			return ret;
-+		}
-+
-+		ret = clk_set_rate(domain->mcasp.target, scki);
-+		if (!ret) {
-+			priv->hsdiv_rates[domain->parent_clk_id] = scki;
-+		} else {
-+			dev_err(priv->dev, "mcasp set rate failed for %u Hz\n",
-+				scki);
-+			return ret;
-+		}
-+	}
-+
-+	return ret;
-+}
-+
-+static int j721e_rule_rate(struct snd_pcm_hw_params *params,
-+			   struct snd_pcm_hw_rule *rule)
-+{
-+	struct snd_interval *t = rule->private;
-+
-+	return snd_interval_refine(hw_param_interval(params, rule->var), t);
-+}
-+
-+static int j721e_audio_startup(struct snd_pcm_substream *substream)
-+{
-+	struct snd_soc_pcm_runtime *rtd = substream->private_data;
-+	struct j721e_priv *priv = snd_soc_card_get_drvdata(rtd->card);
-+	unsigned int domain_id = rtd->dai_link->id;
-+	struct j721e_audio_domain *domain = &priv->audio_domains[domain_id];
-+	struct snd_soc_dai *codec_dai;
-+	unsigned int active_rate;
-+	int ret = 0;
-+	int i;
-+
-+	mutex_lock(&priv->mutex);
-+
-+	domain->active++;
-+
-+	if (priv->audio_domains[J721E_AUDIO_DOMAIN_CPB].rate)
-+		active_rate = priv->audio_domains[J721E_AUDIO_DOMAIN_CPB].rate;
-+	else
-+		active_rate = priv->audio_domains[J721E_AUDIO_DOMAIN_IVI].rate;
-+
-+	if (active_rate)
-+		ret = snd_pcm_hw_constraint_single(substream->runtime,
-+						   SNDRV_PCM_HW_PARAM_RATE,
-+						   active_rate);
-+	else
-+		ret = snd_pcm_hw_rule_add(substream->runtime, 0,
-+					  SNDRV_PCM_HW_PARAM_RATE,
-+					  j721e_rule_rate, &priv->rate_range,
-+					  SNDRV_PCM_HW_PARAM_RATE, -1);
-+
-+	mutex_unlock(&priv->mutex);
-+
-+	if (ret)
-+		return ret;
-+
-+	/* Reset TDM slots to 32 */
-+	ret = snd_soc_dai_set_tdm_slot(rtd->cpu_dai, 0x3, 0x3, 2, 32);
-+	if (ret && ret != -ENOTSUPP)
-+		return ret;
-+
-+	for_each_rtd_codec_dais(rtd, i, codec_dai) {
-+		ret = snd_soc_dai_set_tdm_slot(codec_dai, 0x3, 0x3, 2, 32);
-+		if (ret && ret != -ENOTSUPP)
-+			return ret;
-+	}
-+
-+	return 0;
-+}
-+
-+static int j721e_audio_hw_params(struct snd_pcm_substream *substream,
-+				 struct snd_pcm_hw_params *params)
-+{
-+	struct snd_soc_pcm_runtime *rtd = substream->private_data;
-+	struct snd_soc_card *card = rtd->card;
-+	struct j721e_priv *priv = snd_soc_card_get_drvdata(card);
-+	unsigned int domain_id = rtd->dai_link->id;
-+	struct j721e_audio_domain *domain = &priv->audio_domains[domain_id];
-+	struct snd_soc_dai *codec_dai;
-+	unsigned int sysclk_rate;
-+	int slot_width = 32;
-+	int ret;
-+	int i;
-+
-+	mutex_lock(&priv->mutex);
-+
-+	if (domain->rate && domain->rate != params_rate(params)) {
-+		ret = -EINVAL;
-+		goto out;
-+	}
-+
-+	if (params_width(params) == 16)
-+		slot_width = 16;
-+
-+	ret = snd_soc_dai_set_tdm_slot(rtd->cpu_dai, 0x3, 0x3, 2, slot_width);
-+	if (ret && ret != -ENOTSUPP)
-+		goto out;
-+
-+	for_each_rtd_codec_dais(rtd, i, codec_dai) {
-+		ret = snd_soc_dai_set_tdm_slot(codec_dai, 0x3, 0x3, 2,
-+					       slot_width);
-+		if (ret && ret != -ENOTSUPP)
-+			return ret;
-+	}
-+
-+	ret = j721e_configure_refclk(priv, domain_id, params_rate(params));
-+	if (ret)
-+		goto out;
-+
-+	sysclk_rate = priv->hsdiv_rates[domain->parent_clk_id];
-+	for_each_rtd_codec_dais(rtd, i, codec_dai) {
-+		ret = snd_soc_dai_set_sysclk(codec_dai, 0, sysclk_rate,
-+					     SND_SOC_CLOCK_IN);
-+		if (ret && ret != -ENOTSUPP) {
-+			dev_err(priv->dev,
-+				"codec set_sysclk failed for %u Hz\n",
-+				sysclk_rate);
-+			goto out;
-+		}
-+	}
-+
-+	ret = snd_soc_dai_set_sysclk(rtd->cpu_dai, MCASP_CLK_HCLK_AUXCLK,
-+				     sysclk_rate, SND_SOC_CLOCK_IN);
-+
-+	if (ret && ret != -ENOTSUPP) {
-+		dev_err(priv->dev, "mcasp set_sysclk failed for %u Hz\n",
-+			sysclk_rate);
-+	} else {
-+		domain->rate = params_rate(params);
-+		ret = 0;
-+	}
-+
-+out:
-+	mutex_unlock(&priv->mutex);
-+	return ret;
-+}
-+
-+static void j721e_audio_shutdown(struct snd_pcm_substream *substream)
-+{
-+	struct snd_soc_pcm_runtime *rtd = substream->private_data;
-+	struct j721e_priv *priv = snd_soc_card_get_drvdata(rtd->card);
-+	unsigned int domain_id = rtd->dai_link->id;
-+	struct j721e_audio_domain *domain = &priv->audio_domains[domain_id];
-+
-+	mutex_lock(&priv->mutex);
-+
-+	domain->active--;
-+	if (!domain->active) {
-+		domain->rate = 0;
-+		domain->active_link = 0;
-+	}
-+
-+	mutex_unlock(&priv->mutex);
-+}
-+
-+static const struct snd_soc_ops j721e_audio_ops = {
-+	.startup = j721e_audio_startup,
-+	.hw_params = j721e_audio_hw_params,
-+	.shutdown = j721e_audio_shutdown,
-+};
-+
-+static int j721e_audio_init(struct snd_soc_pcm_runtime *rtd)
-+{
-+	struct j721e_priv *priv = snd_soc_card_get_drvdata(rtd->card);
-+	unsigned int domain_id = rtd->dai_link->id;
-+	struct j721e_audio_domain *domain = &priv->audio_domains[domain_id];
-+	struct snd_soc_dai *codec_dai;
-+	unsigned int sysclk_rate;
-+	int i, ret;
-+
-+	/* Set up initial clock configuration */
-+	ret = j721e_configure_refclk(priv, domain_id, 48000);
-+	if (ret)
-+		return ret;
-+
-+	sysclk_rate = priv->hsdiv_rates[domain->parent_clk_id];
-+	for_each_rtd_codec_dais(rtd, i, codec_dai) {
-+		ret = snd_soc_dai_set_sysclk(codec_dai, 0, sysclk_rate,
-+					     SND_SOC_CLOCK_IN);
-+		if (ret && ret != -ENOTSUPP)
-+			return ret;
-+	}
-+
-+	ret = snd_soc_dai_set_sysclk(rtd->cpu_dai, MCASP_CLK_HCLK_AUXCLK,
-+				     sysclk_rate, SND_SOC_CLOCK_IN);
-+	if (ret && ret != -ENOTSUPP)
-+		return ret;
-+
-+	/* Set initial tdm slots */
-+	ret = snd_soc_dai_set_tdm_slot(rtd->cpu_dai, 0x3, 0x3, 2, 32);
-+	if (ret && ret != -ENOTSUPP)
-+		return ret;
-+
-+	for_each_rtd_codec_dais(rtd, i, codec_dai) {
-+		ret = snd_soc_dai_set_tdm_slot(codec_dai, 0x3, 0x3, 2, 32);
-+		if (ret && ret != -ENOTSUPP)
-+			return ret;
-+	}
-+
-+	return 0;
-+}
-+
-+static int j721e_audio_init_ivi(struct snd_soc_pcm_runtime *rtd)
-+{
-+	struct snd_soc_dapm_context *dapm = &rtd->card->dapm;
-+
-+	snd_soc_dapm_new_controls(dapm, j721e_ivi_codec_a_dapm_widgets,
-+				  ARRAY_SIZE(j721e_ivi_codec_a_dapm_widgets));
-+	snd_soc_dapm_add_routes(dapm, j721e_codec_a_dapm_routes,
-+				ARRAY_SIZE(j721e_codec_a_dapm_routes));
-+	snd_soc_dapm_new_controls(dapm, j721e_ivi_codec_b_dapm_widgets,
-+				  ARRAY_SIZE(j721e_ivi_codec_b_dapm_widgets));
-+	snd_soc_dapm_add_routes(dapm, j721e_codec_b_dapm_routes,
-+				ARRAY_SIZE(j721e_codec_b_dapm_routes));
-+
-+	return j721e_audio_init(rtd);
-+}
-+
-+static int j721e_get_clocks(struct device *dev,
-+			    struct j721e_audio_clocks *clocks, char *prefix)
-+{
-+	struct clk *parent;
-+	char *clk_name;
-+	int ret;
-+
-+	clocks->target = devm_clk_get(dev, prefix);
-+	if (IS_ERR(clocks->target)) {
-+		ret = PTR_ERR(clocks->target);
-+		if (ret != -EPROBE_DEFER)
-+			dev_err(dev, "failed to acquire %s': %d\n",
-+				prefix, ret);
-+		return ret;
-+	}
-+
-+	clk_name = kasprintf(GFP_KERNEL, "%s-48000", prefix);
-+	if (clk_name) {
-+		parent = devm_clk_get(dev, clk_name);
-+		kfree(clk_name);
-+		if (IS_ERR(parent)) {
-+			ret = PTR_ERR(parent);
-+			if (ret != -EPROBE_DEFER)
-+				dev_err(dev, "failed to acquire %s': %d\n",
-+					prefix, ret);
-+			return ret;
-+		}
-+		clocks->parent[J721E_CLK_PARENT_48000] = parent;
-+	} else {
-+		return -ENOMEM;
-+	}
-+
-+	clk_name = kasprintf(GFP_KERNEL, "%s-44100", prefix);
-+	if (clk_name) {
-+		parent = devm_clk_get(dev, clk_name);
-+		kfree(clk_name);
-+		if (IS_ERR(parent)) {
-+			ret = PTR_ERR(parent);
-+			if (ret != -EPROBE_DEFER)
-+				dev_err(dev, "failed to acquire %s': %d\n",
-+					prefix, ret);
-+			return ret;
-+		}
-+		clocks->parent[J721E_CLK_PARENT_44100] = parent;
-+	} else {
-+		return -ENOMEM;
-+	}
-+
-+	return 0;
-+}
-+
-+static const struct j721e_audio_match_data j721e_cpb_data = {
-+	.board_type = J721E_BOARD_CPB,
-+	.num_links = 2, /* CPB pcm3168a */
-+};
-+
-+static const struct j721e_audio_match_data j721e_cpb_ivi_data = {
-+	.board_type = J721E_BOARD_CPB_IVI,
-+	.num_links = 4, /* CPB pcm3168a + 2x IVI pcm3168a */
-+};
-+
-+static const struct of_device_id j721e_audio_of_match[] = {
-+	{
-+		.compatible = "ti,j721e-cpb-audio",
-+		.data = &j721e_cpb_data,
-+	}, {
-+		.compatible = "ti,j721e-cpb-ivi-audio",
-+		.data = &j721e_cpb_ivi_data,
-+	},
-+	{ },
-+};
-+MODULE_DEVICE_TABLE(of, j721e_audio_of_match);
-+
-+static int j721e_calculate_rate_range(struct j721e_priv *priv)
-+{
-+	unsigned int min_rate, max_rate, pll_rate;
-+	struct clk *pll;
-+
-+	pll = clk_get(priv->dev, "pll15");
-+	if (IS_ERR(pll)) {
-+		int ret = PTR_ERR(pll);
-+
-+		if (ret != -EPROBE_DEFER)
-+			dev_err(priv->dev, "failed to acquire PLL15 clock\n");
-+
-+		return ret;
-+	}
-+	priv->pll_rates[J721E_CLK_PARENT_44100] = clk_get_rate(pll);
-+	clk_put(pll);
-+
-+	pll_rate = priv->pll_rates[J721E_CLK_PARENT_44100];
-+	min_rate = pll_rate / J721E_MAX_CLK_HSDIV;
-+	min_rate /= ratios_for_pcm3168a[ARRAY_SIZE(ratios_for_pcm3168a) - 1];
-+
-+	pll = clk_get(priv->dev, "pll4");
-+	if (IS_ERR(pll)) {
-+		int ret = PTR_ERR(pll);
-+
-+		if (ret != -EPROBE_DEFER)
-+			dev_err(priv->dev, "failed to acquire PLL4 clock\n");
-+
-+		return ret;
-+	}
-+	priv->pll_rates[J721E_CLK_PARENT_48000] = clk_get_rate(pll);
-+	clk_put(pll);
-+
-+	pll_rate = priv->pll_rates[J721E_CLK_PARENT_48000];
-+	if (pll_rate > PCM1368A_MAX_SYSCLK)
-+		pll_rate = PCM1368A_MAX_SYSCLK;
-+
-+	max_rate = pll_rate / ratios_for_pcm3168a[0];
-+
-+	snd_interval_any(&priv->rate_range);
-+	priv->rate_range.min = min_rate;
-+	priv->rate_range.max = max_rate;
-+
-+	return 0;
-+}
-+
-+static int j721e_soc_probe_cpb(struct j721e_priv *priv, int *link_idx,
-+			       int *conf_idx)
-+{
-+	struct device_node *node = priv->dev->of_node;
-+	struct snd_soc_dai_link_component *compnent;
-+	struct device_node *dai_node, *codec_node;
-+	struct j721e_audio_domain *domain;
-+	int comp_count, comp_idx;
-+	int ret;
-+
-+	dai_node = of_parse_phandle(node, "ti,cpb-mcasp", 0);
-+	if (!dai_node) {
-+		dev_err(priv->dev, "CPB McASP node is not provided\n");
-+		return -EINVAL;
-+	}
-+
-+	codec_node = of_parse_phandle(node, "ti,cpb-codec", 0);
-+	if (!codec_node) {
-+		dev_err(priv->dev, "CPB codec node is not provided\n");
-+		return -EINVAL;
-+	}
-+
-+	domain = &priv->audio_domains[J721E_AUDIO_DOMAIN_CPB];
-+	ret = j721e_get_clocks(priv->dev, &domain->codec, "audio-refclk2");
-+	if (ret)
-+		return ret;
-+
-+	ret = j721e_get_clocks(priv->dev, &domain->mcasp, "cpb-mcasp");
-+	if (ret)
-+		return ret;
-+
-+	/*
-+	 * Common Processor Board, two links
-+	 * Link 1: McASP10 -> pcm3168a_1 DAC
-+	 * Link 2: McASP10 <- pcm3168a_1 ADC
-+	 */
-+	comp_count = 6;
-+	compnent = devm_kzalloc(priv->dev, comp_count * sizeof(*compnent),
-+				GFP_KERNEL);
-+	if (!compnent)
-+		return -ENOMEM;
-+
-+	comp_idx = 0;
-+	priv->dai_links[*link_idx].cpus = &compnent[comp_idx++];
-+	priv->dai_links[*link_idx].num_cpus = 1;
-+	priv->dai_links[*link_idx].codecs = &compnent[comp_idx++];
-+	priv->dai_links[*link_idx].num_codecs = 1;
-+	priv->dai_links[*link_idx].platforms = &compnent[comp_idx++];
-+	priv->dai_links[*link_idx].num_platforms = 1;
-+
-+	priv->dai_links[*link_idx].name = "CPB PCM3168A Playback";
-+	priv->dai_links[*link_idx].stream_name = "CPB PCM3168A Analog";
-+	priv->dai_links[*link_idx].cpus->of_node = dai_node;
-+	priv->dai_links[*link_idx].platforms->of_node = dai_node;
-+	priv->dai_links[*link_idx].codecs->of_node = codec_node;
-+	priv->dai_links[*link_idx].codecs->dai_name = "pcm3168a-dac";
-+	priv->dai_links[*link_idx].playback_only = 1;
-+	priv->dai_links[*link_idx].id = J721E_AUDIO_DOMAIN_CPB;
-+	priv->dai_links[*link_idx].dai_fmt = J721E_DAI_FMT;
-+	priv->dai_links[*link_idx].init = j721e_audio_init;
-+	priv->dai_links[*link_idx].ops = &j721e_audio_ops;
-+	(*link_idx)++;
-+
-+	priv->dai_links[*link_idx].cpus = &compnent[comp_idx++];
-+	priv->dai_links[*link_idx].num_cpus = 1;
-+	priv->dai_links[*link_idx].codecs = &compnent[comp_idx++];
-+	priv->dai_links[*link_idx].num_codecs = 1;
-+	priv->dai_links[*link_idx].platforms = &compnent[comp_idx++];
-+	priv->dai_links[*link_idx].num_platforms = 1;
-+
-+	priv->dai_links[*link_idx].name = "CPB PCM3168A Capture";
-+	priv->dai_links[*link_idx].stream_name = "CPB PCM3168A Analog";
-+	priv->dai_links[*link_idx].cpus->of_node = dai_node;
-+	priv->dai_links[*link_idx].platforms->of_node = dai_node;
-+	priv->dai_links[*link_idx].codecs->of_node = codec_node;
-+	priv->dai_links[*link_idx].codecs->dai_name = "pcm3168a-adc";
-+	priv->dai_links[*link_idx].capture_only = 1;
-+	priv->dai_links[*link_idx].id = J721E_AUDIO_DOMAIN_CPB;
-+	priv->dai_links[*link_idx].dai_fmt = J721E_DAI_FMT;
-+	priv->dai_links[*link_idx].init = j721e_audio_init;
-+	priv->dai_links[*link_idx].ops = &j721e_audio_ops;
-+	(*link_idx)++;
-+
-+	priv->codec_conf[*conf_idx].dlc.of_node = codec_node;
-+	priv->codec_conf[*conf_idx].name_prefix = "codec-1";
-+	(*conf_idx)++;
-+	priv->codec_conf[*conf_idx].dlc.of_node = dai_node;
-+	priv->codec_conf[*conf_idx].name_prefix = "McASP10";
-+	(*conf_idx)++;
-+
-+	return 0;
-+}
-+
-+static int j721e_soc_probe_ivi(struct j721e_priv *priv, int *link_idx,
-+			       int *conf_idx)
-+{
-+	struct device_node *node = priv->dev->of_node;
-+	struct snd_soc_dai_link_component *compnent;
-+	struct device_node *dai_node, *codeca_node, *codecb_node;
-+	struct j721e_audio_domain *domain;
-+	int comp_count, comp_idx;
-+	int ret;
-+
-+	if (priv->match_data->board_type != J721E_BOARD_CPB_IVI)
-+		return 0;
-+
-+	dai_node = of_parse_phandle(node, "ti,ivi-mcasp", 0);
-+	if (!dai_node) {
-+		dev_err(priv->dev, "IVI McASP node is not provided\n");
-+		return -EINVAL;
-+	}
-+
-+	codeca_node = of_parse_phandle(node, "ti,ivi-codec-a", 0);
-+	if (!codeca_node) {
-+		dev_err(priv->dev, "IVI codec-a node is not provided\n");
-+		return -EINVAL;
-+	}
-+
-+	codecb_node = of_parse_phandle(node, "ti,ivi-codec-b", 0);
-+	if (!codecb_node) {
-+		dev_warn(priv->dev, "IVI codec-b node is not provided\n");
-+		return 0;
-+	}
-+
-+	domain = &priv->audio_domains[J721E_AUDIO_DOMAIN_IVI];
-+	ret = j721e_get_clocks(priv->dev, &domain->codec,
-+			       "audio-refclk0");
-+	if (ret)
-+		return ret;
-+
-+	ret = j721e_get_clocks(priv->dev, &domain->mcasp, "ivi-mcasp");
-+	if (ret)
-+		return ret;
-+
-+	/*
-+	 * IVI extension, two links
-+	 * Link 1: McASP0 -> pcm3168a_a DAC
-+	 *		  \> pcm3168a_b DAC
-+	 * Link 2: McASP0 <- pcm3168a_a ADC
-+	 *		   \ pcm3168a_b ADC
-+	 */
-+	comp_count = 8;
-+	compnent = devm_kzalloc(priv->dev, comp_count * sizeof(*compnent),
-+				GFP_KERNEL);
-+	if (!compnent)
-+		return -ENOMEM;
-+
-+	comp_idx = 0;
-+	priv->dai_links[*link_idx].cpus = &compnent[comp_idx++];
-+	priv->dai_links[*link_idx].num_cpus = 1;
-+	priv->dai_links[*link_idx].platforms = &compnent[comp_idx++];
-+	priv->dai_links[*link_idx].num_platforms = 1;
-+	priv->dai_links[*link_idx].codecs = &compnent[comp_idx];
-+	priv->dai_links[*link_idx].num_codecs = 2;
-+	comp_idx += 2;
-+
-+	priv->dai_links[*link_idx].name = "IVI 2xPCM3168A Playback";
-+	priv->dai_links[*link_idx].stream_name = "IVI 2xPCM3168A Analog";
-+	priv->dai_links[*link_idx].cpus->of_node = dai_node;
-+	priv->dai_links[*link_idx].platforms->of_node = dai_node;
-+	priv->dai_links[*link_idx].codecs[0].of_node = codeca_node;
-+	priv->dai_links[*link_idx].codecs[0].dai_name = "pcm3168a-dac";
-+	priv->dai_links[*link_idx].codecs[1].of_node = codecb_node;
-+	priv->dai_links[*link_idx].codecs[1].dai_name = "pcm3168a-dac";
-+	priv->dai_links[*link_idx].playback_only = 1;
-+	priv->dai_links[*link_idx].id = J721E_AUDIO_DOMAIN_IVI;
-+	priv->dai_links[*link_idx].dai_fmt = J721E_DAI_FMT;
-+	priv->dai_links[*link_idx].init = j721e_audio_init_ivi;
-+	priv->dai_links[*link_idx].ops = &j721e_audio_ops;
-+	(*link_idx)++;
-+
-+	priv->dai_links[*link_idx].cpus = &compnent[comp_idx++];
-+	priv->dai_links[*link_idx].num_cpus = 1;
-+	priv->dai_links[*link_idx].platforms = &compnent[comp_idx++];
-+	priv->dai_links[*link_idx].num_platforms = 1;
-+	priv->dai_links[*link_idx].codecs = &compnent[comp_idx];
-+	priv->dai_links[*link_idx].num_codecs = 2;
-+
-+	priv->dai_links[*link_idx].name = "IVI 2xPCM3168A Capture";
-+	priv->dai_links[*link_idx].stream_name = "IVI 2xPCM3168A Analog";
-+	priv->dai_links[*link_idx].cpus->of_node = dai_node;
-+	priv->dai_links[*link_idx].platforms->of_node = dai_node;
-+	priv->dai_links[*link_idx].codecs[0].of_node = codeca_node;
-+	priv->dai_links[*link_idx].codecs[0].dai_name = "pcm3168a-adc";
-+	priv->dai_links[*link_idx].codecs[1].of_node = codecb_node;
-+	priv->dai_links[*link_idx].codecs[1].dai_name = "pcm3168a-adc";
-+	priv->dai_links[*link_idx].capture_only = 1;
-+	priv->dai_links[*link_idx].id = J721E_AUDIO_DOMAIN_IVI;
-+	priv->dai_links[*link_idx].dai_fmt = J721E_DAI_FMT;
-+	priv->dai_links[*link_idx].init = j721e_audio_init;
-+	priv->dai_links[*link_idx].ops = &j721e_audio_ops;
-+	(*link_idx)++;
-+
-+	priv->codec_conf[*conf_idx].dlc.of_node = codeca_node;
-+	priv->codec_conf[*conf_idx].name_prefix = "codec-a";
-+	(*conf_idx)++;
-+
-+	priv->codec_conf[*conf_idx].dlc.of_node = codecb_node;
-+	priv->codec_conf[*conf_idx].name_prefix = "codec-b";
-+	(*conf_idx)++;
-+
-+	priv->codec_conf[*conf_idx].dlc.of_node = dai_node;
-+	priv->codec_conf[*conf_idx].name_prefix = "McASP0";
-+	(*conf_idx)++;
-+
-+	return 0;
-+}
-+
-+static int j721e_soc_probe(struct platform_device *pdev)
-+{
-+	struct device_node *node = pdev->dev.of_node;
-+	struct snd_soc_card *card;
-+	const struct of_device_id *match;
-+	struct j721e_priv *priv;
-+	int link_cnt, conf_cnt, ret;
-+
-+	if (!node) {
-+		dev_err(&pdev->dev, "of node is missing.\n");
-+		return -ENODEV;
-+	}
-+
-+	match = of_match_node(j721e_audio_of_match, node);
-+	if (!match) {
-+		dev_err(&pdev->dev, "No compatible match found\n");
-+		return -ENODEV;
-+	}
-+
-+	priv = devm_kzalloc(&pdev->dev, sizeof(*priv), GFP_KERNEL);
-+	if (!priv)
-+		return -ENOMEM;
-+
-+	priv->match_data = match->data;
-+
-+	priv->dai_links = devm_kcalloc(&pdev->dev, priv->match_data->num_links,
-+				       sizeof(*priv->dai_links), GFP_KERNEL);
-+	if (!priv->dai_links)
-+		return -ENOMEM;
-+
-+	priv->audio_domains[J721E_AUDIO_DOMAIN_CPB].parent_clk_id = -1;
-+	priv->audio_domains[J721E_AUDIO_DOMAIN_IVI].parent_clk_id = -1;
-+	priv->dev = &pdev->dev;
-+	card = &priv->card;
-+	card->dev = &pdev->dev;
-+	card->owner = THIS_MODULE;
-+	card->dapm_widgets = j721e_cpb_dapm_widgets;
-+	card->num_dapm_widgets = ARRAY_SIZE(j721e_cpb_dapm_widgets);
-+	card->dapm_routes = j721e_cpb_dapm_routes;
-+	card->num_dapm_routes = ARRAY_SIZE(j721e_cpb_dapm_routes);
-+	card->fully_routed = 1;
-+
-+	if (snd_soc_of_parse_card_name(card, "model")) {
-+		dev_err(&pdev->dev, "Card name is not provided\n");
-+		return -ENODEV;
-+	}
-+
-+	link_cnt = 0;
-+	conf_cnt = 0;
-+	ret = j721e_soc_probe_cpb(priv, &link_cnt, &conf_cnt);
-+	if (ret)
-+		return ret;
-+
-+	ret = j721e_soc_probe_ivi(priv, &link_cnt, &conf_cnt);
-+	if (ret)
-+		return ret;
-+
-+	card->dai_link = priv->dai_links;
-+	card->num_links = link_cnt;
-+
-+	card->codec_conf = priv->codec_conf;
-+	card->num_configs = conf_cnt;
-+
-+	ret = j721e_calculate_rate_range(priv);
-+	if (ret)
-+		return ret;
-+
-+	snd_soc_card_set_drvdata(card, priv);
-+
-+	mutex_init(&priv->mutex);
-+	ret = devm_snd_soc_register_card(&pdev->dev, card);
-+	if (ret)
-+		dev_err(&pdev->dev, "devm_snd_soc_register_card() failed: %d\n",
-+			ret);
-+
-+	return ret;
-+}
-+
-+static struct platform_driver j721e_soc_driver = {
-+	.driver = {
-+		.name = "j721e-audio",
-+		.pm = &snd_soc_pm_ops,
-+		.of_match_table = of_match_ptr(j721e_audio_of_match),
-+	},
-+	.probe = j721e_soc_probe,
-+};
-+
-+module_platform_driver(j721e_soc_driver);
-+
-+MODULE_AUTHOR("Peter Ujfalusi <peter.ujfalusi@ti.com>");
-+MODULE_DESCRIPTION("ASoC machine driver for j721e Common Processor Board");
-+MODULE_LICENSE("GPL v2");
--- 
-Peter
-
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
-
+Yes, please.
