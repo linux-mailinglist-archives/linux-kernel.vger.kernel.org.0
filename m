@@ -2,66 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ECEB518B15C
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 11:29:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C589E18B158
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 11:28:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727219AbgCSK2v (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 06:28:51 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:34510 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726967AbgCSK2r (ORCPT
+        id S1727171AbgCSK2r (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 06:28:47 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:55772 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726802AbgCSK2r (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 19 Mar 2020 06:28:47 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=gqy+zebrYjBGvhaO6SqPF4xkV6Hd+2qwfnT0NaMfqFw=; b=HxxXR8a33Mlo3LPRSF0OtzifxY
-        nZ01RbqIrsYECyTprO9a4Hg+e3YXhyA4NLOMZ4FamuSC0hPDqUWZOpIL8mW3tSr2/Z84Gd4YWpk/k
-        ik1t+Xy+FiIkf/cgwCAwlt8977GoyAnubuWtzebqXHCQepNE/v5cRD6J4eErvjnLkXVr5YW357D3A
-        v8lJ3EUL21H8uG46NCpPiE+qVvQiTWG69rtNBEkqpaEYQKD3QC7Xd6i7Ed9JiziqTzp/OL4sVtVCR
-        /WkNXcTrYw/IKBMcO36OdHXhXeM8ltAoUckM3cXppBVPB3RnbCjw0BPEuM1rVMPFef1ssjBf3R8Gi
-        RF4NTWzQ==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jEsPT-0007Vs-O0; Thu, 19 Mar 2020 10:28:19 +0000
-Date:   Thu, 19 Mar 2020 03:28:19 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Kirill Tkhai <ktkhai@virtuozzo.com>
-Cc:     axboe@kernel.dk, martin.petersen@oracle.com, bob.liu@oracle.com,
-        darrick.wong@oracle.com, agk@redhat.com, snitzer@redhat.com,
-        dm-devel@redhat.com, song@kernel.org, tytso@mit.edu,
-        adilger.kernel@dilger.ca, Chaitanya.Kulkarni@wdc.com,
-        ming.lei@redhat.com, osandov@fb.com, jthumshirn@suse.de,
-        minwoo.im.dev@gmail.com, damien.lemoal@wdc.com,
-        andrea.parri@amarulasolutions.com, hare@suse.com, tj@kernel.org,
-        ajay.joshi@wdc.com, sagi@grimberg.me, dsterba@suse.com,
-        bvanassche@acm.org, dhowells@redhat.com, asml.silence@gmail.com,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v7 0/6] block: Introduce REQ_ALLOCATE flag for
- REQ_OP_WRITE_ZEROES
-Message-ID: <20200319102819.GA26418@infradead.org>
-References: <158157930219.111879.12072477040351921368.stgit@localhost.localdomain>
- <e2b7cbab-d91f-fd7b-de6f-a671caa6f5eb@virtuozzo.com>
- <69c0b8a4-656f-98c4-eb55-2fd1184f5fc9@virtuozzo.com>
- <67d63190-c16f-cd26-6b67-641c8943dc3d@virtuozzo.com>
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 02JAR7eY032209;
+        Thu, 19 Mar 2020 11:28:28 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
+ : date : message-id : references : in-reply-to : content-type : content-id
+ : content-transfer-encoding : mime-version; s=STMicroelectronics;
+ bh=a8IUIDV/simADAYkwM+Njnv3lTBx4k59GizTkWNN6Ss=;
+ b=bkBlNCmUITsQYwAIxDnXxiof6dfStcMQbxGYnOstUEFFI+V/ja+pfnndlQ3ZN8hLH0B3
+ b+QUBAtxCj5IBu9RWXHrpB26PYPUXuwmSsNqlJ0vJPFIMC3aTdGOm8K0qDGsC+pmPEtG
+ +bHO3dOG9podOt62m+JmVlBu4y/NdkbfPyzjTPxFmIj9dc5ff3ShkYAqCHLc90RrWQ98
+ EKW3VeunwewQVQWDDkyE+/ZLYcZPzfQdsyVdZX7tZQRwedRHYkD6IElxfdceTVH/iu/k
+ EfgP2ECx8WZiBoSrWIexJtYkgZw1zVGEexLxS/quRrB1UkYUrakRbQwdSYfSmosiKuIb YA== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 2yu95us066-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 19 Mar 2020 11:28:28 +0100
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 996FB100034;
+        Thu, 19 Mar 2020 11:28:23 +0100 (CET)
+Received: from Webmail-eu.st.com (sfhdag3node3.st.com [10.75.127.9])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 80D312A5810;
+        Thu, 19 Mar 2020 11:28:23 +0100 (CET)
+Received: from SFHDAG3NODE3.st.com (10.75.127.9) by SFHDAG3NODE3.st.com
+ (10.75.127.9) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Thu, 19 Mar
+ 2020 11:28:23 +0100
+Received: from SFHDAG3NODE3.st.com ([fe80::3507:b372:7648:476]) by
+ SFHDAG3NODE3.st.com ([fe80::3507:b372:7648:476%20]) with mapi id
+ 15.00.1347.000; Thu, 19 Mar 2020 11:28:23 +0100
+From:   Benjamin GAIGNARD <benjamin.gaignard@st.com>
+To:     Lee Jones <lee.jones@linaro.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>
+CC:     "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "mcoquelin.stm32@gmail.com" <mcoquelin.stm32@gmail.com>,
+        Alexandre TORGUE <alexandre.torgue@st.com>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        Fabrice GASNIER <fabrice.gasnier@st.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-stm32@st-md-mailman.stormreply.com" 
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v4 2/3] mfd: stm32: Add defines to be used for clkevent
+ purpose
+Thread-Topic: [PATCH v4 2/3] mfd: stm32: Add defines to be used for clkevent
+ purpose
+Thread-Index: AQHV5ZiQaom2ANb1fkS0EaDa85E9JagjxuwAgCwKSQCAAAURAA==
+Date:   Thu, 19 Mar 2020 10:28:23 +0000
+Message-ID: <b21ac320-080d-3995-1c63-ca5c187224c6@st.com>
+References: <20200217134546.14562-1-benjamin.gaignard@st.com>
+ <20200217134546.14562-3-benjamin.gaignard@st.com>
+ <e9f7eaac-5b61-1662-2ae1-924d126e6a97@linaro.org>
+ <20200319101014.GA5477@dell>
+In-Reply-To: <20200319101014.GA5477@dell>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.75.127.45]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <85765BABAB3113468E684283C64674E7@st.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <67d63190-c16f-cd26-6b67-641c8943dc3d@virtuozzo.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.645
+ definitions=2020-03-19_02:2020-03-18,2020-03-19 signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 13, 2020 at 04:08:58PM +0300, Kirill Tkhai wrote:
-> I just don't understand the reason nothing happens :(
-> I see newly-sent patches comes fast into block tree.
-> But there is only silence... I grepped over Documentation,
-> and there is no special rules about block tree. So,
-> it looks like standard rules should be applyable.
-> 
-> Some comments? Some requests for reworking? Some personal reasons to ignore my patches?
-
-I'm still completely opposed to the magic overloading using a flag.
-That is just a bad design waiting for trouble to happen.
+DQoNCk9uIDMvMTkvMjAgMTE6MTAgQU0sIExlZSBKb25lcyB3cm90ZToNCj4gT24gVGh1LCAyMCBG
+ZWIgMjAyMCwgRGFuaWVsIExlemNhbm8gd3JvdGU6DQo+PiBPbiAxNy8wMi8yMDIwIDE0OjQ1LCBC
+ZW5qYW1pbiBHYWlnbmFyZCB3cm90ZToNCj4+PiBBZGQgZGVmaW5lcyB0byBiZSBhYmxlIHRvIGVu
+YWJsZS9jbGVhciBpcnEgYW5kIGNvbmZpZ3VyZSBvbmUgc2hvdCBtb2RlLg0KPj4+DQo+Pj4gU2ln
+bmVkLW9mZi1ieTogQmVuamFtaW4gR2FpZ25hcmQgPGJlbmphbWluLmdhaWduYXJkQHN0LmNvbT4N
+Cj4+IEFyZSB5b3UgZmluZSBpZiBJIHBpY2sgdGhpcyBwYXRjaCB3aXRoIHRoZSBzZXJpZXM/DQo+
+IE5vdGhpbmcgaGVhcmQgZnJvbSB5b3Ugc2luY2UgSSBBY2tlZCB0aGlzLg0KPg0KPiBBcmUgeW91
+IHN0aWxsIHBsYW5uaW5nIG9uIHRha2luZyB0aGlzIHBhdGNoPw0KPg0KPiBJZiBzbywgY2FuIHlv
+dSBhbHNvIHRha2UgcGF0Y2ggMSBwbGVhc2U/DQpJIHdpbGwgc2VuZCBhIHY1Lg0KRGFuaWVsIGNv
+dWxkIHlvdSB3YWl0IHVudGlsIHRoYXQgdG8gbWVyZ2UgYWxsIHRoZSBwYXRjaGVzIChldmVuIGlm
+IHRoaXMgDQpvbmUgd29uJ3QgY2hhbmdlKSA/DQoNCkJlbmphbWluDQo+DQo=
