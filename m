@@ -2,41 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CD8CC18B661
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:26:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 75EAB18B5B9
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:21:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730614AbgCSN0X (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 09:26:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54238 "EHLO mail.kernel.org"
+        id S1730040AbgCSNU7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 09:20:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45288 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730772AbgCSN0T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 09:26:19 -0400
+        id S1730038AbgCSNU4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 09:20:56 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E89DC20658;
-        Thu, 19 Mar 2020 13:26:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 785002098B;
+        Thu, 19 Mar 2020 13:20:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584624378;
-        bh=ACVs9EEdSSF2EStts4WvgDFgGjqrcJok/0eJsCLUZM8=;
+        s=default; t=1584624055;
+        bh=0taveyrClKRSFHcmYXfJ0NNt6YlS9nmIS9zwpPLOoYg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=B9zzMw/jDUgVFBzoLcbTZYs6ZHiWZSzZzWk9gugrOfn+lrKAL6f+8O0QnQTc8sKmK
-         bAykaYyw51TEZ7bVxgwVrMc6MICPaSfHmCoKauG/z1UGM1Kd+T5TFO/Kj4CmQfX5jN
-         x8Kf0NvqCA0ddySjdAkG2wUMPvEQh6pkeHNlwVjw=
+        b=kCA2z9DT+R7Zszrn6xWiQUDrDdJ69BbBnK5GNPpdo/Y/umkI+YIXlHA83oGSOh8op
+         9YyXYiArwOYTlyyN4nbtQuYBDf+qK8i9/4Qfbyu+OrMfNYnwZZSMWqIOAPpvY8mi4T
+         hKN4vqZfBQLH/RUpxiKLpJ9k86CVxS9E4WIMZqZM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Antoine Tenart <antoine.tenart@bootlin.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.5 42/65] net: phy: mscc: fix firmware paths
+        stable@vger.kernel.org, Carl Huang <cjhuang@codeaurora.org>,
+        Wen Gong <wgong@codeaurora.org>,
+        Doug Anderson <dianders@chromium.org>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.19 42/48] net: qrtr: fix len of skb_put_padto in qrtr_node_enqueue
 Date:   Thu, 19 Mar 2020 14:04:24 +0100
-Message-Id: <20200319123939.770299315@linuxfoundation.org>
+Message-Id: <20200319123916.071662618@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.2
-In-Reply-To: <20200319123926.466988514@linuxfoundation.org>
-References: <20200319123926.466988514@linuxfoundation.org>
+In-Reply-To: <20200319123902.941451241@linuxfoundation.org>
+References: <20200319123902.941451241@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,43 +45,78 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Antoine Tenart <antoine.tenart@bootlin.com>
+From: Carl Huang <cjhuang@codeaurora.org>
 
-[ Upstream commit c87a9d6fc6d555e4981f2ded77d9a8cce950743e ]
+commit ce57785bf91b1ceaef4f4bffed8a47dc0919c8da upstream.
 
-The firmware paths for the VSC8584 PHYs not not contain the leading
-'microchip/' directory, as used in linux-firmware, resulting in an
-error when probing the driver. This patch fixes it.
+The len used for skb_put_padto is wrong, it need to add len of hdr.
 
-Fixes: a5afc1678044 ("net: phy: mscc: add support for VSC8584 PHY")
-Signed-off-by: Antoine Tenart <antoine.tenart@bootlin.com>
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+In qrtr_node_enqueue, local variable size_t len is assign with
+skb->len, then skb_push(skb, sizeof(*hdr)) will add skb->len with
+sizeof(*hdr), so local variable size_t len is not same with skb->len
+after skb_push(skb, sizeof(*hdr)).
+
+Then the purpose of skb_put_padto(skb, ALIGN(len, 4)) is to add add
+pad to the end of the skb's data if skb->len is not aligned to 4, but
+unfortunately it use len instead of skb->len, at this line, skb->len
+is 32 bytes(sizeof(*hdr)) more than len, for example, len is 3 bytes,
+then skb->len is 35 bytes(3 + 32), and ALIGN(len, 4) is 4 bytes, so
+__skb_put_padto will do nothing after check size(35) < len(4), the
+correct value should be 36(sizeof(*hdr) + ALIGN(len, 4) = 32 + 4),
+then __skb_put_padto will pass check size(35) < len(36) and add 1 byte
+to the end of skb's data, then logic is correct.
+
+function of skb_push:
+void *skb_push(struct sk_buff *skb, unsigned int len)
+{
+	skb->data -= len;
+	skb->len  += len;
+	if (unlikely(skb->data < skb->head))
+		skb_under_panic(skb, len, __builtin_return_address(0));
+	return skb->data;
+}
+
+function of skb_put_padto
+static inline int skb_put_padto(struct sk_buff *skb, unsigned int len)
+{
+	return __skb_put_padto(skb, len, true);
+}
+
+function of __skb_put_padto
+static inline int __skb_put_padto(struct sk_buff *skb, unsigned int len,
+				  bool free_on_error)
+{
+	unsigned int size = skb->len;
+
+	if (unlikely(size < len)) {
+		len -= size;
+		if (__skb_pad(skb, len, free_on_error))
+			return -ENOMEM;
+		__skb_put(skb, len);
+	}
+	return 0;
+}
+
+Signed-off-by: Carl Huang <cjhuang@codeaurora.org>
+Signed-off-by: Wen Gong <wgong@codeaurora.org>
+Cc: Doug Anderson <dianders@chromium.org>
 Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/net/phy/mscc.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ net/qrtr/qrtr.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/phy/mscc.c b/drivers/net/phy/mscc.c
-index d5f8f351d9eff..3e38d15a67c64 100644
---- a/drivers/net/phy/mscc.c
-+++ b/drivers/net/phy/mscc.c
-@@ -310,11 +310,11 @@ enum rgmii_rx_clock_delay {
- 				BIT(VSC8531_FORCE_LED_OFF) | \
- 				BIT(VSC8531_FORCE_LED_ON))
+--- a/net/qrtr/qrtr.c
++++ b/net/qrtr/qrtr.c
+@@ -203,7 +203,7 @@ static int qrtr_node_enqueue(struct qrtr
+ 	hdr->size = cpu_to_le32(len);
+ 	hdr->confirm_rx = 0;
  
--#define MSCC_VSC8584_REVB_INT8051_FW		"mscc_vsc8584_revb_int8051_fb48.bin"
-+#define MSCC_VSC8584_REVB_INT8051_FW		"microchip/mscc_vsc8584_revb_int8051_fb48.bin"
- #define MSCC_VSC8584_REVB_INT8051_FW_START_ADDR	0xe800
- #define MSCC_VSC8584_REVB_INT8051_FW_CRC	0xfb48
+-	skb_put_padto(skb, ALIGN(len, 4));
++	skb_put_padto(skb, ALIGN(len, 4) + sizeof(*hdr));
  
--#define MSCC_VSC8574_REVB_INT8051_FW		"mscc_vsc8574_revb_int8051_29e8.bin"
-+#define MSCC_VSC8574_REVB_INT8051_FW		"microchip/mscc_vsc8574_revb_int8051_29e8.bin"
- #define MSCC_VSC8574_REVB_INT8051_FW_START_ADDR	0x4000
- #define MSCC_VSC8574_REVB_INT8051_FW_CRC	0x29e8
- 
--- 
-2.20.1
-
+ 	mutex_lock(&node->ep_lock);
+ 	if (node->ep)
 
 
