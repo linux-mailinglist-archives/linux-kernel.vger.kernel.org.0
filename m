@@ -2,48 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6E95E18B486
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:10:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D536F18B411
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:06:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728538AbgCSNK3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 09:10:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55290 "EHLO mail.kernel.org"
+        id S1727673AbgCSNG3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 09:06:29 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49636 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727345AbgCSNK2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 09:10:28 -0400
+        id S1727137AbgCSNGY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 09:06:24 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AFF3F2145D;
-        Thu, 19 Mar 2020 13:10:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E75DD20753;
+        Thu, 19 Mar 2020 13:06:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584623427;
-        bh=Vx2xi/DRW2kcc7cTT/7poelu4Z9hp/UMPNMvqQG5O5I=;
-        h=From:To:Cc:Subject:Date:From;
-        b=hetTUdIWuz7c8DqHFhREhwc1YISAr7cOfrgMuJ263rVjJVFNOHN2QANk5YEvssleS
-         d90KRSFq/9csjcL7yIiJ7YKWb8640G+LqRWyyywpKjSmDA7TzEAVCNq4JEhlfOpigi
-         RkMLEYMtt2Botsy90HOTUtPQ1mfR9Ye8wQMr5MAI=
+        s=default; t=1584623183;
+        bh=xC0mdHOCYtkpDML66PqbVkK4GBA6heR93um/WyEakBk=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=Ywj3kF0vIVBuPmyyLSxol1juHHCV5cR/b3kK3510J/ReRc1RWxdnvH5jv7yVhk2uR
+         D/z6v5uYx2JtWUR2DdRAE/tKVNZKW2yh1EeYyPYeTx7hPcnh7/ZK2HsI0i4MJ7NOTJ
+         PDpt7DsbYJPJCav3CT/kkHQbE9SQXn+fEBdvm+j8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
-Subject: [PATCH 4.9 00/90] 4.9.217-rc1 review
-Date:   Thu, 19 Mar 2020 13:59:22 +0100
-Message-Id: <20200319123928.635114118@linuxfoundation.org>
+        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        syzbot <syzkaller@googlegroups.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.4 19/93] slip: make slhc_compress() more robust against malicious packets
+Date:   Thu, 19 Mar 2020 13:59:23 +0100
+Message-Id: <20200319123931.293339285@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.2
-MIME-Version: 1.0
+In-Reply-To: <20200319123924.795019515@linuxfoundation.org>
+References: <20200319123924.795019515@linuxfoundation.org>
 User-Agent: quilt/0.66
-X-stable: review
-X-Patchwork-Hint: ignore
-X-KernelTest-Patch: http://kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.9.217-rc1.gz
-X-KernelTest-Tree: git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
-X-KernelTest-Branch: linux-4.9.y
-X-KernelTest-Patches: git://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git
-X-KernelTest-Version: 4.9.217-rc1
-X-KernelTest-Deadline: 2020-03-21T12:39+00:00
+MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -51,376 +44,119 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is the start of the stable review cycle for the 4.9.217 release.
-There are 90 patches in this series, all will be posted as a response
-to this one.  If anyone has any issues with these being applied, please
-let me know.
-
-Responses should be made by Sat, 21 Mar 2020 12:37:04 +0000.
-Anything received after that time might be too late.
-
-The whole patch series can be found in one patch at:
-	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.9.217-rc1.gz
-or in the git tree and branch at:
-	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.9.y
-and the diffstat can be found below.
-
-thanks,
-
-greg k-h
-
--------------
-Pseudo-Shortlog of commits:
-
-Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-    Linux 4.9.217-rc1
-
-Matteo Croce <mcroce@redhat.com>
-    ipv4: ensure rcu_read_lock() in cipso_v4_error()
-
-Jann Horn <jannh@google.com>
-    mm: slub: add missing TID bump in kmem_cache_alloc_bulk()
-
-Kees Cook <keescook@chromium.org>
-    ARM: 8958/1: rename missed uaccess .fixup section
-
-Florian Fainelli <f.fainelli@gmail.com>
-    ARM: 8957/1: VDSO: Match ARMv8 timer in cntvct_functional()
-
-Qian Cai <cai@lca.pw>
-    jbd2: fix data races at struct journal_head
-
-Linus Torvalds <torvalds@linux-foundation.org>
-    signal: avoid double atomic counter increments for user accounting
-
-Madhuparna Bhowmik <madhuparnabhowmik10@gmail.com>
-    mac80211: rx: avoid RCU list traversal under mutex
-
-Marek Vasut <marex@denx.de>
-    net: ks8851-ml: Fix IRQ handling and locking
-
-Johannes Berg <johannes.berg@intel.com>
-    cfg80211: check reg_rule for NULL in handle_channel_custom()
-
-Kai-Heng Feng <kai.heng.feng@canonical.com>
-    HID: i2c-hid: add Trekstor Surfbook E11B to descriptor override
-
-Mansour Behabadi <mansour@oxplot.com>
-    HID: apple: Add support for recent firmware on Magic Keyboards
-
-Jean Delvare <jdelvare@suse.de>
-    ACPI: watchdog: Allow disabling WDAT at boot
-
-Kim Phillips <kim.phillips@amd.com>
-    perf/amd/uncore: Replace manual sampling check with CAP_NO_INTERRUPT flag
-
-Sven Eckelmann <sven@narfation.org>
-    batman-adv: Use explicit tvlv padding for ELP packets
-
-Sven Eckelmann <sven@narfation.org>
-    batman-adv: Avoid probe ELP information leak
-
-Matthias Schiffer <mschiffer@universe-factory.net>
-    batman-adv: update data pointers after skb_cow()
-
-Sven Eckelmann <sven@narfation.org>
-    batman-adv: Don't schedule OGM for disabled interface
-
-Sven Eckelmann <sven@narfation.org>
-    batman-adv: Avoid free/alloc race when handling OGM buffer
-
-Sven Eckelmann <sven@narfation.org>
-    batman-adv: Avoid free/alloc race when handling OGM2 buffer
-
-Sven Eckelmann <sven@narfation.org>
-    batman-adv: Fix duplicated OGMs on NETDEV_UP
-
-Sven Eckelmann <sven@narfation.org>
-    batman-adv: Prevent duplicated gateway_node entry
-
-Linus Lüssing <linus.luessing@c0d3.blue>
-    batman-adv: Fix multicast TT issues with bogus ROAM flags
-
-Linus Lüssing <linus.luessing@c0d3.blue>
-    batman-adv: Avoid storing non-TT-sync flags on singular entries too
-
-Sven Eckelmann <sven@narfation.org>
-    batman-adv: Fix debugfs path for renamed softif
-
-Sven Eckelmann <sven@narfation.org>
-    batman-adv: Fix debugfs path for renamed hardif
-
-Marek Lindner <mareklindner@neomailbox.ch>
-    batman-adv: prevent TT request storms by not sending inconsistent TT TLVLs
-
-Linus Lüssing <linus.luessing@c0d3.blue>
-    batman-adv: Fix TT sync flags for intermediate TT responses
-
-Sven Eckelmann <sven@narfation.org>
-    batman-adv: Avoid race in TT TVLV allocator helper
-
-Sven Eckelmann <sven@narfation.org>
-    batman-adv: Fix internal interface indices types
-
-Sven Eckelmann <sven@narfation.org>
-    batman-adv: Fix lock for ogm cnt access in batadv_iv_ogm_calc_tq
-
-Sven Eckelmann <sven.eckelmann@openmesh.com>
-    batman-adv: Fix check of retrieved orig_gw in batadv_v_gw_is_eligible
-
-Sven Eckelmann <sven.eckelmann@open-mesh.com>
-    batman-adv: Always initialize fragment header priority
-
-Sven Eckelmann <sven.eckelmann@openmesh.com>
-    batman-adv: Avoid spurious warnings from bat_v neigh_cmp implementation
-
-Linus Lüssing <linus.luessing@c0d3.blue>
-    batman-adv: fix TT sync flag inconsistencies
-
-Sven Eckelmann <sven@narfation.org>
-    batman-adv: Accept only filled wifi station info
-
-Sven Eckelmann <sven@narfation.org>
-    batman-adv: Use default throughput value on cfg80211 error
-
-Sven Eckelmann <sven@narfation.org>
-    batman-adv: Fix rx packet/bytes stats on local ARP reply
-
-Sven Eckelmann <sven@narfation.org>
-    batman-adv: Initialize gw sel_class via batadv_algo
-
-Linus Lüssing <linus.luessing@c0d3.blue>
-    batman-adv: Fix transmission of final, 16th fragment
-
-Sven Eckelmann <sven@narfation.org>
-    batman-adv: Fix double free during fragment merge error
-
-Vladis Dronov <vdronov@redhat.com>
-    efi: Add a sanity check to efivar_store_raw()
-
-Eric Dumazet <edumazet@google.com>
-    ipv6: restrict IPV6_ADDRFORM operation
-
-Daniel Drake <drake@endlessm.com>
-    iommu/vt-d: Ignore devices with out-of-spec domain number
-
-Zhenzhong Duan <zhenzhong.duan@gmail.com>
-    iommu/vt-d: Fix the wrong printing in RHSA parsing
-
-qize wang <wangqize888888888@gmail.com>
-    mwifiex: Fix heap overflow in mmwifiex_process_tdls_action_frame()
-
-Jakub Kicinski <kuba@kernel.org>
-    netfilter: cthelper: add missing attribute validation for cthelper
-
-Jakub Kicinski <kuba@kernel.org>
-    nl80211: add missing attribute validation for channel switch
-
-Jakub Kicinski <kuba@kernel.org>
-    nl80211: add missing attribute validation for beacon report scanning
-
-Jakub Kicinski <kuba@kernel.org>
-    nl80211: add missing attribute validation for critical protocol indication
-
-Yonghyun Hwang <yonghyun@google.com>
-    iommu/vt-d: Fix a bug in intel_iommu_iova_to_phys() for huge page
-
-Hans de Goede <hdegoede@redhat.com>
-    iommu/vt-d: dmar: replace WARN_TAINT with pr_warn + add_taint
-
-Vladis Dronov <vdronov@redhat.com>
-    efi: Fix a race and a buffer overflow while reading efivars via sysfs
-
-Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
-    ARC: define __ALIGN_STR and __ALIGN symbols for ARC
-
-Vitaly Kuznetsov <vkuznets@redhat.com>
-    KVM: x86: clear stale x86_emulate_ctxt->intercept value
-
-Al Viro <viro@zeniv.linux.org.uk>
-    gfs2_atomic_open(): fix O_EXCL|O_CREAT handling on cold dcache
-
-Al Viro <viro@zeniv.linux.org.uk>
-    cifs_atomic_open(): fix double-put on late allocation failure
-
-Colin Ian King <colin.king@canonical.com>
-    drm/amd/display: remove duplicated assignment to grph_obj_type
-
-Hillf Danton <hdanton@sina.com>
-    workqueue: don't use wq_select_unbound_cpu() for bound works
-
-Hans de Goede <hdegoede@redhat.com>
-    iommu/vt-d: quirk_ioat_snb_local_iommu: replace WARN_TAINT with pr_warn + add_taint
-
-Halil Pasic <pasic@linux.ibm.com>
-    virtio-blk: fix hw_queue stopped on arbitrary error
-
-Heiner Kallweit <hkallweit1@gmail.com>
-    net: phy: fix MDIO bus PM PHY resuming
-
-Shakeel Butt <shakeelb@google.com>
-    cgroup: memcg: net: do not associate sock with unrelated cgroup
-
-Eric Dumazet <edumazet@google.com>
-    bonding/alb: make sure arp header is pulled before accessing it
-
-Eric Dumazet <edumazet@google.com>
-    slip: make slhc_compress() more robust against malicious packets
-
-Jakub Kicinski <kuba@kernel.org>
-    net: fec: validate the new settings in fec_enet_set_coalesce()
-
-Mahesh Bandewar <maheshb@google.com>
-    macvlan: add cond_resched() during multicast processing
-
-Mahesh Bandewar <maheshb@google.com>
-    ipvlan: don't deref eth hdr before checking it's set
-
-Eric Dumazet <edumazet@google.com>
-    ipvlan: do not use cond_resched_rcu() in ipvlan_process_multicast()
-
-Paolo Abeni <pabeni@redhat.com>
-    ipvlan: egress mcast packets are not exceptional
-
-Jiri Wiesner <jwiesner@suse.com>
-    ipvlan: do not add hardware address of master to its unicast filter list
-
-Mahesh Bandewar <maheshb@google.com>
-    ipvlan: add cond_resched_rcu() while processing muticast backlog
-
-Jakub Kicinski <kuba@kernel.org>
-    nfc: add missing attribute validation for vendor subcommand
-
-Jakub Kicinski <kuba@kernel.org>
-    nfc: add missing attribute validation for SE API
-
-Jakub Kicinski <kuba@kernel.org>
-    team: add missing attribute validation for array index
-
-Jakub Kicinski <kuba@kernel.org>
-    team: add missing attribute validation for port ifindex
-
-Jakub Kicinski <kuba@kernel.org>
-    net: fq: add missing attribute validation for orphan mask
-
-Jakub Kicinski <kuba@kernel.org>
-    macsec: add missing attribute validation for port
-
-Jakub Kicinski <kuba@kernel.org>
-    nl802154: add missing attribute validation for dev_type
-
-Jakub Kicinski <kuba@kernel.org>
-    nl802154: add missing attribute validation
-
-Jakub Kicinski <kuba@kernel.org>
-    fib: add missing attribute validation for tun_id
-
-Vasundhara Volam <vasundhara-v.volam@broadcom.com>
-    bnxt_en: reinitialize IRQs when MTU is modified
-
-You-Sheng Yang <vicamo.yang@canonical.com>
-    r8152: check disconnect status after long sleep
-
-Dan Carpenter <dan.carpenter@oracle.com>
-    net: nfc: fix bounds checking bugs on "pipe"
-
-Dmitry Bogdanov <dbogdanov@marvell.com>
-    net: macsec: update SCI upon MAC address change.
-
-Hangbin Liu <liuhangbin@gmail.com>
-    ipv6/addrconf: call ipv6_mc_up() for non-Ethernet interface
-
-Eric Dumazet <edumazet@google.com>
-    gre: fix uninit-value in __iptunnel_pull_header
-
-Dmitry Yakunin <zeil@yandex-team.ru>
-    cgroup, netclassid: periodically release file_lock on classid updating
-
-Florian Fainelli <f.fainelli@gmail.com>
-    net: phy: Avoid multiple suspends
-
-David S. Miller <davem@davemloft.net>
-    phy: Revert toggling reset changes.
-
-Petr Malat <oss@malat.biz>
-    NFS: Remove superfluous kmap in nfs_readdir_xdr_to_array
-
-
--------------
-
-Diffstat:
-
- Documentation/filesystems/porting            |   7 ++
- Documentation/kernel-parameters.txt          |   4 +
- Makefile                                     |   4 +-
- arch/arc/include/asm/linkage.h               |   2 +
- arch/arm/kernel/vdso.c                       |   2 +
- arch/arm/lib/copy_from_user.S                |   2 +-
- arch/x86/events/amd/uncore.c                 |  14 +--
- arch/x86/kvm/emulate.c                       |   1 +
- drivers/acpi/acpi_watchdog.c                 |  12 ++-
- drivers/block/virtio_blk.c                   |   8 +-
- drivers/firmware/efi/efivars.c               |  32 ++++--
- drivers/gpu/drm/amd/amdgpu/amdgpu_atombios.c |   3 +-
- drivers/hid/hid-apple.c                      |   3 +-
- drivers/hid/i2c-hid/i2c-hid-dmi-quirks.c     |   8 ++
- drivers/iommu/dmar.c                         |  21 ++--
- drivers/iommu/intel-iommu.c                  |  13 ++-
- drivers/net/bonding/bond_alb.c               |  20 ++--
- drivers/net/ethernet/broadcom/bnxt/bnxt.c    |   4 +-
- drivers/net/ethernet/freescale/fec_main.c    |   6 +-
- drivers/net/ethernet/micrel/ks8851_mll.c     |  14 +--
- drivers/net/ipvlan/ipvlan_core.c             |  19 ++--
- drivers/net/ipvlan/ipvlan_main.c             |   5 +-
- drivers/net/macsec.c                         |  12 ++-
- drivers/net/macvlan.c                        |   2 +
- drivers/net/phy/phy_device.c                 |  18 ++--
- drivers/net/slip/slhc.c                      |  14 ++-
- drivers/net/team/team.c                      |   2 +
- drivers/net/usb/r8152.c                      |   6 ++
- drivers/net/wireless/marvell/mwifiex/tdls.c  |  70 +++++++++++--
- fs/cifs/dir.c                                |   1 -
- fs/gfs2/inode.c                              |   2 +-
- fs/jbd2/transaction.c                        |   8 +-
- fs/nfs/dir.c                                 |   2 -
- fs/open.c                                    |   3 -
- include/linux/phy.h                          |   2 +
- include/net/fib_rules.h                      |   1 +
- kernel/cgroup.c                              |   4 +
- kernel/signal.c                              |  23 +++--
- kernel/workqueue.c                           |  14 +--
- mm/memcontrol.c                              |   4 +
- mm/slub.c                                    |   9 ++
- net/batman-adv/bat_iv_ogm.c                  | 105 +++++++++++++++----
- net/batman-adv/bat_v.c                       |  25 +++--
- net/batman-adv/bat_v_elp.c                   |  22 ++--
- net/batman-adv/bat_v_ogm.c                   |  42 ++++++--
- net/batman-adv/debugfs.c                     |  40 +++++++
- net/batman-adv/debugfs.h                     |  11 ++
- net/batman-adv/distributed-arp-table.c       |   5 +-
- net/batman-adv/fragmentation.c               |  22 ++--
- net/batman-adv/gateway_client.c              |  11 +-
- net/batman-adv/gateway_common.c              |   5 +
- net/batman-adv/hard-interface.c              |  51 +++++++--
- net/batman-adv/originator.c                  |   4 +-
- net/batman-adv/originator.h                  |   4 +-
- net/batman-adv/routing.c                     |  11 +-
- net/batman-adv/soft-interface.c              |   1 -
- net/batman-adv/translation-table.c           | 149 ++++++++++++++++++++++-----
- net/batman-adv/types.h                       |  22 +++-
- net/core/netclassid_cgroup.c                 |  47 +++++++--
- net/ieee802154/nl_policy.c                   |   6 ++
- net/ipv4/cipso_ipv4.c                        |   7 +-
- net/ipv4/gre_demux.c                         |  12 ++-
- net/ipv6/addrconf.c                          |   4 +
- net/ipv6/ipv6_sockglue.c                     |  10 +-
- net/mac80211/rx.c                            |   2 +-
- net/netfilter/nfnetlink_cthelper.c           |   2 +
- net/nfc/hci/core.c                           |  19 +++-
- net/nfc/netlink.c                            |   3 +
- net/sched/sch_fq.c                           |   1 +
- net/wireless/nl80211.c                       |   5 +
- net/wireless/reg.c                           |   2 +-
- 71 files changed, 809 insertions(+), 242 deletions(-)
+From: Eric Dumazet <edumazet@google.com>
+
+[ Upstream commit 110a40dfb708fe940a3f3704d470e431c368d256 ]
+
+Before accessing various fields in IPV4 network header
+and TCP header, make sure the packet :
+
+- Has IP version 4 (ip->version == 4)
+- Has not a silly network length (ip->ihl >= 5)
+- Is big enough to hold network and transport headers
+- Has not a silly TCP header size (th->doff >= sizeof(struct tcphdr) / 4)
+
+syzbot reported :
+
+BUG: KMSAN: uninit-value in slhc_compress+0x5b9/0x2e60 drivers/net/slip/slhc.c:270
+CPU: 0 PID: 11728 Comm: syz-executor231 Not tainted 5.6.0-rc2-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Call Trace:
+ __dump_stack lib/dump_stack.c:77 [inline]
+ dump_stack+0x1c9/0x220 lib/dump_stack.c:118
+ kmsan_report+0xf7/0x1e0 mm/kmsan/kmsan_report.c:118
+ __msan_warning+0x58/0xa0 mm/kmsan/kmsan_instr.c:215
+ slhc_compress+0x5b9/0x2e60 drivers/net/slip/slhc.c:270
+ ppp_send_frame drivers/net/ppp/ppp_generic.c:1637 [inline]
+ __ppp_xmit_process+0x1902/0x2970 drivers/net/ppp/ppp_generic.c:1495
+ ppp_xmit_process+0x147/0x2f0 drivers/net/ppp/ppp_generic.c:1516
+ ppp_write+0x6bb/0x790 drivers/net/ppp/ppp_generic.c:512
+ do_loop_readv_writev fs/read_write.c:717 [inline]
+ do_iter_write+0x812/0xdc0 fs/read_write.c:1000
+ compat_writev+0x2df/0x5a0 fs/read_write.c:1351
+ do_compat_pwritev64 fs/read_write.c:1400 [inline]
+ __do_compat_sys_pwritev fs/read_write.c:1420 [inline]
+ __se_compat_sys_pwritev fs/read_write.c:1414 [inline]
+ __ia32_compat_sys_pwritev+0x349/0x3f0 fs/read_write.c:1414
+ do_syscall_32_irqs_on arch/x86/entry/common.c:339 [inline]
+ do_fast_syscall_32+0x3c7/0x6e0 arch/x86/entry/common.c:410
+ entry_SYSENTER_compat+0x68/0x77 arch/x86/entry/entry_64_compat.S:139
+RIP: 0023:0xf7f7cd99
+Code: 90 e8 0b 00 00 00 f3 90 0f ae e8 eb f9 8d 74 26 00 89 3c 24 c3 90 90 90 90 90 90 90 90 90 90 90 90 51 52 55 89 e5 0f 34 cd 80 <5d> 5a 59 c3 90 90 90 90 eb 0d 90 90 90 90 90 90 90 90 90 90 90 90
+RSP: 002b:00000000ffdb84ac EFLAGS: 00000217 ORIG_RAX: 000000000000014e
+RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 00000000200001c0
+RDX: 0000000000000001 RSI: 0000000000000000 RDI: 0000000000000003
+RBP: 0000000040047459 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
+R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
+
+Uninit was created at:
+ kmsan_save_stack_with_flags mm/kmsan/kmsan.c:144 [inline]
+ kmsan_internal_poison_shadow+0x66/0xd0 mm/kmsan/kmsan.c:127
+ kmsan_slab_alloc+0x8a/0xe0 mm/kmsan/kmsan_hooks.c:82
+ slab_alloc_node mm/slub.c:2793 [inline]
+ __kmalloc_node_track_caller+0xb40/0x1200 mm/slub.c:4401
+ __kmalloc_reserve net/core/skbuff.c:142 [inline]
+ __alloc_skb+0x2fd/0xac0 net/core/skbuff.c:210
+ alloc_skb include/linux/skbuff.h:1051 [inline]
+ ppp_write+0x115/0x790 drivers/net/ppp/ppp_generic.c:500
+ do_loop_readv_writev fs/read_write.c:717 [inline]
+ do_iter_write+0x812/0xdc0 fs/read_write.c:1000
+ compat_writev+0x2df/0x5a0 fs/read_write.c:1351
+ do_compat_pwritev64 fs/read_write.c:1400 [inline]
+ __do_compat_sys_pwritev fs/read_write.c:1420 [inline]
+ __se_compat_sys_pwritev fs/read_write.c:1414 [inline]
+ __ia32_compat_sys_pwritev+0x349/0x3f0 fs/read_write.c:1414
+ do_syscall_32_irqs_on arch/x86/entry/common.c:339 [inline]
+ do_fast_syscall_32+0x3c7/0x6e0 arch/x86/entry/common.c:410
+ entry_SYSENTER_compat+0x68/0x77 arch/x86/entry/entry_64_compat.S:139
+
+Fixes: b5451d783ade ("slip: Move the SLIP drivers")
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Reported-by: syzbot <syzkaller@googlegroups.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ drivers/net/slip/slhc.c |   14 ++++++++++----
+ 1 file changed, 10 insertions(+), 4 deletions(-)
+
+--- a/drivers/net/slip/slhc.c
++++ b/drivers/net/slip/slhc.c
+@@ -232,7 +232,7 @@ slhc_compress(struct slcompress *comp, u
+ 	register struct cstate *cs = lcs->next;
+ 	register unsigned long deltaS, deltaA;
+ 	register short changes = 0;
+-	int hlen;
++	int nlen, hlen;
+ 	unsigned char new_seq[16];
+ 	register unsigned char *cp = new_seq;
+ 	struct iphdr *ip;
+@@ -248,6 +248,8 @@ slhc_compress(struct slcompress *comp, u
+ 		return isize;
+ 
+ 	ip = (struct iphdr *) icp;
++	if (ip->version != 4 || ip->ihl < 5)
++		return isize;
+ 
+ 	/* Bail if this packet isn't TCP, or is an IP fragment */
+ 	if (ip->protocol != IPPROTO_TCP || (ntohs(ip->frag_off) & 0x3fff)) {
+@@ -258,10 +260,14 @@ slhc_compress(struct slcompress *comp, u
+ 			comp->sls_o_tcp++;
+ 		return isize;
+ 	}
+-	/* Extract TCP header */
++	nlen = ip->ihl * 4;
++	if (isize < nlen + sizeof(*th))
++		return isize;
+ 
+-	th = (struct tcphdr *)(((unsigned char *)ip) + ip->ihl*4);
+-	hlen = ip->ihl*4 + th->doff*4;
++	th = (struct tcphdr *)(icp + nlen);
++	if (th->doff < sizeof(struct tcphdr) / 4)
++		return isize;
++	hlen = nlen + th->doff * 4;
+ 
+ 	/*  Bail if the TCP packet isn't `compressible' (i.e., ACK isn't set or
+ 	 *  some other control bit is set). Also uncompressible if
 
 
