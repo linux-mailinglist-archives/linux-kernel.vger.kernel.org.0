@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 14C9A18B6A5
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:28:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A12E718B667
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:26:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730796AbgCSN0g (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 09:26:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54536 "EHLO mail.kernel.org"
+        id S1730812AbgCSN0j (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 09:26:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54636 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730523AbgCSN0c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 09:26:32 -0400
+        id S1730795AbgCSN0g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 09:26:36 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 677502080C;
-        Thu, 19 Mar 2020 13:26:31 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5101E20658;
+        Thu, 19 Mar 2020 13:26:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584624391;
-        bh=iYNgMw4vLnjc2E+zC4jx94Iy5zhCoIdL205SSdMGXNs=;
+        s=default; t=1584624395;
+        bh=jJkSqg+i9P7iPzHlRnCaYYKLwrXSs46x9cFnO80Ekvk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=whS4kEh8x7tEaMA832X9lyn+lQd9raw23OOjSLN244cg45pJeeDqPDkVd6vp7JhM2
-         aoVeVhPuCIYPTcC3Y56WFIX3OheAfuI3N7TdRK+UgpkINmuxYCv6O1RtoAe6EriuKW
-         01VdIyGAIqVQUzqCGb4QwgTd1VOrtjzRaxA060TY=
+        b=WHLc4gijUgZuClmceHp+cWKVgrdM0DwVHX6W7xMFksIOzpeQevCkIsOGzNWa6AcRM
+         O+4s069WcFnHhlCm86dTwCnFe5HfXi9iewGVaPjhM9rJsZy2sayAGo1TUegBWOvvG7
+         yneji/Ltop9DwD91CrLYjJYSNjhCd/uICSmoPSf4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Taehee Yoo <ap420073@gmail.com>,
         "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.5 46/65] net: rmnet: fix NULL pointer dereference in rmnet_newlink()
-Date:   Thu, 19 Mar 2020 14:04:28 +0100
-Message-Id: <20200319123940.955950349@linuxfoundation.org>
+Subject: [PATCH 5.5 47/65] net: rmnet: fix NULL pointer dereference in rmnet_changelink()
+Date:   Thu, 19 Mar 2020 14:04:29 +0100
+Message-Id: <20200319123941.236811843@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.2
 In-Reply-To: <20200319123926.466988514@linuxfoundation.org>
 References: <20200319123926.466988514@linuxfoundation.org>
@@ -46,78 +46,84 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Taehee Yoo <ap420073@gmail.com>
 
-[ Upstream commit 93b5cbfa9636d385126f211dca9efa7e3f683202 ]
+[ Upstream commit 1eb1f43a6e37282348a41e3d68f5e9a6a4359212 ]
 
-rmnet registers IFLA_LINK interface as a lower interface.
-But, IFLA_LINK could be NULL.
-In the current code, rmnet doesn't check IFLA_LINK.
-So, panic would occur.
+In the rmnet_changelink(), it uses IFLA_LINK without checking
+NULL pointer.
+tb[IFLA_LINK] could be NULL pointer.
+So, NULL-ptr-deref could occur.
+
+rmnet already has a lower interface (real_dev).
+So, after this patch, rmnet_changelink() does not use IFLA_LINK anymore.
 
 Test commands:
     modprobe rmnet
-    ip link add rmnet0 type rmnet mux_id 1
+    ip link add dummy0 type dummy
+    ip link add rmnet0 link dummy0 type rmnet mux_id 1
+    ip link set rmnet0 type rmnet mux_id 2
 
 Splat looks like:
-[   36.826109][ T1115] general protection fault, probably for non-canonical address 0xdffffc0000000000I
-[   36.838817][ T1115] KASAN: null-ptr-deref in range [0x0000000000000000-0x0000000000000007]
-[   36.839908][ T1115] CPU: 1 PID: 1115 Comm: ip Not tainted 5.6.0-rc1+ #447
-[   36.840569][ T1115] Hardware name: innotek GmbH VirtualBox/VirtualBox, BIOS VirtualBox 12/01/2006
-[   36.841408][ T1115] RIP: 0010:rmnet_newlink+0x54/0x510 [rmnet]
-[   36.841986][ T1115] Code: 83 ec 18 48 c1 e9 03 80 3c 01 00 0f 85 d4 03 00 00 48 8b 6a 28 48 b8 00 00 00 00 00 c
-[   36.843923][ T1115] RSP: 0018:ffff8880b7e0f1c0 EFLAGS: 00010247
-[   36.844756][ T1115] RAX: dffffc0000000000 RBX: ffff8880d14cca00 RCX: 1ffff11016fc1e99
-[   36.845859][ T1115] RDX: 0000000000000000 RSI: ffff8880c3d04000 RDI: 0000000000000004
-[   36.846961][ T1115] RBP: 0000000000000000 R08: ffff8880b7e0f8b0 R09: ffff8880b6ac2d90
-[   36.848020][ T1115] R10: ffffffffc0589a40 R11: ffffed1016d585b7 R12: ffffffff88ceaf80
-[   36.848788][ T1115] R13: ffff8880c3d04000 R14: ffff8880b7e0f8b0 R15: ffff8880c3d04000
-[   36.849546][ T1115] FS:  00007f50ab3360c0(0000) GS:ffff8880da000000(0000) knlGS:0000000000000000
-[   36.851784][ T1115] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[   36.852422][ T1115] CR2: 000055871afe5ab0 CR3: 00000000ae246001 CR4: 00000000000606e0
-[   36.853181][ T1115] Call Trace:
-[   36.853514][ T1115]  __rtnl_newlink+0xbdb/0x1270
-[   36.853967][ T1115]  ? lock_downgrade+0x6e0/0x6e0
-[   36.854420][ T1115]  ? rtnl_link_unregister+0x220/0x220
-[   36.854936][ T1115]  ? lock_acquire+0x164/0x3b0
-[   36.855376][ T1115]  ? is_bpf_image_address+0xff/0x1d0
-[   36.855884][ T1115]  ? rtnl_newlink+0x4c/0x90
-[   36.856304][ T1115]  ? kernel_text_address+0x111/0x140
-[   36.856857][ T1115]  ? __kernel_text_address+0xe/0x30
-[   36.857440][ T1115]  ? unwind_get_return_address+0x5f/0xa0
-[   36.858063][ T1115]  ? create_prof_cpu_mask+0x20/0x20
-[   36.858644][ T1115]  ? arch_stack_walk+0x83/0xb0
-[   36.859171][ T1115]  ? stack_trace_save+0x82/0xb0
-[   36.859710][ T1115]  ? stack_trace_consume_entry+0x160/0x160
-[   36.860357][ T1115]  ? deactivate_slab.isra.78+0x2c5/0x800
-[   36.860928][ T1115]  ? kasan_unpoison_shadow+0x30/0x40
-[   36.861520][ T1115]  ? kmem_cache_alloc_trace+0x135/0x350
-[   36.862125][ T1115]  ? rtnl_newlink+0x4c/0x90
-[   36.864073][ T1115]  rtnl_newlink+0x65/0x90
+[   90.578726][ T1131] general protection fault, probably for non-canonical address 0xdffffc0000000000I
+[   90.581121][ T1131] KASAN: null-ptr-deref in range [0x0000000000000000-0x0000000000000007]
+[   90.582380][ T1131] CPU: 2 PID: 1131 Comm: ip Not tainted 5.6.0-rc1+ #447
+[   90.584285][ T1131] Hardware name: innotek GmbH VirtualBox/VirtualBox, BIOS VirtualBox 12/01/2006
+[   90.587506][ T1131] RIP: 0010:rmnet_changelink+0x5a/0x8a0 [rmnet]
+[   90.588546][ T1131] Code: 83 ec 20 48 c1 ea 03 80 3c 02 00 0f 85 6f 07 00 00 48 8b 5e 28 48 b8 00 00 00 00 00 0
+[   90.591447][ T1131] RSP: 0018:ffff8880ce78f1b8 EFLAGS: 00010247
+[   90.592329][ T1131] RAX: dffffc0000000000 RBX: 0000000000000000 RCX: ffff8880ce78f8b0
+[   90.593253][ T1131] RDX: 0000000000000000 RSI: ffff8880ce78f4a0 RDI: 0000000000000004
+[   90.594058][ T1131] RBP: ffff8880cf543e00 R08: 0000000000000002 R09: 0000000000000002
+[   90.594859][ T1131] R10: ffffffffc0586a40 R11: 0000000000000000 R12: ffff8880ca47c000
+[   90.595690][ T1131] R13: ffff8880ca47c000 R14: ffff8880cf545000 R15: 0000000000000000
+[   90.596553][ T1131] FS:  00007f21f6c7e0c0(0000) GS:ffff8880da400000(0000) knlGS:0000000000000000
+[   90.597504][ T1131] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[   90.599418][ T1131] CR2: 0000556e413db458 CR3: 00000000c917a002 CR4: 00000000000606e0
+[   90.600289][ T1131] Call Trace:
+[   90.600631][ T1131]  __rtnl_newlink+0x922/0x1270
+[   90.601194][ T1131]  ? lock_downgrade+0x6e0/0x6e0
+[   90.601724][ T1131]  ? rtnl_link_unregister+0x220/0x220
+[   90.602309][ T1131]  ? lock_acquire+0x164/0x3b0
+[   90.602784][ T1131]  ? is_bpf_image_address+0xff/0x1d0
+[   90.603331][ T1131]  ? rtnl_newlink+0x4c/0x90
+[   90.603810][ T1131]  ? kernel_text_address+0x111/0x140
+[   90.604419][ T1131]  ? __kernel_text_address+0xe/0x30
+[   90.604981][ T1131]  ? unwind_get_return_address+0x5f/0xa0
+[   90.605616][ T1131]  ? create_prof_cpu_mask+0x20/0x20
+[   90.606304][ T1131]  ? arch_stack_walk+0x83/0xb0
+[   90.606985][ T1131]  ? stack_trace_save+0x82/0xb0
+[   90.607656][ T1131]  ? stack_trace_consume_entry+0x160/0x160
+[   90.608503][ T1131]  ? deactivate_slab.isra.78+0x2c5/0x800
+[   90.609336][ T1131]  ? kasan_unpoison_shadow+0x30/0x40
+[   90.610096][ T1131]  ? kmem_cache_alloc_trace+0x135/0x350
+[   90.610889][ T1131]  ? rtnl_newlink+0x4c/0x90
+[   90.611512][ T1131]  rtnl_newlink+0x65/0x90
 [ ... ]
 
-Fixes: ceed73a2cf4a ("drivers: net: ethernet: qualcomm: rmnet: Initial implementation")
+Fixes: 23790ef12082 ("net: qualcomm: rmnet: Allow to configure flags for existing devices")
 Signed-off-by: Taehee Yoo <ap420073@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/qualcomm/rmnet/rmnet_config.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/net/ethernet/qualcomm/rmnet/rmnet_config.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
 diff --git a/drivers/net/ethernet/qualcomm/rmnet/rmnet_config.c b/drivers/net/ethernet/qualcomm/rmnet/rmnet_config.c
-index 06de59521fc4a..471e3b2a1403a 100644
+index 471e3b2a1403a..ac58f584190bd 100644
 --- a/drivers/net/ethernet/qualcomm/rmnet/rmnet_config.c
 +++ b/drivers/net/ethernet/qualcomm/rmnet/rmnet_config.c
-@@ -135,6 +135,11 @@ static int rmnet_newlink(struct net *src_net, struct net_device *dev,
- 	int err = 0;
- 	u16 mux_id;
- 
-+	if (!tb[IFLA_LINK]) {
-+		NL_SET_ERR_MSG_MOD(extack, "link not specified");
-+		return -EINVAL;
-+	}
-+
- 	real_dev = __dev_get_by_index(src_net, nla_get_u32(tb[IFLA_LINK]));
- 	if (!real_dev || !dev)
+@@ -300,10 +300,8 @@ static int rmnet_changelink(struct net_device *dev, struct nlattr *tb[],
+ 	if (!dev)
  		return -ENODEV;
+ 
+-	real_dev = __dev_get_by_index(dev_net(dev),
+-				      nla_get_u32(tb[IFLA_LINK]));
+-
+-	if (!real_dev || !rmnet_is_real_dev_registered(real_dev))
++	real_dev = priv->real_dev;
++	if (!rmnet_is_real_dev_registered(real_dev))
+ 		return -ENODEV;
+ 
+ 	port = rmnet_get_port_rtnl(real_dev);
 -- 
 2.20.1
 
