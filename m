@@ -2,45 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BA30E18AEA3
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 09:48:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6905118AEB2
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 09:49:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727003AbgCSIs0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 04:48:26 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:59805 "EHLO
+        id S1727400AbgCSIs6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 04:48:58 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:59783 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727129AbgCSIsE (ORCPT
+        with ESMTP id S1727050AbgCSIsB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 04:48:04 -0400
+        Thu, 19 Mar 2020 04:48:01 -0400
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1jEqqH-00031l-S8; Thu, 19 Mar 2020 09:47:54 +0100
+        id 1jEqqJ-000334-Vo; Thu, 19 Mar 2020 09:47:56 +0100
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 252261C229E;
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id CFB871C229F;
         Thu, 19 Mar 2020 09:47:52 +0100 (CET)
-Date:   Thu, 19 Mar 2020 08:47:51 -0000
-From:   "tip-bot2 for Suman Anna" <tip-bot2@linutronix.de>
+Date:   Thu, 19 Mar 2020 08:47:52 -0000
+From:   "tip-bot2 for Matheus Castello" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: timers/core] clocksource/drivers/timer-ti-dm: Drop bogus
- omap_dm_timer_of_set_source()
-Cc:     Tony Lindgren <tony@atomide.com>, Tero Kristo <t-kristo@ti.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        "H. Nikolaus Schaller" <hns@goldelico.com>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Keerthy <j-keerthy@ti.com>,
-        Ladislav Michl <ladis@linux-mips.org>,
-        Pavel Machek <pavel@ucw.cz>,
-        Sebastian Reichel <sre@kernel.org>, Suman Anna <s-anna@ti.com>,
-        Lokesh Vutla <lokeshvutla@ti.com>,
+Subject: [tip: timers/core] clocksource/drivers/owl: Improve owl_timer_init
+ fail messages
+Cc:     Matheus Castello <matheus@castello.eng.br>,
         Daniel Lezcano <daniel.lezcano@linaro.org>,
         x86 <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>
-In-Reply-To: <20200213053504.22638-1-s-anna@ti.com>
-References: <20200213053504.22638-1-s-anna@ti.com>
+In-Reply-To: <20200219004810.411190-1-matheus@castello.eng.br>
+References: <20200219004810.411190-1-matheus@castello.eng.br>
 MIME-Version: 1.0
-Message-ID: <158460767187.28353.4410336602856187146.tip-bot2@tip-bot2>
+Message-ID: <158460767257.28353.6675261030088110845.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -56,101 +48,55 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the timers/core branch of tip:
 
-Commit-ID:     753e83408b7f2980b7a5bfcf01f1175a937a2340
-Gitweb:        https://git.kernel.org/tip/753e83408b7f2980b7a5bfcf01f1175a937a2340
-Author:        Suman Anna <s-anna@ti.com>
-AuthorDate:    Wed, 12 Feb 2020 23:35:04 -06:00
+Commit-ID:     ad1ded9d2e3d1eb452ff58d325aadf237e187bd9
+Gitweb:        https://git.kernel.org/tip/ad1ded9d2e3d1eb452ff58d325aadf237e187bd9
+Author:        Matheus Castello <matheus@castello.eng.br>
+AuthorDate:    Tue, 18 Feb 2020 21:48:10 -03:00
 Committer:     Daniel Lezcano <daniel.lezcano@linaro.org>
-CommitterDate: Thu, 27 Feb 2020 10:32:11 +01:00
+CommitterDate: Thu, 27 Feb 2020 09:42:00 +01:00
 
-clocksource/drivers/timer-ti-dm: Drop bogus omap_dm_timer_of_set_source()
+clocksource/drivers/owl: Improve owl_timer_init fail messages
 
-The function omap_dm_timer_of_set_source() was originally added in
-commit 31a7448f4fa8a ("ARM: OMAP: dmtimer: Add clock source from DT"),
-and is designed to set a clock source from DT using the clocks property
-of a timer node. This design choice is okay for clk provider nodes but
-otherwise is a bad design as typically the clocks property is used to
-specify the functional clocks for a device, and not its parents.
+Check the return from clocksource_mmio_init, add messages in case of
+an error and in case of not having a defined clock property.
 
-The timer nodes now all define a timer functional clock after the
-conversion to ti-sysc and the new clkctrl layout, and this results
-in an attempt to set the same functional clock as its parent when a
-consumer driver attempts to acquire any of these timers in the
-omap_dm_timer_prepare() function. This was masked and worked around
-in commit 983a5a43ec25 ("clocksource: timer-ti-dm: Fix pwm dmtimer
-usage of fck reparenting"). Fix all of this by simply dropping the
-entire function.
-
-Any DT configuration of clock sources should be achieved using
-assigned-clocks and assigned-clock-parents properties provided
-by the Common Clock Framework.
-
-Cc: Tony Lindgren <tony@atomide.com>
-Cc: Tero Kristo <t-kristo@ti.com>
-Cc: Neil Armstrong <narmstrong@baylibre.com>
-Cc: H. Nikolaus Schaller <hns@goldelico.com>
-Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Cc: Keerthy <j-keerthy@ti.com>
-Cc: Ladislav Michl <ladis@linux-mips.org>
-Cc: Pavel Machek <pavel@ucw.cz>
-Cc: Sebastian Reichel <sre@kernel.org>
-Signed-off-by: Suman Anna <s-anna@ti.com>
-Tested-by: Lokesh Vutla <lokeshvutla@ti.com>
-Tested-by: Tony Lindgren <tony@atomide.com>
+Signed-off-by: Matheus Castello <matheus@castello.eng.br>
 Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-Link: https://lore.kernel.org/r/20200213053504.22638-1-s-anna@ti.com
+Link: https://lore.kernel.org/r/20200219004810.411190-1-matheus@castello.eng.br
 ---
- drivers/clocksource/timer-ti-dm.c | 33 +------------------------------
- 1 file changed, 1 insertion(+), 32 deletions(-)
+ drivers/clocksource/timer-owl.c | 15 +++++++++++----
+ 1 file changed, 11 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/clocksource/timer-ti-dm.c b/drivers/clocksource/timer-ti-dm.c
-index acc9360..6a0adb7 100644
---- a/drivers/clocksource/timer-ti-dm.c
-+++ b/drivers/clocksource/timer-ti-dm.c
-@@ -138,35 +138,6 @@ static int omap_dm_timer_reset(struct omap_dm_timer *timer)
- 	return 0;
- }
+diff --git a/drivers/clocksource/timer-owl.c b/drivers/clocksource/timer-owl.c
+index 900fe73..ac97420 100644
+--- a/drivers/clocksource/timer-owl.c
++++ b/drivers/clocksource/timer-owl.c
+@@ -135,8 +135,11 @@ static int __init owl_timer_init(struct device_node *node)
+ 	}
  
--static int omap_dm_timer_of_set_source(struct omap_dm_timer *timer)
--{
--	int ret;
--	struct clk *parent;
--
--	/*
--	 * FIXME: OMAP1 devices do not use the clock framework for dmtimers so
--	 * do not call clk_get() for these devices.
--	 */
--	if (!timer->fclk)
--		return -ENODEV;
--
--	parent = clk_get(&timer->pdev->dev, NULL);
--	if (IS_ERR(parent))
--		return -ENODEV;
--
--	/* Bail out if both clocks point to fck */
--	if (clk_is_match(parent, timer->fclk))
--		return 0;
--
--	ret = clk_set_parent(timer->fclk, parent);
--	if (ret < 0)
--		pr_err("%s: failed to set parent\n", __func__);
--
--	clk_put(parent);
--
--	return ret;
--}
--
- static int omap_dm_timer_set_source(struct omap_dm_timer *timer, int source)
- {
- 	int ret;
-@@ -276,9 +247,7 @@ static int omap_dm_timer_prepare(struct omap_dm_timer *timer)
- 	__omap_dm_timer_enable_posted(timer);
- 	omap_dm_timer_disable(timer);
+ 	clk = of_clk_get(node, 0);
+-	if (IS_ERR(clk))
+-		return PTR_ERR(clk);
++	if (IS_ERR(clk)) {
++		ret = PTR_ERR(clk);
++		pr_err("Failed to get clock for clocksource (%d)\n", ret);
++		return ret;
++	}
  
--	rc = omap_dm_timer_of_set_source(timer);
--	if (rc == -ENODEV)
--		return omap_dm_timer_set_source(timer, OMAP_TIMER_SRC_32_KHZ);
-+	rc = omap_dm_timer_set_source(timer, OMAP_TIMER_SRC_32_KHZ);
+ 	rate = clk_get_rate(clk);
  
- 	return rc;
- }
+@@ -144,8 +147,12 @@ static int __init owl_timer_init(struct device_node *node)
+ 	owl_timer_set_enabled(owl_clksrc_base, true);
+ 
+ 	sched_clock_register(owl_timer_sched_read, 32, rate);
+-	clocksource_mmio_init(owl_clksrc_base + OWL_Tx_VAL, node->name,
+-			      rate, 200, 32, clocksource_mmio_readl_up);
++	ret = clocksource_mmio_init(owl_clksrc_base + OWL_Tx_VAL, node->name,
++				    rate, 200, 32, clocksource_mmio_readl_up);
++	if (ret) {
++		pr_err("Failed to register clocksource (%d)\n", ret);
++		return ret;
++	}
+ 
+ 	owl_timer_reset(owl_clkevt_base);
+ 
