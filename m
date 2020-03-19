@@ -2,129 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7886118B3DF
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:04:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C5EF318B544
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:17:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727212AbgCSNEe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 09:04:34 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:51954 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725787AbgCSNEe (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 09:04:34 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 02JCm67j104557;
-        Thu, 19 Mar 2020 13:03:51 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
- from : references : date : in-reply-to : message-id : mime-version :
- content-type; s=corp-2020-01-29;
- bh=eDCn48rp2SyuINnEnWSJhbWLS5pcJCnUMKz117As80E=;
- b=sRM7oLvMdOz6FXLMOfiyu2MaOGxcUX+K2BpTbblN0jUCqpqTam90e2wWTY0kIK0dvPls
- BnUHHr7Ugtjvd6v0dH3vYlDa2o6EAqGGx3curiG+tZ6Yv9c/EVX2RTFHj0ejmvEKaprQ
- EUVioEoGVNd64BJBgzYu/LI0+QEfPqfbsSKBy2BBUs0VA7KvgtKSq9FRQlXHi6yokNlG
- 0NW78RY4czQVRvkz5efvlDNSLj+ZqHdPjOpiXr4jXufR54gxl0b25FuS1knIxUx8U8tY
- XCocrA1gY40a7cq9Noi7l0TfFmaaca1chfTfc4bfM3o0ohx/JT08WC7E3u9fC6LU/O31 tg== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by userp2120.oracle.com with ESMTP id 2yub278093-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 19 Mar 2020 13:03:50 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 02JCohiE179280;
-        Thu, 19 Mar 2020 13:03:50 GMT
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by userp3020.oracle.com with ESMTP id 2ys9040cm4-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 19 Mar 2020 13:03:50 +0000
-Received: from abhmp0013.oracle.com (abhmp0013.oracle.com [141.146.116.19])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 02JD3kap006935;
-        Thu, 19 Mar 2020 13:03:46 GMT
-Received: from ca-mkp.ca.oracle.com (/10.159.214.123)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 19 Mar 2020 06:03:45 -0700
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     Kirill Tkhai <ktkhai@virtuozzo.com>, axboe@kernel.dk,
-        martin.petersen@oracle.com, bob.liu@oracle.com,
-        darrick.wong@oracle.com, agk@redhat.com, snitzer@redhat.com,
-        dm-devel@redhat.com, song@kernel.org, tytso@mit.edu,
-        adilger.kernel@dilger.ca, Chaitanya.Kulkarni@wdc.com,
-        ming.lei@redhat.com, osandov@fb.com, jthumshirn@suse.de,
-        minwoo.im.dev@gmail.com, damien.lemoal@wdc.com,
-        andrea.parri@amarulasolutions.com, hare@suse.com, tj@kernel.org,
-        ajay.joshi@wdc.com, sagi@grimberg.me, dsterba@suse.com,
-        bvanassche@acm.org, dhowells@redhat.com, asml.silence@gmail.com,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v7 0/6] block: Introduce REQ_ALLOCATE flag for REQ_OP_WRITE_ZEROES
-From:   "Martin K. Petersen" <martin.petersen@oracle.com>
-Organization: Oracle Corporation
-References: <158157930219.111879.12072477040351921368.stgit@localhost.localdomain>
-        <e2b7cbab-d91f-fd7b-de6f-a671caa6f5eb@virtuozzo.com>
-        <69c0b8a4-656f-98c4-eb55-2fd1184f5fc9@virtuozzo.com>
-        <67d63190-c16f-cd26-6b67-641c8943dc3d@virtuozzo.com>
-        <20200319102819.GA26418@infradead.org>
-Date:   Thu, 19 Mar 2020 09:03:40 -0400
-In-Reply-To: <20200319102819.GA26418@infradead.org> (Christoph Hellwig's
-        message of "Thu, 19 Mar 2020 03:28:19 -0700")
-Message-ID: <yq1tv2k8pjn.fsf@oracle.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1.92 (gnu/linux)
+        id S1727393AbgCSNQ4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 09:16:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37686 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729431AbgCSNQz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 09:16:55 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 09E6F2166E;
+        Thu, 19 Mar 2020 13:16:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1584623814;
+        bh=UDa2qWXHYHGSlYmI++u0oX+jPfDfyrUcCkVb2ISSQnM=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=u18Hp7BehuMWHq7snzwConr+Hlypm2BqAWqmxCb940/E6xIaWfuLQ3rezpqnXmpkb
+         kQVUgagBHtqtcUdiDogLuIXGb87CXLqVl4icSK5nqkb6IhZEjzO6sq2Y42f3ROrW8Z
+         phUbnQ5czmioKbxS4HhqIfOoBI6Xb9M5+1+abQBM=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Lu Baolu <baolu.lu@linux.intel.com>,
+        Daniel Drake <drake@endlessm.com>,
+        Joerg Roedel <jroedel@suse.de>
+Subject: [PATCH 4.14 62/99] iommu/vt-d: Ignore devices with out-of-spec domain number
+Date:   Thu, 19 Mar 2020 14:03:40 +0100
+Message-Id: <20200319124000.332461875@linuxfoundation.org>
+X-Mailer: git-send-email 2.25.2
+In-Reply-To: <20200319123941.630731708@linuxfoundation.org>
+References: <20200319123941.630731708@linuxfoundation.org>
+User-Agent: quilt/0.66
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9564 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 mlxlogscore=835 mlxscore=0
- adultscore=0 bulkscore=0 malwarescore=0 spamscore=0 suspectscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2003020000
- definitions=main-2003190058
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9564 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 impostorscore=0
- mlxlogscore=896 mlxscore=0 phishscore=0 adultscore=0 suspectscore=0
- clxscore=1011 priorityscore=1501 lowpriorityscore=0 bulkscore=0
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2003020000 definitions=main-2003190058
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Daniel Drake <drake@endlessm.com>
 
-Christoph,
+commit da72a379b2ec0bad3eb265787f7008bead0b040c upstream.
 
->> Some comments? Some requests for reworking? Some personal reasons to
->> ignore my patches?
->
-> I'm still completely opposed to the magic overloading using a flag.
-> That is just a bad design waiting for trouble to happen.
+VMD subdevices are created with a PCI domain ID of 0x10000 or
+higher.
 
-The observation was that Kirill's original patch set was a line-for-line
-carbon copy of the write zeroes handling throughout the stack. The only
-difference between the two was at the bottom. Instead of duplicating all
-that code it seemed cleaner to use shared plumbing since these
-operations need to be split and merged exactly the same way in the block
-layer.
+These subdevices are also handled like all other PCI devices by
+dmar_pci_bus_notifier().
 
-Also, we already have REQ_NOUNMAP, not sure why an additional handling
-flag would lead to trouble? Note that I suggested renaming
-REQ_OP_WRITE_ZEROES to something else to separate the semantics from the
-plumbing.
+However, when dmar_alloc_pci_notify_info() take records of such devices,
+it will truncate the domain ID to a u16 value (in info->seg).
+The device at (e.g.) 10000:00:02.0 is then treated by the DMAR code as if
+it is 0000:00:02.0.
 
-We need to be able to express:
+In the unlucky event that a real device also exists at 0000:00:02.0 and
+also has a device-specific entry in the DMAR table,
+dmar_insert_dev_scope() will crash on:
+   BUG_ON(i >= devices_cnt);
 
- - zero & allocate block range (REQ_OP_WRITE_ZEROES, REQ_NOUNMAP)
- - zero & deallocate block range (REQ_OP_WRITE_ZEROES, !REQ_NOUNMAP)
- - allocate block range (?, don't care about zeroing)
- - deallocate block range (REQ_OP_DISCARD, don't care about zeroing)
+That's basically a sanity check that only one PCI device matches a
+single DMAR entry; in this case we seem to have two matching devices.
 
-It just seems like a full-fledged REQ_OP_ALLOCATE is an overkill to fill
-that gap.
+Fix this by ignoring devices that have a domain number higher than
+what can be looked up in the DMAR table.
 
-That said, I do think that we have traditionally put emphasis on the
-wrong part of these operations. All we ever talk about wrt. discard and
-friends is the zeroing aspect. But I actually think that, semantically,
-the act of allocating and deallocating blocks is more important. And
-that zeroing is an optional second order effect of those operations. So
-if we could go back in time and nuke multi-range DSM TRIM/UNMAP, I would
-like to have REQ_OP_ALLOCATE/REQ_OP_DEALLOCATE with an optional REQ_ZERO
-flag. I think that would be cleaner. I have a much easier time wrapping
-my head around "allocate this block and zero it if you can" than "zero
-this block and do not deallocate it". But maybe that's just me.
+This problem was carefully diagnosed by Jian-Hong Pan.
 
--- 
-Martin K. Petersen	Oracle Linux Engineering
+Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
+Signed-off-by: Daniel Drake <drake@endlessm.com>
+Fixes: 59ce0515cdaf3 ("iommu/vt-d: Update DRHD/RMRR/ATSR device scope caches when PCI hotplug happens")
+Signed-off-by: Joerg Roedel <jroedel@suse.de>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+---
+ drivers/iommu/dmar.c |    8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+--- a/drivers/iommu/dmar.c
++++ b/drivers/iommu/dmar.c
+@@ -39,6 +39,7 @@
+ #include <linux/dmi.h>
+ #include <linux/slab.h>
+ #include <linux/iommu.h>
++#include <linux/limits.h>
+ #include <asm/irq_remapping.h>
+ #include <asm/iommu_table.h>
+ 
+@@ -139,6 +140,13 @@ dmar_alloc_pci_notify_info(struct pci_de
+ 
+ 	BUG_ON(dev->is_virtfn);
+ 
++	/*
++	 * Ignore devices that have a domain number higher than what can
++	 * be looked up in DMAR, e.g. VMD subdevices with domain 0x10000
++	 */
++	if (pci_domain_nr(dev->bus) > U16_MAX)
++		return NULL;
++
+ 	/* Only generate path[] for device addition event */
+ 	if (event == BUS_NOTIFY_ADD_DEVICE)
+ 		for (tmp = dev; tmp; tmp = tmp->bus->self)
+
+
