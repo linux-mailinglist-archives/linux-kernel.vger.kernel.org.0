@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6D29618B4B0
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:11:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CE2D618B46D
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:09:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728813AbgCSNL5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 09:11:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57434 "EHLO mail.kernel.org"
+        id S1728374AbgCSNJk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 09:09:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54138 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728799AbgCSNLz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 09:11:55 -0400
+        id S1727659AbgCSNJg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 09:09:36 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id ECDFA208D6;
-        Thu, 19 Mar 2020 13:11:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 24C6B20789;
+        Thu, 19 Mar 2020 13:09:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584623514;
-        bh=FU4WyfQvIhbjeHX3WokTysTLIe/V+NR3fCkHiRcOJww=;
+        s=default; t=1584623375;
+        bh=ce4/0yJFxALgb2ftcjgb8O0SohBFJNFqKkJZpzCh/qY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=aWhEaG8zrGnZabN1EBQ+w4JrJX17yMO+iL2eOQ6KHMBVeDmrmhkVb0FulHCTdH7mP
-         yWbkkj83ZJpiD7I6x9+EDMQPPK2VZVxwRRdzydpIWOOhMnXSM6wKO4AKGthShn/S0t
-         TTBVryakqFyRopMrUsc4EXcj+ufPm/8splflNqXk=
+        b=kNOiU6PeNX4nGDvK9g5xEggOYDF4PeF/jbq60u3mPcKs+ivEdolZLW6N/JF93SdIo
+         X5EmGzb7NR37McU6URNfCbNVCfRzrwboCrBVHOzBQSzbR5y+9M0oW6vd2g4bx1BXqz
+         ETEOUQsl0YatoAiwl6L3+/i6i3rpYBBNjKmWQggI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Marek Lindner <mareklindner@neomailbox.ch>,
         Sven Eckelmann <sven@narfation.org>,
         Simon Wunderlich <sw@simonwunderlich.de>
-Subject: [PATCH 4.9 53/90] batman-adv: Initialize gw sel_class via batadv_algo
-Date:   Thu, 19 Mar 2020 14:00:15 +0100
-Message-Id: <20200319123944.801016349@linuxfoundation.org>
+Subject: [PATCH 4.4 72/93] batman-adv: prevent TT request storms by not sending inconsistent TT TLVLs
+Date:   Thu, 19 Mar 2020 14:00:16 +0100
+Message-Id: <20200319123947.748365919@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.2
-In-Reply-To: <20200319123928.635114118@linuxfoundation.org>
-References: <20200319123928.635114118@linuxfoundation.org>
+In-Reply-To: <20200319123924.795019515@linuxfoundation.org>
+References: <20200319123924.795019515@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,138 +44,80 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sven Eckelmann <sven@narfation.org>
+From: Marek Lindner <mareklindner@neomailbox.ch>
 
-commit 1a9070ec91b37234fe915849b767c61584c64a44 upstream.
+commit 16116dac23396e73c01eeee97b102e4833a4b205 upstream.
 
-The gateway selection class variable is shared between different algorithm
-versions. But the interpretation of the content is algorithm specific. The
-initialization is therefore also algorithm specific.
+A translation table TVLV changset sent with an OGM consists
+of a number of headers (one per VLAN) plus the changeset
+itself (addition and/or deletion of entries).
 
-But this was implemented incorrectly and the initialization for BATMAN_V
-always overwrote the value previously written for BATMAN_IV. This could
-only be avoided when BATMAN_V was disabled during compile time.
+The per-VLAN headers are used by OGM recipients for consistency
+checks. Said consistency check might determine that a full
+translation table request is needed to restore consistency. If
+the TT sender adds per-VLAN headers of empty VLANs into the OGM,
+recipients are led to believe to have reached an inconsistent
+state and thus request a full table update. The full table does
+not contain empty VLANs (due to missing entries) the cycle
+restarts when the next OGM is issued.
 
-Using a special batadv_algo hook for this initialization avoids this
-problem.
+Consequently, when the translation table TVLV headers are
+composed, empty VLANs are to be excluded.
 
-Fixes: 50164d8f500f ("batman-adv: B.A.T.M.A.N. V - implement GW selection logic")
+Fixes: 21a57f6e7a3b ("batman-adv: make the TT CRC logic VLAN specific")
+Signed-off-by: Marek Lindner <mareklindner@neomailbox.ch>
 Signed-off-by: Sven Eckelmann <sven@narfation.org>
 Signed-off-by: Simon Wunderlich <sw@simonwunderlich.de>
+Signed-off-by: Sven Eckelmann <sven@narfation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/batman-adv/bat_iv_ogm.c     |   11 +++++++++++
- net/batman-adv/bat_v.c          |   14 +++++++++++---
- net/batman-adv/gateway_common.c |    5 +++++
- net/batman-adv/soft-interface.c |    1 -
- net/batman-adv/types.h          |    2 ++
- 5 files changed, 29 insertions(+), 4 deletions(-)
+ net/batman-adv/translation-table.c |   15 ++++++++++++---
+ 1 file changed, 12 insertions(+), 3 deletions(-)
 
---- a/net/batman-adv/bat_iv_ogm.c
-+++ b/net/batman-adv/bat_iv_ogm.c
-@@ -2479,6 +2479,16 @@ static void batadv_iv_iface_activate(str
- 	batadv_iv_ogm_schedule(hard_iface);
- }
+--- a/net/batman-adv/translation-table.c
++++ b/net/batman-adv/translation-table.c
+@@ -813,15 +813,20 @@ batadv_tt_prepare_tvlv_local_data(struct
+ 	struct batadv_tvlv_tt_vlan_data *tt_vlan;
+ 	struct batadv_softif_vlan *vlan;
+ 	u16 num_vlan = 0;
+-	u16 num_entries = 0;
++	u16 vlan_entries = 0;
++	u16 total_entries = 0;
+ 	u16 tvlv_len;
+ 	u8 *tt_change_ptr;
+ 	int change_offset;
  
-+/**
-+ * batadv_iv_init_sel_class - initialize GW selection class
-+ * @bat_priv: the bat priv with all the soft interface information
-+ */
-+static void batadv_iv_init_sel_class(struct batadv_priv *bat_priv)
-+{
-+	/* set default TQ difference threshold to 20 */
-+	atomic_set(&bat_priv->gw.sel_class, 20);
-+}
+ 	spin_lock_bh(&bat_priv->softif_vlan_list_lock);
+ 	hlist_for_each_entry_rcu(vlan, &bat_priv->softif_vlan_list, list) {
++		vlan_entries = atomic_read(&vlan->tt.num_entries);
++		if (vlan_entries < 1)
++			continue;
 +
- static struct batadv_gw_node *
- batadv_iv_gw_get_best_gw_node(struct batadv_priv *bat_priv)
- {
-@@ -2827,6 +2837,7 @@ static struct batadv_algo_ops batadv_bat
- 		.del_if = batadv_iv_ogm_orig_del_if,
- 	},
- 	.gw = {
-+		.init_sel_class = batadv_iv_init_sel_class,
- 		.get_best_gw_node = batadv_iv_gw_get_best_gw_node,
- 		.is_eligible = batadv_iv_gw_is_eligible,
- #ifdef CONFIG_BATMAN_ADV_DEBUGFS
---- a/net/batman-adv/bat_v.c
-+++ b/net/batman-adv/bat_v.c
-@@ -668,6 +668,16 @@ err_ifinfo1:
- 	return ret;
- }
+ 		num_vlan++;
+-		num_entries += atomic_read(&vlan->tt.num_entries);
++		total_entries += vlan_entries;
+ 	}
  
-+/**
-+ * batadv_v_init_sel_class - initialize GW selection class
-+ * @bat_priv: the bat priv with all the soft interface information
-+ */
-+static void batadv_v_init_sel_class(struct batadv_priv *bat_priv)
-+{
-+	/* set default throughput difference threshold to 5Mbps */
-+	atomic_set(&bat_priv->gw.sel_class, 50);
-+}
+ 	change_offset = sizeof(**tt_data);
+@@ -829,7 +834,7 @@ batadv_tt_prepare_tvlv_local_data(struct
+ 
+ 	/* if tt_len is negative, allocate the space needed by the full table */
+ 	if (*tt_len < 0)
+-		*tt_len = batadv_tt_len(num_entries);
++		*tt_len = batadv_tt_len(total_entries);
+ 
+ 	tvlv_len = *tt_len;
+ 	tvlv_len += change_offset;
+@@ -846,6 +851,10 @@ batadv_tt_prepare_tvlv_local_data(struct
+ 
+ 	tt_vlan = (struct batadv_tvlv_tt_vlan_data *)(*tt_data + 1);
+ 	hlist_for_each_entry_rcu(vlan, &bat_priv->softif_vlan_list, list) {
++		vlan_entries = atomic_read(&vlan->tt.num_entries);
++		if (vlan_entries < 1)
++			continue;
 +
- static ssize_t batadv_v_store_sel_class(struct batadv_priv *bat_priv,
- 					char *buff, size_t count)
- {
-@@ -1054,6 +1064,7 @@ static struct batadv_algo_ops batadv_bat
- 		.dump = batadv_v_orig_dump,
- 	},
- 	.gw = {
-+		.init_sel_class = batadv_v_init_sel_class,
- 		.store_sel_class = batadv_v_store_sel_class,
- 		.show_sel_class = batadv_v_show_sel_class,
- 		.get_best_gw_node = batadv_v_gw_get_best_gw_node,
-@@ -1094,9 +1105,6 @@ int batadv_v_mesh_init(struct batadv_pri
- 	if (ret < 0)
- 		return ret;
+ 		tt_vlan->vid = htons(vlan->vid);
+ 		tt_vlan->crc = htonl(vlan->tt.crc);
  
--	/* set default throughput difference threshold to 5Mbps */
--	atomic_set(&bat_priv->gw.sel_class, 50);
--
- 	return 0;
- }
- 
---- a/net/batman-adv/gateway_common.c
-+++ b/net/batman-adv/gateway_common.c
-@@ -253,6 +253,11 @@ static void batadv_gw_tvlv_ogm_handler_v
-  */
- void batadv_gw_init(struct batadv_priv *bat_priv)
- {
-+	if (bat_priv->algo_ops->gw.init_sel_class)
-+		bat_priv->algo_ops->gw.init_sel_class(bat_priv);
-+	else
-+		atomic_set(&bat_priv->gw.sel_class, 1);
-+
- 	batadv_tvlv_handler_register(bat_priv, batadv_gw_tvlv_ogm_handler_v1,
- 				     NULL, BATADV_TVLV_GW, 1,
- 				     BATADV_TVLV_HANDLER_OGM_CIFNOTFND);
---- a/net/batman-adv/soft-interface.c
-+++ b/net/batman-adv/soft-interface.c
-@@ -808,7 +808,6 @@ static int batadv_softif_init_late(struc
- 	atomic_set(&bat_priv->mcast.num_want_all_ipv6, 0);
- #endif
- 	atomic_set(&bat_priv->gw.mode, BATADV_GW_MODE_OFF);
--	atomic_set(&bat_priv->gw.sel_class, 20);
- 	atomic_set(&bat_priv->gw.bandwidth_down, 100);
- 	atomic_set(&bat_priv->gw.bandwidth_up, 20);
- 	atomic_set(&bat_priv->orig_interval, 1000);
---- a/net/batman-adv/types.h
-+++ b/net/batman-adv/types.h
-@@ -1466,6 +1466,7 @@ struct batadv_algo_orig_ops {
- 
- /**
-  * struct batadv_algo_gw_ops - mesh algorithm callbacks (GW specific)
-+ * @init_sel_class: initialize GW selection class (optional)
-  * @store_sel_class: parse and stores a new GW selection class (optional)
-  * @show_sel_class: prints the current GW selection class (optional)
-  * @get_best_gw_node: select the best GW from the list of available nodes
-@@ -1476,6 +1477,7 @@ struct batadv_algo_orig_ops {
-  * @dump: dump gateways to a netlink socket (optional)
-  */
- struct batadv_algo_gw_ops {
-+	void (*init_sel_class)(struct batadv_priv *bat_priv);
- 	ssize_t (*store_sel_class)(struct batadv_priv *bat_priv, char *buff,
- 				   size_t count);
- 	ssize_t (*show_sel_class)(struct batadv_priv *bat_priv, char *buff);
 
 
