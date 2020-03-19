@@ -2,167 +2,67 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 55B0618B8D2
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 15:11:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 17F8818B8E4
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 15:12:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727258AbgCSOLe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 10:11:34 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:32888 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727966AbgCSOLU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 10:11:20 -0400
-Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tip-bot2@linutronix.de>)
-        id 1jEvt4-0002NJ-KD; Thu, 19 Mar 2020 15:11:06 +0100
-Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id EA4E01C22A8;
-        Thu, 19 Mar 2020 15:10:56 +0100 (CET)
-Date:   Thu, 19 Mar 2020 14:10:56 -0000
-From:   "tip-bot2 for Nick Desaulniers" <tip-bot2@linutronix.de>
-Reply-to: linux-kernel@vger.kernel.org
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: perf/core] perf diff: Fix undefined string comparison spotted
- by clang's -Wstring-compare
-Cc:     Nick Desaulniers <nick.desaulniers@gmail.com>,
-        Ian Rogers <irogers@google.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Changbin Du <changbin.du@intel.com>,
-        Jin Yao <yao.jin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>, John Keeping <john@metanate.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Song Liu <songliubraving@fb.com>,
-        clang-built-linux@googlegroups.com,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        x86 <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>
-In-Reply-To: <20200223193456.25291-1-nick.desaulniers@gmail.com>
-References: <20200223193456.25291-1-nick.desaulniers@gmail.com>
+        id S1728229AbgCSOLz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 10:11:55 -0400
+Received: from foss.arm.com ([217.140.110.172]:36724 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727969AbgCSOLx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 10:11:53 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0647B30E;
+        Thu, 19 Mar 2020 07:11:53 -0700 (PDT)
+Received: from e119884-lin.cambridge.arm.com (e119884-lin.cambridge.arm.com [10.1.196.72])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 05C843F52E;
+        Thu, 19 Mar 2020 07:11:51 -0700 (PDT)
+From:   Vincenzo Frascino <vincenzo.frascino@arm.com>
+To:     linux-arm-kernel@lists.infradead.org,
+        clang-built-linux@googlegroups.com, linux-kernel@vger.kernel.org
+Cc:     Vincenzo Frascino <vincenzo.frascino@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>, stable@vger.kernel.org
+Subject: [PATCH] arm64: compat: Fix syscall number of compat_clock_getres
+Date:   Thu, 19 Mar 2020 14:11:38 +0000
+Message-Id: <20200319141138.19343-1-vincenzo.frascino@arm.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Message-ID: <158462705662.28353.6097630422293165073.tip-bot2@tip-bot2>
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot2.linutronix.de>
-Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following commit has been merged into the perf/core branch of tip:
+The syscall number of compat_clock_getres was erroneously set to 247
+instead of 264. This causes the vDSO fallback of clock_getres to land
+on the wrong syscall.
 
-Commit-ID:     c395c3553d6870541f1c283479aea2a6f26364d5
-Gitweb:        https://git.kernel.org/tip/c395c3553d6870541f1c283479aea2a6f26364d5
-Author:        Nick Desaulniers <nick.desaulniers@gmail.com>
-AuthorDate:    Sun, 23 Feb 2020 11:34:49 -08:00
-Committer:     Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitterDate: Wed, 04 Mar 2020 10:28:08 -03:00
+Address the issue fixing the syscall number of compat_clock_getres.
 
-perf diff: Fix undefined string comparison spotted by clang's -Wstring-compare
-
-clang warns:
-
-  util/block-info.c:298:18: error: result of comparison against a string
-  literal is unspecified (use an explicit string comparison function
-  instead) [-Werror,-Wstring-compare]
-          if ((start_line != SRCLINE_UNKNOWN) && (end_line != SRCLINE_UNKNOWN)) {
-                          ^  ~~~~~~~~~~~~~~~
-  util/block-info.c:298:51: error: result of comparison against a string
-  literal is unspecified (use an explicit string comparison function
-  instead) [-Werror,-Wstring-compare]
-          if ((start_line != SRCLINE_UNKNOWN) && (end_line != SRCLINE_UNKNOWN)) {
-                                                           ^  ~~~~~~~~~~~~~~~
-  util/block-info.c:298:18: error: result of comparison against a string
-  literal is unspecified (use an explicit string
-  comparison function instead) [-Werror,-Wstring-compare]
-          if ((start_line != SRCLINE_UNKNOWN) && (end_line != SRCLINE_UNKNOWN)) {
-                          ^  ~~~~~~~~~~~~~~~
-  util/block-info.c:298:51: error: result of comparison against a string
-  literal is unspecified (use an explicit string comparison function
-  instead) [-Werror,-Wstring-compare]
-          if ((start_line != SRCLINE_UNKNOWN) && (end_line != SRCLINE_UNKNOWN)) {
-                                                           ^  ~~~~~~~~~~~~~~~
-  util/map.c:434:15: error: result of comparison against a string literal
-  is unspecified (use an explicit string comparison function instead)
-  [-Werror,-Wstring-compare]
-                  if (srcline != SRCLINE_UNKNOWN)
-                              ^  ~~~~~~~~~~~~~~~
-
-Reviewer Notes:
-
-Looks good to me. Some more context:
-https://clang.llvm.org/docs/DiagnosticsReference.html#wstring-compare
-The spec says:
-J.1 Unspecified behavior
-The following are unspecified:
-.. Whether two string literals result in distinct arrays (6.4.5).
-
-Signed-off-by: Nick Desaulniers <nick.desaulniers@gmail.com>
-Reviewed-by: Ian Rogers <irogers@google.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Changbin Du <changbin.du@intel.com>
-Cc: Jin Yao <yao.jin@linux.intel.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: John Keeping <john@metanate.com>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Song Liu <songliubraving@fb.com>
-Cc: clang-built-linux@googlegroups.com
-Link: https://github.com/ClangBuiltLinux/linux/issues/900
-Link: http://lore.kernel.org/lkml/20200223193456.25291-1-nick.desaulniers@gmail.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Fixes: 53c489e1dfeb6 ("arm64: compat: Add missing syscall numbers")
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Will Deacon <will.deacon@arm.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
 ---
- tools/perf/builtin-diff.c    | 3 ++-
- tools/perf/util/block-info.c | 3 ++-
- tools/perf/util/map.c        | 2 +-
- 3 files changed, 5 insertions(+), 3 deletions(-)
+ arch/arm64/include/asm/unistd.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/tools/perf/builtin-diff.c b/tools/perf/builtin-diff.c
-index f8b6ae5..c03c36f 100644
---- a/tools/perf/builtin-diff.c
-+++ b/tools/perf/builtin-diff.c
-@@ -1312,7 +1312,8 @@ static int cycles_printf(struct hist_entry *he, struct hist_entry *pair,
- 	end_line = map__srcline(he->ms.map, bi->sym->start + bi->end,
- 				he->ms.sym);
+diff --git a/arch/arm64/include/asm/unistd.h b/arch/arm64/include/asm/unistd.h
+index 1dd22da1c3a9..803039d504de 100644
+--- a/arch/arm64/include/asm/unistd.h
++++ b/arch/arm64/include/asm/unistd.h
+@@ -25,8 +25,8 @@
+ #define __NR_compat_gettimeofday	78
+ #define __NR_compat_sigreturn		119
+ #define __NR_compat_rt_sigreturn	173
+-#define __NR_compat_clock_getres	247
+ #define __NR_compat_clock_gettime	263
++#define __NR_compat_clock_getres	264
+ #define __NR_compat_clock_gettime64	403
+ #define __NR_compat_clock_getres_time64	406
  
--	if ((start_line != SRCLINE_UNKNOWN) && (end_line != SRCLINE_UNKNOWN)) {
-+	if ((strncmp(start_line, SRCLINE_UNKNOWN, strlen(SRCLINE_UNKNOWN)) != 0) &&
-+	    (strncmp(end_line, SRCLINE_UNKNOWN, strlen(SRCLINE_UNKNOWN)) != 0)) {
- 		scnprintf(buf, sizeof(buf), "[%s -> %s] %4ld",
- 			  start_line, end_line, block_he->diff.cycles);
- 	} else {
-diff --git a/tools/perf/util/block-info.c b/tools/perf/util/block-info.c
-index c4b030b..fbbb6d6 100644
---- a/tools/perf/util/block-info.c
-+++ b/tools/perf/util/block-info.c
-@@ -295,7 +295,8 @@ static int block_range_entry(struct perf_hpp_fmt *fmt, struct perf_hpp *hpp,
- 	end_line = map__srcline(he->ms.map, bi->sym->start + bi->end,
- 				he->ms.sym);
- 
--	if ((start_line != SRCLINE_UNKNOWN) && (end_line != SRCLINE_UNKNOWN)) {
-+	if ((strncmp(start_line, SRCLINE_UNKNOWN, strlen(SRCLINE_UNKNOWN)) != 0) &&
-+	    (strncmp(end_line, SRCLINE_UNKNOWN, strlen(SRCLINE_UNKNOWN)) != 0)) {
- 		scnprintf(buf, sizeof(buf), "[%s -> %s]",
- 			  start_line, end_line);
- 	} else {
-diff --git a/tools/perf/util/map.c b/tools/perf/util/map.c
-index a08ca27..9542851 100644
---- a/tools/perf/util/map.c
-+++ b/tools/perf/util/map.c
-@@ -431,7 +431,7 @@ int map__fprintf_srcline(struct map *map, u64 addr, const char *prefix,
- 
- 	if (map && map->dso) {
- 		char *srcline = map__srcline(map, addr, NULL);
--		if (srcline != SRCLINE_UNKNOWN)
-+		if (strncmp(srcline, SRCLINE_UNKNOWN, strlen(SRCLINE_UNKNOWN)) != 0)
- 			ret = fprintf(fp, "%s%s", prefix, srcline);
- 		free_srcline(srcline);
- 	}
+-- 
+2.25.1
+
