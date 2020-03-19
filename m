@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5326A18B58F
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:19:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4516118B63F
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:25:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729907AbgCSNTj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 09:19:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42976 "EHLO mail.kernel.org"
+        id S1730600AbgCSNZM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 09:25:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52612 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729770AbgCSNTf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 09:19:35 -0400
+        id S1730592AbgCSNZL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 09:25:11 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9663F21775;
-        Thu, 19 Mar 2020 13:19:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5762620B1F;
+        Thu, 19 Mar 2020 13:25:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584623975;
-        bh=9nAbje9iOp4zeC5CKqiOjMhWdsB1A/TcFuuEYuwgMPI=;
+        s=default; t=1584624310;
+        bh=MdM4dmvB1NrI3FG6lrkvPkf35G6mA0uFNk6ScnH/2ew=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=AaoQS8C90axGoa9g3NWggUsnQj4jHXkIv2vQpE2YgYoIM0pjynYMJv3oMvgWmAxVU
-         CXIEB03DSJ0+WRbN7qQKZ16+AiQSMqnB22VxcxrnTZPwpzjdOOUwK+ewE5v0yA6ajK
-         DdYRlfugL0O25jjf5JR4mWK0z0rwpud2bifqzMgI=
+        b=pqzBPi81/1+3wCS07o1wz2SsLX79VvASdikiZh+GQPBrboW1zVVVbX6hOyIs72c7c
+         W0KhQRoicgml7FelRWWg/BCS+E96zShPM+e8/H/7BMZhybbNv7JGqB34BIZfptr7VN
+         /Eob8+x6VbeHGlR+2piiLbrpBhYwddNn3n6tZgUg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Madhuparna Bhowmik <madhuparnabhowmik10@gmail.com>,
-        Johannes Berg <johannes.berg@intel.com>,
+        stable@vger.kernel.org, Hanno Zulla <kontakt@hanno.de>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 17/48] mac80211: rx: avoid RCU list traversal under mutex
-Date:   Thu, 19 Mar 2020 14:03:59 +0100
-Message-Id: <20200319123908.557931607@linuxfoundation.org>
+Subject: [PATCH 5.5 18/65] HID: hid-bigbenff: fix race condition for scheduled work during removal
+Date:   Thu, 19 Mar 2020 14:04:00 +0100
+Message-Id: <20200319123932.165773859@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.2
-In-Reply-To: <20200319123902.941451241@linuxfoundation.org>
-References: <20200319123902.941451241@linuxfoundation.org>
+In-Reply-To: <20200319123926.466988514@linuxfoundation.org>
+References: <20200319123926.466988514@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,37 +44,59 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Madhuparna Bhowmik <madhuparnabhowmik10@gmail.com>
+From: Hanno Zulla <kontakt@hanno.de>
 
-[ Upstream commit 253216ffb2a002a682c6f68bd3adff5b98b71de8 ]
+[ Upstream commit 4eb1b01de5b9d8596d6c103efcf1a15cfc1bedf7 ]
 
-local->sta_mtx is held in __ieee80211_check_fast_rx_iface().
-No need to use list_for_each_entry_rcu() as it also requires
-a cond argument to avoid false lockdep warnings when not used in
-RCU read-side section (with CONFIG_PROVE_RCU_LIST).
-Therefore use list_for_each_entry();
+It's possible that there is scheduled work left while the device is
+already being removed, which can cause a kernel crash. Adding a flag
+will avoid this.
 
-Signed-off-by: Madhuparna Bhowmik <madhuparnabhowmik10@gmail.com>
-Link: https://lore.kernel.org/r/20200223143302.15390-1-madhuparnabhowmik10@gmail.com
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+Signed-off-by: Hanno Zulla <kontakt@hanno.de>
+Signed-off-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/mac80211/rx.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/hid/hid-bigbenff.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/net/mac80211/rx.c b/net/mac80211/rx.c
-index 02d0b22d01141..c7c456c86b0d3 100644
---- a/net/mac80211/rx.c
-+++ b/net/mac80211/rx.c
-@@ -4042,7 +4042,7 @@ void __ieee80211_check_fast_rx_iface(struct ieee80211_sub_if_data *sdata)
+diff --git a/drivers/hid/hid-bigbenff.c b/drivers/hid/hid-bigbenff.c
+index f8c552b64a899..db6da21ade063 100644
+--- a/drivers/hid/hid-bigbenff.c
++++ b/drivers/hid/hid-bigbenff.c
+@@ -174,6 +174,7 @@ static __u8 pid0902_rdesc_fixed[] = {
+ struct bigben_device {
+ 	struct hid_device *hid;
+ 	struct hid_report *report;
++	bool removed;
+ 	u8 led_state;         /* LED1 = 1 .. LED4 = 8 */
+ 	u8 right_motor_on;    /* right motor off/on 0/1 */
+ 	u8 left_motor_force;  /* left motor force 0-255 */
+@@ -190,6 +191,9 @@ static void bigben_worker(struct work_struct *work)
+ 		struct bigben_device, worker);
+ 	struct hid_field *report_field = bigben->report->field[0];
  
- 	lockdep_assert_held(&local->sta_mtx);
++	if (bigben->removed)
++		return;
++
+ 	if (bigben->work_led) {
+ 		bigben->work_led = false;
+ 		report_field->value[0] = 0x01; /* 1 = led message */
+@@ -304,6 +308,7 @@ static void bigben_remove(struct hid_device *hid)
+ {
+ 	struct bigben_device *bigben = hid_get_drvdata(hid);
  
--	list_for_each_entry_rcu(sta, &local->sta_list, list) {
-+	list_for_each_entry(sta, &local->sta_list, list) {
- 		if (sdata != sta->sdata &&
- 		    (!sta->sdata->bss || sta->sdata->bss != sdata->bss))
- 			continue;
++	bigben->removed = true;
+ 	cancel_work_sync(&bigben->worker);
+ 	hid_hw_stop(hid);
+ }
+@@ -324,6 +329,7 @@ static int bigben_probe(struct hid_device *hid,
+ 		return -ENOMEM;
+ 	hid_set_drvdata(hid, bigben);
+ 	bigben->hid = hid;
++	bigben->removed = false;
+ 
+ 	error = hid_parse(hid);
+ 	if (error) {
 -- 
 2.20.1
 
