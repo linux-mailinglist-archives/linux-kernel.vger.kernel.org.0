@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 39BB818B73E
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:32:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 810B518B723
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:31:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729066AbgCSNcA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 09:32:00 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37410 "EHLO mail.kernel.org"
+        id S1729758AbgCSNSM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 09:18:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40124 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727556AbgCSNQt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 09:16:49 -0400
+        id S1729494AbgCSNSK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 09:18:10 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 98815206D7;
-        Thu, 19 Mar 2020 13:16:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1202521556;
+        Thu, 19 Mar 2020 13:18:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584623809;
-        bh=l+SslzW3aQwnBAb6lpZwBPLpDvnhkZu8HaV802HbA1M=;
+        s=default; t=1584623889;
+        bh=smlm/cJ1yG+L/Pnsa2i4WyXPEEueXmy8t9rJyNlk5eU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IYPGSFcyhB0ZO+OPihtN+/Gn91CFf/CYmspp5qkvT9+zzViuJROEXd0QPxpXgaFnA
-         DKo3lPuSYHvFNGQc9nCTCc38L2g6zZFe0mQ0km/4RfM7ziMEa5CHziltA7hYsXzPsY
-         dpRwoNdvWSJL3zAqiZ0xbMggzaxDWTq9P9TIvoA0=
+        b=DVQiP4961A94CfiSF7tm/Mp7BijNeiDcY4Ty5UnZhEhOOAh7We+IdR7jvbOEdLfOf
+         IUqs1tIQCRCj5EW+mEubL7147J0/xgMIC/2bhqZ6V0BwBKOyZEW8X5OpMhjOQD3yHZ
+         fEetneFQIsyBgNmRP04ldsdx1zeD6SbDtnrvErqc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jakub Kicinski <kuba@kernel.org>,
-        Pablo Neira Ayuso <pablo@netfilter.org>
-Subject: [PATCH 4.14 60/99] netfilter: nft_payload: add missing attribute validation for payload csum flags
-Date:   Thu, 19 Mar 2020 14:03:38 +0100
-Message-Id: <20200319123959.844990842@linuxfoundation.org>
+        Sven Eckelmann <sven@narfation.org>,
+        Simon Wunderlich <sw@simonwunderlich.de>
+Subject: [PATCH 4.14 70/99] batman-adv: Fix lock for ogm cnt access in batadv_iv_ogm_calc_tq
+Date:   Thu, 19 Mar 2020 14:03:48 +0100
+Message-Id: <20200319124002.387033138@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.2
 In-Reply-To: <20200319123941.630731708@linuxfoundation.org>
 References: <20200319123941.630731708@linuxfoundation.org>
@@ -43,31 +43,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jakub Kicinski <kuba@kernel.org>
+From: Sven Eckelmann <sven@narfation.org>
 
-commit 9d6effb2f1523eb84516e44213c00f2fd9e6afff upstream.
+commit 5ba7dcfe77037b67016263ea597a8b431692ecab upstream.
 
-Add missing attribute validation for NFTA_PAYLOAD_CSUM_FLAGS
-to the netlink policy.
+The originator node object orig_neigh_node is used to when accessing the
+bcast_own(_sum) and real_packet_count information. The access to them has
+to be protected with the spinlock in orig_neigh_node.
 
-Fixes: 1814096980bb ("netfilter: nft_payload: layer 4 checksum adjustment for pseudoheader fields")
-Signed-off-by: Jakub Kicinski <kuba@kernel.org>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+But the function uses the lock in orig_node instead. This is incorrect
+because they could be two different originator node objects.
+
+Fixes: 0ede9f41b217 ("batman-adv: protect bit operations to count OGMs with spinlock")
+Signed-off-by: Sven Eckelmann <sven@narfation.org>
+Signed-off-by: Simon Wunderlich <sw@simonwunderlich.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- net/netfilter/nft_payload.c |    1 +
- 1 file changed, 1 insertion(+)
+ net/batman-adv/bat_iv_ogm.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/net/netfilter/nft_payload.c
-+++ b/net/netfilter/nft_payload.c
-@@ -121,6 +121,7 @@ static const struct nla_policy nft_paylo
- 	[NFTA_PAYLOAD_LEN]		= { .type = NLA_U32 },
- 	[NFTA_PAYLOAD_CSUM_TYPE]	= { .type = NLA_U32 },
- 	[NFTA_PAYLOAD_CSUM_OFFSET]	= { .type = NLA_U32 },
-+	[NFTA_PAYLOAD_CSUM_FLAGS]	= { .type = NLA_U32 },
- };
+--- a/net/batman-adv/bat_iv_ogm.c
++++ b/net/batman-adv/bat_iv_ogm.c
+@@ -1220,7 +1220,7 @@ static bool batadv_iv_ogm_calc_tq(struct
+ 	orig_node->last_seen = jiffies;
  
- static int nft_payload_init(const struct nft_ctx *ctx,
+ 	/* find packet count of corresponding one hop neighbor */
+-	spin_lock_bh(&orig_node->bat_iv.ogm_cnt_lock);
++	spin_lock_bh(&orig_neigh_node->bat_iv.ogm_cnt_lock);
+ 	if_num = if_incoming->if_num;
+ 	orig_eq_count = orig_neigh_node->bat_iv.bcast_own_sum[if_num];
+ 	neigh_ifinfo = batadv_neigh_ifinfo_new(neigh_node, if_outgoing);
+@@ -1230,7 +1230,7 @@ static bool batadv_iv_ogm_calc_tq(struct
+ 	} else {
+ 		neigh_rq_count = 0;
+ 	}
+-	spin_unlock_bh(&orig_node->bat_iv.ogm_cnt_lock);
++	spin_unlock_bh(&orig_neigh_node->bat_iv.ogm_cnt_lock);
+ 
+ 	/* pay attention to not get a value bigger than 100 % */
+ 	if (orig_eq_count > neigh_rq_count)
 
 
