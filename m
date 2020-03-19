@@ -2,101 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0462918B1DC
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 11:57:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1152C18B1E0
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 11:58:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727201AbgCSK5e (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 06:57:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37640 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727009AbgCSK5d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 06:57:33 -0400
-Received: from disco-boy.misterjones.org (disco-boy.misterjones.org [51.254.78.96])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 223D020752;
-        Thu, 19 Mar 2020 10:57:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584615453;
-        bh=uHx+Br1aMgWnaInx45PzVj4K7vit7la5TgFfqUwGJvA=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=LOf17CNugvPH2Y2uD9Tv74rrJWdl7xOpeMe/roOkwkNQdPLN1/2JREqsMj8iVjP2+
-         5pSBYtrmJMarW0a6lyyXniuNlZcLfCB11qjEGpG2KA0NVKkCZaNPMw86Eo7Q+AacOT
-         9+QuW7mDJe+HZ14RMb2B07KSMZX6oXoQVEOpnHh0=
-Received: from disco-boy.misterjones.org ([51.254.78.96] helo=www.loen.fr)
-        by disco-boy.misterjones.org with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.92)
-        (envelope-from <maz@kernel.org>)
-        id 1jEsrj-00Duvj-FZ; Thu, 19 Mar 2020 10:57:31 +0000
+        id S1727148AbgCSK6k (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 06:58:40 -0400
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:36988 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726188AbgCSK6j (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 06:58:39 -0400
+Received: by mail-oi1-f195.google.com with SMTP id w13so2204388oih.4
+        for <linux-kernel@vger.kernel.org>; Thu, 19 Mar 2020 03:58:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to
+         :content-transfer-encoding;
+        bh=TIiGFpVE/028TVc4LIohZ13JKmLHwuJSN7eJ4s0UbbY=;
+        b=uidFTHpye1XUmUmSLZ7cgcFXkgX8MzVbhy2kQjqQPYg8QK7TFCRDcpw0rB8I+BFiWv
+         0M2xRoXhEQE2tpZqJGMVacQGF88wK4qMmyqCvKheGqTNdheSgoo6F0Hta5IgCfzuieO/
+         sYKwW8HXsZVKaMxYSgFG9OrYj91r30JVYpnBwiVHuRvhdfhUmt6Nw1ZOxG/Rpt2y/Nqy
+         Y9GCO2uLk+O0KJiGSMJZIHIk05ZkxtiKWoTUAO3TsK/wdyJjhre0vSU5besKewp2Rjm/
+         8NKeeycLus0Y4GgmuQHLdGqsECT6zMojf9ZSjdOSEUyyuQ8y5xGaCNy8egx9m62FPYN7
+         KuhA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to:content-transfer-encoding;
+        bh=TIiGFpVE/028TVc4LIohZ13JKmLHwuJSN7eJ4s0UbbY=;
+        b=tHLLFDgagX/SMgBuQ/Sc+B7SOvjO73khdQ6sg3g5XAxxWorrmW3SxZtyGiq4sJCG7I
+         gnv5zZUDNqwE++G+KXaZG/5IzHtbc1UCPzIqi8a7ZuRkrkNi07UTOjlFb4n1kqsLq3TX
+         rfXeV6ouL0g+HTcwqkmMlFJoYQ/uAePOXmXwZ24EIgMO6sFgE/jhuwT0o9Xmelbi/EyN
+         EP/3uO8pDivTnes4q8BuJrdPk0Y2qOFfgX0C7x6TQIRz1gcRU2NbnqF8oG29PgxBmE4U
+         rRXFiWMJChEcgbqcc8FaafyyuDA5LksLfQS/rVPcXVnASZ6bbuBGerpXc7HJ29eoADIE
+         ATiA==
+X-Gm-Message-State: ANhLgQ3Jg3hiW/tBPZEusRw4/+X1C3AyXOtkEZxbqGlCQ5k5ocVSDra3
+        d9GIhKnKYWloFvPICHH7kihV1fzc2ryn6TqBQHQ=
+X-Google-Smtp-Source: ADFU+vsZsH4IMpUVExvRulQWuHpB8jJ3Ks1S4bMlwlfJ0myDY56NQwRkVYiVbxCA4GV+H09CRf1xbEEHP/SNSKxVtUg=
+X-Received: by 2002:aca:df45:: with SMTP id w66mr1808474oig.76.1584615519045;
+ Thu, 19 Mar 2020 03:58:39 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Thu, 19 Mar 2020 10:57:31 +0000
-From:   Marc Zyngier <maz@kernel.org>
-To:     Auger Eric <eric.auger@redhat.com>
-Cc:     linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu,
-        kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Robert Richter <rrichter@marvell.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Zenghui Yu <yuzenghui@huawei.com>,
-        James Morse <james.morse@arm.com>,
-        Julien Thierry <julien.thierry.kdev@gmail.com>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>
-Subject: Re: [PATCH v5 15/23] irqchip/gic-v4.1: Add VSGI property setup
-In-Reply-To: <edfc4aa0-3e96-4fb2-731e-76a284c8ce17@redhat.com>
-References: <20200304203330.4967-1-maz@kernel.org>
- <20200304203330.4967-16-maz@kernel.org>
- <edfc4aa0-3e96-4fb2-731e-76a284c8ce17@redhat.com>
-Message-ID: <fc6ae25a16ec8ad27e8853f137cc82a1@kernel.org>
-X-Sender: maz@kernel.org
-User-Agent: Roundcube Webmail/1.3.10
-X-SA-Exim-Connect-IP: 51.254.78.96
-X-SA-Exim-Rcpt-To: eric.auger@redhat.com, linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, lorenzo.pieralisi@arm.com, jason@lakedaemon.net, rrichter@marvell.com, tglx@linutronix.de, yuzenghui@huawei.com, james.morse@arm.com, julien.thierry.kdev@gmail.com, suzuki.poulose@arm.com
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+Received: by 2002:a9d:6d93:0:0:0:0:0 with HTTP; Thu, 19 Mar 2020 03:58:38
+ -0700 (PDT)
+Reply-To: mrsnancychristopher8@gmail.com
+From:   " Mrs.Nancy Christopher" <wwunionbfafrica@gmail.com>
+Date:   Thu, 19 Mar 2020 03:58:38 -0700
+Message-ID: <CANiKTzXrc65xq7FomuV=5PbbKBzof8_wa=gcaYy8uO-J2ViSzg@mail.gmail.com>
+Subject: HI
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Eric,
+--=20
+Dear Beloved,
 
-On 2020-03-17 10:30, Auger Eric wrote:
-> Hi Marc,
-> 
-> On 3/4/20 9:33 PM, Marc Zyngier wrote:
->> Add the SGI configuration entry point for KVM to use.
->> 
->> Signed-off-by: Marc Zyngier <maz@kernel.org>
->> ---
->>  drivers/irqchip/irq-gic-v3-its.c   |  2 +-
->>  drivers/irqchip/irq-gic-v4.c       | 13 +++++++++++++
->>  include/linux/irqchip/arm-gic-v4.h |  3 ++-
->>  3 files changed, 16 insertions(+), 2 deletions(-)
->> 
->> diff --git a/drivers/irqchip/irq-gic-v3-its.c 
->> b/drivers/irqchip/irq-gic-v3-its.c
->> index effb0e0b0c9d..b65fba67bd85 100644
->> --- a/drivers/irqchip/irq-gic-v3-its.c
->> +++ b/drivers/irqchip/irq-gic-v3-its.c
->> @@ -4039,7 +4039,7 @@ static int its_sgi_set_vcpu_affinity(struct 
->> irq_data *d, void *vcpu_info)
->>  	struct its_cmd_info *info = vcpu_info;
->> 
->>  	switch (info->cmd_type) {
->> -	case PROP_UPDATE_SGI:
->> +	case PROP_UPDATE_VSGI:
-> This change rather belongs to
-> [PATCH v5 12/23] irqchip/gic-v4.1: Plumb set_vcpu_affinity SGI 
-> callbacks
+I=E2=80=99m mrs.Nancy Christopher, 69years old affected with breast cancer,
+the wife of late Nancy Christopher,  the
 
-Absolutely. I messed up a rebase, obviously.
+Director of High River Gold Mines Ltd Burkina Faso West Africa. I am
+contacting you because of my health
 
-Thanks,
+condition,i need a reliable person, who will handle this project
+accordingly, accomplish my heart desire and
 
-         M.
--- 
-Jazz is not dead. It just smells funny...
+utilize this fund. I have decided to donate the sum Twenty-Five
+Million Two Hundred Thousand United State Dollars
+
+Only ($25,200,000.00) to Charity Organizations or to support the
+Orphans, Motherless Babies,Less privileged and
+
+free Medical & Medicine Poor People's around the World since I don t
+have any child and do not want the bank take
+
+over the fund. I don't really know if i am going to survive this
+stage, therefore if you ready to handle this
+
+project, kindly response so that i will instruct the bank to transfer
+the fund to your account.
+
+Contact my private email only if you are interested
+(mrsnancychristopher8@gmail.com)
+
+Remain blessed in the name of the Lord.
+
+
+Regards
+
+Mrs.Nancy Christopher
