@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B636F18B602
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:23:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6CD6E18B670
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:27:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730174AbgCSNXS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 09:23:18 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49132 "EHLO mail.kernel.org"
+        id S1730833AbgCSN1A (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 09:27:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55034 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730313AbgCSNXP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 09:23:15 -0400
+        id S1730832AbgCSN05 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 09:26:57 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 77936206D7;
-        Thu, 19 Mar 2020 13:23:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 32278207FC;
+        Thu, 19 Mar 2020 13:26:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584624194;
-        bh=CF0oxVd1Ljc33k3LLpWxJqOxe/MbmHC6fvTOzBAh5b0=;
+        s=default; t=1584624416;
+        bh=qWd20iwAOFru1dkdrmNhZZetuO5TaElp0urtUJVUjOk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=q+dh4bfyxxyFeDekt7Flg1IHDT47OzzbroPZSFOyfjkU4tx9Jw+aTwXR32hfZYehX
-         zZE1Mo+lPZ1sO1mgBVfxnNMrfiA7XhAAtCkK6Mh/83orHay7CLFzVimQvdija6KLh0
-         kHB1sYNXZKwjpzaNebQTJrbYyjWtQ2fJmf/KTDmI=
+        b=lAPax4ipGwTOSq5JUgOARFk7v/rziTxBFAYZsk1XaBem0yBerNpdOeEPGhnkYS2Cm
+         CVC2vbyRkNC/rKlfl8xPRs56DZPw85HtPwfbRyKdKXPGOrp5wC+7iQTFxDVzMO3Xem
+         h1rsez5XQ2C68IVpJAxcvf/OfeBW/shuwU/uQ9NA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Luo bin <luobin9@huawei.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Monk Liu <Monk.Liu@amd.com>,
+        Hawking Zhang <Hawking.Zhang@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 39/60] hinic: fix a irq affinity bug
+Subject: [PATCH 5.5 35/65] drm/amdgpu: fix memory leak during TDR test(v2)
 Date:   Thu, 19 Mar 2020 14:04:17 +0100
-Message-Id: <20200319123932.030604081@linuxfoundation.org>
+Message-Id: <20200319123937.637687088@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.2
-In-Reply-To: <20200319123919.441695203@linuxfoundation.org>
-References: <20200319123919.441695203@linuxfoundation.org>
+In-Reply-To: <20200319123926.466988514@linuxfoundation.org>
+References: <20200319123926.466988514@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,56 +45,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Luo bin <luobin9@huawei.com>
+From: Monk Liu <Monk.Liu@amd.com>
 
-[ Upstream commit 0bff777bd0cba73ad4cd0145696ad284d7e6a99f ]
+[ Upstream commit 4829f89855f1d3a3d8014e74cceab51b421503db ]
 
-can not use a local variable as an input parameter of
-irq_set_affinity_hint
+fix system memory leak
 
-Signed-off-by: Luo bin <luobin9@huawei.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+v2:
+fix coding style
+
+Signed-off-by: Monk Liu <Monk.Liu@amd.com>
+Reviewed-by: Hawking Zhang <Hawking.Zhang@amd.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/huawei/hinic/hinic_hw_qp.h | 1 +
- drivers/net/ethernet/huawei/hinic/hinic_rx.c    | 5 ++---
- 2 files changed, 3 insertions(+), 3 deletions(-)
+ drivers/gpu/drm/amd/powerplay/smu_v11_0.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/huawei/hinic/hinic_hw_qp.h b/drivers/net/ethernet/huawei/hinic/hinic_hw_qp.h
-index f4a339b10b10b..79091e1314181 100644
---- a/drivers/net/ethernet/huawei/hinic/hinic_hw_qp.h
-+++ b/drivers/net/ethernet/huawei/hinic/hinic_hw_qp.h
-@@ -94,6 +94,7 @@ struct hinic_rq {
+diff --git a/drivers/gpu/drm/amd/powerplay/smu_v11_0.c b/drivers/gpu/drm/amd/powerplay/smu_v11_0.c
+index 8b13d18c6414c..e4149e6b68b39 100644
+--- a/drivers/gpu/drm/amd/powerplay/smu_v11_0.c
++++ b/drivers/gpu/drm/amd/powerplay/smu_v11_0.c
+@@ -948,8 +948,12 @@ int smu_v11_0_init_max_sustainable_clocks(struct smu_context *smu)
+ 	struct smu_11_0_max_sustainable_clocks *max_sustainable_clocks;
+ 	int ret = 0;
  
- 	struct hinic_wq         *wq;
+-	max_sustainable_clocks = kzalloc(sizeof(struct smu_11_0_max_sustainable_clocks),
++	if (!smu->smu_table.max_sustainable_clocks)
++		max_sustainable_clocks = kzalloc(sizeof(struct smu_11_0_max_sustainable_clocks),
+ 					 GFP_KERNEL);
++	else
++		max_sustainable_clocks = smu->smu_table.max_sustainable_clocks;
++
+ 	smu->smu_table.max_sustainable_clocks = (void *)max_sustainable_clocks;
  
-+	struct cpumask		affinity_mask;
- 	u32                     irq;
- 	u16                     msix_entry;
- 
-diff --git a/drivers/net/ethernet/huawei/hinic/hinic_rx.c b/drivers/net/ethernet/huawei/hinic/hinic_rx.c
-index 56ea6d692f1c3..2695ad69fca60 100644
---- a/drivers/net/ethernet/huawei/hinic/hinic_rx.c
-+++ b/drivers/net/ethernet/huawei/hinic/hinic_rx.c
-@@ -475,7 +475,6 @@ static int rx_request_irq(struct hinic_rxq *rxq)
- 	struct hinic_hwdev *hwdev = nic_dev->hwdev;
- 	struct hinic_rq *rq = rxq->rq;
- 	struct hinic_qp *qp;
--	struct cpumask mask;
- 	int err;
- 
- 	rx_add_napi(rxq);
-@@ -492,8 +491,8 @@ static int rx_request_irq(struct hinic_rxq *rxq)
- 	}
- 
- 	qp = container_of(rq, struct hinic_qp, rq);
--	cpumask_set_cpu(qp->q_id % num_online_cpus(), &mask);
--	return irq_set_affinity_hint(rq->irq, &mask);
-+	cpumask_set_cpu(qp->q_id % num_online_cpus(), &rq->affinity_mask);
-+	return irq_set_affinity_hint(rq->irq, &rq->affinity_mask);
- }
- 
- static void rx_free_irq(struct hinic_rxq *rxq)
+ 	max_sustainable_clocks->uclock = smu->smu_table.boot_values.uclk / 100;
 -- 
 2.20.1
 
