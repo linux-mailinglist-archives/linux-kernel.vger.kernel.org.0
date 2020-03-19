@@ -2,38 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DD98918B5BC
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:21:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6A78918B61E
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:24:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730067AbgCSNVG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 09:21:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45568 "EHLO mail.kernel.org"
+        id S1730465AbgCSNYY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 09:24:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50988 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730043AbgCSNVF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 09:21:05 -0400
+        id S1729892AbgCSNYU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 09:24:20 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7BC9520724;
-        Thu, 19 Mar 2020 13:21:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 40E5120658;
+        Thu, 19 Mar 2020 13:24:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584624064;
-        bh=xbfv7AatQ/8gAwDtOYfKEqRPtW1wAwYMUmExtPt3lV4=;
+        s=default; t=1584624259;
+        bh=Dxey7Q8OdyIqif19MhI4LcJl0lda+wnDI72pKg7H+PI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=XocXlM5eaDZeJi80T4WC1xMePw6wp0QK9sk73uNR7VJDThANuashp3fsFjqoJyy8+
-         zUCuZvCndFn0gpDMEpg7fcTG/5wT8up+BdyKtI3xBrfCRDagUDMFi21O5W5hDbFbRs
-         BgnvMvfHotwwq3gxLk8/x8SNsvTq4j66ZQKq6RXs=
+        b=x+QHZhEI0Gtu6O5RZJgwcfwZXC25rqSWa996FewyH/xfVuZHHzzjbBhDBfLQp0K8J
+         exsh5PVa9Loauf9RhYwcfauEcMWuBQjJyxXl5KFbguZQC7kQ/+yHACCsWApjVNXnpd
+         mi04AZyfXESzx52M6CCWuU+2s61eZRFEqhED8yYM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jann Horn <jannh@google.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.19 45/48] mm: slub: add missing TID bump in kmem_cache_alloc_bulk()
-Date:   Thu, 19 Mar 2020 14:04:27 +0100
-Message-Id: <20200319123916.969338281@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Alexandru-Mihai Maftei <amaftei@solarflare.com>,
+        Martin Habets <mhabets@solarflare.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.4 50/60] sfc: fix timestamp reconstruction at 16-bit rollover points
+Date:   Thu, 19 Mar 2020 14:04:28 +0100
+Message-Id: <20200319123935.284186646@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.2
-In-Reply-To: <20200319123902.941451241@linuxfoundation.org>
-References: <20200319123902.941451241@linuxfoundation.org>
+In-Reply-To: <20200319123919.441695203@linuxfoundation.org>
+References: <20200319123919.441695203@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,46 +46,81 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jann Horn <jannh@google.com>
+From: Alex Maftei (amaftei) <amaftei@solarflare.com>
 
-commit fd4d9c7d0c71866ec0c2825189ebd2ce35bd95b8 upstream.
+[ Upstream commit 23797b98909f34b75fd130369bde86f760db69d0 ]
 
-When kmem_cache_alloc_bulk() attempts to allocate N objects from a percpu
-freelist of length M, and N > M > 0, it will first remove the M elements
-from the percpu freelist, then call ___slab_alloc() to allocate the next
-element and repopulate the percpu freelist. ___slab_alloc() can re-enable
-IRQs via allocate_slab(), so the TID must be bumped before ___slab_alloc()
-to properly commit the freelist head change.
+We can't just use the top bits of the last sync event as they could be
+off-by-one every 65,536 seconds, giving an error in reconstruction of
+65,536 seconds.
 
-Fix it by unconditionally bumping c->tid when entering the slowpath.
+This patch uses the difference in the bottom 16 bits (mod 2^16) to
+calculate an offset that needs to be applied to the last sync event to
+get to the current time.
 
-Cc: stable@vger.kernel.org
-Fixes: ebe909e0fdb3 ("slub: improve bulk alloc strategy")
-Signed-off-by: Jann Horn <jannh@google.com>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Alexandru-Mihai Maftei <amaftei@solarflare.com>
+Acked-by: Martin Habets <mhabets@solarflare.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- mm/slub.c |    9 +++++++++
- 1 file changed, 9 insertions(+)
+ drivers/net/ethernet/sfc/ptp.c | 38 +++++++++++++++++++++++++++++++---
+ 1 file changed, 35 insertions(+), 3 deletions(-)
 
---- a/mm/slub.c
-+++ b/mm/slub.c
-@@ -3104,6 +3104,15 @@ int kmem_cache_alloc_bulk(struct kmem_ca
+diff --git a/drivers/net/ethernet/sfc/ptp.c b/drivers/net/ethernet/sfc/ptp.c
+index af15a737c6756..59b4f16896a81 100644
+--- a/drivers/net/ethernet/sfc/ptp.c
++++ b/drivers/net/ethernet/sfc/ptp.c
+@@ -560,13 +560,45 @@ efx_ptp_mac_nic_to_ktime_correction(struct efx_nic *efx,
+ 				    u32 nic_major, u32 nic_minor,
+ 				    s32 correction)
+ {
++	u32 sync_timestamp;
+ 	ktime_t kt = { 0 };
++	s16 delta;
  
- 		if (unlikely(!object)) {
- 			/*
-+			 * We may have removed an object from c->freelist using
-+			 * the fastpath in the previous iteration; in that case,
-+			 * c->tid has not been bumped yet.
-+			 * Since ___slab_alloc() may reenable interrupts while
-+			 * allocating memory, we should bump c->tid now.
-+			 */
-+			c->tid = next_tid(c->tid);
+ 	if (!(nic_major & 0x80000000)) {
+ 		WARN_ON_ONCE(nic_major >> 16);
+-		/* Use the top bits from the latest sync event. */
+-		nic_major &= 0xffff;
+-		nic_major |= (last_sync_timestamp_major(efx) & 0xffff0000);
 +
-+			/*
- 			 * Invoking slow path likely have side-effect
- 			 * of re-populating per CPU c->freelist
- 			 */
++		/* Medford provides 48 bits of timestamp, so we must get the top
++		 * 16 bits from the timesync event state.
++		 *
++		 * We only have the lower 16 bits of the time now, but we do
++		 * have a full resolution timestamp at some point in past. As
++		 * long as the difference between the (real) now and the sync
++		 * is less than 2^15, then we can reconstruct the difference
++		 * between those two numbers using only the lower 16 bits of
++		 * each.
++		 *
++		 * Put another way
++		 *
++		 * a - b = ((a mod k) - b) mod k
++		 *
++		 * when -k/2 < (a-b) < k/2. In our case k is 2^16. We know
++		 * (a mod k) and b, so can calculate the delta, a - b.
++		 *
++		 */
++		sync_timestamp = last_sync_timestamp_major(efx);
++
++		/* Because delta is s16 this does an implicit mask down to
++		 * 16 bits which is what we need, assuming
++		 * MEDFORD_TX_SECS_EVENT_BITS is 16. delta is signed so that
++		 * we can deal with the (unlikely) case of sync timestamps
++		 * arriving from the future.
++		 */
++		delta = nic_major - sync_timestamp;
++
++		/* Recover the fully specified time now, by applying the offset
++		 * to the (fully specified) sync time.
++		 */
++		nic_major = sync_timestamp + delta;
+ 
+ 		kt = ptp->nic_to_kernel_time(nic_major, nic_minor,
+ 					     correction);
+-- 
+2.20.1
+
 
 
