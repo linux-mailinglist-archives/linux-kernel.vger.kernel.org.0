@@ -2,40 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E221318B6F0
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:30:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4D46318B5D9
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:22:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730186AbgCSNaN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 09:30:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46986 "EHLO mail.kernel.org"
+        id S1730163AbgCSNWF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 09:22:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47062 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728927AbgCSNWC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 09:22:02 -0400
+        id S1730154AbgCSNWE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 09:22:04 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6A54420724;
-        Thu, 19 Mar 2020 13:22:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E6B332098B;
+        Thu, 19 Mar 2020 13:22:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584624120;
-        bh=2+JddXm05lMAvMt7a5HtaUlUsXMzX06xKsrUO7VAvF8=;
+        s=default; t=1584624123;
+        bh=57I+7quQKDQmsEDDJITB3L2NMIr5sFzOXq0CxdhIvnc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ye9CSkUKT/3f+pmUOp0MLi/8cCcc5kR+VhrkJIONf/x22DSMN/CB9qO9XNX1ERdT1
-         cEGjXqNoXmfHk52OPIc8lUUgI3hfpE00A26hebthUwePtFCwB5i9nppcZ/5Grc0Jbh
-         aVlKP9zyQWKQO5uIm51PS4NmLMYJLrmf1npNKQGg=
+        b=qwmz3Dvlk2UxSJyEQXtu26x9aKYGqbNNJGhObaAa4ZOinaqJ4+SMFvtq0sREk6EYY
+         qugoG/AhhqhszXKLZSEKNJEl6dZzHQEdqBnQFwWUf+spbpN14wVYeEgfGO2z9vPupc
+         CNv9Yi+PhEKpQ1g1370+EmMcwpV9c3CxG5XLeBw8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Bruce Ashfield <bruce.ashfield@gmail.com>,
-        Victor Kamensky <kamensky@cisco.com>,
-        Paul Burton <paulburton@kernel.org>,
-        linux-mips@vger.kernel.org, Ralf Baechle <ralf@linux-mips.org>,
-        James Hogan <jhogan@kernel.org>,
-        Vincenzo Frascino <vincenzo.frascino@arm.com>,
-        richard.purdie@linuxfoundation.org, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 14/60] mips: vdso: fix jalr t9 crash in vdso code
-Date:   Thu, 19 Mar 2020 14:03:52 +0100
-Message-Id: <20200319123923.535642309@linuxfoundation.org>
+        stable@vger.kernel.org, Paul Burton <paulburton@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.4 15/60] MIPS: Disable VDSO time functionality on microMIPS
+Date:   Thu, 19 Mar 2020 14:03:53 +0100
+Message-Id: <20200319123923.868277570@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.2
 In-Reply-To: <20200319123919.441695203@linuxfoundation.org>
 References: <20200319123919.441695203@linuxfoundation.org>
@@ -48,62 +43,62 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Victor Kamensky <kamensky@cisco.com>
+From: Paul Burton <paulburton@kernel.org>
 
-[ Upstream commit d3f703c4359ff06619b2322b91f69710453e6b6d ]
+[ Upstream commit 07015d7a103c4420b69a287b8ef4d2535c0f4106 ]
 
-Observed that when kernel is built with Yocto mips64-poky-linux-gcc,
-and mips64-poky-linux-gnun32-gcc toolchain, resulting vdso contains
-'jalr t9' instructions in its code and since in vdso case nobody
-sets GOT table code crashes when instruction reached. On other hand
-observed that when kernel is built mips-poky-linux-gcc toolchain, the
-same 'jalr t9' instruction are replaced with PC relative function
-calls using 'bal' instructions.
+A check we're about to add to pick up on function calls that depend on
+bogus use of the GOT in the VDSO picked up on instances of such function
+calls in microMIPS builds. Since the code appears genuinely problematic,
+and given the relatively small amount of use & testing that microMIPS
+sees, go ahead & disable the VDSO for microMIPS builds.
 
-The difference boils down to -mrelax-pic-calls and -mexplicit-relocs
-gcc options that gets different default values depending on gcc
-target triplets and corresponding binutils. -mrelax-pic-calls got
-enabled by default only in mips-poky-linux-gcc case. MIPS binutils
-ld relies on R_MIPS_JALR relocation to convert 'jalr t9' into 'bal'
-and such relocation is generated only if -mrelax-pic-calls option
-is on.
-
-Please note 'jalr t9' conversion to 'bal' can happen only to static
-functions. These static PIC calls use mips local GOT entries that
-are supposed to be filled with start of DSO value by run-time linker
-(missing in VDSO case) and they do not have dynamic relocations.
-Global mips GOT entries must have dynamic relocations and they should
-be prevented by cmd_vdso_check Makefile rule.
-
-Solution call out -mrelax-pic-calls and -mexplicit-relocs options
-explicitly while compiling MIPS vdso code. That would get correct
-and consistent between different toolchains behaviour.
-
-Reported-by: Bruce Ashfield <bruce.ashfield@gmail.com>
-Signed-off-by: Victor Kamensky <kamensky@cisco.com>
 Signed-off-by: Paul Burton <paulburton@kernel.org>
-Cc: linux-mips@vger.kernel.org
-Cc: Ralf Baechle <ralf@linux-mips.org>
-Cc: James Hogan <jhogan@kernel.org>
-Cc: Vincenzo Frascino <vincenzo.frascino@arm.com>
-Cc: richard.purdie@linuxfoundation.org
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/mips/vdso/Makefile | 1 +
- 1 file changed, 1 insertion(+)
+ arch/mips/vdso/Makefile | 19 +++++++++++++++++--
+ 1 file changed, 17 insertions(+), 2 deletions(-)
 
 diff --git a/arch/mips/vdso/Makefile b/arch/mips/vdso/Makefile
-index 996a934ece7d6..3fa4bbe1bae53 100644
+index 3fa4bbe1bae53..b6b1eb638fb14 100644
 --- a/arch/mips/vdso/Makefile
 +++ b/arch/mips/vdso/Makefile
-@@ -29,6 +29,7 @@ endif
- cflags-vdso := $(ccflags-vdso) \
- 	$(filter -W%,$(filter-out -Wa$(comma)%,$(KBUILD_CFLAGS))) \
- 	-O3 -g -fPIC -fno-strict-aliasing -fno-common -fno-builtin -G 0 \
-+	-mrelax-pic-calls -mexplicit-relocs \
- 	-fno-stack-protector -fno-jump-tables -DDISABLE_BRANCH_PROFILING \
- 	$(call cc-option, -fno-asynchronous-unwind-tables) \
- 	$(call cc-option, -fno-stack-protector)
+@@ -48,6 +48,8 @@ endif
+ 
+ CFLAGS_REMOVE_vgettimeofday.o = -pg
+ 
++DISABLE_VDSO := n
++
+ #
+ # For the pre-R6 code in arch/mips/vdso/vdso.h for locating
+ # the base address of VDSO, the linker will emit a R_MIPS_PC32
+@@ -61,11 +63,24 @@ CFLAGS_REMOVE_vgettimeofday.o = -pg
+ ifndef CONFIG_CPU_MIPSR6
+   ifeq ($(call ld-ifversion, -lt, 225000000, y),y)
+     $(warning MIPS VDSO requires binutils >= 2.25)
+-    obj-vdso-y := $(filter-out vgettimeofday.o, $(obj-vdso-y))
+-    ccflags-vdso += -DDISABLE_MIPS_VDSO
++    DISABLE_VDSO := y
+   endif
+ endif
+ 
++#
++# GCC (at least up to version 9.2) appears to emit function calls that make use
++# of the GOT when targeting microMIPS, which we can't use in the VDSO due to
++# the lack of relocations. As such, we disable the VDSO for microMIPS builds.
++#
++ifdef CONFIG_CPU_MICROMIPS
++  DISABLE_VDSO := y
++endif
++
++ifeq ($(DISABLE_VDSO),y)
++  obj-vdso-y := $(filter-out vgettimeofday.o, $(obj-vdso-y))
++  ccflags-vdso += -DDISABLE_MIPS_VDSO
++endif
++
+ # VDSO linker flags.
+ VDSO_LDFLAGS := \
+ 	-Wl,-Bsymbolic -Wl,--no-undefined -Wl,-soname=linux-vdso.so.1 \
 -- 
 2.20.1
 
