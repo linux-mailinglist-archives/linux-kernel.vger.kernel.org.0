@@ -2,156 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 73B8318BA5A
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 16:07:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 33E9018BA7A
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 16:08:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727959AbgCSPGi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 11:06:38 -0400
-Received: from mail-mw2nam10on2117.outbound.protection.outlook.com ([40.107.94.117]:48032
-        "EHLO NAM10-MW2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727858AbgCSPGh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 11:06:37 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=R8NuPuJvrMcVr01sEYMaIYqkNUdrn2ySH2ebDLmVXkOU9DkRhneJOgeS/emrUEE+2b2SZjJEqkfc0sQ4Q1K9KD579nSLFJX+nsRNy3r9BYpkRIBnsfidYht+D0mWxp1WECmCjbrD8aX18XeqV1mw0eJy9G1HVwxOBJMLmXcZicRDvfV8nkMt0Zwre6kXacbEhueCYuT9c4mai3S6U2A94HslyiuTZYXZPS6WOvAh7zBgIOSnFK+p5pxLdJE2Y9v2A6E6DwdZrYkz8iYjNabpj41qL3ifSZWH7c2XfhW9Em1paeE0vKzZ3vKmZLKMHvZ7JDe5nRkPFFGX216qbRkKKg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=v6Er4kLWhx0NOeAcfresGXNuHMQOMKv74GDcSH0xmzY=;
- b=dbhKNYLy2ebtAHC8whhvlX6EfrNcwywq7/UqdO6b5DwXBQqQxScDEeii86waOssQY/UQLsuvzi5SgNxJ7rh0+9yEjLfSVuxTEwxqrVL2x+DjAgaPHViSp7cMlc1mtgQDUdVvR1F7b9Abhk91oSXXXHNfP+9Q8APufjvVZIhT6Uuv5/qSBNYp9CmBPF8CPUcoW63l/4kH64REwYxoAlVxro2eV12GgIcP0+oD8vXLiIuSouPK9Pdj/WD0oAxJBz5cVepdAzbk7nS1RqFzrJ6O/QWrpWriS+ukIzAwkXQWVUPaf233ClAnryhnxHIEDqxmkkmml0tYnNLvRuYhzAmZhw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=microsoft.com; dmarc=pass action=none
- header.from=microsoft.com; dkim=pass header.d=microsoft.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=v6Er4kLWhx0NOeAcfresGXNuHMQOMKv74GDcSH0xmzY=;
- b=LN3McfeZsXy9l2LebLS1MyYi+oMjyfQKwOB7Cyg33xCszToZVIRqIxKhq8pIYQ9ZNY5Oe/vqRHldElmjf9640ciJ34L97RBsJVTcbOfUJlNeLBMJB8I/JDJx7xjz2QLpdfqqfUiGIkuehFY8ugt9XirnMZ+TxwsJvJuBil8yFaI=
-Received: from MW2PR2101MB1052.namprd21.prod.outlook.com (2603:10b6:302:a::16)
- by MW2PR2101MB1081.namprd21.prod.outlook.com (2603:10b6:302:a::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2835.12; Thu, 19 Mar
- 2020 15:06:35 +0000
-Received: from MW2PR2101MB1052.namprd21.prod.outlook.com
- ([fe80::71ee:121:71bd:6156]) by MW2PR2101MB1052.namprd21.prod.outlook.com
- ([fe80::71ee:121:71bd:6156%10]) with mapi id 15.20.2856.003; Thu, 19 Mar 2020
- 15:06:35 +0000
-From:   Michael Kelley <mikelley@microsoft.com>
-To:     vkuznets <vkuznets@redhat.com>,
-        "ltykernel@gmail.com" <ltykernel@gmail.com>
-CC:     Tianyu Lan <Tianyu.Lan@microsoft.com>,
-        "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        KY Srinivasan <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        Wei Liu <liuwe@microsoft.com>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "bp@alien8.de" <bp@alien8.de>, "hpa@zytor.com" <hpa@zytor.com>,
-        "x86@kernel.org" <x86@kernel.org>
-Subject: RE: [PATCH 0/4] x86/Hyper-V: Unload vmbus channel in hv panic
- callback
-Thread-Topic: [PATCH 0/4] x86/Hyper-V: Unload vmbus channel in hv panic
- callback
-Thread-Index: AQHV/F+NpF+arxPCF0mdiFS5UJm0vqhOg1uAgACKLMCAAIObgIAAdb7w
-Date:   Thu, 19 Mar 2020 15:06:35 +0000
-Message-ID: <MW2PR2101MB10522D2935F49CB9AF138E02D7F40@MW2PR2101MB1052.namprd21.prod.outlook.com>
-References: <20200317132523.1508-1-Tianyu.Lan@microsoft.com>
- <20200317132523.1508-2-Tianyu.Lan@microsoft.com>
- <871rpp3ba8.fsf@vitty.brq.redhat.com>
- <MW2PR2101MB10529A60AF5185BBD7B02E04D7F40@MW2PR2101MB1052.namprd21.prod.outlook.com>
- <87mu8c22ky.fsf@vitty.brq.redhat.com>
-In-Reply-To: <87mu8c22ky.fsf@vitty.brq.redhat.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-msip_labels: MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Enabled=True;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SiteId=72f988bf-86f1-41af-91ab-2d7cd011db47;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Owner=mikelley@ntdev.microsoft.com;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SetDate=2020-03-19T15:06:33.6535463Z;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Name=General;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Application=Microsoft Azure
- Information Protection;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ActionId=e3602d56-2684-45f6-9486-9b060ca11974;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Extended_MSFT_Method=Automatic
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=mikelley@microsoft.com; 
-x-originating-ip: [24.22.167.197]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: ce379de3-0271-44ed-a36b-08d7cc171de5
-x-ms-traffictypediagnostic: MW2PR2101MB1081:|MW2PR2101MB1081:|MW2PR2101MB1081:
-x-ms-exchange-transport-forked: True
-x-ld-processed: 72f988bf-86f1-41af-91ab-2d7cd011db47,ExtAddr
-x-microsoft-antispam-prvs: <MW2PR2101MB1081CD22156F42A593BE1689D7F40@MW2PR2101MB1081.namprd21.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:7219;
-x-forefront-prvs: 0347410860
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(4636009)(366004)(136003)(346002)(376002)(39860400002)(396003)(199004)(33656002)(81166006)(478600001)(10290500003)(8936002)(81156014)(8676002)(9686003)(186003)(55016002)(4326008)(26005)(5660300002)(110136005)(316002)(76116006)(2906002)(54906003)(66476007)(66556008)(64756008)(66446008)(66946007)(52536014)(8990500004)(7696005)(86362001)(71200400001)(6506007);DIR:OUT;SFP:1102;SCL:1;SRVR:MW2PR2101MB1081;H:MW2PR2101MB1052.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;
-received-spf: None (protection.outlook.com: microsoft.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: TEbcqDx08WKYKoeQlHASglYgrGI24B4gf1OksmhNbO65MtpQMd24MCMmurke1M9I81CIcX3e51pKf9OqPrvO1Y7V6xrIcNsUtU0gLIE5s1EnrFSgwoKqvVUYMhONOb2YqKpi15MittMq9vh+2r/IXYhMEEUupYjj24rFDIFDuswzGf0Id1j9tHXvdfSkJt3ls3FOJ3/ntjTHT+VvVfQavH6MnxjDKVXorSxksOAtTklqaJwVpHnlRsNwlumcbAn8ZaBdu9CCojcymXm9NEi28Ee4p32saKhq5P9zAzxJGq0VKttaID5lewaZV9CrG0hWe/dizDnTXjBQDgDfdsjpZPtmrMTErAfkdIUXsCQ2PyaZVWJjlv7lFMDrVJDI+4OyL3fY8bqVae61nHHsWxnsVLF9+ng93otRfyhVW0dwHMWHeKCcpZQjOW8LsQq/wLTD
-x-ms-exchange-antispam-messagedata: PCtqtUHFCau+EJ1GVMj3L7EZesJrZ0kbb4TypqjHznf4bS6faJ1zKu8WUpoMzddXjArsOteKDhPFFgWoHJmJKFw3Op31GuuEzefs9tY4pxoAj+adwMtRD55K53ULTaBAMr1Z0tZE4E41bmV+Ua41CA==
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        id S1727783AbgCSPHd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 11:07:33 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:55468 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728037AbgCSPHb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 11:07:31 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 02JEwwgE124196;
+        Thu, 19 Mar 2020 15:07:16 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2020-01-29;
+ bh=tEtZwW7IpOSLSvQnsgQ8J66cJvp62R3ApNSmRuGT2WQ=;
+ b=O/4NOfJOo9aAmZNgtfpBkmebfoNeXdUSGWKDSaPJAG2VVWaDHsbfaIhyeVNcHjoK94Kv
+ OJ98WJEs3tcFgvQmtSIaYPkvApBpXGGI9LX/PaHYLkbukt8og1hjbj/ZAvZNmUi7m6Y+
+ sP+s1zfx6uf2OSSOylP3PX2Tp/tCrrH+fjK8QLXeuDl6xVUoJcdu4v3ph9B8VhoMnSEV
+ jBsmMnJtwjV7gfqVKVfx5njwf5zRz0JgH498L94OKhJoGk01lcqAvzk7clAudGyhjpGs
+ xidrCBNirB0N0ATxPYMXBWOJ2pBZQyvJvp6rAjKnz8Jct1cVVdLlFsUx64sdacYkz+65 1g== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by userp2130.oracle.com with ESMTP id 2yrpprgwf7-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 19 Mar 2020 15:07:16 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 02JEv5tt185228;
+        Thu, 19 Mar 2020 15:07:16 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by aserp3030.oracle.com with ESMTP id 2ys8tw5xt5-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 19 Mar 2020 15:07:15 +0000
+Received: from abhmp0007.oracle.com (abhmp0007.oracle.com [141.146.116.13])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 02JF7EUX002914;
+        Thu, 19 Mar 2020 15:07:14 GMT
+Received: from [10.39.245.129] (/10.39.245.129)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 19 Mar 2020 08:07:14 -0700
+Subject: Re: [PATCH] xen-pciback: fix INTERRUPT_TYPE_* defines
+To:     =?UTF-8?Q?Marek_Marczykowski-G=c3=b3recki?= 
+        <marmarek@invisiblethingslab.com>, xen-devel@lists.xenproject.org
+Cc:     Juergen Gross <jgross@suse.com>,
+        Stefano Stabellini <sstabellini@kernel.org>,
+        =?UTF-8?Q?Roger_Pau_Monn=c3=a9?= <roger.pau@citrix.com>,
+        Simon Gaiser <simon@invisiblethingslab.com>,
+        open list <linux-kernel@vger.kernel.org>
+References: <20200319040648.10396-1-marmarek@invisiblethingslab.com>
+From:   Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Message-ID: <e6c48552-9866-497c-7d2f-62849122f867@oracle.com>
+Date:   Thu, 19 Mar 2020 11:07:13 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ce379de3-0271-44ed-a36b-08d7cc171de5
-X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Mar 2020 15:06:35.2628
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: gF2SxsIcvZPz/jWo8Yc8agZbmn480jrM0zJ8bOr6Bqmf6Djq3HejUjQuHfuIOFttyzyFwCdQGLaVwWxUXN4zJwHOCsUzbs8xlWJyjx2ceLw=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW2PR2101MB1081
+In-Reply-To: <20200319040648.10396-1-marmarek@invisiblethingslab.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9564 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 phishscore=0 mlxscore=0
+ malwarescore=0 suspectscore=0 mlxlogscore=847 spamscore=0 bulkscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2003020000
+ definitions=main-2003190067
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9564 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 bulkscore=0
+ suspectscore=0 lowpriorityscore=0 phishscore=0 adultscore=0 clxscore=1011
+ impostorscore=0 priorityscore=1501 spamscore=0 mlxlogscore=912 mlxscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2003020000
+ definitions=main-2003190067
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vitaly Kuznetsov <vkuznets@redhat.com>  Sent: Thursday, March 19, 202=
-0 1:04 AM
->=20
-> Michael Kelley <mikelley@microsoft.com> writes:
->=20
-> >> > --- a/drivers/hv/vmbus_drv.c
-> >> > +++ b/drivers/hv/vmbus_drv.c
-> >> > @@ -53,9 +53,12 @@ static int hyperv_panic_event(struct notifier_blo=
-ck *nb,
-> unsigned
-> >> long val,
-> >> >  {
-> >> >  	struct pt_regs *regs;
-> >> >
-> >> > -	regs =3D current_pt_regs();
-> >> > +	vmbus_initiate_unload(true);
-> >> >
-> >> > -	hyperv_report_panic(regs, val);
-> >> > +	if (ms_hyperv.misc_features & HV_FEATURE_GUEST_CRASH_MSR_AVAILABLE=
-) {
-> >>
-> >> With Michael's effors to make code in drivers/hv arch agnostic, I thin=
-k
-> >> we need a better, arch-neutral way.
-> >
-> > Vitaly -- could you elaborate on what part is not arch-neutral?  I don'=
-t see
-> > a problem.  ms_hyperv and the misc_features field exist for both the x8=
-6
-> > and ARM64 code branches.  It turns out the particular bit for
-> > GUEST_CRASH_MSR_AVAILABLE is different on the two architectures, but
-> > the compiler will do the right thing.
-> >
->=20
-> Ah, apologies, missed the fact that we also call it
-> 'HV_FEATURE_GUEST_CRASH_MSR_AVAILABLE' - I have to admit I was confused
-> by the 'MSR' part. We can probably rename this to something like
-> HV_FEATURE_GUEST_CRASH_REGS_AVAILABLE - but not as part of the series.
->=20
 
-Good point.  Agreed.
+On 3/19/20 12:06 AM, Marek Marczykowski-Górecki wrote:
+> INTERRUPT_TYPE_NONE should be 0,
 
-Michael
+
+Would
+
+   return ret ?: INTERRUPT_TYPE_NONE
+
+in xen_pcibk_get_interrupt_type() work?
+
+
+I think it's better not to tie macro name to a particular value.
+
+
+-boris
+
+
+>   as it is assumed in
+> xen_pcibk_get_interrupt_type(). Fix the definition, and also shift other
+> values to not leave holes.
+> But also use INTERRUPT_TYPE_NONE in xen_pcibk_get_interrupt_type() to
+> avoid similar confusions in the future.
+>
+> Fixes: 476878e4b2be ("xen-pciback: optionally allow interrupt enable flag writes")
+> Signed-off-by: Marek Marczykowski-Górecki <marmarek@invisiblethingslab.com>
+>
+>   
