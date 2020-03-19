@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1D0FC18B752
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:33:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CFE1318B74E
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:32:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729047AbgCSNPJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 09:15:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34764 "EHLO mail.kernel.org"
+        id S1729003AbgCSNPe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 09:15:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35292 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728944AbgCSNPE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 09:15:04 -0400
+        id S1729402AbgCSNP1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 09:15:27 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C48BF20724;
-        Thu, 19 Mar 2020 13:15:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2ABAD20787;
+        Thu, 19 Mar 2020 13:15:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584623704;
-        bh=ADkIHwvZEhovUlJ4V3u1rGSb3YPotjMy4SJysm5AF6k=;
+        s=default; t=1584623726;
+        bh=9xBXI2zA3y1pn93vgSUUtgTS2XXTyTJNZqWiOC1ufwo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=aACFpffzXK3DfDPdH9NAXeBeWsP0TCToDeT6nooIeAvKsvskhp5ioES54fc7twzJ7
-         hN2JszMFAbcGpfflJ8gX6VZRxVJURU/LXrsr6FKa/3tTpH3AeklxgrcKN0LR1kOOXG
-         L8/AcSqy9MvNt/HDHC3PEWby/NW4T1qWV6xALkA0=
+        b=P4xp1pMuF6SO3cl1l7PJ4AdRmAACLLSNZnq1kr3NO7qfCMBrixjZ8ylKo6zuybXgj
+         aUvJS8N+q9ItA9kQwtuqK5+rXV5MVuNdvPbEgME6HMejctu5SbHjxWjbboFf5o3xCU
+         0Rvb/4o9yTm2JkE4pGCqsZk+5nx+CCLV0Zoyyb04=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Jakub Kicinski <kuba@kernel.org>,
-        Jiri Pirko <jiri@mellanox.com>,
+        Fugang Duan <fugang.duan@nxp.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 25/99] team: add missing attribute validation for array index
-Date:   Thu, 19 Mar 2020 14:03:03 +0100
-Message-Id: <20200319123949.365925458@linuxfoundation.org>
+Subject: [PATCH 4.14 31/99] net: fec: validate the new settings in fec_enet_set_coalesce()
+Date:   Thu, 19 Mar 2020 14:03:09 +0100
+Message-Id: <20200319123951.159284234@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.2
 In-Reply-To: <20200319123941.630731708@linuxfoundation.org>
 References: <20200319123941.630731708@linuxfoundation.org>
@@ -46,29 +46,44 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Jakub Kicinski <kuba@kernel.org>
 
-[ Upstream commit 669fcd7795900cd1880237cbbb57a7db66cb9ac8 ]
+[ Upstream commit ab14961d10d02d20767612c78ce148f6eb85bd58 ]
 
-Add missing attribute validation for TEAM_ATTR_OPTION_ARRAY_INDEX
-to the netlink policy.
+fec_enet_set_coalesce() validates the previously set params
+and if they are within range proceeds to apply the new ones.
+The new ones, however, are not validated. This seems backwards,
+probably a copy-paste error?
 
-Fixes: b13033262d24 ("team: introduce array options")
+Compile tested only.
+
+Fixes: d851b47b22fc ("net: fec: add interrupt coalescence feature support")
 Signed-off-by: Jakub Kicinski <kuba@kernel.org>
-Reviewed-by: Jiri Pirko <jiri@mellanox.com>
+Acked-by: Fugang Duan <fugang.duan@nxp.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/team/team.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/net/ethernet/freescale/fec_main.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
---- a/drivers/net/team/team.c
-+++ b/drivers/net/team/team.c
-@@ -2208,6 +2208,7 @@ team_nl_option_policy[TEAM_ATTR_OPTION_M
- 	[TEAM_ATTR_OPTION_TYPE]			= { .type = NLA_U8 },
- 	[TEAM_ATTR_OPTION_DATA]			= { .type = NLA_BINARY },
- 	[TEAM_ATTR_OPTION_PORT_IFINDEX]		= { .type = NLA_U32 },
-+	[TEAM_ATTR_OPTION_ARRAY_INDEX]		= { .type = NLA_U32 },
- };
+--- a/drivers/net/ethernet/freescale/fec_main.c
++++ b/drivers/net/ethernet/freescale/fec_main.c
+@@ -2478,15 +2478,15 @@ fec_enet_set_coalesce(struct net_device
+ 		return -EINVAL;
+ 	}
  
- static int team_nl_cmd_noop(struct sk_buff *skb, struct genl_info *info)
+-	cycle = fec_enet_us_to_itr_clock(ndev, fep->rx_time_itr);
++	cycle = fec_enet_us_to_itr_clock(ndev, ec->rx_coalesce_usecs);
+ 	if (cycle > 0xFFFF) {
+ 		pr_err("Rx coalesced usec exceed hardware limitation\n");
+ 		return -EINVAL;
+ 	}
+ 
+-	cycle = fec_enet_us_to_itr_clock(ndev, fep->tx_time_itr);
++	cycle = fec_enet_us_to_itr_clock(ndev, ec->tx_coalesce_usecs);
+ 	if (cycle > 0xFFFF) {
+-		pr_err("Rx coalesced usec exceed hardware limitation\n");
++		pr_err("Tx coalesced usec exceed hardware limitation\n");
+ 		return -EINVAL;
+ 	}
+ 
 
 
