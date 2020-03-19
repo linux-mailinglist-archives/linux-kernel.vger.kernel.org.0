@@ -2,39 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 95C2418B6F8
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:31:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4566718B714
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:31:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728435AbgCSNS7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 09:18:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41718 "EHLO mail.kernel.org"
+        id S1727560AbgCSNa5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 09:30:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42882 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727731AbgCSNSy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 09:18:54 -0400
+        id S1728475AbgCSNTd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 09:19:33 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A19E52098B;
-        Thu, 19 Mar 2020 13:18:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2A37F216FD;
+        Thu, 19 Mar 2020 13:19:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584623934;
-        bh=+pU4LulTU4mEYekBOst0ONklTIF3qN/8m0GK1PJ5h18=;
+        s=default; t=1584623972;
+        bh=+aPVeQ9DXXL+NeBXpPp44nt1j9JJrYKhO7gvx1soYkw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vtQrYCAof7De8ao9pktjsSbj3zoaZPC4FoHKsSDhaTkZdTEUj4m0FxBb1/o1x6Inz
-         JvYyDyOYIr3xDs24dcA7drSYu7MctR3IYlWVwdvMZgkngnax9zJ0sM+UtontbxuGr5
-         TrA7sJKZTw3k72Tqxcd2rB/pk6HPhb97DQTeaY2k=
+        b=BZG98O9Num8508sWdiqKM2Q1pKTeyi8j2CfSEA2fCW6pLys9yApR+pk4PQarp70ys
+         EyX45OLTchm3V9fIsF/roKDgzBT62qwuacoHStDNRkgZDarOVma/SGe5qUT/x0+lgW
+         6am0KBZnfhJNNnjbbBV8cHxoRiOuWtMKelhCeXR8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        John Soros <sorosj@gmail.com>,
-        Sven Eckelmann <sven@narfation.org>,
-        Simon Wunderlich <sw@simonwunderlich.de>
-Subject: [PATCH 4.14 76/99] batman-adv: Fix debugfs path for renamed hardif
-Date:   Thu, 19 Mar 2020 14:03:54 +0100
-Message-Id: <20200319124004.043668318@linuxfoundation.org>
+        stable@vger.kernel.org, Marek Vasut <marex@denx.de>,
+        "David S. Miller" <davem@davemloft.net>,
+        Lukas Wunner <lukas@wunner.de>, Petr Stetiar <ynezz@true.cz>,
+        YueHaibing <yuehaibing@huawei.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 16/48] net: ks8851-ml: Fix IRQ handling and locking
+Date:   Thu, 19 Mar 2020 14:03:58 +0100
+Message-Id: <20200319123908.160054078@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.2
-In-Reply-To: <20200319123941.630731708@linuxfoundation.org>
-References: <20200319123941.630731708@linuxfoundation.org>
+In-Reply-To: <20200319123902.941451241@linuxfoundation.org>
+References: <20200319123902.941451241@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,112 +46,102 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sven Eckelmann <sven@narfation.org>
+From: Marek Vasut <marex@denx.de>
 
-commit 36dc621ceca1be3ec885aeade5fdafbbcc452a6d upstream.
+[ Upstream commit 44343418d0f2f623cb9da6f5000df793131cbe3b ]
 
-batman-adv is creating special debugfs directories in the init
-net_namespace for each valid hard-interface (net_device). But it is
-possible to rename a net_device to a completely different name then the
-original one.
+The KS8851 requires that packet RX and TX are mutually exclusive.
+Currently, the driver hopes to achieve this by disabling interrupt
+from the card by writing the card registers and by disabling the
+interrupt on the interrupt controller. This however is racy on SMP.
 
-It can therefore happen that a user registers a new net_device which gets
-the name "wlan0" assigned by default. batman-adv is also adding a new
-directory under $debugfs/batman-adv/ with the name "wlan0".
+Replace this approach by expanding the spinlock used around the
+ks_start_xmit() TX path to ks_irq() RX path to assure true mutual
+exclusion and remove the interrupt enabling/disabling, which is
+now not needed anymore. Furthermore, disable interrupts also in
+ks_net_stop(), which was missing before.
 
-The user then decides to rename this device to "wl_pri" and registers a
-different device. The kernel may now decide to use the name "wlan0" again
-for this new device. batman-adv will detect it as a valid net_device and
-tries to create a directory with the name "wlan0" under
-$debugfs/batman-adv/. But there already exists one with this name under
-this path and thus this fails. batman-adv will detect a problem and
-rollback the registering of this device.
+Note that a massive improvement here would be to re-use the KS8851
+driver approach, which is to move the TX path into a worker thread,
+interrupt handling to threaded interrupt, and synchronize everything
+with mutexes, but that would be a much bigger rework, for a separate
+patch.
 
-batman-adv must therefore take care of renaming the debugfs directories
-for hard-interfaces whenever it detects such a net_device rename.
-
-Fixes: 5bc7c1eb44f2 ("batman-adv: add debugfs structure for information per interface")
-Reported-by: John Soros <sorosj@gmail.com>
-Signed-off-by: Sven Eckelmann <sven@narfation.org>
-Signed-off-by: Simon Wunderlich <sw@simonwunderlich.de>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Marek Vasut <marex@denx.de>
+Cc: David S. Miller <davem@davemloft.net>
+Cc: Lukas Wunner <lukas@wunner.de>
+Cc: Petr Stetiar <ynezz@true.cz>
+Cc: YueHaibing <yuehaibing@huawei.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/batman-adv/debugfs.c        |   22 +++++++++++++++++++++-
- net/batman-adv/debugfs.h        |    6 ++++++
- net/batman-adv/hard-interface.c |    3 +++
- 3 files changed, 30 insertions(+), 1 deletion(-)
+ drivers/net/ethernet/micrel/ks8851_mll.c | 14 ++++++++------
+ 1 file changed, 8 insertions(+), 6 deletions(-)
 
---- a/net/batman-adv/debugfs.c
-+++ b/net/batman-adv/debugfs.c
-@@ -18,6 +18,7 @@
- #include "debugfs.h"
- #include "main.h"
- 
-+#include <linux/dcache.h>
- #include <linux/debugfs.h>
- #include <linux/err.h>
- #include <linux/errno.h>
-@@ -338,7 +339,26 @@ out:
- }
- 
- /**
-- * batadv_debugfs_del_hardif - delete the base directory for a hard interface
-+ * batadv_debugfs_rename_hardif() - Fix debugfs path for renamed hardif
-+ * @hard_iface: hard interface which was renamed
-+ */
-+void batadv_debugfs_rename_hardif(struct batadv_hard_iface *hard_iface)
-+{
-+	const char *name = hard_iface->net_dev->name;
-+	struct dentry *dir;
-+	struct dentry *d;
-+
-+	dir = hard_iface->debug_dir;
-+	if (!dir)
-+		return;
-+
-+	d = debugfs_rename(dir->d_parent, dir, dir->d_parent, name);
-+	if (!d)
-+		pr_err("Can't rename debugfs dir to %s\n", name);
-+}
-+
-+/**
-+ * batadv_debugfs_del_hardif() - delete the base directory for a hard interface
-  *  in debugfs.
-  * @hard_iface: hard interface which is deleted.
-  */
---- a/net/batman-adv/debugfs.h
-+++ b/net/batman-adv/debugfs.h
-@@ -31,6 +31,7 @@ void batadv_debugfs_destroy(void);
- int batadv_debugfs_add_meshif(struct net_device *dev);
- void batadv_debugfs_del_meshif(struct net_device *dev);
- int batadv_debugfs_add_hardif(struct batadv_hard_iface *hard_iface);
-+void batadv_debugfs_rename_hardif(struct batadv_hard_iface *hard_iface);
- void batadv_debugfs_del_hardif(struct batadv_hard_iface *hard_iface);
- 
- #else
-@@ -59,6 +60,11 @@ int batadv_debugfs_add_hardif(struct bat
- }
- 
- static inline
-+void batadv_debugfs_rename_hardif(struct batadv_hard_iface *hard_iface)
-+{
-+}
-+
-+static inline
- void batadv_debugfs_del_hardif(struct batadv_hard_iface *hard_iface)
+diff --git a/drivers/net/ethernet/micrel/ks8851_mll.c b/drivers/net/ethernet/micrel/ks8851_mll.c
+index 9de59facec218..a5525bf977e2c 100644
+--- a/drivers/net/ethernet/micrel/ks8851_mll.c
++++ b/drivers/net/ethernet/micrel/ks8851_mll.c
+@@ -832,14 +832,17 @@ static irqreturn_t ks_irq(int irq, void *pw)
  {
- }
---- a/net/batman-adv/hard-interface.c
-+++ b/net/batman-adv/hard-interface.c
-@@ -1017,6 +1017,9 @@ static int batadv_hard_if_event(struct n
- 		if (batadv_is_wifi_hardif(hard_iface))
- 			hard_iface->num_bcasts = BATADV_NUM_BCASTS_WIRELESS;
- 		break;
-+	case NETDEV_CHANGENAME:
-+		batadv_debugfs_rename_hardif(hard_iface);
-+		break;
- 	default:
- 		break;
+ 	struct net_device *netdev = pw;
+ 	struct ks_net *ks = netdev_priv(netdev);
++	unsigned long flags;
+ 	u16 status;
+ 
++	spin_lock_irqsave(&ks->statelock, flags);
+ 	/*this should be the first in IRQ handler */
+ 	ks_save_cmd_reg(ks);
+ 
+ 	status = ks_rdreg16(ks, KS_ISR);
+ 	if (unlikely(!status)) {
+ 		ks_restore_cmd_reg(ks);
++		spin_unlock_irqrestore(&ks->statelock, flags);
+ 		return IRQ_NONE;
  	}
+ 
+@@ -865,6 +868,7 @@ static irqreturn_t ks_irq(int irq, void *pw)
+ 		ks->netdev->stats.rx_over_errors++;
+ 	/* this should be the last in IRQ handler*/
+ 	ks_restore_cmd_reg(ks);
++	spin_unlock_irqrestore(&ks->statelock, flags);
+ 	return IRQ_HANDLED;
+ }
+ 
+@@ -934,6 +938,7 @@ static int ks_net_stop(struct net_device *netdev)
+ 
+ 	/* shutdown RX/TX QMU */
+ 	ks_disable_qmu(ks);
++	ks_disable_int(ks);
+ 
+ 	/* set powermode to soft power down to save power */
+ 	ks_set_powermode(ks, PMECR_PM_SOFTDOWN);
+@@ -990,10 +995,9 @@ static netdev_tx_t ks_start_xmit(struct sk_buff *skb, struct net_device *netdev)
+ {
+ 	netdev_tx_t retv = NETDEV_TX_OK;
+ 	struct ks_net *ks = netdev_priv(netdev);
++	unsigned long flags;
+ 
+-	disable_irq(netdev->irq);
+-	ks_disable_int(ks);
+-	spin_lock(&ks->statelock);
++	spin_lock_irqsave(&ks->statelock, flags);
+ 
+ 	/* Extra space are required:
+ 	*  4 byte for alignment, 4 for status/length, 4 for CRC
+@@ -1007,9 +1011,7 @@ static netdev_tx_t ks_start_xmit(struct sk_buff *skb, struct net_device *netdev)
+ 		dev_kfree_skb(skb);
+ 	} else
+ 		retv = NETDEV_TX_BUSY;
+-	spin_unlock(&ks->statelock);
+-	ks_enable_int(ks);
+-	enable_irq(netdev->irq);
++	spin_unlock_irqrestore(&ks->statelock, flags);
+ 	return retv;
+ }
+ 
+-- 
+2.20.1
+
 
 
