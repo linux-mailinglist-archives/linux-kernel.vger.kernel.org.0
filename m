@@ -2,159 +2,217 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 259CF18B7D7
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:36:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BC1E518B7F6
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:37:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728124AbgCSNgJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 09:36:09 -0400
-Received: from mailout3.samsung.com ([203.254.224.33]:26866 "EHLO
-        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727471AbgCSNgH (ORCPT
+        id S1728187AbgCSNgx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 09:36:53 -0400
+Received: from mail-wm1-f51.google.com ([209.85.128.51]:52473 "EHLO
+        mail-wm1-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727464AbgCSNgw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 09:36:07 -0400
-Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
-        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20200319133605epoutp03035693fa01ad52d33ad6a2e13cf8d146~9uAKSrzCA3266532665epoutp03M
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Mar 2020 13:36:05 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20200319133605epoutp03035693fa01ad52d33ad6a2e13cf8d146~9uAKSrzCA3266532665epoutp03M
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1584624965;
-        bh=4FL33iP/jwSsQW96+6AWrtYIL4nfSj8zvnMw8LCMztg=;
-        h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-        b=fSS2rSdjXhxn6oNDINfpNeqFPOv54i7eXTlabPA9wFEWUeYjpMCDrE/xOL5Ka4F0c
-         2Ofbp0cNVzjWgzBUJwQWn5/sxBt4HxwEa6gVyVgeTkj57F9AqS+203/amPEIAobaiq
-         EqQ+7vR2Lj0VOiygkPQWo0bIWyi5JMJijmeOenxs=
-Received: from epsmges5p2new.samsung.com (unknown [182.195.42.74]) by
-        epcas5p3.samsung.com (KnoxPortal) with ESMTP id
-        20200319133604epcas5p3dbbb7941cdd45bee37c4c1caa320016b~9uAJzbOTa1621316213epcas5p3E;
-        Thu, 19 Mar 2020 13:36:04 +0000 (GMT)
-Received: from epcas5p2.samsung.com ( [182.195.41.40]) by
-        epsmges5p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        83.AF.04778.445737E5; Thu, 19 Mar 2020 22:36:04 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-        epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
-        20200319133603epcas5p294d8a6f404e5d168d75cfa6861e393e3~9uAJGi74l1782517825epcas5p2p;
-        Thu, 19 Mar 2020 13:36:03 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20200319133603epsmtrp20dd7c56c4edec8817d0b58191b050767~9uAJFqWh63159731597epsmtrp2N;
-        Thu, 19 Mar 2020 13:36:03 +0000 (GMT)
-X-AuditID: b6c32a4a-353ff700000012aa-b1-5e73754435e2
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        13.C4.04024.345737E5; Thu, 19 Mar 2020 22:36:03 +0900 (KST)
-Received: from sriramdash03 (unknown [107.111.85.15]) by
-        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20200319133602epsmtip10df7c703058970433bc7f58b98daa829~9uAIAvU692963729637epsmtip1Y;
-        Thu, 19 Mar 2020 13:36:02 +0000 (GMT)
-From:   "Sriram Dash" <sriram.dash@samsung.com>
-To:     "'Shradha Todi'" <shradha.t@samsung.com>, <kishon@ti.com>
-Cc:     <lorenzo.pieralisi@arm.com>, <bhelgaas@google.com>,
-        <pankaj.dubey@samsung.com>, <linux-pci@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-In-Reply-To: <20200311102852.5207-1-shradha.t@samsung.com>
-Subject: RE: [PATCH] PCI: endpoint: Fix NULL pointer dereference for
- ->get_features()
-Date:   Thu, 19 Mar 2020 19:06:01 +0530
-Message-ID: <000d01d5fdf3$55d43af0$017cb0d0$@samsung.com>
+        Thu, 19 Mar 2020 09:36:52 -0400
+Received: by mail-wm1-f51.google.com with SMTP id 11so2405798wmo.2
+        for <linux-kernel@vger.kernel.org>; Thu, 19 Mar 2020 06:36:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:autocrypt:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=uEd9IVodt6fa58bsyLHIrVxIAopcFc2wB37Cyaqmow4=;
+        b=VxtC05fWVlvcHihiVKFYmJhn/wlPWp3Xybqk6gt7lcl6FeX+sfeDhn1sGbpcgJbu3d
+         kExv/0oyrfd8F/S+V2EZPxliE1pxk090HamF6dAh3KVNCalRwqa6Aqa2m751TYYj62yS
+         DQ6VeD+GFIzm2Da8/hcBN829yACx/Jai0btH7LCpiVPXyA+x1l4lG0Xpqj0Xs4VDv0Nd
+         Vs3iWw+tvI62xadbMi8flMMy/sWOI9CLG8Xj02ndVoQ6L9G/PsUOZ6SG+hk4/wApbc+l
+         1r8+19uE/cSGlIiMLGl9mZfFbB9kcO0yADLZ2Ofc08ul8zZzIgMSRohrPPy4bvaZ4XJm
+         vHQA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:autocrypt
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=uEd9IVodt6fa58bsyLHIrVxIAopcFc2wB37Cyaqmow4=;
+        b=gMvpzBihx3bQZKMbGfsrKuQ+zslfDq1+rgIPmKLWt3NSvSkrANOnkLVaHZdCXEE5/V
+         /TY+uOrXHR+Kfd6LVChX4UOzNaLlVA7C/+dghqEaPKYwlif7M+SK28HJ/y0QJ5hpP8OR
+         i2i8qAUpOroOk9X4V0bcGTGNuM+vWXuEPg4UdHqTuFhtjptdnZuFqLK97PjlXbpNou/j
+         dg5NtJUBhAPZjND6WaGt+5Mg6T+nF2Hp0PvpYf+dbAVgp9QEBfgFdCh9nD7odE8x+Cr6
+         d4pOyVzQc20vTOoWuc+HdUflpYg5eApQ/KzHCbTXHwIArtSIN3MJBlL+zIiNfGQjlfcy
+         /iEQ==
+X-Gm-Message-State: ANhLgQ0MfVySKX4fIflknSXqM2/GCwvEzCPwBH5GythmGo2hKop9CtPx
+        3CuBVzufIGErUd6l4v38fKHUWQ==
+X-Google-Smtp-Source: ADFU+vu1dFag4U4oZYG0BReV/F50kZwKNoJprOTG8xcl9vorDq/ViGEh+iUQkaBJbZrxgjhqXjyXWA==
+X-Received: by 2002:a1c:9d41:: with SMTP id g62mr3937974wme.131.1584625010128;
+        Thu, 19 Mar 2020 06:36:50 -0700 (PDT)
+Received: from ?IPv6:2a01:e34:ed2f:f020:5d64:ea6:49bd:69d7? ([2a01:e34:ed2f:f020:5d64:ea6:49bd:69d7])
+        by smtp.googlemail.com with ESMTPSA id e5sm3553535wru.92.2020.03.19.06.36.48
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 19 Mar 2020 06:36:49 -0700 (PDT)
+Subject: Re: [RESEND PATCH v4 2/4] thermal: k3: Add support for bandgap
+ sensors
+To:     Keerthy <j-keerthy@ti.com>, rui.zhang@intel.com, robh+dt@kernel.org
+Cc:     amit.kucheria@verdurent.com, t-kristo@ti.com,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org,
+        mark.rutland@arm.com
+References: <20200318083028.9984-1-j-keerthy@ti.com>
+ <20200318083028.9984-3-j-keerthy@ti.com>
+ <ea3b34dc-42e3-0b10-4b89-faf2621a4ee2@linaro.org>
+ <03b837de-ff25-2308-8a56-15bc3377cd5f@ti.com>
+From:   Daniel Lezcano <daniel.lezcano@linaro.org>
+Autocrypt: addr=daniel.lezcano@linaro.org; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <d8bff098-f852-4c55-0afc-d7fd043dd10a@linaro.org>
+Date:   Thu, 19 Mar 2020 14:36:48 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQIRa+BXjMtyeVOz/ELce4dgT57WJwIqUA0mp8e8EHA=
-Content-Language: en-in
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrNKsWRmVeSWpSXmKPExsWy7bCmhq5LaXGcwdVHihZLmjIsLjztYbO4
-        vGsOm8XZecfZLN78fsFusWjrF3aL3sO1Duwea+atYfRYsKnUo2/LKkaP4ze2M3l83iQXwBrF
-        ZZOSmpNZllqkb5fAldGz+wJbwTKBio/LfrE1ML7m7WLk5JAQMJF4OusPUxcjF4eQwG5Gie6n
-        t9ghnE+MEvduPWOBcL4xSjT/esUK0/JpZQdUYi+jxNQVG1ghnFeMEuu75jGDVLEJ6EqcvdHE
-        BmKLCNhKLN84H2wus8BkRokby3+xgyQ4BawkOvqngTUIC4RLrJh/kxHEZhFQlfh/4jYLiM0r
-        YCkxb/tRVghbUOLkzCdgcWYBbYllC18zQ5ykIPHz6TJWiGVWEhOX3GWDqBGXOPqzhxlksYTA
-        czaJ32+/M0E0uEhsbzwBZQtLvDq+hR3ClpL4/G4vG4SdLXG57znUghKJGa8WskDY9hIHrswB
-        sjmAFmhKrN+lD7GLT6L39xMmkLCEAK9ER5sQRLWqxKvbm6GmS0scWHsaaquHxNcJF5gmMCrO
-        QvLZLCSfzULywSyEZQsYWVYxSqYWFOempxabFhjlpZbrFSfmFpfmpesl5+duYgQnIS2vHYzL
-        zvkcYhTgYFTi4V2wpihOiDWxrLgy9xCjBAezkgivbnpxnBBvSmJlVWpRfnxRaU5q8SFGaQ4W
-        JXHeSaxXY4QE0hNLUrNTUwtSi2CyTBycUg2M+gHPp+5aecx8QZtgcMeuJ2zPG2c/6O5l9Td6
-        8Mj9dXK+VqPvm0libD1SKrI5Oxd4rBfbuUJuQqdZ79ot86xu17zY2r46t36V98o6qfK9/oks
-        Gf+n9v+JO9iyxaT2yI0PDzLEK1/6blxyK8ika9eZOO+iqAuRrTPMNylOjuD6zGpdkSDONqVH
-        iaU4I9FQi7moOBEACSYjbz4DAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupjkeLIzCtJLcpLzFFi42LZdlhJTte5tDjOYE6LnsWSpgyLC0972Cwu
-        75rDZnF23nE2ize/X7BbLNr6hd2i93CtA7vHmnlrGD0WbCr16NuyitHj+I3tTB6fN8kFsEZx
-        2aSk5mSWpRbp2yVwZWzf0cte0CRQ8ebkN6YGxuO8XYycHBICJhKfVnawdDFycQgJ7GaUeLGj
-        n7GLkQMoIS3x864uRI2wxMp/z9khal4wSszq+sAGkmAT0JU4e6MJzBYRsJd4MWMjK0gRs8B0
-        Rom2LbOhOroZJXYsWQ9WxSlgJdHRP40ZxBYWCJX42DaVFcRmEVCV+H/iNguIzStgKTFv+1FW
-        CFtQ4uTMJ2BxZgFtid6HrYww9rKFr5khzlOQ+Pl0GSvEFVYSE5fcZYOoEZc4+rOHeQKj8Cwk
-        o2YhGTULyahZSFoWMLKsYpRMLSjOTc8tNiwwzEst1ytOzC0uzUvXS87P3cQIjiUtzR2Ml5fE
-        H2IU4GBU4uH1WFUUJ8SaWFZcmXuIUYKDWUmEVze9OE6INyWxsiq1KD++qDQntfgQozQHi5I4
-        79O8Y5FCAumJJanZqakFqUUwWSYOTqkGxtD++Ueudz1imOohe1Bi0suO+5Y9DEp3P5ry54ap
-        7/8X15/VvUm4gLX0vU35kcSQVwzZ05izpUVYeVXXuBgqJ2pznbW7urZN4I5bxLdXZhr8EkpF
-        u49Fcp1cudp0U8Ijpbw0VnmzjufCm3U37G09fDLtHe+axJvxUnoHUq+dXLd7cfaBJ/VTlViK
-        MxINtZiLihMB8/g/J6ECAAA=
-X-CMS-MailID: 20200319133603epcas5p294d8a6f404e5d168d75cfa6861e393e3
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-X-CMS-RootMailID: 20200311103443epcas5p2e97b8f3a8e52dc6f02eb551e0c97f132
-References: <CGME20200311103443epcas5p2e97b8f3a8e52dc6f02eb551e0c97f132@epcas5p2.samsung.com>
-        <20200311102852.5207-1-shradha.t@samsung.com>
+In-Reply-To: <03b837de-ff25-2308-8a56-15bc3377cd5f@ti.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> From: Shradha Todi <shradha.t=40samsung.com>
-> Subject: =5BPATCH=5D PCI: endpoint: Fix NULL pointer dereference for -
-> >get_features()
->=20
-> get_features ops of pci_epc_ops may return NULL, causing NULL pointer
-> dereference in pci_epf_test_bind function. Let us add a check for
-> pci_epc_feature pointer in pci_epf_test_bind before we access it to avoid=
- any
-> such NULL pointer dereference and return -ENOTSUPP in case pci_epc_featur=
-e
-> is not found.
->=20
-> Reviewed-by: Pankaj Dubey <pankaj.dubey=40samsung.com>
-> Signed-off-by: Sriram Dash <sriram.dash=40samsung.com>
-> Signed-off-by: Shradha Todi <shradha.t=40samsung.com>
-> ---
+On 19/03/2020 13:52, Keerthy wrote:
+> 
+> 
+> On 19/03/20 6:08 pm, Daniel Lezcano wrote:
+>> On 18/03/2020 09:30, Keerthy wrote:
+>>> The bandgap provides current and voltage reference for its internal
+>>> circuits and other analog IP blocks. The analog-to-digital
+>>> converter (ADC) produces an output value that is proportional
+>>> to the silicon temperature.
+>>>
+>>> Currently reading temperatures and creating work to periodically
+>>> read temperatures from the zones are supported.
+>>> There are no active/passive cooling agent supported.
+>>>
+>>> Signed-off-by: Keerthy <j-keerthy@ti.com>
+>>> ---
 
-Hi Kishon,
+[ ... ]
 
-Any update on this?
+>>> +static const int k3_adc_to_temp[] = {
+>>> +    -40000, -40000, -40000, -40000, -39800, -39400, -39000, -38600,
 
+[ ... ]
 
->  drivers/pci/endpoint/functions/pci-epf-test.c =7C 15 +++++++++------
->  1 file changed, 9 insertions(+), 6 deletions(-)
->=20
-> diff --git a/drivers/pci/endpoint/functions/pci-epf-test.c
-> b/drivers/pci/endpoint/functions/pci-epf-test.c
-> index c9121b1b9fa9..af4537a487bf 100644
-> --- a/drivers/pci/endpoint/functions/pci-epf-test.c
-> +++ b/drivers/pci/endpoint/functions/pci-epf-test.c
-> =40=40 -510,14 +510,17 =40=40 static int pci_epf_test_bind(struct pci_epf=
- *epf)
->  		return -EINVAL;
->=20
->  	epc_features =3D pci_epc_get_features(epc, epf->func_no);
-> -	if (epc_features) =7B
-> -		linkup_notifier =3D epc_features->linkup_notifier;
-> -		msix_capable =3D epc_features->msix_capable;
-> -		msi_capable =3D epc_features->msi_capable;
-> -		test_reg_bar =3D pci_epc_get_first_free_bar(epc_features);
-> -		pci_epf_configure_bar(epf, epc_features);
-> +	if (=21epc_features) =7B
-> +		dev_err(dev, =22epc_features not implemented=5Cn=22);
-> +		return -ENOTSUPP;
->  	=7D
->=20
-> +	linkup_notifier =3D epc_features->linkup_notifier;
-> +	msix_capable =3D epc_features->msix_capable;
-> +	msi_capable =3D epc_features->msi_capable;
-> +	test_reg_bar =3D pci_epc_get_first_free_bar(epc_features);
-> +	pci_epf_configure_bar(epf, epc_features);
-> +
->  	epf_test->test_reg_bar =3D test_reg_bar;
->  	epf_test->epc_features =3D epc_features;
->=20
-> --
-> 2.17.1
+>>> 123000,
+>>> +    123400, 123800, 124200, 124600, 124900, 125000,
+>>> +};
+>>
+>> Can be this array replaced by an initialization array with a formula?
+>>
+>> Why do we have most of the time a step of 400 then suddenly 500 and 400
+>> again? eg. 30600, 31000, 31400, 31900, 32500, 33000, 33400
+> 
+> This has come from a polynomial equation which i do not want to
+> calculate every time we read the temperature. Hence prefer Look up table.
 
+Agree, it makes sense to not calculate every time the temperature is read.
+
+I was suggesting to fill the array at init time with this polynomial
+formula instead of hardcoding it.
+
+[ ... ]
+
+>>> +
+>>> +    /* Get the sensor count in the VTM */
+>>> +    val = readl(bgp->base + K3_VTM_DEVINFO_PWR0_OFFSET);
+>>> +    cnt = val & K3_VTM_DEVINFO_PWR0_TEMPSENS_CT_MASK;
+>>> +    cnt >>= __ffs(K3_VTM_DEVINFO_PWR0_TEMPSENS_CT_MASK);
+>>> +
+>>> +    data = devm_kcalloc(dev, cnt, sizeof(*data), GFP_KERNEL);
+>>> +    if (!data) {
+>>> +        ret = -ENOMEM;
+>>> +        goto err_alloc;
+>>> +    }
+>>> +
+>>> +    /* Register the thermal sensors */
+>>> +    for (id = 0; id < cnt; id++) {
+>>> +        data[id].sensor_id = id;
+>>> +        data[id].bgp = bgp;
+>>> +        data[id].ctrl_offset = K3_VTM_TMPSENS0_CTRL_OFFSET +
+>>> +                    id * K3_VTM_REGS_PER_TS;
+>>> +        data[id].stat_offset = data[id].ctrl_offset + 0x8;
+>>> +        INIT_WORK(&data[id].thermal_wq, k3_thermal_work);
+>>
+>>         What is supposed to do ?
+> 
+> Periodically poll temperature. I know there is no passive cooling agent
+> like cpufreq at the moment but i do have a critical trip do you
+> recommend to remove that?
+
+Actually I was referring to the workq which is initialized, the callback
+set but it is never called. It can be removed.
+
+Please take also the opportunity to wrap the calls to the register with
+an explicit helper function name.
+
+And remove reg_cnt which is unused.
+
+Thanks
+
+  -- Daniel
+
+-- 
+
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
 
