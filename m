@@ -2,35 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C467918B784
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:34:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 47B6F18B77C
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:33:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728546AbgCSNNN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 09:13:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60106 "EHLO mail.kernel.org"
+        id S1727783AbgCSNdq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 09:33:46 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60260 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729090AbgCSNNK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 09:13:10 -0400
+        id S1729140AbgCSNNR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 09:13:17 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4359620722;
-        Thu, 19 Mar 2020 13:13:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1183620722;
+        Thu, 19 Mar 2020 13:13:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584623589;
-        bh=qNV2gSQakub7A4LNhA7z2CS3u5sKa8dwxIGnhIQIJx0=;
+        s=default; t=1584623596;
+        bh=VuE7TmDy3e1X1Gvxz8ud/ys5uK9G3jifL4rHLjlRcJQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=eL/tcKCeuq35P6+IQGUWZLdmMWHtsD5BCGWAc+A0nI3ScvT/7fw3luUoe1UMYXbuM
-         peUVxYFYktyIlDev9udUzus4nlfaIi7NZHxmwskF9Vdyibh9x9eR1ZQ+r6oNwwTsw7
-         sX4JInm9K6drzVWcUI5vFvljk9yAuqg0UAlwU0nE=
+        b=AuXx42nlDCq/aTAnczf1oOwUOBToZA0kBwftG0zWXz6EPzpBA0CUZYwzoL9YvojRN
+         mO5BraZ0/TXJPcinfBfSXUmGtGh1JrBGJGbatbSGWKKfh1HC0T0h6e89HBfopdZjLN
+         gR9Obe+KYAemLVKVk7xvpdButVRD2WgE5OAJU7tA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Sven Eckelmann <sven@narfation.org>,
+        Antonio Quartulli <a@unstable.cc>,
         Simon Wunderlich <sw@simonwunderlich.de>
-Subject: [PATCH 4.9 61/90] batman-adv: Fix lock for ogm cnt access in batadv_iv_ogm_calc_tq
-Date:   Thu, 19 Mar 2020 14:00:23 +0100
-Message-Id: <20200319123947.388897418@linuxfoundation.org>
+Subject: [PATCH 4.9 63/90] batman-adv: Avoid race in TT TVLV allocator helper
+Date:   Thu, 19 Mar 2020 14:00:25 +0100
+Message-Id: <20200319123948.071644105@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.2
 In-Reply-To: <20200319123928.635114118@linuxfoundation.org>
 References: <20200319123928.635114118@linuxfoundation.org>
@@ -45,42 +46,76 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Sven Eckelmann <sven@narfation.org>
 
-commit 5ba7dcfe77037b67016263ea597a8b431692ecab upstream.
+commit 8ba0f9bd3bdea1058c2b2676bec7905724418e40 upstream.
 
-The originator node object orig_neigh_node is used to when accessing the
-bcast_own(_sum) and real_packet_count information. The access to them has
-to be protected with the spinlock in orig_neigh_node.
+The functions batadv_tt_prepare_tvlv_local_data and
+batadv_tt_prepare_tvlv_global_data are responsible for preparing a buffer
+which can be used to store the TVLV container for TT and add the VLAN
+information to it.
 
-But the function uses the lock in orig_node instead. This is incorrect
-because they could be two different originator node objects.
+This will be done in three phases:
 
-Fixes: 0ede9f41b217 ("batman-adv: protect bit operations to count OGMs with spinlock")
+1. count the number of VLANs and their entries
+2. allocate the buffer using the counters from the previous step and limits
+   from the caller (parameter tt_len)
+3. insert the VLAN information to the buffer
+
+The step 1 and 3 operate on a list which contains the VLANs. The access to
+these lists must be protected with an appropriate lock or otherwise they
+might operate on on different entries. This could for example happen when
+another context is adding VLAN entries to this list.
+
+This could lead to a buffer overflow in these functions when enough entries
+were added between step 1 and 3 to the VLAN lists that the buffer room for
+the entries (*tt_change) is smaller then the now required extra buffer for
+new VLAN entries.
+
+Fixes: 7ea7b4a14275 ("batman-adv: make the TT CRC logic VLAN specific")
 Signed-off-by: Sven Eckelmann <sven@narfation.org>
+Acked-by: Antonio Quartulli <a@unstable.cc>
 Signed-off-by: Simon Wunderlich <sw@simonwunderlich.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/batman-adv/bat_iv_ogm.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ net/batman-adv/translation-table.c |    8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
---- a/net/batman-adv/bat_iv_ogm.c
-+++ b/net/batman-adv/bat_iv_ogm.c
-@@ -1227,7 +1227,7 @@ static bool batadv_iv_ogm_calc_tq(struct
- 	orig_node->last_seen = jiffies;
+--- a/net/batman-adv/translation-table.c
++++ b/net/batman-adv/translation-table.c
+@@ -867,7 +867,7 @@ batadv_tt_prepare_tvlv_global_data(struc
+ 	struct batadv_orig_node_vlan *vlan;
+ 	u8 *tt_change_ptr;
  
- 	/* find packet count of corresponding one hop neighbor */
--	spin_lock_bh(&orig_node->bat_iv.ogm_cnt_lock);
-+	spin_lock_bh(&orig_neigh_node->bat_iv.ogm_cnt_lock);
- 	if_num = if_incoming->if_num;
- 	orig_eq_count = orig_neigh_node->bat_iv.bcast_own_sum[if_num];
- 	neigh_ifinfo = batadv_neigh_ifinfo_new(neigh_node, if_outgoing);
-@@ -1237,7 +1237,7 @@ static bool batadv_iv_ogm_calc_tq(struct
- 	} else {
- 		neigh_rq_count = 0;
- 	}
--	spin_unlock_bh(&orig_node->bat_iv.ogm_cnt_lock);
-+	spin_unlock_bh(&orig_neigh_node->bat_iv.ogm_cnt_lock);
+-	rcu_read_lock();
++	spin_lock_bh(&orig_node->vlan_list_lock);
+ 	hlist_for_each_entry_rcu(vlan, &orig_node->vlan_list, list) {
+ 		num_vlan++;
+ 		num_entries += atomic_read(&vlan->tt.num_entries);
+@@ -905,7 +905,7 @@ batadv_tt_prepare_tvlv_global_data(struc
+ 	*tt_change = (struct batadv_tvlv_tt_change *)tt_change_ptr;
  
- 	/* pay attention to not get a value bigger than 100 % */
- 	if (orig_eq_count > neigh_rq_count)
+ out:
+-	rcu_read_unlock();
++	spin_unlock_bh(&orig_node->vlan_list_lock);
+ 	return tvlv_len;
+ }
+ 
+@@ -941,7 +941,7 @@ batadv_tt_prepare_tvlv_local_data(struct
+ 	u8 *tt_change_ptr;
+ 	int change_offset;
+ 
+-	rcu_read_lock();
++	spin_lock_bh(&bat_priv->softif_vlan_list_lock);
+ 	hlist_for_each_entry_rcu(vlan, &bat_priv->softif_vlan_list, list) {
+ 		num_vlan++;
+ 		num_entries += atomic_read(&vlan->tt.num_entries);
+@@ -979,7 +979,7 @@ batadv_tt_prepare_tvlv_local_data(struct
+ 	*tt_change = (struct batadv_tvlv_tt_change *)tt_change_ptr;
+ 
+ out:
+-	rcu_read_unlock();
++	spin_unlock_bh(&bat_priv->softif_vlan_list_lock);
+ 	return tvlv_len;
+ }
+ 
 
 
