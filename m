@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8FB3218B60C
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:24:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E9DB918B5BA
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:21:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730372AbgCSNXm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 09:23:42 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49660 "EHLO mail.kernel.org"
+        id S1730052AbgCSNVC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 09:21:02 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45384 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730218AbgCSNXi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 09:23:38 -0400
+        id S1730043AbgCSNU7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 09:20:59 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E444020724;
-        Thu, 19 Mar 2020 13:23:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E737B20724;
+        Thu, 19 Mar 2020 13:20:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584624217;
-        bh=fRKNYWaBySuvyK4678K2jvcjErVEbPDR7akhgQ08bno=;
+        s=default; t=1584624059;
+        bh=1sBIkeTKIfNbKJsAZXXIYq07vCvmoC9l+d3drbBYvkA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Pwx00AF9E84NPG/nUyiuAUsD+S1lIoIl7e0ZDjG2BfLvvgST2va44pzloNkd9/ka1
-         vCedajQ1cI2xs504qJg2QBZEpn/FGjUOUcFn2Dv26Rdoa9FaZoXljp53urIbVUnfdw
-         Op1Ykbb6OZaZq3SbFlvwNzoSCyxASOLGt/R1CRXA=
+        b=YkAwN4wgHERiMri46xDIEePb39+PgKbzkPhXs08GPNkfd/2Mm4Tli1YHUywgdZ31t
+         YH55p2WfODXrhRaSHqstmGzqvYLW5Qi9xyKXXOblNPBCDX8QRYmfvKGTaZ0vUhBP6n
+         3adLVcAG+jfB0Bcu9MOLNDosKXUc0q867eKv8zAI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Taehee Yoo <ap420073@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 46/60] net: rmnet: do not allow to change mux id if mux id is duplicated
-Date:   Thu, 19 Mar 2020 14:04:24 +0100
-Message-Id: <20200319123934.168365948@linuxfoundation.org>
+        stable@vger.kernel.org, Florian Fainelli <f.fainelli@gmail.com>,
+        Russell King <rmk+kernel@armlinux.org.uk>
+Subject: [PATCH 4.19 43/48] ARM: 8957/1: VDSO: Match ARMv8 timer in cntvct_functional()
+Date:   Thu, 19 Mar 2020 14:04:25 +0100
+Message-Id: <20200319123916.335652762@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.2
-In-Reply-To: <20200319123919.441695203@linuxfoundation.org>
-References: <20200319123919.441695203@linuxfoundation.org>
+In-Reply-To: <20200319123902.941451241@linuxfoundation.org>
+References: <20200319123902.941451241@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,47 +43,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Taehee Yoo <ap420073@gmail.com>
+From: Florian Fainelli <f.fainelli@gmail.com>
 
-[ Upstream commit 1dc49e9d164cd7e11c81279c83db84a147e14740 ]
+commit 45939ce292b4b11159719faaf60aba7d58d5fe33 upstream.
 
-Basically, duplicate mux id isn't be allowed.
-So, the creation of rmnet will be failed if there is duplicate mux id
-is existing.
-But, changelink routine doesn't check duplicate mux id.
+It is possible for a system with an ARMv8 timer to run a 32-bit kernel.
+When this happens we will unconditionally have the vDSO code remove the
+__vdso_gettimeofday and __vdso_clock_gettime symbols because
+cntvct_functional() returns false since it does not match that
+compatibility string.
 
-Test commands:
-    modprobe rmnet
-    ip link add dummy0 type dummy
-    ip link add rmnet0 link dummy0 type rmnet mux_id 1
-    ip link add rmnet1 link dummy0 type rmnet mux_id 2
-    ip link set rmnet1 type rmnet mux_id 1
+Fixes: ecf99a439105 ("ARM: 8331/1: VDSO initialization, mapping, and synchronization")
+Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-Fixes: 23790ef12082 ("net: qualcomm: rmnet: Allow to configure flags for existing devices")
-Signed-off-by: Taehee Yoo <ap420073@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/qualcomm/rmnet/rmnet_config.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ arch/arm/kernel/vdso.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/net/ethernet/qualcomm/rmnet/rmnet_config.c b/drivers/net/ethernet/qualcomm/rmnet/rmnet_config.c
-index 0ad64aa665925..3c0e6d24d0834 100644
---- a/drivers/net/ethernet/qualcomm/rmnet/rmnet_config.c
-+++ b/drivers/net/ethernet/qualcomm/rmnet/rmnet_config.c
-@@ -306,6 +306,10 @@ static int rmnet_changelink(struct net_device *dev, struct nlattr *tb[],
+--- a/arch/arm/kernel/vdso.c
++++ b/arch/arm/kernel/vdso.c
+@@ -104,6 +104,8 @@ static bool __init cntvct_functional(voi
+ 	 */
+ 	np = of_find_compatible_node(NULL, NULL, "arm,armv7-timer");
+ 	if (!np)
++		np = of_find_compatible_node(NULL, NULL, "arm,armv8-timer");
++	if (!np)
+ 		goto out_put;
  
- 	if (data[IFLA_RMNET_MUX_ID]) {
- 		mux_id = nla_get_u16(data[IFLA_RMNET_MUX_ID]);
-+		if (rmnet_get_endpoint(port, mux_id)) {
-+			NL_SET_ERR_MSG_MOD(extack, "MUX ID already exists");
-+			return -EINVAL;
-+		}
- 		ep = rmnet_get_endpoint(port, priv->mux_id);
- 		if (!ep)
- 			return -ENODEV;
--- 
-2.20.1
-
+ 	if (of_property_read_bool(np, "arm,cpu-registers-not-fw-configured"))
 
 
