@@ -2,104 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 78D6E18B2D7
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 12:58:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E38B618B2F0
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 13:05:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727194AbgCSL60 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 07:58:26 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:48422 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726785AbgCSL60 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 07:58:26 -0400
-Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 9D11378D7C42C01D85C1;
-        Thu, 19 Mar 2020 19:58:10 +0800 (CST)
-Received: from szvp000203569.huawei.com (10.120.216.130) by
- DGGEMS414-HUB.china.huawei.com (10.3.19.214) with Microsoft SMTP Server id
- 14.3.487.0; Thu, 19 Mar 2020 19:58:04 +0800
-From:   Chao Yu <yuchao0@huawei.com>
-To:     <jaegeuk@kernel.org>
-CC:     <linux-f2fs-devel@lists.sourceforge.net>,
-        <linux-kernel@vger.kernel.org>, <chao@kernel.org>,
-        Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH 4/4] f2fs: fix NULL pointer dereference in f2fs_write_begin()
-Date:   Thu, 19 Mar 2020 19:58:00 +0800
-Message-ID: <20200319115800.108926-4-yuchao0@huawei.com>
-X-Mailer: git-send-email 2.18.0.rc1
-In-Reply-To: <20200319115800.108926-1-yuchao0@huawei.com>
-References: <20200319115800.108926-1-yuchao0@huawei.com>
+        id S1727083AbgCSMF0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 08:05:26 -0400
+Received: from foss.arm.com ([217.140.110.172]:34050 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726589AbgCSMF0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 08:05:26 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D99E431B;
+        Thu, 19 Mar 2020 05:05:25 -0700 (PDT)
+Received: from e113632-lin (unknown [10.1.194.46])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1AA8D3F305;
+        Thu, 19 Mar 2020 05:05:24 -0700 (PDT)
+References: <20200311181601.18314-1-valentin.schneider@arm.com> <20200311181601.18314-3-valentin.schneider@arm.com> <4a7fe6ae-3587-4a55-1cf2-c4fe568a5ffa@arm.com>
+User-agent: mu4e 0.9.17; emacs 26.3
+From:   Valentin Schneider <valentin.schneider@arm.com>
+To:     Dietmar Eggemann <dietmar.eggemann@arm.com>
+Cc:     linux-kernel@vger.kernel.org, mingo@kernel.org,
+        peterz@infradead.org, vincent.guittot@linaro.org
+Subject: Re: [PATCH v2 2/9] sched/debug: Make sd->flags sysctl read-only
+In-reply-to: <4a7fe6ae-3587-4a55-1cf2-c4fe568a5ffa@arm.com>
+Date:   Thu, 19 Mar 2020 12:04:56 +0000
+Message-ID: <jhjwo7go8if.mognet@arm.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-X-Originating-IP: [10.120.216.130]
-X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-BUG: kernel NULL pointer dereference, address: 0000000000000000
-RIP: 0010:f2fs_write_begin+0x823/0xb90 [f2fs]
-Call Trace:
- f2fs_quota_write+0x139/0x1d0 [f2fs]
- write_blk+0x36/0x80 [quota_tree]
- get_free_dqblk+0x42/0xa0 [quota_tree]
- do_insert_tree+0x235/0x4a0 [quota_tree]
- do_insert_tree+0x26e/0x4a0 [quota_tree]
- do_insert_tree+0x26e/0x4a0 [quota_tree]
- do_insert_tree+0x26e/0x4a0 [quota_tree]
- qtree_write_dquot+0x70/0x190 [quota_tree]
- v2_write_dquot+0x43/0x90 [quota_v2]
- dquot_acquire+0x77/0x100
- f2fs_dquot_acquire+0x2f/0x60 [f2fs]
- dqget+0x310/0x450
- dquot_transfer+0x7e/0x120
- f2fs_setattr+0x11a/0x4a0 [f2fs]
- notify_change+0x349/0x480
- chown_common+0x168/0x1c0
- do_fchownat+0xbc/0xf0
- __x64_sys_fchownat+0x20/0x30
- do_syscall_64+0x5f/0x220
- entry_SYSCALL_64_after_hwframe+0x44/0xa9
 
-Passing fsdata parameter to .write_{begin,end} in f2fs_quota_write(),
-so that if quota file is compressed one, we can avoid above NULL
-pointer dereference when updating quota content.
+On Thu, Mar 19 2020, Dietmar Eggemann wrote:
+> On 11.03.20 19:15, Valentin Schneider wrote:
+>> Writing to the sysctl of a sched_domain->flags directly updates the value of
+>> the field, and goes nowhere near update_top_cache_domain(). This means that
+>> the cached domain pointers can end up containing stale data (e.g. the
+>> domain pointed to doesn't have the relevant flag set anymore).
+>>
+>> Explicit domain walks that check for flags will be affected by
+>> the write, but this won't be in sync with the cached pointers which will
+>> still point to the domains that were cached at the last sched_domain
+>> build.
+>>
+>> In other words, writing to this interface is playing a dangerous game. It
+>> could be made to trigger an update of the cached sched_domain pointers when
+>> written to, but this does not seem to be worth the trouble. Make it
+>> read-only.
+>
+> As long as I don't change SD flags for which cached SD pointers exist
+> (SD_SHARE_PKG_RESOURCES, SD_NUMA, SD_ASYM_PACKING or
+> SD_ASYM_CPUCAPACITY) the write-able interface still could make some sense.
+>
+> E.g. by enabling SD_BALANCE_WAKE on the fly, I can force !want_affine
+> wakees into slow path.
+>
 
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
----
- fs/f2fs/super.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+True, although since there is no explicit differenciation between the
+cached and !cached flags, this is still a landmined interface.
 
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index ebffe7aa08ee..b83b17b54a0a 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -1936,6 +1936,7 @@ static ssize_t f2fs_quota_write(struct super_block *sb, int type,
- 	int offset = off & (sb->s_blocksize - 1);
- 	size_t towrite = len;
- 	struct page *page;
-+	void *fsdata = NULL;
- 	char *kaddr;
- 	int err = 0;
- 	int tocopy;
-@@ -1945,7 +1946,7 @@ static ssize_t f2fs_quota_write(struct super_block *sb, int type,
- 								towrite);
- retry:
- 		err = a_ops->write_begin(NULL, mapping, off, tocopy, 0,
--							&page, NULL);
-+							&page, &fsdata);
- 		if (unlikely(err)) {
- 			if (err == -ENOMEM) {
- 				congestion_wait(BLK_RW_ASYNC,
-@@ -1962,7 +1963,7 @@ static ssize_t f2fs_quota_write(struct super_block *sb, int type,
- 		flush_dcache_page(page);
- 
- 		a_ops->write_end(NULL, mapping, off, tocopy, tocopy,
--						page, NULL);
-+						page, fsdata);
- 		offset = 0;
- 		towrite -= tocopy;
- 		off += tocopy;
--- 
-2.18.0.rc1
+> The question is, do people use the writable flags interface to tweak
+> select_task_rq_fair() behavior in this regard?
 
+I did try asking around on IRC (which admittedly is just a small subset
+of people) but didn't find anyone.
