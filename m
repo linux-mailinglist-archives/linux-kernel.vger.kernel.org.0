@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6786018A9A5
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 01:11:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5EF3218A999
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 01:11:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727715AbgCSALu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Mar 2020 20:11:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37324 "EHLO mail.kernel.org"
+        id S1727483AbgCSALL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Mar 2020 20:11:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37364 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727426AbgCSALG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1727431AbgCSALG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 18 Mar 2020 20:11:06 -0400
 Received: from paulmck-ThinkPad-P72.home (50-39-105-78.bvtn.or.frontiernet.net [50.39.105.78])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 361322145D;
+        by mail.kernel.org (Postfix) with ESMTPSA id 891C420784;
         Thu, 19 Mar 2020 00:11:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1584576665;
-        bh=lKdlR+yvmKv8UTk4vOzDkhjS0DRm8Tw3V7YRjhYVRfY=;
+        bh=9+z9/6IXhKnsDV/0ekCJis5azPLRxI2BhYEcwRPUzdw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=oEaVZ8CndqyVMYuvpXcUSYxcrz1CSHtxtcIHMwSgnM7CuLYhqFwcKymqhyrZhpjRh
-         iVEOb8Pk4mRSzfBzQkhn2NP1+rjcBUZVngo6Uwvgr5hadvaa5VDwaSLZxXDRtjKGB6
-         WDdN//Ksm/X35x7VV4XQUCh/2IKVxNiT8dJ0XpEM=
+        b=SGlfDndQby9ng9qHhonXso6dbeIJraOtkRxmiuQNZ0zh1WuRIAeOjAx4nfV4+mlb9
+         Stq8bbgqwCngnTo8zF/0DwJBp/NT4/wxrYZYy2j5LW2MwNJDNUgpWIK3WI7VjXAc1g
+         aPvZflUavVPRLJ5FOQzCPLNV2Yvt6zO6rY4ZV/gU=
 From:   paulmck@kernel.org
 To:     rcu@vger.kernel.org
 Cc:     linux-kernel@vger.kernel.org, kernel-team@fb.com, mingo@kernel.org,
@@ -32,9 +32,9 @@ Cc:     linux-kernel@vger.kernel.org, kernel-team@fb.com, mingo@kernel.org,
         rostedt@goodmis.org, dhowells@redhat.com, edumazet@google.com,
         fweisbec@gmail.com, oleg@redhat.com, joel@joelfernandes.org,
         "Paul E. McKenney" <paulmck@kernel.org>
-Subject: [PATCH RFC v2 tip/core/rcu 10/22] rcutorture: Add torture tests for RCU Tasks Rude
-Date:   Wed, 18 Mar 2020 17:10:48 -0700
-Message-Id: <20200319001100.24917-10-paulmck@kernel.org>
+Subject: [PATCH RFC v2 tip/core/rcu 11/22] rcu-tasks: Use unique names for RCU-Tasks kthreads and messages
+Date:   Wed, 18 Mar 2020 17:10:49 -0700
+Message-Id: <20200319001100.24917-11-paulmck@kernel.org>
 X-Mailer: git-send-email 2.9.5
 In-Reply-To: <20200319001024.GA28798@paulmck-ThinkPad-P72>
 References: <20200319001024.GA28798@paulmck-ThinkPad-P72>
@@ -45,141 +45,83 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: "Paul E. McKenney" <paulmck@kernel.org>
 
-This commit adds the definitions required to torture the rude flavor of
-RCU tasks.
+This commit causes the flavors of RCU Tasks to use different names
+for their kthreads and in their console messages.
 
 Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
 ---
- kernel/rcu/Kconfig.debug                           |  2 ++
- kernel/rcu/rcu.h                                   |  1 +
- kernel/rcu/rcutorture.c                            | 31 ++++++++++++++++++++--
- .../selftests/rcutorture/configs/rcu/CFLIST        |  1 +
- .../selftests/rcutorture/configs/rcu/RUDE01        | 10 +++++++
- .../selftests/rcutorture/configs/rcu/RUDE01.boot   |  1 +
- 6 files changed, 44 insertions(+), 2 deletions(-)
- create mode 100644 tools/testing/selftests/rcutorture/configs/rcu/RUDE01
- create mode 100644 tools/testing/selftests/rcutorture/configs/rcu/RUDE01.boot
+ kernel/rcu/tasks.h | 25 ++++++++++++++++---------
+ 1 file changed, 16 insertions(+), 9 deletions(-)
 
-diff --git a/kernel/rcu/Kconfig.debug b/kernel/rcu/Kconfig.debug
-index ec4bb6c..b15a3bd 100644
---- a/kernel/rcu/Kconfig.debug
-+++ b/kernel/rcu/Kconfig.debug
-@@ -24,6 +24,7 @@ config RCU_PERF_TEST
- 	select TORTURE_TEST
- 	select SRCU
- 	select TASKS_RCU
-+	select TASKS_RUDE_RCU
- 	default n
- 	help
- 	  This option provides a kernel module that runs performance
-@@ -41,6 +42,7 @@ config RCU_TORTURE_TEST
- 	select TORTURE_TEST
- 	select SRCU
- 	select TASKS_RCU
-+	select TASKS_RUDE_RCU
- 	default n
- 	help
- 	  This option provides a kernel module that runs torture tests
-diff --git a/kernel/rcu/rcu.h b/kernel/rcu/rcu.h
-index 00ddc92..c574620 100644
---- a/kernel/rcu/rcu.h
-+++ b/kernel/rcu/rcu.h
-@@ -441,6 +441,7 @@ void rcu_request_urgent_qs_task(struct task_struct *t);
- enum rcutorture_type {
- 	RCU_FLAVOR,
- 	RCU_TASKS_FLAVOR,
-+	RCU_TASKS_RUDE_FLAVOR,
- 	RCU_TRIVIAL_FLAVOR,
- 	SRCU_FLAVOR,
- 	INVALID_RCU_FLAVOR
-diff --git a/kernel/rcu/rcutorture.c b/kernel/rcu/rcutorture.c
-index 88631f5..386cd11 100644
---- a/kernel/rcu/rcutorture.c
-+++ b/kernel/rcu/rcutorture.c
-@@ -731,6 +731,33 @@ static struct rcu_torture_ops trivial_ops = {
- 	.name		= "trivial"
+diff --git a/kernel/rcu/tasks.h b/kernel/rcu/tasks.h
+index 7ba1730..ac0f282 100644
+--- a/kernel/rcu/tasks.h
++++ b/kernel/rcu/tasks.h
+@@ -22,6 +22,8 @@ typedef void (*rcu_tasks_gp_func_t)(struct rcu_tasks *rtp);
+  * @kthread_ptr: This flavor's grace-period/callback-invocation kthread.
+  * @gp_func: This flavor's grace-period-wait function.
+  * @call_func: This flavor's call_rcu()-equivalent function.
++ * @name: This flavor's textual name.
++ * @kname: This flavor's kthread name.
+  */
+ struct rcu_tasks {
+ 	struct rcu_head *cbs_head;
+@@ -31,16 +33,20 @@ struct rcu_tasks {
+ 	struct task_struct *kthread_ptr;
+ 	rcu_tasks_gp_func_t gp_func;
+ 	call_rcu_func_t call_func;
++	char *name;
++	char *kname;
  };
  
-+/*
-+ * Definitions for rude RCU-tasks torture testing.
-+ */
-+
-+static void rcu_tasks_rude_torture_deferred_free(struct rcu_torture *p)
-+{
-+	call_rcu_tasks_rude(&p->rtort_rcu, rcu_torture_cb);
-+}
-+
-+static struct rcu_torture_ops tasks_rude_ops = {
-+	.ttype		= RCU_TASKS_RUDE_FLAVOR,
-+	.init		= rcu_sync_torture_init,
-+	.readlock	= rcu_torture_read_lock_trivial,
-+	.read_delay	= rcu_read_delay,  /* just reuse rcu's version. */
-+	.readunlock	= rcu_torture_read_unlock_trivial,
-+	.get_gp_seq	= rcu_no_completed,
-+	.deferred_free	= rcu_tasks_rude_torture_deferred_free,
-+	.sync		= synchronize_rcu_tasks_rude,
-+	.exp_sync	= synchronize_rcu_tasks_rude,
-+	.call		= call_rcu_tasks_rude,
-+	.cb_barrier	= rcu_barrier_tasks_rude,
-+	.fqs		= NULL,
-+	.stats		= NULL,
-+	.irq_capable	= 1,
-+	.name		= "tasks-rude"
-+};
-+
- static unsigned long rcutorture_seq_diff(unsigned long new, unsigned long old)
- {
- 	if (!cur_ops->gp_diff)
-@@ -740,7 +767,7 @@ static unsigned long rcutorture_seq_diff(unsigned long new, unsigned long old)
- 
- static bool __maybe_unused torturing_tasks(void)
- {
--	return cur_ops == &tasks_ops;
-+	return cur_ops == &tasks_ops || cur_ops == &tasks_rude_ops;
+-#define DEFINE_RCU_TASKS(name, gp, call)				\
+-static struct rcu_tasks name =						\
++#define DEFINE_RCU_TASKS(rt_name, gp, call, n)				\
++static struct rcu_tasks rt_name =					\
+ {									\
+-	.cbs_tail = &name.cbs_head,					\
+-	.cbs_wq = __WAIT_QUEUE_HEAD_INITIALIZER(name.cbs_wq),		\
+-	.cbs_lock = __RAW_SPIN_LOCK_UNLOCKED(name.cbs_lock),		\
++	.cbs_tail = &rt_name.cbs_head,					\
++	.cbs_wq = __WAIT_QUEUE_HEAD_INITIALIZER(rt_name.cbs_wq),	\
++	.cbs_lock = __RAW_SPIN_LOCK_UNLOCKED(rt_name.cbs_lock),		\
+ 	.gp_func = gp,							\
+ 	.call_func = call,						\
++	.name = n,							\
++	.kname = #rt_name,						\
  }
  
- /*
-@@ -2408,7 +2435,7 @@ rcu_torture_init(void)
- 	int firsterr = 0;
- 	static struct rcu_torture_ops *torture_ops[] = {
- 		&rcu_ops, &rcu_busted_ops, &srcu_ops, &srcud_ops,
--		&busted_srcud_ops, &tasks_ops, &trivial_ops,
-+		&busted_srcud_ops, &tasks_ops, &tasks_rude_ops, &trivial_ops,
- 	};
+ /* Track exiting tasks in order to allow them to be waited for. */
+@@ -145,8 +151,8 @@ static void __init rcu_spawn_tasks_kthread_generic(struct rcu_tasks *rtp)
+ {
+ 	struct task_struct *t;
  
- 	if (!torture_init_begin(torture_type, verbose))
-diff --git a/tools/testing/selftests/rcutorture/configs/rcu/CFLIST b/tools/testing/selftests/rcutorture/configs/rcu/CFLIST
-index c3c1fb5..ec0c72f 100644
---- a/tools/testing/selftests/rcutorture/configs/rcu/CFLIST
-+++ b/tools/testing/selftests/rcutorture/configs/rcu/CFLIST
-@@ -14,3 +14,4 @@ TINY02
- TASKS01
- TASKS02
- TASKS03
-+RUDE01
-diff --git a/tools/testing/selftests/rcutorture/configs/rcu/RUDE01 b/tools/testing/selftests/rcutorture/configs/rcu/RUDE01
-new file mode 100644
-index 0000000..bafe94c
---- /dev/null
-+++ b/tools/testing/selftests/rcutorture/configs/rcu/RUDE01
-@@ -0,0 +1,10 @@
-+CONFIG_SMP=y
-+CONFIG_NR_CPUS=2
-+CONFIG_HOTPLUG_CPU=y
-+CONFIG_PREEMPT_NONE=n
-+CONFIG_PREEMPT_VOLUNTARY=n
-+CONFIG_PREEMPT=y
-+CONFIG_DEBUG_LOCK_ALLOC=y
-+CONFIG_PROVE_LOCKING=y
-+#CHECK#CONFIG_PROVE_RCU=y
-+CONFIG_RCU_EXPERT=y
-diff --git a/tools/testing/selftests/rcutorture/configs/rcu/RUDE01.boot b/tools/testing/selftests/rcutorture/configs/rcu/RUDE01.boot
-new file mode 100644
-index 0000000..9363708
---- /dev/null
-+++ b/tools/testing/selftests/rcutorture/configs/rcu/RUDE01.boot
-@@ -0,0 +1 @@
-+rcutorture.torture_type=tasks-rude
+-	t = kthread_run(rcu_tasks_kthread, rtp, "rcu_tasks_kthread");
+-	if (WARN_ONCE(IS_ERR(t), "%s: Could not start Tasks-RCU grace-period kthread, OOM is now expected behavior\n", __func__))
++	t = kthread_run(rcu_tasks_kthread, rtp, "%s_kthread", rtp->kname);
++	if (WARN_ONCE(IS_ERR(t), "%s: Could not start %s grace-period kthread, OOM is now expected behavior\n", __func__, rtp->name))
+ 		return;
+ 	smp_mb(); /* Ensure others see full kthread. */
+ }
+@@ -342,7 +348,7 @@ static void rcu_tasks_wait_gp(struct rcu_tasks *rtp)
+ }
+ 
+ void call_rcu_tasks(struct rcu_head *rhp, rcu_callback_t func);
+-DEFINE_RCU_TASKS(rcu_tasks, rcu_tasks_wait_gp, call_rcu_tasks);
++DEFINE_RCU_TASKS(rcu_tasks, rcu_tasks_wait_gp, call_rcu_tasks, "RCU Tasks");
+ 
+ /**
+  * call_rcu_tasks() - Queue an RCU for invocation task-based grace period
+@@ -437,7 +443,8 @@ static void rcu_tasks_rude_wait_gp(struct rcu_tasks *rtp)
+ }
+ 
+ void call_rcu_tasks_rude(struct rcu_head *rhp, rcu_callback_t func);
+-DEFINE_RCU_TASKS(rcu_tasks_rude, rcu_tasks_rude_wait_gp, call_rcu_tasks_rude);
++DEFINE_RCU_TASKS(rcu_tasks_rude, rcu_tasks_rude_wait_gp, call_rcu_tasks_rude,
++		 "RCU Tasks Rude");
+ 
+ /**
+  * call_rcu_tasks_rude() - Queue a callback rude task-based grace period
 -- 
 2.9.5
 
