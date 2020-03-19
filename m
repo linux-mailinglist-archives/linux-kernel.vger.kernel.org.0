@@ -2,36 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ADCB718B741
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:32:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9780C18B72B
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:32:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728265AbgCSNQL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 09:16:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36262 "EHLO mail.kernel.org"
+        id S1729529AbgCSNQ2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 09:16:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36842 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729497AbgCSNQH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 09:16:07 -0400
+        id S1729291AbgCSNQ0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 09:16:26 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 76BC1216FD;
-        Thu, 19 Mar 2020 13:16:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C3B2020724;
+        Thu, 19 Mar 2020 13:16:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584623766;
-        bh=F3E9u0e+OhzeM2fhFFj712/muRznLLR9TG6SMNd/BoM=;
+        s=default; t=1584623785;
+        bh=bg/H4w9x/Y5OH3AJYyYxL/aEubN2iXPYUHMOqSsRVOI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=WOoydtuBAPkzazbaQd0SxeZfgKUHeHJCQO/dorzOe5MHDgVTWDVdR88/aIsa8RAl+
-         ub7Vx7cqrVd0NSTWPD/VUGdp8FPW+GEk9MX23NJwTP5+/E26k6izdA1X+eNEmvO2Hr
-         T310BST6ptiKVxyR6SQVgzww7PupwXG8HZ6Y2W2A=
+        b=2hVyp2okG7l9QaoZEdzf6TNG4S52qzSsj8XYiBfy8v1zHY6VMQV8Ms9cMiuT84hLW
+         O+Dkq8F2TV02FDIC77evaqb12YOWoPx+tkKbXXk97QnNQNcJf8cb1RFuo96JCQw6Ge
+         SfFCJhnV9G1CyFu7CXmL2OX/LmDPdvXu5Mw5u6uQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>
-Subject: [PATCH 4.14 47/99] KVM: x86: clear stale x86_emulate_ctxt->intercept value
-Date:   Thu, 19 Mar 2020 14:03:25 +0100
-Message-Id: <20200319123956.144975540@linuxfoundation.org>
+        stable@vger.kernel.org, Lu Baolu <baolu.lu@linux.intel.com>,
+        Moritz Fischer <mdf@kernel.org>,
+        Yonghyun Hwang <yonghyun@google.com>,
+        Joerg Roedel <jroedel@suse.de>
+Subject: [PATCH 4.14 53/99] iommu/vt-d: Fix a bug in intel_iommu_iova_to_phys() for huge page
+Date:   Thu, 19 Mar 2020 14:03:31 +0100
+Message-Id: <20200319123957.987008616@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.2
 In-Reply-To: <20200319123941.630731708@linuxfoundation.org>
 References: <20200319123941.630731708@linuxfoundation.org>
@@ -44,50 +45,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vitaly Kuznetsov <vkuznets@redhat.com>
+From: Yonghyun Hwang <yonghyun@google.com>
 
-commit 342993f96ab24d5864ab1216f46c0b199c2baf8e upstream.
+commit 77a1bce84bba01f3f143d77127b72e872b573795 upstream.
 
-After commit 07721feee46b ("KVM: nVMX: Don't emulate instructions in guest
-mode") Hyper-V guests on KVM stopped booting with:
+intel_iommu_iova_to_phys() has a bug when it translates an IOVA for a huge
+page onto its corresponding physical address. This commit fixes the bug by
+accomodating the level of page entry for the IOVA and adds IOVA's lower
+address to the physical address.
 
- kvm_nested_vmexit:    rip fffff802987d6169 reason EPT_VIOLATION info1 181
-    info2 0 int_info 0 int_info_err 0
- kvm_page_fault:       address febd0000 error_code 181
- kvm_emulate_insn:     0:fffff802987d6169: f3 a5
- kvm_emulate_insn:     0:fffff802987d6169: f3 a5 FAIL
- kvm_inj_exception:    #UD (0x0)
-
-"f3 a5" is a "rep movsw" instruction, which should not be intercepted
-at all.  Commit c44b4c6ab80e ("KVM: emulate: clean up initializations in
-init_decode_cache") reduced the number of fields cleared by
-init_decode_cache() claiming that they are being cleared elsewhere,
-'intercept', however, is left uncleared if the instruction does not have
-any of the "slow path" flags (NotImpl, Stack, Op3264, Sse, Mmx, CheckPerm,
-NearBranch, No16 and of course Intercept itself).
-
-Fixes: c44b4c6ab80e ("KVM: emulate: clean up initializations in init_decode_cache")
-Fixes: 07721feee46b ("KVM: nVMX: Don't emulate instructions in guest mode")
-Cc: stable@vger.kernel.org
-Suggested-by: Paolo Bonzini <pbonzini@redhat.com>
-Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
-Reviewed-by: Sean Christopherson <sean.j.christopherson@intel.com>
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+Cc: <stable@vger.kernel.org>
+Acked-by: Lu Baolu <baolu.lu@linux.intel.com>
+Reviewed-by: Moritz Fischer <mdf@kernel.org>
+Signed-off-by: Yonghyun Hwang <yonghyun@google.com>
+Fixes: 3871794642579 ("VT-d: Changes to support KVM")
+Signed-off-by: Joerg Roedel <jroedel@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/kvm/emulate.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/iommu/intel-iommu.c |    6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
---- a/arch/x86/kvm/emulate.c
-+++ b/arch/x86/kvm/emulate.c
-@@ -5062,6 +5062,7 @@ int x86_decode_insn(struct x86_emulate_c
- 	ctxt->fetch.ptr = ctxt->fetch.data;
- 	ctxt->fetch.end = ctxt->fetch.data + insn_len;
- 	ctxt->opcode_len = 1;
-+	ctxt->intercept = x86_intercept_none;
- 	if (insn_len > 0)
- 		memcpy(ctxt->fetch.data, insn, insn_len);
- 	else {
+--- a/drivers/iommu/intel-iommu.c
++++ b/drivers/iommu/intel-iommu.c
+@@ -5124,8 +5124,10 @@ static phys_addr_t intel_iommu_iova_to_p
+ 	u64 phys = 0;
+ 
+ 	pte = pfn_to_dma_pte(dmar_domain, iova >> VTD_PAGE_SHIFT, &level);
+-	if (pte)
+-		phys = dma_pte_addr(pte);
++	if (pte && dma_pte_present(pte))
++		phys = dma_pte_addr(pte) +
++			(iova & (BIT_MASK(level_to_offset_bits(level) +
++						VTD_PAGE_SHIFT) - 1));
+ 
+ 	return phys;
+ }
 
 
