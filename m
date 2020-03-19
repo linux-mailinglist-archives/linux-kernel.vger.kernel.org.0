@@ -2,112 +2,169 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B30A318BE52
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 18:41:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9F90518BE62
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 18:42:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727636AbgCSRll (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 13:41:41 -0400
-Received: from mga14.intel.com ([192.55.52.115]:50883 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727034AbgCSRll (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 13:41:41 -0400
-IronPort-SDR: d0Uyhel5dPjZk+EZ7aC8u1OlEcMiqdyS9Mwr9FZNlv6fE+Fw+cEAAkqJhgUjE4vBc5g+p5/QKe
- aB8XxHZ4GalA==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Mar 2020 10:41:40 -0700
-IronPort-SDR: M+4pdbi+zVZ2HdNL26EbrDS7Nh29gZE9Qh/vZepeJyokUYRJ09ibtOf5M5lQA8VK42SY5c5EAR
- 0dDvtY7TShhw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,572,1574150400"; 
-   d="scan'208";a="245232025"
-Received: from crojewsk-mobl1.ger.corp.intel.com (HELO [10.249.128.140]) ([10.249.128.140])
-  by orsmga003.jf.intel.com with ESMTP; 19 Mar 2020 10:41:37 -0700
-Subject: Re: snd_hda_intel/sst-acpi sound breakage on suspend/resume since
- 5.6-rc1
-To:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Dominik Brodowski <linux@dominikbrodowski.net>
-Cc:     Mark Brown <broonie@kernel.org>, kuninori.morimoto.gx@renesas.com,
-        Keyon Jie <yang.jie@linux.intel.com>,
-        alsa-devel@alsa-project.org, curtis@malainey.com,
-        linux-kernel@vger.kernel.org, tiwai@suse.com,
-        liam.r.girdwood@linux.intel.com
-References: <d7a357c5-54af-3e69-771c-d7ea83c6fbb7@linux.intel.com>
- <20200318162029.GA3999@light.dominikbrodowski.net>
- <e49eec28-2037-f5db-e75b-9eadf6180d81@intel.com>
- <20200318192213.GA2987@light.dominikbrodowski.net>
- <b352a46b-8a66-8235-3622-23e561d3728c@intel.com>
- <20200318215218.GA2439@light.dominikbrodowski.net>
- <e7f4f38d-b53e-8c69-8b23-454718cf92af@intel.com>
- <20200319130049.GA2244@light.dominikbrodowski.net>
- <20200319134139.GB3983@sirena.org.uk>
- <a01359dc-479e-b3e3-37a6-4a9c421d18da@intel.com>
- <20200319165157.GA2254@light.dominikbrodowski.net>
- <eef45d20-3bce-184a-842c-216c15252014@linux.intel.com>
-From:   Cezary Rojewski <cezary.rojewski@intel.com>
-Message-ID: <45108a58-da11-3b6a-9e3b-072ac0c63ea1@intel.com>
-Date:   Thu, 19 Mar 2020 18:41:36 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.6.0
+        id S1728383AbgCSRmJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 13:42:09 -0400
+Received: from mout.kundenserver.de ([212.227.17.13]:50797 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727034AbgCSRmH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 13:42:07 -0400
+Received: from mail.cetitecgmbh.com ([87.190.42.90]) by
+ mrelayeu.kundenserver.de (mreue106 [212.227.15.183]) with ESMTPSA (Nemesis)
+ id 1M3UEW-1jEQwX2Lqc-000euR; Thu, 19 Mar 2020 18:41:43 +0100
+Received: from pflvmailgateway.corp.cetitec.com (unknown [127.0.0.1])
+        by mail.cetitecgmbh.com (Postfix) with ESMTP id E8FFE65021B;
+        Thu, 19 Mar 2020 17:41:41 +0000 (UTC)
+X-Virus-Scanned: amavisd-new at cetitec.com
+Received: from mail.cetitecgmbh.com ([127.0.0.1])
+        by pflvmailgateway.corp.cetitec.com (pflvmailgateway.corp.cetitec.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id vd7tABGtwXbN; Thu, 19 Mar 2020 18:41:40 +0100 (CET)
+Received: from pfwsexchange.corp.cetitec.com (unknown [10.10.1.99])
+        by mail.cetitecgmbh.com (Postfix) with ESMTPS id 2839E64FB10;
+        Thu, 19 Mar 2020 18:41:40 +0100 (CET)
+Received: from pflmari.corp.cetitec.com (10.8.5.52) by
+ PFWSEXCHANGE.corp.cetitec.com (10.10.1.99) with Microsoft SMTP Server (TLS)
+ id 15.0.1497.2; Thu, 19 Mar 2020 18:41:40 +0100
+Received: by pflmari.corp.cetitec.com (Postfix, from userid 1000)
+        id 696CB8050C; Thu, 19 Mar 2020 18:41:39 +0100 (CET)
+Date:   Thu, 19 Mar 2020 18:41:39 +0100
+From:   Alex Riesen <alexander.riesen@cetitec.com>
+To:     Kieran Bingham <kieran.bingham@ideasonboard.com>
+CC:     Geert Uytterhoeven <geert@linux-m68k.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        "Laurent Pinchart" <laurent.pinchart@ideasonboard.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        <devel@driverdev.osuosl.org>, <linux-media@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-renesas-soc@vger.kernel.org>
+Subject: [PATCH v2 00/10] media: adv748x: add support for HDMI audio
+Message-ID: <cover.1584639664.git.alexander.riesen@cetitec.com>
+Mail-Followup-To: Alex Riesen <alexander.riesen@cetitec.com>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        devel@driverdev.osuosl.org, linux-media@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
 MIME-Version: 1.0
-In-Reply-To: <eef45d20-3bce-184a-842c-216c15252014@linux.intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+X-Originating-IP: [10.8.5.52]
+X-ClientProxiedBy: PFWSEXCHANGE.corp.cetitec.com (10.10.1.99) To
+ PFWSEXCHANGE.corp.cetitec.com (10.10.1.99)
+X-EsetResult: clean, is OK
+X-EsetId: 37303A290D7F536A6D7762
+X-Provags-ID: V03:K1:mvDYqnPYL3BVimmptxRglwccrdzJ9m6QeBKfaLIDjh4sDza7r3X
+ QdeASc2IvBmpfRKnTcr+Hx3CGUl8j6GckfAQ6mqDk0eoQaNdJZxIl5NP68k29ZGxG3WXIlE
+ I+VBXTnhpFnQtxrwxYdJ9JluO7AzkoyJcJ3f2150JxbjmK8x9aa722MWqEtUoGG/Hjo4kNO
+ QXUJJ0I1r5UmyC++mo2dQ==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:CIkuGflbLG0=:qce+Kh7+XiEPleqp/rhhcf
+ 5RjPHnQLaGasfR2ASI+SyeDCa7W9H6UZ+akD3D4yn4YIOcd39XM5QDPu9W2wTLoD/V20f4Msh
+ kfOa53CybeOD4pkAQjiPvjtH751S6aCf81JUcXM1Qhf7BlX8ojgU8WA4TmCX9W6USMRj1uaP/
+ Cu/UUls0M3iRa2JWjBVrgnVdYD7clhLEIxuLli/KuSX7vI8NVftjbzDFup5Ky4KWTFKoB1mmI
+ hvgv05bm1G521Fw2fbG0JYIgFHjPWs5frzgmE0JVCMLzDqRMv3kJbfoT7/K09ebxvYOOMUa/e
+ tnDuTt6vqJKe19LsNoidbHKfKm8wdvYU3k1Cg5CitpoArvsBunREsi5NDqstnj0VsEZUFJhMG
+ ktz940c4vr+2d8cKHK8aYLTPjw8KUJVSzdwVeYTU5QYNXLTr9QD5+bF7jkHLw8L6sg6BIOMwo
+ sJKR/l6UNg322xTLGJAJE4mTNDQBybyztKRxWSMr2pf9YUVQ+DJpI3YSjBCC1X8ske/O8cnB/
+ Glwl3VYdUiZ2f7uUGzULzvzAWB9BNiKU9tl/GOczmEzSOFWzExVKIpzs4KcpxkCxs4VJm3Yt9
+ UYbWZ953efQzawxCF1A0Ts/T01Z1hx+6xuFI5p1KJP/BQ/FVC+aUoq+tbcxXRLHJJ0tX4lGOc
+ Qa0xvTk+w3IuRWiyxGMVsAtGx9RgLNu2gvPZ9iGelqjHQQISkHE0glarxj2QfKDClaBRv2mHo
+ sF081BO89BMVMLYJXCVoRJO43Y1wGzDfzvveaPVSGROpHe1/QJclwge8xAo1fJPKPvF3/JEsf
+ HCTdMsGaho78iRk1+WJnNh5KqyIJq4BsnVu1uT7v+inoPwLENRfcBi4+LsNS3L1R2ZqcMtw
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2020-03-19 18:21, Pierre-Louis Bossart wrote:
-> On 3/19/20 11:51 AM, Dominik Brodowski wrote:
->> On Thu, Mar 19, 2020 at 04:48:03PM +0100, Cezary Rojewski wrote:
+This adds minimal support for accessing the HDMI audio provided through the
+I2S port available on ADV7481 and ADV7482 decoder devices by ADI.
+The port carries audio signal from the decoded HDMI stream.
 
->>>
->>> Requested for tests with following diff applied:
->>>
->>> diff --git a/sound/soc/intel/boards/broadwell.c
->>> b/sound/soc/intel/boards/broadwell.c
->>> index db7e1e87156d..6ed4c1b0a515 100644
->>> --- a/sound/soc/intel/boards/broadwell.c
->>> +++ b/sound/soc/intel/boards/broadwell.c
->>> @@ -212,7 +212,6 @@ static struct snd_soc_dai_link 
->>> broadwell_rt286_dais[] =
->>> {
->>>                  .init = broadwell_rt286_codec_init,
->>>                  .dai_fmt = SND_SOC_DAIFMT_I2S | SND_SOC_DAIFMT_NB_NF |
->>>                          SND_SOC_DAIFMT_CBS_CFS,
->>> -               .ignore_suspend = 1,
->>>                  .ignore_pmdown_time = 1,
->>>                  .be_hw_params_fixup = broadwell_ssp0_fixup,
->>>                  .ops = &broadwell_rt286_ops,
->>
->> That patch fixes the issue(s). I didn't even need to revert 64df6afa0dab
->> ("ASoC: Intel: broadwell: change cpu_dai and platform components for 
->> SOF")
->> on top of that. But you can assess better whether that patch needs 
->> care for
->> other reasons; for me, this one-liner you have suggested is perfect.
-> 
-> .ignore_suspend is set for bdw-rt5677.c and bdw-rt5650.c as well. I 
-> don't know if that was intentional.
+Currently, the driver only supports I2S in TDM, 8 channels a 24bit at 48kHz.
+Furthermore, only left-justified, 8 slots, 32bit/slot TDM, at 256fs has been
+ever tried.
 
-haswell has it too.
+An ADV7482 on the Renesas Salvator-X ES1.1 (R8A77950 SoC) was used during
+development of this code.
 
-My guess is that it's supposed to mimic offload behaviour on Windows: 
-offload pin playback allows for non-interrupted playback during sleep 
-while system pin follows standard path: breaks on sleep and resumes once 
-sleep concludes. This of course also involves cooperation from 
-application side.
+Changes since v1:
+  - Add ssi4_ctrl pin group to the sound pins. The pins are responsible for
+    SCK4 (sample clock) WS4 and (word boundary input), and are required for
+    SSI audio input over I2S.
+    Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
 
-However, one pin cannot serve two masters. Either it's offload or it's not.
+  - Removed the audio clock C from the list of clocks of adv748x,
+    it is exactly the other way around.
+    Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
 
-This is just a guess of course, and my vision might be clouded becuase 
-of Windows background.
-Other SSP0 examples: rt286 (SKL/ KBL) rt298 (APL) and rt274 (CNL) do not 
-have .ignore_suspend enabled for their links, except when DMIC is 
-involved. So it might be just a bug that has been covered by another bug 
-present in ASoC core, which Morimoto' San fixed during his cleanup series.
+  - Add an instance of (currently) fixed rate I2S master clock (MCLK),
+    connected to the audio_clk_c line of the R-Car SoC.
+    Explicitly declare the device a clock producer and add it to the
+    list of clocks used by the audio system of the Salvator-X board.
+    Suggested-by: Geert Uytterhoeven <geert@linux-m68k.org>
 
-Czarek
+  - The implementation of DAI driver has been moved in a separate file
+    and modified to activate audio decoding and I2S streaming using
+    snd_soc_dai_... interfaces. This allows the driver to be used with
+    just ALSA interfaces.
+
+  - The ioctls for selecting audio output and muting have been removed,
+    as not applicable.
+    Suggested-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+    I have left implementation of the QUERYCAP in, as it seems to be required
+    by v4l-ctl to support loading of EDID for this node. And setting the EDID
+    is one feature I desperately need: there are devices which plainly refuse
+    to talk to the sink if it does not provide EDID they like.
+
+  - A device tree configuration without audio port will disable the audio code
+    altogether, supporting integrations where the port is not connected.
+
+  - The patches have been re-arranged, starting with the generic changes and
+    changes not related to audio directly. Those will be probably sent as a
+    separate series later.
+
+  - The whole series has been rebased on top of v5.6-rc6
+
+Alex Riesen (10):
+  media: adv748x: fix end-of-line terminators in diagnostic statements
+  media: adv748x: include everything adv748x.h needs into the file
+  media: adv748x: reduce amount of code for bitwise modifications of
+    device registers
+  media: adv748x: add definitions for audio output related registers
+  media: adv748x: add support for HDMI audio
+  media: adv748x: only activate DAI if it is described in device tree
+  dt-bindings: adv748x: add information about serial audio interface
+    (I2S/TDM)
+  arm64: dts: renesas: salvator: add a connection from adv748x codec
+    (HDMI input) to the R-Car SoC
+  media: adv748x: add support for log_status ioctl
+  media: adv748x: allow the HDMI sub-device to accept EDID
+
+ .../devicetree/bindings/media/i2c/adv748x.txt |  16 +-
+ .../boot/dts/renesas/r8a77950-salvator-x.dts  |   3 +-
+ .../boot/dts/renesas/salvator-common.dtsi     |  47 +++-
+ drivers/media/i2c/adv748x/Makefile            |   3 +-
+ drivers/media/i2c/adv748x/adv748x-afe.c       |   2 -
+ drivers/media/i2c/adv748x/adv748x-core.c      |  56 +++-
+ drivers/media/i2c/adv748x/adv748x-csi2.c      |   4 +-
+ drivers/media/i2c/adv748x/adv748x-dai.c       | 261 ++++++++++++++++++
+ drivers/media/i2c/adv748x/adv748x-hdmi.c      | 208 +++++++++++++-
+ drivers/media/i2c/adv748x/adv748x.h           |  67 ++++-
+ 10 files changed, 633 insertions(+), 34 deletions(-)
+ create mode 100644 drivers/media/i2c/adv748x/adv748x-dai.c
+
+-- 
+2.25.1.25.g9ecbe7eb18
+
