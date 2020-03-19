@@ -2,108 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C35CF18B3D1
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:00:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 189A318B4E5
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:13:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727016AbgCSNAz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 09:00:55 -0400
-Received: from isilmar-4.linta.de ([136.243.71.142]:57546 "EHLO
-        isilmar-4.linta.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725787AbgCSNAy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 09:00:54 -0400
-X-isilmar-external: YES
-X-isilmar-external: YES
-X-isilmar-external: YES
-X-isilmar-external: YES
-X-isilmar-external: YES
-X-isilmar-external: YES
-X-isilmar-external: YES
-X-isilmar-external: YES
-X-isilmar-external: YES
-X-isilmar-external: YES
-Received: from light.dominikbrodowski.net (brodo.linta [10.1.0.102])
-        by isilmar-4.linta.de (Postfix) with ESMTPSA id 5E6E12009CA;
-        Thu, 19 Mar 2020 13:00:53 +0000 (UTC)
-Received: by light.dominikbrodowski.net (Postfix, from userid 1000)
-        id 172B020B1E; Thu, 19 Mar 2020 14:00:49 +0100 (CET)
-Date:   Thu, 19 Mar 2020 14:00:49 +0100
-From:   Dominik Brodowski <linux@dominikbrodowski.net>
-To:     Cezary Rojewski <cezary.rojewski@intel.com>,
-        kuninori.morimoto.gx@renesas.com
-Cc:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Keyon Jie <yang.jie@linux.intel.com>,
-        alsa-devel@alsa-project.org, curtis@malainey.com,
-        linux-kernel@vger.kernel.org, tiwai@suse.com,
-        liam.r.girdwood@linux.intel.com, broonie@kernel.org
-Subject: Re: snd_hda_intel/sst-acpi sound breakage on suspend/resume since
- 5.6-rc1
-Message-ID: <20200319130049.GA2244@light.dominikbrodowski.net>
-References: <20200318063022.GA116342@light.dominikbrodowski.net>
- <41d0b2b5-6014-6fab-b6a2-7a7dbc4fe020@linux.intel.com>
- <20200318123930.GA2433@light.dominikbrodowski.net>
- <d7a357c5-54af-3e69-771c-d7ea83c6fbb7@linux.intel.com>
- <20200318162029.GA3999@light.dominikbrodowski.net>
- <e49eec28-2037-f5db-e75b-9eadf6180d81@intel.com>
- <20200318192213.GA2987@light.dominikbrodowski.net>
- <b352a46b-8a66-8235-3622-23e561d3728c@intel.com>
- <20200318215218.GA2439@light.dominikbrodowski.net>
- <e7f4f38d-b53e-8c69-8b23-454718cf92af@intel.com>
+        id S1729193AbgCSNNk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 09:13:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60922 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729187AbgCSNNi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 09:13:38 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9E0AD21835;
+        Thu, 19 Mar 2020 13:13:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1584623617;
+        bh=TrcHvj+t0zhknyADv/MVGhq72AnAb4DxejAlu6KPi50=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=e87y+DFN8Wjj0sBxVKLwUUAZohJR2K6w2JqNZ8CpejsgHBcF27xzXOaAoQoRqK/W9
+         I4TnQBy7qa8cK+U8Nb/XHF7wZgmsk1XbEwZPJ4LD+dNxlgXn2jCReUwkzrQzEyPHl0
+         Uiochq+5X6ec5vfxUxjsC8XtD0YP/rOh8O94Idc4=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Kees Cook <keescook@chromium.org>,
+        Ard Biesheuvel <ardb@kernel.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Russell King <rmk+kernel@armlinux.org.uk>
+Subject: [PATCH 4.9 88/90] ARM: 8958/1: rename missed uaccess .fixup section
+Date:   Thu, 19 Mar 2020 14:00:50 +0100
+Message-Id: <20200319123955.454198038@linuxfoundation.org>
+X-Mailer: git-send-email 2.25.2
+In-Reply-To: <20200319123928.635114118@linuxfoundation.org>
+References: <20200319123928.635114118@linuxfoundation.org>
+User-Agent: quilt/0.66
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e7f4f38d-b53e-8c69-8b23-454718cf92af@intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 18, 2020 at 11:20:55PM +0100, Cezary Rojewski wrote:
-> On 2020-03-18 22:52, Dominik Brodowski wrote:
-> > On Wed, Mar 18, 2020 at 09:43:54PM +0100, Cezary Rojewski wrote:
-> > > On 2020-03-18 20:22, Dominik Brodowski wrote:
-> > > > On Wed, Mar 18, 2020 at 07:27:58PM +0100, Cezary Rojewski wrote:
-> > > 
-> > > > > 
-> > > > > Due to pandemic I'm working remotely and right now won't be able to test
-> > > > > audio quality so focusing on the stream==NULL issue. And thus we got to help
-> > > > > each other out : )
-> > > > 
-> > > > Sure, and thanks for taking a look at this!
-> > > > 
-> > > > > Could you verify issue reproduces on 5.6.0-rc1 on your machine?
-> > > > 
-> > > > It reproduces on 5.6.0-rc1 + i915-bugfix. I'm trying to bisect it further in
-> > > > the background, but that may take quite some time.
-> > > > 
-> > > 
-> > > Could you checkout v5.6-rc1 with following commit reverted:
-> > > 	ASoC: Intel: broadwell: change cpu_dai and platform components for SOF
-> > > 
-> > > For my working v5.6-rc1 commit id is:
-> > > 64df6afa0dab5eda95cc4cc2269e3d4e83b6b6ce.
-> > 
-> > Hm, no joy -- after suspend/resume, no sound at first, and if I twiggle some
-> > options with pulseaudio, I get garbled output (even when using
-> > 
-> > 	aplay -f S16_LE -r 44100 -c 2 --device="sysdefault:CARD=broadwellrt286"
-> > 
-> > ). Will try to bisect further the next days.
-> > 
-> 
-> Thanks for quick reply. Revert of said commit fixes stream==NULL issue for
-> me. See if there were any changes in dmesg.
-> Will ask technicians to assist me on site tomorrow.
+From: Kees Cook <keescook@chromium.org>
 
-Have some good news now, namely that a bisect is complete: That pointed to
-1272063a7ee4 ("ASoC: soc-core: care .ignore_suspend for Component suspend");
-therefore I've added Kuninori Morimoto to this e-mail thread.
+commit f87b1c49bc675da30d8e1e8f4b60b800312c7b90 upstream.
 
-Additionally, I have tested mainline (v5.6-rc6+ as of 5076190daded) with
-*both* 64df6afa0dab (which you suggested yesterday) and 1272063a7ee4
-reverted. And that works like a charm as well.
+When the uaccess .fixup section was renamed to .text.fixup, one case was
+missed. Under ld.bfd, the orphaned section was moved close to .text
+(since they share the "ax" bits), so things would work normally on
+uaccess faults. Under ld.lld, the orphaned section was placed outside
+the .text section, making it unreachable.
 
-Hope this helps!
+Link: https://github.com/ClangBuiltLinux/linux/issues/282
+Link: https://bugs.chromium.org/p/chromium/issues/detail?id=1020633#c44
+Link: https://lore.kernel.org/r/nycvar.YSQ.7.76.1912032147340.17114@knanqh.ubzr
+Link: https://lore.kernel.org/lkml/202002071754.F5F073F1D@keescook/
 
-Thanks,
-	Dominik
+Fixes: c4a84ae39b4a5 ("ARM: 8322/1: keep .text and .fixup regions closer together")
+Cc: stable@vger.kernel.org
+Signed-off-by: Kees Cook <keescook@chromium.org>
+Reviewed-by: Ard Biesheuvel <ardb@kernel.org>
+Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
+Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+---
+ arch/arm/lib/copy_from_user.S |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- a/arch/arm/lib/copy_from_user.S
++++ b/arch/arm/lib/copy_from_user.S
+@@ -100,7 +100,7 @@ ENTRY(arm_copy_from_user)
+ 
+ ENDPROC(arm_copy_from_user)
+ 
+-	.pushsection .fixup,"ax"
++	.pushsection .text.fixup,"ax"
+ 	.align 0
+ 	copy_abort_preamble
+ 	ldmfd	sp!, {r1, r2, r3}
+
+
