@@ -2,133 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9DC6018BF3B
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 19:19:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4AF1718BF47
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 19:22:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727217AbgCSST3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 14:19:29 -0400
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:46179 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726663AbgCSST2 (ORCPT
+        id S1727082AbgCSSWK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 14:22:10 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:43060 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726663AbgCSSWJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 14:19:28 -0400
-Received: by mail-ed1-f68.google.com with SMTP id ca19so3880651edb.13;
-        Thu, 19 Mar 2020 11:19:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=VUnLPRFaXYEyBMAu2KerTyrQvIYIc8Adcw0gQEvJv1g=;
-        b=lgXZcIvA+kWlIoPJziys10SY+bpa92mglfzT+MBUMHhjvOu9zbr2UUe9GFdhoqCKEx
-         B2NIDVBcMACw4/h86uBHZHdkFxDKlqEO3RbQHlJdpwsvDLoLyM8g0h35hwOW0kHwRTZb
-         b+b40DXCqdQgTO6FtOInYhhcpCumJvr6veMoQTtS6fqGKXuIECoUzAGrPeZPke+MO8mp
-         dWjl5fe5YasL/G+bdIQlOTbWyUCjDY1j2AUthyCd7vClmH+ulbx8MjbtSHCV73KXo+FK
-         46rgB5WN9EfrklB/kJOGc+zwo6/WKRKM7nyRAOVOIWkNQd8JsfRECJmTIBfutDRonDsD
-         aIsA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=VUnLPRFaXYEyBMAu2KerTyrQvIYIc8Adcw0gQEvJv1g=;
-        b=gvaumCxT2/OeG9g3HQoedlgovkOHRbxwiwzksVpBe7S7sUXkT51pAVwL2PEAcs4s4M
-         /pB9ifHfPyWsj2zlUexH8CYCG90geGNFvRyJI3PhOcf726C/dZ/XSSM5bBvDhWJzlHhi
-         vmvD6nkYH1vetwpUFNMIoNtzxPb4LiXrXSuFOVa9tYdR+7tty8o1BoiOGuBnLZDFLAli
-         e9tQOaRVizu7ub+wG+h1O5vHQARENZqAgPAnoOdqEyRlEXQcXsD62RuHssZuVauXC0vg
-         Y4qQkeDm+6SUGUtD0acCtKG25PWMXnWTkl16Xkh2yRMVEF3s7AcXZbhdLI2iQlpaD/B/
-         1WnA==
-X-Gm-Message-State: ANhLgQ1RVWZ+kwaCMp45MwUpXUhfndp+XEwJIeUz7Vddw0L4TwwECy/i
-        g3o16pz3XzKV4a+FTMC01eqLGE1Adk1kr8H3fA4=
-X-Google-Smtp-Source: ADFU+vud33ZNOWzEZL7qH7qtQzJyc7BdVgN4hxJA6xo79YTL1rHt/UMu58hsnUr03cPz9Jge8sTfUNaovlby3KRdpbE=
-X-Received: by 2002:a05:6402:8ca:: with SMTP id d10mr4157650edz.362.1584641965480;
- Thu, 19 Mar 2020 11:19:25 -0700 (PDT)
+        Thu, 19 Mar 2020 14:22:09 -0400
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 02JID3dP016634;
+        Thu, 19 Mar 2020 19:22:00 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-type; s=STMicroelectronics;
+ bh=G+/E9/Q9sLbpBhTh4T0w7AaQd0y57u80iKpFj5VnKPA=;
+ b=RE7PHEwNRdJyshNH4hQX/2coCEg5//W3GTf9pzPbMZgs64CW+02LOCS242X/YHsuTvUa
+ muuZBZ6ukbpvD4yWINz7B/Y3IQbeqprqTFgL/3IjOqgUEmeYASt29rs2yJEKErq/Vp9e
+ PuujjVPtjSbpBpdS/99LqzCC9HXaePgMA9/vr2SkxBRAMhSIh6EaWAjGou9WNkN5qZw8
+ X5NzlEzXoXibXXX6Valn5X4LCCYvDNxpyl0uAOnXHlfZAMLlyrIknz/K4GBxjqXuuFhc
+ lD4u2fk2ojKxlctogJ1QElDm9eKk+xMzRL+t2tXvhIaYs2DV4GS6i7oWj3kLp94mAnjQ aQ== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 2yu95uu59b-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 19 Mar 2020 19:22:00 +0100
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id A8CC710002A;
+        Thu, 19 Mar 2020 19:21:55 +0100 (CET)
+Received: from Webmail-eu.st.com (sfhdag3node2.st.com [10.75.127.8])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 9B10522190E;
+        Thu, 19 Mar 2020 19:21:55 +0100 (CET)
+Received: from localhost (10.75.127.49) by SFHDAG3NODE2.st.com (10.75.127.8)
+ with Microsoft SMTP Server (TLS) id 15.0.1347.2; Thu, 19 Mar 2020 19:21:55
+ +0100
+From:   Alain Volmat <alain.volmat@st.com>
+To:     <wsa@the-dreams.de>, <pierre-yves.mordret@st.com>
+CC:     <alain.volmat@st.com>, <alexandre.torgue@st.com>,
+        <linux-i2c@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <fabrice.gasnier@st.com>
+Subject: [PATCH] i2c: i2c-stm32f7: improve nack debug message
+Date:   Thu, 19 Mar 2020 19:21:55 +0100
+Message-ID: <1584642115-15378-1-git-send-email-alain.volmat@st.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-References: <20200319043741.3338842-1-bjorn.andersson@linaro.org>
-In-Reply-To: <20200319043741.3338842-1-bjorn.andersson@linaro.org>
-From:   Rob Clark <robdclark@gmail.com>
-Date:   Thu, 19 Mar 2020 11:19:15 -0700
-Message-ID: <CAF6AEGtvSZOp48hyrBUzqQLV6+twtuy6k6MLimz6fhC-dqWEVA@mail.gmail.com>
-Subject: Re: [PATCH] drm/msm: Don't attempt to attach HDMI bridge twice
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Boris Brezillon <boris.brezillon@collabora.com>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        freedreno <freedreno@lists.freedesktop.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-Originating-IP: [10.75.127.49]
+X-ClientProxiedBy: SFHDAG8NODE3.st.com (10.75.127.24) To SFHDAG3NODE2.st.com
+ (10.75.127.8)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.645
+ definitions=2020-03-19_07:2020-03-19,2020-03-19 signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 18, 2020 at 9:39 PM Bjorn Andersson
-<bjorn.andersson@linaro.org> wrote:
->
-> With the introduction of '3ef2f119bd3e ("drm/msm: Use
-> drm_attach_bridge() to attach a bridge to an encoder")' the HDMI bridge
-> is attached both in msm_hdmi_bridge_init() and later in
-> msm_hdmi_modeset_init().
->
-> The second attempt fails as the bridge is already attached to the
-> encoder and the whole process is aborted.
->
-> So instead make msm_hdmi_bridge_init() just initialize the hdmi_bridge
-> object and let msm_hdmi_modeset_init() attach it later.
->
-> Fixes: 3ef2f119bd3e ("drm/msm: Use drm_attach_bridge() to attach a bridge to an encoder")
-> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+From: Fabrice Gasnier <fabrice.gasnier@st.com>
 
-Thanks, I think this should also be solved by:
+Add information on slave addr in the nack debug message.
 
-https://patchwork.freedesktop.org/patch/357331/?series=74611&rev=1
+Signed-off-by: Fabrice Gasnier <fabrice.gasnier@st.com>
+Signed-off-by: Alain Volmat <alain.volmat@st.com>
+---
+ drivers/i2c/busses/i2c-stm32f7.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-BR,
--R
+diff --git a/drivers/i2c/busses/i2c-stm32f7.c b/drivers/i2c/busses/i2c-stm32f7.c
+index 378956ac6d1d..78d40a4cc282 100644
+--- a/drivers/i2c/busses/i2c-stm32f7.c
++++ b/drivers/i2c/busses/i2c-stm32f7.c
+@@ -1431,7 +1431,8 @@ static irqreturn_t stm32f7_i2c_isr_event(int irq, void *data)
+ 
+ 	/* NACK received */
+ 	if (status & STM32F7_I2C_ISR_NACKF) {
+-		dev_dbg(i2c_dev->dev, "<%s>: Receive NACK\n", __func__);
++		dev_dbg(i2c_dev->dev, "<%s>: Receive NACK (addr %x)\n",
++			__func__, f7_msg->addr);
+ 		writel_relaxed(STM32F7_I2C_ICR_NACKCF, base + STM32F7_I2C_ICR);
+ 		f7_msg->result = -ENXIO;
+ 	}
+-- 
+2.7.4
 
-> ---
->  drivers/gpu/drm/msm/hdmi/hdmi_bridge.c | 19 +++----------------
->  1 file changed, 3 insertions(+), 16 deletions(-)
->
-> diff --git a/drivers/gpu/drm/msm/hdmi/hdmi_bridge.c b/drivers/gpu/drm/msm/hdmi/hdmi_bridge.c
-> index 6e380db9287b..0e103ee1b730 100644
-> --- a/drivers/gpu/drm/msm/hdmi/hdmi_bridge.c
-> +++ b/drivers/gpu/drm/msm/hdmi/hdmi_bridge.c
-> @@ -271,31 +271,18 @@ static const struct drm_bridge_funcs msm_hdmi_bridge_funcs = {
->  /* initialize bridge */
->  struct drm_bridge *msm_hdmi_bridge_init(struct hdmi *hdmi)
->  {
-> -       struct drm_bridge *bridge = NULL;
->         struct hdmi_bridge *hdmi_bridge;
-> -       int ret;
-> +       struct drm_bridge *bridge;
->
->         hdmi_bridge = devm_kzalloc(hdmi->dev->dev,
->                         sizeof(*hdmi_bridge), GFP_KERNEL);
-> -       if (!hdmi_bridge) {
-> -               ret = -ENOMEM;
-> -               goto fail;
-> -       }
-> +       if (!hdmi_bridge)
-> +               return ERR_PTR(-ENOMEM);
->
->         hdmi_bridge->hdmi = hdmi;
->
->         bridge = &hdmi_bridge->base;
->         bridge->funcs = &msm_hdmi_bridge_funcs;
->
-> -       ret = drm_bridge_attach(hdmi->encoder, bridge, NULL, 0);
-> -       if (ret)
-> -               goto fail;
-> -
->         return bridge;
-> -
-> -fail:
-> -       if (bridge)
-> -               msm_hdmi_bridge_destroy(bridge);
-> -
-> -       return ERR_PTR(ret);
->  }
-> --
-> 2.24.0
->
