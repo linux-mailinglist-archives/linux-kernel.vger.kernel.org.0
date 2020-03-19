@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 42D3918B8BD
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 15:11:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BFCF818B917
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 15:13:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727634AbgCSOKv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 10:10:51 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:60799 "EHLO
+        id S1727586AbgCSOKt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 10:10:49 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:60804 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727141AbgCSOKs (ORCPT
+        with ESMTP id S1727533AbgCSOKr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 10:10:48 -0400
+        Thu, 19 Mar 2020 10:10:47 -0400
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1jEvse-0001zK-QA; Thu, 19 Mar 2020 15:10:40 +0100
+        id 1jEvsf-00020F-Ry; Thu, 19 Mar 2020 15:10:41 +0100
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 71B111C22A4;
-        Thu, 19 Mar 2020 15:10:40 +0100 (CET)
-Date:   Thu, 19 Mar 2020 14:10:40 -0000
-From:   "tip-bot2 for Jin Yao" <tip-bot2@linutronix.de>
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 823501C22A3;
+        Thu, 19 Mar 2020 15:10:41 +0100 (CET)
+Date:   Thu, 19 Mar 2020 14:10:41 -0000
+From:   "tip-bot2 for Alexey Budankov" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: perf/core] perf report: Fix no branch type statistics report issue
-Cc:     Jin Yao <yao.jin@linux.intel.com>,
+Subject: [tip: perf/core] perf record: Fix binding of AIO user space buffers to nodes
+Cc:     Alexey Budankov <alexey.budankov@linux.intel.com>,
         Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Andi Kleen <ak@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>,
-        Kan Liang <kan.liang@linux.intel.com>,
+        Andi Kleen <ak@linux.intel.com>, Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
         Peter Zijlstra <peterz@infradead.org>,
         Arnaldo Carvalho de Melo <acme@redhat.com>,
         x86 <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>
-In-Reply-To: <20200313134607.12873-1-yao.jin@linux.intel.com>
-References: <20200313134607.12873-1-yao.jin@linux.intel.com>
+In-Reply-To: <c7ea8ffe-1357-bf9e-3a89-1da1d8e9b75b@linux.intel.com>
+References: <c7ea8ffe-1357-bf9e-3a89-1da1d8e9b75b@linux.intel.com>
 MIME-Version: 1.0
-Message-ID: <158462704019.28353.915763794833070245.tip-bot2@tip-bot2>
+Message-ID: <158462704123.28353.13994745078032026323.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -51,87 +51,70 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the perf/core branch of tip:
 
-Commit-ID:     c3b10649a80e9da2892c1fd3038c53abd57588f6
-Gitweb:        https://git.kernel.org/tip/c3b10649a80e9da2892c1fd3038c53abd57588f6
-Author:        Jin Yao <yao.jin@linux.intel.com>
-AuthorDate:    Fri, 13 Mar 2020 21:46:07 +08:00
+Commit-ID:     44d462acc0bf3eabe1522471fd1f683d8ce612cb
+Gitweb:        https://git.kernel.org/tip/44d462acc0bf3eabe1522471fd1f683d8ce612cb
+Author:        Alexey Budankov <alexey.budankov@linux.intel.com>
+AuthorDate:    Thu, 12 Mar 2020 15:21:45 +03:00
 Committer:     Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitterDate: Tue, 17 Mar 2020 18:01:40 -03:00
+CommitterDate: Thu, 12 Mar 2020 11:32:46 -03:00
 
-perf report: Fix no branch type statistics report issue
+perf record: Fix binding of AIO user space buffers to nodes
 
-Previously we could get the report of branch type statistics.
+Correct maxnode parameter value passed to mbind() syscall to be the
+amount of node mask bits to analyze plus 1. Dynamically allocate node
+mask memory depending on the index of node of cpu being profiled.
 
-For example:
-
-  # perf record -j any,save_type ...
-  # t perf report --stdio
-
-  #
-  # Branch Statistics:
-  #
-  COND_FWD:  40.6%
-  COND_BWD:   4.1%
-  CROSS_4K:  24.7%
-  CROSS_2M:  12.3%
-      COND:  44.7%
-    UNCOND:   0.0%
-       IND:   6.1%
-      CALL:  24.5%
-       RET:  24.7%
-
-But now for the recent perf, it can't report the branch type statistics.
-
-It's a regression issue caused by commit 40c39e304641 ("perf report: Fix
-a no annotate browser displayed issue"), which only counts the branch
-type statistics for browser mode.
-
-This patch moves the branch_type_count() outside of ui__has_annotation()
-checking, then branch type statistics can work for stdio mode.
-
-Fixes: 40c39e304641 ("perf report: Fix a no annotate browser displayed issue")
-Signed-off-by: Jin Yao <yao.jin@linux.intel.com>
+Fixes: c44a8b44ca9f ("perf record: Bind the AIO user space buffers to nodes")
+Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
 Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
 Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Kan Liang <kan.liang@linux.intel.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Link: http://lore.kernel.org/lkml/20200313134607.12873-1-yao.jin@linux.intel.com
+Link: http://lore.kernel.org/lkml/c7ea8ffe-1357-bf9e-3a89-1da1d8e9b75b@linux.intel.com
+[ Remove leftover nr_bits + 1 comment in mbind() call ]
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/builtin-report.c |  9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
+ tools/perf/util/mmap.c | 21 +++++++++++++++------
+ 1 file changed, 15 insertions(+), 6 deletions(-)
 
-diff --git a/tools/perf/builtin-report.c b/tools/perf/builtin-report.c
-index d7c905f..5f4045d 100644
---- a/tools/perf/builtin-report.c
-+++ b/tools/perf/builtin-report.c
-@@ -186,24 +186,23 @@ static int hist_iter__branch_callback(struct hist_entry_iter *iter,
+diff --git a/tools/perf/util/mmap.c b/tools/perf/util/mmap.c
+index 3b664fa..ab7108d 100644
+--- a/tools/perf/util/mmap.c
++++ b/tools/perf/util/mmap.c
+@@ -98,20 +98,29 @@ static int perf_mmap__aio_bind(struct mmap *map, int idx, int cpu, int affinity)
  {
- 	struct hist_entry *he = iter->he;
- 	struct report *rep = arg;
--	struct branch_info *bi;
-+	struct branch_info *bi = he->branch_info;
- 	struct perf_sample *sample = iter->sample;
- 	struct evsel *evsel = iter->evsel;
- 	int err;
+ 	void *data;
+ 	size_t mmap_len;
+-	unsigned long node_mask;
++	unsigned long *node_mask;
++	unsigned long node_index;
++	int err = 0;
  
-+	branch_type_count(&rep->brtype_stat, &bi->flags,
-+			  bi->from.addr, bi->to.addr);
-+
- 	if (!ui__has_annotation() && !rep->symbol_ipc)
- 		return 0;
+ 	if (affinity != PERF_AFFINITY_SYS && cpu__max_node() > 1) {
+ 		data = map->aio.data[idx];
+ 		mmap_len = mmap__mmap_len(map);
+-		node_mask = 1UL << cpu__get_node(cpu);
+-		if (mbind(data, mmap_len, MPOL_BIND, &node_mask, 1, 0)) {
+-			pr_err("Failed to bind [%p-%p] AIO buffer to node %d: error %m\n",
+-				data, data + mmap_len, cpu__get_node(cpu));
++		node_index = cpu__get_node(cpu);
++		node_mask = bitmap_alloc(node_index + 1);
++		if (!node_mask) {
++			pr_err("Failed to allocate node mask for mbind: error %m\n");
+ 			return -1;
+ 		}
++		set_bit(node_index, node_mask);
++		if (mbind(data, mmap_len, MPOL_BIND, node_mask, node_index + 1 + 1, 0)) {
++			pr_err("Failed to bind [%p-%p] AIO buffer to node %lu: error %m\n",
++				data, data + mmap_len, node_index);
++			err = -1;
++		}
++		bitmap_free(node_mask);
+ 	}
  
--	bi = he->branch_info;
- 	err = addr_map_symbol__inc_samples(&bi->from, sample, evsel);
- 	if (err)
- 		goto out;
- 
- 	err = addr_map_symbol__inc_samples(&bi->to, sample, evsel);
- 
--	branch_type_count(&rep->brtype_stat, &bi->flags,
--			  bi->from.addr, bi->to.addr);
--
- out:
- 	return err;
+-	return 0;
++	return err;
  }
+ #else /* !HAVE_LIBNUMA_SUPPORT */
+ static int perf_mmap__aio_alloc(struct mmap *map, int idx)
