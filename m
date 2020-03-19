@@ -2,159 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7A6B518C161
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 21:29:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 69BEC18C171
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 21:32:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727411AbgCSU3N (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 16:29:13 -0400
-Received: from mga09.intel.com ([134.134.136.24]:60512 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727364AbgCSU3G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 16:29:06 -0400
-IronPort-SDR: gh8WSXLQMD5/GZ0FmtYx2JVsO75938UgZuH2euh2+/sckyFNMySPnHru4n1nfMqqK/M5SJW7NW
- psPxcC52Ur7g==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Mar 2020 13:29:04 -0700
-IronPort-SDR: Aw0IAjZ00auPnBeERmjVX2BLEWCwwtoxHw9KwW45R0250gAtvczMLLyUDahZo3+pr7BzS0Dfix
- gZM4Ql1Gj2lg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,572,1574150400"; 
-   d="scan'208";a="239031286"
-Received: from labuser-ice-lake-client-platform.jf.intel.com ([10.54.55.65])
-  by orsmga008.jf.intel.com with ESMTP; 19 Mar 2020 13:29:04 -0700
-From:   kan.liang@linux.intel.com
-To:     acme@kernel.org, jolsa@redhat.com, peterz@infradead.org,
-        mingo@redhat.com, linux-kernel@vger.kernel.org
-Cc:     namhyung@kernel.org, adrian.hunter@intel.com,
-        mathieu.poirier@linaro.org, ravi.bangoria@linux.ibm.com,
-        alexey.budankov@linux.intel.com, vitaly.slobodskoy@intel.com,
-        pavel.gerasimov@intel.com, mpe@ellerman.id.au, eranian@google.com,
-        ak@linux.intel.com, Kan Liang <kan.liang@linux.intel.com>
-Subject: [PATCH V4 17/17] perf hist: Add fast path for duplicate entries check
-Date:   Thu, 19 Mar 2020 13:25:17 -0700
-Message-Id: <20200319202517.23423-18-kan.liang@linux.intel.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200319202517.23423-1-kan.liang@linux.intel.com>
-References: <20200319202517.23423-1-kan.liang@linux.intel.com>
+        id S1727240AbgCSUbB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 16:31:01 -0400
+Received: from mx0a-00190b01.pphosted.com ([67.231.149.131]:65002 "EHLO
+        mx0a-00190b01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727023AbgCSUbB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 16:31:01 -0400
+X-Greylist: delayed 1631 seconds by postgrey-1.27 at vger.kernel.org; Thu, 19 Mar 2020 16:31:00 EDT
+Received: from pps.filterd (m0050093.ppops.net [127.0.0.1])
+        by m0050093.ppops.net-00190b01. (8.16.0.42/8.16.0.42) with SMTP id 02JJxfgF004755;
+        Thu, 19 Mar 2020 20:03:45 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=akamai.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=jan2016.eng;
+ bh=mUn3O9VmAsOwEKC1EoFw6DJt4hCpb0XLTybtGwOerzo=;
+ b=H3mDhUz8fe+A9e9ktPUSPTDtcrbu+SEidGulMs4udhqLWYBaJFOd/ezi5WXrygFqyZ8t
+ 2QnYbAM+u5wT1rVqSJcpNPW1JKeduQ9oGfdY5bMpZUAX4MMrFgzYp/7/k8c1KZCKillL
+ HxbY+ao8DdqhU4bSYmlhhSr+FjrelLEjjuF1PjgrslCiIN7mA+tXRkTVaxBn7s9hwtlH
+ zF6kFSn0tsQS8is/VKSMpuZb4cvTQFEwvUzo7A6MBNc1Pr/xdvEV6K0bQ4HcmTZxDxn2
+ lUgAeXm8hnf6lwHG1WlFUy5q5Ip2HXUJNrB1WBeAUJBQUPoJuWqFD7ePLQcBcPA5WMsj SQ== 
+Received: from prod-mail-ppoint3 (prod-mail-ppoint3.akamai.com [96.6.114.86] (may be forged))
+        by m0050093.ppops.net-00190b01. with ESMTP id 2yrqduruqg-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 19 Mar 2020 20:03:45 +0000
+Received: from pps.filterd (prod-mail-ppoint3.akamai.com [127.0.0.1])
+        by prod-mail-ppoint3.akamai.com (8.16.0.27/8.16.0.27) with SMTP id 02JK3Z4Y001211;
+        Thu, 19 Mar 2020 16:03:44 -0400
+Received: from prod-mail-relay14.akamai.com ([172.27.17.39])
+        by prod-mail-ppoint3.akamai.com with ESMTP id 2yrtm0f8u2-1;
+        Thu, 19 Mar 2020 16:03:42 -0400
+Received: from [0.0.0.0] (prod-ssh-gw01.bos01.corp.akamai.com [172.27.119.138])
+        by prod-mail-relay14.akamai.com (Postfix) with ESMTP id C2BDF85C23;
+        Thu, 19 Mar 2020 20:03:39 +0000 (GMT)
+Subject: Re: [PATCH v2] dynamic_debug: Use address-of operator on section
+ symbols
+To:     Nathan Chancellor <natechancellor@gmail.com>
+Cc:     linux-kernel@vger.kernel.org, clang-built-linux@googlegroups.com,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+References: <20200220051320.10739-1-natechancellor@gmail.com>
+ <20200319015909.GA8292@ubuntu-m2-xlarge-x86>
+From:   Jason Baron <jbaron@akamai.com>
+Message-ID: <4b766edb-73e2-c295-22eb-b501405baa9f@akamai.com>
+Date:   Thu, 19 Mar 2020 16:03:39 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
+MIME-Version: 1.0
+In-Reply-To: <20200319015909.GA8292@ubuntu-m2-xlarge-x86>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.645
+ definitions=2020-03-19_08:2020-03-19,2020-03-19 signatures=0
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-2002250000 definitions=main-2003190083
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.645
+ definitions=2020-03-19_07:2020-03-19,2020-03-19 signatures=0
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 mlxscore=0 phishscore=0
+ clxscore=1011 impostorscore=0 priorityscore=1501 lowpriorityscore=0
+ suspectscore=0 bulkscore=0 adultscore=0 mlxlogscore=999 spamscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2003020000
+ definitions=main-2003190083
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kan Liang <kan.liang@linux.intel.com>
 
-Perf checks the duplicate entries in a callchain before adding an entry.
-However the check is very slow especially with deeper call stack.
-Almost ~50% elapsed time of perf report is spent on the check when the
-call stack is always depth of 32.
 
-The hist_entry__cmp() is used to compare the new entry with the old
-entries. It will go through all the available sorts in the sort_list,
-and call the specific cmp of each sort, which is very slow.
-Actually, for most cases, there are no duplicate entries in callchain.
-The symbols are usually different. It's much faster to do a quick check
-for symbols first. Only do the full cmp when the symbols are exactly the
-same.
-The quick check is only to check symbols, not dso. Export
-_sort__sym_cmp.
+On 3/18/20 9:59 PM, Nathan Chancellor wrote:
+> On Wed, Feb 19, 2020 at 10:13:20PM -0700, Nathan Chancellor wrote:
+>> Clang warns:
+>>
+>> ../lib/dynamic_debug.c:1034:24: warning: array comparison always
+>> evaluates to false [-Wtautological-compare]
+>>         if (__start___verbose == __stop___verbose) {
+>>                               ^
+>> 1 warning generated.
+>>
+>> These are not true arrays, they are linker defined symbols, which are
+>> just addresses. Using the address of operator silences the warning and
+>> does not change the resulting assembly with either clang/ld.lld or
+>> gcc/ld (tested with diff + objdump -Dr).
+>>
+>> Link: https://github.com/ClangBuiltLinux/linux/issues/894
+>> Suggested-by: Nick Desaulniers <ndesaulniers@google.com>
+>> Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+>> ---
+>> v1 -> v2: https://lore.kernel.org/lkml/20200219045423.54190-5-natechancellor@gmail.com/
+>>
+>> * No longer a series because there is no prerequisite patch.
+>> * Use address-of operator instead of casting to unsigned long.
+>>
+>>  lib/dynamic_debug.c | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/lib/dynamic_debug.c b/lib/dynamic_debug.c
+>> index aae17d9522e5..8f199f403ab5 100644
+>> --- a/lib/dynamic_debug.c
+>> +++ b/lib/dynamic_debug.c
+>> @@ -1031,7 +1031,7 @@ static int __init dynamic_debug_init(void)
+>>  	int n = 0, entries = 0, modct = 0;
+>>  	int verbose_bytes = 0;
+>>  
+>> -	if (__start___verbose == __stop___verbose) {
+>> +	if (&__start___verbose == &__stop___verbose) {
+>>  		pr_warn("_ddebug table is empty in a CONFIG_DYNAMIC_DEBUG build\n");
+>>  		return 1;
+>>  	}
+>> -- 
+>> 2.25.1
+>>
+> 
+> Gentle ping for review/acceptance.
+> 
+> Cheers,
+> Nathan
 
- $perf record --call-graph lbr ./tchain_edit_64
+Works for me.
 
- Without the patch
- $time perf report --stdio
- real    0m21.142s
- user    0m21.110s
- sys     0m0.033s
-
- With the patch
- $time perf report --stdio
- real    0m10.977s
- user    0m10.948s
- sys     0m0.027s
-
-Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
----
- tools/perf/util/hist.c | 23 +++++++++++++++++++++++
- tools/perf/util/sort.c |  2 +-
- tools/perf/util/sort.h |  2 ++
- 3 files changed, 26 insertions(+), 1 deletion(-)
-
-diff --git a/tools/perf/util/hist.c b/tools/perf/util/hist.c
-index e74a5acf66d9..311d6d119f3c 100644
---- a/tools/perf/util/hist.c
-+++ b/tools/perf/util/hist.c
-@@ -1057,6 +1057,20 @@ iter_next_cumulative_entry(struct hist_entry_iter *iter,
- 	return fill_callchain_info(al, node, iter->hide_unresolved);
- }
- 
-+static bool
-+hist_entry__fast__sym_diff(struct hist_entry *left,
-+			   struct hist_entry *right)
-+{
-+	struct symbol *sym_l = left->ms.sym;
-+	struct symbol *sym_r = right->ms.sym;
-+
-+	if (!sym_l && !sym_r)
-+		return left->ip != right->ip;
-+
-+	return !!_sort__sym_cmp(sym_l, sym_r);
-+}
-+
-+
- static int
- iter_add_next_cumulative_entry(struct hist_entry_iter *iter,
- 			       struct addr_location *al)
-@@ -1083,6 +1097,7 @@ iter_add_next_cumulative_entry(struct hist_entry_iter *iter,
- 	};
- 	int i;
- 	struct callchain_cursor cursor;
-+	bool fast = hists__has(he_tmp.hists, sym);
- 
- 	callchain_cursor_snapshot(&cursor, &callchain_cursor);
- 
-@@ -1093,6 +1108,14 @@ iter_add_next_cumulative_entry(struct hist_entry_iter *iter,
- 	 * It's possible that it has cycles or recursive calls.
- 	 */
- 	for (i = 0; i < iter->curr; i++) {
-+		/*
-+		 * For most cases, there are no duplicate entries in callchain.
-+		 * The symbols are usually different. Do a quick check for
-+		 * symbols first.
-+		 */
-+		if (fast && hist_entry__fast__sym_diff(he_cache[i], &he_tmp))
-+			continue;
-+
- 		if (hist_entry__cmp(he_cache[i], &he_tmp) == 0) {
- 			/* to avoid calling callback function */
- 			iter->he = NULL;
-diff --git a/tools/perf/util/sort.c b/tools/perf/util/sort.c
-index e860595576c2..96fd5fb42116 100644
---- a/tools/perf/util/sort.c
-+++ b/tools/perf/util/sort.c
-@@ -234,7 +234,7 @@ static int64_t _sort__addr_cmp(u64 left_ip, u64 right_ip)
- 	return (int64_t)(right_ip - left_ip);
- }
- 
--static int64_t _sort__sym_cmp(struct symbol *sym_l, struct symbol *sym_r)
-+int64_t _sort__sym_cmp(struct symbol *sym_l, struct symbol *sym_r)
- {
- 	if (!sym_l || !sym_r)
- 		return cmp_null(sym_l, sym_r);
-diff --git a/tools/perf/util/sort.h b/tools/perf/util/sort.h
-index 6c862d62d052..c3c3c68cbfdd 100644
---- a/tools/perf/util/sort.h
-+++ b/tools/perf/util/sort.h
-@@ -309,5 +309,7 @@ int64_t
- sort__daddr_cmp(struct hist_entry *left, struct hist_entry *right);
- int64_t
- sort__dcacheline_cmp(struct hist_entry *left, struct hist_entry *right);
-+int64_t
-+_sort__sym_cmp(struct symbol *sym_l, struct symbol *sym_r);
- char *hist_entry__srcline(struct hist_entry *he);
- #endif	/* __PERF_SORT_H */
--- 
-2.17.1
-
+Acked-by: Jason Baron <jbaron@akamai.com>
