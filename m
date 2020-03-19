@@ -2,119 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 17A0518AFBD
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 10:20:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9059418AFB4
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 10:19:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727360AbgCSJTZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 05:19:25 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:53860 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726968AbgCSJTX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 05:19:23 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Transfer-Encoding
-        :Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-        Sender:Reply-To:Content-ID:Content-Description;
-        bh=SB/qCDEi+ZlLoLxSkMyuujlTlFYXH48WLPTca/+wLJY=; b=NwKhFNciaaQRedaPUzwWPcEuDO
-        6YVQI3gxcvsFKcY2D95xHQnwZQ6Fq7XXnfo4XgG40qTzyiZHbhFfhMxGGXxMXL5nOdm9z64lms9Z+
-        MX1zySziAorbSKFBt7djHH284Q+NJF6Bb99TR0xCyf+90inBaIDUn//3J4VlfMgAhymPi6uBU+vmN
-        JUAT7xa4tCtk6ndbnC5NazgC8uPsUvQyULtff1Ve5ZeXuOYhtibKip39ePOa8ICTYje92d/Ntl5jK
-        VrGi7zImBW85bGdyp0jXcfivDfYp8D/VIudF0S6oSHSTX5GpQUuBccuLm4TkctWy6ecIxYgPnnbEz
-        X6WpnIEA==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jErKJ-0001Bz-4R; Thu, 19 Mar 2020 09:18:55 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        id S1727599AbgCSJTM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 05:19:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45256 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727399AbgCSJTJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 05:19:09 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 4ABB83013A4;
-        Thu, 19 Mar 2020 10:18:50 +0100 (CET)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 31213285F232E; Thu, 19 Mar 2020 10:18:50 +0100 (CET)
-Date:   Thu, 19 Mar 2020 10:18:50 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Ingo Molnar <mingo@kernel.org>, Will Deacon <will@kernel.org>,
-        "Paul E . McKenney" <paulmck@kernel.org>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Arnd Bergmann <arnd@arndb.de>, linuxppc-dev@lists.ozlabs.org,
-        Logan Gunthorpe <logang@deltatee.com>,
-        Kurt Schwemmer <kurt.schwemmer@microsemi.com>,
-        Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
-        Felipe Balbi <balbi@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-usb@vger.kernel.org, Kalle Valo <kvalo@codeaurora.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id AC9CD20722;
+        Thu, 19 Mar 2020 09:19:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1584609549;
+        bh=4ELwAs4r++m0CrqR7Z3cbvZffSziVHNOV9Nhno1MLfI=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=F3E4jwytvaGrRTPAf4qrnrm/mg2eNuHO4eBbywNXHTMGWB7NxPJCwfM56vTbUifxK
+         e2qf3Io0STy6LvAB50RtzUHRynYxJGvdUTpD3cSFW2FBYKSXcAuD9ETBKKZNw1k6nI
+         QEWGK3MroGnEypvUw009yBQRQ4ibVOlcu2m8WGKc=
+Date:   Thu, 19 Mar 2020 10:19:07 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Bernd Edlinger <bernd.edlinger@hotmail.de>
+Cc:     Kirill Tkhai <ktkhai@virtuozzo.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Kees Cook <keescook@chromium.org>,
+        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
         Oleg Nesterov <oleg@redhat.com>,
-        Davidlohr Bueso <dave@stgolabs.net>
-Subject: Re: [patch V2 07/15] powerpc/ps3: Convert half completion to rcuwait
-Message-ID: <20200319091850.GM20730@hirez.programming.kicks-ass.net>
-References: <20200318204302.693307984@linutronix.de>
- <20200318204408.102694393@linutronix.de>
- <20200319090024.wbrywc77tff3ro7i@linutronix.de>
+        Frederic Weisbecker <frederic@kernel.org>,
+        Andrei Vagin <avagin@gmail.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Yuyang Du <duyuyang@gmail.com>,
+        David Hildenbrand <david@redhat.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Anshuman Khandual <anshuman.khandual@arm.com>,
+        David Howells <dhowells@redhat.com>,
+        James Morris <jamorris@linux.microsoft.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Christian Kellner <christian@kellner.me>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        "Dmitry V. Levin" <ldv@altlinux.org>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>,
+        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>
+Subject: Re: [PATCH v4 3/5] exec: Add a exec_update_mutex to replace
+ cred_guard_mutex
+Message-ID: <20200319091907.GC3495501@kroah.com>
+References: <AM6PR03MB5170E9E71B9F84330B098BADE4FA0@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <6002ac56-025a-d50f-e89d-1bf42a072323@virtuozzo.com>
+ <AM6PR03MB5170353DF3575FF7742BB155E4FB0@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <532ce6a3-f0df-e3e4-6966-473c608246e1@virtuozzo.com>
+ <AM6PR03MB51705D8A5631B53844CE447CE4F60@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <13c4d333-9c33-8036-3142-dac22c392c60@virtuozzo.com>
+ <AM6PR03MB5170110A5D332DD0C1AC929FE4F70@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <f7c1508a-a456-6ae4-a81e-8e8aa41d8d39@virtuozzo.com>
+ <AM6PR03MB5170946BCC61F5D6CA233390E4F40@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <AM6PR03MB51703082215BDFE074E9D735E4F40@AM6PR03MB5170.eurprd03.prod.outlook.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20200319090024.wbrywc77tff3ro7i@linutronix.de>
+In-Reply-To: <AM6PR03MB51703082215BDFE074E9D735E4F40@AM6PR03MB5170.eurprd03.prod.outlook.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 19, 2020 at 10:00:24AM +0100, Sebastian Andrzej Siewior wrote:
-> On 2020-03-18 21:43:09 [+0100], Thomas Gleixner wrote:
-> > --- a/arch/powerpc/platforms/ps3/device-init.c
-> > +++ b/arch/powerpc/platforms/ps3/device-init.c
-> > @@ -725,12 +728,12 @@ static int ps3_notification_read_write(s
-> >  	unsigned long flags;
-> >  	int res;
-> >  
-> > -	init_completion(&dev->done);
-> >  	spin_lock_irqsave(&dev->lock, flags);
-> >  	res = write ? lv1_storage_write(dev->sbd.dev_id, 0, 0, 1, 0, lpar,
-> >  					&dev->tag)
-> >  		    : lv1_storage_read(dev->sbd.dev_id, 0, 0, 1, 0, lpar,
-> >  				       &dev->tag);
-> > +	dev->done = false;
-> >  	spin_unlock_irqrestore(&dev->lock, flags);
-> >  	if (res) {
-> >  		pr_err("%s:%u: %s failed %d\n", __func__, __LINE__, op, res);
-> > @@ -738,14 +741,10 @@ static int ps3_notification_read_write(s
-> >  	}
-> >  	pr_debug("%s:%u: notification %s issued\n", __func__, __LINE__, op);
-> >  
-> > -	res = wait_event_interruptible(dev->done.wait,
-> > -				       dev->done.done || kthread_should_stop());
-> > +	rcuwait_wait_event(&dev->wait, dev->done || kthread_should_stop(), TASK_IDLE);
-> > +
-> …
-> 
-> Not sure it matters but this struct `dev' is allocated on stack. Should
-> the interrupt fire *before* rcuwait_wait_event() set wait.task to NULL
-> then it is of random value on the first invocation of rcuwait_wake_up().
-> ->
-> 
-> diff --git a/arch/powerpc/platforms/ps3/device-init.c b/arch/powerpc/platforms/ps3/device-init.c
-> index 197347c3c0b24..e87360a0fb40d 100644
-> --- a/arch/powerpc/platforms/ps3/device-init.c
-> +++ b/arch/powerpc/platforms/ps3/device-init.c
-> @@ -809,6 +809,7 @@ static int ps3_probe_thread(void *data)
->  	}
->  
->  	spin_lock_init(&dev.lock);
-> +	rcuwait_init(&dev.wait);
->  
->  	res = request_irq(irq, ps3_notification_interrupt, 0,
->  			  "ps3_notification", &dev);
-> 
+On Thu, Mar 19, 2020 at 10:13:20AM +0100, Bernd Edlinger wrote:
+> Ah, sorry this is actuall v4 5/5.
+> Should I send a new version or can you handle it?
 
-Very good, sorry for that.
+This thread is a total crazy mess of different versions.
+
+I know I can't unwind any of this, so I _STRONGLY_ suggest resending the
+whole series, properly versioned, as a new thread.
+
+Would you want to try to pick out the proper patches from this pile?
+
+thanks,
+
+greg k-h
