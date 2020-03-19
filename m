@@ -2,85 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3668A18AE89
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 09:45:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AD84018AEBF
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 09:49:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726767AbgCSIpB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 04:45:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57380 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725601AbgCSIpB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 04:45:01 -0400
-Received: from disco-boy.misterjones.org (disco-boy.misterjones.org [51.254.78.96])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 48F9120724;
-        Thu, 19 Mar 2020 08:45:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584607500;
-        bh=nsLp4Rn/WbNgg5c0efrndSO2d36JwaT+wQJoqmu5/SA=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=rf6u2PFmQqWvwY1WKpZe255t6/NQBguN0WrcCWUMycs3Keq2eiQSpMPlRJ9m4wGPW
-         D9gF1iZzqBJ9KxJhaOg3VrMZxn58ybEA/Cq8b+OX/He/2rZLpAfZrQWm+Co8RbTj+6
-         QHy5OK5sHF9g1b0Fp66Nsw3p+Qi+iWNLXSMYaxO8=
-Received: from disco-boy.misterjones.org ([51.254.78.96] helo=www.loen.fr)
-        by disco-boy.misterjones.org with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.92)
-        (envelope-from <maz@kernel.org>)
-        id 1jEqnS-00Dsyj-Cb; Thu, 19 Mar 2020 08:44:58 +0000
+        id S1726663AbgCSItL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 04:49:11 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:59681 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725768AbgCSIrw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 04:47:52 -0400
+Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tip-bot2@linutronix.de>)
+        id 1jEqqC-0002xE-TU; Thu, 19 Mar 2020 09:47:49 +0100
+Received: from [127.0.1.1] (localhost [IPv6:::1])
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 45A8B1C1DC3;
+        Thu, 19 Mar 2020 09:47:46 +0100 (CET)
+Date:   Thu, 19 Mar 2020 08:47:45 -0000
+From:   "tip-bot2 for Ahmed S. Darwish" <tip-bot2@linutronix.de>
+Reply-to: linux-kernel@vger.kernel.org
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip: timers/core] time/sched_clock: Expire timer in hardirq context
+Cc:     "Ahmed S. Darwish" <a.darwish@linutronix.de>,
+        Thomas Gleixner <tglx@linutronix.de>, x86 <x86@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+In-Reply-To: <20200309181529.26558-1-a.darwish@linutronix.de>
+References: <20200309181529.26558-1-a.darwish@linutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
+Message-ID: <158460766596.28353.12288239928107345497.tip-bot2@tip-bot2>
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot2.linutronix.de>
+Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Date:   Thu, 19 Mar 2020 08:44:58 +0000
-From:   Marc Zyngier <maz@kernel.org>
-To:     Sungbo Eo <mans0n@gorani.run>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-oxnas@groups.io, Neil Armstrong <narmstrong@baylibre.com>
-Subject: Re: [PATCH v2] irqchip/versatile-fpga: Handle chained IRQs properly
-In-Reply-To: <20200319023448.1479701-1-mans0n@gorani.run>
-References: <002b72cab9896fa5ac76a52e0cb503ff@kernel.org>
- <20200319023448.1479701-1-mans0n@gorani.run>
-Message-ID: <f0a4acfaf5da72cbfc2670fcb5b71fc6@kernel.org>
-X-Sender: maz@kernel.org
-User-Agent: Roundcube Webmail/1.3.10
-X-SA-Exim-Connect-IP: 51.254.78.96
-X-SA-Exim-Rcpt-To: mans0n@gorani.run, linus.walleij@linaro.org, tglx@linutronix.de, jason@lakedaemon.net, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-oxnas@groups.io, narmstrong@baylibre.com
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2020-03-19 02:34, Sungbo Eo wrote:
-> Enclose the chained handler with chained_irq_{enter,exit}(), so that 
-> the
-> muxed interrupts get properly acked.
-> 
-> This patch also fixes a reboot bug on OX820 SoC, where the jiffies 
-> timer
-> interrupt is never acked. The kernel waits a clock tick forever in
-> calibrate_delay_converge(), which leads to a boot hang.
-> 
-> Fixes: c41b16f8c9d9 ("ARM: integrator/versatile: consolidate FPGA IRQ
-> handling code")
-> Signed-off-by: Sungbo Eo <mans0n@gorani.run>
-> Cc: Neil Armstrong <narmstrong@baylibre.com>
-> ---
-> v2: moved readl below chained_irq_enter()
->     added Fixes tag
-> 
->  drivers/irqchip/irq-versatile-fpga.c | 12 ++++++++++--
->  1 file changed, 10 insertions(+), 2 deletions(-)
+The following commit has been merged into the timers/core branch of tip:
 
-Queued for 5.7.
+Commit-ID:     2c8bd58812ee3dbf0d78b566822f7eacd34bdd7b
+Gitweb:        https://git.kernel.org/tip/2c8bd58812ee3dbf0d78b566822f7eacd34bdd7b
+Author:        Ahmed S. Darwish <a.darwish@linutronix.de>
+AuthorDate:    Mon, 09 Mar 2020 18:15:29 
+Committer:     Thomas Gleixner <tglx@linutronix.de>
+CommitterDate: Thu, 19 Mar 2020 09:45:08 +01:00
 
-Thanks,
+time/sched_clock: Expire timer in hardirq context
 
-         M.
--- 
-Jazz is not dead. It just smells funny...
+To minimize latency, PREEMPT_RT kernels expires hrtimers in preemptible
+softirq context by default. This can be overriden by marking the timer's
+expiry with HRTIMER_MODE_HARD.
+
+sched_clock_timer is missing this annotation: if its callback is preempted
+and the duration of the preemption exceeds the wrap around time of the
+underlying clocksource, sched clock will get out of sync.
+
+Mark the sched_clock_timer for expiry in hard interrupt context.
+
+Signed-off-by: Ahmed S. Darwish <a.darwish@linutronix.de>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Link: https://lkml.kernel.org/r/20200309181529.26558-1-a.darwish@linutronix.de
+
+---
+ kernel/time/sched_clock.c |  9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
+
+diff --git a/kernel/time/sched_clock.c b/kernel/time/sched_clock.c
+index e4332e3..fa3f800 100644
+--- a/kernel/time/sched_clock.c
++++ b/kernel/time/sched_clock.c
+@@ -208,7 +208,8 @@ sched_clock_register(u64 (*read)(void), int bits, unsigned long rate)
+ 
+ 	if (sched_clock_timer.function != NULL) {
+ 		/* update timeout for clock wrap */
+-		hrtimer_start(&sched_clock_timer, cd.wrap_kt, HRTIMER_MODE_REL);
++		hrtimer_start(&sched_clock_timer, cd.wrap_kt,
++			      HRTIMER_MODE_REL_HARD);
+ 	}
+ 
+ 	r = rate;
+@@ -254,9 +255,9 @@ void __init generic_sched_clock_init(void)
+ 	 * Start the timer to keep sched_clock() properly updated and
+ 	 * sets the initial epoch.
+ 	 */
+-	hrtimer_init(&sched_clock_timer, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
++	hrtimer_init(&sched_clock_timer, CLOCK_MONOTONIC, HRTIMER_MODE_REL_HARD);
+ 	sched_clock_timer.function = sched_clock_poll;
+-	hrtimer_start(&sched_clock_timer, cd.wrap_kt, HRTIMER_MODE_REL);
++	hrtimer_start(&sched_clock_timer, cd.wrap_kt, HRTIMER_MODE_REL_HARD);
+ }
+ 
+ /*
+@@ -293,7 +294,7 @@ void sched_clock_resume(void)
+ 	struct clock_read_data *rd = &cd.read_data[0];
+ 
+ 	rd->epoch_cyc = cd.actual_read_sched_clock();
+-	hrtimer_start(&sched_clock_timer, cd.wrap_kt, HRTIMER_MODE_REL);
++	hrtimer_start(&sched_clock_timer, cd.wrap_kt, HRTIMER_MODE_REL_HARD);
+ 	rd->read_sched_clock = cd.actual_read_sched_clock;
+ }
+ 
