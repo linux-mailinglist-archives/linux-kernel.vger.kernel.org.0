@@ -2,126 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8002F18C004
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 20:05:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8EEE718BFD2
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 20:03:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727981AbgCSTEh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 15:04:37 -0400
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:35735 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727605AbgCSTE2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 15:04:28 -0400
-Received: by mail-lf1-f65.google.com with SMTP id m15so2585204lfp.2;
-        Thu, 19 Mar 2020 12:04:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=FzD7KM1adJ8Gdad+SjbdNnB2giwK8d8O4lhpA1iChjI=;
-        b=La/uSPx8FTVei4FU1VbWMVxuNbaBvJfMTXeORDKylSu+QXDz+dxViJJlI31XLVT5fl
-         KADAGdkDgWWfN63q0601+IsmlJVBm4EHCl4LWxvjMiOf255nzjLer+RTZqMkhVzSe0rM
-         Q0sMbTnR6J+HgVFsZOYnjh+4FApTXfv0TxEqfTLQRg72QMPTrWcSpoZxdp2g8SkxFxs+
-         dLKBK4l0yEs7mnnMHD07skmYV9KkeYkvJjmLun/S1cWMHO+dPSK+yDD01dVeQQOrn/84
-         tnrh/Kws8GJU+XW2RSWWpqwa/Itc5fa0fkbV10PDe21uUPITgwmZqCJ3jnQrf3XAySqP
-         m0Qw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=FzD7KM1adJ8Gdad+SjbdNnB2giwK8d8O4lhpA1iChjI=;
-        b=X9MMtvrhf7ElfqQipc/TAcQaw9SHQUUcHvJNKt5cVhmAYir6jRQ57j20LWXQiLz/Tu
-         4xh8xSG1nGIkrRoFbAxi//UgBEO5X1tpDyMPS97oMdGPoKnYZc0Dc/Hyrh4cxmhaBVBQ
-         xODKCKgDV1xwjKbvV8MFw73OcS8UbVXSLxBWBOzbxjLJDp0cgVbkbJ0cH1EEOr8hXy+n
-         XdP8inDcZLICnkMp3d1bzzWJPPpJgv605MmmajS/wgG7INJMMVefA/O24dv44oHj4FhO
-         2bTYPXS3OHvGpVo9TLjGtBF7qWbJDSXqXaTzEfpc5sPOidoKkXp7qAnL3S7UsNHIYh4t
-         kjuA==
-X-Gm-Message-State: ANhLgQ0LDqDBMI5dYhZJyF/x0FjVO454urARoIHxQ8sk3v4XqV35Al5W
-        JbreBYcRcml/Px5zyLTxXpI=
-X-Google-Smtp-Source: ADFU+vvXgwoXHt8F4Hhxl+v/+A9sCmOkV1/dC6+JllXYIW1tUhx3W7HUxzuvar+MVCBV61kah2kmcA==
-X-Received: by 2002:a05:6512:68b:: with SMTP id t11mr3063580lfe.214.1584644664509;
-        Thu, 19 Mar 2020 12:04:24 -0700 (PDT)
-Received: from localhost.localdomain (94-29-39-224.dynamic.spd-mgts.ru. [94.29.39.224])
-        by smtp.gmail.com with ESMTPSA id k14sm2025380lfg.96.2020.03.19.12.04.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 19 Mar 2020 12:04:23 -0700 (PDT)
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Peter Geis <pgwipeout@gmail.com>,
-        Nicolas Chauvet <kwizart@gmail.com>,
-        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
-        =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>,
-        Jasper Korten <jja2000@gmail.com>,
-        David Heidelberg <david@ixit.cz>
-Cc:     linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v8 12/12] ARM: dts: tegra30: beaver: Add CPU Operating Performance Points
-Date:   Thu, 19 Mar 2020 22:02:29 +0300
-Message-Id: <20200319190229.32200-13-digetx@gmail.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200319190229.32200-1-digetx@gmail.com>
-References: <20200319190229.32200-1-digetx@gmail.com>
+        id S1727426AbgCSTDI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 15:03:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41676 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726867AbgCSTDH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 15:03:07 -0400
+Received: from gmail.com (unknown [104.132.1.76])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4AC792070A;
+        Thu, 19 Mar 2020 19:03:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1584644586;
+        bh=ernhXbfEVGnkUDBt61dYmqqeZnm1bLgSbo+SerOadKs=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=yA10IBmoPAJAsc6u7AspQTyanMnQc1CGge6rLRTuz9mAtBo9/EXungbsKFC7m+XVT
+         oG/syAvZrUwB03MKafBhBc1N7mTiPoHzGTxcOg7rGqUGSqu/mK3jm7zLdW94MiiEV6
+         jPDXkmT0CEz/iLf5vLFgMN6M7GEoIrt6vBgQKWsM=
+Date:   Thu, 19 Mar 2020 12:03:04 -0700
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     "Jason A. Donenfeld" <Jason@zx2c4.com>
+Cc:     linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org,
+        gregkh@linuxfoundation.org, herbert@gondor.apana.org.au,
+        Emil Renner Berthing <kernel@esmil.dk>,
+        Ard Biesheuvel <ardb@kernel.org>, stable@vger.kernel.org
+Subject: Re: [PATCH URGENT crypto v2] crypto: arm64/chacha - correctly walk
+ through blocks
+Message-ID: <20200319190304.GB86395@gmail.com>
+References: <CAHmME9otcAe7H4Anan8Tv1KreTZtwt4XXEPMG--x2Ljr0M+o1Q@mail.gmail.com>
+ <20200319022732.166085-1-Jason@zx2c4.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200319022732.166085-1-Jason@zx2c4.com>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Utilize common Tegra30 CPU OPP table. CPU DVFS is available now on beaver.
+On Wed, Mar 18, 2020 at 08:27:32PM -0600, Jason A. Donenfeld wrote:
+> Prior, passing in chunks of 2, 3, or 4, followed by any additional
+> chunks would result in the chacha state counter getting out of sync,
+> resulting in incorrect encryption/decryption, which is a pretty nasty
+> crypto vuln: "why do images look weird on webpages?" WireGuard users
+> never experienced this prior, because we have always, out of tree, used
+> a different crypto library, until the recent Frankenzinc addition. This
+> commit fixes the issue by advancing the pointers and state counter by
+> the actual size processed. It also fixes up a bug in the (optional,
+> costly) stride test that prevented it from running on arm64.
+> 
+> Fixes: b3aad5bad26a ("crypto: arm64/chacha - expose arm64 ChaCha routine as library function")
+> Reported-and-tested-by: Emil Renner Berthing <kernel@esmil.dk>
+> Cc: Ard Biesheuvel <ardb@kernel.org>
+> Cc: stable@vger.kernel.org # v5.5+
+> Signed-off-by: Jason A. Donenfeld <Jason@zx2c4.com>
+> ---
+>  arch/arm64/crypto/chacha-neon-glue.c   |  8 ++++----
+>  lib/crypto/chacha20poly1305-selftest.c | 11 ++++++++---
+>  2 files changed, 12 insertions(+), 7 deletions(-)
+> 
+> diff --git a/arch/arm64/crypto/chacha-neon-glue.c b/arch/arm64/crypto/chacha-neon-glue.c
+> index c1f9660d104c..37ca3e889848 100644
+> --- a/arch/arm64/crypto/chacha-neon-glue.c
+> +++ b/arch/arm64/crypto/chacha-neon-glue.c
+> @@ -55,10 +55,10 @@ static void chacha_doneon(u32 *state, u8 *dst, const u8 *src,
+>  			break;
+>  		}
+>  		chacha_4block_xor_neon(state, dst, src, nrounds, l);
+> -		bytes -= CHACHA_BLOCK_SIZE * 5;
+> -		src += CHACHA_BLOCK_SIZE * 5;
+> -		dst += CHACHA_BLOCK_SIZE * 5;
+> -		state[12] += 5;
+> +		bytes -= l;
+> +		src += l;
+> +		dst += l;
+> +		state[12] += DIV_ROUND_UP(l, CHACHA_BLOCK_SIZE);
+>  	}
+>  }
+>  
+> diff --git a/lib/crypto/chacha20poly1305-selftest.c b/lib/crypto/chacha20poly1305-selftest.c
+> index c391a91364e9..fa43deda2660 100644
+> --- a/lib/crypto/chacha20poly1305-selftest.c
+> +++ b/lib/crypto/chacha20poly1305-selftest.c
+> @@ -9028,10 +9028,15 @@ bool __init chacha20poly1305_selftest(void)
+>  	     && total_len <= 1 << 10; ++total_len) {
+>  		for (i = 0; i <= total_len; ++i) {
+>  			for (j = i; j <= total_len; ++j) {
+> +				k = 0;
+>  				sg_init_table(sg_src, 3);
+> -				sg_set_buf(&sg_src[0], input, i);
+> -				sg_set_buf(&sg_src[1], input + i, j - i);
+> -				sg_set_buf(&sg_src[2], input + j, total_len - j);
+> +				if (i)
+> +					sg_set_buf(&sg_src[k++], input, i);
+> +				if (j - i)
+> +					sg_set_buf(&sg_src[k++], input + i, j - i);
+> +				if (total_len - j)
+> +					sg_set_buf(&sg_src[k++], input + j, total_len - j);
+> +				sg_init_marker(sg_src, k);
+>  				memset(computed_output, 0, total_len);
+>  				memset(input, 0, total_len);
+>  
 
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
----
- arch/arm/boot/dts/tegra30-beaver.dts | 24 ++++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
+Reviewed-by: Eric Biggers <ebiggers@google.com>
 
-diff --git a/arch/arm/boot/dts/tegra30-beaver.dts b/arch/arm/boot/dts/tegra30-beaver.dts
-index a143cac22340..6b6fd8a8058f 100644
---- a/arch/arm/boot/dts/tegra30-beaver.dts
-+++ b/arch/arm/boot/dts/tegra30-beaver.dts
-@@ -2,6 +2,8 @@
- /dts-v1/;
- 
- #include "tegra30.dtsi"
-+#include "tegra30-cpu-opp.dtsi"
-+#include "tegra30-cpu-opp-microvolt.dtsi"
- 
- / {
- 	model = "NVIDIA Tegra30 Beaver evaluation board";
-@@ -2130,4 +2132,26 @@ sound {
- 		assigned-clock-parents = <&tegra_car TEGRA30_CLK_PLL_A_OUT0>,
- 					 <&tegra_car TEGRA30_CLK_EXTERN1>;
- 	};
-+
-+	cpus {
-+		cpu0: cpu@0 {
-+			cpu-supply = <&vddctrl_reg>;
-+			operating-points-v2 = <&cpu0_opp_table>;
-+		};
-+
-+		cpu@1 {
-+			cpu-supply = <&vddctrl_reg>;
-+			operating-points-v2 = <&cpu0_opp_table>;
-+		};
-+
-+		cpu@2 {
-+			cpu-supply = <&vddctrl_reg>;
-+			operating-points-v2 = <&cpu0_opp_table>;
-+		};
-+
-+		cpu@3 {
-+			cpu-supply = <&vddctrl_reg>;
-+			operating-points-v2 = <&cpu0_opp_table>;
-+		};
-+	};
- };
--- 
-2.25.1
+Herbert, can you send this to Linus for 5.6?
 
+- Eric
