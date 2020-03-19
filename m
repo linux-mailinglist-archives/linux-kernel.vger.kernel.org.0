@@ -2,35 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A6EB818B7FA
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:37:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5217F18B7F3
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:37:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727598AbgCSNhJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 09:37:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52664 "EHLO mail.kernel.org"
+        id S1728177AbgCSNIf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 09:08:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52716 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727417AbgCSNI3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 09:08:29 -0400
+        id S1727103AbgCSNIb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 09:08:31 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 47EFB20789;
-        Thu, 19 Mar 2020 13:08:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C0233214D8;
+        Thu, 19 Mar 2020 13:08:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584623308;
-        bh=PXYai1ZiJAgW5vL3Zh/m08qdMjBroO5ouphz7+nA/oI=;
+        s=default; t=1584623311;
+        bh=ED8I+F82MzV8WjOsG+NjX3J8mODwxBnxQmNMv+YhSFM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=U0MhjwdQyoq9ifv6rbKAEPJYaZkHp2zValX5aOtRbqkqx0BDbAG3zqr314mq+xRoY
-         UobdhL6wAbGiroiXBOLcAyRwWlkZIkM1RTD2f0oNpaoL7YmnfM2Jb0aSMWVCdqKLL2
-         6W27gE+m51a3BfrCz+lCy+qtOBgPja0adHphQ9LU=
+        b=QldzL3hUQP0sjF54iZAXhIKAfS9FoFQI8AYvPAh0XwdnmaXEmF1rMw94MK3xZNl8C
+         0Hsk9fIlrzUQKENgB+Nzq6zr1PBGg29IXnUn0TlDIj0uHFq7rznco45sCijouOxfnc
+         tg+nscrotcA+k72sk2ANg/uYZZ/lUnmCMj/aS8nE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        =?UTF-8?q?Linus=20L=FCssing?= <linus.luessing@c0d3.blue>,
         Sven Eckelmann <sven@narfation.org>,
         Simon Wunderlich <sw@simonwunderlich.de>
-Subject: [PATCH 4.4 62/93] batman-adv: Fix double free during fragment merge error
-Date:   Thu, 19 Mar 2020 14:00:06 +0100
-Message-Id: <20200319123944.598841370@linuxfoundation.org>
+Subject: [PATCH 4.4 63/93] batman-adv: Fix transmission of final, 16th fragment
+Date:   Thu, 19 Mar 2020 14:00:07 +0100
+Message-Id: <20200319123944.858061121@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.2
 In-Reply-To: <20200319123924.795019515@linuxfoundation.org>
 References: <20200319123924.795019515@linuxfoundation.org>
@@ -43,72 +44,54 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sven Eckelmann <sven@narfation.org>
+From: Linus Lüssing <linus.luessing@c0d3.blue>
 
-commit 248e23b50e2da0753f3b5faa068939cbe9f8a75a upstream.
+commit 51c6b429c0c95e67edd1cb0b548c5cf6a6604763 upstream.
 
-The function batadv_frag_skb_buffer was supposed not to consume the skbuff
-on errors. This was followed in the helper function
-batadv_frag_insert_packet when the skb would potentially be inserted in the
-fragment queue. But it could happen that the next helper function
-batadv_frag_merge_packets would try to merge the fragments and fail. This
-results in a kfree_skb of all the enqueued fragments (including the just
-inserted one). batadv_recv_frag_packet would detect the error in
-batadv_frag_skb_buffer and try to free the skb again.
+Trying to split and transmit a unicast packet in 16 parts will fail for
+the final fragment: After having sent the 15th one with a frag_packet.no
+index of 14, we will increase the the index to 15 - and return with an
+error code immediately, even though one more fragment is due for
+transmission and allowed.
 
-The behavior of batadv_frag_skb_buffer (and its helper
-batadv_frag_insert_packet) must therefore be changed to always consume the
-skbuff to have a common behavior and avoid the double kfree_skb.
+Fixing this issue by moving the check before incrementing the index.
 
-Fixes: 610bfc6bc99b ("batman-adv: Receive fragmented packets and merge")
+While at it, adding an unlikely(), because the check is actually more of
+an assertion.
+
+Fixes: ee75ed88879a ("batman-adv: Fragment and send skbs larger than mtu")
+Signed-off-by: Linus Lüssing <linus.luessing@c0d3.blue>
 Signed-off-by: Sven Eckelmann <sven@narfation.org>
 Signed-off-by: Simon Wunderlich <sw@simonwunderlich.de>
 Signed-off-by: Sven Eckelmann <sven@narfation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/batman-adv/fragmentation.c |    6 ++++--
- net/batman-adv/routing.c       |    6 ++++++
- 2 files changed, 10 insertions(+), 2 deletions(-)
+ net/batman-adv/fragmentation.c |    8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
 --- a/net/batman-adv/fragmentation.c
 +++ b/net/batman-adv/fragmentation.c
-@@ -233,8 +233,10 @@ err_unlock:
- 	spin_unlock_bh(&chain->lock);
+@@ -480,6 +480,10 @@ bool batadv_frag_send_packet(struct sk_b
  
- err:
--	if (!ret)
-+	if (!ret) {
- 		kfree(frag_entry_new);
-+		kfree_skb(skb);
-+	}
- 
- 	return ret;
- }
-@@ -329,9 +331,9 @@ bool batadv_frag_skb_buffer(struct sk_bu
- 		goto out_err;
- 
- out:
--	*skb = skb_out;
- 	ret = true;
- out_err:
-+	*skb = skb_out;
- 	return ret;
- }
- 
---- a/net/batman-adv/routing.c
-+++ b/net/batman-adv/routing.c
-@@ -1053,6 +1053,12 @@ int batadv_recv_frag_packet(struct sk_bu
- 	batadv_inc_counter(bat_priv, BATADV_CNT_FRAG_RX);
- 	batadv_add_counter(bat_priv, BATADV_CNT_FRAG_RX_BYTES, skb->len);
- 
-+	/* batadv_frag_skb_buffer will always consume the skb and
-+	 * the caller should therefore never try to free the
-+	 * skb after this point
-+	 */
-+	ret = NET_RX_SUCCESS;
+ 	/* Eat and send fragments from the tail of skb */
+ 	while (skb->len > max_fragment_size) {
++		/* The initial check in this function should cover this case */
++		if (frag_header.no == BATADV_FRAG_MAX_FRAGMENTS - 1)
++			goto out_err;
 +
- 	/* Add fragment to buffer and merge if possible. */
- 	if (!batadv_frag_skb_buffer(&skb, orig_node_src))
- 		goto out;
+ 		skb_fragment = batadv_frag_create(skb, &frag_header, mtu);
+ 		if (!skb_fragment)
+ 			goto out_err;
+@@ -490,10 +494,6 @@ bool batadv_frag_send_packet(struct sk_b
+ 		batadv_send_skb_packet(skb_fragment, neigh_node->if_incoming,
+ 				       neigh_node->addr);
+ 		frag_header.no++;
+-
+-		/* The initial check in this function should cover this case */
+-		if (frag_header.no == BATADV_FRAG_MAX_FRAGMENTS - 1)
+-			goto out_err;
+ 	}
+ 
+ 	/* Make room for the fragment header. */
 
 
