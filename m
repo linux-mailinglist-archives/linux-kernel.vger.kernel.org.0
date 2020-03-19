@@ -2,130 +2,158 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BCE8818A99C
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 01:11:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6D70518A9AE
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 01:14:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727541AbgCSALP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Mar 2020 20:11:15 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37168 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727471AbgCSALK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Mar 2020 20:11:10 -0400
-Received: from paulmck-ThinkPad-P72.home (50-39-105-78.bvtn.or.frontiernet.net [50.39.105.78])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4FB71215A4;
-        Thu, 19 Mar 2020 00:11:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584576669;
-        bh=kEtCd2H6wviAt60Qgr+GCKjJ9897aT8RrWZrPSPTuno=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fN3AsaH+W8GANy4Xx1Fors3pbU8sMU0SCJQwGp3hApC6lt/hTU4mBwQ05tz4IXGIO
-         tw+aAF7FPH29DoqeZ0FUPu4VPRQ6X/sO0cpxhFTWpZuYLQhR/ug1dM2+2rHoVSN2HS
-         XCMUghLt8TByC44aCnTN0xd0VMfVZNP2sDkuR/oY=
-From:   paulmck@kernel.org
-To:     rcu@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, kernel-team@fb.com, mingo@kernel.org,
-        jiangshanlai@gmail.com, dipankar@in.ibm.com,
-        akpm@linux-foundation.org, mathieu.desnoyers@efficios.com,
-        josh@joshtriplett.org, tglx@linutronix.de, peterz@infradead.org,
-        rostedt@goodmis.org, dhowells@redhat.com, edumazet@google.com,
-        fweisbec@gmail.com, oleg@redhat.com, joel@joelfernandes.org,
-        "Paul E. McKenney" <paulmck@kernel.org>
-Subject: [PATCH RFC v2 tip/core/rcu 22/22] rcu-tasks: Provide boot parameter to delay IPIs until late in grace period
-Date:   Wed, 18 Mar 2020 17:11:00 -0700
-Message-Id: <20200319001100.24917-22-paulmck@kernel.org>
-X-Mailer: git-send-email 2.9.5
-In-Reply-To: <20200319001024.GA28798@paulmck-ThinkPad-P72>
-References: <20200319001024.GA28798@paulmck-ThinkPad-P72>
+        id S1727310AbgCSAM7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Mar 2020 20:12:59 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:43481 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727163AbgCSAM7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Mar 2020 20:12:59 -0400
+Received: by mail-lj1-f194.google.com with SMTP id u15so142188lji.10
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Mar 2020 17:12:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=lPrGEwKRXyO9yXOFR59fcYZi9g17e4yyfNBd9nprDqQ=;
+        b=MWL8x5y6FCR54ZVgurHR1a4U2f2qAK+jQbBFBpVG0ZAaTwG4qeq2SzJdTWmYih0deb
+         3io78o73rd2gFvbgv8y2FL8afylt+4D3TknLuqgJ2aXvT5n/jFG40Nk1Pv4aGYJzvb2W
+         z+9DCbkj5orhMg0Mxl3d5ao7TfDm0L+8xh/MB/XsEC073kHS04Zh7xiLeBINBy5Tsm7d
+         dJgioQToL/CjHmVind6OINoE6sxkGVAvEcbd/yBwWdgzJFSHvGtN0GvHEJ9ZVnwu4wpa
+         qJWJiEaYh9Rne96GtYsMYZFDkGVXKfF/QBZuu/m7W1eC0yAjoYAGiUfqyT7i6eD42KkM
+         0dcQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=lPrGEwKRXyO9yXOFR59fcYZi9g17e4yyfNBd9nprDqQ=;
+        b=rWLY+gt8kSO9cKyk/1i08jy6ozeW9qNGuQkKPBSTvb/GQ882mbzJefdrU5X6bmpde0
+         PLwc4DxA+mb/L620qjM9qoQL8WxDTD6aO+ttMtZPQXrfDgE98OxviOu9XlajAcd1Qs9L
+         F8xSDJaK3LxX6vup9rZedG24FxKjQVNThQXIhy7vuFPnQCQApV6lr/HKWdYkLJ892HpN
+         N8Jo+GHmjAiR4B1dYWRFrKJT3s5VYy5AQtAQCY7QXLRm8xZg/mDQ5z00QkrZiYfRkGtr
+         Liw3bKR1QNFhl6MLPzc208yEJFjX+v1BwjncXI+pL6shcdgkx4xCXPIpmrShjXDM/FVX
+         uhzw==
+X-Gm-Message-State: ANhLgQ3fkTW2UsZ4aqGgROWmA4FRtC/NOse0+oin52FA3fJTTvWQhOJr
+        t+kd/JQFURPVZHFlCooOlTAq7g==
+X-Google-Smtp-Source: ADFU+vu5tKNdJ9YZUqehURNqjhJh3Yv8MtI6Yf+YXJFfbrRf0fgmxZiKyfLhCqNfc7ljD8Z8N0UuvQ==
+X-Received: by 2002:a05:651c:110b:: with SMTP id d11mr349708ljo.52.1584576777458;
+        Wed, 18 Mar 2020 17:12:57 -0700 (PDT)
+Received: from box.localdomain ([86.57.175.117])
+        by smtp.gmail.com with ESMTPSA id q4sm138647lfd.82.2020.03.18.17.12.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 18 Mar 2020 17:12:56 -0700 (PDT)
+Received: by box.localdomain (Postfix, from userid 1000)
+        id 080D71025D1; Thu, 19 Mar 2020 03:12:59 +0300 (+03)
+Date:   Thu, 19 Mar 2020 03:12:58 +0300
+From:   "Kirill A. Shutemov" <kirill@shutemov.name>
+To:     Yang Shi <yang.shi@linux.alibaba.com>
+Cc:     kirill.shutemov@linux.intel.com, hughd@google.com,
+        aarcange@redhat.com, akpm@linux-foundation.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mm: khugepaged: fix potential page state corruption
+Message-ID: <20200319001258.creziw6ffw4jvwl3@box>
+References: <1584573582-116702-1-git-send-email-yang.shi@linux.alibaba.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1584573582-116702-1-git-send-email-yang.shi@linux.alibaba.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Paul E. McKenney" <paulmck@kernel.org>
+On Thu, Mar 19, 2020 at 07:19:42AM +0800, Yang Shi wrote:
+> When khugepaged collapses anonymous pages, the base pages would be freed
+> via pagevec or free_page_and_swap_cache().  But, the anonymous page may
+> be added back to LRU, then it might result in the below race:
+> 
+> 	CPU A				CPU B
+> khugepaged:
+>   unlock page
+>   putback_lru_page
+>     add to lru
+> 				page reclaim:
+> 				  isolate this page
+> 				  try_to_unmap
+>   page_remove_rmap <-- corrupt _mapcount
+> 
+> It looks nothing would prevent the pages from isolating by reclaimer.
 
-This commit provides a rcupdate.rcu_task_ipi_delay kernel boot parameter
-that specifies how old the RCU tasks trace grace period must be before
-the grace-period kthread starts sending IPIs.  This delay allows more
-tasks to pass through rcu_tasks_qs() quiescent states, thus reducing
-(or even eliminating) the number of IPIs that must be sent.
+Hm. Why should it?
 
-On a short rcutorture test setting this kernel boot parameter to HZ/2
-resulted in zero IPIs for all 877 RCU-tasks trace grace periods that
-elapsed during that test.
+try_to_unmap() doesn't exclude parallel page unmapping. _mapcount is
+protected by ptl. And this particular _mapcount pin is reachable for
+reclaim as it's not part of usual page table tree. Basically
+try_to_unmap() will never succeeds until we give up the _mapcount on
+khugepaged side.
 
-Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
----
- Documentation/admin-guide/kernel-parameters.txt |  7 +++++++
- kernel/rcu/tasks.h                              | 15 ++++++++++-----
- 2 files changed, 17 insertions(+), 5 deletions(-)
+I don't see the issue right away.
 
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index 17eff15..2865767 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -4242,6 +4242,13 @@
- 			only normal grace-period primitives.  No effect
- 			on CONFIG_TINY_RCU kernels.
- 
-+	rcupdate.rcu_task_ipi_delay= [KNL]
-+			Set time in jiffies during which RCU tasks will
-+			avoid sending IPIs, starting with the beginning
-+			of a given grace period.  Setting a large
-+			number avoids disturbing real-time workloads,
-+			but lengthens grace periods.
-+
- 	rcupdate.rcu_task_stall_timeout= [KNL]
- 			Set timeout in jiffies for RCU task stall warning
- 			messages.  Disable with a value less than or equal
-diff --git a/kernel/rcu/tasks.h b/kernel/rcu/tasks.h
-index 6d237c4..d166797 100644
---- a/kernel/rcu/tasks.h
-+++ b/kernel/rcu/tasks.h
-@@ -74,6 +74,11 @@ static struct rcu_tasks rt_name =					\
- /* Track exiting tasks in order to allow them to be waited for. */
- DEFINE_STATIC_SRCU(tasks_rcu_exit_srcu);
- 
-+/* Avoid IPIing CPUs early in the grace period. */
-+#define RCU_TASK_IPI_DELAY (HZ / 2)
-+static int rcu_task_ipi_delay __read_mostly = RCU_TASK_IPI_DELAY;
-+module_param(rcu_task_ipi_delay, int, 0644);
-+
- /* Control stall timeouts.  Disable with <= 0, otherwise jiffies till stall. */
- #define RCU_TASK_STALL_TIMEOUT (HZ * 60 * 10)
- static int rcu_task_stall_timeout __read_mostly = RCU_TASK_STALL_TIMEOUT;
-@@ -713,6 +718,10 @@ DECLARE_WAIT_QUEUE_HEAD(trc_wait);	// List of holdout tasks.
- // Record outstanding IPIs to each CPU.  No point in sending two...
- static DEFINE_PER_CPU(bool, trc_ipi_to_cpu);
- 
-+void call_rcu_tasks_trace(struct rcu_head *rhp, rcu_callback_t func);
-+DEFINE_RCU_TASKS(rcu_tasks_trace, rcu_tasks_wait_gp, call_rcu_tasks_trace,
-+		 "RCU Tasks Trace");
-+
- /* If we are the last reader, wake up the grace-period kthread. */
- void rcu_read_unlock_trace_special(struct task_struct *t)
- {
-@@ -825,7 +834,7 @@ static void trc_wait_for_one_reader(struct task_struct *t,
- 
- 	// If currently running, send an IPI, either way, add to list.
- 	trc_add_holdout(t, bhp);
--	if (task_curr(t)) {
-+	if (task_curr(t) && time_after(jiffies, rcu_tasks_trace.gp_start + rcu_task_ipi_delay)) {
- 		// The task is currently running, so try IPIing it.
- 		cpu = task_cpu(t);
- 
-@@ -990,10 +999,6 @@ void exit_tasks_rcu_finish_trace(struct task_struct *t)
- 		rcu_read_unlock_trace_special(t);
- }
- 
--void call_rcu_tasks_trace(struct rcu_head *rhp, rcu_callback_t func);
--DEFINE_RCU_TASKS(rcu_tasks_trace, rcu_tasks_wait_gp, call_rcu_tasks_trace,
--		 "RCU Tasks Trace");
--
- /**
-  * call_rcu_tasks_trace() - Queue a callback trace task-based grace period
-  * @rhp: structure to be used for queueing the RCU updates.
+> The other problem is the page's active or unevictable flag might be
+> still set when freeing the page via free_page_and_swap_cache().
+
+So what?
+
+> The putback_lru_page() would not clear those two flags if the pages are
+> released via pagevec, it sounds nothing prevents from isolating active
+> or unevictable pages.
+
+Again, why should it? vmscan is equipped to deal with this.
+
+> However I didn't really run into these problems, just in theory by visual
+> inspection.
+> 
+> And, it also seems unnecessary to have the pages add back to LRU again since
+> they are about to be freed when reaching this point.  So, clearing active
+> and unevictable flags, unlocking and dropping refcount from isolate
+> instead of calling putback_lru_page() as what page cache collapse does.
+
+Hm? But we do call putback_lru_page() on the way out. I do not follow.
+
+> 
+> Cc: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+> Cc: Hugh Dickins <hughd@google.com>
+> Cc: Andrea Arcangeli <aarcange@redhat.com>
+> Signed-off-by: Yang Shi <yang.shi@linux.alibaba.com>
+> ---
+>  mm/khugepaged.c | 10 +++++++++-
+>  1 file changed, 9 insertions(+), 1 deletion(-)
+> 
+> diff --git a/mm/khugepaged.c b/mm/khugepaged.c
+> index b679908..f42fa4e 100644
+> --- a/mm/khugepaged.c
+> +++ b/mm/khugepaged.c
+> @@ -673,7 +673,6 @@ static void __collapse_huge_page_copy(pte_t *pte, struct page *page,
+>  			src_page = pte_page(pteval);
+>  			copy_user_highpage(page, src_page, address, vma);
+>  			VM_BUG_ON_PAGE(page_mapcount(src_page) != 1, src_page);
+> -			release_pte_page(src_page);
+>  			/*
+>  			 * ptl mostly unnecessary, but preempt has to
+>  			 * be disabled to update the per-cpu stats
+> @@ -687,6 +686,15 @@ static void __collapse_huge_page_copy(pte_t *pte, struct page *page,
+>  			pte_clear(vma->vm_mm, address, _pte);
+>  			page_remove_rmap(src_page, false);
+>  			spin_unlock(ptl);
+> +
+> +			dec_node_page_state(src_page,
+> +				NR_ISOLATED_ANON + page_is_file_cache(src_page));
+> +			ClearPageActive(src_page);
+> +			ClearPageUnevictable(src_page);
+> +			unlock_page(src_page);
+> +			/* Drop refcount from isolate */
+> +			put_page(src_page);
+> +
+>  			free_page_and_swap_cache(src_page);
+>  		}
+>  	}
+> -- 
+> 1.8.3.1
+> 
+> 
+
 -- 
-2.9.5
-
+ Kirill A. Shutemov
