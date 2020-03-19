@@ -2,35 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A301818B470
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:09:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4454818B46E
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:09:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727877AbgCSNJs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 09:09:48 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54246 "EHLO mail.kernel.org"
+        id S1727733AbgCSNJn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 09:09:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54210 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728377AbgCSNJm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 09:09:42 -0400
+        id S1728364AbgCSNJi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 09:09:38 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 41210208D6;
-        Thu, 19 Mar 2020 13:09:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B3CFF208D6;
+        Thu, 19 Mar 2020 13:09:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584623381;
-        bh=QnLz3/BkTibGRELwWVCE0MtGduZJ0AkQOLxS6ziDWMo=;
+        s=default; t=1584623378;
+        bh=8LF/TtF4aX1kJVWTrhTdRdKARRMVWsPJAm5F9NZi6pw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YhM/RNVGV/euH7nZ3F6CIkkbTSwODCb+SIwIq1gjiPhsaHVYXYE8ReNEMrAsiWQlV
-         JJXnlbdndMVCoAIL6l9DrwI7jG8AEBfAC9LrgqDY6RG8fJhNNr3lZi+djnjjT/eYZd
-         Eop7c1XNH5HuJyLsQ9Ca421VnzUUe5cIyquLaybw=
+        b=HuR2g2rPKPmmXOvjXt0pnidEc+VqahxI1e438ErRYLwkMr2cDUVQsc//7ldVkGHlQ
+         meGel3fZC0IvCIWir+qlf7NIGWGVnqhTdalIaIXD2BNJ7CukeOoh33723XXjATn+VP
+         cvGgtzQUDZak5U/oDsbLvXyjQvAYyOgtrPRYDMnQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jann Horn <jannh@google.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.4 92/93] mm: slub: add missing TID bump in kmem_cache_alloc_bulk()
-Date:   Thu, 19 Mar 2020 14:00:36 +0100
-Message-Id: <20200319123953.547695284@linuxfoundation.org>
+        stable@vger.kernel.org, Guillaume Nault <gnault@redhat.com>,
+        Matteo Croce <mcroce@redhat.com>,
+        Paul Moore <paul@paul-moore.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.4 93/93] ipv4: ensure rcu_read_lock() in cipso_v4_error()
+Date:   Thu, 19 Mar 2020 14:00:37 +0100
+Message-Id: <20200319123953.796484125@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.2
 In-Reply-To: <20200319123924.795019515@linuxfoundation.org>
 References: <20200319123924.795019515@linuxfoundation.org>
@@ -43,46 +45,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jann Horn <jannh@google.com>
+From: Matteo Croce <mcroce@redhat.com>
 
-commit fd4d9c7d0c71866ec0c2825189ebd2ce35bd95b8 upstream.
+commit 3e72dfdf8227b052393f71d820ec7599909dddc2 upstream.
 
-When kmem_cache_alloc_bulk() attempts to allocate N objects from a percpu
-freelist of length M, and N > M > 0, it will first remove the M elements
-from the percpu freelist, then call ___slab_alloc() to allocate the next
-element and repopulate the percpu freelist. ___slab_alloc() can re-enable
-IRQs via allocate_slab(), so the TID must be bumped before ___slab_alloc()
-to properly commit the freelist head change.
+Similarly to commit c543cb4a5f07 ("ipv4: ensure rcu_read_lock() in
+ipv4_link_failure()"), __ip_options_compile() must be called under rcu
+protection.
 
-Fix it by unconditionally bumping c->tid when entering the slowpath.
-
-Cc: stable@vger.kernel.org
-Fixes: ebe909e0fdb3 ("slub: improve bulk alloc strategy")
-Signed-off-by: Jann Horn <jannh@google.com>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Fixes: 3da1ed7ac398 ("net: avoid use IPCB in cipso_v4_error")
+Suggested-by: Guillaume Nault <gnault@redhat.com>
+Signed-off-by: Matteo Croce <mcroce@redhat.com>
+Acked-by: Paul Moore <paul@paul-moore.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- mm/slub.c |    9 +++++++++
- 1 file changed, 9 insertions(+)
+ net/ipv4/cipso_ipv4.c |    7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
---- a/mm/slub.c
-+++ b/mm/slub.c
-@@ -2932,6 +2932,15 @@ int kmem_cache_alloc_bulk(struct kmem_ca
+--- a/net/ipv4/cipso_ipv4.c
++++ b/net/ipv4/cipso_ipv4.c
+@@ -1809,6 +1809,7 @@ void cipso_v4_error(struct sk_buff *skb,
+ {
+ 	unsigned char optbuf[sizeof(struct ip_options) + 40];
+ 	struct ip_options *opt = (struct ip_options *)optbuf;
++	int res;
  
- 		if (unlikely(!object)) {
- 			/*
-+			 * We may have removed an object from c->freelist using
-+			 * the fastpath in the previous iteration; in that case,
-+			 * c->tid has not been bumped yet.
-+			 * Since ___slab_alloc() may reenable interrupts while
-+			 * allocating memory, we should bump c->tid now.
-+			 */
-+			c->tid = next_tid(c->tid);
+ 	if (ip_hdr(skb)->protocol == IPPROTO_ICMP || error != -EACCES)
+ 		return;
+@@ -1820,7 +1821,11 @@ void cipso_v4_error(struct sk_buff *skb,
+ 
+ 	memset(opt, 0, sizeof(struct ip_options));
+ 	opt->optlen = ip_hdr(skb)->ihl*4 - sizeof(struct iphdr);
+-	if (__ip_options_compile(dev_net(skb->dev), opt, skb, NULL))
++	rcu_read_lock();
++	res = __ip_options_compile(dev_net(skb->dev), opt, skb, NULL);
++	rcu_read_unlock();
 +
-+			/*
- 			 * Invoking slow path likely have side-effect
- 			 * of re-populating per CPU c->freelist
- 			 */
++	if (res)
+ 		return;
+ 
+ 	if (gateway)
 
 
