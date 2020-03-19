@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C6BB318B58A
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:19:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4B66718B57D
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:19:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729890AbgCSNT3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 09:19:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42626 "EHLO mail.kernel.org"
+        id S1728339AbgCSNTC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 09:19:02 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41858 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729876AbgCSNTZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 09:19:25 -0400
+        id S1728772AbgCSNS6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 09:18:58 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3654421556;
-        Thu, 19 Mar 2020 13:19:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3EC6C206D7;
+        Thu, 19 Mar 2020 13:18:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584623964;
-        bh=DS4d0xy1Khr+6R+77xJv4V21rN4lNRAPhTHaX8q9uow=;
+        s=default; t=1584623937;
+        bh=1xGl7mtKgWVKYbda3FBN7iYpXquq8Ownl4t8q/yrI/o=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OabFKhy2e3IqDSCIIXVFHgA5cdu813O1IifXtrjNgOhlFWRYLPXtgxzjYABaAotLm
-         0vWzqN43zdnt6A5u8zndOTIQPuUdVDSc4aDHTFRWseIv09z1Zl0+kRJjose6QIVznq
-         VkRLKe2LtIxgUWnvM31Fk978gXp3ha9HHblSCMM8=
+        b=PWjJBYZRtctJP0TA9Oc1LXJTdU4XE61JMjfq80jYmxXAzF6A5HqULZhtM11rKbol4
+         Tb50iB0B+LsYIIvhU9MvpKQZD2e4sBqAO8+zllQ31we0Oi5MqWRSSOhoDAtvkWHlNJ
+         MSuyerEA3blHR8BnGNoNlRRL3APPMRClCWRcPUmg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Johannes Berg <johannes.berg@intel.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 13/48] cfg80211: check reg_rule for NULL in handle_channel_custom()
+        Sven Eckelmann <sven@narfation.org>,
+        Simon Wunderlich <sw@simonwunderlich.de>
+Subject: [PATCH 4.14 77/99] batman-adv: Fix debugfs path for renamed softif
 Date:   Thu, 19 Mar 2020 14:03:55 +0100
-Message-Id: <20200319123907.202125149@linuxfoundation.org>
+Message-Id: <20200319124004.312092894@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.2
-In-Reply-To: <20200319123902.941451241@linuxfoundation.org>
-References: <20200319123902.941451241@linuxfoundation.org>
+In-Reply-To: <20200319123941.630731708@linuxfoundation.org>
+References: <20200319123941.630731708@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,37 +43,142 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Johannes Berg <johannes.berg@intel.com>
+From: Sven Eckelmann <sven@narfation.org>
 
-[ Upstream commit a7ee7d44b57c9ae174088e53a668852b7f4f452d ]
+commit 6da7be7d24b2921f8215473ba7552796dff05fe1 upstream.
 
-We may end up with a NULL reg_rule after the loop in
-handle_channel_custom() if the bandwidth didn't fit,
-check if this is the case and bail out if so.
+batman-adv is creating special debugfs directories in the init
+net_namespace for each created soft-interface (batadv net_device). But it
+is possible to rename a net_device to a completely different name then the
+original one.
 
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
-Link: https://lore.kernel.org/r/20200221104449.3b558a50201c.I4ad3725c4dacaefd2d18d3cc65ba6d18acd5dbfe@changeid
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+It can therefore happen that a user registers a new batadv net_device with
+the name "bat0". batman-adv is then also adding a new directory under
+$debugfs/batman-adv/ with the name "wlan0".
+
+The user then decides to rename this device to "bat1" and registers a
+different batadv device with the name "bat0". batman-adv will then try to
+create a directory with the name "bat0" under $debugfs/batman-adv/ again.
+But there already exists one with this name under this path and thus this
+fails. batman-adv will detect a problem and rollback the registering of
+this device.
+
+batman-adv must therefore take care of renaming the debugfs directories for
+soft-interfaces whenever it detects such a net_device rename.
+
+Fixes: c6c8fea29769 ("net: Add batman-adv meshing protocol")
+Signed-off-by: Sven Eckelmann <sven@narfation.org>
+Signed-off-by: Simon Wunderlich <sw@simonwunderlich.de>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/wireless/reg.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/batman-adv/debugfs.c        |   24 ++++++++++++++++++++++++
+ net/batman-adv/debugfs.h        |    5 +++++
+ net/batman-adv/hard-interface.c |   34 ++++++++++++++++++++++++++++------
+ 3 files changed, 57 insertions(+), 6 deletions(-)
 
-diff --git a/net/wireless/reg.c b/net/wireless/reg.c
-index 018c60be153a7..32f575857e415 100644
---- a/net/wireless/reg.c
-+++ b/net/wireless/reg.c
-@@ -2269,7 +2269,7 @@ static void handle_channel_custom(struct wiphy *wiphy,
- 			break;
- 	}
+--- a/net/batman-adv/debugfs.c
++++ b/net/batman-adv/debugfs.c
+@@ -421,6 +421,30 @@ out:
+ 	return -ENOMEM;
+ }
  
--	if (IS_ERR(reg_rule)) {
-+	if (IS_ERR_OR_NULL(reg_rule)) {
- 		pr_debug("Disabling freq %d MHz as custom regd has no rule that fits it\n",
- 			 chan->center_freq);
- 		if (wiphy->regulatory_flags & REGULATORY_WIPHY_SELF_MANAGED) {
--- 
-2.20.1
-
++/**
++ * batadv_debugfs_rename_meshif() - Fix debugfs path for renamed softif
++ * @dev: net_device which was renamed
++ */
++void batadv_debugfs_rename_meshif(struct net_device *dev)
++{
++	struct batadv_priv *bat_priv = netdev_priv(dev);
++	const char *name = dev->name;
++	struct dentry *dir;
++	struct dentry *d;
++
++	dir = bat_priv->debug_dir;
++	if (!dir)
++		return;
++
++	d = debugfs_rename(dir->d_parent, dir, dir->d_parent, name);
++	if (!d)
++		pr_err("Can't rename debugfs dir to %s\n", name);
++}
++
++/**
++ * batadv_debugfs_del_meshif() - Remove interface dependent debugfs entries
++ * @dev: netdev struct of the soft interface
++ */
+ void batadv_debugfs_del_meshif(struct net_device *dev)
+ {
+ 	struct batadv_priv *bat_priv = netdev_priv(dev);
+--- a/net/batman-adv/debugfs.h
++++ b/net/batman-adv/debugfs.h
+@@ -29,6 +29,7 @@ struct net_device;
+ void batadv_debugfs_init(void);
+ void batadv_debugfs_destroy(void);
+ int batadv_debugfs_add_meshif(struct net_device *dev);
++void batadv_debugfs_rename_meshif(struct net_device *dev);
+ void batadv_debugfs_del_meshif(struct net_device *dev);
+ int batadv_debugfs_add_hardif(struct batadv_hard_iface *hard_iface);
+ void batadv_debugfs_rename_hardif(struct batadv_hard_iface *hard_iface);
+@@ -49,6 +50,10 @@ static inline int batadv_debugfs_add_mes
+ 	return 0;
+ }
+ 
++static inline void batadv_debugfs_rename_meshif(struct net_device *dev)
++{
++}
++
+ static inline void batadv_debugfs_del_meshif(struct net_device *dev)
+ {
+ }
+--- a/net/batman-adv/hard-interface.c
++++ b/net/batman-adv/hard-interface.c
+@@ -955,6 +955,32 @@ void batadv_hardif_remove_interfaces(voi
+ 	rtnl_unlock();
+ }
+ 
++/**
++ * batadv_hard_if_event_softif() - Handle events for soft interfaces
++ * @event: NETDEV_* event to handle
++ * @net_dev: net_device which generated an event
++ *
++ * Return: NOTIFY_* result
++ */
++static int batadv_hard_if_event_softif(unsigned long event,
++				       struct net_device *net_dev)
++{
++	struct batadv_priv *bat_priv;
++
++	switch (event) {
++	case NETDEV_REGISTER:
++		batadv_sysfs_add_meshif(net_dev);
++		bat_priv = netdev_priv(net_dev);
++		batadv_softif_create_vlan(bat_priv, BATADV_NO_FLAGS);
++		break;
++	case NETDEV_CHANGENAME:
++		batadv_debugfs_rename_meshif(net_dev);
++		break;
++	}
++
++	return NOTIFY_DONE;
++}
++
+ static int batadv_hard_if_event(struct notifier_block *this,
+ 				unsigned long event, void *ptr)
+ {
+@@ -963,12 +989,8 @@ static int batadv_hard_if_event(struct n
+ 	struct batadv_hard_iface *primary_if = NULL;
+ 	struct batadv_priv *bat_priv;
+ 
+-	if (batadv_softif_is_valid(net_dev) && event == NETDEV_REGISTER) {
+-		batadv_sysfs_add_meshif(net_dev);
+-		bat_priv = netdev_priv(net_dev);
+-		batadv_softif_create_vlan(bat_priv, BATADV_NO_FLAGS);
+-		return NOTIFY_DONE;
+-	}
++	if (batadv_softif_is_valid(net_dev))
++		return batadv_hard_if_event_softif(event, net_dev);
+ 
+ 	hard_iface = batadv_hardif_get_by_netdev(net_dev);
+ 	if (!hard_iface && (event == NETDEV_REGISTER ||
 
 
