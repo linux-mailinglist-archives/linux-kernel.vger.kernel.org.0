@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CF96B18B436
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:08:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A97FA18B419
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:06:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727984AbgCSNHm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 09:07:42 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51476 "EHLO mail.kernel.org"
+        id S1727753AbgCSNGr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 09:06:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50102 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727952AbgCSNHk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 09:07:40 -0400
+        id S1727731AbgCSNGo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 09:06:44 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B3A3B20842;
-        Thu, 19 Mar 2020 13:07:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7B9C820722;
+        Thu, 19 Mar 2020 13:06:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584623260;
-        bh=LPP5v4SZNWrBxVbQHTXg15znv7K1qgCA0w3y/2YNjgA=;
+        s=default; t=1584623203;
+        bh=sAfmogAQI1FrxifR9OmJIT0rXstwAqgQN9rJPMvCB6Q=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HFZGXipBFIm1C6CA4uua7usvrXBEDH4gmLBLhCVuxpY8uCcDSBkQINdpy2qi8O7KF
-         kY/3IemTwCJGqv77j3ZF8ofGhhhuL4qBv8vXQxIEv6TnMvfQnKEsAPuEA6dBvaCgsp
-         fbBDHBFj4EmXGzbTw0j+LRQEFmuyO+0GR1p7Ts/g=
+        b=LJZ9F9VoGEM0hiBPnEoE1zMnYdNqZabXZPeAPbAsF6Q2NSrnccWTxfzj2agXlaEBm
+         ybFNqkCa4Guk1DWi+zBpeTlqHxsVfcJOsp0elDbkC4KU5emfC2gVZsJ1V71pMiTKAf
+         Ay9PQUyQbJm/AJfS2CbNSCFf0jJYgA7lnc+pQCBI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Sven Eckelmann <sven@narfation.org>,
+        Sven Eckelmann <sven.eckelmann@open-mesh.com>,
         Marek Lindner <mareklindner@neomailbox.ch>,
         Antonio Quartulli <a@unstable.cc>
-Subject: [PATCH 4.4 42/93] batman-adv: Fix unexpected free of bcast_own on add_if error
-Date:   Thu, 19 Mar 2020 13:59:46 +0100
-Message-Id: <20200319123938.445830048@linuxfoundation.org>
+Subject: [PATCH 4.4 43/93] batman-adv: Fix integer overflow in batadv_iv_ogm_calc_tq
+Date:   Thu, 19 Mar 2020 13:59:47 +0100
+Message-Id: <20200319123938.718072127@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.2
 In-Reply-To: <20200319123924.795019515@linuxfoundation.org>
 References: <20200319123924.795019515@linuxfoundation.org>
@@ -44,45 +44,51 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sven Eckelmann <sven@narfation.org>
+From: Sven Eckelmann <sven.eckelmann@open-mesh.com>
 
-commit f7dcdf5fdbe8fec7670d8f65a5db595c98e0ecab upstream.
+commit d285f52cc0f23564fd61976d43fd5b991b4828f6 upstream.
 
-The function batadv_iv_ogm_orig_add_if allocates new buffers for bcast_own
-and bcast_own_sum. It is expected that these buffers are unchanged in case
-either bcast_own or bcast_own_sum couldn't be resized.
+The undefined behavior sanatizer detected an signed integer overflow in a
+setup with near perfect link quality
 
-But the error handling of this function frees the already resized buffer
-for bcast_own when the allocation of the new bcast_own_sum buffer failed.
-This will lead to an invalid memory access when some code will try to
-access bcast_own.
+    UBSAN: Undefined behaviour in net/batman-adv/bat_iv_ogm.c:1246:25
+    signed integer overflow:
+    8713350 * 255 cannot be represented in type 'int'
 
-Instead the resized new bcast_own buffer has to be kept. This will not lead
-to problems because the size of the buffer was only increased and therefore
-no user of the buffer will try to access bytes outside of the new buffer.
+The problems happens because the calculation of mixed unsigned and signed
+integers resulted in an integer multiplication.
 
-Fixes: d0015fdd3d2c ("batman-adv: provide orig_node routing API")
-Signed-off-by: Sven Eckelmann <sven@narfation.org>
+      batadv_ogm_packet::tq (u8 255)
+    * tq_own (u8 255)
+    * tq_asym_penalty (int 134; max 255)
+    * tq_iface_penalty (int 255; max 255)
+
+The tq_iface_penalty, tq_asym_penalty and inv_asym_penalty can just be
+changed to unsigned int because they are not expected to become negative.
+
+Fixes: c039876892e3 ("batman-adv: add WiFi penalty")
+Signed-off-by: Sven Eckelmann <sven.eckelmann@open-mesh.com>
 Signed-off-by: Marek Lindner <mareklindner@neomailbox.ch>
 Signed-off-by: Antonio Quartulli <a@unstable.cc>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/batman-adv/bat_iv_ogm.c |    4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ net/batman-adv/bat_iv_ogm.c |    5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
 --- a/net/batman-adv/bat_iv_ogm.c
 +++ b/net/batman-adv/bat_iv_ogm.c
-@@ -155,10 +155,8 @@ static int batadv_iv_ogm_orig_add_if(str
- 	orig_node->bat_iv.bcast_own = data_ptr;
+@@ -1140,9 +1140,10 @@ static int batadv_iv_ogm_calc_tq(struct
+ 	u8 total_count;
+ 	u8 orig_eq_count, neigh_rq_count, neigh_rq_inv, tq_own;
+ 	unsigned int neigh_rq_inv_cube, neigh_rq_max_cube;
+-	int tq_asym_penalty, inv_asym_penalty, if_num, ret = 0;
++	int if_num, ret = 0;
++	unsigned int tq_asym_penalty, inv_asym_penalty;
+ 	unsigned int combined_tq;
+-	int tq_iface_penalty;
++	unsigned int tq_iface_penalty;
  
- 	data_ptr = kmalloc_array(max_if_num, sizeof(u8), GFP_ATOMIC);
--	if (!data_ptr) {
--		kfree(orig_node->bat_iv.bcast_own);
-+	if (!data_ptr)
- 		goto unlock;
--	}
- 
- 	memcpy(data_ptr, orig_node->bat_iv.bcast_own_sum,
- 	       (max_if_num - 1) * sizeof(u8));
+ 	/* find corresponding one hop neighbor */
+ 	rcu_read_lock();
 
 
