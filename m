@@ -2,115 +2,162 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8EEE718BFD2
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 20:03:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 00D4518C005
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 20:05:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727426AbgCSTDI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 15:03:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41676 "EHLO mail.kernel.org"
+        id S1728014AbgCSTEi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 15:04:38 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42626 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726867AbgCSTDH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 15:03:07 -0400
-Received: from gmail.com (unknown [104.132.1.76])
+        id S1727948AbgCSTEg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 15:04:36 -0400
+Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4AC792070A;
-        Thu, 19 Mar 2020 19:03:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584644586;
-        bh=ernhXbfEVGnkUDBt61dYmqqeZnm1bLgSbo+SerOadKs=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=yA10IBmoPAJAsc6u7AspQTyanMnQc1CGge6rLRTuz9mAtBo9/EXungbsKFC7m+XVT
-         oG/syAvZrUwB03MKafBhBc1N7mTiPoHzGTxcOg7rGqUGSqu/mK3jm7zLdW94MiiEV6
-         jPDXkmT0CEz/iLf5vLFgMN6M7GEoIrt6vBgQKWsM=
-Date:   Thu, 19 Mar 2020 12:03:04 -0700
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     "Jason A. Donenfeld" <Jason@zx2c4.com>
-Cc:     linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org,
-        gregkh@linuxfoundation.org, herbert@gondor.apana.org.au,
-        Emil Renner Berthing <kernel@esmil.dk>,
-        Ard Biesheuvel <ardb@kernel.org>, stable@vger.kernel.org
-Subject: Re: [PATCH URGENT crypto v2] crypto: arm64/chacha - correctly walk
- through blocks
-Message-ID: <20200319190304.GB86395@gmail.com>
-References: <CAHmME9otcAe7H4Anan8Tv1KreTZtwt4XXEPMG--x2Ljr0M+o1Q@mail.gmail.com>
- <20200319022732.166085-1-Jason@zx2c4.com>
+        by mail.kernel.org (Postfix) with ESMTPSA id D43442072C;
+        Thu, 19 Mar 2020 19:04:33 +0000 (UTC)
+Date:   Thu, 19 Mar 2020 15:04:32 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     paulmck@kernel.org
+Cc:     rcu@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-team@fb.com, mingo@kernel.org, jiangshanlai@gmail.com,
+        dipankar@in.ibm.com, akpm@linux-foundation.org,
+        mathieu.desnoyers@efficios.com, josh@joshtriplett.org,
+        tglx@linutronix.de, peterz@infradead.org, dhowells@redhat.com,
+        edumazet@google.com, fweisbec@gmail.com, oleg@redhat.com,
+        joel@joelfernandes.org
+Subject: Re: [PATCH RFC v2 tip/core/rcu 09/22] rcu-tasks: Add an RCU-tasks
+ rude variant
+Message-ID: <20200319150432.1ac9dac9@gandalf.local.home>
+In-Reply-To: <20200319001100.24917-9-paulmck@kernel.org>
+References: <20200319001024.GA28798@paulmck-ThinkPad-P72>
+        <20200319001100.24917-9-paulmck@kernel.org>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200319022732.166085-1-Jason@zx2c4.com>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 18, 2020 at 08:27:32PM -0600, Jason A. Donenfeld wrote:
-> Prior, passing in chunks of 2, 3, or 4, followed by any additional
-> chunks would result in the chacha state counter getting out of sync,
-> resulting in incorrect encryption/decryption, which is a pretty nasty
-> crypto vuln: "why do images look weird on webpages?" WireGuard users
-> never experienced this prior, because we have always, out of tree, used
-> a different crypto library, until the recent Frankenzinc addition. This
-> commit fixes the issue by advancing the pointers and state counter by
-> the actual size processed. It also fixes up a bug in the (optional,
-> costly) stride test that prevented it from running on arm64.
+On Wed, 18 Mar 2020 17:10:47 -0700
+paulmck@kernel.org wrote:
+
+> From: "Paul E. McKenney" <paulmck@kernel.org>
 > 
-> Fixes: b3aad5bad26a ("crypto: arm64/chacha - expose arm64 ChaCha routine as library function")
-> Reported-and-tested-by: Emil Renner Berthing <kernel@esmil.dk>
-> Cc: Ard Biesheuvel <ardb@kernel.org>
-> Cc: stable@vger.kernel.org # v5.5+
-> Signed-off-by: Jason A. Donenfeld <Jason@zx2c4.com>
+> This commit adds a "rude" variant of RCU-tasks that has as quiescent
+> states schedule(), cond_resched_tasks_rcu_qs(), userspace execution,
+> and (in theory, anyway) cond_resched().  In other words, RCU-tasks rude
+> readers are regions of code with preemption disabled, but excluding code
+> early in the CPU-online sequence and late in the CPU-offline sequence.
+> Updates make use of IPIs and force an IPI and a context switch on each
+> online CPU.  This variant is useful in some situations in tracing.
+> 
+> Suggested-by: Steven Rostedt <rostedt@goodmis.org>
+> [ paulmck: Apply EXPORT_SYMBOL_GPL() feedback from Qiujun Huang. ]
+> Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
 > ---
->  arch/arm64/crypto/chacha-neon-glue.c   |  8 ++++----
->  lib/crypto/chacha20poly1305-selftest.c | 11 ++++++++---
->  2 files changed, 12 insertions(+), 7 deletions(-)
+>  include/linux/rcupdate.h |  3 ++
+>  kernel/rcu/Kconfig       | 12 +++++-
+>  kernel/rcu/tasks.h       | 98 ++++++++++++++++++++++++++++++++++++++++++++++++
+>  3 files changed, 112 insertions(+), 1 deletion(-)
 > 
-> diff --git a/arch/arm64/crypto/chacha-neon-glue.c b/arch/arm64/crypto/chacha-neon-glue.c
-> index c1f9660d104c..37ca3e889848 100644
-> --- a/arch/arm64/crypto/chacha-neon-glue.c
-> +++ b/arch/arm64/crypto/chacha-neon-glue.c
-> @@ -55,10 +55,10 @@ static void chacha_doneon(u32 *state, u8 *dst, const u8 *src,
->  			break;
->  		}
->  		chacha_4block_xor_neon(state, dst, src, nrounds, l);
-> -		bytes -= CHACHA_BLOCK_SIZE * 5;
-> -		src += CHACHA_BLOCK_SIZE * 5;
-> -		dst += CHACHA_BLOCK_SIZE * 5;
-> -		state[12] += 5;
-> +		bytes -= l;
-> +		src += l;
-> +		dst += l;
-> +		state[12] += DIV_ROUND_UP(l, CHACHA_BLOCK_SIZE);
->  	}
+> diff --git a/include/linux/rcupdate.h b/include/linux/rcupdate.h
+> index 5523145..2be97a8 100644
+> --- a/include/linux/rcupdate.h
+> +++ b/include/linux/rcupdate.h
+> @@ -37,6 +37,7 @@
+>  /* Exported common interfaces */
+>  void call_rcu(struct rcu_head *head, rcu_callback_t func);
+>  void rcu_barrier_tasks(void);
+> +void rcu_barrier_tasks_rude(void);
+>  void synchronize_rcu(void);
+>  
+>  #ifdef CONFIG_PREEMPT_RCU
+> @@ -138,6 +139,8 @@ static inline void rcu_init_nohz(void) { }
+>  #define rcu_note_voluntary_context_switch(t) rcu_tasks_qs(t)
+>  void call_rcu_tasks(struct rcu_head *head, rcu_callback_t func);
+>  void synchronize_rcu_tasks(void);
+> +void call_rcu_tasks_rude(struct rcu_head *head, rcu_callback_t func);
+> +void synchronize_rcu_tasks_rude(void);
+>  void exit_tasks_rcu_start(void);
+>  void exit_tasks_rcu_finish(void);
+>  #else /* #ifdef CONFIG_TASKS_RCU_GENERIC */
+> diff --git a/kernel/rcu/Kconfig b/kernel/rcu/Kconfig
+> index 38475d0..0d43ec1 100644
+> --- a/kernel/rcu/Kconfig
+> +++ b/kernel/rcu/Kconfig
+> @@ -71,7 +71,7 @@ config TREE_SRCU
+>  	  This option selects the full-fledged version of SRCU.
+>  
+>  config TASKS_RCU_GENERIC
+> -	def_bool TASKS_RCU
+> +	def_bool TASKS_RCU || TASKS_RUDE_RCU
+>  	select SRCU
+>  	help
+>  	  This option enables generic infrastructure code supporting
+> @@ -84,6 +84,16 @@ config TASKS_RCU
+>  	  only voluntary context switch (not preemption!), idle, and
+>  	  user-mode execution as quiescent states.  Not for manual selection.
+>  
+> +config TASKS_RUDE_RCU
+> +	def_bool 0
+> +	default n
+
+No need for "default n" as that's the default without it.
+
+> +	help
+> +	  This option enables a task-based RCU implementation that uses
+> +	  only context switch (including preemption) and user-mode
+> +	  execution as quiescent states.  It forces IPIs and context
+> +	  switches on all online CPUs, including idle ones, so use
+> +	  with caution.  Not for manual selection.
+
+Really don't need the "Not for manual selection", as not having a prompt
+shows that too.
+
+> +
+>  config RCU_STALL_COMMON
+>  	def_bool TREE_RCU
+>  	help
+> diff --git a/kernel/rcu/tasks.h b/kernel/rcu/tasks.h
+> index d77921e..7ba1730 100644
+> --- a/kernel/rcu/tasks.h
+> +++ b/kernel/rcu/tasks.h
+> @@ -180,6 +180,9 @@ static void __init rcu_tasks_bootup_oddness(void)
+>  	else
+>  		pr_info("\tTasks RCU enabled.\n");
+>  #endif /* #ifdef CONFIG_TASKS_RCU */
+> +#ifdef CONFIG_TASKS_RUDE_RCU
+> +	pr_info("\tRude variant of Tasks RCU enabled.\n");
+> +#endif /* #ifdef CONFIG_TASKS_RUDE_RCU */
 >  }
 >  
-> diff --git a/lib/crypto/chacha20poly1305-selftest.c b/lib/crypto/chacha20poly1305-selftest.c
-> index c391a91364e9..fa43deda2660 100644
-> --- a/lib/crypto/chacha20poly1305-selftest.c
-> +++ b/lib/crypto/chacha20poly1305-selftest.c
-> @@ -9028,10 +9028,15 @@ bool __init chacha20poly1305_selftest(void)
->  	     && total_len <= 1 << 10; ++total_len) {
->  		for (i = 0; i <= total_len; ++i) {
->  			for (j = i; j <= total_len; ++j) {
-> +				k = 0;
->  				sg_init_table(sg_src, 3);
-> -				sg_set_buf(&sg_src[0], input, i);
-> -				sg_set_buf(&sg_src[1], input + i, j - i);
-> -				sg_set_buf(&sg_src[2], input + j, total_len - j);
-> +				if (i)
-> +					sg_set_buf(&sg_src[k++], input, i);
-> +				if (j - i)
-> +					sg_set_buf(&sg_src[k++], input + i, j - i);
-> +				if (total_len - j)
-> +					sg_set_buf(&sg_src[k++], input + j, total_len - j);
-> +				sg_init_marker(sg_src, k);
->  				memset(computed_output, 0, total_len);
->  				memset(input, 0, total_len);
+>  #endif /* #ifndef CONFIG_TINY_RCU */
+> @@ -410,3 +413,98 @@ static int __init rcu_spawn_tasks_kthread(void)
+>  core_initcall(rcu_spawn_tasks_kthread);
 >  
+>  #endif /* #ifdef CONFIG_TASKS_RCU */
+> +
+> +#ifdef CONFIG_TASKS_RUDE_RCU
+> +
+> +////////////////////////////////////////////////////////////////////////
+> +//
+> +// "Rude" variant of Tasks RCU, inspired by Steve Rostedt's trick of
+> +// passing an empty function to schedule_on_each_cpu().  This approach
+> +// provides an asynchronous call_rcu_rude() API and batching of concurrent
+> +// calls to the synchronous synchronize_rcu_rude() API.  This sends IPIs
+> +// far and wide and induces otherwise unnecessary context switches on all
+> +// online CPUs, whether online or not.
 
-Reviewed-by: Eric Biggers <ebiggers@google.com>
+   "on all online CPUs, whether online or not" ????
 
-Herbert, can you send this to Linus for 5.6?
+-- Steve
 
-- Eric
+> +
+> +// Empty function to allow workqueues to force a context switch.
+> +static void rcu_tasks_be_rude(struct work_struct *work)
+> +{
+> +}
+> +
