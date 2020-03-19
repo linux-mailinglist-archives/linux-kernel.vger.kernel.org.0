@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0BA3518B483
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:10:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8761A18B400
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:06:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728511AbgCSNKX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 09:10:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55092 "EHLO mail.kernel.org"
+        id S1727549AbgCSNF7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 09:05:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48824 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726988AbgCSNKU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 09:10:20 -0400
+        id S1727514AbgCSNFy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 09:05:54 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 01D0521556;
-        Thu, 19 Mar 2020 13:10:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4B33020739;
+        Thu, 19 Mar 2020 13:05:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584623420;
-        bh=6NYbwMXoJ+wlGSNvLLs16uAuTFfZ4lyBAET+75s50H8=;
+        s=default; t=1584623153;
+        bh=YCwknx/V/AJ8HbdipewMPP+FZ4X03uVZsduURbA9Whk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vmFdvcUHKBVuGaU7VWFxIoS8OUy8hRRLp3IpSUNccF26bykM7T9v1EGA/PPu4KS6O
-         Rm8BZJjUXSkzLvE2Qi3LvNUl+29M65jAIwNqYke3Zk5S0+RzgcuTJxSQm6Srn1t8ti
-         XHsD43AE4UT6ZphPPkfxMcUe/bclftutT7/OJp44=
+        b=polwci4FSxnc5WZWq+04uYCwgukO2Erac7IF1Q3YyP8sH5wZQQT64N/413He0As03
+         oKuMOCDPIs00i+WR3vL2v/5Y4e+Ry7LGY3Nnlx36AihF+5w74HV/SAyJcUJ7j+tOiR
+         bMcmrv17bPHFn6Y77cA+SvjXBIfM7uKFDb9j7uDo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 08/90] net: nfc: fix bounds checking bugs on "pipe"
+        stable@vger.kernel.org, Vineet Gupta <vgupta@synopsys.com>,
+        Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+Subject: [PATCH 4.4 26/93] ARC: define __ALIGN_STR and __ALIGN symbols for ARC
 Date:   Thu, 19 Mar 2020 13:59:30 +0100
-Message-Id: <20200319123931.252651797@linuxfoundation.org>
+Message-Id: <20200319123933.336202324@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.2
-In-Reply-To: <20200319123928.635114118@linuxfoundation.org>
-References: <20200319123928.635114118@linuxfoundation.org>
+In-Reply-To: <20200319123924.795019515@linuxfoundation.org>
+References: <20200319123924.795019515@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,67 +43,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
 
-[ Upstream commit a3aefbfe45751bf7b338c181b97608e276b5bb73 ]
+commit 8d92e992a785f35d23f845206cf8c6cafbc264e0 upstream.
 
-This is similar to commit 674d9de02aa7 ("NFC: Fix possible memory
-corruption when handling SHDLC I-Frame commands") and commit d7ee81ad09f0
-("NFC: nci: Add some bounds checking in nci_hci_cmd_received()") which
-added range checks on "pipe".
+The default defintions use fill pattern 0x90 for padding which for ARC
+generates unintended "ldh_s r12,[r0,0x20]" corresponding to opcode 0x9090
 
-The "pipe" variable comes skb->data[0] in nfc_hci_msg_rx_work().
-It's in the 0-255 range.  We're using it as the array index into the
-hdev->pipes[] array which has NFC_HCI_MAX_PIPES (128) members.
+So use ".align 4" which insert a "nop_s" instruction instead.
 
-Fixes: 118278f20aa8 ("NFC: hci: Add pipes table to reference them with a tuple {gate, host}")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Cc: stable@vger.kernel.org
+Acked-by: Vineet Gupta <vgupta@synopsys.com>
+Signed-off-by: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+Signed-off-by: Vineet Gupta <vgupta@synopsys.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- net/nfc/hci/core.c |   19 ++++++++++++++++---
- 1 file changed, 16 insertions(+), 3 deletions(-)
 
---- a/net/nfc/hci/core.c
-+++ b/net/nfc/hci/core.c
-@@ -193,13 +193,20 @@ exit:
- void nfc_hci_cmd_received(struct nfc_hci_dev *hdev, u8 pipe, u8 cmd,
- 			  struct sk_buff *skb)
- {
--	u8 gate = hdev->pipes[pipe].gate;
- 	u8 status = NFC_HCI_ANY_OK;
- 	struct hci_create_pipe_resp *create_info;
- 	struct hci_delete_pipe_noti *delete_info;
- 	struct hci_all_pipe_cleared_noti *cleared_info;
-+	u8 gate;
+---
+ arch/arc/include/asm/linkage.h |    2 ++
+ 1 file changed, 2 insertions(+)
+
+--- a/arch/arc/include/asm/linkage.h
++++ b/arch/arc/include/asm/linkage.h
+@@ -12,6 +12,8 @@
+ #ifdef __ASSEMBLY__
  
--	pr_debug("from gate %x pipe %x cmd %x\n", gate, pipe, cmd);
-+	pr_debug("from pipe %x cmd %x\n", pipe, cmd);
-+
-+	if (pipe >= NFC_HCI_MAX_PIPES) {
-+		status = NFC_HCI_ANY_E_NOK;
-+		goto exit;
-+	}
-+
-+	gate = hdev->pipes[pipe].gate;
+ #define ASM_NL		 `	/* use '`' to mark new line in macro */
++#define __ALIGN		.align 4
++#define __ALIGN_STR	__stringify(__ALIGN)
  
- 	switch (cmd) {
- 	case NFC_HCI_ADM_NOTIFY_PIPE_CREATED:
-@@ -387,8 +394,14 @@ void nfc_hci_event_received(struct nfc_h
- 			    struct sk_buff *skb)
- {
- 	int r = 0;
--	u8 gate = hdev->pipes[pipe].gate;
-+	u8 gate;
-+
-+	if (pipe >= NFC_HCI_MAX_PIPES) {
-+		pr_err("Discarded event %x to invalid pipe %x\n", event, pipe);
-+		goto exit;
-+	}
- 
-+	gate = hdev->pipes[pipe].gate;
- 	if (gate == NFC_HCI_INVALID_GATE) {
- 		pr_err("Discarded event %x to unopened pipe %x\n", event, pipe);
- 		goto exit;
+ /* annotation for data we want in DCCM - if enabled in .config */
+ .macro ARCFP_DATA nm
 
 
