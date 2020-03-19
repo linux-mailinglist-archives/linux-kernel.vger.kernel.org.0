@@ -2,41 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D326118B5C6
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:22:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 79D1118B5FD
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:23:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729421AbgCSNVX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 09:21:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45958 "EHLO mail.kernel.org"
+        id S1730144AbgCSNXE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 09:23:04 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48764 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728550AbgCSNVT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 09:21:19 -0400
+        id S1730293AbgCSNW7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 09:22:59 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9D993214D8;
-        Thu, 19 Mar 2020 13:21:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F118C206D7;
+        Thu, 19 Mar 2020 13:22:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584624078;
-        bh=s+fKCaWgqz80JcvdAc9wOxbXAfxYrEe2EsPnZWOiq2k=;
+        s=default; t=1584624179;
+        bh=v6rvCBmeL+E4vddPIjozzmAG55y2N6MSdRrgBlSjulQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nSLtXz5xW5TolRYVc9mMNpBYlUyi+qLC2V4RTbCdk+u0V2r7MqrsPSZkhuTAS/AOd
-         UKoBOFQADuRGM8YzADKFxEmrSKitPxIfrDaH6H4rKfnMPG617o48Iirsd3at7ScaT9
-         jIk/Jkwz7SvajAY+p6gfBa8JZwAbwS4DCwzFgyok=
+        b=x40yn6emLMp6u99xsM2/NxOnHzEXnjT9tNHXdB6akUYZ1TVHRyVN7ZV6VMkCPcvux
+         g4xz6ec9GF2fWQuy7SYjRdLQnMiubTgVsthm+CmzQVZJjN9x6kZsHiCg04d93akeV1
+         7ZFJ2E8EoC4pMM7RdxJuMrkMgussOpmy8t2Y1t9c=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Alexandru-Mihai Maftei <amaftei@solarflare.com>,
-        Martin Habets <mhabets@solarflare.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 30/48] sfc: fix timestamp reconstruction at 16-bit rollover points
+        stable@vger.kernel.org, Masahiro Yamada <masahiroy@kernel.org>,
+        Rob Herring <robh@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.4 34/60] kbuild: add dtbs_check to PHONY
 Date:   Thu, 19 Mar 2020 14:04:12 +0100
-Message-Id: <20200319123912.503825201@linuxfoundation.org>
+Message-Id: <20200319123930.591620953@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.2
-In-Reply-To: <20200319123902.941451241@linuxfoundation.org>
-References: <20200319123902.941451241@linuxfoundation.org>
+In-Reply-To: <20200319123919.441695203@linuxfoundation.org>
+References: <20200319123919.441695203@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,79 +43,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alex Maftei (amaftei) <amaftei@solarflare.com>
+From: Masahiro Yamada <masahiroy@kernel.org>
 
-[ Upstream commit 23797b98909f34b75fd130369bde86f760db69d0 ]
+[ Upstream commit 964a596db8db8c77c9903dd05655696696e6b3ad ]
 
-We can't just use the top bits of the last sync event as they could be
-off-by-one every 65,536 seconds, giving an error in reconstruction of
-65,536 seconds.
+The dtbs_check should be a phony target, but currently it is not
+specified so.
 
-This patch uses the difference in the bottom 16 bits (mod 2^16) to
-calculate an offset that needs to be applied to the last sync event to
-get to the current time.
+'make dtbs_check' works even if a file named 'dtbs_check' exists
+because it depends on another phony target, scripts_dtc, but we
+should not rely on it.
 
-Signed-off-by: Alexandru-Mihai Maftei <amaftei@solarflare.com>
-Acked-by: Martin Habets <mhabets@solarflare.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Add dtbs_check to PHONY.
+
+Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+Acked-by: Rob Herring <robh@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/sfc/ptp.c | 38 +++++++++++++++++++++++++++++++---
- 1 file changed, 35 insertions(+), 3 deletions(-)
+ Makefile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/sfc/ptp.c b/drivers/net/ethernet/sfc/ptp.c
-index cc8fbf398c0d7..d47151dbe804d 100644
---- a/drivers/net/ethernet/sfc/ptp.c
-+++ b/drivers/net/ethernet/sfc/ptp.c
-@@ -563,13 +563,45 @@ efx_ptp_mac_nic_to_ktime_correction(struct efx_nic *efx,
- 				    u32 nic_major, u32 nic_minor,
- 				    s32 correction)
- {
-+	u32 sync_timestamp;
- 	ktime_t kt = { 0 };
-+	s16 delta;
+diff --git a/Makefile b/Makefile
+index 2250b1bb8aa9f..b308b84c069c8 100644
+--- a/Makefile
++++ b/Makefile
+@@ -1237,7 +1237,7 @@ ifneq ($(dtstree),)
+ %.dtb: include/config/kernel.release scripts_dtc
+ 	$(Q)$(MAKE) $(build)=$(dtstree) $(dtstree)/$@
  
- 	if (!(nic_major & 0x80000000)) {
- 		WARN_ON_ONCE(nic_major >> 16);
--		/* Use the top bits from the latest sync event. */
--		nic_major &= 0xffff;
--		nic_major |= (last_sync_timestamp_major(efx) & 0xffff0000);
-+
-+		/* Medford provides 48 bits of timestamp, so we must get the top
-+		 * 16 bits from the timesync event state.
-+		 *
-+		 * We only have the lower 16 bits of the time now, but we do
-+		 * have a full resolution timestamp at some point in past. As
-+		 * long as the difference between the (real) now and the sync
-+		 * is less than 2^15, then we can reconstruct the difference
-+		 * between those two numbers using only the lower 16 bits of
-+		 * each.
-+		 *
-+		 * Put another way
-+		 *
-+		 * a - b = ((a mod k) - b) mod k
-+		 *
-+		 * when -k/2 < (a-b) < k/2. In our case k is 2^16. We know
-+		 * (a mod k) and b, so can calculate the delta, a - b.
-+		 *
-+		 */
-+		sync_timestamp = last_sync_timestamp_major(efx);
-+
-+		/* Because delta is s16 this does an implicit mask down to
-+		 * 16 bits which is what we need, assuming
-+		 * MEDFORD_TX_SECS_EVENT_BITS is 16. delta is signed so that
-+		 * we can deal with the (unlikely) case of sync timestamps
-+		 * arriving from the future.
-+		 */
-+		delta = nic_major - sync_timestamp;
-+
-+		/* Recover the fully specified time now, by applying the offset
-+		 * to the (fully specified) sync time.
-+		 */
-+		nic_major = sync_timestamp + delta;
+-PHONY += dtbs dtbs_install dt_binding_check
++PHONY += dtbs dtbs_install dtbs_check dt_binding_check
+ dtbs dtbs_check: include/config/kernel.release scripts_dtc
+ 	$(Q)$(MAKE) $(build)=$(dtstree)
  
- 		kt = ptp->nic_to_kernel_time(nic_major, nic_minor,
- 					     correction);
 -- 
 2.20.1
 
