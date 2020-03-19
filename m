@@ -2,35 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BE38118B546
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:17:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9061718B54E
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:17:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727793AbgCSNRC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 09:17:02 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37886 "EHLO mail.kernel.org"
+        id S1729624AbgCSNRT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 09:17:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38384 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728587AbgCSNQ7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 09:16:59 -0400
+        id S1729355AbgCSNRR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 09:17:17 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 04C952098B;
-        Thu, 19 Mar 2020 13:16:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CF4D92098B;
+        Thu, 19 Mar 2020 13:17:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584623819;
-        bh=QxtaDxcfQEQ1UKz0PJyRYKh2BCVbPnsBm3vuLhOG/lI=;
+        s=default; t=1584623836;
+        bh=0gFlzQXyqjqvTe384NB+HND7LEicV5ORE+ok2fAc4Qo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=AL0twPKEWbf454bozPApl9kC4TKPTJlI03qfrZSRCvrKvGJ+rz8OoB4wKoVT5+bWP
-         a6lEa/iNrKDX6shrxnhE2vqcLg3p1PY3IODCOSsTV1ezgOuMqrLZegdz0Q4IGSEf9u
-         ToXW1VAF1EXAAtw9g3T0mRA9k1X9v7J5acu+zUu8=
+        b=Z3um633u5YrChHfCDkPTUCHq9NpXpCZAsUCOaYNfXwi7nIsDAb4TKlS/3T+EhD2AM
+         nLVhgX42zzyB+UICfkbejmqNAAmWkIFo6cLke6fxSrkNHZtr5OVrbuA1K2YSkKOlsq
+         hyMT2Acz+rbMuj2QpKcncl6N3p243l9xJgSEos+Q=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Vasily Averin <vvs@virtuozzo.com>,
+        stable@vger.kernel.org, Suren Baghdasaryan <surenb@google.com>,
+        =?UTF-8?q?Michal=20Koutn=C3=BD?= <mkoutny@suse.com>,
         Tejun Heo <tj@kernel.org>
-Subject: [PATCH 4.14 37/99] cgroup: cgroup_procs_next should increase position index
-Date:   Thu, 19 Mar 2020 14:03:15 +0100
-Message-Id: <20200319123953.062335196@linuxfoundation.org>
+Subject: [PATCH 4.14 38/99] cgroup: Iterate tasks that did not finish do_exit()
+Date:   Thu, 19 Mar 2020 14:03:16 +0100
+Message-Id: <20200319123953.345883567@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.2
 In-Reply-To: <20200319123941.630731708@linuxfoundation.org>
 References: <20200319123941.630731708@linuxfoundation.org>
@@ -43,85 +44,97 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vasily Averin <vvs@virtuozzo.com>
+From: Michal Koutný <mkoutny@suse.com>
 
-commit 2d4ecb030dcc90fb725ecbfc82ce5d6c37906e0e upstream.
+commit 9c974c77246460fa6a92c18554c3311c8c83c160 upstream.
 
-If seq_file .next fuction does not change position index,
-read after some lseek can generate unexpected output:
+PF_EXITING is set earlier than actual removal from css_set when a task
+is exitting. This can confuse cgroup.procs readers who see no PF_EXITING
+tasks, however, rmdir is checking against css_set membership so it can
+transitionally fail with EBUSY.
 
-1) dd bs=1 skip output of each 2nd elements
-$ dd if=/sys/fs/cgroup/cgroup.procs bs=8 count=1
-2
-3
-4
-5
-1+0 records in
-1+0 records out
-8 bytes copied, 0,000267297 s, 29,9 kB/s
-[test@localhost ~]$ dd if=/sys/fs/cgroup/cgroup.procs bs=1 count=8
-2
-4 <<< NB! 3 was skipped
-6 <<<    ... and 5 too
-8 <<<    ... and 7
-8+0 records in
-8+0 records out
-8 bytes copied, 5,2123e-05 s, 153 kB/s
+Fix this by listing tasks that weren't unlinked from css_set active
+lists.
+It may happen that other users of the task iterator (without
+CSS_TASK_ITER_PROCS) spot a PF_EXITING task before cgroup_exit(). This
+is equal to the state before commit c03cd7738a83 ("cgroup: Include dying
+leaders with live threads in PROCS iterations") but it may be reviewed
+later.
 
- This happen because __cgroup_procs_start() makes an extra
- extra cgroup_procs_next() call
-
-2) read after lseek beyond end of file generates whole last line.
-3) read after lseek into middle of last line generates
-expected rest of last line and unexpected whole line once again.
-
-Additionally patch removes an extra position index changes in
-__cgroup_procs_start()
-
-Cc: stable@vger.kernel.org
-https://bugzilla.kernel.org/show_bug.cgi?id=206283
-Signed-off-by: Vasily Averin <vvs@virtuozzo.com>
+Reported-by: Suren Baghdasaryan <surenb@google.com>
+Fixes: c03cd7738a83 ("cgroup: Include dying leaders with live threads in PROCS iterations")
+Signed-off-by: Michal Koutný <mkoutny@suse.com>
 Signed-off-by: Tejun Heo <tj@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/cgroup/cgroup.c |   10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+ include/linux/cgroup.h |    1 +
+ kernel/cgroup/cgroup.c |   23 ++++++++++++++++-------
+ 2 files changed, 17 insertions(+), 7 deletions(-)
 
+--- a/include/linux/cgroup.h
++++ b/include/linux/cgroup.h
+@@ -61,6 +61,7 @@ struct css_task_iter {
+ 	struct list_head		*mg_tasks_head;
+ 	struct list_head		*dying_tasks_head;
+ 
++	struct list_head		*cur_tasks_head;
+ 	struct css_set			*cur_cset;
+ 	struct css_set			*cur_dcset;
+ 	struct task_struct		*cur_task;
 --- a/kernel/cgroup/cgroup.c
 +++ b/kernel/cgroup/cgroup.c
-@@ -4249,6 +4249,9 @@ static void *cgroup_procs_next(struct se
- 	struct kernfs_open_file *of = s->private;
- 	struct css_task_iter *it = of->priv;
+@@ -4051,12 +4051,16 @@ static void css_task_iter_advance_css_se
+ 		}
+ 	} while (!css_set_populated(cset) && list_empty(&cset->dying_tasks));
  
-+	if (pos)
-+		(*pos)++;
-+
- 	return css_task_iter_next(it);
- }
+-	if (!list_empty(&cset->tasks))
++	if (!list_empty(&cset->tasks)) {
+ 		it->task_pos = cset->tasks.next;
+-	else if (!list_empty(&cset->mg_tasks))
++		it->cur_tasks_head = &cset->tasks;
++	} else if (!list_empty(&cset->mg_tasks)) {
+ 		it->task_pos = cset->mg_tasks.next;
+-	else
++		it->cur_tasks_head = &cset->mg_tasks;
++	} else {
+ 		it->task_pos = cset->dying_tasks.next;
++		it->cur_tasks_head = &cset->dying_tasks;
++	}
  
-@@ -4264,7 +4267,7 @@ static void *__cgroup_procs_start(struct
- 	 * from position 0, so we can simply keep iterating on !0 *pos.
- 	 */
- 	if (!it) {
--		if (WARN_ON_ONCE((*pos)++))
-+		if (WARN_ON_ONCE((*pos)))
- 			return ERR_PTR(-EINVAL);
+ 	it->tasks_head = &cset->tasks;
+ 	it->mg_tasks_head = &cset->mg_tasks;
+@@ -4114,10 +4118,14 @@ repeat:
+ 		else
+ 			it->task_pos = it->task_pos->next;
  
- 		it = kzalloc(sizeof(*it), GFP_KERNEL);
-@@ -4272,10 +4275,11 @@ static void *__cgroup_procs_start(struct
- 			return ERR_PTR(-ENOMEM);
- 		of->priv = it;
- 		css_task_iter_start(&cgrp->self, iter_flags, it);
--	} else if (!(*pos)++) {
-+	} else if (!(*pos)) {
- 		css_task_iter_end(it);
- 		css_task_iter_start(&cgrp->self, iter_flags, it);
--	}
-+	} else
-+		return it->cur_task;
+-		if (it->task_pos == it->tasks_head)
++		if (it->task_pos == it->tasks_head) {
+ 			it->task_pos = it->mg_tasks_head->next;
+-		if (it->task_pos == it->mg_tasks_head)
++			it->cur_tasks_head = it->mg_tasks_head;
++		}
++		if (it->task_pos == it->mg_tasks_head) {
+ 			it->task_pos = it->dying_tasks_head->next;
++			it->cur_tasks_head = it->dying_tasks_head;
++		}
+ 		if (it->task_pos == it->dying_tasks_head)
+ 			css_task_iter_advance_css_set(it);
+ 	} else {
+@@ -4136,11 +4144,12 @@ repeat:
+ 			goto repeat;
  
- 	return cgroup_procs_next(s, NULL, NULL);
+ 		/* and dying leaders w/o live member threads */
+-		if (!atomic_read(&task->signal->live))
++		if (it->cur_tasks_head == it->dying_tasks_head &&
++		    !atomic_read(&task->signal->live))
+ 			goto repeat;
+ 	} else {
+ 		/* skip all dying ones */
+-		if (task->flags & PF_EXITING)
++		if (it->cur_tasks_head == it->dying_tasks_head)
+ 			goto repeat;
+ 	}
  }
 
 
