@@ -2,87 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4A61718BF73
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 19:35:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4686118BF79
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 19:36:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727286AbgCSSfF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 14:35:05 -0400
-Received: from mga06.intel.com ([134.134.136.31]:62956 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725787AbgCSSfF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 14:35:05 -0400
-IronPort-SDR: aGi4gm73iQn5HhSs+wQX+zY6b0Ee7GPbNotxzldgHMaY2NAF/2qv98TBVlccbvZWB1Chx3fyZF
- OZvVMTqteIOA==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Mar 2020 11:35:04 -0700
-IronPort-SDR: 8PJ20HU+/1aAUtKkXBhL4ENr19sfOFgV1IzgPk5go10JOk0SJ1/gsJeVsaEb18kxxu80xGUxGu
- /TeOiOTXzOxA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,572,1574150400"; 
-   d="scan'208";a="356117527"
-Received: from crojewsk-mobl1.ger.corp.intel.com (HELO [10.249.128.140]) ([10.249.128.140])
-  by fmsmga001.fm.intel.com with ESMTP; 19 Mar 2020 11:35:02 -0700
-Subject: Re: snd_hda_intel/sst-acpi sound breakage on suspend/resume since
- 5.6-rc1
-To:     Dominik Brodowski <linux@dominikbrodowski.net>
-Cc:     Mark Brown <broonie@kernel.org>, kuninori.morimoto.gx@renesas.com,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Keyon Jie <yang.jie@linux.intel.com>,
-        alsa-devel@alsa-project.org, curtis@malainey.com,
-        linux-kernel@vger.kernel.org, tiwai@suse.com,
-        liam.r.girdwood@linux.intel.com
-References: <e49eec28-2037-f5db-e75b-9eadf6180d81@intel.com>
- <20200318192213.GA2987@light.dominikbrodowski.net>
- <b352a46b-8a66-8235-3622-23e561d3728c@intel.com>
- <20200318215218.GA2439@light.dominikbrodowski.net>
- <e7f4f38d-b53e-8c69-8b23-454718cf92af@intel.com>
- <20200319130049.GA2244@light.dominikbrodowski.net>
- <20200319134139.GB3983@sirena.org.uk>
- <a01359dc-479e-b3e3-37a6-4a9c421d18da@intel.com>
- <20200319165157.GA2254@light.dominikbrodowski.net>
- <a7bf2aee-78e7-f905-bcc3-cd21bf16a976@intel.com>
- <20200319182413.GA3968@light.dominikbrodowski.net>
-From:   Cezary Rojewski <cezary.rojewski@intel.com>
-Message-ID: <750f7841-0b95-9fa8-d858-e0bff4d834d5@intel.com>
-Date:   Thu, 19 Mar 2020 19:35:00 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.6.0
+        id S1727417AbgCSSg0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 14:36:26 -0400
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:46509 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725787AbgCSSg0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 14:36:26 -0400
+Received: by mail-qt1-f194.google.com with SMTP id t13so2712245qtn.13
+        for <linux-kernel@vger.kernel.org>; Thu, 19 Mar 2020 11:36:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:date:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=KNebSnBdrZ/6z/FStqy7M9Zyh+LbdANWWGx5FjzQeMY=;
+        b=EMduB5pR07+Ca/I8dIlgrqu86DsieUYz8q81Jx/Glsqn35g1stMn+NaUOkH5/DrQsh
+         Q+Ihnd8KmM4/1Q6JR2ZM3lpS68B1M+yo+GiJ8mbzKqbSBzCjIDjZ+U1BFXpZUb3ZvE/n
+         nkJQq9SR+8N/iDvZlCrn67yLzntV3tA7floas8ki7s3ivTS/fjgQXBNCVJo13PpsENZk
+         XPSkxicss5faQW0FKHCquAc8IGNy6F57KNEaKW2AgTKzYZkQ4S2XEg8yYDvGYjRRPiSc
+         XiJT0aCyI/6HNlmErTTOfcdxY+/jilbMk5eDXRHA2ZshRj0ZjmhrAZ60MN3V4zKpCsLH
+         gikg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=KNebSnBdrZ/6z/FStqy7M9Zyh+LbdANWWGx5FjzQeMY=;
+        b=jANjwY8kK+IdbELNLEn28siDrnPwKKQ9hkNH2P7LEGbBWClc/rPw5XcTvOUriyCUih
+         BDlqzMVp3OcP7Ycl5G9e3fQDGwPwaKQXqbowUapPHRAJ3/48jqFAdwQVYzi1k4PM36nT
+         TSLZSA6gfzcnE/Yyvnet9aP4WXhOgR79EYkKED06df+Mt3g0nImSOSorRfrEw7M8tIr9
+         LNVE5Oug9wusWhlv7oSj0ksSgXZYQHEnQG+j0zfXsQw2KgNSEuu1Bkph7JSvRtElYDYM
+         GdBVonZkgXm8GXQGaoZv8Il+zSbCd8SiiTN4zlYIYO3Wrv1A9QgieFDMSq9M0WUjB1Qr
+         rejQ==
+X-Gm-Message-State: ANhLgQ3cheCRqFa+EtLJD3n17SAJW6kEwXlr8LK3P9ICmW4wJtfGJjuj
+        ZxD8t7yY8yfgWSuyDRZUOLU=
+X-Google-Smtp-Source: ADFU+vsiivgYrHXYoDPQr91JLkSKO7wJqI7DGeOf0RHnQvx4YfeqWIaYO2RF7kxB+WaE8415qcOphg==
+X-Received: by 2002:ac8:8b9:: with SMTP id v54mr4341613qth.229.1584642985439;
+        Thu, 19 Mar 2020 11:36:25 -0700 (PDT)
+Received: from quaco.ghostprotocols.net ([179.97.37.151])
+        by smtp.gmail.com with ESMTPSA id e2sm2074630qkb.112.2020.03.19.11.36.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 19 Mar 2020 11:36:24 -0700 (PDT)
+From:   Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
+X-Google-Original-From: Arnaldo Carvalho de Melo <acme@kernel.org>
+Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
+        id B23FB404E4; Thu, 19 Mar 2020 15:36:22 -0300 (-03)
+Date:   Thu, 19 Mar 2020 15:36:22 -0300
+To:     Jiri Olsa <jolsa@redhat.com>
+Cc:     John Garry <john.garry@huawei.com>, peterz@infradead.org,
+        mingo@redhat.com, mark.rutland@arm.com,
+        alexander.shishkin@linux.intel.com, namhyung@kernel.org,
+        will@kernel.org, ak@linux.intel.com, linuxarm@huawei.com,
+        linux-kernel@vger.kernel.org, james.clark@arm.com,
+        qiangqing.zhang@nxp.com
+Subject: Re: [PATCH v2 7/7] perf test: Test pmu-events aliases
+Message-ID: <20200319183622.GD14841@kernel.org>
+References: <1584442939-8911-1-git-send-email-john.garry@huawei.com>
+ <1584442939-8911-8-git-send-email-john.garry@huawei.com>
+ <20200317162043.GC759708@krava>
+ <01dd565b-931c-e853-a721-aa995f87469c@huawei.com>
+ <20200317170730.GF759708@krava>
 MIME-Version: 1.0
-In-Reply-To: <20200319182413.GA3968@light.dominikbrodowski.net>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200317170730.GF759708@krava>
+X-Url:  http://acmel.wordpress.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2020-03-19 19:24, Dominik Brodowski wrote:
-> On Thu, Mar 19, 2020 at 06:33:50PM +0100, Cezary Rojewski wrote:
->>
->> Could you confirm the same happens on your machine when revert of mentioned
->> patch is not applied ("stream is NULL" messages occur)? Issue may be
->> harmless but explained sequence does not look right.
-> 
-> Indeed, I still see
-> 
-> haswell-pcm-audio haswell-pcm-audio: warning: stream is NULL, no stream to reset, ignore it.
-> haswell-pcm-audio haswell-pcm-audio: warning: stream is NULL, no stream to free, ignore it.
-> haswell-pcm-audio haswell-pcm-audio: FW loaded, mailbox readback FW info: type 01, - version: 00.00, build 77, source commit id: 876ac6906f31a43b6772b23c7c983ce9dcb18a19
-> haswell-pcm-audio haswell-pcm-audio: warning: stream is NULL, no stream to reset, ignore it.
-> haswell-pcm-audio haswell-pcm-audio: warning: stream is NULL, no stream to free, ignore it.
-> 
-> though sounds continues to work.
-> 
+Em Tue, Mar 17, 2020 at 06:07:30PM +0100, Jiri Olsa escreveu:
+> On Tue, Mar 17, 2020 at 04:41:04PM +0000, John Garry wrote:
+> > On 17/03/2020 16:20, Jiri Olsa wrote:
+> > > On Tue, Mar 17, 2020 at 07:02:19PM +0800, John Garry wrote:
+> > > > @@ -36,6 +51,8 @@ static struct perf_pmu_test_event test_cpu_events[] = {
+> > > >   			.desc = "Number of segment register loads",
+> > > >   			.topic = "other",
+> > > >   		},
+> > > > +		.alias_str = "umask=0x80,(null)=0x30d40,event=0x6",
 
-Thanks once again for your input and time!
+> > > ah so we are using other pmus because of the format definitions
 
-I'll prepare patches for both issues. My guess is haswell-pcm could be 
-updated to handle 'platform' component param just fine, but it is 
-probably a change of more than few lines. I'd rather revert non-SOF 
-broadwell to its previous behavior and start a separate task from there.
+> > > why is there the '(null)' in there?
 
-Regards,
-Czarek
+> > Well this is just coming from the generated alias string in the pmu code,
+> > and it does not seem to be handling "period" argument properly. It needs to
+> > be checked.
+ 
+> nice, it found first issue already ;-)
+
+Applied the series to perf/core, good job! What about the fix for the
+above (null) problem?
+
+Cheers,
+
+- Arnaldo
