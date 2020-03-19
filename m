@@ -2,69 +2,143 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B835C18BEA5
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 18:47:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 10BE618BEAF
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 18:48:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727749AbgCSRrH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 13:47:07 -0400
-Received: from us-smtp-delivery-74.mimecast.com ([216.205.24.74]:26502 "EHLO
-        us-smtp-delivery-74.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726934AbgCSRrH (ORCPT
+        id S1728293AbgCSRsK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 13:48:10 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:50242 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727034AbgCSRsK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 13:47:07 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1584640026;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=aA76ES7e43xggaYU1fSodrMujaNKIwSE//1w1Lnn+qQ=;
-        b=aXvs6D1S6Nn91J8ZS2dTipJ/2sQXY0u/wosYRX/KdbWtfp1q9GWZJDnrqt8gRUjvKtE2EQ
-        7Z1BdDbh9QjNvewwDIyf1rlw3RdD8Z6IIWtenO796lVWAyMYRPkwR6+GUmlzGVdgHnRNpj
-        xiHTJBdLVSMIhIxiSWC+mzsGBuucoFQ=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-309-YbKSdRvnMb-H-gKH__LWFQ-1; Thu, 19 Mar 2020 13:47:02 -0400
-X-MC-Unique: YbKSdRvnMb-H-gKH__LWFQ-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id D88AF85EE74;
-        Thu, 19 Mar 2020 17:47:00 +0000 (UTC)
-Received: from gondolin (ovpn-113-188.ams2.redhat.com [10.36.113.188])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 71F6B1001B28;
-        Thu, 19 Mar 2020 17:46:55 +0000 (UTC)
-Date:   Thu, 19 Mar 2020 18:46:53 +0100
-From:   Cornelia Huck <cohuck@redhat.com>
-To:     Alex Williamson <alex.williamson@redhat.com>
-Cc:     kvm@vger.kernel.org, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dev@dpdk.org, mtosatti@redhat.com,
-        thomas@monjalon.net, bluca@debian.org, jerinjacobk@gmail.com,
-        bruce.richardson@intel.com, kevin.tian@intel.com
-Subject: Re: [PATCH v3 7/7] vfio/pci: Cleanup .probe() exit paths
-Message-ID: <20200319184653.6c10638b.cohuck@redhat.com>
-In-Reply-To: <158396396706.5601.17691989521568973524.stgit@gimli.home>
-References: <158396044753.5601.14804870681174789709.stgit@gimli.home>
-        <158396396706.5601.17691989521568973524.stgit@gimli.home>
-Organization: Red Hat GmbH
+        Thu, 19 Mar 2020 13:48:10 -0400
+Received: from pendragon.ideasonboard.com (81-175-216-236.bb.dnainternet.fi [81.175.216.236])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 18F68DC4;
+        Thu, 19 Mar 2020 18:48:08 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1584640088;
+        bh=muRfNh5vu7uoti9IKGxoYTDOSnB1SG2YiU3akIX1p/0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=cDHAcd1CttFh1TV6F8AOFaQM8f/vHXwI08QWjwTnH1LKoh4ajd0MNenKWprm45YMj
+         ZKY8mCezz94b7mV0DOtsNC9tYj63WmdxfLlEEtGDCY0/UUbaA+cY0vWguUYAzRdc7u
+         2+MDgK7xO3tQUNYW0YrS32+Q13zWmyxsyNOMuTLg=
+Date:   Thu, 19 Mar 2020 19:48:02 +0200
+From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To:     Alex Riesen <alexander.riesen@cetitec.com>
+Cc:     Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        devel@driverdev.osuosl.org, linux-media@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v2 02/10] media: adv748x: include everything adv748x.h
+ needs into the file
+Message-ID: <20200319174802.GH14585@pendragon.ideasonboard.com>
+References: <cover.1584639664.git.alexander.riesen@cetitec.com>
+ <fe109d58eaa34d68cad0f34bb048f827b336e024.1584639664.git.alexander.riesen@cetitec.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <fe109d58eaa34d68cad0f34bb048f827b336e024.1584639664.git.alexander.riesen@cetitec.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 11 Mar 2020 15:59:27 -0600
-Alex Williamson <alex.williamson@redhat.com> wrote:
+Hi Alexander,
 
-> The cleanup is getting a tad long.
+Thank you for the patch.
+
+On Thu, Mar 19, 2020 at 06:41:48PM +0100, Alex Riesen wrote:
+> To follow the established practice of not depending on others to
+> pull everything in.
 > 
-> Signed-off-by: Alex Williamson <alex.williamson@redhat.com>
+> Signed-off-by: Alexander Riesen <alexander.riesen@cetitec.com>
+
+Good idea. While at it, could you include "adv748x.h" as the very first
+header in at least one of the C files ? That will help ensuring the
+header stays self-contained in the future.
+
 > ---
->  drivers/vfio/pci/vfio_pci.c |   54 ++++++++++++++++++++-----------------------
->  1 file changed, 25 insertions(+), 29 deletions(-)
+>  drivers/media/i2c/adv748x/adv748x-afe.c  | 2 --
+>  drivers/media/i2c/adv748x/adv748x-core.c | 2 --
+>  drivers/media/i2c/adv748x/adv748x-csi2.c | 2 --
+>  drivers/media/i2c/adv748x/adv748x-hdmi.c | 2 --
+>  drivers/media/i2c/adv748x/adv748x.h      | 2 ++
+>  5 files changed, 2 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/media/i2c/adv748x/adv748x-afe.c b/drivers/media/i2c/adv748x/adv748x-afe.c
+> index dbbb1e4d6363..ab0479641c10 100644
+> --- a/drivers/media/i2c/adv748x/adv748x-afe.c
+> +++ b/drivers/media/i2c/adv748x/adv748x-afe.c
+> @@ -11,8 +11,6 @@
+>  #include <linux/mutex.h>
+>  #include <linux/v4l2-dv-timings.h>
+>  
+> -#include <media/v4l2-ctrls.h>
+> -#include <media/v4l2-device.h>
+>  #include <media/v4l2-dv-timings.h>
+>  #include <media/v4l2-ioctl.h>
+>  
+> diff --git a/drivers/media/i2c/adv748x/adv748x-core.c b/drivers/media/i2c/adv748x/adv748x-core.c
+> index c3fb113cef62..345f009de121 100644
+> --- a/drivers/media/i2c/adv748x/adv748x-core.c
+> +++ b/drivers/media/i2c/adv748x/adv748x-core.c
+> @@ -20,8 +20,6 @@
+>  #include <linux/slab.h>
+>  #include <linux/v4l2-dv-timings.h>
+>  
+> -#include <media/v4l2-ctrls.h>
+> -#include <media/v4l2-device.h>
+>  #include <media/v4l2-dv-timings.h>
+>  #include <media/v4l2-fwnode.h>
+>  #include <media/v4l2-ioctl.h>
+> diff --git a/drivers/media/i2c/adv748x/adv748x-csi2.c b/drivers/media/i2c/adv748x/adv748x-csi2.c
+> index c43ce5d78723..78d391009b5a 100644
+> --- a/drivers/media/i2c/adv748x/adv748x-csi2.c
+> +++ b/drivers/media/i2c/adv748x/adv748x-csi2.c
+> @@ -8,8 +8,6 @@
+>  #include <linux/module.h>
+>  #include <linux/mutex.h>
+>  
+> -#include <media/v4l2-ctrls.h>
+> -#include <media/v4l2-device.h>
+>  #include <media/v4l2-ioctl.h>
+>  
+>  #include "adv748x.h"
+> diff --git a/drivers/media/i2c/adv748x/adv748x-hdmi.c b/drivers/media/i2c/adv748x/adv748x-hdmi.c
+> index c557f8fdf11a..0dffcdf79ff2 100644
+> --- a/drivers/media/i2c/adv748x/adv748x-hdmi.c
+> +++ b/drivers/media/i2c/adv748x/adv748x-hdmi.c
+> @@ -8,8 +8,6 @@
+>  #include <linux/module.h>
+>  #include <linux/mutex.h>
+>  
+> -#include <media/v4l2-ctrls.h>
+> -#include <media/v4l2-device.h>
+>  #include <media/v4l2-dv-timings.h>
+>  #include <media/v4l2-ioctl.h>
+>  
+> diff --git a/drivers/media/i2c/adv748x/adv748x.h b/drivers/media/i2c/adv748x/adv748x.h
+> index fccb388ce179..09aab4138c3f 100644
+> --- a/drivers/media/i2c/adv748x/adv748x.h
+> +++ b/drivers/media/i2c/adv748x/adv748x.h
+> @@ -19,6 +19,8 @@
+>   */
+>  
+>  #include <linux/i2c.h>
+> +#include <media/v4l2-ctrls.h>
+> +#include <media/v4l2-device.h>
+>  
+>  #ifndef _ADV748X_H_
+>  #define _ADV748X_H_
 
-Reviewed-by: Cornelia Huck <cohuck@redhat.com>
+-- 
+Regards,
 
+Laurent Pinchart
