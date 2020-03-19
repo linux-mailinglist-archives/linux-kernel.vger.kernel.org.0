@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 562A318B593
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:19:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7159218B612
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:24:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729930AbgCSNTt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 09:19:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43330 "EHLO mail.kernel.org"
+        id S1730401AbgCSNXz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 09:23:55 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50096 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728503AbgCSNTr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 09:19:47 -0400
+        id S1729237AbgCSNXw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 09:23:52 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2A3E42098B;
-        Thu, 19 Mar 2020 13:19:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 13BEE208D6;
+        Thu, 19 Mar 2020 13:23:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584623986;
-        bh=maftcec7q/7Gg+skBb0iIpevHKDV5RwkZc9HnEZIWp4=;
+        s=default; t=1584624231;
+        bh=N3h6q8tCGOh4BWQmsC7dtfhBTXK5drPci7XihK3wjb4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0rEP3si22LQHdSGoyeYRanbYXHFlF3tAZWX/NcirpzIk+a6EwjPQLUApDkwkDdInT
-         IWklAeJmEyUlPgogMg40bpoXfjrd6ltKyYje6odw3ScIAg1QhgutAPNzUyyCFEwy2O
-         POOK59dPCHYCDvhfgkhipvuBxrMz+KrnCXEmxM/I=
+        b=cwlFPMALFK32UEJNp7mKDPFykN7+oiB0O5RwhWAw8RUwV9WJNE4iCsjQUapNdtJ2Q
+         8qCe6FeACYc8vDwm+80zlrfu4FHR0vHpp4Ql3df2eC4jbK8WQyMd+xNKKjzArLoSoQ
+         mMaxODPd1aLaWU+KeLlZ+aPCYZFjUjU4SX5A9Vm0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Luo bin <luobin9@huawei.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Hannes Reinecke <hare@suse.de>,
+        Igor Druzhinin <igor.druzhinin@citrix.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 20/48] hinic: fix a irq affinity bug
+Subject: [PATCH 5.4 24/60] scsi: libfc: free response frame from GPN_ID
 Date:   Thu, 19 Mar 2020 14:04:02 +0100
-Message-Id: <20200319123909.403633619@linuxfoundation.org>
+Message-Id: <20200319123927.044337409@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.2
-In-Reply-To: <20200319123902.941451241@linuxfoundation.org>
-References: <20200319123902.941451241@linuxfoundation.org>
+In-Reply-To: <20200319123919.441695203@linuxfoundation.org>
+References: <20200319123919.441695203@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,56 +45,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Luo bin <luobin9@huawei.com>
+From: Igor Druzhinin <igor.druzhinin@citrix.com>
 
-[ Upstream commit 0bff777bd0cba73ad4cd0145696ad284d7e6a99f ]
+[ Upstream commit ff6993bb79b9f99bdac0b5378169052931b65432 ]
 
-can not use a local variable as an input parameter of
-irq_set_affinity_hint
+fc_disc_gpn_id_resp() should be the last function using it so free it here
+to avoid memory leak.
 
-Signed-off-by: Luo bin <luobin9@huawei.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Link: https://lore.kernel.org/r/1579013000-14570-2-git-send-email-igor.druzhinin@citrix.com
+Reviewed-by: Hannes Reinecke <hare@suse.de>
+Signed-off-by: Igor Druzhinin <igor.druzhinin@citrix.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/huawei/hinic/hinic_hw_qp.h | 1 +
- drivers/net/ethernet/huawei/hinic/hinic_rx.c    | 5 ++---
- 2 files changed, 3 insertions(+), 3 deletions(-)
+ drivers/scsi/libfc/fc_disc.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/net/ethernet/huawei/hinic/hinic_hw_qp.h b/drivers/net/ethernet/huawei/hinic/hinic_hw_qp.h
-index 6c84f83ec2831..d46cfd4fbbbc5 100644
---- a/drivers/net/ethernet/huawei/hinic/hinic_hw_qp.h
-+++ b/drivers/net/ethernet/huawei/hinic/hinic_hw_qp.h
-@@ -103,6 +103,7 @@ struct hinic_rq {
- 
- 	struct hinic_wq         *wq;
- 
-+	struct cpumask		affinity_mask;
- 	u32                     irq;
- 	u16                     msix_entry;
- 
-diff --git a/drivers/net/ethernet/huawei/hinic/hinic_rx.c b/drivers/net/ethernet/huawei/hinic/hinic_rx.c
-index 06b24a92ed7d4..3467d84d96c39 100644
---- a/drivers/net/ethernet/huawei/hinic/hinic_rx.c
-+++ b/drivers/net/ethernet/huawei/hinic/hinic_rx.c
-@@ -414,7 +414,6 @@ static int rx_request_irq(struct hinic_rxq *rxq)
- 	struct hinic_hwdev *hwdev = nic_dev->hwdev;
- 	struct hinic_rq *rq = rxq->rq;
- 	struct hinic_qp *qp;
--	struct cpumask mask;
- 	int err;
- 
- 	rx_add_napi(rxq);
-@@ -431,8 +430,8 @@ static int rx_request_irq(struct hinic_rxq *rxq)
+diff --git a/drivers/scsi/libfc/fc_disc.c b/drivers/scsi/libfc/fc_disc.c
+index 9c5f7c9178c66..2b865c6423e29 100644
+--- a/drivers/scsi/libfc/fc_disc.c
++++ b/drivers/scsi/libfc/fc_disc.c
+@@ -628,6 +628,8 @@ static void fc_disc_gpn_id_resp(struct fc_seq *sp, struct fc_frame *fp,
  	}
- 
- 	qp = container_of(rq, struct hinic_qp, rq);
--	cpumask_set_cpu(qp->q_id % num_online_cpus(), &mask);
--	return irq_set_affinity_hint(rq->irq, &mask);
-+	cpumask_set_cpu(qp->q_id % num_online_cpus(), &rq->affinity_mask);
-+	return irq_set_affinity_hint(rq->irq, &rq->affinity_mask);
+ out:
+ 	kref_put(&rdata->kref, fc_rport_destroy);
++	if (!IS_ERR(fp))
++		fc_frame_free(fp);
  }
  
- static void rx_free_irq(struct hinic_rxq *rxq)
+ /**
 -- 
 2.20.1
 
