@@ -2,452 +2,320 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B1FFD18AFA7
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 10:19:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6221D18AEF4
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 10:13:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727763AbgCSJSh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 05:18:37 -0400
-Received: from 8bytes.org ([81.169.241.247]:52340 "EHLO theia.8bytes.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727256AbgCSJOd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 05:14:33 -0400
-Received: by theia.8bytes.org (Postfix, from userid 1000)
-        id 383F948C; Thu, 19 Mar 2020 10:14:20 +0100 (CET)
-From:   Joerg Roedel <joro@8bytes.org>
-To:     x86@kernel.org
-Cc:     hpa@zytor.com, Andy Lutomirski <luto@kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Hellstrom <thellstrom@vmware.com>,
-        Jiri Slaby <jslaby@suse.cz>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Juergen Gross <jgross@suse.com>,
+        id S1726933AbgCSJNe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 05:13:34 -0400
+Received: from mail-oln040092073052.outbound.protection.outlook.com ([40.92.73.52]:61387
+        "EHLO EUR04-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725768AbgCSJNd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 05:13:33 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=YWifkEORSqwjIHz6zJ0O2Wr2X6DBbY8JXTFXMdD/1fVPhemiezDKCFY8QMS5MhLEjPMSRN5O6sjYIO1JtOXJrOanV1tgFScvtC5NF7eTDYSuNFGVYhsaHYUEj7JBhnWtUN3phPbmpQIGZeN6cvVC/ZJONMSgIZWpA9WWgufwQaISQWQZRvwyuiUyENnvlqawfml6JiAkWXrs+cLDipCtKjQhQjI0fcQUkaM/4lasuaRmKfcKfPVBh4D0+VOlQxSum9Gl/W/Dre7F5m+og3vGudh57YBxnQEu4enFIuS4cgtoNF8ItSyZt4beoQriK6/SNx7VrL8ep/2kHbDOtKRhFA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=2xdPb2xOwTL6+Ei7+MTI+7WSe6j5x1xFgLGonT/9hhw=;
+ b=Pov7UCxuNk30BlNjO7wTgpKsCMwQjn+hm+DuHZz+0psqdOKHm9D9RVr1aSxL6GzbI2M1VoMQetQJfaQk5nerErKgEOc765OJ7HL6oC1gUnFHYe43WJDhmPx9vdxNet3CDYELZxLG1Hm0GVIOkODjltZxsXSGhvGuyMitckne6jzVoEgjnBaz38yCv9ZUd3BO9ZpunxgNXjiFeZgFK4dLVi5FHl6cYsDfcFbDbZnyl4dyLi3s41jKaLd4HRfqFSTd7AUP9eCTAXtme8QcnNbYCyHbgMvvby/3hQmia3yv7x6SW6zo2AEVjO9A4InU9giMb82gPGspsBjtMGhHM+zEtQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=hotmail.de; dmarc=pass action=none header.from=hotmail.de;
+ dkim=pass header.d=hotmail.de; arc=none
+Received: from DB3EUR04FT050.eop-eur04.prod.protection.outlook.com
+ (2a01:111:e400:7e0c::3a) by
+ DB3EUR04HT149.eop-eur04.prod.protection.outlook.com (2a01:111:e400:7e0c::155)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2814.13; Thu, 19 Mar
+ 2020 09:13:23 +0000
+Received: from AM6PR03MB5170.eurprd03.prod.outlook.com (10.152.24.54) by
+ DB3EUR04FT050.mail.protection.outlook.com (10.152.25.40) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2814.13 via Frontend Transport; Thu, 19 Mar 2020 09:13:23 +0000
+X-IncomingTopHeaderMarker: OriginalChecksum:3668331D173F106644B3191FD9237B9E55197368D01837E1FC110AEB8C38898A;UpperCasedChecksum:A6DF1432EF0E4D6BC0F498D9D6AB87BA68CF72EFBFDFA6D7626279BE743B6399;SizeAsReceived:10399;Count:50
+Received: from AM6PR03MB5170.eurprd03.prod.outlook.com
+ ([fe80::1956:d274:cab3:b4dd]) by AM6PR03MB5170.eurprd03.prod.outlook.com
+ ([fe80::1956:d274:cab3:b4dd%6]) with mapi id 15.20.2835.017; Thu, 19 Mar 2020
+ 09:13:23 +0000
+Subject: Re: [PATCH v4 3/5] exec: Add a exec_update_mutex to replace
+ cred_guard_mutex
+From:   Bernd Edlinger <bernd.edlinger@hotmail.de>
+To:     Kirill Tkhai <ktkhai@virtuozzo.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     Christian Brauner <christian.brauner@ubuntu.com>,
         Kees Cook <keescook@chromium.org>,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        virtualization@lists.linux-foundation.org,
-        Joerg Roedel <joro@8bytes.org>, Joerg Roedel <jroedel@suse.de>
-Subject: [PATCH 22/70] x86/boot/compressed/64: Setup GHCB Based VC Exception handler
-Date:   Thu, 19 Mar 2020 10:13:19 +0100
-Message-Id: <20200319091407.1481-23-joro@8bytes.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200319091407.1481-1-joro@8bytes.org>
-References: <20200319091407.1481-1-joro@8bytes.org>
+        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Andrei Vagin <avagin@gmail.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Yuyang Du <duyuyang@gmail.com>,
+        David Hildenbrand <david@redhat.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Anshuman Khandual <anshuman.khandual@arm.com>,
+        David Howells <dhowells@redhat.com>,
+        James Morris <jamorris@linux.microsoft.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Shakeel Butt <shakeelb@google.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Christian Kellner <christian@kellner.me>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        "Dmitry V. Levin" <ldv@altlinux.org>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>,
+        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>
+References: <AM6PR03MB5170EB4427BF5C67EE98FF09E4E60@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <87v9ne5y4y.fsf_-_@x220.int.ebiederm.org>
+ <87zhcq4jdj.fsf_-_@x220.int.ebiederm.org>
+ <f37a5d68-9674-533f-ee9c-a49174605710@virtuozzo.com>
+ <87d09hn4kt.fsf@x220.int.ebiederm.org>
+ <dbce35c7-c060-cfd8-bde1-98fd9a0747a9@virtuozzo.com>
+ <87lfo5lju6.fsf@x220.int.ebiederm.org>
+ <AM6PR03MB5170E9E71B9F84330B098BADE4FA0@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <6002ac56-025a-d50f-e89d-1bf42a072323@virtuozzo.com>
+ <AM6PR03MB5170353DF3575FF7742BB155E4FB0@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <532ce6a3-f0df-e3e4-6966-473c608246e1@virtuozzo.com>
+ <AM6PR03MB51705D8A5631B53844CE447CE4F60@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <13c4d333-9c33-8036-3142-dac22c392c60@virtuozzo.com>
+ <AM6PR03MB5170110A5D332DD0C1AC929FE4F70@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <f7c1508a-a456-6ae4-a81e-8e8aa41d8d39@virtuozzo.com>
+ <AM6PR03MB5170946BCC61F5D6CA233390E4F40@AM6PR03MB5170.eurprd03.prod.outlook.com>
+Message-ID: <AM6PR03MB51703082215BDFE074E9D735E4F40@AM6PR03MB5170.eurprd03.prod.outlook.com>
+Date:   Thu, 19 Mar 2020 10:13:20 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
+In-Reply-To: <AM6PR03MB5170946BCC61F5D6CA233390E4F40@AM6PR03MB5170.eurprd03.prod.outlook.com>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: ZR0P278CA0039.CHEP278.PROD.OUTLOOK.COM
+ (2603:10a6:910:1d::8) To AM6PR03MB5170.eurprd03.prod.outlook.com
+ (2603:10a6:20b:ca::23)
+X-Microsoft-Original-Message-ID: <d22d08fd-3229-c7ed-8413-c01c494defcf@hotmail.de>
+MIME-Version: 1.0
+X-MS-Exchange-MessageSentRepresentingType: 1
+Received: from [192.168.1.101] (92.77.140.102) by ZR0P278CA0039.CHEP278.PROD.OUTLOOK.COM (2603:10a6:910:1d::8) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2835.15 via Frontend Transport; Thu, 19 Mar 2020 09:13:21 +0000
+X-Microsoft-Original-Message-ID: <d22d08fd-3229-c7ed-8413-c01c494defcf@hotmail.de>
+X-TMN:  [UUsM3TMx7bEfLGOIJ+iDQ97ISGUN8ca3]
+X-MS-PublicTrafficType: Email
+X-IncomingHeaderCount: 50
+X-EOPAttributedMessage: 0
+X-MS-Office365-Filtering-Correlation-Id: c89c222a-0453-4829-10db-08d7cbe5c624
+X-MS-TrafficTypeDiagnostic: DB3EUR04HT149:
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: mlQqNO4x95xQcEG/8mCJLLyIIwjsNNPixhKsM1B7A1Uvy0sz7F6ahdIP770jb08pREWxbI9mo58PmQDI5lke6cpMIdXuxJPQYu+Pa0c0anA4CVPiWiQ66vKe0enkqwa6z0yp8jSBoPeomu0/ooFnQyepymAnpqBh+YCuQqCnNO5Ty1LNZFSbE/RbCBbK1zMSdV7wmE4A6Uxss1z/0c2X+LtHF7xHkdxv1mF72JWvf9c=
+X-MS-Exchange-AntiSpam-MessageData: RuA+4SaI16GcwOokoS4uhtgmwWeQBmPbAJsHQTwcBawIZlmuHAce61yygIxfY0wbdngF/0wL881ZRteycfsbjMtu6I0Bl7k4err928PpuJvaAkfjzsxOz2eQbZg8m5aPGxwe+xuHq4CNUkizoH4XGQ==
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c89c222a-0453-4829-10db-08d7cbe5c624
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Mar 2020 09:13:23.1714
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-FromEntityHeader: Internet
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB3EUR04HT149
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Joerg Roedel <jroedel@suse.de>
+Ah, sorry this is actuall v4 5/5.
+Should I send a new version or can you handle it?
 
-Install an exception handler for #VC exception that uses a GHCB. Also
-add the infrastructure for handling different exit-codes by decoding
-the instruction that caused the exception and error handling.
 
-Signed-off-by: Joerg Roedel <jroedel@suse.de>
----
- arch/x86/Kconfig                           |   1 +
- arch/x86/boot/compressed/idt_64.c          |   4 +
- arch/x86/boot/compressed/idt_handlers_64.S |   1 +
- arch/x86/boot/compressed/misc.h            |   1 +
- arch/x86/boot/compressed/sev-es.c          |  94 ++++++++++++++
- arch/x86/include/asm/sev-es.h              |  33 +++++
- arch/x86/include/uapi/asm/svm.h            |   1 +
- arch/x86/kernel/sev-es-shared.c            | 142 +++++++++++++++++++++
- 8 files changed, 277 insertions(+)
-
-diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index beea77046f9b..c12347492589 100644
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -1526,6 +1526,7 @@ config AMD_MEM_ENCRYPT
- 	select DYNAMIC_PHYSICAL_MASK
- 	select ARCH_USE_MEMREMAP_PROT
- 	select ARCH_HAS_FORCE_DMA_UNENCRYPTED
-+	select INSTRUCTION_DECODER
- 	---help---
- 	  Say yes to enable support for the encryption of system memory.
- 	  This requires an AMD processor that supports Secure Memory
-diff --git a/arch/x86/boot/compressed/idt_64.c b/arch/x86/boot/compressed/idt_64.c
-index bdd20dfd1fd0..eebb2f857dac 100644
---- a/arch/x86/boot/compressed/idt_64.c
-+++ b/arch/x86/boot/compressed/idt_64.c
-@@ -45,5 +45,9 @@ void load_stage2_idt(void)
- 
- 	set_idt_entry(X86_TRAP_PF, boot_pf_handler);
- 
-+#ifdef CONFIG_AMD_MEM_ENCRYPT
-+	set_idt_entry(X86_TRAP_VC, boot_stage2_vc_handler);
-+#endif
-+
- 	load_boot_idt(&boot_idt_desc);
- }
-diff --git a/arch/x86/boot/compressed/idt_handlers_64.S b/arch/x86/boot/compressed/idt_handlers_64.S
-index 67ddafab2943..04edeb73d2cf 100644
---- a/arch/x86/boot/compressed/idt_handlers_64.S
-+++ b/arch/x86/boot/compressed/idt_handlers_64.S
-@@ -78,4 +78,5 @@ EXCEPTION_HANDLER	boot_pf_handler do_boot_page_fault error_code=1
- 
- #ifdef CONFIG_AMD_MEM_ENCRYPT
- EXCEPTION_HANDLER	boot_stage1_vc_handler vc_no_ghcb_handler error_code=1
-+EXCEPTION_HANDLER	boot_stage2_vc_handler boot_vc_handler error_code=1
- #endif
-diff --git a/arch/x86/boot/compressed/misc.h b/arch/x86/boot/compressed/misc.h
-index 42f68a858a35..567d71ab5ed9 100644
---- a/arch/x86/boot/compressed/misc.h
-+++ b/arch/x86/boot/compressed/misc.h
-@@ -143,5 +143,6 @@ extern struct desc_ptr boot_idt_desc;
- /* IDT Entry Points */
- void boot_pf_handler(void);
- void boot_stage1_vc_handler(void);
-+void boot_stage2_vc_handler(void);
- 
- #endif /* BOOT_COMPRESSED_MISC_H */
-diff --git a/arch/x86/boot/compressed/sev-es.c b/arch/x86/boot/compressed/sev-es.c
-index eeeb3553547c..193c970a3379 100644
---- a/arch/x86/boot/compressed/sev-es.c
-+++ b/arch/x86/boot/compressed/sev-es.c
-@@ -8,12 +8,16 @@
- #include <linux/kernel.h>
- 
- #include <asm/sev-es.h>
-+#include <asm/trap_defs.h>
- #include <asm/msr-index.h>
- #include <asm/ptrace.h>
- #include <asm/svm.h>
- 
- #include "misc.h"
- 
-+struct ghcb boot_ghcb_page __aligned(PAGE_SIZE);
-+struct ghcb *boot_ghcb;
-+
- static inline u64 sev_es_rd_ghcb_msr(void)
- {
- 	unsigned long low, high;
-@@ -35,8 +39,98 @@ static inline void sev_es_wr_ghcb_msr(u64 val)
- 			"a"(low), "d" (high) : "memory");
- }
- 
-+static enum es_result vc_decode_insn(struct es_em_ctxt *ctxt)
-+{
-+	char buffer[MAX_INSN_SIZE];
-+	enum es_result ret;
-+
-+	memcpy(buffer, (unsigned char *)ctxt->regs->ip, MAX_INSN_SIZE);
-+
-+	insn_init(&ctxt->insn, buffer, MAX_INSN_SIZE, 1);
-+	insn_get_length(&ctxt->insn);
-+
-+	ret = ctxt->insn.immediate.got ? ES_OK : ES_DECODE_FAILED;
-+
-+	return ret;
-+}
-+
-+static enum es_result vc_write_mem(struct es_em_ctxt *ctxt,
-+				   void *dst, char *buf, size_t size)
-+{
-+	memcpy(dst, buf, size);
-+
-+	return ES_OK;
-+}
-+
-+static enum es_result vc_read_mem(struct es_em_ctxt *ctxt,
-+				  void *src, char *buf, size_t size)
-+{
-+	memcpy(buf, src, size);
-+
-+	return ES_OK;
-+}
-+
- #undef __init
-+#undef __pa
- #define __init
-+#define __pa(x)	((unsigned long)(x))
-+
-+#define __BOOT_COMPRESSED
-+
-+/* Basic instruction decoding support needed */
-+#include "../../lib/inat.c"
-+#include "../../lib/insn.c"
- 
- /* Include code for early handlers */
- #include "../../kernel/sev-es-shared.c"
-+
-+static bool sev_es_setup_ghcb(void)
-+{
-+	if (!sev_es_negotiate_protocol())
-+		sev_es_terminate(GHCB_SEV_ES_REASON_PROTOCOL_UNSUPPORTED);
-+
-+	if (set_page_decrypted((unsigned long)&boot_ghcb_page))
-+		return false;
-+
-+	/* Page is now mapped decrypted, clear it */
-+	memset(&boot_ghcb_page, 0, sizeof(boot_ghcb_page));
-+
-+	boot_ghcb = &boot_ghcb_page;
-+
-+	/* Initialize lookup tables for the instruction decoder */
-+	inat_init_tables();
-+
-+	return true;
-+}
-+
-+void boot_vc_handler(struct pt_regs *regs, unsigned long exit_code)
-+{
-+	struct es_em_ctxt ctxt;
-+	enum es_result result;
-+
-+	if (!boot_ghcb && !sev_es_setup_ghcb())
-+		sev_es_terminate(GHCB_SEV_ES_REASON_GENERAL_REQUEST);
-+
-+	vc_ghcb_invalidate(boot_ghcb);
-+	result = vc_init_em_ctxt(&ctxt, regs, exit_code);
-+	if (result != ES_OK)
-+		goto finish;
-+
-+	switch (exit_code) {
-+	default:
-+		result = ES_UNSUPPORTED;
-+		break;
-+	}
-+
-+finish:
-+	if (result == ES_OK) {
-+		vc_finish_insn(&ctxt);
-+	} else if (result != ES_RETRY) {
-+		/*
-+		 * For now, just halt the machine. That makes debugging easier,
-+		 * later we just call sev_es_terminate() here.
-+		 */
-+		while (true)
-+			asm volatile("hlt\n");
-+	}
-+}
-diff --git a/arch/x86/include/asm/sev-es.h b/arch/x86/include/asm/sev-es.h
-index f524b40aef07..512d3ccb9832 100644
---- a/arch/x86/include/asm/sev-es.h
-+++ b/arch/x86/include/asm/sev-es.h
-@@ -9,7 +9,14 @@
- #define __ASM_ENCRYPTED_STATE_H
- 
- #include <linux/types.h>
-+#include <asm/insn.h>
- 
-+#define GHCB_SEV_INFO		0x001UL
-+#define GHCB_SEV_INFO_REQ	0x002UL
-+#define		GHCB_INFO(v)		((v) & 0xfffUL)
-+#define		GHCB_PROTO_MAX(v)	(((v) >> 48) & 0xffffUL)
-+#define		GHCB_PROTO_MIN(v)	(((v) >> 32) & 0xffffUL)
-+#define		GHCB_PROTO_OUR		0x0001UL
- #define GHCB_SEV_CPUID_REQ	0x004UL
- #define		GHCB_CPUID_REQ_EAX	0
- #define		GHCB_CPUID_REQ_EBX	1
-@@ -21,10 +28,36 @@
- 
- #define GHCB_SEV_CPUID_RESP	0x005UL
- #define GHCB_SEV_TERMINATE	0x100UL
-+#define		GHCB_SEV_ES_REASON_GENERAL_REQUEST	0
-+#define		GHCB_SEV_ES_REASON_PROTOCOL_UNSUPPORTED	1
- 
- #define	GHCB_SEV_GHCB_RESP_CODE(v)	((v) & 0xfff)
- #define	VMGEXIT()			{ asm volatile("rep; vmmcall\n\r"); }
- 
-+enum es_result {
-+	ES_OK,			/* All good */
-+	ES_UNSUPPORTED,		/* Requested operation not supported */
-+	ES_VMM_ERROR,		/* Unexpected state from the VMM */
-+	ES_DECODE_FAILED,	/* Instruction decoding failed */
-+	ES_EXCEPTION,		/* Instruction caused exception */
-+	ES_RETRY,		/* Retry instruction emulation */
-+};
-+
-+struct es_fault_info {
-+	unsigned long vector;
-+	unsigned long error_code;
-+	unsigned long cr2;
-+};
-+
-+struct pt_regs;
-+
-+/* ES instruction emulation context */
-+struct es_em_ctxt {
-+	struct pt_regs *regs;
-+	struct insn insn;
-+	struct es_fault_info fi;
-+};
-+
- static inline u64 lower_bits(u64 val, unsigned int bits)
- {
- 	u64 mask = (1ULL << bits) - 1;
-diff --git a/arch/x86/include/uapi/asm/svm.h b/arch/x86/include/uapi/asm/svm.h
-index 2e8a30f06c74..c68d1618c9b0 100644
---- a/arch/x86/include/uapi/asm/svm.h
-+++ b/arch/x86/include/uapi/asm/svm.h
-@@ -29,6 +29,7 @@
- #define SVM_EXIT_WRITE_DR6     0x036
- #define SVM_EXIT_WRITE_DR7     0x037
- #define SVM_EXIT_EXCP_BASE     0x040
-+#define SVM_EXIT_LAST_EXCP     0x05f
- #define SVM_EXIT_INTR          0x060
- #define SVM_EXIT_NMI           0x061
- #define SVM_EXIT_SMI           0x062
-diff --git a/arch/x86/kernel/sev-es-shared.c b/arch/x86/kernel/sev-es-shared.c
-index e963b48d3e86..f0947ea3c601 100644
---- a/arch/x86/kernel/sev-es-shared.c
-+++ b/arch/x86/kernel/sev-es-shared.c
-@@ -9,6 +9,106 @@
-  * and is included directly into both code-bases.
-  */
- 
-+static void sev_es_terminate(unsigned int reason)
-+{
-+	/* Request Guest Termination from Hypvervisor */
-+	sev_es_wr_ghcb_msr(GHCB_SEV_TERMINATE);
-+	VMGEXIT();
-+
-+	while (true)
-+		asm volatile("hlt\n" : : : "memory");
-+}
-+
-+static bool sev_es_negotiate_protocol(void)
-+{
-+	u64 val;
-+
-+	/* Do the GHCB protocol version negotiation */
-+	sev_es_wr_ghcb_msr(GHCB_SEV_INFO_REQ);
-+	VMGEXIT();
-+	val = sev_es_rd_ghcb_msr();
-+
-+	if (GHCB_INFO(val) != GHCB_SEV_INFO)
-+		return false;
-+
-+	if (GHCB_PROTO_MAX(val) < GHCB_PROTO_OUR ||
-+	    GHCB_PROTO_MIN(val) > GHCB_PROTO_OUR)
-+		return false;
-+
-+	return true;
-+}
-+
-+static void vc_ghcb_invalidate(struct ghcb *ghcb)
-+{
-+	memset(ghcb->save.valid_bitmap, 0, sizeof(ghcb->save.valid_bitmap));
-+}
-+
-+static bool vc_decoding_needed(unsigned long exit_code)
-+{
-+	/* Exceptions don't require to decode the instruction */
-+	return !(exit_code >= SVM_EXIT_EXCP_BASE &&
-+		 exit_code <= SVM_EXIT_LAST_EXCP);
-+}
-+
-+static enum es_result vc_init_em_ctxt(struct es_em_ctxt *ctxt,
-+				      struct pt_regs *regs,
-+				      unsigned long exit_code)
-+{
-+	enum es_result ret = ES_OK;
-+
-+	memset(ctxt, 0, sizeof(*ctxt));
-+	ctxt->regs = regs;
-+
-+	if (vc_decoding_needed(exit_code))
-+		ret = vc_decode_insn(ctxt);
-+
-+	return ret;
-+}
-+
-+static void vc_finish_insn(struct es_em_ctxt *ctxt)
-+{
-+	ctxt->regs->ip += ctxt->insn.length;
-+}
-+
-+static enum es_result sev_es_ghcb_hv_call(struct ghcb *ghcb,
-+					  struct es_em_ctxt *ctxt,
-+					  u64 exit_code, u64 exit_info_1,
-+					  u64 exit_info_2)
-+{
-+	enum es_result ret;
-+
-+	ghcb_set_sw_exit_code(ghcb, exit_code);
-+	ghcb_set_sw_exit_info_1(ghcb, exit_info_1);
-+	ghcb_set_sw_exit_info_2(ghcb, exit_info_2);
-+
-+	sev_es_wr_ghcb_msr(__pa(ghcb));
-+	VMGEXIT();
-+
-+	if ((ghcb->save.sw_exit_info_1 & 0xffffffff) == 1) {
-+		u64 info = ghcb->save.sw_exit_info_2;
-+		unsigned long v;
-+
-+		info = ghcb->save.sw_exit_info_2;
-+		v = info & SVM_EVTINJ_VEC_MASK;
-+
-+		/* Check if exception information from hypervisor is sane. */
-+		if ((info & SVM_EVTINJ_VALID) &&
-+		    ((v == X86_TRAP_GP) || (v == X86_TRAP_UD)) &&
-+		    ((info & SVM_EVTINJ_TYPE_MASK) == SVM_EVTINJ_TYPE_EXEPT)) {
-+			ctxt->fi.vector = v;
-+			if (info & SVM_EVTINJ_VALID_ERR)
-+				ctxt->fi.error_code = info >> 32;
-+			ret = ES_EXCEPTION;
-+		} else {
-+			ret = ES_VMM_ERROR;
-+		}
-+	} else {
-+		ret = ES_OK;
-+	}
-+
-+	return ret;
-+}
-+
- /*
-  * Boot VC Handler - This is the first VC handler during boot, there is no GHCB
-  * page yet, so it only supports the MSR based communication with the
-@@ -63,3 +163,45 @@ void __init vc_no_ghcb_handler(struct pt_regs *regs, unsigned long exit_code)
- 	while (true)
- 		asm volatile("hlt\n");
- }
-+
-+static enum es_result vc_insn_string_read(struct es_em_ctxt *ctxt,
-+					  void *src, char *buf,
-+					  unsigned int data_size,
-+					  unsigned int count,
-+					  bool backwards)
-+{
-+	int i, b = backwards ? -1 : 1;
-+	enum es_result ret = ES_OK;
-+
-+	for (i = 0; i < count; i++) {
-+		void *s = src + (i * data_size * b);
-+		char *d = buf + (i * data_size);
-+
-+		ret = vc_read_mem(ctxt, s, d, data_size);
-+		if (ret != ES_OK)
-+			break;
-+	}
-+
-+	return ret;
-+}
-+
-+static enum es_result vc_insn_string_write(struct es_em_ctxt *ctxt,
-+					   void *dst, char *buf,
-+					   unsigned int data_size,
-+					   unsigned int count,
-+					   bool backwards)
-+{
-+	int i, s = backwards ? -1 : 1;
-+	enum es_result ret = ES_OK;
-+
-+	for (i = 0; i < count; i++) {
-+		void *d = dst + (i * data_size * s);
-+		char *b = buf + (i * data_size);
-+
-+		ret = vc_write_mem(ctxt, d, b, data_size);
-+		if (ret != ES_OK)
-+			break;
-+	}
-+
-+	return ret;
-+}
--- 
-2.17.1
-
+On 3/19/20 10:11 AM, Bernd Edlinger wrote:
+> The cred_guard_mutex is problematic.  The cred_guard_mutex is held
+> over the userspace accesses as the arguments from userspace are read.
+> The cred_guard_mutex is held of PTRACE_EVENT_EXIT as the the other
+> threads are killed.  The cred_guard_mutex is held over
+> "put_user(0, tsk->clear_child_tid)" in exit_mm().
+> 
+> Any of those can result in deadlock, as the cred_guard_mutex is held
+> over a possible indefinite userspace waits for userspace.
+> 
+> Add exec_update_mutex that is only held over exec updating process
+> with the new contents of exec, so that code that needs not to be
+> confused by exec changing the mm and the cred in ways that can not
+> happen during ordinary execution of a process.
+> 
+> The plan is to switch the users of cred_guard_mutex to
+> exec_udpate_mutex one by one.  This lets us move forward while still
+> being careful and not introducing any regressions.
+> 
+> Link: https://lore.kernel.org/lkml/20160921152946.GA24210@dhcp22.suse.cz/
+> Link: https://lore.kernel.org/lkml/AM6PR03MB5170B06F3A2B75EFB98D071AE4E60@AM6PR03MB5170.eurprd03.prod.outlook.com/
+> Link: https://lore.kernel.org/linux-fsdevel/20161102181806.GB1112@redhat.com/
+> Link: https://lore.kernel.org/lkml/20160923095031.GA14923@redhat.com/
+> Link: https://lore.kernel.org/lkml/20170213141452.GA30203@redhat.com/
+> Ref: 45c1a159b85b ("Add PTRACE_O_TRACEVFORKDONE and PTRACE_O_TRACEEXIT facilities.")
+> Ref: 456f17cd1a28 ("[PATCH] user-vm-unlock-2.5.31-A2")
+> Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
+> Signed-off-by: Bernd Edlinger <bernd.edlinger@hotmail.de>
+> ---
+>  fs/exec.c                    | 22 +++++++++++++++++++---
+>  include/linux/binfmts.h      |  8 +++++++-
+>  include/linux/sched/signal.h |  9 ++++++++-
+>  init/init_task.c             |  1 +
+>  kernel/fork.c                |  1 +
+>  5 files changed, 36 insertions(+), 5 deletions(-)
+> 
+> v3: this update fixes lock-order and adds an explicit data member in linux_binprm
+> v4: add a function comment to exec_mmap
+> 
+> diff --git a/fs/exec.c b/fs/exec.c
+> index d820a72..0e46ec5 100644
+> --- a/fs/exec.c
+> +++ b/fs/exec.c
+> @@ -1010,16 +1010,26 @@ ssize_t read_code(struct file *file, unsigned long addr, loff_t pos, size_t len)
+>  }
+>  EXPORT_SYMBOL(read_code);
+>  
+> +/*
+> + * Maps the mm_struct mm into the current task struct.
+> + * On success, this function returns with the mutex
+> + * exec_update_mutex locked.
+> + */
+>  static int exec_mmap(struct mm_struct *mm)
+>  {
+>  	struct task_struct *tsk;
+>  	struct mm_struct *old_mm, *active_mm;
+> +	int ret;
+>  
+>  	/* Notify parent that we're no longer interested in the old VM */
+>  	tsk = current;
+>  	old_mm = current->mm;
+>  	exec_mm_release(tsk, old_mm);
+>  
+> +	ret = mutex_lock_killable(&tsk->signal->exec_update_mutex);
+> +	if (ret)
+> +		return ret;
+> +
+>  	if (old_mm) {
+>  		sync_mm_rss(old_mm);
+>  		/*
+> @@ -1031,9 +1041,11 @@ static int exec_mmap(struct mm_struct *mm)
+>  		down_read(&old_mm->mmap_sem);
+>  		if (unlikely(old_mm->core_state)) {
+>  			up_read(&old_mm->mmap_sem);
+> +			mutex_unlock(&tsk->signal->exec_update_mutex);
+>  			return -EINTR;
+>  		}
+>  	}
+> +
+>  	task_lock(tsk);
+>  	active_mm = tsk->active_mm;
+>  	membarrier_exec_mmap(mm);
+> @@ -1288,11 +1300,12 @@ int flush_old_exec(struct linux_binprm * bprm)
+>  		goto out;
+>  
+>  	/*
+> -	 * After clearing bprm->mm (to mark that current is using the
+> -	 * prepared mm now), we have nothing left of the original
+> +	 * After setting bprm->called_exec_mmap (to mark that current is
+> +	 * using the prepared mm now), we have nothing left of the original
+>  	 * process. If anything from here on returns an error, the check
+>  	 * in search_binary_handler() will SEGV current.
+>  	 */
+> +	bprm->called_exec_mmap = 1;
+>  	bprm->mm = NULL;
+>  
+>  #ifdef CONFIG_POSIX_TIMERS
+> @@ -1438,6 +1451,8 @@ static void free_bprm(struct linux_binprm *bprm)
+>  {
+>  	free_arg_pages(bprm);
+>  	if (bprm->cred) {
+> +		if (bprm->called_exec_mmap)
+> +			mutex_unlock(&current->signal->exec_update_mutex);
+>  		mutex_unlock(&current->signal->cred_guard_mutex);
+>  		abort_creds(bprm->cred);
+>  	}
+> @@ -1487,6 +1502,7 @@ void install_exec_creds(struct linux_binprm *bprm)
+>  	 * credentials; any time after this it may be unlocked.
+>  	 */
+>  	security_bprm_committed_creds(bprm);
+> +	mutex_unlock(&current->signal->exec_update_mutex);
+>  	mutex_unlock(&current->signal->cred_guard_mutex);
+>  }
+>  EXPORT_SYMBOL(install_exec_creds);
+> @@ -1678,7 +1694,7 @@ int search_binary_handler(struct linux_binprm *bprm)
+>  
+>  		read_lock(&binfmt_lock);
+>  		put_binfmt(fmt);
+> -		if (retval < 0 && !bprm->mm) {
+> +		if (retval < 0 && bprm->called_exec_mmap) {
+>  			/* we got to flush_old_exec() and failed after it */
+>  			read_unlock(&binfmt_lock);
+>  			force_sigsegv(SIGSEGV);
+> diff --git a/include/linux/binfmts.h b/include/linux/binfmts.h
+> index b40fc63..a345d9f 100644
+> --- a/include/linux/binfmts.h
+> +++ b/include/linux/binfmts.h
+> @@ -44,7 +44,13 @@ struct linux_binprm {
+>  		 * exec has happened. Used to sanitize execution environment
+>  		 * and to set AT_SECURE auxv for glibc.
+>  		 */
+> -		secureexec:1;
+> +		secureexec:1,
+> +		/*
+> +		 * Set by flush_old_exec, when exec_mmap has been called.
+> +		 * This is past the point of no return, when the
+> +		 * exec_update_mutex has been taken.
+> +		 */
+> +		called_exec_mmap:1;
+>  #ifdef __alpha__
+>  	unsigned int taso:1;
+>  #endif
+> diff --git a/include/linux/sched/signal.h b/include/linux/sched/signal.h
+> index 8805025..a29df79 100644
+> --- a/include/linux/sched/signal.h
+> +++ b/include/linux/sched/signal.h
+> @@ -224,7 +224,14 @@ struct signal_struct {
+>  
+>  	struct mutex cred_guard_mutex;	/* guard against foreign influences on
+>  					 * credential calculations
+> -					 * (notably. ptrace) */
+> +					 * (notably. ptrace)
+> +					 * Deprecated do not use in new code.
+> +					 * Use exec_update_mutex instead.
+> +					 */
+> +	struct mutex exec_update_mutex;	/* Held while task_struct is being
+> +					 * updated during exec, and may have
+> +					 * inconsistent permissions.
+> +					 */
+>  } __randomize_layout;
+>  
+>  /*
+> diff --git a/init/init_task.c b/init/init_task.c
+> index 9e5cbe5..bd403ed 100644
+> --- a/init/init_task.c
+> +++ b/init/init_task.c
+> @@ -26,6 +26,7 @@
+>  	.multiprocess	= HLIST_HEAD_INIT,
+>  	.rlim		= INIT_RLIMITS,
+>  	.cred_guard_mutex = __MUTEX_INITIALIZER(init_signals.cred_guard_mutex),
+> +	.exec_update_mutex = __MUTEX_INITIALIZER(init_signals.exec_update_mutex),
+>  #ifdef CONFIG_POSIX_TIMERS
+>  	.posix_timers = LIST_HEAD_INIT(init_signals.posix_timers),
+>  	.cputimer	= {
+> diff --git a/kernel/fork.c b/kernel/fork.c
+> index 8642530..036b692 100644
+> --- a/kernel/fork.c
+> +++ b/kernel/fork.c
+> @@ -1594,6 +1594,7 @@ static int copy_signal(unsigned long clone_flags, struct task_struct *tsk)
+>  	sig->oom_score_adj_min = current->signal->oom_score_adj_min;
+>  
+>  	mutex_init(&sig->cred_guard_mutex);
+> +	mutex_init(&sig->exec_update_mutex);
+>  
+>  	return 0;
+>  }
+> 
