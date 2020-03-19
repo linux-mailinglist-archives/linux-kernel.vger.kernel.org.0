@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7E76B18B848
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:43:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 670FE18B843
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:43:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727706AbgCSNnB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 09:43:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38978 "EHLO mail.kernel.org"
+        id S1727573AbgCSNmz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 09:42:55 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38904 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727576AbgCSNm4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 09:42:56 -0400
+        id S1727137AbgCSNmx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 09:42:53 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 32A5E208C3;
-        Thu, 19 Mar 2020 13:42:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C7076207FC;
+        Thu, 19 Mar 2020 13:42:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584625374;
-        bh=Bz0YxYbHmWLWVD8SNeHP5gI+dLOiUyOyCCCY14UUzLc=;
+        s=default; t=1584625372;
+        bh=PsAxtC4FjGDQ24yM5CKq8AIgU9920s16YPXXRv9kz5s=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=uwx39YifvjSmtGvzCaQ3Y/x9xxsJJ/iW8dsGkqmyMjeFDxi4yAr1eCw74EpDmMSlG
-         FFnjqUz56gCBZxfCd28yeP4e1wm8TiBVGnzN4aLLT58D9gL6Sa2hzc2lBeGAxoq4he
-         MM5LgUmBxayvrd9RfXnDqpZLw9xtf1JKCk49+M9M=
+        b=JWTGHnycHKW88RlF4s8BXWKQnYQdLOK7gfw22km2/V/SlW5+58TUyB1xjDImWZVM8
+         J8e84Tou4YvMN3dNzB+1DUdf3kwILzsOmuku0Fr/OhhyIMSwD3b4Vn4FrWBmVahqMe
+         YKiO660RteN38czxC5PQ3VVRJwW3glm1lhV4qWOE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -36,12 +36,12 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <sashal@kernel.org>,
         Feng Tang <feng.tang@intel.com>
-Subject: [PATCH 4.19 18/48] signal: avoid double atomic counter increments for user accounting
-Date:   Thu, 19 Mar 2020 14:04:00 +0100
-Message-Id: <20200319123908.898223901@linuxfoundation.org>
+Subject: [PATCH 4.14 91/99] signal: avoid double atomic counter increments for user accounting
+Date:   Thu, 19 Mar 2020 14:04:09 +0100
+Message-Id: <20200319124006.961377061@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.2
-In-Reply-To: <20200319123902.941451241@linuxfoundation.org>
-References: <20200319123902.941451241@linuxfoundation.org>
+In-Reply-To: <20200319123941.630731708@linuxfoundation.org>
+References: <20200319123941.630731708@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -114,10 +114,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 14 insertions(+), 9 deletions(-)
 
 diff --git a/kernel/signal.c b/kernel/signal.c
-index 08911bb6fe9ab..c42eaf39b5729 100644
+index 8fee1f2eba2f9..c066168f88541 100644
 --- a/kernel/signal.c
 +++ b/kernel/signal.c
-@@ -407,27 +407,32 @@ __sigqueue_alloc(int sig, struct task_struct *t, gfp_t flags, int override_rlimi
+@@ -379,27 +379,32 @@ __sigqueue_alloc(int sig, struct task_struct *t, gfp_t flags, int override_rlimi
  {
  	struct sigqueue *q = NULL;
  	struct user_struct *user;
@@ -157,7 +157,7 @@ index 08911bb6fe9ab..c42eaf39b5729 100644
  	} else {
  		INIT_LIST_HEAD(&q->list);
  		q->flags = 0;
-@@ -441,8 +446,8 @@ static void __sigqueue_free(struct sigqueue *q)
+@@ -413,8 +418,8 @@ static void __sigqueue_free(struct sigqueue *q)
  {
  	if (q->flags & SIGQUEUE_PREALLOC)
  		return;
