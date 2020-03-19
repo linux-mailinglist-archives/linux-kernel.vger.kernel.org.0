@@ -2,72 +2,198 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C50FF18B05C
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 10:36:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AB59C18B061
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 10:39:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726955AbgCSJgr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 05:36:47 -0400
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:42537 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726802AbgCSJgq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 05:36:46 -0400
-Received: by mail-qt1-f196.google.com with SMTP id g16so1176258qtp.9
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Mar 2020 02:36:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=XXiibj26cwiCy87WU+u2jxQnAx+tvjXXNcEInMJCZoA=;
-        b=OfYbY1e3vgRblH9C7xpvz7qay953QwrzYGoIeAV5tqgyLQ34vh3GJ1HEGvB7aMIqQD
-         XHK/QeFnrjTNVbnmt0cG0VGldiZ1pQX+oH+U9y/EiYmL9GVOZ1w1X1lHhQyQDKHNLmL4
-         wYI61ay8K/XYVEM/UDq2ax/eb2l82mQqS1uyK3IbBgbIB1q5hj7xrugU1xVDUZUrWKcb
-         QF3kBMG6X+SSAoDu5uGfjVRFC2PnNuw+p0uNjolBlmBEmCdChLm+P2AECkxi1mBtrc95
-         Sli/poTowwH9D2AULMz+CHGtm3ewQSgVrv+VbbWRMfy/47T9hqcqayoBVpKMIHLQHY8v
-         m8zQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=XXiibj26cwiCy87WU+u2jxQnAx+tvjXXNcEInMJCZoA=;
-        b=hqf7Vc3MmMxiSGMhvznsZTzkzdrPmiTwFhOL5Qv3sQIoq3gE2yS5d+7qO2x8+FbuxG
-         Cf1LjrzTLPta0+WMegSRUAg3qmhkWo3p1O9Kx09XC2FU78BI5XWU4fH7yeqaYtnDY55R
-         u6m9sZkvCbsdoYx5JZ9TnE2RYp4EZe5KwvS+PP7L5/rS/ITGYZuBTIbPDdB89PiVoaEj
-         5j8XRrnRBzEg4YXb1VV400KUaCKMs2cAQRz8MbmDWvHNj++ReM1tSUb86RfATo4kQbpI
-         5cJi2+21cUwhkh5tvk+O43l2b5z3d/0hp8wyYJJS2l8HnIHm666FYITv7MuOwMmqYd6N
-         guFQ==
-X-Gm-Message-State: ANhLgQ2YV+rdHlx+4Yr20wRaJH0viDGQykqIj3QCzjsE2dVATo6hD29A
-        ecK/mM+kx3KUQTIBOo3JiUo2+jhrDCr3Ur6s2Qc=
-X-Google-Smtp-Source: ADFU+vuuxtB31n0jY42YS1VBvIRwbD+G1WYtMio4yMaZ1xA2Oz4S9+hlMrGoEV7sxLAcVsBdgDWsSKBM/l40tP/MTjU=
-X-Received: by 2002:aed:3c42:: with SMTP id u2mr761698qte.162.1584610605601;
- Thu, 19 Mar 2020 02:36:45 -0700 (PDT)
+        id S1726947AbgCSJjF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 05:39:05 -0400
+Received: from honk.sigxcpu.org ([24.134.29.49]:59276 "EHLO honk.sigxcpu.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725887AbgCSJjE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 05:39:04 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by honk.sigxcpu.org (Postfix) with ESMTP id 5D042FB03;
+        Thu, 19 Mar 2020 10:39:01 +0100 (CET)
+X-Virus-Scanned: Debian amavisd-new at honk.sigxcpu.org
+Received: from honk.sigxcpu.org ([127.0.0.1])
+        by localhost (honk.sigxcpu.org [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id 1Xzj51gxscCV; Thu, 19 Mar 2020 10:38:59 +0100 (CET)
+Received: by bogon.sigxcpu.org (Postfix, from userid 1000)
+        id 3A2A8412BE; Thu, 19 Mar 2020 10:38:59 +0100 (CET)
+Date:   Thu, 19 Mar 2020 10:38:59 +0100
+From:   Guido =?iso-8859-1?Q?G=FCnther?= <agx@sigxcpu.org>
+To:     Sam Ravnborg <sam@ravnborg.org>
+Cc:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Jonas Karlman <jonas@kwiboo.se>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        Lee Jones <lee.jones@linaro.org>,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Robert Chiras <robert.chiras@nxp.com>,
+        Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH v9 2/2] drm/bridge: Add NWL MIPI DSI host controller
+ support
+Message-ID: <20200319093859.GA50655@bogon.m.sigxcpu.org>
+References: <cover.1584544065.git.agx@sigxcpu.org>
+ <6f2e65df672a0fe832af29f4ea89fbe7250c3a07.1584544065.git.agx@sigxcpu.org>
+ <20200318214639.GA971@ravnborg.org>
 MIME-Version: 1.0
-Received: by 2002:a37:9bce:0:0:0:0:0 with HTTP; Thu, 19 Mar 2020 02:36:45
- -0700 (PDT)
-Reply-To: idrisomar259@gmail.com
-From:   Idris Omar <dalamimusa77@gmail.com>
-Date:   Thu, 19 Mar 2020 02:36:45 -0700
-Message-ID: <CAB5zUX-BZhz++dn9oCJuTcZ0rTLpDVtpPuNCDNzG291sqkaAuw@mail.gmail.com>
-Subject: Hello,
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200318214639.GA971@ravnborg.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
--- 
-Sir / Madam,
+Hi Sam,
 
-Hi Friend I am the accountant and auditing manager of the
-International Finance Bank Plc bf I want to transfer an abandoned sum
-of 10.5 millions USD  to your account.50% will be for you. No risk
-involved.
+On Wed, Mar 18, 2020 at 10:46:39PM +0100, Sam Ravnborg wrote:
+> Hi Guido.
+> 
+> Impressive and very detailed changelog in intro mail - nice.
+> 
+> On Wed, Mar 18, 2020 at 04:09:08PM +0100, Guido Günther wrote:
+> > This adds initial support for the NWL MIPI DSI Host controller found on
+> > i.MX8 SoCs.
+> > 
+> > It adds support for the i.MX8MQ but the same IP can be found on
+> > e.g. the i.MX8QXP.
+> > 
+> > It has been tested on the Librem 5 devkit using mxsfb.
+> > 
+> > Signed-off-by: Guido Günther <agx@sigxcpu.org>
+> > Co-developed-by: Robert Chiras <robert.chiras@nxp.com>
+> > Signed-off-by: Robert Chiras <robert.chiras@nxp.com>
+> > Tested-by: Robert Chiras <robert.chiras@nxp.com>
+> > Tested-by: Martin Kepplinger <martin.kepplinger@puri.sm>
+> > ---
+> >  drivers/gpu/drm/bridge/Kconfig   |   16 +
+> >  drivers/gpu/drm/bridge/Makefile  |    3 +
+> >  drivers/gpu/drm/bridge/nwl-dsi.c | 1213 ++++++++++++++++++++++++++++++
+> >  drivers/gpu/drm/bridge/nwl-dsi.h |  144 ++++
+> >  4 files changed, 1376 insertions(+)
+> >  create mode 100644 drivers/gpu/drm/bridge/nwl-dsi.c
+> >  create mode 100644 drivers/gpu/drm/bridge/nwl-dsi.h
+> > 
+> > diff --git a/drivers/gpu/drm/bridge/Kconfig b/drivers/gpu/drm/bridge/Kconfig
+> > index 8397bf72d2f3..d41d93d24f16 100644
+> > --- a/drivers/gpu/drm/bridge/Kconfig
+> > +++ b/drivers/gpu/drm/bridge/Kconfig
+> > @@ -55,6 +55,22 @@ config DRM_MEGACHIPS_STDPXXXX_GE_B850V3_FW
+> >  	  to DP++. This is used with the i.MX6 imx-ldb
+> >  	  driver. You are likely to say N here.
+> >  
+> > +config DRM_NWL_MIPI_DSI
+> > +	tristate "Northwest Logic MIPI DSI Host controller"
+> > +	depends on DRM
+> > +	depends on COMMON_CLK
+> > +	depends on OF && HAS_IOMEM
+> > +	select DRM_KMS_HELPER
+> > +	select DRM_MIPI_DSI
+> > +	select DRM_PANEL_BRIDGE
+> > +	select GENERIC_PHY_MIPI_DPHY
+> > +	select MFD_SYSCON
+> > +	select MULTIPLEXER
+> > +	select REGMAP_MMIO
+> > +	help
+> > +	  This enables the Northwest Logic MIPI DSI Host controller as
+> > +	  for example found on NXP's i.MX8 Processors.
+> > +
+> >  config DRM_NXP_PTN3460
+> >  	tristate "NXP PTN3460 DP/LVDS bridge"
+> >  	depends on OF
+> > diff --git a/drivers/gpu/drm/bridge/Makefile b/drivers/gpu/drm/bridge/Makefile
+> > index 1eb5376c5d68..98581b3128a3 100644
+> > --- a/drivers/gpu/drm/bridge/Makefile
+> > +++ b/drivers/gpu/drm/bridge/Makefile
+> > @@ -15,6 +15,9 @@ obj-$(CONFIG_DRM_TOSHIBA_TC358767) += tc358767.o
+> >  obj-$(CONFIG_DRM_I2C_ADV7511) += adv7511/
+> >  obj-$(CONFIG_DRM_TI_SN65DSI86) += ti-sn65dsi86.o
+> >  obj-$(CONFIG_DRM_TI_TFP410) += ti-tfp410.o
+> > +obj-$(CONFIG_DRM_NWL_MIPI_DSI) += nwl-dsi.o
+> >  
+> >  obj-y += analogix/
+> >  obj-y += synopsys/
+> > +
+> > +header-test-y += nwl-dsi.h
+> Sorry - but header-test-y support was ripped out of the kernel again.
+> So this line has no longer any effect.
 
-Contact me for more details.
+Missed that removal, dropped.
 
-Kindly reply me back to my alternative email address (
-idrisomar259@gmail.com  )
+> > +
+> > +static void nwl_dsi_bridge_enable(struct drm_bridge *bridge)
+> > +{
+> > +	struct nwl_dsi *dsi = bridge_to_dsi(bridge);
+> > +	int ret;
+> > +
+> > +	/* Step 5 from DSI reset-out instructions */
+> > +	ret = reset_control_deassert(dsi->rst_dpi);
+> > +	if (ret < 0)
+> > +		DRM_DEV_ERROR(dsi->dev, "Failed to deassert DPI: %d\n", ret);
+> I picked this for a general comment.
+> 
+>     We have drm_err(drm, "...", ...) which is preferred over DRM_XXX
+>     They require a drm_device * that may not be available everywhere.
+> 
+> IMO not a showstopper, but should be trivial to fix (if adrm_device * is
+> a avaiable).
 
-Thanks,
+We don't do a drm_dev_alloc so no drm device here afaik tell.
 
-Mr Idris Omar
+> 
+> > +}
+> > +
+> > +static int nwl_dsi_bridge_attach(struct drm_bridge *bridge)
+> > +{
+> > +	struct nwl_dsi *dsi = bridge_to_dsi(bridge);
+> > +	struct drm_bridge *panel_bridge;
+> > +	struct drm_panel *panel;
+> > +	int ret;
+> 
+> This function now takes a flags argument.
+> In other words - the driver will not build when applied
+> to drm-misc-next.
+
+Fixed by rebasing on next-20200317. I'll send a new version after
+letting this sit for a moment. It'd be so cool to get this queued up so
+we get a working display stack on the imx8mq.
+
+Cheers,
+ -- Guido
+
+> 
+> > +
+> > +	ret = drm_of_find_panel_or_bridge(dsi->dev->of_node, 1, 0, &panel,
+> > +					  &panel_bridge);
+> > +	if (ret)
+> > +		return ret;
+> > +
+> > +	if (panel) {
+> > +		panel_bridge = drm_panel_bridge_add(panel);
+> > +		if (IS_ERR(panel_bridge))
+> > +			return PTR_ERR(panel_bridge);
+> > +	}
+> > +	dsi->panel_bridge = panel_bridge;
+> > +
+> > +	if (!dsi->panel_bridge)
+> > +		return -EPROBE_DEFER;
+> > +
+> > +	return drm_bridge_attach(bridge->encoder, dsi->panel_bridge, bridge);
+> > +}
+> 
+> 	Sam
+> 
