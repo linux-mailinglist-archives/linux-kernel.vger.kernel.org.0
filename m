@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CC95218B462
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:09:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1BD2218B4D7
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:13:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728319AbgCSNJW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 09:09:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53766 "EHLO mail.kernel.org"
+        id S1729094AbgCSNNK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 09:13:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59824 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728301AbgCSNJU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 09:09:20 -0400
+        id S1729074AbgCSNNE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 09:13:04 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C16F520722;
-        Thu, 19 Mar 2020 13:09:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4A66021556;
+        Thu, 19 Mar 2020 13:13:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584623360;
-        bh=7XS8OHBApcyUM7SsocyIfhCZel6pYeXzBAVonk65o3c=;
+        s=default; t=1584623583;
+        bh=CeS4ZfFNTDnHjmaCoZDg4O8W798qKPZe6yPihomZS+k=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ADHoD+/kxiDQcWpY99KxKNmftimW6ttiR2A8pnLrun/rnGi1LbAP7AltP/M5eCPVW
-         834mZeAdVOCtLKXqqCx/2ydDlxsO+R2V9x+P+lkntU7VWATdWGtN76S1ZE6UA2W6sj
-         kYavXkll9fQHFJVXMWQTWHzeQ10Fq1aQxQe8htiU=
+        b=MPatmkjJavrDQZDcZADlac1MWEIi17kyqkJ5p/OIlHoS0tVV6+QkSep8tz9pzUhKX
+         1kADT7lY8ScFVgcBCzoxxZx0V+9RnbMpIXv3VuWgsw7q007Dqye0fNC+To5cUT7sY1
+         JBG+Nz+4BS3C0gV4Q2JTJMP/gKsTmNcasW+HiOlA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Sven Eckelmann <sven@narfation.org>,
-        Marek Lindner <mareklindner@neomailbox.ch>,
+        Sven Eckelmann <sven.eckelmann@open-mesh.com>,
         Simon Wunderlich <sw@simonwunderlich.de>
-Subject: [PATCH 4.4 77/93] batman-adv: Prevent duplicated nc_node entry
+Subject: [PATCH 4.9 59/90] batman-adv: Always initialize fragment header priority
 Date:   Thu, 19 Mar 2020 14:00:21 +0100
-Message-Id: <20200319123949.150591940@linuxfoundation.org>
+Message-Id: <20200319123946.794943115@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.2
-In-Reply-To: <20200319123924.795019515@linuxfoundation.org>
-References: <20200319123924.795019515@linuxfoundation.org>
+In-Reply-To: <20200319123928.635114118@linuxfoundation.org>
+References: <20200319123928.635114118@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,96 +43,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sven Eckelmann <sven@narfation.org>
+From: Sven Eckelmann <sven.eckelmann@open-mesh.com>
 
-commit fa122fec8640eb7186ce5a41b83a4c1744ceef8f upstream.
+commit fe77d8257c4d838c5976557ddb87bd789f312412 upstream.
 
-The function batadv_nc_get_nc_node is responsible for adding new nc_nodes
-to the in_coding_list and out_coding_list. It first checks whether the
-entry already is in the list or not. If it is, then the creation of a new
-entry is aborted.
+The batman-adv unuicast fragment header contains 3 bits for the priority of
+the packet. These bits will be initialized when the skb->priority contains
+a value between 256 and 263. But otherwise, the uninitialized bits from the
+stack will be used.
 
-But the lock for the list is only held when the list is really modified.
-This could lead to duplicated entries because another context could create
-an entry with the same key between the check and the list manipulation.
-
-The check and the manipulation of the list must therefore be in the same
-locked code section.
-
-Fixes: d56b1705e28c ("batman-adv: network coding - detect coding nodes and remove these after timeout")
-Signed-off-by: Sven Eckelmann <sven@narfation.org>
-Acked-by: Marek Lindner <mareklindner@neomailbox.ch>
+Fixes: c0f25c802b33 ("batman-adv: Include frame priority in fragment header")
+Signed-off-by: Sven Eckelmann <sven.eckelmann@open-mesh.com>
 Signed-off-by: Simon Wunderlich <sw@simonwunderlich.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/batman-adv/network-coding.c |   33 +++++++++++++++------------------
- 1 file changed, 15 insertions(+), 18 deletions(-)
+ net/batman-adv/fragmentation.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/net/batman-adv/network-coding.c
-+++ b/net/batman-adv/network-coding.c
-@@ -828,19 +828,29 @@ static struct batadv_nc_node
- 	spinlock_t *lock; /* Used to lock list selected by "int in_coding" */
- 	struct list_head *list;
+--- a/net/batman-adv/fragmentation.c
++++ b/net/batman-adv/fragmentation.c
+@@ -484,6 +484,8 @@ int batadv_frag_send_packet(struct sk_bu
+ 	 */
+ 	if (skb->priority >= 256 && skb->priority <= 263)
+ 		frag_header.priority = skb->priority - 256;
++	else
++		frag_header.priority = 0;
  
-+	/* Select ingoing or outgoing coding node */
-+	if (in_coding) {
-+		lock = &orig_neigh_node->in_coding_list_lock;
-+		list = &orig_neigh_node->in_coding_list;
-+	} else {
-+		lock = &orig_neigh_node->out_coding_list_lock;
-+		list = &orig_neigh_node->out_coding_list;
-+	}
-+
-+	spin_lock_bh(lock);
-+
- 	/* Check if nc_node is already added */
- 	nc_node = batadv_nc_find_nc_node(orig_node, orig_neigh_node, in_coding);
- 
- 	/* Node found */
- 	if (nc_node)
--		return nc_node;
-+		goto unlock;
- 
- 	nc_node = kzalloc(sizeof(*nc_node), GFP_ATOMIC);
- 	if (!nc_node)
--		return NULL;
-+		goto unlock;
- 
--	if (!atomic_inc_not_zero(&orig_neigh_node->refcount))
--		goto free;
-+	atomic_inc(&orig_neigh_node->refcount);
- 
- 	/* Initialize nc_node */
- 	INIT_LIST_HEAD(&nc_node->list);
-@@ -848,28 +858,15 @@ static struct batadv_nc_node
- 	nc_node->orig_node = orig_neigh_node;
- 	atomic_set(&nc_node->refcount, 2);
- 
--	/* Select ingoing or outgoing coding node */
--	if (in_coding) {
--		lock = &orig_neigh_node->in_coding_list_lock;
--		list = &orig_neigh_node->in_coding_list;
--	} else {
--		lock = &orig_neigh_node->out_coding_list_lock;
--		list = &orig_neigh_node->out_coding_list;
--	}
--
- 	batadv_dbg(BATADV_DBG_NC, bat_priv, "Adding nc_node %pM -> %pM\n",
- 		   nc_node->addr, nc_node->orig_node->orig);
- 
- 	/* Add nc_node to orig_node */
--	spin_lock_bh(lock);
- 	list_add_tail_rcu(&nc_node->list, list);
-+unlock:
- 	spin_unlock_bh(lock);
- 
- 	return nc_node;
--
--free:
--	kfree(nc_node);
--	return NULL;
- }
- 
- /**
+ 	ether_addr_copy(frag_header.orig, primary_if->net_dev->dev_addr);
+ 	ether_addr_copy(frag_header.dest, orig_node->orig);
 
 
