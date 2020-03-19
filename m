@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CFE1318B74E
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:32:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9FCB218B759
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:33:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729003AbgCSNPe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 09:15:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35292 "EHLO mail.kernel.org"
+        id S1727857AbgCSNcl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 09:32:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35410 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729402AbgCSNP1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 09:15:27 -0400
+        id S1728044AbgCSNPc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 09:15:32 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2ABAD20787;
-        Thu, 19 Mar 2020 13:15:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2A9E7216FD;
+        Thu, 19 Mar 2020 13:15:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584623726;
-        bh=9xBXI2zA3y1pn93vgSUUtgTS2XXTyTJNZqWiOC1ufwo=;
+        s=default; t=1584623731;
+        bh=/PVuNNLgYs1qw4JU9G+C5t9quBCZtWSKhTfKLZK6Fv8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=P4xp1pMuF6SO3cl1l7PJ4AdRmAACLLSNZnq1kr3NO7qfCMBrixjZ8ylKo6zuybXgj
-         aUvJS8N+q9ItA9kQwtuqK5+rXV5MVuNdvPbEgME6HMejctu5SbHjxWjbboFf5o3xCU
-         0Rvb/4o9yTm2JkE4pGCqsZk+5nx+CCLV0Zoyyb04=
+        b=2GTBruv9EPQVkwkSRy+sSrlGSiXgWL/BR8lL3CqsBve+4OBqj7Nr+TosO6IpWdiFx
+         l3ditDKvoY4hb7z9lCrmR+o+roAYDtXB/wHoOjNxi+PZVvVnDv8loJId2jEJXkp3tF
+         QBeARD96ddqTbk7OrOMsqvhKU/x17HN1SxjgKVQA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jakub Kicinski <kuba@kernel.org>,
-        Fugang Duan <fugang.duan@nxp.com>,
+        stable@vger.kernel.org, Dmitry Yakunin <zeil@yandex-team.ru>,
+        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 31/99] net: fec: validate the new settings in fec_enet_set_coalesce()
-Date:   Thu, 19 Mar 2020 14:03:09 +0100
-Message-Id: <20200319123951.159284234@linuxfoundation.org>
+Subject: [PATCH 4.14 33/99] inet_diag: return classid for all socket types
+Date:   Thu, 19 Mar 2020 14:03:11 +0100
+Message-Id: <20200319123951.832232691@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.2
 In-Reply-To: <20200319123941.630731708@linuxfoundation.org>
 References: <20200319123941.630731708@linuxfoundation.org>
@@ -44,46 +44,184 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jakub Kicinski <kuba@kernel.org>
+From: Dmitry Yakunin <zeil@yandex-team.ru>
 
-[ Upstream commit ab14961d10d02d20767612c78ce148f6eb85bd58 ]
+[ Upstream commit 83f73c5bb7b9a9135173f0ba2b1aa00c06664ff9 ]
 
-fec_enet_set_coalesce() validates the previously set params
-and if they are within range proceeds to apply the new ones.
-The new ones, however, are not validated. This seems backwards,
-probably a copy-paste error?
+In commit 1ec17dbd90f8 ("inet_diag: fix reporting cgroup classid and
+fallback to priority") croup classid reporting was fixed. But this works
+only for TCP sockets because for other socket types icsk parameter can
+be NULL and classid code path is skipped. This change moves classid
+handling to inet_diag_msg_attrs_fill() function.
 
-Compile tested only.
+Also inet_diag_msg_attrs_size() helper was added and addends in
+nlmsg_new() were reordered to save order from inet_sk_diag_fill().
 
-Fixes: d851b47b22fc ("net: fec: add interrupt coalescence feature support")
-Signed-off-by: Jakub Kicinski <kuba@kernel.org>
-Acked-by: Fugang Duan <fugang.duan@nxp.com>
+Fixes: 1ec17dbd90f8 ("inet_diag: fix reporting cgroup classid and fallback to priority")
+Signed-off-by: Dmitry Yakunin <zeil@yandex-team.ru>
+Reviewed-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/freescale/fec_main.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ include/linux/inet_diag.h |   18 ++++++++++++------
+ net/ipv4/inet_diag.c      |   44 ++++++++++++++++++++------------------------
+ net/ipv4/raw_diag.c       |    5 +++--
+ net/ipv4/udp_diag.c       |    5 +++--
+ net/sctp/sctp_diag.c      |    8 ++------
+ 5 files changed, 40 insertions(+), 40 deletions(-)
 
---- a/drivers/net/ethernet/freescale/fec_main.c
-+++ b/drivers/net/ethernet/freescale/fec_main.c
-@@ -2478,15 +2478,15 @@ fec_enet_set_coalesce(struct net_device
- 		return -EINVAL;
+--- a/include/linux/inet_diag.h
++++ b/include/linux/inet_diag.h
+@@ -2,15 +2,10 @@
+ #ifndef _INET_DIAG_H_
+ #define _INET_DIAG_H_ 1
+ 
++#include <net/netlink.h>
+ #include <uapi/linux/inet_diag.h>
+ 
+-struct net;
+-struct sock;
+ struct inet_hashinfo;
+-struct nlattr;
+-struct nlmsghdr;
+-struct sk_buff;
+-struct netlink_callback;
+ 
+ struct inet_diag_handler {
+ 	void		(*dump)(struct sk_buff *skb,
+@@ -62,6 +57,17 @@ int inet_diag_bc_sk(const struct nlattr
+ 
+ void inet_diag_msg_common_fill(struct inet_diag_msg *r, struct sock *sk);
+ 
++static inline size_t inet_diag_msg_attrs_size(void)
++{
++	return	  nla_total_size(1)  /* INET_DIAG_SHUTDOWN */
++		+ nla_total_size(1)  /* INET_DIAG_TOS */
++#if IS_ENABLED(CONFIG_IPV6)
++		+ nla_total_size(1)  /* INET_DIAG_TCLASS */
++		+ nla_total_size(1)  /* INET_DIAG_SKV6ONLY */
++#endif
++		+ nla_total_size(4)  /* INET_DIAG_MARK */
++		+ nla_total_size(4); /* INET_DIAG_CLASS_ID */
++}
+ int inet_diag_msg_attrs_fill(struct sock *sk, struct sk_buff *skb,
+ 			     struct inet_diag_msg *r, int ext,
+ 			     struct user_namespace *user_ns, bool net_admin);
+--- a/net/ipv4/inet_diag.c
++++ b/net/ipv4/inet_diag.c
+@@ -105,13 +105,9 @@ static size_t inet_sk_attr_size(struct s
+ 		aux = handler->idiag_get_aux_size(sk, net_admin);
+ 
+ 	return	  nla_total_size(sizeof(struct tcp_info))
+-		+ nla_total_size(1) /* INET_DIAG_SHUTDOWN */
+-		+ nla_total_size(1) /* INET_DIAG_TOS */
+-		+ nla_total_size(1) /* INET_DIAG_TCLASS */
+-		+ nla_total_size(4) /* INET_DIAG_MARK */
+-		+ nla_total_size(4) /* INET_DIAG_CLASS_ID */
+-		+ nla_total_size(sizeof(struct inet_diag_meminfo))
+ 		+ nla_total_size(sizeof(struct inet_diag_msg))
++		+ inet_diag_msg_attrs_size()
++		+ nla_total_size(sizeof(struct inet_diag_meminfo))
+ 		+ nla_total_size(SK_MEMINFO_VARS * sizeof(u32))
+ 		+ nla_total_size(TCP_CA_NAME_MAX)
+ 		+ nla_total_size(sizeof(struct tcpvegas_info))
+@@ -152,6 +148,24 @@ int inet_diag_msg_attrs_fill(struct sock
+ 	if (net_admin && nla_put_u32(skb, INET_DIAG_MARK, sk->sk_mark))
+ 		goto errout;
+ 
++	if (ext & (1 << (INET_DIAG_CLASS_ID - 1)) ||
++	    ext & (1 << (INET_DIAG_TCLASS - 1))) {
++		u32 classid = 0;
++
++#ifdef CONFIG_SOCK_CGROUP_DATA
++		classid = sock_cgroup_classid(&sk->sk_cgrp_data);
++#endif
++		/* Fallback to socket priority if class id isn't set.
++		 * Classful qdiscs use it as direct reference to class.
++		 * For cgroup2 classid is always zero.
++		 */
++		if (!classid)
++			classid = sk->sk_priority;
++
++		if (nla_put_u32(skb, INET_DIAG_CLASS_ID, classid))
++			goto errout;
++	}
++
+ 	r->idiag_uid = from_kuid_munged(user_ns, sock_i_uid(sk));
+ 	r->idiag_inode = sock_i_ino(sk);
+ 
+@@ -289,24 +303,6 @@ int inet_sk_diag_fill(struct sock *sk, s
+ 			goto errout;
  	}
  
--	cycle = fec_enet_us_to_itr_clock(ndev, fep->rx_time_itr);
-+	cycle = fec_enet_us_to_itr_clock(ndev, ec->rx_coalesce_usecs);
- 	if (cycle > 0xFFFF) {
- 		pr_err("Rx coalesced usec exceed hardware limitation\n");
- 		return -EINVAL;
- 	}
+-	if (ext & (1 << (INET_DIAG_CLASS_ID - 1)) ||
+-	    ext & (1 << (INET_DIAG_TCLASS - 1))) {
+-		u32 classid = 0;
+-
+-#ifdef CONFIG_SOCK_CGROUP_DATA
+-		classid = sock_cgroup_classid(&sk->sk_cgrp_data);
+-#endif
+-		/* Fallback to socket priority if class id isn't set.
+-		 * Classful qdiscs use it as direct reference to class.
+-		 * For cgroup2 classid is always zero.
+-		 */
+-		if (!classid)
+-			classid = sk->sk_priority;
+-
+-		if (nla_put_u32(skb, INET_DIAG_CLASS_ID, classid))
+-			goto errout;
+-	}
+-
+ out:
+ 	nlmsg_end(skb, nlh);
+ 	return 0;
+--- a/net/ipv4/raw_diag.c
++++ b/net/ipv4/raw_diag.c
+@@ -99,8 +99,9 @@ static int raw_diag_dump_one(struct sk_b
+ 	if (IS_ERR(sk))
+ 		return PTR_ERR(sk);
  
--	cycle = fec_enet_us_to_itr_clock(ndev, fep->tx_time_itr);
-+	cycle = fec_enet_us_to_itr_clock(ndev, ec->tx_coalesce_usecs);
- 	if (cycle > 0xFFFF) {
--		pr_err("Rx coalesced usec exceed hardware limitation\n");
-+		pr_err("Tx coalesced usec exceed hardware limitation\n");
- 		return -EINVAL;
- 	}
+-	rep = nlmsg_new(sizeof(struct inet_diag_msg) +
+-			sizeof(struct inet_diag_meminfo) + 64,
++	rep = nlmsg_new(nla_total_size(sizeof(struct inet_diag_msg)) +
++			inet_diag_msg_attrs_size() +
++			nla_total_size(sizeof(struct inet_diag_meminfo)) + 64,
+ 			GFP_KERNEL);
+ 	if (!rep) {
+ 		sock_put(sk);
+--- a/net/ipv4/udp_diag.c
++++ b/net/ipv4/udp_diag.c
+@@ -67,8 +67,9 @@ static int udp_dump_one(struct udp_table
+ 		goto out;
+ 
+ 	err = -ENOMEM;
+-	rep = nlmsg_new(sizeof(struct inet_diag_msg) +
+-			sizeof(struct inet_diag_meminfo) + 64,
++	rep = nlmsg_new(nla_total_size(sizeof(struct inet_diag_msg)) +
++			inet_diag_msg_attrs_size() +
++			nla_total_size(sizeof(struct inet_diag_meminfo)) + 64,
+ 			GFP_KERNEL);
+ 	if (!rep)
+ 		goto out;
+--- a/net/sctp/sctp_diag.c
++++ b/net/sctp/sctp_diag.c
+@@ -221,15 +221,11 @@ static size_t inet_assoc_attr_size(struc
+ 		addrcnt++;
+ 
+ 	return	  nla_total_size(sizeof(struct sctp_info))
+-		+ nla_total_size(1) /* INET_DIAG_SHUTDOWN */
+-		+ nla_total_size(1) /* INET_DIAG_TOS */
+-		+ nla_total_size(1) /* INET_DIAG_TCLASS */
+-		+ nla_total_size(4) /* INET_DIAG_MARK */
+-		+ nla_total_size(4) /* INET_DIAG_CLASS_ID */
+ 		+ nla_total_size(addrlen * asoc->peer.transport_count)
+ 		+ nla_total_size(addrlen * addrcnt)
+-		+ nla_total_size(sizeof(struct inet_diag_meminfo))
+ 		+ nla_total_size(sizeof(struct inet_diag_msg))
++		+ inet_diag_msg_attrs_size()
++		+ nla_total_size(sizeof(struct inet_diag_meminfo))
+ 		+ 64;
+ }
  
 
 
