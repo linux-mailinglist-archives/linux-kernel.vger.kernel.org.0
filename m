@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C495818B63E
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:25:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E9EB418B583
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:19:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730591AbgCSNZK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 09:25:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52534 "EHLO mail.kernel.org"
+        id S1729859AbgCSNTS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 09:19:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42290 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727753AbgCSNZI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 09:25:08 -0400
+        id S1729851AbgCSNTO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 09:19:14 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D5BEF20658;
-        Thu, 19 Mar 2020 13:25:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B81FD206D7;
+        Thu, 19 Mar 2020 13:19:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584624308;
-        bh=ZHAhe/4h00CCFGKKhXzAdAKElGT6O9nuHzOIyMEOVBA=;
+        s=default; t=1584623954;
+        bh=iwSf164ZWuYorTV8H+dpSCOMv0N/SJ224TWmg2A97cM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=J8jxzvI5eOwExyEuMKjzjglSc2qQov2wUCm2vMb8H66uawfLwvIwAkb53T01NdW9n
-         nUTH6JMZxshtAENXJ8/wR98Al3gQZK1Of/A/NRulgbiV72hbwdtUL/XaF2q7V4QqJz
-         SeE5WclFevW1lHhuYCHGlD+BS/HWEFhUuFiNOH+8=
+        b=jVYXIuk6oXaCmVnf07QqOCl3W27oUh2GMwJmzA5rgVTBkhL8ha+QWNCAj8WT3q/Cl
+         hNcQq0tIsZium+QxRvCUolFydzaDOypGgS7Wjcl3UeRSV0So5Ct0NWO1r3y80qnWec
+         pZ/o5iHUV0PrTNZWdkZ7YX109zC+jn3uUwUlZXMo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -30,12 +30,12 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Mika Westerberg <mika.westerberg@linux.intel.com>,
         "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.5 09/65] ACPI: watchdog: Allow disabling WDAT at boot
-Date:   Thu, 19 Mar 2020 14:03:51 +0100
-Message-Id: <20200319123929.175648228@linuxfoundation.org>
+Subject: [PATCH 4.19 10/48] ACPI: watchdog: Allow disabling WDAT at boot
+Date:   Thu, 19 Mar 2020 14:03:52 +0100
+Message-Id: <20200319123906.381733092@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.2
-In-Reply-To: <20200319123926.466988514@linuxfoundation.org>
-References: <20200319123926.466988514@linuxfoundation.org>
+In-Reply-To: <20200319123902.941451241@linuxfoundation.org>
+References: <20200319123902.941451241@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -62,7 +62,7 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  2 files changed, 15 insertions(+), 1 deletion(-)
 
 diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index ade4e6ec23e03..727a03fb26c99 100644
+index 8bf0c0532046f..1a5101b7e853c 100644
 --- a/Documentation/admin-guide/kernel-parameters.txt
 +++ b/Documentation/admin-guide/kernel-parameters.txt
 @@ -136,6 +136,10 @@
@@ -77,10 +77,10 @@ index ade4e6ec23e03..727a03fb26c99 100644
  			Pass the RSDP address to the kernel, mostly used
  			on machines running EFI runtime service to boot the
 diff --git a/drivers/acpi/acpi_watchdog.c b/drivers/acpi/acpi_watchdog.c
-index d827a4a3e9460..6e9ec6e3fe47d 100644
+index 23cde3d8e8fbb..0bd1899a287f3 100644
 --- a/drivers/acpi/acpi_watchdog.c
 +++ b/drivers/acpi/acpi_watchdog.c
-@@ -55,12 +55,14 @@ static bool acpi_watchdog_uses_rtc(const struct acpi_table_wdat *wdat)
+@@ -58,12 +58,14 @@ static bool acpi_watchdog_uses_rtc(const struct acpi_table_wdat *wdat)
  }
  #endif
  
@@ -96,7 +96,7 @@ index d827a4a3e9460..6e9ec6e3fe47d 100644
  		return NULL;
  
  	status = acpi_get_table(ACPI_SIG_WDAT, 0,
-@@ -88,6 +90,14 @@ bool acpi_has_watchdog(void)
+@@ -91,6 +93,14 @@ bool acpi_has_watchdog(void)
  }
  EXPORT_SYMBOL_GPL(acpi_has_watchdog);
  
