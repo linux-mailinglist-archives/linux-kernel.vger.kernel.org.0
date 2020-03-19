@@ -2,62 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E01B718BBCF
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 17:01:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 08D3218BC39
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 17:17:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728009AbgCSQBr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 12:01:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40050 "EHLO mail.kernel.org"
+        id S1728240AbgCSQRC convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Thu, 19 Mar 2020 12:17:02 -0400
+Received: from albireo.enyo.de ([37.24.231.21]:49206 "EHLO albireo.enyo.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727496AbgCSQBq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 12:01:46 -0400
-Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BD49920658;
-        Thu, 19 Mar 2020 16:01:45 +0000 (UTC)
-Date:   Thu, 19 Mar 2020 12:01:43 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Nick Desaulniers <ndesaulniers@google.com>
-Cc:     Nathan Chancellor <natechancellor@gmail.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        clang-built-linux <clang-built-linux@googlegroups.com>
-Subject: Re: [PATCH v2] tracing: Use address-of operator on section symbols
-Message-ID: <20200319120143.5ffed518@gandalf.local.home>
-In-Reply-To: <CAKwvOdm9notnmKYQqAsTsZN7qqEpNtpQ091wv=rWZ0kzS3OzAA@mail.gmail.com>
-References: <20200220051011.26113-1-natechancellor@gmail.com>
-        <20200319020004.GB8292@ubuntu-m2-xlarge-x86>
-        <20200319103312.070b4246@gandalf.local.home>
-        <CAKwvOdm9notnmKYQqAsTsZN7qqEpNtpQ091wv=rWZ0kzS3OzAA@mail.gmail.com>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1728157AbgCSQRB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 12:17:01 -0400
+Received: from [172.17.203.2] (helo=deneb.enyo.de)
+        by albireo.enyo.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        id 1jExff-0006BE-FU; Thu, 19 Mar 2020 16:05:23 +0000
+Received: from fw by deneb.enyo.de with local (Exim 4.92)
+        (envelope-from <fw@deneb.enyo.de>)
+        id 1jExdz-0000h9-3G; Thu, 19 Mar 2020 17:03:39 +0100
+From:   Florian Weimer <fw@deneb.enyo.de>
+To:     Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc:     libc-alpha <libc-alpha@sourceware.org>, carlos <carlos@redhat.com>,
+        Rich Felker <dalias@libc.org>,
+        linux-api <linux-api@vger.kernel.org>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Will Deacon <will.deacon@arm.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ben Maurer <bmaurer@fb.com>, Dave Watson <davejwatson@fb.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Paul <paulmck@linux.vnet.ibm.com>, Paul Turner <pjt@google.com>,
+        Joseph Myers <joseph@codesourcery.com>
+Subject: Re: [RFC PATCH glibc 4/8] glibc: Perform rseq(2) registration at C startup and thread creation (v15)
+References: <20200319144110.3733-1-mathieu.desnoyers@efficios.com>
+        <20200319144110.3733-5-mathieu.desnoyers@efficios.com>
+        <874kukpf9f.fsf@mid.deneb.enyo.de>
+        <2147217200.3240.1584633395285.JavaMail.zimbra@efficios.com>
+Date:   Thu, 19 Mar 2020 17:03:39 +0100
+In-Reply-To: <2147217200.3240.1584633395285.JavaMail.zimbra@efficios.com>
+        (Mathieu Desnoyers's message of "Thu, 19 Mar 2020 11:56:35 -0400
+        (EDT)")
+Message-ID: <87r1xo5o2s.fsf@mid.deneb.enyo.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 19 Mar 2020 08:27:11 -0700
-Nick Desaulniers <ndesaulniers@google.com> wrote:
+* Mathieu Desnoyers:
 
-> On Thu, Mar 19, 2020 at 7:33 AM Steven Rostedt <rostedt@goodmis.org> wrote:
-> >
-> > On Wed, 18 Mar 2020 19:00:04 -0700
-> > Nathan Chancellor <natechancellor@gmail.com> wrote:
-> >  
-> > > Gentle ping for review/acceptance.  
-> >
-> > Hmm, my local patchwork had this patch rejected. I'll go and apply it, run  
-> 
-> Local patchwork? As in patchwork.kernel.org?  (Is there a client, or
-> can you host your own instance?)
+>> Can you use __has_include in <sys/rseq.h>, with a copy of the kernel
+>> definitions if the kernel header is not available?
 >
+> Sure. Should I pull a verbatim copy of uapi linux/rseq.h into glibc ?
+> If so, where should I put it ?
 
-No, I went into a lot of effort to get it up and running on my own inbox.
-I did this because I wasn't able to keep up with all the patches being sent
-directly to me. It's a bit fragile, and the workflow mailing list is
-working on ways to have this be a more general solution for maintainers.
+Probably into <sys/rseq.h>, perhaps with a construct like this
+(untested):
 
--- Steve
+#ifdef __has_include
+# if __has_include ("linux/rseq.h")
+#   define __GLIBC_HAVE_KERNEL_RSEQ
+# endif
+#else
+# include <linux/version.h>
+# if LINUX_VERSION_CODE >= KERNEL_VERSION (4, 18, 0)
+#   define __GLIBC_HAVE_KERNEL_RSEQ
+# endif
+#endif
+
+#ifdef __GLIBC_HAVE_KERNEL_RSEQ
+# include <linux/rseq.h>
+#else
+
+… (fallback goes here)
+#endif
+
+We have an ongoing debate whether the fallback definition should use
+__u64 or uint64_t.
+
+You also need to add an assert that the compiler supports
+__attribute__ ((aligned)) because ignoring it produces an
+ABI-incompatible header.  The struct rseq/struct rseq_cs definitions
+are broken, they should not try to change the alignment.
+
+PS: I have Internet connection trouble.  Nobody should be worried if I
+drop off the net for a while.  I understand this is quite a bad time
+for that. 8-(
