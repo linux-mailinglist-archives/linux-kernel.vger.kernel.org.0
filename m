@@ -2,148 +2,159 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DA38118B7AD
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:35:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 259CF18B7D7
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:36:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727806AbgCSNfO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 09:35:14 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:39199 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727320AbgCSNfN (ORCPT
+        id S1728124AbgCSNgJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 09:36:09 -0400
+Received: from mailout3.samsung.com ([203.254.224.33]:26866 "EHLO
+        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727471AbgCSNgH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 09:35:13 -0400
-Received: by mail-pf1-f195.google.com with SMTP id d25so1441581pfn.6
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Mar 2020 06:35:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ket5nG48OjRkSmjRLhm6o/GZWaiXnw2ieKQdmnyTlMc=;
-        b=Bh5NyyG1M8gtKQIPrZf/5qLuu0ztHrg/ar6jVL2/WT1taChSOWg/KvzKJbbR0KSYtR
-         XPtaZguXMqGkXBJ3gJyLO7wN+gVjLuV9q3Tz8TwQGSGAjkytzkvd45orPduurhypW4gD
-         yJO04p/sjDB3DsSwi3caCRbP2G4wKsjv3RFhMMrqRyLk1I17Hd7iKJTiXBdaQKPXCmbG
-         /NP1TWBrM/8HPRvMvfpqj8Jq2nmMrWRYtiIF3ldTvwMzZPlyYJxZwNVJiKpxUepjxUOW
-         3Rs27tmyLu3uAw+5+1836CWrZplMOz3sKM7WD7zh+xZEVScIfOCeygBpVOiyZhii8JwD
-         BWgA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ket5nG48OjRkSmjRLhm6o/GZWaiXnw2ieKQdmnyTlMc=;
-        b=CKTeargNKD5IwJ5jnXtWN8AbXNXw/aefnb0QnfvofwZFj1CoVrC+5IaSTbuG5Cgx6W
-         a7YDTbLe1XamtiXG6540TVMldKMIZaMVfG2Vi3ed8THGrjCH7AiEqHBeNaUAGu+W9Zrw
-         gS7aqScBUIhg2M1ppySat07kM3z/zZ6/2CSyHKQwDyij6Z6qSx6cc5CgDTWkWUW/LU6J
-         xO+Hu0yG9iwGPqQrucwHFIO5v7TxJnlYIQFZwf+19IdGdjSws7mfIueH8CXYOUm+UOgW
-         uEPEpr7yy6lWXQCXWA0XOGUm/0XUtlhPU+8NI6NArNSpfZ02AIyCa69umQyQlNwbwoHU
-         BrKA==
-X-Gm-Message-State: ANhLgQ0h5sL1PyeQVOzw6ATyOTbC/jxbxBpXJ4CAWXyquk783h0ToE3y
-        q+K889i0WCCzbimjsIaSj8EaVOExT9grixMzBYM=
-X-Google-Smtp-Source: ADFU+vvo67RB7PN+1WI5QYtP3PGnTDjr7aFXa63C0L5Ako2i2oQmzaEBTO0AggKTr2A7JzPp7zlA8WyDdxJDa+KRnLs=
-X-Received: by 2002:a63:1c4d:: with SMTP id c13mr3369187pgm.4.1584624911491;
- Thu, 19 Mar 2020 06:35:11 -0700 (PDT)
+        Thu, 19 Mar 2020 09:36:07 -0400
+Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
+        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20200319133605epoutp03035693fa01ad52d33ad6a2e13cf8d146~9uAKSrzCA3266532665epoutp03M
+        for <linux-kernel@vger.kernel.org>; Thu, 19 Mar 2020 13:36:05 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20200319133605epoutp03035693fa01ad52d33ad6a2e13cf8d146~9uAKSrzCA3266532665epoutp03M
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1584624965;
+        bh=4FL33iP/jwSsQW96+6AWrtYIL4nfSj8zvnMw8LCMztg=;
+        h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+        b=fSS2rSdjXhxn6oNDINfpNeqFPOv54i7eXTlabPA9wFEWUeYjpMCDrE/xOL5Ka4F0c
+         2Ofbp0cNVzjWgzBUJwQWn5/sxBt4HxwEa6gVyVgeTkj57F9AqS+203/amPEIAobaiq
+         EqQ+7vR2Lj0VOiygkPQWo0bIWyi5JMJijmeOenxs=
+Received: from epsmges5p2new.samsung.com (unknown [182.195.42.74]) by
+        epcas5p3.samsung.com (KnoxPortal) with ESMTP id
+        20200319133604epcas5p3dbbb7941cdd45bee37c4c1caa320016b~9uAJzbOTa1621316213epcas5p3E;
+        Thu, 19 Mar 2020 13:36:04 +0000 (GMT)
+Received: from epcas5p2.samsung.com ( [182.195.41.40]) by
+        epsmges5p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        83.AF.04778.445737E5; Thu, 19 Mar 2020 22:36:04 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+        epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
+        20200319133603epcas5p294d8a6f404e5d168d75cfa6861e393e3~9uAJGi74l1782517825epcas5p2p;
+        Thu, 19 Mar 2020 13:36:03 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20200319133603epsmtrp20dd7c56c4edec8817d0b58191b050767~9uAJFqWh63159731597epsmtrp2N;
+        Thu, 19 Mar 2020 13:36:03 +0000 (GMT)
+X-AuditID: b6c32a4a-353ff700000012aa-b1-5e73754435e2
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        13.C4.04024.345737E5; Thu, 19 Mar 2020 22:36:03 +0900 (KST)
+Received: from sriramdash03 (unknown [107.111.85.15]) by
+        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20200319133602epsmtip10df7c703058970433bc7f58b98daa829~9uAIAvU692963729637epsmtip1Y;
+        Thu, 19 Mar 2020 13:36:02 +0000 (GMT)
+From:   "Sriram Dash" <sriram.dash@samsung.com>
+To:     "'Shradha Todi'" <shradha.t@samsung.com>, <kishon@ti.com>
+Cc:     <lorenzo.pieralisi@arm.com>, <bhelgaas@google.com>,
+        <pankaj.dubey@samsung.com>, <linux-pci@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+In-Reply-To: <20200311102852.5207-1-shradha.t@samsung.com>
+Subject: RE: [PATCH] PCI: endpoint: Fix NULL pointer dereference for
+ ->get_features()
+Date:   Thu, 19 Mar 2020 19:06:01 +0530
+Message-ID: <000d01d5fdf3$55d43af0$017cb0d0$@samsung.com>
 MIME-Version: 1.0
-References: <cover.1584613649.git.msuchanek@suse.de> <1b612025371bb9f2bcce72c700c809ae29e57392.1584613649.git.msuchanek@suse.de>
-In-Reply-To: <1b612025371bb9f2bcce72c700c809ae29e57392.1584613649.git.msuchanek@suse.de>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Thu, 19 Mar 2020 15:35:03 +0200
-Message-ID: <CAHp75VcMkPeJ6exroipnxvf-7g-C8QbVm0bAnp=rk505_nxySw@mail.gmail.com>
-Subject: Re: [PATCH v11 4/8] powerpc/perf: consolidate valid_user_sp
-To:     Michal Suchanek <msuchanek@suse.de>
-Cc:     "open list:LINUX FOR POWERPC PA SEMI PWRFICIENT" 
-        <linuxppc-dev@lists.ozlabs.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Rob Herring <robh@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Christophe Leroy <christophe.leroy@c-s.fr>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Nayna Jain <nayna@linux.ibm.com>,
-        Eric Richter <erichte@linux.ibm.com>,
-        Claudio Carvalho <cclaudio@linux.ibm.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Hari Bathini <hbathini@linux.ibm.com>,
-        Masahiro Yamada <masahiroy@kernel.org>,
-        Thiago Jung Bauermann <bauerman@linux.ibm.com>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        Jordan Niethe <jniethe5@gmail.com>,
-        Michael Neuling <mikey@neuling.org>,
-        Gustavo Luiz Duarte <gustavold@linux.ibm.com>,
-        Allison Randal <allison@lohutok.net>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "linux-fsdevel @ vger . kernel . org --in-reply-to=" 
-        <20200225173541.1549955-1-npiggin@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQIRa+BXjMtyeVOz/ELce4dgT57WJwIqUA0mp8e8EHA=
+Content-Language: en-in
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrNKsWRmVeSWpSXmKPExsWy7bCmhq5LaXGcwdVHihZLmjIsLjztYbO4
+        vGsOm8XZecfZLN78fsFusWjrF3aL3sO1Duwea+atYfRYsKnUo2/LKkaP4ze2M3l83iQXwBrF
+        ZZOSmpNZllqkb5fAldGz+wJbwTKBio/LfrE1ML7m7WLk5JAQMJF4OusPUxcjF4eQwG5Gie6n
+        t9ghnE+MEvduPWOBcL4xSjT/esUK0/JpZQdUYi+jxNQVG1ghnFeMEuu75jGDVLEJ6EqcvdHE
+        BmKLCNhKLN84H2wus8BkRokby3+xgyQ4BawkOvqngTUIC4RLrJh/kxHEZhFQlfh/4jYLiM0r
+        YCkxb/tRVghbUOLkzCdgcWYBbYllC18zQ5ykIPHz6TJWiGVWEhOX3GWDqBGXOPqzhxlksYTA
+        czaJ32+/M0E0uEhsbzwBZQtLvDq+hR3ClpL4/G4vG4SdLXG57znUghKJGa8WskDY9hIHrswB
+        sjmAFmhKrN+lD7GLT6L39xMmkLCEAK9ER5sQRLWqxKvbm6GmS0scWHsaaquHxNcJF5gmMCrO
+        QvLZLCSfzULywSyEZQsYWVYxSqYWFOempxabFhjlpZbrFSfmFpfmpesl5+duYgQnIS2vHYzL
+        zvkcYhTgYFTi4V2wpihOiDWxrLgy9xCjBAezkgivbnpxnBBvSmJlVWpRfnxRaU5q8SFGaQ4W
+        JXHeSaxXY4QE0hNLUrNTUwtSi2CyTBycUg2M+gHPp+5aecx8QZtgcMeuJ2zPG2c/6O5l9Td6
+        8Mj9dXK+VqPvm0libD1SKrI5Oxd4rBfbuUJuQqdZ79ot86xu17zY2r46t36V98o6qfK9/oks
+        Gf+n9v+JO9iyxaT2yI0PDzLEK1/6blxyK8ika9eZOO+iqAuRrTPMNylOjuD6zGpdkSDONqVH
+        iaU4I9FQi7moOBEACSYjbz4DAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupjkeLIzCtJLcpLzFFi42LZdlhJTte5tDjOYE6LnsWSpgyLC0972Cwu
+        75rDZnF23nE2ize/X7BbLNr6hd2i93CtA7vHmnlrGD0WbCr16NuyitHj+I3tTB6fN8kFsEZx
+        2aSk5mSWpRbp2yVwZWzf0cte0CRQ8ebkN6YGxuO8XYycHBICJhKfVnawdDFycQgJ7GaUeLGj
+        n7GLkQMoIS3x864uRI2wxMp/z9khal4wSszq+sAGkmAT0JU4e6MJzBYRsJd4MWMjK0gRs8B0
+        Rom2LbOhOroZJXYsWQ9WxSlgJdHRP40ZxBYWCJX42DaVFcRmEVCV+H/iNguIzStgKTFv+1FW
+        CFtQ4uTMJ2BxZgFtid6HrYww9rKFr5khzlOQ+Pl0GSvEFVYSE5fcZYOoEZc4+rOHeQKj8Cwk
+        o2YhGTULyahZSFoWMLKsYpRMLSjOTc8tNiwwzEst1ytOzC0uzUvXS87P3cQIjiUtzR2Ml5fE
+        H2IU4GBU4uH1WFUUJ8SaWFZcmXuIUYKDWUmEVze9OE6INyWxsiq1KD++qDQntfgQozQHi5I4
+        79O8Y5FCAumJJanZqakFqUUwWSYOTqkGxtD++Ueudz1imOohe1Bi0suO+5Y9DEp3P5ry54ap
+        7/8X15/VvUm4gLX0vU35kcSQVwzZ05izpUVYeVXXuBgqJ2pznbW7urZN4I5bxLdXZhr8EkpF
+        u49Fcp1cudp0U8Ijpbw0VnmzjufCm3U37G09fDLtHe+axJvxUnoHUq+dXLd7cfaBJ/VTlViK
+        MxINtZiLihMB8/g/J6ECAAA=
+X-CMS-MailID: 20200319133603epcas5p294d8a6f404e5d168d75cfa6861e393e3
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+X-CMS-RootMailID: 20200311103443epcas5p2e97b8f3a8e52dc6f02eb551e0c97f132
+References: <CGME20200311103443epcas5p2e97b8f3a8e52dc6f02eb551e0c97f132@epcas5p2.samsung.com>
+        <20200311102852.5207-1-shradha.t@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 19, 2020 at 1:54 PM Michal Suchanek <msuchanek@suse.de> wrote:
->
-> Merge the 32bit and 64bit version.
->
-> Halve the check constants on 32bit.
->
-> Use STACK_TOP since it is defined.
->
-> Passing is_64 is now redundant since is_32bit_task() is used to
-> determine which callchain variant should be used. Use STACK_TOP and
-> is_32bit_task() directly.
->
-> This removes a page from the valid 32bit area on 64bit:
->  #define TASK_SIZE_USER32 (0x0000000100000000UL - (1 * PAGE_SIZE))
->  #define STACK_TOP_USER32 TASK_SIZE_USER32
+> From: Shradha Todi <shradha.t=40samsung.com>
+> Subject: =5BPATCH=5D PCI: endpoint: Fix NULL pointer dereference for -
+> >get_features()
+>=20
+> get_features ops of pci_epc_ops may return NULL, causing NULL pointer
+> dereference in pci_epf_test_bind function. Let us add a check for
+> pci_epc_feature pointer in pci_epf_test_bind before we access it to avoid=
+ any
+> such NULL pointer dereference and return -ENOTSUPP in case pci_epc_featur=
+e
+> is not found.
+>=20
+> Reviewed-by: Pankaj Dubey <pankaj.dubey=40samsung.com>
+> Signed-off-by: Sriram Dash <sriram.dash=40samsung.com>
+> Signed-off-by: Shradha Todi <shradha.t=40samsung.com>
+> ---
 
-...
+Hi Kishon,
 
-> +static inline int valid_user_sp(unsigned long sp)
-> +{
-> +       bool is_64 = !is_32bit_task();
+Any update on this?
+
+
+>  drivers/pci/endpoint/functions/pci-epf-test.c =7C 15 +++++++++------
+>  1 file changed, 9 insertions(+), 6 deletions(-)
+>=20
+> diff --git a/drivers/pci/endpoint/functions/pci-epf-test.c
+> b/drivers/pci/endpoint/functions/pci-epf-test.c
+> index c9121b1b9fa9..af4537a487bf 100644
+> --- a/drivers/pci/endpoint/functions/pci-epf-test.c
+> +++ b/drivers/pci/endpoint/functions/pci-epf-test.c
+> =40=40 -510,14 +510,17 =40=40 static int pci_epf_test_bind(struct pci_epf=
+ *epf)
+>  		return -EINVAL;
+>=20
+>  	epc_features =3D pci_epc_get_features(epc, epf->func_no);
+> -	if (epc_features) =7B
+> -		linkup_notifier =3D epc_features->linkup_notifier;
+> -		msix_capable =3D epc_features->msix_capable;
+> -		msi_capable =3D epc_features->msi_capable;
+> -		test_reg_bar =3D pci_epc_get_first_free_bar(epc_features);
+> -		pci_epf_configure_bar(epf, epc_features);
+> +	if (=21epc_features) =7B
+> +		dev_err(dev, =22epc_features not implemented=5Cn=22);
+> +		return -ENOTSUPP;
+>  	=7D
+>=20
+> +	linkup_notifier =3D epc_features->linkup_notifier;
+> +	msix_capable =3D epc_features->msix_capable;
+> +	msi_capable =3D epc_features->msi_capable;
+> +	test_reg_bar =3D pci_epc_get_first_free_bar(epc_features);
+> +	pci_epf_configure_bar(epf, epc_features);
 > +
-> +       if (!sp || (sp & (is_64 ? 7 : 3)) || sp > STACK_TOP - (is_64 ? 32 : 16))
-> +               return 0;
-> +       return 1;
-> +}
+>  	epf_test->test_reg_bar =3D test_reg_bar;
+>  	epf_test->epc_features =3D epc_features;
+>=20
+> --
+> 2.17.1
 
-Perhaps better to read
 
-  if (!sp)
-    return 0;
-
-  if (is_32bit_task()) {
-    if (sp & 0x03)
-      return 0;
-    if (sp > STACK_TOP - 16)
-      return 0;
-  } else {
-    ...
-  }
-
-  return 1;
-
-Other possibility:
-
-  unsigned long align = is_32bit_task() ? 3 : 7;
-  unsigned long top = STACK_TOP - (is_32bit_task() ? 16 : 32);
-
-  return !(!sp || (sp & align) || sp > top);
-
--- 
-With Best Regards,
-Andy Shevchenko
