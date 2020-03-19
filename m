@@ -2,52 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2932118C0EE
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 20:59:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 83CC818C0F4
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 21:01:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727533AbgCST7K (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 15:59:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37220 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725747AbgCST7J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 15:59:09 -0400
-Received: from kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2BCAE206D7;
-        Thu, 19 Mar 2020 19:59:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584647949;
-        bh=YVwv4E2Ut/NpWXxwh42s1vlrFtIvX7XJV7XAJ8Urwac=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=bLZFQRE2m4crqagFo1jQGa1OhV7nQ/fVZav6Xsr+O3gWbVYixldKSvf210VyOnxJP
-         9IlEhmUnBAraujJYKEBQHhenhNk+84ifOD4jtFv/lgVnuERcMuVy96JuRFV5pVGICU
-         5tlpRdpmfdTSK+KkovvguqmD3JUtM6z06XdVaHRU=
-Content-Type: text/plain; charset="utf-8"
+        id S1727394AbgCSUBT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 16:01:19 -0400
+Received: from mail-qv1-f66.google.com ([209.85.219.66]:34859 "EHLO
+        mail-qv1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725747AbgCSUBT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 16:01:19 -0400
+Received: by mail-qv1-f66.google.com with SMTP id q73so1754822qvq.2
+        for <linux-kernel@vger.kernel.org>; Thu, 19 Mar 2020 13:01:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=fM16z92SEo1un958VCQNdAKQJnbQVV8LOPBQhvLRoZk=;
+        b=QlaHHv8ppA4DqD6kMC29oEyRqsLMTaCPZWlC+i9gmFsUkYUYuWMVX/5UpLbBooF6pB
+         V8sImFyRlvmI97sC5I4LZt/uSgSFEwnwY2I1qgM2OK0FTV0sjFMbo0YWC0cD9YU8IbEB
+         I9zmC0rdVaWwX0678SSKY2GfPyrhbS4rxKEfz8V1YFwoKI5GQU1A2+0yJx5eSdoexWLr
+         sK05lc/HwVLqFQCXdVJMUOlsCnhSPpmst4WtZOdmrw8O8dqi1V5Gk4G9PtaEdLC0VMMG
+         6Sh1Z+q4D813dnjJX5N1bcY2rQKPB2oglQsx516PpUHcCnUmwlDDaeKtb7E6g8DJ2R5T
+         0B9A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=fM16z92SEo1un958VCQNdAKQJnbQVV8LOPBQhvLRoZk=;
+        b=i7+SdCnuedgO8tE3G/RNBhbFEsrpXoQeLNojh0ZiSm3LhNE3RRr2gU+u+IdGn0JdLi
+         dxHjqA75xhgNhX+GLA+kpQ143zEsgEvPF3Sb9SfVomCc4GaocHKp7Ip4eZz1QCX74a1K
+         V/Wt3CwSqeMbbf0Gg/oPNaR7s+Qld26bJn/KAPYJKrct0xchoDvqDU7J+pvWPjXv7mXs
+         unGCrMcUCbKiOoFtn0xW+6QMJ2vYuQBqYAwsjxOK/NZfUdNpSItsvqHu52JNDcmFckUl
+         xcoLHgRt2eg5LrH7sPkXqNK+9EVN55zWb1y3/CrT+VmJ+pJEcwvY7qQqWk4WQ0ljNr8d
+         90dQ==
+X-Gm-Message-State: ANhLgQ3YVbSPQao8itAHsAhVUbZkP4Ow4FDG/OuPBNbTOxo5DJFROq/1
+        YY5o/rMAADKM+3CMm8GXS5g=
+X-Google-Smtp-Source: ADFU+vvGqpBYk3EQhzi5Ry5WVZ9gbnjXOvsi7mGw4BTA2K94j4VfKAfGDB6E6Nws8lRjv832Amc92Q==
+X-Received: by 2002:a0c:fc43:: with SMTP id w3mr4897359qvp.32.1584648076983;
+        Thu, 19 Mar 2020 13:01:16 -0700 (PDT)
+Received: from localhost.localdomain ([179.159.236.147])
+        by smtp.googlemail.com with ESMTPSA id m67sm2226944qke.101.2020.03.19.13.01.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 19 Mar 2020 13:01:15 -0700 (PDT)
+From:   Igor Matheus Andrade Torrente <igormtorrente@gmail.com>
+To:     maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+        sean@poorly.run, airlied@linux.ie, daniel@ffwll.ch,
+        sumit.semwal@linaro.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org
+Cc:     Rodrigo.Siqueira@amd.com, rodrigosiqueiramelo@gmail.com,
+        andrealmeid@collabora.com,
+        Igor Matheus Andrade Torrente <igormtorrente@gmail.com>
+Subject: [PATCH v2] drm: Alligne a comment block
+Date:   Thu, 19 Mar 2020 17:00:28 -0300
+Message-Id: <20200319200028.2096-1-igormtorrente@gmail.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <1584495566-15110-1-git-send-email-Anson.Huang@nxp.com>
-References: <1584495566-15110-1-git-send-email-Anson.Huang@nxp.com>
-Subject: Re: [PATCH] clk: imx: clk-sscg-pll: Remove unnecessary blank lines
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Linux-imx@nxp.com
-To:     Anson Huang <Anson.Huang@nxp.com>, abel.vesa@nxp.com,
-        festevam@gmail.com, jonas.gorski@gmail.com, kernel@pengutronix.de,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, mturquette@baylibre.com,
-        s.hauer@pengutronix.de, shawnguo@kernel.org, t-kristo@ti.com
-Date:   Thu, 19 Mar 2020 12:59:08 -0700
-Message-ID: <158464794846.152100.11284882735806407657@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.9
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Anson Huang (2020-03-17 18:39:25)
-> Remove many unnecessary blank lines for cleanup.
->=20
-> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
-> ---
+Fix a checkpatch warning caused by a misaligned comment block.
 
-Reviewed-by: Stephen Boyd <sboyd@kernel.org>
+Changes in v2:
+- Change subject text
+
+Signed-off-by: Igor Matheus Andrade Torrente <igormtorrente@gmail.com>
+---
+ drivers/gpu/drm/drm_gem.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/gpu/drm/drm_gem.c b/drivers/gpu/drm/drm_gem.c
+index a9e4a610445a..564acc1f4030 100644
+--- a/drivers/gpu/drm/drm_gem.c
++++ b/drivers/gpu/drm/drm_gem.c
+@@ -222,10 +222,10 @@ drm_gem_object_handle_put_unlocked(struct drm_gem_object *obj)
+ 		return;
+ 
+ 	/*
+-	* Must bump handle count first as this may be the last
+-	* ref, in which case the object would disappear before we
+-	* checked for a name
+-	*/
++	 * Must bump handle count first as this may be the last
++	 * ref, in which case the object would disappear before we
++	 * checked for a name
++	 */
+ 
+ 	mutex_lock(&dev->object_name_lock);
+ 	if (--obj->handle_count == 0) {
+-- 
+2.20.1
+
