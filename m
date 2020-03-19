@@ -2,79 +2,150 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5BE4518AEFA
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 10:14:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DB38918AF53
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 10:15:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726987AbgCSJOJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 05:14:09 -0400
-Received: from poy.remlab.net ([94.23.215.26]:55514 "EHLO
-        ns207790.ip-94-23-215.eu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726901AbgCSJOI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 05:14:08 -0400
-Received: from basile.remlab.net (ip6-localhost [IPv6:::1])
-        by ns207790.ip-94-23-215.eu (Postfix) with ESMTP id 437B75FB07;
-        Thu, 19 Mar 2020 10:14:07 +0100 (CET)
-From:   =?UTF-8?q?R=C3=A9mi=20Denis-Courmont?= <remi@remlab.net>
-To:     catalin.marinas@arm.com, will@kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Cc:     mark.rutland@arm.com, james.morse@arm.com,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 1/3] arm64: clean up trampoline vector loads
-Date:   Thu, 19 Mar 2020 11:14:05 +0200
-Message-Id: <20200319091407.51449-1-remi@remlab.net>
-X-Mailer: git-send-email 2.26.0.rc2
-In-Reply-To: <1938400.7m7sAWtiY1@basile.remlab.net>
-References: <1938400.7m7sAWtiY1@basile.remlab.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        id S1727707AbgCSJPj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 05:15:39 -0400
+Received: from 8bytes.org ([81.169.241.247]:51922 "EHLO theia.8bytes.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727532AbgCSJOt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 05:14:49 -0400
+Received: by theia.8bytes.org (Postfix, from userid 1000)
+        id EA96BEEE; Thu, 19 Mar 2020 10:14:28 +0100 (CET)
+From:   Joerg Roedel <joro@8bytes.org>
+To:     x86@kernel.org
+Cc:     hpa@zytor.com, Andy Lutomirski <luto@kernel.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Hellstrom <thellstrom@vmware.com>,
+        Jiri Slaby <jslaby@suse.cz>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Juergen Gross <jgross@suse.com>,
+        Kees Cook <keescook@chromium.org>,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        Joerg Roedel <joro@8bytes.org>, Joerg Roedel <jroedel@suse.de>
+Subject: [PATCH 68/70] x86/sev-es: Support CPU offline/online
+Date:   Thu, 19 Mar 2020 10:14:05 +0100
+Message-Id: <20200319091407.1481-69-joro@8bytes.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20200319091407.1481-1-joro@8bytes.org>
+References: <20200319091407.1481-1-joro@8bytes.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Rémi Denis-Courmont <remi.denis.courmont@huawei.com>
+From: Joerg Roedel <jroedel@suse.de>
 
-This switches from custom instruction patterns to the regular large
-memory model sequence with ADRP and LDR. In doing so, the ADD
-instruction can be eliminated in the SDEI handler, and the code no
-longer assumes that the trampoline vectors and the vectors address both
-start on a page boundary.
+Add a play_dead handler when running under SEV-ES. This is needed
+because the hypervisor can't deliver an SIPI request to restart the AP.
+Instead the kernel has to issue a VMGEXIT to halt the VCPU. When the
+hypervisor would deliver and SIPI is wakes up the VCPU instead.
 
-Signed-off-by: Rémi Denis-Courmont <remi.denis.courmont@huawei.com>
+Signed-off-by: Joerg Roedel <jroedel@suse.de>
 ---
- arch/arm64/kernel/entry.S | 9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
+ arch/x86/include/uapi/asm/svm.h |  1 +
+ arch/x86/kernel/sev-es.c        | 58 +++++++++++++++++++++++++++++++++
+ 2 files changed, 59 insertions(+)
 
-diff --git a/arch/arm64/kernel/entry.S b/arch/arm64/kernel/entry.S
-index e5d4e30ee242..24f828739696 100644
---- a/arch/arm64/kernel/entry.S
-+++ b/arch/arm64/kernel/entry.S
-@@ -805,9 +805,9 @@ alternative_else_nop_endif
- 2:
- 	tramp_map_kernel	x30
- #ifdef CONFIG_RANDOMIZE_BASE
--	adr	x30, tramp_vectors + PAGE_SIZE
-+	adrp	x30, tramp_vectors + PAGE_SIZE
- alternative_insn isb, nop, ARM64_WORKAROUND_QCOM_FALKOR_E1003
--	ldr	x30, [x30]
-+	ldr	x30, [x30, #:lo12:__entry_tramp_data_start]
- #else
- 	ldr	x30, =vectors
- #endif
-@@ -953,9 +953,8 @@ SYM_CODE_START(__sdei_asm_entry_trampoline)
- 1:	str	x4, [x1, #(SDEI_EVENT_INTREGS + S_ORIG_ADDR_LIMIT)]
+diff --git a/arch/x86/include/uapi/asm/svm.h b/arch/x86/include/uapi/asm/svm.h
+index a19ce9681ec2..20a05839dd9a 100644
+--- a/arch/x86/include/uapi/asm/svm.h
++++ b/arch/x86/include/uapi/asm/svm.h
+@@ -84,6 +84,7 @@
+ /* SEV-ES software-defined VMGEXIT events */
+ #define SVM_VMGEXIT_MMIO_READ			0x80000001
+ #define SVM_VMGEXIT_MMIO_WRITE			0x80000002
++#define SVM_VMGEXIT_AP_HLT_LOOP			0x80000004
+ #define SVM_VMGEXIT_AP_JUMP_TABLE		0x80000005
+ #define		SVM_VMGEXIT_SET_AP_JUMP_TABLE			0
+ #define		SVM_VMGEXIT_GET_AP_JUMP_TABLE			1
+diff --git a/arch/x86/kernel/sev-es.c b/arch/x86/kernel/sev-es.c
+index f56bdaf12fbe..3c22f256645e 100644
+--- a/arch/x86/kernel/sev-es.c
++++ b/arch/x86/kernel/sev-es.c
+@@ -23,6 +23,8 @@
+ #include <asm/processor.h>
+ #include <asm/traps.h>
+ #include <asm/svm.h>
++#include <asm/smp.h>
++#include <asm/cpu.h>
  
- #ifdef CONFIG_RANDOMIZE_BASE
--	adr	x4, tramp_vectors + PAGE_SIZE
--	add	x4, x4, #:lo12:__sdei_asm_trampoline_next_handler
--	ldr	x4, [x4]
-+	adrp	x4, tramp_vectors + PAGE_SIZE
-+	ldr	x4, [x4, #:lo12:__sdei_asm_trampoline_next_handler]
- #else
- 	ldr	x4, =__sdei_asm_handler
- #endif
+ #define DR7_RESET_VALUE        0x400
+ 
+@@ -381,6 +383,60 @@ static bool __init sev_es_setup_ghcb(void)
+ 	return true;
+ }
+ 
++#ifdef CONFIG_HOTPLUG_CPU
++static void sev_es_ap_hlt_loop(void)
++{
++	struct ghcb_state state;
++	struct ghcb *ghcb;
++
++	ghcb = sev_es_get_ghcb(&state);
++
++	while (true) {
++		vc_ghcb_invalidate(ghcb);
++		ghcb_set_sw_exit_code(ghcb, SVM_VMGEXIT_AP_HLT_LOOP);
++		ghcb_set_sw_exit_info_1(ghcb, 0);
++		ghcb_set_sw_exit_info_2(ghcb, 0);
++
++		sev_es_wr_ghcb_msr(__pa(ghcb));
++		VMGEXIT();
++
++		/* Wakup Signal? */
++		if (ghcb_is_valid_sw_exit_info_2(ghcb) &&
++		    ghcb->save.sw_exit_info_2 != 0)
++			break;
++	}
++
++	sev_es_put_ghcb(&state);
++}
++
++void sev_es_play_dead(void)
++{
++	play_dead_common();
++
++	/* IRQs now disabled */
++
++	sev_es_ap_hlt_loop();
++
++	/*
++	 * If we get here, the VCPU was woken up again. Jump to CPU
++	 * startup code to get it back online.
++	 */
++
++	start_cpu();
++}
++#else  /* CONFIG_HOTPLUG_CPU */
++#define sev_es_play_dead	native_play_dead
++#endif /* CONFIG_HOTPLUG_CPU */
++
++#ifdef CONFIG_SMP
++static void sev_es_setup_play_dead(void)
++{
++	smp_ops.play_dead = sev_es_play_dead;
++}
++#else
++static inline void sev_es_setup_play_dead(void) { }
++#endif
++
+ void sev_es_init_ghcbs(void)
+ {
+ 	int cpu;
+@@ -399,6 +455,8 @@ void sev_es_init_ghcbs(void)
+ 				     sizeof(*ghcb) >> PAGE_SHIFT);
+ 		memset(ghcb, 0, sizeof(*ghcb));
+ 	}
++
++	sev_es_setup_play_dead();
+ }
+ 
+ static void __init vc_early_vc_forward_exception(struct es_em_ctxt *ctxt)
 -- 
-2.26.0.rc2
+2.17.1
 
