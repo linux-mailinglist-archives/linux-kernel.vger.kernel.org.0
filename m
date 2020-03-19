@@ -2,37 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9780C18B72B
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:32:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A5A6218B72D
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:32:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729529AbgCSNQ2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 09:16:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36842 "EHLO mail.kernel.org"
+        id S1727535AbgCSNQe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 09:16:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36972 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729291AbgCSNQ0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 09:16:26 -0400
+        id S1729537AbgCSNQc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 09:16:32 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C3B2020724;
-        Thu, 19 Mar 2020 13:16:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0555C21556;
+        Thu, 19 Mar 2020 13:16:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584623785;
-        bh=bg/H4w9x/Y5OH3AJYyYxL/aEubN2iXPYUHMOqSsRVOI=;
+        s=default; t=1584623791;
+        bh=HHwE0TbQhSiAvn+ZMbqACCvTK1kzXfONIL2U8HuOR04=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2hVyp2okG7l9QaoZEdzf6TNG4S52qzSsj8XYiBfy8v1zHY6VMQV8Ms9cMiuT84hLW
-         O+Dkq8F2TV02FDIC77evaqb12YOWoPx+tkKbXXk97QnNQNcJf8cb1RFuo96JCQw6Ge
-         SfFCJhnV9G1CyFu7CXmL2OX/LmDPdvXu5Mw5u6uQ=
+        b=Nt0XjUEp1965t63dLpKYWwgL5SPtOjCvUfpJCyOdh5kXL06Qgj6JTeK/WnnKL6ugG
+         zwKD+VFCf6tEzGe4FT1GUfbUEE7x7MdCGiwh+UjCn+DUXhBs8/OSdCDGkTWc+DGuOe
+         pHM71jj7sxWw2/xVNB+OREyPwKO0qB/OJ3voz5sE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Lu Baolu <baolu.lu@linux.intel.com>,
-        Moritz Fischer <mdf@kernel.org>,
-        Yonghyun Hwang <yonghyun@google.com>,
-        Joerg Roedel <jroedel@suse.de>
-Subject: [PATCH 4.14 53/99] iommu/vt-d: Fix a bug in intel_iommu_iova_to_phys() for huge page
-Date:   Thu, 19 Mar 2020 14:03:31 +0100
-Message-Id: <20200319123957.987008616@linuxfoundation.org>
+        stable@vger.kernel.org, Jerome Brunet <jbrunet@baylibre.com>,
+        Nicolas Belin <nbelin@baylibre.com>,
+        Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH 4.14 54/99] pinctrl: meson-gxl: fix GPIOX sdio pins
+Date:   Thu, 19 Mar 2020 14:03:32 +0100
+Message-Id: <20200319123958.276963230@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.2
 In-Reply-To: <20200319123941.630731708@linuxfoundation.org>
 References: <20200319123941.630731708@linuxfoundation.org>
@@ -45,41 +44,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yonghyun Hwang <yonghyun@google.com>
+From: Nicolas Belin <nbelin@baylibre.com>
 
-commit 77a1bce84bba01f3f143d77127b72e872b573795 upstream.
+commit dc7a06b0dbbafac8623c2b7657e61362f2f479a7 upstream.
 
-intel_iommu_iova_to_phys() has a bug when it translates an IOVA for a huge
-page onto its corresponding physical address. This commit fixes the bug by
-accomodating the level of page entry for the IOVA and adds IOVA's lower
-address to the physical address.
+In the gxl driver, the sdio cmd and clk pins are inverted. It has not caused
+any issue so far because devices using these pins always take both pins
+so the resulting configuration is OK.
 
-Cc: <stable@vger.kernel.org>
-Acked-by: Lu Baolu <baolu.lu@linux.intel.com>
-Reviewed-by: Moritz Fischer <mdf@kernel.org>
-Signed-off-by: Yonghyun Hwang <yonghyun@google.com>
-Fixes: 3871794642579 ("VT-d: Changes to support KVM")
-Signed-off-by: Joerg Roedel <jroedel@suse.de>
+Fixes: 0f15f500ff2c ("pinctrl: meson: Add GXL pinctrl definitions")
+Reviewed-by: Jerome Brunet <jbrunet@baylibre.com>
+Signed-off-by: Nicolas Belin <nbelin@baylibre.com>
+Link: https://lore.kernel.org/r/1582204512-7582-1-git-send-email-nbelin@baylibre.com
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/iommu/intel-iommu.c |    6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/pinctrl/meson/pinctrl-meson-gxl.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/iommu/intel-iommu.c
-+++ b/drivers/iommu/intel-iommu.c
-@@ -5124,8 +5124,10 @@ static phys_addr_t intel_iommu_iova_to_p
- 	u64 phys = 0;
+--- a/drivers/pinctrl/meson/pinctrl-meson-gxl.c
++++ b/drivers/pinctrl/meson/pinctrl-meson-gxl.c
+@@ -158,8 +158,8 @@ static const unsigned int sdio_d0_pins[]
+ static const unsigned int sdio_d1_pins[] = { PIN(GPIOX_1, EE_OFF) };
+ static const unsigned int sdio_d2_pins[] = { PIN(GPIOX_2, EE_OFF) };
+ static const unsigned int sdio_d3_pins[] = { PIN(GPIOX_3, EE_OFF) };
+-static const unsigned int sdio_cmd_pins[] = { PIN(GPIOX_4, EE_OFF) };
+-static const unsigned int sdio_clk_pins[] = { PIN(GPIOX_5, EE_OFF) };
++static const unsigned int sdio_clk_pins[] = { PIN(GPIOX_4, EE_OFF) };
++static const unsigned int sdio_cmd_pins[] = { PIN(GPIOX_5, EE_OFF) };
+ static const unsigned int sdio_irq_pins[] = { PIN(GPIOX_7, EE_OFF) };
  
- 	pte = pfn_to_dma_pte(dmar_domain, iova >> VTD_PAGE_SHIFT, &level);
--	if (pte)
--		phys = dma_pte_addr(pte);
-+	if (pte && dma_pte_present(pte))
-+		phys = dma_pte_addr(pte) +
-+			(iova & (BIT_MASK(level_to_offset_bits(level) +
-+						VTD_PAGE_SHIFT) - 1));
- 
- 	return phys;
- }
+ static const unsigned int nand_ce0_pins[]	= { PIN(BOOT_8, EE_OFF) };
 
 
