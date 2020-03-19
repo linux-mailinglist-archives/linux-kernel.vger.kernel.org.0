@@ -2,105 +2,225 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BFB3218BECE
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 18:54:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 844C318BED6
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 18:58:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727740AbgCSRyG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 13:54:06 -0400
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:9656 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726867AbgCSRyF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 13:54:05 -0400
-Received: from pps.filterd (m0046037.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 02JHm9SF030010;
-        Thu, 19 Mar 2020 18:53:27 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=STMicroelectronics;
- bh=xhvicN/AH/49Tg2jHic/L9lkAzHjv3HYlGeap+CFKCw=;
- b=itPC5gsA4ELXAaE5a2xDmNDrb5QWsSt9ffWnFFkd989qno6/JM/OpyoT751KRmhW/tNQ
- 71qYW6KimHr6RiyjbBsoHXLoJDqjWKcnirjzDlAMbVwek7QEQhR+Ik69n4vnor64SVHA
- 4hCbsJHZMCrK5CPkIrUwH6pb9kkTCOuc5qvL4zMOLcXfH6lhm0OWuEP8vuyvHdiidnt5
- IJfMlkjybMUpN4QYPBsXJ6KsXlqPMPsN9yTboHVu94k1OUH6FGjAsoH+1B/HTR194Xzp
- nZgRYNOWW7u+QfXgNj0UJ9jkZT+EqGp6R266rND85YqQsEPi4/k1HkncEl4vdZmJAqgL 4w== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 2yu8etk926-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 19 Mar 2020 18:53:27 +0100
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 1CBB6100034;
-        Thu, 19 Mar 2020 18:53:23 +0100 (CET)
-Received: from Webmail-eu.st.com (sfhdag5node3.st.com [10.75.127.15])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id F0DC32BC7BA;
-        Thu, 19 Mar 2020 18:53:22 +0100 (CET)
-Received: from [10.211.9.6] (10.75.127.45) by SFHDAG5NODE3.st.com
- (10.75.127.15) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 19 Mar
- 2020 18:53:21 +0100
-Subject: Re: [PATCH] dt-bindings: iio: dac: stm32-dac: convert bindings to
- json-schema
-To:     Rob Herring <robh@kernel.org>
-CC:     <robh+dt@kernel.org>, <jic23@kernel.org>,
-        <alexandre.torgue@st.com>, <mark.rutland@arm.com>,
-        <mcoquelin.stm32@gmail.com>, <lars@metafoo.de>, <knaack.h@gmx.de>,
-        <pmeerw@pmeerw.net>, <olivier.moysan@st.com>,
-        <linux-iio@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-References: <1584543037-32095-1-git-send-email-fabrice.gasnier@st.com>
- <20200319171231.GA17071@bogus>
-From:   Fabrice Gasnier <fabrice.gasnier@st.com>
-Message-ID: <3a1474bd-ae64-96f8-d094-545e0e2eff6c@st.com>
-Date:   Thu, 19 Mar 2020 18:53:18 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
-MIME-Version: 1.0
-In-Reply-To: <20200319171231.GA17071@bogus>
-Content-Type: text/plain; charset="utf-8"
+        id S1727556AbgCSR6I (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 13:58:08 -0400
+Received: from mga01.intel.com ([192.55.52.88]:45646 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727009AbgCSR6H (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 13:58:07 -0400
+IronPort-SDR: 9dKycu86rpmA8PBUaCdtojPcLI7VJiIpbXgSb1CUzVhLQur+upXobL8ex/q1fZU92fnq14nUG/
+ r4gzdc1Z38mQ==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Mar 2020 10:58:03 -0700
+IronPort-SDR: 2qQI2aTQucxEoaonlPuvDDBzpJ47WVZpiFWeNiRPEIk8M+JRrSd3V89puKFFEnvZPQpSpKyPE6
+ CzoSXE5oamqA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,572,1574150400"; 
+   d="scan'208";a="248615362"
+Received: from fmsmsx106.amr.corp.intel.com ([10.18.124.204])
+  by orsmga006.jf.intel.com with ESMTP; 19 Mar 2020 10:58:02 -0700
+Received: from fmsmsx607.amr.corp.intel.com (10.18.126.87) by
+ FMSMSX106.amr.corp.intel.com (10.18.124.204) with Microsoft SMTP Server (TLS)
+ id 14.3.439.0; Thu, 19 Mar 2020 10:57:37 -0700
+Received: from fmsmsx605.amr.corp.intel.com (10.18.126.85) by
+ fmsmsx607.amr.corp.intel.com (10.18.126.87) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1713.5; Thu, 19 Mar 2020 10:57:35 -0700
+Received: from FMSEDG001.ED.cps.intel.com (10.1.192.133) by
+ fmsmsx605.amr.corp.intel.com (10.18.126.85) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.1.1713.5
+ via Frontend Transport; Thu, 19 Mar 2020 10:57:35 -0700
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (104.47.56.177)
+ by edgegateway.intel.com (192.55.55.68) with Microsoft SMTP Server (TLS) id
+ 14.3.439.0; Thu, 19 Mar 2020 10:57:23 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=LjhJyNeBbmW0ylR0rvFSPBLRhM0k6C7NCLBr3boPpTqPiZAceyIwYLUaJiOCwAXGfad9i8ruuRb2h3B32CB0dW2izyumUmDRPT3UWcZCMrkiCkvsUV+vLMLxdrf4mNoAuW5p/j+/FdtnR7etqODLs/q6rYhhJqWQCZdpEpGQ892rhxPSttlEUdhsUtrpu4jNbADRbqOLjEviVzxgnipu6vCAyqCBvfqhylmdGGMHj1E0r3qeTptVIHMclIASXSek5XQo6Yg3nAbc6kK048lMDc4/S2T5be4xYJJ1cRULD3k8ZsiSrRalAjcLleUGGfe+j9EMqXaAc0eLE6Dgi7wgDQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=aKSHk8QCexmhXRIx6HG0A35rF9Ndlq5YdEiX1++pmkQ=;
+ b=Sa65+rQfwI72jaRPbkbC1R9vs+iHBysEyD6ddATN9CyNd6RX+dtGckcnUJZr/+Zk6r2davzJLCuNwB//OTw3DMK7SbVcQRTCWUuaGzgVVYsXJtWCwItCxk4lodDTQSPEplkuqWziTVWeoUWnZRuTw8kJygst1IGFIFtX0+uQGL7PohiOOfJRLuILowX93Rg3g8+d+WoDAAedPEnc7xV1SzuqEBVgC4vqbaGkpDcpA6FZRuRjHWs2XHkNGsIpXGtPQhXEdeX2yVwr0YlibR+wKa4T9saP13nDd1hL1TQywaKu1I9i0oQWFaPbIQPst4GNr69Cqa3rXMPdeTu7fSsdcw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=intel.onmicrosoft.com;
+ s=selector2-intel-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=aKSHk8QCexmhXRIx6HG0A35rF9Ndlq5YdEiX1++pmkQ=;
+ b=ofbWW0yvB5VV9IGaxQmJyMK+oCtQLgP+zzW6SxrChAb9yTSkRI4P7zgsyzOHo1JsOnxRyUP5AUspBWxbf7eRsmnumJlitvYWnaNgBmugNAPfQ0RXA9WbOwBXaJYvk1J1tpBLqoQBB5RjL8zckp8Etd82bzVemZFwOUNTuu23lqc=
+Received: from BYAPR11MB3624.namprd11.prod.outlook.com (2603:10b6:a03:b1::33)
+ by BYAPR11MB3784.namprd11.prod.outlook.com (2603:10b6:a03:fe::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2835.15; Thu, 19 Mar
+ 2020 17:57:06 +0000
+Received: from BYAPR11MB3624.namprd11.prod.outlook.com
+ ([fe80::d17e:dcc4:4196:87ab]) by BYAPR11MB3624.namprd11.prod.outlook.com
+ ([fe80::d17e:dcc4:4196:87ab%7]) with mapi id 15.20.2814.021; Thu, 19 Mar 2020
+ 17:57:06 +0000
+From:   "Kammela, Gayatri" <gayatri.kammela@intel.com>
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+CC:     "platform-driver-x86@vger.kernel.org" 
+        <platform-driver-x86@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Somayaji, Vishwanath" <vishwanath.somayaji@intel.com>,
+        "dvhart@infradead.org" <dvhart@infradead.org>,
+        "Westerberg, Mika" <mika.westerberg@intel.com>,
+        "peterz@infradead.org" <peterz@infradead.org>,
+        "Prestopine, Charles D" <charles.d.prestopine@intel.com>,
+        Chen Zhou <chenzhou10@huawei.com>,
+        "Box, David E" <david.e.box@intel.com>
+Subject: RE: [PATCH v3 0/5] platform/x86: intel_pmc_core: Add bug fixes or
+ code
+Thread-Topic: [PATCH v3 0/5] platform/x86: intel_pmc_core: Add bug fixes or
+ code
+Thread-Index: AQHV8ArQghD0dS6yzkaNkpM4RGGi9qg1Q1OAgABJMxCAGsE28A==
+Date:   Thu, 19 Mar 2020 17:57:06 +0000
+Message-ID: <BYAPR11MB3624F3CB24817BB8C5AE6C10F2F40@BYAPR11MB3624.namprd11.prod.outlook.com>
+References: <cover.1583093898.git.gayatri.kammela@intel.com>
+ <20200302125427.GV1224808@smile.fi.intel.com>
+ <BYAPR11MB362421570806431752364CD3F2E70@BYAPR11MB3624.namprd11.prod.outlook.com>
+In-Reply-To: <BYAPR11MB362421570806431752364CD3F2E70@BYAPR11MB3624.namprd11.prod.outlook.com>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.75.127.45]
-X-ClientProxiedBy: SFHDAG2NODE2.st.com (10.75.127.5) To SFHDAG5NODE3.st.com
- (10.75.127.15)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.645
- definitions=2020-03-19_06:2020-03-19,2020-03-19 signatures=0
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+dlp-version: 11.2.0.6
+dlp-reaction: no-action
+dlp-product: dlpe-windows
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=gayatri.kammela@intel.com; 
+x-originating-ip: [192.55.52.194]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 76f63729-99e6-4638-a781-08d7cc2ef056
+x-ms-traffictypediagnostic: BYAPR11MB3784:
+x-ld-processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <BYAPR11MB3784E5BCAA56F56FD76A9B38F2F40@BYAPR11MB3784.namprd11.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:8273;
+x-forefront-prvs: 0347410860
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(199004)(8936002)(498600001)(71200400001)(33656002)(52536014)(9686003)(966005)(5660300002)(186003)(26005)(66476007)(81156014)(64756008)(66946007)(7696005)(86362001)(66556008)(76116006)(81166006)(66446008)(8676002)(54906003)(53546011)(55016002)(4326008)(6506007)(2906002)(6916009);DIR:OUT;SFP:1102;SCL:1;SRVR:BYAPR11MB3784;H:BYAPR11MB3624.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: XtNvkwiZ1asMGXauqwkgE6C+fwATrEDCmA0Q+/r5k8j8AmwNEkuYBkp8n3n5OIvvnx7+NIzM9sKCA/p8o78cc6OPO5IG5mREwXVsJ00IVgJeGGC7KQpNfwvKghyxOw883VZi1ZiCTzIoh+ycVukuqW/BZFeII9cKBq4VG8XMNV+XEwuJEF6ZxxXKiGx6iTVc3Bo6uH5K+AJVVZiBwyl8kuXh96hZz7Q6UpvsSS02Cb9NCLpMy67ZQojNYxCJSLuOfL157U8HTHrkluT1UAHWWlKQTvSQ6Og2i2sHtM0AWD0aLH6UvPNmsJiMR16tF2/c4yKRB/jjMt5qIpZQyMRcBPiL8rzcH8haLgI8isJKO0mEcuZ0agv0Q4wPgCDPeBIfgrD+tL9CZbvOxGYNSe3xhhRDvA8dZhqRoZp0GC/ijXKFgdLto+rzZLsY6cEDH+7sL2kE6ItnY0DQXahpOGiml2gYYcOFFqDzGoxNuiAZqRs+IJWaCdEpg2MimvijtLYH1zabPUZRvIUUR0XbXQNcow==
+x-ms-exchange-antispam-messagedata: yLvAS/onFMQx07HOTy8snsK5oPfjRHxIfqM7FtR2aP42NAFNFCnpTgE/3HfmiBNCjxH9tTVoW8DO3NOqyGQu4zLSC9Yl20Zqg0Bp/HWZ8kVjF5byK5n8cyD4YTOEBnmckA4p562mZLtfaPO81mI6xw==
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-MS-Exchange-CrossTenant-Network-Message-Id: 76f63729-99e6-4638-a781-08d7cc2ef056
+X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Mar 2020 17:57:06.7218
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: kpwcFrqpOGl8HZhWlxVt+NhJPtEDEZchweH/cQVlVf4G+nr0zDPin0ciZJsqmNOWpNA5nZVHHc2Q13JLNU3O3bQ/Z8duvBeS/lJD8H/j6cI=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR11MB3784
+X-OriginatorOrg: intel.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 3/19/20 6:12 PM, Rob Herring wrote:
-> On Wed, 18 Mar 2020 15:50:37 +0100, Fabrice Gasnier wrote:
->> Convert the STM32 DAC binding to DT schema format using json-schema
->>
->> Signed-off-by: Fabrice Gasnier <fabrice.gasnier@st.com>
->> ---
->>  .../devicetree/bindings/iio/dac/st,stm32-dac.txt   |  63 ------------
->>  .../devicetree/bindings/iio/dac/st,stm32-dac.yaml  | 110 +++++++++++++++++++++
->>  2 files changed, 110 insertions(+), 63 deletions(-)
->>  delete mode 100644 Documentation/devicetree/bindings/iio/dac/st,stm32-dac.txt
->>  create mode 100644 Documentation/devicetree/bindings/iio/dac/st,stm32-dac.yaml
->>
-> 
-> My bot found errors running 'make dt_binding_check' on your patch:
-> 
-> Documentation/devicetree/bindings/iio/dac/st,stm32-dac.yaml: $id: relative path/filename doesn't match actual path or filename
-> 	expected: http://devicetree.org/schemas/iio/dac/st,stm32-dac.yaml#
-> 
-> See https://patchwork.ozlabs.org/patch/1257568
-> Please check and re-submit.
+> -----Original Message-----
+> From: Kammela, Gayatri
+> Sent: Monday, March 2, 2020 10:29 AM
+> To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> Cc: platform-driver-x86@vger.kernel.org; linux-kernel@vger.kernel.org;
+> Somayaji, Vishwanath <vishwanath.somayaji@intel.com>;
+> dvhart@infradead.org; Westerberg, Mika <mika.westerberg@intel.com>;
+> peterz@infradead.org; Prestopine, Charles D
+> <charles.d.prestopine@intel.com>; Chen Zhou <chenzhou10@huawei.com>;
+> Box, David E <david.e.box@intel.com>
+> Subject: RE: [PATCH v3 0/5] platform/x86: intel_pmc_core: Add bug fixes o=
+r
+> code
+>=20
+> > -----Original Message-----
+> > From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> > Sent: Monday, March 2, 2020 4:54 AM
+> > To: Kammela, Gayatri <gayatri.kammela@intel.com>
+> > Cc: platform-driver-x86@vger.kernel.org; linux-kernel@vger.kernel.org;
+> > Somayaji, Vishwanath <vishwanath.somayaji@intel.com>;
+> > dvhart@infradead.org; Westerberg, Mika <mika.westerberg@intel.com>;
+> > peterz@infradead.org; Prestopine, Charles D
+> > <charles.d.prestopine@intel.com>; Chen Zhou
+> <chenzhou10@huawei.com>;
+> > Box, David E <david.e.box@intel.com>
+> > Subject: Re: [PATCH v3 0/5] platform/x86: intel_pmc_core: Add bug
+> > fixes or code
+> >
+> > On Sun, Mar 01, 2020 at 12:44:21PM -0800, Gayatri Kammela wrote:
+> > > Hi,
+> > >
+> > > This patch series consists of bug fixes and code optimization for
+> > > the series https://patchwork.kernel.org/patch/11365325/
+> > >
+> >
+> > I had applied first four, the fifth requires additional work.
+> > When send a new version, do it only for last one.
+>=20
+> Thanks Andy! I will send the 5th patch alone in new version.
+>=20
 
-Hi Rob,
+Hi Andy! I see first 3 patches are merged in for-next branch on 2/28 but no=
+t 4th patch. Can you please check? http://git.infradead.org/linux-platform-=
+drivers-x86.git/shortlog/refs/heads/for-next
 
-Just sent a V2.
+> >
+> > > Patch 1: Relocate both pmc_core_slps0_display() and
+> > > pmc_core_lpm_display() Patch 2: Remove the duplicate if() condition
+> > > to create debugfs entry Patch 3: Add back slp_s0_offset attribute
+> > > back to tgl_reg_map Patch 4: Make pmc_core_substate_res_show()
+> > > generic Patch
+> > > 5: Make pmc_core_lpm_display() generic
+> > >
+> > > Changes since v1:
+> > > 1) Changed the order of the patches i.e., patch 2 in v1 is made first=
+ in
+> > >    the order for v2.
+> > > 2) Fixed the warnings reported by kbuild test robot.
+> > >
+> > > Changes since v2:
+> > > 1) Add "Make pmc_core_substate_res_show() generic" patch to v3.
+> > > 2) Fixed the memory leak issue in pmc_core_lpm_display().
+> > > 3) Moved patch 2 in v2 to the last in the series in v3.
+> > >
+> > > Gayatri Kammela (5):
+> > >   platform/x86: intel_pmc_core: fix: Relocate pmc_core_slps0_display(=
+)
+> > >     and pmc_core_lpm_display() to outside of CONFIG_DEBUG_FS
+> > >   platform/x86: intel_pmc_core: fix: Remove the duplicate if() to cre=
+ate
+> > >     debugfs entry for substate_live_status_registers
+> > >   platform/x86: intel_pmc_core: fix: Add slp_s0_offset attribute back=
+ to
+> > >     tgl_reg_map
+> > >   platform/x86: intel_pmc_core: Make pmc_core_substate_res_show()
+> > >     generic
+> > >   platform/x86: intel_pmc_core: fix: Make pmc_core_lpm_display()
+> generic
+> > >     for platforms that support sub-states
+> > >
+> > >  drivers/platform/x86/intel_pmc_core.c | 148 +++++++++++++++---------=
+--
+> > >  drivers/platform/x86/intel_pmc_core.h |   3 +-
+> > >  2 files changed, 85 insertions(+), 66 deletions(-)
+> > >
+> > > base-commit: 7adb1e8aeeb5d4d88012568b2049599c1a247cf2
+> > >
+> > > Cc: Chen Zhou <chenzhou10@huawei.com>
+> > > Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> > > Cc: David Box <david.e.box@intel.com>
+> > > --
+> > > 2.17.1
+> > >
+> >
+> > --
+> > With Best Regards,
+> > Andy Shevchenko
+> >
 
-I fear it's a copy/paste from another patch:
-https://patchwork.ozlabs.org/patch/1223488/
-dt-bindings: iio: adc: stm32-adc: convert bindings to json-schema
-
-Should I send a fix for this one also ?
-
-Please advise,
-Fabrice
-> 
