@@ -2,89 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 08D3218BC39
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 17:17:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5660318BBD6
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 17:05:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728240AbgCSQRC convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Thu, 19 Mar 2020 12:17:02 -0400
-Received: from albireo.enyo.de ([37.24.231.21]:49206 "EHLO albireo.enyo.de"
+        id S1727784AbgCSQFJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 12:05:09 -0400
+Received: from vps0.lunn.ch ([185.16.172.187]:45402 "EHLO vps0.lunn.ch"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728157AbgCSQRB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 12:17:01 -0400
-Received: from [172.17.203.2] (helo=deneb.enyo.de)
-        by albireo.enyo.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        id 1jExff-0006BE-FU; Thu, 19 Mar 2020 16:05:23 +0000
-Received: from fw by deneb.enyo.de with local (Exim 4.92)
-        (envelope-from <fw@deneb.enyo.de>)
-        id 1jExdz-0000h9-3G; Thu, 19 Mar 2020 17:03:39 +0100
-From:   Florian Weimer <fw@deneb.enyo.de>
-To:     Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc:     libc-alpha <libc-alpha@sourceware.org>, carlos <carlos@redhat.com>,
-        Rich Felker <dalias@libc.org>,
-        linux-api <linux-api@vger.kernel.org>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Will Deacon <will.deacon@arm.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ben Maurer <bmaurer@fb.com>, Dave Watson <davejwatson@fb.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Paul <paulmck@linux.vnet.ibm.com>, Paul Turner <pjt@google.com>,
-        Joseph Myers <joseph@codesourcery.com>
-Subject: Re: [RFC PATCH glibc 4/8] glibc: Perform rseq(2) registration at C startup and thread creation (v15)
-References: <20200319144110.3733-1-mathieu.desnoyers@efficios.com>
-        <20200319144110.3733-5-mathieu.desnoyers@efficios.com>
-        <874kukpf9f.fsf@mid.deneb.enyo.de>
-        <2147217200.3240.1584633395285.JavaMail.zimbra@efficios.com>
-Date:   Thu, 19 Mar 2020 17:03:39 +0100
-In-Reply-To: <2147217200.3240.1584633395285.JavaMail.zimbra@efficios.com>
-        (Mathieu Desnoyers's message of "Thu, 19 Mar 2020 11:56:35 -0400
-        (EDT)")
-Message-ID: <87r1xo5o2s.fsf@mid.deneb.enyo.de>
+        id S1727212AbgCSQFJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 12:05:09 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+        s=20171124; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=zJnEspx9nUpxqY4oZ6sWyqjLedPnwb/JDmykq5Fz/1M=; b=jx/5n7+KC18GCR5gh5RC5Uu7Cq
+        Q/sz8HEgxnrFiv8mLmwLAmZ+N1cf43mUrBNqFvCXTMobK/b3lKoUGzXsQUO7zPJbi4NM7P9UXG9qE
+        Lz2hUkREitCNlfc7Xcfs36LleSpZrmZvX7vrLnEFVESYmHrfMNHAY8W1GPCBLRJF/6OU=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.93)
+        (envelope-from <andrew@lunn.ch>)
+        id 1jExfN-0007aG-81; Thu, 19 Mar 2020 17:05:05 +0100
+Date:   Thu, 19 Mar 2020 17:05:05 +0100
+From:   Andrew Lunn <andrew@lunn.ch>
+To:     Antoine Tenart <antoine.tenart@bootlin.com>
+Cc:     davem@davemloft.net, f.fainelli@gmail.com, hkallweit1@gmail.com,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next v3 2/2] net: phy: mscc: RGMII skew delay
+ configuration
+Message-ID: <20200319160505.GE27807@lunn.ch>
+References: <20200319141958.383626-1-antoine.tenart@bootlin.com>
+ <20200319141958.383626-3-antoine.tenart@bootlin.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200319141958.383626-3-antoine.tenart@bootlin.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* Mathieu Desnoyers:
+On Thu, Mar 19, 2020 at 03:19:58PM +0100, Antoine Tenart wrote:
+> This patch adds support for configuring the RGMII skew delays in Rx and
+> Tx. The Rx and Tx skews are set based on the interface mode. By default
+> their configuration is set to the default value in hardware (0.2ns);
+> this means the driver do not rely anymore on the bootloader
+> configuration.
+> 
+> Then based on the interface mode being used, a 2ns delay is added:
+> - RGMII_ID adds it for both Rx and Tx.
+> - RGMII_RXID adds it for Rx.
+> - RGMII_TXID adds it for Tx.
+> 
+> Signed-off-by: Antoine Tenart <antoine.tenart@bootlin.com>
+> ---
+>  drivers/net/phy/mscc/mscc.h      | 14 ++++++++++++++
+>  drivers/net/phy/mscc/mscc_main.c | 29 +++++++++++++++++++++++++++++
+>  2 files changed, 43 insertions(+)
+> 
+> diff --git a/drivers/net/phy/mscc/mscc.h b/drivers/net/phy/mscc/mscc.h
+> index d1b8bbe8acca..25729302714c 100644
+> --- a/drivers/net/phy/mscc/mscc.h
+> +++ b/drivers/net/phy/mscc/mscc.h
+> @@ -161,6 +161,20 @@ enum rgmii_rx_clock_delay {
+>  /* Extended Page 2 Registers */
+>  #define MSCC_PHY_CU_PMD_TX_CNTL		  16
+>  
+> +#define MSCC_PHY_RGMII_SETTINGS		  18
+> +#define RGMII_SKEW_RX_POS		  1
+> +#define RGMII_SKEW_TX_POS		  4
+> +
+> +/* RGMII skew values, in ns */
+> +#define VSC8584_RGMII_SKEW_0_2		  0
+> +#define VSC8584_RGMII_SKEW_0_8		  1
+> +#define VSC8584_RGMII_SKEW_1_1		  2
+> +#define VSC8584_RGMII_SKEW_1_7		  3
+> +#define VSC8584_RGMII_SKEW_2_0		  4
+> +#define VSC8584_RGMII_SKEW_2_3		  5
+> +#define VSC8584_RGMII_SKEW_2_6		  6
+> +#define VSC8584_RGMII_SKEW_3_4		  7
 
->> Can you use __has_include in <sys/rseq.h>, with a copy of the kernel
->> definitions if the kernel header is not available?
->
-> Sure. Should I pull a verbatim copy of uapi linux/rseq.h into glibc ?
-> If so, where should I put it ?
+  
+> +static void vsc8584_rgmii_set_skews(struct phy_device *phydev)
+> +{
+> +	u32 skew_rx, skew_tx;
+> +
+> +	/* We first set the Rx and Tx skews to their default value in h/w
+> +	 * (0.2 ns).
+> +	 */
+> +	skew_rx = VSC8584_RGMII_SKEW_0_2;
+> +	skew_tx = VSC8584_RGMII_SKEW_0_2;
 
-Probably into <sys/rseq.h>, perhaps with a construct like this
-(untested):
+Hi Antoine
 
-#ifdef __has_include
-# if __has_include ("linux/rseq.h")
-#   define __GLIBC_HAVE_KERNEL_RSEQ
-# endif
-#else
-# include <linux/version.h>
-# if LINUX_VERSION_CODE >= KERNEL_VERSION (4, 18, 0)
-#   define __GLIBC_HAVE_KERNEL_RSEQ
-# endif
-#endif
+Does this mean it is impossible to have a skew of 0ns?
 
-#ifdef __GLIBC_HAVE_KERNEL_RSEQ
-# include <linux/rseq.h>
-#else
-
-… (fallback goes here)
-#endif
-
-We have an ongoing debate whether the fallback definition should use
-__u64 or uint64_t.
-
-You also need to add an assert that the compiler supports
-__attribute__ ((aligned)) because ignoring it produces an
-ABI-incompatible header.  The struct rseq/struct rseq_cs definitions
-are broken, they should not try to change the alignment.
-
-PS: I have Internet connection trouble.  Nobody should be worried if I
-drop off the net for a while.  I understand this is quite a bad time
-for that. 8-(
+     Andrew
