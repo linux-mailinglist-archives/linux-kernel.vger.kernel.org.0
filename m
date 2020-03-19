@@ -2,62 +2,62 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 374F718AC66
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 06:41:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 22B9D18AC56
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 06:40:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727201AbgCSFk6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 01:40:58 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:37571 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727032AbgCSFko (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
+        id S1727054AbgCSFko (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
         Thu, 19 Mar 2020 01:40:44 -0400
-Received: by mail-pf1-f195.google.com with SMTP id 3so810087pff.4
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Mar 2020 22:40:42 -0700 (PDT)
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:46084 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725945AbgCSFkn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 01:40:43 -0400
+Received: by mail-pg1-f193.google.com with SMTP id y30so614160pga.13
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Mar 2020 22:40:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=5dFv7/70FKhDKgZsv7z5MRkFYJ6r4vLqdadhMT5bcVs=;
-        b=DEClMfOtnRcUSt/Yj3j7ZFjx+OzidFY/dj2fl7OnWDpSQZemsOdE5BmIXK5wIIm9Cs
-         q9l76oPFb7v6POI8ur1cBXFfBWlKSVDuE7g6S5mIy/RTq1WXCnPFO3/gzp9+SgDbqUEM
-         li+MjvzVXH5Z0KYBsfycUMoTMvFvAujJLJt5/fG5vEY8HZnGjYyK8LSZHiDdoq4VE/Ov
-         rg8N3tj36/Xu3JoNHW5N+q7i+pUOnHYU0QmgXqj0t3OVuzEpiGgKZZh2Dqs2ufCnMFzG
-         ItpOTGZGzt0fMlbNjj4PL4RJw4JkJ+chhx9XzUWXCsZmkpg+Nc/Qh58yCxIl63Fmmt/B
-         pIMw==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=VjRbI/Qcy2ZipTYHWuUTokoOEV5DVKKVy86kR+PhWiE=;
+        b=FFUErapf5Y2xQAQXCjZUnjfCRN0y0A0wXHXw/sJjUknTYFS2v99P/qu6S388LrmOBm
+         WLQv+cq5ggJaBRDLDscsPzceMAR4Ms8QpkQ2bX8IBLhuFHBxHfIPq1m2LbgMU4MM1by+
+         NUPMaf8roA6uBTCE3QIQs1E4S6LoODWGK7/yl06GM+eQ75gKvAWjElYhZ6WYdomNYDxg
+         XJHKMLQDANCKHRwGmr6mUwcaTQOpMDyIggWwmZmDx0Mesp/M8ucO9QmwOTm3oG8IUdxT
+         C+bR2+rPRQYoK3OofEwW0JSBzL1nrf90wfYGe3UDT2fWVttqFZcBgDkUAYwdb++3iwVJ
+         9JXQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=5dFv7/70FKhDKgZsv7z5MRkFYJ6r4vLqdadhMT5bcVs=;
-        b=WhPrt51+dIv7Z6/f+Th/UhWoW7kvrlDHis9V8BzqB3CURv4oqw8TDy9WjsTVHE0e2/
-         mY4Vey3r1NbDdWh4hrn0yGCHaJRVXNWLJomtoIFXtmetLcGD3z1U4vriqVRRtRfcUxj7
-         eHtxjeKbCAmQI/AP/kkRLCdd2QzoEAt7BKiL5nTrlIZi98urNP8d//h0OffrMTISwFiY
-         RMUtOwBAe4TAa0oeUqgUd8B+H5sd8B+9YgMH0UsWs5l0gwcnQ9vlJH0K7ROB5t9GYiDi
-         pE+vNhHE2oNrmTbh+7x8shwggntSeQVC9jKYzD1wmu/shMD7dQL7Qc1r6Ppz+bhnIJMX
-         gH8g==
-X-Gm-Message-State: ANhLgQ0Qkde+hrAJJFimgqj5VPAs/v7ueul1br8GNk8/2SxM5vJCZ1cK
-        7lvYTuyc5VDzOX61DfElWr9CYQ==
-X-Google-Smtp-Source: ADFU+vt+jLntul6FGkobwwASG/5WIX4bgXPG687fd+93UVN/ITFrGOV3ahed94A7k0lgV6aBkV+s7g==
-X-Received: by 2002:a62:30c3:: with SMTP id w186mr2111437pfw.245.1584596441255;
-        Wed, 18 Mar 2020 22:40:41 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=VjRbI/Qcy2ZipTYHWuUTokoOEV5DVKKVy86kR+PhWiE=;
+        b=KQcDZeqcDgxn+yUDG07zGAdmyf/lwJt5cUp4wyK8FWGScQIyy9JKQBOZCoE1uLyh9H
+         MDvmviOr0T9Q7n67jeYTk9mB5hqiUF7FwEr5Vd5800IrCBTopORe6nymvvks5zeT/xu7
+         zQefWTR+9JdOHdsulqLm5iitxhFOkNybrjfg6cZjOvCauxTCqJ5XAm4AoAWCxgFE6eNf
+         L0J1a86WFcYYMVr1cuNxpW7x7nAr/IYtr2axIlaBI4FXiBdULVp6ZURiCvvMctS5jUk1
+         6j46csYUfgbTDvCpewAuz12wiY31zMzRdCfnxfoPSUsKTWGWmdZwdI9zd2W+/Th+9gbR
+         jXDQ==
+X-Gm-Message-State: ANhLgQ2C36Vma5MVmY2+CdwyrrptPT2jlcBu8Y1r8cj/n76Eob/Rz8CF
+        Lp+GrVZ6vz/cybYhG3zZjU8exQ==
+X-Google-Smtp-Source: ADFU+vvvpauezbIT9XfVdGer93wUikobvBaeW9uRALrfaX66+M/F4eSbIFlcahvLdahCTb5waovbRA==
+X-Received: by 2002:aa7:8ec1:: with SMTP id b1mr2136428pfr.125.1584596442589;
+        Wed, 18 Mar 2020 22:40:42 -0700 (PDT)
 Received: from localhost.localdomain (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id l125sm229126pgl.57.2020.03.18.22.40.39
+        by smtp.gmail.com with ESMTPSA id l125sm229126pgl.57.2020.03.18.22.40.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Mar 2020 22:40:40 -0700 (PDT)
+        Wed, 18 Mar 2020 22:40:41 -0700 (PDT)
 From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>
-Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     Andy Gross <agross@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         Rob Clark <robdclark@gmail.com>
-Subject: [PATCH 0/4] clk: qcom: gdsc: Handle supply regulators
-Date:   Wed, 18 Mar 2020 22:38:58 -0700
-Message-Id: <20200319053902.3415984-1-bjorn.andersson@linaro.org>
+Subject: [PATCH 1/4] clk: qcom: gdsc: Handle GDSC regulator supplies
+Date:   Wed, 18 Mar 2020 22:38:59 -0700
+Message-Id: <20200319053902.3415984-2-bjorn.andersson@linaro.org>
 X-Mailer: git-send-email 2.24.0
+In-Reply-To: <20200319053902.3415984-1-bjorn.andersson@linaro.org>
+References: <20200319053902.3415984-1-bjorn.andersson@linaro.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -65,27 +65,105 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Handle supply regulators for GDSCs to allow probe deferral when regulators are
-not yet present/enabled and to allow the GDSC to enable/disable dependencies as
-needed.
+Certain GDSCs, such as the GPU_GX on MSM8996, requires that the upstream
+regulator supply is powered in order to be turned on.
 
-Bjorn Andersson (3):
-  clk: qcom: gdsc: Handle GDSC regulator supplies
-  clk: qcom: mmcc-msm8996: Properly describe GPU_GX gdsc
-  arm64: dts: qcom: msm8996: Make GPU node control GPU_GX GDSC
+It's not guaranteed that the bootloader will leave these supplies on and
+the driver core will attempt to enable any GDSCs before allowing the
+individual drivers to probe defer on the PMIC regulator driver not yet
+being present.
 
-Rajendra Nayak (1):
-  arm64: dts: qcom: db820c: Add s2 regulator in pmi8994
+So the gdsc driver needs to be made aware of supplying regulators and
+probe defer on their absence, and it needs to enable and disable the
+regulator accordingly.
 
- .../devicetree/bindings/clock/qcom,mmcc.yaml  |  4 ++++
- arch/arm64/boot/dts/qcom/apq8096-db820c.dtsi  | 14 +++++++++++
- arch/arm64/boot/dts/qcom/msm8996.dtsi         |  2 +-
- arch/arm64/boot/dts/qcom/pmi8994.dtsi         |  6 +++++
- drivers/clk/qcom/gdsc.c                       | 24 +++++++++++++++++++
- drivers/clk/qcom/gdsc.h                       |  4 ++++
- drivers/clk/qcom/mmcc-msm8996.c               |  2 ++
- 7 files changed, 55 insertions(+), 1 deletion(-)
+Voltage adjustments of the supplying regulator are deferred to the
+client drivers themselves.
 
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+---
+ drivers/clk/qcom/gdsc.c | 24 ++++++++++++++++++++++++
+ drivers/clk/qcom/gdsc.h |  4 ++++
+ 2 files changed, 28 insertions(+)
+
+diff --git a/drivers/clk/qcom/gdsc.c b/drivers/clk/qcom/gdsc.c
+index a250f59708d8..3528789cc9d0 100644
+--- a/drivers/clk/qcom/gdsc.c
++++ b/drivers/clk/qcom/gdsc.c
+@@ -13,6 +13,7 @@
+ #include <linux/regmap.h>
+ #include <linux/reset-controller.h>
+ #include <linux/slab.h>
++#include <linux/regulator/consumer.h>
+ #include "gdsc.h"
+ 
+ #define PWR_ON_MASK		BIT(31)
+@@ -112,6 +113,12 @@ static int gdsc_toggle_logic(struct gdsc *sc, enum gdsc_status status)
+ 	int ret;
+ 	u32 val = (status == GDSC_ON) ? 0 : SW_COLLAPSE_MASK;
+ 
++	if (status == GDSC_ON && sc->rsupply) {
++		ret = regulator_enable(sc->rsupply);
++		if (ret < 0)
++			return ret;
++	}
++
+ 	ret = regmap_update_bits(sc->regmap, sc->gdscr, SW_COLLAPSE_MASK, val);
+ 	if (ret)
+ 		return ret;
+@@ -143,6 +150,13 @@ static int gdsc_toggle_logic(struct gdsc *sc, enum gdsc_status status)
+ 
+ 	ret = gdsc_poll_status(sc, status);
+ 	WARN(ret, "%s status stuck at 'o%s'", sc->pd.name, status ? "ff" : "n");
++
++	if (!ret && status == GDSC_OFF && sc->rsupply) {
++		ret = regulator_disable(sc->rsupply);
++		if (ret < 0)
++			return ret;
++	}
++
+ 	return ret;
+ }
+ 
+@@ -371,6 +385,16 @@ int gdsc_register(struct gdsc_desc *desc,
+ 	if (!data->domains)
+ 		return -ENOMEM;
+ 
++	/* Resolve any regulator supplies */
++	for (i = 0; i < num; i++) {
++		if (!scs[i] || !scs[i]->supply)
++			continue;
++
++		scs[i]->rsupply = devm_regulator_get(dev, scs[i]->supply);
++		if (IS_ERR(scs[i]->rsupply))
++			return PTR_ERR(scs[i]->rsupply);
++	}
++
+ 	data->num_domains = num;
+ 	for (i = 0; i < num; i++) {
+ 		if (!scs[i])
+diff --git a/drivers/clk/qcom/gdsc.h b/drivers/clk/qcom/gdsc.h
+index 64cdc8cf0d4d..c36fc26dcdff 100644
+--- a/drivers/clk/qcom/gdsc.h
++++ b/drivers/clk/qcom/gdsc.h
+@@ -10,6 +10,7 @@
+ #include <linux/pm_domain.h>
+ 
+ struct regmap;
++struct regulator;
+ struct reset_controller_dev;
+ 
+ /**
+@@ -52,6 +53,9 @@ struct gdsc {
+ 	struct reset_controller_dev	*rcdev;
+ 	unsigned int			*resets;
+ 	unsigned int			reset_count;
++
++	const char 			*supply;
++	struct regulator		*rsupply;
+ };
+ 
+ struct gdsc_desc {
 -- 
 2.24.0
 
