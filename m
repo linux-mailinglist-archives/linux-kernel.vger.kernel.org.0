@@ -2,40 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9FF3D18B44E
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:08:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E2BC218B4BE
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:12:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728157AbgCSNIa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 09:08:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52550 "EHLO mail.kernel.org"
+        id S1728892AbgCSNMP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 09:12:15 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58024 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727103AbgCSNIY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 09:08:24 -0400
+        id S1727977AbgCSNMN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 09:12:13 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4FC05208D5;
-        Thu, 19 Mar 2020 13:08:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 806BC214D8;
+        Thu, 19 Mar 2020 13:12:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584623303;
-        bh=CsQT18CPjTjTSx68+Br9l53FvcOFAGgFl8ji2Gx8FMI=;
+        s=default; t=1584623533;
+        bh=Yn+9r6olApXMbL0vUl2d/cjH46UB0IAPFiGQT2Sdx+M=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=TzrI35XuZsmEumHF7docExG3onYQfYwJLOO8Km6DWEGntn8DOk8payA71RKf16Yq3
-         o8XDG0s3On+OQK2JDyVM+Qjrzqdc+Wtr/5OAQh8BYLI7kaDMuUKhAimzgsAm8BSpEO
-         Wi8zzcRQk0+SyV/5mRJAWZjryoSD9MmOJdunTJh4=
+        b=VAbWdt/3WgIusYEtrZz+dfhSIELJvpS9ulnfciIvH5XM6YTbbhbH2AzMfTPBCCuO9
+         wZOxKVRoZ3lECzpV677dE4TIVXHX2nP6EAestxlHo4m13h2Gg0iiDImxh+8ieiXH2y
+         1MYi5fGYzmx17IKNcpZhuRQ4FdwRsJd2k1OXc4u0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Sven Eckelmann <sven@narfation.org>,
-        Antonio Quartulli <a@unstable.cc>,
-        Marek Lindner <mareklindner@neomailbox.ch>,
-        Simon Wunderlich <sw@simonwunderlich.de>
-Subject: [PATCH 4.4 60/93] batman-adv: Fix speedy join in gateway client mode
+        stable@vger.kernel.org, Jakub Kicinski <kuba@kernel.org>,
+        Johannes Berg <johannes.berg@intel.com>
+Subject: [PATCH 4.9 42/90] nl80211: add missing attribute validation for critical protocol indication
 Date:   Thu, 19 Mar 2020 14:00:04 +0100
-Message-Id: <20200319123943.958803953@linuxfoundation.org>
+Message-Id: <20200319123941.645729722@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.2
-In-Reply-To: <20200319123924.795019515@linuxfoundation.org>
-References: <20200319123924.795019515@linuxfoundation.org>
+In-Reply-To: <20200319123928.635114118@linuxfoundation.org>
+References: <20200319123928.635114118@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,42 +43,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sven Eckelmann <sven@narfation.org>
+From: Jakub Kicinski <kuba@kernel.org>
 
-commit d1fe176ca51fa3cb35f70c1d876d9a090e9befce upstream.
+commit 0e1a1d853ecedc99da9d27f9f5c376935547a0e2 upstream.
 
-Speedy join only works when the received packet is either broadcast or an
-4addr unicast packet. Thus packets converted from broadcast to unicast via
-the gateway handling code have to be converted to 4addr packets to allow
-the receiving gateway server to add the sender address as temporary entry
-to the translation table.
+Add missing attribute validation for critical protocol fields
+to the netlink policy.
 
-Not doing it will make the batman-adv gateway server drop the DHCP response
-in many situations because it doesn't yet have the TT entry for the
-destination of the DHCP response.
-
-Fixes: 371351731e9c ("batman-adv: change interface_rx to get orig node")
-Signed-off-by: Sven Eckelmann <sven@narfation.org>
-Acked-by: Antonio Quartulli <a@unstable.cc>
-Signed-off-by: Marek Lindner <mareklindner@neomailbox.ch>
-Signed-off-by: Simon Wunderlich <sw@simonwunderlich.de>
+Fixes: 5de17984898c ("cfg80211: introduce critical protocol indication from user-space")
+Signed-off-by: Jakub Kicinski <kuba@kernel.org>
+Link: https://lore.kernel.org/r/20200303051058.4089398-2-kuba@kernel.org
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- net/batman-adv/send.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/net/batman-adv/send.c
-+++ b/net/batman-adv/send.c
-@@ -381,8 +381,8 @@ int batadv_send_skb_via_gw(struct batadv
- 	struct batadv_orig_node *orig_node;
- 
- 	orig_node = batadv_gw_get_selected_orig(bat_priv);
--	return batadv_send_skb_unicast(bat_priv, skb, BATADV_UNICAST, 0,
--				       orig_node, vid);
-+	return batadv_send_skb_unicast(bat_priv, skb, BATADV_UNICAST_4ADDR,
-+				       BATADV_P_DATA, orig_node, vid);
- }
- 
- void batadv_schedule_bat_ogm(struct batadv_hard_iface *hard_iface)
+---
+ net/wireless/nl80211.c |    2 ++
+ 1 file changed, 2 insertions(+)
+
+--- a/net/wireless/nl80211.c
++++ b/net/wireless/nl80211.c
+@@ -407,6 +407,8 @@ static const struct nla_policy nl80211_p
+ 	[NL80211_ATTR_MDID] = { .type = NLA_U16 },
+ 	[NL80211_ATTR_IE_RIC] = { .type = NLA_BINARY,
+ 				  .len = IEEE80211_MAX_DATA_LEN },
++	[NL80211_ATTR_CRIT_PROT_ID] = { .type = NLA_U16 },
++	[NL80211_ATTR_MAX_CRIT_PROT_DURATION] = { .type = NLA_U16 },
+ 	[NL80211_ATTR_PEER_AID] = { .type = NLA_U16 },
+ 	[NL80211_ATTR_CH_SWITCH_COUNT] = { .type = NLA_U32 },
+ 	[NL80211_ATTR_CH_SWITCH_BLOCK_TX] = { .type = NLA_FLAG },
 
 
