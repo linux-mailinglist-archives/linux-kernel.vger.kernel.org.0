@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6834B18B4C5
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:12:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5BA8718B461
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:09:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728916AbgCSNM3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 09:12:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58358 "EHLO mail.kernel.org"
+        id S1728295AbgCSNJS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 09:09:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53662 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728901AbgCSNM1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 09:12:27 -0400
+        id S1728281AbgCSNJO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 09:09:14 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2B4A3215A4;
-        Thu, 19 Mar 2020 13:12:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A0DB421556;
+        Thu, 19 Mar 2020 13:09:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584623546;
-        bh=yz68c61gnGBkpldyJlxAypbhJtxqSMGYLCBceO05UoI=;
+        s=default; t=1584623354;
+        bh=ixfSi+nQKN8jDvtP4pDnPwS76OFP62rBBdyNT2rRxIQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=g/z3rCk1M9sQL6cbqQ6qz5bjxKMNFIlMvc0d8JIBqM7leX17v+5CVy555kznl8cvB
-         mz+L6gaVRC3OE3VlMVvHdpdVaEQNAedG4rx0ZkW0GY/Nxuw4YPyyvGbmUKpxRHi4JP
-         ht+sTezjtoHZz66qqNXql5zHJmWNFlJfj3O62hbg=
+        b=tmSdbo44y7VfFzMwXY8eTeK9vR76ducTX3FpcOk1qIukY+iroQ3axc0jptK2wpnko
+         DZDkR2ndmJsjMY7BiLelSQpW6eZQW384YcR5rFb6dgB5pXs5YeCAQ77oW0BIWmo9rj
+         jXdPI4qq9hJf0N2SHoNlMJgnExIGzCz5N/adLtD4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Alvaro Antelo <alvaro.antelo@gmail.com>,
+        =?UTF-8?q?Linus=20L=FCssing?= <linus.luessing@c0d3.blue>,
         Sven Eckelmann <sven@narfation.org>,
-        Marek Lindner <mareklindner@neomailbox.ch>,
         Simon Wunderlich <sw@simonwunderlich.de>
-Subject: [PATCH 4.9 56/90] batman-adv: Accept only filled wifi station info
-Date:   Thu, 19 Mar 2020 14:00:18 +0100
-Message-Id: <20200319123945.669377960@linuxfoundation.org>
+Subject: [PATCH 4.4 75/93] batman-adv: Avoid storing non-TT-sync flags on singular entries too
+Date:   Thu, 19 Mar 2020 14:00:19 +0100
+Message-Id: <20200319123948.678550482@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.2
-In-Reply-To: <20200319123928.635114118@linuxfoundation.org>
-References: <20200319123928.635114118@linuxfoundation.org>
+In-Reply-To: <20200319123924.795019515@linuxfoundation.org>
+References: <20200319123924.795019515@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,54 +44,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sven Eckelmann <sven@narfation.org>
+From: Linus Lüssing <linus.luessing@c0d3.blue>
 
-commit d62890885efbc48acea46964ea3af69b61c8c5eb upstream.
+commit 4a519b83da16927fb98fd32b0f598e639d1f1859 upstream.
 
-The wifi driver can decide to not provide parts of the station info. For
-example, the expected throughput of the station can be omitted when the
-used rate control doesn't provide this kind of information.
+Since commit 54e22f265e87 ("batman-adv: fix TT sync flag inconsistencies")
+TT sync flags and TT non-sync'd flags are supposed to be stored
+separately.
 
-The B.A.T.M.A.N. V implementation must therefore check the filled bitfield
-before it tries to access the expected_throughput of the returned
-station_info.
+The previous patch missed to apply this separation on a TT entry with
+only a single TT orig entry.
 
-Reported-by: Alvaro Antelo <alvaro.antelo@gmail.com>
-Fixes: c833484e5f38 ("batman-adv: ELP - compute the metric based on the estimated throughput")
+This is a minor fix because with only a single TT orig entry the DDoS
+issue the former patch solves does not apply.
+
+Fixes: 54e22f265e87 ("batman-adv: fix TT sync flag inconsistencies")
+Signed-off-by: Linus Lüssing <linus.luessing@c0d3.blue>
 Signed-off-by: Sven Eckelmann <sven@narfation.org>
-Reviewed-by: Marek Lindner <mareklindner@neomailbox.ch>
 Signed-off-by: Simon Wunderlich <sw@simonwunderlich.de>
+Signed-off-by: Sven Eckelmann <sven@narfation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/batman-adv/bat_v_elp.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ net/batman-adv/translation-table.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/net/batman-adv/bat_v_elp.c
-+++ b/net/batman-adv/bat_v_elp.c
-@@ -19,6 +19,7 @@
- #include "main.h"
+--- a/net/batman-adv/translation-table.c
++++ b/net/batman-adv/translation-table.c
+@@ -1405,7 +1405,8 @@ static bool batadv_tt_global_add(struct
+ 		ether_addr_copy(common->addr, tt_addr);
+ 		common->vid = vid;
  
- #include <linux/atomic.h>
-+#include <linux/bitops.h>
- #include <linux/byteorder/generic.h>
- #include <linux/errno.h>
- #include <linux/etherdevice.h>
-@@ -29,6 +30,7 @@
- #include <linux/kernel.h>
- #include <linux/kref.h>
- #include <linux/netdevice.h>
-+#include <linux/nl80211.h>
- #include <linux/random.h>
- #include <linux/rculist.h>
- #include <linux/rcupdate.h>
-@@ -102,6 +104,8 @@ static u32 batadv_v_elp_get_throughput(s
- 			}
- 			if (ret)
- 				goto default_throughput;
-+			if (!(sinfo.filled & BIT(NL80211_STA_INFO_EXPECTED_THROUGHPUT)))
-+				goto default_throughput;
- 
- 			return sinfo.expected_throughput / 100;
- 		}
+-		common->flags = flags;
++		common->flags = flags & (~BATADV_TT_SYNC_MASK);
++
+ 		tt_global_entry->roam_at = 0;
+ 		/* node must store current time in case of roaming. This is
+ 		 * needed to purge this entry out on timeout (if nobody claims
 
 
