@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5BA8718B461
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:09:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A567118B4D6
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:13:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728295AbgCSNJS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 09:09:18 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53662 "EHLO mail.kernel.org"
+        id S1727194AbgCSNNH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 09:13:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59726 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728281AbgCSNJO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 09:09:14 -0400
+        id S1729060AbgCSNNB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 09:13:01 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A0DB421556;
-        Thu, 19 Mar 2020 13:09:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A6C8221841;
+        Thu, 19 Mar 2020 13:13:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584623354;
-        bh=ixfSi+nQKN8jDvtP4pDnPwS76OFP62rBBdyNT2rRxIQ=;
+        s=default; t=1584623581;
+        bh=MNISfiGq26FrWPxt9X9i15XovzbjQzDF8bZvT5s9xpc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tmSdbo44y7VfFzMwXY8eTeK9vR76ducTX3FpcOk1qIukY+iroQ3axc0jptK2wpnko
-         DZDkR2ndmJsjMY7BiLelSQpW6eZQW384YcR5rFb6dgB5pXs5YeCAQ77oW0BIWmo9rj
-         jXdPI4qq9hJf0N2SHoNlMJgnExIGzCz5N/adLtD4=
+        b=edOhnWkXRnGoDHigGLejfCiWPgScHwXC9cvigATEqnr63Xz87hwlaaLR27cX1XXai
+         l5+Cj24MyODrhnLP1MdAEnwB2TsR0Ve62jhp1mukSeMUJG0jYjJgnahokam1Uu4F2h
+         xeRmSN7ntdpCwWFsY3Ca9DaRj96K2TmdhsS9gwA4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        =?UTF-8?q?Linus=20L=FCssing?= <linus.luessing@c0d3.blue>,
-        Sven Eckelmann <sven@narfation.org>,
+        Sven Eckelmann <sven.eckelmann@openmesh.com>,
         Simon Wunderlich <sw@simonwunderlich.de>
-Subject: [PATCH 4.4 75/93] batman-adv: Avoid storing non-TT-sync flags on singular entries too
-Date:   Thu, 19 Mar 2020 14:00:19 +0100
-Message-Id: <20200319123948.678550482@linuxfoundation.org>
+Subject: [PATCH 4.9 58/90] batman-adv: Avoid spurious warnings from bat_v neigh_cmp implementation
+Date:   Thu, 19 Mar 2020 14:00:20 +0100
+Message-Id: <20200319123946.481092472@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.2
-In-Reply-To: <20200319123924.795019515@linuxfoundation.org>
-References: <20200319123924.795019515@linuxfoundation.org>
+In-Reply-To: <20200319123928.635114118@linuxfoundation.org>
+References: <20200319123928.635114118@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,41 +43,66 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Linus Lüssing <linus.luessing@c0d3.blue>
+From: Sven Eckelmann <sven.eckelmann@openmesh.com>
 
-commit 4a519b83da16927fb98fd32b0f598e639d1f1859 upstream.
+commit 6a4bc44b012cbc29c9d824be2c7ab9eac8ee6b6f upstream.
 
-Since commit 54e22f265e87 ("batman-adv: fix TT sync flag inconsistencies")
-TT sync flags and TT non-sync'd flags are supposed to be stored
-separately.
+The neighbor compare API implementation for B.A.T.M.A.N. V checks whether
+the neigh_ifinfo for this neighbor on a specific interface exists. A
+warning is printed when it isn't found.
 
-The previous patch missed to apply this separation on a TT entry with
-only a single TT orig entry.
+But it is not called inside a lock which would prevent that this
+information is lost right before batadv_neigh_ifinfo_get. It must therefore
+be expected that batadv_v_neigh_(cmp|is_sob) might not be able to get the
+requested neigh_ifinfo.
 
-This is a minor fix because with only a single TT orig entry the DDoS
-issue the former patch solves does not apply.
+A WARN_ON for such a situation seems not to be appropriate because this
+will only flood the kernel logs. The warnings must therefore be removed.
 
-Fixes: 54e22f265e87 ("batman-adv: fix TT sync flag inconsistencies")
-Signed-off-by: Linus Lüssing <linus.luessing@c0d3.blue>
-Signed-off-by: Sven Eckelmann <sven@narfation.org>
+Signed-off-by: Sven Eckelmann <sven.eckelmann@openmesh.com>
 Signed-off-by: Simon Wunderlich <sw@simonwunderlich.de>
-Signed-off-by: Sven Eckelmann <sven@narfation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/batman-adv/translation-table.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ net/batman-adv/bat_v.c |    9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
 
---- a/net/batman-adv/translation-table.c
-+++ b/net/batman-adv/translation-table.c
-@@ -1405,7 +1405,8 @@ static bool batadv_tt_global_add(struct
- 		ether_addr_copy(common->addr, tt_addr);
- 		common->vid = vid;
+--- a/net/batman-adv/bat_v.c
++++ b/net/batman-adv/bat_v.c
+@@ -19,7 +19,6 @@
+ #include "main.h"
  
--		common->flags = flags;
-+		common->flags = flags & (~BATADV_TT_SYNC_MASK);
-+
- 		tt_global_entry->roam_at = 0;
- 		/* node must store current time in case of roaming. This is
- 		 * needed to purge this entry out on timeout (if nobody claims
+ #include <linux/atomic.h>
+-#include <linux/bug.h>
+ #include <linux/cache.h>
+ #include <linux/errno.h>
+ #include <linux/if_ether.h>
+@@ -623,11 +622,11 @@ static int batadv_v_neigh_cmp(struct bat
+ 	int ret = 0;
+ 
+ 	ifinfo1 = batadv_neigh_ifinfo_get(neigh1, if_outgoing1);
+-	if (WARN_ON(!ifinfo1))
++	if (!ifinfo1)
+ 		goto err_ifinfo1;
+ 
+ 	ifinfo2 = batadv_neigh_ifinfo_get(neigh2, if_outgoing2);
+-	if (WARN_ON(!ifinfo2))
++	if (!ifinfo2)
+ 		goto err_ifinfo2;
+ 
+ 	ret = ifinfo1->bat_v.throughput - ifinfo2->bat_v.throughput;
+@@ -649,11 +648,11 @@ static bool batadv_v_neigh_is_sob(struct
+ 	bool ret = false;
+ 
+ 	ifinfo1 = batadv_neigh_ifinfo_get(neigh1, if_outgoing1);
+-	if (WARN_ON(!ifinfo1))
++	if (!ifinfo1)
+ 		goto err_ifinfo1;
+ 
+ 	ifinfo2 = batadv_neigh_ifinfo_get(neigh2, if_outgoing2);
+-	if (WARN_ON(!ifinfo2))
++	if (!ifinfo2)
+ 		goto err_ifinfo2;
+ 
+ 	threshold = ifinfo1->bat_v.throughput / 4;
 
 
