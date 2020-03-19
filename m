@@ -2,108 +2,147 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5208918B3F3
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:05:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 745FE18B406
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:06:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727089AbgCSNFc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 09:05:32 -0400
-Received: from us-smtp-delivery-74.mimecast.com ([216.205.24.74]:26895 "EHLO
-        us-smtp-delivery-74.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727384AbgCSNFa (ORCPT
+        id S1727592AbgCSNGJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 09:06:09 -0400
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:45521 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727563AbgCSNGE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 09:05:30 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1584623128;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=h7iXFnc3rkjcIjxB0MRXLtgPjHPc/GETaaRu2YfWDZY=;
-        b=LkgyS+FpTtW7wjX9lGYUNMZ3621GLMZ8JaOQBz7Ejr+w2NG3uK2IQUv3ifTBP02M2/du17
-        zyOBLFQm+yNyOClhYoDbuzaK5U3E26otAZMG6HaPa3H0heMYj3gUqufbFvedJTN0DsJ99q
-        E/pioGtzit9wPWhe9qmwBSAwILwcoEU=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-183-7NEixEPoMuKEnlyWlUkp0A-1; Thu, 19 Mar 2020 09:05:26 -0400
-X-MC-Unique: 7NEixEPoMuKEnlyWlUkp0A-1
-Received: by mail-wr1-f72.google.com with SMTP id f13so956757wro.23
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Mar 2020 06:05:26 -0700 (PDT)
+        Thu, 19 Mar 2020 09:06:04 -0400
+Received: by mail-ot1-f65.google.com with SMTP id e9so2215397otr.12;
+        Thu, 19 Mar 2020 06:06:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=JNrzJ43ADUGKGgcYIYmm8uAsAxVnbPxCKcqomy6wzR8=;
+        b=TVp42mYXKeI+CzEDqNdIZ8OSjOYd/x2BHF3WQsRwUplFoeXvhUkRzymLKfdlVKXVgS
+         GzwUg2Q7ho8ZvC7uyy7SUT28MucxF4UxCJ/qO2fnyTsnua7SxjrDkXe0e99BVkOpALLL
+         iX+Nfz8vqxrVET+CnfJyBGbZP9aENhotFEL8cWKt0rx0UXQxhpJcqzqqhY1hbF4XQMVh
+         hUW+v4bgFd5HlN+csF5pQThvddNw+lZumxBcb3eP9pq7feovGzeBUf7Mthvx/0+wAbcr
+         6u5pwajrtYTDgDnYY4EI1S3xWl1jc0aoSPYiQM1i+Ngl1EVzCXMzYw/esdw5gERxe7wM
+         leBw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=h7iXFnc3rkjcIjxB0MRXLtgPjHPc/GETaaRu2YfWDZY=;
-        b=bR7HpEQcT4YHEcx++iSZ0pOwloWLuEFduBwJktNq0xHm2zu8ja6eZBjwut3w1owdCm
-         92ABjybZes/T7Jj/L4ARC/9aAV0fZtkqVUhXEoQqv2lVUhAXpC3Vp/PRwL0On3x/7cQY
-         qDrv35cKJDk6sexgowYlA2h4xlP2BwncDZT5KRr+Ao5agrnIDlM7bSUD4vlPh71Cinqv
-         Irbh96SSPxxbbJwtpsX8WT4dkL2Ed3GyUCoMQa/L8974jFxeDe/vhtqrxb8uakx0vk/2
-         XrfEH9l4PMyUTqixjQRS4Ke8Ch3qFcn6rCUOz/KcB9Z0qwO21t8VSwxP/I4/jqacMs/D
-         qQag==
-X-Gm-Message-State: ANhLgQ0SCBQOb4Suj3F5Bz2D6U8PPWpHJ8BTU23/1cgOOIelRqSvwgur
-        YghFY37JEYZmx/o7lAyYFPVbR4XemYmK39IseL4nrM2HcLfnvaQ6L609n9CjuBZrUq7Yt4eue33
-        H4bOoZ+HAITz//w1ROPAiLoZi
-X-Received: by 2002:adf:e9d2:: with SMTP id l18mr4141024wrn.400.1584623125147;
-        Thu, 19 Mar 2020 06:05:25 -0700 (PDT)
-X-Google-Smtp-Source: ADFU+vvUeEF4lWmB6DnjFfzKFDT4amKFY8lP/2zFH/xeioNvGBfVaVwTGmv399gN3+BdRl6h8oOzCQ==
-X-Received: by 2002:adf:e9d2:: with SMTP id l18mr4140997wrn.400.1584623124901;
-        Thu, 19 Mar 2020 06:05:24 -0700 (PDT)
-Received: from [192.168.178.58] ([151.21.15.43])
-        by smtp.gmail.com with ESMTPSA id n2sm3254478wrr.62.2020.03.19.06.05.21
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 19 Mar 2020 06:05:24 -0700 (PDT)
-Subject: Re: [PATCH 00/12] SEV Live Migration Patchset.
-To:     Ashish Kalra <ashish.kalra@amd.com>,
-        Andy Lutomirski <luto@kernel.org>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Radim Krcmar <rkrcmar@redhat.com>,
-        Joerg Roedel <joro@8bytes.org>, Borislav Petkov <bp@suse.de>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        David Rientjes <rientjes@google.com>, X86 ML <x86@kernel.org>,
-        kvm list <kvm@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Brijesh Singh <brijesh.singh@amd.com>
-References: <cover.1581555616.git.ashish.kalra@amd.com>
- <CALCETrXE9cWd3TbBZMsAwmSwWpDYFsicLZ=amHLWsvE0burQSw@mail.gmail.com>
- <20200213230916.GB8784@ashkalra_ubuntu_server>
- <CALCETrUQBsof3fMf-Dj7RDJJ9GDdVGNOML_ZyeSmJtcp_LhdPQ@mail.gmail.com>
- <20200217194959.GA14833@ashkalra_ubuntu_server>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Message-ID: <101d137c-724a-2b79-f865-e7af8135ca86@redhat.com>
-Date:   Thu, 19 Mar 2020 14:05:21 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=JNrzJ43ADUGKGgcYIYmm8uAsAxVnbPxCKcqomy6wzR8=;
+        b=DYznvXksrBeUHZ2YVSNV0phgaGurg+o4bMY5MKslsMP1VksI+Wiq2V4MfnzPpKkEpe
+         d+ogyHTovUwoT/jjDPXka1vYqqigt0VYFG+PNqJmfJuP84PfJZEHVqhH7/stO2r3jDw/
+         SKGVIoWW0ohF5BwP34dINXuwhRto4KxCF/dbs87kOOy8Idhp9PGP5kFUFMFBr09hb43I
+         X2Eo/rgUyrLBj87Q1cTX6ifilrFLa/8Tko4FJ1J4ZDSMLFJXr2VeF3jcv7aJdmJn7Ci1
+         jARiTLML3r1cS/KqRNruggY54qeykLpF12akiYsQh6jijR3HUgGoOCd/NGHnpnXVUYh/
+         YbaQ==
+X-Gm-Message-State: ANhLgQ1rTNoxibZJ92Shld0XqEy9egsypr7+mq53mdQ8ufbOj9Am73xV
+        4bv903AD+VLekBMqekg6XyzLw+rfzerFSVeNobo=
+X-Google-Smtp-Source: ADFU+vu6TgclLFcGUTWCKylwKuQ1xUKX/i4NckoB5Lg2bmpS65EzGwsKNTO9xiLZkksGH2ZBHR96INCeNIhBb87zs70=
+X-Received: by 2002:a9d:264a:: with SMTP id a68mr2250727otb.176.1584623163859;
+ Thu, 19 Mar 2020 06:06:03 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20200217194959.GA14833@ashkalra_ubuntu_server>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <1584133954-6953-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <1584133954-6953-2-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com> <20200319124452.3yfcvq754vi4q2rv@gilmour.lan>
+In-Reply-To: <20200319124452.3yfcvq754vi4q2rv@gilmour.lan>
+From:   "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date:   Thu, 19 Mar 2020 13:05:37 +0000
+Message-ID: <CA+V-a8vH+wJoC1SL0nuk8ypAH3Mosd+K1dLNDA5wwgP4W6A=CQ@mail.gmail.com>
+Subject: Re: [PATCH v3 1/4] media: dt-bindings: media: i2c: Switch to assigned-clock-rates
+To:     Maxime Ripard <maxime@cerno.tech>,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, Fabio Estevam <festevam@gmail.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Ezequiel Garcia <ezequiel@collabora.com>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        linux-media <linux-media@vger.kernel.org>,
+        LAK <linux-arm-kernel@lists.infradead.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 17/02/20 20:49, Ashish Kalra wrote:
->> Also, you're making guest-side and host-side changes.  What ensures
->> that you don't try to migrate a guest that doesn't support the
->> hypercall for encryption state tracking?
-> This is a good question and it is still an open-ended question. There
-> are two possibilities here: guest does not have any unencrypted pages
-> (for e.g booting 32-bit) and so it does not make any hypercalls, and 
-> the other possibility is that the guest does not have support for
-> the newer hypercall.
-> 
-> In the first case, all the guest pages are then assumed to be 
-> encrypted and live migration happens as such.
-> 
-> For the second case, we have been discussing this internally,
-> and one option is to extend the KVM capabilites/feature bits to check for this ?
+Hi Maxime,
 
-You could extend the hypercall to completely block live migration (e.g.
-a0=a1=~0, a2=0 to unblock or 1 to block).  The KVM_GET_PAGE_ENC_BITMAP
-ioctl can also return the blocked/unblocked state.
+Thank you for the review.
 
-Paolo
+On Thu, Mar 19, 2020 at 12:45 PM Maxime Ripard <maxime@cerno.tech> wrote:
+>
+> Hi,
+>
+> On Fri, Mar 13, 2020 at 09:12:31PM +0000, Lad Prabhakar wrote:
+> > Use assigned-clock-rates to specify the clock rate. Also mark
+> > clock-frequency property as deprecated.
+> >
+> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > ---
+> >  Documentation/devicetree/bindings/media/i2c/ov5645.txt | 5 +++--
+> >  1 file changed, 3 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/Documentation/devicetree/bindings/media/i2c/ov5645.txt b/Documentation/devicetree/bindings/media/i2c/ov5645.txt
+> > index 72ad992..e62fe82 100644
+> > --- a/Documentation/devicetree/bindings/media/i2c/ov5645.txt
+> > +++ b/Documentation/devicetree/bindings/media/i2c/ov5645.txt
+> > @@ -8,7 +8,7 @@ Required Properties:
+> >  - compatible: Value should be "ovti,ov5645".
+> >  - clocks: Reference to the xclk clock.
+> >  - clock-names: Should be "xclk".
+> > -- clock-frequency: Frequency of the xclk clock.
+> > +- clock-frequency (deprecated): Frequency of the xclk clock.
+> >  - enable-gpios: Chip enable GPIO. Polarity is GPIO_ACTIVE_HIGH. This corresponds
+> >    to the hardware pin PWDNB which is physically active low.
+> >  - reset-gpios: Chip reset GPIO. Polarity is GPIO_ACTIVE_LOW. This corresponds to
+> > @@ -37,7 +37,8 @@ Example:
+> >
+> >                       clocks = <&clks 200>;
+> >                       clock-names = "xclk";
+> > -                     clock-frequency = <24000000>;
+> > +                     assigned-clocks = <&clks 200>;
+> > +                     assigned-clock-rates = <24000000>;
+> >
+> >                       vdddo-supply = <&camera_dovdd_1v8>;
+> >                       vdda-supply = <&camera_avdd_2v8>;
+>
+> clock-frequency is quite different from assigned-clock-rates though,
+> semantically speaking. clock-frequency is only about what the clock
+> frequency is, while assigned-clock-rates will change the rate as well,
+> and you have no idea how long it will last.
+>
+Agreed clock-frequency tells whats the clock frequency, wrt ov5645 driver
+this property was read and and the clock rate was changed accordingly as per
+the value being passed. So switching  to assigned-clock-rates does bypass
+of clock rate being set in the ov5645 driver [1] as the framework does it.
 
+> If you want to retrieve that through the clock framework, then just
+> making clock-frequency optional is enough and falling back to
+> clk_get_rate on the clocks property already provided is enough.
+>
+As done in patch [1] ?
+
+Fyi I have posted a v4 [2] to ML.
+
+[1] https://patchwork.linuxtv.org/patch/62378/
+[2] https://patchwork.linuxtv.org/project/linux-media/list/?series=1990
+
+Cheers,
+--Prabhakar
+
+> Maxime
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
