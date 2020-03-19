@@ -2,83 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2D32918AC52
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 06:40:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 20E4318AC68
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 06:43:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727003AbgCSFkh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 01:40:37 -0400
-Received: from bmailout3.hostsharing.net ([176.9.242.62]:32963 "EHLO
-        bmailout3.hostsharing.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725812AbgCSFkh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 01:40:37 -0400
-Received: from h08.hostsharing.net (h08.hostsharing.net [IPv6:2a01:37:1000::53df:5f1c:0])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client CN "*.hostsharing.net", Issuer "COMODO RSA Domain Validation Secure Server CA" (not verified))
-        by bmailout3.hostsharing.net (Postfix) with ESMTPS id D53B7100B0350;
-        Thu, 19 Mar 2020 06:40:34 +0100 (CET)
-Received: by h08.hostsharing.net (Postfix, from userid 100393)
-        id 66B0F22429; Thu, 19 Mar 2020 06:40:34 +0100 (CET)
-Date:   Thu, 19 Mar 2020 06:40:34 +0100
-From:   Lukas Wunner <lukas@wunner.de>
-To:     Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        gregkh@linuxfoundation.org, jslaby@suse.com,
-        matwey.kornilov@gmail.com, linux-serial@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/7] serial: 8250: Add rs485 emulation to 8250_dw
-Message-ID: <20200319054034.dyq7yydqi6yg7jhf@wunner.de>
-References: <20200318142640.982763-1-heiko@sntech.de>
- <20200318144320.GL1922688@smile.fi.intel.com>
- <20200318153754.dctd4q7e2fodeqsw@wunner.de>
- <5640842.EtOnNDtpGh@diego>
+        id S1726986AbgCSFnG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 01:43:06 -0400
+Received: from ozlabs.org ([203.11.71.1]:46601 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725767AbgCSFnG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 01:43:06 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 48jbRC4tDWz9sPk;
+        Thu, 19 Mar 2020 16:43:03 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1584596584;
+        bh=y84bblK27nWKwmaC9KF1aLCcYU/Cn/0VfU66+sQZemo=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=JGyPSjhJjcMZ5dcpgAmSThijGM/bjpPdOLdQOsFrBIQcl/Rexay7OY6ocIhtdIQct
+         MPoqauXaHFo1R+DSUf0NBVXX7+19GcH5TkW18cHuQ8HSWkJjVNN6kf1xr4ioo8vAl7
+         dWNeoLmDIOmO0LhWH/3SKthgVmVMIxebp7TlN4Ojeh4nkDTL605pkxUh2PljGGQWA0
+         9gn/owPz1YRVj8maFpaAZVO434rguC5iYVqFdwrJr5xJwj4mKj/u9LgaR8ZcBMbg/u
+         ogqSzMlLezNa2oBAe7aAiAP8ywheJToDNUrTLezQEzzksgHmbHHwuETBYRwarVMLES
+         29S9+d3ZyharA==
+Date:   Thu, 19 Mar 2020 16:42:59 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc:     Colin Ian King <colin.king@canonical.com>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: linux-next: build failure after merge of the pm tree
+Message-ID: <20200319164259.34a3df52@canb.auug.org.au>
+In-Reply-To: <20200318231837.4041cd8f@canb.auug.org.au>
+References: <20200317185252.3cfeecde@canb.auug.org.au>
+        <20200318224458.1980e10c@canb.auug.org.au>
+        <ddc7ae33-1b82-ae48-5a7e-e78144fb2a8b@canonical.com>
+        <20200318231837.4041cd8f@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <5640842.EtOnNDtpGh@diego>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Type: multipart/signed; boundary="Sig_/Pgc07lYg4LlrlRQi0UWj2DK";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 18, 2020 at 07:49:08PM +0100, Heiko Stübner wrote:
-> Looking at tty-next I notice that you're right. When I started working
-> on this I only found the stuff from 2018 I linked to but didn't imagine
-> that in that exact moment someone else would also work on that area.
+--Sig_/Pgc07lYg4LlrlRQi0UWj2DK
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-There are some more patches in the pipeline for the next cycle
-to add support for an rs485 bus termination GPIO.  They're on
-the tip of this branch:
+Hi Stephen,
 
-https://github.com/RevolutionPi/linux/commits/revpi-4.19
+On Wed, 18 Mar 2020 23:18:37 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+>
+> Hi Colin,
+>=20
+> On Wed, 18 Mar 2020 11:52:00 +0000 Colin Ian King <colin.king@canonical.c=
+om> wrote:
+> > =20
+> > > This was fixed today (by including linux/ioh), but the latest update =
+to
+> > > the pm tree has removed that include again.
+> > >    =20
+> > Hopefully it won't be reverted from linux-next? =20
+>=20
+> Linux-next just contains what its constituent trees contain each day ...
 
-Just so you know in advance and duplicate work is avoided.
+I have had to revert commit
 
+  08c07cefb304 ("ACPI: sysfs: copy ACPI data using io memory copying")
 
-> > The DTR-for-RE thing seems a bit nonstandard, I'm not sure if this is
-> > eligible for mainline or if it's something that should be kept in your
-> > downstream tree.  But no harm in submitting it to the list.
-> 
-> I'm fine either way - maybe I also get a pointer on what may be a better
-> approach ;-)
-> 
-> At least DTR as "Data Terminal Ready" did sound somewhat matching for
-> the "Receive Enable" of RS485 (and it's also the only other output pin
-> in the mctrl gpio list).
+again.
 
-Some UARTs allow disabling the receiver, this can be taken advantage of
-to implement half-duplex mode.  It's what I did in 8250_bcm2835aux.c.
+--=20
+Cheers,
+Stephen Rothwell
 
-On the Revolution Pi devices, !RE is usually connected to ground, so
-reception is always enabled and it cannot be disabled in software
-except by turning off the UART receiver.
+--Sig_/Pgc07lYg4LlrlRQi0UWj2DK
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-There are also boards out there which connect !RE to RTS.  Then only
-half-duplex mode is supported by the hardware and there's no way for
-software to work around it.
+-----BEGIN PGP SIGNATURE-----
 
-Thanks,
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl5zBmMACgkQAVBC80lX
+0GzN8wgAoInnlFPbWqojFwNMHvNURO+rmiw6bWgvKSq4l0b9FtcWI6ZgT/tNXKnc
+CHGaVkNlkkNckJ1O/ebarikuuBSm80gFH8K7Z4tZX65MD8EI+Vn/yFTguT++eeFC
+WWVx8DVB8vOfawqAdoTI9d5Ytv0F5vrk1KUFgNLwD24F3DTzOpxNMakeCMiSlaJS
+XcbdelrLnN8W9pWEQqGmG92EXaSSSB9l36L46Glrvu9ktcI4Yw/nY98Ms6ifMd/2
+ciM/3n5yCHoKMYVY5oFldg++hBqqnQaclHgh/N8MIYjuOy7ri6JM9YrGSTsdHSFV
+OEKEc4ZSp1IFK8J1br5EwrjEZrNnHg==
+=oXci
+-----END PGP SIGNATURE-----
 
-Lukas
+--Sig_/Pgc07lYg4LlrlRQi0UWj2DK--
