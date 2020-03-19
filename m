@@ -2,112 +2,163 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7A6D318BD21
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 17:56:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 479B718BD2D
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 17:58:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728182AbgCSQ4s (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 12:56:48 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:44282 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727146AbgCSQ4q (ORCPT
+        id S1728188AbgCSQ6J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 12:58:09 -0400
+Received: from out30-133.freemail.mail.aliyun.com ([115.124.30.133]:58042 "EHLO
+        out30-133.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727399AbgCSQ6J (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 12:56:46 -0400
-Received: by mail-wr1-f66.google.com with SMTP id o12so3474450wrh.11;
-        Thu, 19 Mar 2020 09:56:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=PXsgN3Xvx75E/VQrukFl6tODlYoxT2hNR8PsVX7/5OY=;
-        b=sE77CzTJxTmivCGzQGQLd5CF6KiYJJged980d0YENUHyqfv+nCgV8rS47734kb94wi
-         5m1CueJNQhYwCACdUYAB8Ler6mLzOoXaPhI7aCYD54HcG7SylaustwPpMGGLWXaxCXuI
-         DrDXPxHx4OHeiW0Z84AWOZh0hJqeIaDTEZV6OgrO6xdeJavHAfGp77ARow/0V8cDDI6C
-         1YVvmvL5Uq3VmcklmVknIlLyvd+Xn4dtipZuRDyNjrVBd+t4Cv166kTSnlNpxcZepsdo
-         bRfXTWlXTyirdWXFocLad6ZH8rm+nDS2tIedce0Awo+pNSHPM6krFYGmWZ9a2F8/aewQ
-         d4Fw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=PXsgN3Xvx75E/VQrukFl6tODlYoxT2hNR8PsVX7/5OY=;
-        b=q3+JwtcPSVujgELZ4GgqAkfj7AK/e3jqLiTU7Fx595gcuklqRFYbFG2mgHHNNun13V
-         Gswd9aucknnqm37Qu20ksqza1YDHCahMyf5hVYp/gUSpXWTe/nUX+8GDKaWzULm+uQLl
-         wRnOYjog/S8kj9juyOSG7mfyax65S1g0q950yNMBvPXrxKeCmTd929mcf/wQdHVyt32N
-         DiNQzBqdBZ6gJMGOG7+taUVLAK8wWU7WpTE6BMLmQ/wiDsiVcPS8ZmsC5RVTfsJLm8is
-         oh44H4XVKbl05g5+GMM0V7BBHykCMcD54jtEGTdvt7RyP0vkJnycQwYYbg47wK3M76H3
-         38Ug==
-X-Gm-Message-State: ANhLgQ3VCU5mWJTsbEd66B7opzN8eyVDNA3GHgbVr4kaRj6ZRIqfiuVv
-        vPcYhu6F7M/Zr8XaPHyKewqbVqCZ
-X-Google-Smtp-Source: ADFU+vtMYiuF+b7V87BvVUKMQP005WAqWiZY1JuJmE92AqsY+mGJCQ2UQNOW6CmZ5jhYfODmaC5scw==
-X-Received: by 2002:adf:ef0b:: with SMTP id e11mr5639053wro.115.1584637004267;
-        Thu, 19 Mar 2020 09:56:44 -0700 (PDT)
-Received: from ?IPv6:2003:ea:8f29:6000:f482:8f51:2469:4533? (p200300EA8F296000F4828F5124694533.dip0.t-ipconnect.de. [2003:ea:8f29:6000:f482:8f51:2469:4533])
-        by smtp.googlemail.com with ESMTPSA id t9sm4290708wrx.31.2020.03.19.09.56.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 19 Mar 2020 09:56:43 -0700 (PDT)
-Subject: Re: [PATCH net-next 3/7] net: phy: introduce
- phy_read_mmd_poll_timeout macro
-To:     Dejin Zheng <zhengdejin5@gmail.com>, andrew@lunn.ch,
-        f.fainelli@gmail.com, linux@armlinux.org.uk, davem@davemloft.net,
-        tglx@linutronix.de, broonie@kernel.org, corbet@lwn.net,
-        mchehab+samsung@kernel.org, netdev@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org
-References: <20200319163910.14733-1-zhengdejin5@gmail.com>
- <20200319163910.14733-4-zhengdejin5@gmail.com>
-From:   Heiner Kallweit <hkallweit1@gmail.com>
-Message-ID: <c88c0ce1-af42-db67-22bc-92e82bd9efbf@gmail.com>
-Date:   Thu, 19 Mar 2020 17:56:39 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.6.0
+        Thu, 19 Mar 2020 12:58:09 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R901e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01f04446;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=7;SR=0;TI=SMTPD_---0Tt2WDss_1584637067;
+Received: from US-143344MP.local(mailfrom:yang.shi@linux.alibaba.com fp:SMTPD_---0Tt2WDss_1584637067)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Fri, 20 Mar 2020 00:57:50 +0800
+Subject: Re: [PATCH] mm: khugepaged: fix potential page state corruption
+To:     "Kirill A. Shutemov" <kirill@shutemov.name>
+Cc:     kirill.shutemov@linux.intel.com, hughd@google.com,
+        aarcange@redhat.com, akpm@linux-foundation.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+References: <1584573582-116702-1-git-send-email-yang.shi@linux.alibaba.com>
+ <20200319001258.creziw6ffw4jvwl3@box>
+ <2cdc734c-c222-4b9d-9114-1762b29dafb4@linux.alibaba.com>
+ <db660bef-c927-b793-7a79-a88df197a756@linux.alibaba.com>
+ <20200319104938.vphyajoyz6ob6jtl@box>
+From:   Yang Shi <yang.shi@linux.alibaba.com>
+Message-ID: <e716c8c6-898e-5199-019c-161ea3ec06c3@linux.alibaba.com>
+Date:   Thu, 19 Mar 2020 09:57:47 -0700
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
+ Gecko/20100101 Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <20200319163910.14733-4-zhengdejin5@gmail.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20200319104938.vphyajoyz6ob6jtl@box>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 19.03.2020 17:39, Dejin Zheng wrote:
-> it is sometimes necessary to poll a phy register by phy_read_mmd()
-> function until its value satisfies some condition. introduce
-> phy_read_mmd_poll_timeout() macros that do this.
-> 
-> Signed-off-by: Dejin Zheng <zhengdejin5@gmail.com>
-> ---
->  include/linux/phy.h | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
-> diff --git a/include/linux/phy.h b/include/linux/phy.h
-> index 36d9dea04016..a30e9008647f 100644
-> --- a/include/linux/phy.h
-> +++ b/include/linux/phy.h
-> @@ -24,6 +24,7 @@
->  #include <linux/mod_devicetable.h>
->  #include <linux/u64_stats_sync.h>
->  #include <linux/irqreturn.h>
-> +#include <linux/iopoll.h>
->  
->  #include <linux/atomic.h>
->  
-> @@ -784,6 +785,9 @@ static inline int __phy_modify_changed(struct phy_device *phydev, u32 regnum,
->   */
->  int phy_read_mmd(struct phy_device *phydev, int devad, u32 regnum);
->  
-> +#define phy_read_mmd_poll_timeout(val, cond, sleep_us, timeout_us, args...) \
-> +	read_poll_timeout(phy_read_mmd, val, cond, sleep_us, timeout_us, args)
-> +
->  /**
->   * __phy_read_mmd - Convenience function for reading a register
->   * from an MMD on a given PHY.
-> 
-I'm not fully convinced. Usage of the new macro with its lots of
-parameters makes the code quite hard to read. Therefore I'm also
-not a big fan of readx_poll_timeout.
 
-Even though I didn't invent it, I prefer the way DECLARE_RTL_COND
-is used in the r8169 driver. The resulting code is much better
-to read, and in case of a timeout a helpful warning is printed
-automatically.
+
+On 3/19/20 3:49 AM, Kirill A. Shutemov wrote:
+> On Wed, Mar 18, 2020 at 10:39:21PM -0700, Yang Shi wrote:
+>>
+>> On 3/18/20 5:55 PM, Yang Shi wrote:
+>>>
+>>> On 3/18/20 5:12 PM, Kirill A. Shutemov wrote:
+>>>> On Thu, Mar 19, 2020 at 07:19:42AM +0800, Yang Shi wrote:
+>>>>> When khugepaged collapses anonymous pages, the base pages would
+>>>>> be freed
+>>>>> via pagevec or free_page_and_swap_cache().  But, the anonymous page may
+>>>>> be added back to LRU, then it might result in the below race:
+>>>>>
+>>>>>      CPU A                CPU B
+>>>>> khugepaged:
+>>>>>     unlock page
+>>>>>     putback_lru_page
+>>>>>       add to lru
+>>>>>                  page reclaim:
+>>>>>                    isolate this page
+>>>>>                    try_to_unmap
+>>>>>     page_remove_rmap <-- corrupt _mapcount
+>>>>>
+>>>>> It looks nothing would prevent the pages from isolating by reclaimer.
+>>>> Hm. Why should it?
+>>>>
+>>>> try_to_unmap() doesn't exclude parallel page unmapping. _mapcount is
+>>>> protected by ptl. And this particular _mapcount pin is reachable for
+>>>> reclaim as it's not part of usual page table tree. Basically
+>>>> try_to_unmap() will never succeeds until we give up the _mapcount on
+>>>> khugepaged side.
+>>> I don't quite get. What does "not part of usual page table tree" means?
+>>>
+>>> How's about try_to_unmap() acquires ptl before khugepaged?
+> The page table we are dealing with was detached from the process' page
+> table tree: see pmdp_collapse_flush(). try_to_unmap() will not see the
+> pte.
+>
+> try_to_unmap() can only reach the ptl if split ptl is disabled
+> (mm->page_table_lock is used), but it still will not be able to reach pte.
+
+Aha, got it. Thanks for explaining. I definitely missed this point. Yes, 
+pmdp_collapse_flush() would clear the pmd, then others won't see the 
+page table.
+
+However, it looks the vmscan would not stop at try_to_unmap() at all, 
+try_to_unmap() would just return true since pmd_present() should return 
+false in pvmw. Then it would go all the way down to __remove_mapping(), 
+but freezing the page would fail since try_to_unmap() doesn't actually 
+drop the refcount from the pte map.
+
+It would not result in any critical problem AFAICT, but suboptimal and 
+it may causes some unnecessary I/O due to swap.
+
+>
+>>>> I don't see the issue right away.
+>>>>
+>>>>> The other problem is the page's active or unevictable flag might be
+>>>>> still set when freeing the page via free_page_and_swap_cache().
+>>>> So what?
+>>> The flags may leak to page free path then kernel may complain if
+>>> DEBUG_VM is set.
+> Could you elaborate on what codepath you are talking about?
+
+__put_page ->
+     __put_single_page ->
+         free_unref_page ->
+             put_unref_page_prepare ->
+                 free_pcp_prepare ->
+                     free_pages_prepare ->
+                         free_pages_check
+
+This check would just be run when DEBUG_VM is enabled.
+
+>
+>>>>> The putback_lru_page() would not clear those two flags if the pages are
+>>>>> released via pagevec, it sounds nothing prevents from isolating active
+>> Sorry, this is a typo. If the page is freed via pagevec, active and
+>> unevictable flag would get cleared before freeing by page_off_lru().
+>>
+>> But, if the page is freed by free_page_and_swap_cache(), these two flags are
+>> not cleared. But, it seems this path is hit rare, the pages are freed by
+>> pagevec for the most cases.
+>>
+>>>>> or unevictable pages.
+>>>> Again, why should it? vmscan is equipped to deal with this.
+>>> I don't mean vmscan, I mean khugepaged may isolate active and
+>>> unevictable pages since it just simply walks page table.
+> Why it is wrong? lru_cache_add() only complains if both flags set, it
+> shouldn't happen.
+
+Noting wrong about isolating active or unevictable pages. I just mean it 
+seems possible active or unevictable flag may be there if the page is 
+freed via free_page_add_swap_cache() path.
+
+>
+>>>>> However I didn't really run into these problems, just in theory
+>>>>> by visual
+>>>>> inspection.
+>>>>>
+>>>>> And, it also seems unnecessary to have the pages add back to LRU
+>>>>> again since
+>>>>> they are about to be freed when reaching this point.  So,
+>>>>> clearing active
+>>>>> and unevictable flags, unlocking and dropping refcount from isolate
+>>>>> instead of calling putback_lru_page() as what page cache collapse does.
+>>>> Hm? But we do call putback_lru_page() on the way out. I do not follow.
+>>> It just calls putback_lru_page() at error path, not success path.
+>>> Putting pages back to lru on error path definitely makes sense. Here it
+>>> is the success path.
+> I agree that putting the apage on LRU just before free the page is
+> suboptimal, but I don't see it as a critical issue.
+
+Yes, given the code analysis above, I agree. If you thought the patch is 
+a fine micro-optimization, I would like to re-submit it with rectified 
+commit log. Thank you for your time.
+
+>
+>
+
