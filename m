@@ -2,41 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 031FC18B631
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:25:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5961B18B591
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:19:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728154AbgCSNYu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 09:24:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51902 "EHLO mail.kernel.org"
+        id S1729924AbgCSNTq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 09:19:46 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43216 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727231AbgCSNYt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 09:24:49 -0400
+        id S1729923AbgCSNTo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 09:19:44 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DC310207FC;
-        Thu, 19 Mar 2020 13:24:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CFBC32098B;
+        Thu, 19 Mar 2020 13:19:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584624288;
-        bh=ZX8raDUJKT4l8g1LIpcJWxxJM22a2en8tJQcUCwfS7Y=;
+        s=default; t=1584623983;
+        bh=yShaqp9jj75yZXFapTcX20CNNhqOJZwzVc1qBAHPgMc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JqbAL5BFm33CPp9SAEehazLQjAkFQfeXSl31fnm52W+SjTCca7iz7TyqBfjNtmx52
-         c2BP0ddDtaFUd9UyFmSXK9s/sglANqKlgJSzTH/mWr3SXaZ4x2NldMmaEz4zVAcAp+
-         SkTuoGegV/wTlaBjOdnKgpjcfnHnj732rrxc1Z3M=
+        b=fxBxOJbDWqHUMB87QEucfymlkca2eAqT80FC2XmsjgoFUhWbUTI148eCfnGDB2vNg
+         D81aOT5Mz4SHRtt4Ur/huIk2skZBS6wOo64O/6VkcKFgjwXXaRqPNL0ItzhiowMb/m
+         aVseK4z1wkzx6QeRfbOcIBREHpovtrJ2YhBh3vFo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Brian Masney <masneyb@onstation.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
+        stable@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.5 02/65] pinctrl: qcom: ssbi-gpio: Fix fwspec parsing bug
+Subject: [PATCH 4.19 02/48] mmc: core: Default to generic_cmd6_time as timeout in __mmc_switch()
 Date:   Thu, 19 Mar 2020 14:03:44 +0100
-Message-Id: <20200319123927.198953416@linuxfoundation.org>
+Message-Id: <20200319123903.875912499@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.2
-In-Reply-To: <20200319123926.466988514@linuxfoundation.org>
-References: <20200319123926.466988514@linuxfoundation.org>
+In-Reply-To: <20200319123902.941451241@linuxfoundation.org>
+References: <20200319123902.941451241@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,40 +43,77 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Linus Walleij <linus.walleij@linaro.org>
+From: Ulf Hansson <ulf.hansson@linaro.org>
 
-[ Upstream commit f98371476f36359da2285d1807b43e5b17fd18de ]
+[ Upstream commit 533a6cfe08f96a7b5c65e06d20916d552c11b256 ]
 
-We are parsing SSBI gpios as fourcell fwspecs but they are
-twocell. Probably a simple copy-and-paste bug.
+All callers of __mmc_switch() should now be specifying a valid timeout for
+the CMD6 command. However, just to be sure, let's print a warning and
+default to use the generic_cmd6_time in case the provided timeout_ms
+argument is zero.
 
-Tested on the APQ8060 DragonBoard and after this ethernet
-and MMC card detection works again.
+In this context, let's also simplify some of the corresponding code and
+clarify some related comments.
 
-Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: stable@vger.kernel.org
-Reviewed-by: Brian Masney <masneyb@onstation.org>
-Fixes: ae436fe81053 ("pinctrl: ssbi-gpio: convert to hierarchical IRQ helpers in gpio core")
-Link: https://lore.kernel.org/r/20200306143416.1476250-1-linus.walleij@linaro.org
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+Link: https://lore.kernel.org/r/20200122142747.5690-4-ulf.hansson@linaro.org
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/mmc/core/mmc_ops.c | 25 +++++++++++--------------
+ 1 file changed, 11 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c b/drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c
-index 73d986a903f1b..3059b245ad2b2 100644
---- a/drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c
-+++ b/drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c
-@@ -794,7 +794,7 @@ static int pm8xxx_gpio_probe(struct platform_device *pdev)
- 	girq->fwnode = of_node_to_fwnode(pctrl->dev->of_node);
- 	girq->parent_domain = parent_domain;
- 	girq->child_to_parent_hwirq = pm8xxx_child_to_parent_hwirq;
--	girq->populate_parent_alloc_arg = gpiochip_populate_parent_fwspec_fourcell;
-+	girq->populate_parent_alloc_arg = gpiochip_populate_parent_fwspec_twocell;
- 	girq->child_offset_to_irq = pm8xxx_child_offset_to_irq;
- 	girq->child_irq_domain_ops.translate = pm8xxx_domain_translate;
+diff --git a/drivers/mmc/core/mmc_ops.c b/drivers/mmc/core/mmc_ops.c
+index 873b2aa0c1556..76de8d441cce4 100644
+--- a/drivers/mmc/core/mmc_ops.c
++++ b/drivers/mmc/core/mmc_ops.c
+@@ -456,10 +456,6 @@ static int mmc_poll_for_busy(struct mmc_card *card, unsigned int timeout_ms,
+ 	bool expired = false;
+ 	bool busy = false;
  
+-	/* We have an unspecified cmd timeout, use the fallback value. */
+-	if (!timeout_ms)
+-		timeout_ms = MMC_OPS_TIMEOUT_MS;
+-
+ 	/*
+ 	 * In cases when not allowed to poll by using CMD13 or because we aren't
+ 	 * capable of polling by using ->card_busy(), then rely on waiting the
+@@ -532,14 +528,19 @@ int __mmc_switch(struct mmc_card *card, u8 set, u8 index, u8 value,
+ 
+ 	mmc_retune_hold(host);
+ 
++	if (!timeout_ms) {
++		pr_warn("%s: unspecified timeout for CMD6 - use generic\n",
++			mmc_hostname(host));
++		timeout_ms = card->ext_csd.generic_cmd6_time;
++	}
++
+ 	/*
+-	 * If the cmd timeout and the max_busy_timeout of the host are both
+-	 * specified, let's validate them. A failure means we need to prevent
+-	 * the host from doing hw busy detection, which is done by converting
+-	 * to a R1 response instead of a R1B.
++	 * If the max_busy_timeout of the host is specified, make sure it's
++	 * enough to fit the used timeout_ms. In case it's not, let's instruct
++	 * the host to avoid HW busy detection, by converting to a R1 response
++	 * instead of a R1B.
+ 	 */
+-	if (timeout_ms && host->max_busy_timeout &&
+-		(timeout_ms > host->max_busy_timeout))
++	if (host->max_busy_timeout && (timeout_ms > host->max_busy_timeout))
+ 		use_r1b_resp = false;
+ 
+ 	cmd.opcode = MMC_SWITCH;
+@@ -550,10 +551,6 @@ int __mmc_switch(struct mmc_card *card, u8 set, u8 index, u8 value,
+ 	cmd.flags = MMC_CMD_AC;
+ 	if (use_r1b_resp) {
+ 		cmd.flags |= MMC_RSP_SPI_R1B | MMC_RSP_R1B;
+-		/*
+-		 * A busy_timeout of zero means the host can decide to use
+-		 * whatever value it finds suitable.
+-		 */
+ 		cmd.busy_timeout = timeout_ms;
+ 	} else {
+ 		cmd.flags |= MMC_RSP_SPI_R1 | MMC_RSP_R1;
 -- 
 2.20.1
 
