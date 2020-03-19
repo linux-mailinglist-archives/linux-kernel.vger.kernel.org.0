@@ -2,64 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A714918C390
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 00:20:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D8DB218C39D
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 00:27:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727579AbgCSXUc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 19:20:32 -0400
-Received: from mga02.intel.com ([134.134.136.20]:52795 "EHLO mga02.intel.com"
+        id S1727647AbgCSX1f (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 19:27:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36344 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727258AbgCSXUb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 19:20:31 -0400
-IronPort-SDR: 8xhBghOgH8dLeI7AKPAzEDl8892xTKWJAOZDPDrQNWznVg3xFhXpD2fR5TmvxxDgp/LtPZ7rnL
- hShL0uTgfuTA==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Mar 2020 16:20:30 -0700
-IronPort-SDR: HadMi20uLVxGJHG83LdM8Njh7ZI/TT88bere7YVaDRqKjeXLCDNzL6hBB8Cujxa/7djijHK2GA
- 9elU9z1ZdyFw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,573,1574150400"; 
-   d="scan'208";a="245314583"
-Received: from samirson-mobl1.amr.corp.intel.com (HELO [10.255.231.67]) ([10.255.231.67])
-  by orsmga003.jf.intel.com with ESMTP; 19 Mar 2020 16:20:30 -0700
-Subject: Re: [PATCH v17 09/12] PCI/AER: Allow clearing Error Status Register
- in FF mode
-To:     Bjorn Helgaas <helgaas@kernel.org>
-Cc:     Austin.Bolen@dell.com, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org, ashok.raj@intel.com,
-        Russell Currey <ruscur@russell.cc>,
-        Sam Bobroff <sbobroff@linux.ibm.com>,
-        Oliver O'Halloran <oohall@gmail.com>
-References: <20200319230303.GA26334@google.com>
-From:   "Kuppuswamy, Sathyanarayanan" 
-        <sathyanarayanan.kuppuswamy@linux.intel.com>
-Message-ID: <6ae88659-7c15-900a-c56d-c08c1f40f3c6@linux.intel.com>
-Date:   Thu, 19 Mar 2020 16:20:30 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
-MIME-Version: 1.0
-In-Reply-To: <20200319230303.GA26334@google.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S1726785AbgCSX1d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 19:27:33 -0400
+Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D1F632076C;
+        Thu, 19 Mar 2020 23:27:32 +0000 (UTC)
+Received: from rostedt by gandalf.local.home with local (Exim 4.93)
+        (envelope-from <rostedt@goodmis.org>)
+        id 1jF4ZX-000h4k-J4; Thu, 19 Mar 2020 19:27:31 -0400
+Message-Id: <20200319232219.446480829@goodmis.org>
+User-Agent: quilt/0.65
+Date:   Thu, 19 Mar 2020 19:22:19 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+        Peter Wu <peter@lekensteyn.nl>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Tom Zanussi <zanussi@kernel.org>,
+        Shuah Khan <shuahkhan@gmail.com>, bpf <bpf@vger.kernel.org>
+Subject: [PATCH 00/12 v2] ring-buffer/tracing: Remove disabling of ring buffer while reading trace file
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Bjorn,
 
-On 3/19/20 4:03 PM, Bjorn Helgaas wrote:
-> I made a few of the updates Christoph suggested and updated the
-> review/edr branch.  Do you want to start with that as the basis for a
-> v18 posting?
+When the ring buffer was first written for ftrace, there was two
+human readable files to read it. One was a standard "producer/consumer"
+file (trace_pipe), which would consume data from the ring buffer as
+it read it, and the other was a "static iterator" that would not
+consume the events, such that the file could be read multiple times
+and return the same output each time.
 
-Do you want to merge your version of patch set first? or wait till we
-address all of the following open issues.
+The "static iterator" was never meant to be read while there was an
+active writer to the ring buffer. If writing was enabled, then it
+would disable the writer when the trace file was opened.
 
-1. Move reset_link callback to pcie_do_recovery().
-2. If recovery issue exist in non-hotplug case, investigate
-    and fix it ( this needs more testing and review).
-3. synchronize EDR handler with hot-plug DLLSC state change handler.
+There has been some complaints about this by the BPF folks, that did
+not realize this little bit of information and it was requested that
+the "trace" file does not stop the writing to the ring buffer.
+
+This patch series attempts to satisfy that request, by creating a
+temporary buffer in each of the per cpu iterators to place the
+read event into, such that it can be passed to users without worrying
+about a writer to corrupt the event while it was being written out.
+It also uses the fact that the ring buffer is broken up into pages,
+where each page has its own timestamp that gets updated when a
+writer crosses over to it. By copying it to the temp buffer, and
+doing a "before and after" test of the time stamp with memory barriers,
+can allow the events to be saved.
+
+Changes since v1:
+
+ - Added fix to selftest first, where these changes wont break it
+
+ - Changed comment in trace_find_next_entry() to better explain what
+   it was doing, as pointed out by Masami Hiramatsu.
+
+ - Allocated the iterator temp buffer when the iterator is created,
+   as Masami pointed out, it would be better than allocating it each
+   time it was used. It is initiated as 128 bytes as most trace events
+   are less than that, but will be expanded if needed. Note that
+   function is only used when latency measurements are needed (seeing
+   two events at once).
+
+Steven Rostedt (VMware) (12):
+      selftest/ftrace: Fix function trigger test to handle trace not disabling the tracer
+      tracing: Save off entry when peeking at next entry
+      ring-buffer: Have ring_buffer_empty() not depend on tracing stopped
+      ring-buffer: Rename ring_buffer_read() to read_buffer_iter_advance()
+      ring-buffer: Add page_stamp to iterator for synchronization
+      ring-buffer: Have rb_iter_head_event() handle concurrent writer
+      ring-buffer: Do not die if rb_iter_peek() fails more than thrice
+      ring-buffer: Optimize rb_iter_head_event()
+      ring-buffer: Do not disable recording when there is an iterator
+      tracing: Do not disable tracing when reading the trace file
+      ring-buffer/tracing: Have iterator acknowledge dropped events
+      tracing: Have the document reflect that the trace file keeps tracing enabled
+
+----
+ Documentation/trace/ftrace.rst                     |  13 +-
+ include/linux/ring_buffer.h                        |   4 +-
+ include/linux/trace_events.h                       |   2 +
+ kernel/trace/ring_buffer.c                         | 196 +++++++++++++++------
+ kernel/trace/trace.c                               |  68 +++++--
+ kernel/trace/trace_functions_graph.c               |   2 +-
+ kernel/trace/trace_output.c                        |  15 +-
+ .../test.d/ftrace/func_traceonoff_triggers.tc      |   2 +-
+ 8 files changed, 211 insertions(+), 91 deletions(-)
