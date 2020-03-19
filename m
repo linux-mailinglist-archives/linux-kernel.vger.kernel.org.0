@@ -2,92 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7D20518B3E2
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:04:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6062B18B694
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:28:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727236AbgCSNEm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 09:04:42 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47536 "EHLO mail.kernel.org"
+        id S1730943AbgCSN1u (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 09:27:50 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56122 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726864AbgCSNEl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 09:04:41 -0400
-Received: from devnote2 (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
+        id S1730331AbgCSN1n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 09:27:43 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B3CD420722;
-        Thu, 19 Mar 2020 13:04:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 51B49208C3;
+        Thu, 19 Mar 2020 13:27:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584623080;
-        bh=VvNu7YV9HwCcFGfgNoTBz+/x/ApwNNpcUctJTQTVmkk=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=MnTkV+7qzOBg+Sk5feH2w3s3XPnKzhWJKqaXis4JzOoSpC2sx0zXmnbjddUw940eM
-         s1cpvmMjRmFBNPxwOZ0p4JTojmMnP3kpaRCr+fCSb0KA1ffGzh71sBLIjTdD+nqz1V
-         cy4ybiIEwEVwRBIObGKfEBMe1PeU4T7AqoIaZHns=
-Date:   Thu, 19 Mar 2020 22:04:35 +0900
-From:   Masami Hiramatsu <mhiramat@kernel.org>
-To:     Shuah Khan <shuahkhan@gmail.com>
-Cc:     Steven Rostedt <rostedt@goodmis.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-        Peter Wu <peter@lekensteyn.nl>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Tom Zanussi <zanussi@kernel.org>,
-        linux-kselftest@vger.kernel.org, skhan@linuxfoundation.org
-Subject: Re: [RFC][PATCH 12/11] selftest/ftrace: Fix function trigger test
- to handle trace not disabling the tracer
-Message-Id: <20200319220435.0f1830f9d11cc05befee26e8@kernel.org>
-In-Reply-To: <CAKocOOPBiHsh6Y6gVcwcaUOv7CD=eqtKM+-6L23WzuCnUyR26A@mail.gmail.com>
-References: <20200317213222.421100128@goodmis.org>
-        <20200318111345.0516642e@gandalf.local.home>
-        <CAKocOOPBiHsh6Y6gVcwcaUOv7CD=eqtKM+-6L23WzuCnUyR26A@mail.gmail.com>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        s=default; t=1584624462;
+        bh=vwFQSTRGBXIuEHRlKDxDsMBN5Lx7bJ4941rvcPOxF5M=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=zIsSJplxxEd0ZIRVJ1E0NqmkAz5NtRoOrqXJQyACZ05qKTjL/VtYmtmCgLmLXIWXK
+         5AWFA8f+ZaVWWCJtsZSPboKzAm/rfS8wTpPCCC84LTN1l7zsoJZl949G5Q8TNIJIs2
+         gz4yp5FLbn441xpgf6+BgJstMvJoYqWtKXQYgq00=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Taehee Yoo <ap420073@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.5 53/65] net: rmnet: fix packet forwarding in rmnet bridge mode
+Date:   Thu, 19 Mar 2020 14:04:35 +0100
+Message-Id: <20200319123943.072434015@linuxfoundation.org>
+X-Mailer: git-send-email 2.25.2
+In-Reply-To: <20200319123926.466988514@linuxfoundation.org>
+References: <20200319123926.466988514@linuxfoundation.org>
+User-Agent: quilt/0.66
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 18 Mar 2020 10:35:29 -0600
-Shuah Khan <shuahkhan@gmail.com> wrote:
+From: Taehee Yoo <ap420073@gmail.com>
 
-> On Wed, Mar 18, 2020 at 9:13 AM Steven Rostedt <rostedt@goodmis.org> wrote:
-> >
-> >
-> > From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
-> >
-> > The ftrace selftest "ftrace - test for function traceon/off triggers"
-> > enables all events and reads the trace file. Now that the trace file does
-> > not disable tracing, and will attempt to continually read new data that is
-> > added, the selftest gets stuck reading the trace file. This is because the
-> > data added to the trace file will fill up quicker than the reading of it.
-> >
-> > By only enabling scheduling events, the read can keep up with the writes.
-> > Instead of enabling all events, only enable the scheduler events.
-> >
-> > Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+[ Upstream commit ad3cc31b599ea80f06b29ebdc18b3a39878a48d6 ]
 
-Looks good to me.
+Packet forwarding is not working in rmnet bridge mode.
+Because when a packet is forwarded, skb_push() for an ethernet header
+is needed. But it doesn't call skb_push().
+So, the ethernet header will be lost.
 
-Acked-by: Masami Hiramatsu <mhiramat@kernel.org>
+Test commands:
+    modprobe rmnet
+    ip netns add nst
+    ip netns add nst2
+    ip link add veth0 type veth peer name veth1
+    ip link add veth2 type veth peer name veth3
+    ip link set veth1 netns nst
+    ip link set veth3 netns nst2
 
-Thanks!
+    ip link add rmnet0 link veth0 type rmnet mux_id 1
+    ip link set veth2 master rmnet0
+    ip link set veth0 up
+    ip link set veth2 up
+    ip link set rmnet0 up
+    ip a a 192.168.100.1/24 dev rmnet0
 
+    ip netns exec nst ip link set veth1 up
+    ip netns exec nst ip a a 192.168.100.2/24 dev veth1
+    ip netns exec nst2 ip link set veth3 up
+    ip netns exec nst2 ip a a 192.168.100.3/24 dev veth3
+    ip netns exec nst2 ping 192.168.100.2
 
-> > ---
-> >  .../selftests/ftrace/test.d/ftrace/func_traceonoff_triggers.tc  | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> +  linux-kselttest and my LF email.
-> 
-> thanks,
-> -- Shuah
+Fixes: 60d58f971c10 ("net: qualcomm: rmnet: Implement bridge mode")
+Signed-off-by: Taehee Yoo <ap420073@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/net/ethernet/qualcomm/rmnet/rmnet_handlers.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-
+diff --git a/drivers/net/ethernet/qualcomm/rmnet/rmnet_handlers.c b/drivers/net/ethernet/qualcomm/rmnet/rmnet_handlers.c
+index 074a8b326c304..29a7bfa2584dc 100644
+--- a/drivers/net/ethernet/qualcomm/rmnet/rmnet_handlers.c
++++ b/drivers/net/ethernet/qualcomm/rmnet/rmnet_handlers.c
+@@ -159,6 +159,9 @@ static int rmnet_map_egress_handler(struct sk_buff *skb,
+ static void
+ rmnet_bridge_handler(struct sk_buff *skb, struct net_device *bridge_dev)
+ {
++	if (skb_mac_header_was_set(skb))
++		skb_push(skb, skb->mac_len);
++
+ 	if (bridge_dev) {
+ 		skb->dev = bridge_dev;
+ 		dev_queue_xmit(skb);
 -- 
-Masami Hiramatsu <mhiramat@kernel.org>
+2.20.1
+
+
+
