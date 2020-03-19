@@ -2,136 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0C1E118BAFE
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 16:23:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 37F9518BAF7
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 16:22:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727943AbgCSPXH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 11:23:07 -0400
-Received: from conssluserg-03.nifty.com ([210.131.2.82]:62303 "EHLO
-        conssluserg-03.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727356AbgCSPXG (ORCPT
+        id S1727888AbgCSPV5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 11:21:57 -0400
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:36952 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727847AbgCSPV5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 11:23:06 -0400
-Received: from mail-ua1-f41.google.com (mail-ua1-f41.google.com [209.85.222.41]) (authenticated)
-        by conssluserg-03.nifty.com with ESMTP id 02JFMkBx018431;
-        Fri, 20 Mar 2020 00:22:47 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-03.nifty.com 02JFMkBx018431
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1584631367;
-        bh=Tu2djgmKkAF8RYObtpeLT7Ttw9jLZvbbIJmApmRreD0=;
-        h=From:Date:Subject:To:Cc:From;
-        b=LRCjykCyVBAJvUCb6ajcQ+J4yAo1Luz0uuAUATklkclcu0fG7IP/A432OiBzK4naU
-         21fS22cQTvtl6HGxUeCi+6u63BJqWNDXXKtcCKEi+P5Qrrn1jaC8ry64GKY0b+iPpH
-         5900rfcdbp1v5OLZPSuOEot6K/GlYT/MtVYPf1e0HkY3WumWWMFvNlnJY79vVNs8YJ
-         P65gOQ6dOshgpyFhL9X0czw1EXEd1Kk3UNrvEVtAnQRvnI8CmgIaNKdJy/Tzo9SAHP
-         xlfNARNquflYbDt9yynKHGuPaymGKIJOs9y72MN9hxMzxnvrjnLfei+IaHLlBixHFl
-         lRqtdSlplJEnw==
-X-Nifty-SrcIP: [209.85.222.41]
-Received: by mail-ua1-f41.google.com with SMTP id r47so897672uad.11;
-        Thu, 19 Mar 2020 08:22:47 -0700 (PDT)
-X-Gm-Message-State: ANhLgQ2U8IS2cjA4ImJpDDHitPRAWGNFxpGfOfCUXOxf9SoX9XNwMmIi
-        TS+SzouFWtT4jxRJMzGctmYpt1XmxNc0RqvLWjA=
-X-Google-Smtp-Source: ADFU+vuhm04AxBGx6dccv3oM51vQOCjxZbw1TUdNd2347ssYWgwR6Gk9KJUrX3UXpvAgfP2p1oTj13v3diMBQgPrRJI=
-X-Received: by 2002:ab0:28d8:: with SMTP id g24mr2169125uaq.121.1584631365859;
- Thu, 19 Mar 2020 08:22:45 -0700 (PDT)
+        Thu, 19 Mar 2020 11:21:57 -0400
+Received: by mail-ed1-f68.google.com with SMTP id b23so3111213edx.4
+        for <linux-kernel@vger.kernel.org>; Thu, 19 Mar 2020 08:21:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=7Vo/Ftz8y0HanBL9Q9HVvo6it3DMCdNOtqGEMgDJW9I=;
+        b=A3/iwjkX8mSzEwg+8yC2HsPaBnY0BRs8nvdHzyDdfD7Rkega4Hbel/Z+53KqkZZXmO
+         wGA/zFmaNJKqzZVoItWdyptVzur6M3qHAvKdKGzimpbZoaK9xPD8ZCu031tQjA2v2MHp
+         J+FXZveu8cxu78e0xK9SA+SpEYIKheUQPMpm3TjmA551iPhkAgkkmsoGDoxc0VVa/fCQ
+         n9p8NyD7NwhTpEnj0voJdyxYYbNdgvhRtoDLGIkFJBix+bV31j0i186dnZ0pXgCRt6X7
+         cZhkQwZ1xIkdmVIJhKrAloj4k10oCmccp1UdNNiqnYeCVj0H2DkQvgBZtk+eAd56F6it
+         wjhQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=7Vo/Ftz8y0HanBL9Q9HVvo6it3DMCdNOtqGEMgDJW9I=;
+        b=OMBtnB3UcX2IFMMCIdDnGHkgK4UTchZNolvPs51pXoX5WGOd8Stws9ODT1ydbBCyGn
+         ONuuHtITpaJDYex2LVgLeOGWqdQzLo/ehA/PH9JYfCFC4xmLkjLuX6GdcKkOKUyihVIs
+         t+VD4VgdDg1IZcjuCBCPU6Layq19lshMRBWWBLLrsqGprMXIhwQO2DtbXRc1/dRxwY5g
+         wgYPQRp2d0JDF6jM39TVvbsS9P0LJ8z53BeS0rSj+uyq3k1Fo6CIIfr0YFxmS6Me+xJX
+         8wHp9kNOKegYkNf7pbGfsCAIyYPxYA9MXCCHEwGeQssBB+j79mxsEgFeBUuUbT2Ax9zR
+         Rg+Q==
+X-Gm-Message-State: ANhLgQ1huEIQVxQv48WFGvEKCsTakSahCUy4d7jtJTWUhu9MNRFOS3rU
+        oyY3J2qCSAhbGgbZuYuubfTZbA==
+X-Google-Smtp-Source: ADFU+vtLlcnn3fVK+LYjZ9eeWQZLIwYJtZSt0seyEWRCmYEYKSnZNg5Ich6NL3IamCZnBo4cqxl5LA==
+X-Received: by 2002:a50:9f07:: with SMTP id b7mr3330605edf.148.1584631315616;
+        Thu, 19 Mar 2020 08:21:55 -0700 (PDT)
+Received: from [192.168.0.38] ([176.61.57.127])
+        by smtp.gmail.com with ESMTPSA id l19sm150533ejn.31.2020.03.19.08.21.54
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 19 Mar 2020 08:21:54 -0700 (PDT)
+Subject: Re: [PATCH 2/7] dt-bindings: usb: dwc3: Add a gpio-usb-connector
+ example
+To:     Stephen Boyd <swboyd@chromium.org>, balbi@kernel.org,
+        gregkh@linuxfoundation.org, linux-usb@vger.kernel.org
+Cc:     linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        bjorn.andersson@linaro.org, jackp@codeaurora.org, robh@kernel.org,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org
+References: <20200311191501.8165-1-bryan.odonoghue@linaro.org>
+ <20200311191501.8165-3-bryan.odonoghue@linaro.org>
+ <158458013177.152100.17920784952083533825@swboyd.mtv.corp.google.com>
+From:   Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Message-ID: <aa6aa234-e2d1-bdcd-0f0e-64b2a7e497d3@linaro.org>
+Date:   Thu, 19 Mar 2020 15:22:14 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-From:   Masahiro Yamada <masahiroy@kernel.org>
-Date:   Fri, 20 Mar 2020 00:22:09 +0900
-X-Gmail-Original-Message-ID: <CAK7LNASTxvF9AbddpkgABM2fAmvCP_bwCCrS9gmeDN0w-ZjfwA@mail.gmail.com>
-Message-ID: <CAK7LNASTxvF9AbddpkgABM2fAmvCP_bwCCrS9gmeDN0w-ZjfwA@mail.gmail.com>
-Subject: [GIT PULL] Kbuild fixes for v5.6-rc7
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <158458013177.152100.17920784952083533825@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+On 19/03/2020 01:08, Stephen Boyd wrote:
+> Quoting Bryan O'Donoghue (2020-03-11 12:14:56)
+>> A USB connector should be a child node of the USB controller
+>> connector/usb-connector.txt. This patch adds an example of how to do this
+>> to the dwc3 binding descriptions.
+> 
+> I read that as a child of the USB interface controller, which is not the
+> same as the USB controller. For example, we're talking about having the
+> usb connector be a child of the EC on ChromeOS devices because that
+> manages the connector
+> 
+>>
+>> It is necessary to declare a connector as a child-node of a USB controller
+>> for role-switching to work, so this example should be helpful to others
+>> implementing that.
+> 
+> Maybe it should be a virtual node at the root of the DT if it's GPIO
+> controlled? And then the phy can be connected to the usb connector
+> through the graph binding.
 
-Please pull more Kbuild fixes.
-Thanks.
+Graph binding can probably work.
 
+Re: the PHY.
 
+For myself the hardware model is
 
-The following changes since commit 98d54f81e36ba3bf92172791eba5ca5bd813989b=
-:
+Connector -> PHY -> Host controller -> Host controller wrapper
 
-  Linux 5.6-rc4 (2020-03-01 16:38:46 -0600)
+Only
 
-are available in the Git repository at:
+Connector -> Host controller -> Host controller wrapper
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/masahiroy/linux-kbuild.git
-tags/kbuild-fixes-v5.6-3
+care about the USB role though.
 
-for you to fetch changes up to 7883a14339299773b2ce08dcfd97c63c199a9289:
+If your PHY did care about the role, you'd really need to write a 
+connector/phy type-c type driver, to detect the state and toggle your 
+PHY bits before doing usb_role_switch_set_role() back to DWC3.
 
-  scripts/kallsyms: fix wrong kallsyms_relative_base (2020-03-19 23:40:20 +=
-0900)
+At least that's my understanding.
 
-----------------------------------------------------------------
-Kbuild fixes for v5.6 (3rd)
-
- - fix __uint128_t capability test in Kconfig when GCC that defaults
-   to 32-bit is used to build the 64-bit kernel
-
- - suppress new noisy Clang warnings -Wpointer-to-enum-cast
-
- - move the namespace field in Module.symvers for the backward
-   compatibility reason for the depmod tool
-
- - use available compression for initramdisk when INTRAMFS_SOURCE
-   is defined, which was the original behavior
-
- - fix modpost to handle correct large section numbers when it refers
-   to modversion CRCs and module namespaces
-
- - fix comments and documents
-
-----------------------------------------------------------------
-Eugeniy Paltsev (1):
-      initramfs: restore default compression behavior
-
-Jessica Yu (1):
-      modpost: move the namespace field in Module.symvers last
-
-Masahiro Yamada (3):
-      kconfig: introduce m32-flag and m64-flag
-      int128: fix __uint128_t compiler test in Kconfig
-      kbuild: doc: fix references to other documents
-
-Mikhail Petrov (1):
-      scripts/kallsyms: fix wrong kallsyms_relative_base
-
-Nathan Chancellor (1):
-      kbuild: Disable -Wpointer-to-enum-cast
-
-SZ Lin (=E6=9E=97=E4=B8=8A=E6=99=BA) (1):
-      kbuild: Fix inconsistent comment
-
-Xiao Yang (1):
-      modpost: Get proper section index by get_secindex() instead of st_shn=
-dx
-
- Documentation/kbuild/kbuild.rst                 |  2 +-
- Documentation/kbuild/kconfig-macro-language.rst |  2 +-
- Documentation/kbuild/makefiles.rst              |  6 +++---
- Documentation/kbuild/modules.rst                |  4 ++--
- Makefile                                        |  2 +-
- init/Kconfig                                    |  3 +--
- scripts/Kconfig.include                         |  7 ++++++
- scripts/Makefile.extrawarn                      |  1 +
- scripts/export_report.pl                        |  2 +-
- scripts/kallsyms.c                              |  8 +++----
- scripts/mod/modpost.c                           | 27 ++++++++++++---------=
 ---
- usr/Kconfig                                     | 22 +++++++++----------
- 12 files changed, 47 insertions(+), 39 deletions(-)
-
-
---=20
-Best Regards
-Masahiro Yamada
+bod
