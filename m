@@ -2,88 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0893718B8A8
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 15:07:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 74E7918B882
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 15:02:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727403AbgCSOH4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 10:07:56 -0400
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:38310 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726936AbgCSOHz (ORCPT
+        id S1727401AbgCSOCA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 10:02:00 -0400
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:40430 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726998AbgCSOCA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 10:07:55 -0400
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 02JE77L3048046;
-        Thu, 19 Mar 2020 09:07:07 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1584626827;
-        bh=F8cnBozYX8/iF9YH+60dq/RPVSZvGKSsyeEtA3GUHiY=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=FUIQinlxjeigNZMn1OTmCITKd7pTLCtLHdjpqObiI5xXQgpEQT2Wo5ZRTHr02bDpR
-         m00TJZbPf6va34eqFVVpqQaBkhh0SQar92NarCwP468LvJ4ZCqMdYD3BJwrdwd2xU5
-         edsOfZgPicfvccrirHYADFMd+WtyTTISsX6abwRc=
-Received: from DLEE100.ent.ti.com (dlee100.ent.ti.com [157.170.170.30])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id 02JE77UJ026756;
-        Thu, 19 Mar 2020 09:07:07 -0500
-Received: from DLEE107.ent.ti.com (157.170.170.37) by DLEE100.ent.ti.com
- (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Thu, 19
- Mar 2020 09:07:07 -0500
-Received: from fllv0039.itg.ti.com (10.64.41.19) by DLEE107.ent.ti.com
- (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Thu, 19 Mar 2020 09:07:07 -0500
-Received: from [10.250.52.63] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id 02JE76v3049010;
-        Thu, 19 Mar 2020 09:07:06 -0500
-Subject: Re: [PATCH] ASoC: tas2562: Fixed incorrect amp_level setting.
-To:     Jonghwan Choi <charlie.jh@kakaocorp.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
-CC:     <alsa-devel@alsa-project.org>, <linux-kernel@vger.kernel.org>
-References: <20200319140043.GA6688@jhbirdchoi-MS-7B79>
-From:   Dan Murphy <dmurphy@ti.com>
-Message-ID: <0b4a59c9-6af7-a34f-fb08-f5200fbe5926@ti.com>
-Date:   Thu, 19 Mar 2020 09:01:24 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        Thu, 19 Mar 2020 10:02:00 -0400
+Received: by mail-qt1-f193.google.com with SMTP id i9so1197390qtw.7
+        for <linux-kernel@vger.kernel.org>; Thu, 19 Mar 2020 07:01:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cmpxchg-org.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=zI26wqa5aEpYDkabLs6lF79jALpaQpgQCRaGe0rAb3k=;
+        b=q7UfSe/xw2kxQTUEkAej8462MqfU323vE3e2pP+VlGXnZwuJVSdhYFj+Yj/cawOF28
+         iE5GnZb/gHfvtBqXJTzG1sBnGIu/Si9ClU+bvRba3yM1OxXUylBhFGR8yb1HvgqM2W+T
+         xlelStGIOPNQgDQIeDixYPKp1rbY8vyVGaQKeE9nANjtyoJFq8JDSKyvRhP6JtUcKIbR
+         xVHLZdP6F/D80hPJpeJBLFvX0KgWBepwVk9njKdFvp37BmXztXGBjaNzs7ARXwlRUd7N
+         HNDAmamF5fMBk7QYpAjQA8ML7Q9YyzIJG5t8ttvxIsuisO3eL+PGgPJG6Mjjx/tZkuWh
+         pp8Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=zI26wqa5aEpYDkabLs6lF79jALpaQpgQCRaGe0rAb3k=;
+        b=fqBUPnQHCU9ldSZfy9HUpPA6LfhsVK2gF5KYYsuLPX+lZnF0pcIgDldnImmSAJKiKO
+         sKAbAI5hKuwtDMPtJbvprp6Zs+PdBIBVDFlw1AlHSBfkvpqnT7ub3KkQVaVp5tysRhgC
+         b/WXPvLFnWJpRZ1nnr4/5Zv4anQiDGE1hCqVj7w0X8MJkscgwsGknRUFlnCBoBphrnML
+         ditn3R505CEAZNFgMLRRJ+/AO2/p4euWFRJUBgiCT5TMXSPiMJvpVoUIet76r/uKJ2zA
+         XVhwpT2sMukPcXg2D4YUzB24aoAhEdsewpjattiyCsRk7KpqnG8L6+u1dJF2JttTL3VE
+         oLQw==
+X-Gm-Message-State: ANhLgQ0z582XmthfWGEdvZf1O6F95E5UtgTszrEwsVgyvZcbVAbNSTff
+        Q6JOUVNLV7U2FWc/J4g1A9Z/jw==
+X-Google-Smtp-Source: ADFU+vvqSwO6Laoiqlw0Vb0ZWC3d9hwN2kFyKBXlgShZonLtCPb91pyqHWP2V0+l5Vq6xXh4LGz3sA==
+X-Received: by 2002:aed:2b83:: with SMTP id e3mr3004742qtd.361.1584626517415;
+        Thu, 19 Mar 2020 07:01:57 -0700 (PDT)
+Received: from localhost ([2620:10d:c091:480::1:a9a9])
+        by smtp.gmail.com with ESMTPSA id f16sm1653251qtk.61.2020.03.19.07.01.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 19 Mar 2020 07:01:56 -0700 (PDT)
+Date:   Thu, 19 Mar 2020 10:01:54 -0400
+From:   Johannes Weiner <hannes@cmpxchg.org>
+To:     Yang Shi <yang.shi@linux.alibaba.com>
+Cc:     shakeelb@google.com, vbabka@suse.cz, willy@infradead.org,
+        akpm@linux-foundation.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [v4 PATCH 1/2] mm: swap: make page_evictable() inline
+Message-ID: <20200319140154.GB187654@cmpxchg.org>
+References: <1584500541-46817-1-git-send-email-yang.shi@linux.alibaba.com>
 MIME-Version: 1.0
-In-Reply-To: <20200319140043.GA6688@jhbirdchoi-MS-7B79>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1584500541-46817-1-git-send-email-yang.shi@linux.alibaba.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Jonghwan
+On Wed, Mar 18, 2020 at 11:02:20AM +0800, Yang Shi wrote:
+> When backporting commit 9c4e6b1a7027 ("mm, mlock, vmscan: no more
+> skipping pagevecs") to our 4.9 kernel, our test bench noticed around 10%
+> down with a couple of vm-scalability's test cases (lru-file-readonce,
+> lru-file-readtwice and lru-file-mmap-read).  I didn't see that much down
+> on my VM (32c-64g-2nodes).  It might be caused by the test configuration,
+> which is 32c-256g with NUMA disabled and the tests were run in root memcg,
+> so the tests actually stress only one inactive and active lru.  It
+> sounds not very usual in mordern production environment.
+> 
+> That commit did two major changes:
+> 1. Call page_evictable()
+> 2. Use smp_mb to force the PG_lru set visible
+> 
+> It looks they contribute the most overhead.  The page_evictable() is a
+> function which does function prologue and epilogue, and that was used by
+> page reclaim path only.  However, lru add is a very hot path, so it
+> sounds better to make it inline.  However, it calls page_mapping() which
+> is not inlined either, but the disassemble shows it doesn't do push and
+> pop operations and it sounds not very straightforward to inline it.
+> 
+> Other than this, it sounds smp_mb() is not necessary for x86 since
+> SetPageLRU is atomic which enforces memory barrier already, replace it
+> with smp_mb__after_atomic() in the following patch.
+> 
+> With the two fixes applied, the tests can get back around 5% on that
+> test bench and get back normal on my VM.  Since the test bench
+> configuration is not that usual and I also saw around 6% up on the
+> latest upstream, so it sounds good enough IMHO.
+> 
+> The below is test data (lru-file-readtwice throughput) against the v5.6-rc4:
+> 	mainline	w/ inline fix
+>           150MB            154MB
+> 
+> With this patch the throughput gets 2.67% up.  The data with using
+> smp_mb__after_atomic() is showed in the following patch.
+> 
+> Shakeel Butt did the below test:
+> 
+> On a real machine with limiting the 'dd' on a single node and reading 100 GiB
+> sparse file (less than a single node).  Just ran a single instance to not
+> cause the lru lock contention. The cmdline used is
+> "dd if=file-100GiB of=/dev/null bs=4k".  Ran the cmd 10 times with drop_caches
+> in between and measured the time it took.
+> 
+> Without patch: 56.64143 +- 0.672 sec
+> 
+> With patches: 56.10 +- 0.21 sec
+> 
+> Fixes: 9c4e6b1a7027 ("mm, mlock, vmscan: no more skipping pagevecs")
+> Cc: Matthew Wilcox <willy@infradead.org>
+> Reviewed-and-Tested-by: Shakeel Butt <shakeelb@google.com>
+> Acked-by: Vlastimil Babka <vbabka@suse.cz>
+> Signed-off-by: Yang Shi <yang.shi@linux.alibaba.com>
 
-On 3/19/20 9:00 AM, Jonghwan Choi wrote:
-> According to the tas2562 datasheet,the bits[5:1] represents the amp_level value.
-> So to set the amp_level value correctly,the shift value should be set to 1.
->
-> Signed-off-by: Jonghwan Choi <charlie.jh@kakaocorp.com>
-> ---
->   sound/soc/codecs/tas2562.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/sound/soc/codecs/tas2562.c b/sound/soc/codecs/tas2562.c
-> index be52886a5edb..fb2233ca9103 100644
-> --- a/sound/soc/codecs/tas2562.c
-> +++ b/sound/soc/codecs/tas2562.c
-> @@ -409,7 +409,7 @@ static const struct snd_kcontrol_new vsense_switch =
->   			1, 1);
->   
->   static const struct snd_kcontrol_new tas2562_snd_controls[] = {
-> -	SOC_SINGLE_TLV("Amp Gain Volume", TAS2562_PB_CFG1, 0, 0x1c, 0,
-> +	SOC_SINGLE_TLV("Amp Gain Volume", TAS2562_PB_CFG1, 1, 0x1c, 0,
->   		       tas2562_dac_tlv),
->   };
->   
-
-
-Acked-by: Dan Murphy <dmurphy@ti.com>
-
+Acked-by: Johannes Weiner <hannes@cmpxchg.org>
