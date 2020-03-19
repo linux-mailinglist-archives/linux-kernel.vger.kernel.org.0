@@ -2,41 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 02EA018B55D
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:18:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8C0D018B60E
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:24:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729708AbgCSNRw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 09:17:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39308 "EHLO mail.kernel.org"
+        id S1729214AbgCSNXr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 09:23:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49812 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729700AbgCSNRr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 09:17:47 -0400
+        id S1730376AbgCSNXo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 09:23:44 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4AFE220724;
-        Thu, 19 Mar 2020 13:17:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 26F48208D6;
+        Thu, 19 Mar 2020 13:23:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584623866;
-        bh=7eiIfsE7p81DiDZxWjU7z/ijJxI8NnrOjncNXabmzYA=;
+        s=default; t=1584624223;
+        bh=GK0txNaAhC1Tj3gLksvBxH5YZiIIZrSnVTFV8FXTM/8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=W80sBzlsNaLddtsmukaJj0k6SxgXd2f6T/8JIanslbArs+YB7hGlKQMnJV+LFK4kl
-         OC3J2k5QnkjUmBtF4idDqg1Z9pwuAGJFKTr8vSQBGrKg1AdGRRsGmjYe1kIEzEfcbA
-         F5W4QL0AtFqdwG/6SR+5/RAKaKdDr2GD8ml51gH8=
+        b=QwU7spysZLjKfViTCw5D7/doukysHO+JKQvfs8D9fYHpQ7B0/P0Y4btovPbgbjgnz
+         G+cVsZrLPzbUmgXxSqqmiuFPc7EWACSRG/FBF7YhKqwCXkT/hqgMFF5SfZZnPSkmFl
+         QVlg79STLzN9T+ZBez1fwLhDLPu+Jzk2PnaE2NRo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        syzbot+a98f2016f40b9cd3818a@syzkaller.appspotmail.com,
-        syzbot+ac36b6a33c28a491e929@syzkaller.appspotmail.com,
-        Sven Eckelmann <sven@narfation.org>,
-        Hillf Danton <hdanton@sina.com>,
-        Simon Wunderlich <sw@simonwunderlich.de>
-Subject: [PATCH 4.14 81/99] batman-adv: Dont schedule OGM for disabled interface
+        stable@vger.kernel.org, Michael Ellerman <mpe@ellerman.id.au>,
+        Shuah Khan <skhan@linuxfoundation.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.4 21/60] selftests/rseq: Fix out-of-tree compilation
 Date:   Thu, 19 Mar 2020 14:03:59 +0100
-Message-Id: <20200319124004.975295259@linuxfoundation.org>
+Message-Id: <20200319123925.958814970@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.2
-In-Reply-To: <20200319123941.630731708@linuxfoundation.org>
-References: <20200319123941.630731708@linuxfoundation.org>
+In-Reply-To: <20200319123919.441695203@linuxfoundation.org>
+References: <20200319123919.441695203@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,42 +44,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sven Eckelmann <sven@narfation.org>
+From: Michael Ellerman <mpe@ellerman.id.au>
 
-commit 8e8ce08198de193e3d21d42e96945216e3d9ac7f upstream.
+[ Upstream commit ef89d0545132d685f73da6f58b7e7fe002536f91 ]
 
-A transmission scheduling for an interface which is currently dropped by
-batadv_iv_ogm_iface_disable could still be in progress. The B.A.T.M.A.N. V
-is simply cancelling the workqueue item in an synchronous way but this is
-not possible with B.A.T.M.A.N. IV because the OGM submissions are
-intertwined.
+Currently if you build with O=... the rseq tests don't build:
 
-Instead it has to stop submitting the OGM when it detect that the buffer
-pointer is set to NULL.
+  $ make O=$PWD/output -C tools/testing/selftests/ TARGETS=rseq
+  make: Entering directory '/linux/tools/testing/selftests'
+  ...
+  make[1]: Entering directory '/linux/tools/testing/selftests/rseq'
+  gcc -O2 -Wall -g -I./ -I../../../../usr/include/ -L./ -Wl,-rpath=./  -shared -fPIC rseq.c -lpthread -o /linux/output/rseq/librseq.so
+  gcc -O2 -Wall -g -I./ -I../../../../usr/include/ -L./ -Wl,-rpath=./  basic_test.c -lpthread -lrseq -o /linux/output/rseq/basic_test
+  /usr/bin/ld: cannot find -lrseq
+  collect2: error: ld returned 1 exit status
 
-Reported-by: syzbot+a98f2016f40b9cd3818a@syzkaller.appspotmail.com
-Reported-by: syzbot+ac36b6a33c28a491e929@syzkaller.appspotmail.com
-Fixes: c6c8fea29769 ("net: Add batman-adv meshing protocol")
-Signed-off-by: Sven Eckelmann <sven@narfation.org>
-Cc: Hillf Danton <hdanton@sina.com>
-Signed-off-by: Simon Wunderlich <sw@simonwunderlich.de>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+This is because the library search path points to the source
+directory, not the output.
+
+We can fix it by changing the library search path to $(OUTPUT).
+
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Signed-off-by: Shuah Khan <skhan@linuxfoundation.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/batman-adv/bat_iv_ogm.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ tools/testing/selftests/rseq/Makefile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/net/batman-adv/bat_iv_ogm.c
-+++ b/net/batman-adv/bat_iv_ogm.c
-@@ -961,6 +961,10 @@ static void batadv_iv_ogm_schedule_buff(
+diff --git a/tools/testing/selftests/rseq/Makefile b/tools/testing/selftests/rseq/Makefile
+index f1053630bb6f5..2af9d39a97168 100644
+--- a/tools/testing/selftests/rseq/Makefile
++++ b/tools/testing/selftests/rseq/Makefile
+@@ -4,7 +4,7 @@ ifneq ($(shell $(CC) --version 2>&1 | head -n 1 | grep clang),)
+ CLANG_FLAGS += -no-integrated-as
+ endif
  
- 	lockdep_assert_held(&hard_iface->bat_iv.ogm_buff_mutex);
+-CFLAGS += -O2 -Wall -g -I./ -I../../../../usr/include/ -L./ -Wl,-rpath=./ \
++CFLAGS += -O2 -Wall -g -I./ -I../../../../usr/include/ -L$(OUTPUT) -Wl,-rpath=./ \
+ 	  $(CLANG_FLAGS)
+ LDLIBS += -lpthread
  
-+	/* interface already disabled by batadv_iv_ogm_iface_disable */
-+	if (!*ogm_buff)
-+		return;
-+
- 	/* the interface gets activated here to avoid race conditions between
- 	 * the moment of activating the interface in
- 	 * hardif_activate_interface() where the originator mac is set and
+-- 
+2.20.1
+
 
 
