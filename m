@@ -2,38 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 94CF118B73B
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:32:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4B6D718B736
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:32:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729299AbgCSNRh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 09:17:37 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38910 "EHLO mail.kernel.org"
+        id S1729630AbgCSNRX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 09:17:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38470 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729125AbgCSNRd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 09:17:33 -0400
+        id S1729622AbgCSNRT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 09:17:19 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0A69F20724;
-        Thu, 19 Mar 2020 13:17:31 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5DDDB21775;
+        Thu, 19 Mar 2020 13:17:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584623852;
-        bh=7qKJKaoue0qyG5bgDF4ILaTZnNgNtd65fVC3HmfCXys=;
+        s=default; t=1584623838;
+        bh=+d8ajJzWO100hATUUE+6j7BLWE9UwVheTuluFvGV3IM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jKy+jh5kycBV4s1ZgOt5OuBPov3hHIuy6i7hRUOAbZcdqxFkB7rZLkWy1G9vELejY
-         GoBXMN6ZYD17yu4dmsvdRzzY5ROUzT69N5Hp2Rx1AXOnX7wakV6I1zU8Qu1u/NTpPZ
-         b5mYt3W02pFLLQ8Z35aPgdxtuRwJdWjp0tsmaV3w=
+        b=uQ/4QnebPSIxX53wNWnAybJUwiC897iCRWc+rWQiA5ytcDfNnHkD0k5cG5lokqP4o
+         BZos7ivQGWyRnNc0J6uQp/zeX02Wh063VuVPFJ6KIRA0k62F4zKzWzlnow+a2FrvUJ
+         OVg54x4TcFBqj7AARfLIOb+/sfaz+Txnusi0WYDw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Per Sundstrom <per.sundstrom@redqube.se>,
-        Jiri Wiesner <jwiesner@suse.com>,
-        Eric Dumazet <edumazet@google.com>,
-        Mahesh Bandewar <maheshb@google.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 34/99] ipvlan: do not add hardware address of master to its unicast filter list
-Date:   Thu, 19 Mar 2020 14:03:12 +0100
-Message-Id: <20200319123952.105371048@linuxfoundation.org>
+        stable@vger.kernel.org, Dan Moulding <dmoulding@me.com>,
+        Kalle Valo <kvalo@codeaurora.org>
+Subject: [PATCH 4.14 39/99] iwlwifi: mvm: Do not require PHY_SKU NVM section for 3168 devices
+Date:   Thu, 19 Mar 2020 14:03:17 +0100
+Message-Id: <20200319123953.604920974@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.2
 In-Reply-To: <20200319123941.630731708@linuxfoundation.org>
 References: <20200319123941.630731708@linuxfoundation.org>
@@ -46,70 +43,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jiri Wiesner <jwiesner@suse.com>
+From: Dan Moulding <dmoulding@me.com>
 
-[ Upstream commit 63aae7b17344d4b08a7d05cb07044de4c0f9dcc6 ]
+commit a9149d243f259ad8f02b1e23dfe8ba06128f15e1 upstream.
 
-There is a problem when ipvlan slaves are created on a master device that
-is a vmxnet3 device (ipvlan in VMware guests). The vmxnet3 driver does not
-support unicast address filtering. When an ipvlan device is brought up in
-ipvlan_open(), the ipvlan driver calls dev_uc_add() to add the hardware
-address of the vmxnet3 master device to the unicast address list of the
-master device, phy_dev->uc. This inevitably leads to the vmxnet3 master
-device being forced into promiscuous mode by __dev_set_rx_mode().
+The logic for checking required NVM sections was recently fixed in
+commit b3f20e098293 ("iwlwifi: mvm: fix NVM check for 3168
+devices"). However, with that fixed the else is now taken for 3168
+devices and within the else clause there is a mandatory check for the
+PHY_SKU section. This causes the parsing to fail for 3168 devices.
 
-Promiscuous mode is switched on the master despite the fact that there is
-still only one hardware address that the master device should use for
-filtering in order for the ipvlan device to be able to receive packets.
-The comment above struct net_device describes the uc_promisc member as a
-"counter, that indicates, that promiscuous mode has been enabled due to
-the need to listen to additional unicast addresses in a device that does
-not implement ndo_set_rx_mode()". Moreover, the design of ipvlan
-guarantees that only the hardware address of a master device,
-phy_dev->dev_addr, will be used to transmit and receive all packets from
-its ipvlan slaves. Thus, the unicast address list of the master device
-should not be modified by ipvlan_open() and ipvlan_stop() in order to make
-ipvlan a workable option on masters that do not support unicast address
-filtering.
+The PHY_SKU section is really only mandatory for the IWL_NVM_EXT
+layout (the phy_sku parameter of iwl_parse_nvm_data is only used when
+the NVM type is IWL_NVM_EXT). So this changes the PHY_SKU section
+check so that it's only mandatory for IWL_NVM_EXT.
 
-Fixes: 2ad7bf3638411 ("ipvlan: Initial check-in of the IPVLAN driver")
-Reported-by: Per Sundstrom <per.sundstrom@redqube.se>
-Signed-off-by: Jiri Wiesner <jwiesner@suse.com>
-Reviewed-by: Eric Dumazet <edumazet@google.com>
-Acked-by: Mahesh Bandewar <maheshb@google.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: b3f20e098293 ("iwlwifi: mvm: fix NVM check for 3168 devices")
+Signed-off-by: Dan Moulding <dmoulding@me.com>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/net/ipvlan/ipvlan_main.c |    5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
 
---- a/drivers/net/ipvlan/ipvlan_main.c
-+++ b/drivers/net/ipvlan/ipvlan_main.c
-@@ -236,7 +236,6 @@ static void ipvlan_uninit(struct net_dev
- static int ipvlan_open(struct net_device *dev)
- {
- 	struct ipvl_dev *ipvlan = netdev_priv(dev);
--	struct net_device *phy_dev = ipvlan->phy_dev;
- 	struct ipvl_addr *addr;
+---
+ drivers/net/wireless/intel/iwlwifi/mvm/nvm.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+--- a/drivers/net/wireless/intel/iwlwifi/mvm/nvm.c
++++ b/drivers/net/wireless/intel/iwlwifi/mvm/nvm.c
+@@ -326,7 +326,8 @@ iwl_parse_nvm_sections(struct iwl_mvm *m
+ 		}
  
- 	if (ipvlan->port->mode == IPVLAN_MODE_L3 ||
-@@ -248,7 +247,7 @@ static int ipvlan_open(struct net_device
- 	list_for_each_entry(addr, &ipvlan->addrs, anode)
- 		ipvlan_ht_addr_add(ipvlan, addr);
- 
--	return dev_uc_add(phy_dev, phy_dev->dev_addr);
-+	return 0;
- }
- 
- static int ipvlan_stop(struct net_device *dev)
-@@ -260,8 +259,6 @@ static int ipvlan_stop(struct net_device
- 	dev_uc_unsync(phy_dev, dev);
- 	dev_mc_unsync(phy_dev, dev);
- 
--	dev_uc_del(phy_dev, phy_dev->dev_addr);
--
- 	list_for_each_entry(addr, &ipvlan->addrs, anode)
- 		ipvlan_ht_addr_del(addr);
- 
+ 		/* PHY_SKU section is mandatory in B0 */
+-		if (!mvm->nvm_sections[NVM_SECTION_TYPE_PHY_SKU].data) {
++		if (mvm->trans->cfg->nvm_type == IWL_NVM_EXT &&
++		    !mvm->nvm_sections[NVM_SECTION_TYPE_PHY_SKU].data) {
+ 			IWL_ERR(mvm,
+ 				"Can't parse phy_sku in B0, empty sections\n");
+ 			return NULL;
 
 
