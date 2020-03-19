@@ -2,133 +2,152 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 573AF18C00A
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 20:05:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9D1C818C015
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 20:07:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727989AbgCSTFH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 15:05:07 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:45092 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726934AbgCSTFG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 15:05:06 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 02JJ3xZp159748;
-        Thu, 19 Mar 2020 19:04:56 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2020-01-29;
- bh=q7UqnzNKhtfOpZaaMZSusBoFgJtFV72rL8iVG93biAM=;
- b=hBr3I9+5kubyCJHns8JiRQIxcCZg7Q/iQXqW7IaSvIErHY4WsSGy5c0hs/fahfXk3Yjp
- AD7eSLGlNjLurYd8WGWbvpIND5UTTvEwPoUnfLtC22QK4/xTr//Ov/AN1n2jWxCaRUav
- FCinEhreK+fvY2KN+JJT8xZPiqfqYpG40GQZfVRbqDrIZAcxK0zi/6mA5sQrClnCXj79
- MlrSLewxYN4Lt99xv0rRODankDTRzKyWEeKIY/CIxuBbS+G/2EnVk5NFtqRD9/kuwdAA
- sL4Xg5ifBAUG/LVSGcN57Roo63eugjpDtDYqF861yAP920YpRGrGidFeTN/Gi6jh0YYd qg== 
-Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
-        by userp2120.oracle.com with ESMTP id 2yub27a166-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 19 Mar 2020 19:04:56 +0000
-Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 02JJ2elY128202;
-        Thu, 19 Mar 2020 19:04:56 GMT
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by userp3030.oracle.com with ESMTP id 2ys8rmvema-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 19 Mar 2020 19:04:55 +0000
-Received: from abhmp0015.oracle.com (abhmp0015.oracle.com [141.146.116.21])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 02JJ4r8E020080;
-        Thu, 19 Mar 2020 19:04:53 GMT
-Received: from ca-dmjordan1.us.oracle.com (/10.211.9.48)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 19 Mar 2020 12:04:53 -0700
-Date:   Thu, 19 Mar 2020 15:05:12 -0400
-From:   Daniel Jordan <daniel.m.jordan@oracle.com>
-To:     Shile Zhang <shile.zhang@linux.alibaba.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Kirill Tkhai <ktkhai@virtuozzo.com>,
-        Pavel Tatashin <pasha.tatashin@soleen.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] mm: fix tick timer stall during deferred page init
-Message-ID: <20200319190512.cwnvgvv3upzcchkm@ca-dmjordan1.us.oracle.com>
-References: <20200311123848.118638-1-shile.zhang@linux.alibaba.com>
+        id S1725787AbgCSTHT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 15:07:19 -0400
+Received: from albireo.enyo.de ([37.24.231.21]:52842 "EHLO albireo.enyo.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727256AbgCSTHR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 15:07:17 -0400
+Received: from [172.17.203.2] (helo=deneb.enyo.de)
+        by albireo.enyo.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        id 1jF0VY-00029N-1A; Thu, 19 Mar 2020 19:07:08 +0000
+Received: from fw by deneb.enyo.de with local (Exim 4.92)
+        (envelope-from <fw@deneb.enyo.de>)
+        id 1jF0UB-00083N-Mg; Thu, 19 Mar 2020 20:05:43 +0100
+From:   Florian Weimer <fw@deneb.enyo.de>
+To:     Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc:     libc-alpha <libc-alpha@sourceware.org>, carlos <carlos@redhat.com>,
+        Rich Felker <dalias@libc.org>,
+        linux-api <linux-api@vger.kernel.org>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Will Deacon <will.deacon@arm.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ben Maurer <bmaurer@fb.com>, Dave Watson <davejwatson@fb.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Paul <paulmck@linux.vnet.ibm.com>, Paul Turner <pjt@google.com>,
+        Joseph Myers <joseph@codesourcery.com>
+Subject: Re: [RFC PATCH glibc 4/8] glibc: Perform rseq(2) registration at C startup and thread creation (v15)
+References: <20200319144110.3733-1-mathieu.desnoyers@efficios.com>
+        <874kukpf9f.fsf@mid.deneb.enyo.de>
+        <2147217200.3240.1584633395285.JavaMail.zimbra@efficios.com>
+        <87r1xo5o2s.fsf@mid.deneb.enyo.de>
+        <1302331358.3965.1584641354569.JavaMail.zimbra@efficios.com>
+        <87sgi4gqhf.fsf@mid.deneb.enyo.de>
+        <1103782439.4046.1584642531222.JavaMail.zimbra@efficios.com>
+        <87k13ggpmf.fsf@mid.deneb.enyo.de>
+        <900536577.4062.1584644126425.JavaMail.zimbra@efficios.com>
+Date:   Thu, 19 Mar 2020 20:05:43 +0100
+In-Reply-To: <900536577.4062.1584644126425.JavaMail.zimbra@efficios.com>
+        (Mathieu Desnoyers's message of "Thu, 19 Mar 2020 14:55:26 -0400
+        (EDT)")
+Message-ID: <87fte4go6w.fsf@mid.deneb.enyo.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200311123848.118638-1-shile.zhang@linux.alibaba.com>
-User-Agent: NeoMutt/20180716
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9565 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 bulkscore=0 phishscore=0
- malwarescore=0 mlxscore=0 mlxlogscore=999 adultscore=0 suspectscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2003020000
- definitions=main-2003190080
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9565 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 impostorscore=0
- mlxlogscore=999 mlxscore=0 phishscore=0 adultscore=0 suspectscore=0
- clxscore=1011 priorityscore=1501 lowpriorityscore=0 bulkscore=0
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2003020000 definitions=main-2003190080
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 11, 2020 at 08:38:48PM +0800, Shile Zhang wrote:
+* Mathieu Desnoyers:
 
-Sorry, I'm late to this.
+>> Inside glibc, you can assume __attribute__ support.
+>
+> OK, so the _Static_assert () could sit in sys/rseq.h
 
-I don't have a better solution, but I did try to find a way to stop holding the
-resize lock during (most of) page init, which would make this fix unnecessary
-and the deferred_init_memmap context less strange.  Here are some ideas that
-didn't work out in case someone sees a different way forward.
+It requires a C11 compiler.  In this case, you could use _Alignas.
 
-One thought is to unify the common parts of deferred_init_memmap and
-deferred_grow_zone and have callers grab chunks of pages to initialize and note
-the next available page to initialize for the next caller.  Interrupt handlers
-participate in page init while it's happening rather than having to wait until
-it's finished.  But what if a partially completed chunk is interrupted midway
-through and the interrupt handler needs to allocate those in-progress pages?
-May be possible to guarantee some memory is available if some minimum number of
-chunks have been completed already, but it's hard to say what that number is if
-the amount of memory handlers might allocate is unbounded.
+>
+>> 
+>>>>>> The struct rseq/struct rseq_cs definitions
+>>>>>> are broken, they should not try to change the alignment.
+>>>>>
+>>>>> AFAIU, this means we should ideally not have used __attribute__((aligned))
+>>>>> in the uapi headers in the first place. Why is it broken ?
+>>>> 
+>>>> Compilers which are not sufficiently GCC-compatible define
+>>>> __attribute__(X) as the empty expansion, so you silently get a
+>>>> different ABI.
+>>>
+>>> It is worth noting that rseq.h is not the only Linux uapi header
+>>> which uses __attribute__ ((aligned)), so this ABI problem exists today
+>>> anyway for those compilers.
+>> 
+>> Yuck.  Even with larger-than-16 alignment?
+>
+> There are two:
+>
+> target_core_user.h
+> 45:#define ALIGN_SIZE 64 /* Should be enough for most CPUs */
+> 58:	__u32 cmd_tail __attribute__((__aligned__(ALIGN_SIZE)));
 
-Given that large allocations from interrupt handlers is a theoretical issue,
-another thought is to reserve one section for deferred_grow_zone, should it be
-called during page init, and if not then the pgdatinit thread could initialize
-it with the resize lock held after the rest of page init is finished.
-Meanwhile regular page init need not hold the resize lock.  If interrupt
-handlers try to allocate more than a section during this time, trigger a
-warning so we know the issue isn't theoretical.  The downside is that it's
-possible this may not fix it for good.
+That one is tough to figure out:
 
-> @@ -1811,9 +1816,23 @@ static int __init deferred_init_memmap(v
->  	 * that we can avoid introducing any issues with the buddy
->  	 * allocator.
->  	 */
-> -	while (spfn < epfn)
-> +	while (spfn < epfn) {
->  		nr_pages += deferred_init_maxorder(&i, zone, &spfn, &epfn);
-> +		/*
-> +		 * Release the interrupts for every TICK_PAGE_COUNT pages
-> +		 * (128MB) to give tick timer the chance to update the
-> +		 * system jiffies.
-> +		 */
-> +		if ((nr_pages - prev_nr_pages) > TICK_PAGE_COUNT) {
-> +			prev_nr_pages = nr_pages;
-> +			pgdat->first_deferred_pfn = spfn;
-> +			pgdat_resize_unlock(pgdat, &flags);
-> +			goto again;
-> +		}
-> +	}
-> +
+struct tcmu_mailbox {
+        __u16 version;
+        __u16 flags;
+        __u32 cmdr_off;
+        __u32 cmdr_size;
 
-Nits only:
+        __u32 cmd_head;
 
- - s/Release the interrupts/Enable interrupts/
- - take out 128MB, that assumes PAGE_SIZE is 4k
+        /* Updated by user. On its own cacheline */
+        __u32 cmd_tail __attribute__((__aligned__(ALIGN_SIZE)));
 
-I considered saving i, spfn, and epfn in pgdat to avoid having to rerun
-deferred_init_mem_pfn_range_in_zone every retry, but it'd enlarge pgdat for
-short-lived data and the function probably isn't expensive.
+} __attribute__((packed));
 
-Regardless,
-Reviewed-by: Daniel Jordan <daniel.m.jordan@oracle.com>
+Apparently, the expectation is that the compiler ignores __attribute__
+((packed) in this context.  Ugh.
+
+> netfilter_bridge/ebtables.h:90:	char data[0] __attribute__ ((aligned (__alignof__(struct ebt_replace))));
+> netfilter_bridge/ebtables.h:132:	unsigned char data[0] __attribute__ ((aligned (__alignof__(struct ebt_replace))));
+> netfilter_bridge/ebtables.h:145:	unsigned char data[0] __attribute__ ((aligned (__alignof__(struct ebt_replace))));
+> netfilter_bridge/ebtables.h:158:	unsigned char data[0] __attribute__ ((aligned (__alignof__(struct ebt_replace))));
+> netfilter_bridge/ebtables.h:191:	unsigned char elems[0] __attribute__ ((aligned (__alignof__(struct ebt_replace))));
+
+I think these values are lower than max_align_t, so uncritical.
+
+>>>> There is really no need to specify 32-byte alignment here.  Is not
+>>>> even the size of a standard cache line.  It can result in crashes if
+>>>> these structs are heap-allocated using malloc, when optimizing for
+>>>> AVX2.
+>>>
+>>> Why would it be valid to allocate those with malloc ? Isn't it the
+>>> purpose of posix_memalign() ?
+>> 
+>> It would not be valid, but I don't think we have diagnostics for C
+>> like we have them for C++'s operator new.
+>
+> We could at least make an effort to let people know that alignment is
+> required here when allocating struct rseq and struct rseq_cs on the
+> heap by adding some comments to that effect in linux/rseq.h ?
+
+We could use different types on the glibc side, then no special
+programmer action will be needed.
+
+>>>>> However, now that it is in the wild, it's a bit late to change that.
+>>>> 
+>>>> I had forgotten about the alignment crashes.  I think we should
+>>>> seriously consider changing the types. 8-(
+>>>
+>>> I don't think this is an option at this stage given that it is part
+>>> of the Linux kernel UAPI. I am not convinced that it is valid at all
+>>> to allocate struct rseq or struct rseq_cs with malloc(), because it
+>>> does not guarantee any alignment.
+>> 
+>> The kernel ABI doesn't change.  The kernel cannot use the alignment
+>> information anyway.  Userspace struct layout may change in subtle
+>> ways, though.
+>
+> Considering the amount of pain this can cause in user-space, and because
+> it can break userspace, this is not a UAPI change I am willing to consider.
+> I'm not sure why we are even discussing the possibility of breaking a Linux
+> UAPI considering that those are set in stone.
+
+Again, the kernel interface is NOT affected.  Only if the struct is
+used in a non-top-level fashion across an ABI boundary in userspace.
+I think making the change now is better than dealing with the breakage
+in rseq users when they are built with -mavx2.
