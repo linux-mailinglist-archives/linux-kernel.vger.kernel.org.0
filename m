@@ -2,97 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6F0E718AD32
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 08:13:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DF34818AD39
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 08:14:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727230AbgCSHNt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 03:13:49 -0400
-Received: from mail-qk1-f196.google.com ([209.85.222.196]:38984 "EHLO
-        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727011AbgCSHNs (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 03:13:48 -0400
-Received: by mail-qk1-f196.google.com with SMTP id t17so1670005qkm.6
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Mar 2020 00:13:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=rH9XkrtMe7HI6VnpexBxHYP1li78F1+6ZSnrUVBDTCw=;
-        b=prPUHVlxVd+bHnSt25R24pQe+7i7O9R1n3DEuULFVAUvo3IiUm9SO3mMtIEaRPGkvz
-         lKFp3mkHdQdETyKa5GlARoh4QXgZ+tKH8X2ph3Hb3vfbjQ2+qYluAggjgQRlLSsd52bT
-         F6xky0J+wLpGQWN5BDv1nVOQM0RIska5/S0L3eeZtDnd19ABYyhiASRMtwy3c8MUDgdg
-         MueSMeN4QycaC90Cs2AtPu8eP5Zj1GA+rOjdD+FDFsYeyLdGxrooicFD+2s/R7LK6p44
-         zb0L9GAp/knpAygSvvb9iA4E3xHqP8l52hMGSF/zPbcoj8c3wbqhkisuq1D9Yf61+fms
-         za4Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=rH9XkrtMe7HI6VnpexBxHYP1li78F1+6ZSnrUVBDTCw=;
-        b=a/MHA4zl3TXNlD0WYO43tHcEtGOwdvIrhcx+LXUH13QnYUQMKF4Dq64UnHrrdN6QI/
-         SJf/7WX77Q41U99djIQGYdhWyxf8320NJ5jgQhzCHCjMYuTehk0zUdzYHrSBaLFM0pu+
-         Xd/TI6IhR2bHmkZYWSMru/eggu1eXCmEN9LQ8m5XzTcG+MDmjkpkicEVuoe1Z1sQsXxV
-         TO3ldKZAK1AQuu7+hgUM8v4NNmF5gKy3cccSHBDCwjnbVaXCjkm3IesPGO9Vp4/ju0JX
-         fiiIPkkX0EH8wkx5JQ89/oqTdkv/NMKSWZiyOHnEXOD9LT2R5rLL4Qr36fC0U5FkEXfm
-         JQJA==
-X-Gm-Message-State: ANhLgQ2CAWGuXkLcglXUpEbL5w2FHd9wTpwbYLfgOc9f5VjQ0sjstBkT
-        AxgsrfhNyoSmWoVHrQmrk5nVhH8APXx9jVWzNK2iHw==
-X-Google-Smtp-Source: ADFU+vvRD/fu9oNydL2plK4iDRAkvvrhZlF6/7O+wy46FW3Kp9+qbKsulg4yL1lxcZZPurOY/plBmaFmtqpvf/If4vA=
-X-Received: by 2002:a37:6115:: with SMTP id v21mr1538768qkb.43.1584602027025;
- Thu, 19 Mar 2020 00:13:47 -0700 (PDT)
+        id S1727277AbgCSHOi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 03:14:38 -0400
+Received: from mx2.suse.de ([195.135.220.15]:52010 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725787AbgCSHOi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 03:14:38 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 01FE1ABDC;
+        Thu, 19 Mar 2020 07:14:35 +0000 (UTC)
+From:   Juergen Gross <jgross@suse.com>
+To:     xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org
+Cc:     Juergen Gross <jgross@suse.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Stefano Stabellini <sstabellini@kernel.org>,
+        =?UTF-8?q?Marek=20Marczykowski-G=C3=B3recki?= 
+        <marmarek@invisiblethingslab.com>, stable@vger.kernel.org
+Subject: [PATCH] xen/events: avoid NULL pointer dereference in evtchn_from_irq()
+Date:   Thu, 19 Mar 2020 08:14:28 +0100
+Message-Id: <20200319071428.12115-1-jgross@suse.com>
+X-Mailer: git-send-email 2.16.4
 MIME-Version: 1.0
-References: <000000000000ae2ab305a123f146@google.com> <CACT4Y+a_d=5TNZth0dPov0B7tB5T9bAzWXBj1HjhXdn-=0KOOg@mail.gmail.com>
- <20200318214109.GV3199@paulmck-ThinkPad-P72>
-In-Reply-To: <20200318214109.GV3199@paulmck-ThinkPad-P72>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Thu, 19 Mar 2020 08:13:35 +0100
-Message-ID: <CACT4Y+ZhP_Qu+WZ4t2dLjd__H+rUKCTRCNoghvW9Uf3QQYRcNg@mail.gmail.com>
-Subject: Re: linux-next build error (8)
-To:     "Paul E. McKenney" <paulmck@kernel.org>
-Cc:     syzbot <syzbot+792dec47d693ccdc05a0@syzkaller.appspotmail.com>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        Joel Fernandes <joel@joelfernandes.org>, rcu@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 18, 2020 at 10:41 PM Paul E. McKenney <paulmck@kernel.org> wrote:
->
-> On Wed, Mar 18, 2020 at 09:54:07PM +0100, Dmitry Vyukov wrote:
-> > On Wed, Mar 18, 2020 at 5:57 PM syzbot
-> > <syzbot+792dec47d693ccdc05a0@syzkaller.appspotmail.com> wrote:
-> > >
-> > > Hello,
-> > >
-> > > syzbot found the following crash on:
-> > >
-> > > HEAD commit:    47780d78 Add linux-next specific files for 20200318
-> > > git tree:       linux-next
-> > > console output: https://syzkaller.appspot.com/x/log.txt?x=14228745e00000
-> > > kernel config:  https://syzkaller.appspot.com/x/.config?x=b68b7b89ad96c62a
-> > > dashboard link: https://syzkaller.appspot.com/bug?extid=792dec47d693ccdc05a0
-> > > compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-> > >
-> > > Unfortunately, I don't have any reproducer for this crash yet.
-> > >
-> > > IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> > > Reported-by: syzbot+792dec47d693ccdc05a0@syzkaller.appspotmail.com
-> > >
-> > > kernel/rcu/tasks.h:1070:37: error: 'rcu_tasks_rude' undeclared (first use in this function); did you mean 'rcu_tasks_qs'?
-> >
-> > +rcu maintainers
->
-> The kbuild test robot beat you to it, and apologies for the hassle.
-> Fixed in -rcu on current "dev" branch.
+There have been reports of races in evtchn_from_irq() where the info
+pointer has been NULL.
 
-If the kernel dev process would only have a way to avoid dups from all
-test systems...
-Now we need to spend time and deal with it. What has fixed it?
+Avoid that case by testing info before dereferencing it.
+
+In order to avoid accessing a just freed info structure do the kfree()
+via kfree_rcu().
+
+Cc: Marek Marczykowski-Górecki <marmarek@invisiblethingslab.com>
+Cc: stable@vger.kernel.org
+Reported-by: Marek Marczykowski-Górecki <marmarek@invisiblethingslab.com>
+Signed-off-by: Juergen Gross <jgross@suse.com>
+---
+ drivers/xen/events/events_base.c     | 10 ++++++++--
+ drivers/xen/events/events_internal.h |  3 +++
+ 2 files changed, 11 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/xen/events/events_base.c b/drivers/xen/events/events_base.c
+index 499eff7d3f65..838762fe3d6e 100644
+--- a/drivers/xen/events/events_base.c
++++ b/drivers/xen/events/events_base.c
+@@ -247,10 +247,16 @@ static void xen_irq_info_cleanup(struct irq_info *info)
+  */
+ unsigned int evtchn_from_irq(unsigned irq)
+ {
++	struct irq_info *info;
++
+ 	if (WARN(irq >= nr_irqs, "Invalid irq %d!\n", irq))
+ 		return 0;
+ 
+-	return info_for_irq(irq)->evtchn;
++	info = info_for_irq(irq);
++	if (info == NULL)
++		return 0;
++
++	return info->evtchn;
+ }
+ 
+ unsigned irq_from_evtchn(unsigned int evtchn)
+@@ -436,7 +442,7 @@ static void xen_free_irq(unsigned irq)
+ 
+ 	WARN_ON(info->refcnt > 0);
+ 
+-	kfree(info);
++	kfree_rcu(info, rcu);
+ 
+ 	/* Legacy IRQ descriptors are managed by the arch. */
+ 	if (irq < nr_legacy_irqs())
+diff --git a/drivers/xen/events/events_internal.h b/drivers/xen/events/events_internal.h
+index 82938cff6c7a..c421055843c8 100644
+--- a/drivers/xen/events/events_internal.h
++++ b/drivers/xen/events/events_internal.h
+@@ -7,6 +7,8 @@
+ #ifndef __EVENTS_INTERNAL_H__
+ #define __EVENTS_INTERNAL_H__
+ 
++#include <linux/rcupdate.h>
++
+ /* Interrupt types. */
+ enum xen_irq_type {
+ 	IRQT_UNBOUND = 0,
+@@ -30,6 +32,7 @@ enum xen_irq_type {
+  */
+ struct irq_info {
+ 	struct list_head list;
++	struct rcu_head rcu;
+ 	int refcnt;
+ 	enum xen_irq_type type;	/* type */
+ 	unsigned irq;
+-- 
+2.16.4
+
