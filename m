@@ -2,92 +2,164 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8653118AC5D
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 06:40:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3E01B18AC50
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 06:39:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727168AbgCSFkv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 01:40:51 -0400
-Received: from mail-pj1-f67.google.com ([209.85.216.67]:35965 "EHLO
-        mail-pj1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727061AbgCSFkt (ORCPT
+        id S1726956AbgCSFjg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 01:39:36 -0400
+Received: from out30-131.freemail.mail.aliyun.com ([115.124.30.131]:38494 "EHLO
+        out30-131.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725812AbgCSFjg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 01:40:49 -0400
-Received: by mail-pj1-f67.google.com with SMTP id nu11so513419pjb.1
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Mar 2020 22:40:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=Z/69m7Zf+ruag16yCUxMLHHMI4Yg4kUCSYDk0zKgyCg=;
-        b=GNA5dhAfvYYpetATfgKyqLZz5xlqU1swtnZ8dzTWy+4qldc1xRRbyXZak0HEBTVC9d
-         Jrg18WL4KAFFq2QXJ3vjKAGQceRb/D6/f4UfoBnqwJuPD6vjnWCLEAEgSod9vHxQX+ej
-         BDIFlrEBBqvgkoxy7lAdszwi6BFG3XySWcWss0gnwUUd/h/Qubwa+ORCnV0/Ib6kBol+
-         fT1t1to1sBkgDvDUMTaiZ6+nxhevdSVkkIy8YmE9K+gLRLnZMnWOW4g1B8kl2bfEGH7G
-         m1mrtPFlotMHwVAHSswInC3EoDzYxrkyaHseIgZBkpXvDTfh5DzDlbFaQ9omhU8wXQTi
-         1hag==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=Z/69m7Zf+ruag16yCUxMLHHMI4Yg4kUCSYDk0zKgyCg=;
-        b=a9iNy8YctVzPY0bFZ/xDiz4LdsQvRJy0juP6Pf6O4WI7SLhac4AgIG6cmaWo38FOnt
-         B634jpcZKlzocDod/wKVbcO2JDIznJ6IQjVkvka5wrl7VCvc1pFCB/usxiMc0Hr5SnWM
-         TLxRvpg0cERqxagycccr23SRNtOzAZAchBONc5zm29zoYD/Igm2+gfYaIM7rP11PP9Vz
-         ZIv6TV9m5x6wZXDRYEILRyDFRg70xG6ibFsk4tDcmsQ1o5WGiMExA/GUVRoWyw4NYMtZ
-         qWyaAotjDaCj+zNFOnK43zuBTuFuyJlqjG58bg8Gyz18XUGqJjHCqAEa+FCDbyCKVBma
-         hEYw==
-X-Gm-Message-State: ANhLgQ3Zqe+vdZi8tDY4FraIauU+TgyqA1cxB+JuBVwiWvk2wvKWW84a
-        Y1ob3LCXfw97rl/DzD18UaxsCxr8w4Q=
-X-Google-Smtp-Source: ADFU+vsRf2sDvae95TJ6VcZ7xmIYGkaloU4QXsDM6UWMf7v+/ukUDbAHYC3DGNVQzt1wESDRV1ejsA==
-X-Received: by 2002:a17:90a:e505:: with SMTP id t5mr1967909pjy.101.1584596448549;
-        Wed, 18 Mar 2020 22:40:48 -0700 (PDT)
-Received: from localhost.localdomain (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id l125sm229126pgl.57.2020.03.18.22.40.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Mar 2020 22:40:47 -0700 (PDT)
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Rob Clark <robdclark@gmail.com>
-Subject: [PATCH 4/4] arm64: dts: qcom: msm8996: Make GPU node control GPU_GX GDSC
-Date:   Wed, 18 Mar 2020 22:39:02 -0700
-Message-Id: <20200319053902.3415984-5-bjorn.andersson@linaro.org>
-X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20200319053902.3415984-1-bjorn.andersson@linaro.org>
-References: <20200319053902.3415984-1-bjorn.andersson@linaro.org>
+        Thu, 19 Mar 2020 01:39:36 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R741e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01f04428;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=7;SR=0;TI=SMTPD_---0Tt03i03_1584596364;
+Received: from US-143344MP.local(mailfrom:yang.shi@linux.alibaba.com fp:SMTPD_---0Tt03i03_1584596364)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Thu, 19 Mar 2020 13:39:26 +0800
+Subject: Re: [PATCH] mm: khugepaged: fix potential page state corruption
+From:   Yang Shi <yang.shi@linux.alibaba.com>
+To:     "Kirill A. Shutemov" <kirill@shutemov.name>
+Cc:     kirill.shutemov@linux.intel.com, hughd@google.com,
+        aarcange@redhat.com, akpm@linux-foundation.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+References: <1584573582-116702-1-git-send-email-yang.shi@linux.alibaba.com>
+ <20200319001258.creziw6ffw4jvwl3@box>
+ <2cdc734c-c222-4b9d-9114-1762b29dafb4@linux.alibaba.com>
+Message-ID: <db660bef-c927-b793-7a79-a88df197a756@linux.alibaba.com>
+Date:   Wed, 18 Mar 2020 22:39:21 -0700
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
+ Gecko/20100101 Thunderbird/52.7.0
 MIME-Version: 1.0
+In-Reply-To: <2cdc734c-c222-4b9d-9114-1762b29dafb4@linux.alibaba.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Presumably the GPU node needs to control both the GPU and GPU GX power
-domains, but given that GPU GX now depends on the GPU GDSC both can
-effectively be controlled by controlling GPU GX. So use this instead.
 
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
----
- arch/arm64/boot/dts/qcom/msm8996.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/qcom/msm8996.dtsi b/arch/arm64/boot/dts/qcom/msm8996.dtsi
-index 14827adebd94..f29f45e9737b 100644
---- a/arch/arm64/boot/dts/qcom/msm8996.dtsi
-+++ b/arch/arm64/boot/dts/qcom/msm8996.dtsi
-@@ -639,7 +639,7 @@ gpu@b00000 {
- 				"mem",
- 				"mem_iface";
- 
--			power-domains = <&mmcc GPU_GDSC>;
-+			power-domains = <&mmcc GPU_GX_GDSC>;
- 			iommus = <&adreno_smmu 0>;
- 
- 			nvmem-cells = <&gpu_speed_bin>;
--- 
-2.24.0
+On 3/18/20 5:55 PM, Yang Shi wrote:
+>
+>
+> On 3/18/20 5:12 PM, Kirill A. Shutemov wrote:
+>> On Thu, Mar 19, 2020 at 07:19:42AM +0800, Yang Shi wrote:
+>>> When khugepaged collapses anonymous pages, the base pages would be 
+>>> freed
+>>> via pagevec or free_page_and_swap_cache().  But, the anonymous page may
+>>> be added back to LRU, then it might result in the below race:
+>>>
+>>>     CPU A                CPU B
+>>> khugepaged:
+>>>    unlock page
+>>>    putback_lru_page
+>>>      add to lru
+>>>                 page reclaim:
+>>>                   isolate this page
+>>>                   try_to_unmap
+>>>    page_remove_rmap <-- corrupt _mapcount
+>>>
+>>> It looks nothing would prevent the pages from isolating by reclaimer.
+>> Hm. Why should it?
+>>
+>> try_to_unmap() doesn't exclude parallel page unmapping. _mapcount is
+>> protected by ptl. And this particular _mapcount pin is reachable for
+>> reclaim as it's not part of usual page table tree. Basically
+>> try_to_unmap() will never succeeds until we give up the _mapcount on
+>> khugepaged side.
+>
+> I don't quite get. What does "not part of usual page table tree" means?
+>
+> How's about try_to_unmap() acquires ptl before khugepaged?
+>
+>>
+>> I don't see the issue right away.
+>>
+>>> The other problem is the page's active or unevictable flag might be
+>>> still set when freeing the page via free_page_and_swap_cache().
+>> So what?
+>
+> The flags may leak to page free path then kernel may complain if 
+> DEBUG_VM is set.
+>
+>>
+>>> The putback_lru_page() would not clear those two flags if the pages are
+>>> released via pagevec, it sounds nothing prevents from isolating active
+
+Sorry, this is a typo. If the page is freed via pagevec, active and 
+unevictable flag would get cleared before freeing by page_off_lru().
+
+But, if the page is freed by free_page_and_swap_cache(), these two flags 
+are not cleared. But, it seems this path is hit rare, the pages are 
+freed by pagevec for the most cases.
+
+>>> or unevictable pages.
+>> Again, why should it? vmscan is equipped to deal with this.
+>
+> I don't mean vmscan, I mean khugepaged may isolate active and 
+> unevictable pages since it just simply walks page table.
+>
+>>
+>>> However I didn't really run into these problems, just in theory by 
+>>> visual
+>>> inspection.
+>>>
+>>> And, it also seems unnecessary to have the pages add back to LRU 
+>>> again since
+>>> they are about to be freed when reaching this point.  So, clearing 
+>>> active
+>>> and unevictable flags, unlocking and dropping refcount from isolate
+>>> instead of calling putback_lru_page() as what page cache collapse does.
+>> Hm? But we do call putback_lru_page() on the way out. I do not follow.
+>
+> It just calls putback_lru_page() at error path, not success path. 
+> Putting pages back to lru on error path definitely makes sense. Here 
+> it is the success path.
+>
+>>
+>>> Cc: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+>>> Cc: Hugh Dickins <hughd@google.com>
+>>> Cc: Andrea Arcangeli <aarcange@redhat.com>
+>>> Signed-off-by: Yang Shi <yang.shi@linux.alibaba.com>
+>>> ---
+>>>   mm/khugepaged.c | 10 +++++++++-
+>>>   1 file changed, 9 insertions(+), 1 deletion(-)
+>>>
+>>> diff --git a/mm/khugepaged.c b/mm/khugepaged.c
+>>> index b679908..f42fa4e 100644
+>>> --- a/mm/khugepaged.c
+>>> +++ b/mm/khugepaged.c
+>>> @@ -673,7 +673,6 @@ static void __collapse_huge_page_copy(pte_t 
+>>> *pte, struct page *page,
+>>>               src_page = pte_page(pteval);
+>>>               copy_user_highpage(page, src_page, address, vma);
+>>>               VM_BUG_ON_PAGE(page_mapcount(src_page) != 1, src_page);
+>>> -            release_pte_page(src_page);
+>>>               /*
+>>>                * ptl mostly unnecessary, but preempt has to
+>>>                * be disabled to update the per-cpu stats
+>>> @@ -687,6 +686,15 @@ static void __collapse_huge_page_copy(pte_t 
+>>> *pte, struct page *page,
+>>>               pte_clear(vma->vm_mm, address, _pte);
+>>>               page_remove_rmap(src_page, false);
+>>>               spin_unlock(ptl);
+>>> +
+>>> +            dec_node_page_state(src_page,
+>>> +                NR_ISOLATED_ANON + page_is_file_cache(src_page));
+>>> +            ClearPageActive(src_page);
+>>> +            ClearPageUnevictable(src_page);
+>>> +            unlock_page(src_page);
+>>> +            /* Drop refcount from isolate */
+>>> +            put_page(src_page);
+>>> +
+>>>               free_page_and_swap_cache(src_page);
+>>>           }
+>>>       }
+>>> -- 
+>>> 1.8.3.1
+>>>
+>>>
+>
 
