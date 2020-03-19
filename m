@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 63BE718B638
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:25:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D118318B5A5
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Mar 2020 14:20:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730570AbgCSNZC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 09:25:02 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52238 "EHLO mail.kernel.org"
+        id S1729980AbgCSNUY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 09:20:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44300 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730558AbgCSNY7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 09:24:59 -0400
+        id S1727572AbgCSNUW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 09:20:22 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 608432080C;
-        Thu, 19 Mar 2020 13:24:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 22B9A206D7;
+        Thu, 19 Mar 2020 13:20:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584624298;
-        bh=tofIbnmadnKlW1E9aujzGi22xYXbLQFA4YGG/fxn2lA=;
+        s=default; t=1584624021;
+        bh=XIYQlR1EVOXx86grHh39EgqW2g1lPWyYdx38Han+qrk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=uEvuGMvJP3Dbn1uWIEiVhQIolg5tJrrubmT7CfRsGuA3q/YLVQ4UMopG+jS5wNPrj
-         A6KlLnTOoCIJSJRIVNkQi3ydzJfq/eI3+XtO1SvbUyDNRS5yNFCls8NuT+Bkwry8ch
-         MZZZA3d9JsrRrjg9/oE3StOEHnP+onmjZltR0hs8=
+        b=XSlOKLOTP3g/khBRnzJNpBOOeQvHtScozetSXxdio+dpwr46nSR8Q24XN1DYB60Kj
+         5+K+vkEInU0m5A48RnEpjQbLneyAS025/u7vHaamwJRiqb+XZj2oqQWjCw6MFtifKG
+         bJZe7KB0sMw9lJTSZUta3xKoe4G+yzdfrtLAujis=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -31,12 +31,12 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Faiz Abbas <faiz_abbas@ti.com>,
         Ulf Hansson <ulf.hansson@linaro.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.5 06/65] mmc: sdhci-omap: Fix busy detection by enabling MMC_CAP_NEED_RSP_BUSY
+Subject: [PATCH 4.19 06/48] mmc: sdhci-omap: Fix busy detection by enabling MMC_CAP_NEED_RSP_BUSY
 Date:   Thu, 19 Mar 2020 14:03:48 +0100
-Message-Id: <20200319123928.305408568@linuxfoundation.org>
+Message-Id: <20200319123905.165728366@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.2
-In-Reply-To: <20200319123926.466988514@linuxfoundation.org>
-References: <20200319123926.466988514@linuxfoundation.org>
+In-Reply-To: <20200319123902.941451241@linuxfoundation.org>
+References: <20200319123902.941451241@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -71,10 +71,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 3 insertions(+)
 
 diff --git a/drivers/mmc/host/sdhci-omap.c b/drivers/mmc/host/sdhci-omap.c
-index 083e7e053c954..d3135249b2e40 100644
+index 5698af25caef6..79ee5fc5a2013 100644
 --- a/drivers/mmc/host/sdhci-omap.c
 +++ b/drivers/mmc/host/sdhci-omap.c
-@@ -1134,6 +1134,9 @@ static int sdhci_omap_probe(struct platform_device *pdev)
+@@ -1109,6 +1109,9 @@ static int sdhci_omap_probe(struct platform_device *pdev)
  	host->mmc_host_ops.execute_tuning = sdhci_omap_execute_tuning;
  	host->mmc_host_ops.enable_sdio_irq = sdhci_omap_enable_sdio_irq;
  
