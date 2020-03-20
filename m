@@ -2,96 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 82B7218CE52
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 13:59:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 088E818CEA5
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 14:17:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727195AbgCTM7W (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Mar 2020 08:59:22 -0400
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:8522 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727020AbgCTM7U (ORCPT
+        id S1727573AbgCTNRl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Mar 2020 09:17:41 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:53926 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727421AbgCTNRk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Mar 2020 08:59:20 -0400
-Received: from pps.filterd (m0046037.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 02KCcOWJ003548;
-        Fri, 20 Mar 2020 13:59:04 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
- : date : message-id : mime-version : content-type; s=STMicroelectronics;
- bh=o41DLb60dwo0XgM7XyP9TCm5BF2bWxbtelGzKn5ttsg=;
- b=qcHeB6XbZYRgiaXbFm1srtc3QoUBsAu1yHFSKI+okPPT0K/lFR34o73UZj/hFnHwiNUu
- h0Dx2PfLYKlb/nAzhE0N5p7UcPXqlnEAKQeROJL1xfvPhqB9NeoP7ZqFi3v7Lszin0+D
- LALKHcG+EqeIUaMaEA8MZ5+Wh8PEGY8oD5Z8lxR8CPUh4g/EVAH6RZYPATpJe8wfCR5w
- 2C5WJqIkfZ04qJDBU2Mwm+VkXAYo2sqkm/uVIDd3JICfNdwQ+gDV5Z5w9bLmOqr3BMwo
- 3iu+Na2a2wgqDBU9255CyKVKE28k3Ko/oluwY+Rh99qYKXauTH8l7XiyMjY4Vi+SidZl OA== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 2yu8etqtk4-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 20 Mar 2020 13:59:04 +0100
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id C0E3B100034;
-        Fri, 20 Mar 2020 13:58:59 +0100 (CET)
-Received: from Webmail-eu.st.com (sfhdag3node1.st.com [10.75.127.7])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id B48982AE6AF;
-        Fri, 20 Mar 2020 13:58:59 +0100 (CET)
-Received: from localhost (10.75.127.47) by SFHDAG3NODE1.st.com (10.75.127.7)
- with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 20 Mar 2020 13:58:57
- +0100
-From:   Arnaud Pouliquen <arnaud.pouliquen@st.com>
-To:     Rob Herring <robh@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>
-CC:     <devicetree@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        Fabien Dessenne <fabien.dessenne@st.com>,
-        Arnaud Pouliquen <arnaud.pouliquen@st.com>
-Subject: [PATCH] ARM: dts: stm32: add cortex-M4 pdds management in Cortex-M4 node
-Date:   Fri, 20 Mar 2020 13:58:41 +0100
-Message-ID: <20200320125841.11059-1-arnaud.pouliquen@st.com>
-X-Mailer: git-send-email 2.17.1
+        Fri, 20 Mar 2020 09:17:40 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 02KDCx70053685;
+        Fri, 20 Mar 2020 13:17:31 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2020-01-29;
+ bh=Ca0hhfBrNJRfEHmVEAesPO0pLfWlBN93+jbMeyIxlq4=;
+ b=qaKSz/Uq3skWoC5I5YMTYvFjQWSSoSsGQvPsBrH+Cikd5o4hPZdXqrjFOAO/TfVd3lY/
+ sRRsboP9MvJ+bY2a6jztntwMgIe0qmNyr3gSoMRr7ZWY3D/V/bLMgdvgoABDvbqT4t0H
+ xE2Y90EgZFILlctEwHm31bxzIwMwAHJGUSoJA585u1hY6K9NBMvFu8iiNgYoj2JrWibO
+ +XPl7V2jABqEsCNz8wCHCN5+wFIMCH5ITd33IrfVxwsKaLFZ0RF8/reTqKRsPPsQjQ/u
+ R6cuOxr0sVFveBq2BTrpxC1NUgpfYTvX+CkAHixLFEmRD00+7XKMslFuZ9LTmnKxMQGq iA== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by aserp2120.oracle.com with ESMTP id 2yrq7mdh11-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 20 Mar 2020 13:17:31 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 02KDCdfQ057200;
+        Fri, 20 Mar 2020 13:17:30 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by userp3020.oracle.com with ESMTP id 2ys906s8xn-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 20 Mar 2020 13:17:30 +0000
+Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 02KDHSh5006058;
+        Fri, 20 Mar 2020 13:17:29 GMT
+Received: from [10.39.249.71] (/10.39.249.71)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Fri, 20 Mar 2020 06:17:28 -0700
+Subject: Re: [PATCH v2] xen-pciback: fix INTERRUPT_TYPE_* defines
+To:     =?UTF-8?Q?Marek_Marczykowski-G=c3=b3recki?= 
+        <marmarek@invisiblethingslab.com>, xen-devel@lists.xenproject.org
+Cc:     Juergen Gross <jgross@suse.com>,
+        Stefano Stabellini <sstabellini@kernel.org>,
+        Simon Gaiser <simon@invisiblethingslab.com>,
+        =?UTF-8?Q?Roger_Pau_Monn=c3=a9?= <roger.pau@citrix.com>,
+        open list <linux-kernel@vger.kernel.org>
+References: <20200320030929.24735-1-marmarek@invisiblethingslab.com>
+From:   Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Message-ID: <46cf0d25-11bc-e580-fe30-9898551c28e2@oracle.com>
+Date:   Thu, 19 Mar 2020 21:21:38 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.75.127.47]
-X-ClientProxiedBy: SFHDAG4NODE2.st.com (10.75.127.11) To SFHDAG3NODE1.st.com
- (10.75.127.7)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.645
- definitions=2020-03-20_03:2020-03-20,2020-03-20 signatures=0
+In-Reply-To: <20200320030929.24735-1-marmarek@invisiblethingslab.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9565 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 mlxlogscore=802 mlxscore=0
+ adultscore=0 bulkscore=0 malwarescore=0 spamscore=0 suspectscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2003020000
+ definitions=main-2003200057
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9565 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 lowpriorityscore=0 suspectscore=0
+ adultscore=0 bulkscore=0 mlxlogscore=858 priorityscore=1501 clxscore=1015
+ malwarescore=0 mlxscore=0 phishscore=0 impostorscore=0 spamscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2003020000
+ definitions=main-2003200057
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add declarations related to the syscon pdds for deep sleep management.
 
-Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@st.com>
----
- arch/arm/boot/dts/stm32mp151.dtsi | 6 ++++++
- 1 file changed, 6 insertions(+)
+On 3/19/20 11:09 PM, Marek Marczykowski-Górecki wrote:
+> xen_pcibk_get_interrupt_type() assumes INTERRUPT_TYPE_NONE being 0
+> (initialize ret to 0 and return as INTERRUPT_TYPE_NONE).
+> Fix the definition to make INTERRUPT_TYPE_NONE really 0, and also shift
+> other values to not leave holes.
+> But also, do not assume INTERRUPT_TYPE_NONE being 0 anymore to avoid
+> similar confusions in the future.
+>
+> Fixes: 476878e4b2be ("xen-pciback: optionally allow interrupt enable flag writes")
+> Signed-off-by: Marek Marczykowski-Górecki <marmarek@invisiblethingslab.com>
 
-diff --git a/arch/arm/boot/dts/stm32mp151.dtsi b/arch/arm/boot/dts/stm32mp151.dtsi
-index 7b93eb4b8f49..46ea1024340e 100644
---- a/arch/arm/boot/dts/stm32mp151.dtsi
-+++ b/arch/arm/boot/dts/stm32mp151.dtsi
-@@ -1115,6 +1115,11 @@
- 			};
- 		};
- 
-+		pwr_mcu: pwr_mcu@50001014 {
-+			compatible = "syscon";
-+			reg = <0x50001014 0x4>;
-+		};
-+
- 		exti: interrupt-controller@5000d000 {
- 			compatible = "st,stm32mp1-exti", "syscon";
- 			interrupt-controller;
-@@ -1693,6 +1698,7 @@
- 			st,syscfg-tz = <&rcc 0x000 0x1>;
- 			st,syscfg-rsc-tbl = <&tamp 0x144 0xFFFFFFFF>;
- 			st,syscfg-copro-state = <&tamp 0x148 0xFFFFFFFF>;
-+			st,syscfg-pdds = <&pwr_mcu 0x0 0x1>;
- 			status = "disabled";
- 		};
- 	};
--- 
-2.17.1
+
+Reviewed-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
 
