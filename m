@@ -2,79 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 11EAF18DC1F
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Mar 2020 00:36:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 94CB118DC27
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Mar 2020 00:44:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727764AbgCTXgj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Mar 2020 19:36:39 -0400
-Received: from mail-io1-f67.google.com ([209.85.166.67]:38976 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727631AbgCTXgh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Mar 2020 19:36:37 -0400
-Received: by mail-io1-f67.google.com with SMTP id c19so7865543ioo.6;
-        Fri, 20 Mar 2020 16:36:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=r56c2sC6zamlywNB9189icYDyAGKVdxKEKYyEkkrtbs=;
-        b=jIglHsdBBqGfP+iZRD+xmqhg6u0oes4iqVrlOxhxfrU1/HvYH5tqBY70q8K1GaW7F7
-         QU2tfM/SHKVZDjBBz0r9YusVGDwACXLU1bCYVNAGidoXju78eb+xAUbeE2VgD2zpqIfb
-         yBDLxS6nFFsQsbfOUo83L8DO4uPPdW9djOvDu0oi1szuCKH2KlxqCk+jCRWDJqmwxcvr
-         78m1MAonXVES7tNbLechb9RFdd55Dh00aS2rycxffXWNAbZDp//pD7nCLeo3IJPjn+wk
-         rSaw8qk9RS+22pcZEz+ee24ZRKw6DO0N6p+m1nqrdzOFbGfCRk938uF18LUKYL9jcdpz
-         dnoQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=r56c2sC6zamlywNB9189icYDyAGKVdxKEKYyEkkrtbs=;
-        b=o/m21ztVyO/AkF/nmBdH7SFF+R8pmzEA7CdUcKJ/43h5bjG3MAQShq2endrTJ1u/XR
-         OGzryo7e/OlMnVKbyzbFgKWkkoqHYZseE7Dig0OV6grCutaP2jmifnHwe5Z4sHs+T9d+
-         mAWg63dJxlSw3kboStnLrsvKKdwmcSC05dQbiVgM8i9v3ZfZtUL0Lr0KadcEbWgn/+6U
-         vwAFHJ4XTUfEbbAy4Dr0tX4tohO/QIaRKVZIoIulzmw72nTRmFP9DrucElyJ73ls3Irn
-         YcpMTyih/aDU2jCv48AiyOj/H0Md8YTaFQpQzAmL2IVYwiQwBXImB1qVMWqQz1uW4ODU
-         LZJg==
-X-Gm-Message-State: ANhLgQ2vgZ9gIaXyXga+IIomuyw4pu/r9QIP4qadXaku96dcADA7XXOz
-        SfT189UBAv221mcT/4RZoFO/X1g2dhtR6YZRw7U=
-X-Google-Smtp-Source: ADFU+vswMWOI+4/lmZP7NubSfTT4Gc+zjPJx/vu+4CB9gKmAIL7r/Cx3A4SqMr8iKsJ4UneSjQvw0JrHpgMFITL80rY=
-X-Received: by 2002:a02:1683:: with SMTP id a125mr2499634jaa.61.1584747396297;
- Fri, 20 Mar 2020 16:36:36 -0700 (PDT)
+        id S1726976AbgCTXn6 convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Fri, 20 Mar 2020 19:43:58 -0400
+Received: from mga04.intel.com ([192.55.52.120]:4270 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726738AbgCTXn6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Mar 2020 19:43:58 -0400
+IronPort-SDR: ux2AVVpx+1OHYfT1MTMN4V66Qit4fcmMByOMCj5NUQcXY2nRi/PTpDv/liwK5tohwLN2RNIqY9
+ e4BJHMEhiZnw==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Mar 2020 16:43:57 -0700
+IronPort-SDR: TuxU30KvSjaF7//l3pktlwxoaMjzB1UrjLcpQoSS7zZ1pXlvrVUGB3SX70/csEGniNzUMVDh3x
+ pv0GbcnD435Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.72,286,1580803200"; 
+   d="scan'208";a="249032861"
+Received: from orsmsx110.amr.corp.intel.com ([10.22.240.8])
+  by orsmga006.jf.intel.com with ESMTP; 20 Mar 2020 16:43:57 -0700
+Received: from orsmsx155.amr.corp.intel.com (10.22.240.21) by
+ ORSMSX110.amr.corp.intel.com (10.22.240.8) with Microsoft SMTP Server (TLS)
+ id 14.3.439.0; Fri, 20 Mar 2020 16:43:57 -0700
+Received: from orsmsx102.amr.corp.intel.com ([169.254.3.165]) by
+ ORSMSX155.amr.corp.intel.com ([169.254.7.107]) with mapi id 14.03.0439.000;
+ Fri, 20 Mar 2020 16:43:56 -0700
+From:   "Park, Kyung Min" <kyung.min.park@intel.com>
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+CC:     "mingo@redhat.com" <mingo@redhat.com>,
+        "hpa@zytor.com" <hpa@zytor.com>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "ak@linux.intel.com" <ak@linux.intel.com>,
+        "Luck, Tony" <tony.luck@intel.com>,
+        "Raj, Ashok" <ashok.raj@intel.com>,
+        "Shankar, Ravi V" <ravi.v.shankar@intel.com>,
+        "Yu, Fenghua" <fenghua.yu@intel.com>
+Subject: RE: [PATCH v2 0/2] x86/delay: Introduce TPAUSE instruction
+Thread-Topic: [PATCH v2 0/2] x86/delay: Introduce TPAUSE instruction
+Thread-Index: AQHV/p370RFgN+BwjkuNNhbDrbt3qKhSJS6g
+Date:   Fri, 20 Mar 2020 23:43:56 +0000
+Message-ID: <3658BA65DD26AF4BA909BEB2C6DF6181A2A622FA@ORSMSX102.amr.corp.intel.com>
+References: <1584677604-32707-1-git-send-email-kyung.min.park@intel.com>
+ <87a74b4ad2.fsf@nanos.tec.linutronix.de>
+In-Reply-To: <87a74b4ad2.fsf@nanos.tec.linutronix.de>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+dlp-product: dlpe-windows
+dlp-version: 11.2.0.6
+dlp-reaction: no-action
+x-originating-ip: [10.22.254.139]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-References: <20200320110959.2114-1-hqjagain@gmail.com> <2dc8673f-a46d-1438-95a8-cfb455bbea57@gmail.com>
-In-Reply-To: <2dc8673f-a46d-1438-95a8-cfb455bbea57@gmail.com>
-From:   Qiujun Huang <hqjagain@gmail.com>
-Date:   Sat, 21 Mar 2020 07:36:24 +0800
-Message-ID: <CAJRQjoedC4PTycGEpv_pCfbzW9zaA+kz2JTJaTi-EDWxcPUvFA@mail.gmail.com>
-Subject: Re: [PATCH v3] sctp: fix refcount bug in sctp_wfree
-To:     Eric Dumazet <eric.dumazet@gmail.com>
-Cc:     Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>, vyasevich@gmail.com,
-        nhorman@tuxdriver.com, Jakub Kicinski <kuba@kernel.org>,
-        linux-sctp@vger.kernel.org, netdev <netdev@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, anenbupt@gmail.com
-Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Mar 21, 2020 at 1:10 AM Eric Dumazet <eric.dumazet@gmail.com> wrote:
->
->
->
->
-> This does not really solve the issue.
->
-> Even if the particular syzbot repro is now fine.
->
-> Really, having anything _after_ the sock_wfree(skb) is the bug, since the current thread no longer
-> own a reference on a socket.
+Hi Thomas,
 
-I get it, thanks.
+> -----Original Message-----
+> From: Thomas Gleixner <tglx@linutronix.de>
+> Sent: Friday, March 20, 2020 2:57 AM
+> To: Park, Kyung Min <kyung.min.park@intel.com>; x86@kernel.org; linux-
+> kernel@vger.kernel.org
+> Cc: mingo@redhat.com; hpa@zytor.com; gregkh@linuxfoundation.org;
+> ak@linux.intel.com; Luck, Tony <tony.luck@intel.com>; Raj, Ashok
+> <ashok.raj@intel.com>; Shankar, Ravi V <ravi.v.shankar@intel.com>; Yu,
+> Fenghua <fenghua.yu@intel.com>; Park, Kyung Min
+> <kyung.min.park@intel.com>
+> Subject: Re: [PATCH v2 0/2] x86/delay: Introduce TPAUSE instruction
+> 
+> Hi!
+> 
+> Kyung Min Park <kyung.min.park@intel.com> writes:
+> 
+> > Intel processors that support the WAITPKG feature implement the TPAUSE
+> > instruction that suspends execution in a lower power state until the
+> > TSC (Time Stamp Counter) exceeds a certain value.
+> >
+> > Update the udelay() function to use TPAUSE on systems where it is
+> > available. Note that we hard code the deeper (C0.2) sleep state
+> > because exit latency is small compared to the "microseconds"
+> > that usleep() will delay.
+> >
+> > ChangeLog:
+> > - Change from v1 to v2:
+> >   1. The patchset applies after Thomas's cleanup patch as below:
+> >      https://lkml.org/lkml/diff/2020/3/18/893/1
+> 
+> lkml.org is horrible. Please use lore.kernel.org if at all.
 
->
->
->
->
+Let me change in the next patch.
+
+> Also please just add the patch to the series when posting so that people don't
+> have to go through loops and hoops to grab that dependency.
+
+Sure, Let me add this patch to the series.
+
+> Thanks,
+> 
+>         tglx
+> 
+
