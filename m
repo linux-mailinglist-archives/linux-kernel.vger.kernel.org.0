@@ -2,414 +2,118 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1908718D177
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 15:49:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E2CC318D17E
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 15:50:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727092AbgCTOtp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Mar 2020 10:49:45 -0400
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:39430 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726847AbgCTOtp (ORCPT
+        id S1727347AbgCTOuZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Mar 2020 10:50:25 -0400
+Received: from mail-pj1-f65.google.com ([209.85.216.65]:51520 "EHLO
+        mail-pj1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726840AbgCTOuY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Mar 2020 10:49:45 -0400
-Received: by mail-oi1-f195.google.com with SMTP id d63so6711265oig.6
-        for <linux-kernel@vger.kernel.org>; Fri, 20 Mar 2020 07:49:43 -0700 (PDT)
+        Fri, 20 Mar 2020 10:50:24 -0400
+Received: by mail-pj1-f65.google.com with SMTP id hg10so2565870pjb.1;
+        Fri, 20 Mar 2020 07:50:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
+        d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=sYXSjYRj4e0el0aohJdLv/kFhC+73J+gTXrl9WkNGlo=;
-        b=Q1KfnjtVII6PYpugCOKxtrLL0L4mjq+hGVg0rgiOafOitBfys4rpAwof4WUh2lRyoV
-         NVqVgcgifsYKikjjER+ma7tz+13R5TwoY42l2FNwabCHKjW6NwAeW9NdpML1NiY1npbI
-         g2BqxoWj2xgC1lbjhYsb6x+lOeA4McwvirWkXHDORmoWHVlbNCOgA/PPUpwYWfN+ETQs
-         NPGeVUbreN09mxOs/rkQ3zC3jPgIeOvyAWnmgRkLJw41K79FyBWFkJ1elj5Ow2EQDFAG
-         mEVuI8PuApd/pU4CGRX2dbzuex3orKqSO/zinAh9gnjZ7+HfwLjYr0XpjkCRomGydcPZ
-         B+Og==
+        bh=3awxwIekRDUBiBlAlaIOOsVcqd9E8h+LzREGVIDTmsg=;
+        b=Q2if4FSJkS5b1GBTG4smedIbHgap+zOMxVKm0PGblSmtf/+NGn7hAlBY00C7COP4f7
+         C27sulG3G4VyEPccPDcjaordcpDVP/LDpNNmf7sdqdm28JOAOGKJshLks4pc/y5oKIVO
+         KGWjEZRwmp9A5QPvKXR3HNp5EoCLSmTcvq/nHwo4lmnaUuCmvV03rO9qJQY+zLejwizQ
+         rVPqPIO2lxX31ILA01SzR6U32fbAhkTK2XzMSE/6hJ7rSCIXhI1QFX+fZOO1s9e7xvNw
+         N+qg30+gWi9AmmMO1AhsmNG/jzt0vIS4zqFSm63+qxFyPIPUowT5GJhOKpZjttaJD3NN
+         t2ug==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=sYXSjYRj4e0el0aohJdLv/kFhC+73J+gTXrl9WkNGlo=;
-        b=W/NVu4z54uS7VtnLce2v6/7su5KaktlsI6cemVUDn1iNhqdfSoaEEj88H0UJ0feSGe
-         LR7B/lr7j64SdcLzsTXd9m8prcVeQOXZBXyCNj/rf7b0KHbcG7W6aoY7wEma0GQenKMv
-         hxVErrr7KuLqytHz6nD5SwVSxYl+7AEtsMdFVU6TcVTjVUWDzorfrKgGPAXLCPfzdYT2
-         JaJ2uzwe4kqefGGq6GHqfJBiA61iisFxFxGPMgUtKN/qwqHCnCoG8MGGrwQDTf5wPLNH
-         p4s19Kq5wWzG9sa3AsnpqWnA9gLY4KaNa0X7tyG5rWAGpE48TWjU7+oZfqc95tYjAII/
-         kb6Q==
-X-Gm-Message-State: ANhLgQ0jCZYcgFAFpmXUepal1QaozyKvnr+gaw4b2o9qyTIydtogFZxP
-        U1xsuTG47wYdFHIn5dMRhijUkPobxX+YKBmTN46GPA==
-X-Google-Smtp-Source: ADFU+vtONQaP+ywA6e4ut1JQIirppcF0FEKuJ6JADuYnVhyUdEDdjPB/mVPF1q9bf95xe/vOP35pAL9CvYLIE+TfdIc=
-X-Received: by 2002:aca:3089:: with SMTP id w131mr6911074oiw.121.1584715783013;
- Fri, 20 Mar 2020 07:49:43 -0700 (PDT)
+        bh=3awxwIekRDUBiBlAlaIOOsVcqd9E8h+LzREGVIDTmsg=;
+        b=jYbzGxAffTFUJ0pX+A1BWagftbqXOTxECj/vzAZRFCTItFX9pCgyddf7DzVKvuDVNT
+         T4D5aC1w4z7k+86Nivm59QBxW0qVCK0QPsBNCZ2L2GpkofA59ztBC/B3aA8QvtKQI3T5
+         kh0fo80aLT086Ky0BNb2N5Mo3KwDdOAgF/Ckx7NkeqbxEyPoDsk7+P7niMfgc7wO5KA+
+         0FHjkL3RDdX4ipugbUGE/9p0CcxXkMYaA+CRtVDp117OS/Fkd3+liWliecZoGJeJnDl3
+         LCOy3mLhzXVKKHALRfvQLVaBjk9qzG1dQAtLzP4+TcNBUNFdeT7Nk+K9MzUV4j1Ov4GO
+         hbVw==
+X-Gm-Message-State: ANhLgQ3taz6cC7ffCEDvPIAMkk+LZ6/bAqE5HkvloYIL7hjGSkkBBrvc
+        /ZYeM2jOuFcAH4j1nAOZADuSvK0aDJ+hX4zG/Ng=
+X-Google-Smtp-Source: ADFU+vsJEMZmNCk8RrzRySH+vRQdh+TFU7wWO6UeDM8ozVAsygQtqKjCFI/e2CTKyamUM7Q0lbVz1aA3GBN4lADHJkU=
+X-Received: by 2002:a17:902:54f:: with SMTP id 73mr8649803plf.255.1584715822790;
+ Fri, 20 Mar 2020 07:50:22 -0700 (PDT)
 MIME-Version: 1.0
-References: <20200309190359.GA5822@paulmck-ThinkPad-P72> <20200309190420.6100-17-paulmck@kernel.org>
- <20200313085220.GC105953@debian-boqun.qqnc3lrjykvubdpftowmye0fmh.lx.internal.cloudapp.net>
- <CANpmjNO-hjVfp729YOGdoiuwWjLacW+OCJ=5RnxEYGvQjfQGhA@mail.gmail.com>
- <20200314022210.GD105953@debian-boqun.qqnc3lrjykvubdpftowmye0fmh.lx.internal.cloudapp.net>
- <CANpmjNPu67nnaWbOtA8xntBWafDm5Ykspzj43wuSdRckLGC=UA@mail.gmail.com> <20200319032326.GE105953@debian-boqun.qqnc3lrjykvubdpftowmye0fmh.lx.internal.cloudapp.net>
-In-Reply-To: <20200319032326.GE105953@debian-boqun.qqnc3lrjykvubdpftowmye0fmh.lx.internal.cloudapp.net>
-From:   Marco Elver <elver@google.com>
-Date:   Fri, 20 Mar 2020 15:49:31 +0100
-Message-ID: <CANpmjNOvDrzb=hbA2D+HW12Jy3LMLfdTrd2H=wgYCwQUcZgDzw@mail.gmail.com>
-Subject: Re: [PATCH kcsan 17/32] kcsan: Introduce ASSERT_EXCLUSIVE_* macros
-To:     Boqun Feng <boqun.feng@gmail.com>
-Cc:     "Paul E. McKenney" <paulmck@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        kasan-dev <kasan-dev@googlegroups.com>, kernel-team@fb.com,
-        Ingo Molnar <mingo@kernel.org>,
-        Andrey Konovalov <andreyknvl@google.com>,
-        Alexander Potapenko <glider@google.com>,
-        Dmitry Vyukov <dvyukov@google.com>, Qian Cai <cai@lca.pw>
+References: <20200320131345.635023594@linutronix.de> <20200320131509.564059710@linutronix.de>
+In-Reply-To: <20200320131509.564059710@linutronix.de>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Fri, 20 Mar 2020 16:50:15 +0200
+Message-ID: <CAHp75VdkvyqOaAsLmz8K2j4bdd0sboPoUpRr6U-zvtkSaQfPRQ@mail.gmail.com>
+Subject: Re: [patch 09/22] cpufreq: Convert to new X86 CPU match macros
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Mark Gross <mgross@linux.intel.com>,
+        Tony Luck <tony.luck@intel.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+        Len Brown <lenb@kernel.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        linux-edac@vger.kernel.org,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        Jean Delvare <jdelvare@suse.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        linux-hwmon@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Amit Kucheria <amit.kucheria@verdurent.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Jacob Pan <jacob.jun.pan@linux.intel.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        linux-mmc <linux-mmc@vger.kernel.org>,
+        Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
+        Takashi Iwai <tiwai@suse.com>,
+        ALSA Development Mailing List <alsa-devel@alsa-project.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        linux-crypto <linux-crypto@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 19 Mar 2020 at 04:23, Boqun Feng <boqun.feng@gmail.com> wrote:
+On Fri, Mar 20, 2020 at 3:18 PM Thomas Gleixner <tglx@linutronix.de> wrote:
 >
-> On Tue, Mar 17, 2020 at 12:12:36PM +0100, Marco Elver wrote:
-> > On Sat, 14 Mar 2020 at 03:22, Boqun Feng <boqun.feng@gmail.com> wrote:
-> > >
-> > > On Fri, Mar 13, 2020 at 05:15:32PM +0100, Marco Elver wrote:
-> > > > On Fri, 13 Mar 2020 at 09:52, Boqun Feng <boqun.feng@gmail.com> wrote:
-> > > > >
-> > > > > Hi Marco,
-> > > > >
-> > > > > On Mon, Mar 09, 2020 at 12:04:05PM -0700, paulmck@kernel.org wrote:
-> > > > > > From: Marco Elver <elver@google.com>
-> > > > > >
-> > > > > > Introduces ASSERT_EXCLUSIVE_WRITER and ASSERT_EXCLUSIVE_ACCESS, which
-> > > > > > may be used to assert properties of synchronization logic, where
-> > > > > > violation cannot be detected as a normal data race.
-> > > > > >
-> > > > > > Examples of the reports that may be generated:
-> > > > > >
-> > > > > >     ==================================================================
-> > > > > >     BUG: KCSAN: assert: race in test_thread / test_thread
-> > > > > >
-> > > > > >     write to 0xffffffffab3d1540 of 8 bytes by task 466 on cpu 2:
-> > > > > >      test_thread+0x8d/0x111
-> > > > > >      debugfs_write.cold+0x32/0x44
-> > > > > >      ...
-> > > > > >
-> > > > > >     assert no writes to 0xffffffffab3d1540 of 8 bytes by task 464 on cpu 0:
-> > > > > >      test_thread+0xa3/0x111
-> > > > > >      debugfs_write.cold+0x32/0x44
-> > > > > >      ...
-> > > > > >     ==================================================================
-> > > > > >
-> > > > > >     ==================================================================
-> > > > > >     BUG: KCSAN: assert: race in test_thread / test_thread
-> > > > > >
-> > > > > >     assert no accesses to 0xffffffffab3d1540 of 8 bytes by task 465 on cpu 1:
-> > > > > >      test_thread+0xb9/0x111
-> > > > > >      debugfs_write.cold+0x32/0x44
-> > > > > >      ...
-> > > > > >
-> > > > > >     read to 0xffffffffab3d1540 of 8 bytes by task 464 on cpu 0:
-> > > > > >      test_thread+0x77/0x111
-> > > > > >      debugfs_write.cold+0x32/0x44
-> > > > > >      ...
-> > > > > >     ==================================================================
-> > > > > >
-> > > > > > Signed-off-by: Marco Elver <elver@google.com>
-> > > > > > Suggested-by: Paul E. McKenney <paulmck@kernel.org>
-> > > > > > Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
-> > > > > > ---
-> > > > > >  include/linux/kcsan-checks.h | 40 ++++++++++++++++++++++++++++++++++++++++
-> > > > > >  1 file changed, 40 insertions(+)
-> > > > > >
-> > > > > > diff --git a/include/linux/kcsan-checks.h b/include/linux/kcsan-checks.h
-> > > > > > index 5dcadc2..cf69617 100644
-> > > > > > --- a/include/linux/kcsan-checks.h
-> > > > > > +++ b/include/linux/kcsan-checks.h
-> > > > > > @@ -96,4 +96,44 @@ static inline void kcsan_check_access(const volatile void *ptr, size_t size,
-> > > > > >       kcsan_check_access(ptr, size, KCSAN_ACCESS_ATOMIC | KCSAN_ACCESS_WRITE)
-> > > > > >  #endif
-> > > > > >
-> > > > > > +/**
-> > > > > > + * ASSERT_EXCLUSIVE_WRITER - assert no other threads are writing @var
-> > > > > > + *
-> > > > > > + * Assert that there are no other threads writing @var; other readers are
-> > > > > > + * allowed. This assertion can be used to specify properties of concurrent code,
-> > > > > > + * where violation cannot be detected as a normal data race.
-> > > > > > + *
-> > > > >
-> > > > > I like the idea that we can assert no other writers, however I think
-> > > > > assertions like ASSERT_EXCLUSIVE_WRITER() are a little limited. For
-> > > > > example, if we have the following code:
-> > > > >
-> > > > >         preempt_disable();
-> > > > >         do_sth();
-> > > > >         raw_cpu_write(var, 1);
-> > > > >         do_sth_else();
-> > > > >         preempt_enable();
-> > > > >
-> > > > > we can add the assert to detect another potential writer like:
-> > > > >
-> > > > >         preempt_disable();
-> > > > >         do_sth();
-> > > > >         ASSERT_EXCLUSIVE_WRITER(var);
-> > > > >         raw_cpu_write(var, 1);
-> > > > >         do_sth_else();
-> > > > >         preempt_enable();
-> > > > >
-> > > > > , but, if I understand how KCSAN works correctly, it only works if the
-> > > > > another writer happens when the ASSERT_EXCLUSIVE_WRITER(var) is called,
-> > > > > IOW, it can only detect another writer between do_sth() and
-> > > > > raw_cpu_write(). But our intent is to prevent other writers for the
-> > > > > whole preemption-off section. With this assertion introduced, people may
-> > > > > end up with code like:
-> > > >
-> > > > To confirm: KCSAN will detect a race if it sets up a watchpoint on
-> > > > ASSERT_EXCLUSIVE_WRITER(var), and a concurrent write happens. Note
-> > > > that the watchpoints aren't always set up, but only periodically
-> > > > (discussed more below). For every watchpoint, we also inject an
-> > > > artificial delay. Pseudo-code:
-> > > >
-> > > > if watchpoint for access already set up {
-> > > >   consume watchpoint;
-> > > > else if should set up watchpoint {
-> > > >   setup watchpoint;
-> > > >   udelay(...);
-> > > >   check watchpoint consumed;
-> > > >   release watchpoint;
-> > > > }
-> > > >
-> > >
-> > > Yes, I get this part.
-> > >
-> > > > >         preempt_disable();
-> > > > >         ASSERT_EXCLUSIVE_WRITER(var);
-> > > > >         do_sth();
-> > > > >         ASSERT_EXCLUSIVE_WRITER(var);
-> > > > >         raw_cpu_write(var, 1);
-> > > > >         ASSERT_EXCLUSIVE_WRITER(var);
-> > > > >         do_sth_else();
-> > > > >         ASSERT_EXCLUSIVE_WRITER(var);
-> > > > >         preempt_enable();
-> > > > >
-> > > > > and that is horrible...
-> > > >
-> > > > It is, and I would strongly discourage any such use, because it's not
-> > > > necessary. See below.
-> > > >
-> > > > > So how about making a pair of annotations
-> > > > > ASSERT_EXCLUSIVE_WRITER_BEGIN() and ASSERT_EXCLUSIVE_WRITER_END(), so
-> > > > > that we can write code like:
-> > > > >
-> > > > >         preempt_disable();
-> > > > >         ASSERT_EXCLUSIVE_WRITER_BEGIN(var);
-> > > > >         do_sth();
-> > > > >         raw_cpu_write(var, 1);
-> > > > >         do_sth_else();
-> > > > >         ASSERT_EXCLUSIVE_WRITER_END(var);
-> > > > >         preempt_enable();
-> > > > >
-> > > > > ASSERT_EXCLUSIVE_WRITER_BEGIN() could be a rough version of watchpoint
-> > > > > setting up and ASSERT_EXCLUSIVE_WRITER_END() could be watchpoint
-> > > > > removing. So I think it's feasible.
-> > > >
-> > > > Keep in mind that the time from ASSERT_EXCLUSIVE_WRITER_BEGIN to END
-> > > > might be on the order of a few nanosec, whereas KCSAN's default
-> > > > watchpoint delay is 10s of microsec (default ~80 for tasks). That
-> > > > means we would still have to set up a delay somewhere, and the few
-> > > > nanosec between BEGIN and END are insignificant and don't buy us
-> > > > anything.
-> > > >
-> > >
-> > > Yeah, the delay doesn't buy us anything given the default watchpoint
-> > > delay, and I agree even with *_{BEGIN/END}, we still need to set up a
-> > > delay somewhere. Adding a delay makes the watchpoint live longer so that
-> > > a problem will more likely happen, but sometimes the delay won't be
-> > > enough, considering another writer like:
-> > >
-> > >         if (per_cpu(var, cpu) == 1)
-> > >                 per_cpu(var, cpu) = 0;
-> > >
-> > > in this user case, percpu variable "var" is used for maintaining some
-> > > state machine, and a CPU set a state with its own variable so that other
-> > > CPUs can consume it. And this another writer cannot be catched by:
-> > >
-> > >         preempt_disable();
-> > >         do_sth();
-> > >         ASSERT_EXCLUSIVE_WRITER(var);
-> > >         raw_cpu_write(var, 1);
-> > >         do_sth_else();
-> > >         preempt_enable();
-> > >
-> >
-> > Right, the example makes sense.
-> >
-> > That is assuming there are various other expected racy reads that are
-> > fine. If that's not true, ASSERT_EXCLUSIVE_ACCESS should be
-> > considered.
-> >
-> > > , no matter how long the delay is set. Another example: let's say the
-> > > do_sth_else() above is actually an operation that queues a callback
-> > > which writes to "var". In one version, do_sth_else() uses call_rcu(),
-> > > which works, because preemption-off is treated as RCU read-side critical
-> > > section, so we are fine. But if someone else changes it to queue_work()
-> > > for some reason, the code is just broken, and KCSAN cannot detect it, no
-> > > matter how long the delay is.
-> > >
-> > > To summarize, a delay is helpful to trigger a problem because it allows
-> > > _other_ CPU/threads to run more code and do more memory accesses,
-> > > however it's not helpful if a particular problem happens due to some
-> > > memory effects of the current/watched CPU/thread. While *_{BEGIN/END}
-> > > can be helpful in this case.
-> >
-> > Makes sense.
-> >
-> > > > Re feasibility: Right now setting up and removing watchpoints is not
-> > > > exposed, and doing something like this would be an extremely intrusive
-> > > > change. Because of that, without being able to quantify the actual
-> > > > usefulness of this, and having evaluated better options (see below),
-> > > > I'd recommend not pursuing this.
-> > > >
-> > > > > Thoughts?
-> > > >
-> > > > Firstly, what is your objective? From what I gather you want to
-> > > > increase the probability of detecting a race with 'var'.
-> > > >
-> > >
-> > > Right, I want to increase the probablity.
-> > >
-> > > > I agree, and have been thinking about it, but there are other options
-> > > > that haven't been exhausted, before we go and make the interface more
-> > > > complicated.
-> > > >
-> > > > == Interface design ==
-> > > > The interface as it is right now, is intuitive and using it is hard to
-> > > > get wrong. Demanding begin/end markers introduces complexity that will
-> > >
-> > > Yeah, the interface is intuitive, however it's still an extra effort to
-> > > put those assertions, right? Which means it doesn't come for free,
-> > > compared to other detection KCSAN can do, the developers don't need to
-> > > put extra lines of code. Given the extra effort for developers to use
-> > > the detect, I think we should dicuss the design thoroughly.
-> > >
-> > > Besides the semantics of assertions is usually "do some checking right
-> > > now to see if things go wrong", and I don't think it quite matches the
-> > > semantics of an exclusive writer: "in this piece of code, I'm the only
-> > > one who can do the write".
-> > >
-> > > > undoubtedly result in incorrect usage, because as soon as you somehow
-> > > > forget to end the region, you'll get tons of false positives. This may
-> > > > be due to control-flow that was missed etc. We had a similar problem
-> > > > with seqlocks, and getting them to work correctly with KCSAN was
-> > > > extremely difficult, because clear begin and end markers weren't
-> > > > always given. I imagine introducing an interface like this will
-> > > > ultimately result in similar problems, as much as we'd like to believe
-> > > > this won't ever happen.
-> > > >
-> > >
-> > > Well, if we use *_{BEGIN,END} approach, one solution is combining them
-> > > with sections introducing primitives (such as preemp_disable() and
-> > > preempt_enable()), for example, we can add
-> > >
-> > >         #define preempt_disable_for(var)                                \
-> > >         do {                                                            \
-> > >                 preempt_disable();                                      \
-> > >                 ASSERT_EXCLUSIVE_WRITER_BEGIN(var);                     \
-> > >         }
-> > >
-> > >         #define preempt_enable_for(var)                                 \
-> > >         do {                                                            \
-> > >                 ASSERT_EXCLUSIVE_WRITER_END(var);                       \
-> > >                 preempt_enable();                                       \
-> > >         }
-> > >
-> > >         (similar for spin lock)
-> > >
-> > >         #define spin_lock_for(lock, var)                                \
-> > >         do {                                                            \
-> > >                 spin_lock(lock);                                        \
-> > >                 ASSERT_EXCLUSIVE_WRITER_BEGIN(var);                     \
-> > >         }
-> > >
-> > >         #define spin_unlock_for(lock, var)                              \
-> > >         do {                                                            \
-> > >                 ASSERT_EXCLUSIVE_WRITER_END(var);                       \
-> > >                 spin_unlock(lock);                                      \
-> > >         }
-> > >
-> > > I admit that I haven't thought this thoroughly, but I think this works,
-> > > and besides primitives like above can help the reader to understand the
-> > > questions like: what this lock/preemption-off critical sections are
-> > > protecting?
-> >
-> > I can't say anything about introducing even more macros. I'd say we
-> > need at least a dozen use-cases or more and understand them, otherwise
-> > we may end up with the wrong API that we can never take back.
-> >
+> The new macro set has a consistent namespace and uses C99 initializers
+> instead of the grufty C89 ones.
 >
-> Agreed, real use-cases are needed for the justification of introducing
-> those APIs.
+> Get rid the of most local macro wrappers for consistency. The ones which
+> make sense for readability are renamed to X86_MATCH*.
 >
-> > > Thoughts?
-> >
-> > Makes sense for the cases you described.
-> >
-> > Changing KCSAN to do this is a major change. On surface, it seems like
-> > a refactor and exporting some existing functionality, but there are
-> > various new corner cases, because now 2 accesses don't really have to
-> > be concurrent anymore to detect a race (and simple properties like a
-> > thread can't race with itself need to be taken care of). The existing
-> > ASSERT_EXCLUSIVE macros were able to leverage existing functionality
-> > mostly as-is. So, to motivate something like this, we need at least a
-> > dozen or so good use-cases, where careful placement of an existing
-> > ASSERT_EXCLUSIVE would not catch what you describe.
-> >
->
-> Right, I think at this point, I'm not object to merging this into
-> kernel, using ASSERT_EXCLUSIVE_*() does provide more chances for us to
-> catch bugs. That said, I think it's better if we have some comments
-> describing the semantics (or the limitation) of the annotations to avoid
-> "mis-use"s (for example, using multiple ASSERT_EXCLUSIVE_WRITER()s for
-> one variables in a function). But that doesn't necessarily block the
-> merge of this feature, we can always do that later.
->
-> Also, I think it's worthwhile to do some experiments on the
-> *_{BEGIN,END} interfaces. If you're interested and have cycles to work
-> on this, please let me, othwerwise, I can have a look at it.
+> In the centrino driver this also removes the two extra duplicates of family
+> 6 model 13 which have no value at all.
 
-Because I really think the BEGIN/END interface is error-prone, I was
-curious if I could make this work:
+> +       X86_MATCH_VENDOR_FAM_MODEL_FEATURE(INTEL,  6,  9, X86_FEATURE_EST, NULL),
+> +       X86_MATCH_VENDOR_FAM_MODEL_FEATURE(INTEL,  6, 13, X86_FEATURE_EST, NULL),
+> +       X86_MATCH_VENDOR_FAM_MODEL_FEATURE(INTEL, 15,  3, X86_FEATURE_EST, NULL),
+> +       X86_MATCH_VENDOR_FAM_MODEL_FEATURE(INTEL, 15,  4, X86_FEATURE_EST, NULL),
 
-         preempt_disable();
-         {
-                  ASSERT_EXCLUSIVE_WRITER_SCOPED(var);
-                  do_sth();
-                  raw_cpu_write(var, 1);
-                  do_sth_else();
-         }
-         preempt_enable();
+> +       X86_MATCH_VENDOR_FAM_MODEL(INTEL,  6, 0x8, 0),
+> +       X86_MATCH_VENDOR_FAM_MODEL(INTEL,  6, 0xb, 0),
+> +       X86_MATCH_VENDOR_FAM_MODEL(INTEL, 15, 0x2, 0),
 
-Since all compilers that support TSAN instrumentation support
-attribute "cleanup", this works for KCSAN. Half-baked patch:
-  https://github.com/melver/linux/commit/d5a510a80b9755909d8b2ccc7bcfdeac99fc0080
+> +       X86_MATCH_VENDOR_FAM_MODEL(INTEL,  6, 0x8, 0),
+> +       X86_MATCH_VENDOR_FAM_MODEL(INTEL,  6, 0xb, 0),
+> +       X86_MATCH_VENDOR_FAM_MODEL(INTEL, 15, 0x2, 0),
 
-Since it's not too intrusive, I'd be fine including this. But I think
-you have to come up with the use-cases. :-)
+Perhaps use names instead of 6 and 15?
+Also, NULL vs. 0?
 
-I can send the patch once I'm done with it.
-
-Thanks,
--- Marco
-
-
-> Thanks!
->
-> Regards,
-> Boqun
->
->
-> > Thanks,
-> > -- Marco
-> >
-> > > Regards,
-> > > Boqun
-> > >
-> [...]
+-- 
+With Best Regards,
+Andy Shevchenko
