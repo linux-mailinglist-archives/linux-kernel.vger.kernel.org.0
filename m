@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B541418CE92
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 14:16:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B773F18CE94
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 14:16:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727417AbgCTNQm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Mar 2020 09:16:42 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:35752 "EHLO
+        id S1727443AbgCTNQs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Mar 2020 09:16:48 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:35754 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727392AbgCTNQk (ORCPT
+        with ESMTP id S1727422AbgCTNQn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Mar 2020 09:16:40 -0400
+        Fri, 20 Mar 2020 09:16:43 -0400
 Received: from p5de0bf0b.dip0.t-ipconnect.de ([93.224.191.11] helo=nanos.tec.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tglx@linutronix.de>)
-        id 1jFHVu-0004AK-JD
+        id 1jFHVu-0004AL-JF
         for linux-kernel@vger.kernel.org; Fri, 20 Mar 2020 14:16:38 +0100
 Received: from nanos.tec.linutronix.de (localhost [IPv6:::1])
-        by nanos.tec.linutronix.de (Postfix) with ESMTP id 7CF291040C9
+        by nanos.tec.linutronix.de (Postfix) with ESMTP id B2BA51040CB
         for <linux-kernel@vger.kernel.org>; Fri, 20 Mar 2020 14:16:28 +0100 (CET)
-Message-Id: <20200320131510.501728797@linutronix.de>
+Message-Id: <20200320131510.594671507@linutronix.de>
 User-Agent: quilt/0.65
-Date:   Fri, 20 Mar 2020 14:14:03 +0100
+Date:   Fri, 20 Mar 2020 14:14:04 +0100
 From:   Thomas Gleixner <tglx@linutronix.de>
 To:     LKML <linux-kernel@vger.kernel.org>
 Cc:     x86@kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Mark Gross <mgross@linux.intel.com>,
-        Tony Luck <tony.luck@intel.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-pm@vger.kernel.org,
-        Paolo Bonzini <pbonzini@redhat.com>,
+        Tony Luck <tony.luck@intel.com>, Takashi Iwai <tiwai@suse.com>,
+        alsa-devel@alsa-project.org, Paolo Bonzini <pbonzini@redhat.com>,
         Darren Hart <dvhart@infradead.org>,
         Andy Shevchenko <andy@infradead.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
         Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org,
         Viresh Kumar <viresh.kumar@linaro.org>,
+        linux-pm@vger.kernel.org,
         Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
         linux-edac@vger.kernel.org, platform-driver-x86@vger.kernel.org,
         Jean Delvare <jdelvare@suse.com>,
@@ -47,13 +48,11 @@ Cc:     x86@kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Adrian Hunter <adrian.hunter@intel.com>,
         Ulf Hansson <ulf.hansson@linaro.org>,
         linux-mmc@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>,
-        linux-pci@vger.kernel.org, Takashi Iwai <tiwai@suse.com>,
-        alsa-devel@alsa-project.org,
+        linux-pci@vger.kernel.org,
         Herbert Xu <herbert@gondor.apana.org.au>,
         "David S. Miller" <davem@davemloft.net>,
         linux-crypto@vger.kernel.org
-Subject: [patch 18/22] powercap/intel_rapl: Convert to new X86 CPU match
- macros
+Subject: [patch 19/22] ASoC: Intel: Convert to new X86 CPU match macros
 References: <20200320131345.635023594@linutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -71,105 +70,44 @@ instead of the grufty C89 ones.
 Get rid the of the local macro wrappers for consistency.
 
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: linux-pm@vger.kernel.org
+Cc: Takashi Iwai <tiwai@suse.com>
+Cc: alsa-devel@alsa-project.org
 ---
- drivers/powercap/intel_rapl_common.c |   81 +++++++++++++++++------------------
- 1 file changed, 40 insertions(+), 41 deletions(-)
+ sound/soc/intel/common/soc-intel-quirks.h |   14 ++++++--------
+ 1 file changed, 6 insertions(+), 8 deletions(-)
 
---- a/drivers/powercap/intel_rapl_common.c
-+++ b/drivers/powercap/intel_rapl_common.c
-@@ -951,52 +951,51 @@ static const struct rapl_defaults rapl_d
- };
+--- a/sound/soc/intel/common/soc-intel-quirks.h
++++ b/sound/soc/intel/common/soc-intel-quirks.h
+@@ -15,13 +15,11 @@
+ #include <asm/intel-family.h>
+ #include <asm/iosf_mbi.h>
  
- static const struct x86_cpu_id rapl_ids[] __initconst = {
--	INTEL_CPU_FAM6(SANDYBRIDGE, rapl_defaults_core),
--	INTEL_CPU_FAM6(SANDYBRIDGE_X, rapl_defaults_core),
-+	X86_MATCH_INTEL_FAM6_MODEL(SANDYBRIDGE,		&rapl_defaults_core),
-+	X86_MATCH_INTEL_FAM6_MODEL(SANDYBRIDGE_X,	&rapl_defaults_core),
- 
--	INTEL_CPU_FAM6(IVYBRIDGE, rapl_defaults_core),
--	INTEL_CPU_FAM6(IVYBRIDGE_X, rapl_defaults_core),
-+	X86_MATCH_INTEL_FAM6_MODEL(IVYBRIDGE,		&rapl_defaults_core),
-+	X86_MATCH_INTEL_FAM6_MODEL(IVYBRIDGE_X,		&rapl_defaults_core),
- 
--	INTEL_CPU_FAM6(HASWELL, rapl_defaults_core),
--	INTEL_CPU_FAM6(HASWELL_L, rapl_defaults_core),
--	INTEL_CPU_FAM6(HASWELL_G, rapl_defaults_core),
--	INTEL_CPU_FAM6(HASWELL_X, rapl_defaults_hsw_server),
+-#define ICPU(model)	{ X86_VENDOR_INTEL, 6, model, X86_FEATURE_ANY, }
 -
--	INTEL_CPU_FAM6(BROADWELL, rapl_defaults_core),
--	INTEL_CPU_FAM6(BROADWELL_G, rapl_defaults_core),
--	INTEL_CPU_FAM6(BROADWELL_D, rapl_defaults_core),
--	INTEL_CPU_FAM6(BROADWELL_X, rapl_defaults_hsw_server),
--
--	INTEL_CPU_FAM6(SKYLAKE, rapl_defaults_core),
--	INTEL_CPU_FAM6(SKYLAKE_L, rapl_defaults_core),
--	INTEL_CPU_FAM6(SKYLAKE_X, rapl_defaults_hsw_server),
--	INTEL_CPU_FAM6(KABYLAKE_L, rapl_defaults_core),
--	INTEL_CPU_FAM6(KABYLAKE, rapl_defaults_core),
--	INTEL_CPU_FAM6(CANNONLAKE_L, rapl_defaults_core),
--	INTEL_CPU_FAM6(ICELAKE_L, rapl_defaults_core),
--	INTEL_CPU_FAM6(ICELAKE, rapl_defaults_core),
--	INTEL_CPU_FAM6(ICELAKE_NNPI, rapl_defaults_core),
--	INTEL_CPU_FAM6(ICELAKE_X, rapl_defaults_hsw_server),
--	INTEL_CPU_FAM6(ICELAKE_D, rapl_defaults_hsw_server),
--	INTEL_CPU_FAM6(COMETLAKE_L, rapl_defaults_core),
--	INTEL_CPU_FAM6(COMETLAKE, rapl_defaults_core),
--	INTEL_CPU_FAM6(TIGERLAKE_L, rapl_defaults_core),
--
--	INTEL_CPU_FAM6(ATOM_SILVERMONT, rapl_defaults_byt),
--	INTEL_CPU_FAM6(ATOM_AIRMONT, rapl_defaults_cht),
--	INTEL_CPU_FAM6(ATOM_SILVERMONT_MID, rapl_defaults_tng),
--	INTEL_CPU_FAM6(ATOM_AIRMONT_MID, rapl_defaults_ann),
--	INTEL_CPU_FAM6(ATOM_GOLDMONT, rapl_defaults_core),
--	INTEL_CPU_FAM6(ATOM_GOLDMONT_PLUS, rapl_defaults_core),
--	INTEL_CPU_FAM6(ATOM_GOLDMONT_D, rapl_defaults_core),
--	INTEL_CPU_FAM6(ATOM_TREMONT_D, rapl_defaults_core),
--	INTEL_CPU_FAM6(ATOM_TREMONT_L, rapl_defaults_core),
-+	X86_MATCH_INTEL_FAM6_MODEL(HASWELL,		&rapl_defaults_core),
-+	X86_MATCH_INTEL_FAM6_MODEL(HASWELL_L,		&rapl_defaults_core),
-+	X86_MATCH_INTEL_FAM6_MODEL(HASWELL_G,		&rapl_defaults_core),
-+	X86_MATCH_INTEL_FAM6_MODEL(HASWELL_X,		&rapl_defaults_hsw_server),
-+
-+	X86_MATCH_INTEL_FAM6_MODEL(BROADWELL,		&rapl_defaults_core),
-+	X86_MATCH_INTEL_FAM6_MODEL(BROADWELL_G,		&rapl_defaults_core),
-+	X86_MATCH_INTEL_FAM6_MODEL(BROADWELL_D,		&rapl_defaults_core),
-+	X86_MATCH_INTEL_FAM6_MODEL(BROADWELL_X,		&rapl_defaults_hsw_server),
-+
-+	X86_MATCH_INTEL_FAM6_MODEL(SKYLAKE,		&rapl_defaults_core),
-+	X86_MATCH_INTEL_FAM6_MODEL(SKYLAKE_L,		&rapl_defaults_core),
-+	X86_MATCH_INTEL_FAM6_MODEL(SKYLAKE_X,		&rapl_defaults_hsw_server),
-+	X86_MATCH_INTEL_FAM6_MODEL(KABYLAKE_L,		&rapl_defaults_core),
-+	X86_MATCH_INTEL_FAM6_MODEL(KABYLAKE,		&rapl_defaults_core),
-+	X86_MATCH_INTEL_FAM6_MODEL(CANNONLAKE_L,	&rapl_defaults_core),
-+	X86_MATCH_INTEL_FAM6_MODEL(ICELAKE_L,		&rapl_defaults_core),
-+	X86_MATCH_INTEL_FAM6_MODEL(ICELAKE,		&rapl_defaults_core),
-+	X86_MATCH_INTEL_FAM6_MODEL(ICELAKE_NNPI,	&rapl_defaults_core),
-+	X86_MATCH_INTEL_FAM6_MODEL(ICELAKE_X,		&rapl_defaults_hsw_server),
-+	X86_MATCH_INTEL_FAM6_MODEL(ICELAKE_D,		&rapl_defaults_hsw_server),
-+	X86_MATCH_INTEL_FAM6_MODEL(COMETLAKE_L,		&rapl_defaults_core),
-+	X86_MATCH_INTEL_FAM6_MODEL(COMETLAKE,		&rapl_defaults_core),
-+	X86_MATCH_INTEL_FAM6_MODEL(TIGERLAKE_L,		&rapl_defaults_core),
-+
-+	X86_MATCH_INTEL_FAM6_MODEL(ATOM_SILVERMONT,	&rapl_defaults_byt),
-+	X86_MATCH_INTEL_FAM6_MODEL(ATOM_AIRMONT,	&rapl_defaults_cht),
-+	X86_MATCH_INTEL_FAM6_MODEL(ATOM_SILVERMONT_MID,	&rapl_defaults_tng),
-+	X86_MATCH_INTEL_FAM6_MODEL(ATOM_AIRMONT_MID,	&rapl_defaults_ann),
-+	X86_MATCH_INTEL_FAM6_MODEL(ATOM_GOLDMONT,	&rapl_defaults_core),
-+	X86_MATCH_INTEL_FAM6_MODEL(ATOM_GOLDMONT_PLUS,	&rapl_defaults_core),
-+	X86_MATCH_INTEL_FAM6_MODEL(ATOM_GOLDMONT_D,	&rapl_defaults_core),
-+	X86_MATCH_INTEL_FAM6_MODEL(ATOM_TREMONT_D,	&rapl_defaults_core),
-+	X86_MATCH_INTEL_FAM6_MODEL(ATOM_TREMONT_L,	&rapl_defaults_core),
+ #define SOC_INTEL_IS_CPU(soc, type)				\
+ static inline bool soc_intel_is_##soc(void)			\
+ {								\
+ 	static const struct x86_cpu_id soc##_cpu_ids[] = {	\
+-		ICPU(type),					\
++		X86_MATCH_INTEL_FAM6_MODEL(type, NULL),		\
+ 		{}						\
+ 	};							\
+ 	const struct x86_cpu_id *id;				\
+@@ -32,11 +30,11 @@ static inline bool soc_intel_is_##soc(vo
+ 	return false;						\
+ }
  
--	INTEL_CPU_FAM6(XEON_PHI_KNL, rapl_defaults_hsw_server),
--	INTEL_CPU_FAM6(XEON_PHI_KNM, rapl_defaults_hsw_server),
-+	X86_MATCH_INTEL_FAM6_MODEL(XEON_PHI_KNL,	&rapl_defaults_hsw_server),
-+	X86_MATCH_INTEL_FAM6_MODEL(XEON_PHI_KNM,	&rapl_defaults_hsw_server),
- 	{}
- };
--
- MODULE_DEVICE_TABLE(x86cpu, rapl_ids);
+-SOC_INTEL_IS_CPU(byt, INTEL_FAM6_ATOM_SILVERMONT);
+-SOC_INTEL_IS_CPU(cht, INTEL_FAM6_ATOM_AIRMONT);
+-SOC_INTEL_IS_CPU(apl, INTEL_FAM6_ATOM_GOLDMONT);
+-SOC_INTEL_IS_CPU(glk, INTEL_FAM6_ATOM_GOLDMONT_PLUS);
+-SOC_INTEL_IS_CPU(cml, INTEL_FAM6_KABYLAKE_L);
++SOC_INTEL_IS_CPU(byt, ATOM_SILVERMONT);
++SOC_INTEL_IS_CPU(cht, ATOM_AIRMONT);
++SOC_INTEL_IS_CPU(apl, ATOM_GOLDMONT);
++SOC_INTEL_IS_CPU(glk, ATOM_GOLDMONT_PLUS);
++SOC_INTEL_IS_CPU(cml, KABYLAKE_L);
  
- /* Read once for all raw primitive data for domains */
+ static inline bool soc_intel_is_byt_cr(struct platform_device *pdev)
+ {
 
