@@ -2,182 +2,394 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 65ACB18D98D
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 21:38:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AC04A18D9A7
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 21:43:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727158AbgCTUiL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Mar 2020 16:38:11 -0400
-Received: from mail-mw2nam10on2056.outbound.protection.outlook.com ([40.107.94.56]:6050
-        "EHLO NAM10-MW2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727175AbgCTUiK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Mar 2020 16:38:10 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=gxXiIBMkcZjYyWeRLjGXbwaTDceYRHhPUI0UJofaHhmo7qUzXKNYfuHrdZ8HhHZfV9VCYjIjY/Mc5JDVJTXA45FB4RmJURehY2Tw7asyZCAHwTbxCu2eCIEQCpMEa9D+q7RNtx89lKKfpjZum00A7K3C15HRpvaSSiFbYoJQkUkFFsR92drIJ+QZkNbDs85JgqrEmI0KI8Y/T3xw5AAcOIZKtjqGsbTg9cdzm8ekuk4Uox9Cah6d60rm42lb3XW0zf6K3zIpNpwEzn6LzS+UwUgeatp1nlj70/kQj34nnPsNm0Ex1BtJzqmilPNTLJLmHu74zv5J+U2BguFqCxAsZg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=wn5YV1jI25T53rRibzoAe1TnCJWzBHMekEj8MPt0Ieo=;
- b=k0vT9VZvZqpfKNvbOngkISOJuQfx7iOKXLU97HyldYcj2BZdH60JL+5zH2nJL2bIKhVMIXVvbvsu12uHTGoXqHSReCGVChiOLY7XJuPOvp5zH2/TrU+m2F+2bdHwiHcwp01k/42oe9rv6xw3nvUiNXyzyDJ/XUCoN70rRVmVskc79VF23cJX5SQuyfOcLOxMeHxVcfCzwxXi/u52MbPs8qAsTRKaCpMp5a1jBfl8tXt3ezQIVlbpVTijkfGhwuo7rk3KGI39MJ37Qkwmtbv0pOfVqdQYvYk1y2MZNlIA+QHHHk3mfYsrNRil2FHWsY4jMW6bi4IMAgDzu6qHVWDD5w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=amdcloud.onmicrosoft.com; s=selector2-amdcloud-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=wn5YV1jI25T53rRibzoAe1TnCJWzBHMekEj8MPt0Ieo=;
- b=p5GIWO9Yz86nicEe+fWLqFFvJK6laGydClYcoTuB5+3axXFv3k20jjEN2g2PH52zPfHnHfeTz00GugOMnNDwzo/fgLmwnkJUQjBfF6vktKUE+5/3aAsmUDqNFt+3dPmmJFUDaOh4+0kURxfo3UmT0nVoOsMlx1Ba0Y1pmZcUJ0o=
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=Thomas.Lendacky@amd.com; 
-Received: from DM6PR12MB3163.namprd12.prod.outlook.com (2603:10b6:5:15e::26)
- by DM6PR12MB3116.namprd12.prod.outlook.com (2603:10b6:5:38::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2835.20; Fri, 20 Mar
- 2020 20:37:28 +0000
-Received: from DM6PR12MB3163.namprd12.prod.outlook.com
- ([fe80::f0f9:a88f:f840:2733]) by DM6PR12MB3163.namprd12.prod.outlook.com
- ([fe80::f0f9:a88f:f840:2733%7]) with mapi id 15.20.2814.025; Fri, 20 Mar 2020
- 20:37:28 +0000
-Subject: Re: [PATCH] KVM: SVM: Issue WBINVD after deactivating an SEV guest
-To:     David Rientjes <rientjes@google.com>
-Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Brijesh Singh <brijesh.singh@amd.com>
-References: <c8bf9087ca3711c5770bdeaafa3e45b717dc5ef4.1584720426.git.thomas.lendacky@amd.com>
- <alpine.DEB.2.21.2003201333510.205664@chino.kir.corp.google.com>
-From:   Tom Lendacky <thomas.lendacky@amd.com>
-Message-ID: <7b8d0c8c-d685-627b-676c-01c3d194fc82@amd.com>
-Date:   Fri, 20 Mar 2020 15:37:23 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
-In-Reply-To: <alpine.DEB.2.21.2003201333510.205664@chino.kir.corp.google.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SN6PR04CA0081.namprd04.prod.outlook.com
- (2603:10b6:805:f2::22) To DM6PR12MB3163.namprd12.prod.outlook.com
- (2603:10b6:5:15e::26)
+        id S1727191AbgCTUnF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Mar 2020 16:43:05 -0400
+Received: from w1.tutanota.de ([81.3.6.162]:44468 "EHLO w1.tutanota.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726855AbgCTUnF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Mar 2020 16:43:05 -0400
+Received: from w3.tutanota.de (unknown [192.168.1.164])
+        by w1.tutanota.de (Postfix) with ESMTP id 9C521FBF53C
+        for <linux-kernel@vger.kernel.org>; Fri, 20 Mar 2020 20:43:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1584736981;
+        s=s1; d=tuta.io;
+        h=From:From:To:To:Subject:Subject:Content-Description:Content-ID:Content-Type:Content-Type:Content-Transfer-Encoding:Content-Transfer-Encoding:Cc:Date:Date:In-Reply-To:MIME-Version:MIME-Version:Message-ID:Message-ID:Reply-To:References:Sender;
+        bh=/Ex8eIlhG4wONznFScMTVgv1C+Wn2zkeSK27MtqjOGo=;
+        b=g9mjLizHjN3fcPuu9UQlAF72P/D9igm9XhXQq7YVrgULKUEy1w10JQMmjh7c6mKy
+        vezYgfEU/i1oG3xNhDgO1sARpZ5U718Msqg1UQuh/oQzlc8YM5pm2llPGycnGNiSstj
+        NFHJrQzytQY7QfyMHIC+vDEdTZOa4a6Hef4t3hyejO5kUy9fqloKzx6Xrr1LfPpI/JY
+        mLCjyqJoqybAD3yPaTLFz1RPNZFO2934ytkdm7SOq/oB1YdoK20UIrHVUdbhnmMskdk
+        Ma05owOmbYIEsb6HPpsQ73j67e0NljeE5ixxYWtvAw5UyPVenrpWC2JEb6LrDKo6/ae
+        GfehPmSlng==
+Date:   Fri, 20 Mar 2020 21:43:01 +0100 (CET)
+From:   stratus@tuta.io
+To:     Linux Kernel <linux-kernel@vger.kernel.org>
+Message-ID: <M2tfonU--3-2@tuta.io>
+Subject: Error messages from searching
+ /sys/devices/pci0000:00/0000:00:01.0/0000:01:00.0/resource0
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from office-linux.texastahm.com (165.204.84.11) by SN6PR04CA0081.namprd04.prod.outlook.com (2603:10b6:805:f2::22) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2835.20 via Frontend Transport; Fri, 20 Mar 2020 20:37:26 +0000
-X-Originating-IP: [165.204.84.11]
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-HT: Tenant
-X-MS-Office365-Filtering-Correlation-Id: a34b4a7a-8357-4bef-8e9d-08d7cd0e8134
-X-MS-TrafficTypeDiagnostic: DM6PR12MB3116:|DM6PR12MB3116:
-X-MS-Exchange-Transport-Forked: True
-X-Microsoft-Antispam-PRVS: <DM6PR12MB311603DBB0B1B1C8B4286056ECF50@DM6PR12MB3116.namprd12.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:7219;
-X-Forefront-PRVS: 03484C0ABF
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(4636009)(366004)(39860400002)(346002)(376002)(136003)(396003)(199004)(956004)(6506007)(53546011)(6486002)(31686004)(66556008)(52116002)(6916009)(66476007)(8936002)(6512007)(54906003)(8676002)(81156014)(81166006)(31696002)(86362001)(66946007)(316002)(6666004)(16526019)(2616005)(4326008)(36756003)(26005)(186003)(5660300002)(478600001)(2906002);DIR:OUT;SFP:1101;SCL:1;SRVR:DM6PR12MB3116;H:DM6PR12MB3163.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;
-Received-SPF: None (protection.outlook.com: amd.com does not designate
- permitted sender hosts)
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: ETK06Uu3FDraM9mNPKdvMltmd3Dl3OeqhngR5ole2BYc15HWru8KGlBzJuYLDJ81KMSeBzxJNLt9B8RjDDIWA+X4xWgbc2GVGldHr8ITBC6o0keeqqcLjt9wfjPP6yBzgsw6rjH3t56+JXHUtXwztRI5mMOUO3aqn7Gtx4sZGr091T7TCpB4oLJkXlXJ09FA9V6GFP3m7NrIoncDYQ/7ELJ62jpKHZa++SwcYLuT0Sj76WfyBQp7B2yplrE7T1Nbm43+56aeUS5jWPHb1lVlS1cGzTlmR9jtgrtbss7qA2y8cIuqYo08/gkIMXYuWN/iAODpvR9ATDhTQkf153UzWURLNnkE2Y8Hnf1t1joVeaJZ7lERgjnMovk+14qxVTiPnAhknnLj9LBpTxMIixx9wVAsSd1hA3WQ/9YIqW5PLO8XZHLdDQHezCUMFS4Zf42u
-X-MS-Exchange-AntiSpam-MessageData: 3cp48oa6c7gtzaJRMpVTL+gihGeLkmyawm4lbUrkuoF9p8VRYE15rAGE7AgNBUAvGbXrKiTmmSHoBFBVOlI4vwvlyMbw0lLooRBjSev+dePApATLq4LC65nhnQSp2SfEDE2aEm69jMaANCcHKuvl1Q==
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a34b4a7a-8357-4bef-8e9d-08d7cd0e8134
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Mar 2020 20:37:27.9114
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: O9Zjm0spBHQFIHdJPounKENJWhVcinjeWoUAW1Zu1lc3SMKFNACwsWfdNp7WLFwBP7NtwtwwctgbDC/nhaGDtw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB3116
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 3/20/20 3:34 PM, David Rientjes wrote:
-> On Fri, 20 Mar 2020, Tom Lendacky wrote:
-> 
->> Currently, CLFLUSH is used to flush SEV guest memory before the guest is
->> terminated (or a memory hotplug region is removed). However, CLFLUSH is
->> not enough to ensure that SEV guest tagged data is flushed from the cache.
->>
->> With 33af3a7ef9e6 ("KVM: SVM: Reduce WBINVD/DF_FLUSH invocations"), the
->> original WBINVD was removed. This then exposed crashes at random times
->> because of a cache flush race with a page that had both a hypervisor and
->> a guest tag in the cache.
->>
->> Restore the WBINVD when destroying an SEV guest and add a WBINVD to the
->> svm_unregister_enc_region() function to ensure hotplug memory is flushed
->> when removed. The DF_FLUSH can still be avoided at this point.
->>
->> Fixes: 33af3a7ef9e6 ("KVM: SVM: Reduce WBINVD/DF_FLUSH invocations")
->> Signed-off-by: Tom Lendacky <thomas.lendacky@amd.com>
-> 
-> Acked-by: David Rientjes <rientjes@google.com>
-> 
-> Should this be marked for stable?
+/sys/devices/pci0000:00/0000:00:01.0/0000:01:00.0$ sudo ag -u something res=
+ource0=C2=A0 (or resource1 / 1_wc / 3)
+This results in ag hanging, plus a huge amount of error messages are writte=
+n to syslog. Once it locked up the desktop and I had to press and hold the =
+power button.
+If a log file limit is not set this can quickly fill the entire partition a=
+nd then the system will not reboot after it is shut down, unless something =
+is deleted.
+I found this by accident when using sudo ag -u from / to search the entire =
+file system. It occurred with the regular distro packages, and still happen=
+s when I installed the relevant -git versions from the AUR.
 
-The Fixes tag should take care of that.
 
-Thanks,
-Tom
+/sys/devices/pci0000:00/0000:00:01.0/0000:01:00.0$ ls -l
+etc...etc:
+-r--r--r-- 1 root root=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 4096 Mar 20 01:03 reso=
+urce
+-rw------- 1 root root=C2=A0 16777216 Mar 20 01:05 resource0
+-rw------- 1 root root 268435456 Mar 20 01:05 resource1
+-rw------- 1 root root 268435456 Mar 20 01:05 resource1_wc
+-rw------- 1 root root=C2=A0 33554432 Mar 20 01:04 resource3
+-rw------- 1 root root=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 128 Mar 20 01:04=
+ resource5
+-r--r--r-- 1 root root=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 4096 Mar 20 01:03 revi=
+sion
+etc...
 
-> 
-> Cc: stable@vger.kernel.org # 5.5+
-> 
->> ---
->>   arch/x86/kvm/svm.c | 22 ++++++++++++++--------
->>   1 file changed, 14 insertions(+), 8 deletions(-)
->>
->> diff --git a/arch/x86/kvm/svm.c b/arch/x86/kvm/svm.c
->> index 08568ae9f7a1..d54cdca9c140 100644
->> --- a/arch/x86/kvm/svm.c
->> +++ b/arch/x86/kvm/svm.c
->> @@ -1980,14 +1980,6 @@ static void sev_clflush_pages(struct page *pages[], unsigned long npages)
->>   static void __unregister_enc_region_locked(struct kvm *kvm,
->>   					   struct enc_region *region)
->>   {
->> -	/*
->> -	 * The guest may change the memory encryption attribute from C=0 -> C=1
->> -	 * or vice versa for this memory range. Lets make sure caches are
->> -	 * flushed to ensure that guest data gets written into memory with
->> -	 * correct C-bit.
->> -	 */
->> -	sev_clflush_pages(region->pages, region->npages);
->> -
->>   	sev_unpin_memory(kvm, region->pages, region->npages);
->>   	list_del(&region->list);
->>   	kfree(region);
->> @@ -2004,6 +1996,13 @@ static void sev_vm_destroy(struct kvm *kvm)
->>   
->>   	mutex_lock(&kvm->lock);
->>   
->> +	/*
->> +	 * Ensure that all guest tagged cache entries are flushed before
->> +	 * releasing the pages back to the system for use. CLFLUSH will
->> +	 * not do this, so issue a WBINVD.
->> +	 */
->> +	wbinvd_on_all_cpus();
->> +
->>   	/*
->>   	 * if userspace was terminated before unregistering the memory regions
->>   	 * then lets unpin all the registered memory.
->> @@ -7247,6 +7246,13 @@ static int svm_unregister_enc_region(struct kvm *kvm,
->>   		goto failed;
->>   	}
->>   
->> +	/*
->> +	 * Ensure that all guest tagged cache entries are flushed before
->> +	 * releasing the pages back to the system for use. CLFLUSH will
->> +	 * not do this, so issue a WBINVD.
->> +	 */
->> +	wbinvd_on_all_cpus();
->> +
->>   	__unregister_enc_region_locked(kvm, region);
->>   
->>   	mutex_unlock(&kvm->lock);
->> -- 
->> 2.17.1
->>
->>
+
+Mar 20 01:09:08 xyz kernel: [=C2=A0 375.563053] nouveau 0000:01:00.0: fb: t=
+rapped read at 0101059e74 on channel -1 [1fed0000 unknown] engine 06 [BAR] =
+client 08 [PFIFO_READ] subclient
+01 [IN] reason 00000002 [PAGE_NOT_PRESENT]
+Mar 20 01:09:08 xyz kernel: [=C2=A0 375.563148] nouveau 0000:01:00.0: fb: t=
+rapped read at 0101059e74 on channel -1 [1fed0000 unknown] engine 06 [BAR] =
+client 08 [PFIFO_READ] subclient
+01 [IN] reason 00000002 [PAGE_NOT_PRESENT]
+Mar 20 01:09:08 xyz kernel: [=C2=A0 375.563300] nouveau 0000:01:00.0: fb: t=
+rapped read at 0101059e84 on channel -1 [1fed0000 unknown] engine 06 [BAR] =
+client 08 [PFIFO_READ] subclient
+01 [IN] reason 00000002 [PAGE_NOT_PRESENT]
+Mar 20 01:09:08 xyz kernel: [=C2=A0 375.563428] nouveau 0000:01:00.0: fb: t=
+rapped read at 0101059e8c on channel -1 [1fed0000 unknown] engine 06 [BAR] =
+client 08 [PFIFO_READ] subclient
+01 [IN] reason 00000002 [PAGE_NOT_PRESENT]
+Mar 20 01:09:08 xyz kernel: [=C2=A0 375.563529] nouveau 0000:01:00.0: fb: t=
+rapped read at 0101059e94 on channel -1 [1fed0000 unknown] engine 06 [BAR] =
+client 08 [PFIFO_READ] subclient
+01 [IN] reason 00000002 [PAGE_NOT_PRESENT]
+Mar 20 01:09:08 xyz kernel: [=C2=A0 375.563665] nouveau 0000:01:00.0: fb: t=
+rapped read at 0101059e9c on channel -1 [1fed0000 unknown] engine 06 [BAR] =
+client 08 [PFIFO_READ] subclient
+01 [IN] reason 00000002 [PAGE_NOT_PRESENT]
+Mar 20 01:09:08 xyz kernel: [=C2=A0 375.563800] nouveau 0000:01:00.0: fb: t=
+rapped read at 0101059ea4 on channel -1 [1fed0000 unknown] engine 06 [BAR] =
+client 08 [PFIFO_READ] subclient
+01 [IN] reason 00000002 [PAGE_NOT_PRESENT]
+
+
+$ inxi -zv7
+System:=C2=A0=C2=A0=C2=A0 Host: xyz Kernel: 5.6.0-rc6-1-git-00009-gac309e77=
+44be x86_64 bits: 64 compiler: gcc v: 9.2.1
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Desktop: Xfce =
+4.14.2 tk: Gtk 3.24.13 info: xfce4-panel wm: xfwm4 dm: startx Distro: Artix=
+ Linux
+Machine:=C2=A0=C2=A0 Type: Portable System: Dell product: Precision M4400 v=
+: N/A serial: <filter> Chassis: type: 8
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 serial: <filte=
+r>
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Mobo: Dell mod=
+el: 0NY980 serial: <filter> BIOS: Dell v: A29 date: 06/04/2013
+Battery:=C2=A0=C2=A0 ID-1: BAT0 charge: 69.7 Wh condition: 69.7/73.3 Wh (95=
+%) volts: 12.4/11.1 model: Sanyo DELL U726H8A
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 type: Li-ion s=
+erial: <filter> status: Full
+Memory:=C2=A0=C2=A0=C2=A0 RAM: total: 7.77 GiB used: 343.3 MiB (4.3%)
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 RAM Report: mi=
+ssing: Required program dmidecode not available
+CPU:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Topology: Dual Core model: Intel C=
+ore2 Duo T9900 bits: 64 type: MCP arch: Penryn rev: A
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 L2 cache: 6144=
+ KiB bogomips: 12241
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Speed: 798 MHz=
+ min/max: 800/3068 MHz boost: enabled Core speeds (MHz): 1: 847 2: 1103
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Flags: acpi ap=
+erfmperf apic arch_perfmon bts clflush cmov constant_tsc cpuid cx16 cx8 de =
+ds_cpl
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 dtes64 dtherm =
+dts est fpu fxsr ht ida lahf_lm lm mca mce mmx monitor msr mtrr nopl nx pae=
+ pat pbe
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 pdcm pebs pge =
+pni pse pse36 pti rep_good sep smx sse sse2 sse4_1 ssse3 syscall tm tm2 tsc=
+ vme xsave
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 xtpr
+Graphics:=C2=A0 Device-1: NVIDIA G96GLM [Quadro FX 770M] vendor: Dell drive=
+r: nouveau v: kernel bus ID: 01:00.0
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 chip ID: 10de:=
+065c
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Display: tty s=
+erver: X.Org 1.20.7 driver: nouveau,vesa unloaded: fbdev,modesetting altern=
+ate: nv
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 resolution: 14=
+40x900~60Hz
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 OpenGL: render=
+er: NV96 v: 3.3 Mesa 20.1.0-devel (git-f778c48869) direct render: Yes
+Audio:=C2=A0=C2=A0=C2=A0=C2=A0 Device-1: Intel 82801I HD Audio vendor: Dell=
+ driver: snd_hda_intel v: kernel bus ID: 00:1b.0
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 chip ID: 8086:=
+293e
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Sound Server: =
+ALSA v: k5.6.0-rc6-1-git-00009-gac309e7744be
+Network:=C2=A0=C2=A0 Device-1: Intel 82567LM Gigabit Network vendor: Dell d=
+river: e1000e v: 3.2.6-k port: efe0
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 bus ID: 00:19.=
+0 chip ID: 8086:10f5
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 IF: enp0s25 st=
+ate: down mac: <filter>
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Device-2: Rali=
+nk RT2760 Wireless 802.11n 1T/2R vendor: Belkin driver: rt2800pci v: 2.3.0 =
+port: df00
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 bus ID: 04:00.=
+0 chip ID: 1814:0701
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 IF: wlp4s0 sta=
+te: down mac: <filter>
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 WAN IP: No WAN=
+ IP data found. Connected to the web? SSL issues?
+Drives:=C2=A0=C2=A0=C2=A0 Local Storage: total: 111.79 GiB used: 36.29 GiB =
+(32.5%)
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ID-1: /dev/sda=
+ model: SSD2S120SF1200SA2 size: 111.79 GiB speed: 3.0 Gb/s serial: <filter>=
+ rev: BBF0
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 scheme: GPT
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Optical-1: /de=
+v/sr0 vendor: MATSHITA model: DVD+-RW UJ862A rev: 1.02 dev-links: cdrom
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Features: spee=
+d: 24 multisession: yes audio: yes dvd: yes rw: cd-r,cd-rw,dvd-r,dvd-ram
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 state: running
+RAID:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Message: No RAID data was found.
+Partition: ID-1: / size: 45.00 GiB used: 36.20 GiB (80.4%) fs: btrfs dev: /=
+dev/sda4 label: root1
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 uuid: 7002a85b=
+-74aa-4374-b55a-61067abb4e94
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ID-2: /boot si=
+ze: 1024.0 MiB used: 89.9 MiB (8.8%) fs: btrfs dev: /dev/sda2 label: N/A
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 uuid: 75c0faca=
+-5886-4abb-aa12-ee239202ffa4
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ID-3: swap-1 s=
+ize: 16.00 GiB used: 0 KiB (0.0%) fs: swap dev: /dev/sda3 label: swap
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 uuid: 402f9ace=
+-25f8-4dc7-a7ab-c1ce4cbd34a8
+Unmounted: ID-1: /dev/sda1 size: 1024 KiB fs: <root required> label: N/A uu=
+id: N/A
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ID-2: /dev/sda=
+5 size: 35.00 GiB fs: btrfs label: devuan uuid: bd06cd95-6c1f-4551-93ba-c3e=
+0403bf6f6
+USB:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Hub: 1-0:1 info: Full speed (or ro=
+ot) Hub ports: 6 rev: 2.0 speed: 480 Mb/s chip ID: 1d6b:0002
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Hub: 2-0:1 inf=
+o: Full speed (or root) Hub ports: 6 rev: 2.0 speed: 480 Mb/s chip ID: 1d6b=
+:0002
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Hub: 3-0:1 inf=
+o: Full speed (or root) Hub ports: 2 rev: 1.1 speed: 12 Mb/s chip ID: 1d6b:=
+0001
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Hub: 4-0:1 inf=
+o: Full speed (or root) Hub ports: 2 rev: 1.1 speed: 12 Mb/s chip ID: 1d6b:=
+0001
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Hub: 5-0:1 inf=
+o: Full speed (or root) Hub ports: 2 rev: 1.1 speed: 12 Mb/s chip ID: 1d6b:=
+0001
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Device-1: 5-1:=
+2 info: Broadcom BCM5880 Secure Applications Processor with fingerprint tou=
+ch sensor
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 type: Smart Ca=
+rd driver: N/A interfaces: 2 rev: 1.1 speed: 12 Mb/s chip ID: 0a5c:5802
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 serial: <filte=
+r>
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Hub: 6-0:1 inf=
+o: Full speed (or root) Hub ports: 2 rev: 1.1 speed: 12 Mb/s chip ID: 1d6b:=
+0001
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Hub: 7-0:1 inf=
+o: Full speed (or root) Hub ports: 2 rev: 1.1 speed: 12 Mb/s chip ID: 1d6b:=
+0001
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Hub: 8-0:1 inf=
+o: Full speed (or root) Hub ports: 2 rev: 1.1 speed: 12 Mb/s chip ID: 1d6b:=
+0001
+Sensors:=C2=A0=C2=A0 System Temperatures: cpu: 39.0 C mobo: N/A sodimm: 39.=
+0 C gpu: nouveau temp: 53 C
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Fan Speeds (RP=
+M): cpu: 0
+Info:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Processes: 179 Uptime: 20m Init: N/A v:=
+ N/A rc: OpenRC v: 0.42.1 runlevel: default Compilers:
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 gcc: 9.3.0 alt=
+: 8 clang: 9.0.1 Shell: bash v: 5.0.16 running in: xfce4-terminal inxi: 3.0=
+.26
+
+
+
+$ uname -r
+5.6.0-rc6-1-git-00009-gac309e7744be
+$ pacman -Qi linux-git
+Name=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 : li=
+nux-git
+Version=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 : 5.6rc6.r9.gac309e=
+7744be-1
+Description=C2=A0=C2=A0=C2=A0=C2=A0 : The Linux git kernel and modules
+Architecture=C2=A0=C2=A0=C2=A0 : x86_64
+URL=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+ : https://www.kernel.org
+Licenses=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 : GPL2
+Groups=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 : None
+Provides=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 : None
+Depends On=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 : coreutils=C2=A0 kmod=C2=A0 initr=
+amfs
+Optional Deps=C2=A0=C2=A0 : crda: to set the correct wireless channels of y=
+our country
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0 linux-firmware: firmware images needed for some=
+ devices [installed]
+Required By=C2=A0=C2=A0=C2=A0=C2=A0 : None
+Optional For=C2=A0=C2=A0=C2=A0 : None
+Conflicts With=C2=A0 : None
+Replaces=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 : None
+Installed Size=C2=A0 : 74.61 MiB
+Packager=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 : Unknown Packager
+Build Date=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 : Tue 17 Mar 2020 21:27:04 GMT
+Install Date=C2=A0=C2=A0=C2=A0 : Wed 18 Mar 2020 20:26:50 GMT
+Install Reason=C2=A0 : Explicitly installed
+Install Script=C2=A0 : No
+Validated By=C2=A0=C2=A0=C2=A0 : None
+
+$ pacman -Qi mesa-git
+Name=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 : me=
+sa-git
+Version=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 : 20.1.0_devel.1213=
+94.f778c48869f-1
+Description=C2=A0=C2=A0=C2=A0=C2=A0 : an open-source implementation of the =
+OpenGL specification, git version
+Architecture=C2=A0=C2=A0=C2=A0 : x86_64
+URL=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+ : https://www.mesa3d.org
+Licenses=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 : custom
+Groups=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 : None
+Provides=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 : mesa=3D20.1.0_devel.12=
+1394.f778c48869f-1=C2=A0 vulkan-intel=3D20.1.0_devel.121394.f778c48869f-1=
+=C2=A0 vulkan-radeon=3D20.1.0_devel.121394.f778c48869f-1
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0 vulkan-mesa-layer=3D20.1.0_devel.121394.f778c48=
+869f-1=C2=A0 libva-mesa-driver=3D20.1.0_devel.121394.f778c48869f-1=C2=A0 me=
+sa-vdpau=3D20.1.0_devel.121394.f778c48869f-1
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0 vulkan-driver=C2=A0 opengl-driver=C2=A0 opencl-=
+driver
+Depends On=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 : libdrm=C2=A0 libxxf86vm=C2=A0 li=
+bxdamage=C2=A0 libxshmfence=C2=A0 libelf=C2=A0 libomxil-bellagio=C2=A0 libu=
+nwind=C2=A0 libglvnd=C2=A0 wayland=C2=A0 lm_sensors=C2=A0 libclc=C2=A0 glsl=
+ang=C2=A0 vulkan-icd-loader=C2=A0 zstd
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0 llvm-libs=3D9.0.1
+Optional Deps=C2=A0=C2=A0 : opengl-man-pages: for the OpenGL API man pages
+Required By=C2=A0=C2=A0=C2=A0=C2=A0 : gst-plugins-base-libs=C2=A0 gtk3=C2=
+=A0 lib32-mesa=C2=A0 libglvnd=C2=A0 qt5-base=C2=A0 xf86-video-nouveau-git=
+=C2=A0 xorg-server-devel
+Optional For=C2=A0=C2=A0=C2=A0 : vulkan-icd-loader
+Conflicts With=C2=A0 : mesa=C2=A0 opencl-mesa=C2=A0 vulkan-intel=C2=A0 vulk=
+an-radeon=C2=A0 vulkan-mesa-layer=C2=A0 libva-mesa-driver=C2=A0 mesa-vdpau
+Replaces=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 : None
+Installed Size=C2=A0 : 148.97 MiB
+Packager=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 : Unknown Packager
+Build Date=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 : Thu 19 Mar 2020 19:11:52 GMT
+Install Date=C2=A0=C2=A0=C2=A0 : Thu 19 Mar 2020 20:09:30 GMT
+Install Reason=C2=A0 : Explicitly installed
+Install Script=C2=A0 : No
+Validated By=C2=A0=C2=A0=C2=A0 : None
+
+$ pacman -Qi libdrm-git
+Name=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 : li=
+bdrm-git
+Version=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 : 2.4.100.r70.g665c=
+0f7f-1
+Description=C2=A0=C2=A0=C2=A0=C2=A0 : Userspace interface to kernel DRM ser=
+vices, master git version
+Architecture=C2=A0=C2=A0=C2=A0 : x86_64
+URL=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+ : http://dri.freedesktop.org/
+Licenses=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 : custom
+Groups=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 : None
+Provides=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 : libdrm
+Depends On=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 : libpciaccess
+Optional Deps=C2=A0=C2=A0 : None
+Required By=C2=A0=C2=A0=C2=A0=C2=A0 : ffmpeg=C2=A0 intel-media-sdk=C2=A0 li=
+b32-libdrm=C2=A0 libva=C2=A0 mesa-git=C2=A0 xorg-server
+Optional For=C2=A0=C2=A0=C2=A0 : None
+Conflicts With=C2=A0 : libdrm
+Replaces=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 : None
+Installed Size=C2=A0 : 959.10 KiB
+Packager=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 : Unknown Packager
+Build Date=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 : Thu 19 Mar 2020 01:23:59 GMT
+Install Date=C2=A0=C2=A0=C2=A0 : Thu 19 Mar 2020 02:14:40 GMT
+Install Reason=C2=A0 : Explicitly installed
+Install Script=C2=A0 : No
+Validated By=C2=A0=C2=A0=C2=A0 : None
+
+$ pacman -Qi xf86-video-nouveau-git
+Name=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 : xf=
+86-video-nouveau-git
+Version=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 : 1.0.16+4+g5444cab=
+-1
+Description=C2=A0=C2=A0=C2=A0=C2=A0 : Open Source 3D acceleration driver fo=
+r nVidia cards
+Architecture=C2=A0=C2=A0=C2=A0 : x86_64
+URL=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+ : http://nouveau.freedesktop.org/
+Licenses=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 : GPL
+Groups=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 : xorg-drivers
+Provides=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 : None
+Depends On=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 : systemd-libs=C2=A0 mesa
+Optional Deps=C2=A0=C2=A0 : None
+Required By=C2=A0=C2=A0=C2=A0=C2=A0 : None
+Optional For=C2=A0=C2=A0=C2=A0 : None
+Conflicts With=C2=A0 : xf86-video-nouveau
+Replaces=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 : None
+Installed Size=C2=A0 : 262.84 KiB
+Packager=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 : Unknown Packager
+Build Date=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 : Thu 19 Mar 2020 20:12:55 GMT
+Install Date=C2=A0=C2=A0=C2=A0 : Thu 19 Mar 2020 20:41:19 GMT
+Install Reason=C2=A0 : Explicitly installed
+Install Script=C2=A0 : No
+Validated By=C2=A0=C2=A0=C2=A0 : None
+
+$ pacman -Qi silver-searcher-git
+Name=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 : si=
+lver-searcher-git
+Version=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 : 2.2.0.24.gb93c271=
+.r2021.b93c271-1
+Description=C2=A0=C2=A0=C2=A0=C2=A0 : The Silver Searcher: An attempt to ma=
+ke something better than ack, which itself is better than grep.
+Architecture=C2=A0=C2=A0=C2=A0 : x86_64
+URL=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+ : https://github.com/ggreer/the_silver_searcher
+Licenses=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 : Apache
+Groups=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 : None
+Provides=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 : the_silver_searcher=3D=
+2.2.0.24.gb93c271.r2021.b93c271
+Depends On=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 : None
+Optional Deps=C2=A0=C2=A0 : None
+Required By=C2=A0=C2=A0=C2=A0=C2=A0 : None
+Optional For=C2=A0=C2=A0=C2=A0 : None
+Conflicts With=C2=A0 : the_silver_searcher
+Replaces=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 : None
+Installed Size=C2=A0 : 98.82 KiB
+Packager=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 : Unknown Packager
+Build Date=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 : Thu 19 Mar 2020 20:44:33 GMT
+Install Date=C2=A0=C2=A0=C2=A0 : Thu 19 Mar 2020 20:45:18 GMT
+Install Reason=C2=A0 : Explicitly installed
+Install Script=C2=A0 : No
+Validated By=C2=A0=C2=A0=C2=A0 : None
