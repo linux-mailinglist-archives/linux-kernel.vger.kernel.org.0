@@ -2,148 +2,185 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4F46D18D54F
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 18:04:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3106918D554
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 18:06:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727415AbgCTREm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Mar 2020 13:04:42 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41606 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726953AbgCTREm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Mar 2020 13:04:42 -0400
-Received: from paulmck-ThinkPad-P72.home (50-39-105-78.bvtn.or.frontiernet.net [50.39.105.78])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C3B2320724;
-        Fri, 20 Mar 2020 17:04:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584723880;
-        bh=VH3g1gFndfzl5vdDr5dD8kRr/B9u2LZmudWDxRf8Mf4=;
-        h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-        b=chI1eSiJFrdkIi5LJcaLEaVvVxXAWRVGxOpx+q9Swlg9tOrOEmFCuIKtuCujay0Ib
-         KS4zuFbuiDM/Zp+Thlx8qI1R8mAJSGJrG66CF6oV4nBjeOtA5s0r2bHoewD3/OWOuP
-         aTU8IoqrvICaq2AaIFHhxdeJpEAL6/suUFhl0BCo=
-Received: by paulmck-ThinkPad-P72.home (Postfix, from userid 1000)
-        id 9461635226B4; Fri, 20 Mar 2020 10:04:40 -0700 (PDT)
-Date:   Fri, 20 Mar 2020 10:04:40 -0700
-From:   "Paul E. McKenney" <paulmck@kernel.org>
-To:     Randy Dunlap <rdunlap@infradead.org>
-Cc:     Dmitry Vyukov <dvyukov@google.com>,
-        syzbot <syzbot+792dec47d693ccdc05a0@syzkaller.appspotmail.com>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        Joel Fernandes <joel@joelfernandes.org>, rcu@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
-Subject: Re: linux-next build error (8)
-Message-ID: <20200320170440.GR3199@paulmck-ThinkPad-P72>
-Reply-To: paulmck@kernel.org
-References: <000000000000ae2ab305a123f146@google.com>
- <CACT4Y+a_d=5TNZth0dPov0B7tB5T9bAzWXBj1HjhXdn-=0KOOg@mail.gmail.com>
- <20200318214109.GV3199@paulmck-ThinkPad-P72>
- <CACT4Y+ZhP_Qu+WZ4t2dLjd__H+rUKCTRCNoghvW9Uf3QQYRcNg@mail.gmail.com>
- <20200319150414.GD3199@paulmck-ThinkPad-P72>
- <CACT4Y+YHQQWeeW44NYAxX+fFU6RyvFbbmcig1q8NSE7yV0zgjA@mail.gmail.com>
- <20200320162650.GP3199@paulmck-ThinkPad-P72>
- <ef4ec876-8b78-3f4a-a3fb-6dbc038e92df@infradead.org>
+        id S1727523AbgCTRGB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Mar 2020 13:06:01 -0400
+Received: from mail-db8eur05on2099.outbound.protection.outlook.com ([40.107.20.99]:35808
+        "EHLO EUR05-DB8-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727471AbgCTRGA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Mar 2020 13:06:00 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=l2BBN/Z1fAaQb4J5fuBeN69Qp0fvJ5AZQDiGAfFXnaNzCqO87z8xSOmO9gddHBzwvAjsU8mFRgmAH3jM4cmi/2FDsjzrKHDIMP8pn6hI8w+mh7TYrqBvXy6+FSoGUVsd9JOJUfhiv0miVWpaBl/7NMXEy+Krp4Sqk0gI/LsN9YdwNqLlcZDW6CC+urIc9QX27Dqldef824HIR6CPD1ZfGeyo2KJTy5W8TnVTZD/uZuyKtlH9J+oEwTk8FMWsRgKFjFalweg7lAozBJ0r1VDjKGbtqJqOA5KI+Rc7USb0iG2lHRb7CPWFUHVBeyDM5UlG0mhqMCHiJl5PiBkSGze9fA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=x+W39hN8Deiz1JC4Xe8tYUNA8xkl+TkZ4Y3YVLQs0q4=;
+ b=flR2LivA8ZcMQ+ChGUhHLgpFftMLG6zG3kmJLv1dz1WaqgYxUgmdhR5fl47KiBOJQUT2ciT2r3OpenZf6abqciI28+fylP4pojk1SY8BmIiCgXDsWjHgg39M028x4kjwtaXsld+He12+rU1p5qdCe9L2udu66kjYE+feGokI3/zCyYIIP1CroxCAZU/13skYq0/zEPQlYSx05ZVros1Uwb5SiZZT+3iwubL2Q7EES8EF9zYHWgbuIhF4LYJ1jhQo+SeO7uB5STmkLpCM+rGSiDX1Kf0etoGjYoTOODmBScADmIHSTWyIYPSufsbNRwXlmxXtAsHpYlm/YVceVSzOeA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=toradex.com; dmarc=pass action=none header.from=toradex.com;
+ dkim=pass header.d=toradex.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=toradex.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=x+W39hN8Deiz1JC4Xe8tYUNA8xkl+TkZ4Y3YVLQs0q4=;
+ b=i9qirCZDeLGTLCs4o7gESej/c7hJluJXuFEFqBhR6WFl6DuX4Csrqx2xLowjVolfNKH/K/A8F2GzvUqWL5en/r+Zbqkd2l/AMD1P7paM6oqU4L4SkqSoEAUDya6dp6uGKWo/DMqFp8RlrcVevaAuHjCpbdTZfB9H7Qnr4fX3Arw=
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=oleksandr.suvorov@toradex.com; 
+Received: from VI1PR05MB3279.eurprd05.prod.outlook.com (10.170.238.24) by
+ VI1PR05MB3472.eurprd05.prod.outlook.com (10.170.237.26) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2814.16; Fri, 20 Mar 2020 17:05:58 +0000
+Received: from VI1PR05MB3279.eurprd05.prod.outlook.com
+ ([fe80::7cdd:4feb:a8b6:a6d2]) by VI1PR05MB3279.eurprd05.prod.outlook.com
+ ([fe80::7cdd:4feb:a8b6:a6d2%7]) with mapi id 15.20.2835.017; Fri, 20 Mar 2020
+ 17:05:58 +0000
+X-Gm-Message-State: ANhLgQ1i68E1I2RhXov+kvq7utk7nqvHu2foPSZSKIGjE9iw2Q9z+lVJ
+        gPAD1NTI1jusRAQNbl9RTUhQbYLihTq7f5deXcw=
+X-Google-Smtp-Source: ADFU+vu5eQ0XQ2gaTaJU+0kPrD4Z2okP/4JxmWwAsKxZeiK7wqSpvMQ/y+cvk0uPde5rBNpjU4WSYadgttbhdf9vC6M=
+X-Received: by 2002:ac8:1633:: with SMTP id p48mr9494130qtj.305.1584723952240;
+ Fri, 20 Mar 2020 10:05:52 -0700 (PDT)
+References: <20191212071847.45561-1-alison.wang@nxp.com> <CAGgjyvHHzPWjRTqxYmGCmk3qa6=kOezHywVDFomgD6UNj-zwpQ@mail.gmail.com>
+ <VI1PR04MB40627CDD5F0C17D8DCDCFFE2F4550@VI1PR04MB4062.eurprd04.prod.outlook.com>
+ <VI1PR04MB4062C67906888DA8142C17E1F4550@VI1PR04MB4062.eurprd04.prod.outlook.com>
+ <CAGgjyvGAjx1SV=K66AM24DxMTA_sAF2uhhDw5gXCFTGNZi8E7Q@mail.gmail.com>
+ <VI1PR04MB40620DD55D5ED0FDC3E94C2BF4550@VI1PR04MB4062.eurprd04.prod.outlook.com>
+ <20191212122318.GB4310@sirena.org.uk> <CAJ+vNU0xZOb0R2VNkq6k3efdkgQUtO_-cEdNgZ643nt_G=vevQ@mail.gmail.com>
+ <af99c9abd9c2aec6a074fb05310c56b780725ebd.camel@toradex.com> <CAJ+vNU16ax9JTx2kSMUF8SiVD-+4KGoFO-U07xM5eE=T6Fwjhw@mail.gmail.com>
+In-Reply-To: <CAJ+vNU16ax9JTx2kSMUF8SiVD-+4KGoFO-U07xM5eE=T6Fwjhw@mail.gmail.com>
+From:   Oleksandr Suvorov <oleksandr.suvorov@toradex.com>
+Date:   Fri, 20 Mar 2020 19:05:40 +0200
+X-Gmail-Original-Message-ID: <CAGgjyvFNCbFw7x6QL063oi-fV2UuVQVfL1cv_pQ74HWoJS4Etg@mail.gmail.com>
+Message-ID: <CAGgjyvFNCbFw7x6QL063oi-fV2UuVQVfL1cv_pQ74HWoJS4Etg@mail.gmail.com>
+Subject: Re: [alsa-devel] [EXT] Re: [PATCH] ASoC: sgtl5000: Revert "ASoC:
+ sgtl5000: Fix of unmute outputs on probe"
+To:     Tim Harvey <tharvey@gateworks.com>
+Cc:     Marcel Ziswiler <marcel.ziswiler@toradex.com>,
+        "broonie@kernel.org" <broonie@kernel.org>,
+        "alison.wang@nxp.com" <alison.wang@nxp.com>,
+        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
+        "festevam@gmail.com" <festevam@gmail.com>,
+        Igor Opanyuk <igor.opanyuk@toradex.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>
+Content-Type: text/plain; charset="UTF-8"
+X-ClientProxiedBy: BL0PR1501CA0027.namprd15.prod.outlook.com
+ (2603:10b6:207:17::40) To VI1PR05MB3279.eurprd05.prod.outlook.com
+ (2603:10a6:802:1c::24)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ef4ec876-8b78-3f4a-a3fb-6dbc038e92df@infradead.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+X-MS-Exchange-MessageSentRepresentingType: 1
+Received: from mail-qt1-f170.google.com (209.85.160.170) by BL0PR1501CA0027.namprd15.prod.outlook.com (2603:10b6:207:17::40) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2835.20 via Frontend Transport; Fri, 20 Mar 2020 17:05:56 +0000
+Received: by mail-qt1-f170.google.com with SMTP id z8so5485642qto.12        for <linux-kernel@vger.kernel.org>; Fri, 20 Mar 2020 10:05:56 -0700 (PDT)
+X-Gm-Message-State: ANhLgQ1i68E1I2RhXov+kvq7utk7nqvHu2foPSZSKIGjE9iw2Q9z+lVJ
+        gPAD1NTI1jusRAQNbl9RTUhQbYLihTq7f5deXcw=
+X-Google-Smtp-Source: ADFU+vu5eQ0XQ2gaTaJU+0kPrD4Z2okP/4JxmWwAsKxZeiK7wqSpvMQ/y+cvk0uPde5rBNpjU4WSYadgttbhdf9vC6M=
+X-Received: by 2002:ac8:1633:: with SMTP id p48mr9494130qtj.305.1584723952240;
+ Fri, 20 Mar 2020 10:05:52 -0700 (PDT)
+X-Gmail-Original-Message-ID: <CAGgjyvFNCbFw7x6QL063oi-fV2UuVQVfL1cv_pQ74HWoJS4Etg@mail.gmail.com>
+X-Originating-IP: [209.85.160.170]
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 278d9382-64a1-4222-a2cc-08d7ccf0f48d
+X-MS-TrafficTypeDiagnostic: VI1PR05MB3472:
+X-Microsoft-Antispam-PRVS: <VI1PR05MB3472F61607F7D6B43AC3D12CF9F50@VI1PR05MB3472.eurprd05.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:8882;
+X-Forefront-PRVS: 03484C0ABF
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(4636009)(396003)(366004)(39850400004)(136003)(346002)(376002)(199004)(44832011)(52116002)(86362001)(6666004)(81156014)(8676002)(81166006)(478600001)(6862004)(316002)(8936002)(5660300002)(42186006)(55446002)(66476007)(9686003)(26005)(2906002)(4326008)(66556008)(54906003)(53546011)(107886003)(66946007)(55236004)(186003);DIR:OUT;SFP:1102;SCL:1;SRVR:VI1PR05MB3472;H:VI1PR05MB3279.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;
+Received-SPF: None (protection.outlook.com: toradex.com does not designate
+ permitted sender hosts)
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: s1lEOtfAg0xyGTpKIfHj0m61Q/6dtj1b2qkN1O4IuC/mHeuSAiVQoeAUllxQXRHaRWgyaIJZ4DU22CC9v4FOrScXPE6j/AekmaOYt+/Gg6tTVU+FhfmsE/CoRZ5lLVqJl2nKkB3aDIpBzsx4+xaoMoZKFkpdH0ZwnRdk5HYw4UCaw7mZw8NJfxGU4YS4/Usav+jjqjCtUpVSa/avA9Vu4GNSWyRmiQflKnVM2r0aAuI8sIUso+O57VuxZSpMbtDJInanGwz9Q/LVuFLjdtB+lEmzK3+EZxQjhfoJI2Gb7XknlvcLaq49ZDEaPBiGwWZVoyOZZJlJW1WGOvh/W8v9ySg7STljgBjIjVDWdYHkE56WA2Qr9JWU7+etfzkajkpTUmZeLt+vw9+tJ1LAeFy9FVFg5UrukeXQ8Wxv/iF7Zq/Ai9J3kSyxKspAjqK3L14w
+X-MS-Exchange-AntiSpam-MessageData: URsz3IY+TSHym8l/j30kncPakL9pAJF/mz9mGdLbMpSb4l557ePsxEqv3NSWSJdy8oor6yBLBtNYf30vT4tgyjFWv+SOBA1VIUGqdbodO9ARWuMLiw0SSC+sGDzRUnp4eM/jy+fXTBj0MuXcrICdOg==
+X-OriginatorOrg: toradex.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 278d9382-64a1-4222-a2cc-08d7ccf0f48d
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Mar 2020 17:05:56.5983
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: d9995866-0d9b-4251-8315-093f062abab4
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: ahB78RQ356NzzQ96iEtquk68Jw3mjlf6P8ZeyY+Q8L12F0RzBrFllY3lfmo6aDR0IQOw+9vzkOOy5FjVdpBIWSlSI2KNz2JWqd33nEGABWY=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR05MB3472
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 20, 2020 at 09:34:13AM -0700, Randy Dunlap wrote:
-> On 3/20/20 9:26 AM, Paul E. McKenney wrote:
-> > On Fri, Mar 20, 2020 at 04:38:54PM +0100, Dmitry Vyukov wrote:
-> >> On Thu, Mar 19, 2020 at 4:04 PM Paul E. McKenney <paulmck@kernel.org> wrote:
-> >>>
-> >>> On Thu, Mar 19, 2020 at 08:13:35AM +0100, Dmitry Vyukov wrote:
-> >>>> On Wed, Mar 18, 2020 at 10:41 PM Paul E. McKenney <paulmck@kernel.org> wrote:
-> >>>>>
-> >>>>> On Wed, Mar 18, 2020 at 09:54:07PM +0100, Dmitry Vyukov wrote:
-> >>>>>> On Wed, Mar 18, 2020 at 5:57 PM syzbot
-> >>>>>> <syzbot+792dec47d693ccdc05a0@syzkaller.appspotmail.com> wrote:
-> >>>>>>>
-> >>>>>>> Hello,
-> >>>>>>>
-> >>>>>>> syzbot found the following crash on:
-> >>>>>>>
-> >>>>>>> HEAD commit:    47780d78 Add linux-next specific files for 20200318
-> >>>>>>> git tree:       linux-next
-> >>>>>>> console output: https://syzkaller.appspot.com/x/log.txt?x=14228745e00000
-> >>>>>>> kernel config:  https://syzkaller.appspot.com/x/.config?x=b68b7b89ad96c62a
-> >>>>>>> dashboard link: https://syzkaller.appspot.com/bug?extid=792dec47d693ccdc05a0
-> >>>>>>> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-> >>>>>>>
-> >>>>>>> Unfortunately, I don't have any reproducer for this crash yet.
-> >>>>>>>
-> >>>>>>> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> >>>>>>> Reported-by: syzbot+792dec47d693ccdc05a0@syzkaller.appspotmail.com
-> >>>>>>>
-> >>>>>>> kernel/rcu/tasks.h:1070:37: error: 'rcu_tasks_rude' undeclared (first use in this function); did you mean 'rcu_tasks_qs'?
-> >>>>>>
-> >>>>>> +rcu maintainers
-> >>>>>
-> >>>>> The kbuild test robot beat you to it, and apologies for the hassle.
-> >>>>> Fixed in -rcu on current "dev" branch.
-> >>>>
-> >>>> If the kernel dev process would only have a way to avoid dups from all
-> >>>> test systems...
-> >>>
-> >>> I do significant testing before pushing to -next, but triggering this
-> >>> one requires a combination of Kconfig options that are incompatible
-> >>> with rcutorture.  :-/
-> >>>
-> >>> I suppose one strategy would be to give kbuild test robot some time before
-> >>> passing to -next, but they seem to sometimes get too far behind for me to
-> >>> be willing to wait that long.  So my current approach is to push my "dev"
-> >>> branch, run moderate rcutorture testing (three hours per scenario other
-> >>> than TREE10, which gets only one hour), and if that passes, push to -next.
-> >>>
-> >>> I suppose that I could push to -next only commits that are at least three
-> >>> days old or some such.  But I get in trouble pushing to -next too slowly
-> >>> as often as I get in trouble pushing too quickly, so I suspect that my
-> >>> current approach is in roughly the right place.
-> >>>
-> >>>> Now we need to spend time and deal with it. What has fixed it?
-> >>>
-> >>> It is fixed by commit c6ef38e4d595 ("rcu-tasks: Add RCU tasks to
-> >>> rcutorture writer stall output") and some of its predecessors.
-> >>>
-> >>> Perhaps more useful to you, this commit is included in next-20200319
-> >>> from the -next tree.  ;-)
-> >>
-> >> Let's tell syzbot about the fix:
-> >>
-> >> #syz fix: rcu-tasks: Add RCU tasks to rcutorture writer stall output
-> >>
-> >> I think what you are doing is the best possible option in the current situation.
-> >> I don't think requiring all human maintainers to do more manual
-> >> repetitive work, which is not well defined and even without a way to
-> >> really require something from them is scalable nor reliable nor the
-> >> right approach.
-> > 
-> > Thank you, and I do greatly appreciate the automation!
-> > 
-> >> We would consume something like LKGR [1] if it existed for the kernel.
-> >> But it would require tighter integration of testing systems with
-> >> kernel dev processes, or of course throwing more manual labor at it to
-> >> track all uncoordinated testing systems and publishing LKGR tags.
-> >>
-> >> [1] https://chromium.googlesource.com/chromiumos/docs/+/master/glossary.md
-> > 
-> > At my end, it is pretty quick and easy to detect duplicate notifications
-> > of the same bug, so the current situation isn't causing me undue distress.
-> 
-> Yeah, I saw the same build error and did-not-report it since it was
-> already reported.  :)
+On Fri, Mar 20, 2020 at 5:51 PM Tim Harvey <tharvey@gateworks.com> wrote:
+>
+> On Fri, Mar 20, 2020 at 12:26 AM Marcel Ziswiler
+> <marcel.ziswiler@toradex.com> wrote:
+> >
+> > Hi Tim
+> >
+> > On Thu, 2020-03-19 at 13:49 -0700, Tim Harvey wrote:
+> > > On Thu, Dec 12, 2019 at 4:24 AM Mark Brown <broonie@kernel.org>
+> > > wrote:
+> > > > On Thu, Dec 12, 2019 at 10:46:31AM +0000, Alison Wang wrote:
+> > > >
+> > > > > We tested this standard solution using gstreamer and standard
+> > > > > ALSA
+> > > > > tools like aplay, arecord and all these tools unmute needed
+> > > > > blocks
+> > > > > successfully.
+> > > > > [Alison Wang] I am using aplay. Do you mean I need to add some
+> > > > > parameters for aplay or others to unmute the outputs?
+> > > >
+> > > > Use amixer.
+> > >
+> > > Marc / Oleksandr,
+> > >
+> > > I can't seem to find the original patch in my mailbox for 631bc8f:
+> > > ('ASoC: sgtl5000: Fix of unmute outputs on probe')
+> >
+> > I forwarded you that one again. OK?
+> >
+> > > however I find it
+> > > breaks sgtl5000 audio output on the Gateworks boards which is still
+> > > broken on 5.6-rc6.
+> >
+> > What exactly do you mean by "breaks"? Isn't it that you just need to
+> > unmute stuff e.g. using amixer or using a proper updated asound.state
+> > file with default states for your controls?
+>
+> the audio device is in /proc/asound/cards but when I send audio to it
+> I 'hear' nothing out the normal line-out output.
+>
+> >
+> > > Was there some follow-up patches that haven't made
+> > > it into mainline yet regarding this?
+> >
+> > I don't think so. It all works perfectly, not?
+> >
+> > > The response above indicates maybe there was an additional ALSA
+> > > control perhaps added as a resolution but I don't see any differences
+> > > there.
+> >
+> > Not that I am aware of, no.
+> >
+>
+> The output of 'amixer' shows nothing different than before this patch
+> where audio out worked (same controls, same settings on them). I'm
+> testing this with a buildroot rootfs with no asound.conf (or at least
+> none that I know of... i'm honestly not clear where all they can be).
 
-Much appreciated!  ;-)
+Tim, did you try to unmute the output with amixer?
 
-							Thanx, Paul
+Could you provide the output of your amixer with and without this patch?
+
+Before this patch, the driver unmuted HP, LO, and ADC unconditionally
+on load (while it just had to set up ZCD bits).
+Now HP, LO, ADC remain muted until one unmutes them using standard
+ALSA tools/interfaces.
+ALSA mute/unmute controls for these outputs have been presenting in
+the kernel for a long time. Please, just use them.
+
+>
+> Tim
+--
+Best regards
+Oleksandr Suvorov
+
+Toradex AG
+Ebenaustrasse 10 | 6048 Horw | Switzerland | T: +41 41 500 48 00
