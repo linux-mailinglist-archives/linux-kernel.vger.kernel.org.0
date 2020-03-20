@@ -2,28 +2,28 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2F27118DA6E
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 22:32:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D38C618DA6A
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 22:31:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727806AbgCTVbq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Mar 2020 17:31:46 -0400
-Received: from mga01.intel.com ([192.55.52.88]:48428 "EHLO mga01.intel.com"
+        id S1727793AbgCTVbk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Mar 2020 17:31:40 -0400
+Received: from mga01.intel.com ([192.55.52.88]:48429 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726997AbgCTV2o (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Mar 2020 17:28:44 -0400
-IronPort-SDR: tnL6tuAWNevl0qJiqtU2E0A/1l2fWbHkkfUUlzqhF9mIyBhT3csFq2t6n7gBbVepIpm6f8xqxd
- Ba18/J4IOfDg==
+        id S1727128AbgCTV2p (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Mar 2020 17:28:45 -0400
+IronPort-SDR: i4s+z7Y6+bAk85agMVrJit9C4JmAguDyae4BYTu5nBRaSYARAvjzwC/PL4A273AtmV/5SVlhhF
+ 16P6ok2Ue6HQ==
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Mar 2020 14:28:44 -0700
-IronPort-SDR: GgzhgFJ4XUl5noxICaWa2SN0uxpcn1W6h3igoCoQQ8L+cl+A/zk9pac6Qip3Q1JpBZux4IzanA
- 0YvTWbv4RuWA==
+  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Mar 2020 14:28:45 -0700
+IronPort-SDR: Ri1CUDQfhkEk7R8e0zAt8uCD3NG2kRKcNu47b6aobzCQXJ8+kBkoIiIv83g1MafQBM5WbvThUV
+ 8wIDHxPGBDCg==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.72,286,1580803200"; 
-   d="scan'208";a="269224402"
+   d="scan'208";a="269224411"
 Received: from sjchrist-coffee.jf.intel.com ([10.54.74.202])
-  by fmsmga004.fm.intel.com with ESMTP; 20 Mar 2020 14:28:43 -0700
+  by fmsmga004.fm.intel.com with ESMTP; 20 Mar 2020 14:28:44 -0700
 From:   Sean Christopherson <sean.j.christopherson@intel.com>
 To:     Paolo Bonzini <pbonzini@redhat.com>
 Cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
@@ -38,9 +38,9 @@ Cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
         John Haxby <john.haxby@oracle.com>,
         Miaohe Lin <linmiaohe@huawei.com>,
         Tom Lendacky <thomas.lendacky@amd.com>
-Subject: [PATCH v3 03/37] KVM: nVMX: Invalidate all EPTP contexts when emulating INVEPT for L1
-Date:   Fri, 20 Mar 2020 14:27:59 -0700
-Message-Id: <20200320212833.3507-4-sean.j.christopherson@intel.com>
+Subject: [PATCH v3 05/37] KVM: x86: Export kvm_propagate_fault() (as kvm_inject_emulated_page_fault)
+Date:   Fri, 20 Mar 2020 14:28:01 -0700
+Message-Id: <20200320212833.3507-6-sean.j.christopherson@intel.com>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20200320212833.3507-1-sean.j.christopherson@intel.com>
 References: <20200320212833.3507-1-sean.j.christopherson@intel.com>
@@ -51,48 +51,70 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Free all L2 (guest_mmu) roots when emulating INVEPT for L1.  Outstanding
-changes to the EPT tables managed by L1 need to be recognized, and
-relying on KVM to always flush L2's EPTP context on nested VM-Enter is
-dangerous.
+Export the page fault propagation helper so that VMX can use it to
+correctly emulate TLB invalidation on page faults in an upcoming patch.
 
-Similar to handle_invpcid(), rely on kvm_mmu_free_roots() to do a remote
-TLB flush if necessary, e.g. if L1 has never entered L2 then there is
-nothing to be done.
+In the (hopefully) not-too-distant future, SGX virtualization will also
+want access to the helper for injecting page faults to the correct level
+(L1 vs. L2) when emulating ENCLS instructions.
 
-Nuking all L2 roots is overkill for the single-context variant, but it's
-the safe and easy bet.  A more precise zap mechanism will be added in
-the future.  Add a TODO to call out that KVM only needs to invalidate
-affected contexts.
+Rename the function to kvm_inject_emulated_page_fault() to clarify that
+it is (a) injecting a fault and (b) only for page faults.  WARN if it's
+invoked with an exception other than PF_VECTOR.
 
-Fixes: b119019847fbc ("kvm: nVMX: Remove unnecessary sync_roots from handle_invept")
-Reported-by: Jim Mattson <jmattson@google.com>
 Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
 ---
- arch/x86/kvm/vmx/nested.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ arch/x86/include/asm/kvm_host.h | 2 ++
+ arch/x86/kvm/x86.c              | 8 ++++++--
+ 2 files changed, 8 insertions(+), 2 deletions(-)
 
-diff --git a/arch/x86/kvm/vmx/nested.c b/arch/x86/kvm/vmx/nested.c
-index f3774cef4fd4..9624cea4ed9f 100644
---- a/arch/x86/kvm/vmx/nested.c
-+++ b/arch/x86/kvm/vmx/nested.c
-@@ -5160,12 +5160,12 @@ static int handle_invept(struct kvm_vcpu *vcpu)
- 		if (!nested_vmx_check_eptp(vcpu, operand.eptp))
- 			return nested_vmx_failValid(vcpu,
- 				VMXERR_INVALID_OPERAND_TO_INVEPT_INVVPID);
+diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
+index 9a183e9d4cb1..328b1765ff76 100644
+--- a/arch/x86/include/asm/kvm_host.h
++++ b/arch/x86/include/asm/kvm_host.h
+@@ -1447,6 +1447,8 @@ void kvm_queue_exception_e(struct kvm_vcpu *vcpu, unsigned nr, u32 error_code);
+ void kvm_requeue_exception(struct kvm_vcpu *vcpu, unsigned nr);
+ void kvm_requeue_exception_e(struct kvm_vcpu *vcpu, unsigned nr, u32 error_code);
+ void kvm_inject_page_fault(struct kvm_vcpu *vcpu, struct x86_exception *fault);
++bool kvm_inject_emulated_page_fault(struct kvm_vcpu *vcpu,
++				    struct x86_exception *fault);
+ int kvm_read_guest_page_mmu(struct kvm_vcpu *vcpu, struct kvm_mmu *mmu,
+ 			    gfn_t gfn, void *data, int offset, int len,
+ 			    u32 access);
+diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+index e54c6ad628a8..64ed6e6e2b56 100644
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -611,8 +611,11 @@ void kvm_inject_page_fault(struct kvm_vcpu *vcpu, struct x86_exception *fault)
+ }
+ EXPORT_SYMBOL_GPL(kvm_inject_page_fault);
+ 
+-static bool kvm_propagate_fault(struct kvm_vcpu *vcpu, struct x86_exception *fault)
++bool kvm_inject_emulated_page_fault(struct kvm_vcpu *vcpu,
++				    struct x86_exception *fault)
+ {
++	WARN_ON_ONCE(fault->vector != PF_VECTOR);
 +
-+		/* TODO: sync only the target EPTP context. */
- 		fallthrough;
- 	case VMX_EPT_EXTENT_GLOBAL:
--	/*
--	 * TODO: Sync the necessary shadow EPT roots here, rather than
--	 * at the next emulated VM-entry.
--	 */
-+		kvm_mmu_free_roots(vcpu, &vcpu->arch.guest_mmu,
-+				   KVM_MMU_ROOTS_ALL);
- 		break;
- 	default:
- 		BUG_ON(1);
+ 	if (mmu_is_nested(vcpu) && !fault->nested_page_fault)
+ 		vcpu->arch.nested_mmu.inject_page_fault(vcpu, fault);
+ 	else
+@@ -620,6 +623,7 @@ static bool kvm_propagate_fault(struct kvm_vcpu *vcpu, struct x86_exception *fau
+ 
+ 	return fault->nested_page_fault;
+ }
++EXPORT_SYMBOL_GPL(kvm_inject_emulated_page_fault);
+ 
+ void kvm_inject_nmi(struct kvm_vcpu *vcpu)
+ {
+@@ -6373,7 +6377,7 @@ static bool inject_emulated_exception(struct kvm_vcpu *vcpu)
+ {
+ 	struct x86_emulate_ctxt *ctxt = vcpu->arch.emulate_ctxt;
+ 	if (ctxt->exception.vector == PF_VECTOR)
+-		return kvm_propagate_fault(vcpu, &ctxt->exception);
++		return kvm_inject_emulated_page_fault(vcpu, &ctxt->exception);
+ 
+ 	if (ctxt->exception.error_code_valid)
+ 		kvm_queue_exception_e(vcpu, ctxt->exception.vector,
 -- 
 2.24.1
 
