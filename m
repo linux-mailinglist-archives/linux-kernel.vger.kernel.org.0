@@ -2,155 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 271A818C4D2
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 02:42:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6096218C4E7
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 02:50:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727441AbgCTBl6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 21:41:58 -0400
-Received: from alexa-out-sd-02.qualcomm.com ([199.106.114.39]:44241 "EHLO
-        alexa-out-sd-02.qualcomm.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727447AbgCTBl2 (ORCPT
+        id S1727318AbgCTBt7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 21:49:59 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:38370 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726726AbgCTBt6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 21:41:28 -0400
-Received: from unknown (HELO ironmsg02-sd.qualcomm.com) ([10.53.140.142])
-  by alexa-out-sd-02.qualcomm.com with ESMTP; 19 Mar 2020 18:41:26 -0700
-Received: from gurus-linux.qualcomm.com ([10.46.162.81])
-  by ironmsg02-sd.qualcomm.com with ESMTP; 19 Mar 2020 18:41:26 -0700
-Received: by gurus-linux.qualcomm.com (Postfix, from userid 383780)
-        id 176744940; Thu, 19 Mar 2020 18:41:26 -0700 (PDT)
-From:   Guru Das Srinagesh <gurus@codeaurora.org>
-To:     linux-pwm@vger.kernel.org
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>,
-        Subbaraman Narayanamurthy <subbaram@codeaurora.org>,
-        linux-kernel@vger.kernel.org,
-        Guru Das Srinagesh <gurus@codeaurora.org>
-Subject: [PATCH v11 12/12] pwm: core: Convert period and duty cycle to u64
-Date:   Thu, 19 Mar 2020 18:41:23 -0700
-Message-Id: <116b72faa1b2db1e51cf4fceae4a01630be7d148.1584667964.git.gurus@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <cover.1584667964.git.gurus@codeaurora.org>
-References: <cover.1584667964.git.gurus@codeaurora.org>
-In-Reply-To: <cover.1584667964.git.gurus@codeaurora.org>
-References: <cover.1584667964.git.gurus@codeaurora.org>
+        Thu, 19 Mar 2020 21:49:58 -0400
+Received: by mail-pf1-f194.google.com with SMTP id z5so2424387pfn.5
+        for <linux-kernel@vger.kernel.org>; Thu, 19 Mar 2020 18:49:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ETiO7XhZXke6GDuUI6KgWzLWxeC6pDtcPaOKYiXplXI=;
+        b=m4sQ4Ar/8AeFnghpsJxl9gzWUZo4dkOoUwggHTi6im5WlyMNlukpG8VR0Q2/aUzlme
+         02l5QGH1Xrq+7tg/kjZPFQHGm7wKWT3JWEVQlGcCjcWqtMDhhJahpUJPnJ5E0aDmdeuK
+         swdqraUeWGR9It54oI3HvYrX+c4TDyHbXzs9Q=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ETiO7XhZXke6GDuUI6KgWzLWxeC6pDtcPaOKYiXplXI=;
+        b=DR2oBIQyXP1g7f3kwy0dVGldm5b3aEty4QbIZyp0rlIRmOlX+svt+pYVYJ323NwpMd
+         Jz39rqJ42radzT+UJR2o1QAHdXlXT1sESr6TOaGirZuLQnCXk4lOg/pSpE4CTQSIkS5A
+         Nr0jwAJTXc0Cdvbcxn02u2/Y1mj7ThQFFfrdbG80EqKyFA0HUGZ9xZ1qL9pTKDRsHN1v
+         zN5jju02mHBG8qUx6q1RjmlIgF7xXPVUve09QW7MylQBooKSXPl2cVeVAaP7USCEIZjL
+         TRCQ3PjP5UyN/srMOLuywSeDW1l6z6i+KjLNcNwB3A8YDSdqxR9Dhlx0QGjfmSK13fye
+         kBUw==
+X-Gm-Message-State: ANhLgQ0zEQlRTi4Iokc2HGrk6jQHiajHyFfo+Jko5aWastB3kUMHEWH+
+        FXj+pa9qZKiOluMHdS/khJ7u4cfpGBY=
+X-Google-Smtp-Source: ADFU+vvuzGeaFQfV3LmVCl2fYFHJkCPG3vQj22hjOiMNGRgRkQ8YWCLc+24CB5sgyp+JeL/7tHgiqQ==
+X-Received: by 2002:a62:1946:: with SMTP id 67mr7337219pfz.0.1584668997488;
+        Thu, 19 Mar 2020 18:49:57 -0700 (PDT)
+Received: from apsdesk.mtv.corp.google.com ([2620:15c:202:1:e09a:8d06:a338:aafb])
+        by smtp.gmail.com with ESMTPSA id y9sm3450235pgo.80.2020.03.19.18.49.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 19 Mar 2020 18:49:57 -0700 (PDT)
+From:   Abhishek Pandit-Subedi <abhishekpandit@chromium.org>
+To:     marcel@holtmann.org, luiz.dentz@gmail.com
+Cc:     linux-bluetooth@vger.kernel.org,
+        chromeos-bluetooth-upstreaming@chromium.org,
+        Abhishek Pandit-Subedi <abhishekpandit@chromium.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Johan Hedberg <johan.hedberg@gmail.com>,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jakub Kicinski <kuba@kernel.org>
+Subject: [RFC PATCH 0/1] Bluetooth: Set wakeable flag via add_device
+Date:   Thu, 19 Mar 2020 18:49:48 -0700
+Message-Id: <20200320014950.85018-1-abhishekpandit@chromium.org>
+X-Mailer: git-send-email 2.25.1.696.g5e7596f4ac-goog
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Because period and duty cycle are defined as ints with units of
-nanoseconds, the maximum time duration that can be set is limited to
-~2.147 seconds. Change their definitions to u64 in the structs of the
-PWM framework so that higher durations may be set.
 
-Signed-off-by: Guru Das Srinagesh <gurus@codeaurora.org>
----
- drivers/pwm/core.c  |  4 ++--
- drivers/pwm/sysfs.c |  8 ++++----
- include/linux/pwm.h | 12 ++++++------
- 3 files changed, 12 insertions(+), 12 deletions(-)
+Hi Marcel and Luiz,
 
-diff --git a/drivers/pwm/core.c b/drivers/pwm/core.c
-index 5a7f659..81aa3c2 100644
---- a/drivers/pwm/core.c
-+++ b/drivers/pwm/core.c
-@@ -1163,8 +1163,8 @@ static void pwm_dbg_show(struct pwm_chip *chip, struct seq_file *s)
- 		if (state.enabled)
- 			seq_puts(s, " enabled");
- 
--		seq_printf(s, " period: %u ns", state.period);
--		seq_printf(s, " duty: %u ns", state.duty_cycle);
-+		seq_printf(s, " period: %llu ns", state.period);
-+		seq_printf(s, " duty: %llu ns", state.duty_cycle);
- 		seq_printf(s, " polarity: %s",
- 			   state.polarity ? "inverse" : "normal");
- 
-diff --git a/drivers/pwm/sysfs.c b/drivers/pwm/sysfs.c
-index 2389b86..449dbc0 100644
---- a/drivers/pwm/sysfs.c
-+++ b/drivers/pwm/sysfs.c
-@@ -42,7 +42,7 @@ static ssize_t period_show(struct device *child,
- 
- 	pwm_get_state(pwm, &state);
- 
--	return sprintf(buf, "%u\n", state.period);
-+	return sprintf(buf, "%llu\n", state.period);
- }
- 
- static ssize_t period_store(struct device *child,
-@@ -52,10 +52,10 @@ static ssize_t period_store(struct device *child,
- 	struct pwm_export *export = child_to_pwm_export(child);
- 	struct pwm_device *pwm = export->pwm;
- 	struct pwm_state state;
--	unsigned int val;
-+	u64 val;
- 	int ret;
- 
--	ret = kstrtouint(buf, 0, &val);
-+	ret = kstrtou64(buf, 0, &val);
- 	if (ret)
- 		return ret;
- 
-@@ -77,7 +77,7 @@ static ssize_t duty_cycle_show(struct device *child,
- 
- 	pwm_get_state(pwm, &state);
- 
--	return sprintf(buf, "%u\n", state.duty_cycle);
-+	return sprintf(buf, "%llu\n", state.duty_cycle);
- }
- 
- static ssize_t duty_cycle_store(struct device *child,
-diff --git a/include/linux/pwm.h b/include/linux/pwm.h
-index 0ef808d..b53f13d 100644
---- a/include/linux/pwm.h
-+++ b/include/linux/pwm.h
-@@ -39,7 +39,7 @@ enum pwm_polarity {
-  * current PWM hardware state.
-  */
- struct pwm_args {
--	unsigned int period;
-+	u64 period;
- 	enum pwm_polarity polarity;
- };
- 
-@@ -56,8 +56,8 @@ enum {
-  * @enabled: PWM enabled status
-  */
- struct pwm_state {
--	unsigned int period;
--	unsigned int duty_cycle;
-+	u64 period;
-+	u64 duty_cycle;
- 	enum pwm_polarity polarity;
- 	bool enabled;
- };
-@@ -105,13 +105,13 @@ static inline bool pwm_is_enabled(const struct pwm_device *pwm)
- 	return state.enabled;
- }
- 
--static inline void pwm_set_period(struct pwm_device *pwm, unsigned int period)
-+static inline void pwm_set_period(struct pwm_device *pwm, u64 period)
- {
- 	if (pwm)
- 		pwm->state.period = period;
- }
- 
--static inline unsigned int pwm_get_period(const struct pwm_device *pwm)
-+static inline u64 pwm_get_period(const struct pwm_device *pwm)
- {
- 	struct pwm_state state;
- 
-@@ -126,7 +126,7 @@ static inline void pwm_set_duty_cycle(struct pwm_device *pwm, unsigned int duty)
- 		pwm->state.duty_cycle = duty;
- }
- 
--static inline unsigned int pwm_get_duty_cycle(const struct pwm_device *pwm)
-+static inline u64 pwm_get_duty_cycle(const struct pwm_device *pwm)
- {
- 	struct pwm_state state;
- 
+As suggested, I've updated the add_device mgmt op to accept flags on the
+device and added support for the wakeable flag. I've prototyped an
+implementation in Bluez as well that will send the mask + value on any
+add_device and then clear it on the add_device completion.
+
+This seems to work fairly well and allows updating flags during runtime
+as well (for example, via dbus property setting).
+
+Please take a look. I will also send up the Bluez changes so you can
+look at how userspace would use this.
+
+Thanks
+Abhishek
+
+
+
+Abhishek Pandit-Subedi (1):
+  Bluetooth: Update add_device to accept flags
+
+ include/net/bluetooth/mgmt.h |  5 ++++-
+ net/bluetooth/mgmt.c         | 42 +++++++++++++++++++++++++++++++++++-
+ 2 files changed, 45 insertions(+), 2 deletions(-)
+
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.25.1.696.g5e7596f4ac-goog
 
