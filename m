@@ -2,87 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DA7FC18D164
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 15:47:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9088818D16D
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 15:47:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727226AbgCTOrA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Mar 2020 10:47:00 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40046 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726913AbgCTOrA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Mar 2020 10:47:00 -0400
-Received: from localhost (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 326BD20714;
-        Fri, 20 Mar 2020 14:46:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584715619;
-        bh=EkWxp6DOsISjV04sDISIAHdyAJaajF7MydZzKwlbcuQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=W7LjqDAg8NykX6zsT1JTH+tARE5M4KboA4UGxmkUj0wIpzzJEBJwfL/9AWnVgJTD1
-         /2hMIzIvD/GmLKIN3xvUnbQ7kuxao9s+6dP0ZcWvT8jQw2wq+/X/YtBFBOXRdoLvuf
-         mlbqM3Kb+yHUAaRpq6K7R0hWTiAlKy87UBvitK6M=
-Date:   Fri, 20 Mar 2020 10:46:58 -0400
-From:   Sasha Levin <sashal@kernel.org>
-To:     Guenter Roeck <linux@roeck-us.net>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org, Kevin Hao <haokexin@gmail.com>
-Subject: Re: [PATCH 5.5 00/65] 5.5.11-rc1 review
-Message-ID: <20200320144658.GK4189@sasha-vm>
-References: <20200319123926.466988514@linuxfoundation.org>
- <fcf6db4c-cebe-9ad3-9f19-00d49a7b1043@roeck-us.net>
- <20200319145900.GC92193@kroah.com>
- <32c627bf-0e6b-8bc4-88d3-032a69484aa6@roeck-us.net>
+        id S1727417AbgCTOrU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Mar 2020 10:47:20 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:45145 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726913AbgCTOrS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Mar 2020 10:47:18 -0400
+Received: by mail-pf1-f193.google.com with SMTP id j10so3317028pfi.12;
+        Fri, 20 Mar 2020 07:47:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=lzqksOZo9oKzssQWd4+TCqMTVJHNfIm+9Q0SEfaLBjU=;
+        b=jvK6zIz+Qr1G8bcWBVBwn3UfzcaK9sRBJks8raIHNoHYfHO2DmiGRVxPhd4Zu5DrCz
+         ssEKRSg6XEUN2Bh1T3t8FxP+2Llw4OryQC/PYqdtuX2VGcpgpXUJOggqoxLEX14U+Ycg
+         LuBarYM6L87ZRlUuDNsMpGMqd9Lb0heHLMtAbs43E7wHfpmR6nmXZQONvOHiQl54CxGC
+         FbYDgx36/VNKIJit0ypjsiN2/VZSsJQdz4/Mwai+3I0nY+qHqo5TS73yp5yHMdK5Qlep
+         kuFS3nbtw7pZAsbQO+unr7n7vI9tW6NkdNc+MtzoBeK6iS8kQ/6WAkOhGDlo0f0qjuhv
+         Qn5Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=lzqksOZo9oKzssQWd4+TCqMTVJHNfIm+9Q0SEfaLBjU=;
+        b=U5ck6+lKlgn5sTOS5RWvgpsCNcJXPaHjnWkqQU1h1GU6ZY7YR/YtKJaq/xELTmo7+H
+         aTrxPs/1yuSrMx+tDzdd4BpBR3gkjY9/iEpf+qcWKTrS554suBY+H2NCKz8utLTGa7H+
+         0uqqxV3yLvKEmIw9765/E/KTYlRY+ko/tnoeCg7HOwJQzNrewJg5aCWxc3N9gJznTAEP
+         SGbJqu7clSt3/osBYr+skzxiuqLqRQI3YnZuUoVgdAMBnAd3ekffZCg7nzCppopSmjra
+         PqxlKei2M/AWTkFJ/nOkeQd1rNlT2IgzAtuVcZDfwfAxnIQhBh0RI34faWQI6zJWFx4Q
+         zPuQ==
+X-Gm-Message-State: ANhLgQ0sgjdP5uJfn7kQg/7n9J4P5lEe9bxQQhopwtfSRDfIIepf2szt
+        eBXcz4PkzABVgVx7ZZxseX2hdKXW6jvw0upGOaw=
+X-Google-Smtp-Source: ADFU+vtsQgQOnLRlTrTgGM50EY41vnr51HFNUk9V7349gPUFHWyFKZzvnxnlkchBu6NONcJcSUPuUU7T2einYPojAXw=
+X-Received: by 2002:aa7:9348:: with SMTP id 8mr10286496pfn.36.1584715637228;
+ Fri, 20 Mar 2020 07:47:17 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <32c627bf-0e6b-8bc4-88d3-032a69484aa6@roeck-us.net>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20200320131345.635023594@linutronix.de> <20200320131509.467730627@linutronix.de>
+In-Reply-To: <20200320131509.467730627@linutronix.de>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Fri, 20 Mar 2020 16:47:10 +0200
+Message-ID: <CAHp75VcK3tL0YayjF=CSkSkHiOpg2zOV3rdkXQWJmLZ9fmevpg@mail.gmail.com>
+Subject: Re: [patch 08/22] ACPI: Convert to new X86 CPU match macros
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Mark Gross <mgross@linux.intel.com>,
+        Tony Luck <tony.luck@intel.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+        linux-edac@vger.kernel.org,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        Jean Delvare <jdelvare@suse.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        linux-hwmon@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Amit Kucheria <amit.kucheria@verdurent.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Jacob Pan <jacob.jun.pan@linux.intel.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        linux-mmc <linux-mmc@vger.kernel.org>,
+        Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
+        Takashi Iwai <tiwai@suse.com>,
+        ALSA Development Mailing List <alsa-devel@alsa-project.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        linux-crypto <linux-crypto@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 19, 2020 at 08:15:40AM -0700, Guenter Roeck wrote:
->On 3/19/20 7:59 AM, Greg Kroah-Hartman wrote:
->> On Thu, Mar 19, 2020 at 07:44:33AM -0700, Guenter Roeck wrote:
->>> On 3/19/20 6:03 AM, Greg Kroah-Hartman wrote:
->>>> This is the start of the stable review cycle for the 5.5.11 release.
->>>> There are 65 patches in this series, all will be posted as a response
->>>> to this one.  If anyone has any issues with these being applied, please
->>>> let me know.
->>>>
->>>> Responses should be made by Sat, 21 Mar 2020 12:37:04 +0000.
->>>> Anything received after that time might be too late.
->>>>
->>>
->>> arm:davinci_all_defconfig fails to build.
->>>
->>> include/linux/gpio/driver.h: In function 'gpiochip_populate_parent_fwspec_twocell':
->>> include/linux/gpio/driver.h:552:1: error: no return statement in function returning non-void [-Werror=return-type]
->>>   552 | }
->>>
->>> The problem is caused by commit 8db6a5905e98 ("gpiolib: Add support for the
->>> irqdomain which doesn't use irq_fwspec as arg") which is missing its fix,
->>> commit 9c6722d85e922 ("gpio: Fix the no return statement warning"). That one
->>> is missing a Fixes: tag, providing a good example why such tags are desirable.
->>
->> Thanks for letting me know, I've now dropped that patch (others
->> complained about it for other reasons) and will push out a -rc2 with
->> that fix.
->>
+On Fri, Mar 20, 2020 at 3:19 PM Thomas Gleixner <tglx@linutronix.de> wrote:
 >
->I did wonder why the offending patch was included, but then I figured that
->I lost the "we apply too many patches to stable releases" battle, and I didn't
->want to re-litigate it.
+> The new macro set has a consistent namespace and uses C99 initializers
+> instead of the grufty C89 ones.
+>
+> Rename the local macro wrapper to X86_MATCH for consistency. It stays for
+> readability sake.
 
-I usually much rather take prerequisite patches rather than do
-backports, which is why that patch was selected.
+> +       X86_MATCH_INTEL_FAM6_MODEL(ATOM_SILVERMONT,     NULL),
+> +       X86_MATCH_INTEL_FAM6_MODEL(ATOM_AIRMONT,        NULL),
+
+> -#define ICPU(model)    { X86_VENDOR_INTEL, 6, model, X86_FEATURE_ANY, }
+> +#define X86_MATCH(model)       X86_MATCH_INTEL_FAM6_MODEL(model, NULL)
+
+Maybe we can do a generic macro to avoid all these ', NULL' repetitions?
 
 -- 
-Thanks,
-Sasha
+With Best Regards,
+Andy Shevchenko
