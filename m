@@ -2,118 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F196A18D61D
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 18:42:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ED57818D622
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 18:43:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727026AbgCTRmu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Mar 2020 13:42:50 -0400
-Received: from us-smtp-delivery-74.mimecast.com ([63.128.21.74]:51336 "EHLO
-        us-smtp-delivery-74.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726829AbgCTRmu (ORCPT
+        id S1727231AbgCTRnK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Mar 2020 13:43:10 -0400
+Received: from outbound-smtp04.blacknight.com ([81.17.249.35]:39483 "EHLO
+        outbound-smtp04.blacknight.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726974AbgCTRnJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Mar 2020 13:42:50 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1584726169;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc; bh=ef36637kDnXkE6FllS0yNPka1X9FChEYgiakf6+7Z7c=;
-        b=EXteLxpIPtvpvuZEpCDVmeV2uOacj9OqidEjQBwSo0KCmWWQ8kt2vqFUnpSZGwDt0yEMd3
-        IRCpOHiMq2I+M9RalrsJjo1bcIAnPTyQ9bP3KfBYw0td4tJtvxq6TSJhqqMLl4iElLatZD
-        5fLn436FeLEV6dUcK5301FNIwD8T+uE=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-308-JCGm1F3lNn-DLjAE_M3WPg-1; Fri, 20 Mar 2020 13:42:47 -0400
-X-MC-Unique: JCGm1F3lNn-DLjAE_M3WPg-1
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 97C389B823;
-        Fri, 20 Mar 2020 17:42:46 +0000 (UTC)
-Received: from virtlab701.virt.lab.eng.bos.redhat.com (virtlab701.virt.lab.eng.bos.redhat.com [10.19.152.228])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 3932D19757;
-        Fri, 20 Mar 2020 17:42:46 +0000 (UTC)
-From:   Paolo Bonzini <pbonzini@redhat.com>
-To:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Cc:     Brijesh Singh <brijesh.singh@amd.com>
-Subject: [PATCH] KVM: SVM: document KVM_MEM_ENCRYPT_OP, let userspace detect if SEV is available
-Date:   Fri, 20 Mar 2020 13:42:45 -0400
-Message-Id: <20200320174245.5220-1-pbonzini@redhat.com>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+        Fri, 20 Mar 2020 13:43:09 -0400
+Received: from mail.blacknight.com (pemlinmail04.blacknight.ie [81.17.254.17])
+        by outbound-smtp04.blacknight.com (Postfix) with ESMTPS id B5E5CBEBC0
+        for <linux-kernel@vger.kernel.org>; Fri, 20 Mar 2020 17:43:06 +0000 (GMT)
+Received: (qmail 24761 invoked from network); 20 Mar 2020 17:43:06 -0000
+Received: from unknown (HELO techsingularity.net) (mgorman@techsingularity.net@[84.203.18.57])
+  by 81.17.254.9 with ESMTPSA (AES256-SHA encrypted, authenticated); 20 Mar 2020 17:43:06 -0000
+Date:   Fri, 20 Mar 2020 17:43:04 +0000
+From:   Mel Gorman <mgorman@techsingularity.net>
+To:     Vincent Guittot <vincent.guittot@linaro.org>
+Cc:     Ingo Molnar <mingo@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Valentin Schneider <valentin.schneider@arm.com>,
+        Phil Auld <pauld@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 4/4] sched/fair: Track possibly overloaded domains and
+ abort a scan if necessary
+Message-ID: <20200320174304.GF3818@techsingularity.net>
+References: <20200320151245.21152-1-mgorman@techsingularity.net>
+ <20200320151245.21152-5-mgorman@techsingularity.net>
+ <CAKfTPtAUuO1Jp6P73gAiP+g5iLTx16UeBgBjm_5zjFxwiBD9=Q@mail.gmail.com>
+ <20200320164432.GE3818@techsingularity.net>
+ <CAKfTPtBixZKDES_i3Lnsj1eAa_kVi-zHv-0uE8uTsKOBcjmkYg@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-15
+Content-Disposition: inline
+In-Reply-To: <CAKfTPtBixZKDES_i3Lnsj1eAa_kVi-zHv-0uE8uTsKOBcjmkYg@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Userspace has no way to query if SEV has been disabled with the
-sev module parameter of kvm-amd.ko.  Actually it has one, but it
-is a hack: do ioctl(KVM_MEM_ENCRYPT_OP, NULL) and check if it
-returns EFAULT.  Make it a little nicer by returning zero for
-SEV enabled and NULL argument, and while at it document the
-ioctl arguments.
+On Fri, Mar 20, 2020 at 05:54:57PM +0100, Vincent Guittot wrote:
+> On Fri, 20 Mar 2020 at 17:44, Mel Gorman <mgorman@techsingularity.net> wrote:
+> >
+> > On Fri, Mar 20, 2020 at 04:48:39PM +0100, Vincent Guittot wrote:
+> > > > ---
+> > > >  include/linux/sched/topology.h |  1 +
+> > > >  kernel/sched/fair.c            | 65 +++++++++++++++++++++++++++++++++++++++---
+> > > >  kernel/sched/features.h        |  3 ++
+> > > >  3 files changed, 65 insertions(+), 4 deletions(-)
+> > > >
+> > > > diff --git a/include/linux/sched/topology.h b/include/linux/sched/topology.h
+> > > > index af9319e4cfb9..76ec7a54f57b 100644
+> > > > --- a/include/linux/sched/topology.h
+> > > > +++ b/include/linux/sched/topology.h
+> > > > @@ -66,6 +66,7 @@ struct sched_domain_shared {
+> > > >         atomic_t        ref;
+> > > >         atomic_t        nr_busy_cpus;
+> > > >         int             has_idle_cores;
+> > > > +       int             is_overloaded;
+> > >
+> > > Can't nr_busy_cpus compared to sd->span_weight give you similar status  ?
+> > >
+> >
+> > It's connected to nohz balancing and I didn't see how I could use that
+> > for detecting overload. Also, I don't think it ever can be larger than
+> > the sd weight and overload is based on the number of running tasks being
+> > greater than the number of available CPUs. Did I miss something obvious?
+> 
+> IIUC you try to estimate if there is a chance to find an idle cpu
+> before starting the loop and scanning the domain and abort early if
+> the possibility is low.
+> 
+> if nr_busy_cpus equals to sd->span_weight it means that there is no
+> free cpu so there is no need to scan
+> 
 
-Cc: Brijesh Singh <brijesh.singh@amd.com>
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
----
- .../virt/kvm/amd-memory-encryption.rst        | 25 +++++++++++++++++++
- arch/x86/kvm/svm.c                            |  3 +++
- 2 files changed, 28 insertions(+)
+Ok, I see what you are getting at but I worry there are multiple
+problems there. First, the nr_busy_cpus is decremented only when a CPU
+is entering idle with the tick stopped. If nohz is disabled then this
+breaks, no? Secondly, a CPU can be idle but the tick not stopped if
+__tick_nohz_idle_stop_tick knows there is an event in the near future
+so using busy_cpus, we potentially miss a sibling that was adequate
+for running a task. Finally, the threshold for cutting off the search
+entirely seems low. The patch marks a domain as overloaded if there are
+twice as many running tasks as runqueues scanned. In that scenario, even
+if tasks are rapidly switching between busy/idle, it's still unlikely
+the task will go idle. When cutting off at just the fully-busy mark, we
+could miss a CPU that is going idle, almost idle or is running SCHED_IDLE
+tasks where are acceptable target candidates for select_idle_sibling. I
+think there are too many cases where nr_busy_cpus are problematic to
+make it a good alternative.
 
-diff --git a/Documentation/virt/kvm/amd-memory-encryption.rst b/Documentation/virt/kvm/amd-memory-encryption.rst
-index d18c97b4e140..c3129b9ba5cb 100644
---- a/Documentation/virt/kvm/amd-memory-encryption.rst
-+++ b/Documentation/virt/kvm/amd-memory-encryption.rst
-@@ -53,6 +53,29 @@ key management interface to perform common hypervisor activities such as
- encrypting bootstrap code, snapshot, migrating and debugging the guest. For more
- information, see the SEV Key Management spec [api-spec]_
- 
-+The main ioctl to access SEV is KVM_MEM_ENCRYPT_OP.  If the argument
-+to KVM_MEM_ENCRYPT_OP is NULL, the ioctl returns 0 if SEV is enabled
-+and ``ENOTTY` if it is disabled (on some older versions of Linux,
-+the ioctl runs normally even with a NULL argument, and therefore will
-+likely return ``EFAULT``).  If non-NULL, the argument to KVM_MEM_ENCRYPT_OP
-+must be a struct kvm_sev_cmd::
-+
-+       struct kvm_sev_cmd {
-+               __u32 id;
-+               __u64 data;
-+               __u32 error;
-+               __u32 sev_fd;
-+       };
-+
-+
-+The ``id`` field contains the subcommand, and the ``data`` field points to
-+another struct containing arguments specific to command.  The ``sev_fd``
-+should point to a file descriptor that is opened on the ``/dev/sev``
-+device, if needed (see individual commands).
-+
-+On output, ``error`` is zero on success, or an error code.  Error codes
-+are defined in ``<linux/psp-dev.h>`.
-+
- KVM implements the following commands to support common lifecycle events of SEV
- guests, such as launching, running, snapshotting, migrating and decommissioning.
- 
-@@ -90,6 +113,8 @@ Returns: 0 on success, -negative on error
- 
- On success, the 'handle' field contains a new handle and on error, a negative value.
- 
-+KVM_SEV_LAUNCH_START requires the ``sev_fd`` field to be valid.
-+
- For more details, see SEV spec Section 6.2.
- 
- 3. KVM_SEV_LAUNCH_UPDATE_DATA
-diff --git a/arch/x86/kvm/svm.c b/arch/x86/kvm/svm.c
-index 91000501756e..f0aa9ff9666f 100644
---- a/arch/x86/kvm/svm.c
-+++ b/arch/x86/kvm/svm.c
-@@ -7158,6 +7158,9 @@ static int svm_mem_enc_op(struct kvm *kvm, void __user *argp)
- 	if (!svm_sev_enabled())
- 		return -ENOTTY;
- 
-+	if (!argp)
-+		return 0;
-+
- 	if (copy_from_user(&sev_cmd, argp, sizeof(struct kvm_sev_cmd)))
- 		return -EFAULT;
- 
 -- 
-2.18.2
-
+Mel Gorman
+SUSE Labs
