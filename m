@@ -2,121 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D301418CF13
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 14:36:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3DE0318CEF9
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 14:35:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727241AbgCTNgX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Mar 2020 09:36:23 -0400
-Received: from mail-qk1-f196.google.com ([209.85.222.196]:34876 "EHLO
-        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727054AbgCTNgX (ORCPT
+        id S1727546AbgCTNfU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Mar 2020 09:35:20 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:53264 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727521AbgCTNfT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Mar 2020 09:36:23 -0400
-Received: by mail-qk1-f196.google.com with SMTP id d8so6817121qka.2;
-        Fri, 20 Mar 2020 06:36:22 -0700 (PDT)
+        Fri, 20 Mar 2020 09:35:19 -0400
+Received: by mail-wm1-f65.google.com with SMTP id 25so6533221wmk.3
+        for <linux-kernel@vger.kernel.org>; Fri, 20 Mar 2020 06:35:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=JAaqZAS5QdKHQm7mABpa6xtK7LMiTx17PY74wDx219A=;
-        b=S9Ev3VL26xZdYuEU7ArhabK/4jZdJmdCtHDiDeRYm/0fjrYGaWy8zRErRCXqHiYXdB
-         SRrUhGM+B4JJp9/r3LnCq7bIiaWMW5Hiqdve1mMvN49FfOWA7S8ytrSPVlU4C3jp8cJr
-         fUY4iD32EbEPn26/JpdpN93RD4bNtFsoq9dk/h1I7K2qKdqBJKMKMYjYQPnWb2YxxML6
-         vGbky50bEHxOdgllXdhfM8VpriH1mPXS3dTmr96NRV0gfxpmwQp554hEzsjyGWOHscee
-         GOVE9n1OJpjHQ2RtMR6igSZl/RYvEYDKxZ64fqBCQr//FeVuJiJZQ5Y5/aM28H4ueuGb
-         I6Zg==
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=YxuT8VTRArGqn+RIbW+oB8jNX+9BGigb4/P7CTp2s5o=;
+        b=d/xQo1zEVHGFHHdCRvK8nW9vYq6E1xfkwHUI4GlFPAkTk2rJ93zWgsa1nut8ctMhGe
+         VeA2tmm32Zl+raj+zbklYNwpNwZVrGRl/KL7Jug6kWnfjrmOTegCVdlJn53XoeIEZZjL
+         rp/VqZw2cRv64TXa1hlwS4i4Qbh15SIgzxPI34v9T0JPXCLSRLSuqFlDMmpB9n4Nj2Jk
+         rbNnT5SJO8v5GqtQY8co5lBXL5VEnixLdYKADGtcRN17BexHmwe93R6tAupYdz26vDsu
+         v4IfzIX5KkJTeWJ+ZjXiG/4En9l4N0Far7/+Ha4U5k25Ho/TL+Dn0nGHOsEcIjGxTig0
+         O1sQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=JAaqZAS5QdKHQm7mABpa6xtK7LMiTx17PY74wDx219A=;
-        b=fwI2XP8TCiEy2t6HTkAT+xeOignFlS1gvTtiesdKaEXfcS6O8biPI6onRZszfbtuye
-         bd7kujhFC/cQtXsQFBn05+RYwB9N9LXkO4XS77NrJEaVcT/Z6VsYiFeGZqGgw8ysWZpU
-         pDSxT/+P2BRUXh5shL6EkZm2eI3gDDkiX29X4Zwb88EmquTtFvwEQR/j5cp0iTW16cSp
-         2z95fCyxhsl9udKf6kKxuSVfyZvCpE5t8r5zLr0kkAUEwG8q3rFb47M0z2Azq/2H1vMn
-         lTeEstQ/m+4zMj3cNbPYtmoSQS6v6lS6g4A+IvlRaoxu7nfkPUaEa08BjwWCQ3URWcqj
-         gPyQ==
-X-Gm-Message-State: ANhLgQ2o1k96zGT8HeJWqwoVVSU2xxVOYca48f/8/cxfGjt5szN9mKnl
-        v9pEV4JERA5qOQgp9MzB1+Y=
-X-Google-Smtp-Source: ADFU+vtAugl+ePC/AUXZBJVeq0uKaR00hPJZ/K3gm/9I4G9cHuFLhjtiG5MwPebWbY/CKyWXdYaqeg==
-X-Received: by 2002:a37:9f8f:: with SMTP id i137mr7850454qke.68.1584711382340;
-        Fri, 20 Mar 2020 06:36:22 -0700 (PDT)
-Received: from icarus (072-189-064-225.res.spectrum.com. [72.189.64.225])
-        by smtp.gmail.com with ESMTPSA id p126sm4224430qkd.108.2020.03.20.06.36.18
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=YxuT8VTRArGqn+RIbW+oB8jNX+9BGigb4/P7CTp2s5o=;
+        b=YBZZ4C0uZ1QI4oal1yEuUJ4wSfabDKaYx+KMtC+sJNtDgeMmmsC8MQyck0VXPOuyBz
+         WL5sRjMcXChBnoSDpsWexkB8Qfn2uPQdx0RyvOHTAmVM79nMCGNBLk5GF3a/QOfMjOjI
+         oheS4M2BFlRbjAO4urvkP9rIW2dNRpmbB9Dtpkq9v+N5ZW0vDxgaNZnsSxpDpQLAA8ra
+         gCnu3+MPaoDN9zcJ3eZU2nvMZnxaCW4tvs7K6efmYhth3mmH2BWP+4Ac0vey5BJArpAz
+         J0EC17myUz5sNB2CXTbG6N8zk3NlDi7YaPWIWjpxoB+WKB/Q0lVahy+NVHzZAZvruSEC
+         BnBg==
+X-Gm-Message-State: ANhLgQ0FAo3VMEH/iatEYutmCF6fP7HfQqfTr0R3GnUBLw5Qb0gz1jnU
+        P2mn16dGW0QEmoJGRG+eAoYJLg==
+X-Google-Smtp-Source: ADFU+vvbxhZ+jhlGwAXeXKHcTIWOulxfuzDlUOLQY4koNixlyTIbyAUF4Hg2xDKlNLPbZ3JGZf0lWg==
+X-Received: by 2002:a1c:4c16:: with SMTP id z22mr10692628wmf.50.1584711317396;
+        Fri, 20 Mar 2020 06:35:17 -0700 (PDT)
+Received: from dell ([2.27.35.213])
+        by smtp.gmail.com with ESMTPSA id m17sm8457182wrw.3.2020.03.20.06.35.16
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 20 Mar 2020 06:36:19 -0700 (PDT)
-Date:   Fri, 20 Mar 2020 09:36:00 -0400
-From:   William Breathitt Gray <vilhelm.gray@gmail.com>
-To:     Syed Nayyar Waris <syednwaris@gmail.com>, jic23@kernel.org
-Cc:     linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1] MAINTAINERS: Add Syed Nayyar Waris to ACCES
- 104-QUAD-8 driver
-Message-ID: <20200320133522.GA3223@icarus>
-References: <20200320081257.GA5818@syed.domain.name>
+        Fri, 20 Mar 2020 06:35:16 -0700 (PDT)
+Date:   Fri, 20 Mar 2020 13:36:02 +0000
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Darren Hart <dvhart@infradead.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        Zha Qipeng <qipeng.zha@intel.com>,
+        "David E . Box" <david.e.box@linux.intel.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v8 01/19] platform/x86: intel_scu_ipc: Split out SCU IPC
+ functionality from the SCU driver
+Message-ID: <20200320133602.GE5477@dell>
+References: <20200303133649.39819-1-mika.westerberg@linux.intel.com>
+ <20200303133649.39819-2-mika.westerberg@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="PuGuTyElPB9bOcsM"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20200320081257.GA5818@syed.domain.name>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200303133649.39819-2-mika.westerberg@linux.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, 03 Mar 2020, Mika Westerberg wrote:
 
---PuGuTyElPB9bOcsM
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Fri, Mar 20, 2020 at 01:42:58PM +0530, Syed Nayyar Waris wrote:
-> Add Syed Nayyar Waris as a co-maintainer for the ACCES 104-QUAD-8
-> counter driver.
->=20
-> Cc: William Breathitt Gray <vilhelm.gray@gmail.com>
-> Signed-off-by: Syed Nayyar Waris <syednwaris@gmail.com>
+> The SCU IPC functionality is usable outside of Intel MID devices. For
+> example modern Intel CPUs include the same thing but now it is called
+> PMC (Power Management Controller) instead of SCU. To make the IPC
+> available for those split the driver into core part (intel_scu_ipc.c)
+> and the SCU PCI driver part (intel_scu_pcidrv.c) which then calls the
+> former before it goes and creates rest of the SCU devices. The SCU IPC
+> will also register a new class that gets assigned to the device that is
+> created under the parent PCI device.
+> 
+> We also split the Kconfig symbols so that INTEL_SCU_IPC enables the SCU
+> IPC library and INTEL_SCU_PCI the SCU driver and convert the users
+> accordingly. While there remove default y from the INTEL_SCU_PCI symbol
+> as it is already selected by X86_INTEL_MID.
+> 
+> Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+> Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 > ---
->  MAINTAINERS | 1 +
->  1 file changed, 1 insertion(+)
->=20
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 8fa40c3..55c7794 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -276,6 +276,7 @@ F:	drivers/gpio/gpio-104-idio-16.c
-> =20
->  ACCES 104-QUAD-8 DRIVER
->  M:	William Breathitt Gray <vilhelm.gray@gmail.com>
-> +M:	Syed Nayyar Waris <syednwaris@gmail.com>
->  L:	linux-iio@vger.kernel.org
->  S:	Maintained
->  F:	Documentation/ABI/testing/sysfs-bus-counter-104-quad-8
-> --=20
-> 2.7.4
+>  arch/x86/Kconfig                        |   2 +-
+>  arch/x86/include/asm/intel_scu_ipc.h    |  18 +++
 
-The 104-QUAD-8 driver is getting large so having another set of eyes on
-it is much appreciated. Thanks!
+>  drivers/mfd/Kconfig                     |   4 +-
 
-Acked-by: William Breathitt Gray <vilhelm.gray@gmail.com>
+For my own reference:
+  Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
 
---PuGuTyElPB9bOcsM
-Content-Type: application/pgp-signature; name="signature.asc"
+>  drivers/platform/x86/Kconfig            |  24 ++--
+>  drivers/platform/x86/Makefile           |   1 +
+>  drivers/platform/x86/intel_scu_ipc.c    | 172 ++++++++++++++++--------
+>  drivers/platform/x86/intel_scu_pcidrv.c |  55 ++++++++
+>  7 files changed, 208 insertions(+), 68 deletions(-)
+>  create mode 100644 drivers/platform/x86/intel_scu_pcidrv.c
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEk5I4PDJ2w1cDf/bghvpINdm7VJIFAl50xsAACgkQhvpINdm7
-VJLrVxAAvF8/G83XHAM7Cli5BrA4052ZSapSdiXX2KfmFiTNUrAV1YWkTB1ifjDx
-/vvofJXDQlRhR8N5uKbS7Ga/6jE42zFsfDv6PFC8WJc71pJ/plw75obmxbnExqSt
-tQBVpjP/ITY74c5buBhZ/v/gdBjlm6xZoqVyYzdSGCkFXZZ0nB0N+SEbGaMLPz5O
-Y+G8A7fsVHSaV4GHoQuUsormxJIHcB0T0fpDPqWcwgBwv2r7s8/JcSRiUgzBgP7Z
-xyXU4BYiynKzUnzBH+hiK4Ubgpn5Y9KfHZpBMpVkEuedj9Jx2ZYbETIp2qrAmAM9
-nP7F44nkkNqZ5dtWmf+M6XpGwI5/7iz/UlWuZvoyPL8lks+gX22XXNfAinQTGFhj
-okxV8yREBh+QBQ72NeWkg7VGlSjiT5ktjUDl6Jg+sv1XdT0M2xSNN3/ECEn5vLhi
-vr8PoYA1jpMYWySk0CJJdk1bKhJdRzgJL34GjdsgDIKNTKjuPKbkMwbRBpxRuLNH
-gZubpNmdtIgJCNFWoWKZu0DiKKMkwMNWO0lTNK4HMexAKfeQcd2hSXZDXkrohBIk
-//7mEYpfR8Apuj8QdXR5HJmhWcC5pyt8SV0tyiOzTB4/hdSjf24wlRLoRaumVA5d
-IFyLTQ6oNvOQOl/4aMO3GFdDJg0GOMFUv2qbhBOdCMZqG5B1w8k=
-=/Hg4
------END PGP SIGNATURE-----
-
---PuGuTyElPB9bOcsM--
+-- 
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
