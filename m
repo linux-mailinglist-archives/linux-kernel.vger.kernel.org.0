@@ -2,107 +2,228 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2005A18D82F
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 20:13:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AB5B818D837
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 20:14:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727210AbgCTTNN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Mar 2020 15:13:13 -0400
-Received: from mail-co1nam11on2055.outbound.protection.outlook.com ([40.107.220.55]:6218
-        "EHLO NAM11-CO1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726814AbgCTTNN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Mar 2020 15:13:13 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=GC1tTRhlvIYYaYF59hJ4PWVCYP4mo+hRT/pjlA284oYsvCphTX0VcSje5A/bHcAooWJFguD2V3iuMReemNZ4sDGVmqGp7tcCatd7Omhf5gzxI1nwNHkAn8GvQcx2X1G/gqGSTMrIiFwarEaaf6ztTMXvlbfyJmA59l78GzYyjnJDs/roZCRlGmcu81pkwdYajJ0a5Lo/bqjEjtXrzoxsHmjJzXaKsqzView6baN69+crJZMN2cbAxicVquh+nWXjJAlWMwY5ju0uEZB1Kxmdca899pJ0LXQmtAAiocJGi4lQyIwg++6R6KclXq3kgZUTBEh28h/O2Gwt+HN0kFo/KA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Shnng4AvX5lOhmnWKLU9C1Q4b+WEC4dXj3oLRhH8riM=;
- b=DrKM9MDlcgB3M9ToQsI91NgtYqAIHPietPcue+sta9VjQf4SCEeIo7lSWTlUN++SdtNUHS/0TyA5U7NvidvEcXF73WGE0vtBU0yL6eAnrSzTLLFLeHGrmAa2KJEbnxrxzJ8g3PxUSTcWJGTuNQoc170mEigo1YnK6Q3sh21/MIisohkbAqDijaPY6W54vVxdOrtfL9H+Xnmer3ZnTQkWjbQnnK3xAczOaRpqmAomL+blLct/zaMFdIOd3Mkcw/xdk8coGcdW6TuQ383Gj6vuX7KsgNEFB49SsRtOZ2Dx7EmOfNGopVTbAz589o8s3j6BC4fWXH1eX4oyf6hv8tZ5og==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=amdcloud.onmicrosoft.com; s=selector2-amdcloud-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Shnng4AvX5lOhmnWKLU9C1Q4b+WEC4dXj3oLRhH8riM=;
- b=PEvj5kKodr+PsLuZWxONSnsk3juv0OUw8+ceO7Jf+6UmUvzbXeUOGy7MYnCWqK953wxGB6ByjzgIvXB7eB/F9PaVQXMialkN/2pRgxLzzpz8pu/KRQkTE05TId35BSH0XMUakJHkk34dL1IwFyfq+pNwyF6S0OjVFZsjLKs8g/E=
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=brijesh.singh@amd.com; 
-Received: from CY4PR12MB1926.namprd12.prod.outlook.com (2603:10b6:903:11b::11)
- by CY4PR12MB1525.namprd12.prod.outlook.com (2603:10b6:910:11::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2835.20; Fri, 20 Mar
- 2020 19:13:09 +0000
-Received: from CY4PR12MB1926.namprd12.prod.outlook.com
- ([fe80::e5ec:63d5:a9a8:74c4]) by CY4PR12MB1926.namprd12.prod.outlook.com
- ([fe80::e5ec:63d5:a9a8:74c4%12]) with mapi id 15.20.2835.017; Fri, 20 Mar
- 2020 19:13:09 +0000
-Cc:     brijesh.singh@amd.com
-Subject: Re: [PATCH] KVM: SVM: document KVM_MEM_ENCRYPT_OP, let userspace
- detect if SEV is available
-To:     Paolo Bonzini <pbonzini@redhat.com>, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org
-References: <20200320174245.5220-1-pbonzini@redhat.com>
-From:   Brijesh Singh <brijesh.singh@amd.com>
-Message-ID: <e7a293bf-acbf-b69a-a082-4a2cce9701b0@amd.com>
-Date:   Fri, 20 Mar 2020 14:14:19 -0500
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:68.0)
- Gecko/20100101 Thunderbird/68.5.0
-In-Reply-To: <20200320174245.5220-1-pbonzini@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-ClientProxiedBy: SN4PR0501CA0024.namprd05.prod.outlook.com
- (2603:10b6:803:40::37) To CY4PR12MB1926.namprd12.prod.outlook.com
- (2603:10b6:903:11b::11)
+        id S1727333AbgCTTOl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Mar 2020 15:14:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55896 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726851AbgCTTOk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Mar 2020 15:14:40 -0400
+Received: from paulmck-ThinkPad-P72.home (50-39-105-78.bvtn.or.frontiernet.net [50.39.105.78])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1973720775;
+        Fri, 20 Mar 2020 19:14:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1584731679;
+        bh=hYZPv/s3zHSOCzc894+itwpGI/83A+dyfFG4Q+wXZ44=;
+        h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+        b=NbhvTVIBn5tozA14O5JR0yx4ULvUgTdmRwrkaeKCXs7/DHD99j7+o0lujjk2BNCgB
+         aja8dXQbPcUJ6/hzP7WeuuikfcAW/XuZ0L9IPx4P9GSKgfj+tmSONaP28YddMDy8ag
+         SpRSXwwpr5kxMg5OLlzts0GOUX6yiwC7ywaQjkMg=
+Received: by paulmck-ThinkPad-P72.home (Postfix, from userid 1000)
+        id D2F1235226B4; Fri, 20 Mar 2020 12:14:38 -0700 (PDT)
+Date:   Fri, 20 Mar 2020 12:14:38 -0700
+From:   "Paul E. McKenney" <paulmck@kernel.org>
+To:     Hillf Danton <hdanton@sina.com>
+Cc:     rcu@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-team@fb.com, mingo@kernel.org, jiangshanlai@gmail.com,
+        dipankar@in.ibm.com, akpm@linux-foundation.org,
+        mathieu.desnoyers@efficios.com, josh@joshtriplett.org,
+        tglx@linutronix.de, peterz@infradead.org, rostedt@goodmis.org,
+        dhowells@redhat.com, edumazet@google.com, fweisbec@gmail.com,
+        oleg@redhat.com, joel@joelfernandes.org
+Subject: Re: [PATCH RFC v2 tip/core/rcu 04/22] rcu-tasks: Move Tasks RCU to
+ its own file
+Message-ID: <20200320191438.GS3199@paulmck-ThinkPad-P72>
+Reply-To: paulmck@kernel.org
+References: <20200319001024.GA28798@paulmck-ThinkPad-P72>
+ <20200320071228.9740-1-hdanton@sina.com>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from Brijeshs-MacBook-Pro.local (165.204.77.11) by SN4PR0501CA0024.namprd05.prod.outlook.com (2603:10b6:803:40::37) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2835.12 via Frontend Transport; Fri, 20 Mar 2020 19:13:08 +0000
-X-Originating-IP: [165.204.77.11]
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-HT: Tenant
-X-MS-Office365-Filtering-Correlation-Id: 7668df3a-f9ee-40d1-9e80-08d7cd02ba11
-X-MS-TrafficTypeDiagnostic: CY4PR12MB1525:|CY4PR12MB1525:
-X-MS-Exchange-Transport-Forked: True
-X-Microsoft-Antispam-PRVS: <CY4PR12MB1525412092667CEDB3CDF5BCE5F50@CY4PR12MB1525.namprd12.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:8273;
-X-Forefront-PRVS: 03484C0ABF
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(4636009)(136003)(346002)(366004)(39860400002)(396003)(376002)(199004)(2906002)(36756003)(52116002)(44832011)(5660300002)(478600001)(186003)(8936002)(16526019)(6666004)(4326008)(2616005)(81156014)(31686004)(26005)(956004)(316002)(4744005)(81166006)(31696002)(86362001)(6506007)(8676002)(66946007)(53546011)(6512007)(66556008)(6486002)(66476007);DIR:OUT;SFP:1101;SCL:1;SRVR:CY4PR12MB1525;H:CY4PR12MB1926.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;
-Received-SPF: None (protection.outlook.com: amd.com does not designate
- permitted sender hosts)
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 88ON0HfLkkNTVm61RWpiKni4qhDLtmPTuW5V6m1ikDYiKDmf+SE9j0j/xf08YTkSW41n905cvr1unnXRWl89HejSdF+rv4KS2FQNFO9o7KCX0LMLIZeADhOMmrxfLbfidv14QLdaV/H0owPu0ZCXnLBwalC5CeC08kYIM3Mv33HcS0TeMSSfCAwRhPnvQhUIgnXAkP9pIspjiKzb1L/0EEVhf7B2l5Xl/OhAg64T1djxZvCM+CiD8NEi57S4kYLnlojaeOdCHiOnCeT3Dm4ynLVWQSqrrTJj7lkFsFd4F75hnw1+jd3gT1agczFWQzzTB1i1WxBj5+b4iyuNvp7xWUekFg0cLskdi1JFdApST1rhDdXA+xIa5umsttMH1PVM4W2az1UQGOl8f9OczK8qWzu9gMY0J7SQXmOQ7ycKq3LHn9quGmBwlzart+owjY1X
-X-MS-Exchange-AntiSpam-MessageData: fGgF5qZof3t5ZFMqP6+yjgNNNbJ0DA2+iqw3pVUEIGW1S0Z8VB0Ky/BWMHPOv44Zj+aandLtwDLhlisW6hybT5ytUyQNqqi0TsQcWzqZ4CHgWEBOaYh61qtym+FZaAxntzywfSD6eIh28VUYpXTLkg==
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7668df3a-f9ee-40d1-9e80-08d7cd02ba11
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Mar 2020 19:13:09.4718
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: eb3R7EMRrXnX9rPTNASL+ou24m5eH2TSTmtdxsxaz2xXi1YWV1Apwn1UpTzzsZEXDVJb/KUH9Vc2OriLO2zP4A==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR12MB1525
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200320071228.9740-1-hdanton@sina.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, Mar 20, 2020 at 03:12:28PM +0800, Hillf Danton wrote:
+> 
+> On Wed, 18 Mar 2020 17:10:42 -0700 "Paul E. McKenney" wrote:
+> > 
+> > +/* RCU-tasks kthread that detects grace periods and invokes callbacks. */
+> > +static int __noreturn rcu_tasks_kthread(void *arg)
+> > +{
+> > +	unsigned long flags;
+> > +	struct task_struct *g, *t;
+> > +	unsigned long lastreport;
+> > +	struct rcu_head *list;
+> > +	struct rcu_head *next;
+> > +	LIST_HEAD(rcu_tasks_holdouts);
+> > +	int fract;
+> > +
+> > +	/* Run on housekeeping CPUs by default.  Sysadm can move if desired. */
+> > +	housekeeping_affine(current, HK_FLAG_RCU);
+> > +
+> > +	/*
+> > +	 * Each pass through the following loop makes one check for
+> > +	 * newly arrived callbacks, and, if there are some, waits for
+> > +	 * one RCU-tasks grace period and then invokes the callbacks.
+> > +	 * This loop is terminated by the system going down.  ;-)
+> > +	 */
+> > +	for (;;) {
+> > +
+> > +		/* Pick up any new callbacks. */
+> > +		raw_spin_lock_irqsave(&rcu_tasks_cbs_lock, flags);
+> > +		list = rcu_tasks_cbs_head;
+> > +		rcu_tasks_cbs_head = NULL;
+> > +		rcu_tasks_cbs_tail = &rcu_tasks_cbs_head;
+> > +		raw_spin_unlock_irqrestore(&rcu_tasks_cbs_lock, flags);
+> > +
+> > +		/* If there were none, wait a bit and start over. */
+> > +		if (!list) {
+> > +			wait_event_interruptible(rcu_tasks_cbs_wq,
+> > +						 READ_ONCE(rcu_tasks_cbs_head));
+> > +			if (!rcu_tasks_cbs_head) {
+> > +				WARN_ON(signal_pending(current));
+> > +				schedule_timeout_interruptible(HZ/10);
+> > +			}
+> > +			continue;
+> > +		}
+> > +
+> > +		/*
+> > +		 * Wait for all pre-existing t->on_rq and t->nvcsw
+> > +		 * transitions to complete.  Invoking synchronize_rcu()
+> > +		 * suffices because all these transitions occur with
+> > +		 * interrupts disabled.  Without this synchronize_rcu(),
+> > +		 * a read-side critical section that started before the
+> > +		 * grace period might be incorrectly seen as having started
+> > +		 * after the grace period.
+> > +		 *
+> > +		 * This synchronize_rcu() also dispenses with the
+> > +		 * need for a memory barrier on the first store to
+> > +		 * ->rcu_tasks_holdout, as it forces the store to happen
+> > +		 * after the beginning of the grace period.
+> > +		 */
+> > +		synchronize_rcu();
+> > +
+> > +		/*
+> > +		 * There were callbacks, so we need to wait for an
+> > +		 * RCU-tasks grace period.  Start off by scanning
+> > +		 * the task list for tasks that are not already
+> > +		 * voluntarily blocked.  Mark these tasks and make
+> > +		 * a list of them in rcu_tasks_holdouts.
+> > +		 */
+> > +		rcu_read_lock();
+> > +		for_each_process_thread(g, t) {
+> > +			if (t != current && READ_ONCE(t->on_rq) &&
+> > +			    !is_idle_task(t)) {
+> > +				get_task_struct(t);
+> > +				t->rcu_tasks_nvcsw = READ_ONCE(t->nvcsw);
+> > +				WRITE_ONCE(t->rcu_tasks_holdout, true);
+> > +				list_add(&t->rcu_tasks_holdout_list,
+> > +					 &rcu_tasks_holdouts);
+> > +			}
+> > +		}
+> 
+> Nit: report stall if it would take a jiffy longer than
+> rcu_task_stall_timeout to collect the tasks?
 
-On 3/20/20 12:42 PM, Paolo Bonzini wrote:
-> Userspace has no way to query if SEV has been disabled with the
-> sev module parameter of kvm-amd.ko.  Actually it has one, but it
-> is a hack: do ioctl(KVM_MEM_ENCRYPT_OP, NULL) and check if it
-> returns EFAULT.  Make it a little nicer by returning zero for
-> SEV enabled and NULL argument, and while at it document the
-> ioctl arguments.
->
-> Cc: Brijesh Singh <brijesh.singh@amd.com>
-> Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+Fair point!
 
-thanks
+That said, the wait time below is in hundreds of milliseconds and the
+stall time defaults to ten minutes, so it is not clear that such a check
+out constitute non-dead code.
 
-Reviewed-by: Brijesh Singh <brijesh.singh@amd.com>
+							Thanx, Paul
 
-
+> > +		rcu_read_unlock();
+> > +
+> > +		/*
+> > +		 * Wait for tasks that are in the process of exiting.
+> > +		 * This does only part of the job, ensuring that all
+> > +		 * tasks that were previously exiting reach the point
+> > +		 * where they have disabled preemption, allowing the
+> > +		 * later synchronize_rcu() to finish the job.
+> > +		 */
+> > +		synchronize_srcu(&tasks_rcu_exit_srcu);
+> > +
+> > +		/*
+> > +		 * Each pass through the following loop scans the list
+> > +		 * of holdout tasks, removing any that are no longer
+> > +		 * holdouts.  When the list is empty, we are done.
+> > +		 */
+> > +		lastreport = jiffies;
+> > +
+> > +		/* Start off with HZ/10 wait and slowly back off to 1 HZ wait*/
+> > +		fract = 10;
+> > +
+> > +		for (;;) {
+> > +			bool firstreport;
+> > +			bool needreport;
+> > +			int rtst;
+> > +			struct task_struct *t1;
+> > +
+> > +			if (list_empty(&rcu_tasks_holdouts))
+> > +				break;
+> > +
+> > +			/* Slowly back off waiting for holdouts */
+> > +			schedule_timeout_interruptible(HZ/fract);
+> > +
+> > +			if (fract > 1)
+> > +				fract--;
+> > +
+> > +			rtst = READ_ONCE(rcu_task_stall_timeout);
+> > +			needreport = rtst > 0 &&
+> > +				     time_after(jiffies, lastreport + rtst);
+> > +			if (needreport)
+> > +				lastreport = jiffies;
+> > +			firstreport = true;
+> > +			WARN_ON(signal_pending(current));
+> > +			list_for_each_entry_safe(t, t1, &rcu_tasks_holdouts,
+> > +						rcu_tasks_holdout_list) {
+> > +				check_holdout_task(t, needreport, &firstreport);
+> > +				cond_resched();
+> > +			}
+> > +		}
+> > +
+> > +		/*
+> > +		 * Because ->on_rq and ->nvcsw are not guaranteed
+> > +		 * to have a full memory barriers prior to them in the
+> > +		 * schedule() path, memory reordering on other CPUs could
+> > +		 * cause their RCU-tasks read-side critical sections to
+> > +		 * extend past the end of the grace period.  However,
+> > +		 * because these ->nvcsw updates are carried out with
+> > +		 * interrupts disabled, we can use synchronize_rcu()
+> > +		 * to force the needed ordering on all such CPUs.
+> > +		 *
+> > +		 * This synchronize_rcu() also confines all
+> > +		 * ->rcu_tasks_holdout accesses to be within the grace
+> > +		 * period, avoiding the need for memory barriers for
+> > +		 * ->rcu_tasks_holdout accesses.
+> > +		 *
+> > +		 * In addition, this synchronize_rcu() waits for exiting
+> > +		 * tasks to complete their final preempt_disable() region
+> > +		 * of execution, cleaning up after the synchronize_srcu()
+> > +		 * above.
+> > +		 */
+> > +		synchronize_rcu();
+> > +
+> > +		/* Invoke the callbacks. */
+> > +		while (list) {
+> > +			next = list->next;
+> > +			local_bh_disable();
+> > +			list->func(list);
+> > +			local_bh_enable();
+> > +			list = next;
+> > +			cond_resched();
+> > +		}
+> > +		/* Paranoid sleep to keep this from entering a tight loop */
+> > +		schedule_timeout_uninterruptible(HZ/10);
+> > +	}
+> > +}
+> 
