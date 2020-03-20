@@ -2,125 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 365FA18C826
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 08:32:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 19FA518C83D
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 08:34:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726979AbgCTHb0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Mar 2020 03:31:26 -0400
-Received: from mail-co1nam11on2064.outbound.protection.outlook.com ([40.107.220.64]:50145
-        "EHLO NAM11-CO1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726902AbgCTHbZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Mar 2020 03:31:25 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=MgFzYZeIeHYClOrXkeQyXokiBz9jPG3eH5s7t9Lee1VSL5PsA3VSiRDLsYxGGpOKc7ApEjbgNX4q+y2xc/1uwhlazI5WPBGhpYQGAiTz3LoY9P9mxwvCG+nOCHeVvD3j9YjYKn35p+EBgW+4IV6l/EXKhed7DqPfA9k7m3V3LFCimmBbDZ8n2weu1hWGliIHMCnIqA1aazkY1kCroC0toGXS4uRd5A84nA2SCV0WXf5QR4d2UHnANclzY3jvSzvKVTh1W0JadaiNNiBY5JUD2KDqUBzR9QRvGqcvE3lr5kpKEIyxTUcPH/DFfp1IWEOJRnunq6cswz5VutNzJ7sglA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=xFMpMOgciMaF7chBjNojKc2qHd9K6c0ZZfEmiuMLdmY=;
- b=MWTNt4UiN7RCMdNKGCY4CeDsTOxWR1kuySde6rvtaTOZf8MfaJ/X4jZHzzNoVaPeR2FHD5ApeD+ncKsILOFwUc38DL+WfICwuPrB6a01jOJLNgmVxbqnGFnp7/15LEDuOljh0a7JPA/Gb8DmK6ezlqjLBOqEi3ppgjxMo7NTPT2sKLDy3zbw0hr2EeqiYusSjlfNRWMz9XJZRQR5JjypnBU6L3NAIpnZk/s2FhOAnz4e3/Rxco8klNY+GM6gksv3UbfzEdQuB8wWTb0z4T4qJPCjyG0wElbURQT32xZ/Xpr/caMxhouleLKKhP6nBEvrSiLFgzpBzN5G8y/v6JHBbg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=amdcloud.onmicrosoft.com; s=selector2-amdcloud-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=xFMpMOgciMaF7chBjNojKc2qHd9K6c0ZZfEmiuMLdmY=;
- b=XsFM2l8AwhaaOgtGtKyYUApfcPgldgMRHDp02eXeLbyQOwYokkc3oiZnL/OfQlvSU7FlpPf4HO8zHvn0zk1K/vDTWKZv0tnoBC6VLOj5YOBwc1f4jHWgwnTX4eGJN43v74t5U8KSSF765ORg5zO4ZTS3tMjRZi+03ASk6s1qhYE=
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=Rijo-john.Thomas@amd.com; 
-Received: from CY4PR12MB1925.namprd12.prod.outlook.com (2603:10b6:903:120::7)
- by CY4PR12MB1752.namprd12.prod.outlook.com (2603:10b6:903:120::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2814.18; Fri, 20 Mar
- 2020 07:31:22 +0000
-Received: from CY4PR12MB1925.namprd12.prod.outlook.com
- ([fe80::c5ae:bcf3:b96b:3ef6]) by CY4PR12MB1925.namprd12.prod.outlook.com
- ([fe80::c5ae:bcf3:b96b:3ef6%9]) with mapi id 15.20.2835.017; Fri, 20 Mar 2020
- 07:31:22 +0000
-Subject: Re: [GIT PULL] another amdtee driver fix for v5.6
-To:     Jens Wiklander <jens.wiklander@linaro.org>, arm@kernel.org,
-        soc@kernel.org
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        tee-dev@lists.linaro.org
-References: <20200320063446.GA9892@jade>
-From:   Rijo Thomas <Rijo-john.Thomas@amd.com>
-Message-ID: <d3af1c98-39e0-5608-0e70-daf35015452c@amd.com>
-Date:   Fri, 20 Mar 2020 13:01:11 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
-In-Reply-To: <20200320063446.GA9892@jade>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: MA1PR01CA0136.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:a00:35::30) To CY4PR12MB1925.namprd12.prod.outlook.com
- (2603:10b6:903:120::7)
+        id S1727213AbgCTHdD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Mar 2020 03:33:03 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:15951 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726821AbgCTHcq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Mar 2020 03:32:46 -0400
+X-UUID: bee15840b9bc490a8d66928e4d5ac2a1-20200320
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+        h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=9ByvZaSP7wgDUAP7dbCeQuybeA2KfOGIgSwyXg+RiC4=;
+        b=ostzrSedWS+EDhrLWhTxAOFGstvtlVetoNoRGil8r5vZMxvaCpuJUIg0BNotZnHmZ3qIPxPRFY/3lQWnfIWEUpC2cJraoMafxcNh7bT2GpRZoe/WB9QKA4NYCceexArP44klK9KLiuSowD1xBrompwOM4krjlZOP24JxHjvxxM4=;
+X-UUID: bee15840b9bc490a8d66928e4d5ac2a1-20200320
+Received: from mtkcas09.mediatek.inc [(172.21.101.178)] by mailgw01.mediatek.com
+        (envelope-from <weiyi.lu@mediatek.com>)
+        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
+        with ESMTP id 387548730; Fri, 20 Mar 2020 15:32:26 +0800
+Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
+ mtkmbs07n1.mediatek.inc (172.21.101.16) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Fri, 20 Mar 2020 15:31:23 +0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by MTKCAS06.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Fri, 20 Mar 2020 15:29:18 +0800
+From:   Weiyi Lu <weiyi.lu@mediatek.com>
+To:     Matthias Brugger <matthias.bgg@gmail.com>,
+        Nicolas Boichat <drinkcat@chromium.org>,
+        Rob Herring <robh@kernel.org>,
+        Sascha Hauer <kernel@pengutronix.de>
+CC:     James Liao <jamesjj.liao@mediatek.com>,
+        Fan Chen <fan.chen@mediatek.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <srv_heupstream@mediatek.com>, Weiyi Lu <weiyi.lu@mediatek.com>
+Subject: [PATCH v13 00/11] Mediatek MT8183 scpsys support
+Date:   Fri, 20 Mar 2020 15:32:09 +0800
+Message-ID: <1584689540-5227-1-git-send-email-weiyi.lu@mediatek.com>
+X-Mailer: git-send-email 1.8.1.1.dirty
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from [10.138.129.230] (165.204.156.251) by MA1PR01CA0136.INDPRD01.PROD.OUTLOOK.COM (2603:1096:a00:35::30) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2835.17 via Frontend Transport; Fri, 20 Mar 2020 07:31:20 +0000
-X-Originating-IP: [165.204.156.251]
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-HT: Tenant
-X-MS-Office365-Filtering-Correlation-Id: 8feadc3c-9bcd-4137-3ce9-08d7cca0b021
-X-MS-TrafficTypeDiagnostic: CY4PR12MB1752:
-X-Microsoft-Antispam-PRVS: <CY4PR12MB175286CE9189A1DAF8BEFB90CFF50@CY4PR12MB1752.namprd12.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:2582;
-X-Forefront-PRVS: 03484C0ABF
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(4636009)(39860400002)(376002)(346002)(136003)(366004)(396003)(199004)(5660300002)(26005)(16526019)(966005)(66946007)(6666004)(186003)(66476007)(31686004)(4326008)(36756003)(66556008)(16576012)(316002)(2616005)(45080400002)(956004)(8676002)(81166006)(8936002)(81156014)(6486002)(54906003)(2906002)(86362001)(53546011)(31696002)(52116002)(478600001);DIR:OUT;SFP:1101;SCL:1;SRVR:CY4PR12MB1752;H:CY4PR12MB1925.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;
-Received-SPF: None (protection.outlook.com: amd.com does not designate
- permitted sender hosts)
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: /nhe7hJNfuYvFy1fpCDXahMOXxhys3f5DrtJsecHjYKMUe0XXvfaJWuVq2hKHP4/caZJQNxHbHx4C402oZMy7TNqLOKqJfwUlUwlTgMIRSDlRkRUFx5n3NwMFTFirwHeGNV6GXY8OsPcfwDhhdb7euW1EhlqHZAhailhrI/dbcAfis5AS9JPLbFxpwi0zKJQeCY4JmXv7EzaZ3cKFbvm8XsWb3ERnchQivjvDlbUZ7FnnAKMa3w20ggzeb1rCNP77i/PZL9Zmliw/1K4/BGdTUTxNBVoTmrkLM7GpHQtz0eQtySQ8Lhcfs+Hexg6VvEO7sm3qKTVXHQfSPsA0Byj/lQsezAoAOGkiDZ6P22OedHpXFquHa1J9swhtuwraiQfFcj9UE8LZHyvFZNXeHi+7BGc8MCWXbzS4HGDVaSk7ElPCG5nhu0HND96W15J/iLjU26OvgQbZoABG6pthTE6IIJ909dCRFECbhCt9fdx+Tuj9kUE3tN2ApxoR7W9aHSSgxqOBLgsCEho0gF2uZNEnw==
-X-MS-Exchange-AntiSpam-MessageData: I0GcFP8KWYtR0grCnggyNrpKeMnAED0lQby70j+xRCyfAxSrkT6cw2hafycqml8p9tmD7FYB8GL8rqVL+ODpYX0lJQTElAlQ0yxI7JbHHHs7kzJTrejH7XMpYFShTR/wrh89OpjAWhR24pxdST2n3w==
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8feadc3c-9bcd-4137-3ce9-08d7cca0b021
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Mar 2020 07:31:22.0175
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Weis/yVt03FfBQizQon5Db/rhRCmrOrXW1yySQ4NjkqaS+Aw4//F0eFS7oShFEIkgEmSywHz2q86x2e4HWyNlw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR12MB1752
+Content-Type: text/plain
+X-MTK:  N
+Content-Transfer-Encoding: base64
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Thanks Jens for pulling in the fixes!
+VGhpcyBzZXJpZXMgaXMgYmFzZWQgb24gdjUuNi1yYzENCg0KY2hhbmdlIHNpbmNlIHYxMjoNCi0g
+c2VwYXJhdGUgdGhlIGZpeCBvZiBjb21tYSBhdCB0aGUgZW5kIGludG8gYSBuZXcgcGF0Y2ggW1BB
+VENIIDA5LzExXQ0KDQpjaGFuZ2VzIHNpbmNlIHYxMToNCi0gcmUtb3JkZXIgcGF0Y2hlcyAiUmVt
+b3ZlIGluZnJhY2ZnIG1pc2MgZHJpdmVyIHN1cHBvcnQiIGFuZCAiQWRkIG11bHRpcGxlIHN0ZXAg
+YnVzIHByb3RlY3Rpb24iDQotIGFkZCBjYXAgTVRLX1NDUERfU1JBTV9JU08gZm9yIGV4dHJhIHNy
+YW0gY29udHJvbA0KLSBtaW5vciBjb2Rpbmcgc3l0bGUgZml4ZXMgYW5kIHJld29yZCBjb21taXQg
+bWVzc2FnZXMNCg0KY2hhbmdlcyBzaW5jZSB2MTA6DQotIHNxdWFzaCBQQVRDSCAwNCBhbmQgUEFU
+Q0ggMDYgaW4gdjkgaW50byBpdHMgcHJldmlvdXMgcGF0Y2gNCi0gYWRkICJpZ25vcmVfY2xyX2Fj
+ayIgZm9yIG11bHRpcGxlIHN0ZXAgYnVzIHByb3RlY3Rpb24gY29udHJvbCB0byBoYXZlIGEgY2xl
+YW4gZGVmaW5pdGlvbiBvZiBwb3dlciBkb21haW4gZGF0YQ0KLSBrZWVwIHRoZSBtYXNrIHJlZ2lz
+dGVyIGJpdCBkZWZpbml0aW9ucyBhbmQgZG8gdGhlIHNhbWUgZm9yIE1UODE4Mw0KDQpjaGFuZ2Vz
+IHNpbmNlIHY5Og0KLSBhZGQgbmV3IFBBVENIIDA0IGFuZCBQQVRDSCAwNiB0byByZXBsYWNlIGJ5
+IG5ldyBtZXRob2QgZm9yIGFsbCBjb21wYXRpYmxlcw0KLSBhZGQgbmV3IFBBVENIIDA3IHRvIHJl
+bW92ZSBpbmZyYWNmZyBtaXNjIGRyaXZlcg0KLSBtaW5vciBjb2Rpbmcgc3l0bGUgZml4DQoNCmNo
+YW5nZXMgc2luY2Ugdjc6DQotIHJld29yZCBpbiBiaW5kaW5nIGRvY3VtZW50IFtQQVRDSCAwMi8x
+NF0NCi0gZml4IGVycm9yIHJldHVybiBjaGVja2luZyBidWcgaW4gc3Vic3lzIGNsb2NrIGNvbnRy
+b2wgW1BBVENIIDEwLzE0XQ0KLSBhZGQgcG93ZXIgZG9tYWlucyBwcm9wZXJpdHkgdG8gbWZnY2Zn
+IHBhdGNoIFtQQVRDSCAxNC8xNF0gZnJvbQ0KICBodHRwczovL3BhdGNod29yay5rZXJuZWwub3Jn
+L3BhdGNoLzExMTI2MTk5Lw0KDQpjaGFuZ2VzIHNpbmNlIHY2Og0KLSByZW1vdmUgdGhlIHBhdGNo
+IG9mIFNQRFggbGljZW5zZSBpZGVudGlmaWVyIGJlY2F1c2UgaXQncyBhbHJlYWR5IGZpeGVkDQoN
+CmNoYW5nZXMgc2luY2UgdjU6DQotIGZpeCBkb2N1bWVudGF0aW9uIGluIFtQQVRDSCAwNC8xNF0N
+Ci0gcmVtb3ZlIHVzZWxlc3MgdmFyaWFibGUgY2hlY2tpbmcgYW5kIHJldXNlIEFQSSBvZiBjbG9j
+ayBjb250cm9sIGluIFtQQVRDSCAwNi8xNF0NCi0gY29kaW5nIHN0eWxlIGZpeCBvZiBidXMgcHJv
+dGVjdGlvbiBjb250cm9sIGluIFtQQVRDSCAwOC8xNF0NCi0gZml4IG5hbWluZyBvZiBuZXcgYWRk
+ZWQgZGF0YSBpbiBbUEFUQ0ggMDkvMTRdDQotIHNtYWxsIHJlZmFjdG9yIG9mIG11bHRpcGxlIHN0
+ZXAgYnVzIHByb3RlY3Rpb24gY29udHJvbCBpbiBbUEFUQ0ggMTAvMTRdDQoNCmNoYW5nZXMgc2lu
+Y2UgdjQ6DQotIGFkZCBwcm9wZXJ0eSB0byBtdDgxODMgc21pLWNvbW1vbg0KLSBzZXBlcmF0ZSBy
+ZWZhY3RvciBwYXRjaGVzIGFuZCBuZXcgYWRkIGZ1bmN0aW9uDQotIGFkZCBwb3dlciBjb250cm9s
+bGVyIGRldmljZSBub2RlDQoNCg0KV2VpeWkgTHUgKDExKToNCiAgZHQtYmluZGluZ3M6IG1lZGlh
+dGVrOiBBZGQgcHJvcGVydHkgdG8gbXQ4MTgzIHNtaS1jb21tb24NCiAgZHQtYmluZGluZ3M6IHNv
+YzogQWRkIE1UODE4MyBwb3dlciBkdC1iaW5kaW5ncw0KICBzb2M6IG1lZGlhdGVrOiBBZGQgYmFz
+aWNfY2xrX25hbWUgdG8gc2NwX3Bvd2VyX2RhdGENCiAgc29jOiBtZWRpYXRlazogUmVtb3ZlIGlu
+ZnJhY2ZnIG1pc2MgZHJpdmVyIHN1cHBvcnQNCiAgc29jOiBtZWRpYXRlazogQWRkIG11bHRpcGxl
+IHN0ZXAgYnVzIHByb3RlY3Rpb24gY29udHJvbA0KICBzb2M6IG1lZGlhdGVrOiBBZGQgc3Vic3lz
+IGNsb2NrIGNvbnRyb2wgZm9yIGJ1cyBwcm90ZWN0aW9uDQogIHNvYzogbWVkaWF0ZWs6IEFkZCBl
+eHRyYSBzcmFtIGNvbnRyb2wNCiAgc29jOiBtZWRpYXRlazogQWRkIE1UODE4MyBzY3BzeXMgc3Vw
+cG9ydA0KICBzb2M6IG1lZGlhdGVrOiBBZGQgYSBjb21tYSBhdCB0aGUgZW5kDQogIGFybTY0OiBk
+dHM6IEFkZCBwb3dlciBjb250cm9sbGVyIGRldmljZSBub2RlIG9mIE1UODE4Mw0KICBhcm02NDog
+ZHRzOiBBZGQgcG93ZXItZG9tYWlucyBwcm9wZXJ0eSB0byBtZmdjZmcNCg0KIC4uLi9tZWRpYXRl
+ayxzbWktY29tbW9uLnR4dCAgICAgICAgICAgICAgICAgICB8ICAgMiArLQ0KIC4uLi9iaW5kaW5n
+cy9zb2MvbWVkaWF0ZWsvc2Nwc3lzLnR4dCAgICAgICAgICB8ICAyMCArLQ0KIGFyY2gvYXJtNjQv
+Ym9vdC9kdHMvbWVkaWF0ZWsvbXQ4MTgzLmR0c2kgICAgICB8ICA2MyArKw0KIGRyaXZlcnMvc29j
+L21lZGlhdGVrL0tjb25maWcgICAgICAgICAgICAgICAgICB8ICAxMCAtDQogZHJpdmVycy9zb2Mv
+bWVkaWF0ZWsvTWFrZWZpbGUgICAgICAgICAgICAgICAgIHwgICAxIC0NCiBkcml2ZXJzL3NvYy9t
+ZWRpYXRlay9tdGstaW5mcmFjZmcuYyAgICAgICAgICAgfCAgNzkgLS0tDQogZHJpdmVycy9zb2Mv
+bWVkaWF0ZWsvbXRrLXNjcHN5cy5jICAgICAgICAgICAgIHwgNjU0ICsrKysrKysrKysrKysrLS0t
+LQ0KIGRyaXZlcnMvc29jL21lZGlhdGVrL3NjcHN5cy5oICAgICAgICAgICAgICAgICB8ICA5MCAr
+KysNCiBpbmNsdWRlL2R0LWJpbmRpbmdzL3Bvd2VyL210ODE4My1wb3dlci5oICAgICAgfCAgMjYg
+Kw0KIGluY2x1ZGUvbGludXgvc29jL21lZGlhdGVrL2luZnJhY2ZnLmggICAgICAgICB8ICAzOSAt
+LQ0KIDEwIGZpbGVzIGNoYW5nZWQsIDcwNyBpbnNlcnRpb25zKCspLCAyNzcgZGVsZXRpb25zKC0p
+DQogZGVsZXRlIG1vZGUgMTAwNjQ0IGRyaXZlcnMvc29jL21lZGlhdGVrL210ay1pbmZyYWNmZy5j
+DQogY3JlYXRlIG1vZGUgMTAwNjQ0IGRyaXZlcnMvc29jL21lZGlhdGVrL3NjcHN5cy5oDQogY3Jl
+YXRlIG1vZGUgMTAwNjQ0IGluY2x1ZGUvZHQtYmluZGluZ3MvcG93ZXIvbXQ4MTgzLXBvd2VyLmgN
+CiBkZWxldGUgbW9kZSAxMDA2NDQgaW5jbHVkZS9saW51eC9zb2MvbWVkaWF0ZWsvaW5mcmFjZmcu
+aA0K
 
--Rijo
-
-On 20/03/20 12:04 pm, Jens Wiklander wrote:
-> Hello arm-soc maintainers,
-> 
-> Please pull this AMDTEE driver fix for an out of bounds read in
-> find_session()
-> 
-> Thanks,
-> Jens
-> 
-> The following changes since commit 11a48a5a18c63fd7621bb050228cebf13566e4d8:
-> 
->   Linux 5.6-rc2 (2020-02-16 13:16:59 -0800)
-> 
-> are available in the Git repository at:
-> 
->   https://nam11.safelinks.protection.outlook.com/?url=https%3A%2F%2Fgit.linaro.org%2Fpeople%2Fjens.wiklander%2Flinux-tee.git&amp;data=02%7C01%7CRijo-john.Thomas%40amd.com%7C1ce9782363e24e7add1d08d7cc98cb02%7C3dd8961fe4884e608e11a82d994e183d%7C0%7C0%7C637202828927574171&amp;sdata=tFMMPSmDgdsgAeUJZ1y2wGo6nhgICw%2BZsr524HQgw5E%3D&amp;reserved=0 tags/tee-amdtee-fix2-for-5.6
-> 
-> for you to fetch changes up to 36fa3e50085e3858dd506e4431b9abd1bcb1f542:
-> 
->   tee: amdtee: out of bounds read in find_session() (2020-03-10 08:12:04 +0100)
-> 
-> ----------------------------------------------------------------
-> tee: amdtee: out of bounds read in find_session()
-> 
-> ----------------------------------------------------------------
-> Dan Carpenter (1):
->       tee: amdtee: out of bounds read in find_session()
-> 
->  drivers/tee/amdtee/core.c | 3 +++
->  1 file changed, 3 insertions(+)
-> 
