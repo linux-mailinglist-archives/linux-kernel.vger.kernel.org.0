@@ -2,65 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3283118D85F
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 20:26:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1BEC218D862
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 20:28:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727101AbgCTT0F (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Mar 2020 15:26:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59544 "EHLO mail.kernel.org"
+        id S1727178AbgCTT2N (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Mar 2020 15:28:13 -0400
+Received: from mga17.intel.com ([192.55.52.151]:32545 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726738AbgCTT0F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Mar 2020 15:26:05 -0400
-Received: from localhost (mobile-166-175-186-165.mycingular.net [166.175.186.165])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 204B52070A;
-        Fri, 20 Mar 2020 19:26:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584732364;
-        bh=/rTRPrDhJPt4afzfgd0cuC2zrxLd35n21OmKayC8W68=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:From;
-        b=YgZZVxxJ9LAvCPtnja5yPtD+z0QxRzJg+mZhLe3MxWZntMk2qTyLe3hSemIxHX3Xe
-         LMPCDV2Aqaw8G3QyClqjl+tm5pn9SG6fagISApYGJUszFoclDQOlU+Il9a6mjGjyrI
-         7TncXVBleNOp7LEkTBmmf63cI1T4Dnn7r3GMr57A=
-Date:   Fri, 20 Mar 2020 14:26:02 -0500
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Ansuel Smith <ansuelsmth@gmail.com>
-Cc:     Stanimir Varbanov <svarbanov@mm-sol.com>,
-        Sham Muthayyan <smuthayy@codeaurora.org>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Andrew Murray <amurray@thegoodpenguin.co.uk>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 09/12] pcie: qcom: Programming the PCIE iATU for IPQ806x
-Message-ID: <20200320192602.GA247248@google.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200320183455.21311-9-ansuelsmth@gmail.com>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+        id S1726814AbgCTT2N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Mar 2020 15:28:13 -0400
+IronPort-SDR: QGMDbq2j2oV/5Fm3JJN9HYNEL5TqSf4U63TRwArg4/xProb2Sch0ifl+C+5FB70dGv0H91GlAB
+ orQz8sx3LrLA==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Mar 2020 12:28:12 -0700
+IronPort-SDR: Yetx+1ziaSCB5Y1zU6AmK+/oXrtZVEj07pPS9ynG1p+MBVtT8mt9WCMYXJpLL9+i+N9hnqj4Vq
+ qKEP38mY9BNA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.72,285,1580803200"; 
+   d="scan'208";a="280521980"
+Received: from crojewsk-ctrl.igk.intel.com ([10.102.9.28])
+  by fmsmga002.fm.intel.com with ESMTP; 20 Mar 2020 12:28:09 -0700
+From:   Cezary Rojewski <cezary.rojewski@intel.com>
+To:     linux-acpi@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, erik.schmauss@intel.com,
+        lenb@kernel.org, rafael@kernel.org,
+        Cezary Rojewski <cezary.rojewski@intel.com>,
+        Erik Kaneda <erik.kaneda@intel.com>,
+        Robert Moore <robert.moore@intel.com>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>
+Subject: [RESEND PATCH] acpi: Add NHLT table signature
+Date:   Fri, 20 Mar 2020 20:27:27 +0100
+Message-Id: <20200320192727.20560-1-cezary.rojewski@intel.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-s/Programming/Program/
+NHLT (Non-HDAudio Link Table) provides configuration of audio
+endpoints for Intel SST (Smart Sound Technology) DSP products. Similarly
+to other ACPI tables, data provided by BIOS may not describe it
+correctly, thus overriding is required.
 
-Capitalize IPQ806x consistently (other patches mention "ipq806x").
+ACPI override mechanism checks for unknown signature before proceeding.
+Update known signatures array to support NHLT.
 
-On Fri, Mar 20, 2020 at 07:34:51PM +0100, Ansuel Smith wrote:
-> From: Sham Muthayyan <smuthayy@codeaurora.org>
-> 
-> Resolved PCIE EP detection errors caused due to missing iATU programming.
+Cc: Erik Kaneda <erik.kaneda@intel.com>
+Cc: Robert Moore <robert.moore@intel.com>
+Cc: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Signed-off-by: Cezary Rojewski <cezary.rojewski@intel.com>
+---
+ drivers/acpi/tables.c | 2 +-
+ include/acpi/actbl2.h | 1 +
+ 2 files changed, 2 insertions(+), 1 deletion(-)
 
-s/Resolved/Resolve/
-s/PCIE/PCIe/
+diff --git a/drivers/acpi/tables.c b/drivers/acpi/tables.c
+index 180ac4329763..0e905c3d1645 100644
+--- a/drivers/acpi/tables.c
++++ b/drivers/acpi/tables.c
+@@ -501,7 +501,7 @@ static const char * const table_sigs[] = {
+ 	ACPI_SIG_WDDT, ACPI_SIG_WDRT, ACPI_SIG_DSDT, ACPI_SIG_FADT,
+ 	ACPI_SIG_PSDT, ACPI_SIG_RSDT, ACPI_SIG_XSDT, ACPI_SIG_SSDT,
+ 	ACPI_SIG_IORT, ACPI_SIG_NFIT, ACPI_SIG_HMAT, ACPI_SIG_PPTT,
+-	NULL };
++	ACPI_SIG_NHLT, NULL };
+ 
+ #define ACPI_HEADER_SIZE sizeof(struct acpi_table_header)
+ 
+diff --git a/include/acpi/actbl2.h b/include/acpi/actbl2.h
+index e45ced27f4c3..876ccf50ec36 100644
+--- a/include/acpi/actbl2.h
++++ b/include/acpi/actbl2.h
+@@ -43,6 +43,7 @@
+ #define ACPI_SIG_SBST           "SBST"	/* Smart Battery Specification Table */
+ #define ACPI_SIG_SDEI           "SDEI"	/* Software Delegated Exception Interface Table */
+ #define ACPI_SIG_SDEV           "SDEV"	/* Secure Devices table */
++#define ACPI_SIG_NHLT           "NHLT"	/* Non-HDAudio Link Table */
+ 
+ /*
+  * All tables must be byte-packed to match the ACPI specification, since
+-- 
+2.17.1
 
-Is this a bug fix?  If so, can you cite the commit that introduced the
-bug?  This is useful when backporting fixes.  Same question applies to
-the other patches as well.
