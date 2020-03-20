@@ -2,32 +2,32 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5432818CCE6
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 12:25:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ED22118CCF1
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 12:26:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727039AbgCTLZQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Mar 2020 07:25:16 -0400
-Received: from web0081.zxcs.nl ([185.104.29.10]:56898 "EHLO web0081.zxcs.nl"
+        id S1727308AbgCTLZz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Mar 2020 07:25:55 -0400
+Received: from web0081.zxcs.nl ([185.104.29.10]:58628 "EHLO web0081.zxcs.nl"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726912AbgCTLZQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Mar 2020 07:25:16 -0400
+        id S1726912AbgCTLZy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Mar 2020 07:25:54 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=pascalroeleven.nl; s=x; h=Content-Transfer-Encoding:MIME-Version:References
         :In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
         Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
         Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
         List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=D4dn5xv1jw6ViZLrXaslqz7DLr1R4Uo+6Hf42tlM8Q4=; b=FLBfp2e7/0Qa/v9Fudx1ORiNXS
-        JV+b8iUSNJpkJrzaIwwkiQopeQZ+qTCveHWN3jx4RM6ab+/t3NQGBbkFlRIRjB8I06dicoCwxg94+
-        Rxip8VdkQ9gwM9dkTnjZfm3c5Kup10Dq9TyzHtlpbSUwQjY7DdnXbcIUtgAH2vo5bFyqx/rToICcM
-        H/QkNaDtbsI9ZgsJc2vKz6wjl2t7/DFcV5PT4JVHpfJRy7yKAxY8ZjHUIHjx0/Gi+/YS0p5dB4n15
-        nWOWUmVJF0qlafkbZgdUtvdLVDlGANH8YIyLGioeIzA2hYZLUt268RZIFCiPlFqDOr51b4r5p+IlT
-        V0bpqgJw==;
+        bh=qEhR3T0Nfojt3eERAwazI68eQPd13TAEcxAgAW/RKYc=; b=N0cfTIenwdEy/BWu8/a7ulLJBk
+        PU/AJ75NTxnoUgVZ6XaLXNNky4hAfXBR4xZTV6OwUCA/tlIyqhthjm0yi8FPiAyG3ik37CEJlfLHR
+        g7FUk3YrTLUyN/CvfD1MvPZs0J9e1I8iPPSowOvFSB2fsau6RWOr/kXBMJmUHK4wDL4YpEP5PfLmJ
+        ftY2GzKOnn+s6ZEeZcFCIDfNE2ws49hHC5SNTHSi2+rHYM8IgojRAPMD8rUgCXWjj7kJ4xAWcuqMl
+        JrnUxB/tV/cSAehFrBbmIuwcKDoGYZtVkotPsIRCFuR6qqoqimIeZZq07RKTOipXjw7NGUXxH1dNA
+        7DFA7y6g==;
 Received: from ip565b1bc7.direct-adsl.nl ([86.91.27.199]:57936 helo=localhost.localdomain)
         by web0081.zxcs.nl with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
         (Exim 4.92.3)
         (envelope-from <dev@pascalroeleven.nl>)
-        id 1jFFm3-0011ci-4I; Fri, 20 Mar 2020 12:25:11 +0100
+        id 1jFFmf-0011ci-PN; Fri, 20 Mar 2020 12:25:49 +0100
 From:   Pascal Roeleven <dev@pascalroeleven.nl>
 To:     Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
@@ -42,9 +42,9 @@ To:     Rob Herring <robh+dt@kernel.org>,
         dri-devel@lists.freedesktop.org
 Cc:     linux-sunxi@googlegroups.com,
         Pascal Roeleven <dev@pascalroeleven.nl>
-Subject: [PATCH v2 2/5] drm: panel: Add Starry KR070PE2T
-Date:   Fri, 20 Mar 2020 12:21:33 +0100
-Message-Id: <20200320112205.7100-3-dev@pascalroeleven.nl>
+Subject: [PATCH v2 3/5] dt-bindings: vendor-prefixes: Add Topwise
+Date:   Fri, 20 Mar 2020 12:21:34 +0100
+Message-Id: <20200320112205.7100-4-dev@pascalroeleven.nl>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200320112205.7100-1-dev@pascalroeleven.nl>
 References: <20200320112205.7100-1-dev@pascalroeleven.nl>
@@ -56,68 +56,27 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The KR070PE2T is a 7" panel with a resolution of 800x480.
-
-KR070PE2T is the marking present on the ribbon cable. As this panel is
-probably available under different brands, this marking will catch
-most devices.
-
-As I can't find a datasheet for this panel, the bus_flags are instead
-from trial-and-error. The flags seem to be common for these kind of
-panels as well.
+Topwise Communication Co,. Ltd. is a company based in Shenzhen. They
+manufacture all kind of products but seem to be focusing on POS nowadays.
 
 Signed-off-by: Pascal Roeleven <dev@pascalroeleven.nl>
 ---
- drivers/gpu/drm/panel/panel-simple.c | 29 ++++++++++++++++++++++++++++
- 1 file changed, 29 insertions(+)
+ Documentation/devicetree/bindings/vendor-prefixes.yaml | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/gpu/drm/panel/panel-simple.c b/drivers/gpu/drm/panel/panel-simple.c
-index e14c14ac6..b3d257257 100644
---- a/drivers/gpu/drm/panel/panel-simple.c
-+++ b/drivers/gpu/drm/panel/panel-simple.c
-@@ -2842,6 +2842,32 @@ static const struct panel_desc shelly_sca07010_bfn_lnn = {
- 	.bus_format = MEDIA_BUS_FMT_RGB666_1X18,
- };
- 
-+static const struct drm_display_mode starry_kr070pe2t_mode = {
-+	.clock = 33000,
-+	.hdisplay = 800,
-+	.hsync_start = 800 + 209,
-+	.hsync_end = 800 + 209 + 1,
-+	.htotal = 800 + 209 + 1 + 45,
-+	.vdisplay = 480,
-+	.vsync_start = 480 + 22,
-+	.vsync_end = 480 + 22 + 1,
-+	.vtotal = 480 + 22 + 1 + 22,
-+	.vrefresh = 60,
-+};
-+
-+static const struct panel_desc starry_kr070pe2t = {
-+	.modes = &starry_kr070pe2t_mode,
-+	.num_modes = 1,
-+	.bpc = 8,
-+	.size = {
-+		.width = 152,
-+		.height = 86,
-+	},
-+	.bus_format = MEDIA_BUS_FMT_RGB888_1X24,
-+	.bus_flags = DRM_BUS_FLAG_DE_HIGH | DRM_BUS_FLAG_PIXDATA_DRIVE_NEGEDGE,
-+	.connector_type = DRM_MODE_CONNECTOR_LVDS,
-+};
-+
- static const struct drm_display_mode starry_kr122ea0sra_mode = {
- 	.clock = 147000,
- 	.hdisplay = 1920,
-@@ -3474,6 +3500,9 @@ static const struct of_device_id platform_of_match[] = {
- 	}, {
- 		.compatible = "shelly,sca07010-bfn-lnn",
- 		.data = &shelly_sca07010_bfn_lnn,
-+	}, {
-+		.compatible = "starry,kr070pe2t",
-+		.data = &starry_kr070pe2t,
- 	}, {
- 		.compatible = "starry,kr122ea0sra",
- 		.data = &starry_kr122ea0sra,
+diff --git a/Documentation/devicetree/bindings/vendor-prefixes.yaml b/Documentation/devicetree/bindings/vendor-prefixes.yaml
+index 9e67944be..3c08370b7 100644
+--- a/Documentation/devicetree/bindings/vendor-prefixes.yaml
++++ b/Documentation/devicetree/bindings/vendor-prefixes.yaml
+@@ -982,6 +982,8 @@ patternProperties:
+   "^toppoly,.*":
+     description: TPO (deprecated, use tpo)
+     deprecated: true
++  "^topwise,.*":
++    description: Topwise Communication Co., Ltd.
+   "^toradex,.*":
+     description: Toradex AG
+   "^toshiba,.*":
 -- 
 2.20.1
 
