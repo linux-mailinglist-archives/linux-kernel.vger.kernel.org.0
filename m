@@ -2,45 +2,46 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D15D218CB47
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 11:14:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D350E18CB4B
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 11:15:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726958AbgCTKOV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Mar 2020 06:14:21 -0400
-Received: from mga09.intel.com ([134.134.136.24]:52631 "EHLO mga09.intel.com"
+        id S1727210AbgCTKPW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Mar 2020 06:15:22 -0400
+Received: from mga14.intel.com ([192.55.52.115]:63544 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726527AbgCTKOU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Mar 2020 06:14:20 -0400
-IronPort-SDR: Tu3KsUvnPOH2Iycl1b8HKo3882RLkK0V47QcO6u5s0dFkxIMViuxRtVMGtAH1J3MLn+gp60sW5
- Ihd2VnFvdRyQ==
+        id S1726690AbgCTKPV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Mar 2020 06:15:21 -0400
+IronPort-SDR: JmhKZyhTuF9Ta1RlNTsPjAqYq9FWW0nCa5W6Htw4i+dAtmrLBgrCj37jC4HVScYVpMUsR7ovFy
+ oLlQ6BKm4+hA==
 X-Amp-Result: UNKNOWN
 X-Amp-Original-Verdict: FILE UNKNOWN
 X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Mar 2020 03:14:16 -0700
-IronPort-SDR: CI0ybodzUJCoG0MyzfqKiolzyuX4Crgmu3LlhjESWgDWeJb2xfbJwKLYc0maywRKk75NwkjUBY
- CmONT3SAJuNQ==
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Mar 2020 03:15:16 -0700
+IronPort-SDR: 1+CCQe/IAi9H0ACb9ZDmAStEW9XVnTrQwNq0s7Ncne6ZaG0ob0ACRsnYPs80Wwh4Rs1sKs1L2s
+ 4L4lQT2z86Cw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.72,284,1580803200"; 
-   d="gz'50?scan'50,208,50";a="280382507"
+   d="gz'50?scan'50,208,50";a="324816939"
 Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
-  by fmsmga002.fm.intel.com with ESMTP; 20 Mar 2020 03:14:13 -0700
+  by orsmga001.jf.intel.com with ESMTP; 20 Mar 2020 03:15:13 -0700
 Received: from kbuild by lkp-server01 with local (Exim 4.89)
         (envelope-from <lkp@intel.com>)
-        id 1jFEfM-0008xb-Jg; Fri, 20 Mar 2020 18:14:12 +0800
-Date:   Fri, 20 Mar 2020 18:13:16 +0800
+        id 1jFEgK-000Djx-OH; Fri, 20 Mar 2020 18:15:12 +0800
+Date:   Fri, 20 Mar 2020 18:14:09 +0800
 From:   kbuild test robot <lkp@intel.com>
 To:     Yang Weijiang <weijiang.yang@intel.com>
 Cc:     kbuild-all@lists.01.org, kvm@vger.kernel.org,
         linux-kernel@vger.kernel.org, sean.j.christopherson@intel.com,
         pbonzini@redhat.com, jmattson@google.com
-Subject: Re: [PATCH v10 3/8] KVM: VMX: Load CET states on vmentry/vmexit
-Message-ID: <202003201815.I3ugPJIn%lkp@intel.com>
-References: <20200320034342.26610-4-weijiang.yang@intel.com>
+Subject: Re: [PATCH v10 6/8] KVM: X86: Add userspace access interface for CET
+ MSRs
+Message-ID: <202003201820.wwf56jp1%lkp@intel.com>
+References: <20200320034342.26610-7-weijiang.yang@intel.com>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="0OAP2g/MAC+5xKAE"
+Content-Type: multipart/mixed; boundary="8t9RHnE3ZwKMSgU+"
 Content-Disposition: inline
-In-Reply-To: <20200320034342.26610-4-weijiang.yang@intel.com>
+In-Reply-To: <20200320034342.26610-7-weijiang.yang@intel.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -48,7 +49,7 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---0OAP2g/MAC+5xKAE
+--8t9RHnE3ZwKMSgU+
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
@@ -77,81 +78,148 @@ Reported-by: kbuild test robot <lkp@intel.com>
 All errors (new ones prefixed by >>):
 
    arch/x86/kvm/x86.c: In function 'kvm_set_cr0':
->> arch/x86/kvm/x86.c:807:53: error: 'X86_CR4_CET' undeclared (first use in this function); did you mean 'X86_CR4_DE'?
+   arch/x86/kvm/x86.c:809:53: error: 'X86_CR4_CET' undeclared (first use in this function); did you mean 'X86_CR4_DE'?
      if (!(cr0 & X86_CR0_WP) && kvm_read_cr4_bits(vcpu, X86_CR4_CET))
                                                         ^~~~~~~~~~~
                                                         X86_CR4_DE
-   arch/x86/kvm/x86.c:807:53: note: each undeclared identifier is reported only once for each function it appears in
---
->> arch/x86/kvm/vmx/vmx.c:47:10: fatal error: asm/cet.h: No such file or directory
-    #include <asm/cet.h>
-             ^~~~~~~~~~~
-   compilation terminated.
+   arch/x86/kvm/x86.c:809:53: note: each undeclared identifier is reported only once for each function it appears in
+   arch/x86/kvm/x86.c: At top level:
+>> arch/x86/kvm/x86.c:1233:16: error: 'MSR_IA32_U_CET' undeclared here (not in a function); did you mean 'MSR_IA32_TSC'?
+     MSR_IA32_XSS, MSR_IA32_U_CET, MSR_IA32_S_CET,
+                   ^~~~~~~~~~~~~~
+                   MSR_IA32_TSC
+>> arch/x86/kvm/x86.c:1233:32: error: 'MSR_IA32_S_CET' undeclared here (not in a function); did you mean 'MSR_IA32_U_CET'?
+     MSR_IA32_XSS, MSR_IA32_U_CET, MSR_IA32_S_CET,
+                                   ^~~~~~~~~~~~~~
+                                   MSR_IA32_U_CET
+>> arch/x86/kvm/x86.c:1234:2: error: 'MSR_IA32_PL0_SSP' undeclared here (not in a function); did you mean 'MSR_IA32_MCG_ESP'?
+     MSR_IA32_PL0_SSP, MSR_IA32_PL1_SSP, MSR_IA32_PL2_SSP,
+     ^~~~~~~~~~~~~~~~
+     MSR_IA32_MCG_ESP
+>> arch/x86/kvm/x86.c:1234:20: error: 'MSR_IA32_PL1_SSP' undeclared here (not in a function); did you mean 'MSR_IA32_PL0_SSP'?
+     MSR_IA32_PL0_SSP, MSR_IA32_PL1_SSP, MSR_IA32_PL2_SSP,
+                       ^~~~~~~~~~~~~~~~
+                       MSR_IA32_PL0_SSP
+>> arch/x86/kvm/x86.c:1234:38: error: 'MSR_IA32_PL2_SSP' undeclared here (not in a function); did you mean 'MSR_IA32_PL1_SSP'?
+     MSR_IA32_PL0_SSP, MSR_IA32_PL1_SSP, MSR_IA32_PL2_SSP,
+                                         ^~~~~~~~~~~~~~~~
+                                         MSR_IA32_PL1_SSP
+>> arch/x86/kvm/x86.c:1235:2: error: 'MSR_IA32_PL3_SSP' undeclared here (not in a function); did you mean 'MSR_IA32_PL2_SSP'?
+     MSR_IA32_PL3_SSP, MSR_IA32_INT_SSP_TAB,
+     ^~~~~~~~~~~~~~~~
+     MSR_IA32_PL2_SSP
+>> arch/x86/kvm/x86.c:1235:20: error: 'MSR_IA32_INT_SSP_TAB' undeclared here (not in a function); did you mean 'MSR_IA32_PL3_SSP'?
+     MSR_IA32_PL3_SSP, MSR_IA32_INT_SSP_TAB,
+                       ^~~~~~~~~~~~~~~~~~~~
+                       MSR_IA32_PL3_SSP
+   arch/x86/kvm/x86.c: In function 'is_xsaves_msr':
+   arch/x86/kvm/x86.c:3267:15: error: comparison between pointer and integer [-Werror]
+     return index == MSR_IA32_U_CET ||
+                  ^~
+   arch/x86/kvm/x86.c:3268:16: error: comparison between pointer and integer [-Werror]
+            (index >= MSR_IA32_PL0_SSP && index <= MSR_IA32_PL3_SSP);
+                   ^~
+   arch/x86/kvm/x86.c:3268:45: error: comparison between pointer and integer [-Werror]
+            (index >= MSR_IA32_PL0_SSP && index <= MSR_IA32_PL3_SSP);
+                                                ^~
+   arch/x86/kvm/x86.c: In function 'kvm_arch_hardware_setup':
+   arch/x86/kvm/x86.c:191:28: error: 'XFEATURE_MASK_CET_USER' undeclared (first use in this function); did you mean 'XFEATURE_MASK_BNDCSR'?
+    #define KVM_SUPPORTED_XSS (XFEATURE_MASK_CET_USER | \
+                               ^
+   arch/x86/kvm/x86.c:9678:30: note: in expansion of macro 'KVM_SUPPORTED_XSS'
+      supported_xss = host_xss & KVM_SUPPORTED_XSS;
+                                 ^~~~~~~~~~~~~~~~~
+   arch/x86/kvm/x86.c:192:6: error: 'XFEATURE_MASK_CET_KERNEL' undeclared (first use in this function); did you mean 'XFEATURE_MASK_CET_USER'?
+         XFEATURE_MASK_CET_KERNEL)
+         ^
+   arch/x86/kvm/x86.c:9678:30: note: in expansion of macro 'KVM_SUPPORTED_XSS'
+      supported_xss = host_xss & KVM_SUPPORTED_XSS;
+                                 ^~~~~~~~~~~~~~~~~
+>> arch/x86/kvm/x86.c:191:51: error: invalid operands to binary | (have 'const u32 * {aka const unsigned int *}' and 'const u32 * {aka const unsigned int *}')
+    #define KVM_SUPPORTED_XSS (XFEATURE_MASK_CET_USER | \
+                               ~                      ^
+   arch/x86/kvm/x86.c:9678:30: note: in expansion of macro 'KVM_SUPPORTED_XSS'
+      supported_xss = host_xss & KVM_SUPPORTED_XSS;
+                                 ^~~~~~~~~~~~~~~~~
+>> arch/x86/kvm/x86.c:9678:28: error: invalid operands to binary & (have 'u64 {aka long long unsigned int}' and 'const u32 * {aka const unsigned int *}')
+      supported_xss = host_xss & KVM_SUPPORTED_XSS;
+                               ^
+>> arch/x86/kvm/x86.c:9678:17: error: assignment makes integer from pointer without a cast [-Werror=int-conversion]
+      supported_xss = host_xss & KVM_SUPPORTED_XSS;
+                    ^
+   cc1: all warnings being treated as errors
 
-vim +807 arch/x86/kvm/x86.c
+vim +1233 arch/x86/kvm/x86.c
 
-   778	
-   779		cr0 &= ~CR0_RESERVED_BITS;
-   780	
-   781		if ((cr0 & X86_CR0_NW) && !(cr0 & X86_CR0_CD))
-   782			return 1;
-   783	
-   784		if ((cr0 & X86_CR0_PG) && !(cr0 & X86_CR0_PE))
-   785			return 1;
-   786	
-   787		if (!is_paging(vcpu) && (cr0 & X86_CR0_PG)) {
-   788	#ifdef CONFIG_X86_64
-   789			if ((vcpu->arch.efer & EFER_LME)) {
-   790				int cs_db, cs_l;
-   791	
-   792				if (!is_pae(vcpu))
-   793					return 1;
-   794				kvm_x86_ops->get_cs_db_l_bits(vcpu, &cs_db, &cs_l);
-   795				if (cs_l)
-   796					return 1;
-   797			} else
-   798	#endif
-   799			if (is_pae(vcpu) && !load_pdptrs(vcpu, vcpu->arch.walk_mmu,
-   800							 kvm_read_cr3(vcpu)))
-   801				return 1;
-   802		}
-   803	
-   804		if (!(cr0 & X86_CR0_PG) && kvm_read_cr4_bits(vcpu, X86_CR4_PCIDE))
-   805			return 1;
-   806	
- > 807		if (!(cr0 & X86_CR0_WP) && kvm_read_cr4_bits(vcpu, X86_CR4_CET))
-   808			return 1;
-   809	
-   810		kvm_x86_ops->set_cr0(vcpu, cr0);
-   811	
-   812		if ((cr0 ^ old_cr0) & X86_CR0_PG) {
-   813			kvm_clear_async_pf_completion_queue(vcpu);
-   814			kvm_async_pf_hash_reset(vcpu);
-   815		}
-   816	
-   817		if ((cr0 ^ old_cr0) & update_bits)
-   818			kvm_mmu_reset_context(vcpu);
-   819	
-   820		if (((cr0 ^ old_cr0) & X86_CR0_CD) &&
-   821		    kvm_arch_has_noncoherent_dma(vcpu->kvm) &&
-   822		    !kvm_check_has_quirk(vcpu->kvm, KVM_X86_QUIRK_CD_NW_CLEARED))
-   823			kvm_zap_gfn_range(vcpu->kvm, 0, ~0ULL);
-   824	
-   825		return 0;
-   826	}
-   827	EXPORT_SYMBOL_GPL(kvm_set_cr0);
-   828	
+  1180	
+  1181	/*
+  1182	 * List of msr numbers which we expose to userspace through KVM_GET_MSRS
+  1183	 * and KVM_SET_MSRS, and KVM_GET_MSR_INDEX_LIST.
+  1184	 *
+  1185	 * The three MSR lists(msrs_to_save, emulated_msrs, msr_based_features)
+  1186	 * extract the supported MSRs from the related const lists.
+  1187	 * msrs_to_save is selected from the msrs_to_save_all to reflect the
+  1188	 * capabilities of the host cpu. This capabilities test skips MSRs that are
+  1189	 * kvm-specific. Those are put in emulated_msrs_all; filtering of emulated_msrs
+  1190	 * may depend on host virtualization features rather than host cpu features.
+  1191	 */
+  1192	
+  1193	static const u32 msrs_to_save_all[] = {
+  1194		MSR_IA32_SYSENTER_CS, MSR_IA32_SYSENTER_ESP, MSR_IA32_SYSENTER_EIP,
+  1195		MSR_STAR,
+  1196	#ifdef CONFIG_X86_64
+  1197		MSR_CSTAR, MSR_KERNEL_GS_BASE, MSR_SYSCALL_MASK, MSR_LSTAR,
+  1198	#endif
+  1199		MSR_IA32_TSC, MSR_IA32_CR_PAT, MSR_VM_HSAVE_PA,
+  1200		MSR_IA32_FEAT_CTL, MSR_IA32_BNDCFGS, MSR_TSC_AUX,
+  1201		MSR_IA32_SPEC_CTRL,
+  1202		MSR_IA32_RTIT_CTL, MSR_IA32_RTIT_STATUS, MSR_IA32_RTIT_CR3_MATCH,
+  1203		MSR_IA32_RTIT_OUTPUT_BASE, MSR_IA32_RTIT_OUTPUT_MASK,
+  1204		MSR_IA32_RTIT_ADDR0_A, MSR_IA32_RTIT_ADDR0_B,
+  1205		MSR_IA32_RTIT_ADDR1_A, MSR_IA32_RTIT_ADDR1_B,
+  1206		MSR_IA32_RTIT_ADDR2_A, MSR_IA32_RTIT_ADDR2_B,
+  1207		MSR_IA32_RTIT_ADDR3_A, MSR_IA32_RTIT_ADDR3_B,
+  1208		MSR_IA32_UMWAIT_CONTROL,
+  1209	
+  1210		MSR_ARCH_PERFMON_FIXED_CTR0, MSR_ARCH_PERFMON_FIXED_CTR1,
+  1211		MSR_ARCH_PERFMON_FIXED_CTR0 + 2, MSR_ARCH_PERFMON_FIXED_CTR0 + 3,
+  1212		MSR_CORE_PERF_FIXED_CTR_CTRL, MSR_CORE_PERF_GLOBAL_STATUS,
+  1213		MSR_CORE_PERF_GLOBAL_CTRL, MSR_CORE_PERF_GLOBAL_OVF_CTRL,
+  1214		MSR_ARCH_PERFMON_PERFCTR0, MSR_ARCH_PERFMON_PERFCTR1,
+  1215		MSR_ARCH_PERFMON_PERFCTR0 + 2, MSR_ARCH_PERFMON_PERFCTR0 + 3,
+  1216		MSR_ARCH_PERFMON_PERFCTR0 + 4, MSR_ARCH_PERFMON_PERFCTR0 + 5,
+  1217		MSR_ARCH_PERFMON_PERFCTR0 + 6, MSR_ARCH_PERFMON_PERFCTR0 + 7,
+  1218		MSR_ARCH_PERFMON_PERFCTR0 + 8, MSR_ARCH_PERFMON_PERFCTR0 + 9,
+  1219		MSR_ARCH_PERFMON_PERFCTR0 + 10, MSR_ARCH_PERFMON_PERFCTR0 + 11,
+  1220		MSR_ARCH_PERFMON_PERFCTR0 + 12, MSR_ARCH_PERFMON_PERFCTR0 + 13,
+  1221		MSR_ARCH_PERFMON_PERFCTR0 + 14, MSR_ARCH_PERFMON_PERFCTR0 + 15,
+  1222		MSR_ARCH_PERFMON_PERFCTR0 + 16, MSR_ARCH_PERFMON_PERFCTR0 + 17,
+  1223		MSR_ARCH_PERFMON_EVENTSEL0, MSR_ARCH_PERFMON_EVENTSEL1,
+  1224		MSR_ARCH_PERFMON_EVENTSEL0 + 2, MSR_ARCH_PERFMON_EVENTSEL0 + 3,
+  1225		MSR_ARCH_PERFMON_EVENTSEL0 + 4, MSR_ARCH_PERFMON_EVENTSEL0 + 5,
+  1226		MSR_ARCH_PERFMON_EVENTSEL0 + 6, MSR_ARCH_PERFMON_EVENTSEL0 + 7,
+  1227		MSR_ARCH_PERFMON_EVENTSEL0 + 8, MSR_ARCH_PERFMON_EVENTSEL0 + 9,
+  1228		MSR_ARCH_PERFMON_EVENTSEL0 + 10, MSR_ARCH_PERFMON_EVENTSEL0 + 11,
+  1229		MSR_ARCH_PERFMON_EVENTSEL0 + 12, MSR_ARCH_PERFMON_EVENTSEL0 + 13,
+  1230		MSR_ARCH_PERFMON_EVENTSEL0 + 14, MSR_ARCH_PERFMON_EVENTSEL0 + 15,
+  1231		MSR_ARCH_PERFMON_EVENTSEL0 + 16, MSR_ARCH_PERFMON_EVENTSEL0 + 17,
+  1232	
+> 1233		MSR_IA32_XSS, MSR_IA32_U_CET, MSR_IA32_S_CET,
+> 1234		MSR_IA32_PL0_SSP, MSR_IA32_PL1_SSP, MSR_IA32_PL2_SSP,
+> 1235		MSR_IA32_PL3_SSP, MSR_IA32_INT_SSP_TAB,
+  1236	};
+  1237	
 
 ---
 0-DAY CI Kernel Test Service, Intel Corporation
 https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
 
---0OAP2g/MAC+5xKAE
+--8t9RHnE3ZwKMSgU+
 Content-Type: application/gzip
 Content-Disposition: attachment; filename=".config.gz"
 Content-Transfer-Encoding: base64
 
-H4sICO6PdF4AAy5jb25maWcAlDzbctw2su/5iqnkJXlIoostu84pPYAkyEGGIGgAHM34haXI
+H4sICI2TdF4AAy5jb25maWcAlDzbctw2su/5iqnkJXlIoostu84pPYAkyEGGIGgAHM34haXI
 Y0d1bMmry27896cbIIcNEJSzW1uxphvXRt/R4E8//LRiz0/3X66fbm+uP3/+tvp0uDs8XD8d
 Pqw+3n4+/O+qUKtG2RUvhP0NGte3d89//357/vZi9fq3i99Ofn24OVttDg93h8+r/P7u4+2n
 Z+h9e3/3w08/wP9/AuCXrzDQw/+sPt3c/Ppm9XNx+PP2+m715rfX0Pv1L/4PaJqrphRVn+e9
@@ -1476,4 +1544,4 @@ Etr3k+vRB9nA+cJG0LB7ldFd0IZ/huyXoeUHBXTsY52vMasz7Uhw5re6MhjTc06wutdZneUI
 JK+mZEkvK7dOssCC7NsT+SH0oAN7Mu3I0owUy8Kl+z6eVfLlr8tMogDIeq+uYWZtOpnIl+GD
 a67jWEja19MZJAUORf8ymV8n7fbn/wF6WdVV9I4EAA==
 
---0OAP2g/MAC+5xKAE--
+--8t9RHnE3ZwKMSgU+--
