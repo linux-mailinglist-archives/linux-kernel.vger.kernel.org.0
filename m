@@ -2,170 +2,139 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D162118D710
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 19:34:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EFDA718D716
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 19:34:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726956AbgCTSd7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Mar 2020 14:33:59 -0400
-Received: from mail-pj1-f68.google.com ([209.85.216.68]:33041 "EHLO
-        mail-pj1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726783AbgCTSd7 (ORCPT
+        id S1727273AbgCTSet (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Mar 2020 14:34:49 -0400
+Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:23502 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727151AbgCTSes (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Mar 2020 14:33:59 -0400
-Received: by mail-pj1-f68.google.com with SMTP id dw20so3720952pjb.0;
-        Fri, 20 Mar 2020 11:33:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=S7Fui894R9lUu2xo1vf09TLmig4naq9sdfWsRqwPmJ0=;
-        b=hu21JmRQA0gv0PwiesOLkjyJGbNmheJ8OF1ARDPC13kWSznREiboKE/qbGYpwIQpSB
-         IJodTlinDcyiAkUbd4IrTokwyNJefZHgPEWSnFHPUqXHLWXJyRlQ/QTcCQjbxzn+DKZl
-         EITX/zvsIQyKis61huEbg86FiK7+FReoTKsTnpx4yKQ7nCb9Vawe3DTHA2lecbteAhm0
-         0S5UwBXX6GE6/aGkL41/8jVH2oGpWaFmxxQh6zAuc66jeuibyN+tua3muXEYo2JuECzO
-         mWnqlDc3lqDE/3hV6ctM/dE5sD1IoXyc5y8ujhqT2LCX17C8oq7gQHRuRRNskPahirY3
-         GOsQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=S7Fui894R9lUu2xo1vf09TLmig4naq9sdfWsRqwPmJ0=;
-        b=Qd4qnCqtJ3aC76jb2QU0XAL1PLdRTfrOIGLSMykMSiMsVCc2hBXlYPrBxPwZDuEsAM
-         vwjkZfNoL7pcJL9FnBWZ4C6acV8sHtYaN5qhXfN/nvOQNLQJpSiELwCzbbiKEQyx7OqI
-         iozDFmp6O7Fr9Uy8P5YUmcTuJI2jSWZ0VO9eOyJnUsRzO13NwGawFH4TCUfKgrocOek7
-         RJKrMmKdphKB/TObEUqJVT7FKrzga2VbPqIf0SiPk1PzjkzMcL0vAqv3Xazko2ImaTwU
-         fyKc8C70tjiFTSR41SLt5cKjtxBiPdbWiXGGUulkjTGU8KoqWruV43p33xZa/h66Hzj3
-         XbHw==
-X-Gm-Message-State: ANhLgQ3Gu8ARQZd5m9ZOXQimMkqCl0CRTMR+qFzUtjGZ/3VtaFQW3aqU
-        C5omZmy1HW9PbAwS+ohDk48=
-X-Google-Smtp-Source: ADFU+vvUspVXpPWj0jZAAuPx+ygVkmstUOzsVMpCR7zHEhcpsHtwhIEN8zcuSygrsCJPw3ysito5tA==
-X-Received: by 2002:a17:90a:da01:: with SMTP id e1mr11297095pjv.100.1584729237878;
-        Fri, 20 Mar 2020 11:33:57 -0700 (PDT)
-Received: from gmail.com ([2601:600:817f:a132:df3e:521d:99d5:710d])
-        by smtp.gmail.com with ESMTPSA id h11sm6359312pfn.103.2020.03.20.11.33.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 20 Mar 2020 11:33:57 -0700 (PDT)
-Date:   Fri, 20 Mar 2020 11:33:55 -0700
-From:   Andrei Vagin <avagin@gmail.com>
-To:     Christian Brauner <christian.brauner@ubuntu.com>
-Cc:     Arnd Bergmann <arnd@arndb.de>, Adrian Reber <areber@redhat.com>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Pavel Emelyanov <ovzxemul@gmail.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Dmitry Safonov <0x7f454c46@gmail.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Radostin Stoyanov <rstoyanov1@gmail.com>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Cyrill Gorcunov <gorcunov@openvz.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        Linux API <linux-api@vger.kernel.org>
-Subject: Re: clone3: allow creation of time namespace with offset
-Message-ID: <20200320183355.GA118769@gmail.com>
-References: <20200317083043.226593-1-areber@redhat.com>
- <CAK8P3a2-qQhpRdF0+iVrpp=vEvgwtndQL89CUm_QzoW2QYX1Jw@mail.gmail.com>
- <20200319081137.GC223854@dcbz.redhat.com>
- <CAK8P3a18YySozk6P77JpS58Hbtz=QQmLKw+PrzXbdOwtOQQuJA@mail.gmail.com>
- <20200319102955.i7slokibkkysz6g6@wittgenstein>
+        Fri, 20 Mar 2020 14:34:48 -0400
+Received: from pps.filterd (m0001303.ppops.net [127.0.0.1])
+        by m0001303.ppops.net (8.16.0.42/8.16.0.42) with SMTP id 02KISUvn004863;
+        Fri, 20 Mar 2020 11:34:30 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=subject : to : cc :
+ references : from : message-id : date : in-reply-to : content-type :
+ content-transfer-encoding : mime-version; s=facebook;
+ bh=fGIsdNVIWwBAjXHczvKw1KrMK7d2nJTkgXva2Z4gcWs=;
+ b=A9iJYj3RZ7uprlmhr6Au1akjwIWnpC1txItRdBBGntrgQSea6ptISZDCnFa0cCBeJFOs
+ pjLvcdrXjKBSMjlOHzGKaaZr2IXPWAbzSGp+vUqMgQJMdPRlD9UjLe1I2sfECYpDCRTC
+ z0tQrTxfryUzFPuqqFUiVm3K+DdPnIKql5o= 
+Received: from maileast.thefacebook.com ([163.114.130.16])
+        by m0001303.ppops.net with ESMTP id 2yu7ynyrxj-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+        Fri, 20 Mar 2020 11:34:30 -0700
+Received: from NAM02-SN1-obe.outbound.protection.outlook.com (100.104.31.183)
+ by o365-in.thefacebook.com (100.104.35.175) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1847.3; Fri, 20 Mar 2020 11:34:29 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=YZqC6LdFWjs6QZ/g3TH+WH62L9/gTmNjs4bhUb4fQ6FGKSuKOLf0SAIdJQeiOysRp6Sx+couSEEnx3XnyBbooSsS8/s2XEXkkGOl0PIENdFwNo3yAvI5wTlE8vv9rnyL9Ojzt3xgz8bTkr79xd1sPaX0o78hR0FtfVzIvyV+AsakmXKvE7VtqQPUZnNGjF/A+MUc0PhS5eItMc/m1xzMwi+PnJyxXsecZlVlE9MtqSuD7MoErRUrjBA0X0SZYXbW3K6ZRzwBE+LbpOevKAhN6HrDCocARQvq2nWeCNiT/BSirdm1PLBRs48D3uDfBpeOn50mFtO8WX+Gd6nTxZLHYg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=fGIsdNVIWwBAjXHczvKw1KrMK7d2nJTkgXva2Z4gcWs=;
+ b=hpakoFrvgrr4O3va+cuR6pbcdyxm9Nlen88xBGGkj+BT/AWN3b6UYEhiyKIGXqPNXr4gT5de9iKxfVC2V4KxQY3X4hAUa5bvIX8M9TzhDlwGqr3KrJptz1TRmnzA+WKdmlBKA/y97lD6Mbp1nFUMl87bhpd7N8HNsqDDW8ByWdsskJFafey3JQtmNesfKUcnadqQzb4tp5VBXbtG3v38luaWJuJZpjX2h3jI54jmIZ3xVFIVhXXXNJEw+4gIdGPpB/Spl1phcTTRVfSGf0F6JDZuisj8xblcKYdBWbDzFIkCyDuV9C6oz5PL6xv+lTtO9Q4/omoOW5vKcFMYo+pstQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=fb.com; dmarc=pass action=none header.from=fb.com; dkim=pass
+ header.d=fb.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
+ s=selector2-fb-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=fGIsdNVIWwBAjXHczvKw1KrMK7d2nJTkgXva2Z4gcWs=;
+ b=ila7XhRIFPEQI7osDPR+wI73duelmocBoX2hisEwLvIv+CjEQkUIEi/FQf2wwD5nI3XgceCwB8jb512VYclymQtkFed98LY9N+cK6hzhUVs0ogf4hG/H2gRB8lkbSsbhVPhodGllU8eNLR11N+ZLamlTNAnHuUJqQorb6mKbCa8=
+Received: from MW3PR15MB3883.namprd15.prod.outlook.com (2603:10b6:303:51::22)
+ by MW3PR15MB3818.namprd15.prod.outlook.com (2603:10b6:303:47::24) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2835.19; Fri, 20 Mar
+ 2020 18:34:29 +0000
+Received: from MW3PR15MB3883.namprd15.prod.outlook.com
+ ([fe80::a49b:8546:912f:dd98]) by MW3PR15MB3883.namprd15.prod.outlook.com
+ ([fe80::a49b:8546:912f:dd98%5]) with mapi id 15.20.2835.017; Fri, 20 Mar 2020
+ 18:34:29 +0000
+Subject: Re: [PATCH] bpf: explicitly memset some bpf info structures declared
+ on the stack
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Daniel Borkmann <daniel@iogearbox.net>
+CC:     Alexei Starovoitov <ast@kernel.org>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Song Liu <songliubraving@fb.com>,
+        Andrii Nakryiko <andriin@fb.com>, <netdev@vger.kernel.org>,
+        <bpf@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        =?UTF-8?Q?Maciej_=c5=bbenczykowski?= <maze@google.com>,
+        John Stultz <john.stultz@linaro.org>,
+        Alexander Potapenko <glider@google.com>,
+        Alistair Delva <adelva@google.com>
+References: <20200320094813.GA421650@kroah.com>
+ <3bcf52da-0930-a27f-60f9-28a40e639949@iogearbox.net>
+ <20200320154518.GA765793@kroah.com>
+ <d55983b3-0f94-cc7f-2055-a0b4ab8075ed@iogearbox.net>
+ <20200320161515.GA778529@kroah.com> <20200320162258.GA794295@kroah.com>
+From:   Yonghong Song <yhs@fb.com>
+Message-ID: <f7063856-8d52-8e29-9593-cdfa0d26799b@fb.com>
+Date:   Fri, 20 Mar 2020 11:34:11 -0700
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:68.0)
+ Gecko/20100101 Thunderbird/68.6.0
+In-Reply-To: <20200320162258.GA794295@kroah.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: MWHPR22CA0024.namprd22.prod.outlook.com
+ (2603:10b6:300:ef::34) To MW3PR15MB3883.namprd15.prod.outlook.com
+ (2603:10b6:303:51::22)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=koi8-r
-Content-Disposition: inline
-In-Reply-To: <20200319102955.i7slokibkkysz6g6@wittgenstein>
+X-MS-Exchange-MessageSentRepresentingType: 1
+Received: from macbook-pro-52.local.dhcp.thefacebook.com (2620:10d:c090:400::5:a280) by MWHPR22CA0024.namprd22.prod.outlook.com (2603:10b6:300:ef::34) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2814.21 via Frontend Transport; Fri, 20 Mar 2020 18:34:27 +0000
+X-Originating-IP: [2620:10d:c090:400::5:a280]
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: f8c30a4d-6526-4cc6-35d6-08d7ccfd52f6
+X-MS-TrafficTypeDiagnostic: MW3PR15MB3818:
+X-MS-Exchange-Transport-Forked: True
+X-Microsoft-Antispam-PRVS: <MW3PR15MB3818B8216054DA4B8E60EBD1D3F50@MW3PR15MB3818.namprd15.prod.outlook.com>
+X-FB-Source: Internal
+X-MS-Oob-TLC-OOBClassifiers: OLM:2331;
+X-Forefront-PRVS: 03484C0ABF
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(366004)(39860400002)(136003)(376002)(346002)(396003)(199004)(81166006)(8936002)(81156014)(53546011)(6506007)(2906002)(31686004)(7416002)(36756003)(4744005)(110136005)(4326008)(54906003)(8676002)(52116002)(86362001)(2616005)(316002)(6486002)(186003)(16526019)(5660300002)(6666004)(31696002)(66556008)(66476007)(6512007)(478600001)(66946007);DIR:OUT;SFP:1102;SCL:1;SRVR:MW3PR15MB3818;H:MW3PR15MB3883.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;
+Received-SPF: None (protection.outlook.com: fb.com does not designate
+ permitted sender hosts)
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: b8t+nlORG12gaTWKEihzgwvkBstUp5jSBl/sXHwb9dYIEULw0y8/f2YlM5FpHWvBYJzaY8kvEhioLjPiicRAwYvRiRvUlLwvLV0+3xfSmEItRMilrzFQXqWQTbFIlc2Kc+DaqERu0Gm+XCgoG0iYnN3S9sUlkkyZ0KOGVxJ46BBxochF7Y+51LLVmzzS/WfUP86xHDJSRYI+ZWqOgQXCRMXi6Ms5Od8i6Qi17kY7ytdqKG2Jn+2/CiU0FBpsoif6zYfvo/u3rPzgPieXkOXlUKkK/g+JhFe8/H5V4e9j13LwT23DeedpOWod3x9Owb9t4r8bB6vDmpNAcz/Y9b7BucUwYMUW+DAr6p9lqmrtShRCsk/AqC6iWf8+EvERrdl0HvZmRN4yICTSPZmkQPPSGPdC+FJrxcvVfmAK+hU/M7jQsxTLWv0CFOUDtU3Ylene
+X-MS-Exchange-AntiSpam-MessageData: KWDyn2sThXDVsU5n6qEoqbmdqn/mjjd4gRUIvv5JQ2zPpoD419VIkqFpcy7RxOAULTuB9lwqPU7qXQMsmSSIyXPyMpWw8eKydZRTKI9RktcWMBb5rL+OiQgvRg9bZoihD62xjl+XlLmYXZiWfvTOPi99ZzrtND94gopggqWOemxwCbQftdn5o5un0UWzN4di
+X-MS-Exchange-CrossTenant-Network-Message-Id: f8c30a4d-6526-4cc6-35d6-08d7ccfd52f6
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Mar 2020 18:34:28.8596
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: vYVLiaemsp9qmPHAgNidEZOubqBsQ94tf7Lba/Yhz4u+EdgQUdCvxRpeC9lx+ntC
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW3PR15MB3818
+X-OriginatorOrg: fb.com
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.645
+ definitions=2020-03-20_06:2020-03-20,2020-03-20 signatures=0
+X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 lowpriorityscore=0
+ suspectscore=0 bulkscore=0 impostorscore=0 adultscore=0 mlxlogscore=685
+ clxscore=1015 mlxscore=0 spamscore=0 malwarescore=0 priorityscore=1501
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2003020000 definitions=main-2003200074
+X-FB-Internal: deliver
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 19, 2020 at 11:29:55AM +0100, Christian Brauner wrote:
-> On Thu, Mar 19, 2020 at 09:16:43AM +0100, Arnd Bergmann wrote:
-> > On Thu, Mar 19, 2020 at 9:11 AM Adrian Reber <areber@redhat.com> wrote:
-> > 
-> > > With Arnd's idea of only using nanoseconds, timens_offset would then
-> > > contain something like this:
-> > >
-> > > struct timens_offset {
-> > >         __aligned_s64 monotonic_offset_ns;
-> > >         __aligned_s64 boottime_offset_ns;
-> > > };
-> > >
-> > > I kind of prefer adding boottime and monotonic directly to struct clone_args
-> > >
-> > >         __aligned_u64 tls;
-> > >         __aligned_u64 set_tid;
-> > >         __aligned_u64 set_tid_size;
-> > > +       __aligned_s64 monotonic_offset_ns;
-> > > +       __aligned_s64 boottime_offset_ns;
-> > >  };
-> > 
-> > I would also prefer the second approach using two 64-bit integers
-> > instead of a pointer, as it keeps the interface simpler to implement
-> > and simpler to interpret by other tools.
+
+
+On 3/20/20 9:22 AM, Greg Kroah-Hartman wrote:
+> Trying to initialize a structure with "= {};" will not always clean out
+> all padding locations in a structure.  So be explicit and call memset to
+> initialize everything for a number of bpf information structures that
+> are then copied from userspace, sometimes from smaller memory locations
+> than the size of the structure.
 > 
-> Why I don't like has two reasons. There's the scenario where we have
-> added new extensions after the new boottime member and then we introduce
-> another offset. Then you'd be looking at:
-> 
-> __aligned_u64 tls;
-> __aligned_u64 set_tid;
-> __aligned_u64 set_tid_size;
-> + __aligned_s64 monotonic_offset_ns;
-> + __aligned_s64 boottime_offset_ns;
-> __aligned_s64 something_1
-> __aligned_s64 anything_2
-> + __aligned_s64 sometime_offset_ns
-> 
-> which bothers me just by looking at it. That's in addition to adding two
-> new members to the struct when most people will never set CLONE_NEWTIME.
-> We'll also likely have more features in the future that will want to
-> pass down more info than we want to directly expose in struct
-> clone_args, e.g. for a long time I have been thinking about adding a
-> struct for CLONE_NEWUSER that allows you to specify the id mappings you
-> want the new user namespace to get. We surely don't want to force all
-> new info into the uppermost struct. So I'm not convinced we should here.
+> Reported-by: Daniel Borkmann <daniel@iogearbox.net
+> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-I think here we can start thinking about a netlink-like interface.
-
-struct clone_args {
-	....
-	u64	attrs_offset;
-}
-
-struct clone_attr {
-	u16 cla_len;
-	u16 cla_type;
-}
-
-
-....
-
-int parse_clone_attributes(struct kernel_clone_args *kargs, struct clone_args *args, size_t args_size)
-{
-	u64 off = args->attrs_offset;
-
-	while (off < size) {
-		struct clone_attr *attr;
-
-		if (off + sizeof(struct clone_attr) uargs_size)
-			return -EINVAL;
-
-		attr = (struct clone_attr *) ((void *)args + off);
-
-		if (attr->cla_type > CLONE_ATTR_TYPE_MAX)
-			return -ENOSYS;
-
-		kargs->attrs[attr->cla_type] = CLONE_ATTR_DATA(attr);
-		off += CLONE_ATTR_LEN(attr);
-	}
-
-	return 0;
-}
-
-This interface doesn't suffer from problems what you enumerated before:
-
-* clone_args contains only fields which are often used.
-* per-feature attributes can be extended in a future without breaking
-  backward compatibility.
-* unused features don't affect clone3 argument size.
-* seccomp-friendly (I am not 100% sure about this)
-
+Acked-by: Yonghong Song <yhs@fb.com>
