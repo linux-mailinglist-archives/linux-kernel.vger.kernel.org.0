@@ -2,152 +2,138 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 673C918D4E0
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 17:51:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 532FC18D4FD
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 17:54:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727522AbgCTQvE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Mar 2020 12:51:04 -0400
-Received: from mout.kundenserver.de ([212.227.126.130]:53899 "EHLO
+        id S1727502AbgCTQy0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Mar 2020 12:54:26 -0400
+Received: from mout.kundenserver.de ([212.227.17.10]:50877 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726983AbgCTQvD (ORCPT
+        with ESMTP id S1726983AbgCTQy0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Mar 2020 12:51:03 -0400
+        Fri, 20 Mar 2020 12:54:26 -0400
 Received: from mail.cetitecgmbh.com ([87.190.42.90]) by
- mrelayeu.kundenserver.de (mreue012 [212.227.15.167]) with ESMTPSA (Nemesis)
- id 1MjxW4-1jhlqo2MQK-00kOBJ for <linux-kernel@vger.kernel.org>; Fri, 20 Mar
- 2020 17:51:02 +0100
+ mrelayeu.kundenserver.de (mreue108 [212.227.15.183]) with ESMTPSA (Nemesis)
+ id 1MulyX-1jXYUF3hTf-00rpfa for <linux-kernel@vger.kernel.org>; Fri, 20 Mar
+ 2020 17:54:24 +0100
 Received: from pflvmailgateway.corp.cetitec.com (unknown [127.0.0.1])
-        by mail.cetitecgmbh.com (Postfix) with ESMTP id 660D864FB26
-        for <linux-kernel@vger.kernel.org>; Fri, 20 Mar 2020 16:51:02 +0000 (UTC)
+        by mail.cetitecgmbh.com (Postfix) with ESMTP id AF3E2650318
+        for <linux-kernel@vger.kernel.org>; Fri, 20 Mar 2020 16:54:24 +0000 (UTC)
 X-Virus-Scanned: amavisd-new at cetitec.com
 Received: from mail.cetitecgmbh.com ([127.0.0.1])
         by pflvmailgateway.corp.cetitec.com (pflvmailgateway.corp.cetitec.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id QdvdBVPMBxQn for <linux-kernel@vger.kernel.org>;
-        Fri, 20 Mar 2020 17:51:02 +0100 (CET)
+        with ESMTP id uvAGQZS8lGqp for <linux-kernel@vger.kernel.org>;
+        Fri, 20 Mar 2020 17:54:24 +0100 (CET)
 Received: from pfwsexchange.corp.cetitec.com (unknown [10.10.1.99])
-        by mail.cetitecgmbh.com (Postfix) with ESMTPS id 12F9864F849
-        for <linux-kernel@vger.kernel.org>; Fri, 20 Mar 2020 17:51:02 +0100 (CET)
+        by mail.cetitecgmbh.com (Postfix) with ESMTPS id 7302564F824
+        for <linux-kernel@vger.kernel.org>; Fri, 20 Mar 2020 17:54:24 +0100 (CET)
 Received: from pflmari.corp.cetitec.com (10.8.5.41) by
  PFWSEXCHANGE.corp.cetitec.com (10.10.1.99) with Microsoft SMTP Server (TLS)
- id 15.0.1497.2; Fri, 20 Mar 2020 17:51:01 +0100
+ id 15.0.1497.2; Fri, 20 Mar 2020 17:54:23 +0100
 Received: by pflmari.corp.cetitec.com (Postfix, from userid 1000)
-        id 86EAC80509; Fri, 20 Mar 2020 17:12:06 +0100 (CET)
-Date:   Fri, 20 Mar 2020 17:12:06 +0100
+        id 6E020804FB; Fri, 20 Mar 2020 17:15:39 +0100 (CET)
+Date:   Fri, 20 Mar 2020 17:15:39 +0100
 From:   Alex Riesen <alexander.riesen@cetitec.com>
-To:     Kieran Bingham <kieran.bingham@ideasonboard.com>
+To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 CC:     Geert Uytterhoeven <geert@linux-m68k.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        "Laurent Pinchart" <laurent.pinchart@ideasonboard.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        <devel@driverdev.osuosl.org>, <linux-media@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-renesas-soc@vger.kernel.org>
-Subject: [PATCH v3 11/11] media: adv748x: allow the HDMI sub-device to accept
- EDID
-Message-ID: <4fce566b68bbe4f85cf92cd80a455b575a5d95d1.1584720678.git.alexander.riesen@cetitec.com>
-Mail-Followup-To: Alex Riesen <alexander.riesen@cetitec.com>,
         Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
         Mauro Carvalho Chehab <mchehab@kernel.org>,
         Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        devel@driverdev.osuosl.org, linux-media@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-References: <cover.1584720678.git.alexander.riesen@cetitec.com>
+        driverdevel <devel@driverdev.osuosl.org>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [PATCH v2 07/10] dt-bindings: adv748x: add information about
+ serial audio interface (I2S/TDM)
+Message-ID: <20200320161539.GM4344@pflmari>
+Mail-Followup-To: Alex Riesen <alexander.riesen@cetitec.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        driverdevel <devel@driverdev.osuosl.org>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+References: <cover.1584639664.git.alexander.riesen@cetitec.com>
+ <c9ff553f804f178a247dca356306948e971432fb.1584639664.git.alexander.riesen@cetitec.com>
+ <20200319180125.GJ14585@pendragon.ideasonboard.com>
+ <20200320084406.GB4344@pflmari>
+ <CAMuHMdUdVb0LwZDx-MH2FLYYPvgq=uj_3Nrzo9obWAi-Q-2ZnA@mail.gmail.com>
+ <20200320090339.GD4344@pflmari>
+ <20200320095907.GB5193@pendragon.ideasonboard.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <cover.1584720678.git.alexander.riesen@cetitec.com>
+In-Reply-To: <20200320095907.GB5193@pendragon.ideasonboard.com>
 X-Originating-IP: [10.8.5.41]
 X-ClientProxiedBy: PFWSEXCHANGE.corp.cetitec.com (10.10.1.99) To
  PFWSEXCHANGE.corp.cetitec.com (10.10.1.99)
 X-EsetResult: clean, is OK
 X-EsetId: 37303A290D7F536A6D7660
-X-Provags-ID: V03:K1:oEMA+4dVfXfsKRD4UklDmhZd9ABI6n8WPxTUfhnYtf8lhdkpo/X
- ukjobM0THDPTrCJ5wqCq8K3vL1spP+wsmzP3qjGeL7qOSxbo4XZIJTjOBOQK6KDUnTMygc9
- tdziSZCSYeJqz5cMJPbh3BZAHYEBfY4BvoYt66KShFAjQoS4PaVRAw34TiTcjQVB3Cbl9es
- kr6w+t1BSI8wZY0gfqQww==
+X-Provags-ID: V03:K1:HxZv8y8RcH6y4dcwnr7xyDX28Qtqcez9PsPtHS+SJv6XYbTCw3n
+ yJvD/HG8k26lBLxP9KIKm3/b8kktYePgnnkvlSkmBjaTTXzMBXkGUkxkwaOiJ/3KSV2LaKx
+ ey1RiiQXMd3eRv1UmCMfRzeoOyVZdG1I/DqVTdgSZSy7mo4C1GyFpxErnqUQHLgnMhQxRTy
+ FCKxUauKIxhBroWV2iknw==
 X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:TJCksSkjBSU=:UixXJXNyWD+aZWy4YzspeO
- eXrwaY1kdDRLkCdEBCpjqKC1NKSA18oqghjOUxNg8ltKc4iW9L40+t2rgZU/FGMIbglXh0+hW
- Goh4gWNIxH/v+juftoerbwTihbqwa88oFPMHkbAoSI9h2hOHttGKZDVmeYhts12cH0yPmmtrJ
- VBwGztd73NOMMBqDvohsWAFley0imXMfZuMyg4AQLlw18M8ZVMEqIxijo66rmGBppOtBSF+fg
- Bum0PR+4zv4yLF730aEDpwqRJ5fFxqa+fLsd5QkxCsseFDrPiFSKrrTGDTxeQCu+XhmDUKSrU
- B8qc0YJYlbLTAAcJsXNueLNyQ+3k2byZ8NygQ1u/Isp/YtZZsqDQdSaAMaa2VtI1tWLD5Ukg2
- 0UjBjgDSOZD747afmyOB1EIrecDDu01AvdBLF59O/2Hozx62OFlJ5Iy3mzgmf/UEJvVjX7mFM
- M1UauC4KWfmJfmaQyQnledTetVleMgEjKMEgml3ORWWexW/EUUtD+0xaBcq0avEWtHxjbGnyW
- ISwlSszaX1M9acklgByx9Cq4k6mGtxuHC+G/7/PKsDJr+exB2BvogiyOB4FO/7SEXJsSltSBS
- 8FeKnBdPX7E3ou5N7YaF1fCicaisHWvBa3CtzVc5hhC+XTQbrL1ckxyw37Q9RoAW2aBT0F2Zv
- wj4km57ZOr29s9528yd9BYIbnqqeAY5IAR7iOVTXYwPqv0eTOT4oUMFMAkM1e8+LeNJ0qaR8f
- fZHoxPzpur8RcD9gciyqgwDCPJto+B97j8MRwzKaavMUtjeB0xgh+fYTPXPqKeSyD84OyohBt
- M3HDGy12Qjdt/yBxKgGwAWAOT1EEN8yTG6EgurBXyvUMyGjucteD7cQmpaa+sNR7ZIkRLlr
+X-UI-Out-Filterresults: notjunk:1;V03:K0:xHKqDly397I=:PlliUZ2I8bFROcuS6GXTaJ
+ xjB4raWYziO6tivses82KhXFHNgUsXBep+oZkiNuiVBwdKsNPo1YiVHVpw1AJhoY+lVyDUqew
+ 7ZTyOFyybD549d2ja5uzj0ADjeV5AqwiLCx6y8u14I69hsFLndF6ktcI7y8z65HwxbuiqYhnm
+ 4fwyW+GP4HIL8OqlqB7iq8VHNTYhU/WlyLwwiJD1as8lUvNaO+zcqUIB8vno9ePVnAuWbBha5
+ u8AqC9pX4uwfGX2W+/n89ewMui3PXdnvkH0vzPqWKMK5mXzrcKbhYZJ6LCbD0jVxzr+rV3Gmk
+ W/ZHBFBq8K020BlvsU/PgNnp4Avt92/POG7/9Y/XuckiTvzlOYE7bixGAX1l8VLdYJWbiFb6T
+ 0EDwj7sq0I5ERCCcjgfcmrr+6Bpfdpv3HpSMAZMYqBKVTk/oGSD2K49KRvMv59bu8KH5AjJhn
+ zrAKKmtC8Z3UFeDl41in+5QETqS794NP21o2qMylKeugq7U3zWaGMWHy38i7/dwtKdy2UIxYa
+ li8opedF+BIDq+ttsxGrz9Pjyva4ORpaoJadw0M+jTYD9il0ZjTB3ri/SDv5PDLoDExAcLFIf
+ LGBh3YNGCF0HjLfOjRmJVZk08Z95dquS1Z61QAGlkco+qF4FODqFGNGraoRQI13WapkIkOzbi
+ SZxdmHyBfN9hZIYr65milZ4aALk1NUwzj/2e+QlFb5Qwlbn1PlPlZNapAIe1gLHChSXeVwA5O
+ j5QNdUTQtoKu9m4KQM2ejcRSh/PYPIjVcp0MbAEY6CMOnOnQV9MGQQU+odSfSueAh7gQxshYo
+ U98KB5HOXv81r7XsZQZ+UxnsoAahmejgm/+n8IJWxj0ljZ2LEwDpZHzaQHhoIzOxThARAzy
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This makes it possible to load a EDID reported by the device
-with v4l2-ctl utility:
+Hi Laurent,
 
-  vdev=/dev/$(grep -l '^adv748x.*hdmi$' /sys/class/video4linux/v4l-subdev*/name |cut -d/ -f5-5)
-  v4l2-ctl -d $vdev --set-edid=pad=0,file=/etc/adv7482.edid
+Laurent Pinchart, Fri, Mar 20, 2020 10:59:07 +0100:
+> On Fri, Mar 20, 2020 at 10:03:39AM +0100, Alex Riesen wrote:
+> > Geert Uytterhoeven, Fri, Mar 20, 2020 09:48:14 +0100:
+> > > 
+> > > You'd be surprised how many board designers would consider this a cheap
+> > > 12.288 MHz clock source, without using the I2S port ;-)
+> > 
+> > Well, I am :-)
+> > 
+> > Especially considering that the driver will not switch the MCLK pin aktive
+> > (all I2S-related pins are tristate by default).
+> 
+> If the MCLK can't be output without enabling the I2S then I don't mind
+> if we make the #clock-cells optional, although, as Geert mentioned,
+> someone may still want to use it.
 
-Signed-off-by: Alexander Riesen <alexander.riesen@cetitec.com>
+So I settled on just removing the option.
 
---
+> > And how do I require it to be set unconditionally? By just removing the
+> > "if ..." part of the statement?
+> 
+> Yes. For YAML it's easy too, the hard part is making properties
+> conditional :-)
 
-I would like to avoid doing that, but found no other way yet.
-Suggestions very welcome.
----
- drivers/media/i2c/adv748x/adv748x-hdmi.c | 27 ++++++++++++++++++++++++
- 1 file changed, 27 insertions(+)
+Converting it into YAML turned out a bit more than just reformatting:
+some of the explicit bindings schema is only implied in the text format :-(
 
-diff --git a/drivers/media/i2c/adv748x/adv748x-hdmi.c b/drivers/media/i2c/adv748x/adv748x-hdmi.c
-index 664930e55baf..fea133472911 100644
---- a/drivers/media/i2c/adv748x/adv748x-hdmi.c
-+++ b/drivers/media/i2c/adv748x/adv748x-hdmi.c
-@@ -775,7 +775,34 @@ static int adv748x_hdmi_log_status(struct v4l2_subdev *sd)
- 	return 0;
- }
- 
-+static long adv748x_hdmi_querycap(struct adv748x_hdmi *hdmi,
-+				  struct v4l2_capability *cap)
-+{
-+	struct adv748x_state *state = adv748x_hdmi_to_state(hdmi);
-+
-+	cap->version = LINUX_VERSION_CODE;
-+	strlcpy(cap->driver, state->dev->driver->name, sizeof(cap->driver));
-+	strlcpy(cap->card, "hdmi", sizeof(cap->card));
-+	snprintf(cap->bus_info, sizeof(cap->bus_info), "i2c:%d-%04x",
-+		 i2c_adapter_id(state->client->adapter),
-+		 state->client->addr);
-+	cap->device_caps = V4L2_CAP_AUDIO | V4L2_CAP_VIDEO_CAPTURE;
-+	cap->capabilities = V4L2_CAP_DEVICE_CAPS;
-+	return 0;
-+}
-+
-+static long adv748x_hdmi_ioctl(struct v4l2_subdev *sd,
-+			       unsigned int cmd, void *arg)
-+{
-+	struct adv748x_hdmi *hdmi = adv748x_sd_to_hdmi(sd);
-+
-+	if (cmd == VIDIOC_QUERYCAP)
-+		return adv748x_hdmi_querycap(hdmi, arg);
-+	return -ENOTTY;
-+}
-+
- static const struct v4l2_subdev_core_ops adv748x_core_ops_hdmi = {
-+	.ioctl = adv748x_hdmi_ioctl,
- 	.log_status = adv748x_hdmi_log_status,
- };
- 
--- 
-2.25.1.25.g9ecbe7eb18
+Takes a while to find out what is what.
 
+Regards,
+Alex
