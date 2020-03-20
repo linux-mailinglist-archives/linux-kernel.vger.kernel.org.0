@@ -2,133 +2,146 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2BC1518C6B6
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 06:15:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 158E418C6C2
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 06:22:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726821AbgCTFPg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Mar 2020 01:15:36 -0400
-Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:7305 "EHLO
-        hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725446AbgCTFPg (ORCPT
+        id S1726838AbgCTFWn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Mar 2020 01:22:43 -0400
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:42267 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725883AbgCTFWn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Mar 2020 01:15:36 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5e74516a0000>; Thu, 19 Mar 2020 22:15:22 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Thu, 19 Mar 2020 22:15:35 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Thu, 19 Mar 2020 22:15:35 -0700
-Received: from [10.25.97.155] (10.124.1.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 20 Mar
- 2020 05:15:32 +0000
-Subject: Re: [PATCH -next] PCI: dwc: fix compile err for pcie-tagra194
-To:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Qiujun Huang <hqjagain@gmail.com>, <anders.roxell@linaro.org>
-CC:     <jingoohan1@gmail.com>, <gustavo.pimentel@synopsys.com>,
-        <amurray@thegoodpenguin.co.uk>, <bhelgaas@google.com>,
-        <linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <1584621380-21152-1-git-send-email-hqjagain@gmail.com>
- <20200319173710.GA7433@e121166-lin.cambridge.arm.com>
-From:   Vidya Sagar <vidyas@nvidia.com>
-X-Nvconfidentiality: public
-Message-ID: <e16eb1a7-6ada-a8ed-c308-6fc5c9a8b7be@nvidia.com>
-Date:   Fri, 20 Mar 2020 10:45:29 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:68.0) Gecko/20100101
- Thunderbird/68.6.0
+        Fri, 20 Mar 2020 01:22:43 -0400
+Received: by mail-ot1-f68.google.com with SMTP id a2so4862812otq.9
+        for <linux-kernel@vger.kernel.org>; Thu, 19 Mar 2020 22:22:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=kuqZitG28D6cu+nd1SoE8yFkR4mBbbKOsK5vySIs4Co=;
+        b=KvGWUWWCVjsfFVfFVYH7c3tKNsW/IY+5HGc7nakHOAlEV5sW7f/4PLYkyuf+DSodXq
+         yTnv6usL0PGvC4OK9knxg8sPSmVzPgVNWOY1Q7qZwYgi++ycRSc3y2a/OOka335ncGJ/
+         VPgA0JrCW1lZaZjrZ5m8BArT4aeePxbVtjKknm2ZOIqJLNEAH8AWRJQh4B2TZT0RdNEl
+         dL3dihtxzoDE9EarNGSBJwm4wm9RDr5eJxDbU27sOBqP619YBGhdXEooliZGVE2qHf0W
+         uRXDqrA9kLPc/LGiVHb3kVTiv69hA+kgci3Q6z9gKs/eZjILlNgajrd6KRzcFsqV2Uyu
+         nXCQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=kuqZitG28D6cu+nd1SoE8yFkR4mBbbKOsK5vySIs4Co=;
+        b=iwY4bT59WPpdTWKLjoJhdiGwY72Ir14ZGeLmO/mhHN7QAGOlOJ1gOweSNwKjreqRbV
+         ZD25ZRqLFjYMxwdjZ9TQ4EWHHiDbv/aFiWxALO2tBmW9z+3AAgRWGgsGJi51EaUHP/X+
+         ojoq2v7chuZrtlZMKbV4eRhrCa+ugOH8jiLc962U962zCt8DYDQQlz9eJ7mNwO5EG46+
+         gU0vHE2Msm0Xf1ujvWQzB9gxWUKi5T5Y5pzkNNK1WJU2FMippA7EO1y1FwwupGiAeyfh
+         DATIYzcyAHOloQuRvqB4NZCk/U2DnXalPD/LHvn6gTFJyJVF0FI0Mk8k63l2KOGRrSJ9
+         CGMw==
+X-Gm-Message-State: ANhLgQ2gaW9CPicK/wlo3IQRYn+1G60upUnjUxzF+xl2pLaY0jXwbo7p
+        BstfMH20R4kwTYTahBJQwFZ2c5HSIiqe4X9MJiOtXQ==
+X-Google-Smtp-Source: ADFU+vuMyCXVoQ7R8+fFsv9qWGJSaeB7mpdOKQvS3drwo7aFOvb7Qtflc+a81WJcHEP/B2afBHA0c5bvj5kBtXFpbA0=
+X-Received: by 2002:a9d:3b09:: with SMTP id z9mr5469806otb.195.1584681762685;
+ Thu, 19 Mar 2020 22:22:42 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20200319173710.GA7433@e121166-lin.cambridge.arm.com>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1584681322; bh=5cDnCRVr/SQ+yk+RPLat6q5cSmCpBVeJdv46ovb/TLA=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:X-Nvconfidentiality:
-         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
-         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=L3FmoXlOLZBJDmfUoTpBdPgvdunMUXY0nysEiquE9EG4KKGiN6M0FQy4HZr/4+iGq
-         lYU7NsF7sarzjjH0C67tIepd2evlFb0HApy9iGvodOvFmW4iWX7zBWDirNHArKQMmf
-         YBeyJRnf4K8guy3MO3pVIiELn6umNXzspDxubf6sY5jbHO9m+CVOogvqABOMHEifkK
-         blqvFgjOqGqry/0nMgioizgsvjaBXRfUiZjjov1HEvBzlNjkuret1lVSkVo+3SiTwG
-         CGYLQeg/NPi2TPw6/Nqv6p+IwudYEIqEGwulJaFSWkvR3Na/LjdLVLqnRetJcb2h/9
-         8GAJ/F0LVZ6pw==
+References: <20200319194954.39853-1-john.stultz@linaro.org>
+In-Reply-To: <20200319194954.39853-1-john.stultz@linaro.org>
+From:   Saravana Kannan <saravanak@google.com>
+Date:   Thu, 19 Mar 2020 22:22:06 -0700
+Message-ID: <CAGETcx-q-BY8o17bKWU79iEgfZagSDn9-fwJQ5FzdcOnwbXQHA@mail.gmail.com>
+Subject: Re: [PATCH v2] soc: qcom: rpmpd: Allow RPMPD driver to be loaded as a module
+To:     John Stultz <john.stultz@linaro.org>
+Cc:     lkml <linux-kernel@vger.kernel.org>, Todd Kjos <tkjos@google.com>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Mar 19, 2020 at 12:50 PM John Stultz <john.stultz@linaro.org> wrote:
+>
+> This patch allow the rpmpd driver to be loaded as a permenent
+> module. Meaning it can be loaded from a module, but then cannot
+> be unloaded.
+>
+> Ideally, it would include a remove hook and related logic, but
+> apparently the genpd code isn't able to track usage and cleaning
+> things up? (See: https://lkml.org/lkml/2019/1/24/38)
+>
+> So making it a permenent module at least improves things slightly
+> over requiring it to be a built in driver.
+>
+> Feedback would be appreciated!
+>
+> Cc: Todd Kjos <tkjos@google.com>
+> Cc: Saravana Kannan <saravanak@google.com>
+> Cc: Andy Gross <agross@kernel.org>
+> Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
+> Cc: Rajendra Nayak <rnayak@codeaurora.org>
+> Cc: linux-arm-msm@vger.kernel.org
+> Signed-off-by: John Stultz <john.stultz@linaro.org>
+> ---
+> v2:
+> * Fix MODULE_LICENSE to be GPL v2 as suggested by Bjorn
+> * Leave initcall as core_initcall, since that switches to module_initcall
+>   only when built as a module, also suggested by Bjorn
+> * Add module tags taken from Rajendra's earlier patch
+> ---
+>  drivers/soc/qcom/Kconfig | 4 ++--
+>  drivers/soc/qcom/rpmpd.c | 6 ++++++
+>  2 files changed, 8 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/soc/qcom/Kconfig b/drivers/soc/qcom/Kconfig
+> index d0a73e76d563..af774555b9d2 100644
+> --- a/drivers/soc/qcom/Kconfig
+> +++ b/drivers/soc/qcom/Kconfig
+> @@ -123,8 +123,8 @@ config QCOM_RPMHPD
+>           for the voltage rail.
+>
+>  config QCOM_RPMPD
+> -       bool "Qualcomm RPM Power domain driver"
+> -       depends on QCOM_SMD_RPM=y
+> +       tristate "Qualcomm RPM Power domain driver"
+> +       depends on QCOM_SMD_RPM
+>         help
+>           QCOM RPM Power domain driver to support power-domains with
+>           performance states. The driver communicates a performance state
+> diff --git a/drivers/soc/qcom/rpmpd.c b/drivers/soc/qcom/rpmpd.c
+> index 2b1834c5609a..22fe94c03e79 100644
+> --- a/drivers/soc/qcom/rpmpd.c
+> +++ b/drivers/soc/qcom/rpmpd.c
+> @@ -5,6 +5,7 @@
+>  #include <linux/init.h>
+>  #include <linux/kernel.h>
+>  #include <linux/mutex.h>
+> +#include <linux/module.h>
+>  #include <linux/pm_domain.h>
+>  #include <linux/of.h>
+>  #include <linux/of_device.h>
+> @@ -226,6 +227,7 @@ static const struct of_device_id rpmpd_match_table[] = {
+>         { .compatible = "qcom,qcs404-rpmpd", .data = &qcs404_desc },
+>         { }
+>  };
+> +MODULE_DEVICE_TABLE(of, rpmpd_match_table);
+>
+>  static int rpmpd_send_enable(struct rpmpd *pd, bool enable)
+>  {
+> @@ -422,3 +424,7 @@ static int __init rpmpd_init(void)
+>         return platform_driver_register(&rpmpd_driver);
+>  }
+>  core_initcall(rpmpd_init);
+> +
+> +MODULE_DESCRIPTION("Qualcomm Technologies, Inc. RPM Power Domain Driver");
+> +MODULE_LICENSE("GPL v2");
+> +MODULE_ALIAS("platform:qcom-rpmpd");
+> --
+> 2.17.1
+>
 
+I think making it a permanent module is still very useful and a good first step.
 
-On 3/19/2020 11:07 PM, Lorenzo Pieralisi wrote:
-> External email: Use caution opening links or attachments
-> 
-> 
-> On Thu, Mar 19, 2020 at 08:36:20PM +0800, Qiujun Huang wrote:
->> make allmodconfig
->> ERROR: modpost: "dw_pcie_ep_init_notify" [drivers/pci/controller/dwc/pcie-tegra194.ko] undefined!
->> ERROR: modpost: "dw_pcie_ep_init_complete" [drivers/pci/controller/dwc/pcie-tegra194.ko] undefined!
->> ERROR: modpost: "dw_pcie_ep_linkup" [drivers/pci/controller/dwc/pcie-tegra194.ko] undefined!
->> make[2]: *** [__modpost] Error 1
->> make[1]: *** [modules] Error 2
->> make: *** [sub-make] Error 2
->>
->> need to export the symbols.
->>
->> Signed-off-by: Qiujun Huang <hqjagain@gmail.com>
->> ---
->>   drivers/pci/controller/dwc/pcie-designware-ep.c | 3 +++
->>   1 file changed, 3 insertions(+)
-> 
-> I have squashed this in with the original patch.
-> 
-> @Vidya: is this something we missed in the review cycle ? Asking just
-> to make sure it was not me who made a mistake while merging the code.
-My apologies. I wasn't compiling the driver as a module (instead built 
-into the kernel image)
-BTW, I see
-ERROR: modpost: "dw_pcie_ep_init" 
-[drivers/pci/controller/dwc/pcie-tegra194.ko] undefined!
-also along with the above three. So I think even dw_pcie_ep_init() needs 
-to be exported.
+Acked-by: Saravana Kannan <saravanak@google.com>
 
-Thanks,
-Vidya Sagar
-> 
-> Thanks,
-> Lorenzo
-> 
->> diff --git a/drivers/pci/controller/dwc/pcie-designware-ep.c b/drivers/pci/controller/dwc/pcie-designware-ep.c
->> index 4233c43..60d62ef 100644
->> --- a/drivers/pci/controller/dwc/pcie-designware-ep.c
->> +++ b/drivers/pci/controller/dwc/pcie-designware-ep.c
->> @@ -18,6 +18,7 @@ void dw_pcie_ep_linkup(struct dw_pcie_ep *ep)
->>
->>        pci_epc_linkup(epc);
->>   }
->> +EXPORT_SYMBOL_GPL(dw_pcie_ep_linkup);
->>
->>   void dw_pcie_ep_init_notify(struct dw_pcie_ep *ep)
->>   {
->> @@ -25,6 +26,7 @@ void dw_pcie_ep_init_notify(struct dw_pcie_ep *ep)
->>
->>        pci_epc_init_notify(epc);
->>   }
->> +EXPORT_SYMBOL_GPL(dw_pcie_ep_init_notify);
->>
->>   static void __dw_pcie_ep_reset_bar(struct dw_pcie *pci, enum pci_barno bar,
->>                                   int flags)
->> @@ -535,6 +537,7 @@ int dw_pcie_ep_init_complete(struct dw_pcie_ep *ep)
->>
->>        return 0;
->>   }
->> +EXPORT_SYMBOL_GPL(dw_pcie_ep_init_complete);
->>
->>   int dw_pcie_ep_init(struct dw_pcie_ep *ep)
->>   {
->> --
->> 1.8.3.1
->>
+-Saravana
