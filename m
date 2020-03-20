@@ -2,149 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0895718D96C
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 21:34:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C618918D9B9
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 21:50:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727273AbgCTUeP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Mar 2020 16:34:15 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:38952 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726902AbgCTUeO (ORCPT
+        id S1727229AbgCTUuP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Mar 2020 16:50:15 -0400
+Received: from ex13-edg-ou-002.vmware.com ([208.91.0.190]:35623 "EHLO
+        EX13-EDG-OU-002.vmware.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726982AbgCTUuH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Mar 2020 16:34:14 -0400
-Received: by mail-pg1-f194.google.com with SMTP id b22so3648866pgb.6
-        for <linux-kernel@vger.kernel.org>; Fri, 20 Mar 2020 13:34:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:in-reply-to:message-id:references
-         :user-agent:mime-version;
-        bh=+N0bQ4JlxAy2jfmVhmfgL9o3zKHhJL+I15S0ny2lKgs=;
-        b=RLsZNvbzOdBVhWrbvFQr3CKCdKtnq0K+ohA8v7c0w2gc/e5LPRQ7JGoNHVRoeXa984
-         2z3VSPKSoz7GWala01EO5uP5GlkIL9GqUS1EeA4kAuhwaKOk9cWUv0Epbqx+W7fTHG26
-         F7GSf84Ed0e/vmNEPjG99lgw+qHi5S5N4O5Z7eWZI4tt13hwNTSs9RSZrckzBagL8Xec
-         vB7KAdDqQ4/LDtPSw0rwyPF5jUdN/dbp0migODoWfLJveA8otGKFz4Vi4ZzssqyfKx7L
-         Lq3fZqlYdRzjncLjUv324t9/cYxxu5IwiOO8MK7leI4eFF6Fp11guAennTNahV8u7/TW
-         amlQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
-         :references:user-agent:mime-version;
-        bh=+N0bQ4JlxAy2jfmVhmfgL9o3zKHhJL+I15S0ny2lKgs=;
-        b=V91/f0ZTDYGKktJ7G072QKE6Difn48hGY42GOCYfzPg2boE+3itqFbEn0c0Ea3uy9R
-         P0rCByuGsemT6+KW4DKdVvDi2I9gl9dgi2CtWr1njtAeCQgQkgosGXN9IvHaLG/aXprB
-         NiPpUeEer95EitkB5NXPtZ/i5NlZars7GalKHRFuAqwh0a95eV6fB+0zw/1aIrtZj3sB
-         TEGYhNp+88lAFSEJEXH0Bn7WFVZ4tw91cHwtiMyGMeUWeX0Q+hARC1IRcYEWafKB5BX7
-         iSW6C6w1u2DWvtDQs5qyx+Nx/YRwgFCUNdvEAT+ZylDxvVqTMuWOJeW04obbUd7U+xPS
-         1BmA==
-X-Gm-Message-State: ANhLgQ1ySYNIUGlGOFw8tQie6smgt29+1loHhneDj+njI0S7+fFU5mFI
-        UhrgctJQ3ucmAKYq99wVriKOXA==
-X-Google-Smtp-Source: ADFU+vvR5V4d3Av2dfFh7WwI8fAcwnWol4/NYm+baHmdq6gt93cp+asM2U0D8WNlss8Unt2oKz1U3w==
-X-Received: by 2002:a63:d351:: with SMTP id u17mr10257174pgi.396.1584736453455;
-        Fri, 20 Mar 2020 13:34:13 -0700 (PDT)
-Received: from [2620:15c:17:3:3a5:23a7:5e32:4598] ([2620:15c:17:3:3a5:23a7:5e32:4598])
-        by smtp.gmail.com with ESMTPSA id 93sm5153147pjo.43.2020.03.20.13.34.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 20 Mar 2020 13:34:12 -0700 (PDT)
-Date:   Fri, 20 Mar 2020 13:34:12 -0700 (PDT)
-From:   David Rientjes <rientjes@google.com>
-X-X-Sender: rientjes@chino.kir.corp.google.com
-To:     Tom Lendacky <thomas.lendacky@amd.com>
-cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Brijesh Singh <brijesh.singh@amd.com>
-Subject: Re: [PATCH] KVM: SVM: Issue WBINVD after deactivating an SEV guest
-In-Reply-To: <c8bf9087ca3711c5770bdeaafa3e45b717dc5ef4.1584720426.git.thomas.lendacky@amd.com>
-Message-ID: <alpine.DEB.2.21.2003201333510.205664@chino.kir.corp.google.com>
-References: <c8bf9087ca3711c5770bdeaafa3e45b717dc5ef4.1584720426.git.thomas.lendacky@amd.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Fri, 20 Mar 2020 16:50:07 -0400
+X-Greylist: delayed 902 seconds by postgrey-1.27 at vger.kernel.org; Fri, 20 Mar 2020 16:50:04 EDT
+Received: from sc9-mailhost2.vmware.com (10.113.161.72) by
+ EX13-EDG-OU-002.vmware.com (10.113.208.156) with Microsoft SMTP Server id
+ 15.0.1156.6; Fri, 20 Mar 2020 13:34:55 -0700
+Received: from localhost.localdomain (unknown [10.118.101.94])
+        by sc9-mailhost2.vmware.com (Postfix) with ESMTP id 9B71CB1505;
+        Fri, 20 Mar 2020 16:34:59 -0400 (EDT)
+From:   Alexey Makhalov <amakhalov@vmware.com>
+To:     <linux-x86_64@vger.kernel.org>
+CC:     <linux-kernel@vger.kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H . Peter Anvin" <hpa@zytor.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+        Juergen Gross <jgross@suse.com>,
+        Alexey Makhalov <amakhalov@vmware.com>
+Subject: [PATCH 0/5] x86/vmware: Steal time accounting support
+Date:   Fri, 20 Mar 2020 20:34:38 +0000
+Message-ID: <20200320203443.27742-1-amakhalov@vmware.com>
+X-Mailer: git-send-email 2.14.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain
+Received-SPF: None (EX13-EDG-OU-002.vmware.com: amakhalov@vmware.com does not
+ designate permitted sender hosts)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 20 Mar 2020, Tom Lendacky wrote:
+Hello,
 
-> Currently, CLFLUSH is used to flush SEV guest memory before the guest is
-> terminated (or a memory hotplug region is removed). However, CLFLUSH is
-> not enough to ensure that SEV guest tagged data is flushed from the cache.
-> 
-> With 33af3a7ef9e6 ("KVM: SVM: Reduce WBINVD/DF_FLUSH invocations"), the
-> original WBINVD was removed. This then exposed crashes at random times
-> because of a cache flush race with a page that had both a hypervisor and
-> a guest tag in the cache.
-> 
-> Restore the WBINVD when destroying an SEV guest and add a WBINVD to the
-> svm_unregister_enc_region() function to ensure hotplug memory is flushed
-> when removed. The DF_FLUSH can still be avoided at this point.
-> 
-> Fixes: 33af3a7ef9e6 ("KVM: SVM: Reduce WBINVD/DF_FLUSH invocations")
-> Signed-off-by: Tom Lendacky <thomas.lendacky@amd.com>
+This patchset introduces steal time accounting support for
+the VMware guest. The idea and implementation of guest
+steal time support is similar to KVM ones and it is based
+on steal clock. The steal clock is a per CPU structure in
+a shared memory between hypervisor and guest, initialized
+by each CPU through hypercall. Steal clock is got updated
+by the hypervisor and read by the guest. 
 
-Acked-by: David Rientjes <rientjes@google.com>
+The patchset consists of 5 items:
 
-Should this be marked for stable?
+1. x86/vmware: Make vmware_select_hypercall() __init
+Minor clean up.
 
-Cc: stable@vger.kernel.org # 5.5+
+2. x86/vmware: Remove vmware_sched_clock_setup()
+Preparation for the main patch.
 
-> ---
->  arch/x86/kvm/svm.c | 22 ++++++++++++++--------
->  1 file changed, 14 insertions(+), 8 deletions(-)
-> 
-> diff --git a/arch/x86/kvm/svm.c b/arch/x86/kvm/svm.c
-> index 08568ae9f7a1..d54cdca9c140 100644
-> --- a/arch/x86/kvm/svm.c
-> +++ b/arch/x86/kvm/svm.c
-> @@ -1980,14 +1980,6 @@ static void sev_clflush_pages(struct page *pages[], unsigned long npages)
->  static void __unregister_enc_region_locked(struct kvm *kvm,
->  					   struct enc_region *region)
->  {
-> -	/*
-> -	 * The guest may change the memory encryption attribute from C=0 -> C=1
-> -	 * or vice versa for this memory range. Lets make sure caches are
-> -	 * flushed to ensure that guest data gets written into memory with
-> -	 * correct C-bit.
-> -	 */
-> -	sev_clflush_pages(region->pages, region->npages);
-> -
->  	sev_unpin_memory(kvm, region->pages, region->npages);
->  	list_del(&region->list);
->  	kfree(region);
-> @@ -2004,6 +1996,13 @@ static void sev_vm_destroy(struct kvm *kvm)
->  
->  	mutex_lock(&kvm->lock);
->  
-> +	/*
-> +	 * Ensure that all guest tagged cache entries are flushed before
-> +	 * releasing the pages back to the system for use. CLFLUSH will
-> +	 * not do this, so issue a WBINVD.
-> +	 */
-> +	wbinvd_on_all_cpus();
-> +
->  	/*
->  	 * if userspace was terminated before unregistering the memory regions
->  	 * then lets unpin all the registered memory.
-> @@ -7247,6 +7246,13 @@ static int svm_unregister_enc_region(struct kvm *kvm,
->  		goto failed;
->  	}
->  
-> +	/*
-> +	 * Ensure that all guest tagged cache entries are flushed before
-> +	 * releasing the pages back to the system for use. CLFLUSH will
-> +	 * not do this, so issue a WBINVD.
-> +	 */
-> +	wbinvd_on_all_cpus();
-> +
->  	__unregister_enc_region_locked(kvm, region);
->  
->  	mutex_unlock(&kvm->lock);
-> -- 
-> 2.17.1
-> 
-> 
+3. x86/vmware: Steal time clock for VMware guest
+Core steal time support functionality.
+
+4. x86/vmware: Enable steal time accounting
+Support for steal time accounting used by update_rq_clock().
+
+5. x86/vmware: Use bool type for vmw_sched_clock
+Minor clean up.
+
+Alexey Makhalov (5):
+  x86/vmware: Make vmware_select_hypercall() __init
+  x86/vmware: Remove vmware_sched_clock_setup()
+  x86/vmware: Steal time clock for VMware guest
+  x86/vmware: Enable steal time accounting
+  x86/vmware: Use bool type for vmw_sched_clock
+
+ Documentation/admin-guide/kernel-parameters.txt |   2 +-
+ arch/x86/kernel/cpu/vmware.c                    | 227 +++++++++++++++++++++++-
+ 2 files changed, 220 insertions(+), 9 deletions(-)
+
+-- 
+2.14.2
+
