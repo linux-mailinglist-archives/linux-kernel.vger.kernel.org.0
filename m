@@ -2,107 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 339AF18CE95
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 14:16:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 30ADA18CE86
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 14:14:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727457AbgCTNQy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Mar 2020 09:16:54 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:35749 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727377AbgCTNQj (ORCPT
+        id S1727194AbgCTNO5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Mar 2020 09:14:57 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:51078 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726954AbgCTNO5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Mar 2020 09:16:39 -0400
-Received: from p5de0bf0b.dip0.t-ipconnect.de ([93.224.191.11] helo=nanos.tec.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1jFHVt-0004Ba-Eh
-        for linux-kernel@vger.kernel.org; Fri, 20 Mar 2020 14:16:37 +0100
-Received: from nanos.tec.linutronix.de (localhost [IPv6:::1])
-        by nanos.tec.linutronix.de (Postfix) with ESMTP id 5D80B1040CD
-        for <linux-kernel@vger.kernel.org>; Fri, 20 Mar 2020 14:16:29 +0100 (CET)
-Message-Id: <20200320131510.900226233@linutronix.de>
-User-Agent: quilt/0.65
-Date:   Fri, 20 Mar 2020 14:14:07 +0100
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     LKML <linux-kernel@vger.kernel.org>
-Cc:     x86@kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Mark Gross <mgross@linux.intel.com>,
-        Tony Luck <tony.luck@intel.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        linux-pm@vger.kernel.org,
-        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-        linux-edac@vger.kernel.org, platform-driver-x86@vger.kernel.org,
-        Jean Delvare <jdelvare@suse.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        linux-hwmon@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Amit Kucheria <amit.kucheria@verdurent.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Jacob Pan <jacob.jun.pan@linux.intel.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        linux-mmc@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>,
-        linux-pci@vger.kernel.org, Takashi Iwai <tiwai@suse.com>,
-        alsa-devel@alsa-project.org,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        linux-crypto@vger.kernel.org
-Subject: [patch 22/22] x86/cpu: Cleanup the now unused CPU match macros
-References: <20200320131345.635023594@linutronix.de>
+        Fri, 20 Mar 2020 09:14:57 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 02KDCpNB053601;
+        Fri, 20 Mar 2020 13:14:39 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=mime-version :
+ message-id : date : from : to : cc : subject : references : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2020-01-29;
+ bh=mj+mPOx49mvMn5UqX9Oy1oF60e1jGLIQt7Fz9oFtxdI=;
+ b=BcRuWoVt1x10gOtlh0xk1020vWBIgssdfvPRrEpVgc9TpKVe9hWRKLVOjIbfNxXcLCnO
+ R/W0OspeUvlyU9bW4UU/Ad6FFOe2JFr/FqqLhLdnS50dvnQeFDjRIxCeYQeGytGz6ACW
+ Gafvf0MSfb3u1LOfDetfmFIGENNG099xQNNDBq71VAIh7laleIong0FYaRsmxD8Vd78x
+ 4+fVegwenYoHu8h4Qzs9+uMyBaEoYZk0im63luIxD8xJGEIQzvrpfV0aYhADfk/AppD6
+ 0mB8Ml2xCwtq1iUipekFp4i6lB5KzBv2BP/uiYCLk1T8n7w3lenxms/6rYhi/v4sW9Lu LQ== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by aserp2120.oracle.com with ESMTP id 2yrq7mdgjn-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 20 Mar 2020 13:14:39 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 02KDCl4G063762;
+        Fri, 20 Mar 2020 13:14:39 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by aserp3030.oracle.com with ESMTP id 2ys8ty2pmg-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 20 Mar 2020 13:14:39 +0000
+Received: from abhmp0014.oracle.com (abhmp0014.oracle.com [141.146.116.20])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 02KDEbdh006265;
+        Fri, 20 Mar 2020 13:14:38 GMT
+Received: from kadam (/41.57.98.10) by default (Oracle Beehive Gateway v4.0)
+ with ESMTP ; Fri, 20 Mar 2020 06:14:36 -0700
+USER-AGENT: Mutt/1.9.4 (2018-02-28)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Message-ID: <20200320131429.GH4650@kadam>
+Date:   Fri, 20 Mar 2020 06:14:29 -0700 (PDT)
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Leon Romanovsky <leonro@mellanox.com>
+Cc:     YueHaibing <yuehaibing@huawei.com>,
+        Derek Chickles <dchickles@marvell.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Satanand Burla <sburla@marvell.com>,
+        Felix Manlunas <fmanlunas@marvell.com>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Hulk Robot <hulkci@huawei.com>
+Subject: Re: [PATCH net-next] liquidio: remove set but not used variable 's'
+References: <20200306023254.61731-1-yuehaibing@huawei.com>
+ <20200319120743.28056-1-yuehaibing@huawei.com>
+ <20200319121035.GO126814@unreal>
+In-Reply-To: <20200319121035.GO126814@unreal>
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9565 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 phishscore=0 mlxscore=0
+ malwarescore=0 suspectscore=0 mlxlogscore=999 spamscore=0 bulkscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2003020000
+ definitions=main-2003200057
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9565 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 lowpriorityscore=0 suspectscore=0
+ adultscore=0 bulkscore=0 mlxlogscore=999 priorityscore=1501 clxscore=1011
+ malwarescore=0 mlxscore=0 phishscore=0 impostorscore=0 spamscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2003020000
+ definitions=main-2003200057
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-No more users.
+On Thu, Mar 19, 2020 at 02:10:35PM +0200, Leon Romanovsky wrote:
+> On Thu, Mar 19, 2020 at 12:07:43PM +0000, YueHaibing wrote:
+> > Fixes gcc '-Wunused-but-set-variable' warning:
+> >
+> > drivers/net/ethernet/cavium/liquidio/lio_main.c: In function 'octeon_chip_specific_setup':
+> > drivers/net/ethernet/cavium/liquidio/lio_main.c:1378:8: warning:
+> >  variable 's' set but not used [-Wunused-but-set-variable]
+> >
+> > It's not used since commit b6334be64d6f ("net/liquidio: Delete driver version assignment")
+> >
+> > Reported-by: Hulk Robot <hulkci@huawei.com>
+> > Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+> > ---
+> >  drivers/net/ethernet/cavium/liquidio/lio_main.c | 5 -----
+> >  1 file changed, 5 deletions(-)
+> >
+> 
+> I'm sorry for missing this warning.
+> 
 
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
----
- arch/x86/include/asm/cpu_device_id.h |    3 ---
- arch/x86/include/asm/intel-family.h  |   13 -------------
- 2 files changed, 16 deletions(-)
+The warning is not enabled by default.
 
---- a/arch/x86/include/asm/cpu_device_id.h
-+++ b/arch/x86/include/asm/cpu_device_id.h
-@@ -89,9 +89,6 @@
- #define X86_MATCH_FEATURE(feature, data)				\
- 	X86_MATCH_VENDOR_FEATURE(ANY, feature, data)
- 
--/* Transitional to keep the existing code working */
--#define X86_FEATURE_MATCH(feature)	X86_MATCH_FEATURE(feature, NULL)
--
- /**
-  * X86_MATCH_VENDOR_FAM_MODEL - Match vendor, family and model
-  * @vendor:	The vendor name, e.g. INTEL, AMD, HYGON, ..., ANY
---- a/arch/x86/include/asm/intel-family.h
-+++ b/arch/x86/include/asm/intel-family.h
-@@ -124,17 +124,4 @@
- /* Family 5 */
- #define INTEL_FAM5_QUARK_X1000		0x09 /* Quark X1000 SoC */
- 
--/* Useful macros */
--#define INTEL_CPU_FAM_ANY(_family, _model, _driver_data)	\
--{								\
--	.vendor		= X86_VENDOR_INTEL,			\
--	.family		= _family,				\
--	.model		= _model,				\
--	.feature	= X86_FEATURE_ANY,			\
--	.driver_data	= (kernel_ulong_t)&_driver_data		\
--}
--
--#define INTEL_CPU_FAM6(_model, _driver_data)			\
--	INTEL_CPU_FAM_ANY(6, INTEL_FAM6_##_model, _driver_data)
--
- #endif /* _ASM_X86_INTEL_FAMILY_H */
+regards,
+dan carpenter
 
