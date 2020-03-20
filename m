@@ -2,158 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C6B5018D09F
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 15:25:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CE7E018CFE7
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 15:22:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727811AbgCTOZD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Mar 2020 10:25:03 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:59708 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726896AbgCTOWd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Mar 2020 10:22:33 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
-        :Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=49NtNRM5Qadqr2s26GFYIu6ccM4cU9VUpklTy0+xovg=; b=E0FTtgTtz0yZlhH4ofIVbriAHB
-        sTcm0KlBxGCDqJL5h2BClG8TCud/MgZSuN6zllQaNRABOd3FiIzhSD28W0uPhRE+OXp2FLnxg9Ije
-        w5ImPXAYqmHnap4hlA0LhaV+0dfloCWAqkLTz3TsVEbAuhJgbtDMOE/8zP3jjb7g4DzTV5fRUQBsZ
-        GdGT31rvq+hFYcM51CWSgEVC3TJdr2rAq89P0hoN0L+9ocaHkA5xwsykojuwl+ldlF6AXb4/AyCok
-        0mg5tVNXxxxbIFYwsWS4xSEl8/olcWLUd0FF/YbN6FySftoToCaTP0bqX5EPh7/cMWI2dRDYHnKDX
-        Yk0OKh7A==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jFIXh-0000h0-0T; Fri, 20 Mar 2020 14:22:33 +0000
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, linux-btrfs@vger.kernel.org,
-        linux-erofs@lists.ozlabs.org, linux-ext4@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net, cluster-devel@redhat.com,
-        ocfs2-devel@oss.oracle.com, linux-xfs@vger.kernel.org,
-        John Hubbard <jhubbard@nvidia.com>,
-        Christoph Hellwig <hch@lst.de>,
-        William Kucharski <william.kucharski@oracle.com>
-Subject: [PATCH v9 01/25] mm: Move readahead prototypes from mm.h
-Date:   Fri, 20 Mar 2020 07:22:07 -0700
-Message-Id: <20200320142231.2402-2-willy@infradead.org>
-X-Mailer: git-send-email 2.21.1
-In-Reply-To: <20200320142231.2402-1-willy@infradead.org>
-References: <20200320142231.2402-1-willy@infradead.org>
+        id S1727152AbgCTOWP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Mar 2020 10:22:15 -0400
+Received: from foss.arm.com ([217.140.110.172]:49536 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726893AbgCTOWP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Mar 2020 10:22:15 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 644CD1FB;
+        Fri, 20 Mar 2020 07:22:14 -0700 (PDT)
+Received: from mbp (unknown [172.31.20.19])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 38BB73F792;
+        Fri, 20 Mar 2020 07:22:11 -0700 (PDT)
+Date:   Fri, 20 Mar 2020 14:22:08 +0000
+From:   Catalin Marinas <catalin.marinas@arm.com>
+To:     Vincenzo Frascino <vincenzo.frascino@arm.com>
+Cc:     linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, clang-built-linux@googlegroups.com,
+        linux-mips@vger.kernel.org, x86@kernel.org,
+        Will Deacon <will.deacon@arm.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Russell King <linux@armlinux.org.uk>,
+        Paul Burton <paul.burton@mips.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Andy Lutomirski <luto@kernel.org>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Mark Salyzyn <salyzyn@android.com>,
+        Kees Cook <keescook@chromium.org>,
+        Peter Collingbourne <pcc@google.com>,
+        Dmitry Safonov <0x7f454c46@gmail.com>,
+        Andrei Vagin <avagin@openvz.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Marc Zyngier <maz@kernel.org>,
+        Mark Rutland <Mark.Rutland@arm.com>,
+        Will Deacon <will@kernel.org>
+Subject: Re: [PATCH v4 18/26] arm64: vdso32: Replace TASK_SIZE_32 check in
+ vgettimeofday
+Message-ID: <20200320142208.GC29214@mbp>
+References: <20200317143834.GC632169@arrakis.emea.arm.com>
+ <f03a9493-c8c2-e981-f560-b2f437a208e4@arm.com>
+ <20200317155031.GD632169@arrakis.emea.arm.com>
+ <83aaf9e1-0a8f-4908-577a-23766541b2ba@arm.com>
+ <20200317174806.GE632169@arrakis.emea.arm.com>
+ <93cfe94a-c2a3-1025-bc9c-e7c3fd891100@arm.com>
+ <20200318183603.GF94111@arrakis.emea.arm.com>
+ <1bc25a53-7a59-0f60-ecf2-a3cace46b823@arm.com>
+ <20200319181004.GA29214@mbp>
+ <b937d1eb-c7fd-e903-fa36-b261662bf40b@arm.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b937d1eb-c7fd-e903-fa36-b261662bf40b@arm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+On Fri, Mar 20, 2020 at 01:05:14PM +0000, Vincenzo Frascino wrote:
+> On 3/19/20 6:10 PM, Catalin Marinas wrote:
+> > On Thu, Mar 19, 2020 at 12:38:42PM +0000, Vincenzo Frascino wrote:
+> >> On 3/18/20 6:36 PM, Catalin Marinas wrote:
+> >>> On Wed, Mar 18, 2020 at 04:14:26PM +0000, Vincenzo Frascino wrote:
+> >>>> On 3/17/20 5:48 PM, Catalin Marinas wrote:
+> >>>>> So clock_gettime() on arm32 always falls back to the syscall?
+> >>>>
+> >>>> This seems not what you asked, and I think I answered accordingly. Anyway, in
+> >>>> the case of arm32 the error code path is handled via syscall fallback.
+> >>>>
+> >>>> Look at the code below as an example (I am using getres because I know this
+> >>>> email will be already too long, and I do not want to add pointless code, but the
+> >>>> concept is the same for gettime and the others):
+> >>>>
+> >>>> static __maybe_unused
+> >>>> int __cvdso_clock_getres(clockid_t clock, struct __kernel_timespec *res)
+> >>>> {
+> >>>> 	int ret = __cvdso_clock_getres_common(clock, res);
+> >>>>
+> >>>> 	if (unlikely(ret))
+> >>>> 		return clock_getres_fallback(clock, res);
+> >>>> 	return 0;
+> >>>> }
+> >>>>
+> >>>> When the return code of the "vdso" internal function returns an error the system
+> >>>> call is triggered.
+> >>>
+> >>> But when __cvdso_clock_getres_common() does *not* return an error, it
+> >>> means that it handled the clock_getres() call without a fallback to the
+> >>> syscall. I assume this is possible on arm32. When the clock_getres() is
+> >>> handled directly (not as a syscall), why doesn't arm32 need the same
+> >>> (res >= TASK_SIZE) check?
+> >>
+> >> Ok, I see what you mean.
+> > 
+> > I'm not sure.
+> 
+> Thank you for the long chat this morning. As we agreed I am going to repost the
+> patches removing the checks discussed in this thread
 
-The readahead code is part of the page cache so should be found in the
-pagemap.h file.  force_page_cache_readahead is only used within mm,
-so move it to mm/internal.h instead.  Remove the parameter names where
-they add no value, and rename the ones which were actively misleading.
+Great, thanks.
 
-Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-Reviewed-by: John Hubbard <jhubbard@nvidia.com>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-Reviewed-by: William Kucharski <william.kucharski@oracle.com>
----
- block/blk-core.c        |  1 +
- include/linux/mm.h      | 19 -------------------
- include/linux/pagemap.h |  8 ++++++++
- mm/fadvise.c            |  2 ++
- mm/internal.h           |  2 ++
- 5 files changed, 13 insertions(+), 19 deletions(-)
+> and we will address the syscall ABI difference subsequently with a
+> different series.
 
-diff --git a/block/blk-core.c b/block/blk-core.c
-index 089e890ab208..41417bb93634 100644
---- a/block/blk-core.c
-+++ b/block/blk-core.c
-@@ -20,6 +20,7 @@
- #include <linux/blk-mq.h>
- #include <linux/highmem.h>
- #include <linux/mm.h>
-+#include <linux/pagemap.h>
- #include <linux/kernel_stat.h>
- #include <linux/string.h>
- #include <linux/init.h>
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index 52269e56c514..68dcda9a2112 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -2401,25 +2401,6 @@ extern vm_fault_t filemap_page_mkwrite(struct vm_fault *vmf);
- int __must_check write_one_page(struct page *page);
- void task_dirty_inc(struct task_struct *tsk);
- 
--/* readahead.c */
--#define VM_READAHEAD_PAGES	(SZ_128K / PAGE_SIZE)
--
--int force_page_cache_readahead(struct address_space *mapping, struct file *filp,
--			pgoff_t offset, unsigned long nr_to_read);
--
--void page_cache_sync_readahead(struct address_space *mapping,
--			       struct file_ra_state *ra,
--			       struct file *filp,
--			       pgoff_t offset,
--			       unsigned long size);
--
--void page_cache_async_readahead(struct address_space *mapping,
--				struct file_ra_state *ra,
--				struct file *filp,
--				struct page *pg,
--				pgoff_t offset,
--				unsigned long size);
--
- extern unsigned long stack_guard_gap;
- /* Generic expand stack which grows the stack according to GROWS{UP,DOWN} */
- extern int expand_stack(struct vm_area_struct *vma, unsigned long address);
-diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
-index ccb14b6a16b5..24894b9b90c9 100644
---- a/include/linux/pagemap.h
-+++ b/include/linux/pagemap.h
-@@ -614,6 +614,14 @@ int replace_page_cache_page(struct page *old, struct page *new, gfp_t gfp_mask);
- void delete_from_page_cache_batch(struct address_space *mapping,
- 				  struct pagevec *pvec);
- 
-+#define VM_READAHEAD_PAGES	(SZ_128K / PAGE_SIZE)
-+
-+void page_cache_sync_readahead(struct address_space *, struct file_ra_state *,
-+		struct file *, pgoff_t index, unsigned long req_count);
-+void page_cache_async_readahead(struct address_space *, struct file_ra_state *,
-+		struct file *, struct page *, pgoff_t index,
-+		unsigned long req_count);
-+
- /*
-  * Like add_to_page_cache_locked, but used to add newly allocated pages:
-  * the page is new, so we can just run __SetPageLocked() against it.
-diff --git a/mm/fadvise.c b/mm/fadvise.c
-index 4f17c83db575..3efebfb9952c 100644
---- a/mm/fadvise.c
-+++ b/mm/fadvise.c
-@@ -22,6 +22,8 @@
- 
- #include <asm/unistd.h>
- 
-+#include "internal.h"
-+
- /*
-  * POSIX_FADV_WILLNEED could set PG_Referenced, and POSIX_FADV_NOREUSE could
-  * deactivate the pages and clear PG_Referenced.
-diff --git a/mm/internal.h b/mm/internal.h
-index 3cf20ab3ca01..83f353e74654 100644
---- a/mm/internal.h
-+++ b/mm/internal.h
-@@ -49,6 +49,8 @@ void unmap_page_range(struct mmu_gather *tlb,
- 			     unsigned long addr, unsigned long end,
- 			     struct zap_details *details);
- 
-+int force_page_cache_readahead(struct address_space *, struct file *,
-+		pgoff_t index, unsigned long nr_to_read);
- extern unsigned int __do_page_cache_readahead(struct address_space *mapping,
- 		struct file *filp, pgoff_t offset, unsigned long nr_to_read,
- 		unsigned long lookahead_size);
+Now I'm even less convinced we need any additional patches. The arm64
+compat syscall would still return -EFAULT for res >= TASK_SIZE_32
+because copy_to_user() will fail. So it would be entirely consistent
+with the arm32 syscall. In the vdso-only case, both arm32 and arm64
+compat would generate a signal.
+
+As Will said, arguably, the syscall semantics may not be applicable to
+the vdso implementation. But if you do want to get down this route (tp =
+UINTPTR_MAX - sizeof(*tp) returning -EFAULT), please do it for all
+architectures, not just arm64 compat. However, I'm not sure anyone
+relies on this functionality, other than the vdsotest, so no real
+application broken.
+
 -- 
-2.25.1
-
+Catalin
