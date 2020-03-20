@@ -2,59 +2,61 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C59E618CEEF
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 14:35:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9C2D618CEF1
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 14:35:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727413AbgCTNfG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Mar 2020 09:35:06 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:39238 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726843AbgCTNfE (ORCPT
+        id S1727441AbgCTNfJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Mar 2020 09:35:09 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:40959 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727400AbgCTNfG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Mar 2020 09:35:04 -0400
-Received: by mail-wm1-f65.google.com with SMTP id a9so3294480wmj.4;
-        Fri, 20 Mar 2020 06:35:03 -0700 (PDT)
+        Fri, 20 Mar 2020 09:35:06 -0400
+Received: by mail-wr1-f66.google.com with SMTP id f3so7478591wrw.7;
+        Fri, 20 Mar 2020 06:35:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=8JpJJSqOukJOsKyLepaL4D5XEBOAfU/5gRiIWf5kS00=;
-        b=tWGeFwmmIfUGURV+x3JrUHC86CPH3NKeEMGtTBdc1A+DfSPGGiNReYcmajZYH2+ich
-         +5FN4V1HavYjJe7g70Mo0/wQdMFRnYyUqHY3vK4eBDouL6MaUSQ8ILr9kYng6csNvrz/
-         eXoI7v0tVchMsHGPIEYKBYGSHXwi/Q0IcCWts2Cbop+HNb3dqDoFMEXV/onSubem831w
-         60n35DBHpHZ4UCuLnMw5uqJwVHEk3wrZtg/cU3L6DVeBUbYkUOXVzJXCWFWZM2/HPIj7
-         J/v8p+2RsKLur432nfDKmFskUJ669cNO0D4rZNP88PwAknyTXSE87Y109Ba6Weqonkex
-         UHaw==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=ADXJiGCDvrv56l+ieUm/SAdymbh3Yub2i9bAMUxwsik=;
+        b=Db5vCvVX3kdDDG4TWQ8K/qx0s58cL0uzjYWQQmQTNfhrKnN21Q7JfcSVcOHBO9DvvT
+         8GtzJL3B98vqCSPLQVyf5XXk/obGzEtkLVgtMrwKgA/o8OK6Gp6gQZ/+zk3VCbj2iPlp
+         WhefUdDx9INTUnwRmkNK/kJjn/aGSszGNZsQPPjbTIbkYgG9LSwKBA+IIwIBkSsDv7oH
+         QmaqGTpi+xyKgha+bxzMQ0QUk78LI3ZX3ogmR1JY7K55sO08YrnWZ2jL8UHo2Z9ESKWe
+         v9j44atOsFMmnz8YgW6rd65wfjQ6Muf9VPLO6KoX0EFa+U3KdtkZC+SpQ75SS3xB1z8m
+         OMIA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=8JpJJSqOukJOsKyLepaL4D5XEBOAfU/5gRiIWf5kS00=;
-        b=Yu7vOhCc1aX0GwrexinJUCU8jS+5Nu8n1RhZ+klgdQIiMzzaGRPjh89tvHzK+Drbf1
-         cj5YrDzVJ7yAwEDClTtAsGBjtyr9WB8lhiaNxYzlvd9UyjDeppN1YnGw+KjgZKM540c0
-         +dnYs6BQ5LqMsZMvDhLCDqvfAl8R6yhRr/gkd9FkMn9VrQlBbRwW2oma8lkccwKcs61E
-         ktY4v1s9ZEsN65/HmMeeRVO+Fdd+UFsncGA7rXjNy9of7zajpMQ6mb1grSipSG2AJKNT
-         aDcqeS8yfhz7NuGBnFJ9TgU9A3XVha34ETXY4IqN5Pi2xN6nmGz9/uTWQdTnHGd6ig3X
-         PKYw==
-X-Gm-Message-State: ANhLgQ05Rm+ou6GlzoFo27JTOBPn0IgPO27M+EhEXx0qcIAx1INueu4b
-        tFL7WjP2WGKi3B2qiLRXLuA=
-X-Google-Smtp-Source: ADFU+vvxQI36QYAS6CSxU3UCX1Mn7P2lPSkCX4OJhmBOZ6ftFFU+w5JwEkI1uI+eqtNjWnQmquQ91w==
-X-Received: by 2002:a1c:8193:: with SMTP id c141mr10045018wmd.14.1584711302435;
-        Fri, 20 Mar 2020 06:35:02 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=ADXJiGCDvrv56l+ieUm/SAdymbh3Yub2i9bAMUxwsik=;
+        b=oXLjnsvLH5069hf+/ZSOUX7KqMlweazw2gIu1k4K+8M1SzuJZwszwGlq59Wfu0PKgT
+         REpu+uXfjuQFh/MYPYqaSdvdRSOzKgqVEcxapORXaYo/yIN27FjKka69F7oPuH/N+ZOH
+         Re2TAB+etnWunIJuiLHl4ktc3kdOl+0szAEEuKS7sLcAAq9fzQC5F9HWLLC8iGFvLOkZ
+         EGYoVJehJV7ZvgSbvQYFqoZ1FkDjGfsNftQGe2qg+BrvcdH9RbTh5I14whtGQSe2NKfT
+         QJD9zpvbl3IqZcTSrS3oehC54yl3TL1G8FpFwwdkijunht5Z2jlDqVawxcxg1c1jOvZI
+         Me0Q==
+X-Gm-Message-State: ANhLgQ2UX3FE9QTmqMwqNMJOqdOzFenF30A9TrFvEHTCkrvdxEBejNqX
+        bKpbWBF4OQUJcEy4T1DqzE0=
+X-Google-Smtp-Source: ADFU+vuqshN9lSmln+18D87rL++S+Fb8k19lx7heUddfv7aKn737EG+IaVZYk9R/pOva1OhAL3A7bw==
+X-Received: by 2002:adf:e98a:: with SMTP id h10mr202766wrm.370.1584711304489;
+        Fri, 20 Mar 2020 06:35:04 -0700 (PDT)
 Received: from localhost (pD9E51CDC.dip0.t-ipconnect.de. [217.229.28.220])
-        by smtp.gmail.com with ESMTPSA id w11sm8617964wrv.86.2020.03.20.06.35.01
+        by smtp.gmail.com with ESMTPSA id g14sm7963218wme.32.2020.03.20.06.35.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 20 Mar 2020 06:35:01 -0700 (PDT)
+        Fri, 20 Mar 2020 06:35:03 -0700 (PDT)
 From:   Thierry Reding <thierry.reding@gmail.com>
 To:     Thomas Gleixner <tglx@linutronix.de>,
         Thierry Reding <thierry.reding@gmail.com>
 Cc:     Rob Herring <robh+dt@kernel.org>,
         Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 0/7] clocksource: Add NVIDIA Tegra186 timers support
-Date:   Fri, 20 Mar 2020 14:34:45 +0100
-Message-Id: <20200320133452.3705040-1-thierry.reding@gmail.com>
+Subject: [PATCH 1/7] dt-bindings: timer: Add bindings for NVIDIA Tegra186 timers
+Date:   Fri, 20 Mar 2020 14:34:46 +0100
+Message-Id: <20200320133452.3705040-2-thierry.reding@gmail.com>
 X-Mailer: git-send-email 2.24.1
+In-Reply-To: <20200320133452.3705040-1-thierry.reding@gmail.com>
+References: <20200320133452.3705040-1-thierry.reding@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -64,40 +66,77 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Thierry Reding <treding@nvidia.com>
 
-This set of patches adds the device tree bindings and a simplified
-driver for the timers found on Tegra186 and later SoCs. The driver
-itself currently only implements a single watchdog, which in turn
-relies on the counter provided by one of the timers. The timers
-themselves are not used at the moment because the SoC also has an
-architected timer and there's currently no use for the additional
-timers provided by this hardware block.
+The NVIDIA Tegra186 SoC contains an IP block that provides a register
+interface for ten timers with a 29-bit counter that can generate one-
+shot, periodic or watchdog interrupts.
 
-I suggest that patches 1 & 2 go through the clocksource tree, while
-I can carry the DTS changes in the Tegra tree for v5.8.
-
-Thierry
-
-Thierry Reding (7):
-  dt-bindings: timer: Add bindings for NVIDIA Tegra186 timers
-  clocksource: Add Tegra186 timers support
-  arm64: tegra: Order nodes by unit-address on Tegra194
-  arm64: tegra: Add native timer support on Tegra186
-  arm64: tegra: Enable native timers on Jetson TX2
-  arm64: tegra: Add native timer support on Tegra194
-  arm64: tegra: Enable native timers on Jetson AGX Xavier
-
- .../bindings/timer/nvidia,tegra186-timer.yaml |  55 +++
- .../arm64/boot/dts/nvidia/tegra186-p3310.dtsi |   4 +
- arch/arm64/boot/dts/nvidia/tegra186.dtsi      |  16 +
- .../arm64/boot/dts/nvidia/tegra194-p2888.dtsi |   4 +
- arch/arm64/boot/dts/nvidia/tegra194.dtsi      |  81 ++--
- drivers/clocksource/Kconfig                   |   8 +
- drivers/clocksource/Makefile                  |   1 +
- drivers/clocksource/timer-tegra186.c          | 377 ++++++++++++++++++
- 8 files changed, 514 insertions(+), 32 deletions(-)
+Signed-off-by: Thierry Reding <treding@nvidia.com>
+---
+ .../bindings/timer/nvidia,tegra186-timer.yaml | 55 +++++++++++++++++++
+ 1 file changed, 55 insertions(+)
  create mode 100644 Documentation/devicetree/bindings/timer/nvidia,tegra186-timer.yaml
- create mode 100644 drivers/clocksource/timer-tegra186.c
 
+diff --git a/Documentation/devicetree/bindings/timer/nvidia,tegra186-timer.yaml b/Documentation/devicetree/bindings/timer/nvidia,tegra186-timer.yaml
+new file mode 100644
+index 000000000000..f9b55041a5ca
+--- /dev/null
++++ b/Documentation/devicetree/bindings/timer/nvidia,tegra186-timer.yaml
+@@ -0,0 +1,55 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/timer/nvidia,tegra186-timer.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: NVIDIA Tegra186 timers
++
++maintainers:
++  - Thierry Reding <thierry.reding@gmail.com>
++  - Jonathan Hunter <jonathanh@nvidia.com>
++
++description: |
++  The Tegra186 timer provides ten 29-bit timer counters and one 32-bit TSC
++  (timestamp counter). The timers run at either a fixed 1 MHz clock rate
++  derived from the oscillator clock. Each timer can be programmed to raise
++  one-shot, periodic, or watchdog interrupts.
++
++properties:
++  compatible:
++    oneOf:
++      - description: NVIDIA Tegra186
++        items:
++          - const: nvidia,tegra186-timer
++
++      - description: NVIDIA Tegra194
++        items:
++          - const: nvidia,tegra194-timer
++          - const: nvidia,tegra186-timer
++
++  reg:
++    maxItems: 1
++
++  interrupts:
++    maxItems: 10
++
++examples:
++  - |
++    #include <dt-bindings/interrupt-controller/arm-gic.h>
++
++    timer@3010000 {
++        compatible = "nvidia,tegra186-timer";
++        reg = <0x03010000 0x000e0000>;
++        interrupts = <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH>,
++                     <GIC_SPI 1 IRQ_TYPE_LEVEL_HIGH>,
++                     <GIC_SPI 2 IRQ_TYPE_LEVEL_HIGH>,
++                     <GIC_SPI 3 IRQ_TYPE_LEVEL_HIGH>,
++                     <GIC_SPI 4 IRQ_TYPE_LEVEL_HIGH>,
++                     <GIC_SPI 5 IRQ_TYPE_LEVEL_HIGH>,
++                     <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>,
++                     <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>,
++                     <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>,
++                     <GIC_SPI 9 IRQ_TYPE_LEVEL_HIGH>;
++        status = "disabled";
++    };
 -- 
 2.24.1
 
