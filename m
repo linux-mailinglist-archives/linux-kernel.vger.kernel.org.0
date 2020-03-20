@@ -2,70 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 92EC618C49C
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 02:28:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6D1B718C477
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 02:03:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727302AbgCTB2z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 21:28:55 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:12103 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727235AbgCTB2z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 21:28:55 -0400
-Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 8FDBE9DD9CCE3F553607;
-        Fri, 20 Mar 2020 09:28:51 +0800 (CST)
-Received: from ubuntu.huawei.com (10.175.104.215) by
- DGGEMS410-HUB.china.huawei.com (10.3.19.210) with Microsoft SMTP Server id
- 14.3.487.0; Fri, 20 Mar 2020 09:28:41 +0800
-From:   Chen Huang <chenhuang5@huawei.com>
-To:     Santosh Shilimkar <ssantosh@kernel.org>
-CC:     Dave Gerlach <d-gerlach@ti.com>, Arnd Bergmann <arnd@arndb.de>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-next@vger.kernel.org>, Chen Huang <chenhuang5@huawei.com>
-Subject: [PATCH -next] soc: ti: pm33xx: Add a judgement for variable 'ret'
-Date:   Fri, 20 Mar 2020 07:11:50 +0800
-Message-ID: <20200319231150.28106-1-chenhuang5@huawei.com>
-X-Mailer: git-send-email 2.17.1
+        id S1727299AbgCTBDi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 21:03:38 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:41106 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725787AbgCTBDi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 21:03:38 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:To:
+        Subject:Sender:Reply-To:Cc:Content-ID:Content-Description;
+        bh=Ys84MSFThr+iceWVOVJ1ydyxTrqVWchEPrhB/TlXSx4=; b=kLlN+Nnmx9HvogqnfJbpvfqQI8
+        +MkKfXUUVy3e9kgGREXRcrq0vebzEsqrATfd/gUCaIn5TL4QIvw+g5oDaG3faiFTZwjmwW0lntlDY
+        yJe18b9P/M7QPu7WPTull9l52/9WPB4Fq8pD3VXQzrBwTvwdS56asp6YVQRo+TzRYlDqsMjQiKacn
+        ISf+sYy/t02OJjuS+Of2UZWkKujLE14J9guIWcgdpuqZu5khzDAcJfhDW5zfQh1VJl3Y7Wrql4Uv8
+        cqYW+KvV9y+dEH0qEy5OhjjmgKkjqpsYb8UDF/uTiOJyUdSqn/YXDxD9phBCoYC3xKKi3YDu3GPNQ
+        9ZKo9I4g==;
+Received: from [2601:1c0:6280:3f0::19c2]
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jF64X-0003Lf-B9; Fri, 20 Mar 2020 01:03:37 +0000
+Subject: Re: [PATCH -next] mm/hugetlb.c: fix printk format warning for 32-bit
+ phys_addr_t
+To:     Joe Perches <joe@perches.com>, Linux MM <linux-mm@kvack.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>
+References: <b74dcb60-ef35-f06e-de2d-b165ed38036a@infradead.org>
+ <f4f8090c1be1a5a5ca663345751fb39893c89814.camel@perches.com>
+ <ff8cc527-e02e-4f4b-56cd-a94ac5e527a3@infradead.org>
+ <be55765b11f925f15f338152399923e169a20f53.camel@perches.com>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <58454a65-5022-7517-df65-7bf504cd1432@infradead.org>
+Date:   Thu, 19 Mar 2020 18:03:35 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.175.104.215]
-X-CFilter-Loop: Reflected
+In-Reply-To: <be55765b11f925f15f338152399923e169a20f53.camel@perches.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Variable 'ret' is the result whether sram has prepared to translate
-to low power state. 0 represents preparation is successful, others
-represent error code. If preparation failed, then return 'ret' to end
-the function.
+On 3/18/20 7:37 PM, Joe Perches wrote:
+> On Wed, 2020-03-18 at 19:11 -0700, Randy Dunlap wrote:
+>> On 3/18/20 7:04 PM, Joe Perches wrote:
+>>> On Wed, 2020-03-18 at 14:33 -0700, Randy Dunlap wrote:
+>>>> From: Randy Dunlap <rdunlap@infradead.org>
+>>>>
+>>>> Fix printk format warnings when phys_addr_t is 32 bits, i.e.,
+>>>> CONFIG_PHYS_ADDR_T_64BIT is not set/enabled.
+>>> []
+>>>> ../mm/hugetlb.c:5472:73: note: format string is defined here
+>>>>     pr_warn("hugetlb_cma: reservation failed: err %d, node %d, [%llu, %llu)",
+>>>>                                                                       ~~~^
+>>> []
+>>>> --- linux-next-20200318.orig/mm/hugetlb.c
+>>>> +++ linux-next-20200318/mm/hugetlb.c
+>>>> @@ -5469,8 +5469,10 @@ void __init hugetlb_cma_reserve(int orde
+>>>>  					     0, false,
+>>>>  					     "hugetlb", &hugetlb_cma[nid]);
+>>>>  		if (res) {
+>>>> -			pr_warn("hugetlb_cma: reservation failed: err %d, node %d, [%llu, %llu)",
+>>>> -				res, nid, PFN_PHYS(min_pfn), PFN_PHYS(max_pfn));
+>>>> +			phys_addr_t begpa = PFN_PHYS(min_pfn);
+>>>> +			phys_addr_t endpa = PFN_PHYS(max_pfn);
+>>>> +			pr_warn("hugetlb_cma: reservation failed: err %d, node %d, [%pap, %pap)",
+>>>> +				res, nid, &begpa, &endpa);
+>>>
+>>> You might correct the odd use of an open bracket
+>>> then close parenthesis and add a new line too
+>>
+>> Definitely needs a newline char.
+>>
+>> I'm fairly sure that the [begin, end) notation is done on purpose, meaning
+>> <begin> is included in the range and <end> is not included in the range.
+> 
+> OK, that seems a pretty obscure and not obvious use of
+> interval notation, at least to me. (18 uses treewide ?)
+> 
+> Maybe it could be documented somewhere?
 
-Fixes gcc '-Wunused-but-set-variable' warning:
+I thought about where to put that and came up empty.
 
-drivers/soc/ti/pm33xx.c: In function am33xx_do_sram_idle:
-drivers/soc/ti/pm33xx.c:135:6: warning: variable ret set but not used [-Wunused-but-set-variable]
+> It's an odd pattern to grep.  Maybe I missed some.
 
-Fixes: commit 6afaff1c6624f ("soc: ti: pm33xx: Add base cpuidle support")
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: Chen Huang <chenhuang5@huawei.com>
----
- drivers/soc/ti/pm33xx.c | 2 ++
- 1 file changed, 2 insertions(+)
+It's probably not used much more than this.
 
-diff --git a/drivers/soc/ti/pm33xx.c b/drivers/soc/ti/pm33xx.c
-index de0123ec8ad6..a51ba770f1e3 100644
---- a/drivers/soc/ti/pm33xx.c
-+++ b/drivers/soc/ti/pm33xx.c
-@@ -139,6 +139,8 @@ static int am33xx_do_sram_idle(u32 wfi_flags)
- 
- 	if (wfi_flags & WFI_FLAG_WAKE_M3)
- 		ret = m3_ipc->ops->prepare_low_power(m3_ipc, WKUP_M3_IDLE);
-+	if (ret)
-+		return ret;
- 
- 	return pm_ops->cpu_suspend(am33xx_do_wfi_sram, wfi_flags);
- }
+> $ git grep -P '".*[\[\{]\s*%\d*[ldux]+\s*[/:,\.\-]?\s*%\d*[ldux]+\).*"'
+> arch/x86/kernel/alternative.c:  DUMP_BYTES(instr, a->instrlen, "%px: [%d:%d) optimized NOPs: ",
+> drivers/clk/qcom/clk-alpha-pll.c:               pr_err("%s: Rounded rate %lu not within range [%lu, %lu)\n",
+> fs/ext4/extents_status.c:               printk(KERN_DEBUG " [%u/%u) %llu %x",
+> fs/ext4/extents_status.c:                       es_debug("%u cached by [%u/%u) %llu %x\n",
+> fs/ext4/extents_status.c:       es_debug("add [%u/%u) %llu %x to extent status tree of inode %lu\n",
+> fs/ext4/extents_status.c:                       es_debug("%u cached by [%u/%u)\n",
+> fs/ext4/extents_status.c:       es_debug("remove [%u/%u) from extent status tree of inode %lu\n",
+> fs/nilfs2/cpfile.c:                       "cannot delete checkpoints: invalid range [%llu, %llu)",
+> fs/nilfs2/dat.c:                          "%s: invalid vblocknr = %llu, [%llu, %llu)",
+> include/trace/events/ext4.h:    TP_printk("dev %d,%d ino %lu es [%u/%u) mapped %llu status %s",
+> include/trace/events/ext4.h:    TP_printk("dev %d,%d ino %lu es [%lld/%lld)",
+> include/trace/events/ext4.h:    TP_printk("dev %d,%d ino %lu es [%u/%u) mapped %llu status %s",
+> include/trace/events/ext4.h:    TP_printk("dev %d,%d ino %lu found %d [%u/%u) %llu %s",
+> include/trace/events/ext4.h:    TP_printk("dev %d,%d ino %lu es [%u/%u) mapped %llu status %s "
+> mm/hugetlb.c:                   pr_warn("hugetlb_cma: reservation failed: err %d, node %d, [%llu, %llu)",
+> mm/kasan/report.c:              pr_err(" [%lu, %lu) '%s'", offset, offset + size, token);
+> mm/page_alloc.c:                pr_info_ratelimited("%s: [%lx, %lx) PFNs busy\n",
+> tools/testing/selftests/kvm/demand_paging_test.c:               PER_VCPU_DEBUG("Added VCPU %d with test mem gpa [%lx, %lx)\n",
+> 
+> 
+
+thanks.
+
 -- 
-2.17.1
+~Randy
 
