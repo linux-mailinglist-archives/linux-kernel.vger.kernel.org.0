@@ -2,120 +2,198 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B052618DAAC
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 23:02:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8A30618DAE3
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 23:07:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727337AbgCTWCX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Mar 2020 18:02:23 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:45348 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726840AbgCTWCV (ORCPT
+        id S1727417AbgCTWHa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Mar 2020 18:07:30 -0400
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:46031 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727175AbgCTWHa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Mar 2020 18:02:21 -0400
-Received: by mail-lj1-f194.google.com with SMTP id y17so8082078ljk.12;
-        Fri, 20 Mar 2020 15:02:20 -0700 (PDT)
+        Fri, 20 Mar 2020 18:07:30 -0400
+Received: by mail-ed1-f66.google.com with SMTP id u59so8923719edc.12
+        for <linux-kernel@vger.kernel.org>; Fri, 20 Mar 2020 15:07:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=j+Zpm7nv3KnXyXL/VwriXYdIco1W4Hfuzxxyjd9h2fs=;
-        b=LS23U3Z2Mkkr/5FwWW3HzaKo/z4My76CU26gDQtzHZJEnhJSUg/GDsffGAd2GyqgMy
-         /ALOaz7gGtJT/f66DMtS9HR0LJHnbWoOsYTZXzE0dm6SGgfWD9y8tYlppiKXpnPkXYFn
-         SoQfdqmzzjFcD5bFuM4v/79ZGKNJ66GVNw9hN+vAdCZEcLD8b1YW1PbTzQ4YTxFAjVh0
-         yoG7/fATCQ7+7pLOkbGXbKmq68ejNOpWfxXcksqpBzN/mq69iYf0dQkkn03yp7MTFpID
-         w2MPo6pgI26ayky5Pz72YUdEyN0GfHbxji3yM+Yh7c5FngLa+/uuvEno5pZIQqG8/j3K
-         qb8w==
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Wh832PW/B1ZgleHxeKKirrgEKzecxyBhNJtn0lhwADc=;
+        b=MEta4Wf9GQWtqP9zfzhGnHT1uVRTqhsv0k0HpdrMcd5nXqYD/oZ5XQkcvyjcRBLxvK
+         4sjs3srDN4vRDd/1/A5aywN1VHgeJ56SUmTLpj37QG+9Q+Sar4AK4yxSIAbjCDAocg8I
+         bEuiugbnwliceIspvKxYjjPcJxE6UuklQR9VqVhpMo+Um3Yea4J9S7JI5Av+XvDYhkwv
+         uvwRdatsyTBwel1vtOBU3nWvcPLEWjmk18oTq8WiEWmkIKLVTsx06V63yofilVl69glZ
+         wIb1bdf3V6k6bHQCg+WGKkP49BmZcXUBFbzf0HtfTkbEl7uJP7esc0Q3H2i8f0Ma0s0F
+         ZD9w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=j+Zpm7nv3KnXyXL/VwriXYdIco1W4Hfuzxxyjd9h2fs=;
-        b=CbAurxoXDTtI0HFMPn8p7r0A4//0J3DQE/oO9JeA0dlSoZv9WbB1IXQoTezuDAMwaq
-         UfUq+7i16Wjq/fm6dtHLM0VVb5bcKmIoXwyj+0fpmmorEArZfhKDLfWOgooKuE3KMCC0
-         D9i8R9agW8aLNVJx2Qzf+NnZttDVEMKHtnbLTuGXVH074FD6QmpCf3rE4Macq1F0hYxQ
-         0bvCD2NToMOjHzA0CXLTlWWctD2nQl64EsNv/sqRp3uJgKPjWncschrRRX9XSArwjBUR
-         yTTx/hygqIbcrhTuOCCqGMnurmykpCyGhgE2IspAEkgusYFGKg9OWKP+9uzjmzWdKCeo
-         bcuw==
-X-Gm-Message-State: ANhLgQ3/n4kDSsE0jgW4IDnh+g4rV8MTlmk3B7DKnH9MFISLXVSvMtE1
-        FuAgsC9+VmQX/T6gCREybaQ=
-X-Google-Smtp-Source: ADFU+vvZxRjv8GWZ+M9ELg7WqLbW0kQbslk4JVDN+5DcpyRTtSgwK+mCqXqUZUyq8NDPeSA6Q2U+1w==
-X-Received: by 2002:a05:651c:106:: with SMTP id a6mr6875085ljb.143.1584741739314;
-        Fri, 20 Mar 2020 15:02:19 -0700 (PDT)
-Received: from localhost.localdomain ([185.188.71.122])
-        by smtp.gmail.com with ESMTPSA id j21sm3992416lji.93.2020.03.20.15.02.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 20 Mar 2020 15:02:18 -0700 (PDT)
-From:   Pawel Dembicki <paweldembicki@gmail.com>
-Cc:     Pawel Dembicki <paweldembicki@gmail.com>,
-        Johan Hovold <johan@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 3/3] USB: serial: option: add Wistron Neweb D19Q1
-Date:   Fri, 20 Mar 2020 23:01:54 +0100
-Message-Id: <20200320220155.5609-3-paweldembicki@gmail.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200320220155.5609-1-paweldembicki@gmail.com>
-References: <20200320220155.5609-1-paweldembicki@gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Wh832PW/B1ZgleHxeKKirrgEKzecxyBhNJtn0lhwADc=;
+        b=RmXJL9PSgTefn5uVux+XBJY34xvP+8TAFCx4YAptJ+Jf3zULCHmqhqLBNGAZ/duZol
+         xs+Y5K2zgfSM79eBt4Egg9bySHy/yK+0U+ZCGo7oFIgHxR2JJd5a7s/Onw07uvXba75T
+         g52ASjVEbKGe0sb6PfiJhbssA4CdDr/pOgi4c6aLNVDrz9/ESjiivnt8gkpmfYAn8nfW
+         H23XcXlp3V3OgC0VwZeyYHX78/156uHbD1wQD1VwUwlJ+pnRrz5pxhR8VZaKRxTVl4VM
+         mtBja4nmH9UAdIZqfSs5ArLaFm7kkJEtrn1j5PiYebilQ8TLxfitvl2t3iVOsXxpaEE8
+         dA0A==
+X-Gm-Message-State: ANhLgQ0xC1OhiR5HnpkOiq/yLNC40sSZL2GCo1aLaB0+g9Dr/Vzv3+7k
+        8a5y+9W+LFF3koyyChBKImugz8246p0g3TiUIPjMbg==
+X-Google-Smtp-Source: ADFU+vvMZyPS+wPi1ycr/20HKTaxuIp65bGgppsOIattbmrIpYaU1PgnwSdKnstpYWRRM5ZFTdryZbvhjNC04CydJL8=
+X-Received: by 2002:a05:6402:22c7:: with SMTP id dm7mr10403457edb.283.1584742046426;
+ Fri, 20 Mar 2020 15:07:26 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-To:     unlisted-recipients:; (no To-header on input)
+References: <20200320175910.180266-1-yonghyun@google.com> <20200320123425.49c6568e@w520.home>
+ <CAEauFbx1Su7Lg5kdxXnvUwfwLCH67qaGB6EZ7g3OOH-tbRfBBA@mail.gmail.com> <20200320145935.4617c7c0@w520.home>
+In-Reply-To: <20200320145935.4617c7c0@w520.home>
+From:   Yonghyun Hwang <yonghyun@google.com>
+Date:   Fri, 20 Mar 2020 15:07:15 -0700
+Message-ID: <CAEauFbyE547joLxswMVLn2mreKgp-kEeQ_S4xyOQmmRsOqr_Wg@mail.gmail.com>
+Subject: Re: [PATCH] vfio-mdev: support mediated device creation in kernel
+To:     Alex Williamson <alex.williamson@redhat.com>
+Cc:     Kirti Wankhede <kwankhede@nvidia.com>,
+        Cornelia Huck <cohuck@redhat.com>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Havard Skinnemoen <hskinnemoen@google.com>,
+        Moritz Fischer <mdf@kernel.org>,
+        Joshua Lang <joshualang@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This modem is embedded on dlink dwr-960 router.
-The oem configuration states:
+If my patch is not aligned with the direction, it results in a
+maintenance burden for the kernel. Thanks for sharing the direction
+and  Yan's vendor-ops approach[1].
 
-T: Bus=01 Lev=01 Prnt=01 Port=00 Cnt=01 Dev#= 2 Spd=480 MxCh= 0
-D: Ver= 2.10 Cls=00(>ifc ) Sub=00 Prot=00 MxPS=64 #Cfgs= 1
-P: Vendor=1435 ProdID=d191 Rev=ff.ff
-S: Manufacturer=Android
-S: Product=Android
-S: SerialNumber=0123456789ABCDEF
-C:* #Ifs= 6 Cfg#= 1 Atr=80 MxPwr=500mA
-I:* If#= 0 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=ff Prot=ff Driver=(none)
-E: Ad=81(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E: Ad=01(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-I:* If#= 1 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=42 Prot=01 Driver=(none)
-E: Ad=02(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E: Ad=82(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-I:* If#= 2 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=00 Prot=00 Driver=(none)
-E: Ad=84(I) Atr=03(Int.) MxPS= 10 Ivl=32ms
-E: Ad=83(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E: Ad=03(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-I:* If#= 3 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=00 Prot=00 Driver=(none)
-E: Ad=86(I) Atr=03(Int.) MxPS= 10 Ivl=32ms
-E: Ad=85(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E: Ad=04(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-I:* If#= 4 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=ff Prot=ff Driver=qmi_wwan
-E: Ad=88(I) Atr=03(Int.) MxPS= 8 Ivl=32ms
-E: Ad=87(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E: Ad=05(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-I:* If#= 5 Alt= 0 #EPs= 2 Cls=08(stor.) Sub=06 Prot=50 Driver=(none)
-E: Ad=89(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E: Ad=06(O) Atr=02(Bulk) MxPS= 512 Ivl=125us
+Thank you,
+Yonghyun
 
-Tested on openwrt distribution
-
-Signed-off-by: Pawel Dembicki <paweldembicki@gmail.com>
----
- drivers/usb/serial/option.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/drivers/usb/serial/option.c b/drivers/usb/serial/option.c
-index 49313a55e1f3..abc717b99204 100644
---- a/drivers/usb/serial/option.c
-+++ b/drivers/usb/serial/option.c
-@@ -2022,6 +2022,8 @@ static const struct usb_device_id option_ids[] = {
- 	  .driver_info = RSVD(6) },
- 	{ USB_DEVICE_INTERFACE_CLASS(0x1690, 0x7588, 0xff),			/* ASKEY WWHC050 */
- 	  .driver_info = RSVD(1) | RSVD(4) },
-+	{ USB_DEVICE_INTERFACE_CLASS(0x1435, 0xd191, 0xff),			/* Wistron Neweb D19Q1 */
-+	  .driver_info = RSVD(1) | RSVD(4) },
- 	{ } /* Terminating entry */
- };
- MODULE_DEVICE_TABLE(usb, option_ids);
--- 
-2.20.1
-
+On Fri, Mar 20, 2020 at 1:59 PM Alex Williamson
+<alex.williamson@redhat.com> wrote:
+>
+> On Fri, 20 Mar 2020 13:46:04 -0700
+> Yonghyun Hwang <yonghyun@google.com> wrote:
+>
+> > On Fri, Mar 20, 2020 at 11:34 AM Alex Williamson
+> > <alex.williamson@redhat.com> wrote:
+> > >
+> > > On Fri, 20 Mar 2020 10:59:10 -0700
+> > > Yonghyun Hwang <yonghyun@google.com> wrote:
+> > >
+> > > > To enable a mediated device, a device driver registers its device to VFIO
+> > > > MDev framework. Once the mediated device gets enabled, UUID gets fed onto
+> > > > the sysfs attribute, "create", to create the mediated device. This
+> > > > additional step happens after boot-up gets complete. If the driver knows
+> > > > how many mediated devices need to be created during probing time, the
+> > > > additional step becomes cumbersome. This commit implements a new function
+> > > > to allow the driver to create a mediated device in kernel.
+> > >
+> > > But pre-creating mdev devices seems like a policy decision.  Why can't
+> > > userspace make such a policy decision, and do so with persistent uuids,
+> > > via something like mdevctl?  Thanks,
+> > >
+> > > Alex
+> >
+> > Yep, it can be viewed as the policy decision and userspace can make
+> > the decision. However, it would be handy and plausible, if a device
+> > driver can pre-create "fixed or default" # of mdev devices, while
+> > allowing the device policy to come into play after bootup gets
+> > complete. Without this patch, a device driver should release the
+> > policy and the policy should be aligned with the driver, which would
+> > be cumbersome (sometimes painful) in a cloud environment. My use case
+> > with mdev is to enable a subset of vfio-pci features without losing my
+> > device driver.
+>
+> Does this last comment suggest the parent device is not being
+> multiplexed through mdev, but only mediated?  If so, would something
+> like Yan's vendor-ops approach[1] be better?  Without a multiplexed
+> device, the lifecycle management of an mdev device doesn't make a lot
+> of sense, and I wonder if that's what you're trying to bypass here.
+> Even SR-IOV devices have moved to userspace enablement with most module
+> options to enable a default number of VFs being deprecated.  I do see
+> that that transition left a gap, but I'm not sure that heading in the
+> opposite direction with mdevs is a good idea either.  Thanks,
+>
+> Alex
+>
+> [1]https://lore.kernel.org/kvm/20200131020803.27519-1-yan.y.zhao@intel.com/
+>
+>
+> > > > Signed-off-by: Yonghyun Hwang <yonghyun@google.com>
+> > > > ---
+> > > >  drivers/vfio/mdev/mdev_core.c | 45 +++++++++++++++++++++++++++++++++++
+> > > >  include/linux/mdev.h          |  3 +++
+> > > >  2 files changed, 48 insertions(+)
+> > > >
+> > > > diff --git a/drivers/vfio/mdev/mdev_core.c b/drivers/vfio/mdev/mdev_core.c
+> > > > index b558d4cfd082..a6d32516de42 100644
+> > > > --- a/drivers/vfio/mdev/mdev_core.c
+> > > > +++ b/drivers/vfio/mdev/mdev_core.c
+> > > > @@ -350,6 +350,51 @@ int mdev_device_create(struct kobject *kobj,
+> > > >       return ret;
+> > > >  }
+> > > >
+> > > > +/*
+> > > > + * mdev_create_device : Create a mdev device
+> > > > + * @dev: device structure representing parent device.
+> > > > + * @uuid: uuid char string for a mdev device.
+> > > > + * @group: index to supported type groups for a mdev device.
+> > > > + *
+> > > > + * Create a mdev device in kernel.
+> > > > + * Returns a negative value on error, otherwise 0.
+> > > > + */
+> > > > +int mdev_create_device(struct device *dev,
+> > > > +                     const char *uuid, int group)
+> > > > +{
+> > > > +     struct mdev_parent *parent = NULL;
+> > > > +     struct mdev_type *type = NULL;
+> > > > +     guid_t guid;
+> > > > +     int i = 1;
+> > > > +     int ret;
+> > > > +
+> > > > +     ret = guid_parse(uuid, &guid);
+> > > > +     if (ret) {
+> > > > +             dev_err(dev, "Failed to parse UUID");
+> > > > +             return ret;
+> > > > +     }
+> > > > +
+> > > > +     parent = __find_parent_device(dev);
+> > > > +     if (!parent) {
+> > > > +             dev_err(dev, "Failed to find parent mdev device");
+> > > > +             return -ENODEV;
+> > > > +     }
+> > > > +
+> > > > +     list_for_each_entry(type, &parent->type_list, next) {
+> > > > +             if (i == group)
+> > > > +                     break;
+> > > > +             i++;
+> > > > +     }
+> > > > +
+> > > > +     if (!type || i != group) {
+> > > > +             dev_err(dev, "Failed to find mdev device");
+> > > > +             return -ENODEV;
+> > > > +     }
+> > > > +
+> > > > +     return mdev_device_create(&type->kobj, parent->dev, &guid);
+> > > > +}
+> > > > +EXPORT_SYMBOL(mdev_create_device);
+> > > > +
+> > > >  int mdev_device_remove(struct device *dev)
+> > > >  {
+> > > >       struct mdev_device *mdev, *tmp;
+> > > > diff --git a/include/linux/mdev.h b/include/linux/mdev.h
+> > > > index 0ce30ca78db0..b66f67998916 100644
+> > > > --- a/include/linux/mdev.h
+> > > > +++ b/include/linux/mdev.h
+> > > > @@ -145,4 +145,7 @@ struct device *mdev_parent_dev(struct mdev_device *mdev);
+> > > >  struct device *mdev_dev(struct mdev_device *mdev);
+> > > >  struct mdev_device *mdev_from_dev(struct device *dev);
+> > > >
+> > > > +extern int mdev_create_device(struct device *dev,
+> > > > +                     const char *uuid, int group_idx);
+> > > > +
+> > > >  #endif /* MDEV_H */
+> > >
+> >
+>
