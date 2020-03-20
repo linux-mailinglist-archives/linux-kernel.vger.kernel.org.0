@@ -2,135 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CAB8818CBBE
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 11:37:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3A84B18CBD6
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 11:41:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727221AbgCTKhD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Mar 2020 06:37:03 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:35237 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726704AbgCTKhC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Mar 2020 06:37:02 -0400
-Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tip-bot2@linutronix.de>)
-        id 1jFF1L-0001rf-9M; Fri, 20 Mar 2020 11:36:55 +0100
-Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id E0D311C229B;
-        Fri, 20 Mar 2020 11:36:54 +0100 (CET)
-Date:   Fri, 20 Mar 2020 10:36:54 -0000
-From:   "tip-bot2 for Andy Lutomirski" <tip-bot2@linutronix.de>
-Reply-to: linux-kernel@vger.kernel.org
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/misc] selftests/x86/vdso: Fix no-vDSO segfaults
-Cc:     kbuild test robot <lkp@intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Borislav Petkov <bp@suse.de>, x86 <x86@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-In-Reply-To: <618ea7b8c55b10d08b1cb139e9a3a957934b8647.1584653439.git.luto@kernel.org>
-References: <618ea7b8c55b10d08b1cb139e9a3a957934b8647.1584653439.git.luto@kernel.org>
-MIME-Version: 1.0
-Message-ID: <158470061455.28353.13715473417067109216.tip-bot2@tip-bot2>
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot2.linutronix.de>
-Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+        id S1727265AbgCTKlB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Mar 2020 06:41:01 -0400
+Received: from inva020.nxp.com ([92.121.34.13]:51626 "EHLO inva020.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726726AbgCTKlA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Mar 2020 06:41:00 -0400
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 175341A055F;
+        Fri, 20 Mar 2020 11:40:59 +0100 (CET)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id E59DA1A0538;
+        Fri, 20 Mar 2020 11:40:52 +0100 (CET)
+Received: from localhost.localdomain (mega.ap.freescale.net [10.192.208.232])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 351E4402E4;
+        Fri, 20 Mar 2020 18:40:45 +0800 (SGT)
+From:   Yangbo Lu <yangbo.lu@nxp.com>
+To:     linux-kernel@vger.kernel.org, netdev@vger.kernel.org
+Cc:     Yangbo Lu <yangbo.lu@nxp.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Richard Cochran <richardcochran@gmail.com>,
+        Vladimir Oltean <vladimir.oltean@nxp.com>,
+        Claudiu Manoil <claudiu.manoil@nxp.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Vivien Didelot <vivien.didelot@gmail.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Microchip Linux Driver Support <UNGLinuxDriver@microchip.com>
+Subject: [PATCH 0/6] Support programmable pins for Ocelot PTP driver
+Date:   Fri, 20 Mar 2020 18:37:20 +0800
+Message-Id: <20200320103726.32559-1-yangbo.lu@nxp.com>
+X-Mailer: git-send-email 2.17.1
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following commit has been merged into the x86/misc branch of tip:
+The Ocelot PTP clock driver had been embedded into ocelot.c driver.
+It had supported basic gettime64/settime64/adjtime/adjfine functions
+by now which were used by both Ocelot switch and Felix switch.
 
-Commit-ID:     07f24dc95daca49b8a2e804edc024dd4e91610ac
-Gitweb:        https://git.kernel.org/tip/07f24dc95daca49b8a2e804edc024dd4e91610ac
-Author:        Andy Lutomirski <luto@kernel.org>
-AuthorDate:    Thu, 19 Mar 2020 14:30:56 -07:00
-Committer:     Borislav Petkov <bp@suse.de>
-CommitterDate: Fri, 20 Mar 2020 11:20:04 +01:00
+This patch-set is to move current ptp clock code out of ocelot.c driver
+maintaining as a single ptp_ocelot.c driver, and to implement 4
+programmable pins (with only periodic signal function for now).
 
-selftests/x86/vdso: Fix no-vDSO segfaults
+Yangbo Lu (6):
+  ptp: move ocelot ptp clock code out of Ethernet driver
+  MAINTAINERS: add entry for Microsemi Ocelot PTP driver
+  net: mscc: ocelot: fix timestamp info if ptp clock does not work
+  net: mscc: ocelot: redefine PTP pins
+  net: mscc: ocelot: add wave programming registers definitions
+  ptp_ocelot: support 4 programmable pins
 
-test_vdso would try to call a NULL pointer if the vDSO was missing.
+ MAINTAINERS                                        |   9 +
+ drivers/net/dsa/ocelot/felix.c                     |   3 +-
+ drivers/net/dsa/ocelot/felix_vsc9959.c             |   2 +
+ drivers/net/ethernet/mscc/ocelot.c                 | 207 +-------------
+ drivers/net/ethernet/mscc/ocelot.h                 |   3 +-
+ drivers/net/ethernet/mscc/ocelot_board.c           |   1 +
+ drivers/net/ethernet/mscc/ocelot_regs.c            |   2 +
+ drivers/ptp/Kconfig                                |  10 +
+ drivers/ptp/Makefile                               |   1 +
+ drivers/ptp/ptp_ocelot.c                           | 310 +++++++++++++++++++++
+ include/soc/mscc/ocelot.h                          |  15 +-
+ .../net/ethernet => include/soc}/mscc/ocelot_ptp.h |   3 +
+ include/soc/mscc/ptp_ocelot.h                      |  34 +++
+ 13 files changed, 395 insertions(+), 205 deletions(-)
+ create mode 100644 drivers/ptp/ptp_ocelot.c
+ rename {drivers/net/ethernet => include/soc}/mscc/ocelot_ptp.h (88%)
+ create mode 100644 include/soc/mscc/ptp_ocelot.h
 
-vdso_restorer_32 hit a genuine failure: trying to use the
-kernel-provided signal restorer doesn't work if the vDSO is missing.
-Skip the test if the vDSO is missing, since the test adds no particular
-value in that case.
+-- 
+2.7.4
 
-Reported-by: kbuild test robot <lkp@intel.com>
-Signed-off-by: Andy Lutomirski <luto@kernel.org>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Link: https://lkml.kernel.org/r/618ea7b8c55b10d08b1cb139e9a3a957934b8647.1584653439.git.luto@kernel.org
----
- tools/testing/selftests/x86/test_vdso.c     |  5 +++++
- tools/testing/selftests/x86/vdso_restorer.c | 15 +++++++++++++++
- 2 files changed, 20 insertions(+)
-
-diff --git a/tools/testing/selftests/x86/test_vdso.c b/tools/testing/selftests/x86/test_vdso.c
-index 35edd61..42052db 100644
---- a/tools/testing/selftests/x86/test_vdso.c
-+++ b/tools/testing/selftests/x86/test_vdso.c
-@@ -259,6 +259,11 @@ static void test_one_clock_gettime(int clock, const char *name)
- 
- static void test_clock_gettime(void)
- {
-+	if (!vdso_clock_gettime) {
-+		printf("[SKIP]\tNo vDSO, so skipping clock_gettime() tests\n");
-+		return;
-+	}
-+
- 	for (int clock = 0; clock < sizeof(clocknames) / sizeof(clocknames[0]);
- 	     clock++) {
- 		test_one_clock_gettime(clock, clocknames[clock]);
-diff --git a/tools/testing/selftests/x86/vdso_restorer.c b/tools/testing/selftests/x86/vdso_restorer.c
-index 29a5c94..fe99f24 100644
---- a/tools/testing/selftests/x86/vdso_restorer.c
-+++ b/tools/testing/selftests/x86/vdso_restorer.c
-@@ -15,6 +15,7 @@
- 
- #include <err.h>
- #include <stdio.h>
-+#include <dlfcn.h>
- #include <string.h>
- #include <signal.h>
- #include <unistd.h>
-@@ -46,11 +47,23 @@ int main()
- 	int nerrs = 0;
- 	struct real_sigaction sa;
- 
-+	void *vdso = dlopen("linux-vdso.so.1",
-+			    RTLD_LAZY | RTLD_LOCAL | RTLD_NOLOAD);
-+	if (!vdso)
-+		vdso = dlopen("linux-gate.so.1",
-+			      RTLD_LAZY | RTLD_LOCAL | RTLD_NOLOAD);
-+	if (!vdso) {
-+		printf("[SKIP]\tFailed to find vDSO.  Tests are not expected to work.\n");
-+		return 0;
-+	}
-+
- 	memset(&sa, 0, sizeof(sa));
- 	sa.handler = handler_with_siginfo;
- 	sa.flags = SA_SIGINFO;
- 	sa.restorer = NULL;	/* request kernel-provided restorer */
- 
-+	printf("[RUN]\tRaise a signal, SA_SIGINFO, sa.restorer == NULL\n");
-+
- 	if (syscall(SYS_rt_sigaction, SIGUSR1, &sa, NULL, 8) != 0)
- 		err(1, "raw rt_sigaction syscall");
- 
-@@ -63,6 +76,8 @@ int main()
- 		nerrs++;
- 	}
- 
-+	printf("[RUN]\tRaise a signal, !SA_SIGINFO, sa.restorer == NULL\n");
-+
- 	sa.flags = 0;
- 	sa.handler = handler_without_siginfo;
- 	if (syscall(SYS_sigaction, SIGUSR1, &sa, 0) != 0)
