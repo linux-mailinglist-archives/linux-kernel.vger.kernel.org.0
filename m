@@ -2,82 +2,162 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EDDC618D264
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 16:09:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4D32218D26E
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 16:10:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727120AbgCTPJk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Mar 2020 11:09:40 -0400
-Received: from mga09.intel.com ([134.134.136.24]:8237 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726809AbgCTPJj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Mar 2020 11:09:39 -0400
-IronPort-SDR: ABkSjmQN9aN3/GK0PrCcLjE6NXJNCMrQGBUHME4bwGO1hj/iMKU3LL/TURl16toJlOZqSxZPO5
- ET11Zjkk1oYQ==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Mar 2020 08:09:39 -0700
-IronPort-SDR: AFkBwF5WP4WysFrNZm4zA8IBQflVD1OzTdUEPsvTGlxHXrP6iOww7F+msDj/FYXc2cMAVwk0hr
- /bws+txLF6Yw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.72,284,1580803200"; 
-   d="scan'208";a="445000342"
-Received: from mdroper-desk1.fm.intel.com (HELO mdroper-desk1.amr.corp.intel.com) ([10.1.27.64])
-  by fmsmga005.fm.intel.com with ESMTP; 20 Mar 2020 08:09:38 -0700
-Date:   Fri, 20 Mar 2020 08:09:38 -0700
-From:   Matt Roper <matthew.d.roper@intel.com>
-To:     Emmanuel Vadot <manu@freebsd.org>
-Cc:     maarten.lankhorst@linux.intel.com, mripard@kernel.org,
-        tzimmermann@suse.de, airlied@linux.ie, daniel@ffwll.ch,
-        noralf@tronnes.org, kraxel@redhat.com, tglx@linutronix.de,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] drm/client: Dual licence the header in GPL-2 and MIT
-Message-ID: <20200320150938.GA2520475@mdroper-desk1.amr.corp.intel.com>
-References: <20200320022114.2234-1-manu@FreeBSD.org>
+        id S1727325AbgCTPKl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Mar 2020 11:10:41 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:42263 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726913AbgCTPKk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Mar 2020 11:10:40 -0400
+Received: by mail-wr1-f65.google.com with SMTP id v11so7883025wrm.9;
+        Fri, 20 Mar 2020 08:10:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=p/MB3ibnOodVPSLRbcvPaSw5k5yXbH6/dCVbJLHXoKk=;
+        b=IhtEJLzSI4ZiarlZnescWMp9HDEWc8bL/A4CHFauDJgQmKTh9mZovDAyg/tIxlRsQ4
+         8NTiF9Oa6hq7bgfE+uYXzuo8IGcRJwc0j/LmMC5KepZOLTBa5nOw5zFa9vUC9IHYEg2n
+         TB4mTELVM+fAbLOQ709UNJCldPcadGK6Avx6pS1YejO6LGM2iW8VU8WJFx9ESZ02BY8+
+         PxXpS22i89kv3OpKE1qiDaj4IOlzKYF7w6ktZL3FnH6tCN8/AFYO9uzqC2J9A6IzaKGV
+         7iUhykQG2kMq2R+jg0YjO7KfZIZJnJ7B9mby0iSEZrbazQw0Uej/ZzX2VeV46YXeOR6Z
+         6fDw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=p/MB3ibnOodVPSLRbcvPaSw5k5yXbH6/dCVbJLHXoKk=;
+        b=NyZzDkvbMN5hTWOBicUj6Kq0svFbDrwLLB/Gkxs8v1/ozUulX596MNpw+kAUjKBcvk
+         OesZrEFuxKriOlo2+mIMq+RL21YXs1wfKZxwjjc1rrXxPyNG02tZO+pvrbOGfWXkuz5V
+         L/J8c8RvtDuAR9Xnst7lQIGYrnWyUaHFknClOd/SkSCD3U47XguD6C07esoYG7scFhPv
+         mRsSYpW+497L+Da7WnNo7t2URaUCROv1CBa+h/XFIVzB9u/ksb4znsnALXxiUch43d5b
+         K2gTo+0QPQzqLF2l/O7twSWUJ5nYvIMsm2im0FiF8iOgQamTNipw6yIpQGFvOhc7GvsK
+         be2A==
+X-Gm-Message-State: ANhLgQ3o9gm3OKMmSSs/jwPuTxv+e0PsapMbuXnY8LIt4T+WSh2bd9qA
+        OY5uezjX7ccbf5lksFD/o9WZsKUl
+X-Google-Smtp-Source: ADFU+vvUSNZuXVLldZhRlKLWnbseGh277sutn59QMZys5POUIiF8H4yXaAV3vR8+R1kH1EB0M6A4Wg==
+X-Received: by 2002:adf:afcb:: with SMTP id y11mr11015452wrd.141.1584717037465;
+        Fri, 20 Mar 2020 08:10:37 -0700 (PDT)
+Received: from localhost (pD9E51CDC.dip0.t-ipconnect.de. [217.229.28.220])
+        by smtp.gmail.com with ESMTPSA id b187sm8795993wmc.14.2020.03.20.08.10.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 20 Mar 2020 08:10:36 -0700 (PDT)
+Date:   Fri, 20 Mar 2020 16:10:35 +0100
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Jon Hunter <jonathanh@nvidia.com>
+Cc:     linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] soc/tegra: fuse: Add custom SoC attributes
+Message-ID: <20200320151035.GB3706404@ulmo>
+References: <20200320113716.6105-1-jonathanh@nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="E39vaYmALEf/7YXx"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20200320022114.2234-1-manu@FreeBSD.org>
+In-Reply-To: <20200320113716.6105-1-jonathanh@nvidia.com>
+User-Agent: Mutt/1.13.1 (2019-12-14)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 20, 2020 at 03:21:13AM +0100, Emmanuel Vadot wrote:
-> Source file was dual licenced but the header was omitted, fix that.
-> Contributors for this file are:
-> Daniel Vetter <daniel.vetter@ffwll.ch>
-> Matt Roper <matthew.d.roper@intel.com>
-> Maxime Ripard <mripard@kernel.org>
-> Noralf Trønnes <noralf@tronnes.org>
-> Thomas Zimmermann <tzimmermann@suse.de>
 
-Acked-by: Matt Roper <matthew.d.roper@intel.com>
+--E39vaYmALEf/7YXx
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> 
-> Signed-off-by: Emmanuel Vadot <manu@FreeBSD.org>
+On Fri, Mar 20, 2020 at 11:37:16AM +0000, Jon Hunter wrote:
+> Add a custom SoC attribute for Tegra to expose the HIDREV register
+> contents to userspace via the sysfs. This register provides additional
+> details about the fabrication and versioning of the device. Exposing
+> this information is useful for identifying the exact device revision and
+> device type.
+>=20
+> Please note that the fields in this register vary depending on the Tegra
+> generation and so instead of exposing the individual fields, just expose
+> the entire contents of the register. Details of the register fields can
+> be found in the Technical Reference Manual for each Tegra device.
+
+That seems a little suboptimal to me. It's pretty trivial for the kernel
+to distinguish between different SoC generations in order to know what
+the fields are. It's a lot more difficult for userspace to do so. Is the
+register completely different between SoC generations or just slightly?
+
+Having individual fields exposed as individual attributes seems like it
+would make it a lot easier for userspace to get at the needed bits.
+
+Thierry
+
+>=20
+> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
 > ---
->  include/drm/drm_client.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/include/drm/drm_client.h b/include/drm/drm_client.h
-> index 3ed5dee899fd..94c9c72c206d 100644
-> --- a/include/drm/drm_client.h
-> +++ b/include/drm/drm_client.h
-> @@ -1,4 +1,4 @@
-> -/* SPDX-License-Identifier: GPL-2.0 */
-> +/* SPDX-License-Identifier: GPL-2.0 or MIT */
->  
->  #ifndef _DRM_CLIENT_H_
->  #define _DRM_CLIENT_H_
-> -- 
-> 2.25.1
-> 
+>  drivers/soc/tegra/fuse/fuse-tegra.c | 19 +++++++++++++++++++
+>  1 file changed, 19 insertions(+)
+>=20
+> diff --git a/drivers/soc/tegra/fuse/fuse-tegra.c b/drivers/soc/tegra/fuse=
+/fuse-tegra.c
+> index 802717b9f6a3..217e326da232 100644
+> --- a/drivers/soc/tegra/fuse/fuse-tegra.c
+> +++ b/drivers/soc/tegra/fuse/fuse-tegra.c
+> @@ -300,6 +300,24 @@ static void tegra_enable_fuse_clk(void __iomem *base)
+>  	writel(reg, base + 0x14);
+>  }
+> =20
+> +static ssize_t tegra_soc_hidrev_show(struct device *dev,
+> +				     struct device_attribute *attr,
+> +				     char *buf)
+> +{
+> +	return sprintf(buf, "%d\n", tegra_read_chipid());
 
--- 
-Matt Roper
-Graphics Software Engineer
-VTT-OSGC Platform Enablement
-Intel Corporation
-(916) 356-2795
+Would it be better to print this as hexadecimal?
+
+> +}
+> +
+> +static DEVICE_ATTR(hidrev, S_IRUGO, tegra_soc_hidrev_show,  NULL);
+> +
+> +static struct attribute *tegra_soc_attr[] =3D {
+> +	&dev_attr_hidrev.attr,
+> +	NULL,
+> +};
+> +
+> +static const struct attribute_group tegra_soc_attr_group =3D {
+> +	.attrs =3D tegra_soc_attr,
+> +};
+> +
+>  struct device * __init tegra_soc_device_register(void)
+>  {
+>  	struct soc_device_attribute *attr;
+> @@ -312,6 +330,7 @@ struct device * __init tegra_soc_device_register(void)
+>  	attr->family =3D kasprintf(GFP_KERNEL, "Tegra");
+>  	attr->revision =3D kasprintf(GFP_KERNEL, "%d", tegra_sku_info.revision);
+>  	attr->soc_id =3D kasprintf(GFP_KERNEL, "%u", tegra_get_chip_id());
+
+I guess we print all of these as decimal, so hidrev should probably be
+the same, so never mind the previous comment.
+
+Thierry
+
+--E39vaYmALEf/7YXx
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl503OsACgkQ3SOs138+
+s6HEwQ/+O9SCRbBqNXYN9nux8BzE8Ipn8+xWykZAptrwS9KAHbiT69ijOt10NCMp
+cOisPIp+xylrpVBsItNmVr5LUdhY6tG74J8thr5ad/8YduzBPGIR9IxDqS7E4Btu
+106OsngzZjFHEcN65/6mey7WnAn20h510IYTxInMBeSuY0ZuhZj7WJd8LkoPURYu
+wfTQnRwKPCYORz+E492TVr/rFeAi9svq8Q7fB63c/CXvG3yQd+4h24b6hdC+/cC6
+MepbgXOe2RwaVU5d+VBSMa+Xd2hbxqw07AAuxlaEvsbSHQfCnkCwn++Ew3wqox+g
+pTOEzEziwSyjXUim9Fbhrd7Ihei2q/RKyWLx+PxjzdB9IGwKbN9MXaMX8skDVOTf
+h55hTSIhdREE5fJdXb3kP+OYGidzW09etaKBxDwIZj/tiTHND/l2oUDqsC6r5753
+MaWX8Kc4zWsEYW/3SQyWfWsWzO80zOOHSoV6nJIOLlr4OgiWBeDcl0gnerN2ZHBE
+US06/1Apu7wb/toICZR+t/u+ml6BZ4fR/Ddp4u8sGIKKDzKkAdFuAMJZKFQj2KMw
+KPi3RwQBIbwSyoFF3+i3Rinq84qKSbm1oe5NLUb0ld1nVHKBV+8o6M3AXqFYNX0Z
+3j2qb3qI5Jgk1bJF8F1zOOM/BI71WfxCDnKYvAuR+x4vRMQNq6o=
+=Nf1c
+-----END PGP SIGNATURE-----
+
+--E39vaYmALEf/7YXx--
