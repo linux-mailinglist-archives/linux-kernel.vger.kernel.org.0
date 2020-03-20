@@ -2,131 +2,138 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9F10D18D447
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 17:23:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7D36018D456
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 17:26:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727450AbgCTQXB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Mar 2020 12:23:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51382 "EHLO mail.kernel.org"
+        id S1727303AbgCTQ0x (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Mar 2020 12:26:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52636 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727232AbgCTQXB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Mar 2020 12:23:01 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        id S1727122AbgCTQ0w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Mar 2020 12:26:52 -0400
+Received: from paulmck-ThinkPad-P72.home (50-39-105-78.bvtn.or.frontiernet.net [50.39.105.78])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3FEC620724;
-        Fri, 20 Mar 2020 16:23:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2DD6D20724;
+        Fri, 20 Mar 2020 16:26:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584721380;
-        bh=lv5dc5lyvfZeoMUgtuTZ8bzmyZe5g6+qYJhcqv6T9H4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=XfRCgcWXuedy3Bn5EMaQ6y0SROMPmy3X3wmAmPLiGGByiiErxDcrSTbAmY3zZa11u
-         AoJUJiP98hoo7XRqTS+oFm9IM31dcUfEOuACdITsJtOgO78KwrFbOefVfDdS8U7vpt
-         OVJ91PgYCMQ9i+zWola632ATrMbJXHzucMJMPBuc=
-Date:   Fri, 20 Mar 2020 17:22:58 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Daniel Borkmann <daniel@iogearbox.net>
-Cc:     Alexei Starovoitov <ast@kernel.org>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
-        Andrii Nakryiko <andriin@fb.com>, netdev@vger.kernel.org,
-        bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Maciej =?utf-8?Q?=C5=BBenczykowski?= <maze@google.com>,
-        John Stultz <john.stultz@linaro.org>,
-        Alexander Potapenko <glider@google.com>,
-        Alistair Delva <adelva@google.com>
-Subject: [PATCH] bpf: explicitly memset some bpf info structures declared on
- the stack
-Message-ID: <20200320162258.GA794295@kroah.com>
-References: <20200320094813.GA421650@kroah.com>
- <3bcf52da-0930-a27f-60f9-28a40e639949@iogearbox.net>
- <20200320154518.GA765793@kroah.com>
- <d55983b3-0f94-cc7f-2055-a0b4ab8075ed@iogearbox.net>
- <20200320161515.GA778529@kroah.com>
+        s=default; t=1584721611;
+        bh=GRkJPRXSUPxB/4FaDSLTXZXzBr8dpjV+3HyNoC/Gdos=;
+        h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+        b=E4YH+CNNo4ZnxnlmBJyLRcAUJDx8wp7GFj5JquWhmYs0ptqbKyXi6+JURFaKi02zi
+         ksBlpCIcrtMfQfq8cmv7BXcEQW6gySqmpoCU/FpVh5HD2YbRnBjvSfoubAmM1rCXSC
+         BIOFSDlRNd4e42leZi4PoTcQX4N7Hb4Edov12V7Q=
+Received: by paulmck-ThinkPad-P72.home (Postfix, from userid 1000)
+        id 00E7035226B4; Fri, 20 Mar 2020 09:26:50 -0700 (PDT)
+Date:   Fri, 20 Mar 2020 09:26:50 -0700
+From:   "Paul E. McKenney" <paulmck@kernel.org>
+To:     Dmitry Vyukov <dvyukov@google.com>
+Cc:     syzbot <syzbot+792dec47d693ccdc05a0@syzkaller.appspotmail.com>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Lai Jiangshan <jiangshanlai@gmail.com>,
+        Joel Fernandes <joel@joelfernandes.org>, rcu@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
+Subject: Re: linux-next build error (8)
+Message-ID: <20200320162650.GP3199@paulmck-ThinkPad-P72>
+Reply-To: paulmck@kernel.org
+References: <000000000000ae2ab305a123f146@google.com>
+ <CACT4Y+a_d=5TNZth0dPov0B7tB5T9bAzWXBj1HjhXdn-=0KOOg@mail.gmail.com>
+ <20200318214109.GV3199@paulmck-ThinkPad-P72>
+ <CACT4Y+ZhP_Qu+WZ4t2dLjd__H+rUKCTRCNoghvW9Uf3QQYRcNg@mail.gmail.com>
+ <20200319150414.GD3199@paulmck-ThinkPad-P72>
+ <CACT4Y+YHQQWeeW44NYAxX+fFU6RyvFbbmcig1q8NSE7yV0zgjA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200320161515.GA778529@kroah.com>
+In-Reply-To: <CACT4Y+YHQQWeeW44NYAxX+fFU6RyvFbbmcig1q8NSE7yV0zgjA@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Trying to initialize a structure with "= {};" will not always clean out
-all padding locations in a structure.  So be explicit and call memset to
-initialize everything for a number of bpf information structures that
-are then copied from userspace, sometimes from smaller memory locations
-than the size of the structure.
+On Fri, Mar 20, 2020 at 04:38:54PM +0100, Dmitry Vyukov wrote:
+> On Thu, Mar 19, 2020 at 4:04 PM Paul E. McKenney <paulmck@kernel.org> wrote:
+> >
+> > On Thu, Mar 19, 2020 at 08:13:35AM +0100, Dmitry Vyukov wrote:
+> > > On Wed, Mar 18, 2020 at 10:41 PM Paul E. McKenney <paulmck@kernel.org> wrote:
+> > > >
+> > > > On Wed, Mar 18, 2020 at 09:54:07PM +0100, Dmitry Vyukov wrote:
+> > > > > On Wed, Mar 18, 2020 at 5:57 PM syzbot
+> > > > > <syzbot+792dec47d693ccdc05a0@syzkaller.appspotmail.com> wrote:
+> > > > > >
+> > > > > > Hello,
+> > > > > >
+> > > > > > syzbot found the following crash on:
+> > > > > >
+> > > > > > HEAD commit:    47780d78 Add linux-next specific files for 20200318
+> > > > > > git tree:       linux-next
+> > > > > > console output: https://syzkaller.appspot.com/x/log.txt?x=14228745e00000
+> > > > > > kernel config:  https://syzkaller.appspot.com/x/.config?x=b68b7b89ad96c62a
+> > > > > > dashboard link: https://syzkaller.appspot.com/bug?extid=792dec47d693ccdc05a0
+> > > > > > compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+> > > > > >
+> > > > > > Unfortunately, I don't have any reproducer for this crash yet.
+> > > > > >
+> > > > > > IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> > > > > > Reported-by: syzbot+792dec47d693ccdc05a0@syzkaller.appspotmail.com
+> > > > > >
+> > > > > > kernel/rcu/tasks.h:1070:37: error: 'rcu_tasks_rude' undeclared (first use in this function); did you mean 'rcu_tasks_qs'?
+> > > > >
+> > > > > +rcu maintainers
+> > > >
+> > > > The kbuild test robot beat you to it, and apologies for the hassle.
+> > > > Fixed in -rcu on current "dev" branch.
+> > >
+> > > If the kernel dev process would only have a way to avoid dups from all
+> > > test systems...
+> >
+> > I do significant testing before pushing to -next, but triggering this
+> > one requires a combination of Kconfig options that are incompatible
+> > with rcutorture.  :-/
+> >
+> > I suppose one strategy would be to give kbuild test robot some time before
+> > passing to -next, but they seem to sometimes get too far behind for me to
+> > be willing to wait that long.  So my current approach is to push my "dev"
+> > branch, run moderate rcutorture testing (three hours per scenario other
+> > than TREE10, which gets only one hour), and if that passes, push to -next.
+> >
+> > I suppose that I could push to -next only commits that are at least three
+> > days old or some such.  But I get in trouble pushing to -next too slowly
+> > as often as I get in trouble pushing too quickly, so I suspect that my
+> > current approach is in roughly the right place.
+> >
+> > > Now we need to spend time and deal with it. What has fixed it?
+> >
+> > It is fixed by commit c6ef38e4d595 ("rcu-tasks: Add RCU tasks to
+> > rcutorture writer stall output") and some of its predecessors.
+> >
+> > Perhaps more useful to you, this commit is included in next-20200319
+> > from the -next tree.  ;-)
+> 
+> Let's tell syzbot about the fix:
+> 
+> #syz fix: rcu-tasks: Add RCU tasks to rcutorture writer stall output
+> 
+> I think what you are doing is the best possible option in the current situation.
+> I don't think requiring all human maintainers to do more manual
+> repetitive work, which is not well defined and even without a way to
+> really require something from them is scalable nor reliable nor the
+> right approach.
 
-Reported-by: Daniel Borkmann <daniel@iogearbox.net
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
+Thank you, and I do greatly appreciate the automation!
 
-Note, this is separate from my previous patch, both are needed.
+> We would consume something like LKGR [1] if it existed for the kernel.
+> But it would require tighter integration of testing systems with
+> kernel dev processes, or of course throwing more manual labor at it to
+> track all uncoordinated testing systems and publishing LKGR tags.
+> 
+> [1] https://chromium.googlesource.com/chromiumos/docs/+/master/glossary.md
 
- kernel/bpf/btf.c     | 3 ++-
- kernel/bpf/syscall.c | 6 ++++--
- 2 files changed, 6 insertions(+), 3 deletions(-)
+At my end, it is pretty quick and easy to detect duplicate notifications
+of the same bug, so the current situation isn't causing me undue distress.
 
-diff --git a/kernel/bpf/btf.c b/kernel/bpf/btf.c
-index 787140095e58..2fc945fcf952 100644
---- a/kernel/bpf/btf.c
-+++ b/kernel/bpf/btf.c
-@@ -4564,7 +4564,7 @@ int btf_get_info_by_fd(const struct btf *btf,
- 		       union bpf_attr __user *uattr)
- {
- 	struct bpf_btf_info __user *uinfo;
--	struct bpf_btf_info info = {};
-+	struct bpf_btf_info info;
- 	u32 info_copy, btf_copy;
- 	void __user *ubtf;
- 	u32 uinfo_len;
-@@ -4573,6 +4573,7 @@ int btf_get_info_by_fd(const struct btf *btf,
- 	uinfo_len = attr->info.info_len;
- 
- 	info_copy = min_t(u32, uinfo_len, sizeof(info));
-+	memset(&info, 0, sizeof(info));
- 	if (copy_from_user(&info, uinfo, info_copy))
- 		return -EFAULT;
- 
-diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
-index a4b1de8ea409..84213cc5d016 100644
---- a/kernel/bpf/syscall.c
-+++ b/kernel/bpf/syscall.c
-@@ -2787,7 +2787,7 @@ static int bpf_prog_get_info_by_fd(struct bpf_prog *prog,
- 				   union bpf_attr __user *uattr)
- {
- 	struct bpf_prog_info __user *uinfo = u64_to_user_ptr(attr->info.info);
--	struct bpf_prog_info info = {};
-+	struct bpf_prog_info info;
- 	u32 info_len = attr->info.info_len;
- 	struct bpf_prog_stats stats;
- 	char __user *uinsns;
-@@ -2799,6 +2799,7 @@ static int bpf_prog_get_info_by_fd(struct bpf_prog *prog,
- 		return err;
- 	info_len = min_t(u32, sizeof(info), info_len);
- 
-+	memset(&info, 0, sizeof(info));
- 	if (copy_from_user(&info, uinfo, info_len))
- 		return -EFAULT;
- 
-@@ -3062,7 +3063,7 @@ static int bpf_map_get_info_by_fd(struct bpf_map *map,
- 				  union bpf_attr __user *uattr)
- {
- 	struct bpf_map_info __user *uinfo = u64_to_user_ptr(attr->info.info);
--	struct bpf_map_info info = {};
-+	struct bpf_map_info info;
- 	u32 info_len = attr->info.info_len;
- 	int err;
- 
-@@ -3071,6 +3072,7 @@ static int bpf_map_get_info_by_fd(struct bpf_map *map,
- 		return err;
- 	info_len = min_t(u32, sizeof(info), info_len);
- 
-+	memset(&info, 0, sizeof(info));
- 	info.type = map->map_type;
- 	info.id = map->id;
- 	info.key_size = map->key_size;
--- 
-2.25.2
-
+							Thanx, Paul
