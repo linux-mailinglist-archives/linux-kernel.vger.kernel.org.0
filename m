@@ -2,49 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5507018D6AC
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 19:18:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0F30918D670
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 19:00:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727268AbgCTSSF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Mar 2020 14:18:05 -0400
-Received: from mga02.intel.com ([134.134.136.20]:6726 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726783AbgCTSSE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Mar 2020 14:18:04 -0400
-IronPort-SDR: MJuDvWSls+whKWjkAl5O74C51A+RWvwyBTs04310L5E8jj4kkba0Ji8mV/Lj10SR+rmbMs5nGB
- ozTESYyLJtpA==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Mar 2020 11:18:04 -0700
-IronPort-SDR: zbi2N4p/jkWWXG5sygpgaZcdsWnUMpYX5W4p6Y/W5HV3X5nuDH7+9Oz5xclUjfXH7BP4Q7V1oz
- hi6rn+uhtmcA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.72,285,1580803200"; 
-   d="scan'208";a="392230416"
-Received: from manallet-mobl.amr.corp.intel.com (HELO [10.255.34.12]) ([10.255.34.12])
-  by orsmga004.jf.intel.com with ESMTP; 20 Mar 2020 11:18:01 -0700
-Subject: Re: [PATCH] soundwire: stream: only change state if needed
-To:     Vinod Koul <vkoul@kernel.org>
-Cc:     alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
-        tiwai@suse.de, broonie@kernel.org, gregkh@linuxfoundation.org,
-        jank@cadence.com, srinivas.kandagatla@linaro.org,
-        slawomir.blauciak@intel.com,
-        Bard liao <yung-chuan.liao@linux.intel.com>,
-        Rander Wang <rander.wang@linux.intel.com>,
-        Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
-        Hui Wang <hui.wang@canonical.com>,
-        Sanyog Kale <sanyog.r.kale@intel.com>
-References: <20200317105142.4998-1-pierre-louis.bossart@linux.intel.com>
- <20200320141528.GI4885@vkoul-mobl>
-From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Message-ID: <f212f561-27aa-265c-3f4c-45b2336ac145@linux.intel.com>
-Date:   Fri, 20 Mar 2020 09:33:36 -0500
+        id S1727302AbgCTSAg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Mar 2020 14:00:36 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:40184 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726738AbgCTSAg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Mar 2020 14:00:36 -0400
+Received: by mail-pg1-f193.google.com with SMTP id t24so3464471pgj.7;
+        Fri, 20 Mar 2020 11:00:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:subject:to:cc:references:from:autocrypt:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=080snhj0lunX6VMRtG4/icf7cWVI3jexKvUDP50Ycfo=;
+        b=uOyI4D1SXSgdlrg3hkrj2eBBm3aw1AM8eNZkTtShIbWtX1ag2uRbCaBw7ZVDfdmm9T
+         0XHVBB/dB60a6/crqGGKgaZcrRqyzdS6cpqbks6bGF7IdJC+1qRd/pL1XollyYB7xz3G
+         mJy0GFC44wyRmCHHP1QNGHDhh2oxY2oBoJ+B6s2lRTXKfKLWAe59EBWFG7ADBCZ1KYnY
+         x8oaVHYB6DxohyjuQvNtg8YzWTw2q6ubV9T2IOuRK93ER1tWkNculhJip5td35yvTjHw
+         cmVuwCTmLpZfZrFjNoIuzBNxNbRlEjm3bT5GiWqphoJga3qYAeMNqYu3ryRIgI0jUhjL
+         g5SQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:subject:to:cc:references:from:autocrypt
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=080snhj0lunX6VMRtG4/icf7cWVI3jexKvUDP50Ycfo=;
+        b=IChvCYegBxhSdrdIr8fwKKEFKoKyfwItRY+TompWhS71cb4Ph9NisD2h6fCXA9DtGU
+         7Akl1SDqRCzxChq14ce7TB0LDbTKK9mBVQmvKa8U4ptl/H7vMlkiexwtQjXX8ABhb660
+         ckf6DBoxkoUijaHbqPde4FhghSHbF5sEbf3ApSGrnyxHzreW38ZcgreTwWD5kVTJiYJ8
+         9Atm+ygpn5k2071blMpLCeuN0CZtMiVOcNmzsMhbIw+wXS7hg277YsnlP3kq2PdacDi0
+         8hWt6FrCDk99U6Soy4xT0qw9V80h27XwUvys3oxDafllGUaOxzbHT/fHZHs8gguWPYoi
+         GVtQ==
+X-Gm-Message-State: ANhLgQ0GUVMw1KCCPH9KufAWCYXQGUH97dwUoyFtUwkYRCwdmFGpVF90
+        Jix5bmhUcIy3Nku/9MVQ2P8F5Xa2
+X-Google-Smtp-Source: ADFU+vtcs4pqFgfEfymMazQv9Pi3A0vaPa2jSxtTF2KcXKm9cqGDrNbbDVfUMH7bUbQn9awm/kTMbQ==
+X-Received: by 2002:a63:161e:: with SMTP id w30mr9747703pgl.110.1584727232388;
+        Fri, 20 Mar 2020 11:00:32 -0700 (PDT)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id z11sm6157479pfa.149.2020.03.20.11.00.30
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 20 Mar 2020 11:00:31 -0700 (PDT)
+Subject: Re: [PATCH 5.5 00/54] 5.5.11-rc3 review
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org
+Cc:     torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        shuah@kernel.org, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org
+References: <20200320113335.277810029@linuxfoundation.org>
+From:   Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
+Message-ID: <53e0e115-6d12-1f1e-518c-26ae2ec5c2b1@roeck-us.net>
+Date:   Fri, 20 Mar 2020 11:00:29 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.4.1
 MIME-Version: 1.0
-In-Reply-To: <20200320141528.GI4885@vkoul-mobl>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <20200320113335.277810029@linuxfoundation.org>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -52,42 +113,21 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 3/20/20 9:15 AM, Vinod Koul wrote:
-> On 17-03-20, 05:51, Pierre-Louis Bossart wrote:
->> In a multi-cpu DAI context, the stream routines may be called from
->> multiple DAI callbacks. Make sure the stream state only changes for
->> the first call, and don't return error messages if the target state is
->> already reached.
+On 3/20/20 4:34 AM, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 5.5.11 release.
+> There are 54 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> For stream-apis we have documented explicitly in Documentation/driver-api/soundwire/stream.rst
+> Responses should be made by Sun, 22 Mar 2020 11:32:39 +0000.
+> Anything received after that time might be too late.
 > 
-> "Bus implements below API for allocate a stream which needs to be called once
-> per stream. From ASoC DPCM framework, this stream state maybe linked to
-> .startup() operation.
-> 
-> .. code-block:: c
-> 
->    int sdw_alloc_stream(char * stream_name); "
-> 
-> This is documented for all stream-apis.
-> 
-> This can be resolved by moving the calling of these APIs from
-> master-dais/slave-dais to machine-dais. They are unique in the card.
 
-this change is about prepare/enable/disable/deprepare, not allocation or 
-startup.
+For v5.5.10-55-gbea94317c526:
 
-I see no reason to burden the machine driver with all these steps. It's 
-not because QCOM needs this transition that everyone does.
+Build results:
+	total: 157 pass: 157 fail: 0
+Qemu test results:
+	total: 428 pass: 428 fail: 0
 
-As discussed earlier, QCOM cannot use this functionality because the 
-prepare/enable and disable/deprepare are done in the hw_params and 
-hw_free respectively. This was never the intended use, but Intel let it 
-happen so I'd like you to return the favor. This change has no impact 
-for QCOM and simplifies the Intel solution, so why would you object?
-
-Seriously, your replies on all Intel contributions make me wonder if 
-this is the QCOM/Linaro SoundWire subsystem, or if we are going to find 
-common ground to deal with vastly different underlying architectures?
+Guenter
