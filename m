@@ -2,128 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4B08A18D6C0
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 19:24:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4F33918D6EC
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 19:25:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726840AbgCTSX5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Mar 2020 14:23:57 -0400
-Received: from mail-pf1-f202.google.com ([209.85.210.202]:48027 "EHLO
-        mail-pf1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725446AbgCTSX5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Mar 2020 14:23:57 -0400
-Received: by mail-pf1-f202.google.com with SMTP id h191so5133016pfe.14
-        for <linux-kernel@vger.kernel.org>; Fri, 20 Mar 2020 11:23:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:message-id:mime-version:subject:from:to:cc;
-        bh=RMPXYe/vR5ct6qGO4irRpO9ggqjWQLrULMnyekYeYdA=;
-        b=CU06efIQZInxH335XVehXng0U+lS//aZfnaXxvf0I2ImUfFSVaakHLgoP/P2TI4ezk
-         X1bS7ff5J9PuTwD3G3siGmY6So6qmAl7PFskKQTCgPd25wnt769kl8x9l2Apf9BkotnG
-         ShNZxWCskCFjJSirTG4wL/8STJVJPY5LoGahYYkbHz8+vyQrLWtwdGPIgXya4IhGGE8e
-         KCHoyClSc1YOlYFWSOcepT1K/TGGchJFQwAvJrRMehnN4ShkdlSMdsAshg00Ra8p6yWd
-         HWuZS1MnWkF+hmTHh23tcAkJ3fJZLMChDyG1EN1S3cXQLf4P9+j7vNXx4c8oDKRjD07u
-         ucWw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
-        bh=RMPXYe/vR5ct6qGO4irRpO9ggqjWQLrULMnyekYeYdA=;
-        b=IHM5+2Yy7tZd+jKrwe6kgMbmfAyURCovf5Bzv8fJVN0k6XFlf/auhcPgrUfNXcY3On
-         wDH3cQnzKrLnDqwlfG72cTtGLU00tqQXco1JLA73NePPpjdMPI1TP4MTEMn8Pn8Ovb0N
-         0knFuIjtaZr6UkPpUXlxuZdi1djmrypRwN6hVg7wL1Y28oSlKOtweV3h+CNqXYTI5mQq
-         jPNtWUIZcOY8eT51nQYLbggkqmT94xOgrMMP00w6m0dv8vb2n40/CeMPXB4g3dTCZcQm
-         JlHCus2m8GOssHbm+a4bO1GKPf4n1gMTIenDiF7lYIrYgZ3yl4MY5nM7Y3zZNTBqH45Y
-         ecpg==
-X-Gm-Message-State: ANhLgQ1jh88TJcOtNl3LErC7QWoZ/tNkgHpnNgg1IWYGd7WW8zVpN8bm
-        5Q/JjH3s7HTo6Mbn8vgYjMgiWSQIh+EO
-X-Google-Smtp-Source: ADFU+vu7Ekr81cC6q+QtWqmhrDj4TMQcXjgygXB8DtY5pc1UlFHaNo/fQ80zM0Suh8w7hOCADMV5UkHFh4f1
-X-Received: by 2002:a17:90a:8c83:: with SMTP id b3mr10818804pjo.1.1584728633692;
- Fri, 20 Mar 2020 11:23:53 -0700 (PDT)
-Date:   Fri, 20 Mar 2020 11:23:47 -0700
-Message-Id: <20200320182347.87675-1-irogers@google.com>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.25.1.696.g5e7596f4ac-goog
-Subject: [PATCH v2] perf mem2node: avoid double free related to realloc
-From:   Ian Rogers <irogers@google.com>
-To:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        linux-kernel@vger.kernel.org, clang-built-linux@googlegroups.com
-Cc:     Stephane Eranian <eranian@google.com>,
-        Ian Rogers <irogers@google.com>
-Content-Type: text/plain; charset="UTF-8"
+        id S1727518AbgCTSZM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Mar 2020 14:25:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35788 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727253AbgCTSYi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Mar 2020 14:24:38 -0400
+Received: from disco-boy.misterjones.org (disco-boy.misterjones.org [51.254.78.96])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4277E20788;
+        Fri, 20 Mar 2020 18:24:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1584728677;
+        bh=N3wwRec9eX3tvnTFhlfc0Z6Er175VJYA27eqwFuKldg=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=xfp31hwNNE/SfpKGyvc/e4S2lRxYGh0r4ZlMb0StqNftSUpexwMEkRfwnBRgA7DLq
+         V5q4CYx/8tfniXV5ehE54xNS0NvSzggfYJ5JUvIOMCv1MqJ9ywGQVgSoEDifqTYsA0
+         0qmsK7LTRbNRT9Jp1SMNZYJmeE02dHJuWCQP0oh8=
+Received: from 78.163-31-62.static.virginmediabusiness.co.uk ([62.31.163.78] helo=why.lan)
+        by disco-boy.misterjones.org with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <maz@kernel.org>)
+        id 1jFMJv-00EKAx-Gr; Fri, 20 Mar 2020 18:24:35 +0000
+From:   Marc Zyngier <maz@kernel.org>
+To:     linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu,
+        kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Zenghui Yu <yuzenghui@huawei.com>,
+        Eric Auger <eric.auger@redhat.com>,
+        James Morse <james.morse@arm.com>,
+        Julien Thierry <julien.thierry.kdev@gmail.com>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>
+Subject: [PATCH v6 04/23] irqchip/gic-v4.1: Wait for completion of redistributor's INVALL operation
+Date:   Fri, 20 Mar 2020 18:23:47 +0000
+Message-Id: <20200320182406.23465-5-maz@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20200320182406.23465-1-maz@kernel.org>
+References: <20200320182406.23465-1-maz@kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 62.31.163.78
+X-SA-Exim-Rcpt-To: linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, lorenzo.pieralisi@arm.com, jason@lakedaemon.net, tglx@linutronix.de, yuzenghui@huawei.com, eric.auger@redhat.com, james.morse@arm.com, julien.thierry.kdev@gmail.com, suzuki.poulose@arm.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Realloc of size zero is a free not an error, avoid this causing a double
-free. Caught by clang's address sanitizer:
+From: Zenghui Yu <yuzenghui@huawei.com>
 
-==2634==ERROR: AddressSanitizer: attempting double-free on 0x6020000015f0 in thread T0:
-    #0 0x5649659297fd in free llvm/llvm-project/compiler-rt/lib/asan/asan_malloc_linux.cpp:123:3
-    #1 0x5649659e9251 in __zfree tools/lib/zalloc.c:13:2
-    #2 0x564965c0f92c in mem2node__exit tools/perf/util/mem2node.c:114:2
-    #3 0x564965a08b4c in perf_c2c__report tools/perf/builtin-c2c.c:2867:2
-    #4 0x564965a0616a in cmd_c2c tools/perf/builtin-c2c.c:2989:10
-    #5 0x564965944348 in run_builtin tools/perf/perf.c:312:11
-    #6 0x564965943235 in handle_internal_command tools/perf/perf.c:364:8
-    #7 0x5649659440c4 in run_argv tools/perf/perf.c:408:2
-    #8 0x564965942e41 in main tools/perf/perf.c:538:3
+In GICv4.1, we emulate a guest-issued INVALL command by a direct write
+to GICR_INVALLR.  Before we finish the emulation and go back to guest,
+let's make sure the physical invalidate operation is actually completed
+and no stale data will be left in redistributor. Per the specification,
+this can be achieved by polling the GICR_SYNCR.Busy bit (to zero).
 
-0x6020000015f0 is located 0 bytes inside of 1-byte region [0x6020000015f0,0x6020000015f1)
-freed by thread T0 here:
-    #0 0x564965929da3 in realloc third_party/llvm/llvm-project/compiler-rt/lib/asan/asan_malloc_linux.cpp:164:3
-    #1 0x564965c0f55e in mem2node__init tools/perf/util/mem2node.c:97:16
-    #2 0x564965a08956 in perf_c2c__report tools/perf/builtin-c2c.c:2803:8
-    #3 0x564965a0616a in cmd_c2c tools/perf/builtin-c2c.c:2989:10
-    #4 0x564965944348 in run_builtin tools/perf/perf.c:312:11
-    #5 0x564965943235 in handle_internal_command tools/perf/perf.c:364:8
-    #6 0x5649659440c4 in run_argv tools/perf/perf.c:408:2
-    #7 0x564965942e41 in main tools/perf/perf.c:538:3
-
-previously allocated by thread T0 here:
-    #0 0x564965929c42 in calloc third_party/llvm/llvm-project/compiler-rt/lib/asan/asan_malloc_linux.cpp:154:3
-    #1 0x5649659e9220 in zalloc tools/lib/zalloc.c:8:9
-    #2 0x564965c0f32d in mem2node__init tools/perf/util/mem2node.c:61:12
-    #3 0x564965a08956 in perf_c2c__report tools/perf/builtin-c2c.c:2803:8
-    #4 0x564965a0616a in cmd_c2c tools/perf/builtin-c2c.c:2989:10
-    #5 0x564965944348 in run_builtin tools/perf/perf.c:312:11
-    #6 0x564965943235 in handle_internal_command tools/perf/perf.c:364:8
-    #7 0x5649659440c4 in run_argv tools/perf/perf.c:408:2
-    #8 0x564965942e41 in main tools/perf/perf.c:538:3
-
-v2: add a WARN_ON_ONCE when the free condition arises.
-
-Signed-off-by: Ian Rogers <irogers@google.com>
+Signed-off-by: Zenghui Yu <yuzenghui@huawei.com>
+Signed-off-by: Marc Zyngier <maz@kernel.org>
+Reviewed-by: Eric Auger <eric.auger@redhat.com>
+Link: https://lore.kernel.org/r/20200302092145.899-1-yuzenghui@huawei.com
+Link: https://lore.kernel.org/r/20200304203330.4967-5-maz@kernel.org
 ---
- tools/perf/util/mem2node.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/irqchip/irq-gic-v3-its.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/tools/perf/util/mem2node.c b/tools/perf/util/mem2node.c
-index 797d86a1ab09..c84f5841c7ab 100644
---- a/tools/perf/util/mem2node.c
-+++ b/tools/perf/util/mem2node.c
-@@ -1,5 +1,6 @@
- #include <errno.h>
- #include <inttypes.h>
-+#include <asm/bug.h>
- #include <linux/bitmap.h>
- #include <linux/kernel.h>
- #include <linux/zalloc.h>
-@@ -95,7 +96,7 @@ int mem2node__init(struct mem2node *map, struct perf_env *env)
+diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-gic-v3-its.c
+index 1af713990123..c84370245bea 100644
+--- a/drivers/irqchip/irq-gic-v3-its.c
++++ b/drivers/irqchip/irq-gic-v3-its.c
+@@ -3827,6 +3827,8 @@ static void its_vpe_4_1_invall(struct its_vpe *vpe)
+ 	/* Target the redistributor this vPE is currently known on */
+ 	rdbase = per_cpu_ptr(gic_rdists->rdist, vpe->col_idx)->rd_base;
+ 	gic_write_lpir(val, rdbase + GICR_INVALLR);
++
++	wait_for_syncr(rdbase);
+ }
  
- 	/* Cut unused entries, due to merging. */
- 	tmp_entries = realloc(entries, sizeof(*entries) * j);
--	if (tmp_entries)
-+	if (tmp_entries || WARN_ON_ONCE(j == 0))
- 		entries = tmp_entries;
- 
- 	for (i = 0; i < j; i++) {
+ static int its_vpe_4_1_set_vcpu_affinity(struct irq_data *d, void *vcpu_info)
 -- 
-2.25.1.696.g5e7596f4ac-goog
+2.20.1
 
