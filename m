@@ -2,96 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6170C18D4A3
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 17:38:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1338318D4A7
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 17:40:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727600AbgCTQis (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Mar 2020 12:38:48 -0400
-Received: from outbound-smtp39.blacknight.com ([46.22.139.222]:56425 "EHLO
-        outbound-smtp39.blacknight.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727269AbgCTQis (ORCPT
+        id S1727520AbgCTQkG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Mar 2020 12:40:06 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:38717 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727267AbgCTQkG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Mar 2020 12:38:48 -0400
-Received: from mail.blacknight.com (pemlinmail04.blacknight.ie [81.17.254.17])
-        by outbound-smtp39.blacknight.com (Postfix) with ESMTPS id 1A1331BBF
-        for <linux-kernel@vger.kernel.org>; Fri, 20 Mar 2020 16:38:46 +0000 (GMT)
-Received: (qmail 5667 invoked from network); 20 Mar 2020 16:38:45 -0000
-Received: from unknown (HELO techsingularity.net) (mgorman@techsingularity.net@[84.203.18.57])
-  by 81.17.254.9 with ESMTPSA (AES256-SHA encrypted, authenticated); 20 Mar 2020 16:38:45 -0000
-Date:   Fri, 20 Mar 2020 16:38:43 +0000
-From:   Mel Gorman <mgorman@techsingularity.net>
-To:     Jirka Hladky <jhladky@redhat.com>
-Cc:     Phil Auld <pauld@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ben Segall <bsegall@google.com>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        Hillf Danton <hdanton@sina.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 00/13] Reconcile NUMA balancing decisions with the load
- balancer v6
-Message-ID: <20200320163843.GD3818@techsingularity.net>
-References: <20200309203625.GU3818@techsingularity.net>
- <20200312095432.GW3818@techsingularity.net>
- <CAE4VaGA4q4_qfC5qe3zaLRfiJhvMaSb2WADgOcQeTwmPvNat+A@mail.gmail.com>
- <20200312155640.GX3818@techsingularity.net>
- <CAE4VaGD8DUEi6JnKd8vrqUL_8HZXnNyHMoK2D+1-F5wo+5Z53Q@mail.gmail.com>
- <20200312214736.GA3818@techsingularity.net>
- <CAE4VaGCfDpu0EuvHNHwDGbR-HNBSAHY=yu3DJ33drKgymMTTOw@mail.gmail.com>
- <CAE4VaGC09OfU2zXeq2yp_N0zXMbTku5ETz0KEocGi-RSiKXv-w@mail.gmail.com>
- <20200320152251.GC3818@techsingularity.net>
- <CAE4VaGBGbTT8dqNyLWAwuiqL8E+3p1_SqP6XTTV71wNZMjc9Zg@mail.gmail.com>
+        Fri, 20 Mar 2020 12:40:06 -0400
+Received: by mail-wm1-f67.google.com with SMTP id l20so7097918wmi.3
+        for <linux-kernel@vger.kernel.org>; Fri, 20 Mar 2020 09:40:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:sender:from:date:message-id:subject:to;
+        bh=gl8m333ia74OFZpNmB4o7kIcYlvQPFpoCsxlN0OXKb0=;
+        b=kNbuTShbw0IsSddVR16CskX9C06Ns3To2pv3t8zoQaDIVXEG3b70sK4t/FVJP15G5b
+         VGpDNjPP4wGCiR+EUBHVqJjOTl+8QscizeaDhWif9uTvhk1nDvdHImI1NK5AoxlnCy0j
+         n9oc49FHwt18TZouwE8SbjjPrFVevxob7LsR+s5wtun0QKcC95tIeof8wr26VPP0qnJ+
+         7DNotqBY8HmGVhlN4UEJRXGXn0hk2KXilc7f5hsUwbXbf2IYZPCNulD8iJpEOJc2oRtr
+         PtPy4rSSagV03aEH7ppWiqC5bGH9zt/GfKt8Y3sApVwh/xDe/VpU2+K8Yl8qfEakEuRI
+         ZIvw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:sender:from:date
+         :message-id:subject:to;
+        bh=gl8m333ia74OFZpNmB4o7kIcYlvQPFpoCsxlN0OXKb0=;
+        b=FstejAX5YqksQgMrxVZljTP69bMTMigzuVN+937Xal9rYvhduk6WnOUco26sKvcW6K
+         sfvsn9Dhqyfe/7DJzsDgoGbghVkJeIWUeC2DRXH0/FEXzmS3QrWRuiHtZHm7zIJnp8cm
+         4ZMguHVKUt1upAPDCGjQLW+DMsOavErsbZYdc7OBiz7QNeseN5iaZGqr3oktYjPeyXTZ
+         UCHK8qtxmbt++AVRKxqTbmb8eIZlKQ6kWbCOu354sTfwO1IMnJ1ApjSaM94BS6fv5lj8
+         /0nhb3Z/VCr9nw79RCYBT2NdnnQUTMY4OcpcLA1DdZ0NCOwiPwAtJ5Dn8R6CdyMH8r+G
+         vVNw==
+X-Gm-Message-State: ANhLgQ2GaU3TWHxKrHji6C5o+2OJzOs8+FBrwXulEG5Z046C9WaxJ1Vt
+        QsyJayzXCWJ+K0Xh8zWOgY/MNRe4FqokIWeTYXw=
+X-Google-Smtp-Source: ADFU+vun8LzndaAaMGSbzLFWuoHjP/a//v7fTHQFK5usPtGJwIpi6fos+vcOoC94XZ5NI01Scg+c2G5c2P2zU3JRam4=
+X-Received: by 2002:a1c:9ecb:: with SMTP id h194mr11768952wme.49.1584722403977;
+ Fri, 20 Mar 2020 09:40:03 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-15
-Content-Disposition: inline
-In-Reply-To: <CAE4VaGBGbTT8dqNyLWAwuiqL8E+3p1_SqP6XTTV71wNZMjc9Zg@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Reply-To: amahakim52@gmail.com
+Received: by 2002:a5d:5104:0:0:0:0:0 with HTTP; Fri, 20 Mar 2020 09:40:03
+ -0700 (PDT)
+From:   "Rev.Wright Watson" <azarara91@gmail.com>
+Date:   Fri, 20 Mar 2020 17:40:03 +0100
+X-Google-Sender-Auth: vJJkq6yrrjXXW3E162Z00Z9ZL0M
+Message-ID: <CAPmUj7JSQEaBW=GnFqdpU8UnP3DYHx1fggsLKxrJ=__fbQtZ9w@mail.gmail.com>
+Subject: Dear Beloved,
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 20, 2020 at 04:30:08PM +0100, Jirka Hladky wrote:
-> >
-> > MPI or OMP and what is a low thread count? For MPI at least, I saw a 0.4%
-> > gain on an 4-node machine for bt_C and a 3.88% regression on 8-nodes. I
-> > think it must be OMP you are using because I found I had to disable UA
-> > for MPI at some point in the past for reasons I no longer remember.
-> 
-> 
-> Yes, it's indeed OMP.  With low threads count, I mean up to 2x number of
-> NUMA nodes (8 threads on 4 NUMA node servers, 16 threads on 8 NUMA node
-> servers).
-> 
+Dear Beloved,
 
-Ok, so we know it's within the imbalance threshold where a NUMA node can
-be left idle.
+I'm Reverend Wright Watson, I was born in USA, 1945, I was ordained
+into the Catholic Priesthood.
 
-> One possibility would be to spread wide always at clone time and assume
-> > wake_affine will pull related tasks but it's fragile because it breaks
-> > if the cloned task execs and then allocates memory from a remote node
-> > only to migrate to a local node immediately.
-> 
-> 
-> I think the only way to find out how it performs is to test it. If you
-> could prepare a patch like that, I'm more than happy to give it a try!
-> 
+Please take your time to read this message, although we have never met
+before, this is no spam, It's a real message sent to you. I know also
+that you will be amazed at the level of trust that I am willing to
+place in a person that I have never seen nor spoken with. If I can
+receive favor from someone I barely know, its not bad entrusting this
+project to unknown person as long as my spirit directed me to you.
 
-When the initial spreading was prevented, it was for pipelines mainly --
-even basic shell scripts. In that case it was observed that a shell would
-fork/exec two tasks connected via pipe that started on separate nodes and
-had allocated remote data before being pulled close. The processes were
-typically too short lived for NUMA balancing to fix it up by exec time
-the information on where the fork happened was lost.  See 2c83362734da
-("sched/fair: Consider SD_NUMA when selecting the most idle group to
-schedule on"). Now the logic has probably been partially broken since
-because of how SD_NUMA is now treated but the concern about spreading
-wide prematurely remains.
+I have been a catholic priest for over 22 years. I spent about 10
+years serving at Africa, Burkina Faso to be precise, I spend most time
+in Ouagadougou Cathedral.
+Presently, I had a heart surgery on the 23-11-2018 and the Doctors
+have informed me that I cannot live longer; I had a serious bleeding
+after the operation.
+Before I left Ouagadougou to my country for the surgery, a priest
+friend of mine visited me from Netherlands with three companion, when
+they went back, one among his companion Transferred 10M$ in my
+personal account with Bank of Africa and advised that I use the money
+to help the poor, handicaps and less privileges because he saw the
+level hardship then.
 
--- 
-Mel Gorman
-SUSE Labs
+Because of my present health condition, I cannot live to proceed with
+the projects, therefore, I have decided to appoint you to reclaim the
+money which total sum of $10,970,000.00 (Ten million Nine Hundred and
+seventy Thousand US DOLLARS).
+
+I want you to use this sum to make the world a better place for the
+poor and less privileged, help the needy and also help your family
+members.
+
+I took this decision because I was raised in an Orphanage so I don't
+have relatives and presently, I'm still in the hospital, where I am
+undergoing treatment. That's why I have decided to contact you so that
+you can contact my account manager in Bank of Africa, reclaim the
+money and make good use of it.
+
+then you can contact me through private email
+addres(RevWrightWatson@yandex.com)
+
+Regards,
+Rev.Wright Watson
