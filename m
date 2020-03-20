@@ -2,219 +2,141 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AE63F18C744
+	by mail.lfdr.de (Postfix) with ESMTP id 3A2FA18C743
 	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 06:58:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726876AbgCTF6w (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Mar 2020 01:58:52 -0400
-Received: from mailout1.samsung.com ([203.254.224.24]:34452 "EHLO
-        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725446AbgCTF6n (ORCPT
+        id S1726673AbgCTF6n (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Mar 2020 01:58:43 -0400
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:47572 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726232AbgCTF6n (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 20 Mar 2020 01:58:43 -0400
-Received: from epcas1p1.samsung.com (unknown [182.195.41.45])
-        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20200320055841epoutp015267f48a08b2976019b75782c0ad5e09~97aF1zciV0507905079epoutp01Z
-        for <linux-kernel@vger.kernel.org>; Fri, 20 Mar 2020 05:58:41 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20200320055841epoutp015267f48a08b2976019b75782c0ad5e09~97aF1zciV0507905079epoutp01Z
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1584683921;
-        bh=JLXzpDo2Uz5P4xcCLc3T6nk7O094GGMnndhBijC6c60=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qjSniMvrQi9E6CrAZoY/KWmrEBPTDj078IDqBn/My8IG+488uyk2g1Ch1RLCUGPgv
-         Lo8JPCEejcACRP/zAsoU1gI5kxd8HUyI+gvx8GKLNo1LvapLo7b4Z10tb/WB4icb52
-         Lt22LOx5U1dteU9+hRVYtbOEGQQvGCIJglsvTciw=
-Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
-        epcas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20200320055841epcas1p24fde7418e65b52d116358225715ecc75~97aFdKznn0986109861epcas1p2N;
-        Fri, 20 Mar 2020 05:58:41 +0000 (GMT)
-Received: from epsmges1p3.samsung.com (unknown [182.195.40.166]) by
-        epsnrtp2.localdomain (Postfix) with ESMTP id 48kCkm1mJzzMqYkV; Fri, 20 Mar
-        2020 05:58:40 +0000 (GMT)
-Received: from epcas1p3.samsung.com ( [182.195.41.47]) by
-        epsmges1p3.samsung.com (Symantec Messaging Gateway) with SMTP id
-        64.00.04071.09B547E5; Fri, 20 Mar 2020 14:58:40 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-        epcas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20200320055839epcas1p189100549687530619d8a19919e8b5de0~97aDoCUx93235132351epcas1p1k;
-        Fri, 20 Mar 2020 05:58:39 +0000 (GMT)
-Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
-        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20200320055839epsmtrp23f33547d37fa3bf441efe7c22e14ea4b~97aDmu8c80413504135epsmtrp2y;
-        Fri, 20 Mar 2020 05:58:39 +0000 (GMT)
-X-AuditID: b6c32a37-797ff70000000fe7-81-5e745b901180
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-        epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        84.06.04158.F8B547E5; Fri, 20 Mar 2020 14:58:39 +0900 (KST)
-Received: from jaewon-linux.10.32.193.11 (unknown [10.253.104.82]) by
-        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20200320055839epsmtip136b85553e8d717235870d503d3b4d8bf~97aDc9S7t1022410224epsmtip1P;
-        Fri, 20 Mar 2020 05:58:39 +0000 (GMT)
-From:   Jaewon Kim <jaewon31.kim@samsung.com>
-To:     willy@infradead.org, walken@google.com, bp@suse.de,
-        akpm@linux-foundation.org, srostedt@vmware.com
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        jaewon31.kim@gmail.com, Jaewon Kim <jaewon31.kim@samsung.com>
-Subject: [PATCH v3 2/2] mm: mmap: add trace point of vm_unmapped_area
-Date:   Fri, 20 Mar 2020 14:58:23 +0900
-Message-Id: <20200320055823.27089-3-jaewon31.kim@samsung.com>
-X-Mailer: git-send-email 2.13.7
-In-Reply-To: <20200320055823.27089-1-jaewon31.kim@samsung.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA01Sa0hTYRjm82zHs3JxWLeXkZcOJKmZO63pSaYU3Q7lD6P6U+Q6uMM2PLu0
-        s5l2oZsMWVnOWGV4zeiGYUyLlIoywsgoRcooKqOItOYqs5uZbZ5F/Xve53senof3ewlMdQBX
-        Exabi3faOIHCp8iu3E7JSK/c7CrQdJ+PY2pamnHGdySFOdhajZiK0FAM09dRgzMvmifkzJ2f
-        gzLmd9VuZux7Db5UwbaffB7LNgTcbOu5VDbwuSqWvXtiTMYebruA2NbunexIIIEdrg/i+YpN
-        gt7Mc0bemcTbCu1Gi82UQ61db1hu0GVq6HR6CZNFJdk4K59DrcjLT19lEcL9qKRiTnCHqXxO
-        FKmMXL3T7nbxSWa76MqheIdRcNAax0KRs4pum2lhod2aTWs0i3Rh5VbB/PpFl8zRE19y700I
-        34tC4EUKAsjFULP/CfKiKYSKvIqgr/aITBo+I/jUNS6LqFTkVwQX/Wl/HY/qH0b56wjqfImS
-        4RuCU1cq8cgDTqZBqKFKHsEzSDP4f76c5DHSDcEPd7EInk6uhHf9HZMaGTkP6kLvUQQryRwY
-        uH80xouIcFgiNE5MyhVkLvRfu4dHsoC8iUPthB9JhVZAbXtTjISnw1BXW6yE1TAyfD1qOIAg
-        WN2KpKEMwfNARdSthYpDPVgkDSNToKUjQ6LnQvtYLZJKT4Ph0UNyqZASyj0qSZIMZW9H5RKe
-        A+O/30YxC+O+Y9Et+hB4q29jlSjh5L+EBoQuoFm8Q7SaeJF2aP//sQCaPMDUrKvo0oO8TkQS
-        iIpTnvCIBSo5VyyWWjsREBg1Q5luClNKI1e6g3faDU63wIudSBdepQ9Tzyy0h8/Z5jLQukVa
-        rZZZnJmVqdNSs5X+fqFARZo4F1/E8w7e+dcXQyjUe5HfI1guKkZ7nhL71qUFP3roy+XeUv98
-        j1HXePZl/P09p5FKP/DFsmDf1v5bm1YNtVyaFz97KHX1ui+xR9s2fvpYfmPDszXZzclF3LZd
-        pWbD5S0KQ9Ov4JnNvYnjFUW9da+W6YmCH8lGunLWcTzbq27sHtheQrh/teUu+KZ/fD5u6iAl
-        E80cnYo5Re4P59xB5ZYDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrFLMWRmVeSWpSXmKPExsWy7bCSnG5/dEmcwZmH3BZz1q9hs5jYr2nR
-        vXkmo0Xv+1dMFpd3zWGzuLfmP6vF0V8vWSz+Taq1+P1jDpsDp8fOWXfZPRZsKvXYvELLY9On
-        SeweJ2b8ZvHo27KK0WPz6WqPz5vkPN7Nf8sWwBnFZZOSmpNZllqkb5fAlfH43nGWgguyFaee
-        vGdrYHwv0cXIySEhYCJxdf55li5GLg4hgd2MEtPWrGSGSMhIvDn/FCjBAWQLSxw+XAwSFhL4
-        yijx+FsRiM0moC3xfsEkVhBbRCBPomXTQzCbWaBS4t/tW2C2sICrxIvru8BsFgFViXnvXzOC
-        2LwCthIPzkxmghgvL7HwP9hWTgE7iet7TrFBrLKVmDvxGfMERr4FjAyrGCVTC4pz03OLDQuM
-        8lLL9YoTc4tL89L1kvNzNzGCQ1RLawfjiRPxhxgFOBiVeHgdWorjhFgTy4orcw8xSnAwK4nw
-        6qYDhXhTEiurUovy44tKc1KLDzFKc7AoifPK5x+LFBJITyxJzU5NLUgtgskycXBKNTCqWfVE
-        3ipUj1kTUPMzU9nKvTh1p7TY07eXA03/fRfXbL8ooZHT0fnRb0nVhWDNH7PSdzzauKD2SFz4
-        9wv/LNbVb6pp2Fh2eaG0uHveSuVPMuUvPyvt/XE5kKtCpHvGnrj2vScPCs7u/WOn/OloklyM
-        T9Oavfp3c5261+VVuzxVVf/X3TfHO02JpTgj0VCLuag4EQAVXKm9TQIAAA==
-X-CMS-MailID: 20200320055839epcas1p189100549687530619d8a19919e8b5de0
-X-Msg-Generator: CA
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 02K5wanm012081;
+        Fri, 20 Mar 2020 00:58:36 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1584683916;
+        bh=GviAYJ/cIsQXwZWzxrbuwydm5DG3/0LKWJF5jH3tp7c=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=cOy6vGiJ64ESd8D8igN1+9cjN1llolyMo3JnX0ogHecAn/GAhaWJI6pC2yOSzKpIe
+         2SZYMZWWW3BJ/9YoyxXNMF88vvHyaBkRIT1G6Ni3Sdg46bhFNg90BelISlyf9zl7tO
+         jvYUiKtL5aU/GJpYfmTT1d8qzPrIPbY1pcQXs+to=
+Received: from DLEE114.ent.ti.com (dlee114.ent.ti.com [157.170.170.25])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 02K5wa1D077568
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 20 Mar 2020 00:58:36 -0500
+Received: from DLEE105.ent.ti.com (157.170.170.35) by DLEE114.ent.ti.com
+ (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Fri, 20
+ Mar 2020 00:58:36 -0500
+Received: from fllv0040.itg.ti.com (10.64.41.20) by DLEE105.ent.ti.com
+ (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Fri, 20 Mar 2020 00:58:36 -0500
+Received: from [10.250.133.193] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id 02K5wXfQ016043;
+        Fri, 20 Mar 2020 00:58:34 -0500
+Subject: Re: [PATCH 1/2] dt-bindings: phy: intel: Add documentation for Keem
+ Bay eMMC PHY
+To:     Wan Ahmad Zainie <wan.ahmad.zainie.wan.mohamad@intel.com>,
+        <robh+dt@kernel.org>, <mark.rutland@arm.com>
+CC:     <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
+References: <20200316103726.16339-1-wan.ahmad.zainie.wan.mohamad@intel.com>
+ <20200316103726.16339-2-wan.ahmad.zainie.wan.mohamad@intel.com>
+From:   Kishon Vijay Abraham I <kishon@ti.com>
+Message-ID: <3de03bba-9e18-d388-7d56-634f74234bac@ti.com>
+Date:   Fri, 20 Mar 2020 11:28:33 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.6.0
+MIME-Version: 1.0
+In-Reply-To: <20200316103726.16339-2-wan.ahmad.zainie.wan.mohamad@intel.com>
 Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: SVC_REQ_APPROVE
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20200320055839epcas1p189100549687530619d8a19919e8b5de0
-References: <20200320055823.27089-1-jaewon31.kim@samsung.com>
-        <CGME20200320055839epcas1p189100549687530619d8a19919e8b5de0@epcas1p1.samsung.com>
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Even on 64 bit kernel, the mmap failure can happen for a 32 bit task.
-Virtual memory space shortage of a task on mmap is reported to userspace
-as -ENOMEM. It can be confused as physical memory shortage of overall
-system.
+Hi,
 
-The vm_unmapped_area can be called to by some drivers or other kernel
-core system like filesystem. In my platform, GPU driver calls to
-vm_unmapped_area and the driver returns -ENOMEM even in GPU side
-shortage. It can be hard to distinguish which code layer returns the
--ENOMEM.
+On 3/16/2020 4:07 PM, Wan Ahmad Zainie wrote:
+> Document Intel Keem Bay eMMC PHY DT bindings.
+> 
+> Signed-off-by: Wan Ahmad Zainie <wan.ahmad.zainie.wan.mohamad@intel.com>
 
-Create mmap trace file and add trace point of vm_unmapped_area.
+Need Rob's Ack on this patch.
 
-i.e.)
-277.156599: vm_unmapped_area: addr=77e0d03000 err=0 total_vm=0x17014b flags=0x1 len=0x400000 lo=0x8000 hi=0x7878c27000 mask=0x0 ofs=0x1
-342.838740: vm_unmapped_area: addr=0 err=-12 total_vm=0xffb08 flags=0x0 len=0x100000 lo=0x40000000 hi=0xfffff000 mask=0x0 ofs=0x22
-
-Signed-off-by: Jaewon Kim <jaewon31.kim@samsung.com>
----
-v3: reduce fast_assign and print format
-v2: use trace point rather than printk with ratelimit
-v1: use printk with ratelimit 
----
- include/trace/events/mmap.h | 48 +++++++++++++++++++++++++++++++++++++++++++++
- mm/mmap.c                   | 12 ++++++++++--
- 2 files changed, 58 insertions(+), 2 deletions(-)
- create mode 100644 include/trace/events/mmap.h
-
-diff --git a/include/trace/events/mmap.h b/include/trace/events/mmap.h
-new file mode 100644
-index 000000000000..986a41b6cfa9
---- /dev/null
-+++ b/include/trace/events/mmap.h
-@@ -0,0 +1,48 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#undef TRACE_SYSTEM
-+#define TRACE_SYSTEM mmap
-+
-+#if !defined(_TRACE_MMAP_H) || defined(TRACE_HEADER_MULTI_READ)
-+#define _TRACE_MMAP_H
-+
-+#include <linux/tracepoint.h>
-+
-+TRACE_EVENT(vm_unmapped_area,
-+
-+	TP_PROTO(unsigned long addr, struct vm_unmapped_area_info *info),
-+
-+	TP_ARGS(addr, info),
-+
-+	TP_STRUCT__entry(
-+		__field(unsigned long,	addr)
-+		__field(unsigned long,	total_vm)
-+		__field(unsigned long,	flags)
-+		__field(unsigned long,	length)
-+		__field(unsigned long,	low_limit)
-+		__field(unsigned long,	high_limit)
-+		__field(unsigned long,	align_mask)
-+		__field(unsigned long,	align_offset)
-+	),
-+
-+	TP_fast_assign(
-+		__entry->addr = addr;
-+		__entry->total_vm = current->mm->total_vm;
-+		__entry->flags = info->flags;
-+		__entry->length = info->length;
-+		__entry->low_limit = info->low_limit;
-+		__entry->high_limit = info->high_limit;
-+		__entry->align_mask = info->align_mask;
-+		__entry->align_offset = info->align_offset;
-+	),
-+
-+	TP_printk("addr=%lx err=%ld total_vm=0x%lx flags=0x%lx len=0x%lx lo=0x%lx hi=0x%lx mask=0x%lx ofs=0x%lx\n",
-+		IS_ERR_VALUE(__entry->addr) ? 0 : __entry->addr,
-+		IS_ERR_VALUE(__entry->addr) ? __entry->addr : 0,
-+		__entry->total_vm, __entry->flags, __entry->length,
-+		__entry->low_limit, __entry->high_limit, __entry->align_mask,
-+		__entry->align_offset)
-+);
-+#endif
-+
-+/* This part must be outside protection */
-+#include <trace/define_trace.h>
-diff --git a/mm/mmap.c b/mm/mmap.c
-index ba990c20ecc2..94ae18398c59 100644
---- a/mm/mmap.c
-+++ b/mm/mmap.c
-@@ -53,6 +53,9 @@
- #include <asm/tlb.h>
- #include <asm/mmu_context.h>
- 
-+#define CREATE_TRACE_POINTS
-+#include <trace/events/mmap.h>
-+
- #include "internal.h"
- 
- #ifndef arch_mmap_check
-@@ -2061,10 +2064,15 @@ static unsigned long unmapped_area_topdown(struct vm_unmapped_area_info *info)
-  */
- unsigned long vm_unmapped_area(struct vm_unmapped_area_info *info)
- {
-+	unsigned long addr;
-+
- 	if (info->flags & VM_UNMAPPED_AREA_TOPDOWN)
--		return unmapped_area_topdown(info);
-+		addr = unmapped_area_topdown(info);
- 	else
--		return unmapped_area(info);
-+		addr = unmapped_area(info);
-+
-+	trace_vm_unmapped_area(addr, info);
-+	return addr;
- }
- 
- #ifndef arch_get_mmap_end
--- 
-2.13.7
-
+Thanks
+Kishon
+> ---
+>  .../bindings/phy/intel,keembay-emmc-phy.yaml  | 57 +++++++++++++++++++
+>  1 file changed, 57 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/phy/intel,keembay-emmc-phy.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/phy/intel,keembay-emmc-phy.yaml b/Documentation/devicetree/bindings/phy/intel,keembay-emmc-phy.yaml
+> new file mode 100644
+> index 000000000000..af1d62fc8323
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/phy/intel,keembay-emmc-phy.yaml
+> @@ -0,0 +1,57 @@
+> +# SPDX-License-Identifier: GPL-2.0-only
+> +# Copyright 2020 Intel Corporation
+> +%YAML 1.2
+> +---
+> +$id: "http://devicetree.org/schemas/phy/intel,keembay-emmc-phy.yaml#"
+> +$schema: "http://devicetree.org/meta-schemas/core.yaml#"
+> +
+> +title: Intel Keem Bay eMMC PHY
+> +
+> +maintainers:
+> +  - Wan Ahmad Zainie <wan.ahmad.zainie.wan.mohamad@intel.com>
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - intel,keembay-emmc-phy
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  clocks:
+> +    maxItems: 1
+> +
+> +  clock-names:
+> +    items:
+> +      - const: emmcclk
+> +
+> +  intel,syscon:
+> +    $ref: '/schemas/types.yaml#/definitions/phandle'
+> +    description:
+> +      A phandle to a syscon device used to access core/phy configuration
+> +      registers.
+> +
+> +  "#phy-cells":
+> +    const: 0
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - intel,syscon
+> +  - "#phy-cells"
+> +
+> +examples:
+> +  - |
+> +    mmc_phy_syscon: syscon@20290000 {
+> +          compatible = "simple-mfd", "syscon";
+> +          reg = <0x0 0x20290000 0x0 0x54>;
+> +    };
+> +
+> +    emmc_phy: mmc_phy@20290000 {
+> +          compatible = "intel,keembay-emmc-phy";
+> +          reg = <0x0 0x20290000 0x0 0x54>;
+> +          clocks = <&mmc>;
+> +          clock-names = "emmcclk";
+> +          intel,syscon = <&mmc_phy_syscon>;
+> +          #phy-cells = <0>;
+> +    };
+> 
