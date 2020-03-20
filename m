@@ -2,81 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 79FBC18C6B8
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 06:15:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 884BF18C6B2
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 06:10:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726878AbgCTFPo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Mar 2020 01:15:44 -0400
-Received: from baldur.buserror.net ([165.227.176.147]:45018 "EHLO
-        baldur.buserror.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725446AbgCTFPo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Mar 2020 01:15:44 -0400
-Received: from [2601:449:8480:af0:12bf:48ff:fe84:c9a0]
-        by baldur.buserror.net with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <oss@buserror.net>)
-        id 1jF9tu-0000dq-Qb; Fri, 20 Mar 2020 00:08:55 -0500
-Message-ID: <db764910fe2de8ae2d63c6adbb0b71d32c0e3886.camel@buserror.net>
-From:   Scott Wood <oss@buserror.net>
-To:     Jason Yan <yanaijie@huawei.com>, mpe@ellerman.id.au,
-        linuxppc-dev@lists.ozlabs.org, diana.craciun@nxp.com,
-        christophe.leroy@c-s.fr, benh@kernel.crashing.org,
-        paulus@samba.org, npiggin@gmail.com, keescook@chromium.org,
-        kernel-hardening@lists.openwall.com
-Cc:     linux-kernel@vger.kernel.org, zhaohongjiang@huawei.com,
-        dja@axtens.net
-Date:   Fri, 20 Mar 2020 00:08:53 -0500
-In-Reply-To: <20200306064033.3398-7-yanaijie@huawei.com>
-References: <20200306064033.3398-1-yanaijie@huawei.com>
-         <20200306064033.3398-7-yanaijie@huawei.com>
-Organization: Red Hat
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5-0ubuntu0.18.04.1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 2601:449:8480:af0:12bf:48ff:fe84:c9a0
-X-SA-Exim-Rcpt-To: yanaijie@huawei.com, mpe@ellerman.id.au, linuxppc-dev@lists.ozlabs.org, diana.craciun@nxp.com, christophe.leroy@c-s.fr, benh@kernel.crashing.org, paulus@samba.org, npiggin@gmail.com, keescook@chromium.org, kernel-hardening@lists.openwall.com, linux-kernel@vger.kernel.org, zhaohongjiang@huawei.com, dja@axtens.net
-X-SA-Exim-Mail-From: oss@buserror.net
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on baldur.localdomain
-X-Spam-Level: 
-X-Spam-Status: No, score=-17.5 required=5.0 tests=ALL_TRUSTED,BAYES_00,
-        GREYLIST_ISWHITE autolearn=ham autolearn_force=no version=3.4.2
-X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-        *  -15 BAYES_00 BODY: Bayes spam probability is 0 to 1%
-        *      [score: 0.0000]
-        * -1.5 GREYLIST_ISWHITE The incoming server has been whitelisted for
-        *      this recipient and sender
-Subject: Re: [PATCH v4 6/6] powerpc/fsl_booke/kaslr: rename
- kaslr-booke32.rst to kaslr-booke.rst and add 64bit part
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on baldur.buserror.net)
+        id S1726726AbgCTFKw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Mar 2020 01:10:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59420 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725883AbgCTFKw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Mar 2020 01:10:52 -0400
+Received: from sol.localdomain (c-107-3-166-239.hsd1.ca.comcast.net [107.3.166.239])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 05DE12072D;
+        Fri, 20 Mar 2020 05:10:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1584681051;
+        bh=bHqz/mmjyWz7y2CbYXKF3rlS2vNGxaJf7CYZ9FIl/Hc=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=CS+AMu4Ldrf5EQrnN3qqOyzcwytupsd2xi8te7S9EclBM61mvUsK4Ty8Ax7mBMCL4
+         JrRgTSfUZMEg0PH+nsGHFpcp9255sLia17GXV7e0lwLANmIZg5fIe0HcAz1VnEFoNM
+         EZeQ0BASP2vftBfk6DI/UUBTAVFxJ3Wqo5/e0Rkg=
+Date:   Thu, 19 Mar 2020 22:10:49 -0700
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Jiri Slaby <jslaby@suse.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com,
+        Eric Dumazet <edumazet@google.com>,
+        Nicolas Pitre <nico@fluxnic.net>
+Subject: Re: [PATCH v2 1/2] vt: vt_ioctl: fix VT_DISALLOCATE freeing in-use
+ virtual console
+Message-ID: <20200320051049.GA1315@sol.localdomain>
+References: <20200318222704.GC2334@sol.localdomain>
+ <20200318223810.162440-1-ebiggers@kernel.org>
+ <20200318223810.162440-2-ebiggers@kernel.org>
+ <2f762aee-720b-9bec-620f-61129c724de6@suse.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2f762aee-720b-9bec-620f-61129c724de6@suse.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2020-03-06 at 14:40 +0800, Jason Yan wrote:
-> @@ -38,5 +41,29 @@ bit of the entropy to decide the index of the 64M zone.
-> Then we chose a
->  
->                                kernstart_virt_addr
->  
-> +
-> +KASLR for Freescale BookE64
-> +---------------------------
-> +
-> +The implementation for Freescale BookE64 is similar as BookE32. One
+On Thu, Mar 19, 2020 at 08:36:28AM +0100, Jiri Slaby wrote:
+> On 18. 03. 20, 23:38, Eric Biggers wrote:
+> > --- a/drivers/tty/vt/vt.c
+> > +++ b/drivers/tty/vt/vt.c
+> > @@ -1102,6 +1102,9 @@ int vc_allocate(unsigned int currcons)	/* return 0 on success */
+> >  	tty_port_init(&vc->port);
+> >  	INIT_WORK(&vc_cons[currcons].SAK_work, vc_SAK);
+> >  
+> > +	/* if this wasn't the case, we'd have to implement port->ops.destruct */
+> > +	BUILD_BUG_ON(offsetof(struct vc_data, port) != 0);
+> > +
+> 
+> This is 3 lines, implementing destruct would be like 4-5 :)? Please
+> implement destruct instead.
+> 
+> Otherwise looks good.
+> 
 
-similar to
+Actually implementing destruct would be 12 lines, see below.  Remember there is
+no tty_port_operations defined yet so we'd have to define it just for destruct.
 
-> +difference is that Freescale BookE64 set up a TLB mapping of 1G during
-> +booting. Another difference is that ppc64 needs the kernel to be
-> +64K-aligned. So we can randomize the kernel in this 1G mapping and make
-> +it 64K-aligned. This can save some code to creat another TLB map at early
+Do you still prefer it?
 
-create
-
--Scott
-
-
+diff --git a/drivers/tty/vt/vt.c b/drivers/tty/vt/vt.c
+index ec34f1f5f3bb5..309a39197be0a 100644
+--- a/drivers/tty/vt/vt.c
++++ b/drivers/tty/vt/vt.c
+@@ -1075,6 +1075,17 @@ static void visual_deinit(struct vc_data *vc)
+ 	module_put(vc->vc_sw->owner);
+ }
+ 
++static void vc_port_destruct(struct tty_port *port)
++{
++	struct vc_data *vc = container_of(port, struct vc_data, port);
++
++	kfree(vc);
++}
++
++static const struct tty_port_operations vc_port_ops = {
++	.destruct = vc_port_destruct,
++};
++
+ int vc_allocate(unsigned int currcons)	/* return 0 on success */
+ {
+ 	struct vt_notifier_param param;
+@@ -1100,11 +1111,9 @@ int vc_allocate(unsigned int currcons)	/* return 0 on success */
+ 
+ 	vc_cons[currcons].d = vc;
+ 	tty_port_init(&vc->port);
++	vc->port.ops = &vc_port_ops;
+ 	INIT_WORK(&vc_cons[currcons].SAK_work, vc_SAK);
+ 
+-	/* if this wasn't the case, we'd have to implement port->ops.destruct */
+-	BUILD_BUG_ON(offsetof(struct vc_data, port) != 0);
+-
+ 	visual_init(vc, currcons, 1);
+ 
+ 	if (!*vc->vc_uni_pagedir_loc)
