@@ -2,64 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 73B7118D9D5
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 21:56:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6F1B518D9CF
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 21:56:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727426AbgCTU4Y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Mar 2020 16:56:24 -0400
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:40597 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727413AbgCTU4S (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Mar 2020 16:56:18 -0400
-Received: by mail-lf1-f66.google.com with SMTP id j17so5649793lfe.7;
-        Fri, 20 Mar 2020 13:56:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=q9oV0Jet7GMraR3xqtV0h+iLCecJI0XRcctkMuUHagA=;
-        b=uJ662SXhR9zxkO088xiUitQhQMrirDeOS3TUScosTIg4zji4P6drAcNKY1fliPnOLy
-         TC7gD8qUZrOf1kuPbaPvTabKzsGP3+LRRZmLE0lz5JSMe2wWs6GT1/UeTu/8K8YKM5m4
-         QNZb+C04XDHdbjfO/nfKsjrFOVGlNAOS/9jFz5LPgWs5XULwEAd1K7SS0CJu4qR0hIUv
-         JCHHsgdq+nftXyM2M0XI0YNoWXCN8k5JOVmv1ksoWcXG3XVNO5y3cZQmcnOXhKmfoqvb
-         XeFq5/4B0ZHYZNQgch62LqTbYyHVxUMhRXFH9qnpo1VFSWMHdosYyFV0p96nS/DjKEUd
-         vFuw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=q9oV0Jet7GMraR3xqtV0h+iLCecJI0XRcctkMuUHagA=;
-        b=rmELD3X51vWb0PmNKDiNkdQjbAL2ergNv3krE+TRE0+lpP0e5YzSsKbd72Hzk+IVnq
-         HJH93m8SGaJ2bxin128MBzdvnGcKd1Wk7gtMhqpUL1P3KFZ885WPSYnS0IQTL6U+VKD3
-         WDfCLmwe9JHUvXMb5vTTZJ86IH+b57JzRVQCHGlt+RQnowfAFhQHFgspMCLZeg+Q5E07
-         WePCwUSQ3K76d6UZUEXBnL6iuWpWgxt9M7MqRFPmUXD6VAfZWP9C0qfcR2suK0bXcbgV
-         fTNaGhynFJdDhIEXFOlh18AmQP/WIm8PAKcfe0jxb3NTuuGd4DBdAnuzl1jhz1hNJXI4
-         dmvQ==
-X-Gm-Message-State: ANhLgQ1g63RP5p5g786iraOELTLQMZ089FsX/FIohyCHEYbltJcPKGrw
-        mzgUUnsTnwNQQQFPOhr+Huk=
-X-Google-Smtp-Source: ADFU+vsLajssmyb9pDEbtINGlaD8mIM0RtJt8T7pAoYMTjD1DsK8CE1iAEpQ1DTyU2ucTWgIXn+98g==
-X-Received: by 2002:a05:6512:108a:: with SMTP id j10mr6566513lfg.35.1584737776522;
-        Fri, 20 Mar 2020 13:56:16 -0700 (PDT)
-Received: from localhost.localdomain (94-29-39-224.dynamic.spd-mgts.ru. [94.29.39.224])
-        by smtp.gmail.com with ESMTPSA id 1sm3873356lft.47.2020.03.20.13.56.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 20 Mar 2020 13:56:15 -0700 (PDT)
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Rob Herring <robh+dt@kernel.org>, Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Stephen Warren <swarren@wwwdotorg.org>,
-        Jonathan Hunter <jonathanh@nvidia.com>
-Cc:     devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
-        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v1 2/2] ASoC: tegra: tegra_wm8903: Support DAPM events for built-in microphone
-Date:   Fri, 20 Mar 2020 23:55:04 +0300
-Message-Id: <20200320205504.30466-3-digetx@gmail.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200320205504.30466-1-digetx@gmail.com>
-References: <20200320205504.30466-1-digetx@gmail.com>
+        id S1727176AbgCTUzs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Mar 2020 16:55:48 -0400
+Received: from mga11.intel.com ([192.55.52.93]:32133 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726738AbgCTUzr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Mar 2020 16:55:47 -0400
+IronPort-SDR: Mrtax5r6S7je/QHfg4sI2au75xzgLMcQ/DAQsUZy12gjghMc7G+ERsPFcTQ1PdU++ln95lU7Uf
+ gZNnPWKTVK8A==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Mar 2020 13:55:47 -0700
+IronPort-SDR: Wokbp1xezwQOg04lztcVSu+PjFiTzDPfBLqx5B6LgK3OObVC7Tz3rYthmd8sfETKC33SiH7a3o
+ +AAl+xhNCOJg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.72,285,1580803200"; 
+   d="scan'208";a="280543314"
+Received: from sjchrist-coffee.jf.intel.com ([10.54.74.202])
+  by fmsmga002.fm.intel.com with ESMTP; 20 Mar 2020 13:55:47 -0700
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     Christian Borntraeger <borntraeger@de.ibm.com>,
+        Janosch Frank <frankja@linux.ibm.com>,
+        Paolo Bonzini <pbonzini@redhat.com>
+Cc:     David Hildenbrand <david@redhat.com>,
+        Cornelia Huck <cohuck@redhat.com>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Qian Cai <cai@lca.pw>,
+        Peter Xu <peterx@redhat.com>
+Subject: [PATCH 0/7] KVM: Fix memslot use-after-free bug
+Date:   Fri, 20 Mar 2020 13:55:39 -0700
+Message-Id: <20200320205546.2396-1-sean.j.christopherson@intel.com>
+X-Mailer: git-send-email 2.24.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -67,51 +43,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The enable-GPIO needs to be toggled on a DAPM event in order to turn
-microphone ON/OFF, otherwise microphone won't work.
+Fix a bug introduced by dynamic memslot allocation where the LRU slot can
+become invalid and lead to a out-of-bounds/use-after-free scenario.
 
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
----
- sound/soc/tegra/tegra_wm8903.c | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+The patch is different that what Qian has already tested, but I was able
+to reproduce the bad behavior by enhancing the set memory region selftest,
+i.e. I'm relatively confident the bug is fixed.
 
-diff --git a/sound/soc/tegra/tegra_wm8903.c b/sound/soc/tegra/tegra_wm8903.c
-index f08d3489c3cf..071c7d2de77c 100644
---- a/sound/soc/tegra/tegra_wm8903.c
-+++ b/sound/soc/tegra/tegra_wm8903.c
-@@ -143,14 +143,32 @@ static int tegra_wm8903_event_hp(struct snd_soc_dapm_widget *w,
- 	return 0;
- }
- 
-+static int tegra_wm8903_event_int_mic(struct snd_soc_dapm_widget *w,
-+				      struct snd_kcontrol *k, int event)
-+{
-+	struct snd_soc_dapm_context *dapm = w->dapm;
-+	struct snd_soc_card *card = dapm->card;
-+	struct tegra_wm8903 *machine = snd_soc_card_get_drvdata(card);
-+
-+	if (!gpio_is_valid(machine->gpio_int_mic_en))
-+		return 0;
-+
-+	gpio_set_value_cansleep(machine->gpio_int_mic_en,
-+				SND_SOC_DAPM_EVENT_ON(event));
-+
-+	return 0;
-+}
-+
- static const struct snd_soc_dapm_widget tegra_wm8903_dapm_widgets[] = {
- 	SND_SOC_DAPM_SPK("Int Spk", tegra_wm8903_event_int_spk),
- 	SND_SOC_DAPM_HP("Headphone Jack", tegra_wm8903_event_hp),
- 	SND_SOC_DAPM_MIC("Mic Jack", NULL),
-+	SND_SOC_DAPM_MIC("Int Mic", tegra_wm8903_event_int_mic),
- };
- 
- static const struct snd_kcontrol_new tegra_wm8903_controls[] = {
- 	SOC_DAPM_PIN_SWITCH("Int Spk"),
-+	SOC_DAPM_PIN_SWITCH("Int Mic"),
- };
- 
- static int tegra_wm8903_init(struct snd_soc_pcm_runtime *rtd)
+Patches 2-6 are a variety of selftest cleanup, with the aforementioned
+set memory region enhancement coming in patch 7.
+
+Note, I couldn't get the selftest to fail outright or with KASAN, but was
+able to hit a WARN_ON an invalid slot 100% of the time (without the fix,
+obviously).
+
+Regarding s390, I played around a bit with merging gfn_to_memslot_approx()
+into search_memslots().  Code wise it's trivial since they're basically
+identical, but doing so increases the code footprint of search_memslots()
+on x86 by 30 bytes, so I ended up abandoning the effort.
+
+Sean Christopherson (7):
+  KVM: Fix out of range accesses to memslots
+  KVM: selftests: Fix cosmetic copy-paste error in vm_mem_region_move()
+  KVM: selftests: Take vcpu pointer instead of id in vm_vcpu_rm()
+  KVM: selftests: Add helpers to consolidate open coded list operations
+  KVM: selftests: Add util to delete memory region
+  KVM: selftests: Expose the primary memslot number to tests
+  KVM: selftests: Add "delete" testcase to set_memory_region_test
+
+ arch/s390/kvm/kvm-s390.c                      |   3 +
+ include/linux/kvm_host.h                      |   3 +
+ .../testing/selftests/kvm/include/kvm_util.h  |   3 +
+ tools/testing/selftests/kvm/lib/kvm_util.c    | 139 ++++++++++--------
+ .../kvm/x86_64/set_memory_region_test.c       | 122 +++++++++++++--
+ virt/kvm/kvm_main.c                           |   3 +
+ 6 files changed, 201 insertions(+), 72 deletions(-)
+
 -- 
-2.25.1
+2.24.1
 
