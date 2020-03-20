@@ -2,35 +2,50 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CDF7018D652
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 18:58:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BB4DA18D6A9
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 19:17:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727133AbgCTR6e (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Mar 2020 13:58:34 -0400
-Received: from foss.arm.com ([217.140.110.172]:55068 "EHLO foss.arm.com"
+        id S1726913AbgCTSRz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Mar 2020 14:17:55 -0400
+Received: from mga02.intel.com ([134.134.136.20]:6726 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726816AbgCTR6d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Mar 2020 13:58:33 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9521C1FB;
-        Fri, 20 Mar 2020 10:58:32 -0700 (PDT)
-Received: from [10.37.12.158] (unknown [10.37.12.158])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9B58A3F305;
-        Fri, 20 Mar 2020 10:58:30 -0700 (PDT)
-Subject: Re: [PATCH 1/6] arm64/cpufeature: Introduce ID_PFR2 CPU register
-To:     anshuman.khandual@arm.com, linux-arm-kernel@lists.infradead.org
-Cc:     catalin.marinas@arm.com, will@kernel.org, maz@kernel.org,
-        james.morse@arm.com, mark.rutland@arm.com,
-        kvmarm@lists.cs.columbia.edu, linux-kernel@vger.kernel.org
-References: <1580215149-21492-1-git-send-email-anshuman.khandual@arm.com>
- <1580215149-21492-2-git-send-email-anshuman.khandual@arm.com>
-From:   Suzuki K Poulose <suzuki.poulose@arm.com>
-Message-ID: <f041fcce-31f8-9f02-4661-ea69025fdae4@arm.com>
-Date:   Fri, 20 Mar 2020 18:03:14 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1726783AbgCTSRy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Mar 2020 14:17:54 -0400
+IronPort-SDR: O3l9wgIUd9Zr6vfkYJlvXLVveniBQTz4HmVh3IIlxh3fueL0c/vllOaXwiKdjOiIZ215yverbU
+ OyLVOnvLSYaw==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Mar 2020 11:17:54 -0700
+IronPort-SDR: DDP/GIIyJJ19iIoNiPikDTqzpCLiEvcn3EZasMzS26QsrLJYpGZzzToJt3N8BmP4qUssLmTSV/
+ L5p+doQnNwBA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.72,285,1580803200"; 
+   d="scan'208";a="392230359"
+Received: from manallet-mobl.amr.corp.intel.com (HELO [10.255.34.12]) ([10.255.34.12])
+  by orsmga004.jf.intel.com with ESMTP; 20 Mar 2020 11:17:51 -0700
+Subject: Re: [PATCH 3/7] soundwire: intel: add mutex to prevent concurrent
+ access to SHIM registers
+To:     Vinod Koul <vkoul@kernel.org>
+Cc:     alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
+        tiwai@suse.de, broonie@kernel.org, gregkh@linuxfoundation.org,
+        jank@cadence.com, srinivas.kandagatla@linaro.org,
+        slawomir.blauciak@intel.com,
+        Bard liao <yung-chuan.liao@linux.intel.com>,
+        Rander Wang <rander.wang@linux.intel.com>,
+        Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
+        Hui Wang <hui.wang@canonical.com>,
+        Sanyog Kale <sanyog.r.kale@intel.com>
+References: <20200311221026.18174-1-pierre-louis.bossart@linux.intel.com>
+ <20200311221026.18174-4-pierre-louis.bossart@linux.intel.com>
+ <20200320134112.GC4885@vkoul-mobl>
+From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Message-ID: <a989368c-5a57-a726-0816-2e389d733ae0@linux.intel.com>
+Date:   Fri, 20 Mar 2020 09:07:45 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-In-Reply-To: <1580215149-21492-2-git-send-email-anshuman.khandual@arm.com>
+In-Reply-To: <20200320134112.GC4885@vkoul-mobl>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -39,21 +54,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 01/28/2020 12:39 PM, Anshuman Khandual wrote:
-> This adds basic building blocks required for ID_PFR2 CPU register which
-> provides information about the AArch32 programmers model which must be
-> interpreted along with ID_PFR0 and ID_PFR1 CPU registers.
+
+>> diff --git a/drivers/soundwire/intel.h b/drivers/soundwire/intel.h
+>> index 38b7c125fb10..568c84a80d79 100644
+>> --- a/drivers/soundwire/intel.h
+>> +++ b/drivers/soundwire/intel.h
+>> @@ -15,6 +15,7 @@
+>>    * @irq: Interrupt line
+>>    * @ops: Shim callback ops
+>>    * @dev: device implementing hw_params and free callbacks
+>> + * @shim_lock: mutex to handle access to shared SHIM registers
+>>    */
+>>   struct sdw_intel_link_res {
+>>   	struct platform_device *pdev;
+>> @@ -25,6 +26,7 @@ struct sdw_intel_link_res {
+>>   	int irq;
+>>   	const struct sdw_intel_ops *ops;
+>>   	struct device *dev;
+>> +	struct mutex *shim_lock; /* protect shared registers */
 > 
-> Cc: Catalin Marinas <catalin.marinas@arm.com>
-> Cc: Will Deacon <will@kernel.org>
-> Cc: Marc Zyngier <maz@kernel.org>
-> Cc: James Morse <james.morse@arm.com>
-> Cc: Suzuki K Poulose <suzuki.poulose@arm.com>
-> Cc: Mark Rutland <mark.rutland@arm.com>
-> Cc: kvmarm@lists.cs.columbia.edu
-> Cc: linux-kernel@vger.kernel.org
-> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
+> Where is this mutex initialized? Did you test this...
 
-Sorry for the delay !
+Dude, we've been testing the heck out of SoundWire.
 
-Reviewed-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+If you want to see the actual initialization it's in the intel_init.c code:
+
+https://github.com/thesofproject/linux/blob/9c7487b33072040ab755d32ca173b75151c0160c/drivers/soundwire/intel_init.c#L231
+
+And this was clearly stated in the cover letter:
+
+"Reviewers might object that the code is provided without some required
+initializations for mutexes and shim masks, they will be added as part
+of the transition to sdw_master_device - still stuck as of 3/11."
+
