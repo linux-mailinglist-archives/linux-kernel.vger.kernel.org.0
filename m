@@ -2,40 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C711718CE40
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 13:59:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1EB3D18CE35
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 13:58:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727501AbgCTM66 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Mar 2020 08:58:58 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:35647 "EHLO
+        id S1727469AbgCTM6n (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Mar 2020 08:58:43 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:35678 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727222AbgCTM6P (ORCPT
+        with ESMTP id S1727420AbgCTM6h (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Mar 2020 08:58:15 -0400
+        Fri, 20 Mar 2020 08:58:37 -0400
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1jFHE0-0003lF-VP; Fri, 20 Mar 2020 13:58:09 +0100
+        id 1jFHEO-0003qC-Tw; Fri, 20 Mar 2020 13:58:33 +0100
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id C87881C22C3;
-        Fri, 20 Mar 2020 13:58:06 +0100 (CET)
-Date:   Fri, 20 Mar 2020 12:58:06 -0000
-From:   "tip-bot2 for Vincent Guittot" <tip-bot2@linutronix.de>
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 818E21C22BE;
+        Fri, 20 Mar 2020 13:58:32 +0100 (CET)
+Date:   Fri, 20 Mar 2020 12:58:32 -0000
+From:   "tip-bot2 for Peter Zijlstra" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: sched/core] sched/fair: Fix enqueue_task_fair warning
-Cc:     Christian Borntraeger <borntraeger@de.ibm.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        stable@vger.kernel.org, stable@vger.kernel.org,
-        #v5.1+@tip-bot2.tec.linutronix.de, x86 <x86@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-In-Reply-To: <20200306135257.25044-1-vincent.guittot@linaro.org>
-References: <20200306135257.25044-1-vincent.guittot@linaro.org>
+Subject: [tip: locking/core] lockdep: Teach lockdep about "USED" <- "IN-NMI"
+ inversions
+Cc:     "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
+        x86 <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>
+In-Reply-To: <20200221134215.090538203@infradead.org>
+References: <20200221134215.090538203@infradead.org>
 MIME-Version: 1.0
-Message-ID: <158470908651.28353.12189194857904620285.tip-bot2@tip-bot2>
+Message-ID: <158470911222.28353.8162149870972354694.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -49,96 +47,143 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following commit has been merged into the sched/core branch of tip:
+The following commit has been merged into the locking/core branch of tip:
 
-Commit-ID:     fe61468b2cbc2b7ce5f8d3bf32ae5001d4c434e9
-Gitweb:        https://git.kernel.org/tip/fe61468b2cbc2b7ce5f8d3bf32ae5001d4c434e9
-Author:        Vincent Guittot <vincent.guittot@linaro.org>
-AuthorDate:    Fri, 06 Mar 2020 14:52:57 +01:00
+Commit-ID:     f6f48e18040402136874a6a71611e081b4d0788a
+Gitweb:        https://git.kernel.org/tip/f6f48e18040402136874a6a71611e081b4d0788a
+Author:        Peter Zijlstra <peterz@infradead.org>
+AuthorDate:    Thu, 20 Feb 2020 09:45:02 +01:00
 Committer:     Peter Zijlstra <peterz@infradead.org>
-CommitterDate: Fri, 20 Mar 2020 13:06:18 +01:00
+CommitterDate: Fri, 20 Mar 2020 13:06:25 +01:00
 
-sched/fair: Fix enqueue_task_fair warning
+lockdep: Teach lockdep about "USED" <- "IN-NMI" inversions
 
-When a cfs rq is throttled, the latter and its child are removed from the
-leaf list but their nr_running is not changed which includes staying higher
-than 1. When a task is enqueued in this throttled branch, the cfs rqs must
-be added back in order to ensure correct ordering in the list but this can
-only happens if nr_running == 1.
-When cfs bandwidth is used, we call unconditionnaly list_add_leaf_cfs_rq()
-when enqueuing an entity to make sure that the complete branch will be
-added.
+nmi_enter() does lockdep_off() and hence lockdep ignores everything.
 
-Similarly unthrottle_cfs_rq() can stop adding cfs in the list when a parent
-is throttled. Iterate the remaining entity to ensure that the complete
-branch will be added in the list.
+And NMI context makes it impossible to do full IN-NMI tracking like we
+do IN-HARDIRQ, that could result in graph_lock recursion.
 
-Reported-by: Christian Borntraeger <borntraeger@de.ibm.com>
-Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
+However, since look_up_lock_class() is lockless, we can find the class
+of a lock that has prior use and detect IN-NMI after USED, just not
+USED after IN-NMI.
+
+NOTE: By shifting the lockdep_off() recursion count to bit-16, we can
+easily differentiate between actual recursion and off.
+
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Reviewed-by: Dietmar Eggemann <dietmar.eggemann@arm.com>
-Tested-by: Christian Borntraeger <borntraeger@de.ibm.com>
-Tested-by: Dietmar Eggemann <dietmar.eggemann@arm.com>
-Cc: stable@vger.kernel.org
-Cc: stable@vger.kernel.org #v5.1+
-Link: https://lkml.kernel.org/r/20200306135257.25044-1-vincent.guittot@linaro.org
+Reviewed-by: Frederic Weisbecker <frederic@kernel.org>
+Reviewed-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+Link: https://lkml.kernel.org/r/20200221134215.090538203@infradead.org
 ---
- kernel/sched/fair.c | 26 ++++++++++++++++++++++----
- 1 file changed, 22 insertions(+), 4 deletions(-)
+ kernel/locking/lockdep.c | 62 +++++++++++++++++++++++++++++++++++++--
+ 1 file changed, 59 insertions(+), 3 deletions(-)
 
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 1dea855..c7aaae2 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -4136,6 +4136,7 @@ static inline void check_schedstat_required(void)
+diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
+index 47e3acb..4c3b1cc 100644
+--- a/kernel/locking/lockdep.c
++++ b/kernel/locking/lockdep.c
+@@ -393,15 +393,22 @@ void lockdep_init_task(struct task_struct *task)
+ 	task->lockdep_recursion = 0;
+ }
+ 
++/*
++ * Split the recrursion counter in two to readily detect 'off' vs recursion.
++ */
++#define LOCKDEP_RECURSION_BITS	16
++#define LOCKDEP_OFF		(1U << LOCKDEP_RECURSION_BITS)
++#define LOCKDEP_RECURSION_MASK	(LOCKDEP_OFF - 1)
++
+ void lockdep_off(void)
+ {
+-	current->lockdep_recursion++;
++	current->lockdep_recursion += LOCKDEP_OFF;
+ }
+ EXPORT_SYMBOL(lockdep_off);
+ 
+ void lockdep_on(void)
+ {
+-	current->lockdep_recursion--;
++	current->lockdep_recursion -= LOCKDEP_OFF;
+ }
+ EXPORT_SYMBOL(lockdep_on);
+ 
+@@ -597,6 +604,7 @@ static const char *usage_str[] =
+ #include "lockdep_states.h"
+ #undef LOCKDEP_STATE
+ 	[LOCK_USED] = "INITIAL USE",
++	[LOCK_USAGE_STATES] = "IN-NMI",
+ };
  #endif
+ 
+@@ -809,6 +817,7 @@ static int count_matching_names(struct lock_class *new_class)
+ 	return count + 1;
  }
  
-+static inline bool cfs_bandwidth_used(void);
++/* used from NMI context -- must be lockless */
+ static inline struct lock_class *
+ look_up_lock_class(const struct lockdep_map *lock, unsigned int subclass)
+ {
+@@ -4720,6 +4729,36 @@ void lock_downgrade(struct lockdep_map *lock, unsigned long ip)
+ }
+ EXPORT_SYMBOL_GPL(lock_downgrade);
  
++/* NMI context !!! */
++static void verify_lock_unused(struct lockdep_map *lock, struct held_lock *hlock, int subclass)
++{
++#ifdef CONFIG_PROVE_LOCKING
++	struct lock_class *class = look_up_lock_class(lock, subclass);
++
++	/* if it doesn't have a class (yet), it certainly hasn't been used yet */
++	if (!class)
++		return;
++
++	if (!(class->usage_mask & LOCK_USED))
++		return;
++
++	hlock->class_idx = class - lock_classes;
++
++	print_usage_bug(current, hlock, LOCK_USED, LOCK_USAGE_STATES);
++#endif
++}
++
++static bool lockdep_nmi(void)
++{
++	if (current->lockdep_recursion & LOCKDEP_RECURSION_MASK)
++		return false;
++
++	if (!in_nmi())
++		return false;
++
++	return true;
++}
++
  /*
-  * MIGRATION
-@@ -4214,10 +4215,16 @@ enqueue_entity(struct cfs_rq *cfs_rq, struct sched_entity *se, int flags)
- 		__enqueue_entity(cfs_rq, se);
- 	se->on_rq = 1;
+  * We are not always called with irqs disabled - do that here,
+  * and also avoid lockdep recursion:
+@@ -4730,8 +4769,25 @@ void lock_acquire(struct lockdep_map *lock, unsigned int subclass,
+ {
+ 	unsigned long flags;
  
--	if (cfs_rq->nr_running == 1) {
-+	/*
-+	 * When bandwidth control is enabled, cfs might have been removed
-+	 * because of a parent been throttled but cfs->nr_running > 1. Try to
-+	 * add it unconditionnally.
-+	 */
-+	if (cfs_rq->nr_running == 1 || cfs_bandwidth_used())
- 		list_add_leaf_cfs_rq(cfs_rq);
+-	if (unlikely(current->lockdep_recursion))
++	if (unlikely(current->lockdep_recursion)) {
++		/* XXX allow trylock from NMI ?!? */
++		if (lockdep_nmi() && !trylock) {
++			struct held_lock hlock;
 +
-+	if (cfs_rq->nr_running == 1)
- 		check_enqueue_throttle(cfs_rq);
--	}
- }
- 
- static void __clear_buddies_last(struct sched_entity *se)
-@@ -4808,11 +4815,22 @@ void unthrottle_cfs_rq(struct cfs_rq *cfs_rq)
- 			break;
- 	}
- 
--	assert_list_leaf_cfs_rq(rq);
--
- 	if (!se)
- 		add_nr_running(rq, task_delta);
- 
-+	/*
-+	 * The cfs_rq_throttled() breaks in the above iteration can result in
-+	 * incomplete leaf list maintenance, resulting in triggering the
-+	 * assertion below.
-+	 */
-+	for_each_sched_entity(se) {
-+		cfs_rq = cfs_rq_of(se);
++			hlock.acquire_ip = ip;
++			hlock.instance = lock;
++			hlock.nest_lock = nest_lock;
++			hlock.irq_context = 2; // XXX
++			hlock.trylock = trylock;
++			hlock.read = read;
++			hlock.check = check;
++			hlock.hardirqs_off = true;
++			hlock.references = 0;
 +
-+		list_add_leaf_cfs_rq(cfs_rq);
++			verify_lock_unused(lock, &hlock, subclass);
++		}
+ 		return;
 +	}
-+
-+	assert_list_leaf_cfs_rq(rq);
-+
- 	/* Determine whether we need to wake up potentially idle CPU: */
- 	if (rq->curr == rq->idle && rq->cfs.nr_running)
- 		resched_curr(rq);
+ 
+ 	raw_local_irq_save(flags);
+ 	check_flags(flags);
