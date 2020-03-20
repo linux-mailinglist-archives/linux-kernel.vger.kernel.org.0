@@ -2,65 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AA50318C8A6
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 09:09:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E821618C8AF
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 09:11:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726953AbgCTIJB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Mar 2020 04:09:01 -0400
-Received: from mail-io1-f68.google.com ([209.85.166.68]:35998 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726820AbgCTIJA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Mar 2020 04:09:00 -0400
-Received: by mail-io1-f68.google.com with SMTP id d15so5084002iog.3
-        for <linux-kernel@vger.kernel.org>; Fri, 20 Mar 2020 01:09:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:sender:from:date:message-id:subject:to;
-        bh=Y1SUJKRXPkHJrk0eHhfQUO78lf3I9KK0p0s9Cce2s7E=;
-        b=Tb3k9qF9/5RCV7tdZAISuMy4JykKdQxA5wpFfIvJKimJ9sl0d0PHraEOy4k+rykktN
-         9GK8TBWAnSJWrD2TcsKRj+Wk8Arnb26qhw7kCQSrLHhEMmkh3gz0rTIZZZpvH+3Ur1+b
-         xUMPqxvnv94R45CwMfXGpR187Zaqhhwd2vu5fSJifuUIPixcCPZN+/2t4eXm6yKFkaze
-         WS0VSOKr235oeeXhRfxXtSQmP8WxtYlaT2gFBp2/+PekHlTKkd6IPLE0I4LaoCH3ethv
-         rFmfFJMVd1rK+64m42j7rhgoThcKPdTWuHHTsJQDOKPrGxqH+gY5EdboubOl4pgPNQ4r
-         9j5w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:sender:from:date
-         :message-id:subject:to;
-        bh=Y1SUJKRXPkHJrk0eHhfQUO78lf3I9KK0p0s9Cce2s7E=;
-        b=ecbw9FUdwTrC2o8lPMuOHOpHAKi22voHwIIzLxXCKzwF+9hKc6XcGlD+9TmxKYIQkN
-         EYzjAyHdApnirE07cE6KLPTJ7g88jYve8zcEUtUUwWBxGlBrcH99ANTSDOF3rgBG3P13
-         e7Ry4erGA9II+evvj2woBThqHFT38zjl9QgTmxK373T0Ldrx3dpb2pN3JH3WwWKZxFi7
-         cKLEY0CzillaX0mkf3fGk8VBFscWnNkleNP6TJFiPFyMasjjc+rZoOyyuNsOfo//No75
-         427mymK0yjm/2vi0OFV8L4HMG4MZz9QESN6+CYLwrMgq+SIti5xhxRto9J4/4oZhdl3s
-         5cKQ==
-X-Gm-Message-State: ANhLgQ3jPuMPx5FTK7FpbCz9t+5BzzexuGyjeedTZfRhEkCfNL3rvJFf
-        Ldaqv87OnvMceGJzZrDq6PwZtefd67ha9GUtWKg=
-X-Google-Smtp-Source: ADFU+vsJJr0k29LHmGzQ3+lW4mZjUfB8yqsezOk4KuYuyyz3bV4ahRRBfcuEj1yaDtBXQ8cDjXmE+9kzlBBxnZ504rI=
-X-Received: by 2002:a02:5489:: with SMTP id t131mr6803631jaa.134.1584691739788;
- Fri, 20 Mar 2020 01:08:59 -0700 (PDT)
+        id S1727043AbgCTILi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Mar 2020 04:11:38 -0400
+Received: from mail.andi.de1.cc ([85.214.55.253]:51332 "EHLO mail.andi.de1.cc"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726631AbgCTILa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Mar 2020 04:11:30 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=kemnade.info; s=20180802; h=Content-Transfer-Encoding:MIME-Version:
+        Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=/tNgPzPvBgCPfKKRPyvUe6Q7AEQzyG6kRTYOs3M9DUI=; b=OGigWW4lHLlo1FNdpuKgv7a9Sf
+        5tPcRcz4mgKK9+Z8hPDypWqIOEEFxKXHH3WlFSZ6NT8cHEskwFIHdZQTF22EdRjYZmmtcMGOX6pF8
+        VDLXUvUxTaLEpks+CfyKyRNBWgK8fd6Nb0+grAXTDiVJ0QLre90WkBhI84n0z2innsq4=;
+Received: from p200300ccff093a00e2cec3fffe93fc31.dip0.t-ipconnect.de ([2003:cc:ff09:3a00:e2ce:c3ff:fe93:fc31] helo=eeepc)
+        by mail.andi.de1.cc with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <andreas@kemnade.info>)
+        id 1jFCkP-00058T-5a; Fri, 20 Mar 2020 09:11:18 +0100
+Received: from andi by eeepc with local (Exim 4.92)
+        (envelope-from <andreas@kemnade.info>)
+        id 1jFCkG-00039E-60; Fri, 20 Mar 2020 09:11:08 +0100
+From:   Andreas Kemnade <andreas@kemnade.info>
+To:     lee.jones@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        a.zummo@towertech.it, alexandre.belloni@bootlin.com,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-rtc@vger.kernel.org, stefan@agner.ch, b.galvani@gmail.com,
+        phh@phh.me, letux-kernel@openphoenux.org, knaack.h@gmx.de,
+        lars@metafoo.de, pmeerw@pmeerw.net, linux-iio@vger.kernel.org,
+        jic23@kernel.org
+Cc:     Andreas Kemnade <andreas@kemnade.info>
+Subject: [PATCH v7 0/7] mfd: rn5t618: Add RTC/ADC support
+Date:   Fri, 20 Mar 2020 09:10:58 +0100
+Message-Id: <20200320081105.12026-1-andreas@kemnade.info>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Reply-To: mrrocksteven505@gmail.com
-Received: by 2002:a02:caa8:0:0:0:0:0 with HTTP; Fri, 20 Mar 2020 01:08:59
- -0700 (PDT)
-From:   "Mr.Rock Steven" <mrcaraluda05@gmail.com>
-Date:   Fri, 20 Mar 2020 01:08:59 -0700
-X-Google-Sender-Auth: dFYPhLX2gxiaiUV2ZZJ77bYZPWk
-Message-ID: <CAJHeprLCBh4GB7Tw+CzVNF+_dU+cpHOb-8wZpO-193xCijH1Cg@mail.gmail.com>
-Subject: READ AND REPLY
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Spam-Score: -1.0 (-)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dear friend.
-I assume you and your family are in good health My name is Mr.Rock
-Steven,work with one of the leading Banks here in Burkina Faso. I have
-a business Proposal that will be of benefit to the both of us and I
-shall be compensating you with 40% at the final conclusion. If you are
-interested please reply ASAP for more details,
-Yours Faithful,
-Mr.Rock Steven,
+In the variant RC5T619 the mfd has an RTC. This patchset adds
+support for it. To do so it adds the missing register defines in 
+rn5t618.h and general irq handling for that.
+It seems that the IRQ definitions are the same except missing RTC
+for the RN5T618 but due to missing ability to test that they are
+not added here.
+It also adds support for the ADC, it is available in both the
+RN5T618 and RC5T619 but due to missing ability to test that,
+the subdevice is only added for the RC5T619.
+
+It was tested on the Kobo Clara HD.
+
+Changes in v7:
+- cleanup in IRQ init stuff
+
+Changes in v6:
+- put together with ADC series
+- also added cleanup i2_device_id patch to avoid merge
+  conflicts
+
+Changes in v5:
+- static rn5t618_irq_init
+- PLATFORM_DEVID_NONE
+- added some Acked-Bys
+
+Changes in v4:
+- use macros for IRQ definitions
+- merge rn5t618-core.c and rn5t618-irq.c
+
+Changes in v3:
+- alignment cleanup
+- output cleanup, remove useless toggling of alarm flag in rtc probe
+- updated bindings description, so patch 1/5 becomes 2/6 and so on
+
+Changes in v2:
+- no dead code in irq code
+- various improvements and cleanups in rtc driver itself
+
+
+Andreas Kemnade (7):
+  dt-bindings: mfd: rn5t618: Document optional property interrupts
+  mfd: rn5t618: add IRQ support
+  mfd: rn5t618: add RTC related registers
+  mfd: rn5t618: add more subdevices
+  rtc: rc5t619: add Ricoh RC5T619 RTC driver
+  iio: adc: rn5t618: Add ADC driver for RN5T618/RC5T619
+  mfd: rn5t618: cleanup i2c_device_id
+
+ .../devicetree/bindings/mfd/rn5t618.txt       |   4 +
+ drivers/iio/adc/Kconfig                       |  10 +
+ drivers/iio/adc/Makefile                      |   1 +
+ drivers/iio/adc/rn5t618-adc.c                 | 256 ++++++++++
+ drivers/mfd/Kconfig                           |   1 +
+ drivers/mfd/rn5t618.c                         | 109 ++++-
+ drivers/rtc/Kconfig                           |  10 +
+ drivers/rtc/Makefile                          |   1 +
+ drivers/rtc/rtc-rc5t619.c                     | 444 ++++++++++++++++++
+ include/linux/mfd/rn5t618.h                   |  26 +
+ 10 files changed, 851 insertions(+), 11 deletions(-)
+ create mode 100644 drivers/iio/adc/rn5t618-adc.c
+ create mode 100644 drivers/rtc/rtc-rc5t619.c
+
+-- 
+2.20.1
+
