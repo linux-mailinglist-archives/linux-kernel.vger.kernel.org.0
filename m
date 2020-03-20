@@ -2,101 +2,130 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B09FE18CAF9
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 10:59:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3203318CB01
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 11:00:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727227AbgCTJ7P (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Mar 2020 05:59:15 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:58876 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726527AbgCTJ7P (ORCPT
+        id S1727264AbgCTKAN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Mar 2020 06:00:13 -0400
+Received: from us-smtp-delivery-74.mimecast.com ([63.128.21.74]:26525 "EHLO
+        us-smtp-delivery-74.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727163AbgCTKAM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Mar 2020 05:59:15 -0400
-Received: from pendragon.ideasonboard.com (81-175-216-236.bb.dnainternet.fi [81.175.216.236])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id CA6A1504;
-        Fri, 20 Mar 2020 10:59:12 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1584698353;
-        bh=ZzexViwT1sNWNVrixfFMMsQEew/KhYKWu3YzN5cmzCI=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Ohp5TXh1V32/7TUc41A62vGmBmoziycU4oAdYUdLefFdH37z8W96SsCvO+jDYOPci
-         yl56teBS9RGHB2sEtwfPKoIF4R0VFKV7zfs7bEv6wK6b+oVhRBgi9uw+HZ903G71qx
-         CnOC7JOVk/Z9/c2QQky3jfKcRhZ0B5Dqi7Y4FRrw=
-Date:   Fri, 20 Mar 2020 11:59:07 +0200
-From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To:     Alex Riesen <alexander.riesen@cetitec.com>
-Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        driverdevel <devel@driverdev.osuosl.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Subject: Re: [PATCH v2 07/10] dt-bindings: adv748x: add information about
- serial audio interface (I2S/TDM)
-Message-ID: <20200320095907.GB5193@pendragon.ideasonboard.com>
-References: <cover.1584639664.git.alexander.riesen@cetitec.com>
- <c9ff553f804f178a247dca356306948e971432fb.1584639664.git.alexander.riesen@cetitec.com>
- <20200319180125.GJ14585@pendragon.ideasonboard.com>
- <20200320084406.GB4344@pflmari>
- <CAMuHMdUdVb0LwZDx-MH2FLYYPvgq=uj_3Nrzo9obWAi-Q-2ZnA@mail.gmail.com>
- <20200320090339.GD4344@pflmari>
+        Fri, 20 Mar 2020 06:00:12 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1584698411;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=wav6xNqI9ihDDoXx/GoMx+TsMvEpi21uQTIJBLfXuG4=;
+        b=ArtPZJsuV5zjr8g5tZpggswtPafK/aolowqcIzdh/Los1y5qeMzT1xOqlfgcS+XRxy/Vlb
+        bN0i+mXLLlJk0HzlSXH9VFNcIirVXsLxuXDvNlyRIA7iRQiDYaoHYPQFIFw9ossX/l3ECl
+        GshujYM9CekJazDvSqI4FvBRxAeDd94=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-256-1Zz8HvToOJmcmiDI4OJmtA-1; Fri, 20 Mar 2020 06:00:07 -0400
+X-MC-Unique: 1Zz8HvToOJmcmiDI4OJmtA-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 960B418CA245;
+        Fri, 20 Mar 2020 10:00:05 +0000 (UTC)
+Received: from localhost (ovpn-13-97.pek2.redhat.com [10.72.13.97])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 315A37389C;
+        Fri, 20 Mar 2020 10:00:00 +0000 (UTC)
+Date:   Fri, 20 Mar 2020 17:59:58 +0800
+From:   Baoquan He <bhe@redhat.com>
+To:     David Hildenbrand <david@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linuxppc-dev@lists.ozlabs.org, linux-hyperv@vger.kernel.org,
+        Wei Yang <richard.weiyang@gmail.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Oscar Salvador <osalvador@suse.de>,
+        "Rafael J. Wysocki" <rafael@kernel.org>
+Subject: Re: [PATCH v3 3/8] drivers/base/memory: store mapping between MMOP_*
+ and string in an array
+Message-ID: <20200320095958.GF2987@MiWiFi-R3L-srv>
+References: <20200319131221.14044-1-david@redhat.com>
+ <20200319131221.14044-4-david@redhat.com>
+ <20200320073653.GE2987@MiWiFi-R3L-srv>
+ <166f7f03-eda9-00a8-bd18-128898526313@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200320090339.GD4344@pflmari>
+In-Reply-To: <166f7f03-eda9-00a8-bd18-128898526313@redhat.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Alex,
-
-On Fri, Mar 20, 2020 at 10:03:39AM +0100, Alex Riesen wrote:
-> Geert Uytterhoeven, Fri, Mar 20, 2020 09:48:14 +0100:
-> > On Fri, Mar 20, 2020 at 9:44 AM Alex Riesen <alexander.riesen@cetitec.com> wrote:
-> > > Laurent Pinchart, Thu, Mar 19, 2020 19:01:25 +0100:
-> > > > On Thu, Mar 19, 2020 at 06:42:36PM +0100, Alex Riesen wrote:
-> > > > > As the driver has some support for the audio interface of the device,
-> > > > > the bindings file should mention it.
-> > > > >
-> > > > > @@ -16,6 +18,8 @@ Required Properties:
-> > > > >      slave device on the I2C bus. The main address is mandatory, others are
-> > > > >      optional and remain at default values if not specified.
-> > > > >
-> > > > > +  - #clock-cells: must be <0> if the I2S port is used
-> > > >
-> > > > Wouldn't it be simpler to set it to 0 unconditionally ?
-> > >
-> > > Would it? If the port itself is optional, shouldn't the clock be an option
-> > > too?
+On 03/20/20 at 10:50am, David Hildenbrand wrote:
+> On 20.03.20 08:36, Baoquan He wrote:
+> > On 03/19/20 at 02:12pm, David Hildenbrand wrote:
+> >> Let's use a simple array which we can reuse soon. While at it, move the
+> >> string->mmop conversion out of the device hotplug lock.
+> >>
+> >> Reviewed-by: Wei Yang <richard.weiyang@gmail.com>
+> >> Acked-by: Michal Hocko <mhocko@suse.com>
+> >> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> >> Cc: Andrew Morton <akpm@linux-foundation.org>
+> >> Cc: Michal Hocko <mhocko@kernel.org>
+> >> Cc: Oscar Salvador <osalvador@suse.de>
+> >> Cc: "Rafael J. Wysocki" <rafael@kernel.org>
+> >> Cc: Baoquan He <bhe@redhat.com>
+> >> Cc: Wei Yang <richard.weiyang@gmail.com>
+> >> Signed-off-by: David Hildenbrand <david@redhat.com>
+> >> ---
+> >>  drivers/base/memory.c | 38 +++++++++++++++++++++++---------------
+> >>  1 file changed, 23 insertions(+), 15 deletions(-)
+> >>
+> >> diff --git a/drivers/base/memory.c b/drivers/base/memory.c
+> >> index e7e77cafef80..8a7f29c0bf97 100644
+> >> --- a/drivers/base/memory.c
+> >> +++ b/drivers/base/memory.c
+> >> @@ -28,6 +28,24 @@
+> >>  
+> >>  #define MEMORY_CLASS_NAME	"memory"
+> >>  
+> >> +static const char *const online_type_to_str[] = {
+> >> +	[MMOP_OFFLINE] = "offline",
+> >> +	[MMOP_ONLINE] = "online",
+> >> +	[MMOP_ONLINE_KERNEL] = "online_kernel",
+> >> +	[MMOP_ONLINE_MOVABLE] = "online_movable",
+> >> +};
+> >> +
+> >> +static int memhp_online_type_from_str(const char *str)
+> >> +{
+> >> +	int i;
 > > 
-> > You'd be surprised how many board designers would consider this a cheap
-> > 12.288 MHz clock source, without using the I2S port ;-)
+> > I would change it as: 
+> > 
+> > 	for (int i = 0; i < ARRAY_SIZE(online_type_to_str); i++) {
+> > 
 > 
-> Well, I am :-)
+> That's not allowed by the C90 standard (and -std=gnu89).
 > 
-> Especially considering that the driver will not switch the MCLK pin aktive
-> (all I2S-related pins are tristate by default).
+> $ gcc main.c -std=gnu89
+> main.c: In function 'main':
+> main.c:3:2: error: 'for' loop initial declarations are only allowed in
+> C99 or C11 mode
+>     3 |  for (int i = 0; i < 8; i++) {
+>       |  ^~~
 
-If the MCLK can't be output without enabling the I2S then I don't mind
-if we make the #clock-cells optional, although, as Geert mentioned,
-someone may still want to use it.
+Good to know, thanks.
 
-> And how do I require it to be set unconditionally? By just removing the
-> "if ..." part of the statement?
+> 
+> One of the reasons why
+> 	git grep "for (int "
+> 
+> will result in very little hits (IOW, only 5 in driver code only).
+> 
+> -- 
+> Thanks,
+> 
+> David / dhildenb
 
-Yes. For YAML it's easy too, the hard part is making properties
-conditional :-)
-
--- 
-Regards,
-
-Laurent Pinchart
