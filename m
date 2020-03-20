@@ -2,125 +2,223 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CE7E018CFE7
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 15:22:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 240F618D092
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 15:25:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727152AbgCTOWP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Mar 2020 10:22:15 -0400
-Received: from foss.arm.com ([217.140.110.172]:49536 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726893AbgCTOWP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Mar 2020 10:22:15 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 644CD1FB;
-        Fri, 20 Mar 2020 07:22:14 -0700 (PDT)
-Received: from mbp (unknown [172.31.20.19])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 38BB73F792;
-        Fri, 20 Mar 2020 07:22:11 -0700 (PDT)
-Date:   Fri, 20 Mar 2020 14:22:08 +0000
-From:   Catalin Marinas <catalin.marinas@arm.com>
-To:     Vincenzo Frascino <vincenzo.frascino@arm.com>
-Cc:     linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, clang-built-linux@googlegroups.com,
-        linux-mips@vger.kernel.org, x86@kernel.org,
-        Will Deacon <will.deacon@arm.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Russell King <linux@armlinux.org.uk>,
-        Paul Burton <paul.burton@mips.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andy Lutomirski <luto@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Mark Salyzyn <salyzyn@android.com>,
-        Kees Cook <keescook@chromium.org>,
-        Peter Collingbourne <pcc@google.com>,
-        Dmitry Safonov <0x7f454c46@gmail.com>,
-        Andrei Vagin <avagin@openvz.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Marc Zyngier <maz@kernel.org>,
-        Mark Rutland <Mark.Rutland@arm.com>,
-        Will Deacon <will@kernel.org>
-Subject: Re: [PATCH v4 18/26] arm64: vdso32: Replace TASK_SIZE_32 check in
- vgettimeofday
-Message-ID: <20200320142208.GC29214@mbp>
-References: <20200317143834.GC632169@arrakis.emea.arm.com>
- <f03a9493-c8c2-e981-f560-b2f437a208e4@arm.com>
- <20200317155031.GD632169@arrakis.emea.arm.com>
- <83aaf9e1-0a8f-4908-577a-23766541b2ba@arm.com>
- <20200317174806.GE632169@arrakis.emea.arm.com>
- <93cfe94a-c2a3-1025-bc9c-e7c3fd891100@arm.com>
- <20200318183603.GF94111@arrakis.emea.arm.com>
- <1bc25a53-7a59-0f60-ecf2-a3cace46b823@arm.com>
- <20200319181004.GA29214@mbp>
- <b937d1eb-c7fd-e903-fa36-b261662bf40b@arm.com>
+        id S1727761AbgCTOYh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Mar 2020 10:24:37 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:59714 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726925AbgCTOWd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Mar 2020 10:22:33 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
+        :Reply-To:Content-Type:Content-ID:Content-Description;
+        bh=gAJNeuZDwvn6ZmLwlM6uxtajgNdN2SI8r4XLzOTRax0=; b=fOQHArVBZ+T12VwKDe8zUK2/Ag
+        0F/5D6hcjAmPYuv7iHwtiF7RgwL2QWQCCFMqJTb1AgFZGMiLbijzZyjXncZtOXGMnqOMU7/PUd8KG
+        WVJa1NOnGj8SmbkVIwja+qNqHlwpbrOQCRXfgE1ujMC1s9Lb9cCut8wuuln9rtGT7q2oZgkT/qLO1
+        aPYvzTbpTb6FXDd8imdkl0gmRI5aivPIEufm6lRZ4wbwfIYE3PO8+8SI2K1AgiW5OkPtCUn7zyt8f
+        OHuRDv6FZrSH0D+cgWrvOSZTbp9RS/bk2hqBhGEKJxmfxQdJxuBBjK8Qihxvau43/qEk5cX3tP/OZ
+        vppKf1XQ==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jFIXh-0000h4-27; Fri, 20 Mar 2020 14:22:33 +0000
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, linux-btrfs@vger.kernel.org,
+        linux-erofs@lists.ozlabs.org, linux-ext4@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net, cluster-devel@redhat.com,
+        ocfs2-devel@oss.oracle.com, linux-xfs@vger.kernel.org,
+        Dave Chinner <dchinner@redhat.com>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Christoph Hellwig <hch@lst.de>,
+        William Kucharski <william.kucharski@oracle.com>
+Subject: [PATCH v9 02/25] mm: Return void from various readahead functions
+Date:   Fri, 20 Mar 2020 07:22:08 -0700
+Message-Id: <20200320142231.2402-3-willy@infradead.org>
+X-Mailer: git-send-email 2.21.1
+In-Reply-To: <20200320142231.2402-1-willy@infradead.org>
+References: <20200320142231.2402-1-willy@infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b937d1eb-c7fd-e903-fa36-b261662bf40b@arm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 20, 2020 at 01:05:14PM +0000, Vincenzo Frascino wrote:
-> On 3/19/20 6:10 PM, Catalin Marinas wrote:
-> > On Thu, Mar 19, 2020 at 12:38:42PM +0000, Vincenzo Frascino wrote:
-> >> On 3/18/20 6:36 PM, Catalin Marinas wrote:
-> >>> On Wed, Mar 18, 2020 at 04:14:26PM +0000, Vincenzo Frascino wrote:
-> >>>> On 3/17/20 5:48 PM, Catalin Marinas wrote:
-> >>>>> So clock_gettime() on arm32 always falls back to the syscall?
-> >>>>
-> >>>> This seems not what you asked, and I think I answered accordingly. Anyway, in
-> >>>> the case of arm32 the error code path is handled via syscall fallback.
-> >>>>
-> >>>> Look at the code below as an example (I am using getres because I know this
-> >>>> email will be already too long, and I do not want to add pointless code, but the
-> >>>> concept is the same for gettime and the others):
-> >>>>
-> >>>> static __maybe_unused
-> >>>> int __cvdso_clock_getres(clockid_t clock, struct __kernel_timespec *res)
-> >>>> {
-> >>>> 	int ret = __cvdso_clock_getres_common(clock, res);
-> >>>>
-> >>>> 	if (unlikely(ret))
-> >>>> 		return clock_getres_fallback(clock, res);
-> >>>> 	return 0;
-> >>>> }
-> >>>>
-> >>>> When the return code of the "vdso" internal function returns an error the system
-> >>>> call is triggered.
-> >>>
-> >>> But when __cvdso_clock_getres_common() does *not* return an error, it
-> >>> means that it handled the clock_getres() call without a fallback to the
-> >>> syscall. I assume this is possible on arm32. When the clock_getres() is
-> >>> handled directly (not as a syscall), why doesn't arm32 need the same
-> >>> (res >= TASK_SIZE) check?
-> >>
-> >> Ok, I see what you mean.
-> > 
-> > I'm not sure.
-> 
-> Thank you for the long chat this morning. As we agreed I am going to repost the
-> patches removing the checks discussed in this thread
+From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
 
-Great, thanks.
+ondemand_readahead has two callers, neither of which use the return value.
+That means that both ra_submit and __do_page_cache_readahead() can return
+void, and we don't need to worry that a present page in the readahead
+window causes us to return a smaller nr_pages than we ought to have.
 
-> and we will address the syscall ABI difference subsequently with a
-> different series.
+Similarly, no caller uses the return value from force_page_cache_readahead().
 
-Now I'm even less convinced we need any additional patches. The arm64
-compat syscall would still return -EFAULT for res >= TASK_SIZE_32
-because copy_to_user() will fail. So it would be entirely consistent
-with the arm32 syscall. In the vdso-only case, both arm32 and arm64
-compat would generate a signal.
+Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+Reviewed-by: Dave Chinner <dchinner@redhat.com>
+Reviewed-by: John Hubbard <jhubbard@nvidia.com>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Reviewed-by: William Kucharski <william.kucharski@oracle.com>
+---
+ mm/fadvise.c   |  4 ----
+ mm/internal.h  | 12 ++++++------
+ mm/readahead.c | 31 +++++++++++++------------------
+ 3 files changed, 19 insertions(+), 28 deletions(-)
 
-As Will said, arguably, the syscall semantics may not be applicable to
-the vdso implementation. But if you do want to get down this route (tp =
-UINTPTR_MAX - sizeof(*tp) returning -EFAULT), please do it for all
-architectures, not just arm64 compat. However, I'm not sure anyone
-relies on this functionality, other than the vdsotest, so no real
-application broken.
-
+diff --git a/mm/fadvise.c b/mm/fadvise.c
+index 3efebfb9952c..0e66f2aaeea3 100644
+--- a/mm/fadvise.c
++++ b/mm/fadvise.c
+@@ -104,10 +104,6 @@ int generic_fadvise(struct file *file, loff_t offset, loff_t len, int advice)
+ 		if (!nrpages)
+ 			nrpages = ~0UL;
+ 
+-		/*
+-		 * Ignore return value because fadvise() shall return
+-		 * success even if filesystem can't retrieve a hint,
+-		 */
+ 		force_page_cache_readahead(mapping, file, start_index, nrpages);
+ 		break;
+ 	case POSIX_FADV_NOREUSE:
+diff --git a/mm/internal.h b/mm/internal.h
+index 83f353e74654..15aaebebd768 100644
+--- a/mm/internal.h
++++ b/mm/internal.h
+@@ -49,20 +49,20 @@ void unmap_page_range(struct mmu_gather *tlb,
+ 			     unsigned long addr, unsigned long end,
+ 			     struct zap_details *details);
+ 
+-int force_page_cache_readahead(struct address_space *, struct file *,
++void force_page_cache_readahead(struct address_space *, struct file *,
+ 		pgoff_t index, unsigned long nr_to_read);
+-extern unsigned int __do_page_cache_readahead(struct address_space *mapping,
+-		struct file *filp, pgoff_t offset, unsigned long nr_to_read,
++void __do_page_cache_readahead(struct address_space *, struct file *,
++		pgoff_t index, unsigned long nr_to_read,
+ 		unsigned long lookahead_size);
+ 
+ /*
+  * Submit IO for the read-ahead request in file_ra_state.
+  */
+-static inline unsigned long ra_submit(struct file_ra_state *ra,
++static inline void ra_submit(struct file_ra_state *ra,
+ 		struct address_space *mapping, struct file *filp)
+ {
+-	return __do_page_cache_readahead(mapping, filp,
+-					ra->start, ra->size, ra->async_size);
++	__do_page_cache_readahead(mapping, filp,
++			ra->start, ra->size, ra->async_size);
+ }
+ 
+ /*
+diff --git a/mm/readahead.c b/mm/readahead.c
+index 2fe72cd29b47..41a592886da7 100644
+--- a/mm/readahead.c
++++ b/mm/readahead.c
+@@ -149,10 +149,8 @@ static int read_pages(struct address_space *mapping, struct file *filp,
+  * the pages first, then submits them for I/O. This avoids the very bad
+  * behaviour which would occur if page allocations are causing VM writeback.
+  * We really don't want to intermingle reads and writes like that.
+- *
+- * Returns the number of pages requested, or the maximum amount of I/O allowed.
+  */
+-unsigned int __do_page_cache_readahead(struct address_space *mapping,
++void __do_page_cache_readahead(struct address_space *mapping,
+ 		struct file *filp, pgoff_t offset, unsigned long nr_to_read,
+ 		unsigned long lookahead_size)
+ {
+@@ -166,7 +164,7 @@ unsigned int __do_page_cache_readahead(struct address_space *mapping,
+ 	gfp_t gfp_mask = readahead_gfp_mask(mapping);
+ 
+ 	if (isize == 0)
+-		goto out;
++		return;
+ 
+ 	end_index = ((isize - 1) >> PAGE_SHIFT);
+ 
+@@ -211,23 +209,21 @@ unsigned int __do_page_cache_readahead(struct address_space *mapping,
+ 	if (nr_pages)
+ 		read_pages(mapping, filp, &page_pool, nr_pages, gfp_mask);
+ 	BUG_ON(!list_empty(&page_pool));
+-out:
+-	return nr_pages;
+ }
+ 
+ /*
+  * Chunk the readahead into 2 megabyte units, so that we don't pin too much
+  * memory at once.
+  */
+-int force_page_cache_readahead(struct address_space *mapping, struct file *filp,
+-			       pgoff_t offset, unsigned long nr_to_read)
++void force_page_cache_readahead(struct address_space *mapping,
++		struct file *filp, pgoff_t offset, unsigned long nr_to_read)
+ {
+ 	struct backing_dev_info *bdi = inode_to_bdi(mapping->host);
+ 	struct file_ra_state *ra = &filp->f_ra;
+ 	unsigned long max_pages;
+ 
+ 	if (unlikely(!mapping->a_ops->readpage && !mapping->a_ops->readpages))
+-		return -EINVAL;
++		return;
+ 
+ 	/*
+ 	 * If the request exceeds the readahead window, allow the read to
+@@ -245,7 +241,6 @@ int force_page_cache_readahead(struct address_space *mapping, struct file *filp,
+ 		offset += this_chunk;
+ 		nr_to_read -= this_chunk;
+ 	}
+-	return 0;
+ }
+ 
+ /*
+@@ -378,11 +373,10 @@ static int try_context_readahead(struct address_space *mapping,
+ /*
+  * A minimal readahead algorithm for trivial sequential/random reads.
+  */
+-static unsigned long
+-ondemand_readahead(struct address_space *mapping,
+-		   struct file_ra_state *ra, struct file *filp,
+-		   bool hit_readahead_marker, pgoff_t offset,
+-		   unsigned long req_size)
++static void ondemand_readahead(struct address_space *mapping,
++		struct file_ra_state *ra, struct file *filp,
++		bool hit_readahead_marker, pgoff_t offset,
++		unsigned long req_size)
+ {
+ 	struct backing_dev_info *bdi = inode_to_bdi(mapping->host);
+ 	unsigned long max_pages = ra->ra_pages;
+@@ -428,7 +422,7 @@ ondemand_readahead(struct address_space *mapping,
+ 		rcu_read_unlock();
+ 
+ 		if (!start || start - offset > max_pages)
+-			return 0;
++			return;
+ 
+ 		ra->start = start;
+ 		ra->size = start - offset;	/* old async_size */
+@@ -464,7 +458,8 @@ ondemand_readahead(struct address_space *mapping,
+ 	 * standalone, small random read
+ 	 * Read as is, and do not pollute the readahead state.
+ 	 */
+-	return __do_page_cache_readahead(mapping, filp, offset, req_size, 0);
++	__do_page_cache_readahead(mapping, filp, offset, req_size, 0);
++	return;
+ 
+ initial_readahead:
+ 	ra->start = offset;
+@@ -489,7 +484,7 @@ ondemand_readahead(struct address_space *mapping,
+ 		}
+ 	}
+ 
+-	return ra_submit(ra, mapping, filp);
++	ra_submit(ra, mapping, filp);
+ }
+ 
+ /**
 -- 
-Catalin
+2.25.1
+
