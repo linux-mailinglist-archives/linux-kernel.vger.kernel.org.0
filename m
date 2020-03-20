@@ -2,26 +2,26 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E687918DBCA
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Mar 2020 00:22:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9607918DBB8
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Mar 2020 00:22:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727500AbgCTXWC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Mar 2020 19:22:02 -0400
+        id S1727545AbgCTXWD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Mar 2020 19:22:03 -0400
 Received: from mga18.intel.com ([134.134.136.126]:42258 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727400AbgCTXWC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1726738AbgCTXWC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 20 Mar 2020 19:22:02 -0400
-IronPort-SDR: ggZTnXPZsE+aVubbMLWwwSIdXDy9qsy3Ns6pLPyEFOACb6dONfZMOSCvKg2sI3D5hoXFxy3dMS
- hC4/NA4unwhA==
+IronPort-SDR: kRcmsuzTTFKgTZBd1F1rAFYMVLcuitZAlSYuB0LzdazUJHjtMBlT4lkapr6EaDJqUHhbn5e9Di
+ SSgWdeSVB+rQ==
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga005.jf.intel.com ([10.7.209.41])
   by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Mar 2020 16:22:01 -0700
-IronPort-SDR: 7HWaRnyyskbWMO/IcOtuDiEPHqo726e+PFwCVlYHd2gKY0ffSvH8WISZ/ZEF+QwM2BisSlfx4x
- 7hSljLqOenFQ==
+IronPort-SDR: zm8+sqo2Y4c3rylIhy759Oscrl2radw/23Wj1LvZqvMxCGDwCLVpDbxwITPW4onYclC77fAA2Y
+ sAvTh6XGuy3g==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.72,286,1580803200"; 
-   d="scan'208";a="418877224"
+   d="scan'208";a="418877227"
 Received: from jacob-builder.jf.intel.com ([10.7.199.155])
   by orsmga005.jf.intel.com with ESMTP; 20 Mar 2020 16:22:01 -0700
 From:   Jacob Pan <jacob.jun.pan@linux.intel.com>
@@ -39,9 +39,9 @@ Cc:     "Yi Liu" <yi.l.liu@intel.com>,
         Jonathan Cameron <jic23@kernel.org>,
         Eric Auger <eric.auger@redhat.com>,
         Jacob Pan <jacob.jun.pan@linux.intel.com>
-Subject: [PATCH V10 02/11] iommu/uapi: Define a mask for bind data
-Date:   Fri, 20 Mar 2020 16:27:32 -0700
-Message-Id: <1584746861-76386-3-git-send-email-jacob.jun.pan@linux.intel.com>
+Subject: [PATCH V10 03/11] iommu/vt-d: Add a helper function to skip agaw
+Date:   Fri, 20 Mar 2020 16:27:33 -0700
+Message-Id: <1584746861-76386-4-git-send-email-jacob.jun.pan@linux.intel.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1584746861-76386-1-git-send-email-jacob.jun.pan@linux.intel.com>
 References: <1584746861-76386-1-git-send-email-jacob.jun.pan@linux.intel.com>
@@ -50,33 +50,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Memory type related flags can be grouped together for one simple check.
-
----
-v9 renamed from EMT to MTS since these are memory type support flags.
----
-
 Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
 ---
- include/uapi/linux/iommu.h | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/iommu/intel-pasid.c | 22 ++++++++++++++++++++++
+ 1 file changed, 22 insertions(+)
 
-diff --git a/include/uapi/linux/iommu.h b/include/uapi/linux/iommu.h
-index 4ad3496e5c43..d7bcbc5f79b0 100644
---- a/include/uapi/linux/iommu.h
-+++ b/include/uapi/linux/iommu.h
-@@ -284,7 +284,10 @@ struct iommu_gpasid_bind_data_vtd {
- 	__u32 pat;
- 	__u32 emt;
- };
--
-+#define IOMMU_SVA_VTD_GPASID_MTS_MASK	(IOMMU_SVA_VTD_GPASID_CD | \
-+					 IOMMU_SVA_VTD_GPASID_EMTE | \
-+					 IOMMU_SVA_VTD_GPASID_PCD |  \
-+					 IOMMU_SVA_VTD_GPASID_PWT)
- /**
-  * struct iommu_gpasid_bind_data - Information about device and guest PASID binding
-  * @version:	Version of this data structure
+diff --git a/drivers/iommu/intel-pasid.c b/drivers/iommu/intel-pasid.c
+index 22b30f10b396..191508c7c03e 100644
+--- a/drivers/iommu/intel-pasid.c
++++ b/drivers/iommu/intel-pasid.c
+@@ -500,6 +500,28 @@ int intel_pasid_setup_first_level(struct intel_iommu *iommu,
+ }
+ 
+ /*
++ * Skip top levels of page tables for iommu which has less agaw
++ * than default. Unnecessary for PT mode.
++ */
++static inline int iommu_skip_agaw(struct dmar_domain *domain,
++				  struct intel_iommu *iommu,
++				  struct dma_pte **pgd)
++{
++	int agaw;
++
++	for (agaw = domain->agaw; agaw > iommu->agaw; agaw--) {
++		*pgd = phys_to_virt(dma_pte_addr(*pgd));
++		if (!dma_pte_present(*pgd)) {
++			return -EINVAL;
++		}
++	}
++	pr_debug_ratelimited("%s: pgd: %llx, agaw %d d_agaw %d\n", __func__, (u64)*pgd,
++		iommu->agaw, domain->agaw);
++
++	return agaw;
++}
++
++/*
+  * Set up the scalable mode pasid entry for second only translation type.
+  */
+ int intel_pasid_setup_second_level(struct intel_iommu *iommu,
 -- 
 2.7.4
 
