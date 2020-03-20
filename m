@@ -2,116 +2,139 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1179B18CB5A
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 11:18:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0B8D118CB61
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 11:20:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727151AbgCTKSq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Mar 2020 06:18:46 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:12170 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726527AbgCTKSq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Mar 2020 06:18:46 -0400
-Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 077008B8674EF2BC430E;
-        Fri, 20 Mar 2020 18:18:43 +0800 (CST)
-Received: from szvp000203569.huawei.com (10.120.216.130) by
- DGGEMS406-HUB.china.huawei.com (10.3.19.206) with Microsoft SMTP Server id
- 14.3.487.0; Fri, 20 Mar 2020 18:18:33 +0800
-From:   Chao Yu <yuchao0@huawei.com>
-To:     <jaegeuk@kernel.org>
-CC:     <linux-f2fs-devel@lists.sourceforge.net>,
-        <linux-kernel@vger.kernel.org>, <chao@kernel.org>,
-        Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH] f2fs: clean up f2fs_may_encrypt()
-Date:   Fri, 20 Mar 2020 18:18:31 +0800
-Message-ID: <20200320101831.70611-1-yuchao0@huawei.com>
-X-Mailer: git-send-email 2.18.0.rc1
+        id S1727268AbgCTKUf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Mar 2020 06:20:35 -0400
+Received: from mx2.suse.de ([195.135.220.15]:54256 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726726AbgCTKUf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Mar 2020 06:20:35 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 389B0B2B3;
+        Fri, 20 Mar 2020 10:20:30 +0000 (UTC)
+From:   Michal Suchanek <msuchanek@suse.de>
+To:     linuxppc-dev@lists.ozlabs.org
+Cc:     Michal Suchanek <msuchanek@suse.de>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Rob Herring <robh@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Christophe Leroy <christophe.leroy@c-s.fr>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Nayna Jain <nayna@linux.ibm.com>,
+        Eric Richter <erichte@linux.ibm.com>,
+        Claudio Carvalho <cclaudio@linux.ibm.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Hari Bathini <hbathini@linux.ibm.com>,
+        Masahiro Yamada <masahiroy@kernel.org>,
+        Thiago Jung Bauermann <bauerman@linux.ibm.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Valentin Schneider <valentin.schneider@arm.com>,
+        Jordan Niethe <jniethe5@gmail.com>,
+        Michael Neuling <mikey@neuling.org>,
+        Gustavo Luiz Duarte <gustavold@linux.ibm.com>,
+        Allison Randal <allison@lohutok.net>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: [PATCH v12 0/8] Disable compat cruft on ppc64le v12
+Date:   Fri, 20 Mar 2020 11:20:11 +0100
+Message-Id: <cover.1584699455.git.msuchanek@suse.de>
+X-Mailer: git-send-email 2.23.0
+In-Reply-To: <20200225173541.1549955-1-npiggin@gmail.com>
+References: <20200225173541.1549955-1-npiggin@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.120.216.130]
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Merge below two conditions into f2fs_may_encrypt() for cleanup
-- IS_ENCRYPTED()
-- DUMMY_ENCRYPTION_ENABLED()
+Less code means less bugs so add a knob to skip the compat stuff.
 
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
----
- fs/f2fs/dir.c   |  4 +---
- fs/f2fs/f2fs.h  | 13 +++++++++----
- fs/f2fs/namei.c |  4 +---
- 3 files changed, 11 insertions(+), 10 deletions(-)
+Changes in v2: saner CONFIG_COMPAT ifdefs
+Changes in v3:
+ - change llseek to 32bit instead of builing it unconditionally in fs
+ - clanup the makefile conditionals
+ - remove some ifdefs or convert to IS_DEFINED where possible
+Changes in v4:
+ - cleanup is_32bit_task and current_is_64bit
+ - more makefile cleanup
+Changes in v5:
+ - more current_is_64bit cleanup
+ - split off callchain.c 32bit and 64bit parts
+Changes in v6:
+ - cleanup makefile after split
+ - consolidate read_user_stack_32
+ - fix some checkpatch warnings
+Changes in v7:
+ - add back __ARCH_WANT_SYS_LLSEEK to fix build with llseek
+ - remove leftover hunk
+ - add review tags
+Changes in v8:
+ - consolidate valid_user_sp to fix it in the split callchain.c
+ - fix build errors/warnings with PPC64 !COMPAT and PPC32
+Changes in v9:
+ - remove current_is_64bit()
+Chanegs in v10:
+ - rebase, sent together with the syscall cleanup
+Changes in v11:
+ - rebase
+ - add MAINTAINERS pattern for ppc perf
+Changes in v12:
+ - simplify valid_user_sp and change to invalid_user_sp
+ - remove superfluous perf patterns in MAINTAINERS
 
-diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
-index 0971ccc4664a..2accfc5e38d0 100644
---- a/fs/f2fs/dir.c
-+++ b/fs/f2fs/dir.c
-@@ -471,7 +471,6 @@ struct page *f2fs_init_inode_metadata(struct inode *inode, struct inode *dir,
- 			struct page *dpage)
- {
- 	struct page *page;
--	int dummy_encrypt = DUMMY_ENCRYPTION_ENABLED(F2FS_I_SB(dir));
- 	int err;
- 
- 	if (is_inode_flag_set(inode, FI_NEW_INODE)) {
-@@ -498,8 +497,7 @@ struct page *f2fs_init_inode_metadata(struct inode *inode, struct inode *dir,
- 		if (err)
- 			goto put_error;
- 
--		if ((IS_ENCRYPTED(dir) || dummy_encrypt) &&
--					f2fs_may_encrypt(inode)) {
-+		if (f2fs_may_encrypt(dir, inode)) {
- 			err = fscrypt_inherit_context(dir, inode, page, false);
- 			if (err)
- 				goto put_error;
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 09db79a20f8e..fcafa68212eb 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -3946,15 +3946,20 @@ static inline bool f2fs_lfs_mode(struct f2fs_sb_info *sbi)
- 	return F2FS_OPTION(sbi).fs_mode == FS_MODE_LFS;
- }
- 
--static inline bool f2fs_may_encrypt(struct inode *inode)
-+static inline bool f2fs_may_encrypt(struct inode *dir, struct inode *inode)
- {
- #ifdef CONFIG_FS_ENCRYPTION
-+	struct f2fs_sb_info *sbi = F2FS_I_SB(dir);
- 	umode_t mode = inode->i_mode;
- 
--	return (S_ISREG(mode) || S_ISDIR(mode) || S_ISLNK(mode));
--#else
--	return false;
-+	/*
-+	 * If the directory encrypted or dummy encryption enabled,
-+	 * then we should encrypt the inode.
-+	 */
-+	if (IS_ENCRYPTED(dir) || DUMMY_ENCRYPTION_ENABLED(sbi))
-+		return (S_ISREG(mode) || S_ISDIR(mode) || S_ISLNK(mode));
- #endif
-+	return false;
- }
- 
- static inline bool f2fs_may_compress(struct inode *inode)
-diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
-index b75c70813f9e..95cfbce062e8 100644
---- a/fs/f2fs/namei.c
-+++ b/fs/f2fs/namei.c
-@@ -75,9 +75,7 @@ static struct inode *f2fs_new_inode(struct inode *dir, umode_t mode)
- 
- 	set_inode_flag(inode, FI_NEW_INODE);
- 
--	/* If the directory encrypted, then we should encrypt the inode. */
--	if ((IS_ENCRYPTED(dir) || DUMMY_ENCRYPTION_ENABLED(sbi)) &&
--				f2fs_may_encrypt(inode))
-+	if (f2fs_may_encrypt(dir, inode))
- 		f2fs_set_encrypted_inode(inode);
- 
- 	if (f2fs_sb_has_extra_attr(sbi)) {
+Michal Suchanek (8):
+  powerpc: Add back __ARCH_WANT_SYS_LLSEEK macro
+  powerpc: move common register copy functions from signal_32.c to
+    signal.c
+  powerpc/perf: consolidate read_user_stack_32
+  powerpc/perf: consolidate valid_user_sp -> invalid_user_sp
+  powerpc/64: make buildable without CONFIG_COMPAT
+  powerpc/64: Make COMPAT user-selectable disabled on littleendian by
+    default.
+  powerpc/perf: split callchain.c by bitness
+  MAINTAINERS: perf: Add pattern that matches ppc perf to the perf
+    entry.
+
+ MAINTAINERS                            |   6 +-
+ arch/powerpc/Kconfig                   |   5 +-
+ arch/powerpc/include/asm/thread_info.h |   4 +-
+ arch/powerpc/include/asm/unistd.h      |   1 +
+ arch/powerpc/kernel/Makefile           |   6 +-
+ arch/powerpc/kernel/entry_64.S         |   2 +
+ arch/powerpc/kernel/signal.c           | 144 +++++++++-
+ arch/powerpc/kernel/signal_32.c        | 140 ----------
+ arch/powerpc/kernel/syscall_64.c       |   6 +-
+ arch/powerpc/kernel/vdso.c             |   3 +-
+ arch/powerpc/perf/Makefile             |   5 +-
+ arch/powerpc/perf/callchain.c          | 356 +------------------------
+ arch/powerpc/perf/callchain.h          |  19 ++
+ arch/powerpc/perf/callchain_32.c       | 196 ++++++++++++++
+ arch/powerpc/perf/callchain_64.c       | 174 ++++++++++++
+ fs/read_write.c                        |   3 +-
+ 16 files changed, 556 insertions(+), 514 deletions(-)
+ create mode 100644 arch/powerpc/perf/callchain.h
+ create mode 100644 arch/powerpc/perf/callchain_32.c
+ create mode 100644 arch/powerpc/perf/callchain_64.c
+
 -- 
-2.18.0.rc1
+2.23.0
 
