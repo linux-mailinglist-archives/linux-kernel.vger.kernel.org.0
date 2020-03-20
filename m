@@ -2,37 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F12E318CE29
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 13:58:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B80D218CE2D
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 13:58:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727267AbgCTM6P (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Mar 2020 08:58:15 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:35604 "EHLO
+        id S1727402AbgCTM60 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Mar 2020 08:58:26 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:35649 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727101AbgCTM6K (ORCPT
+        with ESMTP id S1727261AbgCTM6Q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Mar 2020 08:58:10 -0400
+        Fri, 20 Mar 2020 08:58:16 -0400
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1jFHDx-0003j7-8t; Fri, 20 Mar 2020 13:58:05 +0100
+        id 1jFHE3-0003kI-JS; Fri, 20 Mar 2020 13:58:11 +0100
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id DD2721C22C0;
-        Fri, 20 Mar 2020 13:58:04 +0100 (CET)
-Date:   Fri, 20 Mar 2020 12:58:04 -0000
-From:   "tip-bot2 for Yafang Shao" <tip-bot2@linutronix.de>
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 06EC61C22C2;
+        Fri, 20 Mar 2020 13:58:06 +0100 (CET)
+Date:   Fri, 20 Mar 2020 12:58:05 -0000
+From:   "tip-bot2 for Johannes Weiner" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: sched/core] psi: Move PF_MEMSTALL out of task->flags
+Subject: [tip: sched/core] psi: Fix cpu.pressure for cpu.max and competing cgroups
 Cc:     Johannes Weiner <hannes@cmpxchg.org>,
-        Yafang Shao <laoar.shao@gmail.com>,
         "Peter Zijlstra (Intel)" <peterz@infradead.org>,
         x86 <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>
-In-Reply-To: <1584408485-1921-1-git-send-email-laoar.shao@gmail.com>
-References: <1584408485-1921-1-git-send-email-laoar.shao@gmail.com>
+In-Reply-To: <20200316191333.115523-2-hannes@cmpxchg.org>
+References: <20200316191333.115523-2-hannes@cmpxchg.org>
 MIME-Version: 1.0
-Message-ID: <158470908459.28353.7390210153247885071.tip-bot2@tip-bot2>
+Message-ID: <158470908574.28353.5889910600117208817.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -48,154 +47,178 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the sched/core branch of tip:
 
-Commit-ID:     1066d1b6974e095d5a6c472ad9180a957b496cd6
-Gitweb:        https://git.kernel.org/tip/1066d1b6974e095d5a6c472ad9180a957b496cd6
-Author:        Yafang Shao <laoar.shao@gmail.com>
-AuthorDate:    Mon, 16 Mar 2020 21:28:05 -04:00
+Commit-ID:     b05e75d611380881e73edc58a20fd8c6bb71720b
+Gitweb:        https://git.kernel.org/tip/b05e75d611380881e73edc58a20fd8c6bb71720b
+Author:        Johannes Weiner <hannes@cmpxchg.org>
+AuthorDate:    Mon, 16 Mar 2020 15:13:31 -04:00
 Committer:     Peter Zijlstra <peterz@infradead.org>
-CommitterDate: Fri, 20 Mar 2020 13:06:19 +01:00
+CommitterDate: Fri, 20 Mar 2020 13:06:18 +01:00
 
-psi: Move PF_MEMSTALL out of task->flags
+psi: Fix cpu.pressure for cpu.max and competing cgroups
 
-The task->flags is a 32-bits flag, in which 31 bits have already been
-consumed. So it is hardly to introduce other new per process flag.
-Currently there're still enough spaces in the bit-field section of
-task_struct, so we can define the memstall state as a single bit in
-task_struct instead.
-This patch also removes an out-of-date comment pointed by Matthew.
+For simplicity, cpu pressure is defined as having more than one
+runnable task on a given CPU. This works on the system-level, but it
+has limitations in a cgrouped reality: When cpu.max is in use, it
+doesn't capture the time in which a task is not executing on the CPU
+due to throttling. Likewise, it doesn't capture the time in which a
+competing cgroup is occupying the CPU - meaning it only reflects
+cgroup-internal competitive pressure, not outside pressure.
 
-Suggested-by: Johannes Weiner <hannes@cmpxchg.org>
-Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
+Enable tracking of currently executing tasks, and then change the
+definition of cpu pressure in a cgroup from
+
+	NR_RUNNING > 1
+
+to
+
+	NR_RUNNING > ON_CPU
+
+which will capture the effects of cpu.max as well as competition from
+outside the cgroup.
+
+After this patch, a cgroup running `stress -c 1` with a cpu.max
+setting of 5000 10000 shows ~50% continuous CPU pressure.
+
+Signed-off-by: Johannes Weiner <hannes@cmpxchg.org>
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Acked-by: Johannes Weiner <hannes@cmpxchg.org>
-Link: https://lkml.kernel.org/r/1584408485-1921-1-git-send-email-laoar.shao@gmail.com
+Link: https://lkml.kernel.org/r/20200316191333.115523-2-hannes@cmpxchg.org
 ---
- include/linux/sched.h |  6 ++++--
- kernel/sched/psi.c    | 12 ++++++------
- kernel/sched/stats.h  | 10 +++++-----
- 3 files changed, 15 insertions(+), 13 deletions(-)
+ include/linux/psi_types.h | 10 +++++++++-
+ kernel/sched/core.c       |  2 ++
+ kernel/sched/psi.c        | 12 +++++++-----
+ kernel/sched/stats.h      | 28 ++++++++++++++++++++++++++++
+ 4 files changed, 46 insertions(+), 6 deletions(-)
 
-diff --git a/include/linux/sched.h b/include/linux/sched.h
-index 2e9199b..09bddd9 100644
---- a/include/linux/sched.h
-+++ b/include/linux/sched.h
-@@ -785,9 +785,12 @@ struct task_struct {
- 	unsigned			frozen:1;
- #endif
- #ifdef CONFIG_BLK_CGROUP
--	/* to be used once the psi infrastructure lands upstream. */
- 	unsigned			use_memdelay:1;
- #endif
-+#ifdef CONFIG_PSI
-+	/* Stalled due to lack of memory */
-+	unsigned			in_memstall:1;
-+#endif
+diff --git a/include/linux/psi_types.h b/include/linux/psi_types.h
+index 07aaf9b..4b72584 100644
+--- a/include/linux/psi_types.h
++++ b/include/linux/psi_types.h
+@@ -14,13 +14,21 @@ enum psi_task_count {
+ 	NR_IOWAIT,
+ 	NR_MEMSTALL,
+ 	NR_RUNNING,
+-	NR_PSI_TASK_COUNTS = 3,
++	/*
++	 * This can't have values other than 0 or 1 and could be
++	 * implemented as a bit flag. But for now we still have room
++	 * in the first cacheline of psi_group_cpu, and this way we
++	 * don't have to special case any state tracking for it.
++	 */
++	NR_ONCPU,
++	NR_PSI_TASK_COUNTS = 4,
+ };
  
- 	unsigned long			atomic_flags; /* Flags requiring atomic access. */
+ /* Task state bitmasks */
+ #define TSK_IOWAIT	(1 << NR_IOWAIT)
+ #define TSK_MEMSTALL	(1 << NR_MEMSTALL)
+ #define TSK_RUNNING	(1 << NR_RUNNING)
++#define TSK_ONCPU	(1 << NR_ONCPU)
  
-@@ -1480,7 +1483,6 @@ extern struct pid *cad_pid;
- #define PF_KTHREAD		0x00200000	/* I am a kernel thread */
- #define PF_RANDOMIZE		0x00400000	/* Randomize virtual address space */
- #define PF_SWAPWRITE		0x00800000	/* Allowed to write to swap */
--#define PF_MEMSTALL		0x01000000	/* Stalled due to lack of memory */
- #define PF_UMH			0x02000000	/* I'm an Usermodehelper process */
- #define PF_NO_SETAFFINITY	0x04000000	/* Userland is not allowed to meddle with cpus_mask */
- #define PF_MCE_EARLY		0x08000000      /* Early kill for mce process policy */
+ /* Resources that workloads could be stalled on */
+ enum psi_res {
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index 014d4f7..c1f923d 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -4091,6 +4091,8 @@ static void __sched notrace __schedule(bool preempt)
+ 		 */
+ 		++*switch_count;
+ 
++		psi_sched_switch(prev, next, !task_on_rq_queued(prev));
++
+ 		trace_sched_switch(preempt, prev, next);
+ 
+ 		/* Also unlocks the rq: */
 diff --git a/kernel/sched/psi.c b/kernel/sched/psi.c
-index 955a124..8f45cdb 100644
+index 0285207..5012829 100644
 --- a/kernel/sched/psi.c
 +++ b/kernel/sched/psi.c
-@@ -865,17 +865,17 @@ void psi_memstall_enter(unsigned long *flags)
- 	if (static_branch_likely(&psi_disabled))
- 		return;
+@@ -225,7 +225,7 @@ static bool test_state(unsigned int *tasks, enum psi_states state)
+ 	case PSI_MEM_FULL:
+ 		return tasks[NR_MEMSTALL] && !tasks[NR_RUNNING];
+ 	case PSI_CPU_SOME:
+-		return tasks[NR_RUNNING] > 1;
++		return tasks[NR_RUNNING] > tasks[NR_ONCPU];
+ 	case PSI_NONIDLE:
+ 		return tasks[NR_IOWAIT] || tasks[NR_MEMSTALL] ||
+ 			tasks[NR_RUNNING];
+@@ -695,10 +695,10 @@ static u32 psi_group_change(struct psi_group *group, int cpu,
+ 		if (!(m & (1 << t)))
+ 			continue;
+ 		if (groupc->tasks[t] == 0 && !psi_bug) {
+-			printk_deferred(KERN_ERR "psi: task underflow! cpu=%d t=%d tasks=[%u %u %u] clear=%x set=%x\n",
++			printk_deferred(KERN_ERR "psi: task underflow! cpu=%d t=%d tasks=[%u %u %u %u] clear=%x set=%x\n",
+ 					cpu, t, groupc->tasks[0],
+ 					groupc->tasks[1], groupc->tasks[2],
+-					clear, set);
++					groupc->tasks[3], clear, set);
+ 			psi_bug = 1;
+ 		}
+ 		groupc->tasks[t]--;
+@@ -916,9 +916,11 @@ void cgroup_move_task(struct task_struct *task, struct css_set *to)
  
--	*flags = current->flags & PF_MEMSTALL;
-+	*flags = current->in_memstall;
- 	if (*flags)
- 		return;
- 	/*
--	 * PF_MEMSTALL setting & accounting needs to be atomic wrt
-+	 * in_memstall setting & accounting needs to be atomic wrt
- 	 * changes to the task's scheduling state, otherwise we can
- 	 * race with CPU migration.
- 	 */
- 	rq = this_rq_lock_irq(&rf);
+ 	rq = task_rq_lock(task, &rf);
  
--	current->flags |= PF_MEMSTALL;
-+	current->in_memstall = 1;
- 	psi_task_change(current, 0, TSK_MEMSTALL);
- 
- 	rq_unlock_irq(rq, &rf);
-@@ -898,13 +898,13 @@ void psi_memstall_leave(unsigned long *flags)
- 	if (*flags)
- 		return;
- 	/*
--	 * PF_MEMSTALL clearing & accounting needs to be atomic wrt
-+	 * in_memstall clearing & accounting needs to be atomic wrt
- 	 * changes to the task's scheduling state, otherwise we could
- 	 * race with CPU migration.
- 	 */
- 	rq = this_rq_lock_irq(&rf);
- 
--	current->flags &= ~PF_MEMSTALL;
-+	current->in_memstall = 0;
- 	psi_task_change(current, TSK_MEMSTALL, 0);
- 
- 	rq_unlock_irq(rq, &rf);
-@@ -970,7 +970,7 @@ void cgroup_move_task(struct task_struct *task, struct css_set *to)
- 	} else if (task->in_iowait)
+-	if (task_on_rq_queued(task))
++	if (task_on_rq_queued(task)) {
+ 		task_flags = TSK_RUNNING;
+-	else if (task->in_iowait)
++		if (task_current(rq, task))
++			task_flags |= TSK_ONCPU;
++	} else if (task->in_iowait)
  		task_flags = TSK_IOWAIT;
  
--	if (task->flags & PF_MEMSTALL)
-+	if (task->in_memstall)
- 		task_flags |= TSK_MEMSTALL;
- 
- 	if (task_flags)
+ 	if (task->flags & PF_MEMSTALL)
 diff --git a/kernel/sched/stats.h b/kernel/sched/stats.h
-index 1339f5b..33d0daf 100644
+index ba683fe..6ff0ac1 100644
 --- a/kernel/sched/stats.h
 +++ b/kernel/sched/stats.h
-@@ -70,7 +70,7 @@ static inline void psi_enqueue(struct task_struct *p, bool wakeup)
- 		return;
- 
- 	if (!wakeup || p->sched_psi_wake_requeue) {
--		if (p->flags & PF_MEMSTALL)
-+		if (p->in_memstall)
- 			set |= TSK_MEMSTALL;
- 		if (p->sched_psi_wake_requeue)
- 			p->sched_psi_wake_requeue = 0;
-@@ -90,7 +90,7 @@ static inline void psi_dequeue(struct task_struct *p, bool sleep)
- 		return;
- 
- 	if (!sleep) {
--		if (p->flags & PF_MEMSTALL)
-+		if (p->in_memstall)
+@@ -93,6 +93,14 @@ static inline void psi_dequeue(struct task_struct *p, bool sleep)
+ 		if (p->flags & PF_MEMSTALL)
  			clear |= TSK_MEMSTALL;
  	} else {
- 		/*
-@@ -117,14 +117,14 @@ static inline void psi_ttwu_dequeue(struct task_struct *p)
- 	 * deregister its sleep-persistent psi states from the old
- 	 * queue, and let psi_enqueue() know it has to requeue.
- 	 */
--	if (unlikely(p->in_iowait || (p->flags & PF_MEMSTALL))) {
-+	if (unlikely(p->in_iowait || p->in_memstall)) {
- 		struct rq_flags rf;
- 		struct rq *rq;
- 		int clear = 0;
- 
++		/*
++		 * When a task sleeps, schedule() dequeues it before
++		 * switching to the next one. Merge the clearing of
++		 * TSK_RUNNING and TSK_ONCPU to save an unnecessary
++		 * psi_task_change() call in psi_sched_switch().
++		 */
++		clear |= TSK_ONCPU;
++
  		if (p->in_iowait)
- 			clear |= TSK_IOWAIT;
--		if (p->flags & PF_MEMSTALL)
-+		if (p->in_memstall)
- 			clear |= TSK_MEMSTALL;
- 
- 		rq = __task_rq_lock(p, &rf);
-@@ -149,7 +149,7 @@ static inline void psi_task_tick(struct rq *rq)
- 	if (static_branch_likely(&psi_disabled))
- 		return;
- 
--	if (unlikely(rq->curr->flags & PF_MEMSTALL))
-+	if (unlikely(rq->curr->in_memstall))
- 		psi_memstall_tick(rq->curr, cpu_of(rq));
+ 			set |= TSK_IOWAIT;
+ 	}
+@@ -126,6 +134,23 @@ static inline void psi_ttwu_dequeue(struct task_struct *p)
+ 	}
  }
- #else /* CONFIG_PSI */
+ 
++static inline void psi_sched_switch(struct task_struct *prev,
++				    struct task_struct *next,
++				    bool sleep)
++{
++	if (static_branch_likely(&psi_disabled))
++		return;
++
++	/*
++	 * Clear the TSK_ONCPU state if the task was preempted. If
++	 * it's a voluntary sleep, dequeue will have taken care of it.
++	 */
++	if (!sleep)
++		psi_task_change(prev, TSK_ONCPU, 0);
++
++	psi_task_change(next, 0, TSK_ONCPU);
++}
++
+ static inline void psi_task_tick(struct rq *rq)
+ {
+ 	if (static_branch_likely(&psi_disabled))
+@@ -138,6 +163,9 @@ static inline void psi_task_tick(struct rq *rq)
+ static inline void psi_enqueue(struct task_struct *p, bool wakeup) {}
+ static inline void psi_dequeue(struct task_struct *p, bool sleep) {}
+ static inline void psi_ttwu_dequeue(struct task_struct *p) {}
++static inline void psi_sched_switch(struct task_struct *prev,
++				    struct task_struct *next,
++				    bool sleep) {}
+ static inline void psi_task_tick(struct rq *rq) {}
+ #endif /* CONFIG_PSI */
+ 
