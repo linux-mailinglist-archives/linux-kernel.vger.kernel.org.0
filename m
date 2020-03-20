@@ -2,117 +2,140 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BE09B18D8B8
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 20:52:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1D1E118D8C4
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 20:54:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726925AbgCTTw3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Mar 2020 15:52:29 -0400
-Received: from mail.z3ntu.xyz ([128.199.32.197]:52360 "EHLO mail.z3ntu.xyz"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726738AbgCTTw3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Mar 2020 15:52:29 -0400
-Received: by mail.z3ntu.xyz (Postfix, from userid 182)
-        id E1E16C43CD; Fri, 20 Mar 2020 19:52:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=z3ntu.xyz; s=z3ntu;
-        t=1584733946; bh=MDnzSJT+llofSXN9pFcQrkcAec3ckxZl7QrMwV659OU=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References;
-        b=aV5+AQ5HFMQtjamOGfq2RPgVngbnXZM/kr1CKeliXJGmCvn29OoiLOtA6k1WRlax7
-         ppDPVYf6XCWEK9PcBUBVZ1Xni7o+4PhcPo24OtDDVKzAeMh6FFkVJUUdehwdS4CHkD
-         yWwVP/6VCUwDibK8MTf/YgWud5NfbK1AkV6/wBT0=
-X-Spam-Checker-Version: SpamAssassin 3.4.4 (2020-01-24) on arch-vps
-X-Spam-Level: 
-X-Spam-Status: No, score=0.9 required=5.0 tests=ALL_TRUSTED,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FROM_SUSPICIOUS_NTLD,
-        PDS_OTHER_BAD_TLD,URIBL_BLOCKED autolearn=no autolearn_force=no
-        version=3.4.4
-Received: from g550jk.localnet (80-110-124-168.cgn.dynamic.surfer.at [80.110.124.168])
-        by mail.z3ntu.xyz (Postfix) with ESMTPSA id 7BB74C43BA;
-        Fri, 20 Mar 2020 19:52:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=z3ntu.xyz; s=z3ntu;
-        t=1584733942; bh=MDnzSJT+llofSXN9pFcQrkcAec3ckxZl7QrMwV659OU=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References;
-        b=D3dkUm3eV3UFiDyYuYr9T3nrTLJiA18jxrZ26rNJ/7pLpyiLXTm1wf6cEuMUKeMhc
-         PDTdZxAD0QrTDo0qFjaXiqDhT3hLDf4SME6700HUqDMR8nbCvYuR4j7xFjEiURtWh1
-         TORTze3yF0dIb1duzBBDNGWr81ua4lgRGNUpmH7E=
-From:   Luca Weiss <luca@z3ntu.xyz>
-To:     agross@kernel.org, bjorn.andersson@linaro.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, catalin.marinas@arm.com, will@kernel.org,
-        shawnguo@kernel.org, olof@lixom.net, maxime@cerno.tech,
-        Anson.Huang@nxp.com, dinguyen@kernel.org, leonard.crestez@nxp.com,
-        marcin.juszkiewicz@linaro.org, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Loic Poulain <loic.poulain@linaro.org>,
-        Robert Foss <robert.foss@linaro.org>
-Cc:     Robert Foss <robert.foss@linaro.org>
-Subject: Re: [v2 6/6] arm64: defconfig: Enable QCOM CAMCC, CAMSS and CCI drivers
-Date:   Fri, 20 Mar 2020 20:52:20 +0100
-Message-ID: <2523204.mvXUDI8C0e@g550jk>
-In-Reply-To: <20200317135740.19412-7-robert.foss@linaro.org>
-References: <20200317135740.19412-1-robert.foss@linaro.org> <20200317135740.19412-7-robert.foss@linaro.org>
+        id S1726970AbgCTTyf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Mar 2020 15:54:35 -0400
+Received: from jabberwock.ucw.cz ([46.255.230.98]:55914 "EHLO
+        jabberwock.ucw.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726773AbgCTTyf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Mar 2020 15:54:35 -0400
+Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+        id 07F9C1C0337; Fri, 20 Mar 2020 20:54:33 +0100 (CET)
+Date:   Fri, 20 Mar 2020 20:54:32 +0100
+From:   Pavel Machek <pavel@denx.de>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     Pavel Machek <pavel@denx.de>, ben.hutchings@codethink.co.uk,
+        Chris.Paterson2@renesas.com, bigeasy@linutronix.de,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-rt-users <linux-rt-users@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Carsten Emde <C.Emde@osadl.org>,
+        John Kacur <jkacur@redhat.com>,
+        Julia Cartwright <julia@ni.com>,
+        Daniel Wagner <wagi@monom.org>,
+        Tom Zanussi <zanussi@kernel.org>,
+        "Srivatsa S. Bhat" <srivatsa@csail.mit.edu>
+Subject: Re: 4.19.106-rt44 -- boot problems with irqwork: push most work into
+ softirq context
+Message-ID: <20200320195432.GA12666@duo.ucw.cz>
+References: <20200228170837.3fe8bb57@gandalf.local.home>
+ <20200319214835.GA29781@duo.ucw.cz>
+ <20200319232225.GA7878@duo.ucw.cz>
+ <20200319204859.5011a488@gandalf.local.home>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="iso-8859-1"
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="4Ckj6UjgE2iN1+kY"
+Content-Disposition: inline
+In-Reply-To: <20200319204859.5011a488@gandalf.local.home>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Robert,
 
-On Dienstag, 17. M=E4rz 2020 14:57:40 CET Robert Foss wrote:
-> Build camera clock, isp and controller drivers as modules.
+--4Ckj6UjgE2iN1+kY
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi!
+
+> > > > I'm pleased to announce the 4.19.106-rt44 stable release.
+> > > >=20
+> > > >=20
+> > > > This release is just an update to the new stable 4.19.106 version
+> > > > and no RT specific changes have been made.
+> > > >=20
+> > > >=20
+> > > > You can get this release via the git tree at:
+> > > >=20
+> > > >   git://git.kernel.org/pub/scm/linux/kernel/git/rt/linux-stable-rt.=
+git
+> > > >=20
+> > > >   branch: v4.19-rt
+> > > >   Head SHA1: 0f2960c75dd68d339f0aff2935f51652b5625fbf =20
+> > >=20
+> > > This brought some problems for me. de0-nano board now fails to boot in
+> > > cca 50% of cases if I move these patches on top of -cip tree.
+> > >=20
+> > > This is example of failed job:
+> > >=20
+> > > https://lava.ciplatform.org/scheduler/job/13037
+> > >=20
+> > > de0-nano is 32-bit arm, should be based on Altera SoCFPGA if I unders=
+tand
+> > > things correctly.
+> > >=20
+> > > "fc9f4631a290 irqwork: push most work into softirq context" touches
+> > > area of the panic above. I tried to revert it on top of the full
+> > > series, and tests passed twice so far... =20
+> >=20
+> > Test passed 7 times now. So yes, reverting this fixes de0-nano
+> > boot. Any ideas what might be wrong?
+> >=20
+> > I'll be running it few more times.
+> >=20
+> > https://gitlab.com/cip-project/cip-kernel/linux-cip/pipelines/127953471
+> >=20
 >=20
-> Signed-off-by: Robert Foss <robert.foss@linaro.org>
-> Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> ---
->  arch/arm64/configs/defconfig | 4 ++++
->  1 file changed, 4 insertions(+)
->=20
-> diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-> index 4db223dbc549..7cb6989249ab 100644
-> --- a/arch/arm64/configs/defconfig
-> +++ b/arch/arm64/configs/defconfig
-> @@ -376,6 +376,7 @@ CONFIG_I2C_MESON=3Dy
->  CONFIG_I2C_MV64XXX=3Dy
->  CONFIG_I2C_OWL=3Dy
->  CONFIG_I2C_PXA=3Dy
-> +CONFIG_I2C_QCOM_CCI=3Dm
->  CONFIG_I2C_QCOM_GENI=3Dm
->  CONFIG_I2C_QUP=3Dy
->  CONFIG_I2C_RK3X=3Dy
-> @@ -530,6 +531,7 @@ CONFIG_VIDEO_SAMSUNG_S5P_MFC=3Dm
->  CONFIG_VIDEO_SAMSUNG_EXYNOS_GSC=3Dm
->  CONFIG_VIDEO_RENESAS_FCP=3Dm
->  CONFIG_VIDEO_RENESAS_VSP1=3Dm
-> +CONFIG_VIDEO_QCOM_CAMSS=3Dm
->  CONFIG_DRM=3Dm
->  CONFIG_DRM_I2C_NXP_TDA998X=3Dm
->  CONFIG_DRM_NOUVEAU=3Dm
-> @@ -732,6 +734,7 @@ CONFIG_MSM_GCC_8994=3Dy
->  CONFIG_MSM_MMCC_8996=3Dy
->  CONFIG_MSM_GCC_8998=3Dy
->  CONFIG_QCS_GCC_404=3Dy
-> +CONFIG_SDM_CAMCC_845=3Dm
+> Looks like you are running this without PREEMPT_RT enabled.
 
-You seem to have this option twice in this patch.
+Yes. We still need to set up proper realtime testing.
 
->  CONFIG_SDM_GCC_845=3Dy
->  CONFIG_SM_GCC_8150=3Dy
->  CONFIG_QCOM_HFPLL=3Dy
-> @@ -762,6 +765,7 @@ CONFIG_QCOM_COMMAND_DB=3Dy
->  CONFIG_QCOM_GENI_SE=3Dy
->  CONFIG_QCOM_GLINK_SSR=3Dm
->  CONFIG_QCOM_RMTFS_MEM=3Dm
-> +CONFIG_SDM_CAMCC_845=3Dm
+> Does this patch help?
 
-^
+I don't think so. It also failed, and the failure seems to be
+identical to me.
 
->  CONFIG_QCOM_RPMH=3Dy
->  CONFIG_QCOM_RPMHPD=3Dy
->  CONFIG_QCOM_SMEM=3Dy
+https://gitlab.com/cip-project/cip-kernel/linux-cip/tree/ci/pavel/linux-cip
+https://lava.ciplatform.org/scheduler/job/13110
 
-Regards
-Luca
+Best regards,
+								Pavel
 
+> diff --git a/kernel/irq_work.c b/kernel/irq_work.c
+> index 2940622da5b3..0ca75c77536b 100644
+> --- a/kernel/irq_work.c
+> +++ b/kernel/irq_work.c
+> @@ -146,8 +146,9 @@ bool irq_work_needs_cpu(void)
+>  	raised =3D this_cpu_ptr(&raised_list);
+>  	lazy =3D this_cpu_ptr(&lazy_list);
+> =20
+> -	if (llist_empty(raised) && llist_empty(lazy))
+> -		return false;
+> +	if (llist_empty(raised) || arch_irq_work_has_interrupt())
+> +		if (llist_empty(lazy))
+> +			return false;
+> =20
+>  	/* All work should have been flushed before going offline */
+>  	WARN_ON_ONCE(cpu_is_offline(smp_processor_id()));
 
+--=20
+DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
+HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+
+--4Ckj6UjgE2iN1+kY
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCXnUfeAAKCRAw5/Bqldv6
+8gb1AKC4UHRzoJ+y/GLlVi4otvGsEmA4sQCePb1SuYIyKncm+OugidDI7k92Xeo=
+=0kmu
+-----END PGP SIGNATURE-----
+
+--4Ckj6UjgE2iN1+kY--
