@@ -2,222 +2,161 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 89F6518D4B1
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 17:42:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AA58518D4B8
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 17:42:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727561AbgCTQlx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Mar 2020 12:41:53 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:34658 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727444AbgCTQlw (ORCPT
+        id S1727627AbgCTQmZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Mar 2020 12:42:25 -0400
+Received: from us-smtp-delivery-74.mimecast.com ([216.205.24.74]:43421 "EHLO
+        us-smtp-delivery-74.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727278AbgCTQmZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Mar 2020 12:41:52 -0400
-Received: by mail-lj1-f193.google.com with SMTP id s13so7152589ljm.1
-        for <linux-kernel@vger.kernel.org>; Fri, 20 Mar 2020 09:41:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=CaZ0r65X92Oxu7GzVKpyix0zMa0pOHAykHkKw8nV8IU=;
-        b=tIwc6+70CRNkkxf9Bma96+ddMStZ0BSBedkphLIyty/Dmt7yi8/AE9ewVIL8DQLe2G
-         q3bqK8nAKYXMpKYORMB4NnUYDcQaNu9gkP3HQQrNdSw2ys3oIZYjtenv0MotnBX4Eaz4
-         Utl6axkQI963l56bqWYmooCw1vyCeDNn8L0ZJCtJ4nBRNvsxWts5Vnp23EkqRJ7X8hNh
-         XlXcg8IOuxIh2qeBhRATDM8//GMVMAbzHCQJflwblAtv/9U72xdHUuOkQutneSK9TCer
-         m+Zuja8hXxP2UTMg+BUyxrX78Qus960+IyTCDP0XrC1qqhVnMxJANA1wSyAiyQLuYAy7
-         moaQ==
+        Fri, 20 Mar 2020 12:42:25 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1584722543;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=JuSmP8mzKRWutGuMEZMfymlnZMnuod1hdzuq2jOD+58=;
+        b=P0UE9GDZIaoCWnLo4LDQqfzXv2y2SO2h0WJgjxHTtWehuN6pQ/TxO2dGZUizbEOZ9/pdrl
+        tx1guH1YFTC7vAx10ZxdgBnObW0dfHOqffW23aKJ1Am8fhs9uYrgO0FaBxz703eXRMdpU8
+        rxXqHrd9eKfKANqGfCoxC4VdTWwzHac=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-97-WECJ4nFYNWmPmmnXgNLQhw-1; Fri, 20 Mar 2020 12:42:06 -0400
+X-MC-Unique: WECJ4nFYNWmPmmnXgNLQhw-1
+Received: by mail-wr1-f69.google.com with SMTP id f13so2869697wro.23
+        for <linux-kernel@vger.kernel.org>; Fri, 20 Mar 2020 09:42:05 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=CaZ0r65X92Oxu7GzVKpyix0zMa0pOHAykHkKw8nV8IU=;
-        b=a+1foPffJDRAkz5oRW6cVCvvafcerY8clX2udiC43IPWZoxEjXqcWbCGZkwew+8at0
-         IfMBn1whW0R3Ut/I/7WVYKt2D8+94RoTaJ5UlUQyBM4TrlR1Wnrp2cGFyg2zDa7NUhVU
-         qAZDoq0A9X0ZB/bzX4D72jEixTP6/QwiTUIu5K9F23UYZJnpC0nOrSZfGzgdPewWdwvb
-         DYW/1eauqnMrLX5k38sNANWUppNnW7uVzLKi7lhiVYejKsTU3h+hggJoz6OvbC8tQyXX
-         uAZG/s1U31/J0T9vSviNidLj4z3yjHbZuTr0perCziCY5xcgalOtlIlH6h/kPa4/FAUq
-         vMyw==
-X-Gm-Message-State: ANhLgQ05iqb825O6aqlXm2WfCf9XLNvo8GBws+NrEH1I/TrkTgiz6ueo
-        eqonJQFBfVmEh8+vTMBiFqgw6fzKv3ZrUQbQyCauQA==
-X-Google-Smtp-Source: ADFU+vvXj/1ErVqk4FcUHN8aEU2aBjr/TJ6KGh6YPa4D8H5lLAQ++EhwhU6eKk3SWeXmxyMwGYSzftbNLNrWo2EgxHk=
-X-Received: by 2002:a2e:988d:: with SMTP id b13mr5879420ljj.217.1584722510255;
- Fri, 20 Mar 2020 09:41:50 -0700 (PDT)
-MIME-Version: 1.0
-References: <20200319123902.941451241@linuxfoundation.org> <CA+G9fYsDw6JEznSHm2X=Wvq1dysGbGa4-VpXJyzKWZQxLMdagw@mail.gmail.com>
- <7a8c6a752793f0907662c3e9c197c284fc461550.camel@codethink.co.uk>
- <20200320080317.GA312074@kroah.com> <20200320081122.GA349027@kroah.com>
-In-Reply-To: <20200320081122.GA349027@kroah.com>
-From:   Naresh Kamboju <naresh.kamboju@linaro.org>
-Date:   Fri, 20 Mar 2020 22:11:39 +0530
-Message-ID: <CA+G9fYtS0u1onCKCiZApRkZXzLMgW6X54z5OfHBOeE+v1=ApOQ@mail.gmail.com>
-Subject: Re: [PATCH 4.19 00/48] 4.19.112-rc1 review
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=JuSmP8mzKRWutGuMEZMfymlnZMnuod1hdzuq2jOD+58=;
+        b=AQRJuWW+fTwsxKAM1hJ37ct1jWzuwvjKX/4nPyGMYkGJUC8QzTozaaEm/Pxfayc6Xc
+         ABBV9RseGDK2KqNX6jegGeNGhToxFvEuHSmbT4HJaH/+RUhLNsJRmmFLRPGmHWHmEs6r
+         GFXZ4DF07rp2IUpKf4EiriFLeJAkma5hdyGKRy4E8R4XJKlpcQ1HZRf/vtuAfIZHPTaJ
+         twI+vPOvv5NKCBodMlEWndnONLTdoiXM83iTlyR2yiGstr4Mii93aNkX0/RTwoU5Eh6A
+         8iIE/CVOpxrAy0P5vY1UzEMdHgiWF4ZTuL0MtRRTGfOmH8OtU+TmltEGroNA2N8LmMCn
+         7aiQ==
+X-Gm-Message-State: ANhLgQ2vOS8/XLWkjJoY3KWUaRWQBBbMjXgQs3bqIpA6dasdqMU8e+kX
+        CWn1243c80zkCWTT8GzkzCBDoAnEGZbH1zwFSrvVQa3EJrpqS3ruNb4nF8oAoEaINT4cq46jpP5
+        FLMkkg/pVinv6xbqcgGUWmkeY
+X-Received: by 2002:a7b:c62a:: with SMTP id p10mr10969797wmk.46.1584722523071;
+        Fri, 20 Mar 2020 09:42:03 -0700 (PDT)
+X-Google-Smtp-Source: ADFU+vtkHHEonfjGBQvTJugKUJaMlAw3gGqsGRrGUr+boHYRapviCIkmO3jmDajId8xSHmrus3yopw==
+X-Received: by 2002:a7b:c62a:: with SMTP id p10mr10969692wmk.46.1584722521899;
+        Fri, 20 Mar 2020 09:42:01 -0700 (PDT)
+Received: from x1.localdomain (2001-1c00-0c0c-fe00-fc7e-fd47-85c1-1ab3.cable.dynamic.v6.ziggo.nl. [2001:1c00:c0c:fe00:fc7e:fd47:85c1:1ab3])
+        by smtp.gmail.com with ESMTPSA id s7sm9067396wro.10.2020.03.20.09.42.00
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 20 Mar 2020 09:42:01 -0700 (PDT)
+Subject: Re: [PATCH v12 03/10] firmware: Rename FW_OPT_NOFALLBACK to
+ FW_OPT_NOFALLBACK_SYSFS
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Ben Hutchings <ben.hutchings@codethink.co.uk>,
-        Faiz Abbas <faiz_abbas@ti.com>,
-        open list <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
-        lkft-triage@lists.linaro.org,
-        linux- stable <stable@vger.kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Anders Roxell <anders.roxell@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Cc:     Andy Lutomirski <luto@kernel.org>,
+        Ard Biesheuvel <ardb@kernel.org>,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H . Peter Anvin" <hpa@zytor.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Peter Jones <pjones@redhat.com>,
+        Dave Olsthoorn <dave@bewaar.me>, x86@kernel.org,
+        platform-driver-x86@vger.kernel.org, linux-efi@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-input@vger.kernel.org
+References: <20200115163554.101315-1-hdegoede@redhat.com>
+ <20200115163554.101315-4-hdegoede@redhat.com>
+ <20200124085751.GA2957916@kroah.com>
+ <d25d5d6e-0348-b19f-539e-048cfa70d6a6@redhat.com>
+ <20200318132741.GA2794545@kroah.com>
+ <8fa336bd-339f-40e0-08fe-e6b968736679@redhat.com>
+ <20200320140243.GA636547@kroah.com>
+From:   Hans de Goede <hdegoede@redhat.com>
+Message-ID: <1107490b-0290-5b65-c392-84de0d9dbe0e@redhat.com>
+Date:   Fri, 20 Mar 2020 17:41:59 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.6.0
+MIME-Version: 1.0
+In-Reply-To: <20200320140243.GA636547@kroah.com>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 20 Mar 2020 at 13:41, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> On Fri, Mar 20, 2020 at 09:03:17AM +0100, Greg Kroah-Hartman wrote:
-> > On Thu, Mar 19, 2020 at 08:00:32PM +0000, Ben Hutchings wrote:
-> > > On Fri, 2020-03-20 at 01:12 +0530, Naresh Kamboju wrote:
-> > > > On Thu, 19 Mar 2020 at 18:50, Greg Kroah-Hartman
-> > > > <gregkh@linuxfoundation.org> wrote:
-> > > > > This is the start of the stable review cycle for the 4.19.112 rel=
-ease.
-> > > > > There are 48 patches in this series, all will be posted as a resp=
-onse
-> > > > > to this one.  If anyone has any issues with these being applied, =
-please
-> > > > > let me know.
-> > > > >
-> > > > > Responses should be made by Sat, 21 Mar 2020 12:37:04 +0000.
-> > > > > Anything received after that time might be too late.
-> > > > >
-> > > > > The whole patch series can be found in one patch at:
-> > > > >         https://www.kernel.org/pub/linux/kernel/v4.x/stable-revie=
-w/patch-4.19.112-rc1.gz
-> > > > > or in the git tree and branch at:
-> > > > >         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linu=
-x-stable-rc.git linux-4.19.y
-> > > > > and the diffstat can be found below.
-> > > > >
-> > > > > thanks,
-> > > > >
-> > > > > greg k-h
-> > > > >
-> > > > > Faiz Abbas <faiz_abbas@ti.com>
-> > > > >     mmc: sdhci-omap: Fix Tuning procedure for temperatures < -20C
-> > > > >
-> > > > > Faiz Abbas <faiz_abbas@ti.com>
-> > > > >     mmc: sdhci-omap: Don't finish_mrq() on a command error during=
- tuning
-> > > >
-> > > > Results from Linaro=E2=80=99s test farm.
-> > > > No regressions on arm64, arm, x86_64, and i386.
-> > > >
-> > > > NOTE:
-> > > > The arm beagleboard x15 device running stable rc 4.19.112-rc1, 5.4.=
-27-rc1
-> > > > and 5.5.11-rc2 kernel pops up the following messages on console log=
-,
-> > > > Is this a problem ?
-> > > >
-> > > > [   15.737765] mmc1: unspecified timeout for CMD6 - use generic
-> > > > [   16.754248] mmc1: unspecified timeout for CMD6 - use generic
-> > > > [   16.842071] mmc1: unspecified timeout for CMD6 - use generic
-> > > > ...
-> > > > [  977.126652] mmc1: unspecified timeout for CMD6 - use generic
-> > > > [  985.449798] mmc1: unspecified timeout for CMD6 - use generic
-> > > [...]
-> > >
-> > > This warning was introduced by commit 533a6cfe08f9 "mmc: core: Defaul=
-t
-> > > to generic_cmd6_time as timeout in __mmc_switch()".  That should not =
-be
-> > > applied to stable branches; it is not valid without (at least) these
-> > > preparatory changes:
-> > >
-> > > 0c204979c691 mmc: core: Cleanup BKOPS support
-> > > 24ed3bd01d6a mmc: core: Specify timeouts for BKOPS and CACHE_FLUSH fo=
-r eMMC
-> > > ad91619aa9d7 mmc: block: Use generic_cmd6_time when modifying INAND_C=
-MD38_ARG_EXT_CSD
-> >
-> > Ok, I've now dropped that patch, which also required me to drop
-> > 1292e3efb149 ("mmc: core: Allow host controllers to require R1B for
-> > CMD6").  I've done so for 5.5.y, 5.4.y, and 4.19.y.
->
-> Ugh, I forgot, that broke other things.  I'm going to go rip out a bunch
-> of mmc patches now...
+Hi,
 
-[Am i missing rc2 tag ?]
+On 3/20/20 3:02 PM, Greg Kroah-Hartman wrote:
+> On Wed, Mar 18, 2020 at 02:56:23PM +0100, Hans de Goede wrote:
+>> Hi Greg,
+>>
+>> On 3/18/20 2:27 PM, Greg Kroah-Hartman wrote:
+>>> On Fri, Jan 24, 2020 at 10:16:48AM +0100, Hans de Goede wrote:
+>>>> Hi,
+>>>>
+>>>> On 1/24/20 9:57 AM, Greg Kroah-Hartman wrote:
+>>>>> On Wed, Jan 15, 2020 at 05:35:47PM +0100, Hans de Goede wrote:
+>>>>>> This is a preparation patch for adding a new platform fallback mechanism,
+>>>>>> which will have its own enable/disable FW_OPT_xxx option.
+>>>>>>
+>>>>>> Note this also fixes a typo in one of the re-wordwrapped comments:
+>>>>>> enfoce -> enforce.
+>>>>>>
+>>>>>> Acked-by: Luis Chamberlain <mcgrof@kernel.org>
+>>>>>> Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+>>>>>
+>>>>> I've taken this in my tree for now in a quest to try to get others to
+>>>>> pay attention to this series...
+>>>>
+>>>> Thank you.
+>>>>
+>>>> As mentioned before I believe that this series is ready for merging now.
+>>>>
+>>>> Andy Lutomirski had one last change request for v12 of the second
+>>>> patch in the series, specifically to replace the loop searching for
+>>>> the prefix with a memem, but the kernel does not have memmem.
+>>>>
+>>>> Andy, are you ok with v12 as is, given that we don't have memmem ?
+>>>>
+>>>> Assuming Andy is ok with v12 as is, then to merge this we need
+>>>> to probably wait for 5.6-rc1 and then have the x86/efi folks do
+>>>> an immutable branch with the first 2 patches of the series.
+>>>
+>>> Did this every happen?  Or do I need to dump this all into my tree?
+>>
+>> Ard has done a immutable branch with just the 2 patches:
+>>
+>> https://git.kernel.org/pub/scm/linux/kernel/git/efi/efi.git/tag/?h=stable-shared-branch-for-driver-tree
+>>
+>> I did not see any mails about this being pulled / merged, but I just
+>> checked and this has landed in the tip tree 10 days ago:
+>>
+>> https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git/log/include/linux/efi.h?h=efi/core
+>>
+>> So if you merge the stable-shared-branch-for-driver-tree tag and then
+>> merge patches 3-8 of this series (or rather 4-8 since you already
+>> merged 3 IIRC) that would be great.
+> 
+> Ok, I've merged the above branch with just the two patches, and the rest
+> of yours now, 
 
-Results from Linaro=E2=80=99s test farm.
-No regressions on arm64, arm, x86_64, and i386.
+Great, thank you!
 
-Summary
-------------------------------------------------------------------------
+> sorry this took so long.
 
-kernel: 4.19.112-rc1
-git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stab=
-le-rc.git
-git branch: linux-4.19.y
-git commit: d078cac7a42286ba7c97801a763fc42ad7baf5c1
-git describe: v4.19.109-136-gd078cac7a422
-Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-4.19-oe/bu=
-ild/v4.19.109-136-gd078cac7a422
+No problem, I'm quite happy this is queued for 5.7 now, I was
+afraid it was going to slip to 5.8.
 
+Regards,
 
-No regressions (compared to build v4.19.109)
+Hans
 
-No fixes (compared to build v4.19.109)
-
-Ran 23963 total tests in the following environments and test suites.
-
-Environments
---------------
-- dragonboard-410c - arm64
-- hi6220-hikey
-- i386
-- juno-r2 - arm64
-- juno-r2-compat
-- juno-r2-kasan
-- nxp-ls2088
-- x15
-- x86_64
-- x86-kasan
-- qemu_arm
-- qemu_arm64
-- qemu_i386
-- qemu_x86_64
-
-
-Test Suites
------------
-* install-android-platform-tools-r2800
-* linux-log-parser
-* ltp-ipc-tests
-* v4l2-compliance
-* kvm-unit-tests
-* libhugetlbfs
-* ltp-cap_bounds-tests
-* ltp-commands-tests
-* ltp-containers-tests
-* ltp-cpuhotplug-tests
-* ltp-crypto-tests
-* ltp-cve-tests
-* ltp-dio-tests
-* ltp-fcntl-locktests-tests
-* ltp-filecaps-tests
-* ltp-fs-tests
-* ltp-fs_bind-tests
-* ltp-fs_perms_simple-tests
-* ltp-fsx-tests
-* ltp-hugetlb-tests
-* ltp-io-tests
-* ltp-math-tests
-* ltp-mm-tests
-* ltp-nptl-tests
-* ltp-pty-tests
-* ltp-sched-tests
-* ltp-securebits-tests
-* ltp-syscalls-tests
-
---=20
-Linaro LKFT
-https://lkft.linaro.org
