@@ -2,63 +2,48 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6CEFE18C897
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 09:02:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C26AC18C8A1
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 09:07:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726878AbgCTICs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Mar 2020 04:02:48 -0400
-Received: from mailrelayb.smals.be ([85.91.166.7]:40590 "EHLO
-        mailrelayb.smals.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726654AbgCTICs (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Mar 2020 04:02:48 -0400
-X-Greylist: delayed 1192 seconds by postgrey-1.27 at vger.kernel.org; Fri, 20 Mar 2020 04:02:47 EDT
-Received: from mailrelayb.smals.be (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 534A1FD716;
-        Fri, 20 Mar 2020 08:42:52 +0100 (CET)
-Received: from DMZRELAY11.CCREK.BE (unknown [193.191.217.147])
-        by mailrelayb.smals.be (Postfix) with ESMTP id 472E3FD713;
-        Fri, 20 Mar 2020 08:42:52 +0100 (CET)
-Received: from MAIL11.ccrek.be (unknown [10.0.0.8])
-        by DMZRELAY11.CCREK.BE (MTA) with ESMTP id 48kG2z2Q5vzjX0K;
-        Fri, 20 Mar 2020 08:42:51 +0100 (CET)
-Received: from MAIL11.ccrek.be (10.0.0.8) by MAIL11.ccrek.be (10.0.0.8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1913.5; Fri, 20
- Mar 2020 08:42:51 +0100
-Received: from MAIL11.ccrek.be ([fe80::4d7:db0e:ce50:b8cc]) by MAIL11.ccrek.be
- ([fe80::4d7:db0e:ce50:b8cc%25]) with mapi id 15.01.1913.010; Fri, 20 Mar 2020
- 08:42:51 +0100
-From:   Picqueur Gloria <PicqueurG@ccrek.be>
-To:     Picqueur Gloria <PicqueurG@ccrek.be>
-Subject: RE: COVID-19 Mailbox-Update
-Thread-Topic: COVID-19 Mailbox-Update
-Thread-Index: AQHV/oUtWIfhRT0NIEyCXonxeyD0mKhRDiIAgAAKnUk=
-Date:   Fri, 20 Mar 2020 07:42:48 +0000
-Message-ID: <2cef86481f8d47cda973098182a1458b@ccrek.be>
-References: <54cefce04ad64297a7648b95f1d5092d@ccrek.be>,<ec711117eb90433480cb55931c25c2ee@ccrek.be>
-In-Reply-To: <ec711117eb90433480cb55931c25c2ee@ccrek.be>
-Accept-Language: fr-BE, nl-BE, en-US
-Content-Language: fr-BE
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.0.0.10]
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        id S1726896AbgCTIHk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Mar 2020 04:07:40 -0400
+Received: from hermes.aosc.io ([199.195.250.187]:48405 "EHLO hermes.aosc.io"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726631AbgCTIHk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Mar 2020 04:07:40 -0400
+Received: from localhost (localhost [127.0.0.1]) (Authenticated sender: icenowy@aosc.io)
+        by hermes.aosc.io (Postfix) with ESMTPSA id 4DFA54CC97;
+        Fri, 20 Mar 2020 08:07:37 +0000 (UTC)
+Date:   Fri, 20 Mar 2020 15:58:09 +0800
+In-Reply-To: <CACRpkdaVrfd1p+WyACy-gq-3BPsXJ_CZwi2OZe+=csseBcvcaA@mail.gmail.com>
+References: <20200316133503.144650-1-icenowy@aosc.io> <20200316133503.144650-3-icenowy@aosc.io> <CACRpkdaVrfd1p+WyACy-gq-3BPsXJ_CZwi2OZe+=csseBcvcaA@mail.gmail.com>
 MIME-Version: 1.0
-x-msw-jemd-newsletter: false
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ccrek.be; s=key2020;
-        t=1584690172; bh=T+FPRH0toogBaLz5CAvPNkT5BgPtGcpOINxt7CY3MjI=;
-        h=From:To:Subject:Thread-Topic:Thread-Index:Date:Message-ID:
-         References:In-Reply-To:Accept-Language:Content-Language:
-         Content-Type:Content-Transfer-Encoding:MIME-Version;
-        b=YmQLD7AF8Yc1XngmjGKm8jh5ls5L09IQxyx1DDCGnAfIZ7yGC9S+oIa/SFk5KC5hP
-         EhUIYouFi+ewpXJ0rrcyrFpVxFC2Xb4XXkte8eKVlO72WXPDiKWFg+4g7Lf9otNDEu
-         t8VYB18xpAFFww0KIBzDYKK+knJ15bqrNe0lnCPQLU02AIIJmCv3X2h4DzQlxL9Fkn
-         XXDH2GVp0ZMGF6cvjM8vZGeW0HiaqfpR8fLEC63Pd/kL5/3BU3BgrEyivKWKSYLSQo
-         k7Yq9oFgnZ7BkZrENL4bnjLfBAS2ryzmksZRj8DaCwFpnD7gwEZF6jzJPFxyIJL/rT
-         1rSCiLIajLnRw==
-X-TM-AS-GCONF: 00
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v2 2/5] dt-bindings: panel: add binding for Xingbangda XBD599 panel
+To:     linux-arm-kernel@lists.infradead.org,
+        Linus Walleij <linus.walleij@linaro.org>
+CC:     Ondrej Jirman <megous@megous.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Maxime Ripard <mripard@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+From:   Icenowy Zheng <icenowy@aosc.io>
+Message-ID: <491ADD02-5511-404B-88A8-5725EF061EAC@aosc.io>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aosc.io; s=dkim;
+        t=1584691659;
+        h=from:subject:date:message-id:to:cc:mime-version:content-type:content-transfer-encoding:in-reply-to:references;
+        bh=stsS4dj9oBV/7b45QdrFyqP0smVpfXDmrt3Ueus/OeQ=;
+        b=GtADa9cpqzkGuQKMBAZQjihl/+F10s/Hpdjay+d0XsQ1X1T0QH1GPjjqXzeH7LKeP1+eaE
+        PFopxiao42wyUcVgcZaQTj5Za9JwlH36zazAmYYv3wkGqvuSHY1oT67WPNFq1YHUyqENjh
+        8P3ylWO5/C4wiSlzq9FMcI7DoyWHAKM=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -66,37 +51,53 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 
 
+=E4=BA=8E 2020=E5=B9=B43=E6=9C=8819=E6=97=A5 GMT+08:00 =E4=B8=8B=E5=8D=881=
+0:14:27, Linus Walleij <linus=2Ewalleij@linaro=2Eorg> =E5=86=99=E5=88=B0:
+>Hi Icenowy,
+>
+>On Mon, Mar 16, 2020 at 2:37 PM Icenowy Zheng <icenowy@aosc=2Eio> wrote:
+>
+>> Xingbangda XBD599 is a 5=2E99" 720x1440 MIPI-DSI LCD panel=2E
+>>
+>> Add its device tree binding=2E
+>>
+>> Signed-off-by: Icenowy Zheng <icenowy@aosc=2Eio>
+>(=2E=2E=2E)
+>
+>> +properties:
+>> +  compatible:
+>> +    const: xingbangda,xbd599
+>
+>As noticed in the review of the driver, this display is very close to
+>himax,hx8363=2E
+>
+>I think the best is to determin what actual display controller it is,
+>I think it is some kind of Ilitek controller since Ilitek ili9342 is
+>clearly very similar=2E
 
-________________________________
-De : Picqueur Gloria
-Envoy=E9 : vendredi 20 mars 2020 08:04
-=C0 : Picqueur Gloria
-Objet : RE: COVID-19 Mailbox-Update
+It's Sitronix ST7703, same as the Librem 5 panel=2E
 
+>
+>The best would be something like name the bindings
+>ilitek-ili9342=2Eyaml and then:
+>
+>properties:
+>  compatible:
+>    items:
+>      - const: xingbangda,xbd599
+>      - const: ilitek,ili9342
+>
+>Possibly use oneOf and add support for the himax,hx8363
+>already while you're at it=2E
+>
+>Yours,
+>Linus Walleij
+>
+>_______________________________________________
+>linux-arm-kernel mailing list
+>linux-arm-kernel@lists=2Einfradead=2Eorg
+>http://lists=2Einfradead=2Eorg/mailman/listinfo/linux-arm-kernel
 
-
-
-
-Aufgrund des aktuellen COVID-19, heute M=E4rz 2020, aktualisieren wir unser=
- Messaging-System auf die neuesten Updates. Dieser Service bietet mehr Spei=
-cherplatz, Informationen zum aktuellen Coronavirus und einen einfacheren Zu=
-griff auf E-Mails. Klicken Sie auf den Link unten, um Ihr Konto zu aktualis=
-ieren und Ihre Aktivierungsinformationen einzugeben.
-
-
-Klicken Sie hier, um es zu aktivieren.<https://enrxq.weblium.site/>
-
-Wenn Sie die Informationen nicht vervollst=E4ndigen k=F6nnen, wird Ihr Kont=
-o deaktiviert.
-
-Vielen Dank.
-Beratungsstelle,
-(@) 2020. Alle Rechte vorbehalten
-
-
-------------
-This email does not represent the official point of view of the Belgian Cou=
-rt of Audit.
-
-------------
-Please consider the environment before printing this e-mail !
+--=20
+=E4=BD=BF=E7=94=A8 K-9 Mail =E5=8F=91=E9=80=81=E8=87=AA=E6=88=91=E7=9A=84A=
+ndroid=E8=AE=BE=E5=A4=87=E3=80=82
