@@ -2,185 +2,162 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CB6C71967A1
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Mar 2020 17:46:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4420F196793
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Mar 2020 17:45:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727976AbgC1Qpn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 28 Mar 2020 12:45:43 -0400
-Received: from mx.sdf.org ([205.166.94.20]:50074 "EHLO mx.sdf.org"
+        id S1727801AbgC1Qnq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 28 Mar 2020 12:43:46 -0400
+Received: from mx.sdf.org ([205.166.94.20]:50046 "EHLO mx.sdf.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727750AbgC1Qnd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 28 Mar 2020 12:43:33 -0400
+        id S1727706AbgC1Qn3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 28 Mar 2020 12:43:29 -0400
 Received: from sdf.org (IDENT:lkml@sdf.lonestar.org [205.166.94.16])
-        by mx.sdf.org (8.15.2/8.14.5) with ESMTPS id 02SGhJqQ014207
+        by mx.sdf.org (8.15.2/8.14.5) with ESMTPS id 02SGhQWq022097
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits) verified NO);
-        Sat, 28 Mar 2020 16:43:20 GMT
+        Sat, 28 Mar 2020 16:43:27 GMT
 Received: (from lkml@localhost)
-        by sdf.org (8.15.2/8.12.8/Submit) id 02SGhJ0C010012;
-        Sat, 28 Mar 2020 16:43:19 GMT
-Message-Id: <202003281643.02SGhJ0C010012@sdf.org>
+        by sdf.org (8.15.2/8.12.8/Submit) id 02SGhQQ5025294;
+        Sat, 28 Mar 2020 16:43:26 GMT
+Message-Id: <202003281643.02SGhQQ5025294@sdf.org>
 From:   George Spelvin <lkml@sdf.org>
-Date:   Sun, 8 Mar 2020 06:09:17 -0400
-Subject: [RFC PATCH v1 33/50] lib/test_vmalloc.c: Use pseudorandom numbers
+Date:   Fri, 20 Mar 2020 19:38:09 -0400
+Subject: [RFC PATCH v1 50/50] random: add get_random_nonce()
 To:     linux-kernel@vger.kernel.org, lkml@sdf.org
-Cc:     Uladzislau Rezki <urezki@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Roman Gushchin <guro@fb.com>, linux-mm@kvack.org
+Cc:     "Theodore Ts'o" <tytso@mit.edu>,
+        "Jason A. Donenfeld" <Jason@zx2c4.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Test code doesn't need crypto-grade randomness.
+This is like get_random_bytes(), but uses the same batched entropy
+buffer as get_random_u32().
 
-Also:
-* Simplify shuffle_array using the initialize-while-shuffling
-  Fisher-Yates variant.
-* Shrink the data type to u8; it's currently shuffling 8 items and
-  exceeding 256 will not happen soon.
-* Implement the sequential_test_order flag inside shuffle_array
-  rather than testing it at each call site.  (This is implemented the
-  compact way using an invariant conditional branch inside the loop.
-  Modern branch predictors handle such things very efficiently.)
+Many kernel users of get_random_bytes could be switched to this.
+E.g. eth_random_addr().
+
+But before doing that, we should decide if it wouldn't be better
+to rename this function to get_random_bytes, and let the smaller
+number of sites which really need strongly secure random numbers
+use a different name like "get_secret_bytes()".
+
+Code size +731 bytes (x86-64)
 
 Signed-off-by: George Spelvin <lkml@sdf.org>
-Cc: Uladzislau Rezki (Sony) <urezki@gmail.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Roman Gushchin <guro@fb.com>
-Cc: linux-mm@kvack.org
+Cc: Theodore Ts'o <tytso@mit.edu>
+Cc: Jason A. Donenfeld <Jason@zx2c4.com>
 ---
- lib/test_vmalloc.c | 58 ++++++++++++++++++----------------------------
- 1 file changed, 23 insertions(+), 35 deletions(-)
+ drivers/char/random.c  | 77 ++++++++++++++++++++++++++++++++++++++++++
+ include/linux/random.h |  1 +
+ 2 files changed, 78 insertions(+)
 
-diff --git a/lib/test_vmalloc.c b/lib/test_vmalloc.c
-index 8bbefcaddfe84..27b06c97a2a08 100644
---- a/lib/test_vmalloc.c
-+++ b/lib/test_vmalloc.c
-@@ -74,22 +74,20 @@ test_report_one_done(void)
+diff --git a/drivers/char/random.c b/drivers/char/random.c
+index 67bdfb51eb25c..02e80000310ce 100644
+--- a/drivers/char/random.c
++++ b/drivers/char/random.c
+@@ -342,6 +342,7 @@
+ #include <asm/irq.h>
+ #include <asm/irq_regs.h>
+ #include <asm/io.h>
++#include <asm/unaligned.h>
  
- static int random_size_align_alloc_test(void)
- {
--	unsigned long size, align, rnd;
-+	unsigned long size, align;
- 	void *ptr;
- 	int i;
- 
- 	for (i = 0; i < test_loop_count; i++) {
--		get_random_bytes(&rnd, sizeof(rnd));
--
- 		/*
- 		 * Maximum 1024 pages, if PAGE_SIZE is 4096.
- 		 */
--		align = 1 << (rnd % 23);
-+		align = prandom_u32_max(23);
- 
- 		/*
- 		 * Maximum 10 pages.
- 		 */
--		size = ((rnd % 10) + 1) * PAGE_SIZE;
-+		size = (prandom_u32_max(10) + 1) * PAGE_SIZE;
- 
- 		ptr = __vmalloc_node_range(size, align,
- 		   VMALLOC_START, VMALLOC_END,
-@@ -157,20 +155,16 @@ static int fix_align_alloc_test(void)
- 
- static int random_size_alloc_test(void)
- {
--	unsigned int n;
- 	void *p;
- 	int i;
- 
- 	for (i = 0; i < test_loop_count; i++) {
--		get_random_bytes(&n, sizeof(i));
--		n = (n % 100) + 1;
--
--		p = vmalloc(n * PAGE_SIZE);
-+		p = vmalloc((prandom_u32_max(100) + 1) * PAGE_SIZE);
- 
- 		if (!p)
- 			return -1;
- 
--		*((__u8 *)p) = 1;
-+		*(__u8 *)p = 1;
- 		vfree(p);
- 	}
- 
-@@ -304,16 +298,12 @@ pcpu_alloc_test(void)
- 		return -1;
- 
- 	for (i = 0; i < 35000; i++) {
--		unsigned int r;
--
--		get_random_bytes(&r, sizeof(i));
--		size = (r % (PAGE_SIZE / 4)) + 1;
-+		size = prandom_u32_max(PAGE_SIZE / 4) + 1;
- 
- 		/*
- 		 * Maximum PAGE_SIZE
- 		 */
--		get_random_bytes(&r, sizeof(i));
--		align = 1 << ((i % 11) + 1);
-+		align = 1 << (prandom_u32_max(PAGE_SHIFT-1) + 1);
- 
- 		pcpu[i] = __alloc_percpu(size, align);
- 		if (!pcpu[i])
-@@ -362,28 +352,30 @@ static struct test_driver {
- 	int cpu;
- } per_cpu_test_driver[NR_CPUS];
- 
--static void shuffle_array(int *arr, int n)
-+/*
-+ * Generate a permutation array.  Shuffled by default, or
-+ * the identity mapping if sequential_test_order is set.
-+ */
-+static void shuffle_array(u8 *arr, int n)
- {
--	unsigned int rnd;
--	int i, j, x;
-+	int i;
- 
--	for (i = n - 1; i > 0; i--)  {
--		get_random_bytes(&rnd, sizeof(rnd));
-+	arr[0] = 0;
- 
--		/* Cut the range. */
--		j = rnd % i;
--
--		/* Swap indexes. */
--		x = arr[i];
--		arr[i] = arr[j];
--		arr[j] = x;
-+	for (i = 1; i < n; i++) {
-+		int j = i;
-+		if  (!sequential_test_order) {
-+			j = prandom_u32_max(i+1);
-+			arr[i] = arr[j];
-+		}
-+		arr[j] = i;
- 	}
+ #define CREATE_TRACE_POINTS
+ #include <trace/events/random.h>
+@@ -2569,6 +2570,82 @@ u32 get_random_u32(void)
  }
+ EXPORT_SYMBOL(get_random_u32);
  
- static int test_func(void *private)
++/**
++ * get_random_nonce - Generate a random string of bytes
++ * @buf:	The buffer to fill
++ * @nbytes:	The size of the buffer
++ *
++ * This generates cryptographically strong bytes, at less cost than
++ * get_random_bytes.  In particular, anti-backtracking is not
++ * provided.  It is suitable for public values (random cookies or
++ * MAC addresses which are supposed to be unguessable), and for
++ * secret values which are stored in the kernel as long as they
++ * are valuable, such as SipHash keys or stack canaries.
++ *
++ * In general, if the calling code does not use memzero_explicit(), it
++ * is safe to use this function rather than get_random_bytes.
++ *
++ * TODO: Perhaps get_random_bytes should be renamed to get_secret_bytes
++ * and this function should be renamed to get_random_bytes?
++ */
++void get_random_nonce(void *buf, size_t nbytes)
++{
++	unsigned long ret;
++	size_t pos;
++	unsigned long flags;
++	struct batched_entropy *batch;
++	static void *previous;
++
++#ifdef CONFIG_HAVE_EFFICIENT_UNALIGNED_ACCESS
++	while (nbytes >= sizeof(ret)) {
++		if (!arch_get_random_long(buf))
++			goto software;
++		buf += sizeof(ret);
++		nbytes -= sizeof(ret);
++	}
++	if (nbytes) {
++		if (!arch_get_random_long(&ret))
++			goto software;
++		memcpy(buf, &ret, nbytes);
++	}
++	return;
++software:
++#else
++	while (arch_get_random_long(&ret)) {
++		if (nbytes > sizeof(ret)) {
++			put_unaligned(ret, (unsigned long *)buf);
++			buf += sizeof(ret);
++			nbytes -= sizeof(ret);
++		} else {
++			memcpy(buf, &ret, nbytes);
++			return;
++		}
++	}
++#endif
++
++	warn_unseeded_randomness(&previous);
++
++	local_irq_save(flags);
++	batch = this_cpu_ptr(&batched_entropy);
++	pos = batch->position + 1;
++	if (unlikely(crng_init != batch->crng_init)) {
++		batch->crng_init = crng_init;
++		pos = CHACHA_BLOCK_SIZE;
++	}
++
++	while (nbytes > CHACHA_BLOCK_SIZE - pos) {
++		memcpy(buf, batch->entropy8 + pos, CHACHA_BLOCK_SIZE - pos);
++		buf += CHACHA_BLOCK_SIZE - pos;
++		nbytes -= CHACHA_BLOCK_SIZE - pos;
++		extract_crng(batch->entropy32);
++		pos = 0;
++	}
++	batch->position = pos + nbytes - 1;
++	memcpy(buf, batch->entropy8 + pos, nbytes);
++	local_irq_restore(flags);
++}
++EXPORT_SYMBOL(get_random_nonce);
++
+ /**
+  * __get_random_max32 - Generate a uniform random number 0 <= x < range < 2^32
+  * @range:	Modulus for random number; must not be zero!
+diff --git a/include/linux/random.h b/include/linux/random.h
+index 97d3469f3aad8..de9eae20b69af 100644
+--- a/include/linux/random.h
++++ b/include/linux/random.h
+@@ -50,6 +50,7 @@ extern const struct file_operations random_fops, urandom_fops;
+ 
+ u32 get_random_u32(void);
+ u64 get_random_u64(void);
++void get_random_nonce(void *buf, size_t nbytes);
+ static inline unsigned int get_random_int(void)
  {
- 	struct test_driver *t = private;
--	int random_array[ARRAY_SIZE(test_case_array)];
-+	u8 random_array[ARRAY_SIZE(test_case_array)];
- 	int index, i, j;
- 	ktime_t kt;
- 	u64 delta;
-@@ -391,11 +383,7 @@ static int test_func(void *private)
- 	if (set_cpus_allowed_ptr(current, cpumask_of(t->cpu)) < 0)
- 		pr_err("Failed to set affinity to %d CPU\n", t->cpu);
- 
--	for (i = 0; i < ARRAY_SIZE(test_case_array); i++)
--		random_array[i] = i;
--
--	if (!sequential_test_order)
--		shuffle_array(random_array, ARRAY_SIZE(test_case_array));
-+	shuffle_array(random_array, ARRAY_SIZE(test_case_array));
- 
- 	/*
- 	 * Block until initialization is done.
+ 	return get_random_u32();
 -- 
 2.26.0
 
