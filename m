@@ -2,165 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E037118CCEF
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 12:26:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E8D2C18CCFF
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 12:28:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727298AbgCTLZr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Mar 2020 07:25:47 -0400
-Received: from foss.arm.com ([217.140.110.172]:47686 "EHLO foss.arm.com"
+        id S1726954AbgCTL2d (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Mar 2020 07:28:33 -0400
+Received: from foss.arm.com ([217.140.110.172]:47774 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727280AbgCTLZq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Mar 2020 07:25:46 -0400
+        id S1726806AbgCTL2d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Mar 2020 07:28:33 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id F046231B;
-        Fri, 20 Mar 2020 04:25:45 -0700 (PDT)
-Received: from C02TD0UTHF1T.local (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7E2EE3F85E;
-        Fri, 20 Mar 2020 04:25:44 -0700 (PDT)
-Date:   Fri, 20 Mar 2020 11:25:38 +0000
-From:   Mark Rutland <mark.rutland@arm.com>
-To:     Tuan Phan <tuanphan@amperemail.onmicrosoft.com>
-Cc:     Tuan Phan <tuanphan@os.amperecomputing.com>,
-        Will Deacon <will@kernel.org>, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] driver/perf: Add PMU driver for the ARM DMC-620 memory
- controller.
-Message-ID: <20200320105315.GA35932@C02TD0UTHF1T.local>
-References: <1584491381-31492-1-git-send-email-tuanphan@os.amperecomputing.com>
- <20200319151646.GC4876@lakrids.cambridge.arm.com>
- <23AD5E45-15E3-4487-9B0D-0D9554DD9DE8@amperemail.onmicrosoft.com>
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 882ED31B;
+        Fri, 20 Mar 2020 04:28:30 -0700 (PDT)
+Received: from e107158-lin.cambridge.arm.com (e107158-lin.cambridge.arm.com [10.1.195.21])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A7D863F85E;
+        Fri, 20 Mar 2020 04:28:28 -0700 (PDT)
+Date:   Fri, 20 Mar 2020 11:28:26 +0000
+From:   Qais Yousef <qais.yousef@arm.com>
+To:     Josh Don <joshdon@google.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Li Zefan <lizefan@huawei.com>, Tejun Heo <tj@kernel.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        cgroups@vger.kernel.org, Paul Turner <pjt@google.com>
+Subject: Re: [PATCH v2] sched/cpuset: distribute tasks within affinity masks
+Message-ID: <20200320112825.gn5glqsy6uebxp3w@e107158-lin.cambridge.arm.com>
+References: <20200311010113.136465-1-joshdon@google.com>
+ <20200311140533.pclgecwhbpqzyrks@e107158-lin.cambridge.arm.com>
+ <20200317192401.GE20713@hirez.programming.kicks-ass.net>
+ <CABk29NuAYvkqNmZZ6cjZBC6=hv--2siPPjZG-BUpNewxm02O6A@mail.gmail.com>
+ <20200318113456.3h64jpyb6xiczhcj@e107158-lin.cambridge.arm.com>
+ <CABk29NvvJCYyEnEkDt4JgZacf6XLd+0wxx_BNGnX8oZcrBp4EA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <23AD5E45-15E3-4487-9B0D-0D9554DD9DE8@amperemail.onmicrosoft.com>
+In-Reply-To: <CABk29NvvJCYyEnEkDt4JgZacf6XLd+0wxx_BNGnX8oZcrBp4EA@mail.gmail.com>
+User-Agent: NeoMutt/20171215
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 19, 2020 at 12:03:43PM -0700, Tuan Phan wrote:
-> Hi Mark,
-> Please find my comments below.
+On 03/19/20 15:45, Josh Don wrote:
+> On Wed, Mar 18, 2020 at 4:35 AM Qais Yousef <qais.yousef@arm.com> wrote:
+> >
+> > On 03/17/20 14:35, Josh Don wrote:
+> > > On Wed, Mar 11, 2020 at 7:05 AM Qais Yousef <qais.yousef@arm.com> wrote:
+> > > >
+> > > > It might be a good idea to split the API from the user too.
+> > >
+> > > Not sure what you mean by this, could you clarify?
+> >
+> > I meant it'd be a good idea to split the cpumask API into its own patch and
+> > have a separate patch for the user in sched/core.c. But that was a small nit.
+> > If the user (in sched/core.c) somehow introduces a regression, reverting it
+> > separately should be trivial.
+> >
+> > Thanks
+> 
+> Ah, yes I agree that sounds like a good idea, I can do that.
+> 
+> Peter, any other nit before I re-send?
 
-Hi Tuan,
+AFAICT it was already picked up, so no need to resend to fix the nits from my
+side.
 
-As Will said, *please* set up a more usual mail clinet configuration if
-you can. The reply style (with lines starting with '=>') is unusual and
-very painful to spot.
-
-> > On Mar 19, 2020, at 8:16 AM, Mark Rutland <mark.rutland@arm.com> wrote:
-> > 
-> > Hi Tuan,
-> > 
-> > On Tue, Mar 17, 2020 at 05:29:38PM -0700, Tuan Phan wrote:
-> >> DMC-620 PMU supports total 10 counters which each is
-> >> independently programmable to different events and can
-> >> be started and stopped individually.
-> > 
-> > Looking at the TRM for DMC-620, the PMU registers are not in a separate
-> > frame from the other DMC control registers, and start at offset 0xA00
-> > (AKA 2560). I would generally expect that access to the DMC control
-> > registers was restricted to the secure world; is that not the case on
-> > your platform?
-> > 
-> > I ask because if those are not restricted, the Normal world could
-> > potentially undermine the Secure world through this (e.g. playing with
-> > training settings, messing with the physical memory map, injecting RAS
-> > errors). Have you considered this?
-> => Only PMU registers can be accessed within normal world. I only pass
-> PMU registers (offset 0xA00) to kernel so shouldn’t be problem.
-
-Sure, you only *describe* that in the ACPI tables, but I can't see how
-that's access control is enforced in the hardware, because these
-registers fall in the same 4K page as other control registers, and
-AFAICT the IP doesn't distinguish S/NS accesses.
-
-If the Secure world on your part uses DRAM (including the secure
-portions of IPs like SMMUs), you *must* ensure that the Normal world
-cannot access those other control registers, or it can corrupt Secure
-world state and escalate privilege.
-
-Is that not a concern here?
-
-> >> DMC-620 PMU devices are named as arm_dmc620_<uid> where
-> >> <uid> is the UID of DMC-620 PMU ACPI node. Currently, it only
-> >> supports ACPI. Other platforms feel free to test and add
-> >> support for device tree.
-> >> 
-> >> Usage example:
-> >>  #perf stat -e arm_dmc620_0/clk_cycle_count/ -C 0
-> >>  Get perf event for clk_cycle_count counter.
-> >> 
-> >>  #perf stat -e arm_dmc620_0/clkdiv2_allocate,mask=0x1f,match=0x2f,
-> >>  incr=2,invert=1/ -C 0
-> >>  The above example shows how to specify mask, match, incr,
-> >>  invert parameters for clkdiv2_allocate event.
-> > 
-> > [...]
-> > 
-> >> +#define DMC620_CNT_MAX_PERIOD				0xffffffff
-> >> +#define DMC620_PMU_CLKDIV2_MAX_COUNTERS			8
-> >> +#define DMC620_PMU_CLK_MAX_COUNTERS			2
-> >> +#define DMC620_PMU_MAX_COUNTERS				\
-> >> +	(DMC620_PMU_CLKDIV2_MAX_COUNTERS + DMC620_PMU_CLK_MAX_COUNTERS)
-> >> +
-> >> +#define DMC620_PMU_OVERFLOW_STATUS_CLKDIV2_OFFSET	8
-> > 
-> > This appears to be relative to 0xA00. What exactly does your ACPI
-> > description provide? The whole set of DMC registers, or just the PMU
-> > registers?
-> => Just PMU registers from 0xA00 to 0xBFF.
-
-I don't believe that is correct; see below w.r.t. the ACPI binding.
-
-> >> +static int arm_dmc620_pmu_dev_init(struct arm_dmc620_pmu *dmc620_pmu)
-> >> +{
-> >> +	struct platform_device *pdev = dmc620_pmu->pdev;
-> >> +	int ret;
-> >> +
-> >> +	ret = devm_request_irq(&pdev->dev, dmc620_pmu->irq,
-> >> +				arm_dmc620_pmu_handle_irq,
-> >> +				IRQF_SHARED,
-> >> +				dev_name(&pdev->dev), dmc620_pmu);
-> > 
-> > This should have IRQF_NOBALANCING | IRQF_NO_THREAD. I don't think we
-> > should have IRQF_SHARED.
-> => I agree on having IRQF_NOBALANCING and IRQF_NO_THREAD. But
-> IRQF_SHARED is needed. In our platform all DMC620s share same IRQs and
-> any cpus can access the pmu registers.
-
-Linux needs to ensure that the same instance is concistently accessed
-from the same CPU, and needs to migrate the IRQ to handle that. Given we
-do that on a per-instance basis, we cannot share the IRQ with another
-instance.
-
-Please feed back to you HW designers that muxing IRQs like this causes
-significant problems for software.
-
-> > 
-> > [...]
-> > 
-> >> +static const struct acpi_device_id arm_dmc620_acpi_match[] = {
-> >> +	{ "ARMHD620", 0},
-> >> +	{},
-> >> +};
-> > 
-> > Just to check, was this ID allocated by Arm, or have you allocated it?
-> => ID was allocated by ARM. Please refer to 
-> https://static.docs.arm.com/den0093/a/DEN0093_ACPI_Arm_Components_1.0.pdf <https://static.docs.arm.com/den0093/a/DEN0093_ACPI_Arm_Components_1.0.pdf>
-
-Thanks for the link! For this _HID, the document says the _CRS contains
-a QWordMemory Base address, which the full description is:
-
-| Base Address of the DMC620 in the system address map
-
-... which would presumably mean the *entire* set of MMIO registers, not
-just the PMU portion. The example firmly hints that it is the entire set
-of MMIO registers:
-
-| In this example, the DMC620 register space is mapped to a 64K range
-| that begins at offset 0x80CAFE0000 in the system address space
-
-Thanks,
-Mark.
+--
+Qais Yousef
