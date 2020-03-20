@@ -2,236 +2,139 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 48C5818D9C8
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 21:56:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5662218D9DD
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 21:56:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727319AbgCTUz5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Mar 2020 16:55:57 -0400
-Received: from mga11.intel.com ([192.55.52.93]:32133 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727261AbgCTUzu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Mar 2020 16:55:50 -0400
-IronPort-SDR: 8BiWnNS+6mXPlf4+gzqOzbZ6athxilkvaY5AY5DwpOuvj/w6Y8GmsdlCo60KzmEpipwuwRN+3u
- bZ6mD/W67mow==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Mar 2020 13:55:49 -0700
-IronPort-SDR: +0unh8FONmtrG2sfnffBwNWGCe9gpTodDsZWyehaUdctPxUcGfVFDt60dRhTfzLxKOIwlyUizX
- FJNNMGUF3iLw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.72,285,1580803200"; 
-   d="scan'208";a="280543339"
-Received: from sjchrist-coffee.jf.intel.com ([10.54.74.202])
-  by fmsmga002.fm.intel.com with ESMTP; 20 Mar 2020 13:55:49 -0700
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Christian Borntraeger <borntraeger@de.ibm.com>,
-        Janosch Frank <frankja@linux.ibm.com>,
-        Paolo Bonzini <pbonzini@redhat.com>
-Cc:     David Hildenbrand <david@redhat.com>,
-        Cornelia Huck <cohuck@redhat.com>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Qian Cai <cai@lca.pw>,
-        Peter Xu <peterx@redhat.com>
-Subject: [PATCH 7/7] KVM: selftests: Add "delete" testcase to set_memory_region_test
-Date:   Fri, 20 Mar 2020 13:55:46 -0700
-Message-Id: <20200320205546.2396-8-sean.j.christopherson@intel.com>
-X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200320205546.2396-1-sean.j.christopherson@intel.com>
-References: <20200320205546.2396-1-sean.j.christopherson@intel.com>
+        id S1727486AbgCTU4i (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Mar 2020 16:56:38 -0400
+Received: from mail-vs1-f68.google.com ([209.85.217.68]:32939 "EHLO
+        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727422AbgCTU4g (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Mar 2020 16:56:36 -0400
+Received: by mail-vs1-f68.google.com with SMTP id y138so4941525vsy.0
+        for <linux-kernel@vger.kernel.org>; Fri, 20 Mar 2020 13:56:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=OYdG2hZZXDgzoLuLkSsYKB717kSEQmaZ6NuxIAkbkRI=;
+        b=gcT/fSxvwm997aNwLBz/zCmRcQu7nWKXDJpT0PIDSQR8ASPqr6q7+iYrqwNI9OOzx5
+         HHoQ5CvwCFDFgIo3RDlaOMxpWDiYkob13WZ1XDH5c0lg54kPSz9RBhPZ9UN6Qh7jhU5U
+         MUILZ0Echiv7Ns1i1d7cKl6S/BY1KfmH59RFQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=OYdG2hZZXDgzoLuLkSsYKB717kSEQmaZ6NuxIAkbkRI=;
+        b=GGOqODzP0xl4w0RnULoA3nl42oBlQ62RPJWsWA/uOYriEZWtnfdY54DSmjUbyhP7TL
+         SrodpZTQNyo3pMB0l7vnl3lslMTRNyQBjwlxX/YeRaRJSEoa49vckDyU/BqVW7sOZs86
+         7LDH+0QHCLsnj9r7IO9Ac/5n4USROsgLHl/ob58jcxe2sHCYXk9VeQcoJmnKfg0MiPop
+         B/pYJm2r5Mw4pSszgrLhaLEDtlTBU2sekPzwBozPgQmO+2Bwcrw9xHTsrxXwEfrewfN5
+         Ep/T8+MH8Ln/FhIEyAkqy2LJ8KtcAY9cXQfX2rAs0Nxb4D7xUDg+v4dmutbmAY9mBT1G
+         EIGA==
+X-Gm-Message-State: ANhLgQ3pNOtDcGeCVRL0gHq5FgZ1eAQp/COTW+KzXIjHuwwwgKdOrbvJ
+        5orFbX64Ui0YEoYooVVRYWulGvfEOlvPt6+QFxU1hg==
+X-Google-Smtp-Source: ADFU+vtcGXL3fhlGGMllbHl+g02q56snlZV+onuaMun/wEuC1hbpQwMm+tjNvRXzZoBInnt9/mzSWyrRn3dNAiDI9JE=
+X-Received: by 2002:a67:ec81:: with SMTP id h1mr6782268vsp.96.1584737794701;
+ Fri, 20 Mar 2020 13:56:34 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20200320020153.98280-1-abhishekpandit@chromium.org>
+ <20200319190144.1.I40cc9b3d5de04f0631c931d94757fb0f462b24bd@changeid> <CAD=FV=XT=NTyPag9wNCotATBzT4v9pg=OOa8X6=xWkMH2AFiLQ@mail.gmail.com>
+In-Reply-To: <CAD=FV=XT=NTyPag9wNCotATBzT4v9pg=OOa8X6=xWkMH2AFiLQ@mail.gmail.com>
+From:   Abhishek Pandit-Subedi <abhishekpandit@chromium.org>
+Date:   Fri, 20 Mar 2020 13:56:23 -0700
+Message-ID: <CANFp7mUKRRQT0m9jRB4aeE3GeSW8UM6d-NVJ3CZmHibhSny3+g@mail.gmail.com>
+Subject: Re: [PATCH 1/1] Bluetooth: btmrvl: Detect hangs and force a reset of
+ the SDIO card
+To:     Doug Anderson <dianders@chromium.org>
+Cc:     Marcel Holtmann <marcel@holtmann.org>,
+        BlueZ <linux-bluetooth@vger.kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        ChromeOS Bluetooth Upstreaming 
+        <chromeos-bluetooth-upstreaming@chromium.org>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        Johan Hedberg <johan.hedberg@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add coverate for running a guest with no memslots, and for deleting
-memslots while the guest is running.  Enhance the test to use, and
-expect, a unique value for MMIO reads, e.g. to verify each stage of
-the test.
+Thanks for the heads up Doug. I'll resend the patch once I handle the
+case where the reset is immediate and not a full unplug/replug.
 
-Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
----
- .../kvm/x86_64/set_memory_region_test.c       | 122 ++++++++++++++++--
- 1 file changed, 108 insertions(+), 14 deletions(-)
+In the meantime, please do not merge this patch.
 
-diff --git a/tools/testing/selftests/kvm/x86_64/set_memory_region_test.c b/tools/testing/selftests/kvm/x86_64/set_memory_region_test.c
-index c6691cff4e19..44aed8ac932b 100644
---- a/tools/testing/selftests/kvm/x86_64/set_memory_region_test.c
-+++ b/tools/testing/selftests/kvm/x86_64/set_memory_region_test.c
-@@ -26,42 +26,109 @@
- #define MEM_REGION_SIZE		0x200000
- #define MEM_REGION_SLOT		10
- 
--static void guest_code(void)
-+static const uint64_t MMIO_VAL = 0xbeefull;
-+
-+extern const uint64_t final_rip_start;
-+extern const uint64_t final_rip_end;
-+
-+static inline uint64_t guest_spin_on_val(uint64_t spin_val)
- {
- 	uint64_t val;
- 
- 	do {
- 		val = READ_ONCE(*((uint64_t *)MEM_REGION_GPA));
--	} while (!val);
-+	} while (val == spin_val);
-+	return val;
-+}
- 
--	if (val != 1)
--		ucall(UCALL_ABORT, 1, val);
-+static void guest_code(void)
-+{
-+	uint64_t val;
- 
--	GUEST_DONE();
-+	/*
-+	 * Spin until the memory region is moved to a misaligned address.  This
-+	 * may or may not trigger MMIO, as the window where the memslot is
-+	 * invalid is quite small.
-+	 */
-+	val = guest_spin_on_val(0);
-+	GUEST_ASSERT(val == 1 || val == MMIO_VAL);
-+
-+	/* Spin until the memory region is realigned. */
-+	GUEST_ASSERT(guest_spin_on_val(MMIO_VAL) == 1);
-+
-+	/* Spin until the memory region is deleted. */
-+	GUEST_ASSERT(guest_spin_on_val(1) == MMIO_VAL);
-+
-+	/* Spin until the memory region is recreated. */
-+	GUEST_ASSERT(guest_spin_on_val(MMIO_VAL) == 0);
-+
-+	/* Spin until the memory region is deleted. */
-+	GUEST_ASSERT(guest_spin_on_val(0) == MMIO_VAL);
-+
-+	asm("1:\n\t"
-+	    ".pushsection .rodata\n\t"
-+	    ".global final_rip_start\n\t"
-+	    "final_rip_start: .quad 1b\n\t"
-+	    ".popsection");
-+
-+	/* Spin indefinitely (until the code memslot is deleted). */
-+	guest_spin_on_val(MMIO_VAL);
-+
-+	asm("1:\n\t"
-+	    ".pushsection .rodata\n\t"
-+	    ".global final_rip_end\n\t"
-+	    "final_rip_end: .quad 1b\n\t"
-+	    ".popsection");
-+
-+	GUEST_ASSERT(0);
- }
- 
- static void *vcpu_worker(void *data)
- {
- 	struct kvm_vm *vm = data;
-+	struct kvm_regs regs;
- 	struct kvm_run *run;
- 	struct ucall uc;
--	uint64_t cmd;
- 
- 	/*
- 	 * Loop until the guest is done.  Re-enter the guest on all MMIO exits,
--	 * which will occur if the guest attempts to access a memslot while it
--	 * is being moved.
-+	 * which will occur if the guest attempts to access a memslot after it
-+	 * has been deleted or while it is being moved .
- 	 */
- 	run = vcpu_state(vm, VCPU_ID);
--	do {
-+
-+	memcpy(run->mmio.data, &MMIO_VAL, 8);
-+	while (1) {
- 		vcpu_run(vm, VCPU_ID);
--	} while (run->exit_reason == KVM_EXIT_MMIO);
-+		if (run->exit_reason != KVM_EXIT_MMIO)
-+			break;
- 
--	TEST_ASSERT(run->exit_reason == KVM_EXIT_IO,
-+		TEST_ASSERT(!run->mmio.is_write, "Unexpected exit mmio write");
-+		TEST_ASSERT(run->mmio.len == 8,
-+			    "Unexpected exit mmio size = %u", run->mmio.len);
-+
-+		TEST_ASSERT(run->mmio.phys_addr == MEM_REGION_GPA,
-+			    "Unexpected exit mmio address = 0x%llx",
-+			    run->mmio.phys_addr);
-+	}
-+
-+	if (run->exit_reason == KVM_EXIT_IO) {
-+		(void)get_ucall(vm, VCPU_ID, &uc);
-+		TEST_FAIL("%s at %s:%ld",
-+			  (const char *)uc.args[0], __FILE__, uc.args[1]);
-+	}
-+
-+	TEST_ASSERT(run->exit_reason == KVM_EXIT_SHUTDOWN ||
-+		    run->exit_reason == KVM_INTERNAL_ERROR_EMULATION,
- 		    "Unexpected exit reason = %d", run->exit_reason);
- 
--	cmd = get_ucall(vm, VCPU_ID, &uc);
--	TEST_ASSERT(cmd == UCALL_DONE, "Unexpected val in guest = %lu", uc.args[0]);
-+	vcpu_regs_get(vm, VCPU_ID, &regs);
-+
-+	TEST_ASSERT(regs.rip >= final_rip_start &&
-+		    regs.rip < final_rip_end,
-+		    "Bad rip, expected 0x%lx - 0x%lx, got 0x%llx\n",
-+		    final_rip_start, final_rip_end, regs.rip);
-+
- 	return NULL;
- }
- 
-@@ -72,6 +139,13 @@ static void test_move_memory_region(void)
- 	uint64_t *hva;
- 	uint64_t gpa;
- 
-+	vm = vm_create(VM_MODE_DEFAULT, 0, O_RDWR);
-+	vm_vcpu_add(vm, VCPU_ID);
-+	/* Fails with ENOSPC because the MMU can't create pages (no slots). */
-+	TEST_ASSERT(_vcpu_run(vm, VCPU_ID) == -1 && errno == ENOSPC,
-+		    "Unexpected error code = %d", errno);
-+	kvm_vm_free(vm);
-+
- 	vm = vm_create_default(VCPU_ID, 0, guest_code);
- 
- 	vcpu_set_cpuid(vm, VCPU_ID, kvm_get_supported_cpuid());
-@@ -105,7 +179,6 @@ static void test_move_memory_region(void)
- 	 */
- 	vm_mem_region_move(vm, MEM_REGION_SLOT, MEM_REGION_GPA - 4096);
- 	WRITE_ONCE(*hva, 2);
--
- 	usleep(100000);
- 
- 	/*
-@@ -116,6 +189,27 @@ static void test_move_memory_region(void)
- 
- 	/* Restore the original base, the guest should see "1". */
- 	vm_mem_region_move(vm, MEM_REGION_SLOT, MEM_REGION_GPA);
-+	usleep(100000);
-+
-+	/* Delete the memory region, the guest should not die. */
-+	vm_mem_region_delete(vm, MEM_REGION_SLOT);
-+	usleep(100000);
-+
-+	/* Recreate the memory region.  The guest should see "0". */
-+	vm_userspace_mem_region_add(vm, VM_MEM_SRC_ANONYMOUS_THP,
-+				    MEM_REGION_GPA, MEM_REGION_SLOT,
-+				    MEM_REGION_SIZE / getpagesize(), 0);
-+	usleep(100000);
-+
-+	/* Delete the region again so that there's only one memslot left. */
-+	vm_mem_region_delete(vm, MEM_REGION_SLOT);
-+	usleep(100000);
-+
-+	/*
-+	 * Delete the primary memslot.  This should cause an emulation error or
-+	 * shutdown due to the page tables getting nuked.
-+	 */
-+	vm_mem_region_delete(vm, VM_PRIMARY_MEM_SLOT);
- 
- 	pthread_join(vcpu_thread, NULL);
- 
--- 
-2.24.1
+Thanks
+Abhishek
 
+On Fri, Mar 20, 2020 at 1:00 PM Doug Anderson <dianders@chromium.org> wrote:
+>
+> Hi,
+>
+> On Thu, Mar 19, 2020 at 7:02 PM Abhishek Pandit-Subedi
+> <abhishekpandit@chromium.org> wrote:
+> >
+> > From: Matthias Kaehlcke <mka@chromium.org>
+> >
+> > When scanning for BLE devices for a longer period (e.g. because a
+> > BLE device is paired, but not connected) the Marvell 8997 often
+> > ends up in a borked state, which manifests through failures on
+> > certain SDIO transactions.
+> >
+> > When such a SDIO failure is detected force a reset of the SDIO
+> > card to initialize it from scratch. Since the SDIO bus is shared
+> > with the WiFi part of the chip this also involves a reset of WiFi.
+> >
+> > Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
+> > Signed-off-by: Abhishek Pandit-Subedi <abhishekpandit@chromium.org>
+> > ---
+> >
+> >  drivers/bluetooth/btmrvl_sdio.c | 24 ++++++++++++++++++++++++
+> >  drivers/bluetooth/btmrvl_sdio.h |  1 +
+> >  2 files changed, 25 insertions(+)
+> >
+> > diff --git a/drivers/bluetooth/btmrvl_sdio.c b/drivers/bluetooth/btmrvl_sdio.c
+> > index 0f3a020703ab..69a8b6b3c11c 100644
+> > --- a/drivers/bluetooth/btmrvl_sdio.c
+> > +++ b/drivers/bluetooth/btmrvl_sdio.c
+> > @@ -22,6 +22,8 @@
+> >  #include <linux/slab.h>
+> >  #include <linux/suspend.h>
+> >
+> > +#include <linux/mmc/core.h>
+> > +#include <linux/mmc/card.h>
+> >  #include <linux/mmc/sdio_ids.h>
+> >  #include <linux/mmc/sdio_func.h>
+> >  #include <linux/module.h>
+> > @@ -59,6 +61,23 @@ static const struct of_device_id btmrvl_sdio_of_match_table[] = {
+> >         { }
+> >  };
+> >
+> > +static void btmrvl_sdio_card_reset_work(struct work_struct *work)
+> > +{
+> > +       struct btmrvl_sdio_card *card =
+> > +               container_of(work, struct btmrvl_sdio_card, reset_work);
+> > +       struct sdio_func *func = card->func;
+> > +
+> > +       sdio_claim_host(func);
+> > +       mmc_hw_reset(func->card->host);
+>
+> The fact that you don't check the return value here seems like a
+> problem.  See specifically how commit cdb2256f795e ("mwifiex: Re-work
+> support for SDIO HW reset") handles it.
+>
+> This is a distinct difference between the solution that we landed in
+> Chrome OS 4.19 and what landed upstream.  In Chrome OS 4.19 we went
+> the simple approach and said that there was only one way to reset the
+> card: treat it as a full unplug / replug of the card.  ...but upstream
+> adopted a different solution.  For upstream if there is only a single
+> function on the SD card it will not trigger a full unplug/replug and
+> it's up to the function driver to re-init itself.  This wasn't such a
+> big deal for the WiFi driver since it already had a way to re-init
+> itself (mwifiex_reinit_sw).  I don't know how hard it will be for
+> Bluetooth, but that needs to be part of this patch I think?
+>
+> -Doug
