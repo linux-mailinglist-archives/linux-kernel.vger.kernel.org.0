@@ -2,139 +2,127 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7F2D318CCD3
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 12:23:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0854518CCDE
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 12:24:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727054AbgCTLXp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Mar 2020 07:23:45 -0400
-Received: from mx2.suse.de ([195.135.220.15]:45808 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726814AbgCTLXp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Mar 2020 07:23:45 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 00DEBAC8F;
-        Fri, 20 Mar 2020 11:23:40 +0000 (UTC)
-Date:   Fri, 20 Mar 2020 12:23:38 +0100
-From:   Michal =?iso-8859-1?Q?Such=E1nek?= <msuchanek@suse.de>
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     linuxppc-dev@lists.ozlabs.org,
+        id S1727230AbgCTLYP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Mar 2020 07:24:15 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:13418 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727209AbgCTLYO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Mar 2020 07:24:14 -0400
+Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 02KB3p9m070934
+        for <linux-kernel@vger.kernel.org>; Fri, 20 Mar 2020 07:24:13 -0400
+Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2yu7dbwa5s-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Fri, 20 Mar 2020 07:24:12 -0400
+Received: from localhost
+        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <bharata@linux.ibm.com>;
+        Fri, 20 Mar 2020 11:24:11 -0000
+Received: from b06avi18626390.portsmouth.uk.ibm.com (9.149.26.192)
+        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 20 Mar 2020 11:24:08 -0000
+Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
+        by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 02KBN6Vw49217996
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 20 Mar 2020 11:23:06 GMT
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 5BA3542045;
+        Fri, 20 Mar 2020 11:24:07 +0000 (GMT)
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 0490042041;
+        Fri, 20 Mar 2020 11:24:06 +0000 (GMT)
+Received: from in.ibm.com (unknown [9.85.95.122])
+        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Fri, 20 Mar 2020 11:24:05 +0000 (GMT)
+Date:   Fri, 20 Mar 2020 16:54:03 +0530
+From:   Bharata B Rao <bharata@linux.ibm.com>
+To:     Laurent Dufour <ldufour@linux.ibm.com>
+Cc:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        kvm-ppc@vger.kernel.org, Paul Mackerras <paulus@ozlabs.org>,
         Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Rob Herring <robh@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        Christophe Leroy <christophe.leroy@c-s.fr>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Nayna Jain <nayna@linux.ibm.com>,
-        Eric Richter <erichte@linux.ibm.com>,
-        Claudio Carvalho <cclaudio@linux.ibm.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Hari Bathini <hbathini@linux.ibm.com>,
-        Masahiro Yamada <masahiroy@kernel.org>,
-        Thiago Jung Bauermann <bauerman@linux.ibm.com>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        Jordan Niethe <jniethe5@gmail.com>,
-        Michael Neuling <mikey@neuling.org>,
-        Gustavo Luiz Duarte <gustavold@linux.ibm.com>,
-        Allison Randal <allison@lohutok.net>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v12 8/8] MAINTAINERS: perf: Add pattern that matches ppc
- perf to the perf entry.
-Message-ID: <20200320112338.GP25468@kitsune.suse.cz>
-References: <20200225173541.1549955-1-npiggin@gmail.com>
- <cover.1584699455.git.msuchanek@suse.de>
- <4b150d01c60bd37705789200d9adee9f1c9b50ce.1584699455.git.msuchanek@suse.de>
- <20200320103350.GV1922688@smile.fi.intel.com>
+        Michael Ellerman <mpe@ellerman.id.au>
+Subject: Re: [PATCH 2/2] KVM: PPC: Book3S HV: H_SVM_INIT_START must call
+ UV_RETURN
+Reply-To: bharata@linux.ibm.com
+References: <20200320102643.15516-1-ldufour@linux.ibm.com>
+ <20200320102643.15516-3-ldufour@linux.ibm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200320103350.GV1922688@smile.fi.intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20200320102643.15516-3-ldufour@linux.ibm.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
+X-TM-AS-GCONF: 00
+x-cbid: 20032011-0008-0000-0000-0000036097F3
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 20032011-0009-0000-0000-00004A81F8F6
+Message-Id: <20200320112403.GG26049@in.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.645
+ definitions=2020-03-20_02:2020-03-20,2020-03-20 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 bulkscore=0
+ mlxscore=0 suspectscore=2 clxscore=1011 priorityscore=1501 impostorscore=0
+ adultscore=0 spamscore=0 phishscore=0 mlxlogscore=999 lowpriorityscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2003020000
+ definitions=main-2003200046
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 20, 2020 at 12:33:50PM +0200, Andy Shevchenko wrote:
-> On Fri, Mar 20, 2020 at 11:20:19AM +0100, Michal Suchanek wrote:
-> > While at it also simplify the existing perf patterns.
-> > 
+On Fri, Mar 20, 2020 at 11:26:43AM +0100, Laurent Dufour wrote:
+> When the call to UV_REGISTER_MEM_SLOT is failing, for instance because
+> there is not enough free secured memory, the Hypervisor (HV) has to call
+> UV_RETURN to report the error to the Ultravisor (UV). Then the UV will call
+> H_SVM_INIT_ABORT to abort the securing phase and go back to the calling VM.
 > 
-> And still missed fixes from parse-maintainers.pl.
+> If the kvm->arch.secure_guest is not set, in the return path rfid is called
+> but there is no valid context to get back to the SVM since the Hcall has
+> been routed by the Ultravisor.
+> 
+> Move the setting of kvm->arch.secure_guest earlier in
+> kvmppc_h_svm_init_start() so in the return path, UV_RETURN will be called
+> instead of rfid.
+> 
+> Cc: Bharata B Rao <bharata@linux.ibm.com>
+> Cc: Paul Mackerras <paulus@ozlabs.org>
+> Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+> Cc: Michael Ellerman <mpe@ellerman.id.au>
+> Signed-off-by: Laurent Dufour <ldufour@linux.ibm.com>
+> ---
+>  arch/powerpc/kvm/book3s_hv_uvmem.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/powerpc/kvm/book3s_hv_uvmem.c b/arch/powerpc/kvm/book3s_hv_uvmem.c
+> index 79b1202b1c62..68dff151315c 100644
+> --- a/arch/powerpc/kvm/book3s_hv_uvmem.c
+> +++ b/arch/powerpc/kvm/book3s_hv_uvmem.c
+> @@ -209,6 +209,8 @@ unsigned long kvmppc_h_svm_init_start(struct kvm *kvm)
+>  	int ret = H_SUCCESS;
+>  	int srcu_idx;
+>  
+> +	kvm->arch.secure_guest = KVMPPC_SECURE_INIT_START;
+> +
+>  	if (!kvmppc_uvmem_bitmap)
+>  		return H_UNSUPPORTED;
+>  
+> @@ -233,7 +235,6 @@ unsigned long kvmppc_h_svm_init_start(struct kvm *kvm)
+>  			goto out;
+>  		}
+>  	}
+> -	kvm->arch.secure_guest |= KVMPPC_SECURE_INIT_START;
 
-Oh, that script UX is truly ingenious. It provides no output and quietly
-creates MAINTAINERS.new which is, of course, not included in the patch.
+There is an assumption that memory slots would have been registered with UV
+if KVMPPC_SECURE_INIT_START has been done. KVM_PPC_SVM_OFF ioctl will skip
+unregistration and other steps during reboot if KVMPPC_SECURE_INIT_START
+hasn't been done.
 
-Thanks
+Have you checked if that path isn't affected by this change?
 
-Michal
+Regards,
+Bharata.
 
-> 
-> I see it like below in the linux-next (after the script)
-> 
-> PERFORMANCE EVENTS SUBSYSTEM
-> M:      Peter Zijlstra <peterz@infradead.org>
-> M:      Ingo Molnar <mingo@redhat.com>
-> M:      Arnaldo Carvalho de Melo <acme@kernel.org>
-> R:      Mark Rutland <mark.rutland@arm.com>
-> R:      Alexander Shishkin <alexander.shishkin@linux.intel.com>
-> R:      Jiri Olsa <jolsa@redhat.com>
-> R:      Namhyung Kim <namhyung@kernel.org>
-> L:      linux-kernel@vger.kernel.org
-> S:      Supported
-> T:      git git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git perf/core
-> F:      arch/*/events/*
-> F:      arch/*/events/*/*
-> F:      arch/*/include/asm/perf_event.h
-> F:      arch/*/kernel/*/*/perf_event*.c
-> F:      arch/*/kernel/*/perf_event*.c
-> F:      arch/*/kernel/perf_callchain.c
-> F:      arch/*/kernel/perf_event*.c
-> F:      include/linux/perf_event.h
-> F:      include/uapi/linux/perf_event.h
-> F:      kernel/events/*
-> F:      tools/perf/
-> 
-> > --- a/MAINTAINERS
-> > +++ b/MAINTAINERS
-> > @@ -13080,7 +13080,7 @@ R:	Namhyung Kim <namhyung@kernel.org>
-> >  L:	linux-kernel@vger.kernel.org
-> >  T:	git git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git perf/core
-> >  S:	Supported
-> > -F:	kernel/events/*
-> > +F:	kernel/events/
-> >  F:	include/linux/perf_event.h
-> >  F:	include/uapi/linux/perf_event.h
-> >  F:	arch/*/kernel/perf_event*.c
-> > @@ -13088,8 +13088,8 @@ F:	arch/*/kernel/*/perf_event*.c
-> >  F:	arch/*/kernel/*/*/perf_event*.c
-> >  F:	arch/*/include/asm/perf_event.h
-> >  F:	arch/*/kernel/perf_callchain.c
-> > -F:	arch/*/events/*
-> > -F:	arch/*/events/*/*
-> > +F:	arch/*/events/
-> > +F:	arch/*/perf/
-> >  F:	tools/perf/
-> >  
-> >  PERFORMANCE EVENTS SUBSYSTEM ARM64 PMU EVENTS
-> 
-> -- 
-> With Best Regards,
-> Andy Shevchenko
-> 
-> 
