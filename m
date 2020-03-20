@@ -2,96 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0CDEF18CDEE
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 13:35:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EFAFC18CDF4
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 13:38:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726954AbgCTMes convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Fri, 20 Mar 2020 08:34:48 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:51681 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726814AbgCTMes (ORCPT
+        id S1726976AbgCTMiH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Mar 2020 08:38:07 -0400
+Received: from mail-qk1-f195.google.com ([209.85.222.195]:45876 "EHLO
+        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726896AbgCTMiH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Mar 2020 08:34:48 -0400
-Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ore@pengutronix.de>)
-        id 1jFGrF-0006BR-8f; Fri, 20 Mar 2020 13:34:37 +0100
-Received: from ore by pty.hi.pengutronix.de with local (Exim 4.89)
-        (envelope-from <ore@pengutronix.de>)
-        id 1jFGr4-0003GR-2A; Fri, 20 Mar 2020 13:34:26 +0100
-Date:   Fri, 20 Mar 2020 13:34:26 +0100
-From:   Oleksij Rempel <o.rempel@pengutronix.de>
-To:     Tang Bin <tangbin@cmss.chinamobile.com>
-Cc:     linux@rempel-privat.de, s.hauer@pengutronix.de,
-        shawnguo@kernel.org, linux-i2c@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] drivers/i2c/busses/i2c-imx.c:remove duplicate print
- after platform_get_irq()
-Message-ID: <20200320123425.blnqxh3qpfzfl6ph@pengutronix.de>
-References: <20200318100748.17540-1-tangbin@cmss.chinamobile.com>
+        Fri, 20 Mar 2020 08:38:07 -0400
+Received: by mail-qk1-f195.google.com with SMTP id c145so6526293qke.12
+        for <linux-kernel@vger.kernel.org>; Fri, 20 Mar 2020 05:38:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=endlessm-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=lUsFDDLc+OT1mxat4BydgprIPibf9UQTcm/vZqGE7Pg=;
+        b=tZugQz/AH0shvqjYWaF1gAAwX+4ovdwCpMJMoGaKc3JPHNP4DA0wP2zsgC6Wc7fcg7
+         6b/lkws0cqY8gp36RTo5o0CfaGP2IIcQy+DYVsoxd+wux++dbBa5aLZaeLXCvn6pqDX4
+         FgHC2C8kyi7zTi7bMu5dulWZ6wSXCXhxLDDUK533HO0MZDS+kbxeuPXjJpp/F7DX93JL
+         g3wBrf1xCYeBbUCQSoEUYQIrA0EszHphDJCTYduJhXi36Hynt6Az3btqPZrUFmEz7+Fx
+         GOMEQYUDg01KIVTjvzayfXnA7mXXR76J+LjqCgO0nZg6b4+WcdsuuGzGFuz6G99yEIgf
+         3nOg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=lUsFDDLc+OT1mxat4BydgprIPibf9UQTcm/vZqGE7Pg=;
+        b=d5STttBQwcDtv8IlSBnBNlxkZ7GcL0PQ9kWMaLFtA4w8OKAnTipNp7h39Hkn99LNqx
+         hqSF2DRblZUPxE3Hi6riABoY5OlRvcIqO7mpehifmClpvQckEnnQ2V95UbzrDs9vXBt0
+         6Pv+TV/ynJv6JMI58DNOup0F2XKTW+dd/E8b28T5/5yVgFfs4aQvTV70GP/ms49cWrEM
+         +8X+huhPU0L2poNHactlpIPxUuHh7qpHDolh8iRFJt6juwAA7ncgsH/wHldlyMYlrQcK
+         QYBVVuOgujUDAJJzsKgcuhWqY6ljld7M68pobDLOURnM/pnRKClWzW6LLRhZNw/uJ9sK
+         c1jg==
+X-Gm-Message-State: ANhLgQ0WUVtTmqsDRrArqJaxNo52ygZ7Nkh9xx52TtkJdUh9SoOQqYWi
+        KuVRQ1XzSRn5vJxaz6nnQY0W/5SUGSdWdW5D13MOEw==
+X-Google-Smtp-Source: ADFU+vvDBQQsdYulrWhgu3FelWi5P2Ua5BYNVN5DgtEqXHnJH+UBtT1nfmzl6r7OJ12TSJdnY5SvrhtF8srk+gySCGk=
+X-Received: by 2002:a37:51d5:: with SMTP id f204mr7674280qkb.14.1584707886141;
+ Fri, 20 Mar 2020 05:38:06 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8BIT
-In-Reply-To: <20200318100748.17540-1-tangbin@cmss.chinamobile.com>
-X-Sent-From: Pengutronix Hildesheim
-X-URL:  http://www.pengutronix.de/
-X-IRC:  #ptxdist @freenode
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-Uptime: 13:31:04 up 126 days,  3:49, 159 users,  load average: 0.03, 0.03,
- 0.00
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
-X-SA-Exim-Mail-From: ore@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+References: <20200312083341.9365-1-jian-hong@endlessm.com> <20200312104643.GA15619@zn.tnic>
+In-Reply-To: <20200312104643.GA15619@zn.tnic>
+From:   Daniel Drake <drake@endlessm.com>
+Date:   Fri, 20 Mar 2020 20:37:54 +0800
+Message-ID: <CAD8Lp47ndRqeS5VbkCMR_Faq-du9eDW28rHOG4Owxq862t-kGQ@mail.gmail.com>
+Subject: Re: [PATCH] Revert "x86/reboot, efi: Use EFI reboot for Acer
+ TravelMate X514-51T"
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     Jian-Hong Pan <jian-hong@endlessm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H . Peter Anvin" <hpa@zytor.com>,
+        Ard Biesheuvel <ardb@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Anton Vorontsov <anton@enomsg.org>,
+        Colin Cross <ccross@android.com>,
+        Tony Luck <tony.luck@intel.com>, x86@kernel.org,
+        Linux Kernel <linux-kernel@vger.kernel.org>,
+        linux-efi@vger.kernel.org,
+        Linux Upstreaming Team <linux@endlessm.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 18, 2020 at 06:07:48PM +0800, Tang Bin wrote:
-> We don't need dev_err() message because when something goes wrong,
-> platform_get_irq() has print an error message itself, so we should
-> remove duplicate dev_err().
-> 
-> Signed-off-by: Tang Bin <tangbin@cmss.chinamobile.com>
+On Thu, Mar 12, 2020 at 6:46 PM Borislav Petkov <bp@alien8.de> wrote:
+> How do you know *everyone* affected will update their BIOS?
+>
+> And what's the downside of keeping it?
 
-Acked-by: Oleksij Rempel <o.rempel@pengutronix.de>
+It could indeed be kept without user-visible downside, and that would
+be the normal case for quirks that work around BIOS bugs.
 
-Thank you.
+But I had two reasons for suggesting that Jian-Hong should send this
+revert patch, which may be worth some consideration:
 
-> ---
->  drivers/i2c/busses/i2c-imx.c | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
-> 
-> diff --git a/drivers/i2c/busses/i2c-imx.c b/drivers/i2c/busses/i2c-imx.c
-> index a3b61336f..01fd46682 100644
-> --- a/drivers/i2c/busses/i2c-imx.c
-> +++ b/drivers/i2c/busses/i2c-imx.c
-> @@ -1066,10 +1066,8 @@ static int i2c_imx_probe(struct platform_device *pdev)
->  	dev_dbg(&pdev->dev, "<%s>\n", __func__);
->  
->  	irq = platform_get_irq(pdev, 0);
-> -	if (irq < 0) {
-> -		dev_err(&pdev->dev, "can't get irq number\n");
-> +	if (irq < 0)
->  		return irq;
-> -	}
->  
->  	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
->  	base = devm_ioremap_resource(&pdev->dev, res);
-> -- 
-> 2.20.1.windows.1
-> 
-> 
-> 
-> 
+ 1. This was working around a BIOS bug truly separate from Linux to
+the point where it was a little questionable for Linux to put a quirk
+in place. The original bug was that after Linux completed executing
+the reboot code, the machine would reboot, the BIOS would start
+loading, and then crash well before loading the OS. Presumably
+crashing on some state that Linux left that was not reset in the
+machine's reboot stage. The vendor later found the issue (something
+TPM-related) and fixed the BIOS to avoid the crash.
+ 2. We normally receive these units before they go into mass
+production, so there's a decent chance that production versions
+already include this BIOS fix.
 
--- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+Based on that I was considering that the patch could be reverted for
+cleanliness/ At the same time, I do not have strong feelings on this,
+no issues if the quirk is left in place.
+
+Daniel
