@@ -2,223 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0C6B318C509
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 03:00:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0082418C51F
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 03:01:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727569AbgCTCAp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 22:00:45 -0400
-Received: from mga11.intel.com ([192.55.52.93]:8800 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727526AbgCTCAl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 22:00:41 -0400
-IronPort-SDR: i682mxMLTSXZN1mRm2dRjqlAkd6jw3NZTmGt9PzqvsK3OWCVengqghLM26aHNdvfyHBSmRhWyw
- 2td8SqZIgpgA==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Mar 2020 19:00:41 -0700
-IronPort-SDR: Nf0rjAXlkA2gpSC0joDxUvBEMy5aI1q8aiy37azXXQ+hT1nlJcM8w/iSpml2ZcYrFUBhsDyKK1
- yzR8Wi+9YOCA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.72,282,1580803200"; 
-   d="scan'208";a="356273250"
-Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
-  by fmsmga001.fm.intel.com with ESMTP; 19 Mar 2020 19:00:39 -0700
-Received: from kbuild by lkp-server01 with local (Exim 4.89)
-        (envelope-from <lkp@intel.com>)
-        id 1jF6xj-000Bji-5e; Fri, 20 Mar 2020 10:00:39 +0800
-Date:   Fri, 20 Mar 2020 09:59:56 +0800
-From:   kbuild test robot <lkp@intel.com>
-To:     "x86-ml" <x86@kernel.org>
-Cc:     linux-kernel@vger.kernel.org
-Subject: [tip:x86/cleanups] BUILD SUCCESS
- e2bdafc1070f5db0bc1bc40116955f54188771cb
-Message-ID: <5e74239c.i0kL9Fy2sFVoynk4%lkp@intel.com>
-User-Agent: Heirloom mailx 12.5 6/20/10
+        id S1727681AbgCTCBY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 22:01:24 -0400
+Received: from mail-qk1-f181.google.com ([209.85.222.181]:43435 "EHLO
+        mail-qk1-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727389AbgCTCAd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 22:00:33 -0400
+Received: by mail-qk1-f181.google.com with SMTP id x18so5376578qki.10;
+        Thu, 19 Mar 2020 19:00:31 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=AeGhU+XJtuOPs3cRLNFViNTkzOH17jcA/a34LgeIkSw=;
+        b=aq4OHE/phBWP1IjK3aZCrnawXgjFXaWfTifotFP7BuXGd2TSc3K2gfLzel3p9rN6y8
+         CHjYypIJ3s7MifasLxUVGqOdHnSV9vhzcIPaKyIQOpkPTuORtvUoMqcNanzoYzzwwflk
+         fFFQd0w5w6HgRKHfclgj89U0Axu15OPh/vdrB5jtSkgui2zGmWdC+UDuwb5Bn8Z+775h
+         dDRVOd1Ly8nvbh4IWoy6wOo2/RK52N+g6r+DLxPkedgFjnXToe16EIQphUMPluccd9gG
+         lPrdoux7212Swb4OPiuYd1Q7RXpcoLDsos0HjhrUlaqa7XhFDTuZJpLCmoR4tjXXfOeI
+         Dpqw==
+X-Gm-Message-State: ANhLgQ2ry76fn9D7aFdIPoEam585NgQjHb0+1StlXmYv2LLbomA4cSdL
+        P7d1z+6+pONOTWi6abLuTvs=
+X-Google-Smtp-Source: ADFU+vuYAuraRM34QGCeIGQxO2X9JnyFXoVl2vLu4umGI3M8e/EYAYX6dEjzwMv0Ww/mVra5lFffwQ==
+X-Received: by 2002:a37:7e82:: with SMTP id z124mr5776266qkc.360.1584669630572;
+        Thu, 19 Mar 2020 19:00:30 -0700 (PDT)
+Received: from rani.riverdale.lan ([2001:470:1f07:5f3::b55f])
+        by smtp.gmail.com with ESMTPSA id n46sm3342198qtb.48.2020.03.19.19.00.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 19 Mar 2020 19:00:29 -0700 (PDT)
+From:   Arvind Sankar <nivedita@alum.mit.edu>
+To:     Ard Biesheuvel <ardb@kernel.org>
+Cc:     Hans de Goede <hdegoede@redhat.com>, linux-efi@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2 00/14] efi/gop: Refactoring + mode-setting feature
+Date:   Thu, 19 Mar 2020 22:00:14 -0400
+Message-Id: <20200320020028.1936003-1-nivedita@alum.mit.edu>
+X-Mailer: git-send-email 2.24.1
+In-Reply-To: <20200319192855.29876-1-nivedita@alum.mit.edu>
+References: <20200319192855.29876-1-nivedita@alum.mit.edu>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git  x86/cleanups
-branch HEAD: e2bdafc1070f5db0bc1bc40116955f54188771cb  x86/configs: Slightly reduce defconfigs
+This series is against tip:efi/core.
 
-elapsed time: 481m
+Patches 1-9 are small cleanups and refactoring of the code in
+libstub/gop.c.
 
-configs tested: 164
-configs skipped: 74
+The rest of the patches add the ability to use a command-line option to
+switch the gop's display mode.
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+The options supported are:
+video=efifb:mode=n
+        Choose a specific mode number
+video=efifb:<xres>x<yres>[-(rgb|bgr|<bpp>)]
+        Specify mode by resolution and optionally color depth
+video=efifb:auto
+        Let the EFI stub choose the highest resolution mode available.
 
-arm                              allmodconfig
-arm                               allnoconfig
-arm                              allyesconfig
-arm64                            allmodconfig
-arm64                             allnoconfig
-arm64                            allyesconfig
-arm                         at91_dt_defconfig
-arm                           efm32_defconfig
-arm                          exynos_defconfig
-arm                        multi_v5_defconfig
-arm                        multi_v7_defconfig
-arm                        shmobile_defconfig
-arm                           sunxi_defconfig
-arm64                               defconfig
-sparc                            allyesconfig
-arc                                 defconfig
-riscv                          rv32_defconfig
-i386                              allnoconfig
-i386                             alldefconfig
-i386                             allyesconfig
-i386                                defconfig
-ia64                             alldefconfig
-ia64                             allmodconfig
-ia64                              allnoconfig
-ia64                             allyesconfig
-ia64                                defconfig
-c6x                              allyesconfig
-c6x                        evmc6678_defconfig
-nios2                         10m50_defconfig
-nios2                         3c120_defconfig
-openrisc                    or1ksim_defconfig
-openrisc                 simple_smp_defconfig
-xtensa                       common_defconfig
-xtensa                          iss_defconfig
-alpha                               defconfig
-csky                                defconfig
-nds32                             allnoconfig
-nds32                               defconfig
-h8300                     edosk2674_defconfig
-h8300                    h8300h-sim_defconfig
-h8300                       h8s-sim_defconfig
-m68k                             allmodconfig
-m68k                       m5475evb_defconfig
-m68k                          multi_defconfig
-m68k                           sun3_defconfig
-arc                              allyesconfig
-microblaze                      mmu_defconfig
-microblaze                    nommu_defconfig
-powerpc                           allnoconfig
-powerpc                             defconfig
-powerpc                       ppc64_defconfig
-powerpc                          rhel-kconfig
-mips                           32r2_defconfig
-mips                         64r6el_defconfig
-mips                             allmodconfig
-mips                              allnoconfig
-mips                             allyesconfig
-mips                      fuloong2e_defconfig
-mips                      malta_kvm_defconfig
-parisc                            allnoconfig
-parisc                           allyesconfig
-parisc                generic-32bit_defconfig
-parisc                generic-64bit_defconfig
-x86_64               randconfig-a001-20200319
-x86_64               randconfig-a002-20200319
-x86_64               randconfig-a003-20200319
-i386                 randconfig-a001-20200319
-i386                 randconfig-a002-20200319
-i386                 randconfig-a003-20200319
-alpha                randconfig-a001-20200319
-m68k                 randconfig-a001-20200319
-mips                 randconfig-a001-20200319
-nds32                randconfig-a001-20200319
-parisc               randconfig-a001-20200319
-riscv                randconfig-a001-20200319
-c6x                  randconfig-a001-20200319
-h8300                randconfig-a001-20200319
-microblaze           randconfig-a001-20200319
-nios2                randconfig-a001-20200319
-sparc64              randconfig-a001-20200319
-csky                 randconfig-a001-20200319
-openrisc             randconfig-a001-20200319
-s390                 randconfig-a001-20200319
-sh                   randconfig-a001-20200319
-xtensa               randconfig-a001-20200319
-x86_64               randconfig-b001-20200319
-x86_64               randconfig-b002-20200319
-x86_64               randconfig-b003-20200319
-i386                 randconfig-b001-20200319
-i386                 randconfig-b002-20200319
-i386                 randconfig-b003-20200319
-x86_64               randconfig-c001-20200319
-x86_64               randconfig-c002-20200319
-x86_64               randconfig-c003-20200319
-i386                 randconfig-c001-20200319
-i386                 randconfig-c002-20200319
-i386                 randconfig-c003-20200319
-x86_64               randconfig-d001-20200319
-x86_64               randconfig-d002-20200319
-x86_64               randconfig-d003-20200319
-i386                 randconfig-d001-20200319
-i386                 randconfig-d002-20200319
-i386                 randconfig-d003-20200319
-x86_64               randconfig-e001-20200319
-x86_64               randconfig-e002-20200319
-x86_64               randconfig-e003-20200319
-i386                 randconfig-e001-20200319
-i386                 randconfig-e002-20200319
-i386                 randconfig-e003-20200319
-x86_64               randconfig-f001-20200319
-x86_64               randconfig-f002-20200319
-x86_64               randconfig-f003-20200319
-i386                 randconfig-f001-20200319
-i386                 randconfig-f002-20200319
-i386                 randconfig-f003-20200319
-x86_64               randconfig-g001-20200319
-x86_64               randconfig-g002-20200319
-x86_64               randconfig-g003-20200319
-i386                 randconfig-g001-20200319
-i386                 randconfig-g002-20200319
-i386                 randconfig-g003-20200319
-x86_64               randconfig-h001-20200319
-x86_64               randconfig-h002-20200319
-x86_64               randconfig-h003-20200319
-i386                 randconfig-h001-20200319
-i386                 randconfig-h002-20200319
-i386                 randconfig-h003-20200319
-arc                  randconfig-a001-20200320
-arm                  randconfig-a001-20200320
-arm64                randconfig-a001-20200320
-ia64                 randconfig-a001-20200320
-powerpc              randconfig-a001-20200320
-sparc                randconfig-a001-20200320
-riscv                            allmodconfig
-riscv                             allnoconfig
-riscv                            allyesconfig
-riscv                               defconfig
-riscv                    nommu_virt_defconfig
-s390                             alldefconfig
-s390                             allmodconfig
-s390                              allnoconfig
-s390                             allyesconfig
-s390                          debug_defconfig
-s390                                defconfig
-s390                       zfcpdump_defconfig
-sh                               allmodconfig
-sh                                allnoconfig
-sh                          rsk7269_defconfig
-sh                  sh7785lcr_32bit_defconfig
-sh                            titan_defconfig
-sparc                               defconfig
-sparc64                          allmodconfig
-sparc64                           allnoconfig
-sparc64                          allyesconfig
-sparc64                             defconfig
-um                                  defconfig
-um                             i386_defconfig
-um                           x86_64_defconfig
-x86_64                              fedora-25
-x86_64                                  kexec
-x86_64                                    lkp
-x86_64                                   rhel
-x86_64                         rhel-7.2-clear
-x86_64                               rhel-7.6
+The mode-setting additions increase code size of gop.o by about 3k on
+x86-64 with EFI_MIXED enabled.
 
----
-0-DAY CI Kernel Test Service, Intel Corporation
-https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
+Changes in v2 (HT lkp@intel.com):
+- Fix __efistub_global attribute to be after the variable.
+  (NB: bunch of other places should ideally be fixed, those I guess
+  don't matter as they are scalars?)
+- Silence -Wmaybe-uninitialized warning in set_mode function.
+
+Arvind Sankar (14):
+  efi/gop: Remove redundant current_fb_base
+  efi/gop: Move check for framebuffer before con_out
+  efi/gop: Get mode information outside the loop
+  efi/gop: Factor out locating the gop into a function
+  efi/gop: Slightly re-arrange logic of find_gop
+  efi/gop: Move variable declarations into loop block
+  efi/gop: Use helper macros for populating lfb_base
+  efi/gop: Use helper macros for find_bits
+  efi/gop: Remove unreachable code from setup_pixel_info
+  efi/gop: Add prototypes for query_mode and set_mode
+  efi/gop: Allow specifying mode number on command line
+  efi/gop: Allow specifying mode by <xres>x<yres>
+  efi/gop: Allow specifying depth as well as resolution
+  efi/gop: Allow automatically choosing the best mode
+
+ Documentation/fb/efifb.rst                    |  33 +-
+ arch/x86/include/asm/efi.h                    |   4 +
+ .../firmware/efi/libstub/efi-stub-helper.c    |   3 +
+ drivers/firmware/efi/libstub/efistub.h        |   8 +-
+ drivers/firmware/efi/libstub/gop.c            | 489 ++++++++++++++----
+ 5 files changed, 428 insertions(+), 109 deletions(-)
+
+
+base-commit: d5528d5e91041e68e8eab9792ce627705a0ed273
+-- 
+2.24.1
+
