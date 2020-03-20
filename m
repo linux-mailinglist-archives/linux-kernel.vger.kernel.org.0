@@ -2,108 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7BED218D747
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 19:35:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 357EB18D773
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 19:40:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727628AbgCTSf4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Mar 2020 14:35:56 -0400
-Received: from foss.arm.com ([217.140.110.172]:55660 "EHLO foss.arm.com"
+        id S1727456AbgCTSko (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Mar 2020 14:40:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42246 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726829AbgCTSfw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Mar 2020 14:35:52 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A86C01FB;
-        Fri, 20 Mar 2020 11:35:51 -0700 (PDT)
-Received: from [10.37.12.158] (unknown [10.37.12.158])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DB0AF3F305;
-        Fri, 20 Mar 2020 11:35:49 -0700 (PDT)
-Subject: Re: [PATCH 6/6] arm64/cpufeature: Replace all open bits shift
- encodings with macros
-To:     anshuman.khandual@arm.com, linux-arm-kernel@lists.infradead.org
-Cc:     catalin.marinas@arm.com, will@kernel.org, maz@kernel.org,
-        mark.rutland@arm.com, james.morse@arm.com,
-        linux-kernel@vger.kernel.org
-References: <1580215149-21492-1-git-send-email-anshuman.khandual@arm.com>
- <1580215149-21492-7-git-send-email-anshuman.khandual@arm.com>
-From:   Suzuki K Poulose <suzuki.poulose@arm.com>
-Message-ID: <caea646f-2a74-115b-ab03-fb1325ed101f@arm.com>
-Date:   Fri, 20 Mar 2020 18:40:34 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1726773AbgCTSko (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Mar 2020 14:40:44 -0400
+Received: from sol.localdomain (c-107-3-166-239.hsd1.ca.comcast.net [107.3.166.239])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 275D420739;
+        Fri, 20 Mar 2020 18:40:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1584729643;
+        bh=0lySpfIbLYVkl86wERt9XwrjnUjq7J+z8XZeuge/+7s=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=wi2vuW5Igyu46y5Wx05mkvW8a/VLckiN7s/9GNIOdxM9U7yQM1pyY2njL/QMwkPan
+         KWQEARrCqs16OuxD5B6Kg1R9790qkHmt4v/O/PZizCk3+z+HWCmu6og3Em53508k9B
+         iW3Hml7aQ3jDLnTGNz1ZqdOb+OAH89RjMJ2Qz1nU=
+Date:   Fri, 20 Mar 2020 11:40:41 -0700
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        linux-xfs@vger.kernel.org,
+        William Kucharski <william.kucharski@oracle.com>,
+        linux-kernel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net, cluster-devel@redhat.com,
+        linux-mm@kvack.org, ocfs2-devel@oss.oracle.com,
+        linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-erofs@lists.ozlabs.org, linux-btrfs@vger.kernel.org
+Subject: Re: [PATCH v9 20/25] ext4: Convert from readpages to readahead
+Message-ID: <20200320184041.GG851@sol.localdomain>
+References: <20200320142231.2402-1-willy@infradead.org>
+ <20200320142231.2402-21-willy@infradead.org>
+ <20200320173734.GD851@sol.localdomain>
+ <20200320174848.GC4971@bombadil.infradead.org>
 MIME-Version: 1.0
-In-Reply-To: <1580215149-21492-7-git-send-email-anshuman.khandual@arm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200320174848.GC4971@bombadil.infradead.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 01/28/2020 12:39 PM, Anshuman Khandual wrote:
-> There are many open bits shift encodings for various CPU ID registers that
-> are scattered across cpufeature. This replaces them with register specific
-> sensible macro definitions. This should not have any functional change.
+On Fri, Mar 20, 2020 at 10:48:48AM -0700, Matthew Wilcox wrote:
+> On Fri, Mar 20, 2020 at 10:37:34AM -0700, Eric Biggers wrote:
+> > On Fri, Mar 20, 2020 at 07:22:26AM -0700, Matthew Wilcox wrote:
+> > > From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+> > > 
+> > > Use the new readahead operation in ext4
+> > > 
+> > > Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+> > > Reviewed-by: William Kucharski <william.kucharski@oracle.com>
+> > > ---
+> > >  fs/ext4/ext4.h     |  3 +--
+> > >  fs/ext4/inode.c    | 21 +++++++++------------
+> > >  fs/ext4/readpage.c | 22 ++++++++--------------
+> > >  3 files changed, 18 insertions(+), 28 deletions(-)
+> > > 
+> > 
+> > Reviewed-by: Eric Biggers <ebiggers@google.com>
+> > 
+> > > +		if (rac) {
+> > > +			page = readahead_page(rac);
+> > >  			prefetchw(&page->flags);
+> > > -			list_del(&page->lru);
+> > > -			if (add_to_page_cache_lru(page, mapping, page->index,
+> > > -				  readahead_gfp_mask(mapping)))
+> > > -				goto next_page;
+> > >  		}
+> > 
+> > Maybe the prefetchw(&page->flags) should be included in readahead_page()?
+> > Most of the callers do it.
 > 
-> Cc: Catalin Marinas <catalin.marinas@arm.com>
-> Cc: Will Deacon <will@kernel.org>
-> Cc: Marc Zyngier <maz@kernel.org>
-> Cc: Mark Rutland <mark.rutland@arm.com>
-> Cc: James Morse <james.morse@arm.com>
-> Cc: Suzuki K Poulose <suzuki.poulose@arm.com>
-> Cc: linux-kernel@vger.kernel.org
-> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
-> ---
+> I did notice that a lot of callers do that.  I wonder whether it (still)
+> helps or whether it's just cargo-cult programming.  It can't possibly
+> have helped before because we did list_del(&page->lru) as the very next
+> instruction after prefetchw(), and they're in the same cacheline.  It'd
+> be interesting to take it out and see what happens to performance.
 
+Yeah, it does look like the list_del() made the prefetchw() useless, so it
+should just be removed.  The prefetchw() dates all the way back to
+mpage_readpages() being added in 2002, but even then the list_del() was
+immediately afterwards, and 'flags' and 'lru' were in the same cache line in
+'struct page' even then (assuming at least a 32-byte cache line size), so...
 
-> --- a/arch/arm64/kernel/cpufeature.c
-> +++ b/arch/arm64/kernel/cpufeature.c
-> @@ -263,7 +263,7 @@ static const struct arm64_ftr_bits ftr_ctr[] = {
->   	 * make use of *minLine.
->   	 * If we have differing I-cache policies, report it as the weakest - VIPT.
->   	 */
-> -	ARM64_FTR_BITS(FTR_VISIBLE, FTR_NONSTRICT, FTR_EXACT, 14, 2, ICACHE_POLICY_VIPT),	/* L1Ip */
-> +	ARM64_FTR_BITS(FTR_VISIBLE, FTR_NONSTRICT, FTR_EXACT, CTR_L1IP_SHIFT, 2, ICACHE_POLICY_VIPT),	/* L1Ip */
->   	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_LOWER_SAFE, CTR_IMINLINE_SHIFT, 4, 0),
->   	ARM64_FTR_END,
->   };
-> @@ -274,19 +274,19 @@ struct arm64_ftr_reg arm64_ftr_reg_ctrel0 = {
->   };
->   
->   static const struct arm64_ftr_bits ftr_id_mmfr0[] = {
-> -	S_ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, 28, 4, 0xf),	/* InnerShr */
-> -	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, 24, 4, 0),	/* FCSE */
-> -	ARM64_FTR_BITS(FTR_HIDDEN, FTR_NONSTRICT, FTR_LOWER_SAFE, 20, 4, 0),	/* AuxReg */
-> -	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, 16, 4, 0),	/* TCM */
-> -	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, 12, 4, 0),	/* ShareLvl */
-> -	S_ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, 8, 4, 0xf),	/* OuterShr */
-> -	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, 4, 4, 0),	/* PMSA */
-> -	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, 0, 4, 0),	/* VMSA */
-> +	S_ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, ID_MMFR0_INNERSHR_SHIFT, 4, 0xf),
-> +	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, ID_MMFR0_FCSE_SHIFT, 4, 0),
-> +	ARM64_FTR_BITS(FTR_HIDDEN, FTR_NONSTRICT, FTR_LOWER_SAFE, ID_MMFR0_AUXREG_SHIFT, 4, 0),
-> +	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, ID_MMFR0_TCM_SHIFT, 4, 0),
-> +	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, ID_MMFR0_SHARELVL_SHIFT, 4, 0),
-> +	S_ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, ID_MMFR0_OUTERSHR_SHIFT, 4, 0xf),
-> +	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, ID_MMFR0_PMSA_SHIFT, 4, 0),
-> +	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, ID_MMFR0_VMSA_SHIFT, 4, 0),
->   	ARM64_FTR_END,
->   };
->   
->   static const struct arm64_ftr_bits ftr_id_aa64dfr0[] = {
-> -	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_EXACT, 36, 28, 0),
-> +	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_EXACT, ID_AA64DFR0_DOUBLELOCK_SHIFT, 28, 0),
-
-This must be a signed feature, as we have the following possible values :
-
-	0b0000 - Double lock implemented
-	0b1111 - Double lock not implemented.
-
-So, in case of a conflict we want the safe value as 0b1111.
-
-Please could you fix this as well ?
-
-
-This patch as such looks fine to me.
-
-Reviewed-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+- Eric
