@@ -2,36 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C9BC418CE30
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 13:58:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C455718CE48
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 13:59:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727313AbgCTM6S (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Mar 2020 08:58:18 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:35606 "EHLO
+        id S1727524AbgCTM7I (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Mar 2020 08:59:08 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:35634 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727105AbgCTM6K (ORCPT
+        with ESMTP id S1727191AbgCTM6N (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Mar 2020 08:58:10 -0400
+        Fri, 20 Mar 2020 08:58:13 -0400
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1jFHDy-0003jX-2j; Fri, 20 Mar 2020 13:58:06 +0100
+        id 1jFHE0-0003kY-A9; Fri, 20 Mar 2020 13:58:08 +0100
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id A477D1C22C0;
-        Fri, 20 Mar 2020 13:58:05 +0100 (CET)
-Date:   Fri, 20 Mar 2020 12:58:05 -0000
-From:   "tip-bot2 for Johannes Weiner" <tip-bot2@linutronix.de>
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 6AC251C22C0;
+        Fri, 20 Mar 2020 13:58:06 +0100 (CET)
+Date:   Fri, 20 Mar 2020 12:58:06 -0000
+From:   "tip-bot2 for Paul Turner" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: sched/core] psi: Optimize switching tasks inside shared cgroups
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Johannes Weiner <hannes@cmpxchg.org>, x86 <x86@kernel.org>,
+Subject: [tip: sched/core] sched/core: Distribute tasks within affinity masks
+Cc:     Paul Turner <pjt@google.com>, Josh Don <joshdon@google.com>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Qais Yousef <qais.yousef@arm.com>, x86 <x86@kernel.org>,
         LKML <linux-kernel@vger.kernel.org>
-In-Reply-To: <20200316191333.115523-3-hannes@cmpxchg.org>
-References: <20200316191333.115523-3-hannes@cmpxchg.org>
+In-Reply-To: <20200311010113.136465-1-joshdon@google.com>
+References: <20200311010113.136465-1-joshdon@google.com>
 MIME-Version: 1.0
-Message-ID: <158470908538.28353.4035583045093717977.tip-bot2@tip-bot2>
+Message-ID: <158470908610.28353.9319418052949697237.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -47,210 +48,128 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the sched/core branch of tip:
 
-Commit-ID:     36b238d5717279163859fb6ba0f4360abcafab83
-Gitweb:        https://git.kernel.org/tip/36b238d5717279163859fb6ba0f4360abcafab83
-Author:        Johannes Weiner <hannes@cmpxchg.org>
-AuthorDate:    Mon, 16 Mar 2020 15:13:32 -04:00
+Commit-ID:     46a87b3851f0d6eb05e6d83d5c5a30df0eca8f76
+Gitweb:        https://git.kernel.org/tip/46a87b3851f0d6eb05e6d83d5c5a30df0eca8f76
+Author:        Paul Turner <pjt@google.com>
+AuthorDate:    Tue, 10 Mar 2020 18:01:13 -07:00
 Committer:     Peter Zijlstra <peterz@infradead.org>
-CommitterDate: Fri, 20 Mar 2020 13:06:19 +01:00
+CommitterDate: Fri, 20 Mar 2020 13:06:18 +01:00
 
-psi: Optimize switching tasks inside shared cgroups
+sched/core: Distribute tasks within affinity masks
 
-When switching tasks running on a CPU, the psi state of a cgroup
-containing both of these tasks does not change. Right now, we don't
-exploit that, and can perform many unnecessary state changes in nested
-hierarchies, especially when most activity comes from one leaf cgroup.
+Currently, when updating the affinity of tasks via either cpusets.cpus,
+or, sched_setaffinity(); tasks not currently running within the newly
+specified mask will be arbitrarily assigned to the first CPU within the
+mask.
 
-This patch implements an optimization where we only update cgroups
-whose state actually changes during a task switch. These are all
-cgroups that contain one task but not the other, up to the first
-shared ancestor. When both tasks are in the same group, we don't need
-to update anything at all.
+This (particularly in the case that we are restricting masks) can
+result in many tasks being assigned to the first CPUs of their new
+masks.
 
-We can identify the first shared ancestor by walking the groups of the
-incoming task until we see TSK_ONCPU set on the local CPU; that's the
-first group that also contains the outgoing task.
+This:
+ 1) Can induce scheduling delays while the load-balancer has a chance to
+    spread them between their new CPUs.
+ 2) Can antogonize a poor load-balancer behavior where it has a
+    difficult time recognizing that a cross-socket imbalance has been
+    forced by an affinity mask.
 
-The new psi_task_switch() is similar to psi_task_change(). To allow
-code reuse, move the task flag maintenance code into a new function
-and the poll/avg worker wakeups into the shared psi_group_change().
+This change adds a new cpumask interface to allow iterated calls to
+distribute within the intersection of the provided masks.
 
-Suggested-by: Peter Zijlstra <peterz@infradead.org>
-Signed-off-by: Johannes Weiner <hannes@cmpxchg.org>
+The cases that this mainly affects are:
+ - modifying cpuset.cpus
+ - when tasks join a cpuset
+ - when modifying a task's affinity via sched_setaffinity(2)
+
+Signed-off-by: Paul Turner <pjt@google.com>
+Signed-off-by: Josh Don <joshdon@google.com>
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Link: https://lkml.kernel.org/r/20200316191333.115523-3-hannes@cmpxchg.org
+Reviewed-by: Qais Yousef <qais.yousef@arm.com>
+Tested-by: Qais Yousef <qais.yousef@arm.com>
+Link: https://lkml.kernel.org/r/20200311010113.136465-1-joshdon@google.com
 ---
- include/linux/psi.h  |  2 +-
- kernel/sched/psi.c   | 87 +++++++++++++++++++++++++++++++++----------
- kernel/sched/stats.h |  9 +----
- 3 files changed, 70 insertions(+), 28 deletions(-)
+ include/linux/cpumask.h |  7 +++++++
+ kernel/sched/core.c     |  7 ++++++-
+ lib/cpumask.c           | 29 +++++++++++++++++++++++++++++
+ 3 files changed, 42 insertions(+), 1 deletion(-)
 
-diff --git a/include/linux/psi.h b/include/linux/psi.h
-index 7b3de73..7361023 100644
---- a/include/linux/psi.h
-+++ b/include/linux/psi.h
-@@ -17,6 +17,8 @@ extern struct psi_group psi_system;
- void psi_init(void);
- 
- void psi_task_change(struct task_struct *task, int clear, int set);
-+void psi_task_switch(struct task_struct *prev, struct task_struct *next,
-+		     bool sleep);
- 
- void psi_memstall_tick(struct task_struct *task, int cpu);
- void psi_memstall_enter(unsigned long *flags);
-diff --git a/kernel/sched/psi.c b/kernel/sched/psi.c
-index 5012829..955a124 100644
---- a/kernel/sched/psi.c
-+++ b/kernel/sched/psi.c
-@@ -669,13 +669,14 @@ static void record_times(struct psi_group_cpu *groupc, int cpu,
- 		groupc->times[PSI_NONIDLE] += delta;
+diff --git a/include/linux/cpumask.h b/include/linux/cpumask.h
+index d5cc885..f0d895d 100644
+--- a/include/linux/cpumask.h
++++ b/include/linux/cpumask.h
+@@ -194,6 +194,11 @@ static inline unsigned int cpumask_local_spread(unsigned int i, int node)
+ 	return 0;
  }
  
--static u32 psi_group_change(struct psi_group *group, int cpu,
--			    unsigned int clear, unsigned int set)
-+static void psi_group_change(struct psi_group *group, int cpu,
-+			     unsigned int clear, unsigned int set,
-+			     bool wake_clock)
- {
- 	struct psi_group_cpu *groupc;
-+	u32 state_mask = 0;
- 	unsigned int t, m;
- 	enum psi_states s;
--	u32 state_mask = 0;
- 
- 	groupc = per_cpu_ptr(group->pcpu, cpu);
- 
-@@ -717,7 +718,11 @@ static u32 psi_group_change(struct psi_group *group, int cpu,
- 
- 	write_seqcount_end(&groupc->seq);
- 
--	return state_mask;
-+	if (state_mask & group->poll_states)
-+		psi_schedule_poll_work(group, 1);
-+
-+	if (wake_clock && !delayed_work_pending(&group->avgs_work))
-+		schedule_delayed_work(&group->avgs_work, PSI_FREQ);
- }
- 
- static struct psi_group *iterate_groups(struct task_struct *task, void **iter)
-@@ -744,27 +749,32 @@ static struct psi_group *iterate_groups(struct task_struct *task, void **iter)
- 	return &psi_system;
- }
- 
--void psi_task_change(struct task_struct *task, int clear, int set)
-+static void psi_flags_change(struct task_struct *task, int clear, int set)
- {
--	int cpu = task_cpu(task);
--	struct psi_group *group;
--	bool wake_clock = true;
--	void *iter = NULL;
--
--	if (!task->pid)
--		return;
--
- 	if (((task->psi_flags & set) ||
- 	     (task->psi_flags & clear) != clear) &&
- 	    !psi_bug) {
- 		printk_deferred(KERN_ERR "psi: inconsistent task state! task=%d:%s cpu=%d psi_flags=%x clear=%x set=%x\n",
--				task->pid, task->comm, cpu,
-+				task->pid, task->comm, task_cpu(task),
- 				task->psi_flags, clear, set);
- 		psi_bug = 1;
- 	}
- 
- 	task->psi_flags &= ~clear;
- 	task->psi_flags |= set;
++static inline int cpumask_any_and_distribute(const struct cpumask *src1p,
++					     const struct cpumask *src2p) {
++	return cpumask_next_and(-1, src1p, src2p);
 +}
 +
-+void psi_task_change(struct task_struct *task, int clear, int set)
-+{
-+	int cpu = task_cpu(task);
-+	struct psi_group *group;
-+	bool wake_clock = true;
-+	void *iter = NULL;
-+
-+	if (!task->pid)
-+		return;
-+
-+	psi_flags_change(task, clear, set);
+ #define for_each_cpu(cpu, mask)			\
+ 	for ((cpu) = 0; (cpu) < 1; (cpu)++, (void)mask)
+ #define for_each_cpu_not(cpu, mask)		\
+@@ -245,6 +250,8 @@ static inline unsigned int cpumask_next_zero(int n, const struct cpumask *srcp)
+ int cpumask_next_and(int n, const struct cpumask *, const struct cpumask *);
+ int cpumask_any_but(const struct cpumask *mask, unsigned int cpu);
+ unsigned int cpumask_local_spread(unsigned int i, int node);
++int cpumask_any_and_distribute(const struct cpumask *src1p,
++			       const struct cpumask *src2p);
  
- 	/*
- 	 * Periodic aggregation shuts off if there is a period of no
-@@ -777,14 +787,51 @@ void psi_task_change(struct task_struct *task, int clear, int set)
- 		     wq_worker_last_func(task) == psi_avgs_work))
- 		wake_clock = false;
+ /**
+  * for_each_cpu - iterate over every cpu in a mask
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index 978bf6f..014d4f7 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -1650,7 +1650,12 @@ static int __set_cpus_allowed_ptr(struct task_struct *p,
+ 	if (cpumask_equal(p->cpus_ptr, new_mask))
+ 		goto out;
  
--	while ((group = iterate_groups(task, &iter))) {
--		u32 state_mask = psi_group_change(group, cpu, clear, set);
-+	while ((group = iterate_groups(task, &iter)))
-+		psi_group_change(group, cpu, clear, set, wake_clock);
-+}
-+
-+void psi_task_switch(struct task_struct *prev, struct task_struct *next,
-+		     bool sleep)
-+{
-+	struct psi_group *group, *common = NULL;
-+	int cpu = task_cpu(prev);
-+	void *iter;
-+
-+	if (next->pid) {
-+		psi_flags_change(next, 0, TSK_ONCPU);
-+		/*
-+		 * When moving state between tasks, the group that
-+		 * contains them both does not change: we can stop
-+		 * updating the tree once we reach the first common
-+		 * ancestor. Iterate @next's ancestors until we
-+		 * encounter @prev's state.
-+		 */
-+		iter = NULL;
-+		while ((group = iterate_groups(next, &iter))) {
-+			if (per_cpu_ptr(group->pcpu, cpu)->tasks[NR_ONCPU]) {
-+				common = group;
-+				break;
-+			}
-+
-+			psi_group_change(group, cpu, 0, TSK_ONCPU, true);
-+		}
-+	}
-+
+-	dest_cpu = cpumask_any_and(cpu_valid_mask, new_mask);
 +	/*
-+	 * If this is a voluntary sleep, dequeue will have taken care
-+	 * of the outgoing TSK_ONCPU alongside TSK_RUNNING already. We
-+	 * only need to deal with it during preemption.
++	 * Picking a ~random cpu helps in cases where we are changing affinity
++	 * for groups of tasks (ie. cpuset), so that load balancing is not
++	 * immediately required to distribute the tasks within their new mask.
 +	 */
-+	if (sleep)
-+		return;
- 
--		if (state_mask & group->poll_states)
--			psi_schedule_poll_work(group, 1);
-+	if (prev->pid) {
-+		psi_flags_change(prev, TSK_ONCPU, 0);
- 
--		if (wake_clock && !delayed_work_pending(&group->avgs_work))
--			schedule_delayed_work(&group->avgs_work, PSI_FREQ);
-+		iter = NULL;
-+		while ((group = iterate_groups(prev, &iter)) && group != common)
-+			psi_group_change(group, cpu, TSK_ONCPU, 0, true);
- 	}
++	dest_cpu = cpumask_any_and_distribute(cpu_valid_mask, new_mask);
+ 	if (dest_cpu >= nr_cpu_ids) {
+ 		ret = -EINVAL;
+ 		goto out;
+diff --git a/lib/cpumask.c b/lib/cpumask.c
+index 0cb672e..fb22fb2 100644
+--- a/lib/cpumask.c
++++ b/lib/cpumask.c
+@@ -232,3 +232,32 @@ unsigned int cpumask_local_spread(unsigned int i, int node)
+ 	BUG();
  }
- 
-diff --git a/kernel/sched/stats.h b/kernel/sched/stats.h
-index 6ff0ac1..1339f5b 100644
---- a/kernel/sched/stats.h
-+++ b/kernel/sched/stats.h
-@@ -141,14 +141,7 @@ static inline void psi_sched_switch(struct task_struct *prev,
- 	if (static_branch_likely(&psi_disabled))
- 		return;
- 
--	/*
--	 * Clear the TSK_ONCPU state if the task was preempted. If
--	 * it's a voluntary sleep, dequeue will have taken care of it.
--	 */
--	if (!sleep)
--		psi_task_change(prev, TSK_ONCPU, 0);
--
--	psi_task_change(next, 0, TSK_ONCPU);
-+	psi_task_switch(prev, next, sleep);
- }
- 
- static inline void psi_task_tick(struct rq *rq)
+ EXPORT_SYMBOL(cpumask_local_spread);
++
++static DEFINE_PER_CPU(int, distribute_cpu_mask_prev);
++
++/**
++ * Returns an arbitrary cpu within srcp1 & srcp2.
++ *
++ * Iterated calls using the same srcp1 and srcp2 will be distributed within
++ * their intersection.
++ *
++ * Returns >= nr_cpu_ids if the intersection is empty.
++ */
++int cpumask_any_and_distribute(const struct cpumask *src1p,
++			       const struct cpumask *src2p)
++{
++	int next, prev;
++
++	/* NOTE: our first selection will skip 0. */
++	prev = __this_cpu_read(distribute_cpu_mask_prev);
++
++	next = cpumask_next_and(prev, src1p, src2p);
++	if (next >= nr_cpu_ids)
++		next = cpumask_first_and(src1p, src2p);
++
++	if (next < nr_cpu_ids)
++		__this_cpu_write(distribute_cpu_mask_prev, next);
++
++	return next;
++}
++EXPORT_SYMBOL(cpumask_any_and_distribute);
