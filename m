@@ -2,54 +2,138 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 578DA18D6F9
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 19:26:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4239C18D76E
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 19:39:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727281AbgCTS0d (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Mar 2020 14:26:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37236 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726851AbgCTS0d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Mar 2020 14:26:33 -0400
-Received: from willie-the-truck (236.31.169.217.in-addr.arpa [217.169.31.236])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7814E20767;
-        Fri, 20 Mar 2020 18:26:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584728792;
-        bh=rfWQb/MXe4FaabzbbDcKizSrM7U2zTDWWYfuTq2HNdo=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=pamQhJQKoCx4WWWQGH0ZviG7tsLdkXlFpWPA0XJx7dJmYOmdFLvUg7JQI1tSpJOuP
-         s9GA8PwEYFxPWzu8u1jfBZNxbH2jQHbFCBBdeVo/iIlPYl8rqfieFKSZjs2BvTq65g
-         lrwd5rknV9gx1d5I1hu++icUp3ALAtwXtJXUjAwU=
-Date:   Fri, 20 Mar 2020 18:26:28 +0000
-From:   Will Deacon <will@kernel.org>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     tglx@linutronix.de, rostedt@goodmis.org, mingo@kernel.org,
-        x86@kernel.org, linux-kernel@vger.kernel.org,
-        joel@joelfernandes.org
-Subject: Re: [PATCH 0/4] A bunch of renames
-Message-ID: <20200320182627.GA8471@willie-the-truck>
-References: <20200320115638.737385408@infradead.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200320115638.737385408@infradead.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        id S1727755AbgCTSj3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Mar 2020 14:39:29 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:36865 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726738AbgCTSiS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Mar 2020 14:38:18 -0400
+Received: from p5de0bf0b.dip0.t-ipconnect.de ([93.224.191.11] helo=nanos.tec.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1jFMX9-00021y-8B
+        for linux-kernel@vger.kernel.org; Fri, 20 Mar 2020 19:38:15 +0100
+Received: from nanos.tec.linutronix.de (localhost [IPv6:::1])
+        by nanos.tec.linutronix.de (Postfix) with ESMTP id B31A7100239
+        for <linux-kernel@vger.kernel.org>; Fri, 20 Mar 2020 19:38:14 +0100 (CET)
+Message-Id: <20200320175956.033706968@linutronix.de>
+User-Agent: quilt/0.65
+Date:   Fri, 20 Mar 2020 18:59:56 +0100
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     LKML <linux-kernel@vger.kernel.org>
+Cc:     x86@kernel.org, Paul McKenney <paulmck@kernel.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Brian Gerst <brgerst@gmail.com>,
+        Juergen Gross <jgross@suse.com>,
+        Alexandre Chartre <alexandre.chartre@oracle.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org
+Subject: [patch V3 00/23] x86/entry: Consolidation part II (syscalls)
+Content-transfer-encoding: 8-bit
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 20, 2020 at 12:56:38PM +0100, Peter Zijlstra wrote:
-> While going over a lot of code, we ran into a bunch of confusingly named
-> functions. These 4 patches try and fix some of that.
+Hi!
 
-For the lot:
+This is the third version of the syscall entry code consolidation
+series. V2 can be found here:
 
-Acked-by: Will Deacon <will@kernel.org>
+  https://lore.kernel.org/r/20200308222359.370649591@linutronix.de
 
-I hadn't realised quite how confusing these were until I read this series!
+It applies on top of
 
-Will
+  git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/entry
+
+and is also available from git:
+
+    git://git.kernel.org/pub/scm/linux/kernel/git/tglx/devel entry-v3-part2
+
+The changes vs. V2:
+
+ - A massive rework utilizing Peter Zijlstras objtool patches to analyze
+   the new .noinstr.text section:
+
+   https://lore.kernel.org/r/20200317170234.897520633@infradead.org
+
+   Working with this was really helpful as it clearly pin pointed code
+   which calls out of the protected section which is much more efficient
+   and focussed than chasing everything manually.
+
+ - Picked up the two RCU patches from Paul for completeness. The bugfix
+   is required anyway and the comments have been really helpful to see
+   where the defense line has to be.
+
+ - As the tool flagged KVM as red zone, I looked at the context tracking
+   usage there and it has similar if not worse issues. New set of patches
+   dealing with that.
+
+Please have a close look at the approach and the resulting protected areas.
+
+Known issues:
+
+  - The kprobes '.noinstr.text' exclusion currently works only for built
+    in code. Haven't figured out how to to fix that, but I'm sure that
+    Masami knows :)
+
+  - The various SANitizers if enabled ruin the picture. Peter and I still
+    have no brilliant idea what to do about that.
+
+Thanks,
+
+	tglx
+---
+ arch/x86/entry/common.c                |  173 ++++++++++++++++++++++++---------
+ arch/x86/entry/entry_32.S              |   24 ----
+ arch/x86/entry/entry_64.S              |    6 -
+ arch/x86/entry/entry_64_compat.S       |   32 ------
+ arch/x86/entry/thunk_64.S              |   45 +++++++-
+ arch/x86/include/asm/bug.h             |    3 
+ arch/x86/include/asm/hardirq.h         |    4 
+ arch/x86/include/asm/irqflags.h        |    3 
+ arch/x86/include/asm/nospec-branch.h   |    4 
+ arch/x86/include/asm/paravirt.h        |    3 
+ arch/x86/kvm/svm.c                     |  152 ++++++++++++++++++----------
+ arch/x86/kvm/vmx/ops.h                 |    4 
+ arch/x86/kvm/vmx/vmenter.S             |    2 
+ arch/x86/kvm/vmx/vmx.c                 |   78 +++++++++++---
+ arch/x86/kvm/x86.c                     |    4 
+ b/include/asm-generic/bug.h            |    9 +
+ include/asm-generic/sections.h         |    3 
+ include/asm-generic/vmlinux.lds.h      |    4 
+ include/linux/compiler.h               |   24 ++++
+ include/linux/compiler_types.h         |    4 
+ include/linux/context_tracking.h       |   27 +++--
+ include/linux/context_tracking_state.h |    6 -
+ include/linux/irqflags.h               |    6 +
+ include/linux/sched.h                  |    1 
+ kernel/context_tracking.c              |   14 +-
+ kernel/kprobes.c                       |   11 ++
+ kernel/locking/lockdep.c               |   66 +++++++++---
+ kernel/panic.c                         |    4 
+ kernel/rcu/tree.c                      |   91 +++++++++++------
+ kernel/rcu/tree_plugin.h               |    4 
+ kernel/rcu/update.c                    |    7 -
+ kernel/trace/trace_preemptirq.c        |   25 ++++
+ lib/debug_locks.c                      |    2 
+ lib/smp_processor_id.c                 |   10 -
+ scripts/mod/modpost.c                  |    2 
+ 35 files changed, 590 insertions(+), 267 deletions(-)
+
+
