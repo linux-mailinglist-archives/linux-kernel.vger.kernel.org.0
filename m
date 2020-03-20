@@ -2,134 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AA7F818CB73
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 11:21:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B401018CB76
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 11:21:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727486AbgCTKVI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Mar 2020 06:21:08 -0400
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:39652 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727456AbgCTKVH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Mar 2020 06:21:07 -0400
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 02KAKwg1024302;
-        Fri, 20 Mar 2020 05:20:58 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1584699658;
-        bh=rn+lqi6S8AMGiEUZ5KYnC/dX2IgyH3wA5+iFbZlmJVU=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=n7bPyOtSVxozgzY+7p0JqNOfXGcBqQiwqk6ci2qDVI6/XFXgv3CeqE4Y0o37olaNq
-         OairtZe9Udu4OF4G68Nlg5zBSc8i/HA/TjqyxavwUZcIZuNwo4saorLFhzR7k1DROs
-         JOgGkjtTNb68kxYjrv3HOGC3eCOcyJHariOH6oHc=
-Received: from DLEE104.ent.ti.com (dlee104.ent.ti.com [157.170.170.34])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 02KAKwas088376
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 20 Mar 2020 05:20:58 -0500
-Received: from DLEE106.ent.ti.com (157.170.170.36) by DLEE104.ent.ti.com
- (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Fri, 20
- Mar 2020 05:20:58 -0500
-Received: from lelv0326.itg.ti.com (10.180.67.84) by DLEE106.ent.ti.com
- (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Fri, 20 Mar 2020 05:20:57 -0500
-Received: from [10.250.133.193] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id 02KAKsKP008091;
-        Fri, 20 Mar 2020 05:20:55 -0500
-Subject: Re: [PATCH] PCI: endpoint: Fix NULL pointer dereference for
- ->get_features()
-To:     Sriram Dash <sriram.dash@samsung.com>,
-        "'Shradha Todi'" <shradha.t@samsung.com>
-CC:     <lorenzo.pieralisi@arm.com>, <bhelgaas@google.com>,
-        <pankaj.dubey@samsung.com>, <linux-pci@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <CGME20200311103443epcas5p2e97b8f3a8e52dc6f02eb551e0c97f132@epcas5p2.samsung.com>
- <20200311102852.5207-1-shradha.t@samsung.com>
- <000d01d5fdf3$55d43af0$017cb0d0$@samsung.com>
-From:   Kishon Vijay Abraham I <kishon@ti.com>
-Message-ID: <a7a6a295-160a-94d6-09f9-63f783c8b28a@ti.com>
-Date:   Fri, 20 Mar 2020 15:50:53 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.6.0
+        id S1727494AbgCTKVa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Mar 2020 06:21:30 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46756 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726954AbgCTKV3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Mar 2020 06:21:29 -0400
+Received: from coco.lan (ip5f5ad4e9.dynamic.kabel-deutschland.de [95.90.212.233])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7E2A020754;
+        Fri, 20 Mar 2020 10:21:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1584699688;
+        bh=NZSnQDBgPuiRLwk7BUtGDRlwx1qB7pwmF0Mf3fESOQQ=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=nKvOTbu3MVtN4G+eSJLUiJm7CCaBMhoC7BCy2GzSitb7OhJr/l/sIff930JGWAYgu
+         65Fl5ZH4puN2DxvNPGMtZMMsOgyli1IHdPhiXpDFxNUxS/yiEJ8eBIheSzOgaPiOON
+         s/4pD2vhD5QRvjZI/90AtmXGudekcBIREPZPBQ2A=
+Date:   Fri, 20 Mar 2020 11:21:22 +0100
+From:   Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To:     Federico Vaga <federico.vaga@vaga.pv.it>
+Cc:     Jonathan Corbet <corbet@lwn.net>, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org
+Subject: Re: [PATCH] doc: fix reference to core-api/namespaces.rst
+Message-ID: <20200320112122.48244ec4@coco.lan>
+In-Reply-To: <2008227.4siv4ILC15@harkonnen>
+References: <20191122115337.1541-1-federico.vaga@vaga.pv.it>
+        <20191122103437.59fda273@lwn.net>
+        <2008227.4siv4ILC15@harkonnen>
+X-Mailer: Claws Mail 3.17.5 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <000d01d5fdf3$55d43af0$017cb0d0$@samsung.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Sriram,
+Em Sun, 24 Nov 2019 18:02:02 +0100
+Federico Vaga <federico.vaga@vaga.pv.it> escreveu:
 
-On 3/19/2020 7:06 PM, Sriram Dash wrote:
->> From: Shradha Todi <shradha.t@samsung.com>
->> Subject: [PATCH] PCI: endpoint: Fix NULL pointer dereference for -
->>> get_features()
->>
->> get_features ops of pci_epc_ops may return NULL, causing NULL pointer
->> dereference in pci_epf_test_bind function. Let us add a check for
->> pci_epc_feature pointer in pci_epf_test_bind before we access it to avoid any
->> such NULL pointer dereference and return -ENOTSUPP in case pci_epc_feature
->> is not found.
->>
->> Reviewed-by: Pankaj Dubey <pankaj.dubey@samsung.com>
->> Signed-off-by: Sriram Dash <sriram.dash@samsung.com>
->> Signed-off-by: Shradha Todi <shradha.t@samsung.com>
->> ---
-> 
-> Hi Kishon,
-> 
-> Any update on this?
+> > diff --git a/Documentation/conf.py b/Documentation/conf.py
+> > index 3c7bdf4cd31f..fa2bfcd6df1d 100644
+> > --- a/Documentation/conf.py
+> > +++ b/Documentation/conf.py
+> > @@ -38,7 +38,7 @@ needs_sphinx = '1.3'
+> >  # ones.
+> >  extensions = ['kerneldoc', 'rstFlatTable', 'kernel_include', 'cdomain',
+> >                'kfigure', 'sphinx.ext.ifconfig', 'automarkup',
+> > -              'maintainers_include']
+> > +              'maintainers_include', 'sphinx.ext.autosectionlabel' ]
+> > 
 
-Don't we access epc_features only after checking if epc_features is not NULL in
-pci_epf_test_bind() function? However we are accessing epc_features in multiple
-other functions all over pci-epf-test.
+Testing today's linux-next branch. This extension caused *lots* of
+warnings like this:
 
-So the patch itself is correct though the commit log has to be fixed. You
-should also check if all the endpoint controller drivers existing currently
-provides epc_features.
+	Documentation/driver-api/uio-howto.rst:12: WARNING: duplicate label translations, other instance in Documentation/index.rst
 
-Thanks
-Kishon
-> 
-> 
->>  drivers/pci/endpoint/functions/pci-epf-test.c | 15 +++++++++------
->>  1 file changed, 9 insertions(+), 6 deletions(-)
->>
->> diff --git a/drivers/pci/endpoint/functions/pci-epf-test.c
->> b/drivers/pci/endpoint/functions/pci-epf-test.c
->> index c9121b1b9fa9..af4537a487bf 100644
->> --- a/drivers/pci/endpoint/functions/pci-epf-test.c
->> +++ b/drivers/pci/endpoint/functions/pci-epf-test.c
->> @@ -510,14 +510,17 @@ static int pci_epf_test_bind(struct pci_epf *epf)
->>  		return -EINVAL;
->>
->>  	epc_features = pci_epc_get_features(epc, epf->func_no);
->> -	if (epc_features) {
->> -		linkup_notifier = epc_features->linkup_notifier;
->> -		msix_capable = epc_features->msix_capable;
->> -		msi_capable = epc_features->msi_capable;
->> -		test_reg_bar = pci_epc_get_first_free_bar(epc_features);
->> -		pci_epf_configure_bar(epf, epc_features);
->> +	if (!epc_features) {
->> +		dev_err(dev, "epc_features not implemented\n");
->> +		return -ENOTSUPP;
->>  	}
->>
->> +	linkup_notifier = epc_features->linkup_notifier;
->> +	msix_capable = epc_features->msix_capable;
->> +	msi_capable = epc_features->msi_capable;
->> +	test_reg_bar = pci_epc_get_first_free_bar(epc_features);
->> +	pci_epf_configure_bar(epf, epc_features);
->> +
->>  	epf_test->test_reg_bar = test_reg_bar;
->>  	epf_test->epc_features = epc_features;
->>
->> --
->> 2.17.1
-> 
-> 
+The thing is that, by default, autosectionlabel uses a global namespace,
+with cause lots of troubles with sections like "introduction". So, it
+needs to be ensured that no duplication will happen.
+
+Btw, I tried to setup this:
+
+	diff --git a/Documentation/conf.py b/Documentation/conf.py
+	index fa2bfcd6df1d..7eaadde98a86 100644
+	--- a/Documentation/conf.py
+	+++ b/Documentation/conf.py
+	@@ -40,6 +40,9 @@ extensions = ['kerneldoc', 'rstFlatTable', 'kernel_include', 'cdomain',
+	               'kfigure', 'sphinx.ext.ifconfig', 'automarkup',
+	               'maintainers_include', 'sphinx.ext.autosectionlabel' ]
+	 
+	+# Avoid lots of warnings with autosectionlabel extension
+	+autosectionlabel_prefix_document = True
+	+
+	 # The name of the math extension changed on Sphinx 1.4
+	 if (major == 1 and minor > 3) or (major > 1):
+	     extensions.append("sphinx.ext.imgmath")
+	
+But I still get lots of duplicated section labels inside the same file,
+like this one (757 warnings):
+
+	docs/Documentation/driver-api/parport-lowlevel.rst:815: WARNING: duplicate label driver-api/parport-lowlevel:description, other instance in Documentation/driver-api/parport-lowlevel.rst
+
+There we have things that are similar to man pages, like this:
+
+	parport_register_driver - register a device driver with parport
+	---------------------------------------------------------------
+
+	SYNOPSIS
+	^^^^^^^^
+...
+
+	parport_unregister_driver - tell parport to forget about this driver
+	--------------------------------------------------------------------
+
+	SYNOPSIS
+	^^^^^^^^
+
+A solution would be to split all the files that are hitting this, but
+I suspect that this is too much effort for too less benefit.
+
+I would instead just revert this patch and fix it by adding a normal
+explicit reference.
+
+Another alternative would be to patch the Sphinx extension to make it
+handle references on an hierarchical way, e. g. the above references
+should be, instead of just "synopsis":
+
+	parport-lowlevel / parport_register_driver - register a device driver with parport / synopsis
+	parport-lowlevel / parport_unregister_driver - tell parport to forget about this driver / synopsis
+
+Thanks,
+Mauro
