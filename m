@@ -2,116 +2,182 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F2A5218D14F
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 15:42:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EBAC418D158
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 15:44:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727458AbgCTOmL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Mar 2020 10:42:11 -0400
-Received: from mga07.intel.com ([134.134.136.100]:59804 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727023AbgCTOmL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Mar 2020 10:42:11 -0400
-IronPort-SDR: phK0DiLKLAqHviKbPhC8DIw6yTd3C7Uj3+LicvTKK1NvUE2PwtRvuMOd65S0vNLt/X1RXhRZTL
- UqkXZpK6WFhg==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Mar 2020 07:42:10 -0700
-IronPort-SDR: y/DCTPYeHhLQXTi1kZajrLL8cvBlcF7sM9Lmzxo489dLbGXXuET+DQx7RX/5KtgB3xcn9E6HfG
- ldu8qJw/s5/w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.72,284,1580803200"; 
-   d="scan'208";a="248896586"
-Received: from jralexan-mobl.amr.corp.intel.com (HELO [10.254.187.105]) ([10.254.187.105])
-  by orsmga006.jf.intel.com with ESMTP; 20 Mar 2020 07:42:09 -0700
-Subject: Re: [RFC PATCH v2.1] x86/sev-es: Handle NMI State
-To:     Joerg Roedel <joro@8bytes.org>, Andy Lutomirski <luto@kernel.org>
-Cc:     X86 ML <x86@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Hellstrom <thellstrom@vmware.com>,
-        Jiri Slaby <jslaby@suse.cz>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Juergen Gross <jgross@suse.com>,
-        Kees Cook <keescook@chromium.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        kvm list <kvm@vger.kernel.org>,
-        Linux Virtualization <virtualization@lists.linux-foundation.org>,
-        Joerg Roedel <jroedel@suse.de>
-References: <20200319091407.1481-1-joro@8bytes.org>
- <20200319091407.1481-71-joro@8bytes.org>
- <CALCETrUOQneBHjoZkP-7T5PDijb=WOyv7xF7TD0GLR2Aw77vyA@mail.gmail.com>
- <20200320131707.GF5122@8bytes.org>
-From:   Dave Hansen <dave.hansen@intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-Message-ID: <7d1ee9d9-d333-4529-b21b-19758c99e029@intel.com>
-Date:   Fri, 20 Mar 2020 07:42:09 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1727468AbgCTOoE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Mar 2020 10:44:04 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:65408 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727315AbgCTOoE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Mar 2020 10:44:04 -0400
+Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 02KEXnVO133512
+        for <linux-kernel@vger.kernel.org>; Fri, 20 Mar 2020 10:44:03 -0400
+Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2yu8hy4frp-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Fri, 20 Mar 2020 10:44:03 -0400
+Received: from localhost
+        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <ldufour@linux.ibm.com>;
+        Fri, 20 Mar 2020 14:44:01 -0000
+Received: from b06avi18626390.portsmouth.uk.ibm.com (9.149.26.192)
+        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 20 Mar 2020 14:43:57 -0000
+Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
+        by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 02KEgtuA40829372
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 20 Mar 2020 14:42:55 GMT
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id D29F8AE05A;
+        Fri, 20 Mar 2020 14:43:56 +0000 (GMT)
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 76BAEAE051;
+        Fri, 20 Mar 2020 14:43:56 +0000 (GMT)
+Received: from pomme.local (unknown [9.145.63.10])
+        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Fri, 20 Mar 2020 14:43:56 +0000 (GMT)
+Subject: Re: [PATCH 1/2] KVM: PPC: Book3S HV: check caller of H_SVM_* Hcalls
+To:     Greg Kurz <groug@kaod.org>
+Cc:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        kvm-ppc@vger.kernel.org, Bharata B Rao <bharata@linux.ibm.com>,
+        Paul Mackerras <paulus@ozlabs.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Michael Ellerman <mpe@ellerman.id.au>
+References: <20200320102643.15516-1-ldufour@linux.ibm.com>
+ <20200320102643.15516-2-ldufour@linux.ibm.com>
+ <20200320132248.44b81b3b@bahia.lan>
+From:   Laurent Dufour <ldufour@linux.ibm.com>
+Date:   Fri, 20 Mar 2020 15:43:54 +0100
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:68.0)
+ Gecko/20100101 Thunderbird/68.6.0
 MIME-Version: 1.0
-In-Reply-To: <20200320131707.GF5122@8bytes.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+In-Reply-To: <20200320132248.44b81b3b@bahia.lan>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: fr
 Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 20032014-0012-0000-0000-00000394869C
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 20032014-0013-0000-0000-000021D17040
+Message-Id: <2268d1e3-3020-91c4-90e2-d2eced6a214a@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.645
+ definitions=2020-03-20_04:2020-03-20,2020-03-20 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 spamscore=0
+ suspectscore=0 mlxlogscore=999 priorityscore=1501 impostorscore=0
+ phishscore=0 clxscore=1015 adultscore=0 malwarescore=0 bulkscore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2003020000 definitions=main-2003200059
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 3/20/20 6:17 AM, Joerg Roedel wrote:
-> On Thu, Mar 19, 2020 at 08:35:59AM -0700, Andy Lutomirski wrote:
->> 1. Just put the NMI unmask in do_nmi().  The kernel *already* knows
->> how to handle running do_nmi() with NMIs unmasked.  This is much, much
->> simpler than your code.
-> Okay, attached is the updated patch which implements this approach. I
-> tested it in an SEV-ES guest with 'perf top' running for a little more
-> than 30 minutes and all looked good. I also removed the dead code from
-> the patch.
+Le 20/03/2020 à 13:22, Greg Kurz a écrit :
+> On Fri, 20 Mar 2020 11:26:42 +0100
+> Laurent Dufour <ldufour@linux.ibm.com> wrote:
+> 
+>> The Hcall named H_SVM_* are reserved to the Ultravisor. However, nothing
+>> prevent a malicious VM or SVM to call them. This could lead to weird result
+>> and should be filtered out.
+>>
+>> Checking the Secure bit of the calling MSR ensure that the call is coming
+>> from either the Ultravisor or a SVM. But any system call made from a SVM
+>> are going through the Ultravisor, and the Ultravisor should filter out
+>> these malicious call. This way, only the Ultravisor is able to make such a
+>> Hcall.
+> 
+> "Ultravisor should filter" ? And what if it doesn't (eg. because of a bug) ?
 
-FWIW, perf plus the x86 selftests run in a big loop was my best way of
-stressing the NMI path when we mucked with it for PTI.  The selftests
-make sure to hit some of the more rare entry/exit paths.
+If it doesn't, a malicious SVM would be able to call UV reserved Hcall like 
+H_SVM_INIT_ABORT, etc... which is not a good idea.
+
+> 
+> Shouldn't we also check the HV bit of the calling MSR as well to
+> disambiguate SVM and UV ?
+
+That's another way to do so, but since the SVM Hcall are going through the UV, 
+it seems the right place (the UV) to do the filtering.
+
+>>
+>> Cc: Bharata B Rao <bharata@linux.ibm.com>
+>> Cc: Paul Mackerras <paulus@ozlabs.org>
+>> Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+>> Cc: Michael Ellerman <mpe@ellerman.id.au>
+>> Signed-off-by: Laurent Dufour <ldufour@linux.ibm.com>
+>> ---
+>>   arch/powerpc/kvm/book3s_hv.c | 32 +++++++++++++++++++++-----------
+>>   1 file changed, 21 insertions(+), 11 deletions(-)
+>>
+>> diff --git a/arch/powerpc/kvm/book3s_hv.c b/arch/powerpc/kvm/book3s_hv.c
+>> index 33be4d93248a..43773182a737 100644
+>> --- a/arch/powerpc/kvm/book3s_hv.c
+>> +++ b/arch/powerpc/kvm/book3s_hv.c
+>> @@ -1074,25 +1074,35 @@ int kvmppc_pseries_do_hcall(struct kvm_vcpu *vcpu)
+>>   					 kvmppc_get_gpr(vcpu, 6));
+>>   		break;
+>>   	case H_SVM_PAGE_IN:
+>> -		ret = kvmppc_h_svm_page_in(vcpu->kvm,
+>> -					   kvmppc_get_gpr(vcpu, 4),
+>> -					   kvmppc_get_gpr(vcpu, 5),
+>> -					   kvmppc_get_gpr(vcpu, 6));
+>> +		ret = H_UNSUPPORTED;
+>> +		if (kvmppc_get_srr1(vcpu) & MSR_S)
+>> +			ret = kvmppc_h_svm_page_in(vcpu->kvm,
+>> +						   kvmppc_get_gpr(vcpu, 4),
+>> +						   kvmppc_get_gpr(vcpu, 5),
+>> +						   kvmppc_get_gpr(vcpu, 6));
+> 
+> If calling kvmppc_h_svm_page_in() produces a "weird result" when
+> the MSR_S bit isn't set, then I think it should do the checking
+> itself, ie. pass vcpu.
+> 
+> This would also prevent adding that many lines in kvmppc_pseries_do_hcall()
+> which is a big enough function already. The checking could be done in a
+> helper in book3s_hv_uvmem.c and used by all UV specific hcalls.
+
+I'm not convinced that would be better, and I followed the way checks for other 
+Hcalls has been made (see H_TLB_INVALIDATE,..).
+
+I agree  kvmppc_pseries_do_hcall() is long but this is just a big switch(), 
+quite linear.
+
+> 
+>>   		break;
+>>   	case H_SVM_PAGE_OUT:
+>> -		ret = kvmppc_h_svm_page_out(vcpu->kvm,
+>> -					    kvmppc_get_gpr(vcpu, 4),
+>> -					    kvmppc_get_gpr(vcpu, 5),
+>> -					    kvmppc_get_gpr(vcpu, 6));
+>> +		ret = H_UNSUPPORTED;
+>> +		if (kvmppc_get_srr1(vcpu) & MSR_S)
+>> +			ret = kvmppc_h_svm_page_out(vcpu->kvm,
+>> +						    kvmppc_get_gpr(vcpu, 4),
+>> +						    kvmppc_get_gpr(vcpu, 5),
+>> +						    kvmppc_get_gpr(vcpu, 6));
+>>   		break;
+>>   	case H_SVM_INIT_START:
+>> -		ret = kvmppc_h_svm_init_start(vcpu->kvm);
+>> +		ret = H_UNSUPPORTED;
+>> +		if (kvmppc_get_srr1(vcpu) & MSR_S)
+>> +			ret = kvmppc_h_svm_init_start(vcpu->kvm);
+>>   		break;
+>>   	case H_SVM_INIT_DONE:
+>> -		ret = kvmppc_h_svm_init_done(vcpu->kvm);
+>> +		ret = H_UNSUPPORTED;
+>> +		if (kvmppc_get_srr1(vcpu) & MSR_S)
+>> +			ret = kvmppc_h_svm_init_done(vcpu->kvm);
+>>   		break;
+>>   	case H_SVM_INIT_ABORT:
+>> -		ret = kvmppc_h_svm_init_abort(vcpu->kvm);
+>> +		ret = H_UNSUPPORTED;
+>> +		if (kvmppc_get_srr1(vcpu) & MSR_S)
+>> +			ret = kvmppc_h_svm_init_abort(vcpu->kvm);
+>>   		break;
+>>   
+>>   	default:
+> 
+
