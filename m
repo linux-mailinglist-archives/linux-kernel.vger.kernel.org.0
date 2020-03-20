@@ -2,22 +2,22 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BDB8118D9B6
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 21:50:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3385A18D9B7
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 21:50:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727190AbgCTUuK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Mar 2020 16:50:10 -0400
+        id S1727145AbgCTUuI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Mar 2020 16:50:08 -0400
 Received: from ex13-edg-ou-002.vmware.com ([208.91.0.190]:35623 "EHLO
         EX13-EDG-OU-002.vmware.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726979AbgCTUuG (ORCPT
+        by vger.kernel.org with ESMTP id S1726783AbgCTUuG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 20 Mar 2020 16:50:06 -0400
 X-Greylist: delayed 902 seconds by postgrey-1.27 at vger.kernel.org; Fri, 20 Mar 2020 16:50:04 EDT
 Received: from sc9-mailhost2.vmware.com (10.113.161.72) by
  EX13-EDG-OU-002.vmware.com (10.113.208.156) with Microsoft SMTP Server id
- 15.0.1156.6; Fri, 20 Mar 2020 13:34:55 -0700
+ 15.0.1156.6; Fri, 20 Mar 2020 13:34:56 -0700
 Received: from localhost.localdomain (unknown [10.118.101.94])
-        by sc9-mailhost2.vmware.com (Postfix) with ESMTP id 0D4ABB1E38;
+        by sc9-mailhost2.vmware.com (Postfix) with ESMTP id 72B4BB1D85;
         Fri, 20 Mar 2020 16:35:00 -0400 (EDT)
 From:   Alexey Makhalov <amakhalov@vmware.com>
 To:     <linux-x86_64@vger.kernel.org>
@@ -32,9 +32,9 @@ CC:     <linux-kernel@vger.kernel.org>, Jonathan Corbet <corbet@lwn.net>,
         Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
         Juergen Gross <jgross@suse.com>,
         "Alexey Makhalov" <amakhalov@vmware.com>
-Subject: [PATCH 1/5] x86/vmware: Make vmware_select_hypercall() __init
-Date:   Fri, 20 Mar 2020 20:34:39 +0000
-Message-ID: <20200320203443.27742-2-amakhalov@vmware.com>
+Subject: [PATCH 2/5] x86/vmware: Remove vmware_sched_clock_setup()
+Date:   Fri, 20 Mar 2020 20:34:40 +0000
+Message-ID: <20200320203443.27742-3-amakhalov@vmware.com>
 X-Mailer: git-send-email 2.14.2
 In-Reply-To: <20200320203443.27742-1-amakhalov@vmware.com>
 References: <20200320203443.27742-1-amakhalov@vmware.com>
@@ -47,28 +47,57 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-vmware_select_hypercall() is used only by the __init
-functions, and should be annotated with __init as well.
+Move cyc2ns setup logic to separate function.
+This separation will allow to use cyc2ns mult/shift pair
+not only for the sched_clock but also for other clocks
+such as steal_clock.
 
 Signed-off-by: Alexey Makhalov <amakhalov@vmware.com>
 Reviewed-by: Thomas Hellstrom <thellstrom@vmware.com>
 ---
- arch/x86/kernel/cpu/vmware.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/x86/kernel/cpu/vmware.c | 15 ++++++++++-----
+ 1 file changed, 10 insertions(+), 5 deletions(-)
 
 diff --git a/arch/x86/kernel/cpu/vmware.c b/arch/x86/kernel/cpu/vmware.c
-index 46d732696c1c..d280560fd75e 100644
+index d280560fd75e..efb22fa76ba4 100644
 --- a/arch/x86/kernel/cpu/vmware.c
 +++ b/arch/x86/kernel/cpu/vmware.c
-@@ -213,7 +213,7 @@ static void __init vmware_platform_setup(void)
- 	vmware_set_capabilities();
+@@ -122,7 +122,7 @@ static unsigned long long notrace vmware_sched_clock(void)
+ 	return ns;
  }
  
--static u8 vmware_select_hypercall(void)
-+static u8 __init vmware_select_hypercall(void)
+-static void __init vmware_sched_clock_setup(void)
++static void __init vmware_cyc2ns_setup(void)
  {
- 	int eax, ebx, ecx, edx;
+ 	struct cyc2ns_data *d = &vmware_cyc2ns;
+ 	unsigned long long tsc_now = rdtsc();
+@@ -132,8 +132,7 @@ static void __init vmware_sched_clock_setup(void)
+ 	d->cyc2ns_offset = mul_u64_u32_shr(tsc_now, d->cyc2ns_mul,
+ 					   d->cyc2ns_shift);
  
+-	pv_ops.time.sched_clock = vmware_sched_clock;
+-	pr_info("using sched offset of %llu ns\n", d->cyc2ns_offset);
++	pr_info("using clock offset of %llu ns\n", d->cyc2ns_offset);
+ }
+ 
+ static void __init vmware_paravirt_ops_setup(void)
+@@ -141,8 +140,14 @@ static void __init vmware_paravirt_ops_setup(void)
+ 	pv_info.name = "VMware hypervisor";
+ 	pv_ops.cpu.io_delay = paravirt_nop;
+ 
+-	if (vmware_tsc_khz && vmw_sched_clock)
+-		vmware_sched_clock_setup();
++	if (vmware_tsc_khz == 0)
++		return;
++
++	vmware_cyc2ns_setup();
++
++	if (vmw_sched_clock)
++		pv_ops.time.sched_clock = vmware_sched_clock;
++
+ }
+ #else
+ #define vmware_paravirt_ops_setup() do {} while (0)
 -- 
 2.14.2
 
