@@ -2,52 +2,52 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4765518D578
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 18:15:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6C3C818D583
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 18:15:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727217AbgCTRPI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Mar 2020 13:15:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46588 "EHLO mail.kernel.org"
+        id S1727599AbgCTRPh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Mar 2020 13:15:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46650 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727148AbgCTRPH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Mar 2020 13:15:07 -0400
-Subject: Re: [git pull drm fixes for 5.6-rc7
+        id S1727240AbgCTRPJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Mar 2020 13:15:09 -0400
+Subject: Re: [GIT PULL] TTY driver fixes for 5.6-rc7
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584724507;
-        bh=G5yoDx1A9wxFe1FITEE9mipC9mYOKfihV2JJP7Q0iho=;
+        s=default; t=1584724508;
+        bh=5XG3OFUlmNg8aI4pi041UWHMGMe1DZ86uj8R9VRxuvM=;
         h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=YxE4UumjtW0hygEqHQodDfIyAaoesPbgtxvj/6uJL0G1bY+eJy4iaWuUeU48DYqXf
-         twQnnMLIAfV4ttIr1h1zhegaV3X2xXOaogKWx8G1wKpm4XX4A5zi/jdHe0Jqs0pAsC
-         8rKNA2hEaYuXJGKz5qc3TtUmjEc2otCnXIV+Huog=
+        b=HvqSzTpayRYmJqbkXBR6u/NNYvS0S/VW93QYd+noUDcLJ+NxJC0x+czuJhHQaHyxK
+         b3MybXSAQ/P8mZKUo9SiNVCgSdISmJqaTKWagqVgDHFBwCMcZ/dC/gdGXNbPdE3Bvw
+         6NhQd6HTX3CWEwzlYrl0YmYwWNL7XEFroZ8frFKg=
 From:   pr-tracker-bot@kernel.org
-In-Reply-To: <CAPM=9tziNvC7VozK1C3yd+wqspVGF7d0eToOANwV4Euwy4LMkQ@mail.gmail.com>
-References: <CAPM=9tziNvC7VozK1C3yd+wqspVGF7d0eToOANwV4Euwy4LMkQ@mail.gmail.com>
+In-Reply-To: <20200320142715.GA760292@kroah.com>
+References: <20200320142715.GA760292@kroah.com>
 X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <CAPM=9tziNvC7VozK1C3yd+wqspVGF7d0eToOANwV4Euwy4LMkQ@mail.gmail.com>
-X-PR-Tracked-Remote: git://anongit.freedesktop.org/drm/drm
- tags/drm-fixes-2020-03-20
-X-PR-Tracked-Commit-Id: 5366b96b1997745d903c697a32e0ed27b66fd158
+X-PR-Tracked-Message-Id: <20200320142715.GA760292@kroah.com>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/tty.git tags/tty-5.6-rc7
+X-PR-Tracked-Commit-Id: 6e622cd8bd888c7fa3ee2b7dfb3514ab53b21570
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 69d3e5a5a66bb59c39f36dcb9cf4e9a4239aa8cd
-Message-Id: <158472450732.23492.59820200078010578.pr-tracker-bot@kernel.org>
-Date:   Fri, 20 Mar 2020 17:15:07 +0000
-To:     Dave Airlie <airlied@gmail.com>
+X-PR-Merge-Commit-Id: fa91418b72cbf14742f2439439369fcad942b24c
+Message-Id: <158472450887.23492.7401016980636426695.pr-tracker-bot@kernel.org>
+Date:   Fri, 20 Mar 2020 17:15:08 +0000
+To:     Greg KH <gregkh@linuxfoundation.org>
 Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        LKML <linux-kernel@vger.kernel.org>
+        Jiri Slaby <jslaby@suse.cz>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Fri, 20 Mar 2020 13:01:44 +1000:
+The pull request you sent on Fri, 20 Mar 2020 15:27:15 +0100:
 
-> git://anongit.freedesktop.org/drm/drm tags/drm-fixes-2020-03-20
+> git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/tty.git tags/tty-5.6-rc7
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/69d3e5a5a66bb59c39f36dcb9cf4e9a4239aa8cd
+https://git.kernel.org/torvalds/c/fa91418b72cbf14742f2439439369fcad942b24c
 
 Thank you!
 
