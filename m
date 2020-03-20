@@ -2,101 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4586218D35F
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 16:54:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 07BA518D363
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 16:55:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727122AbgCTPyB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Mar 2020 11:54:01 -0400
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:42039 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726840AbgCTPyA (ORCPT
+        id S1727278AbgCTPzJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Mar 2020 11:55:09 -0400
+Received: from mail-qv1-f65.google.com ([209.85.219.65]:44034 "EHLO
+        mail-qv1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726144AbgCTPzJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Mar 2020 11:54:00 -0400
-Received: by mail-lf1-f65.google.com with SMTP id t21so4929593lfe.9;
-        Fri, 20 Mar 2020 08:53:57 -0700 (PDT)
+        Fri, 20 Mar 2020 11:55:09 -0400
+Received: by mail-qv1-f65.google.com with SMTP id w5so3186952qvp.11
+        for <linux-kernel@vger.kernel.org>; Fri, 20 Mar 2020 08:55:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=1V8FF9eJrm9wvwD4q3tqsWWsW0ZrqInhPAWcIStqMyY=;
-        b=Y3aVTjLECSkF093nyIgekKyw2TJGu4YSFGj2zNevrKYE2v5CWDPQiIl+adnZq+y+Oy
-         uJ6PniVUeFVg0KqllKNg2jLhDkM++/+1zMfN364Ht9dtCR7lvhkZxyxKYIm6NWpzPMXJ
-         obNd8/Z0J3qDm5iBmDTBFPM/sHo3Fqc+JhQ3ot9cnxj0ZYejOIfZ/Esu8eK/ye9zV24H
-         UXPLxFGmvtfAG0iC/rtm6nlbSBpMffiNGRvC7+69rx+eA8MxyWOz11IXC0GZmmieBdCx
-         GGKvUv0WFT/Z9Di5HlF7WT8zqjuPqUAKQ+zF++L1ZvaU57ILjGqwa7cIJH7TdGHd0AAP
-         Vs9g==
+        d=cmpxchg-org.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=kA54VswZsT5/CNlwIwZBY/H30VVL/ablHOI+ykDEfUw=;
+        b=h9BpRW81+Xm0pLBVCmKH2IdQD4VSOMFNFWYiZwvPVdobwa/P6HtGQIJtQXZJXU5CLz
+         qStLK2ZD5vaYWKNyFsI+0O7m7raDmTcfNQd55TxjcluITF+TqXPXWxIhrfuLMEASvnf1
+         AWwe3LDrYTmqVPTDdtP3tKgwpar+TRSFwjRRXqBxfWp62gXvUBPt/nWvu9lPQhjOnOMt
+         XDxekKzMPuj3xlrxEWmTLZIh3ki9YqmWRQWZZS3ILij5BEMMD4iArLkNYJPGq1hz3gr3
+         YKJvqGki+efSkGuckkUDGK2qUr6vAI8G0OS72Xb530svwx80KSuJ4t1fAcZ6bsIDySzO
+         TmGQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=1V8FF9eJrm9wvwD4q3tqsWWsW0ZrqInhPAWcIStqMyY=;
-        b=ACCPDkebZGepKhejPoZFhE/us3QvhpNnz7KrSJMRfM5PeqVk4Q4MyCwZsRqU043xu7
-         NFGyEktdzdEZJ0+VO1qG1IBS9wQGjeuvikHc9D+kbHYdSH/WJptGdFrpEi9qpjPqhhB5
-         7gCSai7UzpElp9ozBpLiBIpyJn1Uh3OaK0i92Bz6ynGO1X5SSHq3klFGODISVSQEXylP
-         TLhjnmubtO18F1eymoEHJgJSROl1NKSCjWE4vefSSVQl7FkRWfa5709ospN3KgNQTsKw
-         qY990cGT04gp6G6amYxo3Oqnh96K9EG8I46KnSSjup63mkfqDsZxxsz0YdnPeMGUtoAQ
-         xAhA==
-X-Gm-Message-State: ANhLgQ0msmQ/ArCc+X9eZetXKH4cQ6jmSSwKUA8HGjifVbauKIZrv4bS
-        lFi9Z+w8Ym1GVyIPrhszm8g=
-X-Google-Smtp-Source: ADFU+vtu5cEYNc1o2tNDXGsVXlSY1xVgFic5YowTxtx9YfTm+lQaO/ztP5C9wnLSHzL2LIXwaK2fpQ==
-X-Received: by 2002:a19:fc12:: with SMTP id a18mr5857736lfi.117.1584719637199;
-        Fri, 20 Mar 2020 08:53:57 -0700 (PDT)
-Received: from [192.168.2.145] (94-29-39-224.dynamic.spd-mgts.ru. [94.29.39.224])
-        by smtp.googlemail.com with ESMTPSA id k2sm3721398lfc.95.2020.03.20.08.53.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 20 Mar 2020 08:53:56 -0700 (PDT)
-Subject: Re: [PATCH v7 00/48] atmel_mxt_ts misc
-To:     "Wang, Jiada" <jiada_wang@mentor.com>, jikos@kernel.org,
-        benjamin.tissoires@redhat.com, rydberg@bitmath.org,
-        dmitry.torokhov@gmail.com, nick@shmanahar.org, bsz@semihalf.com
-Cc:     linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
-        erosca@de.adit-jv.com, Andrew_Gabbasov@mentor.com
-References: <20200212084218.32344-1-jiada_wang@mentor.com>
- <c583d151-9243-cbde-a04b-bc0389d9be5a@gmail.com>
- <89e4bb0b-b2eb-0b67-4307-fb2af914b1c0@mentor.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <f9b221e7-f189-3e47-adab-1cbc49490d4b@gmail.com>
-Date:   Fri, 20 Mar 2020 18:53:55 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=kA54VswZsT5/CNlwIwZBY/H30VVL/ablHOI+ykDEfUw=;
+        b=O5ewxSzbO6gdZfuw3CoUpyAHA0TmDwMR+YyKj5ZRBuAWcfBj940T905/UsirdW4wyM
+         HQH6R5frnnMsIQdpATuhB7qMvfmgz8vXcpXM0ucW7ov4f89kvS7Rk3XHy28uOU3XU31d
+         WIOG8ypEK+nBadapCqdQzaCxVTrDQ9/fGqfY6ip0fSf+1AS7vmHkpIVs0Rc09+fxMZ1r
+         6fIK+ZQZEDICXQNlMcykkVKPlwkotmkZVrznfW7CZ4jbRB9n/ezZQ8VoQw29GrsKYMmb
+         Q2lMG19RgUFZQ76h8naK5g1vwEObijw7gpFMeLrTHTk997a1zUuRKj8m9PxqNvraErNu
+         v4Nw==
+X-Gm-Message-State: ANhLgQ0cCKtgXAg7duEjBYPNCtqkwLqsspthJduzVdQvep5nbeEQTmw6
+        mvZtTaQtAe98hXntqMsuyg48W5evgqw=
+X-Google-Smtp-Source: ADFU+vveo0N4CHbisUB5ArxqhCh+Kdu2UDfHtyEOWTY+K6g/iOG43vJUwa4Ie5ooLXrDSnkymo6JZw==
+X-Received: by 2002:a0c:d601:: with SMTP id c1mr4222390qvj.164.1584719707712;
+        Fri, 20 Mar 2020 08:55:07 -0700 (PDT)
+Received: from localhost ([2620:10d:c091:480::1:a9a9])
+        by smtp.gmail.com with ESMTPSA id c40sm5218215qtk.18.2020.03.20.08.55.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 20 Mar 2020 08:55:06 -0700 (PDT)
+Date:   Fri, 20 Mar 2020 11:55:05 -0400
+From:   Johannes Weiner <hannes@cmpxchg.org>
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     mateusznosek0@gmail.com, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, akpm@linux-foundation.org
+Subject: Re: [PATCH] mm/vmscan.c: Clean code by removing unnecessary
+ assignment
+Message-ID: <20200320155505.GA204561@cmpxchg.org>
+References: <20200319165938.23354-1-mateusznosek0@gmail.com>
+ <20200319171334.GK20800@dhcp22.suse.cz>
 MIME-Version: 1.0
-In-Reply-To: <89e4bb0b-b2eb-0b67-4307-fb2af914b1c0@mentor.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200319171334.GK20800@dhcp22.suse.cz>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Jiada,
-
-20.03.2020 06:37, Wang, Jiada пишет:
-> Hello Dmitry
+On Thu, Mar 19, 2020 at 06:13:34PM +0100, Michal Hocko wrote:
+> It is usually preferable to Cc author of the code (added Johannes)
 > 
-> I have submitted v8 patch-set to address your comments towards v7
-> patch-set,
-> most of checkpatch warnings and errors have been addressed,
+> On Thu 19-03-20 17:59:38, mateusznosek0@gmail.com wrote:
+> > From: Mateusz Nosek <mateusznosek0@gmail.com>
+> > 
+> > Previously 0 was assigned to 'sc->skipped_deactivate'. It could happen only
+> > if 'sc->skipped_deactivate' was 0 so the assignment is unnecessary and can
+> > be removed.
 > 
-> But I didn't update for following two types of warnings
-> since I want to keep consistency with legacy code
+> The above wording was a bit hard to understdand for me. I would go with
+> "
+> sc->memcg_low_skipped resets skipped_deactivate to 0 but this is not
+> needed as this code path is never reachable with skipped_deactivate != 0
+> due to previous sc->skipped_deactivate branch.
+> "
+
+Yeah that sounds good.
+
+> > Signed-off-by: Mateusz Nosek <mateusznosek0@gmail.com>
 > 
-> WARNING: DEVICE_ATTR unusual permissions '0600' used
-> #290: FILE: drivers/input/touchscreen/atmel_mxt_ts.c:3761:
-> +static DEVICE_ATTR(debug_v2_enable, 0600, NULL,
+> The patch is correct. I am not sure it results in a better code though.
+> I will defer to Johannes here. I suspect he simply wanted to express
+> that skipped_deactivate should be always reset when retrying the direct
+> reclaim. After this patch this could be lost in future changes so the
+> code would be more subtle. But I am only guessing here.
 
-What will happen if you'll use 0644? Will an empty line be returned or
-driver will crash?
+It's a valid concern, but I think in this case specifically we're very
+unlikely to change the ordering here - violate memory.low before going
+after active pages of unprotected cgroups.
 
-> WARNING: Consider renaming function(s) 'mxt_debug_notify_show' to
-> 'debug_notify_show'
-> #292: FILE: drivers/input/touchscreen/atmel_mxt_ts.c:3763:
-> +static DEVICE_ATTR(debug_notify, 0444, mxt_debug_notify_show, NULL);
+I indeed just kept it stupid: reset everything, then retry. But it
+appears that the unnecessary assignment trips people up and wastes
+their time, so I'm in favor of removing it.
 
-Perhaps this should be fine to ignore, although the prefix is indeed a
-bit superfluous.
-
-> please let me know if you have different view on this
-
-Thank you very much, I'll test v8 during the weekend.
+Acked-by: Johannes Weiner <hannes@cmpxchg.org>
