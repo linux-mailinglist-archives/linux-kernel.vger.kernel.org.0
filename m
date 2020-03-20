@@ -2,78 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 839B118C8DD
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 09:20:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DA1B118C8EA
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 09:23:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726805AbgCTIUa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Mar 2020 04:20:30 -0400
-Received: from us-smtp-delivery-74.mimecast.com ([216.205.24.74]:29118 "EHLO
-        us-smtp-delivery-74.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726657AbgCTIUa (ORCPT
+        id S1726814AbgCTIXw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Mar 2020 04:23:52 -0400
+Received: from mout.kundenserver.de ([217.72.192.73]:44171 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726527AbgCTIXw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Mar 2020 04:20:30 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1584692429;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=VVZY6TeI0YOm1FYG0w30u2dqA8tug6BHP6KzUJXch3w=;
-        b=QCoGdzyya9ukt/wRDa4wC3ON5V3UK13QfXp55/FjzVJYzpv/molcLNQzJ91RkCw63Vy6Y+
-        tHIU3/ROUyPes0IBFUb4fdKlQUhk+2J5TDLi83vZpZkyWLzdMAl+U66u6RaCPbVm3mAh7n
-        WUyq3n9UiaD1igLOdDQ64g5ZaVpdsjc=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-111-Nm9VmDiBOxqeGfERJwsHVA-1; Fri, 20 Mar 2020 04:20:27 -0400
-X-MC-Unique: Nm9VmDiBOxqeGfERJwsHVA-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id B69A7800D5A;
-        Fri, 20 Mar 2020 08:20:24 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-113-126.rdu2.redhat.com [10.10.113.126])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 5E2B85D9CA;
-        Fri, 20 Mar 2020 08:20:20 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <20200318221457.1330-2-longman@redhat.com>
-References: <20200318221457.1330-2-longman@redhat.com> <20200318221457.1330-1-longman@redhat.com>
-To:     Waiman Long <longman@redhat.com>
-Cc:     dhowells@redhat.com,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>, keyrings@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-integrity@vger.kernel.org, netdev@vger.kernel.org,
-        linux-afs@lists.infradead.org, Sumit Garg <sumit.garg@linaro.org>,
-        Jerry Snitselaar <jsnitsel@redhat.com>,
-        Roberto Sassu <roberto.sassu@huawei.com>,
-        Eric Biggers <ebiggers@google.com>,
-        Chris von Recklinghausen <crecklin@redhat.com>
-Subject: Re: [PATCH v5 1/2] KEYS: Don't write out to userspace while holding key semaphore
+        Fri, 20 Mar 2020 04:23:52 -0400
+Received: from mail.cetitecgmbh.com ([87.190.42.90]) by
+ mrelayeu.kundenserver.de (mreue107 [212.227.15.183]) with ESMTPSA (Nemesis)
+ id 1N3bCH-1jOrq90Hlz-010fJp; Fri, 20 Mar 2020 09:23:34 +0100
+Received: from pflvmailgateway.corp.cetitec.com (unknown [127.0.0.1])
+        by mail.cetitecgmbh.com (Postfix) with ESMTP id ADF0C64F8DA;
+        Fri, 20 Mar 2020 08:23:32 +0000 (UTC)
+X-Virus-Scanned: amavisd-new at cetitec.com
+Received: from mail.cetitecgmbh.com ([127.0.0.1])
+        by pflvmailgateway.corp.cetitec.com (pflvmailgateway.corp.cetitec.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id dUkY0kNg4MH8; Fri, 20 Mar 2020 09:23:32 +0100 (CET)
+Received: from pfwsexchange.corp.cetitec.com (unknown [10.10.1.99])
+        by mail.cetitecgmbh.com (Postfix) with ESMTPS id 62EDA64E0DE;
+        Fri, 20 Mar 2020 09:23:32 +0100 (CET)
+Received: from pflmari.corp.cetitec.com (10.8.5.41) by
+ PFWSEXCHANGE.corp.cetitec.com (10.10.1.99) with Microsoft SMTP Server (TLS)
+ id 15.0.1497.2; Fri, 20 Mar 2020 09:23:32 +0100
+Received: by pflmari.corp.cetitec.com (Postfix, from userid 1000)
+        id BC6AC80524; Fri, 20 Mar 2020 09:23:31 +0100 (CET)
+Date:   Fri, 20 Mar 2020 09:23:31 +0100
+From:   Alex Riesen <alexander.riesen@cetitec.com>
+To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+CC:     Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        "Hans Verkuil" <hverkuil-cisco@xs4all.nl>,
+        Rob Herring <robh+dt@kernel.org>,
+        "Mark Rutland" <mark.rutland@arm.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        <devel@driverdev.osuosl.org>, <linux-media@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [PATCH v2 02/10] media: adv748x: include everything adv748x.h
+ needs into the file
+Message-ID: <20200320082331.GA4344@pflmari>
+Mail-Followup-To: Alex Riesen <alexander.riesen@cetitec.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        devel@driverdev.osuosl.org, linux-media@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+References: <cover.1584639664.git.alexander.riesen@cetitec.com>
+ <fe109d58eaa34d68cad0f34bb048f827b336e024.1584639664.git.alexander.riesen@cetitec.com>
+ <20200319174802.GH14585@pendragon.ideasonboard.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Content-ID: <3251034.1584692419.1@warthog.procyon.org.uk>
-Date:   Fri, 20 Mar 2020 08:20:19 +0000
-Message-ID: <3251035.1584692419@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+Content-Disposition: inline
+In-Reply-To: <20200319174802.GH14585@pendragon.ideasonboard.com>
+X-Originating-IP: [10.8.5.41]
+X-ClientProxiedBy: PFWSEXCHANGE.corp.cetitec.com (10.10.1.99) To
+ PFWSEXCHANGE.corp.cetitec.com (10.10.1.99)
+X-EsetResult: clean, is OK
+X-EsetId: 37303A290D7F536A6D7764
+X-Provags-ID: V03:K1:33L9iXlJrVAggt8Qr9tzFofSe8801Fe853bNzSP0wXiHIM5BDd+
+ ycYFhci0saF/hRiVg9z3D6spodni5WsR06QZvTtkt3mUd6/7A22KIDkjkY4RqWKSzR/1byL
+ YvrPoyjlKlvOgFppmYEqZ6xwFexNcSXyQxrO8D1x2CL2ftDnRx1WUPVNWydn0+5WLFftewx
+ ZYgEWKIXTHmnguyZx3cJg==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:nc81whusC54=:fwlSM1iQLjay0uUJ5eWU3Q
+ b+jrVseEx9QTc34P/74chQufQiB8rgPH8uUYdUqWOpnYsuChGEdeiqr9iQ8xqt2rAvboTE1r7
+ c5UX8BivJbScplA88regWkoGtzK5DqhRLne43IJopTRMKluhf7hPQ5Ft7D8fxIT+0aDcbX+Rv
+ Hff9H4R3u5J5/euBGShbUdKYQ0U7yuV7KXFg1QrJ7EDaoiVBIkwIdyTNSwaXatbcWqlTwKUNd
+ O1nqE76x/SaxlUwC0aKdT8Icm3muNWQBAesNIOFeOyKUDOkvoogz8Kn+SJgi3PtZNaN1+D9mV
+ TBTbAzbzWaLVqcDPOAAhnJpUgoYWFP0C3TtO0p6NnwgVwe2tOLFyoBIc5S0dK/EbQqdKdPFir
+ 6Qc5AWEQXwlkYWdhsZWn8orpSWd7DFliVWn8Iv3lqXtoNq+Ai3H7+gkwYQf40Do6u9LFfXfBz
+ zS4pIuDkzqWdh2gxFrsYJiEyThu2nv6HyhKgXr+lnmUnVeSMJyo2TJJInxgMRWhGRsyf7lTnk
+ GXPvV2xVo2+DALI5Qq9We6cu7qjTmzcxW4wRZ14LBvvmr9uF5tHETCxYHrI+EGPGoS1xTxaMf
+ T+edlaDLFeDP1qmYjtbBXfy7V5yzMKiZJM7i0x1SYlvtXI8aXq/Hl+5U/yjeqRJNGW9hmSSBz
+ aGEZiAXtTgaCJTKEEIPoIVJTV/2lq1/jMMPPPeNC2V+lfH39MXzdDut74rh0i++vov5wuJNQo
+ 9RCqp7qmGjymWOrqFgAk4/k9mP5iovsRLYDxnxlop6m363qljYutiOLQe0YrC5ap3dfA1Ogju
+ bOBQtvFMymsbxR4W5SgSI0+0svPWYjggEP50RU69bro1EgPYqAEGSvwc9DDMSVCmAKYS2cX
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Waiman Long <longman@redhat.com> wrote:
+Hi Laurent,
 
-> +		if ((ret > 0) && (ret <= buflen)) {
+Laurent Pinchart, Thu, Mar 19, 2020 18:48:02 +0100:
+> On Thu, Mar 19, 2020 at 06:41:48PM +0100, Alex Riesen wrote:
+> > To follow the established practice of not depending on others to
+> > pull everything in.
+> 
+> Good idea. While at it, could you include "adv748x.h" as the very first
+> header in at least one of the C files ? That will help ensuring the
+> header stays self-contained in the future.
 
-That's a bit excessive on the bracketage, btw, but don't worry about it unless
-you respin the patches.
-
-David
+Done.
 
