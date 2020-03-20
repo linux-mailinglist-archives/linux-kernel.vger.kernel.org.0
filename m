@@ -2,58 +2,58 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 82B3A18CEFD
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 14:35:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E5BA018CF07
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 14:35:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727516AbgCTNfR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Mar 2020 09:35:17 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:36365 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727448AbgCTNfM (ORCPT
+        id S1727570AbgCTNff (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Mar 2020 09:35:35 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:52830 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727471AbgCTNfO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Mar 2020 09:35:12 -0400
-Received: by mail-wr1-f66.google.com with SMTP id 31so1494739wrs.3;
-        Fri, 20 Mar 2020 06:35:10 -0700 (PDT)
+        Fri, 20 Mar 2020 09:35:14 -0400
+Received: by mail-wm1-f68.google.com with SMTP id 11so6533689wmo.2;
+        Fri, 20 Mar 2020 06:35:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=UNPe3Sj9nisgX8TMQG4uvyThsRCvZnaiE/iNxuk8GJ8=;
-        b=HiPsk+JIb2hyg5Qkn4eZQ5lRw7DEF4diIWH41qF+EGfE1Me0t8w8c+WEgJem++3gc7
-         NhQtgcIBHpzOeUPHxBGXhRzffm6AZxluJcxezw9azGvhMWgqLjlu+eyutfux0RsCthAd
-         7xrP+47+OjQuY1WP8pOBHk1gKFd0nc9MtCdeR8P5eMmvsK5yInuCUJE2fk0LWFhs+yYC
-         vHYNsowa3qGPfwNaDhv6/VlnOFxERDVa3F3uMIYqaQZ/ReKz3n3ON5YJeOteYNdM4vXB
-         ZTxNWJ+HuOvYaGV/DzEF/rn2brKSxhwtEvQbkEe6zPBNGK1+U+Uyea5S7b3VDxDHnCnR
-         6CtA==
+        bh=Ie6jFqOSrTu+xf/V4MNbj7GzVLme0az5kv4/5mQNB0k=;
+        b=bYiSWXG8HNjZu608MUAN1KPB+00ESgXXtFJe3GhMQamj1oqGRLdIag3YlPDV84IXVx
+         Pk2IKG85pzwF+e2b1gPFFZP1XlJMDBM1eOJozEl3FYERUxf42zq8cNoXdifXXmFSZUIm
+         s3QvzOLmDGB7sdRpYfXUOXxBnk/TKAmHkuQLNxDD0jZO0vBcu5w4IWQmJZr9hJ3ZqgOh
+         XVJ7CVyUYtY4PtZSDFVsRTp3sLEV68KxruuIpNGs6o2eA14en3bYLw0YRCr/0F/s4NOL
+         PmLGJsdYO2Q1CKNTDho+GzRMnNeXIOmXyqakuaFBnV1DfMxJsME7EDYWKbfBBQTKD85a
+         Se6Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=UNPe3Sj9nisgX8TMQG4uvyThsRCvZnaiE/iNxuk8GJ8=;
-        b=c0PqLiSd1u3vt5TWsEAIfY04gGnkYAcJ55nWWcYEwg5QnmSRYf/cTL0TuEOcrJK5YY
-         02pc1sy8NKYPcwQdKs+FsuQ2qS2MNtBFnuQdQvOwLFQaOjciLtMAmfejGp2alCdOiE4H
-         aUC9WLGh+VMX+PqELUu2oRzA9xBDteLLReVLhXAF2vF8lUBreBYwJKb6qts9bT3BAnyv
-         zbr+BmeM9cF/5OGzqFd1GyG3GA8HPELe6jPr17ZKl3Hp8eymBs20yjU0leE1nUAno36X
-         93wbEmTDb/Cr/2byFZdn/nQOCLHFREOBnYXFRXvuj9Qtr/YIi0LhyUVE3ZI1CnXmx4ia
-         bhNQ==
-X-Gm-Message-State: ANhLgQ1zbIUKaIzd0CZtTDuahmtXp+WZjXPmgyv7rTy4ucpipNV2hN01
-        SC+xhNYQbGjATDQPRZR77D0=
-X-Google-Smtp-Source: ADFU+vsmF62dkz4NOF0fz2vj+AQ9Q4dIQxEtvA6NbGIPJUif7KQu/7XeP2PuG9ptM3YqSbuJXOnCFA==
-X-Received: by 2002:adf:fc82:: with SMTP id g2mr11634358wrr.117.1584711310179;
-        Fri, 20 Mar 2020 06:35:10 -0700 (PDT)
+        bh=Ie6jFqOSrTu+xf/V4MNbj7GzVLme0az5kv4/5mQNB0k=;
+        b=gHujxYpJsKYNvJNcZ05UyHp3wG6N9oysZV3mG+8qotCYzT04k+MbwOlakTtrRKJbgY
+         iebcQj6h+FkQHmraAdcHeSqwZdP55ImOO6jpPUTMy9h+lspIzorseHQCAF99Hm+zonrB
+         ETDVlp5OD5o6cxmK5I4CoAygQDgMAX9l7rdYvtHVcXCiyK0zhDMVvcTwTGelZf7/UP2d
+         T1qUd19t3yyuuoxXJLo1yK32QNlG+acG6X4X4tSphbr2I9yChVGcG8agnHJVzghSaJcI
+         fcpd1aCu7rIxtAonHtAh7pqeHQzY6qbZ2zKAa6AfPuRBG4YhCN3fUN+dAaBZZrFep+6k
+         bkEw==
+X-Gm-Message-State: ANhLgQ3Wl/0FQmCkirqYAPCO2kTi9kYxVtyb9sBgWtwsJZ9m3mHu7y4D
+        wlYm80jRYEUK6Dy+XRK8xlY=
+X-Google-Smtp-Source: ADFU+vsxJ/OjFy5JkjSacUfjpV9FUE3JNkijj7IBK0oDz5QHO52DdVAXkWTcM1oGmUpgb0A5Bptssw==
+X-Received: by 2002:a1c:68d5:: with SMTP id d204mr10231998wmc.15.1584711312059;
+        Fri, 20 Mar 2020 06:35:12 -0700 (PDT)
 Received: from localhost (pD9E51CDC.dip0.t-ipconnect.de. [217.229.28.220])
-        by smtp.gmail.com with ESMTPSA id s22sm7160030wmc.16.2020.03.20.06.35.09
+        by smtp.gmail.com with ESMTPSA id j39sm8892844wre.11.2020.03.20.06.35.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 20 Mar 2020 06:35:09 -0700 (PDT)
+        Fri, 20 Mar 2020 06:35:11 -0700 (PDT)
 From:   Thierry Reding <thierry.reding@gmail.com>
 To:     Thomas Gleixner <tglx@linutronix.de>,
         Thierry Reding <thierry.reding@gmail.com>
 Cc:     Rob Herring <robh+dt@kernel.org>,
         Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 4/7] arm64: tegra: Add native timer support on Tegra186
-Date:   Fri, 20 Mar 2020 14:34:49 +0100
-Message-Id: <20200320133452.3705040-5-thierry.reding@gmail.com>
+Subject: [PATCH 5/7] arm64: tegra: Enable native timers on Jetson TX2
+Date:   Fri, 20 Mar 2020 14:34:50 +0100
+Message-Id: <20200320133452.3705040-6-thierry.reding@gmail.com>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20200320133452.3705040-1-thierry.reding@gmail.com>
 References: <20200320133452.3705040-1-thierry.reding@gmail.com>
@@ -66,42 +66,29 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Thierry Reding <treding@nvidia.com>
 
-The native timers IP block found on NVIDIA Tegra SoCs implements a
-watchdog timer that can be used to recover from system hangs. Add the
-device tree node on Tegra186.
+Enable the native timers on Jetson TX2 to allow using the watchdog
+functionality to recover from system hangs, for example.
 
 Signed-off-by: Thierry Reding <treding@nvidia.com>
 ---
- arch/arm64/boot/dts/nvidia/tegra186.dtsi | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+ arch/arm64/boot/dts/nvidia/tegra186-p3310.dtsi | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra186.dtsi b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-index 58100fb9cd8b..4dfa70e93693 100644
---- a/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-@@ -167,6 +167,22 @@ emc: external-memory-controller@2c60000 {
- 		};
+diff --git a/arch/arm64/boot/dts/nvidia/tegra186-p3310.dtsi b/arch/arm64/boot/dts/nvidia/tegra186-p3310.dtsi
+index da96de04d003..9aa17744c4a0 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra186-p3310.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra186-p3310.dtsi
+@@ -58,6 +58,10 @@ memory-controller@2c00000 {
+ 		status = "okay";
  	};
  
 +	timer@3010000 {
-+		compatible = "nvidia,tegra186-timer";
-+		reg = <0x0 0x03010000 0x0 0x000e0000>;
-+		interrupts = <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 1 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 2 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 3 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 4 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 5 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 9 IRQ_TYPE_LEVEL_HIGH>;
-+		status = "disabled";
++		status = "okay";
 +	};
 +
- 	uarta: serial@3100000 {
- 		compatible = "nvidia,tegra186-uart", "nvidia,tegra20-uart";
- 		reg = <0x0 0x03100000 0x0 0x40>;
+ 	serial@3100000 {
+ 		status = "okay";
+ 	};
 -- 
 2.24.1
 
