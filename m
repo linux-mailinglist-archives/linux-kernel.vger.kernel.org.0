@@ -2,115 +2,288 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8B6E018C8AA
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 09:11:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DFCCD18C8C0
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 09:12:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726796AbgCTIL1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Mar 2020 04:11:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50866 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726631AbgCTIL1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Mar 2020 04:11:27 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1727120AbgCTILv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Mar 2020 04:11:51 -0400
+Received: from us-smtp-delivery-74.mimecast.com ([63.128.21.74]:58368 "EHLO
+        us-smtp-delivery-74.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726907AbgCTILt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Mar 2020 04:11:49 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1584691909;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=6VHdEsmEEgE8SwVWsTdpGDee8R02Hql0h9BY1woGGU8=;
+        b=asi82RrR+Yj75bY6fUJZUMxisdbBdNjdeWnvA7twn8QjjEY/LuYLKXKXgJWvi602zDgLJJ
+        1gDDXhDUUhpSIzZEUHkQ0w/vM4VSjTsmCZeSUSnC8yOF0wZp+sx6tXlYwBNi+KKwXW6wQB
+        fXw4k+vY7+xJaj5OsZuwBlPSSUtHrEE=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-258-FIDUR_0cOtqXMMLlfsS8ig-1; Fri, 20 Mar 2020 04:11:45 -0400
+X-MC-Unique: FIDUR_0cOtqXMMLlfsS8ig-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5079120739;
-        Fri, 20 Mar 2020 08:11:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584691884;
-        bh=prDI9bGo4LY3zoAZD0tiC/UjvwdIPGeju68RqI+dVvk=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Yy+aRtlAwhGkDm6wixmjsXXBtDHZft4nx/u7K/3veiuFQGEsovpep6Ll/sRMiZPqf
-         10zdcScjbRVesZt+NrAiQU0g5sSL49+25LQulxl2EGmnahS+BFJEbNZNOOd96KhSbh
-         RFj1q1vO1upCItLSFsfuOt3OKGRimgapvEXknH9w=
-Date:   Fri, 20 Mar 2020 09:11:22 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Ben Hutchings <ben.hutchings@codethink.co.uk>
-Cc:     Naresh Kamboju <naresh.kamboju@linaro.org>,
-        Faiz Abbas <faiz_abbas@ti.com>,
-        open list <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
-        lkft-triage@lists.linaro.org,
-        linux- stable <stable@vger.kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Anders Roxell <anders.roxell@linaro.org>
-Subject: Re: [PATCH 4.19 00/48] 4.19.112-rc1 review
-Message-ID: <20200320081122.GA349027@kroah.com>
-References: <20200319123902.941451241@linuxfoundation.org>
- <CA+G9fYsDw6JEznSHm2X=Wvq1dysGbGa4-VpXJyzKWZQxLMdagw@mail.gmail.com>
- <7a8c6a752793f0907662c3e9c197c284fc461550.camel@codethink.co.uk>
- <20200320080317.GA312074@kroah.com>
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id F0D0D13EA;
+        Fri, 20 Mar 2020 08:11:42 +0000 (UTC)
+Received: from [10.36.113.142] (ovpn-113-142.ams2.redhat.com [10.36.113.142])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id A5F299472;
+        Fri, 20 Mar 2020 08:11:39 +0000 (UTC)
+Subject: Re: [PATCH v5 18/23] KVM: arm64: GICv4.1: Add direct injection
+ capability to SGI registers
+To:     Marc Zyngier <maz@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu,
+        kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Robert Richter <rrichter@marvell.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Zenghui Yu <yuzenghui@huawei.com>,
+        James Morse <james.morse@arm.com>,
+        Julien Thierry <julien.thierry.kdev@gmail.com>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>
+References: <20200304203330.4967-1-maz@kernel.org>
+ <20200304203330.4967-19-maz@kernel.org>
+From:   Auger Eric <eric.auger@redhat.com>
+Message-ID: <06705d70-0f99-e719-af52-1a5f778562d8@redhat.com>
+Date:   Fri, 20 Mar 2020 09:11:38 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20200320080317.GA312074@kroah.com>
+In-Reply-To: <20200304203330.4967-19-maz@kernel.org>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 20, 2020 at 09:03:17AM +0100, Greg Kroah-Hartman wrote:
-> On Thu, Mar 19, 2020 at 08:00:32PM +0000, Ben Hutchings wrote:
-> > On Fri, 2020-03-20 at 01:12 +0530, Naresh Kamboju wrote:
-> > > On Thu, 19 Mar 2020 at 18:50, Greg Kroah-Hartman
-> > > <gregkh@linuxfoundation.org> wrote:
-> > > > This is the start of the stable review cycle for the 4.19.112 release.
-> > > > There are 48 patches in this series, all will be posted as a response
-> > > > to this one.  If anyone has any issues with these being applied, please
-> > > > let me know.
-> > > > 
-> > > > Responses should be made by Sat, 21 Mar 2020 12:37:04 +0000.
-> > > > Anything received after that time might be too late.
-> > > > 
-> > > > The whole patch series can be found in one patch at:
-> > > >         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.19.112-rc1.gz
-> > > > or in the git tree and branch at:
-> > > >         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.19.y
-> > > > and the diffstat can be found below.
-> > > > 
-> > > > thanks,
-> > > > 
-> > > > greg k-h
-> > > > 
-> > > > Faiz Abbas <faiz_abbas@ti.com>
-> > > >     mmc: sdhci-omap: Fix Tuning procedure for temperatures < -20C
-> > > > 
-> > > > Faiz Abbas <faiz_abbas@ti.com>
-> > > >     mmc: sdhci-omap: Don't finish_mrq() on a command error during tuning
-> > > 
-> > > Results from Linaro’s test farm.
-> > > No regressions on arm64, arm, x86_64, and i386.
-> > > 
-> > > NOTE:
-> > > The arm beagleboard x15 device running stable rc 4.19.112-rc1, 5.4.27-rc1
-> > > and 5.5.11-rc2 kernel pops up the following messages on console log,
-> > > Is this a problem ?
-> > >
-> > > [   15.737765] mmc1: unspecified timeout for CMD6 - use generic
-> > > [   16.754248] mmc1: unspecified timeout for CMD6 - use generic
-> > > [   16.842071] mmc1: unspecified timeout for CMD6 - use generic
-> > > ...
-> > > [  977.126652] mmc1: unspecified timeout for CMD6 - use generic
-> > > [  985.449798] mmc1: unspecified timeout for CMD6 - use generic
-> > [...]
-> > 
-> > This warning was introduced by commit 533a6cfe08f9 "mmc: core: Default
-> > to generic_cmd6_time as timeout in __mmc_switch()".  That should not be
-> > applied to stable branches; it is not valid without (at least) these
-> > preparatory changes:
-> > 
-> > 0c204979c691 mmc: core: Cleanup BKOPS support
-> > 24ed3bd01d6a mmc: core: Specify timeouts for BKOPS and CACHE_FLUSH for eMMC
-> > ad91619aa9d7 mmc: block: Use generic_cmd6_time when modifying INAND_CMD38_ARG_EXT_CSD
+Hi Marc,
+On 3/4/20 9:33 PM, Marc Zyngier wrote:
+> Most of the GICv3 emulation code that deals with SGIs now has to be
+> aware of the v4.1 capabilities in order to benefit from it.
 > 
-> Ok, I've now dropped that patch, which also required me to drop
-> 1292e3efb149 ("mmc: core: Allow host controllers to require R1B for
-> CMD6").  I've done so for 5.5.y, 5.4.y, and 4.19.y.
+> Add such support, keyed on the interrupt having the hw flag set and
+> being a SGI.
+> 
+> Signed-off-by: Marc Zyngier <maz@kernel.org>
+> ---
+>  virt/kvm/arm/vgic/vgic-mmio-v3.c | 15 +++++-
+>  virt/kvm/arm/vgic/vgic-mmio.c    | 88 ++++++++++++++++++++++++++++++--
+>  2 files changed, 96 insertions(+), 7 deletions(-)
+> 
+> diff --git a/virt/kvm/arm/vgic/vgic-mmio-v3.c b/virt/kvm/arm/vgic/vgic-mmio-v3.c
+> index ebc218840fc2..de89da76a379 100644
+> --- a/virt/kvm/arm/vgic/vgic-mmio-v3.c
+> +++ b/virt/kvm/arm/vgic/vgic-mmio-v3.c
+> @@ -6,6 +6,7 @@
+>  #include <linux/irqchip/arm-gic-v3.h>
+>  #include <linux/kvm.h>
+>  #include <linux/kvm_host.h>
+> +#include <linux/interrupt.h>
+>  #include <kvm/iodev.h>
+>  #include <kvm/arm_vgic.h>
+>  
+> @@ -942,8 +943,18 @@ void vgic_v3_dispatch_sgi(struct kvm_vcpu *vcpu, u64 reg, bool allow_group1)
+>  		 * generate interrupts of either group.
+>  		 */
+>  		if (!irq->group || allow_group1) {
+> -			irq->pending_latch = true;
+> -			vgic_queue_irq_unlock(vcpu->kvm, irq, flags);
+> +			if (!irq->hw) {
+> +				irq->pending_latch = true;
+> +				vgic_queue_irq_unlock(vcpu->kvm, irq, flags);
+> +			} else {
+> +				/* HW SGI? Ask the GIC to inject it */
+> +				int err;
+nit: add line
+> +				err = irq_set_irqchip_state(irq->host_irq,
+> +							    IRQCHIP_STATE_PENDING,
+> +							    true);
+> +				WARN_RATELIMIT(err, "IRQ %d", irq->host_irq);
+> +				raw_spin_unlock_irqrestore(&irq->irq_lock, flags);
+> +			}
+>  		} else {
+>  			raw_spin_unlock_irqrestore(&irq->irq_lock, flags);
+>  		}
+> diff --git a/virt/kvm/arm/vgic/vgic-mmio.c b/virt/kvm/arm/vgic/vgic-mmio.c
+> index 97fb2a40e6ba..2199302597fa 100644
+> --- a/virt/kvm/arm/vgic/vgic-mmio.c
+> +++ b/virt/kvm/arm/vgic/vgic-mmio.c
+> @@ -5,6 +5,8 @@
+>  
+>  #include <linux/bitops.h>
+>  #include <linux/bsearch.h>
+> +#include <linux/interrupt.h>
+> +#include <linux/irq.h>
+>  #include <linux/kvm.h>
+>  #include <linux/kvm_host.h>
+>  #include <kvm/iodev.h>
+> @@ -59,6 +61,11 @@ unsigned long vgic_mmio_read_group(struct kvm_vcpu *vcpu,
+>  	return value;
+>  }
+>  
+> +static void vgic_update_vsgi(struct vgic_irq *irq)
+> +{
+> +	WARN_ON(its_prop_update_vsgi(irq->host_irq, irq->priority, irq->group));
+> +}
+> +
+>  void vgic_mmio_write_group(struct kvm_vcpu *vcpu, gpa_t addr,
+>  			   unsigned int len, unsigned long val)
+>  {
+> @@ -71,7 +78,12 @@ void vgic_mmio_write_group(struct kvm_vcpu *vcpu, gpa_t addr,
+>  
+>  		raw_spin_lock_irqsave(&irq->irq_lock, flags);
+>  		irq->group = !!(val & BIT(i));
+> -		vgic_queue_irq_unlock(vcpu->kvm, irq, flags);
+> +		if (irq->hw && vgic_irq_is_sgi(irq->intid)) {
+> +			vgic_update_vsgi(irq);
+> +			raw_spin_unlock_irqrestore(&irq->irq_lock, flags);
+> +		} else {
+> +			vgic_queue_irq_unlock(vcpu->kvm, irq, flags);
+> +		}
+>  
+>  		vgic_put_irq(vcpu->kvm, irq);
+>  	}
+> @@ -113,7 +125,21 @@ void vgic_mmio_write_senable(struct kvm_vcpu *vcpu,
+>  		struct vgic_irq *irq = vgic_get_irq(vcpu->kvm, vcpu, intid + i);
+>  
+>  		raw_spin_lock_irqsave(&irq->irq_lock, flags);
+> -		if (vgic_irq_is_mapped_level(irq)) {
+> +		if (irq->hw && vgic_irq_is_sgi(irq->intid)) {
+> +			if (!irq->enabled) {
+> +				struct irq_data *data;
+> +
+> +				irq->enabled = true;
+> +				data = &irq_to_desc(irq->host_irq)->irq_data;
+> +				while (irqd_irq_disabled(data))
+> +					enable_irq(irq->host_irq);
+could you explain me why the while() is requested?
+> +			}
+> +
+> +			raw_spin_unlock_irqrestore(&irq->irq_lock, flags);
+> +			vgic_put_irq(vcpu->kvm, irq);
+> +
+> +			continue;
+> +		} else if (vgic_irq_is_mapped_level(irq)) {
+>  			bool was_high = irq->line_level;
+>  
+>  			/*
+> @@ -148,6 +174,8 @@ void vgic_mmio_write_cenable(struct kvm_vcpu *vcpu,
+>  		struct vgic_irq *irq = vgic_get_irq(vcpu->kvm, vcpu, intid + i);
+>  
+>  		raw_spin_lock_irqsave(&irq->irq_lock, flags);
+> +		if (irq->hw && vgic_irq_is_sgi(irq->intid) && irq->enabled)
+> +			disable_irq_nosync(irq->host_irq);
+>  
+>  		irq->enabled = false;
+>  
+> @@ -167,10 +195,22 @@ unsigned long vgic_mmio_read_pending(struct kvm_vcpu *vcpu,
+>  	for (i = 0; i < len * 8; i++) {
+>  		struct vgic_irq *irq = vgic_get_irq(vcpu->kvm, vcpu, intid + i);
+>  		unsigned long flags;
+> +		bool val;
+>  
+>  		raw_spin_lock_irqsave(&irq->irq_lock, flags);
+> -		if (irq_is_pending(irq))
+> -			value |= (1U << i);
+> +		if (irq->hw && vgic_irq_is_sgi(irq->intid)) {
+> +			int err;
+> +
+> +			val = false;
+> +			err = irq_get_irqchip_state(irq->host_irq,
+> +						    IRQCHIP_STATE_PENDING,
+> +						    &val);
+> +			WARN_RATELIMIT(err, "IRQ %d", irq->host_irq);
+> +		} else {
+> +			val = irq_is_pending(irq);
+> +		}
+> +
+> +		value |= ((u32)val << i);
+>  		raw_spin_unlock_irqrestore(&irq->irq_lock, flags);
+>  
+>  		vgic_put_irq(vcpu->kvm, irq);
+> @@ -215,6 +255,21 @@ void vgic_mmio_write_spending(struct kvm_vcpu *vcpu,
+>  		}
+>  
+>  		raw_spin_lock_irqsave(&irq->irq_lock, flags);
+> +
+> +		if (irq->hw && vgic_irq_is_sgi(irq->intid)) {
+> +			/* HW SGI? Ask the GIC to inject it */
+> +			int err;
+nit: extra line
+> +			err = irq_set_irqchip_state(irq->host_irq,
+> +						    IRQCHIP_STATE_PENDING,
+> +						    true);
+> +			WARN_RATELIMIT(err, "IRQ %d", irq->host_irq);
+> +
+> +			raw_spin_unlock_irqrestore(&irq->irq_lock, flags);
+> +			vgic_put_irq(vcpu->kvm, irq);
+> +
+> +			continue;
+> +		}
+> +
+>  		if (irq->hw)
+>  			vgic_hw_irq_spending(vcpu, irq, is_uaccess);
+>  		else
+> @@ -269,6 +324,20 @@ void vgic_mmio_write_cpending(struct kvm_vcpu *vcpu,
+>  
+>  		raw_spin_lock_irqsave(&irq->irq_lock, flags);
+>  
+> +		if (irq->hw && vgic_irq_is_sgi(irq->intid)) {
+> +			/* HW SGI? Ask the GIC to clear its pending bit */
+> +			int err;
+> +			err = irq_set_irqchip_state(irq->host_irq,
+> +						    IRQCHIP_STATE_PENDING,
+> +						    false);
+> +			WARN_RATELIMIT(err, "IRQ %d", irq->host_irq);
+> +
+> +			raw_spin_unlock_irqrestore(&irq->irq_lock, flags);
+> +			vgic_put_irq(vcpu->kvm, irq);
+> +
+> +			continue;
+> +		}
+> +
+>  		if (irq->hw)
+>  			vgic_hw_irq_cpending(vcpu, irq, is_uaccess);
+>  		else
+> @@ -318,8 +387,15 @@ static void vgic_mmio_change_active(struct kvm_vcpu *vcpu, struct vgic_irq *irq,
+>  
+>  	raw_spin_lock_irqsave(&irq->irq_lock, flags);
+>  
+> -	if (irq->hw) {
+> +	if (irq->hw && !vgic_irq_is_sgi(irq->intid)) {
+>  		vgic_hw_irq_change_active(vcpu, irq, active, !requester_vcpu);
+> +	} else if (irq->hw && vgic_irq_is_sgi(irq->intid)) {
+> +		/*
+> +		 * GICv4.1 VSGI feature doesn't track an active state,
+> +		 * so let's not kid ourselves, there is nothing we can
+> +		 * do here.
+> +		 */
+> +		irq->active = false;
+>  	} else {
+>  		u32 model = vcpu->kvm->arch.vgic.vgic_model;
+>  		u8 active_source;
+> @@ -493,6 +569,8 @@ void vgic_mmio_write_priority(struct kvm_vcpu *vcpu,
+>  		raw_spin_lock_irqsave(&irq->irq_lock, flags);
+>  		/* Narrow the priority range to what we actually support */
+>  		irq->priority = (val >> (i * 8)) & GENMASK(7, 8 - VGIC_PRI_BITS);
+> +		if (irq->hw && vgic_irq_is_sgi(irq->intid))
+> +			vgic_update_vsgi(irq);
+>  		raw_spin_unlock_irqrestore(&irq->irq_lock, flags);
+>  
+>  		vgic_put_irq(vcpu->kvm, irq);
+> 
+Reviewed-by: Eric Auger <eric.auger@redhat.com>
 
-Ugh, I forgot, that broke other things.  I'm going to go rip out a bunch
-of mmc patches now...
+Thanks
+
+Eric
 
