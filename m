@@ -2,142 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 792F018D3DF
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 17:13:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 38E5C18D3E2
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 17:14:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727445AbgCTQN0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Mar 2020 12:13:26 -0400
-Received: from mail-am6eur05on2057.outbound.protection.outlook.com ([40.107.22.57]:19488
-        "EHLO EUR05-AM6-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727267AbgCTQNZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Mar 2020 12:13:25 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=cSIFerIukDz5JUe7JXObZxR+O/H99hsFr2nyo1PgO/tbPSUWWOIbqiYNQqXMxLtHb4/ba076E3ViMfuFiq3vUulvoyVJmcN50NS7yB1sHVpsVxSLG1KeWw5I01+n3KrTZSX8uEkGlyjHkgAdQBh0wM44pXt35gRdT1VBweCHNI+oqLDnuug8Gl//HozJJn5nA5rEcxozgSypKMUd5WCHNTO5fYCWu7IM4+JZKl4hM40tdGTmwhvyKxu91riOxitmX4B3rFhiAD+oacBhyd7UUK07GztdbAWFIOV/gWd6B4HS7OjjWCSfDTrdPPeary39XWrRmlFlXjPD5X88LbSkoA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Jw3SevGjeQAQH9/eUq/xmJqIoPoermGM/N+T/+Lj94k=;
- b=lXiEXTLj+V8aTayDuUO5jxAzpPvR4anwVhr2WVZgcqWyKaYoeiUbasWw7EN3pbKb6sOwP7bmuCsaYDomH86Zw2Qjprxx6r6LxvlXyHWMiTfcq6GIGg8dJGCHTVD4tA0xrxf5CDt6oWV8/4b1UfvqyhAaxkKcxJWArC4pH9KodR9NmRjy5WiiI7T/iWpp/nZQ9D7spizfKVwFMIh3EH89LzPVqJ9uZkZIPQEWnufg2+Ug4kIaUuENklSBPc2bAFIYffzhNg3hRmWAwIHmjl0a5MybHf1XV4xy1ePiszyzUswUPlIth4bHR8udguIRgtbjnEYtYwn9+YhiHwCeRyWFpg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Jw3SevGjeQAQH9/eUq/xmJqIoPoermGM/N+T/+Lj94k=;
- b=oIru/qRUxJGwcjjzejJLDKstJt2CVMpNWIYv5kv+Xf1p81g2694vWuNIe/SFBsG98RAqw12YJHQCW9oq9/LiCoIGOwgNnMxbWfgs1zD39vn6xQ6AhdFIND9tySrIdsmXqzmKYeHkyiqSy6HwIZjStlY6FkNhHj5mKlugdDmQnrI=
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=horia.geanta@nxp.com; 
-Received: from VI1PR0402MB3485.eurprd04.prod.outlook.com (52.134.3.153) by
- VI1PR0402MB2862.eurprd04.prod.outlook.com (10.175.23.143) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2835.20; Fri, 20 Mar 2020 16:13:21 +0000
-Received: from VI1PR0402MB3485.eurprd04.prod.outlook.com
- ([fe80::751e:7e8d:ed4:ef5f]) by VI1PR0402MB3485.eurprd04.prod.outlook.com
- ([fe80::751e:7e8d:ed4:ef5f%7]) with mapi id 15.20.2814.021; Fri, 20 Mar 2020
- 16:13:21 +0000
-Subject: Re: [PATCH v9 0/9] enable CAAM's HWRNG as default
-To:     Andrey Smirnov <andrew.smirnov@gmail.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-crypto@vger.kernel.org, Chris Healy <cphealy@gmail.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Iuliana Prodan <iuliana.prodan@nxp.com>,
-        linux-kernel@vger.kernel.org, linux-imx@nxp.com,
-        Laurentiu Tudor <laurentiu.tudor@nxp.com>,
-        Stuart Yoder <stuyoder@gmail.com>,
-        Andrei Botila <andrei.botila@nxp.com>
-References: <20200319161233.8134-1-andrew.smirnov@gmail.com>
-From:   =?UTF-8?Q?Horia_Geant=c4=83?= <horia.geanta@nxp.com>
-Message-ID: <fab6192d-d35b-b26e-5bdc-b52b7d0347b7@nxp.com>
-Date:   Fri, 20 Mar 2020 18:13:18 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
-In-Reply-To: <20200319161233.8134-1-andrew.smirnov@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: AM3PR05CA0089.eurprd05.prod.outlook.com
- (2603:10a6:207:1::15) To VI1PR0402MB3485.eurprd04.prod.outlook.com
- (2603:10a6:803:7::25)
-MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from [192.168.0.129] (84.117.251.185) by AM3PR05CA0089.eurprd05.prod.outlook.com (2603:10a6:207:1::15) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2835.20 via Frontend Transport; Fri, 20 Mar 2020 16:13:20 +0000
-X-Originating-IP: [84.117.251.185]
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-HT: Tenant
-X-MS-Office365-Filtering-Correlation-Id: 174c8ecd-7f28-41a7-4d35-08d7cce99be3
-X-MS-TrafficTypeDiagnostic: VI1PR0402MB2862:|VI1PR0402MB2862:
-X-MS-Exchange-Transport-Forked: True
-X-Microsoft-Antispam-PRVS: <VI1PR0402MB2862AE8BABF90D8FC83CE81998F50@VI1PR0402MB2862.eurprd04.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:9508;
-X-Forefront-PRVS: 03484C0ABF
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(4636009)(376002)(39860400002)(346002)(396003)(136003)(366004)(199004)(8936002)(81166006)(8676002)(66556008)(66946007)(66476007)(31696002)(966005)(31686004)(186003)(36756003)(5660300002)(16526019)(26005)(2906002)(81156014)(86362001)(4326008)(53546011)(66574012)(52116002)(2616005)(956004)(6486002)(316002)(54906003)(16576012)(110136005)(478600001);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR0402MB2862;H:VI1PR0402MB3485.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;
-Received-SPF: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: ARujDT7PBjXYLFxQbLa3sncQIh4NbU1OyNJmSiM5pt+Wn+n4y6XAkwsRe8yKhj9vZg/UGSIUOGDGc7Et2zEjvAfhOGMi7LwEPwdB/Y5Ww9xvvv5/GG5phpaq09fpm+gZ3740oGUwo67Rh+SsbnRCc0J8RGutsFZuLQlDUNlSI8AUms7N648u8s5nho8PzmGGWoV5+pI6xKUkmQjK5ClnRiFs5Wc/oCUbidHZsVVG4rpV2OmksLnKFupfP0W7ssHLgcaYbwKRqVPl1X0GdhiEW1vGLZ8x/u8ifmSKly+41/9MO4y+iYIJFFGC93AB7Icfxl+hGGM7OHsc5BIqNoPJq3TKy3e4fWQgaiQb4PXj6fNOhA+lLDATNI92cnmR2ImkP3p9GMswQZcpnfSBzMBMmMbQCqJl3AwN/k/eohLjtKF6lHRm7hMj2mCWNQPgKi/hzI5b3kRstSjfsx9/urdQSQ1i/tCM1/WAVwED2M64KsyldqI/75O3w8AO+TthSDaKeDpkNa3QFuRNWig+45Xt+g==
-X-MS-Exchange-AntiSpam-MessageData: Ol1bAsluEc/VyNGeD+2/jqtK9gu6V5Z3XU1gSsk/14/DdICRgPHg9MHsDkRLSGxgepbWGyUYR5L+AnrtvQoJlpum6NgAfDhd64VfQs4MEhEjn616+GpVghrBFR5PMx6EebZn0QjQlCss8SZonqJx2Q==
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 174c8ecd-7f28-41a7-4d35-08d7cce99be3
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Mar 2020 16:13:21.5143
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: sPvxZcuIH4WrH2T5pVkm1ysdEU4mk/PtS5rbiDaBId1cM1MQpc0QYJ+DVMh+LryP6jfykARDixJUEOoWlR6p+Q==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0402MB2862
+        id S1727502AbgCTQN5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Mar 2020 12:13:57 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:37903 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727148AbgCTQN5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Mar 2020 12:13:57 -0400
+Received: by mail-wm1-f68.google.com with SMTP id l20so6994277wmi.3;
+        Fri, 20 Mar 2020 09:13:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=T/IZAM0hGmcP9+cRiawGBx8BIofo1ODEPgXI0xOz5JQ=;
+        b=A41y/OOh+uH341q5nsebQ7GTG7UCgVGB+mpUNhuv8UmKnkO6fL8q+Fqa4mH++LdSoD
+         wfS958k2EF6tynHcBsVvBNkydlf720FRBImd4Kseli7Wz+h4BIE48FkMpsu/5MdXizGp
+         o/e9Z8KcHHzojXMe9WgwdX3v7nb4GZE9agEGSR2seOenjrJU69IGEURgXhZT945UeEt5
+         TqxAgK6q3VZ7Fo8Qt+Z7pJjeKDWK4Yiup7Mbaw2/l//kyxft56YG/R1ik8AcSRpXcpXB
+         TLpRAatujT0RxtxgsocUXKNUzHMsTmiapla3Chub1pXR/KQRV7nWji+5dBl2Vd6kcwF5
+         ksaA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=T/IZAM0hGmcP9+cRiawGBx8BIofo1ODEPgXI0xOz5JQ=;
+        b=VcL5svevf3m1mpq8LpNrs53nN6Z7IwCuApJjEvG/INx6D35GSdhy8TRQUS1MFAYMUS
+         UZKY4G14RLiPL583CtsyKvyWO72t12os196LJilf3hhB0QcSoy3J2yhRUq3jB2IfkhGc
+         c7b6+15jQtcoK3FIjFwoZ4FPZOloXpOK0sXX2rIVyuQO+U9lG8cKt6LejnCte0RdWhdH
+         C716AFDFWQ2oSXcSk+MWEI0n+tRDJpoflmVFvDfUDu9ssIdlo1gWKC+js7Rm8x7jkOCV
+         Ew4xGAtMqxdWQNKNP1Ay3OOB8esZZ5lSF8nHaE/MENn17yuet9K0bVPWWPtxjl66AqFO
+         nKbw==
+X-Gm-Message-State: ANhLgQ1ehpVny3H2x0/w4XXbbjCSYQpdPa8mbGHXW4tfrvhxaE3Yd+dK
+        SOcw/BXO1s/EPmmX58O6/Uw=
+X-Google-Smtp-Source: ADFU+vsYtsiOv0xYIgAiB/DAQonqa0r4h7melk2HzMlT4HaABV76dHwG+fxqhV7pYkNS7nGaI+Sjig==
+X-Received: by 2002:a7b:c0d7:: with SMTP id s23mr9219263wmh.104.1584720835137;
+        Fri, 20 Mar 2020 09:13:55 -0700 (PDT)
+Received: from localhost.localdomain ([79.115.60.40])
+        by smtp.gmail.com with ESMTPSA id r3sm9121154wrm.35.2020.03.20.09.13.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 20 Mar 2020 09:13:54 -0700 (PDT)
+From:   Vladimir Oltean <olteanv@gmail.com>
+To:     shawnguo@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com
+Cc:     devicetree@vger.kernel.org, broonie@kernel.org,
+        linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        michael@walle.cc, peng.ma@nxp.com
+Subject: [PATCH devicetree 0/2] Remainder for "[PATCH v5 00/12] NXP DSPI bugfixes and support for LS1028A"
+Date:   Fri, 20 Mar 2020 18:13:44 +0200
+Message-Id: <20200320161346.14155-1-olteanv@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 3/19/2020 6:12 PM, Andrey Smirnov wrote:
-> Everyone:
-> 
-> This series is a continuation of original [discussion]. I don't know
-> if what's in the series is enough to use CAAMs HWRNG system wide, but
-> I am hoping that with enough iterations and feedback it will be.
-> 
-Andrey, thanks for the effort!
+From: Vladimir Oltean <vladimir.oltean@nxp.com>
 
-Herbert, Greg,
+The series with DSPI support for LS1028A was merged by Mark Brown in his
+linux-spi tree here:
 
-I hope it's ok to go with the fsl-mc bus dependency
-	"bus: fsl-mc: add api to retrieve mc version"
-	https://patchwork.kernel.org/patch/11447637/
-included in this series through cryptodev-2.6 tree.
+https://www.spinics.net/lists/linux-spi/msg20842.html
 
-It applies cleanly on latest linux-next (next-20200320),
-and it has been Acked-by Laurențiu (one of the fsl-mc bus maintainers).
+These remaining 2 patches from that series apply on top of Michael
+Walle's basic device tree support patch:
 
-Thank you,
-Horia
+https://patchwork.kernel.org/patch/11389157/#23165893
 
-[...]
-> 
-> Andrei Botila (1):
->   bus: fsl-mc: add api to retrieve mc version
-> 
-> Andrey Smirnov (8):
->   crypto: caam - allocate RNG instantiation descriptor with GFP_DMA
->   crypto: caam - use struct hwrng's .init for initialization
->   crypto: caam - drop global context pointer and init_done
->   crypto: caam - simplify RNG implementation
->   crypto: caam - check if RNG job failed
->   crypto: caam - invalidate entropy register during RNG initialization
->   crypto: caam - enable prediction resistance in HRWNG
->   crypto: caam - limit single JD RNG output to maximum of 16 bytes
-> 
->  drivers/bus/fsl-mc/fsl-mc-bus.c |  33 +--
->  drivers/crypto/caam/Kconfig     |   1 +
->  drivers/crypto/caam/caamrng.c   | 405 ++++++++++++--------------------
->  drivers/crypto/caam/ctrl.c      |  88 +++++--
->  drivers/crypto/caam/desc.h      |   2 +
->  drivers/crypto/caam/intern.h    |   7 +-
->  drivers/crypto/caam/jr.c        |  13 +-
->  drivers/crypto/caam/regs.h      |   7 +-
->  include/linux/fsl/mc.h          |  16 ++
->  9 files changed, 276 insertions(+), 296 deletions(-)
-> 
+Vladimir Oltean (2):
+  arm64: dts: ls1028a: Specify the DMA channels for the DSPI controllers
+  arm64: dts: ls1028a-rdb: Add a spidev node for the mikroBUS
+
+ arch/arm64/boot/dts/freescale/fsl-ls1028a-rdb.dts | 14 ++++++++++++++
+ arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi    |  6 ++++++
+ 2 files changed, 20 insertions(+)
+
+-- 
+2.17.1
+
