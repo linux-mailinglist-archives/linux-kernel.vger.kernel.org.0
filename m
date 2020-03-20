@@ -2,102 +2,222 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1338318D4A7
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 17:40:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 89F6518D4B1
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 17:42:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727520AbgCTQkG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Mar 2020 12:40:06 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:38717 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727267AbgCTQkG (ORCPT
+        id S1727561AbgCTQlx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Mar 2020 12:41:53 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:34658 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727444AbgCTQlw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Mar 2020 12:40:06 -0400
-Received: by mail-wm1-f67.google.com with SMTP id l20so7097918wmi.3
-        for <linux-kernel@vger.kernel.org>; Fri, 20 Mar 2020 09:40:04 -0700 (PDT)
+        Fri, 20 Mar 2020 12:41:52 -0400
+Received: by mail-lj1-f193.google.com with SMTP id s13so7152589ljm.1
+        for <linux-kernel@vger.kernel.org>; Fri, 20 Mar 2020 09:41:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:sender:from:date:message-id:subject:to;
-        bh=gl8m333ia74OFZpNmB4o7kIcYlvQPFpoCsxlN0OXKb0=;
-        b=kNbuTShbw0IsSddVR16CskX9C06Ns3To2pv3t8zoQaDIVXEG3b70sK4t/FVJP15G5b
-         VGpDNjPP4wGCiR+EUBHVqJjOTl+8QscizeaDhWif9uTvhk1nDvdHImI1NK5AoxlnCy0j
-         n9oc49FHwt18TZouwE8SbjjPrFVevxob7LsR+s5wtun0QKcC95tIeof8wr26VPP0qnJ+
-         7DNotqBY8HmGVhlN4UEJRXGXn0hk2KXilc7f5hsUwbXbf2IYZPCNulD8iJpEOJc2oRtr
-         PtPy4rSSagV03aEH7ppWiqC5bGH9zt/GfKt8Y3sApVwh/xDe/VpU2+K8Yl8qfEakEuRI
-         ZIvw==
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=CaZ0r65X92Oxu7GzVKpyix0zMa0pOHAykHkKw8nV8IU=;
+        b=tIwc6+70CRNkkxf9Bma96+ddMStZ0BSBedkphLIyty/Dmt7yi8/AE9ewVIL8DQLe2G
+         q3bqK8nAKYXMpKYORMB4NnUYDcQaNu9gkP3HQQrNdSw2ys3oIZYjtenv0MotnBX4Eaz4
+         Utl6axkQI963l56bqWYmooCw1vyCeDNn8L0ZJCtJ4nBRNvsxWts5Vnp23EkqRJ7X8hNh
+         XlXcg8IOuxIh2qeBhRATDM8//GMVMAbzHCQJflwblAtv/9U72xdHUuOkQutneSK9TCer
+         m+Zuja8hXxP2UTMg+BUyxrX78Qus960+IyTCDP0XrC1qqhVnMxJANA1wSyAiyQLuYAy7
+         moaQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:sender:from:date
-         :message-id:subject:to;
-        bh=gl8m333ia74OFZpNmB4o7kIcYlvQPFpoCsxlN0OXKb0=;
-        b=FstejAX5YqksQgMrxVZljTP69bMTMigzuVN+937Xal9rYvhduk6WnOUco26sKvcW6K
-         sfvsn9Dhqyfe/7DJzsDgoGbghVkJeIWUeC2DRXH0/FEXzmS3QrWRuiHtZHm7zIJnp8cm
-         4ZMguHVKUt1upAPDCGjQLW+DMsOavErsbZYdc7OBiz7QNeseN5iaZGqr3oktYjPeyXTZ
-         UCHK8qtxmbt++AVRKxqTbmb8eIZlKQ6kWbCOu354sTfwO1IMnJ1ApjSaM94BS6fv5lj8
-         /0nhb3Z/VCr9nw79RCYBT2NdnnQUTMY4OcpcLA1DdZ0NCOwiPwAtJ5Dn8R6CdyMH8r+G
-         vVNw==
-X-Gm-Message-State: ANhLgQ2GaU3TWHxKrHji6C5o+2OJzOs8+FBrwXulEG5Z046C9WaxJ1Vt
-        QsyJayzXCWJ+K0Xh8zWOgY/MNRe4FqokIWeTYXw=
-X-Google-Smtp-Source: ADFU+vun8LzndaAaMGSbzLFWuoHjP/a//v7fTHQFK5usPtGJwIpi6fos+vcOoC94XZ5NI01Scg+c2G5c2P2zU3JRam4=
-X-Received: by 2002:a1c:9ecb:: with SMTP id h194mr11768952wme.49.1584722403977;
- Fri, 20 Mar 2020 09:40:03 -0700 (PDT)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=CaZ0r65X92Oxu7GzVKpyix0zMa0pOHAykHkKw8nV8IU=;
+        b=a+1foPffJDRAkz5oRW6cVCvvafcerY8clX2udiC43IPWZoxEjXqcWbCGZkwew+8at0
+         IfMBn1whW0R3Ut/I/7WVYKt2D8+94RoTaJ5UlUQyBM4TrlR1Wnrp2cGFyg2zDa7NUhVU
+         qAZDoq0A9X0ZB/bzX4D72jEixTP6/QwiTUIu5K9F23UYZJnpC0nOrSZfGzgdPewWdwvb
+         DYW/1eauqnMrLX5k38sNANWUppNnW7uVzLKi7lhiVYejKsTU3h+hggJoz6OvbC8tQyXX
+         uAZG/s1U31/J0T9vSviNidLj4z3yjHbZuTr0perCziCY5xcgalOtlIlH6h/kPa4/FAUq
+         vMyw==
+X-Gm-Message-State: ANhLgQ05iqb825O6aqlXm2WfCf9XLNvo8GBws+NrEH1I/TrkTgiz6ueo
+        eqonJQFBfVmEh8+vTMBiFqgw6fzKv3ZrUQbQyCauQA==
+X-Google-Smtp-Source: ADFU+vvXj/1ErVqk4FcUHN8aEU2aBjr/TJ6KGh6YPa4D8H5lLAQ++EhwhU6eKk3SWeXmxyMwGYSzftbNLNrWo2EgxHk=
+X-Received: by 2002:a2e:988d:: with SMTP id b13mr5879420ljj.217.1584722510255;
+ Fri, 20 Mar 2020 09:41:50 -0700 (PDT)
 MIME-Version: 1.0
-Reply-To: amahakim52@gmail.com
-Received: by 2002:a5d:5104:0:0:0:0:0 with HTTP; Fri, 20 Mar 2020 09:40:03
- -0700 (PDT)
-From:   "Rev.Wright Watson" <azarara91@gmail.com>
-Date:   Fri, 20 Mar 2020 17:40:03 +0100
-X-Google-Sender-Auth: vJJkq6yrrjXXW3E162Z00Z9ZL0M
-Message-ID: <CAPmUj7JSQEaBW=GnFqdpU8UnP3DYHx1fggsLKxrJ=__fbQtZ9w@mail.gmail.com>
-Subject: Dear Beloved,
-To:     undisclosed-recipients:;
+References: <20200319123902.941451241@linuxfoundation.org> <CA+G9fYsDw6JEznSHm2X=Wvq1dysGbGa4-VpXJyzKWZQxLMdagw@mail.gmail.com>
+ <7a8c6a752793f0907662c3e9c197c284fc461550.camel@codethink.co.uk>
+ <20200320080317.GA312074@kroah.com> <20200320081122.GA349027@kroah.com>
+In-Reply-To: <20200320081122.GA349027@kroah.com>
+From:   Naresh Kamboju <naresh.kamboju@linaro.org>
+Date:   Fri, 20 Mar 2020 22:11:39 +0530
+Message-ID: <CA+G9fYtS0u1onCKCiZApRkZXzLMgW6X54z5OfHBOeE+v1=ApOQ@mail.gmail.com>
+Subject: Re: [PATCH 4.19 00/48] 4.19.112-rc1 review
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Ben Hutchings <ben.hutchings@codethink.co.uk>,
+        Faiz Abbas <faiz_abbas@ti.com>,
+        open list <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
+        lkft-triage@lists.linaro.org,
+        linux- stable <stable@vger.kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Anders Roxell <anders.roxell@linaro.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dear Beloved,
+On Fri, 20 Mar 2020 at 13:41, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> On Fri, Mar 20, 2020 at 09:03:17AM +0100, Greg Kroah-Hartman wrote:
+> > On Thu, Mar 19, 2020 at 08:00:32PM +0000, Ben Hutchings wrote:
+> > > On Fri, 2020-03-20 at 01:12 +0530, Naresh Kamboju wrote:
+> > > > On Thu, 19 Mar 2020 at 18:50, Greg Kroah-Hartman
+> > > > <gregkh@linuxfoundation.org> wrote:
+> > > > > This is the start of the stable review cycle for the 4.19.112 rel=
+ease.
+> > > > > There are 48 patches in this series, all will be posted as a resp=
+onse
+> > > > > to this one.  If anyone has any issues with these being applied, =
+please
+> > > > > let me know.
+> > > > >
+> > > > > Responses should be made by Sat, 21 Mar 2020 12:37:04 +0000.
+> > > > > Anything received after that time might be too late.
+> > > > >
+> > > > > The whole patch series can be found in one patch at:
+> > > > >         https://www.kernel.org/pub/linux/kernel/v4.x/stable-revie=
+w/patch-4.19.112-rc1.gz
+> > > > > or in the git tree and branch at:
+> > > > >         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linu=
+x-stable-rc.git linux-4.19.y
+> > > > > and the diffstat can be found below.
+> > > > >
+> > > > > thanks,
+> > > > >
+> > > > > greg k-h
+> > > > >
+> > > > > Faiz Abbas <faiz_abbas@ti.com>
+> > > > >     mmc: sdhci-omap: Fix Tuning procedure for temperatures < -20C
+> > > > >
+> > > > > Faiz Abbas <faiz_abbas@ti.com>
+> > > > >     mmc: sdhci-omap: Don't finish_mrq() on a command error during=
+ tuning
+> > > >
+> > > > Results from Linaro=E2=80=99s test farm.
+> > > > No regressions on arm64, arm, x86_64, and i386.
+> > > >
+> > > > NOTE:
+> > > > The arm beagleboard x15 device running stable rc 4.19.112-rc1, 5.4.=
+27-rc1
+> > > > and 5.5.11-rc2 kernel pops up the following messages on console log=
+,
+> > > > Is this a problem ?
+> > > >
+> > > > [   15.737765] mmc1: unspecified timeout for CMD6 - use generic
+> > > > [   16.754248] mmc1: unspecified timeout for CMD6 - use generic
+> > > > [   16.842071] mmc1: unspecified timeout for CMD6 - use generic
+> > > > ...
+> > > > [  977.126652] mmc1: unspecified timeout for CMD6 - use generic
+> > > > [  985.449798] mmc1: unspecified timeout for CMD6 - use generic
+> > > [...]
+> > >
+> > > This warning was introduced by commit 533a6cfe08f9 "mmc: core: Defaul=
+t
+> > > to generic_cmd6_time as timeout in __mmc_switch()".  That should not =
+be
+> > > applied to stable branches; it is not valid without (at least) these
+> > > preparatory changes:
+> > >
+> > > 0c204979c691 mmc: core: Cleanup BKOPS support
+> > > 24ed3bd01d6a mmc: core: Specify timeouts for BKOPS and CACHE_FLUSH fo=
+r eMMC
+> > > ad91619aa9d7 mmc: block: Use generic_cmd6_time when modifying INAND_C=
+MD38_ARG_EXT_CSD
+> >
+> > Ok, I've now dropped that patch, which also required me to drop
+> > 1292e3efb149 ("mmc: core: Allow host controllers to require R1B for
+> > CMD6").  I've done so for 5.5.y, 5.4.y, and 4.19.y.
+>
+> Ugh, I forgot, that broke other things.  I'm going to go rip out a bunch
+> of mmc patches now...
 
-I'm Reverend Wright Watson, I was born in USA, 1945, I was ordained
-into the Catholic Priesthood.
+[Am i missing rc2 tag ?]
 
-Please take your time to read this message, although we have never met
-before, this is no spam, It's a real message sent to you. I know also
-that you will be amazed at the level of trust that I am willing to
-place in a person that I have never seen nor spoken with. If I can
-receive favor from someone I barely know, its not bad entrusting this
-project to unknown person as long as my spirit directed me to you.
+Results from Linaro=E2=80=99s test farm.
+No regressions on arm64, arm, x86_64, and i386.
 
-I have been a catholic priest for over 22 years. I spent about 10
-years serving at Africa, Burkina Faso to be precise, I spend most time
-in Ouagadougou Cathedral.
-Presently, I had a heart surgery on the 23-11-2018 and the Doctors
-have informed me that I cannot live longer; I had a serious bleeding
-after the operation.
-Before I left Ouagadougou to my country for the surgery, a priest
-friend of mine visited me from Netherlands with three companion, when
-they went back, one among his companion Transferred 10M$ in my
-personal account with Bank of Africa and advised that I use the money
-to help the poor, handicaps and less privileges because he saw the
-level hardship then.
+Summary
+------------------------------------------------------------------------
 
-Because of my present health condition, I cannot live to proceed with
-the projects, therefore, I have decided to appoint you to reclaim the
-money which total sum of $10,970,000.00 (Ten million Nine Hundred and
-seventy Thousand US DOLLARS).
+kernel: 4.19.112-rc1
+git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stab=
+le-rc.git
+git branch: linux-4.19.y
+git commit: d078cac7a42286ba7c97801a763fc42ad7baf5c1
+git describe: v4.19.109-136-gd078cac7a422
+Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-4.19-oe/bu=
+ild/v4.19.109-136-gd078cac7a422
 
-I want you to use this sum to make the world a better place for the
-poor and less privileged, help the needy and also help your family
-members.
 
-I took this decision because I was raised in an Orphanage so I don't
-have relatives and presently, I'm still in the hospital, where I am
-undergoing treatment. That's why I have decided to contact you so that
-you can contact my account manager in Bank of Africa, reclaim the
-money and make good use of it.
+No regressions (compared to build v4.19.109)
 
-then you can contact me through private email
-addres(RevWrightWatson@yandex.com)
+No fixes (compared to build v4.19.109)
 
-Regards,
-Rev.Wright Watson
+Ran 23963 total tests in the following environments and test suites.
+
+Environments
+--------------
+- dragonboard-410c - arm64
+- hi6220-hikey
+- i386
+- juno-r2 - arm64
+- juno-r2-compat
+- juno-r2-kasan
+- nxp-ls2088
+- x15
+- x86_64
+- x86-kasan
+- qemu_arm
+- qemu_arm64
+- qemu_i386
+- qemu_x86_64
+
+
+Test Suites
+-----------
+* install-android-platform-tools-r2800
+* linux-log-parser
+* ltp-ipc-tests
+* v4l2-compliance
+* kvm-unit-tests
+* libhugetlbfs
+* ltp-cap_bounds-tests
+* ltp-commands-tests
+* ltp-containers-tests
+* ltp-cpuhotplug-tests
+* ltp-crypto-tests
+* ltp-cve-tests
+* ltp-dio-tests
+* ltp-fcntl-locktests-tests
+* ltp-filecaps-tests
+* ltp-fs-tests
+* ltp-fs_bind-tests
+* ltp-fs_perms_simple-tests
+* ltp-fsx-tests
+* ltp-hugetlb-tests
+* ltp-io-tests
+* ltp-math-tests
+* ltp-mm-tests
+* ltp-nptl-tests
+* ltp-pty-tests
+* ltp-sched-tests
+* ltp-securebits-tests
+* ltp-syscalls-tests
+
+--=20
+Linaro LKFT
+https://lkft.linaro.org
