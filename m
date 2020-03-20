@@ -2,121 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0244B18D788
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 19:44:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3E5C618D79B
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 19:47:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727178AbgCTSoV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Mar 2020 14:44:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43150 "EHLO mail.kernel.org"
+        id S1726956AbgCTSry (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Mar 2020 14:47:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43938 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725446AbgCTSoU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Mar 2020 14:44:20 -0400
-Received: from sol.localdomain (c-107-3-166-239.hsd1.ca.comcast.net [107.3.166.239])
+        id S1725446AbgCTSrx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Mar 2020 14:47:53 -0400
+Received: from localhost (mobile-166-175-186-165.mycingular.net [166.175.186.165])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9895A2051A;
-        Fri, 20 Mar 2020 18:44:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6831C20767;
+        Fri, 20 Mar 2020 18:47:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584729860;
-        bh=5pZqAya2TSGOpl920vnSvHi9jKtNxmt64mv8PAdFI3A=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=VyRgr5LelhylhzZlcVYEomgTosDPQP2hFACxdbSh1g8cxdYQj8CURPVdAol5gz7Rg
-         ExBTz35Q8O5vnKTi+DibRxVv6t5mUtWBLawcyZ38iKpEQsk8AEImcLdLmORUJEYHIs
-         e+oJ5iVBFhvWYyFYTKBJXTMNGFlzAY6GTvEUiHMY=
-Date:   Fri, 20 Mar 2020 11:44:18 -0700
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, linux-btrfs@vger.kernel.org,
-        linux-erofs@lists.ozlabs.org, linux-ext4@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net, cluster-devel@redhat.com,
-        ocfs2-devel@oss.oracle.com, linux-xfs@vger.kernel.org,
-        William Kucharski <william.kucharski@oracle.com>
-Subject: Re: [PATCH v9 21/25] ext4: Pass the inode to ext4_mpage_readpages
-Message-ID: <20200320184418.GH851@sol.localdomain>
-References: <20200320142231.2402-1-willy@infradead.org>
- <20200320142231.2402-22-willy@infradead.org>
+        s=default; t=1584730072;
+        bh=HqpiTJQyr9fDyPSNuUEqWWkbEn51JriLn0w+UPbw2yo=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:From;
+        b=RRZFBvsbfiHI+AmQu/N+eR167scn+qgU4oNVo5beyw2SGt6t9vaMknwVf3fD3uGzz
+         gI9C9c8HLqIJ1flmCtV5aXvQPGFVDfeu1ru8jIO1V2hzWWARhouxJxeb024GNSSqWm
+         kPEgK86HvDj86XSNOAT+dBUUjTw2V53nyQrUNJCE=
+Date:   Fri, 20 Mar 2020 13:47:50 -0500
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Ansuel Smith <ansuelsmth@gmail.com>
+Cc:     Stanimir Varbanov <svarbanov@mm-sol.com>,
+        Sham Muthayyan <smuthayy@codeaurora.org>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Andrew Murray <amurray@thegoodpenguin.co.uk>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 01/12] pcie: qcom: add missing ipq806x clocks in pcie
+ driver
+Message-ID: <20200320184750.GA241809@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200320142231.2402-22-willy@infradead.org>
+In-Reply-To: <20200320183455.21311-1-ansuelsmth@gmail.com>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 20, 2020 at 07:22:27AM -0700, Matthew Wilcox wrote:
-> From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
-> 
-> This function now only uses the mapping argument to look up the inode,
-> and both callers already have the inode, so just pass the inode instead
-> of the mapping.
-> 
-> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-> Reviewed-by: William Kucharski <william.kucharski@oracle.com>
-> ---
->  fs/ext4/ext4.h     | 2 +-
->  fs/ext4/inode.c    | 4 ++--
->  fs/ext4/readpage.c | 3 +--
->  3 files changed, 4 insertions(+), 5 deletions(-)
-> 
-> diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
-> index 1570a0b51b73..bc1b34ba6eab 100644
-> --- a/fs/ext4/ext4.h
-> +++ b/fs/ext4/ext4.h
-> @@ -3278,7 +3278,7 @@ static inline void ext4_set_de_type(struct super_block *sb,
->  }
->  
->  /* readpages.c */
-> -extern int ext4_mpage_readpages(struct address_space *mapping,
-> +extern int ext4_mpage_readpages(struct inode *inode,
->  		struct readahead_control *rac, struct page *page);
->  extern int __init ext4_init_post_read_processing(void);
->  extern void ext4_exit_post_read_processing(void);
-> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-> index d674c5f9066c..4f3703c1408d 100644
-> --- a/fs/ext4/inode.c
-> +++ b/fs/ext4/inode.c
-> @@ -3226,7 +3226,7 @@ static int ext4_readpage(struct file *file, struct page *page)
->  		ret = ext4_readpage_inline(inode, page);
->  
->  	if (ret == -EAGAIN)
-> -		return ext4_mpage_readpages(page->mapping, NULL, page);
-> +		return ext4_mpage_readpages(inode, NULL, page);
->  
->  	return ret;
->  }
-> @@ -3239,7 +3239,7 @@ static void ext4_readahead(struct readahead_control *rac)
->  	if (ext4_has_inline_data(inode))
->  		return;
->  
-> -	ext4_mpage_readpages(rac->mapping, rac, NULL);
-> +	ext4_mpage_readpages(inode, rac, NULL);
->  }
->  
->  static void ext4_invalidatepage(struct page *page, unsigned int offset,
-> diff --git a/fs/ext4/readpage.c b/fs/ext4/readpage.c
-> index 66275f25235d..5761e9961682 100644
-> --- a/fs/ext4/readpage.c
-> +++ b/fs/ext4/readpage.c
-> @@ -221,13 +221,12 @@ static inline loff_t ext4_readpage_limit(struct inode *inode)
->  	return i_size_read(inode);
->  }
->  
-> -int ext4_mpage_readpages(struct address_space *mapping,
-> +int ext4_mpage_readpages(struct inode *inode,
->  		struct readahead_control *rac, struct page *page)
->  {
->  	struct bio *bio = NULL;
->  	sector_t last_block_in_bio = 0;
->  
-> -	struct inode *inode = mapping->host;
->  	const unsigned blkbits = inode->i_blkbits;
->  	const unsigned blocks_per_page = PAGE_SIZE >> blkbits;
->  	const unsigned blocksize = 1 << blkbits;
-> -- 
+Please add a cover letter with the patches as responses to it.
 
-Reviewed-by: Eric Biggers <ebiggers@google.com>
+Make your subjects match in capitalization, verb tense, etc.:
 
-- Eric
+  $ git log --oneline drivers/pci/controller/dwc/pcie-qcom.c
+  ed8cc3b1fc84 PCI: qcom: Add support for SDM845 PCIe controller
+  64adde31c8e9 PCI: qcom: Ensure that PERST is asserted for at least 100 ms
+  67021ae0bbe9 PCI: qcom: Add QCS404 PCIe controller support
+  5aa180974e4d PCI: qcom: Use clk bulk API for 2.4.0 controllers
+  322f03436692 PCI: qcom: Use default config space read function
+  02b485e31d98 PCI: qcom: Don't deassert reset GPIO during probe
+  6e5da6f7d824 PCI: qcom: Fix error handling in runtime PM support
+  739cd35918b7 PCI: qcom: Drop unnecessary root_bus_nr setting
+
+On Fri, Mar 20, 2020 at 07:34:43PM +0100, Ansuel Smith wrote:
+> Aux and Ref clk are missing in pcie qcom driver.
+> Add support in the driver to fix pcie inizialization
+> in ipq806x
+
+s/pcie/PCIe/ in English text like commit logs and comments.
+s/inizialization/initialization/
+
+It'd be useful to have enough context to know what "ipq806x" is.
+
+Add period at end of sentence.
