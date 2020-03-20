@@ -2,71 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 75EAD18DAFB
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 23:19:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2CA6918DB01
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 23:19:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727394AbgCTWT0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Mar 2020 18:19:26 -0400
-Received: from 8bytes.org ([81.169.241.247]:54714 "EHLO theia.8bytes.org"
+        id S1727478AbgCTWTf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Mar 2020 18:19:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57596 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726666AbgCTWT0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Mar 2020 18:19:26 -0400
-Received: by theia.8bytes.org (Postfix, from userid 1000)
-        id 87BB24CA; Fri, 20 Mar 2020 23:19:24 +0100 (CET)
-Date:   Fri, 20 Mar 2020 23:19:23 +0100
-From:   Joerg Roedel <joro@8bytes.org>
-To:     David Rientjes <rientjes@google.com>
-Cc:     erdemaktas@google.com, x86@kernel.org, hpa@zytor.com,
-        Andy Lutomirski <luto@kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Hellstrom <thellstrom@vmware.com>,
-        Jiri Slaby <jslaby@suse.cz>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Juergen Gross <jgross@suse.com>,
-        Kees Cook <keescook@chromium.org>,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        virtualization@lists.linux-foundation.org,
-        Joerg Roedel <jroedel@suse.de>
-Subject: Re: [PATCH 18/70] x86/boot/compressed/64: Add stage1 #VC handler
-Message-ID: <20200320221923.GL5122@8bytes.org>
-References: <20200319091407.1481-1-joro@8bytes.org>
- <20200319091407.1481-19-joro@8bytes.org>
- <alpine.DEB.2.21.2003201413010.205664@chino.kir.corp.google.com>
+        id S1727453AbgCTWTd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Mar 2020 18:19:33 -0400
+Received: from localhost (mobile-166-175-186-165.mycingular.net [166.175.186.165])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id F273720732;
+        Fri, 20 Mar 2020 22:19:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1584742773;
+        bh=csXHNoHEZCJcFFkQwtkt+kVeFZplv3+QRXaIVcYDwQ8=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:From;
+        b=J+xGqQlCtBvhli5sKpaYIumlmnmPLQMuzUvK+e8vtVT4koVbA0y3k2Xhs3XOvhyjP
+         z7CnJCejD4kGynSVMX8iRp15ep+5F6fRLvEq9gEey/bLfvDb8DdYpL/lVRxR5bvib6
+         dM4eV4c79FU+H+e1gIhkKh7KO+hXghOT8OIuNoJU=
+Date:   Fri, 20 Mar 2020 17:19:31 -0500
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Karol Herbst <kherbst@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, Lyude Paul <lyude@redhat.com>,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Mika Westerberg <mika.westerberg@intel.com>,
+        linux-pci@vger.kernel.org, linux-pm@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org,
+        Mika Westerberg <mika.westerberg@linux.intel.com>
+Subject: Re: [PATCH v7] pci: prevent putting nvidia GPUs into lower device
+ states on certain intel bridges
+Message-ID: <20200320221931.GA23783@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.21.2003201413010.205664@chino.kir.corp.google.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20200310192627.437947-1-kherbst@redhat.com>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 20, 2020 at 02:16:39PM -0700, David Rientjes wrote:
-> On Thu, 19 Mar 2020, Joerg Roedel wrote:
-> > +#define	GHCB_SEV_GHCB_RESP_CODE(v)	((v) & 0xfff)
-> > +#define	VMGEXIT()			{ asm volatile("rep; vmmcall\n\r"); }
+On Tue, Mar 10, 2020 at 08:26:27PM +0100, Karol Herbst wrote:
+> Fixes the infamous 'runtime PM' bug many users are facing on Laptops with
+> Nvidia Pascal GPUs by skipping said PCI power state changes on the GPU.
 > 
-> Since preemption and irqs should be disabled before updating the GHCB and 
-> its MSR and until the contents have been accessed following VMGEXIT, 
-> should there be checks in place to ensure that's always the case?
+> Depending on the used kernel there might be messages like those in demsg:
+> 
+> "nouveau 0000:01:00.0: Refused to change power state, currently in D3"
+> "nouveau 0000:01:00.0: can't change power state from D3cold to D0 (config
+> space inaccessible)"
+> followed by backtraces of kernel crashes or timeouts within nouveau.
+> 
+> It's still unkown why this issue exists, but this is a reliable workaround
+> and solves a very annoying issue for user having to choose between a
+> crashing kernel or higher power consumption of their Laptops.
 
-Good point, some checking is certainly helpful. Currently it is the
-case, because the GHCB is accessed and used only:
+Thanks for the bugzilla link.  The bugzilla mentions lots of mailing
+list discussion.  Can you include links to some of that?
 
-	1) At boot when only the boot CPU is running
-
-	2) In the #VC handler, which does not enable interrupts
-
-	3) In the NMI handler, which is also not preemptible
-
-I can also add code to sev_es_get/put_ghcb to make sure these conditions
-are met. All this does not prevent the preemption by NMIs, which could
-cause another nested #VC exception, but that is handled separatly.
+IIUC this basically just turns off PCI power management for the GPU.
+Can you do that with something like the following?  I don't know
+anything about DRM, so I don't know where you could save the pm_cap,
+but I'm sure the driver could keep it somewhere.
 
 
-Regards,
-
-	Joerg
+diff --git a/drivers/gpu/drm/nouveau/nouveau_drm.c b/drivers/gpu/drm/nouveau/nouveau_drm.c
+index b65ae817eabf..2ad825e8891c 100644
+--- a/drivers/gpu/drm/nouveau/nouveau_drm.c
++++ b/drivers/gpu/drm/nouveau/nouveau_drm.c
+@@ -618,6 +618,23 @@ nouveau_drm_device_fini(struct drm_device *dev)
+ 	kfree(drm);
+ }
+ 
++static void quirk_broken_nv_runpm(struct drm_device *drm_dev)
++{
++	struct pci_dev *pdev = drm_dev->pdev;
++	struct pci_dev *bridge = pci_upstream_bridge(pdev);
++
++	if (!bridge || bridge->vendor != PCI_VENDOR_ID_INTEL)
++		return;
++
++	switch (bridge->device) {
++	case 0x1901:
++		STASH->pm_cap = pdev->pm_cap;
++		pdev->pm_cap = 0;
++		NV_INFO(drm_dev, "Disabling PCI power management to avoid bug\n");
++		break;
++	}
++}
++
+ static int nouveau_drm_probe(struct pci_dev *pdev,
+ 			     const struct pci_device_id *pent)
+ {
+@@ -699,6 +716,7 @@ static int nouveau_drm_probe(struct pci_dev *pdev,
+ 	if (ret)
+ 		goto fail_drm_dev_init;
+ 
++	quirk_broken_nv_runpm(drm_dev);
+ 	return 0;
+ 
+ fail_drm_dev_init:
+@@ -735,6 +753,9 @@ nouveau_drm_remove(struct pci_dev *pdev)
+ {
+ 	struct drm_device *dev = pci_get_drvdata(pdev);
+ 
++	/* If we disabled PCI power management, restore it */
++	if (STASH->pm_cap)
++		pdev->pm_cap = STASH->pm_cap;
+ 	nouveau_drm_device_remove(dev);
+ 	pci_disable_device(pdev);
+ }
