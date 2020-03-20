@@ -2,148 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4604318CD59
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 13:00:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 121DA18CD61
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 13:01:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727027AbgCTMAb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Mar 2020 08:00:31 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:37050 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726814AbgCTMAb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Mar 2020 08:00:31 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Type:MIME-Version:References:
-        Subject:Cc:To:From:Date:Message-Id:Sender:Reply-To:Content-Transfer-Encoding:
-        Content-ID:Content-Description:In-Reply-To;
-        bh=48pbbTSIt7drl3nclPw/S2svZezo2KqXiudRpg34TKk=; b=NrftJe2uiM/eRbtUm9v31Bp1c2
-        BNCrs3nazjRTflfZ6/FSIdWd1cgQ6c4K4mN/sKq/Reufea786w2Lem8NdWtr6vzANS/u2oumyQQy5
-        nXP178oBVzempQyURC5eaZxQYPoskQGzfJyP/JvtaQEufG6ahC/uIuhsCM1qRBTi5/0VUcsVy/OWv
-        b2susMYOSMXxDflV9pvJZwve7/NB9yh5D9baSAWu9CC8Y3to/IRhuP/7ZviUfm5wtMtVRfJh6sVxi
-        wBhGT3UXBFIYXI2ZsIzjff61HHKZz+u8D49qDFjKCrLR3H8R+omDmhJs1cS2vHigyITcxw/W+4WAh
-        QMNPuaTw==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jFGK8-0004CM-62; Fri, 20 Mar 2020 12:00:24 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id CC546305BD3;
-        Fri, 20 Mar 2020 13:00:21 +0100 (CET)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 0)
-        id 83ECC2858D592; Fri, 20 Mar 2020 13:00:21 +0100 (CET)
-Message-Id: <20200320115859.178626842@infradead.org>
-User-Agent: quilt/0.65
-Date:   Fri, 20 Mar 2020 12:56:42 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     tglx@linutronix.de, rostedt@goodmis.org, mingo@kernel.org
-Cc:     x86@kernel.org, linux-kernel@vger.kernel.org,
-        joel@joelfernandes.org, will@kernel.org, peterz@infradead.org
-Subject: [PATCH 4/4] lockdep: Rename trace_{hard,soft}{irq_context,irqs_enabled}()
-References: <20200320115638.737385408@infradead.org>
+        id S1727190AbgCTMBL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Mar 2020 08:01:11 -0400
+Received: from foss.arm.com ([217.140.110.172]:48106 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726893AbgCTMBL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Mar 2020 08:01:11 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7AA5D31B;
+        Fri, 20 Mar 2020 05:01:10 -0700 (PDT)
+Received: from C02TD0UTHF1T.local (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1E89A3F85E;
+        Fri, 20 Mar 2020 05:01:07 -0700 (PDT)
+Date:   Fri, 20 Mar 2020 12:01:05 +0000
+From:   Mark Rutland <mark.rutland@arm.com>
+To:     Elliot Berman <eberman@codeaurora.org>
+Cc:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Trilok Soni <tsoni@codeaurora.org>,
+        Prasad Sodagudi <psodagud@codeaurora.org>,
+        David Collins <collinsd@codeaurora.org>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/3] dt: psci: Add arm,psci-sys-reset2-vendor-param
+ property
+Message-ID: <20200320120105.GA36658@C02TD0UTHF1T.local>
+References: <1583435129-31356-1-git-send-email-eberman@codeaurora.org>
+ <1583435129-31356-2-git-send-email-eberman@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1583435129-31356-2-git-send-email-eberman@codeaurora.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Continue what commit:
+Hi Elliot,
 
-  d820ac4c2fa8 ("locking: rename trace_softirq_[enter|exit] => lockdep_softirq_[enter|exit]")
+On Thu, Mar 05, 2020 at 11:05:27AM -0800, Elliot Berman wrote:
+> Some implementors of PSCI may wish to use a different reset type than
+> SYSTEM_WARM_RESET. For instance, Qualcomm SoCs support an alternate
+> reset_type which may be used in more warm reboot scenarios than
+> SYSTEM_WARM_RESET permits (e.g. to reboot into recovery mode).
 
-started, rename these to avoid confusing them with tracepoints.
+To be honest, I'm still confused by this series, and I think that these
+patches indicate a larger problem that we cannot solve generally (e.g.
+on other platofrms and/or with ACPI).
 
-git grep -l "trace_\(soft\|hard\)\(irq_context\|irqs_enabled\)" | while read file;
-do
-	sed -ie 's/trace_\(soft\|hard\)\(irq_context\|irqs_enabled\)/lockdep_\1\2/g' $file;
-done
+I think the underlying issue is whether the semantics for:
 
-Reported-by: Thomas Gleixner <tglx@linutronix.de>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
----
- include/linux/irqflags.h       |   16 ++++++++--------
- kernel/locking/lockdep.c       |    8 ++++----
- kernel/softirq.c               |    2 +-
- tools/include/linux/irqflags.h |    8 ++++----
- 4 files changed, 17 insertions(+), 17 deletions(-)
+a) Linux's RESET_WARM and RESET_SOFT
+b) PSCI's SYSTEM_RESET2 SYSTEM_WARM_RESET
 
---- a/include/linux/irqflags.h
-+++ b/include/linux/irqflags.h
-@@ -31,10 +31,10 @@
- #ifdef CONFIG_TRACE_IRQFLAGS
-   extern void trace_hardirqs_on(void);
-   extern void trace_hardirqs_off(void);
--# define trace_hardirq_context(p)	((p)->hardirq_context)
--# define trace_softirq_context(p)	((p)->softirq_context)
--# define trace_hardirqs_enabled(p)	((p)->hardirqs_enabled)
--# define trace_softirqs_enabled(p)	((p)->softirqs_enabled)
-+# define lockdep_hardirq_context(p)	((p)->hardirq_context)
-+# define lockdep_softirq_context(p)	((p)->softirq_context)
-+# define lockdep_hardirqs_enabled(p)	((p)->hardirqs_enabled)
-+# define lockdep_softirqs_enabled(p)	((p)->softirqs_enabled)
- # define lockdep_hardirq_enter()		\
- do {						\
- 	current->hardirq_context++;		\
-@@ -54,10 +54,10 @@ do {						\
- #else
- # define trace_hardirqs_on()		do { } while (0)
- # define trace_hardirqs_off()		do { } while (0)
--# define trace_hardirq_context(p)	0
--# define trace_softirq_context(p)	0
--# define trace_hardirqs_enabled(p)	0
--# define trace_softirqs_enabled(p)	0
-+# define lockdep_hardirq_context(p)	0
-+# define lockdep_softirq_context(p)	0
-+# define lockdep_hardirqs_enabled(p)	0
-+# define lockdep_softirqs_enabled(p)	0
- # define lockdep_hardirq_enter()	do { } while (0)
- # define lockdep_hardirq_exit()		do { } while (0)
- # define lockdep_softirq_enter()	do { } while (0)
---- a/kernel/locking/lockdep.c
-+++ b/kernel/locking/lockdep.c
-@@ -3081,10 +3081,10 @@ print_usage_bug(struct task_struct *curr
- 
- 	pr_warn("%s/%d [HC%u[%lu]:SC%u[%lu]:HE%u:SE%u] takes:\n",
- 		curr->comm, task_pid_nr(curr),
--		trace_hardirq_context(curr), hardirq_count() >> HARDIRQ_SHIFT,
--		trace_softirq_context(curr), softirq_count() >> SOFTIRQ_SHIFT,
--		trace_hardirqs_enabled(curr),
--		trace_softirqs_enabled(curr));
-+		lockdep_hardirq_context(curr), hardirq_count() >> HARDIRQ_SHIFT,
-+		lockdep_softirq_context(curr), softirq_count() >> SOFTIRQ_SHIFT,
-+		lockdep_hardirqs_enabled(curr),
-+		lockdep_softirqs_enabled(curr));
- 	print_lock(this);
- 
- 	pr_warn("{%s} state was registered at:\n", usage_str[prev_bit]);
---- a/kernel/softirq.c
-+++ b/kernel/softirq.c
-@@ -224,7 +224,7 @@ static inline bool lockdep_softirq_start
- {
- 	bool in_hardirq = false;
- 
--	if (trace_hardirq_context(current)) {
-+	if (lockdep_hardirq_context(current)) {
- 		in_hardirq = true;
- 		lockdep_hardirq_exit();
- 	}
---- a/tools/include/linux/irqflags.h
-+++ b/tools/include/linux/irqflags.h
-@@ -2,10 +2,10 @@
- #ifndef _LIBLOCKDEP_LINUX_TRACE_IRQFLAGS_H_
- #define _LIBLOCKDEP_LINUX_TRACE_IRQFLAGS_H_
- 
--# define trace_hardirq_context(p)	0
--# define trace_softirq_context(p)	0
--# define trace_hardirqs_enabled(p)	0
--# define trace_softirqs_enabled(p)	0
-+# define lockdep_hardirq_context(p)	0
-+# define lockdep_softirq_context(p)	0
-+# define lockdep_hardirqs_enabled(p)	0
-+# define lockdep_softirqs_enabled(p)	0
- # define lockdep_hardirq_enter()	do { } while (0)
- # define lockdep_hardirq_exit()		do { } while (0)
- # define lockdep_softirq_enter()	do { } while (0)
+... actually align in practice, which this series suggests is not the
+case.
 
+If those don't align, then I think that commit:
 
+  4302e381a870aafb ("firmware/psci: add support for SYSTEM_RESET2")
+
+... is not actually reliable, and not something we can support by
+default, and we should rethink the code introduce in that commit.
+
+If (a) and (b) are supposed to align, and the behaviour on your platform
+is an erratum, then I think we should treat it as such rather than
+adding a property that is open to abuse.
+
+Thoughts?
+
+Thanks,
+Mark.
+
+> 
+> Reviewed-by: Sudeep Holla <sudeep.holla@arm.com>
+> Signed-off-by: Elliot Berman <eberman@codeaurora.org>
+> ---
+>  Documentation/devicetree/bindings/arm/psci.yaml | 7 +++++++
+>  1 file changed, 7 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/arm/psci.yaml b/Documentation/devicetree/bindings/arm/psci.yaml
+> index 8ef8542..1a9d2dd 100644
+> --- a/Documentation/devicetree/bindings/arm/psci.yaml
+> +++ b/Documentation/devicetree/bindings/arm/psci.yaml
+> @@ -102,6 +102,13 @@ properties:
+>        [1] Kernel documentation - ARM idle states bindings
+>          Documentation/devicetree/bindings/arm/idle-states.txt
+>  
+> +  arm,psci-sys-reset2-vendor-param:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description: |
+> +        Vendor-specific reset type parameter to use for SYSTEM_RESET2 during
+> +        a warm or soft reboot. If no value is provided, then architectural
+> +        reset type SYSTEM_WARM_RESET is used.
+> +
+>    "#power-domain-cells":
+>      description:
+>        The number of cells in a PM domain specifier as per binding in [3].
+> -- 
+> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+> a Linux Foundation Collaborative Project
