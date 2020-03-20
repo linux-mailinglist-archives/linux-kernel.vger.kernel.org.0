@@ -2,170 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6E9F918D095
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 15:25:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D8EFF18CFA6
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 15:02:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727778AbgCTOYw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Mar 2020 10:24:52 -0400
-Received: from labrats.qualcomm.com ([199.106.110.90]:9007 "EHLO
-        labrats.qualcomm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727128AbgCTOYv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Mar 2020 10:24:51 -0400
-IronPort-SDR: KXdCz/c+E28b++i04tbA1hUhmr2u6IKKr5IZwp6u4IxBjC473fkiz0MWcWHndlUWrI1e79BTHc
- UyXOqZCo8OVhVBxaD6+c3QIMD4BliWknc5YczJ8vcYt3GkOpy3eLgwam1RPjwhIAVrkdUE5OIu
- z1KK5bIlt4MBTP3Titq9LF3yidFqqRxXgWRTps3LoeyMJpilLocIsB+tHWPNoUH+ZUtu6xeGVl
- AjUOokmAvdm4ZNsT2LyHtV1Bd52TPOximN2EtsP2d5NjRGIrQhHhc5vFV6mRx5biMjqr7FTqq8
- ZCY=
-X-IronPort-AV: E=Sophos;i="5.70,559,1574150400"; 
-   d="scan'208";a="28594805"
-Received: from unknown (HELO ironmsg05-sd.qualcomm.com) ([10.53.140.145])
-  by labrats.qualcomm.com with ESMTP; 15 Mar 2020 23:21:12 -0700
-Received: from pacamara-linux.qualcomm.com ([192.168.140.135])
-  by ironmsg05-sd.qualcomm.com with ESMTP; 15 Mar 2020 23:21:11 -0700
-Received: by pacamara-linux.qualcomm.com (Postfix, from userid 359480)
-        id A00EA3A61; Sun, 15 Mar 2020 23:21:11 -0700 (PDT)
-From:   Can Guo <cang@codeaurora.org>
-To:     asutoshd@codeaurora.org, nguyenb@codeaurora.org,
-        hongwus@codeaurora.org, rnayak@codeaurora.org,
-        linux-scsi@vger.kernel.org, kernel-team@android.com,
-        saravanak@google.com, salyzyn@google.com, cang@codeaurora.org
-Cc:     Alim Akhtar <alim.akhtar@samsung.com>,
-        Avri Altman <avri.altman@wdc.com>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Stanley Chu <stanley.chu@mediatek.com>,
-        Bean Huo <beanhuo@micron.com>,
-        Bart Van Assche <bvanassche@acm.org>,
-        Venkat Gopalakrishnan <venkatg@codeaurora.org>,
-        Tomas Winkler <tomas.winkler@intel.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH 2/2] scsi: ufs: Do not rely on prefetched data
-Date:   Sun, 15 Mar 2020 23:20:52 -0700
-Message-Id: <1584339655-20337-3-git-send-email-cang@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1584339655-20337-1-git-send-email-cang@codeaurora.org>
-References: <1584339655-20337-1-git-send-email-cang@codeaurora.org>
+        id S1727026AbgCTOCt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Mar 2020 10:02:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60278 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726866AbgCTOCs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Mar 2020 10:02:48 -0400
+Received: from localhost (unknown [122.167.82.180])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 53A8320754;
+        Fri, 20 Mar 2020 14:02:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1584712968;
+        bh=dRU3m+00mM/qn+r/7DmddOrNxDCjsWb2CGdhg6vzeFc=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=ZnzPTbu1jeHcUFu2Fd0MKrkt+pOutqg0GkJw0/c2dsotJN2IcNxyL4rcnhxyPq/wo
+         +iaUgupnmVaXEp4bRDes7uC3x5WsgHj2+85zFxYppJG5rPSa6/6euur1eFc49JmE5v
+         T5g5zPVh33AH9guBvk7xcMbLJWYij5bebUO7ngxk=
+Date:   Fri, 20 Mar 2020 19:32:43 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     broonie@kernel.org,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc:     pierre-louis.bossart@linux.intel.com, linux-kernel@vger.kernel.org,
+        alsa-devel@alsa-project.org
+Subject: Re: [PATCH 2/2] ASoC: wsa881x: mark read_only_wordlength flag
+Message-ID: <20200320140243.GG4885@vkoul-mobl>
+References: <20200311113545.23773-1-srinivas.kandagatla@linaro.org>
+ <20200311113545.23773-3-srinivas.kandagatla@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200311113545.23773-3-srinivas.kandagatla@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We were setting bActiveICCLevel attribute for UFS device only once but
-type of this attribute has changed from persistent to volatile since UFS
-device specification v2.1. This attribute is set to the default value after
-power cycle or hardware reset event. It isn't safe to rely on prefetched
-data (only used for bActiveICCLevel attribute now). Hence this change
-removes the code related to data prefetching and set this parameter on
-every attempt to probe the UFS device.
+Hi Mark,
 
-Signed-off-by: Can Guo <cang@codeaurora.org>
+On 11-03-20, 11:35, Srinivas Kandagatla wrote:
+> WSA881x works in PDM mode so the wordlength is fixed, which also makes
+> the only field "WordLength" in DPN_BlockCtrl1 register a read-only.
+> Writing to this register will throw up errors with Qualcomm Controller.
+> So use ro_blockctrl1_reg flag to mark this field as read-only so that
+> core will not write to this register.
 
-diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
-index 63aaa88f..99c7fca 100644
---- a/drivers/scsi/ufs/ufshcd.c
-+++ b/drivers/scsi/ufs/ufshcd.c
-@@ -6458,11 +6458,12 @@ static u32 ufshcd_find_max_sup_active_icc_level(struct ufs_hba *hba,
- 	return icc_level;
- }
- 
--static void ufshcd_init_icc_levels(struct ufs_hba *hba)
-+static void ufshcd_set_active_icc_lvl(struct ufs_hba *hba)
- {
- 	int ret;
- 	int buff_len = hba->desc_size.pwr_desc;
- 	u8 *desc_buf;
-+	u32 icc_level;
- 
- 	desc_buf = kmalloc(buff_len, GFP_KERNEL);
- 	if (!desc_buf)
-@@ -6477,20 +6478,17 @@ static void ufshcd_init_icc_levels(struct ufs_hba *hba)
- 		goto out;
- 	}
- 
--	hba->init_prefetch_data.icc_level =
--			ufshcd_find_max_sup_active_icc_level(hba,
--			desc_buf, buff_len);
--	dev_dbg(hba->dev, "%s: setting icc_level 0x%x",
--			__func__, hba->init_prefetch_data.icc_level);
-+	icc_level = ufshcd_find_max_sup_active_icc_level(hba, desc_buf,
-+							 buff_len);
-+	dev_dbg(hba->dev, "%s: setting icc_level 0x%x", __func__, icc_level);
- 
- 	ret = ufshcd_query_attr_retry(hba, UPIU_QUERY_OPCODE_WRITE_ATTR,
--		QUERY_ATTR_IDN_ACTIVE_ICC_LVL, 0, 0,
--		&hba->init_prefetch_data.icc_level);
-+		QUERY_ATTR_IDN_ACTIVE_ICC_LVL, 0, 0, &icc_level);
- 
- 	if (ret)
- 		dev_err(hba->dev,
- 			"%s: Failed configuring bActiveICCLevel = %d ret = %d",
--			__func__, hba->init_prefetch_data.icc_level , ret);
-+			__func__, icc_level, ret);
- 
- out:
- 	kfree(desc_buf);
-@@ -6996,8 +6994,6 @@ static int ufshcd_add_lus(struct ufs_hba *hba)
- {
- 	int ret;
- 
--	ufshcd_init_icc_levels(hba);
--
- 	/* Add required well known logical units to scsi mid layer */
- 	ret = ufshcd_scsi_add_wlus(hba);
- 	if (ret)
-@@ -7095,6 +7091,14 @@ static int ufshcd_probe_hba(struct ufs_hba *hba, bool async)
- 		}
- 	}
- 
-+	/*
-+	 * bActiveICCLevel is volatile for UFS device (as per latest v2.1 spec)
-+	 * and for removable UFS card as well, hence always set the parameter.
-+	 * Note: Error handler may issue the device reset hence resetting
-+	 *       bActiveICCLevel as well so it is always safe to set this here.
-+	 */
-+	ufshcd_set_active_icc_lvl(hba);
-+
- 	/* set the state as operational after switching to desired gear */
- 	hba->ufshcd_state = UFSHCD_STATE_OPERATIONAL;
- 
-diff --git a/drivers/scsi/ufs/ufshcd.h b/drivers/scsi/ufs/ufshcd.h
-index d45a044..5652d39 100644
---- a/drivers/scsi/ufs/ufshcd.h
-+++ b/drivers/scsi/ufs/ufshcd.h
-@@ -404,15 +404,6 @@ struct ufs_clk_scaling {
- 	bool is_suspended;
- };
- 
--/**
-- * struct ufs_init_prefetch - contains data that is pre-fetched once during
-- * initialization
-- * @icc_level: icc level which was read during initialization
-- */
--struct ufs_init_prefetch {
--	u32 icc_level;
--};
--
- #define UFS_ERR_REG_HIST_LENGTH 8
- /**
-  * struct ufs_err_reg_hist - keeps history of errors
-@@ -544,7 +535,6 @@ enum ufshcd_quirks {
-  * @intr_mask: Interrupt Mask Bits
-  * @ee_ctrl_mask: Exception event control mask
-  * @is_powered: flag to check if HBA is powered
-- * @init_prefetch_data: data pre-fetched during initialization
-  * @eh_work: Worker to handle UFS errors that require s/w attention
-  * @eeh_work: Worker to handle exception events
-  * @errors: HBA errors
-@@ -632,7 +622,6 @@ struct ufs_hba {
- 	u32 intr_mask;
- 	u16 ee_ctrl_mask;
- 	bool is_powered;
--	struct ufs_init_prefetch init_prefetch_data;
- 
- 	/* Work Queues */
- 	struct work_struct eh_work;
+I have applied the sdw patch. Since this depends on sdw patch, feel free
+to pull the below tag before you apply this
+
+The following changes since commit bb6d3fb354c5ee8d6bde2d576eb7220ea09862b9:
+
+  Linux 5.6-rc1 (2020-02-09 16:08:48 -0800)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/vkoul/soundwire.git topic/ro_wordlength
+
+for you to fetch changes up to a9107de4b03604ce0d279315c91b31b8065ee4ea:
+
+  soundwire: stream: Add read_only_wordlength flag to port properties (2020-03-20 19:24:59 +0530)
+
+----------------------------------------------------------------
+Srinivas Kandagatla (1):
+      soundwire: stream: Add read_only_wordlength flag to port properties
+
+ drivers/soundwire/stream.c    | 16 +++++++++-------
+ include/linux/soundwire/sdw.h |  2 ++
+ 2 files changed, 11 insertions(+), 7 deletions(-)
+
+> 
+> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+> ---
+>  sound/soc/codecs/wsa881x.c | 4 ++++
+>  1 file changed, 4 insertions(+)
+> 
+> diff --git a/sound/soc/codecs/wsa881x.c b/sound/soc/codecs/wsa881x.c
+> index b59f1d0e7f84..35b44b297f9e 100644
+> --- a/sound/soc/codecs/wsa881x.c
+> +++ b/sound/soc/codecs/wsa881x.c
+> @@ -394,6 +394,7 @@ static struct sdw_dpn_prop wsa_sink_dpn_prop[WSA881X_MAX_SWR_PORTS] = {
+>  		.min_ch = 1,
+>  		.max_ch = 1,
+>  		.simple_ch_prep_sm = true,
+> +		.read_only_wordlength = true,
+>  	}, {
+>  		/* COMP */
+>  		.num = 2,
+> @@ -401,6 +402,7 @@ static struct sdw_dpn_prop wsa_sink_dpn_prop[WSA881X_MAX_SWR_PORTS] = {
+>  		.min_ch = 1,
+>  		.max_ch = 1,
+>  		.simple_ch_prep_sm = true,
+> +		.read_only_wordlength = true,
+>  	}, {
+>  		/* BOOST */
+>  		.num = 3,
+> @@ -408,6 +410,7 @@ static struct sdw_dpn_prop wsa_sink_dpn_prop[WSA881X_MAX_SWR_PORTS] = {
+>  		.min_ch = 1,
+>  		.max_ch = 1,
+>  		.simple_ch_prep_sm = true,
+> +		.read_only_wordlength = true,
+>  	}, {
+>  		/* VISENSE */
+>  		.num = 4,
+> @@ -415,6 +418,7 @@ static struct sdw_dpn_prop wsa_sink_dpn_prop[WSA881X_MAX_SWR_PORTS] = {
+>  		.min_ch = 1,
+>  		.max_ch = 1,
+>  		.simple_ch_prep_sm = true,
+> +		.read_only_wordlength = true,
+>  	}
+>  };
+>  
+> -- 
+> 2.21.0
+
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, a Linux Foundation Collaborative Project.
-
+~Vinod
