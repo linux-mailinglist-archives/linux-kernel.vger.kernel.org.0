@@ -2,37 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 61BD418CE31
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 13:58:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3D5DC18CE23
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 13:58:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727333AbgCTM6U (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Mar 2020 08:58:20 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:35617 "EHLO
+        id S1727047AbgCTM6H (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Mar 2020 08:58:07 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:35575 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727120AbgCTM6L (ORCPT
+        with ESMTP id S1726955AbgCTM6H (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Mar 2020 08:58:11 -0400
+        Fri, 20 Mar 2020 08:58:07 -0400
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1jFHDu-0003hh-E6; Fri, 20 Mar 2020 13:58:02 +0100
+        id 1jFHDu-0003hk-P5; Fri, 20 Mar 2020 13:58:02 +0100
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 0A0A71C22BE;
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 5DB991C22BF;
         Fri, 20 Mar 2020 13:58:02 +0100 (CET)
-Date:   Fri, 20 Mar 2020 12:58:01 -0000
+Date:   Fri, 20 Mar 2020 12:58:02 -0000
 From:   "tip-bot2 for Peter Zijlstra" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: perf/core] perf/core: Fix endless multiplex timer
-Cc:     Andi Kleen <ak@linux.intel.com>,
-        Kan Liang <kan.liang@linux.intel.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        x86 <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>
-In-Reply-To: <20200305123851.GX2596@hirez.programming.kicks-ass.net>
-References: <20200305123851.GX2596@hirez.programming.kicks-ass.net>
+Subject: [tip: perf/core] x86/optprobe: Fix OPTPROBE vs UACCESS
+Cc:     "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>, x86 <x86@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+In-Reply-To: <20200305092130.GU2596@hirez.programming.kicks-ass.net>
+References: <20200305092130.GU2596@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-Message-ID: <158470908175.28353.4859180707604949658.tip-bot2@tip-bot2>
+Message-ID: <158470908209.28353.9034754166916134439.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -48,77 +47,106 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the perf/core branch of tip:
 
-Commit-ID:     90c91dfb86d0ff545bd329d3ddd72c147e2ae198
-Gitweb:        https://git.kernel.org/tip/90c91dfb86d0ff545bd329d3ddd72c147e2ae198
+Commit-ID:     d8a738689794c42c3844284b99ddf165d10a724e
+Gitweb:        https://git.kernel.org/tip/d8a738689794c42c3844284b99ddf165d10a724e
 Author:        Peter Zijlstra <peterz@infradead.org>
-AuthorDate:    Thu, 05 Mar 2020 13:38:51 +01:00
+AuthorDate:    Thu, 05 Mar 2020 10:21:30 +01:00
 Committer:     Peter Zijlstra <peterz@infradead.org>
 CommitterDate: Fri, 20 Mar 2020 13:06:22 +01:00
 
-perf/core: Fix endless multiplex timer
+x86/optprobe: Fix OPTPROBE vs UACCESS
 
-Kan and Andi reported that we fail to kill rotation when the flexible
-events go empty, but the context does not. XXX moar
+While looking at an objtool UACCESS warning, it suddenly occurred to me
+that it is entirely possible to have an OPTPROBE right in the middle of
+an UACCESS region.
 
-Fixes: fd7d55172d1e ("perf/cgroups: Don't rotate events for cgroups unnecessarily")
-Reported-by: Andi Kleen <ak@linux.intel.com>
-Reported-by: Kan Liang <kan.liang@linux.intel.com>
-Tested-by: Kan Liang <kan.liang@linux.intel.com>
+In this case we must of course clear FLAGS.AC while running the KPROBE.
+Luckily the trampoline already saves/restores [ER]FLAGS, so all we need
+to do is inject a CLAC. Unfortunately we cannot use ALTERNATIVE() in the
+trampoline text, so we have to frob that manually.
+
+Fixes: ca0bbc70f147 ("sched/x86_64: Don't save flags on context switch")
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Link: https://lkml.kernel.org/r/20200305123851.GX2596@hirez.programming.kicks-ass.net
+Acked-by: Masami Hiramatsu <mhiramat@kernel.org>
+Link: https://lkml.kernel.org/r/20200305092130.GU2596@hirez.programming.kicks-ass.net
 ---
- kernel/events/core.c | 20 ++++++++++++++------
- 1 file changed, 14 insertions(+), 6 deletions(-)
+ arch/x86/include/asm/kprobes.h |  1 +
+ arch/x86/kernel/kprobes/opt.c  | 25 +++++++++++++++++++++++++
+ 2 files changed, 26 insertions(+)
 
-diff --git a/kernel/events/core.c b/kernel/events/core.c
-index ccf8d4f..b5a68d2 100644
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -2291,6 +2291,7 @@ __perf_remove_from_context(struct perf_event *event,
+diff --git a/arch/x86/include/asm/kprobes.h b/arch/x86/include/asm/kprobes.h
+index 95b1f05..073eb7a 100644
+--- a/arch/x86/include/asm/kprobes.h
++++ b/arch/x86/include/asm/kprobes.h
+@@ -36,6 +36,7 @@ typedef u8 kprobe_opcode_t;
  
- 	if (!ctx->nr_events && ctx->is_active) {
- 		ctx->is_active = 0;
-+		ctx->rotate_necessary = 0;
- 		if (ctx->task) {
- 			WARN_ON_ONCE(cpuctx->task_ctx != ctx);
- 			cpuctx->task_ctx = NULL;
-@@ -3188,12 +3189,6 @@ static void ctx_sched_out(struct perf_event_context *ctx,
- 	if (!ctx->nr_active || !(is_active & EVENT_ALL))
- 		return;
- 
--	/*
--	 * If we had been multiplexing, no rotations are necessary, now no events
--	 * are active.
--	 */
--	ctx->rotate_necessary = 0;
--
- 	perf_pmu_disable(ctx->pmu);
- 	if (is_active & EVENT_PINNED) {
- 		list_for_each_entry_safe(event, tmp, &ctx->pinned_active, active_list)
-@@ -3203,6 +3198,13 @@ static void ctx_sched_out(struct perf_event_context *ctx,
- 	if (is_active & EVENT_FLEXIBLE) {
- 		list_for_each_entry_safe(event, tmp, &ctx->flexible_active, active_list)
- 			group_sched_out(event, cpuctx, ctx);
-+
-+		/*
-+		 * Since we cleared EVENT_FLEXIBLE, also clear
-+		 * rotate_necessary, is will be reset by
-+		 * ctx_flexible_sched_in() when needed.
-+		 */
-+		ctx->rotate_necessary = 0;
- 	}
- 	perf_pmu_enable(ctx->pmu);
+ /* optinsn template addresses */
+ extern __visible kprobe_opcode_t optprobe_template_entry[];
++extern __visible kprobe_opcode_t optprobe_template_clac[];
+ extern __visible kprobe_opcode_t optprobe_template_val[];
+ extern __visible kprobe_opcode_t optprobe_template_call[];
+ extern __visible kprobe_opcode_t optprobe_template_end[];
+diff --git a/arch/x86/kernel/kprobes/opt.c b/arch/x86/kernel/kprobes/opt.c
+index 3f45b5c..ea13f68 100644
+--- a/arch/x86/kernel/kprobes/opt.c
++++ b/arch/x86/kernel/kprobes/opt.c
+@@ -71,6 +71,21 @@ found:
+ 	return (unsigned long)buf;
  }
-@@ -3985,6 +3987,12 @@ ctx_event_to_rotate(struct perf_event_context *ctx)
- 				      typeof(*event), group_node);
- 	}
  
++static void synthesize_clac(kprobe_opcode_t *addr)
++{
 +	/*
-+	 * Unconditionally clear rotate_necessary; if ctx_flexible_sched_in()
-+	 * finds there are unschedulable events, it will set it again.
++	 * Can't be static_cpu_has() due to how objtool treats this feature bit.
++	 * This isn't a fast path anyway.
 +	 */
-+	ctx->rotate_necessary = 0;
++	if (!boot_cpu_has(X86_FEATURE_SMAP))
++		return;
 +
- 	return event;
- }
++	/* Replace the NOP3 with CLAC */
++	addr[0] = 0x0f;
++	addr[1] = 0x01;
++	addr[2] = 0xca;
++}
++
+ /* Insert a move instruction which sets a pointer to eax/rdi (1st arg). */
+ static void synthesize_set_arg1(kprobe_opcode_t *addr, unsigned long val)
+ {
+@@ -92,6 +107,9 @@ asm (
+ 			/* We don't bother saving the ss register */
+ 			"	pushq %rsp\n"
+ 			"	pushfq\n"
++			".global optprobe_template_clac\n"
++			"optprobe_template_clac:\n"
++			ASM_NOP3
+ 			SAVE_REGS_STRING
+ 			"	movq %rsp, %rsi\n"
+ 			".global optprobe_template_val\n"
+@@ -111,6 +129,9 @@ asm (
+ #else /* CONFIG_X86_32 */
+ 			"	pushl %esp\n"
+ 			"	pushfl\n"
++			".global optprobe_template_clac\n"
++			"optprobe_template_clac:\n"
++			ASM_NOP3
+ 			SAVE_REGS_STRING
+ 			"	movl %esp, %edx\n"
+ 			".global optprobe_template_val\n"
+@@ -134,6 +155,8 @@ asm (
+ void optprobe_template_func(void);
+ STACK_FRAME_NON_STANDARD(optprobe_template_func);
+ 
++#define TMPL_CLAC_IDX \
++	((long)optprobe_template_clac - (long)optprobe_template_entry)
+ #define TMPL_MOVE_IDX \
+ 	((long)optprobe_template_val - (long)optprobe_template_entry)
+ #define TMPL_CALL_IDX \
+@@ -389,6 +412,8 @@ int arch_prepare_optimized_kprobe(struct optimized_kprobe *op,
+ 	op->optinsn.size = ret;
+ 	len = TMPL_END_IDX + op->optinsn.size;
+ 
++	synthesize_clac(buf + TMPL_CLAC_IDX);
++
+ 	/* Set probe information */
+ 	synthesize_set_arg1(buf + TMPL_MOVE_IDX, (unsigned long)op);
  
