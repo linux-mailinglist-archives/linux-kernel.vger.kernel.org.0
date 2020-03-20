@@ -2,96 +2,135 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 793D218C535
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 03:17:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CF94918C542
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 03:25:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727392AbgCTCQx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 22:16:53 -0400
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:34009 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727183AbgCTCQw (ORCPT
+        id S1726954AbgCTCZX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 22:25:23 -0400
+Received: from mailout2.samsung.com ([203.254.224.25]:32034 "EHLO
+        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726704AbgCTCZW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 22:16:52 -0400
-Received: by mail-oi1-f196.google.com with SMTP id j5so5030974oij.1;
-        Thu, 19 Mar 2020 19:16:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=89WFqHSLk0grEsQCNT9OeVbEIPTIenyQQOmFqx/NL78=;
-        b=kAIRu4pUhIlwxbiZxg0ycNNwYymI+sZ6Fvz3jXT/MZbhuw8HBC2zwLd1y91gHshsGJ
-         HMi7HcbEmrbiDRjrBPMD0FKe+/yMFBH97gCjJ9rKwFlaiYkimbPxLzwgBdaaIawNwJx+
-         rqbtYtxgTpz5CZjg07H/5fmOlAVx6syro/EHiZALgjMBiJExBS3c0slHMhsdQaP6vzhx
-         oJR+cXG9LBna3rg/eWWfhXVY5Uca4mMTXAqqf/ZNAnr7D12PqZOMuXGKEhwp7S0z764h
-         yJ+wlo+znWPNlSq12TrME7elo/QXyWUkbs+FmtAwqHGI8+AMPb0JvByMa7X8osn6GqjL
-         6VXA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=89WFqHSLk0grEsQCNT9OeVbEIPTIenyQQOmFqx/NL78=;
-        b=DWCJyPlTf8BtDt06F878cIvyuRZqo7Xp8NtZolxvhv+1U9VbAAlxVLx9RDC2bXeAfX
-         8VVGPl3eMZy49VVfTg7WZ+0kCgScaBGO9ZrzoywQWm0XF4jPkL1UbqdtTn+TfDkw3n0s
-         fDPGNafRJnwZHDPUiyessiOkVPk1rWJEuPeGClRIyLukKqNnTdcy24gL6UT2JdXKW6y4
-         ORNzFbkxMnO9L34eFQGsjKkJbELK3cbWX25RW7UAl9YtM1qTbUoKYEo/xhy9Zqy4MqoV
-         5fxLnsr7iT8j83Qo87b4AHhOr7mSE+vqZ2MOVFMi4yP1EFgF5zc5QW9oSuP09C4X+qRB
-         czIw==
-X-Gm-Message-State: ANhLgQ3QCsZ9wnfGXaPX/BgWqc/Sz9bxfAlu9adBKNImqJZ5E60q1vV9
-        XfaGagp+gOOlRGKvtIu/+J3qHY2n
-X-Google-Smtp-Source: ADFU+vtdYN4hEqu0MrneDZ4oEhwKL87CpvbOgt5Vi0pTk4wnmDGJpC5MNv+YFgesgGCY5oKATCEwyg==
-X-Received: by 2002:aca:4991:: with SMTP id w139mr4852785oia.145.1584670611950;
-        Thu, 19 Mar 2020 19:16:51 -0700 (PDT)
-Received: from localhost.localdomain ([2604:1380:4111:8b00::1])
-        by smtp.gmail.com with ESMTPSA id j23sm1484287oib.32.2020.03.19.19.16.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 19 Mar 2020 19:16:51 -0700 (PDT)
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     Jiri Pirko <jiri@mellanox.com>, Ido Schimmel <idosch@mellanox.com>
-Cc:     "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Nathan Chancellor <natechancellor@gmail.com>
-Subject: [PATCH] mlxsw: spectrum_cnt: Fix 64-bit division in mlxsw_sp_counter_resources_register
-Date:   Thu, 19 Mar 2020 19:16:38 -0700
-Message-Id: <20200320021638.1916-1-natechancellor@gmail.com>
-X-Mailer: git-send-email 2.26.0.rc1
-MIME-Version: 1.0
-X-Patchwork-Bot: notify
-Content-Transfer-Encoding: 8bit
+        Thu, 19 Mar 2020 22:25:22 -0400
+Received: from epcas2p3.samsung.com (unknown [182.195.41.55])
+        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20200320022520epoutp0296b053e15b469939ae447f0d28a15b74~94fz_Ao310045200452epoutp02R
+        for <linux-kernel@vger.kernel.org>; Fri, 20 Mar 2020 02:25:20 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20200320022520epoutp0296b053e15b469939ae447f0d28a15b74~94fz_Ao310045200452epoutp02R
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1584671120;
+        bh=HesHIhTOkXFLSniSRlUirXX+eZ+4Ng8C/JZymLphEl0=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=pzjIE7miu36pQLcA2Ud2DZYu8t9ggOLCGHIDuW3rhWfoFlUvz9E4UdC3wS2MaWHtm
+         jxINLTZ2/ZPzdCNpeZREe/OLCoWTyY4RqWHKzthaZG2IIG3DteQKmkTAZ1C8SL2Uwy
+         DFQatOxjY152u4KfCHVoypJ9JN1UzglZ50UXIYw8=
+Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
+        epcas2p2.samsung.com (KnoxPortal) with ESMTP id
+        20200320022519epcas2p2007a9d6a02bc9586e6694093972434d2~94fzT5qDc3060430604epcas2p2w;
+        Fri, 20 Mar 2020 02:25:19 +0000 (GMT)
+Received: from epsmges2p1.samsung.com (unknown [182.195.40.185]) by
+        epsnrtp2.localdomain (Postfix) with ESMTP id 48k70Q11ZZzMqYkf; Fri, 20 Mar
+        2020 02:25:10 +0000 (GMT)
+Received: from epcas2p2.samsung.com ( [182.195.41.54]) by
+        epsmges2p1.samsung.com (Symantec Messaging Gateway) with SMTP id
+        93.6D.04128.D69247E5; Fri, 20 Mar 2020 11:24:45 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+        epcas2p4.samsung.com (KnoxPortal) with ESMTPA id
+        20200320022445epcas2p40ea2f166aff45e67825b3e1a4e2308dd~94fTDfrLw0324703247epcas2p4e;
+        Fri, 20 Mar 2020 02:24:45 +0000 (GMT)
+Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
+        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20200320022445epsmtrp1acb1cc4a01c8b9005e8fdba2453e9a2c~94fTC5nAU0813708137epsmtrp17;
+        Fri, 20 Mar 2020 02:24:45 +0000 (GMT)
+X-AuditID: b6c32a45-f9bff70000001020-72-5e74296d5b9e
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+        epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        60.64.04158.D69247E5; Fri, 20 Mar 2020 11:24:45 +0900 (KST)
+Received: from KEI.dsn.sec.samsung.com (unknown [12.36.155.227]) by
+        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20200320022445epsmtip108039125cbfb3d4529d58879b1e1088f~94fS6_g1j2420024200epsmtip1N;
+        Fri, 20 Mar 2020 02:24:45 +0000 (GMT)
+From:   Seungchul Kim <sc377.kim@samsung.com>
+To:     Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc:     linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Seungchul Kim <sc377.kim@samsung.com>
+Subject: [PATCH] media: v4l2-fh: define v4l2_fh struct regardless of
+ condition
+Date:   Fri, 20 Mar 2020 11:16:43 +0900
+Message-Id: <1584670603-19837-1-git-send-email-sc377.kim@samsung.com>
+X-Mailer: git-send-email 2.7.4
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrCKsWRmVeSWpSXmKPExsWy7bCmmW6uZkmcwfbHqhaXd81hs+jZsJXV
+        YtmmP0wW0+5MYHRg8di0qpPNo2/LKkaPz5vkApijcmwyUhNTUosUUvOS81My89JtlbyD453j
+        Tc0MDHUNLS3MlRTyEnNTbZVcfAJ03TJzgLYpKZQl5pQChQISi4uV9O1sivJLS1IVMvKLS2yV
+        UgtScgoMDQv0ihNzi0vz0vWS83OtDA0MjEyBKhNyMjqfz2QraOOsWNY5k7mB8TB7FyMnh4SA
+        icSyiWfYuhi5OIQEdjBK/Ns5hQnC+cQo8erGTjaQKiGBb4wSCxf7wXS8m7ufGaJoL6PE2alb
+        WCGcr4wSv09PYAKpYhPQlri6eh4ziC0ioCfxfPNFFhCbWSBNYu6NFrAaYYEAiTNd98E2sAio
+        Snx4fZERxOYVcJVouHWCFWKbnMTNc51g2yQEHrJKPL3+kBki4SJxZ/V5KFtY4tXxLVAPSUm8
+        7G+DssslPjzaygTR3MEo0fT1DhtEwlhi1rN2oG0cQBdpSqzfpQ9iSggoSxy5BXUnn0TH4b/s
+        EGFeiY42IYhGZYnVf/uhtkpK7P97ggnC9pCYs2MjKySwYiVaHj5nncAoOwth/gJGxlWMYqkF
+        xbnpqcVGBYbIkbSJEZyCtFx3MM4453OIUYCDUYmH16GlOE6INbGsuDL3EKMEB7OSCK9uOlCI
+        NyWxsiq1KD++qDQntfgQoykw8CYyS4km5wPTY15JvKGpkZmZgaWphamZkYWSOO9m7psxQgLp
+        iSWp2ampBalFMH1MHJxSDYwS/C+y48WN7zdWx7y4opuV9EA8MKNZOSP0HIffFxmTS8yfykOq
+        PXpeCm7mXO+oKqq733vX29qrfw8bc/608grQKyiUftfM4W4RO+uYf1uK4gTddRNdlvU+NawI
+        6HHb6zBRdiP7QrfFbxK+FGh8kF/RPk1jwwtWiUlTr3I41k9nXNzbEnKZV4mlOCPRUIu5qDgR
+        ALcm1/pXAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrEJMWRmVeSWpSXmKPExsWy7bCSnG6uZkmcwaEzfBaXd81hs+jZsJXV
+        YtmmP0wW0+5MYHRg8di0qpPNo2/LKkaPz5vkApijuGxSUnMyy1KL9O0SuDI6n89kK2jjrFjW
+        OZO5gfEwexcjJ4eEgInEu7n7mbsYuTiEBHYzSvyfeIKxi5EDKCEp0XK4AKJGWOJ+yxFWiJrP
+        jBKLNrSBNbMJaEtcXT2PGcQWEdCTeL75IguIzSyQIXFy6zGwGmEBP4npZzrYQGwWAVWJD68v
+        MoLYvAKuEg23TrBCLJCTuHmuk3kCI88CRoZVjJKpBcW56bnFhgVGeanlesWJucWleel6yfm5
+        mxjBIaGltYPxxIn4Q4wCHIxKPLwOLcVxQqyJZcWVuYcYJTiYlUR4ddOBQrwpiZVVqUX58UWl
+        OanFhxilOViUxHnl849FCgmkJ5akZqemFqQWwWSZODilGhht1XonN33ny7Bpfaw4Z1lAn8qV
+        pFMW2fP2nGaYlPxm8kKrmU9D7H37pBZyWpQsum4ZunRHysJ1jbOW3hPJvPbjSWnWtkL1+6rv
+        Xnsd2Pb1XsOaK8f9pvNvTAjsjLcxPKMt5jJV6/1eti6WULt+K0//2C+y677G1/lseHS9o8PE
+        lcFd1slVaJ0SS3FGoqEWc1FxIgBh+4dwBQIAAA==
+X-CMS-MailID: 20200320022445epcas2p40ea2f166aff45e67825b3e1a4e2308dd
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: AUTO_CONFIDENTIAL
+CMS-TYPE: 102P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20200320022445epcas2p40ea2f166aff45e67825b3e1a4e2308dd
+References: <CGME20200320022445epcas2p40ea2f166aff45e67825b3e1a4e2308dd@epcas2p4.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When building arm32 allyesconfig:
+v4l2_fh struct define differently by CONFIG_V4L2_MEM2MEM_DEV.
+If some vendors use CONFIG_V4L2_MEM2MEM_DEV by module,
+it can make the mismatch of v4l2_fh sturct.
 
-ld.lld: error: undefined symbol: __aeabi_uldivmod
->>> referenced by spectrum_cnt.c
->>>               net/ethernet/mellanox/mlxsw/spectrum_cnt.o:(mlxsw_sp_counter_resources_register) in archive drivers/built-in.a
->>> did you mean: __aeabi_uidivmod
->>> defined in: arch/arm/lib/lib.a(lib1funcs.o)
+By the mismatch, the following error occurs.
+===============================
+[    7.533506] v4l2_mem2mem: disagrees about version of symbol video_devdata
+[    7.533594] v4l2_mem2mem: Unknown symbol video_devdata (err -22)
+[    7.535319] v4l2_mem2mem: disagrees about version of symbol v4l2_event_pending
+[    7.542532] v4l2_mem2mem: Unknown symbol v4l2_event_pending (err -22)
+===============================
 
-pool_size and bank_size are u64; use div64_u64 so that 32-bit platforms
-do not error.
+So v4l2_fh struct is modified to does not have dependency
+for CONFIG_V4L2_MEM2MEM_DEV.
 
-Fixes: ab8c4cc60420 ("mlxsw: spectrum_cnt: Move config validation along with resource register")
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+Signed-off-by: Seungchul Kim <sc377.kim@samsung.com>
 ---
- drivers/net/ethernet/mellanox/mlxsw/spectrum_cnt.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ include/media/v4l2-fh.h | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/drivers/net/ethernet/mellanox/mlxsw/spectrum_cnt.c b/drivers/net/ethernet/mellanox/mlxsw/spectrum_cnt.c
-index 0268f0a6662a..7974982533b5 100644
---- a/drivers/net/ethernet/mellanox/mlxsw/spectrum_cnt.c
-+++ b/drivers/net/ethernet/mellanox/mlxsw/spectrum_cnt.c
-@@ -303,7 +303,7 @@ int mlxsw_sp_counter_resources_register(struct mlxsw_core *mlxsw_core)
- 	}
+diff --git a/include/media/v4l2-fh.h b/include/media/v4l2-fh.h
+index 53b4dbb..b5b3e00 100644
+--- a/include/media/v4l2-fh.h
++++ b/include/media/v4l2-fh.h
+@@ -53,9 +53,7 @@ struct v4l2_fh {
+ 	unsigned int		navailable;
+ 	u32			sequence;
  
- 	/* Check config is valid, no bank over subscription */
--	if (WARN_ON(total_bank_config > pool_size / bank_size + 1))
-+	if (WARN_ON(total_bank_config > div64_u64(pool_size, bank_size) + 1))
- 		return -EINVAL;
+-#if IS_ENABLED(CONFIG_V4L2_MEM2MEM_DEV)
+ 	struct v4l2_m2m_ctx	*m2m_ctx;
+-#endif
+ };
  
- 	return 0;
+ /**
 -- 
-2.26.0.rc1
+2.7.4
 
