@@ -2,103 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C00F618C649
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 05:11:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C4B3D18C651
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 05:13:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727043AbgCTELD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Mar 2020 00:11:03 -0400
-Received: from mga02.intel.com ([134.134.136.20]:8176 "EHLO mga02.intel.com"
+        id S1726951AbgCTENk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Mar 2020 00:13:40 -0400
+Received: from mga05.intel.com ([192.55.52.43]:43744 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726448AbgCTELD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Mar 2020 00:11:03 -0400
-IronPort-SDR: nPLQpVSQWslliwwzUsTqjkrtVj+4Qem5kNU8KAPXRbb0v1xZLWbQHvDv0IrcfvQcmaR0HJByJ9
- tc5L2BPXmunQ==
+        id S1725883AbgCTENk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Mar 2020 00:13:40 -0400
+IronPort-SDR: hgnp9zsyY4P543Fz98pSRroNCBHaBx0bn5gfkSAa+luUMY8L7Rl6mzxaT0fD0FSwXCGpFFoelJ
+ 5j4khqtOo6bA==
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Mar 2020 21:11:02 -0700
-IronPort-SDR: w3bTWbbZ23larvI1SORC8UY+DGaYEWukj8OMaFJtlkwN6+aHD0PU/e1A1LWlFgIdUzLw7U0+On
- RZoOtJ3LqgQw==
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Mar 2020 21:13:40 -0700
+IronPort-SDR: uxiOACeS7AKxwG4i39xyV7/w0YwwudVfRMUAkx5aOajcw2D7JckXPGHQ7UAWXlbPNbjXdSIt/C
+ g8h6CdaAietQ==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.72,283,1580803200"; 
-   d="scan'208";a="418586574"
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.202])
-  by orsmga005.jf.intel.com with ESMTP; 19 Mar 2020 21:11:02 -0700
-Date:   Thu, 19 Mar 2020 21:11:02 -0700
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Paolo Bonzini <pbonzini@redhat.com>
-Cc:     Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Ben Gardon <bgardon@google.com>,
-        Junaid Shahid <junaids@google.com>,
-        Liran Alon <liran.alon@oracle.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        John Haxby <john.haxby@oracle.com>,
-        Miaohe Lin <linmiaohe@huawei.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>
-Subject: Re: [PATCH v2 04/32] KVM: nVMX: Invalidate all L2 roots when
- emulating INVVPID without EPT
-Message-ID: <20200320041102.GG11305@linux.intel.com>
-References: <20200317045238.30434-1-sean.j.christopherson@intel.com>
- <20200317045238.30434-5-sean.j.christopherson@intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200317045238.30434-5-sean.j.christopherson@intel.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+   d="scan'208";a="280306857"
+Received: from kmp-skylake-client-platform.sc.intel.com ([172.25.112.108])
+  by fmsmga002.fm.intel.com with ESMTP; 19 Mar 2020 21:13:38 -0700
+From:   Kyung Min Park <kyung.min.park@intel.com>
+To:     x86@kernel.org, linux-kernel@vger.kernel.org
+Cc:     tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
+        gregkh@linuxfoundation.org, ak@linux.intel.com,
+        tony.luck@intel.com, ashok.raj@intel.com, ravi.v.shankar@intel.com,
+        fenghua.yu@intel.com, kyung.min.park@intel.com
+Subject: [PATCH v2 0/2] x86/delay: Introduce TPAUSE instruction 
+Date:   Thu, 19 Mar 2020 21:13:22 -0700
+Message-Id: <1584677604-32707-1-git-send-email-kyung.min.park@intel.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 16, 2020 at 09:52:10PM -0700, Sean Christopherson wrote:
-> From: Junaid Shahid <junaids@google.com>
-> 
-> Free all L2 (guest_mmu) roots when emulating INVVPID for L1 and EPT is
-> disabled, as outstanding changes to the page tables managed by L1 need
-> to be recognized.
-> 
-> Similar to handle_invpcid() and handle_invept(), rely on
-> kvm_mmu_free_roots() to do a remote TLB flush if necessary, e.g. if L1
-> has never entered L2 then there is nothing to be done.
-> 
-> Fixes: 5c614b3583e7b ("KVM: nVMX: nested VPID emulation")
-> Signed-off-by: Junaid Shahid <junaids@google.com>
-> [sean: ported to upstream KVM, reworded the comment and changelog]
-> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-> ---
->  arch/x86/kvm/vmx/nested.c | 11 +++++++++++
->  1 file changed, 11 insertions(+)
-> 
-> diff --git a/arch/x86/kvm/vmx/nested.c b/arch/x86/kvm/vmx/nested.c
-> index 9624cea4ed9f..50bb7d8862aa 100644
-> --- a/arch/x86/kvm/vmx/nested.c
-> +++ b/arch/x86/kvm/vmx/nested.c
-> @@ -5250,6 +5250,17 @@ static int handle_invvpid(struct kvm_vcpu *vcpu)
->  		return kvm_skip_emulated_instruction(vcpu);
->  	}
->  
-> +	/*
-> +	 * Sync L2's shadow page tables if EPT is disabled, L1 is effectively
-> +	 * invalidating linear mappings for L2 (tagged with L2's VPID).  Sync
-> +	 * all roots as VPIDs are not tracked in the MMU role.
-> +	 *
-> +	 * TODO: sync only the affected SPTEs for INVDIVIDUAL_ADDR.
-> +	 */
-> +	if (!enable_ept)
-> +		kvm_mmu_free_roots(vcpu, &vcpu->arch.guest_mmu,
+Intel processors that support the WAITPKG feature implement
+the TPAUSE instruction that suspends execution in a lower power
+state until the TSC (Time Stamp Counter) exceeds a certain value.
 
-Aha!  This is wrong.  guest_mmu is only used if EPT is enabled.  The silver
-lining is that I have confirmed that this code is needed and works as
-intended (when the correct mmu is nuked).
+Update the udelay() function to use TPAUSE on systems where it
+is available. Note that we hard code the deeper (C0.2) sleep
+state because exit latency is small compared to the "microseconds"
+that usleep() will delay.
 
-> +				   KVM_MMU_ROOTS_ALL);
-> +
->  	return nested_vmx_succeed(vcpu);
->  }
->  
-> -- 
-> 2.24.1
-> 
+ChangeLog:
+- Change from v1 to v2:
+  1. The patchset applies after Thomas's cleanup patch as below:
+     https://lkml.org/lkml/diff/2020/3/18/893/1
+  2. Change function/variable names as suggested by Thomas i.e.
+     a. Change to delay_halt_fn/delay_halt_mwaitx/delay_halt_tpause from
+        wait_func/mwaitx/tpause.
+     b. Change variable name loops to cycles.
+     c. Change back to the original name delay_fn from delay_platform.
+  3. Organize comments to use full width.
+  4. Add __ro_after_init for the function pointer delay_halt_fn.
+  5. Change patch titles as suggested by Thomas.
+
+Kyung Min Park (2):
+  x86/delay: Refactor delay_mwaitx() for TPAUSE support
+  x86/delay: Introduce TPAUSE delay
+
+ arch/x86/include/asm/mwait.h | 17 ++++++++++
+ arch/x86/lib/delay.c         | 75 +++++++++++++++++++++++++++++++++-----------
+ 2 files changed, 73 insertions(+), 19 deletions(-)
+
+-- 
+2.7.4
+
