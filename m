@@ -2,18 +2,18 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8974D18D5FF
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 18:41:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E885718D602
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 18:41:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727261AbgCTRl0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Mar 2020 13:41:26 -0400
-Received: from v6.sk ([167.172.42.174]:51786 "EHLO v6.sk"
+        id S1727295AbgCTRlb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Mar 2020 13:41:31 -0400
+Received: from v6.sk ([167.172.42.174]:51822 "EHLO v6.sk"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726814AbgCTRlZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Mar 2020 13:41:25 -0400
+        id S1727268AbgCTRl3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Mar 2020 13:41:29 -0400
 Received: from localhost (v6.sk [IPv6:::1])
-        by v6.sk (Postfix) with ESMTP id D68E160F22;
-        Fri, 20 Mar 2020 17:41:23 +0000 (UTC)
+        by v6.sk (Postfix) with ESMTP id 5EEA760FF9;
+        Fri, 20 Mar 2020 17:41:27 +0000 (UTC)
 From:   Lubomir Rintel <lkundrak@v3.sk>
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc:     Rob Herring <robh+dt@kernel.org>,
@@ -29,9 +29,9 @@ Cc:     Rob Herring <robh+dt@kernel.org>,
         linuxppc-dev@lists.ozlabs.org, linux-serial@vger.kernel.org,
         linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
         Lubomir Rintel <lkundrak@v3.sk>
-Subject: [PATCH 03/10] ARM: dts: pxa*: Make the serial ports compatible with xscale-uart
-Date:   Fri, 20 Mar 2020 18:41:00 +0100
-Message-Id: <20200320174107.29406-4-lkundrak@v3.sk>
+Subject: [PATCH 04/10] ARM: dts: mmp2-brownstone: Don't redeclare phandle references
+Date:   Fri, 20 Mar 2020 18:41:01 +0100
+Message-Id: <20200320174107.29406-5-lkundrak@v3.sk>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200320174107.29406-1-lkundrak@v3.sk>
 References: <20200320174107.29406-1-lkundrak@v3.sk>
@@ -42,92 +42,359 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Some drivers that claim to support mrvl,mmp-uart default to a reg-shift
-of two, some don't. Be explicit to be on a safe side.
-
-With that in place, a XScale serial port driver is perfectly capable of
-supporting the MMP serial port. Add a compatible string.
+Extend the nodes by their phandle references instead of recreating the
+tree and declaring references of the same names.
 
 Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
 ---
- arch/arm/boot/dts/pxa168.dtsi | 9 ++++++---
- arch/arm/boot/dts/pxa910.dtsi | 9 ++++++---
- 2 files changed, 12 insertions(+), 6 deletions(-)
+ arch/arm/boot/dts/mmp2-brownstone.dts | 330 +++++++++++++-------------
+ 1 file changed, 164 insertions(+), 166 deletions(-)
 
-diff --git a/arch/arm/boot/dts/pxa168.dtsi b/arch/arm/boot/dts/pxa168.dtsi
-index 41dc79c9f6320..9a9e38245e88c 100644
---- a/arch/arm/boot/dts/pxa168.dtsi
-+++ b/arch/arm/boot/dts/pxa168.dtsi
-@@ -56,8 +56,9 @@ timer0: timer@d4014000 {
- 			};
+diff --git a/arch/arm/boot/dts/mmp2-brownstone.dts b/arch/arm/boot/dts/mmp2-brownstone.dts
+index aaedc4c742ea5..04f1ae1382e7a 100644
+--- a/arch/arm/boot/dts/mmp2-brownstone.dts
++++ b/arch/arm/boot/dts/mmp2-brownstone.dts
+@@ -19,176 +19,174 @@ memory {
+ 		device_type = "memory";
+ 		reg = <0x00000000 0x08000000>;
+ 	};
++};
  
- 			uart1: serial@d4017000 {
--				compatible = "mrvl,mmp-uart";
-+				compatible = "mrvl,mmp-uart", "intel,xscale-uart";
- 				reg = <0xd4017000 0x1000>;
-+				reg-shift = <2>;
- 				interrupts = <27>;
- 				clocks = <&soc_clocks PXA168_CLK_UART0>;
- 				resets = <&soc_clocks PXA168_CLK_UART0>;
-@@ -65,8 +66,9 @@ uart1: serial@d4017000 {
- 			};
+-	soc {
+-		apb@d4000000 {
+-			uart3: uart@d4018000 {
+-				status = "okay";
+-			};
+-			twsi1: i2c@d4011000 {
+-				status = "okay";
+-				pmic: max8925@3c {
+-					compatible = "maxium,max8925";
+-					reg = <0x3c>;
+-					interrupts = <1>;
+-					interrupt-parent = <&intcmux4>;
+-					interrupt-controller;
+-					#interrupt-cells = <1>;
+-					maxim,tsc-irq = <0>;
++&uart3 {
++	status = "okay";
++};
  
- 			uart2: serial@d4018000 {
--				compatible = "mrvl,mmp-uart";
-+				compatible = "mrvl,mmp-uart", "intel,xscale-uart";
- 				reg = <0xd4018000 0x1000>;
-+				reg-shift = <2>;
- 				interrupts = <28>;
- 				clocks = <&soc_clocks PXA168_CLK_UART1>;
- 				resets = <&soc_clocks PXA168_CLK_UART1>;
-@@ -74,8 +76,9 @@ uart2: serial@d4018000 {
+-					regulators {
+-						SDV1 {
+-							regulator-min-microvolt = <637500>;
+-							regulator-max-microvolt = <1425000>;
+-							regulator-boot-on;
+-							regulator-always-on;
+-						};
+-						SDV2 {
+-							regulator-min-microvolt = <650000>;
+-							regulator-max-microvolt = <2225000>;
+-							regulator-boot-on;
+-							regulator-always-on;
+-						};
+-						SDV3 {
+-							regulator-min-microvolt = <750000>;
+-							regulator-max-microvolt = <3900000>;
+-							regulator-boot-on;
+-							regulator-always-on;
+-						};
+-						LDO1 {
+-							regulator-min-microvolt = <750000>;
+-							regulator-max-microvolt = <3900000>;
+-							regulator-boot-on;
+-							regulator-always-on;
+-						};
+-						LDO2 {
+-							regulator-min-microvolt = <650000>;
+-							regulator-max-microvolt = <2250000>;
+-							regulator-boot-on;
+-							regulator-always-on;
+-						};
+-						LDO3 {
+-							regulator-min-microvolt = <650000>;
+-							regulator-max-microvolt = <2250000>;
+-							regulator-boot-on;
+-							regulator-always-on;
+-						};
+-						LDO4 {
+-							regulator-min-microvolt = <750000>;
+-							regulator-max-microvolt = <3900000>;
+-							regulator-boot-on;
+-							regulator-always-on;
+-						};
+-						LDO5 {
+-							regulator-min-microvolt = <750000>;
+-							regulator-max-microvolt = <3900000>;
+-							regulator-boot-on;
+-							regulator-always-on;
+-						};
+-						LDO6 {
+-							regulator-min-microvolt = <750000>;
+-							regulator-max-microvolt = <3900000>;
+-							regulator-boot-on;
+-							regulator-always-on;
+-						};
+-						LDO7 {
+-							regulator-min-microvolt = <750000>;
+-							regulator-max-microvolt = <3900000>;
+-							regulator-boot-on;
+-							regulator-always-on;
+-						};
+-						LDO8 {
+-							regulator-min-microvolt = <750000>;
+-							regulator-max-microvolt = <3900000>;
+-							regulator-boot-on;
+-							regulator-always-on;
+-						};
+-						LDO9 {
+-							regulator-min-microvolt = <750000>;
+-							regulator-max-microvolt = <3900000>;
+-							regulator-boot-on;
+-							regulator-always-on;
+-						};
+-						LDO10 {
+-							regulator-min-microvolt = <750000>;
+-							regulator-max-microvolt = <3900000>;
+-						};
+-						LDO11 {
+-							regulator-min-microvolt = <750000>;
+-							regulator-max-microvolt = <3900000>;
+-							regulator-boot-on;
+-							regulator-always-on;
+-						};
+-						LDO12 {
+-							regulator-min-microvolt = <750000>;
+-							regulator-max-microvolt = <3900000>;
+-							regulator-boot-on;
+-							regulator-always-on;
+-						};
+-						LDO13 {
+-							regulator-min-microvolt = <750000>;
+-							regulator-max-microvolt = <3900000>;
+-							regulator-boot-on;
+-							regulator-always-on;
+-						};
+-						LDO14 {
+-							regulator-min-microvolt = <750000>;
+-							regulator-max-microvolt = <3900000>;
+-							regulator-boot-on;
+-							regulator-always-on;
+-						};
+-						LDO15 {
+-							regulator-min-microvolt = <750000>;
+-							regulator-max-microvolt = <3900000>;
+-							regulator-boot-on;
+-							regulator-always-on;
+-						};
+-						LDO16 {
+-							regulator-min-microvolt = <750000>;
+-							regulator-max-microvolt = <3900000>;
+-							regulator-boot-on;
+-							regulator-always-on;
+-						};
+-						LDO17 {
+-							regulator-min-microvolt = <650000>;
+-							regulator-max-microvolt = <2250000>;
+-							regulator-boot-on;
+-							regulator-always-on;
+-						};
+-						LDO18 {
+-							regulator-min-microvolt = <650000>;
+-							regulator-max-microvolt = <2250000>;
+-							regulator-boot-on;
+-							regulator-always-on;
+-						};
+-						LDO19 {
+-							regulator-min-microvolt = <750000>;
+-							regulator-max-microvolt = <3900000>;
+-							regulator-boot-on;
+-							regulator-always-on;
+-						};
+-						LDO20 {
+-							regulator-min-microvolt = <750000>;
+-							regulator-max-microvolt = <3900000>;
+-							regulator-boot-on;
+-							regulator-always-on;
+-						};
+-					};
+-					backlight {
+-						maxim,max8925-dual-string = <0>;
+-					};
+-					charger {
+-						batt-detect = <0>;
+-						topoff-threshold = <1>;
+-						fast-charge = <7>;
+-						no-temp-support = <0>;
+-						no-insert-detect = <0>;
+-					};
+-				};
++&twsi1 {
++	status = "okay";
++	pmic: max8925@3c {
++		compatible = "maxium,max8925";
++		reg = <0x3c>;
++		interrupts = <1>;
++		interrupt-parent = <&intcmux4>;
++		interrupt-controller;
++		#interrupt-cells = <1>;
++		maxim,tsc-irq = <0>;
++
++		regulators {
++			SDV1 {
++				regulator-min-microvolt = <637500>;
++				regulator-max-microvolt = <1425000>;
++				regulator-boot-on;
++				regulator-always-on;
  			};
- 
- 			uart3: serial@d4026000 {
--				compatible = "mrvl,mmp-uart";
-+				compatible = "mrvl,mmp-uart", "intel,xscale-uart";
- 				reg = <0xd4026000 0x1000>;
-+				reg-shift = <2>;
- 				interrupts = <29>;
- 				clocks = <&soc_clocks PXA168_CLK_UART2>;
- 				resets = <&soc_clocks PXA168_CLK_UART2>;
-diff --git a/arch/arm/boot/dts/pxa910.dtsi b/arch/arm/boot/dts/pxa910.dtsi
-index 209b1f0ea67b2..587a5e7f0702f 100644
---- a/arch/arm/boot/dts/pxa910.dtsi
-+++ b/arch/arm/boot/dts/pxa910.dtsi
-@@ -68,8 +68,9 @@ timer1: timer@d4016000 {
+-			rtc: rtc@d4010000 {
+-				status = "okay";
++			SDV2 {
++				regulator-min-microvolt = <650000>;
++				regulator-max-microvolt = <2225000>;
++				regulator-boot-on;
++				regulator-always-on;
  			};
- 
- 			uart1: serial@d4017000 {
--				compatible = "mrvl,mmp-uart";
-+				compatible = "mrvl,mmp-uart", "intel,xscale-uart";
- 				reg = <0xd4017000 0x1000>;
-+				reg-shift = <2>;
- 				interrupts = <27>;
- 				clocks = <&soc_clocks PXA910_CLK_UART0>;
- 				resets = <&soc_clocks PXA910_CLK_UART0>;
-@@ -77,8 +78,9 @@ uart1: serial@d4017000 {
- 			};
- 
- 			uart2: serial@d4018000 {
--				compatible = "mrvl,mmp-uart";
-+				compatible = "mrvl,mmp-uart", "intel,xscale-uart";
- 				reg = <0xd4018000 0x1000>;
-+				reg-shift = <2>;
- 				interrupts = <28>;
- 				clocks = <&soc_clocks PXA910_CLK_UART1>;
- 				resets = <&soc_clocks PXA910_CLK_UART1>;
-@@ -86,8 +88,9 @@ uart2: serial@d4018000 {
- 			};
- 
- 			uart3: serial@d4036000 {
--				compatible = "mrvl,mmp-uart";
-+				compatible = "mrvl,mmp-uart", "intel,xscale-uart";
- 				reg = <0xd4036000 0x1000>;
-+				reg-shift = <2>;
- 				interrupts = <59>;
- 				clocks = <&soc_clocks PXA910_CLK_UART2>;
- 				resets = <&soc_clocks PXA910_CLK_UART2>;
++			SDV3 {
++				regulator-min-microvolt = <750000>;
++				regulator-max-microvolt = <3900000>;
++				regulator-boot-on;
++				regulator-always-on;
++			};
++			LDO1 {
++				regulator-min-microvolt = <750000>;
++				regulator-max-microvolt = <3900000>;
++				regulator-boot-on;
++				regulator-always-on;
++			};
++			LDO2 {
++				regulator-min-microvolt = <650000>;
++				regulator-max-microvolt = <2250000>;
++				regulator-boot-on;
++				regulator-always-on;
++			};
++			LDO3 {
++				regulator-min-microvolt = <650000>;
++				regulator-max-microvolt = <2250000>;
++				regulator-boot-on;
++				regulator-always-on;
++			};
++			LDO4 {
++				regulator-min-microvolt = <750000>;
++				regulator-max-microvolt = <3900000>;
++				regulator-boot-on;
++				regulator-always-on;
++			};
++			LDO5 {
++				regulator-min-microvolt = <750000>;
++				regulator-max-microvolt = <3900000>;
++				regulator-boot-on;
++				regulator-always-on;
++			};
++			LDO6 {
++				regulator-min-microvolt = <750000>;
++				regulator-max-microvolt = <3900000>;
++				regulator-boot-on;
++				regulator-always-on;
++			};
++			LDO7 {
++				regulator-min-microvolt = <750000>;
++				regulator-max-microvolt = <3900000>;
++				regulator-boot-on;
++				regulator-always-on;
++			};
++			LDO8 {
++				regulator-min-microvolt = <750000>;
++				regulator-max-microvolt = <3900000>;
++				regulator-boot-on;
++				regulator-always-on;
++			};
++			LDO9 {
++				regulator-min-microvolt = <750000>;
++				regulator-max-microvolt = <3900000>;
++				regulator-boot-on;
++				regulator-always-on;
++			};
++			LDO10 {
++				regulator-min-microvolt = <750000>;
++				regulator-max-microvolt = <3900000>;
++			};
++			LDO11 {
++				regulator-min-microvolt = <750000>;
++				regulator-max-microvolt = <3900000>;
++				regulator-boot-on;
++				regulator-always-on;
++			};
++			LDO12 {
++				regulator-min-microvolt = <750000>;
++				regulator-max-microvolt = <3900000>;
++				regulator-boot-on;
++				regulator-always-on;
++			};
++			LDO13 {
++				regulator-min-microvolt = <750000>;
++				regulator-max-microvolt = <3900000>;
++				regulator-boot-on;
++				regulator-always-on;
++			};
++			LDO14 {
++				regulator-min-microvolt = <750000>;
++				regulator-max-microvolt = <3900000>;
++				regulator-boot-on;
++				regulator-always-on;
++			};
++			LDO15 {
++				regulator-min-microvolt = <750000>;
++				regulator-max-microvolt = <3900000>;
++				regulator-boot-on;
++				regulator-always-on;
++			};
++			LDO16 {
++				regulator-min-microvolt = <750000>;
++				regulator-max-microvolt = <3900000>;
++				regulator-boot-on;
++				regulator-always-on;
++			};
++			LDO17 {
++				regulator-min-microvolt = <650000>;
++				regulator-max-microvolt = <2250000>;
++				regulator-boot-on;
++				regulator-always-on;
++			};
++			LDO18 {
++				regulator-min-microvolt = <650000>;
++				regulator-max-microvolt = <2250000>;
++				regulator-boot-on;
++				regulator-always-on;
++			};
++			LDO19 {
++				regulator-min-microvolt = <750000>;
++				regulator-max-microvolt = <3900000>;
++				regulator-boot-on;
++				regulator-always-on;
++			};
++			LDO20 {
++				regulator-min-microvolt = <750000>;
++				regulator-max-microvolt = <3900000>;
++				regulator-boot-on;
++				regulator-always-on;
++			};
++		};
++		backlight {
++			maxim,max8925-dual-string = <0>;
++		};
++		charger {
++			batt-detect = <0>;
++			topoff-threshold = <1>;
++			fast-charge = <7>;
++			no-temp-support = <0>;
++			no-insert-detect = <0>;
+ 		};
+ 	};
+ };
++
++&rtc {
++	status = "okay";
++};
 -- 
 2.25.1
 
