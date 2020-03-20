@@ -2,28 +2,28 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C738D18CE8E
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 14:16:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 19D4C18CEA3
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 14:17:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727285AbgCTNQb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Mar 2020 09:16:31 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:35718 "EHLO
+        id S1727269AbgCTNQa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Mar 2020 09:16:30 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:35720 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726954AbgCTNQ3 (ORCPT
+        with ESMTP id S1727151AbgCTNQ2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Mar 2020 09:16:29 -0400
+        Fri, 20 Mar 2020 09:16:28 -0400
 Received: from p5de0bf0b.dip0.t-ipconnect.de ([93.224.191.11] helo=nanos.tec.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tglx@linutronix.de>)
-        id 1jFHVi-00048J-8X
+        id 1jFHVi-00048V-Ej
         for linux-kernel@vger.kernel.org; Fri, 20 Mar 2020 14:16:26 +0100
 Received: from nanos.tec.linutronix.de (localhost [IPv6:::1])
-        by nanos.tec.linutronix.de (Postfix) with ESMTP id 66FF21039FF
+        by nanos.tec.linutronix.de (Postfix) with ESMTP id 9C0D3104084
         for <linux-kernel@vger.kernel.org>; Fri, 20 Mar 2020 14:16:25 +0100 (CET)
-Message-Id: <20200320131509.029267418@linutronix.de>
+Message-Id: <20200320131509.136884777@linutronix.de>
 User-Agent: quilt/0.65
-Date:   Fri, 20 Mar 2020 14:13:49 +0100
+Date:   Fri, 20 Mar 2020 14:13:50 +0100
 From:   Thomas Gleixner <tglx@linutronix.de>
 To:     LKML <linux-kernel@vger.kernel.org>
 Cc:     x86@kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -53,7 +53,7 @@ Cc:     x86@kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Herbert Xu <herbert@gondor.apana.org.au>,
         "David S. Miller" <davem@davemloft.net>,
         linux-crypto@vger.kernel.org
-Subject: [patch 04/22] x86/perf/events: Convert to new CPU match macros
+Subject: [patch 05/22] x86/kvm: Convert to new CPU match macros
 References: <20200320131345.635023594@linutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -68,301 +68,33 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 The new macro set has a consistent namespace and uses C99 initializers
 instead of the grufty C89 ones.
 
-Get rid the of the local macro wrappers for consistency.
-
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Paolo Bonzini <pbonzini@redhat.com>
 ---
- arch/x86/events/amd/power.c    |    2 
- arch/x86/events/intel/cstate.c |  109 +++++++++++++++++++----------------------
- arch/x86/events/intel/rapl.c   |   58 ++++++++++-----------
- arch/x86/events/intel/uncore.c |   63 ++++++++++-------------
- 4 files changed, 110 insertions(+), 122 deletions(-)
+ arch/x86/kvm/svm.c     |    2 +-
+ arch/x86/kvm/vmx/vmx.c |    2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
---- a/arch/x86/events/amd/power.c
-+++ b/arch/x86/events/amd/power.c
-@@ -259,7 +259,7 @@ static int power_cpu_init(unsigned int c
- }
+--- a/arch/x86/kvm/svm.c
++++ b/arch/x86/kvm/svm.c
+@@ -60,7 +60,7 @@ MODULE_LICENSE("GPL");
  
- static const struct x86_cpu_id cpu_match[] = {
--	{ .vendor = X86_VENDOR_AMD, .family = 0x15 },
-+	X86_MATCH_VENDOR_FAM(AMD, 0x15, NULL),
- 	{},
+ #ifdef MODULE
+ static const struct x86_cpu_id svm_cpu_id[] = {
+-	X86_FEATURE_MATCH(X86_FEATURE_SVM),
++	X86_MATCH_FEATURE(X86_FEATURE_SVM, NULL),
+ 	{}
  };
+ MODULE_DEVICE_TABLE(x86cpu, svm_cpu_id);
+--- a/arch/x86/kvm/vmx/vmx.c
++++ b/arch/x86/kvm/vmx/vmx.c
+@@ -67,7 +67,7 @@ MODULE_LICENSE("GPL");
  
---- a/arch/x86/events/intel/cstate.c
-+++ b/arch/x86/events/intel/cstate.c
-@@ -594,63 +594,60 @@ static const struct cstate_model glm_cst
+ #ifdef MODULE
+ static const struct x86_cpu_id vmx_cpu_id[] = {
+-	X86_FEATURE_MATCH(X86_FEATURE_VMX),
++	X86_MATCH_FEATURE(X86_FEATURE_VMX, NULL),
+ 	{}
  };
- 
- 
--#define X86_CSTATES_MODEL(model, states)				\
--	{ X86_VENDOR_INTEL, 6, model, X86_FEATURE_ANY, (unsigned long) &(states) }
--
- static const struct x86_cpu_id intel_cstates_match[] __initconst = {
--	X86_CSTATES_MODEL(INTEL_FAM6_NEHALEM,    nhm_cstates),
--	X86_CSTATES_MODEL(INTEL_FAM6_NEHALEM_EP, nhm_cstates),
--	X86_CSTATES_MODEL(INTEL_FAM6_NEHALEM_EX, nhm_cstates),
--
--	X86_CSTATES_MODEL(INTEL_FAM6_WESTMERE,    nhm_cstates),
--	X86_CSTATES_MODEL(INTEL_FAM6_WESTMERE_EP, nhm_cstates),
--	X86_CSTATES_MODEL(INTEL_FAM6_WESTMERE_EX, nhm_cstates),
--
--	X86_CSTATES_MODEL(INTEL_FAM6_SANDYBRIDGE,   snb_cstates),
--	X86_CSTATES_MODEL(INTEL_FAM6_SANDYBRIDGE_X, snb_cstates),
--
--	X86_CSTATES_MODEL(INTEL_FAM6_IVYBRIDGE,   snb_cstates),
--	X86_CSTATES_MODEL(INTEL_FAM6_IVYBRIDGE_X, snb_cstates),
--
--	X86_CSTATES_MODEL(INTEL_FAM6_HASWELL,   snb_cstates),
--	X86_CSTATES_MODEL(INTEL_FAM6_HASWELL_X, snb_cstates),
--	X86_CSTATES_MODEL(INTEL_FAM6_HASWELL_G, snb_cstates),
--
--	X86_CSTATES_MODEL(INTEL_FAM6_HASWELL_L, hswult_cstates),
--
--	X86_CSTATES_MODEL(INTEL_FAM6_ATOM_SILVERMONT,   slm_cstates),
--	X86_CSTATES_MODEL(INTEL_FAM6_ATOM_SILVERMONT_D, slm_cstates),
--	X86_CSTATES_MODEL(INTEL_FAM6_ATOM_AIRMONT,      slm_cstates),
--
--	X86_CSTATES_MODEL(INTEL_FAM6_BROADWELL,   snb_cstates),
--	X86_CSTATES_MODEL(INTEL_FAM6_BROADWELL_D, snb_cstates),
--	X86_CSTATES_MODEL(INTEL_FAM6_BROADWELL_G, snb_cstates),
--	X86_CSTATES_MODEL(INTEL_FAM6_BROADWELL_X, snb_cstates),
--
--	X86_CSTATES_MODEL(INTEL_FAM6_SKYLAKE_L, snb_cstates),
--	X86_CSTATES_MODEL(INTEL_FAM6_SKYLAKE,   snb_cstates),
--	X86_CSTATES_MODEL(INTEL_FAM6_SKYLAKE_X, snb_cstates),
--
--	X86_CSTATES_MODEL(INTEL_FAM6_KABYLAKE_L, hswult_cstates),
--	X86_CSTATES_MODEL(INTEL_FAM6_KABYLAKE,   hswult_cstates),
--	X86_CSTATES_MODEL(INTEL_FAM6_COMETLAKE_L, hswult_cstates),
--	X86_CSTATES_MODEL(INTEL_FAM6_COMETLAKE, hswult_cstates),
--
--	X86_CSTATES_MODEL(INTEL_FAM6_CANNONLAKE_L, cnl_cstates),
--
--	X86_CSTATES_MODEL(INTEL_FAM6_XEON_PHI_KNL, knl_cstates),
--	X86_CSTATES_MODEL(INTEL_FAM6_XEON_PHI_KNM, knl_cstates),
--
--	X86_CSTATES_MODEL(INTEL_FAM6_ATOM_GOLDMONT,   glm_cstates),
--	X86_CSTATES_MODEL(INTEL_FAM6_ATOM_GOLDMONT_D, glm_cstates),
--	X86_CSTATES_MODEL(INTEL_FAM6_ATOM_GOLDMONT_PLUS, glm_cstates),
--	X86_CSTATES_MODEL(INTEL_FAM6_ATOM_TREMONT_D, glm_cstates),
--	X86_CSTATES_MODEL(INTEL_FAM6_ATOM_TREMONT, glm_cstates),
--
--	X86_CSTATES_MODEL(INTEL_FAM6_ICELAKE_L, icl_cstates),
--	X86_CSTATES_MODEL(INTEL_FAM6_ICELAKE,   icl_cstates),
--	X86_CSTATES_MODEL(INTEL_FAM6_TIGERLAKE_L, icl_cstates),
--	X86_CSTATES_MODEL(INTEL_FAM6_TIGERLAKE, icl_cstates),
-+	X86_MATCH_INTEL_FAM6_MODEL(NEHALEM,		&nhm_cstates),
-+	X86_MATCH_INTEL_FAM6_MODEL(NEHALEM_EP,		&nhm_cstates),
-+	X86_MATCH_INTEL_FAM6_MODEL(NEHALEM_EX,		&nhm_cstates),
-+
-+	X86_MATCH_INTEL_FAM6_MODEL(WESTMERE,		&nhm_cstates),
-+	X86_MATCH_INTEL_FAM6_MODEL(WESTMERE_EP,		&nhm_cstates),
-+	X86_MATCH_INTEL_FAM6_MODEL(WESTMERE_EX,		&nhm_cstates),
-+
-+	X86_MATCH_INTEL_FAM6_MODEL(SANDYBRIDGE,		&snb_cstates),
-+	X86_MATCH_INTEL_FAM6_MODEL(SANDYBRIDGE_X,	&snb_cstates),
-+
-+	X86_MATCH_INTEL_FAM6_MODEL(IVYBRIDGE,		&snb_cstates),
-+	X86_MATCH_INTEL_FAM6_MODEL(IVYBRIDGE_X,		&snb_cstates),
-+
-+	X86_MATCH_INTEL_FAM6_MODEL(HASWELL,		&snb_cstates),
-+	X86_MATCH_INTEL_FAM6_MODEL(HASWELL_X,		&snb_cstates),
-+	X86_MATCH_INTEL_FAM6_MODEL(HASWELL_G,		&snb_cstates),
-+
-+	X86_MATCH_INTEL_FAM6_MODEL(HASWELL_L,		&hswult_cstates),
-+
-+	X86_MATCH_INTEL_FAM6_MODEL(ATOM_SILVERMONT,	&slm_cstates),
-+	X86_MATCH_INTEL_FAM6_MODEL(ATOM_SILVERMONT_D,	&slm_cstates),
-+	X86_MATCH_INTEL_FAM6_MODEL(ATOM_AIRMONT,	&slm_cstates),
-+
-+	X86_MATCH_INTEL_FAM6_MODEL(BROADWELL,		&snb_cstates),
-+	X86_MATCH_INTEL_FAM6_MODEL(BROADWELL_D,		&snb_cstates),
-+	X86_MATCH_INTEL_FAM6_MODEL(BROADWELL_G,		&snb_cstates),
-+	X86_MATCH_INTEL_FAM6_MODEL(BROADWELL_X,		&snb_cstates),
-+
-+	X86_MATCH_INTEL_FAM6_MODEL(SKYLAKE_L,		&snb_cstates),
-+	X86_MATCH_INTEL_FAM6_MODEL(SKYLAKE,		&snb_cstates),
-+	X86_MATCH_INTEL_FAM6_MODEL(SKYLAKE_X,		&snb_cstates),
-+
-+	X86_MATCH_INTEL_FAM6_MODEL(KABYLAKE_L,		&hswult_cstates),
-+	X86_MATCH_INTEL_FAM6_MODEL(KABYLAKE,		&hswult_cstates),
-+	X86_MATCH_INTEL_FAM6_MODEL(COMETLAKE_L,		&hswult_cstates),
-+	X86_MATCH_INTEL_FAM6_MODEL(COMETLAKE,		&hswult_cstates),
-+
-+	X86_MATCH_INTEL_FAM6_MODEL(CANNONLAKE_L,	&cnl_cstates),
-+
-+	X86_MATCH_INTEL_FAM6_MODEL(XEON_PHI_KNL,	&knl_cstates),
-+	X86_MATCH_INTEL_FAM6_MODEL(XEON_PHI_KNM,	&knl_cstates),
-+
-+	X86_MATCH_INTEL_FAM6_MODEL(ATOM_GOLDMONT,	&glm_cstates),
-+	X86_MATCH_INTEL_FAM6_MODEL(ATOM_GOLDMONT_D,	&glm_cstates),
-+	X86_MATCH_INTEL_FAM6_MODEL(ATOM_GOLDMONT_PLUS,	&glm_cstates),
-+	X86_MATCH_INTEL_FAM6_MODEL(ATOM_TREMONT_D,	&glm_cstates),
-+	X86_MATCH_INTEL_FAM6_MODEL(ATOM_TREMONT,	&glm_cstates),
-+
-+	X86_MATCH_INTEL_FAM6_MODEL(ICELAKE_L,		&icl_cstates),
-+	X86_MATCH_INTEL_FAM6_MODEL(ICELAKE,		&icl_cstates),
-+	X86_MATCH_INTEL_FAM6_MODEL(TIGERLAKE_L,		&icl_cstates),
-+	X86_MATCH_INTEL_FAM6_MODEL(TIGERLAKE,		&icl_cstates),
- 	{ },
- };
- MODULE_DEVICE_TABLE(x86cpu, intel_cstates_match);
---- a/arch/x86/events/intel/rapl.c
-+++ b/arch/x86/events/intel/rapl.c
-@@ -668,9 +668,6 @@ static int __init init_rapl_pmus(void)
- 	return 0;
- }
- 
--#define X86_RAPL_MODEL_MATCH(model, init)	\
--	{ X86_VENDOR_INTEL, 6, model, X86_FEATURE_ANY, (unsigned long)&init }
--
- static struct rapl_model model_snb = {
- 	.events		= BIT(PERF_RAPL_PP0) |
- 			  BIT(PERF_RAPL_PKG) |
-@@ -716,36 +713,35 @@ static struct rapl_model model_skl = {
- };
- 
- static const struct x86_cpu_id rapl_model_match[] __initconst = {
--	X86_RAPL_MODEL_MATCH(INTEL_FAM6_SANDYBRIDGE,		model_snb),
--	X86_RAPL_MODEL_MATCH(INTEL_FAM6_SANDYBRIDGE_X,		model_snbep),
--	X86_RAPL_MODEL_MATCH(INTEL_FAM6_IVYBRIDGE,		model_snb),
--	X86_RAPL_MODEL_MATCH(INTEL_FAM6_IVYBRIDGE_X,		model_snbep),
--	X86_RAPL_MODEL_MATCH(INTEL_FAM6_HASWELL,		model_hsw),
--	X86_RAPL_MODEL_MATCH(INTEL_FAM6_HASWELL_X,		model_hsx),
--	X86_RAPL_MODEL_MATCH(INTEL_FAM6_HASWELL_L,		model_hsw),
--	X86_RAPL_MODEL_MATCH(INTEL_FAM6_HASWELL_G,		model_hsw),
--	X86_RAPL_MODEL_MATCH(INTEL_FAM6_BROADWELL,		model_hsw),
--	X86_RAPL_MODEL_MATCH(INTEL_FAM6_BROADWELL_G,		model_hsw),
--	X86_RAPL_MODEL_MATCH(INTEL_FAM6_BROADWELL_X,		model_hsx),
--	X86_RAPL_MODEL_MATCH(INTEL_FAM6_BROADWELL_D,		model_hsx),
--	X86_RAPL_MODEL_MATCH(INTEL_FAM6_XEON_PHI_KNL,		model_knl),
--	X86_RAPL_MODEL_MATCH(INTEL_FAM6_XEON_PHI_KNM,		model_knl),
--	X86_RAPL_MODEL_MATCH(INTEL_FAM6_SKYLAKE_L,		model_skl),
--	X86_RAPL_MODEL_MATCH(INTEL_FAM6_SKYLAKE,		model_skl),
--	X86_RAPL_MODEL_MATCH(INTEL_FAM6_SKYLAKE_X,		model_hsx),
--	X86_RAPL_MODEL_MATCH(INTEL_FAM6_KABYLAKE_L,		model_skl),
--	X86_RAPL_MODEL_MATCH(INTEL_FAM6_KABYLAKE,		model_skl),
--	X86_RAPL_MODEL_MATCH(INTEL_FAM6_CANNONLAKE_L,		model_skl),
--	X86_RAPL_MODEL_MATCH(INTEL_FAM6_ATOM_GOLDMONT,		model_hsw),
--	X86_RAPL_MODEL_MATCH(INTEL_FAM6_ATOM_GOLDMONT_D,	model_hsw),
--	X86_RAPL_MODEL_MATCH(INTEL_FAM6_ATOM_GOLDMONT_PLUS,	model_hsw),
--	X86_RAPL_MODEL_MATCH(INTEL_FAM6_ICELAKE_L,		model_skl),
--	X86_RAPL_MODEL_MATCH(INTEL_FAM6_ICELAKE,		model_skl),
--	X86_RAPL_MODEL_MATCH(INTEL_FAM6_COMETLAKE_L,		model_skl),
--	X86_RAPL_MODEL_MATCH(INTEL_FAM6_COMETLAKE,		model_skl),
-+	X86_MATCH_INTEL_FAM6_MODEL(SANDYBRIDGE,		&model_snb),
-+	X86_MATCH_INTEL_FAM6_MODEL(SANDYBRIDGE_X,	&model_snbep),
-+	X86_MATCH_INTEL_FAM6_MODEL(IVYBRIDGE,		&model_snb),
-+	X86_MATCH_INTEL_FAM6_MODEL(IVYBRIDGE_X,		&model_snbep),
-+	X86_MATCH_INTEL_FAM6_MODEL(HASWELL,		&model_hsw),
-+	X86_MATCH_INTEL_FAM6_MODEL(HASWELL_X,		&model_hsx),
-+	X86_MATCH_INTEL_FAM6_MODEL(HASWELL_L,		&model_hsw),
-+	X86_MATCH_INTEL_FAM6_MODEL(HASWELL_G,		&model_hsw),
-+	X86_MATCH_INTEL_FAM6_MODEL(BROADWELL,		&model_hsw),
-+	X86_MATCH_INTEL_FAM6_MODEL(BROADWELL_G,		&model_hsw),
-+	X86_MATCH_INTEL_FAM6_MODEL(BROADWELL_X,		&model_hsx),
-+	X86_MATCH_INTEL_FAM6_MODEL(BROADWELL_D,		&model_hsx),
-+	X86_MATCH_INTEL_FAM6_MODEL(XEON_PHI_KNL,	&model_knl),
-+	X86_MATCH_INTEL_FAM6_MODEL(XEON_PHI_KNM,	&model_knl),
-+	X86_MATCH_INTEL_FAM6_MODEL(SKYLAKE_L,		&model_skl),
-+	X86_MATCH_INTEL_FAM6_MODEL(SKYLAKE,		&model_skl),
-+	X86_MATCH_INTEL_FAM6_MODEL(SKYLAKE_X,		&model_hsx),
-+	X86_MATCH_INTEL_FAM6_MODEL(KABYLAKE_L,		&model_skl),
-+	X86_MATCH_INTEL_FAM6_MODEL(KABYLAKE,		&model_skl),
-+	X86_MATCH_INTEL_FAM6_MODEL(CANNONLAKE_L,	&model_skl),
-+	X86_MATCH_INTEL_FAM6_MODEL(ATOM_GOLDMONT,	&model_hsw),
-+	X86_MATCH_INTEL_FAM6_MODEL(ATOM_GOLDMONT_D,	&model_hsw),
-+	X86_MATCH_INTEL_FAM6_MODEL(ATOM_GOLDMONT_PLUS,	&model_hsw),
-+	X86_MATCH_INTEL_FAM6_MODEL(ICELAKE_L,		&model_skl),
-+	X86_MATCH_INTEL_FAM6_MODEL(ICELAKE,		&model_skl),
-+	X86_MATCH_INTEL_FAM6_MODEL(COMETLAKE_L,		&model_skl),
-+	X86_MATCH_INTEL_FAM6_MODEL(COMETLAKE,		&model_skl),
- 	{},
- };
--
- MODULE_DEVICE_TABLE(x86cpu, rapl_model_match);
- 
- static int __init rapl_pmu_init(void)
---- a/arch/x86/events/intel/uncore.c
-+++ b/arch/x86/events/intel/uncore.c
-@@ -1392,10 +1392,6 @@ static int __init uncore_mmio_init(void)
- 	return ret;
- }
- 
--
--#define X86_UNCORE_MODEL_MATCH(model, init)	\
--	{ X86_VENDOR_INTEL, 6, model, X86_FEATURE_ANY, (unsigned long)&init }
--
- struct intel_uncore_init_fun {
- 	void	(*cpu_init)(void);
- 	int	(*pci_init)(void);
-@@ -1477,38 +1473,37 @@ static const struct intel_uncore_init_fu
- };
- 
- static const struct x86_cpu_id intel_uncore_match[] __initconst = {
--	X86_UNCORE_MODEL_MATCH(INTEL_FAM6_NEHALEM_EP,	  nhm_uncore_init),
--	X86_UNCORE_MODEL_MATCH(INTEL_FAM6_NEHALEM,	  nhm_uncore_init),
--	X86_UNCORE_MODEL_MATCH(INTEL_FAM6_WESTMERE,	  nhm_uncore_init),
--	X86_UNCORE_MODEL_MATCH(INTEL_FAM6_WESTMERE_EP,	  nhm_uncore_init),
--	X86_UNCORE_MODEL_MATCH(INTEL_FAM6_SANDYBRIDGE,	  snb_uncore_init),
--	X86_UNCORE_MODEL_MATCH(INTEL_FAM6_IVYBRIDGE,	  ivb_uncore_init),
--	X86_UNCORE_MODEL_MATCH(INTEL_FAM6_HASWELL,	  hsw_uncore_init),
--	X86_UNCORE_MODEL_MATCH(INTEL_FAM6_HASWELL_L,	  hsw_uncore_init),
--	X86_UNCORE_MODEL_MATCH(INTEL_FAM6_HASWELL_G,	  hsw_uncore_init),
--	X86_UNCORE_MODEL_MATCH(INTEL_FAM6_BROADWELL,	  bdw_uncore_init),
--	X86_UNCORE_MODEL_MATCH(INTEL_FAM6_BROADWELL_G,	  bdw_uncore_init),
--	X86_UNCORE_MODEL_MATCH(INTEL_FAM6_SANDYBRIDGE_X,  snbep_uncore_init),
--	X86_UNCORE_MODEL_MATCH(INTEL_FAM6_NEHALEM_EX,	  nhmex_uncore_init),
--	X86_UNCORE_MODEL_MATCH(INTEL_FAM6_WESTMERE_EX,	  nhmex_uncore_init),
--	X86_UNCORE_MODEL_MATCH(INTEL_FAM6_IVYBRIDGE_X,	  ivbep_uncore_init),
--	X86_UNCORE_MODEL_MATCH(INTEL_FAM6_HASWELL_X,	  hswep_uncore_init),
--	X86_UNCORE_MODEL_MATCH(INTEL_FAM6_BROADWELL_X,	  bdx_uncore_init),
--	X86_UNCORE_MODEL_MATCH(INTEL_FAM6_BROADWELL_D,	  bdx_uncore_init),
--	X86_UNCORE_MODEL_MATCH(INTEL_FAM6_XEON_PHI_KNL,	  knl_uncore_init),
--	X86_UNCORE_MODEL_MATCH(INTEL_FAM6_XEON_PHI_KNM,	  knl_uncore_init),
--	X86_UNCORE_MODEL_MATCH(INTEL_FAM6_SKYLAKE,	  skl_uncore_init),
--	X86_UNCORE_MODEL_MATCH(INTEL_FAM6_SKYLAKE_L,	  skl_uncore_init),
--	X86_UNCORE_MODEL_MATCH(INTEL_FAM6_SKYLAKE_X,      skx_uncore_init),
--	X86_UNCORE_MODEL_MATCH(INTEL_FAM6_KABYLAKE_L,	  skl_uncore_init),
--	X86_UNCORE_MODEL_MATCH(INTEL_FAM6_KABYLAKE,	  skl_uncore_init),
--	X86_UNCORE_MODEL_MATCH(INTEL_FAM6_ICELAKE_L,	  icl_uncore_init),
--	X86_UNCORE_MODEL_MATCH(INTEL_FAM6_ICELAKE_NNPI,	  icl_uncore_init),
--	X86_UNCORE_MODEL_MATCH(INTEL_FAM6_ICELAKE,	  icl_uncore_init),
--	X86_UNCORE_MODEL_MATCH(INTEL_FAM6_ATOM_TREMONT_D, snr_uncore_init),
-+	X86_MATCH_INTEL_FAM6_MODEL(NEHALEM_EP,		&nhm_uncore_init),
-+	X86_MATCH_INTEL_FAM6_MODEL(NEHALEM,		&nhm_uncore_init),
-+	X86_MATCH_INTEL_FAM6_MODEL(WESTMERE,		&nhm_uncore_init),
-+	X86_MATCH_INTEL_FAM6_MODEL(WESTMERE_EP,		&nhm_uncore_init),
-+	X86_MATCH_INTEL_FAM6_MODEL(SANDYBRIDGE,		&snb_uncore_init),
-+	X86_MATCH_INTEL_FAM6_MODEL(IVYBRIDGE,		&ivb_uncore_init),
-+	X86_MATCH_INTEL_FAM6_MODEL(HASWELL,		&hsw_uncore_init),
-+	X86_MATCH_INTEL_FAM6_MODEL(HASWELL_L,		&hsw_uncore_init),
-+	X86_MATCH_INTEL_FAM6_MODEL(HASWELL_G,		&hsw_uncore_init),
-+	X86_MATCH_INTEL_FAM6_MODEL(BROADWELL,		&bdw_uncore_init),
-+	X86_MATCH_INTEL_FAM6_MODEL(BROADWELL_G,		&bdw_uncore_init),
-+	X86_MATCH_INTEL_FAM6_MODEL(SANDYBRIDGE_X,	&snbep_uncore_init),
-+	X86_MATCH_INTEL_FAM6_MODEL(NEHALEM_EX,		&nhmex_uncore_init),
-+	X86_MATCH_INTEL_FAM6_MODEL(WESTMERE_EX,		&nhmex_uncore_init),
-+	X86_MATCH_INTEL_FAM6_MODEL(IVYBRIDGE_X,		&ivbep_uncore_init),
-+	X86_MATCH_INTEL_FAM6_MODEL(HASWELL_X,		&hswep_uncore_init),
-+	X86_MATCH_INTEL_FAM6_MODEL(BROADWELL_X,		&bdx_uncore_init),
-+	X86_MATCH_INTEL_FAM6_MODEL(BROADWELL_D,		&bdx_uncore_init),
-+	X86_MATCH_INTEL_FAM6_MODEL(XEON_PHI_KNL,	&knl_uncore_init),
-+	X86_MATCH_INTEL_FAM6_MODEL(XEON_PHI_KNM,	&knl_uncore_init),
-+	X86_MATCH_INTEL_FAM6_MODEL(SKYLAKE,		&skl_uncore_init),
-+	X86_MATCH_INTEL_FAM6_MODEL(SKYLAKE_L,		&skl_uncore_init),
-+	X86_MATCH_INTEL_FAM6_MODEL(SKYLAKE_X,		&skx_uncore_init),
-+	X86_MATCH_INTEL_FAM6_MODEL(KABYLAKE_L,		&skl_uncore_init),
-+	X86_MATCH_INTEL_FAM6_MODEL(KABYLAKE,		&skl_uncore_init),
-+	X86_MATCH_INTEL_FAM6_MODEL(ICELAKE_L,		&icl_uncore_init),
-+	X86_MATCH_INTEL_FAM6_MODEL(ICELAKE_NNPI,	&icl_uncore_init),
-+	X86_MATCH_INTEL_FAM6_MODEL(ICELAKE,		&icl_uncore_init),
-+	X86_MATCH_INTEL_FAM6_MODEL(ATOM_TREMONT_D,	&snr_uncore_init),
- 	{},
- };
--
- MODULE_DEVICE_TABLE(x86cpu, intel_uncore_match);
- 
- static int __init intel_uncore_init(void)
+ MODULE_DEVICE_TABLE(x86cpu, vmx_cpu_id);
 
