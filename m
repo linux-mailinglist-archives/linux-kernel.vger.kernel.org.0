@@ -2,110 +2,185 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ECB8618D7AC
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 19:51:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2819218D70A
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 19:30:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727113AbgCTSvD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Mar 2020 14:51:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44758 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725446AbgCTSvC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Mar 2020 14:51:02 -0400
-Received: from disco-boy.misterjones.org (disco-boy.misterjones.org [51.254.78.96])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 45E4020775;
-        Fri, 20 Mar 2020 18:51:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584730262;
-        bh=5HBp55Qd0ZlDS4O1ANEKvvb5uWfigs52A8nGgoRcatg=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jUkC9TuKpkImJWmjzw3wTwnRfi5RRCk40sjhLFhKBMHqB+k8MK9u8JxqmSh38Moye
-         S2a8q2qWH9agwUwTGBZw1W+N23guJfuODPPbgqyqWysSLtPtkbe2om/FYFhjf6Kvxs
-         KmRH5r67MOT1VjVphVsoH+XcbM3VGJNgyHcAPx/Y=
-Received: from 78.163-31-62.static.virginmediabusiness.co.uk ([62.31.163.78] helo=why.lan)
-        by disco-boy.misterjones.org with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <maz@kernel.org>)
-        id 1jFMKC-00EKAx-Fl; Fri, 20 Mar 2020 18:24:52 +0000
-From:   Marc Zyngier <maz@kernel.org>
-To:     linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu,
-        kvm@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Zenghui Yu <yuzenghui@huawei.com>,
-        Eric Auger <eric.auger@redhat.com>,
-        James Morse <james.morse@arm.com>,
-        Julien Thierry <julien.thierry.kdev@gmail.com>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>
-Subject: [PATCH v6 23/23] KVM: arm64: GICv4.1: Expose HW-based SGIs in debugfs
-Date:   Fri, 20 Mar 2020 18:24:06 +0000
-Message-Id: <20200320182406.23465-24-maz@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200320182406.23465-1-maz@kernel.org>
-References: <20200320182406.23465-1-maz@kernel.org>
+        id S1726878AbgCTSas (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Mar 2020 14:30:48 -0400
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:44651 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726773AbgCTSar (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Mar 2020 14:30:47 -0400
+Received: by mail-lf1-f65.google.com with SMTP id j188so1496933lfj.11
+        for <linux-kernel@vger.kernel.org>; Fri, 20 Mar 2020 11:30:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=YfCEg6jyW4rMddIRvWAX/VKW3u1IK74f94P15G8A+YU=;
+        b=NG+ISksHKXiylTdpQtYPaHtiWBMaj0a6ivrgsEw1vCx9CdXSMGh/AZYOUFGgYyLjvL
+         VCUmyYUGNCOXWpb0UyRcoUPCp6M6SlxkpwgmMI1pimhiOdMqfUYsn7uad2MvWodnoV6z
+         GfaSDoy9kJQV0lMAZifJQ1VEeQCa4n6laTHFRNDMCVs1muuMwU51JeShye2JP9XiW0Ut
+         R66bTaWHLKNhQlRy/P6TjshxrDcqk4NYp+PkJm+zc+9iJeeTVJMsR3tCZHlAm2+5L/6A
+         IW0xPiyI43UVSltCEQGPPJUedLFm6QOgK7XfWEfv7lx0oILQnQzxpGsLUMEEGfOEsjpO
+         0U9Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=YfCEg6jyW4rMddIRvWAX/VKW3u1IK74f94P15G8A+YU=;
+        b=AxRAZNSaD0Azxe94FQ56uMTPQiMFagu8yH8u0o0HcuEJjix57FxQhDPIVmlkkk8Uzw
+         HKC9gXISK0/Nl54j9+8v7SJ7jPcbz8/HtxF1K4d/AIjbQXDvFRqbB4q9TF5WIognuAy3
+         walZIqEcOYNwV1FI/UK0dpkPNZ7DXaYTs/efAM3pj0fC0EaaIIESqE1UJ2NBAoLNMWqj
+         mciBuBMkdT2Xdt1aylOpp3cg1DMWOqXJfbZr6u6wL+OTohlJqyyNsL956HhzKbaz9jpf
+         s6uy2E22wsjlvmDANpkIvazcxfH4xHbfM9KJwYys5KGy4wBmKNr0yuqNFRnBm4am7U6+
+         YYEw==
+X-Gm-Message-State: ANhLgQ2Rm/SRy636RE5u5DEfmqcxeXSJT2vQL5wWAzPR43uJWrN2k7fc
+        xcO0vSTKdNirIFepI3re7Rmp/+6dEk7sBf7VbB8=
+X-Google-Smtp-Source: ADFU+vs8+Lru4coS6YsOISQO5wP3kQBM9FcAjYvg62Pj6Ip0cabTJIej9E2zjkUB0cYxuNJQPe0U7wMRz4+nUlwz8/0=
+X-Received: by 2002:ac2:4c13:: with SMTP id t19mr1532513lfq.16.1584729043191;
+ Fri, 20 Mar 2020 11:30:43 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 62.31.163.78
-X-SA-Exim-Rcpt-To: linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, lorenzo.pieralisi@arm.com, jason@lakedaemon.net, tglx@linutronix.de, yuzenghui@huawei.com, eric.auger@redhat.com, james.morse@arm.com, julien.thierry.kdev@gmail.com, suzuki.poulose@arm.com
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+References: <1584558186-23373-1-git-send-email-orson.unisoc@gmail.com>
+ <51568376-da8b-3265-ddb3-6ddba74207dc@akamai.com> <20200319152820.GA2793@lenovo>
+ <d8474138-6f8f-8a99-351d-5e5b37999373@akamai.com>
+In-Reply-To: <d8474138-6f8f-8a99-351d-5e5b37999373@akamai.com>
+From:   Orson Zhai <orsonzhai@gmail.com>
+Date:   Sat, 21 Mar 2020 02:30:31 +0800
+Message-ID: <CA+H2tpFF-Kn+QpBFZzbsSYK59A4qLrTWoM+nfQw_ZaOyak54Gw@mail.gmail.com>
+Subject: Re: [RFC PATCH] dynamic_debug: Add config option of DYNAMIC_DEBUG_CORE
+To:     Jason Baron <jbaron@akamai.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Changbin Du <changbin.du@intel.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Shuah Khan <skhan@linuxfoundation.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Brendan Higgins <brendanhiggins@google.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Ard Biesheuvel <ardb@kernel.org>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        David Gow <davidgow@google.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Android Kernel Team <kernel-team@android.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The vgic-state debugfs file could do with showing the pending state
-of the HW-backed SGIs. Plug it into the low-level code.
+On Fri, Mar 20, 2020 at 4:19 AM Jason Baron <jbaron@akamai.com> wrote:
+>
+>
+>
+> On 3/19/20 11:28 AM, Orson Zhai wrote:
+> > Hi Jason,
+> >
+> > On Wed, Mar 18, 2020 at 05:18:43PM -0400, Jason Baron wrote:
+> >>
+> >>
+> >> On 3/18/20 3:03 PM, Orson Zhai wrote:
+> >>> There is the requirement from new Android that kernel image (GKI) and
+> >>> kernel modules are supposed to be built at differnet places. Some people
+> >>> want to enable dynamic debug for kernel modules only but not for kernel
+> >>> image itself with the consideration of binary size increased or more
+> >>> memory being used.
+> >>>
+> >>> By this patch, dynamic debug is divided into core part (the defination of
+> >>> functions) and macro replacement part. We can only have the core part to
+> >>> be built-in and do not have to activate the debug output from kenrel image.
+> >>>
+> >>> Signed-off-by: Orson Zhai <orson.unisoc@gmail.com>
+> >>
+> >> Hi Orson,
+> >>
+> >> I think this is a nice feature. Is the idea then that driver can do
+> >> something like:
+> >>
+> >> #if defined(CONFIG_DRIVER_FOO_DEBUG)
+> >> #define driver_foo_debug(fmt, ...) \
+> >>         dynamic_pr_debug(fmt, ##__VA_ARGS__)
+> >> #else
+> >>      no_printk(KERN_DEBUG pr_fmt(fmt), ##__VA_ARGS__)
+> >> #enif
+> >>
+> >> And then the Kconfig:
+> >>
+> >> config DYNAMIC_DRIVER_FOO_DEBUG
+> >>      bool "Enable dynamic driver foo printk() support"
+> >>      select DYNAMIC_DEBUG_CORE
+> >>
+> > I highly appreciate you for giving this good example to us.
+> > To be honest I did not really think of this kind of usage. :)
+> > But it makes much sense. I think dynamic debug might be a little
+> > bit high for requirement of memory. Every line of pr_debug will be
+> > added with a static data structure and malloc with an item in link table.
+> > It might be sensitive especially in embeded system.
+> > So this example shows how to avoid to turn on dynamci debug for whole
+> > system but part of it when being needed.
+> >
+> >>
+> >> Or did you have something else in mind? Do you have an example
+> >> code for the drivers that you mention?
+> >
+> > My motivation comes from new Andorid GKI release flow. Android kernel team will
+> > be in charge of GKI release. And SoC vendors will build their device driver as
+> > kernel modules which are diffrent from each vendor. End-users will get their phones
+> > installed with GKI plus some modules all together.
+> >
+> > So at Google side, they can only set DYNAMIC_DEBUG_CORE in their defconfig to build
+> > out GKI without worrying about the kernel image size increased too much. Actually
+> > GKI is relatively stable as a common binary and there is no strong reason to do
+> > dynamic debugging to it.
+> >
+> > And at vendor side, they will use a local defconfig which is same with Google one but add
+> > CONFIG_DYNAMIC_DEBUG to build their kenrel modules. As DYNAMIC_DEBUG enables only a
+> > set of macro expansion, so it has no impact to kernel ABI or the modversion.
+> > All modules will be compatible with GKI and with dynamic debug enabled.
+> >
+> > Then the result will be that Google has his clean GKI and vendors have their dynamic-debug-powered modules.
+> >
+>
+>
+> static int __init dynamic_debug_init(void)
+> {
+>         struct _ddebug *iter, *iter_start;
+>         const char *modname = NULL;
+>         char *cmdline;
+>         int ret = 0;
+>         int n = 0, entries = 0, modct = 0;
+>         int verbose_bytes = 0;
+>
+>         if (__start___verbose == __stop___verbose) {
+>                 pr_warn("_ddebug table is empty in a CONFIG_DYNAMIC_DEBUG build\n");
+>                 return 1;
 
-Signed-off-by: Marc Zyngier <maz@kernel.org>
-Reviewed-by: Zenghui Yu <yuzenghui@huawei.com>
-Reviewed-by: Eric Auger <eric.auger@redhat.com>
-Link: https://lore.kernel.org/r/20200304203330.4967-24-maz@kernel.org
----
- virt/kvm/arm/vgic/vgic-debug.c | 14 +++++++++++++-
- 1 file changed, 13 insertions(+), 1 deletion(-)
+Oh, I forgot this.
+If return error here, "ddebug_init_success = 1;" will be never
+executed and there will be no debugfs
+or /proc operation interface for user.
 
-diff --git a/virt/kvm/arm/vgic/vgic-debug.c b/virt/kvm/arm/vgic/vgic-debug.c
-index cc12fe9b2df3..b13a9e3f99dd 100644
---- a/virt/kvm/arm/vgic/vgic-debug.c
-+++ b/virt/kvm/arm/vgic/vgic-debug.c
-@@ -178,6 +178,8 @@ static void print_irq_state(struct seq_file *s, struct vgic_irq *irq,
- 			    struct kvm_vcpu *vcpu)
- {
- 	char *type;
-+	bool pending;
-+
- 	if (irq->intid < VGIC_NR_SGIS)
- 		type = "SGI";
- 	else if (irq->intid < VGIC_NR_PRIVATE_IRQS)
-@@ -190,6 +192,16 @@ static void print_irq_state(struct seq_file *s, struct vgic_irq *irq,
- 	if (irq->intid ==0 || irq->intid == VGIC_NR_PRIVATE_IRQS)
- 		print_header(s, irq, vcpu);
- 
-+	pending = irq->pending_latch;
-+	if (irq->hw && vgic_irq_is_sgi(irq->intid)) {
-+		int err;
-+
-+		err = irq_get_irqchip_state(irq->host_irq,
-+					    IRQCHIP_STATE_PENDING,
-+					    &pending);
-+		WARN_ON_ONCE(err);
-+	}
-+
- 	seq_printf(s, "       %s %4d "
- 		      "    %2d "
- 		      "%d%d%d%d%d%d%d "
-@@ -201,7 +213,7 @@ static void print_irq_state(struct seq_file *s, struct vgic_irq *irq,
- 		      "\n",
- 			type, irq->intid,
- 			(irq->target_vcpu) ? irq->target_vcpu->vcpu_id : -1,
--			irq->pending_latch,
-+			pending,
- 			irq->line_level,
- 			irq->active,
- 			irq->enabled,
--- 
-2.20.1
+>         }
+>
+> ...
+>
+> I wonder if we should just remove it now.
 
+I think we could keep it by adding "... &&
+IS_ENABLED(CONFIG_DYNAMIC_DEBUG)" into the condition.
+Then do the comparison again to __start_verbose and __stop_verbose.
+If no entries we set ddebug_init_success = 1 and return immediately.
+
+I will make patch V2 if you agree with this.
+
+Best,
+-Orson
+
+>
+> Thanks,
+>
+> -Jason
+>
