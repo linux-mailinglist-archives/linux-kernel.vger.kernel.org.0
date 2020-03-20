@@ -2,138 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 532FC18D4FD
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 17:54:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DBF8718D479
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 17:32:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727502AbgCTQy0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Mar 2020 12:54:26 -0400
-Received: from mout.kundenserver.de ([212.227.17.10]:50877 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726983AbgCTQy0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Mar 2020 12:54:26 -0400
-Received: from mail.cetitecgmbh.com ([87.190.42.90]) by
- mrelayeu.kundenserver.de (mreue108 [212.227.15.183]) with ESMTPSA (Nemesis)
- id 1MulyX-1jXYUF3hTf-00rpfa for <linux-kernel@vger.kernel.org>; Fri, 20 Mar
- 2020 17:54:24 +0100
-Received: from pflvmailgateway.corp.cetitec.com (unknown [127.0.0.1])
-        by mail.cetitecgmbh.com (Postfix) with ESMTP id AF3E2650318
-        for <linux-kernel@vger.kernel.org>; Fri, 20 Mar 2020 16:54:24 +0000 (UTC)
-X-Virus-Scanned: amavisd-new at cetitec.com
-Received: from mail.cetitecgmbh.com ([127.0.0.1])
-        by pflvmailgateway.corp.cetitec.com (pflvmailgateway.corp.cetitec.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id uvAGQZS8lGqp for <linux-kernel@vger.kernel.org>;
-        Fri, 20 Mar 2020 17:54:24 +0100 (CET)
-Received: from pfwsexchange.corp.cetitec.com (unknown [10.10.1.99])
-        by mail.cetitecgmbh.com (Postfix) with ESMTPS id 7302564F824
-        for <linux-kernel@vger.kernel.org>; Fri, 20 Mar 2020 17:54:24 +0100 (CET)
-Received: from pflmari.corp.cetitec.com (10.8.5.41) by
- PFWSEXCHANGE.corp.cetitec.com (10.10.1.99) with Microsoft SMTP Server (TLS)
- id 15.0.1497.2; Fri, 20 Mar 2020 17:54:23 +0100
-Received: by pflmari.corp.cetitec.com (Postfix, from userid 1000)
-        id 6E020804FB; Fri, 20 Mar 2020 17:15:39 +0100 (CET)
-Date:   Fri, 20 Mar 2020 17:15:39 +0100
-From:   Alex Riesen <alexander.riesen@cetitec.com>
-To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-CC:     Geert Uytterhoeven <geert@linux-m68k.org>,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Rob Herring <robh+dt@kernel.org>,
+        id S1727501AbgCTQcG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Mar 2020 12:32:06 -0400
+Received: from mga02.intel.com ([134.134.136.20]:62207 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726983AbgCTQcG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Mar 2020 12:32:06 -0400
+IronPort-SDR: KM/wsotyG6X9scLbqQ5zVEgWTfGkryMQEyrdwGTSWvDD9FzdFxbo0X3LIye6Eu5vKMlv0iOMDn
+ 5AZTY1xGtAIw==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Mar 2020 09:32:05 -0700
+IronPort-SDR: yBLMtCkVLlEr3TobR1/WAt2VUDE8yBqk59RSdKlA2nC7FEDMwkqPI+t68fhoyeWMK40VjvMLz2
+ /8m4IG6yxcZQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.72,285,1580803200"; 
+   d="scan'208";a="291961387"
+Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
+  by FMSMGA003.fm.intel.com with ESMTP; 20 Mar 2020 09:31:57 -0700
+Received: from andy by smile with local (Exim 4.93)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1jFKYv-00BVSW-TI; Fri, 20 Mar 2020 18:31:57 +0200
+Date:   Fri, 20 Mar 2020 18:31:57 +0200
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Joe Perches <joe@perches.com>
+Cc:     Michal =?iso-8859-1?Q?Such=E1nek?= <msuchanek@suse.de>,
+        linuxppc-dev@lists.ozlabs.org,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        driverdevel <devel@driverdev.osuosl.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Subject: Re: [PATCH v2 07/10] dt-bindings: adv748x: add information about
- serial audio interface (I2S/TDM)
-Message-ID: <20200320161539.GM4344@pflmari>
-Mail-Followup-To: Alex Riesen <alexander.riesen@cetitec.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        driverdevel <devel@driverdev.osuosl.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-References: <cover.1584639664.git.alexander.riesen@cetitec.com>
- <c9ff553f804f178a247dca356306948e971432fb.1584639664.git.alexander.riesen@cetitec.com>
- <20200319180125.GJ14585@pendragon.ideasonboard.com>
- <20200320084406.GB4344@pflmari>
- <CAMuHMdUdVb0LwZDx-MH2FLYYPvgq=uj_3Nrzo9obWAi-Q-2ZnA@mail.gmail.com>
- <20200320090339.GD4344@pflmari>
- <20200320095907.GB5193@pendragon.ideasonboard.com>
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Rob Herring <robh@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        Christophe Leroy <christophe.leroy@c-s.fr>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Nayna Jain <nayna@linux.ibm.com>,
+        Eric Richter <erichte@linux.ibm.com>,
+        Claudio Carvalho <cclaudio@linux.ibm.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Hari Bathini <hbathini@linux.ibm.com>,
+        Masahiro Yamada <masahiroy@kernel.org>,
+        Thiago Jung Bauermann <bauerman@linux.ibm.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Valentin Schneider <valentin.schneider@arm.com>,
+        Jordan Niethe <jniethe5@gmail.com>,
+        Michael Neuling <mikey@neuling.org>,
+        Gustavo Luiz Duarte <gustavold@linux.ibm.com>,
+        Allison Randal <allison@lohutok.net>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v12 8/8] MAINTAINERS: perf: Add pattern that matches ppc
+ perf to the perf entry.
+Message-ID: <20200320163157.GF1922688@smile.fi.intel.com>
+References: <20200225173541.1549955-1-npiggin@gmail.com>
+ <cover.1584699455.git.msuchanek@suse.de>
+ <4b150d01c60bd37705789200d9adee9f1c9b50ce.1584699455.git.msuchanek@suse.de>
+ <20200320103350.GV1922688@smile.fi.intel.com>
+ <20200320112338.GP25468@kitsune.suse.cz>
+ <20200320124251.GW1922688@smile.fi.intel.com>
+ <b96c9dd4dba4afca5288a551158659bf545d29fb.camel@perches.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20200320095907.GB5193@pendragon.ideasonboard.com>
-X-Originating-IP: [10.8.5.41]
-X-ClientProxiedBy: PFWSEXCHANGE.corp.cetitec.com (10.10.1.99) To
- PFWSEXCHANGE.corp.cetitec.com (10.10.1.99)
-X-EsetResult: clean, is OK
-X-EsetId: 37303A290D7F536A6D7660
-X-Provags-ID: V03:K1:HxZv8y8RcH6y4dcwnr7xyDX28Qtqcez9PsPtHS+SJv6XYbTCw3n
- yJvD/HG8k26lBLxP9KIKm3/b8kktYePgnnkvlSkmBjaTTXzMBXkGUkxkwaOiJ/3KSV2LaKx
- ey1RiiQXMd3eRv1UmCMfRzeoOyVZdG1I/DqVTdgSZSy7mo4C1GyFpxErnqUQHLgnMhQxRTy
- FCKxUauKIxhBroWV2iknw==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:xHKqDly397I=:PlliUZ2I8bFROcuS6GXTaJ
- xjB4raWYziO6tivses82KhXFHNgUsXBep+oZkiNuiVBwdKsNPo1YiVHVpw1AJhoY+lVyDUqew
- 7ZTyOFyybD549d2ja5uzj0ADjeV5AqwiLCx6y8u14I69hsFLndF6ktcI7y8z65HwxbuiqYhnm
- 4fwyW+GP4HIL8OqlqB7iq8VHNTYhU/WlyLwwiJD1as8lUvNaO+zcqUIB8vno9ePVnAuWbBha5
- u8AqC9pX4uwfGX2W+/n89ewMui3PXdnvkH0vzPqWKMK5mXzrcKbhYZJ6LCbD0jVxzr+rV3Gmk
- W/ZHBFBq8K020BlvsU/PgNnp4Avt92/POG7/9Y/XuckiTvzlOYE7bixGAX1l8VLdYJWbiFb6T
- 0EDwj7sq0I5ERCCcjgfcmrr+6Bpfdpv3HpSMAZMYqBKVTk/oGSD2K49KRvMv59bu8KH5AjJhn
- zrAKKmtC8Z3UFeDl41in+5QETqS794NP21o2qMylKeugq7U3zWaGMWHy38i7/dwtKdy2UIxYa
- li8opedF+BIDq+ttsxGrz9Pjyva4ORpaoJadw0M+jTYD9il0ZjTB3ri/SDv5PDLoDExAcLFIf
- LGBh3YNGCF0HjLfOjRmJVZk08Z95dquS1Z61QAGlkco+qF4FODqFGNGraoRQI13WapkIkOzbi
- SZxdmHyBfN9hZIYr65milZ4aALk1NUwzj/2e+QlFb5Qwlbn1PlPlZNapAIe1gLHChSXeVwA5O
- j5QNdUTQtoKu9m4KQM2ejcRSh/PYPIjVcp0MbAEY6CMOnOnQV9MGQQU+odSfSueAh7gQxshYo
- U98KB5HOXv81r7XsZQZ+UxnsoAahmejgm/+n8IJWxj0ljZ2LEwDpZHzaQHhoIzOxThARAzy
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <b96c9dd4dba4afca5288a551158659bf545d29fb.camel@perches.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Laurent,
-
-Laurent Pinchart, Fri, Mar 20, 2020 10:59:07 +0100:
-> On Fri, Mar 20, 2020 at 10:03:39AM +0100, Alex Riesen wrote:
-> > Geert Uytterhoeven, Fri, Mar 20, 2020 09:48:14 +0100:
+On Fri, Mar 20, 2020 at 07:42:03AM -0700, Joe Perches wrote:
+> On Fri, 2020-03-20 at 14:42 +0200, Andy Shevchenko wrote:
+> > On Fri, Mar 20, 2020 at 12:23:38PM +0100, Michal Suchánek wrote:
+> > > On Fri, Mar 20, 2020 at 12:33:50PM +0200, Andy Shevchenko wrote:
+> > > > On Fri, Mar 20, 2020 at 11:20:19AM +0100, Michal Suchanek wrote:
+> > > > > While at it also simplify the existing perf patterns.
+> > > > And still missed fixes from parse-maintainers.pl.
 > > > 
-> > > You'd be surprised how many board designers would consider this a cheap
-> > > 12.288 MHz clock source, without using the I2S port ;-)
+> > > Oh, that script UX is truly ingenious.
 > > 
-> > Well, I am :-)
-> > 
-> > Especially considering that the driver will not switch the MCLK pin aktive
-> > (all I2S-related pins are tristate by default).
+> > You have at least two options, their combinations, etc:
+> >  - complain to the author :-)
+> >  - send a patch :-)
 > 
-> If the MCLK can't be output without enabling the I2S then I don't mind
-> if we make the #clock-cells optional, although, as Geert mentioned,
-> someone may still want to use it.
-
-So I settled on just removing the option.
-
-> > And how do I require it to be set unconditionally? By just removing the
-> > "if ..." part of the statement?
+> Recently:
 > 
-> Yes. For YAML it's easy too, the hard part is making properties
-> conditional :-)
+> https://lore.kernel.org/lkml/4d5291fa3fb4962b1fa55e8fd9ef421ef0c1b1e5.camel@perches.com/
 
-Converting it into YAML turned out a bit more than just reformatting:
-some of the explicit bindings schema is only implied in the text format :-(
+But why?
 
-Takes a while to find out what is what.
+Shouldn't we rather run MAINTAINERS clean up once and require people to use
+parse-maintainers.pl for good?
 
-Regards,
-Alex
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
