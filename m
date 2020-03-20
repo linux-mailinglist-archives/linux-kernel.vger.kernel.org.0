@@ -2,97 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 56B9D18CBEC
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 11:45:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C99FC18CBF5
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 11:47:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727289AbgCTKpG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Mar 2020 06:45:06 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:33516 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726791AbgCTKpG (ORCPT
+        id S1727127AbgCTKrY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Mar 2020 06:47:24 -0400
+Received: from smtprelay0225.hostedemail.com ([216.40.44.225]:58422 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726955AbgCTKrY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Mar 2020 06:45:06 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=gpF47OFbSCOaH9j5hP1QeTQDztS/I2yzYL1A8Yg/DCI=; b=m8gRkUViv+3RtA+3AN1Hq8RB2p
-        /nd8koJA7/ftGKlqVgXGyTS1/R5zs5CBqOx+xx+6K9nCiYjvgKGyw0YC0ClboDv10bRHr9uFVti5l
-        EKvrd8vTTtGuSCXjYHyBDIj5z1uJ87Gimm+Jq3l7cxSmAzKhoX5U0dufJsqNv3jrKQNIBSslh2ZBx
-        d6J4/8w72QCJsw2WMsEdzs02t4aMmq5QQ4FsVoSmBkcn0g/+PBYsMy74VM0WnvU6eDHMxJ7NO6YW7
-        oGhprUfFSJmuJzo+np93Zq4slkqAXWnt+jp4L4s7owS9q9n3ZLlPNQHf+KIrDpK7Ir2rNYPzd9bem
-        57qKm1WQ==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jFF8f-0006yB-F2; Fri, 20 Mar 2020 10:44:29 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 627F2300606;
-        Fri, 20 Mar 2020 11:44:26 +0100 (CET)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 48697285E2762; Fri, 20 Mar 2020 11:44:26 +0100 (CET)
-Date:   Fri, 20 Mar 2020 11:44:26 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Davidlohr Bueso <dave@stgolabs.net>
-Cc:     tglx@linutronix.de, arnd@arndb.de, balbi@kernel.org,
-        bhelgaas@google.com, bigeasy@linutronix.de, davem@davemloft.net,
-        gregkh@linuxfoundation.org, joel@joelfernandes.org,
-        kurt.schwemmer@microsemi.com, kvalo@codeaurora.org,
-        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-        linux-usb@vger.kernel.org, linux-wireless@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, logang@deltatee.com,
-        mingo@kernel.org, mpe@ellerman.id.au, netdev@vger.kernel.org,
-        oleg@redhat.com, paulmck@kernel.org, rdunlap@infradead.org,
-        rostedt@goodmis.org, torvalds@linux-foundation.org,
-        will@kernel.org, Davidlohr Bueso <dbueso@suse.de>
-Subject: Re: [PATCH 17/15] rcuwait: Inform rcuwait_wake_up() users if a
- wakeup was attempted
-Message-ID: <20200320104426.GD20696@hirez.programming.kicks-ass.net>
-References: <20200318204302.693307984@linutronix.de>
- <20200320085527.23861-1-dave@stgolabs.net>
- <20200320085527.23861-2-dave@stgolabs.net>
+        Fri, 20 Mar 2020 06:47:24 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay08.hostedemail.com (Postfix) with ESMTP id 73F96182CF66A;
+        Fri, 20 Mar 2020 10:47:23 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,,RULES_HIT:41:355:379:599:973:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1540:1593:1594:1711:1730:1747:1777:1792:2393:2559:2562:2828:3138:3139:3140:3141:3142:3352:3622:3865:3866:3867:3871:4250:4321:5007:6119:7903:10004:10400:10848:11026:11232:11473:11658:11914:12296:12297:12740:12760:12895:13069:13311:13357:13439:14181:14659:14721:21080:21617:21740:21990:30045:30054:30070:30091,0,RBL:none,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:1,LUA_SUMMARY:none
+X-HE-Tag: plant48_233358f93502b
+X-Filterd-Recvd-Size: 2147
+Received: from XPS-9350.home (unknown [47.151.143.254])
+        (Authenticated sender: joe@perches.com)
+        by omf02.hostedemail.com (Postfix) with ESMTPA;
+        Fri, 20 Mar 2020 10:47:21 +0000 (UTC)
+Message-ID: <f957b11abb70457e7bd8c2652d41e7f07024e301.camel@perches.com>
+Subject: Re: [PATCH v11 08/12] pwm: stm32-lp: Use %llu format specifier for
+ period
+From:   Joe Perches <joe@perches.com>
+To:     Guru Das Srinagesh <gurus@codeaurora.org>,
+        linux-pwm@vger.kernel.org
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Uwe =?ISO-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>,
+        Subbaraman Narayanamurthy <subbaram@codeaurora.org>,
+        linux-kernel@vger.kernel.org,
+        Fabrice Gasnier <fabrice.gasnier@st.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>
+Date:   Fri, 20 Mar 2020 03:45:35 -0700
+In-Reply-To: <5ea1fa27dd036ce732c1c7a1a5d84362752a911f.1584667964.git.gurus@codeaurora.org>
+References: <cover.1584667964.git.gurus@codeaurora.org>
+         <5ea1fa27dd036ce732c1c7a1a5d84362752a911f.1584667964.git.gurus@codeaurora.org>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.34.1-2 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200320085527.23861-2-dave@stgolabs.net>
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 20, 2020 at 01:55:25AM -0700, Davidlohr Bueso wrote:
+On Thu, 2020-03-19 at 18:41 -0700, Guru Das Srinagesh wrote:
+> Since the PWM framework is switching struct pwm_args.period's
+> datatype to u64, prepare for this transition by using the right
+> specifier for printing a 64-bit value.
+[]
+> diff --git a/drivers/pwm/pwm-stm32-lp.c b/drivers/pwm/pwm-stm32-lp.c
+[]
+> @@ -61,7 +61,7 @@ static int stm32_pwm_lp_apply(struct pwm_chip *chip, struct pwm_device *pwm,
+>  	do_div(div, NSEC_PER_SEC);
+>  	if (!div) {
+>  		/* Clock is too slow to achieve requested period. */
+> -		dev_dbg(priv->chip.dev, "Can't reach %u ns\n",	state->period);
+> +		dev_dbg(priv->chip.dev, "Can't reach %llu ns\n", state->period);
+>  		return -EINVAL;
+>  	}
 
-> diff --git a/kernel/exit.c b/kernel/exit.c
-> index 6cc6cc485d07..b0bb0a8ec4b1 100644
-> --- a/kernel/exit.c
-> +++ b/kernel/exit.c
-> @@ -234,9 +234,10 @@ void release_task(struct task_struct *p)
->  		goto repeat;
->  }
->  
-> -void rcuwait_wake_up(struct rcuwait *w)
-> +bool rcuwait_wake_up(struct rcuwait *w)
->  {
->  	struct task_struct *task;
-> +	bool ret = false;
->  
->  	rcu_read_lock();
->  
-> @@ -254,10 +255,15 @@ void rcuwait_wake_up(struct rcuwait *w)
->  	smp_mb(); /* (B) */
->  
->  	task = rcu_dereference(w->task);
-> -	if (task)
-> +	if (task) {
->  		wake_up_process(task);
-> +	        ret = true;
+Doesn't this introduce a warning now without the
+actual change to the type of state->period?
 
-		ret = wake_up_process(task); ?
+Likely these patches should either not be separated
+or this should also use a cast to avoid introducing
+intermediate compilation warnings.
 
-> +	}
->  	rcu_read_unlock();
-> +
-> +	return ret;
->  }
-> +EXPORT_SYMBOL_GPL(rcuwait_wake_up);
+
