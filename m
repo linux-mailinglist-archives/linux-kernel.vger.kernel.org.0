@@ -2,220 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6D58B18CC2C
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 12:05:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9775318CC25
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 12:05:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727337AbgCTLFq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Mar 2020 07:05:46 -0400
-Received: from mail.wangsu.com ([123.103.51.198]:38769 "EHLO wangsu.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726821AbgCTLFp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Mar 2020 07:05:45 -0400
-X-Greylist: delayed 102766 seconds by postgrey-1.27 at vger.kernel.org; Fri, 20 Mar 2020 07:05:43 EDT
-Received: from XMCDN1207038 (unknown [59.61.78.137])
-        by app1 (Coremail) with SMTP id xjNnewB3fgpgo3RejKAaAA--.0S2;
-        Fri, 20 Mar 2020 19:05:05 +0800 (CST)
-From:   "Pengcheng Yang" <yangpc@wangsu.com>
-To:     "'Andrew Morton'" <akpm@linux-foundation.org>
-Cc:     <gregkh@linuxfoundation.org>, <jannh@google.com>,
-        <viro@zeniv.linux.org.uk>, <linux-kernel@vger.kernel.org>
-References: <1579691175-28949-1-git-send-email-yangpc@wangsu.com> <20200123172321.0ef6744e784692585f9843b3@linux-foundation.org>
-In-Reply-To: <20200123172321.0ef6744e784692585f9843b3@linux-foundation.org>
-Subject: Re: [PATCH RESEND] kernel/relay.c: fix read_pos error when multiple readers
-Date:   Fri, 20 Mar 2020 19:04:42 +0800
-Message-ID: <000301d5fea7$5c032080$14096180$@wangsu.com>
+        id S1727299AbgCTLFL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Mar 2020 07:05:11 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:51204 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726821AbgCTLFL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Mar 2020 07:05:11 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 02KAqoZr172799;
+        Fri, 20 Mar 2020 11:05:03 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2020-01-29;
+ bh=o4Vz3fMAmZkMeyHbxS+8hpupOxZL84r2sZTkvZwv2TA=;
+ b=aPld3xt5QB1tpf0S/l/XsymqRbglqGjRO/SKdGikGwgD8wITajZ4PXrRdOJjhpOzS7JS
+ 1NU6Bva/U6V1XS4SETE8zju1M/4muLci4WAp5CZpTZq32thu/0xQKErY1z+FGr7lzjFz
+ 0NQ5z64Dv0FrYeTaXwRBfFdcJlKaeaKrZmBiib0Qd8yVDZ9ccuolQGe+K0MQGlXxDE0Q
+ 68UzIXJimCctD5OS+il9KKCNbvq3zZVW/c0T5lnnqiSG37K0Q+n/+BOkAB0eZRyZxOSJ
+ de/bkYlpndGjHTbvFDr/cq08GT68SynL9Xka6qiymek7TLHBn6FDedXvkntHRUbCIPP8 Tw== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by aserp2120.oracle.com with ESMTP id 2yrq7mcxyw-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 20 Mar 2020 11:05:03 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 02KAq1A7150692;
+        Fri, 20 Mar 2020 11:05:02 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by aserp3020.oracle.com with ESMTP id 2ys92q5hdn-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 20 Mar 2020 11:05:02 +0000
+Received: from abhmp0006.oracle.com (abhmp0006.oracle.com [141.146.116.12])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 02KB51rl025349;
+        Fri, 20 Mar 2020 11:05:01 GMT
+Received: from kadam (/41.57.98.10)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Fri, 20 Mar 2020 04:05:00 -0700
+Date:   Fri, 20 Mar 2020 14:04:53 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Camylla Cantanheide <c.cantanheide@gmail.com>
+Cc:     Joe Perches <joe@perches.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        devel@driverdev.osuosl.org, LKML <linux-kernel@vger.kernel.org>,
+        lkcamp@lists.libreplanetbr.org
+Subject: Re: [PATCH 2/2] staging: rtl8192u: Corrects 'Avoid CamelCase' for
+ variables
+Message-ID: <20200320110453.GA4672@kadam>
+References: <20200317085130.21213-1-c.cantanheide@gmail.com>
+ <20200317085130.21213-2-c.cantanheide@gmail.com>
+ <20200317134329.GC4650@kadam>
+ <ee182711405229e85b5b5a44c683d5a2609b5ba3.camel@perches.com>
+ <CAG3pEr+9tuSYw==qgp3J8r--SdAd8DBMNQqSHCZQc-mkVVuE6w@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain;
-        charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQGPVR6qrpR+TkJwCkoxrhWdu69gOQGyL5EXqNEJ7fA=
-Content-Language: zh-cn
-X-CM-TRANSID: xjNnewB3fgpgo3RejKAaAA--.0S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxCry7tF4fJFyrZrWDCr17KFg_yoWrGw1UpF
-        Z3Cw4Fyr4kWrZ5AFWxAF4vvryfCaykXF47JrWIqa4UJw129rnYyFWfJw4YyrW8GrWF93yj
-        gr4Utwn8JFsrAaDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDU0xBIdaVrnRJUUUyvb7Iv0xC_Zr1lb4IE77IF4wAFc2x0x2IEx4CE42xK8VAvwI8I
-        cIk0rVWrJVCq3wA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjx
-        v20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4UJVW0owA2z4x0Y4vE
-        x4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oVCq3wAS0I0E0xvYzx
-        vE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VCjz48v1sIEY20_Gr4l
-        Yx0Ec7CjxVAajcxG14v26r4j6F4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwI
-        xGrwCY02Avz4vE14v_Gw4l42xK82IYc2Ij64vIr41l42xK82IY6x8ErcxFaVAv8VW8GwCF
-        x2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14
-        v26r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw1lIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY
-        67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2
-        IYs7xG6rWUJVWrZr1UMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAF
-        wI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7IUb8pnPUUUUU==
-X-CM-SenderInfo: p1dqw1nf6zt0xjvxhudrp/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAG3pEr+9tuSYw==qgp3J8r--SdAd8DBMNQqSHCZQc-mkVVuE6w@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9565 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 mlxlogscore=999
+ mlxscore=0 spamscore=0 bulkscore=0 adultscore=0 suspectscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2003020000 definitions=main-2003200048
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9565 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 lowpriorityscore=0 suspectscore=0
+ adultscore=0 bulkscore=0 mlxlogscore=999 priorityscore=1501 clxscore=1015
+ malwarescore=0 mlxscore=0 phishscore=0 impostorscore=0 spamscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2003020000
+ definitions=main-2003200048
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 24 Jan 2020 9:23:26 +0800 Andrew Morton <akpm@linux-foundation.org> wrote:
+On Wed, Mar 18, 2020 at 02:31:27PM -0300, Camylla Cantanheide wrote:
+> Dear Dan Carpenter and Joe Perches,
 > 
-> On Wed, 22 Jan 2020 19:06:15 +0800 Pengcheng Yang <yangpc@wangsu.com> wrote:
+> Thank you very much for the suggestions, I found the evaluation of both
+> very significant. Now, I have another perspective on variables.
 > 
-> > When reading, read_pos should start with bytes_consumed,
-> > not file->f_pos. Because when there is more than one reader,
-> > the read_pos corresponding to file->f_pos may have been consumed,
-> > which will cause the data that has been consumed to be read
-> > and the bytes_consumed update error.
+> I solved the problem for the *setKey *function, however, when executing the
+> checkpatch, more *Checks* of the same type appeared.
+
+If your changed introduces more warnings then you should fix them.  Like
+say you rename variables and now the line goes over 80 characters, then
+fix the new 80 character warning.  But if it was already over 80
+characters then ignore the warning.
+
 > 
-> That sounds fairly serious.  Are you able to describe a userspace setup
-> which will trigger this?  Do you have any test code which is able to
-> demonstrate the bug?
-> 
-> We really should have a relay testcase in tools/testing, but relay came
-> along before we became diligent about this.
+> Should I send the second version of the patch, only to the *setKey*
+> function or do I resolve all *Checks* for the entire file?
 
+We want patches which are easy to review.  If you change everything in
+the file, it will probably be too complicated for me to review.  So I
+guess ignore those warnings.
 
-Thanks for following this case!
-
-The problem is that Relay uses the file->f_pos associated with 
-the process to read the buffer, and adds the number of bytes read 
-to rchan_buf->bytes_consumed.
-
-Here is a simple test case, the kernel module relay_test writes 
-the string "12345678" in module_init through relay_write; 
-the relay_read program uses two processes to alternately 
-read 2 bytes from Relay.
-It shows that process A reads the string "34" that has been 
-consumed by process B, and the string "56" may be skipped next.
-
-
-========
-Module relay_test:
-
-#include <linux/module.h>
-#include <linux/relay.h>
-#include <linux/debugfs.h>
-
-static struct rchan *chan = NULL;
-static struct dentry *dir = NULL;
-
-static size_t subbuf_size = 512;
-static int n_subbufs = 32;
-
-static struct dentry *create_buf_file_handler(const char *filename,
-					      struct dentry *parent,
-					      umode_t mode,
-					      struct rchan_buf *buf,
-					      int *is_global)
-{
-	return debugfs_create_file(filename, mode, parent, buf,
-				   &relay_file_operations);
-}
-
-static int remove_buf_file_handler(struct dentry *dentry)
-{
-	debugfs_remove(dentry);
-	return 0;
-}
-
-static struct rchan_callbacks relay_callbacks = {
-	.create_buf_file = create_buf_file_handler,
-	.remove_buf_file = remove_buf_file_handler,
-};
-
-static int relay_init(void)
-{
-	dir = debugfs_create_dir("relay_test", NULL);
-	if (!dir)
-		goto err;
-
-	chan = relay_open("cpu", dir, subbuf_size, n_subbufs, &relay_callbacks, NULL);
-	if (!chan) {
-		debugfs_remove(dir);
-		goto err;
-	}
-	
-	relay_write(chan, "12345678", 9);
-
-	return 0;
-err:
-	return -EFAULT;
-}
-	
-static void relay_exit(void)
-{
-	relay_close(chan);
-	debugfs_remove(dir);
-}
-
-module_init(relay_init);
-module_exit(relay_exit);
-
-
-========
-Program relay_read:
-
-#include <stdio.h>
-#include <fcntl.h>
-#include <sys/stat.h>
-#include <unistd.h>  
-#include <sys/types.h>  
-
-int main(void)
-{
-	int pa[2], pb[2];
-	char buf[16], buf_r[16] = {0};
-	pid_t pid;
-
-	if (pipe(pa) || pipe(pb))
-		return -1;
-
-	if ((pid = fork()) < 0) {
-		return -2;
-	} else if (pid > 0) { /* process A */
-		int relay_fd = open("/sys/kernel/debug/relay_test/cpu0", O_RDONLY);
-		if (relay_fd < 0)
-			return -1;
-		close(pa[0]);
-		close(pb[1]);
-
-		/* expect to read "12" */
-		read(relay_fd, buf_r, 2);
-		printf("process A: read from relay %s\n", buf_r);
-
-		write(pa[1], "w", 2); /* wake up process B */
-		read(pb[0], buf, 256); /* wait */
-
-		/* BUG: expect to read "56"
-		 * actually read "34" which is already consumed
-		 */
-		read(relay_fd, buf_r, 2);
-		printf("process A: read from relay %s\n", buf_r);
-
-	} else { /* process B */
-		int relay_fd = open("/sys/kernel/debug/relay_test/cpu0", O_RDONLY);
-		if (relay_fd < 0)
-			return -1;
-		close(pa[1]);
-		close(pb[0]);
-
-		read(pa[0], buf, 256); /* wait */
-
-		/* expect to read "34" */
-		read(relay_fd, buf_r, 2);
-		printf("process B: read from relay %s\n", buf_r);
-
-		write(pb[1], "w", 2); /* wake up process A */
-	}
-
-	return 0;
-}
-
-
-========
-Here is runing the test:
-
-# taskset -c 0 insmod relay_test.ko
-# ./relay_read 
-process A: read from relay 12
-process B: read from relay 34
-process A: read from relay 34
-# cat /sys/kernel/debug/relay_test/cpu0
-78
+regards,
+dan carpenter
 
