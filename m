@@ -2,126 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DB66F18C91C
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 09:45:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 24ED618C92A
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 09:48:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726907AbgCTIpv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Mar 2020 04:45:51 -0400
-Received: from mga03.intel.com ([134.134.136.65]:58600 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726767AbgCTIpu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Mar 2020 04:45:50 -0400
-IronPort-SDR: 9XomDNd3tMdpymeRrO3qxFPjGAiC0z++Pf0VKWhQfaaStLk6WKy0NQqamaer79CE1kiTInL2Nr
- IZ/VBS5NzuPA==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Mar 2020 01:45:50 -0700
-IronPort-SDR: 5T1C30mSaU7qaOolo5XckRkhJ0nDDnwxM5w043asqU1T28Dx/O+hHzy8nXj9/WQxzzBKTL2RyQ
- DvkYL+e6IhAQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.72,283,1580803200"; 
-   d="scan'208";a="446590259"
-Received: from likexu-mobl1.ccr.corp.intel.com (HELO [10.238.4.82]) ([10.238.4.82])
-  by fmsmga006.fm.intel.com with ESMTP; 20 Mar 2020 01:45:46 -0700
-Reply-To: like.xu@intel.com
-Subject: Re: [PATCH v9 00/10] Guest Last Branch Recording Enabling
-To:     Paolo Bonzini <pbonzini@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>
-Cc:     kvm@vger.kernel.org, Andi Kleen <ak@linux.intel.com>,
-        Jim Mattson <jmattson@google.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Liran Alon <liran.alon@oracle.com>,
-        Liang Kan <kan.liang@linux.intel.com>,
-        Wei Wang <wei.w.wang@intel.com>, linux-kernel@vger.kernel.org,
-        Vitaly Kuznetsov <vkuznets@redhat.com>
-References: <20200313021616.112322-1-like.xu@linux.intel.com>
-From:   "Xu, Like" <like.xu@intel.com>
-Organization: Intel OTC
-Message-ID: <446eef98-4d9f-4a9b-bdae-d29e36f6e07e@intel.com>
-Date:   Fri, 20 Mar 2020 16:45:45 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.6.0
+        id S1726892AbgCTIs1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Mar 2020 04:48:27 -0400
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:38642 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726232AbgCTIs0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Mar 2020 04:48:26 -0400
+Received: by mail-oi1-f193.google.com with SMTP id k21so5701747oij.5;
+        Fri, 20 Mar 2020 01:48:26 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to;
+        bh=r20INFdy7c88gDnE8p93UG+z/HnHRIMdNoDb/T153Dk=;
+        b=eetNd92+QHCzwMwIExa+dOG89N27YT60kOLduTUztYrJSCAm8zt5TRchD6rC3e0ttK
+         RyVwTzFhVTu5cyFulgFZmd/Hh5mWm8ir338ne0HTv6Sz05wmjmZuSd1RZMj81l4qr4FK
+         ltJhRW5jPB1/8oikJX8RWyVCBFHUIJnAzG3tOPoXeXqQNP9qektmkJhvbf6ORqmACkCH
+         aqiZMqtknATxdkFvN/x9QOjIRjq7ZcXmciSe+jCRkdIg7Zei8/n8PrqtEPSuVz2FK54+
+         oxw9lI+87TTsI4wJ4bIbO0sHbxTQB3onO2QruJh/YKlCGRjeHIgB6xzA694CO+ARGJyl
+         9s7g==
+X-Gm-Message-State: ANhLgQ0V0cSwCqmFxVEDjnvC9jOD89yTH3GKr1PMyZj2qMvlGLgiblZS
+        nJ+khveqdfmubZXHFkQUta8QwPzdDiaZsyejSOXOHA==
+X-Google-Smtp-Source: ADFU+vuodlM7mvUF+rTQ9nef3TgHryKYhBbHdZc1CmVWQ2CDidna4tAYWLd1J2bx8M6xmj0E3O52PNbuj3QsnGbiDSk=
+X-Received: by 2002:aca:4e57:: with SMTP id c84mr5311062oib.148.1584694105840;
+ Fri, 20 Mar 2020 01:48:25 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20200313021616.112322-1-like.xu@linux.intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+References: <cover.1584639664.git.alexander.riesen@cetitec.com>
+ <c9ff553f804f178a247dca356306948e971432fb.1584639664.git.alexander.riesen@cetitec.com>
+ <20200319180125.GJ14585@pendragon.ideasonboard.com> <20200320084406.GB4344@pflmari>
+In-Reply-To: <20200320084406.GB4344@pflmari>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Fri, 20 Mar 2020 09:48:14 +0100
+Message-ID: <CAMuHMdUdVb0LwZDx-MH2FLYYPvgq=uj_3Nrzo9obWAi-Q-2ZnA@mail.gmail.com>
+Subject: Re: [PATCH v2 07/10] dt-bindings: adv748x: add information about
+ serial audio interface (I2S/TDM)
+To:     Alex Riesen <alexander.riesen@cetitec.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        driverdevel <devel@driverdev.osuosl.org>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Peter,
-any comments on the host perf changes?
+Hi Alex,
 
-Hi Paolo,
-any comments on the kvm changes? Isn't this feature interesting to you?
+On Fri, Mar 20, 2020 at 9:44 AM Alex Riesen
+<alexander.riesen@cetitec.com> wrote:
+> Laurent Pinchart, Thu, Mar 19, 2020 19:01:25 +0100:
+> > On Thu, Mar 19, 2020 at 06:42:36PM +0100, Alex Riesen wrote:
+> > > As the driver has some support for the audio interface of the device,
+> > > the bindings file should mention it.
 
-Just kindly ping.
+> > > @@ -16,6 +18,8 @@ Required Properties:
+> > >      slave device on the I2C bus. The main address is mandatory, others are
+> > >      optional and remain at default values if not specified.
+> > >
+> > > +  - #clock-cells: must be <0> if the I2S port is used
+> >
+> > Wouldn't it be simpler to set it to 0 unconditionally ?
+>
+> Would it? If the port itself is optional, shouldn't the clock be an option
+> too?
 
-Thanks,
-Like Xu
+You'd be surprised how many board designers would consider this a cheap
+12.288 MHz clock source, without using the I2S port ;-)
 
-On 2020/3/13 10:16, Like Xu wrote:
-> Hi all,
->
-> Please help review your interesting parts in this stable version,
-> e.g. the first four patches involve the perf event subsystem
-> and the fifth patch concerns the KVM userspace interface.
+Gr{oetje,eeting}s,
 
-> v8->v9 Changelog:
-> - using guest_lbr_constraint to create guest LBR event without hw counter;
->    (please check perf changes in patch 0003)
-> - rename 'cpuc->vcpu_lbr' to 'cpuc->guest_lbr_enabled';
->    (please check host LBR changes in patch 0004)
-> - replace 'pmu->lbr_used' mechanism with lazy release kvm_pmu_lbr_cleanup();
-> - refactor IA32_PERF_CAPABILITIES trap via get_perf_capabilities();
-> - refactor kvm_pmu_lbr_enable() with kvm_pmu_lbr_setup();
-> - simplify model-specific LBR functionality check;
-> - rename x86_perf_get_lbr_stack to x86_perf_get_lbr;
-> - rename intel_pmu_lbr_confirm() to kvm_pmu_availability_check();
->
-> Previous:
-> https://lore.kernel.org/lkml/1565075774-26671-1-git-send-email-wei.w.wang@intel.com/
->
-> Like Xu (7):
->    perf/x86/lbr: Add interface to get basic information about LBR stack
->    perf/x86: Add constraint to create guest LBR event without hw counter
->    perf/x86: Keep LBR stack unchanged on the host for guest LBR event
->    KVM: x86: Add KVM_CAP_X86_GUEST_LBR interface to dis/enable LBR
->      feature
->    KVM: x86/pmu: Add LBR feature emulation via guest LBR event
->    KVM: x86/pmu: Release guest LBR event via vPMU lazy release mechanism
->    KVM: x86: Expose MSR_IA32_PERF_CAPABILITIES to guest for LBR record
->      format
->
-> Wei Wang (3):
->    perf/x86: Fix msr variable type for the LBR msrs
->    KVM: x86/pmu: Tweak kvm_pmu_get_msr to pass 'struct msr_data' in
->    KVM: x86: Remove the common trap handler of the MSR_IA32_DEBUGCTLMSR
->
->   Documentation/virt/kvm/api.rst    |  28 +++
->   arch/x86/events/core.c            |   9 +-
->   arch/x86/events/intel/core.c      |  29 +++
->   arch/x86/events/intel/lbr.c       |  55 +++++-
->   arch/x86/events/perf_event.h      |  21 ++-
->   arch/x86/include/asm/kvm_host.h   |   7 +
->   arch/x86/include/asm/perf_event.h |  24 ++-
->   arch/x86/kvm/cpuid.c              |   3 +-
->   arch/x86/kvm/pmu.c                |  28 ++-
->   arch/x86/kvm/pmu.h                |  26 ++-
->   arch/x86/kvm/pmu_amd.c            |   7 +-
->   arch/x86/kvm/vmx/pmu_intel.c      | 291 ++++++++++++++++++++++++++++--
->   arch/x86/kvm/vmx/vmx.c            |   4 +-
->   arch/x86/kvm/vmx/vmx.h            |   2 +
->   arch/x86/kvm/x86.c                |  42 +++--
->   include/linux/perf_event.h        |   7 +
->   include/uapi/linux/kvm.h          |   1 +
->   kernel/events/core.c              |   7 -
->   tools/include/uapi/linux/kvm.h    |   1 +
->   19 files changed, 540 insertions(+), 52 deletions(-)
->
+                        Geert
 
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
