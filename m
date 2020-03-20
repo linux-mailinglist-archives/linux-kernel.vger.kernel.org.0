@@ -2,303 +2,165 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 50DF118CCE3
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 12:25:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E037118CCEF
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 12:26:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727197AbgCTLYy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Mar 2020 07:24:54 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60176 "EHLO mail.kernel.org"
+        id S1727298AbgCTLZr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Mar 2020 07:25:47 -0400
+Received: from foss.arm.com ([217.140.110.172]:47686 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726820AbgCTLYx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Mar 2020 07:24:53 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2328A20786;
-        Fri, 20 Mar 2020 11:24:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584703492;
-        bh=6W2w0VEa6BQ1N0A5eyXKWFdNrY2QZqWlRERnC3lbFYY=;
-        h=From:To:Cc:Subject:Date:From;
-        b=HWjQ79gah10aULTt6tLKweoZx3tO/jppgpAYpVZS9Lj3YRwdeIzTA0bOy2INsoFJ1
-         /dmS8zUveap6nguDweC07bLtguRn5wQ+UguZHwhlJVA6kaL/mG91HR0vBSUAPnUvF/
-         nfFZhr6e3gb+1UzqdmomioNaUOYPm3UUS+xwzQz8=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
-Subject: [PATCH 5.5 00/55] 5.5.11-rc2 review
-Date:   Fri, 20 Mar 2020 12:24:49 +0100
-Message-Id: <20200320112303.285933194@linuxfoundation.org>
-X-Mailer: git-send-email 2.25.2
+        id S1727280AbgCTLZq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Mar 2020 07:25:46 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id F046231B;
+        Fri, 20 Mar 2020 04:25:45 -0700 (PDT)
+Received: from C02TD0UTHF1T.local (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7E2EE3F85E;
+        Fri, 20 Mar 2020 04:25:44 -0700 (PDT)
+Date:   Fri, 20 Mar 2020 11:25:38 +0000
+From:   Mark Rutland <mark.rutland@arm.com>
+To:     Tuan Phan <tuanphan@amperemail.onmicrosoft.com>
+Cc:     Tuan Phan <tuanphan@os.amperecomputing.com>,
+        Will Deacon <will@kernel.org>, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] driver/perf: Add PMU driver for the ARM DMC-620 memory
+ controller.
+Message-ID: <20200320105315.GA35932@C02TD0UTHF1T.local>
+References: <1584491381-31492-1-git-send-email-tuanphan@os.amperecomputing.com>
+ <20200319151646.GC4876@lakrids.cambridge.arm.com>
+ <23AD5E45-15E3-4487-9B0D-0D9554DD9DE8@amperemail.onmicrosoft.com>
 MIME-Version: 1.0
-User-Agent: quilt/0.66
-X-stable: review
-X-Patchwork-Hint: ignore
-X-KernelTest-Patch: http://kernel.org/pub/linux/kernel/v4.x/stable-review/patch-5.5.11-rc2.gz
-X-KernelTest-Tree: git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
-X-KernelTest-Branch: linux-5.5.y
-X-KernelTest-Patches: git://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git
-X-KernelTest-Version: 5.5.11-rc2
-X-KernelTest-Deadline: 2020-03-22T11:23+00:00
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <23AD5E45-15E3-4487-9B0D-0D9554DD9DE8@amperemail.onmicrosoft.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is the start of the stable review cycle for the 5.5.11 release.
-There are 55 patches in this series, all will be posted as a response
-to this one.  If anyone has any issues with these being applied, please
-let me know.
-
-Responses should be made by Sun, 22 Mar 2020 11:22:06 +0000.
-Anything received after that time might be too late.
-
-The whole patch series can be found in one patch at:
-	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.5.11-rc2.gz
-or in the git tree and branch at:
-	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.5.y
-and the diffstat can be found below.
-
-thanks,
-
-greg k-h
-
--------------
-Pseudo-Shortlog of commits:
-
-Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-    Linux 5.5.11-rc2
-
-Matteo Croce <mcroce@redhat.com>
-    ipv4: ensure rcu_read_lock() in cipso_v4_error()
-
-Ard Biesheuvel <ardb@kernel.org>
-    ARM: 8961/2: Fix Kbuild issue caused by per-task stack protector GCC plugin
-
-Tony Fischetti <tony.fischetti@gmail.com>
-    HID: add ALWAYS_POLL quirk to lenovo pixart mouse
-
-Chen-Tsung Hsieh <chentsung@chromium.org>
-    HID: google: add moonball USB id
-
-Jann Horn <jannh@google.com>
-    mm: slub: add missing TID bump in kmem_cache_alloc_bulk()
-
-Kees Cook <keescook@chromium.org>
-    ARM: 8958/1: rename missed uaccess .fixup section
-
-Florian Fainelli <f.fainelli@gmail.com>
-    ARM: 8957/1: VDSO: Match ARMv8 timer in cntvct_functional()
-
-Ming Lei <ming.lei@redhat.com>
-    blk-mq: insert flush request to the front of dispatch queue
-
-Qian Cai <cai@lca.pw>
-    jbd2: fix data races at struct journal_head
-
-Andrew Lunn <andrew@lunn.ch>
-    net: dsa: mv88e6xxx: Fix masking of egress port
-
-Amit Cohen <amitc@mellanox.com>
-    mlxsw: pci: Wait longer before accessing the device after reset
-
-Alex Maftei (amaftei) <amaftei@solarflare.com>
-    sfc: fix timestamp reconstruction at 16-bit rollover points
-
-Taehee Yoo <ap420073@gmail.com>
-    net: rmnet: fix packet forwarding in rmnet bridge mode
-
-Taehee Yoo <ap420073@gmail.com>
-    net: rmnet: fix bridge mode bugs
-
-Taehee Yoo <ap420073@gmail.com>
-    net: rmnet: use upper/lower device infrastructure
-
-Taehee Yoo <ap420073@gmail.com>
-    net: rmnet: do not allow to change mux id if mux id is duplicated
-
-Taehee Yoo <ap420073@gmail.com>
-    net: rmnet: remove rcu_read_lock in rmnet_force_unassociate_device()
-
-Taehee Yoo <ap420073@gmail.com>
-    net: rmnet: fix suspicious RCU usage
-
-Taehee Yoo <ap420073@gmail.com>
-    net: rmnet: fix NULL pointer dereference in rmnet_changelink()
-
-Taehee Yoo <ap420073@gmail.com>
-    net: rmnet: fix NULL pointer dereference in rmnet_newlink()
-
-Luo bin <luobin9@huawei.com>
-    hinic: fix a bug of rss configuration
-
-Luo bin <luobin9@huawei.com>
-    hinic: fix a bug of setting hw_ioctxt
-
-Luo bin <luobin9@huawei.com>
-    hinic: fix a irq affinity bug
-
-Antoine Tenart <antoine.tenart@bootlin.com>
-    net: phy: mscc: fix firmware paths
-
-yangerkun <yangerkun@huawei.com>
-    slip: not call free_netdev before rtnl_unlock in slip_open
-
-Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-    net: bcmgenet: Clear ID_MODE_DIS in EXT_RGMII_OOB_CTRL when not needed
-
-Linus Torvalds <torvalds@linux-foundation.org>
-    signal: avoid double atomic counter increments for user accounting
-
-Masahiro Yamada <masahiroy@kernel.org>
-    kbuild: add dt_binding_check to PHONY in a correct place
-
-Masahiro Yamada <masahiroy@kernel.org>
-    kbuild: add dtbs_check to PHONY
-
-Jens Axboe <axboe@kernel.dk>
-    io_uring: pick up link work on submit reference drop
-
-Monk Liu <Monk.Liu@amd.com>
-    drm/amdgpu: fix memory leak during TDR test(v2)
-
-Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
-    io_uring: fix poll_list race for SETUP_IOPOLL|SETUP_SQPOLL
-
-Ming Lei <ming.lei@redhat.com>
-    blk-mq: insert passthrough request into hctx->dispatch directly
-
-Esben Haabendal <esben@geanix.com>
-    net: ll_temac: Handle DMA halt condition caused by buffer underrun
-
-Esben Haabendal <esben@geanix.com>
-    net: ll_temac: Fix RX buffer descriptor handling on GFP_ATOMIC pressure
-
-Esben Haabendal <esben@geanix.com>
-    net: ll_temac: Add more error handling of dma_map_single() calls
-
-Esben Haabendal <esben@geanix.com>
-    net: ll_temac: Fix race condition causing TX hang
-
-Madhuparna Bhowmik <madhuparnabhowmik10@gmail.com>
-    mac80211: rx: avoid RCU list traversal under mutex
-
-Marek Vasut <marex@denx.de>
-    net: ks8851-ml: Fix IRQ handling and locking
-
-Daniele Palmas <dnlplm@gmail.com>
-    net: usb: qmi_wwan: restore mtu min/max values after raw_ip switch
-
-Igor Druzhinin <igor.druzhinin@citrix.com>
-    scsi: libfc: free response frame from GPN_ID
-
-Johannes Berg <johannes.berg@intel.com>
-    cfg80211: check reg_rule for NULL in handle_channel_custom()
-
-Tom Zanussi <zanussi@kernel.org>
-    tracing: Fix number printing bug in print_synth_event()
-
-Michael Ellerman <mpe@ellerman.id.au>
-    selftests/rseq: Fix out-of-tree compilation
-
-Heidi Fahim <heidifahim@google.com>
-    kunit: run kunit_tool from any directory
-
-Greentime Hu <greentime.hu@sifive.com>
-    riscv: set pmp configuration if kernel is running in M-mode
-
-Hanno Zulla <kontakt@hanno.de>
-    HID: hid-bigbenff: fix race condition for scheduled work during removal
-
-Hanno Zulla <kontakt@hanno.de>
-    HID: hid-bigbenff: call hid_hw_stop() in case of error
-
-Hanno Zulla <kontakt@hanno.de>
-    HID: hid-bigbenff: fix general protection fault caused by double kfree
-
-Kai-Heng Feng <kai.heng.feng@canonical.com>
-    HID: i2c-hid: add Trekstor Surfbook E11B to descriptor override
-
-Mika Westerberg <mika.westerberg@linux.intel.com>
-    ACPI: watchdog: Set default timeout in probe
-
-Mansour Behabadi <mansour@oxplot.com>
-    HID: apple: Add support for recent firmware on Magic Keyboards
-
-Jean Delvare <jdelvare@suse.de>
-    ACPI: watchdog: Allow disabling WDAT at boot
-
-Ulf Hansson <ulf.hansson@linaro.org>
-    mmc: sdhci-tegra: Fix busy detection by enabling MMC_CAP_NEED_RSP_BUSY
-
-Linus Walleij <linus.walleij@linaro.org>
-    pinctrl: qcom: ssbi-gpio: Fix fwspec parsing bug
-
-
--------------
-
-Diffstat:
-
- Documentation/admin-guide/kernel-parameters.txt    |   4 +
- Makefile                                           |   7 +-
- arch/arm/Makefile                                  |   4 +-
- arch/arm/boot/compressed/Makefile                  |   4 +-
- arch/arm/kernel/vdso.c                             |   2 +
- arch/arm/lib/copy_from_user.S                      |   2 +-
- arch/riscv/include/asm/csr.h                       |  12 ++
- arch/riscv/kernel/head.S                           |   6 +
- block/blk-flush.c                                  |   2 +-
- block/blk-mq-sched.c                               |  44 ++++-
- block/blk-mq.c                                     |  18 +-
- block/blk-mq.h                                     |   3 +-
- drivers/acpi/acpi_watchdog.c                       |  12 +-
- drivers/gpu/drm/amd/powerplay/smu_v11_0.c          |   6 +-
- drivers/hid/hid-apple.c                            |   3 +-
- drivers/hid/hid-bigbenff.c                         |  31 ++-
- drivers/hid/hid-google-hammer.c                    |   2 +
- drivers/hid/hid-ids.h                              |   2 +
- drivers/hid/hid-quirks.c                           |   1 +
- drivers/hid/i2c-hid/i2c-hid-dmi-quirks.c           |   8 +
- drivers/mmc/host/sdhci-tegra.c                     |   3 +
- drivers/net/dsa/mv88e6xxx/global1.c                |   4 +-
- drivers/net/ethernet/broadcom/genet/bcmmii.c       |   1 +
- drivers/net/ethernet/huawei/hinic/hinic_hw_dev.c   |   1 +
- drivers/net/ethernet/huawei/hinic/hinic_hw_dev.h   |   2 +-
- drivers/net/ethernet/huawei/hinic/hinic_hw_if.h    |   1 +
- drivers/net/ethernet/huawei/hinic/hinic_hw_qp.h    |   1 +
- drivers/net/ethernet/huawei/hinic/hinic_main.c     |   3 +-
- drivers/net/ethernet/huawei/hinic/hinic_rx.c       |   5 +-
- drivers/net/ethernet/mellanox/mlxsw/pci_hw.h       |   2 +-
- drivers/net/ethernet/micrel/ks8851_mll.c           |  14 +-
- drivers/net/ethernet/qualcomm/rmnet/rmnet_config.c | 186 +++++++++---------
- drivers/net/ethernet/qualcomm/rmnet/rmnet_config.h |   3 +-
- .../net/ethernet/qualcomm/rmnet/rmnet_handlers.c   |   7 +-
- drivers/net/ethernet/qualcomm/rmnet/rmnet_vnd.c    |   8 -
- drivers/net/ethernet/qualcomm/rmnet/rmnet_vnd.h    |   1 -
- drivers/net/ethernet/sfc/ptp.c                     |  38 +++-
- drivers/net/ethernet/xilinx/ll_temac.h             |   4 +
- drivers/net/ethernet/xilinx/ll_temac_main.c        | 209 +++++++++++++++++----
- drivers/net/phy/mscc.c                             |   4 +-
- drivers/net/slip/slip.c                            |   3 +
- drivers/net/usb/qmi_wwan.c                         |   3 +
- drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c           |   2 +-
- drivers/scsi/libfc/fc_disc.c                       |   2 +
- drivers/watchdog/wdat_wdt.c                        |  23 +++
- fs/io_uring.c                                      |  67 +++----
- fs/jbd2/transaction.c                              |   8 +-
- kernel/signal.c                                    |  23 ++-
- kernel/trace/trace_events_hist.c                   |  32 +++-
- mm/slub.c                                          |   9 +
- net/ipv4/cipso_ipv4.c                              |   7 +-
- net/mac80211/rx.c                                  |   2 +-
- net/wireless/reg.c                                 |   2 +-
- tools/testing/kunit/kunit.py                       |  12 ++
- tools/testing/selftests/rseq/Makefile              |   2 +-
- 55 files changed, 613 insertions(+), 254 deletions(-)
-
-
+On Thu, Mar 19, 2020 at 12:03:43PM -0700, Tuan Phan wrote:
+> Hi Mark,
+> Please find my comments below.
+
+Hi Tuan,
+
+As Will said, *please* set up a more usual mail clinet configuration if
+you can. The reply style (with lines starting with '=>') is unusual and
+very painful to spot.
+
+> > On Mar 19, 2020, at 8:16 AM, Mark Rutland <mark.rutland@arm.com> wrote:
+> > 
+> > Hi Tuan,
+> > 
+> > On Tue, Mar 17, 2020 at 05:29:38PM -0700, Tuan Phan wrote:
+> >> DMC-620 PMU supports total 10 counters which each is
+> >> independently programmable to different events and can
+> >> be started and stopped individually.
+> > 
+> > Looking at the TRM for DMC-620, the PMU registers are not in a separate
+> > frame from the other DMC control registers, and start at offset 0xA00
+> > (AKA 2560). I would generally expect that access to the DMC control
+> > registers was restricted to the secure world; is that not the case on
+> > your platform?
+> > 
+> > I ask because if those are not restricted, the Normal world could
+> > potentially undermine the Secure world through this (e.g. playing with
+> > training settings, messing with the physical memory map, injecting RAS
+> > errors). Have you considered this?
+> => Only PMU registers can be accessed within normal world. I only pass
+> PMU registers (offset 0xA00) to kernel so shouldn’t be problem.
+
+Sure, you only *describe* that in the ACPI tables, but I can't see how
+that's access control is enforced in the hardware, because these
+registers fall in the same 4K page as other control registers, and
+AFAICT the IP doesn't distinguish S/NS accesses.
+
+If the Secure world on your part uses DRAM (including the secure
+portions of IPs like SMMUs), you *must* ensure that the Normal world
+cannot access those other control registers, or it can corrupt Secure
+world state and escalate privilege.
+
+Is that not a concern here?
+
+> >> DMC-620 PMU devices are named as arm_dmc620_<uid> where
+> >> <uid> is the UID of DMC-620 PMU ACPI node. Currently, it only
+> >> supports ACPI. Other platforms feel free to test and add
+> >> support for device tree.
+> >> 
+> >> Usage example:
+> >>  #perf stat -e arm_dmc620_0/clk_cycle_count/ -C 0
+> >>  Get perf event for clk_cycle_count counter.
+> >> 
+> >>  #perf stat -e arm_dmc620_0/clkdiv2_allocate,mask=0x1f,match=0x2f,
+> >>  incr=2,invert=1/ -C 0
+> >>  The above example shows how to specify mask, match, incr,
+> >>  invert parameters for clkdiv2_allocate event.
+> > 
+> > [...]
+> > 
+> >> +#define DMC620_CNT_MAX_PERIOD				0xffffffff
+> >> +#define DMC620_PMU_CLKDIV2_MAX_COUNTERS			8
+> >> +#define DMC620_PMU_CLK_MAX_COUNTERS			2
+> >> +#define DMC620_PMU_MAX_COUNTERS				\
+> >> +	(DMC620_PMU_CLKDIV2_MAX_COUNTERS + DMC620_PMU_CLK_MAX_COUNTERS)
+> >> +
+> >> +#define DMC620_PMU_OVERFLOW_STATUS_CLKDIV2_OFFSET	8
+> > 
+> > This appears to be relative to 0xA00. What exactly does your ACPI
+> > description provide? The whole set of DMC registers, or just the PMU
+> > registers?
+> => Just PMU registers from 0xA00 to 0xBFF.
+
+I don't believe that is correct; see below w.r.t. the ACPI binding.
+
+> >> +static int arm_dmc620_pmu_dev_init(struct arm_dmc620_pmu *dmc620_pmu)
+> >> +{
+> >> +	struct platform_device *pdev = dmc620_pmu->pdev;
+> >> +	int ret;
+> >> +
+> >> +	ret = devm_request_irq(&pdev->dev, dmc620_pmu->irq,
+> >> +				arm_dmc620_pmu_handle_irq,
+> >> +				IRQF_SHARED,
+> >> +				dev_name(&pdev->dev), dmc620_pmu);
+> > 
+> > This should have IRQF_NOBALANCING | IRQF_NO_THREAD. I don't think we
+> > should have IRQF_SHARED.
+> => I agree on having IRQF_NOBALANCING and IRQF_NO_THREAD. But
+> IRQF_SHARED is needed. In our platform all DMC620s share same IRQs and
+> any cpus can access the pmu registers.
+
+Linux needs to ensure that the same instance is concistently accessed
+from the same CPU, and needs to migrate the IRQ to handle that. Given we
+do that on a per-instance basis, we cannot share the IRQ with another
+instance.
+
+Please feed back to you HW designers that muxing IRQs like this causes
+significant problems for software.
+
+> > 
+> > [...]
+> > 
+> >> +static const struct acpi_device_id arm_dmc620_acpi_match[] = {
+> >> +	{ "ARMHD620", 0},
+> >> +	{},
+> >> +};
+> > 
+> > Just to check, was this ID allocated by Arm, or have you allocated it?
+> => ID was allocated by ARM. Please refer to 
+> https://static.docs.arm.com/den0093/a/DEN0093_ACPI_Arm_Components_1.0.pdf <https://static.docs.arm.com/den0093/a/DEN0093_ACPI_Arm_Components_1.0.pdf>
+
+Thanks for the link! For this _HID, the document says the _CRS contains
+a QWordMemory Base address, which the full description is:
+
+| Base Address of the DMC620 in the system address map
+
+... which would presumably mean the *entire* set of MMIO registers, not
+just the PMU portion. The example firmly hints that it is the entire set
+of MMIO registers:
+
+| In this example, the DMC620 register space is mapped to a 64K range
+| that begins at offset 0x80CAFE0000 in the system address space
+
+Thanks,
+Mark.
