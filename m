@@ -2,71 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3E6F118CFC3
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 15:12:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8590D18CFC5
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 15:12:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727175AbgCTOMC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Mar 2020 10:12:02 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35122 "EHLO mail.kernel.org"
+        id S1727236AbgCTOMI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Mar 2020 10:12:08 -0400
+Received: from mga11.intel.com ([192.55.52.93]:61180 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726738AbgCTOMC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Mar 2020 10:12:02 -0400
-Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0A5782072D;
-        Fri, 20 Mar 2020 14:12:00 +0000 (UTC)
-Date:   Fri, 20 Mar 2020 10:11:59 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     guoren@kernel.org
-Cc:     mingo@redhat.co, linux@armlinux.org.uk,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Guo Ren <guoren@linux.alibaba.com>
-Subject: Re: [PATCH] arm/ftrace: Remove duplicate function
-Message-ID: <20200320101159.60037586@gandalf.local.home>
-In-Reply-To: <20200320065340.32685-1-guoren@kernel.org>
-References: <20200320065340.32685-1-guoren@kernel.org>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1726738AbgCTOMI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Mar 2020 10:12:08 -0400
+IronPort-SDR: 6U9bv5gsSrAqXbT+aN4AXEij3e7otJOU0lXtg9sbnAstxyaAiIM9s+Gic3ks+Ea++qWikOb0dy
+ 4OElFHXd6kpA==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Mar 2020 07:12:07 -0700
+IronPort-SDR: hce375dXCIda9G8W4yXD7ilFmrdFvIXS9qsOkqtGySPeCKXm3b2NXt5PVYdsMQ3hLhvA4j3chV
+ RKJgh6FgLNYA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.72,284,1580803200"; 
+   d="scan'208";a="324863758"
+Received: from jsakkine-mobl1.tm.intel.com (HELO localhost) ([10.237.50.161])
+  by orsmga001.jf.intel.com with ESMTP; 20 Mar 2020 07:12:04 -0700
+Date:   Fri, 20 Mar 2020 16:12:02 +0200
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     George Wilson <gcwilson@linux.ibm.com>
+Cc:     linux-integrity@vger.kernel.org,
+        Alexey Kardashevskiy <aik@ozlabs.ru>,
+        Stefan Berger <stefanb@linux.ibm.com>,
+        Nayna Jain <nayna@linux.vnet.ibm.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>, linux-kernel@vger.kernel.org,
+        Linh Pham <phaml@us.ibm.com>, stable@vger.kernel.org
+Subject: Re: [PATCH v4] tpm: ibmvtpm: retry on H_CLOSED in tpm_ibmvtpm_send()
+Message-ID: <20200320141202.GA3629@linux.intel.com>
+References: <20200320032758.228088-1-gcwilson@linux.ibm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200320032758.228088-1-gcwilson@linux.ibm.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 20 Mar 2020 14:53:40 +0800
-guoren@kernel.org wrote:
-
-> From: Guo Ren <guoren@linux.alibaba.com>
+On Thu, Mar 19, 2020 at 11:27:58PM -0400, George Wilson wrote:
+> tpm_ibmvtpm_send() can fail during PowerVM Live Partition Mobility resume
+> with an H_CLOSED return from ibmvtpm_send_crq().  The PAPR says, 'The
+> "partner partition suspended" transport event disables the associated CRQ
+> such that any H_SEND_CRQ hcall() to the associated CRQ returns H_Closed
+> until the CRQ has been explicitly enabled using the H_ENABLE_CRQ hcall.'
+> This patch adds a check in tpm_ibmvtpm_send() for an H_CLOSED return from
+> ibmvtpm_send_crq() and in that case calls tpm_ibmvtpm_resume() and
+> retries the ibmvtpm_send_crq() once.
 > 
-> There is no arch implementation of ftrace_arch_code_modify_prepare in arm,
-> so just use the __weak one in kernel/trace/ftrace.c.
+> Reported-by: Linh Pham <phaml@us.ibm.com>
+> Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
+> Signed-off-by: George Wilson <gcwilson@linux.ibm.com>
+> Tested-by: Linh Pham <phaml@us.ibm.com>
+> Fixes: 132f76294744 ("drivers/char/tpm: Add new device driver to support IBM vTPM")
+> Cc: stable@vger.kernel.org
 
-Reviewed-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 
--- Steve
+Thanks. Applied now.
 
-> 
-> Signed-off-by: Guo Ren <guoren@linux.alibaba.com>
-> ---
->  arch/arm/kernel/ftrace.c | 5 -----
->  1 file changed, 5 deletions(-)
-> 
-> diff --git a/arch/arm/kernel/ftrace.c b/arch/arm/kernel/ftrace.c
-> index 10499d44964a..f66ade28eb8a 100644
-> --- a/arch/arm/kernel/ftrace.c
-> +++ b/arch/arm/kernel/ftrace.c
-> @@ -56,11 +56,6 @@ static unsigned long adjust_address(struct dyn_ftrace *rec, unsigned long addr)
->  	return addr;
->  }
->  
-> -int ftrace_arch_code_modify_prepare(void)
-> -{
-> -	return 0;
-> -}
-> -
->  int ftrace_arch_code_modify_post_process(void)
->  {
->  	/* Make sure any TLB misses during machine stop are cleared. */
-
+/Jarkko
