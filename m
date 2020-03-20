@@ -2,104 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AA24C18D06B
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 15:24:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A6D3818D0A1
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 15:25:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727664AbgCTOYG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Mar 2020 10:24:06 -0400
-Received: from us-smtp-delivery-74.mimecast.com ([63.128.21.74]:27768 "EHLO
-        us-smtp-delivery-74.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727440AbgCTOYE (ORCPT
+        id S1727828AbgCTOZK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Mar 2020 10:25:10 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:41639 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726896AbgCTOZJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Mar 2020 10:24:04 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1584714243;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=ChzXaaoXuhc1XP2003YPwEPKXIEY82z0Pz3X4zEVJU0=;
-        b=FXlO3QjXpfgPNZohO+4L6wml4AfNk5ieWhZ0bBTWdGqaVvm2pIT9R5emEVrMDYaZ0/fRgV
-        ykIS/eLlSgUCgx15DRMOfjZXL8BpUCr3/toI9y+5mlFdj6WsoPQtXaHRhT+9ho/Wk46V57
-        DoIHeULMT6ksmZXHXlNVADhpFjauotY=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-348-LVVhRZYhMzqVwGVfnSqSUg-1; Fri, 20 Mar 2020 10:23:57 -0400
-X-MC-Unique: LVVhRZYhMzqVwGVfnSqSUg-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id D7E581005510;
-        Fri, 20 Mar 2020 14:23:54 +0000 (UTC)
-Received: from [10.36.113.142] (ovpn-113-142.ams2.redhat.com [10.36.113.142])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 96AF45C1B3;
-        Fri, 20 Mar 2020 14:23:50 +0000 (UTC)
-Subject: Re: [PATCH v5 04/23] irqchip/gic-v4.1: Wait for completion of
- redistributor's INVALL operation
-To:     Marc Zyngier <maz@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu,
-        kvm@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Robert Richter <rrichter@marvell.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Zenghui Yu <yuzenghui@huawei.com>,
-        James Morse <james.morse@arm.com>,
-        Julien Thierry <julien.thierry.kdev@gmail.com>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>
-References: <20200304203330.4967-1-maz@kernel.org>
- <20200304203330.4967-5-maz@kernel.org>
-From:   Auger Eric <eric.auger@redhat.com>
-Message-ID: <60beb328-5249-a79e-eceb-967716a085bc@redhat.com>
-Date:   Fri, 20 Mar 2020 15:23:49 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Fri, 20 Mar 2020 10:25:09 -0400
+Received: by mail-lj1-f195.google.com with SMTP id o10so6585467ljc.8;
+        Fri, 20 Mar 2020 07:25:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=T5wfsqz6NA4nBgSyE/y834Ip5hf7e671S0Q1nH1Qsz4=;
+        b=JmJ7iATzKnqammFAuQ9z796W5nzypoWTbGhkE/TubpvYzYTS4aVWgssszGYtYq0jv6
+         ljRG56Ujk4JgnOYdUrbxf3tmTGTUA4hiIONYi/SLmnRb8dnt7Pjtffz3H+CBw59XSJaL
+         JAACc2yqJ21Gwhf9NYjWbNVS6BvKadFjwMneOwk0YlqC05GkOfSuCt9DbLX0kTDB8Moz
+         oh8tKrgmN9OTzk3P9oF2wbXJDTYWZ20Ao8nfuS4Sf74tsPzj5gGi8KJUgpysyYuJSXk6
+         XT1lwOI81as1r78dEBNYq0p3ZcLky42f4FYn9ic1n91Rjbd1XXH6tRpPFO0Gy/SifOQX
+         xFGw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=T5wfsqz6NA4nBgSyE/y834Ip5hf7e671S0Q1nH1Qsz4=;
+        b=IyFreTd82NYz7zwsY61xXQCBSTUepyn9QZPyRH5neqBXtMEX4MYAlShx6GSziKqv5Q
+         0AZd/7EQ/5GPJdeO44f+sxKzLgODTDmdp4O/5DEqyBtEpy1qt5m6A6oxFUMlNvHpkp9r
+         B7+RCaa7S0Z+SXsNGb5NapZTnI19T5tbxMSFpxK9disGJKXspeGBZTgpZiJMDvhlvSL9
+         k59QwOe2yfSQgE+IJvDoOcVk6Y6jpeYUURWThM5MNsO7ySBPKkUuxKhN3GXyOaMJRJG2
+         qIozkUmx5eulRanpwHJW2qoCz4Y5dGfoSG+o47yymS6HvWR17RxNDxNwCwHAhnYtodsY
+         3d1g==
+X-Gm-Message-State: ANhLgQ0KES9hoLQWDpnAHylJJs82MkqAn2yXkDfJg0igtPJZ34pm2k0l
+        C68kNF1MCcYNtKLlMU/rUh8b9/lK
+X-Google-Smtp-Source: ADFU+vugH/QD6QmdOmcFHW6Fzz2Le5mDW7RVs1mxnFOgC0mXoPuKWf4SNE2O75XiwQ0sx6lmjSZftg==
+X-Received: by 2002:a2e:99ca:: with SMTP id l10mr5410105ljj.13.1584714306182;
+        Fri, 20 Mar 2020 07:25:06 -0700 (PDT)
+Received: from [192.168.2.145] (94-29-39-224.dynamic.spd-mgts.ru. [94.29.39.224])
+        by smtp.googlemail.com with ESMTPSA id t23sm3102570lfq.90.2020.03.20.07.25.05
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 20 Mar 2020 07:25:05 -0700 (PDT)
+Subject: Re: [PATCH -next] dmaengine: tegra-apb: mark PM functions as
+ __maybe_unused
+To:     YueHaibing <yuehaibing@huawei.com>, ldewangan@nvidia.com,
+        jonathanh@nvidia.com, dan.j.williams@intel.com, vkoul@kernel.org,
+        thierry.reding@gmail.com, swarren@wwwdotorg.org
+Cc:     dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20200320071337.59756-1-yuehaibing@huawei.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <8d60faa5-2749-0581-7ee5-252f15b0e9cf@gmail.com>
+Date:   Fri, 20 Mar 2020 17:25:04 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-In-Reply-To: <20200304203330.4967-5-maz@kernel.org>
+In-Reply-To: <20200320071337.59756-1-yuehaibing@huawei.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-On 3/4/20 9:33 PM, Marc Zyngier wrote:
-> From: Zenghui Yu <yuzenghui@huawei.com>
+20.03.2020 10:13, YueHaibing пишет:
+> When CONFIG_PM is disabled, gcc warning this:
 > 
-> In GICv4.1, we emulate a guest-issued INVALL command by a direct write
-> to GICR_INVALLR.  Before we finish the emulation and go back to guest,
-> let's make sure the physical invalidate operation is actually completed
-> and no stale data will be left in redistributor. Per the specification,
-> this can be achieved by polling the GICR_SYNCR.Busy bit (to zero).
+> drivers/dma/tegra20-apb-dma.c:1587:12: warning: 'tegra_dma_runtime_resume' defined but not used [-Wunused-function]
+> drivers/dma/tegra20-apb-dma.c:1578:12: warning: 'tegra_dma_runtime_suspend' defined but not used [-Wunused-function]
 > 
-> Signed-off-by: Zenghui Yu <yuzenghui@huawei.com>
-> Signed-off-by: Marc Zyngier <maz@kernel.org>
-> Link: https://lore.kernel.org/r/20200302092145.899-1-yuzenghui@huawei.com
-Reviewed-by: Eric Auger <eric.auger@redhat.com>
-
-Thanks
-
-Eric
+> Make it as __maybe_unused to fix the warnings,
+> also remove unneeded function declarations.
+> 
+> Fixes: ec8a1586780c ("dma: tegra: add dmaengine based dma driver")
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 > ---
->  drivers/irqchip/irq-gic-v3-its.c | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-gic-v3-its.c
-> index 1af713990123..c84370245bea 100644
-> --- a/drivers/irqchip/irq-gic-v3-its.c
-> +++ b/drivers/irqchip/irq-gic-v3-its.c
-> @@ -3827,6 +3827,8 @@ static void its_vpe_4_1_invall(struct its_vpe *vpe)
->  	/* Target the redistributor this vPE is currently known on */
->  	rdbase = per_cpu_ptr(gic_rdists->rdist, vpe->col_idx)->rd_base;
->  	gic_write_lpir(val, rdbase + GICR_INVALLR);
-> +
-> +	wait_for_syncr(rdbase);
->  }
->  
->  static int its_vpe_4_1_set_vcpu_affinity(struct irq_data *d, void *vcpu_info)
-> 
+...
 
+Looks good, thank you:
+
+Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
