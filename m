@@ -2,143 +2,160 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 79B2618CB7A
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 11:22:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4C6B118CB8A
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 11:26:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727101AbgCTKWj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Mar 2020 06:22:39 -0400
-Received: from mail-vk1-f193.google.com ([209.85.221.193]:36125 "EHLO
-        mail-vk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726657AbgCTKWi (ORCPT
+        id S1726796AbgCTK0N (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Mar 2020 06:26:13 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:34228 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726527AbgCTK0M (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Mar 2020 06:22:38 -0400
-Received: by mail-vk1-f193.google.com with SMTP id m131so1584798vkh.3
-        for <linux-kernel@vger.kernel.org>; Fri, 20 Mar 2020 03:22:37 -0700 (PDT)
+        Fri, 20 Mar 2020 06:26:12 -0400
+Received: by mail-wr1-f65.google.com with SMTP id z15so6754050wrl.1;
+        Fri, 20 Mar 2020 03:26:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=8Ahg+K1LklBOYWBRqmStRbuNfs/FmsalbYYMIdthFUE=;
-        b=pnQNW5h4aMDIgh8RiTJcOrlLJPuG2Sy9cfcvjMPaQ7UYihYb1g1mZbvAvrxoa+Sbry
-         ZzZUm3jwhLJFzwiphhQOkznH3NY+RHCdBWCUmeyw+0NlzARUqQzVr9Ayq+0mVn7AFdIH
-         bpj0coq3pT7GieHK2dRjvUKLbWVasGg/BAvmXagNzJNKWni07lFLN0ckVK0ZS/sP3dAr
-         sVVky75+pEfM6wgXZS0hfZAWH2SptLcSJhDOPeoPOSZHU8hqDd+An/SiAa48K32BlJ06
-         K0TtrIPXZEAWP8bq3MZNQCyKOEVPGAavLqlmB+PRmvNDNDr6FHW/9mS4JN9hLfed0F2a
-         qQrA==
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=ZyIwrVMgZez2hQpkOQoJh24f4SGL/SDIbhfYd4+eFuM=;
+        b=UAydlY7oGeViCzVQp1U34KBuIn8k1k64LWR2xxMnLoFWlAcCUoDO0dCGNB+PWe81pt
+         wYBi1XdwwBltZFcOuNQOi9gu6CLA0OYl7wkOhn5ONpGa0lnNsQwla2MUCFyrYEdCcW5v
+         TKmy3GA0gRA8WYfSZLEJzGW6yTkJPUNqhAIR7G01m0bAb8S8t1Z8WAFo5pIoc/1XqNt6
+         Qnadq98BWOW6DHykQpwvMjL9SbGotiEeeHV0bwfOSTfA544vCLRrarNjwmCyFNan3lWJ
+         CjHHXRdUcQ4WVMvNTVY0k3JlIGWSvzsqYfemOnxdx5SkmwBAE2dp618nXgGFDqFqcF5l
+         GU9A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=8Ahg+K1LklBOYWBRqmStRbuNfs/FmsalbYYMIdthFUE=;
-        b=obF+dIQQ4hldquWWpnK7xXIsdmOHL/2G+mweDCKGhLLwtpw4Uy4DLoqLJHProgZd6o
-         6sWbS4tpbP/ZT/MCHwfOVTJSJVyllh1ZL5WpwSJJW6zK1medyONeF2zeehi5OSoQOA4M
-         pjRiL/3IA7LPJsYyyCe0GO2rn3b8RJBfYoEk/hLEbVZwQ/uGQaNvwpXGoWfL2pduGyMh
-         oxfj4zBjREL/vS26lgogsg7kiYNw+YEz7iEmZ9OLoqQk9D4LVs/hCaadA+3wXLxBsgtz
-         nJXudv39l4GrGnGEFMgF6bChqpJBihZiFBWEgpVTfwfvFW5l3pPED78E99hVCZLfSMx0
-         84lQ==
-X-Gm-Message-State: ANhLgQ0Xu7u3uT391eN/p6hewfD0N7/uXq6GSnVm7H8peaJGM2vcpezV
-        hWsEbWfat3gCKbtbRJNmCN+2nx0swUuTGGswFtjTeA==
-X-Google-Smtp-Source: ADFU+vu54A/Qz9IrM4XdvkGAJ9wVr6A5ugW7FnZJwnfFEJmJccYTXWgPOZXeS7RZsCmmNsF4/LxwxKerSA7kqUU40r0=
-X-Received: by 2002:a1f:7f1d:: with SMTP id o29mr5723265vki.101.1584699757213;
- Fri, 20 Mar 2020 03:22:37 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=ZyIwrVMgZez2hQpkOQoJh24f4SGL/SDIbhfYd4+eFuM=;
+        b=jSx0CD+S0yJ/IdQxx2mlPFS7TWwpb9WrII4lfTuXSOIcuD2VxyzRGg1y63OdeIizFO
+         OvVIegDB+f1fxaBTaAoxE1gcCPyfOV9OHTkRBQ9I9gX8zz+64xaq2k5NWBq8L7JAQ6OR
+         MdA2/TiopMpIs4TU8PostbyTMO0c6MWJWpCFZn9w1LZIo2QmKL9nWpHTtAgGIQZ7BC51
+         mUi1znaZSaSTodYt8VU/TKzD4M2pHqCtdbngPkXhBFEd0wl6WsXmVu7tsqX9PgN94P3t
+         iU63X+Mh2k+nIBjyEgqoheWW+/pZ2W+yT8fg/nk4pFhWiDDnlsD6dZd3+b7lFVPW7qzx
+         Pa/A==
+X-Gm-Message-State: ANhLgQ0FPWPzX0HYwxkvbV7lASfpu5AvSzpYVdFNdKp0J5adh4wp4Hau
+        xFx5593WMLptRQkTugC5Olc=
+X-Google-Smtp-Source: ADFU+vtQ2Cvkij5WfY49IP4qyU4ueCsNgP4yapkmAybB1/czoNW9zB2MtX6kNEh7d7f+XLtkCCZR6g==
+X-Received: by 2002:adf:90ee:: with SMTP id i101mr9888897wri.417.1584699969782;
+        Fri, 20 Mar 2020 03:26:09 -0700 (PDT)
+Received: from andrea ([86.61.236.197])
+        by smtp.gmail.com with ESMTPSA id l12sm7423234wrt.73.2020.03.20.03.26.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 20 Mar 2020 03:26:09 -0700 (PDT)
+Date:   Fri, 20 Mar 2020 11:26:03 +0100
+From:   Andrea Parri <parri.andrea@gmail.com>
+To:     "Joel Fernandes (Google)" <joel@joelfernandes.org>
+Cc:     linux-kernel@vger.kernel.org, Akira Yokosawa <akiyks@gmail.com>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Daniel Lustig <dlustig@nvidia.com>,
+        David Howells <dhowells@redhat.com>,
+        Jade Alglave <j.alglave@ucl.ac.uk>, linux-arch@vger.kernel.org,
+        Luc Maranget <luc.maranget@inria.fr>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        "Paul E. McKenney" <paulmck@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Will Deacon <will@kernel.org>
+Subject: Re: [PATCH 1/3] LKMM: Add litmus test for RCU GP guarantee where
+ updater frees object
+Message-ID: <20200320102603.GA22784@andrea>
+References: <20200320065552.253696-1-joel@joelfernandes.org>
 MIME-Version: 1.0
-References: <1582181100-29914-1-git-send-email-sbhanu@codeaurora.org>
- <CAPDyKFqSJ4h7UvQfQzWmSq9gg97A0MXvdcuXXaY7b-YUHs=V2g@mail.gmail.com>
- <158334039680.7173.16159724456027777605@swboyd.mtv.corp.google.com>
- <CAPDyKFqecH=AsvtN+JMxdk6pY2dntWUrhUWF6LEq_DLCcPe6pw@mail.gmail.com> <158463974696.152100.8345578995373250448@swboyd.mtv.corp.google.com>
-In-Reply-To: <158463974696.152100.8345578995373250448@swboyd.mtv.corp.google.com>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Fri, 20 Mar 2020 11:22:01 +0100
-Message-ID: <CAPDyKFrL6uWaKK1zkn6ag2ZqW7ro50VGq6DJnTNyoFS2yGMmRw@mail.gmail.com>
-Subject: Re: [PATCH V4] mmc: sdhci-msm: Update system suspend/resume callbacks
- of sdhci-msm platform driver
-To:     Stephen Boyd <swboyd@chromium.org>
-Cc:     Shaik Sajida Bhanu <sbhanu@codeaurora.org>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        Asutosh Das <asutoshd@codeaurora.org>,
-        Sahitya Tummala <stummala@codeaurora.org>,
-        Sayali Lokhande <sayalil@codeaurora.org>, cang@codeaurora.org,
-        Veerabhadrarao Badiganti <vbadigan@codeaurora.org>,
-        Ram Prakash Gupta <rampraka@codeaurora.org>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        DTML <devicetree@vger.kernel.org>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200320065552.253696-1-joel@joelfernandes.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 19 Mar 2020 at 18:42, Stephen Boyd <swboyd@chromium.org> wrote:
->
-> Quoting Ulf Hansson (2020-03-06 02:07:41)
-> > On Wed, 4 Mar 2020 at 17:46, Stephen Boyd <swboyd@chromium.org> wrote:
-> > >
-> > > Quoting Ulf Hansson (2020-03-04 07:34:29)
-> > > > On Thu, 20 Feb 2020 at 07:45, Shaik Sajida Bhanu <sbhanu@codeaurora.org> wrote:
-> > > > >
-> > > > > The existing suspend/resume callbacks of sdhci-msm driver are just
-> > > > > gating/un-gating the clocks. During suspend cycle more can be done
-> > > > > like disabling controller, disabling card detection, enabling wake-up events.
-> > > > >
-> > > > > So updating the system pm callbacks for performing these extra
-> > > > > actions besides controlling the clocks.
-> > > > >
-> > > > > Signed-off-by: Shaik Sajida Bhanu <sbhanu@codeaurora.org>
-> > > > > Reviewed-by: Stephen Boyd <swboyd@chromium.org>
-> > > > > ---
-> [...]
-> >
-> > >
-> > > >
-> > > > > +
-> > > > > +       ret = pm_runtime_force_suspend(dev);
-> > > >
-> > > > It looks to me that perhaps you could make use of solely
-> > > > pm_runtime_force_suspend(), then just skip calling
-> > > > sdhci_suspend|resume_host() altogether. Do you think that could work?
-> > >
-> > > Does that do all the things the commit text mentions is desired for
-> > > system suspend?
-> >
-> > No. :-)
-> >
-> > But why is system wakeup needed for an eMMC card?
-> >
->
-> I don't know if system wakeup is needed for an eMMC card. Probably only
-> if you plug in a card and some daemon wants to wake up and probe the
-> card for auto-play or something like that? Seems possible so might as
-> well expose the CD gpio as a wakeup in that case and let userspace
-> decide if it wants to do that.
+On Fri, Mar 20, 2020 at 02:55:50AM -0400, Joel Fernandes (Google) wrote:
+> This adds an example for the important RCU grace period guarantee, which
+> shows an RCU reader can never span a grace period.
+> 
+> Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+> ---
+>  .../litmus-tests/RCU+sync+free.litmus         | 40 +++++++++++++++++++
+>  1 file changed, 40 insertions(+)
+>  create mode 100644 tools/memory-model/litmus-tests/RCU+sync+free.litmus
+> 
+> diff --git a/tools/memory-model/litmus-tests/RCU+sync+free.litmus b/tools/memory-model/litmus-tests/RCU+sync+free.litmus
+> new file mode 100644
+> index 0000000000000..c4682502dd296
+> --- /dev/null
+> +++ b/tools/memory-model/litmus-tests/RCU+sync+free.litmus
+> @@ -0,0 +1,40 @@
+> +C RCU+sync+free
+> +
+> +(*
+> + * Result: Never
+> + *
+> + * This litmus test demonstrates that an RCU reader can never see a write after
+> + * the grace period, if it saw writes that happen before the grace period. This
+> + * is a typical pattern of RCU usage, where the write before the grace period
+> + * assigns a pointer, and the writes after destroy the object that the pointer
+> + * points to.
+> + *
+> + * This guarantee also implies, an RCU reader can never span a grace period and
+> + * is an important RCU grace period memory ordering guarantee.
+> + *)
+> +
+> +{
+> +x = 1;
+> +y = x;
+> +z = 1;
 
-Right, card detect IRQs could be useful for system wakeups.
+FYI, this could become a little more readable if we wrote it as follows:
 
-I assume you are using a GPIO IRQ for that, which is easily managed,
-as the runtime PM status of the mmc controller is irrelevant when
-configuring the GPIO IRQ as wakeup.
+int x = 1;
+int *y = &x;
+int z = 1;
 
-We even have a helper for doing this, mmc_gpio_set_cd_wake().
+The LKMM tools are happy either way, just a matter of style/preference;
+and yes, MP+onceassign+derefonce isn't currently following mine...  ;-/
 
->
-> Is runtime suspended state the same as system suspended state here
-> though? The commit text seems to imply that only clks are disabled when
-> it's desirable to disable the entire controller. I'm still fuzzy on how
-> runtime PM and system PM interact because it seems to have changed since
-> I looked last a few years ago. If the driver can stay in a runtime
-> suspended state across system suspend then I'm all for it. That would
-> save time for system PM transitions.
 
-In most cases this should be possible. And so far, for this case, I
-haven't found a good reason to why it shouldn't work.
+> +}
+> +
+> +P0(int *x, int *z, int **y)
+> +{
+> +	int r0;
 
-Although, perhaps we need to improve some of the sdhci's library
-functions for PM, to better support this.
+This would need to be "int *r0;" in order to make klitmus7(+gcc) happy.
 
-Kind regards
-Uffe
+
+> +	int r1;
+> +
+> +	rcu_read_lock();
+> +	r0 = rcu_dereference(*y);
+> +	r1 = READ_ONCE(*r0);
+> +	rcu_read_unlock();
+> +}
+> +
+> +P1(int *x, int *z, int **y)
+> +{
+> +	rcu_assign_pointer(*y, z);
+
+AFAICT, you don't need this "RELEASE"; e.g., compare this test with the
+example in:
+
+  https://www.kernel.org/doc/Documentation/RCU/Design/Requirements/Requirements.html#Grace-Period%20Guarantee
+
+What am I missing?
+
+Thanks,
+  Andrea
+
+
+> +	synchronize_rcu();
+> +	WRITE_ONCE(*x, 0);
+> +}
+> +
+> +exists (0:r0=x /\ 0:r1=0)
+> -- 
+> 2.25.1.696.g5e7596f4ac-goog
+> 
