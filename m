@@ -2,216 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0764918DAC1
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 23:04:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 559DB18DAA7
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 23:02:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727238AbgCTWEv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Mar 2020 18:04:51 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:37510 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727443AbgCTWET (ORCPT
+        id S1727240AbgCTWCJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Mar 2020 18:02:09 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:33839 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726666AbgCTWCJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Mar 2020 18:04:19 -0400
-Received: from p5de0bf0b.dip0.t-ipconnect.de ([93.224.191.11] helo=nanos.tec.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1jFPkC-0004gl-PW; Fri, 20 Mar 2020 23:03:57 +0100
-Received: from nanos.tec.linutronix.de (localhost [IPv6:::1])
-        by nanos.tec.linutronix.de (Postfix) with ESMTP id 524131040D0;
-        Fri, 20 Mar 2020 23:03:50 +0100 (CET)
-Message-Id: <20200320180034.672927065@linutronix.de>
-User-Agent: quilt/0.65
-Date:   Fri, 20 Mar 2020 19:00:19 +0100
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     LKML <linux-kernel@vger.kernel.org>
-Cc:     x86@kernel.org, Paul McKenney <paulmck@kernel.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Brian Gerst <brgerst@gmail.com>,
-        Juergen Gross <jgross@suse.com>,
-        Alexandre Chartre <alexandre.chartre@oracle.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org,
-        Peter Zijlstra <peterz@infradead.org>
-Subject: [RESEND][patch V3 23/23] x86/kvm/svm: Move guest enter/exit into
- .noinstr.text
-References: <20200320175956.033706968@linutronix.de>
+        Fri, 20 Mar 2020 18:02:09 -0400
+Received: by mail-lj1-f196.google.com with SMTP id s13so8148618ljm.1;
+        Fri, 20 Mar 2020 15:02:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=JVLF7ZH3L5Q3n+P3OtFEZgJw0cHKvGqVmerntt7CosM=;
+        b=Nl0cpiBnoOh7866ecwLvpa5MnFm2gNpT1Sr0IiUb1Di+hXR0i/vbfRnYg598mRuk5n
+         OcapMsE1O7mkoDwpZl7wHoV3akVJZqQiquHTgVHIoPzhOF18d6/4nEhcdsuFz35XeIJ5
+         coIAllaylBlOrfOoXLPNQOjmMI52/OqLwgM1VWpIp5nDEdF4lcSkJLNIQRncjf6ny/Go
+         zySPRjCtfe4rOWDfliYUWvcgx15EXEYSeoAfXkdvJN9msIigPJ7nNdHbndXu/gU/mAFu
+         cJgzx2SgtcNSReKfQqOtHQFYm+14kYtwZROM/bxN9I/244s+7gAQxMJaBtgn1unxV/tC
+         8gJg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=JVLF7ZH3L5Q3n+P3OtFEZgJw0cHKvGqVmerntt7CosM=;
+        b=rvEbccBgxOtl90j55uwHrx+M4A7fvpWwxMyntGyM8KZdP2SEceTngKtC/JRwqdBN2G
+         1zotnEXiXdeY0kHINAXwpf8fMRWWdmKdXPfQEUXWyeHgfshrnF0tPv+c16WMpa6zLyM3
+         eV5IeyYG0FC1C+hs1JJN6wM9LwdCLaiym9FpSFWqxhjy9QvoDBYgsEZDMIjFuO7n8CcW
+         xgDk9oxEFJ6W0XX1SN3MnuH7HhRpa4COhJSJTo5k1H9htlN369Inyb4Rx40tHHspXVys
+         yrPQBrEl4kBfJml2fekebmvnMFg1+2Vz/acFvIsV8102owP6ZMpIo0nXLwEADS1rZ8xF
+         aBQw==
+X-Gm-Message-State: ANhLgQ0o/SzBqlyF6q9Iv/Zhtfb/tZsAa+cGe9QZOgmZnneyeVdG4CTm
+        /sayZWGoA3Qf3NjehXiM9ts=
+X-Google-Smtp-Source: ADFU+vsojvRBnw5y3C4N+yBCJXK0/jgUbpozYmpcHiw1bm4Z24o/aj2tzLGzJYAgNMjjKECrpAHsZg==
+X-Received: by 2002:a2e:90da:: with SMTP id o26mr6877330ljg.254.1584741727319;
+        Fri, 20 Mar 2020 15:02:07 -0700 (PDT)
+Received: from localhost.localdomain ([185.188.71.122])
+        by smtp.gmail.com with ESMTPSA id j21sm3992416lji.93.2020.03.20.15.02.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 20 Mar 2020 15:02:06 -0700 (PDT)
+From:   Pawel Dembicki <paweldembicki@gmail.com>
+Cc:     Pawel Dembicki <paweldembicki@gmail.com>,
+        Cezary Jackiewicz <cezary@eko.one.pl>,
+        Johan Hovold <johan@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 1/3] USB: serial: option: add support for ASKEY WWHC050
+Date:   Fri, 20 Mar 2020 23:01:52 +0100
+Message-Id: <20200320220155.5609-1-paweldembicki@gmail.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-transfer-encoding: 8-bit
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Transfer-Encoding: 8bit
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Split out the really last steps of guest enter and the early guest exit
-code and mark it .noinstr.text. Add the required instr_begin()/end() pairs
-around "safe" code and replace the wrmsr() with native_wrmsr() to prevent a
-tracepoint injection.
+ASKEY WWHC050 is a mcie LTE modem.
+The oem configuration states:
 
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Tom Lendacky <thomas.lendacky@amd.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>
-Cc: kvm@vger.kernel.org
+T:  Bus=01 Lev=01 Prnt=01 Port=00 Cnt=01 Dev#=  2 Spd=480  MxCh= 0
+D:  Ver= 2.10 Cls=00(>ifc ) Sub=00 Prot=00 MxPS=64 #Cfgs=  1
+P:  Vendor=1690 ProdID=7588 Rev=ff.ff
+S:  Manufacturer=Android
+S:  Product=Android
+S:  SerialNumber=813f0eef6e6e
+C:* #Ifs= 6 Cfg#= 1 Atr=80 MxPwr=500mA
+I:* If#= 0 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=ff Prot=ff Driver=option
+E:  Ad=81(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+E:  Ad=01(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+I:* If#= 1 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=42 Prot=01 Driver=(none)
+E:  Ad=02(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+E:  Ad=82(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+I:* If#= 2 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
+E:  Ad=84(I) Atr=03(Int.) MxPS=  10 Ivl=32ms
+E:  Ad=83(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+E:  Ad=03(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+I:* If#= 3 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
+E:  Ad=86(I) Atr=03(Int.) MxPS=  10 Ivl=32ms
+E:  Ad=85(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+E:  Ad=04(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+I:* If#= 4 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=ff Prot=ff Driver=qmi_wwan
+E:  Ad=88(I) Atr=03(Int.) MxPS=   8 Ivl=32ms
+E:  Ad=87(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+E:  Ad=05(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+I:* If#= 5 Alt= 0 #EPs= 2 Cls=08(stor.) Sub=06 Prot=50 Driver=(none)
+E:  Ad=89(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+E:  Ad=06(O) Atr=02(Bulk) MxPS= 512 Ivl=125us
+
+Tested on openwrt distribution.
+
+Signed-off-by: Cezary Jackiewicz <cezary@eko.one.pl>
+Signed-off-by: Pawel Dembicki <paweldembicki@gmail.com>
 ---
- arch/x86/kvm/svm.c |  114 ++++++++++++++++++++++++++++-------------------------
- 1 file changed, 62 insertions(+), 52 deletions(-)
+ drivers/usb/serial/option.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/arch/x86/kvm/svm.c
-+++ b/arch/x86/kvm/svm.c
-@@ -5714,58 +5714,9 @@ static void svm_cancel_injection(struct
- 	svm_complete_interrupts(svm);
- }
- 
--static void svm_vcpu_run(struct kvm_vcpu *vcpu)
-+static noinstr void svm_vcpu_enter_exit(struct kvm_vcpu *vcpu,
-+					struct vcpu_svm *svm)
- {
--	struct vcpu_svm *svm = to_svm(vcpu);
--
--	svm->vmcb->save.rax = vcpu->arch.regs[VCPU_REGS_RAX];
--	svm->vmcb->save.rsp = vcpu->arch.regs[VCPU_REGS_RSP];
--	svm->vmcb->save.rip = vcpu->arch.regs[VCPU_REGS_RIP];
--
--	/*
--	 * A vmexit emulation is required before the vcpu can be executed
--	 * again.
--	 */
--	if (unlikely(svm->nested.exit_required))
--		return;
--
--	/*
--	 * Disable singlestep if we're injecting an interrupt/exception.
--	 * We don't want our modified rflags to be pushed on the stack where
--	 * we might not be able to easily reset them if we disabled NMI
--	 * singlestep later.
--	 */
--	if (svm->nmi_singlestep && svm->vmcb->control.event_inj) {
--		/*
--		 * Event injection happens before external interrupts cause a
--		 * vmexit and interrupts are disabled here, so smp_send_reschedule
--		 * is enough to force an immediate vmexit.
--		 */
--		disable_nmi_singlestep(svm);
--		smp_send_reschedule(vcpu->cpu);
--	}
--
--	pre_svm_run(svm);
--
--	sync_lapic_to_cr8(vcpu);
--
--	svm->vmcb->save.cr2 = vcpu->arch.cr2;
--
--	clgi();
--	kvm_load_guest_xsave_state(vcpu);
--
--	if (lapic_in_kernel(vcpu) &&
--		vcpu->arch.apic->lapic_timer.timer_advance_ns)
--		kvm_wait_lapic_expire(vcpu);
--
--	/*
--	 * If this vCPU has touched SPEC_CTRL, restore the guest's value if
--	 * it's non-zero. Since vmentry is serialising on affected CPUs, there
--	 * is no need to worry about the conditional branch over the wrmsr
--	 * being speculatively taken.
--	 */
--	x86_spec_ctrl_set_guest(svm->spec_ctrl, svm->virt_spec_ctrl);
--
- 	/*
- 	 * VMENTER enables interrupts (host state), but the kernel state is
- 	 * interrupts disabled when this is invoked. Also tell RCU about
-@@ -5780,8 +5731,10 @@ static void svm_vcpu_run(struct kvm_vcpu
- 	 * take locks (lockdep needs RCU) and calls into world and some
- 	 * more.
- 	 */
-+	instr_begin();
- 	__trace_hardirqs_on();
- 	lockdep_hardirqs_on_prepare(CALLER_ADDR0);
-+	instr_end();
- 	guest_enter_irqoff();
- 	lockdep_hardirqs_on(CALLER_ADDR0);
- 
-@@ -5881,7 +5834,7 @@ static void svm_vcpu_run(struct kvm_vcpu
- 	vmexit_fill_RSB();
- 
- #ifdef CONFIG_X86_64
--	wrmsrl(MSR_GS_BASE, svm->host.gs_base);
-+	native_wrmsrl(MSR_GS_BASE, svm->host.gs_base);
- #else
- 	loadsegment(fs, svm->host.fs);
- #ifndef CONFIG_X86_32_LAZY_GS
-@@ -5904,7 +5857,64 @@ static void svm_vcpu_run(struct kvm_vcpu
- 	 */
- 	lockdep_hardirqs_off(CALLER_ADDR0);
- 	guest_exit_irqoff();
-+	instr_begin();
- 	__trace_hardirqs_off();
-+	instr_end();
-+}
-+
-+static void svm_vcpu_run(struct kvm_vcpu *vcpu)
-+{
-+	struct vcpu_svm *svm = to_svm(vcpu);
-+
-+	svm->vmcb->save.rax = vcpu->arch.regs[VCPU_REGS_RAX];
-+	svm->vmcb->save.rsp = vcpu->arch.regs[VCPU_REGS_RSP];
-+	svm->vmcb->save.rip = vcpu->arch.regs[VCPU_REGS_RIP];
-+
-+	/*
-+	 * A vmexit emulation is required before the vcpu can be executed
-+	 * again.
-+	 */
-+	if (unlikely(svm->nested.exit_required))
-+		return;
-+
-+	/*
-+	 * Disable singlestep if we're injecting an interrupt/exception.
-+	 * We don't want our modified rflags to be pushed on the stack where
-+	 * we might not be able to easily reset them if we disabled NMI
-+	 * singlestep later.
-+	 */
-+	if (svm->nmi_singlestep && svm->vmcb->control.event_inj) {
-+		/*
-+		 * Event injection happens before external interrupts cause a
-+		 * vmexit and interrupts are disabled here, so smp_send_reschedule
-+		 * is enough to force an immediate vmexit.
-+		 */
-+		disable_nmi_singlestep(svm);
-+		smp_send_reschedule(vcpu->cpu);
-+	}
-+
-+	pre_svm_run(svm);
-+
-+	sync_lapic_to_cr8(vcpu);
-+
-+	svm->vmcb->save.cr2 = vcpu->arch.cr2;
-+
-+	clgi();
-+	kvm_load_guest_xsave_state(vcpu);
-+
-+	if (lapic_in_kernel(vcpu) &&
-+		vcpu->arch.apic->lapic_timer.timer_advance_ns)
-+		kvm_wait_lapic_expire(vcpu);
-+
-+	/*
-+	 * If this vCPU has touched SPEC_CTRL, restore the guest's value if
-+	 * it's non-zero. Since vmentry is serialising on affected CPUs, there
-+	 * is no need to worry about the conditional branch over the wrmsr
-+	 * being speculatively taken.
-+	 */
-+	x86_spec_ctrl_set_guest(svm->spec_ctrl, svm->virt_spec_ctrl);
-+
-+	svm_vcpu_enter_exit(vcpu, svm);
- 
- 	/*
- 	 * We do not use IBRS in the kernel. If this vCPU has used the
+diff --git a/drivers/usb/serial/option.c b/drivers/usb/serial/option.c
+index 0b5dcf973d94..2f17019d3810 100644
+--- a/drivers/usb/serial/option.c
++++ b/drivers/usb/serial/option.c
+@@ -2018,6 +2018,8 @@ static const struct usb_device_id option_ids[] = {
+ 	  .driver_info = RSVD(4) | RSVD(5) },
+ 	{ USB_DEVICE_INTERFACE_CLASS(0x2cb7, 0x0105, 0xff),			/* Fibocom NL678 series */
+ 	  .driver_info = RSVD(6) },
++	{ USB_DEVICE_INTERFACE_CLASS(0x1690, 0x7588, 0xff),			/* ASKEY WWHC050 */
++	  .driver_info = RSVD(1) | RSVD(4) },
+ 	{ } /* Terminating entry */
+ };
+ MODULE_DEVICE_TABLE(usb, option_ids);
+-- 
+2.20.1
 
