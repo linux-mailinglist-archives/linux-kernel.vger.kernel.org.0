@@ -2,106 +2,253 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4AB2618C7F2
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 08:06:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7A75A18C800
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 08:10:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726867AbgCTHGi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Mar 2020 03:06:38 -0400
-Received: from mga03.intel.com ([134.134.136.65]:51858 "EHLO mga03.intel.com"
+        id S1726894AbgCTHKI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Mar 2020 03:10:08 -0400
+Received: from mga07.intel.com ([134.134.136.100]:30218 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726614AbgCTHGi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Mar 2020 03:06:38 -0400
-IronPort-SDR: /5RtDVa0fYimAIkILgAmXLIfuYv+MFFR4M6jlQ+8+VBUrSF1TeQEqKe72sp7jkBrTpzO0mTS9D
- MbZWMivTYT3w==
+        id S1726603AbgCTHKG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Mar 2020 03:10:06 -0400
+IronPort-SDR: 5PruNUfxaInDQHJgWm7V1f3PltwW7SRjqk9TG+B9ro77UCfgMowpgIXFXeiwHq/1OdgDZcvM2j
+ 48Kmr+Leu9dQ==
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Mar 2020 00:06:37 -0700
-IronPort-SDR: qQTFLsdf6C7DljdvIuIQN6Y1afZcxjIFlDqm5oREhf3SQKLv3Q8zMsPRwvvsQ2xfMB1iJdT5ye
- 7yUiw7Egm94Q==
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Mar 2020 00:10:04 -0700
+IronPort-SDR: aZ5Os1vWbf+fDn0aIEV5ZU68ljdq5QEFikKQ8z2Tm+ZWXdAm8Ap4oUaXcH1lDeOvz2CzHVwso2
+ ojHwOehXBokw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.72,283,1580803200"; 
-   d="scan'208";a="356328149"
-Received: from sxu27-mobl2.ccr.corp.intel.com (HELO [10.254.214.109]) ([10.254.214.109])
-  by fmsmga001.fm.intel.com with ESMTP; 20 Mar 2020 00:06:26 -0700
-Cc:     baolu.lu@linux.intel.com,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Rob Clark <robdclark@gmail.com>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Gerald Schaefer <gerald.schaefer@de.ibm.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Jean-Philippe Brucker <jean-philippe@linaro.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Cornelia Huck <cohuck@redhat.com>,
-        Eric Auger <eric.auger@redhat.com>,
-        Marc Zyngier <maz@kernel.org>,
-        Julien Grall <julien.grall@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-mediatek@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-s390@vger.kernel.org,
-        linux-tegra@vger.kernel.org,
-        virtualization@lists.linux-foundation.org, kvm@vger.kernel.org
-Subject: Re: [PATCH 3/8] iommu/vt-d: Remove IOVA handling code from
- non-dma_ops path
-To:     Tom Murphy <murphyt7@tcd.ie>, iommu@lists.linux-foundation.org
-References: <20191221150402.13868-1-murphyt7@tcd.ie>
- <20191221150402.13868-4-murphyt7@tcd.ie>
- <CALQxJuuue2MCF+xAAAcWCW=301HHZ9yWBmYV-K-ubCxO4s5eqQ@mail.gmail.com>
-From:   Lu Baolu <baolu.lu@linux.intel.com>
-Message-ID: <46bf21e2-bb3e-1c1e-8dae-2c5bd8c5274f@linux.intel.com>
-Date:   Fri, 20 Mar 2020 15:06:24 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.6.0
+   d="scan'208";a="446570276"
+Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
+  by fmsmga006.fm.intel.com with ESMTP; 20 Mar 2020 00:10:03 -0700
+Received: from kbuild by lkp-server01 with local (Exim 4.89)
+        (envelope-from <lkp@intel.com>)
+        id 1jFBn8-0009Eh-Ke; Fri, 20 Mar 2020 15:10:02 +0800
+Date:   Fri, 20 Mar 2020 15:09:29 +0800
+From:   kbuild test robot <lkp@intel.com>
+To:     "x86-ml" <x86@kernel.org>
+Cc:     linux-kernel@vger.kernel.org
+Subject: [tip:timers/core] BUILD SUCCESS
+ 52da479a9aee630d2cdf37d05edfe5bcfff3e17f
+Message-ID: <5e746c29.f9ukVDYHZzmZQuvs%lkp@intel.com>
+User-Agent: Heirloom mailx 12.5 6/20/10
 MIME-Version: 1.0
-In-Reply-To: <CALQxJuuue2MCF+xAAAcWCW=301HHZ9yWBmYV-K-ubCxO4s5eqQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2020/3/20 14:30, Tom Murphy wrote:
-> Could we merge patch 1-3 from this series? it just cleans up weird
-> code and merging these patches will cover some of the work needed to
-> move the intel iommu driver to the dma-iommu api in the future.
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git  timers/core
+branch HEAD: 52da479a9aee630d2cdf37d05edfe5bcfff3e17f  Revert "tick/common: Make tick_periodic() check for missing ticks"
 
-Can you please take a look at this patch series?
+elapsed time: 737m
 
-https://lkml.org/lkml/2020/3/13/1162
+configs tested: 194
+configs skipped: 0
 
-It probably makes this series easier.
+The following configs have been built successfully.
+More configs may be tested in the coming days.
 
-Best regards,
-baolu
+arm                              allmodconfig
+arm                               allnoconfig
+arm                              allyesconfig
+arm64                            allmodconfig
+arm64                             allnoconfig
+arm64                            allyesconfig
+arm                         at91_dt_defconfig
+arm                           efm32_defconfig
+arm                          exynos_defconfig
+arm                        multi_v5_defconfig
+arm                        multi_v7_defconfig
+arm                        shmobile_defconfig
+arm                           sunxi_defconfig
+arm64                               defconfig
+sparc                            allyesconfig
+sh                                allnoconfig
+m68k                       m5475evb_defconfig
+i386                              allnoconfig
+i386                             alldefconfig
+riscv                               defconfig
+i386                             allyesconfig
+i386                                defconfig
+ia64                             alldefconfig
+ia64                             allmodconfig
+ia64                              allnoconfig
+ia64                             allyesconfig
+ia64                                defconfig
+c6x                              allyesconfig
+c6x                        evmc6678_defconfig
+nios2                         10m50_defconfig
+nios2                         3c120_defconfig
+openrisc                    or1ksim_defconfig
+openrisc                 simple_smp_defconfig
+xtensa                       common_defconfig
+xtensa                          iss_defconfig
+alpha                               defconfig
+csky                                defconfig
+nds32                             allnoconfig
+nds32                               defconfig
+h8300                     edosk2674_defconfig
+h8300                    h8300h-sim_defconfig
+h8300                       h8s-sim_defconfig
+m68k                             allmodconfig
+m68k                          multi_defconfig
+m68k                           sun3_defconfig
+arc                              allyesconfig
+arc                                 defconfig
+microblaze                      mmu_defconfig
+microblaze                    nommu_defconfig
+powerpc                           allnoconfig
+powerpc                             defconfig
+powerpc                       ppc64_defconfig
+powerpc                          rhel-kconfig
+mips                      fuloong2e_defconfig
+mips                      malta_kvm_defconfig
+mips                             allyesconfig
+mips                         64r6el_defconfig
+mips                              allnoconfig
+mips                           32r2_defconfig
+mips                             allmodconfig
+parisc                            allnoconfig
+parisc                           allyesconfig
+parisc                generic-32bit_defconfig
+parisc                generic-64bit_defconfig
+x86_64               randconfig-a001-20200319
+x86_64               randconfig-a002-20200319
+x86_64               randconfig-a003-20200319
+i386                 randconfig-a001-20200319
+i386                 randconfig-a002-20200319
+i386                 randconfig-a003-20200319
+x86_64               randconfig-a001-20200320
+x86_64               randconfig-a002-20200320
+x86_64               randconfig-a003-20200320
+i386                 randconfig-a001-20200320
+i386                 randconfig-a002-20200320
+i386                 randconfig-a003-20200320
+alpha                randconfig-a001-20200319
+m68k                 randconfig-a001-20200319
+mips                 randconfig-a001-20200319
+nds32                randconfig-a001-20200319
+parisc               randconfig-a001-20200319
+riscv                randconfig-a001-20200319
+c6x                  randconfig-a001-20200319
+h8300                randconfig-a001-20200319
+microblaze           randconfig-a001-20200319
+nios2                randconfig-a001-20200319
+sparc64              randconfig-a001-20200319
+csky                 randconfig-a001-20200319
+openrisc             randconfig-a001-20200319
+s390                 randconfig-a001-20200319
+sh                   randconfig-a001-20200319
+xtensa               randconfig-a001-20200319
+x86_64               randconfig-b001-20200319
+x86_64               randconfig-b002-20200319
+x86_64               randconfig-b003-20200319
+i386                 randconfig-b001-20200319
+i386                 randconfig-b002-20200319
+i386                 randconfig-b003-20200319
+x86_64               randconfig-c001-20200319
+x86_64               randconfig-c002-20200319
+x86_64               randconfig-c003-20200319
+i386                 randconfig-c001-20200319
+i386                 randconfig-c002-20200319
+i386                 randconfig-c003-20200319
+x86_64               randconfig-c001-20200320
+x86_64               randconfig-c002-20200320
+x86_64               randconfig-c003-20200320
+i386                 randconfig-c001-20200320
+i386                 randconfig-c002-20200320
+i386                 randconfig-c003-20200320
+x86_64               randconfig-d001-20200319
+x86_64               randconfig-d002-20200319
+x86_64               randconfig-d003-20200319
+i386                 randconfig-d001-20200319
+i386                 randconfig-d002-20200319
+i386                 randconfig-d003-20200319
+x86_64               randconfig-e001-20200319
+x86_64               randconfig-e002-20200319
+x86_64               randconfig-e003-20200319
+i386                 randconfig-e001-20200319
+i386                 randconfig-e002-20200319
+i386                 randconfig-e003-20200319
+x86_64               randconfig-f001-20200320
+x86_64               randconfig-f002-20200320
+x86_64               randconfig-f003-20200320
+i386                 randconfig-f001-20200320
+i386                 randconfig-f002-20200320
+i386                 randconfig-f003-20200320
+x86_64               randconfig-g001-20200320
+x86_64               randconfig-g002-20200320
+x86_64               randconfig-g003-20200320
+i386                 randconfig-g001-20200320
+i386                 randconfig-g002-20200320
+i386                 randconfig-g003-20200320
+x86_64               randconfig-g001-20200319
+x86_64               randconfig-g002-20200319
+x86_64               randconfig-g003-20200319
+i386                 randconfig-g001-20200319
+i386                 randconfig-g002-20200319
+i386                 randconfig-g003-20200319
+x86_64               randconfig-h001-20200319
+x86_64               randconfig-h002-20200319
+x86_64               randconfig-h003-20200319
+i386                 randconfig-h001-20200319
+i386                 randconfig-h002-20200319
+i386                 randconfig-h003-20200319
+x86_64               randconfig-h001-20200320
+x86_64               randconfig-h002-20200320
+x86_64               randconfig-h003-20200320
+i386                 randconfig-h001-20200320
+i386                 randconfig-h002-20200320
+i386                 randconfig-h003-20200320
+arc                  randconfig-a001-20200320
+arm                  randconfig-a001-20200320
+arm64                randconfig-a001-20200320
+ia64                 randconfig-a001-20200320
+powerpc              randconfig-a001-20200320
+sparc                randconfig-a001-20200320
+arc                  randconfig-a001-20200319
+arm                  randconfig-a001-20200319
+arm64                randconfig-a001-20200319
+ia64                 randconfig-a001-20200319
+powerpc              randconfig-a001-20200319
+sparc                randconfig-a001-20200319
+riscv                             allnoconfig
+riscv                            allyesconfig
+riscv                    nommu_virt_defconfig
+riscv                          rv32_defconfig
+riscv                            allmodconfig
+s390                             alldefconfig
+s390                             allmodconfig
+s390                              allnoconfig
+s390                             allyesconfig
+s390                          debug_defconfig
+s390                                defconfig
+s390                       zfcpdump_defconfig
+sh                               allmodconfig
+sh                          rsk7269_defconfig
+sh                  sh7785lcr_32bit_defconfig
+sh                            titan_defconfig
+sparc                               defconfig
+sparc64                          allmodconfig
+sparc64                           allnoconfig
+sparc64                          allyesconfig
+sparc64                             defconfig
+um                           x86_64_defconfig
+um                             i386_defconfig
+um                                  defconfig
+x86_64                              fedora-25
+x86_64                                  kexec
+x86_64                                    lkp
+x86_64                                   rhel
+x86_64                         rhel-7.2-clear
+x86_64                               rhel-7.6
 
-> 
-> On Sat, 21 Dec 2019 at 07:04, Tom Murphy<murphyt7@tcd.ie>  wrote:
->> Remove all IOVA handling code from the non-dma_ops path in the intel
->> iommu driver.
->>
->> There's no need for the non-dma_ops path to keep track of IOVAs. The
->> whole point of the non-dma_ops path is that it allows the IOVAs to be
->> handled separately. The IOVA handling code removed in this patch is
->> pointless.
->>
->> Signed-off-by: Tom Murphy<murphyt7@tcd.ie>
+---
+0-DAY CI Kernel Test Service, Intel Corporation
+https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
