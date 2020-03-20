@@ -2,22 +2,22 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1669C18DB9D
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Mar 2020 00:15:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3B1EC18DBA0
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Mar 2020 00:16:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727301AbgCTXPq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Mar 2020 19:15:46 -0400
-Received: from gateway20.websitewelcome.com ([192.185.47.18]:22181 "EHLO
-        gateway20.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727092AbgCTXPq (ORCPT
+        id S1727148AbgCTXQh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Mar 2020 19:16:37 -0400
+Received: from gateway23.websitewelcome.com ([192.185.47.80]:37177 "EHLO
+        gateway23.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726773AbgCTXQh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Mar 2020 19:15:46 -0400
-Received: from cm10.websitewelcome.com (cm10.websitewelcome.com [100.42.49.4])
-        by gateway20.websitewelcome.com (Postfix) with ESMTP id D925E400D18E0
-        for <linux-kernel@vger.kernel.org>; Fri, 20 Mar 2020 17:00:12 -0500 (CDT)
+        Fri, 20 Mar 2020 19:16:37 -0400
+Received: from cm11.websitewelcome.com (cm11.websitewelcome.com [100.42.49.5])
+        by gateway23.websitewelcome.com (Postfix) with ESMTP id 3A3C74B97
+        for <linux-kernel@vger.kernel.org>; Fri, 20 Mar 2020 18:16:36 -0500 (CDT)
 Received: from gator4166.hostgator.com ([108.167.133.22])
         by cmsmtp with SMTP
-        id FQrgjdtCWEfyqFQrgjdfF8; Fri, 20 Mar 2020 18:15:44 -0500
+        id FQsWjhDGLSl8qFQsWjFcS6; Fri, 20 Mar 2020 18:16:36 -0500
 X-Authority-Reason: nr=8
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
@@ -25,26 +25,25 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
         :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
         List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=3Z1WXMUOzv6vhoMjbWqc+zBYP+E1MZRZuQ59FW4vRVo=; b=eC9Lo3ROEAZr9wxU6R57O+U2Ma
-        3mG5p21GiDyzx+UhjWA75sTEzGjXvIdR6g59CK7+/4TLdmlpPIcdHgLgUi1NUzxu0+4bhlToCWUDT
-        X+lSbopPDyARR9wPwmXiKAIYOkDS4QJH/098YNbvduBSt8lKyUyHEgOu4sRHaKuj2q0jBjVb0E3/H
-        dIT6H09ZUEKpXya56J8QYQoulHVQif7N/CU/jhED7VCPDTlWroflcFjDPJkmE10Gq4gFz+jqYltcv
-        2I1+GetiTc8VJkUEY6+3iEihgnMwZR0zd9ywdxcnTwv2Wds5WrvYugIYwxX7sweskMe94qHD3/iUM
-        s6kbBfNw==;
-Received: from cablelink-189-218-116-241.hosts.intercable.net ([189.218.116.241]:53572 helo=embeddedor)
+        bh=1K4LBzbZwE60crSlkXO26EuXUhUjFLheBgPzwYswvKI=; b=tffwMHZffsoQ5eHpwux0zLbaNO
+        XM36B5hEJPEcYRrQZfGyghQkKt44oPEeQU9MAKd5muA3VDQbl3zeks8RYstt4872lSiwgncSAWSst
+        No0+VXUag3JAMJY7Vqff8F3xvcVSlhTBqZIbvx+CXFkma3dhXtlgCDVW2LM7J7XfKogH6sWOeTExv
+        tOhcDC7ZBmuBIGEJocXL8psPPi5SVk2faW6MC0o99BbZGidTigeqYigT45CkR2AaOJZ9KhwQrtMRt
+        Nk2pwZewsz3UeOEpfw/gOlwCRIN6jk9x4AbgN+idtdYgAFKMN1QaTKHgWjK1z+UsMugGPguwX1FR1
+        IgMqx/2A==;
+Received: from cablelink-189-218-116-241.hosts.intercable.net ([189.218.116.241]:53576 helo=embeddedor)
         by gator4166.hostgator.com with esmtpa (Exim 4.92)
         (envelope-from <gustavo@embeddedor.com>)
-        id 1jFQrf-001IEP-27; Fri, 20 Mar 2020 18:15:43 -0500
-Date:   Fri, 20 Mar 2020 18:15:42 -0500
+        id 1jFQsU-001IZU-Pw; Fri, 20 Mar 2020 18:16:34 -0500
+Date:   Fri, 20 Mar 2020 18:16:34 -0500
 From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
 To:     Benson Leung <bleung@chromium.org>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        Guenter Roeck <groeck@chromium.org>
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>
 Cc:     linux-kernel@vger.kernel.org,
         "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH][next] chrome: cros_ec_chardev: Replace zero-length array
+Subject: [PATCH][next] chrome: wilco_ec: event: Replace zero-length array
  with flexible-array member
-Message-ID: <20200320231542.GA19872@embeddedor.com>
+Message-ID: <20200320231634.GA20040@embeddedor.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -57,13 +56,13 @@ X-AntiAbuse: Sender Address Domain - embeddedor.com
 X-BWhitelist: no
 X-Source-IP: 189.218.116.241
 X-Source-L: No
-X-Exim-ID: 1jFQrf-001IEP-27
+X-Exim-ID: 1jFQsU-001IZU-Pw
 X-Source: 
 X-Source-Args: 
 X-Source-Dir: 
-X-Source-Sender: cablelink-189-218-116-241.hosts.intercable.net (embeddedor) [189.218.116.241]:53572
+X-Source-Sender: cablelink-189-218-116-241.hosts.intercable.net (embeddedor) [189.218.116.241]:53576
 X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 13
+X-Email-Count: 16
 X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
 X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
@@ -101,22 +100,31 @@ This issue was found with the help of Coccinelle.
 
 Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 ---
- drivers/platform/chrome/cros_ec_chardev.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/platform/chrome/wilco_ec/event.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/platform/chrome/cros_ec_chardev.c b/drivers/platform/chrome/cros_ec_chardev.c
-index b51ab24055f3..e0bce869c49a 100644
---- a/drivers/platform/chrome/cros_ec_chardev.c
-+++ b/drivers/platform/chrome/cros_ec_chardev.c
-@@ -48,7 +48,7 @@ struct ec_event {
- 	struct list_head node;
- 	size_t size;
- 	u8 event_type;
--	u8 data[0];
-+	u8 data[];
+diff --git a/drivers/platform/chrome/wilco_ec/event.c b/drivers/platform/chrome/wilco_ec/event.c
+index dba3d445623f..814518509739 100644
+--- a/drivers/platform/chrome/wilco_ec/event.c
++++ b/drivers/platform/chrome/wilco_ec/event.c
+@@ -79,7 +79,7 @@ static DEFINE_IDA(event_ida);
+ struct ec_event {
+ 	u16 size;
+ 	u16 type;
+-	u16 event[0];
++	u16 event[];
+ } __packed;
+ 
+ #define ec_event_num_words(ev) (ev->size - 1)
+@@ -96,7 +96,7 @@ struct ec_event_queue {
+ 	int capacity;
+ 	int head;
+ 	int tail;
+-	struct ec_event *entries[0];
++	struct ec_event *entries[];
  };
  
- static int ec_get_version(struct cros_ec_dev *ec, char *str, int maxlen)
+ /* Maximum number of events to store in ec_event_queue */
 -- 
 2.23.0
 
