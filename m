@@ -2,217 +2,248 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6AD9518C561
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 03:38:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CDED818C559
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 03:35:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727021AbgCTCim (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 22:38:42 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:39086 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725856AbgCTCik (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 22:38:40 -0400
-Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 41D6693372D32ECF8ABA;
-        Fri, 20 Mar 2020 10:38:37 +0800 (CST)
-Received: from localhost (10.173.223.234) by DGGEMS404-HUB.china.huawei.com
- (10.3.19.204) with Microsoft SMTP Server id 14.3.487.0; Fri, 20 Mar 2020
- 10:38:29 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     <lmb@cloudflare.com>, <daniel@iogearbox.net>,
-        <jakub@cloudflare.com>, <john.fastabend@gmail.com>
-CC:     <davem@davemloft.net>, <netdev@vger.kernel.org>,
-        <bpf@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <andrii.nakryiko@gmail.com>, YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH bpf-next 2/2] bpf: tcp: Make tcp_bpf_recvmsg static
-Date:   Fri, 20 Mar 2020 10:34:26 +0800
-Message-ID: <20200320023426.60684-3-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.10.2.windows.1
-In-Reply-To: <20200320023426.60684-1-yuehaibing@huawei.com>
-References: <20200319124631.58432-1-yuehaibing@huawei.com>
- <20200320023426.60684-1-yuehaibing@huawei.com>
+        id S1726855AbgCTCfY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 22:35:24 -0400
+Received: from mail-il1-f196.google.com ([209.85.166.196]:41678 "EHLO
+        mail-il1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726103AbgCTCfY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 22:35:24 -0400
+Received: by mail-il1-f196.google.com with SMTP id l14so4252366ilj.8;
+        Thu, 19 Mar 2020 19:35:23 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=2Sq6oKLWDfJ+N+DDKC8RQHWKWhsyZ667cL6sIzF8qaQ=;
+        b=IawZQNN/uUQdqmFGqDjmWrYOSTAEejBpK4S5CsCvNgf0vZscPI1b7KqROlFsDBBFa9
+         /HQmLq/IQrNIDBJOYRWTD3hN0s6NumpzHV4B0RFfuPN30iEjSSErZbQOCQ2rgtcec2mR
+         dzYdYhtWJIPPRv6XEaQG5kQkInDp5wXgEAQnL1Ve+I4xOZAV//UbD6bQiUu0brE9pdo/
+         PVvET+Ogp206fl3Xva71lRWMU+11ivL9N8IvofU2erf6UWu9QtMLZMxSILC1R3btgvV2
+         GoRdnqM3rT4TBEkQb+bVn1Ys1FCaxo3SqrULaK1wOpzQdGI4CFoQJ/uVSm3XLxhYGb/L
+         UDZQ==
+X-Gm-Message-State: ANhLgQ076TRYQdeBaQGtRVZiPGYBxQDVjS6kbzPM0dgZgW4FRy53JfQk
+        jHCk7kUMjkvIrA4liKsv8A==
+X-Google-Smtp-Source: ADFU+vsVm+nifF98caUWQnSmDG2GKEgK2WvKO90v12PmyqZXcnTLBJgtj6xphBjSTbngRtG43Fwzbw==
+X-Received: by 2002:a92:dc06:: with SMTP id t6mr6053887iln.89.1584671722918;
+        Thu, 19 Mar 2020 19:35:22 -0700 (PDT)
+Received: from rob-hp-laptop ([64.188.179.250])
+        by smtp.gmail.com with ESMTPSA id j23sm1339289ioa.10.2020.03.19.19.35.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 19 Mar 2020 19:35:22 -0700 (PDT)
+Received: (nullmailer pid 10779 invoked by uid 1000);
+        Fri, 20 Mar 2020 02:35:20 -0000
+Date:   Thu, 19 Mar 2020 20:35:20 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Anurag Kumar Vulisha <anurag.kumar.vulisha@xilinx.com>,
+        Michal Simek <michal.simek@xilinx.com>,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH v6 1/3] dt-bindings: phy: Add DT bindings for Xilinx
+ ZynqMP PSGTR PHY
+Message-ID: <20200320023520.GA18490@bogus>
+References: <20200311103252.17514-1-laurent.pinchart@ideasonboard.com>
+ <20200311103252.17514-2-laurent.pinchart@ideasonboard.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.173.223.234]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200311103252.17514-2-laurent.pinchart@ideasonboard.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-After commit f747632b608f ("bpf: sockmap: Move generic sockmap
-hooks from BPF TCP"), tcp_bpf_recvmsg() is not used out of
-tcp_bpf.c, so make it static and remove it from tcp.h. Also move
-it to BPF_STREAM_PARSER #ifdef to fix unused function warnings.
+On Wed, Mar 11, 2020 at 12:32:50PM +0200, Laurent Pinchart wrote:
+> From: Anurag Kumar Vulisha <anurag.kumar.vulisha@xilinx.com>
+> 
+> Add DT bindings for the Xilinx ZynqMP PHY. ZynqMP SoCs have a High Speed
+> Processing System Gigabit Transceiver which provides PHY capabilities to
+> USB, SATA, PCIE, Display Port and Ehernet SGMII controllers.
+> 
+> Signed-off-by: Anurag Kumar Vulisha <anurag.kumar.vulisha@xilinx.com>
+> Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> ---
+> Changes since v5:
+> 
+> - Document clocks and clock-names properties
+> - Document resets and reset-names properties
+> - Replace subnodes with an additional entry in the PHY cells
+> - Drop lane frequency PHY cell, replaced by reference clock phandle
+> - Convert bindings to YAML
+> - Reword the subject line
+> - Drop Rob's R-b as the bindings have significantly changed
+> - Drop resets and reset-names properties
+> ---
+>  .../bindings/phy/xlnx,zynqmp-psgtr.yaml       | 104 ++++++++++++++++++
+>  include/dt-bindings/phy/phy.h                 |   1 +
+>  2 files changed, 105 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/phy/xlnx,zynqmp-psgtr.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/phy/xlnx,zynqmp-psgtr.yaml b/Documentation/devicetree/bindings/phy/xlnx,zynqmp-psgtr.yaml
+> new file mode 100644
+> index 000000000000..9948e4a60e45
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/phy/xlnx,zynqmp-psgtr.yaml
+> @@ -0,0 +1,104 @@
+> +# SPDX-License-Identifier: GPL-2.0
 
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- include/net/tcp.h  |   2 -
- net/ipv4/tcp_bpf.c | 124 ++++++++++++++++++++++-----------------------
- 2 files changed, 62 insertions(+), 64 deletions(-)
+For new bindings:
 
-diff --git a/include/net/tcp.h b/include/net/tcp.h
-index 43fa07a36fa6..5fa9eacd965a 100644
---- a/include/net/tcp.h
-+++ b/include/net/tcp.h
-@@ -2207,8 +2207,6 @@ static inline void tcp_bpf_clone(const struct sock *sk, struct sock *newsk)
- #ifdef CONFIG_NET_SOCK_MSG
- int tcp_bpf_sendmsg_redir(struct sock *sk, struct sk_msg *msg, u32 bytes,
- 			  int flags);
--int tcp_bpf_recvmsg(struct sock *sk, struct msghdr *msg, size_t len,
--		    int nonblock, int flags, int *addr_len);
- int __tcp_bpf_recvmsg(struct sock *sk, struct sk_psock *psock,
- 		      struct msghdr *msg, int len, int flags);
- #endif /* CONFIG_NET_SOCK_MSG */
-diff --git a/net/ipv4/tcp_bpf.c b/net/ipv4/tcp_bpf.c
-index 37c91f25cae3..5a05327f97c1 100644
---- a/net/ipv4/tcp_bpf.c
-+++ b/net/ipv4/tcp_bpf.c
-@@ -10,25 +10,6 @@
- #include <net/inet_common.h>
- #include <net/tls.h>
- 
--static int tcp_bpf_wait_data(struct sock *sk, struct sk_psock *psock,
--			     int flags, long timeo, int *err)
--{
--	DEFINE_WAIT_FUNC(wait, woken_wake_function);
--	int ret = 0;
--
--	if (!timeo)
--		return ret;
--
--	add_wait_queue(sk_sleep(sk), &wait);
--	sk_set_bit(SOCKWQ_ASYNC_WAITDATA, sk);
--	ret = sk_wait_event(sk, &timeo,
--			    !list_empty(&psock->ingress_msg) ||
--			    !skb_queue_empty(&sk->sk_receive_queue), &wait);
--	sk_clear_bit(SOCKWQ_ASYNC_WAITDATA, sk);
--	remove_wait_queue(sk_sleep(sk), &wait);
--	return ret;
--}
--
- int __tcp_bpf_recvmsg(struct sock *sk, struct sk_psock *psock,
- 		      struct msghdr *msg, int len, int flags)
- {
-@@ -102,49 +83,6 @@ int __tcp_bpf_recvmsg(struct sock *sk, struct sk_psock *psock,
- }
- EXPORT_SYMBOL_GPL(__tcp_bpf_recvmsg);
- 
--int tcp_bpf_recvmsg(struct sock *sk, struct msghdr *msg, size_t len,
--		    int nonblock, int flags, int *addr_len)
--{
--	struct sk_psock *psock;
--	int copied, ret;
--
--	psock = sk_psock_get(sk);
--	if (unlikely(!psock))
--		return tcp_recvmsg(sk, msg, len, nonblock, flags, addr_len);
--	if (unlikely(flags & MSG_ERRQUEUE))
--		return inet_recv_error(sk, msg, len, addr_len);
--	if (!skb_queue_empty(&sk->sk_receive_queue) &&
--	    sk_psock_queue_empty(psock))
--		return tcp_recvmsg(sk, msg, len, nonblock, flags, addr_len);
--	lock_sock(sk);
--msg_bytes_ready:
--	copied = __tcp_bpf_recvmsg(sk, psock, msg, len, flags);
--	if (!copied) {
--		int data, err = 0;
--		long timeo;
--
--		timeo = sock_rcvtimeo(sk, nonblock);
--		data = tcp_bpf_wait_data(sk, psock, flags, timeo, &err);
--		if (data) {
--			if (!sk_psock_queue_empty(psock))
--				goto msg_bytes_ready;
--			release_sock(sk);
--			sk_psock_put(sk, psock);
--			return tcp_recvmsg(sk, msg, len, nonblock, flags, addr_len);
--		}
--		if (err) {
--			ret = err;
--			goto out;
--		}
--		copied = -EAGAIN;
--	}
--	ret = copied;
--out:
--	release_sock(sk);
--	sk_psock_put(sk, psock);
--	return ret;
--}
--
- static int bpf_tcp_ingress(struct sock *sk, struct sk_psock *psock,
- 			   struct sk_msg *msg, u32 apply_bytes, int flags)
- {
-@@ -299,6 +237,68 @@ static bool tcp_bpf_stream_read(const struct sock *sk)
- 	return !empty;
- }
- 
-+static int tcp_bpf_wait_data(struct sock *sk, struct sk_psock *psock,
-+			     int flags, long timeo, int *err)
-+{
-+	DEFINE_WAIT_FUNC(wait, woken_wake_function);
-+	int ret = 0;
-+
-+	if (!timeo)
-+		return ret;
-+
-+	add_wait_queue(sk_sleep(sk), &wait);
-+	sk_set_bit(SOCKWQ_ASYNC_WAITDATA, sk);
-+	ret = sk_wait_event(sk, &timeo,
-+			    !list_empty(&psock->ingress_msg) ||
-+			    !skb_queue_empty(&sk->sk_receive_queue), &wait);
-+	sk_clear_bit(SOCKWQ_ASYNC_WAITDATA, sk);
-+	remove_wait_queue(sk_sleep(sk), &wait);
-+	return ret;
-+}
-+
-+static int tcp_bpf_recvmsg(struct sock *sk, struct msghdr *msg, size_t len,
-+		    int nonblock, int flags, int *addr_len)
-+{
-+	struct sk_psock *psock;
-+	int copied, ret;
-+
-+	psock = sk_psock_get(sk);
-+	if (unlikely(!psock))
-+		return tcp_recvmsg(sk, msg, len, nonblock, flags, addr_len);
-+	if (unlikely(flags & MSG_ERRQUEUE))
-+		return inet_recv_error(sk, msg, len, addr_len);
-+	if (!skb_queue_empty(&sk->sk_receive_queue) &&
-+	    sk_psock_queue_empty(psock))
-+		return tcp_recvmsg(sk, msg, len, nonblock, flags, addr_len);
-+	lock_sock(sk);
-+msg_bytes_ready:
-+	copied = __tcp_bpf_recvmsg(sk, psock, msg, len, flags);
-+	if (!copied) {
-+		int data, err = 0;
-+		long timeo;
-+
-+		timeo = sock_rcvtimeo(sk, nonblock);
-+		data = tcp_bpf_wait_data(sk, psock, flags, timeo, &err);
-+		if (data) {
-+			if (!sk_psock_queue_empty(psock))
-+				goto msg_bytes_ready;
-+			release_sock(sk);
-+			sk_psock_put(sk, psock);
-+			return tcp_recvmsg(sk, msg, len, nonblock, flags, addr_len);
-+		}
-+		if (err) {
-+			ret = err;
-+			goto out;
-+		}
-+		copied = -EAGAIN;
-+	}
-+	ret = copied;
-+out:
-+	release_sock(sk);
-+	sk_psock_put(sk, psock);
-+	return ret;
-+}
-+
- static int tcp_bpf_send_verdict(struct sock *sk, struct sk_psock *psock,
- 				struct sk_msg *msg, int *copied, int flags)
- {
--- 
-2.17.1
+(GPL-2.0-only OR BSD-2-Clause)
 
+Though I guess Anurag needs to agree.
 
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/phy/xlnx,zynqmp-psgtr.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Xilinx ZynqMP Gigabit Transceiver PHY Device Tree Bindings
+> +
+> +maintainers:
+> +  - Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> +
+> +description: |
+> +  This binding describes the Xilinx ZynqMP Gigabit Transceiver (GTR) PHY. The
+> +  GTR provides four lanes and is used by USB, SATA, PCIE, Display port and
+> +  Ethernet SGMII controllers.
+> +
+> +properties:
+> +  "#phy-cells":
+> +    const: 4
+> +    description: |
+> +      The cells contain the following arguments.
+> +
+> +      - description: The GTR lane
+> +        minimum: 0
+> +        maximum: 3
+> +      - description: The PHY type
+> +        enum:
+> +          - PHY_TYPE_DP
+> +          - PHY_TYPE_PCIE
+> +          - PHY_TYPE_SATA
+> +          - PHY_TYPE_SGMII
+> +          - PHY_TYPE_USB
+> +      - description: The PHY instance
+> +        minimum: 0
+> +        maximum: 1 # for DP, SATA or USB
+> +        maximum: 3 # for PCIE or SGMII
+> +      - description: The reference clock number
+> +        minimum: 0
+> +        maximum: 3
+
+Humm, interesting almost json-schema. I guess it's fine as-is.
+
+I would like to figure out how to apply a schema like this to the 
+consumer nodes. We'd have to look up the phandle, get that node's 
+compatible, find the provider's schema, find #.*-cells property, and 
+extract a schema from it. Actually, doesn't sound too hard.
+
+> +
+> +  compatible:
+> +    enum:
+> +      - xlnx,zynqmp-psgtr-v1.1
+> +      - xlnx,zynqmp-psgtr
+> +
+> +  clocks:
+> +    minItems: 1
+> +    maxItems: 4
+> +    description: |
+> +      Clock for each PS_MGTREFCLK[0-3] reference clock input. Unconnected
+> +      inputs shall not have an entry.
+> +
+> +  clock-names:
+> +    minItems: 1
+> +    maxItems: 4
+> +    items:
+> +      pattern: "^ref[0-3]$"
+> +
+> +  reg:
+> +    items:
+> +      - description: SERDES registers block
+> +      - description: SIOU registers block
+> +
+> +  reg-names:
+> +    items:
+> +      - const: serdes
+> +      - const: siou
+> +
+> +required:
+> +  - "#phy-cells"
+> +  - compatible
+> +  - reg
+> +  - reg-names
+> +
+> +if:
+> +  properties:
+> +    compatible:
+> +      const: xlnx,zynqmp-psgtr
+> +
+> +then:
+> +  properties:
+> +    xlnx,tx-termination-fix:
+> +      description: |
+> +        Include this for fixing functional issue with the TX termination
+> +        resistance in GT, which can be out of spec for the XCZU9EG silicon
+> +        version.
+> +      type: boolean
+> +
+> +additionalProperties: false
+
+This won't work with 'xlnx,tx-termination-fix'. You need to move it to 
+the main properties section and then do:
+
+if:
+  properties:
+    compatible:
+      const: xlnx,zynqmp-psgtr-v1.1
+
+then:
+  properties:
+    xlnx,tx-termination-fix: false
+
+I think this would also work:
+
+  not:
+    required:
+      - xlnx,tx-termination-fix
+> +
+> +examples:
+> +  - |
+> +    phy: phy@fd400000 {
+> +      compatible = "xlnx,zynqmp-psgtr-v1.1";
+> +      reg = <0x0 0xfd400000 0x0 0x40000>,
+> +            <0x0 0xfd3d0000 0x0 0x1000>;
+> +      reg-names = "serdes", "siou";
+> +      clocks = <&refclks 3>, <&refclks 2>, <&refclks 0>;
+> +      clock-names = "ref1", "ref2", "ref3";
+> +      #phy-cells = <4>;
+> +      status = "okay";
+
+Drop status in examples.
+
+> +    };
+> +
+> +...
+> diff --git a/include/dt-bindings/phy/phy.h b/include/dt-bindings/phy/phy.h
+> index 1f3f866fae7b..f6bc83b66ae9 100644
+> --- a/include/dt-bindings/phy/phy.h
+> +++ b/include/dt-bindings/phy/phy.h
+> @@ -17,5 +17,6 @@
+>  #define PHY_TYPE_USB3		4
+>  #define PHY_TYPE_UFS		5
+>  #define PHY_TYPE_DP		6
+> +#define PHY_TYPE_SGMII		7
+>  
+>  #endif /* _DT_BINDINGS_PHY */
+> -- 
+> Regards,
+> 
+> Laurent Pinchart
+> 
