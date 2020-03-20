@@ -2,67 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 93ACB18C835
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 08:33:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1C9D818C843
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 08:35:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727044AbgCTHcm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Mar 2020 03:32:42 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:46404 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726821AbgCTHcm (ORCPT
+        id S1726969AbgCTHeH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Mar 2020 03:34:07 -0400
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:38191 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726614AbgCTHeG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Mar 2020 03:32:42 -0400
-X-UUID: dbfc21a60f714f6b933a44b1ee095878-20200320
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-        h=Content-Transfer-Encoding:Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=Nfvzh3wqdzb1MJOk3oGDzEOqxNuPIr7A1JiQgdFIu8U=;
-        b=ZpIJ7wUTg2URO6MbDDZhVMsHgiLyj4L8e1kB5b1sxQKA/5v4hpGfBcmsguwrqjBcnQOFzefQKtwpzj1vyVWcwujYTowLriA6VG7g4l2BLI9DQpvYy4gGigIRoh8JZwlySVSZKb1YHe+G+lZqZ6aBWvwbSHU1Fq9bZjWBla7ks0o=;
-X-UUID: dbfc21a60f714f6b933a44b1ee095878-20200320
-Received: from mtkcas07.mediatek.inc [(172.21.101.84)] by mailgw02.mediatek.com
-        (envelope-from <weiyi.lu@mediatek.com>)
-        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
-        with ESMTP id 1481738020; Fri, 20 Mar 2020 15:32:27 +0800
-Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
- mtkmbs07n1.mediatek.inc (172.21.101.16) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Fri, 20 Mar 2020 15:31:25 +0800
-Received: from mtksdccf07.mediatek.inc (172.21.84.99) by MTKCAS06.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Fri, 20 Mar 2020 15:29:20 +0800
-From:   Weiyi Lu <weiyi.lu@mediatek.com>
-To:     Matthias Brugger <matthias.bgg@gmail.com>,
-        Nicolas Boichat <drinkcat@chromium.org>,
-        Rob Herring <robh@kernel.org>,
-        Sascha Hauer <kernel@pengutronix.de>
-CC:     James Liao <jamesjj.liao@mediatek.com>,
-        Fan Chen <fan.chen@mediatek.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <srv_heupstream@mediatek.com>, Weiyi Lu <weiyi.lu@mediatek.com>
-Subject: [PATCH v13 11/11] arm64: dts: Add power-domains property to mfgcfg
-Date:   Fri, 20 Mar 2020 15:32:20 +0800
-Message-ID: <1584689540-5227-12-git-send-email-weiyi.lu@mediatek.com>
-X-Mailer: git-send-email 1.8.1.1.dirty
-In-Reply-To: <1584689540-5227-1-git-send-email-weiyi.lu@mediatek.com>
-References: <1584689540-5227-1-git-send-email-weiyi.lu@mediatek.com>
+        Fri, 20 Mar 2020 03:34:06 -0400
+Received: by mail-qt1-f193.google.com with SMTP id z12so4165200qtq.5
+        for <linux-kernel@vger.kernel.org>; Fri, 20 Mar 2020 00:34:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=C6YhhHeccU9Mplya57aCZ0zu3hccKv0+lu/NMMye7aU=;
+        b=IHoSYerE0NjORsoFN1pj3/hfaNeUMVskyOfgKYQRAaXViccuLJe8srypa9vCqRlZbI
+         KcMNY/1b0aCfUJr/GOrzlHiMfleCFaHP/SN3vge+eL+MabyLbP/Uzc+QBOp4+KFKMHea
+         FoTreq8I84DKRrFEjR2ZlouUVTZRWScXYaSVJldXLT4/GT0jkleX/XGZWqdjpzJ5UvBj
+         tNazr1NmE6PCKS6eTwA5Jom0ZZlGriv8AzefaF6meaUqvmY8acf0jYbDFbMauUd86cfB
+         KO0GmqS2mnkTcdq9m5iK9xYUfO/0Y9a9l5lLmvv99/1gzh1ZarrbTI4lGXz4ajRUzJr1
+         72fQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=C6YhhHeccU9Mplya57aCZ0zu3hccKv0+lu/NMMye7aU=;
+        b=bWZBALjeFMyv4B+BbH0lTYcXU34ZZ7Z06IBe7rZmw6t75VCqD+AfrLtkY03P3HqzQp
+         gw0vz0uVvziH4NYjXyLH/kk3WQjGVKNEQihA5k8yk5NLu8eLOZfCVFueEsKQ6jKuR7gy
+         G81y3Coo1uVPs6A4M1yx3+43Gfh+q5k0ypWMpVD+gzmkzUf/bznOdLCFOhqdRjGIppNr
+         DOo03ekEQyOhgXr9y7E0FPeJpy/CRPl0D6EOLHInAamrJsFEuGI9sbH6rdvo0OrBLGXN
+         Y9G26yHuRYMLsaFML+bam0KtHBKJ6k7ifmAgbhFQIfHz+qJsbCifCcZ9/8+H3NGKQVIi
+         YRCA==
+X-Gm-Message-State: ANhLgQ1xAlaDix4ZeiONW4DrGspLy+kByN+hmBWn3ZxwQysZx1FHPvJJ
+        dF2Uis2kZu7P0+odFc5Ruia0y73d6jBlaeDl1hg=
+X-Google-Smtp-Source: ADFU+vuO3ncUFcoeEbtYRW8NnoTD0tMhHs04dbeyO/eyX2ksoQMwBi7FHKSuEMV7ESdjD69XJ/X96nTNBtqWPIZoVdo=
+X-Received: by 2002:aed:3346:: with SMTP id u64mr6488332qtd.333.1584689645829;
+ Fri, 20 Mar 2020 00:34:05 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
-Content-Transfer-Encoding: base64
+References: <1584502378-12609-1-git-send-email-iamjoonsoo.kim@lge.com>
+ <1584502378-12609-2-git-send-email-iamjoonsoo.kim@lge.com>
+ <alpine.DEB.2.21.2003181419090.70237@chino.kir.corp.google.com>
+ <CAAmzW4PZr6QiO=6VcM_Nbf4079awHBLULAm+_A_-2mCxrzOO2g@mail.gmail.com> <9a7c94c0-c2b2-d533-316a-4fd42bdf55b1@suse.cz>
+In-Reply-To: <9a7c94c0-c2b2-d533-316a-4fd42bdf55b1@suse.cz>
+From:   Joonsoo Kim <js1304@gmail.com>
+Date:   Fri, 20 Mar 2020 16:33:54 +0900
+Message-ID: <CAAmzW4OC56g-37SghVVsN=4tnxMwfavkK2z31abZnBh5o9J4ag@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] mm/page_alloc: use ac->high_zoneidx for classzone_idx
+To:     Vlastimil Babka <vbabka@suse.cz>
+Cc:     David Rientjes <rientjes@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Minchan Kim <minchan@kernel.org>,
+        Mel Gorman <mgorman@techsingularity.net>, kernel-team@lge.com,
+        Ye Xiaolong <xiaolong.ye@intel.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-bWZnY2ZnIGNsb2NrIGlzIHVuZGVyIE1GR19BU1lOQyBwb3dlciBkb21haW4NCg0KU2lnbmVkLW9m
-Zi1ieTogV2VpeWkgTHUgPHdlaXlpLmx1QG1lZGlhdGVrLmNvbT4NCi0tLQ0KIGFyY2gvYXJtNjQv
-Ym9vdC9kdHMvbWVkaWF0ZWsvbXQ4MTgzLmR0c2kgfCAxICsNCiAxIGZpbGUgY2hhbmdlZCwgMSBp
-bnNlcnRpb24oKykNCg0KZGlmZiAtLWdpdCBhL2FyY2gvYXJtNjQvYm9vdC9kdHMvbWVkaWF0ZWsv
-bXQ4MTgzLmR0c2kgYi9hcmNoL2FybTY0L2Jvb3QvZHRzL21lZGlhdGVrL210ODE4My5kdHNpDQpp
-bmRleCA3MGYxOGI5Li40MzNjNjJlIDEwMDY0NA0KLS0tIGEvYXJjaC9hcm02NC9ib290L2R0cy9t
-ZWRpYXRlay9tdDgxODMuZHRzaQ0KKysrIGIvYXJjaC9hcm02NC9ib290L2R0cy9tZWRpYXRlay9t
-dDgxODMuZHRzaQ0KQEAgLTY1NCw2ICs2NTQsNyBAQA0KIAkJCWNvbXBhdGlibGUgPSAibWVkaWF0
-ZWssbXQ4MTgzLW1mZ2NmZyIsICJzeXNjb24iOw0KIAkJCXJlZyA9IDwwIDB4MTMwMDAwMDAgMCAw
-eDEwMDA+Ow0KIAkJCSNjbG9jay1jZWxscyA9IDwxPjsNCisJCQlwb3dlci1kb21haW5zID0gPCZz
-Y3BzeXMgTVQ4MTgzX1BPV0VSX0RPTUFJTl9NRkdfQVNZTkM+Ow0KIAkJfTsNCiANCiAJCW1tc3lz
-OiBzeXNjb25AMTQwMDAwMDAgew0KLS0gDQoxLjguMS4xLmRpcnR5DQo=
+2020=EB=85=84 3=EC=9B=94 19=EC=9D=BC (=EB=AA=A9) =EC=98=A4=ED=9B=84 9:21, V=
+lastimil Babka <vbabka@suse.cz>=EB=8B=98=EC=9D=B4 =EC=9E=91=EC=84=B1:
+>
+> On 3/19/20 9:57 AM, Joonsoo Kim wrote:
+> >> Curious: is this only an issue when vm.numa_zonelist_order is set to N=
+ode?
+> >
+> > Do you mean "/proc/sys/vm/numa_zonelist_order"? It looks like it's gone=
+ now.
+> >
+> > Thanks.
+>
+> Yes it's gone now, but indeed, AFAIU on older kernels with zone order ins=
+tead of
+> node order, this problem wouldn't manifest.
 
+Yes. In this case, preferred_zone of an allocation is the populated highest=
+ zone
+among all nodes so classzone_idx will the same.
+
+Thanks.
