@@ -2,65 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0CCFE18CF8C
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 14:56:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A498E18CF92
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 14:56:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726867AbgCTN4H (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Mar 2020 09:56:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58052 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726778AbgCTN4H (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Mar 2020 09:56:07 -0400
-Received: from localhost (unknown [122.167.82.180])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1727194AbgCTN4v (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Mar 2020 09:56:51 -0400
+Received: from us-smtp-delivery-74.mimecast.com ([216.205.24.74]:29453 "EHLO
+        us-smtp-delivery-74.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726809AbgCTN4v (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Mar 2020 09:56:51 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1584712610;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=aBKKCxuGzKiLvrrqPPRyma9kDDTtMDjNgcj+HYwHhTs=;
+        b=R5aulqqHutbJXeuhOGBj92E+UT18Hx/7fzRYMpvh2uIZM/euas2YVxhNUiTDGFnZR3ETQY
+        AFy0cSw37xYj10ikdXMZo271iFysm11/XPanSTUQK6pJ9L97a2dc4CS3FsipDycIDWMokY
+        04ZfUdW+FYBEAqVg+by58/6C92nKy+Y=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-259-uCxcpSM7P_e66dxWVrksMQ-1; Fri, 20 Mar 2020 09:56:48 -0400
+X-MC-Unique: uCxcpSM7P_e66dxWVrksMQ-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D559720709;
-        Fri, 20 Mar 2020 13:56:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584712566;
-        bh=bQLfnNJ21tARCpyrrG8kAbYnLEtL50j8Wc8tG/DdL90=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=NavK74h2sYbbhdArU4x0jD1mqxNRojoZeiD2Qy9BRwIEIPCfkuC+cttylna7mGG05
-         3T+ScfauWK8yJSIU57Kgg7uh7YuKBXjGJzKIjUsdwR+KV3jL0gVuXPAk+tXokSx3AM
-         NAtOipTPMM2f+0SYs0ggJCObPHK0GAaWtS0N/pmY=
-Date:   Fri, 20 Mar 2020 19:26:02 +0530
-From:   Vinod Koul <vkoul@kernel.org>
-To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Cc:     broonie@kernel.org, pierre-louis.bossart@linux.intel.com,
-        linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org
-Subject: Re: [PATCH 1/2] soundwire: stream: Add read_only_wordlength flag to
- port properties
-Message-ID: <20200320135602.GF4885@vkoul-mobl>
-References: <20200311113545.23773-1-srinivas.kandagatla@linaro.org>
- <20200311113545.23773-2-srinivas.kandagatla@linaro.org>
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 0FD92477;
+        Fri, 20 Mar 2020 13:56:46 +0000 (UTC)
+Received: from llong.remote.csb (ovpn-118-190.rdu2.redhat.com [10.10.118.190])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 0641C62937;
+        Fri, 20 Mar 2020 13:56:42 +0000 (UTC)
+Subject: Re: [PATCH v5 1/2] KEYS: Don't write out to userspace while holding
+ key semaphore
+To:     David Howells <dhowells@redhat.com>
+Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>, keyrings@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-integrity@vger.kernel.org, netdev@vger.kernel.org,
+        linux-afs@lists.infradead.org, Sumit Garg <sumit.garg@linaro.org>,
+        Jerry Snitselaar <jsnitsel@redhat.com>,
+        Roberto Sassu <roberto.sassu@huawei.com>,
+        Eric Biggers <ebiggers@google.com>,
+        Chris von Recklinghausen <crecklin@redhat.com>
+References: <20200318221457.1330-2-longman@redhat.com>
+ <20200318221457.1330-1-longman@redhat.com>
+ <3251035.1584692419@warthog.procyon.org.uk>
+From:   Waiman Long <longman@redhat.com>
+Organization: Red Hat
+Message-ID: <69678e1c-dfbe-7484-85ad-601ebe23c90d@redhat.com>
+Date:   Fri, 20 Mar 2020 09:56:42 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200311113545.23773-2-srinivas.kandagatla@linaro.org>
+In-Reply-To: <3251035.1584692419@warthog.procyon.org.uk>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11-03-20, 11:35, Srinivas Kandagatla wrote:
-> According to SoundWire Specification Version 1.2.
-> "A Data Port number X (in the range 0-14) which supports only one
-> value of WordLength may implement the WordLength field in the
-> DPX_BlockCtrl1 Register as Read-Only, returning the fixed value of
-> WordLength in response to reads."
-> 
-> As WSA881x interfaces in PDM mode making the only field "WordLength"
-> in DPX_BlockCtrl1" fixed and read-only. Behaviour of writing to this
-> register on WSA881x soundwire slave with Qualcomm Soundwire Controller
-> is throwing up an error. Not sure how other controllers deal with
-> writing to readonly registers, but this patch provides a way to avoid
-> writes to DPN_BlockCtrl1 register by providing a read_only_wordlength
-> flag in struct sdw_dpn_prop
+On 3/20/20 4:20 AM, David Howells wrote:
+> Waiman Long <longman@redhat.com> wrote:
+>
+>> +		if ((ret > 0) && (ret <= buflen)) {
+> That's a bit excessive on the bracketage, btw, but don't worry about it unless
+> you respin the patches.
 
-Applied, thanks
+Got it.
 
-I will send a tag, so that mark can apply the second patch for asoc
+Thanks,
+Longman
 
-Thanks
--- 
-~Vinod
