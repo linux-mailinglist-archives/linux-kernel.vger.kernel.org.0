@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E9A8018CE2B
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 13:58:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9B7AD18CE4C
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 13:59:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727355AbgCTM6W (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Mar 2020 08:58:22 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:35614 "EHLO
+        id S1727538AbgCTM7P (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Mar 2020 08:59:15 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:35619 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727114AbgCTM6L (ORCPT
+        with ESMTP id S1727133AbgCTM6L (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 20 Mar 2020 08:58:11 -0400
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1jFHDv-0003iS-Hr; Fri, 20 Mar 2020 13:58:03 +0100
+        id 1jFHDz-0003ie-Jp; Fri, 20 Mar 2020 13:58:07 +0100
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 0CD821C22BE;
-        Fri, 20 Mar 2020 13:58:03 +0100 (CET)
-Date:   Fri, 20 Mar 2020 12:58:02 -0000
-From:   "tip-bot2 for Tao Zhou" <tip-bot2@linutronix.de>
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 258F51C22BF;
+        Fri, 20 Mar 2020 13:58:04 +0100 (CET)
+Date:   Fri, 20 Mar 2020 12:58:03 -0000
+From:   "tip-bot2 for Vincent Guittot" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: sched/core] sched/fair: Fix condition of avg_load calculation
-Cc:     Tao Zhou <ouwen210@hotmail.com>,
+Subject: [tip: sched/core] sched/fair: Improve spreading of utilization
+Cc:     Vincent Guittot <vincent.guittot@linaro.org>,
         "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Mel Gorman <mgorman@suse.de>, x86 <x86@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
+        x86 <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>
+In-Reply-To: <20200312165429.990-1-vincent.guittot@linaro.org>
+References: <20200312165429.990-1-vincent.guittot@linaro.org>
 MIME-Version: 1.0
-Message-ID: <158470908271.28353.7933643223235675222.tip-bot2@tip-bot2>
+Message-ID: <158470908386.28353.10623151233945522135.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -47,48 +47,66 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the sched/core branch of tip:
 
-Commit-ID:     6c8116c914b65be5e4d6f66d69c8142eb0648c22
-Gitweb:        https://git.kernel.org/tip/6c8116c914b65be5e4d6f66d69c8142eb0648c22
-Author:        Tao Zhou <ouwen210@hotmail.com>
-AuthorDate:    Thu, 19 Mar 2020 11:39:20 +08:00
+Commit-ID:     c32b4308295aaaaedd5beae56cb42e205ae63e58
+Gitweb:        https://git.kernel.org/tip/c32b4308295aaaaedd5beae56cb42e205ae63e58
+Author:        Vincent Guittot <vincent.guittot@linaro.org>
+AuthorDate:    Thu, 12 Mar 2020 17:54:29 +01:00
 Committer:     Peter Zijlstra <peterz@infradead.org>
 CommitterDate: Fri, 20 Mar 2020 13:06:20 +01:00
 
-sched/fair: Fix condition of avg_load calculation
+sched/fair: Improve spreading of utilization
 
-In update_sg_wakeup_stats(), the comment says:
+During load_balancing, a group with spare capacity will try to pull some
+utilizations from an overloaded group. In such case, the load balance
+looks for the runqueue with the highest utilization. Nevertheless, it
+should also ensure that there are some pending tasks to pull otherwise
+the load balance will fail to pull a task and the spread of the load will
+be delayed.
 
-Computing avg_load makes sense only when group is fully
-busy or overloaded.
+This situation is quite transient but it's possible to highlight the
+effect with a short run of sysbench test so the time to spread task impacts
+the global result significantly.
 
-But, the code below this comment does not check like this.
+Below are the average results for 15 iterations on an arm64 octo core:
+sysbench --test=cpu --num-threads=8  --max-requests=1000 run
 
->From reading the code about avg_load in other functions, I
-confirm that avg_load should be calculated in fully busy or
-overloaded case. The comment is correct and the checking
-condition is wrong. So, change that condition.
+                           tip/sched/core  +patchset
+total time:                172ms           158ms
+per-request statistics:
+         avg:                1.337ms         1.244ms
+         max:               21.191ms        10.753ms
 
-Fixes: 57abff067a08 ("sched/fair: Rework find_idlest_group()")
-Signed-off-by: Tao Zhou <ouwen210@hotmail.com>
+The average max doesn't fully reflect the wide spread of the value which
+ranges from 1.350ms to more than 41ms for the tip/sched/core and from
+1.350ms to 21ms with the patch.
+
+Other factors like waiting for an idle load balance or cache hotness
+can delay the spreading of the tasks which explains why we can still
+have up to 21ms with the patch.
+
+Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Reviewed-by: Vincent Guittot <vincent.guittot@linaro.org>
-Acked-by: Mel Gorman <mgorman@suse.de>
-Link: https://lkml.kernel.org/r/Message-ID:
+Link: https://lkml.kernel.org/r/20200312165429.990-1-vincent.guittot@linaro.org
 ---
- kernel/sched/fair.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ kernel/sched/fair.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
 diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 783356f..d7fb20a 100644
+index c7aaae2..783356f 100644
 --- a/kernel/sched/fair.c
 +++ b/kernel/sched/fair.c
-@@ -8631,7 +8631,8 @@ static inline void update_sg_wakeup_stats(struct sched_domain *sd,
- 	 * Computing avg_load makes sense only when group is fully busy or
- 	 * overloaded
- 	 */
--	if (sgs->group_type < group_fully_busy)
-+	if (sgs->group_type == group_fully_busy ||
-+		sgs->group_type == group_overloaded)
- 		sgs->avg_load = (sgs->group_load * SCHED_CAPACITY_SCALE) /
- 				sgs->group_capacity;
- }
+@@ -9313,6 +9313,14 @@ static struct rq *find_busiest_queue(struct lb_env *env,
+ 		case migrate_util:
+ 			util = cpu_util(cpu_of(rq));
+ 
++			/*
++			 * Don't try to pull utilization from a CPU with one
++			 * running task. Whatever its utilization, we will fail
++			 * detach the task.
++			 */
++			if (nr_running <= 1)
++				continue;
++
+ 			if (busiest_util < util) {
+ 				busiest_util = util;
+ 				busiest = rq;
