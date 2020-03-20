@@ -2,97 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0F03118DBB5
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Mar 2020 00:21:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ECDC818DBD1
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Mar 2020 00:24:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727152AbgCTXVK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Mar 2020 19:21:10 -0400
-Received: from mail-pj1-f67.google.com ([209.85.216.67]:40823 "EHLO
-        mail-pj1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726867AbgCTXVJ (ORCPT
+        id S1727093AbgCTXYF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Mar 2020 19:24:05 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:37647 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726738AbgCTXYF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Mar 2020 19:21:09 -0400
-Received: by mail-pj1-f67.google.com with SMTP id bo3so3133487pjb.5
-        for <linux-kernel@vger.kernel.org>; Fri, 20 Mar 2020 16:21:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:content-transfer-encoding:in-reply-to:references
-         :subject:from:cc:to:date:message-id:user-agent;
-        bh=clkZQy76N5lqDvPEfomSFrpTluUVK0zQr3gsx7h7nC8=;
-        b=Yu/8u83xc3BAK8swCPa1v47AYLOMOLAmKQCRaueAmpwbsZvhLe7j+g4VjaRWcl5977
-         8fC/o3X/U6nxKRhiSjURBtP56L1M68KMGL+Rs1ZlLDmm5u4cAhnafvmSejO0Pqby2rfp
-         hWfTochJhDhieWfuL68RKl+pRruYOx+rwqnvE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:content-transfer-encoding
-         :in-reply-to:references:subject:from:cc:to:date:message-id
-         :user-agent;
-        bh=clkZQy76N5lqDvPEfomSFrpTluUVK0zQr3gsx7h7nC8=;
-        b=b4hojz+O6GY4hOZEhuNKrGw8RexTI8fvlQhNUZK+nxbvTb1ZnWJDNs7MiIwLe1v39J
-         d2kSVPEC/L3MyAqM4nTCFDQ+QxvZ+mlTRnAegBWoldJleBZjdNrqV5kVn4b6fg8eaPbg
-         dLC/q/KjjCpzwamJDi43wdHxoUKRnCI508oyKZQwLzpRBuc5yfJqeFilM1fyjyUEKh4m
-         6StQYfMIj4XwZJXkz55XY6rkAogGgz8fOTZ70sG1AkzogeOBahAnodsiQ/J+Sr5B/Hpt
-         7LYcmY0Rvnx7Y4TZBGybgrjrPtCzFYHOJ/gbS8+87t5NGoaRbjQOSp88j13I7c9V8L21
-         vZ8w==
-X-Gm-Message-State: ANhLgQ1TYIONGqfrWPwLeuYh6baEsvGIKOfaNs7i9VdLDpLhoXTPAIx1
-        EiwJrL8+t7ZRi+MyjJ/mRyeD3g==
-X-Google-Smtp-Source: ADFU+vv6GHvXzRwWkdEiLmO10nDPyub2Yebvzznb5KqbElkhWXj+ptG2lYIyNxGql1P+Jw5Jn/kvcw==
-X-Received: by 2002:a17:902:8e8b:: with SMTP id bg11mr11012475plb.138.1584746467739;
-        Fri, 20 Mar 2020 16:21:07 -0700 (PDT)
-Received: from chromium.org ([2620:15c:202:1:fa53:7765:582b:82b9])
-        by smtp.gmail.com with ESMTPSA id w4sm3427639pfc.57.2020.03.20.16.21.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 20 Mar 2020 16:21:07 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
+        Fri, 20 Mar 2020 19:24:05 -0400
+Received: from p5de0bf0b.dip0.t-ipconnect.de ([93.224.191.11] helo=nanos.tec.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1jFQzX-0005ew-Fg; Sat, 21 Mar 2020 00:23:51 +0100
+Received: by nanos.tec.linutronix.de (Postfix, from userid 1000)
+        id D71B1FFC77; Sat, 21 Mar 2020 00:23:50 +0100 (CET)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Andy Lutomirski <luto@kernel.org>
+Cc:     Andy Lutomirski <luto@kernel.org>,
+        Kyung Min Park <kyung.min.park@intel.com>,
+        X86 ML <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Andi Kleen <ak@linux.intel.com>,
+        Tony Luck <tony.luck@intel.com>,
+        "Raj\, Ashok" <ashok.raj@intel.com>,
+        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
+        Fenghua Yu <fenghua.yu@intel.com>
+Subject: Re: [PATCH v2 2/2] x86/delay: Introduce TPAUSE delay
+In-Reply-To: <CALCETrUxOd6P-Yh78qjmOYnh9jY0ggeb4vB=coVjMjthXMTREg@mail.gmail.com>
+References: <1584677604-32707-1-git-send-email-kyung.min.park@intel.com> <1584677604-32707-3-git-send-email-kyung.min.park@intel.com> <CALCETrWJ88CaGmij_NNysRjUQ6LPwwbPnMy1YPdKnM-cFDueSw@mail.gmail.com> <877dzf4a8v.fsf@nanos.tec.linutronix.de> <CALCETrUxOd6P-Yh78qjmOYnh9jY0ggeb4vB=coVjMjthXMTREg@mail.gmail.com>
+Date:   Sat, 21 Mar 2020 00:23:50 +0100
+Message-ID: <87zhcaobjt.fsf@nanos.tec.linutronix.de>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20200320145351.32292-19-vincenzo.frascino@arm.com>
-References: <20200320145351.32292-1-vincenzo.frascino@arm.com> <20200320145351.32292-19-vincenzo.frascino@arm.com>
-Subject: Re: [PATCH v5 18/26] arm64: vdso32: Code clean up
-From:   Stephen Boyd <swboyd@chromium.org>
-Cc:     Vincenzo Frascino <vincenzo.frascino@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-        Russell King <linux@armlinux.org.uk>,
-        Paul Burton <paul.burton@mips.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andy Lutomirski <luto@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Mark Salyzyn <salyzyn@android.com>,
-        Kees Cook <keescook@chromium.org>,
-        Peter Collingbourne <pcc@google.com>,
-        Dmitry Safonov <0x7f454c46@gmail.com>,
-        Andrei Vagin <avagin@openvz.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Marc Zyngier <maz@kernel.org>,
-        Mark Rutland <Mark.Rutland@arm.com>
-To:     Vincenzo Frascino <vincenzo.frascino@arm.com>,
-        clang-built-linux@googlegroups.com, linux-arch@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-mips@vger.kernel.org, x86@kernel.org
-Date:   Fri, 20 Mar 2020 16:21:06 -0700
-Message-ID: <158474646622.125146.3263940499372231797@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.9
+Content-Type: text/plain
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Vincenzo Frascino (2020-03-20 07:53:43)
-> The compat vdso library had some checks that are not anymore relevant.
+Andy Lutomirski <luto@kernel.org> writes:
 
-Can we get the information on why they aren't relevant anymore in the
-commit text? I'd rather not find this commit three years from now and
-have no idea why it was applied.
+> On Fri, Mar 20, 2020 at 3:00 AM Thomas Gleixner <tglx@linutronix.de> wrote:
+>>
+>> Andy Lutomirski <luto@kernel.org> writes:
+>> > On Thu, Mar 19, 2020 at 9:13 PM Kyung Min Park <kyung.min.park@intel.com> wrote:
+>> >>  void use_tsc_delay(void)
+>> >>  {
+>> >> -       if (delay_fn == delay_loop)
+>> >> +       if (static_cpu_has(X86_FEATURE_WAITPKG)) {
+>> >> +               delay_halt_fn = delay_halt_tpause;
+>> >> +               delay_fn = delay_halt;
+>> >> +       } else if (delay_fn == delay_loop) {
+>> >>                 delay_fn = delay_tsc;
+>> >> +       }
+>> >>  }
+>> >
+>> > This is an odd way to dispatch: you're using static_cpu_has(), but
+>> > you're using it once to populate a function pointer.  Why not just put
+>> > the static_cpu_has() directly into delay_halt() and open-code the
+>> > three variants?
+>>
+>> Two: mwaitx and tpause.
+>
+> I was imagining there would also be a variant for systems with neither feature.
 
->=20
-> Remove the unused code from the compat vDSO library.
->=20
-> Note: This patch is preparatory for a future one that will introduce
-> asm/vdso/processor.h on arm64.
->=20
-> Cc: Catalin Marinas <catalin.marinas@arm.com>
-> Cc: Will Deacon <will@kernel.org>
-> Signed-off-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
-> Link: https://lore.kernel.org/lkml/20200317122220.30393-19-vincenzo.frasc=
-ino@arm.com
+Oh I see, you want to get rid of both function pointers. That's tricky.
+
+The boot time function is delay_loop() which is using the magic (1 << 12)
+boot time value until calibration in one way or the other happens and
+something calls use_tsc_delay() or use_mwaitx_delay(). Yes, that's all
+horrible but X86_FEATURE_TSC is unusable for this.
+
+Let me think about it.
+
+Thanks,
+
+        tglx
+
+
+
+
+
+
+
+
