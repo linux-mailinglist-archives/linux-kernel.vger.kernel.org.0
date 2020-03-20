@@ -2,92 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 088E818CEA5
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 14:17:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2B89E18CE62
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 14:02:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727573AbgCTNRl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Mar 2020 09:17:41 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:53926 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727421AbgCTNRk (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Mar 2020 09:17:40 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 02KDCx70053685;
-        Fri, 20 Mar 2020 13:17:31 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2020-01-29;
- bh=Ca0hhfBrNJRfEHmVEAesPO0pLfWlBN93+jbMeyIxlq4=;
- b=qaKSz/Uq3skWoC5I5YMTYvFjQWSSoSsGQvPsBrH+Cikd5o4hPZdXqrjFOAO/TfVd3lY/
- sRRsboP9MvJ+bY2a6jztntwMgIe0qmNyr3gSoMRr7ZWY3D/V/bLMgdvgoABDvbqT4t0H
- xE2Y90EgZFILlctEwHm31bxzIwMwAHJGUSoJA585u1hY6K9NBMvFu8iiNgYoj2JrWibO
- +XPl7V2jABqEsCNz8wCHCN5+wFIMCH5ITd33IrfVxwsKaLFZ0RF8/reTqKRsPPsQjQ/u
- R6cuOxr0sVFveBq2BTrpxC1NUgpfYTvX+CkAHixLFEmRD00+7XKMslFuZ9LTmnKxMQGq iA== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by aserp2120.oracle.com with ESMTP id 2yrq7mdh11-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 20 Mar 2020 13:17:31 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 02KDCdfQ057200;
-        Fri, 20 Mar 2020 13:17:30 GMT
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by userp3020.oracle.com with ESMTP id 2ys906s8xn-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 20 Mar 2020 13:17:30 +0000
-Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 02KDHSh5006058;
-        Fri, 20 Mar 2020 13:17:29 GMT
-Received: from [10.39.249.71] (/10.39.249.71)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Fri, 20 Mar 2020 06:17:28 -0700
-Subject: Re: [PATCH v2] xen-pciback: fix INTERRUPT_TYPE_* defines
-To:     =?UTF-8?Q?Marek_Marczykowski-G=c3=b3recki?= 
-        <marmarek@invisiblethingslab.com>, xen-devel@lists.xenproject.org
-Cc:     Juergen Gross <jgross@suse.com>,
-        Stefano Stabellini <sstabellini@kernel.org>,
-        Simon Gaiser <simon@invisiblethingslab.com>,
-        =?UTF-8?Q?Roger_Pau_Monn=c3=a9?= <roger.pau@citrix.com>,
-        open list <linux-kernel@vger.kernel.org>
-References: <20200320030929.24735-1-marmarek@invisiblethingslab.com>
-From:   Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Message-ID: <46cf0d25-11bc-e580-fe30-9898551c28e2@oracle.com>
-Date:   Thu, 19 Mar 2020 21:21:38 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        id S1727117AbgCTNCj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Mar 2020 09:02:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37590 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726814AbgCTNCj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Mar 2020 09:02:39 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id F09902070A;
+        Fri, 20 Mar 2020 13:02:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1584709358;
+        bh=796vTxH7O1EdHdkETYnGOjJMck+cJ1ILqR0TYnSw244=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=TQLCaZ8Grm5oL+Ddf7jvqGxg18ywLixVgW8bskWtxbEnd8ca+i06amSC+rwNzCJP7
+         a/hBV1dVtRs1I1mCG5P2fmN0lELjcmC8tNMQr5CzwideWed2I5gWGfzApCL1pQ0kYW
+         WVVJ8eRrACpUXKXlljFr0001RQEr8iImupsdMNkc=
+Date:   Fri, 20 Mar 2020 14:02:05 +0100
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Georgi Djakov <georgi.djakov@linaro.org>
+Cc:     linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [GIT PULL] interconnect changes for 5.7
+Message-ID: <20200320130205.GA510387@kroah.com>
+References: <20200320111019.10970-1-georgi.djakov@linaro.org>
 MIME-Version: 1.0
-In-Reply-To: <20200320030929.24735-1-marmarek@invisiblethingslab.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9565 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 mlxlogscore=802 mlxscore=0
- adultscore=0 bulkscore=0 malwarescore=0 spamscore=0 suspectscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2003020000
- definitions=main-2003200057
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9565 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 lowpriorityscore=0 suspectscore=0
- adultscore=0 bulkscore=0 mlxlogscore=858 priorityscore=1501 clxscore=1015
- malwarescore=0 mlxscore=0 phishscore=0 impostorscore=0 spamscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2003020000
- definitions=main-2003200057
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200320111019.10970-1-georgi.djakov@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, Mar 20, 2020 at 01:10:19PM +0200, Georgi Djakov wrote:
+> Hi Greg,
+> 
+> Here is a pull request with interconnect changes for the 5.7-rc1 merge
+> window. It contains just driver updates, and these are:
+> 
+> - Refactoring of the SDM845 driver, which is now improved to better
+> represent the hardware.
+> - New driver for SC7180 platforms.
+> - New driver for OSM L3 interconnect hardware found on SDM845/SC7180
+> platforms.
+> 
+> All of these have been in linux-next for more than two weeks without any
+> reported issues. Please pull into char-misc-next.
+> 
+> Thanks,
+> Georgi
+> 
+> The following changes since commit 11a48a5a18c63fd7621bb050228cebf13566e4d8:
+> 
+>   Linux 5.6-rc2 (2020-02-16 13:16:59 -0800)
+> 
+> are available in the Git repository at:
+> 
+>   https://git.linaro.org/people/georgi.djakov/linux.git tags/icc-5.7-rc1
 
-On 3/19/20 11:09 PM, Marek Marczykowski-Górecki wrote:
-> xen_pcibk_get_interrupt_type() assumes INTERRUPT_TYPE_NONE being 0
-> (initialize ret to 0 and return as INTERRUPT_TYPE_NONE).
-> Fix the definition to make INTERRUPT_TYPE_NONE really 0, and also shift
-> other values to not leave holes.
-> But also, do not assume INTERRUPT_TYPE_NONE being 0 anymore to avoid
-> similar confusions in the future.
->
-> Fixes: 476878e4b2be ("xen-pciback: optionally allow interrupt enable flag writes")
-> Signed-off-by: Marek Marczykowski-Górecki <marmarek@invisiblethingslab.com>
+Pulled and pushed out,t hanks.
 
-
-Reviewed-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-
+greg k-h
