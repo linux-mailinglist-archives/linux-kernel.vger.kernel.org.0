@@ -2,70 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BCC6118C673
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 05:26:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 727DF18C67E
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 05:30:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726907AbgCTE0z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Mar 2020 00:26:55 -0400
-Received: from mga01.intel.com ([192.55.52.88]:30843 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727183AbgCTE0x (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Mar 2020 00:26:53 -0400
-IronPort-SDR: hBUn0LIaPNGgGZm5mYZ9CE4MZnxNjas84q1UxdKTts7QXtgW7/XQf71LWf78FHWafQEtgGjLpe
- W1WbalNWxRIQ==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Mar 2020 21:26:53 -0700
-IronPort-SDR: ROMAYb8mwSZs5ivFVqqqI62gnz9hmAz1nkziNCYdT/hOcN7a+hRopUPIt4fMLBi/jx01vg1nI6
- sTCqsMIsm3cw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.72,283,1580803200"; 
-   d="scan'208";a="234391255"
-Received: from jacob-builder.jf.intel.com ([10.7.199.155])
-  by orsmga007.jf.intel.com with ESMTP; 19 Mar 2020 21:26:53 -0700
-From:   Jacob Pan <jacob.jun.pan@linux.intel.com>
-To:     LKML <linux-kernel@vger.kernel.org>,
-        iommu@lists.linux-foundation.org,
-        "Lu Baolu" <baolu.lu@linux.intel.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        David Woodhouse <dwmw2@infradead.org>
-Cc:     Raj Ashok <ashok.raj@intel.com>, "Yi Liu" <yi.l.liu@intel.com>,
-        Jacob Pan <jacob.jun.pan@linux.intel.com>
-Subject: [PATCH 3/3] iommu/vt-d: Add build dependency on IOASID
-Date:   Thu, 19 Mar 2020 21:32:31 -0700
-Message-Id: <1584678751-43169-4-git-send-email-jacob.jun.pan@linux.intel.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1584678751-43169-1-git-send-email-jacob.jun.pan@linux.intel.com>
-References: <1584678751-43169-1-git-send-email-jacob.jun.pan@linux.intel.com>
+        id S1727190AbgCTEa3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Mar 2020 00:30:29 -0400
+Received: from mail-pj1-f45.google.com ([209.85.216.45]:37585 "EHLO
+        mail-pj1-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726654AbgCTEa3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Mar 2020 00:30:29 -0400
+Received: by mail-pj1-f45.google.com with SMTP id ca13so1934726pjb.2
+        for <linux-kernel@vger.kernel.org>; Thu, 19 Mar 2020 21:30:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=FK0Qs/wfLDgNg2rYS3eqjZVtMnHsMPlZqWjF8TdcBYo=;
+        b=VoT6snoGQ3wP3BQLrQfRUAilBySe7ZAr60T3PsA8dy1TlDvW6MazZXNga49xu1Vpb4
+         NzZfimCvgPSZnwr7F8bCpxyVOikoJcCQvfUEhngwAx10xqHPrnSeEl5GSZkrinpd2RNJ
+         rjtZtxQrdljLaCfjtJigd93CkgG2usYULjRs8GPATMF/HiC/uxcWfuym56k4DFSp3+HM
+         0L8EgjULc8IC8vIleoP0/dbYGdDv3F8tA921LoLjyhvwg7oLbaUHE0jggB8v6oDL+Q2c
+         eQb0pFNuwsHinMK+LAWuoyGIb3jY0T2B6Z+ADTfifLfuQFmGu4uJQI8QamvzM7vDACNT
+         cVNw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=FK0Qs/wfLDgNg2rYS3eqjZVtMnHsMPlZqWjF8TdcBYo=;
+        b=YTl/UaaLDIxNG+DdIrtHeikiHJQckc2GLv0FThkOJ4d4hoNB3G4BILY84fWrBkOS2I
+         5Vh/gemRZl8rSRpR07UFhRL6OCUs5V/E4boCd5kPYyGoKJikabgjuBPOGsLZoBpvWcU7
+         eLSQSrA5azUercoB5xBvPaGKjs2/sAMLt+aPyhUrjBkMpjcOTY/vaUf4O1UeH3yQycFw
+         cSGqpz+hE9sxY7wVL9YyEdXIS3qEP7/rLIlOuluWVjZi5Lmv6yNdd7g9+FeVqP7CYiAt
+         kYMPA5cgav/Ht0PeyTLMPjJK2eHwONbm766r8wMkEWg7y6/w2o2v0O4YLWJvtsElL6jC
+         IkFw==
+X-Gm-Message-State: ANhLgQ3zm08zm2JpZd1oM2Ol2G3yNjQn1F2lqUurY4awRIU3XXafGe9G
+        Eak5RiNpWu36Slfg28UFq73ltQ==
+X-Google-Smtp-Source: ADFU+vvmD0faz/IDlUA+ugLFOG/vv1GJgyi24Xl5N3XX049X07fwpOu7GCTbxqvBdgenTWZz5ADTuA==
+X-Received: by 2002:a17:902:8f94:: with SMTP id z20mr6977222plo.62.1584678627808;
+        Thu, 19 Mar 2020 21:30:27 -0700 (PDT)
+Received: from localhost ([122.171.118.46])
+        by smtp.gmail.com with ESMTPSA id h11sm3792633pfq.56.2020.03.19.21.30.26
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 19 Mar 2020 21:30:27 -0700 (PDT)
+Date:   Fri, 20 Mar 2020 10:00:25 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Ilia Lin <ilia.lin@gmail.com>
+Cc:     Ansuel Smith <ansuelsmth@gmail.com>,
+        Ilia Lin <ilia.lin@kernel.org>,
+        Sricharan R <sricharan@codeaurora.org>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        "open list:ARM/QUALCOMM SUPPORT" <linux-arm-msm@vger.kernel.org>,
+        "open list:QUALCOMM CPUFREQ DRIVER MSM8996/APQ8096" 
+        <linux-pm@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2] cpufreq: qcom: Add support for krait based socs
+Message-ID: <20200320043025.xju43zbzmqda5wes@vireshk-i7>
+References: <ilia.lin@kernel.org>
+ <20200313175213.8654-1-ansuelsmth@gmail.com>
+ <CA+5LGR3WJkwFGPWNM2XAqdhaNZ2yXreB8Ni36BKswx0G=i_5fg@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CA+5LGR3WJkwFGPWNM2XAqdhaNZ2yXreB8Ni36BKswx0G=i_5fg@mail.gmail.com>
+User-Agent: NeoMutt/20180716-391-311a52
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-IOASID code is needed by VT-d scalable mode for PASID allocation.
-Add explicit dependency such that IOASID is built-in whenever Intel
-IOMMU is enabled.
-Otherwise, aux domain code will fail when IOMMU is built-in and IOASID
-is compiled as a module.
+On 13-03-20, 21:34, Ilia Lin wrote:
+> Reviewed-by: Ilia Lin <ilia.lin@kernel.org>
 
-Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
----
- drivers/iommu/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+Applied. Thanks.
 
-diff --git a/drivers/iommu/Kconfig b/drivers/iommu/Kconfig
-index d2fade984999..25149544d57c 100644
---- a/drivers/iommu/Kconfig
-+++ b/drivers/iommu/Kconfig
-@@ -188,6 +188,7 @@ config INTEL_IOMMU
- 	select NEED_DMA_MAP_STATE
- 	select DMAR_TABLE
- 	select SWIOTLB
-+	select IOASID
- 	help
- 	  DMA remapping (DMAR) devices support enables independent address
- 	  translations for Direct Memory Access (DMA) from devices.
 -- 
-2.7.4
-
+viresh
