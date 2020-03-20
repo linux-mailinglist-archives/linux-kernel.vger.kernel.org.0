@@ -2,160 +2,183 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B919518D3BC
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 17:11:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2AE8C18D3E0
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 17:14:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727582AbgCTQLU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Mar 2020 12:11:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47156 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727016AbgCTQLT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Mar 2020 12:11:19 -0400
-Received: from paulmck-ThinkPad-P72.home (50-39-105-78.bvtn.or.frontiernet.net [50.39.105.78])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DCE8320739;
-        Fri, 20 Mar 2020 16:11:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584720678;
-        bh=pga0nnKgW8xg9uhns1BYEZ40Eed+kmdH4uF0UjG48lw=;
-        h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-        b=a3WXVveqaO6ZDJtkp9YMyrQbUe38YQ0w7yVS4S2kZWd8O3UYdfEWDiNF97NFqvRBR
-         Dmz7YwV2IDZ8jw+UhW0qvzW71sGzuXs9EPksJgBVr/4Y++O1RSSguuycN62LPymX1S
-         DR+m6ovlusTmMjzxq2s+ay1zIxZT2LoszNVq4qQs=
-Received: by paulmck-ThinkPad-P72.home (Postfix, from userid 1000)
-        id AFDF835226B4; Fri, 20 Mar 2020 09:11:18 -0700 (PDT)
-Date:   Fri, 20 Mar 2020 09:11:18 -0700
-From:   "Paul E. McKenney" <paulmck@kernel.org>
-To:     Hillf Danton <hdanton@sina.com>
-Cc:     rcu@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-team@fb.com, mingo@kernel.org, jiangshanlai@gmail.com,
-        dipankar@in.ibm.com, akpm@linux-foundation.org,
-        mathieu.desnoyers@efficios.com, josh@joshtriplett.org,
-        tglx@linutronix.de, peterz@infradead.org, rostedt@goodmis.org,
-        dhowells@redhat.com, edumazet@google.com, fweisbec@gmail.com,
-        oleg@redhat.com, joel@joelfernandes.org
-Subject: Re: [PATCH RFC v2 tip/core/rcu 03/22] rcutorture: Add flag to
- produce non-busy-wait task stalls
-Message-ID: <20200320161118.GO3199@paulmck-ThinkPad-P72>
-Reply-To: paulmck@kernel.org
-References: <20200319001024.GA28798@paulmck-ThinkPad-P72>
- <20200319104614.11444-1-hdanton@sina.com>
- <20200319133947.12172-1-hdanton@sina.com>
- <20200320040329.9840-1-hdanton@sina.com>
+        id S1727455AbgCTQNs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Mar 2020 12:13:48 -0400
+Received: from mout.kundenserver.de ([212.227.126.187]:55719 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727148AbgCTQNs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Mar 2020 12:13:48 -0400
+Received: from mail.cetitecgmbh.com ([87.190.42.90]) by
+ mrelayeu.kundenserver.de (mreue009 [212.227.15.167]) with ESMTPSA (Nemesis)
+ id 1MsI0I-1jZSQS0n4E-00tnlB for <linux-kernel@vger.kernel.org>; Fri, 20 Mar
+ 2020 17:13:46 +0100
+Received: from pflvmailgateway.corp.cetitec.com (unknown [127.0.0.1])
+        by mail.cetitecgmbh.com (Postfix) with ESMTP id EEFE565034C
+        for <linux-kernel@vger.kernel.org>; Fri, 20 Mar 2020 16:13:45 +0000 (UTC)
+X-Virus-Scanned: amavisd-new at cetitec.com
+Received: from mail.cetitecgmbh.com ([127.0.0.1])
+        by pflvmailgateway.corp.cetitec.com (pflvmailgateway.corp.cetitec.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id xFWzWIPHP471 for <linux-kernel@vger.kernel.org>;
+        Fri, 20 Mar 2020 17:13:45 +0100 (CET)
+Received: from pfwsexchange.corp.cetitec.com (unknown [10.10.1.99])
+        by mail.cetitecgmbh.com (Postfix) with ESMTPS id 81FA564DA75
+        for <linux-kernel@vger.kernel.org>; Fri, 20 Mar 2020 17:13:45 +0100 (CET)
+Received: from pflmari.corp.cetitec.com (10.8.5.41) by
+ PFWSEXCHANGE.corp.cetitec.com (10.10.1.99) with Microsoft SMTP Server (TLS)
+ id 15.0.1497.2; Fri, 20 Mar 2020 17:13:45 +0100
+Received: by pflmari.corp.cetitec.com (Postfix, from userid 1000)
+        id 37E03804FB; Fri, 20 Mar 2020 17:11:40 +0100 (CET)
+Date:   Fri, 20 Mar 2020 17:11:40 +0100
+From:   Alex Riesen <alexander.riesen@cetitec.com>
+To:     Kieran Bingham <kieran.bingham@ideasonboard.com>
+CC:     Geert Uytterhoeven <geert@linux-m68k.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        "Laurent Pinchart" <laurent.pinchart@ideasonboard.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        <devel@driverdev.osuosl.org>, <linux-media@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-renesas-soc@vger.kernel.org>
+Subject: [PATCH v3 00/11] media: adv748x: add support for HDMI audio
+Message-ID: <cover.1584720678.git.alexander.riesen@cetitec.com>
+Mail-Followup-To: Alex Riesen <alexander.riesen@cetitec.com>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        devel@driverdev.osuosl.org, linux-media@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <20200320040329.9840-1-hdanton@sina.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Originating-IP: [10.8.5.41]
+X-ClientProxiedBy: PFWSEXCHANGE.corp.cetitec.com (10.10.1.99) To
+ PFWSEXCHANGE.corp.cetitec.com (10.10.1.99)
+X-EsetResult: clean, is OK
+X-EsetId: 37303A290D7F536A6D7662
+X-Provags-ID: V03:K1:uZfWM6WGh6sN0iqvFbDpkqe8szByJHQPHOu53s4WURenpzEOqQL
+ tsWRM/5Kb2/w6mmngywsfnUMK6//3tYP2BGpCQVApicJ2wKA4jr85fhtuPNSgh5LYFU9Oar
+ 89EVaGIkRGdn6H8HPJobClHzSO3ML6Et9s+XCuT8X9cMRasRZ+GxYIDZGlh5di+1nu61YEr
+ NqZKVzOPMNDXO1SrauN4A==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:f5fP+sV15JQ=:mWKTJ/aOpxuyK2Ns9UxdiD
+ WWhYefOAjUAKSAGY5S+aDw2HAPaDp6NysbmOuq7xgMjqdSPQMGt+k5eKVvwtBk4qsrG3k6Ii3
+ AZfjlbWo9fXGs/gGymREt0KuAA4/NDSReWDnuPT2ByNWDMeAphSt44VsFGmoW/JFxM9fQSNKk
+ +KR/2czAYaClqrCs3Wh2/FEUSQDRowYPupW7UQcNZQx/Ps5hIyLcHYHwupbDhZAgTHWccYFDY
+ udn7HiwCvkzRoCY/5QsS8VgU5+SeHYMygH4AeamUBO7rIieCSAgI9r8gnnIq3kSLiwiq/pMc1
+ MUSnQJx70ZTfQ9jxX92K241+X4pEvxUjWjfDfBZOhxkE6fAvUhzFM7zuV8BcIiW14Z6oAwa1R
+ SP3fLV1HUDG222KIYdidUrzesZU3ql4TN3nVihbnjGp9UdOMST8xBG+Ta/+MeJO6Xxbr2MkYB
+ Dh9Vnu3C4bAAGfZxLgq6Jrxtu6iiP53Xlpc5yJSkk2J0WXBZ/LryJ7kyK5qqCOv680wfKQ5RS
+ qVUPstxX+Q66TM15fFoNMzDGpF83pXB6OQK1nX2pNuzeH3xaPFhjKBdSorqG+J4GKKpD2Silr
+ Gu1mYnlOsxtXh2EZEHxbSeqr26HxlH6SQuf7BEa6jEHFEJFv8lqwloX8RlaNW4JRDZxmZrSOn
+ VCSEjpds5K+DgvyPU0H4jrh+uEXQ4lNap0I2+ciR9Gt+hZKqiTq+gI/COjAV5LW84Fj/sBadR
+ 0YUuvr1NwX0hivn+1R/5k9KDPI7pGxeppMsGfS7hMU1sdfNCkuD5oVekZetIornwnkoX3zW3X
+ N89revXnZtA8pj59S68YFliJ4TantRBTnTh/eQNKumW7QU8M0LfJO7/qZorViylJa0BtA3k
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 20, 2020 at 12:03:29PM +0800, Hillf Danton wrote:
-> 
-> On Thu, 19 Mar 2020 08:22:53 -0700 "Paul E. McKenney" wrote:
-> > 
-> > On Thu, Mar 19, 2020 at 09:39:47PM +0800, Hillf Danton wrote:
-> > > 
-> > > On Thu, 19 Mar 2020 05:38:12 -0700 "Paul E. McKenney" wrote:
-> > > > 
-> > > > On Thu, Mar 19, 2020 at 06:46:14PM +0800, Hillf Danton wrote:
-> > > > > 
-> > > > > On Wed, 18 Mar 2020 17:10:41 -0700
-> > > > > >  static int rcu_torture_stall(void *args)
-> > > > > >  {
-> > > > > > +	int idx;
-> > > > > >  	unsigned long stop_at;
-> > > > > >  
-> > > > > >  	VERBOSE_TOROUT_STRING("rcu_torture_stall task started");
-> > > > > > @@ -1610,21 +1612,22 @@ static int rcu_torture_stall(void *args)
-> > > > > >  	if (!kthread_should_stop()) {
-> > > > > >  		stop_at = ktime_get_seconds() + stall_cpu;
-> > > > > >  		/* RCU CPU stall is expected behavior in following code. */
-> > > > > > -		rcu_read_lock();
-> > > > > > +		idx = cur_ops->readlock();
-> > > > > >  		if (stall_cpu_irqsoff)
-> > > > > >  			local_irq_disable();
-> > > > > > -		else
-> > > > > > +		else if (!stall_cpu_block)
-> > > > > >  			preempt_disable();
-> > > > > >  		pr_alert("rcu_torture_stall start on CPU %d.\n",
-> > > > > > -			 smp_processor_id());
-> > > > > > +			 raw_smp_processor_id());
-> > > > > >  		while (ULONG_CMP_LT((unsigned long)ktime_get_seconds(),
-> > > > > >  				    stop_at))
-> > > > > > -			continue;  /* Induce RCU CPU stall warning. */
-> > > > > > +			if (stall_cpu_block)
-> > > > > > +				schedule_timeout_uninterruptible(HZ);
-> > > > > 
-> > > > > Why is the scheduled-in task so special that it will be running on
-> > > > > the current CPU with irq disabled?
-> > > > 
-> > > > You lost me on this one.
-> > > 
-> > > Quite likely :)
-> > > 
-> > > > IRQs are not at all disabled.
-> > > > 
-> > > > > >  		if (stall_cpu_irqsoff)
-> > > > > >  			local_irq_enable();
-> > > 
-> > > Local IRQs get enabled here depending on stall_cpu_irqsoff.
-> > > 
-> > > What I was asking is the scheduling case like
-> > > 
-> > > 	local_irq_disable();
-> > > 	schedule_timeout(HZ);
-> > > 	local_irq_enable();
-> > > 
-> > > Is it likely going to be ruled out in this patch?
-> > 
-> > If an rcutorture run specified both the rcutorture.stall_cpu_irqsoff and
-> > the rcutorture.stall_cpu_block module parameters, then yes, exactly the
-> > sequence you call out should occur.  Can't say that I have tried this,
-> > though.  Nor would I expect to have ever done so without your suggesting
-> > that I do.
-> > 
-> > But why not try it on current -rcu?
-> > 
-> > tools/testing/selftests/rcutorture/bin/kvm.sh --cpus 12 --duration 3 --configs "TRACE01" --bootargs "rcutorture.stall_cpu=25 rcutorture.stall_cpu_holdoff=30 rcutorture.stall_cpu_block=1 rcupdate.rcu_task_stall_timeout=10000 rcutorture.stall_cpu_irqsoff"
-> > 
-> > This tells rcutorture to use all 12 hardware threads, to run the kernel for
-> > three minutes, to run only the TRACE01 rcutorture scenario, and to test
-> > RCU CPU stall warnings:
-> > 
-> > rcutorture.stall_cpu=25: Stall the CPU for 25 seconds.
-> > 
-> > rcutorture.stall_cpu_holdoff=30: Wait 30 seconds after boot to start stalling.
-> > 
-> > rcutorture.stall_cpu_block=1: Do the schedule_timeout_uninterruptible()
-> > 	while stalling.
-> > 
-> > rcupdate.rcu_task_stall_timeout=10000: Set the stall-warning timeout
-> > 	to 10,000 jiffies, or ten seconds.
-> > 
-> > rcutorture.stall_cpu_irqsoff: This tells rcutorture to execute the
-> > 	local_irq_disable() that you called out above.
-> > 
-> > And this results in a couple of stall warning messages, as expected
-> 
-> Given these warning messages,
-> 
-> > given that you get two ten-second intervals in a 25-second interval.
-> 
-> I suspect it is likely to induce RCU CPU stall using
-> schedule_timeout_uninterruptible(HZ).
+This adds minimal support for accessing the HDMI audio provided through the
+I2S port available on ADV7481 and ADV7482 decoder devices by ADI.
+The port carries audio signal from the decoded HDMI stream.
 
-Exactly.  In fact, inducing an RCU CPU stall warning is the whole purpose
-of those rcutorture module parameters.
+Currently, the driver only supports I2S in TDM, 8 channels a 24bit at 48kHz.
+Furthermore, only left-justified, 8 slots, 32bit/slot TDM, at 256fs has been
+ever tried.
 
-But it depends on the flavor of RCU in use.  Feel free to experiment!
+An ADV7482 on the Renesas Salvator-X ES1.1 (R8A77950 SoC) was used during
+development of this code.
 
-And again, I do not expect to be using rcutorture.stall_cpu_block=1 and
-rcutorture.stall_cpu_irqsoff at the same time except as a demonstration
-of something silly.  So I do not see the need to make a change.  If you
-are advocating some change or reporting some bug, I am missing your point.
+Changes since v2:
+  - prepare/enable the clock when it is used, as it seems nothing else does
+    this otherwise
 
-							Thanx, Paul
+  - give the clock a unique name to ensure it can be registered if there are
+    multiple adv748x devices in the system
+
+  - remove optionality note from clock cell description to ensure the device
+    description matches the real device (the line is always present, even
+    if not used)
+
+Changes since v1:
+  - Add ssi4_ctrl pin group to the sound pins. The pins are responsible for
+    SCK4 (sample clock) WS4 and (word boundary input), and are required for
+    SSI audio input over I2S.
+    Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
+
+  - Removed the audio clock C from the list of clocks of adv748x,
+    it is exactly the other way around.
+    Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
+
+  - Add an instance of (currently) fixed rate I2S master clock (MCLK),
+    connected to the audio_clk_c line of the R-Car SoC.
+    Explicitly declare the device a clock producer and add it to the
+    list of clocks used by the audio system of the Salvator-X board.
+    Suggested-by: Geert Uytterhoeven <geert@linux-m68k.org>
+
+  - The implementation of DAI driver has been moved in a separate file
+    and modified to activate audio decoding and I2S streaming using
+    snd_soc_dai_... interfaces. This allows the driver to be used with
+    just ALSA interfaces.
+
+  - The ioctls for selecting audio output and muting have been removed,
+    as not applicable.
+    Suggested-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+    I have left implementation of the QUERYCAP in, as it seems to be required
+    by v4l-ctl to support loading of EDID for this node. And setting the EDID
+    is one feature I desperately need: there are devices which plainly refuse
+    to talk to the sink if it does not provide EDID they like.
+
+  - A device tree configuration without audio port will disable the audio code
+    altogether, supporting integrations where the port is not connected.
+
+  - The patches have been re-arranged, starting with the generic changes and
+    changes not related to audio directly. Those will be probably sent as a
+    separate series later.
+
+  - The whole series has been rebased on top of v5.6-rc6
+
+Alex Riesen (11):
+  media: adv748x: fix end-of-line terminators in diagnostic statements
+  media: adv748x: include everything adv748x.h needs into the file
+  media: adv748x: reduce amount of code for bitwise modifications of
+    device registers
+  media: adv748x: add definitions for audio output related registers
+  media: adv748x: add support for HDMI audio
+  media: adv748x: prepare/enable mclk when the audio is used
+  media: adv748x: only activate DAI if it is described in device tree
+  dt-bindings: adv748x: add information about serial audio interface
+    (I2S/TDM)
+  arm64: dts: renesas: salvator: add a connection from adv748x codec
+    (HDMI input) to the R-Car SoC
+  media: adv748x: add support for log_status ioctl
+  media: adv748x: allow the HDMI sub-device to accept EDID
+
+ .../devicetree/bindings/media/i2c/adv748x.txt |  16 +-
+ .../boot/dts/renesas/r8a77950-salvator-x.dts  |   3 +-
+ .../boot/dts/renesas/salvator-common.dtsi     |  47 ++-
+ drivers/media/i2c/adv748x/Makefile            |   3 +-
+ drivers/media/i2c/adv748x/adv748x-afe.c       |   6 +-
+ drivers/media/i2c/adv748x/adv748x-core.c      |  60 ++--
+ drivers/media/i2c/adv748x/adv748x-csi2.c      |   8 +-
+ drivers/media/i2c/adv748x/adv748x-dai.c       | 282 ++++++++++++++++++
+ drivers/media/i2c/adv748x/adv748x-hdmi.c      | 212 ++++++++++++-
+ drivers/media/i2c/adv748x/adv748x.h           |  67 ++++-
+ 10 files changed, 662 insertions(+), 42 deletions(-)
+ create mode 100644 drivers/media/i2c/adv748x/adv748x-dai.c
+
+-- 
+2.25.1.25.g9ecbe7eb18
+
