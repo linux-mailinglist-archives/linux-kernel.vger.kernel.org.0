@@ -2,61 +2,68 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CB01018D24A
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 16:02:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1D67F18D250
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 16:03:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727144AbgCTPCL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Mar 2020 11:02:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51228 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726816AbgCTPCK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Mar 2020 11:02:10 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D7F7720714;
-        Fri, 20 Mar 2020 15:02:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584716530;
-        bh=abV8/ZN//3YrBYbpASQEcaHQnh62HmxBKB67ullzIGY=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ZzOLV/nbV2X1/L58dQ3IkZlLSycU8DKOQKketOO4IOKdxd2U2/rYT7SkwTah5EjVJ
-         iQx82GFrYHrxhgi6UBGnAO02z0cmJpplNHGbUdy4HeQi3Ds72dU53yoowTfDpIdU5U
-         OPE+lL5UAbxawylQefAwtClInfYGFVljyJcPApTM=
-Date:   Fri, 20 Mar 2020 16:02:08 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     iommu@lists.linux-foundation.org,
-        Alexey Kardashevskiy <aik@ozlabs.ru>,
-        linuxppc-dev@lists.ozlabs.org, Lu Baolu <baolu.lu@linux.intel.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] dma-mapping: add a dma_ops_bypass flag to struct
- device
-Message-ID: <20200320150208.GA761915@kroah.com>
-References: <20200320141640.366360-1-hch@lst.de>
- <20200320141640.366360-2-hch@lst.de>
+        id S1727227AbgCTPDc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Mar 2020 11:03:32 -0400
+Received: from netrider.rowland.org ([192.131.102.5]:43925 "HELO
+        netrider.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with SMTP id S1726773AbgCTPDb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Mar 2020 11:03:31 -0400
+Received: (qmail 29349 invoked by uid 500); 20 Mar 2020 11:03:30 -0400
+Received: from localhost (sendmail-bs@127.0.0.1)
+  by localhost with SMTP; 20 Mar 2020 11:03:30 -0400
+Date:   Fri, 20 Mar 2020 11:03:30 -0400 (EDT)
+From:   Alan Stern <stern@rowland.harvard.edu>
+X-X-Sender: stern@netrider.rowland.org
+To:     "Joel Fernandes (Google)" <joel@joelfernandes.org>
+cc:     linux-kernel@vger.kernel.org, Akira Yokosawa <akiyks@gmail.com>,
+        Andrea Parri <parri.andrea@gmail.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Daniel Lustig <dlustig@nvidia.com>,
+        David Howells <dhowells@redhat.com>,
+        Jade Alglave <j.alglave@ucl.ac.uk>,
+        <linux-arch@vger.kernel.org>, Luc Maranget <luc.maranget@inria.fr>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        "Paul E. McKenney" <paulmck@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Will Deacon <will@kernel.org>
+Subject: Re: [PATCH 2/3] LKMM: Add litmus test for RCU GP guarantee where
+ reader stores
+In-Reply-To: <20200320065552.253696-2-joel@joelfernandes.org>
+Message-ID: <Pine.LNX.4.44L0.2003201101060.27303-100000@netrider.rowland.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200320141640.366360-2-hch@lst.de>
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 20, 2020 at 03:16:39PM +0100, Christoph Hellwig wrote:
-> Several IOMMU drivers have a bypass mode where they can use a direct
-> mapping if the devices DMA mask is large enough.  Add generic support
-> to the core dma-mapping code to do that to switch those drivers to
-> a common solution.
-> 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> ---
->  include/linux/device.h      |  6 ++++++
->  include/linux/dma-mapping.h | 30 ++++++++++++++++++------------
->  kernel/dma/mapping.c        | 36 +++++++++++++++++++++++++++---------
->  3 files changed, 51 insertions(+), 21 deletions(-)
+On Fri, 20 Mar 2020, Joel Fernandes (Google) wrote:
 
-Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> This adds an example for the important RCU grace period guarantee, which
+> shows an RCU reader can never span a grace period.
+> 
+> Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+> ---
+>  .../litmus-tests/RCU+sync+read.litmus         | 37 +++++++++++++++++++
+>  1 file changed, 37 insertions(+)
+>  create mode 100644 tools/memory-model/litmus-tests/RCU+sync+read.litmus
+> 
+> diff --git a/tools/memory-model/litmus-tests/RCU+sync+read.litmus b/tools/memory-model/litmus-tests/RCU+sync+read.litmus
+> new file mode 100644
+> index 0000000000000..73557772e2a32
+> --- /dev/null
+> +++ b/tools/memory-model/litmus-tests/RCU+sync+read.litmus
+
+Do these new tests really belong here?  I thought we were adding a new 
+directory under Documentation/ for litmus tests that illustrate parts 
+of the LKMM or memory-barriers.txt.
+
+By contrast, the tests under tools/memory-model are merely to show 
+people what litmus tests look like and how they should be written.
+
+Alan
+
