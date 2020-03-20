@@ -2,35 +2,34 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4D95318CE93
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 14:16:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 339AF18CE95
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 14:16:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727432AbgCTNQn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Mar 2020 09:16:43 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:35753 "EHLO
+        id S1727457AbgCTNQy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Mar 2020 09:16:54 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:35749 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727405AbgCTNQl (ORCPT
+        with ESMTP id S1727377AbgCTNQj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Mar 2020 09:16:41 -0400
+        Fri, 20 Mar 2020 09:16:39 -0400
 Received: from p5de0bf0b.dip0.t-ipconnect.de ([93.224.191.11] helo=nanos.tec.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tglx@linutronix.de>)
-        id 1jFHVs-0004Ar-5Y
-        for linux-kernel@vger.kernel.org; Fri, 20 Mar 2020 14:16:36 +0100
+        id 1jFHVt-0004Ba-Eh
+        for linux-kernel@vger.kernel.org; Fri, 20 Mar 2020 14:16:37 +0100
 Received: from nanos.tec.linutronix.de (localhost [IPv6:::1])
-        by nanos.tec.linutronix.de (Postfix) with ESMTP id 2920D1040CC
+        by nanos.tec.linutronix.de (Postfix) with ESMTP id 5D80B1040CD
         for <linux-kernel@vger.kernel.org>; Fri, 20 Mar 2020 14:16:29 +0100 (CET)
-Message-Id: <20200320131510.793641638@linutronix.de>
+Message-Id: <20200320131510.900226233@linutronix.de>
 User-Agent: quilt/0.65
-Date:   Fri, 20 Mar 2020 14:14:06 +0100
+Date:   Fri, 20 Mar 2020 14:14:07 +0100
 From:   Thomas Gleixner <tglx@linutronix.de>
 To:     LKML <linux-kernel@vger.kernel.org>
 Cc:     x86@kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Mark Gross <mgross@linux.intel.com>,
         Tony Luck <tony.luck@intel.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        linux-crypto@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
         Darren Hart <dvhart@infradead.org>,
         Andy Shevchenko <andy@infradead.org>,
         "Rafael J. Wysocki" <rjw@rjwysocki.net>,
@@ -51,8 +50,10 @@ Cc:     x86@kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         linux-mmc@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>,
         linux-pci@vger.kernel.org, Takashi Iwai <tiwai@suse.com>,
         alsa-devel@alsa-project.org,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [patch 21/22] hwrng: via_rng - Convert to new X86 CPU match macros
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        linux-crypto@vger.kernel.org
+Subject: [patch 22/22] x86/cpu: Cleanup the now unused CPU match macros
 References: <20200320131345.635023594@linutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -64,40 +65,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The new macro set has a consistent namespace and uses C99 initializers
-instead of the grufty C89 ones.
+No more users.
 
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: linux-crypto@vger.kernel.org
 ---
- drivers/char/hw_random/via-rng.c |    7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+ arch/x86/include/asm/cpu_device_id.h |    3 ---
+ arch/x86/include/asm/intel-family.h  |   13 -------------
+ 2 files changed, 16 deletions(-)
 
---- a/drivers/char/hw_random/via-rng.c
-+++ b/drivers/char/hw_random/via-rng.c
-@@ -209,20 +209,19 @@ static int __init mod_init(void)
- out:
- 	return err;
- }
-+module_init(mod_init);
+--- a/arch/x86/include/asm/cpu_device_id.h
++++ b/arch/x86/include/asm/cpu_device_id.h
+@@ -89,9 +89,6 @@
+ #define X86_MATCH_FEATURE(feature, data)				\
+ 	X86_MATCH_VENDOR_FEATURE(ANY, feature, data)
  
- static void __exit mod_exit(void)
- {
- 	hwrng_unregister(&via_rng);
- }
+-/* Transitional to keep the existing code working */
+-#define X86_FEATURE_MATCH(feature)	X86_MATCH_FEATURE(feature, NULL)
 -
--module_init(mod_init);
- module_exit(mod_exit);
+ /**
+  * X86_MATCH_VENDOR_FAM_MODEL - Match vendor, family and model
+  * @vendor:	The vendor name, e.g. INTEL, AMD, HYGON, ..., ANY
+--- a/arch/x86/include/asm/intel-family.h
++++ b/arch/x86/include/asm/intel-family.h
+@@ -124,17 +124,4 @@
+ /* Family 5 */
+ #define INTEL_FAM5_QUARK_X1000		0x09 /* Quark X1000 SoC */
  
- static struct x86_cpu_id __maybe_unused via_rng_cpu_id[] = {
--	X86_FEATURE_MATCH(X86_FEATURE_XSTORE),
-+	X86_MATCH_FEATURE(X86_FEATURE_XSTORE, NULL),
- 	{}
- };
-+MODULE_DEVICE_TABLE(x86cpu, via_rng_cpu_id);
- 
- MODULE_DESCRIPTION("H/W RNG driver for VIA CPU with PadLock");
- MODULE_LICENSE("GPL");
--MODULE_DEVICE_TABLE(x86cpu, via_rng_cpu_id);
+-/* Useful macros */
+-#define INTEL_CPU_FAM_ANY(_family, _model, _driver_data)	\
+-{								\
+-	.vendor		= X86_VENDOR_INTEL,			\
+-	.family		= _family,				\
+-	.model		= _model,				\
+-	.feature	= X86_FEATURE_ANY,			\
+-	.driver_data	= (kernel_ulong_t)&_driver_data		\
+-}
+-
+-#define INTEL_CPU_FAM6(_model, _driver_data)			\
+-	INTEL_CPU_FAM_ANY(6, INTEL_FAM6_##_model, _driver_data)
+-
+ #endif /* _ASM_X86_INTEL_FAMILY_H */
 
