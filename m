@@ -2,189 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6447218D531
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 18:01:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0D59218D537
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 18:03:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727522AbgCTRB2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Mar 2020 13:01:28 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:40686 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727092AbgCTRB1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Mar 2020 13:01:27 -0400
-Received: by mail-wr1-f68.google.com with SMTP id f3so8380783wrw.7
-        for <linux-kernel@vger.kernel.org>; Fri, 20 Mar 2020 10:01:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=WAc5lm/otiSMYlhAZkwpRkCEm3vOHc+J4qVldOzMYLg=;
-        b=PbPE1WyvLko7zML64W4Fy/tWupg+WQH1wKpA3pUay8H3XFuNYdU3nzhD3CPGihnTx7
-         ih+cLHp3N5pEAkHECPGmtZBMzrPaN+y9XHQMkiI7iqEujqP5t7x+2Lt7a1XeJ9QHHLNK
-         nk+1jOvU7HCwNzazBbQWRyev4rktZQY6ByMAnqaVVSxXAQ0Zi9mOB3MGaNTow49biVkr
-         QDmYbFifK5dkrj3HJ6IRqWKpagtMdGr+QqaZl4sZ7+GtG1hNKyCA9NFmiheF4FBlQb9E
-         QJNRHCnlPaej/Y9dapBmKFx6r1AeoUEpVqzdyDEaA6bQBF5ja+41O6bsou1YZFv39a1s
-         +Mgg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=WAc5lm/otiSMYlhAZkwpRkCEm3vOHc+J4qVldOzMYLg=;
-        b=CCk8zZLqiQ8tMXHjZLIdsf/fFJjoEiIOpJXZBAFnYTieRFh4zI9O3XFuQYAqLcyHXy
-         HrySTrd9Q91U9L94Y3ETmimakJ+lk41FlyNPtAx4NWfGaaPg61HBhwg4ihcXRJnMuyf7
-         pi0ceY31xwSyF7j6SWyKZdqcPwIyMcF9wpiB4BLRP69PMqEahCvyIHQ5Nh02tyZguvNT
-         VH0Fu2YlrLoSjb5k9F6irX3tpzUl00Q47zDs6FEUGdQHWA6Fa2JfwoPMOX4mA7r6SFx/
-         geQZeVglKU/ZRWkfuET3xiL0Q5xGjljJw1iNAZefzN06g2ONixYVQ875FWsL08foCpiC
-         CMKQ==
-X-Gm-Message-State: ANhLgQ0X6Pl6hgNpPzCJMkSYspBxJPAD8DeHYTBL9naQdM95BXgg67Hn
-        +dJkzcnMefBladG46xUuMhzuCQ==
-X-Google-Smtp-Source: ADFU+vv37Lo2CSsXWa5Kztok67Rtq3einqxjkNtW+ODswAo0H7LtIjSk0BpXPmvoHxMYmOyW+uTN6A==
-X-Received: by 2002:a5d:694e:: with SMTP id r14mr11999902wrw.312.1584723683784;
-        Fri, 20 Mar 2020 10:01:23 -0700 (PDT)
-Received: from [192.168.86.34] (cpc89974-aztw32-2-0-cust43.18-1.cable.virginm.net. [86.30.250.44])
-        by smtp.googlemail.com with ESMTPSA id c124sm8695442wma.10.2020.03.20.10.01.22
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 20 Mar 2020 10:01:23 -0700 (PDT)
-Subject: Re: [PATCH 5/5] soundwire: qcom: add sdw_master_device support
-To:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        alsa-devel@alsa-project.org
-Cc:     linux-kernel@vger.kernel.org, tiwai@suse.de, broonie@kernel.org,
-        vkoul@kernel.org, gregkh@linuxfoundation.org, jank@cadence.com,
-        slawomir.blauciak@intel.com,
-        Bard liao <yung-chuan.liao@linux.intel.com>,
-        Rander Wang <rander.wang@linux.intel.com>,
-        Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
-        Hui Wang <hui.wang@canonical.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Sanyog Kale <sanyog.r.kale@intel.com>,
-        "open list:ARM/QUALCOMM SUPPORT" <linux-arm-msm@vger.kernel.org>
-References: <20200320162947.17663-1-pierre-louis.bossart@linux.intel.com>
- <20200320162947.17663-6-pierre-louis.bossart@linux.intel.com>
-From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Message-ID: <81e2101e-d7ce-d023-5c35-ac6b55ea7166@linaro.org>
-Date:   Fri, 20 Mar 2020 17:01:21 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1727544AbgCTRC5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Mar 2020 13:02:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40510 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726953AbgCTRC5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Mar 2020 13:02:57 -0400
+Received: from localhost.localdomain (cpe-70-114-128-244.austin.res.rr.com [70.114.128.244])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5599220782;
+        Fri, 20 Mar 2020 17:02:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1584723777;
+        bh=WTT25i45HTyzP5L/oP+xV6T/9doLnhTh1Zo72y+d5Bc=;
+        h=From:To:Cc:Subject:Date:From;
+        b=t/e/9+WjbjI/MvJWjwlaAA2vMxIYhq8oB2TWAodc21n8A9FIZQTT6DO/zbXXMVnBF
+         HaRuGPxjjqWl0INZRKtP4zOO2BtsT7Kq9jtZ58l8h207DrQ/rFPNrqvJ63M9UYlgdY
+         EfeNKwI4xu/ATjCus26559ysXTy9pKptauhKeRWQ=
+From:   Dinh Nguyen <dinguyen@kernel.org>
+To:     linux-clk@vger.kernel.org
+Cc:     dinguyen@kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, sboyd@kernel.org,
+        mturquette@baylibre.com, robh+dt@kernel.org, mark.rutland@arm.com
+Subject: [PATCHv4 0/5] clk: agilex: add clock driver
+Date:   Fri, 20 Mar 2020 12:02:06 -0500
+Message-Id: <20200320170212.21523-1-dinguyen@kernel.org>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-In-Reply-To: <20200320162947.17663-6-pierre-louis.bossart@linux.intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi,
+
+This is version 4 of the patchset to add a clock driver to the Agilex
+platform.
+
+The change from v3 is fixing the build of the dt-bindings file.
+
+Thanks,
 
 
-On 20/03/2020 16:29, Pierre-Louis Bossart wrote:
-> Add new device as a child of the platform device, following the
-> following hierarchy:
-> 
-> platform_device
->      sdw_master_device
->          sdw_slave0
+Dinh Nguyen (5):
+  clk: socfpga: stratix10: use new parent data scheme
+  clk: socfpga: remove clk_ops enable/disable methods
+  clk: socfpga: add const to _ops data structures
+  dt-bindings: documentation: add clock bindings information for Agilex
+  clk: socfpga: agilex: add clock driver for the Agilex platform
 
-Why can't we just remove the platform device layer here and add 
-sdw_master_device directly?
+ .../bindings/clock/intel,agilex.yaml          |  36 ++
+ drivers/clk/Makefile                          |   3 +-
+ drivers/clk/socfpga/Makefile                  |   2 +
+ drivers/clk/socfpga/clk-agilex.c              | 454 ++++++++++++++++++
+ drivers/clk/socfpga/clk-gate-s10.c            |   5 +-
+ drivers/clk/socfpga/clk-periph-s10.c          |  10 +-
+ drivers/clk/socfpga/clk-pll-a10.c             |   4 +-
+ drivers/clk/socfpga/clk-pll-s10.c             |  78 ++-
+ drivers/clk/socfpga/clk-pll.c                 |   4 +-
+ drivers/clk/socfpga/clk-s10.c                 | 160 ++++--
+ drivers/clk/socfpga/stratix10-clk.h           |  10 +-
+ include/dt-bindings/clock/agilex-clock.h      |  70 +++
+ 12 files changed, 784 insertions(+), 52 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/intel,agilex.yaml
+ create mode 100644 drivers/clk/socfpga/clk-agilex.c
+ create mode 100644 include/dt-bindings/clock/agilex-clock.h
 
-What is it stopping doing that?
+-- 
+2.25.1
 
---srini
-
-
-> 	...
-> 	sdw_slaveN
-> 
-> For the Qualcomm implementation no sdw_master_driver is registered so
-> the dais have to be registered using the platform_device and likely
-> all power management is handled at the platform device level.
-> 
-> Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-> ---
->   drivers/soundwire/qcom.c | 29 +++++++++++++++++++++++++----
->   1 file changed, 25 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/soundwire/qcom.c b/drivers/soundwire/qcom.c
-> index 77783ae4b71d..86b46415e50b 100644
-> --- a/drivers/soundwire/qcom.c
-> +++ b/drivers/soundwire/qcom.c
-> @@ -89,6 +89,7 @@ struct qcom_swrm_port_config {
->   struct qcom_swrm_ctrl {
->   	struct sdw_bus bus;
->   	struct device *dev;
-> +	struct sdw_master_device *md;
->   	struct regmap *regmap;
->   	struct completion *comp;
->   	struct work_struct slave_work;
-> @@ -775,14 +776,31 @@ static int qcom_swrm_probe(struct platform_device *pdev)
->   	mutex_init(&ctrl->port_lock);
->   	INIT_WORK(&ctrl->slave_work, qcom_swrm_slave_wq);
->   
-> -	ctrl->bus.dev = dev;
-> +	/*
-> +	 * add sdw_master_device.
-> +	 * For the Qualcomm implementation there is no driver.
-> +	 */
-> +	ctrl->md = sdw_master_device_add(NULL,	/* no driver name */
-> +					 dev,	/* platform device is parent */
-> +					 dev->fwnode,
-> +					 0,	/* only one link supported */
-> +					 NULL);	/* no context */
-> +	if (IS_ERR(ctrl->md)) {
-> +		dev_err(dev, "Could not create sdw_master_device\n");
-> +		ret = PTR_ERR(ctrl->md);
-> +		goto err_clk;
-> +	}
-> +
-> +	/* the bus uses the sdw_master_device, not the platform device */
-> +	ctrl->bus.dev = &ctrl->md->dev;
-> +
->   	ctrl->bus.ops = &qcom_swrm_ops;
->   	ctrl->bus.port_ops = &qcom_swrm_port_ops;
->   	ctrl->bus.compute_params = &qcom_swrm_compute_params;
->   
->   	ret = qcom_swrm_get_port_config(ctrl);
->   	if (ret)
-> -		goto err_clk;
-> +		goto err_md;
->   
->   	params = &ctrl->bus.params;
->   	params->max_dr_freq = DEFAULT_CLK_FREQ;
-> @@ -809,14 +827,14 @@ static int qcom_swrm_probe(struct platform_device *pdev)
->   					"soundwire", ctrl);
->   	if (ret) {
->   		dev_err(dev, "Failed to request soundwire irq\n");
-> -		goto err_clk;
-> +		goto err_md;
->   	}
->   
->   	ret = sdw_add_bus_master(&ctrl->bus);
->   	if (ret) {
->   		dev_err(dev, "Failed to register Soundwire controller (%d)\n",
->   			ret);
-> -		goto err_clk;
-> +		goto err_md;
->   	}
->   
->   	qcom_swrm_init(ctrl);
-> @@ -832,6 +850,8 @@ static int qcom_swrm_probe(struct platform_device *pdev)
->   
->   err_master_add:
->   	sdw_delete_bus_master(&ctrl->bus);
-> +err_md:
-> +	device_unregister(&ctrl->md->dev);
->   err_clk:
->   	clk_disable_unprepare(ctrl->hclk);
->   err_init:
-> @@ -843,6 +863,7 @@ static int qcom_swrm_remove(struct platform_device *pdev)
->   	struct qcom_swrm_ctrl *ctrl = dev_get_drvdata(&pdev->dev);
->   
->   	sdw_delete_bus_master(&ctrl->bus);
-> +	device_unregister(&ctrl->md->dev);
->   	clk_disable_unprepare(ctrl->hclk);
->   
->   	return 0;
-> 
