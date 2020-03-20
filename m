@@ -2,75 +2,117 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3E75418D4DA
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 17:49:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0CF8A18D4E7
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 17:53:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727677AbgCTQtB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Mar 2020 12:49:01 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:40610 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727217AbgCTQtA (ORCPT
+        id S1727471AbgCTQxG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Mar 2020 12:53:06 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:37214 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727232AbgCTQxG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Mar 2020 12:49:00 -0400
-Received: by mail-pg1-f193.google.com with SMTP id t24so3359961pgj.7
-        for <linux-kernel@vger.kernel.org>; Fri, 20 Mar 2020 09:49:00 -0700 (PDT)
+        Fri, 20 Mar 2020 12:53:06 -0400
+Received: by mail-pf1-f195.google.com with SMTP id h72so1333804pfe.4
+        for <linux-kernel@vger.kernel.org>; Fri, 20 Mar 2020 09:53:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:content-transfer-encoding:in-reply-to:references
-         :subject:from:cc:to:date:message-id:user-agent;
-        bh=/ipVe6H1zjRQ3n1A4zatA7ipvQEaxuKms3PaZ37HPp8=;
-        b=lYWiXd3SGfFgR6UtHP0c0V3MSwHAtevmmbtdgPV6Xjqb/AkI3TBBJcY6KNGenPpmqi
-         rYpgmp5fNaKFZgNVU29XVa1jSAB8citYic+Q9GI9pL0vMfyGXrhtRcLv0t9/u+uhJDwK
-         gkxHI851nyFNZodXq1EB62sKpK2GhvlcrQiG0=
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=of4yG/Vch/Qj/D9yPE0fo6j6XLR3095eAUqqs/YSOwY=;
+        b=dRAuHm70s32jvPsyJvaRFXlgBM+OeovibGCvoxVlik+9h50MIPbUWkDSZ4a8aBzq1l
+         GL5XNXRYj8NCKS1ZkuXYKkS6CpXCpF3ywncpFLeVlkJHeBJogxp+uD6jLjCMJaJRFPAZ
+         qmu7zcqMPkRrzPjQz+o/5t+L+KQ+PNi3fln9tbMAjjAdrjc5iEpBg2tDB/6pvRxWBo66
+         Zcrfit9iws2DBEOAKkY8SBbfUex7gkB592zgGvf7L39BfU7oHLKp/nOeJHXBieSeK1ne
+         nwk4HHBpCgS5kfE9EegxZPTsz3OP494UsZafp4XgRRiiE2zJIVdc2nEOs/H9AHz47VRR
+         wa0Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:content-transfer-encoding
-         :in-reply-to:references:subject:from:cc:to:date:message-id
-         :user-agent;
-        bh=/ipVe6H1zjRQ3n1A4zatA7ipvQEaxuKms3PaZ37HPp8=;
-        b=LUHN0lE921j9V1tag/lRCxblkC562wl9sQ33JHcUmMNkzzRAC+lv91WywK7mheL0BI
-         yztbXC6QVKq/D8QoNdmZlXJowh6/CXsRbNHRgUeuKm3WlQrT9LMyt81P/lC0Ct1AXjwb
-         2mlQS+X9QH0vQiNQ1Zg37S3fl0nyBQ7BhIwbTvMFrAXrxxy4iDhFdOiC4mw4xJnjSR9Q
-         Z51CfyIkHF4s2qVVH40AZU/YTWSFEQkc5J0ZQm8KJWvP0fxexi+eKat4QmyBSZU0EzJS
-         ZiovxGil9r+znNOp5ysgYpJM71UVESNsirsKpCMTO+KLa1oOXAh3orLN5FXYvOsrWHJf
-         kExA==
-X-Gm-Message-State: ANhLgQ2Iaig3hRd53mciIS4EynnNyLX9BQInac+2qjb7jLWkT3qF7mPb
-        SGEpzpTZYjolhjHzRgxyT1dttWnoVHM=
-X-Google-Smtp-Source: ADFU+vtxgbGsFdAVCJQ2s90mNARSdrbN0uCEsug5z7SckFioJ2fgpjuGhUt/CgZJcMmVe/VbIF8q8A==
-X-Received: by 2002:aa7:8d82:: with SMTP id i2mr11021445pfr.179.1584722939511;
-        Fri, 20 Mar 2020 09:48:59 -0700 (PDT)
-Received: from chromium.org ([2620:15c:202:1:fa53:7765:582b:82b9])
-        by smtp.gmail.com with ESMTPSA id v29sm6039051pgc.72.2020.03.20.09.48.58
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=of4yG/Vch/Qj/D9yPE0fo6j6XLR3095eAUqqs/YSOwY=;
+        b=f56iql5XP4QqMHAN6lAiWJyTLSLzbYdpecHypHg1YotHv8sjTKs8WZVEQCcfQrTckG
+         NzHOAChY9W/bAzR7bXG98mbHIwfYeVn1FA1QQgqNWLe1tsalWk3Uw6c04qkjKpoOEuNv
+         D2WTn/q6/M+FYC1HbtVmP/5IWdE5X4fI7Y8Z/dk2i00HcR0xQZT73yd8X1cB0/A+2WfN
+         kmo2HODzq+tISKt/B4+uBV4G4A7d3ZdhDww1gbdkHywYaOz9noItPwplmqjLTFRTJx/i
+         6GFbpg8G+zv7Hbbqgskw6ukozSDxI3H4Nj41SFMtqZqT1PrkGER2MSi6hK5KbZPM1SQZ
+         eOqg==
+X-Gm-Message-State: ANhLgQ3wqal3Lx4wT+ARNLz3G0/T/PBha1TiYgMGPp6jeG25Rrdhm3Uw
+        P/MsWh9uySruDfhbls1OFP6oQDsn8ok=
+X-Google-Smtp-Source: ADFU+vuk5fqfRt3pgssw0+gJH1iTPp67oYT5MsVGMC+R4pwtrHcwWn3Nrm0p3QhoOUq62L8YDzj6uQ==
+X-Received: by 2002:a62:e409:: with SMTP id r9mr10332985pfh.119.1584723184948;
+        Fri, 20 Mar 2020 09:53:04 -0700 (PDT)
+Received: from xps15.cg.shawcable.net (S0106002369de4dac.cg.shawcable.net. [68.147.8.254])
+        by smtp.gmail.com with ESMTPSA id x17sm6064216pfn.16.2020.03.20.09.53.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 20 Mar 2020 09:48:59 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
+        Fri, 20 Mar 2020 09:53:04 -0700 (PDT)
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+To:     gregkh@linuxfoundation.org
+Cc:     mike.leach@linaro.org, suzuki.poulose@arm.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v11 00/12] coresight: next v5.6-rc6 
+Date:   Fri, 20 Mar 2020 10:52:51 -0600
+Message-Id: <20200320165303.13681-1-mathieu.poirier@linaro.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20200320163820.3634106-1-vincent@bernat.ch>
-References: <20200320163820.3634106-1-vincent@bernat.ch>
-Subject: Re: [PATCH] scripts/gdb: replace "is 0" by "== 0"
-From:   Stephen Boyd <swboyd@chromium.org>
-Cc:     Vincent Bernat <vincent@bernat.ch>
-To:     Jan Kiszka <jan.kiszka@siemens.com>,
-        Kieran Bingham <kbingham@kernel.org>,
-        Vincent Bernat <vincent@bernat.ch>,
-        linux-kernel@vger.kernel.org
-Date:   Fri, 20 Mar 2020 09:48:58 -0700
-Message-ID: <158472293810.63184.3695647310984420546@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.9
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Vincent Bernat (2020-03-20 09:38:20)
-> While for small numbers, using "node is 0" works with CPython, it is
-> more portable to use "node =3D=3D 0". Moreover, with Python 3, this
-> triggers a syntax warning:
->=20
->     SyntaxWarning: "is" with a literal. Did you mean "=3D=3D"?
->=20
-> Signed-off-by: Vincent Bernat <vincent@bernat.ch>
-> ---
+Hi Greg,
 
-Reviewed-by: Stephen Boyd <swboyd@chromium.org>
+As requested here is another respin - the only thing that changed is
+the replacement of scnprintf() and all sysfs output are now singular,
+i.e don't need any parsing.  That triggered some modification to
+sysfs entries, which have been taken into account in the documentation.
+
+Applies and compile cleanly on your char-misc-next branch.
+
+Thanks,
+Mathieu
+
+Mike Leach (12):
+  coresight: cti: Initial CoreSight CTI Driver
+  coresight: cti: Add sysfs coresight mgmt register access
+  coresight: cti: Add sysfs access to program function registers
+  coresight: cti: Add sysfs trigger / channel programming API
+  dt-bindings: arm: Adds CoreSight CTI hardware definitions
+  coresight: cti: Add device tree support for v8 arch CTI
+  coresight: cti: Add device tree support for custom CTI
+  coresight: cti: Enable CTI associated with devices
+  coresight: cti: Add connection information to sysfs
+  docs: coresight: Update documentation for CoreSight to cover CTI
+  docs: sysfs: coresight: Add sysfs ABI documentation for CTI
+  Update MAINTAINERS to add reviewer for CoreSight
+
+ .../testing/sysfs-bus-coresight-devices-cti   |  241 ++++
+ .../bindings/arm/coresight-cti.yaml           |  336 +++++
+ .../devicetree/bindings/arm/coresight.txt     |    7 +
+ .../trace/coresight/coresight-ect.rst         |  222 +++
+ Documentation/trace/coresight/coresight.rst   |   13 +
+ MAINTAINERS                                   |    3 +
+ drivers/hwtracing/coresight/Kconfig           |   21 +
+ drivers/hwtracing/coresight/Makefile          |    3 +
+ .../coresight/coresight-cti-platform.c        |  485 +++++++
+ .../hwtracing/coresight/coresight-cti-sysfs.c | 1206 +++++++++++++++++
+ drivers/hwtracing/coresight/coresight-cti.c   |  745 ++++++++++
+ drivers/hwtracing/coresight/coresight-cti.h   |  235 ++++
+ .../hwtracing/coresight/coresight-platform.c  |   20 +
+ drivers/hwtracing/coresight/coresight-priv.h  |   15 +
+ drivers/hwtracing/coresight/coresight.c       |   86 +-
+ include/dt-bindings/arm/coresight-cti-dt.h    |   37 +
+ include/linux/coresight.h                     |   27 +
+ 17 files changed, 3688 insertions(+), 14 deletions(-)
+ create mode 100644 Documentation/ABI/testing/sysfs-bus-coresight-devices-cti
+ create mode 100644 Documentation/devicetree/bindings/arm/coresight-cti.yaml
+ create mode 100644 Documentation/trace/coresight/coresight-ect.rst
+ create mode 100644 drivers/hwtracing/coresight/coresight-cti-platform.c
+ create mode 100644 drivers/hwtracing/coresight/coresight-cti-sysfs.c
+ create mode 100644 drivers/hwtracing/coresight/coresight-cti.c
+ create mode 100644 drivers/hwtracing/coresight/coresight-cti.h
+ create mode 100644 include/dt-bindings/arm/coresight-cti-dt.h
+
+-- 
+2.20.1
+
