@@ -2,109 +2,223 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EDDDF18C501
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 03:00:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0C6B318C509
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 03:00:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727364AbgCTCAY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Mar 2020 22:00:24 -0400
-Received: from ozlabs.org ([203.11.71.1]:38701 "EHLO ozlabs.org"
+        id S1727569AbgCTCAp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Mar 2020 22:00:45 -0400
+Received: from mga11.intel.com ([192.55.52.93]:8800 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727049AbgCTCAX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Mar 2020 22:00:23 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 48k6Rk3DG3z9sRf;
-        Fri, 20 Mar 2020 13:00:18 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1584669621;
-        bh=UnT6XT0MYiF55r9HJ3HCBsQ9ZrUxRyyw2v1Npc7EL0c=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=YsOglcXFdBl+mfv+HSaknS4e0l/veMNO/kzbzb7q0ZVexltnv25UgQrVaadL+y0WD
-         9xb0MZyKff24EP0xKg7HrX8+fKO5/sUtpTdZmQA1avqXEdDLpmxO/Lsj3YSl7u/0wY
-         PT7ISW3ojXOyQLPMy1kRevER+gj7HgFY2qZfCFh15xzKKe/39aYFpsVogYOd7XNqYg
-         DlFwzVADIG8IG0ds2hN+k0dju+0A5u+fT9QGn+5V3hqBCdkw1AVIeGKzmlcZH724p9
-         XNrutal6nwLRWvbzZqKoi34FiBQYzAZQ/K/j+5TPodQpB+gzJScF+3p4TFXvG0VmwG
-         iC7zWLFmiyf0A==
-Date:   Fri, 20 Mar 2020 13:00:17 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Waiman Long <longman@redhat.com>
-Cc:     Qian Cai <cai@lca.pw>, Thomas Gleixner <tglx@linutronix.de>,
-        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
-        "Paul E. McKenney" <paulmck@kernel.org>, rcu@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Will Deacon <will@kernel.org>, Ingo Molnar <mingo@kernel.org>,
-        Frederic Weisbecker <fweisbec@gmail.com>
-Subject: Re: Hard lockups due to "tick/common: Make tick_periodic() check
- for missing ticks"
-Message-ID: <20200320130017.6457a1e8@canb.auug.org.au>
-In-Reply-To: <218eed57-27c8-12c0-6f5f-111874798c21@redhat.com>
-References: <CA9BD318-A8C8-4F22-828A-65C355931A5C@lca.pw>
-        <F95F95DE-77D9-4A1D-AA5C-CAC165F6B4C8@lca.pw>
-        <11BEA1A5-2E93-4E01-A05C-A6BA73A74CEB@lca.pw>
-        <218eed57-27c8-12c0-6f5f-111874798c21@redhat.com>
+        id S1727526AbgCTCAl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Mar 2020 22:00:41 -0400
+IronPort-SDR: i682mxMLTSXZN1mRm2dRjqlAkd6jw3NZTmGt9PzqvsK3OWCVengqghLM26aHNdvfyHBSmRhWyw
+ 2td8SqZIgpgA==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Mar 2020 19:00:41 -0700
+IronPort-SDR: Nf0rjAXlkA2gpSC0joDxUvBEMy5aI1q8aiy37azXXQ+hT1nlJcM8w/iSpml2ZcYrFUBhsDyKK1
+ yzR8Wi+9YOCA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.72,282,1580803200"; 
+   d="scan'208";a="356273250"
+Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
+  by fmsmga001.fm.intel.com with ESMTP; 19 Mar 2020 19:00:39 -0700
+Received: from kbuild by lkp-server01 with local (Exim 4.89)
+        (envelope-from <lkp@intel.com>)
+        id 1jF6xj-000Bji-5e; Fri, 20 Mar 2020 10:00:39 +0800
+Date:   Fri, 20 Mar 2020 09:59:56 +0800
+From:   kbuild test robot <lkp@intel.com>
+To:     "x86-ml" <x86@kernel.org>
+Cc:     linux-kernel@vger.kernel.org
+Subject: [tip:x86/cleanups] BUILD SUCCESS
+ e2bdafc1070f5db0bc1bc40116955f54188771cb
+Message-ID: <5e74239c.i0kL9Fy2sFVoynk4%lkp@intel.com>
+User-Agent: Heirloom mailx 12.5 6/20/10
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/200+A/5+J7anyPW8F._3h2Y";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/200+A/5+J7anyPW8F._3h2Y
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git  x86/cleanups
+branch HEAD: e2bdafc1070f5db0bc1bc40116955f54188771cb  x86/configs: Slightly reduce defconfigs
 
-Hi all,
+elapsed time: 481m
 
-On Thu, 19 Mar 2020 15:00:35 -0400 Waiman Long <longman@redhat.com> wrote:
->
-> On 3/19/20 9:58 AM, Qian Cai wrote:
-> > =20
-> >> On Mar 6, 2020, at 10:33 PM, Qian Cai <cai@lca.pw> wrote:
-> >>
-> >>
-> >> =20
-> >>> On Mar 5, 2020, at 11:06 PM, Qian Cai <cai@lca.pw> wrote:
-> >>> =20
-> >> Using this config,
-> >> =20
-> >>> https://raw.githubusercontent.com/cailca/linux-mm/master/x86.config =
-=20
-> >> Reverted the linux-next commit d441dceb5dce (=E2=80=9Ctick/common: Mak=
-e tick_periodic() check for missing ticks=E2=80=9D)
-> >> fixed the lockup that could easily happen during boot. =20
-> >
-> > Thomas or Stephen, can you back out this patch from linux-next while Wa=
-iman is getting to the bottom of it?
-> > I can still reproduce it as today. =20
->=20
-> I am fine for reverting the patch for now. I am still having some
-> trouble reproducing it and I have other tasks to work on right now. I
-> will get to the bottom of it and resubmit a new patch later on.
+configs tested: 164
+configs skipped: 74
 
-I have reverted that commit from linux-next today.
+The following configs have been built successfully.
+More configs may be tested in the coming days.
 
---=20
-Cheers,
-Stephen Rothwell
+arm                              allmodconfig
+arm                               allnoconfig
+arm                              allyesconfig
+arm64                            allmodconfig
+arm64                             allnoconfig
+arm64                            allyesconfig
+arm                         at91_dt_defconfig
+arm                           efm32_defconfig
+arm                          exynos_defconfig
+arm                        multi_v5_defconfig
+arm                        multi_v7_defconfig
+arm                        shmobile_defconfig
+arm                           sunxi_defconfig
+arm64                               defconfig
+sparc                            allyesconfig
+arc                                 defconfig
+riscv                          rv32_defconfig
+i386                              allnoconfig
+i386                             alldefconfig
+i386                             allyesconfig
+i386                                defconfig
+ia64                             alldefconfig
+ia64                             allmodconfig
+ia64                              allnoconfig
+ia64                             allyesconfig
+ia64                                defconfig
+c6x                              allyesconfig
+c6x                        evmc6678_defconfig
+nios2                         10m50_defconfig
+nios2                         3c120_defconfig
+openrisc                    or1ksim_defconfig
+openrisc                 simple_smp_defconfig
+xtensa                       common_defconfig
+xtensa                          iss_defconfig
+alpha                               defconfig
+csky                                defconfig
+nds32                             allnoconfig
+nds32                               defconfig
+h8300                     edosk2674_defconfig
+h8300                    h8300h-sim_defconfig
+h8300                       h8s-sim_defconfig
+m68k                             allmodconfig
+m68k                       m5475evb_defconfig
+m68k                          multi_defconfig
+m68k                           sun3_defconfig
+arc                              allyesconfig
+microblaze                      mmu_defconfig
+microblaze                    nommu_defconfig
+powerpc                           allnoconfig
+powerpc                             defconfig
+powerpc                       ppc64_defconfig
+powerpc                          rhel-kconfig
+mips                           32r2_defconfig
+mips                         64r6el_defconfig
+mips                             allmodconfig
+mips                              allnoconfig
+mips                             allyesconfig
+mips                      fuloong2e_defconfig
+mips                      malta_kvm_defconfig
+parisc                            allnoconfig
+parisc                           allyesconfig
+parisc                generic-32bit_defconfig
+parisc                generic-64bit_defconfig
+x86_64               randconfig-a001-20200319
+x86_64               randconfig-a002-20200319
+x86_64               randconfig-a003-20200319
+i386                 randconfig-a001-20200319
+i386                 randconfig-a002-20200319
+i386                 randconfig-a003-20200319
+alpha                randconfig-a001-20200319
+m68k                 randconfig-a001-20200319
+mips                 randconfig-a001-20200319
+nds32                randconfig-a001-20200319
+parisc               randconfig-a001-20200319
+riscv                randconfig-a001-20200319
+c6x                  randconfig-a001-20200319
+h8300                randconfig-a001-20200319
+microblaze           randconfig-a001-20200319
+nios2                randconfig-a001-20200319
+sparc64              randconfig-a001-20200319
+csky                 randconfig-a001-20200319
+openrisc             randconfig-a001-20200319
+s390                 randconfig-a001-20200319
+sh                   randconfig-a001-20200319
+xtensa               randconfig-a001-20200319
+x86_64               randconfig-b001-20200319
+x86_64               randconfig-b002-20200319
+x86_64               randconfig-b003-20200319
+i386                 randconfig-b001-20200319
+i386                 randconfig-b002-20200319
+i386                 randconfig-b003-20200319
+x86_64               randconfig-c001-20200319
+x86_64               randconfig-c002-20200319
+x86_64               randconfig-c003-20200319
+i386                 randconfig-c001-20200319
+i386                 randconfig-c002-20200319
+i386                 randconfig-c003-20200319
+x86_64               randconfig-d001-20200319
+x86_64               randconfig-d002-20200319
+x86_64               randconfig-d003-20200319
+i386                 randconfig-d001-20200319
+i386                 randconfig-d002-20200319
+i386                 randconfig-d003-20200319
+x86_64               randconfig-e001-20200319
+x86_64               randconfig-e002-20200319
+x86_64               randconfig-e003-20200319
+i386                 randconfig-e001-20200319
+i386                 randconfig-e002-20200319
+i386                 randconfig-e003-20200319
+x86_64               randconfig-f001-20200319
+x86_64               randconfig-f002-20200319
+x86_64               randconfig-f003-20200319
+i386                 randconfig-f001-20200319
+i386                 randconfig-f002-20200319
+i386                 randconfig-f003-20200319
+x86_64               randconfig-g001-20200319
+x86_64               randconfig-g002-20200319
+x86_64               randconfig-g003-20200319
+i386                 randconfig-g001-20200319
+i386                 randconfig-g002-20200319
+i386                 randconfig-g003-20200319
+x86_64               randconfig-h001-20200319
+x86_64               randconfig-h002-20200319
+x86_64               randconfig-h003-20200319
+i386                 randconfig-h001-20200319
+i386                 randconfig-h002-20200319
+i386                 randconfig-h003-20200319
+arc                  randconfig-a001-20200320
+arm                  randconfig-a001-20200320
+arm64                randconfig-a001-20200320
+ia64                 randconfig-a001-20200320
+powerpc              randconfig-a001-20200320
+sparc                randconfig-a001-20200320
+riscv                            allmodconfig
+riscv                             allnoconfig
+riscv                            allyesconfig
+riscv                               defconfig
+riscv                    nommu_virt_defconfig
+s390                             alldefconfig
+s390                             allmodconfig
+s390                              allnoconfig
+s390                             allyesconfig
+s390                          debug_defconfig
+s390                                defconfig
+s390                       zfcpdump_defconfig
+sh                               allmodconfig
+sh                                allnoconfig
+sh                          rsk7269_defconfig
+sh                  sh7785lcr_32bit_defconfig
+sh                            titan_defconfig
+sparc                               defconfig
+sparc64                          allmodconfig
+sparc64                           allnoconfig
+sparc64                          allyesconfig
+sparc64                             defconfig
+um                                  defconfig
+um                             i386_defconfig
+um                           x86_64_defconfig
+x86_64                              fedora-25
+x86_64                                  kexec
+x86_64                                    lkp
+x86_64                                   rhel
+x86_64                         rhel-7.2-clear
+x86_64                               rhel-7.6
 
---Sig_/200+A/5+J7anyPW8F._3h2Y
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl50I7EACgkQAVBC80lX
-0Gwcpgf9GrNX0tgR+8h70/3dJK9k3j3brlFdojIdgsIoGvZLrAWhWM8U4l+MUhyz
-rzZjPYh5wkODl5WslcB98b6psjQv0i+RnbaQVSiKJVqcALwmveJ0YjAAVO0SrVQ5
-Ydn33ybWtrnzgnCHrp4HyrqxyEkd9LvFsZwpcxyRPNitrlTyEM1xlNNEl7TIweU2
-Pr+cPbX12MX+iZFid3j2n3Jya9ldTwiUtGjaGv0X+R/jUlMUdJJ9CCAG3jFPgoK4
-RdwWpJZDkbR2n9T+L41Aaf4eWiALVG+YnBbXwRNXiWuGL8MgjVHALVxtD/gTYMnc
-PXT0kDNSrU63uKm9f6g4WpQnPaX57Q==
-=hKZY
------END PGP SIGNATURE-----
-
---Sig_/200+A/5+J7anyPW8F._3h2Y--
+---
+0-DAY CI Kernel Test Service, Intel Corporation
+https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
