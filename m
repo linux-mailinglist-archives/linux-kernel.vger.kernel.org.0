@@ -2,81 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EFA0F18C8F3
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 09:26:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A4D5218C8F5
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 09:26:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726838AbgCTI0T (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Mar 2020 04:26:19 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:52524 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726232AbgCTI0T (ORCPT
+        id S1726897AbgCTI0o (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Mar 2020 04:26:44 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:32924 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726232AbgCTI0o (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Mar 2020 04:26:19 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=RAiCDcH77jHDXYkeTD8SKPLyPkTVQvNLw8kPgs7l5xU=; b=pUzm+5eUP3tPVNOkrWaFIeBxRc
-        yRcTLahi18JHzsFCG6HFwFLz0Do+6lzpyphE8AszSbKwXFoUEgFrGwEx42r8QazBKt4v0nzF4e/KE
-        Ybkd/YoygJOTf+ovXA8ew0amG51k21gWYNi2V615IE1hEeEvrfJ3Uz1W5ceti7ea6JiWFRq2wmJPh
-        Yq4zZpyCdMfJDPc9wMdrZ4FmxIy7Xw/BriaARsAc42/DDtHmsNAiGrfPWduspu5o0NxYB3C1SCqUW
-        jl2J526fddPFI3U6poBL3EueBCU72Uv/ZF7ZH3b6rDEDjsnZLzx2ZxkPmReA7OzsBC3GOLFFT61Wm
-        d4SBC+Qw==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jFCyu-0008KV-9t; Fri, 20 Mar 2020 08:26:16 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id CFE08300235;
-        Fri, 20 Mar 2020 09:26:13 +0100 (CET)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 8F16E286B1726; Fri, 20 Mar 2020 09:26:13 +0100 (CET)
-Date:   Fri, 20 Mar 2020 09:26:13 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Josh Poimboeuf <jpoimboe@redhat.com>
-Cc:     Randy Dunlap <rdunlap@infradead.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Kees Cook <keescook@chromium.org>
-Subject: Re: linux-next: Tree for Mar 18 (objtool)
-Message-ID: <20200320082613.GA20696@hirez.programming.kicks-ass.net>
-References: <20200318220920.48df2e76@canb.auug.org.au>
- <d7dc5b4a-9a7e-ccf7-e00e-2e7f0e79a9bc@infradead.org>
- <20200318182352.2dgwwl4ugbwndi4x@treble>
- <20200318200542.GK20730@hirez.programming.kicks-ass.net>
- <20200319173101.wufpymi7obhqgoqd@treble>
- <20200319173326.oj4qs24x4ly5lrgt@treble>
- <20200319174028.azzaisoj5gbss7zk@treble>
- <20200319174550.4wpx4j357nw67nzz@treble>
+        Fri, 20 Mar 2020 04:26:44 -0400
+Received: by mail-lj1-f193.google.com with SMTP id z10so4606993ljn.0;
+        Fri, 20 Mar 2020 01:26:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:from:date:message-id:subject:to:cc;
+        bh=9CIUrS+yZvKhtjJWNPvxGGOXzlMi85cVkUe2m48ghlk=;
+        b=d8rMsEwbPVmnRmauEpCLGwHg6JCgRiWAocuacvN2eGLw2gVI4vni2xWq4AgwLwEvns
+         X7Ttru3G2Sd/y6wa7KH9EgegvQLgnNQOW4tLGvw036izfa2jwocQoI4fmg7sXXKF8Xe4
+         Q/bXsjUv+2aqI4cdV2Z55rncNGGVahX/qNA4mFzFwa6Tnz5/qcBvSvpLuK/Hq9m6rojb
+         b4FWwBB0WbInQ+uL4AlFbibMrpx/Xg8qPp0gWgDKCmZP30lMGPfj8E7kr1cH8IpmKoWw
+         ILcRrLY4uWHSfzlqjkhjQ3wDOzvqmxWUgajawSK/31839rXIsI9X02q+qmd5MyrwqT5g
+         GUcQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=9CIUrS+yZvKhtjJWNPvxGGOXzlMi85cVkUe2m48ghlk=;
+        b=DJkRA6GxL5gzG/lI0xbSin83XTkJWtoED6ZKmYH5p6V5OAjTu+rrqFiPsWiLzXjO4e
+         MW76PQdhuNUSgx7U/CaFLUedpJoP/T6tNTdoYA9Grvqc0BDwJbL/do99yKJIQWjUDOpH
+         kVL6DOprwKmT/LC8MSGrTf1DjrneB2yw+yyVYBuFBChtxPEN1bSaqd41zF+kP0xAfnJ+
+         KLgdQCiqrDxyXWzTDOE1sULu7DtxX4GT0bQVjGxCRLfcj36ml+0U3+zgpJoFK3BsgJM7
+         ht5m2ntntogvKRfk1SMqcnmhbjcPF5lvZaxvzmM0FifP6KAkx4Yv0UTDrQ8Yu7iIZ0N+
+         rs2A==
+X-Gm-Message-State: ANhLgQ0Qg6cQbAv4IgC6sk5HA+PiR4WPEHnUsqW3SPwrJzSnrnMV7pdx
+        fNWNMeTSdmAUwMj4lP2PrIxUP3NVFVy1HavVxDc=
+X-Google-Smtp-Source: ADFU+vuxJXh8HfEyPsTCLNlvKGQcHF6YmFcyg5hqvcVu5xENOn3WA8Up+vtfjzm63zckWq4451IYWZ9/5oBPFRjZF+o=
+X-Received: by 2002:a2e:b0f0:: with SMTP id h16mr4488839ljl.48.1584692801092;
+ Fri, 20 Mar 2020 01:26:41 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200319174550.4wpx4j357nw67nzz@treble>
+From:   "she90122 ." <she90122@gmail.com>
+Date:   Fri, 20 Mar 2020 16:26:30 +0800
+Message-ID: <CAMhTFw=OUaVSLGz1tyHJYiq6UXBNni5=fBp16M7vPXjA0HHEEA@mail.gmail.com>
+Subject: [v2,1/1] EDAC: (pnd2) Fix the log level and remove the word "error"
+ for message "Failed to register device with error %d"
+To:     she90122 <she90122@gmail.com>
+Cc:     Tony Luck <tony.luck@intel.com>, Borislav Petkov <bp@alien8.de>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        James Morse <james.morse@arm.com>,
+        Robert Richter <rrichter@marvell.com>,
+        linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Amy.Shih" <Amy.Shih@advantech.com.tw>,
+        "Oakley.Ding" <Oakley.Ding@advantech.com.tw>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 19, 2020 at 12:45:50PM -0500, Josh Poimboeuf wrote:
-> > On Thu, Mar 19, 2020 at 12:33:31PM -0500, Josh Poimboeuf wrote:
+From: Amy Shih <amy.shih@advantech.com.tw>
 
-> > > Actually I suspect it's the __builtin_unreachable() annotation which is
-> > > making UBSAN add the __builtin_trap()...  because I don't see any double
-> > > UD2s for WARNs.
+Fix the log level from "KERN_ERR" to "KERN_INFO" and remove the word
+"error" for message "Failed to register device with error %d", since
+it is not the error message but the information to notice the user.
 
-> Actually, removing __builtin_unreachable() *does* make the extra UD2 go
-> away -- I forgot I had some silly debug code.
+Signed-off-by: Amy Shih <amy.shih@advantech.com.tw>
+---
+Changes in v2:
+- Remove the word "error" from output message.
+---
+ drivers/edac/pnd2_edac.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-LOL, check this:
+diff --git a/drivers/edac/pnd2_edac.c b/drivers/edac/pnd2_edac.c index
+933f772..399da3e 100644
+--- a/drivers/edac/pnd2_edac.c
++++ b/drivers/edac/pnd2_edac.c
+@@ -1572,7 +1572,8 @@ static int __init pnd2_init(void)
 
-"Built-in Function: void __builtin_unreachable (void)
+  rc = pnd2_probe();
+  if (rc < 0) {
+- pnd2_printk(KERN_ERR, "Failed to register device with error %d.\n", rc);
++ pnd2_printk(KERN_INFO,
++     "Failed to register device - %d.\n", rc);
+  return rc;
+  }
 
-    If control flow reaches the point of the __builtin_unreachable, the
-    program is undefined. It is useful in situations where the compiler
-    cannot deduce the unreachability of the code. "
-
-Which, I bet, is what makes UBSAN insert that __builtin_trap().
-
-What a friggin mess :/
+--
+1.8.3.1
