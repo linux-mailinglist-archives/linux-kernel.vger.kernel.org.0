@@ -2,74 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6F86418D6B0
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 19:19:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 82A6118D6A1
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 19:14:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727133AbgCTSTc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Mar 2020 14:19:32 -0400
-Received: from mail-io1-f65.google.com ([209.85.166.65]:41866 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726840AbgCTSTc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Mar 2020 14:19:32 -0400
-Received: by mail-io1-f65.google.com with SMTP id y24so6920171ioa.8
-        for <linux-kernel@vger.kernel.org>; Fri, 20 Mar 2020 11:19:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=jIQSdWr0oHV4OIyHiNzKHtfCGVAX3O/l7l9f4QUta70=;
-        b=K3XmZrJ23rrzvUUxHJfd3l8QhcbYeONYjlIY/8W6YpX3mVqV/LOBzBzb2n3wB0Fh5w
-         487QD7EFS7XeSfBcaKa0jtUOrFBNf4Uu4JxmzBKY1rBLAdUk+g0sTb+b9c/+Q2t/nw0m
-         FplDZ783dyvo7ya3WEcaWOBlLtF9Z4MSX/UuB6929Sqculj916YO1iOdK1gadNKT70fE
-         O4Y4uuBIOeU21M59OhcQFgE38+GSan1e+mts0oxLrqNjhQzG7RjJv2wmpVrm/fcCsBXF
-         eOWJreSraDC/p9upSDlLLJPX8xtCA2Dv6995X+9E7UQwSeZxNLuMLakgL05NO6Rxocws
-         HSLA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=jIQSdWr0oHV4OIyHiNzKHtfCGVAX3O/l7l9f4QUta70=;
-        b=o99RRHCOeR8OgCop5EZmpzK4t77wQPYBs86pEpWdcU/gE+gNiPPz54E6TkjfpUciBt
-         5uPnFTSDL8Lxxuwnnh4haC+WANoEEKynKKFnpzDkF1ozA8OZabydtGYG9SdWwkKHrY+M
-         3aJicWlqh3pjVpKU1Iz9Wr9Jj/JDpJ026XS4cpEyVobP1esMqhvZ7n0xVT2w+IomxF+9
-         iF9auRon76WVRGCHJeEmtoBSRW7qJmbRmjakY6ZbN05zI5F/hQPkzR6zXk6daRoNDVnH
-         F81JQhD0OE90TWJKSf7dB71ANrL1EF7Ej0Ee3egbxQ9wEbfg2UY9f1AvkBenpTkz3AWu
-         C2wQ==
-X-Gm-Message-State: ANhLgQ26X0Lvv4+vUCmJDrokqkgXwKbSVDoNyZEsPqTHFBxeAhzVCBtH
-        z9pnTXBZB2ssb8QEnbH3VY1uduPThlN2LWV+7oxS7w==
-X-Google-Smtp-Source: ADFU+vt+2ciHEPtiNNdll+Gg793qeHEtLTVBQGChIQgNb4nzKr0A70xZ/0OqCYHbrVcFtK9CuIVwJTjzmfe4iMvbEZs=
-X-Received: by 2002:a02:740d:: with SMTP id o13mr9079623jac.113.1584728371234;
- Fri, 20 Mar 2020 11:19:31 -0700 (PDT)
+        id S1727054AbgCTSOj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Mar 2020 14:14:39 -0400
+Received: from foss.arm.com ([217.140.110.172]:55296 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726738AbgCTSOj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Mar 2020 14:14:39 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2C0DE1FB;
+        Fri, 20 Mar 2020 11:14:39 -0700 (PDT)
+Received: from [10.37.12.158] (unknown [10.37.12.158])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4D3FF3F305;
+        Fri, 20 Mar 2020 11:14:37 -0700 (PDT)
+Subject: Re: [PATCH 5/6] arm64/cpufeature: Drop TraceFilt feature exposure
+ from ID_DFR0 register
+To:     anshuman.khandual@arm.com, linux-arm-kernel@lists.infradead.org
+Cc:     catalin.marinas@arm.com, will@kernel.org, james.morse@arm.com,
+        maz@kernel.org, mark.rutland@arm.com, linux-kernel@vger.kernel.org
+References: <1580215149-21492-1-git-send-email-anshuman.khandual@arm.com>
+ <1580215149-21492-6-git-send-email-anshuman.khandual@arm.com>
+From:   Suzuki K Poulose <suzuki.poulose@arm.com>
+Message-ID: <bb4d5175-1c72-a1a6-1e79-116991717fdf@arm.com>
+Date:   Fri, 20 Mar 2020 18:19:21 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-References: <CAP6exY+LnUXaOVRZUXmi2wajCPZoJVMFFAwbCzN3YywWyhi8ZA@mail.gmail.com>
- <D31718CF-1755-4846-8043-6E62D57E4937@zytor.com> <CAP6exYJHgqsNq84DCjgNP=nOjp1Aud9J5JAiEZMXe=+dtm-QGA@mail.gmail.com>
- <8E80838A-7A3F-4600-AF58-923EDA3DE91D@zytor.com>
-In-Reply-To: <8E80838A-7A3F-4600-AF58-923EDA3DE91D@zytor.com>
-From:   Matthew Garrett <mjg59@google.com>
-Date:   Fri, 20 Mar 2020 11:19:19 -0700
-Message-ID: <CACdnJusmAHJYauKvHEXNZKaUWPqZoabB_pSn5WokSy_gOnRtTw@mail.gmail.com>
-Subject: Re: [PATCH 1/1] x86 support for the initrd= command line option
-To:     "H. Peter Anvin" <hpa@zytor.com>
-Cc:     ron minnich <rminnich@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "maintainer:X86 ARCHITECTURE..." <x86@kernel.org>,
-        lkml - Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1580215149-21492-6-git-send-email-anshuman.khandual@arm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 19, 2020 at 5:59 PM <hpa@zytor.com> wrote:
+On 01/28/2020 12:39 PM, Anshuman Khandual wrote:
+> ID_DFR0 based TraceFilt feature should not be exposed.
 
-> It has been designated consumed by the bootloader on x86 since at least 1995. So ARM broke it.
+... to guests.
 
-Eh. This feels like a matter of semantics - booting the kernel via EFI
-results in it being parsed by the boot stub, so in that case we're
-left arguing that the boot stub isn't the kernel. I can just about buy
-that, but it's a stretch. For this change to actually break something,
-we'd need the bootloader to be passing something that the kernel
-parses, but not actually populating the initrd fields in bootparams.
-That seems unlikely?
+  Hence lets drop it.
+
+Reviewed-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+
+> 
+> Cc: Catalin Marinas <catalin.marinas@arm.com>
+> Cc: Will Deacon <will@kernel.org>
+> Cc: James Morse <james.morse@arm.com>
+> Cc: Suzuki K Poulose <suzuki.poulose@arm.com>
+> Cc: Marc Zyngier <maz@kernel.org>
+> Cc: Mark Rutland <mark.rutland@arm.com>
+> Cc: linux-kernel@vger.kernel.org
+> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
+> ---
+>   arch/arm64/kernel/cpufeature.c | 1 -
+>   1 file changed, 1 deletion(-)
+> 
+> diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
+> index 2726bd6441da..a8ded1f0eeaf 100644
+> --- a/arch/arm64/kernel/cpufeature.c
+> +++ b/arch/arm64/kernel/cpufeature.c
+> @@ -374,7 +374,6 @@ static const struct arm64_ftr_bits ftr_id_pfr2[] = {
+>   };
+>   
+>   static const struct arm64_ftr_bits ftr_id_dfr0[] = {
+> -	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, 28, 4, 0),
+>   	S_ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, 24, 4, 0xf),	/* PerfMon */
+>   	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, 20, 4, 0),
+>   	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, 16, 4, 0),
+> 
+
