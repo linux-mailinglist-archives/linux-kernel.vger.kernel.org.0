@@ -2,205 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F3C2018CBDE
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 11:41:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4ED1F18CBC9
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 11:38:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727448AbgCTKlT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Mar 2020 06:41:19 -0400
-Received: from inva020.nxp.com ([92.121.34.13]:51914 "EHLO inva020.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727354AbgCTKlJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Mar 2020 06:41:09 -0400
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 97F9A1A0543;
-        Fri, 20 Mar 2020 11:41:06 +0100 (CET)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 3B1351A055C;
-        Fri, 20 Mar 2020 11:41:00 +0100 (CET)
-Received: from localhost.localdomain (mega.ap.freescale.net [10.192.208.232])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 9633B4031C;
-        Fri, 20 Mar 2020 18:40:52 +0800 (SGT)
-From:   Yangbo Lu <yangbo.lu@nxp.com>
-To:     linux-kernel@vger.kernel.org, netdev@vger.kernel.org
-Cc:     Yangbo Lu <yangbo.lu@nxp.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Richard Cochran <richardcochran@gmail.com>,
-        Vladimir Oltean <vladimir.oltean@nxp.com>,
-        Claudiu Manoil <claudiu.manoil@nxp.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Vivien Didelot <vivien.didelot@gmail.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Microchip Linux Driver Support <UNGLinuxDriver@microchip.com>
-Subject: [PATCH 6/6] ptp_ocelot: support 4 programmable pins
-Date:   Fri, 20 Mar 2020 18:37:26 +0800
-Message-Id: <20200320103726.32559-7-yangbo.lu@nxp.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200320103726.32559-1-yangbo.lu@nxp.com>
-References: <20200320103726.32559-1-yangbo.lu@nxp.com>
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1727240AbgCTKiE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Mar 2020 06:38:04 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:12634 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726704AbgCTKiD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Mar 2020 06:38:03 -0400
+Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 02KAXQkl010252;
+        Fri, 20 Mar 2020 06:37:57 -0400
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2yua2d8h0r-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 20 Mar 2020 06:37:57 -0400
+Received: from m0098417.ppops.net (m0098417.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 02KAYuRI015525;
+        Fri, 20 Mar 2020 06:37:57 -0400
+Received: from ppma03dal.us.ibm.com (b.bd.3ea9.ip4.static.sl-reverse.com [169.62.189.11])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2yua2d8h0d-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 20 Mar 2020 06:37:57 -0400
+Received: from pps.filterd (ppma03dal.us.ibm.com [127.0.0.1])
+        by ppma03dal.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id 02KAaAPe029535;
+        Fri, 20 Mar 2020 10:37:56 GMT
+Received: from b01cxnp23032.gho.pok.ibm.com (b01cxnp23032.gho.pok.ibm.com [9.57.198.27])
+        by ppma03dal.us.ibm.com with ESMTP id 2yrpw7bbaa-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 20 Mar 2020 10:37:56 +0000
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp23032.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 02KAbt3t54002126
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 20 Mar 2020 10:37:55 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id BB5DFB2066;
+        Fri, 20 Mar 2020 10:37:55 +0000 (GMT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 4ADF0B205F;
+        Fri, 20 Mar 2020 10:37:55 +0000 (GMT)
+Received: from sofia.ibm.com (unknown [9.85.67.27])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Fri, 20 Mar 2020 10:37:55 +0000 (GMT)
+Received: by sofia.ibm.com (Postfix, from userid 1000)
+        id 47B522E3408; Fri, 20 Mar 2020 16:07:39 +0530 (IST)
+Date:   Fri, 20 Mar 2020 16:07:39 +0530
+From:   Gautham R Shenoy <ego@linux.vnet.ibm.com>
+To:     Pratik Rajesh Sampat <psampat@linux.ibm.com>
+Cc:     linux-pm@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-kernel@vger.kernel.org, pratik.r.sampat@gmail.com,
+        ego@linux.vnet.ibm.com, dja@axtens.net
+Subject: Re: [PATCH] cpufreq: powernv: Fix frame-size-overflow in
+ powernv_cpufreq_work_fn
+Message-ID: <20200320103739.GA11219@in.ibm.com>
+Reply-To: ego@linux.vnet.ibm.com
+References: <20200316135743.57735-1-psampat@linux.ibm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200316135743.57735-1-psampat@linux.ibm.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.645
+ definitions=2020-03-20_02:2020-03-20,2020-03-20 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ mlxlogscore=999 malwarescore=0 suspectscore=0 clxscore=1011 phishscore=0
+ priorityscore=1501 adultscore=0 bulkscore=0 spamscore=0 mlxscore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2003020000 definitions=main-2003200046
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Support 4 programmable pins for only one function periodic
-signal for now. Since the hardware is not able to support
-absolute start time, driver starts periodic signal immediately.
+On Mon, Mar 16, 2020 at 07:27:43PM +0530, Pratik Rajesh Sampat wrote:
+> The patch avoids allocating cpufreq_policy on stack hence fixing frame
+> size overflow in 'powernv_cpufreq_work_fn'
+>
 
-Signed-off-by: Yangbo Lu <yangbo.lu@nxp.com>
----
- drivers/ptp/ptp_ocelot.c  | 97 ++++++++++++++++++++++++++++++++++++++++++++++-
- include/soc/mscc/ocelot.h |  3 ++
- 2 files changed, 98 insertions(+), 2 deletions(-)
+Thanks for fixing this.
 
-diff --git a/drivers/ptp/ptp_ocelot.c b/drivers/ptp/ptp_ocelot.c
-index 59420a7..299928e 100644
---- a/drivers/ptp/ptp_ocelot.c
-+++ b/drivers/ptp/ptp_ocelot.c
-@@ -164,26 +164,119 @@ static int ocelot_ptp_adjfine(struct ptp_clock_info *ptp, long scaled_ppm)
- 	return 0;
- }
- 
-+static int ocelot_ptp_verify(struct ptp_clock_info *ptp, unsigned int pin,
-+			     enum ptp_pin_function func, unsigned int chan)
-+{
-+	switch (func) {
-+	case PTP_PF_NONE:
-+	case PTP_PF_PEROUT:
-+		break;
-+	case PTP_PF_EXTTS:
-+	case PTP_PF_PHYSYNC:
-+		return -1;
-+	}
-+	return 0;
-+}
-+
-+static int ocelot_ptp_enable(struct ptp_clock_info *ptp,
-+			     struct ptp_clock_request *rq, int on)
-+{
-+	struct ocelot *ocelot = container_of(ptp, struct ocelot, ptp_info);
-+	enum ocelot_ptp_pins ptp_pin;
-+	struct timespec64 ts;
-+	unsigned long flags;
-+	int pin = -1;
-+	u32 val;
-+	s64 ns;
-+
-+	switch (rq->type) {
-+	case PTP_CLK_REQ_PEROUT:
-+		/* Reject requests with unsupported flags */
-+		if (rq->perout.flags)
-+			return -EOPNOTSUPP;
-+
-+		/*
-+		 * TODO: support disabling function
-+		 * When ptp_disable_pinfunc() is to disable function,
-+		 * it has already held pincfg_mux.
-+		 * However ptp_find_pin() in .enable() called also needs
-+		 * to hold pincfg_mux.
-+		 * This causes dead lock. So, just return for function
-+		 * disabling, and this needs fix-up.
-+		 */
-+		if (!on)
-+			break;
-+
-+		pin = ptp_find_pin(ocelot->ptp_clock, PTP_PF_PEROUT,
-+				   rq->perout.index);
-+		if (pin == 0)
-+			ptp_pin = PTP_PIN_0;
-+		else if (pin == 1)
-+			ptp_pin = PTP_PIN_1;
-+		else if (pin == 2)
-+			ptp_pin = PTP_PIN_2;
-+		else if (pin == 3)
-+			ptp_pin = PTP_PIN_3;
-+		else
-+			return -EINVAL;
-+
-+		ts.tv_sec = rq->perout.period.sec;
-+		ts.tv_nsec = rq->perout.period.nsec;
-+		ns = timespec64_to_ns(&ts);
-+		ns = ns >> 1;
-+		if (ns > 0x3fffffff || ns <= 0x6)
-+			return -EINVAL;
-+
-+		spin_lock_irqsave(&ocelot->ptp_clock_lock, flags);
-+		ocelot_write_rix(ocelot, ns, PTP_PIN_WF_LOW_PERIOD, ptp_pin);
-+		ocelot_write_rix(ocelot, ns, PTP_PIN_WF_HIGH_PERIOD, ptp_pin);
-+
-+		val = PTP_PIN_CFG_ACTION(PTP_PIN_ACTION_CLOCK);
-+		ocelot_write_rix(ocelot, val, PTP_PIN_CFG, ptp_pin);
-+		spin_unlock_irqrestore(&ocelot->ptp_clock_lock, flags);
-+		dev_warn(ocelot->dev,
-+			 "Starting periodic signal now! (absolute start time not supported)\n");
-+		break;
-+	default:
-+		return -EOPNOTSUPP;
-+	}
-+	return 0;
-+}
-+
- static struct ptp_clock_info ocelot_ptp_clock_info = {
- 	.owner		= THIS_MODULE,
- 	.name		= "ocelot ptp",
- 	.max_adj	= 0x7fffffff,
- 	.n_alarm	= 0,
- 	.n_ext_ts	= 0,
--	.n_per_out	= 0,
--	.n_pins		= 0,
-+	.n_per_out	= OCELOT_PTP_PINS_NUM,
-+	.n_pins		= OCELOT_PTP_PINS_NUM,
- 	.pps		= 0,
- 	.gettime64	= ocelot_ptp_gettime64,
- 	.settime64	= ocelot_ptp_settime64,
- 	.adjtime	= ocelot_ptp_adjtime,
- 	.adjfine	= ocelot_ptp_adjfine,
-+	.verify		= ocelot_ptp_verify,
-+	.enable		= ocelot_ptp_enable,
- };
- 
- int ocelot_init_timestamp(struct ocelot *ocelot)
- {
- 	struct ptp_clock *ptp_clock;
-+	int i;
- 
- 	ocelot->ptp_info = ocelot_ptp_clock_info;
-+
-+	for (i = 0; i < OCELOT_PTP_PINS_NUM; i++) {
-+		struct ptp_pin_desc *p = &ocelot->ptp_pins[i];
-+
-+		snprintf(p->name, sizeof(p->name), "switch_1588_dat%d", i);
-+		p->index = i;
-+		p->func = PTP_PF_NONE;
-+	}
-+
-+	ocelot->ptp_info.pin_config = &ocelot->ptp_pins[0];
-+
- 	ptp_clock = ptp_clock_register(&ocelot->ptp_info, ocelot->dev);
- 	if (IS_ERR(ptp_clock))
- 		return PTR_ERR(ptp_clock);
-diff --git a/include/soc/mscc/ocelot.h b/include/soc/mscc/ocelot.h
-index bcce278..db2fb14 100644
---- a/include/soc/mscc/ocelot.h
-+++ b/include/soc/mscc/ocelot.h
-@@ -92,6 +92,8 @@
- #define OCELOT_SPEED_100		2
- #define OCELOT_SPEED_10			3
- 
-+#define OCELOT_PTP_PINS_NUM		4
-+
- #define TARGET_OFFSET			24
- #define REG_MASK			GENMASK(TARGET_OFFSET - 1, 0)
- #define REG(reg, offset)		[reg & REG_MASK] = offset
-@@ -544,6 +546,7 @@ struct ocelot {
- 	struct mutex			ptp_lock;
- 	/* Protects the PTP clock */
- 	spinlock_t			ptp_clock_lock;
-+	struct ptp_pin_desc		ptp_pins[OCELOT_PTP_PINS_NUM];
- };
- 
- #define ocelot_read_ix(ocelot, reg, gi, ri) __ocelot_read_ix(ocelot, reg, reg##_GSZ * (gi) + reg##_RSZ * (ri))
--- 
-2.7.4
+> Fixes: 227942809b52 ("cpufreq: powernv: Restore cpu frequency to policy->cur on unthrottling")
+> Signed-off-by: Pratik Rajesh Sampat <psampat@linux.ibm.com>
 
+Reviewed-by: Gautham R. Shenoy <ego@linux.vnet.ibm.com>
+
+> ---
+>  drivers/cpufreq/powernv-cpufreq.c | 13 ++++++++-----
+>  1 file changed, 8 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/cpufreq/powernv-cpufreq.c b/drivers/cpufreq/powernv-cpufreq.c
+> index 56f4bc0d209e..20ee0661555a 100644
+> --- a/drivers/cpufreq/powernv-cpufreq.c
+> +++ b/drivers/cpufreq/powernv-cpufreq.c
+> @@ -902,6 +902,7 @@ static struct notifier_block powernv_cpufreq_reboot_nb = {
+>  void powernv_cpufreq_work_fn(struct work_struct *work)
+>  {
+>  	struct chip *chip = container_of(work, struct chip, throttle);
+> +	struct cpufreq_policy *policy;
+>  	unsigned int cpu;
+>  	cpumask_t mask;
+> 
+> @@ -916,12 +917,14 @@ void powernv_cpufreq_work_fn(struct work_struct *work)
+>  	chip->restore = false;
+>  	for_each_cpu(cpu, &mask) {
+>  		int index;
+> -		struct cpufreq_policy policy;
+> 
+> -		cpufreq_get_policy(&policy, cpu);
+> -		index = cpufreq_table_find_index_c(&policy, policy.cur);
+> -		powernv_cpufreq_target_index(&policy, index);
+> -		cpumask_andnot(&mask, &mask, policy.cpus);
+> +		policy = cpufreq_cpu_get(cpu);
+> +		if (!policy)
+> +			continue;
+> +		index = cpufreq_table_find_index_c(policy, policy->cur);
+> +		powernv_cpufreq_target_index(policy, index);
+> +		cpumask_andnot(&mask, &mask, policy->cpus);
+> +		cpufreq_cpu_put(policy);
+>  	}
+>  out:
+>  	put_online_cpus();
+> -- 
+> 2.24.1
+> 
