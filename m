@@ -2,661 +2,335 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 91C0218D542
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 18:03:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6ACC518D534
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 18:02:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727640AbgCTRDE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Mar 2020 13:03:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40658 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727594AbgCTRDD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Mar 2020 13:03:03 -0400
-Received: from localhost.localdomain (cpe-70-114-128-244.austin.res.rr.com [70.114.128.244])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7F04B20784;
-        Fri, 20 Mar 2020 17:03:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584723782;
-        bh=hBrLxJFq/pCJo7tzbiZrMGm+GYcaamkQHQIMCA3oTXk=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SfiUJK+a7O6x5F3REgPLfY/FOcKbJZKYL4CKh22ezY06xFLWVsJjrJ8cQ2M3j8mSA
-         riEV2aoeb4HaAOkM35BtgRQb5EQXN9RcVeLnvQ+08RdsA+0sH8bfsw+zv4ZpL81k1x
-         JxVoZ2bhlo7J3r6sfkSbtC+xVd/CJrWD8pRBkvpA=
-From:   Dinh Nguyen <dinguyen@kernel.org>
-To:     linux-clk@vger.kernel.org
-Cc:     dinguyen@kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, sboyd@kernel.org,
-        mturquette@baylibre.com, robh+dt@kernel.org, mark.rutland@arm.com
-Subject: [PATCH 5/5] clk: socfpga: agilex: add clock driver for the Agilex platform
-Date:   Fri, 20 Mar 2020 12:02:11 -0500
-Message-Id: <20200320170212.21523-6-dinguyen@kernel.org>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200320170212.21523-1-dinguyen@kernel.org>
-References: <20200320170212.21523-1-dinguyen@kernel.org>
+        id S1727526AbgCTRCg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Mar 2020 13:02:36 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:41463 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726953AbgCTRCg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Mar 2020 13:02:36 -0400
+Received: from gallifrey.ext.pengutronix.de ([2001:67c:670:201:5054:ff:fe8d:eefb] helo=localhost)
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <l.stach@pengutronix.de>)
+        id 1jFL2Y-0001PS-Vc; Fri, 20 Mar 2020 18:02:35 +0100
+Message-ID: <c74744cc78cab34f3be8b547b7ff3cd6769d299b.camel@pengutronix.de>
+Subject: help needed in debugging missed wakeup(?)
+From:   Lucas Stach <l.stach@pengutronix.de>
+To:     linux-kernel@vger.kernel.org
+Cc:     Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>
+Date:   Fri, 20 Mar 2020 18:02:32 +0100
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.34.4 (3.34.4-1.fc31) 
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 2001:67c:670:201:5054:ff:fe8d:eefb
+X-SA-Exim-Mail-From: l.stach@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-For the most part the Agilex clock structure is very similar to
-Stratix10, so we re-use most of the Stratix10 clock driver.
+Hi sched people,
 
-Signed-off-by: Dinh Nguyen <dinguyen@kernel.org>
----
-v4: no changes
-v3: Address Stephen Boyd's comments
-v2: update to use clk_parent_data
----
- drivers/clk/Makefile                |   3 +-
- drivers/clk/socfpga/Makefile        |   2 +
- drivers/clk/socfpga/clk-agilex.c    | 454 ++++++++++++++++++++++++++++
- drivers/clk/socfpga/clk-pll-s10.c   |  68 +++++
- drivers/clk/socfpga/stratix10-clk.h |   2 +
- 5 files changed, 528 insertions(+), 1 deletion(-)
- create mode 100644 drivers/clk/socfpga/clk-agilex.c
+I'm currently debugging something which looks like a missed wakeup and
+involves a rt_mutex (no RT kernel though, this is mainline i2c bus
+locking). The issue seems to be a race condition, as we are seeing it
+on around 5% population of a 300 devices test field all running the
+same load. I was only able to reproduce the issue twice in pretty long
+testing sessions on a single device and was able to gather some debug
+info, but running out of ideas where to look next. Hopefully someone
+around here is able to provide me some fruther clues.
 
-diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-index f4169cc2fd31..a178e4b6001f 100644
---- a/drivers/clk/Makefile
-+++ b/drivers/clk/Makefile
-@@ -104,10 +104,11 @@ obj-$(CONFIG_COMMON_CLK_SAMSUNG)	+= samsung/
- obj-$(CONFIG_CLK_SIFIVE)		+= sifive/
- obj-$(CONFIG_ARCH_SIRF)			+= sirf/
- obj-$(CONFIG_ARCH_SOCFPGA)		+= socfpga/
-+obj-$(CONFIG_ARCH_AGILEX)		+= socfpga/
-+obj-$(CONFIG_ARCH_STRATIX10)		+= socfpga/
- obj-$(CONFIG_PLAT_SPEAR)		+= spear/
- obj-$(CONFIG_ARCH_SPRD)			+= sprd/
- obj-$(CONFIG_ARCH_STI)			+= st/
--obj-$(CONFIG_ARCH_STRATIX10)		+= socfpga/
- obj-$(CONFIG_ARCH_SUNXI)		+= sunxi/
- obj-$(CONFIG_SUNXI_CCU)			+= sunxi-ng/
- obj-$(CONFIG_ARCH_TEGRA)		+= tegra/
-diff --git a/drivers/clk/socfpga/Makefile b/drivers/clk/socfpga/Makefile
-index ce5aa7802eb8..bf736f8d201a 100644
---- a/drivers/clk/socfpga/Makefile
-+++ b/drivers/clk/socfpga/Makefile
-@@ -3,3 +3,5 @@ obj-$(CONFIG_ARCH_SOCFPGA) += clk.o clk-gate.o clk-pll.o clk-periph.o
- obj-$(CONFIG_ARCH_SOCFPGA) += clk-pll-a10.o clk-periph-a10.o clk-gate-a10.o
- obj-$(CONFIG_ARCH_STRATIX10) += clk-s10.o
- obj-$(CONFIG_ARCH_STRATIX10) += clk-pll-s10.o clk-periph-s10.o clk-gate-s10.o
-+obj-$(CONFIG_ARCH_AGILEX) += clk-agilex.o
-+obj-$(CONFIG_ARCH_AGILEX) += clk-pll-s10.o clk-periph-s10.o clk-gate-s10.o
-diff --git a/drivers/clk/socfpga/clk-agilex.c b/drivers/clk/socfpga/clk-agilex.c
-new file mode 100644
-index 000000000000..699527f7e764
---- /dev/null
-+++ b/drivers/clk/socfpga/clk-agilex.c
-@@ -0,0 +1,454 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (C) 2019, Intel Corporation
-+ */
-+#include <linux/slab.h>
-+#include <linux/clk-provider.h>
-+#include <linux/of_device.h>
-+#include <linux/of_address.h>
-+#include <linux/platform_device.h>
-+
-+#include <dt-bindings/clock/agilex-clock.h>
-+
-+#include "stratix10-clk.h"
-+
-+static const struct clk_parent_data pll_mux[] = {
-+	{ .fw_name = "osc1",
-+	  .name = "osc1", },
-+	{ .fw_name = "cb-intosc-hs-div2-clk",
-+	  .name = "cb-intosc-hs-div2-clk", },
-+	{ .fw_name = "f2s-free-clk",
-+	  .name = "f2s-free-clk", },
-+};
-+
-+static const struct clk_parent_data cntr_mux[] = {
-+	{ .fw_name = "main_pll",
-+	  .name = "main_pll", },
-+	{ .fw_name = "periph_pll",
-+	  .name = "periph_pll", },
-+	{ .fw_name = "osc1",
-+	  .name = "osc1", },
-+	{ .fw_name = "cb-intosc-hs-div2-clk",
-+	  .name = "cb-intosc-hs-div2-clk", },
-+	{ .fw_name = "f2s-free-clk",
-+	  .name = "f2s-free-clk", },
-+};
-+
-+static const struct clk_parent_data boot_mux[] = {
-+	{ .fw_name = "osc1",
-+	  .name = "osc1", },
-+	{ .fw_name = "cb-intosc-hs-div2-clk",
-+	  .name = "cb-intosc-hs-div2-clk", },
-+};
-+
-+static const struct clk_parent_data mpu_free_mux[] = {
-+	{ .fw_name = "main_pll_c0",
-+	  .name = "main_pll_c0", },
-+	{ .fw_name = "peri_pll_c0",
-+	  .name = "peri_pll_c0", },
-+	{ .fw_name = "osc1",
-+	  .name = "osc1", },
-+	{ .fw_name = "cb-intosc-hs-div2-clk",
-+	  .name = "cb-intosc-hs-div2-clk", },
-+	{ .fw_name = "f2s-free-clk",
-+	  .name = "f2s-free-clk", },
-+};
-+
-+static const struct clk_parent_data noc_free_mux[] = {
-+	{ .fw_name = "main_pll_c1",
-+	  .name = "main_pll_c1", },
-+	{ .fw_name = "peri_pll_c1",
-+	  .name = "peri_pll_c1", },
-+	{ .fw_name = "osc1",
-+	  .name = "osc1", },
-+	{ .fw_name = "cb-intosc-hs-div2-clk",
-+	  .name = "cb-intosc-hs-div2-clk", },
-+	{ .fw_name = "f2s-free-clk",
-+	  .name = "f2s-free-clk", },
-+};
-+
-+static const struct clk_parent_data emaca_free_mux[] = {
-+	{ .fw_name = "main_pll_c2",
-+	  .name = "main_pll_c2", },
-+	{ .fw_name = "peri_pll_c2",
-+	  .name = "peri_pll_c2", },
-+	{ .fw_name = "osc1",
-+	  .name = "osc1", },
-+	{ .fw_name = "cb-intosc-hs-div2-clk",
-+	  .name = "cb-intosc-hs-div2-clk", },
-+	{ .fw_name = "f2s-free-clk",
-+	  .name = "f2s-free-clk", },
-+};
-+
-+static const struct clk_parent_data emacb_free_mux[] = {
-+	{ .fw_name = "main_pll_c3",
-+	  .name = "main_pll_c3", },
-+	{ .fw_name = "peri_pll_c3",
-+	  .name = "peri_pll_c3", },
-+	{ .fw_name = "osc1",
-+	  .name = "osc1", },
-+	{ .fw_name = "cb-intosc-hs-div2-clk",
-+	  .name = "cb-intosc-hs-div2-clk", },
-+	{ .fw_name = "f2s-free-clk",
-+	  .name = "f2s-free-clk", },
-+};
-+
-+static const struct clk_parent_data emac_ptp_free_mux[] = {
-+	{ .fw_name = "main_pll_c3",
-+	  .name = "main_pll_c3", },
-+	{ .fw_name = "peri_pll_c3",
-+	  .name = "peri_pll_c3", },
-+	{ .fw_name = "osc1",
-+	  .name = "osc1", },
-+	{ .fw_name = "cb-intosc-hs-div2-clk",
-+	  .name = "cb-intosc-hs-div2-clk", },
-+	{ .fw_name = "f2s-free-clk",
-+	  .name = "f2s-free-clk", },
-+};
-+
-+static const struct clk_parent_data gpio_db_free_mux[] = {
-+	{ .fw_name = "main_pll_c3",
-+	  .name = "main_pll_c3", },
-+	{ .fw_name = "peri_pll_c3",
-+	  .name = "peri_pll_c3", },
-+	{ .fw_name = "osc1",
-+	  .name = "osc1", },
-+	{ .fw_name = "cb-intosc-hs-div2-clk",
-+	  .name = "cb-intosc-hs-div2-clk", },
-+	{ .fw_name = "f2s-free-clk",
-+	  .name = "f2s-free-clk", },
-+};
-+
-+static const struct clk_parent_data psi_ref_free_mux[] = {
-+	{ .fw_name = "main_pll_c3",
-+	  .name = "main_pll_c3", },
-+	{ .fw_name = "peri_pll_c3",
-+	  .name = "peri_pll_c3", },
-+	{ .fw_name = "osc1",
-+	  .name = "osc1", },
-+	{ .fw_name = "cb-intosc-hs-div2-clk",
-+	  .name = "cb-intosc-hs-div2-clk", },
-+	{ .fw_name = "f2s-free-clk",
-+	  .name = "f2s-free-clk", },
-+};
-+
-+static const struct clk_parent_data sdmmc_free_mux[] = {
-+	{ .fw_name = "main_pll_c3",
-+	  .name = "main_pll_c3", },
-+	{ .fw_name = "peri_pll_c3",
-+	  .name = "peri_pll_c3", },
-+	{ .fw_name = "osc1",
-+	  .name = "osc1", },
-+	{ .fw_name = "cb-intosc-hs-div2-clk",
-+	  .name = "cb-intosc-hs-div2-clk", },
-+	{ .fw_name = "f2s-free-clk",
-+	  .name = "f2s-free-clk", },
-+};
-+
-+static const struct clk_parent_data s2f_usr0_free_mux[] = {
-+	{ .fw_name = "main_pll_c2",
-+	  .name = "main_pll_c2", },
-+	{ .fw_name = "peri_pll_c2",
-+	  .name = "peri_pll_c2", },
-+	{ .fw_name = "osc1",
-+	  .name = "osc1", },
-+	{ .fw_name = "cb-intosc-hs-div2-clk",
-+	  .name = "cb-intosc-hs-div2-clk", },
-+	{ .fw_name = "f2s-free-clk",
-+	  .name = "f2s-free-clk", },
-+};
-+
-+static const struct clk_parent_data s2f_usr1_free_mux[] = {
-+	{ .fw_name = "main_pll_c2",
-+	  .name = "main_pll_c2", },
-+	{ .fw_name = "peri_pll_c2",
-+	  .name = "peri_pll_c2", },
-+	{ .fw_name = "osc1",
-+	  .name = "osc1", },
-+	{ .fw_name = "cb-intosc-hs-div2-clk",
-+	  .name = "cb-intosc-hs-div2-clk", },
-+	{ .fw_name = "f2s-free-clk",
-+	  .name = "f2s-free-clk", },
-+};
-+
-+static const struct clk_parent_data mpu_mux[] = {
-+	{ .fw_name = "mpu_free_clk",
-+	  .name = "mpu_free_clk", },
-+	{ .fw_name = "boot_clk",
-+	  .name = "boot_clk", },
-+};
-+
-+static const struct clk_parent_data s2f_usr0_mux[] = {
-+	{ .fw_name = "f2s-free-clk",
-+	  .name = "f2s-free-clk", },
-+	{ .fw_name = "boot_clk",
-+	  .name = "boot_clk", },
-+};
-+
-+static const struct clk_parent_data emac_mux[] = {
-+	{ .fw_name = "emaca_free_clk",
-+	  .name = "emaca_free_clk", },
-+	{ .fw_name = "emacb_free_clk",
-+	  .name = "emacb_free_clk", },
-+};
-+
-+static const struct clk_parent_data noc_mux[] = {
-+	{ .fw_name = "noc_free_clk",
-+	  .name = "noc_free_clk", },
-+	{ .fw_name = "boot_clk",
-+	  .name = "boot_clk", },
-+};
-+
-+/* clocks in AO (always on) controller */
-+static const struct stratix10_pll_clock agilex_pll_clks[] = {
-+	{ AGILEX_BOOT_CLK, "boot_clk", boot_mux, ARRAY_SIZE(boot_mux), 0,
-+	  0x0},
-+	{ AGILEX_MAIN_PLL_CLK, "main_pll", pll_mux, ARRAY_SIZE(pll_mux),
-+	  0, 0x48},
-+	{ AGILEX_PERIPH_PLL_CLK, "periph_pll", pll_mux, ARRAY_SIZE(pll_mux),
-+	  0, 0x9c},
-+};
-+
-+static const struct stratix10_perip_c_clock agilex_main_perip_c_clks[] = {
-+	{ AGILEX_MAIN_PLL_C0_CLK, "main_pll_c0", "main_pll", NULL, 1, 0, 0x58},
-+	{ AGILEX_MAIN_PLL_C1_CLK, "main_pll_c1", "main_pll", NULL, 1, 0, 0x5C},
-+	{ AGILEX_MAIN_PLL_C2_CLK, "main_pll_c2", "main_pll", NULL, 1, 0, 0x64},
-+	{ AGILEX_MAIN_PLL_C3_CLK, "main_pll_c3", "main_pll", NULL, 1, 0, 0x68},
-+	{ AGILEX_PERIPH_PLL_C0_CLK, "peri_pll_c0", "periph_pll", NULL, 1, 0, 0xAC},
-+	{ AGILEX_PERIPH_PLL_C1_CLK, "peri_pll_c1", "periph_pll", NULL, 1, 0, 0xB0},
-+	{ AGILEX_PERIPH_PLL_C2_CLK, "peri_pll_c2", "periph_pll", NULL, 1, 0, 0xB8},
-+	{ AGILEX_PERIPH_PLL_C3_CLK, "peri_pll_c3", "periph_pll", NULL, 1, 0, 0xBC},
-+};
-+
-+static const struct stratix10_perip_cnt_clock agilex_main_perip_cnt_clks[] = {
-+	{ AGILEX_MPU_FREE_CLK, "mpu_free_clk", NULL, mpu_free_mux, ARRAY_SIZE(mpu_free_mux),
-+	   0, 0x3C, 0, 0, 0},
-+	{ AGILEX_NOC_FREE_CLK, "noc_free_clk", NULL, noc_free_mux, ARRAY_SIZE(noc_free_mux),
-+	  0, 0x40, 0, 0, 1},
-+	{ AGILEX_L4_SYS_FREE_CLK, "l4_sys_free_clk", "noc_free_clk", NULL, 1, 0,
-+	  0, 4, 0, 0},
-+	{ AGILEX_NOC_CLK, "noc_clk", NULL, noc_mux, ARRAY_SIZE(noc_mux),
-+	  0, 0, 0, 0x30, 1},
-+	{ AGILEX_EMAC_A_FREE_CLK, "emaca_free_clk", NULL, emaca_free_mux, ARRAY_SIZE(emaca_free_mux),
-+	  0, 0xD4, 0, 0x88, 0},
-+	{ AGILEX_EMAC_B_FREE_CLK, "emacb_free_clk", NULL, emacb_free_mux, ARRAY_SIZE(emacb_free_mux),
-+	  0, 0xD8, 0, 0x88, 1},
-+	{ AGILEX_EMAC_PTP_FREE_CLK, "emac_ptp_free_clk", NULL, emac_ptp_free_mux,
-+	  ARRAY_SIZE(emac_ptp_free_mux), 0, 0xDC, 0, 0x88, 2},
-+	{ AGILEX_GPIO_DB_FREE_CLK, "gpio_db_free_clk", NULL, gpio_db_free_mux,
-+	  ARRAY_SIZE(gpio_db_free_mux), 0, 0xE0, 0, 0x88, 3},
-+	{ AGILEX_SDMMC_FREE_CLK, "sdmmc_free_clk", NULL, sdmmc_free_mux,
-+	  ARRAY_SIZE(sdmmc_free_mux), 0, 0xE4, 0, 0x88, 4},
-+	{ AGILEX_S2F_USER0_FREE_CLK, "s2f_user0_free_clk", NULL, s2f_usr0_free_mux,
-+	  ARRAY_SIZE(s2f_usr0_free_mux), 0, 0xE8, 0, 0, 0},
-+	{ AGILEX_S2F_USER1_FREE_CLK, "s2f_user1_free_clk", NULL, s2f_usr1_free_mux,
-+	  ARRAY_SIZE(s2f_usr1_free_mux), 0, 0xEC, 0, 0x88, 5},
-+	{ AGILEX_PSI_REF_FREE_CLK, "psi_ref_free_clk", NULL, psi_ref_free_mux,
-+	  ARRAY_SIZE(psi_ref_free_mux), 0, 0xF0, 0, 0x88, 6},
-+};
-+
-+static const struct stratix10_gate_clock agilex_gate_clks[] = {
-+	{ AGILEX_MPU_CLK, "mpu_clk", NULL, mpu_mux, ARRAY_SIZE(mpu_mux), 0, 0x24,
-+	  0, 0, 0, 0, 0x30, 0, 0},
-+	{ AGILEX_MPU_PERIPH_CLK, "mpu_periph_clk", "mpu_clk", NULL, 1, 0, 0x24,
-+	  0, 0, 0, 0, 0, 0, 4},
-+	{ AGILEX_MPU_L2RAM_CLK, "mpu_l2ram_clk", "mpu_clk", NULL, 1, 0, 0x24,
-+	  0, 0, 0, 0, 0, 0, 2},
-+	{ AGILEX_L4_MAIN_CLK, "l4_main_clk", "noc_clk", NULL, 1, 0, 0x24,
-+	  1, 0x44, 0, 2, 0, 0, 0},
-+	{ AGILEX_L4_MP_CLK, "l4_mp_clk", "noc_clk", NULL, 1, 0, 0x24,
-+	  2, 0x44, 8, 2, 0, 0, 0},
-+	/*
-+	 * The l4_sp_clk feeds a 100 MHz clock to various peripherals, one of them
-+	 * being the SP timers, thus cannot get gated.
-+	 */
-+	{ AGILEX_L4_SP_CLK, "l4_sp_clk", "noc_clk", NULL, 1, CLK_IS_CRITICAL, 0x24,
-+	  3, 0x44, 16, 2, 0, 0, 0},
-+	{ AGILEX_CS_AT_CLK, "cs_at_clk", "noc_clk", NULL, 1, 0, 0x24,
-+	  4, 0x44, 24, 2, 0, 0, 0},
-+	{ AGILEX_CS_TRACE_CLK, "cs_trace_clk", "noc_clk", NULL, 1, 0, 0x24,
-+	  4, 0x44, 26, 2, 0, 0, 0},
-+	{ AGILEX_CS_PDBG_CLK, "cs_pdbg_clk", "cs_at_clk", NULL, 1, 0, 0x24,
-+	  4, 0x44, 28, 1, 0, 0, 0},
-+	{ AGILEX_CS_TIMER_CLK, "cs_timer_clk", "noc_clk", NULL, 1, 0, 0x24,
-+	  5, 0, 0, 0, 0, 0, 0},
-+	{ AGILEX_S2F_USER0_CLK, "s2f_user0_clk", NULL, s2f_usr0_mux, ARRAY_SIZE(s2f_usr0_mux), 0, 0x24,
-+	  6, 0, 0, 0, 0, 0, 0},
-+	{ AGILEX_EMAC0_CLK, "emac0_clk", NULL, emac_mux, ARRAY_SIZE(emac_mux), 0, 0x7C,
-+	  0, 0, 0, 0, 0x94, 26, 0},
-+	{ AGILEX_EMAC1_CLK, "emac1_clk", NULL, emac_mux, ARRAY_SIZE(emac_mux), 0, 0x7C,
-+	  1, 0, 0, 0, 0x94, 27, 0},
-+	{ AGILEX_EMAC2_CLK, "emac2_clk", NULL, emac_mux, ARRAY_SIZE(emac_mux), 0, 0x7C,
-+	  2, 0, 0, 0, 0x94, 28, 0},
-+	{ AGILEX_EMAC_PTP_CLK, "emac_ptp_clk", "emac_ptp_free_clk", NULL, 1, 0, 0x7C,
-+	  3, 0, 0, 0, 0, 0, 0},
-+	{ AGILEX_GPIO_DB_CLK, "gpio_db_clk", "gpio_db_free_clk", NULL, 1, 0, 0x7C,
-+	  4, 0x98, 0, 16, 0, 0, 0},
-+	{ AGILEX_SDMMC_CLK, "sdmmc_clk", "sdmmc_free_clk", NULL, 1, 0, 0x7C,
-+	  5, 0, 0, 0, 0, 0, 4},
-+	{ AGILEX_S2F_USER1_CLK, "s2f_user1_clk", "s2f_user1_free_clk", NULL, 1, 0, 0x7C,
-+	  6, 0, 0, 0, 0, 0, 0},
-+	{ AGILEX_PSI_REF_CLK, "psi_ref_clk", "psi_ref_free_clk", NULL, 1, 0, 0x7C,
-+	  7, 0, 0, 0, 0, 0, 0},
-+	{ AGILEX_USB_CLK, "usb_clk", "l4_mp_clk", NULL, 1, 0, 0x7C,
-+	  8, 0, 0, 0, 0, 0, 0},
-+	{ AGILEX_SPI_M_CLK, "spi_m_clk", "l4_mp_clk", NULL, 1, 0, 0x7C,
-+	  9, 0, 0, 0, 0, 0, 0},
-+	{ AGILEX_NAND_CLK, "nand_clk", "l4_main_clk", NULL, 1, 0, 0x7C,
-+	  10, 0, 0, 0, 0, 0, 0},
-+};
-+
-+static int agilex_clk_register_c_perip(const struct stratix10_perip_c_clock *clks,
-+				       int nums, struct stratix10_clock_data *data)
-+{
-+	struct clk *clk;
-+	void __iomem *base = data->base;
-+	int i;
-+
-+	for (i = 0; i < nums; i++) {
-+		clk = s10_register_periph(&clks[i], base);
-+		if (IS_ERR(clk)) {
-+			pr_err("%s: failed to register clock %s\n",
-+			       __func__, clks[i].name);
-+			continue;
-+		}
-+		data->clk_data.clks[clks[i].id] = clk;
-+	}
-+	return 0;
-+}
-+
-+static int agilex_clk_register_cnt_perip(const struct stratix10_perip_cnt_clock *clks,
-+					 int nums, struct stratix10_clock_data *data)
-+{
-+	struct clk *clk;
-+	void __iomem *base = data->base;
-+	int i;
-+
-+	for (i = 0; i < nums; i++) {
-+		clk = s10_register_cnt_periph(&clks[i], base);
-+		if (IS_ERR(clk)) {
-+			pr_err("%s: failed to register clock %s\n",
-+			       __func__, clks[i].name);
-+			continue;
-+		}
-+		data->clk_data.clks[clks[i].id] = clk;
-+	}
-+
-+	return 0;
-+}
-+
-+static int agilex_clk_register_gate(const struct stratix10_gate_clock *clks,					    int nums, struct stratix10_clock_data *data)
-+{
-+	struct clk *clk;
-+	void __iomem *base = data->base;
-+	int i;
-+
-+	for (i = 0; i < nums; i++) {
-+		clk = s10_register_gate(&clks[i], base);
-+		if (IS_ERR(clk)) {
-+			pr_err("%s: failed to register clock %s\n",
-+			       __func__, clks[i].name);
-+			continue;
-+		}
-+		data->clk_data.clks[clks[i].id] = clk;
-+	}
-+
-+	return 0;
-+}
-+
-+static int agilex_clk_register_pll(const struct stratix10_pll_clock *clks,
-+				 int nums, struct stratix10_clock_data *data)
-+{
-+	struct clk *clk;
-+	void __iomem *base = data->base;
-+	int i;
-+
-+	for (i = 0; i < nums; i++) {
-+		clk = agilex_register_pll(&clks[i], base);
-+		if (IS_ERR(clk)) {
-+			pr_err("%s: failed to register clock %s\n",
-+			       __func__, clks[i].name);
-+			continue;
-+		}
-+		data->clk_data.clks[clks[i].id] = clk;
-+	}
-+
-+	return 0;
-+}
-+
-+static struct stratix10_clock_data *__socfpga_agilex_clk_init(struct platform_device *pdev,
-+						    int nr_clks)
-+{
-+	struct device_node *np = pdev->dev.of_node;
-+	struct device *dev = &pdev->dev;
-+	struct stratix10_clock_data *clk_data;
-+	struct clk **clk_table;
-+	struct resource *res;
-+	void __iomem *base;
-+	int ret;
-+
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	base = devm_ioremap_resource(dev, res);
-+	if (IS_ERR(base))
-+		return ERR_CAST(base);
-+
-+	clk_data = devm_kzalloc(dev, sizeof(*clk_data), GFP_KERNEL);
-+	if (!clk_data)
-+		return ERR_PTR(-ENOMEM);
-+
-+	clk_data->base = base;
-+	clk_table = devm_kcalloc(dev, nr_clks, sizeof(*clk_table), GFP_KERNEL);
-+	if (!clk_table)
-+		return ERR_PTR(-ENOMEM);
-+
-+	clk_data->clk_data.clks = clk_table;
-+	clk_data->clk_data.clk_num = nr_clks;
-+	ret = of_clk_add_provider(np, of_clk_src_onecell_get, &clk_data->clk_data);
-+	if (ret)
-+		return ERR_PTR(ret);
-+
-+	return clk_data;
-+}
-+
-+static int agilex_clkmgr_probe(struct platform_device *pdev)
-+{
-+	struct stratix10_clock_data *clk_data;
-+
-+	clk_data = __socfpga_agilex_clk_init(pdev, AGILEX_NUM_CLKS);
-+	if (IS_ERR(clk_data))
-+		return PTR_ERR(clk_data);
-+
-+	agilex_clk_register_pll(agilex_pll_clks, ARRAY_SIZE(agilex_pll_clks), clk_data);
-+
-+	agilex_clk_register_c_perip(agilex_main_perip_c_clks,
-+				 ARRAY_SIZE(agilex_main_perip_c_clks), clk_data);
-+
-+	agilex_clk_register_cnt_perip(agilex_main_perip_cnt_clks,
-+				   ARRAY_SIZE(agilex_main_perip_cnt_clks),
-+				   clk_data);
-+
-+	agilex_clk_register_gate(agilex_gate_clks, ARRAY_SIZE(agilex_gate_clks),
-+			      clk_data);
-+	return 0;
-+}
-+
-+static const struct of_device_id agilex_clkmgr_match_table[] = {
-+	{ .compatible = "intel,agilex-clkmgr",
-+	  .data = agilex_clkmgr_probe },
-+	{ }
-+};
-+
-+static struct platform_driver agilex_clkmgr_driver = {
-+	.probe		= agilex_clkmgr_probe,
-+	.driver		= {
-+		.name	= "agilex-clkmgr",
-+		.suppress_bind_attrs = true,
-+		.of_match_table = agilex_clkmgr_match_table,
-+	},
-+};
-+
-+static int __init agilex_clk_init(void)
-+{
-+	return platform_driver_register(&agilex_clkmgr_driver);
-+}
-+core_initcall(agilex_clk_init);
-diff --git a/drivers/clk/socfpga/clk-pll-s10.c b/drivers/clk/socfpga/clk-pll-s10.c
-index 5c3e1ee44f6b..4e268953b7da 100644
---- a/drivers/clk/socfpga/clk-pll-s10.c
-+++ b/drivers/clk/socfpga/clk-pll-s10.c
-@@ -18,8 +18,12 @@
- #define SOCFPGA_PLL_RESET_MASK		0x2
- #define SOCFPGA_PLL_REFDIV_MASK		0x00003F00
- #define SOCFPGA_PLL_REFDIV_SHIFT	8
-+#define SOCFPGA_PLL_AREFDIV_MASK	0x00000F00
-+#define SOCFPGA_PLL_DREFDIV_MASK	0x00003000
-+#define SOCFPGA_PLL_DREFDIV_SHIFT	12
- #define SOCFPGA_PLL_MDIV_MASK		0xFF000000
- #define SOCFPGA_PLL_MDIV_SHIFT		24
-+#define SOCFPGA_AGILEX_PLL_MDIV_MASK	0x000003FF
- #define SWCTRLBTCLKSEL_MASK		0x200
- #define SWCTRLBTCLKSEL_SHIFT		9
- 
-@@ -27,6 +31,27 @@
- 
- #define to_socfpga_clk(p) container_of(p, struct socfpga_pll, hw.hw)
- 
-+static unsigned long agilex_clk_pll_recalc_rate(struct clk_hw *hwclk,
-+						unsigned long parent_rate)
-+{
-+	struct socfpga_pll *socfpgaclk = to_socfpga_clk(hwclk);
-+	unsigned long arefdiv, reg, mdiv;
-+	unsigned long long vco_freq;
-+
-+	/* read VCO1 reg for numerator and denominator */
-+	reg = readl(socfpgaclk->hw.reg);
-+	arefdiv = (reg & SOCFPGA_PLL_AREFDIV_MASK) >> SOCFPGA_PLL_REFDIV_SHIFT;
-+
-+	vco_freq = (unsigned long long)parent_rate / arefdiv;
-+
-+	/* Read mdiv and fdiv from the fdbck register */
-+	reg = readl(socfpgaclk->hw.reg + 0x24);
-+	mdiv = reg & SOCFPGA_AGILEX_PLL_MDIV_MASK;
-+
-+	vco_freq = (unsigned long long)vco_freq * mdiv;
-+	return (unsigned long)vco_freq;
-+}
-+
- static unsigned long clk_pll_recalc_rate(struct clk_hw *hwclk,
- 					 unsigned long parent_rate)
- {
-@@ -98,6 +123,12 @@ static int clk_pll_prepare(struct clk_hw *hwclk)
- 	return 0;
- }
- 
-+static const struct clk_ops agilex_clk_pll_ops = {
-+	.recalc_rate = agilex_clk_pll_recalc_rate,
-+	.get_parent = clk_pll_get_parent,
-+	.prepare = clk_pll_prepare,
-+};
-+
- static const struct clk_ops clk_pll_ops = {
- 	.recalc_rate = clk_pll_recalc_rate,
- 	.get_parent = clk_pll_get_parent,
-@@ -146,3 +177,40 @@ struct clk *s10_register_pll(const struct stratix10_pll_clock *clks,
- 	}
- 	return clk;
- }
-+
-+struct clk *agilex_register_pll(const struct stratix10_pll_clock *clks,
-+				void __iomem *reg)
-+{
-+	struct clk *clk;
-+	struct socfpga_pll *pll_clk;
-+	struct clk_init_data init;
-+	const char *name = clks->name;
-+
-+	pll_clk = kzalloc(sizeof(*pll_clk), GFP_KERNEL);
-+	if (WARN_ON(!pll_clk))
-+		return NULL;
-+
-+	pll_clk->hw.reg = reg + clks->offset;
-+
-+	if (streq(name, SOCFPGA_BOOT_CLK))
-+		init.ops = &clk_boot_ops;
-+	else
-+		init.ops = &agilex_clk_pll_ops;
-+
-+	init.name = name;
-+	init.flags = clks->flags;
-+
-+	init.num_parents = clks->num_parents;
-+	init.parent_names = NULL;
-+	init.parent_data = clks->parent_data;
-+	pll_clk->hw.hw.init = &init;
-+
-+	pll_clk->hw.bit_idx = SOCFPGA_PLL_POWER;
-+
-+	clk = clk_register(NULL, &pll_clk->hw.hw);
-+	if (WARN_ON(IS_ERR(clk))) {
-+		kfree(pll_clk);
-+		return NULL;
-+	}
-+	return clk;
-+}
-diff --git a/drivers/clk/socfpga/stratix10-clk.h b/drivers/clk/socfpga/stratix10-clk.h
-index ffbd1fb2c8ef..f9d5d724c694 100644
---- a/drivers/clk/socfpga/stratix10-clk.h
-+++ b/drivers/clk/socfpga/stratix10-clk.h
-@@ -62,6 +62,8 @@ struct stratix10_gate_clock {
- 
- struct clk *s10_register_pll(const struct stratix10_pll_clock *,
- 			     void __iomem *);
-+struct clk *agilex_register_pll(const struct stratix10_pll_clock *,
-+				void __iomem *);
- struct clk *s10_register_periph(const struct stratix10_perip_c_clock *,
- 				void __iomem *);
- struct clk *s10_register_cnt_periph(const struct stratix10_perip_cnt_clock *,
--- 
-2.25.1
+The obvious thing which the kernel lockup detector is able to find is
+the sogov (schedutil governor frequency switching task) being blocked:
+
+INFO: task sugov:0:299 blocked for more than 30 seconds.
+Not tainted 5.4.22 #3
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+sugov:0         D    0   299      2 0x00000000
+Backtrace: 
+[<80b306f8>] (__schedule) from [<80b30df8>] (schedule+0xa4/0xdc)
+[<80b30d54>] (schedule) from [<80b34084>] (__rt_mutex_slowlock+0x104/0x17c)
+[<80b33f80>] (__rt_mutex_slowlock) from [<80b34254>] (rt_mutex_slowlock+0x158/0x224)
+[<80b340fc>] (rt_mutex_slowlock) from [<80b34390>] (rt_mutex_lock_nested+0x70/0x7c)
+[<80b34320>] (rt_mutex_lock_nested) from [<807abf20>] (i2c_adapter_lock_bus+0x28/0x2c)
+[<807abef8>] (i2c_adapter_lock_bus) from [<807ae924>] (i2c_transfer+0x124/0x13c)
+[<807ae800>] (i2c_transfer) from [<807ae994>] (i2c_transfer_buffer_flags+0x58/0x80)
+[<807ae93c>] (i2c_transfer_buffer_flags) from [<80681a0c>] (regmap_i2c_write+0x24/0x40)
+[<806819e8>] (regmap_i2c_write) from [<8067cccc>] (_regmap_raw_write_impl+0x5d8/0x714)
+[<8067c6f4>] (_regmap_raw_write_impl) from [<8067ce98>] (_regmap_bus_raw_write+0x90/0x98)
+[<8067ce08>] (_regmap_bus_raw_write) from [<8067c4a0>] (_regmap_write+0x184/0x1cc)
+[<8067c31c>] (_regmap_write) from [<8067c5d4>] (_regmap_update_bits+0xec/0xfc)
+[<8067c4e8>] (_regmap_update_bits) from [<8067d884>] (regmap_update_bits_base+0x60/0x84)
+[<8067d824>] (regmap_update_bits_base) from [<80575468>] (regulator_set_voltage_sel_regmap+0x54/0x90)
+[<80575414>] (regulator_set_voltage_sel_regmap) from [<80570130>] (_regulator_call_set_voltage_sel+0x78/0xb4)
+[<805700b8>] (_regulator_call_set_voltage_sel) from [<80570784>] (_regulator_do_set_voltage+0x460/0x658)
+[<80570324>] (_regulator_do_set_voltage) from [<80573fa4>] (regulator_set_voltage_rdev+0x12c/0x1fc)
+[<80573e78>] (regulator_set_voltage_rdev) from [<80571dec>] (regulator_balance_voltage+0xf8/0x498)
+[<80571cf4>] (regulator_balance_voltage) from [<80573e64>] (regulator_set_voltage_unlocked+0xf4/0x108)
+[<80573d70>] (regulator_set_voltage_unlocked) from [<80573fc8>] (regulator_set_voltage_rdev+0x150/0x1fc)
+[<80573e78>] (regulator_set_voltage_rdev) from [<80571dec>] (regulator_balance_voltage+0xf8/0x498)
+[<80571cf4>] (regulator_balance_voltage) from [<80573e64>] (regulator_set_voltage_unlocked+0xf4/0x108)
+[<80573d70>] (regulator_set_voltage_unlocked) from [<805740c4>] (regulator_set_voltage+0x50/0x84)
+[<80574074>] (regulator_set_voltage) from [<807fe00c>] (regulator_set_voltage_tol.constprop.0+0x1c/0x38)
+[<807fdff0>] (regulator_set_voltage_tol.constprop.0) from [<807fe37c>] (imx6q_set_target+0x354/0x404)
+[<807fe028>] (imx6q_set_target) from [<807f96d8>] (__cpufreq_driver_target+0x254/0x300)
+[<807f9484>] (__cpufreq_driver_target) from [<8017ec98>] (sugov_work+0x5c/0x68)
+[<8017ec3c>] (sugov_work) from [<80154df4>] (kthread_worker_fn+0x178/0x214)
+[<80154c7c>] (kthread_worker_fn) from [<801553d0>] (kthread+0x120/0x130)
+[<801552b0>] (kthread) from [<801010b4>] (ret_from_fork+0x14/0x20)
+
+The sugov thread blocks waiting for the i2c_bus rt_mutex, as it needs
+to adjust the voltage via a i2c attached PMIC.
+The lock holder of the i2c_bus rt_mutex at this time is a user task
+reading input data from a temperature sendor on the same i2c bus. This
+task does not make any progress, but it also doesn't show up in the
+lockup detector output, as it's in RUNNING state. A sysrq-t at some
+time after the lockup shows this:
+
+QSGRenderThread R  running task        0   559    547 0x00000000
+Backtrace: 
+[<80b306f8>] (__schedule) from [<80b30df8>] (schedule+0xa4/0xdc)
+[<80b30d54>] (schedule) from [<80b347f8>] (schedule_timeout+0xd0/0x108)
+[<80b34728>] (schedule_timeout) from [<807b43dc>] (i2c_imx_trx_complete+0x90/0x13c)
+[<807b434c>] (i2c_imx_trx_complete) from [<807b5ab0>] (i2c_imx_xfer+0x938/0xac4)
+[<807b5178>] (i2c_imx_xfer) from [<807ae5f0>] (__i2c_transfer+0x5a8/0x7b8)
+[<807ae048>] (__i2c_transfer) from [<807ae8ec>] (i2c_transfer+0xec/0x13c)
+[<807ae800>] (i2c_transfer) from [<806819b4>] (regmap_i2c_read+0x64/0x98)
+[<8067cf80>] (_regmap_raw_read) from [<8067d338>] (_regmap_bus_read+0x4c/0x6c)
+[<8067d2ec>] (_regmap_bus_read) from [<8067be70>] (_regmap_read+0x94/0x1e8)
+[<8067bddc>] (_regmap_read) from [<8067c014>] (regmap_read+0x50/0x68)
+[<8067bfc4>] (regmap_read) from [<807e67bc>] (lm75_read+0x90/0xe0)
+[<807e672c>] (lm75_read) from [<807e5908>] (hwmon_attr_show+0x48/0x1cc)
+[<807e58c0>] (hwmon_attr_show) from [<80658570>] (dev_attr_show+0x2c/0x50)
+[<80658544>] (dev_attr_show) from [<80348414>] (sysfs_kf_seq_show+0x98/0xec)
+[<8034837c>] (sysfs_kf_seq_show) from [<80346a2c>] (kernfs_seq_show+0x34/0x38)
+[<803469f8>] (kernfs_seq_show) from [<802f9e48>] (seq_read+0x21c/0x454)
+[<802f9c2c>] (seq_read) from [<80346e50>] (kernfs_fop_read+0x40/0x1d0)
+[<80346e10>] (kernfs_fop_read) from [<802d1f58>] (__vfs_read+0x48/0xf0)
+[<802d1f10>] (__vfs_read) from [<802d209c>] (vfs_read+0x9c/0xb8)
+[<802d2000>] (vfs_read) from [<802d22c4>] (ksys_read+0x78/0xc4)
+[<802d224c>] (ksys_read) from [<802d2328>] (sys_read+0x18/0x1c)
+[<802d2310>] (sys_read) from [<80101000>] (ret_fast_syscall+0x0/0x28)
+
+The task isn't making any progress, even though the
+wait_event_timeout() in i2c_imx_trx_complete() has a 100ms timeout to
+guard against bus lockups, the task is fully stuck there, so it's
+unlikely to be a peripheral HW issue. As the task is in RUNNING state I
+believe that the event that is waited for has happened, as expected.
+
+The sched state at this time is "interesting" and I'm having a hard
+time making any sense out of this. The user task apparently inherited
+the DEADLINE priority from the sugov kthread. But while the user task
+state shows up as RUNNING the task doesn't show up in the dl_rq
+nr_running. Also while cpu#0 shows nr_running as 1, its curr->pid hints
+at it executing the idle task, which is at least consitent with the
+thread still being stuck in __schedule.
+
+Shortened sched debug below. The machine has 4 cores, I only pasted the
+output of the CPUs containing the relevant user task and the sugov
+kthread.
+
+Sched Debug Version: v0.11, 5.4.22 #3
+ktime                                   : 8167595.022639
+sched_clk                               : 8167600.901887
+cpu_clk                                 : 8167600.902554
+jiffies                                 : 786762
+sysctl_sched
+.sysctl_sched_latency                    : 18.000000
+.sysctl_sched_min_granularity            : 2.250000
+.sysctl_sched_wakeup_granularity         : 3.000000
+.sysctl_sched_child_runs_first           : 0
+.sysctl_sched_features                   : 2059067
+.sysctl_sched_tunable_scaling            : 1 (logarithmic)
+cpu#0
+  .nr_running                    : 1
+  .nr_switches                   : 2616061
+  .nr_load_updates               : 0
+  .nr_uninterruptible            : 3
+  .next_balance                  : 0.786770
+  .curr->pid                     : 0
+  .clock                         : 8167706.573554
+  .clock_task                    : 8167709.714554
+  .avg_idle                      : 1000000
+  .max_idle_balance_cost         : 500000
+cfs_rq[0]:/
+  .exec_clock                    : 0.000000
+  .MIN_vruntime                  : 0.000001
+  .min_vruntime                  : 170655.365388
+  .max_vruntime                  : 0.000001
+  .spread                        : 0.000000
+  .spread0                       : 0.000000
+  .nr_spread_over                : 0
+  .nr_running                    : 0
+  .load                          : 0
+  .runnable_weight               : 0
+  .load_avg                      : 137
+  .runnable_load_avg             : 0
+  .util_avg                      : 111
+  .util_est_enqueued             : 0
+  .removed.load_avg              : 0
+  .removed.util_avg              : 0
+  .removed.runnable_sum          : 0
+  .tg_load_avg_contrib           : 0
+  .tg_load_avg                   : 0
+rt_rq[0]:
+  .rt_nr_running                 : 0
+  .rt_nr_migratory               : 0
+  .rt_throttled                  : 0
+  .rt_time                       : 15.497666
+  .rt_runtime                    : 950.000000
+dl_rq[0]:
+  .dl_nr_running                 : 0
+  .dl_nr_migratory               : 0
+  .dl_bw->bw                     : 996147
+  .dl_bw->total_bw               : 0
+runnable tasks:
+ S           task   PID         tree-key  switches  prio     wait-time             sum-exec        sum-sleep
+-----------------------------------------------------------------------------------------------------------
+ I         rcu_gp     3         7.244826         3   100         0.000000         0.202666         0.000000 /
+ I     rcu_par_gp     4         8.838316         3   100         0.000000         0.172000         0.000000 /
+ I   kworker/0:0H     6      6281.741275        12   100         0.000000         1.777333         0.000000 /
+ I   mm_percpu_wq     8        14.640920         3   100         0.000000         0.143000         0.000000 /
+ S    ksoftirqd/0     9    170272.531056     11048   120         0.000000      8117.785661         0.000000 /
+ I    rcu_preempt    10    170647.484054     85503   120         0.000000     10540.749756         0.000000 /
+ S    migration/0    11         0.000000      2052     0         0.000000       169.551366         0.000000 /
+ I    kworker/0:1    12    170492.300722     34025   120         0.000000      5087.014467         0.000000 /
+ S        cpuhp/0    13      3130.355881         9   120         0.000000         0.537667         0.000000 /
+ S     khungtaskd    34    170186.022389      1187   120         0.000000      7649.525998         0.000000 /
+ I       cfg80211   110      2586.210829         4   100         0.000000         0.221000         0.000000 /
+ S      jfsCommit   139      2682.261200         2   120         0.000000         0.127334         0.000000 /
+ I    kworker/0:2   143     13553.725798      3017   120         0.000000       500.353366         0.000000 /
+ I    usbip_event   163      3472.106794         2   100         0.000000         0.216334         0.000000 /
+ I          sdhci   168      3481.262131         2   100         0.000000         0.213334         0.000000 /
+ S    irq/60-mmc0   169         0.000000         7    49         0.000000         1.281667         0.000000 /
+ S    irq/61-mmc1   173         0.000000         7    49         0.000000         0.842335         0.000000 /
+ S    irq/62-mmc2   177         0.000000         4    49         0.000000         0.398334         0.000000 /
+ I   mmc_complete   178      3491.982425         2   100         0.000000         0.192668         0.000000 /
+ I   mmc_complete   182      3507.515908         2   100         0.000000         0.209334         0.000000 /
+ S irq/97-mma8451   296         0.000000         2    49         0.000000         0.209334         0.000000 /
+ S     134000.gpu   320         0.000000         2    98         0.000000         0.207334         0.000000 /
+ S    2204000.gpu   321         0.000000         2    98         0.000000         0.192000         0.000000 /
+ Sirq/330-!soc!ai   334         0.000000         2    49         0.000000         0.175333         0.000000 /
+ Sirq/331-!soc!ai   335         0.000000         2    49         0.000000         0.142667         0.000000 /
+ Sirq/18-imx_ther   338         0.000000         3    49         0.000000         0.300000         0.000000 /
+ I   kworker/u8:4   339    170173.058056     47403   120         0.000000     14864.604657         0.000000 /
+ I   kworker/u9:2   349    170272.470384     49098   100         0.000000     22626.085716         0.000000 /
+ Ssystemd-journal   371    170655.365388      5176   120         0.000000      8538.471989         0.000000 /
+ S    irq/66-vdoa   448         0.075666     56853    49         0.000000      7462.914997         0.000000 /
+ Sirq/30-2040000.   449         0.000000        22    49         0.000000         3.228000         0.000000 /
+ Sirq/31-coda jpe   450         0.081000         3    49         0.000000         0.362001         0.000000 /
+ I           coda   451      6026.818189         2   100         0.000000         0.221000         0.000000 /
+ I   kworker/0:2H   464     13131.123871       178   100         0.000000        74.261336         0.000000 /
+ Salsa-sink-20280   506         0.000000    328034    94         0.000000    137857.664438         0.000000 /
+ S          ptp4l   512    170588.727054     14587   120         0.000000     12961.910636         0.000000 /
+ S          lldpd   518    161330.930102       413   120         0.000000       235.196326         0.000000 /
+ S          lldpd   523    167124.946732       522   120         0.000000       164.690670         0.000000 /
+ S     QQmlThread   555     13035.420131       633   120         0.000000       693.330648         0.000000 /
+ Sgldisplay-event   558     13572.855460         1   120         0.000000         0.680333         0.000000 /
+ RQSGRenderThread   559         0.000000     21984    -1         0.000000      9455.140648         0.000000 /
+ Sgldisplay-event   560     13625.136454         1   120         0.000000         0.607000         0.000000 /
+ Sgldisplay-event   561     13634.828782         1   120         0.000000         0.692333         0.000000 /
+ S  typefind:sink   572     14346.726433       205   120         0.000000        84.886339         0.000000 /
+ Smatroskademux0:   575     27839.889727      8421   120         0.000000      3155.833732         0.000000 /
+ Smultiqueue1:src   580     27939.450393      7412   120         0.000000      3322.682665         0.000000 /
+ Smultiqueue2:src   582     64702.132151     36004   120         0.000000     14180.398062         0.000000 /
+ S    threaded-ml   587    170653.935720    806958   120         0.000000    191834.284940         0.000000 /
+cpu#1
+  .nr_running                    : 0
+  .nr_switches                   : 1951962
+  .nr_load_updates               : 0
+  .nr_uninterruptible            : -17
+  .next_balance                  : 0.786848
+  .curr->pid                     : 0
+  .clock                         : 8168488.074888
+  .clock_task                    : 8168488.074888
+  .avg_idle                      : 1000000
+  .max_idle_balance_cost         : 500000
+cfs_rq[1]:/
+  .exec_clock                    : 0.000000
+  .MIN_vruntime                  : 0.000001
+  .min_vruntime                  : 79675.927756
+  .max_vruntime                  : 0.000001
+  .spread                        : 0.000000
+  .spread0                       : -91036.566966
+  .nr_spread_over                : 0
+  .nr_running                    : 0
+  .load                          : 11916
+  .runnable_weight               : 0
+  .load_avg                      : 1200
+  .runnable_load_avg             : 0
+  .util_avg                      : 51
+  .util_est_enqueued             : 0
+  .removed.load_avg              : 0
+  .removed.util_avg              : 0
+  .removed.runnable_sum          : 0
+  .tg_load_avg_contrib           : 0
+  .tg_load_avg                   : 0
+rt_rq[1]:
+  .rt_nr_running                 : 0
+  .rt_nr_migratory               : 0
+  .rt_throttled                  : 0
+  .rt_time                       : 36.943999
+  .rt_runtime                    : 950.000000
+dl_rq[1]:
+  .dl_nr_running                 : 0
+  .dl_nr_migratory               : 0
+  .dl_bw->bw                     : 996147
+  .dl_bw->total_bw               : 0
+runnable tasks:
+ S           task   PID         tree-key  switches  prio     wait-time             sum-exec        sum-sleep
+-----------------------------------------------------------------------------------------------------------
+ S        systemd     1     78427.950089      7820   120         0.000000     16317.471696         0.000000 /
+ S        cpuhp/1    14       144.194268         8   120         0.000000         1.279665         0.000000 /
+ S    migration/1    15         0.000000      2095     0         0.000000       173.322016         0.000000 /
+ S    ksoftirqd/1    16     78430.110423       827   120         0.000000       220.178683         0.000000 /
+ I          netns    30         5.169486         2   100         0.000000         0.273000         0.000000 /
+ I      writeback    36        14.311131         2   100         0.000000         0.153000         0.000000 /
+ I        kblockd   104      6063.650697         5   100         0.000000         1.485334         0.000000 /
+ I        xprtiod   109        32.881708         2   100         0.000000         0.170001         0.000000 /
+ S        kswapd0   133       144.235935         3   120         0.000000         0.300668         0.000000 /
+ I         nfsiod   134       153.138601         2   100         0.000000         0.157667         0.000000 /
+ S irq/308-aerdrv   146         0.000000         2    49         0.000000         0.144999         0.000000 /
+ S      scsi_eh_0   147      6187.181146        42   120         0.000000        46.664002         0.000000 /
+ I    rmi4-poller   164       242.126243         2   100         0.000000         0.177001         0.000000 /
+ I          sdhci   172       251.241547         2   100         0.000000         0.170333         0.000000 /
+ S          hwrng   295      1981.228871        19   120         0.000000         6.145667         0.000000 /
+ D        sugov:0   299         0.000000     20836    -1         0.000000      6428.315062         0.000000 /
+ I   kworker/u8:9   355     78399.595765     44983   120         0.000000     13516.948580         0.000000 /
+ I   kworker/1:2H   463     12217.874057       118   100         0.000000        32.701656         0.000000 /
+ I   kworker/1:3H   466      6630.229350         3   100         0.000000         0.192334         0.000000 /
+ Salsa-sink-202c0   505         0.000000    467719    94         0.000000    501687.028908         0.000000 /
+ S     bluetoothd   483     12196.448363       219   120         0.000000       207.692334         0.000000 /
+ S NetworkManager   514     78428.249422      1426   120         0.000000       958.963685         0.000000 /
+ S          gmain   516     79661.895205      2911   120         0.000000      1462.902691         0.000000 /
+ S        telnetd   546     13136.934667       201   120         0.000000       128.003662         0.000000 /
+ SQEvdevTouchScre   553     10397.580038        13   120         0.000000         5.707002         0.000000 /
+ S  typefind:sink   573     13074.246005       159   120         0.000000        99.711000         0.000000 /
+ Smultiqueue2:src   585     56018.750354     55803   120         0.000000     32116.048930         0.000000 /
+ S    threaded-ml   587     79674.485504    806994   120         0.000000    191843.905943         0.000000 /
+ S     aqueue:src   590     61290.642959    103825   120         0.000000     38918.500285         0.000000 /
+ S     aqueue:src   593     25819.269867     22273   120         0.000000      6675.391368         0.000000 /
+ I   kworker/u9:0   601     61161.845023     23285   100         0.000000     11131.996351         0.000000 /
+ D    kworker/1:2   617     75716.639814       116   120         0.000000        13.313333         0.000000 /
+ I    kworker/1:3   618     79667.860300      9536   120         0.000000      1262.709303         0.000000 /
+ I    kworker/1:1   619     77765.434809         2   120         0.000000         0.189000         0.000000 /
+
+Any ideas on what it happening here or how I could gather better debug
+data?
+
+Regards,
+Lucas
 
