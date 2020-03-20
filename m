@@ -2,112 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 577FA18D3ED
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 17:15:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9F10D18D447
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 17:23:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727417AbgCTQPG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Mar 2020 12:15:06 -0400
-Received: from mga05.intel.com ([192.55.52.43]:34161 "EHLO mga05.intel.com"
+        id S1727450AbgCTQXB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Mar 2020 12:23:01 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51382 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727002AbgCTQPG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Mar 2020 12:15:06 -0400
-IronPort-SDR: cPJ6GWQUD0izaYg5cvKqraM/ysunOin4y7tqr8rjuwcLuZS+4K9qJ5asAo+krxjKq8ztIQgfhg
- 6mi7r/tkyb5g==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Mar 2020 09:15:06 -0700
-IronPort-SDR: nfbF9FQqKHkQ9x3+7AJIAWSbRldf4humNn2N1DChKht7YMxC+rThaYhyh30bvSaeO6vZ5Pi7Qi
- tg2lPKnv9Zew==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.72,285,1580803200"; 
-   d="scan'208";a="418762631"
-Received: from jacob-builder.jf.intel.com (HELO jacob-builder) ([10.7.199.155])
-  by orsmga005.jf.intel.com with ESMTP; 20 Mar 2020 09:15:06 -0700
-Date:   Fri, 20 Mar 2020 09:20:47 -0700
-From:   Jacob Pan <jacob.jun.pan@linux.intel.com>
-To:     Lu Baolu <baolu.lu@linux.intel.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        iommu@lists.linux-foundation.org, Joerg Roedel <joro@8bytes.org>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Raj Ashok <ashok.raj@intel.com>, Yi Liu <yi.l.liu@intel.com>,
-        jacob.jun.pan@linux.intel.com
-Subject: Re: [PATCH 1/3] iommu/vt-d: Remove redundant IOTLB flush
-Message-ID: <20200320092047.4a4cf551@jacob-builder>
-In-Reply-To: <26ab1917-f087-aafa-e861-6a2478000a6f@linux.intel.com>
-References: <1584678751-43169-1-git-send-email-jacob.jun.pan@linux.intel.com>
-        <1584678751-43169-2-git-send-email-jacob.jun.pan@linux.intel.com>
-        <26ab1917-f087-aafa-e861-6a2478000a6f@linux.intel.com>
-Organization: OTC
-X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
+        id S1727232AbgCTQXB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Mar 2020 12:23:01 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3FEC620724;
+        Fri, 20 Mar 2020 16:23:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1584721380;
+        bh=lv5dc5lyvfZeoMUgtuTZ8bzmyZe5g6+qYJhcqv6T9H4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=XfRCgcWXuedy3Bn5EMaQ6y0SROMPmy3X3wmAmPLiGGByiiErxDcrSTbAmY3zZa11u
+         AoJUJiP98hoo7XRqTS+oFm9IM31dcUfEOuACdITsJtOgO78KwrFbOefVfDdS8U7vpt
+         OVJ91PgYCMQ9i+zWola632ATrMbJXHzucMJMPBuc=
+Date:   Fri, 20 Mar 2020 17:22:58 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Daniel Borkmann <daniel@iogearbox.net>
+Cc:     Alexei Starovoitov <ast@kernel.org>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+        Andrii Nakryiko <andriin@fb.com>, netdev@vger.kernel.org,
+        bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Maciej =?utf-8?Q?=C5=BBenczykowski?= <maze@google.com>,
+        John Stultz <john.stultz@linaro.org>,
+        Alexander Potapenko <glider@google.com>,
+        Alistair Delva <adelva@google.com>
+Subject: [PATCH] bpf: explicitly memset some bpf info structures declared on
+ the stack
+Message-ID: <20200320162258.GA794295@kroah.com>
+References: <20200320094813.GA421650@kroah.com>
+ <3bcf52da-0930-a27f-60f9-28a40e639949@iogearbox.net>
+ <20200320154518.GA765793@kroah.com>
+ <d55983b3-0f94-cc7f-2055-a0b4ab8075ed@iogearbox.net>
+ <20200320161515.GA778529@kroah.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200320161515.GA778529@kroah.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 20 Mar 2020 21:45:26 +0800
-Lu Baolu <baolu.lu@linux.intel.com> wrote:
+Trying to initialize a structure with "= {};" will not always clean out
+all padding locations in a structure.  So be explicit and call memset to
+initialize everything for a number of bpf information structures that
+are then copied from userspace, sometimes from smaller memory locations
+than the size of the structure.
 
-> On 2020/3/20 12:32, Jacob Pan wrote:
-> > IOTLB flush already included in the PASID tear down process. There
-> > is no need to flush again.  
-> 
-> It seems that intel_pasid_tear_down_entry() doesn't flush the pasid
-> based device TLB?
-> 
-I saw this code in intel_pasid_tear_down_entry(). Isn't the last line
-flush the devtlb? Not in guest of course since the passdown tlb flush
-is inclusive.
+Reported-by: Daniel Borkmann <daniel@iogearbox.net
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
 
-	pasid_cache_invalidation_with_pasid(iommu, did, pasid);
-	iotlb_invalidation_with_pasid(iommu, did, pasid);
+Note, this is separate from my previous patch, both are needed.
 
-	/* Device IOTLB doesn't need to be flushed in caching mode. */
-	if (!cap_caching_mode(iommu->cap))
-		devtlb_invalidation_with_pasid(iommu, dev, pasid);
+ kernel/bpf/btf.c     | 3 ++-
+ kernel/bpf/syscall.c | 6 ++++--
+ 2 files changed, 6 insertions(+), 3 deletions(-)
 
-> Best regards,
-> baolu
-> 
-> > 
-> > Cc: Lu Baolu <baolu.lu@linux.intel.com>
-> > Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
-> > ---
-> >   drivers/iommu/intel-svm.c | 6 ++----
-> >   1 file changed, 2 insertions(+), 4 deletions(-)
-> > 
-> > diff --git a/drivers/iommu/intel-svm.c b/drivers/iommu/intel-svm.c
-> > index 8f42d717d8d7..1483f1845762 100644
-> > --- a/drivers/iommu/intel-svm.c
-> > +++ b/drivers/iommu/intel-svm.c
-> > @@ -268,10 +268,9 @@ static void intel_mm_release(struct
-> > mmu_notifier *mn, struct mm_struct *mm)
-> >   	 * *has* to handle gracefully without affecting other
-> > processes. */
-> >   	rcu_read_lock();
-> > -	list_for_each_entry_rcu(sdev, &svm->devs, list) {
-> > +	list_for_each_entry_rcu(sdev, &svm->devs, list)
-> >   		intel_pasid_tear_down_entry(svm->iommu,
-> > sdev->dev, svm->pasid);
-> > -		intel_flush_svm_range_dev(svm, sdev, 0, -1, 0);
-> > -	}
-> > +
-> >   	rcu_read_unlock();
-> >   
-> >   }
-> > @@ -731,7 +730,6 @@ int intel_svm_unbind_mm(struct device *dev, int
-> > pasid)
-> >   			 * large and has to be physically
-> > contiguous. So it's
-> >   			 * hard to be as defensive as we might
-> > like. */ intel_pasid_tear_down_entry(iommu, dev, svm->pasid);
-> > -			intel_flush_svm_range_dev(svm, sdev, 0,
-> > -1, 0); kfree_rcu(sdev, rcu);
-> >   
-> >   			if (list_empty(&svm->devs)) {
-> >   
+diff --git a/kernel/bpf/btf.c b/kernel/bpf/btf.c
+index 787140095e58..2fc945fcf952 100644
+--- a/kernel/bpf/btf.c
++++ b/kernel/bpf/btf.c
+@@ -4564,7 +4564,7 @@ int btf_get_info_by_fd(const struct btf *btf,
+ 		       union bpf_attr __user *uattr)
+ {
+ 	struct bpf_btf_info __user *uinfo;
+-	struct bpf_btf_info info = {};
++	struct bpf_btf_info info;
+ 	u32 info_copy, btf_copy;
+ 	void __user *ubtf;
+ 	u32 uinfo_len;
+@@ -4573,6 +4573,7 @@ int btf_get_info_by_fd(const struct btf *btf,
+ 	uinfo_len = attr->info.info_len;
+ 
+ 	info_copy = min_t(u32, uinfo_len, sizeof(info));
++	memset(&info, 0, sizeof(info));
+ 	if (copy_from_user(&info, uinfo, info_copy))
+ 		return -EFAULT;
+ 
+diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
+index a4b1de8ea409..84213cc5d016 100644
+--- a/kernel/bpf/syscall.c
++++ b/kernel/bpf/syscall.c
+@@ -2787,7 +2787,7 @@ static int bpf_prog_get_info_by_fd(struct bpf_prog *prog,
+ 				   union bpf_attr __user *uattr)
+ {
+ 	struct bpf_prog_info __user *uinfo = u64_to_user_ptr(attr->info.info);
+-	struct bpf_prog_info info = {};
++	struct bpf_prog_info info;
+ 	u32 info_len = attr->info.info_len;
+ 	struct bpf_prog_stats stats;
+ 	char __user *uinsns;
+@@ -2799,6 +2799,7 @@ static int bpf_prog_get_info_by_fd(struct bpf_prog *prog,
+ 		return err;
+ 	info_len = min_t(u32, sizeof(info), info_len);
+ 
++	memset(&info, 0, sizeof(info));
+ 	if (copy_from_user(&info, uinfo, info_len))
+ 		return -EFAULT;
+ 
+@@ -3062,7 +3063,7 @@ static int bpf_map_get_info_by_fd(struct bpf_map *map,
+ 				  union bpf_attr __user *uattr)
+ {
+ 	struct bpf_map_info __user *uinfo = u64_to_user_ptr(attr->info.info);
+-	struct bpf_map_info info = {};
++	struct bpf_map_info info;
+ 	u32 info_len = attr->info.info_len;
+ 	int err;
+ 
+@@ -3071,6 +3072,7 @@ static int bpf_map_get_info_by_fd(struct bpf_map *map,
+ 		return err;
+ 	info_len = min_t(u32, sizeof(info), info_len);
+ 
++	memset(&info, 0, sizeof(info));
+ 	info.type = map->map_type;
+ 	info.id = map->id;
+ 	info.key_size = map->key_size;
+-- 
+2.25.2
 
-[Jacob Pan]
