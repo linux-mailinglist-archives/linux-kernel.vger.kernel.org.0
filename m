@@ -2,69 +2,172 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 554FD18C65C
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 05:22:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2D77218C665
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 05:23:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726831AbgCTEWb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Mar 2020 00:22:31 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:12110 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725446AbgCTEWa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Mar 2020 00:22:30 -0400
-Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id A24DAE60EF66344F6A94;
-        Fri, 20 Mar 2020 12:22:27 +0800 (CST)
-Received: from [127.0.0.1] (10.173.222.27) by DGGEMS409-HUB.china.huawei.com
- (10.3.19.209) with Microsoft SMTP Server id 14.3.487.0; Fri, 20 Mar 2020
- 12:22:18 +0800
-Subject: Re: [PATCH v5 19/23] KVM: arm64: GICv4.1: Allow SGIs to switch
- between HW and SW interrupts
-To:     Marc Zyngier <maz@kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <kvmarm@lists.cs.columbia.edu>, <kvm@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-CC:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Robert Richter <rrichter@marvell.com>,
-        "Thomas Gleixner" <tglx@linutronix.de>,
-        Eric Auger <eric.auger@redhat.com>,
-        "James Morse" <james.morse@arm.com>,
-        Julien Thierry <julien.thierry.kdev@gmail.com>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>
-References: <20200304203330.4967-1-maz@kernel.org>
- <20200304203330.4967-20-maz@kernel.org>
-From:   Zenghui Yu <yuzenghui@huawei.com>
-Message-ID: <10847ac8-af94-0a83-73ed-24039840ca74@huawei.com>
-Date:   Fri, 20 Mar 2020 12:22:15 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.0
+        id S1727210AbgCTEXb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Mar 2020 00:23:31 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51490 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727113AbgCTEX3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Mar 2020 00:23:29 -0400
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id AC26E20777
+        for <linux-kernel@vger.kernel.org>; Fri, 20 Mar 2020 04:23:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1584678209;
+        bh=RwUpts3my+2j4S9FwhIam1+GYrL1NFcEKY29ijsR0f0=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=SQ5BRfBdjGnHWHEOv22TTrCx+hiIZnXlTkt0193blhy5p+OqMwsX6LuafM4HxXK3v
+         nGVfo+rQRRQspZEs8dtCKCugi1IFzKNAm7KeMLAlcex9N1PEWrGstL9Ah9SUilM3sG
+         4WT0MqPoSywO8k8Llp8+4lZkW6k++GNv34pdaVAQ=
+Received: by mail-wm1-f47.google.com with SMTP id 6so5105087wmi.5
+        for <linux-kernel@vger.kernel.org>; Thu, 19 Mar 2020 21:23:28 -0700 (PDT)
+X-Gm-Message-State: ANhLgQ39qMUANDoRk0kj2Cu4Dsz8ExJBBUvAmVRjnOJSXa9fqYoXT0jf
+        6/f32wTfWWxOwIz40O3hB40a4KZ/jq74arwyVGUjBA==
+X-Google-Smtp-Source: ADFU+vviOlsxvS4AUIk2v1iVSa2KGfsgjhwZ1Heqpb+fLRxDpiVTVL5HVvW7Efg92V/1OteNG76Qp5TrjAzat6QdDd4=
+X-Received: by 2002:a7b:c8ce:: with SMTP id f14mr7663108wml.138.1584678206958;
+ Thu, 19 Mar 2020 21:23:26 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20200304203330.4967-20-maz@kernel.org>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.173.222.27]
-X-CFilter-Loop: Reflected
+References: <1584677604-32707-1-git-send-email-kyung.min.park@intel.com> <1584677604-32707-3-git-send-email-kyung.min.park@intel.com>
+In-Reply-To: <1584677604-32707-3-git-send-email-kyung.min.park@intel.com>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Thu, 19 Mar 2020 21:23:15 -0700
+X-Gmail-Original-Message-ID: <CALCETrWJ88CaGmij_NNysRjUQ6LPwwbPnMy1YPdKnM-cFDueSw@mail.gmail.com>
+Message-ID: <CALCETrWJ88CaGmij_NNysRjUQ6LPwwbPnMy1YPdKnM-cFDueSw@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] x86/delay: Introduce TPAUSE delay
+To:     Kyung Min Park <kyung.min.park@intel.com>
+Cc:     X86 ML <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Andi Kleen <ak@linux.intel.com>,
+        Tony Luck <tony.luck@intel.com>,
+        "Raj, Ashok" <ashok.raj@intel.com>,
+        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
+        Fenghua Yu <fenghua.yu@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Marc,
+On Thu, Mar 19, 2020 at 9:13 PM Kyung Min Park <kyung.min.park@intel.com> wrote:
+>
+> TPAUSE instructs the processor to enter an implementation-dependent
+> optimized state. The instruction execution wakes up when the time-stamp
+> counter reaches or exceeds the implicit EDX:EAX 64-bit input value.
+> The instruction execution also wakes up due to the expiration of
+> the operating system time-limit or by an external interrupt
+> or exceptions such as a debug exception or a machine check exception.
+>
+> TPAUSE offers a choice of two lower power states:
+>  1. Light-weight power/performance optimized state C0.1
+>  2. Improved power/performance optimized state C0.2
+> This way, it can save power with low wake-up latency in comparison to
+> spinloop based delay. The selection between the two is governed by the
+> input register.
+>
+> TPAUSE is available on processors with X86_FEATURE_WAITPKG.
+>
+> Reviewed-by: Tony Luck <tony.luck@intel.com>
+> Co-developed-by: Fenghua Yu <fenghua.yu@intel.com>
+> Signed-off-by: Fenghua Yu <fenghua.yu@intel.com>
+> Signed-off-by: Kyung Min Park <kyung.min.park@intel.com>
+> ---
+>  arch/x86/include/asm/mwait.h | 17 +++++++++++++++++
+>  arch/x86/lib/delay.c         | 27 ++++++++++++++++++++++++++-
+>  2 files changed, 43 insertions(+), 1 deletion(-)
+>
+> diff --git a/arch/x86/include/asm/mwait.h b/arch/x86/include/asm/mwait.h
+> index aaf6643..fd59db0 100644
+> --- a/arch/x86/include/asm/mwait.h
+> +++ b/arch/x86/include/asm/mwait.h
+> @@ -22,6 +22,8 @@
+>  #define MWAITX_ECX_TIMER_ENABLE                BIT(1)
+>  #define MWAITX_MAX_WAIT_CYCLES         UINT_MAX
+>  #define MWAITX_DISABLE_CSTATES         0xf0
+> +#define TPAUSE_C01_STATE               1
+> +#define TPAUSE_C02_STATE               0
+>
+>  static inline void __monitor(const void *eax, unsigned long ecx,
+>                              unsigned long edx)
+> @@ -120,4 +122,19 @@ static inline void mwait_idle_with_hints(unsigned long eax, unsigned long ecx)
+>         current_clr_polling();
+>  }
+>
+> +/*
+> + * Caller can specify whether to enter C0.1 (low latency, less
+> + * power saving) or C0.2 state (saves more power, but longer wakeup
+> + * latency). This may be overridden by the IA32_UMWAIT_CONTROL MSR
+> + * which can force requests for C0.2 to be downgraded to C0.1.
+> + */
+> +static inline void __tpause(unsigned int ecx, unsigned int edx,
+> +                           unsigned int eax)
+> +{
+> +       /* "tpause %ecx, %edx, %eax;" */
+> +       asm volatile(".byte 0x66, 0x0f, 0xae, 0xf1\t\n"
+> +                    :
+> +                    : "c"(ecx), "d"(edx), "a"(eax));
+> +}
+> +
+>  #endif /* _ASM_X86_MWAIT_H */
+> diff --git a/arch/x86/lib/delay.c b/arch/x86/lib/delay.c
+> index e6db855..5f11f0a 100644
+> --- a/arch/x86/lib/delay.c
+> +++ b/arch/x86/lib/delay.c
+> @@ -97,6 +97,27 @@ static void delay_tsc(u64 cycles)
+>  }
+>
+>  /*
+> + * On Intel the TPAUSE instruction waits until any of:
+> + * 1) the TSC counter exceeds the value provided in EAX:EDX
+> + * 2) global timeout in IA32_UMWAIT_CONTROL is exceeded
+> + * 3) an external interrupt occurs
+> + */
+> +static void delay_halt_tpause(u64 start, u64 cycles)
+> +{
+> +       u64 until = start + cycles;
+> +       unsigned int eax, edx;
+> +
+> +       eax = (unsigned int)(until & 0xffffffff);
+> +       edx = (unsigned int)(until >> 32);
+> +
+> +       /*
+> +        * Hard code the deeper (C0.2) sleep state because exit latency is
+> +        * small compared to the "microseconds" that usleep() will delay.
+> +        */
+> +       __tpause(TPAUSE_C02_STATE, edx, eax);
+> +}
+> +
+> +/*
+>   * On some AMD platforms, MWAITX has a configurable 32-bit timer, that
+>   * counts with TSC frequency. The input value is the number of TSC cycles
+>   * to wait. MWAITX will also exit when the timer expires.
+> @@ -152,8 +173,12 @@ static void delay_halt(u64 __cycles)
+>
+>  void use_tsc_delay(void)
+>  {
+> -       if (delay_fn == delay_loop)
+> +       if (static_cpu_has(X86_FEATURE_WAITPKG)) {
+> +               delay_halt_fn = delay_halt_tpause;
+> +               delay_fn = delay_halt;
+> +       } else if (delay_fn == delay_loop) {
+>                 delay_fn = delay_tsc;
+> +       }
+>  }
 
-On 2020/3/5 4:33, Marc Zyngier wrote:
-> In order to let a guest buy in the new, active-less SGIs, we
-> need to be able to switch between the two modes.
-> 
-> Handle this by stopping all guest activity, transfer the state
-> from one mode to the other, and resume the guest. Nothing calls
-> this code so far, but a later patch will plug it into the MMIO
-> emulation.
-> 
-> Signed-off-by: Marc Zyngier <maz@kernel.org>
+This is an odd way to dispatch: you're using static_cpu_has(), but
+you're using it once to populate a function pointer.  Why not just put
+the static_cpu_has() directly into delay_halt() and open-code the
+three variants?  That will also make it a lot easier to understand the
+oddity with start and cycles.
 
-Reviewed-by: Zenghui Yu <yuzenghui@huawei.com>
+--Andy
 
-
-Thanks
-
+> --
+> 2.7.4
+>
