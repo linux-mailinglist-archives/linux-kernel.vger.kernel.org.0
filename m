@@ -2,67 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 83C6718D8B2
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 20:48:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4646418D8B5
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 20:50:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726976AbgCTTsx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Mar 2020 15:48:53 -0400
-Received: from 8bytes.org ([81.169.241.247]:54648 "EHLO theia.8bytes.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726666AbgCTTsw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Mar 2020 15:48:52 -0400
-Received: by theia.8bytes.org (Postfix, from userid 1000)
-        id 4F2324CA; Fri, 20 Mar 2020 20:48:51 +0100 (CET)
-Date:   Fri, 20 Mar 2020 20:48:49 +0100
-From:   Joerg Roedel <joro@8bytes.org>
-To:     Andy Lutomirski <luto@kernel.org>
-Cc:     Joerg Roedel <jroedel@suse.de>, X86 ML <x86@kernel.org>,
+        id S1726986AbgCTTuF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Mar 2020 15:50:05 -0400
+Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:14131 "EHLO
+        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726843AbgCTTuF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Mar 2020 15:50:05 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5e751e090004>; Fri, 20 Mar 2020 12:48:25 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Fri, 20 Mar 2020 12:50:04 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Fri, 20 Mar 2020 12:50:04 -0700
+Received: from [10.2.57.131] (172.20.13.39) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 20 Mar
+ 2020 19:50:04 +0000
+Subject: Re: [PATCH] x86/mm: Make pud_present() check _PAGE_PROTNONE and
+ _PAGE_PSE as well
+To:     Anshuman Khandual <anshuman.khandual@arm.com>,
+        "Kirill A. Shutemov" <kirill@shutemov.name>
+CC:     <linux-mm@kvack.org>, Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
         "H. Peter Anvin" <hpa@zytor.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Hellstrom <thellstrom@vmware.com>,
-        Jiri Slaby <jslaby@suse.cz>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Juergen Gross <jgross@suse.com>,
-        Kees Cook <keescook@chromium.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        kvm list <kvm@vger.kernel.org>,
-        Linux Virtualization <virtualization@lists.linux-foundation.org>
-Subject: Re: [PATCH 70/70] x86/sev-es: Add NMI state tracking
-Message-ID: <20200320194849.GJ5122@8bytes.org>
-References: <20200319091407.1481-1-joro@8bytes.org>
- <20200319091407.1481-71-joro@8bytes.org>
- <CALCETrUOQneBHjoZkP-7T5PDijb=WOyv7xF7TD0GLR2Aw77vyA@mail.gmail.com>
- <20200319160749.GC5122@8bytes.org>
- <CALCETrXY5M87C1Fc3QvTkc6MdbQ_3gAuOPUeWJktAzK4T60QNQ@mail.gmail.com>
- <20200319192654.GD611@suse.de>
- <CALCETrXzyUGjPYBR_NDSvTG8TqLuQP2Q+v_mwXPne4O0U-18NA@mail.gmail.com>
+        Dave Hansen <dave.hansen@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>, <x86@kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>
+References: <1584507679-11976-1-git-send-email-anshuman.khandual@arm.com>
+ <c03165c8-6d44-49c2-2dad-a85759200718@arm.com>
+ <20200320114741.c62iolt2yzltnscf@box>
+ <2e7a04cf-80cb-58c1-7344-2f8422ed7d31@arm.com>
+From:   John Hubbard <jhubbard@nvidia.com>
+X-Nvconfidentiality: public
+Message-ID: <082aae4a-b190-7b54-eda9-0bbc28c8a6b3@nvidia.com>
+Date:   Fri, 20 Mar 2020 12:50:03 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CALCETrXzyUGjPYBR_NDSvTG8TqLuQP2Q+v_mwXPne4O0U-18NA@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <2e7a04cf-80cb-58c1-7344-2f8422ed7d31@arm.com>
+X-Originating-IP: [172.20.13.39]
+X-ClientProxiedBy: HQMAIL107.nvidia.com (172.20.187.13) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1584733705; bh=eMx7zJHblAy5+YXR6qnBGnBggweRnlFVeODh2DtisrU=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:X-Nvconfidentiality:
+         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
+         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=Tel2JQH66ScF35HhrWYTgNQPP1AMRuVM4bvqwSSCBmgG15W1HzJ865N1Qi6NhkqsQ
+         woGCQZujdfF6ZIip99vvJBaU5dDWbVtk8VH6TrI7rQ9NbZef+wNBXpkIRTVF22NV5O
+         DdiyvOMXxmjF10pBRS25AJ0le5iUdr8U4HqAZQ1+mEp9OAH/lpnYZm8jqp0jtIKX8y
+         31/DhZyGPocZEe/XRi/zCkNQvP208imeKhlFzHwR1bTNk6xXX8xx/6zjJgtBRpjYV3
+         +um0XPIw+9MhAznV0GwYZZG9146hF/ek7V/WsEFcK+FNqBWLrJ3hk7tFHVapD37Wd0
+         NJivdmuFNik6Q==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 19, 2020 at 02:27:49PM -0700, Andy Lutomirski wrote:
-> AIUI the shift-ist stuff is because we aren't very good about the way
-> that we handle tracing right now, and that can cause a limited degree
-> of recursion.  #DB uses IST for historical reasons that don't
-> necessarily make sense.  Right now, we need it for only one reason:
-> the MOV SS issue.  IIRC this isn't actually triggerable without
-> debugging enabled -- MOV SS with no breakpoint but TF on doesn't seem
-> to malfunction quite as badly.
+On 3/20/20 6:22 AM, Anshuman Khandual wrote:
+...
+>>> +Cc: Kirill A. Shutemov <kirill@shutemov.name>
+>>> +Cc: Dan Williams <dan.j.williams@intel.com>
+>>
+>> Or we can just drop the pud_mknotpresent(). There's no users AFAICS and
+>> only x86 provides it.
 
-I had a look at the shift_ist stuff today and it looks like a good
-solution to the #VC nesting problem when it is turned into a #VC
-handler. The devil is in the details, of course, as 3 or 4 stacks for
-the #VC handler (per cpu) should only be allocated when actually running
-in an SEV-ES guest. Let's see how this works out in practice.
++1
 
-Regards,
+> 
+> Yes that will be an option but IMHO fixing pud_present() here might be
+> a better choice because,
+> 
+> (1) pud_mknotpresent() with fixed pud_present() might be required later
 
-	Joerg
+
+It might. Or it might not. Let's wait until it's actually used, and see.
+Dead code is an avoidable expense (adds size, space on the screen, email
+traffic and other wasted time), so let's avoid it here.
+
+
+> (2) PMD & PUD will be exact same (THP is supported on either level)
+> 
+> Nonetheless, I am happy to go either way.
+> 
+
+
+thanks,
+-- 
+John Hubbard
+NVIDIA
