@@ -2,102 +2,164 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 30ADA18CE86
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 14:14:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1FB2118CE9F
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 14:17:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727194AbgCTNO5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Mar 2020 09:14:57 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:51078 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726954AbgCTNO5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Mar 2020 09:14:57 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 02KDCpNB053601;
-        Fri, 20 Mar 2020 13:14:39 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=mime-version :
- message-id : date : from : to : cc : subject : references : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2020-01-29;
- bh=mj+mPOx49mvMn5UqX9Oy1oF60e1jGLIQt7Fz9oFtxdI=;
- b=BcRuWoVt1x10gOtlh0xk1020vWBIgssdfvPRrEpVgc9TpKVe9hWRKLVOjIbfNxXcLCnO
- R/W0OspeUvlyU9bW4UU/Ad6FFOe2JFr/FqqLhLdnS50dvnQeFDjRIxCeYQeGytGz6ACW
- Gafvf0MSfb3u1LOfDetfmFIGENNG099xQNNDBq71VAIh7laleIong0FYaRsmxD8Vd78x
- 4+fVegwenYoHu8h4Qzs9+uMyBaEoYZk0im63luIxD8xJGEIQzvrpfV0aYhADfk/AppD6
- 0mB8Ml2xCwtq1iUipekFp4i6lB5KzBv2BP/uiYCLk1T8n7w3lenxms/6rYhi/v4sW9Lu LQ== 
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by aserp2120.oracle.com with ESMTP id 2yrq7mdgjn-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 20 Mar 2020 13:14:39 +0000
-Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
-        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 02KDCl4G063762;
-        Fri, 20 Mar 2020 13:14:39 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by aserp3030.oracle.com with ESMTP id 2ys8ty2pmg-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 20 Mar 2020 13:14:39 +0000
-Received: from abhmp0014.oracle.com (abhmp0014.oracle.com [141.146.116.20])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 02KDEbdh006265;
-        Fri, 20 Mar 2020 13:14:38 GMT
-Received: from kadam (/41.57.98.10) by default (Oracle Beehive Gateway v4.0)
- with ESMTP ; Fri, 20 Mar 2020 06:14:36 -0700
-USER-AGENT: Mutt/1.9.4 (2018-02-28)
+        id S1727521AbgCTNRQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Mar 2020 09:17:16 -0400
+Received: from 8bytes.org ([81.169.241.247]:54470 "EHLO theia.8bytes.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727502AbgCTNRL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Mar 2020 09:17:11 -0400
+Received: by theia.8bytes.org (Postfix, from userid 1000)
+        id EDAE0364; Fri, 20 Mar 2020 14:17:09 +0100 (CET)
+Date:   Fri, 20 Mar 2020 14:17:07 +0100
+From:   Joerg Roedel <joro@8bytes.org>
+To:     Andy Lutomirski <luto@kernel.org>
+Cc:     X86 ML <x86@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Hellstrom <thellstrom@vmware.com>,
+        Jiri Slaby <jslaby@suse.cz>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Juergen Gross <jgross@suse.com>,
+        Kees Cook <keescook@chromium.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        kvm list <kvm@vger.kernel.org>,
+        Linux Virtualization <virtualization@lists.linux-foundation.org>,
+        Joerg Roedel <jroedel@suse.de>
+Subject: [RFC PATCH v2.1] x86/sev-es: Handle NMI State
+Message-ID: <20200320131707.GF5122@8bytes.org>
+References: <20200319091407.1481-1-joro@8bytes.org>
+ <20200319091407.1481-71-joro@8bytes.org>
+ <CALCETrUOQneBHjoZkP-7T5PDijb=WOyv7xF7TD0GLR2Aw77vyA@mail.gmail.com>
 MIME-Version: 1.0
-Message-ID: <20200320131429.GH4650@kadam>
-Date:   Fri, 20 Mar 2020 06:14:29 -0700 (PDT)
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Leon Romanovsky <leonro@mellanox.com>
-Cc:     YueHaibing <yuehaibing@huawei.com>,
-        Derek Chickles <dchickles@marvell.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Satanand Burla <sburla@marvell.com>,
-        Felix Manlunas <fmanlunas@marvell.com>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Hulk Robot <hulkci@huawei.com>
-Subject: Re: [PATCH net-next] liquidio: remove set but not used variable 's'
-References: <20200306023254.61731-1-yuehaibing@huawei.com>
- <20200319120743.28056-1-yuehaibing@huawei.com>
- <20200319121035.GO126814@unreal>
-In-Reply-To: <20200319121035.GO126814@unreal>
 Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9565 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 phishscore=0 mlxscore=0
- malwarescore=0 suspectscore=0 mlxlogscore=999 spamscore=0 bulkscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2003020000
- definitions=main-2003200057
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9565 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 lowpriorityscore=0 suspectscore=0
- adultscore=0 bulkscore=0 mlxlogscore=999 priorityscore=1501 clxscore=1011
- malwarescore=0 mlxscore=0 phishscore=0 impostorscore=0 spamscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2003020000
- definitions=main-2003200057
+Content-Disposition: inline
+In-Reply-To: <CALCETrUOQneBHjoZkP-7T5PDijb=WOyv7xF7TD0GLR2Aw77vyA@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 19, 2020 at 02:10:35PM +0200, Leon Romanovsky wrote:
-> On Thu, Mar 19, 2020 at 12:07:43PM +0000, YueHaibing wrote:
-> > Fixes gcc '-Wunused-but-set-variable' warning:
-> >
-> > drivers/net/ethernet/cavium/liquidio/lio_main.c: In function 'octeon_chip_specific_setup':
-> > drivers/net/ethernet/cavium/liquidio/lio_main.c:1378:8: warning:
-> >  variable 's' set but not used [-Wunused-but-set-variable]
-> >
-> > It's not used since commit b6334be64d6f ("net/liquidio: Delete driver version assignment")
-> >
-> > Reported-by: Hulk Robot <hulkci@huawei.com>
-> > Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-> > ---
-> >  drivers/net/ethernet/cavium/liquidio/lio_main.c | 5 -----
-> >  1 file changed, 5 deletions(-)
-> >
-> 
-> I'm sorry for missing this warning.
-> 
+On Thu, Mar 19, 2020 at 08:35:59AM -0700, Andy Lutomirski wrote:
+> 1. Just put the NMI unmask in do_nmi().  The kernel *already* knows
+> how to handle running do_nmi() with NMIs unmasked.  This is much, much
+> simpler than your code.
 
-The warning is not enabled by default.
+Okay, attached is the updated patch which implements this approach. I
+tested it in an SEV-ES guest with 'perf top' running for a little more
+than 30 minutes and all looked good. I also removed the dead code from
+the patch.
 
-regards,
-dan carpenter
+
+From ec3b021c5d9130fd66e00d823c4fabc675c4b49e Mon Sep 17 00:00:00 2001
+From: Joerg Roedel <jroedel@suse.de>
+Date: Tue, 28 Jan 2020 17:31:05 +0100
+Subject: [PATCH] x86/sev-es: Handle NMI State
+
+When running under SEV-ES the kernel has to tell the hypervisor when to
+open the NMI window again after an NMI was injected. This is done with
+an NMI-complete message to the hypervisor.
+
+Add code to the kernels NMI handler to send this message right at the
+beginning of do_nmi(). This always allows nesting NMIs.
+
+Signed-off-by: Joerg Roedel <jroedel@suse.de>
+---
+ arch/x86/include/asm/sev-es.h   |  2 ++
+ arch/x86/include/uapi/asm/svm.h |  1 +
+ arch/x86/kernel/nmi.c           |  8 ++++++++
+ arch/x86/kernel/sev-es.c        | 18 ++++++++++++++++++
+ 4 files changed, 29 insertions(+)
+
+diff --git a/arch/x86/include/asm/sev-es.h b/arch/x86/include/asm/sev-es.h
+index 63acf50e6280..441ec1ba2cc7 100644
+--- a/arch/x86/include/asm/sev-es.h
++++ b/arch/x86/include/asm/sev-es.h
+@@ -82,11 +82,13 @@ struct real_mode_header;
+ 
+ #ifdef CONFIG_AMD_MEM_ENCRYPT
+ int sev_es_setup_ap_jump_table(struct real_mode_header *rmh);
++void sev_es_nmi_complete(void);
+ #else /* CONFIG_AMD_MEM_ENCRYPT */
+ static inline int sev_es_setup_ap_jump_table(struct real_mode_header *rmh)
+ {
+ 	return 0;
+ }
++static inline void sev_es_nmi_complete(void) { }
+ #endif /* CONFIG_AMD_MEM_ENCRYPT*/
+ 
+ #endif
+diff --git a/arch/x86/include/uapi/asm/svm.h b/arch/x86/include/uapi/asm/svm.h
+index 20a05839dd9a..0f837339db66 100644
+--- a/arch/x86/include/uapi/asm/svm.h
++++ b/arch/x86/include/uapi/asm/svm.h
+@@ -84,6 +84,7 @@
+ /* SEV-ES software-defined VMGEXIT events */
+ #define SVM_VMGEXIT_MMIO_READ			0x80000001
+ #define SVM_VMGEXIT_MMIO_WRITE			0x80000002
++#define SVM_VMGEXIT_NMI_COMPLETE		0x80000003
+ #define SVM_VMGEXIT_AP_HLT_LOOP			0x80000004
+ #define SVM_VMGEXIT_AP_JUMP_TABLE		0x80000005
+ #define		SVM_VMGEXIT_SET_AP_JUMP_TABLE			0
+diff --git a/arch/x86/kernel/nmi.c b/arch/x86/kernel/nmi.c
+index 54c21d6abd5a..fc872a7e0ed1 100644
+--- a/arch/x86/kernel/nmi.c
++++ b/arch/x86/kernel/nmi.c
+@@ -37,6 +37,7 @@
+ #include <asm/reboot.h>
+ #include <asm/cache.h>
+ #include <asm/nospec-branch.h>
++#include <asm/sev-es.h>
+ 
+ #define CREATE_TRACE_POINTS
+ #include <trace/events/nmi.h>
+@@ -510,6 +511,13 @@ NOKPROBE_SYMBOL(is_debug_stack);
+ dotraplinkage notrace void
+ do_nmi(struct pt_regs *regs, long error_code)
+ {
++	/*
++	 * Re-enable NMIs right here when running as an SEV-ES guest. This might
++	 * cause nested NMIs, but those can be handled safely.
++	 */
++	if (sev_es_active())
++		sev_es_nmi_complete();
++
+ 	if (IS_ENABLED(CONFIG_SMP) && cpu_is_offline(smp_processor_id()))
+ 		return;
+ 
+diff --git a/arch/x86/kernel/sev-es.c b/arch/x86/kernel/sev-es.c
+index 3c22f256645e..a7e2739771e7 100644
+--- a/arch/x86/kernel/sev-es.c
++++ b/arch/x86/kernel/sev-es.c
+@@ -270,6 +270,24 @@ static phys_addr_t vc_slow_virt_to_phys(struct ghcb *ghcb, long vaddr)
+ /* Include code shared with pre-decompression boot stage */
+ #include "sev-es-shared.c"
+ 
++void sev_es_nmi_complete(void)
++{
++	struct ghcb_state state;
++	struct ghcb *ghcb;
++
++	ghcb = sev_es_get_ghcb(&state);
++
++	vc_ghcb_invalidate(ghcb);
++	ghcb_set_sw_exit_code(ghcb, SVM_VMGEXIT_NMI_COMPLETE);
++	ghcb_set_sw_exit_info_1(ghcb, 0);
++	ghcb_set_sw_exit_info_2(ghcb, 0);
++
++	sev_es_wr_ghcb_msr(__pa(ghcb));
++	VMGEXIT();
++
++	sev_es_put_ghcb(&state);
++}
++
+ static u64 sev_es_get_jump_table_addr(void)
+ {
+ 	struct ghcb_state state;
+-- 
+2.16.4
 
