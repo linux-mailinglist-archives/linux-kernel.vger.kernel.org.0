@@ -2,274 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4C0BE18CB9B
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 11:27:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A5C5818CB82
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 11:23:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727133AbgCTK14 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Mar 2020 06:27:56 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:43281 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726726AbgCTK14 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Mar 2020 06:27:56 -0400
-Received: by mail-lj1-f194.google.com with SMTP id u15so5524957lji.10;
-        Fri, 20 Mar 2020 03:27:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=KA3DiKpRKIX/hbeKWBTq21sCs+Gaeors/SyAmXeRfv4=;
-        b=N6gPVTcaxf+LZ3KQQ/bJmpu6TqTAXApwtvY2LclvnHHoaZ2W0JUcgYnYcobV8XNNnR
-         UxGz6ffD83wGq0bZMxIn8OjGJBYBF2Zj1jFY8D1taEdkQUqVAftGESvJbnImOrXC0MdO
-         W4k04rw5tSwwGw3jfmXgtF7QvMBX7jOP4yg95vlBFVj5weckj/aauplZVuJPrnZ+y3n0
-         oSSwlnfeLxb7VCbI5jMLgqm/o1QA6DSxejTaRTMIlFd9o20RrzaPM6UhFx/WRoRKrw95
-         ay6OrS9s9UlMw8UPnfzDutaHcbLIG6+x1mWgtpQS4+ae4QLLlFmoBSyEJBgdgh4sJClx
-         bXqw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=KA3DiKpRKIX/hbeKWBTq21sCs+Gaeors/SyAmXeRfv4=;
-        b=OLVXDWMIcNBLOXXx4cz4vQ7u1TVm2vCirr8PgatCFd2FLspZGY2fPbIR1I1Kzcf29y
-         JpUK4d6toVvfJWJC7I37NJ+v28H2huevf+qaHZ/J865b6BfEwJStkU1t0hlwD7cnDNbM
-         nie5RsDVsn7yHlpJSb1L4/3JEkr9j5pOwQN134GERDTVuzJ95Zq3vas4srazaD9hcGUA
-         06Z6wn3GoU8r4mWh6Imqfxn9mctoFYwvijXg5qPwhB4mlrraFuBBV77at+EoIiepjoJ4
-         RCsdPV7qhr+6SXEb5+gImsOImAnwr1oV5wFK3vTgcdrPvbC4DYQaetR1EJ8UFSmnBPkV
-         WGNg==
-X-Gm-Message-State: ANhLgQ0hIIdDbsbNfZqg5wWNkSWbmOeoq8K5/6BM3qTrvOOapVtjEaMA
-        7N3/gGBQwIXiPeKi9v71bWOSR8z3ZyUdsCcgXw8=
-X-Google-Smtp-Source: ADFU+vuSUyQ8WOefVEzO38JdXAY/d8OYzxzdExJWM/HjYE//93Jcm6La3bWKNaCR3TMAFyVA1H/VCxkOJsq79H6SiGA=
-X-Received: by 2002:a2e:8059:: with SMTP id p25mr4907405ljg.196.1584700072626;
- Fri, 20 Mar 2020 03:27:52 -0700 (PDT)
+        id S1727151AbgCTKXK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Mar 2020 06:23:10 -0400
+Received: from foss.arm.com ([217.140.110.172]:47072 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726847AbgCTKXK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Mar 2020 06:23:10 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BF43131B;
+        Fri, 20 Mar 2020 03:23:09 -0700 (PDT)
+Received: from [10.37.12.158] (unknown [10.37.12.158])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0B3393F305;
+        Fri, 20 Mar 2020 03:23:07 -0700 (PDT)
+Subject: Re: [PATCH 2/2] perf: arm_dsu: Support DSU ACPI devices.
+To:     tuanphan@amperemail.onmicrosoft.com
+Cc:     mark.rutland@arm.com, tuanphan@os.amperecomputing.com,
+        linux-kernel@vger.kernel.org, sudeep.holla@arm.com,
+        patches@amperecomputing.com, will@kernel.org,
+        linux-arm-kernel@lists.infradead.org
+References: <1584491323-31436-1-git-send-email-tuanphan@os.amperecomputing.com>
+ <a571cf7e-c2a5-e8f8-e782-8087249143b0@arm.com>
+ <64AE7BB3-F2A9-4A62-82FD-FFF2D6B7101C@amperemail.onmicrosoft.com>
+From:   Suzuki K Poulose <suzuki.poulose@arm.com>
+Message-ID: <ba33d1fa-1afb-941b-0961-dc2394af03c6@arm.com>
+Date:   Fri, 20 Mar 2020 10:27:51 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-References: <cover.1584350380.git.baolin.wang7@gmail.com> <c2e62e5a9942fb833dfc0cdc8c967a12f3c34b03.1584350380.git.baolin.wang7@gmail.com>
- <20200318100123.GA27531@ming.t460p> <CADBw62qbdpoyPZd+_np6f0L+83Ah8B218EYKmi8xiUbBf5c6+A@mail.gmail.com>
-In-Reply-To: <CADBw62qbdpoyPZd+_np6f0L+83Ah8B218EYKmi8xiUbBf5c6+A@mail.gmail.com>
-From:   Baolin Wang <baolin.wang7@gmail.com>
-Date:   Fri, 20 Mar 2020 18:27:41 +0800
-Message-ID: <CADBw62rWWk=Jeg7=3nEBqK2prQjLzCGcFyJ+WkZ0D6_grcETHA@mail.gmail.com>
-Subject: Re: [RESEND RFC PATCH 2/8] block: Allow sending a batch of requests
- from the scheduler to hardware
-To:     Ming Lei <ming.lei@redhat.com>
-Cc:     axboe@kernel.dk, Paolo Valente <paolo.valente@linaro.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        linux-mmc <linux-mmc@vger.kernel.org>,
-        linux-block <linux-block@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <64AE7BB3-F2A9-4A62-82FD-FFF2D6B7101C@amperemail.onmicrosoft.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Ming,
+Hi Tuan
 
-On Wed, Mar 18, 2020 at 6:26 PM Baolin Wang <baolin.wang7@gmail.com> wrote:
->
-> Hi Ming,
->
-> On Wed, Mar 18, 2020 at 6:01 PM Ming Lei <ming.lei@redhat.com> wrote:
-> >
-> > On Mon, Mar 16, 2020 at 06:01:19PM +0800, Baolin Wang wrote:
-> > > As we know, some SD/MMC host controllers can support packed request,
-> > > that means we can package several requests to host controller at one
-> > > time to improve performence. So the hardware driver expects the blk-mq
-> > > can dispatch a batch of requests at one time, and driver can use bd.last
-> > > to indicate if it is the last request in the batch to help to combine
-> > > requests as much as possible.
-> > >
-> > > Thus we should add batch requests setting from the block driver to tell
-> > > the scheduler how many requests can be dispatched in a batch, as well
-> > > as changing the scheduler to dispatch more than one request if setting
-> > > the maximum batch requests number.
-> > >
-> >
-> > I feel this batch dispatch style is more complicated, and some other
-> > drivers(virtio blk/scsi) still may get benefit if we can pass real 'last' flag in
-> > .queue_rq().
-> >
-> > So what about the following way by extending .commit_rqs() to this usage?
-> > And you can do whatever batch processing in .commit_rqs() which will be
-> > guaranteed to be called if BLK_MQ_F_FORCE_COMMIT_RQS is set by driver.
->
-> I'm very appreciated for your good suggestion, which is much simpler than mine.
-> It seems to solve my problem, and I will try it on my platform to see
-> if it can work and give you the feadback. Thanks again.
+On 03/19/2020 10:49 PM, Tuan Phan wrote:
+> Hi Suzuki,
+> 
+>> On Mar 18, 2020, at 5:45 PM, Suzuki K Poulose <suzuki.poulose@arm.com> wrote:
+>>
+>> Hello,
+>>
+>>
+>> Please find my comments below.
+>>
+>> On 03/18/2020 12:28 AM, Tuan Phan wrote:
+>>> Add support for probing device from ACPI node.
+>>> Each DSU ACPI node defines "cpus" package which
+>>> each element is the MPIDR of associated cpu.
+>>> Signed-off-by: Tuan Phan <tuanphan@os.amperecomputing.com>
 
-I tried your approach on my platform, but met some problems, see below.
+...
 
->
-> > diff --git a/block/blk-mq-sched.c b/block/blk-mq-sched.c
-> > index 856356b1619e..cd2bbe56f83f 100644
-> > --- a/block/blk-mq-sched.c
-> > +++ b/block/blk-mq-sched.c
-> > @@ -85,11 +85,12 @@ void blk_mq_sched_restart(struct blk_mq_hw_ctx *hctx)
-> >   * its queue by itself in its completion handler, so we don't need to
-> >   * restart queue if .get_budget() returns BLK_STS_NO_RESOURCE.
-> >   */
-> > -static void blk_mq_do_dispatch_sched(struct blk_mq_hw_ctx *hctx)
-> > +static bool blk_mq_do_dispatch_sched(struct blk_mq_hw_ctx *hctx)
-> >  {
-> >         struct request_queue *q = hctx->queue;
-> >         struct elevator_queue *e = q->elevator;
-> >         LIST_HEAD(rq_list);
-> > +       bool ret = false;
-> >
-> >         do {
-> >                 struct request *rq;
-> > @@ -112,7 +113,10 @@ static void blk_mq_do_dispatch_sched(struct blk_mq_hw_ctx *hctx)
-> >                  * in blk_mq_dispatch_rq_list().
-> >                  */
-> >                 list_add(&rq->queuelist, &rq_list);
-> > -       } while (blk_mq_dispatch_rq_list(q, &rq_list, true));
-> > +               ret = blk_mq_dispatch_rq_list(q, &rq_list, true);
-> > +       } while (ret);
-> > +
-> > +       return ret;
-> >  }
-> >
-> >  static struct blk_mq_ctx *blk_mq_next_ctx(struct blk_mq_hw_ctx *hctx,
-> > @@ -131,11 +135,12 @@ static struct blk_mq_ctx *blk_mq_next_ctx(struct blk_mq_hw_ctx *hctx,
-> >   * its queue by itself in its completion handler, so we don't need to
-> >   * restart queue if .get_budget() returns BLK_STS_NO_RESOURCE.
-> >   */
-> > -static void blk_mq_do_dispatch_ctx(struct blk_mq_hw_ctx *hctx)
-> > +static bool blk_mq_do_dispatch_ctx(struct blk_mq_hw_ctx *hctx)
-> >  {
-> >         struct request_queue *q = hctx->queue;
-> >         LIST_HEAD(rq_list);
-> >         struct blk_mq_ctx *ctx = READ_ONCE(hctx->dispatch_from);
-> > +       bool ret = false;
-> >
-> >         do {
-> >                 struct request *rq;
-> > @@ -161,10 +166,12 @@ static void blk_mq_do_dispatch_ctx(struct blk_mq_hw_ctx *hctx)
-> >
-> >                 /* round robin for fair dispatch */
-> >                 ctx = blk_mq_next_ctx(hctx, rq->mq_ctx);
-> > -
-> > -       } while (blk_mq_dispatch_rq_list(q, &rq_list, true));
-> > +               ret = blk_mq_dispatch_rq_list(q, &rq_list, true);
-> > +       } while (ret);
-> >
-> >         WRITE_ONCE(hctx->dispatch_from, ctx);
-> > +
-> > +       return ret;
-> >  }
-> >
-> >  void blk_mq_sched_dispatch_requests(struct blk_mq_hw_ctx *hctx)
-> > @@ -173,6 +180,7 @@ void blk_mq_sched_dispatch_requests(struct blk_mq_hw_ctx *hctx)
-> >         struct elevator_queue *e = q->elevator;
-> >         const bool has_sched_dispatch = e && e->type->ops.dispatch_request;
-> >         LIST_HEAD(rq_list);
-> > +       bool dispatch_ret;
-> >
-> >         /* RCU or SRCU read lock is needed before checking quiesced flag */
-> >         if (unlikely(blk_mq_hctx_stopped(hctx) || blk_queue_quiesced(q)))
-> > @@ -206,20 +214,26 @@ void blk_mq_sched_dispatch_requests(struct blk_mq_hw_ctx *hctx)
-> >          */
-> >         if (!list_empty(&rq_list)) {
-> >                 blk_mq_sched_mark_restart_hctx(hctx);
-> > -               if (blk_mq_dispatch_rq_list(q, &rq_list, false)) {
-> > +               dispatch_ret = blk_mq_dispatch_rq_list(q, &rq_list, false);
-> > +               if (dispatch_ret) {
-> >                         if (has_sched_dispatch)
-> > -                               blk_mq_do_dispatch_sched(hctx);
-> > +                               dispatch_ret = blk_mq_do_dispatch_sched(hctx);
+>>> +#else /* CONFIG_ACPI */
+>>> +	int i, cpu, ret;
+>>> +	const union acpi_object *obj;
+>>> +	struct acpi_device *adev = ACPI_COMPANION(&pdev->dev);
+>>> +	struct dsu_pmu *dsu_pmu =
+>>> +		(struct dsu_pmu *) platform_get_drvdata(pdev);
+>>> +
+>>
+>>> +	ret = acpi_dev_get_property(adev, "cpus", ACPI_TYPE_ANY, &obj);
+>>
+>> Is the binding documented somewhere ?
+>>
+>>
+>> nit: Also, why not :
+>> 	ret = acpi_dev_get_propert(adev, "cpus", ACPI_TYPE_PACKAGE, &obj);
+>> 	if (ret < 0)
+>> 		return ret;
+>> ?
+> => I couldn’t find the device tree binding document of DSU anywhere. Is It enough
 
-If we dispatched a request successfully by blk_mq_dispatch_rq_list(),
-and got dispatch_ret = true now. Then we will try to dispatch more
-reuqests from scheduler by blk_mq_do_dispatch_sched(), but if now no
-more requests in scheduler, then we will got dispatch_ret = false. In
-this case, we will not issue commit_rqs() to tell the hardware to
-handle previous request dispatched from &rq_list.
+The DT bindings are here :
 
-So I think we should not overlap the 'dispatch_ret'? Or do you have
-any other thoughts to fix?
+Documentation/devicetree/bindings/arm/arm-dsu-pmu.txt
 
-> >                         else
-> > -                               blk_mq_do_dispatch_ctx(hctx);
-> > +                               dispatch_ret = blk_mq_do_dispatch_ctx(hctx);
-> >                 }
-> >         } else if (has_sched_dispatch) {
-> > -               blk_mq_do_dispatch_sched(hctx);
-> > +               dispatch_ret = blk_mq_do_dispatch_sched(hctx);
-> >         } else if (hctx->dispatch_busy) {
-> >                 /* dequeue request one by one from sw queue if queue is busy */
-> > -               blk_mq_do_dispatch_ctx(hctx);
-> > +               dispatch_ret = blk_mq_do_dispatch_ctx(hctx);
-> >         } else {
-> >                 blk_mq_flush_busy_ctxs(hctx, &rq_list);
-> > -               blk_mq_dispatch_rq_list(q, &rq_list, false);
-> > +               dispatch_ret = blk_mq_dispatch_rq_list(q, &rq_list, false);
-> > +       }
-> > +
-> > +       if (dispatch_ret) {
-> > +               if (hctx->flags & BLK_MQ_F_FORCE_COMMIT_RQS)
-> > +                       hctx->queue->mq_ops->commit_rqs(hctx);
-> >         }
-> >  }
-> >
-> > diff --git a/block/blk-mq.c b/block/blk-mq.c
-> > index 87c6699f35ae..9b46f5d6c7fd 100644
-> > --- a/block/blk-mq.c
-> > +++ b/block/blk-mq.c
-> > @@ -1238,11 +1238,15 @@ bool blk_mq_dispatch_rq_list(struct request_queue *q, struct list_head *list,
-> >                  * Flag last if we have no more requests, or if we have more
-> >                  * but can't assign a driver tag to it.
-> >                  */
-> > -               if (list_empty(list))
-> > -                       bd.last = true;
-> > -               else {
-> > -                       nxt = list_first_entry(list, struct request, queuelist);
-> > -                       bd.last = !blk_mq_get_driver_tag(nxt);
-> > +               if (!(hctx->flags & BLK_MQ_F_FORCE_COMMIT_RQS)) {
-> > +                       if (list_empty(list))
-> > +                               bd.last = true;
-> > +                       else {
-> > +                               nxt = list_first_entry(list, struct request, queuelist);
-> > +                               bd.last = !blk_mq_get_driver_tag(nxt);
-> > +                       }
-> > +               } else {
-> > +                       bd.last = false;
+> to put a comment describing the acpi binding in the code or need somewhere else?
 
-If we enabled BLK_MQ_F_FORCE_COMMIT_RQS flag, we will always get
-bd.last = false even for the real last request in the IO scheduler. I
-know you already use commit_irqs() to help to kick driver. But I
-worried if it is reasonable that drivers always get bd.last = false.
+The concern here is that we are simply trying to replicate the DT
+binding here, especially replacing the CPU phandles with MPIDRs.
+I am not an expert in the ACPI bindings, but I prefer ACPI
+phandle reference to the CPUs (which is much simpler) to
+MPIDRs (which is not that intuitive). And this is the same message
+that I got from our ACPI folks.
 
-Thanks for your approach.
+Irrespective of what we end up with, this must be part of the "ACPI 
+bindings" document here :
 
-> >                 }
-> >
-> >                 ret = q->mq_ops->queue_rq(hctx, &bd);
-> > diff --git a/include/linux/blk-mq.h b/include/linux/blk-mq.h
-> > index 07fa767bff86..c0ef6990b698 100644
-> > --- a/include/linux/blk-mq.h
-> > +++ b/include/linux/blk-mq.h
-> > @@ -394,6 +394,7 @@ enum {
-> >         BLK_MQ_F_SHOULD_MERGE   = 1 << 0,
-> >         BLK_MQ_F_TAG_SHARED     = 1 << 1,
-> >         BLK_MQ_F_NO_MANAGED_IRQ = 1 << 2,
-> > +       BLK_MQ_F_FORCE_COMMIT_RQS = 1 << 3,
-> >         BLK_MQ_F_BLOCKING       = 1 << 5,
-> >         BLK_MQ_F_NO_SCHED       = 1 << 6,
-> >         BLK_MQ_F_ALLOC_POLICY_START_BIT = 8,
-> >
-> > Thanks,
-> > Ming
-> >
->
->
-> --
-> Baolin Wang
+DEN0093 - Generic ACPI for Arm Components x.y Platform Design Document
+
+So that everybody uses the same bindings irrespective of the OS.
+You don't need to document the bindings here with the Linux kernel code.
 
 
-
--- 
-Baolin Wang
+Kind regards
+Suzuki
