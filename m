@@ -2,18 +2,18 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E885718D602
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 18:41:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 53AD218D605
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 18:41:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727295AbgCTRlb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Mar 2020 13:41:31 -0400
-Received: from v6.sk ([167.172.42.174]:51822 "EHLO v6.sk"
+        id S1727319AbgCTRld (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Mar 2020 13:41:33 -0400
+Received: from v6.sk ([167.172.42.174]:51844 "EHLO v6.sk"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727268AbgCTRl3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Mar 2020 13:41:29 -0400
+        id S1727192AbgCTRlb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Mar 2020 13:41:31 -0400
 Received: from localhost (v6.sk [IPv6:::1])
-        by v6.sk (Postfix) with ESMTP id 5EEA760FF9;
-        Fri, 20 Mar 2020 17:41:27 +0000 (UTC)
+        by v6.sk (Postfix) with ESMTP id ADE0561008;
+        Fri, 20 Mar 2020 17:41:30 +0000 (UTC)
 From:   Lubomir Rintel <lkundrak@v3.sk>
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc:     Rob Herring <robh+dt@kernel.org>,
@@ -29,9 +29,9 @@ Cc:     Rob Herring <robh+dt@kernel.org>,
         linuxppc-dev@lists.ozlabs.org, linux-serial@vger.kernel.org,
         linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
         Lubomir Rintel <lkundrak@v3.sk>
-Subject: [PATCH 04/10] ARM: dts: mmp2-brownstone: Don't redeclare phandle references
-Date:   Fri, 20 Mar 2020 18:41:01 +0100
-Message-Id: <20200320174107.29406-5-lkundrak@v3.sk>
+Subject: [PATCH 05/10] ARM: dts: mmp*: Fix serial port names
+Date:   Fri, 20 Mar 2020 18:41:02 +0100
+Message-Id: <20200320174107.29406-6-lkundrak@v3.sk>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200320174107.29406-1-lkundrak@v3.sk>
 References: <20200320174107.29406-1-lkundrak@v3.sk>
@@ -42,359 +42,98 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Extend the nodes by their phandle references instead of recreating the
-tree and declaring references of the same names.
+A preferred node name for serial ports is "serial":
+
+  mmp2-olpc-xo-1-75.dt.yaml: uart@d4030000: $nodename:0: 'uart@d4030000'
+      does not match '^serial(@[0-9a-f,]+)*$'
+  ...
 
 Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
 ---
- arch/arm/boot/dts/mmp2-brownstone.dts | 330 +++++++++++++-------------
- 1 file changed, 164 insertions(+), 166 deletions(-)
+ arch/arm/boot/dts/mmp2.dtsi | 8 ++++----
+ arch/arm/boot/dts/mmp3.dtsi | 8 ++++----
+ 2 files changed, 8 insertions(+), 8 deletions(-)
 
-diff --git a/arch/arm/boot/dts/mmp2-brownstone.dts b/arch/arm/boot/dts/mmp2-brownstone.dts
-index aaedc4c742ea5..04f1ae1382e7a 100644
---- a/arch/arm/boot/dts/mmp2-brownstone.dts
-+++ b/arch/arm/boot/dts/mmp2-brownstone.dts
-@@ -19,176 +19,174 @@ memory {
- 		device_type = "memory";
- 		reg = <0x00000000 0x08000000>;
- 	};
-+};
+diff --git a/arch/arm/boot/dts/mmp2.dtsi b/arch/arm/boot/dts/mmp2.dtsi
+index 6a2f072c1d0a8..45372df0ec2ad 100644
+--- a/arch/arm/boot/dts/mmp2.dtsi
++++ b/arch/arm/boot/dts/mmp2.dtsi
+@@ -208,7 +208,7 @@ timer0: timer@d4014000 {
+ 				clocks = <&soc_clocks MMP2_CLK_TIMER>;
+ 			};
  
--	soc {
--		apb@d4000000 {
+-			uart1: uart@d4030000 {
++			uart1: serial@d4030000 {
+ 				compatible = "mrvl,mmp-uart";
+ 				reg = <0xd4030000 0x1000>;
+ 				interrupts = <27>;
+@@ -218,7 +218,7 @@ uart1: uart@d4030000 {
+ 				status = "disabled";
+ 			};
+ 
+-			uart2: uart@d4017000 {
++			uart2: serial@d4017000 {
+ 				compatible = "mrvl,mmp-uart";
+ 				reg = <0xd4017000 0x1000>;
+ 				interrupts = <28>;
+@@ -228,7 +228,7 @@ uart2: uart@d4017000 {
+ 				status = "disabled";
+ 			};
+ 
 -			uart3: uart@d4018000 {
--				status = "okay";
--			};
--			twsi1: i2c@d4011000 {
--				status = "okay";
--				pmic: max8925@3c {
--					compatible = "maxium,max8925";
--					reg = <0x3c>;
--					interrupts = <1>;
--					interrupt-parent = <&intcmux4>;
--					interrupt-controller;
--					#interrupt-cells = <1>;
--					maxim,tsc-irq = <0>;
-+&uart3 {
-+	status = "okay";
-+};
++			uart3: serial@d4018000 {
+ 				compatible = "mrvl,mmp-uart";
+ 				reg = <0xd4018000 0x1000>;
+ 				interrupts = <24>;
+@@ -238,7 +238,7 @@ uart3: uart@d4018000 {
+ 				status = "disabled";
+ 			};
  
--					regulators {
--						SDV1 {
--							regulator-min-microvolt = <637500>;
--							regulator-max-microvolt = <1425000>;
--							regulator-boot-on;
--							regulator-always-on;
--						};
--						SDV2 {
--							regulator-min-microvolt = <650000>;
--							regulator-max-microvolt = <2225000>;
--							regulator-boot-on;
--							regulator-always-on;
--						};
--						SDV3 {
--							regulator-min-microvolt = <750000>;
--							regulator-max-microvolt = <3900000>;
--							regulator-boot-on;
--							regulator-always-on;
--						};
--						LDO1 {
--							regulator-min-microvolt = <750000>;
--							regulator-max-microvolt = <3900000>;
--							regulator-boot-on;
--							regulator-always-on;
--						};
--						LDO2 {
--							regulator-min-microvolt = <650000>;
--							regulator-max-microvolt = <2250000>;
--							regulator-boot-on;
--							regulator-always-on;
--						};
--						LDO3 {
--							regulator-min-microvolt = <650000>;
--							regulator-max-microvolt = <2250000>;
--							regulator-boot-on;
--							regulator-always-on;
--						};
--						LDO4 {
--							regulator-min-microvolt = <750000>;
--							regulator-max-microvolt = <3900000>;
--							regulator-boot-on;
--							regulator-always-on;
--						};
--						LDO5 {
--							regulator-min-microvolt = <750000>;
--							regulator-max-microvolt = <3900000>;
--							regulator-boot-on;
--							regulator-always-on;
--						};
--						LDO6 {
--							regulator-min-microvolt = <750000>;
--							regulator-max-microvolt = <3900000>;
--							regulator-boot-on;
--							regulator-always-on;
--						};
--						LDO7 {
--							regulator-min-microvolt = <750000>;
--							regulator-max-microvolt = <3900000>;
--							regulator-boot-on;
--							regulator-always-on;
--						};
--						LDO8 {
--							regulator-min-microvolt = <750000>;
--							regulator-max-microvolt = <3900000>;
--							regulator-boot-on;
--							regulator-always-on;
--						};
--						LDO9 {
--							regulator-min-microvolt = <750000>;
--							regulator-max-microvolt = <3900000>;
--							regulator-boot-on;
--							regulator-always-on;
--						};
--						LDO10 {
--							regulator-min-microvolt = <750000>;
--							regulator-max-microvolt = <3900000>;
--						};
--						LDO11 {
--							regulator-min-microvolt = <750000>;
--							regulator-max-microvolt = <3900000>;
--							regulator-boot-on;
--							regulator-always-on;
--						};
--						LDO12 {
--							regulator-min-microvolt = <750000>;
--							regulator-max-microvolt = <3900000>;
--							regulator-boot-on;
--							regulator-always-on;
--						};
--						LDO13 {
--							regulator-min-microvolt = <750000>;
--							regulator-max-microvolt = <3900000>;
--							regulator-boot-on;
--							regulator-always-on;
--						};
--						LDO14 {
--							regulator-min-microvolt = <750000>;
--							regulator-max-microvolt = <3900000>;
--							regulator-boot-on;
--							regulator-always-on;
--						};
--						LDO15 {
--							regulator-min-microvolt = <750000>;
--							regulator-max-microvolt = <3900000>;
--							regulator-boot-on;
--							regulator-always-on;
--						};
--						LDO16 {
--							regulator-min-microvolt = <750000>;
--							regulator-max-microvolt = <3900000>;
--							regulator-boot-on;
--							regulator-always-on;
--						};
--						LDO17 {
--							regulator-min-microvolt = <650000>;
--							regulator-max-microvolt = <2250000>;
--							regulator-boot-on;
--							regulator-always-on;
--						};
--						LDO18 {
--							regulator-min-microvolt = <650000>;
--							regulator-max-microvolt = <2250000>;
--							regulator-boot-on;
--							regulator-always-on;
--						};
--						LDO19 {
--							regulator-min-microvolt = <750000>;
--							regulator-max-microvolt = <3900000>;
--							regulator-boot-on;
--							regulator-always-on;
--						};
--						LDO20 {
--							regulator-min-microvolt = <750000>;
--							regulator-max-microvolt = <3900000>;
--							regulator-boot-on;
--							regulator-always-on;
--						};
--					};
--					backlight {
--						maxim,max8925-dual-string = <0>;
--					};
--					charger {
--						batt-detect = <0>;
--						topoff-threshold = <1>;
--						fast-charge = <7>;
--						no-temp-support = <0>;
--						no-insert-detect = <0>;
--					};
--				};
-+&twsi1 {
-+	status = "okay";
-+	pmic: max8925@3c {
-+		compatible = "maxium,max8925";
-+		reg = <0x3c>;
-+		interrupts = <1>;
-+		interrupt-parent = <&intcmux4>;
-+		interrupt-controller;
-+		#interrupt-cells = <1>;
-+		maxim,tsc-irq = <0>;
-+
-+		regulators {
-+			SDV1 {
-+				regulator-min-microvolt = <637500>;
-+				regulator-max-microvolt = <1425000>;
-+				regulator-boot-on;
-+				regulator-always-on;
+-			uart4: uart@d4016000 {
++			uart4: serial@d4016000 {
+ 				compatible = "mrvl,mmp-uart";
+ 				reg = <0xd4016000 0x1000>;
+ 				interrupts = <46>;
+diff --git a/arch/arm/boot/dts/mmp3.dtsi b/arch/arm/boot/dts/mmp3.dtsi
+index 59a108e49b41e..7a5b9962497e4 100644
+--- a/arch/arm/boot/dts/mmp3.dtsi
++++ b/arch/arm/boot/dts/mmp3.dtsi
+@@ -318,7 +318,7 @@ timer: timer@d4014000 {
+ 				clocks = <&soc_clocks MMP2_CLK_TIMER>;
  			};
--			rtc: rtc@d4010000 {
--				status = "okay";
-+			SDV2 {
-+				regulator-min-microvolt = <650000>;
-+				regulator-max-microvolt = <2225000>;
-+				regulator-boot-on;
-+				regulator-always-on;
+ 
+-			uart1: uart@d4030000 {
++			uart1: serial@d4030000 {
+ 				compatible = "mrvl,mmp-uart";
+ 				reg = <0xd4030000 0x1000>;
+ 				interrupts = <GIC_SPI 27 IRQ_TYPE_LEVEL_HIGH>;
+@@ -328,7 +328,7 @@ uart1: uart@d4030000 {
+ 				status = "disabled";
  			};
-+			SDV3 {
-+				regulator-min-microvolt = <750000>;
-+				regulator-max-microvolt = <3900000>;
-+				regulator-boot-on;
-+				regulator-always-on;
-+			};
-+			LDO1 {
-+				regulator-min-microvolt = <750000>;
-+				regulator-max-microvolt = <3900000>;
-+				regulator-boot-on;
-+				regulator-always-on;
-+			};
-+			LDO2 {
-+				regulator-min-microvolt = <650000>;
-+				regulator-max-microvolt = <2250000>;
-+				regulator-boot-on;
-+				regulator-always-on;
-+			};
-+			LDO3 {
-+				regulator-min-microvolt = <650000>;
-+				regulator-max-microvolt = <2250000>;
-+				regulator-boot-on;
-+				regulator-always-on;
-+			};
-+			LDO4 {
-+				regulator-min-microvolt = <750000>;
-+				regulator-max-microvolt = <3900000>;
-+				regulator-boot-on;
-+				regulator-always-on;
-+			};
-+			LDO5 {
-+				regulator-min-microvolt = <750000>;
-+				regulator-max-microvolt = <3900000>;
-+				regulator-boot-on;
-+				regulator-always-on;
-+			};
-+			LDO6 {
-+				regulator-min-microvolt = <750000>;
-+				regulator-max-microvolt = <3900000>;
-+				regulator-boot-on;
-+				regulator-always-on;
-+			};
-+			LDO7 {
-+				regulator-min-microvolt = <750000>;
-+				regulator-max-microvolt = <3900000>;
-+				regulator-boot-on;
-+				regulator-always-on;
-+			};
-+			LDO8 {
-+				regulator-min-microvolt = <750000>;
-+				regulator-max-microvolt = <3900000>;
-+				regulator-boot-on;
-+				regulator-always-on;
-+			};
-+			LDO9 {
-+				regulator-min-microvolt = <750000>;
-+				regulator-max-microvolt = <3900000>;
-+				regulator-boot-on;
-+				regulator-always-on;
-+			};
-+			LDO10 {
-+				regulator-min-microvolt = <750000>;
-+				regulator-max-microvolt = <3900000>;
-+			};
-+			LDO11 {
-+				regulator-min-microvolt = <750000>;
-+				regulator-max-microvolt = <3900000>;
-+				regulator-boot-on;
-+				regulator-always-on;
-+			};
-+			LDO12 {
-+				regulator-min-microvolt = <750000>;
-+				regulator-max-microvolt = <3900000>;
-+				regulator-boot-on;
-+				regulator-always-on;
-+			};
-+			LDO13 {
-+				regulator-min-microvolt = <750000>;
-+				regulator-max-microvolt = <3900000>;
-+				regulator-boot-on;
-+				regulator-always-on;
-+			};
-+			LDO14 {
-+				regulator-min-microvolt = <750000>;
-+				regulator-max-microvolt = <3900000>;
-+				regulator-boot-on;
-+				regulator-always-on;
-+			};
-+			LDO15 {
-+				regulator-min-microvolt = <750000>;
-+				regulator-max-microvolt = <3900000>;
-+				regulator-boot-on;
-+				regulator-always-on;
-+			};
-+			LDO16 {
-+				regulator-min-microvolt = <750000>;
-+				regulator-max-microvolt = <3900000>;
-+				regulator-boot-on;
-+				regulator-always-on;
-+			};
-+			LDO17 {
-+				regulator-min-microvolt = <650000>;
-+				regulator-max-microvolt = <2250000>;
-+				regulator-boot-on;
-+				regulator-always-on;
-+			};
-+			LDO18 {
-+				regulator-min-microvolt = <650000>;
-+				regulator-max-microvolt = <2250000>;
-+				regulator-boot-on;
-+				regulator-always-on;
-+			};
-+			LDO19 {
-+				regulator-min-microvolt = <750000>;
-+				regulator-max-microvolt = <3900000>;
-+				regulator-boot-on;
-+				regulator-always-on;
-+			};
-+			LDO20 {
-+				regulator-min-microvolt = <750000>;
-+				regulator-max-microvolt = <3900000>;
-+				regulator-boot-on;
-+				regulator-always-on;
-+			};
-+		};
-+		backlight {
-+			maxim,max8925-dual-string = <0>;
-+		};
-+		charger {
-+			batt-detect = <0>;
-+			topoff-threshold = <1>;
-+			fast-charge = <7>;
-+			no-temp-support = <0>;
-+			no-insert-detect = <0>;
- 		};
- 	};
- };
-+
-+&rtc {
-+	status = "okay";
-+};
+ 
+-			uart2: uart@d4017000 {
++			uart2: serial@d4017000 {
+ 				compatible = "mrvl,mmp-uart";
+ 				reg = <0xd4017000 0x1000>;
+ 				interrupts = <GIC_SPI 28 IRQ_TYPE_LEVEL_HIGH>;
+@@ -338,7 +338,7 @@ uart2: uart@d4017000 {
+ 				status = "disabled";
+ 			};
+ 
+-			uart3: uart@d4018000 {
++			uart3: serial@d4018000 {
+ 				compatible = "mrvl,mmp-uart";
+ 				reg = <0xd4018000 0x1000>;
+ 				interrupts = <GIC_SPI 24 IRQ_TYPE_LEVEL_HIGH>;
+@@ -348,7 +348,7 @@ uart3: uart@d4018000 {
+ 				status = "disabled";
+ 			};
+ 
+-			uart4: uart@d4016000 {
++			uart4: serial@d4016000 {
+ 				compatible = "mrvl,mmp-uart";
+ 				reg = <0xd4016000 0x1000>;
+ 				interrupts = <GIC_SPI 46 IRQ_TYPE_LEVEL_HIGH>;
 -- 
 2.25.1
 
