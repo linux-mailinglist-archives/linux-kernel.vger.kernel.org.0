@@ -2,113 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 94CB118DC27
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Mar 2020 00:44:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 30ED718DC2F
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Mar 2020 00:47:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726976AbgCTXn6 convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Fri, 20 Mar 2020 19:43:58 -0400
-Received: from mga04.intel.com ([192.55.52.120]:4270 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726738AbgCTXn6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Mar 2020 19:43:58 -0400
-IronPort-SDR: ux2AVVpx+1OHYfT1MTMN4V66Qit4fcmMByOMCj5NUQcXY2nRi/PTpDv/liwK5tohwLN2RNIqY9
- e4BJHMEhiZnw==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Mar 2020 16:43:57 -0700
-IronPort-SDR: TuxU30KvSjaF7//l3pktlwxoaMjzB1UrjLcpQoSS7zZ1pXlvrVUGB3SX70/csEGniNzUMVDh3x
- pv0GbcnD435Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.72,286,1580803200"; 
-   d="scan'208";a="249032861"
-Received: from orsmsx110.amr.corp.intel.com ([10.22.240.8])
-  by orsmga006.jf.intel.com with ESMTP; 20 Mar 2020 16:43:57 -0700
-Received: from orsmsx155.amr.corp.intel.com (10.22.240.21) by
- ORSMSX110.amr.corp.intel.com (10.22.240.8) with Microsoft SMTP Server (TLS)
- id 14.3.439.0; Fri, 20 Mar 2020 16:43:57 -0700
-Received: from orsmsx102.amr.corp.intel.com ([169.254.3.165]) by
- ORSMSX155.amr.corp.intel.com ([169.254.7.107]) with mapi id 14.03.0439.000;
- Fri, 20 Mar 2020 16:43:56 -0700
-From:   "Park, Kyung Min" <kyung.min.park@intel.com>
-To:     Thomas Gleixner <tglx@linutronix.de>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     "mingo@redhat.com" <mingo@redhat.com>,
-        "hpa@zytor.com" <hpa@zytor.com>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "ak@linux.intel.com" <ak@linux.intel.com>,
-        "Luck, Tony" <tony.luck@intel.com>,
-        "Raj, Ashok" <ashok.raj@intel.com>,
-        "Shankar, Ravi V" <ravi.v.shankar@intel.com>,
-        "Yu, Fenghua" <fenghua.yu@intel.com>
-Subject: RE: [PATCH v2 0/2] x86/delay: Introduce TPAUSE instruction
-Thread-Topic: [PATCH v2 0/2] x86/delay: Introduce TPAUSE instruction
-Thread-Index: AQHV/p370RFgN+BwjkuNNhbDrbt3qKhSJS6g
-Date:   Fri, 20 Mar 2020 23:43:56 +0000
-Message-ID: <3658BA65DD26AF4BA909BEB2C6DF6181A2A622FA@ORSMSX102.amr.corp.intel.com>
-References: <1584677604-32707-1-git-send-email-kyung.min.park@intel.com>
- <87a74b4ad2.fsf@nanos.tec.linutronix.de>
-In-Reply-To: <87a74b4ad2.fsf@nanos.tec.linutronix.de>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-dlp-product: dlpe-windows
-dlp-version: 11.2.0.6
-dlp-reaction: no-action
-x-originating-ip: [10.22.254.139]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        id S1727357AbgCTXrm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Mar 2020 19:47:42 -0400
+Received: from smtprelay0082.hostedemail.com ([216.40.44.82]:38320 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726773AbgCTXrm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Mar 2020 19:47:42 -0400
+Received: from smtprelay.hostedemail.com (10.5.19.251.rfc1918.com [10.5.19.251])
+        by smtpgrave05.hostedemail.com (Postfix) with ESMTP id 680DC1828B307;
+        Fri, 20 Mar 2020 23:47:41 +0000 (UTC)
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay06.hostedemail.com (Postfix) with ESMTP id 948CC18224D60;
+        Fri, 20 Mar 2020 23:47:40 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,,RULES_HIT:41:355:379:599:800:960:968:973:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1540:1593:1594:1711:1730:1747:1777:1792:2393:2553:2559:2562:2828:3138:3139:3140:3141:3142:3352:3622:3865:3867:3868:3870:3871:3874:4321:5007:7903:10004:10400:10848:10967:11232:11658:11914:12297:12740:12760:12895:13069:13311:13357:13439:14096:14097:14181:14659:14721:21080:21433:21627:30054:30070:30090:30091,0,RBL:none,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:1,LUA_SUMMARY:none
+X-HE-Tag: party49_8ab4ee1cae54
+X-Filterd-Recvd-Size: 1785
+Received: from XPS-9350.home (unknown [47.151.143.254])
+        (Authenticated sender: joe@perches.com)
+        by omf20.hostedemail.com (Postfix) with ESMTPA;
+        Fri, 20 Mar 2020 23:47:39 +0000 (UTC)
+Message-ID: <eb9037a20c81b189468eee3e4849f2707b49278e.camel@perches.com>
+Subject: Re: [PATCH] coding-style.rst: Add fallthrough as an emacs keyword
+From:   Joe Perches <joe@perches.com>
+To:     Jonathan Corbet <corbet@lwn.net>
+Cc:     Federico Vaga <federico.vaga@vaga.pv.it>,
+        Harry Wei <harryxiyou@gmail.com>,
+        Alex Shi <alex.shi@linux.alibaba.com>,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Fri, 20 Mar 2020 16:45:51 -0700
+In-Reply-To: <20200320173119.2707c083@lwn.net>
+References: <7a2977ea9baacd1580ff80689f2c8f20d45b069d.camel@perches.com>
+         <20200320173119.2707c083@lwn.net>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.34.1-2 
 MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Thomas,
+On Fri, 2020-03-20 at 17:31 -0600, Jonathan Corbet wrote:
+> On Sat, 14 Mar 2020 14:13:59 -0700
+> Joe Perches <joe@perches.com> wrote:
+> 
+> > fallthrough was added as a pseudo-keyword by commit 294f69e662d1
+> > ("compiler_attributes.h: Add 'fallthrough' pseudo keyword for switch/case use")
+> > 
+> > Add fallthrough as a keyword to the example .emacs content
+> > so emacs can colorize or highlight the uses.
+> > 
+> > Signed-off-by: Joe Perches <joe@perches.com>
+> > ---
+> > 
+> > I've no idea how to remove the infinite monkeys jibe from the chinese translation
+> 
+> Removing the "jibe" is a second change for this patch, and one which is
+> not reflected in the changelog.  If we want to sanitize the docs that's
+> something we can talk about, but I don't want to sneak such changes in.
 
-> -----Original Message-----
-> From: Thomas Gleixner <tglx@linutronix.de>
-> Sent: Friday, March 20, 2020 2:57 AM
-> To: Park, Kyung Min <kyung.min.park@intel.com>; x86@kernel.org; linux-
-> kernel@vger.kernel.org
-> Cc: mingo@redhat.com; hpa@zytor.com; gregkh@linuxfoundation.org;
-> ak@linux.intel.com; Luck, Tony <tony.luck@intel.com>; Raj, Ashok
-> <ashok.raj@intel.com>; Shankar, Ravi V <ravi.v.shankar@intel.com>; Yu,
-> Fenghua <fenghua.yu@intel.com>; Park, Kyung Min
-> <kyung.min.park@intel.com>
-> Subject: Re: [PATCH v2 0/2] x86/delay: Introduce TPAUSE instruction
-> 
-> Hi!
-> 
-> Kyung Min Park <kyung.min.park@intel.com> writes:
-> 
-> > Intel processors that support the WAITPKG feature implement the TPAUSE
-> > instruction that suspends execution in a lower power state until the
-> > TSC (Time Stamp Counter) exceeds a certain value.
-> >
-> > Update the udelay() function to use TPAUSE on systems where it is
-> > available. Note that we hard code the deeper (C0.2) sleep state
-> > because exit latency is small compared to the "microseconds"
-> > that usleep() will delay.
-> >
-> > ChangeLog:
-> > - Change from v1 to v2:
-> >   1. The patchset applies after Thomas's cleanup patch as below:
-> >      https://lkml.org/lkml/diff/2020/3/18/893/1
-> 
-> lkml.org is horrible. Please use lore.kernel.org if at all.
+And I don't want to bother with the naysayers.
 
-Let me change in the next patch.
-
-> Also please just add the patch to the series when posting so that people don't
-> have to go through loops and hoops to grab that dependency.
-
-Sure, Let me add this patch to the series.
-
-> Thanks,
-> 
->         tglx
-> 
 
