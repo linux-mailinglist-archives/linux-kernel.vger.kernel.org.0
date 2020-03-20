@@ -2,124 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 34F5418CE37
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 13:58:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 82B7218CE52
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 13:59:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727490AbgCTM6p (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Mar 2020 08:58:45 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:35682 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727426AbgCTM6j (ORCPT
+        id S1727195AbgCTM7W (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Mar 2020 08:59:22 -0400
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:8522 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727020AbgCTM7U (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Mar 2020 08:58:39 -0400
-Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tip-bot2@linutronix.de>)
-        id 1jFHEQ-0003qv-0M; Fri, 20 Mar 2020 13:58:34 +0100
-Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 944B51C22C0;
-        Fri, 20 Mar 2020 13:58:33 +0100 (CET)
-Date:   Fri, 20 Mar 2020 12:58:33 -0000
-From:   "tip-bot2 for Boqun Feng" <tip-bot2@linutronix.de>
-Reply-to: linux-kernel@vger.kernel.org
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: locking/core] locking/lockdep: Avoid recursion in
- lockdep_count_{for,back}ward_deps()
-Cc:     Qian Cai <cai@lca.pw>, Boqun Feng <boqun.feng@gmail.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        x86 <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>
-In-Reply-To: <20200312151258.128036-1-boqun.feng@gmail.com>
-References: <20200312151258.128036-1-boqun.feng@gmail.com>
+        Fri, 20 Mar 2020 08:59:20 -0400
+Received: from pps.filterd (m0046037.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 02KCcOWJ003548;
+        Fri, 20 Mar 2020 13:59:04 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-type; s=STMicroelectronics;
+ bh=o41DLb60dwo0XgM7XyP9TCm5BF2bWxbtelGzKn5ttsg=;
+ b=qcHeB6XbZYRgiaXbFm1srtc3QoUBsAu1yHFSKI+okPPT0K/lFR34o73UZj/hFnHwiNUu
+ h0Dx2PfLYKlb/nAzhE0N5p7UcPXqlnEAKQeROJL1xfvPhqB9NeoP7ZqFi3v7Lszin0+D
+ LALKHcG+EqeIUaMaEA8MZ5+Wh8PEGY8oD5Z8lxR8CPUh4g/EVAH6RZYPATpJe8wfCR5w
+ 2C5WJqIkfZ04qJDBU2Mwm+VkXAYo2sqkm/uVIDd3JICfNdwQ+gDV5Z5w9bLmOqr3BMwo
+ 3iu+Na2a2wgqDBU9255CyKVKE28k3Ko/oluwY+Rh99qYKXauTH8l7XiyMjY4Vi+SidZl OA== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 2yu8etqtk4-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 20 Mar 2020 13:59:04 +0100
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id C0E3B100034;
+        Fri, 20 Mar 2020 13:58:59 +0100 (CET)
+Received: from Webmail-eu.st.com (sfhdag3node1.st.com [10.75.127.7])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id B48982AE6AF;
+        Fri, 20 Mar 2020 13:58:59 +0100 (CET)
+Received: from localhost (10.75.127.47) by SFHDAG3NODE1.st.com (10.75.127.7)
+ with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 20 Mar 2020 13:58:57
+ +0100
+From:   Arnaud Pouliquen <arnaud.pouliquen@st.com>
+To:     Rob Herring <robh@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>
+CC:     <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        Fabien Dessenne <fabien.dessenne@st.com>,
+        Arnaud Pouliquen <arnaud.pouliquen@st.com>
+Subject: [PATCH] ARM: dts: stm32: add cortex-M4 pdds management in Cortex-M4 node
+Date:   Fri, 20 Mar 2020 13:58:41 +0100
+Message-ID: <20200320125841.11059-1-arnaud.pouliquen@st.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Message-ID: <158470911332.28353.7259360463548170185.tip-bot2@tip-bot2>
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot2.linutronix.de>
-Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Type: text/plain
+X-Originating-IP: [10.75.127.47]
+X-ClientProxiedBy: SFHDAG4NODE2.st.com (10.75.127.11) To SFHDAG3NODE1.st.com
+ (10.75.127.7)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.645
+ definitions=2020-03-20_03:2020-03-20,2020-03-20 signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following commit has been merged into the locking/core branch of tip:
+Add declarations related to the syscon pdds for deep sleep management.
 
-Commit-ID:     25016bd7f4caf5fc983bbab7403d08e64cba3004
-Gitweb:        https://git.kernel.org/tip/25016bd7f4caf5fc983bbab7403d08e64cba3004
-Author:        Boqun Feng <boqun.feng@gmail.com>
-AuthorDate:    Thu, 12 Mar 2020 23:12:55 +08:00
-Committer:     Peter Zijlstra <peterz@infradead.org>
-CommitterDate: Fri, 20 Mar 2020 13:06:25 +01:00
-
-locking/lockdep: Avoid recursion in lockdep_count_{for,back}ward_deps()
-
-Qian Cai reported a bug when PROVE_RCU_LIST=y, and read on /proc/lockdep
-triggered a warning:
-
-  [ ] DEBUG_LOCKS_WARN_ON(current->hardirqs_enabled)
-  ...
-  [ ] Call Trace:
-  [ ]  lock_is_held_type+0x5d/0x150
-  [ ]  ? rcu_lockdep_current_cpu_online+0x64/0x80
-  [ ]  rcu_read_lock_any_held+0xac/0x100
-  [ ]  ? rcu_read_lock_held+0xc0/0xc0
-  [ ]  ? __slab_free+0x421/0x540
-  [ ]  ? kasan_kmalloc+0x9/0x10
-  [ ]  ? __kmalloc_node+0x1d7/0x320
-  [ ]  ? kvmalloc_node+0x6f/0x80
-  [ ]  __bfs+0x28a/0x3c0
-  [ ]  ? class_equal+0x30/0x30
-  [ ]  lockdep_count_forward_deps+0x11a/0x1a0
-
-The warning got triggered because lockdep_count_forward_deps() call
-__bfs() without current->lockdep_recursion being set, as a result
-a lockdep internal function (__bfs()) is checked by lockdep, which is
-unexpected, and the inconsistency between the irq-off state and the
-state traced by lockdep caused the warning.
-
-Apart from this warning, lockdep internal functions like __bfs() should
-always be protected by current->lockdep_recursion to avoid potential
-deadlocks and data inconsistency, therefore add the
-current->lockdep_recursion on-and-off section to protect __bfs() in both
-lockdep_count_forward_deps() and lockdep_count_backward_deps()
-
-Reported-by: Qian Cai <cai@lca.pw>
-Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Link: https://lkml.kernel.org/r/20200312151258.128036-1-boqun.feng@gmail.com
+Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@st.com>
 ---
- kernel/locking/lockdep.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ arch/arm/boot/dts/stm32mp151.dtsi | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
-index e55c4ee..2564950 100644
---- a/kernel/locking/lockdep.c
-+++ b/kernel/locking/lockdep.c
-@@ -1723,9 +1723,11 @@ unsigned long lockdep_count_forward_deps(struct lock_class *class)
- 	this.class = class;
+diff --git a/arch/arm/boot/dts/stm32mp151.dtsi b/arch/arm/boot/dts/stm32mp151.dtsi
+index 7b93eb4b8f49..46ea1024340e 100644
+--- a/arch/arm/boot/dts/stm32mp151.dtsi
++++ b/arch/arm/boot/dts/stm32mp151.dtsi
+@@ -1115,6 +1115,11 @@
+ 			};
+ 		};
  
- 	raw_local_irq_save(flags);
-+	current->lockdep_recursion = 1;
- 	arch_spin_lock(&lockdep_lock);
- 	ret = __lockdep_count_forward_deps(&this);
- 	arch_spin_unlock(&lockdep_lock);
-+	current->lockdep_recursion = 0;
- 	raw_local_irq_restore(flags);
- 
- 	return ret;
-@@ -1750,9 +1752,11 @@ unsigned long lockdep_count_backward_deps(struct lock_class *class)
- 	this.class = class;
- 
- 	raw_local_irq_save(flags);
-+	current->lockdep_recursion = 1;
- 	arch_spin_lock(&lockdep_lock);
- 	ret = __lockdep_count_backward_deps(&this);
- 	arch_spin_unlock(&lockdep_lock);
-+	current->lockdep_recursion = 0;
- 	raw_local_irq_restore(flags);
- 
- 	return ret;
++		pwr_mcu: pwr_mcu@50001014 {
++			compatible = "syscon";
++			reg = <0x50001014 0x4>;
++		};
++
+ 		exti: interrupt-controller@5000d000 {
+ 			compatible = "st,stm32mp1-exti", "syscon";
+ 			interrupt-controller;
+@@ -1693,6 +1698,7 @@
+ 			st,syscfg-tz = <&rcc 0x000 0x1>;
+ 			st,syscfg-rsc-tbl = <&tamp 0x144 0xFFFFFFFF>;
+ 			st,syscfg-copro-state = <&tamp 0x148 0xFFFFFFFF>;
++			st,syscfg-pdds = <&pwr_mcu 0x0 0x1>;
+ 			status = "disabled";
+ 		};
+ 	};
+-- 
+2.17.1
+
