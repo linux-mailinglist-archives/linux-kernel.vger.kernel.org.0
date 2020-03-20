@@ -2,218 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2FB4C18D9C1
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 21:55:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1C6E718D9D0
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 21:56:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727046AbgCTUzI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Mar 2020 16:55:08 -0400
-Received: from mga11.intel.com ([192.55.52.93]:32090 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726783AbgCTUzI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Mar 2020 16:55:08 -0400
-IronPort-SDR: wU9EgV/cygD+QIyIKxwILWjs098WMUzaj6rtedolV1cvlRxUZuPk1F/Oyo6WSEWRYY2Lt/pG2F
- cUNz255WTGjA==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Mar 2020 13:55:07 -0700
-IronPort-SDR: DvKR0uxn7H6ZFOl2Nb6kWb8JJoDd1jC67VTm5IKr3xh/WAqrBhY2mcko1t/7WSg4wr1nVVq0Hx
- KWoJaslLRumA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.72,285,1580803200"; 
-   d="scan'208";a="392267993"
-Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
-  by orsmga004.jf.intel.com with ESMTP; 20 Mar 2020 13:55:05 -0700
-Received: from kbuild by lkp-server01 with local (Exim 4.89)
-        (envelope-from <lkp@intel.com>)
-        id 1jFOfY-0007Jb-Qk; Sat, 21 Mar 2020 04:55:04 +0800
-Date:   Sat, 21 Mar 2020 04:54:20 +0800
-From:   kbuild test robot <lkp@intel.com>
-To:     "x86-ml" <x86@kernel.org>
-Cc:     linux-kernel@vger.kernel.org
-Subject: [tip:sched/core] BUILD SUCCESS
- 6c8116c914b65be5e4d6f66d69c8142eb0648c22
-Message-ID: <5e752d7c.HVc6xZ02QkBcMKf3%lkp@intel.com>
-User-Agent: Heirloom mailx 12.5 6/20/10
+        id S1727432AbgCTU4T (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Mar 2020 16:56:19 -0400
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:39497 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726851AbgCTU4R (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Mar 2020 16:56:17 -0400
+Received: by mail-lf1-f67.google.com with SMTP id j15so5647061lfk.6;
+        Fri, 20 Mar 2020 13:56:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=KxFdW9v6W+mUSjXzjhOErZqVKviF3hnRVIcHD83c/Zk=;
+        b=vY+bwhQolKHP/YjRpTOkMg1e6CoOyk67/iB6jpyUgrJCPci7UOwuh+sKhreTuHQTCv
+         c38CESG7MX4X45BHD0eL/p+NFlCsXM1SX61hZO71M02CiRJlceCXqDpfcAd5SwaKz0PU
+         4PfeoLJonCrD/eVWKOoFpW8fW/qNDK5+S7ovPE22wqQXkcl5efMOTtAN6QrM6eH1Yri/
+         M3OlY6nQt3vDHzzKScafmPyMaj8D0+ISuqD/JOuZ2ivxGBADIAtPVTLxKIGpiB7TMA2e
+         jYjH/aZUApEEqtSb5OS9N+jFZ+48la0aiKHP3NDTZbFUNj7YdCAEu04pyzCmbEreh3Pf
+         qZUQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=KxFdW9v6W+mUSjXzjhOErZqVKviF3hnRVIcHD83c/Zk=;
+        b=VNB9kB5z4TDva94gxDJE+ctftJbQCWgMN6NR/+JZb9Cl3VV/BT3wyuWgRJo0PthViO
+         WIPMTKr6qwpSnDQTin2WriyssSdqLPLbeis67y3M+VqDHMtk5ghVkSusWSxwbZqGa4R7
+         NIQCdVvyADqS6XsRRes7zjjHRWoeywrPZ36YerAyGauGkxwo4Z1ROfo69X2/+BzsvCad
+         JQeNvpO1FKgRqHzKrvXqCNjamsXdZcKdv2jd6K5Nk8Qh7/RqsoUhyGw6hud0TGZiGiVs
+         RB4DzPW1VBtOL2GcnZnNJ/D90Xx2sm6qkdbhJ4t9ePqAGaeOmHE8Hnve1DzkfPL9S3qN
+         Veqw==
+X-Gm-Message-State: ANhLgQ1ihgfnhPOBflUlOMrWulQftXKYxAGqwaQb58f7gVfwxV5j5Y8p
+        2DNseoKG9nU0rz9aFoat8h8=
+X-Google-Smtp-Source: ADFU+vv3bRJa6nnY4LiRKhr6qR2D1OtfWKdszUzJ8w497f3yhm9cYDRehnMPg0u2rUV4MVq8hoR0gw==
+X-Received: by 2002:ac2:5203:: with SMTP id a3mr6492154lfl.152.1584737774394;
+        Fri, 20 Mar 2020 13:56:14 -0700 (PDT)
+Received: from localhost.localdomain (94-29-39-224.dynamic.spd-mgts.ru. [94.29.39.224])
+        by smtp.gmail.com with ESMTPSA id 1sm3873356lft.47.2020.03.20.13.56.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 20 Mar 2020 13:56:13 -0700 (PDT)
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     Rob Herring <robh+dt@kernel.org>, Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Stephen Warren <swarren@wwwdotorg.org>,
+        Jonathan Hunter <jonathanh@nvidia.com>
+Cc:     devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
+        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v1 0/2] Support built-in Mic on Tegra boards that use WM8903
+Date:   Fri, 20 Mar 2020 23:55:02 +0300
+Message-Id: <20200320205504.30466-1-digetx@gmail.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git  sched/core
-branch HEAD: 6c8116c914b65be5e4d6f66d69c8142eb0648c22  sched/fair: Fix condition of avg_load calculation
+Hello,
 
-elapsed time: 524m
+This small series adds audio route for built-in microphone on NVIDIA Tegra
+boards that use WM8903 CODEC. In particular this is needed in order to unmute
+internal microphone on Acer A500 tablet device. I'm planning to send out the
+device tree for the A500 for 5.8, so will be nice to get the microphone
+sorted out. Please review and apply, thanks in advance.
 
-configs tested: 159
-configs skipped: 0
+Dmitry Osipenko (2):
+  dt-bindings: sound: tegra-wm8903: Document built-in microphone audio
+    source
+  ASoC: tegra: tegra_wm8903: Support DAPM events for built-in microphone
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+ .../sound/nvidia,tegra-audio-wm8903.txt        |  1 +
+ sound/soc/tegra/tegra_wm8903.c                 | 18 ++++++++++++++++++
+ 2 files changed, 19 insertions(+)
 
-arm                              allmodconfig
-arm                               allnoconfig
-arm                              allyesconfig
-arm64                            allmodconfig
-arm64                             allnoconfig
-arm64                            allyesconfig
-arm                         at91_dt_defconfig
-arm                           efm32_defconfig
-arm                          exynos_defconfig
-arm                        multi_v5_defconfig
-arm                        multi_v7_defconfig
-arm                        shmobile_defconfig
-arm                           sunxi_defconfig
-arm64                               defconfig
-sparc                            allyesconfig
-ia64                             allmodconfig
-i386                                defconfig
-s390                             allyesconfig
-i386                              allnoconfig
-i386                             allyesconfig
-i386                             alldefconfig
-ia64                                defconfig
-ia64                              allnoconfig
-ia64                             allyesconfig
-ia64                             alldefconfig
-c6x                              allyesconfig
-c6x                        evmc6678_defconfig
-nios2                         10m50_defconfig
-nios2                         3c120_defconfig
-openrisc                    or1ksim_defconfig
-openrisc                 simple_smp_defconfig
-xtensa                       common_defconfig
-xtensa                          iss_defconfig
-alpha                               defconfig
-csky                                defconfig
-nds32                             allnoconfig
-nds32                               defconfig
-h8300                       h8s-sim_defconfig
-h8300                     edosk2674_defconfig
-m68k                       m5475evb_defconfig
-m68k                             allmodconfig
-h8300                    h8300h-sim_defconfig
-m68k                           sun3_defconfig
-m68k                          multi_defconfig
-arc                              allyesconfig
-arc                                 defconfig
-microblaze                      mmu_defconfig
-microblaze                    nommu_defconfig
-powerpc                           allnoconfig
-powerpc                             defconfig
-powerpc                       ppc64_defconfig
-powerpc                          rhel-kconfig
-mips                      fuloong2e_defconfig
-mips                      malta_kvm_defconfig
-mips                             allyesconfig
-mips                         64r6el_defconfig
-mips                              allnoconfig
-mips                           32r2_defconfig
-mips                             allmodconfig
-parisc                            allnoconfig
-parisc                generic-64bit_defconfig
-parisc                generic-32bit_defconfig
-parisc                           allyesconfig
-i386                 randconfig-a002-20200320
-x86_64               randconfig-a002-20200320
-i386                 randconfig-a001-20200320
-x86_64               randconfig-a001-20200320
-i386                 randconfig-a003-20200320
-x86_64               randconfig-a003-20200320
-mips                 randconfig-a001-20200320
-nds32                randconfig-a001-20200320
-m68k                 randconfig-a001-20200320
-parisc               randconfig-a001-20200320
-alpha                randconfig-a001-20200320
-riscv                randconfig-a001-20200320
-nios2                randconfig-a001-20200320
-c6x                  randconfig-a001-20200320
-csky                 randconfig-a001-20200320
-openrisc             randconfig-a001-20200320
-s390                 randconfig-a001-20200320
-sh                   randconfig-a001-20200320
-xtensa               randconfig-a001-20200320
-x86_64               randconfig-b001-20200320
-x86_64               randconfig-b002-20200320
-x86_64               randconfig-b003-20200320
-i386                 randconfig-b001-20200320
-i386                 randconfig-b002-20200320
-i386                 randconfig-b003-20200320
-x86_64               randconfig-c001-20200320
-x86_64               randconfig-c002-20200320
-x86_64               randconfig-c003-20200320
-i386                 randconfig-c001-20200320
-i386                 randconfig-c002-20200320
-i386                 randconfig-c003-20200320
-x86_64               randconfig-d001-20200320
-x86_64               randconfig-d002-20200320
-x86_64               randconfig-d003-20200320
-i386                 randconfig-d001-20200320
-i386                 randconfig-d002-20200320
-i386                 randconfig-d003-20200320
-x86_64               randconfig-e001-20200320
-x86_64               randconfig-e002-20200320
-x86_64               randconfig-e003-20200320
-i386                 randconfig-e001-20200320
-i386                 randconfig-e002-20200320
-i386                 randconfig-e003-20200320
-x86_64               randconfig-f001-20200320
-x86_64               randconfig-f002-20200320
-x86_64               randconfig-f003-20200320
-i386                 randconfig-f001-20200320
-i386                 randconfig-f002-20200320
-i386                 randconfig-f003-20200320
-x86_64               randconfig-g001-20200320
-x86_64               randconfig-g002-20200320
-x86_64               randconfig-g003-20200320
-i386                 randconfig-g001-20200320
-i386                 randconfig-g002-20200320
-i386                 randconfig-g003-20200320
-x86_64               randconfig-h002-20200320
-x86_64               randconfig-h003-20200320
-x86_64               randconfig-h001-20200320
-i386                 randconfig-h001-20200320
-i386                 randconfig-h002-20200320
-i386                 randconfig-h003-20200320
-arc                  randconfig-a001-20200320
-arm                  randconfig-a001-20200320
-arm64                randconfig-a001-20200320
-ia64                 randconfig-a001-20200320
-powerpc              randconfig-a001-20200320
-sparc                randconfig-a001-20200320
-riscv                    nommu_virt_defconfig
-riscv                             allnoconfig
-riscv                               defconfig
-riscv                          rv32_defconfig
-s390                          debug_defconfig
-s390                              allnoconfig
-s390                             allmodconfig
-s390                             alldefconfig
-s390                                defconfig
-s390                       zfcpdump_defconfig
-sh                               allmodconfig
-sh                                allnoconfig
-sh                          rsk7269_defconfig
-sh                  sh7785lcr_32bit_defconfig
-sh                            titan_defconfig
-sparc                               defconfig
-sparc64                             defconfig
-sparc64                           allnoconfig
-sparc64                          allyesconfig
-sparc64                          allmodconfig
-um                           x86_64_defconfig
-um                             i386_defconfig
-um                                  defconfig
-x86_64                              fedora-25
-x86_64                                  kexec
-x86_64                                    lkp
-x86_64                                   rhel
-x86_64                         rhel-7.2-clear
-x86_64                               rhel-7.6
+-- 
+2.25.1
 
----
-0-DAY CI Kernel Test Service, Intel Corporation
-https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
