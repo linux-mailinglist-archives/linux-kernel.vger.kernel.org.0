@@ -2,71 +2,127 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 95ADE18D4BD
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 17:44:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8A6C818D4CC
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 17:47:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727560AbgCTQog (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Mar 2020 12:44:36 -0400
-Received: from outbound-smtp03.blacknight.com ([81.17.249.16]:60590 "EHLO
-        outbound-smtp03.blacknight.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727217AbgCTQog (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Mar 2020 12:44:36 -0400
-Received: from mail.blacknight.com (pemlinmail04.blacknight.ie [81.17.254.17])
-        by outbound-smtp03.blacknight.com (Postfix) with ESMTPS id A0A92C0CD5
-        for <linux-kernel@vger.kernel.org>; Fri, 20 Mar 2020 16:44:34 +0000 (GMT)
-Received: (qmail 4795 invoked from network); 20 Mar 2020 16:44:34 -0000
-Received: from unknown (HELO techsingularity.net) (mgorman@techsingularity.net@[84.203.18.57])
-  by 81.17.254.9 with ESMTPSA (AES256-SHA encrypted, authenticated); 20 Mar 2020 16:44:34 -0000
-Date:   Fri, 20 Mar 2020 16:44:32 +0000
-From:   Mel Gorman <mgorman@techsingularity.net>
-To:     Vincent Guittot <vincent.guittot@linaro.org>
-Cc:     Ingo Molnar <mingo@kernel.org>,
+        id S1727586AbgCTQre (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Mar 2020 12:47:34 -0400
+Received: from mga06.intel.com ([134.134.136.31]:28764 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727120AbgCTQrd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Mar 2020 12:47:33 -0400
+IronPort-SDR: ZWRGXKXsQffAObSEaTMCNH69ltvHGDQqkRDFzSHIKnfKPAjr5L9oo6pHAT7FIfxLix7M1KzPu8
+ dPV/1EDgLaFg==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Mar 2020 09:47:19 -0700
+IronPort-SDR: dh18lLVo7SI0bBVLPd2Cy19KovYFRENeBeSupTfr4AIdadWB9ym3f9KLJ4NiA2Y4dyMWqRbDKu
+ uxX8AfF9TK1w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.72,285,1580803200"; 
+   d="scan'208";a="234560765"
+Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
+  by orsmga007.jf.intel.com with ESMTP; 20 Mar 2020 09:47:11 -0700
+Received: from andy by smile with local (Exim 4.93)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1jFKnf-00BVrf-RA; Fri, 20 Mar 2020 18:47:11 +0200
+Date:   Fri, 20 Mar 2020 18:47:11 +0200
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Michal =?iso-8859-1?Q?Such=E1nek?= <msuchanek@suse.de>
+Cc:     Joe Perches <joe@perches.com>, linuxppc-dev@lists.ozlabs.org,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
         Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Rob Herring <robh@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        Christophe Leroy <christophe.leroy@c-s.fr>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Nayna Jain <nayna@linux.ibm.com>,
+        Eric Richter <erichte@linux.ibm.com>,
+        Claudio Carvalho <cclaudio@linux.ibm.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Hari Bathini <hbathini@linux.ibm.com>,
+        Masahiro Yamada <masahiroy@kernel.org>,
+        Thiago Jung Bauermann <bauerman@linux.ibm.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
         Valentin Schneider <valentin.schneider@arm.com>,
-        Phil Auld <pauld@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 4/4] sched/fair: Track possibly overloaded domains and
- abort a scan if necessary
-Message-ID: <20200320164432.GE3818@techsingularity.net>
-References: <20200320151245.21152-1-mgorman@techsingularity.net>
- <20200320151245.21152-5-mgorman@techsingularity.net>
- <CAKfTPtAUuO1Jp6P73gAiP+g5iLTx16UeBgBjm_5zjFxwiBD9=Q@mail.gmail.com>
+        Jordan Niethe <jniethe5@gmail.com>,
+        Michael Neuling <mikey@neuling.org>,
+        Gustavo Luiz Duarte <gustavold@linux.ibm.com>,
+        Allison Randal <allison@lohutok.net>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v12 8/8] MAINTAINERS: perf: Add pattern that matches ppc
+ perf to the perf entry.
+Message-ID: <20200320164711.GH1922688@smile.fi.intel.com>
+References: <20200225173541.1549955-1-npiggin@gmail.com>
+ <cover.1584699455.git.msuchanek@suse.de>
+ <4b150d01c60bd37705789200d9adee9f1c9b50ce.1584699455.git.msuchanek@suse.de>
+ <20200320103350.GV1922688@smile.fi.intel.com>
+ <20200320112338.GP25468@kitsune.suse.cz>
+ <20200320124251.GW1922688@smile.fi.intel.com>
+ <b96c9dd4dba4afca5288a551158659bf545d29fb.camel@perches.com>
+ <20200320163157.GF1922688@smile.fi.intel.com>
+ <20200320164204.GV25468@kitsune.suse.cz>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-15
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <CAKfTPtAUuO1Jp6P73gAiP+g5iLTx16UeBgBjm_5zjFxwiBD9=Q@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200320164204.GV25468@kitsune.suse.cz>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 20, 2020 at 04:48:39PM +0100, Vincent Guittot wrote:
-> > ---
-> >  include/linux/sched/topology.h |  1 +
-> >  kernel/sched/fair.c            | 65 +++++++++++++++++++++++++++++++++++++++---
-> >  kernel/sched/features.h        |  3 ++
-> >  3 files changed, 65 insertions(+), 4 deletions(-)
-> >
-> > diff --git a/include/linux/sched/topology.h b/include/linux/sched/topology.h
-> > index af9319e4cfb9..76ec7a54f57b 100644
-> > --- a/include/linux/sched/topology.h
-> > +++ b/include/linux/sched/topology.h
-> > @@ -66,6 +66,7 @@ struct sched_domain_shared {
-> >         atomic_t        ref;
-> >         atomic_t        nr_busy_cpus;
-> >         int             has_idle_cores;
-> > +       int             is_overloaded;
+On Fri, Mar 20, 2020 at 05:42:04PM +0100, Michal Suchánek wrote:
+> On Fri, Mar 20, 2020 at 06:31:57PM +0200, Andy Shevchenko wrote:
+> > On Fri, Mar 20, 2020 at 07:42:03AM -0700, Joe Perches wrote:
+> > > On Fri, 2020-03-20 at 14:42 +0200, Andy Shevchenko wrote:
+> > > > On Fri, Mar 20, 2020 at 12:23:38PM +0100, Michal Suchánek wrote:
+> > > > > On Fri, Mar 20, 2020 at 12:33:50PM +0200, Andy Shevchenko wrote:
+> > > > > > On Fri, Mar 20, 2020 at 11:20:19AM +0100, Michal Suchanek wrote:
+> > > > > > > While at it also simplify the existing perf patterns.
+> > > > > > And still missed fixes from parse-maintainers.pl.
+> > > > > 
+> > > > > Oh, that script UX is truly ingenious.
+> > > > 
+> > > > You have at least two options, their combinations, etc:
+> > > >  - complain to the author :-)
+> > > >  - send a patch :-)
+> > > 
+> > > Recently:
+> > > 
+> > > https://lore.kernel.org/lkml/4d5291fa3fb4962b1fa55e8fd9ef421ef0c1b1e5.camel@perches.com/
+> > 
+> > But why?
+> > 
+> > Shouldn't we rather run MAINTAINERS clean up once and require people to use
+> > parse-maintainers.pl for good?
 > 
-> Can't nr_busy_cpus compared to sd->span_weight give you similar status  ?
+> That cleanup did not happen yet, and I am not volunteering for one.
+> The difference between MAINTAINERS and MAINTAINERS.new is:
 > 
+>  MAINTAINERS | 5510 +++++++++++++++++++++++++++++------------------------------
+>  1 file changed, 2755 insertions(+), 2755 deletions(-)
 
-It's connected to nohz balancing and I didn't see how I could use that
-for detecting overload. Also, I don't think it ever can be larger than
-the sd weight and overload is based on the number of running tasks being
-greater than the number of available CPUs. Did I miss something obvious?
+Yes, it was basically reply to Joe.
 
 -- 
-Mel Gorman
-SUSE Labs
+With Best Regards,
+Andy Shevchenko
+
+
