@@ -2,109 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5F79718D14A
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 15:41:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6C8D518D156
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 15:44:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727358AbgCTOle (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Mar 2020 10:41:34 -0400
-Received: from foss.arm.com ([217.140.110.172]:49790 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726970AbgCTOld (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Mar 2020 10:41:33 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C7D161FB;
-        Fri, 20 Mar 2020 07:41:32 -0700 (PDT)
-Received: from [10.37.12.155] (unknown [10.37.12.155])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D2EFB3F792;
-        Fri, 20 Mar 2020 07:41:27 -0700 (PDT)
-Subject: Re: [PATCH v4 18/26] arm64: vdso32: Replace TASK_SIZE_32 check in
- vgettimeofday
-To:     Catalin Marinas <catalin.marinas@arm.com>
-Cc:     Mark Rutland <Mark.Rutland@arm.com>,
-        Dmitry Safonov <0x7f454c46@gmail.com>,
-        linux-mips@vger.kernel.org, Will Deacon <will@kernel.org>,
-        linux-arch@vger.kernel.org, Marc Zyngier <maz@kernel.org>,
-        x86@kernel.org, Russell King <linux@armlinux.org.uk>,
-        clang-built-linux@googlegroups.com, Ingo Molnar <mingo@redhat.com>,
-        Kees Cook <keescook@chromium.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Will Deacon <will.deacon@arm.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Andy Lutomirski <luto@kernel.org>,
+        id S1727338AbgCTOn6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Mar 2020 10:43:58 -0400
+Received: from smtprelay0173.hostedemail.com ([216.40.44.173]:42312 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726913AbgCTOn5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Mar 2020 10:43:57 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay07.hostedemail.com (Postfix) with ESMTP id 26B1B181D3039;
+        Fri, 20 Mar 2020 14:43:56 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 50,0,0,,d41d8cd98f00b204,joe@perches.com,,RULES_HIT:41:355:379:599:800:967:973:982:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1539:1593:1594:1711:1730:1747:1777:1792:2393:2525:2553:2560:2563:2682:2685:2828:2859:2933:2937:2939:2942:2945:2947:2951:2954:3022:3138:3139:3140:3141:3142:3352:3622:3865:3867:3868:3871:3872:3873:3874:3934:3936:3938:3941:3944:3947:3950:3953:3956:3959:4250:4321:5007:6120:6742:6743:7875:7901:9025:10004:10400:10848:11232:11658:11914:12043:12297:12438:12679:12740:12895:13069:13255:13311:13357:13439:13845:13894:14181:14659:14721:21080:21212:21627:21811:30054:30062:30083:30089:30090:30091,0,RBL:none,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:1,LUA_SUMMARY:none
+X-HE-Tag: hair87_3eb7b513bed5c
+X-Filterd-Recvd-Size: 3245
+Received: from XPS-9350.home (unknown [47.151.143.254])
+        (Authenticated sender: joe@perches.com)
+        by omf10.hostedemail.com (Postfix) with ESMTPA;
+        Fri, 20 Mar 2020 14:43:50 +0000 (UTC)
+Message-ID: <b96c9dd4dba4afca5288a551158659bf545d29fb.camel@perches.com>
+Subject: Re: [PATCH v12 8/8] MAINTAINERS: perf: Add pattern that matches ppc
+ perf to the perf entry.
+From:   Joe Perches <joe@perches.com>
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Michal =?ISO-8859-1?Q?Such=E1nek?= <msuchanek@suse.de>
+Cc:     linuxppc-dev@lists.ozlabs.org,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Rob Herring <robh@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        Christophe Leroy <christophe.leroy@c-s.fr>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Peter Collingbourne <pcc@google.com>,
-        linux-arm-kernel@lists.infradead.org,
-        Andrei Vagin <avagin@openvz.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        linux-kernel@vger.kernel.org, Mark Salyzyn <salyzyn@android.com>,
-        Paul Burton <paul.burton@mips.com>
-References: <20200317143834.GC632169@arrakis.emea.arm.com>
- <f03a9493-c8c2-e981-f560-b2f437a208e4@arm.com>
- <20200317155031.GD632169@arrakis.emea.arm.com>
- <83aaf9e1-0a8f-4908-577a-23766541b2ba@arm.com>
- <20200317174806.GE632169@arrakis.emea.arm.com>
- <93cfe94a-c2a3-1025-bc9c-e7c3fd891100@arm.com>
- <20200318183603.GF94111@arrakis.emea.arm.com>
- <1bc25a53-7a59-0f60-ecf2-a3cace46b823@arm.com> <20200319181004.GA29214@mbp>
- <b937d1eb-c7fd-e903-fa36-b261662bf40b@arm.com> <20200320142208.GC29214@mbp>
-From:   Vincenzo Frascino <vincenzo.frascino@arm.com>
-Message-ID: <46add8e3-dd04-9194-4196-4d8e5cd4c70f@arm.com>
-Date:   Fri, 20 Mar 2020 14:41:57 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        Arnd Bergmann <arnd@arndb.de>,
+        Nayna Jain <nayna@linux.ibm.com>,
+        Eric Richter <erichte@linux.ibm.com>,
+        Claudio Carvalho <cclaudio@linux.ibm.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Hari Bathini <hbathini@linux.ibm.com>,
+        Masahiro Yamada <masahiroy@kernel.org>,
+        Thiago Jung Bauermann <bauerman@linux.ibm.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Valentin Schneider <valentin.schneider@arm.com>,
+        Jordan Niethe <jniethe5@gmail.com>,
+        Michael Neuling <mikey@neuling.org>,
+        Gustavo Luiz Duarte <gustavold@linux.ibm.com>,
+        Allison Randal <allison@lohutok.net>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Date:   Fri, 20 Mar 2020 07:42:03 -0700
+In-Reply-To: <20200320124251.GW1922688@smile.fi.intel.com>
+References: <20200225173541.1549955-1-npiggin@gmail.com>
+         <cover.1584699455.git.msuchanek@suse.de>
+         <4b150d01c60bd37705789200d9adee9f1c9b50ce.1584699455.git.msuchanek@suse.de>
+         <20200320103350.GV1922688@smile.fi.intel.com>
+         <20200320112338.GP25468@kitsune.suse.cz>
+         <20200320124251.GW1922688@smile.fi.intel.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.34.1-2 
 MIME-Version: 1.0
-In-Reply-To: <20200320142208.GC29214@mbp>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Catalin,
-
-On 3/20/20 2:22 PM, Catalin Marinas wrote:
-> On Fri, Mar 20, 2020 at 01:05:14PM +0000, Vincenzo Frascino wrote:
->> On 3/19/20 6:10 PM, Catalin Marinas wrote:
->>> On Thu, Mar 19, 2020 at 12:38:42PM +0000, Vincenzo Frascino wrote:
->>>> On 3/18/20 6:36 PM, Catalin Marinas wrote:
->>>>> On Wed, Mar 18, 2020 at 04:14:26PM +0000, Vincenzo Frascino wrote:
->>>>>> On 3/17/20 5:48 PM, Catalin Marinas wrote:
-[...]
-
->>
->> Thank you for the long chat this morning. As we agreed I am going to repost the
->> patches removing the checks discussed in this thread
+On Fri, 2020-03-20 at 14:42 +0200, Andy Shevchenko wrote:
+> On Fri, Mar 20, 2020 at 12:23:38PM +0100, Michal Suchánek wrote:
+> > On Fri, Mar 20, 2020 at 12:33:50PM +0200, Andy Shevchenko wrote:
+> > > On Fri, Mar 20, 2020 at 11:20:19AM +0100, Michal Suchanek wrote:
+> > > > While at it also simplify the existing perf patterns.
+> > > And still missed fixes from parse-maintainers.pl.
+> > 
+> > Oh, that script UX is truly ingenious.
 > 
-> Great, thanks.
-> 
->> and we will address the syscall ABI difference subsequently with a
->> different series.
-> 
-> Now I'm even less convinced we need any additional patches. The arm64
-> compat syscall would still return -EFAULT for res >= TASK_SIZE_32
-> because copy_to_user() will fail. So it would be entirely consistent
-> with the arm32 syscall. In the vdso-only case, both arm32 and arm64
-> compat would generate a signal.
-> 
-> As Will said, arguably, the syscall semantics may not be applicable to
-> the vdso implementation. But if you do want to get down this route (tp =
-> UINTPTR_MAX - sizeof(*tp) returning -EFAULT), please do it for all
-> architectures, not just arm64 compat. However, I'm not sure anyone
-> relies on this functionality, other than the vdsotest, so no real
-> application broken.
-> 
+> You have at least two options, their combinations, etc:
+>  - complain to the author :-)
+>  - send a patch :-)
 
-It is ok, we will discuss the topic once we cross that bridge. I am already
-happy that I managed to explain finally my reasons ;)
+Recently:
 
-Anyway, I think that if there is an application that relies on this behavior (or
-similar) and uses compat we will discover it as soon as these patches will be
-out in the wild. For this reason I am putting a link to this discussion in the
-commit message of the relevant patch so that we can take it from there.
+https://lore.kernel.org/lkml/4d5291fa3fb4962b1fa55e8fd9ef421ef0c1b1e5.camel@perches.com/
 
--- 
-Regards,
-Vincenzo
+
