@@ -2,44 +2,44 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0E81C18CD5D
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 13:00:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4604318CD59
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 13:00:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727163AbgCTMAm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Mar 2020 08:00:42 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:37052 "EHLO
+        id S1727027AbgCTMAb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Mar 2020 08:00:31 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:37050 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726974AbgCTMAb (ORCPT
+        with ESMTP id S1726814AbgCTMAb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 20 Mar 2020 08:00:31 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=Content-Type:MIME-Version:References:
         Subject:Cc:To:From:Date:Message-Id:Sender:Reply-To:Content-Transfer-Encoding:
         Content-ID:Content-Description:In-Reply-To;
-        bh=zIn6jQud/lKBgUAbg2D9shfSdMDZ9Xw30Vc/HZHD74Q=; b=qYcELcvIoQ3cTBvgcwbemQtxON
-        U7JBvW/RczsWjvCYDTfQGRDHZCDtqQMgg/wPrtCsxOEpwetdXiixjGzH+hnglYnBBjl32bdcTWGP2
-        H3eCceFEPih8iBj90MIn9n4JhvHFtjMTYZiltKs/QbhoD0eCln7jGZY+ET7YGwyvMWuL0bdpQMnvd
-        QP34f/AXRJWwTlFcE8H0k68gRcpd1FKM2OJrXj6WwHu8hqMYhJy41qVvE3wt6PugOmUuYAFG0VoFq
-        JFhq8c7D7FDm6WPIeSwD6mt32bYE04Y0Tdei+yPfF8B1rrv8YdqhyJDnj/BiEQ9kQLj5RygRaM529
-        dJNslwIw==;
+        bh=48pbbTSIt7drl3nclPw/S2svZezo2KqXiudRpg34TKk=; b=NrftJe2uiM/eRbtUm9v31Bp1c2
+        BNCrs3nazjRTflfZ6/FSIdWd1cgQ6c4K4mN/sKq/Reufea786w2Lem8NdWtr6vzANS/u2oumyQQy5
+        nXP178oBVzempQyURC5eaZxQYPoskQGzfJyP/JvtaQEufG6ahC/uIuhsCM1qRBTi5/0VUcsVy/OWv
+        b2susMYOSMXxDflV9pvJZwve7/NB9yh5D9baSAWu9CC8Y3to/IRhuP/7ZviUfm5wtMtVRfJh6sVxi
+        wBhGT3UXBFIYXI2ZsIzjff61HHKZz+u8D49qDFjKCrLR3H8R+omDmhJs1cS2vHigyITcxw/W+4WAh
+        QMNPuaTw==;
 Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
         by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jFGK8-0004CN-60; Fri, 20 Mar 2020 12:00:24 +0000
+        id 1jFGK8-0004CM-62; Fri, 20 Mar 2020 12:00:24 +0000
 Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id CC61D305C92;
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id CC546305BD3;
         Fri, 20 Mar 2020 13:00:21 +0100 (CET)
 Received: by hirez.programming.kicks-ass.net (Postfix, from userid 0)
-        id 80F2A2858D593; Fri, 20 Mar 2020 13:00:21 +0100 (CET)
-Message-Id: <20200320115859.119434738@infradead.org>
+        id 83ECC2858D592; Fri, 20 Mar 2020 13:00:21 +0100 (CET)
+Message-Id: <20200320115859.178626842@infradead.org>
 User-Agent: quilt/0.65
-Date:   Fri, 20 Mar 2020 12:56:41 +0100
+Date:   Fri, 20 Mar 2020 12:56:42 +0100
 From:   Peter Zijlstra <peterz@infradead.org>
 To:     tglx@linutronix.de, rostedt@goodmis.org, mingo@kernel.org
 Cc:     x86@kernel.org, linux-kernel@vger.kernel.org,
         joel@joelfernandes.org, will@kernel.org, peterz@infradead.org
-Subject: [PATCH 3/4] lockdep: Rename trace_softirqs_{on,off}()
+Subject: [PATCH 4/4] lockdep: Rename trace_{hard,soft}{irq_context,irqs_enabled}()
 References: <20200320115638.737385408@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -54,90 +54,96 @@ Continue what commit:
 
 started, rename these to avoid confusing them with tracepoints.
 
-git grep -l "trace_softirqs_\(on\|off\)" | while read file;
+git grep -l "trace_\(soft\|hard\)\(irq_context\|irqs_enabled\)" | while read file;
 do
-	sed -ie 's/trace_softirqs_\(on\|off\)/lockdep_softirqs_\1/g' $file;
+	sed -ie 's/trace_\(soft\|hard\)\(irq_context\|irqs_enabled\)/lockdep_\1\2/g' $file;
 done
 
 Reported-by: Thomas Gleixner <tglx@linutronix.de>
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 ---
- include/linux/irqflags.h |   10 +++++-----
- kernel/locking/lockdep.c |    4 ++--
- kernel/softirq.c         |    6 +++---
- 3 files changed, 10 insertions(+), 10 deletions(-)
+ include/linux/irqflags.h       |   16 ++++++++--------
+ kernel/locking/lockdep.c       |    8 ++++----
+ kernel/softirq.c               |    2 +-
+ tools/include/linux/irqflags.h |    8 ++++----
+ 4 files changed, 17 insertions(+), 17 deletions(-)
 
 --- a/include/linux/irqflags.h
 +++ b/include/linux/irqflags.h
-@@ -15,15 +15,15 @@
- #include <linux/typecheck.h>
- #include <asm/irqflags.h>
- 
--/* Currently trace_softirqs_on/off is used only by lockdep */
-+/* Currently lockdep_softirqs_on/off is used only by lockdep */
- #ifdef CONFIG_PROVE_LOCKING
--  extern void trace_softirqs_on(unsigned long ip);
--  extern void trace_softirqs_off(unsigned long ip);
-+  extern void lockdep_softirqs_on(unsigned long ip);
-+  extern void lockdep_softirqs_off(unsigned long ip);
-   extern void lockdep_hardirqs_on(unsigned long ip);
-   extern void lockdep_hardirqs_off(unsigned long ip);
+@@ -31,10 +31,10 @@
+ #ifdef CONFIG_TRACE_IRQFLAGS
+   extern void trace_hardirqs_on(void);
+   extern void trace_hardirqs_off(void);
+-# define trace_hardirq_context(p)	((p)->hardirq_context)
+-# define trace_softirq_context(p)	((p)->softirq_context)
+-# define trace_hardirqs_enabled(p)	((p)->hardirqs_enabled)
+-# define trace_softirqs_enabled(p)	((p)->softirqs_enabled)
++# define lockdep_hardirq_context(p)	((p)->hardirq_context)
++# define lockdep_softirq_context(p)	((p)->softirq_context)
++# define lockdep_hardirqs_enabled(p)	((p)->hardirqs_enabled)
++# define lockdep_softirqs_enabled(p)	((p)->softirqs_enabled)
+ # define lockdep_hardirq_enter()		\
+ do {						\
+ 	current->hardirq_context++;		\
+@@ -54,10 +54,10 @@ do {						\
  #else
--  static inline void trace_softirqs_on(unsigned long ip) { }
--  static inline void trace_softirqs_off(unsigned long ip) { }
-+  static inline void lockdep_softirqs_on(unsigned long ip) { }
-+  static inline void lockdep_softirqs_off(unsigned long ip) { }
-   static inline void lockdep_hardirqs_on(unsigned long ip) { }
-   static inline void lockdep_hardirqs_off(unsigned long ip) { }
- #endif
+ # define trace_hardirqs_on()		do { } while (0)
+ # define trace_hardirqs_off()		do { } while (0)
+-# define trace_hardirq_context(p)	0
+-# define trace_softirq_context(p)	0
+-# define trace_hardirqs_enabled(p)	0
+-# define trace_softirqs_enabled(p)	0
++# define lockdep_hardirq_context(p)	0
++# define lockdep_softirq_context(p)	0
++# define lockdep_hardirqs_enabled(p)	0
++# define lockdep_softirqs_enabled(p)	0
+ # define lockdep_hardirq_enter()	do { } while (0)
+ # define lockdep_hardirq_exit()		do { } while (0)
+ # define lockdep_softirq_enter()	do { } while (0)
 --- a/kernel/locking/lockdep.c
 +++ b/kernel/locking/lockdep.c
-@@ -3703,7 +3703,7 @@ NOKPROBE_SYMBOL(lockdep_hardirqs_off);
- /*
-  * Softirqs will be enabled:
-  */
--void trace_softirqs_on(unsigned long ip)
-+void lockdep_softirqs_on(unsigned long ip)
- {
- 	struct task_struct *curr = current;
+@@ -3081,10 +3081,10 @@ print_usage_bug(struct task_struct *curr
  
-@@ -3743,7 +3743,7 @@ void trace_softirqs_on(unsigned long ip)
- /*
-  * Softirqs were disabled:
-  */
--void trace_softirqs_off(unsigned long ip)
-+void lockdep_softirqs_off(unsigned long ip)
- {
- 	struct task_struct *curr = current;
+ 	pr_warn("%s/%d [HC%u[%lu]:SC%u[%lu]:HE%u:SE%u] takes:\n",
+ 		curr->comm, task_pid_nr(curr),
+-		trace_hardirq_context(curr), hardirq_count() >> HARDIRQ_SHIFT,
+-		trace_softirq_context(curr), softirq_count() >> SOFTIRQ_SHIFT,
+-		trace_hardirqs_enabled(curr),
+-		trace_softirqs_enabled(curr));
++		lockdep_hardirq_context(curr), hardirq_count() >> HARDIRQ_SHIFT,
++		lockdep_softirq_context(curr), softirq_count() >> SOFTIRQ_SHIFT,
++		lockdep_hardirqs_enabled(curr),
++		lockdep_softirqs_enabled(curr));
+ 	print_lock(this);
  
+ 	pr_warn("{%s} state was registered at:\n", usage_str[prev_bit]);
 --- a/kernel/softirq.c
 +++ b/kernel/softirq.c
-@@ -126,7 +126,7 @@ void __local_bh_disable_ip(unsigned long
- 	 * Were softirqs turned off above:
- 	 */
- 	if (softirq_count() == (cnt & SOFTIRQ_MASK))
--		trace_softirqs_off(ip);
-+		lockdep_softirqs_off(ip);
- 	raw_local_irq_restore(flags);
+@@ -224,7 +224,7 @@ static inline bool lockdep_softirq_start
+ {
+ 	bool in_hardirq = false;
  
- 	if (preempt_count() == cnt) {
-@@ -147,7 +147,7 @@ static void __local_bh_enable(unsigned i
- 		trace_preempt_on(CALLER_ADDR0, get_lock_parent_ip());
+-	if (trace_hardirq_context(current)) {
++	if (lockdep_hardirq_context(current)) {
+ 		in_hardirq = true;
+ 		lockdep_hardirq_exit();
+ 	}
+--- a/tools/include/linux/irqflags.h
++++ b/tools/include/linux/irqflags.h
+@@ -2,10 +2,10 @@
+ #ifndef _LIBLOCKDEP_LINUX_TRACE_IRQFLAGS_H_
+ #define _LIBLOCKDEP_LINUX_TRACE_IRQFLAGS_H_
  
- 	if (softirq_count() == (cnt & SOFTIRQ_MASK))
--		trace_softirqs_on(_RET_IP_);
-+		lockdep_softirqs_on(_RET_IP_);
- 
- 	__preempt_count_sub(cnt);
- }
-@@ -174,7 +174,7 @@ void __local_bh_enable_ip(unsigned long
- 	 * Are softirqs going to be turned on now:
- 	 */
- 	if (softirq_count() == SOFTIRQ_DISABLE_OFFSET)
--		trace_softirqs_on(ip);
-+		lockdep_softirqs_on(ip);
- 	/*
- 	 * Keep preemption disabled until we are done with
- 	 * softirq processing:
+-# define trace_hardirq_context(p)	0
+-# define trace_softirq_context(p)	0
+-# define trace_hardirqs_enabled(p)	0
+-# define trace_softirqs_enabled(p)	0
++# define lockdep_hardirq_context(p)	0
++# define lockdep_softirq_context(p)	0
++# define lockdep_hardirqs_enabled(p)	0
++# define lockdep_softirqs_enabled(p)	0
+ # define lockdep_hardirq_enter()	do { } while (0)
+ # define lockdep_hardirq_exit()		do { } while (0)
+ # define lockdep_softirq_enter()	do { } while (0)
 
 
