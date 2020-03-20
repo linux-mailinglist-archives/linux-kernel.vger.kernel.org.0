@@ -2,61 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1A8FB18CFB4
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 15:07:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4C58C18CFB7
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 15:07:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727142AbgCTOHc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Mar 2020 10:07:32 -0400
-Received: from cloudserver094114.home.pl ([79.96.170.134]:61321 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726855AbgCTOHc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Mar 2020 10:07:32 -0400
-Received: from 185.80.35.16 (185.80.35.16) (HELO kreacher.localnet)
- by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.341)
- id 110b52a977f0d81c; Fri, 20 Mar 2020 15:07:30 +0100
-From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To:     Linux ACPI <linux-acpi@vger.kernel.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>
-Subject: [PATCH] ACPI: s2idle: Fix comment in acpi_s2idle_prepare_late()
-Date:   Fri, 20 Mar 2020 15:07:29 +0100
-Message-ID: <6786907.GdQOV8UKbS@kreacher>
+        id S1727191AbgCTOHp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Mar 2020 10:07:45 -0400
+Received: from foss.arm.com ([217.140.110.172]:49394 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726855AbgCTOHp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Mar 2020 10:07:45 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A1CE51FB;
+        Fri, 20 Mar 2020 07:07:44 -0700 (PDT)
+Received: from e107158-lin.cambridge.arm.com (e107158-lin.cambridge.arm.com [10.1.195.21])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id AB3BC3F792;
+        Fri, 20 Mar 2020 07:07:43 -0700 (PDT)
+Date:   Fri, 20 Mar 2020 14:07:41 +0000
+From:   Qais Yousef <qais.yousef@arm.com>
+To:     Catalin Marinas <catalin.marinas@arm.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        "Paul E . McKenney" <paulmck@kernel.org>,
+        Will Deacon <will@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 05/15] arm64: Don't use disable_nonboot_cpus()
+Message-ID: <20200320140741.f37mtomvr5wb6cct@e107158-lin.cambridge.arm.com>
+References: <20200223192942.18420-1-qais.yousef@arm.com>
+ <20200223192942.18420-6-qais.yousef@arm.com>
+ <20200317112127.GA632169@arrakis.emea.arm.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20200317112127.GA632169@arrakis.emea.arm.com>
+User-Agent: NeoMutt/20171215
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+On 03/17/20 11:21, Catalin Marinas wrote:
+> On Sun, Feb 23, 2020 at 07:29:32PM +0000, Qais Yousef wrote:
+> > disable_nonboot_cpus() is not safe to use when doing machine_down(),
+> > because it relies on freeze_secondary_cpus() which in turn is
+> > a suspend/resume related freeze and could abort if the logic detects any
+> > pending activities that can prevent finishing the offlining process.
+> > 
+> > Beside disable_nonboot_cpus() is dependent on CONFIG_PM_SLEEP_SMP which
+> > is an othogonal config to rely on to ensure this function works
+> > correctly.
+> > 
+> > Use `reboot_cpu` variable instead of hardcoding 0 as the reboot cpu.
+> > 
+> > Signed-off-by: Qais Yousef <qais.yousef@arm.com>
+> > CC: Catalin Marinas <catalin.marinas@arm.com>
+> > CC: Will Deacon <will@kernel.org>
+> > CC: linux-arm-kernel@lists.infradead.org
+> > CC: linux-kernel@vger.kernel.org
+> 
+> I'm not sure whether these patches have been queued already (still
+> unread in my inbox), so here it is:
+> 
+> Acked-by: Catalin Marinas <catalin.marinas@arm.com>
 
-Fix a comment in acpi_s2idle_prepare_late() that has become outdated
-after commit f0ac20c3f613 ("ACPI: EC: Fix flushing of pending work").
+Thanks Catalin!
 
-Fixes: f0ac20c3f613 ("ACPI: EC: Fix flushing of pending work")
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
----
- drivers/acpi/sleep.c |    5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+Russel has requested to split the arm patch into 2 so that the change to
+use reboot_cpu is in a separate patch. I'll do the same for arm64 to stay
+consistent. I'll add your Acked-by to both patches if that's okay.
 
-Index: linux-pm/drivers/acpi/sleep.c
-===================================================================
---- linux-pm.orig/drivers/acpi/sleep.c
-+++ linux-pm/drivers/acpi/sleep.c
-@@ -982,10 +982,7 @@ static int acpi_s2idle_prepare_late(void
- 
- static void acpi_s2idle_sync(void)
- {
--	/*
--	 * The EC driver uses the system workqueue and an additional special
--	 * one, so those need to be flushed too.
--	 */
-+	/* The EC driver uses special workqueues that need to be flushed. */
- 	acpi_ec_flush_work();
- 	acpi_os_wait_events_complete(); /* synchronize Notify handling */
- }
+Please shout if you have any objection.
 
+Thanks
 
-
+--
+Qais Yousef
