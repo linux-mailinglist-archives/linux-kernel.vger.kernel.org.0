@@ -2,108 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D408A18D0FF
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 15:35:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D72E118D109
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 15:36:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727426AbgCTOfx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Mar 2020 10:35:53 -0400
-Received: from mga14.intel.com ([192.55.52.115]:18131 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726816AbgCTOfw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Mar 2020 10:35:52 -0400
-IronPort-SDR: plrOdcyM16YER5Wi4TT0AuG6MVbp+zgp9Snz9hwFTVOteH/CCnFQpxc8CGb9cESDoTk8VEzHIW
- 8uMtNDWB4GNA==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Mar 2020 07:35:52 -0700
-IronPort-SDR: 31yy+iEliot0MYaUGlxyywSdC2TYVWie+dTp/EwvWI6d5G7CX6cuWYyjHg4ItAZSCUX2kp0+Ge
- tp2Cyown55zQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.72,284,1580803200"; 
-   d="scan'208";a="444986444"
-Received: from jsakkine-mobl1.tm.intel.com (HELO localhost) ([10.237.50.161])
-  by fmsmga005.fm.intel.com with ESMTP; 20 Mar 2020 07:35:48 -0700
-Date:   Fri, 20 Mar 2020 16:35:47 +0200
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Waiman Long <longman@redhat.com>
-Cc:     David Howells <dhowells@redhat.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>, keyrings@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-integrity@vger.kernel.org, netdev@vger.kernel.org,
-        linux-afs@lists.infradead.org, Sumit Garg <sumit.garg@linaro.org>,
-        Jerry Snitselaar <jsnitsel@redhat.com>,
-        Roberto Sassu <roberto.sassu@huawei.com>,
-        Eric Biggers <ebiggers@google.com>,
-        Chris von Recklinghausen <crecklin@redhat.com>
-Subject: Re: [PATCH v5 2/2] KEYS: Avoid false positive ENOMEM error on key
- read
-Message-ID: <20200320143547.GB3629@linux.intel.com>
-References: <20200318221457.1330-1-longman@redhat.com>
- <20200318221457.1330-3-longman@redhat.com>
- <20200319194650.GA24804@linux.intel.com>
- <f22757ad-4d6f-ffd2-eed5-6b9bd1621b10@redhat.com>
- <20200320020717.GC183331@linux.intel.com>
- <7dbc524f-6c16-026a-a372-2e80b40eab30@redhat.com>
+        id S1727520AbgCTOgT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Mar 2020 10:36:19 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:51192 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726816AbgCTOgS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Mar 2020 10:36:18 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 02KEABLR153355;
+        Fri, 20 Mar 2020 14:36:13 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : mime-version : content-type : in-reply-to;
+ s=corp-2020-01-29; bh=orcSXTvzl+Xu3zdH1yJK4rv6NFxMx65lBs568wzS5cc=;
+ b=L1ws6ajqJmerUTtgHKCsRAAz6Ed5ByQzYW62x2XEOxwWRTAJSSt6dsOon4aBaxv1uqXB
+ uZtW1a7TGTEXgTjFsu3BYBzq8ifMVaWyXi0AEaCZv6ahn9Zv+JQIM0TAJ9wRWmrcSGC8
+ esx220mjmLD8uPn40KQhaYMtzE1tMRAB2xanb6KATyllv1vH2CKwBUQSVmh/GwroPLbM
+ y0d532BuyRGp5zbCaxNL4wWFDxaP8rRkDFLOpSks1gjUysIGlVUEWdpK4HVqomRACEbF
+ CU0ly/JUrha3EQrfpPgwcsDHS9W12UXreuinXPjLu5bKLETgJ4Fban4LKHdQGsYZrofp MA== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by userp2120.oracle.com with ESMTP id 2yub27dvab-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 20 Mar 2020 14:36:13 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 02KEJrXN193827;
+        Fri, 20 Mar 2020 14:36:13 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by aserp3020.oracle.com with ESMTP id 2ys92qnrj3-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 20 Mar 2020 14:36:12 +0000
+Received: from abhmp0011.oracle.com (abhmp0011.oracle.com [141.146.116.17])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 02KEaBtj022504;
+        Fri, 20 Mar 2020 14:36:11 GMT
+Received: from kadam (/41.57.98.10)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Fri, 20 Mar 2020 07:36:10 -0700
+Date:   Fri, 20 Mar 2020 17:36:04 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     kbuild@lists.01.org, Arvind Sankar <nivedita@alum.mit.edu>
+Cc:     kbuild-all@lists.01.org, Ard Biesheuvel <ardb@kernel.org>,
+        linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 11/14] efi/gop: Allow specifying mode number on command
+ line
+Message-ID: <20200320143526.GI4650@kadam>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <7dbc524f-6c16-026a-a372-2e80b40eab30@redhat.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <20200319192855.29876-12-nivedita@alum.mit.edu>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9565 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 mlxlogscore=999
+ mlxscore=0 spamscore=0 bulkscore=0 adultscore=0 suspectscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2003020000 definitions=main-2003200059
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9565 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 impostorscore=0
+ mlxlogscore=999 mlxscore=0 phishscore=0 adultscore=0 suspectscore=0
+ clxscore=1011 priorityscore=1501 lowpriorityscore=0 bulkscore=0
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2003020000 definitions=main-2003200059
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 20, 2020 at 09:27:03AM -0400, Waiman Long wrote:
-> On 3/19/20 10:07 PM, Jarkko Sakkinen wrote:
-> > On Thu, Mar 19, 2020 at 08:07:55PM -0400, Waiman Long wrote:
-> >> On 3/19/20 3:46 PM, Jarkko Sakkinen wrote:
-> >>> On Wed, Mar 18, 2020 at 06:14:57PM -0400, Waiman Long wrote:
-> >>>> +			 * It is possible, though unlikely, that the key
-> >>>> +			 * changes in between the up_read->down_read period.
-> >>>> +			 * If the key becomes longer, we will have to
-> >>>> +			 * allocate a larger buffer and redo the key read
-> >>>> +			 * again.
-> >>>> +			 */
-> >>>> +			if (!tmpbuf || unlikely(ret > tmpbuflen)) {
-> >>> Shouldn't you check that tmpbuflen stays below buflen (why else
-> >>> you had made copy of buflen otherwise)?
-> >> The check above this thunk:
-> >>
-> >> if ((ret > 0) && (ret <= buflen)) {
-> >>
-> >> will make sure that ret will not be larger than buflen. So tmpbuflen > >> will never be bigger than buflen.  > > Ah right, of course, thanks.
-> >
-> > What would go wrong if the condition was instead
-> > ((ret > 0) && (ret <= tmpbuflen))?
-> 
-> That if statement is a check to see if the actual key length is longer
-> than the user-supplied buffer (buflen). If that is the case, it will
-> just return the expected length without storing anything into the user
-> buffer. For the case that buflen >= ret > tmpbuflen, the revised check
-> above will incorrectly skip the storing step causing the caller to
-> incorrectly think the key is there in the buffer.
-> 
-> Maybe I should clarify that a bit more in the comment.
+Hi Arvind,
 
-OK, right because it is possible in-between tmpbuflen could be
-larger. Got it.
+Thank you for the patch! Perhaps something to improve:
 
-I think that longish key_data and key_data_len would be better
-names than tmpbuf and tpmbuflen.
+url:    https://github.com/0day-ci/linux/commits/Arvind-Sankar/efi-gop-Refactoring-mode-setting-feature/20200320-044605
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/efi/efi.git next
 
-Also the comments are somewat overkill IMHO.
+If you fix the issue, kindly add following tag
+Reported-by: kbuild test robot <lkp@intel.com>
+Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-I'd replace them along the lines of
+New smatch warnings:
+drivers/firmware/efi/libstub/gop.c:113 set_mode() error: uninitialized symbol 'new_mode'.
 
-/* Cap the user supplied buffer length to PAGE_SIZE. */
+# https://github.com/0day-ci/linux/commit/af85e496c9f577df9743784171b1cda94220dd8f
+git remote add linux-review https://github.com/0day-ci/linux
+git remote update linux-review
+git checkout af85e496c9f577df9743784171b1cda94220dd8f
+vim +/info +85 drivers/firmware/efi/libstub/gop.c
 
-/* Key data can change as we don not hold key->sem. */
+af85e496c9f577 Arvind Sankar 2020-03-19   97  static void set_mode(efi_graphics_output_protocol_t *gop)
+af85e496c9f577 Arvind Sankar 2020-03-19   98  {
+af85e496c9f577 Arvind Sankar 2020-03-19   99  	efi_graphics_output_protocol_mode_t *mode;
+af85e496c9f577 Arvind Sankar 2020-03-19  100  	u32 cur_mode, new_mode;
+af85e496c9f577 Arvind Sankar 2020-03-19  101  
+af85e496c9f577 Arvind Sankar 2020-03-19  102  	switch (cmdline.option) {
+af85e496c9f577 Arvind Sankar 2020-03-19  103  	case EFI_CMDLINE_NONE:
+af85e496c9f577 Arvind Sankar 2020-03-19  104  		return;
+af85e496c9f577 Arvind Sankar 2020-03-19  105  	case EFI_CMDLINE_MODE_NUM:
+af85e496c9f577 Arvind Sankar 2020-03-19  106  		new_mode = choose_mode_modenum(gop);
+af85e496c9f577 Arvind Sankar 2020-03-19  107  		break;
 
-/Jarkko
+No default case?
+
+af85e496c9f577 Arvind Sankar 2020-03-19  108  	}
+af85e496c9f577 Arvind Sankar 2020-03-19  109  
+af85e496c9f577 Arvind Sankar 2020-03-19  110  	mode = efi_table_attr(gop, mode);
+af85e496c9f577 Arvind Sankar 2020-03-19  111  	cur_mode = efi_table_attr(mode, mode);
+af85e496c9f577 Arvind Sankar 2020-03-19  112  
+af85e496c9f577 Arvind Sankar 2020-03-19 @113  	if (new_mode == cur_mode)
+af85e496c9f577 Arvind Sankar 2020-03-19  114  		return;
+af85e496c9f577 Arvind Sankar 2020-03-19  115  
+af85e496c9f577 Arvind Sankar 2020-03-19  116  	if (efi_call_proto(gop, set_mode, new_mode) != EFI_SUCCESS)
+af85e496c9f577 Arvind Sankar 2020-03-19  117  		efi_printk("Failed to set requested mode\n");
+af85e496c9f577 Arvind Sankar 2020-03-19  118  }
+
+---
+0-DAY CI Kernel Test Service, Intel Corporation
+https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
