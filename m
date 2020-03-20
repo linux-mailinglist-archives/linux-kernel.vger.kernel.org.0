@@ -2,102 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C26AC18C8A1
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 09:07:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6F08518C873
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 09:01:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726896AbgCTIHk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Mar 2020 04:07:40 -0400
-Received: from hermes.aosc.io ([199.195.250.187]:48405 "EHLO hermes.aosc.io"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726631AbgCTIHk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Mar 2020 04:07:40 -0400
-Received: from localhost (localhost [127.0.0.1]) (Authenticated sender: icenowy@aosc.io)
-        by hermes.aosc.io (Postfix) with ESMTPSA id 4DFA54CC97;
-        Fri, 20 Mar 2020 08:07:37 +0000 (UTC)
-Date:   Fri, 20 Mar 2020 15:58:09 +0800
-In-Reply-To: <CACRpkdaVrfd1p+WyACy-gq-3BPsXJ_CZwi2OZe+=csseBcvcaA@mail.gmail.com>
-References: <20200316133503.144650-1-icenowy@aosc.io> <20200316133503.144650-3-icenowy@aosc.io> <CACRpkdaVrfd1p+WyACy-gq-3BPsXJ_CZwi2OZe+=csseBcvcaA@mail.gmail.com>
+        id S1726971AbgCTIBZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Mar 2020 04:01:25 -0400
+Received: from mail-pl1-f170.google.com ([209.85.214.170]:42867 "EHLO
+        mail-pl1-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726893AbgCTIBZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Mar 2020 04:01:25 -0400
+Received: by mail-pl1-f170.google.com with SMTP id t3so2163052plz.9
+        for <linux-kernel@vger.kernel.org>; Fri, 20 Mar 2020 01:01:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=F4z4DhLVGvbna7aIcuhJEG+lKoXYnQgbcpPqw2ITAKU=;
+        b=Ygxm+18KOXZTFbzvkGg+Tf7RqavXc344b9FQ2nlvHUhRyxiLwNSVZZzOH4mFW/b2RH
+         LJhABONmxCTa+PLt5Tu7POF1qsT8W4TE/ODvrLFy0CuQPCmjym4SToq6doAWMB11DSxd
+         Qar6z2Y3XBEf4v/OJ+QpNzrR9HiEBwUA+wQ+g3GXu4fMFziYPlhtt0njTouf6ExMH0Ro
+         pMPfS9RoHlMQ8ijIOcX1HAAWFwoZHgnhc8sEQyaHf1KHLhHiLgBaenncmhJvMPm4r7po
+         U2n/elBRNUUOMppW5/2Sw8Ks6whUl9OOigfw8icHCwZXxRsq2PF7H5xZFEGmrVnOo0c0
+         Yqig==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=F4z4DhLVGvbna7aIcuhJEG+lKoXYnQgbcpPqw2ITAKU=;
+        b=oXhqkJtEjn8ynf4zZcp8O5ZE+nCn3PpXlHV7qTGreyeI7ymlHshYfb/TVjwwSHEjpz
+         Ulp07ovaxxLTdQzEgSVyr4NzdQtaCr+MMO5g4gpXwuChUdxYOOkgT2r0Mk9k9ShCrOPp
+         vyzZK9rsm8i5hAJ7+E7Nl7ylYOWyAm5pJ+y44JiEQ/oxsYXjpIBHBwSoSZA0wt7esOT6
+         e8aNARPrGf2eI1kV/xwUGyt3FEqYAsj5ZEby7/pnC+JPMZOQNwCQfWGNfJ9V+S9Ep8wc
+         HnLKMrPtplEQtW29SP+ikzkyED7eyRZARkZAAXLf9GcKtVQgEQN53swKKit/xBBF1VML
+         Gk8w==
+X-Gm-Message-State: ANhLgQ369ZKjptWm1sitobLkZQ9mKsAc/4YKLAtOmGBM4hOp9UcK4Lro
+        nAaRGTzXkoi1SubY522jSyzUrw==
+X-Google-Smtp-Source: ADFU+vuiOBTrlaYtXDptNfRvUosd7l5Aa1+h2LxNOdqrM0CsGlfVE5Q6aFN1jDdM00w5TC2vObqltg==
+X-Received: by 2002:a17:902:aa49:: with SMTP id c9mr7501332plr.145.1584691282393;
+        Fri, 20 Mar 2020 01:01:22 -0700 (PDT)
+Received: from localhost ([122.171.118.46])
+        by smtp.gmail.com with ESMTPSA id g7sm3825789pjl.17.2020.03.20.01.01.21
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 20 Mar 2020 01:01:21 -0700 (PDT)
+Date:   Fri, 20 Mar 2020 13:31:19 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Rajendra Nayak <rnayak@codeaurora.org>
+Cc:     Sibi Sankar <sibis@codeaurora.org>, sboyd@kernel.org,
+        georgi.djakov@linaro.org, saravanak@google.com, nm@ti.com,
+        bjorn.andersson@linaro.org, agross@kernel.org,
+        david.brown@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        rjw@rjwysocki.net, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org, dianders@chromium.org, mka@chromium.org,
+        vincent.guittot@linaro.org, amit.kucheria@linaro.org,
+        ulf.hansson@linaro.org, linux-kernel-owner@vger.kernel.org
+Subject: Re: [RFC v3 00/10] DDR/L3 Scaling support on SDM845 and SC7180 SoCs
+Message-ID: <20200320080119.gztifbmenwpi6rrp@vireshk-i7>
+References: <20200127200350.24465-1-sibis@codeaurora.org>
+ <19cf027ba87ade1b895ea90ac0fedbe2@codeaurora.org>
+ <20200318034243.o2metmggzuah6cqw@vireshk-i7>
+ <f6a7930a-4eaa-6982-88c6-b50773bee9d8@codeaurora.org>
+ <ea4265f3f4b5a439d70d3c80bcc77b7f@codeaurora.org>
+ <20200319102411.oivesngrk7gy7vtw@vireshk-i7>
+ <78d92969-0219-d140-d788-d1b14e643e90@codeaurora.org>
+ <20200319110805.glmuc2qvgcei3mon@vireshk-i7>
+ <53065b03-22d5-fb78-aa6f-e4711b8ffd3b@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v2 2/5] dt-bindings: panel: add binding for Xingbangda XBD599 panel
-To:     linux-arm-kernel@lists.infradead.org,
-        Linus Walleij <linus.walleij@linaro.org>
-CC:     Ondrej Jirman <megous@megous.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Maxime Ripard <mripard@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
-From:   Icenowy Zheng <icenowy@aosc.io>
-Message-ID: <491ADD02-5511-404B-88A8-5725EF061EAC@aosc.io>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aosc.io; s=dkim;
-        t=1584691659;
-        h=from:subject:date:message-id:to:cc:mime-version:content-type:content-transfer-encoding:in-reply-to:references;
-        bh=stsS4dj9oBV/7b45QdrFyqP0smVpfXDmrt3Ueus/OeQ=;
-        b=GtADa9cpqzkGuQKMBAZQjihl/+F10s/Hpdjay+d0XsQ1X1T0QH1GPjjqXzeH7LKeP1+eaE
-        PFopxiao42wyUcVgcZaQTj5Za9JwlH36zazAmYYv3wkGqvuSHY1oT67WPNFq1YHUyqENjh
-        8P3ylWO5/C4wiSlzq9FMcI7DoyWHAKM=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <53065b03-22d5-fb78-aa6f-e4711b8ffd3b@codeaurora.org>
+User-Agent: NeoMutt/20180716-391-311a52
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 19-03-20, 17:03, Rajendra Nayak wrote:
+> sure, I understand there is a dependency, however refusing to review the approach
+> (to add multiple OPPS tables per device) that this series is taking because of an outstanding
+> question which, if I read it right is "We can not add multiple OPP tables for a single device right now"
+> seems odd.
+> 
+> Its fine if you are not happy with the approach taken here and you can propose something else,
+> but it looks inevitable that we would need something like this to be supported (multiple OPP tables per device)
+> and hence the request to review the patches.
 
+I understand the frustration you have right now, but honestly most of
+the delay is not from my part. I normally try to be very quick in
+giving reviews or even accepting material for next cycle. Still, I am
+part of the chain which has blocked this series and I am really sorry
+for that.
 
-=E4=BA=8E 2020=E5=B9=B43=E6=9C=8819=E6=97=A5 GMT+08:00 =E4=B8=8B=E5=8D=881=
-0:14:27, Linus Walleij <linus=2Ewalleij@linaro=2Eorg> =E5=86=99=E5=88=B0:
->Hi Icenowy,
->
->On Mon, Mar 16, 2020 at 2:37 PM Icenowy Zheng <icenowy@aosc=2Eio> wrote:
->
->> Xingbangda XBD599 is a 5=2E99" 720x1440 MIPI-DSI LCD panel=2E
->>
->> Add its device tree binding=2E
->>
->> Signed-off-by: Icenowy Zheng <icenowy@aosc=2Eio>
->(=2E=2E=2E)
->
->> +properties:
->> +  compatible:
->> +    const: xingbangda,xbd599
->
->As noticed in the review of the driver, this display is very close to
->himax,hx8363=2E
->
->I think the best is to determin what actual display controller it is,
->I think it is some kind of Ilitek controller since Ilitek ili9342 is
->clearly very similar=2E
+Coming back to reviews. I never liked the idea of keeping separate OPP
+tables just for the relation that a peripheral share with the
+interconnect, i.e. the b/w tables getting discussed right now.
 
-It's Sitronix ST7703, same as the Librem 5 panel=2E
+And I am not at all sure if such tables should be added as device
+tables anyway, it was present in cover letter of Saravana for sometime
+but not in the real patches and so I missed it until the time Sibi
+asked me something on IRC.
 
->
->The best would be something like name the bindings
->ilitek-ili9342=2Eyaml and then:
->
->properties:
->  compatible:
->    items:
->      - const: xingbangda,xbd599
->      - const: ilitek,ili9342
->
->Possibly use oneOf and add support for the himax,hx8363
->already while you're at it=2E
->
->Yours,
->Linus Walleij
->
->_______________________________________________
->linux-arm-kernel mailing list
->linux-arm-kernel@lists=2Einfradead=2Eorg
->http://lists=2Einfradead=2Eorg/mailman/listinfo/linux-arm-kernel
+To be clear, I don't think we will allow multiple active OPP tables
+for a device for now, unless we have a very good reason to do that. It
+just doesn't make sense to me to have one table for keeping
+frequency/voltage thing, and another set of tables for b/w
+requirements from interconnect.
 
---=20
-=E4=BD=BF=E7=94=A8 K-9 Mail =E5=8F=91=E9=80=81=E8=87=AA=E6=88=91=E7=9A=84A=
-ndroid=E8=AE=BE=E5=A4=87=E3=80=82
+So, the changes proposed by this patchset even doesn't matter as I am
+not agreeing on the binding itself. And we need a binding change for
+that, which Saravana never sent, i.e. to have multiple active tables
+for a device.
+
+Yes, we need a solution for this and a quick one. I am fine to discuss
+this all on a hangout session (anyway, everyone is working from home
+now anyways) anytime next week with the interested parties. I think
+/me and Vincent can join it.
+
+-- 
+viresh
