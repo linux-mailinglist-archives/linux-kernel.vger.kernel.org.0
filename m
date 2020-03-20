@@ -2,74 +2,68 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5AD2018C919
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 09:44:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0B06218C91E
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 09:46:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726973AbgCTIod (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Mar 2020 04:44:33 -0400
-Received: from mx2.suse.de ([195.135.220.15]:35046 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726840AbgCTIoc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Mar 2020 04:44:32 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 373A4AEC4
-        for <linux-kernel@vger.kernel.org>; Fri, 20 Mar 2020 08:44:31 +0000 (UTC)
-From:   Takashi Iwai <tiwai@suse.de>
-To:     linux-kernel@vger.kernel.org
-Subject: [PATCH] edd: Use scnprintf() for avoiding potential buffer overflow
-Date:   Fri, 20 Mar 2020 09:44:29 +0100
-Message-Id: <20200320084429.1803-1-tiwai@suse.de>
-X-Mailer: git-send-email 2.16.4
+        id S1727016AbgCTIqA convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Fri, 20 Mar 2020 04:46:00 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:34773 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726657AbgCTIqA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Mar 2020 04:46:00 -0400
+Received: from bigeasy by Galois.linutronix.de with local (Exim 4.80)
+        (envelope-from <bigeasy@linutronix.de>)
+        id 1jFDHJ-000826-Ud; Fri, 20 Mar 2020 09:45:17 +0100
+Date:   Fri, 20 Mar 2020 09:45:17 +0100
+From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To:     Davidlohr Bueso <dave@stgolabs.net>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Ingo Molnar <mingo@kernel.org>, Will Deacon <will@kernel.org>,
+        "Paul E . McKenney" <paulmck@kernel.org>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        Kurt Schwemmer <kurt.schwemmer@microsemi.com>,
+        Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
+        Felipe Balbi <balbi@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-usb@vger.kernel.org, Kalle Valo <kvalo@codeaurora.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Arnd Bergmann <arnd@arndb.de>, linuxppc-dev@lists.ozlabs.org
+Subject: Re: [patch V2 06/15] rcuwait: Add @state argument to
+ rcuwait_wait_event()
+Message-ID: <20200320084517.2tqbi2iwjlu6je2b@linutronix.de>
+References: <20200318204302.693307984@linutronix.de>
+ <20200318204408.010461877@linutronix.de>
+ <20200320053657.ggvcqsjtdotmrl7p@linux-p48b>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8BIT
+In-Reply-To: <20200320053657.ggvcqsjtdotmrl7p@linux-p48b>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since snprintf() returns the would-be-output size instead of the
-actual output size, the succeeding calls may go beyond the given
-buffer limit.  Fix it by replacing with scnprintf().
+On 2020-03-19 22:36:57 [-0700], Davidlohr Bueso wrote:
+> On Wed, 18 Mar 2020, Thomas Gleixner wrote:
+> 
+> Right now I'm not sure what the proper fix should be.
 
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
----
+I though that v2 has it fixed with the previous commit (acpi: Remove
+header dependency). The kbot just reported that everything is fine.
+Let me look…
 
-This driver looks like an orphan.  If no one takes it, I'm willing to
-merge the patch through my tree.
+> Thanks,
+> Davidlohr
 
- drivers/firmware/edd.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/firmware/edd.c b/drivers/firmware/edd.c
-index 29906e39ab4b..14d0970a7198 100644
---- a/drivers/firmware/edd.c
-+++ b/drivers/firmware/edd.c
-@@ -341,7 +341,7 @@ edd_show_legacy_max_cylinder(struct edd_device *edev, char *buf)
- 	if (!info || !buf)
- 		return -EINVAL;
- 
--	p += snprintf(p, left, "%u\n", info->legacy_max_cylinder);
-+	p += scnprintf(p, left, "%u\n", info->legacy_max_cylinder);
- 	return (p - buf);
- }
- 
-@@ -356,7 +356,7 @@ edd_show_legacy_max_head(struct edd_device *edev, char *buf)
- 	if (!info || !buf)
- 		return -EINVAL;
- 
--	p += snprintf(p, left, "%u\n", info->legacy_max_head);
-+	p += scnprintf(p, left, "%u\n", info->legacy_max_head);
- 	return (p - buf);
- }
- 
-@@ -371,7 +371,7 @@ edd_show_legacy_sectors_per_track(struct edd_device *edev, char *buf)
- 	if (!info || !buf)
- 		return -EINVAL;
- 
--	p += snprintf(p, left, "%u\n", info->legacy_sectors_per_track);
-+	p += scnprintf(p, left, "%u\n", info->legacy_sectors_per_track);
- 	return (p - buf);
- }
- 
--- 
-2.16.4
-
+Sebastian
