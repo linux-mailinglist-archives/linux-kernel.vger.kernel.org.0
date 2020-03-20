@@ -2,28 +2,28 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A5C8C18DA23
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 22:29:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A01C218DA37
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 22:29:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727230AbgCTV2u (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Mar 2020 17:28:50 -0400
-Received: from mga04.intel.com ([192.55.52.120]:59216 "EHLO mga04.intel.com"
+        id S1727496AbgCTV3B (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Mar 2020 17:29:01 -0400
+Received: from mga17.intel.com ([192.55.52.151]:42047 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727192AbgCTV2s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Mar 2020 17:28:48 -0400
-IronPort-SDR: vAK15cgCXY7e1hHUzluzawN6bMMS/A3oDHaw0FnhQ8ZFtQtRHu4m+vRN+JthSI2R84EpqOXBpP
- YG9bIX0vkpcA==
+        id S1727278AbgCTV2x (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Mar 2020 17:28:53 -0400
+IronPort-SDR: VitMlAAuMcDYzmYQEjZm1JKrtc5BvLME768MrpKrGCgVpO7esX6HETt8yyF16W0QQ1qg7wR/Xd
+ gfPPWW2FQA0A==
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Mar 2020 14:28:46 -0700
-IronPort-SDR: OUbuLB80Aoo5u0WS81hdPdTcDyar7PORxjpiI2hF5Bdne4MWqYiu0wn5pGSm5JUyL7YSrj5ZQh
- qR9KexWWTobw==
+  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Mar 2020 14:28:52 -0700
+IronPort-SDR: ghAuvcOx6OeLT+TT0hWokk53Kj6URsyVcJrzWRXNop1mQNLjcTFDB0vI3muLMVp8pehK1+G0uy
+ DSVu5+SzqRSQ==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.72,286,1580803200"; 
-   d="scan'208";a="269224421"
+   d="scan'208";a="269224465"
 Received: from sjchrist-coffee.jf.intel.com ([10.54.74.202])
-  by fmsmga004.fm.intel.com with ESMTP; 20 Mar 2020 14:28:46 -0700
+  by fmsmga004.fm.intel.com with ESMTP; 20 Mar 2020 14:28:52 -0700
 From:   Sean Christopherson <sean.j.christopherson@intel.com>
 To:     Paolo Bonzini <pbonzini@redhat.com>
 Cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
@@ -38,9 +38,9 @@ Cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
         John Haxby <john.haxby@oracle.com>,
         Miaohe Lin <linmiaohe@huawei.com>,
         Tom Lendacky <thomas.lendacky@amd.com>
-Subject: [PATCH v3 08/37] KVM: VMX: Skip global INVVPID fallback if vpid==0 in vpid_sync_context()
-Date:   Fri, 20 Mar 2020 14:28:04 -0700
-Message-Id: <20200320212833.3507-9-sean.j.christopherson@intel.com>
+Subject: [PATCH v3 17/37] KVM: SVM: Wire up ->tlb_flush_guest() directly to svm_flush_tlb()
+Date:   Fri, 20 Mar 2020 14:28:13 -0700
+Message-Id: <20200320212833.3507-18-sean.j.christopherson@intel.com>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20200320212833.3507-1-sean.j.christopherson@intel.com>
 References: <20200320212833.3507-1-sean.j.christopherson@intel.com>
@@ -51,31 +51,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Skip the global INVVPID in the unlikely scenario that vpid==0 and the
-SINGLE_CONTEXT variant of INVVPID is unsupported.  If vpid==0, there's
-no need to INVVPID as it's impossible to do VM-Enter with VPID enabled
-and vmcs.VPID==0, i.e. there can't be any TLB entries for the vCPU with
-vpid==0.  The fact that the SINGLE_CONTEXT variant isn't supported is
-irrelevant.
+Use svm_flush_tlb() directly for kvm_x86_ops->tlb_flush_guest() now that
+the @invalidate_gpa param to ->tlb_flush() is gone, i.e. the wrapper for
+->tlb_flush_guest() is no longer necessary.
+
+No functional change intended.
 
 Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
 ---
- arch/x86/kvm/vmx/ops.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/x86/kvm/svm.c | 7 +------
+ 1 file changed, 1 insertion(+), 6 deletions(-)
 
-diff --git a/arch/x86/kvm/vmx/ops.h b/arch/x86/kvm/vmx/ops.h
-index 45eaedee2ac0..33645a8e5463 100644
---- a/arch/x86/kvm/vmx/ops.h
-+++ b/arch/x86/kvm/vmx/ops.h
-@@ -285,7 +285,7 @@ static inline void vpid_sync_context(int vpid)
- {
- 	if (cpu_has_vmx_invvpid_single())
- 		vpid_sync_vcpu_single(vpid);
--	else
-+	else if (vpid != 0)
- 		vpid_sync_vcpu_global();
+diff --git a/arch/x86/kvm/svm.c b/arch/x86/kvm/svm.c
+index 62fa45dcb6a4..dfa3b53f8437 100644
+--- a/arch/x86/kvm/svm.c
++++ b/arch/x86/kvm/svm.c
+@@ -5643,11 +5643,6 @@ static void svm_flush_tlb_gva(struct kvm_vcpu *vcpu, gva_t gva)
+ 	invlpga(gva, svm->vmcb->control.asid);
  }
  
+-static void svm_flush_tlb_guest(struct kvm_vcpu *vcpu)
+-{
+-	svm_flush_tlb(vcpu);
+-}
+-
+ static void svm_prepare_guest_switch(struct kvm_vcpu *vcpu)
+ {
+ }
+@@ -7405,7 +7400,7 @@ static struct kvm_x86_ops svm_x86_ops __ro_after_init = {
+ 
+ 	.tlb_flush = svm_flush_tlb,
+ 	.tlb_flush_gva = svm_flush_tlb_gva,
+-	.tlb_flush_guest = svm_flush_tlb_guest,
++	.tlb_flush_guest = svm_flush_tlb,
+ 
+ 	.run = svm_vcpu_run,
+ 	.handle_exit = handle_exit,
 -- 
 2.24.1
 
