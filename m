@@ -2,45 +2,45 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 11FAE18CC19
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 12:02:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E73D018CC1F
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 12:03:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726974AbgCTLCt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Mar 2020 07:02:49 -0400
-Received: from mga01.intel.com ([192.55.52.88]:59430 "EHLO mga01.intel.com"
+        id S1727243AbgCTLDw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Mar 2020 07:03:52 -0400
+Received: from mga09.intel.com ([134.134.136.24]:55687 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726821AbgCTLCt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Mar 2020 07:02:49 -0400
-IronPort-SDR: 2SCYQUz6MMX/5qYs3IdcRtE96gTbjGhiDRamUk6I92TKQ2Y0UQkmdzx/EKZ/CAyaKkO6zA3MzL
- qZ4q6oKfcFxg==
+        id S1727163AbgCTLDw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Mar 2020 07:03:52 -0400
+IronPort-SDR: /yCqBAVWxJvA3d/uf9f+WGxHshtg45yoSFdXoqUzBJavG1FwV/ezlBYnWFNRVcKYOIzDZdqUm9
+ X/QRxv/CNB6w==
 X-Amp-Result: UNKNOWN
 X-Amp-Original-Verdict: FILE UNKNOWN
 X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Mar 2020 04:02:45 -0700
-IronPort-SDR: 5xhbgwKO3+capHoeFGemzIsu3Y8JGLXJHpVdmJ8Mk0YUosO31RkfHFFGOgADNkRkKcQJZ7gEMk
- IOJxnjAN5klA==
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Mar 2020 04:03:48 -0700
+IronPort-SDR: cyHkQOk8r8SO/vsaYBVvPAb8y4qbx6pUQJjdNqYlY4QF3HZccLQuHR6iZYl7Ln2NW2v664K9YD
+ ga7kPHJstn9A==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.72,284,1580803200"; 
-   d="gz'50?scan'50,208,50";a="237203206"
+   d="gz'50?scan'50,208,50";a="239197307"
 Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
-  by fmsmga007.fm.intel.com with ESMTP; 20 Mar 2020 04:02:42 -0700
+  by orsmga008.jf.intel.com with ESMTP; 20 Mar 2020 04:03:45 -0700
 Received: from kbuild by lkp-server01 with local (Exim 4.89)
         (envelope-from <lkp@intel.com>)
-        id 1jFFQH-0008OF-Cb; Fri, 20 Mar 2020 19:02:41 +0800
-Date:   Fri, 20 Mar 2020 19:02:31 +0800
+        id 1jFFRI-000995-Vg; Fri, 20 Mar 2020 19:03:44 +0800
+Date:   Fri, 20 Mar 2020 19:02:45 +0800
 From:   kbuild test robot <lkp@intel.com>
 To:     Yang Weijiang <weijiang.yang@intel.com>
 Cc:     kbuild-all@lists.01.org, kvm@vger.kernel.org,
         linux-kernel@vger.kernel.org, sean.j.christopherson@intel.com,
         pbonzini@redhat.com, jmattson@google.com
-Subject: Re: [PATCH v10 7/8] KVM: VMX: Enable CET support for nested VM
-Message-ID: <202003201823.hPoNQ4Nj%lkp@intel.com>
-References: <20200320034342.26610-8-weijiang.yang@intel.com>
+Subject: Re: [PATCH v10 4/8] KVM: X86: Refresh CPUID on guest XSS change
+Message-ID: <202003201858.bPUEbKaQ%lkp@intel.com>
+References: <20200320034342.26610-5-weijiang.yang@intel.com>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="LQksG6bCIzRHxTLp"
+Content-Type: multipart/mixed; boundary="ZGiS0Q5IWpPtfppv"
 Content-Disposition: inline
-In-Reply-To: <20200320034342.26610-8-weijiang.yang@intel.com>
+In-Reply-To: <20200320034342.26610-5-weijiang.yang@intel.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -48,7 +48,7 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---LQksG6bCIzRHxTLp
+--ZGiS0Q5IWpPtfppv
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
@@ -74,189 +74,56 @@ reproduce:
 If you fix the issue, kindly add following tag
 Reported-by: kbuild test robot <lkp@intel.com>
 
-All errors (new ones prefixed by >>):
+All error/warnings (new ones prefixed by >>):
 
-   arch/x86/kvm/vmx/nested.c: In function 'nested_vmx_prepare_msr_bitmap':
->> arch/x86/kvm/vmx/nested.c:630:39: error: 'MSR_IA32_U_CET' undeclared (first use in this function); did you mean 'MSR_IA32_TSC'?
-     if (!msr_write_intercepted_l01(vcpu, MSR_IA32_U_CET))
-                                          ^~~~~~~~~~~~~~
-                                          MSR_IA32_TSC
-   arch/x86/kvm/vmx/nested.c:630:39: note: each undeclared identifier is reported only once for each function it appears in
->> arch/x86/kvm/vmx/nested.c:635:39: error: 'MSR_IA32_PL3_SSP' undeclared (first use in this function); did you mean 'MSR_IA32_MCG_ESP'?
-     if (!msr_write_intercepted_l01(vcpu, MSR_IA32_PL3_SSP))
-                                          ^~~~~~~~~~~~~~~~
-                                          MSR_IA32_MCG_ESP
->> arch/x86/kvm/vmx/nested.c:640:39: error: 'MSR_IA32_S_CET' undeclared (first use in this function); did you mean 'MSR_IA32_U_CET'?
-     if (!msr_write_intercepted_l01(vcpu, MSR_IA32_S_CET))
-                                          ^~~~~~~~~~~~~~
-                                          MSR_IA32_U_CET
->> arch/x86/kvm/vmx/nested.c:645:39: error: 'MSR_IA32_PL0_SSP' undeclared (first use in this function); did you mean 'MSR_IA32_PL3_SSP'?
-     if (!msr_write_intercepted_l01(vcpu, MSR_IA32_PL0_SSP))
-                                          ^~~~~~~~~~~~~~~~
-                                          MSR_IA32_PL3_SSP
->> arch/x86/kvm/vmx/nested.c:650:39: error: 'MSR_IA32_PL1_SSP' undeclared (first use in this function); did you mean 'MSR_IA32_PL0_SSP'?
-     if (!msr_write_intercepted_l01(vcpu, MSR_IA32_PL1_SSP))
-                                          ^~~~~~~~~~~~~~~~
-                                          MSR_IA32_PL0_SSP
->> arch/x86/kvm/vmx/nested.c:655:39: error: 'MSR_IA32_PL2_SSP' undeclared (first use in this function); did you mean 'MSR_IA32_PL1_SSP'?
-     if (!msr_write_intercepted_l01(vcpu, MSR_IA32_PL2_SSP))
-                                          ^~~~~~~~~~~~~~~~
-                                          MSR_IA32_PL1_SSP
->> arch/x86/kvm/vmx/nested.c:660:39: error: 'MSR_IA32_INT_SSP_TAB' undeclared (first use in this function); did you mean 'MSR_IA32_PL2_SSP'?
-     if (!msr_write_intercepted_l01(vcpu, MSR_IA32_INT_SSP_TAB))
-                                          ^~~~~~~~~~~~~~~~~~~~
-                                          MSR_IA32_PL2_SSP
+   arch/x86/kvm/x86.c: In function 'kvm_set_cr0':
+   arch/x86/kvm/x86.c:807:53: error: 'X86_CR4_CET' undeclared (first use in this function); did you mean 'X86_CR4_DE'?
+     if (!(cr0 & X86_CR0_WP) && kvm_read_cr4_bits(vcpu, X86_CR4_CET))
+                                                        ^~~~~~~~~~~
+                                                        X86_CR4_DE
+   arch/x86/kvm/x86.c:807:53: note: each undeclared identifier is reported only once for each function it appears in
+   arch/x86/kvm/x86.c: In function 'kvm_arch_hardware_setup':
+>> arch/x86/kvm/x86.c:189:28: error: 'XFEATURE_MASK_CET_USER' undeclared (first use in this function); did you mean 'XFEATURE_MASK_BNDCSR'?
+    #define KVM_SUPPORTED_XSS (XFEATURE_MASK_CET_USER | \
+                               ^
+>> arch/x86/kvm/x86.c:9650:30: note: in expansion of macro 'KVM_SUPPORTED_XSS'
+      supported_xss = host_xss & KVM_SUPPORTED_XSS;
+                                 ^~~~~~~~~~~~~~~~~
+>> arch/x86/kvm/x86.c:190:6: error: 'XFEATURE_MASK_CET_KERNEL' undeclared (first use in this function); did you mean 'XFEATURE_MASK_CET_USER'?
+         XFEATURE_MASK_CET_KERNEL)
+         ^
+>> arch/x86/kvm/x86.c:9650:30: note: in expansion of macro 'KVM_SUPPORTED_XSS'
+      supported_xss = host_xss & KVM_SUPPORTED_XSS;
+                                 ^~~~~~~~~~~~~~~~~
 
-vim +630 arch/x86/kvm/vmx/nested.c
+vim +189 arch/x86/kvm/x86.c
 
-   557	
-   558	/*
-   559	 * Merge L0's and L1's MSR bitmap, return false to indicate that
-   560	 * we do not use the hardware.
-   561	 */
-   562	static inline bool nested_vmx_prepare_msr_bitmap(struct kvm_vcpu *vcpu,
-   563							 struct vmcs12 *vmcs12)
-   564	{
-   565		int msr;
-   566		unsigned long *msr_bitmap_l1;
-   567		unsigned long *msr_bitmap_l0 = to_vmx(vcpu)->nested.vmcs02.msr_bitmap;
-   568		struct kvm_host_map *map = &to_vmx(vcpu)->nested.msr_bitmap_map;
-   569	
-   570		/* Nothing to do if the MSR bitmap is not in use.  */
-   571		if (!cpu_has_vmx_msr_bitmap() ||
-   572		    !nested_cpu_has(vmcs12, CPU_BASED_USE_MSR_BITMAPS))
-   573			return false;
-   574	
-   575		if (kvm_vcpu_map(vcpu, gpa_to_gfn(vmcs12->msr_bitmap), map))
-   576			return false;
-   577	
-   578		msr_bitmap_l1 = (unsigned long *)map->hva;
-   579	
-   580		/*
-   581		 * To keep the control flow simple, pay eight 8-byte writes (sixteen
-   582		 * 4-byte writes on 32-bit systems) up front to enable intercepts for
-   583		 * the x2APIC MSR range and selectively disable them below.
-   584		 */
-   585		enable_x2apic_msr_intercepts(msr_bitmap_l0);
-   586	
-   587		if (nested_cpu_has_virt_x2apic_mode(vmcs12)) {
-   588			if (nested_cpu_has_apic_reg_virt(vmcs12)) {
-   589				/*
-   590				 * L0 need not intercept reads for MSRs between 0x800
-   591				 * and 0x8ff, it just lets the processor take the value
-   592				 * from the virtual-APIC page; take those 256 bits
-   593				 * directly from the L1 bitmap.
-   594				 */
-   595				for (msr = 0x800; msr <= 0x8ff; msr += BITS_PER_LONG) {
-   596					unsigned word = msr / BITS_PER_LONG;
-   597	
-   598					msr_bitmap_l0[word] = msr_bitmap_l1[word];
-   599				}
-   600			}
-   601	
-   602			nested_vmx_disable_intercept_for_msr(
-   603				msr_bitmap_l1, msr_bitmap_l0,
-   604				X2APIC_MSR(APIC_TASKPRI),
-   605				MSR_TYPE_R | MSR_TYPE_W);
-   606	
-   607			if (nested_cpu_has_vid(vmcs12)) {
-   608				nested_vmx_disable_intercept_for_msr(
-   609					msr_bitmap_l1, msr_bitmap_l0,
-   610					X2APIC_MSR(APIC_EOI),
-   611					MSR_TYPE_W);
-   612				nested_vmx_disable_intercept_for_msr(
-   613					msr_bitmap_l1, msr_bitmap_l0,
-   614					X2APIC_MSR(APIC_SELF_IPI),
-   615					MSR_TYPE_W);
-   616			}
-   617		}
-   618	
-   619		/* KVM unconditionally exposes the FS/GS base MSRs to L1. */
-   620		nested_vmx_disable_intercept_for_msr(msr_bitmap_l1, msr_bitmap_l0,
-   621						     MSR_FS_BASE, MSR_TYPE_RW);
-   622	
-   623		nested_vmx_disable_intercept_for_msr(msr_bitmap_l1, msr_bitmap_l0,
-   624						     MSR_GS_BASE, MSR_TYPE_RW);
-   625	
-   626		nested_vmx_disable_intercept_for_msr(msr_bitmap_l1, msr_bitmap_l0,
-   627						     MSR_KERNEL_GS_BASE, MSR_TYPE_RW);
-   628	
-   629		/* Pass CET MSRs to nested VM if L0 and L1 are set to pass-through. */
- > 630		if (!msr_write_intercepted_l01(vcpu, MSR_IA32_U_CET))
-   631			nested_vmx_disable_intercept_for_msr(
-   632						msr_bitmap_l1, msr_bitmap_l0,
-   633						MSR_IA32_U_CET, MSR_TYPE_RW);
-   634	
- > 635		if (!msr_write_intercepted_l01(vcpu, MSR_IA32_PL3_SSP))
-   636			nested_vmx_disable_intercept_for_msr(
-   637						msr_bitmap_l1, msr_bitmap_l0,
-   638						MSR_IA32_PL3_SSP, MSR_TYPE_RW);
-   639	
- > 640		if (!msr_write_intercepted_l01(vcpu, MSR_IA32_S_CET))
-   641			nested_vmx_disable_intercept_for_msr(
-   642						msr_bitmap_l1, msr_bitmap_l0,
-   643						MSR_IA32_S_CET, MSR_TYPE_RW);
-   644	
- > 645		if (!msr_write_intercepted_l01(vcpu, MSR_IA32_PL0_SSP))
-   646			nested_vmx_disable_intercept_for_msr(
-   647						msr_bitmap_l1, msr_bitmap_l0,
-   648						MSR_IA32_PL0_SSP, MSR_TYPE_RW);
-   649	
- > 650		if (!msr_write_intercepted_l01(vcpu, MSR_IA32_PL1_SSP))
-   651			nested_vmx_disable_intercept_for_msr(
-   652						msr_bitmap_l1, msr_bitmap_l0,
-   653						MSR_IA32_PL1_SSP, MSR_TYPE_RW);
-   654	
- > 655		if (!msr_write_intercepted_l01(vcpu, MSR_IA32_PL2_SSP))
-   656			nested_vmx_disable_intercept_for_msr(
-   657						msr_bitmap_l1, msr_bitmap_l0,
-   658						MSR_IA32_PL2_SSP, MSR_TYPE_RW);
-   659	
- > 660		if (!msr_write_intercepted_l01(vcpu, MSR_IA32_INT_SSP_TAB))
-   661			nested_vmx_disable_intercept_for_msr(
-   662						msr_bitmap_l1, msr_bitmap_l0,
-   663						MSR_IA32_INT_SSP_TAB, MSR_TYPE_RW);
-   664		/*
-   665		 * Checking the L0->L1 bitmap is trying to verify two things:
-   666		 *
-   667		 * 1. L0 gave a permission to L1 to actually passthrough the MSR. This
-   668		 *    ensures that we do not accidentally generate an L02 MSR bitmap
-   669		 *    from the L12 MSR bitmap that is too permissive.
-   670		 * 2. That L1 or L2s have actually used the MSR. This avoids
-   671		 *    unnecessarily merging of the bitmap if the MSR is unused. This
-   672		 *    works properly because we only update the L01 MSR bitmap lazily.
-   673		 *    So even if L0 should pass L1 these MSRs, the L01 bitmap is only
-   674		 *    updated to reflect this when L1 (or its L2s) actually write to
-   675		 *    the MSR.
-   676		 */
-   677		if (!msr_write_intercepted_l01(vcpu, MSR_IA32_SPEC_CTRL))
-   678			nested_vmx_disable_intercept_for_msr(
-   679						msr_bitmap_l1, msr_bitmap_l0,
-   680						MSR_IA32_SPEC_CTRL,
-   681						MSR_TYPE_R | MSR_TYPE_W);
-   682	
-   683		if (!msr_write_intercepted_l01(vcpu, MSR_IA32_PRED_CMD))
-   684			nested_vmx_disable_intercept_for_msr(
-   685						msr_bitmap_l1, msr_bitmap_l0,
-   686						MSR_IA32_PRED_CMD,
-   687						MSR_TYPE_W);
-   688	
-   689		kvm_vcpu_unmap(vcpu, &to_vmx(vcpu)->nested.msr_bitmap_map, false);
-   690	
-   691		return true;
-   692	}
-   693	
+18863bdd60f895 Avi Kivity          2009-09-07  183  
+cfc481810c903a Sean Christopherson 2020-03-02  184  #define KVM_SUPPORTED_XCR0     (XFEATURE_MASK_FP | XFEATURE_MASK_SSE \
+cfc481810c903a Sean Christopherson 2020-03-02  185  				| XFEATURE_MASK_YMM | XFEATURE_MASK_BNDREGS \
+cfc481810c903a Sean Christopherson 2020-03-02  186  				| XFEATURE_MASK_BNDCSR | XFEATURE_MASK_AVX512 \
+cfc481810c903a Sean Christopherson 2020-03-02  187  				| XFEATURE_MASK_PKRU)
+cfc481810c903a Sean Christopherson 2020-03-02  188  
+4d0c7566d56266 Yang Weijiang       2020-03-20 @189  #define KVM_SUPPORTED_XSS	(XFEATURE_MASK_CET_USER | \
+4d0c7566d56266 Yang Weijiang       2020-03-20 @190  				 XFEATURE_MASK_CET_KERNEL)
+4d0c7566d56266 Yang Weijiang       2020-03-20  191  
+
+:::::: The code at line 189 was first introduced by commit
+:::::: 4d0c7566d56266fc80759b1780e660edbb6f2fa8 KVM: VMX: Introduce CET VMX fields and flags
+
+:::::: TO: Yang Weijiang <weijiang.yang@intel.com>
+:::::: CC: 0day robot <lkp@intel.com>
 
 ---
 0-DAY CI Kernel Test Service, Intel Corporation
 https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
 
---LQksG6bCIzRHxTLp
+--ZGiS0Q5IWpPtfppv
 Content-Type: application/gzip
 Content-Disposition: attachment; filename=".config.gz"
 Content-Transfer-Encoding: base64
 
-H4sICGWbdF4AAy5jb25maWcAlDzbctw2su/5iqnkJXlIoostu84pPYAkyEGGIGgAHM34haXI
+H4sICNebdF4AAy5jb25maWcAlDzbctw2su/5iqnkJXlIoostu84pPYAkyEGGIGgAHM34haXI
 Y0d1bMmry27896cbIIcNEJSzW1uxphvXRt/R4E8//LRiz0/3X66fbm+uP3/+tvp0uDs8XD8d
 Pqw+3n4+/O+qUKtG2RUvhP0NGte3d89//357/vZi9fq3i99Ofn24OVttDg93h8+r/P7u4+2n
 Z+h9e3/3w08/wP9/AuCXrzDQw/+sPt3c/Ppm9XNx+PP2+m715rfX0Pv1L/4PaJqrphRVn+e9
@@ -1581,4 +1448,4 @@ Etr3k+vRB9nA+cJG0LB7ldFd0IZ/huyXoeUHBXTsY52vMasz7Uhw5re6MhjTc06wutdZneUI
 JK+mZEkvK7dOssCC7NsT+SH0oAN7Mu3I0owUy8Kl+z6eVfLlr8tMogDIeq+uYWZtOpnIl+GD
 a67jWEja19MZJAUORf8ymV8n7fbn/wF6WdVV9I4EAA==
 
---LQksG6bCIzRHxTLp--
+--ZGiS0Q5IWpPtfppv--
