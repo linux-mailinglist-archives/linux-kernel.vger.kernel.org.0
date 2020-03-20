@@ -2,216 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 439DC18D763
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 19:38:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BACAA18D7DA
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 19:51:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727709AbgCTSin (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Mar 2020 14:38:43 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:36907 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727542AbgCTSia (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Mar 2020 14:38:30 -0400
-Received: from p5de0bf0b.dip0.t-ipconnect.de ([93.224.191.11] helo=nanos.tec.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1jFMXL-00025T-NP
-        for linux-kernel@vger.kernel.org; Fri, 20 Mar 2020 19:38:27 +0100
-Received: from nanos.tec.linutronix.de (localhost [IPv6:::1])
-        by nanos.tec.linutronix.de (Postfix) with ESMTP id 46A081040D0
-        for <linux-kernel@vger.kernel.org>; Fri, 20 Mar 2020 19:38:20 +0100 (CET)
-Message-Id: <20200320180034.672927065@linutronix.de>
-User-Agent: quilt/0.65
-Date:   Fri, 20 Mar 2020 19:00:19 +0100
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     LKML <linux-kernel@vger.kernel.org>
-Cc:     x86@kernel.org, Paul McKenney <paulmck@kernel.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Brian Gerst <brgerst@gmail.com>,
-        Juergen Gross <jgross@suse.com>,
-        Alexandre Chartre <alexandre.chartre@oracle.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org,
-        Peter Zijlstra <peterz@infradead.org>
-Subject: [patch V3 23/23] x86/kvm/svm: Move guest enter/exit into .noinstr.text
-References: <20200320175956.033706968@linutronix.de>
+        id S1727653AbgCTSv4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Mar 2020 14:51:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45370 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727317AbgCTSvU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Mar 2020 14:51:20 -0400
+Received: from disco-boy.misterjones.org (disco-boy.misterjones.org [51.254.78.96])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B41F620775;
+        Fri, 20 Mar 2020 18:51:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1584730279;
+        bh=qOYltc5PEvsMpQTSXW5KLk7fZHc6f6PQXk+Qc6VfB1c=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=ssQmUHCBsD3Ox8CDxP91JouIa2NMG4RBIFIOXvc0l8GIPMtVIBLIgatuJmuOMhE+p
+         uPDwlbyKJWFmqe4WNNtzErWAeKu25kYQPlcy/rdHHflNav4738k14juy/u8XWPilkR
+         08EOwDVMVwsZQ14GjQeDMjD6/xa9wB+8qrNmpvmk=
+Received: from 78.163-31-62.static.virginmediabusiness.co.uk ([62.31.163.78] helo=why.lan)
+        by disco-boy.misterjones.org with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <maz@kernel.org>)
+        id 1jFMK0-00EKAx-Uu; Fri, 20 Mar 2020 18:24:41 +0000
+From:   Marc Zyngier <maz@kernel.org>
+To:     linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu,
+        kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Zenghui Yu <yuzenghui@huawei.com>,
+        Eric Auger <eric.auger@redhat.com>,
+        James Morse <james.morse@arm.com>,
+        Julien Thierry <julien.thierry.kdev@gmail.com>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>
+Subject: [PATCH v6 10/23] irqchip/gic-v4.1: Plumb mask/unmask SGI callbacks
+Date:   Fri, 20 Mar 2020 18:23:53 +0000
+Message-Id: <20200320182406.23465-11-maz@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20200320182406.23465-1-maz@kernel.org>
+References: <20200320182406.23465-1-maz@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-transfer-encoding: 8-bit
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 62.31.163.78
+X-SA-Exim-Rcpt-To: linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, lorenzo.pieralisi@arm.com, jason@lakedaemon.net, tglx@linutronix.de, yuzenghui@huawei.com, eric.auger@redhat.com, james.morse@arm.com, julien.thierry.kdev@gmail.com, suzuki.poulose@arm.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Split out the really last steps of guest enter and the early guest exit
-code and mark it .noinstr.text. Add the required instr_begin()/end() pairs
-around "safe" code and replace the wrmsr() with native_wrmsr() to prevent a
-tracepoint injection.
+Implement mask/unmask for virtual SGIs by calling into the
+configuration helper.
 
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Tom Lendacky <thomas.lendacky@amd.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>
-Cc: kvm@vger.kernel.org
+Signed-off-by: Marc Zyngier <maz@kernel.org>
+Reviewed-by: Zenghui Yu <yuzenghui@huawei.com>
+Reviewed-by: Eric Auger <eric.auger@redhat.com>
+Link: https://lore.kernel.org/r/20200304203330.4967-11-maz@kernel.org
 ---
- arch/x86/kvm/svm.c |  114 ++++++++++++++++++++++++++++-------------------------
- 1 file changed, 62 insertions(+), 52 deletions(-)
+ drivers/irqchip/irq-gic-v3-its.c | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
 
---- a/arch/x86/kvm/svm.c
-+++ b/arch/x86/kvm/svm.c
-@@ -5714,58 +5714,9 @@ static void svm_cancel_injection(struct
- 	svm_complete_interrupts(svm);
+diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-gic-v3-its.c
+index c6aa4b4147ac..d89b9d78394d 100644
+--- a/drivers/irqchip/irq-gic-v3-its.c
++++ b/drivers/irqchip/irq-gic-v3-its.c
+@@ -3944,6 +3944,22 @@ static void its_configure_sgi(struct irq_data *d, bool clear)
+ 	its_send_single_vcommand(find_4_1_its(), its_build_vsgi_cmd, &desc);
  }
  
--static void svm_vcpu_run(struct kvm_vcpu *vcpu)
-+static noinstr void svm_vcpu_enter_exit(struct kvm_vcpu *vcpu,
-+					struct vcpu_svm *svm)
- {
--	struct vcpu_svm *svm = to_svm(vcpu);
--
--	svm->vmcb->save.rax = vcpu->arch.regs[VCPU_REGS_RAX];
--	svm->vmcb->save.rsp = vcpu->arch.regs[VCPU_REGS_RSP];
--	svm->vmcb->save.rip = vcpu->arch.regs[VCPU_REGS_RIP];
--
--	/*
--	 * A vmexit emulation is required before the vcpu can be executed
--	 * again.
--	 */
--	if (unlikely(svm->nested.exit_required))
--		return;
--
--	/*
--	 * Disable singlestep if we're injecting an interrupt/exception.
--	 * We don't want our modified rflags to be pushed on the stack where
--	 * we might not be able to easily reset them if we disabled NMI
--	 * singlestep later.
--	 */
--	if (svm->nmi_singlestep && svm->vmcb->control.event_inj) {
--		/*
--		 * Event injection happens before external interrupts cause a
--		 * vmexit and interrupts are disabled here, so smp_send_reschedule
--		 * is enough to force an immediate vmexit.
--		 */
--		disable_nmi_singlestep(svm);
--		smp_send_reschedule(vcpu->cpu);
--	}
--
--	pre_svm_run(svm);
--
--	sync_lapic_to_cr8(vcpu);
--
--	svm->vmcb->save.cr2 = vcpu->arch.cr2;
--
--	clgi();
--	kvm_load_guest_xsave_state(vcpu);
--
--	if (lapic_in_kernel(vcpu) &&
--		vcpu->arch.apic->lapic_timer.timer_advance_ns)
--		kvm_wait_lapic_expire(vcpu);
--
--	/*
--	 * If this vCPU has touched SPEC_CTRL, restore the guest's value if
--	 * it's non-zero. Since vmentry is serialising on affected CPUs, there
--	 * is no need to worry about the conditional branch over the wrmsr
--	 * being speculatively taken.
--	 */
--	x86_spec_ctrl_set_guest(svm->spec_ctrl, svm->virt_spec_ctrl);
--
- 	/*
- 	 * VMENTER enables interrupts (host state), but the kernel state is
- 	 * interrupts disabled when this is invoked. Also tell RCU about
-@@ -5780,8 +5731,10 @@ static void svm_vcpu_run(struct kvm_vcpu
- 	 * take locks (lockdep needs RCU) and calls into world and some
- 	 * more.
- 	 */
-+	instr_begin();
- 	__trace_hardirqs_on();
- 	lockdep_hardirqs_on_prepare(CALLER_ADDR0);
-+	instr_end();
- 	guest_enter_irqoff();
- 	lockdep_hardirqs_on(CALLER_ADDR0);
- 
-@@ -5881,7 +5834,7 @@ static void svm_vcpu_run(struct kvm_vcpu
- 	vmexit_fill_RSB();
- 
- #ifdef CONFIG_X86_64
--	wrmsrl(MSR_GS_BASE, svm->host.gs_base);
-+	native_wrmsrl(MSR_GS_BASE, svm->host.gs_base);
- #else
- 	loadsegment(fs, svm->host.fs);
- #ifndef CONFIG_X86_32_LAZY_GS
-@@ -5904,7 +5857,64 @@ static void svm_vcpu_run(struct kvm_vcpu
- 	 */
- 	lockdep_hardirqs_off(CALLER_ADDR0);
- 	guest_exit_irqoff();
-+	instr_begin();
- 	__trace_hardirqs_off();
-+	instr_end();
++static void its_sgi_mask_irq(struct irq_data *d)
++{
++	struct its_vpe *vpe = irq_data_get_irq_chip_data(d);
++
++	vpe->sgi_config[d->hwirq].enabled = false;
++	its_configure_sgi(d, false);
 +}
 +
-+static void svm_vcpu_run(struct kvm_vcpu *vcpu)
++static void its_sgi_unmask_irq(struct irq_data *d)
 +{
-+	struct vcpu_svm *svm = to_svm(vcpu);
++	struct its_vpe *vpe = irq_data_get_irq_chip_data(d);
 +
-+	svm->vmcb->save.rax = vcpu->arch.regs[VCPU_REGS_RAX];
-+	svm->vmcb->save.rsp = vcpu->arch.regs[VCPU_REGS_RSP];
-+	svm->vmcb->save.rip = vcpu->arch.regs[VCPU_REGS_RIP];
++	vpe->sgi_config[d->hwirq].enabled = true;
++	its_configure_sgi(d, false);
++}
 +
-+	/*
-+	 * A vmexit emulation is required before the vcpu can be executed
-+	 * again.
-+	 */
-+	if (unlikely(svm->nested.exit_required))
-+		return;
-+
-+	/*
-+	 * Disable singlestep if we're injecting an interrupt/exception.
-+	 * We don't want our modified rflags to be pushed on the stack where
-+	 * we might not be able to easily reset them if we disabled NMI
-+	 * singlestep later.
-+	 */
-+	if (svm->nmi_singlestep && svm->vmcb->control.event_inj) {
-+		/*
-+		 * Event injection happens before external interrupts cause a
-+		 * vmexit and interrupts are disabled here, so smp_send_reschedule
-+		 * is enough to force an immediate vmexit.
-+		 */
-+		disable_nmi_singlestep(svm);
-+		smp_send_reschedule(vcpu->cpu);
-+	}
-+
-+	pre_svm_run(svm);
-+
-+	sync_lapic_to_cr8(vcpu);
-+
-+	svm->vmcb->save.cr2 = vcpu->arch.cr2;
-+
-+	clgi();
-+	kvm_load_guest_xsave_state(vcpu);
-+
-+	if (lapic_in_kernel(vcpu) &&
-+		vcpu->arch.apic->lapic_timer.timer_advance_ns)
-+		kvm_wait_lapic_expire(vcpu);
-+
-+	/*
-+	 * If this vCPU has touched SPEC_CTRL, restore the guest's value if
-+	 * it's non-zero. Since vmentry is serialising on affected CPUs, there
-+	 * is no need to worry about the conditional branch over the wrmsr
-+	 * being speculatively taken.
-+	 */
-+	x86_spec_ctrl_set_guest(svm->spec_ctrl, svm->virt_spec_ctrl);
-+
-+	svm_vcpu_enter_exit(vcpu, svm);
+ static int its_sgi_set_affinity(struct irq_data *d,
+ 				const struct cpumask *mask_val,
+ 				bool force)
+@@ -3958,6 +3974,8 @@ static int its_sgi_set_affinity(struct irq_data *d,
  
- 	/*
- 	 * We do not use IBRS in the kernel. If this vCPU has used the
+ static struct irq_chip its_sgi_irq_chip = {
+ 	.name			= "GICv4.1-sgi",
++	.irq_mask		= its_sgi_mask_irq,
++	.irq_unmask		= its_sgi_unmask_irq,
+ 	.irq_set_affinity	= its_sgi_set_affinity,
+ };
+ 
+-- 
+2.20.1
 
