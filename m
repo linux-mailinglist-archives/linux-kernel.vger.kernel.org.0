@@ -2,74 +2,65 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2660D18D7C9
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 19:51:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 302B618D7CB
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 19:51:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727579AbgCTSvi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Mar 2020 14:51:38 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45870 "EHLO mail.kernel.org"
+        id S1727635AbgCTSvk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Mar 2020 14:51:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45916 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727555AbgCTSvg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Mar 2020 14:51:36 -0400
-Received: from sol.localdomain (c-107-3-166-239.hsd1.ca.comcast.net [107.3.166.239])
+        id S1727601AbgCTSvi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Mar 2020 14:51:38 -0400
+Received: from localhost (mobile-166-175-186-165.mycingular.net [166.175.186.165])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 73FEA20775;
-        Fri, 20 Mar 2020 18:51:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0DBA920781;
+        Fri, 20 Mar 2020 18:51:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584730295;
-        bh=wmxvXevR06nb1QmpGEsop/WZiA63VuWIIHhbvnGv3KA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ATEVLUwSRAGOLrwqGIPQHX0PWH4lr45iE5A/NazJJCfEOZHnreOA2VBhpGjQhk/ki
-         4+ZKkX5+P81ra2F1GVplnKnGZnFW5hCuQZ+bwoyYxCCre1aOpfzyewy++fV9Qt8rae
-         IkgJ+cgr/UTSzDQK5vzJ04cieWphnrdFa7f7cJlw=
-Date:   Fri, 20 Mar 2020 11:51:34 -0700
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        linux-xfs@vger.kernel.org,
-        William Kucharski <william.kucharski@oracle.com>,
-        linux-kernel@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net, cluster-devel@redhat.com,
-        linux-mm@kvack.org, ocfs2-devel@oss.oracle.com,
-        linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-erofs@lists.ozlabs.org, linux-btrfs@vger.kernel.org
-Subject: Re: [PATCH v9 22/25] f2fs: Convert from readpages to readahead
-Message-ID: <20200320185134.GI851@sol.localdomain>
-References: <20200320142231.2402-1-willy@infradead.org>
- <20200320142231.2402-23-willy@infradead.org>
+        s=default; t=1584730297;
+        bh=Pxh4RNwztfrlkMAQ30CdqLRP25VoysEoplJZh8LNfAc=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:From;
+        b=b/GHHrqqQTaSpCsOvb2WLrNC6efZgRm1ZyJ155O9mE4abE8nziYOLt+LDXMRkX34b
+         MmwiWPl5oAPhPQEkQD/p6CEEebnt9w++UgPg/kiRSSCTr06fKVrVrefYknfIVcBqLU
+         KUovYTZ+PSG2vO+pSVILi4rBxHn1cZHjcg3lDYdk=
+Date:   Fri, 20 Mar 2020 13:51:35 -0500
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Ansuel Smith <ansuelsmth@gmail.com>
+Cc:     Stanimir Varbanov <svarbanov@mm-sol.com>,
+        Sham Muthayyan <smuthayy@codeaurora.org>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Andrew Murray <amurray@thegoodpenguin.co.uk>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 05/12] pcie: qcom: add missing reset for ipq806x
+Message-ID: <20200320185135.GA242507@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200320142231.2402-23-willy@infradead.org>
+In-Reply-To: <20200320183455.21311-5-ansuelsmth@gmail.com>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 20, 2020 at 07:22:28AM -0700, Matthew Wilcox wrote:
-> From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
-> 
-> Use the new readahead operation in f2fs
-> 
-> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-> Reviewed-by: William Kucharski <william.kucharski@oracle.com>
-> ---
->  fs/f2fs/data.c              | 47 +++++++++++++++----------------------
->  include/trace/events/f2fs.h |  6 ++---
->  2 files changed, 22 insertions(+), 31 deletions(-)
-> 
+On Fri, Mar 20, 2020 at 07:34:47PM +0100, Ansuel Smith wrote:
+> Add missing ext reset used by ipq806x soc in
+> pcie qcom driver
 
-Reviewed-by: Eric Biggers <ebiggers@google.com>
+You say "missing" -- does that mean this is a *new* requirement for
+this ipq806x device, and previous devices work correctly without this
+patch?
 
-> @@ -2210,7 +2204,7 @@ static int f2fs_mpage_readpages(struct address_space *mapping,
->  				ret = f2fs_read_multi_pages(&cc, &bio,
->  							max_nr_pages,
->  							&last_block_in_bio,
-> -							is_readahead);
-> +							rac);
+Or does this fix an omission and previous devices actually didn't work
+correctly?
 
-IMO it would be clearer to write 'rac != NULL' here (and below) since the
-argument is actually a bool, but this works too.
+s/soc/SoC/
+s/pcie/PCIe/
 
-- Eric
+Period at end of sentence.  Please wrap to fill 75 columns.
