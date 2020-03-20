@@ -2,28 +2,28 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EE32A18D76B
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 19:39:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 60AB618D768
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 19:39:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727560AbgCTSjR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Mar 2020 14:39:17 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:36885 "EHLO
+        id S1727316AbgCTSia (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Mar 2020 14:38:30 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:36887 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727394AbgCTSiV (ORCPT
+        with ESMTP id S1727425AbgCTSiX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Mar 2020 14:38:21 -0400
+        Fri, 20 Mar 2020 14:38:23 -0400
 Received: from p5de0bf0b.dip0.t-ipconnect.de ([93.224.191.11] helo=nanos.tec.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tglx@linutronix.de>)
-        id 1jFMXD-00023B-O5
-        for linux-kernel@vger.kernel.org; Fri, 20 Mar 2020 19:38:19 +0100
+        id 1jFMXF-00023J-AA
+        for linux-kernel@vger.kernel.org; Fri, 20 Mar 2020 19:38:21 +0100
 Received: from nanos.tec.linutronix.de (localhost [IPv6:::1])
-        by nanos.tec.linutronix.de (Postfix) with ESMTP id E10EA1040A1
-        for <linux-kernel@vger.kernel.org>; Fri, 20 Mar 2020 19:38:17 +0100 (CET)
-Message-Id: <20200320180033.681580918@linutronix.de>
+        by nanos.tec.linutronix.de (Postfix) with ESMTP id 2912C1040C5
+        for <linux-kernel@vger.kernel.org>; Fri, 20 Mar 2020 19:38:18 +0100 (CET)
+Message-Id: <20200320180033.790597451@linutronix.de>
 User-Agent: quilt/0.65
-Date:   Fri, 20 Mar 2020 19:00:09 +0100
+Date:   Fri, 20 Mar 2020 19:00:10 +0100
 From:   Thomas Gleixner <tglx@linutronix.de>
 To:     LKML <linux-kernel@vger.kernel.org>
 Cc:     x86@kernel.org, Paul McKenney <paulmck@kernel.org>,
@@ -40,7 +40,8 @@ Cc:     x86@kernel.org, Paul McKenney <paulmck@kernel.org>,
         Peter Zijlstra <peterz@infradead.org>,
         Tom Lendacky <thomas.lendacky@amd.com>,
         Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org
-Subject: [patch V3 13/23] lib/smp_processor_id: Move it into noinstr section
+Subject: [patch V3 14/23] x86/speculation/mds: Mark
+ mds_user_clear_cpu_buffers() __always_inline
 References: <20200320175956.033706968@linutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -53,72 +54,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-That code is already not traceable. Move it into the noinstr section so the
-objtool section validation does not trigger.
-
-Annotate the warning code as "safe". While it might be not under all
-circumstances, getting the information out is important enough.
-
-Should this ever trigger from the sensitive code which is shielded against
-instrumentation, e.g. low level entry, then the printk is the least of the
-worries.
-
-Addresses the objtool warnings:
- vmlinux.o: warning: objtool: context_tracking_recursion_enter()+0x7: call to __this_cpu_preempt_check() leaves .noinstr.text section
- vmlinux.o: warning: objtool: __context_tracking_exit()+0x17: call to __this_cpu_preempt_check() leaves .noinstr.text section
- vmlinux.o: warning: objtool: __context_tracking_enter()+0x2a: call to __this_cpu_preempt_check() leaves .noinstr.text section
+Prevent the compiler from uninlining and creating traceable/probable
+functions as this is invoked _after_ context tracking switched to
+CONTEXT_USER and rcu idle.
 
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 ---
-V3: New patch
----
- lib/smp_processor_id.c |   10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ arch/x86/include/asm/nospec-branch.h |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/lib/smp_processor_id.c
-+++ b/lib/smp_processor_id.c
-@@ -8,7 +8,7 @@
- #include <linux/kprobes.h>
- #include <linux/sched.h>
- 
--notrace static nokprobe_inline
-+noinstr static
- unsigned int check_preemption_disabled(const char *what1, const char *what2)
+--- a/arch/x86/include/asm/nospec-branch.h
++++ b/arch/x86/include/asm/nospec-branch.h
+@@ -319,7 +319,7 @@ DECLARE_STATIC_KEY_FALSE(mds_idle_clear)
+  * combination with microcode which triggers a CPU buffer flush when the
+  * instruction is executed.
+  */
+-static inline void mds_clear_cpu_buffers(void)
++static __always_inline void mds_clear_cpu_buffers(void)
  {
- 	int this_cpu = raw_smp_processor_id();
-@@ -37,6 +37,7 @@ unsigned int check_preemption_disabled(c
- 	 */
- 	preempt_disable_notrace();
+ 	static const u16 ds = __KERNEL_DS;
  
-+	instr_begin();
- 	if (!printk_ratelimit())
- 		goto out_enable;
- 
-@@ -45,6 +46,7 @@ unsigned int check_preemption_disabled(c
- 
- 	printk("caller is %pS\n", __builtin_return_address(0));
- 	dump_stack();
-+	instr_end();
- 
- out_enable:
- 	preempt_enable_no_resched_notrace();
-@@ -52,16 +54,14 @@ unsigned int check_preemption_disabled(c
- 	return this_cpu;
- }
- 
--notrace unsigned int debug_smp_processor_id(void)
-+noinstr unsigned int debug_smp_processor_id(void)
+@@ -340,7 +340,7 @@ static inline void mds_clear_cpu_buffers
+  *
+  * Clear CPU buffers if the corresponding static key is enabled
+  */
+-static inline void mds_user_clear_cpu_buffers(void)
++static __always_inline void mds_user_clear_cpu_buffers(void)
  {
- 	return check_preemption_disabled("smp_processor_id", "");
- }
- EXPORT_SYMBOL(debug_smp_processor_id);
--NOKPROBE_SYMBOL(debug_smp_processor_id);
- 
--notrace void __this_cpu_preempt_check(const char *op)
-+noinstr void __this_cpu_preempt_check(const char *op)
- {
- 	check_preemption_disabled("__this_cpu_", op);
- }
- EXPORT_SYMBOL(__this_cpu_preempt_check);
--NOKPROBE_SYMBOL(__this_cpu_preempt_check);
+ 	if (static_branch_likely(&mds_user_clear))
+ 		mds_clear_cpu_buffers();
 
