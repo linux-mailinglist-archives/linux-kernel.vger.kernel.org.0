@@ -2,101 +2,134 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4646418D8B5
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 20:50:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B5EB18D8BA
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Mar 2020 20:52:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726986AbgCTTuF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Mar 2020 15:50:05 -0400
-Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:14131 "EHLO
-        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726843AbgCTTuF (ORCPT
+        id S1727092AbgCTTwc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Mar 2020 15:52:32 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:37003 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726773AbgCTTwa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Mar 2020 15:50:05 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5e751e090004>; Fri, 20 Mar 2020 12:48:25 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Fri, 20 Mar 2020 12:50:04 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Fri, 20 Mar 2020 12:50:04 -0700
-Received: from [10.2.57.131] (172.20.13.39) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 20 Mar
- 2020 19:50:04 +0000
-Subject: Re: [PATCH] x86/mm: Make pud_present() check _PAGE_PROTNONE and
- _PAGE_PSE as well
-To:     Anshuman Khandual <anshuman.khandual@arm.com>,
-        "Kirill A. Shutemov" <kirill@shutemov.name>
-CC:     <linux-mm@kvack.org>, Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>, <x86@kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        Dan Williams <dan.j.williams@intel.com>
-References: <1584507679-11976-1-git-send-email-anshuman.khandual@arm.com>
- <c03165c8-6d44-49c2-2dad-a85759200718@arm.com>
- <20200320114741.c62iolt2yzltnscf@box>
- <2e7a04cf-80cb-58c1-7344-2f8422ed7d31@arm.com>
-From:   John Hubbard <jhubbard@nvidia.com>
-X-Nvconfidentiality: public
-Message-ID: <082aae4a-b190-7b54-eda9-0bbc28c8a6b3@nvidia.com>
-Date:   Fri, 20 Mar 2020 12:50:03 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.6.0
+        Fri, 20 Mar 2020 15:52:30 -0400
+Received: from p5de0bf0b.dip0.t-ipconnect.de ([93.224.191.11] helo=nanos.tec.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1jFNgI-0002w2-14; Fri, 20 Mar 2020 20:51:46 +0100
+Received: by nanos.tec.linutronix.de (Postfix, from userid 1000)
+        id 626F61039FC; Fri, 20 Mar 2020 20:51:44 +0100 (CET)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     paulmck@kernel.org
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Ingo Molnar <mingo@kernel.org>, Will Deacon <will@kernel.org>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        Kurt Schwemmer <kurt.schwemmer@microsemi.com>,
+        Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
+        Felipe Balbi <balbi@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-usb@vger.kernel.org, Kalle Valo <kvalo@codeaurora.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        Oleg Nesterov <oleg@redhat.com>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Arnd Bergmann <arnd@arndb.de>, linuxppc-dev@lists.ozlabs.org
+Subject: Re: [patch V2 08/15] Documentation: Add lock ordering and nesting documentation
+In-Reply-To: <20200320160145.GN3199@paulmck-ThinkPad-P72>
+Date:   Fri, 20 Mar 2020 20:51:44 +0100
+Message-ID: <87mu8apzxr.fsf@nanos.tec.linutronix.de>
 MIME-Version: 1.0
-In-Reply-To: <2e7a04cf-80cb-58c1-7344-2f8422ed7d31@arm.com>
-X-Originating-IP: [172.20.13.39]
-X-ClientProxiedBy: HQMAIL107.nvidia.com (172.20.187.13) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1584733705; bh=eMx7zJHblAy5+YXR6qnBGnBggweRnlFVeODh2DtisrU=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:X-Nvconfidentiality:
-         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
-         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=Tel2JQH66ScF35HhrWYTgNQPP1AMRuVM4bvqwSSCBmgG15W1HzJ865N1Qi6NhkqsQ
-         woGCQZujdfF6ZIip99vvJBaU5dDWbVtk8VH6TrI7rQ9NbZef+wNBXpkIRTVF22NV5O
-         DdiyvOMXxmjF10pBRS25AJ0le5iUdr8U4HqAZQ1+mEp9OAH/lpnYZm8jqp0jtIKX8y
-         31/DhZyGPocZEe/XRi/zCkNQvP208imeKhlFzHwR1bTNk6xXX8xx/6zjJgtBRpjYV3
-         +um0XPIw+9MhAznV0GwYZZG9146hF/ek7V/WsEFcK+FNqBWLrJ3hk7tFHVapD37Wd0
-         NJivdmuFNik6Q==
+Content-Type: text/plain
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 3/20/20 6:22 AM, Anshuman Khandual wrote:
-...
->>> +Cc: Kirill A. Shutemov <kirill@shutemov.name>
->>> +Cc: Dan Williams <dan.j.williams@intel.com>
->>
->> Or we can just drop the pud_mknotpresent(). There's no users AFAICS and
->> only x86 provides it.
+"Paul E. McKenney" <paulmck@kernel.org> writes:
+>
+>  - The soft interrupt related suffix (_bh()) still disables softirq
+>    handlers.  However, unlike non-PREEMPT_RT kernels (which disable
+>    preemption to get this effect), PREEMPT_RT kernels use a per-CPU
+>    lock to exclude softirq handlers.
 
-+1
+I've made that:
 
-> 
-> Yes that will be an option but IMHO fixing pud_present() here might be
-> a better choice because,
-> 
-> (1) pud_mknotpresent() with fixed pud_present() might be required later
+  - The soft interrupt related suffix (_bh()) still disables softirq
+    handlers.
 
+    Non-PREEMPT_RT kernels disable preemption to get this effect.
 
-It might. Or it might not. Let's wait until it's actually used, and see.
-Dead code is an avoidable expense (adds size, space on the screen, email
-traffic and other wasted time), so let's avoid it here.
+    PREEMPT_RT kernels use a per-CPU lock for serialization. The lock
+    disables softirq handlers and prevents reentrancy by a preempting
+    task.
+    
+On non-RT this is implicit through preemption disable, but it's non
+obvious for RT as preemption stays enabled.
 
+> PREEMPT_RT kernels preserve all other spinlock_t semantics:
+>
+>  - Tasks holding a spinlock_t do not migrate.  Non-PREEMPT_RT kernels
+>    avoid migration by disabling preemption.  PREEMPT_RT kernels instead
+>    disable migration, which ensures that pointers to per-CPU variables
+>    remain valid even if the task is preempted.
+>
+>  - Task state is preserved across spinlock acquisition, ensuring that the
+>    task-state rules apply to all kernel configurations.  In non-PREEMPT_RT
+>    kernels leave task state untouched.  However, PREEMPT_RT must change
+>    task state if the task blocks during acquisition.  Therefore, the
+>    corresponding lock wakeup restores the task state.  Note that regular
+>    (not lock related) wakeups do not restore task state.
 
-> (2) PMD & PUD will be exact same (THP is supported on either level)
-> 
-> Nonetheless, I am happy to go either way.
-> 
+   - Task state is preserved across spinlock acquisition, ensuring that the
+     task-state rules apply to all kernel configurations.  Non-PREEMPT_RT
+     kernels leave task state untouched.  However, PREEMPT_RT must change
+     task state if the task blocks during acquisition.  Therefore, it
+     saves the current task state before blocking and the corresponding
+     lock wakeup restores it. A regular not lock related wakeup sets the
+     task state to RUNNING. If this happens while the task is blocked on
+     a spinlock then the saved task state is changed so that correct
+     state is restored on lock wakeup.
 
+Hmm?
 
-thanks,
--- 
-John Hubbard
-NVIDIA
+> But this code failes on PREEMPT_RT kernels because the memory allocator
+> is fully preemptible and therefore cannot be invoked from truly atomic
+> contexts.  However, it is perfectly fine to invoke the memory allocator
+> while holding a normal non-raw spinlocks because they do not disable
+> preemption::
+>
+>> +  spin_lock(&lock);
+>> +  p = kmalloc(sizeof(*p), GFP_ATOMIC);
+>> +
+>> +Most places which use GFP_ATOMIC allocations are safe on PREEMPT_RT as the
+>> +execution is forced into thread context and the lock substitution is
+>> +ensuring preemptibility.
+>
+> Interestingly enough, most uses of GFP_ATOMIC allocations are
+> actually safe on PREEMPT_RT because the the lock substitution ensures
+> preemptibility.  Only those GFP_ATOMIC allocations that are invoke
+> while holding a raw spinlock or with preemption otherwise disabled need
+> adjustment to work correctly on PREEMPT_RT.
+>
+> [ I am not as confident of the above as I would like to be... ]
+
+I'd leave that whole paragraph out. This documents the rules and from
+the above code examples it's pretty clear what works and what not :)
+
+> And meeting time, will continue later!
+
+Enjoy!
+
+Thanks,
+
+        tglx
