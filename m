@@ -2,94 +2,127 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CF7A418E4E6
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Mar 2020 22:54:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3B40B18E4EA
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Mar 2020 22:55:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728151AbgCUVym (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 21 Mar 2020 17:54:42 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:34820 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728081AbgCUVyh (ORCPT
+        id S1728177AbgCUVzJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 21 Mar 2020 17:55:09 -0400
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:46996 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727039AbgCUVzI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 21 Mar 2020 17:54:37 -0400
-Received: by mail-wr1-f65.google.com with SMTP id h4so11939881wru.2;
-        Sat, 21 Mar 2020 14:54:36 -0700 (PDT)
+        Sat, 21 Mar 2020 17:55:08 -0400
+Received: by mail-qt1-f194.google.com with SMTP id g7so2423170qtj.13
+        for <linux-kernel@vger.kernel.org>; Sat, 21 Mar 2020 14:55:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=yDruFVRHrSK5ODyzVMCRmTY0CPw77IJrtm55iVL4ls4=;
-        b=G+Ny8yQIOG79RvLyCWGo3N2mrPHkrZ9M5A1g2Au0NO6RFN4ptQofj4Mkgf1YnTMN8z
-         vvGFHT5+X7Jw7LTXVTr0O9jUE22wtXMADFetR2VO9M+Wn33ED7i3F6h7NX1qpzl+EEGL
-         jII4jAFp0ngp6w+7X9/wcv+2jbi2/T3FxOdfIMhXkcQtbBG6FoxfB9t9rdX28Fi1WPq+
-         Qsa/MaPBd5uWfMGcMVA/4+e5H0GZveBJ6Mq84RcjVOh0soZtDwuAcw2mwss8TKMNadJN
-         3WaWwa6qJi3KDebK1190XVuNe7u8/G5pV8XoYtWqBkTVbegKvih/AaE7Jw4vtBqpeq7l
-         Yq2A==
+        d=ziepe.ca; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=CmG5rzS1VTJ/Gtn12pCRpchEX5vnXgpD/KCibm4JPWQ=;
+        b=QXg0ZNos1/J6d1p0hrWrf/BNlal1wCBZAa4x4E5PIa8BDk8jeEY0GblJxuI4oFmQT/
+         NEFlXQButDNW6Sy8rWCrWEBqBlDVBmAq88Oe1Os3P4X8W9sHapEqJpHApMkG11UZBuGc
+         b5c/Qy70trzWRO+uM2yXpARmvj2AlCEyD9eXx6cUiReoJKwIlahoUDHxSd5sVQiu5kWj
+         lVf+vPf/2xCoROinRkXtRalmj0jS8jiUcIn3LB1fR12o0e5z5NIXXdxa+F/1bZGwg4Ye
+         oRdVryO7nhpz8T7n1j5VtSpK27aodaU2eCFv/2TbkyAf3cxW7xJHjI725K50b1LhbcfF
+         k1dA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=yDruFVRHrSK5ODyzVMCRmTY0CPw77IJrtm55iVL4ls4=;
-        b=ST0N+b9L7P0roOIfk0D2RCjqxBmq68nW5ikjbWtX89m4/K6vE/+En1ejQxIFxqPL/u
-         xcyFdrRwEx5vxyB5cBiKmbDp+YzCbiqgmmQBTGpVi+/mBYns2LEfrENsclP55pfcnLK/
-         ZNyPx8lzC6yRH0CZ2ioMAvekx7QwQklmTFROFD6wh/DNirtBlLBloFZquKhC69ffy8O2
-         AjsJXMC2sDfHjd2Gdb1YPSVOPacmsHibqfD/OlvNbjLzwrWk1hDzwbxxcqhG+AosAMCW
-         7tJfZ/qewvW/xdnVmMdtqgwSJNiudtbXd7lbAWJrnwqwNSDgIOJSO9iYYLlDu9YjkKGt
-         3u7g==
-X-Gm-Message-State: ANhLgQ0f6G6P68b1tzkcbshg/HTq5O6WfBvSjEwsThZ8JY5jLOATYpcN
-        FpPcMSklH3p70cTt+FcqweA=
-X-Google-Smtp-Source: ADFU+vvfecVP4/2cTL1Qur4iAjfBJDvtPVohFp7zMiubwjXigr+XQIYueXlTgQ5kqnzW7sC5BvDI8A==
-X-Received: by 2002:adf:8182:: with SMTP id 2mr18848820wra.37.1584827675862;
-        Sat, 21 Mar 2020 14:54:35 -0700 (PDT)
-Received: from debian.home (ip51ccf9cd.speed.planet.nl. [81.204.249.205])
-        by smtp.gmail.com with ESMTPSA id l83sm14113796wmf.43.2020.03.21.14.54.34
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 21 Mar 2020 14:54:35 -0700 (PDT)
-From:   Johan Jonker <jbx6244@gmail.com>
-To:     heiko@sntech.de
-Cc:     robin.murphy@arm.com, aballier@gentoo.org, robh+dt@kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 6/6] arm64: dts: rockchip: fix &pinctrl phy sub nodename for rk3399-orangepi
-Date:   Sat, 21 Mar 2020 22:54:23 +0100
-Message-Id: <20200321215423.12176-6-jbx6244@gmail.com>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20200321215423.12176-1-jbx6244@gmail.com>
-References: <20200321215423.12176-1-jbx6244@gmail.com>
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=CmG5rzS1VTJ/Gtn12pCRpchEX5vnXgpD/KCibm4JPWQ=;
+        b=YjF7Eoy4w8hnIHffpzUXfl5RmIsG6pRbhs54s4EtWB/raPoNSMCcX/lgyrzfHy27xr
+         uaGuo+5MXorxNticxn3biQ23XDw97JYZMimauIYQI1ONxQziMPpo7w//vlDv9c8UIXt2
+         ie4xIL6U20WXpCGnODDyySJczOnzBaDhHR3HlveHVHa3qVO0Cu9PukyNs2jvFt++fDDa
+         dv9wS82vi9WlIpuTxoFjW1KSyvOoFumrEIQN5+ornvJrNKIwS+CBI9KJumFK+CMUgpJJ
+         YIAj8RY1xlTyz0vHFFDyIZivbED3W/zTERD+8tAC9d/223qVS4puc2TfSlOcA2YIcaeM
+         Qz/w==
+X-Gm-Message-State: ANhLgQ1vI8ww5DuwTWeo6397WKACGsjoW+wWOHzYuudk2vSu1TL+UcvT
+        0B5MBjN6bL0T8D5+gxMqUDsoYA==
+X-Google-Smtp-Source: ADFU+vv/Zh+hyXfiOpNLqojKXOQJzZZr2FWGVPNjpoK48D71dPO0p426cqJtcyzUzhZk5VY+Qlxcbw==
+X-Received: by 2002:ac8:7499:: with SMTP id v25mr15399957qtq.237.1584827707243;
+        Sat, 21 Mar 2020 14:55:07 -0700 (PDT)
+Received: from ziepe.ca (hlfxns017vw-142-68-57-212.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.68.57.212])
+        by smtp.gmail.com with ESMTPSA id p191sm7884005qke.6.2020.03.21.14.55.06
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sat, 21 Mar 2020 14:55:06 -0700 (PDT)
+Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
+        (envelope-from <jgg@ziepe.ca>)
+        id 1jFm5B-0002J4-FR; Sat, 21 Mar 2020 18:55:05 -0300
+Date:   Sat, 21 Mar 2020 18:55:05 -0300
+From:   Jason Gunthorpe <jgg@ziepe.ca>
+To:     Ralph Campbell <rcampbell@nvidia.com>
+Cc:     Leon Romanovsky <leon@kernel.org>,
+        Jerome Glisse <jglisse@redhat.com>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Shuah Khan <shuah@kernel.org>, linux-rdma@vger.kernel.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH v8 0/3] mm/hmm/test: add self tests for HMM
+Message-ID: <20200321215505.GW20941@ziepe.ca>
+References: <20200321003108.22941-1-rcampbell@nvidia.com>
+ <20200321090047.GM514123@unreal>
+ <396f0c30-4a49-6a18-ff02-a73ee1a09883@nvidia.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <396f0c30-4a49-6a18-ff02-a73ee1a09883@nvidia.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-A test with the command below this error:
+On Sat, Mar 21, 2020 at 10:27:46AM -0700, Ralph Campbell wrote:
+> 
+> On 3/21/20 2:00 AM, Leon Romanovsky wrote:
+> > On Fri, Mar 20, 2020 at 05:31:05PM -0700, Ralph Campbell wrote:
+> > > This series adds basic self tests for HMM and are intended for Jason
+> > > Gunthorpe's rdma tree which has a number of HMM patches applied.
+> > > 
+> > > Changes v7 -> v8:
+> > > Rebased to Jason's rdma/hmm tree, plus Jason's 6 patch series
+> > >    "Small hmm_range_fault() cleanups".
+> > > Applied a number of changes from Jason's comments.
+> > > 
+> > > Changes v6 -> v7:
+> > > Rebased to linux-5.6.0-rc6
+> > > Reverted back to just using mmu_interval_notifier_insert() and making
+> > >    this series only introduce HMM self tests.
+> > > 
+> > > Changes v5 -> v6:
+> > > Rebased to linux-5.5.0-rc6
+> > > Refactored mmu interval notifier patches
+> > > Converted nouveau to use the new mmu interval notifier API
+> > > 
+> > > Changes v4 -> v5:
+> > > Added mmu interval notifier insert/remove/update callable from the
+> > >    invalidate() callback
+> > > Updated HMM tests to use the new core interval notifier API
+> > > 
+> > > Changes v1 -> v4:
+> > > https://lore.kernel.org/linux-mm/20191104222141.5173-1-rcampbell@nvidia.com
+> > > 
+> > > Ralph Campbell (3):
+> > >    mm/hmm/test: add selftest driver for HMM
+> > >    mm/hmm/test: add selftests for HMM
+> > >    MAINTAINERS: add HMM selftests
+> > > 
+> > >   MAINTAINERS                            |    3 +
+> > >   include/uapi/linux/test_hmm.h          |   59 ++
+> > 
+> > Isn't UAPI folder supposed to be for user-visible interfaces that follow
+> > the rule of non-breaking user space and not for selftests?
+> > 
+> > Thanks
+> > 
+> 
+> Most of the other kernel module tests seem to invoke the test as part of the
+> module load/init. I'm open to moving it if there is a more appropriate location.
 
-arch/arm64/boot/dts/rockchip/rk3399-orangepi.dt.yaml: phy:
-'#phy-cells' is a required property
+Is it even possible to create a user mm_struct and put crazy things in
+it soley from a kernel module?
 
-'phy' is a reserved nodename and should not be used for pinctrl,
-so change it to 'gmac'.
-
-make ARCH=arm64 dtbs_check
-DT_SCHEMA_FILES=~/.local/lib/python3.5/site-packages/dtschema/schemas/
-phy/phy-provider.yaml
-
-Signed-off-by: Johan Jonker <jbx6244@gmail.com>
----
- arch/arm64/boot/dts/rockchip/rk3399-orangepi.dts | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/arm64/boot/dts/rockchip/rk3399-orangepi.dts b/arch/arm64/boot/dts/rockchip/rk3399-orangepi.dts
-index afbcd213c..6163ae806 100644
---- a/arch/arm64/boot/dts/rockchip/rk3399-orangepi.dts
-+++ b/arch/arm64/boot/dts/rockchip/rk3399-orangepi.dts
-@@ -554,7 +554,7 @@
- 		};
- 	};
- 
--	phy {
-+	gmac {
- 		phy_intb: phy-intb {
- 			rockchip,pins = <3 RK_PB2 RK_FUNC_GPIO &pcfg_pull_up>;
- 		};
--- 
-2.11.0
+Jason 
 
