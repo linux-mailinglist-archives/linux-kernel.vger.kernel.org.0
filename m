@@ -2,112 +2,154 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AB7BB18E4A6
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Mar 2020 22:03:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D2D0B18E4AE
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Mar 2020 22:03:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728262AbgCUVDT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 21 Mar 2020 17:03:19 -0400
-Received: from mail-pg1-f201.google.com ([209.85.215.201]:37248 "EHLO
-        mail-pg1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726539AbgCUVDQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 21 Mar 2020 17:03:16 -0400
-Received: by mail-pg1-f201.google.com with SMTP id q15so3349673pgb.4
-        for <linux-kernel@vger.kernel.org>; Sat, 21 Mar 2020 14:03:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:message-id:mime-version:subject:from:to:cc;
-        bh=xNvYA6UhdIzCQNZy2uMLhsHjhbyUSQ3qyllU0rHtcf0=;
-        b=kx5ovgqmJRy9LGIuPT4ywXhCTs3ARAfhGOZul8HGd64ytF9046OToOx7+bYcct4wDp
-         smEgd1KPD9EJyBA3JJKmZUw1zNINb4lXDpEQtVmU+msGcV0voGhBB/nUyXC8pDL9B6n8
-         4zoZ2K8dHdjHrDgy1oo/AVQMIlkmsceqLBO6pGFZQrzBZdReFjmbbQa7Etko8q7JbqcS
-         R/dqzWdI6BOBvTV7EGEGcji3MwKGwVdUKcbs5Vo//vxMaBfqQJQwV8bEkk2hG4Qh2XSn
-         eQFDa/tXb6HV2gjAxH8/yvbUpSEXrKzzNm/7QzCQtjYZy9cAOIelVI2GjzmDxvMwDZ19
-         gD0Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
-        bh=xNvYA6UhdIzCQNZy2uMLhsHjhbyUSQ3qyllU0rHtcf0=;
-        b=cAtLc8qRfFNsfkgUgf8fG9Rfq1HMYWHH1XQGfLiHvJhwtwevQTslHuuX/2/ILA3KfV
-         cdBRxNLZLUEKaN2KLSHTAqtBcn17JepTaZamZapfMPNcfjzcgfBJiVokElY1Fz3OqFEE
-         3EKfM0pzxpdOEt/zRRGoAHXYWI4KSbaQzTfSfOwPiYmXkSJE73+aMrSpqJBaaZfRzLEd
-         LWFYCg66Zql5DFf0dcjYMcJT+ZA/hsS9kECBgw7nTz5lkGxbmvA7+NrhcLIdmchWB/UQ
-         BoTuYj+II9bocqCfA1CwDC8gqLS07P70dnOBRdyOMB4JCsrjfGz+jmPkdmc+FudBulgv
-         cUTQ==
-X-Gm-Message-State: ANhLgQ2uw9RgxScWEcwR8HWPXAbSv4OufL8wkUrhefgqnfHdF2NfYv8D
-        hAIKQC37ufmK66gqVCtnbBWnqLpP9rcHpks=
-X-Google-Smtp-Source: ADFU+vtYlRCFa88mZmOzBJd3AZ3LAwx5smuo4Pvk3DO0lBLd90kUDcML0zo0KVJTHHQNheV1kmuzhjMEjWY6Ufo=
-X-Received: by 2002:a17:90a:930e:: with SMTP id p14mr16445333pjo.159.1584824594216;
- Sat, 21 Mar 2020 14:03:14 -0700 (PDT)
-Date:   Sat, 21 Mar 2020 14:03:05 -0700
-Message-Id: <20200321210305.28937-1-saravanak@google.com>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.25.1.696.g5e7596f4ac-goog
-Subject: [RFC PATCH v1] driver core: Set fw_devlink to "permissive" behavior
- by default
-From:   Saravana Kannan <saravanak@google.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>
-Cc:     Saravana Kannan <saravanak@google.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        devicetree@vger.kernel.org, kernel-team@android.com,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        id S1728304AbgCUVDj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 21 Mar 2020 17:03:39 -0400
+Received: from rere.qmqm.pl ([91.227.64.183]:53389 "EHLO rere.qmqm.pl"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727184AbgCUVDj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 21 Mar 2020 17:03:39 -0400
+Received: from remote.user (localhost [127.0.0.1])
+        by rere.qmqm.pl (Postfix) with ESMTPSA id 48lCmR0rpQz7N;
+        Sat, 21 Mar 2020 22:03:35 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rere.qmqm.pl; s=1;
+        t=1584824616; bh=tsS79R0QGq7AHtfKZ66fg1w4PDEYc0Ksv1+dYcvsHpQ=;
+        h=Date:From:Subject:To:Cc:From;
+        b=DGAt/QE/kpXzHWzdgv7tyCX9Z57MPer7iaa7TAHqxN+0L8mkCUYup2g/rHf79NBmx
+         3WChkOx/rIddiRNFmv/eGGqg3B2MqXElA4PSu0B/oNIJYtU/lv7mXcCQKEMG+k+Qzx
+         cMvaRAmF82KihVDHGt7c2TSQbqgt/b22obCAxYxNCz0ShhcjRD/cgHQir0dRe+iFn/
+         VA0U2S67Tt2XlqzHm5zq0CUnwyzmX35WHL1ZfIF1UlLHYWep15hZzmX4zTjiu1muC7
+         QlyLn/ZGCaKAaTa3OMT2996ytGeiM72WtUhZ6/K2TZibHDo7jIJrMGqoFZ9Ua8PzDB
+         UzcFjQsQUVM/Q==
+X-Virus-Status: Clean
+X-Virus-Scanned: clamav-milter 0.102.2 at mail
+Date:   Sat, 21 Mar 2020 22:03:34 +0100
+Message-Id: <6466e066d7cbad20cb6a334ad8e37cdcf521c492.1584822011.git.mirq-linux@rere.qmqm.pl>
+From:   =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>
+Subject: [PATCH v2] i2c: at91: support atomic write xfer
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+To:     Ludovic Desroches <ludovic.desroches@microchip.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc:     Dmitry Osipenko <digetx@gmail.com>,
+        Stefan Lengfeld <contact@stefanchrist.eu>,
+        Marco Felsch <m.felsch@pengutronix.de>,
+        linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Set fw_devlink to "permissive" behavior by default so that device links
-are automatically created (with DL_FLAG_SYNC_STATE_ONLY) by scanning the
-firmware.
+Implement basic support for atomic write - enough to get a simple
+write to PMIC on shutdown. Only for chips having ALT_CMD register,
+eg. SAMA5D2.
 
-This ensures suppliers get their sync_state() calls only after all their
-consumers have probed successfully. Without this, suppliers will get
-their sync_state() calls at late_initcall_sync() even if their consuer
-
-Ideally, we'd want to set fw_devlink to "on" or "rpm" by default. But
-that needs more testing as it's known to break some corner case
-drivers/platforms.
-
-Cc: Rob Herring <robh+dt@kernel.org>
-Cc: Frank Rowand <frowand.list@gmail.com>
-Cc: devicetree@vger.kernel.org
-Signed-off-by: Saravana Kannan <saravanak@google.com>
+Signed-off-by: Michał Mirosław <mirq-linux@rere.qmqm.pl>
 ---
+v2: remove runtime-PM usage
+    switch to readl*poll*atomic() for transfer completion wait
+---
+ drivers/i2c/busses/i2c-at91-master.c | 69 +++++++++++++++++++++++++++-
+ 1 file changed, 67 insertions(+), 2 deletions(-)
 
-I think it's time to soak test this and see if anything fails or if
-anyone complains. Definitely not ready for 5.6. But pulling it in for
-5.7 and having it go through all the rc testing would be helpful.
-
-I'm sure there'll be reports where some DT properties are ambiguously
-names and is breaking downstream or even some upstream platform. For
-example, a DT property like "nr-gpios" would have a dmesg log about
-parsing error because it looks like a valid "-gpios" DT binding. It'll
-be good to catch those case and fix them.
-
-Also, is there no way to look up current value of early_params? It'd be
-nice if there was a way to do that.
-
--Saravana
-
- drivers/base/core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/base/core.c b/drivers/base/core.c
-index 5e3cc1651c78..9fabf9749a06 100644
---- a/drivers/base/core.c
-+++ b/drivers/base/core.c
-@@ -2345,7 +2345,7 @@ static int device_private_init(struct device *dev)
- 	return 0;
+diff --git a/drivers/i2c/busses/i2c-at91-master.c b/drivers/i2c/busses/i2c-at91-master.c
+index ba6fbb9c7390..d9226207157a 100644
+--- a/drivers/i2c/busses/i2c-at91-master.c
++++ b/drivers/i2c/busses/i2c-at91-master.c
+@@ -21,6 +21,7 @@
+ #include <linux/i2c.h>
+ #include <linux/interrupt.h>
+ #include <linux/io.h>
++#include <linux/iopoll.h>
+ #include <linux/of.h>
+ #include <linux/of_device.h>
+ #include <linux/platform_device.h>
+@@ -709,6 +710,69 @@ static int at91_twi_xfer(struct i2c_adapter *adap, struct i2c_msg *msg, int num)
+ 	return ret;
  }
  
--static u32 fw_devlink_flags;
-+static u32 fw_devlink_flags = DL_FLAG_SYNC_STATE_ONLY;
- static int __init fw_devlink_setup(char *arg)
- {
- 	if (!arg)
++static int at91_twi_xfer_atomic(struct i2c_adapter *adap, struct i2c_msg *msg, int num)
++{
++	struct at91_twi_dev *dev = i2c_get_adapdata(adap);
++	unsigned long timeout;
++	struct pinctrl *pins;
++	__u32 stat;
++	int ret;
++
++	/* FIXME: only single write request supported to 7-bit addr */
++	if (num != 1)
++		return -EOPNOTSUPP;
++	if (msg->flags & I2C_M_RD)
++		return -EOPNOTSUPP;
++	if (msg->flags & I2C_M_TEN)
++		return -EOPNOTSUPP;
++	if (msg->len > dev->fifo_size && msg->len > 1)
++		return -EOPNOTSUPP;
++	if (!dev->pdata->has_alt_cmd)
++		return -EOPNOTSUPP;
++
++	pins = pinctrl_get_select_default(&adap->dev);
++
++	ret = clk_prepare_enable(twi_dev->clk);
++	if (ret)
++		goto out;
++
++	/* Clear and disable pending interrupts, such as NACK. */
++	at91_twi_read(dev, AT91_TWI_SR);
++	at91_twi_write(dev, AT91_TWI_IDR, ~0);
++
++	at91_twi_write(dev, AT91_TWI_MMR, msg->addr << 16);
++
++	if (!msg->len) {
++		at91_twi_write(dev, AT91_TWI_CR,
++			       AT91_TWI_ACMDIS | AT91_TWI_QUICK);
++	} else {
++		size_t n = msg->len;
++		__u8 *p;
++
++		at91_twi_write(dev, AT91_TWI_CR,
++				    AT91_TWI_ACMEN |
++				    AT91_TWI_THRCLR | AT91_TWI_RHRCLR);
++		at91_twi_write(dev, AT91_TWI_ACR, AT91_TWI_ACR_DATAL(n));
++		for (p = msg->buf; n--; ++p)
++			writeb_relaxed(*p, dev->base + AT91_TWI_THR);
++	}
++
++	readl_relaxed_poll_timeout_atomic(dev->base + AT91_TWI_SR, stat,
++					  stat & AT91_TWI_TXCOMP, 100,
++					  (2 + msg->len) * 1000);
++	if (stat & AT91_TWI_NACK)
++		ret = -EREMOTEIO;
++	else
++		ret = num;
++
++	clk_disable_unprepare(twi_dev->clk);
++out:
++	if (!IS_ERR(pins))
++		pinctrl_put(pins);
++
++	return ret;
++}
++
+ /*
+  * The hardware can handle at most two messages concatenated by a
+  * repeated start via it's internal address feature.
+@@ -725,8 +789,9 @@ static u32 at91_twi_func(struct i2c_adapter *adapter)
+ }
+ 
+ static const struct i2c_algorithm at91_twi_algorithm = {
+-	.master_xfer	= at91_twi_xfer,
+-	.functionality	= at91_twi_func,
++	.master_xfer		= at91_twi_xfer,
++	.master_xfer_atomic	= at91_twi_xfer_atomic,
++	.functionality		= at91_twi_func,
+ };
+ 
+ static int at91_twi_configure_dma(struct at91_twi_dev *dev, u32 phy_addr)
 -- 
-2.25.1.696.g5e7596f4ac-goog
+2.20.1
 
