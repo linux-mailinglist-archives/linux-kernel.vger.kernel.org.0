@@ -2,128 +2,155 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7903118DEEE
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Mar 2020 10:01:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 31DAE18DEF4
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Mar 2020 10:05:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728285AbgCUJBF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 21 Mar 2020 05:01:05 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:43221 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728204AbgCUJBF (ORCPT
+        id S1728270AbgCUJFF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 21 Mar 2020 05:05:05 -0400
+Received: from mx0a-00128a01.pphosted.com ([148.163.135.77]:64836 "EHLO
+        mx0a-00128a01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728071AbgCUJFE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 21 Mar 2020 05:01:05 -0400
-Received: by mail-wr1-f66.google.com with SMTP id b2so10200801wrj.10
-        for <linux-kernel@vger.kernel.org>; Sat, 21 Mar 2020 02:01:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=YohStPVsw3Erx7ZEmjh2wgjlDgrcVBxuvPTzUFp9k2g=;
-        b=G0+w9r+8OCERU4wGlgdAv6EGMbik8XmmeW4mbc+DnLjCsSm69HM29Cj8ucvm/dzJZu
-         3cjtzhedeWCcuGQur5yyutIfAEC9dNUpGDeFDxRlc+6E/Yw++wACd+534kOYYlAGaEMU
-         H1wyKoyCvsg8KyNXN2tHUw7FLkiZgFxT+XjKS0hbWb85h1XztfddQ3JbpjrkA2crvyAV
-         hTytSaqSLGBjIQnNO0pdGkcgF5ZFe3a01UY3bWydMoT+Fv7dWYDsOhsiIPvAsy7TaPlZ
-         uKz9RTAnjNhVq/U+vFxXMpUnznShO2Kx6ONyTUGfBbX1yBdVrj6QmLp2Uppc8LAa28Yl
-         uKVA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=YohStPVsw3Erx7ZEmjh2wgjlDgrcVBxuvPTzUFp9k2g=;
-        b=e/iU2kJ9zuulLJkQ5lxosfVRYR/cS+BTi1Zw9ud926YWJcxuTpeDInvQ/h6Fw/cKQn
-         sVNmAH1nQoOy0nJOlu19pnKHou1YJx9TvG2/SOK1FaDNUG/W+qIvTt3ikjVc6PiNz1Xw
-         RxDpTdhCDL+8T3BBc0HyJBwSvJYBqGXRPP9uEXsZDpQx9mlMgobSRK0rA+PY0uOgK1Uf
-         NoxEHo6AJIg5Ot0v/9/XQb84p4EonSjCRcKQJC4HY2f4QJagCSESG80e5DcMTk83NF8Z
-         rtYrYmy5IdnYn69zn7k62adozBWNynS5q2CCAeTPiDKHQYp7k0ladANkr5c5TZxvDCQj
-         kztw==
-X-Gm-Message-State: ANhLgQ3DQ7jqfEnaYKurFBMdmGg2mJqtAhKDmEAvubw9wrUgqvWY0db9
-        ETe+6p51E/KURzXod79Z1/ZwMC9B
-X-Google-Smtp-Source: ADFU+vs8cWgvAHUISxwDdbvsD9+XZHHmWwA4TEE2qcDc4yPwL4Roild1fd7EP5kuHixrFj6JVypIbQ==
-X-Received: by 2002:adf:bb45:: with SMTP id x5mr14907079wrg.388.1584781262770;
-        Sat, 21 Mar 2020 02:01:02 -0700 (PDT)
-Received: from ogabbay-VM.habana-labs.com ([31.154.190.6])
-        by smtp.gmail.com with ESMTPSA id c7sm1825421wrn.49.2020.03.21.02.01.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 21 Mar 2020 02:01:01 -0700 (PDT)
-From:   Oded Gabbay <oded.gabbay@gmail.com>
-To:     linux-kernel@vger.kernel.org, oshpigelman@habana.ai,
-        ttayar@habana.ai
-Cc:     gregkh@linuxfoundation.org
-Subject: [PATCH] habanalabs: show unsupported message for GAUDI
-Date:   Sat, 21 Mar 2020 11:00:59 +0200
-Message-Id: <20200321090059.21960-1-oded.gabbay@gmail.com>
+        Sat, 21 Mar 2020 05:05:04 -0400
+Received: from pps.filterd (m0167088.ppops.net [127.0.0.1])
+        by mx0a-00128a01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 02L94wMr023271;
+        Sat, 21 Mar 2020 05:05:03 -0400
+Received: from nwd2mta4.analog.com ([137.71.173.58])
+        by mx0a-00128a01.pphosted.com with ESMTP id 2ywcs5re62-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Sat, 21 Mar 2020 05:05:02 -0400
+Received: from SCSQMBX11.ad.analog.com (scsqmbx11.ad.analog.com [10.77.17.10])
+        by nwd2mta4.analog.com (8.14.7/8.14.7) with ESMTP id 02L950HN050563
+        (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=FAIL);
+        Sat, 21 Mar 2020 05:05:01 -0400
+Received: from SCSQCASHYB7.ad.analog.com (10.77.17.133) by
+ SCSQMBX11.ad.analog.com (10.77.17.10) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1779.2; Sat, 21 Mar 2020 02:05:00 -0700
+Received: from SCSQMBX11.ad.analog.com (10.77.17.10) by
+ SCSQCASHYB7.ad.analog.com (10.77.17.133) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1779.2; Sat, 21 Mar 2020 02:05:00 -0700
+Received: from zeus.spd.analog.com (10.64.82.11) by SCSQMBX11.ad.analog.com
+ (10.77.17.10) with Microsoft SMTP Server id 15.1.1779.2 via Frontend
+ Transport; Sat, 21 Mar 2020 02:05:00 -0700
+Received: from localhost.localdomain ([10.48.65.12])
+        by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 02L94vRt009649;
+        Sat, 21 Mar 2020 05:04:58 -0400
+From:   Alexandru Ardelean <alexandru.ardelean@analog.com>
+To:     <linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC:     <jic23@kernel.org>,
+        Alexandru Ardelean <alexandru.ardelean@analog.com>,
+        Michael Hennerich <michael.hennerich@analog.com>
+Subject: [PATCH v2] MAINTAINERS: remove Stefan Popa's email
+Date:   Sat, 21 Mar 2020 11:04:42 +0200
+Message-ID: <20200321090442.11383-1-alexandru.ardelean@analog.com>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20200317143336.6098-1-alexandru.ardelean@analog.com>
+References: <20200317143336.6098-1-alexandru.ardelean@analog.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+X-ADIRoutedOnPrem: True
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.645
+ definitions=2020-03-21_02:2020-03-20,2020-03-21 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ bulkscore=0 adultscore=0 phishscore=0 priorityscore=1501 impostorscore=0
+ malwarescore=0 clxscore=1015 suspectscore=0 spamscore=0 mlxlogscore=999
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2003020000 definitions=main-2003210053
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If a GAUDI device is present in the system, display an error message that
-it is not supported by the current kernel.
+The email is no longer active. This change removes Stefan's email from the
+MAINTAINERS list and replaces it with Michael Hennerich's.
 
-Signed-off-by: Oded Gabbay <oded.gabbay@gmail.com>
+Signed-off-by: Michael Hennerich <michael.hennerich@analog.com>
+Signed-off-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
 ---
- drivers/misc/habanalabs/habanalabs.h     |  4 +++-
- drivers/misc/habanalabs/habanalabs_drv.c | 11 ++++++++++-
- 2 files changed, 13 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/misc/habanalabs/habanalabs.h b/drivers/misc/habanalabs/habanalabs.h
-index 9472da3ef847..31ebcf9458fe 100644
---- a/drivers/misc/habanalabs/habanalabs.h
-+++ b/drivers/misc/habanalabs/habanalabs.h
-@@ -424,10 +424,12 @@ struct hl_eq {
-  * enum hl_asic_type - supported ASIC types.
-  * @ASIC_INVALID: Invalid ASIC type.
-  * @ASIC_GOYA: Goya device.
-+ * @ASIC_GAUDI: Gaudi device.
-  */
- enum hl_asic_type {
- 	ASIC_INVALID,
--	ASIC_GOYA
-+	ASIC_GOYA,
-+	ASIC_GAUDI
- };
+Changelog v1 -> v2:
+* re-send + change author @analog.com; GMail messed it up
+
+ MAINTAINERS | 15 +++++++--------
+ 1 file changed, 7 insertions(+), 8 deletions(-)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 8fa40c3eb72a..72e8960c4f4f 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -552,7 +552,7 @@ F:	drivers/input/misc/adxl34x.c
+ F:	Documentation/devicetree/bindings/iio/accel/adi,adxl345.yaml
  
- struct hl_cs_parser;
-diff --git a/drivers/misc/habanalabs/habanalabs_drv.c b/drivers/misc/habanalabs/habanalabs_drv.c
-index 8c342fb499ca..b670859c677a 100644
---- a/drivers/misc/habanalabs/habanalabs_drv.c
-+++ b/drivers/misc/habanalabs/habanalabs_drv.c
-@@ -40,12 +40,13 @@ MODULE_PARM_DESC(reset_on_lockup,
- #define PCI_VENDOR_ID_HABANALABS	0x1da3
+ ADXL372 THREE-AXIS DIGITAL ACCELEROMETER DRIVER
+-M:	Stefan Popa <stefan.popa@analog.com>
++M:	Michael Hennerich <michael.hennerich@analog.com>
+ W:	http://ez.analog.com/community/linux-device-drivers
+ S:	Supported
+ F:	drivers/iio/accel/adxl372.c
+@@ -900,7 +900,7 @@ F:	drivers/net/ethernet/amd/xgbe/
+ F:	arch/arm64/boot/dts/amd/amd-seattle-xgbe*.dtsi
  
- #define PCI_IDS_GOYA			0x0001
-+#define PCI_IDS_GAUDI			0x1000
+ ANALOG DEVICES INC AD5686 DRIVER
+-M:	Stefan Popa <stefan.popa@analog.com>
++M:	Michael Hennerich <Michael.Hennerich@analog.com>
+ L:	linux-pm@vger.kernel.org
+ W:	http://ez.analog.com/community/linux-device-drivers
+ S:	Supported
+@@ -908,7 +908,7 @@ F:	drivers/iio/dac/ad5686*
+ F:	drivers/iio/dac/ad5696*
  
- static const struct pci_device_id ids[] = {
- 	{ PCI_DEVICE(PCI_VENDOR_ID_HABANALABS, PCI_IDS_GOYA), },
-+	{ PCI_DEVICE(PCI_VENDOR_ID_HABANALABS, PCI_IDS_GAUDI), },
- 	{ 0, }
- };
--MODULE_DEVICE_TABLE(pci, ids);
+ ANALOG DEVICES INC AD5758 DRIVER
+-M:	Stefan Popa <stefan.popa@analog.com>
++M:	Michael Hennerich <Michael.Hennerich@analog.com>
+ L:	linux-iio@vger.kernel.org
+ W:	http://ez.analog.com/community/linux-device-drivers
+ S:	Supported
+@@ -924,7 +924,7 @@ F:	drivers/iio/adc/ad7091r5.c
+ F:	Documentation/devicetree/bindings/iio/adc/adi,ad7091r5.yaml
  
- /*
-  * get_asic_type - translate device id to asic type
-@@ -63,6 +64,9 @@ static enum hl_asic_type get_asic_type(u16 device)
- 	case PCI_IDS_GOYA:
- 		asic_type = ASIC_GOYA;
- 		break;
-+	case PCI_IDS_GAUDI:
-+		asic_type = ASIC_GAUDI;
-+		break;
- 	default:
- 		asic_type = ASIC_INVALID;
- 		break;
-@@ -263,6 +267,11 @@ int create_hdev(struct hl_device **dev, struct pci_dev *pdev,
- 			dev_err(&pdev->dev, "Unsupported ASIC\n");
- 			rc = -ENODEV;
- 			goto free_hdev;
-+		} else if (hdev->asic_type == ASIC_GAUDI) {
-+			dev_err(&pdev->dev,
-+				"GAUDI is not supported by the current kernel\n");
-+			rc = -ENODEV;
-+			goto free_hdev;
- 		}
- 	} else {
- 		hdev->asic_type = asic_type;
+ ANALOG DEVICES INC AD7124 DRIVER
+-M:	Stefan Popa <stefan.popa@analog.com>
++M:	Michael Hennerich <Michael.Hennerich@analog.com>
+ L:	linux-iio@vger.kernel.org
+ W:	http://ez.analog.com/community/linux-device-drivers
+ S:	Supported
+@@ -948,7 +948,7 @@ F:	drivers/iio/adc/ad7292.c
+ F:	Documentation/devicetree/bindings/iio/adc/adi,ad7292.yaml
+ 
+ ANALOG DEVICES INC AD7606 DRIVER
+-M:	Stefan Popa <stefan.popa@analog.com>
++M:	Michael Hennerich <Michael.Hennerich@analog.com>
+ M:	Beniamin Bia <beniamin.bia@analog.com>
+ L:	linux-iio@vger.kernel.org
+ W:	http://ez.analog.com/community/linux-device-drivers
+@@ -957,7 +957,7 @@ F:	drivers/iio/adc/ad7606.c
+ F:	Documentation/devicetree/bindings/iio/adc/adi,ad7606.yaml
+ 
+ ANALOG DEVICES INC AD7768-1 DRIVER
+-M:	Stefan Popa <stefan.popa@analog.com>
++M:	Michael Hennerich <Michael.Hennerich@analog.com>
+ L:	linux-iio@vger.kernel.org
+ W:	http://ez.analog.com/community/linux-device-drivers
+ S:	Supported
+@@ -1018,7 +1018,7 @@ F:	drivers/hwmon/adm1177.c
+ F:	Documentation/devicetree/bindings/hwmon/adi,adm1177.yaml
+ 
+ ANALOG DEVICES INC ADP5061 DRIVER
+-M:	Stefan Popa <stefan.popa@analog.com>
++M:	Michael Hennerich <Michael.Hennerich@analog.com>
+ L:	linux-pm@vger.kernel.org
+ W:	http://ez.analog.com/community/linux-device-drivers
+ S:	Supported
+@@ -1078,7 +1078,6 @@ F:	drivers/dma/dma-axi-dmac.c
+ ANALOG DEVICES INC IIO DRIVERS
+ M:	Lars-Peter Clausen <lars@metafoo.de>
+ M:	Michael Hennerich <Michael.Hennerich@analog.com>
+-M:	Stefan Popa <stefan.popa@analog.com>
+ W:	http://wiki.analog.com/
+ W:	http://ez.analog.com/community/linux-device-drivers
+ S:	Supported
 -- 
 2.17.1
 
