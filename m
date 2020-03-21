@@ -2,201 +2,141 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BA93818DD6F
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Mar 2020 02:32:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B607718DD73
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Mar 2020 02:32:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727815AbgCUBcV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Mar 2020 21:32:21 -0400
-Received: from mail26.static.mailgun.info ([104.130.122.26]:52694 "EHLO
-        mail26.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726773AbgCUBcU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Mar 2020 21:32:20 -0400
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1584754339; h=References: In-Reply-To: Message-Id: Date:
- Subject: Cc: To: From: Sender;
- bh=/FHA7+MQrxO1ynBN4KFge6gmC0i/oDr2iQWcxHPoxsE=; b=d2CNb/IlGA3hr6bzRI8g6CNz+hJAO2OKYd7qfD1ZWyqzyTzJUqZkURjriMRcviYJtL5rZBiE
- Vxn9HBEHw77A7jhaFcmkyw+GNCqYJ9gS3itl+Mg1y/A9DF9+RNR0Fb1LB4dOaprStH4XTmee
- uPjE7YHR9TzWxK2RUy6/fN5w+cs=
-X-Mailgun-Sending-Ip: 104.130.122.26
-X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
- by mxa.mailgun.org with ESMTP id 5e756ea3.7f2b6c7c0d88-smtp-out-n02;
- Sat, 21 Mar 2020 01:32:19 -0000 (UTC)
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 052C7C433CB; Sat, 21 Mar 2020 01:32:18 +0000 (UTC)
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        aws-us-west-2-caf-mail-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE,
-        URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
-Received: from rishabhb-linux.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: rishabhb)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 00845C433BA;
-        Sat, 21 Mar 2020 01:32:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 00845C433BA
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=rishabhb@codeaurora.org
-From:   Rishabh Bhatnagar <rishabhb@codeaurora.org>
-To:     linux-remoteproc-owner@vger.kernel.org,
-        linux-kernel@vger.kernel.org, bjorn.andersson@linaro.org,
-        mathieu.poirier@linaro.org, devicetree@vger.kernel.org
-Cc:     robh@kernel.org, psodagud@codeaurora.org, tsoni@codeaurora.org,
-        sidgup@codeaurora.org, Rishabh Bhatnagar <rishabhb@codeaurora.org>
-Subject: [PATCH v2 2/2] dt-bindings: remoteproc: Add documentation for SPSS remoteproc
-Date:   Fri, 20 Mar 2020 18:32:10 -0700
-Message-Id: <1584754330-445-2-git-send-email-rishabhb@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1584754330-445-1-git-send-email-rishabhb@codeaurora.org>
-References: <1584754330-445-1-git-send-email-rishabhb@codeaurora.org>
+        id S1727897AbgCUBct (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Mar 2020 21:32:49 -0400
+Received: from mga11.intel.com ([192.55.52.93]:51726 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726840AbgCUBct (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Mar 2020 21:32:49 -0400
+IronPort-SDR: KAvBP2651Is0hWWXfmUPbPwswqY7XL0J8M7lMfwx6ZHujFFjNDRBjWZ21Awwwiz8QsGYYwOcH6
+ wI2NVL6P7IoA==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Mar 2020 18:32:48 -0700
+IronPort-SDR: bXMDXjJLJZodiuHPyhNhLQnhRC3EAGO3pLsdO9Vn0wH5EGRPtbOjHaj5g71r+Uft+ETIZad4+i
+ hYzFwvRA5JCg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.72,286,1580803200"; 
+   d="scan'208";a="249051243"
+Received: from blu2-mobl3.ccr.corp.intel.com (HELO [10.254.211.188]) ([10.254.211.188])
+  by orsmga006.jf.intel.com with ESMTP; 20 Mar 2020 18:32:45 -0700
+Cc:     baolu.lu@linux.intel.com, LKML <linux-kernel@vger.kernel.org>,
+        iommu@lists.linux-foundation.org, Joerg Roedel <joro@8bytes.org>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Raj Ashok <ashok.raj@intel.com>, Yi Liu <yi.l.liu@intel.com>
+Subject: Re: [PATCH 1/3] iommu/vt-d: Remove redundant IOTLB flush
+To:     Jacob Pan <jacob.jun.pan@linux.intel.com>
+References: <1584678751-43169-1-git-send-email-jacob.jun.pan@linux.intel.com>
+ <1584678751-43169-2-git-send-email-jacob.jun.pan@linux.intel.com>
+ <26ab1917-f087-aafa-e861-6a2478000a6f@linux.intel.com>
+ <20200320092047.4a4cf551@jacob-builder>
+From:   Lu Baolu <baolu.lu@linux.intel.com>
+Message-ID: <06c9751a-417d-3c32-65af-0788593f811a@linux.intel.com>
+Date:   Sat, 21 Mar 2020 09:32:45 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.6.0
+MIME-Version: 1.0
+In-Reply-To: <20200320092047.4a4cf551@jacob-builder>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add devicetree binding for Secure Subsystem remote processor
-support in remoteproc framework. This describes all the resources
-needed by SPSS to boot and handle crash and shutdown scenarios.
+On 2020/3/21 0:20, Jacob Pan wrote:
+> On Fri, 20 Mar 2020 21:45:26 +0800
+> Lu Baolu <baolu.lu@linux.intel.com> wrote:
+> 
+>> On 2020/3/20 12:32, Jacob Pan wrote:
+>>> IOTLB flush already included in the PASID tear down process. There
+>>> is no need to flush again.
+>>
+>> It seems that intel_pasid_tear_down_entry() doesn't flush the pasid
+>> based device TLB?
+>>
+> I saw this code in intel_pasid_tear_down_entry(). Isn't the last line
+> flush the devtlb? Not in guest of course since the passdown tlb flush
+> is inclusive.
+> 
+> 	pasid_cache_invalidation_with_pasid(iommu, did, pasid);
+> 	iotlb_invalidation_with_pasid(iommu, did, pasid);
+> 
+> 	/* Device IOTLB doesn't need to be flushed in caching mode. */
+> 	if (!cap_caching_mode(iommu->cap))
+> 		devtlb_invalidation_with_pasid(iommu, dev, pasid);
+> 
 
-Signed-off-by: Rishabh Bhatnagar <rishabhb@codeaurora.org>
----
- .../devicetree/bindings/remoteproc/qcom,spss.yaml  | 125 +++++++++++++++++++++
- 1 file changed, 125 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/remoteproc/qcom,spss.yaml
+But devtlb_invalidation_with_pasid() doesn't do the right thing, it
+flushes the device tlb, instead of pasid-based device tlb.
 
-diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,spss.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,spss.yaml
-new file mode 100644
-index 0000000..9ca7947a9
---- /dev/null
-+++ b/Documentation/devicetree/bindings/remoteproc/qcom,spss.yaml
-@@ -0,0 +1,125 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/qcom,spss.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Qualcomm SPSS Peripheral Image Loader
-+
-+maintainers:
-+  - Rishabh Bhatnagar <rishabhb@codeaurora.org>
-+description: |
-+  This document defines the binding for a component that loads and boots firmware
-+  on the Qualcomm Secure Peripheral Processor. This processor is booted in the
-+  bootloader stage and it attaches itself to linux later on in the boot process.
-+
-+properties:
-+  compatible:
-+    enum:
-+      "qcom,sm8250-spss-pas"
-+
-+  reg:
-+    items:
-+      - description: IRQ status register
-+      - description: IRQ clear register
-+      - description: IRQ mask register
-+      - description: Error register
-+      - description: Error spare register
-+
-+  reg-names:
-+    items:
-+      - const: sp2soc_irq_status
-+      - const: sp2soc_irq_clr
-+      - const: sp2soc_irq_mask
-+      - const: rmb_err
-+      - const: rmb_err_spare2
-+
-+  interrupts:
-+    maxitems: 1
-+    items:
-+      - description: rx interrupt
-+
-+  clocks:
-+    items:
-+      - description:
-+                    reference to the xo clock to be held on behalf
-+                    of the booting Hexagon core
-+
-+  clock-names:
-+    items:
-+      - const: xo
-+
-+  cx-supply: true
-+
-+  px-supply: true
-+
-+  memory-region: true
-+    items:
-+      - description: reference to the reserved-memory for the SPSS
-+
-+  qcom,spss-scsr-bits:
-+    - description: Bits that are set by remote processor in the irq status
-+                   register region to represent different states during
-+                   boot process
-+
-+  child-node:
-+    description: Subnode named either "smd-edge" or "glink-edge" that
-+                 describes the communication edge, channels and devices
-+                 related to the SPSS.
-+
-+required:
-+  - compatible
-+  - reg
-+  - reg-names
-+  - interrupts
-+  - clocks
-+  - clock-names
-+  - cx-supply
-+  - px-supply
-+  - memory-region
-+  - qcom,spss-scsr-bits
-+
-+
-+examples:
-+  - |
-+    spss {
-+        compatible = "qcom,sm8250-spss-pil";
-+        reg = <0x188101c 0x4>,
-+                <0x1881024 0x4>,
-+                <0x1881028 0x4>,
-+                <0x188103c 0x4>,
-+                <0x1882014 0x4>;
-+        reg-names = "sp2soc_irq_status", "sp2soc_irq_clr",
-+                    "sp2soc_irq_mask", "rmb_err", "rmb_err_spare2";
-+        interrupts = <0 352 1>;
-+
-+        cx-supply = <&VDD_CX_LEVEL>;
-+        cx-uV-uA = <RPMH_REGULATOR_LEVEL_TURBO 100000>;
-+        px-supply = <&VDD_MX_LEVEL>;
-+        px-uV = <RPMH_REGULATOR_LEVEL_TURBO 100000>;
-+
-+        clocks = <&clock_rpmh RPMH_CXO_CLK>;
-+        clock-names = "xo";
-+        qcom,proxy-clock-names = "xo";
-+        status = "ok";
-+
-+        memory-region = <&pil_spss_mem>;
-+        qcom,spss-scsr-bits = <24 25>;
-+
-+        glink-edge {
-+                qcom,remote-pid = <8>;
-+                transport = "spss";
-+                mboxes = <&sp_scsr 0>;
-+                mbox-names = "spss_spss";
-+                interrupt-parent = <&intsp>;
-+                interrupts = <0 0 IRQ_TYPE_LEVEL_HIGH>;
-+
-+                reg = <0x1885008 0x8>,
-+                      <0x1885010 0x4>;
-+                reg-names = "qcom,spss-addr",
-+                            "qcom,spss-size";
-+
-+                label = "spss";
-+                qcom,glink-label = "spss";
-+        };
-+    };
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+static void
+devtlb_invalidation_with_pasid(struct intel_iommu *iommu,
+                                struct device *dev, int pasid)
+{
+         struct device_domain_info *info;
+         u16 sid, qdep, pfsid;
+
+         info = dev->archdata.iommu;
+         if (!info || !info->ats_enabled)
+                 return;
+
+         sid = info->bus << 8 | info->devfn;
+         qdep = info->ats_qdep;
+         pfsid = info->pfsid;
+
+         qi_flush_dev_iotlb(iommu, sid, pfsid, qdep, 0, 64 - 
+VTD_PAGE_SHIFT);
+}
+
+Best regards,
+baolu
+
+>> Best regards,
+>> baolu
+>>
+>>>
+>>> Cc: Lu Baolu <baolu.lu@linux.intel.com>
+>>> Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
+>>> ---
+>>>    drivers/iommu/intel-svm.c | 6 ++----
+>>>    1 file changed, 2 insertions(+), 4 deletions(-)
+>>>
+>>> diff --git a/drivers/iommu/intel-svm.c b/drivers/iommu/intel-svm.c
+>>> index 8f42d717d8d7..1483f1845762 100644
+>>> --- a/drivers/iommu/intel-svm.c
+>>> +++ b/drivers/iommu/intel-svm.c
+>>> @@ -268,10 +268,9 @@ static void intel_mm_release(struct
+>>> mmu_notifier *mn, struct mm_struct *mm)
+>>>    	 * *has* to handle gracefully without affecting other
+>>> processes. */
+>>>    	rcu_read_lock();
+>>> -	list_for_each_entry_rcu(sdev, &svm->devs, list) {
+>>> +	list_for_each_entry_rcu(sdev, &svm->devs, list)
+>>>    		intel_pasid_tear_down_entry(svm->iommu,
+>>> sdev->dev, svm->pasid);
+>>> -		intel_flush_svm_range_dev(svm, sdev, 0, -1, 0);
+>>> -	}
+>>> +
+>>>    	rcu_read_unlock();
+>>>    
+>>>    }
+>>> @@ -731,7 +730,6 @@ int intel_svm_unbind_mm(struct device *dev, int
+>>> pasid)
+>>>    			 * large and has to be physically
+>>> contiguous. So it's
+>>>    			 * hard to be as defensive as we might
+>>> like. */ intel_pasid_tear_down_entry(iommu, dev, svm->pasid);
+>>> -			intel_flush_svm_range_dev(svm, sdev, 0,
+>>> -1, 0); kfree_rcu(sdev, rcu);
+>>>    
+>>>    			if (list_empty(&svm->devs)) {
+>>>    
+> 
+> [Jacob Pan]
+> 
