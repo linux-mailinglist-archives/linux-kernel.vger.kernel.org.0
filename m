@@ -2,154 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D2D0B18E4AE
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Mar 2020 22:03:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7B26B18E4B4
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Mar 2020 22:11:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728304AbgCUVDj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 21 Mar 2020 17:03:39 -0400
-Received: from rere.qmqm.pl ([91.227.64.183]:53389 "EHLO rere.qmqm.pl"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727184AbgCUVDj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 21 Mar 2020 17:03:39 -0400
-Received: from remote.user (localhost [127.0.0.1])
-        by rere.qmqm.pl (Postfix) with ESMTPSA id 48lCmR0rpQz7N;
-        Sat, 21 Mar 2020 22:03:35 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rere.qmqm.pl; s=1;
-        t=1584824616; bh=tsS79R0QGq7AHtfKZ66fg1w4PDEYc0Ksv1+dYcvsHpQ=;
-        h=Date:From:Subject:To:Cc:From;
-        b=DGAt/QE/kpXzHWzdgv7tyCX9Z57MPer7iaa7TAHqxN+0L8mkCUYup2g/rHf79NBmx
-         3WChkOx/rIddiRNFmv/eGGqg3B2MqXElA4PSu0B/oNIJYtU/lv7mXcCQKEMG+k+Qzx
-         cMvaRAmF82KihVDHGt7c2TSQbqgt/b22obCAxYxNCz0ShhcjRD/cgHQir0dRe+iFn/
-         VA0U2S67Tt2XlqzHm5zq0CUnwyzmX35WHL1ZfIF1UlLHYWep15hZzmX4zTjiu1muC7
-         QlyLn/ZGCaKAaTa3OMT2996ytGeiM72WtUhZ6/K2TZibHDo7jIJrMGqoFZ9Ua8PzDB
-         UzcFjQsQUVM/Q==
-X-Virus-Status: Clean
-X-Virus-Scanned: clamav-milter 0.102.2 at mail
-Date:   Sat, 21 Mar 2020 22:03:34 +0100
-Message-Id: <6466e066d7cbad20cb6a334ad8e37cdcf521c492.1584822011.git.mirq-linux@rere.qmqm.pl>
-From:   =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>
-Subject: [PATCH v2] i2c: at91: support atomic write xfer
+        id S1727653AbgCUVLF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 21 Mar 2020 17:11:05 -0400
+Received: from smtprelay0009.hostedemail.com ([216.40.44.9]:49014 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726366AbgCUVLF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 21 Mar 2020 17:11:05 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay02.hostedemail.com (Postfix) with ESMTP id 2AED72490;
+        Sat, 21 Mar 2020 21:11:04 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,,RULES_HIT:41:355:379:599:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:2393:2559:2562:2828:2840:3138:3139:3140:3141:3142:3352:3622:3865:3866:3867:3868:3871:4321:4384:5007:10004:10400:10848:11026:11232:11658:11914:12043:12297:12438:12740:12760:12895:13069:13311:13357:13439:13972:14659:14721:21080:21611:21627:30029:30054:30091,0,RBL:none,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:2,LUA_SUMMARY:none
+X-HE-Tag: offer68_9258a7d97a5b
+X-Filterd-Recvd-Size: 2021
+Received: from XPS-9350.home (unknown [47.151.143.254])
+        (Authenticated sender: joe@perches.com)
+        by omf13.hostedemail.com (Postfix) with ESMTPA;
+        Sat, 21 Mar 2020 21:11:02 +0000 (UTC)
+Message-ID: <e7188ce191ab1dfb06db0346f45e20829df63c70.camel@perches.com>
+Subject: Re: [PATCH 01/13] iio: accel: kxsd9: Use suitable format specifier
+From:   Joe Perches <joe@perches.com>
+To:     Nishant Malpani <nish.malpani25@gmail.com>, jic23@kernel.org
+Cc:     andriy.shevchenko@linux.intel.com, knaack.h@gmx.de,
+        lars@metafoo.de, pmeerw@pmeerw.net, linux-iio@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Date:   Sat, 21 Mar 2020 14:09:14 -0700
+In-Reply-To: <20200321210204.18106-2-nish.malpani25@gmail.com>
+References: <20200321210204.18106-1-nish.malpani25@gmail.com>
+         <20200321210204.18106-2-nish.malpani25@gmail.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.34.1-2 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-To:     Ludovic Desroches <ludovic.desroches@microchip.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc:     Dmitry Osipenko <digetx@gmail.com>,
-        Stefan Lengfeld <contact@stefanchrist.eu>,
-        Marco Felsch <m.felsch@pengutronix.de>,
-        linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Implement basic support for atomic write - enough to get a simple
-write to PMIC on shutdown. Only for chips having ALT_CMD register,
-eg. SAMA5D2.
+On Sun, 2020-03-22 at 02:31 +0530, Nishant Malpani wrote:
+> Provide more suitable format specifiers while printing error logs.
+> Discards the use of unnecessary explicit casting and prints symbolic
+> error name which might prove to be convenient during debugging.
 
-Signed-off-by: Michał Mirosław <mirq-linux@rere.qmqm.pl>
----
-v2: remove runtime-PM usage
-    switch to readl*poll*atomic() for transfer completion wait
----
- drivers/i2c/busses/i2c-at91-master.c | 69 +++++++++++++++++++++++++++-
- 1 file changed, 67 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/i2c/busses/i2c-at91-master.c b/drivers/i2c/busses/i2c-at91-master.c
-index ba6fbb9c7390..d9226207157a 100644
---- a/drivers/i2c/busses/i2c-at91-master.c
-+++ b/drivers/i2c/busses/i2c-at91-master.c
-@@ -21,6 +21,7 @@
- #include <linux/i2c.h>
- #include <linux/interrupt.h>
- #include <linux/io.h>
-+#include <linux/iopoll.h>
- #include <linux/of.h>
- #include <linux/of_device.h>
- #include <linux/platform_device.h>
-@@ -709,6 +710,69 @@ static int at91_twi_xfer(struct i2c_adapter *adap, struct i2c_msg *msg, int num)
- 	return ret;
- }
- 
-+static int at91_twi_xfer_atomic(struct i2c_adapter *adap, struct i2c_msg *msg, int num)
-+{
-+	struct at91_twi_dev *dev = i2c_get_adapdata(adap);
-+	unsigned long timeout;
-+	struct pinctrl *pins;
-+	__u32 stat;
-+	int ret;
-+
-+	/* FIXME: only single write request supported to 7-bit addr */
-+	if (num != 1)
-+		return -EOPNOTSUPP;
-+	if (msg->flags & I2C_M_RD)
-+		return -EOPNOTSUPP;
-+	if (msg->flags & I2C_M_TEN)
-+		return -EOPNOTSUPP;
-+	if (msg->len > dev->fifo_size && msg->len > 1)
-+		return -EOPNOTSUPP;
-+	if (!dev->pdata->has_alt_cmd)
-+		return -EOPNOTSUPP;
-+
-+	pins = pinctrl_get_select_default(&adap->dev);
-+
-+	ret = clk_prepare_enable(twi_dev->clk);
-+	if (ret)
-+		goto out;
-+
-+	/* Clear and disable pending interrupts, such as NACK. */
-+	at91_twi_read(dev, AT91_TWI_SR);
-+	at91_twi_write(dev, AT91_TWI_IDR, ~0);
-+
-+	at91_twi_write(dev, AT91_TWI_MMR, msg->addr << 16);
-+
-+	if (!msg->len) {
-+		at91_twi_write(dev, AT91_TWI_CR,
-+			       AT91_TWI_ACMDIS | AT91_TWI_QUICK);
-+	} else {
-+		size_t n = msg->len;
-+		__u8 *p;
-+
-+		at91_twi_write(dev, AT91_TWI_CR,
-+				    AT91_TWI_ACMEN |
-+				    AT91_TWI_THRCLR | AT91_TWI_RHRCLR);
-+		at91_twi_write(dev, AT91_TWI_ACR, AT91_TWI_ACR_DATAL(n));
-+		for (p = msg->buf; n--; ++p)
-+			writeb_relaxed(*p, dev->base + AT91_TWI_THR);
-+	}
-+
-+	readl_relaxed_poll_timeout_atomic(dev->base + AT91_TWI_SR, stat,
-+					  stat & AT91_TWI_TXCOMP, 100,
-+					  (2 + msg->len) * 1000);
-+	if (stat & AT91_TWI_NACK)
-+		ret = -EREMOTEIO;
-+	else
-+		ret = num;
-+
-+	clk_disable_unprepare(twi_dev->clk);
-+out:
-+	if (!IS_ERR(pins))
-+		pinctrl_put(pins);
-+
-+	return ret;
-+}
-+
- /*
-  * The hardware can handle at most two messages concatenated by a
-  * repeated start via it's internal address feature.
-@@ -725,8 +789,9 @@ static u32 at91_twi_func(struct i2c_adapter *adapter)
- }
- 
- static const struct i2c_algorithm at91_twi_algorithm = {
--	.master_xfer	= at91_twi_xfer,
--	.functionality	= at91_twi_func,
-+	.master_xfer		= at91_twi_xfer,
-+	.master_xfer_atomic	= at91_twi_xfer_atomic,
-+	.functionality		= at91_twi_func,
- };
- 
- static int at91_twi_configure_dma(struct at91_twi_dev *dev, u32 phy_addr)
--- 
-2.20.1
+'Use suitable format specifier' is obscure and not specific.
+
+All the subjects should likely be something like
+
+[PATCH] subsystem: Use vsprintf extension %pe for symbolic error name
+
+
+> diff --git a/drivers/iio/accel/kxsd9-i2c.c b/drivers/iio/accel/kxsd9-i2c.c
+[]
+> @@ -21,8 +21,8 @@ static int kxsd9_i2c_probe(struct i2c_client *i2c,
+>  
+>  	regmap = devm_regmap_init_i2c(i2c, &config);
+>  	if (IS_ERR(regmap)) {
+> -		dev_err(&i2c->dev, "Failed to register i2c regmap %d\n",
+> -			(int)PTR_ERR(regmap));
+> +		dev_err(&i2c->dev, "Failed to register i2c regmap %pe\n",
+> +			regmap;
+
+And this could use a separator between regmap and errname like
+
+		dev_err(&i2c->dev, "Failed to register i2c regmap: %pe\n",
+or
+		dev_err(&i2c->dev, "Failed to register i2c regmap - %pe\n",
+
 
