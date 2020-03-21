@@ -2,84 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 53D0A18DCD5
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Mar 2020 01:50:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5790318DCC8
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Mar 2020 01:49:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727928AbgCUAuO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Mar 2020 20:50:14 -0400
-Received: from frisell.zx2c4.com ([192.95.5.64]:35097 "EHLO frisell.zx2c4.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727905AbgCUAuK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Mar 2020 20:50:10 -0400
-Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTP id 4ec599b1;
-        Sat, 21 Mar 2020 00:43:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=zx2c4.com; h=from:to:cc
-        :subject:date:message-id:in-reply-to:references:mime-version
-        :content-transfer-encoding; s=mail; bh=97eU/t7S2TVZqtyF+efQnC3Hd
-        b4=; b=zYVv9BcZEG8F5tUUPNJVQvNAznHvnZXc5RQdIS//V9Dlv0WeU08QFw+Se
-        PYahdM2LHgitwZoTYsFpw4w4RM+/U28ZNHXcUE6ZJ7p/+MmDL0lHB7EPvRuovUbR
-        NE4b4xHAkOYCJedLByFgDPZ9THmbgs5fvoH0tA6L9a1YEjKPZPDniQi7iGs29qkt
-        M1l+PxWs5stDsX+I83OWqoVVrY2P13KRRE73dzx21nNaLpwEb+M9CRO6+AB3Pm3n
-        DkAOIpIa0m67XGux++B33RzbOz4o5ukrU8tbFajObMYO/nv9SuxL/ypckax2NKmy
-        lQqb08Yopkx9KgXtUYU4ekXcPfw+g==
-Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 26ab3b27 (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256:NO);
-        Sat, 21 Mar 2020 00:43:28 +0000 (UTC)
-From:   "Jason A. Donenfeld" <Jason@zx2c4.com>
-To:     linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     "Jason A. Donenfeld" <Jason@zx2c4.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        x86@kernel.org, linux-crypto@vger.kernel.org
-Subject: [PATCH RFC 3/3] crypto: curve25519 - do not pollute dispatcher based on assembler
-Date:   Fri, 20 Mar 2020 18:49:45 -0600
-Message-Id: <20200321004945.451497-4-Jason@zx2c4.com>
-In-Reply-To: <20200321004945.451497-1-Jason@zx2c4.com>
-References: <CAHk-=wjbTF2iw3EbKgfiRRq_keb4fHwLO8xJyRXbfK3Q7cscuQ@mail.gmail.com>
- <20200321004945.451497-1-Jason@zx2c4.com>
+        id S1727674AbgCUAtx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Mar 2020 20:49:53 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:45595 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726851AbgCUAtx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Mar 2020 20:49:53 -0400
+Received: by mail-lj1-f196.google.com with SMTP id y17so8385495ljk.12;
+        Fri, 20 Mar 2020 17:49:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=hfTzf6AkODc+KHzE3s2ZnR2MPNAojxSRMj8xOLinhFw=;
+        b=uZ3Avk7smEVbod80RzW7uRr6ijNtsqyaJdy3tnFO6K5xUOHId0xQS/6taPTQAHYmV8
+         twvZXk/+MpZrWG/SOHy7OfEJCkF3Hr+MY2NQ+tpsErU8711gBYwqjCV5GqPVsFwnFBQM
+         BUkZPs46woWRQruYhlE/WJd6qzMKcJFbpVt6jvmqpGoDhNNAsvWNNhvE/qvS8KDTazVa
+         zdJw9VNPr+HwEti4V6IHD7deRzwG14hwIbTFHaVJwGHhGraiNXSRDT20pNAPZU+QNBsL
+         NAHyJsSvsKZkUtGl2Jg1R+InTgY7Fp2besemwjIrpTsPBQCTN2y05a5wZ8h0cVydVTS9
+         wm2Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=hfTzf6AkODc+KHzE3s2ZnR2MPNAojxSRMj8xOLinhFw=;
+        b=ohosailRZV/fbk/tbgXlg5omuUgKRtgToatonduWG05M/LdXOl0U32/1u6LkLYtFW8
+         C2N8a/28Y9zgnCmrktcFP4TP62AMurqz5/pK2O3aum1RK8C/Wp4mxuYmJS10EJ/XdM8G
+         PVw/6YvH44UBv8G+2/Jf53y7v0khImrIae0clsgTbwYaeBMWtF7GQJUVpWUAXdmHjdqL
+         DQNqUFkF1hfG0NHOXosYPYUyem0xaNjkPrqAgDBuoKIoQwMzvmeoKnvSU7VWiyiCWgkA
+         SkQebZ9r0Z0wTJPwBuhXzxnlbYmq/OZ++XcXQ9lILTvTlpTJO8Ck3JOT7H1LkANyoLWS
+         5jeg==
+X-Gm-Message-State: ANhLgQ3CL4+6og79RnVw8q/Rrgj70u+L3VvJvSaow3BPS4fpOpqRoT64
+        zV06UyThWxYYMlqG0uFuaygZYb+O
+X-Google-Smtp-Source: ADFU+vtonjhhEKMbX+G14ChpIgBEzsZ10+qImyxwJ+S+brN4HJLsOs9NIn81D5tr8u0qJosVBYu/Vg==
+X-Received: by 2002:a2e:964e:: with SMTP id z14mr7248148ljh.44.1584751791010;
+        Fri, 20 Mar 2020 17:49:51 -0700 (PDT)
+Received: from [192.168.2.145] (94-29-39-224.dynamic.spd-mgts.ru. [94.29.39.224])
+        by smtp.googlemail.com with ESMTPSA id q4sm4194078lfd.82.2020.03.20.17.49.49
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 20 Mar 2020 17:49:50 -0700 (PDT)
+Subject: Re: [PATCH v1 0/2] Support built-in Mic on Tegra boards that use
+ WM8903
+To:     Stephen Warren <swarren@wwwdotorg.org>
+Cc:     Rob Herring <robh+dt@kernel.org>, Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
+        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
+References: <20200320205504.30466-1-digetx@gmail.com>
+ <c27c2087-14cf-614d-a8c0-05072a54f24b@wwwdotorg.org>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <2f5c1082-2ce9-dff1-4f9f-3442a2ac51fd@gmail.com>
+Date:   Sat, 21 Mar 2020 03:49:48 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
+In-Reply-To: <c27c2087-14cf-614d-a8c0-05072a54f24b@wwwdotorg.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since we're doing a static inline dispatch here, we normally branch
-based on whether or not there's an arch implementation. That would have
-been fine in general, except the crypto Makefile prior used to turn
-things off -- despite the Kconfig -- resulting in us needing to also
-hard code various assembler things into the dispatcher too. The horror!
-Now that the assembler config options are done by Kconfig, we can get
-rid of the inconsistency.
+21.03.2020 01:30, Stephen Warren пишет:
+> On 3/20/20 2:55 PM, Dmitry Osipenko wrote:
+>> Hello,
+>>
+>> This small series adds audio route for built-in microphone on NVIDIA Tegra
+>> boards that use WM8903 CODEC. In particular this is needed in order to unmute
+>> internal microphone on Acer A500 tablet device. I'm planning to send out the
+>> device tree for the A500 for 5.8, so will be nice to get the microphone
+>> sorted out. Please review and apply, thanks in advance.
+> 
+> It's been a long time since I looked at this code, but the series looks
+> plausible,
+> Acked-by: Stephen Warren <swarren@nvidia.com>
 
-Signed-off-by: Jason A. Donenfeld <Jason@zx2c4.com>
----
- include/crypto/curve25519.h | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+Thank you!
 
-diff --git a/include/crypto/curve25519.h b/include/crypto/curve25519.h
-index 9ecb3c1f0f15..4e6dc840b159 100644
---- a/include/crypto/curve25519.h
-+++ b/include/crypto/curve25519.h
-@@ -33,8 +33,7 @@ bool __must_check curve25519(u8 mypublic[CURVE25519_KEY_SIZE],
- 			     const u8 secret[CURVE25519_KEY_SIZE],
- 			     const u8 basepoint[CURVE25519_KEY_SIZE])
- {
--	if (IS_ENABLED(CONFIG_CRYPTO_ARCH_HAVE_LIB_CURVE25519) &&
--	    (!IS_ENABLED(CONFIG_CRYPTO_CURVE25519_X86) || IS_ENABLED(CONFIG_AS_ADX)))
-+	if (IS_ENABLED(CONFIG_CRYPTO_ARCH_HAVE_LIB_CURVE25519))
- 		curve25519_arch(mypublic, secret, basepoint);
- 	else
- 		curve25519_generic(mypublic, secret, basepoint);
-@@ -50,8 +49,7 @@ __must_check curve25519_generate_public(u8 pub[CURVE25519_KEY_SIZE],
- 				    CURVE25519_KEY_SIZE)))
- 		return false;
- 
--	if (IS_ENABLED(CONFIG_CRYPTO_ARCH_HAVE_LIB_CURVE25519) &&
--	    (!IS_ENABLED(CONFIG_CRYPTO_CURVE25519_X86) || IS_ENABLED(CONFIG_AS_ADX)))
-+	if (IS_ENABLED(CONFIG_CRYPTO_ARCH_HAVE_LIB_CURVE25519))
- 		curve25519_base_arch(pub, secret);
- 	else
- 		curve25519_generic(pub, secret, curve25519_base_point);
--- 
-2.25.1
+> (I wonder why machine->gpio_int_mic_en was already parse but never used!)
 
+Perhaps there were plans to support it later on, but that never
+materialized.
