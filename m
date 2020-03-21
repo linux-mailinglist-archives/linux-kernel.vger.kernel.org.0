@@ -2,62 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1984618E2FE
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Mar 2020 17:50:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4625C18E303
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Mar 2020 17:51:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727706AbgCUQu1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 21 Mar 2020 12:50:27 -0400
-Received: from vps0.lunn.ch ([185.16.172.187]:49180 "EHLO vps0.lunn.ch"
+        id S1727805AbgCUQut (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 21 Mar 2020 12:50:49 -0400
+Received: from mga11.intel.com ([192.55.52.93]:45121 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726961AbgCUQu1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 21 Mar 2020 12:50:27 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-        s=20171124; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=3i4jtKDijIiewr8m+uZlezeua+B1nFKyeJkRAfB/8Pc=; b=xYMSxw9EWu/wZUn2D9nhCftCKA
-        xXCLQWc3ubM+Zh4uqpCBW2QL/Qk6QjFq04QkN/LRK6eYTWBGa8qAWPRkhb0fmbScv0ZaoPrXGIbFe
-        JcaQ2wojs5bQdD3Xr2+tQHZXA0KVhaYdCezVQlt8Qf7/yq741ZXmBS6L6TzU9hyEwZRI=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.93)
-        (envelope-from <andrew@lunn.ch>)
-        id 1jFhKA-00069T-Gg; Sat, 21 Mar 2020 17:50:14 +0100
-Date:   Sat, 21 Mar 2020 17:50:14 +0100
-From:   Andrew Lunn <andrew@lunn.ch>
-To:     Dejin Zheng <zhengdejin5@gmail.com>
-Cc:     f.fainelli@gmail.com, hkallweit1@gmail.com, linux@armlinux.org.uk,
-        davem@davemloft.net, allison@lohutok.net, corbet@lwn.net,
-        alexios.zavras@intel.com, broonie@kernel.org, tglx@linutronix.de,
-        mchehab+samsung@kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v2 0/7] introduce read_poll_timeout
-Message-ID: <20200321165014.GD22639@lunn.ch>
-References: <20200320133431.9354-1-zhengdejin5@gmail.com>
+        id S1726961AbgCUQuq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 21 Mar 2020 12:50:46 -0400
+IronPort-SDR: SZdw5Icw6hRsD+xZ4BSdTI4Ir7f1+NPy17ZfwzpYgDfDSwzKwfq8kCB0hPZ/qAd/s3gSJH/HJP
+ JdZL2H9mpfKg==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Mar 2020 09:50:45 -0700
+IronPort-SDR: RsUwU7+ECsn/OucOfZm6zqnltDD9TfdwJQnMe8mXmRrNxdUZ4tsi+JIVBKwb3tcX/35ktM7TnK
+ YMcl8iXN4Ijg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.72,289,1580803200"; 
+   d="scan'208";a="239519730"
+Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
+  by orsmga008.jf.intel.com with ESMTP; 21 Mar 2020 09:50:41 -0700
+Received: from kbuild by lkp-server01 with local (Exim 4.89)
+        (envelope-from <lkp@intel.com>)
+        id 1jFhKa-0003Kr-Uj; Sun, 22 Mar 2020 00:50:40 +0800
+Date:   Sun, 22 Mar 2020 00:50:20 +0800
+From:   kbuild test robot <lkp@intel.com>
+To:     huobean@gmail.com
+Cc:     kbuild-all@lists.01.org, alim.akhtar@samsung.com,
+        avri.altman@wdc.com, asutoshd@codeaurora.org, jejb@linux.ibm.com,
+        martin.petersen@oracle.com, stanley.chu@mediatek.com,
+        beanhuo@micron.com, bvanassche@acm.org, tomas.winkler@intel.com,
+        cang@codeaurora.org, linux-scsi@vger.kernel.org,
+        linux-kernel@vger.kernel.org, ymhungry.lee@samsung.com,
+        j-young.choi@samsung.com
+Subject: Re: [PATCH v1 5/5] scsi: ufs: UFS Host Performance Booster(HPB)
+ driver
+Message-ID: <202003220007.8idvF9WX%lkp@intel.com>
+References: <20200321004156.23364-6-beanhuo@micron.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200320133431.9354-1-zhengdejin5@gmail.com>
+In-Reply-To: <20200321004156.23364-6-beanhuo@micron.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 20, 2020 at 09:34:24PM +0800, Dejin Zheng wrote:
-> This patch sets is introduce read_poll_timeout macro, it is an extension
-> of readx_poll_timeout macro. the accessor function op just supports only
-> one parameter in the readx_poll_timeout macro, but this macro can
-> supports multiple variable parameters for it. so functions like
-> phy_read(struct phy_device *phydev, u32 regnum) and
-> phy_read_mmd(struct phy_device *phydev, int devad, u32 regnum) can
-> use this poll timeout framework.
-> 
-> the first patch introduce read_poll_timeout macro, and the second patch
-> redefined readx_poll_timeout macro by read_poll_timeout(), and the other
-> patches are examples using read_poll_timeout macro.
+Hi,
 
-You missed lan87xx_read_status(), tja11xx_check(), and mv3310_reset().
+Thank you for the patch! Perhaps something to improve:
 
-If you convert all these, your diffstat might look better.
+[auto build test WARNING on mkp-scsi/for-next]
+[also build test WARNING on scsi/for-next next-20200320]
+[cannot apply to v5.6-rc6]
+[if your patch is applied to the wrong git tree, please drop us a note to help
+improve the system. BTW, we also suggest to use '--base' option to specify the
+base tree in git format-patch, please see https://stackoverflow.com/a/37406982]
 
-   Andrew
+url:    https://github.com/0day-ci/linux/commits/huobean-gmail-com/scsi-ufs-add-UFS-Host-Performance-Booster-HPB-driver/20200321-084331
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/mkp/scsi.git for-next
+reproduce:
+        # apt-get install sparse
+        # sparse version: v0.6.1-187-gbff9b106-dirty
+        make ARCH=x86_64 allmodconfig
+        make C=1 CF='-fdiagnostic-prefix -D__CHECK_ENDIAN__'
+
+If you fix the issue, kindly add following tag
+Reported-by: kbuild test robot <lkp@intel.com>
+
+
+sparse warnings: (new ones prefixed by >>)
+
+>> drivers/scsi/ufs/ufshpb.c:32:5: sparse: sparse: symbol 'alloc_mctx' was not declared. Should it be static?
+
+Please review and possibly fold the followup patch.
+
+---
+0-DAY CI Kernel Test Service, Intel Corporation
+https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
