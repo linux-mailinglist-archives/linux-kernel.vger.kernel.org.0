@@ -2,144 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B8BEF18E103
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Mar 2020 13:14:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AB5E618E10B
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Mar 2020 13:16:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727059AbgCUMOJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 21 Mar 2020 08:14:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54418 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726192AbgCUMOJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 21 Mar 2020 08:14:09 -0400
-Received: from [192.168.0.107] (unknown [49.65.245.234])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 46CBB20724;
-        Sat, 21 Mar 2020 12:14:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584792848;
-        bh=nMDvRIWaBQEE07eBr/b8Z+twcpwniFZsKHyMXPtB6pw=;
-        h=Subject:To:References:Cc:From:Date:In-Reply-To:From;
-        b=z8/oylr37/M67dJb6GRGSiB2TCdaqNVQovV9/U//Syw1i0IXQiSdKt9DKu4hgOce0
-         EEOX/9zGcd6Heu38yyesU0w4A1KnPVDYNIXLIG9yO3rku2PiOXtHGVXaBN4VB8785i
-         D49lAK1zHEIxYgMupX1OpoKfZhq2izG/ZhKRXu00=
-Subject: Re: [f2fs-dev] [PATCH] f2fs: clean up f2fs_may_encrypt()
-To:     Eric Biggers <ebiggers@kernel.org>, Chao Yu <yuchao0@huawei.com>
-References: <20200320101831.70611-1-yuchao0@huawei.com>
- <20200320190759.GK851@sol.localdomain>
-Cc:     jaegeuk@kernel.org, linux-kernel@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net
-From:   Chao Yu <chao@kernel.org>
-Message-ID: <14a40f93-d414-d475-56df-f07348db635b@kernel.org>
-Date:   Sat, 21 Mar 2020 20:13:52 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.8.0
+        id S1727318AbgCUMQs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 21 Mar 2020 08:16:48 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:12115 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726997AbgCUMQr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 21 Mar 2020 08:16:47 -0400
+Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 4E3BAB000FCFC12C27AE;
+        Sat, 21 Mar 2020 20:16:37 +0800 (CST)
+Received: from DESKTOP-KKJBAGG.china.huawei.com (10.173.220.25) by
+ DGGEMS410-HUB.china.huawei.com (10.3.19.210) with Microsoft SMTP Server id
+ 14.3.487.0; Sat, 21 Mar 2020 20:16:29 +0800
+From:   Zhenyu Ye <yezhenyu2@huawei.com>
+To:     <will@kernel.org>, <mark.rutland@arm.com>,
+        <catalin.marinas@arm.com>, <aneesh.kumar@linux.ibm.com>,
+        <maz@kernel.org>, <steven.price@arm.com>, <broonie@kernel.org>,
+        <guohanjun@huawei.com>
+CC:     <yezhenyu2@huawei.com>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arch@vger.kernel.org>,
+        <linux-mm@kvack.org>, <arm@kernel.org>, <xiexiangyou@huawei.com>,
+        <prime.zeng@hisilicon.com>, <zhangshaokun@hisilicon.com>
+Subject: [RFC PATCH v3 0/4] arm64: tlb: add support for TTL field
+Date:   Sat, 21 Mar 2020 20:16:17 +0800
+Message-ID: <20200321121621.1600-1-yezhenyu2@huawei.com>
+X-Mailer: git-send-email 2.22.0.windows.1
 MIME-Version: 1.0
-In-Reply-To: <20200320190759.GK851@sol.localdomain>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.173.220.25]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2020-3-21 3:07, Eric Biggers wrote:
-> On Fri, Mar 20, 2020 at 06:18:31PM +0800, Chao Yu wrote:
->> Merge below two conditions into f2fs_may_encrypt() for cleanup
->> - IS_ENCRYPTED()
->> - DUMMY_ENCRYPTION_ENABLED()
->>
->> Signed-off-by: Chao Yu <yuchao0@huawei.com>
->> ---
->>  fs/f2fs/dir.c   |  4 +---
->>  fs/f2fs/f2fs.h  | 13 +++++++++----
->>  fs/f2fs/namei.c |  4 +---
->>  3 files changed, 11 insertions(+), 10 deletions(-)
->>
->> diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
->> index 0971ccc4664a..2accfc5e38d0 100644
->> --- a/fs/f2fs/dir.c
->> +++ b/fs/f2fs/dir.c
->> @@ -471,7 +471,6 @@ struct page *f2fs_init_inode_metadata(struct inode *inode, struct inode *dir,
->>  			struct page *dpage)
->>  {
->>  	struct page *page;
->> -	int dummy_encrypt = DUMMY_ENCRYPTION_ENABLED(F2FS_I_SB(dir));
->>  	int err;
->>
->>  	if (is_inode_flag_set(inode, FI_NEW_INODE)) {
->> @@ -498,8 +497,7 @@ struct page *f2fs_init_inode_metadata(struct inode *inode, struct inode *dir,
->>  		if (err)
->>  			goto put_error;
->>
->> -		if ((IS_ENCRYPTED(dir) || dummy_encrypt) &&
->> -					f2fs_may_encrypt(inode)) {
->> +		if (f2fs_may_encrypt(dir, inode)) {
->>  			err = fscrypt_inherit_context(dir, inode, page, false);
->>  			if (err)
->>  				goto put_error;
->> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
->> index 09db79a20f8e..fcafa68212eb 100644
->> --- a/fs/f2fs/f2fs.h
->> +++ b/fs/f2fs/f2fs.h
->> @@ -3946,15 +3946,20 @@ static inline bool f2fs_lfs_mode(struct f2fs_sb_info *sbi)
->>  	return F2FS_OPTION(sbi).fs_mode == FS_MODE_LFS;
->>  }
->>
->> -static inline bool f2fs_may_encrypt(struct inode *inode)
->> +static inline bool f2fs_may_encrypt(struct inode *dir, struct inode *inode)
->>  {
->>  #ifdef CONFIG_FS_ENCRYPTION
->> +	struct f2fs_sb_info *sbi = F2FS_I_SB(dir);
->>  	umode_t mode = inode->i_mode;
->>
->> -	return (S_ISREG(mode) || S_ISDIR(mode) || S_ISLNK(mode));
->> -#else
->> -	return false;
->> +	/*
->> +	 * If the directory encrypted or dummy encryption enabled,
->> +	 * then we should encrypt the inode.
->> +	 */
->> +	if (IS_ENCRYPTED(dir) || DUMMY_ENCRYPTION_ENABLED(sbi))
->> +		return (S_ISREG(mode) || S_ISDIR(mode) || S_ISLNK(mode));
->>  #endif
->> +	return false;
->>  }
->>
->>  static inline bool f2fs_may_compress(struct inode *inode)
->> diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
->> index b75c70813f9e..95cfbce062e8 100644
->> --- a/fs/f2fs/namei.c
->> +++ b/fs/f2fs/namei.c
->> @@ -75,9 +75,7 @@ static struct inode *f2fs_new_inode(struct inode *dir, umode_t mode)
->>
->>  	set_inode_flag(inode, FI_NEW_INODE);
->>
->> -	/* If the directory encrypted, then we should encrypt the inode. */
->> -	if ((IS_ENCRYPTED(dir) || DUMMY_ENCRYPTION_ENABLED(sbi)) &&
->> -				f2fs_may_encrypt(inode))
->> +	if (f2fs_may_encrypt(dir, inode))
->>  		f2fs_set_encrypted_inode(inode);
->>
->>  	if (f2fs_sb_has_extra_attr(sbi)) {
->> --
->
-> Can't f2fs_init_inode_metadata() just check IS_ENCRYPTED(inode) instead?
-> (inode, not dir.)  The encrypt flag was already set by f2fs_new_inode(), right?
+--
+ChangeList:
+v3:
+use vma->vm_flags to replace mm->context.flags.
 
-Correct, I've updated the patch.
+v2:
+build the patch on Marc's NV series[1].
 
-Thanks,
+v1:
+add support for TTL field in arm64.
 
->
-> If so, then f2fs_may_encrypt() would only have one caller and it could be
-> inlined into f2fs_new_inode(), similar to __ext4_new_inode().
->
-> - Eric
->
->
-> _______________________________________________
-> Linux-f2fs-devel mailing list
-> Linux-f2fs-devel@lists.sourceforge.net
-> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
->
+--
+ARMv8.4-TTL provides the TTL field in tlbi instruction to indicate
+the level of translation table walk holding the leaf entry for the
+address that is being invalidated. Hardware can use this information
+to determine if there was a risk of splintering.
+
+Marc has provided basic support for ARM64-TTL features on his
+NV series[1] patches. NV is a large feature, however, only
+patches 62[2] and 67[3] are need by this patch set. 
+** You only need read those two patches before review this patch. **
+
+Some of this patch depends on a feature powered by @Will Deacon
+two years ago, which tracking the level of page tables in mm_gather.
+See more in commit a6d60245.
+
+[1] git://git.kernel.org/pub/scm/linux/kernel/git/maz/arm-platforms.git kvm-arm64/nv-5.6-rc1
+[2] https://lore.kernel.org/linux-arm-kernel/20200211174938.27809-63-maz@kernel.org/
+[3] https://lore.kernel.org/linux-arm-kernel/20200211174938.27809-68-maz@kernel.org/
+
+Zhenyu Ye (4):
+  arm64: Add level-hinted TLB invalidation helper to tlbi_user
+  mm: Add page table level flags to vm_flags
+  arm64: tlb: Use translation level hint in vm_flags
+  mm: Set VM_LEVEL flags in some tlb_flush functions
+
+ arch/arm64/include/asm/mmu.h      |  2 ++
+ arch/arm64/include/asm/tlb.h      | 12 +++++++++
+ arch/arm64/include/asm/tlbflush.h | 44 ++++++++++++++++++++++++++-----
+ arch/arm64/mm/hugetlbpage.c       |  4 +--
+ arch/arm64/mm/mmu.c               | 14 ++++++++++
+ include/asm-generic/pgtable.h     | 16 +++++++++--
+ include/linux/mm.h                | 10 +++++++
+ include/trace/events/mmflags.h    | 15 ++++++++++-
+ mm/huge_memory.c                  |  8 +++++-
+ 9 files changed, 113 insertions(+), 12 deletions(-)
+
+-- 
+2.19.1
+
+
