@@ -2,38 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0488C18E2B8
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Mar 2020 16:54:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7C05D18E2C3
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Mar 2020 16:54:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727885AbgCUPyC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 21 Mar 2020 11:54:02 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:39046 "EHLO
+        id S1727949AbgCUPyL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 21 Mar 2020 11:54:11 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:39055 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727754AbgCUPx5 (ORCPT
+        with ESMTP id S1727779AbgCUPx7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 21 Mar 2020 11:53:57 -0400
+        Sat, 21 Mar 2020 11:53:59 -0400
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1jFgRZ-0005Tb-Qg; Sat, 21 Mar 2020 16:53:49 +0100
+        id 1jFgRe-0005TF-Ck; Sat, 21 Mar 2020 16:53:54 +0100
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 49FEC1C22EF;
-        Sat, 21 Mar 2020 16:53:49 +0100 (CET)
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id DFEEE1C22EE;
+        Sat, 21 Mar 2020 16:53:48 +0100 (CET)
 Date:   Sat, 21 Mar 2020 15:53:48 -0000
-From:   "tip-bot2 for Sebastian Andrzej Siewior" <tip-bot2@linutronix.de>
+From:   "tip-bot2 for Peter Zijlstra (Intel)" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: locking/core] microblaze: Remove mm.h from asm/uaccess.h
-Cc:     kbuild test robot <lkp@intel.com>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        x86 <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>
-In-Reply-To: <20200321113241.719022171@linutronix.de>
-References: <20200321113241.719022171@linutronix.de>
+Subject: [tip: locking/core] rcuwait: Add @state argument to rcuwait_wait_event()
+Cc:     "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>, x86 <x86@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+In-Reply-To: <20200321113241.824030968@linutronix.de>
+References: <20200321113241.824030968@linutronix.de>
 MIME-Version: 1.0
-Message-ID: <158480602898.28353.16383836205235461350.tip-bot2@tip-bot2>
+Message-ID: <158480602856.28353.10692996135466470181.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -49,52 +47,82 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the locking/core branch of tip:
 
-Commit-ID:     d964ea7014a9d0d6312ccd5f47088a792371ad0b
-Gitweb:        https://git.kernel.org/tip/d964ea7014a9d0d6312ccd5f47088a792371ad0b
-Author:        Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-AuthorDate:    Sat, 21 Mar 2020 12:25:54 +01:00
+Commit-ID:     80fbaf1c3f2926c834f8ca915441dfe27ce5487e
+Gitweb:        https://git.kernel.org/tip/80fbaf1c3f2926c834f8ca915441dfe27ce5487e
+Author:        Peter Zijlstra (Intel) <peterz@infradead.org>
+AuthorDate:    Sat, 21 Mar 2020 12:25:55 +01:00
 Committer:     Peter Zijlstra <peterz@infradead.org>
 CommitterDate: Sat, 21 Mar 2020 16:00:22 +01:00
 
-microblaze: Remove mm.h from asm/uaccess.h
+rcuwait: Add @state argument to rcuwait_wait_event()
 
-The defconfig compiles without linux/mm.h. With mm.h included the
-include chain leands to:
-|   CC      kernel/locking/percpu-rwsem.o
-| In file included from include/linux/huge_mm.h:8,
-|                  from include/linux/mm.h:567,
-|                  from arch/microblaze/include/asm/uaccess.h:,
-|                  from include/linux/uaccess.h:11,
-|                  from include/linux/sched/task.h:11,
-|                  from include/linux/sched/signal.h:9,
-|                  from include/linux/rcuwait.h:6,
-|                  from include/linux/percpu-rwsem.h:8,
-|                  from kernel/locking/percpu-rwsem.c:6:
-| include/linux/fs.h:1422:29: error: array type has incomplete element type 'struct percpu_rw_semaphore'
-|  1422 |  struct percpu_rw_semaphore rw_sem[SB_FREEZE_LEVELS];
+Extend rcuwait_wait_event() with a state variable so that it is not
+restricted to UNINTERRUPTIBLE waits.
 
-once rcuwait.h includes linux/sched/signal.h.
-
-Remove the linux/mm.h include.
-
-Reported-by: kbuild test robot <lkp@intel.com>
-Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Link: https://lkml.kernel.org/r/20200321113241.719022171@linutronix.de
+Link: https://lkml.kernel.org/r/20200321113241.824030968@linutronix.de
 ---
- arch/microblaze/include/asm/uaccess.h | 1 -
- 1 file changed, 1 deletion(-)
+ include/linux/rcuwait.h       | 12 ++++++++++--
+ kernel/locking/percpu-rwsem.c |  2 +-
+ 2 files changed, 11 insertions(+), 3 deletions(-)
 
-diff --git a/arch/microblaze/include/asm/uaccess.h b/arch/microblaze/include/asm/uaccess.h
-index a1f206b..4916d5f 100644
---- a/arch/microblaze/include/asm/uaccess.h
-+++ b/arch/microblaze/include/asm/uaccess.h
-@@ -12,7 +12,6 @@
- #define _ASM_MICROBLAZE_UACCESS_H
+diff --git a/include/linux/rcuwait.h b/include/linux/rcuwait.h
+index 75c97e4..2ffe1ee 100644
+--- a/include/linux/rcuwait.h
++++ b/include/linux/rcuwait.h
+@@ -3,6 +3,7 @@
+ #define _LINUX_RCUWAIT_H_
  
- #include <linux/kernel.h>
--#include <linux/mm.h>
+ #include <linux/rcupdate.h>
++#include <linux/sched/signal.h>
  
- #include <asm/mmu.h>
- #include <asm/page.h>
+ /*
+  * rcuwait provides a way of blocking and waking up a single
+@@ -30,23 +31,30 @@ extern void rcuwait_wake_up(struct rcuwait *w);
+  * The caller is responsible for locking around rcuwait_wait_event(),
+  * such that writes to @task are properly serialized.
+  */
+-#define rcuwait_wait_event(w, condition)				\
++#define rcuwait_wait_event(w, condition, state)				\
+ ({									\
++	int __ret = 0;							\
+ 	rcu_assign_pointer((w)->task, current);				\
+ 	for (;;) {							\
+ 		/*							\
+ 		 * Implicit barrier (A) pairs with (B) in		\
+ 		 * rcuwait_wake_up().					\
+ 		 */							\
+-		set_current_state(TASK_UNINTERRUPTIBLE);		\
++		set_current_state(state);				\
+ 		if (condition)						\
+ 			break;						\
+ 									\
++		if (signal_pending_state(state, current)) {		\
++			__ret = -EINTR;					\
++			break;						\
++		}							\
++									\
+ 		schedule();						\
+ 	}								\
+ 									\
+ 	WRITE_ONCE((w)->task, NULL);					\
+ 	__set_current_state(TASK_RUNNING);				\
++	__ret;								\
+ })
+ 
+ #endif /* _LINUX_RCUWAIT_H_ */
+diff --git a/kernel/locking/percpu-rwsem.c b/kernel/locking/percpu-rwsem.c
+index 183a3aa..a008a1b 100644
+--- a/kernel/locking/percpu-rwsem.c
++++ b/kernel/locking/percpu-rwsem.c
+@@ -234,7 +234,7 @@ void percpu_down_write(struct percpu_rw_semaphore *sem)
+ 	 */
+ 
+ 	/* Wait for all active readers to complete. */
+-	rcuwait_wait_event(&sem->writer, readers_active_check(sem));
++	rcuwait_wait_event(&sem->writer, readers_active_check(sem), TASK_UNINTERRUPTIBLE);
+ }
+ EXPORT_SYMBOL_GPL(percpu_down_write);
+ 
