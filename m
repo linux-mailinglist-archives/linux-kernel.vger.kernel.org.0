@@ -2,70 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9D83D18E0DE
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Mar 2020 12:53:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 72A9718E0F1
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Mar 2020 13:05:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727100AbgCULxX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 21 Mar 2020 07:53:23 -0400
-Received: from smtprelay0072.hostedemail.com ([216.40.44.72]:37372 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726192AbgCULxX (ORCPT
+        id S1727095AbgCUMFa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 21 Mar 2020 08:05:30 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:41300 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726192AbgCUMFa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 21 Mar 2020 07:53:23 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay06.hostedemail.com (Postfix) with ESMTP id 6E7A61800CE17;
-        Sat, 21 Mar 2020 11:53:22 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,,RULES_HIT:41:355:379:599:973:982:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:2393:2559:2562:2828:3138:3139:3140:3141:3142:3352:3622:3865:3866:3867:3868:3871:4037:4250:4321:5007:7903:10004:10400:10848:11232:11658:11914:12297:12438:12740:12760:12895:13069:13095:13311:13357:13439:14181:14659:21080:21433:21451:21627:21990:30034:30054:30080:30091,0,RBL:none,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:1,LUA_SUMMARY:none
-X-HE-Tag: dolls74_57762e850ae30
-X-Filterd-Recvd-Size: 2112
-Received: from XPS-9350.home (unknown [47.151.143.254])
-        (Authenticated sender: joe@perches.com)
-        by omf20.hostedemail.com (Postfix) with ESMTPA;
-        Sat, 21 Mar 2020 11:53:20 +0000 (UTC)
-Message-ID: <c68e74af78fa0f73a9dc4cf5535a2dc16b99b729.camel@perches.com>
-Subject: Re: [PATCH 1/2] iio: light: tsl2563: Wrap comment description
-From:   Joe Perches <joe@perches.com>
-To:     Nishant Malpani <nish.malpani25@gmail.com>, jic23@kernel.org
-Cc:     knaack.h@gmx.de, lars@metafoo.de, pmeerw@pmeerw.net,
-        linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Sat, 21 Mar 2020 04:51:33 -0700
-In-Reply-To: <9129a6c25f772bdfba28d556190e5511c7005e8a.1584518000.git.nish.malpani25@gmail.com>
-References: <cover.1584518000.git.nish.malpani25@gmail.com>
-         <9129a6c25f772bdfba28d556190e5511c7005e8a.1584518000.git.nish.malpani25@gmail.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.34.1-2 
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Sat, 21 Mar 2020 08:05:30 -0400
+Received: by mail-wr1-f67.google.com with SMTP id h9so10621777wrc.8;
+        Sat, 21 Mar 2020 05:05:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=EfodRmW2l478YoUF/NEMb3epOdAHJYA9K519pesBxmk=;
+        b=i9zi7vf2mSwVRJeZGA7d3dFGu2uoE6XGrfBngyYBxngyzvwSCZKgcH7gd8W8uH9YPa
+         fUGjBd1Z92kvMPBYwVqcuIQPlYYg/fa8ASYL89cDISg0HiXxxi7NAR8nXLubPl0A57vT
+         h/Ws/GRLKAT120f8/62vnRzasDbb3528SspE8a6pyOCQsqgemnnAGJKfFAXeE1Do/Knu
+         VIl3dcRdH4zxaw3fXIifN4LEOzIO8YVycMxLLW7ILxMsz4HV/xnwC/j/YW517O6TeZmO
+         v8Zzog4st9TkZN3RQczcPto+8RKQeKgNzEjt4jMxJT3GC8bsr6AqRNSpe2kpxwFQgg4H
+         XqRA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=EfodRmW2l478YoUF/NEMb3epOdAHJYA9K519pesBxmk=;
+        b=MXzUijT/WUjV5uStyCS6aKRy2DbraPJ5EHU2za3TYvxU6jCOAefbFedi9SQNGRpyW0
+         QTF8BvjifRDoMBwjNAggmIQM6Vf1Xm7/QTXk7QGGL8gmAcI3x/CMalNb8DpW2WCDQcWF
+         5+yZ3HGmP/qeLS5N60HT1KMfxVAM48YyqwFYcSDWkWpfGXdM61sipg9flhl1n0lM9K4H
+         DVt7lzLqPfuNtrQLzIZj05z32SKjACe40huhdecO832FSX85B4FZgqeGFgA2gdj0ICfZ
+         v7XmI02BqTN+3f/QcVAZ6BVCPmCAdBATLtWX/MoZG5Qne14NcuEgudzd55Y1CPSeZGH1
+         6pkw==
+X-Gm-Message-State: ANhLgQ1sMMOmTG8n9TxeWUP10JXdlvdNr9+xcmqT1JQQqJou5Rs0KHyi
+        GzfR1e4UZOD70EBoROlDXDk=
+X-Google-Smtp-Source: ADFU+vsKwO+JvuQBHLV7YV3cVJhZb0IeN24HEx0xAO/6OxzgxPpmQRlsCvam2SAHP0OnLpdk86PP7g==
+X-Received: by 2002:a5d:52d0:: with SMTP id r16mr16496453wrv.379.1584792326004;
+        Sat, 21 Mar 2020 05:05:26 -0700 (PDT)
+Received: from felia.fritz.box ([2001:16b8:2d49:b100:e503:a7c7:f4c6:1aab])
+        by smtp.gmail.com with ESMTPSA id c4sm12246120wml.7.2020.03.21.05.05.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 21 Mar 2020 05:05:25 -0700 (PDT)
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To:     Shannon Nelson <snelson@pensando.io>, netdev@vger.kernel.org
+Cc:     linux-spdx@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: [PATCH] ionic: make spdxcheck.py happy
+Date:   Sat, 21 Mar 2020 13:05:14 +0100
+Message-Id: <20200321120514.10464-1-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2020-03-18 at 13:33 +0530, Nishant Malpani wrote:
-> This patch wraps the comment description at 75 chars. Fixes the
-> following warning generated by checkpatch.pl:
-> 
-> WARNING: Possible unwrapped commit description (prefer a maximum 75 chars per line)
+Headers ionic_if.h and ionic_regs.h are licensed under three alternative
+licenses and the used SPDX-License-Identifier expression makes
+./scripts/spdxcheck.py complain:
 
-Please do not scan files as patches.
+drivers/net/ethernet/pensando/ionic/ionic_if.h: 1:52 Syntax error: OR
+drivers/net/ethernet/pensando/ionic/ionic_regs.h: 1:52 Syntax error: OR
 
-checkpatch does not emit this message on a file
-when used properly with the -f option.
+As OR is associative, it is irrelevant if the parentheses are put around
+the first or the second OR-expression.
 
-> diff --git a/drivers/iio/light/tsl2563.c b/drivers/iio/light/tsl2563.c
-[]
-> @@ -222,9 +222,9 @@ static int tsl2563_read_id(struct tsl2563_chip *chip, u8 *id)
->  }
->  
->  /*
-> - * "Normalized" ADC value is one obtained with 400ms of integration time and
-> - * 16x gain. This function returns the number of bits of shift needed to
-> - * convert between normalized values and HW values obtained using given
-> + * "Normalized" ADC value is one obtained with 400ms of integration time
-> + * and 16x gain. This function returns the number of bits of shift needed
-> + * to convert between normalized values and HW values obtained using given
->   * timing and gain settings.
->   */
->  static int tsl2563_adc_shiftbits(u8 timing)
+Simply add parentheses to make spdxcheck.py happy.
+
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+ drivers/net/ethernet/pensando/ionic/ionic_if.h   | 2 +-
+ drivers/net/ethernet/pensando/ionic/ionic_regs.h | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/net/ethernet/pensando/ionic/ionic_if.h b/drivers/net/ethernet/pensando/ionic/ionic_if.h
+index 54547d53b0f2..51adf5059834 100644
+--- a/drivers/net/ethernet/pensando/ionic/ionic_if.h
++++ b/drivers/net/ethernet/pensando/ionic/ionic_if.h
+@@ -1,4 +1,4 @@
+-/* SPDX-License-Identifier: GPL-2.0 OR Linux-OpenIB OR BSD-2-Clause */
++/* SPDX-License-Identifier: (GPL-2.0 OR Linux-OpenIB) OR BSD-2-Clause */
+ /* Copyright (c) 2017-2019 Pensando Systems, Inc.  All rights reserved. */
+ 
+ #ifndef _IONIC_IF_H_
+diff --git a/drivers/net/ethernet/pensando/ionic/ionic_regs.h b/drivers/net/ethernet/pensando/ionic/ionic_regs.h
+index 03ee5a36472b..2e174f45c030 100644
+--- a/drivers/net/ethernet/pensando/ionic/ionic_regs.h
++++ b/drivers/net/ethernet/pensando/ionic/ionic_regs.h
+@@ -1,4 +1,4 @@
+-/* SPDX-License-Identifier: GPL-2.0 OR Linux-OpenIB OR BSD-2-Clause */
++/* SPDX-License-Identifier: (GPL-2.0 OR Linux-OpenIB) OR BSD-2-Clause */
+ /* Copyright (c) 2018-2019 Pensando Systems, Inc.  All rights reserved. */
+ 
+ #ifndef IONIC_REGS_H
+-- 
+2.17.1
 
