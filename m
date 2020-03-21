@@ -2,100 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6754918E2C7
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Mar 2020 16:54:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BFF3B18E2D9
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Mar 2020 17:12:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728133AbgCUPyi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 21 Mar 2020 11:54:38 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:39078 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727891AbgCUPyD (ORCPT
+        id S1727369AbgCUQL7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 21 Mar 2020 12:11:59 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:44876 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727128AbgCUQL6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 21 Mar 2020 11:54:03 -0400
-Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tip-bot2@linutronix.de>)
-        id 1jFgRi-0005Wq-61; Sat, 21 Mar 2020 16:53:58 +0100
-Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 791541C22F0;
-        Sat, 21 Mar 2020 16:53:53 +0100 (CET)
-Date:   Sat, 21 Mar 2020 15:53:53 -0000
-From:   "tip-bot2 for Logan Gunthorpe" <tip-bot2@linutronix.de>
-Reply-to: linux-kernel@vger.kernel.org
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: locking/core] PCI/switchtec: Fix init_completion race condition
- with poll_wait()
-Cc:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Bjorn Helgaas <bhelgaas@google.com>, x86 <x86@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-In-Reply-To: <20200313183608.2646-1-logang@deltatee.com>
-References: <20200313183608.2646-1-logang@deltatee.com>
+        Sat, 21 Mar 2020 12:11:58 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=rDHp5EkQVqal1KnnLcQv1KsG4j/TBGs8Jpkhs3ktxK0=; b=HXtwAPOsfT+13uB7XIgG4qtOHz
+        z/ve7Xn0NvjqHtqTnSKLQ3Yz7DzFg/PP3qLLkQ1vewmKWjEPJB+RI79N2dVmn2FNUN3PGFXQd8LB+
+        IQ9/vQciIg1V103pnfOafymjZhyjGdLVzS2QOUMM0c+JXt7v5w3xH+SqQjtmzeSlxpAUvw7/2hR/i
+        x9Mva5axNRiL8IU5odbqCMin3JyYNfzFL962tB7PdgSiIVqe0Os+CrCURM4Pm+tS6ymjjPDcvzkH8
+        q1AR3sdPNFfUfPTF7Jy9UinuE+VyMrDFTC1NT0uAIa+LaICsMjLOxeAhtrMlS7EeT5H9kVyeLdfhf
+        353bILTw==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=worktop.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jFgj4-0004AS-8d; Sat, 21 Mar 2020 16:11:54 +0000
+Received: by worktop.programming.kicks-ass.net (Postfix, from userid 1000)
+        id C393E983502; Sat, 21 Mar 2020 17:11:51 +0100 (CET)
+Date:   Sat, 21 Mar 2020 17:11:51 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Miroslav Benes <mbenes@suse.cz>
+Cc:     tglx@linutronix.de, jpoimboe@redhat.com,
+        linux-kernel@vger.kernel.org, x86@kernel.org, mhiramat@kernel.org,
+        brgerst@gmail.com
+Subject: Re: [PATCH v2 17/19] objtool: Optimize !vmlinux.o again
+Message-ID: <20200321161151.GB3323@worktop.programming.kicks-ass.net>
+References: <20200317170234.897520633@infradead.org>
+ <20200317170910.819744197@infradead.org>
+ <20200318132025.GH20730@hirez.programming.kicks-ass.net>
+ <alpine.LSU.2.21.2003201719200.21240@pobox.suse.cz>
+ <20200321151421.GD2452@worktop.programming.kicks-ass.net>
 MIME-Version: 1.0
-Message-ID: <158480603317.28353.1853956587316616991.tip-bot2@tip-bot2>
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot2.linutronix.de>
-Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200321151421.GD2452@worktop.programming.kicks-ass.net>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following commit has been merged into the locking/core branch of tip:
+On Sat, Mar 21, 2020 at 04:14:21PM +0100, Peter Zijlstra wrote:
+> On Fri, Mar 20, 2020 at 05:20:47PM +0100, Miroslav Benes wrote:
+> 
+> > I think there is one more missing in create_orc_entry().
+> 
+> I'm thikning you're quite right about that.... lemme see what to do
+> about that.
 
-Commit-ID:     efbdc769601f4d50018bf7ca50fc9f7c67392ece
-Gitweb:        https://git.kernel.org/tip/efbdc769601f4d50018bf7ca50fc9f7c67392ece
-Author:        Logan Gunthorpe <logang@deltatee.com>
-AuthorDate:    Sat, 21 Mar 2020 12:25:45 +01:00
-Committer:     Peter Zijlstra <peterz@infradead.org>
-CommitterDate: Sat, 21 Mar 2020 16:00:20 +01:00
-
-PCI/switchtec: Fix init_completion race condition with poll_wait()
-
-The call to init_completion() in mrpc_queue_cmd() can theoretically
-race with the call to poll_wait() in switchtec_dev_poll().
-
-  poll()			write()
-    switchtec_dev_poll()   	  switchtec_dev_write()
-      poll_wait(&s->comp.wait);      mrpc_queue_cmd()
-			               init_completion(&s->comp)
-				         init_waitqueue_head(&s->comp.wait)
-
-To my knowledge, no one has hit this bug.
-
-Fix this by using reinit_completion() instead of init_completion() in
-mrpc_queue_cmd().
-
-Fixes: 080b47def5e5 ("MicroSemi Switchtec management interface driver")
-
-Reported-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Acked-by: Bjorn Helgaas <bhelgaas@google.com>
-Link: https://lkml.kernel.org/r/20200313183608.2646-1-logang@deltatee.com
 ---
- drivers/pci/switch/switchtec.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+--- a/tools/objtool/elf.c
++++ b/tools/objtool/elf.c
+@@ -472,6 +472,14 @@ static int read_symbols(struct elf *elf)
+ 	return -1;
+ }
 
-diff --git a/drivers/pci/switch/switchtec.c b/drivers/pci/switch/switchtec.c
-index a823b4b..81dc7ac 100644
---- a/drivers/pci/switch/switchtec.c
-+++ b/drivers/pci/switch/switchtec.c
-@@ -175,7 +175,7 @@ static int mrpc_queue_cmd(struct switchtec_user *stuser)
- 	kref_get(&stuser->kref);
- 	stuser->read_len = sizeof(stuser->data);
- 	stuser_set_state(stuser, MRPC_QUEUED);
--	init_completion(&stuser->comp);
-+	reinit_completion(&stuser->comp);
- 	list_add_tail(&stuser->list, &stdev->mrpc_queue);
- 
- 	mrpc_cmd_submit(stdev);
++void elf_add_rela(struct elf *elf, struct rela *rela)
++{
++	struct section *sec = rela->sec;
++
++	list_add_tail(&rela->list, &sec->rela_list);
++	elf_hash_add(elf->rela_hash, &rela->hash, rela_hash(rela));
++}
++
+ static int read_relas(struct elf *elf)
+ {
+ 	struct section *sec;
+@@ -519,8 +527,7 @@ static int read_relas(struct elf *elf)
+ 				return -1;
+ 			}
+
+-			list_add_tail(&rela->list, &sec->rela_list);
+-			elf_hash_add(elf->rela_hash, &rela->hash, rela_hash(rela));
++			elf_add_rela(elf, rela);
+ 			nr_rela++;
+ 		}
+ 		max_rela = max(max_rela, nr_rela);
+--- a/tools/objtool/elf.h
++++ b/tools/objtool/elf.h
+@@ -127,6 +127,7 @@ struct section *elf_create_rela_section(
+ int elf_rebuild_rela_section(struct section *sec);
+ int elf_write(struct elf *elf);
+ void elf_close(struct elf *elf);
++void elf_add_rela(struct elf *elf, struct rela *rela);
+
+ #define for_each_sec(file, sec)						\
+ 	list_for_each_entry(sec, &file->elf->sections, list)
+--- a/tools/objtool/orc_gen.c
++++ b/tools/objtool/orc_gen.c
+@@ -111,8 +111,7 @@ static int create_orc_entry(struct elf *
+ 	rela->offset = idx * sizeof(int);
+ 	rela->sec = ip_relasec;
+
+-	list_add_tail(&rela->list, &ip_relasec->rela_list);
+-	hash_add(elf->rela_hash, &rela->hash, rela_hash(rela));
++	elf_add_rela(elf, rela);
+
+ 	return 0;
+ }
+
