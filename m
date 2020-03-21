@@ -2,94 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5790318DCC8
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Mar 2020 01:49:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ABBC918DCD7
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Mar 2020 01:50:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727674AbgCUAtx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Mar 2020 20:49:53 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:45595 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726851AbgCUAtx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Mar 2020 20:49:53 -0400
-Received: by mail-lj1-f196.google.com with SMTP id y17so8385495ljk.12;
-        Fri, 20 Mar 2020 17:49:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=hfTzf6AkODc+KHzE3s2ZnR2MPNAojxSRMj8xOLinhFw=;
-        b=uZ3Avk7smEVbod80RzW7uRr6ijNtsqyaJdy3tnFO6K5xUOHId0xQS/6taPTQAHYmV8
-         twvZXk/+MpZrWG/SOHy7OfEJCkF3Hr+MY2NQ+tpsErU8711gBYwqjCV5GqPVsFwnFBQM
-         BUkZPs46woWRQruYhlE/WJd6qzMKcJFbpVt6jvmqpGoDhNNAsvWNNhvE/qvS8KDTazVa
-         zdJw9VNPr+HwEti4V6IHD7deRzwG14hwIbTFHaVJwGHhGraiNXSRDT20pNAPZU+QNBsL
-         NAHyJsSvsKZkUtGl2Jg1R+InTgY7Fp2besemwjIrpTsPBQCTN2y05a5wZ8h0cVydVTS9
-         wm2Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=hfTzf6AkODc+KHzE3s2ZnR2MPNAojxSRMj8xOLinhFw=;
-        b=ohosailRZV/fbk/tbgXlg5omuUgKRtgToatonduWG05M/LdXOl0U32/1u6LkLYtFW8
-         C2N8a/28Y9zgnCmrktcFP4TP62AMurqz5/pK2O3aum1RK8C/Wp4mxuYmJS10EJ/XdM8G
-         PVw/6YvH44UBv8G+2/Jf53y7v0khImrIae0clsgTbwYaeBMWtF7GQJUVpWUAXdmHjdqL
-         DQNqUFkF1hfG0NHOXosYPYUyem0xaNjkPrqAgDBuoKIoQwMzvmeoKnvSU7VWiyiCWgkA
-         SkQebZ9r0Z0wTJPwBuhXzxnlbYmq/OZ++XcXQ9lILTvTlpTJO8Ck3JOT7H1LkANyoLWS
-         5jeg==
-X-Gm-Message-State: ANhLgQ3CL4+6og79RnVw8q/Rrgj70u+L3VvJvSaow3BPS4fpOpqRoT64
-        zV06UyThWxYYMlqG0uFuaygZYb+O
-X-Google-Smtp-Source: ADFU+vtonjhhEKMbX+G14ChpIgBEzsZ10+qImyxwJ+S+brN4HJLsOs9NIn81D5tr8u0qJosVBYu/Vg==
-X-Received: by 2002:a2e:964e:: with SMTP id z14mr7248148ljh.44.1584751791010;
-        Fri, 20 Mar 2020 17:49:51 -0700 (PDT)
-Received: from [192.168.2.145] (94-29-39-224.dynamic.spd-mgts.ru. [94.29.39.224])
-        by smtp.googlemail.com with ESMTPSA id q4sm4194078lfd.82.2020.03.20.17.49.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 20 Mar 2020 17:49:50 -0700 (PDT)
-Subject: Re: [PATCH v1 0/2] Support built-in Mic on Tegra boards that use
- WM8903
-To:     Stephen Warren <swarren@wwwdotorg.org>
-Cc:     Rob Herring <robh+dt@kernel.org>, Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
-        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
-References: <20200320205504.30466-1-digetx@gmail.com>
- <c27c2087-14cf-614d-a8c0-05072a54f24b@wwwdotorg.org>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <2f5c1082-2ce9-dff1-4f9f-3442a2ac51fd@gmail.com>
-Date:   Sat, 21 Mar 2020 03:49:48 +0300
+        id S1727856AbgCUAuy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Mar 2020 20:50:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:32886 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726851AbgCUAux (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Mar 2020 20:50:53 -0400
+Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id F1D0D2072D;
+        Sat, 21 Mar 2020 00:50:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1584751853;
+        bh=M9bbJaVZb9089JUD2phojo7fZFMiZIUm9uRxe1zkSp8=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=ZyARP0tx6rNnkEUXpNRVOE83U60WinqFN3Y3Iy5vy5DhHUUM+sYokfTGQHv7A+PDn
+         bZ40vWdp7FTC6YXLXh+J/0Y8EOvx3aTC4jdpVHWmlC/o3RzafbA9ax1gfMUIHljoxd
+         jlD487b8svqAhLgp8jJPy6AmH9AjxJ3mKDQTM/mk=
+Subject: Re: [PATCH 4.4 00/93] 4.4.217-rc1 review
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org
+Cc:     torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        linux@roeck-us.net, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org, shuah <shuah@kernel.org>
+References: <20200319123924.795019515@linuxfoundation.org>
+From:   shuah <shuah@kernel.org>
+Message-ID: <bf7f6d54-40c0-f772-ef1f-ff8a3c505df3@kernel.org>
+Date:   Fri, 20 Mar 2020 18:50:52 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-In-Reply-To: <c27c2087-14cf-614d-a8c0-05072a54f24b@wwwdotorg.org>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20200319123924.795019515@linuxfoundation.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-21.03.2020 01:30, Stephen Warren пишет:
-> On 3/20/20 2:55 PM, Dmitry Osipenko wrote:
->> Hello,
->>
->> This small series adds audio route for built-in microphone on NVIDIA Tegra
->> boards that use WM8903 CODEC. In particular this is needed in order to unmute
->> internal microphone on Acer A500 tablet device. I'm planning to send out the
->> device tree for the A500 for 5.8, so will be nice to get the microphone
->> sorted out. Please review and apply, thanks in advance.
+On 3/19/20 6:59 AM, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.4.217 release.
+> There are 93 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> It's been a long time since I looked at this code, but the series looks
-> plausible,
-> Acked-by: Stephen Warren <swarren@nvidia.com>
+> Responses should be made by Sat, 21 Mar 2020 12:37:04 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.4.217-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.4.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
+> 
 
-Thank you!
+Compiled and booted on my test system. No dmesg regressions.
 
-> (I wonder why machine->gpio_int_mic_en was already parse but never used!)
-
-Perhaps there were plans to support it later on, but that never
-materialized.
+thanks,
+-- Shuah
