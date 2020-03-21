@@ -2,37 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3C5E118E27C
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Mar 2020 16:31:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AB56218E294
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Mar 2020 16:32:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727858AbgCUPav (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 21 Mar 2020 11:30:51 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:38938 "EHLO
+        id S1728036AbgCUPb2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 21 Mar 2020 11:31:28 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:38907 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727692AbgCUPao (ORCPT
+        with ESMTP id S1727644AbgCUPaj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 21 Mar 2020 11:30:44 -0400
+        Sat, 21 Mar 2020 11:30:39 -0400
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1jFg5B-00050N-94; Sat, 21 Mar 2020 16:30:41 +0100
+        id 1jFg57-00051A-GR; Sat, 21 Mar 2020 16:30:37 +0100
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id C68ED1C22E7;
-        Sat, 21 Mar 2020 16:30:35 +0100 (CET)
-Date:   Sat, 21 Mar 2020 15:30:35 -0000
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id A56521C22E8;
+        Sat, 21 Mar 2020 16:30:36 +0100 (CET)
+Date:   Sat, 21 Mar 2020 15:30:36 -0000
 From:   "tip-bot2 for Brian Gerst" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/entry] x86/entry/64: Remove ptregs qualifier from syscall table
+Subject: [tip: x86/entry] x86/entry/64: Split X32 syscall table into its own file
 Cc:     Brian Gerst <brgerst@gmail.com>,
         Thomas Gleixner <tglx@linutronix.de>,
         Dominik Brodowski <linux@dominikbrodowski.net>,
         x86 <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>
-In-Reply-To: <20200313195144.164260-10-brgerst@gmail.com>
-References: <20200313195144.164260-10-brgerst@gmail.com>
+In-Reply-To: <20200313195144.164260-8-brgerst@gmail.com>
+References: <20200313195144.164260-8-brgerst@gmail.com>
 MIME-Version: 1.0
-Message-ID: <158480463547.28353.6779026446666587633.tip-bot2@tip-bot2>
+Message-ID: <158480463634.28353.12540165408970276913.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -48,95 +48,115 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the x86/entry branch of tip:
 
-Commit-ID:     d3b1b776eefcc1695d15730f37cdaab201fd8707
-Gitweb:        https://git.kernel.org/tip/d3b1b776eefcc1695d15730f37cdaab201fd8707
+Commit-ID:     2e487c357917b98adc6a6dafa612c435cad1af41
+Gitweb:        https://git.kernel.org/tip/2e487c357917b98adc6a6dafa612c435cad1af41
 Author:        Brian Gerst <brgerst@gmail.com>
-AuthorDate:    Fri, 13 Mar 2020 15:51:35 -04:00
+AuthorDate:    Fri, 13 Mar 2020 15:51:33 -04:00
 Committer:     Thomas Gleixner <tglx@linutronix.de>
 CommitterDate: Sat, 21 Mar 2020 16:03:21 +01:00
 
-x86/entry/64: Remove ptregs qualifier from syscall table
+x86/entry/64: Split X32 syscall table into its own file
 
-Now that the fast syscall path is removed, the ptregs qualifier is unused.
+Since X32 has its own syscall table now, move it to a separate file.
 
 Signed-off-by: Brian Gerst <brgerst@gmail.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Reviewed-by: Dominik Brodowski <linux@dominikbrodowski.net>
-Link: https://lkml.kernel.org/r/20200313195144.164260-10-brgerst@gmail.com
+Link: https://lkml.kernel.org/r/20200313195144.164260-8-brgerst@gmail.com
 
 ---
- arch/x86/entry/syscalls/syscall_64.tbl | 20 ++++++++++----------
- 1 file changed, 10 insertions(+), 10 deletions(-)
+ arch/x86/entry/Makefile      |  1 +
+ arch/x86/entry/syscall_64.c  | 27 ++-------------------------
+ arch/x86/entry/syscall_x32.c | 26 ++++++++++++++++++++++++++
+ 3 files changed, 29 insertions(+), 25 deletions(-)
+ create mode 100644 arch/x86/entry/syscall_x32.c
 
-diff --git a/arch/x86/entry/syscalls/syscall_64.tbl b/arch/x86/entry/syscalls/syscall_64.tbl
-index 0b5a25b..e8fb722 100644
---- a/arch/x86/entry/syscalls/syscall_64.tbl
-+++ b/arch/x86/entry/syscalls/syscall_64.tbl
-@@ -23,7 +23,7 @@
- 12	common	brk			__x64_sys_brk
- 13	64	rt_sigaction		__x64_sys_rt_sigaction
- 14	common	rt_sigprocmask		__x64_sys_rt_sigprocmask
--15	64	rt_sigreturn		__x64_sys_rt_sigreturn/ptregs
-+15	64	rt_sigreturn		__x64_sys_rt_sigreturn
- 16	64	ioctl			__x64_sys_ioctl
- 17	common	pread64			__x64_sys_pread64
- 18	common	pwrite64		__x64_sys_pwrite64
-@@ -64,10 +64,10 @@
- 53	common	socketpair		__x64_sys_socketpair
- 54	64	setsockopt		__x64_sys_setsockopt
- 55	64	getsockopt		__x64_sys_getsockopt
--56	common	clone			__x64_sys_clone/ptregs
--57	common	fork			__x64_sys_fork/ptregs
--58	common	vfork			__x64_sys_vfork/ptregs
--59	64	execve			__x64_sys_execve/ptregs
-+56	common	clone			__x64_sys_clone
-+57	common	fork			__x64_sys_fork
-+58	common	vfork			__x64_sys_vfork
-+59	64	execve			__x64_sys_execve
- 60	common	exit			__x64_sys_exit
- 61	common	wait4			__x64_sys_wait4
- 62	common	kill			__x64_sys_kill
-@@ -180,7 +180,7 @@
- 169	common	reboot			__x64_sys_reboot
- 170	common	sethostname		__x64_sys_sethostname
- 171	common	setdomainname		__x64_sys_setdomainname
--172	common	iopl			__x64_sys_iopl/ptregs
-+172	common	iopl			__x64_sys_iopl
- 173	common	ioperm			__x64_sys_ioperm
- 174	64	create_module
- 175	common	init_module		__x64_sys_init_module
-@@ -330,7 +330,7 @@
- 319	common	memfd_create		__x64_sys_memfd_create
- 320	common	kexec_file_load		__x64_sys_kexec_file_load
- 321	common	bpf			__x64_sys_bpf
--322	64	execveat		__x64_sys_execveat/ptregs
-+322	64	execveat		__x64_sys_execveat
- 323	common	userfaultfd		__x64_sys_userfaultfd
- 324	common	membarrier		__x64_sys_membarrier
- 325	common	mlock2			__x64_sys_mlock2
-@@ -356,7 +356,7 @@
- 432	common	fsmount			__x64_sys_fsmount
- 433	common	fspick			__x64_sys_fspick
- 434	common	pidfd_open		__x64_sys_pidfd_open
--435	common	clone3			__x64_sys_clone3/ptregs
-+435	common	clone3			__x64_sys_clone3
- 437	common	openat2			__x64_sys_openat2
- 438	common	pidfd_getfd		__x64_sys_pidfd_getfd
+diff --git a/arch/x86/entry/Makefile b/arch/x86/entry/Makefile
+index 06fc70c..85eb381 100644
+--- a/arch/x86/entry/Makefile
++++ b/arch/x86/entry/Makefile
+@@ -14,4 +14,5 @@ obj-y				+= vdso/
+ obj-y				+= vsyscall/
  
-@@ -374,7 +374,7 @@
- 517	x32	recvfrom		__x32_compat_sys_recvfrom
- 518	x32	sendmsg			__x32_compat_sys_sendmsg
- 519	x32	recvmsg			__x32_compat_sys_recvmsg
--520	x32	execve			__x32_compat_sys_execve/ptregs
-+520	x32	execve			__x32_compat_sys_execve
- 521	x32	ptrace			__x32_compat_sys_ptrace
- 522	x32	rt_sigpending		__x32_compat_sys_rt_sigpending
- 523	x32	rt_sigtimedwait		__x32_compat_sys_rt_sigtimedwait_time64
-@@ -399,6 +399,6 @@
- 542	x32	getsockopt		__x32_compat_sys_getsockopt
- 543	x32	io_setup		__x32_compat_sys_io_setup
- 544	x32	io_submit		__x32_compat_sys_io_submit
--545	x32	execveat		__x32_compat_sys_execveat/ptregs
-+545	x32	execveat		__x32_compat_sys_execveat
- 546	x32	preadv2			__x32_compat_sys_preadv64v2
- 547	x32	pwritev2		__x32_compat_sys_pwritev64v2
+ obj-$(CONFIG_IA32_EMULATION)	+= entry_64_compat.o syscall_32.o
++obj-$(CONFIG_X86_X32_ABI)	+= syscall_x32.o
+ 
+diff --git a/arch/x86/entry/syscall_64.c b/arch/x86/entry/syscall_64.c
+index 058dc1b..efb85c6 100644
+--- a/arch/x86/entry/syscall_64.c
++++ b/arch/x86/entry/syscall_64.c
+@@ -8,14 +8,13 @@
+ #include <asm/asm-offsets.h>
+ #include <asm/syscall.h>
+ 
++#define __SYSCALL_X32(nr, sym, qual)
++
+ #define __SYSCALL_64(nr, sym, qual) extern asmlinkage long sym(const struct pt_regs *);
+-#define __SYSCALL_X32(nr, sym, qual) __SYSCALL_64(nr, sym, qual)
+ #include <asm/syscalls_64.h>
+ #undef __SYSCALL_64
+-#undef __SYSCALL_X32
+ 
+ #define __SYSCALL_64(nr, sym, qual) [nr] = sym,
+-#define __SYSCALL_X32(nr, sym, qual)
+ 
+ asmlinkage const sys_call_ptr_t sys_call_table[__NR_syscall_max+1] = {
+ 	/*
+@@ -25,25 +24,3 @@ asmlinkage const sys_call_ptr_t sys_call_table[__NR_syscall_max+1] = {
+ 	[0 ... __NR_syscall_max] = &__x64_sys_ni_syscall,
+ #include <asm/syscalls_64.h>
+ };
+-
+-#undef __SYSCALL_64
+-#undef __SYSCALL_X32
+-
+-#ifdef CONFIG_X86_X32_ABI
+-
+-#define __SYSCALL_64(nr, sym, qual)
+-#define __SYSCALL_X32(nr, sym, qual) [nr] = sym,
+-
+-asmlinkage const sys_call_ptr_t x32_sys_call_table[__NR_syscall_x32_max+1] = {
+-	/*
+-	 * Smells like a compiler bug -- it doesn't work
+-	 * when the & below is removed.
+-	 */
+-	[0 ... __NR_syscall_x32_max] = &__x64_sys_ni_syscall,
+-#include <asm/syscalls_64.h>
+-};
+-
+-#undef __SYSCALL_64
+-#undef __SYSCALL_X32
+-
+-#endif
+diff --git a/arch/x86/entry/syscall_x32.c b/arch/x86/entry/syscall_x32.c
+new file mode 100644
+index 0000000..d144ced
+--- /dev/null
++++ b/arch/x86/entry/syscall_x32.c
+@@ -0,0 +1,26 @@
++// SPDX-License-Identifier: GPL-2.0
++/* System call table for x32 ABI. */
++
++#include <linux/linkage.h>
++#include <linux/sys.h>
++#include <linux/cache.h>
++#include <linux/syscalls.h>
++#include <asm/asm-offsets.h>
++#include <asm/syscall.h>
++
++#define __SYSCALL_64(nr, sym, qual)
++
++#define __SYSCALL_X32(nr, sym, qual) extern asmlinkage long sym(const struct pt_regs *);
++#include <asm/syscalls_64.h>
++#undef __SYSCALL_X32
++
++#define __SYSCALL_X32(nr, sym, qual) [nr] = sym,
++
++asmlinkage const sys_call_ptr_t x32_sys_call_table[__NR_syscall_x32_max+1] = {
++	/*
++	 * Smells like a compiler bug -- it doesn't work
++	 * when the & below is removed.
++	 */
++	[0 ... __NR_syscall_x32_max] = &__x64_sys_ni_syscall,
++#include <asm/syscalls_64.h>
++};
