@@ -2,74 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CAE3D18DCA2
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Mar 2020 01:43:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 707E718DCA7
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Mar 2020 01:44:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727827AbgCUAnR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Mar 2020 20:43:17 -0400
-Received: from mga02.intel.com ([134.134.136.20]:34096 "EHLO mga02.intel.com"
+        id S1727846AbgCUAoF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Mar 2020 20:44:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59216 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726773AbgCUAnR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Mar 2020 20:43:17 -0400
-IronPort-SDR: wPdHwqpfCfpYIn41XMPQKOHaI5ypXsJr/0tr8cdFYYeZXM5AtS13KxuAWTy2bsUBT1+zrbhllx
- BDVbz3l8NhyA==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Mar 2020 17:43:17 -0700
-IronPort-SDR: 6KNo0lISF8otDX5ZVA0Mi6sEF0fH+6FqBk3CBN1t309CeLPSX20jr6BL7qWiAh+fy4d+JcYDBU
- RS2W/dEXZ8IA==
-X-IronPort-AV: E=Sophos;i="5.72,286,1580803200"; 
-   d="scan'208";a="325032086"
-Received: from agluck-desk2.sc.intel.com (HELO agluck-desk2.amr.corp.intel.com) ([10.3.52.68])
-  by orsmga001-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Mar 2020 17:43:16 -0700
-Date:   Fri, 20 Mar 2020 17:43:15 -0700
-From:   "Luck, Tony" <tony.luck@intel.com>
-To:     Xiaoyao Li <xiaoyao.li@intel.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        hpa@zytor.com, Paolo Bonzini <pbonzini@redhat.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        kvm@vger.kernel.org, x86@kernel.org, linux-kernel@vger.kernel.org,
-        Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Arvind Sankar <nivedita@alum.mit.edu>,
-        Fenghua Yu <fenghua.yu@intel.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Jim Mattson <jmattson@google.com>
-Subject: Re: [PATCH v5 2/9] x86/split_lock: Avoid runtime reads of the
- TEST_CTRL MSR
-Message-ID: <20200321004315.GB6578@agluck-desk2.amr.corp.intel.com>
-References: <20200315050517.127446-1-xiaoyao.li@intel.com>
- <20200315050517.127446-3-xiaoyao.li@intel.com>
+        id S1726773AbgCUAoF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Mar 2020 20:44:05 -0400
+Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3AA252070A;
+        Sat, 21 Mar 2020 00:44:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1584751444;
+        bh=h4P7E0pVLo9O7XlYssZcLGMTxlYJWYNtFW0fo8tGXbU=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=Fw8QCccp9N7Wfil+KZrTrNva5n3LN5BLVmGBblxtIgY6f7oCpj9PzjZ3IhljQRXKJ
+         h3Rzp2ifFewxO2LxBTEgxdfB7JW+u+sMjMOhfNSEK5XbdSKyEBcK/LHg9PEnMbx845
+         naGHLUWM9OzKd+kUVhXoeq1G80Cmxjr+i3hu8Tc8=
+Subject: Re: [PATCH 4.14 00/99] 4.14.174-rc1 review
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org
+Cc:     torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        linux@roeck-us.net, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org, shuah <shuah@kernel.org>
+References: <20200319123941.630731708@linuxfoundation.org>
+From:   shuah <shuah@kernel.org>
+Message-ID: <2401f255-a2c6-aeb5-ba43-54ca2ed67d5d@kernel.org>
+Date:   Fri, 20 Mar 2020 18:44:03 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200315050517.127446-3-xiaoyao.li@intel.com>
+In-Reply-To: <20200319123941.630731708@linuxfoundation.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Mar 15, 2020 at 01:05:10PM +0800, Xiaoyao Li wrote:
-> In a context switch from a task that is detecting split locks
-> to one that is not (or vice versa) we need to update the TEST_CTRL
-> MSR. Currently this is done with the common sequence:
-> 	read the MSR
-> 	flip the bit
-> 	write the MSR
-> in order to avoid changing the value of any reserved bits in the MSR.
+On 3/19/20 7:02 AM, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.14.174 release.
+> There are 99 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> Cache the value of the TEST_CTRL MSR when we read it during initialization
-> so we can avoid an expensive RDMSR instruction during context switch.
+> Responses should be made by Sat, 21 Mar 2020 12:37:04 +0000.
+> Anything received after that time might be too late.
 > 
-> Suggested-by: Sean Christopherson <sean.j.christopherson@intel.com>
-> Originally-by: Tony Luck <tony.luck@intel.com>
-> Signed-off-by: Xiaoyao Li <xiaoyao.li@intel.com>
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.14.174-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.14.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
+> 
 
-Is it bad form to Ack/Review patches originally by oneself?
+Compiled and booted on my test system. No dmesg regressions.
 
-Whatever:
-
-Acked-by: Tony Luck <tony.luck@intel.com>
+thanks,
+-- Shuah
 
