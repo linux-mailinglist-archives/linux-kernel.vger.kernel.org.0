@@ -2,108 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7BBDD18E3FB
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Mar 2020 20:32:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 51C7018E3FE
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Mar 2020 20:37:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727904AbgCUTbz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 21 Mar 2020 15:31:55 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:37710 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727296AbgCUTbz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 21 Mar 2020 15:31:55 -0400
-Received: by mail-wr1-f66.google.com with SMTP id w10so11654929wrm.4
-        for <linux-kernel@vger.kernel.org>; Sat, 21 Mar 2020 12:31:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=tAhMZYvG/G7C+UxGyPYY7dK/Sq4D4s4ohO0yGJZTXxY=;
-        b=SFSkxNikzlUEPoZZkz9LGgx8W0ZYrakIf9SQ2cED+xBRql8xEffMwXkqluyb7PYY2D
-         MrPKftWf9bd/BJV6ZAdi573Gp+F7dSKXAswYTRvUTubdzO6nIuYDgE4rVLNvsdMmbBn3
-         fGVuGxYINpcwDlYoZ9OBMMFny6gPsg9dqoFbqXwtQk8zTn7esFWJE6l2FGikN/AluTwT
-         HjZLD27u0oiAwJlawipPVhVgrhaIQyVOoZOhawyJ2jGaqC1VoeeUiEWbc0DZWjtuR+N5
-         vPZwwKc6+7O9JFOZJUt010k8EM+Dj/BZqtkwhICSdbd8czvcrvktfcjMNQXz2gA/Rlbw
-         6gPA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=tAhMZYvG/G7C+UxGyPYY7dK/Sq4D4s4ohO0yGJZTXxY=;
-        b=dhJlYXgsMU6hEwALbrigiyCbJ7C0aySudAbKCtq6OfYyihj12FQ1gXOdc5Exqd+7ue
-         Yb8p9rdp4pnHlSdX/nLBrgq0/iAzMVxGcpJkQCP8aSiEoSCLMQWpBN3pkRaOWtdbyQf5
-         OlKxxcKTj0/7VeWn9DCsoGxGku9rNLzSm4I3YGiVdhBBHqhIdBh87r8HNLLTc81qMNfI
-         PtGDOE7G5qYP5ycv18IuIn63c9U4BRnO5P/SWSmxNbqBelWQ2qe09rgKkHhz6wojuY0E
-         YoT6l/tneN3zmN7f7M59xb3g09mq2+GoT/DH9ByJhMv+38g4CqpGdzOS9igK8H3dLjyK
-         3s3A==
-X-Gm-Message-State: ANhLgQ2dytXumqzQH8AKn+oZuF54QqpkVHem5sQtT7svQqDCi1CTPYaA
-        9THKfW0ISC3X/N5oktMxeLavGA==
-X-Google-Smtp-Source: ADFU+vviGuHhsNoh791a6fmt5zGMi1TMVN4TNwD7gf+jlyLbXgSp/3Ucq0V4kGML+qzTr1054nIAgQ==
-X-Received: by 2002:adf:f88b:: with SMTP id u11mr16031186wrp.84.1584819112216;
-        Sat, 21 Mar 2020 12:31:52 -0700 (PDT)
-Received: from mai.imgcgcw.net ([2a01:e34:ed2f:f020:ca2:a5ed:e238:a0c0])
-        by smtp.gmail.com with ESMTPSA id n124sm8990714wma.11.2020.03.21.12.31.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 21 Mar 2020 12:31:51 -0700 (PDT)
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-To:     daniel.lezcano@linaro.org
-Cc:     Amit Daniel Kachhap <amit.kachhap@gmail.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Javi Merino <javi.merino@kernel.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Amit Kucheria <amit.kucheria@verdurent.com>,
-        linux-pm@vger.kernel.org (open list:THERMAL/CPU_COOLING),
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH] thermal/drivers/cpufreq_cooling: Remove abusing WARN_ON
-Date:   Sat, 21 Mar 2020 20:31:07 +0100
-Message-Id: <20200321193107.21590-1-daniel.lezcano@linaro.org>
-X-Mailer: git-send-email 2.17.1
+        id S1727909AbgCUTh2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 21 Mar 2020 15:37:28 -0400
+Received: from mga04.intel.com ([192.55.52.120]:47180 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727028AbgCUTh1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 21 Mar 2020 15:37:27 -0400
+IronPort-SDR: NIo1oz9mA2LI5NiCllfdKBTjwws206u46zyC+aPYDPQL6Lj7SKLxVfZUordfTaoQYwn60O+QpF
+ vVYSBrqzuVpw==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Mar 2020 12:37:26 -0700
+IronPort-SDR: kd/2ebf5UTBnT6mnDo5GgSAINDTkqfh47lhY8cjKzgUsVh+mdnRuMu+rKC3T+lUIxQg4BjI52T
+ OhjM5Hyz7nqg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.72,289,1580803200"; 
+   d="scan'208";a="234831917"
+Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
+  by orsmga007.jf.intel.com with ESMTP; 21 Mar 2020 12:37:24 -0700
+Received: from andy by smile with local (Exim 4.93)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1jFjvy-00BnrV-OU; Sat, 21 Mar 2020 21:37:26 +0200
+Date:   Sat, 21 Mar 2020 21:37:26 +0200
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Alexandru Ardelean <alexandru.ardelean@analog.com>
+Cc:     linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        jic23@kernel.org, lars@metafoo.de
+Subject: Re: [PATCH v2 5/5] iio: adc: ad7793: use read_avail iio hook for
+ scale available
+Message-ID: <20200321193726.GA2813151@smile.fi.intel.com>
+References: <20200321090802.11537-1-alexandru.ardelean@analog.com>
+ <20200321090802.11537-5-alexandru.ardelean@analog.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200321090802.11537-5-alexandru.ardelean@analog.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The WARN_ON macros are used at the entry functions state2power() and
-set_cur_state().
+On Sat, Mar 21, 2020 at 11:08:02AM +0200, Alexandru Ardelean wrote:
+> This change uses the read_avail and '.info_mask_shared_by_type_available'
+> modifier to set the available scale.
+> Essentially, nothing changes to the driver's ABI.
+> 
+> The main idea for this patch is to remove the AD7793 driver from
+> checkpatch's radar. There have been about ~3 attempts to fix/break the
+> 'in_voltage-voltage_scale_available' attribute, because checkpatch assumed
+> it to be an arithmetic operation and people were trying to change that.
 
-state2power() is called with the max_state retrieved from
-get_max_state which returns cpufreq_cdev->max_level, then it check if
-max_state is > cpufreq_cdev->max_level. The test does not really makes
-sense but let's assume we want to make sure to catch an error if the
-code evolves. However the WARN_ON is overkill.
+> +static int ad7793_read_avail(struct iio_dev *indio_dev,
+> +			     struct iio_chan_spec const *chan,
+> +			     const int **vals, int *type, int *length,
+> +			     long mask)
+>  {
+>  	struct ad7793_state *st = iio_priv(indio_dev);
+>  
+> +	switch (mask) {
+> +	case IIO_CHAN_INFO_SCALE:
+> +		*vals = (int *)st->scale_avail;
+> +		*type = IIO_VAL_INT_PLUS_NANO;
+> +		/* Values are stored in a 2D matrix  */
+> +		*length = ARRAY_SIZE(st->scale_avail) * 2;
+>  
+> +		return IIO_AVAIL_LIST;
+> +	}
+>  
 
-set_cur_state() is also called from userspace if we write to the
-sysfs. It is easy to see a stack dumped by just writing to sysfs
-/sys/class/thermal/cooling_device0/cur_state a value greater than
-"max_level". A bit scary. Returing -EINVAL is enough.
+> +	return -EINVAL;
 
-Remove these WARN_ON.
+Wouldn't be better move this under default case?
 
-Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
----
- drivers/thermal/cpufreq_cooling.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/thermal/cpufreq_cooling.c b/drivers/thermal/cpufreq_cooling.c
-index af55ac08e1bd..d66791a71320 100644
---- a/drivers/thermal/cpufreq_cooling.c
-+++ b/drivers/thermal/cpufreq_cooling.c
-@@ -273,7 +273,7 @@ static int cpufreq_state2power(struct thermal_cooling_device *cdev,
- 	struct cpufreq_cooling_device *cpufreq_cdev = cdev->devdata;
- 
- 	/* Request state should be less than max_level */
--	if (WARN_ON(state > cpufreq_cdev->max_level))
-+	if (state > cpufreq_cdev->max_level)
- 		return -EINVAL;
- 
- 	num_cpus = cpumask_weight(cpufreq_cdev->policy->cpus);
-@@ -434,7 +434,7 @@ static int cpufreq_set_cur_state(struct thermal_cooling_device *cdev,
- 	int ret;
- 
- 	/* Request state should be less than max_level */
--	if (WARN_ON(state > cpufreq_cdev->max_level))
-+	if (state > cpufreq_cdev->max_level)
- 		return -EINVAL;
- 
- 	/* Check if the old cooling action is same as new cooling action */
 -- 
-2.17.1
+With Best Regards,
+Andy Shevchenko
+
 
