@@ -2,106 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4304618E1E4
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Mar 2020 15:34:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C821618E212
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Mar 2020 15:38:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727884AbgCUOd5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 21 Mar 2020 10:33:57 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:38794 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727805AbgCUOdw (ORCPT
+        id S1727289AbgCUOih (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 21 Mar 2020 10:38:37 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:46414 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726607AbgCUOig (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 21 Mar 2020 10:33:52 -0400
-Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tip-bot2@linutronix.de>)
-        id 1jFfC1-0004Et-KI; Sat, 21 Mar 2020 15:33:41 +0100
-Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id F2F121C22E0;
-        Sat, 21 Mar 2020 15:33:33 +0100 (CET)
-Date:   Sat, 21 Mar 2020 14:33:33 -0000
-From:   "tip-bot2 for Vincenzo Frascino" <tip-bot2@linutronix.de>
-Reply-to: linux-kernel@vger.kernel.org
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: timers/core] linux/const.h: Extract common header for vDSO
-Cc:     Vincenzo Frascino <vincenzo.frascino@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>, x86 <x86@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-In-Reply-To: <20200320145351.32292-2-vincenzo.frascino@arm.com>
-References: <20200320145351.32292-2-vincenzo.frascino@arm.com>
+        Sat, 21 Mar 2020 10:38:36 -0400
+Received: by mail-wr1-f65.google.com with SMTP id j17so7582067wru.13;
+        Sat, 21 Mar 2020 07:38:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=KHezbaonDObNhrnITsOBJjiiKzk30bQA9Nv61l1omqk=;
+        b=cIcG4ZRm5PgmhKA92ygSxLPrxu7LZhPesEZxIfgPAfNuVpC7YynZsD5a/+MzA5EpaG
+         ArirO23mGiHwzZYi/B/SyqQPJCqOCb73+L4OJo+pfY61/k43+TIAY4q2LUuU+rYsFd0j
+         6KAWqV0zF3TRV7jnt+t+368F/ULon3DMD54hukiqnZ2huZsCrFoU2PopNmc6Apap92ZQ
+         vS4AzOXyyvxnGKgRLMGkMfOFyOR0697PVql8GAy97analmoW7YVKNNG6C0IR1YBfh3Na
+         wKI4PXD9KuA8QMHDrh0rBnyP21DFlRrmmhV++5JKSQXxrOi7dQSVafzDtkGo45gw/HnP
+         5SHg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
+         :mime-version:content-transfer-encoding;
+        bh=KHezbaonDObNhrnITsOBJjiiKzk30bQA9Nv61l1omqk=;
+        b=tbQE8FSjRGmsLM1DHUEfu6Un4ZoRKPGHPi4lh6ZvsDUBAtlSGucZAP/4sE55zfmNwB
+         8/Oi2UE57JNS6r7jOENTgh16tTRCM4cAe2BYPyhTB/0G3h9mJIQNW3baWJ4sbSTARAbL
+         XYMFV1B31FMP85el3TAhHRAy1bUbQOgvEGYL1cBiGFYYGSghYRTHiaH6bjSfL9b9kHPD
+         DpLJKjrGPp5OJZ1jX5S3/f+UBYJWvbK2rTTUYSrvTTHaK2k9ofdYfZ4yGIUZxtNtEoqz
+         ru26oLomqSot2tDL16X8nXJxXhP+YCgd0lI4APX5ccs4kLRPcjOJy1TaC08DfmDVIdeG
+         S1bA==
+X-Gm-Message-State: ANhLgQ0xPrSa2+SdvOpKWkvbw9vUGxSgtzxu3pBCGuD4HEKPhw9TXY7v
+        PNmZVWGLLu56C4bjsi/NFFzLw6W7
+X-Google-Smtp-Source: ADFU+vvpJtD699uzrYrAyKDY3EnPQVf/SKIbwRg3zTVmGJ/b93WqeNNUlBpkc62TVccvt/eOjXNkHg==
+X-Received: by 2002:adf:9b96:: with SMTP id d22mr19058977wrc.249.1584801514210;
+        Sat, 21 Mar 2020 07:38:34 -0700 (PDT)
+Received: from localhost.localdomain ([2a01:4262:1ab:c:b4be:c5ec:d5f1:2a7f])
+        by smtp.gmail.com with ESMTPSA id w204sm13499569wma.1.2020.03.21.07.38.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 21 Mar 2020 07:38:33 -0700 (PDT)
+From:   Emil Renner Berthing <kernel@esmil.dk>
+To:     netdev@vger.kernel.org
+Cc:     David Wu <david.wu@rock-chips.com>,
+        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Jose Abreu <joabreu@synopsys.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        linux-rockchip@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Emil Renner Berthing <kernel@esmil.dk>
+Subject: [PATCH] net: stmmac: dwmac-rk: fix error path in rk_gmac_probe
+Date:   Sat, 21 Mar 2020 15:36:19 +0100
+Message-Id: <20200321143619.91533-1-kernel@esmil.dk>
+X-Mailer: git-send-email 2.25.2
 MIME-Version: 1.0
-Message-ID: <158480121366.28353.9221456034218489518.tip-bot2@tip-bot2>
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot2.linutronix.de>
-Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following commit has been merged into the timers/core branch of tip:
+Make sure we clean up devicetree related configuration
+also when clock init fails.
 
-Commit-ID:     8165b57bca2167acc150b708a9a6b7322f235e91
-Gitweb:        https://git.kernel.org/tip/8165b57bca2167acc150b708a9a6b7322f235e91
-Author:        Vincenzo Frascino <vincenzo.frascino@arm.com>
-AuthorDate:    Fri, 20 Mar 2020 14:53:26 
-Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Sat, 21 Mar 2020 15:23:53 +01:00
-
-linux/const.h: Extract common header for vDSO
-
-The vDSO library should only include the necessary headers required for
-a userspace library (UAPI and a minimal set of kernel headers). To make
-this possible it is necessary to isolate from the kernel headers the
-common parts that are strictly necessary to build the library.
-
-Split const.h into linux and common headers to make the latter suitable
-for inclusion in the vDSO library.
-
-Signed-off-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lkml.kernel.org/r/20200320145351.32292-2-vincenzo.frascino@arm.com
-
+Fixes: fecd4d7eef8b ("net: stmmac: dwmac-rk: Add integrated PHY support")
+Signed-off-by: Emil Renner Berthing <kernel@esmil.dk>
 ---
- include/linux/const.h |  5 +----
- include/vdso/const.h  | 10 ++++++++++
- 2 files changed, 11 insertions(+), 4 deletions(-)
- create mode 100644 include/vdso/const.h
+ drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/include/linux/const.h b/include/linux/const.h
-index 7b55a55..81b8aae 100644
---- a/include/linux/const.h
-+++ b/include/linux/const.h
-@@ -1,9 +1,6 @@
- #ifndef _LINUX_CONST_H
- #define _LINUX_CONST_H
+diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c
+index dc50ba13a746..2d5573b3dee1 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c
++++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c
+@@ -1406,17 +1406,17 @@ static int rk_gmac_probe(struct platform_device *pdev)
+ 	plat_dat->bsp_priv = rk_gmac_setup(pdev, plat_dat, data);
+ 	if (IS_ERR(plat_dat->bsp_priv)) {
+ 		ret = PTR_ERR(plat_dat->bsp_priv);
+ 		goto err_remove_config_dt;
+ 	}
  
--#include <uapi/linux/const.h>
--
--#define UL(x)		(_UL(x))
--#define ULL(x)		(_ULL(x))
-+#include <vdso/const.h>
+ 	ret = rk_gmac_clk_init(plat_dat);
+ 	if (ret)
+-		return ret;
++		goto err_remove_config_dt;
  
- #endif /* _LINUX_CONST_H */
-diff --git a/include/vdso/const.h b/include/vdso/const.h
-new file mode 100644
-index 0000000..94b385a
---- /dev/null
-+++ b/include/vdso/const.h
-@@ -0,0 +1,10 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef __VDSO_CONST_H
-+#define __VDSO_CONST_H
-+
-+#include <uapi/linux/const.h>
-+
-+#define UL(x)		(_UL(x))
-+#define ULL(x)		(_ULL(x))
-+
-+#endif /* __VDSO_CONST_H */
+ 	ret = rk_gmac_powerup(plat_dat->bsp_priv);
+ 	if (ret)
+ 		goto err_remove_config_dt;
+ 
+ 	ret = stmmac_dvr_probe(&pdev->dev, plat_dat, &stmmac_res);
+ 	if (ret)
+ 		goto err_gmac_powerdown;
+-- 
+2.25.2
+
