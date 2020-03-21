@@ -2,85 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C4C1B18E18B
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Mar 2020 14:25:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EBBCB18E19A
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Mar 2020 14:40:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727431AbgCUNZX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 21 Mar 2020 09:25:23 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:54456 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726192AbgCUNZW (ORCPT
+        id S1727469AbgCUNkj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 21 Mar 2020 09:40:39 -0400
+Received: from mout-u-107.mailbox.org ([91.198.250.252]:25472 "EHLO
+        mout-u-107.mailbox.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727039AbgCUNki (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 21 Mar 2020 09:25:22 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=uOfIGIpRB2lO24/37Hp09bZWL3HJHLXJIpo1yxUaj/8=; b=Mq6P+tfvYLvEqgQFJ6nHXYxg4u
-        lSNr6e/11mnwLyEY3LyWYwg8ippufaIhEQAss5BIVESSJU1QO2aDbyhn2krrkFga8vs1aE8jcSsvF
-        YMQO8bJ/edvesCOelMsUvxXIKar7fy3dtNpD4hoiJHaxQTEd1gTS1fwz2dsHMu3IdCPYZd/NV04EZ
-        1ORI9bJyJroPPrei5yXxwD4gx096PvwIApv6aeb2jJQtxFo4MjimPetwG6kK96SKcNOUYzuaBtuKN
-        VZfYL8yxEmqqYFb5moD9sy/P4sn+pT1IRZ8K1qX29v8X4dm2xHhuWV29SLw2/J7jYzBtQMcekaB07
-        MDQMyDkA==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jFe7p-0000XK-8L; Sat, 21 Mar 2020 13:25:17 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id A7B743010CF;
-        Sat, 21 Mar 2020 14:25:15 +0100 (CET)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 84E1820CF2170; Sat, 21 Mar 2020 14:25:15 +0100 (CET)
-Date:   Sat, 21 Mar 2020 14:25:15 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Ian Rogers <irogers@google.com>
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Kan Liang <kan.liang@linux.intel.com>,
-        linux-kernel@vger.kernel.org, Stephane Eranian <eranian@google.com>
-Subject: Re: [PATCH] perf/cgroup: correct indirection in perf_less_group_idx
-Message-ID: <20200321132515.GI20696@hirez.programming.kicks-ass.net>
-References: <20200321013839.197114-1-irogers@google.com>
+        Sat, 21 Mar 2020 09:40:38 -0400
+Received: from smtp1.mailbox.org (smtp1.mailbox.org [80.241.60.240])
+        (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
+        (No client certificate requested)
+        by mout-u-107.mailbox.org (Postfix) with ESMTPS id 48l1xJ4ySSzKpBh;
+        Sat, 21 Mar 2020 14:40:36 +0100 (CET)
+X-Virus-Scanned: amavisd-new at heinlein-support.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gorani.run; s=MBO0001;
+        t=1584798035;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=6gUTnyBd+wF4DcNE7R2+NzsCS2Cnj7qei4GbwrUoBsU=;
+        b=Wp7XIFjG6vsHM2RFsi/R75ByN0PxJkmTChTRZvcA+95nlBCKmnP4g7OSuMA+ZS2VpR+ISZ
+        7Atuz113Kb5RaHrkzhR61DmpN+ggZqWjOdqQZdgV7ChSvSJCaao6aWwFLXWBSQLt5WL9yX
+        gBV+5eHxP880JVPNiKZqrJ05hmDGThEySDr/3gRb9RQABUoqYt9FMZB5uneBp//M2o5SUg
+        OGI+qnmtISB7gtviyrw37VajKO7QRZgjsf2e7TkOv0zsfphv4E/+4HGsW7rvenPcSqIbg8
+        iEffaHuAVBQMe6o7j+iDeT5+PcvCKryZAAOEvSY1YxqFy9j+btbl7H1FzQjrNQ==
+Received: from smtp1.mailbox.org ([80.241.60.240])
+        by spamfilter06.heinlein-hosting.de (spamfilter06.heinlein-hosting.de [80.241.56.125]) (amavisd-new, port 10030)
+        with ESMTP id Gpg7pxJw-UWe; Sat, 21 Mar 2020 14:40:33 +0100 (CET)
+From:   Sungbo Eo <mans0n@gorani.run>
+To:     linux-oxnas@groups.io, Linus Walleij <linus.walleij@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <maz@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc:     Sungbo Eo <mans0n@gorani.run>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Daniel Golle <daniel@makrotopia.org>
+Subject: [PATCH] irqchip/versatile-fpga: Apply clear-mask earlier
+Date:   Sat, 21 Mar 2020 22:38:42 +0900
+Message-Id: <20200321133842.2408823-1-mans0n@gorani.run>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200321013839.197114-1-irogers@google.com>
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 20, 2020 at 06:38:39PM -0700, Ian Rogers wrote:
-> The void* in perf_less_group_idx is to a cell in the array which points
-> at a perf_event*, as such it is a perf_event**.
-> 
-> Fixes: 6eef8a7116de ("perf/core: Use min_heap in visit_groups_merge()")
-> Author: John Sperbeck <jsperbeck@google.com>
+Clear its own IRQs before the parent IRQ get enabled, so that the
+remaining IRQs do not accidentally interrupt the parent IRQ controller.
 
-That doesn't make sense, did he write the patch? Then there needs to be
-a From: him and a SoB: him, If he reported the issue, it should be
-Reported-by: him.
+This patch also fixes a reboot bug on OX820 SoC, where the remaining
+rps-timer IRQ raises a GIC interrupt that is left pending. After that,
+the rps-timer IRQ is cleared during driver initialization, and there's
+no IRQ left in rps-irq when local_irq_enable() is called, which evokes
+an error message "unexpected IRQ trap".
 
-> Signed-off-by: Ian Rogers <irogers@google.com>
-> ---
->  kernel/events/core.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/kernel/events/core.c b/kernel/events/core.c
-> index d22e4ba59dfa..a758c2311c53 100644
-> --- a/kernel/events/core.c
-> +++ b/kernel/events/core.c
-> @@ -3503,7 +3503,8 @@ static void cpu_ctx_sched_out(struct perf_cpu_context *cpuctx,
->  
->  static bool perf_less_group_idx(const void *l, const void *r)
->  {
-> -	const struct perf_event *le = l, *re = r;
-> +	const struct perf_event *le = *(const struct perf_event **)l;
-> +	const struct perf_event *re = *(const struct perf_event **)r;
+Fixes: bdd272cbb97a ("irqchip: versatile FPGA: support cascaded interrupts from DT")
+Signed-off-by: Sungbo Eo <mans0n@gorani.run>
+Cc: Neil Armstrong <narmstrong@baylibre.com>
+Cc: Daniel Golle <daniel@makrotopia.org>
+---
+ drivers/irqchip/irq-versatile-fpga.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-How did this not insta explode?
+diff --git a/drivers/irqchip/irq-versatile-fpga.c b/drivers/irqchip/irq-versatile-fpga.c
+index 70e2cfff8175..f1386733d3bc 100644
+--- a/drivers/irqchip/irq-versatile-fpga.c
++++ b/drivers/irqchip/irq-versatile-fpga.c
+@@ -212,6 +212,9 @@ int __init fpga_irq_of_init(struct device_node *node,
+ 	if (of_property_read_u32(node, "valid-mask", &valid_mask))
+ 		valid_mask = 0;
+ 
++	writel(clear_mask, base + IRQ_ENABLE_CLEAR);
++	writel(clear_mask, base + FIQ_ENABLE_CLEAR);
++
+ 	/* Some chips are cascaded from a parent IRQ */
+ 	parent_irq = irq_of_parse_and_map(node, 0);
+ 	if (!parent_irq) {
+@@ -221,9 +224,6 @@ int __init fpga_irq_of_init(struct device_node *node,
+ 
+ 	fpga_irq_init(base, node->name, 0, parent_irq, valid_mask, node);
+ 
+-	writel(clear_mask, base + IRQ_ENABLE_CLEAR);
+-	writel(clear_mask, base + FIQ_ENABLE_CLEAR);
+-
+ 	/*
+ 	 * On Versatile AB/PB, some secondary interrupts have a direct
+ 	 * pass-thru to the primary controller for IRQs 20 and 22-31 which need
+-- 
+2.25.2
+
