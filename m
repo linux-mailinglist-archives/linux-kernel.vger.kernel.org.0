@@ -2,96 +2,55 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4ED2418DE90
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Mar 2020 08:40:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 425C718DE96
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Mar 2020 08:58:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728186AbgCUHkt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 21 Mar 2020 03:40:49 -0400
-Received: from m213143.mail.qiye.163.com ([223.252.213.143]:55872 "EHLO
-        m213143.mail.qiye.163.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727961AbgCUHkt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 21 Mar 2020 03:40:49 -0400
-Received: from vivo.com (wm-7 [127.0.0.1])
-        by m213143.mail.qiye.163.com (Hmail) with ESMTP id 332BD5814F8;
-        Sat, 21 Mar 2020 15:40:15 +0800 (CST)
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: base64
-Message-ID: <AAcAiQCjCGSRNYLoGw6Zkqov.3.1584776415192.Hmail.wenhu.wang@vivo.com>
-To:     Jonathan Corbet <corbet@lwn.net>
-Cc:     Harry Wei <harryxiyou@gmail.com>,
-        Alex Shi <alex.shi@linux.alibaba.com>,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel@vivo.com
-Subject: =?UTF-8?B?UmU6UmU6IFtQQVRDSCB2MixSRVNFTkRdIGRvYzogemhfQ046IGZpeCBzdHlsZSBwcm9ibGVtcyBmb3IgaW9fb3JkZXJpbmcudHh0?=
-X-Priority: 3
-X-Mailer: HMail Webmail Server V2.0 Copyright (c) 2016-163.com
-X-Originating-IP: 58.251.74.227
-In-Reply-To: <20200320172426.121d881d@lwn.net>
-MIME-Version: 1.0
-Received: from wenhu.wang@vivo.com( [58.251.74.227) ] by ajax-webmail ( [127.0.0.1] ) ; Sat, 21 Mar 2020 15:40:15 +0800 (GMT+08:00)
-From:   =?UTF-8?B?546L5paH6JmO?= <wenhu.wang@vivo.com>
-Date:   Sat, 21 Mar 2020 15:40:15 +0800 (GMT+08:00)
-X-HM-Spam-Status: e1kfGhgUHx5ZQUtXWQgYFAkeWUFZSFVDTUtLS0tKSEhOSk9PWVdZKFlBSE
-        83V1ktWUFJV1kJDhceCFlBWTU0KTY6NyQpLjc#WQY+
-X-HM-Sender-Digest: e1kJHlYWEh9ZQUhNTEJNTEJCSUpDN1dZDB4ZWUEPCQ4eV1kSHx4VD1lB
-        WUc6Ohg6Eio4ETg8KCk1IjcUPAxNIRAKFA1VSFVKTkNPTExNT0pMTUpLVTMWGhIXVQweFRMOVQwa
-        FRw7DRINFFUYFBZFWVdZEgtZQVlOQ1VJTkpVTE9VSUlMWVdZCAFZQU5CSkI3Bg++
-X-HM-Tid: 0a70fc0907f27f7bkuuk332bd5814f8
+        id S1728179AbgCUH6X (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 21 Mar 2020 03:58:23 -0400
+Received: from olimex.com ([184.105.72.32]:52495 "EHLO olimex.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728008AbgCUH6U (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 21 Mar 2020 03:58:20 -0400
+Received: from localhost.localdomain ([89.25.85.162])
+        by olimex.com with ESMTPSA (ECDHE-RSA-AES128-GCM-SHA256:TLSv1.2:Kx=ECDH:Au=RSA:Enc=AESGCM(128):Mac=AEAD) (SMTP-AUTH username stefan@olimex.com, mechanism PLAIN)
+        for <linux-kernel@vger.kernel.org>; Sat, 21 Mar 2020 00:58:11 -0700
+From:   Stefan Mavrodiev <stefan@olimex.com>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Corentin Labbe <clabbe@baylibre.com>,
+        Stefan Mavrodiev <stefan@olimex.com>,
+        =?UTF-8?q?Cl=C3=A9ment=20P=C3=A9ron?= <peron.clem@gmail.com>,
+        devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED
+        DEVICE TREE BINDINGS),
+        linux-arm-kernel@lists.infradead.org (moderated list:ARM/Allwinner
+        sunXi SoC support), linux-kernel@vger.kernel.org (open list)
+Cc:     linux-sunxi@googlegroups.com
+Subject: [PATCH 0/2] Add A20-OLinuXino-LIME-eMMC
+Date:   Sat, 21 Mar 2020 09:57:55 +0200
+Message-Id: <20200321075757.15853-1-stefan@olimex.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-RnJvbTogSm9uYXRoYW4gQ29yYmV0IDxjb3JiZXRAbHduLm5ldD4KRGF0ZTogMjAyMC0wMy0yMSAw
-NzoyNDoyNgpUbzogIFdhbmcgV2VuaHUgPHdlbmh1LndhbmdAdml2by5jb20+CkNjOiAgSGFycnkg
-V2VpIDxoYXJyeXhpeW91QGdtYWlsLmNvbT4sQWxleCBTaGkgPGFsZXguc2hpQGxpbnV4LmFsaWJh
-YmEuY29tPixsaW51eC1kb2NAdmdlci5rZXJuZWwub3JnLGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5l
-bC5vcmcsa2VybmVsQHZpdm8uY29tClN1YmplY3Q6IFJlOiBbUEFUQ0ggdjIsUkVTRU5EXSBkb2M6
-IHpoX0NOOiBmaXggc3R5bGUgcHJvYmxlbXMgZm9yIGlvX29yZGVyaW5nLnR4dD5PbiBTYXQsIDE0
-IE1hciAyMDIwIDIzOjA4OjU1IC0wNzAwCj5XYW5nIFdlbmh1IDx3ZW5odS53YW5nQHZpdm8uY29t
-PiB3cm90ZToKPgo+PiBQcm9ibGVtcyBleGlzdCBpbiB0aGUgQ2hpbmVzZSB0cmFuc2xhdGlvbiBv
-ZiBpb19vcmRlcmluZy50eHQuCj4+IFBhcnRseSBmb3IgdGhlIGRpZmZlcmVuY2UgYmV0d2VlbiBD
-aGluZXNlIGFuZCBFbmdsaXNoIGNoYXJhY3Rlcgo+PiBlbmNvZGluZyBmb3JtYXQsIGFuZCB0aGUg
-b3RoZXJzIGFyZSBvZiB0aGUgZmFpbHVyZSB0byBjb21wbHkKPj4gd2l0aCB0aGUgUmVTVCBtYXJr
-dXBzLgo+Cj5TbyBJIGZlZWwgbGlrZSBJJ20gbWlzc2luZyBzb21ldGhpbmcgaGVyZS4uLgpTb21l
-IHN0eWxlIG1vZGlmaWNhdGlvbiwgc3VjaCBhcyAiOjoiIGZpZWxkIGFkZGVkIHdpdGhpbiBhIG5l
-d2xpbmUgaW5kaWNhdGluZwpzdGFydCBvZiBhIGJsb2NrLiBCZWNhdXNlIG9mIHRoZSBkaWZmZXJl
-bmNlIGJldHdlZW4gZW5jb2Rpbmcgb2YgQ2hpbmVzZSBhbmQKRW5nbGlzaCwgaXQgZGlkIG5vdCB3
-b3JrIHdlbGwgZm9yIENoaW5lc2UgdG8ganVzdCBwdXQgaXQgYWZ0ZXIgc29tZSBDaGluZXNlCmNo
-YXJhY3RlcnMgd2l0aGluIHRoZSBzYW1lIGxpbmUuCgpUaGUgZmlsZSBpcyBjdXJyZW50bHkgYSB0
-eHQgZmlsZShub25lIHJzdCksIHNvIGl0J3MgT0sganVzdCBpZ25vcmUgdGhlIG1vZGlmYWN0aW9u
-cy4KPgo+PiBTaWduZWQtb2ZmLWJ5OiBXYW5nIFdlbmh1IDx3ZW5odS53YW5nQHZpdm8uY29tPgo+
-PiAtLS0KPj4gdjI6IHJlc2VuZCBmb3IgdGhlIGZhaWx1cmUgb2YgZGVsaXZlcmluZy4KPj4gCj4+
-ICAuLi4vdHJhbnNsYXRpb25zL3poX0NOL2lvX29yZGVyaW5nLnR4dCAgICAgICAgfCA3MiArKysr
-KysrKysrKystLS0tLS0tCj4+ICAxIGZpbGUgY2hhbmdlZCwgNDYgaW5zZXJ0aW9ucygrKSwgMjYg
-ZGVsZXRpb25zKC0pCj4+IAo+PiBkaWZmIC0tZ2l0IGEvRG9jdW1lbnRhdGlvbi90cmFuc2xhdGlv
-bnMvemhfQ04vaW9fb3JkZXJpbmcudHh0IGIvRG9jdW1lbnRhdGlvbi90cmFuc2xhdGlvbnMvemhf
-Q04vaW9fb3JkZXJpbmcudHh0Cj4+IGluZGV4IDFmODEyN2JkZDQxNS4uMDgwZWQyOTExZGIwIDEw
-MDY0NAo+PiAtLS0gYS9Eb2N1bWVudGF0aW9uL3RyYW5zbGF0aW9ucy96aF9DTi9pb19vcmRlcmlu
-Zy50eHQKPj4gKysrIGIvRG9jdW1lbnRhdGlvbi90cmFuc2xhdGlvbnMvemhfQ04vaW9fb3JkZXJp
-bmcudHh0Cj4+IEBAIC0yOSwzOSArMjksNTkgQEAgRG9jdW1lbnRhdGlvbi9pb19vcmRlcmluZy50
-eHQg55qE5Lit5paH57+76K+RCj4+ICDov5nkuZ/lj6/ku6Xkv53or4HlkI7pnaLnmoTlhpnmk43k
-vZzlj6rlnKjliY3pnaLnmoTlhpnmk43kvZzkuYvlkI7liLDovr7orr7lpIfvvIjov5npnZ7luLjn
-sbvkvLzkuo7lhoXlrZgKPj4gIOWxj+manOaTjeS9nO+8jG1iKCnvvIzkuI3ov4fku4XpgILnlKjk
-uo5JL0/vvInjgIIKPj4gIAo+PiArQSBtb3JlIGNvbmNyZXRlIGV4YW1wbGUgZnJvbSBhIGh5cG90
-aGV0aWNhbCBkZXZpY2UgZHJpdmVyOjoKPj4gKwo+PiArCQkuLi4KPj4gKwlDUFUgQTogIHNwaW5f
-bG9ja19pcnFzYXZlKCZkZXZfbG9jaywgZmxhZ3MpCj4+ICsJQ1BVIEE6ICB2YWwgPSByZWFkbCht
-eV9zdGF0dXMpOwo+PiArCUNQVSBBOiAgLi4uCj4+ICsJQ1BVIEE6ICB3cml0ZWwobmV3dmFsLCBy
-aW5nX3B0cik7Cj4+ICsJQ1BVIEE6ICBzcGluX3VubG9ja19pcnFyZXN0b3JlKCZkZXZfbG9jaywg
-ZmxhZ3MpCj4+ICsJCS4uLgo+PiArCUNQVSBCOiAgc3Bpbl9sb2NrX2lycXNhdmUoJmRldl9sb2Nr
-LCBmbGFncykKPj4gKwlDUFUgQjogIHZhbCA9IHJlYWRsKG15X3N0YXR1cyk7Cj4+ICsJQ1BVIEI6
-ICAuLi4KPj4gKwlDUFUgQjogIHdyaXRlbChuZXd2YWwyLCByaW5nX3B0cik7Cj4+ICsJQ1BVIEI6
-ICBzcGluX3VubG9ja19pcnFyZXN0b3JlKCZkZXZfbG9jaywgZmxhZ3MpCj4+ICsJCS4uLgo+PiAr
-Cj4+ICsKPj4gIOWBh+iuvuS4gOS4quiuvuWkh+mpseWKqOeoi+eahOWFt+S9k+S+i+WtkO+8mgo+
-PiArOjoKPj4gIAo+PiArCQkuLi4KPj4gKwlDUFUgQTogIHNwaW5fbG9ja19pcnFzYXZlKCZkZXZf
-bG9jaywgZmxhZ3MpCj4+ICsJQ1BVIEE6ICB2YWwgPSByZWFkbChteV9zdGF0dXMpOwo+PiArCUNQ
-VSBBOiAgLi4uCj4+ICsJQ1BVIEE6ICB3cml0ZWwobmV3dmFsLCByaW5nX3B0cik7Cj4+ICsJQ1BV
-IEE6ICBzcGluX3VubG9ja19pcnFyZXN0b3JlKCZkZXZfbG9jaywgZmxhZ3MpCj4+ICsJCS4uLgo+
-PiArCUNQVSBCOiAgc3Bpbl9sb2NrX2lycXNhdmUoJmRldl9sb2NrLCBmbGFncykKPj4gKwlDUFUg
-QjogIHZhbCA9IHJlYWRsKG15X3N0YXR1cyk7Cj4+ICsJQ1BVIEI6ICAuLi4KPj4gKwlDUFUgQjog
-IHdyaXRlbChuZXd2YWwyLCByaW5nX3B0cik7Cj4+ICsJQ1BVIEI6ICBzcGluX3VubG9ja19pcnFy
-ZXN0b3JlKCZkZXZfbG9jaywgZmxhZ3MpCj4KPkl0IHN1cmUgbG9va3MgbGlrZSB5b3UncmUgYWRk
-aW5nIHRoZSBzYW1lIHRleHQgdHdpY2UgaGVyZS4uLj8KQXMgSSBtZW50aW9uZWQgYmVsb3cgdGhl
-IHNpZ24tb2ZmIGFyZWEsIGRlbGl2ZXJ5IGZhaWx1cmUgaGFwcGVuZWQgc28KdGhpcyBpcyBqdXN0
-IGEgcmVzZW50IHZlcnNpb24uCj4KPlRoYW5rcywKPgo+am9uCj4KDQoNCg==
+The board is the same as A20-OLinuXino-LIME with added eMMC chip. So the
+dts is almost identical with A20-OLinuXino-LIME2.
+
+This patch series adds a new dts file and appends the bindings
+documentation.
+
+Stefan Mavrodiev (2):
+  ARM: dts: sun7i: Add A20-OLinuXino-LIME-eMMC
+  dt-bindings: arm: sunxi: Add compatible for A20-OLinuXino-LIME-eMMC
+
+ .../devicetree/bindings/arm/sunxi.yaml        |  5 +++
+ arch/arm/boot/dts/Makefile                    |  1 +
+ .../dts/sun7i-a20-olinuxino-lime-emmc.dts     | 32 +++++++++++++++++++
+ 3 files changed, 38 insertions(+)
+ create mode 100644 arch/arm/boot/dts/sun7i-a20-olinuxino-lime-emmc.dts
+
+-- 
+2.17.1
