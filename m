@@ -2,85 +2,144 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 51C7018E3FE
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Mar 2020 20:37:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7463918E405
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Mar 2020 20:38:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727909AbgCUTh2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 21 Mar 2020 15:37:28 -0400
-Received: from mga04.intel.com ([192.55.52.120]:47180 "EHLO mga04.intel.com"
+        id S1728121AbgCUTiG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 21 Mar 2020 15:38:06 -0400
+Received: from mga11.intel.com ([192.55.52.93]:55983 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727028AbgCUTh1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 21 Mar 2020 15:37:27 -0400
-IronPort-SDR: NIo1oz9mA2LI5NiCllfdKBTjwws206u46zyC+aPYDPQL6Lj7SKLxVfZUordfTaoQYwn60O+QpF
- vVYSBrqzuVpw==
+        id S1727028AbgCUThz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 21 Mar 2020 15:37:55 -0400
+IronPort-SDR: +Rx1ZYW07g0Ptr3eTy5pTl/0VFKi5XxeGN/1roJVNf32H7zeMrc4a2WpQARhhWP33u4enAmQH0
+ jxK197J7eBYw==
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Mar 2020 12:37:26 -0700
-IronPort-SDR: kd/2ebf5UTBnT6mnDo5GgSAINDTkqfh47lhY8cjKzgUsVh+mdnRuMu+rKC3T+lUIxQg4BjI52T
- OhjM5Hyz7nqg==
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Mar 2020 12:37:53 -0700
+IronPort-SDR: WXb3xou5Qmr5WW8ex0hNZM+Ew9D7J/HSFYceqXfQGAiXC65lJSoEKuSP40uZ6LHZkD582big0+
+ tsz1jHfT/rrg==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.72,289,1580803200"; 
-   d="scan'208";a="234831917"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
-  by orsmga007.jf.intel.com with ESMTP; 21 Mar 2020 12:37:24 -0700
-Received: from andy by smile with local (Exim 4.93)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1jFjvy-00BnrV-OU; Sat, 21 Mar 2020 21:37:26 +0200
-Date:   Sat, 21 Mar 2020 21:37:26 +0200
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Alexandru Ardelean <alexandru.ardelean@analog.com>
-Cc:     linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        jic23@kernel.org, lars@metafoo.de
-Subject: Re: [PATCH v2 5/5] iio: adc: ad7793: use read_avail iio hook for
- scale available
-Message-ID: <20200321193726.GA2813151@smile.fi.intel.com>
-References: <20200321090802.11537-1-alexandru.ardelean@analog.com>
- <20200321090802.11537-5-alexandru.ardelean@analog.com>
+   d="scan'208";a="445353676"
+Received: from sjchrist-coffee.jf.intel.com ([10.54.74.202])
+  by fmsmga005.fm.intel.com with ESMTP; 21 Mar 2020 12:37:52 -0700
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     Paolo Bonzini <pbonzini@redhat.com>
+Cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/3] KVM: VMX: Fix for kexec VMCLEAR and VMXON cleanup
+Date:   Sat, 21 Mar 2020 12:37:48 -0700
+Message-Id: <20200321193751.24985-1-sean.j.christopherson@intel.com>
+X-Mailer: git-send-email 2.24.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200321090802.11537-5-alexandru.ardelean@analog.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Mar 21, 2020 at 11:08:02AM +0200, Alexandru Ardelean wrote:
-> This change uses the read_avail and '.info_mask_shared_by_type_available'
-> modifier to set the available scale.
-> Essentially, nothing changes to the driver's ABI.
-> 
-> The main idea for this patch is to remove the AD7793 driver from
-> checkpatch's radar. There have been about ~3 attempts to fix/break the
-> 'in_voltage-voltage_scale_available' attribute, because checkpatch assumed
-> it to be an arithmetic operation and people were trying to change that.
+Patch 1 fixes a a theoretical bug where a crashdump NMI that arrives
+while KVM is messing with the percpu VMCS list would result in one or more
+VMCSes not being cleared, potentially causing memory corruption in the new
+kexec'd kernel.
 
-> +static int ad7793_read_avail(struct iio_dev *indio_dev,
-> +			     struct iio_chan_spec const *chan,
-> +			     const int **vals, int *type, int *length,
-> +			     long mask)
->  {
->  	struct ad7793_state *st = iio_priv(indio_dev);
->  
-> +	switch (mask) {
-> +	case IIO_CHAN_INFO_SCALE:
-> +		*vals = (int *)st->scale_avail;
-> +		*type = IIO_VAL_INT_PLUS_NANO;
-> +		/* Values are stored in a 2D matrix  */
-> +		*length = ARRAY_SIZE(st->scale_avail) * 2;
->  
-> +		return IIO_AVAIL_LIST;
-> +	}
->  
+Patch 2 is cleanup that's made possible by patch 1.
 
-> +	return -EINVAL;
+Patch 3 isn't directly related, but it conflicts with the crash cleanup
+changes, both from a code and a semantics perspective.  Without the crash
+cleanup, IMO hardware_enable() should do crash_disable_local_vmclear()
+if VMXON fails, i.e. clean up after itself.  But hardware_disable()
+doesn't even do crash_disable_local_vmclear() (which is what got me
+looking at that code in the first place).  Basing the VMXON change on top
+of the crash cleanup avoids the debate entirely.
 
-Wouldn't be better move this under default case?
+v2:
+  - Inverted the code flow, i.e. move code from loaded_vmcs_init() to
+    __loaded_vmcs_clear().  Trying to share loaded_vmcs_init() with
+    alloc_loaded_vmcs() was taking more code than it saved. [Paolo]
+
+
+Gory details on the crashdump bug:
+
+I verified my analysis of the NMI bug by simulating what would happen if
+an NMI arrived in the middle of list_add() and list_del().  The below
+output matches expectations, e.g. nothing hangs, the entry being added
+doesn't show up, and the entry being deleted _does_ show up.
+
+[    8.205898] KVM: testing NMI in list_add()
+[    8.205898] KVM: testing NMI in list_del()
+[    8.205899] KVM: found e3
+[    8.205899] KVM: found e2
+[    8.205899] KVM: found e1
+[    8.205900] KVM: found e3
+[    8.205900] KVM: found e1
+
+static void vmx_test_list(struct list_head *list, struct list_head *e1,
+                          struct list_head *e2, struct list_head *e3)
+{
+        struct list_head *tmp;
+
+        list_for_each(tmp, list) {
+                if (tmp == e1)
+                        pr_warn("KVM: found e1\n");
+                else if (tmp == e2)
+                        pr_warn("KVM: found e2\n");
+                else if (tmp == e3)
+                        pr_warn("KVM: found e3\n");
+                else
+                        pr_warn("KVM: kaboom\n");
+        }
+}
+
+static int __init vmx_init(void)
+{
+        LIST_HEAD(list);
+        LIST_HEAD(e1);
+        LIST_HEAD(e2);
+        LIST_HEAD(e3);
+
+        pr_warn("KVM: testing NMI in list_add()\n");
+
+        list.next->prev = &e1;
+        vmx_test_list(&list, &e1, &e2, &e3);
+
+        e1.next = list.next;
+        vmx_test_list(&list, &e1, &e2, &e3);
+
+        e1.prev = &list;
+        vmx_test_list(&list, &e1, &e2, &e3);
+
+        INIT_LIST_HEAD(&list);
+        INIT_LIST_HEAD(&e1);
+
+        list_add(&e1, &list);
+        list_add(&e2, &list);
+        list_add(&e3, &list);
+
+        pr_warn("KVM: testing NMI in list_del()\n");
+
+        e3.prev = &e1;
+        vmx_test_list(&list, &e1, &e2, &e3);
+
+        list_del(&e2);
+        list.prev = &e1;
+        vmx_test_list(&list, &e1, &e2, &e3);
+}
+
+Sean Christopherson (3):
+  KVM: VMX: Always VMCLEAR in-use VMCSes during crash with kexec support
+  KVM: VMX: Fold loaded_vmcs_init() into alloc_loaded_vmcs()
+  KVM: VMX: Gracefully handle faults on VMXON
+
+ arch/x86/kvm/vmx/vmx.c | 103 ++++++++++++++++-------------------------
+ arch/x86/kvm/vmx/vmx.h |   1 -
+ 2 files changed, 40 insertions(+), 64 deletions(-)
 
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.24.1
 
