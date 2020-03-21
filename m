@@ -2,106 +2,50 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BB07118E3F5
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Mar 2020 20:29:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4B89518E3FC
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Mar 2020 20:34:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727864AbgCUT3B (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 21 Mar 2020 15:29:01 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:39274 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727264AbgCUT3B (ORCPT
+        id S1727887AbgCUTei (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 21 Mar 2020 15:34:38 -0400
+Received: from resqmta-ch2-08v.sys.comcast.net ([69.252.207.40]:59918 "EHLO
+        resqmta-ch2-08v.sys.comcast.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727296AbgCUTei (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 21 Mar 2020 15:29:01 -0400
-Received: from p5de0bf0b.dip0.t-ipconnect.de ([93.224.191.11] helo=nanos.tec.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1jFjnY-0008Uo-OD; Sat, 21 Mar 2020 20:28:44 +0100
-Received: by nanos.tec.linutronix.de (Postfix, from userid 1000)
-        id 1657D1040D4; Sat, 21 Mar 2020 20:28:43 +0100 (CET)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     kbuild test robot <lkp@intel.com>,
-        "Peter Zijlstra \(Intel\)" <peterz@infradead.org>
-Cc:     kbuild-all@lists.01.org, linux-kernel@vger.kernel.org,
-        x86@kernel.org, Greg Ungerer <gerg@linux-m68k.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        linux-m68k@lists.linux-m68k.org
-Subject: Re: [tip:locking/core 19/28] include/linux/fs.h:1422:29: error: array type has incomplete element type 'struct percpu_rw_semaphore'
-In-Reply-To: <202003220209.CjthuGEA%lkp@intel.com>
-References: <202003220209.CjthuGEA%lkp@intel.com>
-Date:   Sat, 21 Mar 2020 20:28:43 +0100
-Message-ID: <87fte1qzh0.fsf@nanos.tec.linutronix.de>
+        Sat, 21 Mar 2020 15:34:38 -0400
+X-Greylist: delayed 488 seconds by postgrey-1.27 at vger.kernel.org; Sat, 21 Mar 2020 15:34:38 EDT
+Received: from resomta-ch2-10v.sys.comcast.net ([69.252.207.106])
+        by resqmta-ch2-08v.sys.comcast.net with ESMTP
+        id FibGj0dG8LoTbFjlNjhP7v; Sat, 21 Mar 2020 19:26:29 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=comcast.net;
+        s=20190202a; t=1584818789;
+        bh=vaeBmkVNINKx94yWt69KnTdaPQ9Bgw6KKAykYDGyWSU=;
+        h=Received:Received:To:From:Subject:Message-ID:Date:MIME-Version:
+         Content-Type;
+        b=hqGQo+wsIovdnAjC/CgAmjkF+/OUpwgGCec3gB3ugjWoZuP5q6DmlekF2ux3fOc+d
+         449zJn4+CJp+nYWoGXFiplkH8qryT9dVfvN6bwrlZbXayKCrRVj8vuDJoye3UnKfvx
+         OKyJNSeXNNAMDk9Co0fkBozVo78p8y4zbVbTqi9ji19JoxD/2dFtJPNFeAVtzvi9k+
+         3hUJFiYxrDdiQkrDCr0LARhr7ttL12xzgLHo1CD/wMSlqKUifpKIm0IwdNCAYMPG9E
+         5uJAb7eWbmhpa5yO40nEiRc7SKbknGaO/jir7ZLHKYDSBdJLwY2A0cYLsuWo+IVRkS
+         fnftduycFR6yw==
+Received: from [IPv6:2601:500:8303:76a0:eef4:bbff:fe36:426]
+ ([IPv6:2601:500:8303:76a0:eef4:bbff:fe36:426])
+        by resomta-ch2-10v.sys.comcast.net with ESMTPA
+        id FjlLjUytkg6zoFjlNjOO5O; Sat, 21 Mar 2020 19:26:29 +0000
+X-Xfinity-VMeta: sc=0.00;st=legit
+To:     linux-kernel@vger.kernel.org
+From:   don fisher <hdf3@comcast.net>
+Subject: help
+Message-ID: <5cebdf24-9094-2291-61a9-edf1190e40e7@comcast.net>
+Date:   Sat, 21 Mar 2020 12:26:27 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-kbuild test robot <lkp@intel.com> writes:
-> All errors (new ones prefixed by >>):
->
->    In file included from include/linux/huge_mm.h:8,
->                     from include/linux/mm.h:567,
->                     from arch/m68k/include/asm/uaccess_no.h:8,
->                     from arch/m68k/include/asm/uaccess.h:3,
->                     from include/linux/uaccess.h:11,
->                     from include/linux/sched/task.h:11,
->                     from include/linux/sched/signal.h:9,
->                     from include/linux/rcuwait.h:6,
->                     from include/linux/percpu-rwsem.h:7,
->                     from kernel/locking/percpu-rwsem.c:6:
->>> include/linux/fs.h:1422:29: error: array type has incomplete element type 'struct percpu_rw_semaphore'
->     1422 |  struct percpu_rw_semaphore rw_sem[SB_FREEZE_LEVELS];
->          |                             ^~~~~~
-
-Same problem as in the other architectures and same cure.
-
-Thanks,
-
-        tglx
----
-Subject: m68knommu: Remove mm.h include from uaccess_no.h
-From: Thomas Gleixner <tglx@linutronix.de>
-Date: Sat, 21 Mar 2020 20:22:10 +0100
-
-In file included
-  from include/linux/huge_mm.h:8,
-  from include/linux/mm.h:567,
-  from arch/m68k/include/asm/uaccess_no.h:8,
-  from arch/m68k/include/asm/uaccess.h:3,
-  from include/linux/uaccess.h:11,
-  from include/linux/sched/task.h:11,
-  from include/linux/sched/signal.h:9,
-  from include/linux/rcuwait.h:6,
-  from include/linux/percpu-rwsem.h:7,
-  from kernel/locking/percpu-rwsem.c:6:
- include/linux/fs.h:1422:29: error: array type has incomplete element type 'struct percpu_rw_semaphore'
-    1422 |  struct percpu_rw_semaphore rw_sem[SB_FREEZE_LEVELS];
-
-Removing the include of linux/mm.h from the uaccess header solves the problem
-and various build tests of nommu configurations still work.
-
-Fixes: 80fbaf1c3f29 ("rcuwait: Add @state argument to rcuwait_wait_event()")
-Reported-by: kbuild test robot <lkp@intel.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Greg Ungerer <gerg@linux-m68k.org>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: linux-m68k@lists.linux-m68k.org
----
- arch/m68k/include/asm/uaccess_no.h |    1 -
- 1 file changed, 1 deletion(-)
-
---- a/arch/m68k/include/asm/uaccess_no.h
-+++ b/arch/m68k/include/asm/uaccess_no.h
-@@ -5,7 +5,6 @@
- /*
-  * User space memory access functions
-  */
--#include <linux/mm.h>
- #include <linux/string.h>
- 
- #include <asm/segment.h>
+I want to change my subscription. How do I do it?
