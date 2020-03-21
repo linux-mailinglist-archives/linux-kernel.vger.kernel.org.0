@@ -2,95 +2,156 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4851918E199
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Mar 2020 14:40:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2E82A18E19F
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Mar 2020 14:41:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727406AbgCUNkR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 21 Mar 2020 09:40:17 -0400
-Received: from mail-il1-f198.google.com ([209.85.166.198]:43688 "EHLO
-        mail-il1-f198.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727039AbgCUNkR (ORCPT
+        id S1727508AbgCUNlG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 21 Mar 2020 09:41:06 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:51608 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726646AbgCUNlF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 21 Mar 2020 09:40:17 -0400
-Received: by mail-il1-f198.google.com with SMTP id o9so4083489ila.10
-        for <linux-kernel@vger.kernel.org>; Sat, 21 Mar 2020 06:40:16 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=pyMoj2Ao5xrYueRmpo2CDvoKtmm7H1d6XHU2eunTcBs=;
-        b=HI/iDTrTPnPjBSeR5vCSFEsXFm0/AXaOhRTrwqU5/TJsiDYVlHVzbrxKAOEWt1YEPN
-         S/nqHRFw/FXgTQ+rt/hMcmGUcIGgWdryO/g4JCArd/teCZHVfJWCfl0oX1gdlHx9sNsb
-         qorgREUrLbhRfBKxB3+ycjhbsGL8aL/EWZyFLx6/rXyp0Ev4XWrSRdbtyfEuJtqeUL4W
-         e6UPkJdpHQ8VmEe2IGZ3Mt6UiCqEFNXUH7OFL9oLDuTdwD3KoNONiMymu9YErQLILpPE
-         dQS9gRKx9oq7K66kX/CIYkxqaqtSr8/stsCZRWvOtYO9Fbsq9HGSwItk4m3dhnpEWa/G
-         dDhQ==
-X-Gm-Message-State: ANhLgQ2Mj6qqP00/pbLK/wfEGw6W45Qoyoi6haZh245h889R0UCrAr8X
-        CVKxoP1OCigMRLk1dhdfVt6568U1zAgquVgNaFUrHDwizecg
-X-Google-Smtp-Source: ADFU+vsuPK95kr3EfZG0nV0RC/z5+OfOuDJQiDqIdZLlH1alFFTQmOA7fA8/R9We5nWodEngkn6TZ1bMbCR1u0bDCecZovj1wGUe
+        Sat, 21 Mar 2020 09:41:05 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=bRhGgZCvp+D4IKpka0PHEQGPnYx9eAOjKg1+y/QaM30=; b=K1OXLz9sfQ+ACTqiK7MkHAVbS5
+        026OiPFEg73Ok4OLqafT/rzM84uihbVArbnkF5c/v2xlgIuKYwPr8zV4mBaj66RxUGbNh4a1vXZ4R
+        0WwCEMBhNNVrZPJGHH4+IiRoldJLPEiYENMP76yMT8QSaOipQhIpbZJQ2HtgWj3nr2F1tcFxwchVf
+        9kxD/XScw4m0J0Iltqviq2nG3F8i4Qh6TyuYCRJGFOiBivACE0Frj6VErT7/gN+uRHJQ1oipJbSPC
+        wRLrCRhTLuMLq3geLW+tuZPLclyY8tswQLQZCwu0ew/1PWWd+tAy5e/kB9WU/CKosNCg6JILCc5o5
+        gXq2naGg==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jFeMx-0001j7-Kb; Sat, 21 Mar 2020 13:40:55 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 2EB89303C41;
+        Sat, 21 Mar 2020 14:40:54 +0100 (CET)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id EAB1E28B4E0DE; Sat, 21 Mar 2020 14:40:53 +0100 (CET)
+Date:   Sat, 21 Mar 2020 14:40:53 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Ian Rogers <irogers@google.com>
+Cc:     Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Andi Kleen <ak@linux.intel.com>,
+        Kan Liang <kan.liang@linux.intel.com>,
+        linux-kernel@vger.kernel.org, Stephane Eranian <eranian@google.com>
+Subject: Re: [PATCH] perf test x86: address multiplexing in rdpmc test
+Message-ID: <20200321134053.GJ20696@hirez.programming.kicks-ass.net>
+References: <20200321001400.245121-1-irogers@google.com>
 MIME-Version: 1.0
-X-Received: by 2002:a92:890b:: with SMTP id n11mr12898208ild.54.1584798016082;
- Sat, 21 Mar 2020 06:40:16 -0700 (PDT)
-Date:   Sat, 21 Mar 2020 06:40:16 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000ca19c205a15d8aca@google.com>
-Subject: KASAN: slab-out-of-bounds Read in garmin_read_process
-From:   syzbot <syzbot+d29e9263e13ce0b9f4fd@syzkaller.appspotmail.com>
-To:     andreyknvl@google.com, gregkh@linuxfoundation.org,
-        johan@kernel.org, linux-kernel@vger.kernel.org,
-        linux-usb@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200321001400.245121-1-irogers@google.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On Fri, Mar 20, 2020 at 05:14:00PM -0700, Ian Rogers wrote:
+> Counters may be being used for pinned or other events which inhibit the
+> instruction counter in the test from being scheduled - time_enabled > 0
+> but time_running == 0. This causes the test to fail with division by 0.
+> Add a sleep loop to ensure that the counter is run before computing
+> the count.
+> 
+> Signed-off-by: Ian Rogers <irogers@google.com>
+> ---
+>  tools/perf/arch/x86/tests/rdpmc.c | 45 ++++++++++++++++++++++++-------
+>  1 file changed, 35 insertions(+), 10 deletions(-)
+> 
+> diff --git a/tools/perf/arch/x86/tests/rdpmc.c b/tools/perf/arch/x86/tests/rdpmc.c
+> index 1ea916656a2d..0b0792ae67f7 100644
+> --- a/tools/perf/arch/x86/tests/rdpmc.c
+> +++ b/tools/perf/arch/x86/tests/rdpmc.c
+> @@ -34,19 +34,35 @@ static u64 rdtsc(void)
+>  	return low | ((u64)high) << 32;
+>  }
+>  
+> -static u64 mmap_read_self(void *addr)
+> +static u64 mmap_read_self(void *addr, bool *error)
+>  {
+>  	struct perf_event_mmap_page *pc = addr;
+> -	u32 seq, idx, time_mult = 0, time_shift = 0;
+> +	u32 seq, idx, time_mult = 0, time_shift = 0, sleep_count = 0;
+>  	u64 count, cyc = 0, time_offset = 0, enabled, running, delta;
+>  
+> +	*error = false;
+>  	do {
+> -		seq = pc->lock;
+> -		barrier();
+> -
+> -		enabled = pc->time_enabled;
+> -		running = pc->time_running;
+> -
+> +		do {
+> +			seq = pc->lock;
+> +			barrier();
+> +
+> +			enabled = pc->time_enabled;
+> +			running = pc->time_running;
+> +
+> +			if (running == 0) {
 
-syzbot found the following crash on:
+This is not in fact the condition the Changelog calls out.
 
-HEAD commit:    e17994d1 usb: core: kcov: collect coverage from usb comple..
-git tree:       https://github.com/google/kasan.git usb-fuzzer
-console output: https://syzkaller.appspot.com/x/log.txt?x=16255ce5e00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=5d64370c438bc60
-dashboard link: https://syzkaller.appspot.com/bug?extid=d29e9263e13ce0b9f4fd
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1376a3f9e00000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14c65fe3e00000
-
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+d29e9263e13ce0b9f4fd@syzkaller.appspotmail.com
-
-==================================================================
-BUG: KASAN: slab-out-of-bounds in __le32_to_cpup include/uapi/linux/byteorder/little_endian.h:58 [inline]
-BUG: KASAN: slab-out-of-bounds in getLayerId drivers/usb/serial/garmin_gps.c:208 [inline]
-BUG: KASAN: slab-out-of-bounds in garmin_read_process+0x1b0/0x2e0 drivers/usb/serial/garmin_gps.c:1142
-Read of size 4 at addr ffff8881ca74abe8 by task swapper/1/0
-
-CPU: 1 PID: 0 Comm: swapper/1 Not tainted 5.6.0-rc5-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Call Trace:
- <IRQ>
- __dump_stack lib/dump_stack.c:77 [inline]
- dump_stack+0xef/0x16e lib/dump_stack.c:118
- print_address_description.constprop.0.cold+0xd3/0x314 mm/kasan/report.c:374
- __kasan_report.cold+0x37/0x77 mm/kasan/report.c:506
- kasan_report+0xe/0x20 mm/kasan/common.c:641
- __le32_to_cpup include/uapi/linux/byteorder/little_endian.h:58 [inline]
- getLayerId drivers/usb/serial/garmin_gps.c:208 [inline]
- garmin_read_process+0x1b0/0x2e0 drivers/usb/serial/garmin_gps.c:1142
- garmin_read_int_callback+0x19f/0x746 drivers/usb/serial/garmin_gps.c:1279
- __usb_hcd_giveback_urb+0x29a/0x550 drivers/usb/core/hcd.c:1650
- usb_hcd_giveback_urb+0x368/0x420 drivers/usb/core/hcd.c:1716
- dummy_timer+0x1258/0x32ae drivers/usb/gadget/udc/dummy_hcd.c:1966
+> +				/*
+> +				 * Event hasn't run, this may be caused by
+> +				 * multiplexing.
+> +				 */
+> +				sleep_count++;
+> +				if (sleep_count > 60) {
+> +					pr_err("Event failed to run. Are higher priority counters being sampled by a different process?\n");
+> +					*error = true;
+> +					return 0;
+> +				}
+> +				sleep(1);
+> +			}
+> +		} while (running == 0);
 
 
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+Also, I would much prefer this test to be in the caller of this
+function, and not deface this function.
 
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-syzbot can test patches for this bug, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+I'd prefer this function to stay representative of the outlines in
+uapi/linux/perf_event.h and an example of how to actually use it.
+
+>  		if (enabled != running) {
+>  			cyc = rdtsc();
+>  			time_mult = pc->time_mult;
+> @@ -131,13 +147,22 @@ static int __test__rdpmc(void)
+>  
+>  	for (n = 0; n < 6; n++) {
+>  		u64 stamp, now, delta;
+> +		bool error;
+>  
+> -		stamp = mmap_read_self(addr);
+> +		stamp = mmap_read_self(addr, &error);
+> +		if (error) {
+> +			delta_sum = 0;
+> +			goto out_close;
+> +		}
+>  
+>  		for (i = 0; i < loops; i++)
+>  			tmp++;
+>  
+> -		now = mmap_read_self(addr);
+> +		now = mmap_read_self(addr, &error);
+> +		if (error) {
+> +			delta_sum = 0;
+> +			goto out_close;
+> +		}
+>  		loops *= 10;
+>  
+>  		delta = now - stamp;
+> -- 
+> 2.25.1.696.g5e7596f4ac-goog
+> 
