@@ -2,94 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 16FBD18E432
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Mar 2020 21:19:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 560E618E456
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Mar 2020 21:26:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727841AbgCUUTC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 21 Mar 2020 16:19:02 -0400
-Received: from mail-pj1-f67.google.com ([209.85.216.67]:37865 "EHLO
-        mail-pj1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726539AbgCUUTC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 21 Mar 2020 16:19:02 -0400
-Received: by mail-pj1-f67.google.com with SMTP id o12so326478pjs.2;
-        Sat, 21 Mar 2020 13:19:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=pJ0AgRbEJoFommdqX1eg2v1GRS9pD6sawkpvA/Zb67c=;
-        b=oas0AV1oe5ksIUibU59v1KUrsf9zvET7zdNxvM5R+n9/H+28L89s5Fd0z/PQiRQKKE
-         Axr7wppUYJZ5w30AL29RJDaxCXRgpDYyzlRRHYw3DTV016dkyKE+PlP8djs9vLwTPZRj
-         wacAEaeDlRWzP4lop/OSnMxzY9VxsZQpHLqrO3gzVORt87qoTEZegQrcOws+X7JgmlWr
-         7c/sfJsV7h1AlIOVlHlvgPkbx83pkQ2S7tdefrVBWjBOSWvfsindexUd730Z/pclJlwU
-         zgBa7NsSHAAc52rLqbd57qCch0GWItr0Fvhc3GLh1J7WRPb9jNwIsV1cCM7NnVMYZDM+
-         g2HA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=pJ0AgRbEJoFommdqX1eg2v1GRS9pD6sawkpvA/Zb67c=;
-        b=Gy8wezHxjVJv1Quaeuab/hbYzXZB3Fp02ZOAvxSrluuwqngF7zDdKy/1++y644NjVD
-         piA7gN9Ja1oHZCEbMtxi5YobwVcmpkmtIfupfbmVsM482npC3PzH6PgkvFvdlj8L3uqo
-         mhchvN3idIuxRIGszH+w9MYyuqwT0S/8DaUAMPAR6xaucitVJkf7jdONAYgoD8mXpgrd
-         x7d2SEwXW6EisENF6LEG6Wh1Zgi6HXaucJDL70HhnG1eKr+U1zzRFN3nkR5E5ZKMeAKX
-         dgW4nHSBAYX5Y4vuWxAIP4XRDAmS0nUmg83/HRkOwOg45zQ+4y2Q0JyGHhUWbWkDqcpT
-         Egmg==
-X-Gm-Message-State: ANhLgQ2PO6mTY88Q2KOYJLQIScrsvQdb/zhFn+13CdbrJwv6VkDe2DfL
-        vcI9CVQcTIX9Bk/TmDBMF++vHow9WJe7TVrkxoA=
-X-Google-Smtp-Source: ADFU+vvLvwI30YSioHW9jCG7YRT4vp3Bo1OO5Jz61Wu8AqozjSPXCfyA6nh7vCsBj7upjsgK/dxSqP0i7n+9QZiJQM0=
-X-Received: by 2002:a17:902:54f:: with SMTP id 73mr14443053plf.255.1584821941371;
- Sat, 21 Mar 2020 13:19:01 -0700 (PDT)
+        id S1728110AbgCUU0K (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 21 Mar 2020 16:26:10 -0400
+Received: from mga03.intel.com ([134.134.136.65]:8930 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726846AbgCUU0I (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 21 Mar 2020 16:26:08 -0400
+IronPort-SDR: eFWtV/jdffBkXM4rVldq+kUR+7v4P0+e/PQZsWhjoIrgawmXlglnv9YqdZJV0qwWbLz5tsLmT4
+ fl1VvdtnfLeQ==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Mar 2020 13:26:05 -0700
+IronPort-SDR: wc7DG86xh4vPeKd3LZfA/TbWv8x9O/HuKQW/jGF3O4aUFN/qKwYCQ8SRM7iJWo2KoQnsDSJboM
+ NHtSa3M5ZLog==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.72,289,1580803200"; 
+   d="scan'208";a="280773532"
+Received: from sjchrist-coffee.jf.intel.com ([10.54.74.202])
+  by fmsmga002.fm.intel.com with ESMTP; 21 Mar 2020 13:26:04 -0700
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     Paolo Bonzini <pbonzini@redhat.com>
+Cc:     Paul Mackerras <paulus@ozlabs.org>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        Janosch Frank <frankja@linux.ibm.com>,
+        David Hildenbrand <david@redhat.com>,
+        Cornelia Huck <cohuck@redhat.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>, Marc Zyngier <maz@kernel.org>,
+        James Morse <james.morse@arm.com>,
+        Julien Thierry <julien.thierry.kdev@gmail.com>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        linux-mips@vger.kernel.org, kvm@vger.kernel.org,
+        kvm-ppc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        kvmarm@lists.cs.columbia.edu, linux-kernel@vger.kernel.org
+Subject: [PATCH v3 0/9]  KVM: Move x86 init ops to separate struct
+Date:   Sat, 21 Mar 2020 13:25:54 -0700
+Message-Id: <20200321202603.19355-1-sean.j.christopherson@intel.com>
+X-Mailer: git-send-email 2.24.1
 MIME-Version: 1.0
-References: <20200317143336.6098-1-alexandru.ardelean@analog.com>
- <20200321194859.GA2813896@smile.fi.intel.com> <c026dcc85e8454a1ea191c20ba03ce2072271af9.camel@perches.com>
-In-Reply-To: <c026dcc85e8454a1ea191c20ba03ce2072271af9.camel@perches.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Sat, 21 Mar 2020 22:18:49 +0200
-Message-ID: <CAHp75VcAo4qHvFyVkv3Keq63XD_HfSvJ=1LBbxYTM0kYGWJh_g@mail.gmail.com>
-Subject: Re: [PATCH] MAINTAINERS: remove Stefan Popa's email
-To:     Joe Perches <joe@perches.com>
-Cc:     Andy Shevchenko <andriy.shevchenko@intel.com>,
-        Alexandru Ardelean <ardeleanalex@gmail.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-iio <linux-iio@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Alexandru Ardelean <alexandru.ardelean@analog.com>,
-        Michael Hennerich <michael.hennerich@analog.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Mar 21, 2020 at 10:11 PM Joe Perches <joe@perches.com> wrote:
->
-> On Sat, 2020-03-21 at 21:48 +0200, Andy Shevchenko wrote:
-> > On Tue, Mar 17, 2020 at 04:33:36PM +0200, Alexandru Ardelean wrote:
-> > > The email is no longer active. This change removes Stefan's email from the
-> > > MAINTAINERS list and replaces it with Michael Hennerich's.
-> > >
-> >
-> > Are you planning to fix entries as parse-maintainers.pl does?
-> > (Maybe in a separate change, but also why not here)
->
-> I think perhaps you should not ask people to use parse-maintainers
-> on specific sections anymore as it's rather confusing to use and
-> it's best done as a one-shot by Linus one day.  I hope soon.
+The non-x86 part of this series is wholly contained in patch 01.  Compared
+to other recent kvm-wide changes, this one is very straightforward (famous
+last words).
 
-Why not? The benefits are
- - people will know about the tool
- - the particular sections will be fixed since they are touching the data base
+Like a few other architectures, e.g. PPC, x86 uses a set of global hooks
+to call back into vendor code on demand.  A handlful of the x86 hooks are
+used only within the scope of kvm_init().  This series moves the init-only
+hooks to a separate struct, partly to clean up the code a bit, but mainly
+so that the runtime hooks can be made available only after the x86 vendor
+has completed its ->hardware_setup().  While working on a different series
+I spent a fair bit of time scratching my as to why a kvm_x86_ops wasn't
+working, and eventually realized VMX's callback wasn't "ready" because the
+vmcs_config hadn't yet been populated.
 
-And it doesn't prevent Linus or anybody to run the script in the future.
+Due to lack of a cross-compiling setup, the non-x86 changes in patch 01
+are untested.
 
-Actually it will teach people ahead to use the tool then in the future
-we won't see such drastic deviation in ordering.
+v3:
+ - Rebase to kvm/queue, d55c9d4009c7 ("KVM: nSVM: check for EFER ... ").
+   Conflicts galore, but all mechanical in nature.
+ - Drop an SVM patch that was obsoleted by kvm/queue.
+ - Collect an ack. [Marc]
+
+v2:
+  - Rebase to kvm/queue, 2c2787938512 ("KVM: selftests: Stop ...")
+  - Collect tags. [Cornelia]
+  - Add a patch to make kvm_x86_ops its own instance and copy
+    {vmx,svm}_x86_ops by value, which saves a memory access on every
+    invocation of a kvm_x86_ops hook. [Paolo]
+  - Add patches to tag {vmx,svm}_x86_ops as __initdata after they're
+    copied by value.
+
+
+Sean Christopherson (9):
+  KVM: Pass kvm_init()'s opaque param to additional arch funcs
+  KVM: x86: Move init-only kvm_x86_ops to separate struct
+  KVM: VMX: Move hardware_setup() definition below vmx_x86_ops
+  KVM: VMX: Configure runtime hooks using vmx_x86_ops
+  KVM: x86: Set kvm_x86_ops only after ->hardware_setup() completes
+  KVM: x86: Copy kvm_x86_ops by value to eliminate layer of indirection
+  KVM: x86: Drop __exit from kvm_x86_ops' hardware_unsetup()
+  KVM: VMX: Annotate vmx_x86_ops as __initdata
+  KVM: SVM: Annotate svm_x86_ops as __initdata
+
+ arch/mips/kvm/mips.c            |   4 +-
+ arch/powerpc/kvm/powerpc.c      |   4 +-
+ arch/s390/kvm/kvm-s390.c        |   4 +-
+ arch/x86/include/asm/kvm_host.h |  33 +--
+ arch/x86/kvm/cpuid.c            |   4 +-
+ arch/x86/kvm/hyperv.c           |   8 +-
+ arch/x86/kvm/kvm_cache_regs.h   |  10 +-
+ arch/x86/kvm/lapic.c            |  30 +--
+ arch/x86/kvm/mmu.h              |   8 +-
+ arch/x86/kvm/mmu/mmu.c          |  32 +--
+ arch/x86/kvm/pmu.c              |  30 +--
+ arch/x86/kvm/pmu.h              |   2 +-
+ arch/x86/kvm/svm.c              |  19 +-
+ arch/x86/kvm/trace.h            |   4 +-
+ arch/x86/kvm/vmx/nested.c       |  17 +-
+ arch/x86/kvm/vmx/nested.h       |   3 +-
+ arch/x86/kvm/vmx/vmx.c          | 371 ++++++++++++++++----------------
+ arch/x86/kvm/x86.c              | 370 +++++++++++++++----------------
+ arch/x86/kvm/x86.h              |   4 +-
+ include/linux/kvm_host.h        |   4 +-
+ virt/kvm/arm/arm.c              |   4 +-
+ virt/kvm/kvm_main.c             |  18 +-
+ 22 files changed, 507 insertions(+), 476 deletions(-)
 
 -- 
-With Best Regards,
-Andy Shevchenko
+2.24.1
+
