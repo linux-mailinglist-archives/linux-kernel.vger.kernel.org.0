@@ -2,37 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5637D18E272
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Mar 2020 16:30:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B3E6718E26F
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Mar 2020 16:30:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727691AbgCUPam (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 21 Mar 2020 11:30:42 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:38871 "EHLO
+        id S1727542AbgCUPae (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 21 Mar 2020 11:30:34 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:38860 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727323AbgCUPae (ORCPT
+        with ESMTP id S1727028AbgCUPae (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sat, 21 Mar 2020 11:30:34 -0400
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1jFg50-0004wI-Rb; Sat, 21 Mar 2020 16:30:30 +0100
+        id 1jFg51-0004wK-6C; Sat, 21 Mar 2020 16:30:31 +0100
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 53D841C22E5;
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id B640C1C22E6;
         Sat, 21 Mar 2020 16:30:30 +0100 (CET)
 Date:   Sat, 21 Mar 2020 15:30:30 -0000
-From:   "tip-bot2 for Peter Zijlstra" <tip-bot2@linutronix.de>
+From:   "tip-bot2 for Thomas Gleixner" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/entry] lockdep: Rename trace_softirqs_{on,off}()
+Subject: [tip: x86/entry] lockdep: Rename trace_hardirq_{enter,exit}()
 Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
         Will Deacon <will@kernel.org>, x86 <x86@kernel.org>,
         LKML <linux-kernel@vger.kernel.org>
-In-Reply-To: <20200320115859.119434738@infradead.org>
-References: <20200320115859.119434738@infradead.org>
+In-Reply-To: <20200320115859.060481361@infradead.org>
+References: <20200320115859.060481361@infradead.org>
 MIME-Version: 1.0
-Message-ID: <158480463002.28353.16464317745293998156.tip-bot2@tip-bot2>
+Message-ID: <158480463041.28353.16689826264585245749.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -48,14 +47,14 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the x86/entry branch of tip:
 
-Commit-ID:     0d38453c85b426e47375346812d2271680c47988
-Gitweb:        https://git.kernel.org/tip/0d38453c85b426e47375346812d2271680c47988
-Author:        Peter Zijlstra <peterz@infradead.org>
-AuthorDate:    Fri, 20 Mar 2020 12:56:41 +01:00
+Commit-ID:     2502ec37a7b228b34c1e2e89480f98b92f53046a
+Gitweb:        https://git.kernel.org/tip/2502ec37a7b228b34c1e2e89480f98b92f53046a
+Author:        Thomas Gleixner <tglx@linutronix.de>
+AuthorDate:    Fri, 20 Mar 2020 12:56:40 +01:00
 Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Sat, 21 Mar 2020 16:03:54 +01:00
+CommitterDate: Sat, 21 Mar 2020 16:03:53 +01:00
 
-lockdep: Rename trace_softirqs_{on,off}()
+lockdep: Rename trace_hardirq_{enter,exit}()
 
 Continue what commit:
 
@@ -63,99 +62,128 @@ Continue what commit:
 
 started, rename these to avoid confusing them with tracepoints.
 
-git grep -l "trace_softirqs_\(on\|off\)" | while read file;
-do
-	sed -ie 's/trace_softirqs_\(on\|off\)/lockdep_softirqs_\1/g' $file;
-done
-
-Reported-by: Thomas Gleixner <tglx@linutronix.de>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
 Acked-by: Will Deacon <will@kernel.org>
-Link: https://lkml.kernel.org/r/20200320115859.119434738@infradead.org
+Link: https://lkml.kernel.org/r/20200320115859.060481361@infradead.org
 
 ---
- include/linux/irqflags.h | 10 +++++-----
- kernel/locking/lockdep.c |  4 ++--
- kernel/softirq.c         |  6 +++---
- 3 files changed, 10 insertions(+), 10 deletions(-)
+ include/linux/hardirq.h        | 8 ++++----
+ include/linux/irqflags.h       | 8 ++++----
+ kernel/softirq.c               | 7 ++++---
+ tools/include/linux/irqflags.h | 4 ++--
+ 4 files changed, 14 insertions(+), 13 deletions(-)
 
+diff --git a/include/linux/hardirq.h b/include/linux/hardirq.h
+index da0af63..7c8b82f 100644
+--- a/include/linux/hardirq.h
++++ b/include/linux/hardirq.h
+@@ -37,7 +37,7 @@ extern void rcu_nmi_exit(void);
+ 	do {						\
+ 		account_irq_enter_time(current);	\
+ 		preempt_count_add(HARDIRQ_OFFSET);	\
+-		trace_hardirq_enter();			\
++		lockdep_hardirq_enter();		\
+ 	} while (0)
+ 
+ /*
+@@ -50,7 +50,7 @@ extern void irq_enter(void);
+  */
+ #define __irq_exit()					\
+ 	do {						\
+-		trace_hardirq_exit();			\
++		lockdep_hardirq_exit();			\
+ 		account_irq_exit_time(current);		\
+ 		preempt_count_sub(HARDIRQ_OFFSET);	\
+ 	} while (0)
+@@ -74,12 +74,12 @@ extern void irq_exit(void);
+ 		BUG_ON(in_nmi());				\
+ 		preempt_count_add(NMI_OFFSET + HARDIRQ_OFFSET);	\
+ 		rcu_nmi_enter();				\
+-		trace_hardirq_enter();				\
++		lockdep_hardirq_enter();			\
+ 	} while (0)
+ 
+ #define nmi_exit()						\
+ 	do {							\
+-		trace_hardirq_exit();				\
++		lockdep_hardirq_exit();				\
+ 		rcu_nmi_exit();					\
+ 		BUG_ON(!in_nmi());				\
+ 		preempt_count_sub(NMI_OFFSET + HARDIRQ_OFFSET);	\
 diff --git a/include/linux/irqflags.h b/include/linux/irqflags.h
-index 7c4e645..7ca1f21 100644
+index 21619c9..7c4e645 100644
 --- a/include/linux/irqflags.h
 +++ b/include/linux/irqflags.h
-@@ -15,15 +15,15 @@
- #include <linux/typecheck.h>
- #include <asm/irqflags.h>
- 
--/* Currently trace_softirqs_on/off is used only by lockdep */
-+/* Currently lockdep_softirqs_on/off is used only by lockdep */
- #ifdef CONFIG_PROVE_LOCKING
--  extern void trace_softirqs_on(unsigned long ip);
--  extern void trace_softirqs_off(unsigned long ip);
-+  extern void lockdep_softirqs_on(unsigned long ip);
-+  extern void lockdep_softirqs_off(unsigned long ip);
-   extern void lockdep_hardirqs_on(unsigned long ip);
-   extern void lockdep_hardirqs_off(unsigned long ip);
- #else
--  static inline void trace_softirqs_on(unsigned long ip) { }
--  static inline void trace_softirqs_off(unsigned long ip) { }
-+  static inline void lockdep_softirqs_on(unsigned long ip) { }
-+  static inline void lockdep_softirqs_off(unsigned long ip) { }
-   static inline void lockdep_hardirqs_on(unsigned long ip) { }
-   static inline void lockdep_hardirqs_off(unsigned long ip) { }
+@@ -35,11 +35,11 @@
+ # define trace_softirq_context(p)	((p)->softirq_context)
+ # define trace_hardirqs_enabled(p)	((p)->hardirqs_enabled)
+ # define trace_softirqs_enabled(p)	((p)->softirqs_enabled)
+-# define trace_hardirq_enter()			\
++# define lockdep_hardirq_enter()		\
+ do {						\
+ 	current->hardirq_context++;		\
+ } while (0)
+-# define trace_hardirq_exit()			\
++# define lockdep_hardirq_exit()			\
+ do {						\
+ 	current->hardirq_context--;		\
+ } while (0)
+@@ -58,8 +58,8 @@ do {						\
+ # define trace_softirq_context(p)	0
+ # define trace_hardirqs_enabled(p)	0
+ # define trace_softirqs_enabled(p)	0
+-# define trace_hardirq_enter()		do { } while (0)
+-# define trace_hardirq_exit()		do { } while (0)
++# define lockdep_hardirq_enter()	do { } while (0)
++# define lockdep_hardirq_exit()		do { } while (0)
+ # define lockdep_softirq_enter()	do { } while (0)
+ # define lockdep_softirq_exit()		do { } while (0)
  #endif
-diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
-index 32406ef..26ef412 100644
---- a/kernel/locking/lockdep.c
-+++ b/kernel/locking/lockdep.c
-@@ -3468,7 +3468,7 @@ NOKPROBE_SYMBOL(lockdep_hardirqs_off);
- /*
-  * Softirqs will be enabled:
-  */
--void trace_softirqs_on(unsigned long ip)
-+void lockdep_softirqs_on(unsigned long ip)
- {
- 	struct task_struct *curr = current;
- 
-@@ -3508,7 +3508,7 @@ void trace_softirqs_on(unsigned long ip)
- /*
-  * Softirqs were disabled:
-  */
--void trace_softirqs_off(unsigned long ip)
-+void lockdep_softirqs_off(unsigned long ip)
- {
- 	struct task_struct *curr = current;
- 
 diff --git a/kernel/softirq.c b/kernel/softirq.c
-index b328689..0112ca0 100644
+index 0427a86..b328689 100644
 --- a/kernel/softirq.c
 +++ b/kernel/softirq.c
-@@ -126,7 +126,7 @@ void __local_bh_disable_ip(unsigned long ip, unsigned int cnt)
- 	 * Were softirqs turned off above:
- 	 */
- 	if (softirq_count() == (cnt & SOFTIRQ_MASK))
--		trace_softirqs_off(ip);
-+		lockdep_softirqs_off(ip);
- 	raw_local_irq_restore(flags);
+@@ -226,7 +226,7 @@ static inline bool lockdep_softirq_start(void)
  
- 	if (preempt_count() == cnt) {
-@@ -147,7 +147,7 @@ static void __local_bh_enable(unsigned int cnt)
- 		trace_preempt_on(CALLER_ADDR0, get_lock_parent_ip());
+ 	if (trace_hardirq_context(current)) {
+ 		in_hardirq = true;
+-		trace_hardirq_exit();
++		lockdep_hardirq_exit();
+ 	}
  
- 	if (softirq_count() == (cnt & SOFTIRQ_MASK))
--		trace_softirqs_on(_RET_IP_);
-+		lockdep_softirqs_on(_RET_IP_);
+ 	lockdep_softirq_enter();
+@@ -239,7 +239,7 @@ static inline void lockdep_softirq_end(bool in_hardirq)
+ 	lockdep_softirq_exit();
  
- 	__preempt_count_sub(cnt);
+ 	if (in_hardirq)
+-		trace_hardirq_enter();
++		lockdep_hardirq_enter();
  }
-@@ -174,7 +174,7 @@ void __local_bh_enable_ip(unsigned long ip, unsigned int cnt)
- 	 * Are softirqs going to be turned on now:
- 	 */
- 	if (softirq_count() == SOFTIRQ_DISABLE_OFFSET)
--		trace_softirqs_on(ip);
-+		lockdep_softirqs_on(ip);
- 	/*
- 	 * Keep preemption disabled until we are done with
- 	 * softirq processing:
+ #else
+ static inline bool lockdep_softirq_start(void) { return false; }
+@@ -414,7 +414,8 @@ void irq_exit(void)
+ 
+ 	tick_irq_exit();
+ 	rcu_irq_exit();
+-	trace_hardirq_exit(); /* must be last! */
++	 /* must be last! */
++	lockdep_hardirq_exit();
+ }
+ 
+ /*
+diff --git a/tools/include/linux/irqflags.h b/tools/include/linux/irqflags.h
+index e734da3..ced6f64 100644
+--- a/tools/include/linux/irqflags.h
++++ b/tools/include/linux/irqflags.h
+@@ -6,8 +6,8 @@
+ # define trace_softirq_context(p)	0
+ # define trace_hardirqs_enabled(p)	0
+ # define trace_softirqs_enabled(p)	0
+-# define trace_hardirq_enter()		do { } while (0)
+-# define trace_hardirq_exit()		do { } while (0)
++# define lockdep_hardirq_enter()	do { } while (0)
++# define lockdep_hardirq_exit()		do { } while (0)
+ # define lockdep_softirq_enter()	do { } while (0)
+ # define lockdep_softirq_exit()		do { } while (0)
+ # define INIT_TRACE_IRQFLAGS
