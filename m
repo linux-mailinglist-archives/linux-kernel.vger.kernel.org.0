@@ -2,209 +2,210 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 08D2A18E53B
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Mar 2020 23:30:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 586F618E543
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Mar 2020 23:36:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728201AbgCUWaK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 21 Mar 2020 18:30:10 -0400
-Received: from mail-pj1-f67.google.com ([209.85.216.67]:51293 "EHLO
-        mail-pj1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727700AbgCUWaJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 21 Mar 2020 18:30:09 -0400
-Received: by mail-pj1-f67.google.com with SMTP id hg10so4219497pjb.1
-        for <linux-kernel@vger.kernel.org>; Sat, 21 Mar 2020 15:30:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=B5qFJrGFQqJyZwNKSurlZaktra2A1JiMh2eH8abzUa8=;
-        b=E41elm12jd11riNXAxZcemim/OxYinkuqYLL8oC+r4tkR5+6JCTftkVbwJxr5NWhwd
-         bQAP85rscxX0Jx/qnXpQqUDzgnu/EAKq8c24Y55N1UWxdS7IRe+ClebYXwlWq4DQPPDU
-         PyVvsznktL62JBkK3d4x6NrQdzlJ0C0CUGGEFm8y+9Vqt3iNEY8HkxrPOXdGHtKNs6k5
-         lN1OiTf71jTBZoRR7XrC1EYosNoiLW7gbmWH3SLT8BdBunOzNHGLulEKWbic20Q0iVz8
-         e9XjmvnAsPDgVvnMeeXXh4X/c/+umih9KwNGJF8x3iMEENXElRKdiPXmt4rXl6FJYGQK
-         +QJg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=B5qFJrGFQqJyZwNKSurlZaktra2A1JiMh2eH8abzUa8=;
-        b=CzxkBYZ/ZWAgzt8+KRIPRf9m+eZ6L+vi5UaQI8bOEKVRwGm7I762g7XJWgga6RC1Bo
-         u41NXAtwHTwnxNf4TH24SZG1/ZeAr/a7R0tvgrwkcR9m9XrzVTeNOfC7CD+zBGNO0wFV
-         pck/+tj4U9T4Xilgs1TSYcvbma7s5EUJ6qYsObp+D8lMGjKvB/1n/RfQpjjy7L53FEVO
-         heiqxhdK9bobuHCTdaaS82RDHUhgqbB8bXB+PT2a31o8AiDZyeRPzdcxR0W+X9ZJj6dE
-         o3keSia1PwHHqu+8qFvji12tMOUM1gnEO03RsyAtIhtGIoJf7a1P0/j8xHneY/oftBdx
-         LsUA==
-X-Gm-Message-State: ANhLgQ383GfaUCaF3zLQIkJPAF4V87Sef72sKmSxWzF8+8O70T9MTt5x
-        PECMGsMI0P+sHDqFOhDU/G8=
-X-Google-Smtp-Source: ADFU+vvkkhBVrJVmLGfrS6hCjDf1bFoMlXdSo23YEMHegOOqFAtPPj7TpLoW0FaWvzEON9K1okVv9Q==
-X-Received: by 2002:a17:902:b198:: with SMTP id s24mr14576295plr.89.1584829808477;
-        Sat, 21 Mar 2020 15:30:08 -0700 (PDT)
-Received: from localhost.localdomain ([113.193.33.115])
-        by smtp.gmail.com with ESMTPSA id k6sm8136655pje.8.2020.03.21.15.30.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 21 Mar 2020 15:30:08 -0700 (PDT)
-From:   Shreeya Patel <shreeya.patel23498@gmail.com>
-To:     Larry.Finger@lwfinger.net, gregkh@linuxfoundation.org,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
-        outreachy-kernel@googlegroups.com
-Cc:     Shreeya Patel <shreeya.patel23498@gmail.com>
-Subject: [Outreachy kernel] [PATCH 11/11] Staging: rtl8188eu: rtl8188eu_xmit: Add space around operators
-Date:   Sun, 22 Mar 2020 04:00:02 +0530
-Message-Id: <cf8c629e7aa360fb3f86329d8d7df7e49ec360d4.1584826154.git.shreeya.patel23498@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <cover.1584826154.git.shreeya.patel23498@gmail.com>
-References: <cover.1584826154.git.shreeya.patel23498@gmail.com>
+        id S1728076AbgCUWgE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 21 Mar 2020 18:36:04 -0400
+Received: from mga14.intel.com ([192.55.52.115]:24400 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727700AbgCUWgE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 21 Mar 2020 18:36:04 -0400
+IronPort-SDR: PXiJJSF//F/T3WIu6N8/KlqBRcCtojxlu3WgMMLEi0jd8b1eCUWA2JfTNCTiz6KkenyK40OWcS
+ K2/8jAxJORWA==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Mar 2020 15:36:03 -0700
+IronPort-SDR: fLbsV9ZoZl0vrc+e2jeAa5myvZlbP4xkDJWjcQF/1p7HktXHopy/X9+o1fRlgWptFyS2h0budz
+ Vc9HREL2pP8g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.72,290,1580803200"; 
+   d="scan'208";a="419091643"
+Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
+  by orsmga005.jf.intel.com with ESMTP; 21 Mar 2020 15:36:01 -0700
+Received: from kbuild by lkp-server01 with local (Exim 4.89)
+        (envelope-from <lkp@intel.com>)
+        id 1jFmin-000FQw-0l; Sun, 22 Mar 2020 06:36:01 +0800
+Date:   Sun, 22 Mar 2020 06:35:34 +0800
+From:   kbuild test robot <lkp@intel.com>
+To:     "x86-ml" <x86@kernel.org>
+Cc:     linux-kernel@vger.kernel.org
+Subject: [tip:timers/core] BUILD SUCCESS
+ a5d442f50a41d7c5a6a97b19c49d8a1ee0cf128b
+Message-ID: <5e7696b6.HNp093qrM39vO08N%lkp@intel.com>
+User-Agent: Heirloom mailx 12.5 6/20/10
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add space around operators for improving the code
-readability.
-Reported by checkpatch.pl
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git  timers/core
+branch HEAD: a5d442f50a41d7c5a6a97b19c49d8a1ee0cf128b  arm64: vdso32: Enable Clang Compilation
 
-git diff -w shows no difference.
-diff of the .o files before and after the changes shows no difference.
+elapsed time: 483m
 
-Signed-off-by: Shreeya Patel <shreeya.patel23498@gmail.com>
+configs tested: 151
+configs skipped: 0
+
+The following configs have been built successfully.
+More configs may be tested in the coming days.
+
+arm64                            allyesconfig
+arm                              allyesconfig
+arm64                            allmodconfig
+arm64                             allnoconfig
+arm                               allnoconfig
+arm                           efm32_defconfig
+arm                         at91_dt_defconfig
+arm                        shmobile_defconfig
+arm64                               defconfig
+arm                          exynos_defconfig
+arm                        multi_v5_defconfig
+arm                           sunxi_defconfig
+arm                        multi_v7_defconfig
+sparc                            allyesconfig
+nds32                             allnoconfig
+nios2                         3c120_defconfig
+sh                          rsk7269_defconfig
+i386                              allnoconfig
+i386                             allyesconfig
+i386                             alldefconfig
+i386                                defconfig
+ia64                             allmodconfig
+ia64                                defconfig
+ia64                              allnoconfig
+ia64                             allyesconfig
+ia64                             alldefconfig
+arm                              allmodconfig
+nios2                         10m50_defconfig
+c6x                        evmc6678_defconfig
+xtensa                          iss_defconfig
+c6x                              allyesconfig
+xtensa                       common_defconfig
+openrisc                 simple_smp_defconfig
+openrisc                    or1ksim_defconfig
+alpha                               defconfig
+csky                                defconfig
+nds32                               defconfig
+h8300                       h8s-sim_defconfig
+h8300                     edosk2674_defconfig
+m68k                       m5475evb_defconfig
+m68k                             allmodconfig
+h8300                    h8300h-sim_defconfig
+m68k                           sun3_defconfig
+m68k                          multi_defconfig
+arc                                 defconfig
+arc                              allyesconfig
+powerpc                             defconfig
+powerpc                       ppc64_defconfig
+powerpc                          rhel-kconfig
+microblaze                      mmu_defconfig
+microblaze                    nommu_defconfig
+powerpc                           allnoconfig
+mips                      fuloong2e_defconfig
+mips                      malta_kvm_defconfig
+mips                             allyesconfig
+mips                         64r6el_defconfig
+mips                              allnoconfig
+mips                           32r2_defconfig
+mips                             allmodconfig
+parisc                            allnoconfig
+parisc                generic-64bit_defconfig
+parisc                generic-32bit_defconfig
+parisc                           allyesconfig
+mips                 randconfig-a001-20200321
+nds32                randconfig-a001-20200321
+m68k                 randconfig-a001-20200321
+parisc               randconfig-a001-20200321
+alpha                randconfig-a001-20200321
+riscv                randconfig-a001-20200321
+h8300                randconfig-a001-20200322
+microblaze           randconfig-a001-20200322
+nios2                randconfig-a001-20200322
+c6x                  randconfig-a001-20200322
+sparc64              randconfig-a001-20200322
+h8300                randconfig-a001-20200321
+microblaze           randconfig-a001-20200321
+nios2                randconfig-a001-20200321
+c6x                  randconfig-a001-20200321
+sparc64              randconfig-a001-20200321
+s390                 randconfig-a001-20200321
+xtensa               randconfig-a001-20200321
+csky                 randconfig-a001-20200321
+openrisc             randconfig-a001-20200321
+sh                   randconfig-a001-20200321
+i386                 randconfig-b003-20200322
+i386                 randconfig-b001-20200322
+x86_64               randconfig-b003-20200322
+i386                 randconfig-b002-20200322
+x86_64               randconfig-b002-20200322
+x86_64               randconfig-c003-20200321
+i386                 randconfig-c002-20200321
+x86_64               randconfig-c001-20200321
+x86_64               randconfig-c002-20200321
+i386                 randconfig-c003-20200321
+i386                 randconfig-c001-20200321
+i386                 randconfig-d003-20200322
+i386                 randconfig-d001-20200322
+i386                 randconfig-d002-20200322
+x86_64               randconfig-d001-20200322
+x86_64               randconfig-d003-20200322
+i386                 randconfig-d003-20200321
+i386                 randconfig-d001-20200321
+x86_64               randconfig-d002-20200321
+i386                 randconfig-d002-20200321
+x86_64               randconfig-d001-20200321
+x86_64               randconfig-d003-20200321
+x86_64               randconfig-e001-20200321
+i386                 randconfig-e002-20200321
+x86_64               randconfig-e003-20200321
+i386                 randconfig-e003-20200321
+x86_64               randconfig-e002-20200321
+i386                 randconfig-e001-20200321
+arm                  randconfig-a001-20200321
+arm64                randconfig-a001-20200321
+ia64                 randconfig-a001-20200321
+sparc                randconfig-a001-20200321
+arc                  randconfig-a001-20200321
+powerpc              randconfig-a001-20200322
+ia64                 randconfig-a001-20200322
+arc                  randconfig-a001-20200322
+riscv                            allyesconfig
+riscv                    nommu_virt_defconfig
+riscv                             allnoconfig
+riscv                               defconfig
+riscv                          rv32_defconfig
+riscv                            allmodconfig
+s390                       zfcpdump_defconfig
+s390                          debug_defconfig
+s390                             allyesconfig
+s390                              allnoconfig
+s390                             allmodconfig
+s390                             alldefconfig
+s390                                defconfig
+sh                               allmodconfig
+sh                            titan_defconfig
+sh                  sh7785lcr_32bit_defconfig
+sh                                allnoconfig
+sparc                               defconfig
+sparc64                             defconfig
+sparc64                           allnoconfig
+sparc64                          allyesconfig
+sparc64                          allmodconfig
+um                                  defconfig
+um                             i386_defconfig
+um                           x86_64_defconfig
+x86_64                                   rhel
+x86_64                               rhel-7.6
+x86_64                         rhel-7.2-clear
+x86_64                                    lkp
+x86_64                              fedora-25
+x86_64                                  kexec
+
 ---
-
-shreeya@Shreeya-Patel:~git/kernels/staging$ git diff -w drivers/staging/rtl8188eu/hal/rtl8188eu_xmit.c
-shreeya@Shreeya-Patel:~git/kernels/staging$
-
-shreeya@Shreeya-Patel:~git/kernels/staging/drivers/staging/rtl8188eu/hal$ diff rtl8188eu_xmit_old.o rtl8188eu_xmit.o
-shreeya@Shreeya-Patel:~git/kernels/staging/drivers/staging/rtl8188eu/hal$
-
- .../staging/rtl8188eu/hal/rtl8188eu_xmit.c    | 32 +++++++++----------
- 1 file changed, 16 insertions(+), 16 deletions(-)
-
-diff --git a/drivers/staging/rtl8188eu/hal/rtl8188eu_xmit.c b/drivers/staging/rtl8188eu/hal/rtl8188eu_xmit.c
-index 2808f2b119bf..7d315bd438d4 100644
---- a/drivers/staging/rtl8188eu/hal/rtl8188eu_xmit.c
-+++ b/drivers/staging/rtl8188eu/hal/rtl8188eu_xmit.c
-@@ -58,12 +58,12 @@ void rtl8188e_fill_fake_txdesc(struct adapter *adapt, u8 *desc, u32 BufferLen, u
- 	/* offset 0 */
- 	ptxdesc->txdw0 |= cpu_to_le32(OWN | FSG | LSG); /* own, bFirstSeg, bLastSeg; */
- 
--	ptxdesc->txdw0 |= cpu_to_le32(((TXDESC_SIZE+OFFSET_SZ)<<OFFSET_SHT)&0x00ff0000); /* 32 bytes for TX Desc */
-+	ptxdesc->txdw0 |= cpu_to_le32(((TXDESC_SIZE + OFFSET_SZ) << OFFSET_SHT) & 0x00ff0000); /* 32 bytes for TX Desc */
- 
--	ptxdesc->txdw0 |= cpu_to_le32(BufferLen&0x0000ffff); /*  Buffer size + command header */
-+	ptxdesc->txdw0 |= cpu_to_le32(BufferLen & 0x0000ffff); /*  Buffer size + command header */
- 
- 	/* offset 4 */
--	ptxdesc->txdw1 |= cpu_to_le32((QSLT_MGNT<<QSEL_SHT)&0x00001f00); /*  Fixed queue of Mgnt queue */
-+	ptxdesc->txdw1 |= cpu_to_le32((QSLT_MGNT << QSEL_SHT) & 0x00001f00); /*  Fixed queue of Mgnt queue */
- 
- 	/* Set NAVUSEHDR to prevent Ps-poll AId filed to be changed to error vlaue by Hw. */
- 	if (ispspoll) {
-@@ -91,16 +91,16 @@ static void fill_txdesc_sectype(struct pkt_attrib *pattrib, struct tx_desc *ptxd
- 		/* SEC_TYPE : 0:NO_ENC,1:WEP40/TKIP,2:WAPI,3:AES */
- 		case _WEP40_:
- 		case _WEP104_:
--			ptxdesc->txdw1 |= cpu_to_le32((0x01<<SEC_TYPE_SHT)&0x00c00000);
-+			ptxdesc->txdw1 |= cpu_to_le32((0x01 << SEC_TYPE_SHT) & 0x00c00000);
- 			ptxdesc->txdw2 |= cpu_to_le32(0x7 << AMPDU_DENSITY_SHT);
- 			break;
- 		case _TKIP_:
- 		case _TKIP_WTMIC_:
--			ptxdesc->txdw1 |= cpu_to_le32((0x01<<SEC_TYPE_SHT)&0x00c00000);
-+			ptxdesc->txdw1 |= cpu_to_le32((0x01 << SEC_TYPE_SHT) & 0x00c00000);
- 			ptxdesc->txdw2 |= cpu_to_le32(0x7 << AMPDU_DENSITY_SHT);
- 			break;
- 		case _AES_:
--			ptxdesc->txdw1 |= cpu_to_le32((0x03<<SEC_TYPE_SHT)&0x00c00000);
-+			ptxdesc->txdw1 |= cpu_to_le32((0x03 << SEC_TYPE_SHT) & 0x00c00000);
- 			ptxdesc->txdw2 |= cpu_to_le32(0x7 << AMPDU_DENSITY_SHT);
- 			break;
- 		case _NO_PRIVACY_:
-@@ -127,7 +127,7 @@ static void fill_txdesc_vcs(struct pkt_attrib *pattrib, __le32 *pdw)
- 		*pdw |= cpu_to_le32(HW_RTS_EN);
- 		/*  Set RTS BW */
- 		if (pattrib->ht_en) {
--			*pdw |= (pattrib->bwmode&HT_CHANNEL_WIDTH_40) ?	cpu_to_le32(BIT(27)) : 0;
-+			*pdw |= (pattrib->bwmode & HT_CHANNEL_WIDTH_40) ?	cpu_to_le32(BIT(27)) : 0;
- 
- 			if (pattrib->ch_offset == HAL_PRIME_CHNL_OFFSET_LOWER)
- 				*pdw |= cpu_to_le32((0x01 << 28) & 0x30000000);
-@@ -144,7 +144,7 @@ static void fill_txdesc_vcs(struct pkt_attrib *pattrib, __le32 *pdw)
- static void fill_txdesc_phy(struct pkt_attrib *pattrib, __le32 *pdw)
- {
- 	if (pattrib->ht_en) {
--		*pdw |= (pattrib->bwmode&HT_CHANNEL_WIDTH_40) ?	cpu_to_le32(BIT(25)) : 0;
-+		*pdw |= (pattrib->bwmode & HT_CHANNEL_WIDTH_40) ?	cpu_to_le32(BIT(25)) : 0;
- 
- 		if (pattrib->ch_offset == HAL_PRIME_CHNL_OFFSET_LOWER)
- 			*pdw |= cpu_to_le32((0x01 << DATA_SC_SHT) & 0x003f0000);
-@@ -171,7 +171,7 @@ static s32 update_txdesc(struct xmit_frame *pxmitframe, u8 *pmem, s32 sz, u8 bag
- 
- 	if (adapt->registrypriv.mp_mode == 0) {
- 		if ((!bagg_pkt) && (urb_zero_packet_chk(adapt, sz) == 0)) {
--			ptxdesc = (struct tx_desc *)(pmem+PACKET_OFFSET_SZ);
-+			ptxdesc = (struct tx_desc *)(pmem + PACKET_OFFSET_SZ);
- 			pull = 1;
- 		}
- 	}
-@@ -263,11 +263,11 @@ static s32 update_txdesc(struct xmit_frame *pxmitframe, u8 *pmem, s32 sz, u8 bag
- 				ptxdesc->txdw4 |= cpu_to_le32(BIT(24));/*  DATA_SHORT */
- 			ptxdesc->txdw5 |= cpu_to_le32(MRateToHwRate(pmlmeext->tx_rate));
- 		}
--	} else if ((pxmitframe->frame_tag&0x0f) == MGNT_FRAMETAG) {
-+	} else if ((pxmitframe->frame_tag & 0x0f) == MGNT_FRAMETAG) {
- 		/* offset 4 */
- 		ptxdesc->txdw1 |= cpu_to_le32(pattrib->mac_id & 0x3f);
- 
--		qsel = (uint)(pattrib->qsel&0x0000001f);
-+		qsel = (uint)(pattrib->qsel & 0x0000001f);
- 		ptxdesc->txdw1 |= cpu_to_le32((qsel << QSEL_SHT) & 0x00001f00);
- 
- 		ptxdesc->txdw1 |= cpu_to_le32((pattrib->raid << RATE_ID_SHT) & 0x000f0000);
-@@ -278,7 +278,7 @@ static s32 update_txdesc(struct xmit_frame *pxmitframe, u8 *pmem, s32 sz, u8 bag
- 			ptxdesc->txdw2 |= cpu_to_le32(BIT(19));
- 
- 		/* offset 12 */
--		ptxdesc->txdw3 |= cpu_to_le32((pattrib->seqnum<<SEQ_SHT)&0x0FFF0000);
-+		ptxdesc->txdw3 |= cpu_to_le32((pattrib->seqnum << SEQ_SHT) & 0x0FFF0000);
- 
- 		/* offset 20 */
- 		ptxdesc->txdw5 |= cpu_to_le32(RTY_LMT_EN);/* retry limit enable */
-@@ -288,7 +288,7 @@ static s32 update_txdesc(struct xmit_frame *pxmitframe, u8 *pmem, s32 sz, u8 bag
- 			ptxdesc->txdw5 |= cpu_to_le32(0x00300000);/* retry limit = 12 */
- 
- 		ptxdesc->txdw5 |= cpu_to_le32(MRateToHwRate(pmlmeext->tx_rate));
--	} else if ((pxmitframe->frame_tag&0x0f) == TXAGG_FRAMETAG) {
-+	} else if ((pxmitframe->frame_tag & 0x0f) == TXAGG_FRAMETAG) {
- 		DBG_88E("pxmitframe->frame_tag == TXAGG_FRAMETAG\n");
- 	} else {
- 		DBG_88E("pxmitframe->frame_tag = %d\n", pxmitframe->frame_tag);
-@@ -301,7 +301,7 @@ static s32 update_txdesc(struct xmit_frame *pxmitframe, u8 *pmem, s32 sz, u8 bag
- 		/* offset 8 */
- 
- 		/* offset 12 */
--		ptxdesc->txdw3 |= cpu_to_le32((pattrib->seqnum<<SEQ_SHT)&0x0fff0000);
-+		ptxdesc->txdw3 |= cpu_to_le32((pattrib->seqnum << SEQ_SHT) & 0x0fff0000);
- 
- 		/* offset 20 */
- 		ptxdesc->txdw5 |= cpu_to_le32(MRateToHwRate(pmlmeext->tx_rate));
-@@ -466,7 +466,7 @@ bool rtl8188eu_xmitframe_complete(struct adapter *adapt,
- 
- 	/* 3 2. aggregate same priority and same DA(AP or STA) frames */
- 	pfirstframe = pxmitframe;
--	len = xmitframe_need_length(pfirstframe) + TXDESC_SIZE + (pfirstframe->pkt_offset*PACKET_OFFSET_SZ);
-+	len = xmitframe_need_length(pfirstframe) + TXDESC_SIZE + (pfirstframe->pkt_offset * PACKET_OFFSET_SZ);
- 	pbuf_tail = len;
- 	pbuf = round_up(pbuf_tail, 8);
- 
-@@ -517,7 +517,7 @@ bool rtl8188eu_xmitframe_complete(struct adapter *adapt,
- 		pxmitframe->agg_num = 0; /*  not first frame of aggregation */
- 		pxmitframe->pkt_offset = 0; /*  not first frame of aggregation, no need to reserve offset */
- 
--		len = xmitframe_need_length(pxmitframe) + TXDESC_SIZE + (pxmitframe->pkt_offset*PACKET_OFFSET_SZ);
-+		len = xmitframe_need_length(pxmitframe) + TXDESC_SIZE + (pxmitframe->pkt_offset * PACKET_OFFSET_SZ);
- 
- 		if (round_up(pbuf + len, 8) > MAX_XMITBUF_SZ) {
- 			pxmitframe->agg_num = 1;
--- 
-2.17.1
-
+0-DAY CI Kernel Test Service, Intel Corporation
+https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
