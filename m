@@ -2,202 +2,156 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EFFDF18DCFD
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Mar 2020 02:00:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AF63118DD07
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Mar 2020 02:03:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727900AbgCUBAM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Mar 2020 21:00:12 -0400
-Received: from alexa-out-sd-02.qualcomm.com ([199.106.114.39]:24787 "EHLO
-        alexa-out-sd-02.qualcomm.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727046AbgCUBAJ (ORCPT
+        id S1727822AbgCUBDF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Mar 2020 21:03:05 -0400
+Received: from us-smtp-delivery-74.mimecast.com ([216.205.24.74]:53871 "EHLO
+        us-smtp-delivery-74.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727693AbgCUBDE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Mar 2020 21:00:09 -0400
-Received: from unknown (HELO ironmsg02-sd.qualcomm.com) ([10.53.140.142])
-  by alexa-out-sd-02.qualcomm.com with ESMTP; 20 Mar 2020 18:00:09 -0700
-Received: from asutoshd-linux1.qualcomm.com ([10.46.160.39])
-  by ironmsg02-sd.qualcomm.com with ESMTP; 20 Mar 2020 18:00:08 -0700
-Received: by asutoshd-linux1.qualcomm.com (Postfix, from userid 92687)
-        id 984271FFE7; Fri, 20 Mar 2020 18:00:08 -0700 (PDT)
-From:   Asutosh Das <asutoshd@codeaurora.org>
-To:     cang@codeaurora.org, Avri.Altman@wdc.com,
-        martin.petersen@oracle.com, linux-scsi@vger.kernel.org
-Cc:     Asutosh Das <asutoshd@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Avri Altman <avri.altman@wdc.com>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        Stanley Chu <stanley.chu@mediatek.com>,
-        Bean Huo <beanhuo@micron.com>,
-        Tomas Winkler <tomas.winkler@intel.com>,
-        Colin Ian King <colin.king@canonical.com>,
-        linux-kernel@vger.kernel.org (open list)
-Subject: [<RFC RESEND PATCH v2> 3/3] ufs: sysfs: add sysfs entries for write booster
-Date:   Fri, 20 Mar 2020 17:59:20 -0700
-Message-Id: <7dcdd3ec5b49a17d14c53540bf70bb725c6bc1cb.1584752043.git.asutoshd@codeaurora.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <cover.1584752043.git.asutoshd@codeaurora.org>
-References: <cover.1584752043.git.asutoshd@codeaurora.org>
-In-Reply-To: <cover.1584752043.git.asutoshd@codeaurora.org>
-References: <cover.1584752043.git.asutoshd@codeaurora.org>
+        Fri, 20 Mar 2020 21:03:04 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1584752583;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=AjQuPaCjd7Ig4gpbwFISut+nUjzFUAzjw+os+HFJBP8=;
+        b=gUKXJIQaM+2nvr74Y65YzDph9UpV/V/vcf1GbZpiP4TzwUxuBsVJv/Tu5zVbOmImeIY0O3
+        JG9WfQzGZLelAVOAlNG0QpEo7/iAT6wR1Dmq2ZuVeDdYsTQks4PXOk4/aDNqoItPzrrt8O
+        h8UR+QE2S2nlYmjy0gFO4eHrPLgSNk4=
+Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com
+ [209.85.222.200]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-65-J6rnopdwPoKhZLzNW0a9JQ-1; Fri, 20 Mar 2020 21:03:01 -0400
+X-MC-Unique: J6rnopdwPoKhZLzNW0a9JQ-1
+Received: by mail-qk1-f200.google.com with SMTP id l27so7029920qkl.0
+        for <linux-kernel@vger.kernel.org>; Fri, 20 Mar 2020 18:03:01 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=AjQuPaCjd7Ig4gpbwFISut+nUjzFUAzjw+os+HFJBP8=;
+        b=CdHf0e9Cc7piremt7tZhyDaD/ODu0JOmeLFTqxCq9AOpwVY7OdIJbtxA9ilDUqreJn
+         2t4e/J6t3F6QeO3LZT7hucjTE1twUowDn0LH8PcwRgClsSKr5la6U49WF4HWsG9ELX4N
+         LUR2q2pObNSnLHRTD8ZSDzGIPh8hrUt4P/Cmw/x+A40N0lTWiMce2BLJYv/SlS1nBCRN
+         +INCecySghK/dqlf0xTjYYfyib7ffnC8j++7NnsKZeAVac0wJK4t8SBLaK4TVhXZ8+b2
+         bM2WsRh3n3/bNNz9chzIEdLFyffj1uMIWulspBLP9Vs/QDSd0MS1Zw8xjx+0de/yIz4h
+         9UHA==
+X-Gm-Message-State: ANhLgQ33OUoX0T23hSpHtwdMUOkj1ZgzC5Vr/naJqtqxHuzsvdVDL/M0
+        GRvNQ1CKSHD/IlJNQRJtiypyr+1NVdbjdsDWURRbcqpnEk0VmpVxEeLPhSDwVmR0d+PmpnGa+/K
+        p8B+CZzn6L6C52DOzIutMtGzUM2oThrreHPZ/0nL9
+X-Received: by 2002:a37:9f42:: with SMTP id i63mr11208509qke.192.1584752581297;
+        Fri, 20 Mar 2020 18:03:01 -0700 (PDT)
+X-Google-Smtp-Source: ADFU+vtCh2wJtD/g8xto3BH0cPBIK4C3l4y4LBkjZ5hI622fvjzhRRZrgbDgis1CB+9R05hCeHqJZDHrFD188Ry1ESA=
+X-Received: by 2002:a37:9f42:: with SMTP id i63mr11208481qke.192.1584752580926;
+ Fri, 20 Mar 2020 18:03:00 -0700 (PDT)
+MIME-Version: 1.0
+References: <20200310192627.437947-1-kherbst@redhat.com> <20200320221931.GA23783@google.com>
+In-Reply-To: <20200320221931.GA23783@google.com>
+From:   Karol Herbst <kherbst@redhat.com>
+Date:   Sat, 21 Mar 2020 02:02:22 +0100
+Message-ID: <CACO55tsamLG5WE16U=psJpRWfz=7Fy5K8haGKHnhic1h0WAmqA@mail.gmail.com>
+Subject: Re: [PATCH v7] pci: prevent putting nvidia GPUs into lower device
+ states on certain intel bridges
+To:     Bjorn Helgaas <helgaas@kernel.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>, Lyude Paul <lyude@redhat.com>,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Mika Westerberg <mika.westerberg@intel.com>,
+        Linux PCI <linux-pci@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        nouveau <nouveau@lists.freedesktop.org>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Adds unit, device, geometry descriptor sysfs entries.
-Adds flags sysfs entries for write booster.
+On Fri, Mar 20, 2020 at 11:19 PM Bjorn Helgaas <helgaas@kernel.org> wrote:
+>
+> On Tue, Mar 10, 2020 at 08:26:27PM +0100, Karol Herbst wrote:
+> > Fixes the infamous 'runtime PM' bug many users are facing on Laptops with
+> > Nvidia Pascal GPUs by skipping said PCI power state changes on the GPU.
+> >
+> > Depending on the used kernel there might be messages like those in demsg:
+> >
+> > "nouveau 0000:01:00.0: Refused to change power state, currently in D3"
+> > "nouveau 0000:01:00.0: can't change power state from D3cold to D0 (config
+> > space inaccessible)"
+> > followed by backtraces of kernel crashes or timeouts within nouveau.
+> >
+> > It's still unkown why this issue exists, but this is a reliable workaround
+> > and solves a very annoying issue for user having to choose between a
+> > crashing kernel or higher power consumption of their Laptops.
+>
+> Thanks for the bugzilla link.  The bugzilla mentions lots of mailing
+> list discussion.  Can you include links to some of that?
+>
+> IIUC this basically just turns off PCI power management for the GPU.
+> Can you do that with something like the following?  I don't know
+> anything about DRM, so I don't know where you could save the pm_cap,
+> but I'm sure the driver could keep it somewhere.
+>
 
-Change-Id: I53ac9e83baa4a012187ee215280032d96deedf62
-Signed-off-by: Asutosh Das <asutoshd@codeaurora.org>
----
- drivers/scsi/ufs/ufs-sysfs.c | 39 ++++++++++++++++++++++++++++++++++++++-
- drivers/scsi/ufs/ufs.h       |  6 ++++++
- 2 files changed, 44 insertions(+), 1 deletion(-)
+Sure this would work? From a quick look over the pci code, it looks
+like a of code would be skipped we really need, like the platform code
+to turn off the GPU via ACPI. But I could also remember incorrectly on
+how all of that worked again. I can of course try and see what the
+effect of this patch would be. And would the parent bus even go into
+D3hot if it knows one of its children is still at D0? Because that's
+what the result of that would be as well, no? And I know that if the
+bus stays in D0, that it has a negative impact on power consumption.
 
-diff --git a/drivers/scsi/ufs/ufs-sysfs.c b/drivers/scsi/ufs/ufs-sysfs.c
-index dbdf8b0..db3b932 100644
---- a/drivers/scsi/ufs/ufs-sysfs.c
-+++ b/drivers/scsi/ufs/ufs-sysfs.c
-@@ -274,6 +274,10 @@ UFS_DEVICE_DESC_PARAM(device_version, _DEV_VER, 2);
- UFS_DEVICE_DESC_PARAM(number_of_secure_wpa, _NUM_SEC_WPA, 1);
- UFS_DEVICE_DESC_PARAM(psa_max_data_size, _PSA_MAX_DATA, 4);
- UFS_DEVICE_DESC_PARAM(psa_state_timeout, _PSA_TMT, 1);
-+UFS_DEVICE_DESC_PARAM(ext_feature_sup, _EXT_UFS_FEATURE_SUP, 4);
-+UFS_DEVICE_DESC_PARAM(wb_presv_us_en, _WB_US_RED_EN, 1);
-+UFS_DEVICE_DESC_PARAM(wb_type, _WB_TYPE, 1);
-+UFS_DEVICE_DESC_PARAM(wb_shared_alloc_units, _WB_SHARED_ALLOC_UNITS, 4);
- 
- static struct attribute *ufs_sysfs_device_descriptor[] = {
- 	&dev_attr_device_type.attr,
-@@ -302,6 +306,10 @@ static struct attribute *ufs_sysfs_device_descriptor[] = {
- 	&dev_attr_number_of_secure_wpa.attr,
- 	&dev_attr_psa_max_data_size.attr,
- 	&dev_attr_psa_state_timeout.attr,
-+	&dev_attr_ext_feature_sup.attr,
-+	&dev_attr_wb_presv_us_en.attr,
-+	&dev_attr_wb_type.attr,
-+	&dev_attr_wb_shared_alloc_units.attr,
- 	NULL,
- };
- 
-@@ -371,6 +379,12 @@ UFS_GEOMETRY_DESC_PARAM(enh4_memory_max_alloc_units,
- 	_ENM4_MAX_NUM_UNITS, 4);
- UFS_GEOMETRY_DESC_PARAM(enh4_memory_capacity_adjustment_factor,
- 	_ENM4_CAP_ADJ_FCTR, 2);
-+UFS_GEOMETRY_DESC_PARAM(wb_max_alloc_units, _WB_MAX_ALLOC_UNITS, 4);
-+UFS_GEOMETRY_DESC_PARAM(wb_max_wb_luns, _WB_MAX_WB_LUNS, 1);
-+UFS_GEOMETRY_DESC_PARAM(wb_buff_cap_adj, _WB_BUFF_CAP_ADJ, 1);
-+UFS_GEOMETRY_DESC_PARAM(wb_sup_red_type, _WB_SUP_RED_TYPE, 1);
-+UFS_GEOMETRY_DESC_PARAM(wb_sup_wb_type, _WB_SUP_WB_TYPE, 1);
-+
- 
- static struct attribute *ufs_sysfs_geometry_descriptor[] = {
- 	&dev_attr_raw_device_capacity.attr,
-@@ -402,6 +416,11 @@ static struct attribute *ufs_sysfs_geometry_descriptor[] = {
- 	&dev_attr_enh3_memory_capacity_adjustment_factor.attr,
- 	&dev_attr_enh4_memory_max_alloc_units.attr,
- 	&dev_attr_enh4_memory_capacity_adjustment_factor.attr,
-+	&dev_attr_wb_max_alloc_units.attr,
-+	&dev_attr_wb_max_wb_luns.attr,
-+	&dev_attr_wb_buff_cap_adj.attr,
-+	&dev_attr_wb_sup_red_type.attr,
-+	&dev_attr_wb_sup_wb_type.attr,
- 	NULL,
- };
- 
-@@ -608,7 +627,7 @@ static ssize_t _name##_show(struct device *dev,				\
- 	if (ufshcd_query_flag(hba, UPIU_QUERY_OPCODE_READ_FLAG,		\
- 		QUERY_FLAG_IDN##_uname, &flag))				\
- 		return -EINVAL;						\
--	return sprintf(buf, "%s\n", flag ? "true" : "false");		\
-+	return sprintf(buf, "%s\n", flag ? "true" : "false"); \
- }									\
- static DEVICE_ATTR_RO(_name)
- 
-@@ -620,6 +639,9 @@ UFS_FLAG(life_span_mode_enable, _LIFE_SPAN_MODE_ENABLE);
- UFS_FLAG(phy_resource_removal, _FPHYRESOURCEREMOVAL);
- UFS_FLAG(busy_rtc, _BUSY_RTC);
- UFS_FLAG(disable_fw_update, _PERMANENTLY_DISABLE_FW_UPDATE);
-+UFS_FLAG(wb_enable, _WB_EN);
-+UFS_FLAG(wb_flush_en, _WB_BUFF_FLUSH_EN);
-+UFS_FLAG(wb_flush_during_h8, _WB_BUFF_FLUSH_DURING_HIBERN8);
- 
- static struct attribute *ufs_sysfs_device_flags[] = {
- 	&dev_attr_device_init.attr,
-@@ -630,6 +652,9 @@ static struct attribute *ufs_sysfs_device_flags[] = {
- 	&dev_attr_phy_resource_removal.attr,
- 	&dev_attr_busy_rtc.attr,
- 	&dev_attr_disable_fw_update.attr,
-+	&dev_attr_wb_enable.attr,
-+	&dev_attr_wb_flush_en.attr,
-+	&dev_attr_wb_flush_during_h8.attr,
- 	NULL,
- };
- 
-@@ -667,6 +692,11 @@ UFS_ATTRIBUTE(exception_event_status, _EE_STATUS);
- UFS_ATTRIBUTE(ffu_status, _FFU_STATUS);
- UFS_ATTRIBUTE(psa_state, _PSA_STATE);
- UFS_ATTRIBUTE(psa_data_size, _PSA_DATA_SIZE);
-+UFS_ATTRIBUTE(wb_flush_status, _WB_FLUSH_STATUS);
-+UFS_ATTRIBUTE(wb_avail_buf, _AVAIL_WB_BUFF_SIZE);
-+UFS_ATTRIBUTE(wb_life_time_est, _WB_BUFF_LIFE_TIME_EST);
-+UFS_ATTRIBUTE(wb_cur_buf, _CURR_WB_BUFF_SIZE);
-+
- 
- static struct attribute *ufs_sysfs_attributes[] = {
- 	&dev_attr_boot_lun_enabled.attr,
-@@ -685,6 +715,10 @@ static struct attribute *ufs_sysfs_attributes[] = {
- 	&dev_attr_ffu_status.attr,
- 	&dev_attr_psa_state.attr,
- 	&dev_attr_psa_data_size.attr,
-+	&dev_attr_wb_flush_status.attr,
-+	&dev_attr_wb_avail_buf.attr,
-+	&dev_attr_wb_life_time_est.attr,
-+	&dev_attr_wb_cur_buf.attr,
- 	NULL,
- };
- 
-@@ -736,6 +770,8 @@ UFS_UNIT_DESC_PARAM(provisioning_type, _PROVISIONING_TYPE, 1);
- UFS_UNIT_DESC_PARAM(physical_memory_resourse_count, _PHY_MEM_RSRC_CNT, 8);
- UFS_UNIT_DESC_PARAM(context_capabilities, _CTX_CAPABILITIES, 2);
- UFS_UNIT_DESC_PARAM(large_unit_granularity, _LARGE_UNIT_SIZE_M1, 1);
-+UFS_UNIT_DESC_PARAM(wb_buf_alloc_units, _WB_BUF_ALLOC_UNITS, 4);
-+
- 
- static struct attribute *ufs_sysfs_unit_descriptor[] = {
- 	&dev_attr_boot_lun_id.attr,
-@@ -751,6 +787,7 @@ static struct attribute *ufs_sysfs_unit_descriptor[] = {
- 	&dev_attr_physical_memory_resourse_count.attr,
- 	&dev_attr_context_capabilities.attr,
- 	&dev_attr_large_unit_granularity.attr,
-+	&dev_attr_wb_buf_alloc_units.attr,
- 	NULL,
- };
- 
-diff --git a/drivers/scsi/ufs/ufs.h b/drivers/scsi/ufs/ufs.h
-index 2c77b3e..5c26659 100644
---- a/drivers/scsi/ufs/ufs.h
-+++ b/drivers/scsi/ufs/ufs.h
-@@ -267,6 +267,7 @@ enum device_desc_param {
- 	DEVICE_DESC_PARAM_PSA_TMT		= 0x29,
- 	DEVICE_DESC_PARAM_PRDCT_REV		= 0x2A,
- 	DEVICE_DESC_PARAM_EXT_UFS_FEATURE_SUP	= 0x4F,
-+	DEVICE_DESC_PARAM_WB_US_RED_EN		= 0x53,
- 	DEVICE_DESC_PARAM_WB_TYPE		= 0x54,
- 	DEVICE_DESC_PARAM_WB_SHARED_ALLOC_UNITS = 0x55,
- };
-@@ -313,6 +314,11 @@ enum geometry_desc_param {
- 	GEOMETRY_DESC_PARAM_ENM4_MAX_NUM_UNITS	= 0x3E,
- 	GEOMETRY_DESC_PARAM_ENM4_CAP_ADJ_FCTR	= 0x42,
- 	GEOMETRY_DESC_PARAM_OPT_LOG_BLK_SIZE	= 0x44,
-+	GEOMETRY_DESC_PARAM_WB_MAX_ALLOC_UNITS	= 0x4F,
-+	GEOMETRY_DESC_PARAM_WB_MAX_WB_LUNS	= 0x53,
-+	GEOMETRY_DESC_PARAM_WB_BUFF_CAP_ADJ	= 0x54,
-+	GEOMETRY_DESC_PARAM_WB_SUP_RED_TYPE	= 0x55,
-+	GEOMETRY_DESC_PARAM_WB_SUP_WB_TYPE	= 0x56,
- };
- 
- /* Health descriptor parameters offsets in bytes*/
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, a Linux Foundation Collaborative Project.
+Anyway, I will try that out, I am just not seeing how that would help.
+
+>
+> diff --git a/drivers/gpu/drm/nouveau/nouveau_drm.c b/drivers/gpu/drm/nouveau/nouveau_drm.c
+> index b65ae817eabf..2ad825e8891c 100644
+> --- a/drivers/gpu/drm/nouveau/nouveau_drm.c
+> +++ b/drivers/gpu/drm/nouveau/nouveau_drm.c
+> @@ -618,6 +618,23 @@ nouveau_drm_device_fini(struct drm_device *dev)
+>         kfree(drm);
+>  }
+>
+> +static void quirk_broken_nv_runpm(struct drm_device *drm_dev)
+> +{
+> +       struct pci_dev *pdev = drm_dev->pdev;
+> +       struct pci_dev *bridge = pci_upstream_bridge(pdev);
+> +
+> +       if (!bridge || bridge->vendor != PCI_VENDOR_ID_INTEL)
+> +               return;
+> +
+> +       switch (bridge->device) {
+> +       case 0x1901:
+> +               STASH->pm_cap = pdev->pm_cap;
+> +               pdev->pm_cap = 0;
+> +               NV_INFO(drm_dev, "Disabling PCI power management to avoid bug\n");
+> +               break;
+> +       }
+> +}
+> +
+>  static int nouveau_drm_probe(struct pci_dev *pdev,
+>                              const struct pci_device_id *pent)
+>  {
+> @@ -699,6 +716,7 @@ static int nouveau_drm_probe(struct pci_dev *pdev,
+>         if (ret)
+>                 goto fail_drm_dev_init;
+>
+> +       quirk_broken_nv_runpm(drm_dev);
+>         return 0;
+>
+>  fail_drm_dev_init:
+> @@ -735,6 +753,9 @@ nouveau_drm_remove(struct pci_dev *pdev)
+>  {
+>         struct drm_device *dev = pci_get_drvdata(pdev);
+>
+> +       /* If we disabled PCI power management, restore it */
+> +       if (STASH->pm_cap)
+> +               pdev->pm_cap = STASH->pm_cap;
+>         nouveau_drm_device_remove(dev);
+>         pci_disable_device(pdev);
+>  }
+>
 
