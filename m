@@ -2,91 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8BF5318E3B0
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Mar 2020 19:33:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4285018E3B3
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Mar 2020 19:38:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727702AbgCUSdw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 21 Mar 2020 14:33:52 -0400
-Received: from sauhun.de ([88.99.104.3]:38110 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727028AbgCUSdw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 21 Mar 2020 14:33:52 -0400
-Received: from localhost (p54B33C59.dip0.t-ipconnect.de [84.179.60.89])
-        by pokefinder.org (Postfix) with ESMTPSA id E797B2C2E9C;
-        Sat, 21 Mar 2020 19:33:49 +0100 (CET)
-Date:   Sat, 21 Mar 2020 19:33:49 +0100
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     Sergey.Semin@baikalelectronics.ru
-Cc:     Jarkko Nikula <jarkko.nikula@linux.intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Serge Semin <fancer.lancer@gmail.com>,
-        Alexey Malahov <Alexey.Malahov@baikalelectronics.ru>,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        Paul Burton <paulburton@kernel.org>,
-        Ralf Baechle <ralf@linux-mips.org>, linux-i2c@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 6/6] i2c: designware: Add Baikal-T1 SoC I2C controller
- support
-Message-ID: <20200321183349.GC5632@ninjato>
-References: <20200306131955.12806-1-Sergey.Semin@baikalelectronics.ru>
- <20200306132348.71E638030793@mail.baikalelectronics.ru>
+        id S1727446AbgCUSij (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 21 Mar 2020 14:38:39 -0400
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:43649 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727015AbgCUSii (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 21 Mar 2020 14:38:38 -0400
+Received: by mail-pl1-f196.google.com with SMTP id f8so3963152plt.10
+        for <linux-kernel@vger.kernel.org>; Sat, 21 Mar 2020 11:38:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=from:subject:to:cc:message-id:date:user-agent:mime-version
+         :content-language:content-transfer-encoding;
+        bh=yJsfugZDU7DZQtM62SLLjOYi0hS3mhuiYGirhWMRsNI=;
+        b=Z+UtOWrb663FAQnoPIp6OLW9eYD8xWzoFnGvXcjjz4+Bqbe4qEgzBzbZLh7s4nudvh
+         GjyRXr5NrmrDBhcVBoPxbTUEeb5ECrCq3mdSJARLTyQTyCyIL9sTpw59aUQMPBx/abyS
+         gjvVxnXlekNAL7OJwSjBClx9IDJ+CRnRG7XGhgvs7atR590Ylv6AEgaf2WPRWKA9gErp
+         m+ea3e36drQECgquMdkLkSOIn99l8JAIyy/R9DZMhjsxAhM8wyE5pBzbvTQBQ8+jdSGg
+         ZDgofTQVYoOAo51b755WMD7xdUYd7mUTSCj0Csy1Sjmj7CR14uhlbqYk9njFwRRskeYg
+         p0Eg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:subject:to:cc:message-id:date:user-agent
+         :mime-version:content-language:content-transfer-encoding;
+        bh=yJsfugZDU7DZQtM62SLLjOYi0hS3mhuiYGirhWMRsNI=;
+        b=TQOQGRIryqbd+lhWmIEtc6iUr3A/Jl5hsADQnyOKrTRr922X4KUyJRJ2hvrNo8ElbP
+         8WIUoFvty+w5gqPi61UGy+gxHwoI8Exo1g7e5AdVp6Tw2kiPKTG5GkxppNLV90YzhkvG
+         ic4ZokeUMfs1DyrS55HKnqBlxSJGkI3A0hmfPvZmv1TGxuE8NAPWlreEoIv3wBJAoXkw
+         BxsnDfZRv2Rp0hxyl8fZCZ0XG2NSeLUJ/H6cpPVnE/KjjXfvalxbLsDIfL31mHTDJbj0
+         59dPnva5Xrsn07yiUlcHGNvnnKfn7kNQ9AfsnFkp2ag4UpTwD5rgVoH6B/3sRWDKPoBY
+         /jRQ==
+X-Gm-Message-State: ANhLgQ1qiS0IPei8woLlskEio7A6F5DqGYYhCa5h5peORkYlRyM7ZPpo
+        I77v4QuO3DXUuOq6TfZTY6Lemiw5IPYFcA==
+X-Google-Smtp-Source: ADFU+vvUbCZBa8Rx1oLK+kKmZFdJsFZ8EopLyP3vCsfUEw5+NCF01U4glXJk/QYG7FASQW2jyfQQ4w==
+X-Received: by 2002:a17:902:bd92:: with SMTP id q18mr1696500pls.282.1584815917630;
+        Sat, 21 Mar 2020 11:38:37 -0700 (PDT)
+Received: from [192.168.1.188] ([66.219.217.145])
+        by smtp.gmail.com with ESMTPSA id e38sm8208653pgb.32.2020.03.21.11.38.36
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 21 Mar 2020 11:38:36 -0700 (PDT)
+From:   Jens Axboe <axboe@kernel.dk>
+Subject: [GIT PULL] io_uring fixes for 5.6-rc
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     io-uring <io-uring@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Message-ID: <51feabdd-c2e2-e24f-92af-edf4b2b0f54d@kernel.dk>
+Date:   Sat, 21 Mar 2020 12:38:34 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="7qSK/uQB79J36Y4o"
-Content-Disposition: inline
-In-Reply-To: <20200306132348.71E638030793@mail.baikalelectronics.ru>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Linus,
 
---7qSK/uQB79J36Y4o
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Two different fixes in here:
 
-On Fri, Mar 06, 2020 at 04:19:58PM +0300, Sergey.Semin@baikalelectronics.ru=
- wrote:
-> From: Serge Semin <Sergey.Semin@baikalelectronics.ru>
->=20
-> A third I2C controller embedded into the Baikal-T1 SoC is also fully
-> based on the DW APB I2C core, but its registers are indirectly
-> accessible via "command/data in/data out" trio. There is no difference
-> other than that. So in order to have that controller supported by the
-> common DW APB I2C driver we only need to introduce a new flag
-> ACCESS_INDIRECT and use the access-registers to reach the I2C controller
-> normal registers space in the dw_readl/dw_writel methods. Currently this
-> flag is only enabled for the controllers with "be,bt1-i2c" compatible
-> string.
->=20
-> Signed-off-by: Serge Semin <Sergey.Semin@baikalelectronics.ru>
-> Signed-off-by: Alexey Malahov <Alexey.Malahov@baikalelectronics.ru>
+- Fix for a potential NULL pointer deref for links with async or drain
+  marked (Pavel)
 
-Patches 2,3, and 6 have comments which should be addressed. Patches 4+5
-can be dropped when sending next version.
+- Fix for not properly checking RLIMIT_NOFILE for async punted
+  operations. This affects openat/openat2, which were added this cycle,
+  and accept4. I did a full audit of other cases where we might check
+  current->signal->rlim[] and found only RLIMIT_FSIZE for buffered
+  writes and fallocate. That one is fixed and queued for 5.7 and marked
+  stable.
+
+Please pull!
 
 
---7qSK/uQB79J36Y4o
-Content-Type: application/pgp-signature; name="signature.asc"
+  git://git.kernel.dk/linux-block.git tags/io_uring-5.6-20200320
 
------BEGIN PGP SIGNATURE-----
 
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAl52Xg0ACgkQFA3kzBSg
-KbYNoQ/+IqAHiu0yu6E7vmrFh163UulAWJmyVeL2xt5Umm6AqdBs1yTL6Oy4JB6w
-9fMelMGKk4uybuL32UvtviBiNBlqdxPrmkNLfqJ3TkFvg/kSev+HR8QIRPS3WNme
-UuHz5MCoYPfZK8Pbx8oJsaopI0Ad7/d0uB9MOmatEERHz6jrvQulhm42psN2/icM
-wufLIsBr803+Ld1VxotTU/15lKfOXsYKhDj3LmiP6iUUtc7K0yQdRcD5KI+3+KZ2
-FehsEcizI4YuexDTQrup4Ri6PFj7Tcc8ZXEFXjMYQIuVyYZP50Fs8USKSQcja0e6
-Q0er8yM3BRqla5ZoCYQsbXqHYDZh70RxYnj6kOPsYFsjyzR54An0NUG9WERTjCaE
-DVt0qoOfG6uQnQGX9fgJhzQA5TDlr1xcwxU3A4WS+VNgRuBiG1PI0pFkux9/oesG
-jFSb0SHLxH9sHE6iH9nhb04hlLxPqiI0esFMtAc8PPW2zaH/ksxa70pc5T3QNJUc
-poJGFzVxhyI9i0mgnWRYjcITPA5rQqIHAPNxzwNOHvkryDyv1L8dzMey2toJzvUB
-0NF0i2II9y5nPt2AWm0ctjdRfmsaikLotwAWLHjNBp+mx+dKpOLtF74D/g/knOKo
-sU0TkXTi56MjIz05pP6/nvbD+fjeVOUtj4MEyYNH5OIhrQQoibE=
-=KXuX
------END PGP SIGNATURE-----
+----------------------------------------------------------------
+Jens Axboe (2):
+      io_uring: make sure openat/openat2 honor rlimit nofile
+      io_uring: make sure accept honor rlimit nofile
 
---7qSK/uQB79J36Y4o--
+Pavel Begunkov (1):
+      io_uring: NULL-deref for IOSQE_{ASYNC,DRAIN}
+
+ fs/file.c              |  7 ++++++-
+ fs/io_uring.c          | 18 ++++++++++++++++--
+ include/linux/file.h   |  1 +
+ include/linux/socket.h |  3 ++-
+ net/socket.c           |  8 +++++---
+ 5 files changed, 30 insertions(+), 7 deletions(-)
+
+-- 
+Jens Axboe
+
