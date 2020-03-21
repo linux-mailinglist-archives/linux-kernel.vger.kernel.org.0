@@ -2,135 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2AEF418E1D2
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Mar 2020 15:29:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C698818E201
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Mar 2020 15:34:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727367AbgCUO3S (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 21 Mar 2020 10:29:18 -0400
-Received: from mail-io1-f71.google.com ([209.85.166.71]:38114 "EHLO
-        mail-io1-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727128AbgCUO3S (ORCPT
+        id S1728045AbgCUOem (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 21 Mar 2020 10:34:42 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:38706 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726997AbgCUOda (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 21 Mar 2020 10:29:18 -0400
-Received: by mail-io1-f71.google.com with SMTP id x20so6657844iox.5
-        for <linux-kernel@vger.kernel.org>; Sat, 21 Mar 2020 07:29:17 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=+0C+BS0h1x1M3bgLFevyE/Hyim/L16vOi1m2yvEXErw=;
-        b=H3Zc0xmACMnGPvv8SxyCzrmML80ZH+URIWpf2iZ5Dy/6lMNdukAq+ImiAJTx4BM71F
-         t3nX7Hk+S3eyHpwQk7ty1RNH0W/yPMFSsetdrnz/4BIkHeCrtdULcthHC5AqRTvYhlCJ
-         ictJki5oezEku9tzEmh/MeHdScsDRAHcGbGjIcg6k9FgM1L/JnH6mdGqhR8TP6IJKEgi
-         k9PclcKcW+gvs+RSOkviRZpf54TBJ1QVR7oCx+9vPqgx4h6b/az6RBBeXwiC1gr3p2E/
-         L5vUggDQVVYYhT6NEPE7zWWpUUS/L4v4yLcnDBrXKKFDY9BnXnb3eBtLtuKKOiYaFZhw
-         KjTg==
-X-Gm-Message-State: ANhLgQ3N6NwfcJJhySmhTudA+uOktWv44bp8uMlRbLQ78KNCnytfeMvf
-        TC36pZmPNnxJz2wo9S7ZCRtEu7B2QU4D+o2oEHeQd0oQpi7i
-X-Google-Smtp-Source: ADFU+vv6MVIwdTe7nx6daaLhb5yBGUc7wIq+Gx93IxbvGpgnVAZCtbcIL5ggGkk8wyR95yIjTwu3q1gq4FX3RVF9vozQx04r6NYo
+        Sat, 21 Mar 2020 10:33:30 -0400
+Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tip-bot2@linutronix.de>)
+        id 1jFfBk-00044I-2x; Sat, 21 Mar 2020 15:33:24 +0100
+Received: from [127.0.1.1] (localhost [IPv6:::1])
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id A5C9C1C22BC;
+        Sat, 21 Mar 2020 15:33:23 +0100 (CET)
+Date:   Sat, 21 Mar 2020 14:33:23 -0000
+From:   "tip-bot2 for Vincenzo Frascino" <tip-bot2@linutronix.de>
+Reply-to: linux-kernel@vger.kernel.org
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip: timers/core] arm64: vdso32: Enable Clang Compilation
+Cc:     Vincenzo Frascino <vincenzo.frascino@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Stephen Boyd <swboyd@chromium.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>, x86 <x86@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+In-Reply-To: <20200320145351.32292-27-vincenzo.frascino@arm.com>
+References: <20200320145351.32292-27-vincenzo.frascino@arm.com>
 MIME-Version: 1.0
-X-Received: by 2002:a02:c8cd:: with SMTP id q13mr12867621jao.66.1584800957332;
- Sat, 21 Mar 2020 07:29:17 -0700 (PDT)
-Date:   Sat, 21 Mar 2020 07:29:17 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000001a033405a15e3acb@google.com>
-Subject: WARNING in hwahc_probe
-From:   syzbot <syzbot+df767d588771697b0433@syzkaller.appspotmail.com>
-To:     andreyknvl@google.com, devel@driverdev.osuosl.org,
-        gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
-        linux-usb@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-        tranmanphong@gmail.com
-Content-Type: text/plain; charset="UTF-8"
+Message-ID: <158480120332.28353.15188888538994089903.tip-bot2@tip-bot2>
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot2.linutronix.de>
+Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+The following commit has been merged into the timers/core branch of tip:
 
-syzbot found the following crash on:
+Commit-ID:     a5d442f50a41d7c5a6a97b19c49d8a1ee0cf128b
+Gitweb:        https://git.kernel.org/tip/a5d442f50a41d7c5a6a97b19c49d8a1ee0cf128b
+Author:        Vincenzo Frascino <vincenzo.frascino@arm.com>
+AuthorDate:    Fri, 20 Mar 2020 14:53:51 
+Committer:     Thomas Gleixner <tglx@linutronix.de>
+CommitterDate: Sat, 21 Mar 2020 15:24:03 +01:00
 
-HEAD commit:    e17994d1 usb: core: kcov: collect coverage from usb comple..
-git tree:       https://github.com/google/kasan.git usb-fuzzer
-console output: https://syzkaller.appspot.com/x/log.txt?x=12d170ade00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=5d64370c438bc60
-dashboard link: https://syzkaller.appspot.com/bug?extid=df767d588771697b0433
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14ac8b91e00000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1010e223e00000
+arm64: vdso32: Enable Clang Compilation
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+df767d588771697b0433@syzkaller.appspotmail.com
+Enable Clang Compilation for the vdso32 library.
 
-pl2303 1-1:31.37: required endpoints missing
-hwa-hc 1-1:31.37: Wire Adapter v219.213 newer than groked v1.0
-hwa-hc 1-1:31.37: FIXME: USB_MAXCHILDREN too low for WUSB adapter (62 ports)
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 95 at lib/vsprintf.c:2512 vsnprintf+0xf46/0x14f0 lib/vsprintf.c:2512
-Kernel panic - not syncing: panic_on_warn set ...
-CPU: 0 PID: 95 Comm: kworker/0:2 Not tainted 5.6.0-rc5-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Workqueue: usb_hub_wq hub_event
-Call Trace:
- __dump_stack lib/dump_stack.c:77 [inline]
- dump_stack+0xef/0x16e lib/dump_stack.c:118
- panic+0x2aa/0x6e1 kernel/panic.c:221
- __warn.cold+0x2f/0x30 kernel/panic.c:582
- report_bug+0x27b/0x2f0 lib/bug.c:195
- fixup_bug arch/x86/kernel/traps.c:174 [inline]
- fixup_bug arch/x86/kernel/traps.c:169 [inline]
- do_error_trap+0x12b/0x1e0 arch/x86/kernel/traps.c:267
- do_invalid_op+0x32/0x40 arch/x86/kernel/traps.c:286
- invalid_op+0x23/0x30 arch/x86/entry/entry_64.S:1027
-RIP: 0010:vsnprintf+0xf46/0x14f0 lib/vsprintf.c:2512
-Code: 10 83 c5 08 41 89 2f e8 f8 34 b3 fb 4c 89 f0 48 c1 e8 03 80 3c 18 00 0f 85 38 04 00 00 4d 8b 36 e9 bb f2 ff ff e8 da 34 b3 fb <0f> 0b 45 31 ed e9 71 f3 ff ff e8 cb 34 b3 fb 4c 89 e8 4c 89 ea 48
-RSP: 0018:ffff8881d58c6fc8 EFLAGS: 00010293
-RAX: ffff8881d7976200 RBX: fffffffffffffff7 RCX: ffffffff858c1258
-RDX: 0000000000000000 RSI: ffffffff858c2106 RDI: 0000000000000007
-RBP: ffffffff86881480 R08: ffff8881d7976200 R09: ffffed103ab18e4e
-R10: ffffed103ab18e4d R11: ffff8881d58c7269 R12: ffff8881d58c7279
-R13: fffffffffffffff7 R14: ffffffff86881480 R15: ffff8881d58c70c8
- snprintf+0xbb/0xf0 lib/vsprintf.c:2707
- hwahc_security_create drivers/staging/wusbcore/host/hwa-hc.c:683 [inline]
- hwahc_create drivers/staging/wusbcore/host/hwa-hc.c:738 [inline]
- hwahc_probe+0xfd6/0x1490 drivers/staging/wusbcore/host/hwa-hc.c:805
- usb_probe_interface+0x310/0x800 drivers/usb/core/driver.c:374
- really_probe+0x290/0xac0 drivers/base/dd.c:551
- driver_probe_device+0x223/0x350 drivers/base/dd.c:724
- __device_attach_driver+0x1d1/0x290 drivers/base/dd.c:831
- bus_for_each_drv+0x162/0x1e0 drivers/base/bus.c:431
- __device_attach+0x217/0x390 drivers/base/dd.c:897
- bus_probe_device+0x1e4/0x290 drivers/base/bus.c:491
- device_add+0x1459/0x1bf0 drivers/base/core.c:2500
- usb_set_configuration+0xe47/0x17d0 drivers/usb/core/message.c:2023
- usb_generic_driver_probe+0x9d/0xe0 drivers/usb/core/generic.c:241
- usb_probe_device+0xd9/0x230 drivers/usb/core/driver.c:272
- really_probe+0x290/0xac0 drivers/base/dd.c:551
- driver_probe_device+0x223/0x350 drivers/base/dd.c:724
- __device_attach_driver+0x1d1/0x290 drivers/base/dd.c:831
- bus_for_each_drv+0x162/0x1e0 drivers/base/bus.c:431
- __device_attach+0x217/0x390 drivers/base/dd.c:897
- bus_probe_device+0x1e4/0x290 drivers/base/bus.c:491
- device_add+0x1459/0x1bf0 drivers/base/core.c:2500
- usb_new_device.cold+0x540/0xcd0 drivers/usb/core/hub.c:2548
- hub_port_connect drivers/usb/core/hub.c:5195 [inline]
- hub_port_connect_change drivers/usb/core/hub.c:5335 [inline]
- port_event drivers/usb/core/hub.c:5481 [inline]
- hub_event+0x21cb/0x4300 drivers/usb/core/hub.c:5563
- process_one_work+0x94b/0x1620 kernel/workqueue.c:2264
- worker_thread+0x96/0xe20 kernel/workqueue.c:2410
- kthread+0x318/0x420 kernel/kthread.c:255
- ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
-Kernel Offset: disabled
-Rebooting in 86400 seconds..
-
+Signed-off-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Tested-by: Nathan Chancellor <natechancellor@gmail.com> # build
+Tested-by: Stephen Boyd <swboyd@chromium.org>
+Reviewed-by: Nathan Chancellor <natechancellor@gmail.com>
+Acked-by: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Will Deacon <will@kernel.org>
+Link: https://lkml.kernel.org/r/20200320145351.32292-27-vincenzo.frascino@arm.com
 
 ---
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+ arch/arm64/kernel/vdso32/Makefile | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-syzbot can test patches for this bug, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+diff --git a/arch/arm64/kernel/vdso32/Makefile b/arch/arm64/kernel/vdso32/Makefile
+index 04df57b..3964738 100644
+--- a/arch/arm64/kernel/vdso32/Makefile
++++ b/arch/arm64/kernel/vdso32/Makefile
+@@ -10,7 +10,18 @@ include $(srctree)/lib/vdso/Makefile
+ 
+ # Same as cc-*option, but using CC_COMPAT instead of CC
+ ifeq ($(CONFIG_CC_IS_CLANG), y)
++COMPAT_GCC_TOOLCHAIN_DIR := $(dir $(shell which $(CROSS_COMPILE_COMPAT)elfedit))
++COMPAT_GCC_TOOLCHAIN := $(realpath $(COMPAT_GCC_TOOLCHAIN_DIR)/..)
++
++CC_COMPAT_CLANG_FLAGS := --target=$(notdir $(CROSS_COMPILE_COMPAT:%-=%))
++CC_COMPAT_CLANG_FLAGS += --prefix=$(COMPAT_GCC_TOOLCHAIN_DIR)
++CC_COMPAT_CLANG_FLAGS += -no-integrated-as -Qunused-arguments
++ifneq ($(COMPAT_GCC_TOOLCHAIN),)
++CC_COMPAT_CLANG_FLAGS += --gcc-toolchain=$(COMPAT_GCC_TOOLCHAIN)
++endif
++
+ CC_COMPAT ?= $(CC)
++CC_COMPAT += $(CC_COMPAT_CLANG_FLAGS)
+ else
+ CC_COMPAT ?= $(CROSS_COMPILE_COMPAT)gcc
+ endif
