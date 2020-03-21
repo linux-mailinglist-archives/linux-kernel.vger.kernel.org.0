@@ -2,97 +2,118 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 96F8418DEEA
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Mar 2020 10:00:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5D4CB18DEEF
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Mar 2020 10:01:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728240AbgCUJAd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 21 Mar 2020 05:00:33 -0400
-Received: from mx0a-00128a01.pphosted.com ([148.163.135.77]:42956 "EHLO
-        mx0a-00128a01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728008AbgCUJAd (ORCPT
+        id S1728305AbgCUJBS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 21 Mar 2020 05:01:18 -0400
+Received: from new4-smtp.messagingengine.com ([66.111.4.230]:34793 "EHLO
+        new4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728008AbgCUJBR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 21 Mar 2020 05:00:33 -0400
-Received: from pps.filterd (m0167088.ppops.net [127.0.0.1])
-        by mx0a-00128a01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 02L8st3n014731;
-        Sat, 21 Mar 2020 05:00:19 -0400
-Received: from nwd2mta4.analog.com ([137.71.173.58])
-        by mx0a-00128a01.pphosted.com with ESMTP id 2ywcs5rdqx-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Sat, 21 Mar 2020 05:00:19 -0400
-Received: from SCSQMBX10.ad.analog.com (scsqmbx10.ad.analog.com [10.77.17.5])
-        by nwd2mta4.analog.com (8.14.7/8.14.7) with ESMTP id 02L90HpF049901
-        (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=FAIL);
-        Sat, 21 Mar 2020 05:00:17 -0400
-Received: from SCSQMBX11.ad.analog.com (10.77.17.10) by
- SCSQMBX10.ad.analog.com (10.77.17.5) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1779.2; Sat, 21 Mar 2020 02:00:16 -0700
-Received: from zeus.spd.analog.com (10.64.82.11) by SCSQMBX11.ad.analog.com
- (10.77.17.10) with Microsoft SMTP Server id 15.1.1779.2 via Frontend
- Transport; Sat, 21 Mar 2020 02:00:15 -0700
-Received: from localhost.localdomain ([10.48.65.12])
-        by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 02L90CUH009329;
-        Sat, 21 Mar 2020 05:00:12 -0400
-From:   Alexandru Ardelean <alexandru.ardelean@analog.com>
-To:     <linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC:     <lars@metafoo.de>, <andriy.shevchenko@linux.intel.com>,
-        <jic23@kernel.org>,
-        Alexandru Ardelean <alexandru.ardelean@analog.com>
-Subject: [PATCH v2] iio: buffer: re-introduce bitmap_zalloc() for trialmask
-Date:   Sat, 21 Mar 2020 10:59:56 +0200
-Message-ID: <20200321085956.11213-1-alexandru.ardelean@analog.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200317123621.27722-1-alexandru.ardelean@analog.com>
-References: <20200317123621.27722-1-alexandru.ardelean@analog.com>
+        Sat, 21 Mar 2020 05:01:17 -0400
+Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
+        by mailnew.nyi.internal (Postfix) with ESMTP id F0B87580700;
+        Sat, 21 Mar 2020 05:00:33 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute1.internal (MEProxy); Sat, 21 Mar 2020 05:00:33 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=
+        date:from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=fm3; bh=ALmjW+HIyhOT5zUGzSO/D37QXo/
+        rPihFOsRD5OGJ6Rg=; b=kEm5Ygo0FPZjRbTYocTFES8NPUlGElygVjugiSsRA3n
+        vru8BJJ8tNWWA1aBC6MUE6AqY6wsLM3GXiyzB7/KcJWCNJ5lCCm/qDclG4dF8plq
+        cNmoLuNTRlVe76ntEf+7CdsaxmJWLFFu4WB1muK4Vr1PWFPH+Sw4G81BFSLewgR+
+        6JB2ll2rZZ1Fqd8jcerWqFgeMP0L+cILkgWYoMYlEPzb/cKy4uHV+HiCyK5HPTEC
+        5gleYoVjpBsM4HR+qUC63mvzdIcTYERc3wPbzHAK/+CXXir9mMtzStZCZrUv+SGR
+        zGf2i6w5hnLo5ZBYfBLQudzv3kzZiHDRw7PCNutkR2g==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=ALmjW+
+        HIyhOT5zUGzSO/D37QXo/rPihFOsRD5OGJ6Rg=; b=K5YF/0lqzw1nyUZssapERV
+        MtAhWdygOUErp6IxIxf13m4mM6AQAI0DpHLEzGhWDooqcv+bylyHu3N/dfoZBDmj
+        Zhfrekl8SxOJX0+8dtU+T0Wbcql66hw77sdHm8UNHjRryiGD8r1cejEtCeNkgqp+
+        8J7AuVQyzAASfpsd28v/F88EJOVVbAsO14CtUDIMEI1dpYyrnFgJLaj5JcO1RXyl
+        EWgNcRJ2tEoYpU4fr41gGrGUWIm7NOKL5/AxD6Rwh+KJGCzxwOvu/RDxUPGPIaav
+        8wt9JoHbXEWCIyKhYjGIaTP75XGn2edAcZZOq3wZWwKHTLFCu02DsBBLMoLt2NfQ
+        ==
+X-ME-Sender: <xms:sNd1XkY87sJRpJfVaHD11KeSmppo5NtozC6kEyYOa0dy1nWhTxFCcw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedugedrudegvddguddvfecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
+    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
+    enucfjughrpeffhffvuffkfhggtggujgesthdtredttddtvdenucfhrhhomhepifhrvghg
+    ucfmjfcuoehgrhgvgheskhhrohgrhhdrtghomheqnecuffhomhgrihhnpehkvghrnhgvlh
+    drohhrghenucfkphepkeefrdekiedrkeelrddutdejnecuvehluhhsthgvrhfuihiivgep
+    tdenucfrrghrrghmpehmrghilhhfrhhomhepghhrvghgsehkrhhorghhrdgtohhm
+X-ME-Proxy: <xmx:sNd1XjoqGRzcgsGN119CZr0cGB46HCOMC49lNOQF0JG8ZsqhP4506w>
+    <xmx:sNd1XigKcM5vELOC7gzLRXd1s7sdJlHk4LtlOZByhOU-60dxIiwOHw>
+    <xmx:sNd1XtxT4PPqq4P-VuUfbGsOgmAJfzQuUeYekEUtM66_LEn-QrOdgw>
+    <xmx:sdd1XoCMs5G_4X8iRTp-FQMpHB1bsG3DryCpfJp66UyBLjCju3N--A>
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 62CB4328005A;
+        Sat, 21 Mar 2020 05:00:32 -0400 (EDT)
+Date:   Sat, 21 Mar 2020 10:00:30 +0100
+From:   Greg KH <greg@kroah.com>
+To:     Tom Lendacky <thomas.lendacky@amd.com>
+Cc:     David Rientjes <rientjes@google.com>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Brijesh Singh <brijesh.singh@amd.com>
+Subject: Re: [PATCH] KVM: SVM: Issue WBINVD after deactivating an SEV guest
+Message-ID: <20200321090030.GA884290@kroah.com>
+References: <c8bf9087ca3711c5770bdeaafa3e45b717dc5ef4.1584720426.git.thomas.lendacky@amd.com>
+ <alpine.DEB.2.21.2003201333510.205664@chino.kir.corp.google.com>
+ <7b8d0c8c-d685-627b-676c-01c3d194fc82@amd.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-ADIRoutedOnPrem: True
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.645
- definitions=2020-03-21_02:2020-03-20,2020-03-21 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- bulkscore=0 adultscore=0 phishscore=0 priorityscore=1501 impostorscore=0
- malwarescore=0 clxscore=1015 suspectscore=0 spamscore=0 mlxlogscore=999
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2003020000 definitions=main-2003210051
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <7b8d0c8c-d685-627b-676c-01c3d194fc82@amd.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit 3862828a903d3 ("iio: buffer: Switch to bitmap_zalloc()") introduced
-bitmap_alloc(), but commit 20ea39ef9f2f9 ("iio: Fix scan mask selection")
-reverted it.
+On Fri, Mar 20, 2020 at 03:37:23PM -0500, Tom Lendacky wrote:
+> On 3/20/20 3:34 PM, David Rientjes wrote:
+> > On Fri, 20 Mar 2020, Tom Lendacky wrote:
+> > 
+> > > Currently, CLFLUSH is used to flush SEV guest memory before the guest is
+> > > terminated (or a memory hotplug region is removed). However, CLFLUSH is
+> > > not enough to ensure that SEV guest tagged data is flushed from the cache.
+> > > 
+> > > With 33af3a7ef9e6 ("KVM: SVM: Reduce WBINVD/DF_FLUSH invocations"), the
+> > > original WBINVD was removed. This then exposed crashes at random times
+> > > because of a cache flush race with a page that had both a hypervisor and
+> > > a guest tag in the cache.
+> > > 
+> > > Restore the WBINVD when destroying an SEV guest and add a WBINVD to the
+> > > svm_unregister_enc_region() function to ensure hotplug memory is flushed
+> > > when removed. The DF_FLUSH can still be avoided at this point.
+> > > 
+> > > Fixes: 33af3a7ef9e6 ("KVM: SVM: Reduce WBINVD/DF_FLUSH invocations")
+> > > Signed-off-by: Tom Lendacky <thomas.lendacky@amd.com>
+> > 
+> > Acked-by: David Rientjes <rientjes@google.com>
+> > 
+> > Should this be marked for stable?
+> 
+> The Fixes tag should take care of that.
 
-This change adds it back. The only difference is that it's adding
-bitmap_zalloc(). There might be some changes later that would require
-initializing it to zero. In any case, now it's already zero-ing the
-trialmask.
+No it does not.
+Please read:
+    https://www.kernel.org/doc/html/latest/process/stable-kernel-rules.html
+for how to do this properly.
 
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Signed-off-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
----
+Yes, I have had to go around and clean up after maintainers who don't
+seem to realize this, but for KVM patches I have been explicitly told to
+NOT take any patch unless it has a cc: stable on it, due to issues that
+have happened in the past.
 
-Changelog v1 -> v2:
-* add 'Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>' 
-* re-send from an Analog server; GMail changed the author to @gmail.com
+So for this subsystem, what you suggested guaranteed it would NOT get
+picked up, please do not do that.
 
- drivers/iio/industrialio-buffer.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
-diff --git a/drivers/iio/industrialio-buffer.c b/drivers/iio/industrialio-buffer.c
-index 4ada5592aa2b..5ff34ce8b6a2 100644
---- a/drivers/iio/industrialio-buffer.c
-+++ b/drivers/iio/industrialio-buffer.c
-@@ -316,8 +316,7 @@ static int iio_scan_mask_set(struct iio_dev *indio_dev,
- 	const unsigned long *mask;
- 	unsigned long *trialmask;
- 
--	trialmask = kcalloc(BITS_TO_LONGS(indio_dev->masklength),
--			    sizeof(*trialmask), GFP_KERNEL);
-+	trialmask = bitmap_zalloc(indio_dev->masklength, GFP_KERNEL);
- 	if (trialmask == NULL)
- 		return -ENOMEM;
- 	if (!indio_dev->masklength) {
--- 
-2.17.1
-
+greg k-h
