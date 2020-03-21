@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A563518E1DF
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Mar 2020 15:33:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4304618E1E4
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Mar 2020 15:34:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727772AbgCUOdt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 21 Mar 2020 10:33:49 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:38764 "EHLO
+        id S1727884AbgCUOd5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 21 Mar 2020 10:33:57 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:38794 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727664AbgCUOdl (ORCPT
+        with ESMTP id S1727805AbgCUOdw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 21 Mar 2020 10:33:41 -0400
+        Sat, 21 Mar 2020 10:33:52 -0400
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1jFfBx-0004Dj-VK; Sat, 21 Mar 2020 15:33:38 +0100
+        id 1jFfC1-0004Et-KI; Sat, 21 Mar 2020 15:33:41 +0100
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 8C7BB1C22BC;
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id F2F121C22E0;
         Sat, 21 Mar 2020 15:33:33 +0100 (CET)
 Date:   Sat, 21 Mar 2020 14:33:33 -0000
 From:   "tip-bot2 for Vincenzo Frascino" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: timers/core] linux/bits.h: Extract common header for vDSO
+Subject: [tip: timers/core] linux/const.h: Extract common header for vDSO
 Cc:     Vincenzo Frascino <vincenzo.frascino@arm.com>,
         Thomas Gleixner <tglx@linutronix.de>, x86 <x86@kernel.org>,
         LKML <linux-kernel@vger.kernel.org>
-In-Reply-To: <20200320145351.32292-3-vincenzo.frascino@arm.com>
-References: <20200320145351.32292-3-vincenzo.frascino@arm.com>
+In-Reply-To: <20200320145351.32292-2-vincenzo.frascino@arm.com>
+References: <20200320145351.32292-2-vincenzo.frascino@arm.com>
 MIME-Version: 1.0
-Message-ID: <158480121310.28353.14624466122926546854.tip-bot2@tip-bot2>
+Message-ID: <158480121366.28353.9221456034218489518.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -47,60 +47,61 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the timers/core branch of tip:
 
-Commit-ID:     3945ff37d2f48d39fd1751d282c80176654049e4
-Gitweb:        https://git.kernel.org/tip/3945ff37d2f48d39fd1751d282c80176654049e4
+Commit-ID:     8165b57bca2167acc150b708a9a6b7322f235e91
+Gitweb:        https://git.kernel.org/tip/8165b57bca2167acc150b708a9a6b7322f235e91
 Author:        Vincenzo Frascino <vincenzo.frascino@arm.com>
-AuthorDate:    Fri, 20 Mar 2020 14:53:27 
+AuthorDate:    Fri, 20 Mar 2020 14:53:26 
 Committer:     Thomas Gleixner <tglx@linutronix.de>
 CommitterDate: Sat, 21 Mar 2020 15:23:53 +01:00
 
-linux/bits.h: Extract common header for vDSO
+linux/const.h: Extract common header for vDSO
 
 The vDSO library should only include the necessary headers required for
 a userspace library (UAPI and a minimal set of kernel headers). To make
 this possible it is necessary to isolate from the kernel headers the
 common parts that are strictly necessary to build the library.
 
-Split bits.h into linux and common headers to make the latter suitable
+Split const.h into linux and common headers to make the latter suitable
 for inclusion in the vDSO library.
 
 Signed-off-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lkml.kernel.org/r/20200320145351.32292-3-vincenzo.frascino@arm.com
+Link: https://lkml.kernel.org/r/20200320145351.32292-2-vincenzo.frascino@arm.com
 
 ---
- include/linux/bits.h |  2 +-
- include/vdso/bits.h  |  9 +++++++++
- 2 files changed, 10 insertions(+), 1 deletion(-)
- create mode 100644 include/vdso/bits.h
+ include/linux/const.h |  5 +----
+ include/vdso/const.h  | 10 ++++++++++
+ 2 files changed, 11 insertions(+), 4 deletions(-)
+ create mode 100644 include/vdso/const.h
 
-diff --git a/include/linux/bits.h b/include/linux/bits.h
-index 669d694..a740bbc 100644
---- a/include/linux/bits.h
-+++ b/include/linux/bits.h
-@@ -3,9 +3,9 @@
- #define __LINUX_BITS_H
+diff --git a/include/linux/const.h b/include/linux/const.h
+index 7b55a55..81b8aae 100644
+--- a/include/linux/const.h
++++ b/include/linux/const.h
+@@ -1,9 +1,6 @@
+ #ifndef _LINUX_CONST_H
+ #define _LINUX_CONST_H
  
- #include <linux/const.h>
-+#include <vdso/bits.h>
- #include <asm/bitsperlong.h>
- 
--#define BIT(nr)			(UL(1) << (nr))
- #define BIT_ULL(nr)		(ULL(1) << (nr))
- #define BIT_MASK(nr)		(UL(1) << ((nr) % BITS_PER_LONG))
- #define BIT_WORD(nr)		((nr) / BITS_PER_LONG)
-diff --git a/include/vdso/bits.h b/include/vdso/bits.h
-new file mode 100644
-index 0000000..6d005a1
---- /dev/null
-+++ b/include/vdso/bits.h
-@@ -0,0 +1,9 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef __VDSO_BITS_H
-+#define __VDSO_BITS_H
-+
+-#include <uapi/linux/const.h>
+-
+-#define UL(x)		(_UL(x))
+-#define ULL(x)		(_ULL(x))
 +#include <vdso/const.h>
+ 
+ #endif /* _LINUX_CONST_H */
+diff --git a/include/vdso/const.h b/include/vdso/const.h
+new file mode 100644
+index 0000000..94b385a
+--- /dev/null
++++ b/include/vdso/const.h
+@@ -0,0 +1,10 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++#ifndef __VDSO_CONST_H
++#define __VDSO_CONST_H
 +
-+#define BIT(nr)			(UL(1) << (nr))
++#include <uapi/linux/const.h>
 +
-+#endif	/* __VDSO_BITS_H */
++#define UL(x)		(_UL(x))
++#define ULL(x)		(_ULL(x))
++
++#endif /* __VDSO_CONST_H */
