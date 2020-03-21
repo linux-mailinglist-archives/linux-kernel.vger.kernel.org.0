@@ -2,149 +2,184 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 56B9818DD03
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Mar 2020 02:02:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9D18718DD0D
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Mar 2020 02:09:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727733AbgCUBCv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Mar 2020 21:02:51 -0400
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:45047 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727046AbgCUBCv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Mar 2020 21:02:51 -0400
-Received: by mail-qt1-f193.google.com with SMTP id y24so6717992qtv.11;
-        Fri, 20 Mar 2020 18:02:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=SP3el1IeHgtMqeYCx0AVkkm40OqwUzAvF5os8GiwOs4=;
-        b=FbpWCcpd9LHTnS+akC3+GX290aj4hoKE1FHNJTLvRfGWp2aAO4zV3soqt/F1TyWbG+
-         d0w14Z6LJbIOPFEseKssJXRbbXYpxsHVU7Jtu7P7C89hJRKjT7JGvDPbmS7XY2ZX9B2t
-         qGjSGjQ2py8tLMTGl8rkbbbIxZTl2kVAXtKFoWhu0tlVfj6J7jHrzuLyuxgSXzDMO7/J
-         1h4nMWJ64vlB/BuDLAXjtG1sELPDefhYwQ4Gyvt+9ZFPpQrrwAKQy1vLDDdm822U9XkY
-         yAG/6t1f6iD9ytDrgjJHfwBfnN90LJV+SxKIV3bCv1iKtzbuJ6lW/ZmYHbtVm9Kptfgv
-         1NjA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=SP3el1IeHgtMqeYCx0AVkkm40OqwUzAvF5os8GiwOs4=;
-        b=YXGpAnaNbNrehZEEavJbrHDHkUGuODkVzRGIDwgRpgFeok0UIv1VOJ1f5zVRnDALcs
-         M0uLmdzwxKp5uiAsAwwNsAS7a5bW0kJacyveKvdcuBfiKoolu4N8BIdWfJoRLIsQN2Z1
-         NnlSijQ5yGczAvXkp0xDr/us3/27Sb1pZ4UTdonBp5GmXz4NttLITJE43R2msp9YCs+9
-         pOPxeXWcqV8k3XxbcIlYw4apB2m7Sc+R9PwCzSQYtiRBexjibzajQX+2THGViStB5miz
-         Xq0ga/+iWBFLk6B+9AwZrZwygZyGiZ74w2AYB4MAtuY0YWSlXTkVChnsyOO6DFP6ksFr
-         5KBw==
-X-Gm-Message-State: ANhLgQ0kOD9v9F/m+94Z77gC6D5bSA4pA+a5TYLkolzmuooe7AqlZuX+
-        VfW47ppVb47DJiwnqIA4cCQ=
-X-Google-Smtp-Source: ADFU+vvUa38Dl8xOfFFceaFo9zzCvGfi2g+6hz8m955ErR/mjUAKA+BmWKI6y9S3WU2IgFOxPY7WaQ==
-X-Received: by 2002:ac8:5653:: with SMTP id 19mr11114357qtt.385.1584752570069;
-        Fri, 20 Mar 2020 18:02:50 -0700 (PDT)
-Received: from localhost.localdomain ([2001:1284:f028:3cb2:8072:4dfa:fd1:eb22])
-        by smtp.gmail.com with ESMTPSA id 85sm3986672qke.128.2020.03.20.18.02.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 20 Mar 2020 18:02:48 -0700 (PDT)
-Received: by localhost.localdomain (Postfix, from userid 1000)
-        id 7F110C3145; Fri, 20 Mar 2020 22:02:46 -0300 (-03)
-Date:   Fri, 20 Mar 2020 22:02:46 -0300
-From:   Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
-To:     Qiujun Huang <hqjagain@gmail.com>
-Cc:     "David S. Miller" <davem@davemloft.net>, vyasevich@gmail.com,
-        nhorman@tuxdriver.com, Jakub Kicinski <kuba@kernel.org>,
-        linux-sctp@vger.kernel.org, netdev <netdev@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, anenbupt@gmail.com
-Subject: Re: [PATCH v3] sctp: fix refcount bug in sctp_wfree
-Message-ID: <20200321010246.GC3828@localhost.localdomain>
-References: <20200320110959.2114-1-hqjagain@gmail.com>
- <20200320185204.GB3828@localhost.localdomain>
- <CAJRQjoc-U_K-2THbmBOj2TOWDTfP9yr5Vec-WjhTjS8sj19fHA@mail.gmail.com>
+        id S1727304AbgCUBJe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Mar 2020 21:09:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42914 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726840AbgCUBJd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Mar 2020 21:09:33 -0400
+Received: from kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 120862072C;
+        Sat, 21 Mar 2020 01:09:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1584752972;
+        bh=1TMSACbNS6snXsOh2chfn6p2kjbS1jSTgaqql6DheHw=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=yeIm/T7/7y1KH1Gbu+UR/1UIDDnUApqSCB7y14Yi+8X2cQl3dY9W9sm2U07WBj0uS
+         YZhyyKsgTUn+hlTiw1pI5dvaYofvwEaMovHPdIpHnq6KqA+eB9sN61MicN5adBFcez
+         YR7zPDRPAXKXRrhzra4E66H0cDSb5fXLTf7R80S4=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAJRQjoc-U_K-2THbmBOj2TOWDTfP9yr5Vec-WjhTjS8sj19fHA@mail.gmail.com>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <82828e89ccf4173de4e5e52dcecacc4d5168315c.1584720678.git.alexander.riesen@cetitec.com>
+References: <cover.1584720678.git.alexander.riesen@cetitec.com> <82828e89ccf4173de4e5e52dcecacc4d5168315c.1584720678.git.alexander.riesen@cetitec.com>
+Subject: Re: [PATCH v3 05/11] media: adv748x: add support for HDMI audio
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        devel@driverdev.osuosl.org, linux-media@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        linux-clk <linux-clk@vger.kernel.org>
+To:     Alex Riesen <alexander.riesen@cetitec.com>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>
+Date:   Fri, 20 Mar 2020 18:09:31 -0700
+Message-ID: <158475297119.125146.8177273856843293558@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.9
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Mar 21, 2020 at 07:53:29AM +0800, Qiujun Huang wrote:
-...
-> > > So, sctp_wfree was not called to destroy SKB)
-> > >
-> > > then migrate happened
-> > >
-> > >       sctp_for_each_tx_datachunk(
-> > >       sctp_clear_owner_w);
-> > >       sctp_assoc_migrate();
-> > >       sctp_for_each_tx_datachunk(
-> > >       sctp_set_owner_w);
-> > > SKB was not in the outq, and was not changed to newsk
-> >
-> > The real fix is to fix the migration to the new socket, though the
-> > situation on which it is happening is still not clear.
-> >
-> > The 2nd sendto() call on the reproducer is sending 212992 bytes on a
-> > single call. That's usually the whole sndbuf size, and will cause
-> > fragmentation to happen. That means the datamsg will contain several
-> > skbs. But still, the sacked chunks should be freed if needed while the
-> > remaining ones will be left on the queues that they are.
-> 
-> in sctp_sendmsg_to_asoc
-> datamsg holds his chunk result in that the sacked chunks can't be freed
+Quoting Alex Riesen (2020-03-20 09:12:00)
+> diff --git a/drivers/media/i2c/adv748x/adv748x-dai.c b/drivers/media/i2c/=
+adv748x/adv748x-dai.c
+> new file mode 100644
+> index 000000000000..6fce7d000423
+> --- /dev/null
+> +++ b/drivers/media/i2c/adv748x/adv748x-dai.c
+> @@ -0,0 +1,265 @@
+> +// SPDX-License-Identifier: GPL-2.0+
+> +/*
+> + * Driver for Analog Devices ADV748X HDMI receiver with AFE
+> + * The implementation of DAI.
+> + */
+> +
+> +#include "adv748x.h"
+> +
+> +#include <linux/clk.h>
 
-Right! Now I see it, thanks.
-In the end, it's not a locking race condition. It's just not iterating
-on the lists properly.
+Is this include used? Please try to make a clk provider or a clk
+consumer and not both unless necessary.
 
-> 
-> list_for_each_entry(chunk, &datamsg->chunks, frag_list) {
-> sctp_chunk_hold(chunk);
-> sctp_set_owner_w(chunk);
-> chunk->transport = transport;
-> }
-> 
-> any ideas to handle it?
+> +#include <linux/clk-provider.h>
+> +#include <sound/pcm_params.h>
+> +
+> +#define state_of(soc_dai) \
+> +       adv748x_dai_to_state(container_of((soc_dai)->driver, \
+> +                                         struct adv748x_dai, \
+> +                                         drv))
+> +
+> +static const char ADV748X_DAI_NAME[] =3D "adv748x-i2s";
+> +
+[...]
+> +       .set_sysclk =3D adv748x_dai_set_sysclk,
+> +       .set_fmt =3D adv748x_dai_set_fmt,
+> +       .startup =3D adv748x_dai_startup,
+> +       .hw_params =3D adv748x_dai_hw_params,
+> +       .mute_stream =3D adv748x_dai_mute_stream,
+> +       .shutdown =3D adv748x_dai_shutdown,
+> +};
+> +
+> +static int adv748x_of_xlate_dai_name(struct snd_soc_component *component,
+> +                                     struct of_phandle_args *args,
+> +                                     const char **dai_name)
+> +{
+> +       if (dai_name)
+> +               *dai_name =3D ADV748X_DAI_NAME;
+> +       return 0;
+> +}
+> +
+> +static const struct snd_soc_component_driver adv748x_codec =3D {
+> +       .of_xlate_dai_name =3D adv748x_of_xlate_dai_name,
+> +};
+> +
+> +int adv748x_dai_init(struct adv748x_dai *dai)
+> +{
+> +       int ret;
+> +       struct adv748x_state *state =3D adv748x_dai_to_state(dai);
+> +
+> +       dai->mclk_name =3D kasprintf(GFP_KERNEL, "%s.%s-i2s-mclk",
+> +                                  state->dev->driver->name,
+> +                                  dev_name(state->dev));
+> +       if (!dai->mclk_name) {
+> +               ret =3D -ENOMEM;
+> +               adv_err(state, "No memory for MCLK\n");
+> +               goto fail;
+> +       }
+> +       dai->mclk =3D clk_register_fixed_rate(state->dev,
 
-sctp_for_each_tx_datachunk() needs to be aware of this situation.
-Instead of iterating directly/only over the chunk list, it should
-iterate over the datamsgs instead. Something like the below (just
-compile tested).
+Please register with clk_hw_register_fixed_rate() instead.
 
-Then, the old socket will be free to die regardless of the new one.
-Otherwise, if this association gets stuck on retransmissions or so,
-the old socket would not be freed till then.
+> +                                           dai->mclk_name,
+> +                                           NULL /* parent_name */,
+> +                                           0 /* flags */,
+> +                                           12288000 /* rate */);
 
-diff --git a/net/sctp/socket.c b/net/sctp/socket.c
-index fed26a1e9518..85c742310d26 100644
---- a/net/sctp/socket.c
-+++ b/net/sctp/socket.c
-@@ -151,9 +151,10 @@ static void sctp_for_each_tx_datachunk(struct sctp_association *asoc,
- 				       void (*cb)(struct sctp_chunk *))
- 
- {
-+	struct sctp_datamsg *msg, *prev_msg = NULL;
- 	struct sctp_outq *q = &asoc->outqueue;
- 	struct sctp_transport *t;
--	struct sctp_chunk *chunk;
-+	struct sctp_chunk *chunk, *c;
- 
- 	list_for_each_entry(t, &asoc->peer.transport_addr_list, transports)
- 		list_for_each_entry(chunk, &t->transmitted, transmitted_list)
-@@ -162,8 +163,14 @@ static void sctp_for_each_tx_datachunk(struct sctp_association *asoc,
- 	list_for_each_entry(chunk, &q->retransmit, transmitted_list)
- 		cb(chunk);
- 
--	list_for_each_entry(chunk, &q->sacked, transmitted_list)
--		cb(chunk);
-+	list_for_each_entry(chunk, &q->sacked, transmitted_list) {
-+		msg = chunk->msg;
-+		if (msg == prev_msg)
-+			continue;
-+		list_for_each_entry(c, &msg->chunks, frag_list)
-+			cb(c);
-+		prev_msg = msg;
-+	}
- 
- 	list_for_each_entry(chunk, &q->abandoned, transmitted_list)
- 		cb(chunk);
+Not sure these comments are useful.
+
+> +       if (IS_ERR_OR_NULL(dai->mclk)) {
+> +               ret =3D PTR_ERR(dai->mclk);
+> +               adv_err(state, "Failed to register MCLK (%d)\n", ret);
+> +               goto fail;
+> +       }
+> +       ret =3D of_clk_add_provider(state->dev->of_node, of_clk_src_simpl=
+e_get,
+> +                                 dai->mclk);
+> +       if (ret < 0) {
+> +               adv_err(state, "Failed to add MCLK provider (%d)\n", ret);
+> +               goto unreg_mclk;
+> +       }
+> +       dai->drv.name =3D ADV748X_DAI_NAME;
+> +       dai->drv.ops =3D &adv748x_dai_ops;
+> +       dai->drv.capture =3D (struct snd_soc_pcm_stream){
+
+Can this be const?
+
+> +               .stream_name    =3D "Capture",
+> +               .channels_min   =3D 8,
+> +               .channels_max   =3D 8,
+> +               .rates =3D SNDRV_PCM_RATE_48000,
+> +               .formats =3D SNDRV_PCM_FMTBIT_S24_LE | SNDRV_PCM_FMTBIT_U=
+24_LE,
+> +       };
+> +
+> +       ret =3D devm_snd_soc_register_component(state->dev, &adv748x_code=
+c,
+> +                                             &dai->drv, 1);
+> +       if (ret < 0) {
+> +               adv_err(state, "Failed to register the codec (%d)\n", ret=
+);
+> +               goto cleanup_mclk;
+> +       }
+> +       return 0;
+> +
+> +cleanup_mclk:
+> +       of_clk_del_provider(state->dev->of_node);
+> +unreg_mclk:
+> +       clk_unregister_fixed_rate(dai->mclk);
+> +fail:
+> +       return ret;
+> +}
+> +
+> +void adv748x_dai_cleanup(struct adv748x_dai *dai)
+> +{
+> +       struct adv748x_state *state =3D adv748x_dai_to_state(dai);
+> +
+> +       of_clk_del_provider(state->dev->of_node);
+> +       clk_unregister_fixed_rate(dai->mclk);
+> +       kfree(dai->mclk_name);
+> +}
+> +
+
+Please drop extra newline at end of file.
