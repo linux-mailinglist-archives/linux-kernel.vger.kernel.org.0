@@ -2,56 +2,56 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0819318E4DD
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Mar 2020 22:54:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C607F18E4E8
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Mar 2020 22:54:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728021AbgCUVye (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 21 Mar 2020 17:54:34 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:35990 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726846AbgCUVyd (ORCPT
+        id S1728173AbgCUVyt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 21 Mar 2020 17:54:49 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:33875 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728044AbgCUVyg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 21 Mar 2020 17:54:33 -0400
-Received: by mail-wr1-f65.google.com with SMTP id 31so5875125wrs.3;
-        Sat, 21 Mar 2020 14:54:32 -0700 (PDT)
+        Sat, 21 Mar 2020 17:54:36 -0400
+Received: by mail-wr1-f66.google.com with SMTP id z15so11890335wrl.1;
+        Sat, 21 Mar 2020 14:54:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=/QGnM5aF633O9T+Q9bE7j7rBcANzw8cmYuGuF3OhlUI=;
-        b=mE6DwdoCdvIrq6k6mckByOPROcnYRtJTsjJ01FfrQUXQfQpHOjpQ9NzteV55TDBsso
-         J4bH/fAaVcbTldZtFetSL8nR6F07U7J/hNn29UDMnXCRcZVPHkFxw5gpn4B2J0hLfHip
-         MxxqYLK9vMc2y7FCJaDgCV4Gt4j83HJ+X2p/NJPveRRn+SekYle/XHJEhGTkx8xJHXuw
-         e7GarbzUhAR4IbNeUUfbrUIlS1iqmTJP9Wq5EgEFaFBR9JgwqPdwXbNF0htckv6c5rbQ
-         O0D974ktV7tGRy4zpHbfnd6kPNXPMWZmPAIQWPfLkHeLmFO0hYFU1yK/ngn5Z2i42fby
-         llyw==
+        bh=yAx8su1/7aGFuhAGg/EaVyMzVkBJWF+j6/kaWK9mJHw=;
+        b=DYPMRiocriecW171ocGwPa9hcFeccH9jeYHN2XRG1NEeJm4jMNxU5HEbT66vOzJ+0b
+         TBM+D+7C+/rGvMBuWvg7CL+g6f8u/nBpXpE87DuISS9Miig1W+Lkw91huA7ov4ubDRsf
+         FOpgumAN96EbnJbeMfACCrmh+z4C75zUyN9AgYGxnTo2DeubxMSx4kNyqVz6E7AdrEny
+         7fcCG5uRamQa0V/TnRUWzvNXwnVRKsZ8mfcAlfc4ACpKJ2z2GJpVTHk9UGlbvaotImyM
+         YKaHOnPxLE2+ChXIQpvjLViwAimRpS0AQI/3bALuyQkarhgh26ntT3Ssj0/ZSaMQ0yEw
+         /z7g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=/QGnM5aF633O9T+Q9bE7j7rBcANzw8cmYuGuF3OhlUI=;
-        b=bW0bclh1xKTuopiVhzkxUzROi9hns1y17bhwx2T9sguqFR91UpIiyeMSeLiVq1bvs3
-         6l/XZdQ1qQ8fwMN1RMZBw8gwE3hpDP8VkkQTskjo4hjnmBaGMKLsQEIAbyu7GTBckajP
-         jRUcrkMBwI/FzUDRGyKhfOjoPz8Amxs80M16KJPGMD2zmL0Eo06pjV44zz17FVk93MkJ
-         5++VjrUJR3Ic1/XvseDxC2Tl71SnSgGXiGIqnkt2FiQRNLa2Q4OyyBaaJWLP8rZN2/pC
-         o2Pwv+sjH9EEQ+Q2Fe65bOwmyBxxn9T5FfgSPDrb+6UqO9Hlger7RbA8sRJmOUMTR9BT
-         /4vw==
-X-Gm-Message-State: ANhLgQ2+jl/25Q52JLVo4dQAG7wBYXejmIuQXby4lWeqfJ76yKQyVtYH
-        97rMi2TQE0NswldV1qR6rRqeH6Ho
-X-Google-Smtp-Source: ADFU+vuhRHlUNjw0nRmyX68DRkdDY/81x1nxjG77MQWmrMGsuHpBMKBLmYWp0wdtVlI085MN09BICg==
-X-Received: by 2002:a5d:5386:: with SMTP id d6mr12268879wrv.92.1584827672086;
-        Sat, 21 Mar 2020 14:54:32 -0700 (PDT)
+        bh=yAx8su1/7aGFuhAGg/EaVyMzVkBJWF+j6/kaWK9mJHw=;
+        b=Kqy7F7futpI638bT47LUcT4BPKgupHmbxrD9CeKzhEas3q0nVq3SIpxL8lnbUK8unu
+         Of1hQs3+GaAm0EMAUmayWqB/1qEnIU126ajNIDYChQW2U6ZkuBL5VfMMYHBCXwtLwWBE
+         y2fmEJMArqHkLDdeBYu66AUvn0v2RSDt1wIhUgHVG0HBzATefyKYiqsW111g7gPRXLup
+         iVfhbnr1JqthBBGASg/4jxHwRFc8DKw+uvjA7lEBabkpSHrg8Elso6+ChqhlwuEayM6K
+         /ullcukiOQ6PvZyJmOPXp/iKIRDYFwnzWYAzspd1Qf6jEwHkXkLBREmiF4WmJ/TFwEHc
+         YruA==
+X-Gm-Message-State: ANhLgQ1yRqZ/laSKRg9zVUx77COXoueqAx+waJ3NlqMawugHasqZqdn/
+        vUhhs22npj89YpafBLNLnmQ=
+X-Google-Smtp-Source: ADFU+vv2IejMRNQduQ+Dww45mKhZKuLxpXnA3+KypuBSPMYHDsOLLuGwcTQoWBA5U+2hewuhWvgEPQ==
+X-Received: by 2002:a05:6000:1184:: with SMTP id g4mr19735035wrx.396.1584827673044;
+        Sat, 21 Mar 2020 14:54:33 -0700 (PDT)
 Received: from debian.home (ip51ccf9cd.speed.planet.nl. [81.204.249.205])
-        by smtp.gmail.com with ESMTPSA id l83sm14113796wmf.43.2020.03.21.14.54.31
+        by smtp.gmail.com with ESMTPSA id l83sm14113796wmf.43.2020.03.21.14.54.32
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 21 Mar 2020 14:54:31 -0700 (PDT)
+        Sat, 21 Mar 2020 14:54:32 -0700 (PDT)
 From:   Johan Jonker <jbx6244@gmail.com>
 To:     heiko@sntech.de
 Cc:     robin.murphy@arm.com, aballier@gentoo.org, robh+dt@kernel.org,
         devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 2/6] arm64: dts: rockchip: fix rtl8211f nodename for rk3328 Beelink A1
-Date:   Sat, 21 Mar 2020 22:54:19 +0100
-Message-Id: <20200321215423.12176-2-jbx6244@gmail.com>
+Subject: [PATCH 3/6] arm64: dts: rockchip: fix rtl8211e nodename for rk3399-nanopi4
+Date:   Sat, 21 Mar 2020 22:54:20 +0100
+Message-Id: <20200321215423.12176-3-jbx6244@gmail.com>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20200321215423.12176-1-jbx6244@gmail.com>
 References: <20200321215423.12176-1-jbx6244@gmail.com>
@@ -60,12 +60,16 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-A test with the command below gives this error:
+A test with the command below gives these errors:
 
-arch/arm64/boot/dts/rockchip/rk3328-a1.dt.yaml: phy@0:
+arch/arm64/boot/dts/rockchip/rk3399-nanopc-t4.dt.yaml: phy@1:
+'#phy-cells' is a required property
+arch/arm64/boot/dts/rockchip/rk3399-nanopi-m4.dt.yaml: phy@1:
+'#phy-cells' is a required property
+arch/arm64/boot/dts/rockchip/rk3399-nanopi-neo4.dt.yaml: phy@1:
 '#phy-cells' is a required property
 
-The rtl8211f node is used by a phy-handle.
+The rtl8211e node is used by a phy-handle.
 The parent node is compatible with "snps,dwmac-mdio",
 so change nodename to 'ethernet-phy', for which '#phy-cells'
 is not a required property.
@@ -76,22 +80,22 @@ phy/phy-provider.yaml
 
 Signed-off-by: Johan Jonker <jbx6244@gmail.com>
 ---
- arch/arm64/boot/dts/rockchip/rk3328-a1.dts | 2 +-
+ arch/arm64/boot/dts/rockchip/rk3399-nanopi4.dtsi | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/rockchip/rk3328-a1.dts b/arch/arm64/boot/dts/rockchip/rk3328-a1.dts
-index 16f1656d5..fbd06a351 100644
---- a/arch/arm64/boot/dts/rockchip/rk3328-a1.dts
-+++ b/arch/arm64/boot/dts/rockchip/rk3328-a1.dts
-@@ -114,7 +114,7 @@
+diff --git a/arch/arm64/boot/dts/rockchip/rk3399-nanopi4.dtsi b/arch/arm64/boot/dts/rockchip/rk3399-nanopi4.dtsi
+index c88018a0e..20529105c 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3399-nanopi4.dtsi
++++ b/arch/arm64/boot/dts/rockchip/rk3399-nanopi4.dtsi
+@@ -182,7 +182,7 @@
  		#address-cells = <1>;
  		#size-cells = <0>;
  
--		rtl8211f: phy@0 {
-+		rtl8211f: ethernet-phy@0 {
- 			reg = <0>;
- 			reset-assert-us = <10000>;
- 			reset-deassert-us = <30000>;
+-		rtl8211e: phy@1 {
++		rtl8211e: ethernet-phy@1 {
+ 			reg = <1>;
+ 			interrupt-parent = <&gpio3>;
+ 			interrupts = <RK_PB2 IRQ_TYPE_LEVEL_LOW>;
 -- 
 2.11.0
 
