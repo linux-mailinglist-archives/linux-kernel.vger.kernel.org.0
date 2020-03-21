@@ -2,61 +2,59 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0431718DE58
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Mar 2020 07:59:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2B07018DE46
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Mar 2020 07:41:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728130AbgCUG6h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 21 Mar 2020 02:58:37 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:33140 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728005AbgCUG6g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 21 Mar 2020 02:58:36 -0400
-Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 928C2BBD596AE1935CE6;
-        Sat, 21 Mar 2020 14:58:20 +0800 (CST)
-Received: from localhost.localdomain (10.175.34.53) by
- DGGEMS401-HUB.china.huawei.com (10.3.19.201) with Microsoft SMTP Server id
- 14.3.487.0; Sat, 21 Mar 2020 14:57:24 +0800
-From:   Luo bin <luobin9@huawei.com>
-To:     <davem@davemloft.net>
-CC:     <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <luoxianjun@huawei.com>, <luobin9@huawei.com>,
-        <yin.yinshi@huawei.com>, <cloud.wangxiaoyun@huawei.com>
-Subject: [PATCH net 5/5] hinic: fix wrong value of MIN_SKB_LEN
-Date:   Fri, 20 Mar 2020 23:13:20 +0000
-Message-ID: <20200320231320.1001-6-luobin9@huawei.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200320231320.1001-1-luobin9@huawei.com>
-References: <20200320231320.1001-1-luobin9@huawei.com>
+        id S1728022AbgCUGlN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 21 Mar 2020 02:41:13 -0400
+Received: from smtp03.smtpout.orange.fr ([80.12.242.125]:47128 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727824AbgCUGlN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 21 Mar 2020 02:41:13 -0400
+Received: from localhost.localdomain ([90.126.162.40])
+        by mwinf5d06 with ME
+        id Guh7220090scBcy03uh8Hr; Sat, 21 Mar 2020 07:41:10 +0100
+X-ME-Helo: localhost.localdomain
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sat, 21 Mar 2020 07:41:10 +0100
+X-ME-IP: 90.126.162.40
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     jikos@kernel.org, benjamin.tissoires@redhat.com
+Cc:     linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] HID: rmi: Simplify an error handling path in 'rmi_hid_read_block()'
+Date:   Sat, 21 Mar 2020 07:40:48 +0100
+Message-Id: <20200321064048.15768-1-christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.175.34.53]
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-the minimum value of skb len that hw supports is 32 rather than 17
+The 'RMI_READ_REQUEST_PENDING' bit is already cleared in the error handling
+path. There is no need to reset it twice.
 
-Signed-off-by: Luo bin <luobin9@huawei.com>
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/net/ethernet/huawei/hinic/hinic_tx.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/hid/hid-rmi.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/huawei/hinic/hinic_tx.c b/drivers/net/ethernet/huawei/hinic/hinic_tx.c
-index cabcc9019ee4..8993f5b07059 100644
---- a/drivers/net/ethernet/huawei/hinic/hinic_tx.c
-+++ b/drivers/net/ethernet/huawei/hinic/hinic_tx.c
-@@ -45,7 +45,7 @@
- 
- #define HW_CONS_IDX(sq)                 be16_to_cpu(*(u16 *)((sq)->hw_ci_addr))
- 
--#define MIN_SKB_LEN			17
-+#define MIN_SKB_LEN			32
- #define HINIC_GSO_MAX_SIZE		65536
- 
- #define	MAX_PAYLOAD_OFFSET		221
+diff --git a/drivers/hid/hid-rmi.c b/drivers/hid/hid-rmi.c
+index 9ce22acdfaca..8cffa84c9650 100644
+--- a/drivers/hid/hid-rmi.c
++++ b/drivers/hid/hid-rmi.c
+@@ -217,7 +217,6 @@ static int rmi_hid_read_block(struct rmi_transport_dev *xport, u16 addr,
+ 		ret = rmi_write_report(hdev, data->writeReport,
+ 						data->output_report_size);
+ 		if (ret != data->output_report_size) {
+-			clear_bit(RMI_READ_REQUEST_PENDING, &data->flags);
+ 			dev_err(&hdev->dev,
+ 				"failed to write request output report (%d)\n",
+ 				ret);
 -- 
-2.17.1
+2.20.1
 
