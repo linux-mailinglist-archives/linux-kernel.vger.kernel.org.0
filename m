@@ -2,90 +2,53 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 16CEE18E3DC
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Mar 2020 20:14:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 59C2E18E3E4
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Mar 2020 20:15:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727840AbgCUTOE convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Sat, 21 Mar 2020 15:14:04 -0400
-Received: from eu-smtp-delivery-151.mimecast.com ([207.82.80.151]:48853 "EHLO
-        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727428AbgCUTOE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 21 Mar 2020 15:14:04 -0400
-Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
- TLS) by relay.mimecast.com with ESMTP id
- uk-mta-258-5dLg6k9dMdWiOUfVgdYHTg-1; Sat, 21 Mar 2020 19:13:59 +0000
-X-MC-Unique: 5dLg6k9dMdWiOUfVgdYHTg-1
-Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
- AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
- Server (TLS) id 15.0.1347.2; Sat, 21 Mar 2020 19:13:51 +0000
-Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
- AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
- Sat, 21 Mar 2020 19:13:51 +0000
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     'Steven Rostedt' <rostedt@goodmis.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-        Peter Wu <peter@lekensteyn.nl>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Tom Zanussi <zanussi@kernel.org>,
-        Shuah Khan <shuahkhan@gmail.com>, bpf <bpf@vger.kernel.org>
-Subject: RE: [PATCH 00/12 v2] ring-buffer/tracing: Remove disabling of ring
- buffer while reading trace file
-Thread-Topic: [PATCH 00/12 v2] ring-buffer/tracing: Remove disabling of ring
- buffer while reading trace file
-Thread-Index: AQHV/kYCQIwPxRMFlk+UdEERk+KYoKhTa8kQ
-Date:   Sat, 21 Mar 2020 19:13:51 +0000
-Message-ID: <2a7f96545945457cade216aa3c736bcc@AcuMS.aculab.com>
-References: <20200319232219.446480829@goodmis.org>
-In-Reply-To: <20200319232219.446480829@goodmis.org>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
-MIME-Version: 1.0
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: aculab.com
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+        id S1727892AbgCUTPG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 21 Mar 2020 15:15:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39188 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727428AbgCUTPG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 21 Mar 2020 15:15:06 -0400
+Subject: Re: [GIT PULL] turbostat version 20.03.20
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1584818106;
+        bh=X6cLDmZep6N2MpMLqEt0HiSjaHs6tK386GRraOG1k2g=;
+        h=From:In-Reply-To:References:Date:To:Cc:From;
+        b=J1VOG6L+oOZc7LMnFFFgUk9TRM3KnGwTa19ZM3gOYA9EEumb8RFqVTrKzoZHToECV
+         aYq1TUU5GMvyEg+14mtkj5rHhOzqVpuTUoLQJupnEKNoxyNstBW/+1d6huiNqhJitA
+         7ZbmUebyqnQglq1cg0P7RatCMa3Pk1znGigQFt0Q=
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <CAJvTdKmNJkx+aeHDcrqRG=0JDfaut5tj4w0oOojGWTjx9tY3qQ@mail.gmail.com>
+References: <CAJvTdKmNJkx+aeHDcrqRG=0JDfaut5tj4w0oOojGWTjx9tY3qQ@mail.gmail.com>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <CAJvTdKmNJkx+aeHDcrqRG=0JDfaut5tj4w0oOojGWTjx9tY3qQ@mail.gmail.com>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/lenb/linux.git turbostat
+X-PR-Tracked-Commit-Id: b95fffb9b4afa8b9aa4a389ec7a0c578811eaf42
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 6c1bae744d5a15108c412336d95f3c4e5db6aff4
+Message-Id: <158481810606.2095.279138460899577791.pr-tracker-bot@kernel.org>
+Date:   Sat, 21 Mar 2020 19:15:06 +0000
+To:     Len Brown <lenb@kernel.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux PM list <linux-pm@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Steven Rostedt
-> Sent: 19 March 2020 23:22
-...
-> 
-> This patch series attempts to satisfy that request, by creating a
-> temporary buffer in each of the per cpu iterators to place the
-> read event into, such that it can be passed to users without worrying
-> about a writer to corrupt the event while it was being written out.
-> It also uses the fact that the ring buffer is broken up into pages,
-> where each page has its own timestamp that gets updated when a
-> writer crosses over to it. By copying it to the temp buffer, and
-> doing a "before and after" test of the time stamp with memory barriers,
-> can allow the events to be saved.
+The pull request you sent on Sat, 21 Mar 2020 12:41:59 -0400:
 
-Does this mean the you will no longer be able to look at a snapshot
-of the trace by running 'less trace' (and typically going to the end
-to get info for all cpus).
+> git://git.kernel.org/pub/scm/linux/kernel/git/lenb/linux.git turbostat
 
-A lot of the time trace is being written far too fast for it to make
-any sense to try to read it continuously.
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/6c1bae744d5a15108c412336d95f3c4e5db6aff4
 
-Also, if BPF start using ftrace, no one will be able to use it for
-'normal debugging' on such systems.
+Thank you!
 
-	David
-
--
-Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
-Registration No: 1397386 (Wales)
-
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/prtracker
