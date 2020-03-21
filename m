@@ -2,67 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B446B18E159
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Mar 2020 13:50:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 49A6E18E15C
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Mar 2020 13:53:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727110AbgCUMuN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 21 Mar 2020 08:50:13 -0400
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:37022 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726192AbgCUMuN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 21 Mar 2020 08:50:13 -0400
-Received: by mail-ot1-f65.google.com with SMTP id i12so8788047otp.4
-        for <linux-kernel@vger.kernel.org>; Sat, 21 Mar 2020 05:50:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to
-         :content-transfer-encoding;
-        bh=HXE6tstiCEJgLEvZqX/al+c2Uj3U9XPUohG/1iBPeWI=;
-        b=a4aq7LEoMR4j5IiQjNHy3uKrgcxeLZOZ8CDNKo6RxhTwsdYnFbdUZkcfo8GiUSP95K
-         T+BULxm8IdodEXiWIQGOtvupc6IytfpIyYlGGRhPKzI9/r6w6xA6tB+hmcW5Vztqe+uM
-         65DfYtTR/9eQ8XdMwDMlr5Mgv/uXky1ppDB9eRNNdatvOhXObyU9ekWz5hfpxQk31is4
-         9Ct3EPyMhbY3lbQqhIjQAL9/02eYc1sxTibVHlIAX1LgqE6GfGPLDBlPkwxo6QymFCwH
-         FClKH2Dq6ZMRsYZdCIcz2X9E2R6YghmxKi47TWMdspexLa+NuloT+JtnSPY9FIKmNcjz
-         coTQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to:content-transfer-encoding;
-        bh=HXE6tstiCEJgLEvZqX/al+c2Uj3U9XPUohG/1iBPeWI=;
-        b=kCROBrFwbseR4VQCTXcB+0Q8DLkas7TtwvikS0qckQuwN6qXLKLftzLMycnQB4NHhQ
-         92cJbQ6/M8OZqFgxRQEZvjq8FF1ThSMToF3ssBnHfB9a0Gfmmm8ogPZE7ATe0CxIVlAW
-         AQ4PVEPdKFYmBQduK2Merf4HKntpA/n8H50KOiZCT6bF59U2I5fHPkdRKfnOJGAct0Kt
-         JZ6zKRtkPmiuclQGKoPuT5/V5vvfZyYAejsL+o8k5FRvPA5GxdzEqpod9tr3FQcsdDjL
-         NtB192I7GqUpYVI6Q6zEBecp8opHTZbG3oEprF7S/IYk25Qaza0opznecVcH2nDgfQ6c
-         AArg==
-X-Gm-Message-State: ANhLgQ3gF6oS9SXorKahvRId5keMzecoih2aT3Aj3ShBuwAmxAYGn0o4
-        rnmtCtzUryzi5a5Wx1ZCcEiCOMcNtA0yGSI82K8=
-X-Google-Smtp-Source: ADFU+vsjxrZRHodH3kKTo79AK7LTrLO6lZoOXcfo5I7jttl9qT5bVWZWy/kMmMhsxWsWFWghAxUCvuiOeCqOHg/7RSc=
-X-Received: by 2002:a05:6830:16cc:: with SMTP id l12mr10639490otr.234.1584795012277;
- Sat, 21 Mar 2020 05:50:12 -0700 (PDT)
+        id S1727269AbgCUMx3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 21 Mar 2020 08:53:29 -0400
+Received: from mail.manjaro.org ([176.9.38.148]:37078 "EHLO mail.manjaro.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726192AbgCUMx3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 21 Mar 2020 08:53:29 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by mail.manjaro.org (Postfix) with ESMTP id BA73237E5074;
+        Sat, 21 Mar 2020 13:53:27 +0100 (CET)
+X-Virus-Scanned: Debian amavisd-new at manjaro.org
+Received: from mail.manjaro.org ([127.0.0.1])
+        by localhost (manjaro.org [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id tcVmSE4T3BKl; Sat, 21 Mar 2020 13:53:25 +0100 (CET)
+From:   Tobias Schramm <t.schramm@manjaro.org>
+To:     Rob Herring <robh+dt@kernel.org>
+Cc:     Sebastian Reichel <sre@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, linux-pm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Tobias Schramm <t.schramm@manjaro.org>
+Subject: [PATCH v6 0/3] Add support for CellWise cw2015 fuel gauge
+Date:   Sat, 21 Mar 2020 13:52:38 +0100
+Message-Id: <20200321125241.3072123-1-t.schramm@manjaro.org>
 MIME-Version: 1.0
-Received: by 2002:a9d:5785:0:0:0:0:0 with HTTP; Sat, 21 Mar 2020 05:50:11
- -0700 (PDT)
-Reply-To: begabriel6543@hotmail.com
-From:   Gabriel Bertrand <boxemail404@gmail.com>
-Date:   Sat, 21 Mar 2020 05:50:11 -0700
-Message-ID: <CAOLS_qSrk+zJN7-H59br1aY_WpXycd6epCp4DmXfOzx1BGmC-g@mail.gmail.com>
-Subject: hello
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: base64
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-LS0gDQoNCuS9oOWlve+8jA0KDQrmiJHluIzmnJvkvaDlgZrnmoTlpb3jgIIg5b6I5oqx5q2J5Lul
-6L+Z56eN5pa55byP5LiO5oKo6IGU57O744CCIOaIkeWPq0dhYnJpZWwgQmVydHJhbmTvvIzmiJHl
-nKjms5Xlm73kuIDlrrbpooblhYjnmoTpk7booYzlt6XkvZzjgIINCuivt+ihqOaYjuaCqOacieWF
-tOi2o+iOt+W+l+mBl+S6p+WfuumHke+8jOivpeasvumhueWxnuS6juWcqOS4jeW5uOS6i+aVheS4
-reS4p+eUn+eahOWkluWbveWuouaIt+OAgg0KDQrkuIDml6bmgqjooajovr7kuobmgqjnmoTmhI/l
-m77vvIzmiJHlsIbkuLrmgqjmj5Dkvpvmm7TlpJror6bnu4bkv6Hmga/jgIIg56Wd5oKo5pyJ5Liq
-576O5aW955qE5LiA5aSp77ya6K+35LiO5oiR6IGU57O777yaPiBiZWdhYnJpZWw2NTQzQGdtYWls
-LmNvbQ0KDQoNCuaIkeWcqOetieS9oOeahOWbnuWkjeOAgg0KDQrmnIDlpb3nmoTnpZ3npo/vvIwN
-CuWKoOW4g+mHjOWfg+WwlMK35Lyv54m55YWwDQo=
+This patchset adds support for the CellWise cw2015 fuel gauge.
+
+The CellWise cw2015 fuel gauge is a shuntless, single-cell Li-Ion fuel
+gauge. It is used in the pine64 Pinebook Pro laptop.
+
+This is v6 of the patchset. This version fixes binding issues found
+by Rob.
+
+I've kept the cellwise,battery-profile property in the device tree. Its
+content describes characteristics of the battery built into a device. The
+exact format is unknown and not publicly documented. It is likely
+comprised of some key parameters of the battery (chemistry, voltages,
+design capacity) and parameters for tuning the internal state of charge
+approximation function.
+Since v2 CellWise has confirmed to me that the only way to obtain the
+profile blob is to mail them batteries for testing. Thus we will need to
+keep that property.
+
+In general I'm not 100 % sure about my json-schema binding for the gauge.
+It is my first time ever writing a json-schema binding and I'm not sure
+whether properties like power-supplies or monitored-battery need to be
+added to a separate, common schema for power supplies or not.
+
+
+Best Regards,
+
+Tobias Schramm
+
+Changelog:
+ v2:
+  * Change subject to "Add support for CellWise cw2015 fuel gauge"
+  * Rewrite bindings as json-schema
+  * Use default power-supplies handling
+  * Use regmap for register access
+  * Use standard simple-battery node
+  * Replace printk/pr_* by dev_{dbg,info,warn,err}
+  * Use cancel_delayed_work_sync in remove
+  * General code cleanup
+ v3:
+  * Incorporate review by Andy
+  * Add cellwise vendor prefix
+  * Rename cellwise,bat-config-info property to cellwise,battery-profile
+  * Remove most state of charge post-processing
+  * Use fwnode interface
+  * General code cleanup
+  * Lots of code style fixes
+ v4:
+  * Implement additional changes requested by Andy
+  * Use fwnode inline wrappers
+  * Clean up waiting for gauge
+  * Minor code style fixes
+ v5:
+  * Clean up includes
+  * Handle errors during device property parsing
+  * Refactor device property parsing
+  * Replace i2c->probe by i2c->probe_new 
+  * More code style fixes
+ v6:
+  * Fix bindings according to review by Rob
+
+
+Tobias Schramm (3):
+  dt-bindings: Document cellwise vendor-prefix
+  dt-bindings: power: supply: add cw2015_battery bindings
+  power: supply: add CellWise cw2015 fuel gauge driver
+
+ .../bindings/power/supply/cw2015_battery.yaml |  82 ++
+ .../devicetree/bindings/vendor-prefixes.yaml  |   2 +
+ MAINTAINERS                                   |   6 +
+ drivers/power/supply/Kconfig                  |  11 +
+ drivers/power/supply/Makefile                 |   1 +
+ drivers/power/supply/cw2015_battery.c         | 749 ++++++++++++++++++
+ 6 files changed, 851 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/power/supply/cw2015_battery.yaml
+ create mode 100644 drivers/power/supply/cw2015_battery.c
+
+-- 
+2.24.1
+
