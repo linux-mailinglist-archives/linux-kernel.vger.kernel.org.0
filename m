@@ -2,71 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8D4C918DC8F
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Mar 2020 01:40:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AFC9918DC91
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Mar 2020 01:41:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727532AbgCUAkW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Mar 2020 20:40:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58286 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726773AbgCUAkW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Mar 2020 20:40:22 -0400
-Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 01C9D2070A;
-        Sat, 21 Mar 2020 00:40:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584751221;
-        bh=KPTTZRR0P1krQVF9aGGXYjeBN6m0kMJWsQK1NP3CY0c=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=u9oer6e8glTW6WNO/0mTSpDEoTMszTLT8AK4qLApltuL2Ksrga40OrZRBuxXPNzvj
-         W8GAnXYd2yzParOUl2Yb7qTMGHPlQILuYI/Gmn5Bo2wR0g85nh6DTK5SQZvn1FsSi8
-         MNl3Cb7Hp9rkRN7uvANAKmzCwSFL8hFf/0iFdZwY=
-Subject: Re: [PATCH 4.19 00/48] 4.19.112-rc1 review
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-Cc:     torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        linux@roeck-us.net, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org, shuah <shuah@kernel.org>
-References: <20200319123902.941451241@linuxfoundation.org>
-From:   shuah <shuah@kernel.org>
-Message-ID: <cb1fa4c2-bfee-2632-bac7-696fc57fae93@kernel.org>
-Date:   Fri, 20 Mar 2020 18:40:20 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        id S1727732AbgCUAk5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Mar 2020 20:40:57 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:36338 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726867AbgCUAk5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Mar 2020 20:40:57 -0400
+Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 02L0XE0K080013
+        for <linux-kernel@vger.kernel.org>; Fri, 20 Mar 2020 20:40:56 -0400
+Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2yvq66ptd2-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Fri, 20 Mar 2020 20:40:56 -0400
+Received: from localhost
+        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <linuxram@us.ibm.com>;
+        Sat, 21 Mar 2020 00:40:54 -0000
+Received: from b06avi18878370.portsmouth.uk.ibm.com (9.149.26.194)
+        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Sat, 21 Mar 2020 00:40:50 -0000
+Received: from d06av24.portsmouth.uk.ibm.com (mk.ibm.com [9.149.105.60])
+        by b06avi18878370.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 02L0emlp43516332
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Sat, 21 Mar 2020 00:40:48 GMT
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id C2D794203F;
+        Sat, 21 Mar 2020 00:40:48 +0000 (GMT)
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 6136C42042;
+        Sat, 21 Mar 2020 00:40:47 +0000 (GMT)
+Received: from oc0525413822.ibm.com (unknown [9.85.223.94])
+        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Sat, 21 Mar 2020 00:40:47 +0000 (GMT)
+Date:   Fri, 20 Mar 2020 17:40:44 -0700
+From:   Ram Pai <linuxram@us.ibm.com>
+To:     Laurent Dufour <ldufour@linux.ibm.com>
+Cc:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        kvm-ppc@vger.kernel.org, Bharata B Rao <bharata@linux.ibm.com>
+Reply-To: Ram Pai <linuxram@us.ibm.com>
+References: <20200320102643.15516-1-ldufour@linux.ibm.com>
+ <20200320102643.15516-2-ldufour@linux.ibm.com>
 MIME-Version: 1.0
-In-Reply-To: <20200319123902.941451241@linuxfoundation.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200320102643.15516-2-ldufour@linux.ibm.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 20032100-0012-0000-0000-00000394C5B1
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 20032100-0013-0000-0000-000021D1B0B5
+Message-Id: <20200321004044.GA5243@oc0525413822.ibm.com>
+Subject: Re:  [PATCH 1/2] KVM: PPC: Book3S HV: check caller of H_SVM_* Hcalls
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.645
+ definitions=2020-03-20_08:2020-03-20,2020-03-20 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ priorityscore=1501 mlxlogscore=999 impostorscore=0 spamscore=0
+ phishscore=0 clxscore=1011 malwarescore=0 suspectscore=0 bulkscore=0
+ mlxscore=0 adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2003020000 definitions=main-2003210001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 3/19/20 7:03 AM, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 4.19.112 release.
-> There are 48 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On Fri, Mar 20, 2020 at 11:26:42AM +0100, Laurent Dufour wrote:
+> The Hcall named H_SVM_* are reserved to the Ultravisor. However, nothing
+> prevent a malicious VM or SVM to call them. This could lead to weird result
+> and should be filtered out.
 > 
-> Responses should be made by Sat, 21 Mar 2020 12:37:04 +0000.
-> Anything received after that time might be too late.
+> Checking the Secure bit of the calling MSR ensure that the call is coming
+> from either the Ultravisor or a SVM. But any system call made from a SVM
+> are going through the Ultravisor, and the Ultravisor should filter out
+> these malicious call. This way, only the Ultravisor is able to make such a
+> Hcall.
 > 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.19.112-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.19.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
+> Cc: Bharata B Rao <bharata@linux.ibm.com>
+> Cc: Paul Mackerras <paulus@ozlabs.org>
+> Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+> Cc: Michael Ellerman <mpe@ellerman.id.au>
+> Signed-off-by: Laurent Dufour <ldufour@linux.ibm.com>
+
+Reviewed-by: Ram Pai <linuxram@us.ibnm.com>
+
+> ---
+>  arch/powerpc/kvm/book3s_hv.c | 32 +++++++++++++++++++++-----------
+>  1 file changed, 21 insertions(+), 11 deletions(-)
 > 
 
-Compiled and booted on my test system. No dmesg regressions.
-
-thanks,
--- Shuah
