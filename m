@@ -2,201 +2,62 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5AA6518DEFC
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Mar 2020 10:09:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 298DC18DF04
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Mar 2020 10:19:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728313AbgCUJI7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 21 Mar 2020 05:08:59 -0400
-Received: from mx0a-00128a01.pphosted.com ([148.163.135.77]:28884 "EHLO
-        mx0a-00128a01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728256AbgCUJIy (ORCPT
+        id S1727040AbgCUJTU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 21 Mar 2020 05:19:20 -0400
+Received: from sonic308-2.consmr.mail.ne1.yahoo.com ([66.163.187.121]:41663
+        "EHLO sonic308-2.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726933AbgCUJTU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 21 Mar 2020 05:08:54 -0400
-Received: from pps.filterd (m0167089.ppops.net [127.0.0.1])
-        by mx0a-00128a01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 02L97MV1021067;
-        Sat, 21 Mar 2020 05:08:42 -0400
-Received: from nwd2mta3.analog.com ([137.71.173.56])
-        by mx0a-00128a01.pphosted.com with ESMTP id 2ywfu501gb-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Sat, 21 Mar 2020 05:08:42 -0400
-Received: from SCSQMBX10.ad.analog.com (scsqmbx10.ad.analog.com [10.77.17.5])
-        by nwd2mta3.analog.com (8.14.7/8.14.7) with ESMTP id 02L98esD009419
-        (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=FAIL);
-        Sat, 21 Mar 2020 05:08:41 -0400
-Received: from SCSQMBX10.ad.analog.com (10.77.17.5) by SCSQMBX10.ad.analog.com
- (10.77.17.5) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1779.2; Sat, 21 Mar
- 2020 02:08:39 -0700
-Received: from zeus.spd.analog.com (10.64.82.11) by SCSQMBX10.ad.analog.com
- (10.77.17.5) with Microsoft SMTP Server id 15.1.1779.2 via Frontend
- Transport; Sat, 21 Mar 2020 02:08:39 -0700
-Received: from localhost.localdomain ([10.48.65.12])
-        by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 02L98VkW010119;
-        Sat, 21 Mar 2020 05:08:36 -0400
-From:   Alexandru Ardelean <alexandru.ardelean@analog.com>
-To:     <linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC:     <jic23@kernel.org>, <lars@metafoo.de>,
-        Alexandru Ardelean <alexandru.ardelean@analog.com>
-Subject: [PATCH v2 5/5] iio: adc: ad7793: use read_avail iio hook for scale available
-Date:   Sat, 21 Mar 2020 11:08:02 +0200
-Message-ID: <20200321090802.11537-5-alexandru.ardelean@analog.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200321090802.11537-1-alexandru.ardelean@analog.com>
-References: <20200321090802.11537-1-alexandru.ardelean@analog.com>
+        Sat, 21 Mar 2020 05:19:20 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1584782359; bh=kcevCRoll2+Bsa3FDERpIV72LVcB1A4YV1b5N2AWYBk=; h=Date:From:Reply-To:Subject:References:From:Subject; b=D1cqfHLTvndZoHUSlt8UNtMkbQDtPD8E3ls63EQTGvxhHOlS06LlXrtHABIRSZ13mPML0mTPQdDymRm9ORcBd3/ugtQ562nGKPpC2aqegZW/rqKqLHVOW0Ak+A6Vv1/vKGCmszUVhornqS2pr0ZKe6YFaFeYW4dTkydmwXJx85nAXz4wehbcsq4AcXtPvQ/Ge2dKZQskVdMUXuGyxK49QtBrbpeR8ZJL5Jgte1TEF/JA3y6W59NohvwP7h6kxXEWfSd7dPOV7ZFxek1yQ6zibwaEJOQzuWNwbSLPlcl+8t3CWeyu83MbvPXhCTGMpguDvB3TClOuCvLzPPR51Av5Pw==
+X-YMail-OSG: IR7tbfoVM1nZbDeU0qA_jNaYC1822WH45_SsvzmLCWyWC44UPNmDOPOy4TTpVAE
+ dIjzSf5B95HVmoyRDkT3s_CXxyT9G4R.UEcYPVMTNh63I2cYH1J64Ka2L2LlYbFHLEULr2duHeXA
+ fZAe.JTZK6Uk7pJnYxZXZH3Gbl..WIG5j6B5Cn1pmUbPcpmtsXl3acGLT7qWRToszomsyiz5uIu8
+ aHsF4qzrrw1auMaMkU5LV3bOSTESajCXIzE0x6hyEz0QjYh.wgroAJlOlkYbKFz5e2WugFuDljTw
+ Qy2sqT0sJky0pedTm7OfQ_z26Dc9DLYBORRSC62lSDtPFBy.q5hNqdQQjNkSt9SxG5G0NWN.HWTY
+ _s9b3OKg_D4UHZY50dtSKkSR8Yoc7BT42QvGzMRlsF57xefdTbEwhb55MB08lSxzis9GfEf7kr6v
+ k_P0qD9Yr7cyhgC7Syw.DANmdEDHixUG4fX7ZV3AsucuGi_hS0zgy.cQI_9L_Fc1OVhCZ6jchGWf
+ Ywwpzb2j99IkhBpnyuTinhb0oZudxLEM5Ml.0KwcP0szHq_YUKdc9db3NeyU3RM5fA4QMxeoTJQv
+ Km7s.hqKx1QVWZBK_gul2zGMv1ddPBUCvbiKn7Ik9rg4Nf.R9.lL62fFO4wKXqdl0SP8lDsy614h
+ fJ0VRRTratu66td6lDZjLAhQYHOFvShyYz61DdqFNP4BnelfKwaEMNrbkt3t8S3PfTXaIIOB8.Zw
+ X2qaMS.HLv9GY0vjcwwE87hOcj3ds96MXEs3.0VbJAeNXt5U1QKPLTwr0EkX8A73XU._R1q99JT1
+ CoUWo1oC_s_cmNiCce9VBY81sLXv61pbLgHEcHsPIOT9efajFf32l2jPtBAO1gBScgz1cnfPbrPV
+ 4PBhXh3WvLrWWXDH8csHCXFIJJW5uTrvin5X6hQ5C3AbSqbzYB7EmkuwaTW8x57qQF6X82SY0AXF
+ _4MyTd5P.I9D_Kuh8VXwRW6ZG2eRhRCY3zFNbMB6o2g5q3.cwKaCQtb78Xhhql.MEZgE3Ysh584F
+ omo_cDFnvRYJIN5eLafcWs6aiQPDw6gJdJO4jhuIK_5DPMfbvITk2Q3XcIvLG7AVQf0iysUdOSYI
+ Xrtdv36ui3hn3ZkSokHaIhImc5mFdH2_uX41D7i9HJqwJ9WzRmq280Z_yNA7.C6HP..q5bUTDWi9
+ OCwKE0YIhslYjT7jxSjZPBB9CmQNIcMGM4IAcnCS5.XHWx1huaVYNjkxHY6m0HqpNHjc0O2XKlhs
+ fjRq4ZPuXjypf.ZvOknynAVM.Cjg9AV36X_hXyi3PkkNtNLHnkSx_XkhGXFK6_VueCpx_EGadbdl
+ X8Q..AauUzT7veNWbrRDkCSVW24DjpE_VDfof5YnEDX.MJnCpIJOscWTu
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic308.consmr.mail.ne1.yahoo.com with HTTP; Sat, 21 Mar 2020 09:19:19 +0000
+Date:   Sat, 21 Mar 2020 09:17:18 +0000 (UTC)
+From:   Stephen Li <lii77@kcgut.com>
+Reply-To: stephli947701@gmail.com
+Message-ID: <42031118.74631.1584782238062@mail.yahoo.com>
+Subject: REF
 MIME-Version: 1.0
-Content-Type: text/plain
-X-ADIRoutedOnPrem: True
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.645
- definitions=2020-03-21_02:2020-03-20,2020-03-21 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 bulkscore=0
- clxscore=1015 impostorscore=0 adultscore=0 malwarescore=0
- priorityscore=1501 spamscore=0 suspectscore=0 phishscore=0
- lowpriorityscore=0 mlxlogscore=999 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.12.0-2003020000 definitions=main-2003210053
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+References: <42031118.74631.1584782238062.ref@mail.yahoo.com>
+X-Mailer: WebService/1.1.15511 YMailNodin Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.149 Safari/537.36
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This change uses the read_avail and '.info_mask_shared_by_type_available'
-modifier to set the available scale.
-Essentially, nothing changes to the driver's ABI.
 
-The main idea for this patch is to remove the AD7793 driver from
-checkpatch's radar. There have been about ~3 attempts to fix/break the
-'in_voltage-voltage_scale_available' attribute, because checkpatch assumed
-it to be an arithmetic operation and people were trying to change that.
 
-Signed-off-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
----
- drivers/iio/adc/ad7793.c | 53 +++++++++++++++++++++++++++-------------
- 1 file changed, 36 insertions(+), 17 deletions(-)
-
-diff --git a/drivers/iio/adc/ad7793.c b/drivers/iio/adc/ad7793.c
-index 5592ae573e6b..fad98f1801db 100644
---- a/drivers/iio/adc/ad7793.c
-+++ b/drivers/iio/adc/ad7793.c
-@@ -354,29 +354,28 @@ static IIO_CONST_ATTR_SAMP_FREQ_AVAIL(
- static IIO_CONST_ATTR_NAMED(sampling_frequency_available_ad7797,
- 	sampling_frequency_available, "123 62 50 33 17 16 12 10 8 6 4");
- 
--static ssize_t ad7793_show_scale_available(struct device *dev,
--			struct device_attribute *attr, char *buf)
-+static int ad7793_read_avail(struct iio_dev *indio_dev,
-+			     struct iio_chan_spec const *chan,
-+			     const int **vals, int *type, int *length,
-+			     long mask)
- {
--	struct iio_dev *indio_dev = dev_to_iio_dev(dev);
- 	struct ad7793_state *st = iio_priv(indio_dev);
--	int i, len = 0;
- 
--	for (i = 0; i < ARRAY_SIZE(st->scale_avail); i++)
--		len += sprintf(buf + len, "%d.%09u ", st->scale_avail[i][0],
--			       st->scale_avail[i][1]);
-+	switch (mask) {
-+	case IIO_CHAN_INFO_SCALE:
-+		*vals = (int *)st->scale_avail;
-+		*type = IIO_VAL_INT_PLUS_NANO;
-+		/* Values are stored in a 2D matrix  */
-+		*length = ARRAY_SIZE(st->scale_avail) * 2;
- 
--	len += sprintf(buf + len, "\n");
-+		return IIO_AVAIL_LIST;
-+	}
- 
--	return len;
-+	return -EINVAL;
- }
- 
--static IIO_DEVICE_ATTR_NAMED(in_m_in_scale_available,
--		in_voltage-voltage_scale_available, S_IRUGO,
--		ad7793_show_scale_available, NULL, 0);
--
- static struct attribute *ad7793_attributes[] = {
- 	&iio_const_attr_sampling_frequency_available.dev_attr.attr,
--	&iio_dev_attr_in_m_in_scale_available.dev_attr.attr,
- 	NULL
- };
- 
-@@ -534,6 +533,7 @@ static const struct iio_info ad7793_info = {
- 	.read_raw = &ad7793_read_raw,
- 	.write_raw = &ad7793_write_raw,
- 	.write_raw_get_fmt = &ad7793_write_raw_get_fmt,
-+	.read_avail = ad7793_read_avail,
- 	.attrs = &ad7793_attribute_group,
- 	.validate_trigger = ad_sd_validate_trigger,
- };
-@@ -547,7 +547,7 @@ static const struct iio_info ad7797_info = {
- };
- 
- #define __AD7793_CHANNEL(_si, _channel1, _channel2, _address, _bits, \
--	_storagebits, _shift, _extend_name, _type, _mask_all) \
-+	_storagebits, _shift, _extend_name, _type, _mask_type_av, _mask_all) \
- 	{ \
- 		.type = (_type), \
- 		.differential = (_channel2 == -1 ? 0 : 1), \
-@@ -559,6 +559,7 @@ static const struct iio_info ad7797_info = {
- 		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW) | \
- 			BIT(IIO_CHAN_INFO_OFFSET), \
- 		.info_mask_shared_by_type = BIT(IIO_CHAN_INFO_SCALE), \
-+		.info_mask_shared_by_type_available = (_mask_type_av), \
- 		.info_mask_shared_by_all = _mask_all, \
- 		.scan_index = (_si), \
- 		.scan_type = { \
-@@ -574,23 +575,41 @@ static const struct iio_info ad7797_info = {
- 	_storagebits, _shift) \
- 	__AD7793_CHANNEL(_si, _channel1, _channel2, _address, _bits, \
- 		_storagebits, _shift, NULL, IIO_VOLTAGE, \
-+		BIT(IIO_CHAN_INFO_SCALE), \
- 		BIT(IIO_CHAN_INFO_SAMP_FREQ))
- 
- #define AD7793_SHORTED_CHANNEL(_si, _channel, _address, _bits, \
- 	_storagebits, _shift) \
- 	__AD7793_CHANNEL(_si, _channel, _channel, _address, _bits, \
- 		_storagebits, _shift, "shorted", IIO_VOLTAGE, \
-+		BIT(IIO_CHAN_INFO_SCALE), \
- 		BIT(IIO_CHAN_INFO_SAMP_FREQ))
- 
- #define AD7793_TEMP_CHANNEL(_si, _address, _bits, _storagebits, _shift) \
- 	__AD7793_CHANNEL(_si, 0, -1, _address, _bits, \
- 		_storagebits, _shift, NULL, IIO_TEMP, \
-+		0, \
- 		BIT(IIO_CHAN_INFO_SAMP_FREQ))
- 
- #define AD7793_SUPPLY_CHANNEL(_si, _channel, _address, _bits, _storagebits, \
- 	_shift) \
- 	__AD7793_CHANNEL(_si, _channel, -1, _address, _bits, \
- 		_storagebits, _shift, "supply", IIO_VOLTAGE, \
-+		0, \
-+		BIT(IIO_CHAN_INFO_SAMP_FREQ))
-+
-+#define AD7797_DIFF_CHANNEL(_si, _channel1, _channel2, _address, _bits, \
-+	_storagebits, _shift) \
-+	__AD7793_CHANNEL(_si, _channel1, _channel2, _address, _bits, \
-+		_storagebits, _shift, NULL, IIO_VOLTAGE, \
-+		0, \
-+		BIT(IIO_CHAN_INFO_SAMP_FREQ))
-+
-+#define AD7797_SHORTED_CHANNEL(_si, _channel, _address, _bits, \
-+	_storagebits, _shift) \
-+	__AD7793_CHANNEL(_si, _channel, _channel, _address, _bits, \
-+		_storagebits, _shift, "shorted", IIO_VOLTAGE, \
-+		0, \
- 		BIT(IIO_CHAN_INFO_SAMP_FREQ))
- 
- #define DECLARE_AD7793_CHANNELS(_name, _b, _sb, _s) \
-@@ -620,8 +639,8 @@ const struct iio_chan_spec _name##_channels[] = { \
- 
- #define DECLARE_AD7797_CHANNELS(_name, _b, _sb) \
- const struct iio_chan_spec _name##_channels[] = { \
--	AD7793_DIFF_CHANNEL(0, 0, 0, AD7793_CH_AIN1P_AIN1M, (_b), (_sb), 0), \
--	AD7793_SHORTED_CHANNEL(1, 0, AD7793_CH_AIN1M_AIN1M, (_b), (_sb), 0), \
-+	AD7797_DIFF_CHANNEL(0, 0, 0, AD7793_CH_AIN1P_AIN1M, (_b), (_sb), 0), \
-+	AD7797_SHORTED_CHANNEL(1, 0, AD7793_CH_AIN1M_AIN1M, (_b), (_sb), 0), \
- 	AD7793_TEMP_CHANNEL(2, AD7793_CH_TEMP, (_b), (_sb), 0), \
- 	AD7793_SUPPLY_CHANNEL(3, 3, AD7793_CH_AVDD_MONITOR, (_b), (_sb), 0), \
- 	IIO_CHAN_SOFT_TIMESTAMP(4), \
--- 
-2.17.1
-
+Greetings,
+I was searching through a local business directory when I found your
+profile. I am Soliciting On-Behalf of my private client who is
+interested in having a serious business investment in your country. If
+you have a valid business, investment or project he can invest
+back to me for more details. Your swift response is highly needed.
+Sincerely
+Stephen Li
+Please response back to me with is my private email below for more details
+stephli947701@gmail.com
