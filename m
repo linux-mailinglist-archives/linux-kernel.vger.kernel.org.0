@@ -2,92 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 573B618DFC1
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Mar 2020 12:22:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3939B18DFC3
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Mar 2020 12:23:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728462AbgCULWH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 21 Mar 2020 07:22:07 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:37132 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725932AbgCULWG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 21 Mar 2020 07:22:06 -0400
-Received: by mail-wr1-f67.google.com with SMTP id w10so10546932wrm.4;
-        Sat, 21 Mar 2020 04:22:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=wrykALwAZHn2gI4OIvSp4Cr1q7UfqoQL07MxjhgqGhI=;
-        b=iokK+tj+ES8Dz+zcq6RpuEqINz9k7mZVDpnL+mOZkdhMW0Z2/zEhFQJ24GS11Yq7ms
-         M7hSQuZrik3r6nZbAKLKKmmtMAmu1S2tgVHkKDuYxcjA3XdOQwM5OP17Px1MMjqiGfZd
-         zmOrQoxr40OMSS2V2D4KLCFTo64Iu+GVX98to2jItoILC9ZoAizm5TBPkEPxCzZ5UDZv
-         tmjPe5MCaRi8D3EObUeTdX+g8lxJEaM/3+xVO+rdU/CZ4rxtIMsCuBy55YGpMkaBi7os
-         f0kwEiAhnLBbpPHTP9f1fl0BEVJ7x0KAnkD+b3JFtPY+Palrrr6ySVVuJCE2bhtyapgc
-         +M+w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=wrykALwAZHn2gI4OIvSp4Cr1q7UfqoQL07MxjhgqGhI=;
-        b=LKCDRZtdV4M38ZZ6RNZAU7Z0o7EyopJ8UrgcZmdh+PLKMS6ppONM5Di5NdkBloR8xU
-         bgGJ05j0wM2rxD5J8z3bAZRc+u79TvkBfn7rNwVBDMbPoCSkhTwMP9VRbgXgI769f0te
-         vILAA1IYTZAtmVMNlET9uNiySOdm6JTvq6zFqw9KYLZyNbBOSwLUDE0nFBkTuIf8UwWH
-         cd+6bWisCMPWbxwudxAwfDP5pWKoBb/v5k4efy0MQ4aszzNWSlVNOkAPR2hdhaXku68z
-         3uWBI9njVqcaCZsPJl+10MNHuxStw3+gHWjZBYvF1O1NMaUERdyx9QZgl3+B7nlj5pw8
-         O+Rg==
-X-Gm-Message-State: ANhLgQ0GEUlrBIRqaRvMPBPJSG8t30fgyaddTIu1tLba3XWbV0nhn8gU
-        2FEQgog+QmTes1CWJXwrOcQ=
-X-Google-Smtp-Source: ADFU+vvUdBv4IbyytOzeaYSUEhatmuthQBOlPFK2tmwCRSwKRlZbN1HaAN305D2qc31CAbtmwZ+XPQ==
-X-Received: by 2002:adf:e345:: with SMTP id n5mr17736309wrj.220.1584789724226;
-        Sat, 21 Mar 2020 04:22:04 -0700 (PDT)
-Received: from prasmi.home ([2a00:23c8:2510:d000:a04f:dbc7:8e23:adad])
-        by smtp.gmail.com with ESMTPSA id x24sm11986616wmc.36.2020.03.21.04.22.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 21 Mar 2020 04:22:03 -0700 (PDT)
-From:   Lad Prabhakar <prabhakar.csengg@gmail.com>
-X-Google-Original-From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-To:     Kishon Vijay Abraham I <kishon@ti.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Cc:     Arnd Bergmann <arnd@arndb.de>, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Lad Prabhakar <prabhakar.csengg@gmail.com>,
-        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH] misc: pci_endpoint_test: remove duplicate macro PCI_ENDPOINT_TEST_STATUS
-Date:   Sat, 21 Mar 2020 11:21:39 +0000
-Message-Id: <20200321112139.17184-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-X-Mailer: git-send-email 2.20.1
+        id S1727926AbgCULXH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 21 Mar 2020 07:23:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41692 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725932AbgCULXG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 21 Mar 2020 07:23:06 -0400
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B757820786;
+        Sat, 21 Mar 2020 11:23:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1584789786;
+        bh=IrN8hft8egtKt9q2QCIAHGIVjoG+tI0cY9ujDNwCIRg=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=Mj+1sA3qyTxHp4YDj2Lx/59ZyUJ6tpiQZUSLPF2MWhNCRYMQZnERYuq6ABUR5x6BE
+         /fVXmUcRPtXRAKSKXitqslhPV6JtoMIkZniWk8DTOB76ldBL5JAuRNM678vK3NAUWR
+         NPP+qXQ9mlI1PByJeUo1B36mZPwxwrXc24YsziYY=
+Received: by mail-lf1-f44.google.com with SMTP id a28so6506847lfr.13;
+        Sat, 21 Mar 2020 04:23:05 -0700 (PDT)
+X-Gm-Message-State: ANhLgQ0B145zTVE/GqZrLfVhDEQPtYbfr0QKebp+UiwPgZX4f4HxlKcS
+        0CZwQxij7YABmKaIvkI+xGD25QpoJHRXzj0nZko=
+X-Google-Smtp-Source: ADFU+vtBuGthZOiE/exncdFcOQotmhkxovU5FM+ioKG7kIdq/Q77KU7HLxMgNJ9KnymclfA9axDhFQpw7K0/sN7K6dk=
+X-Received: by 2002:a19:4f10:: with SMTP id d16mr6800457lfb.52.1584789783795;
+ Sat, 21 Mar 2020 04:23:03 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20200318044702.104793-1-wenhu.wang@vivo.com>
+In-Reply-To: <20200318044702.104793-1-wenhu.wang@vivo.com>
+From:   Guo Ren <guoren@kernel.org>
+Date:   Sat, 21 Mar 2020 19:22:52 +0800
+X-Gmail-Original-Message-ID: <CAJF2gTTp8fwy7hRCKKzmxXv9WZfh=Lhzu4_7nK52E3T6XfW8iQ@mail.gmail.com>
+Message-ID: <CAJF2gTTp8fwy7hRCKKzmxXv9WZfh=Lhzu4_7nK52E3T6XfW8iQ@mail.gmail.com>
+Subject: Re: [PATCH] csky: delete redundant micro io_remap_pfn_range
+To:     Wang Wenhu <wenhu.wang@vivo.com>
+Cc:     Will Deacon <will@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mike Rapoport <rppt@linux.ibm.com>, linux-csky@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        kernel@vivo.com, trivial@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PCI_ENDPOINT_TEST_STATUS is already defined in pci_endpoint_test.c along
-with the status bits, so this patch drops duplicate definition.
+Thx
 
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
----
- This patch applies on top of pci/endpoint branch [1].
- 
- [1] https://git.kernel.org/pub/scm/linux/kernel/git/lpieralisi/pci.git
+Acked and queued.
 
- drivers/misc/pci_endpoint_test.c | 1 -
- 1 file changed, 1 deletion(-)
+On Wed, Mar 18, 2020 at 12:47 PM Wang Wenhu <wenhu.wang@vivo.com> wrote:
+>
+> Same definition exists in "include/asm-generic/pgtable.h",
+> which is included just below the lines to be deleted.
+>
+> #ifndef io_remap_pfn_range
+> #define io_remap_pfn_range remap_pfn_range
+> #endif
+>
+> Signed-off-by: Wang Wenhu <wenhu.wang@vivo.com>
+> ---
+>  arch/csky/include/asm/pgtable.h | 3 ---
+>  1 file changed, 3 deletions(-)
+>
+> diff --git a/arch/csky/include/asm/pgtable.h b/arch/csky/include/asm/pgtable.h
+> index 9b7764cb7645..bde812a785c8 100644
+> --- a/arch/csky/include/asm/pgtable.h
+> +++ b/arch/csky/include/asm/pgtable.h
+> @@ -306,9 +306,6 @@ void update_mmu_cache(struct vm_area_struct *vma, unsigned long address,
+>  /* Needs to be defined here and not in linux/mm.h, as it is arch dependent */
+>  #define kern_addr_valid(addr)  (1)
+>
+> -#define io_remap_pfn_range(vma, vaddr, pfn, size, prot) \
+> -       remap_pfn_range(vma, vaddr, pfn, size, prot)
+> -
+>  #include <asm-generic/pgtable.h>
+>
+>  #endif /* __ASM_CSKY_PGTABLE_H */
+> --
+> 2.17.1
+>
 
-diff --git a/drivers/misc/pci_endpoint_test.c b/drivers/misc/pci_endpoint_test.c
-index b536ca4b14ca..a1bb94902b5a 100644
---- a/drivers/misc/pci_endpoint_test.c
-+++ b/drivers/misc/pci_endpoint_test.c
-@@ -53,7 +53,6 @@
- #define STATUS_SRC_ADDR_INVALID			BIT(7)
- #define STATUS_DST_ADDR_INVALID			BIT(8)
- 
--#define PCI_ENDPOINT_TEST_STATUS		0x8
- #define PCI_ENDPOINT_TEST_LOWER_SRC_ADDR	0x0c
- #define PCI_ENDPOINT_TEST_UPPER_SRC_ADDR	0x10
- 
+
 -- 
-2.20.1
+Best Regards
+ Guo Ren
 
+ML: https://lore.kernel.org/linux-csky/
