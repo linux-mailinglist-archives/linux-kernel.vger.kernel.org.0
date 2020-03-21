@@ -2,61 +2,58 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 014A018DC59
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Mar 2020 01:06:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6C7CF18DC5E
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Mar 2020 01:08:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727725AbgCUAGJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Mar 2020 20:06:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50106 "EHLO mail.kernel.org"
+        id S1727527AbgCUAI4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Mar 2020 20:08:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50932 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727650AbgCUAGI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Mar 2020 20:06:08 -0400
+        id S1726773AbgCUAI4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Mar 2020 20:08:56 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2CFA020777;
-        Sat, 21 Mar 2020 00:06:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 843B72076E;
+        Sat, 21 Mar 2020 00:08:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584749168;
-        bh=aqc1nwxD2JVKkvrOl3kWSCll9YVmqSIDMks9uATyyG8=;
+        s=default; t=1584749335;
+        bh=BwR1A0LR4kSGnvfTTmFx0nWVw51KQHZYZJj7qIvL188=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=ClC5dOV8QR9KK+Zq8oUQh5C/7iRhf3yloDptsKdGBEQcWDFezB3p2RzDsnmdslXkR
-         SuD884ExJU2+R1qXwTIrZV0BmIblCO3FXG2zMi/CJosLX106gYIzZXRXethR6rQif+
-         WY6vfmoTq5jRudWWCCyDMc+VzE26TLfsidQWTlZ0=
+        b=lHMA/IdtyWk6BevCXweklo6NBit2XzYMm6/rufxTgug66xoBm+c5MVhb89OOcdrtW
+         U5FReYFgVaP00VPGp6yGqM3xqzszCBLILZUkWNPBKUIKTeGdTl84xqw/Bnk/1Xmhm4
+         +dUtw81U4aelKaM1NaiqKEVv6ePknOBegQNDN5jA=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20200227053529.16479-3-vigneshr@ti.com>
-References: <20200227053529.16479-1-vigneshr@ti.com> <20200227053529.16479-3-vigneshr@ti.com>
-Subject: Re: [PATCH v4 2/2] clk: keystone: Add new driver to handle syscon based clocks
+In-Reply-To: <20200213161952.37460-1-paul@crapouillou.net>
+References: <20200213161952.37460-1-paul@crapouillou.net>
+Subject: Re: [PATCH v2 1/2] clk: ingenic/jz4770: Exit with error if CGU init failed
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Tero Kristo <t-kristo@ti.com>
-To:     Mark Rutland <mark.rutland@arm.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Vignesh Raghavendra <vigneshr@ti.com>
-Date:   Fri, 20 Mar 2020 17:06:07 -0700
-Message-ID: <158474916743.125146.2512565488728319970@swboyd.mtv.corp.google.com>
+Cc:     od@zcrc.me, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Paul Cercueil <paul@crapouillou.net>,
+        stable@vger.kernel.org, kbuild test robot <lkp@intel.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Paul Cercueil <paul@crapouillou.net>,
+        Stephen Boyd <sboyd@codeaurora.org>
+Date:   Fri, 20 Mar 2020 17:08:54 -0700
+Message-ID: <158474933477.125146.7017462796685890112@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Vignesh Raghavendra (2020-02-26 21:35:29)
-> On TI's AM654/J721e SoCs, certain clocks can be gatemld/ungated by settin=
-g a
-> single bit in SoC's System Control Module registers. Sometime more than
-> one clock control can be in the same register.
-> Add a driver to support such clocks using syscon framework.
-> Driver currently supports controlling EHRPWM's TimeBase clock(TBCLK) for
-> AM654 SoC.
+Quoting Paul Cercueil (2020-02-13 08:19:51)
+> Exit jz4770_cgu_init() if the 'cgu' pointer we get is NULL, since the
+> pointer is passed as argument to functions later on.
 >=20
-> Signed-off-by: Vignesh Raghavendra <vigneshr@ti.com>
+> Fixes: 7a01c19007ad ("clk: Add Ingenic jz4770 CGU driver")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+> Reported-by: kbuild test robot <lkp@intel.com>
+> Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
 > ---
 
 Applied to clk-next
