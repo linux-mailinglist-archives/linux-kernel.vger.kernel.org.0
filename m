@@ -2,112 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ECB0818EB1E
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Mar 2020 18:51:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2B2BE18EB08
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Mar 2020 18:49:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727234AbgCVRuk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 22 Mar 2020 13:50:40 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:44204 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726623AbgCVRue (ORCPT
+        id S1726912AbgCVRtx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 22 Mar 2020 13:49:53 -0400
+Received: from mail-out.m-online.net ([212.18.0.10]:50645 "EHLO
+        mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726502AbgCVRtx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Mar 2020 13:50:34 -0400
-Received: by mail-pg1-f195.google.com with SMTP id 142so694929pgf.11;
-        Sun, 22 Mar 2020 10:50:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=AymXtp3nG2LLyQijF0AdQUTMbx+e63yTlaZBg9wNr3E=;
-        b=IlEFI136z2Ku169Qafi1L04lNH2PtWbJTwkZVbsZIH5y4xUSSUnY468PQp+D6aIJ73
-         HIH4XuPjOJ5ZYRDfLgnzR2fJfVLVcjM7B0Hk0B5DcmojpC2qnaBhFSHbd+M7ilNoiU+a
-         VqPMI5HZHFugtDQF9TyN6mlczdpxlI1xRTxdJzXNaf03HwPWNHalBJs3h1uBo2QQEcpr
-         ydD88vMRIOCDkYFu53YPaoyYBDvpumsFqf7ue7wzeAtREUsps/XCYgSEIBbqpJqYUeTB
-         Bp4HjJdHldmCms0+4I08eDqRldrPUuUzdJPzlhFprC7YoqpVQLgdVzdGkgSl91F8538z
-         uVNA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=AymXtp3nG2LLyQijF0AdQUTMbx+e63yTlaZBg9wNr3E=;
-        b=qSa4WkxywL+AvxAcR6NQgROtPd/h18oPZkQ3+tR3bYrl3sdjpbtH+h2DiV0Qk5Gp5V
-         fZb0sBLHwnuvFzF8hV9rBDk5AoUExjG+M2ZjN0YrdRxpxInL8nrrZh494ScXpkjQXmKm
-         e8320WtKqQEA3jeIRDZK3jAl24vIAN5ZtMSiJV5lWJwnkazqo2u+Ik+8WoWi0gBaWiN1
-         NabkZdgluhs64Wtsp3gII8qZ7fvnI3hIcJo96p8DvxO9xh8hYN/+raa+bvXn+4/EWmtd
-         AKr9cuE5lbRYAPdXuuPHGFd89Lcju3klg21neDqVWIwkEouCWFaFdlNI2WY8Z22NVITY
-         fUNg==
-X-Gm-Message-State: ANhLgQ1ZCX8BOqurTAg5t/u6py5sPwnbEOHvn0VAdgC5asfP/nCcQFdG
-        8z3ZNXnoDKpk9OmoeR+syJ0=
-X-Google-Smtp-Source: ADFU+vubfSt1fEHY9S2nQ7rDmb5y7eWgE6gS4SDOOl5P/pjQymmoxGN0DZN8GGvtnTLoleWBYfWKJg==
-X-Received: by 2002:aa7:99c8:: with SMTP id v8mr19918083pfi.151.1584899433441;
-        Sun, 22 Mar 2020 10:50:33 -0700 (PDT)
-Received: from localhost ([216.24.188.11])
-        by smtp.gmail.com with ESMTPSA id c8sm11594453pfj.108.2020.03.22.10.50.32
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 22 Mar 2020 10:50:33 -0700 (PDT)
-From:   Dejin Zheng <zhengdejin5@gmail.com>
-To:     andrew@lunn.ch, f.fainelli@gmail.com, hkallweit1@gmail.com,
-        linux@armlinux.org.uk, davem@davemloft.net,
-        mchehab+samsung@kernel.org, corbet@lwn.net,
-        gregkh@linuxfoundation.org, broonie@kernel.org, tglx@linutronix.de,
-        netdev@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, Dejin Zheng <zhengdejin5@gmail.com>
-Subject: [PATCH net-next v5 10/10] net: phy: tja11xx: use phy_read_poll_timeout() to simplify the code
-Date:   Mon, 23 Mar 2020 01:49:43 +0800
-Message-Id: <20200322174943.26332-11-zhengdejin5@gmail.com>
-X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200322174943.26332-1-zhengdejin5@gmail.com>
-References: <20200322174943.26332-1-zhengdejin5@gmail.com>
+        Sun, 22 Mar 2020 13:49:53 -0400
+Received: from frontend01.mail.m-online.net (unknown [192.168.8.182])
+        by mail-out.m-online.net (Postfix) with ESMTP id 48llQQ1pF4z1rn32;
+        Sun, 22 Mar 2020 18:49:50 +0100 (CET)
+Received: from localhost (dynscan1.mnet-online.de [192.168.6.70])
+        by mail.m-online.net (Postfix) with ESMTP id 48llQQ0hnXz1qv4S;
+        Sun, 22 Mar 2020 18:49:50 +0100 (CET)
+X-Virus-Scanned: amavisd-new at mnet-online.de
+Received: from mail.mnet-online.de ([192.168.8.182])
+        by localhost (dynscan1.mail.m-online.net [192.168.6.70]) (amavisd-new, port 10024)
+        with ESMTP id 3-qeDV3uJFOP; Sun, 22 Mar 2020 18:49:48 +0100 (CET)
+X-Auth-Info: m8gazT5yJHbOX8AVW6gKdokOWg0xO2LJked0Vv1wmZc=
+Received: from [IPv6:::1] (unknown [195.140.253.167])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.mnet-online.de (Postfix) with ESMTPSA;
+        Sun, 22 Mar 2020 18:49:48 +0100 (CET)
+Subject: Re: [PATCH] mtd: rawnand: denali: add more delays before latching
+ incoming data
+To:     Masahiro Yamada <masahiroy@kernel.org>
+Cc:     Miquel Raynal <miquel.raynal@bootlin.com>,
+        linux-mtd <linux-mtd@lists.infradead.org>,
+        Richard Weinberger <richard@nod.at>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20200316104307.1891-1-yamada.masahiro@socionext.com>
+ <20200320181159.5004099f@xps13>
+ <2d02c851-4249-053c-99e9-69b209bffad2@denx.de>
+ <CAK7LNAR5_uCmfmxAduMRxnBNzhtCwNR65OJ__AdZsNz2iiNJWA@mail.gmail.com>
+From:   Marek Vasut <marex@denx.de>
+Message-ID: <727b7c26-a57a-6aec-ebba-57c215a5b901@denx.de>
+Date:   Sun, 22 Mar 2020 18:49:47 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAK7LNAR5_uCmfmxAduMRxnBNzhtCwNR65OJ__AdZsNz2iiNJWA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-use phy_read_poll_timeout() to replace the poll codes for
-simplify tja11xx_check() function.
+On 3/22/20 6:42 PM, Masahiro Yamada wrote:
+> On Sat, Mar 21, 2020 at 2:15 AM Marek Vasut <marex@denx.de> wrote:
+>>
+>> On 3/20/20 6:11 PM, Miquel Raynal wrote:
+>>> Hi Marek,
+>>>
+>>> Masahiro Yamada <yamada.masahiro@socionext.com> wrote on Mon, 16 Mar
+>>> 2020 19:43:07 +0900:
+>>>
+>>>> The Denali IP have several registers to specify how many clock cycles
+>>>> should be waited between falling/rising signals. You can improve the
+>>>> NAND access performance by programming these registers with optimized
+>>>> values.
+>>>>
+>>>> Because struct nand_sdr_timings represents the device requirement
+>>>> in pico seconds, denali_setup_data_interface() computes the register
+>>>> values by dividing the device timings with the clock period.
+>>>>
+>>>> Marek Vasut reported this driver in the latest kernel does not work
+>>>> on his SOCFPGA board. (The on-board NAND chip is mode 5)
+>>>>
+>>>> The suspicious parameter is acc_clks, so this commit relaxes it.
+>>>>
+>>>> The Denali NAND Flash Memory Controller User's Guide describes this
+>>>> register as follows:
+>>>>
+>>>>   acc_clks
+>>>>     signifies the number of bus interface clk_x clock cycles,
+>>>>     controller should wait from read enable going low to sending
+>>>>     out a strobe of clk_x for capturing of incoming data.
+>>>>
+>>>> Currently, acc_clks is calculated only based on tREA, the delay on the
+>>>> chip side. This does not include additional delays that come from the
+>>>> data path on the PCB and in the SoC, load capacity of the pins, etc.
+>>>>
+>>>> This relatively becomes a big factor on faster timing modes like mode 5.
+>>>>
+>>>> Before supporting the ->setup_data_interface() hook (e.g. Linux 4.12),
+>>>> the Denali driver hacks acc_clks in a couple of ways [1] [2] to support
+>>>> the timing mode 5.
+>>>>
+>>>> We would not go back to the hard-coded acc_clks, but we need to include
+>>>> this factor into the delay somehow. Let's say the amount of the additional
+>>>> delay is 10000 pico sec.
+>>>>
+>>>> In the new calculation, acc_clks is determined by timings->tREA_max +
+>>>> data_setup_on_host.
+>>>>
+>>>> Also, prolong the RE# low period to make sure the data hold is met.
+>>>>
+>>>> Finally, re-center the data latch timing for extra safety.
+>>>>
+>>>> [1] https://github.com/torvalds/linux/blob/v4.12/drivers/mtd/nand/denali.c#L276
+>>>> [2] https://github.com/torvalds/linux/blob/v4.12/drivers/mtd/nand/denali.c#L282
+>>>>
+>>>> Reported-by: Marek Vasut <marex@denx.de>
+>>>> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+>>>> ---
+>>>
+>>> Can you please give this patch a try and report the result?
+>>
+>> It's on my list, don't worry.
+> 
+> 
+> Preferably, please test v2.
 
-Suggested-by: Andrew Lunn <andrew@lunn.ch>
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
-Signed-off-by: Dejin Zheng <zhengdejin5@gmail.com>
----
-v4 -> v5:
-	- no changed.
-v3 -> v4:
-	- add this patch by Andrew's suggestion. Thanks Andrew!
-
- drivers/net/phy/nxp-tja11xx.c | 16 +++-------------
- 1 file changed, 3 insertions(+), 13 deletions(-)
-
-diff --git a/drivers/net/phy/nxp-tja11xx.c b/drivers/net/phy/nxp-tja11xx.c
-index b705d0bd798b..32ef32a4af3c 100644
---- a/drivers/net/phy/nxp-tja11xx.c
-+++ b/drivers/net/phy/nxp-tja11xx.c
-@@ -72,20 +72,10 @@ static struct tja11xx_phy_stats tja11xx_hw_stats[] = {
- 
- static int tja11xx_check(struct phy_device *phydev, u8 reg, u16 mask, u16 set)
- {
--	int i, ret;
--
--	for (i = 0; i < 200; i++) {
--		ret = phy_read(phydev, reg);
--		if (ret < 0)
--			return ret;
--
--		if ((ret & mask) == set)
--			return 0;
--
--		usleep_range(100, 150);
--	}
-+	int val;
- 
--	return -ETIMEDOUT;
-+	return phy_read_poll_timeout(phydev, reg, val, (val & mask) == set,
-+				     150, 30000);
- }
- 
- static int phy_modify_check(struct phy_device *phydev, u8 reg,
--- 
-2.25.0
-
+Yes, I see the V2.
