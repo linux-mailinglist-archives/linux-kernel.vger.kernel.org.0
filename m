@@ -2,81 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D6A0618E9D3
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Mar 2020 16:43:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 08BD218E9A6
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Mar 2020 16:32:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727103AbgCVPnZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 22 Mar 2020 11:43:25 -0400
-Received: from foss.arm.com ([217.140.110.172]:41132 "EHLO foss.arm.com"
+        id S1726869AbgCVPcb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 22 Mar 2020 11:32:31 -0400
+Received: from vps0.lunn.ch ([185.16.172.187]:50272 "EHLO vps0.lunn.ch"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725970AbgCVPnY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Mar 2020 11:43:24 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 617CAFEC;
-        Sun, 22 Mar 2020 08:43:24 -0700 (PDT)
-Received: from ssg-dev-vb.arm.com (unknown [10.57.20.128])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 06F3E3F52E;
-        Sun, 22 Mar 2020 08:43:18 -0700 (PDT)
-From:   Hadar Gat <hadar.gat@arm.com>
-To:     Matt Mackall <mpm@selenic.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Alexander Sverdlin <alexander.sverdlin@nokia.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Tomer Maimon <tmaimon77@gmail.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Zaibo Xu <xuzaibo@huawei.com>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Cc:     linux-crypto@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Gilad Ben-Yossef <gilad@benyossef.com>,
-        Ofir Drang <ofir.drang@arm.com>, Hadar Gat <hadar.gat@arm.com>
-Subject: [PATCH v5 3/3] MAINTAINERS: add HG as cctrng maintainer
-Date:   Sun, 22 Mar 2020 17:31:25 +0200
-Message-Id: <1584891085-8963-4-git-send-email-hadar.gat@arm.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1584891085-8963-1-git-send-email-hadar.gat@arm.com>
-References: <1584891085-8963-1-git-send-email-hadar.gat@arm.com>
+        id S1725785AbgCVPcb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 22 Mar 2020 11:32:31 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+        s=20171124; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=GBWLiXIetq3iao8NDSJX3RHDoOSCZXvAQ79NXJI3pU4=; b=QuGeDcVUuQu0X4v6OZsefCf1dK
+        tW1pNgnyYig8X+MjXohsFrtevqx9re+dNpQTw+xTlR7q6L5iMz4SqJ0BZS9ssV8LceXOob2qYFE/Y
+        pXN4MXJ/0r2BnCh4PYHyaoPIXBOF3lCAnzLV6HH51+s5KcNrE/wXQmX7FNit14xEAMnM=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.93)
+        (envelope-from <andrew@lunn.ch>)
+        id 1jG2aD-0000WM-7K; Sun, 22 Mar 2020 16:32:13 +0100
+Date:   Sun, 22 Mar 2020 16:32:13 +0100
+From:   Andrew Lunn <andrew@lunn.ch>
+To:     Dejin Zheng <zhengdejin5@gmail.com>
+Cc:     f.fainelli@gmail.com, hkallweit1@gmail.com, linux@armlinux.org.uk,
+        davem@davemloft.net, gregkh@linuxfoundation.org,
+        broonie@kernel.org, alexios.zavras@intel.com, tglx@linutronix.de,
+        mchehab+samsung@kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next v4 3/9] net: phy: introduce
+ phy_read_mmd_poll_timeout macro
+Message-ID: <20200322153213.GL11481@lunn.ch>
+References: <20200322065555.17742-1-zhengdejin5@gmail.com>
+ <20200322065555.17742-4-zhengdejin5@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200322065555.17742-4-zhengdejin5@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I work for Arm on maintaining the TrustZone CryptoCell TRNG driver.
+On Sun, Mar 22, 2020 at 02:55:49PM +0800, Dejin Zheng wrote:
+> it is sometimes necessary to poll a phy register by phy_read_mmd()
+> function until its value satisfies some condition. introduce
+> phy_read_mmd_poll_timeout() macros that do this.
+> 
+> Suggested-by: Andrew Lunn <andrew@lunn.ch>
+> Signed-off-by: Dejin Zheng <zhengdejin5@gmail.com>
 
-Signed-off-by: Hadar Gat <hadar.gat@arm.com>
----
- MAINTAINERS | 9 +++++++++
- 1 file changed, 9 insertions(+)
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index c312b65..3f27716 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -3847,6 +3847,15 @@ S:	Supported
- F:	drivers/crypto/ccree/
- W:	https://developer.arm.com/products/system-ip/trustzone-cryptocell/cryptocell-700-family
- 
-+CCTRNG ARM TRUSTZONE CRYPTOCELL TRUE RANDOM NUMBER GENERATOR (TRNG) DRIVER
-+M:	Hadar Gat <hadar.gat@arm.com>
-+L:	linux-crypto@vger.kernel.org
-+S:	Supported
-+F:	drivers/char/hw_random/cctrng.c
-+F:	drivers/char/hw_random/cctrng.h
-+F:	Documentation/devicetree/bindings/rng/arm-cctrng.txt
-+W:	https://developer.arm.com/products/system-ip/trustzone-cryptocell/cryptocell-700-family
-+
- CEC FRAMEWORK
- M:	Hans Verkuil <hverkuil-cisco@xs4all.nl>
- L:	linux-media@vger.kernel.org
--- 
-2.7.4
-
+    Andrew
