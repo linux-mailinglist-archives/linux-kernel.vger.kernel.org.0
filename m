@@ -2,29 +2,29 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 77D2A18E7AB
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Mar 2020 09:57:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8ECF218E7AD
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Mar 2020 09:59:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726896AbgCVI5Q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 22 Mar 2020 04:57:16 -0400
-Received: from relay12.mail.gandi.net ([217.70.178.232]:36875 "EHLO
-        relay12.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725987AbgCVI5P (ORCPT
+        id S1726895AbgCVI7j (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 22 Mar 2020 04:59:39 -0400
+Received: from relay10.mail.gandi.net ([217.70.178.230]:56471 "EHLO
+        relay10.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725987AbgCVI7j (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Mar 2020 04:57:15 -0400
+        Sun, 22 Mar 2020 04:59:39 -0400
 Received: from localhost (lfbn-lyo-1-9-35.w86-202.abo.wanadoo.fr [86.202.105.35])
         (Authenticated sender: alexandre.belloni@bootlin.com)
-        by relay12.mail.gandi.net (Postfix) with ESMTPSA id B8AE0200003;
-        Sun, 22 Mar 2020 08:57:11 +0000 (UTC)
-Date:   Sun, 22 Mar 2020 09:57:11 +0100
+        by relay10.mail.gandi.net (Postfix) with ESMTPSA id 26DDB24000B;
+        Sun, 22 Mar 2020 08:59:32 +0000 (UTC)
+Date:   Sun, 22 Mar 2020 09:59:31 +0100
 From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
 To:     Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
         arm@kernel.org, soc@kernel.org
 Cc:     Nicolas Ferre <nicolas.ferre@microchip.com>,
         Ludovic Desroches <ludovic.desroches@microchip.com>,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] ARM: at91: defconfig for 5.7
-Message-ID: <20200322085711.GA208700@piout.net>
+Subject: [GIT PULL] ARM: at91: DT for 5.7
+Message-ID: <20200322085931.GA208770@piout.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -35,8 +35,8 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Arnd, Olof,
 
-A single patch enabling the sama5d4 watchdog driver in
-at91_dt_defconfig.
+Very few DT updates this cycle. I've filled in the google doc as you
+requested.
 
 The following changes since commit bb6d3fb354c5ee8d6bde2d576eb7220ea09862b9:
 
@@ -44,23 +44,52 @@ The following changes since commit bb6d3fb354c5ee8d6bde2d576eb7220ea09862b9:
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/at91/linux tags/at91-5.7-defconfig
+  git://git.kernel.org/pub/scm/linux/kernel/git/at91/linux tags/at91-5.7-dt
 
-for you to fetch changes up to 91d14ab8d913e798b3f68663ffc2e1f7dc8c4a8b:
+for you to fetch changes up to b8c2c052de210d23d83eb178fa030b541ca51842:
 
-  ARM: configs: at91: enable sama5d4 compatible watchdog (2020-02-12 12:29:22 +0100)
-
-----------------------------------------------------------------
-AT91 defconfig for 5.7
-
- - Add sama5d4 watchdog to at91_dt_defconfig as it is present on sam9x60
+  ARM: dts: at91: sama5d27_wlsom1_ek: add USB device node (2020-03-20 23:58:14 +0100)
 
 ----------------------------------------------------------------
-Eugen Hristev (1):
-      ARM: configs: at91: enable sama5d4 compatible watchdog
+AT91 DT for 5.7
 
- arch/arm/configs/at91_dt_defconfig | 1 +
- 1 file changed, 1 insertion(+)
+ - Enable watchdog on sam9x60
+ - Correct sama5d4/2 RTC compatibles
+ - Add i2c gpio pinctrl to allow i2c recovery
+
+----------------------------------------------------------------
+Alexandre Belloni (2):
+      ARM: dts: at91: sama5d2: use correct rtc compatible
+      ARM: dts: at91: sama5d4: use correct rtc compatible
+
+Cristian Birsan (1):
+      ARM: dts: at91: sama5d27_wlsom1_ek: add USB device node
+
+Eugen Hristev (2):
+      ARM: dts: at91: sam9x60: add watchdog node
+      ARM: dts: at91: sam9x60ek: enable watchdog node
+
+Kamel Bouhara (3):
+      ARM: dts: at91: sama5d3: add i2c gpio pinctrl
+      ARM: dts: at91: sama5d4: add i2c gpio pinctrl
+      ARM: dts: at91: sama5d2: add i2c gpio pinctrl
+
+Rob Herring (1):
+      ARM: dts: at91: Kill off "simple-panel" compatibles
+
+ arch/arm/boot/dts/at91-dvk_su60_somc_lcm.dtsi |  2 +-
+ arch/arm/boot/dts/at91-sam9x60ek.dts          |  5 ++++
+ arch/arm/boot/dts/at91-sama5d27_wlsom1_ek.dts | 12 +++++++++
+ arch/arm/boot/dts/at91-sama5d2_ptc_ek.dts     | 33 ++++++++++++++++++++++---
+ arch/arm/boot/dts/at91-sama5d2_xplained.dts   | 33 ++++++++++++++++++++++---
+ arch/arm/boot/dts/at91-sama5d4_ma5d4evk.dts   |  2 +-
+ arch/arm/boot/dts/at91sam9n12ek.dts           |  2 +-
+ arch/arm/boot/dts/at91sam9x5dm.dtsi           |  2 +-
+ arch/arm/boot/dts/sam9x60.dtsi                |  8 ++++++
+ arch/arm/boot/dts/sama5d2.dtsi                |  2 +-
+ arch/arm/boot/dts/sama5d3.dtsi                | 33 ++++++++++++++++++++++---
+ arch/arm/boot/dts/sama5d4.dtsi                | 35 ++++++++++++++++++++++++---
+ 12 files changed, 151 insertions(+), 18 deletions(-)
 
 -- 
 Alexandre Belloni, Bootlin
