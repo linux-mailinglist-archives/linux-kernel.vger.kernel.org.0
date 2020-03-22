@@ -2,107 +2,185 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6C03B18EAE4
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Mar 2020 18:34:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2E21D18EAEA
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Mar 2020 18:37:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726797AbgCVReW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 22 Mar 2020 13:34:22 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:42487 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726538AbgCVReW (ORCPT
+        id S1726955AbgCVRhN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 22 Mar 2020 13:37:13 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:37106 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726781AbgCVRhK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Mar 2020 13:34:22 -0400
-Received: by mail-wr1-f67.google.com with SMTP id h15so1637871wrx.9;
-        Sun, 22 Mar 2020 10:34:20 -0700 (PDT)
+        Sun, 22 Mar 2020 13:37:10 -0400
+Received: by mail-pf1-f194.google.com with SMTP id h72so4061269pfe.4;
+        Sun, 22 Mar 2020 10:37:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:subject:date:message-id:in-reply-to:references:mime-version
-         :content-transfer-encoding;
-        bh=cQ7HYMFbbKAuDCMOfbn6HqKEoBXsMZuFfeRp8Yh61Ok=;
-        b=UustbaFUhoIub2rOK6HQ+QJ3QiUqiOPp4lEhc11koY0aJfLjlS9hNdXf4IoGv/ID9m
-         wtC7boPwQvl5NlI+CB1IelqUUiL/3AX4bCSKsQgZ+W5J9a/LXxJI8h3rtOyGGBE554H9
-         1rZ7abibNGBYKHhCbx6dt4jMdbnchwmTUpFTdHVxVvlsNbIQ6JVJK9sy8V7F2laxU7tx
-         J++nNIZwuxTwrbQ9TaR/AVEgRe2celCLlfoMnvNJ4l+ILzw8i3YtgLonvJrC2APyZ8SC
-         0WzoH6MECDTiiJxOx7J4fVz7+aWgqZS4kI/2Jku74H2jYRVcRHsGbgvBNEKubDxMw+IJ
-         xELg==
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=uFjqerOpAXXY1w84b6DnYVFNxiy8C9qzfSlLAukKhAk=;
+        b=qnQSMhd39MEE9TjdNvplzII+uAo1ntqM8eJ90m2Esf3prCDYVAX77d9AsYQOE8R6W4
+         UbLd01N7XVDpXfqx0uRiCQRO9UYcTzBLAgZtmMWCiUqyhthEW6rx8040YnY3rapUwfMZ
+         EyUm6aGr6R2Jph58O2TZxnry7ikEh8svgNUxmkcsYov/hTM4h2GQfP8aBoqRt2u3JaJz
+         bRWTcXJKGRRfYbBajPQdfcqrtm7zSLGcyVWvY8Q2IdjI/EoRXCfbecduOr/EiuV3Iwe0
+         cZpZGNt9R2b308+CLiy8AO9pbUEL3JvDDRyq0xQ7vH7oJTz0jorZfdv+4wUs6or433NH
+         0x4A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=cQ7HYMFbbKAuDCMOfbn6HqKEoBXsMZuFfeRp8Yh61Ok=;
-        b=WI7cadNz7wyu8BK/HdG11UPfDPsOiklKNyz1nQ1EYsZTUwjgcw1VMjj5DrDACFFmHQ
-         klTnsmEYwHj5XNfDusjxa6J3BBTFtXfP1QkQSUleKuLFp8n5oMSp9+EkRCWC54I2dGtk
-         ENEFIKf4Z4lWakr7rrmd043iopD7OD+D9/Orgwd3Do+S1p4cgmj+NHJSC1mMhbOvccj2
-         rWjA3/ByG2JpvyVlq7yny5DyTnO2eXN/kTG39h2p6Cgpmus+HQQ0BoGXXP1KxrfUKplr
-         LCtXkd36v9D4bDci0v5bBl/r4JF5LmrSTDIFEJNAF46xjEA61AWVn9BQscbTSIt0EnL1
-         CapA==
-X-Gm-Message-State: ANhLgQ11UDWSVggbqyJIdyZ+CLBsJrTbbU+gJx2HH++kXw8lXkXFxjg+
-        GnFd4eEmVF+5bVHZCvKDb3Q=
-X-Google-Smtp-Source: ADFU+vs6xFWgxOsPlZz4IW1uYgigFjNLcWueKdt7J01toef8xawT7hnF+aF+CIipF1uCl3oKBPTHRw==
-X-Received: by 2002:a05:6000:1184:: with SMTP id g4mr24816792wrx.396.1584898459650;
-        Sun, 22 Mar 2020 10:34:19 -0700 (PDT)
-Received: from localhost.localdomain ([109.126.140.227])
-        by smtp.gmail.com with ESMTPSA id t21sm5245948wmt.43.2020.03.22.10.34.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 22 Mar 2020 10:34:17 -0700 (PDT)
-From:   Pavel Begunkov <asml.silence@gmail.com>
-To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2] io-wq: close cancel gap for hashed linked work
-Date:   Sun, 22 Mar 2020 20:33:16 +0300
-Message-Id: <c38a2421e15e3aaa5c55e3e0d7ddca4c77d178e1.1584898199.git.asml.silence@gmail.com>
-X-Mailer: git-send-email 2.24.0
-In-Reply-To: <c7f352b4-0255-d87a-1fb4-0b55984df137@kernel.dk>
-References: <c7f352b4-0255-d87a-1fb4-0b55984df137@kernel.dk>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=uFjqerOpAXXY1w84b6DnYVFNxiy8C9qzfSlLAukKhAk=;
+        b=uLzXkj7hwK2dGW+zY4v8VLdVMUhI+VvIspjbdJZXA9+Zj1VgwGaD/pWTaJWzCkgoxm
+         N6Wq0pVQEVNbqJM2lWeXeY+088mbxwbKxLhkvZqxbTALeZKtEW+NcnNNdQ1M54ClwGSp
+         DjHwUx6hLuzhOSduPj0/2JDNH0ZrMj5LHfOfXCstdIwoZDYSNYwiiGMFzvKS/6Q/dUmZ
+         cDGKemnKy55vpR40o7f2Irl8oXAaHNFfAcBeQfPmmiHRudIgIFujJ0XmfEVduHfAyuvX
+         P6bhQ8Veshv0BaJcDgnvAszDhb1VJxs+WOYz7EzvhyYkKqu6B75LSs8HLr36Cf8cpUrI
+         hkTQ==
+X-Gm-Message-State: ANhLgQ0pzT/N9dSiDinTOukB4t4eisnaVfjSTuIF3ZQa+XE/biDrAtlO
+        fvMbSOlYidGHvvAwHNfBbGncu+eHPDo=
+X-Google-Smtp-Source: ADFU+vsda57LLmdZodUXWrDSSkM4zN5Ko0cmIKxgWT/T8KRBW0AHy4/KzO3fY+ywKVRyrNNdhMnShw==
+X-Received: by 2002:a65:424b:: with SMTP id d11mr17452753pgq.17.1584898628938;
+        Sun, 22 Mar 2020 10:37:08 -0700 (PDT)
+Received: from ?IPv6:2409:4072:992:9f95:b1e5:4cbf:6219:65ee? ([2409:4072:992:9f95:b1e5:4cbf:6219:65ee])
+        by smtp.gmail.com with ESMTPSA id x70sm10088379pgd.37.2020.03.22.10.37.03
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 22 Mar 2020 10:37:08 -0700 (PDT)
+Subject: Re: [PATCH v2 1/4] dt-bindings: iio: vcnl4000: convert bindings to
+ YAML format
+To:     Jonathan Cameron <jic23@kernel.org>,
+        =?UTF-8?Q?Guido_G=c3=bcnther?= <agx@sigxcpu.org>
+Cc:     Tomas Novotny <tomas@novotny.cz>, Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        "Angus Ainslie (Purism)" <angus@akkea.ca>,
+        Marco Felsch <m.felsch@pengutronix.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>
+References: <cover.1584380360.git.agx@sigxcpu.org>
+ <6182053bb8c442e0b4d72b34c83c7f1565f4a258.1584380360.git.agx@sigxcpu.org>
+ <20200322172910.51456fe4@archlinux>
+From:   Nishant Malpani <nish.malpani25@gmail.com>
+Message-ID: <f5ea512c-d427-94c7-cf5f-f1300cbd4aa3@gmail.com>
+Date:   Sun, 22 Mar 2020 23:07:00 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
+In-Reply-To: <20200322172910.51456fe4@archlinux>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-After io_assign_current_work() of a linked work, it can be decided to
-offloaded to another thread so doing io_wqe_enqueue(). However, until
-next io_assign_current_work() it can be cancelled, that isn't handled.
+On 22/03/20 10:59 pm, Jonathan Cameron wrote:
+> On Mon, 16 Mar 2020 18:46:17 +0100
+> Guido Günther <agx@sigxcpu.org> wrote:
+> 
+>> Convert the vcnl4000 device tree bindings to the new YAML format.
+>>
+>> Signed-off-by: Guido Günther <agx@sigxcpu.org>
+> Looks good to me. However, I've made far too many mistakes in
+> DT binding review recently, so will definitely be waiting for Rob to
+> get a chance to look at it!
+> 
+> Jonathan
+> 
+>> ---
+>>   .../bindings/iio/light/vcnl4000.txt           | 24 ----------
+>>   .../bindings/iio/light/vcnl4000.yaml          | 45 +++++++++++++++++++
+>>   2 files changed, 45 insertions(+), 24 deletions(-)
+>>   delete mode 100644 Documentation/devicetree/bindings/iio/light/vcnl4000.txt
+>>   create mode 100644 Documentation/devicetree/bindings/iio/light/vcnl4000.yaml
+>>
+>> diff --git a/Documentation/devicetree/bindings/iio/light/vcnl4000.txt b/Documentation/devicetree/bindings/iio/light/vcnl4000.txt
+>> deleted file mode 100644
+>> index 955af4555c90..000000000000
+>> --- a/Documentation/devicetree/bindings/iio/light/vcnl4000.txt
+>> +++ /dev/null
+>> @@ -1,24 +0,0 @@
+>> -VISHAY VCNL4000 -  Ambient Light and proximity sensor
+>> -
+>> -This driver supports the VCNL4000/10/20/40 and VCNL4200 chips
+>> -
+>> -Required properties:
+>> -
+>> -	-compatible: must be one of :
+>> -        vishay,vcnl4000
+>> -        vishay,vcnl4010
+>> -        vishay,vcnl4020
+>> -        vishay,vcnl4040
+>> -        vishay,vcnl4200
+>> -
+>> -	-reg: I2C address of the sensor, should be one from below based on the model:
+>> -        0x13
+>> -        0x51
+>> -        0x60
+>> -
+>> -Example:
+>> -
+>> -light-sensor@51 {
+>> -	compatible = "vishay,vcnl4200";
+>> -	reg = <0x51>;
+>> -};
+>> diff --git a/Documentation/devicetree/bindings/iio/light/vcnl4000.yaml b/Documentation/devicetree/bindings/iio/light/vcnl4000.yaml
+>> new file mode 100644
+>> index 000000000000..74d53cfbeb85
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/iio/light/vcnl4000.yaml
+>> @@ -0,0 +1,45 @@
+>> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+>> +%YAML 1.2
+>> +---
+>> +$id: http://devicetree.org/schemas/iio/light/vcnl4000.yaml#
+Shouldn't the devicetree binding document be named with the manufacturer 
+part as well?
 
-Don't assign it, if it's not going to be executed.
+With regards,
+Nishant
 
-Fixes: 60cf46ae605446feb0c43c472c0 ("io-wq: hash dependent work")
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
----
- fs/io-wq.c | 10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
-
-diff --git a/fs/io-wq.c b/fs/io-wq.c
-index 9541df2729de..b3fb61ec0870 100644
---- a/fs/io-wq.c
-+++ b/fs/io-wq.c
-@@ -485,7 +485,7 @@ static void io_worker_handle_work(struct io_worker *worker)
- 	struct io_wq *wq = wqe->wq;
- 
- 	do {
--		struct io_wq_work *work;
-+		struct io_wq_work *work, *assign_work;
- 		unsigned int hash;
- get_next:
- 		/*
-@@ -522,10 +522,14 @@ static void io_worker_handle_work(struct io_worker *worker)
- 			hash = io_get_work_hash(work);
- 			work->func(&work);
- 			work = (old_work == work) ? NULL : work;
--			io_assign_current_work(worker, work);
-+
-+			assign_work = work;
-+			if (work && io_wq_is_hashed(work))
-+				assign_work = NULL;
-+			io_assign_current_work(worker, assign_work);
- 			wq->free_work(old_work);
- 
--			if (work && io_wq_is_hashed(work)) {
-+			if (work && !assign_work) {
- 				io_wqe_enqueue(wqe, work);
- 				work = NULL;
- 			}
--- 
-2.24.0
-
+>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>> +
+>> +title: VISHAY VCNL4000 ambient light and proximity sensor
+>> +
+>> +maintainers:
+>> +  - Peter Meerwald <pmeerw@pmeerw.net>
+>> +
+>> +description: |
+>> +  Ambient light sensing with proximity detection over an i2c
+>> +  interface.
+>> +
+>> +properties:
+>> +  compatible:
+>> +    enum:
+>> +      - vishay,vcnl4000
+>> +      - vishay,vcnl4010
+>> +      - vishay,vcnl4020
+>> +      - vishay,vcnl4040
+>> +      - vishay,vcnl4200
+>> +
+>> +  reg:
+>> +    maxItems: 1
+>> +
+>> +required:
+>> +  - compatible
+>> +  - reg
+>> +
+>> +additionalProperties: false
+>> +
+>> +examples:
+>> +- |
+>> +  i2c {
+>> +      #address-cells = <1>;
+>> +      #size-cells = <0>;
+>> +
+>> +      light-sensor@51 {
+>> +              compatible = "vishay,vcnl4200";
+>> +              reg = <0x51>;
+>> +      };
+>> +  };
+>> +...
+> 
