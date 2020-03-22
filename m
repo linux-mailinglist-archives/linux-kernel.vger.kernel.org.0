@@ -2,69 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5A25218EA14
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Mar 2020 17:15:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BCD8318EA1B
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Mar 2020 17:16:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726896AbgCVQPA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 22 Mar 2020 12:15:00 -0400
-Received: from sauhun.de ([88.99.104.3]:51334 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726538AbgCVQO7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Mar 2020 12:14:59 -0400
-Received: from localhost (p54B33042.dip0.t-ipconnect.de [84.179.48.66])
-        by pokefinder.org (Postfix) with ESMTPSA id 81B8A2C0064;
-        Sun, 22 Mar 2020 17:14:57 +0100 (CET)
-Date:   Sun, 22 Mar 2020 17:14:57 +0100
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     Chuhong Yuan <hslester96@gmail.com>
-Cc:     linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] i2c: hix5hd2: add missed clk_disable_unprepare in remove
-Message-ID: <20200322161456.GA6766@ninjato>
-References: <20191104150049.6366-1-hslester96@gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="a8Wt8u1KmwUX3Y2C"
-Content-Disposition: inline
-In-Reply-To: <20191104150049.6366-1-hslester96@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        id S1726903AbgCVQQU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 22 Mar 2020 12:16:20 -0400
+Received: from mr85p00im-hyfv06021301.me.com ([17.58.23.188]:42327 "EHLO
+        mr85p00im-hyfv06021301.me.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726785AbgCVQQU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 22 Mar 2020 12:16:20 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=me.com; s=1a1hai;
+        t=1584893780; bh=lUx573AhALdx5V9UYwZ7h1AoyYiVLJFqxyU5PbCpUmI=;
+        h=From:To:Subject:Date:Message-Id;
+        b=ma1pavz3PiIsOwmVg9f8z7scVV4fmyT4WEaiFHd1Jfe6z1KZ/QiF+koKGHn5g8vFt
+         zsOuP+vYp9d3BhrD5UCEpuEgj+gNe0sEIIRGZZl9QkTgkxilYyaiw8fGLG3csK8LVB
+         vDe5XSdhxWVH9GEX0h6wcmicy7F6pALXxdnLE1rkhvaxTkYCIK3LebQhjfT6o4w2Ec
+         OgFTYgeui3spfmsbg/IJ90cGWPsNREGUUO8GVuU4S4TQKTVyfiupgqDSHoftrm9+g4
+         5D6snyGBajUHf4ee0/amhe5JQWUpUzYWSSreAi87oLzjzwowH+U8XCEKEcj+x5Z34V
+         J7cc00aKTq15g==
+Received: from localhost (101.220.150.77.rev.sfr.net [77.150.220.101])
+        by mr85p00im-hyfv06021301.me.com (Postfix) with ESMTPSA id 6D26140520;
+        Sun, 22 Mar 2020 16:16:19 +0000 (UTC)
+From:   Alain Volmat <avolmat@me.com>
+To:     patrice.chotard@st.com, robh+dt@kernel.org, mark.rutland@arm.com,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     avolmat@me.com
+Subject: [PATCH] dts: arm: stih407-family: remove duplicated rng nodes
+Date:   Sun, 22 Mar 2020 17:16:16 +0100
+Message-Id: <20200322161616.19111-1-avolmat@me.com>
+X-Mailer: git-send-email 2.17.1
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2020-03-22_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 clxscore=1011 mlxscore=0
+ mlxlogscore=938 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1908290000 definitions=main-2003220099
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+the 2 rng nodes are duplicated within the stih407-family.dtsi
 
---a8Wt8u1KmwUX3Y2C
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Alain Volmat <avolmat@me.com>
+---
+ arch/arm/boot/dts/stih407-family.dtsi | 14 --------------
+ 1 file changed, 14 deletions(-)
 
-On Mon, Nov 04, 2019 at 11:00:48PM +0800, Chuhong Yuan wrote:
-> The driver forgets to disable and unprepare clk when remove.
-> Add a call to clk_disable_unprepare to fix it.
->=20
-> Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
+diff --git a/arch/arm/boot/dts/stih407-family.dtsi b/arch/arm/boot/dts/stih407-family.dtsi
+index 7c36c37260a4..23a1746f3baa 100644
+--- a/arch/arm/boot/dts/stih407-family.dtsi
++++ b/arch/arm/boot/dts/stih407-family.dtsi
+@@ -767,20 +767,6 @@
+ 				 <&clk_s_c0_flexgen CLK_ETH_PHY>;
+ 		};
+ 
+-		rng10: rng@8a89000 {
+-			compatible      = "st,rng";
+-			reg		= <0x08a89000 0x1000>;
+-			clocks          = <&clk_sysin>;
+-			status		= "okay";
+-		};
+-
+-		rng11: rng@8a8a000 {
+-			compatible      = "st,rng";
+-			reg		= <0x08a8a000 0x1000>;
+-			clocks          = <&clk_sysin>;
+-			status		= "okay";
+-		};
+-
+ 		mailbox0: mailbox@8f00000  {
+ 			compatible	= "st,stih407-mailbox";
+ 			reg		= <0x8f00000 0x1000>;
+-- 
+2.17.1
 
-Applied to for-current, thanks!
-
-
---a8Wt8u1KmwUX3Y2C
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAl53jwAACgkQFA3kzBSg
-Kba2Pg//dI6w5vFqspLeTRNaiDFsFq5gDXt9k58j06uWcfGFFtSMKxb0AjH2wMGW
-6YldH/SDxcEClJg/6RtN8qkVSNTvoVl0uM5kUl3ZozMkQ+nvx/LAZ5D0xlF02kem
-sGcqfynPMxS5HOfT0tRZlOPYNqaml3rKv9dFsCkWaSJhXa1nKWT7RDj4kKj8W40/
-+GYQi36WCGouvlghYy8OGX5TKcU1MhVme51RJCE7zZpOFzQPGskqWiBGmxPCNuWv
-weLoSk3+UsOILL13hAIIyDj2MF3+JpIxf2ofPfXUGGQDWKzwlNufWWt+2uhQla8v
-/3h3RdBAGa6SCk4XQ4tYi3PXaIUsqEAML5x4Mfw54q1pdYSws4AWvGIWaI2hJTD8
-0/I4QM6QkWVNRU0jsFWla6G262i9sULSoAziBh2tDYpYu2GjighiSDBAu/flNyit
-BqKqpzrovToAYvCuC8e8Cvl8LtPtxjz/HEJKdu4KREGPPkal5Rke4Iah3PKZp0js
-D89P1S77mczcrXcj7IjvUnlYSeMSmRRt1c0G1Sw415BkfMHJULcQAiv8+ljeJ7u9
-YhRqucPUN+SqJsYA0rkXQ7KoilutnOv7W5JHGob8N3ikpO3bDQzmpeKgOP7ZzDaS
-+EqJ7fQsIVt0/koN2/BPsDnFg0slL8XWUCwLYfCim2eW/2iCU+U=
-=z57U
------END PGP SIGNATURE-----
-
---a8Wt8u1KmwUX3Y2C--
