@@ -2,139 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8574318E584
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Mar 2020 01:10:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6787918E589
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Mar 2020 01:21:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728169AbgCVAKV convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Sat, 21 Mar 2020 20:10:21 -0400
-Received: from mga02.intel.com ([134.134.136.20]:60486 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727296AbgCVAKV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 21 Mar 2020 20:10:21 -0400
-IronPort-SDR: XTO9Vy5E8Z8LqTgJjBwnUodRU3dtxByjimZbBLzojmQTuwoEId5XT4Dtj+iaUeRarb2wRBZV2t
- kplmb8KAovSg==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Mar 2020 17:10:20 -0700
-IronPort-SDR: mii5KpTSfIGBj11O2+43GbeJRFg2WXU27ap44jA/W0ADYtZKKyrhVhS9ZdfY8htiBNZLtRAHRH
- o/FKu1TMR8JQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.72,290,1580803200"; 
-   d="scan'208";a="249242511"
-Received: from pgsmsx112.gar.corp.intel.com ([10.108.55.201])
-  by orsmga006.jf.intel.com with ESMTP; 21 Mar 2020 17:10:19 -0700
-Received: from pgsmsx110.gar.corp.intel.com (10.221.44.111) by
- PGSMSX112.gar.corp.intel.com (10.108.55.201) with Microsoft SMTP Server (TLS)
- id 14.3.439.0; Sun, 22 Mar 2020 08:10:16 +0800
-Received: from pgsmsx101.gar.corp.intel.com ([169.254.1.189]) by
- PGSMSX110.gar.corp.intel.com ([169.254.13.28]) with mapi id 14.03.0439.000;
- Sun, 22 Mar 2020 08:10:16 +0800
-From:   "Tsai, Rex" <rex.tsai@intel.com>
-To:     Kai-Heng Feng <kai.heng.feng@canonical.com>
-Subject: RE: [Intel-wired-lan] [PATCH 1/1] e1000e: Disable s0ix flow for X1
- Carbon 7th
-Thread-Topic: [Intel-wired-lan] [PATCH 1/1] e1000e: Disable s0ix flow for X1
- Carbon 7th
-Thread-Index: AQG3cCI3NG3RtKSKRa6ZGiuDYJEouqiQ3AGQ
-Date:   Sun, 22 Mar 2020 00:10:15 +0000
-Message-ID: <D83742F1B1819A43B1E71852F964BF245D763260@PGSMSX101.gar.corp.intel.com>
-References: <20200319052629.7282-1-kai.heng.feng@canonical.com>
-In-Reply-To: <20200319052629.7282-1-kai.heng.feng@canonical.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-dlp-product: dlpe-windows
-dlp-version: 11.2.0.6
-dlp-reaction: no-action
-x-originating-ip: [172.30.20.206]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        id S1728156AbgCVAVQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 21 Mar 2020 20:21:16 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:44274 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727296AbgCVAVP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 21 Mar 2020 20:21:15 -0400
+Received: by mail-pg1-f194.google.com with SMTP id 37so5130160pgm.11;
+        Sat, 21 Mar 2020 17:21:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=oo1KhDpsYm4r+ZCFpfpS62+p3Q8htiktdPZfhYhrkqM=;
+        b=PUlsm6g9R40oqeZpDaQXuGcpnmirz9Da9vYRs56HYevTggKswALehHL5ie5FIi5P5s
+         XBBMIUzBtqTcG8u4A0p5/p/7eXiZtP+ikmxAC1gLeqWibgabGzKsfueK+TORmT8EKkGG
+         JEsKy6cMrvPs6oAp8tvxX+RUiuAfwkXFCpLHedzf6SanwuBcg6jcg5OhrJbc4HxIIgDL
+         QoLS2aulPY9IKthojust6jmNvf2oAVctlnOZI/TCXixUSQeH5Tz8mryJvU9LTPXGVqD5
+         CaT21P6vM5dvdhk7S3Fdqx1oGK69Kh8GNjcGb4UtksXS40+j2RyzgN2eBJ8+h0Z3N1qU
+         YBXA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=oo1KhDpsYm4r+ZCFpfpS62+p3Q8htiktdPZfhYhrkqM=;
+        b=osHXChdmbB+YrH7kHq5OPxZ/C4RfvrLnvzz7yWcSeB8D8WNG9DJP63vc3y7Qwhy0Fg
+         TDRnGLhvzU1um79OFi2lD8asdWhQY0T9qDnz0sOX5e3bTzw1tZRCJ3o1Gapx1KXhgYRi
+         T/EFwYmJFZ9NcGm4F/imszC3oNUn1IV4BS8mjQCvkl2aaG/Rr53A5zKO0+g5sQs47KY7
+         am52SjanRB4hGRvPxvf++gM1vQBOkwHEoD9Kt2Yw8JjwqwcrQaXWDB+3rGNxwTMD8tmb
+         GnPO2p7hyFgMhsKIDxD3G2G0DPvxiZcXM+pmMDj9rNboYY+agKB3bco4tQXQsGj8cXj0
+         bCog==
+X-Gm-Message-State: ANhLgQ1rBebVZRtMdV3320/cZOEF6rudp19cOvo8eCS7vkb3XAlOdnU8
+        QHSSc/bmfS7bafpAJk4QwsQIddUbT341S2PLCgJpZyfqDHO7lg==
+X-Google-Smtp-Source: ADFU+vsa0ivPADE4hSeky25Q7EI3YbLdtV5qmX0dYZSfF4r4NYyeZaiojOWGaifckbRlK6AEm76cUtG00EWEIaTXBJo=
+X-Received: by 2002:a63:1c4d:: with SMTP id c13mr15056673pgm.4.1584836474171;
+ Sat, 21 Mar 2020 17:21:14 -0700 (PDT)
 MIME-Version: 1.0
+References: <cover.1584380360.git.agx@sigxcpu.org> <5566fe01df933d3281f058666e2147cb97b38126.1584380360.git.agx@sigxcpu.org>
+In-Reply-To: <5566fe01df933d3281f058666e2147cb97b38126.1584380360.git.agx@sigxcpu.org>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Sun, 22 Mar 2020 02:21:02 +0200
+Message-ID: <CAHp75VcHuAUDB59ZDJQAQgugQOwASM6K+sQ9uPAR7jMyOcdZCQ@mail.gmail.com>
+Subject: Re: [PATCH v2 3/4] iio: vcnl4000: Export near level property for
+ proximity sensor
+To:     =?UTF-8?Q?Guido_G=C3=BCnther?= <agx@sigxcpu.org>
+Cc:     Tomas Novotny <tomas@novotny.cz>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        "Angus Ainslie (Purism)" <angus@akkea.ca>,
+        Marco Felsch <m.felsch@pengutronix.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-iio <linux-iio@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Kai-Heng,
-I will take over here. When do you have a chance to talk this issue next week?
+On Mon, Mar 16, 2020 at 7:47 PM Guido G=C3=BCnther <agx@sigxcpu.org> wrote:
+>
+> When an object can be considered close to the sensor is hardware
+> dependent. Allowing to configure the property via device tree
+> allows to configure this device specific value.
+>
+> This is useful for e.g. iio-sensor-proxy to indicate to userspace
+> if an object is close to the sensor.
 
-Rex Tsai | Intel Client LAN Engineer | +1 (503) 264-0517
+...
 
------Original Message-----
-From: Intel-wired-lan <intel-wired-lan-bounces@osuosl.org> On Behalf Of Kai-Heng Feng
-Sent: Wednesday, March 18, 2020 10:26 PM
-To: Kirsher, Jeffrey T <jeffrey.t.kirsher@intel.com>
-Cc: open list:NETWORKING DRIVERS <netdev@vger.kernel.org>; Kai-Heng Feng <kai.heng.feng@canonical.com>; moderated list:INTEL ETHERNET DRIVERS <intel-wired-lan@lists.osuosl.org>; David S. Miller <davem@davemloft.net>; open list <linux-kernel@vger.kernel.org>
-Subject: [Intel-wired-lan] [PATCH 1/1] e1000e: Disable s0ix flow for X1 Carbon 7th
+> @@ -342,6 +343,26 @@ static const struct vcnl4000_chip_spec vcnl4000_chip=
+_spec_cfg[] =3D {
+>         },
+>  };
+>
 
-The s0ix flow makes X1 Carbon 7th can only run S2Idle for only once.
+> +
 
-Temporarily disable it until Intel found a solution.
+No need for this blank line.
 
-Link:
-https://lists.osuosl.org/pipermail/intel-wired-lan/Week-of-Mon-20200316/0192
-22.html
-BugLink: https://bugs.launchpad.net/bugs/1865570
-Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
----
- drivers/net/ethernet/intel/e1000e/netdev.c | 16 ++++++++++++++--
- 1 file changed, 14 insertions(+), 2 deletions(-)
+> +static ssize_t vcnl4000_read_near_level(struct iio_dev *indio_dev,
+> +                                       uintptr_t priv,
+> +                                       const struct iio_chan_spec *chan,
+> +                                       char *buf)
 
-diff --git a/drivers/net/ethernet/intel/e1000e/netdev.c
-b/drivers/net/ethernet/intel/e1000e/netdev.c
-index db4ea58bac82..3e090aa993ee 100644
---- a/drivers/net/ethernet/intel/e1000e/netdev.c
-+++ b/drivers/net/ethernet/intel/e1000e/netdev.c
-@@ -25,6 +25,7 @@
- #include <linux/pm_runtime.h>
- #include <linux/aer.h>
- #include <linux/prefetch.h>
-+#include <linux/dmi.h>
- 
- #include "e1000.h"
- 
-@@ -6843,6 +6844,17 @@ static int __e1000_resume(struct pci_dev *pdev)  }
- 
- #ifdef CONFIG_PM_SLEEP
-+static const struct dmi_system_id s0ix_blacklist[] = {
-+	{
-+		.ident = "LENOVO ThinkPad X1 Carbon 7th",
-+		.matches = {
-+			DMI_MATCH(DMI_SYS_VENDOR, "LENOVO"),
-+			DMI_MATCH(DMI_PRODUCT_VERSION, "ThinkPad X1 Carbon
-7th"),
-+		},
-+	},
-+	{}
-+};
-+
- static int e1000e_pm_suspend(struct device *dev)  {
- 	struct net_device *netdev = pci_get_drvdata(to_pci_dev(dev)); @@ -6860,7 +6872,7 @@ static int e1000e_pm_suspend(struct device *dev)
- 		e1000e_pm_thaw(dev);
- 
- 	/* Introduce S0ix implementation */
--	if (hw->mac.type >= e1000_pch_cnp)
-+	if (hw->mac.type >= e1000_pch_cnp &&
-!dmi_check_system(s0ix_blacklist))
- 		e1000e_s0ix_entry_flow(adapter);
- 
- 	return rc;
-@@ -6875,7 +6887,7 @@ static int e1000e_pm_resume(struct device *dev)
- 	int rc;
- 
- 	/* Introduce S0ix implementation */
--	if (hw->mac.type >= e1000_pch_cnp)
-+	if (hw->mac.type >= e1000_pch_cnp &&
-!dmi_check_system(s0ix_blacklist))
- 		e1000e_s0ix_exit_flow(adapter);
- 
- 	rc = __e1000_resume(pdev);
---
-2.17.1
+...
 
-_______________________________________________
-Intel-wired-lan mailing list
-Intel-wired-lan@osuosl.org
-https://lists.osuosl.org/mailman/listinfo/intel-wired-lan
+> +       if (device_property_read_u32(&client->dev, "near-level",
+> +                                    &data->near_level) < 0)
+
+It doesn't return > 0. So, you may drop that and put everything to one
+line I think.
+
+> +               data->near_level =3D 0;
+
+--=20
+With Best Regards,
+Andy Shevchenko
