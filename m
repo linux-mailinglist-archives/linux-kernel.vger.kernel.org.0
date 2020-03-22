@@ -2,449 +2,531 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3964918E8C4
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Mar 2020 13:28:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E95FA18E8E1
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Mar 2020 13:32:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727313AbgCVM1j (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 22 Mar 2020 08:27:39 -0400
-Received: from mga14.intel.com ([192.55.52.115]:23953 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727117AbgCVM1d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Mar 2020 08:27:33 -0400
-IronPort-SDR: AZWnW3B9TIgegvjY9Qvtdq2YQpp3rVmN9W2X+kMps/tQyFzVCzzukHhlP7MxDP8HpOAU5FsIBE
- 8KQ/JMWV1VcA==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Mar 2020 05:27:32 -0700
-IronPort-SDR: mrJEpjYY/nWi64DTjb00cmdEkk087Bn/UCjBNTdgkPivfCtDTkNkRPZv6/SMfo2EMXsHTKjrLr
- pBtpv5eAGZSw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.72,292,1580803200"; 
-   d="scan'208";a="356846587"
-Received: from jacob-builder.jf.intel.com ([10.7.199.155])
-  by fmsmga001.fm.intel.com with ESMTP; 22 Mar 2020 05:27:32 -0700
-From:   "Liu, Yi L" <yi.l.liu@intel.com>
-To:     alex.williamson@redhat.com, eric.auger@redhat.com
-Cc:     kevin.tian@intel.com, jacob.jun.pan@linux.intel.com,
-        joro@8bytes.org, ashok.raj@intel.com, yi.l.liu@intel.com,
-        jun.j.tian@intel.com, yi.y.sun@intel.com, jean-philippe@linaro.org,
-        peterx@redhat.com, iommu@lists.linux-foundation.org,
-        kvm@vger.kernel.org, linux-kernel@vger.kernel.org, hao.wu@intel.com
-Subject: [PATCH v1 2/2] vfio/pci: Emulate PASID/PRI capability for VFs
-Date:   Sun, 22 Mar 2020 05:33:14 -0700
-Message-Id: <1584880394-11184-3-git-send-email-yi.l.liu@intel.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1584880394-11184-1-git-send-email-yi.l.liu@intel.com>
-References: <1584880394-11184-1-git-send-email-yi.l.liu@intel.com>
+        id S1727350AbgCVMbJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 22 Mar 2020 08:31:09 -0400
+Received: from out28-101.mail.aliyun.com ([115.124.28.101]:55057 "EHLO
+        out28-101.mail.aliyun.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727253AbgCVMbI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 22 Mar 2020 08:31:08 -0400
+X-Alimail-AntiSpam: AC=CONTINUE;BC=0.07436965|-1;CH=green;DM=||false|;DS=CONTINUE|ham_alarm|0.0914353-0.001419-0.907146;FP=0|0|0|0|0|-1|-1|-1;HT=e02c03279;MF=zhouyanjie@wanyeetech.com;NM=1;PH=DS;RN=12;RT=12;SR=0;TI=SMTPD_---.H3RU7D6_1584880252;
+Received: from 192.168.10.227(mailfrom:zhouyanjie@wanyeetech.com fp:SMTPD_---.H3RU7D6_1584880252)
+          by smtp.aliyun-inc.com(10.147.42.22);
+          Sun, 22 Mar 2020 20:30:53 +0800
+Subject: Re: [PATCH v6 4/6] clk: Ingenic: Add CGU driver for X1830.
+To:     Paul Cercueil <paul@crapouillou.net>
+References: <1584865262-25297-1-git-send-email-zhouyanjie@wanyeetech.com>
+ <1584865262-25297-6-git-send-email-zhouyanjie@wanyeetech.com>
+Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, sboyd@kernel.org,
+        mturquette@baylibre.com, robh+dt@kernel.org, mark.rutland@arm.com,
+        dongsheng.qiu@ingenic.com, yanfei.li@ingenic.com,
+        sernia.zhou@foxmail.com, zhenwenjin@gmail.com
+From:   Zhou Yanjie <zhouyanjie@wanyeetech.com>
+Message-ID: <5E775A7A.70107@wanyeetech.com>
+Date:   Sun, 22 Mar 2020 20:30:50 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:38.0) Gecko/20100101
+ Thunderbird/38.8.0
+MIME-Version: 1.0
+In-Reply-To: <1584865262-25297-6-git-send-email-zhouyanjie@wanyeetech.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Liu Yi L <yi.l.liu@intel.com>
+Hi Paul,
 
-Per PCIe r5.0, sec 9.3.7.14, if a PF implements the PASID Capability, the
-PF PASID configuration is shared by its VFs.  VFs must not implement their
-own PASID Capability.
+On 2020年03月22日 20:08, Paul Cercueil wrote:
+> Hi Zhou,
+>
+> Le dim. 22 mars 2020 à 16:21, 周琰杰 (Zhou Yanjie) 
+> <zhouyanjie@wanyeetech.com> a écrit :
+>> Add support for the clocks provided by the CGU in the Ingenic X1830
+>> SoC, making use of the cgu code to do the heavy lifting.
+>>
+>> Signed-off-by: 周琰杰 (Zhou Yanjie) <zhouyanjie@wanyeetech.com>
+>> ---
+>>
+>> Notes:
+>>     v1->v2:
+>>     1.Use two fields (pll_reg & bypass_reg) instead of the 2-values
+>>       array (reg[2]).
+>>     2.Remove the "pll_info->version" and add a 
+>> "pll_info->rate_multiplier".
+>>     3.Change my Signed-off-by from "Zhou Yanjie <zhouyanjie@zoho.com>"
+>>       to "周琰杰 (Zhou Yanjie) <zhouyanjie@wanyeetech.com>" because
+>>       the old mailbox is in an unstable state.
+>>
+>>     v2->v3:
+>>     Adjust order from [4/5] in v2 to [5/5] in v3.
+>>
+>>     v3->v4:
+>>     Adjust order from [5/5] in v3 to [4/4] in v4.
+>>
+>>     v4->v5:
+>>     Rebase on top of kernel 5.6-rc1.
+>>
+>>     v5->v6:
+>>     Add missing part of X1830's CGU.
+>>
+>>  drivers/clk/ingenic/Kconfig     |  10 ++
+>>  drivers/clk/ingenic/Makefile    |   1 +
+>>  drivers/clk/ingenic/x1830-cgu.c | 387 
+>> ++++++++++++++++++++++++++++++++++++++++
+>>  3 files changed, 398 insertions(+)
+>>  create mode 100644 drivers/clk/ingenic/x1830-cgu.c
+>>
+>> diff --git a/drivers/clk/ingenic/Kconfig b/drivers/clk/ingenic/Kconfig
+>> index b4555b4..580b0cf 100644
+>> --- a/drivers/clk/ingenic/Kconfig
+>> +++ b/drivers/clk/ingenic/Kconfig
+>> @@ -55,6 +55,16 @@ config INGENIC_CGU_X1000
+>>
+>>        If building for a X1000 SoC, you want to say Y here.
+>>
+>> +config INGENIC_CGU_X1830
+>> +    bool "Ingenic X1830 CGU driver"
+>> +    default MACH_X1830
+>> +    select INGENIC_CGU_COMMON
+>> +    help
+>> +      Support the clocks provided by the CGU hardware on Ingenic X1830
+>> +      and compatible SoCs.
+>> +
+>> +      If building for a X1830 SoC, you want to say Y here.
+>> +
+>>  config INGENIC_TCU_CLK
+>>      bool "Ingenic JZ47xx TCU clocks driver"
+>>      default MACH_INGENIC
+>> diff --git a/drivers/clk/ingenic/Makefile b/drivers/clk/ingenic/Makefile
+>> index 8b1dad9..aaa4bff 100644
+>> --- a/drivers/clk/ingenic/Makefile
+>> +++ b/drivers/clk/ingenic/Makefile
+>> @@ -5,4 +5,5 @@ obj-$(CONFIG_INGENIC_CGU_JZ4725B)    += jz4725b-cgu.o
+>>  obj-$(CONFIG_INGENIC_CGU_JZ4770)    += jz4770-cgu.o
+>>  obj-$(CONFIG_INGENIC_CGU_JZ4780)    += jz4780-cgu.o
+>>  obj-$(CONFIG_INGENIC_CGU_X1000)        += x1000-cgu.o
+>> +obj-$(CONFIG_INGENIC_CGU_X1830)        += x1830-cgu.o
+>>  obj-$(CONFIG_INGENIC_TCU_CLK)        += tcu.o
+>> diff --git a/drivers/clk/ingenic/x1830-cgu.c 
+>> b/drivers/clk/ingenic/x1830-cgu.c
+>> new file mode 100644
+>> index 00000000..0bc927f
+>> --- /dev/null
+>> +++ b/drivers/clk/ingenic/x1830-cgu.c
+>> @@ -0,0 +1,387 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +/*
+>> + * X1830 SoC CGU driver
+>> + * Copyright (c) 2019 周琰杰 (Zhou Yanjie) <zhouyanjie@wanyeetech.com>
+>> + */
+>> +
+>> +#include <linux/clk-provider.h>
+>> +#include <linux/delay.h>
+>> +#include <linux/of.h>
+>> +#include <dt-bindings/clock/x1830-cgu.h>
+>
+> Please order the includes alphabetically (but with <> ones still  
+> before "" ones, and with a blank line between the two).
+>
 
-Per PCIe r5.0, sec 9.3.7.11, VFs must not implement the PRI Capability. If
-the PF implements PRI, it is shared by the VFs.
+Sure, seems the "x1000-cgu.c" also has this problem, I will fix both in 
+next version.
 
-On bare metal, it has been fixed by below efforts.
-to PASID/PRI are
-https://lkml.org/lkml/2019/9/5/996
-https://lkml.org/lkml/2019/9/5/995
+>> +#include "cgu.h"
+>> +#include "pm.h"
+>> +
+>> +/* CGU register offsets */
+>> +#define CGU_REG_CPCCR        0x00
+>> +#define CGU_REG_CPPCR        0x0c
+>> +#define CGU_REG_APLL        0x10
+>> +#define CGU_REG_MPLL        0x14
+>> +#define CGU_REG_CLKGR0        0x20
+>> +#define CGU_REG_OPCR        0x24
+>> +#define CGU_REG_CLKGR1        0x28
+>> +#define CGU_REG_DDRCDR        0x2c
+>> +#define CGU_REG_USBPCR        0x3c
+>> +#define CGU_REG_USBRDT        0x40
+>> +#define CGU_REG_USBVBFIL    0x44
+>> +#define CGU_REG_USBPCR1        0x48
+>> +#define CGU_REG_MACCDR        0x54
+>> +#define CGU_REG_EPLL        0x58
+>> +#define CGU_REG_I2SCDR        0x60
+>> +#define CGU_REG_LPCDR        0x64
+>> +#define CGU_REG_MSC0CDR        0x68
+>> +#define CGU_REG_I2SCDR1        0x70
+>> +#define CGU_REG_SSICDR        0x74
+>> +#define CGU_REG_CIMCDR        0x7c
+>> +#define CGU_REG_MSC1CDR        0xa4
+>> +#define CGU_REG_CMP_INTR    0xb0
+>> +#define CGU_REG_CMP_INTRE    0xb4
+>> +#define CGU_REG_DRCG        0xd0
+>> +#define CGU_REG_CPCSR        0xd4
+>> +#define CGU_REG_VPLL        0xe0
+>> +#define CGU_REG_MACPHYC        0xe8
+>> +
+>> +/* bits within the OPCR register */
+>> +#define OPCR_SPENDN0        BIT(7)
+>> +#define OPCR_SPENDN1        BIT(6)
+>> +
+>> +static struct ingenic_cgu *cgu;
+>
+> I don't think you need this global variable at all.
+>
 
-This patch adds emulated PASID/PRI capabilities for VFs when assigned to
-VMs via vfio-pci driver. This is required for enabling vSVA on pass-through
-VFs as VFs have no PASID/PRI capability structure in its configure space.
+This variable will be used in x1830_cgu_init(), and it is also the same 
+in other cgu drivers of other Ingenic processors, I think we should keep it.
 
-Cc: Kevin Tian <kevin.tian@intel.com>
-CC: Jacob Pan <jacob.jun.pan@linux.intel.com>
-Cc: Alex Williamson <alex.williamson@redhat.com>
-Cc: Eric Auger <eric.auger@redhat.com>
-Cc: Jean-Philippe Brucker <jean-philippe@linaro.org>
-Signed-off-by: Liu Yi L <yi.l.liu@intel.com>
----
- drivers/vfio/pci/vfio_pci_config.c | 325 ++++++++++++++++++++++++++++++++++++-
- 1 file changed, 323 insertions(+), 2 deletions(-)
+Thanks and best regards!
 
-diff --git a/drivers/vfio/pci/vfio_pci_config.c b/drivers/vfio/pci/vfio_pci_config.c
-index 4b9af99..84b4ea0 100644
---- a/drivers/vfio/pci/vfio_pci_config.c
-+++ b/drivers/vfio/pci/vfio_pci_config.c
-@@ -1509,11 +1509,304 @@ static int vfio_cap_init(struct vfio_pci_device *vdev)
- 	return 0;
- }
- 
-+static int vfio_fill_custom_vconfig_bytes(struct vfio_pci_device *vdev,
-+					int offset, uint8_t *data, int size)
-+{
-+	int ret = 0, data_offset = 0;
-+
-+	while (size) {
-+		int filled;
-+
-+		if (size >= 4 && !(offset % 4)) {
-+			__le32 *dwordp = (__le32 *)&vdev->vconfig[offset];
-+			u32 dword;
-+
-+			memcpy(&dword, data + data_offset, 4);
-+			*dwordp = cpu_to_le32(dword);
-+			filled = 4;
-+		} else if (size >= 2 && !(offset % 2)) {
-+			__le16 *wordp = (__le16 *)&vdev->vconfig[offset];
-+			u16 word;
-+
-+			memcpy(&word, data + data_offset, 2);
-+			*wordp = cpu_to_le16(word);
-+			filled = 2;
-+		} else {
-+			u8 *byte = &vdev->vconfig[offset];
-+
-+			memcpy(byte, data + data_offset, 1);
-+			filled = 1;
-+		}
-+
-+		offset += filled;
-+		data_offset += filled;
-+		size -= filled;
-+	}
-+
-+	return ret;
-+}
-+
-+static int vfio_pci_get_ecap_content(struct pci_dev *pdev,
-+					int cap, int cap_len, u8 *content)
-+{
-+	int pos, offset, len = cap_len, ret = 0;
-+
-+	pos = pci_find_ext_capability(pdev, cap);
-+	if (!pos)
-+		return -EINVAL;
-+
-+	offset = 0;
-+	while (len) {
-+		int fetched;
-+
-+		if (len >= 4 && !(pos % 4)) {
-+			u32 *dwordp = (u32 *) (content + offset);
-+			u32 dword;
-+			__le32 *dwptr = (__le32 *) &dword;
-+
-+			ret = pci_read_config_dword(pdev, pos, &dword);
-+			if (ret)
-+				return ret;
-+			*dwordp = le32_to_cpu(*dwptr);
-+			fetched = 4;
-+		} else if (len >= 2 && !(pos % 2)) {
-+			u16 *wordp = (u16 *) (content + offset);
-+			u16 word;
-+			__le16 *wptr = (__le16 *) &word;
-+
-+			ret = pci_read_config_word(pdev, pos, &word);
-+			if (ret)
-+				return ret;
-+			*wordp = le16_to_cpu(*wptr);
-+			fetched = 2;
-+		} else {
-+			u8 *byte = (u8 *) (content + offset);
-+
-+			ret = pci_read_config_byte(pdev, pos, byte);
-+			if (ret)
-+				return ret;
-+			fetched = 1;
-+		}
-+
-+		pos += fetched;
-+		offset += fetched;
-+		len -= fetched;
-+	}
-+
-+	return ret;
-+}
-+
-+struct vfio_pci_pasid_cap_data {
-+	u32 id:16;
-+	u32 version:4;
-+	u32 next:12;
-+	union {
-+		u16 cap_reg_val;
-+		struct {
-+			u16 rsv1:1;
-+			u16 execs:1;
-+			u16 prvs:1;
-+			u16 rsv2:5;
-+			u16 pasid_bits:5;
-+			u16 rsv3:3;
-+		};
-+	} cap_reg;
-+	union {
-+		u16 control_reg_val;
-+		struct {
-+			u16 paside:1;
-+			u16 exece:1;
-+			u16 prve:1;
-+			u16 rsv4:13;
-+		};
-+	} control_reg;
-+};
-+
-+static int vfio_pci_add_pasid_cap(struct vfio_pci_device *vdev,
-+				    struct pci_dev *pdev,
-+				    u16 epos, u16 *next, __le32 **prevp)
-+{
-+	u8 *map = vdev->pci_config_map;
-+	int ecap = PCI_EXT_CAP_ID_PASID;
-+	int len = pci_ext_cap_length[ecap];
-+	struct vfio_pci_pasid_cap_data pasid_cap;
-+	struct vfio_pci_pasid_cap_data vpasid_cap;
-+	int ret;
-+
-+	/*
-+	 * If no cap filled in this function, should make sure the next
-+	 * pointer points to current epos.
-+	 */
-+	*next = epos;
-+
-+	if (!len) {
-+		pr_info("%s: VF %s hiding PASID capability\n",
-+				__func__, dev_name(&vdev->pdev->dev));
-+		ret = 0;
-+		goto out;
-+	}
-+
-+	/* Add PASID capability*/
-+	ret = vfio_pci_get_ecap_content(pdev, ecap,
-+					len, (u8 *)&pasid_cap);
-+	if (ret)
-+		goto out;
-+
-+	if (!pasid_cap.control_reg.paside) {
-+		pr_debug("%s: its PF's PASID capability is not enabled\n",
-+			dev_name(&vdev->pdev->dev));
-+		ret = 0;
-+		goto out;
-+	}
-+
-+	memcpy(&vpasid_cap, &pasid_cap, len);
-+
-+	vpasid_cap.id = 0x18;
-+	vpasid_cap.next = 0;
-+	/* clear the control reg for guest */
-+	memset(&vpasid_cap.control_reg, 0x0,
-+			sizeof(vpasid_cap.control_reg));
-+
-+	memset(map + epos, vpasid_cap.id, len);
-+	ret = vfio_fill_custom_vconfig_bytes(vdev, epos,
-+					(u8 *)&vpasid_cap, len);
-+	if (!ret) {
-+		/*
-+		 * Successfully filled in PASID cap, update
-+		 * the next offset in previous cap header,
-+		 * and also update caller about the offset
-+		 * of next cap if any.
-+		 */
-+		u32 val = epos;
-+		**prevp &= cpu_to_le32(~(0xffcU << 20));
-+		**prevp |= cpu_to_le32(val << 20);
-+		*prevp = (__le32 *)&vdev->vconfig[epos];
-+		*next = epos + len;
-+	}
-+
-+out:
-+	return ret;
-+}
-+
-+struct vfio_pci_pri_cap_data {
-+	u32 id:16;
-+	u32 version:4;
-+	u32 next:12;
-+	union {
-+		u16 control_reg_val;
-+		struct {
-+			u16 enable:1;
-+			u16 reset:1;
-+			u16 rsv1:14;
-+		};
-+	} control_reg;
-+	union {
-+		u16 status_reg_val;
-+		struct {
-+			u16 rf:1;
-+			u16 uprgi:1;
-+			u16 rsv2:6;
-+			u16 stop:1;
-+			u16 rsv3:6;
-+			u16 pasid_required:1;
-+		};
-+	} status_reg;
-+	u32 prq_capacity;
-+	u32 prq_quota;
-+};
-+
-+static int vfio_pci_add_pri_cap(struct vfio_pci_device *vdev,
-+				    struct pci_dev *pdev,
-+				    u16 epos, u16 *next, __le32 **prevp)
-+{
-+	u8 *map = vdev->pci_config_map;
-+	int ecap = PCI_EXT_CAP_ID_PRI;
-+	int len = pci_ext_cap_length[ecap];
-+	struct vfio_pci_pri_cap_data pri_cap;
-+	struct vfio_pci_pri_cap_data vpri_cap;
-+	int ret;
-+
-+	/*
-+	 * If no cap filled in this function, should make sure the next
-+	 * pointer points to current epos.
-+	 */
-+	*next = epos;
-+
-+	if (!len) {
-+		pr_info("%s: VF %s hiding PRI capability\n",
-+				__func__, dev_name(&vdev->pdev->dev));
-+		ret = 0;
-+		goto out;
-+	}
-+
-+	/* Add PASID capability*/
-+	ret = vfio_pci_get_ecap_content(pdev, ecap,
-+					len, (u8 *)&pri_cap);
-+	if (ret)
-+		goto out;
-+
-+	if (!pri_cap.control_reg.enable) {
-+		pr_debug("%s: its PF's PRI capability is not enabled\n",
-+			dev_name(&vdev->pdev->dev));
-+		ret = 0;
-+		goto out;
-+	}
-+
-+	memcpy(&vpri_cap, &pri_cap, len);
-+
-+	vpri_cap.id = 0x19;
-+	vpri_cap.next = 0;
-+	/* clear the control reg for guest */
-+	memset(&vpri_cap.control_reg, 0x0,
-+			sizeof(vpri_cap.control_reg));
-+
-+	memset(map + epos, vpri_cap.id, len);
-+	ret = vfio_fill_custom_vconfig_bytes(vdev, epos,
-+					(u8 *)&vpri_cap, len);
-+	if (!ret) {
-+		/*
-+		 * Successfully filled in PASID cap, update
-+		 * the next offset in previous cap header,
-+		 * and also update caller about the offset
-+		 * of next cap if any.
-+		 */
-+		u32 val = epos;
-+		**prevp &= cpu_to_le32(~(0xffcU << 20));
-+		**prevp |= cpu_to_le32(val << 20);
-+		*prevp = (__le32 *)&vdev->vconfig[epos];
-+		*next = epos + len;
-+	}
-+
-+out:
-+	return ret;
-+}
-+
-+static int vfio_pci_add_emulated_cap_for_vf(struct vfio_pci_device *vdev,
-+			struct pci_dev *pdev, u16 start_epos, __le32 *prev)
-+{
-+	__le32 *__prev = prev;
-+	u16 epos = start_epos, epos_next = start_epos;
-+	int ret = 0;
-+
-+	/* Add PASID capability*/
-+	ret = vfio_pci_add_pasid_cap(vdev, pdev, epos,
-+					&epos_next, &__prev);
-+	if (ret)
-+		return ret;
-+
-+	/* Add PRI capability */
-+	epos = epos_next;
-+	ret = vfio_pci_add_pri_cap(vdev, pdev, epos,
-+				   &epos_next, &__prev);
-+
-+	return ret;
-+}
-+
- static int vfio_ecap_init(struct vfio_pci_device *vdev)
- {
- 	struct pci_dev *pdev = vdev->pdev;
- 	u8 *map = vdev->pci_config_map;
--	u16 epos;
-+	u16 epos, epos_max;
- 	__le32 *prev = NULL;
- 	int loops, ret, ecaps = 0;
- 
-@@ -1521,6 +1814,7 @@ static int vfio_ecap_init(struct vfio_pci_device *vdev)
- 		return 0;
- 
- 	epos = PCI_CFG_SPACE_SIZE;
-+	epos_max = PCI_CFG_SPACE_SIZE;
- 
- 	loops = (pdev->cfg_size - PCI_CFG_SPACE_SIZE) / PCI_CAP_SIZEOF;
- 
-@@ -1545,6 +1839,9 @@ static int vfio_ecap_init(struct vfio_pci_device *vdev)
- 			}
- 		}
- 
-+		if (epos_max <= (epos + len))
-+			epos_max = epos + len;
-+
- 		if (!len) {
- 			pci_info(pdev, "%s: hiding ecap %#x@%#x\n",
- 				 __func__, ecap, epos);
-@@ -1604,6 +1901,18 @@ static int vfio_ecap_init(struct vfio_pci_device *vdev)
- 	if (!ecaps)
- 		*(u32 *)&vdev->vconfig[PCI_CFG_SPACE_SIZE] = 0;
- 
-+#ifdef CONFIG_PCI_ATS
-+	if (pdev->is_virtfn) {
-+		struct pci_dev *physfn = pdev->physfn;
-+
-+		ret = vfio_pci_add_emulated_cap_for_vf(vdev,
-+					physfn, epos_max, prev);
-+		if (ret)
-+			pr_info("%s, failed to add special caps for VF %s\n",
-+				__func__, dev_name(&vdev->pdev->dev));
-+	}
-+#endif
-+
- 	return 0;
- }
- 
-@@ -1748,6 +2057,17 @@ static size_t vfio_pci_cap_remaining_dword(struct vfio_pci_device *vdev,
- 	return i;
- }
- 
-+static bool vfio_pci_need_virt_perm(struct pci_dev *pdev, u8 cap_id)
-+{
-+#ifdef CONFIG_PCI_ATS
-+	return (pdev->is_virtfn &&
-+		(cap_id == PCI_EXT_CAP_ID_PASID ||
-+		 cap_id == PCI_EXT_CAP_ID_PRI));
-+#else
-+	return false;
-+#endif
-+}
-+
- static ssize_t vfio_config_do_rw(struct vfio_pci_device *vdev, char __user *buf,
- 				 size_t count, loff_t *ppos, bool iswrite)
- {
-@@ -1781,7 +2101,8 @@ static ssize_t vfio_config_do_rw(struct vfio_pci_device *vdev, char __user *buf,
- 	if (cap_id == PCI_CAP_ID_INVALID) {
- 		perm = &unassigned_perms;
- 		cap_start = *ppos;
--	} else if (cap_id == PCI_CAP_ID_INVALID_VIRT) {
-+	} else if (cap_id == PCI_CAP_ID_INVALID_VIRT ||
-+		   vfio_pci_need_virt_perm(pdev, cap_id)) {
- 		perm = &virt_perms;
- 		cap_start = *ppos;
- 	} else {
--- 
-2.7.4
+> -Paul
+>
+>> +
+>> +static const s8 pll_od_encoding[64] = {
+>> +    0x0, 0x1,  -1, 0x2,  -1,  -1,  -1, 0x3,
+>> +     -1,  -1,  -1,  -1,  -1,  -1,  -1, 0x4,
+>> +     -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,
+>> +     -1,  -1,  -1,  -1,  -1,  -1,  -1, 0x5,
+>> +     -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,
+>> +     -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,
+>> +     -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,
+>> +     -1,  -1,  -1,  -1,  -1,  -1,  -1, 0x6,
+>> +};
+>> +
+>> +static const struct ingenic_cgu_clk_info x1830_cgu_clocks[] = {
+>> +
+>> +    /* External clocks */
+>> +
+>> +    [X1830_CLK_EXCLK] = { "ext", CGU_CLK_EXT },
+>> +    [X1830_CLK_RTCLK] = { "rtc", CGU_CLK_EXT },
+>> +
+>> +    /* PLLs */
+>> +
+>> +    [X1830_CLK_APLL] = {
+>> +        "apll", CGU_CLK_PLL,
+>> +        .parents = { X1830_CLK_EXCLK, -1, -1, -1 },
+>> +        .pll = {
+>> +            .reg = CGU_REG_APLL,
+>> +            .rate_multiplier = 2,
+>> +            .m_shift = 20,
+>> +            .m_bits = 9,
+>> +            .m_offset = 1,
+>> +            .n_shift = 14,
+>> +            .n_bits = 6,
+>> +            .n_offset = 1,
+>> +            .od_shift = 11,
+>> +            .od_bits = 3,
+>> +            .od_max = 64,
+>> +            .od_encoding = pll_od_encoding,
+>> +            .bypass_reg = CGU_REG_CPPCR,
+>> +            .bypass_bit = 30,
+>> +            .enable_bit = 0,
+>> +            .stable_bit = 3,
+>> +        },
+>> +    },
+>> +
+>> +    [X1830_CLK_MPLL] = {
+>> +        "mpll", CGU_CLK_PLL,
+>> +        .parents = { X1830_CLK_EXCLK, -1, -1, -1 },
+>> +        .pll = {
+>> +            .reg = CGU_REG_MPLL,
+>> +            .rate_multiplier = 2,
+>> +            .m_shift = 20,
+>> +            .m_bits = 9,
+>> +            .m_offset = 1,
+>> +            .n_shift = 14,
+>> +            .n_bits = 6,
+>> +            .n_offset = 1,
+>> +            .od_shift = 11,
+>> +            .od_bits = 3,
+>> +            .od_max = 64,
+>> +            .od_encoding = pll_od_encoding,
+>> +            .bypass_reg = CGU_REG_CPPCR,
+>> +            .bypass_bit = 28,
+>> +            .enable_bit = 0,
+>> +            .stable_bit = 3,
+>> +        },
+>> +    },
+>> +
+>> +    [X1830_CLK_EPLL] = {
+>> +        "epll", CGU_CLK_PLL,
+>> +        .parents = { X1830_CLK_EXCLK, -1, -1, -1 },
+>> +        .pll = {
+>> +            .reg = CGU_REG_EPLL,
+>> +            .rate_multiplier = 2,
+>> +            .m_shift = 20,
+>> +            .m_bits = 9,
+>> +            .m_offset = 1,
+>> +            .n_shift = 14,
+>> +            .n_bits = 6,
+>> +            .n_offset = 1,
+>> +            .od_shift = 11,
+>> +            .od_bits = 3,
+>> +            .od_max = 64,
+>> +            .od_encoding = pll_od_encoding,
+>> +            .bypass_reg = CGU_REG_CPPCR,
+>> +            .bypass_bit = 24,
+>> +            .enable_bit = 0,
+>> +            .stable_bit = 3,
+>> +        },
+>> +    },
+>> +
+>> +    [X1830_CLK_VPLL] = {
+>> +        "vpll", CGU_CLK_PLL,
+>> +        .parents = { X1830_CLK_EXCLK, -1, -1, -1 },
+>> +        .pll = {
+>> +            .reg = CGU_REG_VPLL,
+>> +            .rate_multiplier = 2,
+>> +            .m_shift = 20,
+>> +            .m_bits = 9,
+>> +            .m_offset = 1,
+>> +            .n_shift = 14,
+>> +            .n_bits = 6,
+>> +            .n_offset = 1,
+>> +            .od_shift = 11,
+>> +            .od_bits = 3,
+>> +            .od_max = 64,
+>> +            .od_encoding = pll_od_encoding,
+>> +            .bypass_reg = CGU_REG_CPPCR,
+>> +            .bypass_bit = 26,
+>> +            .enable_bit = 0,
+>> +            .stable_bit = 3,
+>> +        },
+>> +    },
+>> +
+>> +    /* Muxes & dividers */
+>> +
+>> +    [X1830_CLK_SCLKA] = {
+>> +        "sclk_a", CGU_CLK_MUX,
+>> +        .parents = { -1, X1830_CLK_EXCLK, X1830_CLK_APLL, -1 },
+>> +        .mux = { CGU_REG_CPCCR, 30, 2 },
+>> +    },
+>> +
+>> +    [X1830_CLK_CPUMUX] = {
+>> +        "cpu_mux", CGU_CLK_MUX,
+>> +        .parents = { -1, X1830_CLK_SCLKA, X1830_CLK_MPLL, -1 },
+>> +        .mux = { CGU_REG_CPCCR, 28, 2 },
+>> +    },
+>> +
+>> +    [X1830_CLK_CPU] = {
+>> +        "cpu", CGU_CLK_DIV | CGU_CLK_GATE,
+>> +        .parents = { X1830_CLK_CPUMUX, -1, -1, -1 },
+>> +        .div = { CGU_REG_CPCCR, 0, 1, 4, 22, -1, -1 },
+>> +        .gate = { CGU_REG_CLKGR1, 15 },
+>> +    },
+>> +
+>> +    [X1830_CLK_L2CACHE] = {
+>> +        "l2cache", CGU_CLK_DIV,
+>> +        .parents = { X1830_CLK_CPUMUX, -1, -1, -1 },
+>> +        .div = { CGU_REG_CPCCR, 4, 1, 4, 22, -1, -1 },
+>> +    },
+>> +
+>> +    [X1830_CLK_AHB0] = {
+>> +        "ahb0", CGU_CLK_MUX | CGU_CLK_DIV,
+>> +        .parents = { -1, X1830_CLK_SCLKA, X1830_CLK_MPLL, -1 },
+>> +        .mux = { CGU_REG_CPCCR, 26, 2 },
+>> +        .div = { CGU_REG_CPCCR, 8, 1, 4, 21, -1, -1 },
+>> +    },
+>> +
+>> +    [X1830_CLK_AHB2PMUX] = {
+>> +        "ahb2_apb_mux", CGU_CLK_MUX,
+>> +        .parents = { -1, X1830_CLK_SCLKA, X1830_CLK_MPLL, -1 },
+>> +        .mux = { CGU_REG_CPCCR, 24, 2 },
+>> +    },
+>> +
+>> +    [X1830_CLK_AHB2] = {
+>> +        "ahb2", CGU_CLK_DIV,
+>> +        .parents = { X1830_CLK_AHB2PMUX, -1, -1, -1 },
+>> +        .div = { CGU_REG_CPCCR, 12, 1, 4, 20, -1, -1 },
+>> +    },
+>> +
+>> +    [X1830_CLK_PCLK] = {
+>> +        "pclk", CGU_CLK_DIV | CGU_CLK_GATE,
+>> +        .parents = { X1830_CLK_AHB2PMUX, -1, -1, -1 },
+>> +        .div = { CGU_REG_CPCCR, 16, 1, 4, 20, -1, -1 },
+>> +        .gate = { CGU_REG_CLKGR1, 14 },
+>> +    },
+>> +
+>> +    [X1830_CLK_DDR] = {
+>> +        "ddr", CGU_CLK_MUX | CGU_CLK_DIV | CGU_CLK_GATE,
+>> +        .parents = { -1, X1830_CLK_SCLKA, X1830_CLK_MPLL, -1 },
+>> +        .mux = { CGU_REG_DDRCDR, 30, 2 },
+>> +        .div = { CGU_REG_DDRCDR, 0, 1, 4, 29, 28, 27 },
+>> +        .gate = { CGU_REG_CLKGR0, 31 },
+>> +    },
+>> +
+>> +    [X1830_CLK_MAC] = {
+>> +        "mac", CGU_CLK_MUX | CGU_CLK_DIV | CGU_CLK_GATE,
+>> +        .parents = { X1830_CLK_SCLKA, X1830_CLK_MPLL,
+>> +                     X1830_CLK_VPLL, X1830_CLK_EPLL },
+>> +        .mux = { CGU_REG_MACCDR, 30, 2 },
+>> +        .div = { CGU_REG_MACCDR, 0, 1, 8, 29, 28, 27 },
+>> +        .gate = { CGU_REG_CLKGR1, 4 },
+>> +    },
+>> +
+>> +    [X1830_CLK_LCD] = {
+>> +        "lcd", CGU_CLK_MUX | CGU_CLK_DIV | CGU_CLK_GATE,
+>> +        .parents = { X1830_CLK_SCLKA, X1830_CLK_MPLL,
+>> +                     X1830_CLK_VPLL, X1830_CLK_EPLL },
+>> +        .mux = { CGU_REG_LPCDR, 30, 2 },
+>> +        .div = { CGU_REG_LPCDR, 0, 1, 8, 28, 27, 26 },
+>> +        .gate = { CGU_REG_CLKGR1, 9 },
+>> +    },
+>> +
+>> +    [X1830_CLK_MSCMUX] = {
+>> +        "msc_mux", CGU_CLK_MUX,
+>> +        .parents = { X1830_CLK_SCLKA, X1830_CLK_MPLL,
+>> +                     X1830_CLK_VPLL, X1830_CLK_EPLL },
+>> +        .mux = { CGU_REG_MSC0CDR, 30, 2 },
+>> +    },
+>> +
+>> +    [X1830_CLK_MSC0] = {
+>> +        "msc0", CGU_CLK_DIV | CGU_CLK_GATE,
+>> +        .parents = { X1830_CLK_MSCMUX, -1, -1, -1 },
+>> +        .div = { CGU_REG_MSC0CDR, 0, 2, 8, 29, 28, 27 },
+>> +        .gate = { CGU_REG_CLKGR0, 4 },
+>> +    },
+>> +
+>> +    [X1830_CLK_MSC1] = {
+>> +        "msc1", CGU_CLK_DIV | CGU_CLK_GATE,
+>> +        .parents = { X1830_CLK_MSCMUX, -1, -1, -1 },
+>> +        .div = { CGU_REG_MSC1CDR, 0, 2, 8, 29, 28, 27 },
+>> +        .gate = { CGU_REG_CLKGR0, 5 },
+>> +    },
+>> +
+>> +    [X1830_CLK_SSIPLL] = {
+>> +        "ssi_pll", CGU_CLK_MUX | CGU_CLK_DIV,
+>> +        .parents = { X1830_CLK_SCLKA, X1830_CLK_MPLL,
+>> +                     X1830_CLK_VPLL, X1830_CLK_EPLL },
+>> +        .mux = { CGU_REG_SSICDR, 30, 2 },
+>> +        .div = { CGU_REG_SSICDR, 0, 1, 8, 28, 27, 26 },
+>> +    },
+>> +
+>> +    [X1830_CLK_SSIPLL_DIV2] = {
+>> +        "ssi_pll_div2", CGU_CLK_FIXDIV,
+>> +        .parents = { X1830_CLK_SSIPLL },
+>> +        .fixdiv = { 2 },
+>> +    },
+>> +
+>> +    [X1830_CLK_SSIMUX] = {
+>> +        "ssi_mux", CGU_CLK_MUX,
+>> +        .parents = { X1830_CLK_EXCLK, X1830_CLK_SSIPLL_DIV2, -1, -1 },
+>> +        .mux = { CGU_REG_SSICDR, 29, 1 },
+>> +    },
+>> +
+>> +    /* Gate-only clocks */
+>> +
+>> +    [X1830_CLK_EMC] = {
+>> +        "emc", CGU_CLK_GATE,
+>> +        .parents = { X1830_CLK_AHB2, -1, -1, -1 },
+>> +        .gate = { CGU_REG_CLKGR0, 0 },
+>> +    },
+>> +
+>> +    [X1830_CLK_EFUSE] = {
+>> +        "efuse", CGU_CLK_GATE,
+>> +        .parents = { X1830_CLK_AHB2, -1, -1, -1 },
+>> +        .gate = { CGU_REG_CLKGR0, 1 },
+>> +    },
+>> +
+>> +    [X1830_CLK_OTG] = {
+>> +        "otg", CGU_CLK_GATE,
+>> +        .parents = { X1830_CLK_EXCLK, -1, -1, -1 },
+>> +        .gate = { CGU_REG_CLKGR0, 3 },
+>> +    },
+>> +
+>> +    [X1830_CLK_SSI0] = {
+>> +        "ssi0", CGU_CLK_GATE,
+>> +        .parents = { X1830_CLK_SSIMUX, -1, -1, -1 },
+>> +        .gate = { CGU_REG_CLKGR0, 6 },
+>> +    },
+>> +
+>> +    [X1830_CLK_SMB0] = {
+>> +        "smb0", CGU_CLK_GATE,
+>> +        .parents = { X1830_CLK_PCLK, -1, -1, -1 },
+>> +        .gate = { CGU_REG_CLKGR0, 7 },
+>> +    },
+>> +
+>> +    [X1830_CLK_SMB1] = {
+>> +        "smb1", CGU_CLK_GATE,
+>> +        .parents = { X1830_CLK_PCLK, -1, -1, -1 },
+>> +        .gate = { CGU_REG_CLKGR0, 8 },
+>> +    },
+>> +
+>> +    [X1830_CLK_SMB2] = {
+>> +        "smb2", CGU_CLK_GATE,
+>> +        .parents = { X1830_CLK_PCLK, -1, -1, -1 },
+>> +        .gate = { CGU_REG_CLKGR0, 9 },
+>> +    },
+>> +
+>> +    [X1830_CLK_UART0] = {
+>> +        "uart0", CGU_CLK_GATE,
+>> +        .parents = { X1830_CLK_EXCLK, -1, -1, -1 },
+>> +        .gate = { CGU_REG_CLKGR0, 14 },
+>> +    },
+>> +
+>> +    [X1830_CLK_UART1] = {
+>> +        "uart1", CGU_CLK_GATE,
+>> +        .parents = { X1830_CLK_EXCLK, -1, -1, -1 },
+>> +        .gate = { CGU_REG_CLKGR0, 15 },
+>> +    },
+>> +
+>> +    [X1830_CLK_SSI1] = {
+>> +        "ssi1", CGU_CLK_GATE,
+>> +        .parents = { X1830_CLK_SSIMUX, -1, -1, -1 },
+>> +        .gate = { CGU_REG_CLKGR0, 19 },
+>> +    },
+>> +
+>> +    [X1830_CLK_SFC] = {
+>> +        "sfc", CGU_CLK_GATE,
+>> +        .parents = { X1830_CLK_SSIPLL, -1, -1, -1 },
+>> +        .gate = { CGU_REG_CLKGR0, 20 },
+>> +    },
+>> +
+>> +    [X1830_CLK_PDMA] = {
+>> +        "pdma", CGU_CLK_GATE,
+>> +        .parents = { X1830_CLK_EXCLK, -1, -1, -1 },
+>> +        .gate = { CGU_REG_CLKGR0, 21 },
+>> +    },
+>> +
+>> +    [X1830_CLK_DTRNG] = {
+>> +        "dtrng", CGU_CLK_GATE,
+>> +        .parents = { X1830_CLK_PCLK, -1, -1, -1 },
+>> +        .gate = { CGU_REG_CLKGR1, 1 },
+>> +    },
+>> +
+>> +    [X1830_CLK_OST] = {
+>> +        "ost", CGU_CLK_GATE,
+>> +        .parents = { X1830_CLK_EXCLK, -1, -1, -1 },
+>> +        .gate = { CGU_REG_CLKGR1, 11 },
+>> +    },
+>> +};
+>> +
+>> +static void __init x1830_cgu_init(struct device_node *np)
+>> +{
+>> +    int retval;
+>> +
+>> +    cgu = ingenic_cgu_new(x1830_cgu_clocks,
+>> +                  ARRAY_SIZE(x1830_cgu_clocks), np);
+>> +    if (!cgu) {
+>> +        pr_err("%s: failed to initialise CGU\n", __func__);
+>> +        return;
+>> +    }
+>> +
+>> +    retval = ingenic_cgu_register_clocks(cgu);
+>> +    if (retval) {
+>> +        pr_err("%s: failed to register CGU Clocks\n", __func__);
+>> +        return;
+>> +    }
+>> +
+>> +    ingenic_cgu_register_syscore_ops(cgu);
+>> +}
+>> +CLK_OF_DECLARE_DRIVER(x1830_cgu, "ingenic,x1830-cgu", x1830_cgu_init);
+>> -- 
+>> 2.7.4
+>>
+>
 
