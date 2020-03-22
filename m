@@ -2,284 +2,155 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 398A418E8C6
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Mar 2020 13:28:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 39C0918E8B3
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Mar 2020 13:27:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727163AbgCVM2A (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 22 Mar 2020 08:28:00 -0400
-Received: from smtp2207-205.mail.aliyun.com ([121.197.207.205]:47704 "EHLO
-        smtp2207-205.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727004AbgCVM2A (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Mar 2020 08:28:00 -0400
-X-Alimail-AntiSpam: AC=CONTINUE;BC=0.07436282|-1;CH=green;DM=||false|;DS=CONTINUE|ham_regular_dialog|0.232732-0.000359942-0.766908;FP=0|0|0|0|0|-1|-1|-1;HT=e02c03311;MF=liaoweixiong@allwinnertech.com;NM=1;PH=DS;RN=16;RT=16;SR=0;TI=SMTPD_---.H3RTJAs_1584880056;
-Received: from 172.16.10.102(mailfrom:liaoweixiong@allwinnertech.com fp:SMTPD_---.H3RTJAs_1584880056)
-          by smtp.aliyun-inc.com(10.147.40.200);
-          Sun, 22 Mar 2020 20:27:37 +0800
-Subject: Re: [PATCH v2 07/11] pstore/blk: skip broken zone for mtd device
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Anton Vorontsov <anton@enomsg.org>,
-        Colin Cross <ccross@android.com>,
-        Tony Luck <tony.luck@intel.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Richard Weinberger <richard@nod.at>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Rob Herring <robh@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mtd@lists.infradead.org
-References: <1581078355-19647-1-git-send-email-liaoweixiong@allwinnertech.com>
- <1581078355-19647-8-git-send-email-liaoweixiong@allwinnertech.com>
- <202003181131.3A8F861F@keescook>
-From:   WeiXiong Liao <liaoweixiong@allwinnertech.com>
-Message-ID: <a65c9f15-c510-caf5-9bc8-98941a30488c@allwinnertech.com>
-Date:   Sun, 22 Mar 2020 20:27:45 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
-MIME-Version: 1.0
-In-Reply-To: <202003181131.3A8F861F@keescook>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S1727228AbgCVM0x (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 22 Mar 2020 08:26:53 -0400
+Received: from mga18.intel.com ([134.134.136.126]:51562 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726984AbgCVM0Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 22 Mar 2020 08:26:25 -0400
+IronPort-SDR: VbsgSx7gSsGf0N6hgS7G+ORwFbJCKjK9GL+4sY/Na9D3xsa/K+iMMK0VegOFi7XmAvrjF+u+tB
+ YrsqFxuW5C5g==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Mar 2020 05:26:23 -0700
+IronPort-SDR: Cy6rHL7Yt8Bx00K+whxJzVWM95dDmNBC+s3FORZdpg1GwjHmSDiRC2tikfoh+bCYeuAvqfteE8
+ Zdeyt14VdXSw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.72,292,1580803200"; 
+   d="scan'208";a="239663862"
+Received: from jacob-builder.jf.intel.com ([10.7.199.155])
+  by orsmga008.jf.intel.com with ESMTP; 22 Mar 2020 05:26:23 -0700
+From:   "Liu, Yi L" <yi.l.liu@intel.com>
+To:     alex.williamson@redhat.com, eric.auger@redhat.com
+Cc:     kevin.tian@intel.com, jacob.jun.pan@linux.intel.com,
+        joro@8bytes.org, ashok.raj@intel.com, yi.l.liu@intel.com,
+        jun.j.tian@intel.com, yi.y.sun@intel.com, jean-philippe@linaro.org,
+        peterx@redhat.com, iommu@lists.linux-foundation.org,
+        kvm@vger.kernel.org, linux-kernel@vger.kernel.org, hao.wu@intel.com
+Subject: [PATCH v1 0/8] vfio: expose virtual Shared Virtual Addressing to VMs
+Date:   Sun, 22 Mar 2020 05:31:57 -0700
+Message-Id: <1584880325-10561-1-git-send-email-yi.l.liu@intel.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-hi Kees Cook,
+From: Liu Yi L <yi.l.liu@intel.com>
 
-On 2020/3/19 AM 2:35, Kees Cook wrote:
-> On Fri, Feb 07, 2020 at 08:25:51PM +0800, WeiXiong Liao wrote:
->> It's one of a series of patches for adaptive to MTD device.
->>
->> MTD device is not block device. As the block of flash (MTD device) will
->> be broken, it's necessary for pstore/blk to skip the broken block
->> (bad block).
->>
->> If device drivers return -ENEXT, pstore/blk will try next zone of dmesg.
->>
->> Signed-off-by: WeiXiong Liao <liaoweixiong@allwinnertech.com>
->> ---
->>  Documentation/admin-guide/pstore-block.rst |  3 +-
->>  fs/pstore/blkzone.c                        | 74 +++++++++++++++++++++++-------
->>  include/linux/blkoops.h                    |  4 +-
->>  include/linux/pstore_blk.h                 |  4 ++
->>  4 files changed, 66 insertions(+), 19 deletions(-)
->>
->> diff --git a/Documentation/admin-guide/pstore-block.rst b/Documentation/admin-guide/pstore-block.rst
->> index c8a5f68960c3..be865dfc1a28 100644
->> --- a/Documentation/admin-guide/pstore-block.rst
->> +++ b/Documentation/admin-guide/pstore-block.rst
->> @@ -188,7 +188,8 @@ The parameter @offset of these interface is the relative position of the device.
->>  Normally the number of bytes read/written should be returned, while for error,
->>  negative number will be returned. The following return numbers mean more:
->>  
->> --EBUSY: pstore/blk should try again later.
->> +1. -EBUSY: pstore/blk should try again later.
->> +#. -ENEXT: this zone is used or broken, pstore/blk should try next one.
->>  
->>  panic_write (for non-block device)
->>  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->> diff --git a/fs/pstore/blkzone.c b/fs/pstore/blkzone.c
->> index 442e5a5bbfda..205aeff28992 100644
->> --- a/fs/pstore/blkzone.c
->> +++ b/fs/pstore/blkzone.c
->> @@ -207,6 +207,9 @@ static int blkz_zone_write(struct blkz_zone *zone,
->>  
->>  	return 0;
->>  set_dirty:
->> +	/* no need to mark dirty if going to try next zone */
->> +	if (wcnt == -ENEXT)
->> +		return -ENEXT;
->>  	atomic_set(&zone->dirty, true);
->>  	/* flush dirty zones nicely */
->>  	if (wcnt == -EBUSY && !is_on_panic())
->> @@ -360,7 +363,11 @@ static int blkz_recover_dmesg_meta(struct blkz_context *cxt)
->>  			return -EINVAL;
->>  
->>  		rcnt = info->read((char *)buf, len, zone->off);
->> -		if (rcnt != len) {
->> +		if (rcnt == -ENEXT) {
->> +			pr_debug("%s with id %lu may be broken, skip\n",
->> +					zone->name, i);
->> +			continue;
->> +		} else if (rcnt != len) {
->>  			pr_err("read %s with id %lu failed\n", zone->name, i);
->>  			return (int)rcnt < 0 ? (int)rcnt : -EIO;
->>  		}
->> @@ -650,24 +657,58 @@ static void blkz_write_kmsg_hdr(struct blkz_zone *zone,
->>  		hdr->counter = 0;
->>  }
->>  
->> +/*
->> + * In case zone is broken, which may occur to MTD device, we try each zones,
->> + * start at cxt->dmesg_write_cnt.
->> + */
->>  static inline int notrace blkz_dmesg_write_do(struct blkz_context *cxt,
->>  		struct pstore_record *record)
->>  {
->> +	int ret = -EBUSY;
->>  	size_t size, hlen;
->>  	struct blkz_zone *zone;
->> -	unsigned int zonenum;
->> +	unsigned int i;
->>  
->> -	zonenum = cxt->dmesg_write_cnt;
->> -	zone = cxt->dbzs[zonenum];
->> -	if (unlikely(!zone))
->> -		return -ENOSPC;
->> -	cxt->dmesg_write_cnt = (zonenum + 1) % cxt->dmesg_max_cnt;
->> +	for (i = 0; i < cxt->dmesg_max_cnt; i++) {
->> +		unsigned int zonenum, len;
->> +
->> +		zonenum = (cxt->dmesg_write_cnt + i) % cxt->dmesg_max_cnt;
->> +		zone = cxt->dbzs[zonenum];
->> +		if (unlikely(!zone))
->> +			return -ENOSPC;
->>  
->> -	pr_debug("write %s to zone id %d\n", zone->name, zonenum);
->> -	blkz_write_kmsg_hdr(zone, record);
->> -	hlen = sizeof(struct blkz_dmesg_header);
->> -	size = min_t(size_t, record->size, zone->buffer_size - hlen);
->> -	return blkz_zone_write(zone, FLUSH_ALL, record->buf, size, hlen);
->> +		/* avoid destorying old data, allocate a new one */
->> +		len = zone->buffer_size + sizeof(*zone->buffer);
->> +		zone->oldbuf = zone->buffer;
->> +		zone->buffer = kzalloc(len, GFP_KERNEL);
->> +		if (!zone->buffer) {
->> +			zone->buffer = zone->oldbuf;
->> +			return -ENOMEM;
->> +		}
->> +		zone->buffer->sig = zone->oldbuf->sig;
->> +
->> +		pr_debug("write %s to zone id %d\n", zone->name, zonenum);
->> +		blkz_write_kmsg_hdr(zone, record);
->> +		hlen = sizeof(struct blkz_dmesg_header);
->> +		size = min_t(size_t, record->size, zone->buffer_size - hlen);
->> +		ret = blkz_zone_write(zone, FLUSH_ALL, record->buf, size, hlen);
->> +		if (likely(!ret || ret != -ENEXT)) {
->> +			cxt->dmesg_write_cnt = zonenum + 1;
->> +			cxt->dmesg_write_cnt %= cxt->dmesg_max_cnt;
->> +			/* no need to try next zone, free last zone buffer */
->> +			kfree(zone->oldbuf);
->> +			zone->oldbuf = NULL;
->> +			return ret;
->> +		}
->> +
->> +		pr_debug("zone %u may be broken, try next dmesg zone\n",
->> +				zonenum);
->> +		kfree(zone->buffer);
->> +		zone->buffer = zone->oldbuf;
->> +		zone->oldbuf = NULL;
->> +	}
->> +
->> +	return -EBUSY;
->>  }
->>  
->>  static int notrace blkz_dmesg_write(struct blkz_context *cxt,
->> @@ -791,7 +832,6 @@ static int notrace blkz_pstore_write(struct pstore_record *record)
->>  	}
->>  }
->>  
->> -#define READ_NEXT_ZONE ((ssize_t)(-1024))
->>  static struct blkz_zone *blkz_read_next_zone(struct blkz_context *cxt)
->>  {
->>  	struct blkz_zone *zone = NULL;
->> @@ -852,7 +892,7 @@ static ssize_t blkz_dmesg_read(struct blkz_zone *zone,
->>  	if (blkz_read_dmesg_hdr(zone, record)) {
->>  		atomic_set(&zone->buffer->datalen, 0);
->>  		atomic_set(&zone->dirty, 0);
->> -		return READ_NEXT_ZONE;
->> +		return -ENEXT;
->>  	}
->>  	size -= sizeof(struct blkz_dmesg_header);
->>  
->> @@ -877,7 +917,7 @@ static ssize_t blkz_dmesg_read(struct blkz_zone *zone,
->>  	if (unlikely(blkz_zone_read(zone, record->buf + hlen, size,
->>  				sizeof(struct blkz_dmesg_header)) < 0)) {
->>  		kfree(record->buf);
->> -		return READ_NEXT_ZONE;
->> +		return -ENEXT;
->>  	}
->>  
->>  	return size + hlen;
->> @@ -891,7 +931,7 @@ static ssize_t blkz_record_read(struct blkz_zone *zone,
->>  
->>  	buf = (struct blkz_buffer *)zone->oldbuf;
->>  	if (!buf)
->> -		return READ_NEXT_ZONE;
->> +		return -ENEXT;
->>  
->>  	size = atomic_read(&buf->datalen);
->>  	start = atomic_read(&buf->start);
->> @@ -943,7 +983,7 @@ static ssize_t blkz_pstore_read(struct pstore_record *record)
->>  	}
->>  
->>  	ret = readop(zone, record);
->> -	if (ret == READ_NEXT_ZONE)
->> +	if (ret == -ENEXT)
->>  		goto next_zone;
->>  	return ret;
->>  }
->> diff --git a/include/linux/blkoops.h b/include/linux/blkoops.h
->> index 8f40f225545d..71c596fd4cc8 100644
->> --- a/include/linux/blkoops.h
->> +++ b/include/linux/blkoops.h
->> @@ -27,6 +27,7 @@
->>   *	On error, negative number should be returned. The following returning
->>   *	number means more:
->>   *	  -EBUSY: pstore/blk should try again later.
->> + *	  -ENEXT: this zone is used or broken, pstore/blk should try next one.
->>   * @panic_write:
->>   *	The write operation only used for panic.
->>   *
->> @@ -45,7 +46,8 @@ struct blkoops_device {
->>  
->>  /*
->>   * Panic write for block device who should write alignmemt to SECTOR_SIZE.
->> - * On success, zero should be returned. Others mean error.
->> + * On success, zero should be returned. Others mean error except that -ENEXT
->> + * means the zone is used or broken, pstore/blk should try next one.
->>   */
->>  typedef int (*blkoops_blk_panic_write_op)(const char *buf, sector_t start_sect,
->>  		sector_t sects);
->> diff --git a/include/linux/pstore_blk.h b/include/linux/pstore_blk.h
->> index 77704c1b404a..bbbe4fe37f7c 100644
->> --- a/include/linux/pstore_blk.h
->> +++ b/include/linux/pstore_blk.h
->> @@ -6,6 +6,9 @@
->>  #include <linux/types.h>
->>  #include <linux/blkdev.h>
->>  
->> +/* read/write function return -ENEXT means try next zone */
->> +#define ENEXT ((ssize_t)(1024))
-> 
-> I really don't like inventing errno numbers. Can you just reuse an
-> existing (but non-block) errno like ESRCH or ENOMSG or something?
-> 
+Shared Virtual Addressing (SVA), a.k.a, Shared Virtual Memory (SVM) on
+Intel platforms allows address space sharing between device DMA and
+applications. SVA can reduce programming complexity and enhance security.
 
-ENOMSG is OK.
+This VFIO series is intended to expose SVA usage to VMs. i.e. Sharing
+guest application address space with passthru devices. This is called
+vSVA in this series. The whole vSVA enabling requires QEMU/VFIO/IOMMU
+changes. For IOMMU and QEMU changes, they are in separate series (listed
+in the "Related series").
 
->> +
->>  /**
->>   * struct blkz_info - backend blkzone driver structure
->>   *
->> @@ -42,6 +45,7 @@
->>   *	On error, negative number should be returned. The following returning
->>   *	number means more:
->>   *	  -EBUSY: pstore/blk should try again later.
->> + *	  -ENEXT: this zone is used or broken, pstore/blk should try next one.
->>   * @panic_write:
->>   *	The write operation only used for panic. It's optional if you do not
->>   *	care panic record. If panic occur but blkzone do not recover yet, the
->> -- 
->> 1.9.1
->>
-> 
+The high-level architecture for SVA virtualization is as below, the key
+design of vSVA support is to utilize the dual-stage IOMMU translation (
+also known as IOMMU nesting translation) capability in host IOMMU.
+
+
+    .-------------.  .---------------------------.
+    |   vIOMMU    |  | Guest process CR3, FL only|
+    |             |  '---------------------------'
+    .----------------/
+    | PASID Entry |--- PASID cache flush -
+    '-------------'                       |
+    |             |                       V
+    |             |                CR3 in GPA
+    '-------------'
+Guest
+------| Shadow |--------------------------|--------
+      v        v                          v
+Host
+    .-------------.  .----------------------.
+    |   pIOMMU    |  | Bind FL for GVA-GPA  |
+    |             |  '----------------------'
+    .----------------/  |
+    | PASID Entry |     V (Nested xlate)
+    '----------------\.------------------------------.
+    |             |   |SL for GPA-HPA, default domain|
+    |             |   '------------------------------'
+    '-------------'
+Where:
+ - FL = First level/stage one page tables
+ - SL = Second level/stage two page tables
+
+There are roughly four parts in this patchset which are
+corresponding to the basic vSVA support for PCI device
+assignment
+ 1. vfio support for PASID allocation and free for VMs
+ 2. vfio support for guest page table binding request from VMs
+ 3. vfio support for IOMMU cache invalidation from VMs
+ 4. vfio support for vSVA usage on IOMMU-backed mdevs
+
+The complete vSVA kernel upstream patches are divided into three phases:
+    1. Common APIs and PCI device direct assignment
+    2. IOMMU-backed Mediated Device assignment
+    3. Page Request Services (PRS) support
+
+This patchset is aiming for the phase 1 and phase 2, and based on Jacob's
+below series.
+[PATCH V10 00/11] Nested Shared Virtual Address (SVA) VT-d support:
+https://lkml.org/lkml/2020/3/20/1172
+
+Complete set for current vSVA can be found in below branch.
+https://github.com/luxis1999/linux-vsva.git: vsva-linux-5.6-rc6
+
+The corresponding QEMU patch series is as below, complete QEMU set can be
+found in below branch.
+[PATCH v1 00/22] intel_iommu: expose Shared Virtual Addressing to VMs
+complete QEMU set can be found in below link:
+https://github.com/luxis1999/qemu.git: sva_vtd_v10_v1
+
+Regards,
+Yi Liu
+
+Changelog:
+	- RFC v1 -> Patch v1:
+	  a) Address comments to the PASID request(alloc/free) path
+	  b) Report PASID alloc/free availabitiy to user-space
+	  c) Add a vfio_iommu_type1 parameter to support pasid quota tuning
+	  d) Adjusted to latest ioasid code implementation. e.g. remove the
+	     code for tracking the allocated PASIDs as latest ioasid code
+	     will track it, VFIO could use ioasid_free_set() to free all
+	     PASIDs.
+
+	- RFC v2 -> v3:
+	  a) Refine the whole patchset to fit the roughly parts in this series
+	  b) Adds complete vfio PASID management framework. e.g. pasid alloc,
+	  free, reclaim in VM crash/down and per-VM PASID quota to prevent
+	  PASID abuse.
+	  c) Adds IOMMU uAPI version check and page table format check to ensure
+	  version compatibility and hardware compatibility.
+	  d) Adds vSVA vfio support for IOMMU-backed mdevs.
+
+	- RFC v1 -> v2:
+	  Dropped vfio: VFIO_IOMMU_ATTACH/DETACH_PASID_TABLE.
+
+Liu Yi L (8):
+  vfio: Add VFIO_IOMMU_PASID_REQUEST(alloc/free)
+  vfio/type1: Add vfio_iommu_type1 parameter for quota tuning
+  vfio/type1: Report PASID alloc/free support to userspace
+  vfio: Check nesting iommu uAPI version
+  vfio/type1: Report 1st-level/stage-1 format to userspace
+  vfio/type1: Bind guest page tables to host
+  vfio/type1: Add VFIO_IOMMU_CACHE_INVALIDATE
+  vfio/type1: Add vSVA support for IOMMU-backed mdevs
+
+ drivers/vfio/vfio.c             | 136 +++++++++++++
+ drivers/vfio/vfio_iommu_type1.c | 419 ++++++++++++++++++++++++++++++++++++++++
+ include/linux/vfio.h            |  21 ++
+ include/uapi/linux/vfio.h       | 127 ++++++++++++
+ 4 files changed, 703 insertions(+)
 
 -- 
-WeiXiong Liao
+2.7.4
+
