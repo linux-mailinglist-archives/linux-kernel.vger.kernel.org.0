@@ -2,179 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BF8C218EA99
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Mar 2020 17:53:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9D5D218EA9D
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Mar 2020 17:57:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726785AbgCVQxY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 22 Mar 2020 12:53:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41044 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725881AbgCVQxY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Mar 2020 12:53:24 -0400
-Received: from archlinux (cpc149474-cmbg20-2-0-cust94.5-4.cable.virginm.net [82.4.196.95])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E6EE2206F8;
-        Sun, 22 Mar 2020 16:53:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584896003;
-        bh=PoM6WPokFPax4XCKK0j4sFwE6uYh1cd7prgIs8gJuz0=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=EKzsfMaq4kI6h0cRWXjPeZaiC9IxTdKZwOalO+Pla+90hFDampCEwfoZExTAtPehS
-         G2bswVGJVNjn7Vux+ArgdxMeeW1v4fin1cUhArq9QaGDxsI3pnzKMZYdGN6q9Xr+Jc
-         n0ssDvKZuhKgUaLkCJmMiyVT0JUDf4DkudawaMNM=
-Date:   Sun, 22 Mar 2020 16:53:17 +0000
-From:   Jonathan Cameron <jic23@kernel.org>
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Andy Shevchenko <andy.shevchenko@gmail.com>,
-        "Ardelean, Alexandru" <alexandru.Ardelean@analog.com>,
-        "lars@metafoo.de" <lars@metafoo.de>,
-        "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
-        "Grozav, Andrei" <Andrei.Grozav@analog.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Hennerich, Michael" <Michael.Hennerich@analog.com>,
-        "Nagy, Laszlo" <Laszlo.Nagy@analog.com>,
-        "Csomortani, Istvan" <Istvan.Csomortani@analog.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "Bogdan, Dragos" <Dragos.Bogdan@analog.com>,
-        "Costina, Adrian" <Adrian.Costina@analog.com>
-Subject: Re: [PATCH v11 5/8] iio: adc: adi-axi-adc: add support for AXI ADC
- IP core
-Message-ID: <20200322165317.0b1f0674@archlinux>
-In-Reply-To: <202003220901.880A6DF@keescook>
-References: <20200321085315.11030-1-alexandru.ardelean@analog.com>
-        <20200321085315.11030-6-alexandru.ardelean@analog.com>
-        <CAHp75VecnornqckmG_WgN-V9A1VSQfRT85TxFzwHgaLw9dAHeA@mail.gmail.com>
-        <979ef870a4f0935e41e95e7759847eba8bd0407c.camel@analog.com>
-        <CAHp75Vdna2+txY=w87n+SWE3x3FYJLeMjYbYa6V-co3z0mYx_g@mail.gmail.com>
-        <202003220901.880A6DF@keescook>
-X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1726810AbgCVQ5P (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 22 Mar 2020 12:57:15 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:35697 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725785AbgCVQ5O (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 22 Mar 2020 12:57:14 -0400
+Received: by mail-wr1-f67.google.com with SMTP id d5so1378007wrn.2;
+        Sun, 22 Mar 2020 09:57:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=wUQo9FObQ1FgjFAGXhInSZHPZVn6g0FEvK2Y0V4ii4s=;
+        b=cm3Y5RK61DgWTyAjUEHbhN4kf16h0FsjsXqX5Wi4X5whIT2SP4SdktnwB1jesX8aKQ
+         tzqzci22S8NX105QyHJSiJLu+FRV5Ba4SfX5yFnz6ccIyIDW1PWvsMLg9r8xrhMqFK6o
+         P/mPFg7lfPr+20+Hvo4DGbSaVc4l4bJe6PGv3bPESHghmSt2Yh92ha2kxNsRMlcCSMue
+         +Y3zrB2Xi60lRou1SzOm+pU+qpq1VP5FPjer+W9z3WwbCpysaj5W6e6XOsI6DSpEBNHq
+         DvUE4cMFexRKyp5N50ZLLKReIo6qW2vO1clbvnLuwO3q1BgwEN6cuH1Jbni9vIjnq3cv
+         xQQw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=wUQo9FObQ1FgjFAGXhInSZHPZVn6g0FEvK2Y0V4ii4s=;
+        b=iW85Pm/taJ1PPEDcsJQS7sGlCUOPxqZg+Yoi4U3MHpd6cYcm8Ryw9XRlH1m/8ktDtf
+         GJ5+cIzrbUsXDV2G32ioOr4mJ8aTmMuf96TQVWhuTmjtbX5yPjEHNQf78tkUc9MWcB0E
+         2QMdW1Y4PZ5Dlt7FUUIFSTGjlYC0zJB9LrGmg5/WVne7cZLFeyyYReAiMuwHQrWogT09
+         W+MsZeLK3IiA2oUfh4hFhS+maIeeULpGicSNvgX2Sg6qiPeXd7cnQrIKmaLZ5ON4HINs
+         W9Cc/4OF3z2VZOqyy2v2mQTIT0gZFoAGeHJtL/StvHz6ZqRdAEOPFa37if4UPzrxkrhF
+         /BLQ==
+X-Gm-Message-State: ANhLgQ2ndDq1p1KEfxI30QwjpsvvxMnvDXXuI20U0Rr0J3XdYfscF7Hz
+        htAOQKBvzpwUH7onswdDlRU=
+X-Google-Smtp-Source: ADFU+vv0O1PRSJTkoWSbd2kn8eMmyO5OQPBalAxMSJYJK6yNWO8ywwkAx6pb4+XopsfmHHm9FENUxQ==
+X-Received: by 2002:a5d:498b:: with SMTP id r11mr24635645wrq.368.1584896231295;
+        Sun, 22 Mar 2020 09:57:11 -0700 (PDT)
+Received: from felia.fritz.box ([2001:16b8:2d25:ed00:30d0:a825:e837:3a59])
+        by smtp.gmail.com with ESMTPSA id t126sm18806162wmb.27.2020.03.22.09.57.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 22 Mar 2020 09:57:10 -0700 (PDT)
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To:     Jiri Kosina <trivial@kernel.org>,
+        Rusty Russell <rusty@rustcorp.com.au>,
+        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     "Gustavo A . R . Silva" <gustavo@embeddedor.com>,
+        Nicholas Krause <xerofoify@gmail.com>,
+        Duan Jiong <duanj.fnst@cn.fujitsu.com>,
+        Sachin Kamat <sachin.kamat@linaro.org>,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: [PATCH] err.h: remove deprecated PTR_RET for good
+Date:   Sun, 22 Mar 2020 17:57:02 +0100
+Message-Id: <20200322165702.6712-1-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 22 Mar 2020 09:16:36 -0700
-Kees Cook <keescook@chromium.org> wrote:
+Initially, commit fa9ee9c4b988 ("include/linux/err.h: add a function to
+cast error-pointers to a return value") from Uwe Kleine-König introduced
+PTR_RET in 03/2011. Then, in 07/2013, commit 6e8b8726ad50 ("PTR_RET is
+now PTR_ERR_OR_ZERO") from Rusty Russell renamed PTR_RET to
+PTR_ERR_OR_ZERO, and left PTR_RET as deprecated-marked alias.
 
-> On Sun, Mar 22, 2020 at 12:45:39PM +0200, Andy Shevchenko wrote:
-> > +Cc Kees (see below about allocation size checks)
-> > 
-> > On Sun, Mar 22, 2020 at 11:36 AM Ardelean, Alexandru
-> > <alexandru.Ardelean@analog.com> wrote:  
-> > > On Sat, 2020-03-21 at 23:38 +0200, Andy Shevchenko wrote:  
-> > > > On Sat, Mar 21, 2020 at 10:55 AM Alexandru Ardelean
-> > > > <alexandru.ardelean@analog.com> wrote:  
-> > 
-> > ...
-> >   
-> > > > > +static struct adi_axi_adc_conv *adi_axi_adc_conv_register(struct device
-> > > > > *dev,
-> > > > > +                                                         int sizeof_priv)
-> > > > > +{
-> > > > > +       struct adi_axi_adc_client *cl;
-> > > > > +       size_t alloc_size;
-> > > > > +
-> > > > > +       alloc_size = sizeof(struct adi_axi_adc_client);
-> > > > > +       if (sizeof_priv) {
-> > > > > +               alloc_size = ALIGN(alloc_size, IIO_ALIGN);
-> > > > > +               alloc_size += sizeof_priv;
-> > > > > +       }
-> > > > > +       alloc_size += IIO_ALIGN - 1;  
-> > > >
-> > > > Have you looked at linux/overflow.h?  
-> > >
-> > > i did now;
-> > > any hints where i should look closer?  
-> > 
-> > It seems it lacks of this kind of allocation size checks... Perhaps add one?
-> > Kees, what do you think?
-> >   
-> > > > > +       cl = kzalloc(alloc_size, GFP_KERNEL);
-> > > > > +       if (!cl)
-> > > > > +               return ERR_PTR(-ENOMEM);  
-> 
-> My head hurts trying to read this! ;) Okay, so the base size is
-> sizeof(struct adi_axi_adc_client). But if sizeof_priv is non-zero
-> (this arg should be size_t not int), then we need to make the struct
-> size ALIGNed? And then what is the "+= IIO_ALIGN - 1" for?
+After six years since the renaming and various repeated cleanups in the
+meantime, it is time to finally remove the deprecated PTR_RET for good.
 
-I'm a bit embarrassed.  I can't remember what the += IIO_ALIGN - 1
-was for in the first place and I can't work it out now.
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+Rusty, if you are still around, Acked-by is appreciated.
+Uwe, Acked-by is appreciated.
+Kudos to Gustavo, Nicholas, Duan & Sachin for previous cleanups.
 
-The purpose of the fun here was to end up with a structure that
-was either
-a) sizeof(struct iio_dev) long,
-b) sizeof(struct iio_dev) + padding + sizeof_priv 
-where the padding ensured that any __cacheline_aligned elements
-in the private structure were cacheline aligned within resulting
-allocation.
+applies cleanly on current master and on next-20200320
+Jiri, please pick this trival patch for the next merge window. Thanks.
 
-So why the extra IIO_ALIGN - 1....
+ include/linux/err.h | 3 ---
+ 1 file changed, 3 deletions(-)
 
-The original patch doesn't help much either given it's got a question
-in there for why this bit is needed.
-
-https://lore.kernel.org/linux-iio/1302890160-8823-5-git-send-email-jic23@cam.ac.uk/
-
-However, it rang a slight bell.  Seems I lifted the code from netdev.
-https://elixir.bootlin.com/linux/latest/source/net/core/dev.c#L9718
-
-I'm fairly sure we don't need that padding here..  What can I say,
-I was young and stupid :)
-
-I did add a question mark so clearly meant to come back and
-take another look ;)
-
-One vague thought is that it's about ensuring we are big enough to
-ensure we are cacheline aligned.  That's obviously not a problem with
-current struct iio_dev which is far from small,
-but in theory it could have been.  Also, thinking about it we only
-need the struct iio_dev to be cacheline aligned if we have
-an iio_priv structure.  If we have one of those it will definitely
-be big enough anyway.
-
-At somepoint I'd like to look at cleaning it up for iio_device_alloc
-but with a lot of testing as who knows what is relying on this behaviour
-or if I've missed something.  Crashes around this alignment are
-infrequent and nasty to trace at the best of times.
-
-Jonathan
-
-> 
-> It's not clear to me what the expect alignment/padding is here.
-> 
-> I would probably construct this as:
-> 
-> 	sizeof_self = sizeof(struct adi_axi_adc_client);
-> 	if (sizeof_priv)
-> 		sizeof_self = ALIGN(sizeof_self, IIO_ALIGN);
-> 	if (check_add_overflow(sizeof_self, sizeof_priv, &sizeof_alloc))
-> 		return ERR_PTR(-ENOMEM);
-> 	if (check_add_overflow(sizeof_alloc, IIO_ALIGN - 1, &sizeof_alloc))
-> 		return ERR_PTR(-ENOMEM);
-> 
-> But I don't understand the "IIO_ALIGN - 1" part, so I assume this could
-> be shortened with better use of ALIGN()?
-> 
-> Also, this feels like a weird driver allocation overall:
-> 
-> +	struct adi_axi_adc_conv **ptr, *conv;
-> +
-> +	ptr = devres_alloc(devm_adi_axi_adc_conv_release, sizeof(*ptr),
-> +			   GFP_KERNEL);
-> +	if (!ptr)
-> +		return ERR_PTR(-ENOMEM);
-> +
-> +	conv = adi_axi_adc_conv_register(dev, sizeof_priv);
-> 
-> devres_alloc() allocates storage for a _single pointer_. :P That's not
-> useful for resource tracking. Why is devres_alloc() being called here
-> and not down in adi_axi_adc_conv_register() and just passing the pointer
-> back up?
-> 
+diff --git a/include/linux/err.h b/include/linux/err.h
+index 87be24350e91..a139c64aef2a 100644
+--- a/include/linux/err.h
++++ b/include/linux/err.h
+@@ -62,9 +62,6 @@ static inline int __must_check PTR_ERR_OR_ZERO(__force const void *ptr)
+ 		return 0;
+ }
+ 
+-/* Deprecated */
+-#define PTR_RET(p) PTR_ERR_OR_ZERO(p)
+-
+ #endif
+ 
+ #endif /* _LINUX_ERR_H */
+-- 
+2.17.1
 
