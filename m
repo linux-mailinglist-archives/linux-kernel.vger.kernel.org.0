@@ -2,123 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2B2BE18EB08
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Mar 2020 18:49:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E197B18EB20
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Mar 2020 18:51:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726912AbgCVRtx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 22 Mar 2020 13:49:53 -0400
-Received: from mail-out.m-online.net ([212.18.0.10]:50645 "EHLO
-        mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726502AbgCVRtx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Mar 2020 13:49:53 -0400
-Received: from frontend01.mail.m-online.net (unknown [192.168.8.182])
-        by mail-out.m-online.net (Postfix) with ESMTP id 48llQQ1pF4z1rn32;
-        Sun, 22 Mar 2020 18:49:50 +0100 (CET)
-Received: from localhost (dynscan1.mnet-online.de [192.168.6.70])
-        by mail.m-online.net (Postfix) with ESMTP id 48llQQ0hnXz1qv4S;
-        Sun, 22 Mar 2020 18:49:50 +0100 (CET)
-X-Virus-Scanned: amavisd-new at mnet-online.de
-Received: from mail.mnet-online.de ([192.168.8.182])
-        by localhost (dynscan1.mail.m-online.net [192.168.6.70]) (amavisd-new, port 10024)
-        with ESMTP id 3-qeDV3uJFOP; Sun, 22 Mar 2020 18:49:48 +0100 (CET)
-X-Auth-Info: m8gazT5yJHbOX8AVW6gKdokOWg0xO2LJked0Vv1wmZc=
-Received: from [IPv6:::1] (unknown [195.140.253.167])
+        id S1727243AbgCVRut (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 22 Mar 2020 13:50:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33012 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726710AbgCVRur (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 22 Mar 2020 13:50:47 -0400
+Received: from archlinux (cpc149474-cmbg20-2-0-cust94.5-4.cable.virginm.net [82.4.196.95])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.mnet-online.de (Postfix) with ESMTPSA;
-        Sun, 22 Mar 2020 18:49:48 +0100 (CET)
-Subject: Re: [PATCH] mtd: rawnand: denali: add more delays before latching
- incoming data
-To:     Masahiro Yamada <masahiroy@kernel.org>
-Cc:     Miquel Raynal <miquel.raynal@bootlin.com>,
-        linux-mtd <linux-mtd@lists.infradead.org>,
-        Richard Weinberger <richard@nod.at>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <20200316104307.1891-1-yamada.masahiro@socionext.com>
- <20200320181159.5004099f@xps13>
- <2d02c851-4249-053c-99e9-69b209bffad2@denx.de>
- <CAK7LNAR5_uCmfmxAduMRxnBNzhtCwNR65OJ__AdZsNz2iiNJWA@mail.gmail.com>
-From:   Marek Vasut <marex@denx.de>
-Message-ID: <727b7c26-a57a-6aec-ebba-57c215a5b901@denx.de>
-Date:   Sun, 22 Mar 2020 18:49:47 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        by mail.kernel.org (Postfix) with ESMTPSA id A1FC5206C3;
+        Sun, 22 Mar 2020 17:50:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1584899446;
+        bh=Sh7L3UieGYgixm8GAYfakbok0Y3K+sHMc1ocIK9XGkg=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=ktftY6ofPak9V2HY5dfbS30wwGib13PT/8ptEYmPwtilPfKvU1P0KmPJUtDPaf0XO
+         5N8GybHQEcLNsSyOqaovwArE4vDlxcnzseasiGCYzq1CrDO4iLJLuFsZISf9XR8B+a
+         /Xw72O8RB+XdYs3bCgvjyN5wkKoeQfLDG+oFv3to=
+Date:   Sun, 22 Mar 2020 17:50:42 +0000
+From:   Jonathan Cameron <jic23@kernel.org>
+To:     Rohit Sarkar <rohitsarkar5398@gmail.com>
+Cc:     linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        alexandru.Ardelean@analog.com, dragos.bogdan@analog.com,
+        Matt Ranostay <matt.ranostay@konsulko.com>
+Subject: Re: [PATCH v2] iio: health: max30100: use generic property handler
+Message-ID: <20200322175042.7903862d@archlinux>
+In-Reply-To: <5e6e48dd.1c69fb81.11507.523e@mx.google.com>
+References: <5e6e48dd.1c69fb81.11507.523e@mx.google.com>
+X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <CAK7LNAR5_uCmfmxAduMRxnBNzhtCwNR65OJ__AdZsNz2iiNJWA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 3/22/20 6:42 PM, Masahiro Yamada wrote:
-> On Sat, Mar 21, 2020 at 2:15 AM Marek Vasut <marex@denx.de> wrote:
->>
->> On 3/20/20 6:11 PM, Miquel Raynal wrote:
->>> Hi Marek,
->>>
->>> Masahiro Yamada <yamada.masahiro@socionext.com> wrote on Mon, 16 Mar
->>> 2020 19:43:07 +0900:
->>>
->>>> The Denali IP have several registers to specify how many clock cycles
->>>> should be waited between falling/rising signals. You can improve the
->>>> NAND access performance by programming these registers with optimized
->>>> values.
->>>>
->>>> Because struct nand_sdr_timings represents the device requirement
->>>> in pico seconds, denali_setup_data_interface() computes the register
->>>> values by dividing the device timings with the clock period.
->>>>
->>>> Marek Vasut reported this driver in the latest kernel does not work
->>>> on his SOCFPGA board. (The on-board NAND chip is mode 5)
->>>>
->>>> The suspicious parameter is acc_clks, so this commit relaxes it.
->>>>
->>>> The Denali NAND Flash Memory Controller User's Guide describes this
->>>> register as follows:
->>>>
->>>>   acc_clks
->>>>     signifies the number of bus interface clk_x clock cycles,
->>>>     controller should wait from read enable going low to sending
->>>>     out a strobe of clk_x for capturing of incoming data.
->>>>
->>>> Currently, acc_clks is calculated only based on tREA, the delay on the
->>>> chip side. This does not include additional delays that come from the
->>>> data path on the PCB and in the SoC, load capacity of the pins, etc.
->>>>
->>>> This relatively becomes a big factor on faster timing modes like mode 5.
->>>>
->>>> Before supporting the ->setup_data_interface() hook (e.g. Linux 4.12),
->>>> the Denali driver hacks acc_clks in a couple of ways [1] [2] to support
->>>> the timing mode 5.
->>>>
->>>> We would not go back to the hard-coded acc_clks, but we need to include
->>>> this factor into the delay somehow. Let's say the amount of the additional
->>>> delay is 10000 pico sec.
->>>>
->>>> In the new calculation, acc_clks is determined by timings->tREA_max +
->>>> data_setup_on_host.
->>>>
->>>> Also, prolong the RE# low period to make sure the data hold is met.
->>>>
->>>> Finally, re-center the data latch timing for extra safety.
->>>>
->>>> [1] https://github.com/torvalds/linux/blob/v4.12/drivers/mtd/nand/denali.c#L276
->>>> [2] https://github.com/torvalds/linux/blob/v4.12/drivers/mtd/nand/denali.c#L282
->>>>
->>>> Reported-by: Marek Vasut <marex@denx.de>
->>>> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
->>>> ---
->>>
->>> Can you please give this patch a try and report the result?
->>
->> It's on my list, don't worry.
-> 
-> 
-> Preferably, please test v2.
+On Sun, 15 Mar 2020 20:55:12 +0530
+Rohit Sarkar <rohitsarkar5398@gmail.com> wrote:
 
-Yes, I see the V2.
+> Instead of of_property_read_xxx use device_property_read_xxx as it is
+> compatible with ACPI too as opposed to only device tree.
+> 
+> Signed-off-by: Rohit Sarkar <rohitsarkar5398@gmail.com>
+
+Looks good to me.
+
+Applied to the togreg branch of iio.git and pushed out as testing for
+the autobuilders to play with them.
+
+Thanks,
+
+Jonathan
+
+> ---
+> Changelog
+> v1 -> v2
+> - remove of_match_ptr to make it possible to use PRP0001 ACPI based
+>   bindings
+>  drivers/iio/health/max30100.c | 7 +++----
+>  1 file changed, 3 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/iio/health/max30100.c b/drivers/iio/health/max30100.c
+> index 84010501762d..546fc37ad75d 100644
+> --- a/drivers/iio/health/max30100.c
+> +++ b/drivers/iio/health/max30100.c
+> @@ -16,7 +16,7 @@
+>  #include <linux/irq.h>
+>  #include <linux/i2c.h>
+>  #include <linux/mutex.h>
+> -#include <linux/of.h>
+> +#include <linux/property.h>
+>  #include <linux/regmap.h>
+>  #include <linux/iio/iio.h>
+>  #include <linux/iio/buffer.h>
+> @@ -267,11 +267,10 @@ static int max30100_get_current_idx(unsigned int val, int *reg)
+>  static int max30100_led_init(struct max30100_data *data)
+>  {
+>  	struct device *dev = &data->client->dev;
+> -	struct device_node *np = dev->of_node;
+>  	unsigned int val[2];
+>  	int reg, ret;
+>  
+> -	ret = of_property_read_u32_array(np, "maxim,led-current-microamp",
+> +	ret = device_property_read_u32_array(dev, "maxim,led-current-microamp",
+>  					(unsigned int *) &val, 2);
+>  	if (ret) {
+>  		/* Default to 24 mA RED LED, 50 mA IR LED */
+> @@ -502,7 +501,7 @@ MODULE_DEVICE_TABLE(of, max30100_dt_ids);
+>  static struct i2c_driver max30100_driver = {
+>  	.driver = {
+>  		.name	= MAX30100_DRV_NAME,
+> -		.of_match_table	= of_match_ptr(max30100_dt_ids),
+> +		.of_match_table	= max30100_dt_ids,
+>  	},
+>  	.probe		= max30100_probe,
+>  	.remove		= max30100_remove,
+
