@@ -2,160 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0560318EA9B
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Mar 2020 17:57:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 26B3118EAA2
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Mar 2020 18:01:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726710AbgCVQ5J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 22 Mar 2020 12:57:09 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:40838 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725785AbgCVQ5I (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Mar 2020 12:57:08 -0400
-Received: by mail-pf1-f193.google.com with SMTP id l184so6235905pfl.7
-        for <linux-kernel@vger.kernel.org>; Sun, 22 Mar 2020 09:57:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=dc2ft7jmj6hxFB83CfxE8r8hUsUgGlvpHZTaLQ9Mj8c=;
-        b=abYLlraReyPJ1+n1SLVb1EZKISahqek0PA2wFE0h+NbfYdSVu980mfLzvdGwJk6IXS
-         HHscNptr41y2v29Wj1Dj8cKpGcarslk7RotihDl0CGHLtiS+wbNaep63ZXK+f9s/ioiC
-         KVNkSPc2TmLWA/o9l6AnHdlXQPiaJ0npLgEw4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=dc2ft7jmj6hxFB83CfxE8r8hUsUgGlvpHZTaLQ9Mj8c=;
-        b=JIpbYKiBVzbKPIfb248Er+L+96e+siO10dKGoniICvWFedPvmsScDerH2Az7wbnHaw
-         LDsZVy78Sm/t8d1Xj/1358QVjnBehJAEGGLFXCJZ8baS2euuAO/SYLQdeGwlSluL5ppr
-         lp439kgh9VzHCm2Bq6oRZW7TNc04av3syfknXA7hSC375r6z5ldkg2W+8MZtqJ18hu/t
-         SS0oF2bEK+UzD37B2CNY/bfES6pQ0/3+wP6ZXpexC9RqhzIWAPJ78nzkO+afhm0tqvlG
-         HnLCFYRs4puU1gVwFYbrx7FC/DR31jEQVDrSirsdOBlNnzn7VXNZoG23geDNijpIEv9Y
-         eLAg==
-X-Gm-Message-State: ANhLgQ2znIN0XdZ7qFMfGMDwW0mO+eqgW8bgiy8/FcCn/t61g/ZFw14W
-        Ax3VD5X/1vx8DqigSj4r7wuH3g==
-X-Google-Smtp-Source: ADFU+vuvlYyKKsqi5xEyU7cb8qW3ImSL8Yy96K5kakEKiPLla3VrlEvzBr6kjH1Lyejqj8NIlEZceg==
-X-Received: by 2002:a63:2323:: with SMTP id j35mr17960882pgj.440.1584896225995;
-        Sun, 22 Mar 2020 09:57:05 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id x24sm2124386pfn.140.2020.03.22.09.57.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 22 Mar 2020 09:57:04 -0700 (PDT)
-Date:   Sun, 22 Mar 2020 09:57:03 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk,
-        glider@google.com, arnd@arndb.de, gregkh@linuxfoundation.org,
-        linux-kernel@vger.kernel.org, rafael@kernel.org,
-        syzbot+fcab69d1ada3e8d6f06b@syzkaller.appspotmail.com,
-        syzkaller-bugs@googlegroups.com
-Subject: Re: [PATCH] libfs: fix infoleak in simple_attr_read()
-Message-ID: <202003220954.24E1E2EB5E@keescook>
-References: <CAG_fn=WvVp7Nxm5E+1dYs4guMYUV8D1XZEt_AZFF6rAQEbbAeg@mail.gmail.com>
- <20200308023849.988264-1-ebiggers@kernel.org>
+        id S1726666AbgCVRBk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 22 Mar 2020 13:01:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42986 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725881AbgCVRBk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 22 Mar 2020 13:01:40 -0400
+Received: from archlinux (cpc149474-cmbg20-2-0-cust94.5-4.cable.virginm.net [82.4.196.95])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D49FF20724;
+        Sun, 22 Mar 2020 17:01:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1584896499;
+        bh=fRgZZMF3O8FsJEBNZuwdEDytSWq+gORzarwQbFC502M=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=icTarVVZBn8HYnGaH7DB2idV9R5zd0ChanKmPcbwcm+MUn6QvqZVMti4e75xzTDDc
+         EO8N+2l3FlE58AzsWiD2tqjxHBf09vfYEeg0cTnHHB2RcK6otA4nGfuz0uAcRd4Z7i
+         qoiBKz44XQNNjqLn77Kx6gyYSO3EGUolGKyyGzcU=
+Date:   Sun, 22 Mar 2020 17:01:31 +0000
+From:   Jonathan Cameron <jic23@kernel.org>
+To:     Alexandru Ardelean <alexandru.ardelean@analog.com>
+Cc:     <linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <lars@metafoo.de>, <andriy.shevchenko@linux.intel.com>
+Subject: Re: [PATCH v2] iio: buffer: re-introduce bitmap_zalloc() for
+ trialmask
+Message-ID: <20200322170131.3e83f0bd@archlinux>
+In-Reply-To: <20200321085956.11213-1-alexandru.ardelean@analog.com>
+References: <20200317123621.27722-1-alexandru.ardelean@analog.com>
+        <20200321085956.11213-1-alexandru.ardelean@analog.com>
+X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200308023849.988264-1-ebiggers@kernel.org>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Mar 07, 2020 at 06:38:49PM -0800, Eric Biggers wrote:
-> From: Eric Biggers <ebiggers@google.com>
+On Sat, 21 Mar 2020 10:59:56 +0200
+Alexandru Ardelean <alexandru.ardelean@analog.com> wrote:
+
+> Commit 3862828a903d3 ("iio: buffer: Switch to bitmap_zalloc()") introduced
+> bitmap_alloc(), but commit 20ea39ef9f2f9 ("iio: Fix scan mask selection")
+> reverted it.
 > 
-> Reading from a debugfs file at a nonzero position, without first reading
-> at position 0, leaks uninitialized memory to userspace.
+> This change adds it back. The only difference is that it's adding
+> bitmap_zalloc(). There might be some changes later that would require
+> initializing it to zero. In any case, now it's already zero-ing the
+> trialmask.
 > 
-> It's a bit tricky to do this, since lseek() and pread() aren't allowed
-> on these files, and write() doesn't update the position on them.  But
-> writing to them with splice() *does* update the position:
-> 
-> 	#define _GNU_SOURCE 1
-> 	#include <fcntl.h>
-> 	#include <stdio.h>
-> 	#include <unistd.h>
-> 	int main()
-> 	{
-> 		int pipes[2], fd, n, i;
-> 		char buf[32];
-> 
-> 		pipe(pipes);
-> 		write(pipes[1], "0", 1);
-> 		fd = open("/sys/kernel/debug/fault_around_bytes", O_RDWR);
-> 		splice(pipes[0], NULL, fd, NULL, 1, 0);
-> 		n = read(fd, buf, sizeof(buf));
-> 		for (i = 0; i < n; i++)
-> 			printf("%02x", buf[i]);
-> 		printf("\n");
-> 	}
-> 
-> Output:
-> 	5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a30
-> 
-> Fix the infoleak by making simple_attr_read() always fill
-> simple_attr::get_buf if it hasn't been filled yet.
-> 
-> Reported-by: syzbot+fcab69d1ada3e8d6f06b@syzkaller.appspotmail.com
-> Reported-by: Alexander Potapenko <glider@google.com>
-> Fixes: acaefc25d21f ("[PATCH] libfs: add simple attribute files")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Eric Biggers <ebiggers@google.com>
+> Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> Signed-off-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
 
-Yikes, that's an important fix!
+Applied to the togreg branch of iio.git and pushed out as testing
+for the autobuilders to poke it.
 
-Acked-by: Kees Cook <keescook@chromium.org>
+Thanks,
 
-Luckily (as Alexander mentioned too), most distros make debugfs
-non-accessible by non-root (I hope):
-
-$ ls -lda /sys/kernel/debug
-drwx------ 39 root root 0 Jan  8 09:10 /sys/kernel/debug/
-
-That function is also exposed via DEFINE_SIMPLE_ATTRIBUTE(), but those
-users appear to also be mostly (all?) debugfs too.
-
-And, just to note, for v5.3 and later, this would be fully mitigated by
-booting with "init_on_alloc=1".
-
--Kees
-
+Jonathan
 > ---
->  fs/libfs.c | 8 +++++---
->  1 file changed, 5 insertions(+), 3 deletions(-)
 > 
-> diff --git a/fs/libfs.c b/fs/libfs.c
-> index c686bd9caac6..3759fbacf522 100644
-> --- a/fs/libfs.c
-> +++ b/fs/libfs.c
-> @@ -891,7 +891,7 @@ int simple_attr_open(struct inode *inode, struct file *file,
->  {
->  	struct simple_attr *attr;
+> Changelog v1 -> v2:
+> * add 'Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>' 
+> * re-send from an Analog server; GMail changed the author to @gmail.com
+> 
+>  drivers/iio/industrialio-buffer.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+> 
+> diff --git a/drivers/iio/industrialio-buffer.c b/drivers/iio/industrialio-buffer.c
+> index 4ada5592aa2b..5ff34ce8b6a2 100644
+> --- a/drivers/iio/industrialio-buffer.c
+> +++ b/drivers/iio/industrialio-buffer.c
+> @@ -316,8 +316,7 @@ static int iio_scan_mask_set(struct iio_dev *indio_dev,
+>  	const unsigned long *mask;
+>  	unsigned long *trialmask;
 >  
-> -	attr = kmalloc(sizeof(*attr), GFP_KERNEL);
-> +	attr = kzalloc(sizeof(*attr), GFP_KERNEL);
->  	if (!attr)
+> -	trialmask = kcalloc(BITS_TO_LONGS(indio_dev->masklength),
+> -			    sizeof(*trialmask), GFP_KERNEL);
+> +	trialmask = bitmap_zalloc(indio_dev->masklength, GFP_KERNEL);
+>  	if (trialmask == NULL)
 >  		return -ENOMEM;
->  
-> @@ -931,9 +931,11 @@ ssize_t simple_attr_read(struct file *file, char __user *buf,
->  	if (ret)
->  		return ret;
->  
-> -	if (*ppos) {		/* continued read */
-> +	if (*ppos && attr->get_buf[0]) {
-> +		/* continued read */
->  		size = strlen(attr->get_buf);
-> -	} else {		/* first read */
-> +	} else {
-> +		/* first read */
->  		u64 val;
->  		ret = attr->get(attr->data, &val);
->  		if (ret)
-> -- 
-> 2.25.1
-> 
+>  	if (!indio_dev->masklength) {
 
--- 
-Kees Cook
