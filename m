@@ -2,113 +2,53 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E03B818ED51
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Mar 2020 00:38:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A048318ED5B
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Mar 2020 00:48:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726913AbgCVXiA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 22 Mar 2020 19:38:00 -0400
-Received: from bilbo.ozlabs.org ([203.11.71.1]:34741 "EHLO ozlabs.org"
+        id S1726936AbgCVXsp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 22 Mar 2020 19:48:45 -0400
+Received: from n7.nabble.com ([162.253.133.57]:53852 "EHLO n7.nabble.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726832AbgCVXiA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Mar 2020 19:38:00 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 48lv843Rdjz9sPF;
-        Mon, 23 Mar 2020 10:37:55 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1584920276;
-        bh=pB/ij0LQ+hU9R0vbeJpfiRSVLQIXMR/HzdLDcVicW6A=;
-        h=Date:From:To:Cc:Subject:From;
-        b=NC4J8tcMAabGrVma91oEIkvAInIZqsunZTcjrDh40RkMwcTQjumEvzpBypgcfMt1n
-         qx5e8D92ptB43Gs5XTuBbjHXeLtbnLkNxYci8bAZ/hPtFw4EZpQnBhCa4m/UnPElTr
-         g9b7rn3R9uBlkzHda06YC6h44bOSmKInZ1Tvyb8VZvVWGrESSyrWloRtMVrFfIO0Vh
-         qDny1qk9Y8f4FXLf5qvGjnq4sWxpSak9PfqdJYbMYjtzGYgLJvxE/IWLVmIh3HY0JO
-         4/yAi5vMyCYjWNkI8UCs6ZBVLS3OmEnc2XeUDk8Bx9sEl+v7W9adqDY7helWOrUEl4
-         wsgurRTggO53A==
-Date:   Mon, 23 Mar 2020 10:37:53 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Guenter Roeck <linux@roeck-us.net>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Grant Peltier <grantpeltier93@gmail.com>
-Subject: linux-next: build failure after merge of the hwmon-staging tree
-Message-ID: <20200323103753.09474a57@canb.auug.org.au>
+        id S1726872AbgCVXsp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 22 Mar 2020 19:48:45 -0400
+X-Greylist: delayed 347 seconds by postgrey-1.27 at vger.kernel.org; Sun, 22 Mar 2020 19:48:45 EDT
+Received: from n7.nabble.com (localhost [127.0.0.1])
+        by n7.nabble.com (Postfix) with ESMTP id 66E4214AF6C82
+        for <linux-kernel@vger.kernel.org>; Sun, 22 Mar 2020 16:42:58 -0700 (MST)
+Date:   Sun, 22 Mar 2020 16:42:58 -0700 (MST)
+From:   itpenguin <info@itpenguin.de>
+To:     linux-kernel@vger.kernel.org
+Message-ID: <1584920578289-0.post@n7.nabble.com>
+In-Reply-To: <0c5a4ca9d877c3d5b5ed57b96bfc0532@teksavvy.com>
+References: <505f039bc185286b1295600807741499@teksavvy.com> <1444850729.6312.7.camel@falcon.homelinux.org> <410706506d73adeefedf5b6b21dcc6af@teksavvy.com> <1A7043D5F58CCB44A599DFD55ED4C9484693770E@fmsmsx115.amr.corp.intel.com> <e33a9301c7e02385c95ef36cd2dbd226@teksavvy.com> <1A7043D5F58CCB44A599DFD55ED4C9484693803A@fmsmsx115.amr.corp.intel.com> <8a2fbe014542329c06e09d7747faf50d@teksavvy.com> <1A7043D5F58CCB44A599DFD55ED4C9484693815B@fmsmsx115.amr.corp.intel.com> <0c5a4ca9d877c3d5b5ed57b96bfc0532@teksavvy.com>
+Subject: Re: Re[6]: 3.4-rc smpboot: do_boot_cpu failed(-1) to wakeup CPU#1
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/s6EK36.+4ZLEWuS5Ky_s876";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/s6EK36.+4ZLEWuS5Ky_s876
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+I'm a little bit confused about this thread, because I'm facing a similiar
+problem on my system:
 
-Hi all,
+I have a CentOS 7.7 AltArch i386 installation:
+Linux erbusze 3.10.0-1062.18.1.el7.centos.plus.i686 #1 SMP Wed Mar 18
+12:57:13 UTC 2020 i686 i686 i386 GNU/Linux
 
-After merging the hwmon-staging tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+on this CPU:
+smpboot: CPU0: Intel(R) Core(TM) i7-6700 CPU @ 3.40GHz (fam: 06, model: 5e,
+stepping: 03)
 
-drivers/hwmon/pmbus/isl68137.c: In function 'raa_dmpvr2_read_word_data':
-drivers/hwmon/pmbus/isl68137.c:125:9: error: too few arguments to function =
-'pmbus_read_word_data'
-  125 |   ret =3D pmbus_read_word_data(client, page, RAA_DMPVR2_READ_VMON);
-      |         ^~~~~~~~~~~~~~~~~~~~
-In file included from drivers/hwmon/pmbus/isl68137.c:19:
-drivers/hwmon/pmbus/pmbus.h:466:5: note: declared here
-  466 | int pmbus_read_word_data(struct i2c_client *client, int page, int p=
-hase,
-      |     ^~~~~~~~~~~~~~~~~~~~
-drivers/hwmon/pmbus/isl68137.c: In function 'isl68137_probe':
-drivers/hwmon/pmbus/isl68137.c:199:24: error: assignment to 'int (*)(struct=
- i2c_client *, int,  int,  int)' from incompatible pointer type 'int (*)(st=
-ruct i2c_client *, int,  int)' [-Werror=3Dincompatible-pointer-types]
-  199 |   info->read_word_data =3D raa_dmpvr2_read_word_data;
-      |                        ^
-drivers/hwmon/pmbus/isl68137.c:203:24: error: assignment to 'int (*)(struct=
- i2c_client *, int,  int,  int)' from incompatible pointer type 'int (*)(st=
-ruct i2c_client *, int,  int)' [-Werror=3Dincompatible-pointer-types]
-  203 |   info->read_word_data =3D raa_dmpvr2_read_word_data;
-      |                        ^
-drivers/hwmon/pmbus/isl68137.c:206:24: error: assignment to 'int (*)(struct=
- i2c_client *, int,  int,  int)' from incompatible pointer type 'int (*)(st=
-ruct i2c_client *, int,  int)' [-Werror=3Dincompatible-pointer-types]
-  206 |   info->read_word_data =3D raa_dmpvr2_read_word_data;
-      |                        ^
-drivers/hwmon/pmbus/isl68137.c:216:24: error: assignment to 'int (*)(struct=
- i2c_client *, int,  int,  int)' from incompatible pointer type 'int (*)(st=
-ruct i2c_client *, int,  int)' [-Werror=3Dincompatible-pointer-types]
-  216 |   info->read_word_data =3D raa_dmpvr2_read_word_data;
-      |                        ^
+with these boot errors:
+[    0.160538] Kernel panic - not syncing: Fatal exception
+[   10.166450] smpboot: do_boot_cpu failed(-1) to wakeup CPU#1
 
-Caused by commit
+I tried several different values of cpu_init_udelay in the kernel command
+boot line, but with no changes to the described behaviour.
 
-  96c72647bc37 ("hwmon: (pmbus) add support for 2nd Gen Renesas digital mul=
-tiphase")
 
-I have used the version of the hwmon-staging from next-20200320 for today.
 
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/s6EK36.+4ZLEWuS5Ky_s876
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl539tEACgkQAVBC80lX
-0GzadQf/WXl0ZzFl0ylfsDmaQRTjRRlXWFpbwMMnB8CmlUQPACBj6pmAMm3LazUs
-XC9XkMYnxNYu/G2eaxeKtWL3hfclhZefVt72/y4Qj7AVm9vobWzGUNhsR+PJz5gt
-D0LpUqRsx4w/utS8JYykl5EJJN36QTMabWOCXoPVK3pCOuXpyGsMjESdrODm1Bi+
-eNdeFK9g2IWRDHq/TjhJObktaXx7q6MlU25ao4xYZMzBIxGpkKEluXI5dbHUBqCj
-/rv2dlQVl/pFUdVYMeu3OB584Uh9GYQ+Mg8NSO5xrGcWhtNX5PtSj7Bs3hny75wu
-xajbo1/YiKA5JGyjJGizaK8S67mf9w==
-=x4Uq
------END PGP SIGNATURE-----
-
---Sig_/s6EK36.+4ZLEWuS5Ky_s876--
+--
+Sent from: http://linux-kernel.2935.n7.nabble.com/
