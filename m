@@ -2,92 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3480118ECEE
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Mar 2020 23:30:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 61C6218ED02
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Mar 2020 23:34:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727046AbgCVWah (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 22 Mar 2020 18:30:37 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:37016 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726945AbgCVWae (ORCPT
+        id S1726916AbgCVWd7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 22 Mar 2020 18:33:59 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:47612 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726809AbgCVWd7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Mar 2020 18:30:34 -0400
-Received: by mail-wr1-f67.google.com with SMTP id w10so14682033wrm.4;
-        Sun, 22 Mar 2020 15:30:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=6QvXfJZlpggMK4ANi6m9pBKzrWALkcbq78l8N8OifPg=;
-        b=iNlo842b2IZbB4k4GNg40U38B5BAXAYpbvKeEk7Dc/+bOAjMapsHryR3aodBMAu0cw
-         EhX70aCHLZUKf86vdEDJn4JFhLVF2jntWk/OioFzw+qYk0hrnj5XNCraPCdso4646mcF
-         jglG6rqrp0Aq1Oqnl7aNsiqiZGSc4c/o43i11Gj1zRCQi5S7eLbfX3hYpnVMePdh3AgH
-         cIJLy+s08J2uO/rTN1btWrg9TCj6fthHcbyW+ackw+jRWPBetHTc0pDig4d3A0bgZrEL
-         Ev6XinvZkDFEQq/CUCyjqNxCU+6DRvWHByc3cJSp3Rw+UtYv6/FFiFLeVcOgyLByp+bL
-         sYxA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=6QvXfJZlpggMK4ANi6m9pBKzrWALkcbq78l8N8OifPg=;
-        b=pb8HVAAhl9uqmFGhLAW7M7hz1ehXY7NQtz6hSrsZ8uxP/5jMsJH4Sre4IVpYUbVcw5
-         p4z60KlIEfYyiwiylUNvebB6Semu/2DWlPSg9EzXh1Pl7xtweIheysCT7gWTmYbvlEBT
-         2WqnscZnLk9wCzAVY5MlDYET7S+7Dng7CRMt9zLtM7bwmyRvCdxkjcX3F9CAZNRW5n5y
-         Jvvh+lOv8Y2bwIOJiSTKVXIkCu6xvHWaIa/dZkUr9QHo2SJ2LkXv/tm003z9HQilrX80
-         7C35QNuVtatxGTLLezVgzYnW5xDfcAiJmc31K4q3gkncd80mtXVMq8hq8PRkLdPqwwEM
-         wivw==
-X-Gm-Message-State: ANhLgQ0e/MxTzPv5xNZes+tTMPP3Oz1X/WOHnAV2YMT2IzXlqYV87Ran
-        jMYdC5xUPulUQxjikjb+FfQ=
-X-Google-Smtp-Source: ADFU+vtdKjMEZ3M5NceBBY7KjXw4/hbXmYf/MhFtXlDNzKjzmO9VqLfZH/7KCuV2EVVjaBeh5Dls6w==
-X-Received: by 2002:adf:eb51:: with SMTP id u17mr27376880wrn.29.1584916231767;
-        Sun, 22 Mar 2020 15:30:31 -0700 (PDT)
-Received: from localhost.localdomain (p5DCFFFE5.dip0.t-ipconnect.de. [93.207.255.229])
-        by smtp.gmail.com with ESMTPSA id p13sm8060517wru.3.2020.03.22.15.30.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 22 Mar 2020 15:30:31 -0700 (PDT)
-From:   Saravanan Sekar <sravanhome@gmail.com>
-To:     lee.jones@linaro.org, robh+dt@kernel.org, jic23@kernel.org,
-        knaack.h@gmx.de, lars@metafoo.de, pmeerw@pmeerw.net, sre@kernel.org
-Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-iio@vger.kernel.org, linux-pm@vger.kernel.org,
-        Saravanan Sekar <sravanhome@gmail.com>
-Subject: [PATCH v3 5/5] MAINTAINERS: Add entry for mp2629 Battery Charger driver
-Date:   Sun, 22 Mar 2020 23:30:16 +0100
-Message-Id: <20200322223016.11509-6-sravanhome@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200322223016.11509-1-sravanhome@gmail.com>
-References: <20200322223016.11509-1-sravanhome@gmail.com>
+        Sun, 22 Mar 2020 18:33:59 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=zS+FVq9GRAqW8korIhuLbfacLrfQT3Nbm32pK6UBBgc=; b=RJgvyIj2PxYSWCGVEpK6gTGg/s
+        +rX4ZIHdy8MbnOdAOy+rdpiPLxePo/GhIpvRmhZXSuedinY7g+jwczuq4zxIFOEtJ1A2k/TjaZ1FV
+        SSHl7aBwkGX2nuyzzrjOwQEKStsafORwWMAC+D3Hybly/JkJqi9szuvm1yO4WzRzOWoVuhbcmSV5I
+        wd7LHXncK1GOiQFEW/enb9ikH6MpnZtEHhRTb1ocvVPi91KT81dtipHRnm4xXq7/trST69peXntw1
+        06xaLNePQu7/8kLriu1ISEBmE0y5MwH6O0omcRd6kkDkNotJlRm1OHXgIlelr8GRS8n3gPaiYhtQA
+        aI33aYOA==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jG99N-0001i9-0j; Sun, 22 Mar 2020 22:32:57 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id A35803010CF;
+        Sun, 22 Mar 2020 23:32:49 +0100 (CET)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 6464C299F245C; Sun, 22 Mar 2020 23:32:49 +0100 (CET)
+Date:   Sun, 22 Mar 2020 23:32:49 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Davidlohr Bueso <dave@stgolabs.net>
+Cc:     tglx@linutronix.de, arnd@arndb.de, balbi@kernel.org,
+        bhelgaas@google.com, bigeasy@linutronix.de, davem@davemloft.net,
+        gregkh@linuxfoundation.org, joel@joelfernandes.org,
+        kurt.schwemmer@microsemi.com, kvalo@codeaurora.org,
+        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+        linux-usb@vger.kernel.org, linux-wireless@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, logang@deltatee.com,
+        mingo@kernel.org, mpe@ellerman.id.au, netdev@vger.kernel.org,
+        oleg@redhat.com, paulmck@kernel.org, rdunlap@infradead.org,
+        rostedt@goodmis.org, torvalds@linux-foundation.org,
+        will@kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
+        Davidlohr Bueso <dbueso@suse.de>
+Subject: Re: [PATCH 18/15] kvm: Replace vcpu->swait with rcuwait
+Message-ID: <20200322223249.GK20696@hirez.programming.kicks-ass.net>
+References: <20200318204302.693307984@linutronix.de>
+ <20200320085527.23861-1-dave@stgolabs.net>
+ <20200320085527.23861-3-dave@stgolabs.net>
+ <20200320125455.GE20696@hirez.programming.kicks-ass.net>
+ <20200322163317.mh4sygr7xcjptmjp@linux-p48b>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200322163317.mh4sygr7xcjptmjp@linux-p48b>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add MAINTAINERS entry for Monolithic Power Systems mp2629 Charger driver.
+On Sun, Mar 22, 2020 at 09:33:17AM -0700, Davidlohr Bueso wrote:
+> On Fri, 20 Mar 2020, Peter Zijlstra wrote:
+> 
+> > On Fri, Mar 20, 2020 at 01:55:26AM -0700, Davidlohr Bueso wrote:
+> > > -	swait_event_interruptible_exclusive(*wq, ((!vcpu->arch.power_off) &&
+> > > -				       (!vcpu->arch.pause)));
+> > > +	rcuwait_wait_event(*wait,
+> > > +			   (!vcpu->arch.power_off) && (!vcpu->arch.pause),
+> > > +			   TASK_INTERRUPTIBLE);
+> > 
+> > > -	for (;;) {
+> > > -		prepare_to_swait_exclusive(&vcpu->wq, &wait, TASK_INTERRUPTIBLE);
+> > > -
+> > > -		if (kvm_vcpu_check_block(vcpu) < 0)
+> > > -			break;
+> > > -
+> > > -		waited = true;
+> > > -		schedule();
+> > > -	}
+> > > -
+> > > -	finish_swait(&vcpu->wq, &wait);
+> > > +	rcuwait_wait_event(&vcpu->wait,
+> > > +			   (block_check = kvm_vcpu_check_block(vcpu)) < 0,
+> > > +			   TASK_INTERRUPTIBLE);
+> > 
+> > Are these yet more instances that really want to be TASK_IDLE ?
+> 
+> Hmm probably as it makes sense for a blocked vcpu not to be contributing to
+> the loadavg. So if this is the only reason to use interruptible, then yes we
+> ought to change it.
+> 
+> However, I'll make this a separate patch, given this (ab)use isn't as obvious
+> as the PS3 case, which is a kthread and therefore signals are masked.
 
-Signed-off-by: Saravanan Sekar <sravanhome@gmail.com>
----
- MAINTAINERS | 5 +++++
- 1 file changed, 5 insertions(+)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 32a95d162f06..0f82d5a7a614 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -11358,10 +11358,15 @@ F:	drivers/tty/mxser.*
- MONOLITHIC POWER SYSTEM PMIC DRIVER
- M:	Saravanan Sekar <sravanhome@gmail.com>
- S:	Maintained
-+F:	Documentation/devicetree/bindings/mfd/mps,mp2629.yaml
- F:	Documentation/devicetree/bindings/regulator/mps,mp*.yaml
-+F:	drivers/iio/adc/mp2629_adc.c
-+F:	drivers/mfd/mp2629.c
-+F:	drivers/power/supply/mp2629_charger.c
- F:	drivers/regulator/mp5416.c
- F:	drivers/regulator/mpq7920.c
- F:	drivers/regulator/mpq7920.h
-+F:	include/linux/mfd/mp2629.h
- 
- MR800 AVERMEDIA USB FM RADIO DRIVER
- M:	Alexey Klimov <klimov.linux@gmail.com>
--- 
-2.17.1
-
+The thing that was a dead give-away was that the return value of the
+interruptible wait wasn't used.
