@@ -2,96 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8ECF218E7AD
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Mar 2020 09:59:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EC15C18E7BF
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Mar 2020 10:12:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726895AbgCVI7j (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 22 Mar 2020 04:59:39 -0400
-Received: from relay10.mail.gandi.net ([217.70.178.230]:56471 "EHLO
-        relay10.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725987AbgCVI7j (ORCPT
+        id S1726843AbgCVJMy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 22 Mar 2020 05:12:54 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:53942 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725987AbgCVJMx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Mar 2020 04:59:39 -0400
-Received: from localhost (lfbn-lyo-1-9-35.w86-202.abo.wanadoo.fr [86.202.105.35])
-        (Authenticated sender: alexandre.belloni@bootlin.com)
-        by relay10.mail.gandi.net (Postfix) with ESMTPSA id 26DDB24000B;
-        Sun, 22 Mar 2020 08:59:32 +0000 (UTC)
-Date:   Sun, 22 Mar 2020 09:59:31 +0100
-From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
-To:     Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
-        arm@kernel.org, soc@kernel.org
-Cc:     Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] ARM: at91: DT for 5.7
-Message-ID: <20200322085931.GA208770@piout.net>
+        Sun, 22 Mar 2020 05:12:53 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=TJrI/72OolCj0fyJBBsdmgL621cjAq707kYl/3sgaOE=; b=m8w2AT/g/c3Gy5hP6+GASiHSoJ
+        kCNFcjRYnHvnyVeh19O9WbN6E7jnixRqOxe3bWveDmmXxWiTNk0Xfss/U871xUqNa/g4QG6QAHnCS
+        LX/AtZ8M7mvYd+hQ4Z6/O8jrVHWEsxlMcbSJOdazw2Rc+rdNT2+RXpHle+yxNE7+Z4vaTceGAKQnH
+        MEyQz0pFQIgTACP5e+PKS6QnZTVddYGpFJ8RUfgNFJdO6qvnhTFAHD21MO5DAwJjBOg13p5vP58wL
+        zBev04E5hcTo/BgfBaQJJ5UGHhhFeo/ZhVUV+JicEPob6r/P+jxxHzwsxpfMY3rJH34Zs1tJc8uq4
+        7sziHuPg==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=worktop.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jFwey-0005Jk-9G; Sun, 22 Mar 2020 09:12:44 +0000
+Received: by worktop.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 3F62F983500; Sun, 22 Mar 2020 09:35:44 +0100 (CET)
+Date:   Sun, 22 Mar 2020 09:35:44 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Ian Rogers <irogers@google.com>
+Cc:     Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Andi Kleen <ak@linux.intel.com>,
+        Kan Liang <kan.liang@linux.intel.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Stephane Eranian <eranian@google.com>
+Subject: Re: [PATCH] perf test x86: address multiplexing in rdpmc test
+Message-ID: <20200322083544.GE2452@worktop.programming.kicks-ass.net>
+References: <20200321001400.245121-1-irogers@google.com>
+ <20200321134053.GJ20696@hirez.programming.kicks-ass.net>
+ <CAP-5=fXcHrh=uHmPj43=xYnikx0mHRWFQwMJa1q8yQ=opvSEDA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <CAP-5=fXcHrh=uHmPj43=xYnikx0mHRWFQwMJa1q8yQ=opvSEDA@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Arnd, Olof,
+On Sat, Mar 21, 2020 at 10:44:49AM -0700, Ian Rogers wrote:
+> On Sat, Mar 21, 2020 at 6:41 AM Peter Zijlstra <peterz@infradead.org> wrote:
+> >
+> > On Fri, Mar 20, 2020 at 05:14:00PM -0700, Ian Rogers wrote:
+> > > Counters may be being used for pinned or other events which inhibit the
+> > > instruction counter in the test from being scheduled - time_enabled > 0
+> > > but time_running == 0. This causes the test to fail with division by 0.
+> > > Add a sleep loop to ensure that the counter is run before computing
+> > > the count.
 
-Very few DT updates this cycle. I've filled in the google doc as you
-requested.
+> > > +
+> > > +                     if (running == 0) {
+> >
+> > This is not in fact the condition the Changelog calls out.
+> 
+> Not sure I follow. As in the multiplexing? It is exactly the condition
+> that time_running == 0.
 
-The following changes since commit bb6d3fb354c5ee8d6bde2d576eb7220ea09862b9:
-
-  Linux 5.6-rc1 (2020-02-09 16:08:48 -0800)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/at91/linux tags/at91-5.7-dt
-
-for you to fetch changes up to b8c2c052de210d23d83eb178fa030b541ca51842:
-
-  ARM: dts: at91: sama5d27_wlsom1_ek: add USB device node (2020-03-20 23:58:14 +0100)
-
-----------------------------------------------------------------
-AT91 DT for 5.7
-
- - Enable watchdog on sam9x60
- - Correct sama5d4/2 RTC compatibles
- - Add i2c gpio pinctrl to allow i2c recovery
-
-----------------------------------------------------------------
-Alexandre Belloni (2):
-      ARM: dts: at91: sama5d2: use correct rtc compatible
-      ARM: dts: at91: sama5d4: use correct rtc compatible
-
-Cristian Birsan (1):
-      ARM: dts: at91: sama5d27_wlsom1_ek: add USB device node
-
-Eugen Hristev (2):
-      ARM: dts: at91: sam9x60: add watchdog node
-      ARM: dts: at91: sam9x60ek: enable watchdog node
-
-Kamel Bouhara (3):
-      ARM: dts: at91: sama5d3: add i2c gpio pinctrl
-      ARM: dts: at91: sama5d4: add i2c gpio pinctrl
-      ARM: dts: at91: sama5d2: add i2c gpio pinctrl
-
-Rob Herring (1):
-      ARM: dts: at91: Kill off "simple-panel" compatibles
-
- arch/arm/boot/dts/at91-dvk_su60_somc_lcm.dtsi |  2 +-
- arch/arm/boot/dts/at91-sam9x60ek.dts          |  5 ++++
- arch/arm/boot/dts/at91-sama5d27_wlsom1_ek.dts | 12 +++++++++
- arch/arm/boot/dts/at91-sama5d2_ptc_ek.dts     | 33 ++++++++++++++++++++++---
- arch/arm/boot/dts/at91-sama5d2_xplained.dts   | 33 ++++++++++++++++++++++---
- arch/arm/boot/dts/at91-sama5d4_ma5d4evk.dts   |  2 +-
- arch/arm/boot/dts/at91sam9n12ek.dts           |  2 +-
- arch/arm/boot/dts/at91sam9x5dm.dtsi           |  2 +-
- arch/arm/boot/dts/sam9x60.dtsi                |  8 ++++++
- arch/arm/boot/dts/sama5d2.dtsi                |  2 +-
- arch/arm/boot/dts/sama5d3.dtsi                | 33 ++++++++++++++++++++++---
- arch/arm/boot/dts/sama5d4.dtsi                | 35 ++++++++++++++++++++++++---
- 12 files changed, 151 insertions(+), 18 deletions(-)
-
--- 
-Alexandre Belloni, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+I meant the condition should be 'enabled && !running'.
