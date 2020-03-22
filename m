@@ -2,121 +2,117 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B27E418E835
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Mar 2020 12:01:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D60C618E845
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Mar 2020 12:09:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727008AbgCVLBS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 22 Mar 2020 07:01:18 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:37580 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726936AbgCVLBS (ORCPT
+        id S1727016AbgCVLJN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 22 Mar 2020 07:09:13 -0400
+Received: from us-smtp-delivery-74.mimecast.com ([216.205.24.74]:50565 "EHLO
+        us-smtp-delivery-74.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726866AbgCVLJM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Mar 2020 07:01:18 -0400
-Received: by mail-wr1-f65.google.com with SMTP id w10so12932550wrm.4;
-        Sun, 22 Mar 2020 04:01:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=sSNfn1lOuwrdFcFfi180EAlddz36torDoaIxoG4z+2U=;
-        b=ri+n76E+3tHH8Z3EWDRFGOg52UBOIuh1YosaBsija/90WTG2WKxKUOKBNnnIgYpa8S
-         nF74tppOl3nSTC3mw4dszoys9PPkIVRdh0Q+VdMkWH4m6paGT6MXie2jmJdN/lV6csja
-         M+azlwzV3XG6UXsH9A2zeIhdLKLwTzuNWJUSIicFwQkaujfbYmbYTQVC2EDx0rL7e25G
-         jdZotnUuiVBz5dYL9dPzD7i4Eb3RwTRILrRr1aGOUlBc5SLWJXy0zhibuRPYoKC+x6NS
-         PXU6j4zMCJuIAJfVZVlF1NNxta4AbY6x7iEEa5PWsZ92iDwjT18ANYK/HD5EnapZ4YkI
-         lVyw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=sSNfn1lOuwrdFcFfi180EAlddz36torDoaIxoG4z+2U=;
-        b=IfMoWI7I43U6K8xuMdIPJAlVtRKC+lIWVKdnV+Ffy6b4CFZa6hVwUP+bP6VcqDO6H+
-         Im4B5ssBN6MM1W6bPyHIZNoGwpnQpOtMH7XRJRtbdcEde58IePBfqrNNATSXFwkqGFhi
-         UB6yblt9O8VoxPBdunHtmFAkcWNLeuRYf4eBcKKxSgJNxmz4WG98MUBUzzlyVUqr6Oe9
-         BEALv6ntRmjX+eHJLad/YlCVtcd2iRflqBsJKQX4YjhTeK5xxMSq9X8/A4YY2lrr1KkY
-         XUj9s1j9+ppec3DCZWV+dVcD2+R5sMTZhjf/9sIKzFYm57dmNZY22s3FGEWJ3sbLT1rt
-         XDmw==
-X-Gm-Message-State: ANhLgQ0HNU4pjZ3ngL5U3uJl63P2GDxEcLVrJ91GiVvohNXFXz6KQkec
-        h4B1KN+nh0ww4ZCDSO1Phyo/fr561wcOknIB85k=
-X-Google-Smtp-Source: ADFU+vsSBXMut+ZcU1fczh3pG4r8yPPPXaEt73HpCzUdEb+UaS8v/m5UKZuNuctmlE8iRS0oXgF7Gx/RJiLBK6bCOdc=
-X-Received: by 2002:a5d:674f:: with SMTP id l15mr4404734wrw.196.1584874876241;
- Sun, 22 Mar 2020 04:01:16 -0700 (PDT)
+        Sun, 22 Mar 2020 07:09:12 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1584875351;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type;
+        bh=UuVeC4/NGVly7qh8t4z6DXcT1v9hFLFYvhikXTFie/A=;
+        b=AzYsiaYzyMwyzXJiAz6ssrFyvtFgM0Pu68Xng9hX1gpZ1GtdbrXfSCNLafzqhYTMGGOcG5
+        W3lRppfEQ30TyQW67cnSnuromVLIdvFj3m4SXXV+COQycbdoUnhxIOzE7lr7x2gFBWckLP
+        KFxdb55Zx7t4ysixHLlJOGReN9MGJgo=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-311-zV-lPawhNWa3_kqsuXuZ7Q-1; Sun, 22 Mar 2020 07:09:06 -0400
+X-MC-Unique: zV-lPawhNWa3_kqsuXuZ7Q-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 8F208107ACC4;
+        Sun, 22 Mar 2020 11:09:04 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.40.192.62])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 670B05C1B2;
+        Sun, 22 Mar 2020 11:09:02 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+        oleg@redhat.com; Sun, 22 Mar 2020 12:09:04 +0100 (CET)
+Date:   Sun, 22 Mar 2020 12:09:01 +0100
+From:   Oleg Nesterov <oleg@redhat.com>
+To:     Andrew Morton <akpm@linux-foundation.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     Davidlohr Bueso <dave@stgolabs.net>,
+        Manfred Spraul <manfred@colorfullife.com>,
+        Markus Elfring <elfring@users.sourceforge.net>,
+        Yoji <yoji.fujihar.min@gmail.com>, linux-kernel@vger.kernel.org
+Subject: [PATCH] ipc/mqueue.c: change __do_notify() to bypass
+ check_kill_permission()
+Message-ID: <20200322110901.GA25108@redhat.com>
 MIME-Version: 1.0
-References: <20200304072730.9193-1-zhang.lyra@gmail.com> <20200304072730.9193-4-zhang.lyra@gmail.com>
- <158475317083.125146.1467485980949213245@swboyd.mtv.corp.google.com>
-In-Reply-To: <158475317083.125146.1467485980949213245@swboyd.mtv.corp.google.com>
-From:   Chunyan Zhang <zhang.lyra@gmail.com>
-Date:   Sun, 22 Mar 2020 19:00:39 +0800
-Message-ID: <CAAfSe-sQnZLn8J7Ct5OES=2PmT-nGT-_0zXxRaO=mcHVtgTcnQ@mail.gmail.com>
-Subject: Re: [PATCH v6 3/7] dt-bindings: clk: sprd: add bindings for sc9863a
- clock controller
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Mark Rutland <mark.rutland@arm.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        DTML <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Baolin Wang <baolin.wang7@gmail.com>,
-        Chunyan Zhang <chunyan.zhang@unisoc.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Stephen,
+Commit cc731525f26a ("signal: Remove kernel interal si_code magic")
+changed the value of SI_FROMUSER(SI_MESGQ), this means that mq_notify()
+no longer works if the sender doesn't have rights to send a signal.
 
-On Sat, 21 Mar 2020 at 09:12, Stephen Boyd <sboyd@kernel.org> wrote:
->
-> Quoting Chunyan Zhang (2020-03-03 23:27:26)
-> > From: Chunyan Zhang <chunyan.zhang@unisoc.com>
-> >
-> > add a new bindings to describe sc9863a clock compatible string.
-> >
-> > Signed-off-by: Chunyan Zhang <chunyan.zhang@unisoc.com>
-> [...]
-> > +examples:
-> > +  - |
-> > +    ap_clk: clock-controller@21500000 {
-> > +      compatible = "sprd,sc9863a-ap-clk";
-> > +      reg = <0 0x21500000 0 0x1000>;
-> > +      clocks = <&ext_26m>, <&ext_32k>;
-> > +      clock-names = "ext-26m", "ext-32k";
-> > +      #clock-cells = <1>;
-> > +    };
-> > +
-> > +  - |
-> > +    soc {
-> > +      #address-cells = <2>;
-> > +      #size-cells = <2>;
-> > +
-> > +      ap_ahb_regs: syscon@20e00000 {
-> > +        compatible = "sprd,sc9863a-glbregs", "syscon", "simple-mfd";
-> > +        reg = <0 0x20e00000 0 0x4000>;
-> > +        #address-cells = <1>;
-> > +        #size-cells = <1>;
-> > +        ranges = <0 0 0x20e00000 0x4000>;
-> > +
-> > +        apahb_gate: apahb-gate@0 {
->
-> Why do we need a node per "clk type" in the simple-mfd syscon? Can't we
-> register clks from the driver that matches the parent node and have that
-> driver know what sorts of clks are where? Sorry I haven't read the rest
-> of the patch series and I'm not aware if this came up before. If so,
-> please put details about this in the commit text.
+Change __do_notify() to use do_send_sig_info() instead of kill_pid_info()
+to avoid check_kill_permission().
 
-Please see the change logs after v2 in cover-letter.
+This needs the additional notify.sigev_signo != 0 check, shouldn't we
+change do_mq_notify() to deny sigev_signo == 0 ?
 
-Rob suggested us to put some clocks under syscon nodes, since these
-clocks have the same
-physical address base with the syscon;
+Reported-by: Yoji <yoji.fujihar.min@gmail.com>
+Fixes: cc731525f26a ("signal: Remove kernel interal si_code magic")
+Cc: stable <stable@vger.kernel.org>
+Signed-off-by: Oleg Nesterov <oleg@redhat.com>
+---
+ ipc/mqueue.c | 15 ++++++++++-----
+ 1 file changed, 10 insertions(+), 5 deletions(-)
 
-Thanks,
-Chunyan
+diff --git a/ipc/mqueue.c b/ipc/mqueue.c
+index 49a05ba3000d..3145fae162c1 100644
+--- a/ipc/mqueue.c
++++ b/ipc/mqueue.c
+@@ -775,12 +775,15 @@ static void __do_notify(struct mqueue_inode_info *info)
+ 	if (info->notify_owner &&
+ 	    info->attr.mq_curmsgs == 1) {
+ 		struct kernel_siginfo sig_i;
++		struct task_struct *task;
+ 		switch (info->notify.sigev_notify) {
+ 		case SIGEV_NONE:
+ 			break;
+ 		case SIGEV_SIGNAL:
++			/* do_mq_notify() accepts sigev_signo == 0, why?? */
++			if (!info->notify.sigev_signo)
++				break;
+ 			/* sends signal */
+-
+ 			clear_siginfo(&sig_i);
+ 			sig_i.si_signo = info->notify.sigev_signo;
+ 			sig_i.si_errno = 0;
+@@ -790,11 +793,13 @@ static void __do_notify(struct mqueue_inode_info *info)
+ 			rcu_read_lock();
+ 			sig_i.si_pid = task_tgid_nr_ns(current,
+ 						ns_of_pid(info->notify_owner));
+-			sig_i.si_uid = from_kuid_munged(info->notify_user_ns, current_uid());
++			sig_i.si_uid = from_kuid_munged(info->notify_user_ns,
++						current_uid());
++			task = pid_task(info->notify_owner, PIDTYPE_PID);
++			if (task)
++				do_send_sig_info(info->notify.sigev_signo,
++						&sig_i, task, PIDTYPE_TGID);
+ 			rcu_read_unlock();
+-
+-			kill_pid_info(info->notify.sigev_signo,
+-				      &sig_i, info->notify_owner);
+ 			break;
+ 		case SIGEV_THREAD:
+ 			set_cookie(info->notify_cookie, NOTIFY_WOKENUP);
+-- 
+2.25.1.362.g51ebf55
 
->
-> > +          compatible = "sprd,sc9863a-apahb-gate";
-> > +          reg = <0x0 0x1020>;
-> > +          #clock-cells = <1>;
+
