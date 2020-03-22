@@ -2,102 +2,139 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EB66C18E57D
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Mar 2020 00:48:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8574318E584
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Mar 2020 01:10:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728196AbgCUXs6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 21 Mar 2020 19:48:58 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48788 "EHLO mail.kernel.org"
+        id S1728169AbgCVAKV convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Sat, 21 Mar 2020 20:10:21 -0400
+Received: from mga02.intel.com ([134.134.136.20]:60486 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726997AbgCUXs6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 21 Mar 2020 19:48:58 -0400
-Received: from localhost.localdomain (c-73-231-172-41.hsd1.ca.comcast.net [73.231.172.41])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1FCB520776;
-        Sat, 21 Mar 2020 23:48:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584834537;
-        bh=sWExtjn8sa4U+VoWjZDvGtP+9AcpWaq/4Mq2vl0qPTw=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=d9Tdc1/r7NUzkOgvOakY6hhP+Dr5lXeCZPcNa0FEny4Ue+fx23XzfbRoN+isjFRnt
-         WVm/r9s1cCwT0VQyt9izelOraD9hU3NuEm0IdL2tY8gLS03kTOSi229WjhiHuyR6M1
-         gOLnRyzVaXknbwTTlZRYopw6g6oS0JHKbRsjUeb4=
-Date:   Sat, 21 Mar 2020 16:48:56 -0700
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     Roman Gushchin <guro@fb.com>
-Cc:     Johannes Weiner <hannes@cmpxchg.org>,
-        Michal Hocko <mhocko@kernel.org>, <linux-mm@kvack.org>,
-        <kernel-team@fb.com>, <linux-kernel@vger.kernel.org>,
-        Bharata B Rao <bharata@linux.ibm.com>,
-        <stable@vger.kernel.org>
-Subject: Re: [PATCH] mm: fork: fix kernel_stack memcg stats for various
- stack implementations
-Message-Id: <20200321164856.be68344b7fac84b759e23727@linux-foundation.org>
-In-Reply-To: <20200303233550.251375-1-guro@fb.com>
-References: <20200303233550.251375-1-guro@fb.com>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1727296AbgCVAKV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 21 Mar 2020 20:10:21 -0400
+IronPort-SDR: XTO9Vy5E8Z8LqTgJjBwnUodRU3dtxByjimZbBLzojmQTuwoEId5XT4Dtj+iaUeRarb2wRBZV2t
+ kplmb8KAovSg==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Mar 2020 17:10:20 -0700
+IronPort-SDR: mii5KpTSfIGBj11O2+43GbeJRFg2WXU27ap44jA/W0ADYtZKKyrhVhS9ZdfY8htiBNZLtRAHRH
+ o/FKu1TMR8JQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.72,290,1580803200"; 
+   d="scan'208";a="249242511"
+Received: from pgsmsx112.gar.corp.intel.com ([10.108.55.201])
+  by orsmga006.jf.intel.com with ESMTP; 21 Mar 2020 17:10:19 -0700
+Received: from pgsmsx110.gar.corp.intel.com (10.221.44.111) by
+ PGSMSX112.gar.corp.intel.com (10.108.55.201) with Microsoft SMTP Server (TLS)
+ id 14.3.439.0; Sun, 22 Mar 2020 08:10:16 +0800
+Received: from pgsmsx101.gar.corp.intel.com ([169.254.1.189]) by
+ PGSMSX110.gar.corp.intel.com ([169.254.13.28]) with mapi id 14.03.0439.000;
+ Sun, 22 Mar 2020 08:10:16 +0800
+From:   "Tsai, Rex" <rex.tsai@intel.com>
+To:     Kai-Heng Feng <kai.heng.feng@canonical.com>
+Subject: RE: [Intel-wired-lan] [PATCH 1/1] e1000e: Disable s0ix flow for X1
+ Carbon 7th
+Thread-Topic: [Intel-wired-lan] [PATCH 1/1] e1000e: Disable s0ix flow for X1
+ Carbon 7th
+Thread-Index: AQG3cCI3NG3RtKSKRa6ZGiuDYJEouqiQ3AGQ
+Date:   Sun, 22 Mar 2020 00:10:15 +0000
+Message-ID: <D83742F1B1819A43B1E71852F964BF245D763260@PGSMSX101.gar.corp.intel.com>
+References: <20200319052629.7282-1-kai.heng.feng@canonical.com>
+In-Reply-To: <20200319052629.7282-1-kai.heng.feng@canonical.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+dlp-product: dlpe-windows
+dlp-version: 11.2.0.6
+dlp-reaction: no-action
+x-originating-ip: [172.30.20.206]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 3 Mar 2020 15:35:50 -0800 Roman Gushchin <guro@fb.com> wrote:
+Hello Kai-Heng,
+I will take over here. When do you have a chance to talk this issue next week?
 
-> Depending on CONFIG_VMAP_STACK and the THREAD_SIZE / PAGE_SIZE ratio
-> the space for task stacks can be allocated using __vmalloc_node_range(),
-> alloc_pages_node() and kmem_cache_alloc_node(). In the first and the
-> second cases page->mem_cgroup pointer is set, but in the third it's
-> not: memcg membership of a slab page should be determined using the
-> memcg_from_slab_page() function, which looks at
-> page->slab_cache->memcg_params.memcg . In this case, using
-> mod_memcg_page_state() (as in account_kernel_stack()) is incorrect:
-> page->mem_cgroup pointer is NULL even for pages charged to a non-root
-> memory cgroup.
-> 
-> It can lead to kernel_stack per-memcg counters permanently showing 0
-> on some architectures (depending on the configuration).
-> 
-> In order to fix it, let's introduce a mod_memcg_obj_state() helper,
-> which takes a pointer to a kernel object as a first argument, uses
-> mem_cgroup_from_obj() to get a RCU-protected memcg pointer and
-> calls mod_memcg_state(). It allows to handle all possible
-> configurations (CONFIG_VMAP_STACK and various THREAD_SIZE/PAGE_SIZE
-> values) without spilling any memcg/kmem specifics into fork.c .
-> 
-> Note: this patch has been first posted as a part of the new slab
-> controller patchset. This is a slightly updated version: the fixes
-> tag has been added and the commit log was extended by the advice
-> of Johannes Weiner. Because it's a fix that makes sense by itself,
-> I'm re-posting it as a standalone patch.
+Rex Tsai | Intel Client LAN Engineer | +1 (503) 264-0517
 
-Actually, it isn't a standalone patch.
+-----Original Message-----
+From: Intel-wired-lan <intel-wired-lan-bounces@osuosl.org> On Behalf Of Kai-Heng Feng
+Sent: Wednesday, March 18, 2020 10:26 PM
+To: Kirsher, Jeffrey T <jeffrey.t.kirsher@intel.com>
+Cc: open list:NETWORKING DRIVERS <netdev@vger.kernel.org>; Kai-Heng Feng <kai.heng.feng@canonical.com>; moderated list:INTEL ETHERNET DRIVERS <intel-wired-lan@lists.osuosl.org>; David S. Miller <davem@davemloft.net>; open list <linux-kernel@vger.kernel.org>
+Subject: [Intel-wired-lan] [PATCH 1/1] e1000e: Disable s0ix flow for X1 Carbon 7th
 
-> --- a/mm/memcontrol.c
-> +++ b/mm/memcontrol.c
-> @@ -776,6 +776,17 @@ void __mod_lruvec_slab_state(void *p, enum node_stat_item idx, int val)
->  	rcu_read_unlock();
->  }
->  
-> +void mod_memcg_obj_state(void *p, int idx, int val)
-> +{
-> +	struct mem_cgroup *memcg;
-> +
-> +	rcu_read_lock();
-> +	memcg = mem_cgroup_from_obj(p);
-> +	if (memcg)
-> +		mod_memcg_state(memcg, idx, val);
-> +	rcu_read_unlock();
-> +}
+The s0ix flow makes X1 Carbon 7th can only run S2Idle for only once.
 
-mem_cgroup_from_obj() is later added by
-http://lkml.kernel.org/r/20200117203609.3146239-1-guro@fb.com
+Temporarily disable it until Intel found a solution.
 
-We could merge both mm-memcg-slab-introduce-mem_cgroup_from_obj.patch
-and this patch, but that's a whole lot of stuff to backport into
--stable.
+Link:
+https://lists.osuosl.org/pipermail/intel-wired-lan/Week-of-Mon-20200316/0192
+22.html
+BugLink: https://bugs.launchpad.net/bugs/1865570
+Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
+---
+ drivers/net/ethernet/intel/e1000e/netdev.c | 16 ++++++++++++++--
+ 1 file changed, 14 insertions(+), 2 deletions(-)
 
-Are you able to come up with a simpler suitable-for-stable fix?
+diff --git a/drivers/net/ethernet/intel/e1000e/netdev.c
+b/drivers/net/ethernet/intel/e1000e/netdev.c
+index db4ea58bac82..3e090aa993ee 100644
+--- a/drivers/net/ethernet/intel/e1000e/netdev.c
++++ b/drivers/net/ethernet/intel/e1000e/netdev.c
+@@ -25,6 +25,7 @@
+ #include <linux/pm_runtime.h>
+ #include <linux/aer.h>
+ #include <linux/prefetch.h>
++#include <linux/dmi.h>
+ 
+ #include "e1000.h"
+ 
+@@ -6843,6 +6844,17 @@ static int __e1000_resume(struct pci_dev *pdev)  }
+ 
+ #ifdef CONFIG_PM_SLEEP
++static const struct dmi_system_id s0ix_blacklist[] = {
++	{
++		.ident = "LENOVO ThinkPad X1 Carbon 7th",
++		.matches = {
++			DMI_MATCH(DMI_SYS_VENDOR, "LENOVO"),
++			DMI_MATCH(DMI_PRODUCT_VERSION, "ThinkPad X1 Carbon
+7th"),
++		},
++	},
++	{}
++};
++
+ static int e1000e_pm_suspend(struct device *dev)  {
+ 	struct net_device *netdev = pci_get_drvdata(to_pci_dev(dev)); @@ -6860,7 +6872,7 @@ static int e1000e_pm_suspend(struct device *dev)
+ 		e1000e_pm_thaw(dev);
+ 
+ 	/* Introduce S0ix implementation */
+-	if (hw->mac.type >= e1000_pch_cnp)
++	if (hw->mac.type >= e1000_pch_cnp &&
+!dmi_check_system(s0ix_blacklist))
+ 		e1000e_s0ix_entry_flow(adapter);
+ 
+ 	return rc;
+@@ -6875,7 +6887,7 @@ static int e1000e_pm_resume(struct device *dev)
+ 	int rc;
+ 
+ 	/* Introduce S0ix implementation */
+-	if (hw->mac.type >= e1000_pch_cnp)
++	if (hw->mac.type >= e1000_pch_cnp &&
+!dmi_check_system(s0ix_blacklist))
+ 		e1000e_s0ix_exit_flow(adapter);
+ 
+ 	rc = __e1000_resume(pdev);
+--
+2.17.1
+
+_______________________________________________
+Intel-wired-lan mailing list
+Intel-wired-lan@osuosl.org
+https://lists.osuosl.org/mailman/listinfo/intel-wired-lan
