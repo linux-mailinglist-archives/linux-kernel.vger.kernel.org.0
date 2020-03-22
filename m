@@ -2,75 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EC15C18E7BF
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Mar 2020 10:12:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6533D18E7B1
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Mar 2020 10:01:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726843AbgCVJMy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 22 Mar 2020 05:12:54 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:53942 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725987AbgCVJMx (ORCPT
+        id S1726901AbgCVJBY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 22 Mar 2020 05:01:24 -0400
+Received: from relay6-d.mail.gandi.net ([217.70.183.198]:42125 "EHLO
+        relay6-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725987AbgCVJBY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Mar 2020 05:12:53 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=TJrI/72OolCj0fyJBBsdmgL621cjAq707kYl/3sgaOE=; b=m8w2AT/g/c3Gy5hP6+GASiHSoJ
-        kCNFcjRYnHvnyVeh19O9WbN6E7jnixRqOxe3bWveDmmXxWiTNk0Xfss/U871xUqNa/g4QG6QAHnCS
-        LX/AtZ8M7mvYd+hQ4Z6/O8jrVHWEsxlMcbSJOdazw2Rc+rdNT2+RXpHle+yxNE7+Z4vaTceGAKQnH
-        MEyQz0pFQIgTACP5e+PKS6QnZTVddYGpFJ8RUfgNFJdO6qvnhTFAHD21MO5DAwJjBOg13p5vP58wL
-        zBev04E5hcTo/BgfBaQJJ5UGHhhFeo/ZhVUV+JicEPob6r/P+jxxHzwsxpfMY3rJH34Zs1tJc8uq4
-        7sziHuPg==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=worktop.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jFwey-0005Jk-9G; Sun, 22 Mar 2020 09:12:44 +0000
-Received: by worktop.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 3F62F983500; Sun, 22 Mar 2020 09:35:44 +0100 (CET)
-Date:   Sun, 22 Mar 2020 09:35:44 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Ian Rogers <irogers@google.com>
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Andi Kleen <ak@linux.intel.com>,
-        Kan Liang <kan.liang@linux.intel.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Stephane Eranian <eranian@google.com>
-Subject: Re: [PATCH] perf test x86: address multiplexing in rdpmc test
-Message-ID: <20200322083544.GE2452@worktop.programming.kicks-ass.net>
-References: <20200321001400.245121-1-irogers@google.com>
- <20200321134053.GJ20696@hirez.programming.kicks-ass.net>
- <CAP-5=fXcHrh=uHmPj43=xYnikx0mHRWFQwMJa1q8yQ=opvSEDA@mail.gmail.com>
+        Sun, 22 Mar 2020 05:01:24 -0400
+X-Originating-IP: 86.202.105.35
+Received: from localhost (lfbn-lyo-1-9-35.w86-202.abo.wanadoo.fr [86.202.105.35])
+        (Authenticated sender: alexandre.belloni@bootlin.com)
+        by relay6-d.mail.gandi.net (Postfix) with ESMTPSA id 70DCAC0005;
+        Sun, 22 Mar 2020 09:01:16 +0000 (UTC)
+Date:   Sun, 22 Mar 2020 10:01:16 +0100
+From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
+To:     Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
+        arm@kernel.org, soc@kernel.org
+Cc:     Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] ARM: at91: SoC for 5.7
+Message-ID: <20200322090116.GA208895@piout.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAP-5=fXcHrh=uHmPj43=xYnikx0mHRWFQwMJa1q8yQ=opvSEDA@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Mar 21, 2020 at 10:44:49AM -0700, Ian Rogers wrote:
-> On Sat, Mar 21, 2020 at 6:41 AM Peter Zijlstra <peterz@infradead.org> wrote:
-> >
-> > On Fri, Mar 20, 2020 at 05:14:00PM -0700, Ian Rogers wrote:
-> > > Counters may be being used for pinned or other events which inhibit the
-> > > instruction counter in the test from being scheduled - time_enabled > 0
-> > > but time_running == 0. This causes the test to fail with division by 0.
-> > > Add a sleep loop to ensure that the counter is run before computing
-> > > the count.
+Arnd, Olof,
 
-> > > +
-> > > +                     if (running == 0) {
-> >
-> > This is not in fact the condition the Changelog calls out.
-> 
-> Not sure I follow. As in the multiplexing? It is exactly the condition
-> that time_running == 0.
+A bigger update than usual, reworking the PM code to support sam9x60.
+I've filled in the google doc as you requested.
 
-I meant the condition should be 'enabled && !running'.
+The following changes since commit bb6d3fb354c5ee8d6bde2d576eb7220ea09862b9:
+
+  Linux 5.6-rc1 (2020-02-09 16:08:48 -0800)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/at91/linux tags/at91-5.7-soc
+
+for you to fetch changes up to bb1a0e87e1c54cd884e9b92b1cec06b186edc7a0:
+
+  ARM: at91: pm: add quirk for sam9x60's ulp1 (2020-02-18 21:47:54 +0100)
+
+----------------------------------------------------------------
+AT91 SoC for 5.7
+
+ - Rework PM to support sam9x60
+
+----------------------------------------------------------------
+Claudiu Beznea (8):
+      ARM: at91: pm: use proper master clock register offset
+      ARM: at91: pm: revert do not disable/enable PLLA for ULP modes
+      ARM: at91: pm: add macros for plla disable/enable
+      ARM: at91: pm: add pmc_version member to at91_pm_data
+      ARM: at91: pm: s/sfr/sfrbu in pm_suspend.S
+      clk: at91: move sam9x60's PLL register offsets to PMC header
+      ARM: at91: pm: add plla disable/enable support for sam9x60
+      ARM: at91: pm: add quirk for sam9x60's ulp1
+
+Geert Uytterhoeven (1):
+      ARM: at91: Drop unneeded select of COMMON_CLK
+
+ arch/arm/mach-at91/Kconfig           |   1 -
+ arch/arm/mach-at91/pm.c              |  35 ++++++-
+ arch/arm/mach-at91/pm.h              |   2 +
+ arch/arm/mach-at91/pm_data-offsets.c |   4 +
+ arch/arm/mach-at91/pm_suspend.S      | 189 ++++++++++++++++++++++++++++++++---
+ drivers/clk/at91/clk-sam9x60-pll.c   |  91 +++++++----------
+ include/linux/clk/at91_pmc.h         |  23 +++++
+ 7 files changed, 270 insertions(+), 75 deletions(-)
+
+-- 
+Alexandre Belloni, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
