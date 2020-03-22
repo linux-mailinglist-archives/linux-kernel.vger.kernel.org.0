@@ -2,136 +2,176 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0934C18E912
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Mar 2020 14:08:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4EA4E18E919
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Mar 2020 14:21:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726770AbgCVNIT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 22 Mar 2020 09:08:19 -0400
-Received: from us-smtp-delivery-74.mimecast.com ([63.128.21.74]:31893 "EHLO
-        us-smtp-delivery-74.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725997AbgCVNIS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Mar 2020 09:08:18 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1584882498;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=wo+FEifuRFslOR4lP0rC0Ti7Taj/A+kMlugh1DShQME=;
-        b=Tag0G7d6ysCVSnBR/Mg16CmGmSfgV+RcWeGKn+tmHgqQGjYocGNSRV0iXlx0o17P43Kz1Q
-        L5uOElm80PRZxXFY4KlfpcyqCozpwIBQRXf8WP8N3I9L1bHDfe5N1ondA2AByXtsX3J2Ly
-        8p63TYncfx4HUDZybwwjH9wrwVinOBY=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-40-VNQwXkbWNdi7xXTGstxbsQ-1; Sun, 22 Mar 2020 09:08:16 -0400
-X-MC-Unique: VNQwXkbWNdi7xXTGstxbsQ-1
-Received: by mail-wr1-f69.google.com with SMTP id q18so5785722wrw.5
-        for <linux-kernel@vger.kernel.org>; Sun, 22 Mar 2020 06:08:16 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
-         :message-id:mime-version;
-        bh=wo+FEifuRFslOR4lP0rC0Ti7Taj/A+kMlugh1DShQME=;
-        b=FqXXGe/sFeC5fWTFI7ZF8sAmFbqQRmBpYo/+lgk612yLP7VX77sAK7Nbqn8dAJ4TT4
-         EueeAg2rwNeL/5CUdTpYPRdhlindKzGfI0zpJD73nbpUAK7GBQ70LhteYK6olMSWlzpt
-         NWg1FrfvM5Z/HzSRTw/skQS/VsSit+YqcwJzgiGRLy4cWCONhUN3GwowLx4ykN5gWCIu
-         d8BWvhbhe9rtAKWZzpEeogAEGd3xjhcivQyr64CXFBPTzPhCeY7IxoRRB5YK2NCbJ9f4
-         BhxIlORoJItllN+gIxt7bHZIY+6cOxcRzalPkm9wtWFZXkJDwp7P+62bamhQBaFnrmDk
-         GARw==
-X-Gm-Message-State: ANhLgQ0K/iJFsIf4sd7ycML17+pzdRLpQY8BMdS1EDhWNNZbW+zvdwWs
-        2OVhtRZg6+AzQfVyfkTy7NZHbXz8o3yvKOBTue6LJNUsNKZKMdK0R7zZN4hhVv1NTfnHgd1GwDz
-        efw+HUj/yHpYSRHv9zgR4f6b8
-X-Received: by 2002:adf:dd10:: with SMTP id a16mr15126893wrm.26.1584882495419;
-        Sun, 22 Mar 2020 06:08:15 -0700 (PDT)
-X-Google-Smtp-Source: ADFU+vusblq6la+uuydp58U1smaFH+cEB4h83QoWWeBOqy/iybNOzxNYvMhb326r5THN16y+CJaS9A==
-X-Received: by 2002:adf:dd10:: with SMTP id a16mr15126869wrm.26.1584882495224;
-        Sun, 22 Mar 2020 06:08:15 -0700 (PDT)
-Received: from vitty.brq.redhat.com (g-server-2.ign.cz. [91.219.240.2])
-        by smtp.gmail.com with ESMTPSA id g1sm4072755wro.28.2020.03.22.06.08.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 22 Mar 2020 06:08:14 -0700 (PDT)
-From:   Vitaly Kuznetsov <vkuznets@redhat.com>
-To:     Sean Christopherson <sean.j.christopherson@intel.com>
-Cc:     Paolo Bonzini <pbonzini@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/3] KVM: VMX: Fold loaded_vmcs_init() into alloc_loaded_vmcs()
-In-Reply-To: <20200321193751.24985-3-sean.j.christopherson@intel.com>
-References: <20200321193751.24985-1-sean.j.christopherson@intel.com> <20200321193751.24985-3-sean.j.christopherson@intel.com>
-Date:   Sun, 22 Mar 2020 14:08:13 +0100
-Message-ID: <87fte0bkqq.fsf@vitty.brq.redhat.com>
+        id S1726847AbgCVNTD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 22 Mar 2020 09:19:03 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59238 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725985AbgCVNTD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 22 Mar 2020 09:19:03 -0400
+Received: from [192.168.0.107] (unknown [49.65.245.234])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id E780E206C3;
+        Sun, 22 Mar 2020 13:18:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1584883142;
+        bh=cJjXz7mTR35bJeZ7sip2Qhg3W0McxHjMQu+j8nUdb9I=;
+        h=Subject:To:References:From:Date:In-Reply-To:From;
+        b=iGx7KuSE6BZZ+GLWAPN1YBrpSItELWyoE/Xzm/PEjrv4sg5hgyoKQBzrSvh/GQj6y
+         kKdo2c1WzRdzaA0gM6nnR5DGUMgAO4NId3hP5nuIiW9wGPdckIgaary/EHtSy933CG
+         6ekP1qHBQdaH7NqRUOK91pRmJqq9QTYzeVh9MkXs=
+Subject: Re: [PATCH] f2fs: fix potential .flags overflow on 32bit architecture
+To:     =?UTF-8?Q?Ond=c5=99ej_Jirman?= <megi@xff.cz>, jaegeuk@kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net,
+        linux-kernel@vger.kernel.org, Chao Yu <yuchao0@huawei.com>
+References: <20200322101327.5979-1-chao@kernel.org>
+ <20200322121434.i2jea6o5tzanip7z@core.my.home>
+From:   Chao Yu <chao@kernel.org>
+Message-ID: <47c71fe9-e168-8080-d0ed-2cfaa9a77e5e@kernel.org>
+Date:   Sun, 22 Mar 2020 21:18:56 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.8.0
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <20200322121434.i2jea6o5tzanip7z@core.my.home>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Sean Christopherson <sean.j.christopherson@intel.com> writes:
+Hi,
 
-> Subsume loaded_vmcs_init() into alloc_loaded_vmcs(), its only remaining
-> caller, and drop the VMCLEAR on the shadow VMCS, which is guaranteed to
-> be NULL.  loaded_vmcs_init() was previously used by loaded_vmcs_clear(),
-> but loaded_vmcs_clear() also subsumed loaded_vmcs_init() to properly
-> handle smp_wmb() with respect to VMCLEAR.
+On 2020-3-22 20:14, Ondřej Jirman wrote:
+> Hello,
 >
-> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-> ---
->  arch/x86/kvm/vmx/vmx.c | 14 ++++----------
->  arch/x86/kvm/vmx/vmx.h |  1 -
->  2 files changed, 4 insertions(+), 11 deletions(-)
+> On Sun, Mar 22, 2020 at 06:13:27PM +0800, Chao Yu wrote:
+>> From: Chao Yu <yuchao0@huawei.com>
+>>
+>> f2fs_inode_info.flags is unsigned long variable, it has 32 bits
+>> in 32bit architecture, since we introduced FI_MMAP_FILE flag
+>> when we support data compression, we may access memory cross
+>> the border of .flags field, corrupting .i_sem field, result in
+>> below deadlock.
+>>
+>> To fix this issue, let's introduce .extra_flags to grab extra
+>> space to store those new flags.
+>>
+>> Call Trace:
+>>  __schedule+0x8d0/0x13fc
+>>  ? mark_held_locks+0xac/0x100
+>>  schedule+0xcc/0x260
+>>  rwsem_down_write_slowpath+0x3ab/0x65d
+>>  down_write+0xc7/0xe0
+>>  f2fs_drop_nlink+0x3d/0x600 [f2fs]
+>>  f2fs_delete_inline_entry+0x300/0x440 [f2fs]
+>>  f2fs_delete_entry+0x3a1/0x7f0 [f2fs]
+>>  f2fs_unlink+0x500/0x790 [f2fs]
+>>  vfs_unlink+0x211/0x490
+>>  do_unlinkat+0x483/0x520
+>>  sys_unlink+0x4a/0x70
+>>  do_fast_syscall_32+0x12b/0x683
+>>  entry_SYSENTER_32+0xaa/0x102
+>>
+>> Fixes: 4c8ff7095bef ("f2fs: support data compression")
+>> Signed-off-by: Chao Yu <yuchao0@huawei.com>
+>> ---
+>>  fs/f2fs/f2fs.h  | 26 ++++++++++++++++++++------
+>>  fs/f2fs/inode.c |  1 +
+>>  2 files changed, 21 insertions(+), 6 deletions(-)
+>>
+>> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+>> index fcafa68212eb..fcd22df2e9ca 100644
+>> --- a/fs/f2fs/f2fs.h
+>> +++ b/fs/f2fs/f2fs.h
+>> @@ -695,6 +695,7 @@ struct f2fs_inode_info {
+>>
+>>  	/* Use below internally in f2fs*/
+>>  	unsigned long flags;		/* use to pass per-file flags */
+>> +	unsigned long extra_flags;	/* extra flags */
+>>  	struct rw_semaphore i_sem;	/* protect fi info */
+>>  	atomic_t dirty_pages;		/* # of dirty pages */
+>>  	f2fs_hash_t chash;		/* hash value of given file name */
+>> @@ -2569,7 +2570,7 @@ enum {
+>>  };
+>>
+>>  static inline void __mark_inode_dirty_flag(struct inode *inode,
+>> -						int flag, bool set)
+>> +					unsigned long long flag, bool set)
+>>  {
+>>  	switch (flag) {
+>>  	case FI_INLINE_XATTR:
+>> @@ -2588,20 +2589,33 @@ static inline void __mark_inode_dirty_flag(struct inode *inode,
+>>
+>>  static inline void set_inode_flag(struct inode *inode, int flag)
+>>  {
+>> -	if (!test_bit(flag, &F2FS_I(inode)->flags))
+>> -		set_bit(flag, &F2FS_I(inode)->flags);
+>> +	if ((1 << flag) <= sizeof(unsigned long)) {
 >
-> diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-> index efaca09455bf..07634caa560d 100644
-> --- a/arch/x86/kvm/vmx/vmx.c
-> +++ b/arch/x86/kvm/vmx/vmx.c
-> @@ -653,15 +653,6 @@ static int vmx_set_guest_msr(struct vcpu_vmx *vmx, struct shared_msr_entry *msr,
->  	return ret;
->  }
->  
-> -void loaded_vmcs_init(struct loaded_vmcs *loaded_vmcs)
-> -{
-> -	vmcs_clear(loaded_vmcs->vmcs);
-> -	if (loaded_vmcs->shadow_vmcs && loaded_vmcs->launched)
-> -		vmcs_clear(loaded_vmcs->shadow_vmcs);
-> -	loaded_vmcs->cpu = -1;
-> -	loaded_vmcs->launched = 0;
-> -}
-> -
->  #ifdef CONFIG_KEXEC_CORE
->  static void crash_vmclear_local_loaded_vmcss(void)
->  {
-> @@ -2555,9 +2546,12 @@ int alloc_loaded_vmcs(struct loaded_vmcs *loaded_vmcs)
->  	if (!loaded_vmcs->vmcs)
->  		return -ENOMEM;
->  
-> +	vmcs_clear(loaded_vmcs->vmcs);
-> +
->  	loaded_vmcs->shadow_vmcs = NULL;
->  	loaded_vmcs->hv_timer_soft_disabled = false;
-> -	loaded_vmcs_init(loaded_vmcs);
-> +	loaded_vmcs->cpu = -1;
-> +	loaded_vmcs->launched = 0;
->  
->  	if (cpu_has_vmx_msr_bitmap()) {
->  		loaded_vmcs->msr_bitmap = (unsigned long *)
-> diff --git a/arch/x86/kvm/vmx/vmx.h b/arch/x86/kvm/vmx/vmx.h
-> index be93d597306c..79d38f41ef7a 100644
-> --- a/arch/x86/kvm/vmx/vmx.h
-> +++ b/arch/x86/kvm/vmx/vmx.h
-> @@ -492,7 +492,6 @@ struct vmcs *alloc_vmcs_cpu(bool shadow, int cpu, gfp_t flags);
->  void free_vmcs(struct vmcs *vmcs);
->  int alloc_loaded_vmcs(struct loaded_vmcs *loaded_vmcs);
->  void free_loaded_vmcs(struct loaded_vmcs *loaded_vmcs);
-> -void loaded_vmcs_init(struct loaded_vmcs *loaded_vmcs);
->  void loaded_vmcs_clear(struct loaded_vmcs *loaded_vmcs);
->  
->  static inline struct vmcs *alloc_vmcs(bool shadow)
+> ^ this is wrong. Maybe you meant flag <= BITS_PER_LONG
 
-Reviewed-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+Oh, my bad, I meant that, thanks for pointing out this. :)
 
--- 
-Vitaly
+>
+> And ditto for the same checks below. Maybe you can make flags an array of
+> BIT_WORD(max_flag_value) + 1 and skip the branches altogether?
 
+That will be better, let me revise this patch.
+
+Thanks,
+
+>
+> thank you and regards,
+> 	o.
+>
+>> +		if (!test_bit(flag, &F2FS_I(inode)->flags))
+>> +			set_bit(flag, &F2FS_I(inode)->flags);
+>> +	} else {
+>> +		if (!test_bit(flag - 32, &F2FS_I(inode)->extra_flags))
+>> +			set_bit(flag - 32, &F2FS_I(inode)->extra_flags);
+>> +	}
+>>  	__mark_inode_dirty_flag(inode, flag, true);
+>>  }
+>>
+>>  static inline int is_inode_flag_set(struct inode *inode, int flag)
+>>  {
+>> -	return test_bit(flag, &F2FS_I(inode)->flags);
+>> +	if ((1 << flag) <= sizeof(unsigned long))
+>> +		return test_bit(flag, &F2FS_I(inode)->flags);
+>> +	else
+>> +		return test_bit(flag - 32, &F2FS_I(inode)->extra_flags);
+>>  }
+>>
+>>  static inline void clear_inode_flag(struct inode *inode, int flag)
+>>  {
+>> -	if (test_bit(flag, &F2FS_I(inode)->flags))
+>> -		clear_bit(flag, &F2FS_I(inode)->flags);
+>> +	if ((1 << flag) <= sizeof(unsigned long)) {
+>> +		if (test_bit(flag, &F2FS_I(inode)->flags))
+>> +			clear_bit(flag, &F2FS_I(inode)->flags);
+>> +	} else {
+>> +		if (test_bit(flag - 32, &F2FS_I(inode)->extra_flags))
+>> +			clear_bit(flag - 32, &F2FS_I(inode)->extra_flags);
+>> +	}
+>>  	__mark_inode_dirty_flag(inode, flag, false);
+>>  }
+>>
+>> diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
+>> index 44e08bf2e2b4..ca924d7e0e30 100644
+>> --- a/fs/f2fs/inode.c
+>> +++ b/fs/f2fs/inode.c
+>> @@ -363,6 +363,7 @@ static int do_read_inode(struct inode *inode)
+>>  	if (S_ISREG(inode->i_mode))
+>>  		fi->i_flags &= ~F2FS_PROJINHERIT_FL;
+>>  	fi->flags = 0;
+>> +	fi->extra_flags = 0;
+>>  	fi->i_advise = ri->i_advise;
+>>  	fi->i_pino = le32_to_cpu(ri->i_pino);
+>>  	fi->i_dir_level = ri->i_dir_level;
+>> --
+>> 2.22.0
+>>
