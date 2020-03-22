@@ -2,54 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6585318EBBF
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Mar 2020 20:06:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AD78C18EBC6
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Mar 2020 20:08:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726832AbgCVTGE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 22 Mar 2020 15:06:04 -0400
-Received: from vps0.lunn.ch ([185.16.172.187]:50670 "EHLO vps0.lunn.ch"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725881AbgCVTGD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Mar 2020 15:06:03 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-        s=20171124; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=SEiG5DvzF7klvpfRDNwNaEO0lzYKIPH2n0p4wyrcEqE=; b=pSXieA7QEgxvUmEoqhNFw3qJYc
-        2ttuurZUSL5+8mvVfArKEYmCjyyXap0WGn3KBNsuc6BIG6imnPlfufr4Pc5LziStZrredTb//K6gL
-        Ktd55+BQCD/zdPLuvxtdPxf19yPgzorWRKkL4SUyJcVVVH/yZP4zs/EBAP+0xpIkba70=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.93)
-        (envelope-from <andrew@lunn.ch>)
-        id 1jG5uy-0001tO-2d; Sun, 22 Mar 2020 20:05:52 +0100
-Date:   Sun, 22 Mar 2020 20:05:52 +0100
-From:   Andrew Lunn <andrew@lunn.ch>
-To:     Dejin Zheng <zhengdejin5@gmail.com>
-Cc:     f.fainelli@gmail.com, hkallweit1@gmail.com, linux@armlinux.org.uk,
-        davem@davemloft.net, mchehab+samsung@kernel.org, corbet@lwn.net,
-        gregkh@linuxfoundation.org, broonie@kernel.org, tglx@linutronix.de,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v5 08/10] net: phy: use phy_read_poll_timeout()
- to simplify the code
-Message-ID: <20200322190552.GD3819@lunn.ch>
-References: <20200322174943.26332-1-zhengdejin5@gmail.com>
- <20200322174943.26332-9-zhengdejin5@gmail.com>
+        id S1726809AbgCVTIR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 22 Mar 2020 15:08:17 -0400
+Received: from out28-122.mail.aliyun.com ([115.124.28.122]:45680 "EHLO
+        out28-122.mail.aliyun.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725985AbgCVTIR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 22 Mar 2020 15:08:17 -0400
+X-Alimail-AntiSpam: AC=CONTINUE;BC=0.2745475|-1;CH=green;DM=||false|;DS=CONTINUE|ham_news_journal|0.0226627-0.000317842-0.977019;FP=0|0|0|0|0|-1|-1|-1;HT=e01l07447;MF=zhouyanjie@wanyeetech.com;NM=1;PH=DS;RN=12;RT=12;SR=0;TI=SMTPD_---.H3Z9uBl_1584904084;
+Received: from localhost.localdomain(mailfrom:zhouyanjie@wanyeetech.com fp:SMTPD_---.H3Z9uBl_1584904084)
+          by smtp.aliyun-inc.com(10.147.41.199);
+          Mon, 23 Mar 2020 03:08:13 +0800
+From:   =?UTF-8?q?=E5=91=A8=E7=90=B0=E6=9D=B0=20=28Zhou=20Yanjie=29?= 
+        <zhouyanjie@wanyeetech.com>
+To:     linux-clk@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        sboyd@kernel.org, mturquette@baylibre.com, robh+dt@kernel.org,
+        mark.rutland@arm.com, paul@crapouillou.net,
+        dongsheng.qiu@ingenic.com, yanfei.li@ingenic.com,
+        sernia.zhou@foxmail.com, zhenwenjin@gmail.com
+Subject: Add support for the X1830 and fix bugs for X1000 v7.
+Date:   Mon, 23 Mar 2020 03:07:31 +0800
+Message-Id: <1584904058-53155-1-git-send-email-zhouyanjie@wanyeetech.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200322174943.26332-9-zhengdejin5@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 23, 2020 at 01:49:41AM +0800, Dejin Zheng wrote:
-> use phy_read_poll_timeout() to replace the poll codes for
-> simplify the code in phy_poll_reset() function.
-> 
-> Signed-off-by: Dejin Zheng <zhengdejin5@gmail.com>
+v6->v7:
+1.Update commit message of [2/6].
+2.Adjust includes in [4/6], add blank line as Paul Cercueil's suggest,
+  and Move "*cgu" into x1830_cgu_init() as a local variable.
+3.Update commit message of [6/6].
 
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
-
-    Andrew
