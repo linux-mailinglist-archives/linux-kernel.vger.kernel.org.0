@@ -2,101 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6DB8A18E948
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Mar 2020 15:00:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6530218E95B
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Mar 2020 15:17:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726809AbgCVOA4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 22 Mar 2020 10:00:56 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:41420 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725785AbgCVOAz (ORCPT
+        id S1726869AbgCVORk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 22 Mar 2020 10:17:40 -0400
+Received: from mr85p00im-zteg06021501.me.com ([17.58.23.183]:45100 "EHLO
+        mr85p00im-zteg06021501.me.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725997AbgCVORk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Mar 2020 10:00:55 -0400
-Received: by mail-wr1-f65.google.com with SMTP id h9so13284549wrc.8;
-        Sun, 22 Mar 2020 07:00:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=+Pk1Qm0yKFU4UFpPiRDPyywzNL1S0kp3oY+pR0dHLbM=;
-        b=oi5rzEX0X8RLP2HKiTVVqVs7HpQ7aPojsZDgCYmMnYOtWabV8UXffBg4gms1wqcqft
-         +/58QOvDf6bioXi8SnjrvUM7F6HcQ70/1Kpghz3s2qRBBNtUZxZnrX4Yh6Ho/3kN3BEZ
-         2fwN1nJFoFiZLWIdXHivtU9nzJ/K74nWzVxFipAPBoTgjuB/lHjvOcolL4ISXWR2XX/5
-         2SZu3Kx1bDbRDkXb8q/hn6hJR7uYBQmORF1lUEz1xfVgDOYNuaJYiHKGGcPQ7yUmPxN8
-         +cEeu8HCCo+YMhwe0vXdnx9jtXryqqQwOsPdky5SVb8bgshlml7FsP7PDftZnOxPPhM3
-         y/Cw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=+Pk1Qm0yKFU4UFpPiRDPyywzNL1S0kp3oY+pR0dHLbM=;
-        b=E53DnOZkQUqExn1C8btdvjW4RDmSt9DxsA3n7O8zN2cgMPwTQ5Rb8/xuEgs9KN/pF5
-         zH5nAhRDa/S8ztVxOmV/ILgWRdqePfmrv7kF7db5NJ6jUCU/Fvi4CcZFreqrYBZUBUjn
-         Amiie6j94+DkzgcbQ+eLdVJCUFKycokHpYctKQwv8O6EVROPU22eib6yHNsjewMDe61W
-         yGoMd13sF71ZQa9B3G0X+wMDADMkq1gQP9fTp5i8joqPWEjgleknkCONxO9EDbauWotg
-         nKud877yTB3vSNZgAuEP8BXGqIOzFO37ex1rp6NEe0JLokaEAtcPCOaa72blXKkNIhV0
-         dbGQ==
-X-Gm-Message-State: ANhLgQ35FFALuTKufwVaXvvHOc0+LodbWmCgBfgs1S39LN8eWul4yo2I
-        AIFzSEgmwP19eVx0FvvQpBE=
-X-Google-Smtp-Source: ADFU+vv9LrpAvriFkI/duBNcEmS2l2/uhLRxDqAJ4ObMkC37RlGZ/y1+sMgI5XKHs3Xia3KUeu4Mjw==
-X-Received: by 2002:adf:a4d2:: with SMTP id h18mr24215660wrb.90.1584885653724;
-        Sun, 22 Mar 2020 07:00:53 -0700 (PDT)
-Received: from debian.home (ip51ccf9cd.speed.planet.nl. [81.204.249.205])
-        by smtp.gmail.com with ESMTPSA id 1sm11355129wmz.32.2020.03.22.07.00.52
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 22 Mar 2020 07:00:53 -0700 (PDT)
-From:   Johan Jonker <jbx6244@gmail.com>
-To:     heiko@sntech.de
-Cc:     robh+dt@kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] arm64: dts: rockchip: fix defines in pd_vio node for rk3399
-Date:   Sun, 22 Mar 2020 15:00:46 +0100
-Message-Id: <20200322140046.5824-1-jbx6244@gmail.com>
-X-Mailer: git-send-email 2.11.0
+        Sun, 22 Mar 2020 10:17:40 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=me.com; s=1a1hai;
+        t=1584886070; bh=0bf0boBl6+WiqF/tkyebjgPSbA4EbGvKPFn8GKnl33A=;
+        h=From:To:Subject:Date:Message-Id;
+        b=v7JOYLCZmpqBkMp6sh9V2/yZ03FN4N5BvQYB5zw9jNlbhIUl0Fjf1GL09ZVH5uwt4
+         QT/RUwLQ5tmmX5XV/i3qi4sYjmx9ozbqNOQYxAuRLvkpvUMUw86HcrdiUkGXec+y5p
+         zFNDMMZr1ERCh/Ga6UApiMQwPBSEVRvAYU0HgaDYHt9VID45N0KmgSHO0u/lEkBxab
+         ZsgOt3crFunhe1ZiOm/PNSH7gT9WwQixfqtZfz5bOGESdGEerG/jEHrAzRHVgBqSSK
+         pHO8pYHyz8NPi0ioTxxhHtsBsXgIyFZyA1c03/aO0JkWwKKoIsE+Tog20y61O9depA
+         4tBSNIvIOciag==
+Received: from localhost (101.220.150.77.rev.sfr.net [77.150.220.101])
+        by mr85p00im-zteg06021501.me.com (Postfix) with ESMTPSA id B432738031E;
+        Sun, 22 Mar 2020 14:07:49 +0000 (UTC)
+From:   Alain Volmat <avolmat@me.com>
+To:     mturquette@baylibre.com, sboyd@kernel.org, lee.jones@linaro.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     patrice.chotard@st.com, avolmat@me.com
+Subject: [PATCH] clk: clk-flexgen: fix clock-critical handling
+Date:   Sun, 22 Mar 2020 15:07:40 +0100
+Message-Id: <20200322140740.3970-1-avolmat@me.com>
+X-Mailer: git-send-email 2.17.1
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2020-03-22_04:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 clxscore=1011 mlxscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1908290000 definitions=main-2003220086
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-A test with the command below gives for example this error:
+Fixes an issue leading to having all clocks following a critical
+clocks marked as well as criticals.
 
-arch/arm64/boot/dts/rockchip/rk3399-evb.dt.yaml: pd_vio@15:
-'pd_tcpc0@RK3399_PD_TCPC0', 'pd_tcpc1@RK3399_PD_TCPC1'
-do not match any of the regexes:
-'.*-names$', '.*-supply$', '^#.*-cells$',
-'^#[a-zA-Z0-9,+\\-._]{0,63}$',
-'^[a-zA-Z][a-zA-Z0-9,+\\-._]{0,63}$',
-'^[a-zA-Z][a-zA-Z0-9,+\\-._]{0,63}@[0-9a-fA-F]+(,[0-9a-fA-F]+)*$',
-'^__.*__$', 'pinctrl-[0-9]+'
+Fixes: fa6415affe20 ("clk: st: clk-flexgen: Detect critical clocks")
 
-Fix error by replacing the wrong defines by the ones
-mentioned in 'rk3399-power.h'.
-
-make -k ARCH=arm64 dtbs_check
-
-Signed-off-by: Johan Jonker <jbx6244@gmail.com>
+Signed-off-by: Alain Volmat <avolmat@me.com>
 ---
- arch/arm64/boot/dts/rockchip/rk3399.dtsi | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/clk/st/clk-flexgen.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm64/boot/dts/rockchip/rk3399.dtsi b/arch/arm64/boot/dts/rockchip/rk3399.dtsi
-index 8aac201f0..3dc8fe620 100644
---- a/arch/arm64/boot/dts/rockchip/rk3399.dtsi
-+++ b/arch/arm64/boot/dts/rockchip/rk3399.dtsi
-@@ -1087,12 +1087,12 @@
- 					pm_qos = <&qos_isp1_m0>,
- 						 <&qos_isp1_m1>;
- 				};
--				pd_tcpc0@RK3399_PD_TCPC0 {
-+				pd_tcpc0@RK3399_PD_TCPD0 {
- 					reg = <RK3399_PD_TCPD0>;
- 					clocks = <&cru SCLK_UPHY0_TCPDCORE>,
- 						 <&cru SCLK_UPHY0_TCPDPHY_REF>;
- 				};
--				pd_tcpc1@RK3399_PD_TCPC1 {
-+				pd_tcpc1@RK3399_PD_TCPD1 {
- 					reg = <RK3399_PD_TCPD1>;
- 					clocks = <&cru SCLK_UPHY1_TCPDCORE>,
- 						 <&cru SCLK_UPHY1_TCPDPHY_REF>;
+diff --git a/drivers/clk/st/clk-flexgen.c b/drivers/clk/st/clk-flexgen.c
+index 4413b6e04a8e..55873d4b7603 100644
+--- a/drivers/clk/st/clk-flexgen.c
++++ b/drivers/clk/st/clk-flexgen.c
+@@ -375,6 +375,7 @@ static void __init st_of_flexgen_setup(struct device_node *np)
+ 			break;
+ 		}
+ 
++		flex_flags &= ~CLK_IS_CRITICAL;
+ 		of_clk_detect_critical(np, i, &flex_flags);
+ 
+ 		/*
 -- 
-2.11.0
+2.17.1
 
