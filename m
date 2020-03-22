@@ -2,102 +2,363 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B27EC18E86E
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Mar 2020 12:39:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1D69F18E877
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Mar 2020 12:50:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727011AbgCVLjA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 22 Mar 2020 07:39:00 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:33678 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726896AbgCVLjA (ORCPT
+        id S1727022AbgCVLuA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 22 Mar 2020 07:50:00 -0400
+Received: from smtp2207-205.mail.aliyun.com ([121.197.207.205]:60154 "EHLO
+        smtp2207-205.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726976AbgCVLt7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Mar 2020 07:39:00 -0400
-Received: by mail-pf1-f196.google.com with SMTP id j1so3291883pfe.0;
-        Sun, 22 Mar 2020 04:38:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=Z+r+Ca5wy4wGRgdBd/D74jqqWNbUOBR9cUPVfMcIPhI=;
-        b=uxOB2o16Ee1fduqLQBOWbIJFB2t8k9yyl73bpylT+j6pX6Tqeo1mZYo6j30lEej0dh
-         2af30A9uzLyBWK75QZGafmoz17qdAbIDNBJ0YLBZBEb4tby2g16/FsrUGeQqMVIWQAqk
-         C7GjnohnYNd6zToIT2Q3HGmL3tdoxN7xN0+GRCgM4qf3eWylyVnlftmOX4zBwgqvlp/z
-         22mWqBWTIakkr1YK2nKYNda3k21hqfJa7U0JeA5gdpPkoT4pOyBu38SokPQNFpVDqtwu
-         BoTYEQz57MVJCvHbl71TtpAQ7jpf8CLr5mOqdiUpjW+UIUHy9Y+iuqajdETkw3fVQo96
-         G/UQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=Z+r+Ca5wy4wGRgdBd/D74jqqWNbUOBR9cUPVfMcIPhI=;
-        b=adImztvhmKQItfNtIWb1CXv9q9OG5tyRbUNPCZ/XSxrZghXZQG/HuBa1JRUmO6E63H
-         MttRg6GLIuwiwt1BtAIgvy5rDt3WJlg4NiELVExACy7NzWr5YuUaVFZqDPQlAZsf5zi4
-         dfX6xhMvlGHPsxERUBHV2w87GJDzT2tXhQCmjKxZ2yAcvEMpLwgmeFAQARmKUY3yMC8Q
-         Nx1Y7Hlzcq0toCJh9rpoMXevFrEq08NX1pLlRadfD8OsaypcvwPC1+0wx7QO/gWiZamX
-         j8I/EMmoAlCxGIU0EhqkhQjXmsGt1ExNf8kFb0rG5mdO+eRPGNL0uA7Uqj5xupVmf0Kh
-         lwxw==
-X-Gm-Message-State: ANhLgQ09iPFLNcb+I/prs8KBLB83kXE7vx4mopv7HcQumQz43QWtISA8
-        3yre+DZ8aK0TqaNN0bwTk1HsVfex2QI=
-X-Google-Smtp-Source: ADFU+vs7NwrhSo9TcVfHDTikYxjPBNlGMHUU1LCMZhjEcqLlxHVm2YdFqJYnLbwaUBw+97Gb+1QP9A==
-X-Received: by 2002:a63:b60:: with SMTP id a32mr17655841pgl.417.1584877138268;
-        Sun, 22 Mar 2020 04:38:58 -0700 (PDT)
-Received: from localhost.localdomain ([203.109.114.220])
-        by smtp.gmail.com with ESMTPSA id w19sm9902111pgm.27.2020.03.22.04.38.55
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Sun, 22 Mar 2020 04:38:57 -0700 (PDT)
-From:   Raag Jadav <raagjadav@gmail.com>
-To:     linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     mchehab@kernel.org, wenyou.yang@microchip.com,
-        Raag Jadav <raagjadav@gmail.com>
-Subject: [PATCH] media: ov7740: use SCCB regmap
-Date:   Sun, 22 Mar 2020 17:08:11 +0530
-Message-Id: <1584877091-16838-1-git-send-email-raagjadav@gmail.com>
-X-Mailer: git-send-email 2.7.4
+        Sun, 22 Mar 2020 07:49:59 -0400
+X-Alimail-AntiSpam: AC=CONTINUE;BC=0.07436282|-1;CH=green;DM=||false|;DS=CONTINUE|ham_system_inform|0.0966192-0.00042761-0.902953;FP=0|0|0|0|0|-1|-1|-1;HT=e02c03297;MF=liaoweixiong@allwinnertech.com;NM=1;PH=DS;RN=16;RT=16;SR=0;TI=SMTPD_---.H3QKLuS_1584877317;
+Received: from 172.16.10.102(mailfrom:liaoweixiong@allwinnertech.com fp:SMTPD_---.H3QKLuS_1584877317)
+          by smtp.aliyun-inc.com(10.147.43.230);
+          Sun, 22 Mar 2020 19:41:58 +0800
+Subject: Re: [PATCH v2 05/11] pstore/blk: blkoops: support ftrace recorder
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Anton Vorontsov <anton@enomsg.org>,
+        Colin Cross <ccross@android.com>,
+        Tony Luck <tony.luck@intel.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Richard Weinberger <richard@nod.at>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Rob Herring <robh@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mtd@lists.infradead.org
+References: <1581078355-19647-1-git-send-email-liaoweixiong@allwinnertech.com>
+ <1581078355-19647-6-git-send-email-liaoweixiong@allwinnertech.com>
+ <202003181117.6EA5486@keescook>
+From:   WeiXiong Liao <liaoweixiong@allwinnertech.com>
+Message-ID: <42205dc0-f001-bbf0-00b6-85aca0cdb1f8@allwinnertech.com>
+Date:   Sun, 22 Mar 2020 19:42:07 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
+MIME-Version: 1.0
+In-Reply-To: <202003181117.6EA5486@keescook>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Make use of SCCB APIs for regmap operations.
+hi Kees Cook,
 
-Signed-off-by: Raag Jadav <raagjadav@gmail.com>
----
- drivers/media/i2c/ov7740.c | 10 +---------
- 1 file changed, 1 insertion(+), 9 deletions(-)
+On 2020/3/19 AM 2:19, Kees Cook wrote:
+> On Fri, Feb 07, 2020 at 08:25:49PM +0800, WeiXiong Liao wrote:
+>> Support recorder for ftrace. To enable ftrace recorder, just make
+>> ftrace_size be greater than 0 and a multiple of 4096.
+>>
+>> Signed-off-by: WeiXiong Liao <liaoweixiong@allwinnertech.com>
+>> ---
+>>  fs/pstore/Kconfig          | 12 ++++++++
+>>  fs/pstore/blkoops.c        | 11 +++++++
+>>  fs/pstore/blkzone.c        | 75 ++++++++++++++++++++++++++++++++++++++++++++--
+>>  include/linux/pstore_blk.h |  4 +++
+>>  4 files changed, 99 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/fs/pstore/Kconfig b/fs/pstore/Kconfig
+>> index 5f0a42823028..308a0a4c5ee5 100644
+>> --- a/fs/pstore/Kconfig
+>> +++ b/fs/pstore/Kconfig
+>> @@ -210,6 +210,18 @@ config PSTORE_BLKOOPS_CONSOLE_SIZE
+>>  	  NOTE that, both kconfig and module parameters can configure blkoops,
+>>  	  but module parameters have priority over kconfig.
+>>  
+>> +config PSTORE_BLKOOPS_FTRACE_SIZE
+>> +	int "ftrace size in kbytes for blkoops"
+>> +	depends on PSTORE_BLKOOPS
+>> +	depends on PSTORE_FTRACE
+>> +	default 64
+> 
+> Same tricks. :)
+> 
 
-diff --git a/drivers/media/i2c/ov7740.c b/drivers/media/i2c/ov7740.c
-index 732655f..5832461 100644
---- a/drivers/media/i2c/ov7740.c
-+++ b/drivers/media/i2c/ov7740.c
-@@ -1068,13 +1068,6 @@ static int ov7740_probe(struct i2c_client *client)
- 	struct v4l2_subdev *sd;
- 	int ret;
- 
--	if (!i2c_check_functionality(client->adapter,
--				     I2C_FUNC_SMBUS_BYTE_DATA)) {
--		dev_err(&client->dev,
--			"OV7740: I2C-Adapter doesn't support SMBUS\n");
--		return -EIO;
--	}
--
- 	ov7740 = devm_kzalloc(&client->dev, sizeof(*ov7740), GFP_KERNEL);
- 	if (!ov7740)
- 		return -ENOMEM;
-@@ -1091,7 +1084,7 @@ static int ov7740_probe(struct i2c_client *client)
- 	if (ret)
- 		return ret;
- 
--	ov7740->regmap = devm_regmap_init_i2c(client, &ov7740_regmap_config);
-+	ov7740->regmap = devm_regmap_init_sccb(client, &ov7740_regmap_config);
- 	if (IS_ERR(ov7740->regmap)) {
- 		ret = PTR_ERR(ov7740->regmap);
- 		dev_err(&client->dev, "Failed to allocate register map: %d\n",
-@@ -1100,7 +1093,6 @@ static int ov7740_probe(struct i2c_client *client)
- 	}
- 
- 	sd = &ov7740->subdev;
--	client->flags |= I2C_CLIENT_SCCB;
- 	v4l2_i2c_subdev_init(sd, client, &ov7740_subdev_ops);
- 
- #ifdef CONFIG_VIDEO_V4L2_SUBDEV_API
+Sure. We can discuss on patch 2 and I will fix it to all over the series
+patches.
+
+>> +	help
+>> +	  This just sets size of ftrace (ftrace_size) for pstore/blk. The
+>> +	  size is in KB and must be a multiple of 4.
+>> +
+>> +	  NOTE that, both kconfig and module parameters can configure blkoops,
+>> +	  but module parameters have priority over kconfig.
+>> +
+>>  config PSTORE_BLKOOPS_BLKDEV
+>>  	string "block device for blkoops"
+>>  	depends on PSTORE_BLKOOPS
+>> diff --git a/fs/pstore/blkoops.c b/fs/pstore/blkoops.c
+>> index 05990bc3b168..c76bab671b0b 100644
+>> --- a/fs/pstore/blkoops.c
+>> +++ b/fs/pstore/blkoops.c
+>> @@ -24,6 +24,10 @@
+>>  module_param(console_size, long, 0400);
+>>  MODULE_PARM_DESC(console_size, "console size in kbytes");
+>>  
+>> +static long ftrace_size = -1;
+>> +module_param(ftrace_size, long, 0400);
+>> +MODULE_PARM_DESC(ftrace_size, "ftrace size in kbytes");
+>> +
+>>  static int dump_oops = -1;
+>>  module_param(dump_oops, int, 0400);
+>>  MODULE_PARM_DESC(total_size, "whether dump oops");
+>> @@ -80,6 +84,12 @@
+>>  #define DEFAULT_CONSOLE_SIZE 0
+>>  #endif
+>>  
+>> +#ifdef CONFIG_PSTORE_BLKOOPS_FTRACE_SIZE
+>> +#define DEFAULT_FTRACE_SIZE CONFIG_PSTORE_BLKOOPS_FTRACE_SIZE
+>> +#else
+>> +#define DEFAULT_FTRACE_SIZE 0
+>> +#endif
+>> +
+>>  #ifdef CONFIG_PSTORE_BLKOOPS_DUMP_OOPS
+>>  #define DEFAULT_DUMP_OOPS CONFIG_PSTORE_BLKOOPS_DUMP_OOPS
+>>  #else
+>> @@ -135,6 +145,7 @@ int blkoops_register_device(struct blkoops_device *bo_dev)
+>>  	verify_size(dmesg_size, DEFAULT_DMESG_SIZE, 4096);
+>>  	verify_size(pmsg_size, DEFAULT_PMSG_SIZE, 4096);
+>>  	verify_size(console_size, DEFAULT_CONSOLE_SIZE, 4096);
+>> +	verify_size(ftrace_size, DEFAULT_FTRACE_SIZE, 4096);
+>>  #undef verify_size
+>>  	dump_oops = !!(dump_oops < 0 ? DEFAULT_DUMP_OOPS : dump_oops);
+>>  
+>> diff --git a/fs/pstore/blkzone.c b/fs/pstore/blkzone.c
+>> index 9a7e9b06ccf7..442e5a5bbfda 100644
+>> --- a/fs/pstore/blkzone.c
+>> +++ b/fs/pstore/blkzone.c
+>> @@ -89,10 +89,13 @@ struct blkz_context {
+>>  	struct blkz_zone **dbzs;	/* dmesg block zones */
+>>  	struct blkz_zone *pbz;		/* Pmsg block zone */
+>>  	struct blkz_zone *cbz;		/* console block zone */
+>> +	struct blkz_zone **fbzs;	/* Ftrace zones */
+>>  	unsigned int dmesg_max_cnt;
+>>  	unsigned int dmesg_read_cnt;
+>>  	unsigned int pmsg_read_cnt;
+>>  	unsigned int console_read_cnt;
+>> +	unsigned int ftrace_max_cnt;
+>> +	unsigned int ftrace_read_cnt;
+>>  	unsigned int dmesg_write_cnt;
+>>  	/*
+>>  	 * the counter should be recovered when recover.
+>> @@ -281,6 +284,7 @@ static void blkz_flush_all_dirty_zones(struct work_struct *work)
+>>  	blkz_flush_dirty_zone(cxt->pbz);
+>>  	blkz_flush_dirty_zone(cxt->cbz);
+>>  	blkz_flush_dirty_zones(cxt->dbzs, cxt->dmesg_max_cnt);
+>> +	blkz_flush_dirty_zones(cxt->fbzs, cxt->ftrace_max_cnt);
+>>  }
+>>  
+>>  static int blkz_recover_dmesg_data(struct blkz_context *cxt)
+>> @@ -497,6 +501,31 @@ static int blkz_recover_zone(struct blkz_context *cxt, struct blkz_zone *zone)
+>>  	return ret;
+>>  }
+>>  
+>> +static int blkz_recover_zones(struct blkz_context *cxt,
+>> +		struct blkz_zone **zones, unsigned int cnt)
+>> +{
+>> +	int ret;
+>> +	unsigned int i;
+>> +	struct blkz_zone *zone;
+>> +
+>> +	if (!zones)
+>> +		return 0;
+>> +
+>> +	for (i = 0; i < cnt; i++) {
+>> +		zone = zones[i];
+>> +		if (unlikely(!zone))
+>> +			continue;
+>> +		ret = blkz_recover_zone(cxt, zone);
+>> +		if (ret)
+>> +			goto recover_fail;
+>> +	}
+>> +
+>> +	return 0;
+>> +recover_fail:
+>> +	pr_debug("recover %s[%u] failed\n", zone->name, i);
+>> +	return ret;
+>> +}
+> 
+> Why is this introduced here? Shouldn't this be earlier in the series?
+> 
+
+blkz_recover_zones() is used to recover a array of zones. Only ftrace
+recorder
+need it, so it's introduced here.
+
+>> +
+>>  static inline int blkz_recovery(struct blkz_context *cxt)
+>>  {
+>>  	int ret = -EBUSY;
+>> @@ -516,6 +545,10 @@ static inline int blkz_recovery(struct blkz_context *cxt)
+>>  	if (ret)
+>>  		goto recover_fail;
+>>  
+>> +	ret = blkz_recover_zones(cxt, cxt->fbzs, cxt->ftrace_max_cnt);
+>> +	if (ret)
+>> +		goto recover_fail;
+>> +
+>>  	pr_debug("recover end!\n");
+>>  	atomic_set(&cxt->recovered, 1);
+>>  	return 0;
+>> @@ -532,6 +565,7 @@ static int blkz_pstore_open(struct pstore_info *psi)
+>>  	cxt->dmesg_read_cnt = 0;
+>>  	cxt->pmsg_read_cnt = 0;
+>>  	cxt->console_read_cnt = 0;
+>> +	cxt->ftrace_read_cnt = 0;
+>>  	return 0;
+>>  }
+>>  
+>> @@ -589,6 +623,8 @@ static int blkz_pstore_erase(struct pstore_record *record)
+>>  		return blkz_record_erase(cxt, cxt->pbz);
+>>  	case PSTORE_TYPE_CONSOLE:
+>>  		return blkz_record_erase(cxt, cxt->cbz);
+>> +	case PSTORE_TYPE_FTRACE:
+>> +		return blkz_record_erase(cxt, cxt->fbzs[record->id]);
+>>  	default: return -EINVAL;
+>>  	}
+>>  }
+>> @@ -743,6 +779,13 @@ static int notrace blkz_pstore_write(struct pstore_record *record)
+>>  		return blkz_record_write(cxt, cxt->cbz, record);
+>>  	case PSTORE_TYPE_PMSG:
+>>  		return blkz_record_write(cxt, cxt->pbz, record);
+>> +	case PSTORE_TYPE_FTRACE: {
+>> +		int zonenum = smp_processor_id();
+>> +
+>> +		if (!cxt->fbzs)
+>> +			return -ENOSPC;
+>> +		return blkz_record_write(cxt, cxt->fbzs[zonenum], record);
+>> +	}
+>>  	default:
+>>  		return -EINVAL;
+>>  	}
+>> @@ -759,6 +802,12 @@ static struct blkz_zone *blkz_read_next_zone(struct blkz_context *cxt)
+>>  			return zone;
+>>  	}
+>>  
+>> +	while (cxt->ftrace_read_cnt < cxt->ftrace_max_cnt) {
+>> +		zone = cxt->fbzs[cxt->ftrace_read_cnt++];
+>> +		if (blkz_old_ok(zone))
+>> +			return zone;
+>> +	}
+>> +
+>>  	if (cxt->pmsg_read_cnt == 0) {
+>>  		cxt->pmsg_read_cnt++;
+>>  		zone = cxt->pbz;
+>> @@ -881,6 +930,9 @@ static ssize_t blkz_pstore_read(struct pstore_record *record)
+>>  		readop = blkz_dmesg_read;
+>>  		record->id = cxt->dmesg_read_cnt - 1;
+>>  		break;
+>> +	case PSTORE_TYPE_FTRACE:
+>> +		record->id = cxt->ftrace_read_cnt - 1;
+>> +		/* fallthrough */
+> 
+> Please mark with "fallthrough;".
+> https://www.kernel.org/doc/html/latest/process/deprecated.html#implicit-switch-case-fall-through
+> 
+
+Fixed.
+
+>>  	case PSTORE_TYPE_CONSOLE:
+>>  		/* fallthrough */
+>>  	case PSTORE_TYPE_PMSG:
+>> @@ -1046,15 +1098,27 @@ static int blkz_cut_zones(struct blkz_context *cxt)
+>>  		goto free_pmsg;
+>>  	}
+>>  
+>> +	off_size += info->ftrace_size;
+>> +	cxt->fbzs = blkz_init_zones(PSTORE_TYPE_FTRACE, &off,
+>> +			info->ftrace_size,
+>> +			info->ftrace_size / nr_cpu_ids,
+>> +			&cxt->ftrace_max_cnt);
+>> +	if (IS_ERR(cxt->fbzs)) {
+>> +		err = PTR_ERR(cxt->fbzs);
+>> +		goto free_console;
+>> +	}
+>> +
+>>  	cxt->dbzs = blkz_init_zones(PSTORE_TYPE_DMESG, &off,
+>>  			info->total_size - off_size,
+>>  			info->dmesg_size, &cxt->dmesg_max_cnt);
+>>  	if (IS_ERR(cxt->dbzs)) {
+>>  		err = PTR_ERR(cxt->dbzs);
+>> -		goto free_console;
+>> +		goto free_ftrace;
+>>  	}
+>>  
+>>  	return 0;
+>> +free_ftrace:
+>> +	blkz_free_zones(&cxt->fbzs, &cxt->ftrace_max_cnt);
+>>  free_console:
+>>  	blkz_free_zone(&cxt->cbz);
+>>  free_pmsg:
+>> @@ -1103,6 +1167,7 @@ int blkz_register(struct blkz_info *info)
+>>  	check_size(dmesg_size, SECTOR_SIZE);
+>>  	check_size(pmsg_size, SECTOR_SIZE);
+>>  	check_size(console_size, SECTOR_SIZE);
+>> +	check_size(ftrace_size, SECTOR_SIZE);
+>>  
+>>  #undef check_size
+>>  
+>> @@ -1136,6 +1201,7 @@ int blkz_register(struct blkz_info *info)
+>>  	pr_debug("\tdmesg size : %ld Bytes\n", info->dmesg_size);
+>>  	pr_debug("\tpmsg size : %ld Bytes\n", info->pmsg_size);
+>>  	pr_debug("\tconsole size : %ld Bytes\n", info->console_size);
+>> +	pr_debug("\tftrace size : %ld Bytes\n", info->ftrace_size);
+>>  
+>>  	err = blkz_cut_zones(cxt);
+>>  	if (err) {
+>> @@ -1159,13 +1225,16 @@ int blkz_register(struct blkz_info *info)
+>>  		cxt->pstore.flags |= PSTORE_FLAGS_PMSG;
+>>  	if (info->console_size)
+>>  		cxt->pstore.flags |= PSTORE_FLAGS_CONSOLE;
+>> +	if (info->ftrace_size)
+>> +		cxt->pstore.flags |= PSTORE_FLAGS_FTRACE;
+>>  
+>> -	pr_info("Registered %s as blkzone backend for %s%s%s%s\n",
+>> +	pr_info("Registered %s as blkzone backend for %s%s%s%s%s\n",
+>>  			info->name,
+>>  			cxt->dbzs && cxt->bzinfo->dump_oops ? "Oops " : "",
+>>  			cxt->dbzs && cxt->bzinfo->panic_write ? "Panic " : "",
+>>  			cxt->pbz ? "Pmsg " : "",
+>> -			cxt->cbz ? "Console" : "");
+>> +			cxt->cbz ? "Console " : "",
+>> +			cxt->fbzs ? "Ftrace" : "");
+>>  
+>>  	err = pstore_register(&cxt->pstore);
+>>  	if (err) {
+>> diff --git a/include/linux/pstore_blk.h b/include/linux/pstore_blk.h
+>> index 546375e04419..77704c1b404a 100644
+>> --- a/include/linux/pstore_blk.h
+>> +++ b/include/linux/pstore_blk.h
+>> @@ -25,6 +25,9 @@
+>>   * @console_size:
+>>   *	The size of zone for console. Zero means disabled, othewise, it must
+>>   *	be multiple of SECTOR_SIZE(512).
+>> + * @ftrace_size:
+>> + *	The size of zone for ftrace. Zero means disabled, othewise, it must
+>> + *	be multiple of SECTOR_SIZE(512).
+>>   * @dump_oops:
+>>   *	Dump oops and panic log or only panic.
+>>   * @read, @write:
+>> @@ -60,6 +63,7 @@ struct blkz_info {
+>>  	unsigned long dmesg_size;
+>>  	unsigned long pmsg_size;
+>>  	unsigned long console_size;
+>> +	unsigned long ftrace_size;
+>>  	int dump_oops;
+>>  	blkz_read_op read;
+>>  	blkz_write_op write;
+>> -- 
+>> 1.9.1
+>>
+> 
+
 -- 
-2.7.4
-
+WeiXiong Liao
