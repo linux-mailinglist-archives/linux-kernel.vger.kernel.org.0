@@ -2,20 +2,20 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9213F18E833
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Mar 2020 12:01:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 28F9E18E837
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Mar 2020 12:01:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726984AbgCVLAh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 22 Mar 2020 07:00:37 -0400
-Received: from relay10.mail.gandi.net ([217.70.178.230]:37813 "EHLO
+        id S1727026AbgCVLBl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 22 Mar 2020 07:01:41 -0400
+Received: from relay10.mail.gandi.net ([217.70.178.230]:43157 "EHLO
         relay10.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726955AbgCVLAh (ORCPT
+        with ESMTP id S1726936AbgCVLBl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Mar 2020 07:00:37 -0400
+        Sun, 22 Mar 2020 07:01:41 -0400
 Received: from localhost.localdomain (lfbn-lyo-1-453-25.w2-7.abo.wanadoo.fr [2.7.45.25])
         (Authenticated sender: alex@ghiti.fr)
-        by relay10.mail.gandi.net (Postfix) with ESMTPSA id DD5E224000A;
-        Sun, 22 Mar 2020 11:00:32 +0000 (UTC)
+        by relay10.mail.gandi.net (Postfix) with ESMTPSA id ED460240003;
+        Sun, 22 Mar 2020 11:01:35 +0000 (UTC)
 From:   Alexandre Ghiti <alex@ghiti.fr>
 To:     Paul Walmsley <paul.walmsley@sifive.com>,
         Palmer Dabbelt <palmer@dabbelt.com>,
@@ -23,10 +23,12 @@ To:     Paul Walmsley <paul.walmsley@sifive.com>,
         Christoph Hellwig <hch@lst.de>,
         linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
 Cc:     Alexandre Ghiti <alex@ghiti.fr>
-Subject: [RFC PATCH 0/7] Introduce sv48 support 
-Date:   Sun, 22 Mar 2020 07:00:21 -0400
-Message-Id: <20200322110028.18279-1-alex@ghiti.fr>
+Subject: [RFC PATCH 1/7] riscv: Get rid of compile time logic with MAX_EARLY_MAPPING_SIZE
+Date:   Sun, 22 Mar 2020 07:00:22 -0400
+Message-Id: <20200322110028.18279-2-alex@ghiti.fr>
 X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20200322110028.18279-1-alex@ghiti.fr>
+References: <20200322110028.18279-1-alex@ghiti.fr>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -34,55 +36,53 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patchset implements sv48 support at runtime. The kernel will try to
-boot with 4-level page table and will fallback to 3-level if the HW does not
-support it.
+There is no need to compare at compile time MAX_EARLY_MAPPING_SIZE value
+with PGDIR_SIZE since MAX_EARLY_MAPPING_SIZE is set to 128MB which is less
+than PGDIR_SIZE that is equal to 1GB: that allows to simplify early_pmd
+definition.
 
-The biggest advantage is that we only have one kernel for 64bit, which
-is way easier to maintain.
+Signed-off-by: Alexandre Ghiti <alex@ghiti.fr>
+---
+ arch/riscv/mm/init.c | 16 ++++------------
+ 1 file changed, 4 insertions(+), 12 deletions(-)
 
-Folding the 4th level into a 3-level page table has almost no cost at
-runtime.
-
-At the moment, there is no way to enforce 3-level if the HW supports
-4-level page table: early parameters are parsed after the choice must be
-made.
-
-It is based on my relocatable patchset v3 that I have not posted yet,
-you can try the sv48 support by using the branch
-int/alex/riscv_sv48_runtime_v1 here:
-
-https://github.com/AlexGhiti/riscv-linux
-
-Any feedback appreciated,
-
-Thanks,
-
-Alexandre Ghiti (7):
-  riscv: Get rid of compile time logic with MAX_EARLY_MAPPING_SIZE
-  riscv: Allow to dynamically define VA_BITS
-  riscv: Simplify MAXPHYSMEM config
-  riscv: Implement sv48 support
-  riscv: Use pgtable_l4_enabled to output mmu type in cpuinfo
-  dt-bindings: riscv: Remove "riscv,svXX" property from device-tree
-  riscv: Explicit comment about user virtual address space size
-
- .../devicetree/bindings/riscv/cpus.yaml       |  13 --
- arch/riscv/Kconfig                            |  34 ++---
- arch/riscv/boot/dts/sifive/fu540-c000.dtsi    |   4 -
- arch/riscv/include/asm/csr.h                  |   3 +-
- arch/riscv/include/asm/fixmap.h               |   1 +
- arch/riscv/include/asm/page.h                 |  15 +-
- arch/riscv/include/asm/pgalloc.h              |  36 +++++
- arch/riscv/include/asm/pgtable-64.h           |  98 +++++++++++-
- arch/riscv/include/asm/pgtable.h              |  24 ++-
- arch/riscv/include/asm/sparsemem.h            |   2 +-
- arch/riscv/kernel/cpu.c                       |  24 +--
- arch/riscv/kernel/head.S                      |  37 ++++-
- arch/riscv/mm/context.c                       |   4 +-
- arch/riscv/mm/init.c                          | 142 +++++++++++++++---
- 14 files changed, 341 insertions(+), 96 deletions(-)
-
+diff --git a/arch/riscv/mm/init.c b/arch/riscv/mm/init.c
+index 238bd0033c3f..18bbb426848e 100644
+--- a/arch/riscv/mm/init.c
++++ b/arch/riscv/mm/init.c
+@@ -247,13 +247,7 @@ static void __init create_pte_mapping(pte_t *ptep,
+ 
+ pmd_t trampoline_pmd[PTRS_PER_PMD] __page_aligned_bss;
+ pmd_t fixmap_pmd[PTRS_PER_PMD] __page_aligned_bss;
+-
+-#if MAX_EARLY_MAPPING_SIZE < PGDIR_SIZE
+-#define NUM_EARLY_PMDS		1UL
+-#else
+-#define NUM_EARLY_PMDS		(1UL + MAX_EARLY_MAPPING_SIZE / PGDIR_SIZE)
+-#endif
+-pmd_t early_pmd[PTRS_PER_PMD * NUM_EARLY_PMDS] __initdata __aligned(PAGE_SIZE);
++pmd_t early_pmd[PTRS_PER_PMD] __initdata __aligned(PAGE_SIZE);
+ 
+ static pmd_t *__init get_pmd_virt(phys_addr_t pa)
+ {
+@@ -267,14 +261,12 @@ static pmd_t *__init get_pmd_virt(phys_addr_t pa)
+ 
+ static phys_addr_t __init alloc_pmd(uintptr_t va)
+ {
+-	uintptr_t pmd_num;
+-
+ 	if (mmu_enabled)
+ 		return memblock_phys_alloc(PAGE_SIZE, PAGE_SIZE);
+ 
+-	pmd_num = (va - PAGE_OFFSET) >> PGDIR_SHIFT;
+-	BUG_ON(pmd_num >= NUM_EARLY_PMDS);
+-	return (uintptr_t)&early_pmd[pmd_num * PTRS_PER_PMD];
++	BUG_ON((va - PAGE_OFFSET) >> PGDIR_SHIFT);
++
++	return (uintptr_t)early_pmd;
+ }
+ 
+ static void __init create_pmd_mapping(pmd_t *pmdp,
 -- 
 2.20.1
 
