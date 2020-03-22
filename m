@@ -2,71 +2,44 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5FE1B18EB43
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Mar 2020 18:58:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D4D3A18EB85
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Mar 2020 19:25:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726816AbgCVR6g (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 22 Mar 2020 13:58:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37616 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725881AbgCVR6g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Mar 2020 13:58:36 -0400
-Received: from archlinux (cpc149474-cmbg20-2-0-cust94.5-4.cable.virginm.net [82.4.196.95])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8DC7D206C3;
-        Sun, 22 Mar 2020 17:58:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584899915;
-        bh=T+ytWmZQpGjbAP/os4ys8r0V5Uy2/2QTxKN4sGQ8ZJk=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=eVSCfN0t+/UVPK+HhohDI2nLzeg40nb9kVvGMwc4Y4EGYqfFAGP4J0/6xpFlV3rGQ
-         fb4U7BxavbGYN805zW7ItRdI7BoseRXip+OQhASIH+BCHokPDoTHKTGYQdgSxi9Wwa
-         nnWWBkOovHe5RgTETiNhZ9hPAPelqv03iYrDIuLY=
-Date:   Sun, 22 Mar 2020 17:58:31 +0000
-From:   Jonathan Cameron <jic23@kernel.org>
-To:     William Breathitt Gray <vilhelm.gray@gmail.com>
-Cc:     Syed Nayyar Waris <syednwaris@gmail.com>,
-        linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 1/3] counter: 104-quad-8: Add lock guards - generic
- interface
-Message-ID: <20200322175831.74e10aa7@archlinux>
-In-Reply-To: <20200318020506.GA45571@icarus>
-References: <20200316124929.GA389@syed.domain.name>
-        <20200318020506.GA45571@icarus>
-X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1726880AbgCVSZA convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Sun, 22 Mar 2020 14:25:00 -0400
+Received: from mail.destinigroup.com ([175.144.213.75]:59028 "EHLO
+        mail.destinigroup.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725785AbgCVSY7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 22 Mar 2020 14:24:59 -0400
+X-Greylist: delayed 4880 seconds by postgrey-1.27 at vger.kernel.org; Sun, 22 Mar 2020 14:24:58 EDT
+Received: from localhost (localhost [127.0.0.1])
+        by mail.destinigroup.com (Postfix) with ESMTP id 30D862D350A;
+        Mon, 23 Mar 2020 00:52:45 +0800 (MYT)
+Received: from mail.destinigroup.com ([127.0.0.1])
+        by localhost (mail.destinigroup.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id UL4mDKi7Amuh; Mon, 23 Mar 2020 00:52:45 +0800 (MYT)
+Received: from [45.143.223.46] (unknown [45.143.223.46])
+        by mail.destinigroup.com (Postfix) with ESMTPSA id 0AAF92D2E43;
+        Mon, 23 Mar 2020 00:52:39 +0800 (MYT)
+Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8BIT
+Content-Description: Mail message body
+Subject: YOUR EARLY REPLY
+To:     Recipients <amunoza@surnet.cl>
+From:   "Mr. Fu" <amunoza@surnet.cl>
+Date:   Sun, 22 Mar 2020 09:52:32 -0700
+Reply-To: fulanlan28@gmail.com
+Message-Id: <20200322165240.0AAF92D2E43@mail.destinigroup.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 17 Mar 2020 22:14:49 -0400
-William Breathitt Gray <vilhelm.gray@gmail.com> wrote:
-
-> On Mon, Mar 16, 2020 at 06:19:30PM +0530, Syed Nayyar Waris wrote:
-> > Add lock protection from race conditions to 104-quad-8 counter driver
-> > generic interface code changes. Mutex calls used for protection.
-> > 
-> > Fixes: f1d8a071d45b ("counter: 104-quad-8: Add Generic Counter interface
-> > support")
-> > 
-> > Signed-off-by: Syed Nayyar Waris <syednwaris@gmail.com>
-> > ---
-> > Changes in v5:
-> >  - Change spin lock calls to mutex lock calls
-> >  - Modify the title description.  
-> 
-> Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
-
-Looks good.  I'm not sure right now which tree I'll take this through
-(depends on whether it looks like we'll get an rc8 and hence I can sneak
-it in for the coming merge window or not).
-
-So poke me if I seem to have forgotten to apply this in a week or so.
-
-Thanks,
-
-Jonathan
+YOUR EARLY REPLY
+I have a lucrative business proposal that I would like to share with you.
+I'm glad about your quick answer
+E-mail;fulanlan28@gmail.com
+greetings
+Mr. Fu Lan
