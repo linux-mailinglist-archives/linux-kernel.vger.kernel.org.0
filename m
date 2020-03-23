@@ -2,133 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9580B18F0B6
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Mar 2020 09:18:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CB33C18F0BD
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Mar 2020 09:20:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727535AbgCWISa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Mar 2020 04:18:30 -0400
-Received: from us-smtp-delivery-74.mimecast.com ([216.205.24.74]:48421 "EHLO
-        us-smtp-delivery-74.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727526AbgCWISa (ORCPT
+        id S1727574AbgCWIUY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Mar 2020 04:20:24 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:37375 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727516AbgCWIUX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Mar 2020 04:18:30 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1584951508;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=9+djlOZkkG34kATfFU8ToSkWmnwBYyFJfZBQaAAXqqE=;
-        b=UoClQMO61tOXMtbTmaf2gwx9zvXRbdjdecKnP9NVJ4wfOEi8MWOZsvX5jA6OmMBGr8X6Mm
-        NBdZ+eBhWVV19giVwbsmZ6VmRAcRiDHyOl1TYa/xZRZ+i9FpVlmjCSaVmfCMQgmXe/IuXi
-        ukk9MscQGqe/DsWlBkyGfmBjbWiHSUE=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-201-qsXFI-B7MZCs6vdgKpsJHQ-1; Mon, 23 Mar 2020 04:18:20 -0400
-X-MC-Unique: qsXFI-B7MZCs6vdgKpsJHQ-1
-Received: by mail-wm1-f71.google.com with SMTP id s14so1049220wmj.9
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Mar 2020 01:18:19 -0700 (PDT)
+        Mon, 23 Mar 2020 04:20:23 -0400
+Received: by mail-wm1-f66.google.com with SMTP id d1so13601164wmb.2;
+        Mon, 23 Mar 2020 01:20:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:subject:date:message-id:in-reply-to:references:mime-version
+         :content-transfer-encoding;
+        bh=4X1Z6DBl4C8HGw65pPFrYCqZJP71M3Q/BOMQzOBqfdc=;
+        b=CV6q6lN3RkNvtZvP3NicZuIziS4Fjd5YCd9o6JxBg4su/vAT7W19fnSInrMUuhK9rA
+         QxUOZTeeslkpfd0kMIUc61KInphJ/y60CWO9u8crqYUkfYV8Tt0kTJ37F0KFvTD/C2Jh
+         8U1epqG4jjagnkoNoMjD9LwN2mQXizRnmHXN9MZaiuVfmHDmVbBS3Tquf7gRQ4aZah29
+         xR7nMhpNi8QysiNcpjxAsBI3kNj3i28LgQHTJM+joFDExF+Azh8dNdD7fZ5kKw6DjlAH
+         oBlUEef91L2T8t74vARHfu5j3bOZ0bk+EfCv+Wobii4ROWJheV9gmDpAAPeexRcY1kZo
+         NEdQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=9+djlOZkkG34kATfFU8ToSkWmnwBYyFJfZBQaAAXqqE=;
-        b=n5WYJgej/rmYeUfKybroqnp9QvNkIF0GgRvVlEmmv4B2a3m01NmD+aBLea7DrF+Mmn
-         0+UqadGRdV4vgp62LIezwendlV+bokEh6+Hw/VM2PV/jhAAEO0CYGHJSiFbCutd/J1BV
-         WHUt61vbtl/Aaa1r1zYJReVYhtMeAEe+XeI7mKmNIFJK4DWr8+buhIBnRWhvk/q4E7qc
-         oPWoMQQ4L5dij107zS325OM3pjg5uuTf/vjX0TVL81ua4+dZm+6LoASlv24mp0AgL+I4
-         qEsrBXJ++9f0hStbAFWZ0fpeW+sajYwA67m/ytmxlnVhOgajUcMYpxqnS1bSFEgJcpWG
-         1sww==
-X-Gm-Message-State: ANhLgQ3jTq3TDdy/uLP2k5xLdi9qUTlh8sQPBvsJx8211WY2BVkl3pt0
-        MZr9c9ltbN2+hi76eltgIlj9IdCUiKBVFqoUXQb2w7F1ZHrbh3LGyZG+1VGz7XWs3dcYP0ZJQ5o
-        bqABBnfsgv/S4huSK4h8mXZfj
-X-Received: by 2002:adf:fa8a:: with SMTP id h10mr6852180wrr.160.1584951497496;
-        Mon, 23 Mar 2020 01:18:17 -0700 (PDT)
-X-Google-Smtp-Source: ADFU+vuglqGpMjyGAXtjGXC9VUQZ55Okh6SKZ0pRVVSMnctABMUeYyFbQ50ib/snd3MA/dgnb/Bz0A==
-X-Received: by 2002:adf:fa8a:: with SMTP id h10mr6852142wrr.160.1584951497210;
-        Mon, 23 Mar 2020 01:18:17 -0700 (PDT)
-Received: from ?IPv6:2001:b07:6468:f312:24d8:ed40:c82a:8a01? ([2001:b07:6468:f312:24d8:ed40:c82a:8a01])
-        by smtp.gmail.com with ESMTPSA id t126sm21823703wmb.27.2020.03.23.01.18.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 23 Mar 2020 01:18:16 -0700 (PDT)
-Subject: Re: BUG: unable to handle kernel NULL pointer dereference in
- handle_external_interrupt_irqoff
-To:     Dmitry Vyukov <dvyukov@google.com>,
-        syzbot <syzbot+3f29ca2efb056a761e38@syzkaller.appspotmail.com>,
-        clang-built-linux <clang-built-linux@googlegroups.com>
-Cc:     Borislav Petkov <bp@alien8.de>, "H. Peter Anvin" <hpa@zytor.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>, KVM list <kvm@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        "Christopherson, Sean J" <sean.j.christopherson@intel.com>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>, wanpengli@tencent.com,
-        the arch/x86 maintainers <x86@kernel.org>
-References: <000000000000277a0405a16bd5c9@google.com>
- <CACT4Y+b1WFT87pWQaXD3CWjyjoQaP1jcycHdHF+rtxoR5xW1ww@mail.gmail.com>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Message-ID: <5058aabe-f32d-b8ef-57ed-f9c0206304c5@redhat.com>
-Date:   Mon, 23 Mar 2020 09:18:19 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=4X1Z6DBl4C8HGw65pPFrYCqZJP71M3Q/BOMQzOBqfdc=;
+        b=Um50o1nJwOUEntwZyPpGOZglpvolB2ZYZx4cfZCU0+N0toxNyKP+8qjqUrZGvJZM3D
+         U3zL4h7L3GsD3AYWeFvYMOtytGRlcbHzgzQIWyvt85UYjlyECfq2jXbJsbaDoW4J4oDa
+         BIb8HY69PIAP24Qsin3sDmN5m+ADjR2lj4UKRQnntUp6GpRluPEJM4fCfxiWzMj8YfNa
+         5FN9SzxBsvxrP6WOYsswDiMcaR1JNEgl++EiES4Zwi0oI2+snuxRsE4u3U5xWRhF1TIO
+         R6BIBdymZQXB8okH9ILSTn/7375XHO9Llwak9gdB9cedEpoCvk97WQYUeZsMJNSNMB7A
+         6WjA==
+X-Gm-Message-State: ANhLgQ3+xnpLb1Ryok5othzfEvVgUt66Uux688iogG2wAcBER7t5tHQZ
+        ulo6GQgZVbdzvswViIE8AbJXxggJ
+X-Google-Smtp-Source: ADFU+vvZKjlztybgaUz1LfLsvTStISrbBPVn+CkN+v51pTczGTOuF0tuZECZeoD31b9f9lyQ0ZQ2LQ==
+X-Received: by 2002:a05:600c:2293:: with SMTP id 19mr19359496wmf.84.1584951621607;
+        Mon, 23 Mar 2020 01:20:21 -0700 (PDT)
+Received: from localhost.localdomain ([109.126.140.227])
+        by smtp.gmail.com with ESMTPSA id o67sm5096814wmo.5.2020.03.23.01.20.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 23 Mar 2020 01:20:21 -0700 (PDT)
+From:   Pavel Begunkov <asml.silence@gmail.com>
+To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2] io_uring: Fix ->data corruption on re-enqueue
+Date:   Mon, 23 Mar 2020 11:19:14 +0300
+Message-Id: <dfc0b13b8ccc5f7780fd94c1f7e4db724ac7513d.1584951486.git.asml.silence@gmail.com>
+X-Mailer: git-send-email 2.24.0
+In-Reply-To: <c8d9cc69995858fd8859b339f77901f93574c528.1584912194.git.asml.silence@gmail.com>
+References: <c8d9cc69995858fd8859b339f77901f93574c528.1584912194.git.asml.silence@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <CACT4Y+b1WFT87pWQaXD3CWjyjoQaP1jcycHdHF+rtxoR5xW1ww@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 22/03/20 07:59, Dmitry Vyukov wrote:
-> 
-> The commit range is presumably
-> fb279f4e238617417b132a550f24c1e86d922558..63849c8f410717eb2e6662f3953ff674727303e7
-> But I don't see anything that says "it's me". The only commit that
-> does non-trivial changes to x86/vmx seems to be "KVM: VMX: check
-> descriptor table exits on instruction emulation":
+work->data and work->list are shared in union. io_wq_assign_next() sets
+->data if a req having a linked_timeout, but then io-wq may want to use
+work->list, e.g. to do re-enqueue of a request, so corrupting ->data.
 
-That seems unlikely, it's a completely different file and it would only
-affect the outside (non-nested) environment rather than your own kernel.
+Don't need ->data, remove it and get linked_timeout through @link_list.
 
-The only instance of "0x86" in the registers is in the flags:
+Fixes: 60cf46ae6054 ("io-wq: hash dependent work")
+Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+---
+ fs/io-wq.h    | 5 +----
+ fs/io_uring.c | 9 ++++-----
+ 2 files changed, 5 insertions(+), 9 deletions(-)
 
-> RSP: 0018:ffffc90001ac7998 EFLAGS: 00010086
-> RAX: ffffc90001ac79c8 RBX: fffffe0000000000 RCX: 0000000000040000
-> RDX: ffffc9000e20f000 RSI: 000000000000b452 RDI: 000000000000b453
-> RBP: 0000000000000ec0 R08: ffffffff83987523 R09: ffffffff811c7eca
-> R10: ffff8880a4e94200 R11: 0000000000000002 R12: dffffc0000000000
-> R13: fffffe0000000ec8 R14: ffffffff880016f0 R15: fffffe0000000ecb
-> FS:  00007fb50e370700(0000) GS:ffff8880ae800000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 000000000000005c CR3: 0000000092fc7000 CR4: 00000000001426f0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-
-That would suggest a miscompilation of the inline assembly, which does
-push the flags:
-
-#ifdef CONFIG_X86_64
-                "mov %%" _ASM_SP ", %[sp]\n\t"
-                "and $0xfffffffffffffff0, %%" _ASM_SP "\n\t"
-                "push $%c[ss]\n\t"
-                "push %[sp]\n\t"
-#endif
-                "pushf\n\t"
-                __ASM_SIZE(push) " $%c[cs]\n\t"
-                CALL_NOSPEC
-
-
-It would not explain why it suddenly started to break, unless the clang
-version also changed, but it would be easy to ascertain and fix (in
-either KVM or clang).  Dmitry, can you send me the vmx.o and
-kvm-intel.ko files?
-
-Thanks,
-
-Paolo
+diff --git a/fs/io-wq.h b/fs/io-wq.h
+index 298b21f4a4d2..d2a5684bf673 100644
+--- a/fs/io-wq.h
++++ b/fs/io-wq.h
+@@ -63,10 +63,7 @@ static inline void wq_node_del(struct io_wq_work_list *list,
+ } while (0)
+ 
+ struct io_wq_work {
+-	union {
+-		struct io_wq_work_node list;
+-		void *data;
+-	};
++	struct io_wq_work_node list;
+ 	void (*func)(struct io_wq_work **);
+ 	struct files_struct *files;
+ 	struct mm_struct *mm;
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index 5267e331b4a4..ce8f38aa070a 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -1567,9 +1567,10 @@ static void io_free_req(struct io_kiocb *req)
+ 
+ static void io_link_work_cb(struct io_wq_work **workptr)
+ {
+-	struct io_wq_work *work = *workptr;
+-	struct io_kiocb *link = work->data;
++	struct io_kiocb *req = container_of(*workptr, struct io_kiocb, work);
++	struct io_kiocb *link;
+ 
++	link = list_first_entry(&req->link_list, struct io_kiocb, link_list);
+ 	io_queue_linked_timeout(link);
+ 	io_wq_submit_work(workptr);
+ }
+@@ -1584,10 +1585,8 @@ static void io_wq_assign_next(struct io_wq_work **workptr, struct io_kiocb *nxt)
+ 
+ 	*workptr = &nxt->work;
+ 	link = io_prep_linked_timeout(nxt);
+-	if (link) {
++	if (link)
+ 		nxt->work.func = io_link_work_cb;
+-		nxt->work.data = link;
+-	}
+ }
+ 
+ /*
+-- 
+2.24.0
 
