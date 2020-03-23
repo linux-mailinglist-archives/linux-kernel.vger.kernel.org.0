@@ -2,99 +2,132 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1F28F18F3BF
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Mar 2020 12:34:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BD59818F3DC
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Mar 2020 12:43:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728177AbgCWLe4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Mar 2020 07:34:56 -0400
-Received: from foss.arm.com ([217.140.110.172]:47678 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728115AbgCWLe4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Mar 2020 07:34:56 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2F8AD1FB;
-        Mon, 23 Mar 2020 04:34:55 -0700 (PDT)
-Received: from [10.37.12.136] (unknown [10.37.12.136])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 562D63F52E;
-        Mon, 23 Mar 2020 04:34:52 -0700 (PDT)
-Subject: Re: [PATCH 1/2] coresight: etm4x: Add support for Qualcomm SC7180 SoC
-To:     saiprakash.ranjan@codeaurora.org
-Cc:     mathieu.poirier@linaro.org, bjorn.andersson@linaro.org,
-        leo.yan@linaro.org, devicetree@vger.kernel.org, robh+dt@kernel.org,
-        agross@kernel.org, david.brown@linaro.org, mark.rutland@arm.com,
-        swboyd@chromium.org, rnayak@codeaurora.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
-References: <cover.1584689229.git.saiprakash.ranjan@codeaurora.org>
- <07a6b272c6e71e0e480f0dd0bffaf3138c0ab4c2.1584689229.git.saiprakash.ranjan@codeaurora.org>
- <edf1bab3-411a-ff7a-b4ca-78a8ab00c72b@arm.com>
- <4924d6c9495d412d9ecb3e1a50ea6ca8@codeaurora.org>
-From:   Suzuki K Poulose <suzuki.poulose@arm.com>
-Message-ID: <788554ee-1b78-9651-9a95-843b8725f502@arm.com>
-Date:   Mon, 23 Mar 2020 11:39:39 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <4924d6c9495d412d9ecb3e1a50ea6ca8@codeaurora.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        id S1728200AbgCWLnI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Mar 2020 07:43:08 -0400
+Received: from mail-wr1-f73.google.com ([209.85.221.73]:45027 "EHLO
+        mail-wr1-f73.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728151AbgCWLnI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Mar 2020 07:43:08 -0400
+Received: by mail-wr1-f73.google.com with SMTP id u18so7198249wrn.11
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Mar 2020 04:43:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:cc;
+        bh=lSE+DSc9amXP//IBtR/r3PMKZC9AUFcm/JzIAvbwz4Y=;
+        b=B+SMEnEmy0Cylz0cvWADVv2wy8XltTOm0SEKG3nrST2UcLXoLlZZ66WHVv8h6/y1dy
+         g4G+JbQlyafqSZ+lE0Ey6y/mNIq/FnJnCKsA4SdDDGb0mS9OT1zJrwpNxHZHCH/w/rNT
+         D16FUGfn33ZoZku0PmD4UYQpSZ7LWx/okUpZzVXhvJ13KojJB3f4z5P6erulhmRdZj0M
+         +5emuTsRtho9Vviafk35ULhwb2iubD/ytpcVC3KpFPQTwLTKH7adD90TouY5BbaIMZyq
+         tDoN/pdQ7rlPrsWvP1h8gkL484boxRo7luZJt+fqyGNmNTFs6sLzSghFUbijVJQDxbks
+         SN1Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:cc;
+        bh=lSE+DSc9amXP//IBtR/r3PMKZC9AUFcm/JzIAvbwz4Y=;
+        b=KH+PD39Bwgf2MdtfnOzFBJUNbiikWPBDbDn4ksn+FyiSM7M//1fEQUU1SX41QcczLv
+         QYbSeF2Xton6QsoIUpzRrLl7q6ohPlSwDOZoC0ZIMr8FFBf5CmMOaMutVi3Mn1/+t3hj
+         VugGqCI+OBApmduFpyAPZnoW6XUCZPBhiz4v5ml8lshVJNFmElTBowFBUoAVE1JOnuA0
+         9qtAMx/nbW4LMgEppYdKXMVTbkLiMcwAiNTtjNfCyy3DP6pUujNYr2XGaGyKNils6qqt
+         DtNK29fxT3UaubnjbdVZZsieRhlKQJkTI/QPGHwhGi/DCqe/mq49/5/JdP7kGiRKZuxA
+         vlpg==
+X-Gm-Message-State: ANhLgQ3XUdDtJ5PHx6zajjqDe/rWHXScbqHhVH3UoiqVE1nx6GhwcLsc
+        76GLl0l1CNbWUyxtznble1uxmbXe6BC5
+X-Google-Smtp-Source: ADFU+vvVzcaUYjQV7bRCwqcHpFkISUOwv6YPHz5NI4aMv8jYgaNnLf5oDf7OQ7BDUyztW8V6hOcxQWzZ8Joh
+X-Received: by 2002:adf:dfce:: with SMTP id q14mr30519861wrn.326.1584963785709;
+ Mon, 23 Mar 2020 04:43:05 -0700 (PDT)
+Date:   Mon, 23 Mar 2020 12:42:06 +0100
+Message-Id: <20200323114207.222412-1-courbet@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.25.1.696.g5e7596f4ac-goog
+Subject: [PATCH]     x86: Alias memset to __builtin_memset.
+From:   Clement Courbet <courbet@google.com>
+Cc:     Clement Courbet <courbet@google.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        linux-kernel@vger.kernel.org, clang-built-linux@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/23/2020 11:32 AM, Sai Prakash Ranjan wrote:
-> Hi Suzuki,
-> 
-> On 2020-03-23 15:25, Suzuki K Poulose wrote:
->> On 03/20/2020 07:44 AM, Sai Prakash Ranjan wrote:
->>> Add ETM Peripheral IDs for Qualcomm SC7180 SoC. It has
->>> 2 big CPU cores based on Cortex-A76 and 6 LITTLE CPU
->>> cores based on Cortex-A55.
->>>
->>> Signed-off-by: Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
->>> ---
->>>   drivers/hwtracing/coresight/coresight-etm4x.c | 2 ++
->>>   1 file changed, 2 insertions(+)
->>>
->>> diff --git a/drivers/hwtracing/coresight/coresight-etm4x.c 
->>> b/drivers/hwtracing/coresight/coresight-etm4x.c
->>> index a90d757f7043..a153a65c4c5b 100644
->>> --- a/drivers/hwtracing/coresight/coresight-etm4x.c
->>> +++ b/drivers/hwtracing/coresight/coresight-etm4x.c
->>> @@ -1556,6 +1556,8 @@ static const struct amba_id etm4_ids[] = {
->>>       CS_AMBA_UCI_ID(0x000f0211, uci_id_etm4),/* Qualcomm Kryo */
->>>       CS_AMBA_ID(0x000bb802),            /* Qualcomm Kryo 385 
->>> Cortex-A55 */
->>>       CS_AMBA_ID(0x000bb803),            /* Qualcomm Kryo 385 
->>> Cortex-A75 */
->>> +    CS_AMBA_ID(0x000bb805),            /* Qualcomm Kryo 4XX 
->>> Cortex-A55 */
->>> +    CS_AMBA_ID(0x000bb804),            /* Qualcomm Kryo 4XX 
->>> Cortex-A76 */
->>
->> Does the DEVARCH indicate that it is an ETMv4 ? (It should !) Please
->> could we enforce the UCI_ID check for these components ? The
->> moment you add CTI components to your board this could conflict with
->> them unless we check the UCI_ID for ETMv4.
->>
-> 
-> Yes I got these IDs through devarch and it does indicate that it is 
-> ETMv4.2.
-> 
-> devname=7040000.etm dev->type=0x13 devarch=0x47724a13
-> devname=7140000.etm dev->type=0x13 devarch=0x47724a13
-> devname=7240000.etm dev->type=0x13 devarch=0x47724a13
-> devname=7340000.etm dev->type=0x13 devarch=0x47724a13
-> devname=7440000.etm dev->type=0x13 devarch=0x47724a13
-> devname=7540000.etm dev->type=0x13 devarch=0x47724a13
-> devname=7640000.etm dev->type=0x13 devarch=0x47724a13
-> devname=7740000.etm dev->type=0x13 devarch=0x47724a13
-> 
-> I will add the UCI_ID as you suggested in next version.
+    Recent compilers know the meaning of builtins (`memset`,
+    `memcpy`, ...) and can replace calls by inline code when
+    deemed better. For example, `memset(p, 0, 4)` will be lowered
+    to a four-byte zero store.
 
-If you do have access to the Kryo 385 variants, please fix
-them as well.
+    When using -ffreestanding (this is the case e.g. building on
+    clang), these optimizations are disabled. This means that **all**
+    memsets, including those with small, constant sizes, will result
+    in an actual call to memset.
 
-Cheers
-Suzuki
+    We have identified several spots where we have high CPU usage
+    because of this. For example, a single one of these memsets is
+    responsible for about 0.3% of our total CPU usage in the kernel.
+
+    Aliasing `memset` to `__builtin_memset` allows the compiler to
+    perform this optimization even when -ffreestanding is used.
+    There is no change when -ffreestanding is not used.
+
+    Below is a diff (clang) for `update_sg_lb_stats()`, which
+    includes the aforementionned hot memset:
+        memset(sgs, 0, sizeof(*sgs));
+
+    Diff:
+        movq %rsi, %rbx        ~~~>  movq $0x0, 0x40(%r8)
+        movq %rdi, %r15        ~~~>  movq $0x0, 0x38(%r8)
+        movl $0x48, %edx       ~~~>  movq $0x0, 0x30(%r8)
+        movq %r8, %rdi         ~~~>  movq $0x0, 0x28(%r8)
+        xorl %esi, %esi        ~~~>  movq $0x0, 0x20(%r8)
+        callq <memset>         ~~~>  movq $0x0, 0x18(%r8)
+                               ~~~>  movq $0x0, 0x10(%r8)
+                               ~~~>  movq $0x0, 0x8(%r8)
+                               ~~~>  movq $0x0, (%r8)
+
+    In terms of code size, this grows the clang-built kernel a
+    bit (+0.022%):
+    440285512 vmlinux.clang.after
+    440383608 vmlinux.clang.before
+
+Signed-off-by: Clement Courbet <courbet@google.com>
+---
+ arch/x86/include/asm/string_64.h | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
+
+diff --git a/arch/x86/include/asm/string_64.h b/arch/x86/include/asm/string_64.h
+index 75314c3dbe47..7073c25aa4a3 100644
+--- a/arch/x86/include/asm/string_64.h
++++ b/arch/x86/include/asm/string_64.h
+@@ -18,6 +18,15 @@ extern void *__memcpy(void *to, const void *from, size_t len);
+ void *memset(void *s, int c, size_t n);
+ void *__memset(void *s, int c, size_t n);
+ 
++/* Recent compilers can generate much better code for known size and/or
++ * fill values, and will fallback on `memset` if they fail.
++ * We alias `memset` to `__builtin_memset` explicitly to inform the compiler to
++ * perform this optimization even when -ffreestanding is used.
++ */
++#if (__GNUC__ >= 4)
++#define memset(s, c, count) __builtin_memset(s, c, count)
++#endif
++
+ #define __HAVE_ARCH_MEMSET16
+ static inline void *memset16(uint16_t *s, uint16_t v, size_t n)
+ {
+@@ -74,6 +83,7 @@ int strcmp(const char *cs, const char *ct);
+ #undef memcpy
+ #define memcpy(dst, src, len) __memcpy(dst, src, len)
+ #define memmove(dst, src, len) __memmove(dst, src, len)
++#undef memset
+ #define memset(s, c, n) __memset(s, c, n)
+ 
+ #ifndef __NO_FORTIFY
+-- 
+2.25.1.696.g5e7596f4ac-goog
+
