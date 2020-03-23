@@ -2,96 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0E68718F124
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Mar 2020 09:47:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 823B318F129
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Mar 2020 09:48:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727619AbgCWIq5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Mar 2020 04:46:57 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:40603 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727477AbgCWIq5 (ORCPT
+        id S1727644AbgCWIsO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Mar 2020 04:48:14 -0400
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:34059 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727477AbgCWIsO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Mar 2020 04:46:57 -0400
-Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tip-bot2@linutronix.de>)
-        id 1jGIjL-0002Aw-ML; Mon, 23 Mar 2020 09:46:43 +0100
-Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 428271C0470;
-        Mon, 23 Mar 2020 09:46:43 +0100 (CET)
-Date:   Mon, 23 Mar 2020 08:46:42 -0000
-From:   "tip-bot2 for Anshuman Khandual" <tip-bot2@linutronix.de>
-Reply-to: linux-kernel@vger.kernel.org
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/cleanups] x86/mm: Drop pud_mknotpresent()
-Cc:     Anshuman Khandual <anshuman.khandual@arm.com>,
-        Borislav Petkov <bp@suse.de>, Baoquan He <bhe@redhat.com>,
-        Balbir Singh <bsingharora@gmail.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        x86 <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>
-In-Reply-To: <1584925542-13034-1-git-send-email-anshuman.khandual@arm.com>
-References: <1584925542-13034-1-git-send-email-anshuman.khandual@arm.com>
+        Mon, 23 Mar 2020 04:48:14 -0400
+Received: by mail-oi1-f195.google.com with SMTP id e9so5600466oii.1;
+        Mon, 23 Mar 2020 01:48:11 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to;
+        bh=RJbFP927PDfm1sY4PttJqfX0fNR527qKJB6QODPMhuM=;
+        b=N0k/RR4b4hy+0BP8D/6cuXG4Y22AYMW1oQ7BtRVQ1IbGOSlsFlIg9YLV/EflUtuxbS
+         Itzfi5oXLbZPb7V0i6am/4b3YZWxhyr91BX5cIncRrfMACiS0RkrjPDkH9rty037VOMS
+         cvb/d3O2ApaOihA3csmCZdId4Q7A0ULI3q8CEdjXHIJemVixlUxiVv6Mk62IRCzv+lYM
+         sZUJeDW//gGddfT5h3cEAirfk6RdPU+csrfb0u+4ZrgrEr6UALYj4K093CLZvRycXt5J
+         W4XXG2FtmRcMQ0wNDDSKV4bvHJz22T1BZ4oDfih9SErjq5lJ47l8/197+cGo2TTTqL0R
+         27DA==
+X-Gm-Message-State: ANhLgQ1Gs2v0FvM8Hb0YOMbtF0p4DpAiXZUHiQRSnOtpA7lWbtupsDbQ
+        uk27PyKdzPcl+SSgGD5/Adm+0TgO2anHEQXDm7I=
+X-Google-Smtp-Source: ADFU+vtdVJgAXItyc43TbkLIUv4kwGAbgyIVQTZ8qz9en/UVDvhJtk0N+HUqX3ZKzF07nssZX6w6OMO51CAgLN5tYYU=
+X-Received: by 2002:aca:cdd1:: with SMTP id d200mr15467580oig.153.1584953291595;
+ Mon, 23 Mar 2020 01:48:11 -0700 (PDT)
 MIME-Version: 1.0
-Message-ID: <158495320286.28353.18108219786340349995.tip-bot2@tip-bot2>
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot2.linutronix.de>
-Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+References: <cover.1584720678.git.alexander.riesen@cetitec.com>
+ <077a97942890b79fef2b271e889055fc07c74939.1584720678.git.alexander.riesen@cetitec.com>
+ <CAMuHMdXiG1upHQrCcuZgNLFOEoeDVcb0zWxh1BZZST5TOURDBQ@mail.gmail.com> <20200323084011.GC4298@pflmari>
+In-Reply-To: <20200323084011.GC4298@pflmari>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Mon, 23 Mar 2020 09:48:00 +0100
+Message-ID: <CAMuHMdXa96P+boX9HgGMBKEXLKK91t3Jgu-Sy8mP5A5--EeP=A@mail.gmail.com>
+Subject: Re: [PATCH v3 09/11] arm64: dts: renesas: salvator: add a connection
+ from adv748x codec (HDMI input) to the R-Car SoC
+To:     Alex Riesen <alexander.riesen@cetitec.com>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        driverdevel <devel@driverdev.osuosl.org>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following commit has been merged into the x86/cleanups branch of tip:
+Hi Alex,
 
-Commit-ID:     31a9122058bc5f042cb04bcdb8cd9e6c77fdae8d
-Gitweb:        https://git.kernel.org/tip/31a9122058bc5f042cb04bcdb8cd9e6c77fdae8d
-Author:        Anshuman Khandual <anshuman.khandual@arm.com>
-AuthorDate:    Mon, 23 Mar 2020 06:35:42 +05:30
-Committer:     Borislav Petkov <bp@suse.de>
-CommitterDate: Mon, 23 Mar 2020 09:11:48 +01:00
+On Mon, Mar 23, 2020 at 9:41 AM Alex Riesen
+<alexander.riesen@cetitec.com> wrote:
+> Geert Uytterhoeven, Mon, Mar 23, 2020 09:34:45 +0100:
+> > On Fri, Mar 20, 2020 at 5:43 PM Alex Riesen <alexander.riesen@cetitec.com> wrote:
+> > > As all known variants of the Salvator board have the HDMI decoder
+> > > chip (the ADV7482) connected to the SSI4 on R-Car SoC, the ADV7482
+> > > endpoint and the connection definitions are placed in the common board
+> > > file.
+> > > For the same reason, the CLK_C clock line and I2C configuration (similar
+> > > to the ak4613, on the same interface) are added into the common file.
+> > >
+> > > Signed-off-by: Alexander Riesen <alexander.riesen@cetitec.com>
+> > > Reviewed-by: Geert Uytterhoeven <geert@linux-m68k.org>
+> >
+> > Did I provide a Reviewed-by?
+> >
+> > > The driver provides only MCLK clock, not the SCLK and LRCLK,
+> > > which are part of the I2S protocol.
+> > >
+> > > Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> >
+> > Perhaps you mixed it up with Laurent's?
+>
+> Sorry. I actually did: he did provded Reviewed-by in his email, and you
+> did not. I was ... a little overwhelmed.
+>
+> But you really did provide a lot of very useful information and it did help
+> to improve the code. Shall I remove the tag still?
 
-x86/mm: Drop pud_mknotpresent()
+Please do so.
 
-There is an inconsistency between PMD and PUD-based THP page table helpers
-like the following, as pud_present() does not test for _PAGE_PSE.
+While I can point out issues in audio patches, my audio-foo is not strong
+enough to provide an R-B, and I'll rely on the R-bs provided by others.
 
-pmd_present(pmd_mknotpresent(pmd)) : True
-pud_present(pud_mknotpresent(pud)) : False
+Gr{oetje,eeting}s,
 
-Drop pud_mknotpresent() as there are no current users. If/when needed
-back later, pud_present() will also have to be fixed to accommodate
-_PAGE_PSE.
+                        Geert
 
-Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Reviewed-by: Baoquan He <bhe@redhat.com>
-Acked-by: Balbir Singh <bsingharora@gmail.com>
-Acked-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-Link: https://lkml.kernel.org/r/1584925542-13034-1-git-send-email-anshuman.khandual@arm.com
----
- arch/x86/include/asm/pgtable.h | 6 ------
- 1 file changed, 6 deletions(-)
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-diff --git a/arch/x86/include/asm/pgtable.h b/arch/x86/include/asm/pgtable.h
-index 7e11866..d74dc56 100644
---- a/arch/x86/include/asm/pgtable.h
-+++ b/arch/x86/include/asm/pgtable.h
-@@ -595,12 +595,6 @@ static inline pmd_t pmd_mknotpresent(pmd_t pmd)
- 		      __pgprot(pmd_flags(pmd) & ~(_PAGE_PRESENT|_PAGE_PROTNONE)));
- }
- 
--static inline pud_t pud_mknotpresent(pud_t pud)
--{
--	return pfn_pud(pud_pfn(pud),
--	      __pgprot(pud_flags(pud) & ~(_PAGE_PRESENT|_PAGE_PROTNONE)));
--}
--
- static inline u64 flip_protnone_guard(u64 oldval, u64 val, u64 mask);
- 
- static inline pte_t pte_modify(pte_t pte, pgprot_t newprot)
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
