@@ -2,118 +2,137 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 587C218F051
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Mar 2020 08:35:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2751518F059
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Mar 2020 08:38:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727442AbgCWHfh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Mar 2020 03:35:37 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:57114 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727399AbgCWHfh (ORCPT
+        id S1727479AbgCWHiH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Mar 2020 03:38:07 -0400
+Received: from mout.kundenserver.de ([212.227.17.24]:50743 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727433AbgCWHiH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Mar 2020 03:35:37 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 02N7TCJG196590;
-        Mon, 23 Mar 2020 07:35:29 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2020-01-29;
- bh=hX+vs80DDeOiro/tdn2Q9wyWfWoExexS44f4rTOFClM=;
- b=lLQzg5gddQjDpe/Z2V7KPmCdKmwN9wdJ2mYPY4HImmaInH66WsBxMo/5pxPgWDRYQKxe
- e5MQlk+1IOHlXhfXkhE6hYGSqe5fnL6qNAUf0M5+H8AcuIHKxMawH+KErCIq5Z5IaV+X
- wSnyj0wQQl5W1gqP0qcKf21aEr8KWtSntqZZnY8LOkjGRp9j+PeRaDw4MBJmeojcUF4y
- 9qFFnndHdo2kwLl0STeAkOqBPI2Hw7bjCTCrIgHRWYMSKbzazLpRdoMlZe7EaU4GyXGK
- hRgET7BHJptsoYhDkbGcD8+YPlWrwaY9+rf1owS+FiuiwMypIHNt3oOPXTork0waLpBc ng== 
-Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
-        by userp2130.oracle.com with ESMTP id 2ywabqvy8n-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 23 Mar 2020 07:35:29 +0000
-Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 02N7QqSn162743;
-        Mon, 23 Mar 2020 07:35:28 GMT
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by userp3030.oracle.com with ESMTP id 2ywvdbjhqv-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 23 Mar 2020 07:35:28 +0000
-Received: from abhmp0010.oracle.com (abhmp0010.oracle.com [141.146.116.16])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 02N7ZRTx029793;
-        Mon, 23 Mar 2020 07:35:27 GMT
-Received: from kadam (/41.57.98.10)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 23 Mar 2020 00:35:26 -0700
-Date:   Mon, 23 Mar 2020 10:35:18 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Oscar Carter <oscar.carter@gmx.com>
-Cc:     Forest Bond <forest@alittletooquiet.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        devel@driverdev.osuosl.org, Malcolm Priestley <tvboxspy@gmail.com>,
-        Mukesh Ojha <mojha@codeaurora.org>,
-        linux-kernel@vger.kernel.org,
-        Ojaswin Mujoo <ojaswin25111998@gmail.com>
-Subject: Re: [PATCH] staging: vt6656: Use BIT() macro instead of hex value
-Message-ID: <20200323073518.GK4650@kadam>
-References: <20200320171056.7841-1-oscar.carter@gmx.com>
+        Mon, 23 Mar 2020 03:38:07 -0400
+Received: from mail.cetitecgmbh.com ([87.190.42.90]) by
+ mrelayeu.kundenserver.de (mreue106 [212.227.15.183]) with ESMTPSA (Nemesis)
+ id 1MFbiK-1j2WHe2D0Q-00H8ym for <linux-kernel@vger.kernel.org>; Mon, 23 Mar
+ 2020 08:38:00 +0100
+Received: from pflvmailgateway.corp.cetitec.com (unknown [127.0.0.1])
+        by mail.cetitecgmbh.com (Postfix) with ESMTP id 514C56503EB
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Mar 2020 07:38:00 +0000 (UTC)
+X-Virus-Scanned: amavisd-new at cetitec.com
+Received: from mail.cetitecgmbh.com ([127.0.0.1])
+        by pflvmailgateway.corp.cetitec.com (pflvmailgateway.corp.cetitec.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id z2kghf3aGAbn for <linux-kernel@vger.kernel.org>;
+        Mon, 23 Mar 2020 08:38:00 +0100 (CET)
+Received: from pfwsexchange.corp.cetitec.com (unknown [10.10.1.99])
+        by mail.cetitecgmbh.com (Postfix) with ESMTPS id 026E364FD76
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Mar 2020 08:38:00 +0100 (CET)
+Received: from pflmari.corp.cetitec.com (10.8.5.4) by
+ PFWSEXCHANGE.corp.cetitec.com (10.10.1.99) with Microsoft SMTP Server (TLS)
+ id 15.0.1497.2; Mon, 23 Mar 2020 08:37:59 +0100
+Received: by pflmari.corp.cetitec.com (Postfix, from userid 1000)
+        id A763D804FB; Mon, 23 Mar 2020 08:35:57 +0100 (CET)
+Date:   Mon, 23 Mar 2020 08:35:57 +0100
+From:   Alex Riesen <alexander.riesen@cetitec.com>
+To:     Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+CC:     Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        "Hans Verkuil" <hverkuil-cisco@xs4all.nl>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        "Mark Rutland" <mark.rutland@arm.com>,
+        <devel@driverdev.osuosl.org>, <linux-media@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [PATCH v2 08/10] arm64: dts: renesas: salvator: add a connection
+ from adv748x codec (HDMI input) to the R-Car SoC
+Message-ID: <20200323073557.GA4298@pflmari>
+Mail-Followup-To: Alex Riesen <alexander.riesen@cetitec.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, devel@driverdev.osuosl.org,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+References: <cover.1584639664.git.alexander.riesen@cetitec.com>
+ <ebda055ae4c898b4ca29e518f89d8f3f4be4d27c.1584639664.git.alexander.riesen@cetitec.com>
+ <87fte0lyjz.wl-kuninori.morimoto.gx@renesas.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <20200320171056.7841-1-oscar.carter@gmx.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9568 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 bulkscore=0 spamscore=0
- suspectscore=0 mlxscore=0 phishscore=0 adultscore=0 malwarescore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2003020000
- definitions=main-2003230044
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9568 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 suspectscore=0
- lowpriorityscore=0 malwarescore=0 phishscore=0 priorityscore=1501
- clxscore=1011 adultscore=0 mlxscore=0 mlxlogscore=999 bulkscore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2003020000 definitions=main-2003230044
+In-Reply-To: <87fte0lyjz.wl-kuninori.morimoto.gx@renesas.com>
+X-Originating-IP: [10.8.5.4]
+X-ClientProxiedBy: PFWSEXCHANGE.corp.cetitec.com (10.10.1.99) To
+ PFWSEXCHANGE.corp.cetitec.com (10.10.1.99)
+X-EsetResult: clean, is OK
+X-EsetId: 37303A290D7F536A6D7066
+X-Provags-ID: V03:K1:1m39TC+xvYay9EOt5SXaUcUUiMq+opHESLAKllgh6X95/CkPYwA
+ btyUONHbiRL1e+BGcA+wg3QKq42nqjMcqmT4z6I4D1hZSvugC9P+nC6kvwLN/ziO760yM0L
+ w/B60MEhPff9+OOtcPofX7d+ezCWj7DLQ6ODwSWKHqyqoRUUAEIg+9FxuGdUEZEgeX5HIm6
+ eDULk5R9WhDgJuZA/CEsA==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:xX6rdB/4Zic=:H0JnF3jy3yd8szn/4Q3hAE
+ vxueHIP/VeFkrfyz98SYkx+M7AOaAJSGq1YVdOmEoiJLFL4YIaaju4968iTFabvI7uOKlYNBf
+ z7G4GAAfWXFeRGrdpydipMPI+x16tKrm01Wgwvg/Sjw4UwiBvac40xTZS2UtIdK2Yrc7G82fo
+ ucfeotw4c3uHHey10Ayjbb9UUFN06Vfh2z7kZGzO5h8P+iqfQj9hu1JhGRJ5+EBscIwIKOAXw
+ eb/DECQfEMdZ/ej4rVDJAxlDnTgM+5QvyhqjtcDDWkHNfbL61lMPyypJrm9Q4QsXrfW3TWqL6
+ AbqcmG1/TvEEEKpYyyWEq43/usQZ4RetjywFjreafUkzkqXPOGV0h99JRPq665bIzJN/vB83s
+ mnsthAVxuE7gmK5Bk7qsTPjesHdvWwryraWHcXJubIeOd9vnMdCOpL5OKpIR59t44u6Q3nv/H
+ Wz94OglBl6+KGZAtDs+SUooZZreWbImDVvUdMSgZB92p/OBfJNUm+bp6gedoG9UGhOnLKF3+i
+ UtVhvwuId14xQsEc7try0/EYpWt42Im7jBTkmqzCIOV5ucGwxx3UQAYNhZbzW3udwRNPEN4l7
+ oDUwC5fhFiQIv1CXLzxf1r03hvCtkr3DMt73V7Awvlp8M+SGR8K8Mm07FN4l+lmEVGuehkdDX
+ CbbQ77Gya52U23EW1QBnwtaRJyFDd4ntZJ6PNFPNZ+YjEZuj4LVFg7ySVrQ3OShDiJ4WPhaPF
+ yca8EEyQ9Zb14hZnxb1oyOeNjByET7rf+Utb8s2plw2R6UNEfxtR9wcGN4u+vqbYbIciXEFkC
+ v+ozeqaF5CC4OgYorQ6CXM9ZA2QFltQU6Kw2+NJ6jNdQQmz23FWBlUVy9bOAa0zZ351YZk/
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 20, 2020 at 06:10:56PM +0100, Oscar Carter wrote:
-> -#define RSR_ADDRBROAD       0x80
-> -#define RSR_ADDRMULTI       0x40
-> +#define RSR_ADDRBROAD       BIT(7)
-> +#define RSR_ADDRMULTI       BIT(6)
->  #define RSR_ADDRUNI         0x00
-> -#define RSR_IVLDTYP         0x20        /* invalid packet type */
-> -#define RSR_IVLDLEN         0x10        /* invalid len (> 2312 byte) */
-> -#define RSR_BSSIDOK         0x08
-> -#define RSR_CRCOK           0x04
-> -#define RSR_BCNSSIDOK       0x02
-> -#define RSR_ADDROK          0x01
-> +#define RSR_IVLDTYP         BIT(5)	/* invalid packet type */
-> +#define RSR_IVLDLEN         BIT(4)	/* invalid len (> 2312 byte) */
-> +#define RSR_BSSIDOK         BIT(3)
-> +#define RSR_CRCOK           BIT(2)
-> +#define RSR_BCNSSIDOK       BIT(1)
-> +#define RSR_ADDROK          BIT(0)
+Hi Morimoto-san,
 
-I like these ones because I do think the new version is more clear
-now.
+Kuninori Morimoto, Mon, Mar 23, 2020 01:12:00 +0100:
+> > As all known variants of the Salvator board have the HDMI decoder
+> > chip (the ADV7482) connected to the SSI4 on R-Car SoC, the ADV7482
+> > endpoint and the connection definitions are placed in the common board
+> > file.
+> > For the same reason, the CLK_C clock line and I2C configuration (similar
+> > to the ak4613, on the same interface) are added into the common file.
+> > 
+> > Signed-off-by: Alexander Riesen <alexander.riesen@cetitec.com>
+> > Reviewed-by: Geert Uytterhoeven <geert@linux-m68k.org>
+> (snip)
+> > @@ -758,8 +769,19 @@ &rcar_sound {
+> >  		 <&cpg CPG_MOD 1020>, <&cpg CPG_MOD 1021>,
+> >  		 <&cpg CPG_MOD 1019>, <&cpg CPG_MOD 1018>,
+> >  		 <&audio_clk_a>, <&cs2000>,
+> > -		 <&audio_clk_c>,
+> > +		 <&adv7482_hdmi_in>,
+> >  		 <&cpg CPG_CORE CPG_AUDIO_CLK_I>;
+> > +	clock-names = "ssi-all",
+> > +		      "ssi.9", "ssi.8", "ssi.7", "ssi.6",
+> > +		      "ssi.5", "ssi.4", "ssi.3", "ssi.2",
+> > +		      "ssi.1", "ssi.0",
+> > +		      "src.9", "src.8", "src.7", "src.6",
+> > +		      "src.5", "src.4", "src.3", "src.2",
+> > +		      "src.1", "src.0",
+> > +		      "mix.1", "mix.0",
+> > +		      "ctu.1", "ctu.0",
+> > +		      "dvc.0", "dvc.1",
+> > +		      "clk_a", "clk_b", "clk_c", "clk_i";
+> 
+> I think you don't need to overwrite clock-names here in this case ?
 
->  /* Bits in the EnhanceCFG_0 register */
->  #define EnCFG_BBType_a		0x00
-> -#define EnCFG_BBType_b		0x01
-> -#define EnCFG_BBType_g		0x02
-> -#define EnCFG_BBType_MASK	0x03
-> -#define EnCFG_ProtectMd		0x20
-> +#define EnCFG_BBType_b		BIT(0)
-> +#define EnCFG_BBType_g		BIT(1)
-> +#define EnCFG_BBType_MASK	(BIT(0) | BIT(1))
-> +#define EnCFG_ProtectMd		BIT(5)
+I vaguely remember something using the names and failing to enable clk_c
+without the list spelled out...
 
-Probably EnCFG_BBType_MASK should be defined using the other defines.
+I shall re-test though, perhaps it was my own code (since removed) using it.
 
-#define EnCFG_BBType_MASK (EnCFG_BBType_b | EnCFG_BBType_g)
-
-Otherwise it looks good.  Can you change that one thing and then add
-my Reviewed-by: Dan Carpenter <dan.carpenter@oracle.com>
-
-regards,
-dan carpenter
+Regards,
+Alex
 
