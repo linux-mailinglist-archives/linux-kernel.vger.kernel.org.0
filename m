@@ -2,174 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CBD8818FE0C
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Mar 2020 20:49:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2524818FE13
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Mar 2020 20:50:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725991AbgCWTtv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Mar 2020 15:49:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58770 "EHLO mail.kernel.org"
+        id S1727050AbgCWTuP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Mar 2020 15:50:15 -0400
+Received: from frisell.zx2c4.com ([192.95.5.64]:54011 "EHLO frisell.zx2c4.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725776AbgCWTtv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Mar 2020 15:49:51 -0400
-Received: from disco-boy.misterjones.org (disco-boy.misterjones.org [51.254.78.96])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AD84C2070A;
-        Mon, 23 Mar 2020 19:49:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584992989;
-        bh=75fCAdyH4YV81OwXKG2GRQR18TAvhiNCXmFJeaAdyck=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=y5vo+6AF3TQK2YW/tZA0Jy8AbEKmvv1Y6a4gi+YZPNOKWLQaJnYCs22QY5MeFL+Tq
-         ob/MhXhtp/8mzVoBIOuORDQL0p9rf4ph2aXEvxZygJS63Rv1lL7LtA4jfE+nD3pfz8
-         sCBHKEfhQ71SriTplZAe4wRFHMKpKehZlwZ5yUaQ=
-Received: from 78.163-31-62.static.virginmediabusiness.co.uk ([62.31.163.78] helo=why)
-        by disco-boy.misterjones.org with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <maz@kernel.org>)
-        id 1jGT51-00F3cy-U1; Mon, 23 Mar 2020 19:49:48 +0000
-Date:   Mon, 23 Mar 2020 19:49:46 +0000
-From:   Marc Zyngier <maz@kernel.org>
-To:     Marek Vasut <marex@denx.de>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel@vger.kernel.org,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
-Subject: Re: [PATCH v3 2/2] pinctrl: stm32: Add level interrupt support to
- gpio irq chip
-Message-ID: <20200323194946.26bdd003@why>
-In-Reply-To: <8e2795d8-4a8b-35a7-7d3f-e24d011878f6@denx.de>
-References: <20200219143229.18084-1-alexandre.torgue@st.com>
-        <20200219143229.18084-3-alexandre.torgue@st.com>
-        <CACRpkdZ7uq4U6GBQQQh=pTLf4wW3KfH3Zrz9z_3ZQgoaJD9Ynw@mail.gmail.com>
-        <c991edca3e8925cf0489c0a5676f77b2@kernel.org>
-        <a7fc5e43-34c2-a4e6-e0c5-1584f17fb024@denx.de>
-        <8d6f6646-56e4-5218-9990-f0c96862dc83@denx.de>
-        <20200323193157.038f36f9@why>
-        <8e2795d8-4a8b-35a7-7d3f-e24d011878f6@denx.de>
-Organization: Approximate
-X-Mailer: Claws Mail 3.17.5 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1725776AbgCWTuP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Mar 2020 15:50:15 -0400
+Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTP id d07cdbd7;
+        Mon, 23 Mar 2020 19:43:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=zx2c4.com; h=mime-version
+        :references:in-reply-to:from:date:message-id:subject:to:cc
+        :content-type; s=mail; bh=ARsmCOiccHNPI2GJ9BGtp7i3LYY=; b=FY2Jx9
+        nEsfEJLPF+tI/yEJKvvVu8yS5lCI8K8rZ8gWD4b+8uL8yaAIQhJ/EYyDsBTgkQPZ
+        BpTyrg+V/0v0GRdQit67Itpr+s+hyMM+Sd8UEvSOapxyDL/ClZV/D8+q8V7c2zO0
+        xw8JwrQr2W6tLdvuFZ9NXa9cxs96xzgb4sF4TyqjXpgWPF2syrfm8uDia7yzuXDO
+        Yd+rx5hta/MUozntQCB4VsxSWw99vDoeZa0/RCe+tRhQ9EBr1d8puPZ6ib6dX4bZ
+        OJ/rVivrJf20pJR46rpusX9J5jJk6Zkw7bl+M76d70aQ9xxuTmVKcZ9kUGk6GJ5r
+        06zbLGKzsHVjedMQ==
+Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 783bb53a (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256:NO);
+        Mon, 23 Mar 2020 19:43:10 +0000 (UTC)
+Received: by mail-io1-f43.google.com with SMTP id c19so15661347ioo.6;
+        Mon, 23 Mar 2020 12:50:12 -0700 (PDT)
+X-Gm-Message-State: ANhLgQ0mmizbXUaf9SheXk3cKAvUB3LYWlTQfVg/qiFbkri3BjSDEYAF
+        +49g/k8LwpQkpFd0/RSGTt2fWshfdO5NvsK4Ymo=
+X-Google-Smtp-Source: ADFU+vtbqSgGXmN8lOz/6XAXbL8GhAwjjTG6v2fKkZp23QgkzRne+YI9zK1t8WN3CztQO2PAapdtgwE0xNatsIUGuYw=
+X-Received: by 2002:a5e:a50f:: with SMTP id 15mr3802700iog.67.1584993011135;
+ Mon, 23 Mar 2020 12:50:11 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 62.31.163.78
-X-SA-Exim-Rcpt-To: marex@denx.de, linus.walleij@linaro.org, alexandre.torgue@st.com, tglx@linutronix.de, jason@lakedaemon.net, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+References: <20200323020844.17064-1-masahiroy@kernel.org> <CAHmME9p=ECJ15uyPH79bF0tuzEksdxoUsjGQSyz74FfdEJxTpQ@mail.gmail.com>
+ <CAHmME9q4egN7_KeYB-ZHCFPfXs-virgTv4iz9jW2SVOM7dTnLw@mail.gmail.com>
+ <CAK7LNAR07vZFzh1Bbpq4CoJ4zmsc+p5rxpkO1Zv8QVfqhfvr2w@mail.gmail.com>
+ <CAHmME9qCjo4kOQM3Dw6PDjEebmb6rvXajqhK-m-=vKcHWqNhAw@mail.gmail.com> <CA+icZUUjP7e2zgrVCFenO_YJfpcOQWV++kuU5UWGKN_5udZXSw@mail.gmail.com>
+In-Reply-To: <CA+icZUUjP7e2zgrVCFenO_YJfpcOQWV++kuU5UWGKN_5udZXSw@mail.gmail.com>
+From:   "Jason A. Donenfeld" <Jason@zx2c4.com>
+Date:   Mon, 23 Mar 2020 13:50:00 -0600
+X-Gmail-Original-Message-ID: <CAHmME9quSMLwLacntdhvLKVDVtg6QVGhOQxADzz_4kVZYOJxNA@mail.gmail.com>
+Message-ID: <CAHmME9quSMLwLacntdhvLKVDVtg6QVGhOQxADzz_4kVZYOJxNA@mail.gmail.com>
+Subject: Re: [PATCH 0/7] x86: remove always-defined CONFIG_AS_* options
+To:     sedat.dilek@gmail.com
+Cc:     Masahiro Yamada <masahiroy@kernel.org>, X86 ML <x86@kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>,
+        "H . Peter Anvin" <hpa@zytor.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Allison Randal <allison@lohutok.net>,
+        Armijn Hemel <armijn@tjaldur.nl>,
+        "David S. Miller" <davem@davemloft.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Ingo Molnar <mingo@redhat.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Song Liu <songliubraving@fb.com>,
+        Zhengyuan Liu <liuzhengyuan@kylinos.cn>,
+        clang-built-linux <clang-built-linux@googlegroups.com>,
+        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 23 Mar 2020 20:37:54 +0100
-Marek Vasut <marex@denx.de> wrote:
+On Mon, Mar 23, 2020 at 3:53 AM Sedat Dilek <sedat.dilek@gmail.com> wrote:
+> Hi Jason,
+> I have not checked your Kconfig changes are really working, especially
+> I looked at [2] and comment on this.
+>
+> I would have expected your arch/x86/Kconfig.assembler file as
+> arch/x86/crypto/Kconfig (source include needs to be adapted in
+> arch/x86/Kconfig).
 
-> On 3/23/20 8:31 PM, Marc Zyngier wrote:
-> > On Mon, 23 Mar 2020 20:19:39 +0100
-> > Marek Vasut <marex@denx.de> wrote:
-> > 
-> >> On 3/23/20 8:04 PM, Marek Vasut wrote:
-> >>> On 2/20/20 10:17 AM, Marc Zyngier wrote:
-> >>>> On 2020-02-20 09:04, Linus Walleij wrote:
-> >>>>> On Wed, Feb 19, 2020 at 3:32 PM Alexandre Torgue
-> >>>>> <alexandre.torgue@st.com> wrote:
-> >>>>>
-> >>>>>> GPIO hardware block is directly linked to EXTI block but EXTI handles
-> >>>>>> external interrupts only on edge. To be able to handle GPIO interrupt on
-> >>>>>> level a "hack" is done in gpio irq chip: parent interrupt (exti irq
-> >>>>>> chip)
-> >>>>>> is retriggered following interrupt type and gpio line value.
-> >>>>>>
-> >>>>>> Signed-off-by: Alexandre Torgue <alexandre.torgue@st.com>
-> >>>>>> Tested-by: Marek Vasut <marex@denx.de>
-> >>>>>
-> >>>>> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-> >>>>>
-> >>>>> If Marc want to merge it with patch 1/2 go ahead!
-> >>>>
-> >>>> I'll queue the whole thing for 5.7.
-> >>>
-> >>> I have a feeling this doesn't work with threaded interrupts.
-> >>>
-> >>> If the interrupt handler runs in a thread context, the EOI will happen
-> >>> almost right away (while the IRQ handler runs) and so will the code
-> >>> handling the IRQ retriggering. But since the IRQ handler still runs and
-> >>> didn't return yet, the retriggering doesn't cause the IRQ handler to be
-> >>> called again once it finishes, even if the IRQ line is still asserted.
-> >>> And that could result in some of the retriggers now happening I think.
-> >>> Or am I doing something wrong ?
-> >>
-> >> The patch below makes my usecase work, but I don't know whether it's
-> >> correct. Basically once the threaded IRQ handler finishes and unmasks
-> >> the IRQ, check whether the line is asserted and retrigger if so.
-> >>
-> >> diff --git a/drivers/pinctrl/stm32/pinctrl-stm32.c
-> >> b/drivers/pinctrl/stm32/pinctrl-stm32.c
-> >> index 9ac9ecfc2f34..060dbcb7ae72 100644
-> >> --- a/drivers/pinctrl/stm32/pinctrl-stm32.c
-> >> +++ b/drivers/pinctrl/stm32/pinctrl-stm32.c
-> >> @@ -371,12 +371,26 @@ static void
-> >> stm32_gpio_irq_release_resources(struct irq_data *irq_data)
-> >>         gpiochip_unlock_as_irq(&bank->gpio_chip, irq_data->hwirq);
-> >>  }
-> >>
-> >> +static void stm32_gpio_irq_unmask(struct irq_data *d)
-> >> +{
-> >> +       struct stm32_gpio_bank *bank = d->domain->host_data;
-> >> +       int level;
-> >> +
-> >> +       irq_chip_unmask_parent(d);
-> >> +
-> >> +       /* If level interrupt type then retrig */
-> >> +       level = stm32_gpio_get(&bank->gpio_chip, d->hwirq);
-> >> +       if ((level == 0 && bank->irq_type[d->hwirq] ==
-> >> IRQ_TYPE_LEVEL_LOW) ||
-> >> +           (level == 1 && bank->irq_type[d->hwirq] == IRQ_TYPE_LEVEL_HIGH))
-> >> +               irq_chip_retrigger_hierarchy(d);
-> >> +}
-> >> +
-> >>  static struct irq_chip stm32_gpio_irq_chip = {
-> >>         .name           = "stm32gpio",
-> >>         .irq_eoi        = stm32_gpio_irq_eoi,
-> >>         .irq_ack        = irq_chip_ack_parent,
-> >>         .irq_mask       = irq_chip_mask_parent,
-> >> -       .irq_unmask     = irq_chip_unmask_parent,
-> >> +       .irq_unmask     = stm32_gpio_irq_unmask,
-> >>         .irq_set_type   = stm32_gpio_set_type,
-> >>         .irq_set_wake   = irq_chip_set_wake_parent,
-> >>         .irq_request_resources = stm32_gpio_irq_request_resources,
-> >>
-> > 
-> > OK, I see your problem now.
-> > 
-> > The usual flow is along the line of Ack+Eoi, and that's what the
-> > current code guarantees.
-> > 
-> > Threaded interrupts do Ack+Mask+Eoi, followed by an Unmask once the
-> > thread finishes. This unmask needs to do the retrigger as well, as you
-> > found out.
-> > 
-> > Can you please refactor the above so that we have the common code
-> > between unmask and eoi in a separate function, send a proper patch, and
-> > I'll apply it on top of the current irq/irqchip-5.7 branch.
-> 
-> Sure, I can. Do we still need this retriggering in the irq_eoi too ?
+CONFIG_AS_* is required for more than just the crypto.
 
-Absolutely, because that's what matters for the non-threaded case
-(there is no mask/unmask on that path). It is also never wrong to
-over-resample (it just slows things down).
+> What about a commit subject like "x86: crypto: Probe assembler options
+> via Kconfig instead of makefile"?
 
-> Also, are there any other hidden details I might've missed ?
+Thanks. Will fix silly verbiage and update branch.
 
-Probably. But let's fix one bug at a time, shall we? ;-) And let's hope
-that ST doesn't take this as a excuse not to clean up their act in
-their next SoC!
-
-Thanks,
-
-	M.
--- 
-Jazz is not dead. It just smells funny...
+Jason
