@@ -2,32 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D1DEB18FAF7
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Mar 2020 18:10:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 206F818FAFC
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Mar 2020 18:11:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727560AbgCWRKI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Mar 2020 13:10:08 -0400
-Received: from foss.arm.com ([217.140.110.172]:52208 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727201AbgCWRKI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Mar 2020 13:10:08 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 31C381FB;
-        Mon, 23 Mar 2020 10:10:07 -0700 (PDT)
-Received: from e113632-lin (e113632-lin.cambridge.arm.com [10.1.194.46])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 456F53F7C3;
-        Mon, 23 Mar 2020 10:10:06 -0700 (PDT)
-References: <20200311183320.19186-1-valentin.schneider@arm.com> <20200311183320.19186-2-valentin.schneider@arm.com> <20200323134234.GD6103@e123083-lin>
-User-agent: mu4e 0.9.17; emacs 26.3
-From:   Valentin Schneider <valentin.schneider@arm.com>
-To:     Morten Rasmussen <morten.rasmussen@arm.com>
-Cc:     linux-kernel@vger.kernel.org, mingo@kernel.org,
-        peterz@infradead.org, vincent.guittot@linaro.org,
-        dietmar.eggemann@arm.com
-Subject: Re: [RFC PATCH 1/3] sched/topology: Split out SD_* flags declaration to its own file
-In-reply-to: <20200323134234.GD6103@e123083-lin>
-Date:   Mon, 23 Mar 2020 17:10:00 +0000
-Message-ID: <jhjy2rrknfb.mognet@arm.com>
+        id S1727673AbgCWRLB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Mar 2020 13:11:01 -0400
+Received: from mail26.static.mailgun.info ([104.130.122.26]:55757 "EHLO
+        mail26.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727201AbgCWRK7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Mar 2020 13:10:59 -0400
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1584983458; h=Content-Type: MIME-Version: Message-ID:
+ In-Reply-To: Date: References: Subject: Cc: To: From: Sender;
+ bh=CzEwMos4Yyj1h7s0OSbR4yOAc3JC3hcUnO0IMzo1qok=; b=CgE+nh/40KFCL3ip5KU5azGAMDzOs2BujYSlluk9o355fXZrvKbOz4NOlIZKN2ybC8JlSaGo
+ 5G4ihLuBJXjfPKFI+rSekr4fsukmhz9RxDlYYXKG/2NvQFkNq6JzEHTJxhQQmKF2fTiJBuCR
+ GL6EQrBemmyAADWu/tA7hDoMeFU=
+X-Mailgun-Sending-Ip: 104.130.122.26
+X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
+ by mxa.mailgun.org with ESMTP id 5e78ed94.7f6ccb263ea0-smtp-out-n05;
+ Mon, 23 Mar 2020 17:10:44 -0000 (UTC)
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id F056AC433BA; Mon, 23 Mar 2020 17:10:43 +0000 (UTC)
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        aws-us-west-2-caf-mail-1.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE
+        autolearn=unavailable autolearn_force=no version=3.4.0
+Received: from tynnyri.adurom.net (tynnyri.adurom.net [51.15.11.48])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: kvalo)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 04585C433D2;
+        Mon, 23 Mar 2020 17:10:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 04585C433D2
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
+From:   Kalle Valo <kvalo@codeaurora.org>
+To:     Luis Chamberlain <mcgrof@kernel.org>
+Cc:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: drivers/net/wireless spring cleaning
+References: <20200225012008.GA4309@embeddedor>
+        <20200225183247.GW11244@42.do-not-panic.com>
+Date:   Mon, 23 Mar 2020 19:10:39 +0200
+In-Reply-To: <20200225183247.GW11244@42.do-not-panic.com> (Luis Chamberlain's
+        message of "Tue, 25 Feb 2020 18:32:48 +0000")
+Message-ID: <87ftdzq9o0.fsf_-_@tynnyri.adurom.net>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
 Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
@@ -35,91 +60,53 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+(changing the subject)
 
-Hi Morten,
+Luis Chamberlain <mcgrof@kernel.org> writes:
 
-Just as a heads-up, I think those changes would better fit 2/3, or be
-in their own patch. 1/3 is just a straight up code move, with no changes
-to the existing comments.
-
-On Mon, Mar 23 2020, Morten Rasmussen wrote:
-> On Wed, Mar 11, 2020 at 06:33:18PM +0000, Valentin Schneider wrote:
->> diff --git a/include/linux/sched/sd_flags.h b/include/linux/sched/sd_flags.h
->> new file mode 100644
->> index 000000000000..685bbe736945
->> --- /dev/null
->> +++ b/include/linux/sched/sd_flags.h
->> @@ -0,0 +1,33 @@
->> +// SPDX-License-Identifier: GPL-2.0
->> +/*
->> + * sched-domains (multiprocessor balancing) flag declarations.
->> + */
->> +
->> +/* Balance when about to become idle */
->> +SD_FLAG(SD_BALANCE_NEWIDLE,     0)
->> +/* Balance on exec */
->> +SD_FLAG(SD_BALANCE_EXEC,        1)
->> +/* Balance on fork, clone */
->> +SD_FLAG(SD_BALANCE_FORK,        2)
->> +/* Balance on wakeup */
->> +SD_FLAG(SD_BALANCE_WAKE,        3)
->> +/* Wake task to waking CPU */
->> +SD_FLAG(SD_WAKE_AFFINE,         4)
+> On Mon, Feb 24, 2020 at 07:20:08PM -0600, Gustavo A. R. Silva wrote:
+>> The current codebase makes use of the zero-length array language
+>> extension to the C90 standard, but the preferred mechanism to declare
+>> variable-length types such as these ones is a flexible array member[1][2],
+>> introduced in C99:
+>> 
+>> struct foo {
+>>         int stuff;
+>>         struct boo array[];
+>> };
+>> 
+>> By making use of the mechanism above, we will get a compiler warning
+>> in case the flexible array does not occur last in the structure, which
+>> will help us prevent some kind of undefined behavior bugs from being
+>> inadvertently introduced[3] to the codebase from now on.
+>> 
+>> Also, notice that, dynamic memory allocations won't be affected by
+>> this change:
+>> 
+>> "Flexible array members have incomplete type, and so the sizeof operator
+>> may not be applied. As a quirk of the original implementation of
+>> zero-length arrays, sizeof evaluates to zero."[1]
+>> 
+>> This issue was found with the help of Coccinelle.
+>> 
+>> [1] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
+>> [2] https://github.com/KSPP/linux/issues/21
+>> [3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
+>> 
+>> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 >
-> Isn't it more like: "Consider waking task on waking CPU"?
->
-> IIRC, with this flag set the wake-up can happen either near prev_cpu or
-> this_cpu.
->
+> I'd rather we just remove this driver completely, as it has a
+> replacement upstream p54, and remained upstream just for a theoretical
+> period of time someone was not able to use p54 anymore. I'll follow up
+> with a removal of the driver.
 
-Right, it's not a hard guarantee.
+Yeah, please do.
 
->> +/* Domain members have different CPU capacities */
->> +SD_FLAG(SD_ASYM_CPUCAPACITY,    5)
->> +/* Domain members share CPU capacity */
->> +SD_FLAG(SD_SHARE_CPUCAPACITY,   6)
->
-> Perhaps add +" (SMT)" to the comment to help the uninitiated
-> understanding it a bit easier?
->
+I wonder if we should do other spring cleanup as well and remove drivers
+like ray_cs and wl3501, I have not seen any activity on those for years.
+Also rndis_wlan would be other candidate for removal.
 
-Sounds good.
+Anyone know if these drivers are used or if they even work anymore?
 
->> +/* Domain members share power domain */
->> +SD_FLAG(SD_SHARE_POWERDOMAIN,   7)
->
-> This flag is set only by 32-bit arm and has never had any effect. I
-> think it was the beginning of something years ago that hasn't
-> progressed. Perhaps we can remove it now?
->
-
-Right, I don't think I've seen anything recent that uses that flag.
-
->> +/* Domain members share CPU pkg resources */
->> +SD_FLAG(SD_SHARE_PKG_RESOURCES, 8)
->
-> +" (e.g. caches)" ?
->
-
-Agreed! I actually already have that one in 2/3.
-
->> +/* Only a single load balancing instance */
->> +SD_FLAG(SD_SERIALIZE,           9)
->> +/* Place busy groups earlier in the domain */
->> +SD_FLAG(SD_ASYM_PACKING,        10)
->
-> Place busy _tasks_ earlier in the domain?
->
-
-Ack.
-
-> It is a bit unclear what 'earlier' means here but since the packing
-> ordering can actually be defined by the architecture, we can't be much
-> more specific I guess.
->
-
-This probably dates back to when ASYM_PACKING was really just for
-bubbling tasks up to the first CPU of each core, and hasn't been changed
-when the asym_priority thing was introduced. I can add a pointer to that.
-
-> Morten
+-- 
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
