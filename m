@@ -2,128 +2,64 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5B33318F8C2
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Mar 2020 16:38:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 323C318F8CD
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Mar 2020 16:39:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727368AbgCWPh7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Mar 2020 11:37:59 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:34669 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727124AbgCWPh7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Mar 2020 11:37:59 -0400
-Received: by mail-wm1-f65.google.com with SMTP id 26so313689wmk.1
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Mar 2020 08:37:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=date:from:to:cc:subject:message-id:mail-followup-to:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=N3Q+qAIc552rJD7ZSPM4p2mnFuNM9e12XzMy9h14WCY=;
-        b=dEun6e07weqIPfvGZLW2lxQWBnRjAcTPfpJcwnj6VLcaSCQ8E/PNj4jIiO18ld/bFx
-         fp/HLKk5uUVLbdTUICIzqevbrLkIs69s93OpFV+2cB7tICCsHRp4sKldvYa+2v7L++O3
-         g0PxvKzquB+EPBCoSM3kjpryRp4UairYjg5Qs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :in-reply-to;
-        bh=N3Q+qAIc552rJD7ZSPM4p2mnFuNM9e12XzMy9h14WCY=;
-        b=TExBG+BzGhCaGdsMZLMIOr8XpfdNO2xolEcM6l+CRAJc0EuRKnTl+6lukTsG0RPqwU
-         7S3EmDqKxaugBDROwj5Rs9K7KWJslgvN3hXALmlrAaLgBk3N8yZwEyHa//i39jb5D1gG
-         xYi6AnGfd5uniIWngNN5OqdmrruUqCjGBVAEbheNGC5joQpujmx9/B5hdDO+8GTgQ8Mk
-         cG7/oQ2JopDSizntnAsbPkbIJgP6mAWWuTV7De7d7ffLhAe+hdNxrvaxZdf1j+z6OWt8
-         jPwnz1zcE+CIXMbh2tOi79cb9lm/idh6IPgP9KDw2AorCNttkMNaN6Qz6xar6a2E607O
-         15GQ==
-X-Gm-Message-State: ANhLgQ3fnHpxaDZ6Xi/N57n4rFg6dPhmtuP9YN/pQkquNKRP9MR01AK8
-        Ho6DlrL5dIHJ2cDTqOBgI5cNuQ==
-X-Google-Smtp-Source: ADFU+vvGd1MKe/OvLt2X47KYngeTnpKSj43dHgfDxQAUMDIBGIJ3JQimSSVq6szxlHUK+ouaNN/xLQ==
-X-Received: by 2002:a7b:c194:: with SMTP id y20mr11877864wmi.163.1584977877362;
-        Mon, 23 Mar 2020 08:37:57 -0700 (PDT)
-Received: from phenom.ffwll.local ([2a02:168:57f4:0:efd0:b9e5:5ae6:c2fa])
-        by smtp.gmail.com with ESMTPSA id k3sm3322699wro.39.2020.03.23.08.37.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 Mar 2020 08:37:55 -0700 (PDT)
-Date:   Mon, 23 Mar 2020 16:37:52 +0100
-From:   Daniel Vetter <daniel@ffwll.ch>
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     Wambui Karuga <wambui.karugax@gmail.com>,
-        maarten.lankhorst@linux.intel.com, mripard@kernel.org,
-        tzimmermann@suse.de, airlied@linux.ie, daniel@ffwll.ch,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] drm/vram-helper: remove unneeded #if defined/endif
- guards.
-Message-ID: <20200323153752.GK2363188@phenom.ffwll.local>
-Mail-Followup-To: Greg KH <gregkh@linuxfoundation.org>,
-        Wambui Karuga <wambui.karugax@gmail.com>,
-        maarten.lankhorst@linux.intel.com, mripard@kernel.org,
-        tzimmermann@suse.de, airlied@linux.ie,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-References: <20200323112802.228214-1-wambui.karugax@gmail.com>
- <20200323113726.GA663867@kroah.com>
+        id S1727321AbgCWPjo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Mar 2020 11:39:44 -0400
+Received: from mga03.intel.com ([134.134.136.65]:41400 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727119AbgCWPjo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Mar 2020 11:39:44 -0400
+IronPort-SDR: oFPFApnlOFo+TXG699Pe6H+2xs2Tu4k03C8+dPPEAJFhL7MCZkT6+sOa6buVXK1eO4OC/M9sIt
+ +Uuf6Q9EqHoQ==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Mar 2020 08:38:04 -0700
+IronPort-SDR: 9+1ObKw03rdINnymPRfYKrF7RSRXlP6uiMZXg8gBrh9a6pVNyoKoE2F80qOku+lRShN01imbPW
+ nmmRx4WRdMAA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.72,296,1580803200"; 
+   d="scan'208";a="235253307"
+Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.202])
+  by orsmga007.jf.intel.com with ESMTP; 23 Mar 2020 08:38:04 -0700
+Date:   Mon, 23 Mar 2020 08:38:04 -0700
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     Vitaly Kuznetsov <vkuznets@redhat.com>
+Cc:     Paolo Bonzini <pbonzini@redhat.com>,
+        Paul Mackerras <paulus@ozlabs.org>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        Janosch Frank <frankja@linux.ibm.com>,
+        David Hildenbrand <david@redhat.com>,
+        Cornelia Huck <cohuck@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>, Marc Zyngier <maz@kernel.org>,
+        James Morse <james.morse@arm.com>,
+        Julien Thierry <julien.thierry.kdev@gmail.com>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        linux-mips@vger.kernel.org, kvm@vger.kernel.org,
+        kvm-ppc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        kvmarm@lists.cs.columbia.edu, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 6/9] KVM: x86: Copy kvm_x86_ops by value to eliminate
+ layer of indirection
+Message-ID: <20200323153803.GF28711@linux.intel.com>
+References: <20200321202603.19355-1-sean.j.christopherson@intel.com>
+ <20200321202603.19355-7-sean.j.christopherson@intel.com>
+ <87d0939r5t.fsf@vitty.brq.redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200323113726.GA663867@kroah.com>
-X-Operating-System: Linux phenom 5.3.0-3-amd64 
+In-Reply-To: <87d0939r5t.fsf@vitty.brq.redhat.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 23, 2020 at 12:37:26PM +0100, Greg KH wrote:
-> On Mon, Mar 23, 2020 at 02:28:02PM +0300, Wambui Karuga wrote:
-> > Remove unneeded #if/#endif guards for checking whether the
-> > CONFIG_DEBUG_FS option is set or not. If the option is not set, the
-> > compiler optimizes the functions making the guards
-> > unnecessary.
-> > 
-> > Signed-off-by: Wambui Karuga <wambui.karugax@gmail.com>
+On Mon, Mar 23, 2020 at 01:44:46PM +0100, Vitaly Kuznetsov wrote:
+> (OK, I have to admit I trust the fact that GCC is still able to build
+> KVM modules more than my own eyes)
 
-Applied, thanks a lot.
--Daniel
-
-> > ---
-> >  drivers/gpu/drm/drm_gem_vram_helper.c | 4 ----
-> >  1 file changed, 4 deletions(-)
-> > 
-> > diff --git a/drivers/gpu/drm/drm_gem_vram_helper.c b/drivers/gpu/drm/drm_gem_vram_helper.c
-> > index 76506bedac11..b3201a70cbfc 100644
-> > --- a/drivers/gpu/drm/drm_gem_vram_helper.c
-> > +++ b/drivers/gpu/drm/drm_gem_vram_helper.c
-> > @@ -1018,7 +1018,6 @@ static struct ttm_bo_driver bo_driver = {
-> >   * struct drm_vram_mm
-> >   */
-> >  
-> > -#if defined(CONFIG_DEBUG_FS)
-> >  static int drm_vram_mm_debugfs(struct seq_file *m, void *data)
-> >  {
-> >  	struct drm_info_node *node = (struct drm_info_node *) m->private;
-> > @@ -1035,7 +1034,6 @@ static int drm_vram_mm_debugfs(struct seq_file *m, void *data)
-> >  static const struct drm_info_list drm_vram_mm_debugfs_list[] = {
-> >  	{ "vram-mm", drm_vram_mm_debugfs, 0, NULL },
-> >  };
-> > -#endif
-> >  
-> >  /**
-> >   * drm_vram_mm_debugfs_init() - Register VRAM MM debugfs file.
-> > @@ -1045,11 +1043,9 @@ static const struct drm_info_list drm_vram_mm_debugfs_list[] = {
-> >   */
-> >  void drm_vram_mm_debugfs_init(struct drm_minor *minor)
-> >  {
-> > -#if defined(CONFIG_DEBUG_FS)
-> >  	drm_debugfs_create_files(drm_vram_mm_debugfs_list,
-> >  				 ARRAY_SIZE(drm_vram_mm_debugfs_list),
-> >  				 minor->debugfs_root, minor);
-> > -#endif
-> >  }
-> >  EXPORT_SYMBOL(drm_vram_mm_debugfs_init);
-> >  
-> > -- 
-> > 2.25.1
-> 
-> Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+Ha, yep, I trust gcc far more than my grep skills.
