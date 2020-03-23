@@ -2,144 +2,227 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EEE7D18FF29
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Mar 2020 21:25:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B372D18FF45
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Mar 2020 21:25:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727209AbgCWUYR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Mar 2020 16:24:17 -0400
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:35130 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727656AbgCWUYO (ORCPT
+        id S1727725AbgCWUZB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Mar 2020 16:25:01 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:42768 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725991AbgCWUY5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Mar 2020 16:24:14 -0400
-Received: by mail-pl1-f193.google.com with SMTP id g6so6417929plt.2
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Mar 2020 13:24:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=C0LsAz70o8cEG4Nw2F0iYGNC/gi7roMlmMUaydZViic=;
-        b=mUNBTWdVOxOOX6AMAo6cgRH71ec0iV+SXDJ6JsA+ueMI12basjiumCLVcRvtdlfVsg
-         OTGqufJENljEUWV9yNfmo/oi9+1JriOXNQdBg/sXHGWN4vH//BMyk3nxzIbD2bQw5sH6
-         tFIP6XXBPMynW6Y4IHYYXZ8z4OQmViSCCKsxQKz1ZrOST7+Y6566R7oaniScAQNGHGvS
-         sH3Wqn8bYzirLfVOTEuifD2Gt8kYBDBm1u4ydEfERAmCLUnrZLxYlspAAJnDpZb3rmO9
-         O0zv3rUMz9wFk8HU9iqqIIbSnNC05bHEyosNyru1FjiuEL7939BWs3Qv2uU5oDKR+WnF
-         TUdA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=C0LsAz70o8cEG4Nw2F0iYGNC/gi7roMlmMUaydZViic=;
-        b=ZwjLtikDXilcOwZWyTJae6DzAQ9QqJSZyQdJJ2LhJlB7LQ0Ml6ilfafHTVw59h2dzo
-         vPho6PrPnwLzAP9wUmHDs+1aXsSlIGjf7ByZTyLUhhgkStxtEVf/YC1IPfp6KXtSeawF
-         iLPVEESO1qCJV79bMomHC4Um1AOQa2ubD5ThFjK17YdFrqcHJw6nuMUCPvlDSGhQr4H/
-         W4VTZt0Te4F0bcfiDdPeipj3nm1TTv4XJ3b5xnmOIyuigS+sgRMq/LPW20raTWggBHvo
-         6QCacE6uiLgGTFwlXjoLczZaVITpbIqUm82QS6CF4ggLq//FRzLrd6sLeeyQrOucRYDl
-         1Gcg==
-X-Gm-Message-State: ANhLgQ2UuHnnC2PalBOfm42ZiLmB15hSX2TFygUOoiGjYXmO6o17l17J
-        g3jzzf9zChLb6zVOzWDk+EC+ikJ3P2jK4FPN4LhzhkwzHwk=
-X-Google-Smtp-Source: ADFU+vvYNOQvMVU8ZpcPZT3z+xHkhnMEd5HXpvvnpiNRLlGKXz7Ftce1nGRjzBbLh0Jk2Evgw+d0jvM44zxx6FFA7Rg=
-X-Received: by 2002:a17:90b:8d2:: with SMTP id ds18mr1099401pjb.186.1584995052592;
- Mon, 23 Mar 2020 13:24:12 -0700 (PDT)
+        Mon, 23 Mar 2020 16:24:57 -0400
+Received: from p5de0bf0b.dip0.t-ipconnect.de ([93.224.191.11] helo=nanos.tec.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1jGTcm-0006Yi-2v; Mon, 23 Mar 2020 21:24:40 +0100
+Received: by nanos.tec.linutronix.de (Postfix, from userid 1000)
+        id 2D0391040AA; Mon, 23 Mar 2020 21:24:39 +0100 (CET)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Xiaoyao Li <xiaoyao.li@intel.com>, Ingo Molnar <mingo@redhat.com>,
+        Borislav Petkov <bp@alien8.de>, hpa@zytor.com,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        kvm@vger.kernel.org, x86@kernel.org, linux-kernel@vger.kernel.org
+Cc:     Andy Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Arvind Sankar <nivedita@alum.mit.edu>,
+        Fenghua Yu <fenghua.yu@intel.com>,
+        Tony Luck <tony.luck@intel.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Jim Mattson <jmattson@google.com>,
+        Xiaoyao Li <xiaoyao.li@intel.com>
+Subject: Re: [PATCH v5 1/9] x86/split_lock: Rework the initialization flow of split lock detection
+In-Reply-To: <87zhc7ovhj.fsf@nanos.tec.linutronix.de>
+References: <20200315050517.127446-1-xiaoyao.li@intel.com> <20200315050517.127446-2-xiaoyao.li@intel.com> <87zhc7ovhj.fsf@nanos.tec.linutronix.de>
+Date:   Mon, 23 Mar 2020 21:24:39 +0100
+Message-ID: <87lfnqq0oo.fsf@nanos.tec.linutronix.de>
 MIME-Version: 1.0
-References: <20200323021053.17319-1-masahiroy@kernel.org>
-In-Reply-To: <20200323021053.17319-1-masahiroy@kernel.org>
-From:   Nick Desaulniers <ndesaulniers@google.com>
-Date:   Mon, 23 Mar 2020 13:24:01 -0700
-Message-ID: <CAKwvOdk3g0HzU1r90oRm46ACwfr=CwYjYxUs8w_x47n_sRsVTQ@mail.gmail.com>
-Subject: Re: [PATCH] drm/i915: remove always-defined CONFIG_AS_MOVNTDQA
-To:     Masahiro Yamada <masahiroy@kernel.org>
-Cc:     Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        intel-gfx@lists.freedesktop.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        "Jason A . Donenfeld" <Jason@zx2c4.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        David Airlie <airlied@linux.ie>,
-        clang-built-linux <clang-built-linux@googlegroups.com>,
-        dri-devel <dri-devel@lists.freedesktop.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Mar 22, 2020 at 7:12 PM Masahiro Yamada <masahiroy@kernel.org> wrote:
+Thomas Gleixner <tglx@linutronix.de> writes:
+> Xiaoyao Li <xiaoyao.li@intel.com> writes:
 >
-> CONFIG_AS_MOVNTDQA was introduced by commit 0b1de5d58e19 ("drm/i915:
-> Use SSE4.1 movntdqa to accelerate reads from WC memory").
+>> Current initialization flow of split lock detection has following issues:
+>> 1. It assumes the initial value of MSR_TEST_CTRL.SPLIT_LOCK_DETECT to be
+>>    zero. However, it's possible that BIOS/firmware has set it.
 >
-> We raise the minimal supported binutils version from time to time.
-> The last bump was commit 1fb12b35e5ff ("kbuild: Raise the minimum
-> required binutils version to 2.21").
+> Ok.
+>
+>> 2. X86_FEATURE_SPLIT_LOCK_DETECT flag is unconditionally set even if
+>>    there is a virtualization flaw that FMS indicates the existence while
+>>    it's actually not supported.
+>>
+>> 3. Because of #2, KVM cannot rely on X86_FEATURE_SPLIT_LOCK_DETECT flag
+>>    to check verify if feature does exist, so cannot expose it to
+>>    guest.
+>
+> Sorry this does not make anny sense. KVM is the hypervisor, so it better
+> can rely on the detect flag. Unless you talk about nested virt and a
+> broken L1 hypervisor.
+>
+>> To solve these issues, introducing a new sld_state, "sld_not_exist",
+>> as
+>
+> The usual naming convention is sld_not_supported.
 
-Indeed, I see 2.21 was released in 2010, and I see a commit modifying
-existing support for movntdqa in 2008; it looks like these have been
-supported for a while.  Thanks for this cleanup; the less we have to
-invoke tools during make invocation, to lower the overhead of Kbuild.
-Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
+But this extra state is not needed at all, it already exists:
 
->
-> I confirmed the code in $(call as-instr,...) can be assembled by the
-> binutils 2.21 assembler and also by Clang's integrated assembler.
->
-> Remove CONFIG_AS_MOVNTDQA, which is always defined.
->
-> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
-> ---
->
->  drivers/gpu/drm/i915/Makefile      | 3 ---
->  drivers/gpu/drm/i915/i915_memcpy.c | 5 -----
->  2 files changed, 8 deletions(-)
->
-> diff --git a/drivers/gpu/drm/i915/Makefile b/drivers/gpu/drm/i915/Makefile
-> index a1f2411aa21b..e559e53fc634 100644
-> --- a/drivers/gpu/drm/i915/Makefile
-> +++ b/drivers/gpu/drm/i915/Makefile
-> @@ -28,9 +28,6 @@ subdir-ccflags-$(CONFIG_DRM_I915_WERROR) += -Werror
->  CFLAGS_i915_pci.o = $(call cc-disable-warning, override-init)
->  CFLAGS_display/intel_fbdev.o = $(call cc-disable-warning, override-init)
->
-> -subdir-ccflags-y += \
-> -       $(call as-instr,movntdqa (%eax)$(comma)%xmm0,-DCONFIG_AS_MOVNTDQA)
-> -
->  subdir-ccflags-y += -I$(srctree)/$(src)
->
->  # Please keep these build lists sorted!
-> diff --git a/drivers/gpu/drm/i915/i915_memcpy.c b/drivers/gpu/drm/i915/i915_memcpy.c
-> index fdd550405fd3..7b3b83bd5ab8 100644
-> --- a/drivers/gpu/drm/i915/i915_memcpy.c
-> +++ b/drivers/gpu/drm/i915/i915_memcpy.c
-> @@ -35,7 +35,6 @@
->
->  static DEFINE_STATIC_KEY_FALSE(has_movntdqa);
->
-> -#ifdef CONFIG_AS_MOVNTDQA
->  static void __memcpy_ntdqa(void *dst, const void *src, unsigned long len)
->  {
->         kernel_fpu_begin();
-> @@ -93,10 +92,6 @@ static void __memcpy_ntdqu(void *dst, const void *src, unsigned long len)
->
->         kernel_fpu_end();
->  }
-> -#else
-> -static void __memcpy_ntdqa(void *dst, const void *src, unsigned long len) {}
-> -static void __memcpy_ntdqu(void *dst, const void *src, unsigned long len) {}
-> -#endif
->
->  /**
->   * i915_memcpy_from_wc: perform an accelerated *aligned* read from WC
-> --
-> 2.17.1
->
-> --
-> You received this message because you are subscribed to the Google Groups "Clang Built Linux" group.
-> To unsubscribe from this group and stop receiving emails from it, send an email to clang-built-linux+unsubscribe@googlegroups.com.
-> To view this discussion on the web visit https://groups.google.com/d/msgid/clang-built-linux/20200323021053.17319-1-masahiroy%40kernel.org.
+    X86_FEATURE_SPLIT_LOCK_DETECT
 
+You just need to make split_lock_setup() a bit smarter. Soemthing like
+the below. It just wants to be split into separate patches.
 
-
--- 
 Thanks,
-~Nick Desaulniers
+
+        tglx
+---
+--- a/arch/x86/kernel/cpu/intel.c
++++ b/arch/x86/kernel/cpu/intel.c
+@@ -45,6 +45,7 @@ enum split_lock_detect_state {
+  * split lock detect, unless there is a command line override.
+  */
+ static enum split_lock_detect_state sld_state = sld_off;
++static DEFINE_PER_CPU(u64, msr_test_ctrl_cache);
+ 
+ /*
+  * Processors which have self-snooping capability can handle conflicting
+@@ -984,11 +985,32 @@ static inline bool match_option(const ch
+ 	return len == arglen && !strncmp(arg, opt, len);
+ }
+ 
++static bool __init split_lock_verify_msr(bool on)
++{
++	u64 ctrl, tmp;
++
++	if (rdmsrl_safe(MSR_TEST_CTRL, &ctrl))
++		return false;
++	if (on)
++		ctrl |= MSR_TEST_CTRL_SPLIT_LOCK_DETECT;
++	else
++		ctrl &= ~MSR_TEST_CTRL_SPLIT_LOCK_DETECT;
++	if (wrmsrl_safe(MSR_TEST_CTRL, ctrl))
++		return false;
++	rdmsrl(MSR_TEST_CTRL, tmp);
++	return ctrl == tmp;
++}
++
+ static void __init split_lock_setup(void)
+ {
+ 	char arg[20];
+ 	int i, ret;
+ 
++	if (!split_lock_verify_msr(true) || !split_lock_verify_msr(false)) {
++		pr_info("MSR access failed: Disabled\n");
++		return;
++	}
++
+ 	setup_force_cpu_cap(X86_FEATURE_SPLIT_LOCK_DETECT);
+ 	sld_state = sld_warn;
+ 
+@@ -1007,7 +1029,6 @@ static void __init split_lock_setup(void
+ 	case sld_off:
+ 		pr_info("disabled\n");
+ 		break;
+-
+ 	case sld_warn:
+ 		pr_info("warning about user-space split_locks\n");
+ 		break;
+@@ -1018,44 +1039,40 @@ static void __init split_lock_setup(void
+ 	}
+ }
+ 
+-/*
+- * Locking is not required at the moment because only bit 29 of this
+- * MSR is implemented and locking would not prevent that the operation
+- * of one thread is immediately undone by the sibling thread.
+- * Use the "safe" versions of rdmsr/wrmsr here because although code
+- * checks CPUID and MSR bits to make sure the TEST_CTRL MSR should
+- * exist, there may be glitches in virtualization that leave a guest
+- * with an incorrect view of real h/w capabilities.
+- */
+-static bool __sld_msr_set(bool on)
++static void split_lock_init(void)
+ {
+-	u64 test_ctrl_val;
++	u64 ctrl;
+ 
+-	if (rdmsrl_safe(MSR_TEST_CTRL, &test_ctrl_val))
+-		return false;
++	if (!boot_cpu_has(X86_FEATURE_SPLIT_LOCK_DETECT))
++		return;
+ 
+-	if (on)
+-		test_ctrl_val |= MSR_TEST_CTRL_SPLIT_LOCK_DETECT;
++	rdmsrl(MSR_TEST_CTRL, ctrl);
++	if (sld_state == sld_off)
++		ctrl &= ~MSR_TEST_CTRL_SPLIT_LOCK_DETECT;
+ 	else
+-		test_ctrl_val &= ~MSR_TEST_CTRL_SPLIT_LOCK_DETECT;
+-
+-	return !wrmsrl_safe(MSR_TEST_CTRL, test_ctrl_val);
++		ctrl |= MSR_TEST_CTRL_SPLIT_LOCK_DETECT;
++	wrmsrl(MSR_TEST_CTRL, ctrl);
++	this_cpu_write(msr_test_ctrl_cache, ctrl);
+ }
+ 
+-static void split_lock_init(void)
++/*
++ * MSR_TEST_CTRL is per core, but we treat it like a per CPU MSR. Locking
++ * is not implemented as one thread could undo the setting of the other
++ * thread immediately after dropping the lock anyway.
++ */
++static void msr_test_ctrl_update(bool on, u64 mask)
+ {
+-	if (sld_state == sld_off)
+-		return;
++	u64 tmp, ctrl = this_cpu_read(msr_test_ctrl_cache);
+ 
+-	if (__sld_msr_set(true))
+-		return;
++	if (on)
++		tmp = ctrl | mask;
++	else
++		tmp = ctrl & ~mask;
+ 
+-	/*
+-	 * If this is anything other than the boot-cpu, you've done
+-	 * funny things and you get to keep whatever pieces.
+-	 */
+-	pr_warn("MSR fail -- disabled\n");
+-	sld_state = sld_off;
++	if (tmp != ctrl) {
++		wrmsrl(MSR_TEST_CTRL, ctrl);
++		this_cpu_write(msr_test_ctrl_cache, ctrl);
++	}
+ }
+ 
+ bool handle_user_split_lock(struct pt_regs *regs, long error_code)
+@@ -1071,7 +1088,7 @@ bool handle_user_split_lock(struct pt_re
+ 	 * progress and set TIF_SLD so the detection is re-enabled via
+ 	 * switch_to_sld() when the task is scheduled out.
+ 	 */
+-	__sld_msr_set(false);
++	msr_test_ctrl_update(false, MSR_TEST_CTRL_SPLIT_LOCK_DETECT);
+ 	set_tsk_thread_flag(current, TIF_SLD);
+ 	return true;
+ }
+@@ -1085,7 +1102,7 @@ bool handle_user_split_lock(struct pt_re
+  */
+ void switch_to_sld(unsigned long tifn)
+ {
+-	__sld_msr_set(!(tifn & _TIF_SLD));
++	msr_test_ctrl_update(!(tifn & _TIF_SLD), MSR_TEST_CTRL_SPLIT_LOCK_DETECT);
+ }
+ 
+ #define SPLIT_LOCK_CPU(model) {X86_VENDOR_INTEL, 6, model, X86_FEATURE_ANY}
+
+
