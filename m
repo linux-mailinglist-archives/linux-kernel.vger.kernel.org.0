@@ -2,69 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 995A418F87D
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Mar 2020 16:25:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A035518F89B
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Mar 2020 16:29:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727275AbgCWPZO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Mar 2020 11:25:14 -0400
-Received: from netrider.rowland.org ([192.131.102.5]:59027 "HELO
-        netrider.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with SMTP id S1727228AbgCWPZO (ORCPT
+        id S1727296AbgCWP36 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Mar 2020 11:29:58 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:36175 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727053AbgCWP35 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Mar 2020 11:25:14 -0400
-Received: (qmail 24985 invoked by uid 500); 23 Mar 2020 11:25:13 -0400
-Received: from localhost (sendmail-bs@127.0.0.1)
-  by localhost with SMTP; 23 Mar 2020 11:25:13 -0400
-Date:   Mon, 23 Mar 2020 11:25:13 -0400 (EDT)
-From:   Alan Stern <stern@rowland.harvard.edu>
-X-X-Sender: stern@netrider.rowland.org
-To:     Vinod Koul <vkoul@kernel.org>
-cc:     Mathias Nyman <mathias.nyman@intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        <linux-arm-msm@vger.kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Christian Lamparter <chunkeey@googlemail.com>,
-        John Stultz <john.stultz@linaro.org>,
-        =?UTF-8?q?Andreas=20B=C3=B6hler?= <dev@aboehler.at>,
-        <linux-usb@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Mathias Nyman <mathias.nyman@linux.intel.com>
-Subject: Re: [PATCH v7 1/5] usb: hci: add hc_driver as argument for
- usb_hcd_pci_probe
-In-Reply-To: <20200323101121.243906-2-vkoul@kernel.org>
-Message-ID: <Pine.LNX.4.44L0.2003231124190.24254-100000@netrider.rowland.org>
+        Mon, 23 Mar 2020 11:29:57 -0400
+Received: from dude.hi.pengutronix.de ([2001:67c:670:100:1d::7])
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <afa@pengutronix.de>)
+        id 1jGP1X-00020E-7M; Mon, 23 Mar 2020 16:29:55 +0100
+Received: from afa by dude.hi.pengutronix.de with local (Exim 4.92)
+        (envelope-from <afa@pengutronix.de>)
+        id 1jGP1W-00007c-JR; Mon, 23 Mar 2020 16:29:54 +0100
+From:   Ahmad Fatoum <a.fatoum@pengutronix.de>
+To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc:     kernel@pengutronix.de, Christian Eggers <CEggers@arri.de>,
+        Ahmad Fatoum <a.fatoum@pengutronix.de>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2] nvmem: core: don't consider subnodes not matching binding
+Date:   Mon, 23 Mar 2020 16:28:50 +0100
+Message-Id: <20200323152850.32657-1-a.fatoum@pengutronix.de>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::7
+X-SA-Exim-Mail-From: afa@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 23 Mar 2020, Vinod Koul wrote:
+The nvmem cell binding applies to objects which match "^.*@[0-9a-f]+$",
+but so far the driver has matched all objects and failed if they didn't
+have the expected properties.
 
-> usb_hcd_pci_probe expects users to call this with driver_data set as
-> hc_driver, that limits the possibility of using the driver_data for
-> driver data.
-> 
-> Add hc_driver as argument to usb_hcd_pci_probe and modify the callers
-> ehci/ohci/xhci/uhci to pass hc_driver as argument and freeup the
-> driver_data used
-> 
-> Tested xhci driver on Dragon-board RB3, compile tested ehci and ohci.
-> Couldn't compile uhci
-> 
-> Suggested-by: Mathias Nyman <mathias.nyman@linux.intel.com>
-> Signed-off-by: Vinod Koul <vkoul@kernel.org>
-> ---
->  drivers/usb/core/hcd-pci.c  |  7 ++++---
->  drivers/usb/host/ehci-pci.c |  6 ++----
->  drivers/usb/host/ohci-pci.c |  9 ++++++---
->  drivers/usb/host/uhci-pci.c |  8 ++++++--
->  drivers/usb/host/xhci-pci.c | 14 +++++---------
->  include/linux/usb/hcd.h     |  3 ++-
->  6 files changed, 25 insertions(+), 22 deletions(-)
+The driver's behavior in this regard precludes future extension of
+EEPROMs by child nodes other than nvmem and clashes with the barebox
+bootloader binding that extends the fixed-partitions MTD binding to
+EEPROMs as it tries to interpret the "fixed-partitions"-compatible
+partitions node as a nvmem cell.
 
-For all but the xHCI parts:
+Solve this issue by skipping all subnodes that don't contain an @.
 
-Acked-by: Alan Stern <stern@rowland.harvard.edu>
+This still allows for cell names like `partitions@0,0', but this
+is much less likely to cause future collisions.
+
+Signed-off-by: Ahmad Fatoum <a.fatoum@pengutronix.de>
+---
+v1 -> v2:
+  use ->full_name instead of ->name as to not break existing correct
+  cells (Christian)
+---
+ drivers/nvmem/core.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/nvmem/core.c b/drivers/nvmem/core.c
+index ef326f243f36..f051051fb1a8 100644
+--- a/drivers/nvmem/core.c
++++ b/drivers/nvmem/core.c
+@@ -278,6 +278,8 @@ static int nvmem_add_cells_from_of(struct nvmem_device *nvmem)
+ 	parent = dev->of_node;
+ 
+ 	for_each_child_of_node(parent, child) {
++		if (!strchr(kbasename(child->full_name), '@'))
++			continue;
+ 		addr = of_get_property(child, "reg", &len);
+ 		if (!addr || (len < 2 * sizeof(u32))) {
+ 			dev_err(dev, "nvmem: invalid reg on %pOF\n", child);
+-- 
+2.25.1
 
