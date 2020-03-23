@@ -2,42 +2,29 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BED4318F64B
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Mar 2020 14:52:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AD65818F64F
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Mar 2020 14:52:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728653AbgCWNvl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Mar 2020 09:51:41 -0400
-Received: from foss.arm.com ([217.140.110.172]:49540 "EHLO foss.arm.com"
+        id S1728744AbgCWNwI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Mar 2020 09:52:08 -0400
+Received: from foss.arm.com ([217.140.110.172]:49566 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728595AbgCWNvh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Mar 2020 09:51:37 -0400
+        id S1728641AbgCWNvi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Mar 2020 09:51:38 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9FFD013FD;
-        Mon, 23 Mar 2020 06:51:36 -0700 (PDT)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D004113D5;
+        Mon, 23 Mar 2020 06:51:37 -0700 (PDT)
 Received: from e107158-lin.cambridge.arm.com (e107158-lin.cambridge.arm.com [10.1.195.21])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6E5963F52E;
-        Mon, 23 Mar 2020 06:51:34 -0700 (PDT)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D14BA3F52E;
+        Mon, 23 Mar 2020 06:51:36 -0700 (PDT)
 From:   Qais Yousef <qais.yousef@arm.com>
 To:     Thomas Gleixner <tglx@linutronix.de>
 Cc:     linux-kernel@vger.kernel.org, Qais Yousef <qais.yousef@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Steve Capper <steve.capper@arm.com>,
-        Richard Fontana <rfontana@redhat.com>,
-        James Morse <james.morse@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Jiri Kosina <jkosina@suse.cz>,
-        Pavankumar Kondeti <pkondeti@codeaurora.org>,
-        Zhenzhong Duan <zhenzhong.duan@oracle.com>,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v4 08/17] arm64: hibernate.c: Create a new function to handle cpu_up(sleep_cpu)
-Date:   Mon, 23 Mar 2020 13:51:01 +0000
-Message-Id: <20200323135110.30522-9-qais.yousef@arm.com>
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org
+Subject: [PATCH v4 09/17] x86: Replace cpu_up/down with add/remove_cpu
+Date:   Mon, 23 Mar 2020 13:51:02 +0000
+Message-Id: <20200323135110.30522-10-qais.yousef@arm.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200323135110.30522-1-qais.yousef@arm.com>
 References: <20200323135110.30522-1-qais.yousef@arm.com>
@@ -46,106 +33,114 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In preparation to make cpu_up/down private - move the user in arm64
-hibernate.c to use a new generic function that provides what arm64
-needs.
+The core device API performs extra housekeeping bits that are missing
+from directly calling cpu_up/down.
 
-Acked-by: Catalin Marinas <catalin.marinas@arm.com>
+See commit a6717c01ddc2 ("powerpc/rtas: use device model APIs and
+serialization during LPM") for an example description of what might go
+wrong.
+
+This also prepares to make cpu_up/down a private interface for anything
+but the cpu subsystem.
+
 Signed-off-by: Qais Yousef <qais.yousef@arm.com>
-CC: Catalin Marinas <catalin.marinas@arm.com>
-CC: Will Deacon <will@kernel.org>
-CC: Steve Capper <steve.capper@arm.com>
-CC: Richard Fontana <rfontana@redhat.com>
-CC: James Morse <james.morse@arm.com>
-CC: Mark Rutland <mark.rutland@arm.com>
 CC: Thomas Gleixner <tglx@linutronix.de>
-CC: Josh Poimboeuf <jpoimboe@redhat.com>
-CC: Ingo Molnar <mingo@kernel.org>
-CC: "Peter Zijlstra (Intel)" <peterz@infradead.org>
-CC: Nicholas Piggin <npiggin@gmail.com>
-CC: Daniel Lezcano <daniel.lezcano@linaro.org>
-CC: Jiri Kosina <jkosina@suse.cz>
-CC: Pavankumar Kondeti <pkondeti@codeaurora.org>
-CC: Zhenzhong Duan <zhenzhong.duan@oracle.com>
-CC: linux-arm-kernel@lists.infradead.org
+CC: Ingo Molnar <mingo@redhat.com>
+CC: Borislav Petkov <bp@alien8.de>
+CC: "H. Peter Anvin" <hpa@zytor.com>
+CC: x86@kernel.org
 CC: linux-kernel@vger.kernel.org
 ---
- arch/arm64/kernel/hibernate.c | 13 +++++--------
- include/linux/cpu.h           |  1 +
- kernel/cpu.c                  | 24 ++++++++++++++++++++++++
- 3 files changed, 30 insertions(+), 8 deletions(-)
+ arch/x86/kernel/topology.c | 22 ++++++----------------
+ arch/x86/mm/mmio-mod.c     |  4 ++--
+ arch/x86/xen/smp.c         |  2 +-
+ 3 files changed, 9 insertions(+), 19 deletions(-)
 
-diff --git a/arch/arm64/kernel/hibernate.c b/arch/arm64/kernel/hibernate.c
-index 590963c9c609..5b73e92c99e3 100644
---- a/arch/arm64/kernel/hibernate.c
-+++ b/arch/arm64/kernel/hibernate.c
-@@ -166,14 +166,11 @@ int arch_hibernation_header_restore(void *addr)
- 		sleep_cpu = -EINVAL;
+diff --git a/arch/x86/kernel/topology.c b/arch/x86/kernel/topology.c
+index be5bc2e47c71..b8810ebbc8ae 100644
+--- a/arch/x86/kernel/topology.c
++++ b/arch/x86/kernel/topology.c
+@@ -59,39 +59,29 @@ __setup("cpu0_hotplug", enable_cpu0_hotplug);
+  */
+ int _debug_hotplug_cpu(int cpu, int action)
+ {
+-	struct device *dev = get_cpu_device(cpu);
+ 	int ret;
+ 
+ 	if (!cpu_is_hotpluggable(cpu))
  		return -EINVAL;
- 	}
--	if (!cpu_online(sleep_cpu)) {
--		pr_info("Hibernated on a CPU that is offline! Bringing CPU up.\n");
--		ret = cpu_up(sleep_cpu);
--		if (ret) {
--			pr_err("Failed to bring hibernate-CPU up!\n");
--			sleep_cpu = -EINVAL;
--			return ret;
+ 
+-	lock_device_hotplug();
+-
+ 	switch (action) {
+ 	case 0:
+-		ret = cpu_down(cpu);
+-		if (!ret) {
++		ret = remove_cpu(cpu);
++		if (!ret)
+ 			pr_info("DEBUG_HOTPLUG_CPU0: CPU %u is now offline\n", cpu);
+-			dev->offline = true;
+-			kobject_uevent(&dev->kobj, KOBJ_OFFLINE);
+-		} else
++		else
+ 			pr_debug("Can't offline CPU%d.\n", cpu);
+ 		break;
+ 	case 1:
+-		ret = cpu_up(cpu);
+-		if (!ret) {
+-			dev->offline = false;
+-			kobject_uevent(&dev->kobj, KOBJ_ONLINE);
+-		} else {
++		ret = add_cpu(cpu);
++		if (ret)
+ 			pr_debug("Can't online CPU%d.\n", cpu);
 -		}
 +
-+	ret = bringup_hibernate_cpu(sleep_cpu);
-+	if (ret) {
-+		sleep_cpu = -EINVAL;
-+		return ret;
+ 		break;
+ 	default:
+ 		ret = -EINVAL;
  	}
  
- 	resume_hdr = *hdr;
-diff --git a/include/linux/cpu.h b/include/linux/cpu.h
-index 64a246e9c8db..aebe8186cb07 100644
---- a/include/linux/cpu.h
-+++ b/include/linux/cpu.h
-@@ -93,6 +93,7 @@ int add_cpu(unsigned int cpu);
- void notify_cpu_starting(unsigned int cpu);
- extern void cpu_maps_update_begin(void);
- extern void cpu_maps_update_done(void);
-+extern int bringup_hibernate_cpu(unsigned int sleep_cpu);
- 
- #else	/* CONFIG_SMP */
- #define cpuhp_tasks_frozen	0
-diff --git a/kernel/cpu.c b/kernel/cpu.c
-index 03c727195b65..bf39c5bfb6d9 100644
---- a/kernel/cpu.c
-+++ b/kernel/cpu.c
-@@ -1275,6 +1275,30 @@ int add_cpu(unsigned int cpu)
+-	unlock_device_hotplug();
+-
+ 	return ret;
  }
- EXPORT_SYMBOL_GPL(add_cpu);
  
-+/**
-+ * bringup_hibernate_cpu - Bring up the CPU that we hibernated on
-+ * @sleep_cpu: The cpu we hibernated on and should be brought up.
-+ *
-+ * On some archs like arm64, we can hibernate on any CPU, but on wake up the
-+ * CPU we hibernated on might be offline as a side effect of using maxcpus= for
-+ * example.
-+ */
-+int bringup_hibernate_cpu(unsigned int sleep_cpu)
-+{
-+	int ret;
-+
-+	if (!cpu_online(sleep_cpu)) {
-+		pr_info("Hibernated on a CPU that is offline! Bringing CPU up.\n");
-+		ret = cpu_up(sleep_cpu);
-+		if (ret) {
-+			pr_err("Failed to bring hibernate-CPU up!\n");
-+			return ret;
-+		}
-+	}
-+
-+	return 0;
-+}
-+
- #ifdef CONFIG_PM_SLEEP_SMP
- static cpumask_var_t frozen_cpus;
+diff --git a/arch/x86/mm/mmio-mod.c b/arch/x86/mm/mmio-mod.c
+index 673de6063345..109325d77b3e 100644
+--- a/arch/x86/mm/mmio-mod.c
++++ b/arch/x86/mm/mmio-mod.c
+@@ -386,7 +386,7 @@ static void enter_uniprocessor(void)
+ 	put_online_cpus();
  
+ 	for_each_cpu(cpu, downed_cpus) {
+-		err = cpu_down(cpu);
++		err = remove_cpu(cpu);
+ 		if (!err)
+ 			pr_info("CPU%d is down.\n", cpu);
+ 		else
+@@ -406,7 +406,7 @@ static void leave_uniprocessor(void)
+ 		return;
+ 	pr_notice("Re-enabling CPUs...\n");
+ 	for_each_cpu(cpu, downed_cpus) {
+-		err = cpu_up(cpu);
++		err = add_cpu(cpu);
+ 		if (!err)
+ 			pr_info("enabled CPU%d.\n", cpu);
+ 		else
+diff --git a/arch/x86/xen/smp.c b/arch/x86/xen/smp.c
+index 7a43b2ae19f1..2097fa0ebdb5 100644
+--- a/arch/x86/xen/smp.c
++++ b/arch/x86/xen/smp.c
+@@ -132,7 +132,7 @@ void __init xen_smp_cpus_done(unsigned int max_cpus)
+ 		if (xen_vcpu_nr(cpu) < MAX_VIRT_CPUS)
+ 			continue;
+ 
+-		rc = cpu_down(cpu);
++		rc = remove_cpu(cpu);
+ 
+ 		if (rc == 0) {
+ 			/*
 -- 
 2.17.1
 
