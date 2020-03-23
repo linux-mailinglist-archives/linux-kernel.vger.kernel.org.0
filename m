@@ -2,99 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C446B18F033
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Mar 2020 08:27:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C652118F03C
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Mar 2020 08:28:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727401AbgCWH10 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Mar 2020 03:27:26 -0400
-Received: from mx2.suse.de ([195.135.220.15]:59904 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727164AbgCWH1Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Mar 2020 03:27:25 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id C5EF6AC11;
-        Mon, 23 Mar 2020 07:27:23 +0000 (UTC)
-Date:   Mon, 23 Mar 2020 08:27:22 +0100 (CET)
-From:   Miroslav Benes <mbenes@suse.cz>
-To:     Peter Zijlstra <peterz@infradead.org>
-cc:     tglx@linutronix.de, jpoimboe@redhat.com,
-        linux-kernel@vger.kernel.org, x86@kernel.org, mhiramat@kernel.org,
-        brgerst@gmail.com
-Subject: Re: [PATCH v2 17/19] objtool: Optimize !vmlinux.o again
-In-Reply-To: <20200321161151.GB3323@worktop.programming.kicks-ass.net>
-Message-ID: <alpine.LSU.2.21.2003230826570.23992@pobox.suse.cz>
-References: <20200317170234.897520633@infradead.org> <20200317170910.819744197@infradead.org> <20200318132025.GH20730@hirez.programming.kicks-ass.net> <alpine.LSU.2.21.2003201719200.21240@pobox.suse.cz> <20200321151421.GD2452@worktop.programming.kicks-ass.net>
- <20200321161151.GB3323@worktop.programming.kicks-ass.net>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+        id S1727444AbgCWH2d (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Mar 2020 03:28:33 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:44669 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727350AbgCWH2c (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Mar 2020 03:28:32 -0400
+Received: by mail-pg1-f196.google.com with SMTP id 142so1513192pgf.11
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Mar 2020 00:28:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=NFyWVs+kduv2j1R2/60e64VqrdzsP1HRwFGN/XYNDZo=;
+        b=LILNAYyQ8szwFEkmyAgot0buT6BbWuPaMeqDEzmHEOA82yWb/7h8Q1ltu1+n4qIVYR
+         O2Syb3UEtgrn7LHNXVqQ8SQP+A6KGKhI/dmNJPdCV3I9w9RtZ+Kwtt4abirzJXyz0Kxg
+         i5i1XGp0OXMn/kN8stG1yga7zw/nZMIFMjc5M=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=NFyWVs+kduv2j1R2/60e64VqrdzsP1HRwFGN/XYNDZo=;
+        b=K9nnr9WogZLsPcZ0nAosMEb47gx6VIKCCTFnWqxg97bU7Ml+Ff0V7YPdAmjImoF1iw
+         dG71ZtN4/F4ESC71F/IbDKhlkxRdhcNVudiaAc+uOxsv6tD8Z6bWkHFH9lIXPvgAv+1X
+         Il8rBvOqQ6blBcLNHqyjuFgV4YsfqX8WKjtFXXAp230kdAYhsUKVg2aOWdzoHpoPOoq/
+         Glo0iTOd7cu3wU6Y7S2Wjp5VbnBJ3A1nkz7JJomO5eK62Uo8HKfauxNWUD2mRKVF7ql7
+         0cYJeq6ayN+MmDv2UHlh+LfscjMKc1WmtSJaHM5jWbFTO7/Zg4DOa5vj95syIIQqxewp
+         qiZA==
+X-Gm-Message-State: ANhLgQ2ougn90IJem2mdLWpYXx3JB501E9QZ4tK8ESTd4saHg0KQ+zqL
+        U5ODuvpyLJtyMGfEX5ByBVvjpA==
+X-Google-Smtp-Source: ADFU+vvfZ+qhit8yI7fVEav4nHdqfpAwVAeCiMKsf3LZMu/WqYHyCiYaU+G01pALbh0CUrK9KNHGHw==
+X-Received: by 2002:a63:3d48:: with SMTP id k69mr19784007pga.395.1584948511935;
+        Mon, 23 Mar 2020 00:28:31 -0700 (PDT)
+Received: from mcchou0.mtv.corp.google.com ([2620:15c:202:201:b46:ac84:1014:9555])
+        by smtp.gmail.com with ESMTPSA id z16sm12645399pfr.138.2020.03.23.00.28.30
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 23 Mar 2020 00:28:31 -0700 (PDT)
+From:   Miao-chen Chou <mcchou@chromium.org>
+To:     Bluetooth Kernel Mailing List <linux-bluetooth@vger.kernel.org>
+Cc:     Luiz Augusto von Dentz <luiz.von.dentz@intel.com>,
+        Marcel Holtmann <marcel@holtmann.org>,
+        Alain Michaud <alainm@chromium.org>,
+        Miao-chen Chou <mcchou@chromium.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Johan Hedberg <johan.hedberg@gmail.com>,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org
+Subject: [PATCH v1 0/2] btusb: Introduce the use of vendor extension(s)
+Date:   Mon, 23 Mar 2020 00:28:22 -0700
+Message-Id: <20200323072824.254495-1-mcchou@chromium.org>
+X-Mailer: git-send-email 2.24.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 21 Mar 2020, Peter Zijlstra wrote:
+Hi Marcel and Luiz,
 
-> On Sat, Mar 21, 2020 at 04:14:21PM +0100, Peter Zijlstra wrote:
-> > On Fri, Mar 20, 2020 at 05:20:47PM +0100, Miroslav Benes wrote:
-> > 
-> > > I think there is one more missing in create_orc_entry().
-> > 
-> > I'm thikning you're quite right about that.... lemme see what to do
-> > about that.
-> 
-> ---
-> --- a/tools/objtool/elf.c
-> +++ b/tools/objtool/elf.c
-> @@ -472,6 +472,14 @@ static int read_symbols(struct elf *elf)
->  	return -1;
->  }
-> 
-> +void elf_add_rela(struct elf *elf, struct rela *rela)
-> +{
-> +	struct section *sec = rela->sec;
-> +
-> +	list_add_tail(&rela->list, &sec->rela_list);
-> +	elf_hash_add(elf->rela_hash, &rela->hash, rela_hash(rela));
-> +}
-> +
->  static int read_relas(struct elf *elf)
->  {
->  	struct section *sec;
-> @@ -519,8 +527,7 @@ static int read_relas(struct elf *elf)
->  				return -1;
->  			}
-> 
-> -			list_add_tail(&rela->list, &sec->rela_list);
-> -			elf_hash_add(elf->rela_hash, &rela->hash, rela_hash(rela));
-> +			elf_add_rela(elf, rela);
->  			nr_rela++;
->  		}
->  		max_rela = max(max_rela, nr_rela);
-> --- a/tools/objtool/elf.h
-> +++ b/tools/objtool/elf.h
-> @@ -127,6 +127,7 @@ struct section *elf_create_rela_section(
->  int elf_rebuild_rela_section(struct section *sec);
->  int elf_write(struct elf *elf);
->  void elf_close(struct elf *elf);
-> +void elf_add_rela(struct elf *elf, struct rela *rela);
-> 
->  #define for_each_sec(file, sec)						\
->  	list_for_each_entry(sec, &file->elf->sections, list)
-> --- a/tools/objtool/orc_gen.c
-> +++ b/tools/objtool/orc_gen.c
-> @@ -111,8 +111,7 @@ static int create_orc_entry(struct elf *
->  	rela->offset = idx * sizeof(int);
->  	rela->sec = ip_relasec;
-> 
-> -	list_add_tail(&rela->list, &ip_relasec->rela_list);
-> -	hash_add(elf->rela_hash, &rela->hash, rela_hash(rela));
-> +	elf_add_rela(elf, rela);
-> 
->  	return 0;
->  }
+The standard HCI does not provide commands/events regarding to
+advertisement monitoring with content filter while there are few vendors
+providing this feature. Chrome OS BT would like to introduce the use of
+vendor specific features where Microsoft vendor extension is targeted at
+this moment.
 
-Yup, looks good.
+Chrome OS BT would like to utilize Microsoft vendor extension's
+advertisement monitoring feature which is not yet a part of standard
+Bluetooth specification. This series introduces the driver information for
+Microsoft vendor extension, and this was verified with kernel 4.4 on Atlas
+Chromebook.
 
-Miroslav
+Thanks
+Miao
+
+Changes in v1:
+- Add a bit mask of driver_info for Microsoft vendor extension.
+- Indicates the support of Microsoft vendor extension for Intel
+9460/9560 and 9160/9260.
+- Add fields to struct hci_dev to facilitate the support of Microsoft
+vendor extension.
+- Add vendor_hci.h to facilitate opcodes and packet structures of vendor
+extension(s).
+- Add opcode for the HCI_VS_MSFT_Read_Supported_Features command from
+Microsoft vendor extension.
+- Issue a HCI_VS_MSFT_Read_Supported_Features command upon
+hci_dev_do_open and save the return values.
+
+Miao-chen Chou (2):
+  Bluetooth: btusb: Indicate Microsoft vendor extension for Intel
+    9460/9560 and 9160/9260
+  Bluetooth: btusb: Read the supported features of Microsoft vendor
+    extension
+
+ drivers/bluetooth/btusb.c          | 18 +++++++++--
+ include/net/bluetooth/hci.h        |  2 ++
+ include/net/bluetooth/hci_core.h   |  5 +++
+ include/net/bluetooth/vendor_hci.h | 51 ++++++++++++++++++++++++++++++
+ net/bluetooth/hci_core.c           | 30 ++++++++++++++++++
+ net/bluetooth/hci_event.c          | 49 +++++++++++++++++++++++++++-
+ 6 files changed, 152 insertions(+), 3 deletions(-)
+ create mode 100644 include/net/bluetooth/vendor_hci.h
+
+-- 
+2.24.1
+
