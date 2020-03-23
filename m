@@ -2,121 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3D91E18EDE1
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Mar 2020 03:11:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7ED2718EDE6
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Mar 2020 03:12:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727120AbgCWCLI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 22 Mar 2020 22:11:08 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:45488 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726951AbgCWCLI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Mar 2020 22:11:08 -0400
-Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 977822BEDAB46AD93768;
-        Mon, 23 Mar 2020 10:09:52 +0800 (CST)
-Received: from [10.134.22.195] (10.134.22.195) by smtp.huawei.com
- (10.3.19.206) with Microsoft SMTP Server (TLS) id 14.3.487.0; Mon, 23 Mar
- 2020 10:09:49 +0800
-Subject: Re: [PATCH v3] f2fs: fix potential .flags overflow on 32bit
- architecture
-To:     =?UTF-8?Q?Ond=c5=99ej_Jirman?= <megi@xff.cz>, <jaegeuk@kernel.org>,
-        <linux-f2fs-devel@lists.sourceforge.net>,
-        <linux-kernel@vger.kernel.org>, <chao@kernel.org>
-References: <20200323012519.41536-1-yuchao0@huawei.com>
- <20200323015036.pniupuucfl3dug4m@core.my.home>
-From:   Chao Yu <yuchao0@huawei.com>
-Message-ID: <1d861a2e-0045-af0c-1f5b-c45b774c83f6@huawei.com>
-Date:   Mon, 23 Mar 2020 10:09:48 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <20200323015036.pniupuucfl3dug4m@core.my.home>
-Content-Type: text/plain; charset="UTF-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.134.22.195]
-X-CFilter-Loop: Reflected
+        id S1727044AbgCWCMb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 22 Mar 2020 22:12:31 -0400
+Received: from conuserg-11.nifty.com ([210.131.2.78]:47452 "EHLO
+        conuserg-11.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726982AbgCWCMb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 22 Mar 2020 22:12:31 -0400
+Received: from grover.flets-west.jp (softbank126093102113.bbtec.net [126.93.102.113]) (authenticated)
+        by conuserg-11.nifty.com with ESMTP id 02N2B0XE005345;
+        Mon, 23 Mar 2020 11:11:00 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-11.nifty.com 02N2B0XE005345
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1584929461;
+        bh=921IQ+kt9407iGCDk1ZEmlbnWdF8N6TUyCzyGcOHkIA=;
+        h=From:To:Cc:Subject:Date:From;
+        b=AsLaLubRaEcK2e+0uHzTYGp9FDfJiAMoQo3oT0Q2vqBenotASSN07zJz5Bd7g12Uj
+         NlArBFCPkz7Yy3sLWH2bYO0IDVRMufDPeVGX9geH3JpFFySsL07kNuebrqSs6KpIqW
+         W1Gr0jQFRXu+hC0dhVP66IqRfoUDckUNlGYkz/v0kXBUxhkOMgagaMKrEvMs4XqpTe
+         rt++g2WB8pLBK458BCQIIAk06YmRNoUZe7UokQ/SEhNtOq2Dr3SN4NZnvTs9zwvwBN
+         vKfD9d98wgWBxSsW2yKcgXfuxengtOMRa7SXy8hlK5tKhmgf2IWi9UPU+WzZl9cWt7
+         7HAqPq1ycBbCw==
+X-Nifty-SrcIP: [126.93.102.113]
+From:   Masahiro Yamada <masahiroy@kernel.org>
+To:     Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        intel-gfx@lists.freedesktop.org
+Cc:     linux-kernel@vger.kernel.org,
+        "Jason A . Donenfeld" <Jason@zx2c4.com>,
+        Masahiro Yamada <masahiroy@kernel.org>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        David Airlie <airlied@linux.ie>,
+        clang-built-linux@googlegroups.com, dri-devel@lists.freedesktop.org
+Subject: [PATCH] drm/i915: remove always-defined CONFIG_AS_MOVNTDQA
+Date:   Mon, 23 Mar 2020 11:10:53 +0900
+Message-Id: <20200323021053.17319-1-masahiroy@kernel.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Ondřej,
+CONFIG_AS_MOVNTDQA was introduced by commit 0b1de5d58e19 ("drm/i915:
+Use SSE4.1 movntdqa to accelerate reads from WC memory").
 
-On 2020/3/23 9:50, Ondřej Jirman wrote:
-> Hello Chao Yu,
-> 
-> On Mon, Mar 23, 2020 at 09:25:19AM +0800, Chao Yu wrote:
->> [snip]
->>  
->> +static inline void __set_inode_flag(struct inode *inode, int flag)
->> +{
->> +	test_and_set_bit(flag % BITS_PER_LONG,
->> +			&F2FS_I(inode)->flags[BIT_WORD(flag)]);
-> 
-> This can simply be:
-> 
->     test_and_set_bit(flag, F2FS_I(inode)->flags);
-> 
-> all of these bitmap manipulation functions already will do the
-> right thing to access the correct location in the flags array:
-> 
->   https://elixir.bootlin.com/linux/latest/source/include/asm-generic/bitops/atomic.h#L32
-> 
-> see BIT_MASK and BIT_WORD use in that function.
+We raise the minimal supported binutils version from time to time.
+The last bump was commit 1fb12b35e5ff ("kbuild: Raise the minimum
+required binutils version to 2.21").
 
-Oops, most f2fs bitmap check uses the same form, I missed this case....
+I confirmed the code in $(call as-instr,...) can be assembled by the
+binutils 2.21 assembler and also by Clang's integrated assembler.
 
-> 
->> +}
->> +
->>  static inline void set_inode_flag(struct inode *inode, int flag)
->>  {
->> -	if (!test_bit(flag, &F2FS_I(inode)->flags))
->> -		set_bit(flag, &F2FS_I(inode)->flags);
->> +	__set_inode_flag(inode, flag);
->>  	__mark_inode_dirty_flag(inode, flag, true);
->>  }
->>  
->>  static inline int is_inode_flag_set(struct inode *inode, int flag)
->>  {
->> -	return test_bit(flag, &F2FS_I(inode)->flags);
->> +	return test_bit(flag % BITS_PER_LONG,
->> +				&F2FS_I(inode)->flags[BIT_WORD(flag)]);
-> 
-> ditto
-> 
->>  }
->>  
->>  static inline void clear_inode_flag(struct inode *inode, int flag)
->>  {
->> -	if (test_bit(flag, &F2FS_I(inode)->flags))
->> -		clear_bit(flag, &F2FS_I(inode)->flags);
->> +	test_and_clear_bit(flag % BITS_PER_LONG,
->> +				&F2FS_I(inode)->flags[BIT_WORD(flag)]);
-> 
-> ditto
-> 
-> I'm going to test the patch. It looks like that this was really
-> the root cause of all those locking issues I was seeing on my
-> 32-bit tablet. It seems to explain why my 64-bit systems were
-> not affected, and why reverting compession fixed it too.
-> Great job figuring this out.
-> 
-> I'll let you know soon.
+Remove CONFIG_AS_MOVNTDQA, which is always defined.
 
-Great, hoping this patch can fix the issue this time.
+Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+---
 
-Thanks anyway for supporting on troubleshooting this issue.
+ drivers/gpu/drm/i915/Makefile      | 3 ---
+ drivers/gpu/drm/i915/i915_memcpy.c | 5 -----
+ 2 files changed, 8 deletions(-)
 
-Thanks,
+diff --git a/drivers/gpu/drm/i915/Makefile b/drivers/gpu/drm/i915/Makefile
+index a1f2411aa21b..e559e53fc634 100644
+--- a/drivers/gpu/drm/i915/Makefile
++++ b/drivers/gpu/drm/i915/Makefile
+@@ -28,9 +28,6 @@ subdir-ccflags-$(CONFIG_DRM_I915_WERROR) += -Werror
+ CFLAGS_i915_pci.o = $(call cc-disable-warning, override-init)
+ CFLAGS_display/intel_fbdev.o = $(call cc-disable-warning, override-init)
+ 
+-subdir-ccflags-y += \
+-	$(call as-instr,movntdqa (%eax)$(comma)%xmm0,-DCONFIG_AS_MOVNTDQA)
+-
+ subdir-ccflags-y += -I$(srctree)/$(src)
+ 
+ # Please keep these build lists sorted!
+diff --git a/drivers/gpu/drm/i915/i915_memcpy.c b/drivers/gpu/drm/i915/i915_memcpy.c
+index fdd550405fd3..7b3b83bd5ab8 100644
+--- a/drivers/gpu/drm/i915/i915_memcpy.c
++++ b/drivers/gpu/drm/i915/i915_memcpy.c
+@@ -35,7 +35,6 @@
+ 
+ static DEFINE_STATIC_KEY_FALSE(has_movntdqa);
+ 
+-#ifdef CONFIG_AS_MOVNTDQA
+ static void __memcpy_ntdqa(void *dst, const void *src, unsigned long len)
+ {
+ 	kernel_fpu_begin();
+@@ -93,10 +92,6 @@ static void __memcpy_ntdqu(void *dst, const void *src, unsigned long len)
+ 
+ 	kernel_fpu_end();
+ }
+-#else
+-static void __memcpy_ntdqa(void *dst, const void *src, unsigned long len) {}
+-static void __memcpy_ntdqu(void *dst, const void *src, unsigned long len) {}
+-#endif
+ 
+ /**
+  * i915_memcpy_from_wc: perform an accelerated *aligned* read from WC
+-- 
+2.17.1
 
-> 
-> thank you and regards,
-> 	o.
-> 
->>  	__mark_inode_dirty_flag(inode, flag, false);
->>  }
->>  
-> .
-> 
