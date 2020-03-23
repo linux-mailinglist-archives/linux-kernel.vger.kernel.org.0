@@ -2,103 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 315E618EDC6
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Mar 2020 02:57:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 40CF818EDCE
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Mar 2020 03:02:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727096AbgCWB5v (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 22 Mar 2020 21:57:51 -0400
-Received: from mail-qk1-f193.google.com ([209.85.222.193]:34358 "EHLO
-        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727064AbgCWB5s (ORCPT
+        id S1727008AbgCWCCt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 22 Mar 2020 22:02:49 -0400
+Received: from smtprelay0176.hostedemail.com ([216.40.44.176]:44760 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726954AbgCWCCt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Mar 2020 21:57:48 -0400
-Received: by mail-qk1-f193.google.com with SMTP id i6so4714229qke.1
-        for <linux-kernel@vger.kernel.org>; Sun, 22 Mar 2020 18:57:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=joelfernandes.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=vz9xBYT7w2JZFqAtcJyqqCJgtO34i29+WCO4KTVtkB8=;
-        b=LKskb9/qJnxs+ndLBRI6a2Qvn4blylgqfSDZDNHlcfPrnXsyfOH+lvtJTl/4/hpMFZ
-         ehZS19cQtTegYgR2LjnZPtCsQKUNC/VZ7WGPfwJnCLebkOze/3K6jTLYgwHpVxON6LKA
-         ogda2WQ/xUnbauY8b7cNfrjtnYo/DoaCrYvko=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=vz9xBYT7w2JZFqAtcJyqqCJgtO34i29+WCO4KTVtkB8=;
-        b=QnVCvVtMbu0jsZAr54w3lJCNhmdViqtAKdrl78zoRJBY2jR4rtNTHfFql4sOFddfI3
-         66ZltaDfFmDBYjp9EYr4Yw9dWE+EQigui4jgrLVaMTaUiX/PoCFgh1wHYY6rXf///6Z3
-         Ryw6qllbIGcbPYurZ/+Cs8NW3v0pbqDc9/aT4JGq1avLg9FpDOSjhbu66EV9sVJjKTWr
-         7K0hsvW5ODMgsVq4j+YyArDAePY3Y46UCsDAo5Jg5SAj6WPpShL4Rrl09dpGAefNXO0B
-         NrlHQ4miO4qLVHGEgXfIKIe7UiSwDx7x4QBW8mL2R9sxYi/zD0mC16PA4ACRGPWS/pjA
-         PHPA==
-X-Gm-Message-State: ANhLgQ3ZC5n7lGjx4MAAEagnmf6ouPkdGKke7V+HkoF+KPtkN5fmR50W
-        Y6QbPD8RDTpUALpiO3IHdI4NVNpe+ho=
-X-Google-Smtp-Source: ADFU+vt1yWrK2R2GI2UFyps1U5tV/pTHQam8GzIYyN4qfwwXi4mmjWSN2KEPsWPNu5U2UR1d7x9Ieg==
-X-Received: by 2002:a37:8b01:: with SMTP id n1mr16659727qkd.407.1584928666324;
-        Sun, 22 Mar 2020 18:57:46 -0700 (PDT)
-Received: from joelaf.cam.corp.google.com ([2620:15c:6:12:9c46:e0da:efbf:69cc])
-        by smtp.gmail.com with ESMTPSA id e66sm10146233qkd.129.2020.03.22.18.57.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 22 Mar 2020 18:57:46 -0700 (PDT)
-From:   "Joel Fernandes (Google)" <joel@joelfernandes.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     "Joel Fernandes (Google)" <joel@joelfernandes.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Andrea Parri <parri.andrea@gmail.com>,
-        Will Deacon <will@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        David Howells <dhowells@redhat.com>,
-        Jade Alglave <j.alglave@ucl.ac.uk>,
-        Luc Maranget <luc.maranget@inria.fr>,
-        "Paul E. McKenney" <paulmck@kernel.org>,
-        Akira Yokosawa <akiyks@gmail.com>,
-        Daniel Lustig <dlustig@nvidia.com>, linux-doc@vger.kernel.org
-Subject: [PATCH v2 4/4] MAINTAINERS: Update maintainers for new Documentaion/litmus-tests/
-Date:   Sun, 22 Mar 2020 21:57:35 -0400
-Message-Id: <20200323015735.236279-4-joel@joelfernandes.org>
-X-Mailer: git-send-email 2.25.1.696.g5e7596f4ac-goog
-In-Reply-To: <20200323015735.236279-1-joel@joelfernandes.org>
-References: <20200323015735.236279-1-joel@joelfernandes.org>
+        Sun, 22 Mar 2020 22:02:49 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay03.hostedemail.com (Postfix) with ESMTP id A55B2837F24F;
+        Mon, 23 Mar 2020 02:02:48 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,,RULES_HIT:41:355:379:599:973:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:2198:2199:2393:2553:2559:2562:2691:2828:2901:3138:3139:3140:3141:3142:3352:3622:3865:3866:3867:3868:3870:3871:3872:4321:5007:6119:7903:10004:10400:11026:11232:11473:11658:11914:12043:12295:12297:12438:12740:12760:12895:13069:13138:13231:13311:13357:13439:14659:14721:21080:21627:21990:30054:30090:30091,0,RBL:none,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:1,LUA_SUMMARY:none
+X-HE-Tag: cakes39_8cd2320f7ba51
+X-Filterd-Recvd-Size: 2290
+Received: from XPS-9350.home (unknown [47.151.136.130])
+        (Authenticated sender: joe@perches.com)
+        by omf07.hostedemail.com (Postfix) with ESMTPA;
+        Mon, 23 Mar 2020 02:02:47 +0000 (UTC)
+Message-ID: <ed37a2a18060f71accb202c05724c0b66d0aa9f7.camel@perches.com>
+Subject: Re: [PATCH v3] f2fs: fix potential .flags overflow on 32bit
+ architecture
+From:   Joe Perches <joe@perches.com>
+To:     Chao Yu <yuchao0@huawei.com>, jaegeuk@kernel.org
+Cc:     linux-f2fs-devel@lists.sourceforge.net,
+        linux-kernel@vger.kernel.org, chao@kernel.org
+Date:   Sun, 22 Mar 2020 19:00:58 -0700
+In-Reply-To: <20200323012519.41536-1-yuchao0@huawei.com>
+References: <20200323012519.41536-1-yuchao0@huawei.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.34.1-2 
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Also add me as Reviewer for LKMM. Previously a patch to do this was
-Acked but somewhere along the line got lost. Add myself in this patch.
+On Mon, 2020-03-23 at 09:25 +0800, Chao Yu wrote:
+> f2fs_inode_info.flags is unsigned long variable, it has 32 bits
+> in 32bit architecture, since we introduced FI_MMAP_FILE flag
+> when we support data compression, we may access memory cross
+> the border of .flags field, corrupting .i_sem field, result in
+> below deadlock.
+> 
+> To fix this issue, let's expand .flags as an array to grab enough
+> space to store new flags.
+[]
+> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+[]
+> @@ -2586,22 +2590,28 @@ static inline void __mark_inode_dirty_flag(struct inode *inode,
+>  	}
+>  }
+>  
+> +static inline void __set_inode_flag(struct inode *inode, int flag)
+> +{
+> +	test_and_set_bit(flag % BITS_PER_LONG,
+> +			&F2FS_I(inode)->flags[BIT_WORD(flag)]);
 
-Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
----
- MAINTAINERS | 2 ++
- 1 file changed, 2 insertions(+)
+I believe this should just use
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index cc1d18cb5d186..fc38b181fdff9 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -9699,6 +9699,7 @@ M:	Luc Maranget <luc.maranget@inria.fr>
- M:	"Paul E. McKenney" <paulmck@kernel.org>
- R:	Akira Yokosawa <akiyks@gmail.com>
- R:	Daniel Lustig <dlustig@nvidia.com>
-+R:	Joel Fernandes <joel@joelfernandes.org>
- L:	linux-kernel@vger.kernel.org
- L:	linux-arch@vger.kernel.org
- S:	Supported
-@@ -9709,6 +9710,7 @@ F:	Documentation/atomic_t.txt
- F:	Documentation/core-api/atomic_ops.rst
- F:	Documentation/core-api/refcount-vs-atomic.rst
- F:	Documentation/memory-barriers.txt
-+F:	Documentation/litmus-tests/
- 
- LIS3LV02D ACCELEROMETER DRIVER
- M:	Eric Piel <eric.piel@tremplin-utc.net>
--- 
-2.25.1.696.g5e7596f4ac-goog
+	test_and_set_bit(flag, F2FS_I(inode)->flags);
+
+>  static inline int is_inode_flag_set(struct inode *inode, int flag)
+>  {
+> -	return test_bit(flag, &F2FS_I(inode)->flags);
+> +	return test_bit(flag % BITS_PER_LONG,
+> +				&F2FS_I(inode)->flags[BIT_WORD(flag)]);
+
+here too.
+
+	test_bit(flag, F2FS_I(inode)->flags);
+
+>  static inline void clear_inode_flag(struct inode *inode, int flag)
+>  {
+> -	if (test_bit(flag, &F2FS_I(inode)->flags))
+> -		clear_bit(flag, &F2FS_I(inode)->flags);
+> +	test_and_clear_bit(flag % BITS_PER_LONG,
+> +				&F2FS_I(inode)->flags[BIT_WORD(flag)]);
+
+and here.
+
+I also don't know why these functions are used at all.
+
 
