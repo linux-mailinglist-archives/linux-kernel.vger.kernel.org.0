@@ -2,25 +2,25 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CE35B18FCD8
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Mar 2020 19:39:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3600918FCD3
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Mar 2020 19:39:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727992AbgCWSjE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Mar 2020 14:39:04 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:46750 "EHLO
+        id S1727928AbgCWSiv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Mar 2020 14:38:51 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:46740 "EHLO
         ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727685AbgCWSiY (ORCPT
+        with ESMTP id S1727662AbgCWSiZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Mar 2020 14:38:24 -0400
+        Mon, 23 Mar 2020 14:38:25 -0400
 Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jGRxt-00135r-FP; Mon, 23 Mar 2020 18:38:21 +0000
+        id 1jGRxt-00135y-Km; Mon, 23 Mar 2020 18:38:21 +0000
 From:   Al Viro <viro@ZenIV.linux.org.uk>
 To:     Linus Torvalds <torvalds@linux-foundation.org>
 Cc:     Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [RFC][PATCH 10/22] x86: switch setup_sigcontext() to unsafe_put_user()
-Date:   Mon, 23 Mar 2020 18:38:07 +0000
-Message-Id: <20200323183819.250124-10-viro@ZenIV.linux.org.uk>
+Subject: [RFC][PATCH 11/22] x86: switch ia32_setup_sigcontext() to unsafe_put_user()
+Date:   Mon, 23 Mar 2020 18:38:08 +0000
+Message-Id: <20200323183819.250124-11-viro@ZenIV.linux.org.uk>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20200323183819.250124-1-viro@ZenIV.linux.org.uk>
 References: <20200323183620.GD23230@ZenIV.linux.org.uk>
@@ -36,54 +36,25 @@ From: Al Viro <viro@zeniv.linux.org.uk>
 
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- arch/x86/include/asm/sighandling.h |  3 --
- arch/x86/kernel/signal.c           | 88 +++++++++++++++++++-------------------
- 2 files changed, 45 insertions(+), 46 deletions(-)
+ arch/x86/ia32/ia32_signal.c | 64 +++++++++++++++++++++++----------------------
+ 1 file changed, 33 insertions(+), 31 deletions(-)
 
-diff --git a/arch/x86/include/asm/sighandling.h b/arch/x86/include/asm/sighandling.h
-index 2fcbd6f33ef7..35e0b579ffcb 100644
---- a/arch/x86/include/asm/sighandling.h
-+++ b/arch/x86/include/asm/sighandling.h
-@@ -14,9 +14,6 @@
- 			 X86_EFLAGS_CF | X86_EFLAGS_RF)
- 
- void signal_fault(struct pt_regs *regs, void __user *frame, char *where);
--int setup_sigcontext(struct sigcontext __user *sc, void __user *fpstate,
--		     struct pt_regs *regs, unsigned long mask);
--
- 
- #ifdef CONFIG_X86_X32_ABI
- asmlinkage long sys32_x32_rt_sigreturn(void);
-diff --git a/arch/x86/kernel/signal.c b/arch/x86/kernel/signal.c
-index 83563e98f0be..3b4ca484cfc2 100644
---- a/arch/x86/kernel/signal.c
-+++ b/arch/x86/kernel/signal.c
-@@ -140,63 +140,65 @@ static int restore_sigcontext(struct pt_regs *regs,
- 			       IS_ENABLED(CONFIG_X86_32));
- }
- 
--int setup_sigcontext(struct sigcontext __user *sc, void __user *fpstate,
-+static int setup_sigcontext(struct sigcontext __user *sc, void __user *fpstate,
- 		     struct pt_regs *regs, unsigned long mask)
+diff --git a/arch/x86/ia32/ia32_signal.c b/arch/x86/ia32/ia32_signal.c
+index 23e2c55d8a59..af673ec23a2d 100644
+--- a/arch/x86/ia32/ia32_signal.c
++++ b/arch/x86/ia32/ia32_signal.c
+@@ -158,38 +158,40 @@ static int ia32_setup_sigcontext(struct sigcontext_32 __user *sc,
+ 				 void __user *fpstate,
+ 				 struct pt_regs *regs, unsigned int mask)
  {
 -	int err = 0;
 -
 -	put_user_try {
-+	if (!user_access_begin(sc, sizeof(struct sigcontext)))
-+		return -EFAULT;
- 
- #ifdef CONFIG_X86_32
--		put_user_ex(get_user_gs(regs), (unsigned int __user *)&sc->gs);
--		put_user_ex(regs->fs, (unsigned int __user *)&sc->fs);
--		put_user_ex(regs->es, (unsigned int __user *)&sc->es);
--		put_user_ex(regs->ds, (unsigned int __user *)&sc->ds);
-+	unsafe_put_user(get_user_gs(regs),
-+				  (unsigned int __user *)&sc->gs, Efault);
-+	unsafe_put_user(regs->fs, (unsigned int __user *)&sc->fs, Efault);
-+	unsafe_put_user(regs->es, (unsigned int __user *)&sc->es, Efault);
-+	unsafe_put_user(regs->ds, (unsigned int __user *)&sc->ds, Efault);
- #endif /* CONFIG_X86_32 */
- 
+-		put_user_ex(get_user_seg(gs), (unsigned int __user *)&sc->gs);
+-		put_user_ex(get_user_seg(fs), (unsigned int __user *)&sc->fs);
+-		put_user_ex(get_user_seg(ds), (unsigned int __user *)&sc->ds);
+-		put_user_ex(get_user_seg(es), (unsigned int __user *)&sc->es);
+-
 -		put_user_ex(regs->di, &sc->di);
 -		put_user_ex(regs->si, &sc->si);
 -		put_user_ex(regs->bp, &sc->bp);
@@ -92,6 +63,29 @@ index 83563e98f0be..3b4ca484cfc2 100644
 -		put_user_ex(regs->dx, &sc->dx);
 -		put_user_ex(regs->cx, &sc->cx);
 -		put_user_ex(regs->ax, &sc->ax);
+-		put_user_ex(current->thread.trap_nr, &sc->trapno);
+-		put_user_ex(current->thread.error_code, &sc->err);
+-		put_user_ex(regs->ip, &sc->ip);
+-		put_user_ex(regs->cs, (unsigned int __user *)&sc->cs);
+-		put_user_ex(regs->flags, &sc->flags);
+-		put_user_ex(regs->sp, &sc->sp_at_signal);
+-		put_user_ex(regs->ss, (unsigned int __user *)&sc->ss);
+-
+-		put_user_ex(ptr_to_compat(fpstate), &sc->fpstate);
+-
+-		/* non-iBCS2 extensions.. */
+-		put_user_ex(mask, &sc->oldmask);
+-		put_user_ex(current->thread.cr2, &sc->cr2);
+-	} put_user_catch(err);
++	if (!user_access_begin(sc, sizeof(struct sigcontext_32)))
++		return -EFAULT;
+ 
+-	return err;
++	unsafe_put_user(get_user_seg(gs), (unsigned int __user *)&sc->gs, Efault);
++	unsafe_put_user(get_user_seg(fs), (unsigned int __user *)&sc->fs, Efault);
++	unsafe_put_user(get_user_seg(ds), (unsigned int __user *)&sc->ds, Efault);
++	unsafe_put_user(get_user_seg(es), (unsigned int __user *)&sc->es, Efault);
++
 +	unsafe_put_user(regs->di, &sc->di, Efault);
 +	unsafe_put_user(regs->si, &sc->si, Efault);
 +	unsafe_put_user(regs->bp, &sc->bp, Efault);
@@ -100,62 +94,16 @@ index 83563e98f0be..3b4ca484cfc2 100644
 +	unsafe_put_user(regs->dx, &sc->dx, Efault);
 +	unsafe_put_user(regs->cx, &sc->cx, Efault);
 +	unsafe_put_user(regs->ax, &sc->ax, Efault);
- #ifdef CONFIG_X86_64
--		put_user_ex(regs->r8, &sc->r8);
--		put_user_ex(regs->r9, &sc->r9);
--		put_user_ex(regs->r10, &sc->r10);
--		put_user_ex(regs->r11, &sc->r11);
--		put_user_ex(regs->r12, &sc->r12);
--		put_user_ex(regs->r13, &sc->r13);
--		put_user_ex(regs->r14, &sc->r14);
--		put_user_ex(regs->r15, &sc->r15);
-+	unsafe_put_user(regs->r8, &sc->r8, Efault);
-+	unsafe_put_user(regs->r9, &sc->r9, Efault);
-+	unsafe_put_user(regs->r10, &sc->r10, Efault);
-+	unsafe_put_user(regs->r11, &sc->r11, Efault);
-+	unsafe_put_user(regs->r12, &sc->r12, Efault);
-+	unsafe_put_user(regs->r13, &sc->r13, Efault);
-+	unsafe_put_user(regs->r14, &sc->r14, Efault);
-+	unsafe_put_user(regs->r15, &sc->r15, Efault);
- #endif /* CONFIG_X86_64 */
- 
--		put_user_ex(current->thread.trap_nr, &sc->trapno);
--		put_user_ex(current->thread.error_code, &sc->err);
--		put_user_ex(regs->ip, &sc->ip);
 +	unsafe_put_user(current->thread.trap_nr, &sc->trapno, Efault);
 +	unsafe_put_user(current->thread.error_code, &sc->err, Efault);
 +	unsafe_put_user(regs->ip, &sc->ip, Efault);
- #ifdef CONFIG_X86_32
--		put_user_ex(regs->cs, (unsigned int __user *)&sc->cs);
--		put_user_ex(regs->flags, &sc->flags);
--		put_user_ex(regs->sp, &sc->sp_at_signal);
--		put_user_ex(regs->ss, (unsigned int __user *)&sc->ss);
 +	unsafe_put_user(regs->cs, (unsigned int __user *)&sc->cs, Efault);
 +	unsafe_put_user(regs->flags, &sc->flags, Efault);
 +	unsafe_put_user(regs->sp, &sc->sp_at_signal, Efault);
 +	unsafe_put_user(regs->ss, (unsigned int __user *)&sc->ss, Efault);
- #else /* !CONFIG_X86_32 */
--		put_user_ex(regs->flags, &sc->flags);
--		put_user_ex(regs->cs, &sc->cs);
--		put_user_ex(0, &sc->gs);
--		put_user_ex(0, &sc->fs);
--		put_user_ex(regs->ss, &sc->ss);
-+	unsafe_put_user(regs->flags, &sc->flags, Efault);
-+	unsafe_put_user(regs->cs, &sc->cs, Efault);
-+	unsafe_put_user(0, &sc->gs, Efault);
-+	unsafe_put_user(0, &sc->fs, Efault);
-+	unsafe_put_user(regs->ss, &sc->ss, Efault);
- #endif /* CONFIG_X86_32 */
- 
--		put_user_ex(fpstate, (unsigned long __user *)&sc->fpstate);
-+	unsafe_put_user(fpstate, (unsigned long __user *)&sc->fpstate, Efault);
- 
--		/* non-iBCS2 extensions.. */
--		put_user_ex(mask, &sc->oldmask);
--		put_user_ex(current->thread.cr2, &sc->cr2);
--	} put_user_catch(err);
--
--	return err;
++
++	unsafe_put_user(ptr_to_compat(fpstate), &sc->fpstate, Efault);
++
 +	/* non-iBCS2 extensions.. */
 +	unsafe_put_user(mask, &sc->oldmask, Efault);
 +	unsafe_put_user(current->thread.cr2, &sc->cr2, Efault);
