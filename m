@@ -2,151 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AAD4B18F7F9
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Mar 2020 16:00:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2F8BE18F801
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Mar 2020 16:01:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727443AbgCWPAh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Mar 2020 11:00:37 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53060 "EHLO mail.kernel.org"
+        id S1727518AbgCWPBL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Mar 2020 11:01:11 -0400
+Received: from mga02.intel.com ([134.134.136.20]:26774 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727400AbgCWPAf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Mar 2020 11:00:35 -0400
-Received: from paulmck-ThinkPad-P72.home (50-39-105-78.bvtn.or.frontiernet.net [50.39.105.78])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8E0182076A;
-        Mon, 23 Mar 2020 15:00:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584975634;
-        bh=sOwqdzjNyDhqWaqPuKSrOiqTlX2z5cN/FIXJ3P/xkjI=;
-        h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-        b=zCkspbRTmHUxF9l9kRPZQnxtYGdYi8+u6rRR3/9+G3jy+1Py13gdsJwR0GL7JDxJY
-         DSpD2HdIdJvkPPQPC0zgJceBlBX5G9X0TWzOx+qjPICnwN5AmkaI4wgCQcYvkrDVkI
-         xQOQ+kQyCeBEE5NPoHcjWNEc/LS2t4bjGP3+oOWY=
-Received: by paulmck-ThinkPad-P72.home (Postfix, from userid 1000)
-        id 5B36B35226C6; Mon, 23 Mar 2020 08:00:34 -0700 (PDT)
-Date:   Mon, 23 Mar 2020 08:00:34 -0700
-From:   "Paul E. McKenney" <paulmck@kernel.org>
-To:     Qais Yousef <qais.yousef@arm.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
-        Helge Deller <deller@gmx.de>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        Juergen Gross <jgross@suse.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        xen-devel@lists.xenproject.org, linux-parisc@vger.kernel.org,
-        sparclinux@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-arm-kernel@lists.infradead.org, x86@kernel.org
-Subject: Re: [PATCH v4 01/17] cpu: Add new {add,remove}_cpu() functions
-Message-ID: <20200323150034.GG3199@paulmck-ThinkPad-P72>
-Reply-To: paulmck@kernel.org
-References: <20200323135110.30522-1-qais.yousef@arm.com>
- <20200323135110.30522-2-qais.yousef@arm.com>
+        id S1727186AbgCWPBK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Mar 2020 11:01:10 -0400
+IronPort-SDR: wEAdiD36GD9o81KLPyhMEeSrsQluUXcP23V2L6mxkhabW+wYzGKAQwSIoFovzfodU2/k9uJ/qe
+ 8YtuZTMBRW0Q==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Mar 2020 08:01:09 -0700
+IronPort-SDR: xOQfy8K5XD/GBlZ7JKWStXexCAJb8C+lZtzN2pJK44cWveY8AhNgNESDv/BIFavzGK8p1xtQ9G
+ 86unrakaIxgA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.72,296,1580803200"; 
+   d="scan'208";a="237926017"
+Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.202])
+  by fmsmga007.fm.intel.com with ESMTP; 23 Mar 2020 08:01:07 -0700
+Date:   Mon, 23 Mar 2020 08:01:08 -0700
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     syzbot <syzbot+f2ca20d4aa1408b0385a@syzkaller.appspotmail.com>
+Cc:     alexander.deucher@amd.com, bigeasy@linutronix.de, bp@alien8.de,
+        dave.hansen@intel.com, dvyukov@google.com, hpa@zytor.com,
+        linmiaohe@huawei.com, linux-kernel@vger.kernel.org,
+        mingo@redhat.com, nicholas.kazlauskas@amd.com, pbonzini@redhat.com,
+        riel@surriel.com, sunpeng.li@amd.com,
+        syzkaller-bugs@googlegroups.com, tglx@linutronix.de,
+        x86@kernel.org, zhan.liu@amd.com
+Subject: Re: WARNING in switch_fpu_return
+Message-ID: <20200323150107.GB28711@linux.intel.com>
+References: <000000000000f04e43059b1ee697@google.com>
+ <000000000000ac36ba05a1793693@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200323135110.30522-2-qais.yousef@arm.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <000000000000ac36ba05a1793693@google.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 23, 2020 at 01:50:54PM +0000, Qais Yousef wrote:
-> The new functions use device_{online,offline}() which are userspace
-> safe.
+On Sun, Mar 22, 2020 at 03:41:03PM -0700, syzbot wrote:
+> syzbot suspects this bug was fixed by commit:
 > 
-> This is in preparation to move cpu_{up, down} kernel users to use
-> a safer interface that is not racy with userspace.
+> commit 3009afc6e39e78708d8fb444ae50544b3bcd3a3f
+> Author: Sean Christopherson <sean.j.christopherson@intel.com>
+> Date:   Wed Jan 22 04:43:39 2020 +0000
 > 
-> Suggested-by: "Paul E. McKenney" <paulmck@kernel.org>
-> Signed-off-by: Qais Yousef <qais.yousef@arm.com>
-> CC: Thomas Gleixner <tglx@linutronix.de>
-> CC: "Paul E. McKenney" <paulmck@kernel.org>
+>     KVM: x86: Use a typedef for fastop functions
+> 
+> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1667aa4be00000
+> start commit:   bf8d1cd4 Merge tag 'scsi-fixes' of git://git.kernel.org/pu..
+> git tree:       upstream
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=ed9d672709340e35
+> dashboard link: https://syzkaller.appspot.com/bug?extid=f2ca20d4aa1408b0385a
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=151d549ee00000
+> 
+> If the result looks correct, please mark the bug fixed by replying with:
+> 
+> #syz fix: KVM: x86: Use a typedef for fastop functions
 
-Reviewed-by: Paul E. McKenney <paulmck@kernel.org>
+Ha, fat chance of that.
 
-> CC: Helge Deller <deller@gmx.de>
-> CC: Michael Ellerman <mpe@ellerman.id.au>
-> CC: "David S. Miller" <davem@davemloft.net>
-> CC: Juergen Gross <jgross@suse.com>
-> CC: Mark Rutland <mark.rutland@arm.com>
-> CC: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-> CC: xen-devel@lists.xenproject.org
-> CC: linux-parisc@vger.kernel.org
-> CC: sparclinux@vger.kernel.org
-> CC: linuxppc-dev@lists.ozlabs.org
-> CC: linux-arm-kernel@lists.infradead.org
-> CC: x86@kernel.org
-> CC: linux-kernel@vger.kernel.org
-> ---
->  include/linux/cpu.h |  2 ++
->  kernel/cpu.c        | 24 ++++++++++++++++++++++++
->  2 files changed, 26 insertions(+)
-> 
-> diff --git a/include/linux/cpu.h b/include/linux/cpu.h
-> index 1ca2baf817ed..cf8cf38dca43 100644
-> --- a/include/linux/cpu.h
-> +++ b/include/linux/cpu.h
-> @@ -89,6 +89,7 @@ extern ssize_t arch_cpu_release(const char *, size_t);
->  #ifdef CONFIG_SMP
->  extern bool cpuhp_tasks_frozen;
->  int cpu_up(unsigned int cpu);
-> +int add_cpu(unsigned int cpu);
->  void notify_cpu_starting(unsigned int cpu);
->  extern void cpu_maps_update_begin(void);
->  extern void cpu_maps_update_done(void);
-> @@ -118,6 +119,7 @@ extern void cpu_hotplug_disable(void);
->  extern void cpu_hotplug_enable(void);
->  void clear_tasks_mm_cpumask(int cpu);
->  int cpu_down(unsigned int cpu);
-> +int remove_cpu(unsigned int cpu);
->  
->  #else /* CONFIG_HOTPLUG_CPU */
->  
-> diff --git a/kernel/cpu.c b/kernel/cpu.c
-> index 9c706af713fb..069802f7010f 100644
-> --- a/kernel/cpu.c
-> +++ b/kernel/cpu.c
-> @@ -1057,6 +1057,18 @@ int cpu_down(unsigned int cpu)
->  }
->  EXPORT_SYMBOL(cpu_down);
->  
-> +int remove_cpu(unsigned int cpu)
-> +{
-> +	int ret;
-> +
-> +	lock_device_hotplug();
-> +	ret = device_offline(get_cpu_device(cpu));
-> +	unlock_device_hotplug();
-> +
-> +	return ret;
-> +}
-> +EXPORT_SYMBOL_GPL(remove_cpu);
-> +
->  #else
->  #define takedown_cpu		NULL
->  #endif /*CONFIG_HOTPLUG_CPU*/
-> @@ -1209,6 +1221,18 @@ int cpu_up(unsigned int cpu)
->  }
->  EXPORT_SYMBOL_GPL(cpu_up);
->  
-> +int add_cpu(unsigned int cpu)
-> +{
-> +	int ret;
-> +
-> +	lock_device_hotplug();
-> +	ret = device_online(get_cpu_device(cpu));
-> +	unlock_device_hotplug();
-> +
-> +	return ret;
-> +}
-> +EXPORT_SYMBOL_GPL(add_cpu);
-> +
->  #ifdef CONFIG_PM_SLEEP_SMP
->  static cpumask_var_t frozen_cpus;
->  
-> -- 
-> 2.17.1
-> 
+The offending call to switch_fpu_return() in kvm_arch_vcpu_load() was
+removed by commit 2620fe268e80 ("KVM: x86: Revert "KVM: X86: Fix fpu state
+crash in kvm guest"")
+
+ RIP: 0010:__fpregs_load_activate arch/x86/include/asm/fpu/internal.h:539 [inline]
+ RIP: 0010:switch_fpu_return+0x437/0x4f0 arch/x86/kernel/fpu/core.c:343
+  kvm_arch_vcpu_load+0x66e/0x950 arch/x86/kvm/x86.c:3463
+  vcpu_load+0x43/0x90 arch/x86/kvm/../../../virt/kvm/kvm_main.c:201
+  kvm_unload_vcpu_mmu arch/x86/kvm/x86.c:9543 [inline]
+  kvm_free_vcpus arch/x86/kvm/x86.c:9558 [inline]
+  kvm_arch_destroy_vm+0x184/0x5f0 arch/x86/kvm/x86.c:9663
+  kvm_destroy_vm arch/x86/kvm/../../../virt/kvm/kvm_main.c:816 [inline]
+  kvm_put_kvm+0x5a5/0xcc0 arch/x86/kvm/../../../virt/kvm/kvm_main.c:837
+  async_pf_execute+0x3bf/0x800 arch/x86/kvm/../../../virt/kvm/async_pf.c:101
+  process_one_work+0x9af/0x1740 kernel/workqueue.c:2264
+  worker_thread+0x98/0xe40 kernel/workqueue.c:2410
+  kthread+0x361/0x430 kernel/kthread.c:255
+  ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
+
+So
+
+#syz fix: KVM: x86: Revert "KVM: X86: Fix fpu state crash in kvm guest"
+
+> For information about bisection process see: https://goo.gl/tpsmEJ#bisection
