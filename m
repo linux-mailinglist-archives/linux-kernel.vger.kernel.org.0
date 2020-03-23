@@ -2,79 +2,147 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 33D6E18F6C6
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Mar 2020 15:25:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CD18218F6D7
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Mar 2020 15:26:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727046AbgCWOZT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Mar 2020 10:25:19 -0400
-Received: from mail-pj1-f46.google.com ([209.85.216.46]:52609 "EHLO
-        mail-pj1-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726971AbgCWOZT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Mar 2020 10:25:19 -0400
-Received: by mail-pj1-f46.google.com with SMTP id ng8so6252460pjb.2
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Mar 2020 07:25:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=nlduzVPDyqKnPQVp9n4x5RYEfHbfM1LD5pCTm/+UuqY=;
-        b=IDWjG6o5LDRvbGQOXpLg+YnM+AzoBkb4ouG7MG9W8lzvftXUCUBcfZpXbARvWYTtN4
-         n4h5eEg4WtOpA8XBEMUmSMovg15M3L0/rx23P9J498bj0K8i54oZFwi95FQal9u51UB3
-         ia5gADrJH7Ce6u3+oG8p4yuJxEMOadtAddmqOoM9OOUaRvcw4OQRqsOw2CsYXh9zVSZM
-         HllWoTixA2RpB8wPcOriAxSbaW5DpaxDuZ41o6CBE+UkL7rWhVXKiN4p6HqMC1cWi2wi
-         4AD+DdJzBInBij2D6Un5GO4dW64T5F6kGDuMP4KgJgxJtd+WDUZYhliyYVgQVAinzhtR
-         t1XA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=nlduzVPDyqKnPQVp9n4x5RYEfHbfM1LD5pCTm/+UuqY=;
-        b=msFt8Vq8kiYCoXdZmSI2RMrSdyN8myaps9Uyhz5bbszvRuRFYNEgWL9LBPkzYcwgwz
-         Mryz4tFkSMD/jPb9m0tFW2fPYq1bgVJkv/GTbPOudC+Uo5SfhyvgsVvhlPDPWwiWGZ8s
-         pqKa8pDGroWaFhXSyoclNR8o2jYkqDyMaGIfyntL62RKSGIz00DCNPEb6f6zBsi/gr3r
-         /U/SQYi9oz0WDXd597qswz5+uh5KDQ3W/lvfxXA4wmUBlW33LV3RAjyRsVUETrDxX+p1
-         meMcthQF0ujKnLukuc1qqqt8ITAa+qyPr/FSzZMXToyQkzVH+puZmUtpkCJF+q3o+m+d
-         7EBg==
-X-Gm-Message-State: ANhLgQ3cUem66CB+F8ednXMQmddJ12I6g268OpW9mBN8hDo1R8Sn3Qsi
-        2O0Nbvw3GPSrnX+hK+n71sHCVYqLk1F3hw==
-X-Google-Smtp-Source: ADFU+vu1RJ7BBqufFQRBaIpLy0UeR07UBFiFByXojwAY3z4hfmTLPSNu+/yA8Qa8vVOZwrs1sMpMgQ==
-X-Received: by 2002:a17:90a:30c7:: with SMTP id h65mr26926351pjb.44.1584973516052;
-        Mon, 23 Mar 2020 07:25:16 -0700 (PDT)
-Received: from [192.168.1.188] ([66.219.217.145])
-        by smtp.gmail.com with ESMTPSA id x135sm12784397pgx.41.2020.03.23.07.25.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 23 Mar 2020 07:25:15 -0700 (PDT)
-Subject: Re: [PATCH v2] io_uring: Fix ->data corruption on re-enqueue
-To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <c8d9cc69995858fd8859b339f77901f93574c528.1584912194.git.asml.silence@gmail.com>
- <dfc0b13b8ccc5f7780fd94c1f7e4db724ac7513d.1584951486.git.asml.silence@gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <e48d707c-9ee9-a455-651a-85e16d11eb74@kernel.dk>
-Date:   Mon, 23 Mar 2020 08:25:14 -0600
+        id S1727119AbgCWO0j (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Mar 2020 10:26:39 -0400
+Received: from foss.arm.com ([217.140.110.172]:50176 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725776AbgCWO0i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Mar 2020 10:26:38 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B28771FB;
+        Mon, 23 Mar 2020 07:26:37 -0700 (PDT)
+Received: from [192.168.1.19] (unknown [172.31.20.19])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A7CEF3F52E;
+        Mon, 23 Mar 2020 07:26:36 -0700 (PDT)
+Subject: Re: [PATCH v2 3/9] sched: Remove checks against SD_LOAD_BALANCE
+To:     Valentin Schneider <valentin.schneider@arm.com>
+Cc:     linux-kernel@vger.kernel.org, mingo@kernel.org,
+        peterz@infradead.org, vincent.guittot@linaro.org
+References: <20200311181601.18314-1-valentin.schneider@arm.com>
+ <20200311181601.18314-4-valentin.schneider@arm.com>
+ <c74a32d9-e40c-b976-be19-9ceea91d6fa7@arm.com> <jhjv9n0o8hf.mognet@arm.com>
+From:   Dietmar Eggemann <dietmar.eggemann@arm.com>
+Message-ID: <5decd96b-6fe0-3c35-4609-59378a0c8621@arm.com>
+Date:   Mon, 23 Mar 2020 15:26:35 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.4.1
 MIME-Version: 1.0
-In-Reply-To: <dfc0b13b8ccc5f7780fd94c1f7e4db724ac7513d.1584951486.git.asml.silence@gmail.com>
+In-Reply-To: <jhjv9n0o8hf.mognet@arm.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 3/23/20 2:19 AM, Pavel Begunkov wrote:
-> work->data and work->list are shared in union. io_wq_assign_next() sets
-> ->data if a req having a linked_timeout, but then io-wq may want to use
-> work->list, e.g. to do re-enqueue of a request, so corrupting ->data.
+On 19.03.20 13:05, Valentin Schneider wrote:
 > 
-> Don't need ->data, remove it and get linked_timeout through @link_list.
+> On Thu, Mar 19 2020, Dietmar Eggemann wrote:
+>> On 11.03.20 19:15, Valentin Schneider wrote:
 
-Thanks!
+[...]
 
--- 
-Jens Axboe
+> Your comments make me realize that changelog isn't great, what about the
+> following?
+> 
+> ---
+> 
+> The SD_LOAD_BALANCE flag is set unconditionally for all domains in
+> sd_init(). By making the sched_domain->flags syctl interface read-only, we
+> have removed the last piece of code that could clear that flag - as such,
+> it will now be always present. Rather than to keep carrying it along, we
+> can work towards getting rid of it entirely.
+> 
+> cpusets don't need it because they can make CPUs be attached to the NULL
+> domain (e.g. cpuset with sched_load_balance=0), or to a partitionned
 
+s/partitionned/partitioned
+
+> root_domain, i.e. a sched_domain hierarchy that doesn't span the entire
+> system (e.g. root cpuset with sched_load_balance=0 and sibling cpusets with
+> sched_load_balance=1).
+> 
+> isolcpus apply the same "trick": isolated CPUs are explicitly taken out of
+> the sched_domain rebuild (using housekeeping_cpumask()), so they get the
+> NULL domain treatment as well.
+> 
+> Remove the checks against SD_LOAD_BALANCE.
+
+Sounds better to me:
+
+Essentially, I was referring to examples like:
+
+Hikey960 - 2x4
+
+(A) exclusive cpusets:
+
+root@h960:/sys/fs/cgroup/cpuset# mkdir cs1
+root@h960:/sys/fs/cgroup/cpuset# echo 1 > cs1/cpuset.cpu_exclusive
+root@h960:/sys/fs/cgroup/cpuset# echo 0 > cs1/cpuset.mems
+root@h960:/sys/fs/cgroup/cpuset# echo 0-2 > cs1/cpuset.cpus
+root@h960:/sys/fs/cgroup/cpuset# mkdir cs2
+root@h960:/sys/fs/cgroup/cpuset# echo 1 > cs2/cpuset.cpu_exclusive
+root@h960:/sys/fs/cgroup/cpuset# echo 0 > cs2/cpuset.mems
+root@h960:/sys/fs/cgroup/cpuset# echo 3-5 > cs2/cpuset.cpus
+root@h960:/sys/fs/cgroup/cpuset# echo 0 > cpuset.sched_load_balance
+
+root@h960:/proc/sys/kernel# tree -d sched_domain
+
+├── cpu0
+│   └── domain0
+├── cpu1
+│   └── domain0
+├── cpu2
+│   └── domain0
+├── cpu3
+│   └── domain0
+├── cpu4
+│   ├── domain0
+│   └── domain1
+├── cpu5
+│   ├── domain0
+│   └── domain1
+├── cpu6
+└── cpu7
+
+(B) non-exclusive cpuset:
+
+root@h960:/sys/fs/cgroup/cpuset# echo 0 > cpuset.sched_load_balance
+
+[ 8661.240385] CPU1 attaching NULL sched-domain.
+[ 8661.244802] CPU2 attaching NULL sched-domain.
+[ 8661.249255] CPU3 attaching NULL sched-domain.
+[ 8661.253623] CPU4 attaching NULL sched-domain.
+[ 8661.257989] CPU5 attaching NULL sched-domain.
+[ 8661.262363] CPU6 attaching NULL sched-domain.
+[ 8661.266730] CPU7 attaching NULL sched-domain.
+
+root@h960:/sys/fs/cgroup/cpuset# mkdir cs1
+root@h960:/sys/fs/cgroup/cpuset# echo 0-5 > cs1/cpuset.cpus
+
+root@h960:/proc/sys/kernel# tree -d sched_domain
+
+├── cpu0
+│   ├── domain0
+│   └── domain1
+├── cpu1
+│   ├── domain0
+│   └── domain1
+├── cpu2
+│   ├── domain0
+│   └── domain1
+├── cpu3
+│   ├── domain0
+│   └── domain1
+├── cpu4
+│   ├── domain0
+│   └── domain1
+├── cpu5
+│   ├── domain0
+│   └── domain1
+├── cpu6
+└── cpu7
