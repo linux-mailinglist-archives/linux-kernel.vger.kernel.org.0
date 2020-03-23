@@ -2,81 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5331418FACE
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Mar 2020 18:06:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AF1E018FAD5
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Mar 2020 18:06:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727564AbgCWRGN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Mar 2020 13:06:13 -0400
-Received: from foss.arm.com ([217.140.110.172]:52120 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725913AbgCWRGN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Mar 2020 13:06:13 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 071A01FB;
-        Mon, 23 Mar 2020 10:06:13 -0700 (PDT)
-Received: from e107158-lin.cambridge.arm.com (e107158-lin.cambridge.arm.com [10.1.195.21])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 572A43F7C3;
-        Mon, 23 Mar 2020 10:06:12 -0700 (PDT)
-Date:   Mon, 23 Mar 2020 17:06:10 +0000
-From:   Qais Yousef <qais.yousef@arm.com>
-To:     "Paul E. McKenney" <paulmck@kernel.org>
-Cc:     Davidlohr Bueso <dave@stgolabs.net>,
-        Josh Triplett <josh@joshtriplett.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: Hit WARN_ON() in rcutorture.c:1055
-Message-ID: <20200323170609.w64xrfahd2snfz6h@e107158-lin.cambridge.arm.com>
-References: <20200323154309.nah44so2556ee56g@e107158-lin.cambridge.arm.com>
- <20200323155731.GK3199@paulmck-ThinkPad-P72>
+        id S1727738AbgCWRGj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Mar 2020 13:06:39 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:42119 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725861AbgCWRGi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Mar 2020 13:06:38 -0400
+Received: from p5de0bf0b.dip0.t-ipconnect.de ([93.224.191.11] helo=nanos.tec.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1jGQX1-0002zH-Ts; Mon, 23 Mar 2020 18:06:32 +0100
+Received: by nanos.tec.linutronix.de (Postfix, from userid 1000)
+        id 622551040AA; Mon, 23 Mar 2020 18:06:31 +0100 (CET)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     "Luck\, Tony" <tony.luck@intel.com>,
+        Xiaoyao Li <xiaoyao.li@intel.com>
+Cc:     Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        hpa@zytor.com, Paolo Bonzini <pbonzini@redhat.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        kvm@vger.kernel.org, x86@kernel.org, linux-kernel@vger.kernel.org,
+        Andy Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Arvind Sankar <nivedita@alum.mit.edu>,
+        Fenghua Yu <fenghua.yu@intel.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Jim Mattson <jmattson@google.com>
+Subject: Re: [PATCH v5 2/9] x86/split_lock: Avoid runtime reads of the TEST_CTRL MSR
+In-Reply-To: <20200321004315.GB6578@agluck-desk2.amr.corp.intel.com>
+References: <20200315050517.127446-1-xiaoyao.li@intel.com> <20200315050517.127446-3-xiaoyao.li@intel.com> <20200321004315.GB6578@agluck-desk2.amr.corp.intel.com>
+Date:   Mon, 23 Mar 2020 18:06:31 +0100
+Message-ID: <87tv2fovag.fsf@nanos.tec.linutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20200323155731.GK3199@paulmck-ThinkPad-P72>
-User-Agent: NeoMutt/20171215
+Content-Type: text/plain
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/23/20 08:57, Paul E. McKenney wrote:
-> On Mon, Mar 23, 2020 at 03:43:09PM +0000, Qais Yousef wrote:
-> > Hi
-> > 
-> > I hit the following warning while running rcutorture tests. It only happens
-> > when I try to hibernate the system (arm64 Juno-r2).
-> 
-> Hibernating the system during rcutorture tests.  Now that is gutsy!  ;-)
+"Luck, Tony" <tony.luck@intel.com> writes:
 
-Hehe was just a side effect of testing the cpu hotplug stuff :-)
+> On Sun, Mar 15, 2020 at 01:05:10PM +0800, Xiaoyao Li wrote:
+>> In a context switch from a task that is detecting split locks
+>> to one that is not (or vice versa) we need to update the TEST_CTRL
+>> MSR. Currently this is done with the common sequence:
+>> 	read the MSR
+>> 	flip the bit
+>> 	write the MSR
+>> in order to avoid changing the value of any reserved bits in the MSR.
+>> 
+>> Cache the value of the TEST_CTRL MSR when we read it during initialization
+>> so we can avoid an expensive RDMSR instruction during context switch.
+>> 
+>> Suggested-by: Sean Christopherson <sean.j.christopherson@intel.com>
+>> Originally-by: Tony Luck <tony.luck@intel.com>
+>> Signed-off-by: Xiaoyao Li <xiaoyao.li@intel.com>
+>
+> Is it bad form to Ack/Review patches originally by oneself?
 
-> 
-> > Let me know if you need additional info.
-> 
-> 1.	Do you need this to work?  If so, please tell me your use case.
-
-Nope. It just happened while trying to stress the cpu hotplug series I just
-posted.
-
-> 
-> 2.	What is line 1055 of your rcutorture.c?  Here is my guess:
-
-It's 5.6-rc6, sorry should have mentioned in the report.
-
-		/* Cycle through nesting levels of rcu_expedite_gp() calls. */
-		if (can_expedite &&
-		    !(torture_random(&rand) & 0xff & (!!expediting - 1))) {
-			WARN_ON_ONCE(expediting == 0 && rcu_gp_is_expedited());
-			if (expediting >= 0)
-				rcu_expedite_gp();
-			else
-				rcu_unexpedite_gp();
-			if (++expediting > 3)
-				expediting = -expediting;
-		} else if (!can_expedite) { /* Disabled during boot, recheck. */
-
-If it's something you don't care about, then I don't care about too. I just
-thought I'd report it in case it uncovered something worthwhile.
-
-Thanks!
-
---
-Qais Yousef
+Only if they are broken ....
