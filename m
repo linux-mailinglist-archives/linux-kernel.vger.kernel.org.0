@@ -2,48 +2,48 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9278518EF93
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Mar 2020 06:52:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0B1BB18EF94
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Mar 2020 06:52:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727334AbgCWFwu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Mar 2020 01:52:50 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:38637 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727253AbgCWFwt (ORCPT
+        id S1727352AbgCWFwx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Mar 2020 01:52:53 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:33705 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727337AbgCWFwv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Mar 2020 01:52:49 -0400
-Received: by mail-pf1-f194.google.com with SMTP id z25so2642914pfa.5
-        for <linux-kernel@vger.kernel.org>; Sun, 22 Mar 2020 22:52:46 -0700 (PDT)
+        Mon, 23 Mar 2020 01:52:51 -0400
+Received: by mail-pg1-f196.google.com with SMTP id d17so6074770pgo.0
+        for <linux-kernel@vger.kernel.org>; Sun, 22 Mar 2020 22:52:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=j6iK115r4yAzPkHgkiyJxNjSgms6sufr4Xa73STF5NU=;
-        b=MhbjjMzHYMVqut2cxjnRgSo4EzX/RmSpB+NTDaZJlIyJPLHdIGtwn2W90ekr7noqsy
-         ZgvlnsLH/A/9OksZ+dM68Nkmsukei9TQVt24kt9/n9+P1qMjVAuagaUUgYzBEDuaX8pG
-         0E02S14KWAGYZfwuelei0KPOpyEfxT62v3XUzt7sCTqTf0K/kWLLCvGZE1C+M3LZ9Xj1
-         dkk9Kmwqd/Tz2gHENJqmU/Pa6AZkTWGQD3X+id7GF4Q1NCneOQYWSSEN3OBHkd4jkhkl
-         PiahZHukZV9OWCv79YCX3h4FiFchwU3xh60ujYOsqE8G6cOQqAVygojyxChwtdyNWXGD
-         aHjQ==
+        bh=PA58IeGELp7GsoJt+UjQP9iD9gs1mWgVhDSyVyxp9eY=;
+        b=b0fCVVFFvGUde3UoRxe5Hn/eOXfRswcrwmv5eQI0g7DBF3RqDkmM8/wMGHKhToO4BO
+         VALj/+Np3QDwTxyxi5hpGau0EIq2dKJvTg5SSuxYvrV45nT12HKGTRQIiw7LFWI99AoH
+         xoMN6RwQp9a9aGchGQ7kJDqDk+rM9GGLCFIzphcojz/HmIN3h6LD27NMLSX5o2I4uKZL
+         qQK+1qAiQiEeFY6i+1uuQLJ4eoWuQeBpZpHg6ovlWoBqIcP0G4EzUFHvjw9eRwclzN7w
+         +NUEwSQFa48scVZ7ZQZiyjlg53+viYmtgG1bEFcU2FaGG90iVaB0XE+62qexHT03Inv1
+         GBtQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=j6iK115r4yAzPkHgkiyJxNjSgms6sufr4Xa73STF5NU=;
-        b=Hj55HEQQYfUInmKqpPq0cHiMoA9ET2gah0e70YYPZoJPEBFuff/D9nVeB3NiQdgoSX
-         SENVYFKMDjUz/CkPX/i9sGCL7r+U6aSTejV0Jj7+tmNfOg735erUqbpTK1+QZvY495L3
-         grQptr44cFQxMWN5fmrIwZeQ2trh8s4e1awDG5ecquk46c/LPbGQ6/PYB/50ARrP0Y81
-         4nf6Kf5R/F2GJvKCFXa2uEADyby52eK+maQRNJm7H7ktBjdciaNKtNKHzsFPiusEhoT4
-         jfZgbsouMQYXYg+fUUiRL40MBlgqFYVIzfqu6/P+sucf3MPFNpuDD9Jo5cTK2iAyBL6c
-         flOg==
-X-Gm-Message-State: ANhLgQ10yeEYOBgz5CVNCt2b2etOIxWRaygEHeDviSqggEWC/3yuYoPg
-        uFy2IUJMwJ1wJ0QhexOavMo=
-X-Google-Smtp-Source: ADFU+vuuqKs7zJRbxUVUMawYsBYRVOcpKxBqEI48FeeqPqBtqZ8stvfIg91WljIs4dIh07BgiEwzHA==
-X-Received: by 2002:a65:641a:: with SMTP id a26mr13873989pgv.247.1584942766280;
-        Sun, 22 Mar 2020 22:52:46 -0700 (PDT)
+        bh=PA58IeGELp7GsoJt+UjQP9iD9gs1mWgVhDSyVyxp9eY=;
+        b=bwZeTfrhMtsOXN0UhymgFcqoSgfwuR5bkLvdf5S+GowqUUtUjZEQ5oo0UQC4mbk4mH
+         RGzbX0eJcdCkxusJXMh7f5QFhdVlxbEDk5sU3yjNo1ZKw/ZkovFXAeT75Tre8bGB8LsK
+         KRZOwIi4BHk/rVkO3ELI1rSjj7/YyI47KyWqjoT1FwD6CUCieGoTHLU609Y/74m8WC+y
+         fV5agpTG9q+PK6w+r775p7HP7uZ3yClSO2e10PU1+lFTthqinlpDMQ60oHwyX3BxybBY
+         KsxFeA+Nfk3HI703V3uHuAWZ722CcSJo14yYM0uE5NEPeEkpBBaCLdypyEl0nFqcEZ4Z
+         D/yA==
+X-Gm-Message-State: ANhLgQ3PP1OgcMB7ieClPIoSLxNdCO7GWgm7kJF+TWNN7A8HRZXUNHx2
+        EwX6Qzk0U6/d2J6z2f4rvDg=
+X-Google-Smtp-Source: ADFU+vuGliCxHPs66TbnySCtCClvxORBH+oMz63p8tvjnSznatR+XfNrRr0tDX/2ia3Rivrmbn7xOQ==
+X-Received: by 2002:a62:8247:: with SMTP id w68mr23302803pfd.146.1584942769827;
+        Sun, 22 Mar 2020 22:52:49 -0700 (PDT)
 Received: from localhost.localdomain ([114.206.198.176])
-        by smtp.gmail.com with ESMTPSA id y30sm12563058pff.67.2020.03.22.22.52.43
+        by smtp.gmail.com with ESMTPSA id y30sm12563058pff.67.2020.03.22.22.52.46
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Sun, 22 Mar 2020 22:52:45 -0700 (PDT)
+        Sun, 22 Mar 2020 22:52:49 -0700 (PDT)
 From:   js1304@gmail.com
 X-Google-Original-From: iamjoonsoo.kim@lge.com
 To:     Andrew Morton <akpm@linux-foundation.org>
@@ -55,9 +55,9 @@ Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
         Vlastimil Babka <vbabka@suse.cz>,
         Mel Gorman <mgorman@techsingularity.net>, kernel-team@lge.com,
         Joonsoo Kim <iamjoonsoo.kim@lge.com>
-Subject: [PATCH v4 5/8] mm/workingset: handle the page without memcg
-Date:   Mon, 23 Mar 2020 14:52:09 +0900
-Message-Id: <1584942732-2184-6-git-send-email-iamjoonsoo.kim@lge.com>
+Subject: [PATCH v4 6/8] mm/swap: implement workingset detection for anonymous LRU
+Date:   Mon, 23 Mar 2020 14:52:10 +0900
+Message-Id: <1584942732-2184-7-git-send-email-iamjoonsoo.kim@lge.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1584942732-2184-1-git-send-email-iamjoonsoo.kim@lge.com>
 References: <1584942732-2184-1-git-send-email-iamjoonsoo.kim@lge.com>
@@ -68,44 +68,149 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Joonsoo Kim <iamjoonsoo.kim@lge.com>
 
-When implementing workingset detection for anonymous page, I found
-some swapcache pages with NULL memcg. They are brought in by swap
-readahead and nobody has touched it.
-
-The idea behind the workingset code is to tell on page fault time
-whether pages have been previously used or not. Since this page
-hasn't been used, don't store a shadow entry for it; when it later
-faults back in, we treat it as the new page that it is.
+This patch implements workingset detection for anonymous LRU.
+All the infrastructure is implemented by the previous patches so this patch
+just activates the workingset detection by installing/retrieving
+the shadow entry.
 
 Signed-off-by: Joonsoo Kim <iamjoonsoo.kim@lge.com>
 ---
- mm/workingset.c | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+ include/linux/swap.h |  6 ++++++
+ mm/memory.c          |  7 ++++++-
+ mm/swap_state.c      | 20 ++++++++++++++++++--
+ mm/vmscan.c          |  7 +++++--
+ 4 files changed, 35 insertions(+), 5 deletions(-)
 
-diff --git a/mm/workingset.c b/mm/workingset.c
-index 59415e0..8b192e8 100644
---- a/mm/workingset.c
-+++ b/mm/workingset.c
-@@ -257,6 +257,19 @@ void *workingset_eviction(struct page *page, struct mem_cgroup *target_memcg)
- 	VM_BUG_ON_PAGE(page_count(page), page);
- 	VM_BUG_ON_PAGE(!PageLocked(page), page);
+diff --git a/include/linux/swap.h b/include/linux/swap.h
+index 273de48..fb4772e 100644
+--- a/include/linux/swap.h
++++ b/include/linux/swap.h
+@@ -408,6 +408,7 @@ extern struct address_space *swapper_spaces[];
+ extern unsigned long total_swapcache_pages(void);
+ extern void show_swap_cache_info(void);
+ extern int add_to_swap(struct page *page);
++extern void *get_shadow_from_swap_cache(swp_entry_t entry);
+ extern int add_to_swap_cache(struct page *page, swp_entry_t entry,
+ 			gfp_t gfp, void **shadowp);
+ extern int __add_to_swap_cache(struct page *page, swp_entry_t entry);
+@@ -566,6 +567,11 @@ static inline int add_to_swap(struct page *page)
+ 	return 0;
+ }
  
-+	/*
-+	 * A page can be without a cgroup here when it was brought in by
-+	 * swap readahead and nobody has touched it since.
-+	 *
-+	 * The idea behind the workingset code is to tell on page fault
-+	 * time whether pages have been previously used or not. Since
-+	 * this page hasn't been used, don't store a shadow entry for it;
-+	 * when it later faults back in, we treat it as the new page
-+	 * that it is.
-+	 */
-+	if (!page_memcg(page))
-+		return NULL;
++static inline void *get_shadow_from_swap_cache(swp_entry_t entry)
++{
++	return NULL;
++}
 +
- 	advance_inactive_age(page_memcg(page), pgdat, file);
+ static inline int add_to_swap_cache(struct page *page, swp_entry_t entry,
+ 					gfp_t gfp_mask, void **shadowp)
+ {
+diff --git a/mm/memory.c b/mm/memory.c
+index 5f7813a..91a2097 100644
+--- a/mm/memory.c
++++ b/mm/memory.c
+@@ -2925,10 +2925,15 @@ vm_fault_t do_swap_page(struct vm_fault *vmf)
+ 			page = alloc_page_vma(GFP_HIGHUSER_MOVABLE, vma,
+ 							vmf->address);
+ 			if (page) {
++				void *shadow;
++
+ 				__SetPageLocked(page);
+ 				__SetPageSwapBacked(page);
+ 				set_page_private(page, entry.val);
+-				lru_cache_add_anon(page);
++				shadow = get_shadow_from_swap_cache(entry);
++				if (shadow)
++					workingset_refault(page, shadow);
++				lru_cache_add(page);
+ 				swap_readpage(page, true);
+ 			}
+ 		} else {
+diff --git a/mm/swap_state.c b/mm/swap_state.c
+index f06af84..f996455 100644
+--- a/mm/swap_state.c
++++ b/mm/swap_state.c
+@@ -107,6 +107,18 @@ void show_swap_cache_info(void)
+ 	printk("Total swap = %lukB\n", total_swap_pages << (PAGE_SHIFT - 10));
+ }
  
- 	lruvec = mem_cgroup_lruvec(target_memcg, pgdat);
++void *get_shadow_from_swap_cache(swp_entry_t entry)
++{
++	struct address_space *address_space = swap_address_space(entry);
++	pgoff_t idx = swp_offset(entry);
++	struct page *page;
++
++	page = find_get_entry(address_space, idx);
++	if (xa_is_value(page))
++		return page;
++	return NULL;
++}
++
+ /*
+  * add_to_swap_cache resembles add_to_page_cache_locked on swapper_space,
+  * but sets SwapCache flag and private instead of mapping and index.
+@@ -376,6 +388,7 @@ struct page *__read_swap_cache_async(swp_entry_t entry, gfp_t gfp_mask,
+ 	struct page *found_page = NULL, *new_page = NULL;
+ 	struct swap_info_struct *si;
+ 	int err;
++	void *shadow;
+ 	*new_page_allocated = false;
+ 
+ 	do {
+@@ -431,12 +444,15 @@ struct page *__read_swap_cache_async(swp_entry_t entry, gfp_t gfp_mask,
+ 		/* May fail (-ENOMEM) if XArray node allocation failed. */
+ 		__SetPageLocked(new_page);
+ 		__SetPageSwapBacked(new_page);
++		shadow = NULL;
+ 		err = add_to_swap_cache(new_page, entry,
+-				gfp_mask & GFP_KERNEL, NULL);
++				gfp_mask & GFP_KERNEL, &shadow);
+ 		if (likely(!err)) {
+ 			/* Initiate read into locked page */
+ 			SetPageWorkingset(new_page);
+-			lru_cache_add_anon(new_page);
++			if (shadow)
++				workingset_refault(new_page, shadow);
++			lru_cache_add(new_page);
+ 			*new_page_allocated = true;
+ 			return new_page;
+ 		}
+diff --git a/mm/vmscan.c b/mm/vmscan.c
+index 9871861..b37cc26 100644
+--- a/mm/vmscan.c
++++ b/mm/vmscan.c
+@@ -867,6 +867,7 @@ static int __remove_mapping(struct address_space *mapping, struct page *page,
+ {
+ 	unsigned long flags;
+ 	int refcount;
++	void *shadow = NULL;
+ 
+ 	BUG_ON(!PageLocked(page));
+ 	BUG_ON(mapping != page_mapping(page));
+@@ -909,12 +910,13 @@ static int __remove_mapping(struct address_space *mapping, struct page *page,
+ 	if (PageSwapCache(page)) {
+ 		swp_entry_t swap = { .val = page_private(page) };
+ 		mem_cgroup_swapout(page, swap);
+-		__delete_from_swap_cache(page, swap, NULL);
++		if (reclaimed && !mapping_exiting(mapping))
++			shadow = workingset_eviction(page, target_memcg);
++		__delete_from_swap_cache(page, swap, shadow);
+ 		xa_unlock_irqrestore(&mapping->i_pages, flags);
+ 		put_swap_page(page, swap);
+ 	} else {
+ 		void (*freepage)(struct page *);
+-		void *shadow = NULL;
+ 
+ 		freepage = mapping->a_ops->freepage;
+ 		/*
+@@ -1476,6 +1478,7 @@ static unsigned long shrink_page_list(struct list_head *page_list,
+ 			SetPageActive(page);
+ 			stat->nr_activate[type] += nr_pages;
+ 			count_memcg_page_event(page, PGACTIVATE);
++			workingset_activation(page);
+ 		}
+ keep_locked:
+ 		unlock_page(page);
 -- 
 2.7.4
 
