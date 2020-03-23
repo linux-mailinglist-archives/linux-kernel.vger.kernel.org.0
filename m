@@ -2,95 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E5FAB18F8AD
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Mar 2020 16:34:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AE76F18F8B9
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Mar 2020 16:36:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727347AbgCWPei (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Mar 2020 11:34:38 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39476 "EHLO mail.kernel.org"
+        id S1727361AbgCWPgY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Mar 2020 11:36:24 -0400
+Received: from mx2.suse.de ([195.135.220.15]:35632 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727313AbgCWPeh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Mar 2020 11:34:37 -0400
-Received: from localhost (unknown [122.178.205.141])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3BD3420409;
-        Mon, 23 Mar 2020 15:34:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584977677;
-        bh=DInxYfQiqRHYOI49FnJU7I3F0DNh7c3v5Bpu42/3e3I=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ajtBK9vv0Y1kOS5LD73f0LwYvfdJazjc48yA+RBjA3u0z4XYGlBcdSv30C5jS8pHF
-         aRSLe27s3d07J1yjI1zuKf/bEkTtRHIrbI1aDwbF1+mJnFkhadh3x1BKg6MQdmOUYQ
-         kTbeFrvz44s25BzjcYDv1V1GWwJ6E8gztCdGC+6M=
-Date:   Mon, 23 Mar 2020 21:04:29 +0530
-From:   Vinod Koul <vkoul@kernel.org>
-To:     kbuild test robot <lkp@intel.com>
-Cc:     kbuild-all@lists.01.org, clang-built-linux@googlegroups.com,
-        Mathias Nyman <mathias.nyman@intel.com>,
+        id S1727124AbgCWPgX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Mar 2020 11:36:23 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id B9F18AE24;
+        Mon, 23 Mar 2020 15:36:21 +0000 (UTC)
+Message-ID: <1584977769.27949.18.camel@suse.de>
+Subject: Re: lockdep warning in urb.c:363 usb_submit_urb
+From:   Oliver Neukum <oneukum@suse.de>
+To:     Qais Yousef <qais.yousef@arm.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "linux-arm-msm@vger.kernel.org, Bjorn Andersson" 
-        <bjorn.andersson@linaro.org>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Christian Lamparter <chunkeey@googlemail.com>,
-        John Stultz <john.stultz@linaro.org>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Andreas =?iso-8859-1?Q?B=F6hler?= <dev@aboehler.at>,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Mathias Nyman <mathias.nyman@linux.intel.com>
-Subject: Re: [PATCH v7 1/5] usb: hci: add hc_driver as argument for
- usb_hcd_pci_probe
-Message-ID: <20200323153429.GR72691@vkoul-mobl>
-References: <20200323101121.243906-2-vkoul@kernel.org>
- <202003232207.IGeWbiPn%lkp@intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <202003232207.IGeWbiPn%lkp@intel.com>
+        linux-usb@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org
+Date:   Mon, 23 Mar 2020 16:36:09 +0100
+In-Reply-To: <20200323143857.db5zphxhq4hz3hmd@e107158-lin.cambridge.arm.com>
+References: <20200323143857.db5zphxhq4hz3hmd@e107158-lin.cambridge.arm.com>
+Content-Type: multipart/mixed; boundary="=-IYg+DkhohS1dh6vva5Gj"
+X-Mailer: Evolution 3.26.6 
+Mime-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 23-03-20, 22:49, kbuild test robot wrote:
-> Hi Vinod,
-> 
-> I love your patch! Yet something to improve:
 
-Thanks for the report.
+--=-IYg+DkhohS1dh6vva5Gj
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 
-> [auto build test ERROR on v5.6-rc7]
-> [also build test ERROR on next-20200323]
-> [cannot apply to usb/usb-testing]
-> [if your patch is applied to the wrong git tree, please drop us a note to help
-> improve the system. BTW, we also suggest to use '--base' option to specify the
-> base tree in git format-patch, please see https://stackoverflow.com/a/37406982]
+Am Montag, den 23.03.2020, 14:38 +0000 schrieb Qais Yousef:
+> Hi
 > 
-> url:    https://github.com/0day-ci/linux/commits/Vinod-Koul/usb-xhci-Add-support-for-Renesas-USB-controllers/20200323-203447
-> base:    16fbf79b0f83bc752cee8589279f1ebfe57b3b6e
-> config: x86_64-defconfig (attached as .config)
-> compiler: clang version 11.0.0 (https://github.com/llvm/llvm-project 006244152d6c7dd6a390ff89b236cc7801834b46)
-> reproduce:
->         wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
->         chmod +x ~/bin/make.cross
->         # save the attached .config to linux build tree
->         COMPILER=clang make.cross ARCH=x86_64 
+> I've hit the following lockdep warning when I trigger hibernate on arm64
+> platform (Juno-r2)
 > 
-> If you fix the issue, kindly add following tag
-> Reported-by: kbuild test robot <lkp@intel.com>
 > 
-> All errors (new ones prefixed by >>):
+> 	echo suspend > /sys/power/disk
+> 	echo disk > /sys/power/state
 > 
->    In file included from drivers/usb/host/uhci-hcd.c:847:
-> >> drivers/usb/host/uhci-pci.c:297:36: error: passing 'const struct hc_driver *' to parameter of type 'struct hc_driver *' discards qualifiers [-Werror,-Wincompatible-pointer-types-discards-qualifiers]
->            return usb_hcd_pci_probe(dev, id, &uhci_driver);
->                                              ^~~~~~~~~~~~
->    include/linux/usb/hcd.h:483:27: note: passing argument to parameter 'driver' here
->                                 struct hc_driver *driver);
+> I only had a usb flash drive attached to it. Let me know if you need more info.
 
-I need to drop the const qualifiers for uhci_driver, I have checked that
-and will send v8 with this fix
+Hi,
+
+that is not a lockdep issue, but the hub driver is not properly killing
+its URB presumably. Yet, the driver looks correct to me. Please use
+the additional patch and activate dynamic debugging for usbcore.
+
+	Regards
+		Oliver
+
+--=-IYg+DkhohS1dh6vva5Gj
+Content-Disposition: attachment; filename="0001-usb-hub-additional-debugging.patch"
+Content-Type: text/x-patch; name="0001-usb-hub-additional-debugging.patch";
+	charset="UTF-8"
+Content-Transfer-Encoding: base64
+
+RnJvbSA4MzU3ZDlkN2FiZTM1ZDVlMzY4NGY1MTI3ZmVhNmQyNDMwMDExNTI2IE1vbiBTZXAgMTcg
+MDA6MDA6MDAgMjAwMQpGcm9tOiBPbGl2ZXIgTmV1a3VtIDxvbmV1a3VtQHN1c2UuY29tPgpEYXRl
+OiBNb24sIDIzIE1hciAyMDIwIDE2OjM0OjM1ICswMTAwClN1YmplY3Q6IFtQQVRDSF0gdXNiOiBo
+dWIgYWRkaXRpb25hbCBkZWJ1Z2dpbmcKCi0tLQogZHJpdmVycy91c2IvY29yZS9odWIuYyB8IDEg
+KwogMSBmaWxlIGNoYW5nZWQsIDEgaW5zZXJ0aW9uKCspCgpkaWZmIC0tZ2l0IGEvZHJpdmVycy91
+c2IvY29yZS9odWIuYyBiL2RyaXZlcnMvdXNiL2NvcmUvaHViLmMKaW5kZXggNTRjZDhlZjc5NWVj
+Li4yNTUzMGNmMzAzODEgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvdXNiL2NvcmUvaHViLmMKKysrIGIv
+ZHJpdmVycy91c2IvY29yZS9odWIuYwpAQCAtMTYyOSw2ICsxNjI5LDcgQEAgc3RhdGljIGludCBo
+dWJfY29uZmlndXJlKHN0cnVjdCB1c2JfaHViICpodWIsCiAJCXJldCA9IC1FTk9NRU07CiAJCWdv
+dG8gZmFpbDsKIAl9CisJZGV2X2RiZyhodWJfZGV2LCAiJXAgVVJCIGFsbG9jYXRlZCBcbiIpOwog
+CiAJdXNiX2ZpbGxfaW50X3VyYihodWItPnVyYiwgaGRldiwgcGlwZSwgKmh1Yi0+YnVmZmVyLCBt
+YXhwLCBodWJfaXJxLAogCQlodWIsIGVuZHBvaW50LT5iSW50ZXJ2YWwpOwotLSAKMi4xNi40Cgo=
 
 
--- 
-~Vinod
+--=-IYg+DkhohS1dh6vva5Gj--
+
