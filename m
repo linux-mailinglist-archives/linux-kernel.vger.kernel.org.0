@@ -2,90 +2,145 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8E12218FFAD
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Mar 2020 21:45:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E37D718FFB1
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Mar 2020 21:45:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727005AbgCWUo5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Mar 2020 16:44:57 -0400
-Received: from frisell.zx2c4.com ([192.95.5.64]:35063 "EHLO frisell.zx2c4.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725844AbgCWUo5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Mar 2020 16:44:57 -0400
-Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTP id 34bb9f45;
-        Mon, 23 Mar 2020 20:37:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=zx2c4.com; h=date:from:to
-        :cc:subject:message-id:references:mime-version:content-type
-        :in-reply-to; s=mail; bh=lO1tfTg2EiIAONfM9UiInlqel2I=; b=EQ3ZqVc
-        1rOs+mxB/P0W1ebcdTeJHplIaDOV4gL8GTuteSAFNQypSC2uNxAv+ikkkQasf/BD
-        6id/edk4fHX6E8Oir60ULnCpPr+adAC21hmJWWsBeb7JCFmbfPbx8VUtZEqDV6Mp
-        2VBkY0KCJejYuRfxx0NAV53yy1WRzY+6lF0zqOj1hmqVUGSXvMU0K4qIiodNtIwn
-        R2Wrmtep+hxGsSav/c/i3ChzI3jsTMc6UssD6iX5v79hETPfZ/aSed4bEPRxBxmo
-        A3GTxzh/k8Pmx5SanmBdb1lIv/VgcZ9iX2kBuRWfOiHXnJHPqABSXiHLWnsjvJUP
-        4uPVzzqwvqnNQXQ==
-Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 17584a94 (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256:NO);
-        Mon, 23 Mar 2020 20:37:53 +0000 (UTC)
-Date:   Mon, 23 Mar 2020 14:44:54 -0600
-From:   "Jason A. Donenfeld" <Jason@zx2c4.com>
-To:     bp@alien8.de
-Cc:     Arvind Sankar <nivedita@alum.mit.edu>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Kees Cook <keescook@chromium.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
-        linux-kernel@vger.kernel.org,
-        Thomas Lendacky <Thomas.Lendacky@amd.com>,
-        Mauro Rossi <issor.oruam@gmail.com>,
-        Michael Matz <matz@suse.de>
-Subject: Re: [PATCH] Documentation/changes: Raise minimum supported binutils
- version to 2.23
-Message-ID: <20200323204454.GA2611336@zx2c4.com>
-References: <20200113161310.GA191743@rani.riverdale.lan>
- <20200113195337.604646-1-nivedita@alum.mit.edu>
- <202001131750.C1B8468@keescook>
- <20200114165135.GK31032@zn.tnic>
- <20200115002131.GA3258770@rani.riverdale.lan>
- <20200115122458.GB20975@zn.tnic>
- <20200316160259.GN26126@zn.tnic>
+        id S1727066AbgCWUpb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Mar 2020 16:45:31 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:42618 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725844AbgCWUpa (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Mar 2020 16:45:30 -0400
+Received: by mail-pf1-f194.google.com with SMTP id 22so4505430pfa.9
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Mar 2020 13:45:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=GfjxddVFwXVhr+lvz5y2NmQxJSLFPqj/SiFXB2tHtT0=;
+        b=TigBIbf7q1EqJVTJBD7SAafvjDrgp/bDbud6cX7jAXwbUu+AZTqPS5jSKwQ8ATLnK+
+         T/WbrP/hl52AiFJj2ajKrcajplRuWdcfFF3td5lnrdw3AKoGpyjCglRChPkBF08Y2Auh
+         gWqobqbw2V3WVXxSGJ4w7Jo49jENZfZq7b5nfRT2oK6nZhoM/XyKeQNnqkuf01yY4ICR
+         yVKBvVa8o3DXP7DDQ9h2FmaUV9qQDNhUFV7utKdURX1Hb8Vm7U7loHpSKMZT+IvP5fBZ
+         WpRQ1bUov5c8L1E/IM+gfr8Z1AtWVUrnPzDVFDvUtMTZ215900S+z/u4j+0k8HU6Pwsw
+         DRyw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=GfjxddVFwXVhr+lvz5y2NmQxJSLFPqj/SiFXB2tHtT0=;
+        b=ehUOeBnBhZ1oXaQPPYYXbryo71/jx4sdlbQ8J7iLvQpYNvmyH9pel9JWobTl4sR0tN
+         00LdLC/Juut6cLwNHF20ebJ13yHmQwi4NgPDbdF8XKpVqwerBj0EpkrE8kXrERwqCOlY
+         D+xGU9CE9EH81SlmW/2V+I9Sz4jSF2reSDAo+hHNo1lViZ48GyfhO63dYGBhPUrItkgz
+         JIPgz4FeLo1xveMUM7Ga0zl2MBIjiFfqLdRayhBwzxKLO0EkqpqoaNzMCBykJ2fF/zq8
+         IZsMfqTAftE/HsykZhyxj6qrIvPZXC1Ki+wOAYtTXNZr/a+i4Iq99AoE4wrN7QrtNzmL
+         uGWw==
+X-Gm-Message-State: ANhLgQ21zCzCwuAG7kFHfFRAVayrzGBWC3/M3DDI2w8XIzt7OmoC6YMj
+        dfCX1lfRT8PVq+E5QMa0v+3pbbe5dbWqS4dUO+2T0g==
+X-Google-Smtp-Source: ADFU+vv+mOycefKtvOW6j2Erc9ggbazUYImeQMvTxTjFQCCzakXOhdg0mlnzKnoxiu/zXpDmhjPegd/nO4w68Rn8JOU=
+X-Received: by 2002:a05:6a00:42:: with SMTP id i2mr25856528pfk.108.1584996329288;
+ Mon, 23 Mar 2020 13:45:29 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20200316160259.GN26126@zn.tnic>
+References: <20200323020844.17064-1-masahiroy@kernel.org> <20200323020844.17064-4-masahiroy@kernel.org>
+In-Reply-To: <20200323020844.17064-4-masahiroy@kernel.org>
+From:   Nick Desaulniers <ndesaulniers@google.com>
+Date:   Mon, 23 Mar 2020 13:45:17 -0700
+Message-ID: <CAKwvOd=V=HF3RBP5bMwgnAZsPg7nVewZiMQ7F3bh=D6_5ejBaQ@mail.gmail.com>
+Subject: Re: [PATCH 3/7] x86: remove always-defined CONFIG_AS_CFI_SIGNAL_FRAME
+To:     Masahiro Yamada <masahiroy@kernel.org>
+Cc:     "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>,
+        "H . Peter Anvin" <hpa@zytor.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "Jason A . Donenfeld" <Jason@zx2c4.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        clang-built-linux <clang-built-linux@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 16, 2020 at 05:02:59PM +0100, Borislav Petkov wrote:
-> Long overdue patch, see below.
-> 
-> Plan is to queue it after 5.7-rc1.
-> 
+On Sun, Mar 22, 2020 at 7:09 PM Masahiro Yamada <masahiroy@kernel.org> wrote:
+>
+> CONFIG_AS_CFI_SIGNAL_FRAME was introduced by commit adf1423698f0
+> ("[PATCH] i386/x86-64: Work around gcc bug with noreturn functions
+> in unwinder").
+>
+> We raise the minimal supported binutils version from time to time.
+> The last bump was commit 1fb12b35e5ff ("kbuild: Raise the minimum
+> required binutils version to 2.21").
+>
+> I confirmed the code in $(call as-instr,...) can be assembled by the
+> binutils 2.21 assembler and also by LLVM integrated assembler.
+>
+> Remove CONFIG_AS_CFI_SIGNAL_FRAME, which is always defined.
+
+grepping for CONFIG_AS_CFI_SIGNAL_FRAME, I see another use in
+arch/arc/kernel/unwind.c.  This change will cause inclusion of
+additional code there, whereas for binutils produced within the past
+ten years, there was not.
+
+>
+> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
 > ---
-> From: Borislav Petkov <bp@suse.de>
-> Date: Mon, 16 Mar 2020 16:28:36 +0100
-> Subject: [PATCH] Documentation/changes: Raise minimum supported binutilsa version to 2.23
-> 
-> The currently minimum-supported binutils version 2.21 has the problem of
-> promoting symbols which are defined outside of a section into absolute.
-> According to Arvind:
-> 
->   binutils-2.21 and -2.22. An x86-64 defconfig will fail with
->           Invalid absolute R_X86_64_32S relocation: _etext
->   and after fixing that one, with
->           Invalid absolute R_X86_64_32S relocation: __end_of_kernel_reserve
-> 
-> Those two versions of binutils have a bug when it comes to handling
-> symbols defined outside of a section and binutils 2.23 has the proper
-> fix, see: https://sourceware.org/legacy-ml/binutils/2012-06/msg00155.html
-> 
-> Therefore, up to the fixed version directly, skipping the broken ones.
-> 
-> Currently shipping distros already have the fixed binutils version so
-> there should be no breakage resulting from this.
-> 
-> For more details about the whole thing, see the thread in Link.
+>
+>  arch/x86/Makefile             | 6 ++----
+>  arch/x86/include/asm/dwarf2.h | 5 -----
+>  2 files changed, 2 insertions(+), 9 deletions(-)
+>
+> diff --git a/arch/x86/Makefile b/arch/x86/Makefile
+> index 72f8f744ebd7..dd275008fc59 100644
+> --- a/arch/x86/Makefile
+> +++ b/arch/x86/Makefile
+> @@ -177,8 +177,6 @@ ifeq ($(ACCUMULATE_OUTGOING_ARGS), 1)
+>         KBUILD_CFLAGS += $(call cc-option,-maccumulate-outgoing-args,)
+>  endif
+>
+> -# is .cfi_signal_frame supported too?
+> -cfi-sigframe := $(call as-instr,.cfi_startproc\n.cfi_signal_frame\n.cfi_endproc,-DCONFIG_AS_CFI_SIGNAL_FRAME=1)
+>  cfi-sections := $(call as-instr,.cfi_sections .debug_frame,-DCONFIG_AS_CFI_SECTIONS=1)
+>
+>  # does binutils support specific instructions?
+> @@ -190,8 +188,8 @@ sha1_ni_instr :=$(call as-instr,sha1msg1 %xmm0$(comma)%xmm1,-DCONFIG_AS_SHA1_NI=
+>  sha256_ni_instr :=$(call as-instr,sha256msg1 %xmm0$(comma)%xmm1,-DCONFIG_AS_SHA256_NI=1)
+>  adx_instr := $(call as-instr,adox %r10$(comma)%r10,-DCONFIG_AS_ADX=1)
+>
+> -KBUILD_AFLAGS += $(cfi-sigframe) $(cfi-sections) $(asinstr) $(avx_instr) $(avx2_instr) $(avx512_instr) $(sha1_ni_instr) $(sha256_ni_instr) $(adx_instr)
+> -KBUILD_CFLAGS += $(cfi-sigframe) $(cfi-sections) $(asinstr) $(avx_instr) $(avx2_instr) $(avx512_instr) $(sha1_ni_instr) $(sha256_ni_instr) $(adx_instr)
+> +KBUILD_AFLAGS += $(cfi-sections) $(asinstr) $(avx_instr) $(avx2_instr) $(avx512_instr) $(sha1_ni_instr) $(sha256_ni_instr) $(adx_instr)
+> +KBUILD_CFLAGS += $(cfi-sections) $(asinstr) $(avx_instr) $(avx2_instr) $(avx512_instr) $(sha1_ni_instr) $(sha256_ni_instr) $(adx_instr)
+>
+>  KBUILD_LDFLAGS := -m elf_$(UTS_MACHINE)
+>
+> diff --git a/arch/x86/include/asm/dwarf2.h b/arch/x86/include/asm/dwarf2.h
+> index 90807583cad7..d6697aab5706 100644
+> --- a/arch/x86/include/asm/dwarf2.h
+> +++ b/arch/x86/include/asm/dwarf2.h
+> @@ -20,12 +20,7 @@
+>  #define CFI_RESTORE_STATE      .cfi_restore_state
+>  #define CFI_UNDEFINED          .cfi_undefined
+>  #define CFI_ESCAPE             .cfi_escape
+> -
+> -#ifdef CONFIG_AS_CFI_SIGNAL_FRAME
+>  #define CFI_SIGNAL_FRAME       .cfi_signal_frame
 
-That sounds very good to me. Then we'll be able to use ADX instructions
-without ifdefs.
+Has no uses in the kernel.
 
-Acked-by: Jason A. Donenfeld <Jason@zx2c4.com>
+> -#else
+> -#define CFI_SIGNAL_FRAME
+> -#endif
+>
+>  #if defined(CONFIG_AS_CFI_SECTIONS)
+>  #ifndef BUILD_VDSO
+> --
+> 2.17.1
+>
+> --
+
+-- 
+Thanks,
+~Nick Desaulniers
