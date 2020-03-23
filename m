@@ -2,180 +2,133 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DDD0B18F111
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Mar 2020 09:45:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5572D18F125
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Mar 2020 09:47:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727604AbgCWIo6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Mar 2020 04:44:58 -0400
-Received: from mail-io1-f68.google.com ([209.85.166.68]:42117 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727569AbgCWIo6 (ORCPT
+        id S1727632AbgCWIru (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Mar 2020 04:47:50 -0400
+Received: from mout.kundenserver.de ([217.72.192.75]:41863 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727569AbgCWIru (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Mar 2020 04:44:58 -0400
-Received: by mail-io1-f68.google.com with SMTP id q128so13228124iof.9
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Mar 2020 01:44:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=8zPLvGcYQo1o0IQb+SkUkD1MBg65ZhQ3XSlCwhyWfpI=;
-        b=Ua25DunDi0MeBVuRXcr6VxR75Zm8tN3mOIgQLv7SVFyOMiQTGlLwB2NhjD5hHMyGh0
-         jgbJY8Kv2wMMvllY/0rD5aG71MJobqW61gI5zuPRyiYBq6RN9RhoFIEInxws/vuFougT
-         m/FLLRIBW1noWeJQ+8SFmGYFFLbrveNGrvdotyOtaM840t/6npJwkZvNMkqWP6Eo12Q4
-         P7lpEQYGPmYNJisG/Rb/DbJraeU/vv11KnJDPi+LCNrWQiUE9eEr56RXwk27WCP2e5V1
-         QI1E06abQhbNtKpYYxUUwilUbd9UGJyPYuxk4wDHfg5Llgh8rTn7ZE4Ft/eMN5uLy3oV
-         nuKg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=8zPLvGcYQo1o0IQb+SkUkD1MBg65ZhQ3XSlCwhyWfpI=;
-        b=BsfOKHQR7FJbyAa3COpRsetkFHuxGqgCPL9JtTMevnu3qLF5PbetmDv14kb9jeiTlI
-         m06wFB06/4jQAMfwZosKpJCetozXLJwgYFqz208pV2kAENWTZTtM+IVUeJdfJtt4xmMY
-         PuiEq/TRP3sZgTb4P6UzuEyM+3uGGpTjkdaW1NDtjf3p3Fj64RDIsKRoIRaDtjISgOgk
-         Q9vvhRi4NBFLXtggL0RlDXOT9jBAsa5jBJsuyEPtXD6CHlBqaVWu3CjwpH+vrSnATtJf
-         KT4koznPnYBX2T4r1Kf+CNaHE2/roFumHLJXOV8aIGLqpIB6k+53HxBX9fbtevV6E2aU
-         NEhg==
-X-Gm-Message-State: ANhLgQ2eGjC6uKM6IATUo0mitTVFoMJ+xw9R85qpZf6oqlfM4S948Bbb
-        RtGCRWxXaeIxNIBu2Xy6Ie8aE7elq3e28SIO15NWTQ==
-X-Google-Smtp-Source: ADFU+vuAXHIndZOUmHZ6KwtgPOsJUB4ijygt/ruRcg/bBmcsWhpC3fPPMJnSyb8rsa9k9SR7V6O+b/KvIzcm+1LqfdA=
-X-Received: by 2002:a5e:8204:: with SMTP id l4mr18406002iom.31.1584953095899;
- Mon, 23 Mar 2020 01:44:55 -0700 (PDT)
-MIME-Version: 1.0
-References: <20200224094158.28761-1-brgl@bgdev.pl> <20200224094158.28761-3-brgl@bgdev.pl>
- <CAMRc=MdbvwQ3Exa2gmY-J0p8UeB-_dKrgqHEBo=S08yU4Uth=A@mail.gmail.com>
- <CACRpkdbBCihyayQ=hPVLY8z4G=n5cxLnUmaPpHRuKedDQPVUyQ@mail.gmail.com>
- <CAMpxmJX_Jqz97bp-nKtJp7_CgJ=72ZxWkEPN4Y-dpNpqEwa_Mg@mail.gmail.com>
- <CACRpkdYpers8Zzh9A3T0mFSyZYDcrjfn9iaQn92RkVHWE+GinQ@mail.gmail.com> <CAMRc=MdLYD3CeFtp4jF+-P+4kSmt1sAezrkPFk5rK4=whNEWuA@mail.gmail.com>
-In-Reply-To: <CAMRc=MdLYD3CeFtp4jF+-P+4kSmt1sAezrkPFk5rK4=whNEWuA@mail.gmail.com>
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-Date:   Mon, 23 Mar 2020 09:44:45 +0100
-Message-ID: <CAMRc=MfEo6=im5EPHYtht3xN83k+rcRgQDSOB=Ucs52M8RWirg@mail.gmail.com>
-Subject: Re: [PATCH 2/3] gpiolib: use kref in gpio_desc
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Mon, 23 Mar 2020 04:47:50 -0400
+Received: from mail.cetitecgmbh.com ([87.190.42.90]) by
+ mrelayeu.kundenserver.de (mreue106 [212.227.15.183]) with ESMTPSA (Nemesis)
+ id 1MSLhm-1inboK22cy-00Sc1j for <linux-kernel@vger.kernel.org>; Mon, 23 Mar
+ 2020 09:47:48 +0100
+Received: from pflvmailgateway.corp.cetitec.com (unknown [127.0.0.1])
+        by mail.cetitecgmbh.com (Postfix) with ESMTP id 4C96E6503FF
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Mar 2020 08:47:48 +0000 (UTC)
+X-Virus-Scanned: amavisd-new at cetitec.com
+Received: from mail.cetitecgmbh.com ([127.0.0.1])
+        by pflvmailgateway.corp.cetitec.com (pflvmailgateway.corp.cetitec.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id oh7xj93cHGVg for <linux-kernel@vger.kernel.org>;
+        Mon, 23 Mar 2020 09:47:47 +0100 (CET)
+Received: from pfwsexchange.corp.cetitec.com (unknown [10.10.1.99])
+        by mail.cetitecgmbh.com (Postfix) with ESMTPS id EF12265023F
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Mar 2020 09:47:47 +0100 (CET)
+Received: from pflmari.corp.cetitec.com (10.8.5.4) by
+ PFWSEXCHANGE.corp.cetitec.com (10.10.1.99) with Microsoft SMTP Server (TLS)
+ id 15.0.1497.2; Mon, 23 Mar 2020 09:47:47 +0100
+Received: by pflmari.corp.cetitec.com (Postfix, from userid 1000)
+        id D7DA3804FB; Mon, 23 Mar 2020 09:45:43 +0100 (CET)
+Date:   Mon, 23 Mar 2020 09:45:43 +0100
+From:   Alex Riesen <alexander.riesen@cetitec.com>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        "Laurent Pinchart" <laurent.pinchart@ideasonboard.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        driverdevel <devel@driverdev.osuosl.org>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [PATCH v3 09/11] arm64: dts: renesas: salvator: add a connection
+ from adv748x codec (HDMI input) to the R-Car SoC
+Message-ID: <20200323084543.GD4298@pflmari>
+Mail-Followup-To: Alex Riesen <alexander.riesen@cetitec.com>,
         Geert Uytterhoeven <geert@linux-m68k.org>,
-        Khouloud Touil <ktouil@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        driverdevel <devel@driverdev.osuosl.org>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+References: <cover.1584720678.git.alexander.riesen@cetitec.com>
+ <077a97942890b79fef2b271e889055fc07c74939.1584720678.git.alexander.riesen@cetitec.com>
+ <CAMuHMdXiG1upHQrCcuZgNLFOEoeDVcb0zWxh1BZZST5TOURDBQ@mail.gmail.com>
+ <20200323084011.GC4298@pflmari>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20200323084011.GC4298@pflmari>
+X-Originating-IP: [10.8.5.4]
+X-ClientProxiedBy: PFWSEXCHANGE.corp.cetitec.com (10.10.1.99) To
+ PFWSEXCHANGE.corp.cetitec.com (10.10.1.99)
+X-EsetResult: clean, is OK
+X-EsetId: 37303A290D7F536A6D7066
+X-Provags-ID: V03:K1:mG8qDdG46eZt0YIdCzBfuKDxpiKUwyPumOi/GoU3CKPhfPllCBx
+ UFtngEXsxFcybqe1Un5RC3BpGRz1r33AOMbnLW6ICC6gh3LHHduOf27Lf8N/jeED5a3uBBl
+ m/iljxfkOIrH0rGrn26ktHU8NDQsd0KXi/ZttN9NM2RynmeOJArGkiTdhoRiGMrq7npMBcd
+ /WbhTQH0lU7j6aVwdNv9A==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:7i9DDpY8QzM=:yRRGzB1u6HtwLMutppyMiP
+ 5CbtJU42YJxkjNlX0ZPd9TocmKW5PN/rHoXBCdd+f/gLjhxp8r/PxY0LuzmdGUYfkhpcSqHv2
+ RF5g1JCEGleNaSc6mzJ89eapxsnPvJJjqkihWbaYG2d6XbahN3mqqaFJmF8c4zOUbR7csDaxg
+ Qyy58Pm0R9uPznQdI7vePwZwhwu8ZsMBsJScgDta2XkGXhqVqXs1/kLShYoF2/Byn0Oq/89pD
+ vXrbXS1KrgRTLodYeYj38p73B0EQMC2iEYv3XnxXBaLFFFNJRW/i8ZB1s2NXfsbMvS2DB4zov
+ Eu64efXhgdGBW1F6TNlATkbU7lpANW2Q+Oa+AeLX/o8fXo/5Vgsc7qdvxm9pinyaKjYiAYmGu
+ OUET6TAg1CyKmtAZBCWmyni4Lv0JswvELecfEJpdi43QXKVdgmOlP6pov0jLyvnRe0jT4PfgZ
+ nnNrqyIES/hyJCJGVzO116QJTRgiXltkCdw8LSla1JDhPzPGobrRoO1gElrIaVL4zr1jini64
+ Wi9zmTf/gt+DZj2diUvVsYeaLbU+kaf7rsS6WHA3CBiGejpKJXv4Oc0RWsbHhBA6UcHs96mTw
+ /ilh9v3yXD3I6BSwxMnAXl6TSQ3FUxpiqNbJGK31ILN4WewalBBj54+JiE3jTJwo9i6F5gWZJ
+ mfz0D4fUPMKvX3xllOZ/pJxnNYxRFddQd4KFdGsL5lKm3zFif5n4CTWN4RZUsQp8A8ap5e0Ku
+ 7a+dAtJSOuqP/dX7/Lo+cTLVPy3Z2nNaRqebBE718enM8/0AIwNQeub936j2+nGklyiOHhqfT
+ 0s3k2lThk1fgN7Aheo9t+OypE99g9Xo0JAa+kR2Gwy+6SYjJHKaIdlglFgemo1aa6ukCmGg
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-pt., 13 mar 2020 o 16:04 Bartosz Golaszewski <brgl@bgdev.pl> napisa=C5=82(a=
-):
->
-> pt., 13 mar 2020 o 09:44 Linus Walleij <linus.walleij@linaro.org> napisa=
-=C5=82(a):
-> >
-> > On Thu, Mar 12, 2020 at 7:25 PM Bartosz Golaszewski
-> > <bgolaszewski@baylibre.com> wrote:
-> >
-> > > I believe this is not correct. The resources managed by devres are
-> > > released when the device is detached from a driver, not when the
-> > > device's reference count goes to 0. When the latter happens, the
-> > > device's specific (or its device_type's) release callback is called -
-> > > for gpiolib this is gpiodevice_release().
-> >
-> > Yeah you're right, I even point that out in my second letter :/
-> >
-> > It's a bit of confusion for everyone (or it's just me).
-> >
->
-> No, it is confusing and I only recently understood it while trying to
-> fix a memory leak in nvmem.
->
-> > > The kref inside struct device will not go down to zero until you call
-> > > device_del() (if you previously called device_add() that is which
-> > > increases the reference count by a couple points). But what I'm
-> > > thinking about is making the call to device_del() depend not on the
-> > > call to gpiochip_remove() but on the kref on the gpio device going
-> > > down to zero. As for the protection against module removal - this
-> > > should be handled by module_get/put().
-> >
-> > Right. At the end of gpiochip_remove():
-> >
-> >    cdev_device_del(&gdev->chrdev, &gdev->dev);
-> >    put_device(&gdev->dev);
-> >
-> > That last put_device() should in best case bring the refcount
-> > to zero.
-> >
-> > So the actual way we lifecycle GPIO chips is managed
-> > resources using only devm_* but the reference count does work
-> > too: reference count should normally land at zero since the
-> > gpiochip_remove() call is ended with a call to
-> > put_device() and that should (ideally) bring it to zero.
-> >
-> > It's just that this doesn't really trigger anything.
-> >
->
-> Not necessarily - if the new kref for GPIO device would be detached
-> from device reference counting and what it would trigger at release is
-> this:
->
->    cdev_device_del(&gdev->chrdev, &gdev->dev);
->    put_device(&gdev->dev);
->
-> Or to be even more clear: "getting" the gpiodevice would not be the
-> same as "getting" a device - in fact only when the gpiodevice kref
-> goes down to 0 do we put the reference to the device object.
->
-> > I think there is no way out of the fact that we have to
-> > forcefully remove the gpio_chip when devm_* destructors
-> > kicks in: the driver is indeed getting removed at that
-> > point.
-> >
->
-> There does seem to be a way around that though: the clock framework
-> does it by creating a clock "core" object which is reference counted
-> and if the provider is removed while consumers still hold references
-> to it, then it does a couple things to "numb" the provider (as you
-> nicely put it) like replacing all ops callbacks with NULL pointers but
-> keeps the structure alive until the consumers also give up all their
-> references.
->
-> That being said: I'm not saying this is necessary or even useful. I
-> started the discussion because I was under the impression I wasn't
-> clear enough when writing about reference counting for descriptors. If
-> nobody complains about the current implementation then let's not fix
-> something that's not broken.
->
-> Bartosz
->
-> > In gpiochip_remove() we "numb" the chip so that any
-> > gpio_desc:s currently in use will just fail silently and not crash,
-> > since they are not backed by a driver any more. The descs
-> > stay around until the consumer releases them, but if we probe the
-> > same GPIO device again they will certainly not re-attach or
-> > something.
-> >
-> > Arguably it is a bit of policy. Would it make more sense to
-> > have rmmod fail if the kref inside gdev->dev->kobj->kref
-> > is !=3D 1? I suppose that is what things like storage
-> > drivers pretty much have to do.
-> >
-> > The problem with that is that as soon as you have a consumer
-> > that is compiled into the kernel it makes it impossible to
-> > remove the gpio driver with rmmod.
-> >
-> > I really needed to refresh this a bit, so the above is maybe
-> > a bit therapeutic.
-> >
-> > I don't really see how we could do things differently without
-> > creating some other problem though.
-> >
-> > Yours,
-> > Linus Walleij
+Alex Riesen, Mon, Mar 23, 2020 09:40:11 +0100:
+> Geert Uytterhoeven, Mon, Mar 23, 2020 09:34:45 +0100:
+> > On Fri, Mar 20, 2020 at 5:43 PM Alex Riesen <alexander.riesen@cetitec.com> wrote:
+> > > As all known variants of the Salvator board have the HDMI decoder
+> > > chip (the ADV7482) connected to the SSI4 on R-Car SoC, the ADV7482
+> > > endpoint and the connection definitions are placed in the common board
+> > > file.
+> > > For the same reason, the CLK_C clock line and I2C configuration (similar
+> > > to the ak4613, on the same interface) are added into the common file.
+> > >
+> > > Signed-off-by: Alexander Riesen <alexander.riesen@cetitec.com>
+> > > Reviewed-by: Geert Uytterhoeven <geert@linux-m68k.org>
+> > 
+> > Did I provide a Reviewed-by?
+> > 
+> > > The driver provides only MCLK clock, not the SCLK and LRCLK,
+> > > which are part of the I2S protocol.
+> > >
+> > > Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> > 
+> > Perhaps you mixed it up with Laurent's?
+> 
+> Sorry. I actually did: he did provded Reviewed-by in his email, and you
+> did not. I was ... a little overwhelmed.
 
-Hi Linus,
+It's even worse: even Laurent didn't provide his Reviewed-by for this
+particular patch (it was bindings). Corrected.
 
-what is your decision on this? Because if we don't merge this, then we
-need to make sure nvmem doesn't call gpiod_put() for descriptors it
-didn't obtain itself and we should probably fix it this week.
+Regards,
+Alex
 
-Bart
