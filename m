@@ -2,102 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6F5DB18F1EF
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Mar 2020 10:38:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 60D4918F1F7
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Mar 2020 10:41:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727742AbgCWJiI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Mar 2020 05:38:08 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:34364 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727695AbgCWJiH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Mar 2020 05:38:07 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 02N9D4M0106062;
-        Mon, 23 Mar 2020 09:37:57 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2020-01-29;
- bh=MzRxKaGV9xInLffLGfmDzLkmkfS8IEjkXPJtcxjqfcg=;
- b=xs5Sy3Lz+y8kPa8bBsz23uICZF+ZMg9meeI0piXrawPX5eLyZyM6y9gqwCx3KPc0Ql32
- +0cD4F0lKBsz6b0OPl25SZYFFaU3vwBxu33DrPwr8+SQq6WORZ6T1ICU8j2O72uSmiT4
- +y5/pfslipBaPBwA726gltb1PMg1JJ9vBkohyyx8TAWbHOG2pk/GjJv+ZE6d2JJ+h77m
- f1XttVM7/eBukRM789i9BsaXx4foRBOGk3u1Acu2h2il0UIjyl8hxafPLZQIoPJUJlVD
- sWN0vV2+YF/gbkHWGsGA7L0Uc15VmnZVmhDuKoaJ5UJMEKb5CVHawW4H6ShDe3OuI2qS Nw== 
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by userp2130.oracle.com with ESMTP id 2ywabqwjmp-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 23 Mar 2020 09:37:57 +0000
-Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 02N9bubv039599;
-        Mon, 23 Mar 2020 09:37:56 GMT
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by aserp3020.oracle.com with ESMTP id 2ywvqqpepm-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 23 Mar 2020 09:37:56 +0000
-Received: from abhmp0020.oracle.com (abhmp0020.oracle.com [141.146.116.26])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 02N9beZF029581;
-        Mon, 23 Mar 2020 09:37:40 GMT
-Received: from kadam (/41.57.98.10)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 23 Mar 2020 02:37:40 -0700
-Date:   Mon, 23 Mar 2020 12:37:33 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Jean Delvare <jdelvare@suse.de>
-Cc:     Daniel Kurtz <djkurtz@chromium.org>, linux-i2c@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        syzbot <syzbot+ed71512d469895b5b34e@syzkaller.appspotmail.com>
-Subject: Re: [PATCH] i2c: i801: Fix memory corruption in i801_isr_byte_done()
-Message-ID: <20200323093733.GA26299@kadam>
-References: <0000000000009586b2059c13c7e1@google.com>
- <20200114073406.qaq3hbrhtx76fkes@kili.mountain>
- <20200322231106.3d431ced@endymion>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200322231106.3d431ced@endymion>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9568 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 phishscore=0 bulkscore=0
- suspectscore=0 mlxlogscore=999 malwarescore=0 mlxscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2003020000
- definitions=main-2003230056
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9568 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 suspectscore=0
- lowpriorityscore=0 malwarescore=0 phishscore=0 priorityscore=1501
- clxscore=1011 adultscore=0 mlxscore=0 mlxlogscore=999 bulkscore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2003020000 definitions=main-2003230055
+        id S1727769AbgCWJlE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Mar 2020 05:41:04 -0400
+Received: from mx.socionext.com ([202.248.49.38]:5862 "EHLO mx.socionext.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727695AbgCWJlD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Mar 2020 05:41:03 -0400
+Received: from unknown (HELO kinkan-ex.css.socionext.com) ([172.31.9.52])
+  by mx.socionext.com with ESMTP; 23 Mar 2020 18:41:01 +0900
+Received: from mail.mfilter.local (m-filter-2 [10.213.24.62])
+        by kinkan-ex.css.socionext.com (Postfix) with ESMTP id 0EAA0180BCB;
+        Mon, 23 Mar 2020 18:41:02 +0900 (JST)
+Received: from 172.31.9.51 (172.31.9.51) by m-FILTER with ESMTP; Mon, 23 Mar 2020 18:41:01 +0900
+Received: from plum.e01.socionext.com (unknown [10.213.132.32])
+        by kinkan.css.socionext.com (Postfix) with ESMTP id 7B9B61A12AD;
+        Mon, 23 Mar 2020 18:41:01 +0900 (JST)
+From:   Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+To:     Bjorn Helgaas <bhelgaas@google.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Andrew Murray <andrew.murray@arm.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc:     linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Masami Hiramatsu <masami.hiramatsu@linaro.org>,
+        Jassi Brar <jaswinder.singh@linaro.org>,
+        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+Subject: [PATCH v3 0/2] PCI: Add new UniPhier PCIe endpoint driver
+Date:   Mon, 23 Mar 2020 18:40:52 +0900
+Message-Id: <1584956454-8829-1-git-send-email-hayashi.kunihiko@socionext.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Mar 22, 2020 at 11:11:06PM +0100, Jean Delvare wrote:
-> Definitely not correct. The first byte of the block data array MUST be
-> the size of the block read. Even if the code above does not do the
-> right thing, removing the line will not help.
-> 
+This series adds PCIe endpoint controller driver for Socionext UniPhier
+SoCs. This controller is based on the DesignWare PCIe core.
 
-Yeah.  I misread the code.
+This driver supports Pro5 SoC only, so Pro5 needs multiple clocks and
+resets in devicetree node.
 
-> Is it possible that kasan got this wrong due to the convoluted logic?
-> It's late and I'll check again tomorrow morning but the code looks OK
-> to me.
+Changes since v2:
+- dt-bindings: Add clock-names, reset-names, and fix example for Pro5
+- Remove 'is_legacy' indicating that the compatible is for legacy SoC
+- Use pci_epc_features instead of defining uniphier_soc_data
+- Remove redundant register read access
+- Clean up return code on uniphier_add_pcie_ep()
+- typo: intx -> INTx
 
-KASan doesn't work like that.  It works at runtime and doesn't care
-about the logic.
+Changes since v1:
+- dt-bindings: Add Reviewed-by line
+- Fix register value to set EP mode
+- Add error message when failed to get phy
+- Replace INTx assertion time with macro
 
-https://syzkaller.appspot.com/bug?id=426fc8b1c1b63fb0af524d839dfcf452f2d858e2
+Kunihiko Hayashi (2):
+  dt-bindings: PCI: Add UniPhier PCIe endpoint controller description
+  PCI: uniphier: Add Socionext UniPhier Pro5 PCIe endpoint controller
+    driver
 
-At the bottom of the report it shows that we're in a field of f9
-poisoned data so it's not priv->len which is wrong.  (My patch was way
-off).
+ .../devicetree/bindings/pci/uniphier-pcie-ep.txt   |  53 +++
+ MAINTAINERS                                        |   4 +-
+ drivers/pci/controller/dwc/Kconfig                 |  13 +-
+ drivers/pci/controller/dwc/Makefile                |   1 +
+ drivers/pci/controller/dwc/pcie-uniphier-ep.c      | 380 +++++++++++++++++++++
+ 5 files changed, 447 insertions(+), 4 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/pci/uniphier-pcie-ep.txt
+ create mode 100644 drivers/pci/controller/dwc/pcie-uniphier-ep.c
 
-mm/kasan/kasan.h:#define KASAN_VMALLOC_INVALID   0xF9  /* unallocated space in vmapped page */
+-- 
+2.7.4
 
-The logic looks okay to me too.  So possibly this was a race condition
-or even memory corruption in an unrelated part of the kernel.
-
-regards,
-dan carpenter
