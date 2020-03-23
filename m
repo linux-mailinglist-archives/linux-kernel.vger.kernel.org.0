@@ -2,114 +2,117 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D630F18F3B5
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Mar 2020 12:32:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1BA8C18F3C3
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Mar 2020 12:36:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728169AbgCWLcp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Mar 2020 07:32:45 -0400
-Received: from mail26.static.mailgun.info ([104.130.122.26]:20282 "EHLO
-        mail26.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728115AbgCWLcp (ORCPT
+        id S1728184AbgCWLgN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Mar 2020 07:36:13 -0400
+Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:4416 "EHLO
+        hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728115AbgCWLgN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Mar 2020 07:32:45 -0400
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1584963164; h=Message-ID: References: In-Reply-To: Subject:
- Cc: To: From: Date: Content-Transfer-Encoding: Content-Type:
- MIME-Version: Sender; bh=YMB8K55hI/123CSM9pBfUPGHc3eZmHO7f2KvWzC7Gw0=;
- b=QKF6jYJIUdfdgxzZfcDatJM60AZ8uYSCO9GW4Z91yqtD5N5by4ahv+o2TMpLJ7xUMoskX6kk
- IuuGbs4B/ITfZACFH0tWdhSKKE3Ua5aSWVWKhLg+G7slRCB7oXyOniPvIN+9FSbmu3EaXpfB
- SkPjxKGebQeE0+LSNnGBPmo5uKU=
-X-Mailgun-Sending-Ip: 104.130.122.26
-X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
- by mxa.mailgun.org with ESMTP id 5e789e59.7f361487d030-smtp-out-n04;
- Mon, 23 Mar 2020 11:32:41 -0000 (UTC)
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id A0431C432C2; Mon, 23 Mar 2020 11:32:40 +0000 (UTC)
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        aws-us-west-2-caf-mail-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,URIBL_BLOCKED
-        autolearn=unavailable autolearn_force=no version=3.4.0
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: saiprakash.ranjan)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 0D0F6C433D2;
-        Mon, 23 Mar 2020 11:32:40 +0000 (UTC)
+        Mon, 23 Mar 2020 07:36:13 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5e789eff0000>; Mon, 23 Mar 2020 04:35:27 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Mon, 23 Mar 2020 04:36:12 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Mon, 23 Mar 2020 04:36:12 -0700
+Received: from [10.26.73.76] (172.20.13.39) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 23 Mar
+ 2020 11:36:09 +0000
+Subject: Re: [PATCH] pwm: tegra: Add support for Tegra194
+To:     Sandipan Patra <spatra@nvidia.com>, <treding@nvidia.com>,
+        <robh+dt@kernel.org>, <u.kleine-koenig@pengutronix.de>
+CC:     <bbasu@nvidia.com>, <ldewangan@nvidia.com>,
+        <linux-pwm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <1583407653-30059-1-git-send-email-spatra@nvidia.com>
+From:   Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <1e40daf7-e5f8-7b79-cabe-8aceef6dda58@nvidia.com>
+Date:   Mon, 23 Mar 2020 11:36:07 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
+In-Reply-To: <1583407653-30059-1-git-send-email-spatra@nvidia.com>
+X-Originating-IP: [172.20.13.39]
+X-ClientProxiedBy: HQMAIL107.nvidia.com (172.20.187.13) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-Date:   Mon, 23 Mar 2020 17:02:39 +0530
-From:   Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
-To:     Suzuki K Poulose <suzuki.poulose@arm.com>
-Cc:     mathieu.poirier@linaro.org, bjorn.andersson@linaro.org,
-        leo.yan@linaro.org, devicetree@vger.kernel.org, robh+dt@kernel.org,
-        agross@kernel.org, david.brown@linaro.org, mark.rutland@arm.com,
-        swboyd@chromium.org, rnayak@codeaurora.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH 1/2] coresight: etm4x: Add support for Qualcomm SC7180 SoC
-In-Reply-To: <edf1bab3-411a-ff7a-b4ca-78a8ab00c72b@arm.com>
-References: <cover.1584689229.git.saiprakash.ranjan@codeaurora.org>
- <07a6b272c6e71e0e480f0dd0bffaf3138c0ab4c2.1584689229.git.saiprakash.ranjan@codeaurora.org>
- <edf1bab3-411a-ff7a-b4ca-78a8ab00c72b@arm.com>
-Message-ID: <4924d6c9495d412d9ecb3e1a50ea6ca8@codeaurora.org>
-X-Sender: saiprakash.ranjan@codeaurora.org
-User-Agent: Roundcube Webmail/1.3.9
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1584963327; bh=Ax5Luu1Wgx/GtkJPbCn5+KhconBwWEM43/aV+eFmyS0=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=jUJqLG6NJAY/qZCEoFKvpMnAMPHll61DC5NFj9AqYPyzgsFTD0xv2wus1i/vAmlm+
+         ibI2WfTWY/vZfBNtYniGGZ6vYn8OIyquhxhdV1bccnlZun2XqiZqk0HoA26SweeU+B
+         mIW+sFhuPn8In/WlNxU5j/Dpy2KozDnwd9Z1vD/IhGIUh8snwlMdCYGGbV2A6rPGBp
+         N4Ohqed20b243fzW8a4ohKYsg3Jqx6Q1YtENlXDq3q0aAXGyvopthBHr7sTQWnX+Z1
+         LZA40P6nTXLa38vFLR1ZPsRenjrWSpZ+Yp+g8XcLhMz8bd7lwi+TJPBAGwKlILUa3w
+         D+TOnrzR1R6OQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Suzuki,
 
-On 2020-03-23 15:25, Suzuki K Poulose wrote:
-> On 03/20/2020 07:44 AM, Sai Prakash Ranjan wrote:
->> Add ETM Peripheral IDs for Qualcomm SC7180 SoC. It has
->> 2 big CPU cores based on Cortex-A76 and 6 LITTLE CPU
->> cores based on Cortex-A55.
->> 
->> Signed-off-by: Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
->> ---
->>   drivers/hwtracing/coresight/coresight-etm4x.c | 2 ++
->>   1 file changed, 2 insertions(+)
->> 
->> diff --git a/drivers/hwtracing/coresight/coresight-etm4x.c 
->> b/drivers/hwtracing/coresight/coresight-etm4x.c
->> index a90d757f7043..a153a65c4c5b 100644
->> --- a/drivers/hwtracing/coresight/coresight-etm4x.c
->> +++ b/drivers/hwtracing/coresight/coresight-etm4x.c
->> @@ -1556,6 +1556,8 @@ static const struct amba_id etm4_ids[] = {
->>   	CS_AMBA_UCI_ID(0x000f0211, uci_id_etm4),/* Qualcomm Kryo */
->>   	CS_AMBA_ID(0x000bb802),			/* Qualcomm Kryo 385 Cortex-A55 */
->>   	CS_AMBA_ID(0x000bb803),			/* Qualcomm Kryo 385 Cortex-A75 */
->> +	CS_AMBA_ID(0x000bb805),			/* Qualcomm Kryo 4XX Cortex-A55 */
->> +	CS_AMBA_ID(0x000bb804),			/* Qualcomm Kryo 4XX Cortex-A76 */
+On 05/03/2020 11:27, Sandipan Patra wrote:
+> Tegra194 has multiple PWM controllers with each having only one output.
 > 
-> Does the DEVARCH indicate that it is an ETMv4 ? (It should !) Please
-> could we enforce the UCI_ID check for these components ? The
-> moment you add CTI components to your board this could conflict with
-> them unless we check the UCI_ID for ETMv4.
+> Also the maxmimum frequency is higher than earlier SoCs.
+> 
+> Add support for Tegra194 and specify the number of PWM outputs and
+> maximum supported frequency using device tree match data.
+> 
+> Signed-off-by: Sandipan Patra <spatra@nvidia.com>
+> ---
+>  Documentation/devicetree/bindings/pwm/nvidia,tegra20-pwm.txt | 1 +
+>  drivers/pwm/pwm-tegra.c                                      | 6 ++++++
+>  2 files changed, 7 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/pwm/nvidia,tegra20-pwm.txt b/Documentation/devicetree/bindings/pwm/nvidia,tegra20-pwm.txt
+> index 0a69ead..74c41e3 100644
+> --- a/Documentation/devicetree/bindings/pwm/nvidia,tegra20-pwm.txt
+> +++ b/Documentation/devicetree/bindings/pwm/nvidia,tegra20-pwm.txt
+> @@ -9,6 +9,7 @@ Required properties:
+>    - "nvidia,tegra132-pwm", "nvidia,tegra20-pwm": for Tegra132
+>    - "nvidia,tegra210-pwm", "nvidia,tegra20-pwm": for Tegra210
+>    - "nvidia,tegra186-pwm": for Tegra186
+> +  - "nvidia,tegra194-pwm": for Tegra194
+>  - reg: physical base address and length of the controller's registers
+>  - #pwm-cells: should be 2. See pwm.yaml in this directory for a description of
+>    the cells format.
+> diff --git a/drivers/pwm/pwm-tegra.c b/drivers/pwm/pwm-tegra.c
+> index aa12fb3..d26ed8f 100644
+> --- a/drivers/pwm/pwm-tegra.c
+> +++ b/drivers/pwm/pwm-tegra.c
+> @@ -282,9 +282,15 @@ static const struct tegra_pwm_soc tegra186_pwm_soc = {
+>  	.max_frequency = 102000000UL,
+>  };
+>  
+> +static const struct tegra_pwm_soc tegra194_pwm_soc = {
+> +	.num_channels = 1,
+> +	.max_frequency = 408000000UL,
+> +};
+> +
+>  static const struct of_device_id tegra_pwm_of_match[] = {
+>  	{ .compatible = "nvidia,tegra20-pwm", .data = &tegra20_pwm_soc },
+>  	{ .compatible = "nvidia,tegra186-pwm", .data = &tegra186_pwm_soc },
+> +	{ .compatible = "nvidia,tegra194-pwm", .data = &tegra194_pwm_soc },
+>  	{ }
+>  };
+>  MODULE_DEVICE_TABLE(of, tegra_pwm_of_match);
 > 
 
-Yes I got these IDs through devarch and it does indicate that it is 
-ETMv4.2.
 
-devname=7040000.etm dev->type=0x13 devarch=0x47724a13
-devname=7140000.etm dev->type=0x13 devarch=0x47724a13
-devname=7240000.etm dev->type=0x13 devarch=0x47724a13
-devname=7340000.etm dev->type=0x13 devarch=0x47724a13
-devname=7440000.etm dev->type=0x13 devarch=0x47724a13
-devname=7540000.etm dev->type=0x13 devarch=0x47724a13
-devname=7640000.etm dev->type=0x13 devarch=0x47724a13
-devname=7740000.etm dev->type=0x13 devarch=0x47724a13
+Acked-by: Jon Hunter <jonathanh@nvidia.com>
 
-I will add the UCI_ID as you suggested in next version.
+Cheers
+Jon
 
-Thanks,
-Sai
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a 
-member
-of Code Aurora Forum, hosted by The Linux Foundation
+nvpublic
