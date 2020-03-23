@@ -2,102 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4961E18FE28
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Mar 2020 20:54:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DC73018FE39
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Mar 2020 20:55:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727134AbgCWTyg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Mar 2020 15:54:36 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:42692 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727064AbgCWTyc (ORCPT
+        id S1726177AbgCWTze (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Mar 2020 15:55:34 -0400
+Received: from mail-il1-f193.google.com ([209.85.166.193]:33448 "EHLO
+        mail-il1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725839AbgCWTze (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Mar 2020 15:54:32 -0400
-Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tip-bot2@linutronix.de>)
-        id 1jGT9Y-00065W-JG; Mon, 23 Mar 2020 20:54:28 +0100
-Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id B0CA61C0470;
-        Mon, 23 Mar 2020 20:54:27 +0100 (CET)
-Date:   Mon, 23 Mar 2020 19:54:27 -0000
-From:   "tip-bot2 for Vincenzo Frascino" <tip-bot2@linutronix.de>
-Reply-to: linux-kernel@vger.kernel.org
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: timers/core] vdso: Fix clocksource.h macro detection
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Vincenzo Frascino <vincenzo.frascino@arm.com>,
-        Borislav Petkov <bp@suse.de>, x86 <x86@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-In-Reply-To: <20200323133920.46546-1-vincenzo.frascino@arm.com>
-References: <20200323133920.46546-1-vincenzo.frascino@arm.com>
+        Mon, 23 Mar 2020 15:55:34 -0400
+Received: by mail-il1-f193.google.com with SMTP id k29so14600998ilg.0;
+        Mon, 23 Mar 2020 12:55:33 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=kFJFA9AgWvFk/kEnU8vamRR2gWaNyHgegYHT2Tyfw1s=;
+        b=O8ZWyFaE9bazNLLN62jwG01sbQAjbsK4pZw93SIyXBLERnq6QilWejswF7KYNeNy8S
+         PU3N3W0r9eELCFk2Pk4GgbiKcuSygct9FlJK4XuoRqQISl/GDX6hlKz50oivMGg3LPlB
+         BLhWm26v8L4RxF8n2aTUqVF3+4ALWmMpbGyNpdJBrGvJQYCw9PT5OHTNEuy+jXWVwQa/
+         ybMJF3FPKEp8B/esieC/mWjkGzoH0ot9gIX5Omz0VSShSkYBZmJMDrbS2pWoOTHQDNIw
+         GAG+uZ2kDK2LdwpmV57MWRhC8ZxDzfjaYMs8C02oPzqQ8yvZXVkJQIccRYh84wH+/nSm
+         5dMA==
+X-Gm-Message-State: ANhLgQ1gDQTHFiS6/WRGNV/faLDUvLhg/5YYn10w0K715kRaDK4aRM8d
+        NzBMB4KLUZIT0T4VMrcNYQ==
+X-Google-Smtp-Source: ADFU+vvuzRa31naxtDjJTr2hNuD1sIvCIOHJrm60YMlQcXIoc6vaYFq5cIIV9MqEbf92kT5yUeZ1Ng==
+X-Received: by 2002:a92:c790:: with SMTP id c16mr393841ilk.206.1584993333182;
+        Mon, 23 Mar 2020 12:55:33 -0700 (PDT)
+Received: from rob-hp-laptop ([64.188.179.250])
+        by smtp.gmail.com with ESMTPSA id l17sm5488218ilc.49.2020.03.23.12.55.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 23 Mar 2020 12:55:32 -0700 (PDT)
+Received: (nullmailer pid 6267 invoked by uid 1000);
+        Mon, 23 Mar 2020 19:55:31 -0000
+Date:   Mon, 23 Mar 2020 13:55:31 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Heiko Stuebner <heiko@sntech.de>
+Cc:     linux-rockchip@lists.infradead.org, robh+dt@kernel.org,
+        devicetree@vger.kernel.org, mark.rutland@arm.com,
+        christoph.muellner@theobroma-systems.com, robin.murphy@arm.com,
+        heiko@sntech.de, linux-arm-kernel@lists.infradead.org,
+        kever.yang@rock-chips.com, linux-kernel@vger.kernel.org,
+        jbx6244@gmail.com,
+        Heiko Stuebner <heiko.stuebner@theobroma-systems.com>
+Subject: Re: [PATCH v2 2/3] dt-bindings: Add binding for Hardkernel Odroid Go
+ Advance
+Message-ID: <20200323195531.GA6201@bogus>
+References: <20200308223250.353053-1-heiko@sntech.de>
+ <20200308223250.353053-2-heiko@sntech.de>
 MIME-Version: 1.0
-Message-ID: <158499326733.28353.8842220324373081169.tip-bot2@tip-bot2>
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot2.linutronix.de>
-Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200308223250.353053-2-heiko@sntech.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following commit has been merged into the timers/core branch of tip:
+On Sun,  8 Mar 2020 23:32:49 +0100, Heiko Stuebner wrote:
+> From: Heiko Stuebner <heiko.stuebner@theobroma-systems.com>
+> 
+> Add a compatible for the Odroid Go Advance from Hardkernel.
+> The compatible used by the vendor already is odroid-go2, to distinguish
+> it from the previous (microcontroller-based) Odroid Go, so we're keeping
+> that, also to not cause unnecessary incompatibilites.
+> 
+> Signed-off-by: Heiko Stuebner <heiko.stuebner@theobroma-systems.com>
+> ---
+>  Documentation/devicetree/bindings/arm/rockchip.yaml | 5 +++++
+>  1 file changed, 5 insertions(+)
+> 
 
-Commit-ID:     ca214e2c1793058e3a1387f9e343cc5b1731db15
-Gitweb:        https://git.kernel.org/tip/ca214e2c1793058e3a1387f9e343cc5b1731db15
-Author:        Vincenzo Frascino <vincenzo.frascino@arm.com>
-AuthorDate:    Mon, 23 Mar 2020 13:39:20 
-Committer:     Borislav Petkov <bp@suse.de>
-CommitterDate: Mon, 23 Mar 2020 18:51:08 +01:00
-
-vdso: Fix clocksource.h macro detection
-
-CONFIG_GENERIC_GETTIMEOFDAY is a sufficient condition to verify if an
-architecture implements asm/vdso/clocksource.h or not. The current
-implementation wrongly assumes that the same is true for the config
-option CONFIG_ARCH_CLOCKSOURCE_DATA.
-
-This results in a series of build errors on ia64/sparc/sparc64 like this:
-
-  In file included from ./include/linux/clocksource.h:31,
-                   from ./include/linux/clockchips.h:14,
-                   from ./include/linux/tick.h:8,
-                   from fs/proc/stat.c:15:
-  ./include/vdso/clocksource.h:9:10: fatal error: asm/vdso/clocksource.h:
-  No such file or directory
-      9 | #include <asm/vdso/clocksource.h>
-        |          ^~~~~~~~~~~~~~~~~~~~~~~~
-
-Fix the issue removing the unneeded config condition.
-
-Fixes: 14ee2ac618e4 ("linux/clocksource.h: Extract common header for vDSO")
-Reported-by: Thomas Gleixner <tglx@linutronix.de>
-Signed-off-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Link: https://lkml.kernel.org/r/20200323133920.46546-1-vincenzo.frascino@arm.com
----
- include/vdso/clocksource.h | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
-
-diff --git a/include/vdso/clocksource.h b/include/vdso/clocksource.h
-index ab58330..c682e7c 100644
---- a/include/vdso/clocksource.h
-+++ b/include/vdso/clocksource.h
-@@ -4,10 +4,9 @@
- 
- #include <vdso/limits.h>
- 
--#if defined(CONFIG_ARCH_CLOCKSOURCE_DATA) || \
--	defined(CONFIG_GENERIC_GETTIMEOFDAY)
-+#ifdef CONFIG_GENERIC_GETTIMEOFDAY
- #include <asm/vdso/clocksource.h>
--#endif /* CONFIG_ARCH_CLOCKSOURCE_DATA || CONFIG_GENERIC_GETTIMEOFDAY */
-+#endif /* CONFIG_GENERIC_GETTIMEOFDAY */
- 
- enum vdso_clock_mode {
- 	VDSO_CLOCKMODE_NONE,
+Acked-by: Rob Herring <robh@kernel.org>
