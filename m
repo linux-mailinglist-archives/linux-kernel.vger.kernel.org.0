@@ -2,77 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 51A7F18EFE7
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Mar 2020 07:48:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4216718EFF5
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Mar 2020 07:53:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727352AbgCWGsU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Mar 2020 02:48:20 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:56286 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726142AbgCWGsT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Mar 2020 02:48:19 -0400
-Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 7B578D4A8DDD5F88AC1A;
-        Mon, 23 Mar 2020 14:48:11 +0800 (CST)
-Received: from huawei.com (10.175.113.25) by DGGEMS408-HUB.china.huawei.com
- (10.3.19.208) with Microsoft SMTP Server id 14.3.487.0; Mon, 23 Mar 2020
- 14:48:04 +0800
-From:   Zheng Zengkai <zhengzengkai@huawei.com>
-To:     <sgoutham@marvell.com>, <rrichter@marvell.com>,
-        <davem@davemloft.net>, <ast@kernel.org>
-CC:     <linux-arm-kernel@lists.infradead.org>, <netdev@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <bpf@vger.kernel.org>,
-        <zhengzengkai@huawei.com>
-Subject: [PATCH net-next] net: thunderx: remove set but not used variable 'tail'
-Date:   Mon, 23 Mar 2020 14:51:16 +0800
-Message-ID: <20200323065116.45399-1-zhengzengkai@huawei.com>
-X-Mailer: git-send-email 2.20.1
+        id S1727384AbgCWGxY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Mar 2020 02:53:24 -0400
+Received: from frisell.zx2c4.com ([192.95.5.64]:57655 "EHLO frisell.zx2c4.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727164AbgCWGxX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Mar 2020 02:53:23 -0400
+Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTP id 4025283f;
+        Mon, 23 Mar 2020 06:46:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=zx2c4.com; h=mime-version
+        :references:in-reply-to:from:date:message-id:subject:to:cc
+        :content-type; s=mail; bh=hhsjJ5nTbW/Bbc8zpStB0FYxsX4=; b=tuhwgU
+        CA3CliFET6ommFcdWnTY9HTFkBS8OxDwc7nsw3GhO5sx9aE5GBe5Ydojnok9nCw1
+        1vYdyFqJzC6IUQojzF0/FaGqmY5bFAP0IIv9SYipC3yMwn3j+di1WhG1goRr3VCW
+        P5cmkIKnazgNMzsqvfnWe6TVUvCuEqWD3um+ZYGPc/BpggtsnSpsmyIAX7/MCK+7
+        IuH9MvimzRnSwT0LjlX7USt92bcXJvxwX8NMrlSIfASPVrcc6GxFbzodBtZPbpNE
+        O0nmc2kSVca49dbX8zFc+js7wcC2h3zxcuvooAmt5gY5EDdSktMe/KXh2dnda38f
+        ZJnxrIA5yatRhvvg==
+Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 386d45d0 (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256:NO);
+        Mon, 23 Mar 2020 06:46:24 +0000 (UTC)
+Received: by mail-il1-f180.google.com with SMTP id a6so12115110ilc.4;
+        Sun, 22 Mar 2020 23:53:21 -0700 (PDT)
+X-Gm-Message-State: ANhLgQ0yBy7JeiyoYgx/saz1H31ggZeKBarL+VktwiAitKFsEKhxQbL/
+        Q/59bFvUpjwpWqY1unhQXXdEgIaCuSEVSMI7a98=
+X-Google-Smtp-Source: ADFU+vvErpWTeF+7DC+qPRKivjaXJFbfQ/Ox9xb4I/r/H5QniD3d2icAJTBOpd6e052DbBZKVfb+zvNoYRMiCNhl/jc=
+X-Received: by 2002:a92:cece:: with SMTP id z14mr11415751ilq.38.1584946400678;
+ Sun, 22 Mar 2020 23:53:20 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.175.113.25]
-X-CFilter-Loop: Reflected
+References: <20200323020844.17064-1-masahiroy@kernel.org> <CAHmME9p=ECJ15uyPH79bF0tuzEksdxoUsjGQSyz74FfdEJxTpQ@mail.gmail.com>
+ <CAHmME9q4egN7_KeYB-ZHCFPfXs-virgTv4iz9jW2SVOM7dTnLw@mail.gmail.com> <CAK7LNAR07vZFzh1Bbpq4CoJ4zmsc+p5rxpkO1Zv8QVfqhfvr2w@mail.gmail.com>
+In-Reply-To: <CAK7LNAR07vZFzh1Bbpq4CoJ4zmsc+p5rxpkO1Zv8QVfqhfvr2w@mail.gmail.com>
+From:   "Jason A. Donenfeld" <Jason@zx2c4.com>
+Date:   Mon, 23 Mar 2020 00:53:09 -0600
+X-Gmail-Original-Message-ID: <CAHmME9qCjo4kOQM3Dw6PDjEebmb6rvXajqhK-m-=vKcHWqNhAw@mail.gmail.com>
+Message-ID: <CAHmME9qCjo4kOQM3Dw6PDjEebmb6rvXajqhK-m-=vKcHWqNhAw@mail.gmail.com>
+Subject: Re: [PATCH 0/7] x86: remove always-defined CONFIG_AS_* options
+To:     Masahiro Yamada <masahiroy@kernel.org>
+Cc:     X86 ML <x86@kernel.org>, Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>,
+        "H . Peter Anvin" <hpa@zytor.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Allison Randal <allison@lohutok.net>,
+        Armijn Hemel <armijn@tjaldur.nl>,
+        "David S. Miller" <davem@davemloft.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Ingo Molnar <mingo@redhat.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Song Liu <songliubraving@fb.com>,
+        Zhengyuan Liu <liuzhengyuan@kylinos.cn>,
+        clang-built-linux <clang-built-linux@googlegroups.com>,
+        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Zheng zengkai <zhengzengkai@huawei.com>
+On Mon, Mar 23, 2020 at 12:36 AM Masahiro Yamada <masahiroy@kernel.org> wrote:
+>
+> Hi Jason,
+>
+> On Mon, Mar 23, 2020 at 1:28 PM Jason A. Donenfeld <Jason@zx2c4.com> wrote:
+> >
+> > Hi again,
+> >
+> > I've consolidated your patches and rebased mine on top, and
+> > incorporated your useful binutils comments. The result lives here:
+> >
+> > https://git.zx2c4.com/linux-dev/log/?h=jd/kconfig-assembler-support
+> >
+> > I can submit all of those to the list, if you want, or maybe you can
+> > just pull them out of there, include them in your v2, and put them in
+> > your tree for 5.7? However you want is fine with me.
+>
+>
+> Your series does not work correctly.
+>
+> I will comment why later.
 
-Fixes gcc '-Wunused-but-set-variable' warning:
+Bummer, okay. Looking forward to learning what's up. Also, if some
+parts of it are useful (like the resorting and organizing of
+arch/x86/crypto/Makefile), feel free to cannibalize it, keeping what's
+useful and discarding what's not.
 
-drivers/net/ethernet/cavium/thunder/nicvf_queues.c: In function nicvf_sq_free_used_descs:
-drivers/net/ethernet/cavium/thunder/nicvf_queues.c:1182:12: warning:
- variable tail set but not used [-Wunused-but-set-variable]
-
-It's not used since commit 4863dea3fab01("net: Adding support for Cavium ThunderX network controller"),
-so remove it.
-
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: Zheng zengkai <zhengzengkai@huawei.com>
----
- drivers/net/ethernet/cavium/thunder/nicvf_queues.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
-diff --git a/drivers/net/ethernet/cavium/thunder/nicvf_queues.c b/drivers/net/ethernet/cavium/thunder/nicvf_queues.c
-index 4ab57d33a87e..069e7413f1ef 100644
---- a/drivers/net/ethernet/cavium/thunder/nicvf_queues.c
-+++ b/drivers/net/ethernet/cavium/thunder/nicvf_queues.c
-@@ -1179,13 +1179,12 @@ void nicvf_sq_disable(struct nicvf *nic, int qidx)
- void nicvf_sq_free_used_descs(struct net_device *netdev, struct snd_queue *sq,
- 			      int qidx)
- {
--	u64 head, tail;
-+	u64 head;
- 	struct sk_buff *skb;
- 	struct nicvf *nic = netdev_priv(netdev);
- 	struct sq_hdr_subdesc *hdr;
- 
- 	head = nicvf_queue_reg_read(nic, NIC_QSET_SQ_0_7_HEAD, qidx) >> 4;
--	tail = nicvf_queue_reg_read(nic, NIC_QSET_SQ_0_7_TAIL, qidx) >> 4;
- 	while (sq->head != head) {
- 		hdr = (struct sq_hdr_subdesc *)GET_SQ_DESC(sq, sq->head);
- 		if (hdr->subdesc_type != SQ_DESC_TYPE_HEADER) {
--- 
-2.18.1
-
+Jason
