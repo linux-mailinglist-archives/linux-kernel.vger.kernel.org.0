@@ -2,100 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1915118FE42
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Mar 2020 20:57:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0B02B18FE40
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Mar 2020 20:56:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727046AbgCWT4u (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Mar 2020 15:56:50 -0400
-Received: from mail-qk1-f194.google.com ([209.85.222.194]:44269 "EHLO
-        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725839AbgCWT4u (ORCPT
+        id S1726954AbgCWT4l (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Mar 2020 15:56:41 -0400
+Received: from mail-io1-f67.google.com ([209.85.166.67]:46885 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725839AbgCWT4l (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Mar 2020 15:56:50 -0400
-Received: by mail-qk1-f194.google.com with SMTP id j4so16688880qkc.11;
-        Mon, 23 Mar 2020 12:56:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=O7igelSqnZSzby+9Agw+dKmcrgK2R8ajZWmZKikiDho=;
-        b=ZyQUyKFaEKEmFfsZZGGcpVLCY0rdoDcXD4zCVsS+DgCffo3uQdBYftPv9A3/cFjzvg
-         JFKdIy5CKVRWPXrx59DJhXtz7S+IpYdEtq5rSdV8YO+GxrEDHDrjBXxjLWCV9k6HB15/
-         VNZYAgWnrLlcKLCTxwkco4cJvfXlv9tytCQJnd7l3sWGPcsgnyDf6OLck2xJtnU7Z9pp
-         tPg+oJAwbEXvTBeWkKUfNu4LDfcvPJVOlsrN6wkrNsqly5Ajl6cpgp/R62a5m3bp7BlG
-         /Eiu4kdXD6AYVl550u98b798SiNPPtnMetTIrLGAIcMDJRRatccFCKoVSe37lckkmXbl
-         bjGw==
+        Mon, 23 Mar 2020 15:56:41 -0400
+Received: by mail-io1-f67.google.com with SMTP id a20so8418031ioo.13;
+        Mon, 23 Mar 2020 12:56:40 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=O7igelSqnZSzby+9Agw+dKmcrgK2R8ajZWmZKikiDho=;
-        b=cMW7yionHRpEQNC3o9xeE5nPUqOs6OaWtQTdRei8DzzkQxnGU5LX/5rUchpnEXsRvh
-         9toGf05LyGOPFq9KnHyKZybncFMTt2tvHayKlhWtiP+yUrzP3sFJaaQpLSIcacqmp8BT
-         4b6AuLs3Fh6fa/iVkqr12wHbTh48VFlGSoNIBTWqkV4GFWY7oWfYRT2PbkoynkYv/qFn
-         nXfqp1lkQbKpnqNl3NiWYnG2oTWdUVdGsYLVR8Us76uVQRqKNE2QgMDV+uGQK79zWXJH
-         TMeNZQmSe2JWpjxpnb1mQEbpjKhY8CA3VHnyPNaJ0me5VGYVG2xIDBGfTrHnz2dbqMw7
-         vQNw==
-X-Gm-Message-State: ANhLgQ0OWJhhAr4OxVRvw/7gFkeO41zJE4Wzf/uEA+4oqkb6DPBG3shz
-        nwTPhWzaq8wuxYP357/Cmym0gQJ6+pVBt2VQ8HI=
-X-Google-Smtp-Source: ADFU+vuNk+XojfkD2ANEtHWgonqRE45FobN+3bk7jLbXRujpqxIfFOz+ZhAN35zK9Cfgh1TYjbwqXMhx7RXBO8eHaQs=
-X-Received: by 2002:a37:992:: with SMTP id 140mr23091475qkj.36.1584993408656;
- Mon, 23 Mar 2020 12:56:48 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=qXevwrfc2p5AdDU33jwvkxHfjutpsoW73v5+sjJRTb0=;
+        b=j0ryfBGG7XuNoBOau6gEB1+gtV/03celkDK6vHlIDjjPB5DbbDUlMuxEkBxSJrX9Us
+         RJpj06biB0MVgQxAR+noDYIHFAxke+1eHNOizifI7/9WwRwYY20RR0b2tfRKszNbuQh0
+         sc1GdAoDTBpJ8g1zHjHK899fvLjZ6DW+UcDlfn7XyW2AGAuEXKYDXVPbs/mU0rWS/on7
+         s0atcTxorreDTii7KHIQnsZAYdsNGaPL4vjX5KmJefA02o/Xzsvh4pwgwABP82zBu8Iv
+         uqxtHBa2Udh58n3ejK90AJOW3NqCH6y+XjoT9unXxHgSEIeh1oV3rym/EujAHbGgmIZf
+         /6CA==
+X-Gm-Message-State: ANhLgQ1cLfECVfTPIZBDrknloZy5jCoZnlT4bFMM++wxD8AxLsWVNzsV
+        JlJM0CPzRYG/xNOf3g8WJA==
+X-Google-Smtp-Source: ADFU+vtLwq6QT60pJAfxzLxrg6bcvqD+KMyEIEHEsy8Q+CFNUhFt660np21tKveAFvaUbUdZlOgs9g==
+X-Received: by 2002:a5d:9301:: with SMTP id l1mr20763884ion.68.1584993399925;
+        Mon, 23 Mar 2020 12:56:39 -0700 (PDT)
+Received: from rob-hp-laptop ([64.188.179.250])
+        by smtp.gmail.com with ESMTPSA id p14sm4584248ios.38.2020.03.23.12.56.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 23 Mar 2020 12:56:39 -0700 (PDT)
+Received: (nullmailer pid 8120 invoked by uid 1000);
+        Mon, 23 Mar 2020 19:56:38 -0000
+Date:   Mon, 23 Mar 2020 13:56:38 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     andy.tang@nxp.com
+Cc:     daniel.lezcano@linaro.org, edubezval@gmail.com,
+        rui.zhang@intel.com, linux-pm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Yuantian Tang <andy.tang@nxp.com>
+Subject: Re: [PATCH] dt-bindings: thermal: make cooling-maps property optional
+Message-ID: <20200323195638.GA8059@bogus>
+References: <20200309045411.21859-1-andy.tang@nxp.com>
 MIME-Version: 1.0
-References: <20200323164415.12943-1-kpsingh@chromium.org> <20200323164415.12943-3-kpsingh@chromium.org>
-In-Reply-To: <20200323164415.12943-3-kpsingh@chromium.org>
-From:   Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date:   Mon, 23 Mar 2020 12:56:37 -0700
-Message-ID: <CAEf4Bza67kM0KiX464yB+iV83aV96TyD7iLEZJccXyH-Od0QTQ@mail.gmail.com>
-Subject: Re: [PATCH bpf-next v5 2/7] security: Refactor declaration of LSM hooks
-To:     KP Singh <kpsingh@chromium.org>
-Cc:     open list <linux-kernel@vger.kernel.org>,
-        bpf <bpf@vger.kernel.org>, linux-security-module@vger.kernel.org,
-        Brendan Jackman <jackmanb@google.com>,
-        Florent Revest <revest@google.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        James Morris <jmorris@namei.org>,
-        Kees Cook <keescook@chromium.org>,
-        Paul Turner <pjt@google.com>, Jann Horn <jannh@google.com>,
-        Florent Revest <revest@chromium.org>,
-        Brendan Jackman <jackmanb@chromium.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200309045411.21859-1-andy.tang@nxp.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 23, 2020 at 9:45 AM KP Singh <kpsingh@chromium.org> wrote:
->
-> From: KP Singh <kpsingh@google.com>
->
-> The information about the different types of LSM hooks is scattered
-> in two locations i.e. union security_list_options and
-> struct security_hook_heads. Rather than duplicating this information
-> even further for BPF_PROG_TYPE_LSM, define all the hooks with the
-> LSM_HOOK macro in lsm_hook_names.h which is then used to generate all
-> the data structures required by the LSM framework.
->
-> Signed-off-by: KP Singh <kpsingh@google.com>
-> Reviewed-by: Brendan Jackman <jackmanb@google.com>
-> Reviewed-by: Florent Revest <revest@google.com>
+On Mon,  9 Mar 2020 12:54:11 +0800, andy.tang@nxp.com wrote:
+> From: Yuantian Tang <andy.tang@nxp.com>
+> 
+> Cooling-maps doesn't have to be a required property because there may
+> be no cooling device on system, or there are no enough cooling devices for
+> each thermal zone in multiple thermal zone cases since cooling devices
+> can't be shared.
+> So make this property optional to remove such limitations.
+> 
+> For thermal zones with no cooling-maps, there could be critic trips
+> that can trigger CPU reset or shutdown. So they still can take actions.
+> 
+> Signed-off-by: Yuantian Tang <andy.tang@nxp.com>
 > ---
->  include/linux/lsm_hook_names.h | 354 +++++++++++++++++++
->  include/linux/lsm_hooks.h      | 622 +--------------------------------
->  2 files changed, 360 insertions(+), 616 deletions(-)
->  create mode 100644 include/linux/lsm_hook_names.h
->
-> diff --git a/include/linux/lsm_hook_names.h b/include/linux/lsm_hook_names.h
-> new file mode 100644
-> index 000000000000..412e4ca24c9b
-> --- /dev/null
-> +++ b/include/linux/lsm_hook_names.h
+>  Documentation/devicetree/bindings/thermal/thermal.txt | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
 
-It's not really just hook names, it's full hook definitions, no? So
-lsm_hook_defs.h seems a bit more appropriate. Just for consideration,
-not that I care that strongly :)
-
-
-[...]
+Acked-by: Rob Herring <robh@kernel.org>
