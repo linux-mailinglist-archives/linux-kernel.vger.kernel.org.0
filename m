@@ -2,89 +2,59 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B185A18EF76
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Mar 2020 06:35:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B648B18EF78
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Mar 2020 06:35:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727253AbgCWFfJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Mar 2020 01:35:09 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:38181 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725930AbgCWFfI (ORCPT
+        id S1727281AbgCWFfo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Mar 2020 01:35:44 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:43612 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725930AbgCWFfo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Mar 2020 01:35:08 -0400
-Received: by mail-wr1-f66.google.com with SMTP id s1so15366847wrv.5
-        for <linux-kernel@vger.kernel.org>; Sun, 22 Mar 2020 22:35:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=48qkqxYGNTDT4PSF+80i7p8bQweaG9a4WqU/RKeDBq0=;
-        b=HvHOEg6bjFJZoPMKPOmc7fwaVV2PDx1Ej1qXD4A4KcfoHT4syJkL251SH4ddfaSJay
-         LPG6C91roOJSUvy0ke+r7pFnsOYGJ07pHwVSYGbZBje3Pn/j+Eqo4r5KbfG7ddlkDr8X
-         XXe21LX8S9C4hlWgexmfve42E6GH+e9sbTpqE3kVe23+MBRpEYLR4OX2kr6FWTObvxJ0
-         5URCx0Xc83wMqefkAMRfk4fJHl1qFA5HMp3x4hPzWGme60NBZLkNguorjZv8XTEu2Zta
-         xvWzY4CFtu3/pI59o8w3UutM5Ex/oEe8SYq9ltKHJfTHz30uUeuS73UfE0jWqbSLSJWo
-         Uptw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=48qkqxYGNTDT4PSF+80i7p8bQweaG9a4WqU/RKeDBq0=;
-        b=nG4e50Ib4oZVMQkcoFOlJ5jD2VBZ13d3UG6oIEGNTq3ET6i3ABD+CB/jvxACV7f+IL
-         SBke3SfEvKhvv1fInBRJQhftRU9T+fEp7Vl+hRgGcEGhVITPgdqsbjLOJdPf54TmK0UF
-         oOrglY6vHfBzZytPI0geb9mvaJu8FUIbsryP7AkoiIpd/9qnyRDfI6KCU9FiL0F0yVo5
-         dLTAO9mFTOEIA3VyAlI9bgZ+96H6yMs/U43iBlXQb504CVX8H6pl1C79a8Z8BDgIpoHM
-         yHh8cOmY5F/xDU53bACPZBYocJnmHZBRDNFCU+sGdpDGchRkjGnKENYMsp4mT0ojwVt3
-         OnFg==
-X-Gm-Message-State: ANhLgQ2wxnD3GnNWtpl4qT1WK6cs6aSfETd9R/RZy6iAAfHeXL+cPi2x
-        /pebeSuUpbXV4hUBDBbhV20=
-X-Google-Smtp-Source: ADFU+vtxXvjXEAlDtqjeAJ71CW/iwYi4dJYF2EK/ocEUKGF4ITV9b2s0pUjEdrnOwB6r7yU2RMkscQ==
-X-Received: by 2002:adf:9ccb:: with SMTP id h11mr7645800wre.22.1584941706626;
-        Sun, 22 Mar 2020 22:35:06 -0700 (PDT)
-Received: from kbp1-lhp-F74019 (a81-14-236-68.net-htp.de. [81.14.236.68])
-        by smtp.gmail.com with ESMTPSA id z129sm19935999wmb.7.2020.03.22.22.35.05
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 22 Mar 2020 22:35:06 -0700 (PDT)
-Date:   Mon, 23 Mar 2020 07:35:03 +0200
-From:   Yan Yankovskyi <yyankovskyi@gmail.com>
-To:     Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Jan Beulich <jbeulich@suse.com>
-Cc:     Juergen Gross <jgross@suse.com>,
-        Stefano Stabellini <sstabellini@kernel.org>,
-        xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org
-Subject: [Xen-devel] [PATCH 2/2] evtchn: Change evtchn port type to
- evtchn_port_t
-Message-ID: <20200323053503.GA1406@kbp1-lhp-F74019>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        Mon, 23 Mar 2020 01:35:44 -0400
+Received: from 61-220-137-37.hinet-ip.hinet.net ([61.220.137.37] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <kai.heng.feng@canonical.com>)
+        id 1jGFkN-00063j-9D; Mon, 23 Mar 2020 05:35:35 +0000
+From:   Kai-Heng Feng <kai.heng.feng@canonical.com>
+To:     maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+        airlied@linux.ie, daniel@ffwll.ch
+Cc:     Kai-Heng Feng <kai.heng.feng@canonical.com>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        dri-devel@lists.freedesktop.org (open list:DRM DRIVERS),
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH] drm/i915: Force DPCD backlight mode for HP Spectre x360 Convertible 13t-aw100
+Date:   Mon, 23 Mar 2020 13:35:28 +0800
+Message-Id: <20200323053528.3147-1-kai.heng.feng@canonical.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-struct evtchn_set_priority uses uint32_t type for event channel port.
-Replace the type with evtchn_port_t. Such change is also done in Linux.
+There's another OLED panel needs to use DPCD aux interface to control
+backlight.
 
-Signed-off-by: Yan Yankovskyi <yyankovskyi@gmail.com>
+BugLink: https://bugs.launchpad.net/bugs/1860303
+Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
 ---
- xen/include/public/event_channel.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/drm_dp_helper.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/xen/include/public/event_channel.h b/xen/include/public/event_channel.h
-index 44c549dd6b..cfb7929fef 100644
---- a/xen/include/public/event_channel.h
-+++ b/xen/include/public/event_channel.h
-@@ -307,7 +307,7 @@ typedef struct evtchn_expand_array evtchn_expand_array_t;
-  */
- struct evtchn_set_priority {
-     /* IN parameters. */
--    uint32_t port;
-+    evtchn_port_t port;
-     uint32_t priority;
- };
- typedef struct evtchn_set_priority evtchn_set_priority_t;
+diff --git a/drivers/gpu/drm/drm_dp_helper.c b/drivers/gpu/drm/drm_dp_helper.c
+index 8ba4531e808d..a0d4314663de 100644
+--- a/drivers/gpu/drm/drm_dp_helper.c
++++ b/drivers/gpu/drm/drm_dp_helper.c
+@@ -1301,6 +1301,8 @@ static const struct edid_quirk edid_quirk_list[] = {
+ 	 * only supports DPCD backlight controls
+ 	 */
+ 	{ MFG(0x4c, 0x83), PROD_ID(0x41, 0x41), BIT(DP_QUIRK_FORCE_DPCD_BACKLIGHT) },
++	/* HP Spectre x360 Convertible 13t-aw100 */
++	{ MFG(0x4c, 0x83), PROD_ID(0x42, 0x41), BIT(DP_QUIRK_FORCE_DPCD_BACKLIGHT) },
+ 	/*
+ 	 * Some Dell CML 2020 systems have panels support both AUX and PWM
+ 	 * backlight control, and some only support AUX backlight control. All
 -- 
 2.17.1
 
