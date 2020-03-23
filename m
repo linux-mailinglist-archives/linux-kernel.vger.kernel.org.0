@@ -2,25 +2,25 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 650D218FCD7
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Mar 2020 19:39:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F047318FCD6
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Mar 2020 19:39:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727978AbgCWSi7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Mar 2020 14:38:59 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:46768 "EHLO
+        id S1727962AbgCWSi5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Mar 2020 14:38:57 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:46772 "EHLO
         ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727658AbgCWSiZ (ORCPT
+        with ESMTP id S1727695AbgCWSiZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 23 Mar 2020 14:38:25 -0400
 Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jGRxv-00136w-6C; Mon, 23 Mar 2020 18:38:23 +0000
+        id 1jGRxv-001376-9a; Mon, 23 Mar 2020 18:38:23 +0000
 From:   Al Viro <viro@ZenIV.linux.org.uk>
 To:     Linus Torvalds <torvalds@linux-foundation.org>
 Cc:     Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [RFC][PATCH 17/22] x86: setup_sigcontext(): list user_access_{begin,end}() into callers
-Date:   Mon, 23 Mar 2020 18:38:14 +0000
-Message-Id: <20200323183819.250124-17-viro@ZenIV.linux.org.uk>
+Subject: [RFC][PATCH 18/22] x86: __setup_frame(): consolidate uaccess areas
+Date:   Mon, 23 Mar 2020 18:38:15 +0000
+Message-Id: <20200323183819.250124-18-viro@ZenIV.linux.org.uk>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20200323183819.250124-1-viro@ZenIV.linux.org.uk>
 References: <20200323183620.GD23230@ZenIV.linux.org.uk>
@@ -34,111 +34,67 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Al Viro <viro@zeniv.linux.org.uk>
 
-Similar to ia32_setup_sigcontext() change several commits ago, make it
-__always_inline.  In cases when there is a user_access_{begin,end}()
-section nearby, just move the call over there.
-
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- arch/x86/kernel/signal.c | 32 +++++++++++++++++---------------
- 1 file changed, 17 insertions(+), 15 deletions(-)
+ arch/x86/kernel/signal.c | 23 ++++++-----------------
+ 1 file changed, 6 insertions(+), 17 deletions(-)
 
 diff --git a/arch/x86/kernel/signal.c b/arch/x86/kernel/signal.c
-index 8b879fdc214c..a5a898c3c574 100644
+index a5a898c3c574..02b81784acc7 100644
 --- a/arch/x86/kernel/signal.c
 +++ b/arch/x86/kernel/signal.c
-@@ -140,12 +140,9 @@ static int restore_sigcontext(struct pt_regs *regs,
- 			       IS_ENABLED(CONFIG_X86_32));
- }
- 
--static int setup_sigcontext(struct sigcontext __user *sc, void __user *fpstate,
-+static __always_inline int setup_sigcontext(struct sigcontext __user *sc, void __user *fpstate,
- 		     struct pt_regs *regs, unsigned long mask)
+@@ -295,26 +295,17 @@ __setup_frame(int sig, struct ksignal *ksig, sigset_t *set,
  {
--	if (!user_access_begin(sc, sizeof(struct sigcontext)))
+ 	struct sigframe __user *frame;
+ 	void __user *restorer;
+-	int err = 0;
+ 	void __user *fpstate = NULL;
+ 
+ 	frame = get_sigframe(&ksig->ka, regs, sizeof(*frame), &fpstate);
+ 
+-	if (!access_ok(frame, sizeof(*frame)))
 -		return -EFAULT;
 -
- #ifdef CONFIG_X86_32
- 	unsafe_put_user(get_user_gs(regs),
- 				  (unsigned int __user *)&sc->gs, Efault);
-@@ -194,10 +191,8 @@ static int setup_sigcontext(struct sigcontext __user *sc, void __user *fpstate,
- 	/* non-iBCS2 extensions.. */
- 	unsafe_put_user(mask, &sc->oldmask, Efault);
- 	unsafe_put_user(current->thread.cr2, &sc->cr2, Efault);
+-	if (__put_user(sig, &frame->sig))
++	if (!user_access_begin(frame, sizeof(*frame)))
+ 		return -EFAULT;
+ 
+-	if (!user_access_begin(&frame->sc, sizeof(struct sigcontext)))
+-		return -EFAULT;
++	unsafe_put_user(sig, &frame->sig, Efault);
+ 	if (setup_sigcontext(&frame->sc, fpstate, regs, set->sig[0]))
+ 		goto Efault;
 -	user_access_end();
- 	return 0;
- Efault:
--	user_access_end();
- 	return -EFAULT;
- }
+-
+-	if (__put_user(set->sig[1], &frame->extramask[0]))
+-		return -EFAULT;
+-
++	unsafe_put_user(set->sig[1], &frame->extramask[0], Efault);
+ 	if (current->mm->context.vdso)
+ 		restorer = current->mm->context.vdso +
+ 			vdso_image_32.sym___kernel_sigreturn;
+@@ -324,7 +315,7 @@ __setup_frame(int sig, struct ksignal *ksig, sigset_t *set,
+ 		restorer = ksig->ka.sa.sa_restorer;
  
-@@ -311,8 +306,11 @@ __setup_frame(int sig, struct ksignal *ksig, sigset_t *set,
- 	if (__put_user(sig, &frame->sig))
- 		return -EFAULT;
+ 	/* Set up to return from userspace.  */
+-	err |= __put_user(restorer, &frame->pretcode);
++	unsafe_put_user(restorer, &frame->pretcode, Efault);
  
--	if (setup_sigcontext(&frame->sc, fpstate, regs, set->sig[0]))
-+	if (!user_access_begin(&frame->sc, sizeof(struct sigcontext)))
- 		return -EFAULT;
-+	if (setup_sigcontext(&frame->sc, fpstate, regs, set->sig[0]))
-+		goto Efault;
-+	user_access_end();
- 
- 	if (__put_user(set->sig[1], &frame->extramask[0]))
- 		return -EFAULT;
-@@ -353,6 +351,10 @@ __setup_frame(int sig, struct ksignal *ksig, sigset_t *set,
- 	regs->cs = __USER_CS;
- 
- 	return 0;
-+
-+Efault:
-+	user_access_end();
-+	return -EFAULT;
- }
- 
- static int __setup_rt_frame(int sig, struct ksignal *ksig,
-@@ -395,13 +397,13 @@ static int __setup_rt_frame(int sig, struct ksignal *ksig,
+ 	/*
+ 	 * This is popl %eax ; movl $__NR_sigreturn, %eax ; int $0x80
+@@ -333,10 +324,8 @@ __setup_frame(int sig, struct ksignal *ksig, sigset_t *set,
+ 	 * reasons and because gdb uses it as a signature to notice
  	 * signal handler stack frames.
  	 */
- 	unsafe_put_user(*((u64 *)&rt_retcode), (u64 *)frame->retcode, Efault);
-+	if (setup_sigcontext(&frame->uc.uc_mcontext, fpstate,
-+				regs, set->sig[0]))
-+		goto Efault;
- 	user_access_end();
- 	
- 	err |= copy_siginfo_to_user(&frame->info, &ksig->info);
--	err |= setup_sigcontext(&frame->uc.uc_mcontext, fpstate,
--				regs, set->sig[0]);
- 	err |= __copy_to_user(&frame->uc.uc_sigmask, set, sizeof(*set));
+-	err |= __put_user(*((u64 *)&retcode), (u64 *)frame->retcode);
 -
- 	if (err)
- 		return -EFAULT;
+-	if (err)
+-		return -EFAULT;
++	unsafe_put_user(*((u64 *)&retcode), (u64 *)frame->retcode, Efault);
++	user_access_end();
  
-@@ -472,9 +474,9 @@ static int __setup_rt_frame(int sig, struct ksignal *ksig,
- 	/* Set up to return from userspace.  If provided, use a stub
- 	   already in userspace.  */
- 	unsafe_put_user(ksig->ka.sa.sa_restorer, &frame->pretcode, Efault);
-+	if (setup_sigcontext(&frame->uc.uc_mcontext, fp, regs, set->sig[0]))
-+		goto Efault;
- 	user_access_end();
--
--	err |= setup_sigcontext(&frame->uc.uc_mcontext, fp, regs, set->sig[0]);
- 	err |= __put_user(set->sig[0], &frame->uc.uc_sigmask.sig[0]);
- 
- 	if (err)
-@@ -559,10 +561,10 @@ static int x32_setup_rt_frame(struct ksignal *ksig,
- 	unsafe_put_user(0, &frame->uc.uc__pad0, Efault);
- 	restorer = ksig->ka.sa.sa_restorer;
- 	unsafe_put_user(restorer, (unsigned long __user *)&frame->pretcode, Efault);
-+	if (setup_sigcontext(&frame->uc.uc_mcontext, fpstate,
-+				regs, set->sig[0]))
-+		goto Efault;
- 	user_access_end();
--
--	err |= setup_sigcontext(&frame->uc.uc_mcontext, fpstate,
--				regs, set->sig[0]);
- 	err |= __put_user(*(__u64 *)set, (__u64 __user *)&frame->uc.uc_sigmask);
- 
- 	if (err)
+ 	/* Set up registers for signal handler */
+ 	regs->sp = (unsigned long)frame;
 -- 
 2.11.0
 
