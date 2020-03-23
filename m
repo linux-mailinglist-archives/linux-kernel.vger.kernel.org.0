@@ -2,186 +2,154 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2356D18F094
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Mar 2020 09:05:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D07DF18F0A3
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Mar 2020 09:08:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727518AbgCWIFO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Mar 2020 04:05:14 -0400
-Received: from mailout4.samsung.com ([203.254.224.34]:34855 "EHLO
-        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727477AbgCWIFN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Mar 2020 04:05:13 -0400
-Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
-        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20200323080510epoutp041bbad08f31085032337e3f9fb3cbb289~_4EYV65nK1412914129epoutp044
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Mar 2020 08:05:10 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20200323080510epoutp041bbad08f31085032337e3f9fb3cbb289~_4EYV65nK1412914129epoutp044
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1584950710;
-        bh=P4CavwZXkNCT7Ikw0Fe20I2u/uDn4BTxVIDGmLZRxuw=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UcEXFM2WTcTtblyK758mlzUNgO3piXC6/70tFii6H5/ufSCHx6oWpXlZLJlgbZoNG
-         eVTjUqrc/dY3OsBESsu2TKTg/xk0l5sECj+0r4xbwQpPd5+9ZvNYi+7VUZmOMCMsd/
-         f/+51c541VgWwscBiShDwttLL95ifxl8Q39Ii10Q=
-Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
-        epcas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20200323080509epcas1p188e0bb9b7848da53225cb7f3c86ec8ae~_4EXouD5b0465004650epcas1p1q;
-        Mon, 23 Mar 2020 08:05:09 +0000 (GMT)
-Received: from epsmges1p4.samsung.com (unknown [182.195.40.162]) by
-        epsnrtp3.localdomain (Postfix) with ESMTP id 48m6PJ5KSCzMqYl0; Mon, 23 Mar
-        2020 08:05:08 +0000 (GMT)
-Received: from epcas1p1.samsung.com ( [182.195.41.45]) by
-        epsmges1p4.samsung.com (Symantec Messaging Gateway) with SMTP id
-        DE.0E.04160.4BD687E5; Mon, 23 Mar 2020 17:05:08 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas1p3.samsung.com (KnoxPortal) with ESMTPA id
-        20200323080508epcas1p3c68190cd46635b9ff026a4ae70fc7a3b~_4EWPvhKj3019030190epcas1p3D;
-        Mon, 23 Mar 2020 08:05:08 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20200323080508epsmtrp1b7b626fbe636fd09f4fa64c04c8276d1~_4EWO2m150107001070epsmtrp1-;
-        Mon, 23 Mar 2020 08:05:08 +0000 (GMT)
-X-AuditID: b6c32a38-297ff70000001040-11-5e786db41e39
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        08.73.04024.4BD687E5; Mon, 23 Mar 2020 17:05:08 +0900 (KST)
-Received: from jaewon-linux.10.32.193.11 (unknown [10.253.104.82]) by
-        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20200323080508epsmtip1996987f173182e8893721e72705829c8~_4EWBdNZ70114401144epsmtip1O;
-        Mon, 23 Mar 2020 08:05:08 +0000 (GMT)
-From:   Jaewon Kim <jaewon31.kim@samsung.com>
-To:     gregkh@linuxfoundation.org, leon@kernel.org, vbabka@suse.cz,
-        adobriyan@gmail.com, akpm@linux-foundation.org, labbott@redhat.com,
-        sumit.semwal@linaro.org, minchan@kernel.org, ngupta@vflare.org,
-        sergey.senozhatsky.work@gmail.com, kasong@redhat.com,
-        bhe@redhat.com
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        jaewon31.kim@gmail.com, linux-api@vger.kernel.org,
-        kexec@lists.infradead.org, Jaewon Kim <jaewon31.kim@samsung.com>
-Subject: [RFC PATCH v2 3/3] android: ion: include system heap size in
- meminfo extra
-Date:   Mon, 23 Mar 2020 17:05:03 +0900
-Message-Id: <20200323080503.6224-4-jaewon31.kim@samsung.com>
-X-Mailer: git-send-email 2.13.7
-In-Reply-To: <20200323080503.6224-1-jaewon31.kim@samsung.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrCJsWRmVeSWpSXmKPExsWy7bCmru6W3Io4g/sz1C2mN3pZzFm/hs3i
-        /INfbBbNi9ezWXRvnslo0fv+FZPF8nenGS12n/7KZLFyzw8miym/ljJbbP7ewWZxedccNot7
-        a/6zWiz7+p7dYkPLLHaLRxMmMVmcuvuZ3WJ2Yx+jg5DHzll32T02repk89j0aRK7x51re9g8
-        Tsz4zeKxf+4ado/NS+o93u+7yubRt2UVo8eZBUfYPXZ+2szq8XmTXABPVI5NRmpiSmqRQmpe
-        cn5KZl66rZJ3cLxzvKmZgaGuoaWFuZJCXmJuqq2Si0+ArltmDtB7SgpliTmlQKGAxOJiJX07
-        m6L80pJUhYz84hJbpdSClJwCQ4MCveLE3OLSvHS95PxcK0MDAyNToMqEnIwrT6czFlwQrZh8
-        /S5rA+NCoS5GTg4JAROJT1emMYPYQgI7GCVuLiroYuQCsj8xSmzf+oUJwvnGKPF4ykVWmI6P
-        1zZAJfYySrzaeJ4dov07o8T+9lIQm01AW+L9gkmsIEUiAv1MEovuLmIBcZgF1jJKrOq6ywRS
-        JSwQKnFp5iUWEJtFQFVi8oaZYDavgI3EisuTgWwOoHXyEgv/g93HKWArse/SLTaQORICi9gl
-        LmyYxQZxkovE8afzGSFsYYlXx7ewQ9hSEi/729ghGpoZJd7O3MwI4bQwStzd1AvVYSzR23OB
-        GWQbs4CmxPpd+hBhRYmdv+eClTAL8Em8+9rDCnEQr0RHGzTw1CRann2FBouMxN9/z6BsD4kF
-        89+xQoJoAqPEoZsvWScwys1C2LCAkXEVo1hqQXFuemqxYYEJcpxtYgSnYC2LHYx7zvkcYhTg
-        YFTi4b3RWx4nxJpYVlyZe4hRgoNZSYR3c2pFnBBvSmJlVWpRfnxRaU5q8SFGU2BQTmSWEk3O
-        B+aHvJJ4Q1MjY2NjCxMzczNTYyVx3qnXc+KEBNITS1KzU1MLUotg+pg4OKUaGMWv2NjONrv7
-        o9X3Mkcn5zvFf5tS/Ha1t+v8c5Y771wTPqVj0vuaN2tzmk65pD1+YWG65KLGrn1xMtz8eQxr
-        zivsZl9qXzT9xhy7ywIsEn33X0euFkvaFjS7SDh4xd7nogGR7eWnFJ/whrueWV14WC1X/1XD
-        7avnLJ4ERidLngy4abm401ZvpxJLcUaioRZzUXEiAPhoS1HXAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrNLMWRmVeSWpSXmKPExsWy7bCSnO6W3Io4g1m7OC2mN3pZzFm/hs3i
-        /INfbBbNi9ezWXRvnslo0fv+FZPF8nenGS12n/7KZLFyzw8miym/ljJbbP7ewWZxedccNot7
-        a/6zWiz7+p7dYkPLLHaLRxMmMVmcuvuZ3WJ2Yx+jg5DHzll32T02repk89j0aRK7x51re9g8
-        Tsz4zeKxf+4ado/NS+o93u+7yubRt2UVo8eZBUfYPXZ+2szq8XmTXABPFJdNSmpOZllqkb5d
-        AlfGlafTGQsuiFZMvn6XtYFxoVAXIyeHhICJxMdrG5i6GLk4hAR2M0r0LexghkjISLw5/5Sl
-        i5EDyBaWOHy4GKLmK6PEul0/WUFq2AS0Jd4vmARmiwjMZ5Lob+cHKWIW2MwoMXFpMwtIQlgg
-        WGLu8X2MIDaLgKrE5A0zweK8AjYSKy5PhlogL7HwP9heTgFbiX2XbrGB2EJAJVu7nzFPYORb
-        wMiwilEytaA4Nz232LDAMC+1XK84Mbe4NC9dLzk/dxMjOEq0NHcwXl4Sf4hRgINRiYf3Rm95
-        nBBrYllxZe4hRgkOZiUR3s2pFXFCvCmJlVWpRfnxRaU5qcWHGKU5WJTEeZ/mHYsUEkhPLEnN
-        Tk0tSC2CyTJxcEo1MBovOqR8+WWsncxxd1+XvQYMhcK/OQ4+vlhzaWPopNxSkaqt56vep2aX
-        POpNsr76QvGH0NJ/L/oks54niubs/J/y6PnsJGbhw7Gtui6XxJQfL+r/2Zl+LzwlxD/h7Nen
-        M3gWibzpKPFeM0eWqYp3B+fDW1msS58kiLStmaDRLzNhsthi0b+sv5VYijMSDbWYi4oTAT2/
-        SM2OAgAA
-X-CMS-MailID: 20200323080508epcas1p3c68190cd46635b9ff026a4ae70fc7a3b
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: SVC_REQ_APPROVE
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20200323080508epcas1p3c68190cd46635b9ff026a4ae70fc7a3b
-References: <20200323080503.6224-1-jaewon31.kim@samsung.com>
-        <CGME20200323080508epcas1p3c68190cd46635b9ff026a4ae70fc7a3b@epcas1p3.samsung.com>
+        id S1727518AbgCWIIq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Mar 2020 04:08:46 -0400
+Received: from mail-dm6nam12on2073.outbound.protection.outlook.com ([40.107.243.73]:6051
+        "EHLO NAM12-DM6-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727486AbgCWIIp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Mar 2020 04:08:45 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=TOO1G7gWpf7d4k3u4hnT4ybHuMtEpJehQIByKseqoCceD9i0O6RrXXY135LAN2/AqKaDMWUIhqQRQlLGkzxzQtXzRp/yDU1vCRDsfiCqQXmK+VAh3yeBvAF5mqG1tVaZKSkl8doEVHRuPb/jfgNFRuVZ4TF9u3AFmJ4CWIUjavx3VNqrudzGUDz7P3k84yyPCOznm4FceXSrOjdcAENqfe5IluQ3NmzOhrMjbv2dRGwYr5pKw+R4rgybrJ1nY+0SwBwbDmHlEjv8yFgdrXa0wjqwLi/cdD3MINfIhedYfrjqH5jG0b07+OEDM5UPl+Japa/QmxsIL5s1vXf5c0z4Vw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Enscesey7yzLYrtE4L+/Txn1r+dHg3TjlpnJWzhzZ3U=;
+ b=F7L4MsZwKHEp+UzouhkbLBsI2hMAcHsedHxytf5URPFUMzZsShxoAj/nRrQEGRHU21+nfdMGfMEPOvG45oe3B2BhPwIyZbWi705KSUMwOaNilQvVoX0Nx0Tjlt9ejP7SmRu9YWB1+Q/KDZyRnoDtWIQ7tO8zP7q+qpDidla3GY7aU6CIdEjX7Uk5fD4oBaDSYNso2QV6ZogE8UwSOIGadKNoN6tq7rEO1PuEYvPvwjG5c+FckrFj7t19EXfg39a8xEinH8KPXvytFor6wwpgiwCn7QsuTna1+wSvdkYj3XGQBlA7+D3fPoDWC/tVR+RvVV99SDokwsmGP/b/iRhyiw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 149.199.60.83) smtp.rcpttodomain=canb.auug.org.au smtp.mailfrom=xilinx.com;
+ dmarc=bestguesspass action=none header.from=xilinx.com; dkim=none (message
+ not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=xilinx.onmicrosoft.com; s=selector2-xilinx-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Enscesey7yzLYrtE4L+/Txn1r+dHg3TjlpnJWzhzZ3U=;
+ b=qrJmi+s3l7YsI6KFUhL3LwvzHdB5kEEduExNz7b2+OHqb/04G1Eatwx///fW00MxW94ai9EepKAkFVrvMJCFGgTmbImJuRKzWxGnKQZdvrXqV44jq3l6R8dw+I//lz1uzDwsi3VooQoh4CizPRKOjzNyjxQLGPkVbpBkFncxAkM=
+Received: from SN4PR0801CA0003.namprd08.prod.outlook.com
+ (2603:10b6:803:29::13) by SN6PR02MB4096.namprd02.prod.outlook.com
+ (2603:10b6:805:2b::27) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2835.22; Mon, 23 Mar
+ 2020 08:08:39 +0000
+Received: from SN1NAM02FT036.eop-nam02.prod.protection.outlook.com
+ (2603:10b6:803:29:cafe::fc) by SN4PR0801CA0003.outlook.office365.com
+ (2603:10b6:803:29::13) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2835.15 via Frontend
+ Transport; Mon, 23 Mar 2020 08:08:39 +0000
+Authentication-Results: spf=pass (sender IP is 149.199.60.83)
+ smtp.mailfrom=xilinx.com; canb.auug.org.au; dkim=none (message not signed)
+ header.d=none;canb.auug.org.au; dmarc=bestguesspass action=none
+ header.from=xilinx.com;
+Received-SPF: Pass (protection.outlook.com: domain of xilinx.com designates
+ 149.199.60.83 as permitted sender) receiver=protection.outlook.com;
+ client-ip=149.199.60.83; helo=xsj-pvapsmtpgw01;
+Received: from xsj-pvapsmtpgw01 (149.199.60.83) by
+ SN1NAM02FT036.mail.protection.outlook.com (10.152.72.149) with Microsoft SMTP
+ Server (version=TLS1_0, cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.20.2814.13
+ via Frontend Transport; Mon, 23 Mar 2020 08:08:38 +0000
+Received: from unknown-38-66.xilinx.com ([149.199.38.66] helo=xsj-pvapsmtp01)
+        by xsj-pvapsmtpgw01 with esmtp (Exim 4.63)
+        (envelope-from <michal.simek@xilinx.com>)
+        id 1jGI8U-0005ni-Ca; Mon, 23 Mar 2020 01:08:38 -0700
+Received: from [127.0.0.1] (helo=localhost)
+        by xsj-pvapsmtp01 with smtp (Exim 4.63)
+        (envelope-from <michal.simek@xilinx.com>)
+        id 1jGI8P-0000OV-9E; Mon, 23 Mar 2020 01:08:33 -0700
+Received: from xsj-pvapsmtp01 (maildrop.xilinx.com [149.199.38.66])
+        by xsj-smtp-dlp2.xlnx.xilinx.com (8.13.8/8.13.1) with ESMTP id 02N88QS6021123;
+        Mon, 23 Mar 2020 01:08:26 -0700
+Received: from [172.30.17.108]
+        by xsj-pvapsmtp01 with esmtp (Exim 4.63)
+        (envelope-from <michals@xilinx.com>)
+        id 1jGI8I-0000NA-5d; Mon, 23 Mar 2020 01:08:26 -0700
+Subject: Re: linux-next: build failure after merge of the irqchip tree
+To:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Marc Zyngier <marc.zyngier@arm.com>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Michal Simek <michal.simek@xilinx.com>,
+        Mubin Sayyed <mubin.usman.sayyed@xilinx.com>
+References: <20200323175946.7ad497ea@canb.auug.org.au>
+From:   Michal Simek <michal.simek@xilinx.com>
+Message-ID: <48d3232d-0f1d-42ea-3109-f44bbabfa2e8@xilinx.com>
+Date:   Mon, 23 Mar 2020 09:08:24 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
+MIME-Version: 1.0
+In-Reply-To: <20200323175946.7ad497ea@canb.auug.org.au>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-RCIS-Action: ALLOW
+X-TM-AS-Product-Ver: IMSS-7.1.0.1224-8.2.0.1013-23620.005
+X-TM-AS-User-Approved-Sender: Yes;Yes
+X-EOPAttributedMessage: 0
+X-MS-Office365-Filtering-HT: Tenant
+X-Forefront-Antispam-Report: CIP:149.199.60.83;IPV:;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(4636009)(136003)(396003)(39860400002)(346002)(376002)(199004)(46966005)(47076004)(44832011)(426003)(2616005)(186003)(356004)(31686004)(2906002)(336012)(478600001)(26005)(316002)(107886003)(110136005)(54906003)(5660300002)(31696002)(36756003)(70206006)(81166006)(8936002)(4326008)(9786002)(70586007)(81156014)(8676002);DIR:OUT;SFP:1101;SCL:1;SRVR:SN6PR02MB4096;H:xsj-pvapsmtpgw01;FPR:;SPF:Pass;LANG:en;PTR:unknown-60-83.xilinx.com;A:1;
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: e5046c16-53a5-4a82-e686-08d7cf0164c3
+X-MS-TrafficTypeDiagnostic: SN6PR02MB4096:
+X-Microsoft-Antispam-PRVS: <SN6PR02MB409628BD8FF920262A743DB0C6F00@SN6PR02MB4096.namprd02.prod.outlook.com>
+X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
+X-MS-Oob-TLC-OOBClassifiers: OLM:7691;
+X-Forefront-PRVS: 0351D213B3
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: 9wpPlRvzJSfDkg9r5lWNkSNJpB98RiCPPEStwLalSqqe8/g+etDERwMXBgDnH8ztvyN6BGYc4ZfQcn6a6AaA0+p3WpNbC8gcm15o5zMUbab3J71Hj27v15uq9u0ExaluPjxYCdtJETK2rJjdPrjfuQMY92/V4WgXj3KzKzwTD0MX3IVGzcEeQ/A6IGv9nuyX85NS4hJOf8uaBa2IvJjhmZZ2g8FXtk1Vdqf1LILkFIAn1/I/yV5EBX+anaZfK/20aHbuIGJAZsHOAmyFXpS0gZcTZ0oSFePD2NHIHQeWDfmkM14XIrS5UBlqCVYCERejGQCyPmCAJowukL3fl6mSrb4Ei1U9tQO94cd6a2fkoklrk925k7uMmXAB5275NfAqv0eZXLyiqIgfj006YoG5kg7wERkZULUrBi7MS3by0c3Zdm1r9RrvLgXFhk+V4WzOXCJQPabxrZ8ID61RdfWuODaxGRg5MMiycD1rVXTEXCNKxm0fy2rgz/I8RiS6Q/P0poPZmnrt/679ezN9cArS1g==
+X-OriginatorOrg: xilinx.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Mar 2020 08:08:38.7572
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: e5046c16-53a5-4a82-e686-08d7cf0164c3
+X-MS-Exchange-CrossTenant-Id: 657af505-d5df-48d0-8300-c31994686c5c
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.60.83];Helo=[xsj-pvapsmtpgw01]
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR02MB4096
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In Android system ion system heap size is huge like hundreds of MB. To
-know overal system memory usage, include ion system heap size in
-proc/meminfo_extra.
+Hi Stephen,
 
-To include heap size, use register_meminfo_extra introduced in previous
-patch.
+On 23. 03. 20 7:59, Stephen Rothwell wrote:
+> Hi all,
+> 
+> After merging the irqchip tree, today's linux-next build (powerpc
+> ppc44x_defconfig) failed like this:
+> 
+> drivers/irqchip/irq-xilinx-intc.c: In function 'xil_intc_handle_irq':
+> drivers/irqchip/irq-xilinx-intc.c:176:10: error: implicit declaration of function 'handle_domain_irq'; did you mean 'handle_bad_irq'? [-Werror=implicit-function-declaration]
+>   176 |    ret = handle_domain_irq(irqc->root_domain, hwirq, regs);
+>       |          ^~~~~~~~~~~~~~~~~
+>       |          handle_bad_irq
+> drivers/irqchip/irq-xilinx-intc.c: In function 'xilinx_intc_of_init':
+> drivers/irqchip/irq-xilinx-intc.c:253:3: error: implicit declaration of function 'set_handle_irq'; did you mean 'generic_handle_irq'? [-Werror=implicit-function-declaration]
+>   253 |   set_handle_irq(xil_intc_handle_irq);
+>       |   ^~~~~~~~~~~~~~
+>       |   generic_handle_irq
+> 
+> Caused by commit
+> 
+>   a0789993bf82 ("irqchip/xilinx: Enable generic irq multi handler")
+> 
+> I have reverted that commit (and commit
+> 
+>   9c2d4f525c00 ("irqchip/xilinx: Do not call irq_set_default_host()")
+> 
+> that conflicted with the other revert).
+> 
 
-Prior to register we need to add stats to show the ion heap usage. Add
-total_allocated into ion heap and count it on allocation and freeing. In
-a ion heap using ION_HEAP_FLAG_DEFER_FREE, a buffer can be freed from
-user but still live on deferred free list. Keep stats until the buffer
-is finally freed so that we can cover situation of deferred free thread
-stuck problem.
+thanks for reporting this.
 
-i.e) cat /proc/meminfo_extra | grep IonSystemHeap
-IonSystemHeap:    242620 kB
+Marc: I completely forget about this wiring for very ancient platform.
+AFAIK Xilinx is not testing this platform for years and would likely the
+best to remove support for it completely.
+The second option is to get xintc_get_irq() back with note about powerpc
+because it won't be that simple change all PPC platform to generic
+domain irq handler.
+Any other suggestion?
 
-i.e.) show_mem on oom
-<6>[  420.856428]  Mem-Info:
-<6>[  420.856433]  IonSystemHeap:32813kB
-
-Signed-off-by: Jaewon Kim <jaewon31.kim@samsung.com>
----
- drivers/staging/android/ion/ion.c             | 2 ++
- drivers/staging/android/ion/ion.h             | 1 +
- drivers/staging/android/ion/ion_system_heap.c | 2 ++
- 3 files changed, 5 insertions(+)
-
-diff --git a/drivers/staging/android/ion/ion.c b/drivers/staging/android/ion/ion.c
-index 38b51eace4f9..76db91a9f26a 100644
---- a/drivers/staging/android/ion/ion.c
-+++ b/drivers/staging/android/ion/ion.c
-@@ -74,6 +74,7 @@ static struct ion_buffer *ion_buffer_create(struct ion_heap *heap,
- 
- 	INIT_LIST_HEAD(&buffer->attachments);
- 	mutex_init(&buffer->lock);
-+	atomic_long_add(len, &heap->total_allocated);
- 	return buffer;
- 
- err1:
-@@ -95,6 +96,7 @@ void ion_buffer_destroy(struct ion_buffer *buffer)
- 	buffer->heap->num_of_buffers--;
- 	buffer->heap->num_of_alloc_bytes -= buffer->size;
- 	spin_unlock(&buffer->heap->stat_lock);
-+	atomic_long_sub(buffer->size, &buffer->heap->total_allocated);
- 
- 	kfree(buffer);
- }
-diff --git a/drivers/staging/android/ion/ion.h b/drivers/staging/android/ion/ion.h
-index 74914a266e25..10867a2e5728 100644
---- a/drivers/staging/android/ion/ion.h
-+++ b/drivers/staging/android/ion/ion.h
-@@ -157,6 +157,7 @@ struct ion_heap {
- 	u64 num_of_buffers;
- 	u64 num_of_alloc_bytes;
- 	u64 alloc_bytes_wm;
-+	atomic_long_t total_allocated;
- 
- 	/* protect heap statistics */
- 	spinlock_t stat_lock;
-diff --git a/drivers/staging/android/ion/ion_system_heap.c b/drivers/staging/android/ion/ion_system_heap.c
-index b83a1d16bd89..f7882fb7505d 100644
---- a/drivers/staging/android/ion/ion_system_heap.c
-+++ b/drivers/staging/android/ion/ion_system_heap.c
-@@ -259,6 +259,8 @@ static struct ion_heap *__ion_system_heap_create(void)
- 	if (ion_system_heap_create_pools(heap->pools))
- 		goto free_heap;
- 
-+	register_meminfo_extra(&heap->heap.total_allocated, PAGE_SHIFT,
-+			       "IonSystemHeap");
- 	return &heap->heap;
- 
- free_heap:
--- 
-2.13.7
-
+Thanks,
+Michal
