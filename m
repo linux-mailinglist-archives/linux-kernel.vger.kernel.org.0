@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 06BB618EE86
+	by mail.lfdr.de (Postfix) with ESMTP id 8183C18EE87
 	for <lists+linux-kernel@lfdr.de>; Mon, 23 Mar 2020 04:32:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727154AbgCWDcW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 22 Mar 2020 23:32:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42400 "EHLO mail.kernel.org"
+        id S1727194AbgCWDcY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 22 Mar 2020 23:32:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42472 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726983AbgCWDcW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Mar 2020 23:32:22 -0400
+        id S1726983AbgCWDcY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 22 Mar 2020 23:32:24 -0400
 Received: from lenoir.home (lfbn-ncy-1-985-231.w90-101.abo.wanadoo.fr [90.101.63.231])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3D62A20732;
-        Mon, 23 Mar 2020 03:32:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C5B2B20753;
+        Mon, 23 Mar 2020 03:32:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584934341;
-        bh=+sebJlZmwTkQ0Lv4nHLq6RFly3APM4ysfV4bs3HL/GQ=;
+        s=default; t=1584934343;
+        bh=dEwDTB7aI50sp41aasePK2wzlJCiouMLZUIKc+5DTdE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qJ84vxTEexH3ovRNg2wEpi8BJlwjpEHbJNjVEB6WPaz4Va2t4UsdRXht5oAHC2oO3
-         dCbKOYzSbyxOt9Vrf2nSPFEaxs88NAZHQHUMXSdCKL/d07AatWmoeVBntjCEJU+d+g
-         XqBwxOHmMVjLgXSqJbl2TqHT92baR2MdNKK8VmBE=
+        b=XdVx7sHZ0RGXKivqHch2Tp6V6bRB0tyo94rVXHt9s+6DcyDB/XcVS4J838/JRSMLJ
+         FLaHssrIVazo1ahtHvTHVIx1StnLWcfAjuWA4vs3ASVyyyDkgbGGkWT1w09KWVrreU
+         lAU5MrDa6BY8rfOs9RaaoK4i0c4e6uHwbTLnDjOg=
 From:   Frederic Weisbecker <frederic@kernel.org>
 To:     LKML <linux-kernel@vger.kernel.org>
 Cc:     Frederic Weisbecker <frederic@kernel.org>,
@@ -30,9 +30,9 @@ Cc:     Frederic Weisbecker <frederic@kernel.org>,
         Peter Zijlstra <peterz@infradead.org>,
         "Paul E . McKenney" <paulmck@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>
-Subject: [RFC PATCH 1/3] lockdep/irq: Be more strict about IRQ-threadable code end
-Date:   Mon, 23 Mar 2020 04:32:05 +0100
-Message-Id: <20200323033207.32370-2-frederic@kernel.org>
+Subject: [RFC PATCH 2/3] lockdep: Merge hardirq_threaded and irq_config together
+Date:   Mon, 23 Mar 2020 04:32:06 +0100
+Message-Id: <20200323033207.32370-3-frederic@kernel.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200323033207.32370-1-frederic@kernel.org>
 References: <20200323033207.32370-1-frederic@kernel.org>
@@ -43,104 +43,214 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-struct task_struct::hardirq_threaded is set before the IRQ handler
-is invoked but is not cleared back explicitly. This is done on the next
-time trace_hardirq_enter() is called, which may be at best after softirq
-execution, if any, or at worst by the next hardirq entry.
+These fields describe the same state: a code block running in hardirq
+that might be threaded under specific configurations.
 
-Besides being confusing, this exposes all the code in hardirq that
-follows the handler outside lockdep vigilance concerning LD_WAIT_CONFIG
-locking.
+Merge them together in the same field. Also rename the result as
+"hardirq_threadable" as we are talking about a possible state and not
+an actual one.
 
-Lets rather be paranoid and make sure we properly define the end of an
-LD_WAIT_CONFIG safe block.
+While at it remove the posix cpu timer lockdep functions since we can
+call into trace_hardirq_[un]threadable() directly. The need for hrtimer
+binders is debatable as well.
 
 Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 ---
- include/linux/irqflags.h | 22 +++++++++++++++-------
- kernel/irq/handle.c      | 10 ++++++++--
- 2 files changed, 23 insertions(+), 9 deletions(-)
+ include/linux/irqflags.h       | 70 ++++++++++++++--------------------
+ include/linux/sched.h          |  3 +-
+ kernel/irq/handle.c            |  4 +-
+ kernel/locking/lockdep.c       |  2 +-
+ kernel/time/posix-cpu-timers.c |  6 +--
+ 5 files changed, 35 insertions(+), 50 deletions(-)
 
 diff --git a/include/linux/irqflags.h b/include/linux/irqflags.h
-index a16adbb58f66..28481702460e 100644
+index 28481702460e..f69f93839760 100644
 --- a/include/linux/irqflags.h
 +++ b/include/linux/irqflags.h
-@@ -37,17 +37,24 @@
- # define trace_softirqs_enabled(p)	((p)->softirqs_enabled)
- # define trace_hardirq_enter()			\
- do {						\
--	if (!current->hardirq_context++)	\
--		current->hardirq_threaded = 0;	\
--} while (0)
--# define trace_hardirq_threaded()		\
--do {						\
--	current->hardirq_threaded = 1;		\
-+	current->hardirq_context++;		\
- } while (0)
-+
- # define trace_hardirq_exit()			\
- do {						\
+@@ -45,14 +45,14 @@ do {						\
  	current->hardirq_context--;		\
  } while (0)
-+
-+# define trace_hardirq_threaded()		\
-+do {						\
-+	current->hardirq_threaded = 1;		\
-+} while (0)
-+
-+# define trace_hardirq_unthreaded()		\
-+do {						\
-+	current->hardirq_threaded = 0;		\
-+} while (0)
-+
- # define lockdep_softirq_enter()		\
+ 
+-# define trace_hardirq_threaded()		\
++# define trace_hardirq_threadable()		\
  do {						\
- 	current->softirq_context++;		\
-@@ -98,8 +105,9 @@ do {						\
- # define trace_hardirqs_enabled(p)	0
+-	current->hardirq_threaded = 1;		\
++	current->hardirq_threadable = 1;	\
+ } while (0)
+ 
+-# define trace_hardirq_unthreaded()		\
++# define trace_hardirq_unthreadable()		\
+ do {						\
+-	current->hardirq_threaded = 0;		\
++	current->hardirq_threadable = 0;	\
+ } while (0)
+ 
+ # define lockdep_softirq_enter()		\
+@@ -64,38 +64,16 @@ do {						\
+ 	current->softirq_context--;		\
+ } while (0)
+ 
+-# define lockdep_hrtimer_enter(__hrtimer)		\
+-	  do {						\
+-		  if (!__hrtimer->is_hard)		\
+-			current->irq_config = 1;	\
+-	  } while (0)
+-
+-# define lockdep_hrtimer_exit(__hrtimer)		\
+-	  do {						\
+-		  if (!__hrtimer->is_hard)		\
+-			current->irq_config = 0;	\
+-	  } while (0)
+-
+-# define lockdep_posixtimer_enter()				\
+-	  do {							\
+-		  current->irq_config = 1;			\
+-	  } while (0)
+-
+-# define lockdep_posixtimer_exit()				\
+-	  do {							\
+-		  current->irq_config = 0;			\
+-	  } while (0)
+-
+ # define lockdep_irq_work_enter(__work)					\
+-	  do {								\
+-		  if (!(atomic_read(&__work->flags) & IRQ_WORK_HARD_IRQ))\
+-			current->irq_config = 1;			\
+-	  } while (0)
++do {									\
++	if (!(atomic_read(&__work->flags) & IRQ_WORK_HARD_IRQ))		\
++		trace_hardirq_threadable();				\
++} while (0)
+ # define lockdep_irq_work_exit(__work)					\
+-	  do {								\
+-		  if (!(atomic_read(&__work->flags) & IRQ_WORK_HARD_IRQ))\
+-			current->irq_config = 0;			\
+-	  } while (0)
++do {									\
++	if (!(atomic_read(&__work->flags) & IRQ_WORK_HARD_IRQ))		\
++		trace_hardirq_unthreadable();				\
++} while (0)
+ 
+ #else
+ # define trace_hardirqs_on()		do { } while (0)
+@@ -106,18 +84,26 @@ do {						\
  # define trace_softirqs_enabled(p)	0
  # define trace_hardirq_enter()		do { } while (0)
--# define trace_hardirq_threaded()	do { } while (0)
  # define trace_hardirq_exit()		do { } while (0)
-+# define trace_hardirq_threaded()	do { } while (0)
-+# define trace_hardirq_unthreaded()	do { } while (0)
+-# define trace_hardirq_threaded()	do { } while (0)
+-# define trace_hardirq_unthreaded()	do { } while (0)
++# define trace_hardirq_threadable()	do { } while (0)
++# define trace_hardirq_unthreadable()	do { } while (0)
  # define lockdep_softirq_enter()	do { } while (0)
  # define lockdep_softirq_exit()		do { } while (0)
- # define lockdep_hrtimer_enter(__hrtimer)		do { } while (0)
+-# define lockdep_hrtimer_enter(__hrtimer)		do { } while (0)
+-# define lockdep_hrtimer_exit(__hrtimer)		do { } while (0)
+-# define lockdep_posixtimer_enter()		do { } while (0)
+-# define lockdep_posixtimer_exit()		do { } while (0)
+-# define lockdep_irq_work_enter(__work)		do { } while (0)
+-# define lockdep_irq_work_exit(__work)		do { } while (0)
++# define lockdep_irq_work_enter(__work)	do { } while (0)
++# define lockdep_irq_work_exit(__work)	do { } while (0)
+ #endif
+ 
++# define lockdep_hrtimer_enter(__hrtimer)	\
++do {						\
++	if (!__hrtimer->is_hard)		\
++		trace_hardirq_threadable();	\
++} while (0)
++
++# define lockdep_hrtimer_exit(__hrtimer)	\
++do {						\
++	if (!__hrtimer->is_hard)		\
++		trace_hardirq_unthreadable();	\
++} while (0)
++
+ #if defined(CONFIG_IRQSOFF_TRACER) || \
+ 	defined(CONFIG_PREEMPT_TRACER)
+  extern void stop_critical_timings(void);
+diff --git a/include/linux/sched.h b/include/linux/sched.h
+index 933914cdf219..9918d23b53e7 100644
+--- a/include/linux/sched.h
++++ b/include/linux/sched.h
+@@ -970,7 +970,7 @@ struct task_struct {
+ 
+ #ifdef CONFIG_TRACE_IRQFLAGS
+ 	unsigned int			irq_events;
+-	unsigned int			hardirq_threaded;
++	unsigned int			hardirq_threadable;
+ 	unsigned long			hardirq_enable_ip;
+ 	unsigned long			hardirq_disable_ip;
+ 	unsigned int			hardirq_enable_event;
+@@ -983,7 +983,6 @@ struct task_struct {
+ 	unsigned int			softirq_enable_event;
+ 	int				softirqs_enabled;
+ 	int				softirq_context;
+-	int				irq_config;
+ #endif
+ 
+ #ifdef CONFIG_LOCKDEP
 diff --git a/kernel/irq/handle.c b/kernel/irq/handle.c
-index 16ee716e8291..39d6cf9f5853 100644
+index 39d6cf9f5853..55405879b8ad 100644
 --- a/kernel/irq/handle.c
 +++ b/kernel/irq/handle.c
-@@ -144,18 +144,24 @@ irqreturn_t __handle_irq_event_percpu(struct irq_desc *desc, unsigned int *flags
+@@ -153,14 +153,14 @@ irqreturn_t __handle_irq_event_percpu(struct irq_desc *desc, unsigned int *flags
+ 			      !(action->flags & (IRQF_NO_THREAD | IRQF_PERCPU | IRQF_ONESHOT)));
  
- 	for_each_action_of_desc(desc, action) {
- 		irqreturn_t res;
-+		bool threadable;
- 
- 		/*
- 		 * If this IRQ would be threaded under force_irqthreads, mark it so.
- 		 */
--		if (irq_settings_can_thread(desc) &&
--		    !(action->flags & (IRQF_NO_THREAD | IRQF_PERCPU | IRQF_ONESHOT)))
-+		threadable = (irq_settings_can_thread(desc) &&
-+			      !(action->flags & (IRQF_NO_THREAD | IRQF_PERCPU | IRQF_ONESHOT)));
-+
-+		if (threadable)
- 			trace_hardirq_threaded();
+ 		if (threadable)
+-			trace_hardirq_threaded();
++			trace_hardirq_threadable();
  
  		trace_irq_handler_entry(irq, action);
  		res = action->handler(irq, action->dev_id);
  		trace_irq_handler_exit(irq, action, res);
  
-+		if (threadable)
-+			trace_hardirq_unthreaded();
-+
+ 		if (threadable)
+-			trace_hardirq_unthreaded();
++			trace_hardirq_unthreadable();
+ 
  		if (WARN_ONCE(!irqs_disabled(),"irq %u handler %pS enabled interrupts\n",
  			      irq, action->handler))
- 			local_irq_disable();
+diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
+index 0ebf9807d971..1cebaeb790a0 100644
+--- a/kernel/locking/lockdep.c
++++ b/kernel/locking/lockdep.c
+@@ -4025,7 +4025,7 @@ static int check_wait_context(struct task_struct *curr, struct held_lock *next)
+ 		/*
+ 		 * Check if force_irqthreads will run us threaded.
+ 		 */
+-		if (curr->hardirq_threaded || curr->irq_config)
++		if (curr->hardirq_threadable)
+ 			curr_inner = LD_WAIT_CONFIG;
+ 		else
+ 			curr_inner = LD_WAIT_SPIN;
+diff --git a/kernel/time/posix-cpu-timers.c b/kernel/time/posix-cpu-timers.c
+index 2c48a7233b19..d29a06d60206 100644
+--- a/kernel/time/posix-cpu-timers.c
++++ b/kernel/time/posix-cpu-timers.c
+@@ -1126,9 +1126,9 @@ void run_posix_cpu_timers(void)
+ 	if (!fastpath_timer_check(tsk))
+ 		return;
+ 
+-	lockdep_posixtimer_enter();
++	trace_hardirq_threadable();
+ 	if (!lock_task_sighand(tsk, &flags)) {
+-		lockdep_posixtimer_exit();
++		trace_hardirq_unthreadable();
+ 		return;
+ 	}
+ 	/*
+@@ -1172,7 +1172,7 @@ void run_posix_cpu_timers(void)
+ 			cpu_timer_fire(timer);
+ 		spin_unlock(&timer->it_lock);
+ 	}
+-	lockdep_posixtimer_exit();
++	trace_hardirq_unthreadable();
+ }
+ 
+ /*
 -- 
 2.25.0
 
