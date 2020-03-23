@@ -2,157 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3C3A918F3CD
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Mar 2020 12:37:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 04C0F18F3D3
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Mar 2020 12:38:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728266AbgCWLgq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Mar 2020 07:36:46 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:35216 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728196AbgCWLgm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Mar 2020 07:36:42 -0400
-Received: by mail-lj1-f193.google.com with SMTP id u12so14152765ljo.2;
-        Mon, 23 Mar 2020 04:36:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=GphvHmLAhceFYQBa1OZ1h7RBa7vQUlExR2ca155Stlg=;
-        b=qS76gR8fwgcl4Ri1p34R8jatA1DUnG172+l7oWlwnJzP2+abTSO66DypYT9p5np6GM
-         sv2zIBmkm62x18gBBOsGgvCALynAltxlcLgZByiEY7tjq884dt59n4Qu0tWsb/U+8O50
-         DFLC5a//0oRw76uMPBp0mwYBT3ubmiHPIDAbyGk3ztPr13igmVBKMrnCZQF8o3PAYwkF
-         81RAnFNccC2jSmglGBHpm3L0U+UpQjxu2owVW+NOoWhqLKnZlkimbGNsAJ9ieBWhH0Ct
-         p/O7C0+vD/rFjN8xuvJEyfngkQf/duPKWaKKzOIlBC+DH14GitLAglVhkHPuX83GHr0F
-         mDZg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=GphvHmLAhceFYQBa1OZ1h7RBa7vQUlExR2ca155Stlg=;
-        b=FPmbG8HMxknBsQe3E7eGqel+fg+tF5nOvnQw2GFcUhtoqZXKi332YE4JyE9g4+DWTL
-         k3B5c0OLiQ8t2CdRbsAo4jiGeRYpQ1nAMjW9kvTLEb1TM6It0w0uzHn8Pe1timTZk75R
-         a3QQWVG4exwXD+ngwm7cMIl/RizfR0IL+53L1svjWSeBF+7osi2lDIScmJYbe+xrReMN
-         YZuBJ3Uw+QKEQ6JmQhmPXuC5SiOiekqeKN887MJ8Wxd8RMcjYjwIYM2uZm2Oab9udzGy
-         T0AL/qnFk/DHFtZ41H58mGmdB+9P1M1xX0jp5qPM3DJiN/p+ZFw5fXL4Amm8xaETjJTj
-         HSpA==
-X-Gm-Message-State: ANhLgQ13oZCnuYtgF/u2C9b10AQKiw4OvDe5YyHbJNrDOGe6evHZ0MEA
-        KjEUYfrOirmuci0qK7AQQkZpJJCgHHw=
-X-Google-Smtp-Source: ADFU+vvBWQplGGYEHQzPeT5aUZc2YTbon7I5TlSyLNWceXWYZ5QlGyXx3t+RzLSXJ/6u7P0C3heXRQ==
-X-Received: by 2002:a2e:a3d3:: with SMTP id w19mr13993303lje.232.1584963399122;
-        Mon, 23 Mar 2020 04:36:39 -0700 (PDT)
-Received: from localhost.localdomain (h5ef52e31.seluork.dyn.perspektivbredband.net. [94.245.46.49])
-        by smtp.gmail.com with ESMTPSA id r23sm8079268lfi.89.2020.03.23.04.36.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 Mar 2020 04:36:38 -0700 (PDT)
-From:   "Uladzislau Rezki (Sony)" <urezki@gmail.com>
-To:     LKML <linux-kernel@vger.kernel.org>,
-        "Paul E . McKenney" <paulmck@kernel.org>,
-        Joel Fernandes <joel@joelfernandes.org>
-Cc:     RCU <rcu@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Uladzislau Rezki <urezki@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Oleksiy Avramchenko <oleksiy.avramchenko@sonymobile.com>
-Subject: [PATCH 7/7] rcu: support headless variant in the kvfree_rcu()
-Date:   Mon, 23 Mar 2020 12:36:21 +0100
-Message-Id: <20200323113621.12048-8-urezki@gmail.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200323113621.12048-1-urezki@gmail.com>
-References: <20200323113621.12048-1-urezki@gmail.com>
+        id S1728241AbgCWLha (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Mar 2020 07:37:30 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48112 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728115AbgCWLha (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Mar 2020 07:37:30 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 40C172072D;
+        Mon, 23 Mar 2020 11:37:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1584963448;
+        bh=Qvwdz8ilRZsCc6m4V1drguRDObDE7BaSWVLZcfchPxs=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=pDQDVC84TdvDgm8Yp4vynCgeBAz6qkIsJyMp4y6tkStNL9WlwK/con7SNvepYz+O7
+         LKn/lf+cKyg3+AirXdzLWCQnfNlXXUF0JF9f14TRpJ//Ma610xkNa6WfCHyWl3b+Hz
+         pVbtSWsDiApFIZ2kuB9HQQauBID5XBMiYWylvG5g=
+Date:   Mon, 23 Mar 2020 12:37:26 +0100
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Wambui Karuga <wambui.karugax@gmail.com>
+Cc:     maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+        tzimmermann@suse.de, airlied@linux.ie, daniel@ffwll.ch,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] drm/vram-helper: remove unneeded #if defined/endif
+ guards.
+Message-ID: <20200323113726.GA663867@kroah.com>
+References: <20200323112802.228214-1-wambui.karugax@gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200323112802.228214-1-wambui.karugax@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Make it possible to pass one or two arguments to the
-kvfree_rcu() macro what corresponds to either headless
-case or not, so it becomes a bit versatile.
+On Mon, Mar 23, 2020 at 02:28:02PM +0300, Wambui Karuga wrote:
+> Remove unneeded #if/#endif guards for checking whether the
+> CONFIG_DEBUG_FS option is set or not. If the option is not set, the
+> compiler optimizes the functions making the guards
+> unnecessary.
+> 
+> Signed-off-by: Wambui Karuga <wambui.karugax@gmail.com>
+> ---
+>  drivers/gpu/drm/drm_gem_vram_helper.c | 4 ----
+>  1 file changed, 4 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/drm_gem_vram_helper.c b/drivers/gpu/drm/drm_gem_vram_helper.c
+> index 76506bedac11..b3201a70cbfc 100644
+> --- a/drivers/gpu/drm/drm_gem_vram_helper.c
+> +++ b/drivers/gpu/drm/drm_gem_vram_helper.c
+> @@ -1018,7 +1018,6 @@ static struct ttm_bo_driver bo_driver = {
+>   * struct drm_vram_mm
+>   */
+>  
+> -#if defined(CONFIG_DEBUG_FS)
+>  static int drm_vram_mm_debugfs(struct seq_file *m, void *data)
+>  {
+>  	struct drm_info_node *node = (struct drm_info_node *) m->private;
+> @@ -1035,7 +1034,6 @@ static int drm_vram_mm_debugfs(struct seq_file *m, void *data)
+>  static const struct drm_info_list drm_vram_mm_debugfs_list[] = {
+>  	{ "vram-mm", drm_vram_mm_debugfs, 0, NULL },
+>  };
+> -#endif
+>  
+>  /**
+>   * drm_vram_mm_debugfs_init() - Register VRAM MM debugfs file.
+> @@ -1045,11 +1043,9 @@ static const struct drm_info_list drm_vram_mm_debugfs_list[] = {
+>   */
+>  void drm_vram_mm_debugfs_init(struct drm_minor *minor)
+>  {
+> -#if defined(CONFIG_DEBUG_FS)
+>  	drm_debugfs_create_files(drm_vram_mm_debugfs_list,
+>  				 ARRAY_SIZE(drm_vram_mm_debugfs_list),
+>  				 minor->debugfs_root, minor);
+> -#endif
+>  }
+>  EXPORT_SYMBOL(drm_vram_mm_debugfs_init);
+>  
+> -- 
+> 2.25.1
 
-As a result we obtain two ways of using that macro,
-below are two examples:
-
-a) kvfree_rcu(ptr, rhf);
-    struct X {
-        struct rcu_head rhf;
-        unsigned char data[100];
-    };
-
-    void *ptr = kvmalloc(sizeof(struct X), GFP_KERNEL);
-    if (ptr)
-        kvfree_rcu(ptr, rhf);
-
-b) kvfree_rcu(ptr);
-    void *ptr = kvmalloc(some_bytes, GFP_KERNEL);
-    if (ptr)
-        kvfree_rcu(ptr);
-
-Last one, we name it headless variant, only needs one
-argument, means it does not require any rcu_head to be
-present within the type of ptr.
-
-There is a restriction the (b) context has to fall into
-might_sleep() annotation. To check that, please activate
-the CONFIG_DEBUG_ATOMIC_SLEEP option in your kernel.
-
-Signed-off-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
----
- include/linux/rcupdate.h | 38 ++++++++++++++++++++++++++++++++++----
- 1 file changed, 34 insertions(+), 4 deletions(-)
-
-diff --git a/include/linux/rcupdate.h b/include/linux/rcupdate.h
-index efd3dc13c36d..51ebf2461d51 100644
---- a/include/linux/rcupdate.h
-+++ b/include/linux/rcupdate.h
-@@ -844,12 +844,42 @@ do {									\
- 
- /**
-  * kvfree_rcu() - kvfree an object after a grace period.
-- * @ptr:	pointer to kvfree
-- * @rhf:	the name of the struct rcu_head within the type of @ptr.
-  *
-- * Same as kfree_rcu(), just simple alias.
-+ * This macro consists of one or two arguments and it is
-+ * based on whether an object is head-less or not. If it
-+ * has a head then a semantic stays the same as it used
-+ * to be before:
-+ *
-+ *     kvfree_rcu(ptr, rhf);
-+ *
-+ * where @ptr is a pointer to kvfree(), @rhf is the name
-+ * of the rcu_head structure within the type of @ptr.
-+ *
-+ * When it comes to head-less variant, only one argument
-+ * is passed and that is just a pointer which has to be
-+ * freed after a grace period. Therefore the semantic is
-+ *
-+ *     kvfree_rcu(ptr);
-+ *
-+ * where @ptr is a pointer to kvfree().
-+ *
-+ * Please note, head-less way of freeing is permitted to
-+ * use from a context that has to follow might_sleep()
-+ * annotation. Otherwise, please switch and embed the
-+ * rcu_head structure within the type of @ptr.
-  */
--#define kvfree_rcu(ptr, rhf) kfree_rcu(ptr, rhf)
-+#define kvfree_rcu(...) KVFREE_GET_MACRO(__VA_ARGS__,		\
-+	kvfree_rcu_arg_2, kvfree_rcu_arg_1)(__VA_ARGS__)
-+
-+#define KVFREE_GET_MACRO(_1, _2, NAME, ...) NAME
-+#define kvfree_rcu_arg_2(ptr, rhf) kfree_rcu(ptr, rhf)
-+#define kvfree_rcu_arg_1(ptr)					\
-+do {								\
-+	typeof(ptr) ___p = (ptr);				\
-+								\
-+	if (___p)						\
-+		kvfree_call_rcu(NULL, (rcu_callback_t) (___p));	\
-+} while (0)
- 
- /*
-  * Place this after a lock-acquisition primitive to guarantee that
--- 
-2.20.1
-
+Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
