@@ -2,192 +2,383 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D6B9518F90F
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Mar 2020 16:57:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D082218F914
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Mar 2020 16:58:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727391AbgCWP5c (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Mar 2020 11:57:32 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43810 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727207AbgCWP5c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Mar 2020 11:57:32 -0400
-Received: from paulmck-ThinkPad-P72.home (50-39-105-78.bvtn.or.frontiernet.net [50.39.105.78])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5EF9D20714;
-        Mon, 23 Mar 2020 15:57:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584979051;
-        bh=wWmp79oYZzRaFnYu+JbO0jOsvCTJ1l20wpyJ4PcbvPw=;
-        h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-        b=Jc49PZWHvYzMwgEdu9/+8tjzBQdvcrpBisMFFac0VVR/yE6Ao2qLGSm9mvnF7CMsL
-         yJ70ErRJzt7E4d3oV5auDnn9+YvskerNhbygw41pO4VQbzRs8cxPaRA/DKrBsHmfbs
-         1HFEJ5J0xUnozzCuJum9y4r5VJDJ16a9IRQ0fQtY=
-Received: by paulmck-ThinkPad-P72.home (Postfix, from userid 1000)
-        id 2DC5A35226C6; Mon, 23 Mar 2020 08:57:31 -0700 (PDT)
-Date:   Mon, 23 Mar 2020 08:57:31 -0700
-From:   "Paul E. McKenney" <paulmck@kernel.org>
-To:     Qais Yousef <qais.yousef@arm.com>
-Cc:     Davidlohr Bueso <dave@stgolabs.net>,
-        Josh Triplett <josh@joshtriplett.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: Hit WARN_ON() in rcutorture.c:1055
-Message-ID: <20200323155731.GK3199@paulmck-ThinkPad-P72>
-Reply-To: paulmck@kernel.org
-References: <20200323154309.nah44so2556ee56g@e107158-lin.cambridge.arm.com>
+        id S1727438AbgCWP6M (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Mar 2020 11:58:12 -0400
+Received: from mail-vs1-f68.google.com ([209.85.217.68]:44767 "EHLO
+        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727129AbgCWP6L (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Mar 2020 11:58:11 -0400
+Received: by mail-vs1-f68.google.com with SMTP id e138so9042787vsc.11
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Mar 2020 08:58:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=n3nF2XEJF+3VJmtugEEG0k9Mal8VgUQrukDbfKGmZmw=;
+        b=YSYjEAYdWU+Fcf3THNsHZiqYlveQL9H5/YFc9huB2qW0SVXTH1coofuUlbrn12kIXG
+         oEk+JCxz5/G4NuMkHiNN7TAz7qKbGH/2/LivZdBvUWyHlsMIQKNiU0onzYv8obbaoTjt
+         aeVMD/Sshl9NlDcl26nZwcS9+y/BY7b/zTqTcHFSp9ZQaR0PJSbVTm8cebq6uNXVaIt6
+         59OCuJye0bTcysKaPKl2VgWUCHsPLLdSSdH9zqfrmljm1SRIc9ovUMHITte6oii5+Ggo
+         I7/RrIzz0BW+kdgHwlADprLyL3QG6UqLfHEgIq9e+d1drrFHbg7oOZajk5V27vtRp6JJ
+         fh6A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=n3nF2XEJF+3VJmtugEEG0k9Mal8VgUQrukDbfKGmZmw=;
+        b=RVVnCldUxg+tkTiZ/ZIAxlSxQGFU/yeH4+dmnAVBzA72n7IdxcDVVjxfUidfQAhIZk
+         RtlsWBSTFiyJ26+u8Q0sd1cmTE7An0mKmUjznUYnooSMCV2e5eUPjggMxTvXiBAG6moU
+         XIYoFDKtBoLJmkuWqfGPExbPu2IQS9RtIF2o5a/ES5vg0NRn9Bdw/uEikRH9yNSD7NZf
+         lxyCGRJP/UKkSbCfZRWhnN94Jarpj0Gf9YBHZ+Dn+LHn4e8hr06j8rGqAko1dkx7f1f6
+         uLVPi5kAWRaaGLWEd2v3XEQ8fHmO17eR8RyARz3lCDFD0qms5xiKvPWOxANIyo0Y3cZT
+         7QBg==
+X-Gm-Message-State: ANhLgQ3jaT3Ld1UylI7oDL3h6Y9eOAbvsDGCZK3BObI5dPfqMY8siEuK
+        dRcDfxpcThXcR97R/rjT21W7PQd9k7DwgABJdlSR9w==
+X-Google-Smtp-Source: ADFU+vsS91ZoQIuI8ccP/DSMa9qRHXbW9REfOAml1Q+Ozi/C0xXdvRCLJ31dq8A8mFDqpGQA5tuX7hcVDRsQj4pKH30=
+X-Received: by 2002:a05:6102:2051:: with SMTP id q17mr16732708vsr.165.1584979089841;
+ Mon, 23 Mar 2020 08:58:09 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200323154309.nah44so2556ee56g@e107158-lin.cambridge.arm.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <20200320014107.26087-1-thara.gopinath@linaro.org> <20200320014107.26087-4-thara.gopinath@linaro.org>
+In-Reply-To: <20200320014107.26087-4-thara.gopinath@linaro.org>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Mon, 23 Mar 2020 16:57:33 +0100
+Message-ID: <CAPDyKFqn0E=-sNZy=09tLZn=6VxEfiXL-vUNwb9HK8+WLDBiPw@mail.gmail.com>
+Subject: Re: [Patch v5 3/6] thermal: Add generic power domain warming device driver.
+To:     Thara Gopinath <thara.gopinath@linaro.org>
+Cc:     Zhang Rui <rui.zhang@intel.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Andy Gross <agross@kernel.org>, Rob Herring <robh@kernel.org>,
+        Amit Kucheria <amit.kucheria@verdurent.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        DTML <devicetree@vger.kernel.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 23, 2020 at 03:43:09PM +0000, Qais Yousef wrote:
-> Hi
-> 
-> I hit the following warning while running rcutorture tests. It only happens
-> when I try to hibernate the system (arm64 Juno-r2).
+On Fri, 20 Mar 2020 at 02:41, Thara Gopinath <thara.gopinath@linaro.org> wrote:
+>
+> Resources modeled as power domains in linux kernel can  be used to warm the
+> SoC(eg. mx power domain on sdm845).  To support this feature, introduce a
+> generic power domain warming device driver that can be plugged into the
+> thermal framework (The thermal framework itself requires further
+> modifiction to support a warming device in place of a cooling device.
+> Those extensions are not introduced in this patch series).
+>
+> Signed-off-by: Thara Gopinath <thara.gopinath@linaro.org>
+> ---
+>
+> v3->v4:
+>         - Removed late_init hook pd_warming_device_ops.
+>         - Use of_genpd_add_device instead of pm_genpd_add_device to attach
+>           device to the generic power domain.
+>         - Use thermal_of_cooling_device_parent_register to register the
+>           cooling device so that the device with genpd attached can be
+>           made parent of the cooling device.
+>         - With above changes, remove reference to generic_pm_domain in
+>           pd_warming_device.
+>
+> v4->v5:
+>         - All the below changes are as per Ulf's review comments.
+>         - Renamed pwr_domain_warming.c and pwr_domain_warming.h to
+>           pd_warming.c and pd_warming.h.
+>         - Renamed pwr_domain_warming_register API to
+>           of_pd_warming_register.
+>         - Dropped in-param pd_name to of_pd_warming_register.
+>         - Introduced ID allocator to uniquely identify each power domain
+>           warming device.
+>         - Introduced pd_warming_release to handle device kfree for
+>           pd_warming_device.
+>         - Introduced pm_genpd_remove_device in the error exit path
+>           of of_pd_warming_register.
+>
+>  drivers/thermal/Kconfig      |  10 +++
+>  drivers/thermal/Makefile     |   2 +
+>  drivers/thermal/pd_warming.c | 168 +++++++++++++++++++++++++++++++++++
+>  include/linux/pd_warming.h   |  29 ++++++
+>  4 files changed, 209 insertions(+)
+>  create mode 100644 drivers/thermal/pd_warming.c
+>  create mode 100644 include/linux/pd_warming.h
+>
+> diff --git a/drivers/thermal/Kconfig b/drivers/thermal/Kconfig
+> index 4d6753f2b18f..92522d541d0e 100644
+> --- a/drivers/thermal/Kconfig
+> +++ b/drivers/thermal/Kconfig
+> @@ -206,6 +206,16 @@ config DEVFREQ_THERMAL
+>
+>           If you want this support, you should say Y here.
+>
+> +config PWR_DOMAIN_WARMING_THERMAL
+> +       bool "Power Domain based warming device"
+> +       depends on PM_GENERIC_DOMAINS_OF
+> +       help
+> +         This implements the generic power domain based warming
+> +         mechanism through increasing the performance state of
+> +         a power domain.
+> +
+> +         If you want this support, you should say Y here.
+> +
+>  config THERMAL_EMULATION
+>         bool "Thermal emulation mode support"
+>         help
+> diff --git a/drivers/thermal/Makefile b/drivers/thermal/Makefile
+> index 8c8ed7b79915..7db87a779126 100644
+> --- a/drivers/thermal/Makefile
+> +++ b/drivers/thermal/Makefile
+> @@ -28,6 +28,8 @@ thermal_sys-$(CONFIG_CLOCK_THERMAL)   += clock_cooling.o
+>  # devfreq cooling
+>  thermal_sys-$(CONFIG_DEVFREQ_THERMAL) += devfreq_cooling.o
+>
+> +thermal_sys-$(CONFIG_PWR_DOMAIN_WARMING_THERMAL)       += pd_warming.o
+> +
+>  # platform thermal drivers
+>  obj-y                          += broadcom/
+>  obj-$(CONFIG_THERMAL_MMIO)             += thermal_mmio.o
+> diff --git a/drivers/thermal/pd_warming.c b/drivers/thermal/pd_warming.c
+> new file mode 100644
+> index 000000000000..c0854d2e4b92
+> --- /dev/null
+> +++ b/drivers/thermal/pd_warming.c
+> @@ -0,0 +1,168 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (c) 2019, Linaro Ltd
+> + */
+> +#include <linux/err.h>
+> +#include <linux/kernel.h>
+> +#include <linux/init.h>
+> +#include <linux/of_device.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/module.h>
+> +#include <linux/pm_runtime.h>
+> +#include <linux/slab.h>
+> +#include <linux/pd_warming.h>
+> +
+> +struct pd_warming_device {
+> +       struct thermal_cooling_device *cdev;
+> +       struct device dev;
+> +       int id;
+> +       int max_state;
+> +       int cur_state;
+> +       bool runtime_resumed;
+> +};
+> +
+> +static DEFINE_IDA(pd_ida);
+> +
+> +static int pd_wdev_get_max_state(struct thermal_cooling_device *cdev,
+> +                                unsigned long *state)
+> +{
+> +       struct pd_warming_device *pd_wdev = cdev->devdata;
+> +
+> +       *state = pd_wdev->max_state;
+> +       return 0;
+> +}
+> +
+> +static int pd_wdev_get_cur_state(struct thermal_cooling_device *cdev,
+> +                                unsigned long *state)
+> +{
+> +       struct pd_warming_device *pd_wdev = cdev->devdata;
+> +
+> +       *state = dev_pm_genpd_get_performance_state(&pd_wdev->dev);
+> +
+> +       return 0;
+> +}
+> +
+> +static int pd_wdev_set_cur_state(struct thermal_cooling_device *cdev,
+> +                                unsigned long state)
+> +{
+> +       struct pd_warming_device *pd_wdev = cdev->devdata;
+> +       struct device *dev = &pd_wdev->dev;
+> +       int ret;
+> +
+> +       ret = dev_pm_genpd_set_performance_state(dev, state);
+> +
+> +       if (ret)
+> +               return ret;
+> +
+> +       if (state && !pd_wdev->runtime_resumed) {
+> +               ret = pm_runtime_get_sync(dev);
+> +               pd_wdev->runtime_resumed = true;
+> +       } else if (!state && pd_wdev->runtime_resumed) {
+> +               ret = pm_runtime_put(dev);
+> +               pd_wdev->runtime_resumed = false;
+> +       }
+> +
+> +       return ret;
+> +}
+> +
+> +static struct thermal_cooling_device_ops pd_warming_device_ops = {
+> +       .get_max_state  = pd_wdev_get_max_state,
+> +       .get_cur_state  = pd_wdev_get_cur_state,
+> +       .set_cur_state  = pd_wdev_set_cur_state,
+> +};
+> +
+> +static void pd_warming_release(struct device *dev)
+> +{
+> +       kfree(dev);
 
-Hibernating the system during rcutorture tests.  Now that is gutsy!  ;-)
+This is wrong, you should free a "struct pd_warming_device *". Use the
+"container of" macro to get it from 'dev'.
 
-> Let me know if you need additional info.
+> +}
+> +
+> +struct thermal_cooling_device *
+> +of_pd_warming_register(struct device *parent, int pd_id)
+> +{
+> +       struct pd_warming_device *pd_wdev;
+> +       struct of_phandle_args pd_args;
+> +       char cdev_name[THERMAL_NAME_LENGTH];
+> +       int ret;
+> +
+> +       pd_wdev = kzalloc(sizeof(*pd_wdev), GFP_KERNEL);
+> +       if (!pd_wdev)
+> +               return ERR_PTR(-ENOMEM);
+> +
+> +       dev_set_name(&pd_wdev->dev, "%s_%d_warming_dev",
+> +                    dev_name(parent), pd_id);
+> +       pd_wdev->dev.parent = parent;
+> +       pd_wdev->dev.release = pd_warming_release;
+> +
+> +       ret = device_register(&pd_wdev->dev);
+> +       if (ret) {
+> +               put_device(&pd_wdev->dev);
+> +               goto free_pd_wdev;
+> +       }
+> +
+> +       ret = ida_simple_get(&pd_ida, 0, 0, GFP_KERNEL);
+> +       if (ret < 0)
+> +               goto unregister_device;
 
-1.	Do you need this to work?  If so, please tell me your use case.
+If you use and ida, you might as well use it as a part of the
+dev_set_name() above.
 
-2.	What is line 1055 of your rcutorture.c?  Here is my guess:
+That should give you a unique name, similar to how you use it for the
+cdev_name below.
 
-		if (stutter_wait("rcu_torture_writer") &&
-		    !READ_ONCE(rcu_fwd_cb_nodelay) &&
-		    !cur_ops->slow_gps &&
-		    !torture_must_stop() &&
-		    rcu_inkernel_boot_has_ended())
-			for (i = 0; i < ARRAY_SIZE(rcu_tortures); i++)
-				if (list_empty(&rcu_tortures[i].rtort_free) &&
-				    rcu_access_pointer(rcu_torture_current) !=
-				    &rcu_tortures[i]) {
-					rcu_ftrace_dump(DUMP_ALL);
-					WARN(1, "%s: rtort_pipe_count: %d\n", __func__, rcu_tortures[i].rtort_pipe_count);
+> +
+> +       pd_wdev->id = ret;
+> +
+> +       pd_args.np = parent->of_node;
+> +       pd_args.args[0] = pd_id;
+> +       pd_args.args_count = 1;
+> +
+> +       ret = of_genpd_add_device(&pd_args, &pd_wdev->dev);
+> +
+> +       if (ret)
+> +               goto remove_ida;
+> +
+> +       ret = dev_pm_genpd_performance_state_count(&pd_wdev->dev);
+> +       if (ret < 0)
+> +               goto out_genpd;
+> +
+> +       pd_wdev->max_state = ret - 1;
+> +       pm_runtime_enable(&pd_wdev->dev);
+> +       pd_wdev->runtime_resumed = false;
+> +
+> +       snprintf(cdev_name, sizeof(cdev_name), "thermal-pd-%d", pd_wdev->id);
+> +       pd_wdev->cdev = thermal_of_cooling_device_register
+> +                                       (NULL, cdev_name, pd_wdev,
+> +                                        &pd_warming_device_ops);
+> +       if (IS_ERR(pd_wdev->cdev)) {
+> +               pr_err("unable to register %s cooling device\n", cdev_name);
+> +               ret = PTR_ERR(pd_wdev->cdev);
+> +               goto out_runtime_disable;
+> +       }
+> +
+> +       return pd_wdev->cdev;
+> +
+> +out_runtime_disable:
+> +       pm_runtime_disable(&pd_wdev->dev);
+> +out_genpd:
+> +       pm_genpd_remove_device(&pd_wdev->dev);
+> +remove_ida:
+> +       ida_simple_remove(&pd_ida, pd_wdev->id);
+> +unregister_device:
+> +       device_unregister(&pd_wdev->dev);
+> +       pd_warming_release(&pd_wdev->dev);
 
-	If my guess is correct, it is complaining because of the lack of
-	forward progress during the time the system was suspended.  ;-)
+This is wrong, drop this.
 
-	Or tell me exactly what kernel commit you are using, and I can
-	look it up.
+> +free_pd_wdev:
+> +       kfree(pd_wdev);
 
-							Thanx, Paul
+Since you should free this from the ->release() callback, there is no
+need to do this here.
 
-> # echo suspend > /sys/power/disk
-> # [  299.688526] rcu_torture_fwd_prog_nr: Duration 2913 cver 183 gps 285
-> e[  300.176051] rcu_torture_fwd_prog_cr Duration 39 barrier: 29 pending 9295 n_launders: 21213 n_launders_sa: 8224 n_max_gps: 100 n_max_cbs: 12823 cver 4 gps 10
-> [  300.190434] rcu_torture_fwd_cb_hist: Callback-invocation histogram (duration 72 jiffies): 1s/10: 11381:6 2s/10: 21139:7 3s/10: 1516:1
-> # echo disk > /sys/power/state
-> [  304.592943] PM: hibernation: hibernation entry
-> [  304.612969] Filesystems sync: 0.003 seconds
-> [  304.617616] Freezing user space processes ... (elapsed 0.004 seconds) done.
-> [  304.629712] OOM killer disabled.
-> [  304.642462] PM: hibernation: Preallocating image memory
-> [  305.988263] PM: hibernation: Allocated 96990 pages for snapshot
-> [  305.994311] PM: hibernation: Allocated 387960 kbytes in 1.33 seconds (291.69 MB/s)
-> [  306.002022] Freezing remaining freezable tasks ... (elapsed 0.001 seconds) done.
-> [  306.013873] printk: Suspending console(s) (use no_console_suspend to debug)
-> [  306.079141] Disabling non-boot CPUs ...
-> [  306.082829] CPU1: shutdown
-> [  306.082947] psci: CPU1 killed (polled 0 ms)
-> [  306.090930] CPU2: shutdown
-> [  306.092095] psci: CPU2 killed (polled 0 ms)
-> [  306.101501] CPU3: shutdown
-> [  306.101551] psci: CPU3 killed (polled 0 ms)
-> [  306.112128] CPU4: shutdown
-> [  306.112177] psci: CPU4 killed (polled 0 ms)
-> [  306.130425] CPU5: shutdown
-> [  306.130477] psci: CPU5 killed (polled 0 ms)
-> [  306.135659] PM: hibernation: Creating image:
-> [  306.135659] PM: hibernation: Need to copy 95345 pages
-> [  306.135659] PM: hibernation: Image created (95345 pages copied)
-> [  306.138145] Enabling non-boot CPUs ...
-> [  306.152537] Detected PIPT I-cache on CPU1
-> [  306.152605] CPU1: Booted secondary processor 0x0000000000 [0x410fd080]
-> [  306.156520] CPU1 is up
-> [  306.170179] Detected PIPT I-cache on CPU2
-> [  306.170217] CPU2: Booted secondary processor 0x0000000001 [0x410fd080]
-> [  306.171592] CPU2 is up
-> [  306.185303] Detected VIPT I-cache on CPU3
-> [  306.185454] CPU3: Booted secondary processor 0x0000000101 [0x410fd033]
-> [  306.191492] CPU3 is up
-> [  306.205183] Detected VIPT I-cache on CPU4
-> [  306.205314] CPU4: Booted secondary processor 0x0000000102 [0x410fd033]
-> [  306.212156] CPU4 is up
-> [  306.226312] Detected VIPT I-cache on CPU5
-> [  306.226440] CPU5: Booted secondary processor 0x0000000103 [0x410fd033]
-> [  306.235222] CPU5 is up
-> [  306.392553] usb usb2: runtime PM trying to activate child device usb2 but parent (7ffb0000.ohci) is not active
-> [  306.552039] hibernate: Hibernating on CPU 0 [mpidr:0x100]
-> [  306.643894] PM: Using 3 thread(s) for compression
-> [  306.648700] PM: Compressing and saving image data (95532 pages)...
-> [  306.655007] PM: Image saving progress:   0%
-> [  308.347979] ata2: SATA link down (SStatus 0 SControl 0)
-> [  308.353489] ata1: SATA link down (SStatus 0 SControl 0)
-> [  311.608370] ------------[ cut here ]------------
-> [  311.613127] WARNING: CPU: 3 PID: 261 at kernel/rcu/rcutorture.c:1055 rcu_torture_writer+0x664/0xa90
-> [  311.622360] Modules linked in:
-> [  311.625495] CPU: 3 PID: 261 Comm: rcu_torture_wri Not tainted 5.6.0-rc6 #535
-> [  311.632690] Hardware name: ARM Juno development board (r2) (DT)
-> [  311.638737] pstate: 00000005 (nzcv daif -PAN -UAO)
-> [  311.643634] pc : rcu_torture_writer+0x664/0xa90
-> [  311.648266] lr : rcu_torture_writer+0x65c/0xa90
-> [  311.652896] sp : ffff800018a1bde0
-> [  311.656287] x29: ffff800018a1bde0 x28: ffff800014048140
-> [  311.661717] x27: 000000000000c134 x26: ffff800014046f08
-> [  311.667149] x25: ffff8000120ff000 x24: 0000000000000001
-> [  311.672581] x23: ffff800014046f08 x22: ffff800014045000
-> [  311.678012] x21: ffff800013279000 x20: ffff800014048938
-> [  311.683444] x19: ffff800014046000 x18: 00000000fffffffd
-> [  311.688875] x17: 000000001824429d x16: ffff800014554170
-> [  311.694306] x15: 00000000fffffffe x14: 003d090000000000
-> [  311.699737] x13: 00003d0900000000 x12: 0000000000000003
-> [  311.705169] x11: 0000000000000c02 x10: 0000000000000000
-> [  311.710599] x9 : ffff8000137ed0a0 x8 : ffff0009757c8850
-> [  311.716030] x7 : 0000000000000000 x6 : ffff800018a1bcc0
-> [  311.721461] x5 : 0000000000000001 x4 : 0000000000000000
-> [  311.726891] x3 : 0000000000000080 x2 : 0000000002611501
-> [  311.732322] x1 : 0000000000000000 x0 : 0000000000000001
-> [  311.737754] Call trace:
-> [  311.740263]  rcu_torture_writer+0x664/0xa90
-> [  311.744544]  kthread+0x13c/0x140
-> [  311.747852]  ret_from_fork+0x10/0x18
-> [  311.751510] irq event stamp: 228320
-> [  311.755086] hardirqs last  enabled at (228319): [<ffff800010113dc0>] __local_bh_enable_ip+0x98/0x148
-> [  311.764414] hardirqs last disabled at (228320): [<ffff8000100a9300>] do_debug_exception+0x1a8/0x258
-> [  311.773652] softirqs last  enabled at (228318): [<ffff8000101b95fc>] rcu_torture_free+0x84/0x98
-> [  311.782537] softirqs last disabled at (228316): [<ffff8000101b95d8>] rcu_torture_free+0x60/0x98
-> [  311.791417] ---[ end trace dab722c9424166a2 ]---
-> [  311.998802] PM: Image saving progress:  10%
-> [  312.211076] PM: Image saving progress:  20%
-> [  312.311430] PM: Image saving progress:  30%
-> [  312.949974] psmouse serio0: Failed to enable mouse on 1c060000.kmi
-> [  313.351906] rcu-torture: rtc: 00000000e3ff6cce ver: 6966 tfle: 0 rta: 6967 rtaf: 0 rtf: 6957 rtmbe: 0 rtbe: 0 rtbke: 0 rtbre: 0 rtbf: 0 rtb: 0 nt: 123307 onoff: 0/0:0/0 -1,0:-1,0 0:0 (HZ=250) barrier: 0/
-> 0:0
-> [  313.370772] rcu-torture: Reader Pipe:  75577741 19694 0 0 0 0 0 0 0 0 0
-> [  313.377628] rcu-torture: Reader Batch:  75556519 40915 0 0 0 0 0 0 0 0 0
-> [  313.384570] rcu-torture: Free-Block Circulation:  6966 6965 6964 6963 6962 6961 6960 6959 6958 6957 0
-> [  315.017220] PM: Image saving progress:  40%
-> [  319.595899] psmouse serio1: Failed to enable mouse on 1c070000.kmi
-> [  321.033476] PM: Image saving progress:  50%
-> [  325.241344] PM: Image saving progress:  60%
-> [  325.692738] PM: Image saving progress:  70%
-> [  329.862793] PM: Image saving progress:  80%
-> [  333.941109] PM: Image saving progress:  90%
-> [  334.429067] PM: Image saving progress: 100%
-> [  334.442732] PM: Image saving done
-> [  334.446290] PM: hibernation: Wrote 382128 kbytes in 27.78 seconds (13.75 MB/s)
-> [  334.458377] PM: S|
-> [  334.747355] printk: Suspending console(s) (use no_console_suspend to debug)
-> 
-> 
-> Thanks
-> 
+> +       return ERR_PTR(ret);
+> +}
+> +EXPORT_SYMBOL_GPL(of_pd_warming_register);
+> +
+> +void pd_warming_unregister(struct thermal_cooling_device *cdev)
+> +{
+> +       struct pd_warming_device *pd_wdev = cdev->devdata;
+> +       struct device *dev = &pd_wdev->dev;
+> +
+> +       if (pd_wdev->runtime_resumed) {
+> +               dev_pm_genpd_set_performance_state(dev, 0);
+> +               pm_runtime_put(dev);
+> +               pd_wdev->runtime_resumed = false;
+> +       }
+> +       pm_runtime_disable(dev);
+> +       pm_genpd_remove_device(dev);
+> +       ida_simple_remove(&pd_ida, pd_wdev->id);
+> +       thermal_cooling_device_unregister(cdev);
+> +       kfree(pd_wdev);
+
+Don't use kfree here, but instead device_unregister(dev);
+
+> +}
+> +EXPORT_SYMBOL_GPL(pd_warming_unregister);
+> diff --git a/include/linux/pd_warming.h b/include/linux/pd_warming.h
+> new file mode 100644
+> index 000000000000..550a5683b56d
+> --- /dev/null
+> +++ b/include/linux/pd_warming.h
+> @@ -0,0 +1,29 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (c) 2019, Linaro Ltd.
+> + */
+> +#ifndef __PWR_DOMAIN_WARMING_H__
+> +#define __PWR_DOMAIN_WARMING_H__
+> +
+> +#include <linux/pm_domain.h>
+> +#include <linux/thermal.h>
+> +
+> +#ifdef CONFIG_PWR_DOMAIN_WARMING_THERMAL
+> +struct thermal_cooling_device *
+> +of_pd_warming_register(struct device *parent, int pd_id);
+> +
+> +void pd_warming_unregister(struct thermal_cooling_device *cdev);
+> +
+> +#else
+> +static inline struct thermal_cooling_device *
+> +of_pd_warming_register(struct device *parent, int pd_id)
+> +{
+> +       return ERR_PTR(-ENOSYS);
+> +}
+> +
+> +static inline void
+> +pd_warming_unregister(struct thermal_cooling_device *cdev)
+> +{
+> +}
+> +#endif /* CONFIG_PWR_DOMAIN_WARMING_THERMAL */
+> +#endif /* __PWR_DOMAIN_WARMING_H__ */
 > --
-> Qais Yousef
+> 2.20.1
+>
+
+Besides the few things above, this looks good to me.
+
+Kind regards
+Uffe
