@@ -2,87 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A9BAF18FC4B
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Mar 2020 19:06:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 95BF518FC5A
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Mar 2020 19:07:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727677AbgCWSGi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Mar 2020 14:06:38 -0400
-Received: from frisell.zx2c4.com ([192.95.5.64]:58345 "EHLO frisell.zx2c4.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726991AbgCWSGi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Mar 2020 14:06:38 -0400
-Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTP id c8a2d632;
-        Mon, 23 Mar 2020 17:59:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=zx2c4.com; h=mime-version
-        :references:in-reply-to:from:date:message-id:subject:to:cc
-        :content-type; s=mail; bh=FPZf4kVghzlSWSBHY6w3F8ZRqfw=; b=kLckJL
-        XzpdN8QraJS6PfLqt3cwASnfpFIbUg2dkAHu06/Qbrp8xKiNtUSjgRsiNWeyAAa0
-        MHwZ2Wi2iseZ9bbwDbGOMwIqaZgsfUFKJwRmBTlWklLiaY211PM+Y4sg2csYXxhc
-        2vJxrqGRSZ+RPa/Xo+SvlZpI/9XemAk++VZJVefs82EhAU9y+JwA8vgcXNq8VFLA
-        U8AyV8TtCPLqNknkbyc3yHVoZGvelUGXvfV2Za05MGF35DUOvF5OeV1Wl7bdxeen
-        ZgtyY5TyS32elN9JYzrUEi4ocyuHcYU2UdDu2rylUkk4FWOYqs50OWWfao18+YYH
-        YMpS4XX5+YPSMBUw==
-Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 7a32da01 (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256:NO);
-        Mon, 23 Mar 2020 17:59:33 +0000 (UTC)
-Received: by mail-io1-f45.google.com with SMTP id h8so15230879iob.2;
-        Mon, 23 Mar 2020 11:06:34 -0700 (PDT)
-X-Gm-Message-State: ANhLgQ04WlYE++ODZ1bQag63imAYhkVZYDxiL5l00GXx76VupkxMju/e
-        GrRqGC5KgQiA7Rjkm2JyUs8QCwRt8NaEn+4eKv4=
-X-Google-Smtp-Source: ADFU+vt+pDpeqWScbmvLs9OTr6OR3UtD7Q3r5qSpCUxhzqAWtqxjh7kbAn4P2ZYYhC5RjEDqPxVEXxLIypNeTI1dk9I=
-X-Received: by 2002:a05:6638:308:: with SMTP id w8mr20677307jap.108.1584986793763;
- Mon, 23 Mar 2020 11:06:33 -0700 (PDT)
+        id S1727826AbgCWSHm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Mar 2020 14:07:42 -0400
+Received: from mail.baikalelectronics.com ([87.245.175.226]:37496 "EHLO
+        mail.baikalelectronics.ru" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727822AbgCWSHj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Mar 2020 14:07:39 -0400
+Received: from localhost (unknown [127.0.0.1])
+        by mail.baikalelectronics.ru (Postfix) with ESMTP id AF91B80307CA;
+        Mon, 23 Mar 2020 18:07:35 +0000 (UTC)
+X-Virus-Scanned: amavisd-new at baikalelectronics.ru
+Received: from mail.baikalelectronics.ru ([127.0.0.1])
+        by localhost (mail.baikalelectronics.ru [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id qS4D5cx75mAd; Mon, 23 Mar 2020 21:07:34 +0300 (MSK)
+From:   <Sergey.Semin@baikalelectronics.ru>
+CC:     Serge Semin <Sergey.Semin@baikalelectronics.ru>,
+        Serge Semin <fancer.lancer@gmail.com>,
+        Alexey Malahov <Alexey.Malahov@baikalelectronics.ru>,
+        Maxim Kaurkin <Maxim.Kaurkin@baikalelectronics.ru>,
+        Pavel Parkhomenko <Pavel.Parkhomenko@baikalelectronics.ru>,
+        Ramil Zaripov <Ramil.Zaripov@baikalelectronics.ru>,
+        Ekaterina Skachko <Ekaterina.Skachko@baikalelectronics.ru>,
+        Vadim Vlasov <V.Vlasov@baikalelectronics.ru>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        Paul Burton <paulburton@kernel.org>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Hoan Tran <hoan@os.amperecomputing.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        <linux-gpio@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH v2 0/6] gpio: dwapb: Fix reference clocks usage
+Date:   Mon, 23 Mar 2020 21:06:26 +0300
+Message-ID: <20200323180632.14119-1-Sergey.Semin@baikalelectronics.ru>
+In-Reply-To: <20200306132505.8D3B88030795@mail.baikalelectronics.ru>
+References: <20200306132505.8D3B88030795@mail.baikalelectronics.ru>
 MIME-Version: 1.0
-References: <20200323020844.17064-1-masahiroy@kernel.org> <20200323020844.17064-6-masahiroy@kernel.org>
-In-Reply-To: <20200323020844.17064-6-masahiroy@kernel.org>
-From:   "Jason A. Donenfeld" <Jason@zx2c4.com>
-Date:   Mon, 23 Mar 2020 12:06:22 -0600
-X-Gmail-Original-Message-ID: <CAHmME9p3LAnrUMmcGPEUFqY5vOASe8MVk4=pzqFRj3E9C-bM+Q@mail.gmail.com>
-Message-ID: <CAHmME9p3LAnrUMmcGPEUFqY5vOASe8MVk4=pzqFRj3E9C-bM+Q@mail.gmail.com>
-Subject: Re: [PATCH 5/7] x86: remove always-defined CONFIG_AS_SSSE3
-To:     Masahiro Yamada <masahiroy@kernel.org>
-Cc:     X86 ML <x86@kernel.org>, Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Allison Randal <allison@lohutok.net>,
-        Armijn Hemel <armijn@tjaldur.nl>,
-        "David S. Miller" <davem@davemloft.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Ingo Molnar <mingo@redhat.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Song Liu <songliubraving@fb.com>,
-        Zhengyuan Liu <liuzhengyuan@kylinos.cn>,
-        clang-built-linux <clang-built-linux@googlegroups.com>,
-        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-ClientProxiedBy: MAIL.baikal.int (192.168.51.25) To mail (192.168.51.25)
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Mar 22, 2020 at 8:10 PM Masahiro Yamada <masahiroy@kernel.org> wrote:
-> diff --git a/lib/raid6/algos.c b/lib/raid6/algos.c
-> index bf1b4765c8f6..77457ea5a239 100644
-> --- a/lib/raid6/algos.c
-> +++ b/lib/raid6/algos.c
-> @@ -103,9 +103,7 @@ const struct raid6_recov_calls *const raid6_recov_algos[] = {
->  #ifdef CONFIG_AS_AVX2
->         &raid6_recov_avx2,
->  #endif
-> -#ifdef CONFIG_AS_SSSE3
->         &raid6_recov_ssse3,
-> -#endif
->  #ifdef CONFIG_S390
->         &raid6_recov_s390xc,
->  #endif
+From: Serge Semin <fancer.lancer@gmail.com>
 
-algos.c is compiled on all platforms, so you'll need to ifdef that x86
-section where SSSE3 is no longer guarding it. The pattern in the rest
-of the file, if you want to follow it, is "#if defined(__x86_64__) &&
-!defined(__arch_um__)". That seems ugly and like there are better
-ways, but in the interest of uniformity and a lack of desire to
-rewrite all the raid6 code, I went with that in this cleanup:
+There is no need in any fixes to have the Baikal-T1 SoC DW GPIO controllers
+supported by the kernel DW APB GPIO driver. It works for them just fine with
+no modifications. But still there is a room for optimizations there.
 
-https://git.zx2c4.com/linux-dev/commit/?h=jd/kconfig-assembler-support&id=512a00ddebbe5294a88487dcf1dc845cf56703d9
+First of all as it tends to be traditional for all Baikal-T1 SoC related
+patchset we replaced the legacy plain text-based dt-binding file with
+yaml-based one. Baikal-T1 DW GPIO port A supports a debounce functionality,
+but in order to use it the corresponding reference clock must be enabled.
+We added support of that clock in the driver and made sure the dt-bindings
+had its declaration. In addition seeing both APB and debounce reference
+clocks are optional, we replaced the standard devm_clk_get() usage with
+the function of optional clocks acquisition.
+
+This patchset is rebased and tested on the mainline Linux kernel 5.6-rc4:
+commit 98d54f81e36b ("Linux 5.6-rc4").
+
+Changelog v2:
+- Use a shorter summary describing the DT bindings conversion patch.
+- Add myself to the MAINTAINERS file as a maintainer of the DW APB GPIO driver.
+- Add myself to the maintainers list of the DW APB GPIO driver DT schema.
+- Print error instead of info-message if APB/debounce clocks either
+  failed to be acquired or couldn't be enabled.
+- Rearrange the SoB tags.
+- Make sure DT schema defines the lowercase hex numbers in the main dt-node
+  name and in the sub-node names.
+- Use "allOf:" statement to apply uint32 and "minimum/maximum" limitations
+  on the "snps,nr-gpios" property of the DW APB GPIO DT schema.
+- Discard "interrupts-extended" property from the DT schema.
+- Make sure the sub-nodes have names with either 'gpio-port' or
+  'gpio-controller' prefixes.
+- Our corporate email server doesn't change Message-Id anymore, so the patchset
+  is resubmitted being in the cover-letter-threaded format.
+
+Signed-off-by: Serge Semin <Sergey.Semin@baikalelectronics.ru>
+Cc: Alexey Malahov <Alexey.Malahov@baikalelectronics.ru>
+Cc: Maxim Kaurkin <Maxim.Kaurkin@baikalelectronics.ru>
+Cc: Pavel Parkhomenko <Pavel.Parkhomenko@baikalelectronics.ru>
+Cc: Ramil Zaripov <Ramil.Zaripov@baikalelectronics.ru>
+Cc: Ekaterina Skachko <Ekaterina.Skachko@baikalelectronics.ru>
+Cc: Vadim Vlasov <V.Vlasov@baikalelectronics.ru>
+Cc: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+Cc: Paul Burton <paulburton@kernel.org>
+Cc: Ralf Baechle <ralf@linux-mips.org>
+Cc: Hoan Tran <hoan@os.amperecomputing.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>
+Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Cc: Philipp Zabel <p.zabel@pengutronix.de>
+Cc: Rob Herring <robh+dt@kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: linux-gpio@vger.kernel.org
+Cc: devicetree@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+
+Serge Semin (6):
+  dt-bindings: gpio: Convert snps,dw-apb-gpio to DT schema
+  dt-bindings: gpio: Add DW GPIO debounce clock property
+  dt-bindings: gpio: Add Sergey Semin to DW APB GPIO driver maintainers
+  gpio: dwapb: Use optional-clocks interface for APB ref-clock
+  gpio: dwapb: Add debounce reference clock support
+  MAINTAINERS: Add Segey Semin to maintainers of DW APB GPIO driver
+
+ .../bindings/gpio/snps,dw-apb-gpio.yaml       | 134 ++++++++++++++++++
+ .../bindings/gpio/snps-dwapb-gpio.txt         |  65 ---------
+ MAINTAINERS                                   |   1 +
+ drivers/gpio/gpio-dwapb.c                     |  41 ++++--
+ 4 files changed, 161 insertions(+), 80 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/gpio/snps,dw-apb-gpio.yaml
+ delete mode 100644 Documentation/devicetree/bindings/gpio/snps-dwapb-gpio.txt
+
+-- 
+2.25.1
+
