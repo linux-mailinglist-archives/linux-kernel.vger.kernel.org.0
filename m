@@ -2,263 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 89D6318F534
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Mar 2020 14:06:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A8AC918F549
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Mar 2020 14:09:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728323AbgCWNGh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Mar 2020 09:06:37 -0400
-Received: from mail-db8eur05on2061.outbound.protection.outlook.com ([40.107.20.61]:6100
-        "EHLO EUR05-DB8-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728260AbgCWNGh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Mar 2020 09:06:37 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=O6VEOuX+In9+evVJixUcDKXtl/65terq0txxL08zPcmn313VTAMmjTDepEEzbOMJrbs/FbQRTl6LFNimmgcWEI1ArJenZ3Bs5EAlwOdTKXhceVPE7zrrLqXt4lJBKk5wCe4hqkrPvzs3sNtx8t6a+QfBjhBGM07Fe1UMECfPIQq/NMJfSyHrEStXbrhE+Dz9Yl9rHxYlEzv3svJb0IRqUvKCQtSY1TMFLv3NLnFaGaquK6x5SYEbxlqgdViEM3hMy5sLPLNrKADrVLKaHY2pB3Roo/MIOpvKw6I5+Z9XSYb5Xl0Yr1hHvqoIuxzc/vl2L8wDQ1gA7XVis8WGU3lP7g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=jQARICbr+DMZlfkeCtmL1Pa5dz4EF4TO/82jyEiiaQU=;
- b=TFj2csfwyZOYf/vunIRwV/rqL5GaIF2lNIfyw7fxwZiiBWbxqjajK6uf9k82MSb8Eq3M572lTHk76qqpd3B1/MoTj+PmO7ggnw1DPa/JgmqcLBNv27Aqzb/zS25gFdPXmPjXdMcTcc7+33ZJWzVkC2ElZuXwtyVhc2/XFfKEcMHsgsOv84rFxKa8S5C7gchbMNbmyVcMiym/qLirX7tE7neqi4BhLtjAxC3m96ivzfuiV0X1QfQd7AO9x4xn6tsbrsFdIi+XjZD6yBSCElsTzQz5LeoSbcLLLuKHIonpB9/7IsEbMZBDIcjl8uHIprZUtF9Un5dhT7DfEJghg0xK4Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=jQARICbr+DMZlfkeCtmL1Pa5dz4EF4TO/82jyEiiaQU=;
- b=s7a7xGBAF0Ac4fVeVAjbjKR8uVvegoDeTaCr7fVZHOHHjRfjm8YlsYhnGJqDxfattwDbXXIIo10tF4l1kJecM76PrFC1pIGViOpCdm2lcVAsjrgNp8mh186keOL8qII/26MKiyv8HKUw8RwqRW9MD8Hdhhev3qgEp/kPpJ+UfRs=
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=laurentiu.tudor@nxp.com; 
-Received: from AM6PR04MB5925.eurprd04.prod.outlook.com (20.179.2.147) by
- AM6PR04MB4727.eurprd04.prod.outlook.com (20.177.32.204) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2835.18; Mon, 23 Mar 2020 13:06:33 +0000
-Received: from AM6PR04MB5925.eurprd04.prod.outlook.com
- ([fe80::dd71:5f33:1b21:cd9e]) by AM6PR04MB5925.eurprd04.prod.outlook.com
- ([fe80::dd71:5f33:1b21:cd9e%5]) with mapi id 15.20.2835.021; Mon, 23 Mar 2020
- 13:06:33 +0000
-Subject: Re: [PATCH 09/10] bus/fsl-mc: Add a container setup function
-To:     Diana Craciun <diana.craciun@oss.nxp.com>,
-        linux-kernel@vger.kernel.org, stuyoder@gmail.com,
-        leoyang.li@nxp.com, linux-arm-kernel@lists.infradead.org,
-        bharatb.yadav@gmail.com
-References: <20200319154051.30609-1-diana.craciun@oss.nxp.com>
- <20200319154051.30609-10-diana.craciun@oss.nxp.com>
-From:   Laurentiu Tudor <laurentiu.tudor@nxp.com>
-Message-ID: <f828ffd5-85cb-ed71-b18e-000ca8cf3550@nxp.com>
-Date:   Mon, 23 Mar 2020 15:06:23 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.6.0
-In-Reply-To: <20200319154051.30609-10-diana.craciun@oss.nxp.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: BYAPR06CA0047.namprd06.prod.outlook.com
- (2603:10b6:a03:14b::24) To AM6PR04MB5925.eurprd04.prod.outlook.com
- (2603:10a6:20b:ab::19)
-MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from [10.213.175.155] (192.88.158.246) by BYAPR06CA0047.namprd06.prod.outlook.com (2603:10b6:a03:14b::24) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2835.15 via Frontend Transport; Mon, 23 Mar 2020 13:06:30 +0000
-X-Originating-IP: [192.88.158.246]
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-HT: Tenant
-X-MS-Office365-Filtering-Correlation-Id: 743423fa-6baa-4e44-8c69-08d7cf2b029f
-X-MS-TrafficTypeDiagnostic: AM6PR04MB4727:|AM6PR04MB4727:
-X-MS-Exchange-Transport-Forked: True
-X-Microsoft-Antispam-PRVS: <AM6PR04MB472775271F51AC326195729BECF00@AM6PR04MB4727.eurprd04.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:4502;
-X-Forefront-PRVS: 0351D213B3
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(4636009)(396003)(39860400002)(346002)(376002)(366004)(136003)(199004)(36756003)(186003)(2616005)(16526019)(956004)(6666004)(478600001)(44832011)(5660300002)(26005)(8936002)(2906002)(66476007)(81156014)(8676002)(31686004)(81166006)(16576012)(66946007)(66556008)(6486002)(86362001)(53546011)(31696002)(316002)(52116002);DIR:OUT;SFP:1101;SCL:1;SRVR:AM6PR04MB4727;H:AM6PR04MB5925.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;
-Received-SPF: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: Q+gariIh4BlibXSc9ue3Q1CpVAFWeitMN4JpXu5Q0zCDZTDb/fQs5xmKv7pbQ/FVJIaJ6fASc+ALkjz36MYG3UrNKzru4j97L9E1kyuQaKKvavn1eKwnUYItGTpeOSRktG70R1dr4iJ9MwJOeFNFkA3LpZRE8KgS+e8Ga2f8pC/SuAbBcp3mK2P4gI7sBQCc0bYJqkk1atp29CLEyGWLcCyl+lcfxuS63LzphiNrQEZWwrDzE/tabQil4AoOIL/ZW6tCc+rXJnRuH4+OADOcrCxkllug8/KJuFdLsUD3T9BJ7bRuwAfQ5M7Bz6tKg0niCEAyoZiIJgykCic42hEiBt07Zh2gGfzXtAy+AetPfLf6sZ/m6zxyJgcZRFopKoKpVFjr3jGPCHEBFL6DxCjB55Ma5ZDLSeyKoAtc7WuliKO5wOXnAIa8htG1ObUR0RwM
-X-MS-Exchange-AntiSpam-MessageData: ASwFoa5eRn6PRFFZueMnfUAxZo4SfRycem4/Fw8UXAQNkpZGtFYXHjt2RV+9U2odA4Gj6rhTgVQt4OYHbi6gT/Tf9yLOQ+PS9hVD6I4ZrjCufrCy2caybsaQxDT4ndQgwxJFFp5C3ht3Ef0J4XUYig==
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 743423fa-6baa-4e44-8c69-08d7cf2b029f
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Mar 2020 13:06:33.4426
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: VSTpTJ+JyNg53ctjYO1qNqkOVwYzsD4R/KtOGUAdtlDMNGk9nBa03q6Mj0ruXqeIUrb0DT+F4XLwZyCxBF4Bsg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR04MB4727
+        id S1728391AbgCWNJj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Mar 2020 09:09:39 -0400
+Received: from mail-pj1-f68.google.com ([209.85.216.68]:53398 "EHLO
+        mail-pj1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728275AbgCWNJj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Mar 2020 09:09:39 -0400
+Received: by mail-pj1-f68.google.com with SMTP id l36so6157015pjb.3;
+        Mon, 23 Mar 2020 06:09:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=UVUZSZmN0wfjBDMswnzLJO1IiNBLG8FZGAX4PW0SLkk=;
+        b=e4nrWQdDZ5NyXWFxrTJOR86i5pZIZr/nwpPzSIUUS7OfQg0vG0p999rLCaZ4syxvqj
+         rYTQkwVIfQvvsAibJBaJSw11yNn2RaV4LftQcZjYQihRm9SNXN5GYzLD3atDe1OuhCaa
+         SBYpQFWc71X451bz9yKrmR0eTz9R0bFMPWVdY9Go6j+db3T30hfCiMvbR1zaUUuem0tD
+         PZIO7xJtBsIc7PSLncYHnwHERLXXHTOB9I51bXpiP0CxGmJREOG6sWYpYj/qj/zYYeW7
+         mDSPMFrSOklfZq+si3TziJ9x3inTq8V/k5204MGzOqCA9F2B6t0eSQSx3i7Hkm+IdPy4
+         wjzw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=UVUZSZmN0wfjBDMswnzLJO1IiNBLG8FZGAX4PW0SLkk=;
+        b=onxp7FADVsujDym7A+NZEQmuKQ99/bFT1OgFXIxPCVUcwGOg5Xl8om9iaJ0HMbsQ8M
+         aPihbZ41M+KCPGJUBD1pdWgpEXrFLpiLg3JOhOvr1nTbSVqbd33m7Qma8XBt8UQhjBAY
+         Np7mq0Ek7lr1iO477Xu+m2aRN5sElVN8fTsu2saRVx8/nVqgmCHTbIW+lo9cGDSQ+mBX
+         AAcxLDhczaSFHKqSUdIETShUEqfFiOBP+AXV2t/gxy8h/3y4Ic/BrDzUXmiacJzXkXGm
+         04bDy3Q3OuBYrtEBX2pM3fCetKKG9lELwFELHNyWSHFtMnoI40xFno6t6Qv/gnsNBbW8
+         BPpA==
+X-Gm-Message-State: ANhLgQ03ImGn6uljcFtlPtAddlR2KX6e+rj0Qf2oeBBsl6kvOuToTw8Y
+        n+2SLLhS/ikois2CCQzFu4A=
+X-Google-Smtp-Source: ADFU+vtB4leTBTZjE63gAMA35Rvm5e8MjeaU9ZkT+abole1ttsY0G4cq73QxN4AY1ERoj9DLZr9ndA==
+X-Received: by 2002:a17:90b:30ca:: with SMTP id hi10mr24931835pjb.113.1584968978640;
+        Mon, 23 Mar 2020 06:09:38 -0700 (PDT)
+Received: from localhost.corp.microsoft.com ([131.107.147.210])
+        by smtp.googlemail.com with ESMTPSA id u14sm12262034pgg.67.2020.03.23.06.09.37
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 23 Mar 2020 06:09:37 -0700 (PDT)
+From:   ltykernel@gmail.com
+X-Google-Original-From: Tianyu.Lan@microsoft.com
+To:     kys@microsoft.com, haiyangz@microsoft.com, sthemmin@microsoft.com,
+        liuwe@microsoft.com, tglx@linutronix.de, mingo@redhat.com,
+        bp@alien8.de, hpa@zytor.com, x86@kernel.org,
+        michael.h.kelley@microsoft.com
+Cc:     Tianyu Lan <Tianyu.Lan@microsoft.com>,
+        linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org,
+        vkuznets@redhat.com
+Subject: [PATCH V2 0/6] x86/Hyper-V: Panic code path fixes
+Date:   Mon, 23 Mar 2020 06:09:18 -0700
+Message-Id: <20200323130924.2968-1-Tianyu.Lan@microsoft.com>
+X-Mailer: git-send-email 2.14.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Tianyu Lan <Tianyu.Lan@microsoft.com>
 
+This patchset fixes some issues in the Hyper-V panic code path.
+Patch 1 resolves issue that panic system still responses network
+packets.
+Patch 2-3,5-6 resolves crash enlightenment issues.
+Patch 4 is to set crash_kexec_post_notifiers to true for Hyper-V
+VM in order to report crash data or kmsg to host before running
+kdump kernel.
 
-On 3/19/2020 5:40 PM, Diana Craciun wrote:
-> Both DPRC driver and VFIO driver use a initialization code
-> for the DPRC. Introduced a new function which groups this
-> initialization code. The function is exported and may be
-> used by VFIO as well.
-> 
-> Signed-off-by: Diana Craciun <diana.craciun@oss.nxp.com>
-> ---
->  drivers/bus/fsl-mc/dprc-driver.c | 77 +++++++++++++++++++++-----------
->  drivers/bus/fsl-mc/mc-io.c       |  7 ++-
->  include/linux/fsl/mc.h           |  2 +
->  3 files changed, 60 insertions(+), 26 deletions(-)
-> 
-> diff --git a/drivers/bus/fsl-mc/dprc-driver.c b/drivers/bus/fsl-mc/dprc-driver.c
-> index a655e3fee291..0fe45c301858 100644
-> --- a/drivers/bus/fsl-mc/dprc-driver.c
-> +++ b/drivers/bus/fsl-mc/dprc-driver.c
-> @@ -570,16 +570,15 @@ static int dprc_setup_irq(struct fsl_mc_device *mc_dev)
->  }
->  
->  /**
-> - * dprc_probe - callback invoked when a DPRC is being bound to this driver
-> + * dprc_setup - opens and creates a mc_io for DPRC
->   *
->   * @mc_dev: Pointer to fsl-mc device representing a DPRC
->   *
->   * It opens the physical DPRC in the MC.
-> - * It scans the DPRC to discover the MC objects contained in it.
-> - * It creates the interrupt pool for the MC bus associated with the DPRC.
-> - * It configures the interrupts for the DPRC device itself.
-> + * It configures the DPRC portal used to communicate with MC
->   */
-> -static int dprc_probe(struct fsl_mc_device *mc_dev)
-> +
-> +int dprc_setup(struct fsl_mc_device *mc_dev)
->  {
->  	int error;
->  	size_t region_size;
-> @@ -589,12 +588,6 @@ static int dprc_probe(struct fsl_mc_device *mc_dev)
->  	bool msi_domain_set = false;
->  	u16 major_ver, minor_ver;
->  
-> -	if (!is_fsl_mc_bus_dprc(mc_dev))
-> -		return -EINVAL;
-> -
-> -	if (dev_get_msi_domain(&mc_dev->dev))
-> -		return -EINVAL;
-> -
->  	if (!mc_dev->mc_io) {
->  		/*
->  		 * This is a child DPRC:
-> @@ -678,35 +671,69 @@ static int dprc_probe(struct fsl_mc_device *mc_dev)
->  		goto error_cleanup_open;
->  	}
->  
-> +	return 0;
-> +
-> +error_cleanup_open:
-> +	(void)dprc_close(mc_dev->mc_io, 0, mc_dev->mc_handle);
-> +
-> +error_cleanup_msi_domain:
-> +	if (msi_domain_set)
-> +		dev_set_msi_domain(&mc_dev->dev, NULL);
-> +
-> +	if (mc_io_created) {
-> +		fsl_destroy_mc_io(mc_dev->mc_io);
-> +		mc_dev->mc_io = NULL;
-> +	}
-> +
-> +	return error;
-> +}
-> +EXPORT_SYMBOL_GPL(dprc_setup);
-> +
-> +/**
-> + * dprc_probe - callback invoked when a DPRC is being bound to this driver
-> + *
-> + * @mc_dev: Pointer to fsl-mc device representing a DPRC
-> + *
-> + * It opens the physical DPRC in the MC.
-> + * It scans the DPRC to discover the MC objects contained in it.
-> + * It creates the interrupt pool for the MC bus associated with the DPRC.
-> + * It configures the interrupts for the DPRC device itself.
-> + */
-> +static int dprc_probe(struct fsl_mc_device *mc_dev)
-> +{
-> +	int error;
-> +
-> +	if (!is_fsl_mc_bus_dprc(mc_dev))
-> +		return -EINVAL;
-> +
-> +	if (dev_get_msi_domain(&mc_dev->dev))
-> +		return -EINVAL;
-> +
-> +	error = dprc_setup(mc_dev);
-> +	if (error < 0)
-> +		return error;
-> +
->  	/*
->  	 * Discover MC objects in DPRC object:
->  	 */
->  	error = dprc_scan_container(mc_dev, NULL, true);
->  	if (error < 0)
-> -		goto error_cleanup_open;
-> +		goto dprc_cleanup;
->  
->  	/*
->  	 * Configure interrupt for the DPRC object associated with this MC bus:
->  	 */
->  	error = dprc_setup_irq(mc_dev);
->  	if (error < 0)
-> -		goto error_cleanup_open;
-> +		goto scan_cleanup;
->  
->  	dev_info(&mc_dev->dev, "DPRC device bound to driver");
->  	return 0;
->  
-> -error_cleanup_open:
-> -	(void)dprc_close(mc_dev->mc_io, 0, mc_dev->mc_handle);
-> -
-> -error_cleanup_msi_domain:
-> -	if (msi_domain_set)
-> -		dev_set_msi_domain(&mc_dev->dev, NULL);
-> -
-> -	if (mc_io_created) {
-> -		fsl_destroy_mc_io(mc_dev->mc_io);
-> -		mc_dev->mc_io = NULL;
-> -	}
-> -
-> +scan_cleanup:
-> +	device_for_each_child(&mc_dev->dev, NULL, __fsl_mc_device_remove);
-> +dprc_cleanup:
-> +	dprc_cleanup(mc_dev);
->  	return error;
->  }
->  
-> diff --git a/drivers/bus/fsl-mc/mc-io.c b/drivers/bus/fsl-mc/mc-io.c
-> index 6ae48ad80409..e1dfe4a76519 100644
-> --- a/drivers/bus/fsl-mc/mc-io.c
-> +++ b/drivers/bus/fsl-mc/mc-io.c
-> @@ -129,7 +129,12 @@ int __must_check fsl_create_mc_io(struct device *dev,
->   */
->  void fsl_destroy_mc_io(struct fsl_mc_io *mc_io)
->  {
-> -	struct fsl_mc_device *dpmcp_dev = mc_io->dpmcp_dev;
-> +	struct fsl_mc_device *dpmcp_dev;
-> +
-> +	if (!mc_io)
-> +		return;
-> +
-> +	dpmcp_dev = mc_io->dpmcp_dev;
+Tianyu Lan (6):
+  x86/Hyper-V: Unload vmbus channel in hv panic callback
+  x86/Hyper-V: Free hv_panic_page when fail to register kmsg dump
+  x86/Hyper-V: Trigger crash enlightenment only once during  system
+    crash.
+  x86/Hyper-V: Report crash register data or ksmg before  running crash
+    kernel
+  x86/Hyper-V: Report crash register data when sysctl_record_panic_msg
+    is not set
+  x86/Hyper-V: Report crash data in die() when panic_on_oops is set
 
-Is this change related to the patch?
+ arch/x86/kernel/cpu/mshyperv.c | 10 ++++++++
+ drivers/hv/channel_mgmt.c      |  3 +++
+ drivers/hv/vmbus_drv.c         | 55 ++++++++++++++++++++++++++++--------------
+ 3 files changed, 50 insertions(+), 18 deletions(-)
 
----
-Best Regards, Laurentiu
+-- 
+2.14.5
 
->  	if (dpmcp_dev)
->  		fsl_mc_io_unset_dpmcp(mc_io);
-> diff --git a/include/linux/fsl/mc.h b/include/linux/fsl/mc.h
-> index e3ba273a1122..59b39c635ec9 100644
-> --- a/include/linux/fsl/mc.h
-> +++ b/include/linux/fsl/mc.h
-> @@ -480,6 +480,8 @@ int dprc_scan_container(struct fsl_mc_device *mc_bus_dev,
->  		   const char *driver_override,
->  		   bool alloc_interrupts);
->  
-> +int dprc_setup(struct fsl_mc_device *mc_dev);
-> +
->  int dprc_cleanup(struct fsl_mc_device *mc_dev);
->  
->  /*
-> 
