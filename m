@@ -2,140 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A958818EFF1
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Mar 2020 07:53:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 795D618EFF7
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Mar 2020 07:53:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727364AbgCWGxS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Mar 2020 02:53:18 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:40684 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727164AbgCWGxS (ORCPT
+        id S1727395AbgCWGxe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Mar 2020 02:53:34 -0400
+Received: from mail-wr1-f49.google.com ([209.85.221.49]:40984 "EHLO
+        mail-wr1-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727164AbgCWGxe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Mar 2020 02:53:18 -0400
-Received: by mail-lj1-f196.google.com with SMTP id 19so13234286ljj.7;
-        Sun, 22 Mar 2020 23:53:16 -0700 (PDT)
+        Mon, 23 Mar 2020 02:53:34 -0400
+Received: by mail-wr1-f49.google.com with SMTP id h9so15488387wrc.8
+        for <linux-kernel@vger.kernel.org>; Sun, 22 Mar 2020 23:53:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=wGDd6myf+GdHCozxtrhmVLjHaTI84rSVkvwPMbf2b58=;
+        b=cvOyUgm3MfUe3yvKUo5aJ1XPsi8hi07U2PZdZJHUC+l7JhpHg/ZEBxJ+h1nY84FsqI
+         Di2wMDfKuZbHvQcV6aOX/CIP+n+BcgERrqB2X3Nu4/8JcPE4c8ZmvmaSEw2C44p66rF8
+         O7kcYXct7EuBmdOGVfdzqc7lOAISg7+5BQLs0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=WoCr+foN/8GXkw0Qp+PYNvYpbwWofyuyqb/3wF5oAQ0=;
-        b=fSiqCnw2zf7Vld1iihjA7bFiyJXfTMXjjEU4RF1bFNrlP2PuAI/99WtEG3Tq9MEHpU
-         E7XaUY18NOg+ce1MTp4eMf6Db6qMABa0vUbxwixu0Pp/698GsouKtQG5R7odxqUjI0ak
-         Lb/hrAHnvLyhOV3IquC3/ff76S9bolL7qTr2h0DgIByJf6u+elNU5nC3Tf0f/iFuRMok
-         PH6Ytzf/o1UadY6u9QiMpXl5orrwFS2pXKm4DiJZtbilBuf2bwH1cbxAPy+hHSqkML4u
-         +QfdkNI80F2VsvNyZfLcxnNy/tyrazrpjGvgHimGvJrRI7FjyqQFK2vwBRDFvGWsL8/L
-         Dt/g==
-X-Gm-Message-State: ANhLgQ1G3V0YXn+358cXlH8HPHktW+m94kt4PAEMNLn7J+pJHuM234a0
-        c/c7BWDz/knW7FZ8WBjvp+g=
-X-Google-Smtp-Source: ADFU+vuMZue8vK66PxCV4QGppTqpco/74F7mHnAgQ3DaTqBb9cApDot3ZuKGv2VLiCHt6BdNejomVg==
-X-Received: by 2002:a2e:a401:: with SMTP id p1mr12840290ljn.106.1584946395170;
-        Sun, 22 Mar 2020 23:53:15 -0700 (PDT)
-Received: from vostro.wlan (dty2hzyyyyyyyyyyyyx9y-3.rev.dnainternet.fi. [2001:14ba:802c:6a00::4fa])
-        by smtp.gmail.com with ESMTPSA id o2sm3976447ljm.2.2020.03.22.23.53.14
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=wGDd6myf+GdHCozxtrhmVLjHaTI84rSVkvwPMbf2b58=;
+        b=tpRKSrqnErdHFWtRnjMbY4DWiMVCTmpkqwTPqYjz9d19jOT74L155ahJbCg2zzbAiV
+         siOoxt7n84FfEF069XIW0w/wtQtGDIzCAla8ZQxm7J7hHpYGwpXgj9VK9uNvYrK+LRYY
+         pdC1HLL5pO3f7lMcxtUjaCeJdoaMreqH+oJdpjpZeJcGarCJwFdv4/XVJM58sR7eabPc
+         RrOaVcle+LrX+sPYInS5CyJ8DydxFrmdZjltSD1PL/64c7lPSy++K5MIreFDsbOkbrRZ
+         IJHSTelGRg82i7pNwUAk7NVWqbHIdSK7n7xEAiqiog6q+95eSfk8IN1bQmVY3SSKuOmM
+         5f9Q==
+X-Gm-Message-State: ANhLgQ3rEMtf5zRl00RsMMVYLaHLyF1HNfG6jjulICrFydMpza3TeC9R
+        /cF/C5/CBkDHO7MWi5tsJLg2vg==
+X-Google-Smtp-Source: ADFU+vvwB0MywmLuH1Zm77A5oLo0Gs8q6wjwWuZhQExQclt1yA8E1xmrBOZA/+OlJRl7ZFtCTqdUtA==
+X-Received: by 2002:a5d:6245:: with SMTP id m5mr28064980wrv.154.1584946411935;
+        Sun, 22 Mar 2020 23:53:31 -0700 (PDT)
+Received: from rayagonda.dhcp.broadcom.net ([192.19.234.250])
+        by smtp.gmail.com with ESMTPSA id g128sm21127453wmf.27.2020.03.22.23.53.27
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 22 Mar 2020 23:53:14 -0700 (PDT)
-Date:   Mon, 23 Mar 2020 08:53:11 +0200
-From:   Timo Teras <timo.teras@iki.fi>
-To:     YueHaibing <yuehaibing@huawei.com>
-Cc:     <steffen.klassert@secunet.com>, <herbert@gondor.apana.org.au>,
-        <davem@davemloft.net>, <kuba@kernel.org>, <netdev@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] xfrm: policy: Fix doulbe free in xfrm_policy_timer
-Message-ID: <20200323085311.35aefe10@vostro.wlan>
-In-Reply-To: <20200323014155.56376-1-yuehaibing@huawei.com>
-References: <20200318034839.57996-1-yuehaibing@huawei.com>
-        <20200323014155.56376-1-yuehaibing@huawei.com>
-X-Mailer: Claws Mail 3.17.5 (GTK+ 2.24.32; x86_64-alpine-linux-musl)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Sun, 22 Mar 2020 23:53:31 -0700 (PDT)
+From:   Rayagonda Kokatanur <rayagonda.kokatanur@broadcom.com>
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>, Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        bcm-kernel-feedback-list@broadcom.com,
+        Yendapally Reddy Dhananjaya Reddy 
+        <yendapally.reddy@broadcom.com>, linux-pwm@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc:     Rayagonda Kokatanur <rayagonda.kokatanur@broadcom.com>
+Subject: [PATCH v1 0/2] Handle return value and remove unnecessary check
+Date:   Mon, 23 Mar 2020 12:23:16 +0530
+Message-Id: <20200323065318.16533-1-rayagonda.kokatanur@broadcom.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi
+This patch series contains following changes,
+1. Handle clk_get_rate() return
+2. remove unnecessary check of 'duty'
 
-On Mon, 23 Mar 2020 09:41:55 +0800
-YueHaibing <yuehaibing@huawei.com> wrote:
+Rayagonda Kokatanur (2):
+  pwm: bcm-iproc: handle clk_get_rate() return
+  pwm: bcm-iproc: remove unnecessary check of 'duty'
 
-> After xfrm_add_policy add a policy, its ref is 2, then
-> 
->                              xfrm_policy_timer
->                                read_lock
->                                xp->walk.dead is 0
->                                ....
->                                mod_timer()
-> xfrm_policy_kill
->   policy->walk.dead = 1
->   ....
->   del_timer(&policy->timer)
->     xfrm_pol_put //ref is 1
->   xfrm_pol_put  //ref is 0
->     xfrm_policy_destroy
->       call_rcu
->                                  xfrm_pol_hold //ref is 1
->                                read_unlock
->                                xfrm_pol_put //ref is 0
->                                  xfrm_policy_destroy
->                                   call_rcu
-> 
-> xfrm_policy_destroy is called twice, which may leads to
-> double free.
+ drivers/pwm/pwm-bcm-iproc.c | 35 ++++++++++++++++++++---------------
+ 1 file changed, 20 insertions(+), 15 deletions(-)
 
-I believe the timer changes were added later in commit e7d8f6cb2f which
-added holding a reference when timer is running. I think it fails to
-properly account for concurrently running timer in xfrm_policy_kill().
-
-The time when commit ea2dea9dacc2 was done this was not the case.
-
-I think it would be preferable if the concurrency issue could be solved
-without additional locking.
-
-> Call Trace:
-> RIP: 0010:refcount_warn_saturate+0x161/0x210
-> ...
->  xfrm_policy_timer+0x522/0x600
->  call_timer_fn+0x1b3/0x5e0
->  ? __xfrm_decode_session+0x2990/0x2990
->  ? msleep+0xb0/0xb0
->  ? _raw_spin_unlock_irq+0x24/0x40
->  ? __xfrm_decode_session+0x2990/0x2990
->  ? __xfrm_decode_session+0x2990/0x2990
->  run_timer_softirq+0x5c5/0x10e0
-> 
-> Fix this by use write_lock_bh in xfrm_policy_kill.
-> 
-> Fixes: ea2dea9dacc2 ("xfrm: remove policy lock when accessing
-> policy->walk.dead") Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-
-Should be instead:
-Fixes: e7d8f6cb2f ("xfrm: Add refcount handling to queued policies")
-
-> ---
-> v2:  Fix typo 'write_lock_bh'--> 'write_unlock_bh' while unlocking
-> ---
->  net/xfrm/xfrm_policy.c | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/net/xfrm/xfrm_policy.c b/net/xfrm/xfrm_policy.c
-> index dbda08ec566e..ae0689174bbf 100644
-> --- a/net/xfrm/xfrm_policy.c
-> +++ b/net/xfrm/xfrm_policy.c
-> @@ -434,6 +434,7 @@ EXPORT_SYMBOL(xfrm_policy_destroy);
->  
->  static void xfrm_policy_kill(struct xfrm_policy *policy)
->  {
-> +	write_lock_bh(&policy->lock);
->  	policy->walk.dead = 1;
->  
->  	atomic_inc(&policy->genid);
-> @@ -445,6 +446,7 @@ static void xfrm_policy_kill(struct xfrm_policy
-> *policy) if (del_timer(&policy->timer))
->  		xfrm_pol_put(policy);
->  
-> +	write_unlock_bh(&policy->lock);
->  	xfrm_pol_put(policy);
->  }
->  
+-- 
+2.17.1
 
