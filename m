@@ -2,102 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5CC3618F34A
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Mar 2020 12:01:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DD6FD18F35F
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Mar 2020 12:06:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728061AbgCWLBP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Mar 2020 07:01:15 -0400
-Received: from us-smtp-delivery-74.mimecast.com ([216.205.24.74]:20450 "EHLO
-        us-smtp-delivery-74.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727991AbgCWLBP (ORCPT
+        id S1728105AbgCWLGI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Mar 2020 07:06:08 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:37414 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727987AbgCWLGI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Mar 2020 07:01:15 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1584961274;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=UhvE5SsATsLb9aEaVavJjTl1Si3A9wCeislY3orrWOU=;
-        b=AQtK4jQ6VXT9KHHGXSHFA5cfsMkrMFRWyfuinLbZK8LB+1gibwRoca0QU2YkjieTuIG6It
-        aJKS/cS3cQz3IVuLHC3oZ6ECtBFyQ8IwDJWTVASbCLhqVv76Jnasf76RfgzdEe0Ic/024N
-        xj7Suo+7GCWW+oht/Oi3AUNcBcMiGwI=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-311-u1LTdQP9O6SPU5UtK40M-g-1; Mon, 23 Mar 2020 07:01:09 -0400
-X-MC-Unique: u1LTdQP9O6SPU5UtK40M-g-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id C71D4DB63;
-        Mon, 23 Mar 2020 11:01:07 +0000 (UTC)
-Received: from krava (unknown [10.40.192.119])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 1651B5DA7B;
-        Mon, 23 Mar 2020 11:01:04 +0000 (UTC)
-Date:   Mon, 23 Mar 2020 12:01:02 +0100
-From:   Jiri Olsa <jolsa@redhat.com>
-To:     Ian Rogers <irogers@google.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Andi Kleen <ak@linux.intel.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Leo Yan <leo.yan@linaro.org>, linux-kernel@vger.kernel.org,
-        clang-built-linux@googlegroups.com,
-        Stephane Eranian <eranian@google.com>
-Subject: Re: [PATCH v2 2/2] libperf evlist: fix memory leaks
-Message-ID: <20200323110102.GF1534489@krava>
-References: <20200319023101.82458-1-irogers@google.com>
- <20200319023101.82458-2-irogers@google.com>
+        Mon, 23 Mar 2020 07:06:08 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 02NB349S019401;
+        Mon, 23 Mar 2020 11:05:48 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2020-01-29;
+ bh=w5K+Q/84iqNbz33/6C2NZu0Q3vAYsOs50DjnxAcgG1Y=;
+ b=Mn7R6b0l8wez1yAcZLSfpc2wrIhMuzIwnTi0DtAnf8n+KJJWKQeqrHu46og+68aFWP5o
+ UlNfC2u8vRgCUcQw+sT5NelWNsoTB2CtwLH/MVe1bQdl0y32RZY72hNojPZEPiYBrrc8
+ S3dxgQ50L9JIoialZaoweLgtoj/hidwCVju76UtCSHbvBwYILrom3gW9x0IAjqwGKhOS
+ 2cMWUfxtvB9b5Dq7Iv2zuxqOxLj/Cqi1oM4mR+hSuH1E2GlY8o97hOltmHXLS+GxIvlN
+ S1TSKze+GqbnJSzp7SDqIeegRc6yWOkw2+PIeEaCTE5uZNmUKaWfkqd509W0XibbdIdx Jg== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by userp2130.oracle.com with ESMTP id 2ywabqwx7c-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 23 Mar 2020 11:05:48 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 02NAvRWn067564;
+        Mon, 23 Mar 2020 11:03:47 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by aserp3030.oracle.com with ESMTP id 2ywwuht83f-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 23 Mar 2020 11:03:47 +0000
+Received: from abhmp0004.oracle.com (abhmp0004.oracle.com [141.146.116.10])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 02NB3igg014374;
+        Mon, 23 Mar 2020 11:03:45 GMT
+Received: from kadam (/41.57.98.10)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 23 Mar 2020 04:03:44 -0700
+Date:   Mon, 23 Mar 2020 14:03:34 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
+        mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
+        jolsa@redhat.com, namhyung@kernel.org, kan.liang@linux.intel.com,
+        zhe.he@windriver.com, dzickus@redhat.com, jstancek@redhat.com,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] perf cpumap: Use scnprintf instead of snprintf
+Message-ID: <20200323110334.GC26299@kadam>
+References: <20200322172523.2677-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200319023101.82458-2-irogers@google.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+In-Reply-To: <20200322172523.2677-1-christophe.jaillet@wanadoo.fr>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9568 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 suspectscore=0 spamscore=0
+ mlxlogscore=999 malwarescore=0 mlxscore=0 bulkscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2003020000
+ definitions=main-2003230065
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9568 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 suspectscore=0
+ lowpriorityscore=0 malwarescore=0 phishscore=0 priorityscore=1501
+ clxscore=1011 adultscore=0 mlxscore=0 mlxlogscore=999 bulkscore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2003020000 definitions=main-2003230065
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 18, 2020 at 07:31:01PM -0700, Ian Rogers wrote:
-> Memory leaks found by applying LLVM's libfuzzer on the tools/perf
-> parse_events function.
+On Sun, Mar 22, 2020 at 06:25:23PM +0100, Christophe JAILLET wrote:
+> 'scnprintf' returns the number of characters written in the output buffer
+> excluding the trailing '\0', instead of the number of characters which
+> would be generated for the given input.
 > 
-> Signed-off-by: Ian Rogers <irogers@google.com>
-
-Arnaldo,
-could you plz pull first:
-  https://lore.kernel.org/lkml/1583665157-349023-1-git-send-email-zhe.he@windriver.com/
-
-and then merge in this one? 
-
-thanks,
-jirka
-
-Acked-by: Jiri Olsa <jolsa@redhat.com>
-
+> Both function return a number of characters, excluding the trailing '\0'.
+> So comparaison to check if it overflows, should be done against max_size-1.
+> Comparaison against max_size can never match.
+> 
+> Fixes: 7780c25bae59f ("perf tools: Allow ability to map cpus to nodes easily")
+> Fixes: a24020e6b7cf6 ("perf tools: Change cpu_map__fprintf output")
+> Fixes: 92a7e1278005b ("perf cpumap: Add cpu__max_present_cpu()")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 > ---
->  tools/lib/perf/evlist.c | 2 ++
->  1 file changed, 2 insertions(+)
+>  tools/perf/util/cpumap.c | 39 ++++++++++++++++++++-------------------
+>  1 file changed, 20 insertions(+), 19 deletions(-)
 > 
-> diff --git a/tools/lib/perf/evlist.c b/tools/lib/perf/evlist.c
-> index 5b9f2ca50591..6485d1438f75 100644
-> --- a/tools/lib/perf/evlist.c
-> +++ b/tools/lib/perf/evlist.c
-> @@ -125,8 +125,10 @@ static void perf_evlist__purge(struct perf_evlist *evlist)
->  void perf_evlist__exit(struct perf_evlist *evlist)
->  {
->  	perf_cpu_map__put(evlist->cpus);
-> +	perf_cpu_map__put(evlist->all_cpus);
->  	perf_thread_map__put(evlist->threads);
->  	evlist->cpus = NULL;
-> +	evlist->all_cpus = NULL;
->  	evlist->threads = NULL;
->  	fdarray__exit(&evlist->pollfd);
->  }
-> -- 
-> 2.25.1.696.g5e7596f4ac-goog
-> 
+> diff --git a/tools/perf/util/cpumap.c b/tools/perf/util/cpumap.c
+> index 983b7388f22b..b87e7ef4d130 100644
+> --- a/tools/perf/util/cpumap.c
+> +++ b/tools/perf/util/cpumap.c
+> @@ -316,8 +316,8 @@ static void set_max_cpu_num(void)
+>  		goto out;
+>  
+>  	/* get the highest possible cpu number for a sparse allocation */
+> -	ret = snprintf(path, PATH_MAX, "%s/devices/system/cpu/possible", mnt);
+> -	if (ret == PATH_MAX) {
+> +	ret = scnprintf(path, PATH_MAX, "%s/devices/system/cpu/possible", mnt);
+> +	if (ret == PATH_MAX-1) {
+
+This should be a static analysis warning.
+
+But isn't this stuff userspace?  I can't figure out how to compile it on
+Debian so I'm not sure.  There is no scnprintf() in user space.
+
+regards,
+dan carpenter
 
