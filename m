@@ -2,138 +2,211 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7239418FD46
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Mar 2020 20:05:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1B1C318FD40
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Mar 2020 20:05:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727913AbgCWTF2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Mar 2020 15:05:28 -0400
-Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:2090 "EHLO
-        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727624AbgCWTF1 (ORCPT
+        id S1727847AbgCWTFH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Mar 2020 15:05:07 -0400
+Received: from mail-pf1-f201.google.com ([209.85.210.201]:55180 "EHLO
+        mail-pf1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727218AbgCWTFH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Mar 2020 15:05:27 -0400
-Received: from pps.filterd (m0109333.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 02NIus6Y008960;
-        Mon, 23 Mar 2020 12:05:07 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=subject : to : cc :
- references : from : message-id : date : in-reply-to : content-type :
- content-transfer-encoding : mime-version; s=facebook;
- bh=aWI0ufuT2jljY7C07J2YbCR3c+JaS8oFlDcenGBsKKQ=;
- b=qelVB0EHQ7uJcUsEdiJoVQZ/T0tWfQQpUriBWyYVIacLBs1/acYzIKkt6jJR9j1lp2n+
- +ncwHQyplUPlcjby7jMkjwuayLA4TipXgk8SOqY66k+CwLXyJT77vACrgtAsRblKWfQf
- s4vtlMlettQx11blNEm1Y/dZLLVzW9p+cPs= 
-Received: from mail.thefacebook.com ([163.114.132.120])
-        by mx0a-00082601.pphosted.com with ESMTP id 2yx32wen7e-3
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-        Mon, 23 Mar 2020 12:05:07 -0700
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (100.104.98.9) by
- o365-in.thefacebook.com (100.104.94.230) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1847.3; Mon, 23 Mar 2020 12:05:06 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=ib3B1i/HQL+vvmTWpRWmMpSQuyLhVqaiPsWOWHPTB6u8dgYA4lDgEC68/2JEkoALMiO1b2nhYxtuj6Lt7WYdOdA0zM8DT6nRO6oB9fpss1uOQceDp0tcwq9WIP9iZYGyrfDLPbCU0mXCoe+1ivKWhoTS2bNT2g6N7s946CEFzW+eFD+jm8CO/6WeG9nUu/nvaSyvCqUtwzQ88uiQwAfZWgc6Ei9Yj4UD06JqZV1vjxxOEzR3P4nL78HVlp62fEUNkwGFp5seOSRw8WVavitOTDkJ7t0448tXy1ksqHHYW0GnohQsLXk3waA/datBhpSe9t3qS/7JP8xFSVHuSPKNsA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=aWI0ufuT2jljY7C07J2YbCR3c+JaS8oFlDcenGBsKKQ=;
- b=D7n1hN8zSGWerxp9mTtxK3rsrorkov/vqZ5IkkNUR2WMft6cvjL2JmKxVQY2MDy9qGvRye6oScOY/1RsIDQmGUQMND0G2PqCP5wxXDQIaKrWLqmG+UDasbMVe2zjAj5zPPgMeD3qW4UZ7iVuT6i1dT23k6Kl0eNXWp51hTYvy6rEjiSiDV40RXn915Ml9I2kbIrhfJpGsdnNPHckUpYI3cdBGnOXDJYGGF99jysOucWzMKsIuOmrQfe9aXcK0Q15kPLGC+dNP8MM2xB6a8b/v1qB60J+cRCxlJN6SihDvrn/2UISBmekcnRyzAE9ykwfSTV+flhRxObJP7i6G6FEfg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=fb.com; dmarc=pass action=none header.from=fb.com; dkim=pass
- header.d=fb.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
- s=selector2-fb-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=aWI0ufuT2jljY7C07J2YbCR3c+JaS8oFlDcenGBsKKQ=;
- b=RhzOubAmHtK5ZqGznf7hYKhzXA4/W/6dlVAql/8hw3KPmzU718Gk0BOf1e4V62qzbCUdVjYmeNppTwg22zWLWgvouuIH9eLVKN8lQNO9TT/B2qDo5GQKOHXIWOE+jX9S7FyQl3PUx2b6N6FujAkEgqqv86o1WCG/x5E1R1Ogtls=
-Received: from MW3PR15MB3883.namprd15.prod.outlook.com (2603:10b6:303:51::22)
- by MW3PR15MB3882.namprd15.prod.outlook.com (2603:10b6:303:49::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2835.20; Mon, 23 Mar
- 2020 19:04:52 +0000
-Received: from MW3PR15MB3883.namprd15.prod.outlook.com
- ([fe80::a49b:8546:912f:dd98]) by MW3PR15MB3883.namprd15.prod.outlook.com
- ([fe80::a49b:8546:912f:dd98%5]) with mapi id 15.20.2835.021; Mon, 23 Mar 2020
- 19:04:52 +0000
-Subject: Re: [PATCH bpf-next v5 3/7] bpf: lsm: provide attachment points for
- BPF LSM programs
-To:     KP Singh <kpsingh@chromium.org>, <linux-kernel@vger.kernel.org>,
-        <bpf@vger.kernel.org>, <linux-security-module@vger.kernel.org>
-CC:     Brendan Jackman <jackmanb@google.com>,
-        Florent Revest <revest@google.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        James Morris <jmorris@namei.org>,
-        Kees Cook <keescook@chromium.org>,
-        Paul Turner <pjt@google.com>, Jann Horn <jannh@google.com>,
-        Florent Revest <revest@chromium.org>,
-        Brendan Jackman <jackmanb@chromium.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-References: <20200323164415.12943-1-kpsingh@chromium.org>
- <20200323164415.12943-4-kpsingh@chromium.org>
-From:   Yonghong Song <yhs@fb.com>
-Message-ID: <5ce03d5b-fef6-c48d-0d9a-3ea6bc4e1401@fb.com>
-Date:   Mon, 23 Mar 2020 12:04:48 -0700
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:68.0)
- Gecko/20100101 Thunderbird/68.6.0
-In-Reply-To: <20200323164415.12943-4-kpsingh@chromium.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: MWHPR18CA0033.namprd18.prod.outlook.com
- (2603:10b6:320:31::19) To MW3PR15MB3883.namprd15.prod.outlook.com
- (2603:10b6:303:51::22)
-MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from MacBook-Pro-52.local (2620:10d:c090:400::5:2131) by MWHPR18CA0033.namprd18.prod.outlook.com (2603:10b6:320:31::19) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2835.20 via Frontend Transport; Mon, 23 Mar 2020 19:04:50 +0000
-X-Originating-IP: [2620:10d:c090:400::5:2131]
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 7feb8bd6-0dbf-432d-3e12-08d7cf5d1107
-X-MS-TrafficTypeDiagnostic: MW3PR15MB3882:
-X-Microsoft-Antispam-PRVS: <MW3PR15MB3882C0BF1936D519D1F721CAD3F00@MW3PR15MB3882.namprd15.prod.outlook.com>
-X-FB-Source: Internal
-X-MS-Oob-TLC-OOBClassifiers: OLM:302;
-X-Forefront-PRVS: 0351D213B3
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(136003)(396003)(376002)(366004)(39860400002)(346002)(199004)(4744005)(31686004)(2616005)(54906003)(86362001)(316002)(31696002)(2906002)(16526019)(4326008)(7416002)(186003)(8936002)(81156014)(81166006)(8676002)(52116002)(6486002)(478600001)(36756003)(66556008)(66946007)(5660300002)(66476007)(6506007)(6512007)(53546011);DIR:OUT;SFP:1102;SCL:1;SRVR:MW3PR15MB3882;H:MW3PR15MB3883.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;
-Received-SPF: None (protection.outlook.com: fb.com does not designate
- permitted sender hosts)
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: oDN1cc9/a7UksVj4UoSFVZ3+HOsw8LzYtVZd36Hyb0xAHIHPPXAxwSq3YMC+yXcDHJVnmqxPh6lpwPB9dO2a4dX+VbrMvwuU2rgz+CBH4wwO4pbrRWphe8805WsTwi/Umw66OnQXKMic3eRDEjsD2fogcv7ma4eM/EQuvj9MGLsp8Kz87XTkKzHvluDu2LgZfXtOhdGLClbHXh+/2dB/GT1zlTamlj/sWKHSFm3K3OG7QFzJ3ryKIgDr958C22OSEZw7sH5UOb7tTLg9+S6xASnSHYuOX5BG3YTHWtCyh1D2/sYXRFApx9bPs3gFLov6MfddlgjVnTVYeyc2y9Oymht2saKDYemEKYtPBUy/+CxqdSbg0zmNeBn4T5Kw9O0vOj3fubhodPfyKJwxTgFCPKkp7HAbrCmwMVsEW35qSX3dSis8Y6P5ePxH8b7TWdSr
-X-MS-Exchange-AntiSpam-MessageData: AyP5NkOSOHWqpI9e+2I0hUQC/Ytht22Ns+cl6yQ5KzT4gfNVIbOXyackrXN4/VC+8K+Y93qo2WtnS+YUwCWkNBNkrJNXP/oLoJHXNcwPgzJ8BWGGZ+wHvrIeR/KJUw8dO7G0bt/pV5z53afBBeF6nD+WpbjzsqMQbl1eMpjtAjCrZO91cezBEu2IFRWqQSVE
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7feb8bd6-0dbf-432d-3e12-08d7cf5d1107
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Mar 2020 19:04:52.2542
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Ih1cUTI1BEHEzb1/g15b0hgxO3EFEN3XOSc+Z31Wnr7ITggpzS2eyHoadcqY9915
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW3PR15MB3882
-X-OriginatorOrg: fb.com
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.645
- definitions=2020-03-23_07:2020-03-23,2020-03-23 signatures=0
-X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 mlxscore=0
- impostorscore=0 mlxlogscore=686 spamscore=0 suspectscore=0
- priorityscore=1501 malwarescore=0 bulkscore=0 lowpriorityscore=0
- adultscore=0 clxscore=1015 phishscore=0 classifier=spam adjust=0
- reason=mlx scancount=1 engine=8.12.0-2003020000
- definitions=main-2003230096
-X-FB-Internal: deliver
+        Mon, 23 Mar 2020 15:05:07 -0400
+Received: by mail-pf1-f201.google.com with SMTP id t19so11954937pfq.21
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Mar 2020 12:05:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=62ODFo7fgtXrZQirhZFriVDxWJbpN32F85/2VefFryo=;
+        b=rlLq4n/miZ/WNYaR8D0o1QhJuCKChqbKhtqfObtqtHzh3ZK09KPXexT576LOjSw3qH
+         MrHnfw7INxbbdsjnuJy+239bqBeW/7MV9P98a8o70j95TzgbbxBYPny55hqrBM5l/Yo8
+         wSeImOAGWwY6yzb5U5KFsBEbf+zmK7NrrnUROgF4wS5a4pa5LbSPUU/iwXNYUBeWz16T
+         LwfqL3FR2iQTKHan5y65vPha46ce5jMsQ8qam1pNx3zq+CyaOFjiPKY5aqibqdv+Lceg
+         kk/fUCQZjTJW8+MEGeocQphtfjQ/+5O1TwgcAwkbi7UzM3VcpJF/AM97lQXYXAYa+6Cg
+         9fDA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=62ODFo7fgtXrZQirhZFriVDxWJbpN32F85/2VefFryo=;
+        b=YXrNwj6+6QIVMPY+Ac6kyZhQeKGXECyMeQ75F/5c6Nv/qvnaMSIV6UcuIDL26FUTz2
+         CO7HaFEbDvETxrgD9TzGfhU17jeI+BBSvktX7Mbe+Kf83s9tBokg7ejFefREYouV3+T9
+         GH9rh7DXeuDlmpBdyFh9N30YW+W3Zdneae/F++qSn21uq26ziPYzi7F0tJkJzQaRyQZB
+         p1eqILWY7I3bhylL6Jejq6w4E1vXYZniCZM+1mjZVUDFWRd2zGOibx+mH1+mfVrznPzm
+         n6hwTFZTi/rxIeT+tMnKcYiRSnKZjgoStHntut5rDURLfFosnVb99s+wWupM4R/OD608
+         bAdg==
+X-Gm-Message-State: ANhLgQ0J3NxwODP3QjPdRQPy7JdmzrgG7yvI/LwYvdeur99amt/AcNjM
+        +6MASUrjnz15l9xIw/jRGCDbQS3qSo3hpOOcyMiEdg==
+X-Google-Smtp-Source: ADFU+vu60MjNR8qzisTn2g+enOhutcBQfdSiszlSCdNZiG9hSVpVqoH9ZuWAdaiqf7WCYmN1QexHDoTKiL0zlXbSGQCUgg==
+X-Received: by 2002:a17:90b:14cb:: with SMTP id jz11mr910275pjb.142.1584990305331;
+ Mon, 23 Mar 2020 12:05:05 -0700 (PDT)
+Date:   Mon, 23 Mar 2020 12:04:59 -0700
+Message-Id: <20200323190459.64737-1-brendanhiggins@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.25.1.696.g5e7596f4ac-goog
+Subject: [PATCH rebase v2] kunit: add --make_options
+From:   Brendan Higgins <brendanhiggins@google.com>
+To:     shuah@kernel.org, gthelen@google.com, natechancellor@gmail.com
+Cc:     linux-kselftest@vger.kernel.org, davidgow@google.com,
+        kunit-dev@googlegroups.com, clang-built-linux@googlegroups.com,
+        linux-kernel@vger.kernel.org,
+        Brendan Higgins <brendanhiggins@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Greg Thelen <gthelen@google.com>
 
+The kunit.py utility builds an ARCH=um kernel and then runs it.  Add
+optional --make_options flag to kunit.py allowing for the operator to
+specify extra build options.
 
-On 3/23/20 9:44 AM, KP Singh wrote:
-> From: KP Singh <kpsingh@google.com>
-> 
-> When CONFIG_BPF_LSM is enabled, nops functions, bpf_lsm_<hook_name>, are
-> generated for each LSM hook. These nops are initialized as LSM hooks in
-> a subsequent patch.
-> 
-> Signed-off-by: KP Singh <kpsingh@google.com>
-> Reviewed-by: Brendan Jackman <jackmanb@google.com>
-> Reviewed-by: Florent Revest <revest@google.com>
+This allows use of the clang compiler for kunit:
+  tools/testing/kunit/kunit.py run --defconfig \
+    --make_options CC=clang --make_options HOSTCC=clang
 
-Acked-by: Yonghong Song <yhs@fb.com>
+Signed-off-by: Greg Thelen <gthelen@google.com>
+Reviewed-by: Brendan Higgins <brendanhiggins@google.com>
+Reviewed-by: Nathan Chancellor <natechancellor@gmail.com>
+Tested-by: David Gow <davidgow@google.com>
+Signed-off-by: Brendan Higgins <brendanhiggins@google.com>
+---
+ tools/testing/kunit/kunit.py        | 14 ++++++++++----
+ tools/testing/kunit/kunit_kernel.py | 24 ++++++++++++++----------
+ 2 files changed, 24 insertions(+), 14 deletions(-)
+
+diff --git a/tools/testing/kunit/kunit.py b/tools/testing/kunit/kunit.py
+index 650bb4cfc544..7dca74774dd2 100755
+--- a/tools/testing/kunit/kunit.py
++++ b/tools/testing/kunit/kunit.py
+@@ -24,7 +24,7 @@ KunitResult = namedtuple('KunitResult', ['status','result'])
+ 
+ KunitRequest = namedtuple('KunitRequest', ['raw_output','timeout', 'jobs',
+ 					   'build_dir', 'defconfig',
+-					   'alltests'])
++					   'alltests', 'make_options'])
+ 
+ KernelDirectoryPath = sys.argv[0].split('tools/testing/kunit/')[0]
+ 
+@@ -49,7 +49,7 @@ def get_kernel_root_path():
+ def run_tests(linux: kunit_kernel.LinuxSourceTree,
+ 	      request: KunitRequest) -> KunitResult:
+ 	config_start = time.time()
+-	success = linux.build_reconfig(request.build_dir)
++	success = linux.build_reconfig(request.build_dir, request.make_options)
+ 	config_end = time.time()
+ 	if not success:
+ 		return KunitResult(KunitStatus.CONFIG_FAILURE, 'could not configure kernel')
+@@ -59,7 +59,8 @@ def run_tests(linux: kunit_kernel.LinuxSourceTree,
+ 	build_start = time.time()
+ 	success = linux.build_um_kernel(request.alltests,
+ 					request.jobs,
+-					request.build_dir)
++					request.build_dir,
++					request.make_options)
+ 	build_end = time.time()
+ 	if not success:
+ 		return KunitResult(KunitStatus.BUILD_FAILURE, 'could not build kernel')
+@@ -125,6 +126,10 @@ def main(argv, linux=None):
+ 				help='Run all KUnit tests through allyesconfig',
+ 				action='store_true')
+ 
++	run_parser.add_argument('--make_options',
++				help='X=Y make option, can be repeated.',
++				action='append')
++
+ 	cli_args = parser.parse_args(argv)
+ 
+ 	if cli_args.subcommand == 'run':
+@@ -149,7 +154,8 @@ def main(argv, linux=None):
+ 				       cli_args.jobs,
+ 				       cli_args.build_dir,
+ 				       cli_args.defconfig,
+-				       cli_args.alltests)
++				       cli_args.alltests,
++				       cli_args.make_options)
+ 		result = run_tests(linux, request)
+ 		if result.status != KunitStatus.SUCCESS:
+ 			sys.exit(1)
+diff --git a/tools/testing/kunit/kunit_kernel.py b/tools/testing/kunit/kunit_kernel.py
+index 415d8f3c4fe4..63dbda2d029f 100644
+--- a/tools/testing/kunit/kunit_kernel.py
++++ b/tools/testing/kunit/kunit_kernel.py
+@@ -40,8 +40,10 @@ class LinuxSourceTreeOperations(object):
+ 		except subprocess.CalledProcessError as e:
+ 			raise ConfigError(e.output)
+ 
+-	def make_olddefconfig(self, build_dir):
++	def make_olddefconfig(self, build_dir, make_options):
+ 		command = ['make', 'ARCH=um', 'olddefconfig']
++		if make_options:
++			command.extend(make_options)
+ 		if build_dir:
+ 			command += ['O=' + build_dir]
+ 		try:
+@@ -68,8 +70,10 @@ class LinuxSourceTreeOperations(object):
+ 		kunit_parser.print_with_timestamp(
+ 			'Starting Kernel with all configs takes a few minutes...')
+ 
+-	def make(self, jobs, build_dir):
++	def make(self, jobs, build_dir, make_options):
+ 		command = ['make', 'ARCH=um', '--jobs=' + str(jobs)]
++		if make_options:
++			command.extend(make_options)
+ 		if build_dir:
+ 			command += ['O=' + build_dir]
+ 		try:
+@@ -128,19 +132,19 @@ class LinuxSourceTree(object):
+ 			return False
+ 		return True
+ 
+-	def build_config(self, build_dir):
++	def build_config(self, build_dir, make_options):
+ 		kconfig_path = get_kconfig_path(build_dir)
+ 		if build_dir and not os.path.exists(build_dir):
+ 			os.mkdir(build_dir)
+ 		self._kconfig.write_to_file(kconfig_path)
+ 		try:
+-			self._ops.make_olddefconfig(build_dir)
++			self._ops.make_olddefconfig(build_dir, make_options)
+ 		except ConfigError as e:
+ 			logging.error(e)
+ 			return False
+ 		return self.validate_config(build_dir)
+ 
+-	def build_reconfig(self, build_dir):
++	def build_reconfig(self, build_dir, make_options):
+ 		"""Creates a new .config if it is not a subset of the .kunitconfig."""
+ 		kconfig_path = get_kconfig_path(build_dir)
+ 		if os.path.exists(kconfig_path):
+@@ -149,19 +153,19 @@ class LinuxSourceTree(object):
+ 			if not self._kconfig.is_subset_of(existing_kconfig):
+ 				print('Regenerating .config ...')
+ 				os.remove(kconfig_path)
+-				return self.build_config(build_dir)
++				return self.build_config(build_dir, make_options)
+ 			else:
+ 				return True
+ 		else:
+ 			print('Generating .config ...')
+-			return self.build_config(build_dir)
++			return self.build_config(build_dir, make_options)
+ 
+-	def build_um_kernel(self, alltests, jobs, build_dir):
++	def build_um_kernel(self, alltests, jobs, build_dir, make_options):
+ 		if alltests:
+ 			self._ops.make_allyesconfig()
+ 		try:
+-			self._ops.make_olddefconfig(build_dir)
+-			self._ops.make(jobs, build_dir)
++			self._ops.make_olddefconfig(build_dir, make_options)
++			self._ops.make(jobs, build_dir, make_options)
+ 		except (ConfigError, BuildError) as e:
+ 			logging.error(e)
+ 			return False
+
+base-commit: f90ead0534f28c96dd8149ca13408d167bed9209
+-- 
+2.25.1.696.g5e7596f4ac-goog
+
