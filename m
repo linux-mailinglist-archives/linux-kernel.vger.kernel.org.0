@@ -2,121 +2,383 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 87F3818EDB0
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Mar 2020 02:42:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2897C18EDB5
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Mar 2020 02:47:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726974AbgCWBmb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 22 Mar 2020 21:42:31 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:12173 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726951AbgCWBmb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Mar 2020 21:42:31 -0400
-Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 188EEA22B45C05522922;
-        Mon, 23 Mar 2020 09:42:21 +0800 (CST)
-Received: from [10.134.22.195] (10.134.22.195) by smtp.huawei.com
- (10.3.19.210) with Microsoft SMTP Server (TLS) id 14.3.487.0; Mon, 23 Mar
- 2020 09:42:18 +0800
-Subject: Re: [f2fs-dev] [PATCH] ENOSPC returned but there still many free
- segments
-To:     chenying <chen.ying153@zte.com.cn>, <jaegeuk@kernel.org>
-CC:     <wang.yi59@zte.com.cn>, <xue.zhihong@zte.com.cn>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-f2fs-devel@lists.sourceforge.net>, <jiang.xuexin@zte.com.cn>
-References: <1584754308-39299-1-git-send-email-chen.ying153@zte.com.cn>
-From:   Chao Yu <yuchao0@huawei.com>
-Message-ID: <26f11617-92e4-1dc5-38fd-5048e92e059e@huawei.com>
-Date:   Mon, 23 Mar 2020 09:42:17 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        id S1726987AbgCWBrk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 22 Mar 2020 21:47:40 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:33256 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726954AbgCWBrk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 22 Mar 2020 21:47:40 -0400
+Received: by mail-lj1-f196.google.com with SMTP id r22so5715240ljh.0
+        for <linux-kernel@vger.kernel.org>; Sun, 22 Mar 2020 18:47:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:from:date:message-id:subject:to
+         :content-transfer-encoding;
+        bh=AMZF4s/90m5UQVjQG/C/ZPsEKDummbDXGR2s0wEej5M=;
+        b=BPcekzt0pY+2ynQ6pKKU/7r3JbYfdq3N6sYK2HWDW0FZA0jza57CYFHBf96NN0MJ8k
+         Takt7f3zyWg3BQ6eVLbDdU2dQOETWGjujNyD+Gq3KjP/erQ7JQSsHQw4Ews+yXJKFN3z
+         eSQDvrDcMStxaI11V22rG1qeArgWlMDbE2z34=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to
+         :content-transfer-encoding;
+        bh=AMZF4s/90m5UQVjQG/C/ZPsEKDummbDXGR2s0wEej5M=;
+        b=TAYmS5McRoyRY3hZ7PoRm5vwdc80FpH8EAqfYndTv4+nJNVdJwGrQIFeFbPJ/gAprB
+         KLJpUSypIoMO3pnK34+GrqHGWWWHcF4N4wuBjp/8Sgh24Yg62GI5tluILNwEnho444qL
+         366HtZXSCm+QOhdZCp1Y1sSGF5ssJleB0+HdgbfAF5lg6Zgl6XZWuuJ2/oy4PdBL6tEd
+         kW4CKa2A3nWwJ9P6qsnnHSA1Aq5nUnRu/59IguU8k8L77Kdy5sy6epxXs/COgLdjdTIQ
+         JZwnuG2UQA4KjeDcM+gGgb6GBAtMOZ661nENUr2OD+DiIti3VsUjxOpsyp8AW2OajPjb
+         1n8Q==
+X-Gm-Message-State: ANhLgQ0CuAQku8ZIE4ZKe/MoRAE6rMohzGmtfPSUMlfXOJylQF9xh/vM
+        lwlPoJNn4ynETMH+L4IfRSeTOSn2iOI=
+X-Google-Smtp-Source: ADFU+vvmSiKyToEE1Kn7GWTrZHZqap0muxxnBHry/wB7LTOtjZuobmcIj/9nfzzZ1Oc+8hoXiSvMvA==
+X-Received: by 2002:a2e:b168:: with SMTP id a8mr12003834ljm.29.1584928056058;
+        Sun, 22 Mar 2020 18:47:36 -0700 (PDT)
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com. [209.85.208.170])
+        by smtp.gmail.com with ESMTPSA id t23sm105978lfq.4.2020.03.22.18.47.35
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 22 Mar 2020 18:47:35 -0700 (PDT)
+Received: by mail-lj1-f170.google.com with SMTP id g12so12785782ljj.3
+        for <linux-kernel@vger.kernel.org>; Sun, 22 Mar 2020 18:47:35 -0700 (PDT)
+X-Received: by 2002:a2e:a58e:: with SMTP id m14mr12187521ljp.204.1584928054522;
+ Sun, 22 Mar 2020 18:47:34 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <1584754308-39299-1-git-send-email-chen.ying153@zte.com.cn>
-Content-Type: text/plain; charset="windows-1252"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.134.22.195]
-X-CFilter-Loop: Reflected
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Sun, 22 Mar 2020 18:47:18 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wipv1y2Z7=CDQ5ajb2OvSyq-0BL9yLRPm1YqW+sjcSDzQ@mail.gmail.com>
+Message-ID: <CAHk-=wipv1y2Z7=CDQ5ajb2OvSyq-0BL9yLRPm1YqW+sjcSDzQ@mail.gmail.com>
+Subject: Linux 5.6-rc7
+To:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2020/3/21 9:31, chenying wrote:
-> I write data to a compressed file when the disk space is almost full
-> and it return -ENOSPC error, but cat /sys/kernel/debug/f2fs/status
-> shows that there still many free segments.
+The world around us may be going through strange times, but at least
+so far kernel development looks normal.
 
-free segments include reserved segments, so its value should never be zero,
-otherwise there should be a bug.
+The bulk this week is - as usual - drivers: gpu, mmc, staging, iio,
+usb, sound... But there's some VM fixes, some arch updates,
+documentation and tooling (mostly turbostat).
 
-BTW, could you check result in 'stat -f <your_mountpoint>' rather than f2fs
-status in debugfs?
+Nothing really stands out, it's all pretty small. I'm going to be
+optimistic, and say that it's because we're nicely on track for a
+normal calm release, but obviously it may be partly because everybody
+is distracted by virus worries. But I haven't seen anything that looks
+hugely worrisome on the kernel side.
 
-> 
-> Signed-off-by: chenying <chen.ying153@zte.com.cn>
-> ---
->  fs/f2fs/compress.c | 5 ++++-
->  fs/f2fs/file.c     | 4 ++++
->  2 files changed, 8 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/f2fs/compress.c b/fs/f2fs/compress.c
-> index d8a64be..6ca058b 100644
-> --- a/fs/f2fs/compress.c
-> +++ b/fs/f2fs/compress.c
-> @@ -854,6 +854,8 @@ static int f2fs_write_compressed_pages(struct compress_ctx *cc,
->  				fio.compr_blocks++;
->  			if (__is_valid_data_blkaddr(blkaddr))
->  				f2fs_invalidate_blocks(sbi, blkaddr);
-> +			else if (blkaddr != NULL_ADDR)
-> +				dec_valid_block_count(sbi, dn.inode, 1);
->  			f2fs_update_data_blkaddr(&dn, COMPRESS_ADDR);
->  			goto unlock_continue;
->  		}
-> @@ -865,7 +867,8 @@ static int f2fs_write_compressed_pages(struct compress_ctx *cc,
->  			if (__is_valid_data_blkaddr(blkaddr)) {
->  				f2fs_invalidate_blocks(sbi, blkaddr);
->  				f2fs_update_data_blkaddr(&dn, NEW_ADDR);
-> -			}
-> +			} else if (blkaddr != NULL_ADDR)
-> +				dec_valid_block_count(sbi, dn.inode, 1);
+Go test,
 
-I don't think this is correct, you could check message in git pull of 5.6:
+               Linus
 
-Quoted:
+---
 
-"f2fs-for-5.6
+Alberto Mattea (1):
+      usb: xhci: apply XHCI_SUSPEND_DELAY to AMD XHCI controller 1022:145c
 
-In this series, we've implemented transparent compression experimentally. It
-supports LZO and LZ4, but will add more later as we investigate in the field
-more. At this point, the feature doesn't expose compressed space to user
-directly in order to guarantee potential data updates later to the space.
-Instead, the main goal is to reduce data writes to flash disk as much as
-possible, resulting in extending disk life time as well as relaxing IO
-congestion. Alternatively, we're also considering to add ioctl() to reclaim
-compressed space and show it to user after putting the immutable bit.
-"
+Alexander Shishkin (4):
+      stm class: sys-t: Fix the use of time_after()
+      intel_th: msu: Fix the unexpected state warning
+      intel_th: Fix user-visible error codes
+      intel_th: pci: Add Elkhart Lake CPU support
 
-That means we will keep reserved blocks in compressed cluster until user
-release them via ioctl.
+Alexandru Tachici (1):
+      iio: accel: adxl372: Set iio_chan BE
 
-Thanks,
+Anthony Mallet (2):
+      USB: cdc-acm: fix close_delay and closing_wait units in TIOCSSERIAL
+      USB: cdc-acm: fix rounding error in TIOCSSERIAL
 
->  			goto unlock_continue;
->  		}
->  
-> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-> index 0d4da64..f07c9e2 100644
-> --- a/fs/f2fs/file.c
-> +++ b/fs/f2fs/file.c
-> @@ -589,6 +589,10 @@ void f2fs_truncate_data_blocks_range(struct dnode_of_data *dn, int count)
->  			clear_inode_flag(dn->inode, FI_FIRST_BLOCK_WRITTEN);
->  
->  		f2fs_invalidate_blocks(sbi, blkaddr);
-> +		if (compressed_cluster &&
-> +			(blkaddr == NEW_ADDR || blkaddr == COMPRESS_ADDR))
-> +			continue;
-> +
->  		nr_free++;
->  	}
->  
-> 
+Ard Biesheuvel (1):
+      ARM: 8961/2: Fix Kbuild issue caused by per-task stack protector
+GCC plugin
+
+Arnd Bergmann (1):
+      drm/komeda: mark PM functions as __maybe_unused
+
+Baoquan He (1):
+      mm/hotplug: fix hot remove failure in SPARSEMEM|!VMEMMAP case
+
+Caz Yokoyama (1):
+      Revert "drm/i915/tgl: Add extra hdc flush workaround"
+
+Chen Yu (5):
+      tools/power turbostat: Support Cometlake
+      tools/power turbostat: Support Tiger Lake
+      tools/power turbostat: Support Ice Lake server
+      tools/power turbostat: Support Jasper Lake
+      tools/power turbostat: Support Elkhart Lake
+
+Chen-Tsung Hsieh (1):
+      HID: google: add moonball USB id
+
+Chris Down (2):
+      mm, memcg: fix corruption on 64-bit divisor in memory.high throttling
+      mm, memcg: throttle allocators based on ancestral memory.high
+
+Chris Wilson (1):
+      drm/i915/execlists: Track active elements during dequeue
+
+Christian Brauner (1):
+      binderfs: use refcount for binder control devices too
+
+Christophe Leroy (1):
+      powerpc/kasan: Fix shadow memory protection with CONFIG_KASAN_VMALLOC
+
+Chunguang Xu (1):
+      memcg: fix NULL pointer dereference in __mem_cgroup_usage_unregister_=
+event
+
+Corentin Labbe (1):
+      rtc: max8907: add missing select REGMAP_IRQ
+
+Cristian Marussi (2):
+      arm64: smp: fix smp_send_stop() behaviour
+      arm64: smp: fix crash_smp_send_stop() behaviour
+
+Dan Carpenter (2):
+      thunderbolt: Fix error code in tb_port_is_width_supported()
+      cifs: potential unintitliazed error code in cifs_getattr()
+
+Daniele Palmas (1):
+      USB: serial: option: add ME910G1 ECM composition 0x110b
+
+Eric Biggers (3):
+      tty: drop outdated comments about release_tty() locking
+      tty: fix compat TIOCGSERIAL leaking uninitialized memory
+      tty: fix compat TIOCGSERIAL checking wrong function ptr
+
+Eugen Hristev (1):
+      iio: adc: at91-sama5d2_adc: fix differential channels in triggered mo=
+de
+
+Eugeniy Paltsev (1):
+      initramfs: restore default compression behavior
+
+Evan Quan (1):
+      drm/amdgpu: add fbdev suspend/resume on gpu reset
+
+Fabrice Gasnier (1):
+      iio: trigger: stm32-timer: disable master mode when stopping
+
+Filipe Manana (2):
+      btrfs: fix log context list corruption after rename whiteout error
+      btrfs: fix removal of raid[56|1c34} incompat flags after
+removing block group
+
+Florian Fainelli (1):
+      ARM: 8957/1: VDSO: Match ARMv8 timer in cntvct_functional()
+
+Gerd Hoffmann (1):
+      drm/bochs: downgrade pci_request_region failure from error to warning
+
+Greg Kurz (1):
+      KVM: PPC: Fix kernel crash with PR KVM
+
+Hans de Goede (3):
+      mmc: sdhci-acpi: Switch signal voltage back to 3.3V on suspend
+on external microSD on Lenovo Miix 320
+      mmc: sdhci-acpi: Disable write protect detection on Acer Aspire
+Switch 10 (SW5-012)
+      usb: quirks: add NO_LPM quirk for RTL8153 based ethernet adapters
+
+Heikki Krogerus (2):
+      usb: typec: ucsi: displayport: Fix NULL pointer dereference
+      usb: typec: ucsi: displayport: Fix a potential race during registrati=
+on
+
+James Zhu (3):
+      drm/amdgpu: fix typo for vcn1 idle check
+      drm/amdgpu: fix typo for vcn2/jpeg2 idle check
+      drm/amdgpu: fix typo for vcn2.5/jpeg2.5 idle check
+
+Jann Horn (1):
+      mm: slub: add missing TID bump in kmem_cache_alloc_bulk()
+
+Jens Axboe (2):
+      io_uring: make sure openat/openat2 honor rlimit nofile
+      io_uring: make sure accept honor rlimit nofile
+
+Jernej Skrabec (1):
+      drm/bridge: dw-hdmi: fix AVI frame colorimetry
+
+Jessica Yu (1):
+      modpost: move the namespace field in Module.symvers last
+
+Jian-Hong Pan (2):
+      ALSA: hda/realtek - Enable headset mic of Acer X2660G with ALC662
+      ALSA: hda/realtek - Enable the headset of Acer N50-600 with ALC662
+
+Joerg Roedel (1):
+      x86/mm: split vmalloc_sync_all()
+
+Johan Hovold (3):
+      staging: greybus: loopback_test: fix poll-mask build breakage
+      staging: greybus: loopback_test: fix potential path truncation
+      staging: greybus: loopback_test: fix potential path truncations
+
+J=C3=A9r=C3=B4me Pouiller (5):
+      staging: wfx: fix warning about freeing in-use mutex during
+device unregister
+      staging: wfx: fix lines ending with a comma instead of a semicolon
+      staging: wfx: make warning about pending frame less scary
+      staging: wfx: fix RCU usage in wfx_join_finalize()
+      staging: wfx: fix RCU usage between hif_join() and ieee80211_bss_get_=
+ie()
+
+Kai-Heng Feng (2):
+      ALSA: hda/realtek: Fix pop noise on ALC225
+      USB: Disable LPM on WD19's Realtek Hub
+
+Kees Cook (1):
+      ARM: 8958/1: rename missed uaccess .fixup section
+
+Len Brown (5):
+      tools/power turbostat: Fix gcc build warnings
+      tools/power turbostat: Fix missing SYS_LPI counter on some Chromebook=
+s
+      tools/power turbostat: Fix 32-bit capabilities warning
+      tools/power turbostat: Print cpuidle information
+      tools/power turbostat: update version
+
+Linus Torvalds (3):
+      mm: slub: be more careful about the double cmpxchg of freelist
+      locks: reinstate locks_delete_block optimization
+      Linux 5.6-rc7
+
+Mario Kleiner (2):
+      drm/amd/display: Add link_rate quirk for Apple 15" MBP 2017
+      drm/amd/display: Fix pageflip event race condition for DCN.
+
+Masahiro Yamada (4):
+      kconfig: introduce m32-flag and m64-flag
+      int128: fix __uint128_t compiler test in Kconfig
+      kbuild: doc: fix references to other documents
+      mmc: sdhci-cadence: set SDHCI_QUIRK2_PRESET_VALUE_BROKEN for UniPhier
+
+Matt Roper (1):
+      drm/i915: Handle all MCR ranges
+
+Michael Straube (1):
+      staging: rtl8188eu: Add device id for MERCUSYS MW150US v2
+
+Michal Hocko (1):
+      mm: do not allow MADV_PAGEOUT for CoW pages
+
+Micha=C5=82 Miros=C5=82aw (1):
+      mmc: sdhci-of-at91: fix cd-gpios for SAMA5D2
+
+Mikhail Petrov (1):
+      scripts/kallsyms: fix wrong kallsyms_relative_base
+
+Murphy Zhou (1):
+      CIFS: fiemap: do not return EINVAL if get nothing
+
+Nathan Chancellor (1):
+      kbuild: Disable -Wpointer-to-enum-cast
+
+Olivier Moysan (1):
+      iio: adc: stm32-dfsdm: fix sleep in atomic context
+
+Pavel Begunkov (1):
+      io_uring: NULL-deref for IOSQE_{ASYNC,DRAIN}
+
+Peter Chen (1):
+      usb: chipidea: udc: fix sleeping function called from invalid context
+
+Petr =C5=A0tetiar (1):
+      iio: chemical: sps30: fix missing triggered buffer dependency
+
+Prabhath Sajeepa (1):
+      nvme-rdma: Avoid double freeing of async event data
+
+Qian Cai (2):
+      page-flags: fix a crash at SetPageError(THP_SWAP)
+      mm/mmu_notifier: silence PROVE_RCU_LIST warnings
+
+Qiujun Huang (1):
+      drm/lease: fix WARNING in idr_destroy
+
+Ran Wang (1):
+      usb: host: xhci-plat: add a shutdown
+
+Ricky Wu (1):
+      mmc: rtsx_pci: Fix support for speed-modes that relies on tuning
+
+Roman Penyaev (1):
+      epoll: fix possible lost wakeup on epoll_ctl() path
+
+SZ Lin (=E6=9E=97=E4=B8=8A=E6=99=BA) (1):
+      kbuild: Fix inconsistent comment
+
+Sagi Grimberg (1):
+      nvmet-tcp: set MSG_MORE only if we actually have more to send
+
+Samuel Thibault (1):
+      staging/speakup: fix get_word non-space look-ahead
+
+Scott Chen (1):
+      USB: serial: pl2303: add device-id for HP LD381
+
+Shyam Prasad N (1):
+      CIFS: Increment num_remote_opens stats counter even in case of
+smb2_query_dir_first
+
+Srinivas Kandagatla (1):
+      slimbus: ngd: add v2.1.0 compatible
+
+Stanley.Yang (1):
+      drm/amd/display: fix typos for dcn20_funcs and dcn21_funcs struct
+
+Stephan Gerhold (1):
+      iio: magnetometer: ak8974: Fix negative raw values in sysfs
+
+Steven Rostedt (VMware) (1):
+      xhci: Do not open code __print_symbolic() in xhci trace events
+
+Takashi Iwai (7):
+      ALSA: pcm: oss: Avoid plugin buffer overflow
+      ALSA: line6: Fix endless MIDI read loop
+      HID: hid-picolcd_fb: Use scnprintf() for avoiding potential
+buffer overflow
+      HID: hid-sensor-custom: Use scnprintf() for avoiding potential
+buffer overflow
+      ALSA: pcm: oss: Remove WARNING from snd_pcm_plug_alloc() checks
+      ALSA: seq: virmidi: Fix running status after receiving sysex
+      ALSA: seq: oss: Fix running status after receiving sysex
+
+Tom St Denis (1):
+      drm/amd/amdgpu: Fix GPR read from debugfs (v2)
+
+Tomas Novotny (2):
+      iio: light: vcnl4000: update sampling periods for vcnl4200
+      iio: light: vcnl4000: update sampling periods for vcnl4040
+
+Tony Fischetti (1):
+      HID: add ALWAYS_POLL quirk to lenovo pixart mouse
+
+Vincenzo Frascino (1):
+      arm64: compat: Fix syscall number of compat_clock_getres
+
+Vlastimil Babka (1):
+      mm, slub: prevent kmalloc_node crashes and memory leaks
+
+Wen-chien Jesse Sung (1):
+      iio: st_sensors: remap SMO8840 to LIS2DH12
+
+Will Deacon (1):
+      arm64: kpti: Fix "kpti=3Doff" when KASLR is enabled
+
+Xiao Yang (1):
+      modpost: Get proper section index by get_secindex() instead of st_shn=
+dx
+
+YueHaibing (1):
+      iio: ping: set pa_laser_ping_cfg in of_ping_match
