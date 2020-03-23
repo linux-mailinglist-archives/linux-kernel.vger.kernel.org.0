@@ -2,49 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 97A6618F3CC
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Mar 2020 12:37:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 72F1E18F3C5
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Mar 2020 12:36:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728222AbgCWLgh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Mar 2020 07:36:37 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:38811 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728172AbgCWLgf (ORCPT
+        id S1728194AbgCWLgd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Mar 2020 07:36:33 -0400
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:45604 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728115AbgCWLgd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Mar 2020 07:36:35 -0400
-Received: by mail-lj1-f196.google.com with SMTP id w1so14118967ljh.5;
-        Mon, 23 Mar 2020 04:36:30 -0700 (PDT)
+        Mon, 23 Mar 2020 07:36:33 -0400
+Received: by mail-lf1-f68.google.com with SMTP id v4so6240124lfo.12;
+        Mon, 23 Mar 2020 04:36:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=FhhZGCEqFSQlZZpCymNYzwJIUYAa9ackcZ71n1wRacs=;
-        b=X2L7i/q0OdGizDsMgr6Gk7TUlPAX8wTytluqu4+YB7+eBXKKqaSu8+6MmhAHcJJPkn
-         1bPZn6Z0apG79YYUcQdDtgNMWQVranf8/88QGes94jFImnQiyDhpCCV12pBSZkng5jTp
-         oOGEGz8pYPD0f7ENho248WwFfX1n7IEBBVAD0unE1h9OJNn8gBCYhIcz+dmSZ2N/R4UA
-         qe5lqD3vboQ+r61opbDko6tafK3iL8k53U3sEFNQjk5F+H2netMivsCU4wEarbL4+6XX
-         RZCwXsVVUfN8JS2kNBOYh4FL7Wbe1fB5O3WhEMaTMgFzG4+IxQfjyT+8dgHlmU0EqB25
-         n1pw==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=hvv/BXuLWpNLLdFDZgSPAuIrVWrqIrNN7T6QpB5RAFg=;
+        b=k819nhoBDc5EyyUjuH/4btny90/o6wFeimVwb5KP7g8Y16lFcL5r0JB+nV9lT525wE
+         QLrDKBTCMfMf+hPhj+w+i/7GpTU7ydmBNfIbPKj5B8RCXOE+IEKq/xvl4+IY163AgZSj
+         amt+kBqX72nyFwveKuIHXVKszRyG61y/idcptcCw1bunBP+imMtJPkRy0AXZjV2aXq1u
+         5LNvsR0e6LhxIIDjQrriQtsyzmZnTlNEmh5bkeh2syC33yQb7m+3vPV2GbaGU9hRBScF
+         V8M4I9GTkNqxDr0+Uh2Hn6p7LENmbawjjt8jvc9u+/s4luEMelPsKzO4RzFtJ1n2RrBS
+         8Hfw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=FhhZGCEqFSQlZZpCymNYzwJIUYAa9ackcZ71n1wRacs=;
-        b=McGj0NnlsGLKSijV7sAJzJVS/i5p553Elb6dDo9wHh7Ma611x0syKTX8DyIPNAst1/
-         QohTogLsLghasl/x/UAW5tGmcXWU9uRM4z/8hqBY7vfG+1D5oTLoWj71axqanMGkiXAe
-         CYIG6kzLc5qRsiDUMI5U6MWuw87X1obFxtZsMS8oHeSmZoGf3To/fTrv/6bN4tSydsyo
-         mAiII11hkpI3RxwKBMimJM6hwHelEtZqH7d+DGHb19AKwZzKzatqFWKWT8br0yW3jUGJ
-         QalW1uXIxB5ddvYHZixY6Skx82ph6fn3pj/AJt0YYzs+Oe5xZvU+in82E6+Vz6Epq9OV
-         i/7A==
-X-Gm-Message-State: ANhLgQ1zuLCurkwjfwQErSsLmRXJy1XwQbbN5ZSosuxUBrBq+1a1f+u2
-        12+1PHLjKG+sXctJ/X7L+XUQQCVzabY=
-X-Google-Smtp-Source: ADFU+vvEtCsZKxAOj4D7FjJD1eFU3j3ni3gLtcqQPAPhIr2LkbDnwJOqVHX2StnYdEInhsa/VvEA7w==
-X-Received: by 2002:a2e:9797:: with SMTP id y23mr13494219lji.183.1584963389645;
-        Mon, 23 Mar 2020 04:36:29 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=hvv/BXuLWpNLLdFDZgSPAuIrVWrqIrNN7T6QpB5RAFg=;
+        b=qTUmwZIZtivvOgnwB+PGyFeMfl62uMdWldz8SRWeU4/lapiSil9tihmvFy0nQSbXmB
+         pUEW4uFzGFvyfWyXhsHCFhpy7G7YMR4QQSw5lvA0GhaQQvBZFsThXLv2jxibul75ilcD
+         jeLtUPgOkeMQC56R9U5jrjJyx41uIx+Y7KWSGwUQ9jRnhwvWghmr+6IKqPVU0U+Gufw5
+         X4ffyA6zP6w8+X2PZyYBl+yIv/osY57dwyPyuD+6Kr2G2EU2RV3yKMQP7mdGBPWex2u0
+         ISn7NikQrEn4Q/u5ZBbB+EFSc9O9YRAUSGnhRVh7fh7HePWX1Qr6bZvPOU6NqG5wIODF
+         sXlQ==
+X-Gm-Message-State: ANhLgQ0p65HSWSwtry8x7lhzhnhqpVHf10UCRTrwDZm+KPFn5X8I0HUx
+        OE9iJm8h5cMv2JTmJe1R363ig0zITfM=
+X-Google-Smtp-Source: ADFU+vsXUNwIpWKAQp1aIDXwj6QSNoKhtla7QlbDXZnzdYEI1Ma8Ix5BrXGy/Ly3aisIoC1w2Bs9Vg==
+X-Received: by 2002:a05:6512:31d6:: with SMTP id j22mr12838040lfe.173.1584963390994;
+        Mon, 23 Mar 2020 04:36:30 -0700 (PDT)
 Received: from localhost.localdomain (h5ef52e31.seluork.dyn.perspektivbredband.net. [94.245.46.49])
-        by smtp.gmail.com with ESMTPSA id r23sm8079268lfi.89.2020.03.23.04.36.28
+        by smtp.gmail.com with ESMTPSA id r23sm8079268lfi.89.2020.03.23.04.36.29
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 Mar 2020 04:36:29 -0700 (PDT)
+        Mon, 23 Mar 2020 04:36:30 -0700 (PDT)
 From:   "Uladzislau Rezki (Sony)" <urezki@gmail.com>
 To:     LKML <linux-kernel@vger.kernel.org>,
         "Paul E . McKenney" <paulmck@kernel.org>,
@@ -53,11 +53,14 @@ Cc:     RCU <rcu@vger.kernel.org>,
         Andrew Morton <akpm@linux-foundation.org>,
         Uladzislau Rezki <urezki@gmail.com>,
         Steven Rostedt <rostedt@goodmis.org>,
-        Oleksiy Avramchenko <oleksiy.avramchenko@sonymobile.com>
-Subject: [PATCH 0/7] Headless support in the kvfree_rcu()
-Date:   Mon, 23 Mar 2020 12:36:14 +0100
-Message-Id: <20200323113621.12048-1-urezki@gmail.com>
+        Oleksiy Avramchenko <oleksiy.avramchenko@sonymobile.com>,
+        Boqun Feng <boqun.feng@gmail.com>
+Subject: [PATCH 1/7] rcu/tree: simplify KFREE_BULK_MAX_ENTR macro
+Date:   Mon, 23 Mar 2020 12:36:15 +0100
+Message-Id: <20200323113621.12048-2-urezki@gmail.com>
 X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20200323113621.12048-1-urezki@gmail.com>
+References: <20200323113621.12048-1-urezki@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -65,102 +68,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Motivation.
-We had some discussions about having possibility to kvfree() an
-object that does not contain any rcu_head inside its allocated
-memory. Basically to have a simple interface like:
+We can simplify KFREE_BULK_MAX_ENTR macro and get rid of
+magic numbers which were used to make the structure to be
+exactly one page.
 
-<snip>
-    void *ptr = kvmalloc(some_bytes, GFP_KERNEL);
-        if (ptr)
-            kvfree_rcu(ptr);
-<snip>
+Suggested-by: Boqun Feng <boqun.feng@gmail.com>
+Signed-off-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
+---
+ kernel/rcu/tree.c | 15 ++++++++-------
+ 1 file changed, 8 insertions(+), 7 deletions(-)
 
-For example, please have a look at recent ext4 topic
-    https://lkml.org/lkml/2020/2/19/1372
-
-due to lack of the interface that is in question, the
-ext4 specific workaround has been introduced to kvfree()
-after a grace period:
-
-<snip>
-void ext4_kvfree_array_rcu(void *to_free)
-{
-	struct ext4_rcu_ptr *ptr = kzalloc(sizeof(*ptr), GFP_KERNEL);
-
-	if (ptr) {
-		ptr->ptr = to_free;
-		call_rcu(&ptr->rcu, ext4_rcu_ptr_callback);
-		return;
-	}
-	synchronize_rcu();
-	kvfree(ptr);
-}
-<snip>
-
-Also, as Joel Fernandes mentioned and proposed we also
-can have kfree_rcu() headless variant. Actually with this
-series it is capable of doing that, but there is missing
-one thing. The kfree_rcu() macro is eligible to be called
-with two arguments only. So it should be updated similar
-way as it has been done for kvfree_rcu().
-
-In that case we can update many places in the kernel where
-people do not embed the rcu_head into their stuctures for
-some reason and do like:
-
-<snip>
-    synchronize_rcu();
-    kfree(p);
-<snip>
-
-<snip>
-urezki@pc636:~/data/ssd/coding/linux-rcu$ find ./ -name "*.c" | xargs grep -C 1 -rn "synchronize_rcu" | grep kfree
-./arch/x86/mm/mmio-mod.c-314-           kfree(found_trace);
-./kernel/module.c-3910- kfree(mod->args);
-./kernel/trace/ftrace.c-5078-                   kfree(direct);
-./kernel/trace/ftrace.c-5155-                   kfree(direct);
-./kernel/trace/trace_probe.c-1087-      kfree(link);
-./fs/nfs/sysfs.c-113-           kfree(old);
-./fs/ext4/super.c-1701- kfree(old_qname);
-./net/ipv4/gre.mod.c-36-        { 0xfc3fcca2, "kfree_skb" },
-./net/core/sysctl_net_core.c-143-                               kfree(cur);
-./drivers/crypto/nx/nx-842-pseries.c-1010-      kfree(old_devdata);
-./drivers/misc/vmw_vmci/vmci_context.c-692-             kfree(notifier);
-./drivers/misc/vmw_vmci/vmci_event.c-213-       kfree(s);
-./drivers/infiniband/core/device.c:2162:                         * synchronize_rcu before the netdev is kfreed, so we
-./drivers/infiniband/hw/hfi1/sdma.c-1337-       kfree(dd->per_sdma);
-./drivers/net/ethernet/myricom/myri10ge/myri10ge.c-3582-        kfree(mgp->ss);
-./drivers/net/ethernet/myricom/myri10ge/myri10ge.mod.c-156-     { 0x37a0cba, "kfree" },
-./drivers/net/ethernet/mellanox/mlx5/core/fpga/tls.c:286:       synchronize_rcu(); /* before kfree(flow) */
-./drivers/net/ethernet/mellanox/mlxsw/core.c-1504-      kfree(rxl_item);
-./drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.c-6648- kfree(adapter->mbox_log);
-./drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.c-6650- kfree(adapter);
-./drivers/block/drbd/drbd_receiver.c-3804-      kfree(old_net_conf);
-./drivers/block/drbd/drbd_receiver.c-4176-                      kfree(old_disk_conf);
-./drivers/block/drbd/drbd_state.c-2074-         kfree(old_conf);
-./drivers/block/drbd/drbd_nl.c-1689-    kfree(old_disk_conf);
-./drivers/block/drbd/drbd_nl.c-2522-    kfree(old_net_conf);
-./drivers/block/drbd/drbd_nl.c-2935-            kfree(old_disk_conf);
-./drivers/mfd/dln2.c-178-               kfree(i);
-./drivers/staging/fwserial/fwserial.c-2122-     kfree(peer);
-<snip>
-
-Uladzislau Rezki (Sony) (7):
-  rcu/tree: simplify KFREE_BULK_MAX_ENTR macro
-  rcu/tree: maintain separate array for vmalloc ptrs
-  rcu/tree: introduce expedited_drain flag
-  rcu/tree: support reclaim for head-less object
-  rcu/tiny: move kvfree_call_rcu() out of header
-  rcu/tiny: support reclaim for head-less object
-  rcu: support headless variant in the kvfree_rcu()
-
- include/linux/rcupdate.h |  38 ++++-
- include/linux/rcutiny.h  |   6 +-
- kernel/rcu/tiny.c        | 161 +++++++++++++++++++++
- kernel/rcu/tree.c        | 294 ++++++++++++++++++++++++++++-----------
- 4 files changed, 407 insertions(+), 92 deletions(-)
-
+diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
+index e7963270e7f6..49ba1ff50af5 100644
+--- a/kernel/rcu/tree.c
++++ b/kernel/rcu/tree.c
+@@ -2740,13 +2740,6 @@ EXPORT_SYMBOL_GPL(call_rcu);
+ #define KFREE_DRAIN_JIFFIES (HZ / 50)
+ #define KFREE_N_BATCHES 2
+ 
+-/*
+- * This macro defines how many entries the "records" array
+- * will contain. It is based on the fact that the size of
+- * kfree_rcu_bulk_data structure becomes exactly one page.
+- */
+-#define KFREE_BULK_MAX_ENTR ((PAGE_SIZE / sizeof(void *)) - 3)
+-
+ /**
+  * struct kfree_rcu_bulk_data - single block to store kfree_rcu() pointers
+  * @nr_records: Number of active pointers in the array
+@@ -2760,6 +2753,14 @@ struct kfree_rcu_bulk_data {
+ 	struct kfree_rcu_bulk_data *next;
+ };
+ 
++/*
++ * This macro defines how many entries the "records" array
++ * will contain. It is based on the fact that the size of
++ * kfree_rcu_bulk_data structure becomes exactly one page.
++ */
++#define KFREE_BULK_MAX_ENTR \
++	((PAGE_SIZE - sizeof(struct kfree_rcu_bulk_data)) / sizeof(void *))
++
+ /**
+  * struct kfree_rcu_cpu_work - single batch of kfree_rcu() requests
+  * @rcu_work: Let queue_rcu_work() invoke workqueue handler after grace period
 -- 
 2.20.1
 
