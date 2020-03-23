@@ -2,465 +2,323 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2609D18F422
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Mar 2020 13:12:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E03E818F43C
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Mar 2020 13:16:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727493AbgCWMMz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Mar 2020 08:12:55 -0400
-Received: from us-smtp-delivery-74.mimecast.com ([216.205.24.74]:53752 "EHLO
-        us-smtp-delivery-74.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727384AbgCWMMz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Mar 2020 08:12:55 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1584965573;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=5qx8zhPCnTE2qfI2i3stQlj2dT0PZ4HXDVQ2fRtvOJ8=;
-        b=JwVoPvTxqyu9A8bEcRMf+mDNzp8Y/9MlPf6hhHpPj7+5DAoe+sV7gQYekTKvs4Z3E4DDmL
-        joQUTNrAcbWiEysfNVzMKoo74nonRRr5zq7Y14ON2wS0SwBuC1UB0AzgNInZ5txAGnlGVv
-        eN0JfW7HCiTB9HCUjevZYSAEVsy1HmA=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-291-IIY746kDOOC-AC4LHBs5oA-1; Mon, 23 Mar 2020 08:12:51 -0400
-X-MC-Unique: IIY746kDOOC-AC4LHBs5oA-1
-Received: by mail-wm1-f72.google.com with SMTP id x23so600936wmj.1
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Mar 2020 05:12:51 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
-         :message-id:mime-version;
-        bh=5qx8zhPCnTE2qfI2i3stQlj2dT0PZ4HXDVQ2fRtvOJ8=;
-        b=XpsImpjxBKMyUb2wyk0X9A5yIa9nTxp1VXCnj6VsVwcmOtF7Jh5xgMOuZ3T++12/yi
-         V8e+Y1VmKaDweH7wvshwXygDM9kQpif/ireo/gPPz49gMU/5Pqk4c92IFX1u+rjeucTU
-         +cDVRP77odC3UgSYZaApVU/VskJNqiiU8xktnSoZjKlPSFSKLjj5IuCXOk0OxvFZutyp
-         cr/f7+Q7HLSIZ1TOxcdl4q//31G8NYblXODaHVMFM/GZGr4R2oid4JlwgbH/p9kTf2Yf
-         A3QXPqpZjboORgxhDoDavs5oaSGaCehNNXuq2isDBWjnQ1xuhHP4LOqZolyvlY7g200G
-         hcvQ==
-X-Gm-Message-State: ANhLgQ2ECC3ZcjKmOcfDnhaBAkQVvpdGaVHPrv9Kao1TyhmMkjqR+bQt
-        7G02QCCU0tZql6VfsMxJ6sPE87R53g3FkuOj0iOT5gFEQ8tOY6FqGI0pk8Cbvqd0/wsK5vAsjJ8
-        MqJ7OYlqZPNcQfCpnU1UKa98X
-X-Received: by 2002:a1c:7dc8:: with SMTP id y191mr26149367wmc.167.1584965570413;
-        Mon, 23 Mar 2020 05:12:50 -0700 (PDT)
-X-Google-Smtp-Source: ADFU+vvxdntzGTAq5lGTsloo1YunEi0RacH3kYz7CeYUhon5iCYkq0bwrHPPjatnROv0Mk0H2zrWhQ==
-X-Received: by 2002:a1c:7dc8:: with SMTP id y191mr26149348wmc.167.1584965570127;
-        Mon, 23 Mar 2020 05:12:50 -0700 (PDT)
-Received: from vitty.brq.redhat.com (g-server-2.ign.cz. [91.219.240.2])
-        by smtp.gmail.com with ESMTPSA id p16sm20678671wmi.40.2020.03.23.05.12.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 Mar 2020 05:12:49 -0700 (PDT)
-From:   Vitaly Kuznetsov <vkuznets@redhat.com>
-To:     Sean Christopherson <sean.j.christopherson@intel.com>,
-        Paolo Bonzini <pbonzini@redhat.com>
-Cc:     Paul Mackerras <paulus@ozlabs.org>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        Janosch Frank <frankja@linux.ibm.com>,
-        David Hildenbrand <david@redhat.com>,
-        Cornelia Huck <cohuck@redhat.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>, Marc Zyngier <maz@kernel.org>,
-        James Morse <james.morse@arm.com>,
-        Julien Thierry <julien.thierry.kdev@gmail.com>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        linux-mips@vger.kernel.org, kvm@vger.kernel.org,
-        kvm-ppc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        kvmarm@lists.cs.columbia.edu, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 3/9] KVM: VMX: Move hardware_setup() definition below vmx_x86_ops
-In-Reply-To: <20200321202603.19355-4-sean.j.christopherson@intel.com>
-References: <20200321202603.19355-1-sean.j.christopherson@intel.com> <20200321202603.19355-4-sean.j.christopherson@intel.com>
-Date:   Mon, 23 Mar 2020 13:12:47 +0100
-Message-ID: <87imiv9sn4.fsf@vitty.brq.redhat.com>
+        id S1728118AbgCWMP7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Mar 2020 08:15:59 -0400
+Received: from foss.arm.com ([217.140.110.172]:48054 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727401AbgCWMP5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Mar 2020 08:15:57 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 08FFB1FB;
+        Mon, 23 Mar 2020 05:15:57 -0700 (PDT)
+Received: from [192.168.1.123] (unknown [172.31.20.19])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BC7BC3F52E;
+        Mon, 23 Mar 2020 05:15:45 -0700 (PDT)
+Subject: Re: [PATCH 1/2] dma-mapping: add a dma_ops_bypass flag to struct
+ device
+To:     Christoph Hellwig <hch@lst.de>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+        Alexey Kardashevskiy <aik@ozlabs.ru>
+Cc:     "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+        Lu Baolu <baolu.lu@linux.intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Joerg Roedel <joro@8bytes.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20200320141640.366360-1-hch@lst.de>
+ <20200320141640.366360-2-hch@lst.de>
+From:   Robin Murphy <robin.murphy@arm.com>
+Message-ID: <0a6003e5-8003-4509-4014-4b286d5e8fe0@arm.com>
+Date:   Mon, 23 Mar 2020 12:14:08 +0000
+User-Agent: Mozilla/5.0 (Windows NT 10.0; rv:68.0) Gecko/20100101
+ Thunderbird/68.6.0
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <20200320141640.366360-2-hch@lst.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Sean Christopherson <sean.j.christopherson@intel.com> writes:
+On 2020-03-20 2:16 pm, Christoph Hellwig wrote:
+> Several IOMMU drivers have a bypass mode where they can use a direct
+> mapping if the devices DMA mask is large enough.  Add generic support
+> to the core dma-mapping code to do that to switch those drivers to
+> a common solution.
 
-> Move VMX's hardware_setup() below its vmx_x86_ops definition so that a
-> future patch can refactor hardware_setup() to modify vmx_x86_ops
-> directly instead of indirectly modifying the ops via the global
-> kvm_x86_ops.
->
-> No functional change intended.
->
-> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+Hmm, this is _almost_, but not quite the same as the case where drivers 
+are managing their own IOMMU mappings, but still need to use streaming 
+DMA for cache maintenance on the underlying pages. For that we need the 
+ops bypass to be a "true" bypass and also avoid SWIOTLB regardless of 
+the device's DMA mask. That behaviour should in fact be fine for the 
+opportunistic bypass case here as well, since the mask being "big 
+enough" implies by definition that this should never need to bounce either.
+
+For the (hopefully less common) third case where, due to groups or user 
+overrides, we end up giving an identity DMA domain to a device with 
+limited DMA masks which _does_ need SWIOTLB, I'd like to think we can 
+solve that by not giving the device IOMMU DMA ops in the first place, 
+such that it never needs to engage the bypass mechanism at all.
+
+Thoughts?
+
+Robin.
+
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
 > ---
->  arch/x86/kvm/vmx/vmx.c | 346 ++++++++++++++++++++---------------------
->  1 file changed, 173 insertions(+), 173 deletions(-)
->
-> diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-> index ffcdcc86f5b7..82dab775d520 100644
-> --- a/arch/x86/kvm/vmx/vmx.c
-> +++ b/arch/x86/kvm/vmx/vmx.c
-> @@ -7652,179 +7652,6 @@ static bool vmx_apic_init_signal_blocked(struct kvm_vcpu *vcpu)
->  	return to_vmx(vcpu)->nested.vmxon;
->  }
->  
-> -static __init int hardware_setup(void)
-> -{
-> -	unsigned long host_bndcfgs;
-> -	struct desc_ptr dt;
-> -	int r, i, ept_lpage_level;
-> -
-> -	store_idt(&dt);
-> -	host_idt_base = dt.address;
-> -
-> -	for (i = 0; i < ARRAY_SIZE(vmx_msr_index); ++i)
-> -		kvm_define_shared_msr(i, vmx_msr_index[i]);
-> -
-> -	if (setup_vmcs_config(&vmcs_config, &vmx_capability) < 0)
-> -		return -EIO;
-> -
-> -	if (boot_cpu_has(X86_FEATURE_NX))
-> -		kvm_enable_efer_bits(EFER_NX);
-> -
-> -	if (boot_cpu_has(X86_FEATURE_MPX)) {
-> -		rdmsrl(MSR_IA32_BNDCFGS, host_bndcfgs);
-> -		WARN_ONCE(host_bndcfgs, "KVM: BNDCFGS in host will be lost");
-> -	}
-> -
-> -	if (!cpu_has_vmx_mpx())
-> -		supported_xcr0 &= ~(XFEATURE_MASK_BNDREGS |
-> -				    XFEATURE_MASK_BNDCSR);
-> -
-> -	if (!cpu_has_vmx_vpid() || !cpu_has_vmx_invvpid() ||
-> -	    !(cpu_has_vmx_invvpid_single() || cpu_has_vmx_invvpid_global()))
-> -		enable_vpid = 0;
-> -
-> -	if (!cpu_has_vmx_ept() ||
-> -	    !cpu_has_vmx_ept_4levels() ||
-> -	    !cpu_has_vmx_ept_mt_wb() ||
-> -	    !cpu_has_vmx_invept_global())
-> -		enable_ept = 0;
-> -
-> -	if (!cpu_has_vmx_ept_ad_bits() || !enable_ept)
-> -		enable_ept_ad_bits = 0;
-> -
-> -	if (!cpu_has_vmx_unrestricted_guest() || !enable_ept)
-> -		enable_unrestricted_guest = 0;
-> -
-> -	if (!cpu_has_vmx_flexpriority())
-> -		flexpriority_enabled = 0;
-> -
-> -	if (!cpu_has_virtual_nmis())
-> -		enable_vnmi = 0;
-> -
-> -	/*
-> -	 * set_apic_access_page_addr() is used to reload apic access
-> -	 * page upon invalidation.  No need to do anything if not
-> -	 * using the APIC_ACCESS_ADDR VMCS field.
-> -	 */
-> -	if (!flexpriority_enabled)
-> -		kvm_x86_ops->set_apic_access_page_addr = NULL;
-> -
-> -	if (!cpu_has_vmx_tpr_shadow())
-> -		kvm_x86_ops->update_cr8_intercept = NULL;
-> -
-> -#if IS_ENABLED(CONFIG_HYPERV)
-> -	if (ms_hyperv.nested_features & HV_X64_NESTED_GUEST_MAPPING_FLUSH
-> -	    && enable_ept) {
-> -		kvm_x86_ops->tlb_remote_flush = hv_remote_flush_tlb;
-> -		kvm_x86_ops->tlb_remote_flush_with_range =
-> -				hv_remote_flush_tlb_with_range;
-> -	}
-> -#endif
-> -
-> -	if (!cpu_has_vmx_ple()) {
-> -		ple_gap = 0;
-> -		ple_window = 0;
-> -		ple_window_grow = 0;
-> -		ple_window_max = 0;
-> -		ple_window_shrink = 0;
-> -	}
-> -
-> -	if (!cpu_has_vmx_apicv()) {
-> -		enable_apicv = 0;
-> -		kvm_x86_ops->sync_pir_to_irr = NULL;
-> -	}
-> -
-> -	if (cpu_has_vmx_tsc_scaling()) {
-> -		kvm_has_tsc_control = true;
-> -		kvm_max_tsc_scaling_ratio = KVM_VMX_TSC_MULTIPLIER_MAX;
-> -		kvm_tsc_scaling_ratio_frac_bits = 48;
-> -	}
-> -
-> -	set_bit(0, vmx_vpid_bitmap); /* 0 is reserved for host */
-> -
-> -	if (enable_ept)
-> -		vmx_enable_tdp();
-> -
-> -	if (!enable_ept)
-> -		ept_lpage_level = 0;
-> -	else if (cpu_has_vmx_ept_1g_page())
-> -		ept_lpage_level = PT_PDPE_LEVEL;
-> -	else if (cpu_has_vmx_ept_2m_page())
-> -		ept_lpage_level = PT_DIRECTORY_LEVEL;
-> -	else
-> -		ept_lpage_level = PT_PAGE_TABLE_LEVEL;
-> -	kvm_configure_mmu(enable_ept, ept_lpage_level);
-> -
-> -	/*
-> -	 * Only enable PML when hardware supports PML feature, and both EPT
-> -	 * and EPT A/D bit features are enabled -- PML depends on them to work.
-> -	 */
-> -	if (!enable_ept || !enable_ept_ad_bits || !cpu_has_vmx_pml())
-> -		enable_pml = 0;
-> -
-> -	if (!enable_pml) {
-> -		kvm_x86_ops->slot_enable_log_dirty = NULL;
-> -		kvm_x86_ops->slot_disable_log_dirty = NULL;
-> -		kvm_x86_ops->flush_log_dirty = NULL;
-> -		kvm_x86_ops->enable_log_dirty_pt_masked = NULL;
-> -	}
-> -
-> -	if (!cpu_has_vmx_preemption_timer())
-> -		enable_preemption_timer = false;
-> -
-> -	if (enable_preemption_timer) {
-> -		u64 use_timer_freq = 5000ULL * 1000 * 1000;
-> -		u64 vmx_msr;
-> -
-> -		rdmsrl(MSR_IA32_VMX_MISC, vmx_msr);
-> -		cpu_preemption_timer_multi =
-> -			vmx_msr & VMX_MISC_PREEMPTION_TIMER_RATE_MASK;
-> -
-> -		if (tsc_khz)
-> -			use_timer_freq = (u64)tsc_khz * 1000;
-> -		use_timer_freq >>= cpu_preemption_timer_multi;
-> -
-> -		/*
-> -		 * KVM "disables" the preemption timer by setting it to its max
-> -		 * value.  Don't use the timer if it might cause spurious exits
-> -		 * at a rate faster than 0.1 Hz (of uninterrupted guest time).
-> -		 */
-> -		if (use_timer_freq > 0xffffffffu / 10)
-> -			enable_preemption_timer = false;
-> -	}
-> -
-> -	if (!enable_preemption_timer) {
-> -		kvm_x86_ops->set_hv_timer = NULL;
-> -		kvm_x86_ops->cancel_hv_timer = NULL;
-> -		kvm_x86_ops->request_immediate_exit = __kvm_request_immediate_exit;
-> -	}
-> -
-> -	kvm_set_posted_intr_wakeup_handler(wakeup_handler);
-> -
-> -	kvm_mce_cap_supported |= MCG_LMCE_P;
-> -
-> -	if (pt_mode != PT_MODE_SYSTEM && pt_mode != PT_MODE_HOST_GUEST)
-> -		return -EINVAL;
-> -	if (!enable_ept || !cpu_has_vmx_intel_pt())
-> -		pt_mode = PT_MODE_SYSTEM;
-> -
-> -	if (nested) {
-> -		nested_vmx_setup_ctls_msrs(&vmcs_config.nested,
-> -					   vmx_capability.ept);
-> -
-> -		r = nested_vmx_hardware_setup(kvm_vmx_exit_handlers);
-> -		if (r)
-> -			return r;
-> -	}
-> -
-> -	vmx_set_cpu_caps();
-> -
-> -	r = alloc_kvm_area();
-> -	if (r)
-> -		nested_vmx_hardware_unsetup();
-> -	return r;
-> -}
-> -
->  static __exit void hardware_unsetup(void)
->  {
->  	if (nested)
-> @@ -7978,6 +7805,179 @@ static struct kvm_x86_ops vmx_x86_ops __ro_after_init = {
->  	.apic_init_signal_blocked = vmx_apic_init_signal_blocked,
->  };
->  
-> +static __init int hardware_setup(void)
+>   include/linux/device.h      |  6 ++++++
+>   include/linux/dma-mapping.h | 30 ++++++++++++++++++------------
+>   kernel/dma/mapping.c        | 36 +++++++++++++++++++++++++++---------
+>   3 files changed, 51 insertions(+), 21 deletions(-)
+> 
+> diff --git a/include/linux/device.h b/include/linux/device.h
+> index 0cd7c647c16c..09be8bb2c4a6 100644
+> --- a/include/linux/device.h
+> +++ b/include/linux/device.h
+> @@ -525,6 +525,11 @@ struct dev_links_info {
+>    *		  sync_state() callback.
+>    * @dma_coherent: this particular device is dma coherent, even if the
+>    *		architecture supports non-coherent devices.
+> + * @dma_ops_bypass: If set to %true then the dma_ops are bypassed for the
+> + *		streaming DMA operations (->map_* / ->unmap_* / ->sync_*),
+> + *		and optionall (if the coherent mask is large enough) also
+> + *		for dma allocations.  This flag is managed by the dma ops
+> + *		instance from ->dma_supported.
+>    *
+>    * At the lowest level, every device in a Linux system is represented by an
+>    * instance of struct device. The device structure contains the information
+> @@ -625,6 +630,7 @@ struct device {
+>       defined(CONFIG_ARCH_HAS_SYNC_DMA_FOR_CPU_ALL)
+>   	bool			dma_coherent:1;
+>   #endif
+> +	bool			dma_ops_bypass : 1;
+>   };
+>   
+>   static inline struct device *kobj_to_dev(struct kobject *kobj)
+> diff --git a/include/linux/dma-mapping.h b/include/linux/dma-mapping.h
+> index 330ad58fbf4d..c3af0cf5e435 100644
+> --- a/include/linux/dma-mapping.h
+> +++ b/include/linux/dma-mapping.h
+> @@ -188,9 +188,15 @@ static inline int dma_mmap_from_global_coherent(struct vm_area_struct *vma,
+>   }
+>   #endif /* CONFIG_DMA_DECLARE_COHERENT */
+>   
+> -static inline bool dma_is_direct(const struct dma_map_ops *ops)
+> +/*
+> + * Check if the devices uses a direct mapping for streaming DMA operations.
+> + * This allows IOMMU drivers to set a bypass mode if the DMA mask is large
+> + * enough.
+> + */
+> +static inline bool dma_map_direct(struct device *dev,
+> +		const struct dma_map_ops *ops)
+>   {
+> -	return likely(!ops);
+> +	return likely(!ops) || dev->dma_ops_bypass;
+>   }
+>   
+>   /*
+> @@ -279,7 +285,7 @@ static inline dma_addr_t dma_map_page_attrs(struct device *dev,
+>   	dma_addr_t addr;
+>   
+>   	BUG_ON(!valid_dma_direction(dir));
+> -	if (dma_is_direct(ops))
+> +	if (dma_map_direct(dev, ops))
+>   		addr = dma_direct_map_page(dev, page, offset, size, dir, attrs);
+>   	else
+>   		addr = ops->map_page(dev, page, offset, size, dir, attrs);
+> @@ -294,7 +300,7 @@ static inline void dma_unmap_page_attrs(struct device *dev, dma_addr_t addr,
+>   	const struct dma_map_ops *ops = get_dma_ops(dev);
+>   
+>   	BUG_ON(!valid_dma_direction(dir));
+> -	if (dma_is_direct(ops))
+> +	if (dma_map_direct(dev, ops))
+>   		dma_direct_unmap_page(dev, addr, size, dir, attrs);
+>   	else if (ops->unmap_page)
+>   		ops->unmap_page(dev, addr, size, dir, attrs);
+> @@ -313,7 +319,7 @@ static inline int dma_map_sg_attrs(struct device *dev, struct scatterlist *sg,
+>   	int ents;
+>   
+>   	BUG_ON(!valid_dma_direction(dir));
+> -	if (dma_is_direct(ops))
+> +	if (dma_map_direct(dev, ops))
+>   		ents = dma_direct_map_sg(dev, sg, nents, dir, attrs);
+>   	else
+>   		ents = ops->map_sg(dev, sg, nents, dir, attrs);
+> @@ -331,7 +337,7 @@ static inline void dma_unmap_sg_attrs(struct device *dev, struct scatterlist *sg
+>   
+>   	BUG_ON(!valid_dma_direction(dir));
+>   	debug_dma_unmap_sg(dev, sg, nents, dir);
+> -	if (dma_is_direct(ops))
+> +	if (dma_map_direct(dev, ops))
+>   		dma_direct_unmap_sg(dev, sg, nents, dir, attrs);
+>   	else if (ops->unmap_sg)
+>   		ops->unmap_sg(dev, sg, nents, dir, attrs);
+> @@ -352,7 +358,7 @@ static inline dma_addr_t dma_map_resource(struct device *dev,
+>   	if (WARN_ON_ONCE(pfn_valid(PHYS_PFN(phys_addr))))
+>   		return DMA_MAPPING_ERROR;
+>   
+> -	if (dma_is_direct(ops))
+> +	if (dma_map_direct(dev, ops))
+>   		addr = dma_direct_map_resource(dev, phys_addr, size, dir, attrs);
+>   	else if (ops->map_resource)
+>   		addr = ops->map_resource(dev, phys_addr, size, dir, attrs);
+> @@ -368,7 +374,7 @@ static inline void dma_unmap_resource(struct device *dev, dma_addr_t addr,
+>   	const struct dma_map_ops *ops = get_dma_ops(dev);
+>   
+>   	BUG_ON(!valid_dma_direction(dir));
+> -	if (!dma_is_direct(ops) && ops->unmap_resource)
+> +	if (!dma_map_direct(dev, ops) && ops->unmap_resource)
+>   		ops->unmap_resource(dev, addr, size, dir, attrs);
+>   	debug_dma_unmap_resource(dev, addr, size, dir);
+>   }
+> @@ -380,7 +386,7 @@ static inline void dma_sync_single_for_cpu(struct device *dev, dma_addr_t addr,
+>   	const struct dma_map_ops *ops = get_dma_ops(dev);
+>   
+>   	BUG_ON(!valid_dma_direction(dir));
+> -	if (dma_is_direct(ops))
+> +	if (dma_map_direct(dev, ops))
+>   		dma_direct_sync_single_for_cpu(dev, addr, size, dir);
+>   	else if (ops->sync_single_for_cpu)
+>   		ops->sync_single_for_cpu(dev, addr, size, dir);
+> @@ -394,7 +400,7 @@ static inline void dma_sync_single_for_device(struct device *dev,
+>   	const struct dma_map_ops *ops = get_dma_ops(dev);
+>   
+>   	BUG_ON(!valid_dma_direction(dir));
+> -	if (dma_is_direct(ops))
+> +	if (dma_map_direct(dev, ops))
+>   		dma_direct_sync_single_for_device(dev, addr, size, dir);
+>   	else if (ops->sync_single_for_device)
+>   		ops->sync_single_for_device(dev, addr, size, dir);
+> @@ -408,7 +414,7 @@ dma_sync_sg_for_cpu(struct device *dev, struct scatterlist *sg,
+>   	const struct dma_map_ops *ops = get_dma_ops(dev);
+>   
+>   	BUG_ON(!valid_dma_direction(dir));
+> -	if (dma_is_direct(ops))
+> +	if (dma_map_direct(dev, ops))
+>   		dma_direct_sync_sg_for_cpu(dev, sg, nelems, dir);
+>   	else if (ops->sync_sg_for_cpu)
+>   		ops->sync_sg_for_cpu(dev, sg, nelems, dir);
+> @@ -422,7 +428,7 @@ dma_sync_sg_for_device(struct device *dev, struct scatterlist *sg,
+>   	const struct dma_map_ops *ops = get_dma_ops(dev);
+>   
+>   	BUG_ON(!valid_dma_direction(dir));
+> -	if (dma_is_direct(ops))
+> +	if (dma_map_direct(dev, ops))
+>   		dma_direct_sync_sg_for_device(dev, sg, nelems, dir);
+>   	else if (ops->sync_sg_for_device)
+>   		ops->sync_sg_for_device(dev, sg, nelems, dir);
+> diff --git a/kernel/dma/mapping.c b/kernel/dma/mapping.c
+> index 12ff766ec1fa..fdea45574345 100644
+> --- a/kernel/dma/mapping.c
+> +++ b/kernel/dma/mapping.c
+> @@ -105,6 +105,24 @@ void *dmam_alloc_attrs(struct device *dev, size_t size, dma_addr_t *dma_handle,
+>   }
+>   EXPORT_SYMBOL(dmam_alloc_attrs);
+>   
+> +static bool dma_alloc_direct(struct device *dev, const struct dma_map_ops *ops)
 > +{
-> +	unsigned long host_bndcfgs;
-> +	struct desc_ptr dt;
-> +	int r, i, ept_lpage_level;
-> +
-> +	store_idt(&dt);
-> +	host_idt_base = dt.address;
-> +
-> +	for (i = 0; i < ARRAY_SIZE(vmx_msr_index); ++i)
-> +		kvm_define_shared_msr(i, vmx_msr_index[i]);
-> +
-> +	if (setup_vmcs_config(&vmcs_config, &vmx_capability) < 0)
-> +		return -EIO;
-> +
-> +	if (boot_cpu_has(X86_FEATURE_NX))
-> +		kvm_enable_efer_bits(EFER_NX);
-> +
-> +	if (boot_cpu_has(X86_FEATURE_MPX)) {
-> +		rdmsrl(MSR_IA32_BNDCFGS, host_bndcfgs);
-> +		WARN_ONCE(host_bndcfgs, "KVM: BNDCFGS in host will be lost");
-> +	}
-> +
-> +	if (!cpu_has_vmx_mpx())
-> +		supported_xcr0 &= ~(XFEATURE_MASK_BNDREGS |
-> +				    XFEATURE_MASK_BNDCSR);
-> +
-> +	if (!cpu_has_vmx_vpid() || !cpu_has_vmx_invvpid() ||
-> +	    !(cpu_has_vmx_invvpid_single() || cpu_has_vmx_invvpid_global()))
-> +		enable_vpid = 0;
-> +
-> +	if (!cpu_has_vmx_ept() ||
-> +	    !cpu_has_vmx_ept_4levels() ||
-> +	    !cpu_has_vmx_ept_mt_wb() ||
-> +	    !cpu_has_vmx_invept_global())
-> +		enable_ept = 0;
-> +
-> +	if (!cpu_has_vmx_ept_ad_bits() || !enable_ept)
-> +		enable_ept_ad_bits = 0;
-> +
-> +	if (!cpu_has_vmx_unrestricted_guest() || !enable_ept)
-> +		enable_unrestricted_guest = 0;
-> +
-> +	if (!cpu_has_vmx_flexpriority())
-> +		flexpriority_enabled = 0;
-> +
-> +	if (!cpu_has_virtual_nmis())
-> +		enable_vnmi = 0;
+> +	if (!ops)
+> +		return true;
 > +
 > +	/*
-> +	 * set_apic_access_page_addr() is used to reload apic access
-> +	 * page upon invalidation.  No need to do anything if not
-> +	 * using the APIC_ACCESS_ADDR VMCS field.
+> +	 * Allows IOMMU drivers to bypass dynamic translations if the DMA mask
+> +	 * is large enough.
 > +	 */
-> +	if (!flexpriority_enabled)
-> +		kvm_x86_ops->set_apic_access_page_addr = NULL;
-> +
-> +	if (!cpu_has_vmx_tpr_shadow())
-> +		kvm_x86_ops->update_cr8_intercept = NULL;
-> +
-> +#if IS_ENABLED(CONFIG_HYPERV)
-> +	if (ms_hyperv.nested_features & HV_X64_NESTED_GUEST_MAPPING_FLUSH
-> +	    && enable_ept) {
-> +		kvm_x86_ops->tlb_remote_flush = hv_remote_flush_tlb;
-> +		kvm_x86_ops->tlb_remote_flush_with_range =
-> +				hv_remote_flush_tlb_with_range;
-> +	}
-> +#endif
-> +
-> +	if (!cpu_has_vmx_ple()) {
-> +		ple_gap = 0;
-> +		ple_window = 0;
-> +		ple_window_grow = 0;
-> +		ple_window_max = 0;
-> +		ple_window_shrink = 0;
+> +	if (dev->dma_ops_bypass) {
+> +		if (min_not_zero(dev->coherent_dma_mask, dev->bus_dma_limit) >=
+> +				dma_direct_get_required_mask(dev))
+> +			return true;
 > +	}
 > +
-> +	if (!cpu_has_vmx_apicv()) {
-> +		enable_apicv = 0;
-> +		kvm_x86_ops->sync_pir_to_irr = NULL;
-> +	}
-> +
-> +	if (cpu_has_vmx_tsc_scaling()) {
-> +		kvm_has_tsc_control = true;
-> +		kvm_max_tsc_scaling_ratio = KVM_VMX_TSC_MULTIPLIER_MAX;
-> +		kvm_tsc_scaling_ratio_frac_bits = 48;
-> +	}
-> +
-> +	set_bit(0, vmx_vpid_bitmap); /* 0 is reserved for host */
-> +
-> +	if (enable_ept)
-> +		vmx_enable_tdp();
-> +
-> +	if (!enable_ept)
-> +		ept_lpage_level = 0;
-> +	else if (cpu_has_vmx_ept_1g_page())
-> +		ept_lpage_level = PT_PDPE_LEVEL;
-> +	else if (cpu_has_vmx_ept_2m_page())
-> +		ept_lpage_level = PT_DIRECTORY_LEVEL;
-> +	else
-> +		ept_lpage_level = PT_PAGE_TABLE_LEVEL;
-> +	kvm_configure_mmu(enable_ept, ept_lpage_level);
-> +
-> +	/*
-> +	 * Only enable PML when hardware supports PML feature, and both EPT
-> +	 * and EPT A/D bit features are enabled -- PML depends on them to work.
-> +	 */
-> +	if (!enable_ept || !enable_ept_ad_bits || !cpu_has_vmx_pml())
-> +		enable_pml = 0;
-> +
-> +	if (!enable_pml) {
-> +		kvm_x86_ops->slot_enable_log_dirty = NULL;
-> +		kvm_x86_ops->slot_disable_log_dirty = NULL;
-> +		kvm_x86_ops->flush_log_dirty = NULL;
-> +		kvm_x86_ops->enable_log_dirty_pt_masked = NULL;
-> +	}
-> +
-> +	if (!cpu_has_vmx_preemption_timer())
-> +		enable_preemption_timer = false;
-> +
-> +	if (enable_preemption_timer) {
-> +		u64 use_timer_freq = 5000ULL * 1000 * 1000;
-> +		u64 vmx_msr;
-> +
-> +		rdmsrl(MSR_IA32_VMX_MISC, vmx_msr);
-> +		cpu_preemption_timer_multi =
-> +			vmx_msr & VMX_MISC_PREEMPTION_TIMER_RATE_MASK;
-> +
-> +		if (tsc_khz)
-> +			use_timer_freq = (u64)tsc_khz * 1000;
-> +		use_timer_freq >>= cpu_preemption_timer_multi;
-> +
-> +		/*
-> +		 * KVM "disables" the preemption timer by setting it to its max
-> +		 * value.  Don't use the timer if it might cause spurious exits
-> +		 * at a rate faster than 0.1 Hz (of uninterrupted guest time).
-> +		 */
-> +		if (use_timer_freq > 0xffffffffu / 10)
-> +			enable_preemption_timer = false;
-> +	}
-> +
-> +	if (!enable_preemption_timer) {
-> +		kvm_x86_ops->set_hv_timer = NULL;
-> +		kvm_x86_ops->cancel_hv_timer = NULL;
-> +		kvm_x86_ops->request_immediate_exit = __kvm_request_immediate_exit;
-> +	}
-> +
-> +	kvm_set_posted_intr_wakeup_handler(wakeup_handler);
-> +
-> +	kvm_mce_cap_supported |= MCG_LMCE_P;
-> +
-> +	if (pt_mode != PT_MODE_SYSTEM && pt_mode != PT_MODE_HOST_GUEST)
-> +		return -EINVAL;
-> +	if (!enable_ept || !cpu_has_vmx_intel_pt())
-> +		pt_mode = PT_MODE_SYSTEM;
-> +
-> +	if (nested) {
-> +		nested_vmx_setup_ctls_msrs(&vmcs_config.nested,
-> +					   vmx_capability.ept);
-> +
-> +		r = nested_vmx_hardware_setup(kvm_vmx_exit_handlers);
-> +		if (r)
-> +			return r;
-> +	}
-> +
-> +	vmx_set_cpu_caps();
-> +
-> +	r = alloc_kvm_area();
-> +	if (r)
-> +		nested_vmx_hardware_unsetup();
-> +	return r;
+> +	return false;
 > +}
 > +
->  static struct kvm_x86_init_ops vmx_init_ops __initdata = {
->  	.cpu_has_kvm_support = cpu_has_kvm_support,
->  	.disabled_by_bios = vmx_disabled_by_bios,
-
-Reviewed-by: Vitaly Kuznetsov <vkuznets@redhat.com>
-
--- 
-Vitaly
-
+>   /*
+>    * Create scatter-list for the already allocated DMA buffer.
+>    */
+> @@ -138,7 +156,7 @@ int dma_get_sgtable_attrs(struct device *dev, struct sg_table *sgt,
+>   {
+>   	const struct dma_map_ops *ops = get_dma_ops(dev);
+>   
+> -	if (dma_is_direct(ops))
+> +	if (dma_alloc_direct(dev, ops))
+>   		return dma_direct_get_sgtable(dev, sgt, cpu_addr, dma_addr,
+>   				size, attrs);
+>   	if (!ops->get_sgtable)
+> @@ -206,7 +224,7 @@ bool dma_can_mmap(struct device *dev)
+>   {
+>   	const struct dma_map_ops *ops = get_dma_ops(dev);
+>   
+> -	if (dma_is_direct(ops))
+> +	if (dma_alloc_direct(dev, ops))
+>   		return dma_direct_can_mmap(dev);
+>   	return ops->mmap != NULL;
+>   }
+> @@ -231,7 +249,7 @@ int dma_mmap_attrs(struct device *dev, struct vm_area_struct *vma,
+>   {
+>   	const struct dma_map_ops *ops = get_dma_ops(dev);
+>   
+> -	if (dma_is_direct(ops))
+> +	if (dma_alloc_direct(dev, ops))
+>   		return dma_direct_mmap(dev, vma, cpu_addr, dma_addr, size,
+>   				attrs);
+>   	if (!ops->mmap)
+> @@ -244,7 +262,7 @@ u64 dma_get_required_mask(struct device *dev)
+>   {
+>   	const struct dma_map_ops *ops = get_dma_ops(dev);
+>   
+> -	if (dma_is_direct(ops))
+> +	if (dma_map_direct(dev, ops))
+>   		return dma_direct_get_required_mask(dev);
+>   	if (ops->get_required_mask)
+>   		return ops->get_required_mask(dev);
+> @@ -275,7 +293,7 @@ void *dma_alloc_attrs(struct device *dev, size_t size, dma_addr_t *dma_handle,
+>   	/* let the implementation decide on the zone to allocate from: */
+>   	flag &= ~(__GFP_DMA | __GFP_DMA32 | __GFP_HIGHMEM);
+>   
+> -	if (dma_is_direct(ops))
+> +	if (dma_alloc_direct(dev, ops))
+>   		cpu_addr = dma_direct_alloc(dev, size, dma_handle, flag, attrs);
+>   	else if (ops->alloc)
+>   		cpu_addr = ops->alloc(dev, size, dma_handle, flag, attrs);
+> @@ -307,7 +325,7 @@ void dma_free_attrs(struct device *dev, size_t size, void *cpu_addr,
+>   		return;
+>   
+>   	debug_dma_free_coherent(dev, size, cpu_addr, dma_handle);
+> -	if (dma_is_direct(ops))
+> +	if (dma_alloc_direct(dev, ops))
+>   		dma_direct_free(dev, size, cpu_addr, dma_handle, attrs);
+>   	else if (ops->free)
+>   		ops->free(dev, size, cpu_addr, dma_handle, attrs);
+> @@ -318,7 +336,7 @@ int dma_supported(struct device *dev, u64 mask)
+>   {
+>   	const struct dma_map_ops *ops = get_dma_ops(dev);
+>   
+> -	if (dma_is_direct(ops))
+> +	if (!ops)
+>   		return dma_direct_supported(dev, mask);
+>   	if (!ops->dma_supported)
+>   		return 1;
+> @@ -374,7 +392,7 @@ void dma_cache_sync(struct device *dev, void *vaddr, size_t size,
+>   
+>   	BUG_ON(!valid_dma_direction(dir));
+>   
+> -	if (dma_is_direct(ops))
+> +	if (dma_alloc_direct(dev, ops))
+>   		arch_dma_cache_sync(dev, vaddr, size, dir);
+>   	else if (ops->cache_sync)
+>   		ops->cache_sync(dev, vaddr, size, dir);
+> @@ -386,7 +404,7 @@ size_t dma_max_mapping_size(struct device *dev)
+>   	const struct dma_map_ops *ops = get_dma_ops(dev);
+>   	size_t size = SIZE_MAX;
+>   
+> -	if (dma_is_direct(ops))
+> +	if (dma_map_direct(dev, ops))
+>   		size = dma_direct_max_mapping_size(dev);
+>   	else if (ops && ops->max_mapping_size)
+>   		size = ops->max_mapping_size(dev);
+> 
