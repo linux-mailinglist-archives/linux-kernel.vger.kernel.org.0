@@ -2,42 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C56FF18FA8B
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Mar 2020 17:56:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 41FF318FA8C
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Mar 2020 17:56:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727769AbgCWQ4w (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        id S1727817AbgCWQ4x (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Mar 2020 12:56:53 -0400
+Received: from ciao.gmane.io ([159.69.161.202]:56956 "EHLO ciao.gmane.io"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727586AbgCWQ4w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 23 Mar 2020 12:56:52 -0400
-Received: from smtp09.smtpout.orange.fr ([80.12.242.131]:33669 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727277AbgCWQ4w (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Mar 2020 12:56:52 -0400
-Received: from [192.168.42.210] ([93.22.39.252])
-        by mwinf5d85 with ME
-        id Hswm2200j5SRGh103swn5w; Mon, 23 Mar 2020 17:56:49 +0100
-X-ME-Helo: [192.168.42.210]
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Mon, 23 Mar 2020 17:56:49 +0100
-X-ME-IP: 93.22.39.252
+Received: from list by ciao.gmane.io with local (Exim 4.92)
+        (envelope-from <glk-linux-kernel-4@m.gmane-mx.org>)
+        id 1jGQNe-0005Ro-VT
+        for linux-kernel@vger.kernel.org; Mon, 23 Mar 2020 17:56:50 +0100
+X-Injected-Via-Gmane: http://gmane.org/
+To:     linux-kernel@vger.kernel.org
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 Subject: Re: [PATCH] usbip: vhci_hcd: slighly simplify code in
  'vhci_urb_dequeue()'
-To:     shuah <shuah@kernel.org>, valentina.manea.m@gmail.com,
-        gregkh@linuxfoundation.org
-Cc:     linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Newsgroups: gmane.linux.kernel,gmane.linux.usb.general,gmane.linux.kernel.janitors
+Date:   Mon, 23 Mar 2020 17:56:46 +0100
+Message-ID: <2fb983be-2a42-1b89-447a-a7415ffc7335@wanadoo.fr>
 References: <20200321152938.19580-1-christophe.jaillet@wanadoo.fr>
  <c8e319c8-cd65-2c2c-df5d-e75908ca63b7@kernel.org>
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Message-ID: <2fb983be-2a42-1b89-447a-a7415ffc7335@wanadoo.fr>
-Date:   Mon, 23 Mar 2020 17:56:46 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.6.0
-MIME-Version: 1.0
-In-Reply-To: <c8e319c8-cd65-2c2c-df5d-e75908ca63b7@kernel.org>
+Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.6.0
+In-Reply-To: <c8e319c8-cd65-2c2c-df5d-e75908ca63b7@kernel.org>
 Content-Language: en-US
+Cc:     linux-usb@vger.kernel.org, kernel-janitors@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -109,4 +103,5 @@ CJ
 > thanks,
 > -- Shuah
 >
+
 
