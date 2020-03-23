@@ -2,219 +2,117 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DDC6418EE51
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Mar 2020 04:00:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3D21D18EE54
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Mar 2020 04:03:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727268AbgCWC71 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 22 Mar 2020 22:59:27 -0400
-Received: from mail.loongson.cn ([114.242.206.163]:56016 "EHLO loongson.cn"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727067AbgCWC70 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Mar 2020 22:59:26 -0400
-Received: from linux.localdomain (unknown [113.200.148.30])
-        by mail.loongson.cn (Coremail) with SMTP id AQAAf9AxP+gDJnhedaseAA--.407S5;
-        Mon, 23 Mar 2020 10:59:18 +0800 (CST)
-From:   Tiezhu Yang <yangtiezhu@loongson.cn>
-To:     Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        Huacai Chen <chenhc@lemote.com>,
-        Jiaxun Yang <jiaxun.yang@flygoat.com>
-Cc:     linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Xuefeng Li <lixuefeng@loongson.cn>
-Subject: [PATCH v2 3/3] MIPS: Loongson: Add PCI support for 7A1000
-Date:   Mon, 23 Mar 2020 10:59:15 +0800
-Message-Id: <1584932355-3642-4-git-send-email-yangtiezhu@loongson.cn>
-X-Mailer: git-send-email 2.1.0
-In-Reply-To: <1584932355-3642-1-git-send-email-yangtiezhu@loongson.cn>
-References: <1584932355-3642-1-git-send-email-yangtiezhu@loongson.cn>
-X-CM-TRANSID: AQAAf9AxP+gDJnhedaseAA--.407S5
-X-Coremail-Antispam: 1UD129KBjvJXoW3Jw1Utw4xWr17Kr4ktFykAFb_yoW7uF45pF
-        43J3WUKr4FqF1fGFnYy3y8GF1fAFZxJF9rKFW2vryjv3sxZryYqF98W3W5tr4fKrs8Xa47
-        WrWfKF17GF1jkaDanT9S1TB71UUUUUDqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDU0xBIdaVrnRJUUUBv14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-        rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_JrWl82xGYIkIc2
-        x26xkF7I0E14v26r4j6ryUM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2z4x0
-        Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Cr0_Gr1UM2
-        8EF7xvwVC2z280aVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Cr1j6rxd
-        M2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjx
-        v20xvE14v26r126r1DMcIj6I8E87Iv67AKxVW8JVWxJwAm72CE4IkC6x0Yz7v_Jr0_Gr1l
-        F7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7MxkIecxEwVAFwVW8JwCF04
-        k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18
-        MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw1lIxkGc2Ij64vIr4
-        1lIxAIcVC0I7IYx2IY67AKxVWUCVW8JwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1l
-        IxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r4j6F4UMIIF0xvEx4
-        A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUYjgxUUUUU=
-X-CM-SenderInfo: p1dqw3xlh2x3gn0dqz5rrqw2lrqou0/
+        id S1727096AbgCWDDb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 22 Mar 2020 23:03:31 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:44023 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726983AbgCWDDb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 22 Mar 2020 23:03:31 -0400
+Received: by mail-wr1-f68.google.com with SMTP id b2so15137908wrj.10
+        for <linux-kernel@vger.kernel.org>; Sun, 22 Mar 2020 20:03:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=atishpatra.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=RG8JaLzGTKMyhBP0BlO9r9T3SiXBNV0qtiTHs4NKU/I=;
+        b=SvTq/87um7GXn4vBgge1JZc0gbJqbdPlvrcL4EYia/FzG5ezZ/hpp6DKWcvqlCiDE7
+         MGT5z9Z60a/Jo3rCZ9eD5uk+UBFPzhcOvqkIPMKJQptN8UaNCrzqO0f7mHu/8WMqfNFd
+         /LwMq2FUfbw3Xuxh2TpDpym4meEmuNszBGSmknrwd3spK1ixmlOJpx7X6DxTwJOjRV1q
+         bZz4M0fDOPJ15kr4KFBY9m0M/+kBDKacr9v/qWzVoZ+Q8NXsmfDrhDbvtlWyOtyyv+AQ
+         ndLbPhxTf885AXhriH2zWZ2zasMTYe1stBM59Kw5xvwRYfYkhxBCrY2k58+Ky/1sOg9O
+         l5Eg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=RG8JaLzGTKMyhBP0BlO9r9T3SiXBNV0qtiTHs4NKU/I=;
+        b=IqVUiJLeZOuY59FGzo4o66pdT6KYw87w/QX3y7WM6ZKbU22bMVYh62wabFeK3t3Dgp
+         efsqwQPNiDPRY9LI2C2mJyxGvVHuG2Ht76BygGMkYtH6LAFWAKUL2mELPaqbJih2Bn2B
+         IgGHpRsvSxF44TsBif3zdhMGQLG9ZnY+M0i6oOiold133HaO2tbv/YMVF+XdtKtH6dUb
+         WZ9gx1joUHbKCEKm/EL+9wgW9eekrCPaTIXnmot2lWycy895bJ/ocD+3SGyjnVHWzjKa
+         mMoHuRBUyHo56A5aXtj0Ms38un6jUIM+J3C4SPru3GeqjtfzAa0O6v+LlOiy1rqVswcb
+         TnLQ==
+X-Gm-Message-State: ANhLgQ2mOjZuzLIP6odPlQm/5rRq19DhVaAAc79HH4XraTb53+CbVive
+        kRJMiqE8qalGyzvBx+971yAsq8wQYyKt4wsACxU7
+X-Google-Smtp-Source: ADFU+vtN2d113HCoAwuCsH276Sf3lrwOu7bapSZpQpVPG1E7Z1lLXx0J8pj7PaR2D7lDwHI0R4g1Arbl6YRmYjEgUJo=
+X-Received: by 2002:a5d:4003:: with SMTP id n3mr12335418wrp.176.1584932608778;
+ Sun, 22 Mar 2020 20:03:28 -0700 (PDT)
+MIME-Version: 1.0
+References: <20200318011144.91532-1-atish.patra@wdc.com> <CANBLGcxB7Tf7wmkDnjsiEpmo6djwzN2DEjGqPfCt4LG6wcjLbQ@mail.gmail.com>
+In-Reply-To: <CANBLGcxB7Tf7wmkDnjsiEpmo6djwzN2DEjGqPfCt4LG6wcjLbQ@mail.gmail.com>
+From:   Atish Patra <atishp@atishpatra.org>
+Date:   Sun, 22 Mar 2020 20:03:17 -0700
+Message-ID: <CAOnJCULYLBV0O+xrgnCkv6FgFC2wz0U54uYV7S5hkBfQf+7vRg@mail.gmail.com>
+Subject: Re: [PATCH v11 00/11] Add support for SBI v0.2 and CPU hotplug
+To:     Emil Renner Berthing <emil.renner.berthing@gmail.com>
+Cc:     Atish Patra <atish.patra@wdc.com>,
+        Albert Ou <aou@eecs.berkeley.edu>, Gary Guo <gary@garyguo.net>,
+        Nick Hu <nickhu@andestech.com>,
+        Anup Patel <anup@brainfault.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Vincent Chen <vincent.chen@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Zong Li <zong.li@sifive.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Greentime Hu <greentime.hu@sifive.com>,
+        linux-riscv <linux-riscv@lists.infradead.org>,
+        Bin Meng <bmeng.cn@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Mao Han <han_mao@c-sky.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add PCI support for 7A1000 to detect PCI device.
+On Sun, Mar 22, 2020 at 10:49 AM Emil Renner Berthing
+<emil.renner.berthing@gmail.com> wrote:
+>
+> Hi Atish,
+>
+> On Wed, 18 Mar 2020 at 02:12, Atish Patra <atish.patra@wdc.com> wrote:
+> >
+> > The Supervisor Binary Interface(SBI) specification[1] now defines a
+> > base extension that provides extendability to add future extensions
+> > while maintaining backward compatibility with previous versions.
+> > The new version is defined as 0.2 and older version is marked as 0.1.
+> >
+> > This series adds following features to RISC-V Linux.
+> > 1. Adds support for SBI v0.2
+> > 2. A Unified calling convention implementation between 0.1 and 0.2.
+> > 3. SBI Hart state management extension (HSM)
+> > 4. Ordered booting of harts
+> > 4. CPU hotplug
+>
+> If it's any help I tried this series with both OpenSBI v0.6 and master
+> (9a74a64ae08),
+> and in both cases Linux found all four cpus. I can test the hotplug
+> stuff too if you send
+> me instructions. In any case you can add my
+>
+> Tested-by: Emil Renner Berthing <kernel@esmil.dk>
+>
 
-Signed-off-by: Tiezhu Yang <yangtiezhu@loongson.cn>
----
- arch/mips/include/asm/mach-loongson64/boot_param.h |  9 +++
- arch/mips/loongson64/env.c                         |  2 +
- arch/mips/pci/ops-loongson3.c                      | 72 ++++++++++++++++++++--
- 3 files changed, 79 insertions(+), 4 deletions(-)
+Thanks for testing the patches. Here are the steps to online/offline a cpu.
 
-diff --git a/arch/mips/include/asm/mach-loongson64/boot_param.h b/arch/mips/include/asm/mach-loongson64/boot_param.h
-index c759b7c..d766a36 100644
---- a/arch/mips/include/asm/mach-loongson64/boot_param.h
-+++ b/arch/mips/include/asm/mach-loongson64/boot_param.h
-@@ -195,6 +195,7 @@ enum loongson_bridge_type {
- 	LS7A1000 = 2
- };
- 
-+struct pci_bus;
- struct loongson_system_configuration {
- 	u32 nr_cpus;
- 	u32 nr_nodes;
-@@ -220,6 +221,8 @@ struct loongson_system_configuration {
- 	struct sensor_device sensors[MAX_SENSORS];
- 	u64 workarounds;
- 	void (*early_config)(void);
-+	int (*pci_config_access)(unsigned char access_type, struct pci_bus *bus,
-+				 unsigned int devfn, int where, u32 *data);
- };
- 
- extern struct efi_memory_map_loongson *loongson_memmap;
-@@ -228,5 +231,11 @@ extern struct loongson_system_configuration loongson_sysconf;
- extern u32 node_id_offset;
- extern void rs780e_early_config(void);
- extern void ls7a1000_early_config(void);
-+extern int rs780e_pci_config_access(unsigned char access_type,
-+		struct pci_bus *bus, unsigned int devfn,
-+		int where, u32 *data);
-+extern int ls7a1000_pci_config_access(unsigned char access_type,
-+		struct pci_bus *bus, unsigned int devfn,
-+		int where, u32 *data);
- 
- #endif
-diff --git a/arch/mips/loongson64/env.c b/arch/mips/loongson64/env.c
-index 32a3822..1c27f46 100644
---- a/arch/mips/loongson64/env.c
-+++ b/arch/mips/loongson64/env.c
-@@ -168,9 +168,11 @@ void __init prom_init_env(void)
- 		pr_info("The bridge chip is Loongson 7A1000\n");
- 		loongson_sysconf.bridgetype = LS7A1000;
- 		loongson_sysconf.early_config = ls7a1000_early_config;
-+		loongson_sysconf.pci_config_access = ls7a1000_pci_config_access;
- 	} else {
- 		pr_info("The bridge chip is AMD RS780E or SR5690\n");
- 		loongson_sysconf.bridgetype = RS780E;
- 		loongson_sysconf.early_config = rs780e_early_config;
-+		loongson_sysconf.pci_config_access = rs780e_pci_config_access;
- 	}
- }
-diff --git a/arch/mips/pci/ops-loongson3.c b/arch/mips/pci/ops-loongson3.c
-index 2f6ad36..0b8fc5e 100644
---- a/arch/mips/pci/ops-loongson3.c
-+++ b/arch/mips/pci/ops-loongson3.c
-@@ -13,7 +13,10 @@
- #define HT1LO_PCICFG_BASE      0x1a000000
- #define HT1LO_PCICFG_BASE_TP1  0x1b000000
- 
--static int loongson3_pci_config_access(unsigned char access_type,
-+#define HT1LO_PCICFG_BASE_EXT 0xefe00000000
-+#define HT1LO_PCICFG_BASE_TP1_EXT 0xefe10000000
-+
-+int rs780e_pci_config_access(unsigned char access_type,
- 		struct pci_bus *bus, unsigned int devfn,
- 		int where, u32 *data)
- {
-@@ -62,11 +65,72 @@ static int loongson3_pci_config_access(unsigned char access_type,
- 	return PCIBIOS_SUCCESSFUL;
- }
- 
-+
-+int ls7a1000_pci_config_access(unsigned char access_type,
-+		struct pci_bus *bus, unsigned int devfn,
-+		int where, u32 *data)
-+{
-+	u_int64_t addr;
-+	void *addrp;
-+	unsigned char busnum = bus->number;
-+	int device = PCI_SLOT(devfn);
-+	int function = PCI_FUNC(devfn);
-+	int reg = where & ~3;
-+
-+	if (where >= PCI_CFG_SPACE_EXP_SIZE)
-+		return PCIBIOS_DEVICE_NOT_FOUND;
-+
-+	if (busnum == 0 && device > 23)
-+		return PCIBIOS_DEVICE_NOT_FOUND;
-+
-+	if (where < PCI_CFG_SPACE_SIZE) { /* standard config */
-+		addr = (busnum << 16) | (device << 11) | (function << 8) | reg;
-+		if (busnum == 0) {
-+			addr = HT1LO_PCICFG_BASE | addr;
-+			addrp = (void *)TO_UNCAC(addr);
-+		} else {
-+			addr = HT1LO_PCICFG_BASE_TP1 | addr;
-+			addrp = (void *)TO_UNCAC(addr);
-+		}
-+	} else { /* extended config */
-+		reg = (reg & 0xff) | ((reg & 0xf00) << 16);
-+		addr = (busnum << 16) | (device << 11) | (function << 8) | reg;
-+		if (busnum == 0) {
-+			addr = HT1LO_PCICFG_BASE_EXT | addr;
-+			addrp = (void *)TO_UNCAC(addr);
-+		} else {
-+			addr = HT1LO_PCICFG_BASE_TP1_EXT | addr;
-+			addrp = (void *)TO_UNCAC(addr);
-+		}
-+	}
-+
-+	if (access_type == PCI_ACCESS_WRITE)
-+		*(unsigned int *)addrp = cpu_to_le32(*data);
-+	else {
-+		*data = le32_to_cpu(*(unsigned int *)addrp);
-+		if (*data == 0xffffffff) {
-+			*data = -1;
-+			return PCIBIOS_DEVICE_NOT_FOUND;
-+		}
-+	}
-+
-+	return PCIBIOS_SUCCESSFUL;
-+}
-+
-+static void ls7a1000_pci_class_quirk(struct pci_dev *dev)
-+{
-+	dev->class = PCI_CLASS_BRIDGE_PCI << 8;
-+}
-+
-+DECLARE_PCI_FIXUP_EARLY(0x0014, 0x7a09, ls7a1000_pci_class_quirk);
-+DECLARE_PCI_FIXUP_EARLY(0x0014, 0x7a19, ls7a1000_pci_class_quirk);
-+DECLARE_PCI_FIXUP_EARLY(0x0014, 0x7a29, ls7a1000_pci_class_quirk);
-+
- static int loongson3_pci_pcibios_read(struct pci_bus *bus, unsigned int devfn,
- 				 int where, int size, u32 *val)
- {
- 	u32 data = 0;
--	int ret = loongson3_pci_config_access(PCI_ACCESS_READ,
-+	int ret = loongson_sysconf.pci_config_access(PCI_ACCESS_READ,
- 			bus, devfn, where, &data);
- 
- 	if (ret != PCIBIOS_SUCCESSFUL)
-@@ -91,7 +155,7 @@ static int loongson3_pci_pcibios_write(struct pci_bus *bus, unsigned int devfn,
- 	if (size == 4)
- 		data = val;
- 	else {
--		ret = loongson3_pci_config_access(PCI_ACCESS_READ,
-+		ret = loongson_sysconf.pci_config_access(PCI_ACCESS_READ,
- 				bus, devfn, where, &data);
- 		if (ret != PCIBIOS_SUCCESSFUL)
- 			return ret;
-@@ -104,7 +168,7 @@ static int loongson3_pci_pcibios_write(struct pci_bus *bus, unsigned int devfn,
- 			    (val << ((where & 3) << 3));
- 	}
- 
--	ret = loongson3_pci_config_access(PCI_ACCESS_WRITE,
-+	ret = loongson_sysconf.pci_config_access(PCI_ACCESS_WRITE,
- 			bus, devfn, where, &data);
- 
- 	return ret;
+To mark a cpu offline
+$echo 0 > /sys/devices/system/cpu/cpuX/online
+
+To mark a cpu online
+$echo 1 > /sys/devices/system/cpu/cpuX/online
+
+Here are the official kernel documentation.
+https://www.kernel.org/doc/html/latest/core-api/cpu_hotplug.html
+
+> /Emil
+>
+
+
 -- 
-2.1.0
-
+Regards,
+Atish
