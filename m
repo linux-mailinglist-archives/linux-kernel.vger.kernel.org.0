@@ -2,85 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 55AA918F7FD
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Mar 2020 16:00:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EC3CA18F7FE
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Mar 2020 16:01:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727492AbgCWPAx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Mar 2020 11:00:53 -0400
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:44816 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727341AbgCWPAa (ORCPT
+        id S1727296AbgCWPAZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Mar 2020 11:00:25 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:44119 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726956AbgCWPAY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Mar 2020 11:00:30 -0400
-Received: from pps.filterd (m0046668.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 02NEbVx4023781;
-        Mon, 23 Mar 2020 16:00:12 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
- : date : message-id : in-reply-to : references : mime-version :
- content-type; s=STMicroelectronics;
- bh=YNDg9aUDB/h6JOtly4P30iV25DZw0H9ltZvqpy2BYBo=;
- b=A1vH6DySsH8MbDJDiclUecb1HDv8eFqI0P+yq/Qd50xd1Zyo9O+DvFfuddIRmarXdPAL
- sGeeT2Yku+IkqGs4KEyL5j5egVtXRaNsSJS5sMbZFZhXbbPJDQO3a3QqCjdyEo1BQW3E
- q21DOIi281P9IGEdE5OsBBbm2V/8gl68d5uqUPQFv6NTVfoU5yJuZqhQc4kBDRQm5IYt
- jEVZki66xcxSexL/j1OrWkxepMY9b5ZoMR6W5Fe1qfJB3PjhBqLJ6ROUGgifRDC8Z1ym
- GLyk1d2SumWSlNkzN7x6MNQrvSWjc8YfwUjqdebcQJOSKqvCiqGQwgYMjiCm85xp8I1P Eg== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 2yw995ajf3-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 23 Mar 2020 16:00:12 +0100
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 7176B100034;
-        Mon, 23 Mar 2020 16:00:12 +0100 (CET)
-Received: from Webmail-eu.st.com (sfhdag6node2.st.com [10.75.127.17])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 62B8A220F8F;
-        Mon, 23 Mar 2020 16:00:12 +0100 (CET)
-Received: from localhost (10.75.127.44) by SFHDAG6NODE2.st.com (10.75.127.17)
- with Microsoft SMTP Server (TLS) id 15.0.1347.2; Mon, 23 Mar 2020 16:00:11
- +0100
-From:   Christophe Kerello <christophe.kerello@st.com>
-To:     <miquel.raynal@bootlin.com>, <richard@nod.at>, <vigneshr@ti.com>,
-        <lee.jones@linaro.org>, <robh+dt@kernel.org>,
-        <mark.rutland@arm.com>, <tony@atomide.com>
-CC:     <linux-mtd@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>, <marex@denx.de>,
-        Christophe Kerello <christophe.kerello@st.com>
-Subject: [12/12] mtd: rawnand: stm32_fmc2: add new MP1 compatible string
-Date:   Mon, 23 Mar 2020 15:58:52 +0100
-Message-ID: <1584975532-8038-13-git-send-email-christophe.kerello@st.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1584975532-8038-1-git-send-email-christophe.kerello@st.com>
-References: <1584975532-8038-1-git-send-email-christophe.kerello@st.com>
+        Mon, 23 Mar 2020 11:00:24 -0400
+Received: by mail-wr1-f65.google.com with SMTP id m17so8507160wrw.11
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Mar 2020 08:00:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=CrKKQrPGfQFRg7O+vdgKrrd0BOZAZev2MLFiaSgyZ1I=;
+        b=mush7+yERMiuascXsIXpZhs1VjJ3P5orEU9x7LRqxsOOAENQAgwnXVOuH0uwWF+h3r
+         ObsJNkt/dB5e3/nsoUNwrdgzcD+XWPyc6OQNWfgtfZebqDP89RVarAxkoFBompcWbZDU
+         rxXlbxRH7ppUbWrszbz6GUZgvv/5q3Ra8nZIiw585XBaxer2C4Zl8lukVMMUvEqnGLZR
+         ceQMTmCMlBnSulHRKNHd/9xgaMBM8vRkwvFr/C1OaQzf5cVgpJVf7Bs0GYJVSfS8pewE
+         uKJfhteGatNkV6Gxnq7I2dRih+wmjezFLdejfqSPJvr1uB5dAbjZO8Cs4quZ5rfU7dtW
+         sOtw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=CrKKQrPGfQFRg7O+vdgKrrd0BOZAZev2MLFiaSgyZ1I=;
+        b=bL6GFD7gwgm/lJxX8wnS21OAji7+lFQiygubvlDfJJRFOGLOh1ejY3/ZTcMaXxGPdW
+         JHvYnJOHlzRoy21D43I0yI9mzVAUZcxYcx6qgiaA+c56n+SI+iwNXGGLJz+uECE0PKpF
+         tVTG7jbpDcOHd31iISLjXt8lQnuhiX0AvNrIkclzdKgkhkORUnMjcUDOeDrfVI+3/gps
+         +gTzTsRB31a51YhNDDIZ0hxuP5iYLlCVG9royJbmG/DlIaPD0G6jdWQA5DKxnLSEPP0Y
+         oQgE7H35ueWNScFOR6XWPd/KpRKIwMYWQ4DfjLm0L4n0qIN4gE3M+rKsE4HOw141buaM
+         LfkQ==
+X-Gm-Message-State: ANhLgQ2kCIg0h7iq3LWlZcU4+53us1ZtoKd4yJlYGNF7Yst0wVgnQGXi
+        EwDgE0PzZemITzZ/GivpHYA8nQ==
+X-Google-Smtp-Source: ADFU+vsvlgw+lN3GNp1q2MMLQUFtUgqb+HGeDjdPszXkA2zzYG2n8/KXS9d51QVzASfGXcFEA3OXbg==
+X-Received: by 2002:adf:e448:: with SMTP id t8mr8335390wrm.257.1584975621735;
+        Mon, 23 Mar 2020 08:00:21 -0700 (PDT)
+Received: from srini-hackbox.lan (cpc89974-aztw32-2-0-cust43.18-1.cable.virginm.net. [86.30.250.44])
+        by smtp.gmail.com with ESMTPSA id k15sm1084196wrm.55.2020.03.23.08.00.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 23 Mar 2020 08:00:21 -0700 (PDT)
+From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+To:     gregkh@linuxfoundation.org
+Cc:     linux-kernel@vger.kernel.org, Freeman Liu <freeman.liu@unisoc.com>,
+        Baolin Wang <baolin.wang7@gmail.com>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Subject: [PATCH 1/5] nvmem: sprd: Fix the block lock operation
+Date:   Mon, 23 Mar 2020 15:00:03 +0000
+Message-Id: <20200323150007.7487-2-srinivas.kandagatla@linaro.org>
+X-Mailer: git-send-email 2.21.0
+In-Reply-To: <20200323150007.7487-1-srinivas.kandagatla@linaro.org>
+References: <20200323150007.7487-1-srinivas.kandagatla@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.75.127.44]
-X-ClientProxiedBy: SFHDAG1NODE3.st.com (10.75.127.3) To SFHDAG6NODE2.st.com
- (10.75.127.17)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.645
- definitions=2020-03-23_05:2020-03-21,2020-03-23 signatures=0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds "st,stm32mp1-fmc2-nand" compatible string.
+From: Freeman Liu <freeman.liu@unisoc.com>
 
-Signed-off-by: Christophe Kerello <christophe.kerello@st.com>
+According to the Spreadtrum eFuse specification, we should write 0 to
+the block to trigger the lock operation.
+
+Fixes: 096030e7f449 ("nvmem: sprd: Add Spreadtrum SoCs eFuse support")
+Signed-off-by: Freeman Liu <freeman.liu@unisoc.com>
+Signed-off-by: Baolin Wang <baolin.wang7@gmail.com>
+Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 ---
- drivers/mtd/nand/raw/stm32_fmc2_nand.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/nvmem/sprd-efuse.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/mtd/nand/raw/stm32_fmc2_nand.c b/drivers/mtd/nand/raw/stm32_fmc2_nand.c
-index 1dc568f..2c0a206 100644
---- a/drivers/mtd/nand/raw/stm32_fmc2_nand.c
-+++ b/drivers/mtd/nand/raw/stm32_fmc2_nand.c
-@@ -1956,6 +1956,7 @@ static SIMPLE_DEV_PM_OPS(stm32_fmc2_nfc_pm_ops, stm32_fmc2_nfc_suspend,
+diff --git a/drivers/nvmem/sprd-efuse.c b/drivers/nvmem/sprd-efuse.c
+index 2f1e0fbd1901..7a189ef52333 100644
+--- a/drivers/nvmem/sprd-efuse.c
++++ b/drivers/nvmem/sprd-efuse.c
+@@ -239,7 +239,7 @@ static int sprd_efuse_raw_prog(struct sprd_efuse *efuse, u32 blk, bool doub,
+ 		ret = -EBUSY;
+ 	} else {
+ 		sprd_efuse_set_prog_lock(efuse, lock);
+-		writel(*data, efuse->base + SPRD_EFUSE_MEM(blk));
++		writel(0, efuse->base + SPRD_EFUSE_MEM(blk));
+ 		sprd_efuse_set_prog_lock(efuse, false);
+ 	}
  
- static const struct of_device_id stm32_fmc2_nfc_match[] = {
- 	{.compatible = "st,stm32mp15-fmc2"},
-+	{.compatible = "st,stm32mp1-fmc2-nand"},
- 	{}
- };
- MODULE_DEVICE_TABLE(of, stm32_fmc2_nfc_match);
 -- 
-1.9.1
+2.21.0
 
