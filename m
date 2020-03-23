@@ -2,125 +2,132 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 50DA5190058
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Mar 2020 22:30:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 11AF8190077
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Mar 2020 22:36:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727249AbgCWVaV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Mar 2020 17:30:21 -0400
-Received: from us-smtp-delivery-74.mimecast.com ([63.128.21.74]:55170 "EHLO
-        us-smtp-delivery-74.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726203AbgCWVaU (ORCPT
+        id S1727102AbgCWVgP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Mar 2020 17:36:15 -0400
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:56804 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726203AbgCWVgO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Mar 2020 17:30:20 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1584999019;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=ZVsEY6cNKMHIU4w2rXsM2TCIqoA6fSVNDl3M8SH4l6g=;
-        b=dmIBPfG9V1I/WxDzg/hZwdfDj2J8fpaXgoK18IerITJF56Ddpi9jz3NEVWoAQ5TtRromFK
-        yGMPPAUf6vKI79VGCeIg+mfa8pvFnR7NEGRS2el0H4eoiKWROLLDuWnScdLgjIaBqHT41n
-        CMLiGcfygK3Q5oPgZF4x4p3pcN7IkYA=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-426-suLvxhWCM16kHxyllzdYtw-1; Mon, 23 Mar 2020 17:30:15 -0400
-X-MC-Unique: suLvxhWCM16kHxyllzdYtw-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id E714A10CE782;
-        Mon, 23 Mar 2020 21:30:12 +0000 (UTC)
-Received: from w520.home (ovpn-112-162.phx2.redhat.com [10.3.112.162])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 21B2F60BF3;
-        Mon, 23 Mar 2020 21:30:00 +0000 (UTC)
-Date:   Mon, 23 Mar 2020 15:29:59 -0600
-From:   Alex Williamson <alex.williamson@redhat.com>
-To:     Yan Zhao <yan.y.zhao@intel.com>
-Cc:     "intel-gvt-dev@lists.freedesktop.org" 
-        <intel-gvt-dev@lists.freedesktop.org>,
-        "aik@ozlabs.ru" <aik@ozlabs.ru>,
-        "Zhengxiao.zx@alibaba-inc.com" <Zhengxiao.zx@alibaba-inc.com>,
-        "shuangtai.tst@alibaba-inc.com" <shuangtai.tst@alibaba-inc.com>,
-        "qemu-devel@nongnu.org" <qemu-devel@nongnu.org>,
-        "eauger@redhat.com" <eauger@redhat.com>,
-        "Liu, Yi L" <yi.l.liu@intel.com>,
-        "Yang, Ziye" <ziye.yang@intel.com>,
-        "mlevitsk@redhat.com" <mlevitsk@redhat.com>,
-        "pasic@linux.ibm.com" <pasic@linux.ibm.com>,
-        "felipe@nutanix.com" <felipe@nutanix.com>,
-        "Liu, Changpeng" <changpeng.liu@intel.com>,
-        "Ken.Xue@amd.com" <Ken.Xue@amd.com>,
-        "jonathan.davies@nutanix.com" <jonathan.davies@nutanix.com>,
-        "He, Shaopeng" <shaopeng.he@intel.com>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "libvir-list@redhat.com" <libvir-list@redhat.com>,
-        "dgilbert@redhat.com" <dgilbert@redhat.com>,
-        "cohuck@redhat.com" <cohuck@redhat.com>,
-        "Tian, Kevin" <kevin.tian@intel.com>,
-        "zhenyuw@linux.intel.com" <zhenyuw@linux.intel.com>,
-        "Wang, Zhi A" <zhi.a.wang@intel.com>,
-        "cjia@nvidia.com" <cjia@nvidia.com>,
-        "kwankhede@nvidia.com" <kwankhede@nvidia.com>,
-        "berrange@redhat.com" <berrange@redhat.com>,
-        "dinechin@redhat.com" <dinechin@redhat.com>
-Subject: Re: [PATCH v4 0/2] introduction of migration_version attribute for
- VFIO live migration
-Message-ID: <20200323152959.1c39e9a7@w520.home>
-In-Reply-To: <20190604003422.GA30229@joy-OptiPlex-7040>
-References: <20190531004438.24528-1-yan.y.zhao@intel.com>
-        <20190603132932.1b5dc7fe@x1.home>
-        <20190604003422.GA30229@joy-OptiPlex-7040>
+        Mon, 23 Mar 2020 17:36:14 -0400
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 02NLZsXq059531;
+        Mon, 23 Mar 2020 16:35:54 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1584999354;
+        bh=Wvw1D63rekymXu1Ggt19/vs1VYdgX6m9pJ7jrcHqaus=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=w617zcJ4nZPSrbmRZGmTxrF4uXUOH/PzsObEbAJhaM1zgICAlZOydKp4JEI3FmkV0
+         ak+1/OrXb2SsBe21lgiTtDfpKaVTdR7K2+xUDlTheTkUPo5RcUhgieA08aSZoqnkJn
+         O1VOFcmBBz78RK/wZd7iYAcb2U0YmVF22OLrVJ6M=
+Received: from DFLE105.ent.ti.com (dfle105.ent.ti.com [10.64.6.26])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id 02NLZsXP055546;
+        Mon, 23 Mar 2020 16:35:54 -0500
+Received: from DFLE100.ent.ti.com (10.64.6.21) by DFLE105.ent.ti.com
+ (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Mon, 23
+ Mar 2020 16:35:54 -0500
+Received: from lelv0327.itg.ti.com (10.180.67.183) by DFLE100.ent.ti.com
+ (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Mon, 23 Mar 2020 16:35:53 -0500
+Received: from [10.250.52.63] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id 02NLZpPI047330;
+        Mon, 23 Mar 2020 16:35:52 -0500
+Subject: Re: [PATCH 2/3] dt-bindings: leds: Add binding for sgm3140
+To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Luca Weiss <luca@z3ntu.xyz>
+CC:     <linux-leds@vger.kernel.org>, Heiko Stuebner <heiko@sntech.de>,
+        Icenowy Zheng <icenowy@aosc.io>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Pavel Machek <pavel@ucw.cz>, Rob Herring <robh+dt@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        <~postmarketos/upstreaming@lists.sr.ht>
+References: <20200309203558.305725-1-luca@z3ntu.xyz>
+ <20200309203558.305725-3-luca@z3ntu.xyz>
+ <4f848ab3-0e76-ae63-0771-758b1eaa0660@ti.com> <3051566.44csPzL39Z@g550jk>
+ <20200315105345.GB4732@pendragon.ideasonboard.com>
+From:   Dan Murphy <dmurphy@ti.com>
+Message-ID: <fb5e504e-c448-124e-09ed-a2bba003c8ff@ti.com>
+Date:   Mon, 23 Mar 2020 16:30:07 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+In-Reply-To: <20200315105345.GB4732@pendragon.ideasonboard.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 3 Jun 2019 20:34:22 -0400
-Yan Zhao <yan.y.zhao@intel.com> wrote:
+Luca
 
-> On Tue, Jun 04, 2019 at 03:29:32AM +0800, Alex Williamson wrote:
-> > On Thu, 30 May 2019 20:44:38 -0400
-> > Yan Zhao <yan.y.zhao@intel.com> wrote:
-> >   
-> > > This patchset introduces a migration_version attribute under sysfs of VFIO
-> > > Mediated devices.
-> > > 
-> > > This migration_version attribute is used to check migration compatibility
-> > > between two mdev devices of the same mdev type.
-> > > 
-> > > Patch 1 defines migration_version attribute in
-> > > Documentation/vfio-mediated-device.txt
-> > > 
-> > > Patch 2 uses GVT as an example to show how to expose migration_version
-> > > attribute and check migration compatibility in vendor driver.  
-> > 
-> > Thanks for iterating through this, it looks like we've settled on
-> > something reasonable, but now what?  This is one piece of the puzzle to
-> > supporting mdev migration, but I don't think it makes sense to commit
-> > this upstream on its own without also defining the remainder of how we
-> > actually do migration, preferably with more than one working
-> > implementation and at least prototyped, if not final, QEMU support.  I
-> > hope that was the intent, and maybe it's now time to look at the next
-> > piece of the puzzle.  Thanks,
-> > 
-> > Alex  
-> 
-> Got it. 
-> Also thank you and all for discussing and guiding all along:)
-> We'll move to the next episode now.
+On 3/15/20 5:53 AM, Laurent Pinchart wrote:
+> Hi Luca,
+>
+> On Sun, Mar 15, 2020 at 11:47:36AM +0100, Luca Weiss wrote:
+>> On Mittwoch, 11. März 2020 13:49:35 CET Dan Murphy wrote:
+>>> On 3/9/20 3:35 PM, Luca Weiss wrote:
+>>>> Add YAML devicetree binding for SGMICRO SGM3140 charge pump used for
+>>>> camera flash LEDs.
+>>>>
+>>>> Signed-off-by: Luca Weiss <luca@z3ntu.xyz>
+>>>> ---
+>>>> Changes since RFC:
+>>>> - new patch
+>>>>
+>>>> I'm not sure about the completeness of this binding as it doesn't
+>>>> mention the led subnode at all.
+>>>> The only existing led yaml binding is leds/leds-max77650.yaml which
+>>>> mentions the subnode but duplicates properties from documented in
+>>>> leds/common.txt.
+>>>>
+>>>>    .../bindings/leds/leds-sgm3140.yaml           | 53 +++++++++++++++++++
+>>>>    1 file changed, 53 insertions(+)
+>>>>    create mode 100644
+>>>>    Documentation/devicetree/bindings/leds/leds-sgm3140.yaml
+>>>>
+>>>> diff --git a/Documentation/devicetree/bindings/leds/leds-sgm3140.yaml
+>>>> b/Documentation/devicetree/bindings/leds/leds-sgm3140.yaml new file mode
+>>>> 100644
+>>>> index 000000000000..be9384573d02
+>>>> --- /dev/null
+>>>> +++ b/Documentation/devicetree/bindings/leds/leds-sgm3140.yaml
+>>>> @@ -0,0 +1,53 @@
+>>>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+>>>> +%YAML 1.2
+>>>> +---
+>>>> +$id: http://devicetree.org/schemas/leds/leds-sgm3140.yaml#
+>>>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>>>> +
+>>>> +title: SGMICRO SGM3140 500mA Buck/Boost Charge Pump LED Driver
+>>>> +
+>>>> +maintainers:
+>>>> +  - Luca Weiss <luca@z3ntu.xyz>
+>>>> +
+>>>> +description: |
+>>>> +  The SGM3140 is a current-regulated charge pump which can regulate two
+>>>> current +  levels for Flash and Torch modes.
+>>>> +
+>>>> +  It is controlled with two GPIO pins.
+>>> Please define "It".  Not sure what is controlled here.
+>>>
+>> "It" means the SGM3140. Not sure how else to write that or what the correct
+>> term for such a component is.
+> Maybe "The device" ? I think Dan's concern is that he wasn't sure if
+> "It" referred to "the device" or to "flash and torch modes".
 
-Hi Yan,
+Laurent is correct.  Are the flash and torch modes controlled by GPIOs 
+the device or the current levels?
 
-As we're hopefully moving towards a migration API, would it make sense
-to refresh this series at the same time?  I think we're still expecting
-a vendor driver implementing Kirti's migration API to also implement
-this sysfs interface for compatibility verification.  Thanks,
 
-Alex
 
+>
