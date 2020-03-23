@@ -2,56 +2,56 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6CECB18F7FF
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Mar 2020 16:01:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6E0DA18F7F0
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Mar 2020 16:00:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727504AbgCWPA6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Mar 2020 11:00:58 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:41840 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727313AbgCWPA1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
+        id S1727337AbgCWPA1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
         Mon, 23 Mar 2020 11:00:27 -0400
-Received: by mail-wr1-f67.google.com with SMTP id h9so17478314wrc.8
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Mar 2020 08:00:24 -0700 (PDT)
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:38905 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727301AbgCWPA0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Mar 2020 11:00:26 -0400
+Received: by mail-wr1-f65.google.com with SMTP id s1so17493515wrv.5
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Mar 2020 08:00:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=0O+vyK5vvC4g3IYlNFFCkLQmqVkoo7LNP5yoPvyfpdE=;
-        b=Gqo70M0+HFwbN0MmzQEglDxiBxNm+W+puIXvN+GAICu7lYABiGs/xEsSBxYkvVqpWq
-         yuvHsTjP2uH3iw7e9HwaLc+sF2R88a5l3FTi84DjzvNenJ1bYJtO/8w4oFrAaSlWoH5A
-         nHX17SgUfcCu7WxxqvaeXnh3WdmESJvdlayLJVRV/R6nsjUtjS4f/NL77xHMCn1qvh/5
-         aw9GdJMALGLJVOGlubDV4zdndIR+RYEbMBKHDgthFt9rgHDb1mOW2y+OK4G7mvUlYdpQ
-         VSIamwLE6ETJ16ZXObw5XH2naLAVv3aGVUYrzmlfipzhx1t0Vh3kkQcz6UQpo5gGmwJN
-         NdHg==
+        bh=2HWDKGe7o0RlZ1ycFAcKhMfPvSlYOOFb4fX4iFyPE34=;
+        b=oo9AZI4lqQKOxCjlxcgQ/ZLomfS7BzOwzi+HQe9wTh5URTFBgqhHp7x+vUDENsUfKv
+         iOoKHs7GQzR3W+ybS191kq/2l61gyEIMXfmtvvtFQ+wDMQsfIIacWIBc/c1VpANTevS5
+         ittY5NdkIhkfdon3piHQLsuAQDZWDmwkQygR7TEjNtdjM2r8wPe61v2cQ1uKbw8GZK+f
+         xyBSHn7CXf9w4WNb80lBkMrE9DNxG61Ia9ft0QKroBZ6ZkKVXjuoQWcijqHagVm1zid8
+         rSDlmW3FkmiKhIpwad6y6Z5JerPKOFL+/fPClAEOIMBy+egOGK7wEW/RJBQECDsIF5w2
+         +TdA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=0O+vyK5vvC4g3IYlNFFCkLQmqVkoo7LNP5yoPvyfpdE=;
-        b=ld/I+LD/2eIuXDsByib5U9wpNd1RqJB6PhULtDJkiOk3NgdmdHNk9AfrUrkvERJVfh
-         1mr+C09A7dU27ePEf4QwOg0zD3BGFV2VydeG2YhjSIaS5N+GVldPeWFxuLJzHuqPISIx
-         ODi0kThYBHsD2RPzQz/JZjWhjVRCvh1tcQ+hSK53HYrp+B1TyHbuaKG9FNsgY2tTTYj2
-         VXS9IEO9Uc8oeTm4WKDsopeeoNjbQsYtNxEj++fnK0mGsoA/ZeUcvrNfHZTkPqe//tIh
-         +voqkshKq5jTy7TdQ7H+7JQ4tTtmJ+hChVeedrSgP34UZMPU651mFNmiLm8/kyrBI2EE
-         ORJg==
-X-Gm-Message-State: ANhLgQ3+S43UI+6gZpvdPZoAur0ALEsdiRFN/gqvcHqKvkqdt9/+Ogg7
-        wQOBKSlDp/eR9SKpn33o9+Vn0g==
-X-Google-Smtp-Source: ADFU+vvUw8NlYb8kFG0Q4CTsJDCPmoXn3SIEDR2EUPxgYv4otkwIBqPzpG1jWJPPXmGr3T9mKf3khw==
-X-Received: by 2002:adf:dec3:: with SMTP id i3mr4458066wrn.351.1584975623946;
-        Mon, 23 Mar 2020 08:00:23 -0700 (PDT)
+        bh=2HWDKGe7o0RlZ1ycFAcKhMfPvSlYOOFb4fX4iFyPE34=;
+        b=X0w4POPx12xdWLqFf/zmfFTLtCziuSb8jzXwPFvOlpukI0o+v2+gpBH5YRkS+eX1av
+         gCZtKuHr8W5OSgQrHIKX/u/fscy0vwAD8yUgQ8WIISY0ZBnKo1Q+1m8q+RJNQCpbL/2X
+         9/Q9wUqWnUgBSMjD0M4l7aRGQ7k2v3C7QxG1XKkvwX8p6mTMxqzy5Afw3IAb4eKlSErP
+         RygLd+yhoZ3ofOqCveVvMljFbCWXp1e2xyhCXauaLRwKUpTFY3lJRgrL5oyqPsHE9dOh
+         Z/GLuacaHQuEOGw0AbsoIMKSEbsYzjaEzcvx6msPGJcQkDTkAuMJqTQXwrVHOXkr1CKc
+         qcJA==
+X-Gm-Message-State: ANhLgQ2Wot2AQ8Vjq97JSeemDy6VU6e3WOPzgFp9GdVW2jCGWj4HVExN
+        XzsiStm9qd2YmTwpQIgF8iGFVZKmSS8=
+X-Google-Smtp-Source: ADFU+vtl7Eu/KjNNT/XI4pKBLLj18KZm9PMLF4AcEflkTz4wKA99zG+podxlZv3udjZXn2QwUmZwtQ==
+X-Received: by 2002:a5d:45c7:: with SMTP id b7mr2708426wrs.44.1584975624987;
+        Mon, 23 Mar 2020 08:00:24 -0700 (PDT)
 Received: from srini-hackbox.lan (cpc89974-aztw32-2-0-cust43.18-1.cable.virginm.net. [86.30.250.44])
-        by smtp.gmail.com with ESMTPSA id k15sm1084196wrm.55.2020.03.23.08.00.23
+        by smtp.gmail.com with ESMTPSA id k15sm1084196wrm.55.2020.03.23.08.00.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 Mar 2020 08:00:23 -0700 (PDT)
+        Mon, 23 Mar 2020 08:00:24 -0700 (PDT)
 From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 To:     gregkh@linuxfoundation.org
-Cc:     linux-kernel@vger.kernel.org, Baolin Wang <baolin.wang7@gmail.com>,
+Cc:     linux-kernel@vger.kernel.org, Anson Huang <Anson.Huang@nxp.com>,
         Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Subject: [PATCH 3/5] nvmem: sprd: Determine double data programming from device data
-Date:   Mon, 23 Mar 2020 15:00:05 +0000
-Message-Id: <20200323150007.7487-4-srinivas.kandagatla@linaro.org>
+Subject: [PATCH 4/5] nvmem: mxs-ocotp: Use devm_add_action_or_reset() for cleanup
+Date:   Mon, 23 Mar 2020 15:00:06 +0000
+Message-Id: <20200323150007.7487-5-srinivas.kandagatla@linaro.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20200323150007.7487-1-srinivas.kandagatla@linaro.org>
 References: <20200323150007.7487-1-srinivas.kandagatla@linaro.org>
@@ -62,38 +62,80 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Baolin Wang <baolin.wang7@gmail.com>
+From: Anson Huang <Anson.Huang@nxp.com>
 
-We've saved the double data flag in the device data, so we should
-use it when programming a block.
+Use devm_add_action_or_reset() for cleanup to call clk_unprepare(),
+which can simplify the error handling in .probe, and .remove callback
+can be dropped.
 
-Signed-off-by: Baolin Wang <baolin.wang7@gmail.com>
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
 Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 ---
- drivers/nvmem/sprd-efuse.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/nvmem/mxs-ocotp.c | 30 +++++++++++-------------------
+ 1 file changed, 11 insertions(+), 19 deletions(-)
 
-diff --git a/drivers/nvmem/sprd-efuse.c b/drivers/nvmem/sprd-efuse.c
-index 43b3f6ef8c20..925feb21d5ad 100644
---- a/drivers/nvmem/sprd-efuse.c
-+++ b/drivers/nvmem/sprd-efuse.c
-@@ -324,6 +324,7 @@ static int sprd_efuse_read(void *context, u32 offset, void *val, size_t bytes)
- static int sprd_efuse_write(void *context, u32 offset, void *val, size_t bytes)
+diff --git a/drivers/nvmem/mxs-ocotp.c b/drivers/nvmem/mxs-ocotp.c
+index 8e4898dec002..588ab56d75b7 100644
+--- a/drivers/nvmem/mxs-ocotp.c
++++ b/drivers/nvmem/mxs-ocotp.c
+@@ -130,6 +130,11 @@ static const struct of_device_id mxs_ocotp_match[] = {
+ };
+ MODULE_DEVICE_TABLE(of, mxs_ocotp_match);
+ 
++static void mxs_ocotp_action(void *data)
++{
++	clk_unprepare(data);
++}
++
+ static int mxs_ocotp_probe(struct platform_device *pdev)
  {
- 	struct sprd_efuse *efuse = context;
-+	bool blk_double = efuse->data->blk_double;
- 	bool lock;
- 	int ret;
+ 	struct device *dev = &pdev->dev;
+@@ -160,39 +165,26 @@ static int mxs_ocotp_probe(struct platform_device *pdev)
+ 		return ret;
+ 	}
  
-@@ -348,7 +349,7 @@ static int sprd_efuse_write(void *context, u32 offset, void *val, size_t bytes)
- 	else
- 		lock = true;
++	ret = devm_add_action_or_reset(&pdev->dev, mxs_ocotp_action, otp->clk);
++	if (ret)
++		return ret;
++
+ 	data = match->data;
  
--	ret = sprd_efuse_raw_prog(efuse, offset, false, lock, val);
-+	ret = sprd_efuse_raw_prog(efuse, offset, blk_double, lock, val);
+ 	ocotp_config.size = data->size;
+ 	ocotp_config.priv = otp;
+ 	ocotp_config.dev = dev;
+ 	otp->nvmem = devm_nvmem_register(dev, &ocotp_config);
+-	if (IS_ERR(otp->nvmem)) {
+-		ret = PTR_ERR(otp->nvmem);
+-		goto err_clk;
+-	}
++	if (IS_ERR(otp->nvmem))
++		return PTR_ERR(otp->nvmem);
  
- 	clk_disable_unprepare(efuse->clk);
+ 	platform_set_drvdata(pdev, otp);
  
+-	return 0;
+-
+-err_clk:
+-	clk_unprepare(otp->clk);
+-
+-	return ret;
+-}
+-
+-static int mxs_ocotp_remove(struct platform_device *pdev)
+-{
+-	struct mxs_ocotp *otp = platform_get_drvdata(pdev);
+-
+-	clk_unprepare(otp->clk);
+-
+ 	return 0;
+ }
+ 
+ static struct platform_driver mxs_ocotp_driver = {
+ 	.probe = mxs_ocotp_probe,
+-	.remove = mxs_ocotp_remove,
+ 	.driver = {
+ 		.name = "mxs-ocotp",
+ 		.of_match_table = mxs_ocotp_match,
 -- 
 2.21.0
 
