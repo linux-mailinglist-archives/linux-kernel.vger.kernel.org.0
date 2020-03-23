@@ -2,91 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4C46218F4CF
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Mar 2020 13:40:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B5AC918F4D7
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Mar 2020 13:41:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728331AbgCWMkQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Mar 2020 08:40:16 -0400
-Received: from mail-il1-f199.google.com ([209.85.166.199]:56939 "EHLO
-        mail-il1-f199.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728142AbgCWMkP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Mar 2020 08:40:15 -0400
-Received: by mail-il1-f199.google.com with SMTP id 191so12539232ilb.23
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Mar 2020 05:40:14 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=iDq4wNZVaHbH9ptRCLoICWSHeJziVSt0hE9bV6lZbUM=;
-        b=Qnj5X7UldZjAXJ9zc+xRorY/YrmY2OgQKH7YDmJCVbRAoFhvcVhrFxIpa4b98gNN/O
-         SeoY8VuI9w/Tz/s9zg8kcXPQ15J4zLmRwuvVjYM4EvuA8g0Y8lz8+UE0iA6VkC1aWS22
-         X+kiBpk7Htuvk249T3LxQ7VUBIFGrYNqD/b46vyv7fSPsxcRJlZjsZRBpI3EXF/1mKVu
-         RwH65r+B2hQtphDz44rMiSs4fQUiONxS5g8m41dwl6izvc2yxkppWjluHji5zWAiHCpx
-         8fBLT9LED7P/czVwKal14arsLF9mbPswpc9Nu1eb3rJn+945TqTpIx1THSPQH080hQqX
-         4dpg==
-X-Gm-Message-State: ANhLgQ33vm2+2gFcsh5tzr35aNNZ4nYFnPTjAXlE0pniTnugx444c1cx
-        vKWrV/FnskoPPhDB2BTkef2PQeLM4OygVlg0GpzJnoRii3Uh
-X-Google-Smtp-Source: ADFU+vtZ06kvfCxzwPMjo3uy4cdd7KqAhPKqo3oC+Gp2MaOKQbMVZIfESs7BgAhzZfyqpNsg+Q90MygcGfDF/HG/8myhpZdo0noQ
+        id S1728209AbgCWMlZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Mar 2020 08:41:25 -0400
+Received: from foss.arm.com ([217.140.110.172]:48488 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728105AbgCWMlZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Mar 2020 08:41:25 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CA7261FB;
+        Mon, 23 Mar 2020 05:41:24 -0700 (PDT)
+Received: from e119884-lin.cambridge.arm.com (e119884-lin.cambridge.arm.com [10.1.196.72])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 94B8A3F52E;
+        Mon, 23 Mar 2020 05:41:23 -0700 (PDT)
+From:   Vincenzo Frascino <vincenzo.frascino@arm.com>
+To:     linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
+        clang-built-linux@googlegroups.com, x86@kernel.org
+Cc:     Vincenzo Frascino <vincenzo.frascino@arm.com>,
+        kbuild test robot <lkp@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>
+Subject: [PATCH] um: Fix header inclusion
+Date:   Mon, 23 Mar 2020 12:41:09 +0000
+Message-Id: <20200323124109.7104-1-vincenzo.frascino@arm.com>
+X-Mailer: git-send-email 2.25.2
 MIME-Version: 1.0
-X-Received: by 2002:a92:afc1:: with SMTP id v62mr20547963ill.308.1584967214577;
- Mon, 23 Mar 2020 05:40:14 -0700 (PDT)
-Date:   Mon, 23 Mar 2020 05:40:14 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000ce3eed05a184efe9@google.com>
-Subject: KASAN: slab-out-of-bounds Read in edge_interrupt_callback
-From:   syzbot <syzbot+37ba33391ad5f3935bbd@syzkaller.appspotmail.com>
-To:     andreyknvl@google.com, gregkh@linuxfoundation.org,
-        johan@kernel.org, linux-kernel@vger.kernel.org,
-        linux-usb@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+User Mode is a flavor of x86 that from the vDSO prospective always falls
+back on system calls. This implies that it does not require any of the
+unified vDSO definitions and their inclusion causes side effects like
+the one reported below:
 
-syzbot found the following crash on:
+In file included from include/vdso/processor.h:10:0,
+                    from include/vdso/datapage.h:17,
+                    from arch/x86/include/asm/vgtod.h:7,
+                    from arch/x86/um/../kernel/sys_ia32.c:49:
+>> arch/x86/include/asm/vdso/processor.h:11:29: error: redefinition of 'rep_nop'
+    static __always_inline void rep_nop(void)
+                                ^~~~~~~
+   In file included from include/linux/rcupdate.h:30:0,
+                    from include/linux/rculist.h:11,
+                    from include/linux/pid.h:5,
+                    from include/linux/sched.h:14,
+                    from arch/x86/um/../kernel/sys_ia32.c:25:
+   arch/x86/um/asm/processor.h:24:20: note: previous definition of 'rep_nop' was here
+    static inline void rep_nop(void)
 
-HEAD commit:    e17994d1 usb: core: kcov: collect coverage from usb comple..
-git tree:       https://github.com/google/kasan.git usb-fuzzer
-console output: https://syzkaller.appspot.com/x/log.txt?x=13706939e00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=5d64370c438bc60
-dashboard link: https://syzkaller.appspot.com/bug?extid=37ba33391ad5f3935bbd
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=150d3841e00000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12842b19e00000
+Make sure that the unnecessary headers are not included when um is built
+to address the problem.
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+37ba33391ad5f3935bbd@syzkaller.appspotmail.com
-
-==================================================================
-BUG: KASAN: slab-out-of-bounds in edge_interrupt_callback+0x8be/0x9d0 drivers/usb/serial/io_edgeport.c:715
-Read of size 1 at addr ffff8881d2920c67 by task swapper/0/0
-
-CPU: 0 PID: 0 Comm: swapper/0 Not tainted 5.6.0-rc5-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Call Trace:
- <IRQ>
- __dump_stack lib/dump_stack.c:77 [inline]
- dump_stack+0xef/0x16e lib/dump_stack.c:118
- print_address_description.constprop.0.cold+0xd3/0x314 mm/kasan/report.c:374
- __kasan_report.cold+0x37/0x77 mm/kasan/report.c:506
- kasan_report+0xe/0x20 mm/kasan/common.c:641
- edge_interrupt_callback+0x8be/0x9d0 drivers/usb/serial/io_edgeport.c:715
- __usb_hcd_giveback_urb+0x29a/0x550 drivers/usb/core/hcd.c:1650
- usb_hcd_giveback_urb+0x368/0x420 drivers/usb/core/hcd.c:1716
- dummy_timer+0x1258/0x32ae drivers/usb/gadget/udc/dummy_hcd.c:1966
- call_timer_fn+0x195/0x6f0 kernel/time/timer.c:1404
-
-
+Fixes: abc22418db02 ("x86/vdso: Enable x86 to use common headers")
+Reported-by: kbuild test robot <lkp@intel.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Borislav Petkov <bp@alien8.de>
+Signed-off-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
 ---
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+Rebased on tip/master
 
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-syzbot can test patches for this bug, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+ arch/x86/include/asm/vgtod.h | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/arch/x86/include/asm/vgtod.h b/arch/x86/include/asm/vgtod.h
+index fc8e4cd342cc..7aa38b2ad8a9 100644
+--- a/arch/x86/include/asm/vgtod.h
++++ b/arch/x86/include/asm/vgtod.h
+@@ -2,6 +2,11 @@
+ #ifndef _ASM_X86_VGTOD_H
+ #define _ASM_X86_VGTOD_H
+ 
++/*
++ * This check is required to prevent ARCH=um to include
++ * unwanted headers.
++ */
++#ifdef CONFIG_GENERIC_GETTIMEOFDAY
+ #include <linux/compiler.h>
+ #include <asm/clocksource.h>
+ #include <vdso/datapage.h>
+@@ -14,5 +19,6 @@ typedef u64 gtod_long_t;
+ #else
+ typedef unsigned long gtod_long_t;
+ #endif
++#endif /* CONFIG_GENERIC_GETTIMEOFDAY */
+ 
+ #endif /* _ASM_X86_VGTOD_H */
+-- 
+2.25.2
+
