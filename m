@@ -2,184 +2,192 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0454C190137
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Mar 2020 23:52:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C8F6619015B
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Mar 2020 23:54:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727022AbgCWWw2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Mar 2020 18:52:28 -0400
-Received: from mail-qk1-f196.google.com ([209.85.222.196]:39140 "EHLO
-        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725897AbgCWWw2 (ORCPT
+        id S1727302AbgCWWyB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Mar 2020 18:54:01 -0400
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:48260 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727133AbgCWWxI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Mar 2020 18:52:28 -0400
-Received: by mail-qk1-f196.google.com with SMTP id b62so8024006qkf.6
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Mar 2020 15:52:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=EN3/8nPrGjDFP5FiRDwnVv0jq98uFBAuJO6UXCJg8/8=;
-        b=XW7sHiomY4SolQ/XAgSERiGDv3GH1MG/5Sg/9yKQZY9xK/GcJ/pgyjjbWnF26Hys1A
-         cWeCjqUaPylhKJKv1+cbeNWqxJ2Q9mwTLJX9na4EwpF4MZJwCOBuOY8jpBBJtaarX00E
-         0zZAJXGiYhxFzkMlLRSCeTR2ZvMriueZTkDO71LwFyhKw3Ablck5cwnBHsjUQWH+o5/Y
-         +ikI1lSYDO2bWvz/8Na3VIilw2UY95CrKTdNv87bnnv0xIMyhmQ3VK4DqipqQpIRgU+g
-         J3b1FfXDPb7KChYjzS+o0o/c/sYpj1P8FOOxTx8n2TeqP25KA5E5wjO4LHKp3HSo0X6v
-         l45Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=EN3/8nPrGjDFP5FiRDwnVv0jq98uFBAuJO6UXCJg8/8=;
-        b=I3LRZu8nfvpcJl6a9YEiVyxNkeJmuFii2YHSFVmU+g4bomTvrdevL0j4lotVFxC9Z3
-         8V3cFWfQAcFmJFEO9rC1rnJYi3SPRU3T9mo3eAvi9tPzOgvOif1ND+OBicykh3Hl97oB
-         Y55Is8/lENNbGvxt93vL3Trvn293cQgqGg0vbQ4RTIk84hiP31E2rTMQAFuXM6CAnTfa
-         3dHaFk5IWCs5uRjarvHqNnaVgQqysiQKvzaJo5Iknl+gUn2YdPyn/kikhz5QN2QtZHP1
-         H6tdgODzaCC97q+gJRsVr2NnDQsD1lq1T3cGICe+pKYXRdZ2KMx+oV135FibP4CZiB0u
-         UzPQ==
-X-Gm-Message-State: ANhLgQ3LYQgtYX0Psk+SfjszOWitOD9VIXleb6mHsBajIMnxR57yqf5d
-        DTMpAtJFmW+mX/Oi3eY5U/POBA==
-X-Google-Smtp-Source: ADFU+vuIxvcXkLHkkUwg/gcivfQjs9y5Wtz9wozt9Y4PWM35iGAs1MxHMJOPkfq43QrdfzminBi6Qw==
-X-Received: by 2002:a37:4fc3:: with SMTP id d186mr24438557qkb.100.1585003946439;
-        Mon, 23 Mar 2020 15:52:26 -0700 (PDT)
-Received: from ziepe.ca (hlfxns017vw-142-68-57-212.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.68.57.212])
-        by smtp.gmail.com with ESMTPSA id w132sm11883304qkb.96.2020.03.23.15.52.25
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 23 Mar 2020 15:52:25 -0700 (PDT)
-Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
-        (envelope-from <jgg@ziepe.ca>)
-        id 1jGVvl-00063l-6Z; Mon, 23 Mar 2020 19:52:25 -0300
-Date:   Mon, 23 Mar 2020 19:52:25 -0300
-From:   Jason Gunthorpe <jgg@ziepe.ca>
-To:     Mike Kravetz <mike.kravetz@oracle.com>
-Cc:     "Longpeng (Mike)" <longpeng2@huawei.com>,
-        akpm@linux-foundation.org, kirill.shutemov@linux.intel.com,
-        linux-kernel@vger.kernel.org, arei.gonglei@huawei.com,
-        weidong.huang@huawei.com, weifuqiang@huawei.com,
-        kvm@vger.kernel.org, linux-mm@kvack.org,
-        Matthew Wilcox <willy@infradead.org>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        stable@vger.kernel.org
-Subject: Re: [PATCH v2] mm/hugetlb: fix a addressing exception caused by
- huge_pte_offset()
-Message-ID: <20200323225225.GF20941@ziepe.ca>
-References: <1582342427-230392-1-git-send-email-longpeng2@huawei.com>
- <51a25d55-de49-4c0a-c994-bf1a8cfc8638@oracle.com>
- <20200323160955.GY20941@ziepe.ca>
- <69055395-e7e5-a8e2-7f3e-f61607149318@oracle.com>
- <20200323180706.GC20941@ziepe.ca>
- <88698dd7-eb87-4b0b-7ba7-44ef6eab6a6c@oracle.com>
+        Mon, 23 Mar 2020 18:53:08 -0400
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 02NMquNZ112993;
+        Mon, 23 Mar 2020 17:52:56 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1585003976;
+        bh=ODdbyHqndP5tMn1Y7dSVqZZwdLCJtpnUZLLEgVY0LcI=;
+        h=From:To:CC:Subject:Date;
+        b=rnn7XpDXOQPg2VMkVGS5PyLtdMFZxoWfm2NhnEDWxc9DCOMcmQhBodA+vARq3Td1w
+         IcmwP9wuHwGx0MmSwriZhkU/gHz922G79KX2/2Z2Akr1/7P5kyhBWP053vPNEa4JN+
+         KT63/xRRRlV+mipG8pAKinWPcnFQL8U9YGxnQLNE=
+Received: from DLEE101.ent.ti.com (dlee101.ent.ti.com [157.170.170.31])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 02NMqun8049914
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 23 Mar 2020 17:52:56 -0500
+Received: from DLEE102.ent.ti.com (157.170.170.32) by DLEE101.ent.ti.com
+ (157.170.170.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Mon, 23
+ Mar 2020 17:52:56 -0500
+Received: from fllv0039.itg.ti.com (10.64.41.19) by DLEE102.ent.ti.com
+ (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Mon, 23 Mar 2020 17:52:56 -0500
+Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id 02NMqteJ079160;
+        Mon, 23 Mar 2020 17:52:55 -0500
+From:   Grygorii Strashko <grygorii.strashko@ti.com>
+To:     Peter Ujfalusi <peter.ujfalusi@ti.com>,
+        Rob Herring <robh@kernel.org>, Tero Kristo <t-kristo@ti.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        netdev <netdev@vger.kernel.org>, Roger Quadros <rogerq@ti.com>,
+        <devicetree@vger.kernel.org>, Jakub Kicinski <kuba@kernel.org>
+CC:     Murali Karicheri <m-karicheri2@ti.com>,
+        Sekhar Nori <nsekhar@ti.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        Grygorii Strashko <grygorii.strashko@ti.com>
+Subject: [PATCH net-next v6 00/11] net: ethernet: ti: add networking support for k3 am65x/j721e soc
+Date:   Tue, 24 Mar 2020 00:52:43 +0200
+Message-ID: <20200323225254.12759-1-grygorii.strashko@ti.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <88698dd7-eb87-4b0b-7ba7-44ef6eab6a6c@oracle.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 23, 2020 at 01:35:07PM -0700, Mike Kravetz wrote:
-> On 3/23/20 11:07 AM, Jason Gunthorpe wrote:
-> > On Mon, Mar 23, 2020 at 10:27:48AM -0700, Mike Kravetz wrote:
-> > 
-> >>>  	pgd = pgd_offset(mm, addr);
-> >>> -	if (!pgd_present(*pgd))
-> >>> +	if (!pgd_present(READ_ONCE(*pgd)))
-> >>>  		return NULL;
-> >>>  	p4d = p4d_offset(pgd, addr);
-> >>> -	if (!p4d_present(*p4d))
-> >>> +	if (!p4d_present(READ_ONCE(*p4d)))
-> >>>  		return NULL;
-> >>>  
-> >>>       pud = pud_offset(p4d, addr);
-> >>
-> >> One would argue that pgd and p4d can not change from present to !present
-> >> during the execution of this code.  To me, that seems like the issue which
-> >> would cause an issue.  Of course, I could be missing something.
-> > 
-> > This I am not sure of, I think it must be true under the read side of
-> > the mmap_sem, but probably not guarenteed under RCU..
-> > 
-> > In any case, it doesn't matter, the fact that *p4d can change at all
-> > is problematic. Unwinding the above inlines we get:
-> > 
-> >   p4d = p4d_offset(pgd, addr)
-> >   if (!p4d_present(*p4d))
-> >       return NULL;
-> >   pud = (pud_t *)p4d_page_vaddr(*p4d) + pud_index(address);
-> > 
-> > According to our memory model the compiler/CPU is free to execute this
-> > as:
-> > 
-> >   p4d = p4d_offset(pgd, addr)
-> >   p4d_for_vaddr = *p4d;
-> >   if (!p4d_present(*p4d))
-> >       return NULL;
-> >   pud = (pud_t *)p4d_page_vaddr(p4d_for_vaddr) + pud_index(address);
-> > 
-> 
-> Wow!  How do you know this?  You don't need to answer :)
+Hi
 
-It says explicitly in Documentation/memory-barriers.txt - see
-section COMPILER BARRIER:
+This v6 series adds basic networking support support TI K3 AM654x/J721E SoC which
+have integrated Gigabit Ethernet MAC (Media Access Controller) into device MCU
+domain and named MCU_CPSW0 (CPSW2G NUSS).
 
- (*) The compiler is within its rights to reorder loads and stores
-     to the same variable, and in some cases, the CPU is within its
-     rights to reorder loads to the same variable.  This means that
-     the following code:
+Formally TRMs refer CPSW2G NUSS as two-port Gigabit Ethernet Switch subsystem
+with port 0 being the CPPI DMA host port and port 1 being the external Ethernet
+port, but for 1 external port device it's just Port 0 <-> ALE <-> Port 1 and it's
+rather device with HW filtering capabilities then actually switching device.
+It's expected to have similar devices, but with more external ports.
 
-        a[0] = x;
-        a[1] = x;
+The new Host port 0 Communications Port Programming Interface (CPPI5) is
+operating by TI AM654x/J721E NAVSS Unified DMA Peripheral Root Complex (UDMA-P)
+controller [1].
 
-     Might result in an older value of x stored in a[1] than in a[0].
+The CPSW2G contains below modules for which existing code is re-used:
+ - MAC SL: cpsw_sl.c
+ - Address Lookup Engine (ALE): cpsw_ale.c, basically compatible with K2 66AK2E/G
+ - Management Data Input/Output interface (MDIO): davinci_mdio.c, fully 
+   compatible with TI AM3/4/5 devices
 
-It also says READ_ONCE puts things in program order, but we don't use
-READ_ONCE inside pud_offset(), so it doesn't help us.
+Basic features supported by CPSW2G NUSS driver:
+ - VLAN support, 802.1Q compliant, Auto add port VLAN for untagged frames on
+   ingress, Auto VLAN removal on egress and auto pad to minimum frame size.
+ - multicast filtering
+ - promisc mode
+ - TX multiq support in Round Robin or Fixed priority modes
+ - RX checksum offload for non-fragmented IPv4/IPv6 TCP/UDP packets
+ - TX checksum offload support for IPv4/IPv6 TCP/UDP packets (J721E only).
 
-Best answer is to code things so there is exactly one dereference of
-the pointer protected by READ_ONCE. Very clear to read, very safe.
+Features under development:
+ - Support for IEEE 1588 Clock Synchronization. The CPSW2G NUSS includes new
+   version of Common Platform Time Sync (CPTS)
+ - tc-mqprio: priority level Quality Of Service (QOS) support (802.1p)
+ - tc-cbs: Support for Audio/Video Bridging (P802.1Qav/D6.0) HW shapers
+ - tc-taprio: IEEE 802.1Qbv/D2.2 Enhancements for Scheduled Traffic
+ - frame preemption: IEEE P902.3br/D2.0 Interspersing Express Traffic, 802.1Qbu
+ - extended ALE features: classifier/policers, auto-aging
 
-Maybe Longpeng can rework the patch around these principles?
+Patches 1-6 are intended for netdev, Patches 7-11 are intended for K3 Platform
+tree and provided here for testing purposes.
 
-Also I wonder if the READ_ONCE(*pmdp) is OK. gup_pmd_range() uses it,
-but I can't explain why it shouldn't be pmd_read_atomic().
+Changes in v6:
+ - fixed comments from Rob Herring <robh@kernel.org> and added his Reviewed-by.
+ - added Tested-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
 
-> > In the case where p4 goes from !present -> present (ie
-> > handle_mm_fault()):
-> > 
-> > p4d_for_vaddr == p4d_none, and p4d_present(*p4d) == true, meaning the
-> > p4d_page_vaddr() will crash.
-> > 
-> > Basically the problem here is not just missing READ_ONCE, but that the
-> > p4d is read multiple times at all. It should be written like gup_fast
-> > does, to guarantee a single CPU read of the unstable data:
-> > 
-> >   p4d = READ_ONCE(*p4d_offset(pgdp, addr));
-> >   if (!p4d_present(p4))
-> >       return NULL;
-> >   pud = pud_offset(&p4d, addr);
-> > 
-> > At least this is what I've been able to figure out :\
-> 
-> In that case, I believe there are a bunch of similar routines with this issue.
+Changes in v5:
+ - renamed files k3-udma-desc-pool.*  k3-udma-desc-pool to k3-cppi-desc-pool.*,
+   and API to k3_cppi_desc_pool_* as requested by Peter Ujfalusi <peter.ujfalusi@ti.com>
+ - fixed copy-paste err in am65_cpsw_nuss_ndo_slave_set_rx_mode() which blocked
+   recieving of mcast frames.
+ - added Tested-by: Murali Karicheri <m-karicheri2@ti.com> 
 
-Yes, my look around page walk related users makes me come to a similar
-worry.
+Changes in v4:
+ - fixed minor comments from Jakub Kicinski <kuba@kernel.org>
+ - dependencies resolved: required phy-rmii-sel changes [2] queued for merge
+   except one [3] which is included in this series with Kishon's ask.
 
-Fortunately, I think this is largely theoretical as most likely the
-compiler will generate a single store for these coding patterns. 
+Changes in v3:
+ - add ARM64 defconfig changes for testing purposes
+ - fixed DT yaml definition
+ - fixed comments from Jakub Kicinski <kuba@kernel.org>
 
-That said, there have been bugs in the past, see commit 26c191788f18
-("mm: pmd_read_atomic: fix 32bit PAE pmd walk vs pmd_populate SMP race
-condition") which is significantly related to the compiler lifting a
-load inside pte_offset to before the required 'if (pmd_*)' checks.
+Changes in v2:
+ - fixed DT yaml definition
+ - fixed comments from David Miller
 
-> For this patch, I was primarily interested in seeing the obvious
-> multiple dereferences in C fixed up.  This is above and beyond that!
-> :)
+v5: https://patchwork.ozlabs.org/cover/1258295/
+v4: https://patchwork.ozlabs.org/cover/1256092/
+v3: https://patchwork.ozlabs.org/cover/1254568/
+v2: https://patchwork.ozlabs.org/cover/1250674/
+v1: https://lwn.net/Articles/813087/
 
-Well, I think it is worth solving the underlying problem
-properly. Otherwise we get weird solutions to data races like
-pmd_trans_unstable()...
+TRMs:
+ AM654: http://www.ti.com/lit/ug/spruid7e/spruid7e.pdf
+ J721E: http://www.ti.com/lit/ug/spruil1a/spruil1a.pdf
 
-Jason
+Preliminary documentation can be found at:
+ http://software-dl.ti.com/processor-sdk-linux/esd/docs/latest/linux/Foundational_Components/Kernel/Kernel_Drivers/Network/K3_CPSW2g.html
+
+[1] https://lwn.net/Articles/808030/
+[2] https://lkml.org/lkml/2020/2/22/100
+[3] https://lkml.org/lkml/2020/3/3/724
+
+Grygorii Strashko (11):
+  phy: ti: gmii-sel: simplify config dependencies between net drivers
+    and gmii phy
+  net: ethernet: ti: ale: fix seeing unreg mcast packets with promisc
+    and allmulti disabled
+  net: ethernet: ti: ale: add support for mac-only mode
+  net: ethernet: ti: ale: am65: add support for default thread cfg
+  dt-binding: ti: am65x: document mcu cpsw nuss
+  net: ethernet: ti: introduce am65x/j721e gigabit eth subsystem driver
+  arm64: dts: ti: k3-am65-mcu: add cpsw nuss node
+  arm64: dts: k3-am654-base-board: add mcu cpsw nuss pinmux and phy defs
+  arm64: dts: ti: k3-j721e-mcu: add mcu cpsw nuss node
+  arm64: dts: ti: k3-j721e-common-proc-board: add mcu cpsw nuss pinmux
+    and phy defs
+  arm64: defconfig: ti: k3: enable dma and networking
+
+ .../bindings/net/ti,k3-am654-cpsw-nuss.yaml   |  225 ++
+ arch/arm64/boot/dts/ti/k3-am65-mcu.dtsi       |   49 +
+ arch/arm64/boot/dts/ti/k3-am65.dtsi           |    1 +
+ .../arm64/boot/dts/ti/k3-am654-base-board.dts |   42 +
+ .../dts/ti/k3-j721e-common-proc-board.dts     |   43 +
+ .../boot/dts/ti/k3-j721e-mcu-wakeup.dtsi      |   49 +
+ arch/arm64/boot/dts/ti/k3-j721e.dtsi          |    1 +
+ arch/arm64/configs/defconfig                  |    3 +
+ drivers/net/ethernet/ti/Kconfig               |   20 +-
+ drivers/net/ethernet/ti/Makefile              |    3 +
+ drivers/net/ethernet/ti/am65-cpsw-ethtool.c   |  747 +++++++
+ drivers/net/ethernet/ti/am65-cpsw-nuss.c      | 1965 +++++++++++++++++
+ drivers/net/ethernet/ti/am65-cpsw-nuss.h      |  142 ++
+ drivers/net/ethernet/ti/cpsw_ale.c            |   38 +
+ drivers/net/ethernet/ti/cpsw_ale.h            |    4 +
+ drivers/net/ethernet/ti/k3-cppi-desc-pool.c   |  126 ++
+ drivers/net/ethernet/ti/k3-cppi-desc-pool.h   |   30 +
+ drivers/phy/ti/Kconfig                        |    3 -
+ 18 files changed, 3486 insertions(+), 5 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/net/ti,k3-am654-cpsw-nuss.yaml
+ create mode 100644 drivers/net/ethernet/ti/am65-cpsw-ethtool.c
+ create mode 100644 drivers/net/ethernet/ti/am65-cpsw-nuss.c
+ create mode 100644 drivers/net/ethernet/ti/am65-cpsw-nuss.h
+ create mode 100644 drivers/net/ethernet/ti/k3-cppi-desc-pool.c
+ create mode 100644 drivers/net/ethernet/ti/k3-cppi-desc-pool.h
+
+-- 
+2.17.1
+
