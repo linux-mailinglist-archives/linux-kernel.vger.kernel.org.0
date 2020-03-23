@@ -2,120 +2,202 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 25FFA18FC4F
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Mar 2020 19:06:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8CBB818FC54
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Mar 2020 19:07:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727715AbgCWSGv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Mar 2020 14:06:51 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:37272 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726991AbgCWSGv (ORCPT
+        id S1727792AbgCWSHb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Mar 2020 14:07:31 -0400
+Received: from mr85p00im-hyfv06021301.me.com ([17.58.23.188]:40144 "EHLO
+        mr85p00im-hyfv06021301.me.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727149AbgCWSHb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Mar 2020 14:06:51 -0400
-Received: by mail-wr1-f66.google.com with SMTP id w10so18316022wrm.4
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Mar 2020 11:06:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=hPUm/HhpONACSgj8NcmzE9a98krdtrzc27JDL5LBNKQ=;
-        b=nTKGbJ64Trr4thrThDxbIV2WGfup7R/kt56W8gtCc0GJQFu62G5jb8ufTMvwPcS3H+
-         uy7vPLpawyjtkoXkUf9FhUHOQSNUUYAIWgHq6iw+CMOWL1fO92pCVR5dCbzjvoYRKtA9
-         n4NXerLYtcyV4+0h4gfi0brs+dFhYIEGDuxe9OBqtVflmCd+trcADnuBg7/jnAxfxlFW
-         0D22pmxbRULBKGFWKFWB+f1u9iD6uIBGt3QYoiaTLyxDxZC9LUD0o+Oy5uP6AtG0zFuc
-         qjKSW+Pry3/I6djMz2hqTEnQM4ymDQ3HIYyI0HVI+xZfLvbOEFB9LjGrB9AA7kX8GclZ
-         eVoQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=hPUm/HhpONACSgj8NcmzE9a98krdtrzc27JDL5LBNKQ=;
-        b=iy+ZZsJWTXPqQuXn1GuSd7E+aM6av6h2ff8Mir/uD1eG3aKOPtl73dAM+EL7ed+wd5
-         gS9UW4FCCuwLzU8uRGS1usu08QXkOnZ83MdmvQTWERrf+d8uN6wOuLsy1tGJcz1hx+Zv
-         NeoqiDYnLsCfQGGUvJ76krksQBeuKdTrKKQx1ileFhHIvthT7Q2MvFqo1VJ6eOcyWPtI
-         43QjQJUVe4KZ0ab7iGLr6V3g4/xcoy259UsjnGgfj//HHxyFkvZ65a6LVSH2iFMIMPG8
-         AnItXecDTqZ2lX8Fs54ucrxhoya044hWjFlZ+9LNvbP9Zr5O2WbxnpzsfvMcuCtD3okm
-         ILKA==
-X-Gm-Message-State: ANhLgQ1M290OnCNFtKXLITs9e8GheHwRnistiUmmu3v/UrnU5nsJL4V6
-        MJROLe1NxLWzxLbjf+e1jvmyF01gI+da8aHzXApT5w==
-X-Google-Smtp-Source: ADFU+vv8LJRvApnLoC3YWQlOBxqsAybTAfaFiTIPOB4Kp6JDPrX3l9J3X/09U0KYtYXyDnl9ZV9/u7pRaZJBUlCvwCA=
-X-Received: by 2002:a05:6000:100f:: with SMTP id a15mr29739901wrx.382.1584986808806;
- Mon, 23 Mar 2020 11:06:48 -0700 (PDT)
-MIME-Version: 1.0
-References: <000000000000277a0405a16bd5c9@google.com> <CACT4Y+b1WFT87pWQaXD3CWjyjoQaP1jcycHdHF+rtxoR5xW1ww@mail.gmail.com>
- <5058aabe-f32d-b8ef-57ed-f9c0206304c5@redhat.com> <CAG_fn=WYtSoyi63ACaz-ya=Dbi+BFU-_mADDpL6gQvDimQscmw@mail.gmail.com>
- <20200323163925.GP28711@linux.intel.com> <CAKwvOdkE8OAu=Gj4MKWwpctka6==6EtrbF3e1tvF=jS2hBB3Ow@mail.gmail.com>
- <CAKwvOdkXi1MN2Yqqoa6ghw14tQ25WYgyJkSv35-+1KRb=cmhZw@mail.gmail.com> <CAG_fn=WE0BmuHSxUoBJWQ9dnZ4X5ZpBqcT9rQaDE_6HAfTYKQA@mail.gmail.com>
-In-Reply-To: <CAG_fn=WE0BmuHSxUoBJWQ9dnZ4X5ZpBqcT9rQaDE_6HAfTYKQA@mail.gmail.com>
-From:   Alexander Potapenko <glider@google.com>
-Date:   Mon, 23 Mar 2020 19:06:37 +0100
-Message-ID: <CAG_fn=Uf2dDo4K9X==wE=eL8HQMc1an8m8H18tvWd9Mkyhpskg@mail.gmail.com>
-Subject: Re: BUG: unable to handle kernel NULL pointer dereference in handle_external_interrupt_irqoff
-To:     Nick Desaulniers <ndesaulniers@google.com>
-Cc:     Dmitry Vyukov <dvyukov@google.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        syzbot <syzbot+3f29ca2efb056a761e38@syzkaller.appspotmail.com>,
-        clang-built-linux <clang-built-linux@googlegroups.com>,
-        Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>, KVM list <kvm@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Mon, 23 Mar 2020 14:07:31 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=me.com; s=1a1hai;
+        t=1584986850; bh=Syms5C1o7RmHUh1txTaH5Wi0LpA3XXA2FF5eRn6eE2g=;
+        h=From:To:Subject:Date:Message-Id;
+        b=hXfPnf6dijJ5KW2rdVGJNcj6BUtlRFHbCS2cE7gErk6xuQrkwbkihh4jYsA7oNKk+
+         7jd1JNEm+drP21GD2VqLMJGXbnRmyPKDdrKiBEp3sC7h2ndee/2ndGU1rMX28uSage
+         8Kz4ctx5zDnUuHRI/YF6HpSme9GB9rzOgrivERKtJ4bSMqP6Z28NxDPNn4jsSk8z6L
+         wzbyidfJ/LymzRW8TzJgBmXJ55W8RG92vESF5h35EcBo0cfxxr2BDPr8yQWi4RVppZ
+         kDDKnKJNIsfF1lQ/kvQTs5LGvmcRV0HAJqCY5tlJSx7RL4feP4LtiIAAR1N/m+TAyi
+         cIS5gJABAppNQ==
+Received: from localhost (101.220.150.77.rev.sfr.net [77.150.220.101])
+        by mr85p00im-hyfv06021301.me.com (Postfix) with ESMTPSA id DA75B40823;
+        Mon, 23 Mar 2020 18:07:29 +0000 (UTC)
+From:   Alain Volmat <avolmat@me.com>
+To:     Russell King <linux@armlinux.org.uk>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Olof Johansson <olof@lixom.net>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Nathan Huckleberry <nhuck15@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>,
+        Enrico Weigelt <info@metux.net>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        Sean Christopherson <sean.j.christopherson@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc:     patrice.chotard@st.com, avolmat@me.com
+Subject: [PATCH 1/2] arm: use DEBUG_UART_PHYS and DEBUG_UART_VIRT for sti LL_UART
+Date:   Mon, 23 Mar 2020 19:06:38 +0100
+Message-Id: <20200323180639.8481-2-avolmat@me.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20200323180639.8481-1-avolmat@me.com>
+References: <20200323180639.8481-1-avolmat@me.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2020-03-23_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 clxscore=1015 mlxscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1908290000 definitions=main-2003230094
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 23, 2020 at 6:55 PM Alexander Potapenko <glider@google.com> wrote:
->
-> I've reduced the faulty test case to the following code:
->
-> =================================
-> a;
-> long b;
-> register unsigned long current_stack_pointer asm("rsp");
-> handle_external_interrupt_irqoff() {
->   asm("and $0xfffffffffffffff0, %%rsp\n\tpush $%c[ss]\n\tpush "
->       "%[sp]\n\tpushf\n\tpushq $%c[cs]\n\tcall *%[thunk_target]\n"
->       : [ sp ] "=&r"(b), "+r" (current_stack_pointer)
->       : [ thunk_target ] "rm"(a), [ ss ] "i"(3 * 8), [ cs ] "i"(2 * 8) );
-> }
-> =================================
-> (in fact creduce even throws away current_stack_pointer, but we
-> probably want to keep it to prove the point).
->
-> Clang generates the following code for it:
->
-> $ clang vmx.i -O2 -c -w -o vmx.o
-> $ objdump -d vmx.o
-> ...
-> 0000000000000000 <handle_external_interrupt_irqoff>:
->    0: 8b 05 00 00 00 00    mov    0x0(%rip),%eax        # 6
-> <handle_external_interrupt_irqoff+0x6>
->    6: 89 44 24 fc          mov    %eax,-0x4(%rsp)
->    a: 48 83 e4 f0          and    $0xfffffffffffffff0,%rsp
->    e: 6a 18                pushq  $0x18
->   10: 50                    push   %rax
->   11: 9c                    pushfq
->   12: 6a 10                pushq  $0x10
->   14: ff 54 24 fc          callq  *-0x4(%rsp)
->   18: 48 89 05 00 00 00 00 mov    %rax,0x0(%rip)        # 1f
-> <handle_external_interrupt_irqoff+0x1f>
->   1f: c3                    retq
->
-> The question is whether using current_stack_pointer as an output is
-> actually a valid way to tell the compiler it should not clobber RSP.
-> Intuitively it is, but explicitly adding RSP to the clobber list
-> sounds a bit more bulletproof.
+Update the sti platform LL_UART support to rely on
+CONFIG_DEBUG_UART_PHYS and CONFIG_DEBUG_UART_VIRT from Kconfig
 
-Ok, I am wrong: according to
-https://gcc.gnu.org/onlinedocs/gcc/Extended-Asm.html it's incorrect to
-list RSP in the clobber list.
+Signed-off-by: Alain Volmat <avolmat@me.com>
+---
+ arch/arm/Kconfig.debug       | 23 ++++++++++++-----------
+ arch/arm/include/debug/sti.S | 26 ++------------------------
+ 2 files changed, 14 insertions(+), 35 deletions(-)
+
+diff --git a/arch/arm/Kconfig.debug b/arch/arm/Kconfig.debug
+index b70d7debf5ca..f1fa1cb45ecb 100644
+--- a/arch/arm/Kconfig.debug
++++ b/arch/arm/Kconfig.debug
+@@ -1177,10 +1177,9 @@ choice
+ 		  Say Y here if you want kernel low-level debugging support
+ 		  on ST SPEAr13xx based platforms.
+ 
+-	config STIH41X_DEBUG_ASC2
++	config DEBUG_STIH41X_ASC2
+ 		bool "Use StiH415/416 ASC2 UART for low-level debug"
+ 		depends on ARCH_STI
+-		select DEBUG_STI_UART
+ 		help
+ 		  Say Y here if you want kernel low-level debugging support
+ 		  on STiH415/416 based platforms like b2000, which has
+@@ -1188,10 +1187,9 @@ choice
+ 
+ 		  If unsure, say N.
+ 
+-	config STIH41X_DEBUG_SBC_ASC1
++	config DEBUG_STIH41X_SBC_ASC1
+ 		bool "Use StiH415/416 SBC ASC1 UART for low-level debug"
+ 		depends on ARCH_STI
+-		select DEBUG_STI_UART
+ 		help
+ 		  Say Y here if you want kernel low-level debugging support
+ 		  on STiH415/416 based platforms like b2020. which has
+@@ -1501,10 +1499,6 @@ config DEBUG_TEGRA_UART
+ 	bool
+ 	depends on ARCH_TEGRA
+ 
+-config DEBUG_STI_UART
+-	bool
+-	depends on ARCH_STI
+-
+ config DEBUG_STM32_UART
+ 	bool
+ 	depends on ARCH_STM32
+@@ -1557,7 +1551,8 @@ config DEBUG_LL_INCLUDE
+ 	default "debug/s3c24xx.S" if DEBUG_S3C24XX_UART || DEBUG_S3C64XX_UART
+ 	default "debug/s5pv210.S" if DEBUG_S5PV210_UART
+ 	default "debug/sirf.S" if DEBUG_SIRFSOC_UART
+-	default "debug/sti.S" if DEBUG_STI_UART
++	default "debug/sti.S" if DEBUG_STIH41X_ASC2
++	default "debug/sti.S" if DEBUG_STIH41X_SBC_ASC1
+ 	default "debug/stm32.S" if DEBUG_STM32_UART
+ 	default "debug/tegra.S" if DEBUG_TEGRA_UART
+ 	default "debug/ux500.S" if DEBUG_UX500_UART
+@@ -1685,7 +1680,9 @@ config DEBUG_UART_PHYS
+ 	default 0xfc00c000 if DEBUG_AT91_SAMA5D4_USART3
+ 	default 0xfcb00000 if DEBUG_HI3620_UART
+ 	default 0xfd883000 if DEBUG_ALPINE_UART0
++	default 0xfe531000 if DEBUG_STIH41X_SBC_ASC1
+ 	default 0xfe800000 if ARCH_IOP32X
++	default 0xfed32000 if DEBUG_STIH41X_ASC2
+ 	default 0xff690000 if DEBUG_RK32_UART2
+ 	default 0xffc02000 if DEBUG_SOCFPGA_UART0
+ 	default 0xffc02100 if DEBUG_SOCFPGA_ARRIA10_UART1
+@@ -1713,7 +1710,8 @@ config DEBUG_UART_PHYS
+ 		DEBUG_S3C64XX_UART || \
+ 		DEBUG_BCM63XX_UART || DEBUG_ASM9260_UART || \
+ 		DEBUG_SIRFSOC_UART || DEBUG_DIGICOLOR_UA0 || \
+-		DEBUG_AT91_UART
++		DEBUG_AT91_UART || \
++		DEBUG_STIH41X_ASC2 || DEBUG_STIH41X_SBC_ASC1
+ 
+ config DEBUG_UART_VIRT
+ 	hex "Virtual base address of debug UART"
+@@ -1778,7 +1776,9 @@ config DEBUG_UART_VIRT
+ 	default 0xfc705000 if DEBUG_ZTE_ZX
+ 	default 0xfcfe8600 if DEBUG_BCM63XX_UART
+ 	default 0xfd000000 if DEBUG_SPEAR3XX || DEBUG_SPEAR13XX
++	default 0xfd531000 if DEBUG_STIH41X_SBC_ASC1
+ 	default 0xfd883000 if DEBUG_ALPINE_UART0
++	default 0xfdd32000 if DEBUG_STIH41X_ASC2
+ 	default 0xfe017000 if DEBUG_MMP_UART2
+ 	default 0xfe018000 if DEBUG_MMP_UART3
+ 	default 0xfe100000 if DEBUG_IMX23_UART || DEBUG_IMX28_UART
+@@ -1823,7 +1823,8 @@ config DEBUG_UART_VIRT
+ 		DEBUG_S3C64XX_UART || \
+ 		DEBUG_BCM63XX_UART || DEBUG_ASM9260_UART || \
+ 		DEBUG_SIRFSOC_UART || DEBUG_DIGICOLOR_UA0 || \
+-		DEBUG_AT91_UART
++		DEBUG_AT91_UART || \
++		DEBUG_STIH41X_ASC2 || DEBUG_STIH41X_SBC_ASC1
+ 
+ config DEBUG_UART_8250_SHIFT
+ 	int "Register offset shift for the 8250 debug UART"
+diff --git a/arch/arm/include/debug/sti.S b/arch/arm/include/debug/sti.S
+index 6b42c91f217d..a903a60b81c6 100644
+--- a/arch/arm/include/debug/sti.S
++++ b/arch/arm/include/debug/sti.S
+@@ -6,28 +6,6 @@
+  * Copyright (C) 2013 STMicroelectronics (R&D) Limited.
+  */
+ 
+-#define STIH41X_COMMS_BASE              0xfed00000
+-#define STIH41X_ASC2_BASE               (STIH41X_COMMS_BASE+0x32000)
+-
+-#define STIH41X_SBC_LPM_BASE            0xfe400000
+-#define STIH41X_SBC_COMMS_BASE          (STIH41X_SBC_LPM_BASE + 0x100000)
+-#define STIH41X_SBC_ASC1_BASE           (STIH41X_SBC_COMMS_BASE + 0x31000)
+-
+-
+-#define VIRT_ADDRESS(x)		(x - 0x1000000)
+-
+-#if IS_ENABLED(CONFIG_STIH41X_DEBUG_ASC2)
+-#define DEBUG_LL_UART_BASE	STIH41X_ASC2_BASE
+-#endif
+-
+-#if IS_ENABLED(CONFIG_STIH41X_DEBUG_SBC_ASC1)
+-#define DEBUG_LL_UART_BASE	STIH41X_SBC_ASC1_BASE
+-#endif
+-
+-#ifndef DEBUG_LL_UART_BASE
+-#error "DEBUG UART is not Configured"
+-#endif
+-
+ #define ASC_TX_BUF_OFF  0x04
+ #define ASC_CTRL_OFF    0x0c
+ #define ASC_STA_OFF     0x14
+@@ -37,8 +15,8 @@
+ 
+ 
+ 		.macro	addruart, rp, rv, tmp
+-		ldr	\rp,      =DEBUG_LL_UART_BASE	@ physical base
+-		ldr	\rv,      =VIRT_ADDRESS(DEBUG_LL_UART_BASE) @ virt base
++		ldr	\rp,      =CONFIG_DEBUG_UART_PHYS	@ physical base
++		ldr	\rv,      =CONFIG_DEBUG_UART_VIRT	@ virt base
+ 		.endm
+ 
+                 .macro  senduart,rd,rx
+-- 
+2.17.1
+
