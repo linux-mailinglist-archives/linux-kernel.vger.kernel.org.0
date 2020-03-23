@@ -2,91 +2,121 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 48ED318EDDF
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Mar 2020 03:10:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3D91E18EDE1
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Mar 2020 03:11:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727103AbgCWCKv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 22 Mar 2020 22:10:51 -0400
-Received: from conuserg-11.nifty.com ([210.131.2.78]:44556 "EHLO
-        conuserg-11.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726958AbgCWCKv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Mar 2020 22:10:51 -0400
-Received: from grover.flets-west.jp (softbank126093102113.bbtec.net [126.93.102.113]) (authenticated)
-        by conuserg-11.nifty.com with ESMTP id 02N28urY002941;
-        Mon, 23 Mar 2020 11:09:04 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-11.nifty.com 02N28urY002941
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1584929345;
-        bh=E2psVuEg+JhrGKw/xZVOkRp9XPBXsZqoNs5V0bJG/gA=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MfRamYOstzaL5Sdv1wE9lZXnE8bLRnXna+yR1JH4iXjmaUPwYMnh2NWst9/ff8YPw
-         AXJKIQ3+rVT9RGaDi4j9DWLail38HYCjOzAZqjdjkEA4KAAqQRsX+EqrFmR+07iOkN
-         QvgMAy0+YFGccpWjhxWNNm2ic37LK2yOhmqyRyDphkwIoVjJKxo8xk4C6yWkFUS6cz
-         /Fv4pcHguDHLpP2fxOlPLBWqc4upQ0sUQd3cs2XWW4CdFVrk8TizPmVCzYxbpalFW0
-         XDM2TEFWRMJnV/gu1kuYYz/qnk7T37MZsS89UoLTLe74Mq3caI6+MueCVI52hB8+br
-         i7i0vEneYa5uw==
-X-Nifty-SrcIP: [126.93.102.113]
-From:   Masahiro Yamada <masahiroy@kernel.org>
-To:     x86@kernel.org, Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>,
-        "H . Peter Anvin" <hpa@zytor.com>
-Cc:     linux-kernel@vger.kernel.org,
-        "Jason A . Donenfeld" <Jason@zx2c4.com>,
-        Masahiro Yamada <masahiroy@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        clang-built-linux@googlegroups.com
-Subject: [PATCH 7/7] x86: add comments about the binutils version to support code in as-instr
-Date:   Mon, 23 Mar 2020 11:08:44 +0900
-Message-Id: <20200323020844.17064-8-masahiroy@kernel.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200323020844.17064-1-masahiroy@kernel.org>
-References: <20200323020844.17064-1-masahiroy@kernel.org>
+        id S1727120AbgCWCLI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 22 Mar 2020 22:11:08 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:45488 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726951AbgCWCLI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 22 Mar 2020 22:11:08 -0400
+Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 977822BEDAB46AD93768;
+        Mon, 23 Mar 2020 10:09:52 +0800 (CST)
+Received: from [10.134.22.195] (10.134.22.195) by smtp.huawei.com
+ (10.3.19.206) with Microsoft SMTP Server (TLS) id 14.3.487.0; Mon, 23 Mar
+ 2020 10:09:49 +0800
+Subject: Re: [PATCH v3] f2fs: fix potential .flags overflow on 32bit
+ architecture
+To:     =?UTF-8?Q?Ond=c5=99ej_Jirman?= <megi@xff.cz>, <jaegeuk@kernel.org>,
+        <linux-f2fs-devel@lists.sourceforge.net>,
+        <linux-kernel@vger.kernel.org>, <chao@kernel.org>
+References: <20200323012519.41536-1-yuchao0@huawei.com>
+ <20200323015036.pniupuucfl3dug4m@core.my.home>
+From:   Chao Yu <yuchao0@huawei.com>
+Message-ID: <1d861a2e-0045-af0c-1f5b-c45b774c83f6@huawei.com>
+Date:   Mon, 23 Mar 2020 10:09:48 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <20200323015036.pniupuucfl3dug4m@core.my.home>
+Content-Type: text/plain; charset="UTF-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.134.22.195]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We raise the minimal supported binutils version from time to time.
-The last bump was commit 1fb12b35e5ff ("kbuild: Raise the minimum
-required binutils version to 2.21").
+Hello Ondřej,
 
-We need to keep these as-instr checks because binutils 2.21 does not
-support them.
+On 2020/3/23 9:50, Ondřej Jirman wrote:
+> Hello Chao Yu,
+> 
+> On Mon, Mar 23, 2020 at 09:25:19AM +0800, Chao Yu wrote:
+>> [snip]
+>>  
+>> +static inline void __set_inode_flag(struct inode *inode, int flag)
+>> +{
+>> +	test_and_set_bit(flag % BITS_PER_LONG,
+>> +			&F2FS_I(inode)->flags[BIT_WORD(flag)]);
+> 
+> This can simply be:
+> 
+>     test_and_set_bit(flag, F2FS_I(inode)->flags);
+> 
+> all of these bitmap manipulation functions already will do the
+> right thing to access the correct location in the flags array:
+> 
+>   https://elixir.bootlin.com/linux/latest/source/include/asm-generic/bitops/atomic.h#L32
+> 
+> see BIT_MASK and BIT_WORD use in that function.
 
-I hope this will be a good hint which one can be dropped when we
-bump the minimal binutils version next time.
+Oops, most f2fs bitmap check uses the same form, I missed this case....
 
-As for the Clang/LLVM builds, we require very new LLVM version,
-so the LLVM integrated assembler supports all of them.
+> 
+>> +}
+>> +
+>>  static inline void set_inode_flag(struct inode *inode, int flag)
+>>  {
+>> -	if (!test_bit(flag, &F2FS_I(inode)->flags))
+>> -		set_bit(flag, &F2FS_I(inode)->flags);
+>> +	__set_inode_flag(inode, flag);
+>>  	__mark_inode_dirty_flag(inode, flag, true);
+>>  }
+>>  
+>>  static inline int is_inode_flag_set(struct inode *inode, int flag)
+>>  {
+>> -	return test_bit(flag, &F2FS_I(inode)->flags);
+>> +	return test_bit(flag % BITS_PER_LONG,
+>> +				&F2FS_I(inode)->flags[BIT_WORD(flag)]);
+> 
+> ditto
+> 
+>>  }
+>>  
+>>  static inline void clear_inode_flag(struct inode *inode, int flag)
+>>  {
+>> -	if (test_bit(flag, &F2FS_I(inode)->flags))
+>> -		clear_bit(flag, &F2FS_I(inode)->flags);
+>> +	test_and_clear_bit(flag % BITS_PER_LONG,
+>> +				&F2FS_I(inode)->flags[BIT_WORD(flag)]);
+> 
+> ditto
+> 
+> I'm going to test the patch. It looks like that this was really
+> the root cause of all those locking issues I was seeing on my
+> 32-bit tablet. It seems to explain why my 64-bit systems were
+> not affected, and why reverting compession fixed it too.
+> Great job figuring this out.
+> 
+> I'll let you know soon.
 
-Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
----
+Great, hoping this patch can fix the issue this time.
 
- arch/x86/Makefile | 5 +++++
- 1 file changed, 5 insertions(+)
+Thanks anyway for supporting on troubleshooting this issue.
 
-diff --git a/arch/x86/Makefile b/arch/x86/Makefile
-index f32ef7b8d5ca..4c57cb3018fb 100644
---- a/arch/x86/Makefile
-+++ b/arch/x86/Makefile
-@@ -178,10 +178,15 @@ ifeq ($(ACCUMULATE_OUTGOING_ARGS), 1)
- endif
- 
- # does binutils support specific instructions?
-+# binutils >= 2.22
- avx2_instr :=$(call as-instr,vpbroadcastb %xmm0$(comma)%ymm1,-DCONFIG_AS_AVX2=1)
-+# binutils >= 2.25
- avx512_instr :=$(call as-instr,vpmovm2b %k1$(comma)%zmm5,-DCONFIG_AS_AVX512=1)
-+# binutils >= 2.24
- sha1_ni_instr :=$(call as-instr,sha1msg1 %xmm0$(comma)%xmm1,-DCONFIG_AS_SHA1_NI=1)
-+# binutils >= 2.24
- sha256_ni_instr :=$(call as-instr,sha256msg1 %xmm0$(comma)%xmm1,-DCONFIG_AS_SHA256_NI=1)
-+# binutils >= 2.23
- adx_instr := $(call as-instr,adox %r10$(comma)%r10,-DCONFIG_AS_ADX=1)
- 
- KBUILD_AFLAGS += $(avx2_instr) $(avx512_instr) $(sha1_ni_instr) $(sha256_ni_instr) $(adx_instr)
--- 
-2.17.1
+Thanks,
 
+> 
+> thank you and regards,
+> 	o.
+> 
+>>  	__mark_inode_dirty_flag(inode, flag, false);
+>>  }
+>>  
+> .
+> 
