@@ -2,165 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 83B6818FBF3
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Mar 2020 18:52:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BD34E18FC1F
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Mar 2020 18:55:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727855AbgCWRwq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Mar 2020 13:52:46 -0400
-Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:17093 "EHLO
-        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727803AbgCWRwo (ORCPT
+        id S1727179AbgCWRzU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Mar 2020 13:55:20 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:40566 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727090AbgCWRzT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Mar 2020 13:52:44 -0400
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5e78f7110000>; Mon, 23 Mar 2020 10:51:13 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Mon, 23 Mar 2020 10:52:43 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Mon, 23 Mar 2020 10:52:43 -0700
-Received: from HQMAIL109.nvidia.com (172.20.187.15) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 23 Mar
- 2020 17:52:43 +0000
-Received: from hqnvemgw03.nvidia.com (10.124.88.68) by HQMAIL109.nvidia.com
- (172.20.187.15) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
- Transport; Mon, 23 Mar 2020 17:52:42 +0000
-Received: from skomatineni-linux.nvidia.com (Not Verified[10.2.160.78]) by hqnvemgw03.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5e78f76a0000>; Mon, 23 Mar 2020 10:52:42 -0700
-From:   Sowjanya Komatineni <skomatineni@nvidia.com>
-To:     <skomatineni@nvidia.com>, <thierry.reding@gmail.com>,
-        <jonathanh@nvidia.com>, <frankc@nvidia.com>, <hverkuil@xs4all.nl>,
-        <helen.koike@collabora.com>
-CC:     <digetx@gmail.com>, <sboyd@kernel.org>,
-        <linux-media@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [RFC PATCH v5 9/9] arm64: tegra: Add Tegra VI CSI support in device tree
-Date:   Mon, 23 Mar 2020 10:52:35 -0700
-Message-ID: <1584985955-19101-10-git-send-email-skomatineni@nvidia.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1584985955-19101-1-git-send-email-skomatineni@nvidia.com>
-References: <1584985955-19101-1-git-send-email-skomatineni@nvidia.com>
-X-NVConfidentiality: public
+        Mon, 23 Mar 2020 13:55:19 -0400
+Received: by mail-wr1-f65.google.com with SMTP id f3so18228236wrw.7
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Mar 2020 10:55:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=+XjXArON/nteRXhEm+avg+BQR0G/+8Zsnf7Y6LGWsQw=;
+        b=LRurrVu3FEJrjddH9Dp7x6EbblzfnT1KxjLAvNlZhOC/xTqU1Ow8u7Dl5F8H1x+wCc
+         dUDgrllLRf4HfPHH5q4tSb1tyd4vk2uR2DFjPa0SAxNTrOxtkHQ4HfY3Anzy3cUVBl+l
+         Y7MMZ5nADcEIY1taSc9wDaV9zTlh+9sRomE7ZfuZdQ3aYFKS627GU9nAo4cZP/Hyz8YM
+         RUPfV3wz0cqgN/SmqpdSu4AGSzE9af5zZmBOTg3Yf93WoSsU09odZzqwLUbJFasFjNV5
+         FSTAule32F4o17HEMxIsw+KiT6utAOgfMK5VQfd0Z6542bNo4pEyVSlrqWDdV28FEiCe
+         UV6w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=+XjXArON/nteRXhEm+avg+BQR0G/+8Zsnf7Y6LGWsQw=;
+        b=X7K+tZBZZFrHlQskPrkWvN8abFzdg2VZFZ1APYV5RHJ+eLWnX9Mu3skbe+zLEayFiI
+         XqnR8Iyz/kXx8pXvuqCCxwjpSttQq3BMX12C57KPqrGuFVx9pOo99nYb1bMEtdL8bGRl
+         7f3z93OC8Bgo1CPwYtR4CJL0QlSBDegCTlLOV25qh1Zcwm7SR18rnlRf16Xl49H7M1NT
+         /BkRHF8mJGV5xQtjmMACNgVpS+fF/HvhHBXPGYWaCj81hVckSqFRsaW8Giyg+8nCgRcI
+         70n1ijG4wEXxc+hGNJ6L27eJsfcReqznwtMib4601Q1//N5Vyq4IonHU7mGERjdHv6D4
+         4u/w==
+X-Gm-Message-State: ANhLgQ195IclCsDMungQDhjPHIoGJd/A/0adRT8TzWpQE8t6U2DOL30E
+        aSrh1gbJl4fgRNVkA45SiglkBDWjx6Un7cM7vMGIWQ==
+X-Google-Smtp-Source: ADFU+vv6lG8KfkaUa1MoJIlV06SZfWqvD81WQ22YMnvn2jyWH0lQ6LIgWyIOBTjrW0uX1mhiNl0iXHt6y0nVmAu5m2g=
+X-Received: by 2002:a05:6000:100f:: with SMTP id a15mr29680460wrx.382.1584986118163;
+ Mon, 23 Mar 2020 10:55:18 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1584985873; bh=qg4/50YwdGiG0ifmC8NW2wUPpPGLSESHVND184P5UFw=;
-        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
-         In-Reply-To:References:X-NVConfidentiality:MIME-Version:
-         Content-Type;
-        b=kFzaIrtxtdihQI5PAHWVWD/UqOIby7BGGDpM+ZaaV/ObTaFIMJs+ZJWEWARzbmnXT
-         Ca204D+JfmYqEQNxS8Rh24W/uHV2S3AhvYPNR6ZQgEmZhYyLa4CH9oOu1+XLiiBtaF
-         zZqG/v/6VGz9uuAS1exEQMqWOkOKo6mDGJmhVvSLmcYvLnkh1fBPVH8J36Jmhn14Rg
-         yzHqgp0rFSHyF6z5PcjxpQVFLNW1phlCBNXTIiRIe10ZnjaaGjO9zkHzbPS/kMwIrN
-         6UgbN+jg/cWGn+mTW9SyomtuhIZYwvL1Be1T1gKqRdQS8ktM0A26X4/z6O1tuD8Pv4
-         t0wEW0mA7D7Tg==
+References: <000000000000277a0405a16bd5c9@google.com> <CACT4Y+b1WFT87pWQaXD3CWjyjoQaP1jcycHdHF+rtxoR5xW1ww@mail.gmail.com>
+ <5058aabe-f32d-b8ef-57ed-f9c0206304c5@redhat.com> <CAG_fn=WYtSoyi63ACaz-ya=Dbi+BFU-_mADDpL6gQvDimQscmw@mail.gmail.com>
+ <20200323163925.GP28711@linux.intel.com> <CAKwvOdkE8OAu=Gj4MKWwpctka6==6EtrbF3e1tvF=jS2hBB3Ow@mail.gmail.com>
+ <CAKwvOdkXi1MN2Yqqoa6ghw14tQ25WYgyJkSv35-+1KRb=cmhZw@mail.gmail.com>
+In-Reply-To: <CAKwvOdkXi1MN2Yqqoa6ghw14tQ25WYgyJkSv35-+1KRb=cmhZw@mail.gmail.com>
+From:   Alexander Potapenko <glider@google.com>
+Date:   Mon, 23 Mar 2020 18:55:07 +0100
+Message-ID: <CAG_fn=WE0BmuHSxUoBJWQ9dnZ4X5ZpBqcT9rQaDE_6HAfTYKQA@mail.gmail.com>
+Subject: Re: BUG: unable to handle kernel NULL pointer dereference in handle_external_interrupt_irqoff
+To:     Nick Desaulniers <ndesaulniers@google.com>
+Cc:     Dmitry Vyukov <dvyukov@google.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        syzbot <syzbot+3f29ca2efb056a761e38@syzkaller.appspotmail.com>,
+        clang-built-linux <clang-built-linux@googlegroups.com>,
+        Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>, KVM list <kvm@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        Sean Christopherson <sean.j.christopherson@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Tegra210 contains VI controller for video input capture from MIPI
-CSI camera sensors and also supports built-in test pattern generator.
+I've reduced the faulty test case to the following code:
 
-CSI ports can be one-to-one mapped to VI channels for capturing from
-an external sensor or from built-in test pattern generator.
+=================================
+a;
+long b;
+register unsigned long current_stack_pointer asm("rsp");
+handle_external_interrupt_irqoff() {
+  asm("and $0xfffffffffffffff0, %%rsp\n\tpush $%c[ss]\n\tpush "
+      "%[sp]\n\tpushf\n\tpushq $%c[cs]\n\tcall *%[thunk_target]\n"
+      : [ sp ] "=&r"(b), "+r" (current_stack_pointer)
+      : [ thunk_target ] "rm"(a), [ ss ] "i"(3 * 8), [ cs ] "i"(2 * 8) );
+}
+=================================
+(in fact creduce even throws away current_stack_pointer, but we
+probably want to keep it to prove the point).
 
-This patch adds support for VI and CSI and enables them in Tegra210
-device tree.
+Clang generates the following code for it:
 
-Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
----
- arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi | 10 ++++++
- arch/arm64/boot/dts/nvidia/tegra210.dtsi       | 45 +++++++++++++++++++++++++-
- 2 files changed, 54 insertions(+), 1 deletion(-)
+$ clang vmx.i -O2 -c -w -o vmx.o
+$ objdump -d vmx.o
+...
+0000000000000000 <handle_external_interrupt_irqoff>:
+   0: 8b 05 00 00 00 00    mov    0x0(%rip),%eax        # 6
+<handle_external_interrupt_irqoff+0x6>
+   6: 89 44 24 fc          mov    %eax,-0x4(%rsp)
+   a: 48 83 e4 f0          and    $0xfffffffffffffff0,%rsp
+   e: 6a 18                pushq  $0x18
+  10: 50                    push   %rax
+  11: 9c                    pushfq
+  12: 6a 10                pushq  $0x10
+  14: ff 54 24 fc          callq  *-0x4(%rsp)
+  18: 48 89 05 00 00 00 00 mov    %rax,0x0(%rip)        # 1f
+<handle_external_interrupt_irqoff+0x1f>
+  1f: c3                    retq
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi b/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi
-index 313a4c2..b57d837 100644
---- a/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi
-@@ -14,6 +14,16 @@
- 			status = "okay";
- 		};
- 
-+		vi@54080000 {
-+			status = "okay";
-+
-+			avdd-dsi-csi-supply = <&vdd_dsi_csi>;
-+
-+			csi@838 {
-+				status = "okay";
-+			};
-+		};
-+
- 		sor@54580000 {
- 			status = "okay";
- 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra210.dtsi b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-index 5b1dfd8..2deba87 100644
---- a/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-@@ -137,9 +137,43 @@
- 
- 		vi@54080000 {
- 			compatible = "nvidia,tegra210-vi";
--			reg = <0x0 0x54080000 0x0 0x00040000>;
-+			reg = <0x0 0x54080000 0x0 0x700>;
- 			interrupts = <GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>;
- 			status = "disabled";
-+			assigned-clocks = <&tegra_car TEGRA210_CLK_VI>;
-+			assigned-clock-parents = <&tegra_car TEGRA210_CLK_PLL_C4_OUT0>;
-+
-+			clocks = <&tegra_car TEGRA210_CLK_VI>;
-+			clock-names = "vi";
-+			power-domains = <&pd_venc>;
-+
-+			#address-cells = <1>;
-+			#size-cells = <1>;
-+
-+			ranges = <0x0 0x0 0x54080000 0x2000>;
-+
-+			csi@838 {
-+				compatible = "nvidia,tegra210-csi";
-+				reg = <0x838 0x1300>;
-+				status = "disabled";
-+				assigned-clocks = <&tegra_car TEGRA210_CLK_CILAB>,
-+						  <&tegra_car TEGRA210_CLK_CILCD>,
-+						  <&tegra_car TEGRA210_CLK_CILE>;
-+				assigned-clock-parents = <&tegra_car TEGRA210_CLK_PLL_P>,
-+							 <&tegra_car TEGRA210_CLK_PLL_P>,
-+							 <&tegra_car TEGRA210_CLK_PLL_P>;
-+				assigned-clock-rates = <102000000>,
-+						       <102000000>,
-+						       <102000000>;
-+
-+				clocks = <&tegra_car TEGRA210_CLK_CSI>,
-+					 <&tegra_car TEGRA210_CLK_CILAB>,
-+					 <&tegra_car TEGRA210_CLK_CILCD>,
-+					 <&tegra_car TEGRA210_CLK_CILE>;
-+				clock-names = "csi", "cilab", "cilcd", "cile";
-+				power-domains = <&pd_sor>;
-+			};
-+
- 		};
- 
- 		tsec@54100000 {
-@@ -839,6 +873,15 @@
- 				reset-names = "vic";
- 				#power-domain-cells = <0>;
- 			};
-+
-+			pd_venc: venc {
-+				clocks = <&tegra_car TEGRA210_CLK_VI>,
-+					 <&tegra_car TEGRA210_CLK_CSI>;
-+				resets = <&mc TEGRA210_MC_RESET_VI>,
-+					 <&tegra_car TEGRA210_RST_VI>,
-+					 <&tegra_car TEGRA210_CLK_CSI>;
-+				#power-domain-cells = <0>;
-+			};
- 		};
- 
- 		sdmmc1_3v3: sdmmc1-3v3 {
--- 
-2.7.4
-
+The question is whether using current_stack_pointer as an output is
+actually a valid way to tell the compiler it should not clobber RSP.
+Intuitively it is, but explicitly adding RSP to the clobber list
+sounds a bit more bulletproof.
