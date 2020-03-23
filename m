@@ -2,76 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C477118F580
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Mar 2020 14:17:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8E3AA18F584
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Mar 2020 14:17:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728421AbgCWNRS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Mar 2020 09:17:18 -0400
-Received: from bmailout3.hostsharing.net ([176.9.242.62]:53087 "EHLO
-        bmailout3.hostsharing.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728307AbgCWNRR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Mar 2020 09:17:17 -0400
-Received: from h08.hostsharing.net (h08.hostsharing.net [IPv6:2a01:37:1000::53df:5f1c:0])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client CN "*.hostsharing.net", Issuer "COMODO RSA Domain Validation Secure Server CA" (not verified))
-        by bmailout3.hostsharing.net (Postfix) with ESMTPS id 6AD1F100EF4DC;
-        Mon, 23 Mar 2020 14:17:15 +0100 (CET)
-Received: by h08.hostsharing.net (Postfix, from userid 100393)
-        id F291875F0B; Mon, 23 Mar 2020 14:17:14 +0100 (CET)
-Date:   Mon, 23 Mar 2020 14:17:14 +0100
-From:   Lukas Wunner <lukas@wunner.de>
-To:     Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        gregkh@linuxfoundation.org, jslaby@suse.com,
-        matwey.kornilov@gmail.com, linux-serial@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/7] serial: 8250: Add rs485 emulation to 8250_dw
-Message-ID: <20200323131714.vmhjws5xpj6yf536@wunner.de>
-References: <20200318142640.982763-1-heiko@sntech.de>
- <5640842.EtOnNDtpGh@diego>
- <20200319054034.dyq7yydqi6yg7jhf@wunner.de>
- <6241816.LpgjcNKrfa@diego>
+        id S1728510AbgCWNRZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Mar 2020 09:17:25 -0400
+Received: from foss.arm.com ([217.140.110.172]:48836 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728393AbgCWNRZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Mar 2020 09:17:25 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D028A1FB;
+        Mon, 23 Mar 2020 06:17:24 -0700 (PDT)
+Received: from C02TD0UTHF1T.local (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C864F3F52E;
+        Mon, 23 Mar 2020 06:17:23 -0700 (PDT)
+Date:   Mon, 23 Mar 2020 13:17:20 +0000
+From:   Mark Rutland <mark.rutland@arm.com>
+To:     Changbin Du <changbin.du@gmail.com>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: Two questions about cache coherency on arm platforms
+Message-ID: <20200323131720.GE2597@C02TD0UTHF1T.local>
+References: <20200323123524.w67fici6oxzdo665@mail.google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <6241816.LpgjcNKrfa@diego>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20200323123524.w67fici6oxzdo665@mail.google.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 23, 2020 at 09:25:57AM +0100, Heiko Stübner wrote:
-> Am Donnerstag, 19. März 2020, 06:40:34 CET schrieb Lukas Wunner:
-> > There are some more patches in the pipeline for the next cycle
-> > to add support for an rs485 bus termination GPIO.  They're on
-> > the tip of this branch:
-> > 
-> > https://github.com/RevolutionPi/linux/commits/revpi-4.19
-> > 
-> > Just so you know in advance and duplicate work is avoided.
+On Mon, Mar 23, 2020 at 08:35:26PM +0800, Changbin Du wrote:
+> Hi, All,
+> I am not very familiar with ARM processors. I have two questions about
+> cache coherency. Could anyone help me?
 > 
-> do you plan on submitting these soonish? Because looking at your
-> termination-gpio change makes me want to do something similar for
-> my RE-gpio ... instead of trying to mangle this into the DTR thingy.
-[...]
-> So I guess having that as rs485-re-gpios property might be the best way.
+> 1. How is cache coherency maintenanced on ARMv8 big.LITTLE system?
+> As far as I know, big cores and little cores are in seperate clusters on
+> big.LITTLE system.
 
-I plan to submit them once the 5.7 merge window closes, I'll probably
-have to go over them at least one more time to apply some polish.
+This is often true, but not always the case. For example, with DSU big
+and little cores can be placed within the same cluster.
 
-On UARTs capable of disabling and enabling the receiver in software,
-it's best to leverage that to enable full-duplex or half-duplex mode.
-However after having a brief look at the DW UART databook, it seems
-it's not capable of doing that.  For such UARTs, a separate GPIO indeed
-seems like a legitimate approach to allow switching between full-duplex
-and half-duplex.
+> And cache coherence betwwen clusters requires the
+> memory regions are marked as 'Outer Shareable' and is very expensive.
 
-"rs485-re-gpios" seems a bit cryptic, how about "rs485-rx-enable-gpios"
-or "rs485-full-duplex-gpios"?
+This is not correct.
+
+Linux requires that all cores it uses are within the same Inner
+Shareable domain, regardless of whether they are in distinct clusters.
+Linux does not support systems where cores are in distinct Inner
+Shareable domains.
+
+This is the intended use of the architecture. Per ARM DDI 0487E.a page
+B2-144:
+
+| This architecture assumes that all PEs that use the same operating
+| system or hypervisor are in the same Inner Shareable shareability
+| shareability
+
+... where a PE is a "Processing Element", which you can think of as a
+single core.
+
+> I have checked the kernel code, and seems it only requires coherence in
+> 'Inner Shareable' domain. So my question is how can linux guarantees
+> cache coherence in 'CPU migration' or 'Global Task Scheduling' models
+> wich both clusters are active at the same time? For example, a thread
+> ran in Cluster A and modified 'Inner Shareable' memory, then it migrates
+> to Cluster B.
+
+As above, this works because all the relevant cores are within the same
+Inner Shareable domain.
+
+> 2. ARM64 cache maintenance code sync_icache_aliases() for non-aliasing icache.
+> In linux kernel on arm64 platform, the flow function sync_icache_aliases()
+> is used to sync i-cache and d-cache. I understand the aliasing case. but
+> for non-aliasing case why it just does "dc cvau" (in __flush_icache_range())
+> whithout really invalidate the icache?
+
+The __flush_icache_range/__flush_cache_user_range assembly function does
+both the D-cache maintenance with DC CVAU, then the I-cache maintenance
+with IC IVAU, so I think you have misread it.
 
 Thanks,
+Mark.
 
-Lukas
+> Will i-cache refill from L2 cache?
+>
+> void sync_icache_aliases(void *kaddr, unsigned long len)
+> {
+> 	unsigned long addr = (unsigned long)kaddr;
+> 
+> 	if (icache_is_aliasing()) {
+> 		__clean_dcache_area_pou(kaddr, len);
+> 		__flush_icache_all();
+> 	} else {
+> 		/*
+> 		 * Don't issue kick_all_cpus_sync() after I-cache invalidation
+> 		 * for user mappings.
+> 		 */
+> 		__flush_icache_range(addr, addr + len);
+> 	}
+> }
+> 
+> -- 
+> Cheers,
+> Changbin Du
