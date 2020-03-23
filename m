@@ -2,96 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E0F1719014E
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Mar 2020 23:53:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 52BC0190167
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Mar 2020 23:55:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727384AbgCWWxo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Mar 2020 18:53:44 -0400
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:57094 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727286AbgCWWxX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Mar 2020 18:53:23 -0400
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 02NMrH4d032114;
-        Mon, 23 Mar 2020 17:53:17 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1585003997;
-        bh=yi2MmqBOorPdvVx0+0bzgMIbD89D2d6JUgh+Bq0enGs=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=Ii/c0RBrb3vG9nCDUJJH6nc9fDjyez1LLy3XmRyn2gx3AUwdkWCyfpQz7/873qhW3
-         iU9lJzp9EM672jORkLFQ0NRNyMPdcdG5dzGbSzLOeEbG+lrh6d5wK7wOSiVbH06/a9
-         5Oli80sWkbcloTtMcSjlfFbmuBVYiEGozZ7XNrZ0=
-Received: from DLEE108.ent.ti.com (dlee108.ent.ti.com [157.170.170.38])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id 02NMrHuA032912;
-        Mon, 23 Mar 2020 17:53:17 -0500
-Received: from DLEE109.ent.ti.com (157.170.170.41) by DLEE108.ent.ti.com
- (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Mon, 23
- Mar 2020 17:53:17 -0500
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DLEE109.ent.ti.com
- (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Mon, 23 Mar 2020 17:53:17 -0500
-Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id 02NMrG0N105875;
-        Mon, 23 Mar 2020 17:53:16 -0500
-From:   Grygorii Strashko <grygorii.strashko@ti.com>
-To:     Peter Ujfalusi <peter.ujfalusi@ti.com>,
-        Rob Herring <robh@kernel.org>, Tero Kristo <t-kristo@ti.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        netdev <netdev@vger.kernel.org>, Roger Quadros <rogerq@ti.com>,
-        <devicetree@vger.kernel.org>, Jakub Kicinski <kuba@kernel.org>
-CC:     Murali Karicheri <m-karicheri2@ti.com>,
-        Sekhar Nori <nsekhar@ti.com>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        Grygorii Strashko <grygorii.strashko@ti.com>
-Subject: [PATCH net-next v6 11/11] arm64: defconfig: ti: k3: enable dma and networking
-Date:   Tue, 24 Mar 2020 00:52:54 +0200
-Message-ID: <20200323225254.12759-12-grygorii.strashko@ti.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200323225254.12759-1-grygorii.strashko@ti.com>
-References: <20200323225254.12759-1-grygorii.strashko@ti.com>
+        id S1727145AbgCWWy4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Mar 2020 18:54:56 -0400
+Received: from helcar.hmeau.com ([216.24.177.18]:33292 "EHLO fornost.hmeau.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725897AbgCWWyz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Mar 2020 18:54:55 -0400
+Received: from gwarestrin.me.apana.org.au ([192.168.0.7] helo=gwarestrin.arnor.me.apana.org.au)
+        by fornost.hmeau.com with smtp (Exim 4.89 #2 (Debian))
+        id 1jGVxM-00071z-4E; Tue, 24 Mar 2020 09:54:05 +1100
+Received: by gwarestrin.arnor.me.apana.org.au (sSMTP sendmail emulation); Tue, 24 Mar 2020 09:54:03 +1100
+Date:   Tue, 24 Mar 2020 09:54:03 +1100
+From:   Herbert Xu <herbert@gondor.apana.org.au>
+To:     Linus Torvalds <torvalds@linux-foundation.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
+Subject: [GIT PULL] Crypto Fixes for 5.6
+Message-ID: <20200323225403.GA10100@gondor.apana.org.au>
+References: <20190916084901.GA20338@gondor.apana.org.au>
+ <20190923050515.GA6980@gondor.apana.org.au>
+ <20191202062017.ge4rz72ki3vczhgb@gondor.apana.org.au>
+ <20191214084749.jt5ekav5o5pd2dcp@gondor.apana.org.au>
+ <20200115150812.mo2eycc53lbsgvue@gondor.apana.org.au>
+ <20200213033231.xjwt6uf54nu26qm5@gondor.apana.org.au>
+ <20200224060042.GA26184@gondor.apana.org.au>
+ <20200312115714.GA21470@gondor.apana.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200312115714.GA21470@gondor.apana.org.au>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Enable TI K3 AM654x/J721E DMA and networking options.
+Hi Linus:
 
-Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
-Tested-by: Murali Karicheri <m-karicheri2@ti.com>
-Tested-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
----
- arch/arm64/configs/defconfig | 3 +++
- 1 file changed, 3 insertions(+)
+This push fixes a correctness bug in the ARM64 version of ChaCha
+for lib/crypto used by WireGuard.
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index 4db223dbc549..13cd865d7d4b 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -283,6 +283,7 @@ CONFIG_SMSC911X=y
- CONFIG_SNI_AVE=y
- CONFIG_SNI_NETSEC=y
- CONFIG_STMMAC_ETH=m
-+CONFIG_TI_K3_AM65_CPSW_NUSS=y
- CONFIG_MDIO_BUS_MUX_MMIOREG=y
- CONFIG_MARVELL_PHY=m
- CONFIG_MARVELL_10G_PHY=m
-@@ -698,6 +699,8 @@ CONFIG_QCOM_HIDMA_MGMT=y
- CONFIG_QCOM_HIDMA=y
- CONFIG_RCAR_DMAC=y
- CONFIG_RENESAS_USB_DMAC=m
-+CONFIG_TI_K3_UDMA=y
-+CONFIG_TI_K3_UDMA_GLUE_LAYER=y
- CONFIG_VFIO=y
- CONFIG_VFIO_PCI=y
- CONFIG_VIRTIO_PCI=y
+The following changes since commit 1579f1bc3b753d17a44de3457d5c6f4a5b14c752:
+
+  crypto: x86/curve25519 - support assemblers with no adx support (2020-03-05 18:28:09 +1100)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/herbert/crypto-2.6.git linus 
+
+for you to fetch changes up to c8cfcb78c65877313cda7bcbace624d3dbd1f3b3:
+
+  crypto: arm64/chacha - correctly walk through blocks (2020-03-20 14:35:27 +1100)
+
+----------------------------------------------------------------
+Jason A. Donenfeld (1):
+      crypto: arm64/chacha - correctly walk through blocks
+
+ arch/arm64/crypto/chacha-neon-glue.c   |  8 ++++----
+ lib/crypto/chacha20poly1305-selftest.c | 11 ++++++++---
+ 2 files changed, 12 insertions(+), 7 deletions(-)
+
+Thanks,
 -- 
-2.17.1
-
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
