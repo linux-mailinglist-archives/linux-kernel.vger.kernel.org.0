@@ -2,270 +2,229 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7105918FD56
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Mar 2020 20:11:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9AD2E18FD5D
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Mar 2020 20:12:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727731AbgCWTKz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Mar 2020 15:10:55 -0400
-Received: from mail-vs1-f68.google.com ([209.85.217.68]:39069 "EHLO
-        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727569AbgCWTKz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Mar 2020 15:10:55 -0400
-Received: by mail-vs1-f68.google.com with SMTP id j128so2949592vsd.6
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Mar 2020 12:10:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=1tp3bC93e0nUfPggrmvnMYoBNQ6UWOR58w4LV4ZhNS0=;
-        b=QZFAJNVnkEz6tJ6FzoGWo4cS0Tr0c2wT3Gyl8gMiNmkTeIqbKiWYsC2rYDsKnGt2e8
-         t0G0SzWlbvcpkKDxM0HH2DVdv5P7T3kTpraFDN528g94nBDdv0LJS3W0wP8SJBTPgyTD
-         qgcvi04yAeh1TRoLfUD0Y6hp2xFWkCWWHiQaI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=1tp3bC93e0nUfPggrmvnMYoBNQ6UWOR58w4LV4ZhNS0=;
-        b=Hdv/cKPhE9KcMhbtnXvdtP4rIkLpFl99OnaeQqe5F8ZtWdh3LZ0UpMy9imQHB0IxZ4
-         5CGLYIoMr6y/eqLtmckU2mqedabLYbnDFBPYvmmRJCAPMaB0cOP+noHZUf47zur1nzAB
-         2Ye4ropbwGl45RmInHFWsM0E2m0pjSVDhGmolq67c3HeProla/M3J5ZUFjXfYmzz23km
-         GQ7/RSM5FAte7DeGszSBnqVnNTR65X0/G+7v0GkssPFy+Ef5zeHHK4qhg0XSlrKsWAU6
-         B3O26r1La5DPZ8+O+3SGjsZ5YfD1NoaESFWFlFzM0sGsUgQM4qWD07RdaOQmrZHSWPu8
-         a31w==
-X-Gm-Message-State: ANhLgQ0di3PG8lxnhRAS41PPsDTRp+BqreEr5R+9JcRpQKgvwK800b+D
-        Ai+Jt1WnmexOX5Yd9voVNufeVM3poE4Foy4XVFf21w==
-X-Google-Smtp-Source: ADFU+vuXszqaXED87ZaiMONJXX8a5RIeucsij/ir43q9RdI+5nS8boUUKde8aIEelt/LyWxeF7BRDsbfceIVon8FCw0=
-X-Received: by 2002:a67:c01e:: with SMTP id v30mr17629845vsi.71.1584990652351;
- Mon, 23 Mar 2020 12:10:52 -0700 (PDT)
+        id S1727851AbgCWTM0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Mar 2020 15:12:26 -0400
+Received: from mga05.intel.com ([192.55.52.43]:7322 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727179AbgCWTM0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Mar 2020 15:12:26 -0400
+IronPort-SDR: Nlhab+YLo89nKwi42Ca1CiKbu+i7FaN95TFu2AryNnbVGSENK/KdO3Pu65sg6l+PIuMTeyibr1
+ KxF8zRDle+tQ==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Mar 2020 12:12:25 -0700
+IronPort-SDR: 12XoA8zrSjgnQZGvEA+dYDqw2zhSk3KdsxgcfHQ8P2s62F3MQ0xGuM0RzzdSHDXkytE/+n3Xmz
+ p47wXTYIBBmA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.72,297,1580803200"; 
+   d="scan'208";a="249729812"
+Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
+  by orsmga006.jf.intel.com with ESMTP; 23 Mar 2020 12:12:23 -0700
+Received: from kbuild by lkp-server01 with local (Exim 4.89)
+        (envelope-from <lkp@intel.com>)
+        id 1jGSUp-000FC4-1a; Tue, 24 Mar 2020 03:12:23 +0800
+Date:   Tue, 24 Mar 2020 03:11:43 +0800
+From:   kbuild test robot <lkp@intel.com>
+To:     "x86-ml" <x86@kernel.org>
+Cc:     linux-kernel@vger.kernel.org
+Subject: [tip:x86/cleanups] BUILD SUCCESS
+ 0e79ad863df43b01090ae18c97de5c3787f069c6
+Message-ID: <5e7909ef.EHPWIMJRcSKMsT4C%lkp@intel.com>
+User-Agent: Heirloom mailx 12.5 6/20/10
 MIME-Version: 1.0
-References: <20200320231928.137720-1-abhishekpandit@chromium.org>
- <20200320161922.v2.1.I17e2220fd0c0822c76a15ef89b882fb4cfe3fe89@changeid> <C09DCA09-A2C9-4675-B17B-05CE0B5DE172@holtmann.org>
-In-Reply-To: <C09DCA09-A2C9-4675-B17B-05CE0B5DE172@holtmann.org>
-From:   Abhishek Pandit-Subedi <abhishekpandit@chromium.org>
-Date:   Mon, 23 Mar 2020 12:10:40 -0700
-Message-ID: <CANFp7mXG1HXKNQKn2YTsEOX6puNz=8WY6AHWac4UOiVMVQyEkg@mail.gmail.com>
-Subject: Re: [PATCH v2 1/1] Bluetooth: Prioritize SCO traffic
-To:     Marcel Holtmann <marcel@holtmann.org>
-Cc:     Bluetooth Kernel Mailing List <linux-bluetooth@vger.kernel.org>,
-        ChromeOS Bluetooth Upstreaming 
-        <chromeos-bluetooth-upstreaming@chromium.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Johan Hedberg <johan.hedberg@gmail.com>,
-        netdev <netdev@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Jakub Kicinski <kuba@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 23, 2020 at 11:58 AM Marcel Holtmann <marcel@holtmann.org> wrote:
->
-> Hi Abhishek,
->
-> > When scheduling TX packets, send all SCO/eSCO packets first, check for
-> > pending SCO/eSCO packets after every ACL/LE packet and send them if any
-> > are pending.  This is done to make sure that we can meet SCO deadlines
-> > on slow interfaces like UART.
-> >
-> > If we were to queue up multiple ACL packets without checking for a SCO
-> > packet, we might miss the SCO timing. For example:
-> >
-> > The time it takes to send a maximum size ACL packet (1024 bytes):
-> > t = 10/8 * 1024 bytes * 8 bits/byte * 1 packet / baudrate
-> >        where 10/8 is uart overhead due to start/stop bits per byte
-> >
-> > Replace t = 3.75ms (SCO deadline), which gives us a baudrate of 2730666.
-> >
-> > At a baudrate of 3000000, if we didn't check for SCO packets within 1024
-> > bytes, we would miss the 3.75ms timing window.
-> >
-> > Signed-off-by: Abhishek Pandit-Subedi <abhishekpandit@chromium.org>
-> > ---
-> >
-> > Changes in v2:
-> > * Refactor to check for SCO/eSCO after each ACL/LE packet sent
-> > * Enabled SCO priority all the time and removed the sched_limit variable
-> >
-> > net/bluetooth/hci_core.c | 111 +++++++++++++++++++++------------------
-> > 1 file changed, 61 insertions(+), 50 deletions(-)
-> >
-> > diff --git a/net/bluetooth/hci_core.c b/net/bluetooth/hci_core.c
-> > index dbd2ad3a26ed..a29177e1a9d0 100644
-> > --- a/net/bluetooth/hci_core.c
-> > +++ b/net/bluetooth/hci_core.c
-> > @@ -4239,6 +4239,60 @@ static void __check_timeout(struct hci_dev *hdev, unsigned int cnt)
-> >       }
-> > }
-> >
-> > +/* Schedule SCO */
-> > +static void hci_sched_sco(struct hci_dev *hdev)
-> > +{
-> > +     struct hci_conn *conn;
-> > +     struct sk_buff *skb;
-> > +     int quote;
-> > +
-> > +     BT_DBG("%s", hdev->name);
-> > +
-> > +     if (!hci_conn_num(hdev, SCO_LINK))
-> > +             return;
-> > +
-> > +     while (hdev->sco_cnt && (conn = hci_low_sent(hdev, SCO_LINK, &quote))) {
-> > +             while (quote-- && (skb = skb_dequeue(&conn->data_q))) {
-> > +                     BT_DBG("skb %p len %d", skb, skb->len);
-> > +                     hci_send_frame(hdev, skb);
-> > +
-> > +                     conn->sent++;
-> > +                     if (conn->sent == ~0)
-> > +                             conn->sent = 0;
-> > +             }
-> > +     }
-> > +}
-> > +
-> > +static void hci_sched_esco(struct hci_dev *hdev)
-> > +{
-> > +     struct hci_conn *conn;
-> > +     struct sk_buff *skb;
-> > +     int quote;
-> > +
-> > +     BT_DBG("%s", hdev->name);
-> > +
-> > +     if (!hci_conn_num(hdev, ESCO_LINK))
-> > +             return;
-> > +
-> > +     while (hdev->sco_cnt && (conn = hci_low_sent(hdev, ESCO_LINK,
-> > +                                                  &quote))) {
-> > +             while (quote-- && (skb = skb_dequeue(&conn->data_q))) {
-> > +                     BT_DBG("skb %p len %d", skb, skb->len);
-> > +                     hci_send_frame(hdev, skb);
-> > +
-> > +                     conn->sent++;
-> > +                     if (conn->sent == ~0)
-> > +                             conn->sent = 0;
-> > +             }
-> > +     }
-> > +}
-> > +
-> > +static void hci_sched_sync(struct hci_dev *hdev)
-> > +{
-> > +     hci_sched_sco(hdev);
-> > +     hci_sched_esco(hdev);
-> > +}
-> > +
->
-> scrap this function. It has almost zero benefit.
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git  x86/cleanups
+branch HEAD: 0e79ad863df43b01090ae18c97de5c3787f069c6  x86/cpu: Fix a -Wmissing-prototypes warning for init_ia32_feat_ctl()
 
-Done.
+elapsed time: 484m
 
->
-> > static void hci_sched_acl_pkt(struct hci_dev *hdev)
-> > {
-> >       unsigned int cnt = hdev->acl_cnt;
-> > @@ -4270,6 +4324,9 @@ static void hci_sched_acl_pkt(struct hci_dev *hdev)
-> >                       hdev->acl_cnt--;
-> >                       chan->sent++;
-> >                       chan->conn->sent++;
-> > +
-> > +                     /* Send pending SCO packets right away */
-> > +                     hci_sched_sync(hdev);
->
->                         hci_sched_esco();
->                         hci_sched_sco();
->
-> >               }
-> >       }
-> >
-> > @@ -4354,54 +4411,6 @@ static void hci_sched_acl(struct hci_dev *hdev)
-> >       }
-> > }
-> >
-> > -/* Schedule SCO */
-> > -static void hci_sched_sco(struct hci_dev *hdev)
-> > -{
-> > -     struct hci_conn *conn;
-> > -     struct sk_buff *skb;
-> > -     int quote;
-> > -
-> > -     BT_DBG("%s", hdev->name);
-> > -
-> > -     if (!hci_conn_num(hdev, SCO_LINK))
-> > -             return;
-> > -
-> > -     while (hdev->sco_cnt && (conn = hci_low_sent(hdev, SCO_LINK, &quote))) {
-> > -             while (quote-- && (skb = skb_dequeue(&conn->data_q))) {
-> > -                     BT_DBG("skb %p len %d", skb, skb->len);
-> > -                     hci_send_frame(hdev, skb);
-> > -
-> > -                     conn->sent++;
-> > -                     if (conn->sent == ~0)
-> > -                             conn->sent = 0;
-> > -             }
-> > -     }
-> > -}
-> > -
-> > -static void hci_sched_esco(struct hci_dev *hdev)
-> > -{
-> > -     struct hci_conn *conn;
-> > -     struct sk_buff *skb;
-> > -     int quote;
-> > -
-> > -     BT_DBG("%s", hdev->name);
-> > -
-> > -     if (!hci_conn_num(hdev, ESCO_LINK))
-> > -             return;
-> > -
-> > -     while (hdev->sco_cnt && (conn = hci_low_sent(hdev, ESCO_LINK,
-> > -                                                  &quote))) {
-> > -             while (quote-- && (skb = skb_dequeue(&conn->data_q))) {
-> > -                     BT_DBG("skb %p len %d", skb, skb->len);
-> > -                     hci_send_frame(hdev, skb);
-> > -
-> > -                     conn->sent++;
-> > -                     if (conn->sent == ~0)
-> > -                             conn->sent = 0;
-> > -             }
-> > -     }
-> > -}
-> > -
-> > static void hci_sched_le(struct hci_dev *hdev)
-> > {
-> >       struct hci_chan *chan;
-> > @@ -4436,6 +4445,9 @@ static void hci_sched_le(struct hci_dev *hdev)
-> >                       cnt--;
-> >                       chan->sent++;
-> >                       chan->conn->sent++;
-> > +
-> > +                     /* Send pending SCO packets right away */
-> > +                     hci_sched_sync(hdev);
->
-> Same as above. Just call the two functions.
+configs tested: 170
+configs skipped: 106
 
-Done
+The following configs have been built successfully.
+More configs may be tested in the coming days.
 
->
-> >               }
-> >       }
-> >
-> > @@ -4458,9 +4470,8 @@ static void hci_tx_work(struct work_struct *work)
-> >
-> >       if (!hci_dev_test_flag(hdev, HCI_USER_CHANNEL)) {
-> >               /* Schedule queues and send stuff to HCI driver */
-> > +             hci_sched_sync(hdev);
-> >               hci_sched_acl(hdev);
-> > -             hci_sched_sco(hdev);
-> > -             hci_sched_esco(hdev);
-> >               hci_sched_le(hdev);
->
-> I would actually just move _le up after _acl and then keep _sco and _esco at the bottom. The calls here are just for the case there are no ACL nor LE packets.
+arm                              allmodconfig
+arm                               allnoconfig
+arm                              allyesconfig
+arm64                            allmodconfig
+arm64                             allnoconfig
+arm64                            allyesconfig
+arm                         at91_dt_defconfig
+arm                           efm32_defconfig
+arm                          exynos_defconfig
+arm                        multi_v5_defconfig
+arm                        multi_v7_defconfig
+arm                        shmobile_defconfig
+arm                           sunxi_defconfig
+arm64                               defconfig
+sparc                            allyesconfig
+sparc64                             defconfig
+i386                              allnoconfig
+ia64                             allyesconfig
+riscv                               defconfig
+s390                              allnoconfig
+ia64                                defconfig
+powerpc                             defconfig
+arc                              allyesconfig
+i386                             alldefconfig
+i386                             allyesconfig
+i386                                defconfig
+ia64                             alldefconfig
+ia64                             allmodconfig
+ia64                              allnoconfig
+c6x                              allyesconfig
+c6x                        evmc6678_defconfig
+nios2                         10m50_defconfig
+nios2                         3c120_defconfig
+openrisc                    or1ksim_defconfig
+openrisc                 simple_smp_defconfig
+xtensa                       common_defconfig
+xtensa                          iss_defconfig
+alpha                               defconfig
+csky                                defconfig
+nds32                             allnoconfig
+nds32                               defconfig
+h8300                     edosk2674_defconfig
+h8300                    h8300h-sim_defconfig
+h8300                       h8s-sim_defconfig
+m68k                             allmodconfig
+m68k                       m5475evb_defconfig
+m68k                          multi_defconfig
+m68k                           sun3_defconfig
+arc                                 defconfig
+microblaze                      mmu_defconfig
+microblaze                    nommu_defconfig
+powerpc                           allnoconfig
+powerpc                       ppc64_defconfig
+powerpc                          rhel-kconfig
+mips                           32r2_defconfig
+mips                         64r6el_defconfig
+mips                             allmodconfig
+mips                              allnoconfig
+mips                             allyesconfig
+mips                      fuloong2e_defconfig
+mips                      malta_kvm_defconfig
+parisc                            allnoconfig
+parisc                           allyesconfig
+parisc                generic-32bit_defconfig
+parisc                generic-64bit_defconfig
+x86_64               randconfig-a001-20200323
+x86_64               randconfig-a002-20200323
+x86_64               randconfig-a003-20200323
+i386                 randconfig-a001-20200323
+i386                 randconfig-a002-20200323
+i386                 randconfig-a003-20200323
+x86_64               randconfig-a001-20200322
+x86_64               randconfig-a002-20200322
+x86_64               randconfig-a003-20200322
+i386                 randconfig-a001-20200322
+i386                 randconfig-a002-20200322
+i386                 randconfig-a003-20200322
+alpha                randconfig-a001-20200323
+m68k                 randconfig-a001-20200323
+mips                 randconfig-a001-20200323
+nds32                randconfig-a001-20200323
+parisc               randconfig-a001-20200323
+c6x                  randconfig-a001-20200323
+h8300                randconfig-a001-20200323
+microblaze           randconfig-a001-20200323
+nios2                randconfig-a001-20200323
+sparc64              randconfig-a001-20200323
+c6x                  randconfig-a001-20200322
+h8300                randconfig-a001-20200322
+microblaze           randconfig-a001-20200322
+nios2                randconfig-a001-20200322
+sparc64              randconfig-a001-20200322
+csky                 randconfig-a001-20200323
+openrisc             randconfig-a001-20200323
+s390                 randconfig-a001-20200323
+sh                   randconfig-a001-20200323
+xtensa               randconfig-a001-20200323
+x86_64               randconfig-b001-20200323
+x86_64               randconfig-b002-20200323
+x86_64               randconfig-b003-20200323
+i386                 randconfig-b001-20200323
+i386                 randconfig-b002-20200323
+i386                 randconfig-b003-20200323
+x86_64               randconfig-c001-20200323
+x86_64               randconfig-c002-20200323
+x86_64               randconfig-c003-20200323
+i386                 randconfig-c001-20200323
+i386                 randconfig-c002-20200323
+i386                 randconfig-c003-20200323
+x86_64               randconfig-d001-20200323
+x86_64               randconfig-d002-20200323
+x86_64               randconfig-d003-20200323
+i386                 randconfig-d001-20200323
+i386                 randconfig-d002-20200323
+i386                 randconfig-d003-20200323
+x86_64               randconfig-e001-20200323
+x86_64               randconfig-e002-20200323
+x86_64               randconfig-e003-20200323
+i386                 randconfig-e001-20200323
+i386                 randconfig-e002-20200323
+i386                 randconfig-e003-20200323
+x86_64               randconfig-f001-20200323
+x86_64               randconfig-f002-20200323
+x86_64               randconfig-f003-20200323
+i386                 randconfig-f001-20200323
+i386                 randconfig-f002-20200323
+i386                 randconfig-f003-20200323
+x86_64               randconfig-g001-20200323
+x86_64               randconfig-g002-20200323
+x86_64               randconfig-g003-20200323
+i386                 randconfig-g001-20200323
+i386                 randconfig-g002-20200323
+i386                 randconfig-g003-20200323
+x86_64               randconfig-h001-20200323
+x86_64               randconfig-h002-20200323
+x86_64               randconfig-h003-20200323
+i386                 randconfig-h001-20200323
+i386                 randconfig-h002-20200323
+i386                 randconfig-h003-20200323
+arc                  randconfig-a001-20200323
+arm                  randconfig-a001-20200323
+arm64                randconfig-a001-20200323
+ia64                 randconfig-a001-20200323
+powerpc              randconfig-a001-20200323
+sparc                randconfig-a001-20200323
+riscv                            allmodconfig
+riscv                             allnoconfig
+riscv                            allyesconfig
+riscv                    nommu_virt_defconfig
+riscv                          rv32_defconfig
+s390                             alldefconfig
+s390                             allmodconfig
+s390                             allyesconfig
+s390                          debug_defconfig
+s390                                defconfig
+s390                       zfcpdump_defconfig
+sh                                allnoconfig
+sh                          rsk7269_defconfig
+sh                  sh7785lcr_32bit_defconfig
+sh                            titan_defconfig
+sparc                               defconfig
+sparc64                          allmodconfig
+sparc64                           allnoconfig
+sparc64                          allyesconfig
+x86_64                              fedora-25
+x86_64                                  kexec
+x86_64                                    lkp
+x86_64                                   rhel
+x86_64                         rhel-7.2-clear
+x86_64                               rhel-7.6
 
-Then we would send at least 1 ACL/LE packet before SCO even if there
-were SCO pending when we entered this function. I think it is still
-better to keep SCO/eSCO at the top.
-
->
-> Regards
->
-> Marcel
->
+---
+0-DAY CI Kernel Test Service, Intel Corporation
+https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
