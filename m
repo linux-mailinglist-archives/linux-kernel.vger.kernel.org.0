@@ -2,346 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A59C318FA34
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Mar 2020 17:44:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0F6F818FA37
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Mar 2020 17:44:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727820AbgCWQoo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Mar 2020 12:44:44 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:39459 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727686AbgCWQol (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Mar 2020 12:44:41 -0400
-Received: by mail-wr1-f66.google.com with SMTP id p10so5537656wrt.6
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Mar 2020 09:44:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=hNnT69pxg2eYE6uGhioN4FH2+4XbGURiqaggzHNPFW0=;
-        b=TW+/rwyxb8wdk7e/NGL0yVvkx4tXi6cAmmRl0/yEwpBBBq+bbV4rkI36+r0Mov7Amw
-         g1LUMcZTU0hMBn2Ix2tVc/vKoBadNYSEtgjtkj8fTO4e0h78t5qZPUg9R13ESQ1/7hxZ
-         TkWEPcLTqmTnI7yd9cCDQJGXqnsafNw5J6S+s=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=hNnT69pxg2eYE6uGhioN4FH2+4XbGURiqaggzHNPFW0=;
-        b=M4vQ3ZjqO0z+6ZLzfAFpEsbVfh4NcrM44I3NCq8LtaHjqb6hMv0gJVSqraAxRNLMQY
-         2f8zuuumiGpKJWrZLhuqrtHrSlPKZLqIoa7nQovQuAAiIgE6D+fPg6N1PpGZt3apbtdV
-         hFz07BZartuDiIjZCicM31NaO5TAZFAr/zpzwDbQBSr/eye/U/lyoHXlMg55bprAbw8i
-         1kHp9dutemVEN4ZwfPdYOVp/rSnUjCJA0181N1gnl2q57cWpLHx+Immh02iD5lDkbNgc
-         4COB7q5TXAnBuyM0LXWIBq4eS/65tmKZ80V9S6uVlkPqW+mDh2Gy9LHMi1lO8Q1yDD+t
-         uihg==
-X-Gm-Message-State: ANhLgQ1owb6Dc7oIo67P81vvnioWX6OdUMEnXLbxxw4lRuH+a1k0AA1q
-        58d1IqWJakAQ89F0tV0Dq3/ZCnwcEhA=
-X-Google-Smtp-Source: ADFU+vuF+58XxqQmQZl7BKSQ4GLqqwbXHdHNZVG8TRwqbPl4Eyu1AdM1G+EQZgCaAtuYHyASfYczkw==
-X-Received: by 2002:a5d:6187:: with SMTP id j7mr7202750wru.419.1584981878319;
-        Mon, 23 Mar 2020 09:44:38 -0700 (PDT)
-Received: from kpsingh-kernel.localdomain (77-56-209-237.dclient.hispeed.ch. [77.56.209.237])
-        by smtp.gmail.com with ESMTPSA id l8sm199874wmj.2.2020.03.23.09.44.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 Mar 2020 09:44:37 -0700 (PDT)
-From:   KP Singh <kpsingh@chromium.org>
-To:     linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Cc:     Brendan Jackman <jackmanb@google.com>,
-        Florent Revest <revest@google.com>,
-        Thomas Garnier <thgarnie@google.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        James Morris <jmorris@namei.org>,
-        Kees Cook <keescook@chromium.org>,
-        Paul Turner <pjt@google.com>, Jann Horn <jannh@google.com>,
-        Florent Revest <revest@chromium.org>,
-        Brendan Jackman <jackmanb@chromium.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: [PATCH bpf-next v5 7/7] bpf: lsm: Add selftests for BPF_PROG_TYPE_LSM
-Date:   Mon, 23 Mar 2020 17:44:15 +0100
-Message-Id: <20200323164415.12943-8-kpsingh@chromium.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200323164415.12943-1-kpsingh@chromium.org>
-References: <20200323164415.12943-1-kpsingh@chromium.org>
+        id S1727848AbgCWQou (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Mar 2020 12:44:50 -0400
+Received: from mga06.intel.com ([134.134.136.31]:57127 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727686AbgCWQot (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Mar 2020 12:44:49 -0400
+IronPort-SDR: gIg3r+Q83T7TZgiyL8OxMB2naREdc4tuoom1DfP32+qZ1tBX21qDoAmQLRCTFbRN8+iuZALAn9
+ SldYZfAKy7nQ==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Mar 2020 09:44:48 -0700
+IronPort-SDR: Hm+eB0RfVMBxxIF+g7Epr9a3bkiwXrIn7Kxppf3oUdQ+3yzvX3qwOUw+bTO9FJ5fn651hqMx1T
+ hvtlOT5il54A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.72,297,1580803200"; 
+   d="scan'208";a="246253181"
+Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.202])
+  by orsmga003.jf.intel.com with ESMTP; 23 Mar 2020 09:44:48 -0700
+Date:   Mon, 23 Mar 2020 09:44:48 -0700
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     Jim Mattson <jmattson@google.com>
+Cc:     Paolo Bonzini <pbonzini@redhat.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Joerg Roedel <joro@8bytes.org>, kvm list <kvm@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Ben Gardon <bgardon@google.com>,
+        Junaid Shahid <junaids@google.com>,
+        Liran Alon <liran.alon@oracle.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        John Haxby <john.haxby@oracle.com>,
+        Miaohe Lin <linmiaohe@huawei.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>
+Subject: Re: [PATCH v3 03/37] KVM: nVMX: Invalidate all EPTP contexts when
+ emulating INVEPT for L1
+Message-ID: <20200323164447.GQ28711@linux.intel.com>
+References: <20200320212833.3507-1-sean.j.christopherson@intel.com>
+ <20200320212833.3507-4-sean.j.christopherson@intel.com>
+ <CALMp9eR5Uu7nRDOS2nQHGzb+Gi6vjDEk1AmuiqkkGWFjKNG+sA@mail.gmail.com>
+ <20200323162807.GN28711@linux.intel.com>
+ <CALMp9eR42eM7g81EgHieyNky+kP2mycO7UyMN+y2ibLoqrD2Yg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CALMp9eR42eM7g81EgHieyNky+kP2mycO7UyMN+y2ibLoqrD2Yg@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: KP Singh <kpsingh@google.com>
+On Mon, Mar 23, 2020 at 09:36:22AM -0700, Jim Mattson wrote:
+> On Mon, Mar 23, 2020 at 9:28 AM Sean Christopherson
+> <sean.j.christopherson@intel.com> wrote:
+> >
+> > On Mon, Mar 23, 2020 at 09:24:25AM -0700, Jim Mattson wrote:
+> > > On Fri, Mar 20, 2020 at 2:29 PM Sean Christopherson
+> > > <sean.j.christopherson@intel.com> wrote:
+> > > >
+> > > > Free all L2 (guest_mmu) roots when emulating INVEPT for L1.  Outstanding
+> > > > changes to the EPT tables managed by L1 need to be recognized, and
+> > > > relying on KVM to always flush L2's EPTP context on nested VM-Enter is
+> > > > dangerous.
+> > > >
+> > > > Similar to handle_invpcid(), rely on kvm_mmu_free_roots() to do a remote
+> > > > TLB flush if necessary, e.g. if L1 has never entered L2 then there is
+> > > > nothing to be done.
+> > > >
+> > > > Nuking all L2 roots is overkill for the single-context variant, but it's
+> > > > the safe and easy bet.  A more precise zap mechanism will be added in
+> > > > the future.  Add a TODO to call out that KVM only needs to invalidate
+> > > > affected contexts.
+> > > >
+> > > > Fixes: b119019847fbc ("kvm: nVMX: Remove unnecessary sync_roots from handle_invept")
+> > >
+> > > The bug existed well before the commit indicated in the "Fixes" line.
+> >
+> > Ah, my bad.  A cursory glance at commit b119019847fbc makes that quite
+> > obvious.  This should be
+> >
+> >   Fixes: bfd0a56b9000 ("nEPT: Nested INVEPT")
+> 
+> Actually, I think that things were fine back then (though we
+> gratuitously flushed L1's TLB as a result of an emulated INVEPT). The
+> problem started when we stopped flushing the TLB on every emulated
+> VM-entry (i.e. L1 -> L2 transitions). I'm not sure what that commit
+> was, but I think you referenced it in an earlier email.
 
-* Load/attach a BPF program to the file_mprotect (int) and
-  bprm_committed_creds (void) LSM hooks.
-* Perform an action that triggers the hook.
-* Verify if the audit event was received using a shared global
-  result variable.
+Hmm, true.  I was thinking it was the original commit because it didn't
+operate on guest_mmu, but guest_mmu didn't exist back then.  So I think
 
-Signed-off-by: KP Singh <kpsingh@google.com>
-Reviewed-by: Brendan Jackman <jackmanb@google.com>
-Reviewed-by: Florent Revest <revest@google.com>
-Reviewed-by: Thomas Garnier <thgarnie@google.com>
----
- tools/testing/selftests/bpf/lsm_helpers.h     |  19 +++
- .../selftests/bpf/prog_tests/lsm_test.c       | 112 ++++++++++++++++++
- .../selftests/bpf/progs/lsm_int_hook.c        |  54 +++++++++
- .../selftests/bpf/progs/lsm_void_hook.c       |  41 +++++++
- 4 files changed, 226 insertions(+)
- create mode 100644 tools/testing/selftests/bpf/lsm_helpers.h
- create mode 100644 tools/testing/selftests/bpf/prog_tests/lsm_test.c
- create mode 100644 tools/testing/selftests/bpf/progs/lsm_int_hook.c
- create mode 100644 tools/testing/selftests/bpf/progs/lsm_void_hook.c
+  Fixes: 14c07ad89f4d ("x86/kvm/mmu: introduce guest_mmu")
 
-diff --git a/tools/testing/selftests/bpf/lsm_helpers.h b/tools/testing/selftests/bpf/lsm_helpers.h
-new file mode 100644
-index 000000000000..3de230df93db
---- /dev/null
-+++ b/tools/testing/selftests/bpf/lsm_helpers.h
-@@ -0,0 +1,19 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+
-+/*
-+ * Copyright (C) 2020 Google LLC.
-+ */
-+#ifndef _LSM_HELPERS_H
-+#define _LSM_HELPERS_H
-+
-+struct lsm_prog_result {
-+	/* This ensures that the LSM Hook only monitors the PID requested
-+	 * by the loader
-+	 */
-+	__u32 monitored_pid;
-+	/* The number of calls to the prog for the monitored PID.
-+	 */
-+	__u32 count;
-+};
-+
-+#endif /* _LSM_HELPERS_H */
-diff --git a/tools/testing/selftests/bpf/prog_tests/lsm_test.c b/tools/testing/selftests/bpf/prog_tests/lsm_test.c
-new file mode 100644
-index 000000000000..5fd6b8f569f7
---- /dev/null
-+++ b/tools/testing/selftests/bpf/prog_tests/lsm_test.c
-@@ -0,0 +1,112 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+/*
-+ * Copyright (C) 2020 Google LLC.
-+ */
-+
-+#include <test_progs.h>
-+#include <sys/mman.h>
-+#include <sys/wait.h>
-+#include <unistd.h>
-+#include <malloc.h>
-+#include <stdlib.h>
-+
-+#include "lsm_helpers.h"
-+#include "lsm_void_hook.skel.h"
-+#include "lsm_int_hook.skel.h"
-+
-+char *LS_ARGS[] = {"true", NULL};
-+
-+int heap_mprotect(void)
-+{
-+	void *buf;
-+	long sz;
-+
-+	sz = sysconf(_SC_PAGESIZE);
-+	if (sz < 0)
-+		return sz;
-+
-+	buf = memalign(sz, 2 * sz);
-+	if (buf == NULL)
-+		return -ENOMEM;
-+
-+	return mprotect(buf, sz, PROT_READ | PROT_EXEC);
-+}
-+
-+int exec_ls(struct lsm_prog_result *result)
-+{
-+	int child_pid;
-+
-+	child_pid = fork();
-+	if (child_pid == 0) {
-+		result->monitored_pid = getpid();
-+		execvp(LS_ARGS[0], LS_ARGS);
-+		return -EINVAL;
-+	} else if (child_pid > 0)
-+		return wait(NULL);
-+
-+	return -EINVAL;
-+}
-+
-+void test_lsm_void_hook(void)
-+{
-+	struct lsm_prog_result *result;
-+	struct lsm_void_hook *skel = NULL;
-+	int err, duration = 0;
-+
-+	skel = lsm_void_hook__open_and_load();
-+	if (CHECK(!skel, "skel_load", "lsm_void_hook skeleton failed\n"))
-+		goto close_prog;
-+
-+	err = lsm_void_hook__attach(skel);
-+	if (CHECK(err, "attach", "lsm_void_hook attach failed: %d\n", err))
-+		goto close_prog;
-+
-+	result = &skel->bss->result;
-+
-+	err = exec_ls(result);
-+	if (CHECK(err < 0, "exec_ls", "err %d errno %d\n", err, errno))
-+		goto close_prog;
-+
-+	if (CHECK(result->count != 1, "count", "count = %d", result->count))
-+		goto close_prog;
-+
-+	CHECK_FAIL(result->count != 1);
-+
-+close_prog:
-+	lsm_void_hook__destroy(skel);
-+}
-+
-+void test_lsm_int_hook(void)
-+{
-+	struct lsm_prog_result *result;
-+	struct lsm_int_hook *skel = NULL;
-+	int err, duration = 0;
-+
-+	skel = lsm_int_hook__open_and_load();
-+	if (CHECK(!skel, "skel_load", "lsm_int_hook skeleton failed\n"))
-+		goto close_prog;
-+
-+	err = lsm_int_hook__attach(skel);
-+	if (CHECK(err, "attach", "lsm_int_hook attach failed: %d\n", err))
-+		goto close_prog;
-+
-+	result = &skel->bss->result;
-+	result->monitored_pid = getpid();
-+
-+	err = heap_mprotect();
-+	if (CHECK(errno != EPERM, "heap_mprotect", "want errno=EPERM, got %d\n",
-+		  errno))
-+		goto close_prog;
-+
-+	CHECK_FAIL(result->count != 1);
-+
-+close_prog:
-+	lsm_int_hook__destroy(skel);
-+}
-+
-+void test_lsm_test(void)
-+{
-+	test_lsm_void_hook();
-+	test_lsm_int_hook();
-+}
-diff --git a/tools/testing/selftests/bpf/progs/lsm_int_hook.c b/tools/testing/selftests/bpf/progs/lsm_int_hook.c
-new file mode 100644
-index 000000000000..1c5028ddca61
---- /dev/null
-+++ b/tools/testing/selftests/bpf/progs/lsm_int_hook.c
-@@ -0,0 +1,54 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+/*
-+ * Copyright 2020 Google LLC.
-+ */
-+
-+#include <linux/bpf.h>
-+#include <stdbool.h>
-+#include <bpf/bpf_helpers.h>
-+#include <bpf/bpf_tracing.h>
-+#include  <errno.h>
-+#include "lsm_helpers.h"
-+
-+char _license[] SEC("license") = "GPL";
-+
-+struct lsm_prog_result result = {
-+	.monitored_pid = 0,
-+	.count = 0,
-+};
-+
-+/*
-+ * Define some of the structs used in the BPF program.
-+ * Only the field names and their sizes need to be the
-+ * same as the kernel type, the order is irrelevant.
-+ */
-+struct mm_struct {
-+	unsigned long start_brk, brk;
-+} __attribute__((preserve_access_index));
-+
-+struct vm_area_struct {
-+	unsigned long vm_start, vm_end;
-+	struct mm_struct *vm_mm;
-+} __attribute__((preserve_access_index));
-+
-+SEC("lsm/file_mprotect")
-+int BPF_PROG(test_int_hook, struct vm_area_struct *vma,
-+	     unsigned long reqprot, unsigned long prot, int ret)
-+{
-+	if (ret != 0)
-+		return ret;
-+
-+	__u32 pid = bpf_get_current_pid_tgid();
-+	int is_heap = 0;
-+
-+	is_heap = (vma->vm_start >= vma->vm_mm->start_brk &&
-+		   vma->vm_end <= vma->vm_mm->brk);
-+
-+	if (is_heap && result.monitored_pid == pid) {
-+		result.count++;
-+		ret = -EPERM;
-+	}
-+
-+	return ret;
-+}
-diff --git a/tools/testing/selftests/bpf/progs/lsm_void_hook.c b/tools/testing/selftests/bpf/progs/lsm_void_hook.c
-new file mode 100644
-index 000000000000..4d01a8536413
---- /dev/null
-+++ b/tools/testing/selftests/bpf/progs/lsm_void_hook.c
-@@ -0,0 +1,41 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+/*
-+ * Copyright (C) 2020 Google LLC.
-+ */
-+
-+#include <linux/bpf.h>
-+#include <stdbool.h>
-+#include <bpf/bpf_helpers.h>
-+#include <bpf/bpf_tracing.h>
-+#include  <errno.h>
-+#include "lsm_helpers.h"
-+
-+char _license[] SEC("license") = "GPL";
-+
-+struct lsm_prog_result result = {
-+	.monitored_pid = 0,
-+	.count = 0,
-+};
-+
-+/*
-+ * Define some of the structs used in the BPF program.
-+ * Only the field names and their sizes need to be the
-+ * same as the kernel type, the order is irrelevant.
-+ */
-+struct linux_binprm {
-+	const char *filename;
-+} __attribute__((preserve_access_index));
-+
-+SEC("lsm/bprm_committed_creds")
-+int BPF_PROG(test_void_hook, struct linux_binprm *bprm)
-+{
-+	__u32 pid = bpf_get_current_pid_tgid();
-+	char fmt[] = "lsm(bprm_committed_creds): process executed %s\n";
-+
-+	bpf_trace_printk(fmt, sizeof(fmt), bprm->filename);
-+	if (result.monitored_pid == pid)
-+		result.count++;
-+
-+	return 0;
-+}
--- 
-2.20.1
-
+would be appropriate?
