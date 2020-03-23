@@ -2,115 +2,191 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4203518F3D9
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Mar 2020 12:43:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 274BF18F3DE
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Mar 2020 12:43:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728183AbgCWLm6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Mar 2020 07:42:58 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:33722 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728152AbgCWLm5 (ORCPT
+        id S1728217AbgCWLnn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Mar 2020 07:43:43 -0400
+Received: from mail-pj1-f65.google.com ([209.85.216.65]:36624 "EHLO
+        mail-pj1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728115AbgCWLnn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Mar 2020 07:42:57 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 02NBdECu114405;
-        Mon, 23 Mar 2020 11:42:38 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2020-01-29;
- bh=M30jtPOLXFGKh0OiBXL0iPiQWOfFHuziHXXkfFK5U2A=;
- b=uE8Qkvw2f3iHluL4afcTXM89lN+Rk8kalQNFUp6khL4h8gwllbrTeC571hY/4dbu1g3U
- ENC9sI6rW4qhccdHsYwSYmrHyzCRq2zKBt8LK760Lxgzf/BfzozNLTCio1sbx0Q1gKzC
- kLnf6bcxj+7cc5bRK8Od8AK2oIpPcHmkSVxoDrfdX94z/FJXGVJRF0fJzCtVHq+AZOvy
- 4Qr5g3phfgZa+TZpTuTqQP7fxUNc/guPC/z+g0WEeJfC65kSmX99YPbgW3yQvXxFoS58
- bUouP3AGJ/BEez8IFVRqoNihkPPE/7TvQ3AMpc6nZEhRN4/z92pEJtsElpqUXgAfOHlf ag== 
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by userp2130.oracle.com with ESMTP id 2ywabqx2yj-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 23 Mar 2020 11:42:38 +0000
-Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 02NBfv2U064536;
-        Mon, 23 Mar 2020 11:42:38 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by aserp3020.oracle.com with ESMTP id 2ywvqqywbk-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 23 Mar 2020 11:42:37 +0000
-Received: from abhmp0014.oracle.com (abhmp0014.oracle.com [141.146.116.20])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 02NBgX4V004477;
-        Mon, 23 Mar 2020 11:42:34 GMT
-Received: from kadam (/41.57.98.10)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 23 Mar 2020 04:42:33 -0700
-Date:   Mon, 23 Mar 2020 14:42:25 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Qiujun Huang <anenbupt@gmail.com>
-Cc:     syzbot <syzbot+4a88b2b9dc280f47baf4@syzkaller.appspotmail.com>,
-        aeb@cwi.nl, danarag@gmail.com, kstewart@linuxfoundation.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-        tglx@linutronix.de, viro@zeniv.linux.org.uk
-Subject: Re: KASAN: null-ptr-deref Write in get_block
-Message-ID: <20200323114225.GE26299@kadam>
-References: <000000000000cbeaf705a15a9b30@google.com>
- <CADG63jAEOBvWZ2G-9tyvHbbuKnHxNTPpqqjfWmhP7YVvsHVioQ@mail.gmail.com>
+        Mon, 23 Mar 2020 07:43:43 -0400
+Received: by mail-pj1-f65.google.com with SMTP id nu11so5980854pjb.1;
+        Mon, 23 Mar 2020 04:43:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=0JOxub9d4VjSXMXskvu51BJ1QSfTigyzc+ouxeQXEaA=;
+        b=S9OGfzCzXIcIMKESKPTI8raOcWYhYOumisUPYKGxWopELZnGo5EDBHP/9ZZS5gbe2w
+         /VTjACjsW0S8pFuQGPsuNAD02f/dEozjEJFpH5Z1GV7cWF8qnArzU276bY5yjQSo9nIz
+         X73BPjrLKVNUTOwzrSuYKxnKHFcTqFBAzwoeL6W5vJCUg40UR2s1Y2qDM6AUAoDaKJed
+         btej/h4t866SU5t06/GAQEmKvVjlUHZY8h40F+nfPoJ1oLfDWeUCLdAl+vi6KMqt9oOv
+         BGeMy3giOF5S5/Mmt/bOMKFKK/A7lvtg5zZsbFXTDjKNyPeMKWq1GNyJTEPgCHccCcSr
+         ewIw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=0JOxub9d4VjSXMXskvu51BJ1QSfTigyzc+ouxeQXEaA=;
+        b=Ih3JJyT6aNicrBjzXNw/Q0CizylZFqDORNSptfhlvt1nr/1doWkqaPP1q+MBofbGn7
+         YWdIUuZUXucYfrf1+xrfDbVIPwsXbDKBi/yMivR1uQZMYml/UuDw5Rk+VFZ1VMKOmzVU
+         DYXMxx3mTvaKXZOFl1FwWF5XtMtlP8FnOpc29FPkT2L4FWtEfYjU49yEaYnnCm01YzVn
+         juRzJL8Y0jHdupwe0ME4WtPymxYgKeUpmP4uWhnFhBY3g/92eHAzxIeR3uh0Vg41Cn+e
+         uG1QjkBRIW8TRGxe1aZ6s9PJNDsqGcRYbFrhJFYrT9L/3ARk73wmi6BS62YdYutDuWM0
+         oNvg==
+X-Gm-Message-State: ANhLgQ2vQKduxw7COvRi3P+0qiTQfb9JcbQ2uNuR3wnB0BmrEqytP+D2
+        SfJUU8SC8Ge30kUHU+QGqMQ9kM6A9bcNyO2eGpA=
+X-Google-Smtp-Source: ADFU+vuipq4kIJ7C8yZtaz5IdeyNyOaNs3ZibsKgTMdYID/vP2bcwGDGGG4hdry0X8YTgQB/Xzpul6noFe7xvMN8AYs=
+X-Received: by 2002:a17:90a:8403:: with SMTP id j3mr25160854pjn.8.1584963820252;
+ Mon, 23 Mar 2020 04:43:40 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CADG63jAEOBvWZ2G-9tyvHbbuKnHxNTPpqqjfWmhP7YVvsHVioQ@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9568 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 phishscore=0 bulkscore=0
- suspectscore=2 mlxlogscore=999 malwarescore=0 mlxscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2003020000
- definitions=main-2003230069
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9568 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 suspectscore=2
- lowpriorityscore=0 malwarescore=0 phishscore=0 priorityscore=1501
- clxscore=1011 adultscore=0 mlxscore=0 mlxlogscore=999 bulkscore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2003020000 definitions=main-2003230068
+References: <20200323143816.345b3d54@canb.auug.org.au>
+In-Reply-To: <20200323143816.345b3d54@canb.auug.org.au>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Mon, 23 Mar 2020 13:43:32 +0200
+Message-ID: <CAHp75Vfozkw2sBwLO95EEsW955Wqi9G1JOW-zpretnhHS2waSA@mail.gmail.com>
+Subject: Re: linux-next: manual merge of the driver-core tree with the
+ drivers-x86 tree
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     Greg KH <greg@kroah.com>, Darren Hart <dvhart@infradead.org>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Hans de Goede <hdegoede@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix the subject to [PATCH] minix: Fix NULL dereference in alloc_branch()
+On Mon, Mar 23, 2020 at 5:38 AM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>
+> Hi all,
+>
+> Today's linux-next merge of the driver-core tree got a conflict in:
+>
+>   drivers/platform/x86/Kconfig
+>
+> between commit:
+>
+>   45a3d578f2ed ("platform/x86: Kconfig: Group modules by companies and functions")
+>
+> from the drivers-x86 tree and commit:
+>
+>   835e1b86ef8c ("platform/x86: touchscreen_dmi: Add EFI embedded firmware info support")
+>
+> from the driver-core tree.
+>
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
 
-On Sun, Mar 22, 2020 at 08:06:48PM +0800, Qiujun Huang wrote:
-> Need to check the return value of sb_getblk.
-> 
+Thank you, Stephen, looks good to me!
 
-Add a Reported-by tag.
+>
+> --
+> Cheers,
+> Stephen Rothwell
+>
+> diff --cc drivers/platform/x86/Kconfig
+> index ae75b19e8649,cd9e2758c479..000000000000
+> --- a/drivers/platform/x86/Kconfig
+> +++ b/drivers/platform/x86/Kconfig
+> @@@ -1134,46 -978,54 +1134,47 @@@ config TOPSTAR_LAPTO
+>         depends on ACPI
+>         depends on INPUT
+>         select INPUT_SPARSEKMAP
+>  -      help
+>  -        This driver provides support for the Intel Virtual Button interface.
+>  -        Some laptops require this driver for power button support.
+>  -
+>  -        To compile this driver as a module, choose M here: the module will
+>  -        be called intel_vbtn.
+>  -
+>  -config INTEL_SCU_IPC
+>  -      bool "Intel SCU IPC Support"
+>  -      depends on X86_INTEL_MID
+>  -      default y
+>  +      select LEDS_CLASS
+>  +      select NEW_LEDS
+>         ---help---
+>  -        IPC is used to bridge the communications between kernel and SCU on
+>  -        some embedded Intel x86 platforms. This is not needed for PC-type
+>  -        machines.
+>  +        This driver adds support for hotkeys found on Topstar laptops.
+>
+>  -config INTEL_SCU_IPC_UTIL
+>  -      tristate "Intel SCU IPC utility driver"
+>  -      depends on INTEL_SCU_IPC
+>  -      ---help---
+>  -        The IPC Util driver provides an interface with the SCU enabling
+>  -        low level access for debug work and updating the firmware. Say
+>  -        N unless you will be doing this on an Intel MID platform.
+>  +        If you have a Topstar laptop, say Y or M here.
+>
+>  -config INTEL_MID_POWER_BUTTON
+>  -      tristate "power button driver for Intel MID platforms"
+>  -      depends on INTEL_SCU_IPC && INPUT
+>  +config I2C_MULTI_INSTANTIATE
+>  +      tristate "I2C multi instantiate pseudo device driver"
+>  +      depends on I2C && ACPI
+>         help
+>  -        This driver handles the power button on the Intel MID platforms.
+>  +        Some ACPI-based systems list multiple i2c-devices in a single ACPI
+>  +        firmware-node. This driver will instantiate separate i2c-clients
+>  +        for each device in the firmware-node.
+>
+>  -        If unsure, say N.
+>  +        To compile this driver as a module, choose M here: the module
+>  +        will be called i2c-multi-instantiate.
+>
+>  -config INTEL_MFLD_THERMAL
+>  -       tristate "Thermal driver for Intel Medfield platform"
+>  -       depends on MFD_INTEL_MSIC && THERMAL
+>  -       help
+>  -         Say Y here to enable thermal driver support for the  Intel Medfield
+>  -         platform.
+>  +config MLX_PLATFORM
+>  +      tristate "Mellanox Technologies platform support"
+>  +      depends on I2C && REGMAP
+>  +      ---help---
+>  +        This option enables system support for the Mellanox Technologies
+>  +        platform. The Mellanox systems provide data center networking
+>  +        solutions based on Virtual Protocol Interconnect (VPI) technology
+>  +        enable seamless connectivity to 56/100Gb/s InfiniBand or 10/40/56GbE
+>  +        connection.
+>
+>  -config INTEL_IPS
+>  -      tristate "Intel Intelligent Power Sharing"
+>  -      depends on ACPI && PCI
+>  +        If you have a Mellanox system, say Y or M here.
+>  +
+>  +config TOUCHSCREEN_DMI
+>  +      bool "DMI based touchscreen configuration info"
+>  +      depends on ACPI && DMI && I2C=y && TOUCHSCREEN_SILEAD
+> ++      select EFI_EMBEDDED_FIRMWARE if EFI
+>         ---help---
+>  -        Intel Calpella platforms support dynamic power sharing between the
+>  -        CPU and GPU, maximizing performance in a given TDP.  This driver,
+>  -        along with the CPU frequency and i915 drivers, provides that
+>  -        functionality.  If in doubt, say Y here; it will only load on
+>  -        supported platforms.
+>  +        Certain ACPI based tablets with e.g. Silead or Chipone touchscreens
+>  +        do not have enough data in ACPI tables for the touchscreen driver to
+>  +        handle the touchscreen properly, as OEMs expect the data to be baked
+>  +        into the tablet model specific version of the driver shipped with the
+>  +        the OS-image for the device. This option supplies the missing info.
+>  +        Enable this for x86 tablets with Silead or Chipone touchscreens.
+>
+>   config INTEL_IMR
+>         bool "Intel Isolated Memory Region support"
 
-Reported-by: syzbot+4a88b2b9dc280f47baf4@syzkaller.appspotmail.com
 
-> Signed-off-by: Qiujun Huang <hqjagain@gmail.com>
-> ---
->  fs/minix/itree_common.c | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/fs/minix/itree_common.c b/fs/minix/itree_common.c
-> index 043c3fd..eedd79f 100644
-> --- a/fs/minix/itree_common.c
-> +++ b/fs/minix/itree_common.c
-> @@ -85,6 +85,8 @@ static int alloc_branch(struct inode *inode,
->   break;
->   branch[n].key = cpu_to_block(nr);
->   bh = sb_getblk(inode->i_sb, parent);
-> + if (!bh)
-> + break;
 
-The patch is white space damaged and we need to do a bit of error
-handling before the break as well.
-
- 	bh = sb_getblk(inode->i_sb, parent);
-+	if (!bh) {
-+		minix_free_block(inode, block_to_cpu(branch[n].key));
-+		break;
-+	}
- 	lock_buffer(bh);
-
-Please fix those few things and resend.
-
-regards,
-dan carpenter
-
+-- 
+With Best Regards,
+Andy Shevchenko
