@@ -2,202 +2,151 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D94BB18F7F1
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Mar 2020 16:00:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AAD4B18F7F9
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Mar 2020 16:00:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727381AbgCWPAb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Mar 2020 11:00:31 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:38910 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727323AbgCWPA1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Mar 2020 11:00:27 -0400
-Received: by mail-wr1-f68.google.com with SMTP id s1so17493582wrv.5
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Mar 2020 08:00:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=PKz+43pYWEKiqemNMbJW8RSxtkKY/tbV+925ZPw1MUM=;
-        b=Hyiz0iShcNQgLk81bzvNCYEI3zVhyjb9CTyz7QVnaTUUwwdZyoSweONNSqU8t4qh+f
-         UOs+sccBizFvLMiCTflKaNtQt+P5WYcmnC8zhwNkOueu7/vFfD2bwIAQee9gemq1KD21
-         kgeJvUVJQIXaktiXb5NmgG0XgHaxN7g4bR/lFzGlJUjAuMpjklkuhiYTF1PhW8bL0OEB
-         IxaIfWXrmKbBErhnQJwhZ9DsMUJG1gTYCSQEoUo4QjfMb6TF1JeXokAMSmryppjdRnSD
-         g/LJefhbug1b+guiUTrZDn+O4nJgpd+y5YTBER2HXtsBBdgsX840oJ20O6EW+jdNbcpz
-         GmqA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=PKz+43pYWEKiqemNMbJW8RSxtkKY/tbV+925ZPw1MUM=;
-        b=RyD0mGBisMJtaQXeIZcQ020o3MhEyWx1AKNSnDar2VVW1w63OigqfBdOvLEUZsBbDK
-         gzziZS1IB9tkQHRNPIf5Kz+DIqXTAeFez8bj67HgtFN7RmRE+lZZWQCjQGtx4txY11Ci
-         RAs3SzphDUOuIWJz3+4YU+JT42VwdUYV5MbTZ5QIfim361el97ZjBhKbzgVSDbYvBOVS
-         TbF5Id7QcUBUIFjkv5aZhAS6v9kDRruSoxhBmOFV3Ke5sl6ojQjqLlch2ZgAUK+n2SCo
-         179NyT+bBHTj8TCltI2eH8w9V2DpzyJE0NLVTKEuvZvlpVEbTGXbC7MrqoAL5pOT7XKD
-         KbmQ==
-X-Gm-Message-State: ANhLgQ0BR3MKoy1sJOb5KQAhn9R4gKPlK9Vgsp3LqaNKtC2Ho0TD97mM
-        21sF6Cks87O19PEhHHrJ1fzo9Q==
-X-Google-Smtp-Source: ADFU+vv3/WhwNr1XiGH3+qclsgA002DaA7wInGOVzE4FBnyG31g2jAslkgp+85cvBpSWmJr8PRDWxA==
-X-Received: by 2002:a5d:4b52:: with SMTP id w18mr17183476wrs.233.1584975625938;
-        Mon, 23 Mar 2020 08:00:25 -0700 (PDT)
-Received: from srini-hackbox.lan (cpc89974-aztw32-2-0-cust43.18-1.cable.virginm.net. [86.30.250.44])
-        by smtp.gmail.com with ESMTPSA id k15sm1084196wrm.55.2020.03.23.08.00.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 Mar 2020 08:00:25 -0700 (PDT)
-From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-To:     gregkh@linuxfoundation.org
-Cc:     linux-kernel@vger.kernel.org,
-        Nicholas Johnson <nicholas.johnson-opensource@outlook.com.au>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Subject: [PATCH 5/5] nvmem: Add support for write-only instances
-Date:   Mon, 23 Mar 2020 15:00:07 +0000
-Message-Id: <20200323150007.7487-6-srinivas.kandagatla@linaro.org>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20200323150007.7487-1-srinivas.kandagatla@linaro.org>
-References: <20200323150007.7487-1-srinivas.kandagatla@linaro.org>
+        id S1727443AbgCWPAh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Mar 2020 11:00:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53060 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727400AbgCWPAf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Mar 2020 11:00:35 -0400
+Received: from paulmck-ThinkPad-P72.home (50-39-105-78.bvtn.or.frontiernet.net [50.39.105.78])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8E0182076A;
+        Mon, 23 Mar 2020 15:00:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1584975634;
+        bh=sOwqdzjNyDhqWaqPuKSrOiqTlX2z5cN/FIXJ3P/xkjI=;
+        h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+        b=zCkspbRTmHUxF9l9kRPZQnxtYGdYi8+u6rRR3/9+G3jy+1Py13gdsJwR0GL7JDxJY
+         DSpD2HdIdJvkPPQPC0zgJceBlBX5G9X0TWzOx+qjPICnwN5AmkaI4wgCQcYvkrDVkI
+         xQOQ+kQyCeBEE5NPoHcjWNEc/LS2t4bjGP3+oOWY=
+Received: by paulmck-ThinkPad-P72.home (Postfix, from userid 1000)
+        id 5B36B35226C6; Mon, 23 Mar 2020 08:00:34 -0700 (PDT)
+Date:   Mon, 23 Mar 2020 08:00:34 -0700
+From:   "Paul E. McKenney" <paulmck@kernel.org>
+To:     Qais Yousef <qais.yousef@arm.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
+        Helge Deller <deller@gmx.de>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        Juergen Gross <jgross@suse.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        xen-devel@lists.xenproject.org, linux-parisc@vger.kernel.org,
+        sparclinux@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-arm-kernel@lists.infradead.org, x86@kernel.org
+Subject: Re: [PATCH v4 01/17] cpu: Add new {add,remove}_cpu() functions
+Message-ID: <20200323150034.GG3199@paulmck-ThinkPad-P72>
+Reply-To: paulmck@kernel.org
+References: <20200323135110.30522-1-qais.yousef@arm.com>
+ <20200323135110.30522-2-qais.yousef@arm.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200323135110.30522-2-qais.yousef@arm.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nicholas Johnson <nicholas.johnson-opensource@outlook.com.au>
+On Mon, Mar 23, 2020 at 01:50:54PM +0000, Qais Yousef wrote:
+> The new functions use device_{online,offline}() which are userspace
+> safe.
+> 
+> This is in preparation to move cpu_{up, down} kernel users to use
+> a safer interface that is not racy with userspace.
+> 
+> Suggested-by: "Paul E. McKenney" <paulmck@kernel.org>
+> Signed-off-by: Qais Yousef <qais.yousef@arm.com>
+> CC: Thomas Gleixner <tglx@linutronix.de>
+> CC: "Paul E. McKenney" <paulmck@kernel.org>
 
-There is at least one real-world use-case for write-only nvmem
-instances. Refer to 03cd45d2e219 ("thunderbolt: Prevent crash if
-non-active NVMem file is read").
+Reviewed-by: Paul E. McKenney <paulmck@kernel.org>
 
-Add support for write-only nvmem instances by adding attrs for 0200.
-
-Change nvmem_register() to abort if NULL group is returned from
-nvmem_sysfs_get_groups().
-
-Return NULL from nvmem_sysfs_get_groups() in invalid cases.
-
-Signed-off-by: Nicholas Johnson <nicholas.johnson-opensource@outlook.com.au>
-Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
----
- drivers/nvmem/core.c        | 10 +++++--
- drivers/nvmem/nvmem-sysfs.c | 56 +++++++++++++++++++++++++++++++------
- 2 files changed, 56 insertions(+), 10 deletions(-)
-
-diff --git a/drivers/nvmem/core.c b/drivers/nvmem/core.c
-index 77d890d3623d..ddc7be5149d5 100644
---- a/drivers/nvmem/core.c
-+++ b/drivers/nvmem/core.c
-@@ -381,6 +381,14 @@ struct nvmem_device *nvmem_register(const struct nvmem_config *config)
- 	nvmem->type = config->type;
- 	nvmem->reg_read = config->reg_read;
- 	nvmem->reg_write = config->reg_write;
-+	nvmem->dev.groups = nvmem_sysfs_get_groups(nvmem, config);
-+	if (!nvmem->dev.groups) {
-+		ida_simple_remove(&nvmem_ida, nvmem->id);
-+		gpiod_put(nvmem->wp_gpio);
-+		kfree(nvmem);
-+		return ERR_PTR(-EINVAL);
-+	}
-+
- 	if (!config->no_of_node)
- 		nvmem->dev.of_node = config->dev->of_node;
- 
-@@ -395,8 +403,6 @@ struct nvmem_device *nvmem_register(const struct nvmem_config *config)
- 	nvmem->read_only = device_property_present(config->dev, "read-only") ||
- 			   config->read_only || !nvmem->reg_write;
- 
--	nvmem->dev.groups = nvmem_sysfs_get_groups(nvmem, config);
--
- 	device_initialize(&nvmem->dev);
- 
- 	dev_dbg(&nvmem->dev, "Registering nvmem device %s\n", config->name);
-diff --git a/drivers/nvmem/nvmem-sysfs.c b/drivers/nvmem/nvmem-sysfs.c
-index 8759c4470012..9728da948988 100644
---- a/drivers/nvmem/nvmem-sysfs.c
-+++ b/drivers/nvmem/nvmem-sysfs.c
-@@ -202,16 +202,49 @@ static const struct attribute_group *nvmem_ro_root_dev_groups[] = {
- 	NULL,
- };
- 
-+/* write only permission, root only */
-+static struct bin_attribute bin_attr_wo_root_nvmem = {
-+	.attr	= {
-+		.name	= "nvmem",
-+		.mode	= 0200,
-+	},
-+	.write	= bin_attr_nvmem_write,
-+};
-+
-+static struct bin_attribute *nvmem_bin_wo_root_attributes[] = {
-+	&bin_attr_wo_root_nvmem,
-+	NULL,
-+};
-+
-+static const struct attribute_group nvmem_bin_wo_root_group = {
-+	.bin_attrs	= nvmem_bin_wo_root_attributes,
-+	.attrs		= nvmem_attrs,
-+};
-+
-+static const struct attribute_group *nvmem_wo_root_dev_groups[] = {
-+	&nvmem_bin_wo_root_group,
-+	NULL,
-+};
-+
- const struct attribute_group **nvmem_sysfs_get_groups(
- 					struct nvmem_device *nvmem,
- 					const struct nvmem_config *config)
- {
--	if (config->root_only)
--		return nvmem->read_only ?
--			nvmem_ro_root_dev_groups :
--			nvmem_rw_root_dev_groups;
-+	/* Read-only */
-+	if (nvmem->reg_read && (!nvmem->reg_write || nvmem->read_only))
-+		return config->root_only ?
-+			nvmem_ro_root_dev_groups : nvmem_ro_dev_groups;
-+
-+	/* Read-write */
-+	if (nvmem->reg_read && nvmem->reg_write && !nvmem->read_only)
-+		return config->root_only ?
-+			nvmem_rw_root_dev_groups : nvmem_rw_dev_groups;
-+
-+	/* Write-only, do not honour request for global writable entry */
-+	if (!nvmem->reg_read && nvmem->reg_write && !nvmem->read_only)
-+		return config->root_only ? nvmem_wo_root_dev_groups : NULL;
- 
--	return nvmem->read_only ? nvmem_ro_dev_groups : nvmem_rw_dev_groups;
-+	return NULL;
- }
- 
- /*
-@@ -230,17 +263,24 @@ int nvmem_sysfs_setup_compat(struct nvmem_device *nvmem,
- 	if (!config->base_dev)
- 		return -EINVAL;
- 
--	if (nvmem->read_only) {
-+	if (nvmem->reg_read && (!nvmem->reg_write || nvmem->read_only)) {
- 		if (config->root_only)
- 			nvmem->eeprom = bin_attr_ro_root_nvmem;
- 		else
- 			nvmem->eeprom = bin_attr_ro_nvmem;
--	} else {
-+	} else if (!nvmem->reg_read && nvmem->reg_write && !nvmem->read_only) {
-+		if (config->root_only)
-+			nvmem->eeprom = bin_attr_wo_root_nvmem;
-+		else
-+			return -EINVAL;
-+	} else if (nvmem->reg_read && nvmem->reg_write && !nvmem->read_only) {
- 		if (config->root_only)
- 			nvmem->eeprom = bin_attr_rw_root_nvmem;
- 		else
- 			nvmem->eeprom = bin_attr_rw_nvmem;
--	}
-+	} else
-+		return -EINVAL;
-+
- 	nvmem->eeprom.attr.name = "eeprom";
- 	nvmem->eeprom.size = nvmem->size;
- #ifdef CONFIG_DEBUG_LOCK_ALLOC
--- 
-2.21.0
-
+> CC: Helge Deller <deller@gmx.de>
+> CC: Michael Ellerman <mpe@ellerman.id.au>
+> CC: "David S. Miller" <davem@davemloft.net>
+> CC: Juergen Gross <jgross@suse.com>
+> CC: Mark Rutland <mark.rutland@arm.com>
+> CC: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+> CC: xen-devel@lists.xenproject.org
+> CC: linux-parisc@vger.kernel.org
+> CC: sparclinux@vger.kernel.org
+> CC: linuxppc-dev@lists.ozlabs.org
+> CC: linux-arm-kernel@lists.infradead.org
+> CC: x86@kernel.org
+> CC: linux-kernel@vger.kernel.org
+> ---
+>  include/linux/cpu.h |  2 ++
+>  kernel/cpu.c        | 24 ++++++++++++++++++++++++
+>  2 files changed, 26 insertions(+)
+> 
+> diff --git a/include/linux/cpu.h b/include/linux/cpu.h
+> index 1ca2baf817ed..cf8cf38dca43 100644
+> --- a/include/linux/cpu.h
+> +++ b/include/linux/cpu.h
+> @@ -89,6 +89,7 @@ extern ssize_t arch_cpu_release(const char *, size_t);
+>  #ifdef CONFIG_SMP
+>  extern bool cpuhp_tasks_frozen;
+>  int cpu_up(unsigned int cpu);
+> +int add_cpu(unsigned int cpu);
+>  void notify_cpu_starting(unsigned int cpu);
+>  extern void cpu_maps_update_begin(void);
+>  extern void cpu_maps_update_done(void);
+> @@ -118,6 +119,7 @@ extern void cpu_hotplug_disable(void);
+>  extern void cpu_hotplug_enable(void);
+>  void clear_tasks_mm_cpumask(int cpu);
+>  int cpu_down(unsigned int cpu);
+> +int remove_cpu(unsigned int cpu);
+>  
+>  #else /* CONFIG_HOTPLUG_CPU */
+>  
+> diff --git a/kernel/cpu.c b/kernel/cpu.c
+> index 9c706af713fb..069802f7010f 100644
+> --- a/kernel/cpu.c
+> +++ b/kernel/cpu.c
+> @@ -1057,6 +1057,18 @@ int cpu_down(unsigned int cpu)
+>  }
+>  EXPORT_SYMBOL(cpu_down);
+>  
+> +int remove_cpu(unsigned int cpu)
+> +{
+> +	int ret;
+> +
+> +	lock_device_hotplug();
+> +	ret = device_offline(get_cpu_device(cpu));
+> +	unlock_device_hotplug();
+> +
+> +	return ret;
+> +}
+> +EXPORT_SYMBOL_GPL(remove_cpu);
+> +
+>  #else
+>  #define takedown_cpu		NULL
+>  #endif /*CONFIG_HOTPLUG_CPU*/
+> @@ -1209,6 +1221,18 @@ int cpu_up(unsigned int cpu)
+>  }
+>  EXPORT_SYMBOL_GPL(cpu_up);
+>  
+> +int add_cpu(unsigned int cpu)
+> +{
+> +	int ret;
+> +
+> +	lock_device_hotplug();
+> +	ret = device_online(get_cpu_device(cpu));
+> +	unlock_device_hotplug();
+> +
+> +	return ret;
+> +}
+> +EXPORT_SYMBOL_GPL(add_cpu);
+> +
+>  #ifdef CONFIG_PM_SLEEP_SMP
+>  static cpumask_var_t frozen_cpus;
+>  
+> -- 
+> 2.17.1
+> 
