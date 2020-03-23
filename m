@@ -2,87 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EC1F318F0BB
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Mar 2020 09:20:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A9E3418F0DB
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Mar 2020 09:28:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727558AbgCWIUU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Mar 2020 04:20:20 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:42475 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727516AbgCWIUT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Mar 2020 04:20:19 -0400
-Received: from dude.hi.pengutronix.de ([2001:67c:670:100:1d::7])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <afa@pengutronix.de>)
-        id 1jGIJd-0003c0-0a; Mon, 23 Mar 2020 09:20:09 +0100
-Received: from afa by dude.hi.pengutronix.de with local (Exim 4.92)
-        (envelope-from <afa@pengutronix.de>)
-        id 1jGIJb-0008Ge-3C; Mon, 23 Mar 2020 09:20:07 +0100
-From:   Ahmad Fatoum <a.fatoum@pengutronix.de>
-To:     Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Rouven Czerwinski <r.czerwinski@pengutronix.de>,
-        Ahmad Fatoum <a.fatoum@pengutronix.de>
-Cc:     stable@vger.kernel.org,
-        Clemens Gruber <clemens.gruber@pqgruber.com>,
-        Russell King <linux@armlinux.org.uk>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] ARM: imx: provide v7_cpu_resume() only on ARM_CPU_SUSPEND=y
-Date:   Mon, 23 Mar 2020 09:19:33 +0100
-Message-Id: <20200323081933.31497-1-a.fatoum@pengutronix.de>
-X-Mailer: git-send-email 2.25.1
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::7
-X-SA-Exim-Mail-From: afa@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+        id S1727600AbgCWI23 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Mar 2020 04:28:29 -0400
+Received: from mail.fudan.edu.cn ([202.120.224.10]:50384 "EHLO fudan.edu.cn"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727544AbgCWI22 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Mar 2020 04:28:28 -0400
+Received: from localhost.localdomain (unknown [120.229.255.251])
+        by app1 (Coremail) with SMTP id XAUFCgCXnysVc3he4fcPAA--.9465S3;
+        Mon, 23 Mar 2020 16:28:08 +0800 (CST)
+From:   Xiyu Yang <xiyuyang19@fudan.edu.cn>
+To:     Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Alexios Zavras <alexios.zavras@intel.com>,
+        Allison Randal <allison@lohutok.net>,
+        Adit Ranadive <aditr@vmware.com>,
+        Jorgen Hansen <jhansen@vmware.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Vishnu DASA <vdasa@vmware.com>,
+        Xiyu Yang <xiyuyang19@fudan.edu.cn>,
+        linux-kernel@vger.kernel.org
+Cc:     yuanxzhang@fudan.edu.cn, kjlu@umn.edu,
+        Xin Tan <tanxin.ctf@gmail.com>
+Subject: [PATCH v2] VMCI: Fix NULL pointer dereference on context ptr
+Date:   Mon, 23 Mar 2020 16:22:33 +0800
+Message-Id: <1584951832-120773-1-git-send-email-xiyuyang19@fudan.edu.cn>
+X-Mailer: git-send-email 2.7.4
+X-CM-TRANSID: XAUFCgCXnysVc3he4fcPAA--.9465S3
+X-Coremail-Antispam: 1UD129KBjvdXoWruF45WFy7ZF1rWr4kXrWfGrg_yoW3uFX_Ca
+        43XrsrArWjyasI93Z2yr13ZryFy398urn7Zw17trW5JFy7Z3Z3Gr1jqrnxXFyrurZrCF9r
+        Jw1DAFW0vw17tjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+        9fnUUIcSsGvfJTRUUUb3kFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+        6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+        A2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_GcCE
+        3s1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_GcCE3s
+        1lnxkEFVAIw20F6cxK64vIFxWle2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IE
+        w4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMc
+        vjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v
+        4I1lFIxGxcIEc7CjxVA2Y2ka0xkIwI1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7
+        v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF
+        1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIx
+        AIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWrZr1j6s0D
+        MIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIda
+        VFxhVjvjDU0xZFpf9x0JUQZ23UUUUU=
+X-CM-SenderInfo: irzsiiysuqikmy6i3vldqovvfxof0/
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-512a928affd5 ("ARM: imx: build v7_cpu_resume() unconditionally")
-introduced an unintended linker error for i.MX6 configurations that have
-ARM_CPU_SUSPEND=n which can happen if neither CONFIG_PM, CONFIG_CPU_IDLE,
-nor ARM_PSCI_FW are selected.
+A NULL vmci_ctx object may pass to vmci_ctx_put() from its callers.
+Add a NULL check to prevent NULL pointer dereference.
 
-Fix this by having v7_cpu_resume() compiled only when cpu_resume() it
-calls is available as well.
-
-The C declaration for the function remains unguarded to avoid future code
-inadvertently using a stub and introducing a regression to the bug the
-original commit fixed.
-
-Cc: <stable@vger.kernel.org>
-Fixes: 512a928affd5 ("ARM: imx: build v7_cpu_resume() unconditionally")
-Reported-by: Clemens Gruber <clemens.gruber@pqgruber.com>
-Signed-off-by: Ahmad Fatoum <a.fatoum@pengutronix.de>
+Signed-off-by: Xiyu Yang <xiyuyang19@fudan.edu.cn>
+Signed-off-by: Xin Tan <tanxin.ctf@gmail.com>
 ---
- arch/arm/mach-imx/Makefile | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/misc/vmw_vmci/vmci_context.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm/mach-imx/Makefile b/arch/arm/mach-imx/Makefile
-index 03506ce46149..e7364e6c8c6b 100644
---- a/arch/arm/mach-imx/Makefile
-+++ b/arch/arm/mach-imx/Makefile
-@@ -91,8 +91,10 @@ AFLAGS_suspend-imx6.o :=-Wa,-march=armv7-a
- obj-$(CONFIG_SOC_IMX6) += suspend-imx6.o
- obj-$(CONFIG_SOC_IMX53) += suspend-imx53.o
- endif
-+ifeq ($(CONFIG_ARM_CPU_SUSPEND),y)
- AFLAGS_resume-imx6.o :=-Wa,-march=armv7-a
- obj-$(CONFIG_SOC_IMX6) += resume-imx6.o
-+endif
- obj-$(CONFIG_SOC_IMX6) += pm-imx6.o
+diff --git a/drivers/misc/vmw_vmci/vmci_context.c b/drivers/misc/vmw_vmci/vmci_context.c
+index 16695366ec92..2f4963ab51bd 100644
+--- a/drivers/misc/vmw_vmci/vmci_context.c
++++ b/drivers/misc/vmw_vmci/vmci_context.c
+@@ -494,7 +494,8 @@ static void ctx_free_ctx(struct kref *kref)
+  */
+ void vmci_ctx_put(struct vmci_ctx *context)
+ {
+-	kref_put(&context->kref, ctx_free_ctx);
++	if (context)
++		kref_put(&context->kref, ctx_free_ctx);
+ }
  
- obj-$(CONFIG_SOC_IMX1) += mach-imx1.o
+ /*
 -- 
-2.25.1
+2.7.4
 
