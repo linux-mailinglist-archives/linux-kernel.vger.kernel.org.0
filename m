@@ -2,64 +2,217 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 66E2318F30B
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Mar 2020 11:42:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0B14F18F302
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Mar 2020 11:41:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728070AbgCWKmI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Mar 2020 06:42:08 -0400
-Received: from smtprelay0192.hostedemail.com ([216.40.44.192]:40866 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727908AbgCWKmH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Mar 2020 06:42:07 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay01.hostedemail.com (Postfix) with ESMTP id 1FBD8100E7B47;
-        Mon, 23 Mar 2020 10:42:07 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,,RULES_HIT:41:355:379:599:973:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1539:1593:1594:1711:1714:1730:1747:1777:1792:2198:2199:2393:2553:2559:2562:2828:2901:3138:3139:3140:3141:3142:3351:3622:3865:3866:3870:3871:3872:3873:4321:5007:10004:10400:10848:11026:11473:11658:11914:12295:12297:12740:12760:12895:13069:13138:13231:13311:13357:13439:14659:14721:21080:21627:30054:30090:30091,0,RBL:none,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:1,LUA_SUMMARY:none
-X-HE-Tag: spot70_125bc865c5d12
-X-Filterd-Recvd-Size: 1557
-Received: from XPS-9350.home (unknown [47.151.136.130])
-        (Authenticated sender: joe@perches.com)
-        by omf08.hostedemail.com (Postfix) with ESMTPA;
-        Mon, 23 Mar 2020 10:42:06 +0000 (UTC)
-Message-ID: <afa74570dacebb3b93d4b9c27d6c8a87186cef2d.camel@perches.com>
-Subject: Re: [PATCH v5] f2fs: fix potential .flags overflow on 32bit
- architecture
-From:   Joe Perches <joe@perches.com>
-To:     Chao Yu <yuchao0@huawei.com>, jaegeuk@kernel.org
-Cc:     linux-f2fs-devel@lists.sourceforge.net,
-        linux-kernel@vger.kernel.org, chao@kernel.org
-Date:   Mon, 23 Mar 2020 03:40:16 -0700
-In-Reply-To: <20200323031807.94473-1-yuchao0@huawei.com>
-References: <20200323031807.94473-1-yuchao0@huawei.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.34.1-2 
+        id S1727956AbgCWKlT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Mar 2020 06:41:19 -0400
+Received: from mga04.intel.com ([192.55.52.120]:8196 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727927AbgCWKlT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Mar 2020 06:41:19 -0400
+IronPort-SDR: KCwF5Ply8UgSeO4S+PGl3DvEZ9Z3MA8VTHGpBKASbQ4cAeW2/7KKt38F9c5Rkva7aB58vKPw0h
+ fA23NPq31pxA==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Mar 2020 03:41:18 -0700
+IronPort-SDR: eOtrzGvSusLMTfRTvFyBPorKV+mVb51eytbuTxs3x6COANHzQSGtcUYUsCG0w+mPYFHObkAHT+
+ w8jYrxNqA8dg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.72,296,1580803200"; 
+   d="scan'208";a="292536636"
+Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
+  by FMSMGA003.fm.intel.com with ESMTP; 23 Mar 2020 03:41:16 -0700
+Received: from kbuild by lkp-server01 with local (Exim 4.89)
+        (envelope-from <lkp@intel.com>)
+        id 1jGKWC-0001Lo-5v; Mon, 23 Mar 2020 18:41:16 +0800
+Date:   Mon, 23 Mar 2020 18:40:42 +0800
+From:   kbuild test robot <lkp@intel.com>
+To:     "x86-ml" <x86@kernel.org>
+Cc:     linux-kernel@vger.kernel.org
+Subject: [tip:perf/core] BUILD SUCCESS
+ 3442a9ecb8e72a33c28a2b969b766c659830e410
+Message-ID: <5e78922a.1XnAcV+Rfg8lBNUp%lkp@intel.com>
+User-Agent: Heirloom mailx 12.5 6/20/10
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2020-03-23 at 11:18 +0800, Chao Yu wrote:
-> f2fs_inode_info.flags is unsigned long variable, it has 32 bits
-> in 32bit architecture, since we introduced FI_MMAP_FILE flag
-> when we support data compression, we may access memory cross
-> the border of .flags field, corrupting .i_sem field, result in
-> below deadlock.
-[]
-> diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
-[]
-> @@ -362,7 +362,7 @@ static int do_read_inode(struct inode *inode)
->  	fi->i_flags = le32_to_cpu(ri->i_flags);
->  	if (S_ISREG(inode->i_mode))
->  		fi->i_flags &= ~F2FS_PROJINHERIT_FL;
-> -	fi->flags = 0;
-> +	bitmap_zero(fi->flags, BITS_TO_LONGS(FI_MAX));
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git  perf/core
+branch HEAD: 3442a9ecb8e72a33c28a2b969b766c659830e410  perf/x86/intel/uncore: Factor out __snr_uncore_mmio_init_box
 
-Sorry, I misled you here, this should be
+elapsed time: 3704m
 
-	bitmap_zero(fi->flags, FI_MAX);
+configs tested: 158
+configs skipped: 0
 
+The following configs have been built successfully.
+More configs may be tested in the coming days.
 
+arm                              allmodconfig
+arm                               allnoconfig
+arm                              allyesconfig
+arm64                            allmodconfig
+arm64                             allnoconfig
+arm64                            allyesconfig
+arm                           efm32_defconfig
+arm                         at91_dt_defconfig
+arm                        shmobile_defconfig
+arm64                               defconfig
+arm                          exynos_defconfig
+arm                        multi_v5_defconfig
+arm                           sunxi_defconfig
+arm                        multi_v7_defconfig
+sparc                            allyesconfig
+ia64                             alldefconfig
+h8300                     edosk2674_defconfig
+microblaze                    nommu_defconfig
+i386                             allyesconfig
+i386                             alldefconfig
+i386                                defconfig
+i386                              allnoconfig
+ia64                             allmodconfig
+ia64                                defconfig
+ia64                              allnoconfig
+ia64                             allyesconfig
+c6x                              allyesconfig
+c6x                        evmc6678_defconfig
+nios2                         10m50_defconfig
+nios2                         3c120_defconfig
+openrisc                    or1ksim_defconfig
+openrisc                 simple_smp_defconfig
+xtensa                       common_defconfig
+xtensa                          iss_defconfig
+nds32                               defconfig
+nds32                             allnoconfig
+csky                                defconfig
+alpha                               defconfig
+h8300                       h8s-sim_defconfig
+m68k                       m5475evb_defconfig
+m68k                             allmodconfig
+h8300                    h8300h-sim_defconfig
+m68k                           sun3_defconfig
+m68k                          multi_defconfig
+arc                                 defconfig
+arc                              allyesconfig
+microblaze                      mmu_defconfig
+powerpc                           allnoconfig
+mips                      fuloong2e_defconfig
+mips                             allyesconfig
+mips                              allnoconfig
+mips                           32r2_defconfig
+mips                             allmodconfig
+parisc                            allnoconfig
+parisc                generic-64bit_defconfig
+parisc                generic-32bit_defconfig
+parisc                           allyesconfig
+x86_64               randconfig-a001-20200323
+x86_64               randconfig-a002-20200323
+x86_64               randconfig-a003-20200323
+i386                 randconfig-a001-20200323
+i386                 randconfig-a002-20200323
+i386                 randconfig-a003-20200323
+alpha                randconfig-a001-20200323
+m68k                 randconfig-a001-20200323
+mips                 randconfig-a001-20200323
+nds32                randconfig-a001-20200323
+parisc               randconfig-a001-20200323
+c6x                  randconfig-a001-20200323
+h8300                randconfig-a001-20200323
+microblaze           randconfig-a001-20200323
+nios2                randconfig-a001-20200323
+sparc64              randconfig-a001-20200323
+csky                 randconfig-a001-20200323
+openrisc             randconfig-a001-20200323
+s390                 randconfig-a001-20200323
+sh                   randconfig-a001-20200323
+xtensa               randconfig-a001-20200323
+x86_64               randconfig-b001-20200323
+x86_64               randconfig-b002-20200323
+x86_64               randconfig-b003-20200323
+i386                 randconfig-b001-20200323
+i386                 randconfig-b002-20200323
+i386                 randconfig-b003-20200323
+x86_64               randconfig-c001-20200323
+x86_64               randconfig-c002-20200323
+x86_64               randconfig-c003-20200323
+i386                 randconfig-c001-20200323
+i386                 randconfig-c002-20200323
+i386                 randconfig-c003-20200323
+x86_64               randconfig-d001-20200323
+x86_64               randconfig-d002-20200323
+x86_64               randconfig-d003-20200323
+i386                 randconfig-d001-20200323
+i386                 randconfig-d002-20200323
+i386                 randconfig-d003-20200323
+x86_64               randconfig-e001-20200323
+x86_64               randconfig-e002-20200323
+x86_64               randconfig-e003-20200323
+i386                 randconfig-e001-20200323
+i386                 randconfig-e002-20200323
+i386                 randconfig-e003-20200323
+x86_64               randconfig-f001-20200323
+x86_64               randconfig-f002-20200323
+x86_64               randconfig-f003-20200323
+i386                 randconfig-f001-20200323
+i386                 randconfig-f002-20200323
+i386                 randconfig-f003-20200323
+x86_64               randconfig-g001-20200323
+x86_64               randconfig-g002-20200323
+x86_64               randconfig-g003-20200323
+i386                 randconfig-g001-20200323
+i386                 randconfig-g002-20200323
+i386                 randconfig-g003-20200323
+x86_64               randconfig-h001-20200323
+x86_64               randconfig-h002-20200323
+x86_64               randconfig-h003-20200323
+i386                 randconfig-h001-20200323
+i386                 randconfig-h002-20200323
+i386                 randconfig-h003-20200323
+arc                  randconfig-a001-20200323
+arm                  randconfig-a001-20200323
+arm64                randconfig-a001-20200323
+ia64                 randconfig-a001-20200323
+powerpc              randconfig-a001-20200323
+sparc                randconfig-a001-20200323
+riscv                            allyesconfig
+riscv                    nommu_virt_defconfig
+riscv                             allnoconfig
+riscv                               defconfig
+riscv                          rv32_defconfig
+riscv                            allmodconfig
+s390                             alldefconfig
+s390                             allmodconfig
+s390                              allnoconfig
+s390                             allyesconfig
+s390                          debug_defconfig
+s390                                defconfig
+s390                       zfcpdump_defconfig
+sh                          rsk7269_defconfig
+sh                               allmodconfig
+sh                            titan_defconfig
+sh                  sh7785lcr_32bit_defconfig
+sh                                allnoconfig
+sparc                               defconfig
+sparc64                             defconfig
+sparc64                           allnoconfig
+sparc64                          allyesconfig
+sparc64                          allmodconfig
+um                           x86_64_defconfig
+um                             i386_defconfig
+um                                  defconfig
+x86_64                              fedora-25
+x86_64                                  kexec
+x86_64                                    lkp
+x86_64                                   rhel
+x86_64                         rhel-7.2-clear
+x86_64                               rhel-7.6
+
+---
+0-DAY CI Kernel Test Service, Intel Corporation
+https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
