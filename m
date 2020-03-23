@@ -2,101 +2,143 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 177EB18F4B5
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Mar 2020 13:35:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8291218F4CA
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Mar 2020 13:39:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728305AbgCWMfb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Mar 2020 08:35:31 -0400
-Received: from mail-pj1-f65.google.com ([209.85.216.65]:36303 "EHLO
-        mail-pj1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728289AbgCWMfa (ORCPT
+        id S1728305AbgCWMjT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Mar 2020 08:39:19 -0400
+Received: from mail-il1-f200.google.com ([209.85.166.200]:55507 "EHLO
+        mail-il1-f200.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728142AbgCWMjS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Mar 2020 08:35:30 -0400
-Received: by mail-pj1-f65.google.com with SMTP id nu11so6039056pjb.1
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Mar 2020 05:35:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=VzwPSZbs06tTKNRZDvRedEakK8DwlP6wfcMOmcIPDiQ=;
-        b=YUvXg8JeKwhErLrKCF1xiN6mn9vENO+w+J9yWrzvE/FIO5ls7p5oPerFSlcD3H9sIq
-         OeZO23NJjY60VCwo3rzZoSPD5vd3kltarou47rqy8q5xQqCTAP9qjSFBj7lOaHFxvSfu
-         SWz8JCaZ8U+bplzJApgAtEp2CHp8wXVn1/Jw5R9fippvB0z0W7muyKthEPT1KyPx3gWG
-         agHVqpB5uF2qG69Q6GfUydSdoKsRMjmtxMMometkHMxsBLyvc0D+BCC47GnzJIXbClNW
-         HsuJt1bCdMWbDk+gglWuybD2XbIPLc1irLXl4Xjz0yosrfyTQEuCNH230M0aqu2upHEN
-         ptFg==
+        Mon, 23 Mar 2020 08:39:18 -0400
+Received: by mail-il1-f200.google.com with SMTP id h10so7136198ilq.22
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Mar 2020 05:39:17 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=VzwPSZbs06tTKNRZDvRedEakK8DwlP6wfcMOmcIPDiQ=;
-        b=C0nx4dSux+mHYRczB+RiCfLjYClBWhjTWSaZs4+Q8mGloaQOPlE3ZplBR4ug+eUmCa
-         XJbdpDQ9fF4f8oYqwqw0jM5d+oZp9wHxn+M6sS0HDDSCfF76G8azJTygtpR4FtBp/I5C
-         bx435VBu3dW5Ys+cIZeR0VkQOCk7jsHa2BcrfsgXO+3HSi8bWk7tmF55cW8kiiGC6cVO
-         0SQBUaErFsilxQYl0Enifz85lbIlGRpQObwJSQq13honrgWsUt5JzqMW0P7+PEIucovE
-         OrUU0CITo1rK9IpsHqSNAjPYMCCArHKFh9xVd7xWBD0hjfqDu/clm6RzfUFOjSBVuD7q
-         aauA==
-X-Gm-Message-State: ANhLgQ3nJypTt2vEqoIjq0ooseeemXki015SsRoxCM7Uj4tVqNa2unFv
-        yeSxnu0Pjs+eECb0FUD+UNY=
-X-Google-Smtp-Source: ADFU+vtarkTB9uyKT4ILRH3RXgRnkAP3/KXJ7VJXqWayfL97rEDtMrQGje9p4tznojK1PkeJy3F5/A==
-X-Received: by 2002:a17:90b:908:: with SMTP id bo8mr24900638pjb.74.1584966929847;
-        Mon, 23 Mar 2020 05:35:29 -0700 (PDT)
-Received: from mail.google.com ([149.248.10.52])
-        by smtp.gmail.com with ESMTPSA id a2sm12229487pjq.20.2020.03.23.05.35.27
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 23 Mar 2020 05:35:29 -0700 (PDT)
-Date:   Mon, 23 Mar 2020 20:35:26 +0800
-From:   Changbin Du <changbin.du@gmail.com>
-To:     linux-arm-kernel@lists.infradead.org
-Cc:     changbin.du@gmail.com, linux-kernel@vger.kernel.org
-Subject: Two questions about cache coherency on arm platforms
-Message-ID: <20200323123524.w67fici6oxzdo665@mail.google.com>
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=1cOyjRHn2L+bFqtxc+Fw7X4e1wgEro2ch7tZOkfYwL8=;
+        b=KZKzfzvD+Q+KAzEuiLHOVdHVXcAIDbaBgY/yVh2JMnOa57JWM9xhcPWg285wSLCOeH
+         USJtXwX1XaBpj7sOUBuzcDQGGSyF7NuuPgcBYtSkrzxyHZZTSf/DbdhFNCRtTf3RIMPl
+         XhYe8BIO7h2Eda73xC2bxVtIbfRX7zvguT7b/vN4/39KdxeVS/N8LuIRgjSJC/YDgqNA
+         UaKINjcXAbiz7aXXBaE1LhLD1n6iN4skFim+W6nWPUO6oRYWEcCsxr188vHRhqp7K+4U
+         vi3COxtzGviUamfqGP+3Uallz31+f9YgM3ZkZnxVfJmrv8OZ1copmwogSUuzkU2+YYgd
+         9TYw==
+X-Gm-Message-State: ANhLgQ2zjaVDbpl5ViDZdZ/3fq6HlURs7kcxjzIOt1oqJ5XZvw9dWuMC
+        a0jxQhTH+vieUWJQCpyeRf1zy1fZcuVsj/UORvK4LwimoqUE
+X-Google-Smtp-Source: ADFU+vuJapsVlDzNfST80/RBMf3N0g3M5ZbnGss9Ev1QH8nWhAo+R9cbXbcb26BzE63HoqloYlyamyFkk7w1d6OLdYvBQ817Szvz
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: NeoMutt/20171215
+X-Received: by 2002:a92:bac3:: with SMTP id t64mr15593062ill.299.1584967157444;
+ Mon, 23 Mar 2020 05:39:17 -0700 (PDT)
+Date:   Mon, 23 Mar 2020 05:39:17 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000006678a105a184ecb7@google.com>
+Subject: KASAN: use-after-free Read in hfa384x_usbin_callback
+From:   syzbot <syzbot+a57b24d359dc5577634a@syzkaller.appspotmail.com>
+To:     andreyknvl@google.com, devel@driverdev.osuosl.org,
+        gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
+        linux-usb@vger.kernel.org, nishkadg.linux@gmail.com,
+        osdevtc@gmail.com, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi, All,
-I am not very familiar with ARM processors. I have two questions about
-cache coherency. Could anyone help me?
+Hello,
 
-1. How is cache coherency maintenanced on ARMv8 big.LITTLE system?
-As far as I know, big cores and little cores are in seperate clusters on
-big.LITTLE system. And cache coherence betwwen clusters requires the
-memory regions are marked as 'Outer Shareable' and is very expensive.
-I have checked the kernel code, and seems it only requires coherence in
-'Inner Shareable' domain. So my question is how can linux guarantees
-cache coherence in 'CPU migration' or 'Global Task Scheduling' models
-wich both clusters are active at the same time? For example, a thread
-ran in Cluster A and modified 'Inner Shareable' memory, then it migrates
-to Cluster B.
+syzbot found the following crash on:
 
-2. ARM64 cache maintenance code sync_icache_aliases() for non-aliasing icache.
-In linux kernel on arm64 platform, the flow function sync_icache_aliases()
-is used to sync i-cache and d-cache. I understand the aliasing case. but
-for non-aliasing case why it just does "dc cvau" (in __flush_icache_range())
-whithout really invalidate the icache? Will i-cache refill from L2 cache?
+HEAD commit:    e17994d1 usb: core: kcov: collect coverage from usb comple..
+git tree:       https://github.com/google/kasan.git usb-fuzzer
+console output: https://syzkaller.appspot.com/x/log.txt?x=15217373e00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=5d64370c438bc60
+dashboard link: https://syzkaller.appspot.com/bug?extid=a57b24d359dc5577634a
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14a720ade00000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1467b755e00000
 
-void sync_icache_aliases(void *kaddr, unsigned long len)
-{
-	unsigned long addr = (unsigned long)kaddr;
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+a57b24d359dc5577634a@syzkaller.appspotmail.com
 
-	if (icache_is_aliasing()) {
-		__clean_dcache_area_pou(kaddr, len);
-		__flush_icache_all();
-	} else {
-		/*
-		 * Don't issue kick_all_cpus_sync() after I-cache invalidation
-		 * for user mappings.
-		 */
-		__flush_icache_range(addr, addr + len);
-	}
-}
+==================================================================
+BUG: KASAN: use-after-free in memcpy include/linux/string.h:381 [inline]
+BUG: KASAN: use-after-free in skb_put_data include/linux/skbuff.h:2284 [inline]
+BUG: KASAN: use-after-free in hfa384x_int_rxmonitor drivers/staging/wlan-ng/hfa384x_usb.c:3412 [inline]
+BUG: KASAN: use-after-free in hfa384x_usbin_rx drivers/staging/wlan-ng/hfa384x_usb.c:3312 [inline]
+BUG: KASAN: use-after-free in hfa384x_usbin_callback+0x1993/0x2360 drivers/staging/wlan-ng/hfa384x_usb.c:3026
+Read of size 34945 at addr ffff8881cda9f33c by task swapper/0/0
 
--- 
-Cheers,
-Changbin Du
+CPU: 0 PID: 0 Comm: swapper/0 Not tainted 5.6.0-rc5-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Call Trace:
+ <IRQ>
+ __dump_stack lib/dump_stack.c:77 [inline]
+ dump_stack+0xef/0x16e lib/dump_stack.c:118
+ print_address_description.constprop.0.cold+0xd3/0x314 mm/kasan/report.c:374
+ __kasan_report.cold+0x37/0x77 mm/kasan/report.c:506
+ kasan_report+0xe/0x20 mm/kasan/common.c:641
+ check_memory_region_inline mm/kasan/generic.c:185 [inline]
+ check_memory_region+0x152/0x1c0 mm/kasan/generic.c:192
+ memcpy+0x20/0x50 mm/kasan/common.c:127
+ memcpy include/linux/string.h:381 [inline]
+ skb_put_data include/linux/skbuff.h:2284 [inline]
+ hfa384x_int_rxmonitor drivers/staging/wlan-ng/hfa384x_usb.c:3412 [inline]
+ hfa384x_usbin_rx drivers/staging/wlan-ng/hfa384x_usb.c:3312 [inline]
+ hfa384x_usbin_callback+0x1993/0x2360 drivers/staging/wlan-ng/hfa384x_usb.c:3026
+ __usb_hcd_giveback_urb+0x29a/0x550 drivers/usb/core/hcd.c:1650
+ usb_hcd_giveback_urb+0x368/0x420 drivers/usb/core/hcd.c:1716
+ dummy_timer+0x1258/0x32ae drivers/usb/gadget/udc/dummy_hcd.c:1966
+ call_timer_fn+0x195/0x6f0 kernel/time/timer.c:1404
+ expire_timers kernel/time/timer.c:1449 [inline]
+ __run_timers kernel/time/timer.c:1773 [inline]
+ __run_timers kernel/time/timer.c:1740 [inline]
+ run_timer_softirq+0x5f9/0x1500 kernel/time/timer.c:1786
+ __do_softirq+0x21e/0x950 kernel/softirq.c:292
+ invoke_softirq kernel/softirq.c:373 [inline]
+ irq_exit+0x178/0x1a0 kernel/softirq.c:413
+ exiting_irq arch/x86/include/asm/apic.h:546 [inline]
+ smp_apic_timer_interrupt+0x141/0x540 arch/x86/kernel/apic/apic.c:1146
+ apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:829
+ </IRQ>
+RIP: 0010:default_idle+0x28/0x300 arch/x86/kernel/process.c:696
+Code: cc cc 41 56 41 55 65 44 8b 2d 44 77 72 7a 41 54 55 53 0f 1f 44 00 00 e8 b6 62 b5 fb e9 07 00 00 00 0f 00 2d ea 0c 53 00 fb f4 <65> 44 8b 2d 20 77 72 7a 0f 1f 44 00 00 5b 5d 41 5c 41 5d 41 5e c3
+RSP: 0018:ffffffff87007d80 EFLAGS: 00000246 ORIG_RAX: ffffffffffffff13
+RAX: 0000000000000007 RBX: ffffffff8702cc40 RCX: 0000000000000000
+RDX: 0000000000000000 RSI: 0000000000000006 RDI: ffffffff8702d48c
+RBP: fffffbfff0e05988 R08: ffffffff8702cc40 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
+R13: 0000000000000000 R14: ffffffff87e607c0 R15: 0000000000000000
+ cpuidle_idle_call kernel/sched/idle.c:154 [inline]
+ do_idle+0x3e0/0x500 kernel/sched/idle.c:269
+ cpu_startup_entry+0x14/0x20 kernel/sched/idle.c:361
+ start_kernel+0xe16/0xe5a init/main.c:998
+ secondary_startup_64+0xb6/0xc0 arch/x86/kernel/head_64.S:242
+
+The buggy address belongs to the page:
+page:ffffea000736a600 refcount:32769 mapcount:0 mapping:0000000000000000 index:0x0 compound_mapcount: 0
+flags: 0x200000000010000(head)
+raw: 0200000000010000 dead000000000100 dead000000000122 0000000000000000
+raw: 0000000000000000 0000000000000000 00008001ffffffff 0000000000000000
+page dumped because: kasan: bad access detected
+
+Memory state around the buggy address:
+ ffff8881cda9ff00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+ ffff8881cda9ff80: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+>ffff8881cdaa0000: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                   ^
+ ffff8881cdaa0080: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+ ffff8881cdaa0100: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+==================================================================
+
+
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+syzbot can test patches for this bug, for details see:
+https://goo.gl/tpsmEJ#testing-patches
