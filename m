@@ -2,106 +2,152 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6C4BC18FDAD
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Mar 2020 20:31:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4A6A118FDC9
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Mar 2020 20:38:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727932AbgCWTbo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Mar 2020 15:31:44 -0400
-Received: from mga01.intel.com ([192.55.52.88]:17166 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727725AbgCWTbo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Mar 2020 15:31:44 -0400
-IronPort-SDR: 56MVZZvxu7sFpJFVVnbnK8QXxHYHD29Jjy+lkrMo6CyBJDAES0vr4G3rcz9KIoqJYPJR0s+9B8
- FFKGjNNupLmA==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Mar 2020 12:31:43 -0700
-IronPort-SDR: Icf8e98MiUEH/hHIfhewV+VPnMA8LD7cxcdLyLi/5k33n+f3hMfzJSh8lJjfoeiPTl1h+ZzdSu
- dFKFzC5AQiNg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.72,297,1580803200"; 
-   d="scan'208";a="235316548"
-Received: from jacob-builder.jf.intel.com (HELO jacob-builder) ([10.7.199.155])
-  by orsmga007.jf.intel.com with ESMTP; 23 Mar 2020 12:31:43 -0700
-Date:   Mon, 23 Mar 2020 12:37:26 -0700
-From:   Jacob Pan <jacob.jun.pan@linux.intel.com>
-To:     Lu Baolu <baolu.lu@linux.intel.com>
-Cc:     iommu@lists.linux-foundation.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Joerg Roedel <joro@8bytes.org>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Jean-Philippe Brucker <jean-philippe@linaro.com>,
-        Yi Liu <yi.l.liu@intel.com>,
-        "Tian, Kevin" <kevin.tian@intel.com>,
-        Raj Ashok <ashok.raj@intel.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Eric Auger <eric.auger@redhat.com>,
-        jacob.jun.pan@linux.intel.com
-Subject: Re: [PATCH V10 02/11] iommu/uapi: Define a mask for bind data
-Message-ID: <20200323123726.64974d83@jacob-builder>
-In-Reply-To: <ae2a1a46-07ed-8445-d905-37dda1459e28@linux.intel.com>
-References: <1584746861-76386-1-git-send-email-jacob.jun.pan@linux.intel.com>
-        <1584746861-76386-3-git-send-email-jacob.jun.pan@linux.intel.com>
-        <ae2a1a46-07ed-8445-d905-37dda1459e28@linux.intel.com>
-Organization: OTC
-X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
+        id S1725893AbgCWTiB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Mar 2020 15:38:01 -0400
+Received: from mail-out.m-online.net ([212.18.0.10]:48132 "EHLO
+        mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725710AbgCWTiA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Mar 2020 15:38:00 -0400
+Received: from frontend01.mail.m-online.net (unknown [192.168.8.182])
+        by mail-out.m-online.net (Postfix) with ESMTP id 48mPmh58Qkz1rrKb;
+        Mon, 23 Mar 2020 20:37:56 +0100 (CET)
+Received: from localhost (dynscan1.mnet-online.de [192.168.6.70])
+        by mail.m-online.net (Postfix) with ESMTP id 48mPmh3dmXz1qyDd;
+        Mon, 23 Mar 2020 20:37:56 +0100 (CET)
+X-Virus-Scanned: amavisd-new at mnet-online.de
+Received: from mail.mnet-online.de ([192.168.8.182])
+        by localhost (dynscan1.mail.m-online.net [192.168.6.70]) (amavisd-new, port 10024)
+        with ESMTP id la4VWb-ZJ090; Mon, 23 Mar 2020 20:37:55 +0100 (CET)
+X-Auth-Info: 2HAWIBbYvus5V2XKLd5HdN0JKCCAwwqp/nMJ0D/R/6c=
+Received: from [IPv6:::1] (unknown [195.140.253.167])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.mnet-online.de (Postfix) with ESMTPSA;
+        Mon, 23 Mar 2020 20:37:55 +0100 (CET)
+Subject: Re: [PATCH v3 2/2] pinctrl: stm32: Add level interrupt support to
+ gpio irq chip
+To:     Marc Zyngier <maz@kernel.org>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel@vger.kernel.org,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
+References: <20200219143229.18084-1-alexandre.torgue@st.com>
+ <20200219143229.18084-3-alexandre.torgue@st.com>
+ <CACRpkdZ7uq4U6GBQQQh=pTLf4wW3KfH3Zrz9z_3ZQgoaJD9Ynw@mail.gmail.com>
+ <c991edca3e8925cf0489c0a5676f77b2@kernel.org>
+ <a7fc5e43-34c2-a4e6-e0c5-1584f17fb024@denx.de>
+ <8d6f6646-56e4-5218-9990-f0c96862dc83@denx.de> <20200323193157.038f36f9@why>
+From:   Marek Vasut <marex@denx.de>
+Message-ID: <8e2795d8-4a8b-35a7-7d3f-e24d011878f6@denx.de>
+Date:   Mon, 23 Mar 2020 20:37:54 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20200323193157.038f36f9@why>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 22 Mar 2020 09:29:32 +0800
-Lu Baolu <baolu.lu@linux.intel.com> wrote:
-
-> On 2020/3/21 7:27, Jacob Pan wrote:
-> > Memory type related flags can be grouped together for one simple
-> > check.
-> > 
-> > ---
-> > v9 renamed from EMT to MTS since these are memory type support
-> > flags. ---
-> > 
-> > Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
-> > ---
-> >   include/uapi/linux/iommu.h | 5 ++++-
-> >   1 file changed, 4 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/include/uapi/linux/iommu.h b/include/uapi/linux/iommu.h
-> > index 4ad3496e5c43..d7bcbc5f79b0 100644
-> > --- a/include/uapi/linux/iommu.h
-> > +++ b/include/uapi/linux/iommu.h
-> > @@ -284,7 +284,10 @@ struct iommu_gpasid_bind_data_vtd {
-> >   	__u32 pat;
-> >   	__u32 emt;
-> >   };
-> > -
-> > +#define IOMMU_SVA_VTD_GPASID_MTS_MASK
-> > (IOMMU_SVA_VTD_GPASID_CD | \
-> > +					 IOMMU_SVA_VTD_GPASID_EMTE
-> > | \
-> > +					 IOMMU_SVA_VTD_GPASID_PCD
-> > |  \
-> > +
-> > IOMMU_SVA_VTD_GPASID_PWT)  
+On 3/23/20 8:31 PM, Marc Zyngier wrote:
+> On Mon, 23 Mar 2020 20:19:39 +0100
+> Marek Vasut <marex@denx.de> wrote:
 > 
-> As name implies, can this move to intel-iommu.h?
+>> On 3/23/20 8:04 PM, Marek Vasut wrote:
+>>> On 2/20/20 10:17 AM, Marc Zyngier wrote:
+>>>> On 2020-02-20 09:04, Linus Walleij wrote:
+>>>>> On Wed, Feb 19, 2020 at 3:32 PM Alexandre Torgue
+>>>>> <alexandre.torgue@st.com> wrote:
+>>>>>
+>>>>>> GPIO hardware block is directly linked to EXTI block but EXTI handles
+>>>>>> external interrupts only on edge. To be able to handle GPIO interrupt on
+>>>>>> level a "hack" is done in gpio irq chip: parent interrupt (exti irq
+>>>>>> chip)
+>>>>>> is retriggered following interrupt type and gpio line value.
+>>>>>>
+>>>>>> Signed-off-by: Alexandre Torgue <alexandre.torgue@st.com>
+>>>>>> Tested-by: Marek Vasut <marex@denx.de>
+>>>>>
+>>>>> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+>>>>>
+>>>>> If Marc want to merge it with patch 1/2 go ahead!
+>>>>
+>>>> I'll queue the whole thing for 5.7.
+>>>
+>>> I have a feeling this doesn't work with threaded interrupts.
+>>>
+>>> If the interrupt handler runs in a thread context, the EOI will happen
+>>> almost right away (while the IRQ handler runs) and so will the code
+>>> handling the IRQ retriggering. But since the IRQ handler still runs and
+>>> didn't return yet, the retriggering doesn't cause the IRQ handler to be
+>>> called again once it finishes, even if the IRQ line is still asserted.
+>>> And that could result in some of the retriggers now happening I think.
+>>> Or am I doing something wrong ?
+>>
+>> The patch below makes my usecase work, but I don't know whether it's
+>> correct. Basically once the threaded IRQ handler finishes and unmasks
+>> the IRQ, check whether the line is asserted and retrigger if so.
+>>
+>> diff --git a/drivers/pinctrl/stm32/pinctrl-stm32.c
+>> b/drivers/pinctrl/stm32/pinctrl-stm32.c
+>> index 9ac9ecfc2f34..060dbcb7ae72 100644
+>> --- a/drivers/pinctrl/stm32/pinctrl-stm32.c
+>> +++ b/drivers/pinctrl/stm32/pinctrl-stm32.c
+>> @@ -371,12 +371,26 @@ static void
+>> stm32_gpio_irq_release_resources(struct irq_data *irq_data)
+>>         gpiochip_unlock_as_irq(&bank->gpio_chip, irq_data->hwirq);
+>>  }
+>>
+>> +static void stm32_gpio_irq_unmask(struct irq_data *d)
+>> +{
+>> +       struct stm32_gpio_bank *bank = d->domain->host_data;
+>> +       int level;
+>> +
+>> +       irq_chip_unmask_parent(d);
+>> +
+>> +       /* If level interrupt type then retrig */
+>> +       level = stm32_gpio_get(&bank->gpio_chip, d->hwirq);
+>> +       if ((level == 0 && bank->irq_type[d->hwirq] ==
+>> IRQ_TYPE_LEVEL_LOW) ||
+>> +           (level == 1 && bank->irq_type[d->hwirq] == IRQ_TYPE_LEVEL_HIGH))
+>> +               irq_chip_retrigger_hierarchy(d);
+>> +}
+>> +
+>>  static struct irq_chip stm32_gpio_irq_chip = {
+>>         .name           = "stm32gpio",
+>>         .irq_eoi        = stm32_gpio_irq_eoi,
+>>         .irq_ack        = irq_chip_ack_parent,
+>>         .irq_mask       = irq_chip_mask_parent,
+>> -       .irq_unmask     = irq_chip_unmask_parent,
+>> +       .irq_unmask     = stm32_gpio_irq_unmask,
+>>         .irq_set_type   = stm32_gpio_set_type,
+>>         .irq_set_wake   = irq_chip_set_wake_parent,
+>>         .irq_request_resources = stm32_gpio_irq_request_resources,
+>>
 > 
-I also thought about this but the masks are in vendor specific part of
-the UAPI.
-
-> Best regards,
-> baolu
+> OK, I see your problem now.
 > 
-> >   /**
-> >    * struct iommu_gpasid_bind_data - Information about device and
-> > guest PASID binding
-> >    * @version:	Version of this data structure
-> >   
+> The usual flow is along the line of Ack+Eoi, and that's what the
+> current code guarantees.
+> 
+> Threaded interrupts do Ack+Mask+Eoi, followed by an Unmask once the
+> thread finishes. This unmask needs to do the retrigger as well, as you
+> found out.
+> 
+> Can you please refactor the above so that we have the common code
+> between unmask and eoi in a separate function, send a proper patch, and
+> I'll apply it on top of the current irq/irqchip-5.7 branch.
 
-[Jacob Pan]
+Sure, I can. Do we still need this retriggering in the irq_eoi too ?
+
+Also, are there any other hidden details I might've missed ?
