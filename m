@@ -2,113 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E656918FA57
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Mar 2020 17:49:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 03A5118FA5C
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Mar 2020 17:50:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727600AbgCWQtm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Mar 2020 12:49:42 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:41376 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727067AbgCWQtm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Mar 2020 12:49:42 -0400
-Received: by mail-lj1-f195.google.com with SMTP id n17so5029452lji.8;
-        Mon, 23 Mar 2020 09:49:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:from:to:cc:references:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=qhFCWeL+rFInk3bPHjEA9ZVNIShgAywBeYzVQNJyjnc=;
-        b=d5Mx9bupBBr8PrzmgTgsFR7/M+Ctng0M8cH49sMpfEoTyJ9lcR59HvKbWFdGlb6qoj
-         0cWox1slQ/osr/jLC0UjEHib0nVQZFIruWsiGOW3RxjxJhD+Xc2IkxpAOHS6htYXm/Wq
-         CNMRpGebCJhE5l4CPkpra8WbC/bme7CjFH/3Dg3zINHS+0JCW6xfTyph4hRpqG/IFzPw
-         8iMJ/8xkzVOBG1tFywGL12tolFxrxkw6+rnEBxGj2VLL3WTeypD0aaytJQLEX7FaiC+M
-         LH7G/EA1rA+Wssk/fYW4zSjIx6kwB2JMyoB83P2oJaDuQu/ymGogvurNmhRP9gL4/KUl
-         YeEg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=qhFCWeL+rFInk3bPHjEA9ZVNIShgAywBeYzVQNJyjnc=;
-        b=shAeDRzPPrLrvDAMi+vRtgXi0prn1LhbBBeiuOFaJCj0i0fSu7NymVMM5QxVs/tdD3
-         krdAqy2XYKlQbR6Sg8gtL2TahGLMvBawuzugdl8zdX2NHYtHitOg0SdRslRmwVtnpXed
-         iIJkxvvfHcq5Enpvpd104cxkKLwIhSLmVSFtWWpl7eXIN5Z3FXE5+v7RC/Cj6jHatp/c
-         OQgXDQBF6NjRBzvDosH9DhkZMVxMfob6mz9YgT1nnS/rQb+naqB5rd1oVG0RrJ2ZWUY3
-         r4W15/l3y9KWAbLCMqnbqHaeIc4umj7UJFKNFsHx1AbdzihS/52h2dInW1F9cV1EYJLh
-         /UMQ==
-X-Gm-Message-State: ANhLgQ3tnCwidfHshH0uGS0SUdfofn3+OHUGhN7EYJSWY5+hXWm8KXod
-        j2npXqlDBqZ/OJ0dMiKss0xjH82I
-X-Google-Smtp-Source: ADFU+vuDnRyR4TA0KiU8EGeB+376glc1HzjE04SBb5yigFJd8YWFX717LqkEyyYiDH/S57kVviYPdQ==
-X-Received: by 2002:a2e:94c8:: with SMTP id r8mr14569628ljh.28.1584982178682;
-        Mon, 23 Mar 2020 09:49:38 -0700 (PDT)
-Received: from [192.168.2.145] (94-29-39-224.dynamic.spd-mgts.ru. [94.29.39.224])
-        by smtp.googlemail.com with ESMTPSA id k23sm8661150ljk.40.2020.03.23.09.49.37
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 23 Mar 2020 09:49:38 -0700 (PDT)
-Subject: Re: [PATCH v3 00/10] Introduce NVIDIA Tegra Partition Table
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Jens Axboe <axboe@kernel.dk>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
-        David Heidelberg <david@ixit.cz>,
-        Peter Geis <pgwipeout@gmail.com>,
-        Stephen Warren <swarren@wwwdotorg.org>,
-        Nicolas Chauvet <kwizart@gmail.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Billy Laws <blaws05@gmail.com>
-Cc:     linux-tegra@vger.kernel.org, linux-block@vger.kernel.org,
-        Andrey Danin <danindrey@mail.ru>,
-        Gilles Grandou <gilles@grandou.net>,
-        Ryan Grachek <ryan@edited.us>, linux-mmc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20200323163431.7678-1-digetx@gmail.com>
-Message-ID: <021a340f-e289-b1ee-db4f-ef61ee2b4004@gmail.com>
-Date:   Mon, 23 Mar 2020 19:49:37 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        id S1727715AbgCWQuD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Mar 2020 12:50:03 -0400
+Received: from mga02.intel.com ([134.134.136.20]:36306 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727067AbgCWQuD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Mar 2020 12:50:03 -0400
+IronPort-SDR: AuCpJwR6e+ND5waOSVyALQJStdbEozrPuOUoz/2Mxvlrcu1zQ1eQBxNe6dslk0xrCuFupYLwkT
+ TTZ8E36hxLXg==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Mar 2020 09:50:02 -0700
+IronPort-SDR: YOjnM1lhGB6aAHFakbm39vv7nwcKvrPIL1qKbD+3OLR+h+dn9jhdjj/+lZlvnev8270tbaFZmK
+ d5gqoSd7NAcQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.72,297,1580803200"; 
+   d="scan'208";a="447452716"
+Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.202])
+  by fmsmga006.fm.intel.com with ESMTP; 23 Mar 2020 09:50:01 -0700
+Date:   Mon, 23 Mar 2020 09:50:01 -0700
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     Vitaly Kuznetsov <vkuznets@redhat.com>
+Cc:     Paolo Bonzini <pbonzini@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Ben Gardon <bgardon@google.com>,
+        Junaid Shahid <junaids@google.com>,
+        Liran Alon <liran.alon@oracle.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        John Haxby <john.haxby@oracle.com>,
+        Miaohe Lin <linmiaohe@huawei.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>
+Subject: Re: [PATCH v3 04/37] KVM: nVMX: Invalidate all roots when emulating
+ INVVPID without EPT
+Message-ID: <20200323165001.GR28711@linux.intel.com>
+References: <20200320212833.3507-1-sean.j.christopherson@intel.com>
+ <20200320212833.3507-5-sean.j.christopherson@intel.com>
+ <87v9mv84qu.fsf@vitty.brq.redhat.com>
+ <20200323160432.GJ28711@linux.intel.com>
+ <87lfnr820r.fsf@vitty.brq.redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <20200323163431.7678-1-digetx@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87lfnr820r.fsf@vitty.brq.redhat.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-23.03.2020 19:34, Dmitry Osipenko пишет:
-> Some NVIDIA Tegra devices have GPT entry at a wrong location and others may
-> even not have it at all. So either a custom workaround for GPT parsing or
-> TegraPT support is needed for those devices if we want to support them in
-> upstream kernel. The former solution was already rejected [1], let's try
-> the latter.
+On Mon, Mar 23, 2020 at 05:33:08PM +0100, Vitaly Kuznetsov wrote:
+> Sean Christopherson <sean.j.christopherson@intel.com> writes:
 > 
-> [1] https://patchwork.ozlabs.org/patch/1240809/
+> > On Mon, Mar 23, 2020 at 04:34:17PM +0100, Vitaly Kuznetsov wrote:
+> >> Sean Christopherson <sean.j.christopherson@intel.com> writes:
+> >> 
+> >> > From: Junaid Shahid <junaids@google.com>
+> >> >
+> >> > Free all roots when emulating INVVPID for L1 and EPT is disabled, as
+> >> > outstanding changes to the page tables managed by L1 need to be
+> >> > recognized.  Because L1 and L2 share an MMU when EPT is disabled, and
+> >> > because VPID is not tracked by the MMU role, all roots in the current
+> >> > MMU (root_mmu) need to be freed, otherwise a future nested VM-Enter or
+> >> > VM-Exit could do a fast CR3 switch (without a flush/sync) and consume
+> >> > stale SPTEs.
+> >> >
+> >> > Fixes: 5c614b3583e7b ("KVM: nVMX: nested VPID emulation")
+> >> > Signed-off-by: Junaid Shahid <junaids@google.com>
+> >> > [sean: ported to upstream KVM, reworded the comment and changelog]
+> >> > Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+> >> > ---
+> >> >  arch/x86/kvm/vmx/nested.c | 14 ++++++++++++++
+> >> >  1 file changed, 14 insertions(+)
+> >> >
+> >> > diff --git a/arch/x86/kvm/vmx/nested.c b/arch/x86/kvm/vmx/nested.c
+> >> > index 9624cea4ed9f..bc74fbbf33c6 100644
+> >> > --- a/arch/x86/kvm/vmx/nested.c
+> >> > +++ b/arch/x86/kvm/vmx/nested.c
+> >> > @@ -5250,6 +5250,20 @@ static int handle_invvpid(struct kvm_vcpu *vcpu)
+> >> >  		return kvm_skip_emulated_instruction(vcpu);
+> >> >  	}
+> >> >  
+> >> > +	/*
+> >> > +	 * Sync the shadow page tables if EPT is disabled, L1 is invalidating
+> >> > +	 * linear mappings for L2 (tagged with L2's VPID).  Free all roots as
+> >> > +	 * VPIDs are not tracked in the MMU role.
+> >> > +	 *
+> >> > +	 * Note, this operates on root_mmu, not guest_mmu, as L1 and L2 share
+> >> > +	 * an MMU when EPT is disabled.
+> >> > +	 *
+> >> > +	 * TODO: sync only the affected SPTEs for INVDIVIDUAL_ADDR.
+> >> > +	 */
+> >> > +	if (!enable_ept)
+> >> > +		kvm_mmu_free_roots(vcpu, &vcpu->arch.root_mmu,
+> >> > +				   KVM_MMU_ROOTS_ALL);
+> >> > +
+> >> 
+> >> This is related to my remark on the previous patch; the comment above
+> >> makes me think I'm missing something obvious, enlighten me please)
+> >> 
+> >> My understanding is that L1 and L2 will share arch.root_mmu not only
+> >> when EPT is globally disabled, we seem to switch between
+> >> root_mmu/guest_mmu only when nested_cpu_has_ept(vmcs12) but different L2
+> >> guests may be different on this. Do we need to handle this somehow?
+> >
+> > guest_mmu is used iff nested EPT is enabled, which requires enable_ept=1.
+> > enable_ept is global and cannot be changed without reloading kvm_intel.
+> >
+> > This most definitely over-invalidates, e.g. it blasts away L1's page
+> > tables.  But, fixing that requires tracking VPID in mmu_role and/or adding
+> > support for using guest_mmu when L1 isn't using TDP, i.e. nested EPT is
+> > disabled.  Assuming the vast majority of nested deployments enable EPT in
+> > L0, the cost of both options likely outweighs the benefits.
+> >
 > 
-> Big thanks to everyone who helped with figuring out the TegraPT format!
-> 
-> Changelog:
-> 
-> v3: - Fixed "BUG: KASAN: slab-out-of-bounds in tegra_partition". Thanks to
->       Peter Geis for noticing the problem.
-> 
->     - The MMC boot partitions scanning is now opt-in. See this patch:
-> 
->         mmc: block: Support partition-table scanning on boot partitions
-> 
->     - The found MMC boot partitions won't be assigned to the MMC boot
->       block device ever due to the new GENHD_FL_PART_SCAN_ONCE flag.
-> 
->       This makes us to ensure that the old behavior of the MMC core is
->       preserved for a non-Tegra MMC-block users.
-> 
->     New patches in v3:
-> 
->         block: Introduce GENHD_FL_PART_SCAN_ONCE
->         mmc: sdhci-tegra: Enable boot partitions scanning on Tegra20 and Tegra30
+> Yes but my question rather was: what if global 'enable_ept' is true but
+> nested EPT is not being used by L1, don't we still need to do
+> kvm_mmu_free_roots(&vcpu->arch.root_mmu) here?
 
-I forgot to mention that the TegraPT Kconfig entry now depends on MMC,
-which was suggested by Randy Dunlap in the review comment to the v2.
+No, because L0 isn't shadowing the L1->L2 page tables, i.e. there can't be
+unsync'd SPTEs for L2.  The vpid_sync_*() above flushes the TLB for L2's
+effective VPID, which is all that's required.
