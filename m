@@ -2,124 +2,190 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A751018EE8A
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Mar 2020 04:34:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6488818EE91
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Mar 2020 04:38:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727105AbgCWDeR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 22 Mar 2020 23:34:17 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:38737 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726979AbgCWDeQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Mar 2020 23:34:16 -0400
-Received: by mail-lj1-f195.google.com with SMTP id w1so12928507ljh.5
-        for <linux-kernel@vger.kernel.org>; Sun, 22 Mar 2020 20:34:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:from:date:message-id:subject:to:cc;
-        bh=fVeSqe6WLUik8YqlISLlzVYFaPVNJoGzH5CdvUMY7Mg=;
-        b=GYG5N/FnCemSWnoHlBQ/q/1hv8MVIo1L2tt3+lDvezBTJLCJBdS83ODR2HyQMD5HjQ
-         avbRqtK9J07v7f32Ri8yyxeC16hdcC2Rt8yAK8TTIIXRROparEliR3hWR4ate36dpqwy
-         kGmVKZpy/xagQNn3YJMdAtGQzh4CgVzD6Gi043z3ywLT2OVzi+G9G3OxeODtaDDS6I0L
-         q431banXrcibH7UbzFzFwURwYwxH6CpN/YUvN3p2C8Hk0KyXQ4ZBXMochDeSc8YoNCtv
-         n4wn+RSt6HH87+QKZSOXG2sDRZfyZy0HKiUc/ifrwjZXu5lKksGKgfO7FJ+6LTCXAL7V
-         I0Qw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
-        bh=fVeSqe6WLUik8YqlISLlzVYFaPVNJoGzH5CdvUMY7Mg=;
-        b=Jdp2c4CLBMNCjNKjTYRQOUzC1G2C+QVWdDcARi6TMhQisBr3oH3jMMLw4XjsJYF82A
-         V8sxVbX9BT8zDLwcCkQzfaGxQ2SsQ8LzZskLFN9ZAMSDfKgSp14wfmPIHZjMK00eZEAR
-         37CqBo4i9iCfhW2ZO8J6vp9g779tco64p0zV4tqtP/kJxiaj//4F4KYYbhEnGnx9inlv
-         xgK3FhzN2JIXhdlBGFN/Vx5wvuHYyFtb/Pbrw8Ha8b8Aj9hBXZ/PFz6mvNtCxiyVo5O4
-         I/6ZhY/kD7RrJsq7zG6Kr68gYMmiHTdnj1nNRzdo4Xapvgv8EmzHxdtJfm7Dc+5ykVcf
-         2bZA==
-X-Gm-Message-State: ANhLgQ21r/c0kpod54IViYlpileKREdU9Pckodv0dCVsMzOPOLr1ySPh
-        Ig7MyzIYdW5j+0bYvlZT/SDSrG5Q7hBBy79OkiI2NA==
-X-Google-Smtp-Source: ADFU+vsR9MjnHVQYElmVrZah9BBnjNY8zjOorcLoPvHg0nDR1a3gTIlgR1WImXZIwm0DGAj6+mR+QxMwAd49s6dZflY=
-X-Received: by 2002:a2e:9d84:: with SMTP id c4mr12648082ljj.51.1584934452677;
- Sun, 22 Mar 2020 20:34:12 -0700 (PDT)
+        id S1727183AbgCWDi1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 22 Mar 2020 23:38:27 -0400
+Received: from bilbo.ozlabs.org ([203.11.71.1]:37435 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726979AbgCWDi0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 22 Mar 2020 23:38:26 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 48m0TV55Kkz9sR4;
+        Mon, 23 Mar 2020 14:38:22 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1584934703;
+        bh=uPCNoVEw+QAUy93lHSU8pF9nTZf1T0t1eG2TShFgHs8=;
+        h=Date:From:To:Cc:Subject:From;
+        b=YCB0w4xVdG5QzA+Q8SlpD+JA4Q//qAbKYOqM87LOUhrlXiIJV1l+7B5OlKBKuFZSe
+         RuUvIOFnYJ0XC7qZSQk3vZ5wegG6rxqCizZnOufjl3HIJ06QXmjX6R1uoEpTyPQ3vj
+         lhHR/PsBJATIOkLNzaq25IKPt+oonLdHtLz+tBj70bAWsAt5W5tjuxcaRKiHA7CANT
+         7m9qYQJkCtFsHpCCl+gqEWoNvHDgr7JvAwOBq89Wn3dV02oIXsRuasdsYo2xOP5TNc
+         10PZwFgnNtxJwM2UKGN873OvGVPJxpNlIERcFvaNRvfOEjTl3FioByytyoiqVZkXez
+         DeKAVXbWyBw/A==
+Date:   Mon, 23 Mar 2020 14:38:16 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Greg KH <greg@kroah.com>, Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Hans de Goede <hdegoede@redhat.com>
+Subject: linux-next: manual merge of the driver-core tree with the
+ drivers-x86 tree
+Message-ID: <20200323143816.345b3d54@canb.auug.org.au>
 MIME-Version: 1.0
-From:   Kyungtae Kim <kt0755@gmail.com>
-Date:   Sun, 22 Mar 2020 23:34:01 -0400
-Message-ID: <CAEAjamv3wT4aqF0y1_PHG_=cbzH-ATsP6TiV5Zt5Qc+ACVnOPw@mail.gmail.com>
-Subject: UBSAN: Undefined behaviour in drivers/tty/vt/keyboard.c
-To:     Greg KH <gregkh@linuxfoundation.org>, jslaby@suse.com,
-        slyfox@gentoo.org, Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        rei4dan@gmail.com
-Cc:     Dave Tian <dave.jing.tian@gmail.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; boundary="Sig_/soBEOiYHNlehT2faRHoYIpf";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We report a bug (in linux-5.5.11) found by FuzzUSB (modified version
-of syzkaller)
+--Sig_/soBEOiYHNlehT2faRHoYIpf
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Seems the variable "npadch" has a very large value (i.e., 333333333)
-as a result of multiple executions of the function "k_ascii" (keyboard.c:888)
-while the variable "base" has 10.
-So their multiplication at line 888 in "k_ascii" will become
-larger than the max of type int, causing such an integer overflow.
+Hi all,
 
-I believe this can be solved by checking for overflow ahead of operations
-e.g., using check_mul_overflow().
+Today's linux-next merge of the driver-core tree got a conflict in:
 
-kernel config: https://kt0755.github.io/etc/config_v5.5.11
+  drivers/platform/x86/Kconfig
 
-==================================================================
-UBSAN: Undefined behaviour in drivers/tty/vt/keyboard.c:888:19
-signed integer overflow:
-10 * 333333333 cannot be represented in type 'int'
-CPU: 0 PID: 0 Comm: swapper/0 Not tainted 5.5.11 #2
-Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS
-1.10.2-1ubuntu1 04/01/2014
-Call Trace:
- <IRQ>
- __dump_stack lib/dump_stack.c:77 [inline]
- dump_stack+0xce/0x128 lib/dump_stack.c:118
- ubsan_epilogue+0xe/0x30 lib/ubsan.c:154
- handle_overflow+0x141/0x150 lib/ubsan.c:184
- __ubsan_handle_mul_overflow+0x2a/0x40 lib/ubsan.c:205
- k_ascii+0xbf/0xd0 drivers/tty/vt/keyboard.c:888
- kbd_keycode drivers/tty/vt/keyboard.c:1477 [inline]
- kbd_event+0x85d/0x3b90 drivers/tty/vt/keyboard.c:1495
- input_to_handler+0x3a9/0x4b0 drivers/input/input.c:118
- input_pass_values.part.8+0x25e/0x690 drivers/input/input.c:145
- input_pass_values drivers/input/input.c:181 [inline]
- input_repeat_key+0x1fa/0x2e0 drivers/input/input.c:193
- call_timer_fn+0x226/0x7a0 kernel/time/timer.c:1404
- expire_timers kernel/time/timer.c:1449 [inline]
- __run_timers kernel/time/timer.c:1773 [inline]
- run_timer_softirq+0x661/0x13e0 kernel/time/timer.c:1786
- __do_softirq+0x262/0xb46 kernel/softirq.c:292
- invoke_softirq kernel/softirq.c:373 [inline]
- irq_exit+0x161/0x1b0 kernel/softirq.c:413
- exiting_irq arch/x86/include/asm/apic.h:546 [inline]
- smp_apic_timer_interrupt+0x137/0x500 arch/x86/kernel/apic/apic.c:1146
- apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:829
- </IRQ>
-RIP: 0010:default_idle+0x2d/0x2e0 arch/x86/kernel/process.c:700
-Code: e5 41 57 41 56 65 44 8b 35 78 c6 5c 7a 41 55 41 54 53 0f 1f 44
-00 00 e8 91 dd a3 fb e9 07 00 00 00 0f 00 2d 85 48 5d 00 fb f4 <65> 44
-8b 35 53 c6 5c 7a 0f 1f 44 00 00 5b 41 5c 41 5d 41 5e 41 5f
-RSP: 0018:ffffffff87007ce8 EFLAGS: 00000292 ORIG_RAX: ffffffffffffff13
-RAX: 0000000000000007 RBX: ffffffff87032700 RCX: 0000000000000000
-RDX: 0000000000000000 RSI: 0000000000000006 RDI: ffffffff87032f4c
-RBP: ffffffff87007d10 R08: fffffbfff0e064e1 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
-R13: ffffffff88c37a80 R14: 0000000000000000 R15: 0000000000000000
- arch_cpu_idle+0xa/0x10 arch/x86/kernel/process.c:690
- default_idle_call+0x50/0x70 kernel/sched/idle.c:94
- cpuidle_idle_call kernel/sched/idle.c:154 [inline]
- do_idle+0x345/0x550 kernel/sched/idle.c:269
- cpu_startup_entry+0x18/0x20 kernel/sched/idle.c:361
- rest_init+0x240/0x3d0 init/main.c:451
- arch_call_rest_init+0xe/0x1b
- start_kernel+0x81c/0x858 init/main.c:785
- x86_64_start_reservations+0x2a/0x2c arch/x86/kernel/head64.c:490
- x86_64_start_kernel+0x77/0x7a arch/x86/kernel/head64.c:471
- secondary_startup_64+0xa4/0xb0 arch/x86/kernel/head_64.S:242
-==================================================================
+between commit:
+
+  45a3d578f2ed ("platform/x86: Kconfig: Group modules by companies and func=
+tions")
+
+from the drivers-x86 tree and commit:
+
+  835e1b86ef8c ("platform/x86: touchscreen_dmi: Add EFI embedded firmware i=
+nfo support")
+
+from the driver-core tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc drivers/platform/x86/Kconfig
+index ae75b19e8649,cd9e2758c479..000000000000
+--- a/drivers/platform/x86/Kconfig
++++ b/drivers/platform/x86/Kconfig
+@@@ -1134,46 -978,54 +1134,47 @@@ config TOPSTAR_LAPTO
+  	depends on ACPI
+  	depends on INPUT
+  	select INPUT_SPARSEKMAP
+ -	help
+ -	  This driver provides support for the Intel Virtual Button interface.
+ -	  Some laptops require this driver for power button support.
+ -
+ -	  To compile this driver as a module, choose M here: the module will
+ -	  be called intel_vbtn.
+ -
+ -config INTEL_SCU_IPC
+ -	bool "Intel SCU IPC Support"
+ -	depends on X86_INTEL_MID
+ -	default y
+ +	select LEDS_CLASS
+ +	select NEW_LEDS
+  	---help---
+ -	  IPC is used to bridge the communications between kernel and SCU on
+ -	  some embedded Intel x86 platforms. This is not needed for PC-type
+ -	  machines.
+ +	  This driver adds support for hotkeys found on Topstar laptops.
+ =20
+ -config INTEL_SCU_IPC_UTIL
+ -	tristate "Intel SCU IPC utility driver"
+ -	depends on INTEL_SCU_IPC
+ -	---help---
+ -	  The IPC Util driver provides an interface with the SCU enabling
+ -	  low level access for debug work and updating the firmware. Say
+ -	  N unless you will be doing this on an Intel MID platform.
+ +	  If you have a Topstar laptop, say Y or M here.
+ =20
+ -config INTEL_MID_POWER_BUTTON
+ -	tristate "power button driver for Intel MID platforms"
+ -	depends on INTEL_SCU_IPC && INPUT
+ +config I2C_MULTI_INSTANTIATE
+ +	tristate "I2C multi instantiate pseudo device driver"
+ +	depends on I2C && ACPI
+  	help
+ -	  This driver handles the power button on the Intel MID platforms.
+ +	  Some ACPI-based systems list multiple i2c-devices in a single ACPI
+ +	  firmware-node. This driver will instantiate separate i2c-clients
+ +	  for each device in the firmware-node.
+ =20
+ -	  If unsure, say N.
+ +	  To compile this driver as a module, choose M here: the module
+ +	  will be called i2c-multi-instantiate.
+ =20
+ -config INTEL_MFLD_THERMAL
+ -       tristate "Thermal driver for Intel Medfield platform"
+ -       depends on MFD_INTEL_MSIC && THERMAL
+ -       help
+ -         Say Y here to enable thermal driver support for the  Intel Medfi=
+eld
+ -         platform.
+ +config MLX_PLATFORM
+ +	tristate "Mellanox Technologies platform support"
+ +	depends on I2C && REGMAP
+ +	---help---
+ +	  This option enables system support for the Mellanox Technologies
+ +	  platform. The Mellanox systems provide data center networking
+ +	  solutions based on Virtual Protocol Interconnect (VPI) technology
+ +	  enable seamless connectivity to 56/100Gb/s InfiniBand or 10/40/56GbE
+ +	  connection.
+ =20
+ -config INTEL_IPS
+ -	tristate "Intel Intelligent Power Sharing"
+ -	depends on ACPI && PCI
+ +	  If you have a Mellanox system, say Y or M here.
+ +
+ +config TOUCHSCREEN_DMI
+ +	bool "DMI based touchscreen configuration info"
+ +	depends on ACPI && DMI && I2C=3Dy && TOUCHSCREEN_SILEAD
+++	select EFI_EMBEDDED_FIRMWARE if EFI
+  	---help---
+ -	  Intel Calpella platforms support dynamic power sharing between the
+ -	  CPU and GPU, maximizing performance in a given TDP.  This driver,
+ -	  along with the CPU frequency and i915 drivers, provides that
+ -	  functionality.  If in doubt, say Y here; it will only load on
+ -	  supported platforms.
+ +	  Certain ACPI based tablets with e.g. Silead or Chipone touchscreens
+ +	  do not have enough data in ACPI tables for the touchscreen driver to
+ +	  handle the touchscreen properly, as OEMs expect the data to be baked
+ +	  into the tablet model specific version of the driver shipped with the
+ +	  the OS-image for the device. This option supplies the missing info.
+ +	  Enable this for x86 tablets with Silead or Chipone touchscreens.
+ =20
+  config INTEL_IMR
+  	bool "Intel Isolated Memory Region support"
+
+--Sig_/soBEOiYHNlehT2faRHoYIpf
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl54LykACgkQAVBC80lX
+0GzxtQf+JK3ShCaIYV88xyxISKZVa76jagYjeFTU3hdgMR8H94jX3ui4NV3ZcmEI
+iQxykJ/XPw2KRF6YJ/BaCEdc3zX+ECXWu5V7xDzVPK84z79nN107Vy5khJbu0hmZ
+qERT1FjIVAgw8RUTqma6sO9AebpUKlNaHpFA+Z0VPzpXvJ0X5cI7jUm6mdHiBEQX
+5+CUgSmdV16SQq48X09WcRGs1Bp6ZbeHKwcWTt73hqOab3gnva85Ql9FaV2lscuy
+WFl6+zlmPh07V7yJdgXRXFR5aiueMNVtT3MTq1nhI1P6bv38boMY9ilr9m9JWIxe
+shCJeQ9+y/SvtBvw1eF8UL7oIYOmxg==
+=F02p
+-----END PGP SIGNATURE-----
+
+--Sig_/soBEOiYHNlehT2faRHoYIpf--
