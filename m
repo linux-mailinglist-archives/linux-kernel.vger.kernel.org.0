@@ -2,30 +2,30 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2867C18FAAA
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Mar 2020 17:59:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 63BE618FAAD
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Mar 2020 18:00:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727708AbgCWQ7v (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Mar 2020 12:59:51 -0400
-Received: from mail27.static.mailgun.info ([104.130.122.27]:26870 "EHLO
-        mail27.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727600AbgCWQ7u (ORCPT
+        id S1727684AbgCWRAt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Mar 2020 13:00:49 -0400
+Received: from mail26.static.mailgun.info ([104.130.122.26]:27381 "EHLO
+        mail26.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727067AbgCWRAt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Mar 2020 12:59:50 -0400
+        Mon, 23 Mar 2020 13:00:49 -0400
 DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1584982790; h=Date: Message-Id: Cc: To: References:
+ s=smtp; t=1584982848; h=Date: Message-Id: Cc: To: References:
  In-Reply-To: From: Subject: Content-Transfer-Encoding: MIME-Version:
- Content-Type: Sender; bh=pvhtnrFUGoUFy0r6FPYarSkh+6JJMoZ+6oiCFQBrtdc=;
- b=e8KqEkeZ0AkThBfDMwJJKVJ/H87lS7beXEXNDVyCYcPJkN0ZWyeC3z9gQgE1RAAhlp8F6SHP
- x2/qZPLjEzLHpWzBTBobUMg/WRDT/s1Fh8rtCyT4EhjakDWGm/g6/A4SU2Er1nCEPfru29QE
- bJjHOIszlydapDDdLf/aqKP4cLA=
-X-Mailgun-Sending-Ip: 104.130.122.27
+ Content-Type: Sender; bh=tzfypWCuOoF80JsF+B3LjAiL7qvWRx5AGPIdhOB5XFs=;
+ b=FImHBrsXJdyMlCt3444ExT1aBfVrGUeFQ6FElaAOrUaKlSui6uHpfAnRsK2JMIpnB6lSKuhs
+ oDtzfncAoUS63jw+lgS2neUNa3ZpJAIX0E0v7Sg7mMk35cqrsuq7JSq+S1U7tWXWkRhYYNRI
+ m+B4hEJY96tCk0zAmYElCX98YZk=
+X-Mailgun-Sending-Ip: 104.130.122.26
 X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
 Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
- by mxa.mailgun.org with ESMTP id 5e78eafd.7f9808c1efb8-smtp-out-n01;
- Mon, 23 Mar 2020 16:59:41 -0000 (UTC)
+ by mxa.mailgun.org with ESMTP id 5e78eb26.7f9da34f4928-smtp-out-n05;
+ Mon, 23 Mar 2020 17:00:22 -0000 (UTC)
 Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 3BB8FC433CB; Mon, 23 Mar 2020 16:59:41 +0000 (UTC)
+        id CA25BC433D2; Mon, 23 Mar 2020 17:00:21 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
         aws-us-west-2-caf-mail-1.web.codeaurora.org
 X-Spam-Level: 
@@ -36,27 +36,27 @@ Received: from potku.adurom.net (88-114-240-156.elisa-laajakaista.fi [88.114.240
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
         (Authenticated sender: kvalo)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 4639AC433D2;
-        Mon, 23 Mar 2020 16:59:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4639AC433D2
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id BF583C433D2;
+        Mon, 23 Mar 2020 17:00:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org BF583C433D2
 Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Subject: Re: [PATCH][next] hostap: Replace zero-length array with
+Subject: Re: [PATCH][next] orinoco: Replace zero-length array with
  flexible-array member
 From:   Kalle Valo <kvalo@codeaurora.org>
-In-Reply-To: <20200225011151.GA30675@embeddedor>
-References: <20200225011151.GA30675@embeddedor>
+In-Reply-To: <20200225011415.GA31868@embeddedor>
+References: <20200225011415.GA31868@embeddedor>
 To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc:     Jouni Malinen <j@w1.fi>, "David S. Miller" <davem@davemloft.net>,
+Cc:     "David S. Miller" <davem@davemloft.net>,
         linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         "Gustavo A. R. Silva" <gustavo@embeddedor.com>
 User-Agent: pwcli/0.0.0-git (https://github.com/kvalo/pwcli/) Python/2.7.12
-Message-Id: <20200323165941.3BB8FC433CB@smtp.codeaurora.org>
-Date:   Mon, 23 Mar 2020 16:59:41 +0000 (UTC)
+Message-Id: <20200323170021.CA25BC433D2@smtp.codeaurora.org>
+Date:   Mon, 23 Mar 2020 17:00:21 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -96,9 +96,9 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Patch applied to wireless-drivers-next.git, thanks.
 
-bc1d50a1a485 hostap: Replace zero-length array with flexible-array member
+645aa87fdfd9 orinoco: Replace zero-length array with flexible-array member
 
 -- 
-https://patchwork.kernel.org/patch/11402357/
+https://patchwork.kernel.org/patch/11402359/
 
 https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
