@@ -2,139 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 19C3F18FAEA
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Mar 2020 18:07:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4E69518FACF
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Mar 2020 18:06:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727907AbgCWRHf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Mar 2020 13:07:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45594 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727611AbgCWRHc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Mar 2020 13:07:32 -0400
-Received: from localhost.localdomain (unknown [122.178.205.141])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7D21E20719;
-        Mon, 23 Mar 2020 17:07:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584983251;
-        bh=fomihoNKlPSOdDcQeFVhX/QuKjKtyu63YoEHBqorJ4U=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=E51SSEP3w99hro3rEvMthEnIMeD48rKshU0vLz4Cj8bpcu6q4oxhDC5FsmRM3Cn26
-         ST7Z7ohhBVRNdZMuXgahB+k5V0JYXUO83L05ShDLfaoG7Dxjj29/ZLlAcwzW89OeQr
-         FF8rJFE3c+2VZdWS2DevX1bNBvkeVZR+QEHS4VOk=
-From:   Vinod Koul <vkoul@kernel.org>
-To:     Mathias Nyman <mathias.nyman@intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-arm-msm@vger.kernel.org,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Vinod Koul <vkoul@kernel.org>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Christian Lamparter <chunkeey@googlemail.com>,
-        John Stultz <john.stultz@linaro.org>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        =?UTF-8?q?Andreas=20B=C3=B6hler?= <dev@aboehler.at>,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v8 5/5] usb: xhci: provide a debugfs hook for erasing rom
-Date:   Mon, 23 Mar 2020 22:36:01 +0530
-Message-Id: <20200323170601.419809-6-vkoul@kernel.org>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200323170601.419809-1-vkoul@kernel.org>
-References: <20200323170601.419809-1-vkoul@kernel.org>
+        id S1727650AbgCWRGW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Mar 2020 13:06:22 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:42107 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725861AbgCWRGV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Mar 2020 13:06:21 -0400
+Received: from p5de0bf0b.dip0.t-ipconnect.de ([93.224.191.11] helo=nanos.tec.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1jGQWc-0002xf-JV; Mon, 23 Mar 2020 18:06:06 +0100
+Received: by nanos.tec.linutronix.de (Postfix, from userid 1000)
+        id A41851040AA; Mon, 23 Mar 2020 18:06:04 +0100 (CET)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Xiaoyao Li <xiaoyao.li@intel.com>, Ingo Molnar <mingo@redhat.com>,
+        Borislav Petkov <bp@alien8.de>, hpa@zytor.com,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        kvm@vger.kernel.org, x86@kernel.org, linux-kernel@vger.kernel.org
+Cc:     Andy Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Arvind Sankar <nivedita@alum.mit.edu>,
+        Fenghua Yu <fenghua.yu@intel.com>,
+        Tony Luck <tony.luck@intel.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Jim Mattson <jmattson@google.com>,
+        Xiaoyao Li <xiaoyao.li@intel.com>
+Subject: Re: [PATCH v5 2/9] x86/split_lock: Avoid runtime reads of the TEST_CTRL MSR
+In-Reply-To: <20200315050517.127446-3-xiaoyao.li@intel.com>
+References: <20200315050517.127446-1-xiaoyao.li@intel.com> <20200315050517.127446-3-xiaoyao.li@intel.com>
+Date:   Mon, 23 Mar 2020 18:06:04 +0100
+Message-ID: <87wo7bovb7.fsf@nanos.tec.linutronix.de>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-run "echo 1 > /sys/kernel/debug/renesas-usb/rom_erase" to erase firmware
-when driver is loaded.
+Xiaoyao Li <xiaoyao.li@intel.com> writes:
+> +/*
+> + * Soft copy of MSR_TEST_CTRL initialized when we first read the
+> + * MSR. Used at runtime to avoid using rdmsr again just to collect
+> + * the reserved bits in the MSR. We assume reserved bits are the
+> + * same on all CPUs.
+> + */
+> +static u64 test_ctrl_val;
+> +
+>  /*
+>   * Locking is not required at the moment because only bit 29 of this
+>   * MSR is implemented and locking would not prevent that the operation
+> @@ -1027,16 +1035,14 @@ static void __init split_lock_setup(void)
+>   */
+>  static void __sld_msr_set(bool on)
+>  {
+> -	u64 test_ctrl_val;
+> -
+> -	rdmsrl(MSR_TEST_CTRL, test_ctrl_val);
+> +	u64 val = test_ctrl_val;
+>  
+>  	if (on)
+> -		test_ctrl_val |= MSR_TEST_CTRL_SPLIT_LOCK_DETECT;
+> +		val |= MSR_TEST_CTRL_SPLIT_LOCK_DETECT;
+>  	else
+> -		test_ctrl_val &= ~MSR_TEST_CTRL_SPLIT_LOCK_DETECT;
+> +		val &= ~MSR_TEST_CTRL_SPLIT_LOCK_DETECT;
+>  
+> -	wrmsrl(MSR_TEST_CTRL, test_ctrl_val);
+> +	wrmsrl(MSR_TEST_CTRL, val);
+>  }
+>  
+>  /*
+> @@ -1048,11 +1054,13 @@ static void __sld_msr_set(bool on)
+>   */
+>  static void split_lock_init(struct cpuinfo_x86 *c)
+>  {
+> -	u64 test_ctrl_val;
+> +	u64 val;
+>  
+> -	if (rdmsrl_safe(MSR_TEST_CTRL, &test_ctrl_val))
+> +	if (rdmsrl_safe(MSR_TEST_CTRL, &val))
+>  		goto msr_broken;
+>  
+> +	test_ctrl_val = val;
+> +
+>  	switch (sld_state) {
+>  	case sld_off:
+>  		if (wrmsrl_safe(MSR_TEST_CTRL, test_ctrl_val & ~MSR_TEST_CTRL_SPLIT_LOCK_DETECT))
 
-Subsequent init of driver shall reload the firmware
+That's just broken. Simply because
 
-Signed-off-by: Vinod Koul <vkoul@kernel.org>
----
- drivers/usb/host/xhci-pci-renesas.c | 35 +++++++++++++++++++++++++++++
- 1 file changed, 35 insertions(+)
+       case sld_warn:
+       case sld_fatal:
 
-diff --git a/drivers/usb/host/xhci-pci-renesas.c b/drivers/usb/host/xhci-pci-renesas.c
-index 6301730b1f8d..714932eaac90 100644
---- a/drivers/usb/host/xhci-pci-renesas.c
-+++ b/drivers/usb/host/xhci-pci-renesas.c
-@@ -2,6 +2,7 @@
- /* Copyright (C) 2019-2020 Linaro Limited */
- 
- #include <linux/acpi.h>
-+#include <linux/debugfs.h>
- #include <linux/firmware.h>
- #include <linux/module.h>
- #include <linux/pci.h>
-@@ -162,6 +163,8 @@ static int renesas_fw_verify(struct pci_dev *dev,
- 	return 0;
- }
- 
-+static void debugfs_init(struct pci_dev *pdev);
-+
- static int renesas_check_rom_state(struct pci_dev *pdev)
- {
- 	u16 rom_state;
-@@ -194,9 +197,11 @@ static int renesas_check_rom_state(struct pci_dev *pdev)
- 		/* Check the "Result Code" Bits (6:4) and act accordingly */
- 		switch (rom_state & RENESAS_ROM_STATUS_RESULT) {
- 		case RENESAS_ROM_STATUS_SUCCESS:
-+			debugfs_init(pdev);
- 			return 0;
- 
- 		case RENESAS_ROM_STATUS_NO_RESULT: /* No result yet */
-+			debugfs_init(pdev);
- 			return 0;
- 
- 		case RENESAS_ROM_STATUS_ERROR: /* Error State */
-@@ -443,6 +448,34 @@ static void renesas_rom_erase(struct pci_dev *pdev)
- 	dev_dbg(&pdev->dev, "ROM Erase... Done success\n");
- }
- 
-+static int debugfs_rom_erase(void *data, u64 value)
-+{
-+	struct pci_dev *pdev = data;
-+
-+	if (value == 1) {
-+		dev_dbg(&pdev->dev, "Userspace requested ROM erase\n");
-+		renesas_rom_erase(pdev);
-+		return 0;
-+	}
-+	return -EINVAL;
-+}
-+DEFINE_DEBUGFS_ATTRIBUTE(rom_erase_ops, NULL, debugfs_rom_erase, "%llu\n");
-+
-+static struct dentry *debugfs_root;
-+
-+static void debugfs_init(struct pci_dev *pdev)
-+{
-+	debugfs_root = debugfs_create_dir("renesas_usb", NULL);
-+
-+	debugfs_create_file("rom_erase", 0200, debugfs_root,
-+			    pdev, &rom_erase_ops);
-+}
-+
-+static void debugfs_exit(void)
-+{
-+	debugfs_remove_recursive(debugfs_root);
-+}
-+
- static bool renesas_download_rom(struct pci_dev *pdev,
- 				 const u32 *fw, size_t step)
- {
-@@ -754,6 +787,8 @@ int renesas_xhci_pci_probe(struct pci_dev *dev,
- 
- int renesas_xhci_pci_remove(struct pci_dev *dev)
- {
-+	debugfs_exit();
-+
- 	if (renesas_fw_check_running(dev)) {
- 		/*
- 		 * bail out early, if this was a renesas device w/o FW.
--- 
-2.25.1
+set the split lock detect bit, but the cache variable has it cleared
+unless it was set at boot time already.
 
+Thanks,
+
+        tglx
