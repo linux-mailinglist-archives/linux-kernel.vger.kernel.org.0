@@ -2,200 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 67F1B18FAE7
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Mar 2020 18:07:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D1DEB18FAF7
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Mar 2020 18:10:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727891AbgCWRHc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Mar 2020 13:07:32 -0400
-Received: from mail.baikalelectronics.com ([87.245.175.226]:37190 "EHLO
-        mail.baikalelectronics.ru" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727111AbgCWRHc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Mar 2020 13:07:32 -0400
-Received: from localhost (unknown [127.0.0.1])
-        by mail.baikalelectronics.ru (Postfix) with ESMTP id 3FBFD803087C;
-        Mon, 23 Mar 2020 17:07:28 +0000 (UTC)
-X-Virus-Scanned: amavisd-new at baikalelectronics.ru
-Received: from mail.baikalelectronics.ru ([127.0.0.1])
-        by localhost (mail.baikalelectronics.ru [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id kJbE8wblbHHU; Mon, 23 Mar 2020 20:07:26 +0300 (MSK)
-Date:   Mon, 23 Mar 2020 20:07:09 +0300
-From:   Sergey Semin <Sergey.Semin@baikalelectronics.ru>
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>,
-        Alexey Malahov <Alexey.Malahov@baikalelectronics.ru>,
-        Maxim Kaurkin <Maxim.Kaurkin@baikalelectronics.ru>,
-        Pavel Parkhomenko <Pavel.Parkhomenko@baikalelectronics.ru>,
-        Ramil Zaripov <Ramil.Zaripov@baikalelectronics.ru>,
-        Ekaterina Skachko <Ekaterina.Skachko@baikalelectronics.ru>,
-        Vadim Vlasov <V.Vlasov@baikalelectronics.ru>,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        Paul Burton <paulburton@kernel.org>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Maxime Ripard <mripard@kernel.org>,
-        Chen-Yu Tsai <wens@csie.org>, Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Wei Xu <xuwei5@hisilicon.com>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Jisheng Zhang <Jisheng.Zhang@synaptics.com>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        <linux-arm-kernel@lists.infradead.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, <linux-clk@vger.kernel.org>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Kefeng Wang <wangkefeng.wang@huawei.com>,
-        <linux-serial@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] serial: 8250_dw: Fix common clocks usage race
- condition
-Message-ID: <20200323170709.izdecff3hfctzumv@ubsrv2.baikal.int>
-References: <20200306130231.05BBC8030795@mail.baikalelectronics.ru>
- <20200323024611.16039-1-Sergey.Semin@baikalelectronics.ru>
- <20200323092051.GB1922688@smile.fi.intel.com>
- <20200323111149.73wqrd7qnkkiitbe@ubsrv2.baikal.int>
- <20200323115225.GJ1922688@smile.fi.intel.com>
+        id S1727560AbgCWRKI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Mar 2020 13:10:08 -0400
+Received: from foss.arm.com ([217.140.110.172]:52208 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727201AbgCWRKI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Mar 2020 13:10:08 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 31C381FB;
+        Mon, 23 Mar 2020 10:10:07 -0700 (PDT)
+Received: from e113632-lin (e113632-lin.cambridge.arm.com [10.1.194.46])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 456F53F7C3;
+        Mon, 23 Mar 2020 10:10:06 -0700 (PDT)
+References: <20200311183320.19186-1-valentin.schneider@arm.com> <20200311183320.19186-2-valentin.schneider@arm.com> <20200323134234.GD6103@e123083-lin>
+User-agent: mu4e 0.9.17; emacs 26.3
+From:   Valentin Schneider <valentin.schneider@arm.com>
+To:     Morten Rasmussen <morten.rasmussen@arm.com>
+Cc:     linux-kernel@vger.kernel.org, mingo@kernel.org,
+        peterz@infradead.org, vincent.guittot@linaro.org,
+        dietmar.eggemann@arm.com
+Subject: Re: [RFC PATCH 1/3] sched/topology: Split out SD_* flags declaration to its own file
+In-reply-to: <20200323134234.GD6103@e123083-lin>
+Date:   Mon, 23 Mar 2020 17:10:00 +0000
+Message-ID: <jhjy2rrknfb.mognet@arm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20200323115225.GJ1922688@smile.fi.intel.com>
-X-ClientProxiedBy: MAIL.baikal.int (192.168.51.25) To mail (192.168.51.25)
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 23, 2020 at 01:52:25PM +0200, Andy Shevchenko wrote:
-> On Mon, Mar 23, 2020 at 02:11:49PM +0300, Sergey Semin wrote:
-> > On Mon, Mar 23, 2020 at 11:20:51AM +0200, Andy Shevchenko wrote:
-> > > On Mon, Mar 23, 2020 at 05:46:09AM +0300, Sergey.Semin@baikalelectronics.ru wrote:
-> > > > From: Serge Semin <Sergey.Semin@baikalelectronics.ru>
-> > > 
-> > > The question to CLK framework maintainers, is it correct approach in general
-> > > for this case?
-> > 
-> > You should have been more specific then, if you wanted to see someone
-> > special.
-> 
-> I didn't get your comment here. Since you put the question under a pile of
-> words in the commit message, and actually in the changelog, not even in the
-> message, I repeated it clearly that clock maintainers can see it.
-> 
-> > > On Wed, Mar 18, 2020 at 05:19:53PM +0200, Andy Shevchenko wrote:
-> > >> Also it would be nice to see come clock framework guys' opinions...
-> > 
-> > Who can give a better comments regarding the clk API if not the
-> > subsystem maintainers?
-> 
-> You already got one from Maxime.
-> 
-> ...
-> 
-> > > > +	/*
-> > > > +	 * Some platforms may provide a reference clock shared between several
-> > > > +	 * devices. In this case before using the serial port first we have to
-> > > > +	 * make sure nothing will change the rate behind our back and second
-> > > > +	 * the tty/serial subsystem knows the actual reference clock rate of
-> > > > +	 * the port.
-> > > > +	 */
-> > > 
-> > > > +	if (clk_rate_exclusive_get(d->clk)) {
-> > > > +		dev_warn(p->dev, "Couldn't lock the clock rate\n");
-> > > 
-> > > So, if this fails, in ->shutdown you will disbalance reference count, or did I
-> > > miss something?
-> > > 
-> > 
-> > Hm, you are right. I didn't fully thought this through. The thing is
-> > that according to the clk_rate_exclusive_get() function code currently
-> > it never fails. Though this isn't excuse for introducing a prone to future
-> > bugs code.
-> > 
-> > Anyway if according to design a function may return an error we must take
-> > into account in the code using it. Due to this obligation and seeing we can't
-> > easily detect whether clk_rate_exclusive_get() has been failed while the
-> > driver is being executed in the shutdown method, the best approach would be
-> > to just return an error in startup method in case of the clock rate exclusivity
-> > acquisition failure. If you are ok with this, I'll have it fixed in v3
-> > patchset.
-> 
-> It needs to be carefully tested on other platforms than yours.
-> 
 
-Alas I don't have one. But it can be done by other kernel users at rc-s stage
-of the next kernel release.
+Hi Morten,
 
-> > > > +	} else if (d->clk) {
-> > > 
-> > > > +		p->uartclk = clk_get_rate(d->clk);
-> > > > +		if (!p->uartclk) {
-> > > > +			clk_rate_exclusive_put(d->clk);
-> > > > +			dev_err(p->dev, "Clock rate not defined\n");
-> > > > +			return -EINVAL;
-> > > > +		}
-> > > 
-> > > This operations I didn't get. If we have d->clk and suddenly get 0 as a rate
-> > > (and note, that we still update uartclk member!), we try to put (why?) the
-> > > exclusiveness of rate.
-> > > 
-> > 
-> > Here is what I had in my mind while implementing this code. If d->clk
-> > isn't NULL, then there is a "baudclk" clock handler and we can use it to
-> > alter/retrieve the baud clock rate. But the same clock could be used by
-> > some other driver and that driver could have changed the rate while we
-> > didn't have this tty port started up (opened). In this case that driver
-> > could also have the clock exclusively acquired. So instead of trying to
-> > set the current p->uartclk rate to the clock, check the return value,
-> > if it's an error, try to get the current clock rate, check the return
-> > value, and so on, I just get the current baud clock rate and make sure
-> > the value is not zero
-> 
-> > (clk_get_rate() returns a zero rate in case of
-> > internal errors).
-> 
-> Have you considered !CLK case?
-> 
+Just as a heads-up, I think those changes would better fit 2/3, or be
+in their own patch. 1/3 is just a straight up code move, with no changes
+to the existing comments.
 
-Yes. It's a case of optional clock. Have a look at how the clock API
-works. You are already using it here in this driver when calling
-clk_prepare_enable()/clk_disable_unprepare().
+On Mon, Mar 23 2020, Morten Rasmussen wrote:
+> On Wed, Mar 11, 2020 at 06:33:18PM +0000, Valentin Schneider wrote:
+>> diff --git a/include/linux/sched/sd_flags.h b/include/linux/sched/sd_flags.h
+>> new file mode 100644
+>> index 000000000000..685bbe736945
+>> --- /dev/null
+>> +++ b/include/linux/sched/sd_flags.h
+>> @@ -0,0 +1,33 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +/*
+>> + * sched-domains (multiprocessor balancing) flag declarations.
+>> + */
+>> +
+>> +/* Balance when about to become idle */
+>> +SD_FLAG(SD_BALANCE_NEWIDLE,     0)
+>> +/* Balance on exec */
+>> +SD_FLAG(SD_BALANCE_EXEC,        1)
+>> +/* Balance on fork, clone */
+>> +SD_FLAG(SD_BALANCE_FORK,        2)
+>> +/* Balance on wakeup */
+>> +SD_FLAG(SD_BALANCE_WAKE,        3)
+>> +/* Wake task to waking CPU */
+>> +SD_FLAG(SD_WAKE_AFFINE,         4)
+>
+> Isn't it more like: "Consider waking task on waking CPU"?
+>
+> IIRC, with this flag set the wake-up can happen either near prev_cpu or
+> this_cpu.
+>
 
-> > At the same time dw8250_set_termios() will try to update
-> > the baud clock rate anyway (also by the serial core at the point of the port
-> > startup), so we don't need such complication in the DW 8250 port startup
-> > code.
-> > 
-> > > (and note, that we still update uartclk member!),
-> > 
-> > Yes, if we can't determine the current baud clock rate, then the there is
-> > a problem with the clock device, so we don't know at what rate it's
-> > currently working. Zero is the most appropriate value to be set in this case.
-> > 
-> > > we try to put (why?) the > exclusiveness of rate.
-> > 
-> > Yes, we put the exclusivity and return an error, because this if-branch has
-> > been taken only if the exclusivity has been successfully acquired.
-> 
-> So, this means that above code requires elaboration in the comments to explain
-> how it supposed to work.
-> 
+Right, it's not a hard guarantee.
 
-That's what I did by the comment: "... second the tty/serial subsystem knows
-the actual reference clock rate of the port." If you think, that checking a
-return value and undoing things in case of an error need elaboration in a
-comment I'll do it in v3.
+>> +/* Domain members have different CPU capacities */
+>> +SD_FLAG(SD_ASYM_CPUCAPACITY,    5)
+>> +/* Domain members share CPU capacity */
+>> +SD_FLAG(SD_SHARE_CPUCAPACITY,   6)
+>
+> Perhaps add +" (SMT)" to the comment to help the uninitiated
+> understanding it a bit easier?
+>
 
--Regards,
-Sergey
+Sounds good.
 
-> -- 
-> With Best Regards,
-> Andy Shevchenko
-> 
-> 
+>> +/* Domain members share power domain */
+>> +SD_FLAG(SD_SHARE_POWERDOMAIN,   7)
+>
+> This flag is set only by 32-bit arm and has never had any effect. I
+> think it was the beginning of something years ago that hasn't
+> progressed. Perhaps we can remove it now?
+>
+
+Right, I don't think I've seen anything recent that uses that flag.
+
+>> +/* Domain members share CPU pkg resources */
+>> +SD_FLAG(SD_SHARE_PKG_RESOURCES, 8)
+>
+> +" (e.g. caches)" ?
+>
+
+Agreed! I actually already have that one in 2/3.
+
+>> +/* Only a single load balancing instance */
+>> +SD_FLAG(SD_SERIALIZE,           9)
+>> +/* Place busy groups earlier in the domain */
+>> +SD_FLAG(SD_ASYM_PACKING,        10)
+>
+> Place busy _tasks_ earlier in the domain?
+>
+
+Ack.
+
+> It is a bit unclear what 'earlier' means here but since the packing
+> ordering can actually be defined by the architecture, we can't be much
+> more specific I guess.
+>
+
+This probably dates back to when ASYM_PACKING was really just for
+bubbling tasks up to the first CPU of each core, and hasn't been changed
+when the asym_priority thing was introduced. I can add a pointer to that.
+
+> Morten
