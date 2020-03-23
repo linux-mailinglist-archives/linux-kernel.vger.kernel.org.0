@@ -2,77 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DC73018FE39
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Mar 2020 20:55:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1915118FE42
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Mar 2020 20:57:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726177AbgCWTze (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Mar 2020 15:55:34 -0400
-Received: from mail-il1-f193.google.com ([209.85.166.193]:33448 "EHLO
-        mail-il1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725839AbgCWTze (ORCPT
+        id S1727046AbgCWT4u (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Mar 2020 15:56:50 -0400
+Received: from mail-qk1-f194.google.com ([209.85.222.194]:44269 "EHLO
+        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725839AbgCWT4u (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Mar 2020 15:55:34 -0400
-Received: by mail-il1-f193.google.com with SMTP id k29so14600998ilg.0;
-        Mon, 23 Mar 2020 12:55:33 -0700 (PDT)
+        Mon, 23 Mar 2020 15:56:50 -0400
+Received: by mail-qk1-f194.google.com with SMTP id j4so16688880qkc.11;
+        Mon, 23 Mar 2020 12:56:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=O7igelSqnZSzby+9Agw+dKmcrgK2R8ajZWmZKikiDho=;
+        b=ZyQUyKFaEKEmFfsZZGGcpVLCY0rdoDcXD4zCVsS+DgCffo3uQdBYftPv9A3/cFjzvg
+         JFKdIy5CKVRWPXrx59DJhXtz7S+IpYdEtq5rSdV8YO+GxrEDHDrjBXxjLWCV9k6HB15/
+         VNZYAgWnrLlcKLCTxwkco4cJvfXlv9tytCQJnd7l3sWGPcsgnyDf6OLck2xJtnU7Z9pp
+         tPg+oJAwbEXvTBeWkKUfNu4LDfcvPJVOlsrN6wkrNsqly5Ajl6cpgp/R62a5m3bp7BlG
+         /Eiu4kdXD6AYVl550u98b798SiNPPtnMetTIrLGAIcMDJRRatccFCKoVSe37lckkmXbl
+         bjGw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=kFJFA9AgWvFk/kEnU8vamRR2gWaNyHgegYHT2Tyfw1s=;
-        b=O8ZWyFaE9bazNLLN62jwG01sbQAjbsK4pZw93SIyXBLERnq6QilWejswF7KYNeNy8S
-         PU3N3W0r9eELCFk2Pk4GgbiKcuSygct9FlJK4XuoRqQISl/GDX6hlKz50oivMGg3LPlB
-         BLhWm26v8L4RxF8n2aTUqVF3+4ALWmMpbGyNpdJBrGvJQYCw9PT5OHTNEuy+jXWVwQa/
-         ybMJF3FPKEp8B/esieC/mWjkGzoH0ot9gIX5Omz0VSShSkYBZmJMDrbS2pWoOTHQDNIw
-         GAG+uZ2kDK2LdwpmV57MWRhC8ZxDzfjaYMs8C02oPzqQ8yvZXVkJQIccRYh84wH+/nSm
-         5dMA==
-X-Gm-Message-State: ANhLgQ1gDQTHFiS6/WRGNV/faLDUvLhg/5YYn10w0K715kRaDK4aRM8d
-        NzBMB4KLUZIT0T4VMrcNYQ==
-X-Google-Smtp-Source: ADFU+vvuzRa31naxtDjJTr2hNuD1sIvCIOHJrm60YMlQcXIoc6vaYFq5cIIV9MqEbf92kT5yUeZ1Ng==
-X-Received: by 2002:a92:c790:: with SMTP id c16mr393841ilk.206.1584993333182;
-        Mon, 23 Mar 2020 12:55:33 -0700 (PDT)
-Received: from rob-hp-laptop ([64.188.179.250])
-        by smtp.gmail.com with ESMTPSA id l17sm5488218ilc.49.2020.03.23.12.55.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 Mar 2020 12:55:32 -0700 (PDT)
-Received: (nullmailer pid 6267 invoked by uid 1000);
-        Mon, 23 Mar 2020 19:55:31 -0000
-Date:   Mon, 23 Mar 2020 13:55:31 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Heiko Stuebner <heiko@sntech.de>
-Cc:     linux-rockchip@lists.infradead.org, robh+dt@kernel.org,
-        devicetree@vger.kernel.org, mark.rutland@arm.com,
-        christoph.muellner@theobroma-systems.com, robin.murphy@arm.com,
-        heiko@sntech.de, linux-arm-kernel@lists.infradead.org,
-        kever.yang@rock-chips.com, linux-kernel@vger.kernel.org,
-        jbx6244@gmail.com,
-        Heiko Stuebner <heiko.stuebner@theobroma-systems.com>
-Subject: Re: [PATCH v2 2/3] dt-bindings: Add binding for Hardkernel Odroid Go
- Advance
-Message-ID: <20200323195531.GA6201@bogus>
-References: <20200308223250.353053-1-heiko@sntech.de>
- <20200308223250.353053-2-heiko@sntech.de>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=O7igelSqnZSzby+9Agw+dKmcrgK2R8ajZWmZKikiDho=;
+        b=cMW7yionHRpEQNC3o9xeE5nPUqOs6OaWtQTdRei8DzzkQxnGU5LX/5rUchpnEXsRvh
+         9toGf05LyGOPFq9KnHyKZybncFMTt2tvHayKlhWtiP+yUrzP3sFJaaQpLSIcacqmp8BT
+         4b6AuLs3Fh6fa/iVkqr12wHbTh48VFlGSoNIBTWqkV4GFWY7oWfYRT2PbkoynkYv/qFn
+         nXfqp1lkQbKpnqNl3NiWYnG2oTWdUVdGsYLVR8Us76uVQRqKNE2QgMDV+uGQK79zWXJH
+         TMeNZQmSe2JWpjxpnb1mQEbpjKhY8CA3VHnyPNaJ0me5VGYVG2xIDBGfTrHnz2dbqMw7
+         vQNw==
+X-Gm-Message-State: ANhLgQ0OWJhhAr4OxVRvw/7gFkeO41zJE4Wzf/uEA+4oqkb6DPBG3shz
+        nwTPhWzaq8wuxYP357/Cmym0gQJ6+pVBt2VQ8HI=
+X-Google-Smtp-Source: ADFU+vuNk+XojfkD2ANEtHWgonqRE45FobN+3bk7jLbXRujpqxIfFOz+ZhAN35zK9Cfgh1TYjbwqXMhx7RXBO8eHaQs=
+X-Received: by 2002:a37:992:: with SMTP id 140mr23091475qkj.36.1584993408656;
+ Mon, 23 Mar 2020 12:56:48 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200308223250.353053-2-heiko@sntech.de>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20200323164415.12943-1-kpsingh@chromium.org> <20200323164415.12943-3-kpsingh@chromium.org>
+In-Reply-To: <20200323164415.12943-3-kpsingh@chromium.org>
+From:   Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date:   Mon, 23 Mar 2020 12:56:37 -0700
+Message-ID: <CAEf4Bza67kM0KiX464yB+iV83aV96TyD7iLEZJccXyH-Od0QTQ@mail.gmail.com>
+Subject: Re: [PATCH bpf-next v5 2/7] security: Refactor declaration of LSM hooks
+To:     KP Singh <kpsingh@chromium.org>
+Cc:     open list <linux-kernel@vger.kernel.org>,
+        bpf <bpf@vger.kernel.org>, linux-security-module@vger.kernel.org,
+        Brendan Jackman <jackmanb@google.com>,
+        Florent Revest <revest@google.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        James Morris <jmorris@namei.org>,
+        Kees Cook <keescook@chromium.org>,
+        Paul Turner <pjt@google.com>, Jann Horn <jannh@google.com>,
+        Florent Revest <revest@chromium.org>,
+        Brendan Jackman <jackmanb@chromium.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun,  8 Mar 2020 23:32:49 +0100, Heiko Stuebner wrote:
-> From: Heiko Stuebner <heiko.stuebner@theobroma-systems.com>
-> 
-> Add a compatible for the Odroid Go Advance from Hardkernel.
-> The compatible used by the vendor already is odroid-go2, to distinguish
-> it from the previous (microcontroller-based) Odroid Go, so we're keeping
-> that, also to not cause unnecessary incompatibilites.
-> 
-> Signed-off-by: Heiko Stuebner <heiko.stuebner@theobroma-systems.com>
+On Mon, Mar 23, 2020 at 9:45 AM KP Singh <kpsingh@chromium.org> wrote:
+>
+> From: KP Singh <kpsingh@google.com>
+>
+> The information about the different types of LSM hooks is scattered
+> in two locations i.e. union security_list_options and
+> struct security_hook_heads. Rather than duplicating this information
+> even further for BPF_PROG_TYPE_LSM, define all the hooks with the
+> LSM_HOOK macro in lsm_hook_names.h which is then used to generate all
+> the data structures required by the LSM framework.
+>
+> Signed-off-by: KP Singh <kpsingh@google.com>
+> Reviewed-by: Brendan Jackman <jackmanb@google.com>
+> Reviewed-by: Florent Revest <revest@google.com>
 > ---
->  Documentation/devicetree/bindings/arm/rockchip.yaml | 5 +++++
->  1 file changed, 5 insertions(+)
-> 
+>  include/linux/lsm_hook_names.h | 354 +++++++++++++++++++
+>  include/linux/lsm_hooks.h      | 622 +--------------------------------
+>  2 files changed, 360 insertions(+), 616 deletions(-)
+>  create mode 100644 include/linux/lsm_hook_names.h
+>
+> diff --git a/include/linux/lsm_hook_names.h b/include/linux/lsm_hook_names.h
+> new file mode 100644
+> index 000000000000..412e4ca24c9b
+> --- /dev/null
+> +++ b/include/linux/lsm_hook_names.h
 
-Acked-by: Rob Herring <robh@kernel.org>
+It's not really just hook names, it's full hook definitions, no? So
+lsm_hook_defs.h seems a bit more appropriate. Just for consideration,
+not that I care that strongly :)
+
+
+[...]
