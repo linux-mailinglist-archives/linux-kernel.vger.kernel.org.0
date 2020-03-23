@@ -2,191 +2,180 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 257E618F106
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Mar 2020 09:40:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DDD0B18F111
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Mar 2020 09:45:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727608AbgCWIkw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Mar 2020 04:40:52 -0400
-Received: from new2-smtp.messagingengine.com ([66.111.4.224]:49873 "EHLO
-        new2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727477AbgCWIkv (ORCPT
+        id S1727604AbgCWIo6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Mar 2020 04:44:58 -0400
+Received: from mail-io1-f68.google.com ([209.85.166.68]:42117 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727569AbgCWIo6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Mar 2020 04:40:51 -0400
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-        by mailnew.nyi.internal (Postfix) with ESMTP id CB3CC5803F3;
-        Mon, 23 Mar 2020 04:40:49 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute4.internal (MEProxy); Mon, 23 Mar 2020 04:40:49 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm2; bh=fHWUKXGid2zJLklqRrQVAqJyxWO
-        RDMns591d25tofu0=; b=AytY9mV4LMIsxZFCbDZA1rPAfWPiUSkl1yJA9yHT1Dg
-        U5C+aUFEt02ihAk22pTPK6Fh4tafs9ajDlc1CK+G2FC+2mCT6Z4vEsUAyS9IQY3J
-        xK+dL0sMH+E/zP3SIVoaLTDOqbOvsWTZc+nR3Pg2ttHj+49aHMiHtOyVwPeA2vX+
-        dyR9ftC7te7emHVAM+iNZgQmopr2XzgAlV6GflYm68dwIu7qfB12W3Z01fO15PrV
-        tG7KBgpiqU2S4r/6ibfcusZYyv0VIHHsaTQoWGU+yvBpyVTD50KiL2aJ3ozreXPI
-        opTOdNar82f6rA2NtlVIDaDN3eSsSnabPH+fF47z97w==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=fHWUKX
-        Gid2zJLklqRrQVAqJyxWORDMns591d25tofu0=; b=13xQaVbcSm9Niz4m5vzzXm
-        dE1Pl+K/uMotiDU9ENoRL6+BFM9fImRCyrqrTerOO1E9oNkQThz7bUtuSYy0SMI4
-        ShMTIK5nUHmArDiEgUBDC2eGbML4bvZRbhqSiQadTfxn0rpSFK+m8DnZkA1tRzZa
-        JhPgyzpDE5IzuC43V1n0E7VfhWWLQIFk0/NAb/zUHYuC5gke5qLCm46PtXQ+wj4m
-        AJiOGMyA6WkPdgrzY8u2SPfZ0zKSWM+sTJBWdtNgVWUYfGgqCEYzJd5C+RP7yhpf
-        h7hQgERaHdSDs1Vj3s3lOhTK02++5awDp1/Y73ZHSigcCy5W3Ant/D3D7OpiwExQ
-        ==
-X-ME-Sender: <xms:DnZ4Xp7cMc482V-wIbnsLigZckbRgSxzztsFBJJdyBVjupHEgSl8NA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedugedrudegjedgudduvdcutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
-    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
-    enucfjughrpeffhffvuffkfhggtggujgesghdtreertddtvdenucfhrhhomhepofgrgihi
-    mhgvucftihhprghrugcuoehmrgigihhmvgestggvrhhnohdrthgvtghhqeenucffohhmrg
-    hinhepuggvvhhitggvthhrvggvrdhorhhgnecukfhppeeltddrkeelrdeikedrjeeinecu
-    vehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepmhgrgihimh
-    gvsegtvghrnhhordhtvggthh
-X-ME-Proxy: <xmx:DnZ4XrzWaf-48WNPSb1IujStB9_zZoiw5q2rWcsoqsM3NT2-1yqRhg>
-    <xmx:DnZ4XuBmeSwX5ZaCJALhNaazY51wZCnKu-_vJcEUOkd8zT9LQYUodQ>
-    <xmx:DnZ4XkPdQCUogMWWnuQJMdbKWUvk0ya5D6OqVcEw-DStuo0JDp9xOg>
-    <xmx:EXZ4Xtj7Mq5CRPJR9l5TUXx2Q7DRAiUWa2VOIHN6_9U4_FhRjw56lA>
-Received: from localhost (lfbn-tou-1-1502-76.w90-89.abo.wanadoo.fr [90.89.68.76])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 83F373280059;
-        Mon, 23 Mar 2020 04:40:46 -0400 (EDT)
-Date:   Mon, 23 Mar 2020 09:40:44 +0100
-From:   Maxime Ripard <maxime@cerno.tech>
-To:     Florian Fainelli <f.fainelli@gmail.com>
-Cc:     Rob Herring <robh@kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        "maintainer:BROADCOM IPROC ARM ARCHITECTURE" 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
-        Sugaya Taichi <sugaya.taichi@socionext.com>,
-        Andrew Jeffery <andrew@aj.id.au>,
-        Arnd Bergmann <arnd@arndb.de>, Joel Stanley <joel@jms.id.au>,
-        Vinod Koul <vkoul@kernel.org>,
-        "james.tai" <james.tai@realtek.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        "moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" 
-        <linux-rpi-kernel@lists.infradead.org>
-Subject: Re: [PATCH v2 12/12] dt-bindings: arm: bcm: Convert BCM2835 firmware
- binding to YAML
-Message-ID: <20200323084044.dziwbk7pugoy73yh@gilmour.lan>
-References: <20200204235552.7466-1-f.fainelli@gmail.com>
- <20200204235552.7466-13-f.fainelli@gmail.com>
- <20200206192333.GA30325@bogus>
- <47e12841-d9bb-3204-76c0-5bc0ef74b094@gmail.com>
+        Mon, 23 Mar 2020 04:44:58 -0400
+Received: by mail-io1-f68.google.com with SMTP id q128so13228124iof.9
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Mar 2020 01:44:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=8zPLvGcYQo1o0IQb+SkUkD1MBg65ZhQ3XSlCwhyWfpI=;
+        b=Ua25DunDi0MeBVuRXcr6VxR75Zm8tN3mOIgQLv7SVFyOMiQTGlLwB2NhjD5hHMyGh0
+         jgbJY8Kv2wMMvllY/0rD5aG71MJobqW61gI5zuPRyiYBq6RN9RhoFIEInxws/vuFougT
+         m/FLLRIBW1noWeJQ+8SFmGYFFLbrveNGrvdotyOtaM840t/6npJwkZvNMkqWP6Eo12Q4
+         P7lpEQYGPmYNJisG/Rb/DbJraeU/vv11KnJDPi+LCNrWQiUE9eEr56RXwk27WCP2e5V1
+         QI1E06abQhbNtKpYYxUUwilUbd9UGJyPYuxk4wDHfg5Llgh8rTn7ZE4Ft/eMN5uLy3oV
+         nuKg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=8zPLvGcYQo1o0IQb+SkUkD1MBg65ZhQ3XSlCwhyWfpI=;
+        b=BsfOKHQR7FJbyAa3COpRsetkFHuxGqgCPL9JtTMevnu3qLF5PbetmDv14kb9jeiTlI
+         m06wFB06/4jQAMfwZosKpJCetozXLJwgYFqz208pV2kAENWTZTtM+IVUeJdfJtt4xmMY
+         PuiEq/TRP3sZgTb4P6UzuEyM+3uGGpTjkdaW1NDtjf3p3Fj64RDIsKRoIRaDtjISgOgk
+         Q9vvhRi4NBFLXtggL0RlDXOT9jBAsa5jBJsuyEPtXD6CHlBqaVWu3CjwpH+vrSnATtJf
+         KT4koznPnYBX2T4r1Kf+CNaHE2/roFumHLJXOV8aIGLqpIB6k+53HxBX9fbtevV6E2aU
+         NEhg==
+X-Gm-Message-State: ANhLgQ2eGjC6uKM6IATUo0mitTVFoMJ+xw9R85qpZf6oqlfM4S948Bbb
+        RtGCRWxXaeIxNIBu2Xy6Ie8aE7elq3e28SIO15NWTQ==
+X-Google-Smtp-Source: ADFU+vuAXHIndZOUmHZ6KwtgPOsJUB4ijygt/ruRcg/bBmcsWhpC3fPPMJnSyb8rsa9k9SR7V6O+b/KvIzcm+1LqfdA=
+X-Received: by 2002:a5e:8204:: with SMTP id l4mr18406002iom.31.1584953095899;
+ Mon, 23 Mar 2020 01:44:55 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="wwybpixyqgd42xes"
-Content-Disposition: inline
-In-Reply-To: <47e12841-d9bb-3204-76c0-5bc0ef74b094@gmail.com>
+References: <20200224094158.28761-1-brgl@bgdev.pl> <20200224094158.28761-3-brgl@bgdev.pl>
+ <CAMRc=MdbvwQ3Exa2gmY-J0p8UeB-_dKrgqHEBo=S08yU4Uth=A@mail.gmail.com>
+ <CACRpkdbBCihyayQ=hPVLY8z4G=n5cxLnUmaPpHRuKedDQPVUyQ@mail.gmail.com>
+ <CAMpxmJX_Jqz97bp-nKtJp7_CgJ=72ZxWkEPN4Y-dpNpqEwa_Mg@mail.gmail.com>
+ <CACRpkdYpers8Zzh9A3T0mFSyZYDcrjfn9iaQn92RkVHWE+GinQ@mail.gmail.com> <CAMRc=MdLYD3CeFtp4jF+-P+4kSmt1sAezrkPFk5rK4=whNEWuA@mail.gmail.com>
+In-Reply-To: <CAMRc=MdLYD3CeFtp4jF+-P+4kSmt1sAezrkPFk5rK4=whNEWuA@mail.gmail.com>
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+Date:   Mon, 23 Mar 2020 09:44:45 +0100
+Message-ID: <CAMRc=MfEo6=im5EPHYtht3xN83k+rcRgQDSOB=Ucs52M8RWirg@mail.gmail.com>
+Subject: Re: [PATCH 2/3] gpiolib: use kref in gpio_desc
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Khouloud Touil <ktouil@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
---wwybpixyqgd42xes
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-Hi Florian,
-
-On Sun, Mar 22, 2020 at 02:35:17PM -0700, Florian Fainelli wrote:
+pt., 13 mar 2020 o 16:04 Bartosz Golaszewski <brgl@bgdev.pl> napisa=C5=82(a=
+):
 >
->
-> On 2/6/2020 11:23 AM, Rob Herring wrote:
-> > On Tue, Feb 04, 2020 at 03:55:52PM -0800, Florian Fainelli wrote:
-> >> Convert the Raspberry Pi BCM2835 firmware binding document to YAML.
-> >> Verified with dt_binding_check and dtbs_check.
-> >>
-> >> Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
-> >> ---
-> >>  .../arm/bcm/raspberrypi,bcm2835-firmware.txt  | 14 --------
-> >>  .../arm/bcm/raspberrypi,bcm2835-firmware.yaml | 33 +++++++++++++++++++
-> >>  2 files changed, 33 insertions(+), 14 deletions(-)
-> >>  delete mode 100644 Documentation/devicetree/bindings/arm/bcm/raspberrypi,bcm2835-firmware.txt
-> >>  create mode 100644 Documentation/devicetree/bindings/arm/bcm/raspberrypi,bcm2835-firmware.yaml
-> >>
-> >> diff --git a/Documentation/devicetree/bindings/arm/bcm/raspberrypi,bcm2835-firmware.txt b/Documentation/devicetree/bindings/arm/bcm/raspberrypi,bcm2835-firmware.txt
-> >> deleted file mode 100644
-> >> index 6824b3180ffb..000000000000
-> >> --- a/Documentation/devicetree/bindings/arm/bcm/raspberrypi,bcm2835-firmware.txt
-> >> +++ /dev/null
-> >> @@ -1,14 +0,0 @@
-> >> -Raspberry Pi VideoCore firmware driver
-> >> -
-> >> -Required properties:
-> >> -
-> >> -- compatible:		Should be "raspberrypi,bcm2835-firmware"
-> >> -- mboxes:		Phandle to the firmware device's Mailbox.
-> >> -			  (See: ../mailbox/mailbox.txt for more information)
-> >> -
-> >> -Example:
-> >> -
-> >> -firmware {
-> >> -	compatible = "raspberrypi,bcm2835-firmware";
-> >> -	mboxes = <&mailbox>;
-> >> -};
-> >> diff --git a/Documentation/devicetree/bindings/arm/bcm/raspberrypi,bcm2835-firmware.yaml b/Documentation/devicetree/bindings/arm/bcm/raspberrypi,bcm2835-firmware.yaml
-> >> new file mode 100644
-> >> index 000000000000..db355d970f2b
-> >> --- /dev/null
-> >> +++ b/Documentation/devicetree/bindings/arm/bcm/raspberrypi,bcm2835-firmware.yaml
-> >> @@ -0,0 +1,33 @@
-> >> +# SPDX-License-Identifier: GPL-2.0
-> >> +%YAML 1.2
-> >> +---
-> >> +$id: http://devicetree.org/schemas/arm/bcm/raspberrypi,bcm2835-firmware.yaml#
-> >> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> >> +
-> >> +title: Raspberry Pi VideoCore firmware driver
-> >> +
-> >> +maintainers:
-> >> +  - Eric Anholt <eric@anholt.net>
-> >> +  - Stefan Wahren <wahrenst@gmx.net>
-> >> +
-> >> +properties:
-> >> +  compatible:
-> >> +    const: raspberrypi,bcm2835-firmware simple-bus
-> >                                           ^
+> pt., 13 mar 2020 o 09:44 Linus Walleij <linus.walleij@linaro.org> napisa=
+=C5=82(a):
 > >
-> > I need to check for spaces with the meta-schema...
+> > On Thu, Mar 12, 2020 at 7:25 PM Bartosz Golaszewski
+> > <bgolaszewski@baylibre.com> wrote:
+> >
+> > > I believe this is not correct. The resources managed by devres are
+> > > released when the device is detached from a driver, not when the
+> > > device's reference count goes to 0. When the latter happens, the
+> > > device's specific (or its device_type's) release callback is called -
+> > > for gpiolib this is gpiodevice_release().
+> >
+> > Yeah you're right, I even point that out in my second letter :/
+> >
+> > It's a bit of confusion for everyone (or it's just me).
+> >
 >
-> I believe I had tried to use:
+> No, it is confusing and I only recently understood it while trying to
+> fix a memory leak in nvmem.
 >
-> const: raspberrypi,bcm2835-firmware
-> const: simple-bus
+> > > The kref inside struct device will not go down to zero until you call
+> > > device_del() (if you previously called device_add() that is which
+> > > increases the reference count by a couple points). But what I'm
+> > > thinking about is making the call to device_del() depend not on the
+> > > call to gpiochip_remove() but on the kref on the gpio device going
+> > > down to zero. As for the protection against module removal - this
+> > > should be handled by module_get/put().
+> >
+> > Right. At the end of gpiochip_remove():
+> >
+> >    cdev_device_del(&gdev->chrdev, &gdev->dev);
+> >    put_device(&gdev->dev);
+> >
+> > That last put_device() should in best case bring the refcount
+> > to zero.
+> >
+> > So the actual way we lifecycle GPIO chips is managed
+> > resources using only devm_* but the reference count does work
+> > too: reference count should normally land at zero since the
+> > gpiochip_remove() call is ended with a call to
+> > put_device() and that should (ideally) bring it to zero.
+> >
+> > It's just that this doesn't really trigger anything.
+> >
 >
-> but this did not work, and I had to resort to doing this.
+> Not necessarily - if the new kref for GPIO device would be detached
+> from device reference counting and what it would trigger at release is
+> this:
+>
+>    cdev_device_del(&gdev->chrdev, &gdev->dev);
+>    put_device(&gdev->dev);
+>
+> Or to be even more clear: "getting" the gpiodevice would not be the
+> same as "getting" a device - in fact only when the gpiodevice kref
+> goes down to 0 do we put the reference to the device object.
+>
+> > I think there is no way out of the fact that we have to
+> > forcefully remove the gpio_chip when devm_* destructors
+> > kicks in: the driver is indeed getting removed at that
+> > point.
+> >
+>
+> There does seem to be a way around that though: the clock framework
+> does it by creating a clock "core" object which is reference counted
+> and if the provider is removed while consumers still hold references
+> to it, then it does a couple things to "numb" the provider (as you
+> nicely put it) like replacing all ops callbacks with NULL pointers but
+> keeps the structure alive until the consumers also give up all their
+> references.
+>
+> That being said: I'm not saying this is necessary or even useful. I
+> started the discussion because I was under the impression I wasn't
+> clear enough when writing about reference counting for descriptors. If
+> nobody complains about the current implementation then let's not fix
+> something that's not broken.
+>
+> Bartosz
+>
+> > In gpiochip_remove() we "numb" the chip so that any
+> > gpio_desc:s currently in use will just fail silently and not crash,
+> > since they are not backed by a driver any more. The descs
+> > stay around until the consumer releases them, but if we probe the
+> > same GPIO device again they will certainly not re-attach or
+> > something.
+> >
+> > Arguably it is a bit of policy. Would it make more sense to
+> > have rmmod fail if the kref inside gdev->dev->kobj->kref
+> > is !=3D 1? I suppose that is what things like storage
+> > drivers pretty much have to do.
+> >
+> > The problem with that is that as soon as you have a consumer
+> > that is compiled into the kernel it makes it impossible to
+> > remove the gpio driver with rmmod.
+> >
+> > I really needed to refresh this a bit, so the above is maybe
+> > a bit therapeutic.
+> >
+> > I don't really see how we could do things differently without
+> > creating some other problem though.
+> >
+> > Yours,
+> > Linus Walleij
 
-That would be:
+Hi Linus,
 
-compatible:
-  items:
-    - const: raspberrypi,bcm2835-firmware
-    - const: simple-bus
+what is your decision on this? Because if we don't merge this, then we
+need to make sure nvmem doesn't call gpiod_put() for descriptors it
+didn't obtain itself and we should probably fix it this week.
 
-It changes slightly from what the initial binding was saying though,
-since it wasn't mentionning simple-bus at all? Is that on purpose?
-
-Maxime
-
---wwybpixyqgd42xes
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXnh2DAAKCRDj7w1vZxhR
-xWPgAQDElnAp04YnCuO+jkIJku1JVizkv38k3ww8QABe4VX0xQD/arimv4bGqD7V
-epzB2XkOyomNsyh7Rg3ODKZa7PzqxgM=
-=r/Q5
------END PGP SIGNATURE-----
-
---wwybpixyqgd42xes--
+Bart
