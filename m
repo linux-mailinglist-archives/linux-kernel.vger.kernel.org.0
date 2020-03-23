@@ -2,90 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 04C0F18F3D3
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Mar 2020 12:38:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1F28F18F3BF
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Mar 2020 12:34:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728241AbgCWLha (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Mar 2020 07:37:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48112 "EHLO mail.kernel.org"
+        id S1728177AbgCWLe4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Mar 2020 07:34:56 -0400
+Received: from foss.arm.com ([217.140.110.172]:47678 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728115AbgCWLha (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Mar 2020 07:37:30 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 40C172072D;
-        Mon, 23 Mar 2020 11:37:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584963448;
-        bh=Qvwdz8ilRZsCc6m4V1drguRDObDE7BaSWVLZcfchPxs=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=pDQDVC84TdvDgm8Yp4vynCgeBAz6qkIsJyMp4y6tkStNL9WlwK/con7SNvepYz+O7
-         LKn/lf+cKyg3+AirXdzLWCQnfNlXXUF0JF9f14TRpJ//Ma610xkNa6WfCHyWl3b+Hz
-         pVbtSWsDiApFIZ2kuB9HQQauBID5XBMiYWylvG5g=
-Date:   Mon, 23 Mar 2020 12:37:26 +0100
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Wambui Karuga <wambui.karugax@gmail.com>
-Cc:     maarten.lankhorst@linux.intel.com, mripard@kernel.org,
-        tzimmermann@suse.de, airlied@linux.ie, daniel@ffwll.ch,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] drm/vram-helper: remove unneeded #if defined/endif
- guards.
-Message-ID: <20200323113726.GA663867@kroah.com>
-References: <20200323112802.228214-1-wambui.karugax@gmail.com>
+        id S1728115AbgCWLe4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Mar 2020 07:34:56 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2F8AD1FB;
+        Mon, 23 Mar 2020 04:34:55 -0700 (PDT)
+Received: from [10.37.12.136] (unknown [10.37.12.136])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 562D63F52E;
+        Mon, 23 Mar 2020 04:34:52 -0700 (PDT)
+Subject: Re: [PATCH 1/2] coresight: etm4x: Add support for Qualcomm SC7180 SoC
+To:     saiprakash.ranjan@codeaurora.org
+Cc:     mathieu.poirier@linaro.org, bjorn.andersson@linaro.org,
+        leo.yan@linaro.org, devicetree@vger.kernel.org, robh+dt@kernel.org,
+        agross@kernel.org, david.brown@linaro.org, mark.rutland@arm.com,
+        swboyd@chromium.org, rnayak@codeaurora.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
+References: <cover.1584689229.git.saiprakash.ranjan@codeaurora.org>
+ <07a6b272c6e71e0e480f0dd0bffaf3138c0ab4c2.1584689229.git.saiprakash.ranjan@codeaurora.org>
+ <edf1bab3-411a-ff7a-b4ca-78a8ab00c72b@arm.com>
+ <4924d6c9495d412d9ecb3e1a50ea6ca8@codeaurora.org>
+From:   Suzuki K Poulose <suzuki.poulose@arm.com>
+Message-ID: <788554ee-1b78-9651-9a95-843b8725f502@arm.com>
+Date:   Mon, 23 Mar 2020 11:39:39 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200323112802.228214-1-wambui.karugax@gmail.com>
+In-Reply-To: <4924d6c9495d412d9ecb3e1a50ea6ca8@codeaurora.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 23, 2020 at 02:28:02PM +0300, Wambui Karuga wrote:
-> Remove unneeded #if/#endif guards for checking whether the
-> CONFIG_DEBUG_FS option is set or not. If the option is not set, the
-> compiler optimizes the functions making the guards
-> unnecessary.
+On 03/23/2020 11:32 AM, Sai Prakash Ranjan wrote:
+> Hi Suzuki,
 > 
-> Signed-off-by: Wambui Karuga <wambui.karugax@gmail.com>
-> ---
->  drivers/gpu/drm/drm_gem_vram_helper.c | 4 ----
->  1 file changed, 4 deletions(-)
+> On 2020-03-23 15:25, Suzuki K Poulose wrote:
+>> On 03/20/2020 07:44 AM, Sai Prakash Ranjan wrote:
+>>> Add ETM Peripheral IDs for Qualcomm SC7180 SoC. It has
+>>> 2 big CPU cores based on Cortex-A76 and 6 LITTLE CPU
+>>> cores based on Cortex-A55.
+>>>
+>>> Signed-off-by: Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
+>>> ---
+>>>   drivers/hwtracing/coresight/coresight-etm4x.c | 2 ++
+>>>   1 file changed, 2 insertions(+)
+>>>
+>>> diff --git a/drivers/hwtracing/coresight/coresight-etm4x.c 
+>>> b/drivers/hwtracing/coresight/coresight-etm4x.c
+>>> index a90d757f7043..a153a65c4c5b 100644
+>>> --- a/drivers/hwtracing/coresight/coresight-etm4x.c
+>>> +++ b/drivers/hwtracing/coresight/coresight-etm4x.c
+>>> @@ -1556,6 +1556,8 @@ static const struct amba_id etm4_ids[] = {
+>>>       CS_AMBA_UCI_ID(0x000f0211, uci_id_etm4),/* Qualcomm Kryo */
+>>>       CS_AMBA_ID(0x000bb802),            /* Qualcomm Kryo 385 
+>>> Cortex-A55 */
+>>>       CS_AMBA_ID(0x000bb803),            /* Qualcomm Kryo 385 
+>>> Cortex-A75 */
+>>> +    CS_AMBA_ID(0x000bb805),            /* Qualcomm Kryo 4XX 
+>>> Cortex-A55 */
+>>> +    CS_AMBA_ID(0x000bb804),            /* Qualcomm Kryo 4XX 
+>>> Cortex-A76 */
+>>
+>> Does the DEVARCH indicate that it is an ETMv4 ? (It should !) Please
+>> could we enforce the UCI_ID check for these components ? The
+>> moment you add CTI components to your board this could conflict with
+>> them unless we check the UCI_ID for ETMv4.
+>>
 > 
-> diff --git a/drivers/gpu/drm/drm_gem_vram_helper.c b/drivers/gpu/drm/drm_gem_vram_helper.c
-> index 76506bedac11..b3201a70cbfc 100644
-> --- a/drivers/gpu/drm/drm_gem_vram_helper.c
-> +++ b/drivers/gpu/drm/drm_gem_vram_helper.c
-> @@ -1018,7 +1018,6 @@ static struct ttm_bo_driver bo_driver = {
->   * struct drm_vram_mm
->   */
->  
-> -#if defined(CONFIG_DEBUG_FS)
->  static int drm_vram_mm_debugfs(struct seq_file *m, void *data)
->  {
->  	struct drm_info_node *node = (struct drm_info_node *) m->private;
-> @@ -1035,7 +1034,6 @@ static int drm_vram_mm_debugfs(struct seq_file *m, void *data)
->  static const struct drm_info_list drm_vram_mm_debugfs_list[] = {
->  	{ "vram-mm", drm_vram_mm_debugfs, 0, NULL },
->  };
-> -#endif
->  
->  /**
->   * drm_vram_mm_debugfs_init() - Register VRAM MM debugfs file.
-> @@ -1045,11 +1043,9 @@ static const struct drm_info_list drm_vram_mm_debugfs_list[] = {
->   */
->  void drm_vram_mm_debugfs_init(struct drm_minor *minor)
->  {
-> -#if defined(CONFIG_DEBUG_FS)
->  	drm_debugfs_create_files(drm_vram_mm_debugfs_list,
->  				 ARRAY_SIZE(drm_vram_mm_debugfs_list),
->  				 minor->debugfs_root, minor);
-> -#endif
->  }
->  EXPORT_SYMBOL(drm_vram_mm_debugfs_init);
->  
-> -- 
-> 2.25.1
+> Yes I got these IDs through devarch and it does indicate that it is 
+> ETMv4.2.
+> 
+> devname=7040000.etm dev->type=0x13 devarch=0x47724a13
+> devname=7140000.etm dev->type=0x13 devarch=0x47724a13
+> devname=7240000.etm dev->type=0x13 devarch=0x47724a13
+> devname=7340000.etm dev->type=0x13 devarch=0x47724a13
+> devname=7440000.etm dev->type=0x13 devarch=0x47724a13
+> devname=7540000.etm dev->type=0x13 devarch=0x47724a13
+> devname=7640000.etm dev->type=0x13 devarch=0x47724a13
+> devname=7740000.etm dev->type=0x13 devarch=0x47724a13
+> 
+> I will add the UCI_ID as you suggested in next version.
 
-Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+If you do have access to the Kryo 385 variants, please fix
+them as well.
+
+Cheers
+Suzuki
