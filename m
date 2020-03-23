@@ -2,122 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6DE9C18F4D3
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Mar 2020 13:40:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3899918F4CC
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Mar 2020 13:40:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728061AbgCWMk4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Mar 2020 08:40:56 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:12178 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727130AbgCWMk4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Mar 2020 08:40:56 -0400
-Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 63E252ECE21C08DF8A96;
-        Mon, 23 Mar 2020 20:40:18 +0800 (CST)
-Received: from [127.0.0.1] (10.173.222.27) by DGGEMS406-HUB.china.huawei.com
- (10.3.19.206) with Microsoft SMTP Server id 14.3.487.0; Mon, 23 Mar 2020
- 20:40:11 +0800
-Subject: Re: [PATCH v5 20/23] KVM: arm64: GICv4.1: Plumb SGI implementation
- selection in the distributor
-To:     Marc Zyngier <maz@kernel.org>
-CC:     <linux-arm-kernel@lists.infradead.org>,
-        <kvmarm@lists.cs.columbia.edu>, <kvm@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Jason Cooper <jason@lakedaemon.net>,
-        "Robert Richter" <rrichter@marvell.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Eric Auger" <eric.auger@redhat.com>,
-        James Morse <james.morse@arm.com>,
-        "Julien Thierry" <julien.thierry.kdev@gmail.com>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>
-References: <20200304203330.4967-1-maz@kernel.org>
- <20200304203330.4967-21-maz@kernel.org>
- <72832f51-bbde-8502-3e03-189ac20a0143@huawei.com>
- <4a06fae9c93e10351276d173747d17f4@kernel.org>
- <1c9fdfc8-bdb2-88b6-4bdc-2b9254dfa55c@huawei.com>
- <256b58a9679412c96600217f316f424f@kernel.org>
- <cf5d7cf3-076f-47a7-83cf-717a619dc13e@huawei.com>
- <1c10593ac5b75f37c6853fbc74daa481@kernel.org>
-From:   Zenghui Yu <yuzenghui@huawei.com>
-Message-ID: <49fedfb3-ea4a-a18b-f453-86f43be7f18f@huawei.com>
-Date:   Mon, 23 Mar 2020 20:40:10 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.0
+        id S1728346AbgCWMkQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Mar 2020 08:40:16 -0400
+Received: from mail-io1-f71.google.com ([209.85.166.71]:53189 "EHLO
+        mail-io1-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728304AbgCWMkP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Mar 2020 08:40:15 -0400
+Received: by mail-io1-f71.google.com with SMTP id e21so11596121ios.19
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Mar 2020 05:40:15 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=sd5TWIKyh1qqWFF6KwpxYU67VG5X+U6rMqNnTsWSS9Y=;
+        b=i2yi7TfqX+5QRUCr1WeAYJX8/bVZDVfNn8QH6rCn7iVt1oQIfH9/3PPWQAqm+b4miI
+         rmhb5gxdxrxRrYezYYtniZGm5ktMTTpr2HJR93pAfXSlMMFLEBZTRD5de+UJ69iMrNIO
+         zs7xDIHdShm5ES4exsluN0dmH5q2OC34TMmT+zpeDzEh3bDtBoauRWt/tUfAxnFfz1Ie
+         qI7LWVeRlITkjHJh1Q9NhQiMsw54OZAAaV7SDI2Bx1Ko6bT8XQJEGYMvrk9Ys5nk27qo
+         9AHMzTICX2rHQAlqBklwpVphSQ3kKUiyBN90RPMRDHTW3I6ZexMTcIdiMFI8V85Csj/J
+         pcBQ==
+X-Gm-Message-State: ANhLgQ39B/I6j2lxXeO+I+vESUgCjSFD9RRbOEQgqXr/xXUClh+HKdGB
+        I6jmpwAMfsyij1W+GLDTu5R6oyVO8w5W0lPSSI4t9/o8glZT
+X-Google-Smtp-Source: ADFU+vvCsSOf70d5/8qdUtRuUFQKnuve4kAAYZvu+ttebpieoKpkKcU3BlgD4DKYP5VV2oGKkFpNExtbaqxAVXhsMvLkUCqFpw6f
 MIME-Version: 1.0
-In-Reply-To: <1c10593ac5b75f37c6853fbc74daa481@kernel.org>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.173.222.27]
-X-CFilter-Loop: Reflected
+X-Received: by 2002:a92:8312:: with SMTP id f18mr20145413ild.98.1584967214867;
+ Mon, 23 Mar 2020 05:40:14 -0700 (PDT)
+Date:   Mon, 23 Mar 2020 05:40:14 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000d2b60105a184ef30@google.com>
+Subject: WARNING: ODEBUG bug in prism2sta_disconnect_usb
+From:   syzbot <syzbot+6d2e7f6fa90e27be9d62@syzkaller.appspotmail.com>
+To:     andreyknvl@google.com, devel@driverdev.osuosl.org,
+        gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
+        linux-usb@vger.kernel.org, osdevtc@gmail.com,
+        syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Marc,
+Hello,
 
-On 2020/3/23 16:25, Marc Zyngier wrote:
-> Hi Zenghui,
-> 
-> [...]
-> 
->>> And actually, maybe we can handle that pretty cheaply. If userspace
->>> tries to restore GICD_TYPER2 to a value that isn't what KVM can
->>> offer, we just return an error. Exactly like we do for GICD_IIDR.
->>> Hence the following patch:
->>>
->>> diff --git a/virt/kvm/arm/vgic/vgic-mmio-v3.c 
->>> b/virt/kvm/arm/vgic/vgic-mmio-v3.c
->>> index 28b639fd1abc..e72dcc454247 100644
->>> --- a/virt/kvm/arm/vgic/vgic-mmio-v3.c
->>> +++ b/virt/kvm/arm/vgic/vgic-mmio-v3.c
->>> @@ -156,6 +156,7 @@ static int vgic_mmio_uaccess_write_v3_misc(struct 
->>> kvm_vcpu *vcpu,
->>>       struct vgic_dist *dist = &vcpu->kvm->arch.vgic;
->>>
->>>       switch (addr & 0x0c) {
->>> +    case GICD_TYPER2:
->>>       case GICD_IIDR:
->>>           if (val != vgic_mmio_read_v3_misc(vcpu, addr, len))
->>>               return -EINVAL;
->>>
->>> Being a RO register, writing something that isn't compatible with the
->>> possible behaviour of the hypervisor will just return an error.
->>
->> This is really a nice point to address my concern! I'm happy to see
->> this in v6 now.
->>
->>>
->>> What do you think?
->>
->> I agreed with you, with a bit nervous though. Some old guests (which
->> have no knowledge about GICv4.1 vSGIs and don't care about nASSGIcap
->> at all) will also fail to migrate from A to B, just because now we
->> present two different (unused) GICD_TYPER2 registers to them.
->>
->> Is it a little unfair to them :-) ?
-> 
-> I never pretended to be fair! ;-)
-> 
-> I'm happy to prevent migrating from a v4.1 system (A) to a v4.0
-> system (B). As soon as the guest has run, it isn't safe to do so
-> (it may have read TYPER2, and now knows about vSGIs). We *could*
-> track this and find ways to migrate this state as well, but it
-> feels fragile.
-> 
-> Migrating from B to A is more appealing. It should be possible to
-> do so without much difficulty (just check that the nASSGIcap bit
-> is either 0 or equal to KVM's view of the capability).
-> 
-> But overall I seriously doubt we can easily migrate guests across
-> very different HW. We've been talking about this for years, and
-> we still don't have a good solution for it given the diversity
-> of the ecosystem... :-/
+syzbot found the following crash on:
 
-Fair enough. Thanks for your detailed explanation!
+HEAD commit:    e17994d1 usb: core: kcov: collect coverage from usb comple..
+git tree:       https://github.com/google/kasan.git usb-fuzzer
+console output: https://syzkaller.appspot.com/x/log.txt?x=1129afe3e00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=5d64370c438bc60
+dashboard link: https://syzkaller.appspot.com/bug?extid=6d2e7f6fa90e27be9d62
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+
+Unfortunately, I don't have any reproducer for this crash yet.
+
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+6d2e7f6fa90e27be9d62@syzkaller.appspotmail.com
+
+------------[ cut here ]------------
+ODEBUG: free active (active state 0) object type: work_struct hint: hfa384x_usb_defer+0x0/0x430 include/linux/list.h:71
+WARNING: CPU: 0 PID: 95 at lib/debugobjects.c:485 debug_print_object+0x160/0x250 lib/debugobjects.c:485
+Kernel panic - not syncing: panic_on_warn set ...
+CPU: 0 PID: 95 Comm: kworker/0:2 Not tainted 5.6.0-rc5-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Workqueue: usb_hub_wq hub_event
+Call Trace:
+ __dump_stack lib/dump_stack.c:77 [inline]
+ dump_stack+0xef/0x16e lib/dump_stack.c:118
+ panic+0x2aa/0x6e1 kernel/panic.c:221
+ __warn.cold+0x2f/0x30 kernel/panic.c:582
+ report_bug+0x27b/0x2f0 lib/bug.c:195
+ fixup_bug arch/x86/kernel/traps.c:174 [inline]
+ fixup_bug arch/x86/kernel/traps.c:169 [inline]
+ do_error_trap+0x12b/0x1e0 arch/x86/kernel/traps.c:267
+ do_invalid_op+0x32/0x40 arch/x86/kernel/traps.c:286
+ invalid_op+0x23/0x30 arch/x86/entry/entry_64.S:1027
+RIP: 0010:debug_print_object+0x160/0x250 lib/debugobjects.c:485
+Code: dd 20 37 fc 85 48 89 fa 48 c1 ea 03 80 3c 02 00 0f 85 bf 00 00 00 48 8b 14 dd 20 37 fc 85 48 c7 c7 60 2b fc 85 e8 98 0b 29 ff <0f> 0b 83 05 0b 3a fb 05 01 48 83 c4 20 5b 5d 41 5c 41 5d c3 48 89
+RSP: 0018:ffff8881d58c76b0 EFLAGS: 00010286
+RAX: 0000000000000000 RBX: 0000000000000003 RCX: 0000000000000000
+RDX: 0000000000040000 RSI: ffffffff812972fd RDI: ffffed103ab18ec8
+RBP: 0000000000000001 R08: ffff8881d58b8000 R09: fffffbfff1266e8f
+R10: fffffbfff1266e8e R11: ffffffff89337477 R12: ffffffff870d8b00
+R13: ffffffff8119f700 R14: ffff8881d963cd20 R15: ffff8881d35b8e38
+ __debug_check_no_obj_freed lib/debugobjects.c:967 [inline]
+ debug_check_no_obj_freed+0x2e1/0x445 lib/debugobjects.c:998
+ slab_free_hook mm/slub.c:1441 [inline]
+ slab_free_freelist_hook mm/slub.c:1477 [inline]
+ slab_free mm/slub.c:3024 [inline]
+ kfree+0x18a/0x300 mm/slub.c:3976
+ prism2sta_disconnect_usb+0x76e/0xc30 drivers/staging/wlan-ng/prism2usb.c:209
+ usb_unbind_interface+0x1bd/0x8a0 drivers/usb/core/driver.c:436
+ __device_release_driver drivers/base/dd.c:1137 [inline]
+ device_release_driver_internal+0x42f/0x500 drivers/base/dd.c:1168
+ bus_remove_device+0x2eb/0x5a0 drivers/base/bus.c:533
+ device_del+0x481/0xd30 drivers/base/core.c:2677
+ usb_disable_device+0x23d/0x790 drivers/usb/core/message.c:1237
+ usb_disconnect+0x293/0x900 drivers/usb/core/hub.c:2211
+ hub_port_connect drivers/usb/core/hub.c:5046 [inline]
+ hub_port_connect_change drivers/usb/core/hub.c:5335 [inline]
+ port_event drivers/usb/core/hub.c:5481 [inline]
+ hub_event+0x1a1d/0x4300 drivers/usb/core/hub.c:5563
+ process_one_work+0x94b/0x1620 kernel/workqueue.c:2264
+ process_scheduled_works kernel/workqueue.c:2326 [inline]
+ worker_thread+0x7ab/0xe20 kernel/workqueue.c:2412
+ kthread+0x318/0x420 kernel/kthread.c:255
+ ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
+Kernel Offset: disabled
+Rebooting in 86400 seconds..
 
 
-Zenghui
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
