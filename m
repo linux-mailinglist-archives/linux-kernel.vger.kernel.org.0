@@ -2,30 +2,30 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 27C4518EDE3
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Mar 2020 03:11:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 070E918EDDC
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Mar 2020 03:10:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727132AbgCWCL2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 22 Mar 2020 22:11:28 -0400
-Received: from conuserg-11.nifty.com ([210.131.2.78]:45630 "EHLO
+        id S1727025AbgCWCK0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 22 Mar 2020 22:10:26 -0400
+Received: from conuserg-11.nifty.com ([210.131.2.78]:43815 "EHLO
         conuserg-11.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726954AbgCWCL2 (ORCPT
+        with ESMTP id S1726954AbgCWCK0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Mar 2020 22:11:28 -0400
+        Sun, 22 Mar 2020 22:10:26 -0400
 Received: from grover.flets-west.jp (softbank126093102113.bbtec.net [126.93.102.113]) (authenticated)
-        by conuserg-11.nifty.com with ESMTP id 02N28urR002941;
-        Mon, 23 Mar 2020 11:08:57 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-11.nifty.com 02N28urR002941
+        by conuserg-11.nifty.com with ESMTP id 02N28urS002941;
+        Mon, 23 Mar 2020 11:08:58 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-11.nifty.com 02N28urS002941
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
         s=dec2015msa; t=1584929338;
-        bh=H8Ul8qvy3/NjGlVWM0US24XZqkIoV6sumKhoWd9ALvU=;
-        h=From:To:Cc:Subject:Date:From;
-        b=QK1JkiQHss7CKQmUCCDhEmKxIkM/NXpU3k4+HCFbMgGvduOYvmPs6LbrIWByUf67v
-         mx8GHDFFWY6SV3/V0w2iVjIt/bmAad+rV0jjTvwer1CrexVtZ9zdP9Ud2h4xA9oWQu
-         cQFv7eJRpaXgjKIeYE2RTgBf+gFdImlDKE0Tl4GGQVAKOyTb+ysh6OCFOHb+79geL3
-         8mDRTUAzmuxa+PHF6ebp5z5K3v/2b3DrdhsJWXFfKOL0YXlwUJil+T4L82LMtY1+us
-         bE92TKWNjwHCk69ME3cR8bkjRL70rb/AI5/9m7dxsrdxYWqfHJ7hf2fU74OJBYfS13
-         r44+C0s9neTUg==
+        bh=Ht/jXfHLvSpNys7BvHrwcyb9dV5etFomjPUBpEzfSoQ=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=aWQl/dtPyIYMHtwxUwPgY9OfAZA8FVXwHwxDR34avL+ffUbk8PBDvBw+7Mw2iC9OM
+         M7BU3Z55/IPOR4idUlYZjo6FPoWLQ9VokEBnkuUzf1UWWhU9bwf5ghj0hXbBGOGOTr
+         rh2Zqr+VMk+6EpVyX0f3CPBu8pAEGfKnb2Og/4zeslpkdOju8VTNmyyTM24PNAoxU9
+         lSjmtl2HYaR1oBtbBGCQU31CvSnxBd8th7r/Ndk7Vs7YZGQFU6dvmN4CkDkE7dM92o
+         UyHd9Ya1vN3MPREdxbREJOCojAfgIbt4atFDyYwTXxJSl9V48HWvkfhr+LNS11AQqp
+         DqLOv+J0INg5Q==
 X-Nifty-SrcIP: [126.93.102.113]
 From:   Masahiro Yamada <masahiroy@kernel.org>
 To:     x86@kernel.org, Ingo Molnar <mingo@kernel.org>,
@@ -35,70 +35,45 @@ To:     x86@kernel.org, Ingo Molnar <mingo@kernel.org>,
 Cc:     linux-kernel@vger.kernel.org,
         "Jason A . Donenfeld" <Jason@zx2c4.com>,
         Masahiro Yamada <masahiroy@kernel.org>,
-        Allison Randal <allison@lohutok.net>,
-        Armijn Hemel <armijn@tjaldur.nl>,
-        "David S. Miller" <davem@davemloft.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Ingo Molnar <mingo@redhat.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Song Liu <songliubraving@fb.com>,
-        Zhengyuan Liu <liuzhengyuan@kylinos.cn>,
-        clang-built-linux@googlegroups.com, linux-crypto@vger.kernel.org
-Subject: [PATCH 0/7] x86: remove always-defined CONFIG_AS_* options
-Date:   Mon, 23 Mar 2020 11:08:37 +0900
-Message-Id: <20200323020844.17064-1-masahiroy@kernel.org>
+        Ingo Molnar <mingo@redhat.com>
+Subject: [PATCH 1/7] x86: remove unneeded defined(__ASSEMBLY__) check from asm/dwarf2.h
+Date:   Mon, 23 Mar 2020 11:08:38 +0900
+Message-Id: <20200323020844.17064-2-masahiroy@kernel.org>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20200323020844.17064-1-masahiroy@kernel.org>
+References: <20200323020844.17064-1-masahiroy@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-arch/x86/Makefile tests instruction code by $(call as-instr, ...)
+This header file has the following check at the top:
 
-Some of them are very old.
-For example, the check for CONFIG_AS_CFI dates back to 2006.
+  #ifndef __ASSEMBLY__
+  #warning "asm/dwarf2.h should be only included in pure assembly files"
+  #endif
 
-We raise GCC versions from time to time, and we clean old code away.
-The same policy applied to binutils.
+So, we expect defined(__ASSEMBLY__) is always true.
 
-The current minimal supported version of binutils is 2.21
+Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+---
 
-This is new enough to recognize the instruction in most of
-as-instr calls.
+ arch/x86/include/asm/dwarf2.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-
-
-Masahiro Yamada (7):
-  x86: remove unneeded defined(__ASSEMBLY__) check from asm/dwarf2.h
-  x86: remove always-defined CONFIG_AS_CFI
-  x86: remove always-defined CONFIG_AS_CFI_SIGNAL_FRAME
-  x86: remove always-defined CONFIG_AS_CFI_SECTIONS
-  x86: remove always-defined CONFIG_AS_SSSE3
-  x86: remove always-defined CONFIG_AS_AVX
-  x86: add comments about the binutils version to support code in
-    as-instr
-
- arch/x86/Makefile                             | 21 +++------
- arch/x86/crypto/Makefile                      | 32 ++++++--------
- arch/x86/crypto/aesni-intel_avx-x86_64.S      |  3 --
- arch/x86/crypto/aesni-intel_glue.c            | 14 +-----
- arch/x86/crypto/blake2s-core.S                |  2 -
- arch/x86/crypto/poly1305-x86_64-cryptogams.pl |  8 ----
- arch/x86/crypto/poly1305_glue.c               |  6 +--
- arch/x86/crypto/sha1_ssse3_asm.S              |  4 --
- arch/x86/crypto/sha1_ssse3_glue.c             |  9 +---
- arch/x86/crypto/sha256-avx-asm.S              |  3 --
- arch/x86/crypto/sha256_ssse3_glue.c           |  8 +---
- arch/x86/crypto/sha512-avx-asm.S              |  2 -
- arch/x86/crypto/sha512_ssse3_glue.c           |  7 +--
- arch/x86/include/asm/dwarf2.h                 | 43 -------------------
- arch/x86/include/asm/xor_avx.h                |  9 ----
- lib/raid6/algos.c                             |  2 -
- lib/raid6/recov_ssse3.c                       |  6 ---
- lib/raid6/test/Makefile                       |  3 --
- 18 files changed, 26 insertions(+), 156 deletions(-)
-
+diff --git a/arch/x86/include/asm/dwarf2.h b/arch/x86/include/asm/dwarf2.h
+index ae391f609840..5a0502212bc5 100644
+--- a/arch/x86/include/asm/dwarf2.h
++++ b/arch/x86/include/asm/dwarf2.h
+@@ -36,7 +36,7 @@
+ #define CFI_SIGNAL_FRAME
+ #endif
+ 
+-#if defined(CONFIG_AS_CFI_SECTIONS) && defined(__ASSEMBLY__)
++#if defined(CONFIG_AS_CFI_SECTIONS)
+ #ifndef BUILD_VDSO
+ 	/*
+ 	 * Emit CFI data in .debug_frame sections, not .eh_frame sections.
 -- 
 2.17.1
 
