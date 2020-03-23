@@ -2,57 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ED95318FD32
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Mar 2020 20:03:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7561018FD3A
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Mar 2020 20:04:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727689AbgCWTDF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Mar 2020 15:03:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54288 "EHLO mail.kernel.org"
+        id S1727775AbgCWTEN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Mar 2020 15:04:13 -0400
+Received: from foss.arm.com ([217.140.110.172]:53372 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727179AbgCWTDF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Mar 2020 15:03:05 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4BF612051A;
-        Mon, 23 Mar 2020 19:03:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584990182;
-        bh=yD6k3tOPv3TonJQXAyleomSnTMu0yIQmfZBOylOVK0M=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=MT6ftKgFSoY7zi1rkguZr3WKyFdIfCYFlcTs5ST0vcm9MGXpcmZ1j6AqeOYu6p19R
-         0rVpq2fEZf/RlzGuXZVxWSqyZIWhTt89Q2SDLuxptgB8pKowZvjyqItu34M7MrgJo9
-         X//zsAwXu1J2/OhlDni/wLZvodhL1VkZbRhBWA80=
-Date:   Mon, 23 Mar 2020 20:02:59 +0100
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Cc:     linux-kernel@vger.kernel.org, Freeman Liu <freeman.liu@unisoc.com>,
-        Baolin Wang <baolin.wang7@gmail.com>
-Subject: Re: [PATCH 1/5] nvmem: sprd: Fix the block lock operation
-Message-ID: <20200323190259.GA632476@kroah.com>
-References: <20200323150007.7487-1-srinivas.kandagatla@linaro.org>
- <20200323150007.7487-2-srinivas.kandagatla@linaro.org>
+        id S1727451AbgCWTEN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Mar 2020 15:04:13 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B40CC31B;
+        Mon, 23 Mar 2020 12:04:12 -0700 (PDT)
+Received: from mbp (unknown [172.31.20.19])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BB8EA3F52E;
+        Mon, 23 Mar 2020 12:04:11 -0700 (PDT)
+Date:   Mon, 23 Mar 2020 19:04:09 +0000
+From:   Catalin Marinas <catalin.marinas@arm.com>
+To:     Mark Rutland <mark.rutland@arm.com>
+Cc:     =?iso-8859-1?Q?R=E9mi?= Denis-Courmont <remi@remlab.net>,
+        will@kernel.org, james.morse@arm.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/3] arm64: clean up trampoline vector loads
+Message-ID: <20200323190408.GE4892@mbp>
+References: <1938400.7m7sAWtiY1@basile.remlab.net>
+ <20200319091407.51449-1-remi@remlab.net>
+ <20200323120700.GB2597@C02TD0UTHF1T.local>
+ <2345780.q8flsOIESp@basile.remlab.net>
+ <20200323121437.GC2597@C02TD0UTHF1T.local>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20200323150007.7487-2-srinivas.kandagatla@linaro.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200323121437.GC2597@C02TD0UTHF1T.local>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 23, 2020 at 03:00:03PM +0000, Srinivas Kandagatla wrote:
-> From: Freeman Liu <freeman.liu@unisoc.com>
+On Mon, Mar 23, 2020 at 12:14:37PM +0000, Mark Rutland wrote:
+> On Mon, Mar 23, 2020 at 02:08:53PM +0200, Rémi Denis-Courmont wrote:
+> > Le maanantaina 23. maaliskuuta 2020, 14.07.00 EET Mark Rutland a écrit :
+> > > On Thu, Mar 19, 2020 at 11:14:05AM +0200, Rémi Denis-Courmont wrote:
+> > > > From: Rémi Denis-Courmont <remi.denis.courmont@huawei.com>
+> > > > 
+> > > > This switches from custom instruction patterns to the regular large
+> > > > memory model sequence with ADRP and LDR. In doing so, the ADD
+> > > > instruction can be eliminated in the SDEI handler, and the code no
+> > > > longer assumes that the trampoline vectors and the vectors address both
+> > > > start on a page boundary.
+> > > > 
+> > > > Signed-off-by: Rémi Denis-Courmont <remi.denis.courmont@huawei.com>
+> > > > ---
+> > > > 
+> > > >  arch/arm64/kernel/entry.S | 9 ++++-----
+> > > >  1 file changed, 4 insertions(+), 5 deletions(-)
+> > > > 
+> > > > diff --git a/arch/arm64/kernel/entry.S b/arch/arm64/kernel/entry.S
+> > > > index e5d4e30ee242..24f828739696 100644
+> > > > --- a/arch/arm64/kernel/entry.S
+> > > > +++ b/arch/arm64/kernel/entry.S
+> > > > @@ -805,9 +805,9 @@ alternative_else_nop_endif
+> > > > 
+> > > >  2:
+> > > >  	tramp_map_kernel	x30
+> > > >  
+> > > >  #ifdef CONFIG_RANDOMIZE_BASE
+> > > > 
+> > > > -	adr	x30, tramp_vectors + PAGE_SIZE
+> > > > +	adrp	x30, tramp_vectors + PAGE_SIZE
+> > > > 
+> > > >  alternative_insn isb, nop, ARM64_WORKAROUND_QCOM_FALKOR_E1003
+> > > > 
+> > > > -	ldr	x30, [x30]
+> > > > +	ldr	x30, [x30, #:lo12:__entry_tramp_data_start]
+> > > 
+> > > I think this is busted for !4K kernels once we reduce the alignment of
+> > > __entry_tramp_data_start.
+> > > 
+> > > The ADRP gives us a 64K aligned address (with bits 15:0 clear). The lo12
+> > > relocation gives us bits 11:0, so we haven't accounted for bits 15:12.
+> > 
+> > IMU, ADRP gives a 4K aligned value, regardless of MMU (TCR) settings.
 > 
-> According to the Spreadtrum eFuse specification, we should write 0 to
-> the block to trigger the lock operation.
-> 
-> Fixes: 096030e7f449 ("nvmem: sprd: Add Spreadtrum SoCs eFuse support")
-> Signed-off-by: Freeman Liu <freeman.liu@unisoc.com>
-> Signed-off-by: Baolin Wang <baolin.wang7@gmail.com>
-> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-> ---
->  drivers/nvmem/sprd-efuse.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> Sorry, I had erroneously assumed tramp_vectors was page aligned. The
+> issue still stands -- we haven't accounted for bits 15:12, as those can
+> differ between tramp_vectors and __entry_tramp_data_start.
 
-This should go to stable, I'll add the tag...
+Should we just use adrp on __entry_tramp_data_start? Anyway, the diff
+below doesn't solve the issue I'm seeing (only reverting patch 3).
+
+diff --git a/arch/arm64/kernel/entry.S b/arch/arm64/kernel/entry.S
+index ca1340eb46d8..4cc9d1df3985 100644
+--- a/arch/arm64/kernel/entry.S
++++ b/arch/arm64/kernel/entry.S
+@@ -810,7 +810,7 @@ alternative_else_nop_endif
+ 2:
+ 	tramp_map_kernel	x30
+ #ifdef CONFIG_RANDOMIZE_BASE
+-	adrp	x30, tramp_vectors + PAGE_SIZE
++	adrp	x30, __entry_tramp_data_start
+ alternative_insn isb, nop, ARM64_WORKAROUND_QCOM_FALKOR_E1003
+ 	ldr	x30, [x30, #:lo12:__entry_tramp_data_start]
+ #else
+@@ -964,7 +964,7 @@ SYM_CODE_START(__sdei_asm_entry_trampoline)
+ 1:	str	x4, [x1, #(SDEI_EVENT_INTREGS + S_ORIG_ADDR_LIMIT)]
+ 
+ #ifdef CONFIG_RANDOMIZE_BASE
+-	adrp	x4, tramp_vectors + PAGE_SIZE
++	adrp	x4, __sdei_asm_trampoline_next_handler
+ 	ldr	x4, [x4, #:lo12:__sdei_asm_trampoline_next_handler]
+ #else
+ 	ldr	x4, =__sdei_asm_handler
+
+-- 
+Catalin
