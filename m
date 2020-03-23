@@ -2,36 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 712BB18F427
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Mar 2020 13:13:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5A41518F410
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Mar 2020 13:09:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727497AbgCWMNz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Mar 2020 08:13:55 -0400
-Received: from ciao.gmane.io ([159.69.161.202]:42424 "EHLO ciao.gmane.io"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726204AbgCWMNz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Mar 2020 08:13:55 -0400
-X-Greylist: delayed 301 seconds by postgrey-1.27 at vger.kernel.org; Mon, 23 Mar 2020 08:13:54 EDT
-Received: from list by ciao.gmane.io with local (Exim 4.92)
-        (envelope-from <glk-linux-kernel-4@m.gmane-mx.org>)
-        id 1jGLsy-000BDo-Df
-        for linux-kernel@vger.kernel.org; Mon, 23 Mar 2020 13:08:52 +0100
-X-Injected-Via-Gmane: http://gmane.org/
-To:     linux-kernel@vger.kernel.org
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+        id S1727451AbgCWMJC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Mar 2020 08:09:02 -0400
+Received: from smtp09.smtpout.orange.fr ([80.12.242.131]:31087 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727430AbgCWMJC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Mar 2020 08:09:02 -0400
+Received: from [192.168.42.210] ([93.22.39.252])
+        by mwinf5d69 with ME
+        id Ho8n2200f5SRGh103o8oSn; Mon, 23 Mar 2020 13:08:59 +0100
+X-ME-Helo: [192.168.42.210]
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Mon, 23 Mar 2020 13:08:59 +0100
+X-ME-IP: 93.22.39.252
 Subject: Re: [PATCH] perf cpumap: Use scnprintf instead of snprintf
-Date:   Mon, 23 Mar 2020 13:08:47 +0100
-Message-ID: <9f8351f9-7664-8c96-9c37-a6e86efc9643@wanadoo.fr>
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
+        mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
+        jolsa@redhat.com, namhyung@kernel.org, kan.liang@linux.intel.com,
+        zhe.he@windriver.com, dzickus@redhat.com, jstancek@redhat.com,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Newsgroups: gmane.linux.kernel,gmane.linux.kernel.janitors
 References: <20200322172523.2677-1-christophe.jaillet@wanadoo.fr>
  <20200323110334.GC26299@kadam>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Message-ID: <9f8351f9-7664-8c96-9c37-a6e86efc9643@wanadoo.fr>
+Date:   Mon, 23 Mar 2020 13:08:47 +0100
 User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
  Thunderbird/68.6.0
+MIME-Version: 1.0
 In-Reply-To: <20200323110334.GC26299@kadam>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Content-Language: en-US
-Cc:     kernel-janitors@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -90,5 +97,4 @@ but 'if (ret == PATH_MAX)' should be turned in 'if (ret >= PATH_MAX)'.
 If agreed, I can send a V2.
 
 CJ
-
 
