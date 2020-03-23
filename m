@@ -2,467 +2,165 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E350518EFB5
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Mar 2020 07:14:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C834918EFBC
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Mar 2020 07:16:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727304AbgCWGOD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Mar 2020 02:14:03 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:38129 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726142AbgCWGOC (ORCPT
+        id S1727299AbgCWGQ5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Mar 2020 02:16:57 -0400
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:46171 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726059AbgCWGQ5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Mar 2020 02:14:02 -0400
-Received: by mail-pf1-f194.google.com with SMTP id z25so2667870pfa.5;
-        Sun, 22 Mar 2020 23:13:59 -0700 (PDT)
+        Mon, 23 Mar 2020 02:16:57 -0400
+Received: by mail-lf1-f67.google.com with SMTP id y83so1460031lff.13
+        for <linux-kernel@vger.kernel.org>; Sun, 22 Mar 2020 23:16:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :in-reply-to:references;
-        bh=zj9erq2KJqJpY6FHezES+mBlU6wRrmbz/+BDFOKU9yw=;
-        b=A+7cpEr7AKkiU1WEDsLNYWYAjyg0U1VaoMObhMMk06nrYDgaeRC+g1E5lC1v4zW2i0
-         ce0IRqDORoTUITH8hOyeyrgWkimYmYqc/ac1sOSnx+1+Lw1d9iOaqGeox3FsMV+ApyqZ
-         1Fdsci3oovUQLpDM/gCTzZx8o4t7SJiMhOfW/ME4TWm9H3fefFK2ksHyn7tbCv4TPWDA
-         NXdKTKh1O/MSRf+tsmMBO5ImddKmLi5GSnPjJ0VJQxSp31MxrfzEFLX/BDFlO+Mrb5pS
-         HvxU1Hj9j+vah83BCKqcjkvfkGRJ7yaTQtAaTbtp88lByLlCsgiQlzVfzXg+2WQRTy8n
-         X/eQ==
+        h=mime-version:from:date:message-id:subject:to:cc;
+        bh=s22y1lcN+QQQu9Cq44npfGXvNt5eRiT3PE1oNla8giQ=;
+        b=gLQa6HsYLUGk1i+0aevIUcbfiuq9eUyzqTf0QXh9nVx/f0OTNTa6RK3JNsmjNEQJ/l
+         jc1h0aaV2OS4B4Myr1FFSN5/tGP4sWUoffQ81ZOba9sSF8fjpbUS8dja9S4xMExPEwvB
+         1+ad9BxSsAzWihxlICNB5NPJfkUXx2lTgWXA9sLZmk2UM/uoATYUWIXJT8Eia1mHt55K
+         4/rC7g1tTSlXL9ZwQEkcFFNmwsGh8PPvavRk7p8vgUppcYoWzKuMP2rWpA2Kn17gjA5T
+         jB1dzp1EDfwzFmpwAA6RIWm2byt2usk/vrNxTbCeTFQNff2Y8ikWdO/hA6fJHCRCT9kx
+         5AeQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:in-reply-to:references;
-        bh=zj9erq2KJqJpY6FHezES+mBlU6wRrmbz/+BDFOKU9yw=;
-        b=alG2NyOFGD1w8uhRKzyaSMCCyq5gMfHKSnd/7CyOtLAi+uD7cowz9Kra/Is84kkGAg
-         qdiE8HSQYuPvNoJFn8nnVZLZNtJjngwNOJnMXkD2ucyKM/Meb+/NE2TVjVd5m4HxijaV
-         p5Jv/HmvYtIALkWdMgH9R+o8Q8cuHIuf45Hon+M97BTVhf1teDI2ieaV+YPq9grHNzv7
-         O0OhcPiKf1fpm1EAI7o+Vq24SBT0xJQ/AfWZNmeJwj79q9JsYGLQtZhldmRfGcZH3kaI
-         g+NOBrDJw1gnYQEkVYXyNVvokOQKMhdLLNs6+Q8fPBvBjTHIyIzOOffc1L00Uyh/PRuU
-         OwGw==
-X-Gm-Message-State: ANhLgQ3O+7ZEtGxoRCs8xdJb+WgBCzC+zr7LfgZp5mAZu7w7TALnpNDh
-        gKaaGKYnVWLvyNyQQ/hLUBU=
-X-Google-Smtp-Source: ADFU+vuZFCZfqvriekSOQdqKkKJsjGOrOZYZcvrWMaf7JhHh+wof15O4mFjAglUFSV6KNB0gxBVFdw==
-X-Received: by 2002:a63:e551:: with SMTP id z17mr20384747pgj.21.1584944039446;
-        Sun, 22 Mar 2020 23:13:59 -0700 (PDT)
-Received: from sh03840pcu.spreadtrum.com ([117.18.48.82])
-        by smtp.gmail.com with ESMTPSA id l1sm11458625pje.9.2020.03.22.23.13.56
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Sun, 22 Mar 2020 23:13:58 -0700 (PDT)
-From:   Baolin Wang <baolin.wang7@gmail.com>
-To:     robh+dt@kernel.org, mark.rutland@arm.com, jassisinghbrar@gmail.com
-Cc:     orsonzhai@gmail.com, zhang.lyra@gmail.com, baolin.wang7@gmail.com,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 2/2] mailbox: sprd: Add Spreadtrum mailbox driver
-Date:   Mon, 23 Mar 2020 14:13:47 +0800
-Message-Id: <3387181f33b841851fce4e648cfae95d69882cae.1584943873.git.baolin.wang7@gmail.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <600e0b027a4e62a4aea8900e5a1e95e3e14b10f0.1584943873.git.baolin.wang7@gmail.com>
-References: <600e0b027a4e62a4aea8900e5a1e95e3e14b10f0.1584943873.git.baolin.wang7@gmail.com>
-In-Reply-To: <600e0b027a4e62a4aea8900e5a1e95e3e14b10f0.1584943873.git.baolin.wang7@gmail.com>
-References: <600e0b027a4e62a4aea8900e5a1e95e3e14b10f0.1584943873.git.baolin.wang7@gmail.com>
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=s22y1lcN+QQQu9Cq44npfGXvNt5eRiT3PE1oNla8giQ=;
+        b=FZTygXC2XDjMAuL+KxjgD3FD6evwuT7UJH7yuX1jzvZ8e06mvsHG/G+vwD0pM4/rWD
+         L8s0AT5j8h5/9j2ZF+aLkDTXtPGVxPXUBhhGCiFOknkwV9f4/xGZpDAB9y4/vU9SgzL9
+         GFlwoXeg1sjRTXYpx1hvRqAK15+eFK1lWs2x3r9+ORCe2gIRKjMBU1PPKS0ER0KYtmzg
+         xWpzGX0f04zk1sftblltNRwJ4M6tS+ur46KDU/2kZMkt5uAq6SA1c8rlxvn2ozlzntGs
+         21mBtviLSDLeTrKYzJD/s2cIc4DQa2f+tAfK55tyDKR4GufnhsngSuS6xV/y6QkIjeOb
+         A0zg==
+X-Gm-Message-State: ANhLgQ21/kShi5UI+jVX858CAIA4LHPmB6q8npQNWPCRxx14SEIfB5Gf
+        ZYuESr8xwZe0tdfED2og0hYAEzoLTJyxIfiXj7M=
+X-Google-Smtp-Source: ADFU+vvBOiADwm4Qhayd2Fn8+aUtgHrb5ojQ0lWTRj4AtWBt40+AlWxLXqFrSWLhaqSDK4Mj0nNL5M3DV+7VuKKW7Uk=
+X-Received: by 2002:ac2:41d3:: with SMTP id d19mr12456096lfi.57.1584944214073;
+ Sun, 22 Mar 2020 23:16:54 -0700 (PDT)
+MIME-Version: 1.0
+From:   Kyungtae Kim <kt0755@gmail.com>
+Date:   Mon, 23 Mar 2020 02:16:43 -0400
+Message-ID: <CAEAjamtb2Kbn0He5O++=d_HCG1eQvLnGGbcVUOQ76+NfDiNybQ@mail.gmail.com>
+Subject: BUG: KASAN: use-after-free in usb_hcd_unlink_urb+0x5f/0x170 drivers/usb/core/hcd.c
+To:     Greg KH <gregkh@linuxfoundation.org>, laurentiu.tudor@nxp.com,
+        noring@nocrew.org, chunfeng.yun@mediatek.com,
+        felipe.balbi@linux.intel.com, tweek@google.com, tony@atomide.com,
+        rrangel@chromium.org, m.szyprowski@samsung.com
+Cc:     Dave Tian <dave.jing.tian@gmail.com>, linux-usb@vger.kernel.og,
+        syzkaller <syzkaller@googlegroups.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Baolin Wang <baolin.wang@unisoc.com>
+We report a bug (in linux-5.5.11) found by FuzzUSB (a modified version
+of syzkaller)
 
-The Spreadtrum mailbox controller supports 8 channels to communicate
-with MCUs, and it contains 2 different parts: inbox and outbox, which
-are used to send and receive messages by IRQ mode.
+In function usb_hcd_unlink_urb (driver/usb/core/hcd.c:1607), it tries to
+read "urb->use_count". But it seems the instance "urb" was
+already freed (right after urb->dev at line 1597) by the function "urb_destroy"
+in a different thread, which caused memory access violation.
+To solve, it may need to check if urb is valid before urb->use_count,
+to avoid such freed memory access.
 
-Signed-off-by: Baolin Wang <baolin.wang@unisoc.com>
-Signed-off-by: Baolin Wang <baolin.wang7@gmail.com>
----
-Changes from v1:
- - None
----
- drivers/mailbox/Kconfig        |   8 +
- drivers/mailbox/Makefile       |   2 +
- drivers/mailbox/sprd-mailbox.c | 350 +++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 360 insertions(+)
- create mode 100644 drivers/mailbox/sprd-mailbox.c
+kernel config: https://kt0755.github.io/etc/config_v5.5.11
 
-diff --git a/drivers/mailbox/Kconfig b/drivers/mailbox/Kconfig
-index ab4eb75..a33eaab 100644
---- a/drivers/mailbox/Kconfig
-+++ b/drivers/mailbox/Kconfig
-@@ -227,4 +227,12 @@ config ZYNQMP_IPI_MBOX
- 	  message to the IPI buffer and will access the IPI control
- 	  registers to kick the other processor or enquire status.
- 
-+config SPRD_MBOX
-+	tristate "Spreadtrum Mailbox"
-+	depends on ARCH_SPRD || COMPILE_TEST
-+	help
-+	  Mailbox driver implementation for the Spreadtrum platform. It is used
-+	  to send message between application processors and MCU. Say Y here if
-+	  you want to build the Spreatrum mailbox controller driver.
-+
- endif
-diff --git a/drivers/mailbox/Makefile b/drivers/mailbox/Makefile
-index c22fad6..0f47b6b 100644
---- a/drivers/mailbox/Makefile
-+++ b/drivers/mailbox/Makefile
-@@ -48,3 +48,5 @@ obj-$(CONFIG_STM32_IPCC) 	+= stm32-ipcc.o
- obj-$(CONFIG_MTK_CMDQ_MBOX)	+= mtk-cmdq-mailbox.o
- 
- obj-$(CONFIG_ZYNQMP_IPI_MBOX)	+= zynqmp-ipi-mailbox.o
-+
-+obj-$(CONFIG_SPRD_MBOX)		+= sprd-mailbox.o
-diff --git a/drivers/mailbox/sprd-mailbox.c b/drivers/mailbox/sprd-mailbox.c
-new file mode 100644
-index 0000000..58e5388
---- /dev/null
-+++ b/drivers/mailbox/sprd-mailbox.c
-@@ -0,0 +1,350 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Spreadtrum mailbox driver
-+ *
-+ * Copyright (c) 2020 Spreadtrum Communications Inc.
-+ */
-+
-+#include <linux/err.h>
-+#include <linux/interrupt.h>
-+#include <linux/io.h>
-+#include <linux/mailbox_controller.h>
-+#include <linux/module.h>
-+#include <linux/platform_device.h>
-+#include <linux/clk.h>
-+
-+#define SPRD_MBOX_ID		0x0
-+#define SPRD_MBOX_MSG_LOW	0x4
-+#define SPRD_MBOX_MSG_HIGH	0x8
-+#define SPRD_MBOX_TRIGGER	0xc
-+#define SPRD_MBOX_FIFO_RST	0x10
-+#define SPRD_MBOX_FIFO_STS	0x14
-+#define SPRD_MBOX_IRQ_STS	0x18
-+#define SPRD_MBOX_IRQ_MSK	0x1c
-+#define SPRD_MBOX_LOCK		0x20
-+#define SPRD_MBOX_FIFO_DEPTH	0x24
-+
-+/* Bit and mask definiation for inbox's SPRD_MBOX_FIFO_STS register */
-+#define SPRD_INBOX_FIFO_DELIVER_MASK		GENMASK(23, 16)
-+#define SPRD_INBOX_FIFO_OVERLOW_MASK		GENMASK(15, 8)
-+#define SPRD_INBOX_FIFO_DELIVER_SHIFT		16
-+#define SPRD_INBOX_FIFO_BUSY_MASK		GENMASK(7, 0)
-+
-+/* Bit and mask definiation for SPRD_MBOX_IRQ_STS register */
-+#define SPRD_MBOX_IRQ_CLR			BIT(0)
-+
-+/* Bit and mask definiation for outbox's SPRD_MBOX_FIFO_STS register */
-+#define SPRD_OUTBOX_FIFO_FULL			BIT(0)
-+#define SPRD_OUTBOX_FIFO_WR_SHIFT		16
-+#define SPRD_OUTBOX_FIFO_RD_SHIFT		24
-+#define SPRD_OUTBOX_FIFO_POS_MASK		GENMASK(7, 0)
-+
-+/* Bit and mask definiation for inbox's SPRD_MBOX_IRQ_MSK register */
-+#define SPRD_INBOX_FIFO_BLOCK_IRQ		BIT(0)
-+#define SPRD_INBOX_FIFO_OVERFLOW_IRQ		BIT(1)
-+#define SPRD_INBOX_FIFO_DELIVER_IRQ		BIT(2)
-+#define SPRD_INBOX_FIFO_IRQ_MASK		GENMASK(2, 0)
-+
-+/* Bit and mask definiation for outbox's SPRD_MBOX_IRQ_MSK register */
-+#define SPRD_OUTBOX_FIFO_NOT_EMPTY_IRQ		BIT(0)
-+#define SPRD_OUTBOX_FIFO_IRQ_MASK		GENMASK(4, 0)
-+
-+#define SPRD_MBOX_CHAN_MAX			8
-+
-+struct sprd_mbox_chan {
-+	u8			id;
-+	struct mbox_chan	*chan;
-+};
-+
-+struct sprd_mbox_priv {
-+	struct mbox_controller	mbox;
-+	struct device		*dev;
-+	void __iomem		*inbox_base;
-+	void __iomem		*outbox_base;
-+	struct clk		*clk;
-+	u32			outbox_fifo_depth;
-+
-+	struct sprd_mbox_chan	mchan[SPRD_MBOX_CHAN_MAX];
-+	struct mbox_chan	chan[SPRD_MBOX_CHAN_MAX];
-+};
-+
-+static struct sprd_mbox_priv *to_sprd_mbox_priv(struct mbox_controller *mbox)
-+{
-+	return container_of(mbox, struct sprd_mbox_priv, mbox);
-+}
-+
-+static u32 sprd_mbox_get_fifo_len(struct sprd_mbox_priv *priv, u32 fifo_sts)
-+{
-+	u32 wr_pos = (fifo_sts >> SPRD_OUTBOX_FIFO_WR_SHIFT) &
-+		SPRD_OUTBOX_FIFO_POS_MASK;
-+	u32 rd_pos = (fifo_sts >> SPRD_OUTBOX_FIFO_RD_SHIFT) &
-+		SPRD_OUTBOX_FIFO_POS_MASK;
-+	u32 fifo_len;
-+
-+	/*
-+	 * If the read pointer is equal with write pointer, which means the fifo
-+	 * is full or empty.
-+	 */
-+	if (wr_pos == rd_pos) {
-+		if (fifo_sts & SPRD_OUTBOX_FIFO_FULL)
-+			fifo_len = priv->outbox_fifo_depth;
-+		else
-+			fifo_len = 0;
-+	} else if (wr_pos > rd_pos) {
-+		fifo_len = wr_pos - rd_pos;
-+	} else {
-+		fifo_len = priv->outbox_fifo_depth - rd_pos + wr_pos;
-+	}
-+
-+	return fifo_len;
-+}
-+
-+static irqreturn_t sprd_mbox_outbox_isr(int irq, void *data)
-+{
-+	struct sprd_mbox_priv *priv = data;
-+	struct sprd_mbox_chan *mchan;
-+	u32 fifo_sts, fifo_len, msg[2];
-+	int i, id;
-+
-+	fifo_sts = readl(priv->outbox_base + SPRD_MBOX_FIFO_STS);
-+
-+	fifo_len = sprd_mbox_get_fifo_len(priv, fifo_sts);
-+	if (!fifo_len) {
-+		dev_warn_ratelimited(priv->dev, "spurious outbox interrupt\n");
-+		return IRQ_NONE;
-+	}
-+
-+	for (i = 0; i < fifo_len; i++) {
-+		msg[0] = readl(priv->outbox_base + SPRD_MBOX_MSG_LOW);
-+		msg[1] = readl(priv->outbox_base + SPRD_MBOX_MSG_HIGH);
-+		id = readl(priv->outbox_base + SPRD_MBOX_ID);
-+
-+		mchan = &priv->mchan[id];
-+		mbox_chan_received_data(mchan->chan, (void *)msg);
-+
-+		/* Trigger to update outbox FIFO pointer */
-+		writel(0x1, priv->outbox_base + SPRD_MBOX_TRIGGER);
-+	}
-+
-+	/* Clear irq status after reading all message. */
-+	writel(SPRD_MBOX_IRQ_CLR, priv->outbox_base + SPRD_MBOX_IRQ_STS);
-+
-+	return IRQ_HANDLED;
-+}
-+
-+static irqreturn_t sprd_mbox_inbox_isr(int irq, void *data)
-+{
-+	struct sprd_mbox_priv *priv = data;
-+	struct sprd_mbox_chan *mchan;
-+	u32 fifo_sts, send_sts, id;
-+
-+	fifo_sts = readl(priv->inbox_base + SPRD_MBOX_FIFO_STS);
-+
-+	/* Get the inbox data delivery status */
-+	send_sts = (fifo_sts & SPRD_INBOX_FIFO_DELIVER_MASK) >>
-+		SPRD_INBOX_FIFO_DELIVER_SHIFT;
-+	if (!send_sts) {
-+		dev_warn_ratelimited(priv->dev, "spurious inbox interrupt\n");
-+		return IRQ_NONE;
-+	}
-+
-+	while (send_sts) {
-+		id = __ffs(send_sts);
-+		send_sts &= (send_sts - 1);
-+
-+		mchan = &priv->mchan[id];
-+		mbox_chan_txdone(mchan->chan, 0);
-+	}
-+
-+	/* Clear FIFO delivery and overflow status */
-+	writel(fifo_sts &
-+	       (SPRD_INBOX_FIFO_DELIVER_MASK | SPRD_INBOX_FIFO_OVERLOW_MASK),
-+	       priv->inbox_base + SPRD_MBOX_FIFO_RST);
-+
-+	/* Clear irq status */
-+	writel(SPRD_MBOX_IRQ_CLR, priv->inbox_base + SPRD_MBOX_IRQ_STS);
-+
-+	return IRQ_HANDLED;
-+}
-+
-+static int sprd_mbox_send_data(struct mbox_chan *chan, void *msg)
-+{
-+	struct sprd_mbox_priv *priv = to_sprd_mbox_priv(chan->mbox);
-+	struct sprd_mbox_chan *mchan = chan->con_priv;
-+	u32 *data = msg, busy;
-+
-+	/*
-+	 * Check if current channel is busy or not, and we can not send data
-+	 * if current channel is busy.
-+	 */
-+	busy = readl(priv->inbox_base + SPRD_MBOX_FIFO_STS) &
-+		SPRD_INBOX_FIFO_BUSY_MASK;
-+	if (busy & BIT(mchan->id)) {
-+		dev_err(priv->dev, "Channel %d is busy\n", mchan->id);
-+		return -EBUSY;
-+	}
-+
-+	/* Write data into inbox FIFO, and only support 8 bytes every time */
-+	writel(data[0], priv->inbox_base + SPRD_MBOX_MSG_LOW);
-+	writel(data[1], priv->inbox_base + SPRD_MBOX_MSG_HIGH);
-+
-+	/* Set target core id */
-+	writel(mchan->id, priv->inbox_base + SPRD_MBOX_ID);
-+
-+	/* Trigger remote request */
-+	writel(0x1, priv->inbox_base + SPRD_MBOX_TRIGGER);
-+
-+	return 0;
-+}
-+
-+static int sprd_mbox_startup(struct mbox_chan *chan)
-+{
-+	struct sprd_mbox_priv *priv = to_sprd_mbox_priv(chan->mbox);
-+	u32 val;
-+
-+	/* Select outbox FIFO mode and reset the outbox FIFO status */
-+	writel(0x0, priv->outbox_base + SPRD_MBOX_FIFO_RST);
-+
-+	/* Enable inbox FIFO overflow and delivery interrupt */
-+	val = readl(priv->inbox_base + SPRD_MBOX_IRQ_MSK);
-+	val &= ~(SPRD_INBOX_FIFO_OVERFLOW_IRQ | SPRD_INBOX_FIFO_DELIVER_IRQ);
-+	writel(val, priv->inbox_base + SPRD_MBOX_IRQ_MSK);
-+
-+	/* Enable outbox FIFO not empty interrupt */
-+	val = readl(priv->outbox_base + SPRD_MBOX_IRQ_MSK);
-+	val &= ~SPRD_OUTBOX_FIFO_NOT_EMPTY_IRQ;
-+	writel(val, priv->outbox_base + SPRD_MBOX_IRQ_MSK);
-+
-+	return 0;
-+}
-+
-+static void sprd_mbox_shutdown(struct mbox_chan *chan)
-+{
-+	struct sprd_mbox_priv *priv = to_sprd_mbox_priv(chan->mbox);
-+
-+	/* Disable inbox & outbox interrupt */
-+	writel(SPRD_INBOX_FIFO_IRQ_MASK, priv->inbox_base + SPRD_MBOX_IRQ_MSK);
-+	writel(SPRD_OUTBOX_FIFO_IRQ_MASK, priv->outbox_base + SPRD_MBOX_IRQ_MSK);
-+}
-+
-+static const struct mbox_chan_ops sprd_mbox_ops = {
-+	.send_data    = sprd_mbox_send_data,
-+	.startup      = sprd_mbox_startup,
-+	.shutdown     = sprd_mbox_shutdown,
-+};
-+
-+static void sprd_mbox_disable(void *data)
-+{
-+	struct sprd_mbox_priv *priv = data;
-+
-+	clk_disable_unprepare(priv->clk);
-+}
-+
-+static int sprd_mbox_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct sprd_mbox_priv *priv;
-+	int i, ret, inbox_irq, outbox_irq;
-+
-+	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
-+	if (!priv)
-+		return -ENOMEM;
-+
-+	priv->dev = dev;
-+
-+	/*
-+	 * The Spreadtrum mailbox uses an inbox to send messages to the target
-+	 * core, and uses an outbox to receive messages from other cores.
-+	 *
-+	 * Thus the mailbox controller supplies 2 different register addresses
-+	 * and IRQ numbers for inbox and outbox.
-+	 */
-+	priv->inbox_base = devm_platform_ioremap_resource(pdev, 0);
-+	if (IS_ERR(priv->inbox_base))
-+		return PTR_ERR(priv->inbox_base);
-+
-+	priv->outbox_base = devm_platform_ioremap_resource(pdev, 1);
-+	if (IS_ERR(priv->outbox_base))
-+		return PTR_ERR(priv->outbox_base);
-+
-+	priv->clk = devm_clk_get(dev, "enable");
-+	if (IS_ERR(priv->clk)) {
-+		dev_err(dev, "failed to get mailbox clock\n");
-+		return PTR_ERR(priv->clk);
-+	}
-+
-+	ret = clk_prepare_enable(priv->clk);
-+	if (ret)
-+		return ret;
-+
-+	ret = devm_add_action_or_reset(dev, sprd_mbox_disable, priv);
-+	if (ret) {
-+		dev_err(dev, "failed to add mailbox disable action\n");
-+		return ret;
-+	}
-+
-+	inbox_irq = platform_get_irq(pdev, 0);
-+	if (inbox_irq < 0)
-+		return inbox_irq;
-+
-+	ret = devm_request_irq(dev, inbox_irq, sprd_mbox_inbox_isr,
-+			       IRQF_NO_SUSPEND, dev_name(dev), priv);
-+	if (ret) {
-+		dev_err(dev, "failed to request inbox IRQ: %d\n", ret);
-+		return ret;
-+	}
-+
-+	outbox_irq = platform_get_irq(pdev, 1);
-+	if (outbox_irq < 0)
-+		return outbox_irq;
-+
-+	ret = devm_request_irq(dev, outbox_irq, sprd_mbox_outbox_isr,
-+			       IRQF_NO_SUSPEND, dev_name(dev), priv);
-+	if (ret) {
-+		dev_err(dev, "failed to request outbox IRQ: %d\n", ret);
-+		return ret;
-+	}
-+
-+	/* Get the default outbox FIFO depth */
-+	priv->outbox_fifo_depth =
-+		readl(priv->outbox_base + SPRD_MBOX_FIFO_DEPTH) + 1;
-+	priv->mbox.dev = dev;
-+	priv->mbox.chans = &priv->chan[0];
-+	priv->mbox.num_chans = SPRD_MBOX_CHAN_MAX;
-+	priv->mbox.ops = &sprd_mbox_ops;
-+	priv->mbox.txdone_irq = true;
-+
-+	for (i = 0; i < SPRD_MBOX_CHAN_MAX; i++) {
-+		priv->chan[i].con_priv = &priv->mchan[i];
-+
-+		priv->mchan[i].chan = &priv->chan[i];
-+		priv->mchan[i].id = i;
-+	}
-+
-+	ret = devm_mbox_controller_register(dev, &priv->mbox);
-+	if (ret) {
-+		dev_err(dev, "failed to register mailbox: %d\n", ret);
-+		return ret;
-+	}
-+
-+	return 0;
-+}
-+
-+static const struct of_device_id sprd_mbox_of_match[] = {
-+	{ .compatible = "sprd,sc9860-mailbox", },
-+	{ },
-+};
-+MODULE_DEVICE_TABLE(of, sprd_mbox_of_match);
-+
-+static struct platform_driver sprd_mbox_driver = {
-+	.driver = {
-+		.name = "sprd-mailbox",
-+		.of_match_table = sprd_mbox_of_match,
-+	},
-+	.probe	= sprd_mbox_probe,
-+};
-+module_platform_driver(sprd_mbox_driver);
-+
-+MODULE_AUTHOR("Baolin Wang <baolin.wang@unisoc.com>");
-+MODULE_DESCRIPTION("Spreadtrum mailbox driver");
-+MODULE_LICENSE("GPL v2");
--- 
-1.9.1
+==================================================================
+BUG: KASAN: use-after-free in atomic_read
+include/asm-generic/atomic-instrumented.h:26 [inline]
+BUG: KASAN: use-after-free in usb_hcd_unlink_urb+0x5f/0x170
+drivers/usb/core/hcd.c:1607
+Read of size 4 at addr ffff888065379610 by task kworker/u4:1/27
 
+CPU: 1 PID: 27 Comm: kworker/u4:1 Not tainted 5.5.11 #2
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS
+1.10.2-1ubuntu1 04/01/2014
+Workqueue: scsi_tmf_2 scmd_eh_abort_handler
+Call Trace:
+ __dump_stack lib/dump_stack.c:77 [inline]
+ dump_stack+0xce/0x128 lib/dump_stack.c:118
+ print_address_description.constprop.4+0x21/0x3c0 mm/kasan/report.c:374
+ __kasan_report+0x153/0x1cb mm/kasan/report.c:506
+ kasan_report+0x12/0x20 mm/kasan/common.c:639
+ check_memory_region_inline mm/kasan/generic.c:185 [inline]
+ check_memory_region+0x152/0x1b0 mm/kasan/generic.c:192
+ __kasan_check_read+0x11/0x20 mm/kasan/common.c:95
+ atomic_read include/asm-generic/atomic-instrumented.h:26 [inline]
+ usb_hcd_unlink_urb+0x5f/0x170 drivers/usb/core/hcd.c:1607
+ usb_unlink_urb+0x72/0xb0 drivers/usb/core/urb.c:657
+ usb_sg_cancel+0x14e/0x290 drivers/usb/core/message.c:602
+ usb_stor_stop_transport+0x5e/0xa0 drivers/usb/storage/transport.c:937
+ command_abort+0x19d/0x200 drivers/usb/storage/scsiglue.c:439
+ scsi_try_to_abort_cmd drivers/scsi/scsi_error.c:927 [inline]
+ scmd_eh_abort_handler+0x18e/0x410 drivers/scsi/scsi_error.c:145
+ process_one_work+0x9dd/0x1710 kernel/workqueue.c:2266
+ worker_thread+0x8b/0xc40 kernel/workqueue.c:2412
+ kthread+0x35f/0x440 kernel/kthread.c:255
+ ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
+
+Allocated by task 2532:
+ save_stack+0x21/0x90 mm/kasan/common.c:72
+ set_track mm/kasan/common.c:80 [inline]
+ __kasan_kmalloc.constprop.3+0xa7/0xd0 mm/kasan/common.c:513
+ kasan_kmalloc+0x9/0x10 mm/kasan/common.c:527
+ __kmalloc+0x148/0x380 mm/slub.c:3812
+ kmalloc include/linux/slab.h:561 [inline]
+ usb_alloc_urb+0x42/0x90 drivers/usb/core/urb.c:74
+ usb_sg_init+0x323/0xa00 drivers/usb/core/message.c:406
+ usb_stor_bulk_transfer_sglist+0xbe/0x280 drivers/usb/storage/transport.c:423
+ usb_stor_bulk_srb+0x10d/0x230 drivers/usb/storage/transport.c:465
+ usb_stor_Bulk_transport+0x55f/0x1060 drivers/usb/storage/transport.c:1161
+ usb_stor_invoke_transport+0xef/0x15f0 drivers/usb/storage/transport.c:606
+ usb_stor_transparent_scsi_command+0x1d/0x30 drivers/usb/storage/protocol.c:108
+ usb_stor_control_thread+0x6d8/0xa80 drivers/usb/storage/usb.c:380
+ kthread+0x35f/0x440 kernel/kthread.c:255
+ ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
+
+Freed by task 2532:
+ save_stack+0x21/0x90 mm/kasan/common.c:72
+ set_track mm/kasan/common.c:80 [inline]
+ kasan_set_free_info mm/kasan/common.c:335 [inline]
+ __kasan_slab_free+0x135/0x190 mm/kasan/common.c:474
+ kasan_slab_free+0xe/0x10 mm/kasan/common.c:483
+ slab_free_hook mm/slub.c:1425 [inline]
+ slab_free_freelist_hook mm/slub.c:1458 [inline]
+ slab_free mm/slub.c:3005 [inline]
+ kfree+0xf7/0x410 mm/slub.c:3966
+ urb_destroy drivers/usb/core/urb.c:26 [inline]
+ kref_put include/linux/kref.h:65 [inline]
+ usb_free_urb.part.0+0x95/0x100 drivers/usb/core/urb.c:96
+ usb_free_urb+0x1f/0x30 drivers/usb/core/urb.c:95
+ sg_clean+0x111/0x270 drivers/usb/core/message.c:263
+ usb_sg_wait+0x26d/0x440 drivers/usb/core/message.c:573
+ usb_stor_bulk_transfer_sglist+0x127/0x280 drivers/usb/storage/transport.c:447
+ usb_stor_bulk_srb+0x10d/0x230 drivers/usb/storage/transport.c:465
+ usb_stor_Bulk_transport+0x55f/0x1060 drivers/usb/storage/transport.c:1161
+ usb_stor_invoke_transport+0xef/0x15f0 drivers/usb/storage/transport.c:606
+ usb_stor_transparent_scsi_command+0x1d/0x30 drivers/usb/storage/protocol.c:108
+ usb_stor_control_thread+0x6d8/0xa80 drivers/usb/storage/usb.c:380
+ kthread+0x35f/0x440 kernel/kthread.c:255
+ ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
+
+The buggy address belongs to the object at ffff888065379600
+ which belongs to the cache kmalloc-192 of size 192
+The buggy address is located 16 bytes inside of
+ 192-byte region [ffff888065379600, ffff8880653796c0)
+The buggy address belongs to the page:
+page:ffffea000194de40 refcount:1 mapcount:0 mapping:ffff88806c002a00 index:0x0
+flags: 0x100000000000200(slab)
+raw: 0100000000000200 ffffea0000ee7a00 0000000500000005 ffff88806c002a00
+raw: 0000000000000000 0000000080100010 00000001ffffffff 0000000000000000
+page dumped because: kasan: bad access detected
+
+Memory state around the buggy address:
+ ffff888065379500: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+ ffff888065379580: fb fb fb fb fb fb fb fb fc fc fc fc fc fc fc fc
+>ffff888065379600: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                         ^
+ ffff888065379680: fb fb fb fb fb fb fb fb fc fc fc fc fc fc fc fc
+ ffff888065379700: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+==================================================================
