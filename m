@@ -2,110 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7CCAA18FD82
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Mar 2020 20:20:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AD22818FD62
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Mar 2020 20:16:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727867AbgCWTUI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Mar 2020 15:20:08 -0400
-Received: from mail-qk1-f201.google.com ([209.85.222.201]:52372 "EHLO
-        mail-qk1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727179AbgCWTUH (ORCPT
+        id S1727731AbgCWTQI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Mar 2020 15:16:08 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:33542 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727218AbgCWTQH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Mar 2020 15:20:07 -0400
-Received: by mail-qk1-f201.google.com with SMTP id w124so13382066qkd.19
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Mar 2020 12:20:05 -0700 (PDT)
+        Mon, 23 Mar 2020 15:16:07 -0400
+Received: by mail-pg1-f195.google.com with SMTP id d17so7125711pgo.0
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Mar 2020 12:16:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
-        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=EuEgHEvOOlLZGILEOt39luhrShhjhA+dXySCvlN5S/w=;
-        b=frWZZr05u+jNrEcB3GH0499Ea350wyE93JmIJPfup0N2Iea+YPd3q6/qiz0WC7FuIP
-         WBoyPuMVzyQ4O0/YDSAKhAYkgwpj2nq/kGj7IXWW8nzOpSAWmDkEmkHZBHhOdIb7x4pd
-         qlvurUUNUqAF0ALylfTDWTBWNPTw17zbfsbVbCkiBao+3wRoTcRnmjsmmCReJ48hIwth
-         B68OT7qccAkZcNrdsb1H/LUCmoznz/xEpUxBHTQXSMH4jktAFRqwWvBTNfrNypJtUtaF
-         YcA+zNaafJAhGeMyIFSuEJaN92/9bAes2ovUyOw85AoB7NNsikFkTqC7SY5py2h97KEV
-         vWNg==
+        bh=Ge+SjDt8XkYogl3cRlienjEoLSa3og33Dmi/56o0M7Y=;
+        b=O6YzOT8gXPDE40c3wFDECEysSpGx0XiYKlpUNH6HK6QTOlH0Rr9uuJWU3nXcSCLskf
+         Xm1MobyG8mOmKWR1hUqAk2YeQzMUyJvKTHvgcbP0dSER7xSiPpRKOjzqox+X3xeRFzbp
+         nvwN218YhGqA+LCFyZSuX6rtNGOnpF7E37P83YbVMp4SxuIL+VzczgcPZj6tIlEtHaxc
+         Fu8BiQASznTVLr04lZfCAL8qh2blifuz97scL+g76DLa4LIPrZMZzy4TtQHmoznAKBW1
+         JwGbNAh7KO6kNSqTtzg8nhszfUp0YaPJUWc4YoBJ0eFapBZ7vztcMN33eVsocV7RJku+
+         hDZg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=EuEgHEvOOlLZGILEOt39luhrShhjhA+dXySCvlN5S/w=;
-        b=fyuOJ7a9OXFzZGlah13Un8wZVkUaeMhL7meiA8bflYL1D3DbMOVYPbbG8mZrUx4Y8u
-         VGOpWUiUQdl65YGx2DYaS6FVw52ah/Emf+bm1t8iYlYip/IReYSrcB578gpdamGgL8B1
-         p8p/Lpuu2Kc5lI+sDLZtQX0UOdEQ2Q2G5OCWidmOOfwnshd4JuzgeQoq3vxqzwTNq1t/
-         1KNgqSby/mj5b1UBwIk/CGzJhAgttTBN82tf/2P9JK5L1i+KTG9D576jPXbXLWJ+NelR
-         J7Ni4tZl/PIp2W/fYzXZ6R+0MAdJzWpm5QCjK2HiwDNi7sUdOBPUgxbicefOzgmr7vsm
-         Ao2w==
-X-Gm-Message-State: ANhLgQ2axfDI0qpxzsdHd5RJ+9n8b+VWPorIjhRGRBiOUoTqU1LLzGgD
-        DUN0SoIYCG33xwbhd8N+eAafOfAhDj1oISsQXeE=
-X-Google-Smtp-Source: ADFU+vvHiSEJBBT42wVNqrw/x1QVUgfHCyw0l5oYHfNcWj0WqOy/M8fE1DC3Ojv4iFuGiQeAk5S8n+b6TA1pOtTBh1A=
-X-Received: by 2002:a0c:fd85:: with SMTP id p5mr6095302qvr.205.1584991205290;
- Mon, 23 Mar 2020 12:20:05 -0700 (PDT)
-Date:   Mon, 23 Mar 2020 12:12:43 -0700
-In-Reply-To: <CAKwvOdn10Ts_AU6i+7toj7NkMwK-+0yr5wTrN0XEDudBWS0sPQ@mail.gmail.com>
-Message-Id: <20200323191243.30002-1-ndesaulniers@google.com>
-Mime-Version: 1.0
-References: <CAKwvOdn10Ts_AU6i+7toj7NkMwK-+0yr5wTrN0XEDudBWS0sPQ@mail.gmail.com>
-X-Mailer: git-send-email 2.25.1.696.g5e7596f4ac-goog
-Subject: [PATCH] KVM: VMX: don't allow memory operands for inline asm that
- modifies SP
-From:   Nick Desaulniers <ndesaulniers@google.com>
-To:     pbonzini@redhat.com, sean.j.christopherson@intel.com
-Cc:     ndesaulniers@google.com, bp@alien8.de,
-        clang-built-linux@googlegroups.com, dvyukov@google.com,
-        glider@google.com, hpa@zytor.com, jmattson@google.com,
-        joro@8bytes.org, kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        mingo@redhat.com,
-        syzbot+3f29ca2efb056a761e38@syzkaller.appspotmail.com,
-        syzkaller-bugs@googlegroups.com, tglx@linutronix.de,
-        vkuznets@redhat.com, wanpengli@tencent.com, x86@kernel.org
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Ge+SjDt8XkYogl3cRlienjEoLSa3og33Dmi/56o0M7Y=;
+        b=hpC8U1hcpne6kGp8+VtQnQrHmGr2uFZPc8e0so5iGooR9gcAJGv4vXZbhsjM+ZFSVJ
+         0Mk2+6UO4PVJql4qXGjbM8yd40gWmglFyxRbXnCfG7J4uKa92WbE2zpg4laiT6oTuhmI
+         rYwQTPklrcplu0G/HmH5E2+bcemYps+jycRhYOZnyepm087xmJwg2x0+LTrBLpp7Vvtz
+         fyNefOVAagJR2H5k5evY3wS4Mh6RAyOimw+QKehymdz5tWGjOTJBtVT4+PhsnQTzR77H
+         4qYE8uDJaLb3k7aLWmcXk7RoKFCuw4/zYoNTrMNO+qaF+3RbPAdGV1u5+hazDMgTmDvy
+         ymzg==
+X-Gm-Message-State: ANhLgQ0nFqzsTwSxEVwbn+zJXR22G30+4iZaxW+orJ88sBUOoHZyoXDq
+        brMUl10dyqQ68nZcAjOm4KqDzGGTxzQtq+OL2v3+3w==
+X-Google-Smtp-Source: ADFU+vtBoyGtoUKl58MXCCY/B3Ow7q0foDDWrI7P4k8QpSvV/CRLv15jN3ag/N3C5jlQJO2ro27EvpDd0QmG8lXN8ts=
+X-Received: by 2002:a63:dd06:: with SMTP id t6mr22540455pgg.384.1584990966098;
+ Mon, 23 Mar 2020 12:16:06 -0700 (PDT)
+MIME-Version: 1.0
+References: <20200323173653.41305-1-brendanhiggins@google.com> <e5f7db19-4468-8679-9ed1-3565a0adcfc0@kernel.org>
+In-Reply-To: <e5f7db19-4468-8679-9ed1-3565a0adcfc0@kernel.org>
+From:   Brendan Higgins <brendanhiggins@google.com>
+Date:   Mon, 23 Mar 2020 12:15:54 -0700
+Message-ID: <CAFd5g46GqBqdrRk6743bnUQyS+yStP3DpkVNWsAMEHDS3i3FBw@mail.gmail.com>
+Subject: Re: [PATCH v1] kunit: tool: add missing test data file content
+To:     shuah <shuah@kernel.org>
+Cc:     David Gow <davidgow@google.com>,
+        Heidi Fahim <heidifahim@google.com>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        KUnit Development <kunit-dev@googlegroups.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-THUNK_TARGET defines [thunk_target] as having "rm" input constraints
-when CONFIG_RETPOLINE is not set, which isn't constrained enough for
-this specific case.
+On Mon, Mar 23, 2020 at 11:44 AM shuah <shuah@kernel.org> wrote:
+>
+> On 3/23/20 11:36 AM, Brendan Higgins wrote:
+> > A test data file for one of the kunit_tool unit tests was missing; add
+> > it in so that unit tests can run properly.
+> >
+> > Signed-off-by: Brendan Higgins <brendanhiggins@google.com>
+> > ---
+> > Shuah, this is a fix for a broken test. Can you apply this for 5.7?
+>
+> Can you please add more details on what kind of data this file supplies
+> and which test fails if it doesn't exist.
 
-For inline assembly that modifies the stack pointer before using this
-input, the underspecification of constraints is dangerous, and results
-in an indirect call to a previously pushed flags register.
+Sure,
 
-In this case `entry`'s stack slot is good enough to satisfy the "m"
-constraint in "rm", but the inline assembly in
-handle_external_interrupt_irqoff() modifies the stack pointer via
-push+pushf before using this input, which in this case results in
-calling what was the previous state of the flags register, rather than
-`entry`.
+This adds a raw dmesg test log to test the kunit_tool's dmesg parser.
+test_prefix_poundsign and test_output_with_prefix_isolated_correctly
+fail without this test log.
 
-Be more specific in the constraints by requiring `entry` be in a
-register, and not a memory operand.
+I will send a new revision with this information in the commit message.
 
-Reported-by: Dmitry Vyukov <dvyukov@google.com>
-Reported-by: syzbot+3f29ca2efb056a761e38@syzkaller.appspotmail.com
-Debugged-by: Alexander Potapenko <glider@google.com>
-Debugged-by: Paolo Bonzini <pbonzini@redhat.com>
-Debugged-by: Sean Christopherson <sean.j.christopherson@intel.com>
-Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
----
- arch/x86/kvm/vmx/vmx.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> > ---
+> >   .../testing/kunit/test_data/test_pound_sign.log  | Bin 0 -> 1656 bytes
+> >   1 file changed, 0 insertions(+), 0 deletions(-)
+> >
+> > diff --git a/tools/testing/kunit/test_data/test_pound_sign.log b/tools/testing/kunit/test_data/test_pound_sign.log
+> > index e69de29bb2d1d6434b8b29ae775ad8c2e48c5391..28ffa5ba03bfa81ea02ea9d38e7de7acf3dd9e5d 100644
+> > GIT binary patch
+> > literal 1656
+> > zcmah}U2EGg6n$=g#f7|Vtj^>lPBOzDM#o@mlt9+Kgd${FPEBlGBgsqs?{^h<Y3h$o
+> > zFBaGLocpP>13GNVmW<8=R3_K%5Q9W*u~4upWe`4q(jqBTdcAw?ZG=v-jA5@FZ|^*5
+> > zoU$NALGF+lEFssq<A{~zdHR7p&7+U(X~E!_yGM{l@40vQ%(~pazHH!+GB!sI;iCKZ
+> > zY69Cjp-?V{LrnyMQ5I_>Rp5<1_i#FmdPY1z2tkYI|M1-7PdS}Ub_h8eK~m)?&(I;{
+> > zd<2<NV1vyl7BWOggn_Hc5ba`wRu)R=x;oPiRuheYD}$9XJTpphG^wKX*mr|pw(;#T
+> > zTvPxWb#R&-VC|~9KeFD0ooNCooO~P|@vNKL)n#t&WQm2JSh%gFRMuv7!M#yqYailx
+> > z8TM&AUN~yqVM$ThVIE55OcVU4mW$eHC#dHEeUvCiE1wT#?U%cS^A_HAK$VqiIBG75
+> > z($V`G!unJPuo@k2@gj4y7$WV7g73Ls@d32giPqc=`3mz^u|IR`05hOx29+=__XXIv
+> > z%Xf#6<%P11b*dyatBVv$thED!=x%_Ts?sj1OY%b*t$Y}rODc$J2is^#<A~w+w`~mf
+> > zCs_oC7u=9pAjzurLE}*e38}&1-KX^pd*7wM-Q35(VDtTJOgeOnB`K*rii#c_+)*qi
+> > zNQ+5Dqv>MG0wcp<uf!}(SCXw)kqXk>xCSP@rQbRs58c`TmTbn>%WO@TFp;w*gB6RU
+> > km;Ljlo8cvfMVVCc>`K4bOfE$-fO&T9$C>+RbV7Fh7t6}$ApigX
+> >
+> > literal 0
+> > HcmV?d00001
+> >
+> >
+> > base-commit: 021ed9f551da33449a5238e45e849913422671d7
+> >
+>
+> thanks,
+> -- Shuah
 
-diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-index 4d22b1b5e822..310e8c1169b8 100644
---- a/arch/x86/kvm/vmx/vmx.c
-+++ b/arch/x86/kvm/vmx/vmx.c
-@@ -6277,7 +6277,7 @@ static void handle_external_interrupt_irqoff(struct kvm_vcpu *vcpu)
- #endif
- 		ASM_CALL_CONSTRAINT
- 		:
--		THUNK_TARGET(entry),
-+		[thunk_target]"r"(entry),
- 		[ss]"i"(__KERNEL_DS),
- 		[cs]"i"(__KERNEL_CS)
- 	);
--- 
-2.25.1.696.g5e7596f4ac-goog
-
+Cheers
