@@ -2,64 +2,58 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 43D5118EFC9
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Mar 2020 07:29:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C173018EFCE
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Mar 2020 07:30:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727314AbgCWG3p (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Mar 2020 02:29:45 -0400
-Received: from helcar.hmeau.com ([216.24.177.18]:56914 "EHLO fornost.hmeau.com"
+        id S1727339AbgCWGaW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Mar 2020 02:30:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46732 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726059AbgCWG3p (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Mar 2020 02:29:45 -0400
-Received: from gwarestrin.me.apana.org.au ([192.168.0.7] helo=gwarestrin.arnor.me.apana.org.au)
-        by fornost.hmeau.com with smtp (Exim 4.89 #2 (Debian))
-        id 1jGGaI-0004Wx-IH; Mon, 23 Mar 2020 17:29:15 +1100
-Received: by gwarestrin.arnor.me.apana.org.au (sSMTP sendmail emulation); Mon, 23 Mar 2020 17:29:14 +1100
-Date:   Mon, 23 Mar 2020 17:29:14 +1100
-From:   Herbert Xu <herbert@gondor.apana.org.au>
+        id S1726059AbgCWGaW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Mar 2020 02:30:22 -0400
+Received: from localhost (unknown [171.76.96.96])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6A3C7206F8;
+        Mon, 23 Mar 2020 06:30:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1584945022;
+        bh=lGY0/B9v5kKP+fRPvrlnERsifU+J0PKOjNa0Qax8RwM=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=hean15XoxKID8EY5Tcazr5zdTf2itcveXgy7ln0MhQEq/cw4Y8eD1o4vaYOT3ybHx
+         LIhmVLjoK2Td2QTKupu4GYQujTftHLWPvpooT+mKjt2Fh/CzvBsTKXpjfwvXIYEsg+
+         nfWucFwKKsNmJl/qjPtwKU7Up2adbDbp7bcHrrEA=
+Date:   Mon, 23 Mar 2020 12:00:14 +0530
+From:   Vinod Koul <vkoul@kernel.org>
 To:     YueHaibing <yuehaibing@huawei.com>
-Cc:     steffen.klassert@secunet.com, davem@davemloft.net, kuba@kernel.org,
-        timo.teras@iki.fi, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] xfrm: policy: Fix doulbe free in xfrm_policy_timer
-Message-ID: <20200323062914.GA5811@gondor.apana.org.au>
-References: <20200318034839.57996-1-yuehaibing@huawei.com>
- <20200323014155.56376-1-yuehaibing@huawei.com>
+Cc:     ldewangan@nvidia.com, jonathanh@nvidia.com,
+        dan.j.williams@intel.com, thierry.reding@gmail.com,
+        swarren@wwwdotorg.org, dmaengine@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        digetx@gmail.com
+Subject: Re: [PATCH -next] dmaengine: tegra-apb: mark PM functions as
+ __maybe_unused
+Message-ID: <20200323063014.GG72691@vkoul-mobl>
+References: <20200320071337.59756-1-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200323014155.56376-1-yuehaibing@huawei.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20200320071337.59756-1-yuehaibing@huawei.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 23, 2020 at 09:41:55AM +0800, YueHaibing wrote:
->
-> diff --git a/net/xfrm/xfrm_policy.c b/net/xfrm/xfrm_policy.c
-> index dbda08ec566e..ae0689174bbf 100644
-> --- a/net/xfrm/xfrm_policy.c
-> +++ b/net/xfrm/xfrm_policy.c
-> @@ -434,6 +434,7 @@ EXPORT_SYMBOL(xfrm_policy_destroy);
->  
->  static void xfrm_policy_kill(struct xfrm_policy *policy)
->  {
-> +	write_lock_bh(&policy->lock);
->  	policy->walk.dead = 1;
->  
->  	atomic_inc(&policy->genid);
-> @@ -445,6 +446,7 @@ static void xfrm_policy_kill(struct xfrm_policy *policy)
->  	if (del_timer(&policy->timer))
->  		xfrm_pol_put(policy);
->  
-> +	write_unlock_bh(&policy->lock);
+On 20-03-20, 15:13, YueHaibing wrote:
+> When CONFIG_PM is disabled, gcc warning this:
+> 
+> drivers/dma/tegra20-apb-dma.c:1587:12: warning: 'tegra_dma_runtime_resume' defined but not used [-Wunused-function]
+> drivers/dma/tegra20-apb-dma.c:1578:12: warning: 'tegra_dma_runtime_suspend' defined but not used [-Wunused-function]
+> 
+> Make it as __maybe_unused to fix the warnings,
+> also remove unneeded function declarations.
 
-Why did you expand the critical section? Can't you just undo the
-patch in xfrm_policy_kill?
+Applied, thanks
 
-Cheers,
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+~Vinod
