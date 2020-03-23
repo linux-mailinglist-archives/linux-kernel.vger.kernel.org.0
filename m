@@ -2,290 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8A8DE18F9D8
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Mar 2020 17:35:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D44BA18F9FA
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Mar 2020 17:36:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727795AbgCWQf4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Mar 2020 12:35:56 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:44775 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727689AbgCWQfs (ORCPT
+        id S1727832AbgCWQgf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Mar 2020 12:36:35 -0400
+Received: from mail-io1-f66.google.com ([209.85.166.66]:38802 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727578AbgCWQgf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Mar 2020 12:35:48 -0400
-Received: by mail-lj1-f193.google.com with SMTP id w4so15289678lji.11;
-        Mon, 23 Mar 2020 09:35:46 -0700 (PDT)
+        Mon, 23 Mar 2020 12:36:35 -0400
+Received: by mail-io1-f66.google.com with SMTP id m15so9710373iob.5
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Mar 2020 09:36:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=QniCpQjPJXTAwB46jjMW57nPV4Kx9N7fme8aB82yFro=;
-        b=HmajspLKp94NMbwJgNkK9F+3DreNcShuPTxmQie5bnGBkmLFBLrZ1hdjQgG36En68G
-         RIKiSvCWyf/i9H0sVfcccBxhhCujmIFtVk5uqwOt5NyMDsXSfqVLEZb7DrGuwrlvHpie
-         RZh7HUEufQo8Cgb7Y/kx+cMg2SYz3Rc6PRKqVEPmF0n4aI90H9eWEgs0LI1eOptut6rL
-         JrhOJVQPEA1vZwDwLDqlVQ07gYPWC/hHh9wKABaAJoS7UkFzeefnauZUXEaEx1OHF9ol
-         ObYrl65IwlTFNeb3MKgeyVTDUHQqj7m+GLuuiQebM5/8fP8nVYpSX5P3GUVtB36pYGvA
-         Wj3Q==
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=xZed4vuzAn5/aNVB1Kdbz5tqSTALBHIWaW5u1icHeCY=;
+        b=U/UGFiIz7X9b1XORx4G0t8VK2Vtpq2Ha1+ZZX+tSAZSdmyebvAE6+Y5V3rx3lRKG75
+         CaHAQofdlayPv8CK04pkyFPISqwOZ12wVaCKtxGqI4L8OqxNPE68vVotVCsaseur+Ke9
+         SDsz2XIy4C592KfSooSZAhWPZTKCfbcd5AWndoy4+d4IIEx/bHdOUdzz6BxLR7+ixqYW
+         rcJzSdbZIBxjMhIqu4WIJZNRXUn2zvi37lc4UaBlYGHLeJvWuz0qY8+n2KBNobObumAh
+         Vyp5WAg+o0j7apYcrfEYWq3QtkCZfO+hrK1eyHyvgtlR5wWrZY2JasZicfeV2wqt3zB2
+         yg5Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=QniCpQjPJXTAwB46jjMW57nPV4Kx9N7fme8aB82yFro=;
-        b=Lx/2ogsCNtkaFawTZKPgWUbO5/khdKYT4rmYpkwaaTbZ0L7EF0o/L12Wib37hhYDv8
-         91A8MEFoPuXlKv7/7NGjYTM77APwOoBMtlZ6C2kAroYYkPov/BpaLG1aC4PxuPGmeMsN
-         5F28D9xs/hvAKidFpANzFvdt64a4d3QaetSaJGUhLuRb0AYbuHAF5dzVtlp6MvEPz1A2
-         sbWylfCqua6VrY3BLUlfFQG1m0hCnNmJ9N4JonLzEDi4oFIv8Q1spC1eAC46fc11KQou
-         vHSZKnPqbl69azdMzqkpKx8d0z+sUA4A+lEB4E0+7Jp7MBNJktl1u5K7yUyzKYZCpKVw
-         N4WA==
-X-Gm-Message-State: ANhLgQ17ttWrLUnmXRhXrg6htB2zix0bfA0vdFOvljnPUcZcm4xFZiZ5
-        RmKMsbJpaXPXNTWjIEGWa4Q=
-X-Google-Smtp-Source: ADFU+vv7x9KQTUFEfdMp/RNH6gi82I774PfSv5dAfz6Culd+uLgWQ7cCiPrxd20mWcn/9n44DuCr5w==
-X-Received: by 2002:a2e:9a54:: with SMTP id k20mr7111758ljj.272.1584981345380;
-        Mon, 23 Mar 2020 09:35:45 -0700 (PDT)
-Received: from localhost.localdomain (94-29-39-224.dynamic.spd-mgts.ru. [94.29.39.224])
-        by smtp.gmail.com with ESMTPSA id m14sm4820017lfo.25.2020.03.23.09.35.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 Mar 2020 09:35:44 -0700 (PDT)
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Jens Axboe <axboe@kernel.dk>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>,
-        David Heidelberg <david@ixit.cz>,
-        Peter Geis <pgwipeout@gmail.com>,
-        Stephen Warren <swarren@wwwdotorg.org>,
-        Nicolas Chauvet <kwizart@gmail.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Billy Laws <blaws05@gmail.com>
-Cc:     linux-tegra@vger.kernel.org, linux-block@vger.kernel.org,
-        Andrey Danin <danindrey@mail.ru>,
-        Gilles Grandou <gilles@grandou.net>,
-        Ryan Grachek <ryan@edited.us>, linux-mmc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v3 10/10] partitions/tegra: Implement eMMC boot partitions scanning
-Date:   Mon, 23 Mar 2020 19:34:31 +0300
-Message-Id: <20200323163431.7678-11-digetx@gmail.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200323163431.7678-1-digetx@gmail.com>
-References: <20200323163431.7678-1-digetx@gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=xZed4vuzAn5/aNVB1Kdbz5tqSTALBHIWaW5u1icHeCY=;
+        b=OVRsDzblTySb8TXFYHBNVE1+QEu9sq9p4OlrqCoz4l4T2OXKQ/bOsYWniB6JDLFouw
+         aQkIcvuaDqhyd9J8RFII9XlvJoMj3Ea7r+E4vm8C+7Pc7nyvnSjJrL9mkbx4tWLsaHJh
+         II9iubMluw+PCr11uptlaw4LgJMnFxHvNJf5cAoMuaqGoY+ibau4PFe7PRbBg/LbpDq7
+         zis8j8hNCiG/8XBhaXTNUieXMUrpqtMxXP2k4vdw2d4EprTbEA1mBRCjqwRjkqhoU2jx
+         L4DBNCbgCl04zi+ofPEWQZ0hIil0iPjThVXMlhv7tUXB+wQSwrngZC2l6ymsk0GqptNK
+         HtJw==
+X-Gm-Message-State: ANhLgQ3+5+P87EWDWi0iriMw75smC5KMK3qIGBuDMGX8w8rmq2k7sPzf
+        mWW8W11Lt52QPRwYm++fx6fPuKDPb6+yOtu8+ktwvA==
+X-Google-Smtp-Source: ADFU+vsWzcumLwhqw56m/BCbndSZWQyTZy977Pe1EcOchX9GJbFfWlVB9Xjq+FDtNdouWnpRTTre4vuCJsXIdPHUUk8=
+X-Received: by 2002:a02:5a87:: with SMTP id v129mr19330387jaa.48.1584981393823;
+ Mon, 23 Mar 2020 09:36:33 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20200320212833.3507-1-sean.j.christopherson@intel.com>
+ <20200320212833.3507-4-sean.j.christopherson@intel.com> <CALMp9eR5Uu7nRDOS2nQHGzb+Gi6vjDEk1AmuiqkkGWFjKNG+sA@mail.gmail.com>
+ <20200323162807.GN28711@linux.intel.com>
+In-Reply-To: <20200323162807.GN28711@linux.intel.com>
+From:   Jim Mattson <jmattson@google.com>
+Date:   Mon, 23 Mar 2020 09:36:22 -0700
+Message-ID: <CALMp9eR42eM7g81EgHieyNky+kP2mycO7UyMN+y2ibLoqrD2Yg@mail.gmail.com>
+Subject: Re: [PATCH v3 03/37] KVM: nVMX: Invalidate all EPTP contexts when
+ emulating INVEPT for L1
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
+Cc:     Paolo Bonzini <pbonzini@redhat.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Joerg Roedel <joro@8bytes.org>, kvm list <kvm@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Ben Gardon <bgardon@google.com>,
+        Junaid Shahid <junaids@google.com>,
+        Liran Alon <liran.alon@oracle.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        John Haxby <john.haxby@oracle.com>,
+        Miaohe Lin <linmiaohe@huawei.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Some NVIDIA Tegra devices store partition table on eMMC boot partition.
-In order to support this case, the tegra-partition parser will read out
-partition table from a boot partition and stash it for the main eMMC
-partition.
+On Mon, Mar 23, 2020 at 9:28 AM Sean Christopherson
+<sean.j.christopherson@intel.com> wrote:
+>
+> On Mon, Mar 23, 2020 at 09:24:25AM -0700, Jim Mattson wrote:
+> > On Fri, Mar 20, 2020 at 2:29 PM Sean Christopherson
+> > <sean.j.christopherson@intel.com> wrote:
+> > >
+> > > Free all L2 (guest_mmu) roots when emulating INVEPT for L1.  Outstanding
+> > > changes to the EPT tables managed by L1 need to be recognized, and
+> > > relying on KVM to always flush L2's EPTP context on nested VM-Enter is
+> > > dangerous.
+> > >
+> > > Similar to handle_invpcid(), rely on kvm_mmu_free_roots() to do a remote
+> > > TLB flush if necessary, e.g. if L1 has never entered L2 then there is
+> > > nothing to be done.
+> > >
+> > > Nuking all L2 roots is overkill for the single-context variant, but it's
+> > > the safe and easy bet.  A more precise zap mechanism will be added in
+> > > the future.  Add a TODO to call out that KVM only needs to invalidate
+> > > affected contexts.
+> > >
+> > > Fixes: b119019847fbc ("kvm: nVMX: Remove unnecessary sync_roots from handle_invept")
+> >
+> > The bug existed well before the commit indicated in the "Fixes" line.
+>
+> Ah, my bad.  A cursory glance at commit b119019847fbc makes that quite
+> obvious.  This should be
+>
+>   Fixes: bfd0a56b9000 ("nEPT: Nested INVEPT")
 
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
----
- block/partitions/tegra.c | 122 +++++++++++++++++++++++++++++++++++----
- 1 file changed, 111 insertions(+), 11 deletions(-)
-
-diff --git a/block/partitions/tegra.c b/block/partitions/tegra.c
-index 4cb8064bf458..09c300330f81 100644
---- a/block/partitions/tegra.c
-+++ b/block/partitions/tegra.c
-@@ -25,6 +25,7 @@
- #include <linux/mmc/blkdev.h>
- #include <linux/mmc/card.h>
- #include <linux/mmc/host.h>
-+#include <linux/mmc/mmc.h>
- 
- #include <soc/tegra/common.h>
- #include <soc/tegra/partition.h>
-@@ -50,7 +51,10 @@
- struct tegra_partition_table_parser {
- 	struct tegra_partition_table *pt;
- 	struct parsed_partitions *state;
-+	struct mmc_card *card;
- 	bool pt_entry_checked;
-+	unsigned int boot_id;
-+	bool snapshot_mode;
- 	sector_t sector;
- 	int boot_offset;
- 	u32 dev_instance;
-@@ -67,6 +71,7 @@ struct tegra_partition_type {
- 	char *name;
- };
- 
-+static struct tegra_partition_table *scratch_pt;
- static sector_t tegra_pt_sector_address;
- static sector_t tegra_pt_sectors_num;
- 
-@@ -224,6 +229,10 @@ static bool tegra_partition_valid(struct tegra_partition_table_parser *ptp,
- 		return false;
- 	}
- 
-+	/* size will be validated when ptp->snapshot_mode=false */
-+	if (ptp->snapshot_mode && size)
-+		return true;
-+
- 	sect_end = get_capacity(ptp->state->bdev->bd_disk);
- 
- 	/* eMMC boot partitions are below ptp->boot_offset */
-@@ -254,6 +263,9 @@ static bool tegra_partitions_parse(struct tegra_partition_table_parser *ptp,
- 	sector_t sector, size;
- 	int i, slot = 1;
- 
-+	if (ptp->snapshot_mode && !check_only)
-+		return true;
-+
- 	ptp->pt_entry_checked = false;
- 
- 	for (i = 0; i < pt->secure.num_partitions; i++) {
-@@ -369,6 +381,7 @@ tegra_partition_table_emmc_boot_offset(struct tegra_partition_table_parser *ptp)
- {
- 	struct mmc_card *card = mmc_bdev_to_card(ptp->state->bdev);
- 	const struct of_device_id *matched;
-+	int part_type, area_type;
- 	const u32 *sdhci_bases;
- 	u32 sdhci_base;
- 	unsigned int i;
-@@ -404,6 +417,32 @@ tegra_partition_table_emmc_boot_offset(struct tegra_partition_table_parser *ptp)
- 	ptp->dev_id       = TEGRA_PT_SDHCI_DEVICE_ID;
- 	ptp->dev_instance = i;
- 
-+	area_type = mmc_bdev_to_area_type(ptp->state->bdev);
-+
-+	if (WARN_ON(area_type < 0))
-+		return -1;
-+
-+	switch (area_type) {
-+	case MMC_BLK_DATA_AREA_BOOT:
-+		part_type = mmc_bdev_to_part_type(ptp->state->bdev);
-+
-+		if (WARN_ON(part_type < 0))
-+			return -1;
-+
-+		ptp->boot_id = part_type - EXT_CSD_PART_CONFIG_ACC_BOOT0;
-+		ptp->snapshot_mode = true;
-+		break;
-+
-+	case MMC_BLK_DATA_AREA_MAIN:
-+		break;
-+
-+	default:
-+		TEGRA_PT_ERR(ptp, "unexpected area_type: %u\n", area_type);
-+		return -1;
-+	}
-+
-+	ptp->card = card;
-+
- 	/*
- 	 * eMMC storage has two special boot partitions in addition to the
- 	 * main one.  NVIDIA's bootloader linearizes eMMC boot0->boot1->main
-@@ -427,6 +466,9 @@ static int tegra_read_partition_table(struct tegra_partition_table_parser *ptp)
- 	Sector sect;
- 	void *part;
- 
-+	if (scratch_pt)
-+		return 1;
-+
- 	for (i = 0; i < ARRAY_SIZE(ptu->pt_parts); i++) {
- 		/*
- 		 * Partition table takes at maximum 4096 bytes, but
-@@ -462,18 +504,64 @@ int tegra_partition(struct parsed_partitions *state)
- 	if (ptp.boot_offset < 0)
- 		return 0;
- 
--	if (tegra_pt_sector_address < ptp.boot_offset) {
--		TEGRA_PT_INFO(&ptp,
--			      "scanning eMMC boot partitions unimplemented\n");
--		return 0;
--	}
-+	/*
-+	 * Some devices store partition table on boot MMC partition.
-+	 * In this case a "snapshot mode" will be used, which will
-+	 * only read->check->store partition table, the stored table
-+	 * will be used for the main MMC partition later on.
-+	 */
-+	if (ptp.snapshot_mode) {
-+		sector_t boot_start, boot_end, boot_size;
- 
--	ptp.pt = kmalloc(TEGRA_PT_LOGICAL_SECTOR_SIZE, GFP_KERNEL);
--	if (!ptp.pt)
--		return 0;
-+		/* partition is already snapshoted, no need to proceed */
-+		if (scratch_pt)
-+			return 0;
-+
-+		boot_size  = ptp.boot_offset / MMC_NUM_BOOT_PARTITION;
-+		boot_start = ptp.boot_id * boot_size;
-+		boot_end   = boot_start + boot_size;
- 
--	ptp.sector = tegra_pt_sector_address - ptp.boot_offset;
--	end_sector = ptp.sector + tegra_pt_sectors_num;
-+		/*
-+		 * Bail out if partition table isn't located here, at this MMC
-+		 * partition.
-+		 */
-+		if (tegra_pt_sector_address < boot_start ||
-+		    tegra_pt_sector_address >= boot_end)
-+			return 0;
-+
-+		ptp.boot_offset = boot_start;
-+
-+		/*
-+		 * Note that mmc_blk_probe() always registers boot partitions
-+		 * after the main and we rely on this feature, otherwise
-+		 * scratch_pt won't be released (although this is not a big
-+		 * deal).
-+		 */
-+		ptp.pt = kmalloc(TEGRA_PT_LOGICAL_SECTOR_SIZE, GFP_KERNEL);
-+		if (!ptp.pt)
-+			return 0;
-+
-+		ptp.sector = tegra_pt_sector_address - ptp.boot_offset;
-+		end_sector = ptp.sector + tegra_pt_sectors_num;
-+
-+	} else if (scratch_pt) {
-+		TEGRA_PT_INFO(&ptp, "using stashed partition table\n");
-+
-+		ptp.pt     = scratch_pt;
-+		ptp.sector = 0;
-+		end_sector = 1;
-+
-+	} else {
-+		if (tegra_pt_sector_address < ptp.boot_offset)
-+			return 0;
-+
-+		ptp.pt = kmalloc(TEGRA_PT_LOGICAL_SECTOR_SIZE, GFP_KERNEL);
-+		if (!ptp.pt)
-+			return 0;
-+
-+		ptp.sector = tegra_pt_sector_address - ptp.boot_offset;
-+		end_sector = ptp.sector + tegra_pt_sectors_num;
-+	}
- 
- 	/*
- 	 * Partition table is duplicated till the end_sector.
-@@ -503,9 +591,21 @@ int tegra_partition(struct parsed_partitions *state)
- 		ptp.sector += TEGRA_PT_SECTOR_SZ;
- 	}
- 
--	if (ret == 1)
-+	if (ret == 1) {
-+		if (ptp.snapshot_mode) {
-+			ptp.card->quirks |= MMC_QUIRK_RESCAN_MAIN_BLKDEV;
-+			scratch_pt = ptp.pt;
-+
-+			strlcat(state->pp_buf,
-+				" stashed tegra-partition table\n", PAGE_SIZE);
-+
-+			return ret;
-+		}
-+
- 		strlcat(state->pp_buf, "\n", PAGE_SIZE);
-+	}
- 
-+	scratch_pt = NULL;
- 	kfree(ptp.pt);
- 
- 	return ret;
--- 
-2.25.1
-
+Actually, I think that things were fine back then (though we
+gratuitously flushed L1's TLB as a result of an emulated INVEPT). The
+problem started when we stopped flushing the TLB on every emulated
+VM-entry (i.e. L1 -> L2 transitions). I'm not sure what that commit
+was, but I think you referenced it in an earlier email.
