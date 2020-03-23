@@ -2,73 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B42C518F055
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Mar 2020 08:37:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D3B9E18F05A
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Mar 2020 08:38:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727451AbgCWHhE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Mar 2020 03:37:04 -0400
-Received: from mail-io1-f71.google.com ([209.85.166.71]:48125 "EHLO
-        mail-io1-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727389AbgCWHhD (ORCPT
+        id S1727493AbgCWHiK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Mar 2020 03:38:10 -0400
+Received: from mail26.static.mailgun.info ([104.130.122.26]:55203 "EHLO
+        mail26.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727440AbgCWHiJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Mar 2020 03:37:03 -0400
-Received: by mail-io1-f71.google.com with SMTP id c2so5799207iok.14
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Mar 2020 00:37:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
-         :from:to;
-        bh=xI0usRcGed/whdLZrrsYIFzz4drUK13ORfQnfasIJ14=;
-        b=jA8Ep/yFxPeKgA7BJoLh0h6GooWHkZpl4sGfGmcSvNnaUeGJ4pmYlE1a0OhXxTX6TS
-         QOuX6rLu0hun5yHtW9jRVMHS8rpgm1hRygB7KKLJlYkG2vhQXYLeTQNEQiBq3W7vNyIk
-         dp1EUsxnx13CfaD5BIfweuKy1qpOT/337qaUR8+CDG+Lbb23TWe4nEcP8nZ1yzMrGJLA
-         JUqc0+fIt0NH1HndwVS4V2lC6xAin3lRmFq5Y820OCndXqmWaO80cnrNPeimddvrNSMD
-         5ON+UX4EYA1o1xX7sG5QMJySDOcqGaXEPT2mpQ7LnMUvr+olT1qdWAi5zmdm+AHDfoIn
-         qw5Q==
-X-Gm-Message-State: ANhLgQ1CpJjzvzGV4AulWT3KagUabj3UAT0arOQsWx8p08WvWvMO/IO+
-        KjweWhGamYkfCTVAdsH9jqErdjkMF3zvMyE2ZMwxkeEQ4Fl7
-X-Google-Smtp-Source: ADFU+vufWP1ZmfhWge9JYASUxfhkELaTlcETnEuwcsBoeOODucklUQVC3o7tld/u7Pwx7D1VAa9UfQDBlJdJnT2pfzm7+QwL09Wo
+        Mon, 23 Mar 2020 03:38:09 -0400
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1584949089; h=Message-ID: References: In-Reply-To: Subject:
+ Cc: To: From: Date: Content-Transfer-Encoding: Content-Type:
+ MIME-Version: Sender; bh=qD6MdWpyeM1qFTA64jlmNgu6EXEHLcXXCvElH53FoOg=;
+ b=GKrxJvbJV5NdnjQA74z4t1lyTyeFdPlNVGtimQ4Id0NyS/9DhyJa2zxF+3pt5Zlz3CoIzTxU
+ xf6hwiQqvm3/RBdKuQzQ3IbQjNBM8kp/e3oZtHS4K40N2qIuWCAhIAPJ7sj0QftxHD5eXu0a
+ DkJ1VXTR/JB3C8TLb4n+XOvkwD4=
+X-Mailgun-Sending-Ip: 104.130.122.26
+X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
+ by mxa.mailgun.org with ESMTP id 5e786754.7efcbe51f8f0-smtp-out-n05;
+ Mon, 23 Mar 2020 07:37:56 -0000 (UTC)
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 733AFC43637; Mon, 23 Mar 2020 07:37:56 +0000 (UTC)
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        aws-us-west-2-caf-mail-1.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,URIBL_BLOCKED
+        autolearn=unavailable autolearn_force=no version=3.4.0
+Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
+        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: saiprakash.ranjan)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id BC68CC433CB;
+        Mon, 23 Mar 2020 07:37:55 +0000 (UTC)
 MIME-Version: 1.0
-X-Received: by 2002:a6b:f60d:: with SMTP id n13mr17817597ioh.147.1584949022600;
- Mon, 23 Mar 2020 00:37:02 -0700 (PDT)
-Date:   Mon, 23 Mar 2020 00:37:02 -0700
-In-Reply-To: <000000000000e9e518059fd84189@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000007ab36905a180b328@google.com>
-Subject: Re: KASAN: use-after-free Write in hci_sock_bind (2)
-From:   syzbot <syzbot+04e804c8c2224b6a9497@syzkaller.appspotmail.com>
-To:     a@unstable.cc, andrew@lunn.ch, b.a.t.m.a.n@lists.open-mesh.org,
-        davem@davemloft.net, f.fainelli@gmail.com, johan.hedberg@gmail.com,
-        kuba@kernel.org, linux-bluetooth@vger.kernel.org,
-        linux-kernel@vger.kernel.org, marcel@holtmann.org,
-        mareklindner@neomailbox.ch, netdev@vger.kernel.org,
-        sw@simonwunderlich.de, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Mon, 23 Mar 2020 13:07:55 +0530
+From:   Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
+To:     Stephen Boyd <swboyd@chromium.org>
+Cc:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Leo Yan <leo.yan@linaro.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        devicetree@vger.kernel.org, Rajendra Nayak <rnayak@codeaurora.org>,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH 2/2] arm64: dts: qcom: sc7180: Add Coresight support
+In-Reply-To: <158482865109.125146.10520179077419628836@swboyd.mtv.corp.google.com>
+References: <cover.1584689229.git.saiprakash.ranjan@codeaurora.org>
+ <351f1091af0b6d6e0537382fad0c1c51db45edc5.1584689229.git.saiprakash.ranjan@codeaurora.org>
+ <158482865109.125146.10520179077419628836@swboyd.mtv.corp.google.com>
+Message-ID: <de3d226dbd7b00f9c4b7cd6c86db97e0@codeaurora.org>
+X-Sender: saiprakash.ranjan@codeaurora.org
+User-Agent: Roundcube Webmail/1.3.9
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-syzbot has bisected this bug to:
+On 2020-03-22 03:40, Stephen Boyd wrote:
+> Quoting Sai Prakash Ranjan (2020-03-20 00:44:29)
+>> Add coresight components found on Qualcomm SC7180 SoC.
+>> 
+>> Signed-off-by: Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
+>> ---
+> 
+> Reviewed-by: Stephen Boyd <swboyd@chromium.org>
+> Tested-by: Stephen Boyd <swboyd@chromium.org>
+> 
+> One nit below.
+> 
+>>  arch/arm64/boot/dts/qcom/sc7180.dtsi | 507 
+>> +++++++++++++++++++++++++++
+>>  1 file changed, 507 insertions(+)
+>> 
+>> diff --git a/arch/arm64/boot/dts/qcom/sc7180.dtsi 
+>> b/arch/arm64/boot/dts/qcom/sc7180.dtsi
+>> index 998f101ad623..d8fe960d6ace 100644
+>> --- a/arch/arm64/boot/dts/qcom/sc7180.dtsi
+>> +++ b/arch/arm64/boot/dts/qcom/sc7180.dtsi
+>> @@ -1294,6 +1294,513 @@
+>>                         };
+>>                 };
+>> 
+>> +               stm@6002000 {
+>> +                       compatible = "arm,coresight-stm", 
+>> "arm,primecell";
+>> +                       reg = <0 0x06002000 0 0x1000>,
+>> +                             <0 0x16280000 0 0x180000>;
+>> +                       reg-names = "stm-base", "stm-stimulus-base";
+>> +
+>> +                       clocks = <&aoss_qmp>;
+>> +                       clock-names = "apb_pclk";
+>> +
+>> +                       out-ports {
+>> +                               port {
+>> +                                       stm_out: endpoint {
+>> +                                               remote-endpoint =
+>> +                                                 <&funnel0_in7>;
+> 
+> Given that this is DT I'd say we just put this remote-endpoint all on
+> one line. Makes it more readable and I don't think we really care about
+> the line length in these cases. We're nested pretty deep because it's a
+> graph binding.
+> 
 
-commit 7d13eca09ed5e477f6ecfd97a35058762228b5e4
-Author: Florian Fainelli <f.fainelli@gmail.com>
-Date:   Sat Aug 27 22:34:20 2016 +0000
+Thanks for the review and test, I will make this change.
 
-    Documentation: networking: dsa: Remove platform device TODO
+-Sai
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1746f3f9e00000
-start commit:   770fbb32 Add linux-next specific files for 20200228
-git tree:       linux-next
-final crash:    https://syzkaller.appspot.com/x/report.txt?x=14c6f3f9e00000
-console output: https://syzkaller.appspot.com/x/log.txt?x=10c6f3f9e00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=576314276bce4ad5
-dashboard link: https://syzkaller.appspot.com/bug?extid=04e804c8c2224b6a9497
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11fc5e75e00000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10707013e00000
-
-Reported-by: syzbot+04e804c8c2224b6a9497@syzkaller.appspotmail.com
-Fixes: 7d13eca09ed5 ("Documentation: networking: dsa: Remove platform device TODO")
-
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a 
+member
+of Code Aurora Forum, hosted by The Linux Foundation
