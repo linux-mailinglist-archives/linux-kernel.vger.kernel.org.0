@@ -2,201 +2,283 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 509A41900AA
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Mar 2020 22:51:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5D4D11900AE
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Mar 2020 22:51:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727050AbgCWVuu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Mar 2020 17:50:50 -0400
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:44978 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725897AbgCWVuu (ORCPT
+        id S1727113AbgCWVvN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Mar 2020 17:51:13 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:34964 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727025AbgCWVvN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Mar 2020 17:50:50 -0400
-Received: by mail-lf1-f65.google.com with SMTP id j188so7670273lfj.11
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Mar 2020 14:50:47 -0700 (PDT)
+        Mon, 23 Mar 2020 17:51:13 -0400
+Received: by mail-pl1-f193.google.com with SMTP id g6so6511424plt.2
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Mar 2020 14:51:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=awriAJ/UGkX1bKms0hcVq3QXUUYcggmI13L6OZOIT1s=;
-        b=A6CGikb4ixy0N3jxLh3sfml+5zyNO87lU4R3AdcHtQE1KNSuc1SHLC64dFbSEJ6vRq
-         9u8CyzmMeXLuAwXMbt3yhvtxB49wFRU506BFeJDByrFhb4uqo+abwYPFVxLyLVimL2Eg
-         rzWxTjseHctZhw+qBvohQ1bj/FW63IsSuOBIysS1dRldhnyi0fGRiy57T7nZ+0IdMt+g
-         ar0+04o/T7n0y8jY3+nUdepcvaQYgttgYbWtGyqEMJVS3iEArs930+UFkgOY84k5LPo+
-         1QBTDl5ELtzfmwaqOY1W/NAbxsiAtknQYYqeOi1bnd0xamiJsVoYd/GKj0gJBXceiYZG
-         T7+g==
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=rwVl0RUGYbVVd53EKmMU44a5cDo2y4Opjc0SA6TNhKc=;
+        b=n5jPAGZqZ62oMKHsAqYIOK+4ZJVnWLyYFROPJ55BWbJ0NCCGoDQz8PNzrrEY7PZU58
+         3FvDt/jRcU60R48KkkI8q7V6Fr8tyo4swdYizYqqTGfY3aynIWfA0a+0F7ZxCR7Yf2q0
+         4vw5/OqB+d2YMdywgKWH4sMEa+nbmm308lu10=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=awriAJ/UGkX1bKms0hcVq3QXUUYcggmI13L6OZOIT1s=;
-        b=N56XcsOZYtLccLUx3XPQVj6oOZvDf+abYz5GanR24i3Oq6rOeH/9nt+qHxxD2RLO87
-         YAaq242fzL1oTh87MuOz8b1kvqgAS63CoOJRWudNHhCltm9fj9xrwmU70B8XvI79FqIv
-         F8F03pB9BwH7jEWALPYSarFNuyhLq1pl3KzSodMCtNCD1ADJfm3VbcZImez1XL5O9hbx
-         z20JOaGV1hEXmaHdrm760ndH3MGIA5VkSp18An1d1kYRpsd7MjOf59emR3qKzeSLcoJ+
-         fgx2KuTwbZW/YRm7NAMFXnMXMpEaDsEzsU0KJXVjQ7gI2vHqiMT4LwCzO7W+zt5q2FNN
-         zcKQ==
-X-Gm-Message-State: ANhLgQ3x+/gZo0Wm94eqT+AmM/sHC1zWSV/tH46QcgaXCUpmj0BjMpQF
-        B0ijsNPXy2i+7ShZoE2m6X6cHYD8ocInr29ilL8=
-X-Google-Smtp-Source: ADFU+vtTD8SNHt7dSkUqOeNL/r2ikQNu0FCpR39WcthBYWH/eeVJal7JgUg09kng4S6SEt54VrJMGAdxR2e+DoWWeKA=
-X-Received: by 2002:ac2:4352:: with SMTP id o18mr10618183lfl.81.1585000246670;
- Mon, 23 Mar 2020 14:50:46 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=rwVl0RUGYbVVd53EKmMU44a5cDo2y4Opjc0SA6TNhKc=;
+        b=fTXji2VWWUdWWxx4U2xG7PcylpY3QaojiAPGsmraPzReEZebeaPRVYG38/jLLS4wiW
+         v+1P4jSjVmtvaDCx7WQ8BaYAX4JMxq0hU4eUEqUTFtYTNFudJqIMrN4DbB6NIo64BX3O
+         ovSeRUjmi8hkE4dUyJCtXOhViLWhR4qUQZAw8HkmPcBfmQVjjqyVLJBJnX3cDhviBs2t
+         45kln3ZDwIBpaAeJlagr3MAidAhZwtptJE/vFB9MsSuTHx5LfUWMs3RMiFu38ERIw1tL
+         pcobYgUC3rGIP1I7i2ig0oFGfHSzh63ZL4s2B+prK4bVgCkLOFuUsWs0+d6cogls/akN
+         l1Kg==
+X-Gm-Message-State: ANhLgQ0wZZSqKtZVwJK4t4lZnVbbjlFyoD0tL2motPrRGs7gWR/4Yyya
+        hdbRDEqHlRCN7UkF9oU9lcjmSQ==
+X-Google-Smtp-Source: ADFU+vvU28lLGB57K22+cEicr73FO2MRtPgwjuBZdyX+DYdCd5z4XmBA5begWk059u/7EyN7YQqLNg==
+X-Received: by 2002:a17:902:148:: with SMTP id 66mr24090778plb.148.1585000270792;
+        Mon, 23 Mar 2020 14:51:10 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id m12sm505440pjf.25.2020.03.23.14.51.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 23 Mar 2020 14:51:09 -0700 (PDT)
+Date:   Mon, 23 Mar 2020 14:51:08 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     "Guilherme G. Piccoli" <gpiccoli@canonical.com>
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-doc@vger.kernel.org, mcgrof@kernel.org, yzaikin@google.com,
+        tglx@linutronix.de, penguin-kernel@I-love.SAKURA.ne.jp,
+        akpm@linux-foundation.org, cocci@systeme.lip6.fr,
+        linux-api@vger.kernel.org, kernel@gpiccoli.net
+Subject: Re: [PATCH V2] kernel/hung_task.c: Introduce sysctl to print all
+ traces when a hung task is detected
+Message-ID: <202003231447.0574B783CF@keescook>
+References: <20200323214618.28429-1-gpiccoli@canonical.com>
 MIME-Version: 1.0
-References: <CAEAjamtb2Kbn0He5O++=d_HCG1eQvLnGGbcVUOQ76+NfDiNybQ@mail.gmail.com>
- <CAAeHK+zy+seoWm7avxGSEXwoR1tuqHyO00eA_SWk3CC-ngbmLQ@mail.gmail.com>
-In-Reply-To: <CAAeHK+zy+seoWm7avxGSEXwoR1tuqHyO00eA_SWk3CC-ngbmLQ@mail.gmail.com>
-From:   Kyungtae Kim <kt0755@gmail.com>
-Date:   Mon, 23 Mar 2020 17:50:35 -0400
-Message-ID: <CAEAjamvxCQ9xgjw3Rqe-uJJuPfNLJ30+9U+wbWamCcSCwhh9bg@mail.gmail.com>
-Subject: Re: BUG: KASAN: use-after-free in usb_hcd_unlink_urb+0x5f/0x170 drivers/usb/core/hcd.c
-To:     Andrey Konovalov <andreyknvl@google.com>
-Cc:     Greg KH <gregkh@linuxfoundation.org>, laurentiu.tudor@nxp.com,
-        noring@nocrew.org, Chunfeng Yun <chunfeng.yun@mediatek.com>,
-        Felipe Balbi <felipe.balbi@linux.intel.com>,
-        =?UTF-8?Q?Thi=C3=A9baud_Weksteen?= <tweek@google.com>,
-        tony@atomide.com, rrangel@chromium.org,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Dave Tian <dave.jing.tian@gmail.com>, linux-usb@vger.kernel.og,
-        syzkaller <syzkaller@googlegroups.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200323214618.28429-1-gpiccoli@canonical.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 23, 2020 at 05:45:17PM +0100, Andrey Konovalov wrote:
-> On Mon, Mar 23, 2020 at 7:16 AM Kyungtae Kim <kt0755@gmail.com> wrote:
-> >
-> > We report a bug (in linux-5.5.11) found by FuzzUSB (a modified version
-> > of syzkaller)
->
-> Hi Kyungtae,
->
-> Sounds interesting! Could you share what approach to USB fuzzing you
-> have taken? Based on the stack trace I see you're fuzzing the USB
-> storage layer, for which we don't yet have any descriptions in
-> syzkaller's USB fuzzer itself [1].
->
-> Thanks!
->
-> [1] https://github.com/google/syzkaller/blob/master/docs/linux/external_fuzzing_usb.md
->
-> >
-> > In function usb_hcd_unlink_urb (driver/usb/core/hcd.c:1607), it tries to
-> > read "urb->use_count". But it seems the instance "urb" was
-> > already freed (right after urb->dev at line 1597) by the function "urb_destroy"
-> > in a different thread, which caused memory access violation.
-> > To solve, it may need to check if urb is valid before urb->use_count,
-> > to avoid such freed memory access.
-> >
-> > kernel config: https://kt0755.github.io/etc/config_v5.5.11
-> >
-> > ==================================================================
-> > BUG: KASAN: use-after-free in atomic_read
-> > include/asm-generic/atomic-instrumented.h:26 [inline]
-> > BUG: KASAN: use-after-free in usb_hcd_unlink_urb+0x5f/0x170
-> > drivers/usb/core/hcd.c:1607
-> > Read of size 4 at addr ffff888065379610 by task kworker/u4:1/27
-> >
-> > CPU: 1 PID: 27 Comm: kworker/u4:1 Not tainted 5.5.11 #2
-> > Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS
-> > 1.10.2-1ubuntu1 04/01/2014
-> > Workqueue: scsi_tmf_2 scmd_eh_abort_handler
-> > Call Trace:
-> >  __dump_stack lib/dump_stack.c:77 [inline]
-> >  dump_stack+0xce/0x128 lib/dump_stack.c:118
-> >  print_address_description.constprop.4+0x21/0x3c0 mm/kasan/report.c:374
-> >  __kasan_report+0x153/0x1cb mm/kasan/report.c:506
-> >  kasan_report+0x12/0x20 mm/kasan/common.c:639
-> >  check_memory_region_inline mm/kasan/generic.c:185 [inline]
-> >  check_memory_region+0x152/0x1b0 mm/kasan/generic.c:192
-> >  __kasan_check_read+0x11/0x20 mm/kasan/common.c:95
-> >  atomic_read include/asm-generic/atomic-instrumented.h:26 [inline]
-> >  usb_hcd_unlink_urb+0x5f/0x170 drivers/usb/core/hcd.c:1607
-> >  usb_unlink_urb+0x72/0xb0 drivers/usb/core/urb.c:657
-> >  usb_sg_cancel+0x14e/0x290 drivers/usb/core/message.c:602
-> >  usb_stor_stop_transport+0x5e/0xa0 drivers/usb/storage/transport.c:937
-> >  command_abort+0x19d/0x200 drivers/usb/storage/scsiglue.c:439
-> >  scsi_try_to_abort_cmd drivers/scsi/scsi_error.c:927 [inline]
-> >  scmd_eh_abort_handler+0x18e/0x410 drivers/scsi/scsi_error.c:145
-> >  process_one_work+0x9dd/0x1710 kernel/workqueue.c:2266
-> >  worker_thread+0x8b/0xc40 kernel/workqueue.c:2412
-> >  kthread+0x35f/0x440 kernel/kthread.c:255
-> >  ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
-> >
-> > Allocated by task 2532:
-> >  save_stack+0x21/0x90 mm/kasan/common.c:72
-> >  set_track mm/kasan/common.c:80 [inline]
-> >  __kasan_kmalloc.constprop.3+0xa7/0xd0 mm/kasan/common.c:513
-> >  kasan_kmalloc+0x9/0x10 mm/kasan/common.c:527
-> >  __kmalloc+0x148/0x380 mm/slub.c:3812
-> >  kmalloc include/linux/slab.h:561 [inline]
-> >  usb_alloc_urb+0x42/0x90 drivers/usb/core/urb.c:74
-> >  usb_sg_init+0x323/0xa00 drivers/usb/core/message.c:406
-> >  usb_stor_bulk_transfer_sglist+0xbe/0x280 drivers/usb/storage/transport.c:423
-> >  usb_stor_bulk_srb+0x10d/0x230 drivers/usb/storage/transport.c:465
-> >  usb_stor_Bulk_transport+0x55f/0x1060 drivers/usb/storage/transport.c:1161
-> >  usb_stor_invoke_transport+0xef/0x15f0 drivers/usb/storage/transport.c:606
-> >  usb_stor_transparent_scsi_command+0x1d/0x30 drivers/usb/storage/protocol.c:108
-> >  usb_stor_control_thread+0x6d8/0xa80 drivers/usb/storage/usb.c:380
-> >  kthread+0x35f/0x440 kernel/kthread.c:255
-> >  ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
-> >
-> > Freed by task 2532:
-> >  save_stack+0x21/0x90 mm/kasan/common.c:72
-> >  set_track mm/kasan/common.c:80 [inline]
-> >  kasan_set_free_info mm/kasan/common.c:335 [inline]
-> >  __kasan_slab_free+0x135/0x190 mm/kasan/common.c:474
-> >  kasan_slab_free+0xe/0x10 mm/kasan/common.c:483
-> >  slab_free_hook mm/slub.c:1425 [inline]
-> >  slab_free_freelist_hook mm/slub.c:1458 [inline]
-> >  slab_free mm/slub.c:3005 [inline]
-> >  kfree+0xf7/0x410 mm/slub.c:3966
-> >  urb_destroy drivers/usb/core/urb.c:26 [inline]
-> >  kref_put include/linux/kref.h:65 [inline]
-> >  usb_free_urb.part.0+0x95/0x100 drivers/usb/core/urb.c:96
-> >  usb_free_urb+0x1f/0x30 drivers/usb/core/urb.c:95
-> >  sg_clean+0x111/0x270 drivers/usb/core/message.c:263
-> >  usb_sg_wait+0x26d/0x440 drivers/usb/core/message.c:573
-> >  usb_stor_bulk_transfer_sglist+0x127/0x280 drivers/usb/storage/transport.c:447
-> >  usb_stor_bulk_srb+0x10d/0x230 drivers/usb/storage/transport.c:465
-> >  usb_stor_Bulk_transport+0x55f/0x1060 drivers/usb/storage/transport.c:1161
-> >  usb_stor_invoke_transport+0xef/0x15f0 drivers/usb/storage/transport.c:606
-> >  usb_stor_transparent_scsi_command+0x1d/0x30 drivers/usb/storage/protocol.c:108
-> >  usb_stor_control_thread+0x6d8/0xa80 drivers/usb/storage/usb.c:380
-> >  kthread+0x35f/0x440 kernel/kthread.c:255
-> >  ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
-> >
-> > The buggy address belongs to the object at ffff888065379600
-> >  which belongs to the cache kmalloc-192 of size 192
-> > The buggy address is located 16 bytes inside of
-> >  192-byte region [ffff888065379600, ffff8880653796c0)
-> > The buggy address belongs to the page:
-> > page:ffffea000194de40 refcount:1 mapcount:0 mapping:ffff88806c002a00 index:0x0
-> > flags: 0x100000000000200(slab)
-> > raw: 0100000000000200 ffffea0000ee7a00 0000000500000005 ffff88806c002a00
-> > raw: 0000000000000000 0000000080100010 00000001ffffffff 0000000000000000
-> > page dumped because: kasan: bad access detected
-> >
-> > Memory state around the buggy address:
-> >  ffff888065379500: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-> >  ffff888065379580: fb fb fb fb fb fb fb fb fc fc fc fc fc fc fc fc
-> > >ffff888065379600: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-> >                          ^
-> >  ffff888065379680: fb fb fb fb fb fb fb fb fc fc fc fc fc fc fc fc
-> >  ffff888065379700: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-> > ==================================================================
-> >
-> > --
-> > You received this message because you are subscribed to the Google Groups "syzkaller" group.
-> > To unsubscribe from this group and stop receiving emails from it, send an email to syzkaller+unsubscribe@googlegroups.com.
-> > To view this discussion on the web visit https://groups.google.com/d/msgid/syzkaller/CAEAjamtb2Kbn0He5O%2B%2B%3Dd_HCG1eQvLnGGbcVUOQ76%2BNfDiNybQ%40mail.gmail.com.
+On Mon, Mar 23, 2020 at 06:46:18PM -0300, Guilherme G. Piccoli wrote:
+> Commit 401c636a0eeb ("kernel/hung_task.c: show all hung tasks before panic")
+> introduced a change in that we started to show all CPUs backtraces when a
+> hung task is detected _and_ the sysctl/kernel parameter "hung_task_panic"
+> is set. The idea is good, because usually when observing deadlocks (that
+> may lead to hung tasks), the culprit is another task holding a lock and
+> not necessarily the task detected as hung.
+> 
+> The problem with this approach is that dumping backtraces is a slightly
+> expensive task, specially printing that on console (and specially in many
+> CPU machines, as servers commonly found nowadays). So, users that plan to
+> collect a kdump to investigate the hung tasks and narrow down the deadlock
+> definitely don't need the CPUs backtrace on dmesg/console, which will delay
+> the panic and pollute the log (crash tool would easily grab all CPUs traces
+> with 'bt -a' command).
+> Also, there's the reciprocal scenario: some users may be interested in
+> seeing the CPUs backtraces but not have the system panic when a hung task
+> is detected. The current approach hence is almost as embedding a policy in
+> the kernel, by forcing the CPUs backtraces' dump (only) on hung_task_panic.
+> 
+> This patch decouples the panic event on hung task from the CPUs backtraces
+> dump, by creating (and documenting) a new sysctl/kernel parameter called
+> "hung_task_all_cpu_backtrace", analog to the approach taken on soft/hard
+> lockups, that have both a panic and an "all_cpu_backtrace" sysctl to allow
+> individual control. The new mechanism for dumping the CPUs backtraces on
+> hung task detection respects "hung_task_warnings" by not dumping the
+> traces in case there's no warnings left.
+> 
+> Cc: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+> Signed-off-by: Guilherme G. Piccoli <gpiccoli@canonical.com>
+> ---
+> 
+> 
+> V2: Followed suggestions from Kees and Tetsuo (and other grammar
+> improvements). Also, followed Tetsuo suggestion to itereate kernel
+> testing community - but I don't really know a ML for that, so I've
+> CCed Coccinelle community and kernel-api ML.
+> 
+> Also, Tetsuo suggested that this option could be default to 1 - I'm
+> open to it, but given it is only available if hung_task panic is set
+> as of now and the goal of this patch is give users more flexibility,
+> I vote to keep default as 0. I can respin a V3 in case more people
+> want to see it enabled by default. Thanks in advance for the review!
 
-Thanks a lot for your interest. We are still improving, so right now
-we cannot share too much details,
-but we are actually trying to test in several different ways without
-kernel modification.
+Yeah, most things like this we've tried to be conservative. I'd like to
+see it stay zero too.
 
-Regards,
-Kyungtae Kim
+Reviewed-by: Kees Cook <keescook@chromium.org>
+
+-Kees
+
+> Cheers,
+> 
+> Guilherme
+> 
+> 
+>  .../admin-guide/kernel-parameters.txt         |  6 ++++
+>  Documentation/admin-guide/sysctl/kernel.rst   | 15 ++++++++++
+>  include/linux/sched/sysctl.h                  |  7 +++++
+>  kernel/hung_task.c                            | 30 +++++++++++++++++--
+>  kernel/sysctl.c                               | 11 +++++++
+>  5 files changed, 67 insertions(+), 2 deletions(-)
+> 
+> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+> index c07815d230bc..7a14caac6c94 100644
+> --- a/Documentation/admin-guide/kernel-parameters.txt
+> +++ b/Documentation/admin-guide/kernel-parameters.txt
+> @@ -1453,6 +1453,12 @@
+>  			x86-64 are 2M (when the CPU supports "pse") and 1G
+>  			(when the CPU supports the "pdpe1gb" cpuinfo flag).
+>  
+> +	hung_task_all_cpu_backtrace=
+> +			[KNL] Should kernel generate backtraces on all cpus
+> +			when a hung task is detected. Defaults to 0 and can
+> +			be controlled by hung_task_all_cpu_backtrace sysctl.
+> +			Format: <integer>
+> +
+>  	hung_task_panic=
+>  			[KNL] Should the hung task detector generate panics.
+>  			Format: <integer>
+> diff --git a/Documentation/admin-guide/sysctl/kernel.rst b/Documentation/admin-guide/sysctl/kernel.rst
+> index def074807cee..8b4ff69d2348 100644
+> --- a/Documentation/admin-guide/sysctl/kernel.rst
+> +++ b/Documentation/admin-guide/sysctl/kernel.rst
+> @@ -40,6 +40,7 @@ show up in /proc/sys/kernel:
+>  - hotplug
+>  - hardlockup_all_cpu_backtrace
+>  - hardlockup_panic
+> +- hung_task_all_cpu_backtrace
+>  - hung_task_panic
+>  - hung_task_check_count
+>  - hung_task_timeout_secs
+> @@ -338,6 +339,20 @@ Path for the hotplug policy agent.
+>  Default value is "/sbin/hotplug".
+>  
+>  
+> +hung_task_all_cpu_backtrace:
+> +================
+> +
+> +If this option is set, the kernel will send an NMI to all CPUs to dump
+> +their backtraces when a hung task is detected. This file shows up if
+> +CONFIG_DETECT_HUNG_TASK and CONFIG_SMP are enabled.
+> +
+> +0: Won't show all CPUs backtraces when a hung task is detected.
+> +This is the default behavior.
+> +
+> +1: Will non-maskably interrupt all CPUs and dump their backtraces when
+> +a hung task is detected.
+> +
+> +
+>  hung_task_panic:
+>  ================
+>  
+> diff --git a/include/linux/sched/sysctl.h b/include/linux/sched/sysctl.h
+> index d4f6215ee03f..8cd29440ec8a 100644
+> --- a/include/linux/sched/sysctl.h
+> +++ b/include/linux/sched/sysctl.h
+> @@ -7,6 +7,13 @@
+>  struct ctl_table;
+>  
+>  #ifdef CONFIG_DETECT_HUNG_TASK
+> +
+> +#ifdef CONFIG_SMP
+> +extern unsigned int sysctl_hung_task_all_cpu_backtrace;
+> +#else
+> +#define sysctl_hung_task_all_cpu_backtrace 0
+> +#endif /* CONFIG_SMP */
+> +
+>  extern int	     sysctl_hung_task_check_count;
+>  extern unsigned int  sysctl_hung_task_panic;
+>  extern unsigned long sysctl_hung_task_timeout_secs;
+> diff --git a/kernel/hung_task.c b/kernel/hung_task.c
+> index 14a625c16cb3..0d76f9d25820 100644
+> --- a/kernel/hung_task.c
+> +++ b/kernel/hung_task.c
+> @@ -53,9 +53,28 @@ int __read_mostly sysctl_hung_task_warnings = 10;
+>  static int __read_mostly did_panic;
+>  static bool hung_task_show_lock;
+>  static bool hung_task_call_panic;
+> +static bool hung_task_show_all_bt;
+>  
+>  static struct task_struct *watchdog_task;
+>  
+> +#ifdef CONFIG_SMP
+> +/*
+> + * Should we dump all CPUs backtraces in a hung task event?
+> + * Defaults to 0, can be changed either via cmdline or sysctl.
+> + */
+> +unsigned int __read_mostly sysctl_hung_task_all_cpu_backtrace;
+> +
+> +static int __init hung_task_backtrace_setup(char *str)
+> +{
+> +	int rc = kstrtouint(str, 0, &sysctl_hung_task_all_cpu_backtrace);
+> +
+> +	if (rc)
+> +		return rc;
+> +	return 1;
+> +}
+> +__setup("hung_task_all_cpu_backtrace=", hung_task_backtrace_setup);
+> +#endif /* CONFIG_SMP */
+> +
+>  /*
+>   * Should we panic (and reboot, if panic_timeout= is set) when a
+>   * hung task is detected:
+> @@ -137,6 +156,9 @@ static void check_hung_task(struct task_struct *t, unsigned long timeout)
+>  			" disables this message.\n");
+>  		sched_show_task(t);
+>  		hung_task_show_lock = true;
+> +
+> +		if (sysctl_hung_task_all_cpu_backtrace)
+> +			hung_task_show_all_bt = true;
+>  	}
+>  
+>  	touch_nmi_watchdog();
+> @@ -201,10 +223,14 @@ static void check_hung_uninterruptible_tasks(unsigned long timeout)
+>  	rcu_read_unlock();
+>  	if (hung_task_show_lock)
+>  		debug_show_all_locks();
+> -	if (hung_task_call_panic) {
+> +
+> +	if (hung_task_show_all_bt) {
+> +		hung_task_show_all_bt = false;
+>  		trigger_all_cpu_backtrace();
+> +	}
+> +
+> +	if (hung_task_call_panic)
+>  		panic("hung_task: blocked tasks");
+> -	}
+>  }
+>  
+>  static long hung_timeout_jiffies(unsigned long last_checked,
+> diff --git a/kernel/sysctl.c b/kernel/sysctl.c
+> index ad5b88a53c5a..238f268de486 100644
+> --- a/kernel/sysctl.c
+> +++ b/kernel/sysctl.c
+> @@ -1098,6 +1098,17 @@ static struct ctl_table kern_table[] = {
+>  	},
+>  #endif
+>  #ifdef CONFIG_DETECT_HUNG_TASK
+> +#ifdef CONFIG_SMP
+> +	{
+> +		.procname	= "hung_task_all_cpu_backtrace",
+> +		.data		= &sysctl_hung_task_all_cpu_backtrace,
+> +		.maxlen		= sizeof(int),
+> +		.mode		= 0644,
+> +		.proc_handler	= proc_dointvec_minmax,
+> +		.extra1		= SYSCTL_ZERO,
+> +		.extra2		= SYSCTL_ONE,
+> +	},
+> +#endif /* CONFIG_SMP */
+>  	{
+>  		.procname	= "hung_task_panic",
+>  		.data		= &sysctl_hung_task_panic,
+> -- 
+> 2.25.1
+> 
+
+-- 
+Kees Cook
