@@ -2,112 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 152D818F7E5
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Mar 2020 16:00:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4871F18F7EC
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Mar 2020 16:00:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727205AbgCWPAI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Mar 2020 11:00:08 -0400
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:38619 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727053AbgCWPAI (ORCPT
+        id S1727277AbgCWPAW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Mar 2020 11:00:22 -0400
+Received: from mail-wm1-f47.google.com ([209.85.128.47]:40435 "EHLO
+        mail-wm1-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726956AbgCWPAW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Mar 2020 11:00:08 -0400
-Received: from pps.filterd (m0046037.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 02NEceZY020199;
-        Mon, 23 Mar 2020 15:59:51 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
- : date : message-id : in-reply-to : references : mime-version :
- content-type; s=STMicroelectronics;
- bh=kyVB+tiE+rN9XPO8kyR9LpGoCVCUanK+RTCgZf2jO/w=;
- b=MXyz0nnEv459Rz7r4TnL48ZtCtsDd2fJpJVrxgLmWsClY8NF/tTZ9Tkr30Ob1K2teP7f
- sTM2kHOLPm0IwBRXmkJfLH+xhn4qON6+jMlTAPE5iqZK1bZcrssGfmRp92R80BWp6Zbt
- HIro4TAbgR6jLGBGrlgl+Vnh2F5LTopOj37sUfIEFN2PDTGBM9tEQiRfiwKBlAbhx12A
- ZigrK9Fszpu+9LIgZJ5ztx33ZkNOG+0fdmrStJOK0RgB8skfmwuFPr5nno1JhJm6DzgX
- 0sbIhClBijuCEIQ5b2sq1UHKqvPeS5sXwuxsS3FZtOXbvDM/BFj6oujHSlybi8xAVEjN cw== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 2yw9jytgfg-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 23 Mar 2020 15:59:51 +0100
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id A7AA410002A;
-        Mon, 23 Mar 2020 15:59:50 +0100 (CET)
-Received: from Webmail-eu.st.com (sfhdag6node2.st.com [10.75.127.17])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 9947E220F8F;
-        Mon, 23 Mar 2020 15:59:50 +0100 (CET)
-Received: from localhost (10.75.127.47) by SFHDAG6NODE2.st.com (10.75.127.17)
- with Microsoft SMTP Server (TLS) id 15.0.1347.2; Mon, 23 Mar 2020 15:59:49
- +0100
-From:   Christophe Kerello <christophe.kerello@st.com>
-To:     <miquel.raynal@bootlin.com>, <richard@nod.at>, <vigneshr@ti.com>,
-        <lee.jones@linaro.org>, <robh+dt@kernel.org>,
-        <mark.rutland@arm.com>, <tony@atomide.com>
-CC:     <linux-mtd@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>, <marex@denx.de>,
-        Christophe Kerello <christophe.kerello@st.com>
-Subject: [06/12] mtd: rawnand: stm32_fmc2: use FMC2_TIMEOUT_MS for timeouts
-Date:   Mon, 23 Mar 2020 15:58:46 +0100
-Message-ID: <1584975532-8038-7-git-send-email-christophe.kerello@st.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1584975532-8038-1-git-send-email-christophe.kerello@st.com>
-References: <1584975532-8038-1-git-send-email-christophe.kerello@st.com>
+        Mon, 23 Mar 2020 11:00:22 -0400
+Received: by mail-wm1-f47.google.com with SMTP id a81so9424178wmf.5
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Mar 2020 08:00:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=H1foJ/7dzFcW1ibnyR1fQ1dVKm6BmjeU6Wk64TSBnq4=;
+        b=dZbITrOfxNqhB943lLNdXwVtR2EFgCwHzU/1Qld/fltEX4chtm3OSUkBuU0ICOY4aO
+         iXjDaa2KBJNad3bW208trlJ5vWtWs2qSUO5cFbCWAOPc0aJK6geXgoC48h8gNDT3SqOd
+         eh2idO/7t281mDhsQgXRbteC84wZx0d3EIm4K3SWACunViLwSIKESBFnwPu2oqF05UIl
+         QqMtt1oU+CJU5iZbck6iY1AHEkmD6oTOYExHGK3nrkdWqGxoJQuACH+1VaJntESNH0b8
+         vAx6n+Zbrm8CpLBt+/nxADtpGpw7+Hxsokai6KcHJ7PEtQ7OXhhkPrSCrN4GEdaop+1i
+         4V8w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=H1foJ/7dzFcW1ibnyR1fQ1dVKm6BmjeU6Wk64TSBnq4=;
+        b=Up9YAQEZT5NZIyivDk4DGQeWbaVe3TJHSgVwwVeYUzKbnRYHsQdReUBLUNocKirReB
+         qPpthHnHkAMUh4nj7cqB+cSbOVoUfEZEueWUd135gb8KJISZlWhNza2GVTMyY3Za4V3G
+         qJf/pqGFYTYqPZEqcLbaxPZM9xoIDqOdbv59r6PvrEQ5QQsf556ajHLl0A6qmwO1DYQB
+         hJuZikKgoH77UJ8oGE8nxcTerKLF7d/Eok+2MXQLRFIsbHglsMbAiwLlK0r2u4COVcdL
+         sb9Jy0xMAOjX45CydgzPOuqDqpMbYyIyifh3SLFkufruR6II+AhQX+nsZUTa882C6iL3
+         Cftg==
+X-Gm-Message-State: ANhLgQ06vOvmZEcAaE4jE4RKmxz5EP+7S00TKafmos9udMA7kynCVPfZ
+        gLu0y8ave23Ihqjvf8Uwgch1l4pSK3w=
+X-Google-Smtp-Source: ADFU+vunD/RIW3cj5Jk6VTD3QhV9HV8x9FzBtr8VJ4h21ScDs8qNQ2qpZLDfaz/CEcu1mm9nIjR8iQ==
+X-Received: by 2002:a1c:7c0d:: with SMTP id x13mr26990667wmc.44.1584975620669;
+        Mon, 23 Mar 2020 08:00:20 -0700 (PDT)
+Received: from srini-hackbox.lan (cpc89974-aztw32-2-0-cust43.18-1.cable.virginm.net. [86.30.250.44])
+        by smtp.gmail.com with ESMTPSA id k15sm1084196wrm.55.2020.03.23.08.00.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 23 Mar 2020 08:00:20 -0700 (PDT)
+From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+To:     gregkh@linuxfoundation.org
+Cc:     linux-kernel@vger.kernel.org,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Subject: [PATCH 0/5] nvmem: patches (set 2) for 5.7
+Date:   Mon, 23 Mar 2020 15:00:02 +0000
+Message-Id: <20200323150007.7487-1-srinivas.kandagatla@linaro.org>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.75.127.47]
-X-ClientProxiedBy: SFHDAG7NODE3.st.com (10.75.127.21) To SFHDAG6NODE2.st.com
- (10.75.127.17)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.645
- definitions=2020-03-23_05:2020-03-21,2020-03-23 signatures=0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch removes the constant FMC2_TIMEOUT_US.
-FMC2_TIMEOUT_MS is set to 5 seconds and this constant is used
-each time that we need to wait (except when the timeout value
-is set by the framework)
+Hi Greg,
 
-Signed-off-by: Christophe Kerello <christophe.kerello@st.com>
----
- drivers/mtd/nand/raw/stm32_fmc2_nand.c | 11 +++++------
- 1 file changed, 5 insertions(+), 6 deletions(-)
+Here are some nvmem patches for 5.7 which includes
+- sprd nvmem provider fixes 
+- mxs-ocotp driver cleanup
+- add proper checks for read/write callbacks and support root-write only
 
-diff --git a/drivers/mtd/nand/raw/stm32_fmc2_nand.c b/drivers/mtd/nand/raw/stm32_fmc2_nand.c
-index ab53314..f159c39 100644
---- a/drivers/mtd/nand/raw/stm32_fmc2_nand.c
-+++ b/drivers/mtd/nand/raw/stm32_fmc2_nand.c
-@@ -37,8 +37,7 @@
- /* Max ECC buffer length */
- #define FMC2_MAX_ECC_BUF_LEN		(FMC2_BCHDSRS_LEN * FMC2_MAX_SG)
- 
--#define FMC2_TIMEOUT_US			1000
--#define FMC2_TIMEOUT_MS			1000
-+#define FMC2_TIMEOUT_MS			5000
- 
- /* Timings */
- #define FMC2_THIZ			1
-@@ -525,9 +524,9 @@ static int stm32_fmc2_ham_calculate(struct nand_chip *chip, const u8 *data,
- 	u32 sr, heccr;
- 	int ret;
- 
--	ret = readl_relaxed_poll_timeout(fmc2->io_base + FMC2_SR,
--					 sr, sr & FMC2_SR_NWRF, 10,
--					 FMC2_TIMEOUT_MS);
-+	ret = readl_relaxed_poll_timeout_atomic(fmc2->io_base + FMC2_SR,
-+						sr, sr & FMC2_SR_NWRF, 1,
-+						1000 * FMC2_TIMEOUT_MS);
- 	if (ret) {
- 		dev_err(fmc2->dev, "ham timeout\n");
- 		return ret;
-@@ -1315,7 +1314,7 @@ static int stm32_fmc2_waitrdy(struct nand_chip *chip, unsigned long timeout_ms)
- 	/* Check if there is no pending requests to the NAND flash */
- 	if (readl_relaxed_poll_timeout_atomic(fmc2->io_base + FMC2_SR, sr,
- 					      sr & FMC2_SR_NWRF, 1,
--					      FMC2_TIMEOUT_US))
-+					      1000 * FMC2_TIMEOUT_MS))
- 		dev_warn(fmc2->dev, "Waitrdy timeout\n");
- 
- 	/* Wait tWB before R/B# signal is low */
+If its not too late, Can you please queue them up for 5.7.
+
+thanks for you help,
+srini
+
+Anson Huang (1):
+  nvmem: mxs-ocotp: Use devm_add_action_or_reset() for cleanup
+
+Baolin Wang (1):
+  nvmem: sprd: Determine double data programming from device data
+
+Freeman Liu (2):
+  nvmem: sprd: Fix the block lock operation
+  nvmem: sprd: Optimize the block lock operation
+
+Nicholas Johnson (1):
+  nvmem: Add support for write-only instances
+
+ drivers/nvmem/core.c        | 10 +++++--
+ drivers/nvmem/mxs-ocotp.c   | 30 ++++++++------------
+ drivers/nvmem/nvmem-sysfs.c | 56 +++++++++++++++++++++++++++++++------
+ drivers/nvmem/sprd-efuse.c  | 27 ++++++++++++++----
+ 4 files changed, 89 insertions(+), 34 deletions(-)
+
 -- 
-1.9.1
+2.21.0
 
