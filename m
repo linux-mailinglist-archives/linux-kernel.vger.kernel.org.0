@@ -2,104 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D858818F40A
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Mar 2020 13:07:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A088518F40E
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Mar 2020 13:08:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727369AbgCWMHG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Mar 2020 08:07:06 -0400
-Received: from foss.arm.com ([217.140.110.172]:47924 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726204AbgCWMHF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Mar 2020 08:07:05 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id ED2BE1FB;
-        Mon, 23 Mar 2020 05:07:04 -0700 (PDT)
-Received: from C02TD0UTHF1T.local (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8D96A3F52E;
-        Mon, 23 Mar 2020 05:07:03 -0700 (PDT)
-Date:   Mon, 23 Mar 2020 12:07:00 +0000
-From:   Mark Rutland <mark.rutland@arm.com>
-To:     =?utf-8?B?UsOpbWk=?= Denis-Courmont <remi@remlab.net>
-Cc:     catalin.marinas@arm.com, will@kernel.org,
-        linux-arm-kernel@lists.infradead.org, james.morse@arm.com,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/3] arm64: clean up trampoline vector loads
-Message-ID: <20200323120700.GB2597@C02TD0UTHF1T.local>
-References: <1938400.7m7sAWtiY1@basile.remlab.net>
- <20200319091407.51449-1-remi@remlab.net>
+        id S1727391AbgCWMIb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Mar 2020 08:08:31 -0400
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:46199 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726204AbgCWMIb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Mar 2020 08:08:31 -0400
+Received: by mail-lf1-f66.google.com with SMTP id y83so2208468lff.13
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Mar 2020 05:08:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to
+         :content-transfer-encoding;
+        bh=biwoS3JaViyjPUOgCAnYF8XGHwR5xOAqDJQ0djIw6ac=;
+        b=ajTsz7RB9CokAa0vR13EwHoAjf/BcbLGYOgvlLGMJ5wz8Uiyfz5S4gMsAbrQ8zUzQb
+         hYCVW2LafjwHalUkr8USqXZS8bhcuJ3kGvlLZwkJPBbcnQ7nf9YIrbkZ29drD3QnINjx
+         BNVw1oa4D5U73XmVoFdBfiY7DDYMP28EjmXD9cQQwaVy3pQVhcUuRuXF0511w89TC/lS
+         Gl26ATkUqGQMVC2IWuCyR6v6NJbEDxwzFi7hhM9uGSvTjxqlf63zJgEl3Enl4fY410pz
+         CvYVZ/Ai2Owrghr4Vx3Xbe0DLx0PZQacq58wCB0OY5qrdkB+PWxXFiJbUFeBtx+K9Bv9
+         wfRg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to:content-transfer-encoding;
+        bh=biwoS3JaViyjPUOgCAnYF8XGHwR5xOAqDJQ0djIw6ac=;
+        b=rKaBU6d1e9J8mV0N3sSV+KqpskWNettOB3IoeBwPNewXoLtbj7mLu7/PwaITS6jYGd
+         T/qxDI45xIjsmgwp3wKa8Jju3eWDM7zahNqUkTKbFcp2uqXQSVXAzkijs7DJPy/G1RNe
+         jIsBiyYJuKWHe6c4vx5adR5tTCMW78C7pjFb3FqdWPb4zb1v4BDHYt+3GESGhqrkfA54
+         fr/5fSGboUyFTIWHBnHGGAgcwGjbdewK06cC9xE3Bd6U7jMfdCUE3ChIjjIa11ObjiO+
+         ke5vtx7GpQ2hN/f5PZHX+mba0T41np3gTRmwzdgZx76MSmPcGXWMRmZ+qtrHWoCXUSVd
+         Zt9w==
+X-Gm-Message-State: ANhLgQ1BILGqqK1UGDSRESATYSdf1743s77Hu3q2zIUKI+AOu1H/hAob
+        +3gRXWc7tCp1+vPVVbL2Y437yn2H5otTh0czJzU=
+X-Google-Smtp-Source: ADFU+vtuPGKRt0tqqbtMu6hQT3zOSuutUnZbI1awU+DsclV+Ayu7GnE0O9wwZVtVNWF3tBHvHkNTYQfLsYceYbN8RBM=
+X-Received: by 2002:ac2:53b2:: with SMTP id j18mr12836652lfh.206.1584965309053;
+ Mon, 23 Mar 2020 05:08:29 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20200319091407.51449-1-remi@remlab.net>
+Received: by 2002:a2e:b615:0:0:0:0:0 with HTTP; Mon, 23 Mar 2020 05:08:26
+ -0700 (PDT)
+Reply-To: robertandersonhappy1@gmail.com
+From:   robert <nnadinawafo11@gmail.com>
+Date:   Mon, 23 Mar 2020 05:08:26 -0700
+Message-ID: <CAPhDfr3xEyHQUimL5ocVJwQEZLJ-U94atDd-vQEgWD+mcrgC+A@mail.gmail.com>
+Subject: good
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 19, 2020 at 11:14:05AM +0200, Rémi Denis-Courmont wrote:
-> From: Rémi Denis-Courmont <remi.denis.courmont@huawei.com>
-> 
-> This switches from custom instruction patterns to the regular large
-> memory model sequence with ADRP and LDR. In doing so, the ADD
-> instruction can be eliminated in the SDEI handler, and the code no
-> longer assumes that the trampoline vectors and the vectors address both
-> start on a page boundary.
-> 
-> Signed-off-by: Rémi Denis-Courmont <remi.denis.courmont@huawei.com>
-> ---
->  arch/arm64/kernel/entry.S | 9 ++++-----
->  1 file changed, 4 insertions(+), 5 deletions(-)
-> 
-> diff --git a/arch/arm64/kernel/entry.S b/arch/arm64/kernel/entry.S
-> index e5d4e30ee242..24f828739696 100644
-> --- a/arch/arm64/kernel/entry.S
-> +++ b/arch/arm64/kernel/entry.S
-> @@ -805,9 +805,9 @@ alternative_else_nop_endif
->  2:
->  	tramp_map_kernel	x30
->  #ifdef CONFIG_RANDOMIZE_BASE
-> -	adr	x30, tramp_vectors + PAGE_SIZE
-> +	adrp	x30, tramp_vectors + PAGE_SIZE
->  alternative_insn isb, nop, ARM64_WORKAROUND_QCOM_FALKOR_E1003
-> -	ldr	x30, [x30]
-> +	ldr	x30, [x30, #:lo12:__entry_tramp_data_start]
-
-I think this is busted for !4K kernels once we reduce the alignment of
-__entry_tramp_data_start.
-
-The ADRP gives us a 64K aligned address (with bits 15:0 clear). The lo12
-relocation gives us bits 11:0, so we haven't accounted for bits 15:12.
-I think that's what's causing the hang Catalin sees with 64K pages (and
-would also be a problem for 16K pages).
-
-Ideally, we'd account for those bits with the ADRP, but I'm not sure
-that an ELF relocation can encode symbol + addr + symbol:15-12, so we
-likely nned more instructions to explicitly mask that in.
-
-... either that, or leave this page aligned.
-
->  #else
->  	ldr	x30, =vectors
->  #endif
-> @@ -953,9 +953,8 @@ SYM_CODE_START(__sdei_asm_entry_trampoline)
->  1:	str	x4, [x1, #(SDEI_EVENT_INTREGS + S_ORIG_ADDR_LIMIT)]
->  
->  #ifdef CONFIG_RANDOMIZE_BASE
-> -	adr	x4, tramp_vectors + PAGE_SIZE
-> -	add	x4, x4, #:lo12:__sdei_asm_trampoline_next_handler
-> -	ldr	x4, [x4]
-> +	adrp	x4, tramp_vectors + PAGE_SIZE
-> +	ldr	x4, [x4, #:lo12:__sdei_asm_trampoline_next_handler]
-
-Likewise here.
-
-Thanks,
-Mark.
-
->  #else
->  	ldr	x4, =__sdei_asm_handler
->  #endif
-> -- 
-> 2.26.0.rc2
-> 
+Lieber Freund,
+Mein Name ist Bar.robert anderson. Ich bin Rechtsanwalt und Privatmann
+Account Manager an meinen verstorbenen Kunden. Im Jahr 2015 mein Kunde mit =
+Namen
+Herr Carlos, verstorben. Der Grund, warum ich Sie kontaktiert habe,
+ist, dass Sie
+trage den gleichen Nachnamen mit dem Verstorbenen, und ich kann dich
+als pr=C3=A4sentieren
+Der Beg=C3=BCnstigte und Angeh=C3=B6rige meiner verstorbenen Kundengelder w=
+erden Sie dann
+Stehen Sie als sein n=C3=A4chster Verwandter und fordern Sie das Geld ein.
+ein Geld zur=C3=BCcklassen
+Erbschaft von sieben Millionen f=C3=BCnfhunderttausend Vereinigten Staaten
+Dollar (US $ 7.500.000,00). Mein verstorbener Kunde und Busenfreund
+ist in aufgewachsen
+ein "Motherless Babies Home". Er hatte keine Familie, keinen
+Nutznie=C3=9Fer oder n=C3=A4chsten
+Angeh=C3=B6rige der bei der Bank zur=C3=BCckgelassenen Erbschaftsfonds.
+Sie sollten mich =C3=BCber meine private E-Mail-Adresse kontaktieren:
+robertandersonhappy1@gmail.com
+Freundliche Gr=C3=BC=C3=9Fe,
+Bar. robert anderson
