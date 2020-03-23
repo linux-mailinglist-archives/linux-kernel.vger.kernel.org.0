@@ -2,94 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 51D3918EE48
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Mar 2020 03:59:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6627D18EE52
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Mar 2020 04:00:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727118AbgCWC7A (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 22 Mar 2020 22:59:00 -0400
-Received: from smtprelay0204.hostedemail.com ([216.40.44.204]:45076 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727067AbgCWC7A (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Mar 2020 22:59:00 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay05.hostedemail.com (Postfix) with ESMTP id BCE4E1802926E;
-        Mon, 23 Mar 2020 02:58:59 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,,RULES_HIT:41:355:379:599:960:973:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:2198:2199:2393:2553:2559:2562:2828:2901:3138:3139:3140:3141:3142:3353:3622:3865:3866:3867:3868:3870:3871:3872:4321:5007:6119:7903:8603:10004:10400:10848:11026:11473:11658:11914:12295:12297:12740:12760:12895:13069:13138:13231:13311:13357:13439:14659:14721:21080:21451:21627:21796:30036:30054:30090:30091,0,RBL:none,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:1,LUA_SUMMARY:none
-X-HE-Tag: foot07_314bb36a3e01d
-X-Filterd-Recvd-Size: 2428
-Received: from XPS-9350.home (unknown [47.151.136.130])
-        (Authenticated sender: joe@perches.com)
-        by omf08.hostedemail.com (Postfix) with ESMTPA;
-        Mon, 23 Mar 2020 02:58:58 +0000 (UTC)
-Message-ID: <8d435607bd79f518bd9420d68894ddda521bac5a.camel@perches.com>
-Subject: Re: [PATCH v4] f2fs: fix potential .flags overflow on 32bit
- architecture
-From:   Joe Perches <joe@perches.com>
-To:     Chao Yu <yuchao0@huawei.com>, jaegeuk@kernel.org
-Cc:     linux-f2fs-devel@lists.sourceforge.net,
-        linux-kernel@vger.kernel.org, chao@kernel.org
-Date:   Sun, 22 Mar 2020 19:57:09 -0700
-In-Reply-To: <20200323024109.60967-1-yuchao0@huawei.com>
-References: <20200323024109.60967-1-yuchao0@huawei.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.34.1-2 
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S1727228AbgCWC71 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 22 Mar 2020 22:59:27 -0400
+Received: from mail.loongson.cn ([114.242.206.163]:56006 "EHLO loongson.cn"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727050AbgCWC70 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 22 Mar 2020 22:59:26 -0400
+Received: from linux.localdomain (unknown [113.200.148.30])
+        by mail.loongson.cn (Coremail) with SMTP id AQAAf9AxP+gDJnhedaseAA--.407S2;
+        Mon, 23 Mar 2020 10:59:15 +0800 (CST)
+From:   Tiezhu Yang <yangtiezhu@loongson.cn>
+To:     Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        Huacai Chen <chenhc@lemote.com>,
+        Jiaxun Yang <jiaxun.yang@flygoat.com>
+Cc:     linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Xuefeng Li <lixuefeng@loongson.cn>
+Subject: [PATCH v2 0/3] Add basic support for Loongson 7A1000 bridge chip
+Date:   Mon, 23 Mar 2020 10:59:12 +0800
+Message-Id: <1584932355-3642-1-git-send-email-yangtiezhu@loongson.cn>
+X-Mailer: git-send-email 2.1.0
+X-CM-TRANSID: AQAAf9AxP+gDJnhedaseAA--.407S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7Cw4UGr4xXFW7tryfGF48WFg_yoW8KFW7pF
+        WF9a1rWrs8Wry7Aasxur48ur4rArn3JrZrWa17Gr1kAa98XF10qr929a15t3W29r9a9a1U
+        Xry8WrWDKa15CaDanT9S1TB71UUUUUDqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDU0xBIdaVrnRJUUUkl14x267AKxVWUJVW8JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+        rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+        1l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
+        6r4UJwA2z4x0Y4vEx4A2jsIE14v26r4UJVWxJr1l84ACjcxK6I8E87Iv6xkF7I0E14v26F
+        4UJVW0owAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv
+        7VC0I7IYx2IY67AKxVWUAVWUtwAv7VC2z280aVAFwI0_Gr0_Cr1lOx8S6xCaFVCjc4AY6r
+        1j6r4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwCY02Avz4vE14v_
+        Gr1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxV
+        WUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r126r1DMIIYrxkI
+        7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r
+        1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVW3JVWrJr1lIxAIcVC2z280aVAFwI0_Gr0_Cr1l
+        IxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VUjg_-DUUUU
+        U==
+X-CM-SenderInfo: p1dqw3xlh2x3gn0dqz5rrqw2lrqou0/
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2020-03-23 at 10:41 +0800, Chao Yu wrote:
-> f2fs_inode_info.flags is unsigned long variable, it has 32 bits
-> in 32bit architecture, since we introduced FI_MMAP_FILE flag
-> when we support data compression, we may access memory cross
-> the border of .flags field, corrupting .i_sem field, result in
-> below deadlock.
-[]
-> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-[]
-> @@ -682,6 +682,47 @@ enum {
-[]
-> +/* used for f2fs_inode_info->flags */
-> +enum {
-[]
-> +	FI_MAX,			/* max flag, never be used */
-> +};
-> +
-> +/* f2fs_inode_info.flags array size */
-> +#define FI_ARRAY_SIZE		(BITS_TO_LONGS(FI_MAX))
+The Loongson 7A1000 bridge chip has been released for several years
+since the second half of 2017, but it is not supported by the Linux
+mainline kernel while it only works well with the Loongson internal
+kernel version. When I update the latest version of Linux mainline
+kernel on the Loongson 3A3000 CPU and 7A1000 bridge chip system,
+the boot process failed and I feel depressed.
 
-Perhaps FI_ARRAY_SIZE isn't necessary.
+The 7A1000 bridge chip is used a lot with 3A3000 or 3A4000 CPU in
+the most Loongson desktop and sever products, it is important to
+support Loongson 7A1000 bridge chip by the Linux mainline kernel.
 
-> +
->  struct f2fs_inode_info {
->  	struct inode vfs_inode;		/* serve a vfs inode */
->  	unsigned long i_flags;		/* keep an inode flags for ioctl */
-> @@ -694,7 +735,7 @@ struct f2fs_inode_info {
->  	umode_t i_acl_mode;		/* keep file acl mode temporarily */
->  
->  	/* Use below internally in f2fs*/
-> -	unsigned long flags;		/* use to pass per-file flags */
-> +	unsigned long flags[FI_ARRAY_SIZE];	/* use to pass per-file flags */
+This patch series adds the basic support for the Loongson 7A1000
+bridge chip, when apply these patches based on linux-5.6-rc7, the
+boot process is successful and we can login normally used with the
+latest firmware and discrete graphics card, the next work to do is
+power management and some other controller device drivers.
 
-and BITS_TO_LONGS should be used here.
+Additionally, when I git clone mips code [1], the speed is too slow
+and clone always failed, so this patch series is based on the latest
+linux-5.6-rc7 [2].
 
-> diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
-[]
-> @@ -362,7 +363,8 @@ static int do_read_inode(struct inode *inode)
->  	fi->i_flags = le32_to_cpu(ri->i_flags);
->  	if (S_ISREG(inode->i_mode))
->  		fi->i_flags &= ~F2FS_PROJINHERIT_FL;
-> -	fi->flags = 0;
-> +	for (i = 0; i < FI_ARRAY_SIZE; i++)
-> +		fi->flags[i] = 0;
+If you have any questions and suggestions, please let me know.
 
-And this could become
+Thanks,
 
-	bitmap_zero(fi->flags, BITS_TO_LONG(FI_MAX));
+Tiezhu Yang
 
-Is FI_ARRAY_SIZE used anywhere else?
+v2:
+  - The split patch series about Loongson vendor ID and SATA controller
+    has been merged into the linux-block.git by Jens Axboe [3].
+
+  - Think about using hierarchy IRQ domain in the patch of interrupt
+    controller, and this maybe depend on the patch series by Jiaxun
+    ("Modernize Loongson64 Machine"), so the patch about interrupt is
+    not included in this v2 patch series.
+
+[1] git clone https://git.kernel.org/pub/scm/linux/kernel/git/mips/linux.git
+[2] git clone https://github.com/torvalds/linux.git
+[3] https://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux-block.git/commit/?h=for-next&id=9acb9fe18d86
+    https://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux-block.git/commit/?h=for-next&id=e49bd683e00b
+
+Tiezhu Yang (3):
+  MIPS: Loongson: Get host bridge information
+  MIPS: Loongson: Add DMA support for 7A1000
+  MIPS: Loongson: Add PCI support for 7A1000
+
+ arch/mips/include/asm/mach-loongson64/boot_param.h | 20 ++++++
+ arch/mips/loongson64/dma.c                         |  9 ++-
+ arch/mips/loongson64/env.c                         | 20 ++++++
+ arch/mips/loongson64/init.c                        | 17 +++++
+ arch/mips/pci/ops-loongson3.c                      | 72 ++++++++++++++++++++--
+ 5 files changed, 131 insertions(+), 7 deletions(-)
+
+-- 
+2.1.0
 
