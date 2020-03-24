@@ -2,37 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1D5BD190A64
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 11:15:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 20072190A74
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 11:16:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727266AbgCXKPZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 06:15:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49250 "EHLO mail.kernel.org"
+        id S1727456AbgCXKPn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 06:15:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49262 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726994AbgCXKPY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1727145AbgCXKPY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 24 Mar 2020 06:15:24 -0400
 Received: from mail.kernel.org (ip5f5ad4e9.dynamic.kabel-deutschland.de [95.90.212.233])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EF9C92080C;
-        Tue, 24 Mar 2020 10:15:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0F13A20870;
+        Tue, 24 Mar 2020 10:15:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1585044924;
-        bh=Ng776RDVUtwc7KQiVz21I8I2Wgral1f/GNSOxXixasQ=;
+        bh=mvF+8DJswgww3SrqFXIL4DAo4Hpgzr3yTYJuJvmcW+8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SrI1EStL6N2czPIvrLO/O+OPW/W3qsBSsCz4X8Ohr+eKhLangk0n+/HG47GtTyl6Z
-         NKZ6KOMGNkxerLO+IS/pQvSM5FCWjhbJINtTwZRDWcM8kpijSD3WBycHC2Dk1SkpFS
-         4Jlemtlv3MeOVM7t4cCRCOdDJtN6+JtuRvY+42Fc=
+        b=fFIgvBRW/GgEzYk5YXzvZlSbRkHNzjlkbuLwyQQ/A5xXyHN9nhOjz7d2zYB6/xjZd
+         0Go4mue5PUAT4NhhHMxxNL2SBr1MOTdTJJCa2zCIQkquizF21JbtEk0/yaGlbESU2z
+         P42a8Hifrj8r5evBxIcULoMOxCBzpLG7K5377pKE=
 Received: from mchehab by mail.kernel.org with local (Exim 4.92.3)
         (envelope-from <mchehab@kernel.org>)
-        id 1jGgag-001pjR-8z; Tue, 24 Mar 2020 11:15:22 +0100
+        id 1jGgag-001pjX-A0; Tue, 24 Mar 2020 11:15:22 +0100
 From:   Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 To:     Linux Doc Mailing List <linux-doc@vger.kernel.org>
 Cc:     Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
         linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>
-Subject: [PATCH 3/8] media: pci: move VIDEO_PCI_SKELETON to a different Kconfig
-Date:   Tue, 24 Mar 2020 11:15:16 +0100
-Message-Id: <8a09c8d2144c36f8d370f6ab069ff1c6e6d6fb00.1585044374.git.mchehab+huawei@kernel.org>
+Subject: [PATCH 4/8] media: reorganize the drivers menu options
+Date:   Tue, 24 Mar 2020 11:15:17 +0100
+Message-Id: <fa1eab8ee9addcb546fa6f88f72fa05c1e6b7dc6.1585044374.git.mchehab+huawei@kernel.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <cover.1585044374.git.mchehab+huawei@kernel.org>
 References: <cover.1585044374.git.mchehab+huawei@kernel.org>
@@ -43,58 +43,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The V4L2 PCI skeleton is not part of the V4L2 core. Move it
-to appear together with the other PCI drivers, at the end,
-as this is something that normal users don't even need to
-bother.
+The comments before some of the drivers support look
+weird, because their Kconfig have their own "comment"
+directive inside it. So, rearrange them to make it
+look a little nicer for the ones with are not too
+familiar with the media system.
 
 Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 ---
- drivers/media/pci/Kconfig       | 10 ++++++++++
- drivers/media/v4l2-core/Kconfig | 10 ----------
- 2 files changed, 10 insertions(+), 10 deletions(-)
+ drivers/media/Kconfig | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/media/pci/Kconfig b/drivers/media/pci/Kconfig
-index dcb3719f440e..9336f8446cf0 100644
---- a/drivers/media/pci/Kconfig
-+++ b/drivers/media/pci/Kconfig
-@@ -56,5 +56,15 @@ endif
+diff --git a/drivers/media/Kconfig b/drivers/media/Kconfig
+index 4af21fa73fcf..586d8931d9fc 100644
+--- a/drivers/media/Kconfig
++++ b/drivers/media/Kconfig
+@@ -87,6 +87,8 @@ config MEDIA_CEC_SUPPORT
+ 	  Say Y when you have an HDMI receiver, transmitter or a USB CEC
+ 	  adapter that supports HDMI CEC.
  
- source "drivers/media/pci/intel/ipu3/Kconfig"
- 
-+config VIDEO_PCI_SKELETON
-+	tristate "Skeleton PCI V4L2 driver"
-+	depends on PCI
-+	depends on SAMPLES
-+	depends on VIDEO_V4L2 && VIDEOBUF2_CORE
-+	depends on VIDEOBUF2_MEMOPS && VIDEOBUF2_DMA_CONTIG
-+	help
-+	  Enable build of the skeleton PCI driver, used as a reference
-+	  when developing new drivers.
++comment "Media core options"
 +
- endif #MEDIA_PCI_SUPPORT
- endif #PCI
-diff --git a/drivers/media/v4l2-core/Kconfig b/drivers/media/v4l2-core/Kconfig
-index 39e3fb30ba0b..26276b257eae 100644
---- a/drivers/media/v4l2-core/Kconfig
-+++ b/drivers/media/v4l2-core/Kconfig
-@@ -31,16 +31,6 @@ config VIDEO_FIXED_MINOR_RANGES
+ source "drivers/media/cec/Kconfig"
  
- 	  When in doubt, say N.
+ source "drivers/media/mc/Kconfig"
+@@ -166,17 +168,17 @@ comment "Media drivers"
  
--config VIDEO_PCI_SKELETON
--	tristate "Skeleton PCI V4L2 driver"
--	depends on PCI
--	depends on SAMPLES
--	depends on VIDEO_V4L2 && VIDEOBUF2_CORE
--	depends on VIDEOBUF2_MEMOPS && VIDEOBUF2_DMA_CONTIG
--	help
--	  Enable build of the skeleton PCI driver, used as a reference
--	  when developing new drivers.
+ source "drivers/media/usb/Kconfig"
+ source "drivers/media/pci/Kconfig"
++source "drivers/media/radio/Kconfig"
++
++# Common driver options
++source "drivers/media/common/Kconfig"
+ source "drivers/media/platform/Kconfig"
+ source "drivers/media/mmc/Kconfig"
+-source "drivers/media/radio/Kconfig"
+ 
+ comment "Supported FireWire (IEEE 1394) Adapters"
+ 	depends on DVB_CORE && FIREWIRE
+ source "drivers/media/firewire/Kconfig"
+ 
+-# Common driver options
+-source "drivers/media/common/Kconfig"
 -
- # Used by drivers that need tuner.ko
- config VIDEO_TUNER
- 	tristate
+ comment "Media ancillary drivers (tuners, sensors, i2c, spi, frontends)"
+ 
+ #
 -- 
 2.24.1
 
