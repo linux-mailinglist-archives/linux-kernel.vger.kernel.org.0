@@ -2,189 +2,146 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 768AF19196C
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 19:48:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BA2F0191973
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 19:51:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727940AbgCXSsV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 14:48:21 -0400
-Received: from ssl.serverraum.org ([176.9.125.105]:44833 "EHLO
-        ssl.serverraum.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727715AbgCXSsT (ORCPT
+        id S1727772AbgCXStu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 14:49:50 -0400
+Received: from mail-qk1-f193.google.com ([209.85.222.193]:37230 "EHLO
+        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727468AbgCXStu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 14:48:19 -0400
-Received: from apollo.fritz.box (unknown [IPv6:2a02:810c:c200:2e91:6257:18ff:fec4:ca34])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-384) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by ssl.serverraum.org (Postfix) with ESMTPSA id C7CAE23E21;
-        Tue, 24 Mar 2020 19:48:16 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=walle.cc; s=mail2016061301;
-        t=1585075697;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=coDQ3BMYKViIn16BM07LUkgfCh1z1B3hMas8+q9F7Sw=;
-        b=f55ZEELx7JwrXq8N7GdKDqFSn+gYu3SeNb6I2dSyn5zgnq99C6/MDIEAjK52rZENauJTVa
-        VhB1C4dT/ElNuVPBurPT784TQ15z/UrztP1puoudFSc2ngLJlZpYDlgoPZ98W7q4Rq1EfZ
-        Sn4ew/PKsWdDiXqfWjIE9LAtmNKX0Vo=
-From:   Michael Walle <michael@walle.cc>
-To:     linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Jiri Slaby <jslaby@suse.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Michael Walle <michael@walle.cc>,
-        Leonard Crestez <leonard.crestez@nxp.com>
-Subject: [RFC PATCH 3/3] tty: serial: fsl_lpuart: fix possible console deadlock
-Date:   Tue, 24 Mar 2020 19:47:58 +0100
-Message-Id: <20200324184758.8204-3-michael@walle.cc>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200324184758.8204-1-michael@walle.cc>
-References: <VI1PR04MB69413E158203E33D42E3B3B3EEF10@VI1PR04MB6941.eurprd04.prod.outlook.com>
- <20200324184758.8204-1-michael@walle.cc>
+        Tue, 24 Mar 2020 14:49:50 -0400
+Received: by mail-qk1-f193.google.com with SMTP id x3so8900760qki.4
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Mar 2020 11:49:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=joelfernandes.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=xovp2IRENC1ieKOWc2uYOS9mTeP7hB0qq6rWQBQMySs=;
+        b=SVvirGnr/T0FjI3nqFgreHYMr6mc+UZL8Z+s+VddsQqi21EjHWPd+E+HSTEHFk4cE+
+         tHb3us5ZnYiZl+qpHxndAv8D0pKH1iTMQJtZvxCX0rigKt7V3DwIY+t8gVFSAsdkDTgE
+         64FiZOMvPnAt58rLWCUvaqgL3JxMYlnkEHzAg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=xovp2IRENC1ieKOWc2uYOS9mTeP7hB0qq6rWQBQMySs=;
+        b=nO36qHAarpY5M2dDSzC5ZpSxXfLeTciUSm39h0mgVhMbYL1NSVDUeNvRoqgCqQez+3
+         4DVUUg5o/oBwwk2iLKV56IBq5QUsP0L4P0XOZzi6lWKUBawrkle9FXNSpxIGQmkPdUws
+         zrnuelOcsxkNZotWwjmYalmMWMEPJkxVFKhRR3KsU1mqBrCUSB+8wI6YnEWwgXwPYXw+
+         o1KdwAFsN3Up/0TKpoy4N5F/t4hwzGWB3pPKzh/F/aFTg0Dkn1cERLa4dODuZkUQ3Ufe
+         a/AU4UXQcyeswvqtn6DNFHHSr+O91IIVaFkpOTXVa3zRRPyAARWNNuFsK7rTiiKKWEIR
+         4/og==
+X-Gm-Message-State: ANhLgQ3PYQqvE3A+pUEmDTDPPXtZL9FkDBIPArkUkaAgbUeKyh0qH35P
+        cDFseFx/H01ftXHagfx8Wzn6U3v/VSk=
+X-Google-Smtp-Source: ADFU+vsiRuAlbd07QNKzn+VGN6AikvbGVgeX8NfMdZ/wYqbhAecooDsHPZ7lUxQHdacydy37UEjNeg==
+X-Received: by 2002:a37:49cc:: with SMTP id w195mr27682802qka.42.1585075787451;
+        Tue, 24 Mar 2020 11:49:47 -0700 (PDT)
+Received: from localhost ([2620:15c:6:12:9c46:e0da:efbf:69cc])
+        by smtp.gmail.com with ESMTPSA id 4sm9693732qkl.51.2020.03.24.11.49.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 24 Mar 2020 11:49:46 -0700 (PDT)
+Date:   Tue, 24 Mar 2020 14:49:46 -0400
+From:   Joel Fernandes <joel@joelfernandes.org>
+To:     "Li, Aubrey" <aubrey.li@linux.intel.com>
+Cc:     paulmck@kernel.org, linux-kernel@vger.kernel.org,
+        vpillai <vpillai@digitalocean.com>,
+        Aaron Lu <aaron.lwe@gmail.com>,
+        Aubrey Li <aubrey.intel@gmail.com>, peterz@infradead.org,
+        Ben Segall <bsegall@google.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Mel Gorman <mgorman@suse.de>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>
+Subject: Re: [PATCH] sched: Use RCU-sched in core-scheduling balancing logic
+Message-ID: <20200324184946.GD257597@google.com>
+References: <20200313232918.62303-1-joel@joelfernandes.org>
+ <20200314003004.GI3199@paulmck-ThinkPad-P72>
+ <f77b9432-933c-a9fe-5541-437cf0094a65@linux.intel.com>
+ <20200323152126.GA141027@google.com>
+ <6d933ce2-75e3-6469-4bb0-08ce9df29139@linux.intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spamd-Bar: ++++
-X-Spam-Level: ****
-X-Rspamd-Server: web
-X-Spam-Status: No, score=4.90
-X-Spam-Score: 4.90
-X-Rspamd-Queue-Id: C7CAE23E21
-X-Spamd-Result: default: False [4.90 / 15.00];
-         FROM_HAS_DN(0.00)[];
-         TO_DN_SOME(0.00)[];
-         R_MISSING_CHARSET(2.50)[];
-         TO_MATCH_ENVRCPT_ALL(0.00)[];
-         MIME_GOOD(-0.10)[text/plain];
-         NEURAL_SPAM(0.00)[0.189];
-         BROKEN_CONTENT_TYPE(1.50)[];
-         RCPT_COUNT_FIVE(0.00)[6];
-         DKIM_SIGNED(0.00)[];
-         MID_CONTAINS_FROM(1.00)[];
-         RCVD_COUNT_ZERO(0.00)[0];
-         FROM_EQ_ENVFROM(0.00)[];
-         MIME_TRACE(0.00)[0:+];
-         ASN(0.00)[asn:31334, ipnet:2a02:810c:8000::/33, country:DE]
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6d933ce2-75e3-6469-4bb0-08ce9df29139@linux.intel.com>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If the kernel console output is on this console any
-dev_{err,warn,info}() may result in a deadlock if the sport->port.lock
-spinlock is already held. This is because the _console_write() try to
-aquire this lock, too. Remove any error messages where the spinlock is
-taken or print after the lock is released.
+On Tue, Mar 24, 2020 at 11:01:27AM +0800, Li, Aubrey wrote:
+> On 2020/3/23 23:21, Joel Fernandes wrote:
+> > On Mon, Mar 23, 2020 at 02:58:18PM +0800, Li, Aubrey wrote:
+> >> On 2020/3/14 8:30, Paul E. McKenney wrote:
+> >>> On Fri, Mar 13, 2020 at 07:29:18PM -0400, Joel Fernandes (Google) wrote:
+> >>>> rcu_read_unlock() can incur an infrequent deadlock in
+> >>>> sched_core_balance(). Fix this by using the RCU-sched flavor instead.
+> >>>>
+> >>>> This fixes the following spinlock recursion observed when testing the
+> >>>> core scheduling patches on PREEMPT=y kernel on ChromeOS:
+> >>>>
+> >>>> [   14.998590] watchdog: BUG: soft lockup - CPU#0 stuck for 11s! [kworker/0:10:965]
+> >>>>
+> >>>
+> >>> The original could indeed deadlock, and this would avoid that deadlock.
+> >>> (The commit to solve this deadlock is sadly not yet in mainline.)
+> >>>
+> >>> Acked-by: Paul E. McKenney <paulmck@kernel.org>
+> >>
+> >> I saw this in dmesg with this patch, is it expected?
+> >>
+> >> [  117.000905] =============================
+> >> [  117.000907] WARNING: suspicious RCU usage
+> >> [  117.000911] 5.5.7+ #160 Not tainted
+> >> [  117.000913] -----------------------------
+> >> [  117.000916] kernel/sched/core.c:4747 suspicious rcu_dereference_check() usage!
+> >> [  117.000918] 
+> >>                other info that might help us debug this:
+> > 
+> > Sigh, this is because for_each_domain() expects rcu_read_lock(). From an RCU
+> > PoV, the code is correct (warning doesn't cause any issue).
+> > 
+> > To silence warning, we could replace the rcu_read_lock_sched() in my patch with:
+> > preempt_disable();
+> > rcu_read_lock();
+> > 
+> > and replace the unlock with:
+> > 
+> > rcu_read_unlock();
+> > preempt_enable();
+> > 
+> > That should both take care of both the warning and the scheduler-related
+> > deadlock. Thoughts?
+> > 
+> 
+> How about this?
+> 
+> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+> index a01df3e..7ff694e 100644
+> --- a/kernel/sched/core.c
+> +++ b/kernel/sched/core.c
+> @@ -4743,7 +4743,6 @@ static void sched_core_balance(struct rq *rq)
+>  	int cpu = cpu_of(rq);
+>  
+>  	rcu_read_lock();
+> -	raw_spin_unlock_irq(rq_lockp(rq));
+>  	for_each_domain(cpu, sd) {
+>  		if (!(sd->flags & SD_LOAD_BALANCE))
+>  			break;
+> @@ -4754,7 +4753,6 @@ static void sched_core_balance(struct rq *rq)
+>  		if (steal_cookie_task(cpu, sd))
+>  			break;
+>  	}
+> -	raw_spin_lock_irq(rq_lockp(rq));
 
-Reported-by: Leonard Crestez <leonard.crestez@nxp.com>
-Signed-off-by: Michael Walle <michael@walle.cc>
----
- drivers/tty/serial/fsl_lpuart.c | 35 +++++++--------------------------
- 1 file changed, 7 insertions(+), 28 deletions(-)
+try_steal_cookie() does a double_rq_lock(). Would this change not deadlock
+with that?
 
-diff --git a/drivers/tty/serial/fsl_lpuart.c b/drivers/tty/serial/fsl_lpuart.c
-index bbba298b68a4..0910308b38b1 100644
---- a/drivers/tty/serial/fsl_lpuart.c
-+++ b/drivers/tty/serial/fsl_lpuart.c
-@@ -420,7 +420,6 @@ static void lpuart_dma_tx(struct lpuart_port *sport)
- {
- 	struct circ_buf *xmit = &sport->port.state->xmit;
- 	struct scatterlist *sgl = sport->tx_sgl;
--	struct device *dev = sport->port.dev;
- 	struct dma_chan *chan = sport->dma_tx_chan;
- 	int ret;
- 
-@@ -442,10 +441,8 @@ static void lpuart_dma_tx(struct lpuart_port *sport)
- 
- 	ret = dma_map_sg(chan->device->dev, sgl, sport->dma_tx_nents,
- 			 DMA_TO_DEVICE);
--	if (!ret) {
--		dev_err(dev, "DMA mapping error for TX.\n");
-+	if (!ret)
- 		return;
--	}
- 
- 	sport->dma_tx_desc = dmaengine_prep_slave_sg(chan, sgl,
- 					ret, DMA_MEM_TO_DEV,
-@@ -453,7 +450,6 @@ static void lpuart_dma_tx(struct lpuart_port *sport)
- 	if (!sport->dma_tx_desc) {
- 		dma_unmap_sg(chan->device->dev, sgl, sport->dma_tx_nents,
- 			      DMA_TO_DEVICE);
--		dev_err(dev, "Cannot prepare TX slave DMA!\n");
- 		return;
- 	}
- 
-@@ -520,21 +516,12 @@ static int lpuart_dma_tx_request(struct uart_port *port)
- 	struct lpuart_port *sport = container_of(port,
- 					struct lpuart_port, port);
- 	struct dma_slave_config dma_tx_sconfig = {};
--	int ret;
- 
- 	dma_tx_sconfig.dst_addr = lpuart_dma_datareg_addr(sport);
- 	dma_tx_sconfig.dst_addr_width = DMA_SLAVE_BUSWIDTH_1_BYTE;
- 	dma_tx_sconfig.dst_maxburst = 1;
- 	dma_tx_sconfig.direction = DMA_MEM_TO_DEV;
--	ret = dmaengine_slave_config(sport->dma_tx_chan, &dma_tx_sconfig);
--
--	if (ret) {
--		dev_err(sport->port.dev,
--				"DMA slave config failed, err = %d\n", ret);
--		return ret;
--	}
--
--	return 0;
-+	return dmaengine_slave_config(sport->dma_tx_chan, &dma_tx_sconfig);
- }
- 
- static bool lpuart_is_32(struct lpuart_port *sport)
-@@ -1074,8 +1061,8 @@ static void lpuart_copy_rx_to_tty(struct lpuart_port *sport)
- 
- 	dmastat = dmaengine_tx_status(chan, sport->dma_rx_cookie, &state);
- 	if (dmastat == DMA_ERROR) {
--		dev_err(sport->port.dev, "Rx DMA transfer failed!\n");
- 		spin_unlock_irqrestore(&sport->port.lock, flags);
-+		dev_err(sport->port.dev, "Rx DMA transfer failed!\n");
- 		return;
- 	}
- 
-@@ -1179,23 +1166,17 @@ static inline int lpuart_start_rx_dma(struct lpuart_port *sport)
- 	sg_init_one(&sport->rx_sgl, ring->buf, sport->rx_dma_rng_buf_len);
- 	nent = dma_map_sg(chan->device->dev, &sport->rx_sgl, 1,
- 			  DMA_FROM_DEVICE);
--
--	if (!nent) {
--		dev_err(sport->port.dev, "DMA Rx mapping error\n");
-+	if (!nent)
- 		return -EINVAL;
--	}
- 
- 	dma_rx_sconfig.src_addr = lpuart_dma_datareg_addr(sport);
- 	dma_rx_sconfig.src_addr_width = DMA_SLAVE_BUSWIDTH_1_BYTE;
- 	dma_rx_sconfig.src_maxburst = 1;
- 	dma_rx_sconfig.direction = DMA_DEV_TO_MEM;
--	ret = dmaengine_slave_config(chan, &dma_rx_sconfig);
- 
--	if (ret < 0) {
--		dev_err(sport->port.dev,
--				"DMA Rx slave config failed, err = %d\n", ret);
-+	ret = dmaengine_slave_config(chan, &dma_rx_sconfig);
-+	if (ret < 0)
- 		return ret;
--	}
- 
- 	sport->dma_rx_desc = dmaengine_prep_dma_cyclic(chan,
- 				 sg_dma_address(&sport->rx_sgl),
-@@ -1203,10 +1184,8 @@ static inline int lpuart_start_rx_dma(struct lpuart_port *sport)
- 				 sport->rx_sgl.length / 2,
- 				 DMA_DEV_TO_MEM,
- 				 DMA_PREP_INTERRUPT);
--	if (!sport->dma_rx_desc) {
--		dev_err(sport->port.dev, "Cannot prepare cyclic DMA\n");
-+	if (!sport->dma_rx_desc)
- 		return -EFAULT;
--	}
- 
- 	sport->dma_rx_desc->callback = lpuart_dma_rx_complete;
- 	sport->dma_rx_desc->callback_param = sport;
--- 
-2.20.1
+thanks,
+
+ - Joel
 
