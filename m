@@ -2,165 +2,171 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A1230191AAC
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 21:12:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 42BD7191AB4
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 21:14:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728147AbgCXUME (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 16:12:04 -0400
-Received: from ste-pvt-msa1.bahnhof.se ([213.80.101.70]:41972 "EHLO
-        ste-pvt-msa1.bahnhof.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728225AbgCXUMB (ORCPT
+        id S1727659AbgCXUNq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 16:13:46 -0400
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:46635 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726764AbgCXUNp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 16:12:01 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by ste-pvt-msa1.bahnhof.se (Postfix) with ESMTP id 739123F622;
-        Tue, 24 Mar 2020 21:11:59 +0100 (CET)
-Authentication-Results: ste-pvt-msa1.bahnhof.se;
-        dkim=pass (1024-bit key; unprotected) header.d=shipmail.org header.i=@shipmail.org header.b=Kl8o1BtF;
-        dkim-atps=neutral
-X-Virus-Scanned: Debian amavisd-new at bahnhof.se
-X-Spam-Flag: NO
-X-Spam-Score: -2.099
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.099 tagged_above=-999 required=6.31
-        tests=[BAYES_00=-1.9, DKIM_SIGNED=0.1, DKIM_VALID=-0.1,
-        DKIM_VALID_AU=-0.1, DKIM_VALID_EF=-0.1, URIBL_BLOCKED=0.001]
-        autolearn=ham autolearn_force=no
-Received: from ste-pvt-msa1.bahnhof.se ([127.0.0.1])
-        by localhost (ste-pvt-msa1.bahnhof.se [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id H1yL9sC9zG1m; Tue, 24 Mar 2020 21:11:58 +0100 (CET)
-Received: from mail1.shipmail.org (h-205-35.A357.priv.bahnhof.se [155.4.205.35])
-        (Authenticated sender: mb878879)
-        by ste-pvt-msa1.bahnhof.se (Postfix) with ESMTPA id 50ADC3F2C1;
-        Tue, 24 Mar 2020 21:11:58 +0100 (CET)
-Received: from localhost.localdomain.localdomain (h-205-35.A357.priv.bahnhof.se [155.4.205.35])
-        by mail1.shipmail.org (Postfix) with ESMTPSA id A42093602F7;
-        Tue, 24 Mar 2020 21:11:56 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=shipmail.org; s=mail;
-        t=1585080718; bh=dge3pNJVvGiKNp3sQJQFaMfk+pmcdaLcKhPFLMuRR/s=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Kl8o1BtFZy8oqt7W50ge8DqKF/0i+NxXwf3Gt+O1+JBQgqu5ii1uE59nwHIM1tYku
-         AqVqqRYQ7K1bZpASYeqwa9r7iy8wVt1YT0dMaO98pH0D6YIfg6d3ytCsGuWkdhts7l
-         CB0Ww5omotebFfKJM3ARhwymLYwOkZ1Y+Ql32tyY=
-From:   =?UTF-8?q?Thomas=20Hellstr=C3=B6m=20=28VMware=29?= 
-        <thomas_os@shipmail.org>
-To:     linux-mm@kvack.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org
-Cc:     pv-drivers@vmware.com, linux-graphics-maintainer@vmware.com,
-        "Thomas Hellstrom (VMware)" <thomas_os@shipmail.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>,
-        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Ralph Campbell <rcampbell@nvidia.com>,
-        =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
-        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Roland Scheidegger <sroland@vmware.com>
-Subject: [PATCH v7 9/9] drm/vmwgfx: Hook up the helpers to align buffer objects
-Date:   Tue, 24 Mar 2020 21:11:23 +0100
-Message-Id: <20200324201123.3118-10-thomas_os@shipmail.org>
-X-Mailer: git-send-email 2.21.1
-In-Reply-To: <20200324201123.3118-1-thomas_os@shipmail.org>
-References: <20200324201123.3118-1-thomas_os@shipmail.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        Tue, 24 Mar 2020 16:13:45 -0400
+Received: by mail-qt1-f196.google.com with SMTP id g7so96579qtj.13
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Mar 2020 13:13:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lca.pw; s=google;
+        h=mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=C9b2EFih07Bol0OhuOp+naFJ2QOu8CjYU0vdzwBlssE=;
+        b=CMxrEsAyp8SoMtphK9LTHXEQNe0gvYg1kG4es2vY/Cbot4/a9hWYn5blklz6400FbL
+         fjtCKnMWVFyIValqMYpQBcctE+nIM3FCSmEJE9KpwkGnDfyqpU95ejovPi8CN4uN3ujw
+         JcZZEOcfqRgyR5sasNtVg6iu0Ng4YM+cAoCXu6ofZTKJqlpxKBCx/7ErtIrZC48JQKeE
+         g6OEhLyoSiFv52Hz2QJCkO9Id2bwJbgHfgO+t3X163n3GPhu10dppbSKUaF/6c3JLipw
+         2encQyfW+aPLKWmgHK80Cz0zjSUUD2w/lNtHix4PZ/vJyNA/bIlnYB59B2G8cGTUXrbp
+         6NmA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=C9b2EFih07Bol0OhuOp+naFJ2QOu8CjYU0vdzwBlssE=;
+        b=qeKvH3rmPA4qxdLJG5RdCRG+oNxC7v5aLy/AHQ/3GtWNUinOhGDR4emTS8jBpd9G3H
+         6Y17etAOQz5wi9sga9xTfnchvC/uTwDSvvs0u1Hz7qUGnqNMbWIB+QWYo0VX12mVWsbb
+         3w3KEKf29E2k24JbuVNjP2AJHSOcZ1EYRWXGOIwPERrtv1sTGchQd4tvckJAQVCEECLl
+         LlKgtqJ2/5nv0BZ0gFfmiTQg0kKoNpaoEAZJTBVq6jNlhKVJTwxX1nCH/rf2HO56k8/D
+         dzgfHbCmItVcDPF/mrxq/qqpopsH4VNokG/4BZ2v3Uu/s1dr8rMD3YUC2qW+XHCwTRkF
+         SZCQ==
+X-Gm-Message-State: ANhLgQ18YnsQNGGRtFs7byXoa5Hle6Caf16kAIb/gYrK+UbYKqeiuD7Q
+        NllxPLfd7eYru8rlWTT5xz5Qzg==
+X-Google-Smtp-Source: ADFU+vvUb5EPEwWM830GWFC8xZrHZgfn11CiVhdGj190JilNUxrE/jVs5R/tSSA6ED7rCnFbo78KcA==
+X-Received: by 2002:ac8:1968:: with SMTP id g37mr28036704qtk.322.1585080824046;
+        Tue, 24 Mar 2020 13:13:44 -0700 (PDT)
+Received: from [192.168.1.153] (pool-71-184-117-43.bstnma.fios.verizon.net. [71.184.117.43])
+        by smtp.gmail.com with ESMTPSA id y127sm13540702qkb.76.2020.03.24.13.13.42
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 24 Mar 2020 13:13:43 -0700 (PDT)
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 13.0 \(3608.60.0.2.5\))
+Subject: Re: Argh, can't find dcache properties !
+From:   Qian Cai <cai@lca.pw>
+In-Reply-To: <876a5938fbad9d9e176e5f22f12e6b472d0dc4f7.camel@alliedtelesis.co.nz>
+Date:   Tue, 24 Mar 2020 16:13:42 -0400
+Cc:     "christophe.leroy@c-s.fr" <christophe.leroy@c-s.fr>,
+        "paulus@samba.org" <paulus@samba.org>,
+        "mpe@ellerman.id.au" <mpe@ellerman.id.au>,
+        "benh@kernel.crashing.org" <benh@kernel.crashing.org>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Hamish Martin <Hamish.Martin@alliedtelesis.co.nz>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <48F1D8CF-13A1-4348-8973-81503782A451@lca.pw>
+References: <be8c123a90f6d1664a902b6ad6c754b9f3d9e567.camel@alliedtelesis.co.nz>
+ <87tv2exst1.fsf@mpe.ellerman.id.au>
+ <876a5938fbad9d9e176e5f22f12e6b472d0dc4f7.camel@alliedtelesis.co.nz>
+To:     Chris Packham <Chris.Packham@alliedtelesis.co.nz>
+X-Mailer: Apple Mail (2.3608.60.0.2.5)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Thomas Hellstrom (VMware)" <thomas_os@shipmail.org>
 
-Start using the helpers that align buffer object user-space addresses and
-buffer object vram addresses to huge page boundaries.
-This is to improve the chances of allowing huge page-table entries.
 
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Michal Hocko <mhocko@suse.com>
-Cc: "Matthew Wilcox (Oracle)" <willy@infradead.org>
-Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Cc: Ralph Campbell <rcampbell@nvidia.com>
-Cc: "Jérôme Glisse" <jglisse@redhat.com>
-Cc: "Christian König" <christian.koenig@amd.com>
-Cc: Dan Williams <dan.j.williams@intel.com>
-Signed-off-by: Thomas Hellstrom (VMware) <thomas_os@shipmail.org>
-Reviewed-by: Roland Scheidegger <sroland@vmware.com>
-Acked-by: Christian König <christian.koenig@amd.com>
----
- drivers/gpu/drm/drm_file.c                 |  1 +
- drivers/gpu/drm/vmwgfx/vmwgfx_drv.c        | 13 +++++++++++++
- drivers/gpu/drm/vmwgfx/vmwgfx_drv.h        |  1 +
- drivers/gpu/drm/vmwgfx/vmwgfx_ttm_buffer.c |  2 +-
- 4 files changed, 16 insertions(+), 1 deletion(-)
+> On Mar 24, 2020, at 4:06 PM, Chris Packham =
+<Chris.Packham@alliedtelesis.co.nz> wrote:
+>=20
+> On Tue, 2020-03-24 at 15:47 +1100, Michael Ellerman wrote:
+>> Chris Packham <Chris.Packham@alliedtelesis.co.nz> writes:
+>>> Hi All,
+>>>=20
+>>> Just booting up v5.5.11 on a Freescale T2080RDB and I'm seeing the
+>>> following mesage.
+>>>=20
+>>> kern.warning linuxbox kernel: Argh, can't find dcache properties !
+>>> kern.warning linuxbox kernel: Argh, can't find icache properties !
+>>>=20
+>>> This was changed from DBG() to pr_warn() in commit 3b9176e9a874
+>>> ("powerpc/setup_64: fix -Wempty-body warnings") but the message
+>>> seems
+>>> to be much older than that. So it's probably been an issue on the
+>>> T2080
+>>> (and other QorIQ SoCs) for a while.
+>>=20
+>> That's an e6500 I think? So 64-bit Book3E.
+>>=20
+>=20
+> Yes that's correct.
+>=20
+>> You'll be getting the default values, which is 64 bytes so I guess
+>> that
+>> works in practice.
+>>=20
+>>> Looking at the code the t208x doesn't specifiy any of the d-cache-
+>>> size/i-cache-size properties. Should I add them to silence the
+>>> warning
+>>> or switch it to pr_debug()/pr_info()?
+>>=20
+>> Yeah ideally you'd add them to the device tree(s) for those boards.
+>>=20
+>=20
+> I think the info I need is in the block diagram[0]. I'll whip up
+> a patch.
+>=20
+> --
+> [1] - =
+https://www.nxp.com/products/processors-and-microcontrollers/power-archite=
+cture/qoriq-communication-processors/t-series/qoriq-t2080-and-t2081-multic=
+ore-communications-processors:T2080
 
-diff --git a/drivers/gpu/drm/drm_file.c b/drivers/gpu/drm/drm_file.c
-index d1fcb0c61622..eb009d3ab48f 100644
---- a/drivers/gpu/drm/drm_file.c
-+++ b/drivers/gpu/drm/drm_file.c
-@@ -1011,4 +1011,5 @@ unsigned long drm_get_unmapped_area(struct file *file,
- 	return current->mm->get_unmapped_area(file, uaddr, len, pgoff, flags);
- }
- #endif /* CONFIG_TRANSPARENT_HUGEPAGE */
-+EXPORT_SYMBOL_GPL(drm_get_unmapped_area);
- #endif /* CONFIG_MMU */
-diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_drv.c b/drivers/gpu/drm/vmwgfx/vmwgfx_drv.c
-index 4f58364421ce..f0b7a891cbad 100644
---- a/drivers/gpu/drm/vmwgfx/vmwgfx_drv.c
-+++ b/drivers/gpu/drm/vmwgfx/vmwgfx_drv.c
-@@ -1230,6 +1230,18 @@ static void vmw_remove(struct pci_dev *pdev)
- 	pci_disable_device(pdev);
- }
- 
-+static unsigned long
-+vmw_get_unmapped_area(struct file *file, unsigned long uaddr,
-+		      unsigned long len, unsigned long pgoff,
-+		      unsigned long flags)
-+{
-+	struct drm_file *file_priv = file->private_data;
-+	struct vmw_private *dev_priv = vmw_priv(file_priv->minor->dev);
-+
-+	return drm_get_unmapped_area(file, uaddr, len, pgoff, flags,
-+				     &dev_priv->vma_manager);
-+}
-+
- static int vmwgfx_pm_notifier(struct notifier_block *nb, unsigned long val,
- 			      void *ptr)
- {
-@@ -1401,6 +1413,7 @@ static const struct file_operations vmwgfx_driver_fops = {
- 	.compat_ioctl = vmw_compat_ioctl,
- #endif
- 	.llseek = noop_llseek,
-+	.get_unmapped_area = vmw_get_unmapped_area,
- };
- 
- static struct drm_driver driver = {
-diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_drv.h b/drivers/gpu/drm/vmwgfx/vmwgfx_drv.h
-index d19d28c13671..fc98622caf87 100644
---- a/drivers/gpu/drm/vmwgfx/vmwgfx_drv.h
-+++ b/drivers/gpu/drm/vmwgfx/vmwgfx_drv.h
-@@ -915,6 +915,7 @@ extern int vmw_mmap(struct file *filp, struct vm_area_struct *vma);
- 
- extern void vmw_validation_mem_init_ttm(struct vmw_private *dev_priv,
- 					size_t gran);
-+
- /**
-  * TTM buffer object driver - vmwgfx_ttm_buffer.c
-  */
-diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_ttm_buffer.c b/drivers/gpu/drm/vmwgfx/vmwgfx_ttm_buffer.c
-index 3f3b2c7a208a..bf0bc4697959 100644
---- a/drivers/gpu/drm/vmwgfx/vmwgfx_ttm_buffer.c
-+++ b/drivers/gpu/drm/vmwgfx/vmwgfx_ttm_buffer.c
-@@ -749,7 +749,7 @@ static int vmw_init_mem_type(struct ttm_bo_device *bdev, uint32_t type,
- 		break;
- 	case TTM_PL_VRAM:
- 		/* "On-card" video ram */
--		man->func = &ttm_bo_manager_func;
-+		man->func = &vmw_thp_func;
- 		man->gpu_offset = 0;
- 		man->flags = TTM_MEMTYPE_FLAG_FIXED | TTM_MEMTYPE_FLAG_MAPPABLE;
- 		man->available_caching = TTM_PL_FLAG_CACHED;
--- 
-2.21.1
+BTW, POWER9 PowerNV would have the same thing.=20
 
+[    0.000000][    T0] Setting debug_guardpage_minorder to 1
+[    0.000000][    T0] Reserving 512MB of memory at 128MB for =
+crashkernel (System RAM: 262144MB)
+[    0.000000][    T0] radix-mmu: Page sizes from device-tree:
+[    0.000000][    T0] radix-mmu: Page size shift =3D 12 AP=3D0x0
+[    0.000000][    T0] radix-mmu: Page size shift =3D 16 AP=3D0x5
+[    0.000000][    T0] radix-mmu: Page size shift =3D 21 AP=3D0x1
+[    0.000000][    T0] radix-mmu: Page size shift =3D 30 AP=3D0x2
+[    0.000000][    T0] radix-mmu: Activating Kernel Userspace Execution =
+Prevention
+[    0.000000][    T0] radix-mmu: Activating Kernel Userspace Access =
+Prevention
+[    0.000000][    T0] radix-mmu: Mapped =
+0x0000000000000000-0x0000000001600000 with 2.00 MiB pages (exec)
+[    0.000000][    T0] radix-mmu: Mapped =
+0x0000000001600000-0x0000000040000000 with 2.00 MiB pages
+[    0.000000][    T0] radix-mmu: Mapped =
+0x0000000040000000-0x0000002000000000 with 1.00 GiB pages
+[    0.000000][    T0] radix-mmu: Mapped =
+0x0000200000000000-0x0000202000000000 with 1.00 GiB pages
+[    0.000000][    T0] radix-mmu: Initializing Radix MMU
+[    0.000000][    T0] Linux version 5.6.0-rc7-next-20200324+ =
+(root@ibm-p9wr) (gcc version 8.3.1 20191121 (Red Hat 8.3.1-5) (GCC)) #2 =
+SMP Tue Mar 24 15:52:36 EDT 2020
+[    0.000000][    T0] Argh, can't find dcache properties !
+[    0.000000][    T0] Argh, can't find icache properties !
+[    0.000000][    T0] Found initrd at =
+0xc000000007850000:0xc00000000ad26142
+[    0.000000][    T0] OPAL: Found memory mapped LPC bus on chip 0
+[    0.000000][    T0] Using PowerNV machine description
+[    0.000000][    T0] printk: bootconsole [udbg0] enabled
+[    0.000000][    T0] CPU maps initialized for 4 threads per core
+[    0.000000][    T0] =
+-----------------------------------------------------
+[    0.000000][    T0] phys_mem_size     =3D 0x4000000000
+[    0.000000][    T0] dcache_bsize      =3D 0x80
+[    0.000000][    T0] icache_bsize      =3D 0x80
+[    0.000000][    T0] cpu_features      =3D 0x0001f86f8f5fb1a7
+[    0.000000][    T0]   possible        =3D 0x0003fbffcf5fb1a7
+[    0.000000][    T0]   always          =3D 0x0000006f8b5c91a1
+[    0.000000][    T0] cpu_user_features =3D 0xdc0065c2 0xaee00000
+[    0.000000][    T0] mmu_features      =3D 0xbc006041
+[    0.000000][    T0] firmware_features =3D 0x0000000010000000
+[    0.000000][    T0] vmalloc start     =3D 0xc008000000000000
+[    0.000000][    T0] IO start          =3D 0xc00a000000000000
+[    0.000000][    T0] vmemmap start     =3D 0xc00c000000000000
+[    0.000000][    T0] =
+-----------------------------------------------------=
