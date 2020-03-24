@@ -2,209 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 151F8191677
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 17:32:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BB6151916AA
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 17:43:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728150AbgCXQbS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 12:31:18 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:51726 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727693AbgCXQbR (ORCPT
+        id S1727939AbgCXQlZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 12:41:25 -0400
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:40949 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725767AbgCXQlY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 12:31:17 -0400
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: eballetbo)
-        with ESMTPSA id 1E5862969FD
-Subject: Re: [PATCH v2] platform: x86: Add ACPI driver for ChromeOS
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, vbendeb@chromium.org,
-        groeck@chromium.org, bleung@chromium.org, dtor@chromium.org,
-        gwendal@chromium.org, andy@infradead.org,
-        Collabora Kernel ML <kernel@collabora.com>,
-        Ayman Bagabas <ayman.bagabas@gmail.com>,
-        Darren Hart <dvhart@infradead.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Jeremy Soller <jeremy@system76.com>,
-        Mattias Jacobsson <2pi@mok.nu>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Rajat Jain <rajatja@google.com>,
-        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-        Yauhen Kharuzhy <jekhor@gmail.com>,
-        platform-driver-x86@vger.kernel.org
-References: <20200322094334.1872663-1-enric.balletbo@collabora.com>
- <20200322111022.GA72939@kroah.com>
-From:   Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Message-ID: <c480f318-c326-d51c-e757-c65c2526ab4d@collabora.com>
-Date:   Tue, 24 Mar 2020 17:31:10 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        Tue, 24 Mar 2020 12:41:24 -0400
+Received: by mail-ed1-f67.google.com with SMTP id w26so15126670edu.7
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Mar 2020 09:41:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=XEAcgrtzlQ0nzsuAIOz6lRZnZyzpLkzKdjSUsUmbaiY=;
+        b=DyaeVbt/mnGOvxpYTVSUTvxDPVQYVS3x1eaUPvsh7Rnx3FOM/j8k6No0xzupqKHlBl
+         grkrG08s2C8Y2S6RpApRxXhiSNAT115kCoNJQmXFlNcT27zq7jafr0hzEJ1L4puKWJWF
+         n5mHXzOpLZGae3EMG6VJK7HG0w8XHQ66cfXo4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=XEAcgrtzlQ0nzsuAIOz6lRZnZyzpLkzKdjSUsUmbaiY=;
+        b=MMsdo1H8SJINLzkjDiZ8A0lrD3E6Gs7yUrGy+pxKqSa6qXnpTLWGkac6QiIo8tvjYI
+         Nf8Hz2TVrxi93c6VMAc4opt9BhL8TWgL+BnjTapcwr3CeZ4MrykZ27M1odRSG1Flrrxc
+         ij0f9Cxw9+OVwo7EcGFxyfpimM0qj/8hsOKZ/CKUQsVpcLW3a4mEga6uMIqkeUMjggZe
+         D/2F09A1RNCfJq+NTDJpBS0kBSa0VHrdeW4ekQzQYdrfWZUok87QBzNwAMbhytnameJ0
+         FFsOd28FlIJHYBg96F9uzUs3xsVFJ/vpmZlRQzUdWzEDZooq7WwvZsxoas/oZK5XeD4f
+         /CUg==
+X-Gm-Message-State: ANhLgQ0O5UG1VXq2U89r+Y4w3R/6LJ7WSRj61VABKg7FdZQQoyMijapO
+        y8GD6EfWNs6KOrhZMY86t/0BpUFNQVo=
+X-Google-Smtp-Source: ADFU+vv3VjHxlQOAr5fL8O8m2cvtardGhCI2ub8u0ASJfzBqA92/e1KhAPqG/9BXRvB6R9qj9LhaPg==
+X-Received: by 2002:a50:f383:: with SMTP id g3mr4367772edm.316.1585068082741;
+        Tue, 24 Mar 2020 09:41:22 -0700 (PDT)
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com. [209.85.208.45])
+        by smtp.gmail.com with ESMTPSA id t13sm1399435edw.49.2020.03.24.09.41.22
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 24 Mar 2020 09:41:22 -0700 (PDT)
+Received: by mail-ed1-f45.google.com with SMTP id i24so21504844eds.1
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Mar 2020 09:41:22 -0700 (PDT)
+X-Received: by 2002:a05:651c:50e:: with SMTP id o14mr17538229ljp.241.1585067617805;
+ Tue, 24 Mar 2020 09:33:37 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20200322111022.GA72939@kroah.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <CAHk-=wiumU4QxAkT+GqhBt5f-iUsoLNC0sqVfRKp0xypA6aNYg@mail.gmail.com>
+ <86D80EA7-9087-4042-8119-12DD5FCEAA87@amacapital.net>
+In-Reply-To: <86D80EA7-9087-4042-8119-12DD5FCEAA87@amacapital.net>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Tue, 24 Mar 2020 09:33:21 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wim-2aaFi_GNs5KmX4ykkgQjnRo5D4B9ZK+1Oz=kpp_2A@mail.gmail.com>
+Message-ID: <CAHk-=wim-2aaFi_GNs5KmX4ykkgQjnRo5D4B9ZK+1Oz=kpp_2A@mail.gmail.com>
+Subject: Re: [RESEND][PATCH v3 14/17] static_call: Add static_cond_call()
+To:     Andy Lutomirski <luto@amacapital.net>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Daniel Bristot de Oliveira <bristot@redhat.com>,
+        Jason Baron <jbaron@akamai.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>, Nadav Amit <namit@vmware.com>,
+        Peter Anvin <hpa@zytor.com>,
+        Andrew Lutomirski <luto@kernel.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Greg,
+On Tue, Mar 24, 2020 at 9:22 AM Andy Lutomirski <luto@amacapital.net> wrote=
+:
+>
+> I haven=E2=80=99t checked if static calls currently support return values=
+, but
+> the conditional case only makes sense for functions that return void.
+>
+> Aside from that, it might be nice for passing NULL in to warn or bug
+> when the NULL pointer is stored instead of silently NOPping out the
+> call in cases where having a real implementation isn=E2=80=99t optional.
 
-Many thanks for your quick answer, some comments below.
+Both good points. I take back my question.
 
-On 22/3/20 12:10, Greg Kroah-Hartman wrote:
-> On Sun, Mar 22, 2020 at 10:43:34AM +0100, Enric Balletbo i Serra wrote:
->> This driver attaches to the ChromeOS ACPI device and then exports the values
->> reported by the ACPI in a sysfs directory. The ACPI values are presented in
->> the string form (numbers as decimal values) or binary blobs, and can be
->> accessed as the contents of the appropriate read only files in the sysfs
->> directory tree originating in /sys/devices/platform/chromeos_acpi.
->>
->> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-> 
-> What is wrong with the "default" ACPI sysfs access?  Why do you need a
-> special driver just for this specific ACPI firmware?
-> 
+And it aside from warning about passing in NULL then it doesn't work,
+I wonder if we could warn - at build time - when then using the COND
+version with a function that doesn't return void?
 
-Please correct me if I am wrong, as I'm not an ACPI expert and I probably have
-some ACPI leaks and misunderstandings.
+Of course, one alternative is to just say "instead of using NOP, use
+'xorl %eax,%eax'", and then we'd have the rule that a NULL conditional
+function returns zero (or NULL).
 
-What is exporting this driver is the attributes for the non-default Chromebook
-specific MLST ACPI method. Hence, I assumed we needed a special driver to expose
-these values that can't be done using "default" ACPI sysfs. Note that these
-attributes are dynamically created and are different between Chromebooks so need
-some parsing.
+I _think_ a "xorl %eax,%eax ; retq" is just three bytes and would fit
+in the tailcall slot too.
 
-I didn't find a "standard" way to expose these attributes to userspace, so,
-please kindly point me to one if there is one.
-
-> Also, you forgot to add Documentation/ABI/ entries for your new files :(
-> 
-
-Right, my bad. Not all Chromebooks have the same values. I can document the ones
-that are created on the devices I have but I'll probably miss some of them. I'll
-do some firmware research regarding this.
-
-
->> +config ACPI_CHROMEOS
->> +	tristate "ChromeOS specific ACPI extensions"
->> +	depends on ACPI
->> +	depends on CHROME_PLATFORMS
-> 
-> No BUILD_TEST?
-> 
-
-Will add in the next version.
-
-> 
->> +static void
->> +chromeos_acpi_remove_attribs(struct chromeos_acpi_attribute_group *aag)
->> +{
->> +	struct chromeos_acpi_attribute *attr, *tmp_attr;
->> +
->> +	list_for_each_entry_safe(attr, tmp_attr, &aag->attribs, list) {
->> +		sysfs_remove_bin_file(aag->kobj, &attr->bin_attr);
-> 
-> Attribute groups are your friend, do not do this "by hand".
-> 
-
-I thought that the code is more readable doing it attribute by attribute, and
-the reason is that apart from remove the bin file I should also free the name,
-the data and the specific struct to store the attribute itself as all are
-dynamically allocated.
-
-Using attribute groups I should do two steps:
-
-sysfs_remove_group()
-list_for_each_entry_safe(attr, tmp_attr, &aag->attribs, list)  {
-   kfree(attr->name);
-   kfree(attr->data);
-   kfree(attr);
-}
-
-Ok, will do that in next version.
-
->> +		kfree(attr->name);
->> +		kfree(attr->data);
->> +		kfree(attr);
->> +	}
->> +}
->> +
->> +/**
->> + * chromeos_acpi_add_group() - Create a sysfs group including attributes
->> + *			       representing a nested ACPI package.
->> + *
->> + * @obj: Package contents as returned by ACPI.
->> + * @name: Name of the group.
->> + * @num_attrs: Number of attributes of this package.
->> + * @index: Index number of this particular group.
->> + *
->> + * The created group is called @name in case there is a single instance, or
->> + * @name.@index otherwise.
->> + *
->> + * All group and attribute storage allocations are included in the lists for
->> + * tracking of allocated memory.
->> + *
->> + * Return: 0 on success, negative errno on failure.
->> + */
->> +static int chromeos_acpi_add_group(union acpi_object *obj, char *name,
->> +				   int num_attrs, int index)
->> +{
->> +	struct device *dev = &chromeos_acpi.pdev->dev;
->> +	struct chromeos_acpi_attribute_group *aag;
->> +	union acpi_object *element;
->> +	int i, count, ret;
->> +
->> +	aag = kzalloc(sizeof(*aag), GFP_KERNEL);
->> +	if (!aag)
->> +		return -ENOMEM;
->> +
->> +	aag->name = chromeos_acpi_alloc_name(name, num_attrs, index);
->> +	if (!aag->name) {
->> +		ret = -ENOMEM;
->> +		goto free_group;
->> +	}
->> +
->> +	aag->kobj = kobject_create_and_add(aag->name, &dev->kobj);
-> 
-> By using "raw" kobjects, you just now prevented any userspace tool from
-> seeing these attributes (like udev).  Not nice :(
-> 
-> Why, if you really really have to do this, are you not just using
-> "normal" struct device attributes instead?
-> 
-
-Ok.
-
->> +static int __init chromeos_acpi_init(void)
->> +{
->> +	int ret;
->> +
->> +	chromeos_acpi.pdev = platform_device_register_simple("chromeos_acpi",
->> +						PLATFORM_DEVID_NONE, NULL, 0);
->> +	if (IS_ERR(chromeos_acpi.pdev)) {
->> +		pr_err("unable to register chromeos_acpi platform device\n");
->> +		return PTR_ERR(chromeos_acpi.pdev);
->> +	}
-> 
-> Only use platform devices and drivers for things that are actually
-> platform devices and drivers.  That's not what this is, it is an ACPI
-> device and driver.  Don't abuse the platform interface please.
-> 
-
-Ok. The purpose was to not break ChromeOS userspace since is looking for the
-attributes inside /sys/devices/platform/chromeos_acpi. Not a good reason, I
-know, and I assume we will need to change userspace instead, and convert this to
-a ACPI device and driver only, right?
-
-I'll investigate the different places in userspace where this is used and see
-how difficult it is to do the changes.
-
-Thanks,
-
-~Enric
-
-> thanks,
-> 
-> greg k-h
-> 
+                Linus
