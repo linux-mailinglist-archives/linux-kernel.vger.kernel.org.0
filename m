@@ -2,161 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 64908190CB2
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 12:47:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BA5DB190C76
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 12:30:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727303AbgCXLq5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 07:46:57 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:18862 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727272AbgCXLq5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 07:46:57 -0400
-Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 02OBYTj4028125
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Mar 2020 07:46:55 -0400
-Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2ywd2ry7ew-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Mar 2020 07:46:55 -0400
-Received: from localhost
-        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <imbrenda@linux.ibm.com>;
-        Tue, 24 Mar 2020 11:46:53 -0000
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
-        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 24 Mar 2020 11:46:50 -0000
-Received: from d06av24.portsmouth.uk.ibm.com (mk.ibm.com [9.149.105.60])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 02OBknrS27001084
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 24 Mar 2020 11:46:49 GMT
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 3682B42042;
-        Tue, 24 Mar 2020 11:46:49 +0000 (GMT)
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id B05A042041;
-        Tue, 24 Mar 2020 11:46:48 +0000 (GMT)
-Received: from p-imbrenda (unknown [9.145.13.129])
-        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Tue, 24 Mar 2020 11:46:48 +0000 (GMT)
-Date:   Tue, 24 Mar 2020 11:12:15 +0100
-From:   Claudio Imbrenda <imbrenda@linux.ibm.com>
-To:     Christian Borntraeger <borntraeger@de.ibm.com>
-Cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
-        Janosch Frank <frankja@linux.ibm.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        David Hildenbrand <david@redhat.com>,
-        Cornelia Huck <cohuck@redhat.com>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Qian Cai <cai@lca.pw>,
-        Peter Xu <peterx@redhat.com>
-Subject: Re: [PATCH 1/7] KVM: Fix out of range accesses to memslots
-In-Reply-To: <6f62f9db-a4c5-051c-2189-670d5c8707da@de.ibm.com>
-References: <20200320205546.2396-1-sean.j.christopherson@intel.com>
-        <20200320205546.2396-2-sean.j.christopherson@intel.com>
-        <6f62f9db-a4c5-051c-2189-670d5c8707da@de.ibm.com>
-Organization: IBM
-X-Mailer: Claws Mail 3.17.5 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+        id S1727282AbgCXLah (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 07:30:37 -0400
+Received: from mail-vi1eur05on2076.outbound.protection.outlook.com ([40.107.21.76]:6104
+        "EHLO EUR05-VI1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726944AbgCXLah (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Mar 2020 07:30:37 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=JtLC+krVy2YatXxLAJqi72IQYrEQck0S03MHKTlcdh4njBORzhbOi4q4sz/nfgLpoxSR90uzRq7K9IB8d7HjOjtOetM9HDVP6KocnrINs6M3JoL3xh4tooQsBrRbJTWmPK0wEVs171LvHuHCk6ZCWNn+O8jKHOamihNK+FmpGFxSQe7QcmCeFgFlJSbNHQCxYoUw/vXd19JXY44uZ3CdURTxE0k6sYikheZPANS8YyY0+xLPO3LzBnQ9Pk8jyfQQF56OxLMN697q/yuGlEJ6sTWSRbHjnhz1VLRR7XC9iRbHrvRU57mXGDRxgYjV1bAURLkvdNw+VIuL9Uq4bENFuw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=pg+8IM8Rq0BMgwys+NY7eYgPbomblGiHhi2paGqATyE=;
+ b=kAZpLZ8jlVMnnpAZINILZbsjLcRmsZ5hyZYmzUpAtQBLYFi3sA6LBrIsxV+He1SS5bTwdM7OBQtblZo8qRBap0ejI5LzY28oK4bCHaKFtqGizzmIhliN8NHzGnvPHAbNpbgeHAu53CLTqT8YJ8QjivhNdnTUgVMfyNJCjImoNXytZvLPtdfUmu/hq18rbxwPVFUk4cBSKLMrKsCIgUuys/n/SwsHAKaCq/jtZLQs1ITwofM0lPBQ5A6RrlqBDjVh9Xj4kAJUDdKsU/KUkaKn5QipMcXpJKXI6XxhdtKgIxOGar40XcDI7KPH8nZ8wO3jFQEdfVPVgXHb7T1wFLGqiw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=pg+8IM8Rq0BMgwys+NY7eYgPbomblGiHhi2paGqATyE=;
+ b=CAYlGPefVtskV/QBSfluZCwjWpJzUnMK9JIEc2wQWSPLDsGa9qb5nzKWgSoW3XLzYibCUWmR5oa2x5txV1msNXmwgPpjwLb/yPdj4/48ZNTVm5JVwZtLX2DsrWf2fnoUqi40erdMhxT65MRHjkYv5mbcU3uuae6cPtkwb47xXpc=
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=laurentiu.tudor@nxp.com; 
+Received: from AM6PR04MB5925.eurprd04.prod.outlook.com (20.179.2.147) by
+ AM6PR04MB5960.eurprd04.prod.outlook.com (20.178.92.152) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2835.20; Tue, 24 Mar 2020 11:30:33 +0000
+Received: from AM6PR04MB5925.eurprd04.prod.outlook.com
+ ([fe80::dd71:5f33:1b21:cd9e]) by AM6PR04MB5925.eurprd04.prod.outlook.com
+ ([fe80::dd71:5f33:1b21:cd9e%5]) with mapi id 15.20.2835.023; Tue, 24 Mar 2020
+ 11:30:33 +0000
+From:   laurentiu.tudor@nxp.com
+To:     robin.murphy@arm.com, lorenzo.pieralisi@arm.com,
+        linux-kernel@vger.kernel.org, iommu@lists.linux-foundation.org,
+        linux-arm-kernel@lists.infradead.org, linux-acpi@vger.kernel.org
+Cc:     ard.biesheuvel@linaro.org, ioana.ciornei@nxp.com,
+        diana.craciun@oss.nxp.com, maz@kernel.org, jon@solid-run.com,
+        pankaj.bansal@nxp.com, makarand.pawagi@nxp.com,
+        calvin.johnson@nxp.com, V.Sethi@nxp.com, cristian.sovaiala@nxp.com,
+        Stuart.Yoder@arm.com, jeremy.linton@arm.com, joro@8bytes.org,
+        tglx@linutronix.de, jason@lakedaemon.net,
+        Laurentiu Tudor <laurentiu.tudor@nxp.com>
+Subject: [RFC PATCH v2 0/4]  bus: fsl-mc: Add ACPI support for fsl-mc
+Date:   Tue, 24 Mar 2020 13:30:19 +0200
+Message-Id: <20200324113023.322-1-laurentiu.tudor@nxp.com>
+X-Mailer: git-send-email 2.17.1
+Content-Type: text/plain; charset="us-ascii"
+X-ClientProxiedBy: AM0PR06CA0036.eurprd06.prod.outlook.com
+ (2603:10a6:208:ab::49) To AM6PR04MB5925.eurprd04.prod.outlook.com
+ (2603:10a6:20b:ab::19)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 20032411-0028-0000-0000-000003EA8956
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 20032411-0029-0000-0000-000024AFF2BB
-Message-Id: <20200324111215.46e4b856@p-imbrenda>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.645
- definitions=2020-03-24_05:2020-03-23,2020-03-24 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- lowpriorityscore=0 suspectscore=27 spamscore=0 mlxscore=0 adultscore=0
- priorityscore=1501 malwarescore=0 phishscore=0 mlxlogscore=866 bulkscore=0
- clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2003020000 definitions=main-2003240060
+X-MS-Exchange-MessageSentRepresentingType: 1
+Received: from fsr-ub1864-101.ea.freescale.net (89.37.124.34) by AM0PR06CA0036.eurprd06.prod.outlook.com (2603:10a6:208:ab::49) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2835.18 via Frontend Transport; Tue, 24 Mar 2020 11:30:32 +0000
+X-Mailer: git-send-email 2.17.1
+X-Originating-IP: [89.37.124.34]
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-HT: Tenant
+X-MS-Office365-Filtering-Correlation-Id: 28b32295-fb09-4428-f5d8-08d7cfe6c3bf
+X-MS-TrafficTypeDiagnostic: AM6PR04MB5960:|AM6PR04MB5960:
+X-MS-Exchange-Transport-Forked: True
+X-Microsoft-Antispam-PRVS: <AM6PR04MB59607971FE7BA0001F8AE2D6ECF10@AM6PR04MB5960.eurprd04.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:5797;
+X-Forefront-PRVS: 03524FBD26
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(4636009)(376002)(136003)(39860400002)(346002)(396003)(366004)(66476007)(6486002)(66556008)(66946007)(4744005)(6512007)(2906002)(9686003)(478600001)(81166006)(8676002)(186003)(16526019)(81156014)(26005)(52116002)(8936002)(6506007)(1076003)(7416002)(2616005)(5660300002)(956004)(4326008)(6666004)(36756003)(86362001)(316002);DIR:OUT;SFP:1101;SCL:1;SRVR:AM6PR04MB5960;H:AM6PR04MB5925.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;
+Received-SPF: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: ynWu7pCsEJey1HU4WGwPJ5dUFiPt3KAyhqafdbU9WjH7zEfOTLD5gmYdjJk/E4DGv8EyGcc4QMCeR5iAdx1lU3xEL+vKnxE0zMpPVzQMKsb8CqU+BPDG9O7MPEPu8jK2wgHziwlfQdq6e6w9wyHnc2zx4bgOvEHT0H48C9l9P9+xQz1oj8WwktwUoY3Q2u6KfEtCm1RYXd6SVvE+JMx7nP1Fpwkm3WxrawAoKeDgzOlcIe9xm86bXc73L1g4MwW18UIksJ/s04n4GbiaUeiRse06F5olFIzKE5vxySS3ih9Y/92y66karBz9nXxBShloxieBmUGBl8soJXcU+7+xW+NWKQuHyb2i3V0sk+xb/OWZ5cPOcwbspq2tmLeSmRkhashOmeUP3U7uhyNWrwF5mV5ivpA/0J88OlyMqjC/pqKWjjYdLQphlG5vypwdBUXS
+X-MS-Exchange-AntiSpam-MessageData: aVMGSiBUXOvriiq4pyg11djuzvEY54WIiqHjUdNfqWTH2otwT0pfpFdeJDMbMJrKn45+vFoZ/xtbnRGpOzf1goWuHmgTHaIlzAokziMD6pjcqBOfo2QJPQKM390LvsvLdtnm2DAH0EDcvpcXVHYo5Q==
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 28b32295-fb09-4428-f5d8-08d7cfe6c3bf
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Mar 2020 11:30:33.1768
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: dnjXs3yIVCmR8QplT/ye/7nf7mwJSRSqHnyphhvZw1D/FlJpCanDkLX3O/skWP18nl4f/e1tboKC1QgNqz8U9Q==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR04MB5960
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 24 Mar 2020 08:12:59 +0100
-Christian Borntraeger <borntraeger@de.ibm.com> wrote:
+From: Laurentiu Tudor <laurentiu.tudor@nxp.com>
 
-> On 20.03.20 21:55, Sean Christopherson wrote:
-> > Reset the LRU slot if it becomes invalid when deleting a memslot to
-> > fix an out-of-bounds/use-after-free access when searching through
-> > memslots.
-> > 
-> > Explicitly check for there being no used slots in
-> > search_memslots(), and in the caller of s390's approximation
-> > variant.
-> > 
-> > Fixes: 36947254e5f9 ("KVM: Dynamically size memslot array based on
-> > number of used slots") Reported-by: Qian Cai <cai@lca.pw>
-> > Cc: Peter Xu <peterx@redhat.com>
-> > Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-> > ---
-> >  arch/s390/kvm/kvm-s390.c | 3 +++
-> >  include/linux/kvm_host.h | 3 +++
-> >  virt/kvm/kvm_main.c      | 3 +++
-> >  3 files changed, 9 insertions(+)
-> > 
-> > diff --git a/arch/s390/kvm/kvm-s390.c b/arch/s390/kvm/kvm-s390.c
-> > index 807ed6d722dd..cb15fdda1fee 100644
-> > --- a/arch/s390/kvm/kvm-s390.c
-> > +++ b/arch/s390/kvm/kvm-s390.c
-> > @@ -2002,6 +2002,9 @@ static int kvm_s390_get_cmma(struct kvm *kvm,
-> > struct kvm_s390_cmma_log *args,  
-> 
-> Adding Claudio, but
-> >  	struct kvm_memslots *slots = kvm_memslots(kvm);
-> >  	struct kvm_memory_slot *ms;
-> >  
-> > +	if (unlikely(!slots->used_slots))
-> > +		return 0;
-> > +  
+This patch adds ACPI support for the fsl-mc bus driver. First 2 patches
+are prerequsite that remove dependencies on device tree. Third patch
+adds the actual ACPI support and the final one drops some fsl-mc
+specific code in the generic device tree handling code.
 
-this should never happen, as this function is only called during
-migration, and if we don't have any memory slots, then we will not try
-to migrate them. 
+Changes in v2:
+ - add missing of_xlate call in custom .dma_configure (patch 1)
+ - added a cover letter
 
-But this is something that is triggered by userspace, so we need to
-protect the kernel from rogue or broken userspace.
+Diana Craciun (1):
+  irqchip/fsl-mc: Change the way the IRQ domain is set for MC devices
 
-Reviewed-by: Claudio Imbrenda <imbrenda@linux.ibm.com>
+Laurentiu Tudor (2):
+  bus: fsl-mc: add custom .dma_configure implementation
+  iommu/of: get rid of fsl-mc specific code
 
-> this looks sane and like the right fix.
-> 
-> Acked-by: Christian Borntraeger <borntraeger@de.ibm.com>
-> 
-> >  	cur_gfn = kvm_s390_next_dirty_cmma(slots, args->start_gfn);
-> >  	ms = gfn_to_memslot(kvm, cur_gfn);
-> >  	args->count = 0;
-> > diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
-> > index 35bc52e187a2..b19dee4ed7d9 100644
-> > --- a/include/linux/kvm_host.h
-> > +++ b/include/linux/kvm_host.h
-> > @@ -1032,6 +1032,9 @@ search_memslots(struct kvm_memslots *slots,
-> > gfn_t gfn) int slot = atomic_read(&slots->lru_slot);
-> >  	struct kvm_memory_slot *memslots = slots->memslots;
-> >  
-> > +	if (unlikely(!slots->used_slots))
-> > +		return NULL;
-> > +
-> >  	if (gfn >= memslots[slot].base_gfn &&
-> >  	    gfn < memslots[slot].base_gfn + memslots[slot].npages)
-> >  		return &memslots[slot];
-> > diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
-> > index 28eae681859f..f744bc603c53 100644
-> > --- a/virt/kvm/kvm_main.c
-> > +++ b/virt/kvm/kvm_main.c
-> > @@ -882,6 +882,9 @@ static inline void kvm_memslot_delete(struct
-> > kvm_memslots *slots, 
-> >  	slots->used_slots--;
-> >  
-> > +	if (atomic_read(&slots->lru_slot) >= slots->used_slots)
-> > +		atomic_set(&slots->lru_slot, 0);
-> > +
-> >  	for (i = slots->id_to_index[memslot->id]; i <
-> > slots->used_slots; i++) { mslots[i] = mslots[i + 1];
-> >  		slots->id_to_index[mslots[i].id] = i;
-> >   
+Makarand Pawagi (1):
+  bus: fsl-mc: Add ACPI support for fsl-mc
+
+ drivers/bus/fsl-mc/fsl-mc-bus.c             | 85 ++++++++++++++++-----
+ drivers/bus/fsl-mc/fsl-mc-msi.c             | 11 ++-
+ drivers/iommu/of_iommu.c                    | 20 -----
+ drivers/irqchip/irq-gic-v3-its-fsl-mc-msi.c | 69 ++++++++++++++++-
+ 4 files changed, 145 insertions(+), 40 deletions(-)
+
+-- 
+2.17.1
 
