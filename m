@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1922C190FE1
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 14:30:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1A20F190F28
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 14:19:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728848AbgCXNXx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 09:23:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47100 "EHLO mail.kernel.org"
+        id S1728649AbgCXNSF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 09:18:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38012 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729395AbgCXNXv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 09:23:51 -0400
+        id S1728673AbgCXNSD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Mar 2020 09:18:03 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0766E208CA;
-        Tue, 24 Mar 2020 13:23:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6E23220775;
+        Tue, 24 Mar 2020 13:18:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585056230;
+        s=default; t=1585055882;
         bh=0Tl/uLt/DtI6IenNCwj6LwcQMUVo0+qBxc/JUlB4s4E=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=uoQKtaoJ356EYx6u/4LH6TAp9+G4McavNVwHpjGO8g+fIJar264tgvkKW1GF4E0xn
-         wtXsXuAGcBbSpHH7ZKtKdvTRzFw7Ojs+XVd7sFD8nFa8QX9XRGvzRlHesWK/jdWTMK
-         CbX3aWte/1zDVwpySWmUgKbpeWYIHahuEHjMUz7w=
+        b=wTzG2F88bg8Yyaa0aLLQh00xTrE7olh2uaxgdoy38whXeAomzvqBvMzaFzWoLp2vn
+         093vextN9vXccVIaz0/NWMovkcbFNR27SM6iRS8HKw9U694iD1rd3jQr42J20H+NQ9
+         O3fzVXgSrXon+KODyrsLsWgE/81gLHR2gmziFTQ8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -30,12 +30,12 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Wen-chien Jesse Sung <jesse.sung@canonical.com>,
         Hans de Goede <hdegoede@redhat.com>, Stable@vger.kernel.org,
         Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Subject: [PATCH 5.5 063/119] iio: st_sensors: remap SMO8840 to LIS2DH12
-Date:   Tue, 24 Mar 2020 14:10:48 +0100
-Message-Id: <20200324130814.510451677@linuxfoundation.org>
+Subject: [PATCH 5.4 057/102] iio: st_sensors: remap SMO8840 to LIS2DH12
+Date:   Tue, 24 Mar 2020 14:10:49 +0100
+Message-Id: <20200324130812.491444025@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.2
-In-Reply-To: <20200324130808.041360967@linuxfoundation.org>
-References: <20200324130808.041360967@linuxfoundation.org>
+In-Reply-To: <20200324130806.544601211@linuxfoundation.org>
+References: <20200324130806.544601211@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
