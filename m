@@ -2,91 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7C2BE1913F8
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 16:14:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A38661913FC
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 16:15:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727965AbgCXPOY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 11:14:24 -0400
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:54632 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727555AbgCXPOY (ORCPT
+        id S1728158AbgCXPPF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 11:15:05 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:58418 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727999AbgCXPPF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 11:14:24 -0400
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 02OFELjc055861;
-        Tue, 24 Mar 2020 10:14:21 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1585062861;
-        bh=l7ghfWCYstg4OWQmwbil6bEMOSOomOvQuKwzXl0urrs=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=xi2+9VO8c3ngMb6vQYu9llOVBDCazzgFvrzKYmmt8XgAIoCTbODzcy+OxdsTy7Q4X
-         H2oxJlPSfYpWyW5JvNqINkYhxYoTk8SPWFGsGi4CPoIKJfTithz8HwduXZYJ1xugYt
-         MjnOh8o331QR4X4xfM84yjdPg6tUlrpNBIBFH/gA=
-Received: from DLEE115.ent.ti.com (dlee115.ent.ti.com [157.170.170.26])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 02OFELBd096857
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 24 Mar 2020 10:14:21 -0500
-Received: from DLEE109.ent.ti.com (157.170.170.41) by DLEE115.ent.ti.com
- (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Tue, 24
- Mar 2020 10:14:21 -0500
-Received: from lelv0327.itg.ti.com (10.180.67.183) by DLEE109.ent.ti.com
- (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Tue, 24 Mar 2020 10:14:21 -0500
-Received: from [10.250.43.45] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id 02OFEKMv045692;
-        Tue, 24 Mar 2020 10:14:21 -0500
-Subject: Re: [RESEND PATCH v5 0/3] BQ25150/155 Charger
-To:     <sre@kernel.org>
-CC:     <linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <dmurphy@ti.com>
-References: <20200304174025.31655-1-r-rivera-matos@ti.com>
-From:   Ricardo Rivera-Matos <r-rivera-matos@ti.com>
-Message-ID: <eb5f0818-21c7-1b84-b0c9-904bce9721be@ti.com>
-Date:   Tue, 24 Mar 2020 10:14:20 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        Tue, 24 Mar 2020 11:15:05 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=8TXwLdoUDxOFHArMszYS+qpN9z46iZMtciU0e+inYj0=; b=3dUmx8ntr/oFgCmMcBnnANMTip
+        21oGu0KzDc0Yd4MPZHFTTRzmuma8nxyj0/WHXe5fU8WqxJTKHCnKGjBZpOiY+EojAfNnxsg1IKuKj
+        kSKVslo7wUy77OdEkkt+aw3rnLT7cH0gsSE82Ijs81BVgx4EYFJBLxLfoI8iiQPm0MPFLLnk5Y9Ly
+        XGe9VWA5Y62NThk1OLH9bYisCLNtpucatBQ/0c9O+z2MWH9/02Wc/SbPcbkYb1hoyaTVLBt/Mj9Up
+        NFtY11fW51lvEeCM+cMUMNitrPSvFOBWWpUKL/zcTVREDkhgvZ/gP95Wq4ilQtqPoV7balMMqxsMB
+        fhzWWfgA==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jGlGg-0004yl-4h; Tue, 24 Mar 2020 15:15:02 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id AA687300096;
+        Tue, 24 Mar 2020 16:15:00 +0100 (CET)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 9549F29B3DAFF; Tue, 24 Mar 2020 16:15:00 +0100 (CET)
+Date:   Tue, 24 Mar 2020 16:15:00 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Al Viro <viro@ZenIV.linux.org.uk>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [RFC][PATCH 01/22] x86 user stack frame reads: switch to
+ explicit __get_user()
+Message-ID: <20200324151500.GQ20696@hirez.programming.kicks-ass.net>
+References: <20200323183620.GD23230@ZenIV.linux.org.uk>
+ <20200323183819.250124-1-viro@ZenIV.linux.org.uk>
 MIME-Version: 1.0
-In-Reply-To: <20200304174025.31655-1-r-rivera-matos@ti.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200323183819.250124-1-viro@ZenIV.linux.org.uk>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-bump
+On Mon, Mar 23, 2020 at 06:37:58PM +0000, Al Viro wrote:
+> From: Al Viro <viro@zeniv.linux.org.uk>
+> 
+> rather than relying upon the magic in raw_copy_from_user()
+> 
+> Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 
-On 3/4/20 11:40 AM, Ricardo Rivera-Matos wrote:
-> Hello,
->
-> This v5 series picks up on the development that Dan Murphy <dmurphy@ti.com> began with the power_supply framework and bq2515x_charger driver. This series incorporates the changes suggested by Sebastien Reichel <sre@kernel.org> in v4.
->
-> Datasheets for these devices can be found at:
-> http://www.ti.com/lit/ds/symlink/bq25150.pdf
-> http://www.ti.com/lit/ds/symlink/bq25155.pdf
->
-> Thanks, Ricardo
->
-> Dan Murphy (1):
->    power_supply: Add additional health properties to the header
->
-> Ricardo Rivera-Matos (2):
->    Add the bindings for the bq25150 and bq25155 500mA charging ICs from
->      Texas Instruments.
->    power: supply: bq25150 introduce the bq25150
->
->   Documentation/ABI/testing/sysfs-class-power   |    2 +-
->   .../bindings/power/supply/bq2515x.yaml        |   99 ++
->   drivers/power/supply/Kconfig                  |    8 +
->   drivers/power/supply/Makefile                 |    1 +
->   drivers/power/supply/bq2515x_charger.c        | 1170 +++++++++++++++++
->   drivers/power/supply/power_supply_sysfs.c     |    2 +-
->   include/linux/power_supply.h                  |    3 +
->   7 files changed, 1283 insertions(+), 2 deletions(-)
->   create mode 100644 Documentation/devicetree/bindings/power/supply/bq2515x.yaml
->   create mode 100644 drivers/power/supply/bq2515x_charger.c
->
+
+> diff --git a/arch/x86/include/asm/uaccess.h b/arch/x86/include/asm/uaccess.h
+> index 61d93f062a36..ab8eab43a8a2 100644
+> --- a/arch/x86/include/asm/uaccess.h
+> +++ b/arch/x86/include/asm/uaccess.h
+> @@ -695,15 +695,6 @@ extern struct movsl_mask {
+>  #endif
+>  
+>  /*
+> - * We rely on the nested NMI work to allow atomic faults from the NMI path; the
+> - * nested NMI paths are careful to preserve CR2.
+> - *
+> - * Caller must use pagefault_enable/disable, or run in interrupt context,
+> - * and also do a uaccess_ok() check
+> - */
+> -#define __copy_from_user_nmi __copy_from_user_inatomic
+> -
+> -/*
+>   * The "unsafe" user accesses aren't really "unsafe", but the naming
+>   * is a big fat warning: you have to not only do the access_ok()
+>   * checking before using them, but you have to surround them with the
+
+Thanks for killing that remnant!
+
+Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
