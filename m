@@ -2,263 +2,172 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 938E7190CC1
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 12:51:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D1F9C190CC6
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 12:52:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727389AbgCXLvd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 07:51:33 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:40364 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727066AbgCXLvc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 07:51:32 -0400
-Received: by mail-wr1-f67.google.com with SMTP id u10so668446wro.7
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Mar 2020 04:51:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=Qb3SWCtaISb5UHtj/oc80ogj3OiicTeNsb5XjW4Nra8=;
-        b=k8Cl0v0YRke+W4Iyg4rIcrb2AaV77rmHszkX1TJT1CXUfEEiTDy3Zt3HSY+ibqd8qC
-         A3S49wiXlMzj+a60yk49B49EoGNL1pkUZ84/R2UH8M/acBHMjdZnm9Q0hfXosORsThTc
-         VfTY32R1zsVZSpIZxnsz9Aye7uHa8J7LX7HdDG3LUdzkS7TgIRdwEABMVMzJ0w8ZQ4Gh
-         TBadG6JaoId1zvbUw9kLbzNYVhy6s6wJU5pyIjAj3XHAqSuOeVUDSShqf1b6K+4B385q
-         6Ff1APc+i1ccZ1X1ye2MRc9HUW9pwbAX9X1LlwUauMwDr1omGS+Dqw6db0h9ZMmBwKps
-         q0Kg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=Qb3SWCtaISb5UHtj/oc80ogj3OiicTeNsb5XjW4Nra8=;
-        b=U1T8qomkMV66+NN12Fm67RIURqmmm0fbhmvlxtmLaoiErPnZoFJ1jNasveg4QM/KF8
-         5xHB4965L50G7SXOk9x7N2UMH6IxcpTu+fjwaF4uw68inhuV3R+eZVM4HxafDg4S5+dL
-         BYkW08yztwwC0ASGlE48i1Fz1fH6WZa1shNYOKy5TBs3U1piGJXkZ0mNmoN2vJA2hSFd
-         UUr4I17r+YJP/AYSHUq0oHabSFgYHRMvgwpHGheNtdYLhyEW0jycrubIelj6kIUs2xhE
-         4nvDXh0H3qkJo17ccrixmF4P/jjKmM3/ac6HSXlr80i6I8wBqCaGecysr+lxFzLQDbr/
-         j4bw==
-X-Gm-Message-State: ANhLgQ1MgFwsDFbI1csWa41F+0ePDxjIOhAgwHR8X1nE8VsVeYKJ68Vn
-        Pu78Pfg7P0AIh3KyUdO9c/VUqyiFe8E=
-X-Google-Smtp-Source: ADFU+vsil1NDJkZi5GRfcoTO3H79GCgl2t3IXoh8zPgAXBdJnWlGOIBmt2iIeYJgisR8OROwZDqrMA==
-X-Received: by 2002:adf:a457:: with SMTP id e23mr36516673wra.21.1585050690502;
-        Tue, 24 Mar 2020 04:51:30 -0700 (PDT)
-Received: from dell ([2.27.35.213])
-        by smtp.gmail.com with ESMTPSA id n2sm27368476wrr.62.2020.03.24.04.51.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Mar 2020 04:51:30 -0700 (PDT)
-Date:   Tue, 24 Mar 2020 11:52:19 +0000
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Darren Hart <dvhart@infradead.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        Zha Qipeng <qipeng.zha@intel.com>,
-        "David E . Box" <david.e.box@linux.intel.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v8 18/19] platform/x86: intel_pmc_ipc: Convert to MFD
-Message-ID: <20200324115219.GB437932@dell>
-References: <20200303133649.39819-1-mika.westerberg@linux.intel.com>
- <20200303133649.39819-19-mika.westerberg@linux.intel.com>
+        id S1727444AbgCXLwb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 07:52:31 -0400
+Received: from mta-02.yadro.com ([89.207.88.252]:35964 "EHLO mta-01.yadro.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727400AbgCXLwb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Mar 2020 07:52:31 -0400
+Received: from localhost (unknown [127.0.0.1])
+        by mta-01.yadro.com (Postfix) with ESMTP id EFA3241286;
+        Tue, 24 Mar 2020 11:52:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=yadro.com; h=
+        content-transfer-encoding:mime-version:user-agent:content-type
+        :content-type:organization:references:in-reply-to:date:date:from
+        :from:subject:subject:message-id:received:received:received; s=
+        mta-01; t=1585050747; x=1586865148; bh=r/+JpB/tzVggc5+uUHeVaa6fh
+        /sE674WIfm1mQzEXGE=; b=Ca64qgUokGK2sYLawspct1XYaPuroDblVruX3BjtG
+        s/bWrsVasOqeFifGlhcXXYeyBR7+Y03KBxOwUTNqh65RgPkdxYCRZBZ9hdFOOZIn
+        Bpb01eb6sFlx0VpvgNi8EnP45mAtJxrZ654Bt9qIV3L1AlzXrPaC1G5+/voM0nEk
+        gc=
+X-Virus-Scanned: amavisd-new at yadro.com
+Received: from mta-01.yadro.com ([127.0.0.1])
+        by localhost (mta-01.yadro.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id lmXVjV-HORA3; Tue, 24 Mar 2020 14:52:27 +0300 (MSK)
+Received: from T-EXCH-02.corp.yadro.com (t-exch-02.corp.yadro.com [172.17.10.102])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mta-01.yadro.com (Postfix) with ESMTPS id 1286441259;
+        Tue, 24 Mar 2020 14:52:27 +0300 (MSK)
+Received: from localhost.localdomain (10.199.1.182) by
+ T-EXCH-02.corp.yadro.com (172.17.10.102) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384_P384) id
+ 15.1.669.32; Tue, 24 Mar 2020 14:52:27 +0300
+Message-ID: <321453af40ca49839bc7b9d1c65b828841492f72.camel@yadro.com>
+Subject: Re: [PATCH 2/2] iio: proximity: Add driver support for vcnl3020
+ proximity sensor
+From:   Ivan Mikhaylov <i.mikhaylov@yadro.com>
+To:     Andy Shevchenko <andy.shevchenko@gmail.com>
+CC:     Jonathan Cameron <jic23@kernel.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        linux-iio <linux-iio@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Rob Herring <robh+dt@kernel.org>
+Date:   Tue, 24 Mar 2020 14:52:30 +0300
+In-Reply-To: <CAHp75Ve4rejBKjG+mioRL3S7i3meyy=_4TtW1fr2aGvnVn2tBA@mail.gmail.com>
+References: <20200323103926.21271-1-i.mikhaylov@yadro.com>
+         <20200323103926.21271-3-i.mikhaylov@yadro.com>
+         <CAHp75Ve4rejBKjG+mioRL3S7i3meyy=_4TtW1fr2aGvnVn2tBA@mail.gmail.com>
+Organization: YADRO
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.32.5 (3.32.5-1.fc30) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20200303133649.39819-19-mika.westerberg@linux.intel.com>
+X-Originating-IP: [10.199.1.182]
+X-ClientProxiedBy: T-EXCH-01.corp.yadro.com (172.17.10.101) To
+ T-EXCH-02.corp.yadro.com (172.17.10.102)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 03 Mar 2020, Mika Westerberg wrote:
-
-> This driver only creates a bunch of platform devices sharing resources
-> belonging to the PMC device. This is pretty much what MFD subsystem is
-> for so move the driver there, renaming it to intel_pmc_bxt.c which
-> should be more clear what it is.
+On Mon, 2020-03-23 at 14:10 +0200, Andy Shevchenko wrote:
+> On Mon, Mar 23, 2020 at 12:41 PM Ivan Mikhaylov <i.mikhaylov@yadro.com> wrote:
+> > Proximity sensor driver based on light/vcnl4000.c code.
+> > For now supports only the single on-demand measurement.
+> > 
+> > The VCNL3020 is a fully integrated proximity sensor. Fully
+> > integrated means that the infrared emitter is included in the
+> > package. It has 16-bit resolution. It includes a signal
+> > processing IC and features standard I2C communication
+> > interface. It features an interrupt function.
 > 
-> MFD subsystem provides nice helper APIs for subdevice creation so
-> convert the driver to use those. Unfortunately the ACPI device includes
-> separate resources for most of the subdevices so we cannot simply call
-> mfd_add_devices() to create all of them but instead we need to call it
-> separately for each device.
+> Thank you for a patch, my comments below.
 > 
-> The new MFD driver continues to expose two sysfs attributes that allow
-> userspace to send IPC commands to the PMC/SCU to avoid breaking any
-> existing applications that may use these. Generally this is bad idea so
-> document this in the ABI documentation.
+> > Datasheet available at:
+> > http://www.vishay.com/docs/84150/vcnl3020.pdf
 > 
-> Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-> Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> ---
->  .../ABI/obsolete/sysfs-driver-intel_pmc_bxt   |  22 +
->  arch/x86/include/asm/intel_pmc_ipc.h          |  47 --
->  arch/x86/include/asm/intel_telemetry.h        |   1 +
->  drivers/mfd/Kconfig                           |  16 +-
->  drivers/mfd/Makefile                          |   1 +
->  drivers/mfd/intel_pmc_bxt.c                   | 504 ++++++++++++++
->  drivers/platform/x86/Kconfig                  |  16 +-
->  drivers/platform/x86/Makefile                 |   1 -
->  drivers/platform/x86/intel_pmc_ipc.c          | 645 ------------------
->  .../platform/x86/intel_telemetry_debugfs.c    |  12 +-
->  drivers/platform/x86/intel_telemetry_pltdrv.c |   2 +
->  drivers/usb/typec/tcpm/Kconfig                |   2 +-
->  include/linux/mfd/intel_pmc_bxt.h             |  43 ++
->  13 files changed, 602 insertions(+), 710 deletions(-)
->  create mode 100644 Documentation/ABI/obsolete/sysfs-driver-intel_pmc_bxt
->  delete mode 100644 arch/x86/include/asm/intel_pmc_ipc.h
->  create mode 100644 drivers/mfd/intel_pmc_bxt.c
->  delete mode 100644 drivers/platform/x86/intel_pmc_ipc.c
->  create mode 100644 include/linux/mfd/intel_pmc_bxt.h
+> I'm thinking that we may simple introduce new tag, called Datesheet:
+> to put such links.
+> 
+> > Signed-off-by: Ivan Mikhaylov <i.mikhaylov@yadro.com>
+> 
+> ...
+> 
+> >  obj-$(CONFIG_SRF08)            += srf08.o
+> >  obj-$(CONFIG_SX9500)           += sx9500.o
+> >  obj-$(CONFIG_VL53L0X_I2C)      += vl53l0x-i2c.o
+> > +obj-$(CONFIG_VCNL3020)         += vcnl3020.o
+> 
+> Perhaps keep ordered?
 
-[...]
+Oops.
 
-> +/*
-> + * We use the below templates to construct MFD cells. The struct
-> + * intel_pmc_dev instance holds the real MFD cells where we first copy
-> + * these and then fill the dynamic parts based on the extracted resources.
-> + */
-> +
-> +static const struct mfd_cell punit = {
-> +	.name = "intel_punit_ipc",
-> +};
-> +
-> +static int update_no_reboot_bit(void *priv, bool set)
-> +{
-> +	struct intel_pmc_dev *pmc = priv;
-> +	u32 bits = PMC_CFG_NO_REBOOT_EN;
-> +	u32 value = set ? bits : 0;
-> +
-> +	return intel_pmc_gcr_update(pmc, PMC_GCR_PMC_CFG_REG, bits, value);
-> +}
-> +
-> +static const struct itco_wdt_platform_data tco_pdata = {
-> +	.name = "Apollo Lake SoC",
-> +	.version = 5,
-> +	.update_no_reboot_bit = update_no_reboot_bit,
-> +};
-> +
-> +static const struct mfd_cell tco = {
-> +	.name = "iTCO_wdt",
-> +	.ignore_resource_conflicts = true,
-> +};
-> +
-> +static const struct resource telem_res[] = {
-> +	DEFINE_RES_MEM(TELEM_PUNIT_SSRAM_OFFSET, TELEM_SSRAM_SIZE),
-> +	DEFINE_RES_MEM(TELEM_PMC_SSRAM_OFFSET, TELEM_SSRAM_SIZE),
-> +};
-> +
-> +static const struct mfd_cell telem = {
-> +	.name = "intel_telemetry",
-> +	.resources = telem_res,
-> +	.num_resources = ARRAY_SIZE(telem_res),
-> +};
-> +
-> +static int intel_pmc_get_tco_resources(struct platform_device *pdev,
-> +				       struct intel_pmc_dev *pmc)
-> +{
-> +	struct itco_wdt_platform_data *pdata;
-> +	struct resource *res, *tco_res;
-> +
-> +	if (acpi_has_watchdog())
-> +		return 0;
-> +
-> +	res = platform_get_resource(pdev, IORESOURCE_IO,
-> +				    PLAT_RESOURCE_ACPI_IO_INDEX);
-> +	if (!res) {
-> +		dev_err(&pdev->dev, "Failed to get IO resource\n");
-> +		return -EINVAL;
-> +	}
-> +
-> +	tco_res = devm_kcalloc(&pdev->dev, 2, sizeof(*tco_res), GFP_KERNEL);
-> +	if (!tco_res)
-> +		return -ENOMEM;
-> +
-> +	tco_res[0].flags = IORESOURCE_IO;
-> +	tco_res[0].start = res->start + TCO_BASE_OFFSET;
-> +	tco_res[0].end = tco_res[0].start + TCO_REGS_SIZE - 1;
-> +	tco_res[1].flags = IORESOURCE_IO;
-> +	tco_res[1].start = res->start + SMI_EN_OFFSET;
-> +	tco_res[1].end = tco_res[1].start + SMI_EN_SIZE - 1;
-> +
-> +	pmc->cells[PMC_TCO].resources = tco_res;
-> +	pmc->cells[PMC_TCO].num_resources = 2;
-> +
-> +	pdata = devm_kmemdup(&pdev->dev, &tco_pdata, sizeof(*pdata), GFP_KERNEL);
-> +	if (!pdata)
-> +		return -ENOMEM;
+> 
+> ...
+> 
+> > +static int32_t vcnl3020_init(struct vcnl3020_data *data)
+> 
+> int32_t...
+> 
+> > +{
+> > +       s32 rc;
+> 
+> ...s32?!
+> 
+> Applies to entire code.
 
-Why do you need to take a copy?
+checkpatch.pl --strict doesn't show anything bad in it but I can change from
+int32_t/s32 into int easily, it's not a problem for me.
 
-This can be referenced directly in 'mfd_cell tco', no?
+> 
+> > +       u32 led_current;
+> > +       struct device *dev = &data->client->dev;
+> 
+> Reversed xmas tree order looks better.
+> 
+> > +       rc = i2c_smbus_read_byte_data(data->client, VCNL_PROD_REV);
+> 
+> Can you use regmap I²C API?
+> 
 
-> +	pdata->no_reboot_priv = pmc;
+That's a nice idea.
 
-You're putting device data inside platform data?
+> ...
+> 
+> > +       dev_info(&client->dev, "Proximity sensor, Rev: %02x\n",
+> > +                data->rev);
+> 
+> Noise.
 
-This doesn't sit right with me at all.
+Doesn't it help to determine the presence of driver to a common user?
 
-You already saved it using platform_set_drvdata(), why do you need it
-twice?  Why can't you export update_no_reboot_bit() and make it take
-'struct intel_pmc_dev' or better yet 'pdev' as an argument?
+> 
+> > +               goto out;
+> > +
+> > +       return rc;
+> > +out:
+> > +       devm_iio_device_free(&client->dev, indio_dev);
+> > +       return rc;
+> 
+> Managed resources are exactly for this not to be appeared in the code.
 
-> +	pmc->cells[PMC_TCO].platform_data = pdata;
-> +	pmc->cells[PMC_TCO].pdata_size = sizeof(*pdata);
-> +
-> +	return 0;
-> +}
-> +
-> +static int intel_pmc_get_resources(struct platform_device *pdev,
-> +				   struct intel_pmc_dev *pmc,
-> +				   struct intel_scu_ipc_data *scu_data)
-> +{
-> +	struct resource *res, *punit_res;
-> +	struct resource gcr_res;
-> +	size_t npunit_res = 0;
-> +	int ret;
-> +
-> +	scu_data->irq = platform_get_irq_optional(pdev, 0);
-> +
-> +	res = platform_get_resource(pdev, IORESOURCE_MEM,
-> +				    PLAT_RESOURCE_IPC_INDEX);
-> +	if (!res) {
-> +		dev_err(&pdev->dev, "Failed to get IPC resource\n");
-> +		return -EINVAL;
-> +	}
-> +
-> +	/* IPC registers */
-> +	scu_data->mem.flags = res->flags;
-> +	scu_data->mem.start = res->start;
-> +	scu_data->mem.end = res->start + PLAT_RESOURCE_IPC_SIZE - 1;
-> +
-> +	/* GCR registers */
-> +	gcr_res.flags = res->flags;
-> +	gcr_res.start = res->start + PLAT_RESOURCE_GCR_OFFSET;
-> +	gcr_res.end = gcr_res.start + PLAT_RESOURCE_GCR_SIZE - 1;
-> +
-> +	pmc->gcr_mem_base = devm_ioremap_resource(&pdev->dev, &gcr_res);
-> +	if (IS_ERR(pmc->gcr_mem_base))
-> +		return PTR_ERR(pmc->gcr_mem_base);
-> +
-> +	pmc->cells[PMC_TCO] = tco;
-> +	pmc->cells[PMC_PUNIT] = punit;
-> +	pmc->cells[PMC_TELEM] = telem;
+I can do something like this:
+return devm_iio_device_register(&client->dev, indio_dev);
 
-Why are you still saving these to device data?
+Would it suffice?
 
-What's stopping you operating on the structures directly?
+> 
+> > +}
+> 
+> ...
+> 
+> > +static const struct of_device_id vcnl3020_of_match[] = {
+> > +       {
+> > +               .compatible = "vishay,vcnl3020",
+> > +       },
+> 
+> Missed terminator. How did you test this?
 
-[...]
+All works fine with real hw, I'll add terminator.
+Agree with everything else.
 
-Remainder looks half sane.
+Thanks. 
 
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
