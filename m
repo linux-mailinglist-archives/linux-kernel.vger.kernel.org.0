@@ -2,72 +2,138 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 40A01191374
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 15:43:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 853D919137D
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 15:45:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727874AbgCXOnm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 10:43:42 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42868 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727464AbgCXOnl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 10:43:41 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C0F0C2074D;
-        Tue, 24 Mar 2020 14:43:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585061021;
-        bh=YGLNP/IXNHSdlNivc3mGScmLK2wHsHCBGrFUSV8D1/8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Gc+D7SdE/ud/v+FUvrfzIHLDg8P0l+lMONFjhoG9pzIjxogZ/4nwiVstBhi4nzXAs
-         dSgVLcFjPgl9j44S0ghS907EjBOcbbsTltVjKaUpphLgAXbbqQZThMelpSga4K7hTN
-         2OcoTeOA2GPzhoWR20lv8p26kC1o/3cXn24UyYRY=
-Date:   Tue, 24 Mar 2020 15:43:38 +0100
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Mark Salyzyn <salyzyn@android.com>
-Cc:     stable <stable@vger.kernel.org>,
-        Android Kernel Team <kernel-team@android.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: locks use-after-free stable request
-Message-ID: <20200324144338.GA2507446@kroah.com>
-References: <52be02d3-3a6a-c8b8-4177-5cc1d67aedd4@android.com>
+        id S1727289AbgCXOoY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 10:44:24 -0400
+Received: from smtp09.smtpout.orange.fr ([80.12.242.131]:55821 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727962AbgCXOoX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Mar 2020 10:44:23 -0400
+Received: from [192.168.42.210] ([93.22.39.100])
+        by mwinf5d18 with ME
+        id JEkD2200M29f5LV03EkD63; Tue, 24 Mar 2020 15:44:21 +0100
+X-ME-Helo: [192.168.42.210]
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Tue, 24 Mar 2020 15:44:21 +0100
+X-ME-IP: 93.22.39.100
+Subject: Re: [PATCH V2] perf cpumap: Fix snprintf overflow check
+To:     Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
+Cc:     peterz@infradead.org, mingo@redhat.com, mark.rutland@arm.com,
+        alexander.shishkin@linux.intel.com, jolsa@redhat.com,
+        namhyung@kernel.org, kan.liang@linux.intel.com,
+        zhe.he@windriver.com, dzickus@redhat.com, jstancek@redhat.com,
+        David Laight <David.Laight@aculab.com>,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <20200324070319.10901-1-christophe.jaillet@wanadoo.fr>
+ <20200324125001.GA21569@kernel.org>
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Message-ID: <75a8e792-dc9e-6169-4dd2-8758967c50e2@wanadoo.fr>
+Date:   Tue, 24 Mar 2020 15:44:15 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <52be02d3-3a6a-c8b8-4177-5cc1d67aedd4@android.com>
+In-Reply-To: <20200324125001.GA21569@kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 24, 2020 at 07:24:49AM -0700, Mark Salyzyn wrote:
-> Referencing upstream fixes commit dcf23ac3e846ca0cf626c155a0e3fcbbcf4fae8a
-> ("locks: reinstate locks_delete_block optimization") and commit
-> 6d390e4b5d48ec03bb87e63cf0a2bff5f4e116da ("locks: fix a potential
-> use-after-free problem when wakeup a waiter") and possibly address
-> CVE-2019-19769.
-> 
-> Please apply to all relevant stable trees including 5.4, 4.19 and below.
-> Confirmed they apply cleanly to 5.4 and 4.19.
-> 
-> 
-> Signed-off-by: Mark Salyzyn <salyzyn@android.com>
-> 
-> Cc: stable@vger.kernel.org
-> 
-> Cc: linux-kernel@vger.kernel.org
-> 
-> Cc: kernel-team@android.com
-> 
+Le 24/03/2020 à 13:50, Arnaldo Carvalho de Melo a écrit :
+> Em Tue, Mar 24, 2020 at 08:03:19AM +0100, Christophe JAILLET escreveu:
+>> 'snprintf' returns the number of characters which would be generated for
+>> the given input.
+>>
+>> If the returned value is *greater than* or equal to the buffer size, it
+>> means that the output has been truncated.
+>>
+>> Fix the overflow test accordingling.
+>                                    y
+>
+> You forgot to CC David and add this to your patch, which I did:
+>
+> Suggested-by: David Laight <David.Laight@ACULAB.COM>
+>
+> Ok?
 
-These are all queued up for the next round of 5.4 and 5.5 stable
-releases,but they do not seem to apply to 4.19.
+No problem for me.
 
-And why do you think they apply to 4.19, that's not what 6d390e4b5d48
-("locks: fix a potential use-after-free problem when wakeup a waiter")
-says.
+The to: and cc: list are (at least should be :)) the ones given by 
+get_maintainer, and I was not aware of the 'Suggested-by' tag.
 
-confused,
+BTW, thanks for fixing the typo in the description.
 
-greg k-h
+CJ
+
+
+> - Arnaldo
+>   
+>> Fixes: 7780c25bae59f ("perf tools: Allow ability to map cpus to nodes easily")
+>> Fixes: 92a7e1278005b ("perf cpumap: Add cpu__max_present_cpu()")
+>> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+>> ---
+>> V2: keep snprintf
+>>      modifiy the tests for truncated output
+>>      Update subject and description
+>> ---
+>>   tools/perf/util/cpumap.c | 10 +++++-----
+>>   1 file changed, 5 insertions(+), 5 deletions(-)
+>>
+>> diff --git a/tools/perf/util/cpumap.c b/tools/perf/util/cpumap.c
+>> index 983b7388f22b..dc5c5e6fc502 100644
+>> --- a/tools/perf/util/cpumap.c
+>> +++ b/tools/perf/util/cpumap.c
+>> @@ -317,7 +317,7 @@ static void set_max_cpu_num(void)
+>>   
+>>   	/* get the highest possible cpu number for a sparse allocation */
+>>   	ret = snprintf(path, PATH_MAX, "%s/devices/system/cpu/possible", mnt);
+>> -	if (ret == PATH_MAX) {
+>> +	if (ret >= PATH_MAX) {
+>>   		pr_err("sysfs path crossed PATH_MAX(%d) size\n", PATH_MAX);
+>>   		goto out;
+>>   	}
+>> @@ -328,7 +328,7 @@ static void set_max_cpu_num(void)
+>>   
+>>   	/* get the highest present cpu number for a sparse allocation */
+>>   	ret = snprintf(path, PATH_MAX, "%s/devices/system/cpu/present", mnt);
+>> -	if (ret == PATH_MAX) {
+>> +	if (ret >= PATH_MAX) {
+>>   		pr_err("sysfs path crossed PATH_MAX(%d) size\n", PATH_MAX);
+>>   		goto out;
+>>   	}
+>> @@ -356,7 +356,7 @@ static void set_max_node_num(void)
+>>   
+>>   	/* get the highest possible cpu number for a sparse allocation */
+>>   	ret = snprintf(path, PATH_MAX, "%s/devices/system/node/possible", mnt);
+>> -	if (ret == PATH_MAX) {
+>> +	if (ret >= PATH_MAX) {
+>>   		pr_err("sysfs path crossed PATH_MAX(%d) size\n", PATH_MAX);
+>>   		goto out;
+>>   	}
+>> @@ -441,7 +441,7 @@ int cpu__setup_cpunode_map(void)
+>>   		return 0;
+>>   
+>>   	n = snprintf(path, PATH_MAX, "%s/devices/system/node", mnt);
+>> -	if (n == PATH_MAX) {
+>> +	if (n >= PATH_MAX) {
+>>   		pr_err("sysfs path crossed PATH_MAX(%d) size\n", PATH_MAX);
+>>   		return -1;
+>>   	}
+>> @@ -456,7 +456,7 @@ int cpu__setup_cpunode_map(void)
+>>   			continue;
+>>   
+>>   		n = snprintf(buf, PATH_MAX, "%s/%s", path, dent1->d_name);
+>> -		if (n == PATH_MAX) {
+>> +		if (n >= PATH_MAX) {
+>>   			pr_err("sysfs path crossed PATH_MAX(%d) size\n", PATH_MAX);
+>>   			continue;
+>>   		}
+>> -- 
+>> 2.20.1
+>>
+
