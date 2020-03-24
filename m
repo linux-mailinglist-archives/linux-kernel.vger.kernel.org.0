@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A58D219130C
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 15:25:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 24DE419130D
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 15:25:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728298AbgCXOZc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 10:25:32 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:53656 "EHLO
+        id S1728763AbgCXOZd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 10:25:33 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:53626 "EHLO
         merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728368AbgCXOYx (ORCPT
+        with ESMTP id S1728414AbgCXOYw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 10:24:53 -0400
+        Tue, 24 Mar 2020 10:24:52 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=merlin.20170209; h=Content-Type:MIME-Version:References:
         Subject:Cc:To:From:Date:Message-Id:Sender:Reply-To:Content-Transfer-Encoding:
         Content-ID:Content-Description:In-Reply-To;
-        bh=ilsEuYY3hTt7FLEbWHUcw1XKoXU2dWp83auMDDvi0GM=; b=XgW8PTcKrLTSZFVN+SapkDRo5n
-        gUI8LtCkWtpDhDky563pA///7oQ8NMsvxTCRHP6jTqLXVdArap8FKAAEmx7MQTFH+ZxE4IxCWDIvV
-        mJ0ICS+ReuwZYDxOBKLIfr9xpMsBrZMBCiiE7r1BysFuxQmQFlxrfBvJTK6Ho5KtmGDPibQSG6loe
-        7SAJjK9o02Qpgr4/8mMUnxi2ENjEpK77zBgmEc85ATAgA697Lt0xWKgk/d9mhzUa8iu8RaRSvb+pQ
-        fqmrf8XgMUqvI71pAiV5zdKotkoEbJ7fkrfdlOneduK+P8AYkQwnYaO1ZN2fxw26yxH6OftKKiojc
-        tFAdIhmA==;
+        bh=3t6eU71lRjUzrJDVhnXtMZVERuAG0gMD+7bjUByhvLs=; b=2yf+DNRcDJmrd2cHCiHGWbJTpe
+        3NONZ8IUGCOtgAuKtV8RIMIFP/PjwwiksrWV58SP17dzTKLm5lZ20Kch/OtE9mPgr0zG2v+L2zIzm
+        /Q8GkLwj5ZD8vqCBhW7KeKfzBUJJV5CEqU1eX930lSZC4KbDZLZFB3fEGbogTiYDS/fsliae2pdAr
+        l1vce9wXj9d7H2ODoirZSgdNkn33HaAIK5uju+ogUOk1JlrRUJxX1zyTmGlp3z2fu8aUKJca83Gh1
+        wwF8tDkTmC5FSXp/6r+49b1UXp1GEQfVSGkPFflnoYEFT+bJ1Dlq7PDY3CQ15R9rpSFNjwNk39F+B
+        XDL+09DQ==;
 Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
         by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jGkTu-0003of-0Y; Tue, 24 Mar 2020 14:24:38 +0000
+        id 1jGkTv-0003om-3S; Tue, 24 Mar 2020 14:24:39 +0000
 Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 73517307945;
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 7A6B030794D;
         Tue, 24 Mar 2020 15:24:35 +0100 (CET)
 Received: by hirez.programming.kicks-ass.net (Postfix, from userid 0)
-        id 0D8E5286C13B4; Tue, 24 Mar 2020 15:24:35 +0100 (CET)
-Message-Id: <20200324142245.757214434@infradead.org>
+        id 14498286C13B6; Tue, 24 Mar 2020 15:24:35 +0100 (CET)
+Message-Id: <20200324142245.819003994@infradead.org>
 User-Agent: quilt/0.65
-Date:   Tue, 24 Mar 2020 14:56:11 +0100
+Date:   Tue, 24 Mar 2020 14:56:12 +0100
 From:   Peter Zijlstra <peterz@infradead.org>
 To:     x86@kernel.org
 Cc:     peterz@infradead.org, linux-kernel@vger.kernel.org,
@@ -43,7 +43,7 @@ Cc:     peterz@infradead.org, linux-kernel@vger.kernel.org,
         tglx@linutronix.de, mingo@kernel.org, namit@vmware.com,
         hpa@zytor.com, luto@kernel.org, ard.biesheuvel@linaro.org,
         jpoimboe@redhat.com
-Subject: [RESEND][PATCH v3 08/17] static_call: Avoid kprobes on inline static_call()s
+Subject: [RESEND][PATCH v3 09/17] x86/static_call: Add out-of-line static call implementation
 References: <20200324135603.483964896@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -52,170 +52,101 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Similar to how we disallow kprobes on any other dynamic text
-(ftrace/jump_label) also disallow kprobes on inline static_call()s.
+Add the x86 out-of-line static call implementation.  For each key, a
+permanent trampoline is created which is the destination for all static
+calls for the given key.  The trampoline has a direct jump which gets
+patched by static_call_update() when the destination function changes.
 
+Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
+[peterz: fixed trampoline, rewrote patching code]
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 ---
- arch/x86/kernel/kprobes/opt.c |    4 +-
- include/linux/static_call.h   |   11 +++++++
- kernel/kprobes.c              |    2 +
- kernel/static_call.c          |   64 ++++++++++++++++++++++++++++++++++++++++++
- 4 files changed, 80 insertions(+), 1 deletion(-)
+ arch/x86/Kconfig                   |    1 +
+ arch/x86/include/asm/static_call.h |   22 ++++++++++++++++++++++
+ arch/x86/kernel/Makefile           |    1 +
+ arch/x86/kernel/static_call.c      |   31 +++++++++++++++++++++++++++++++
+ 4 files changed, 55 insertions(+)
+ create mode 100644 arch/x86/include/asm/static_call.h
+ create mode 100644 arch/x86/kernel/static_call.c
 
---- a/arch/x86/kernel/kprobes/opt.c
-+++ b/arch/x86/kernel/kprobes/opt.c
-@@ -16,6 +16,7 @@
- #include <linux/kallsyms.h>
- #include <linux/ftrace.h>
- #include <linux/frame.h>
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@ -205,6 +205,7 @@ config X86
+ 	select HAVE_FUNCTION_ARG_ACCESS_API
+ 	select HAVE_STACKPROTECTOR		if CC_HAS_SANE_STACKPROTECTOR
+ 	select HAVE_STACK_VALIDATION		if X86_64
++	select HAVE_STATIC_CALL
+ 	select HAVE_RSEQ
+ 	select HAVE_SYSCALL_TRACEPOINTS
+ 	select HAVE_UNSTABLE_SCHED_CLOCK
+--- /dev/null
++++ b/arch/x86/include/asm/static_call.h
+@@ -0,0 +1,22 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++#ifndef _ASM_STATIC_CALL_H
++#define _ASM_STATIC_CALL_H
++
++#include <asm/text-patching.h>
++
++/*
++ * For CONFIG_HAVE_STATIC_CALL, this is a permanent trampoline which
++ * does a direct jump to the function.  The direct jump gets patched by
++ * static_call_update().
++ */
++#define ARCH_DEFINE_STATIC_CALL_TRAMP(name, func)			\
++	asm(".pushsection .text, \"ax\"				\n"	\
++	    ".align 4						\n"	\
++	    ".globl " STATIC_CALL_TRAMP_STR(name) "		\n"	\
++	    STATIC_CALL_TRAMP_STR(name) ":			\n"	\
++	    "	jmp.d32 " #func "				\n"	\
++	    ".type " STATIC_CALL_TRAMP_STR(name) ", @function	\n"	\
++	    ".size " STATIC_CALL_TRAMP_STR(name) ", . - " STATIC_CALL_TRAMP_STR(name) " \n" \
++	    ".popsection					\n")
++
++#endif /* _ASM_STATIC_CALL_H */
+--- a/arch/x86/kernel/Makefile
++++ b/arch/x86/kernel/Makefile
+@@ -63,6 +63,7 @@ obj-y			+= tsc.o tsc_msr.o io_delay.o rt
+ obj-y			+= pci-iommu_table.o
+ obj-y			+= resource.o
+ obj-y			+= irqflags.o
++obj-y			+= static_call.o
+ 
+ obj-y				+= process.o
+ obj-y				+= fpu/
+--- /dev/null
++++ b/arch/x86/kernel/static_call.c
+@@ -0,0 +1,31 @@
++// SPDX-License-Identifier: GPL-2.0
 +#include <linux/static_call.h>
- 
- #include <asm/text-patching.h>
- #include <asm/cacheflush.h>
-@@ -188,7 +189,8 @@ static int copy_optimized_instructions(u
- 	/* Check whether the address range is reserved */
- 	if (ftrace_text_reserved(src, src + len - 1) ||
- 	    alternatives_text_reserved(src, src + len - 1) ||
--	    jump_label_text_reserved(src, src + len - 1))
-+	    jump_label_text_reserved(src, src + len - 1) ||
-+	    static_call_text_reserved(src, src + len - 1))
- 		return -EBUSY;
- 
- 	return len;
---- a/include/linux/static_call.h
-+++ b/include/linux/static_call.h
-@@ -93,6 +93,7 @@ struct static_call_key {
- 
- extern void __static_call_update(struct static_call_key *key, void *tramp, void *func);
- extern int static_call_mod_init(struct module *mod);
-+extern int static_call_text_reserved(void *start, void *end);
- 
- #define DEFINE_STATIC_CALL(name, _func)					\
- 	DECLARE_STATIC_CALL(name, _func);				\
-@@ -137,6 +138,11 @@ void __static_call_update(struct static_
- 	cpus_read_unlock();
- }
- 
-+static inline int static_call_text_reserved(void *start, void *end)
++#include <linux/memory.h>
++#include <linux/bug.h>
++#include <asm/text-patching.h>
++
++static void __static_call_transform(void *insn, u8 opcode, void *func)
 +{
-+	return 0;
++	const void *code = text_gen_insn(opcode, (long)insn, (long)func);
++
++	if (WARN_ONCE(*(u8 *)insn != opcode,
++		      "unexpected static call insn opcode 0x%x at %pS\n",
++		      opcode, insn))
++		return;
++
++	if (memcmp(insn, code, CALL_INSN_SIZE) == 0)
++		return;
++
++	text_poke_bp(insn, code, CALL_INSN_SIZE, NULL);
 +}
 +
- #define EXPORT_STATIC_CALL(name)	EXPORT_SYMBOL(STATIC_CALL_TRAMP(name))
- #define EXPORT_STATIC_CALL_GPL(name)	EXPORT_SYMBOL_GPL(STATIC_CALL_TRAMP(name))
- 
-@@ -161,6 +167,11 @@ void __static_call_update(struct static_
- 	WRITE_ONCE(key->func, func);
- }
- 
-+static inline int static_call_text_reserved(void *start, void *end)
++void arch_static_call_transform(void *site, void *tramp, void *func)
 +{
-+	return 0;
++	mutex_lock(&text_mutex);
++
++	if (tramp)
++		__static_call_transform(tramp, JMP32_INSN_OPCODE, func);
++
++	mutex_unlock(&text_mutex);
 +}
-+
- #define EXPORT_STATIC_CALL(name)	EXPORT_SYMBOL(STATIC_CALL_NAME(name))
- #define EXPORT_STATIC_CALL_GPL(name)	EXPORT_SYMBOL_GPL(STATIC_CALL_NAME(name))
- 
---- a/kernel/kprobes.c
-+++ b/kernel/kprobes.c
-@@ -35,6 +35,7 @@
- #include <linux/ftrace.h>
- #include <linux/cpu.h>
- #include <linux/jump_label.h>
-+#include <linux/static_call.h>
- 
- #include <asm/sections.h>
- #include <asm/cacheflush.h>
-@@ -1539,6 +1540,7 @@ static int check_kprobe_address_safe(str
- 	if (!kernel_text_address((unsigned long) p->addr) ||
- 	    within_kprobe_blacklist((unsigned long) p->addr) ||
- 	    jump_label_text_reserved(p->addr, p->addr) ||
-+	    static_call_text_reserved(p->addr, p->addr) ||
- 	    find_bug((unsigned long)p->addr)) {
- 		ret = -EINVAL;
- 		goto out;
---- a/kernel/static_call.c
-+++ b/kernel/static_call.c
-@@ -204,8 +204,58 @@ static int __static_call_init(struct mod
- 	return 0;
- }
- 
-+static int addr_conflict(struct static_call_site *site, void *start, void *end)
-+{
-+	unsigned long addr = (unsigned long)static_call_addr(site);
-+
-+	if (addr <= (unsigned long)end &&
-+	    addr + CALL_INSN_SIZE > (unsigned long)start)
-+		return 1;
-+
-+	return 0;
-+}
-+
-+static int __static_call_text_reserved(struct static_call_site *iter_start,
-+				       struct static_call_site *iter_stop,
-+				       void *start, void *end)
-+{
-+	struct static_call_site *iter = iter_start;
-+
-+	while (iter < iter_stop) {
-+		if (addr_conflict(iter, start, end))
-+			return 1;
-+		iter++;
-+	}
-+
-+	return 0;
-+}
-+
- #ifdef CONFIG_MODULES
- 
-+static int __static_call_mod_text_reserved(void *start, void *end)
-+{
-+	struct module *mod;
-+	int ret;
-+
-+	preempt_disable();
-+	mod = __module_text_address((unsigned long)start);
-+	WARN_ON_ONCE(__module_text_address((unsigned long)end) != mod);
-+	if (!try_module_get(mod))
-+		mod = NULL;
-+	preempt_enable();
-+
-+	if (!mod)
-+		return 0;
-+
-+	ret = __static_call_text_reserved(mod->static_call_sites,
-+			mod->static_call_sites + mod->num_static_call_sites,
-+			start, end);
-+
-+	module_put(mod);
-+
-+	return ret;
-+}
-+
- static int static_call_add_module(struct module *mod)
- {
- 	return __static_call_init(mod, mod->static_call_sites,
-@@ -275,6 +325,20 @@ static struct notifier_block static_call
- 
- #endif /* CONFIG_MODULES */
- 
-+int static_call_text_reserved(void *start, void *end)
-+{
-+	int ret = __static_call_text_reserved(__start_static_call_sites,
-+			__stop_static_call_sites, start, end);
-+
-+	if (ret)
-+		return ret;
-+
-+#ifdef CONFIG_MODULES
-+	ret = __static_call_mod_text_reserved(start, end);
-+#endif
-+	return ret;
-+}
-+
- static void __init static_call_init(void)
- {
- 	int ret;
++EXPORT_SYMBOL_GPL(arch_static_call_transform);
 
 
