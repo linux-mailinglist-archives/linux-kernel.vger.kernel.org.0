@@ -2,43 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 50E3E190F88
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 14:29:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 921EF190ED4
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 14:15:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728945AbgCXNUi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 09:20:38 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41932 "EHLO mail.kernel.org"
+        id S1728239AbgCXNPT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 09:15:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34092 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727931AbgCXNUg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 09:20:36 -0400
+        id S1727561AbgCXNPQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Mar 2020 09:15:16 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E8639206F6;
-        Tue, 24 Mar 2020 13:20:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 17FBE2137B;
+        Tue, 24 Mar 2020 13:15:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585056035;
-        bh=0TNe39U/n3LLxJ2voepxX+iI1yVqAXFhRSuLS/oi794=;
+        s=default; t=1585055715;
+        bh=ifh5+NO2a8Bf7LjnkrDL9Kt1p7E0gJkTC3guzHdEZxk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=zOQjYC5lZS7bVzVJbhQdDvPgHjoBKtYV9HZnsBoGeYHG0BKvQwNNYFQceLXmEoAi6
-         Ess/ghMWrP77f4ccnwZRRM7E1hVo9yaBBSWtIRQ5tf0pMkTlVBi8etpCYDo6o6XRcZ
-         cZM5Pd2xAykYxuFaZsO0ulChdTJ9TvfnHQ/XXBMs=
+        b=CI6nO3J7GZjGG/epma1MJqPNOcT6z8DG2ZIfTMmFT/XFBDsKAuCCnN/jg+LLP5Nr/
+         rkSsi/tXN1Y2Z95HKlayhYQrTVK4/1h4usc+QAxgZXc9v/1rlY33rZ+6Xrq9n5PKMu
+         tUWHLWEFi9xM9ZxHEgrH9M/erSRJVDwy91Y5OLvU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chunguang Xu <brookxu@tencent.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 5.4 084/102] memcg: fix NULL pointer dereference in __mem_cgroup_usage_unregister_event
+        stable@vger.kernel.org,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Masahiro Yamada <masahiroy@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 55/65] kbuild: Disable -Wpointer-to-enum-cast
 Date:   Tue, 24 Mar 2020 14:11:16 +0100
-Message-Id: <20200324130815.057687859@linuxfoundation.org>
+Message-Id: <20200324130803.760587988@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.2
-In-Reply-To: <20200324130806.544601211@linuxfoundation.org>
-References: <20200324130806.544601211@linuxfoundation.org>
+In-Reply-To: <20200324130756.679112147@linuxfoundation.org>
+References: <20200324130756.679112147@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -48,120 +45,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chunguang Xu <brookxu@tencent.com>
+From: Nathan Chancellor <natechancellor@gmail.com>
 
-commit 7d36665a5886c27ca4c4d0afd3ecc50b400f3587 upstream.
+commit 82f2bc2fcc0160d6f82dd1ac64518ae0a4dd183f upstream.
 
-An eventfd monitors multiple memory thresholds of the cgroup, closes them,
-the kernel deletes all events related to this eventfd.  Before all events
-are deleted, another eventfd monitors the memory threshold of this cgroup,
-leading to a crash:
+Clang's -Wpointer-to-int-cast deviates from GCC in that it warns when
+casting to enums. The kernel does this in certain places, such as device
+tree matches to set the version of the device being used, which allows
+the kernel to avoid using a gigantic union.
 
-  BUG: kernel NULL pointer dereference, address: 0000000000000004
-  #PF: supervisor write access in kernel mode
-  #PF: error_code(0x0002) - not-present page
-  PGD 800000033058e067 P4D 800000033058e067 PUD 3355ce067 PMD 0
-  Oops: 0002 [#1] SMP PTI
-  CPU: 2 PID: 14012 Comm: kworker/2:6 Kdump: loaded Not tainted 5.6.0-rc4 #3
-  Hardware name: LENOVO 20AWS01K00/20AWS01K00, BIOS GLET70WW (2.24 ) 05/21/2014
-  Workqueue: events memcg_event_remove
-  RIP: 0010:__mem_cgroup_usage_unregister_event+0xb3/0x190
-  RSP: 0018:ffffb47e01c4fe18 EFLAGS: 00010202
-  RAX: 0000000000000001 RBX: ffff8bb223a8a000 RCX: 0000000000000001
-  RDX: 0000000000000001 RSI: ffff8bb22fb83540 RDI: 0000000000000001
-  RBP: ffffb47e01c4fe48 R08: 0000000000000000 R09: 0000000000000010
-  R10: 000000000000000c R11: 071c71c71c71c71c R12: ffff8bb226aba880
-  R13: ffff8bb223a8a480 R14: 0000000000000000 R15: 0000000000000000
-  FS:  0000000000000000(0000) GS:ffff8bb242680000(0000) knlGS:0000000000000000
-  CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-  CR2: 0000000000000004 CR3: 000000032c29c003 CR4: 00000000001606e0
-  Call Trace:
-    memcg_event_remove+0x32/0x90
-    process_one_work+0x172/0x380
-    worker_thread+0x49/0x3f0
-    kthread+0xf8/0x130
-    ret_from_fork+0x35/0x40
-  CR2: 0000000000000004
+https://elixir.bootlin.com/linux/v5.5.8/source/drivers/ata/ahci_brcm.c#L428
+https://elixir.bootlin.com/linux/v5.5.8/source/drivers/ata/ahci_brcm.c#L402
+https://elixir.bootlin.com/linux/v5.5.8/source/include/linux/mod_devicetable.h#L264
 
-We can reproduce this problem in the following ways:
+To avoid a ton of false positive warnings, disable this particular part
+of the warning, which has been split off into a separate diagnostic so
+that the entire warning does not need to be turned off for clang. It
+will be visible under W=1 in case people want to go about fixing these
+easily and enabling the warning treewide.
 
-1. We create a new cgroup subdirectory and a new eventfd, and then we
-   monitor multiple memory thresholds of the cgroup through this eventfd.
-
-2.  closing this eventfd, and __mem_cgroup_usage_unregister_event ()
-   will be called multiple times to delete all events related to this
-   eventfd.
-
-The first time __mem_cgroup_usage_unregister_event() is called, the
-kernel will clear all items related to this eventfd in thresholds->
-primary.
-
-Since there is currently only one eventfd, thresholds-> primary becomes
-empty, so the kernel will set thresholds-> primary and hresholds-> spare
-to NULL.  If at this time, the user creates a new eventfd and monitor
-the memory threshold of this cgroup, kernel will re-initialize
-thresholds-> primary.
-
-Then when __mem_cgroup_usage_unregister_event () is called for the
-second time, because thresholds-> primary is not empty, the system will
-access thresholds-> spare, but thresholds-> spare is NULL, which will
-trigger a crash.
-
-In general, the longer it takes to delete all events related to this
-eventfd, the easier it is to trigger this problem.
-
-The solution is to check whether the thresholds associated with the
-eventfd has been cleared when deleting the event.  If so, we do nothing.
-
-[akpm@linux-foundation.org: fix comment, per Kirill]
-Fixes: 907860ed381a ("cgroups: make cftype.unregister_event() void-returning")
-Signed-off-by: Chunguang Xu <brookxu@tencent.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Acked-by: Michal Hocko <mhocko@suse.com>
-Acked-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-Cc: Johannes Weiner <hannes@cmpxchg.org>
-Cc: Vladimir Davydov <vdavydov.dev@gmail.com>
-Cc: <stable@vger.kernel.org>
-Link: http://lkml.kernel.org/r/077a6f67-aefa-4591-efec-f2f3af2b0b02@gmail.com
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Cc: stable@vger.kernel.org
+Link: https://github.com/ClangBuiltLinux/linux/issues/887
+Link: https://github.com/llvm/llvm-project/commit/2a41b31fcdfcb67ab7038fc2ffb606fd50b83a84
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- mm/memcontrol.c |   10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+ scripts/Makefile.extrawarn | 1 +
+ 1 file changed, 1 insertion(+)
 
---- a/mm/memcontrol.c
-+++ b/mm/memcontrol.c
-@@ -4151,7 +4151,7 @@ static void __mem_cgroup_usage_unregiste
- 	struct mem_cgroup_thresholds *thresholds;
- 	struct mem_cgroup_threshold_ary *new;
- 	unsigned long usage;
--	int i, j, size;
-+	int i, j, size, entries;
- 
- 	mutex_lock(&memcg->thresholds_lock);
- 
-@@ -4171,14 +4171,20 @@ static void __mem_cgroup_usage_unregiste
- 	__mem_cgroup_threshold(memcg, type == _MEMSWAP);
- 
- 	/* Calculate new number of threshold */
--	size = 0;
-+	size = entries = 0;
- 	for (i = 0; i < thresholds->primary->size; i++) {
- 		if (thresholds->primary->entries[i].eventfd != eventfd)
- 			size++;
-+		else
-+			entries++;
- 	}
- 
- 	new = thresholds->spare;
- 
-+	/* If no items related to eventfd have been cleared, nothing to do */
-+	if (!entries)
-+		goto unlock;
-+
- 	/* Set thresholds array to NULL if we don't have thresholds */
- 	if (!size) {
- 		kfree(new);
+diff --git a/scripts/Makefile.extrawarn b/scripts/Makefile.extrawarn
+index 8d5357053f865..486e135d3e30a 100644
+--- a/scripts/Makefile.extrawarn
++++ b/scripts/Makefile.extrawarn
+@@ -72,5 +72,6 @@ KBUILD_CFLAGS += $(call cc-disable-warning, format)
+ KBUILD_CFLAGS += $(call cc-disable-warning, sign-compare)
+ KBUILD_CFLAGS += $(call cc-disable-warning, format-zero-length)
+ KBUILD_CFLAGS += $(call cc-disable-warning, uninitialized)
++KBUILD_CFLAGS += $(call cc-disable-warning, pointer-to-enum-cast)
+ endif
+ endif
+-- 
+2.20.1
+
 
 
