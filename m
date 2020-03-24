@@ -2,103 +2,210 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BB6151916AA
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 17:43:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6F6F519167E
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 17:35:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727939AbgCXQlZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 12:41:25 -0400
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:40949 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725767AbgCXQlY (ORCPT
+        id S1727456AbgCXQdk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 12:33:40 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:35486 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727161AbgCXQdk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 12:41:24 -0400
-Received: by mail-ed1-f67.google.com with SMTP id w26so15126670edu.7
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Mar 2020 09:41:23 -0700 (PDT)
+        Tue, 24 Mar 2020 12:33:40 -0400
+Received: by mail-pg1-f194.google.com with SMTP id 7so9301645pgr.2;
+        Tue, 24 Mar 2020 09:33:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
+        d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=XEAcgrtzlQ0nzsuAIOz6lRZnZyzpLkzKdjSUsUmbaiY=;
-        b=DyaeVbt/mnGOvxpYTVSUTvxDPVQYVS3x1eaUPvsh7Rnx3FOM/j8k6No0xzupqKHlBl
-         grkrG08s2C8Y2S6RpApRxXhiSNAT115kCoNJQmXFlNcT27zq7jafr0hzEJ1L4puKWJWF
-         n5mHXzOpLZGae3EMG6VJK7HG0w8XHQ66cfXo4=
+         :cc;
+        bh=iyN1hBaAFSOHm3J/cqXgvfDBZR4y77oHwv+quvoJ2Ow=;
+        b=n0yORBkxyDKz3l+5kEyjxxdVxjiqvfxWjr9KzX7zthOx3zoi4FaxmCBPHrzaATQ+DR
+         uFAmkKdf89YlaAmcZ+BiKZbr/41CEZDvzGmVgMyNiNh0qgjSIYLZWMRbyXHAAz5TKs/3
+         d1TMGFu+nVqG6Gu94QrgQKIZ1qdQFlZneEAOZLf+aYtLuVr9GDnehP50IUA1MzFSNIb6
+         ttXQ9ZhcbPjKHY0F4U5hVNA5OflhweFQ4r/p+8eeVnLL0tfr9f2PzMzGfQ9PKnJyvGKL
+         vBAZq2R4qITHVrEOtuact0xmIaJyrCzo4+qX28D/RdlSLLTnxXHtHwqhT/othhzKHPPG
+         gTKg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=XEAcgrtzlQ0nzsuAIOz6lRZnZyzpLkzKdjSUsUmbaiY=;
-        b=MMsdo1H8SJINLzkjDiZ8A0lrD3E6Gs7yUrGy+pxKqSa6qXnpTLWGkac6QiIo8tvjYI
-         Nf8Hz2TVrxi93c6VMAc4opt9BhL8TWgL+BnjTapcwr3CeZ4MrykZ27M1odRSG1Flrrxc
-         ij0f9Cxw9+OVwo7EcGFxyfpimM0qj/8hsOKZ/CKUQsVpcLW3a4mEga6uMIqkeUMjggZe
-         D/2F09A1RNCfJq+NTDJpBS0kBSa0VHrdeW4ekQzQYdrfWZUok87QBzNwAMbhytnameJ0
-         FFsOd28FlIJHYBg96F9uzUs3xsVFJ/vpmZlRQzUdWzEDZooq7WwvZsxoas/oZK5XeD4f
-         /CUg==
-X-Gm-Message-State: ANhLgQ0O5UG1VXq2U89r+Y4w3R/6LJ7WSRj61VABKg7FdZQQoyMijapO
-        y8GD6EfWNs6KOrhZMY86t/0BpUFNQVo=
-X-Google-Smtp-Source: ADFU+vv3VjHxlQOAr5fL8O8m2cvtardGhCI2ub8u0ASJfzBqA92/e1KhAPqG/9BXRvB6R9qj9LhaPg==
-X-Received: by 2002:a50:f383:: with SMTP id g3mr4367772edm.316.1585068082741;
-        Tue, 24 Mar 2020 09:41:22 -0700 (PDT)
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com. [209.85.208.45])
-        by smtp.gmail.com with ESMTPSA id t13sm1399435edw.49.2020.03.24.09.41.22
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 24 Mar 2020 09:41:22 -0700 (PDT)
-Received: by mail-ed1-f45.google.com with SMTP id i24so21504844eds.1
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Mar 2020 09:41:22 -0700 (PDT)
-X-Received: by 2002:a05:651c:50e:: with SMTP id o14mr17538229ljp.241.1585067617805;
- Tue, 24 Mar 2020 09:33:37 -0700 (PDT)
+         :message-id:subject:to:cc;
+        bh=iyN1hBaAFSOHm3J/cqXgvfDBZR4y77oHwv+quvoJ2Ow=;
+        b=RbJIuzVftmKzCaoxMAteLR8vkyZrsG2bfr+HvxhI/IB3adsITrc70DxQASq2eDJIH1
+         I3KHdHwM1S06/hdxd898V5KttFl5eDX6gWpvy8vAeKlR+RhIuZHg/zJfeMw3s2Ph5Txc
+         sGAkSGnK3x67Qw69bZ02AsHCj0V8m9I6hXQnu8eKL2UT7F588ea5albA2JBuMve55wOB
+         ZEtY++GHlVboNkSZV2h82wtVWVh3xLS/r6r69VaroHJr+4LkbMNfJ3MzXbJZfnziwrhj
+         HfPAcga6fVYrpe+hFQuOfz375rXj28uExLreCRTrJJy1mLeNkRe8ZDqt9g89/eeU8K7n
+         vRVw==
+X-Gm-Message-State: ANhLgQ3Wo4Yooh8t65MxlktFKASkAplOS3IcLTS1jNlcb86r3f5HYYlj
+        nda5PhrUHNkcPlEm2vOcZUd6wW2nqPWSeKH95YEpAOtXuB1a/g==
+X-Google-Smtp-Source: ADFU+vunIaPHWUUqedQrpgKWtpPoP3M7Xizwmytl/c1HZPLqo46nZbzfQGaudS9BltKy1Pv3nq8w/yYVltMJ7cU06ZA=
+X-Received: by 2002:a63:798a:: with SMTP id u132mr29374862pgc.203.1585067618685;
+ Tue, 24 Mar 2020 09:33:38 -0700 (PDT)
 MIME-Version: 1.0
-References: <CAHk-=wiumU4QxAkT+GqhBt5f-iUsoLNC0sqVfRKp0xypA6aNYg@mail.gmail.com>
- <86D80EA7-9087-4042-8119-12DD5FCEAA87@amacapital.net>
-In-Reply-To: <86D80EA7-9087-4042-8119-12DD5FCEAA87@amacapital.net>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Tue, 24 Mar 2020 09:33:21 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wim-2aaFi_GNs5KmX4ykkgQjnRo5D4B9ZK+1Oz=kpp_2A@mail.gmail.com>
-Message-ID: <CAHk-=wim-2aaFi_GNs5KmX4ykkgQjnRo5D4B9ZK+1Oz=kpp_2A@mail.gmail.com>
-Subject: Re: [RESEND][PATCH v3 14/17] static_call: Add static_cond_call()
-To:     Andy Lutomirski <luto@amacapital.net>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
+References: <1585064650-16235-1-git-send-email-jprakash@codeaurora.org> <1585064650-16235-4-git-send-email-jprakash@codeaurora.org>
+In-Reply-To: <1585064650-16235-4-git-send-email-jprakash@codeaurora.org>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Tue, 24 Mar 2020 18:33:31 +0200
+Message-ID: <CAHp75Vfk1DZ+bz6h_prm6Tp7kXos6jio5JCpg6=wvGRmDPTBsw@mail.gmail.com>
+Subject: Re: [PATCH 3/3] iio: adc: Add support for PMIC7 ADC
+To:     Jishnu Prakash <jprakash@codeaurora.org>
+Cc:     agross@kernel.org, Bjorn Andersson <bjorn.andersson@linaro.org>,
+        devicetree <devicetree@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Daniel Bristot de Oliveira <bristot@redhat.com>,
-        Jason Baron <jbaron@akamai.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>, Nadav Amit <namit@vmware.com>,
-        Peter Anvin <hpa@zytor.com>,
-        Andrew Lutomirski <luto@kernel.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>
+        Matthias Kaehlcke <mka@chromium.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        smohanad@codeaurora.org, kgunda@codeaurora.org,
+        aghayal@codeaurora.org, Jonathan Cameron <jic23@kernel.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-msm@vger.kernel.org,
+        linux-iio <linux-iio@vger.kernel.org>,
+        linux-arm-msm-owner@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 24, 2020 at 9:22 AM Andy Lutomirski <luto@amacapital.net> wrote=
-:
+On Tue, Mar 24, 2020 at 5:46 PM Jishnu Prakash <jprakash@codeaurora.org> wrote:
 >
-> I haven=E2=80=99t checked if static calls currently support return values=
-, but
-> the conditional case only makes sense for functions that return void.
+> The ADC architecture on PMIC7 is changed as compared to PMIC5. The
+> major change from PMIC5 is that all SW communication to ADC goes through
+> PMK8350, which communicates with other PMICs through PBS when the ADC
+> on PMK8350 works in master mode. The SID register is used to identify the
+> PMICs with which the PBS needs to communicate. Add support for the same.
 >
-> Aside from that, it might be nice for passing NULL in to warn or bug
-> when the NULL pointer is stored instead of silently NOPping out the
-> call in cases where having a real implementation isn=E2=80=99t optional.
+> In addition, add definitions for ADC channels and virtual channel
+> definitions per PMIC, to be used by ADC clients for PMIC7.
 
-Both good points. I take back my question.
+...
 
-And it aside from warning about passing in NULL then it doesn't work,
-I wonder if we could warn - at build time - when then using the COND
-version with a function that doesn't return void?
+> +#define ADC_CHANNEL_OFFSET                     0x8
+> +#define ADC_CHANNEL_MASK                       0xff
 
-Of course, one alternative is to just say "instead of using NOP, use
-'xorl %eax,%eax'", and then we'd have the rule that a NULL conditional
-function returns zero (or NULL).
+GENMASK()
 
-I _think_ a "xorl %eax,%eax ; retq" is just three bytes and would fit
-in the tailcall slot too.
+...
 
-                Linus
+> +#define ADC_APP_SID                            0x40
+> +#define ADC_APP_SID_MASK                       0xf
+
+GENMASK()
+
+> +#define ADC7_CONV_TIMEOUT                      msecs_to_jiffies(10)
+
+Useless.
+
+...
+
+> +       buf[1] &= (u8) ~ADC5_USR_FAST_AVG_CTL_SAMPLES_MASK;
+
+Use '0xFF ^ _MASK' instead of casting.
+
+...
+
+> +       buf[3] &= (u8) ~ADC5_USR_HW_SETTLE_DELAY_MASK;
+
+Ditto.
+
+...
+
+> +       ret = adc5_write(adc, ADC5_USR_CONV_REQ, &conv_req, 1);
+> +
+> +       return ret;
+
+return adc5_write(...);
+
+...
+
+> +               pr_err("ADC configure failed with %d\n", ret);
+
+Use dev_*() instead everywhere.
+
+...
+
+> +       /* No support for polling mode at present*/
+> +       wait_for_completion_timeout(&adc->complete,
+> +                                       ADC7_CONV_TIMEOUT);
+
+One line. The limit is 80 and it can be bend in some cases a little bit.
+
+...
+
+> +               v_channel = ((adc->chan_props[i].sid << ADC_CHANNEL_OFFSET) |
+> +                       adc->chan_props[i].channel);
+
+Too many parentheses.
+
+...
+
+> +               sid = (chan >> ADC_CHANNEL_OFFSET);
+> +               chan = (chan & ADC_CHANNEL_MASK);
+
+Ditto.
+
+...
+
+> +                       (adc->is_pmic7))
+
+Ditto.
+
+...
+
+> +       if (of_device_is_compatible(node, "qcom,spmi-adc7")) {
+> +               indio_dev->info = &adc7_info;
+> +               adc->is_pmic7 = true;
+> +       } else {
+> +               indio_dev->info = &adc5_info;
+> +       }
+
+Hmm... I would rather put this as driver_data in ID structure(s).
+
+...
+
+> +static int adc5_exit(struct platform_device *pdev)
+> +{
+> +       struct adc5_chip *adc = platform_get_drvdata(pdev);
+> +
+
+> +       mutex_destroy(&adc->lock);
+
+Are you sure you will have no race conditions? Does this driver use IRQs?
+
+> +       return 0;
+> +}
+
+...
+
+> +       s64 resistance = 0;
+
+= adc_code  // or sign extended variant if needed.
+
+> +       /* (ADC code * R_PULLUP (100Kohm)) / (full_scale_code - ADC code)*/
+
+> +       resistance = (s64) adc_code * R_PU_100K;
+> +       resistance = div64_s64(resistance, (RATIO_MAX_ADC7 - adc_code));
+
+ resistance *= R_PU_100K;
+ resistance = div64_s64(resistance, RATIO_MAX_ADC7 - adc_code);
+
+...
+
+> +       int voltage, vtemp0, temp, i = 0;
+
+> +       while (i < ARRAY_SIZE(adcmap7_die_temp)) {
+> +               if (adcmap7_die_temp[i].x > voltage)
+> +                       break;
+> +               i++;
+> +       }
+
+for loop (one line less, more explicit initial value assignment)?
+
+-- 
+With Best Regards,
+Andy Shevchenko
