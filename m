@@ -2,118 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B583C19193E
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 19:35:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 337D6191941
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 19:35:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727755AbgCXSe5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 14:34:57 -0400
-Received: from mail-pj1-f65.google.com ([209.85.216.65]:51299 "EHLO
-        mail-pj1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727543AbgCXSe4 (ORCPT
+        id S1727926AbgCXSfU convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 24 Mar 2020 14:35:20 -0400
+Received: from coyote.holtmann.net ([212.227.132.17]:42502 "EHLO
+        mail.holtmann.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727398AbgCXSfU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 14:34:56 -0400
-Received: by mail-pj1-f65.google.com with SMTP id hg10so1981110pjb.1
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Mar 2020 11:34:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=mx9h2G9Pa234gVddEgnTViqlM2nzOYE5T6EE2ivPTBA=;
-        b=X8BpTUshqVTp5ZrfGENJjA7S8D3PMkC1H9raELqRdSdjLNe5sZB5Y4RMX/nghlzJ8E
-         1CsWUkd+SHVMvC1UIUpx6JTnz1l2RNGsNZUks9+wLQ7kIaqQcNp/2bungkmZ4F+++aNv
-         F9F+k+zvWPAIpXVP3evPY5DDeIBLOdTEoj2Ac=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=mx9h2G9Pa234gVddEgnTViqlM2nzOYE5T6EE2ivPTBA=;
-        b=BdShQFJZM8ygIMAefJtQv3q1dA557HS/ak5OK1g4cnHil6+fym6yoN3LqR/WDpKxFK
-         bK7MSO+A6jgjNMYe7zsymGu6yH0z/xS3HCFpLjTbpnuEnQu0iuoA+aWjrLHWh6Ym2FNi
-         oF7iyZD81kRz+5CP9q1Ipm/3ONqPYYvJ6GgPRUQzgq1astD5xvCbwG+ljhzXh2kxfUUH
-         /MTUOpLgISedJkqN7SN2qkrwnWREZ5uD1VX5g7hd7b5A1xtt7dGriBAeAUvF+gQkixeY
-         n22VEJvRqyYhbKol3W9RNNvKQjGJ9InW16WC0oTjiV/sTl1df+xMkKQx9eygfWbLSWMq
-         t/Yw==
-X-Gm-Message-State: ANhLgQ0qmX2yp6njtY8o2JOEmgOyafO5qFVF0DkLBKLIZe7wTyS+/l1y
-        eCIP+qUBDdTT+PazNwizuMequA==
-X-Google-Smtp-Source: ADFU+vuY4HhM8vNaIQSER7/NiwCNGWQLQ6U2UpEtoYs0U+twgNdazhReNufRdZraq2u/dEMlw6NdIQ==
-X-Received: by 2002:a17:902:850a:: with SMTP id bj10mr27476778plb.28.1585074894587;
-        Tue, 24 Mar 2020 11:34:54 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id x135sm15801559pgx.41.2020.03.24.11.34.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Mar 2020 11:34:53 -0700 (PDT)
-Date:   Tue, 24 Mar 2020 11:34:52 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     KP Singh <kpsingh@chromium.org>
-Cc:     Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Brendan Jackman <jackmanb@google.com>,
-        Florent Revest <revest@google.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        James Morris <jmorris@namei.org>, Paul Turner <pjt@google.com>,
-        Jann Horn <jannh@google.com>,
-        Florent Revest <revest@chromium.org>,
-        Brendan Jackman <jackmanb@chromium.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Paul Moore <paul@paul-moore.com>
-Subject: Re: [PATCH bpf-next v5 4/7] bpf: lsm: Implement attach, detach and
- execution
-Message-ID: <202003241133.16C02BE5B@keescook>
-References: <CAEjxPJ4MukexdmAD=py0r7vkE6vnn6T1LVcybP_GSJYsAdRuxA@mail.gmail.com>
- <20200324145003.GA2685@chromium.org>
- <CAEjxPJ4YnCCeQUTK36Ao550AWProHrkrW1a6K5RKuKYcPcfhyA@mail.gmail.com>
- <d578d19f-1d3b-f60d-f803-2fcb46721a4a@schaufler-ca.com>
- <CAEjxPJ59wijpB=wa4ZhPyX_PRXrRAX2+PO6e8+f25wrb9xndRA@mail.gmail.com>
- <202003241100.279457EF@keescook>
- <20200324180652.GA11855@chromium.org>
- <CAEjxPJ7ebh1FHBjfuoWquFLJi0TguipfRq5ozaSepLVt8+qaMQ@mail.gmail.com>
- <20200324182759.GA5557@chromium.org>
- <20200324183130.GA6784@chromium.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20200324183130.GA6784@chromium.org>
+        Tue, 24 Mar 2020 14:35:20 -0400
+Received: from marcel-macbook.fritz.box (p4FEFC5A7.dip0.t-ipconnect.de [79.239.197.167])
+        by mail.holtmann.org (Postfix) with ESMTPSA id C8009CECBE;
+        Tue, 24 Mar 2020 19:44:49 +0100 (CET)
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 13.0 \(3608.60.0.2.5\))
+Subject: Re: [PATCH v1 1/2] Bluetooth: btusb: Indicate Microsoft vendor
+ extension for Intel 9460/9560 and 9160/9260
+From:   Marcel Holtmann <marcel@holtmann.org>
+In-Reply-To: <CALWDO_U5Cnt3_Ss2QQNhtuKS_8qq7oyNH4d97J68pmbmQMe=3w@mail.gmail.com>
+Date:   Tue, 24 Mar 2020 19:35:17 +0100
+Cc:     Joe Perches <joe@perches.com>,
+        Miao-chen Chou <mcchou@chromium.org>,
+        Bluetooth Kernel Mailing List 
+        <linux-bluetooth@vger.kernel.org>,
+        Luiz Augusto von Dentz <luiz.von.dentz@intel.com>,
+        Alain Michaud <alainm@chromium.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Johan Hedberg <johan.hedberg@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        netdev <netdev@vger.kernel.org>
+Content-Transfer-Encoding: 8BIT
+Message-Id: <643C6020-2FC5-4EEA-8F64-5D4B7F9258A4@holtmann.org>
+References: <20200323072824.254495-1-mcchou@chromium.org>
+ <20200323002820.v1.1.I0e975833a6789e8acc74be7756cd54afde6ba98c@changeid>
+ <04021BE3-63F7-4B19-9F0E-145785594E8C@holtmann.org>
+ <421d27670f2736c88e8c0693e3ff7c0dcfceb40b.camel@perches.com>
+ <57C56801-7F3B-478A-83E9-1D2376C60666@holtmann.org>
+ <03547be94c4944ca672c7aef2dd38b0fb1eedc84.camel@perches.com>
+ <CALWDO_U5Cnt3_Ss2QQNhtuKS_8qq7oyNH4d97J68pmbmQMe=3w@mail.gmail.com>
+To:     Alain Michaud <alainmichaud@google.com>
+X-Mailer: Apple Mail (2.3608.60.0.2.5)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 24, 2020 at 07:31:30PM +0100, KP Singh wrote:
-> On 24-Mär 19:27, KP Singh wrote:
-> > We do not have a specific capable check for BPF_PROG_TYPE_LSM programs
-> > now. There is a general check which requires CAP_SYS_ADMIN when
-> > unprivileged BPF is disabled:
-> > 
-> > in kernel/bpf/sycall.c:
-> > 
-> >         if (sysctl_unprivileged_bpf_disabled && !capable(CAP_SYS_ADMIN))
-> > 	        return -EPERM;
-> > 
-> > AFAIK, Most distros disable unprivileged eBPF.
-> > 
-> > Now that I look at this, I think we might need a CAP_MAC_ADMIN check
-> > though as unprivileged BPF being enabled will result in an
-> > unprivileged user being able to load MAC policies.
-> 
-> Actually we do have an extra check for loading BPF programs:
-> 
-> 
-> in kernel/bpf/syscall.c:bpf_prog_load
-> 
-> 	if (type != BPF_PROG_TYPE_SOCKET_FILTER &&
-> 	    type != BPF_PROG_TYPE_CGROUP_SKB &&
-> 	    !capable(CAP_SYS_ADMIN))
-> 		return -EPERM;
-> 
-> Do you think we still need a CAP_MAC_ADMIN check for LSM programs?
+Hi Alain,
 
-IMO, these are distinct privileges on the non-SELinux system. I think
-your patch is fine as-is.
+>>>>>> This adds a bit mask of driver_info for Microsoft vendor extension and
+>>>>>> indicates the support for Intel 9460/9560 and 9160/9260. See
+>>>>>> https://docs.microsoft.com/en-us/windows-hardware/drivers/bluetooth/
+>>>>>> microsoft-defined-bluetooth-hci-commands-and-events for more information
+>>>>>> about the extension. This was verified with Intel ThunderPeak BT controller
+>>>>>> where msft_vnd_ext_opcode is 0xFC1E.
+>>>> []
+>>>>>> diff --git a/include/net/bluetooth/hci_core.h b/include/net/bluetooth/hci_core.h
+>>>> []
+>>>>>> @@ -315,6 +315,10 @@ struct hci_dev {
+>>>>>>        __u8            ssp_debug_mode;
+>>>>>>        __u8            hw_error_code;
+>>>>>>        __u32           clock;
+>>>>>> +       __u16           msft_vnd_ext_opcode;
+>>>>>> +       __u64           msft_vnd_ext_features;
+>>>>>> +       __u8            msft_vnd_ext_evt_prefix_len;
+>>>>>> +       void            *msft_vnd_ext_evt_prefix;
+>>>> 
+>>>> msft is just another vendor.
+>>>> 
+>>>> If there are to be vendor extensions, this should
+>>>> likely use a blank line above and below and not
+>>>> be prefixed with msft_
+>>> 
+>>> there are other vendors, but all of them are different. So this needs to be prefixed with msft_ actually. But I agree that having empty lines above and below makes it more readable.
+>> 
+>> So struct hci_dev should become a clutter
+>> of random vendor extensions?
+>> 
+>> Perhaps there should instead be something like
+>> an array of char at the end of the struct and
+>> various vendor specific extensions could be
+>> overlaid on that array or just add a void *
+>> to whatever info that vendors require.
+> I don't particularly like trailing buffers, but I agree we could
+> possibly organize this a little better by with a struct.  something
+> like:
+> 
+> struct msft_vnd_ext {
+>    bool              supported; // <-- Clearly calls out if the
+> extension is supported.
+>    __u16           msft_vnd_ext_opcode; // <-- Note that this also
+> needs to be provided by the driver.  I don't recommend we have this
+> read from the hardware since we just cause an extra redirection that
+> isn't necessary.  Ideally, this should come from the usb_table const.
 
--- 
-Kees Cook
+Actually supported == false is the same as opcode == 0x0000. And supported == true is opcode != 0x0000.
+
+>    __u64           msft_vnd_ext_features;
+>    __u8             msft_vnd_ext_evt_prefix_len;
+>    void             *msft_vnd_ext_evt_prefix;
+> };
+> 
+> And then simply add the struct msft_vnd_ext (and any others) to hci_dev.
+
+Anyway, Lets keep these for now as hci_dev->msft_vnd_ext_*. We can fix this up later without any impact.
+
+Regards
+
+Marcel
+
