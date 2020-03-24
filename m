@@ -2,159 +2,146 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 05BA2191397
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 15:50:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EF99A191395
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 15:50:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728130AbgCXOuQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 10:50:16 -0400
-Received: from us-smtp-delivery-74.mimecast.com ([216.205.24.74]:29816 "EHLO
-        us-smtp-delivery-74.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727065AbgCXOuO (ORCPT
+        id S1727966AbgCXOuM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 10:50:12 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:36251 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727837AbgCXOuM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 10:50:14 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1585061412;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=zI1iQYeYC9lt1kBrjAHropMSeNOxmOibl4mmPnXMvvM=;
-        b=ekq2UcYP+UPerQIq4lgF2ENtrMjxRPcI49yhNpx+yD0xmG0DyWFL+7WF6hEaYkwzVQPFAF
-        G5qiXLHQWdcwhUKLATWMkt9pzzH1EBubZhL9wcebnMSzjim1dNMVclR8/Q+UOENqlJDwr5
-        OtteiYk1fD3utmBepJswBqK1sR0lkoE=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-401-dxBHpPlMMnKjecfa07nMQw-1; Tue, 24 Mar 2020 10:50:08 -0400
-X-MC-Unique: dxBHpPlMMnKjecfa07nMQw-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 41EB58018A2;
-        Tue, 24 Mar 2020 14:50:05 +0000 (UTC)
-Received: from w520.home (ovpn-112-162.phx2.redhat.com [10.3.112.162])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id A77B4171B1;
-        Tue, 24 Mar 2020 14:49:54 +0000 (UTC)
-Date:   Tue, 24 Mar 2020 08:49:54 -0600
-From:   Alex Williamson <alex.williamson@redhat.com>
-To:     "Dr. David Alan Gilbert" <dgilbert@redhat.com>
-Cc:     Yan Zhao <yan.y.zhao@intel.com>,
-        "intel-gvt-dev@lists.freedesktop.org" 
-        <intel-gvt-dev@lists.freedesktop.org>,
-        "aik@ozlabs.ru" <aik@ozlabs.ru>,
-        "Zhengxiao.zx@alibaba-inc.com" <Zhengxiao.zx@alibaba-inc.com>,
-        "shuangtai.tst@alibaba-inc.com" <shuangtai.tst@alibaba-inc.com>,
-        "qemu-devel@nongnu.org" <qemu-devel@nongnu.org>,
-        "eauger@redhat.com" <eauger@redhat.com>,
-        "Liu, Yi L" <yi.l.liu@intel.com>,
-        "Yang, Ziye" <ziye.yang@intel.com>,
-        "mlevitsk@redhat.com" <mlevitsk@redhat.com>,
-        "pasic@linux.ibm.com" <pasic@linux.ibm.com>,
-        "felipe@nutanix.com" <felipe@nutanix.com>,
-        "Liu, Changpeng" <changpeng.liu@intel.com>,
-        "Ken.Xue@amd.com" <Ken.Xue@amd.com>,
-        "jonathan.davies@nutanix.com" <jonathan.davies@nutanix.com>,
-        "He, Shaopeng" <shaopeng.he@intel.com>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "libvir-list@redhat.com" <libvir-list@redhat.com>,
-        "cohuck@redhat.com" <cohuck@redhat.com>,
-        "Tian, Kevin" <kevin.tian@intel.com>,
-        "zhenyuw@linux.intel.com" <zhenyuw@linux.intel.com>,
-        "Wang, Zhi A" <zhi.a.wang@intel.com>,
-        "cjia@nvidia.com" <cjia@nvidia.com>,
-        "kwankhede@nvidia.com" <kwankhede@nvidia.com>,
-        "berrange@redhat.com" <berrange@redhat.com>,
-        "dinechin@redhat.com" <dinechin@redhat.com>
-Subject: Re: [PATCH v4 0/2] introduction of migration_version attribute for
- VFIO live migration
-Message-ID: <20200324084954.0dd835e2@w520.home>
-In-Reply-To: <20200324092331.GA2645@work-vm>
-References: <20190531004438.24528-1-yan.y.zhao@intel.com>
-        <20190603132932.1b5dc7fe@x1.home>
-        <20190604003422.GA30229@joy-OptiPlex-7040>
-        <20200323152959.1c39e9a7@w520.home>
-        <20200324035316.GE5456@joy-OptiPlex-7040>
-        <20200324092331.GA2645@work-vm>
+        Tue, 24 Mar 2020 10:50:12 -0400
+Received: by mail-wr1-f65.google.com with SMTP id 31so15776124wrs.3
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Mar 2020 07:50:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:date:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=oGbi1kK4rZ5Jg0cdOf4BlknnOlqmymkgqgzxdZFk9xc=;
+        b=A9CiRgGuc0FzDG8Jea7fRV9it5TL0VjdcTyRfjSQ7U6FCuWl+0j9LmRVYnApg12iUa
+         2FrYHGgTGEObTGVfsbzvatv/yw//8Y8xyP7ubTh8hHoCVdlpsnSjckPtRjenc1x0QOhd
+         n3PsTLkaVT6G+ohUiS6sU/8kAAkOTJj4oFtkk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=oGbi1kK4rZ5Jg0cdOf4BlknnOlqmymkgqgzxdZFk9xc=;
+        b=pxFwC7KsbjMoVlVNPW9qM2wWcJpsTP4Cp+bV8PpvlQeKbO3VwRI/gOupnrOtuI+sFY
+         WIarfteQ6KBneHh7xcap6FHicEbEsjSK7rX9Qks1+PA0DdNp8mqwCz2qw8ooz+wWMZru
+         BnXe2IOcJQjqzL64bS6rsxLy+Bqw7sgWGFz17JukjxlIFTJu1lyxE1LoS470m3dIxI/e
+         /VjMiIHHGCiMrIgQo4AYnlPBVPAhZWLjQPp3O8vs7WEm03EHcPDTrwhyVydMcL4UGlYR
+         ndyyqQ+1fUBxgL4F8MqdurSpIHtJUq03BZpssqQU6P3TGSna159QV4Qg5ndtVntSaZxf
+         QY9w==
+X-Gm-Message-State: ANhLgQ251ylpn9bOA3kmqlFt/74tulu7YOUueyuKxr2BhiX07Gx4YJlO
+        AZlIZhkcM8ebAkkprwF0Q0sAcg==
+X-Google-Smtp-Source: ADFU+vtsBplmFb4Y6HIsHkRuws6sb8YO/62KkZdxsazEbdRgj7TzX90VeMndzuqAH2a1dHAS+iNnog==
+X-Received: by 2002:adf:f0c5:: with SMTP id x5mr10031231wro.415.1585061410761;
+        Tue, 24 Mar 2020 07:50:10 -0700 (PDT)
+Received: from chromium.org (77-56-209-237.dclient.hispeed.ch. [77.56.209.237])
+        by smtp.gmail.com with ESMTPSA id y7sm6619108wrq.54.2020.03.24.07.50.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 24 Mar 2020 07:50:10 -0700 (PDT)
+From:   KP Singh <kpsingh@chromium.org>
+X-Google-Original-From: KP Singh <kpsingh>
+Date:   Tue, 24 Mar 2020 15:50:03 +0100
+To:     Stephen Smalley <stephen.smalley.work@gmail.com>
+Cc:     linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Brendan Jackman <jackmanb@google.com>,
+        Florent Revest <revest@google.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        James Morris <jmorris@namei.org>,
+        Kees Cook <keescook@chromium.org>,
+        Paul Turner <pjt@google.com>, Jann Horn <jannh@google.com>,
+        Florent Revest <revest@chromium.org>,
+        Brendan Jackman <jackmanb@chromium.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Paul Moore <paul@paul-moore.com>
+Subject: Re: [PATCH bpf-next v5 4/7] bpf: lsm: Implement attach, detach and
+ execution
+Message-ID: <20200324145003.GA2685@chromium.org>
+References: <20200323164415.12943-1-kpsingh@chromium.org>
+ <20200323164415.12943-5-kpsingh@chromium.org>
+ <CAEjxPJ4MukexdmAD=py0r7vkE6vnn6T1LVcybP_GSJYsAdRuxA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAEjxPJ4MukexdmAD=py0r7vkE6vnn6T1LVcybP_GSJYsAdRuxA@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 24 Mar 2020 09:23:31 +0000
-"Dr. David Alan Gilbert" <dgilbert@redhat.com> wrote:
-
-> * Yan Zhao (yan.y.zhao@intel.com) wrote:
-> > On Tue, Mar 24, 2020 at 05:29:59AM +0800, Alex Williamson wrote:  
-> > > On Mon, 3 Jun 2019 20:34:22 -0400
-> > > Yan Zhao <yan.y.zhao@intel.com> wrote:
-> > >   
-> > > > On Tue, Jun 04, 2019 at 03:29:32AM +0800, Alex Williamson wrote:  
-> > > > > On Thu, 30 May 2019 20:44:38 -0400
-> > > > > Yan Zhao <yan.y.zhao@intel.com> wrote:
-> > > > >     
-> > > > > > This patchset introduces a migration_version attribute under sysfs of VFIO
-> > > > > > Mediated devices.
-> > > > > > 
-> > > > > > This migration_version attribute is used to check migration compatibility
-> > > > > > between two mdev devices of the same mdev type.
-> > > > > > 
-> > > > > > Patch 1 defines migration_version attribute in
-> > > > > > Documentation/vfio-mediated-device.txt
-> > > > > > 
-> > > > > > Patch 2 uses GVT as an example to show how to expose migration_version
-> > > > > > attribute and check migration compatibility in vendor driver.    
-> > > > > 
-> > > > > Thanks for iterating through this, it looks like we've settled on
-> > > > > something reasonable, but now what?  This is one piece of the puzzle to
-> > > > > supporting mdev migration, but I don't think it makes sense to commit
-> > > > > this upstream on its own without also defining the remainder of how we
-> > > > > actually do migration, preferably with more than one working
-> > > > > implementation and at least prototyped, if not final, QEMU support.  I
-> > > > > hope that was the intent, and maybe it's now time to look at the next
-> > > > > piece of the puzzle.  Thanks,
-> > > > > 
-> > > > > Alex    
-> > > > 
-> > > > Got it. 
-> > > > Also thank you and all for discussing and guiding all along:)
-> > > > We'll move to the next episode now.  
-> > > 
-> > > Hi Yan,
-> > > 
-> > > As we're hopefully moving towards a migration API, would it make sense
-> > > to refresh this series at the same time?  I think we're still expecting
-> > > a vendor driver implementing Kirti's migration API to also implement
-> > > this sysfs interface for compatibility verification.  Thanks,
-> > >  
-> > Hi Alex
-> > Got it!
-> > Thanks for reminding of this. And as now we have vfio-pci implementing
-> > vendor ops to allow live migration of pass-through devices, is it
-> > necessary to implement similar sysfs node for those devices?
-> > or do you think just PCI IDs of those devices are enough for libvirt to
-> > know device compatibility ?  
+On 24-Mär 10:35, Stephen Smalley wrote:
+> On Mon, Mar 23, 2020 at 12:46 PM KP Singh <kpsingh@chromium.org> wrote:
+> >
+> > From: KP Singh <kpsingh@google.com>
+> >
+> > JITed BPF programs are dynamically attached to the LSM hooks
+> > using BPF trampolines. The trampoline prologue generates code to handle
+> > conversion of the signature of the hook to the appropriate BPF context.
+> >
+> > The allocated trampoline programs are attached to the nop functions
+> > initialized as LSM hooks.
+> >
+> > BPF_PROG_TYPE_LSM programs must have a GPL compatible license and
+> > and need CAP_SYS_ADMIN (required for loading eBPF programs).
+> >
+> > Upon attachment:
+> >
+> > * A BPF fexit trampoline is used for LSM hooks with a void return type.
+> > * A BPF fmod_ret trampoline is used for LSM hooks which return an
+> >   int. The attached programs can override the return value of the
+> >   bpf LSM hook to indicate a MAC Policy decision.
+> >
+> > Signed-off-by: KP Singh <kpsingh@google.com>
+> > Reviewed-by: Brendan Jackman <jackmanb@google.com>
+> > Reviewed-by: Florent Revest <revest@google.com>
+> > ---
 > 
-> Wasn't the problem that we'd have to know how to check for things like:
->   a) Whether different firmware versions in the device were actually
-> compatible
->   b) Whether minor hardware differences were compatible - e.g. some
-> hardware might let you migrate to the next version of hardware up.
+> > diff --git a/kernel/bpf/bpf_lsm.c b/kernel/bpf/bpf_lsm.c
+> > index 530d137f7a84..2a8131b640b8 100644
+> > --- a/kernel/bpf/bpf_lsm.c
+> > +++ b/kernel/bpf/bpf_lsm.c
+> > @@ -9,6 +9,9 @@
+> >  #include <linux/btf.h>
+> >  #include <linux/lsm_hooks.h>
+> >  #include <linux/bpf_lsm.h>
+> > +#include <linux/jump_label.h>
+> > +#include <linux/kallsyms.h>
+> > +#include <linux/bpf_verifier.h>
+> >
+> >  /* For every LSM hook  that allows attachment of BPF programs, declare a NOP
+> >   * function where a BPF program can be attached as an fexit trampoline.
+> > @@ -27,6 +30,32 @@ noinline __weak void bpf_lsm_##NAME(__VA_ARGS__) {}
+> >  #include <linux/lsm_hook_names.h>
+> >  #undef LSM_HOOK
+> >
+> > +#define BPF_LSM_SYM_PREFX  "bpf_lsm_"
+> > +
+> > +int bpf_lsm_verify_prog(struct bpf_verifier_log *vlog,
+> > +                       const struct bpf_prog *prog)
+> > +{
+> > +       /* Only CAP_MAC_ADMIN users are allowed to make changes to LSM hooks
+> > +        */
+> > +       if (!capable(CAP_MAC_ADMIN))
+> > +               return -EPERM;
+> 
+> I had asked before, and will ask again: please provide an explicit LSM
+> hook for mediating whether one can make changes to the LSM hooks.
+> Neither CAP_MAC_ADMIN nor CAP_SYS_ADMIN suffices to check this for SELinux.
 
-Yes, minor changes in hardware or firmware that may not be represented
-in the device ID or hardware revision.  Also the version is as much for
-indicating the compatibility of the vendor defined migration protocol
-as it is for the hardware itself.  I certainly wouldn't be so bold as
-to create a protocol that is guaranteed compatible forever.  We'll need
-to expose the same sysfs attribute in some standard location for
-non-mdev devices.  I assume vfio-pci would provide the vendor ops some
-mechanism to expose these in a standard namespace of sysfs attributes
-under the device itself.  Perhaps that indicates we need to link the
-mdev type version under the mdev device as well to make this
-transparent to userspace tools like libvirt.  Thanks,
+What do you think about:
 
-Alex
+  int security_check_mutable_hooks(void)
 
+Do you have any suggestions on the signature of this hook? Does this
+hook need to be BPF specific?
+
+- KP
