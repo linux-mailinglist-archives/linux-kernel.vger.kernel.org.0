@@ -2,52 +2,53 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C054A19174B
+	by mail.lfdr.de (Postfix) with ESMTP id 50F1119174A
 	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 18:15:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727420AbgCXRPK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 13:15:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51578 "EHLO mail.kernel.org"
+        id S1727341AbgCXRPI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 13:15:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51588 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727161AbgCXRPJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 13:15:09 -0400
-Subject: Re: [GIT PULL] x86 fix
+        id S1727161AbgCXRPI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Mar 2020 13:15:08 -0400
+Subject: Re: [GIT PULL] perf fixes
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1585070108;
-        bh=6iz/00lA67PKU53GPRZ6djTMfIMd00kLqbqrKNWFlLw=;
+        bh=Ptf2h+wtQSYQ+KyO+iq5FjGWavjKdwW24pR9LTKnnMs=;
         h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=vrrcIy9FSRLFdYOXlCrRx+4EyAr0i3FZPf6lgzL5xd2sBSnzpGOzhJl8DzEkWM2p1
-         Cz+P4s1jsd356oXgHULkeMLxNeCwJnfgcHW4KiFwuOwuZ3IA/nSBkmoOyO9RjLuSvw
-         8SLhgWArr2OxKOuS1/iDiW7eyUwITc4g2jvhOb2U=
+        b=f6Yq5ExFf4XC+wDmuGLD7WCdsxoHgFaNlyPgPc2ZXr2oY/9Hbv6xLH8vWTlCCZVTc
+         7vt1OyDxI25OSSDBEngDAsTW2Goz3nqmyicpECPBQaJZ9SKWgMia/GMJ7RqX3xyteP
+         IOuPFai593AAurjBCq+0QQBa9kbi7l0zPpa+9Cc4=
 From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20200324090627.GA46739@gmail.com>
-References: <20200324090627.GA46739@gmail.com>
+In-Reply-To: <20200324091952.GA66321@gmail.com>
+References: <20200324091952.GA66321@gmail.com>
 X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20200324090627.GA46739@gmail.com>
+X-PR-Tracked-Message-Id: <20200324091952.GA66321@gmail.com>
 X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git
- x86-urgent-for-linus
-X-PR-Tracked-Commit-Id: 870b4333a62e45b0b2000d14b301b7b8b8cad9da
+ perf-urgent-for-linus
+X-PR-Tracked-Commit-Id: 564200ed8e71d91327d337e46bc778cee02da866
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 3f3ee43a462344f6509bd15c988e39d330af91b3
-Message-Id: <158507010802.16590.2166787800981748763.pr-tracker-bot@kernel.org>
+X-PR-Merge-Commit-Id: 76ccd234269bd05debdbc12c96eafe62dd9a6180
+Message-Id: <158507010827.16590.2535992708509912561.pr-tracker-bot@kernel.org>
 Date:   Tue, 24 Mar 2020 17:15:08 +0000
 To:     Ingo Molnar <mingo@kernel.org>
 Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>
+        linux-kernel@vger.kernel.org,
+        Arnaldo Carvalho de Melo <acme@infradead.org>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Thomas Gleixner <tglx@linutronix.de>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Tue, 24 Mar 2020 10:06:27 +0100:
+The pull request you sent on Tue, 24 Mar 2020 10:19:52 +0100:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86-urgent-for-linus
+> git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git perf-urgent-for-linus
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/3f3ee43a462344f6509bd15c988e39d330af91b3
+https://git.kernel.org/torvalds/c/76ccd234269bd05debdbc12c96eafe62dd9a6180
 
 Thank you!
 
