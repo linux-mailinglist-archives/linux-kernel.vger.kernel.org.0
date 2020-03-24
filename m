@@ -2,218 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BA10E191CF8
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 23:39:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BE26B191D01
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 23:45:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728382AbgCXWjS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 18:39:18 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:33187 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728241AbgCXWjR (ORCPT
+        id S1728475AbgCXWpl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 18:45:41 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:39394 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727554AbgCXWpl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 18:39:17 -0400
-Received: by mail-wr1-f65.google.com with SMTP id a25so692289wrd.0
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Mar 2020 15:39:14 -0700 (PDT)
+        Tue, 24 Mar 2020 18:45:41 -0400
+Received: by mail-lj1-f196.google.com with SMTP id i20so450632ljn.6;
+        Tue, 24 Mar 2020 15:45:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=CsJTvGpVPmav8scr1f+8vGqJnRDlYhqVnGsY3dWNugM=;
-        b=eFbp7iaJn1hT6hxrzF9p2+uV+G3iYIs+RbR8w+oGK0SWl0M4CdoFe9D5CI8MNBfLsT
-         FhwxLc9CyARUimd4HUlZZOKRqVlcuOlFSP9Za+9D9NKccTdhiyawFfOKdUwa0n4aVQut
-         bdVmJFSTEIUwO6Of5kw0HNRVyFy7EgOsn8Cy8=
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=1HxGR4IMpW8Yf3poFYJ0yW6+xXLZYxn2YNkddFlKXd8=;
+        b=ewxanhcY0YBuUPV3qNKUCNj/4v2hzLIcwwi86EkrozrqhCpg5IJYoahWTJnGZAIXF6
+         ttTSKp7gjG75aZqgGbe5LBfwrrd8fzZrwkBULjH1/ZPPRxSWTYGXhqPzeYxv2Nqvo0EX
+         kRmgThP9MKUL2TcM8wO+fUQcEcpUTszXjGTgz8tBhHy0ceTxlXCafpYAqJpGpb9w4VgM
+         3kB6J9mcwCRWPkCaS9abJ6jaARgTyMTpPa64bltRlAYwgd+2TPnSErWsPw9VlkWwRe7U
+         j/8U/sPfbueWtv9dM6hqkTFmgCQWt+5hh90bexsrCx0iE5TfmMRogdFM6nnhdLhCrgTF
+         bkKQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=CsJTvGpVPmav8scr1f+8vGqJnRDlYhqVnGsY3dWNugM=;
-        b=qCv8nJUt2TJKvTFLYCsC8oW3ECXLdFcR6VIPQCpCaA8hwcllELW4IOKPeJUAby119I
-         Jj+TZFM9dc/tfKOR9E8a7+WVZXqUiU26RIZ0/1vJHu5a2A3q/Pfp/9RTzw77lXSN801o
-         uZ34XGmPJvhHLl0cFHHjYAF6e5YQ+U561GQNdJScbRMFR95HIZGZAILTNh6UMt+ex8Rm
-         x0RsA5dFxkwVN/07f/g9zc3qiUKVa0fK6gLtz+kRHbxWhPuFPCZI8kAoD9lZykHo1+ts
-         L2yeY2GCHeGogXzbQA1zETkG5B/guLKRNf1k5eFy3Ow9e4txPUDTXxGNXCpHJZNTEBVR
-         tPvw==
-X-Gm-Message-State: ANhLgQ2vqeWoqQc6Ql08FkXmKTaPTsDpSzQZQQMFFWBRwDQ8ndIItGiz
-        B+siXHP4MSLQgcOH3D4Bj28GCw==
-X-Google-Smtp-Source: ADFU+vvmq9phB+TJsSu5PlZjdZhx430KLaniYgGVncHAKBv0pYcKZqkSfT8jbwXzYfaMKem6odSqdQ==
-X-Received: by 2002:adf:9322:: with SMTP id 31mr39623063wro.297.1585089553456;
-        Tue, 24 Mar 2020 15:39:13 -0700 (PDT)
-Received: from chromium.org (77-56-209-237.dclient.hispeed.ch. [77.56.209.237])
-        by smtp.gmail.com with ESMTPSA id c21sm5509329wmb.13.2020.03.24.15.39.12
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=1HxGR4IMpW8Yf3poFYJ0yW6+xXLZYxn2YNkddFlKXd8=;
+        b=oO/8s7aGB52Eg1VPrsK1srGv9nDM7VdGsS8RHkRRGNPBgED4HWOMzJrJYXuJqGxoKt
+         /j9tu2ca8iPp5xSi1g7a+VTHZeUrsz+Z+NeLUOF4uslRnTOrGEztz33TKuPM5OjzMg53
+         II9p4/0AzG1pEL8KCuwN7KoO08Ca+kZmFBreIPsfJogu809jtCJXrMYq5yPoDEPFin6g
+         qxfmldaBmcJNn/gBocCL4EVYV+QAi4RlZS0B10c7Bdc26/T1XbWOw/IfuoOumrjU2bs/
+         SiNKRJFUd5kbwRIphTcS+OLK1DWVC1AhL+k9yGv+8YS7odTtxRh18Iek2K8S0rsQfxWs
+         sc1Q==
+X-Gm-Message-State: ANhLgQ2gZPZ+Dkp9vOKfsFfmQb46REy+jhttJ9Qa6SLbdbYSWjyOJGvy
+        58VGPYuOcvS6eKb/LcuCBMbWaLbs
+X-Google-Smtp-Source: APiQypKK9aJ/vteGvqg2enrRQJOAVimwi3mKjNazUA694NM7Fj2SOo9y8bnfprMAWPe4Y0SRWaljDQ==
+X-Received: by 2002:a05:651c:1061:: with SMTP id y1mr4506ljm.285.1585089938878;
+        Tue, 24 Mar 2020 15:45:38 -0700 (PDT)
+Received: from localhost.localdomain (94-29-39-224.dynamic.spd-mgts.ru. [94.29.39.224])
+        by smtp.gmail.com with ESMTPSA id d4sm10534279lfa.75.2020.03.24.15.45.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Mar 2020 15:39:12 -0700 (PDT)
-From:   KP Singh <kpsingh@chromium.org>
-X-Google-Original-From: KP Singh <kpsingh>
-Date:   Tue, 24 Mar 2020 23:39:10 +0100
-To:     Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc:     open list <linux-kernel@vger.kernel.org>,
-        bpf <bpf@vger.kernel.org>, linux-security-module@vger.kernel.org,
-        Brendan Jackman <jackmanb@google.com>,
-        Florent Revest <revest@google.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        James Morris <jmorris@namei.org>,
-        Kees Cook <keescook@chromium.org>,
-        Paul Turner <pjt@google.com>, Jann Horn <jannh@google.com>,
-        Florent Revest <revest@chromium.org>,
-        Brendan Jackman <jackmanb@chromium.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH bpf-next v5 3/7] bpf: lsm: provide attachment points for
- BPF LSM programs
-Message-ID: <20200324223910.GA5448@chromium.org>
-References: <20200323164415.12943-1-kpsingh@chromium.org>
- <20200323164415.12943-4-kpsingh@chromium.org>
- <CAEf4BzbRivYO=gVjuQw8Z8snN+RFwXswvNxs67c=5g6U3o9rmw@mail.gmail.com>
- <20200324103910.GA7135@chromium.org>
- <20200324161211.GA11227@chromium.org>
- <CAEf4BzZZLBf3xRsV4khGCFdTxDFV61KbFfV1mHwM5yiCr4P37w@mail.gmail.com>
+        Tue, 24 Mar 2020 15:45:38 -0700 (PDT)
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>,
+        Jasper Korten <jja2000@gmail.com>,
+        David Heidelberg <david@ixit.cz>,
+        Peter Geis <pgwipeout@gmail.com>
+Cc:     linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v1 0/3] Enable LP2 CPUIDLE state on NVIDIA Tegra30
+Date:   Wed, 25 Mar 2020 01:43:32 +0300
+Message-Id: <20200324224335.5825-1-digetx@gmail.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAEf4BzZZLBf3xRsV4khGCFdTxDFV61KbFfV1mHwM5yiCr4P37w@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 24-Mär 14:26, Andrii Nakryiko wrote:
-> On Tue, Mar 24, 2020 at 9:12 AM KP Singh <kpsingh@chromium.org> wrote:
-> >
-> > On 24-Mär 11:39, KP Singh wrote:
-> > > On 23-Mär 12:59, Andrii Nakryiko wrote:
-> > > > On Mon, Mar 23, 2020 at 9:45 AM KP Singh <kpsingh@chromium.org> wrote:
-> > > > >
-> > > > > From: KP Singh <kpsingh@google.com>
-> > > > >
-> > > > > When CONFIG_BPF_LSM is enabled, nops functions, bpf_lsm_<hook_name>, are
-> > > > > generated for each LSM hook. These nops are initialized as LSM hooks in
-> > > > > a subsequent patch.
-> > > > >
-> > > > > Signed-off-by: KP Singh <kpsingh@google.com>
-> > > > > Reviewed-by: Brendan Jackman <jackmanb@google.com>
-> > > > > Reviewed-by: Florent Revest <revest@google.com>
-> > > > > ---
-> > > > >  include/linux/bpf_lsm.h | 21 +++++++++++++++++++++
-> > > > >  kernel/bpf/bpf_lsm.c    | 19 +++++++++++++++++++
-> > > > >  2 files changed, 40 insertions(+)
-> > > > >  create mode 100644 include/linux/bpf_lsm.h
-> > > > >
-> > > > > diff --git a/include/linux/bpf_lsm.h b/include/linux/bpf_lsm.h
-> > > > > new file mode 100644
-> > > > > index 000000000000..c6423a140220
-> > > > > --- /dev/null
-> > > > > +++ b/include/linux/bpf_lsm.h
-> > > > > @@ -0,0 +1,21 @@
-> > > > > +/* SPDX-License-Identifier: GPL-2.0 */
-> > > > > +
-> > > > > +/*
-> > > > > + * Copyright (C) 2020 Google LLC.
-> > > > > + */
-> > > > > +
-> > > > > +#ifndef _LINUX_BPF_LSM_H
-> > > > > +#define _LINUX_BPF_LSM_H
-> > > > > +
-> > > > > +#include <linux/bpf.h>
-> > > > > +#include <linux/lsm_hooks.h>
-> > > > > +
-> > > > > +#ifdef CONFIG_BPF_LSM
-> > > > > +
-> > > > > +#define LSM_HOOK(RET, NAME, ...) RET bpf_lsm_##NAME(__VA_ARGS__);
-> > > > > +#include <linux/lsm_hook_names.h>
-> > > > > +#undef LSM_HOOK
-> > > > > +
-> > > > > +#endif /* CONFIG_BPF_LSM */
-> > > > > +
-> > > > > +#endif /* _LINUX_BPF_LSM_H */
-> > > > > diff --git a/kernel/bpf/bpf_lsm.c b/kernel/bpf/bpf_lsm.c
-> > > > > index 82875039ca90..530d137f7a84 100644
-> > > > > --- a/kernel/bpf/bpf_lsm.c
-> > > > > +++ b/kernel/bpf/bpf_lsm.c
-> > > > > @@ -7,6 +7,25 @@
-> > > > >  #include <linux/filter.h>
-> > > > >  #include <linux/bpf.h>
-> > > > >  #include <linux/btf.h>
-> > > > > +#include <linux/lsm_hooks.h>
-> > > > > +#include <linux/bpf_lsm.h>
-> > > > > +
-> > > > > +/* For every LSM hook  that allows attachment of BPF programs, declare a NOP
-> > > > > + * function where a BPF program can be attached as an fexit trampoline.
-> > > > > + */
-> > > > > +#define LSM_HOOK(RET, NAME, ...) LSM_HOOK_##RET(NAME, __VA_ARGS__)
-> > > > > +
-> > > > > +#define LSM_HOOK_int(NAME, ...)                        \
-> > > > > +noinline __weak int bpf_lsm_##NAME(__VA_ARGS__)        \
-> > > > > +{                                              \
-> > > > > +       return 0;                               \
-> > > > > +}
-> > > > > +
-> > > > > +#define LSM_HOOK_void(NAME, ...) \
-> > > > > +noinline __weak void bpf_lsm_##NAME(__VA_ARGS__) {}
-> > > > > +
-> > > >
-> > > > Could unify with:
-> > > >
-> > > > #define LSM_HOOK(RET, NAME, ...) noinline __weak RET bpf_lsm_##NAME(__VA_ARGS__)
-> > > > {
-> > > >     return (RET)0;
-> > > > }
-> > > >
-> > > > then you don't need LSM_HOOK_int and LSM_HOOK_void.
-> > >
-> > > Nice.
-> > >
-> > > But, given that we are adding default values and that
-> > > they are only needed for int hooks, we will need to keep the macros
-> > > separate for int and void. Or, Am I missing a trick here?
-> > >
-> > > - KP
-> >
-> > Actually, was able to get it work. not setting a default for void
-> > hooks makes the macros messier. So i just set it void. For example:
-> >
-> >   LSM_HOOK(void, void, bprm_committing_creds, struct linux_binprm *bprm)
-> 
-> surprised this works, was going to propose to specify `(void)0` as
-> default value :)
+Hello,
 
-Yeah, you are right that does not work. so I added:
+This series enables LP2 CPU idling state on Tegra30. Previously,
+MichaÅ‚ MirosÅ‚aw reported that this wasn't working on ASUS Transformer
+device and we found that replicating the Transformer's downstream kernel
+behavior (in regards to the firmware) helps. Later on MichaÅ‚ told that
+LP2 works without the firmware changes using a different kernel version /
+config, we don't know for sure what was the cause of the original problem.
 
-  LSM_HOOK(void, LSM_RET_VOID, bprm_committed_creds, struct linux_binprm *bprm)
+This series makes the TF firmware changes that are known to work well
+in regards to LP2 idling on all devices and then the LP2 idling state
+is enabled.
 
-and as you suggested defined LSM_RET_VOID in lsm_hooks.h:
+Please review and apply, thanks in advance.
 
-  /* LSM_RET_VOID is used as the default value in LSM_HOOK definitions for void
-   * for void LSM hooks (in include/linux/lsm_hook_defs.h).
-   */
-  #define LSM_RET_VOID ((void) 0)
+Dmitry Osipenko (3):
+  ARM: tegra: Initialize r0 register for firmware wake-up
+  firmware: trusted_foundations: Different way of L2 cache enabling
+    after LP2 suspend
+  cpuidle: tegra: Support CPU cluster power-down state on Tegra30
 
-I also noticed a few other hooks that were passing an initial return
-value to call_int_hook which were missed in this revision. Have fixed
-these for the next one.
+ arch/arm/mach-tegra/pm.c                     |  4 ++++
+ arch/arm/mach-tegra/reset-handler.S          |  7 ++++++-
+ drivers/cpuidle/cpuidle-tegra.c              |  1 -
+ drivers/firmware/trusted_foundations.c       | 21 ++++++++++++++++++--
+ include/linux/firmware/trusted_foundations.h |  1 +
+ 5 files changed, 30 insertions(+), 4 deletions(-)
 
-- KP
+-- 
+2.25.1
 
-> 
-> >
-> > This also allows me to use the cleanup you suggested and not having
-> > to split every usage into int and void.
-> >
-> 
-> Nice, one of the reasons for proposing this.
-> 
-> > - KP
-> >
-> > >
-> > > >
-> > > > > +#include <linux/lsm_hook_names.h>
-> > > > > +#undef LSM_HOOK
-> > > > >
-> > > > >  const struct bpf_prog_ops lsm_prog_ops = {
-> > > > >  };
-> > > > > --
-> > > > > 2.20.1
-> > > > >
