@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D8D0A191306
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 15:25:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 789A7191303
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 15:25:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728651AbgCXOZG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 10:25:06 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:53776 "EHLO
+        id S1728593AbgCXOZA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 10:25:00 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:53654 "EHLO
         merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728595AbgCXOZB (ORCPT
+        with ESMTP id S1728469AbgCXOYx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 10:25:01 -0400
+        Tue, 24 Mar 2020 10:24:53 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=merlin.20170209; h=Content-Type:MIME-Version:References:
         Subject:Cc:To:From:Date:Message-Id:Sender:Reply-To:Content-Transfer-Encoding:
         Content-ID:Content-Description:In-Reply-To;
-        bh=AZ9gMrfy7tII+1yB9euI/yxsmZUgWasRxZVXQg2YzCc=; b=GiSVP7kfMWgLC/zeHSGgH+TP7s
-        ADiM0paoH6+tnqE4x6ff1HnvHl/KBzMhco5ifSNH2RZgriWhzyuhoiT34w/oJutayW3Lavk25QXje
-        7XCv2k48PJloQvgjW7++K22sqnZpNY9yVn6sO+mKst3NYS9RrUqZIQqjTMX5Cp+3aoL+EnYmhcsjt
-        bB7XVoDLFU4Z7sBU8eRXKqUz9dZM/5Bv3BGiSvMY4FBVshw+rcBWs3D167F8YVERv1i6Wg2fIGBlT
-        v2gvoDwahjv6SI5jFcQT7kvaI9abUnE2qicBZeII5rOgrnmxWL/yW/c/zEJCQEcnfRGhMF4Cyp5Rc
-        5qViea8Q==;
+        bh=VPQomJJLBbpBHwTU7FaAjpr7uF55pgGc/ipgi+cCgsw=; b=TCVYQNsacP7xmPKn0oGFtxkGin
+        xpfu2558ioQZXlEWTd61LZ4l/JEqk+JdTt3BLEblLz9HtmNsY+I949doCtzfYcX4e18qy5TnwGppZ
+        MrTw3ctUxpKoFDEMI6juPDfF5yQ1MGEIE3tJ9GEk24+oT/IpkIeJ1W1eM4NJV6WhXcui+LnmEnHP8
+        /u1KBL2Syd4otrcfhLv0NsiWLo4hKWazxmrQNuwGxxuVfueqzYKMuiqfl93UUvEWddwid7Y7QCVqy
+        RzZVdD5V+jl31v/FBqWb41cL8LJWF100bltyO4PYwb3Z5e8C0j/v0GTbFfhKuyH+GOT2kgFIVMExD
+        yMmuhWyA==;
 Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
         by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jGkTv-0003or-JQ; Tue, 24 Mar 2020 14:24:39 +0000
+        id 1jGkTv-0003os-JX; Tue, 24 Mar 2020 14:24:39 +0000
 Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 862C130796B;
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 8705430796C;
         Tue, 24 Mar 2020 15:24:35 +0100 (CET)
 Received: by hirez.programming.kicks-ass.net (Postfix, from userid 0)
-        id 26BF1286C13BA; Tue, 24 Mar 2020 15:24:35 +0100 (CET)
-Message-Id: <20200324142246.066152557@infradead.org>
+        id 2B9C7286C13BB; Tue, 24 Mar 2020 15:24:35 +0100 (CET)
+Message-Id: <20200324142246.127013582@infradead.org>
 User-Agent: quilt/0.65
-Date:   Tue, 24 Mar 2020 14:56:16 +0100
+Date:   Tue, 24 Mar 2020 14:56:17 +0100
 From:   Peter Zijlstra <peterz@infradead.org>
 To:     x86@kernel.org
 Cc:     peterz@infradead.org, linux-kernel@vger.kernel.org,
@@ -43,7 +43,7 @@ Cc:     peterz@infradead.org, linux-kernel@vger.kernel.org,
         tglx@linutronix.de, mingo@kernel.org, namit@vmware.com,
         hpa@zytor.com, luto@kernel.org, ard.biesheuvel@linaro.org,
         jpoimboe@redhat.com
-Subject: [RESEND][PATCH v3 13/17] x86/alternatives: Teach text_poke_bp() to emulate RET
+Subject: [RESEND][PATCH v3 14/17] static_call: Add static_cond_call()
 References: <20200324135603.483964896@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -52,80 +52,169 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Future patches will need to poke a RET instruction, provide the
-infrastructure required for this.
+Extend the static_call infrastructure to optimize the following common
+pattern:
+
+	if (func_ptr)
+		func_ptr(args...)
+
+For the trampoline (which is in effect a tail-call), we patch the
+JMP.d32 into a RET, which then directly consumes the trampoline call.
+
+For the in-line sites we replace the CALL with a NOP5.
 
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 ---
- arch/x86/include/asm/text-patching.h |   17 +++++++++++++++++
- arch/x86/kernel/alternative.c        |    5 +++++
- 2 files changed, 22 insertions(+)
+ arch/x86/include/asm/static_call.h |   10 ++++++++
+ arch/x86/kernel/static_call.c      |   42 ++++++++++++++++++++++++++++---------
+ include/linux/static_call.h        |   29 +++++++++++++++++++++++++
+ 3 files changed, 71 insertions(+), 10 deletions(-)
 
---- a/arch/x86/include/asm/text-patching.h
-+++ b/arch/x86/include/asm/text-patching.h
-@@ -53,6 +53,9 @@ extern void text_poke_finish(void);
- #define INT3_INSN_SIZE		1
- #define INT3_INSN_OPCODE	0xCC
+--- a/arch/x86/include/asm/static_call.h
++++ b/arch/x86/include/asm/static_call.h
+@@ -32,4 +32,14 @@
+ 	    ".size " STATIC_CALL_TRAMP_STR(name) ", . - " STATIC_CALL_TRAMP_STR(name) " \n" \
+ 	    ".popsection					\n")
  
-+#define RET_INSN_SIZE		1
-+#define RET_INSN_OPCODE		0xC3
++#define ARCH_DEFINE_STATIC_CALL_RETTRAMP(name)				\
++	asm(".pushsection .static_call.text, \"ax\"		\n"	\
++	    ".align 4						\n"	\
++	    ".globl " STATIC_CALL_TRAMP_STR(name) "		\n"	\
++	    STATIC_CALL_TRAMP_STR(name) ":			\n"	\
++	    "	ret; nop; nop; nop; nop;			\n"	\
++	    ".type " STATIC_CALL_TRAMP_STR(name) ", @function	\n"	\
++	    ".size " STATIC_CALL_TRAMP_STR(name) ", . - " STATIC_CALL_TRAMP_STR(name) " \n" \
++	    ".popsection					\n")
 +
- #define CALL_INSN_SIZE		5
- #define CALL_INSN_OPCODE	0xE8
+ #endif /* _ASM_STATIC_CALL_H */
+--- a/arch/x86/kernel/static_call.c
++++ b/arch/x86/kernel/static_call.c
+@@ -4,19 +4,41 @@
+ #include <linux/bug.h>
+ #include <asm/text-patching.h>
  
-@@ -73,6 +76,7 @@ static inline int text_opcode_size(u8 op
- 
- 	switch(opcode) {
- 	__CASE(INT3);
-+	__CASE(RET);
- 	__CASE(CALL);
- 	__CASE(JMP32);
- 	__CASE(JMP8);
-@@ -138,11 +142,24 @@ static inline void int3_emulate_push(str
- 	*(unsigned long *)regs->sp = val;
- }
- 
-+static inline unsigned long int3_emulate_pop(struct pt_regs *regs)
-+{
-+	unsigned long val = *(unsigned long *)regs->sp;
-+	regs->sp += sizeof(unsigned long);
-+	return val;
-+}
+-static void __static_call_transform(void *insn, u8 opcode, void *func)
++enum insn_type {
++	call = 0, /* site call */
++	nop = 1,  /* site cond-call */
++	jmp = 2,  /* tramp / site tail-call */
++	ret = 3,  /* tramp / site cond-tail-call */
++};
 +
- static inline void int3_emulate_call(struct pt_regs *regs, unsigned long func)
++static void __static_call_transform(void *insn, enum insn_type type, void *func)
  {
- 	int3_emulate_push(regs, regs->ip - INT3_INSN_SIZE + CALL_INSN_SIZE);
- 	int3_emulate_jmp(regs, func);
- }
-+
-+static inline void int3_emulate_ret(struct pt_regs *regs)
-+{
-+	unsigned long ip = int3_emulate_pop(regs);
-+	int3_emulate_jmp(regs, ip);
-+}
- #endif /* !CONFIG_UML_X86 */
+-	const void *code = text_gen_insn(opcode, (long)insn, (long)func);
++	int size = CALL_INSN_SIZE;
++	const void *code;
  
- #endif /* _ASM_X86_TEXT_PATCHING_H */
---- a/arch/x86/kernel/alternative.c
-+++ b/arch/x86/kernel/alternative.c
-@@ -1045,6 +1045,10 @@ int notrace poke_int3_handler(struct pt_
- 		 */
- 		goto out_put;
- 
-+	case RET_INSN_OPCODE:
-+		int3_emulate_ret(regs);
+-	if (WARN_ONCE(*(u8 *)insn != opcode,
+-		      "unexpected static call insn opcode 0x%x at %pS\n",
+-		      opcode, insn))
+-		return;
++	switch (type) {
++	case call:
++		code = text_gen_insn(CALL_INSN_OPCODE, insn, func);
 +		break;
 +
- 	case CALL_INSN_OPCODE:
- 		int3_emulate_call(regs, (long)ip + tp->rel32);
- 		break;
-@@ -1187,6 +1191,7 @@ void text_poke_loc_init(struct text_poke
++	case nop:
++		code = ideal_nops[NOP_ATOMIC5];
++		break;
++
++	case jmp:
++		code = text_gen_insn(JMP32_INSN_OPCODE, insn, func);
++		break;
++
++	case ret:
++		code = text_gen_insn(RET_INSN_OPCODE, insn, func);
++		size = RET_INSN_SIZE;
++		break;
++	}
  
- 	switch (tp->opcode) {
- 	case INT3_INSN_OPCODE:
-+	case RET_INSN_OPCODE:
- 		break;
+-	if (memcmp(insn, code, CALL_INSN_SIZE) == 0)
++	if (memcmp(insn, code, size) == 0)
+ 		return;
  
- 	case CALL_INSN_OPCODE:
+-	text_poke_bp(insn, code, CALL_INSN_SIZE, NULL);
++	text_poke_bp(insn, code, size, NULL);
+ }
+ 
+ void arch_static_call_transform(void *site, void *tramp, void *func)
+@@ -24,10 +46,10 @@ void arch_static_call_transform(void *si
+ 	mutex_lock(&text_mutex);
+ 
+ 	if (tramp)
+-		__static_call_transform(tramp, JMP32_INSN_OPCODE, func);
++		__static_call_transform(tramp, jmp + !func, func);
+ 
+ 	if (IS_ENABLED(CONFIG_HAVE_STATIC_CALL_INLINE) && site)
+-		__static_call_transform(site, CALL_INSN_OPCODE, func);
++		__static_call_transform(site, !func, func);
+ 
+ 	mutex_unlock(&text_mutex);
+ }
+--- a/include/linux/static_call.h
++++ b/include/linux/static_call.h
+@@ -17,6 +17,7 @@
+  *   DECLARE_STATIC_CALL(name, func);
+  *   DEFINE_STATIC_CALL(name, func);
+  *   static_call(name)(args...);
++ *   static_cond_call(name)(args...)
+  *   static_call_update(name, func);
+  *
+  * Usage example:
+@@ -107,7 +108,17 @@ extern int static_call_text_reserved(voi
+ 	__ADDRESSABLE(STATIC_CALL_NAME(name));				\
+ 	ARCH_DEFINE_STATIC_CALL_TRAMP(name, _func)
+ 
++#define DEFINE_STATIC_COND_CALL(name, _func)				\
++	DECLARE_STATIC_CALL(name, _func);				\
++	struct static_call_key STATIC_CALL_NAME(name) = {		\
++		.func = NULL,						\
++		.type = 1,						\
++	};								\
++	__ADDRESSABLE(STATIC_CALL_NAME(name));				\
++	ARCH_DEFINE_STATIC_CALL_RETTRAMP(name)
++
+ #define static_call(name)	STATIC_CALL_TRAMP(name)
++#define static_cond_call(name)	STATIC_CALL_TRAMP(name)
+ 
+ #define EXPORT_STATIC_CALL(name)					\
+ 	EXPORT_SYMBOL(STATIC_CALL_NAME(name));				\
+@@ -130,7 +141,15 @@ struct static_call_key {
+ 	};								\
+ 	ARCH_DEFINE_STATIC_CALL_TRAMP(name, _func)
+ 
++#define DEFINE_STATIC_COND_CALL(name, _func)				\
++	DECLARE_STATIC_CALL(name, _func);				\
++	struct static_call_key STATIC_CALL_NAME(name) = {		\
++		.func = NULL,						\
++	};								\
++	ARCH_DEFINE_STATIC_CALL_RETTRAMP(name)
++
+ #define static_call(name)	STATIC_CALL_TRAMP(name)
++#define static_cond_call(name)	STATIC_CALL_TRAMP(name)
+ 
+ static inline
+ void __static_call_update(struct static_call_key *key, void *tramp, void *func)
+@@ -161,9 +180,19 @@ struct static_call_key {
+ 		.func = _func,						\
+ 	}
+ 
++#define DEFINE_STATIC_COND_CALL(name, _func)				\
++	DECLARE_STATIC_CALL(name, _func);				\
++	struct static_call_key STATIC_CALL_NAME(name) = {		\
++		.func = NULL,						\
++	}
++
+ #define static_call(name)						\
+ 	((typeof(STATIC_CALL_TRAMP(name))*)(STATIC_CALL_NAME(name).func))
+ 
++#define static_cond_call(name)						\
++	if (STATIC_CALL_NAME(name).func)				\
++		((typeof(STATIC_CALL_TRAMP(name))*)(STATIC_CALL_NAME(name).func))
++
+ static inline
+ void __static_call_update(struct static_call_key *key, void *tramp, void *func)
+ {
 
 
