@@ -2,89 +2,51 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 830AD190496
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 05:46:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 22A4519049B
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 05:46:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727253AbgCXEqS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 00:46:18 -0400
-Received: from mx2.suse.de ([195.135.220.15]:39658 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727064AbgCXEqR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 00:46:17 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 9B2E2AD5F;
-        Tue, 24 Mar 2020 04:46:15 +0000 (UTC)
-From:   Davidlohr Bueso <dave@stgolabs.net>
-To:     tglx@linutronix.de, pbonzini@redhat.com
-Cc:     bigeasy@linutronix.de, peterz@infradead.org, rostedt@goodmis.org,
-        torvalds@linux-foundation.org, will@kernel.org,
-        joel@joelfernandes.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, dave@stgolabs.net,
-        Davidlohr Bueso <dbueso@suse.de>
-Subject: [PATCH 4/4] sched/swait: Reword some of the main description
-Date:   Mon, 23 Mar 2020 21:44:53 -0700
-Message-Id: <20200324044453.15733-5-dave@stgolabs.net>
-X-Mailer: git-send-email 2.16.4
-In-Reply-To: <20200324044453.15733-1-dave@stgolabs.net>
-References: <20200324044453.15733-1-dave@stgolabs.net>
+        id S1727340AbgCXEqj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 00:46:39 -0400
+Received: from shards.monkeyblade.net ([23.128.96.9]:56336 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727299AbgCXEqj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Mar 2020 00:46:39 -0400
+Received: from localhost (unknown [IPv6:2601:601:9f00:477::3d5])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id E14451579A57D;
+        Mon, 23 Mar 2020 21:46:37 -0700 (PDT)
+Date:   Mon, 23 Mar 2020 21:46:36 -0700 (PDT)
+Message-Id: <20200323.214636.1040830888283850102.davem@davemloft.net>
+To:     f.fainelli@gmail.com
+Cc:     netdev@vger.kernel.org, mbizon@freebox.fr, andrew@lunn.ch,
+        vivien.didelot@gmail.com, kuba@kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net] net: dsa: Fix duplicate frames flooded by learning
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <20200322205850.3528-1-f.fainelli@gmail.com>
+References: <20200322205850.3528-1-f.fainelli@gmail.com>
+X-Mailer: Mew version 6.8 on Emacs 26.1
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Mon, 23 Mar 2020 21:46:38 -0700 (PDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-With both the increased use of swait and kvm no longer using
-it, we can reword some of the comments. While removing Linus'
-valid rant, I've also cared to explicitly mention that swait
-is very different than regular wait. In addition it is
-mentioned against using swait in favor of the regular flavor.
+From: Florian Fainelli <f.fainelli@gmail.com>
+Date: Sun, 22 Mar 2020 13:58:50 -0700
 
-Signed-off-by: Davidlohr Bueso <dbueso@suse.de>
----
- include/linux/swait.h | 23 +++++------------------
- 1 file changed, 5 insertions(+), 18 deletions(-)
+> When both the switch and the bridge are learning about new addresses,
+> switch ports attached to the bridge would see duplicate ARP frames
+> because both entities would attempt to send them.
+> 
+> Fixes: 5037d532b83d ("net: dsa: add Broadcom tag RX/TX handler")
+> Reported-by: Maxime Bizon <mbizon@freebox.fr>
+> Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
 
-diff --git a/include/linux/swait.h b/include/linux/swait.h
-index 73e06e9986d4..6e5b5d0e64fd 100644
---- a/include/linux/swait.h
-+++ b/include/linux/swait.h
-@@ -9,23 +9,10 @@
- #include <asm/current.h>
- 
- /*
-- * BROKEN wait-queues.
-- *
-- * These "simple" wait-queues are broken garbage, and should never be
-- * used. The comments below claim that they are "similar" to regular
-- * wait-queues, but the semantics are actually completely different, and
-- * every single user we have ever had has been buggy (or pointless).
-- *
-- * A "swake_up_one()" only wakes up _one_ waiter, which is not at all what
-- * "wake_up()" does, and has led to problems. In other cases, it has
-- * been fine, because there's only ever one waiter (kvm), but in that
-- * case gthe whole "simple" wait-queue is just pointless to begin with,
-- * since there is no "queue". Use "wake_up_process()" with a direct
-- * pointer instead.
-- *
-- * While these are very similar to regular wait queues (wait.h) the most
-- * important difference is that the simple waitqueue allows for deterministic
-- * behaviour -- IOW it has strictly bounded IRQ and lock hold times.
-+ * Simple waitqueues are semantically very different to regular wait queues
-+ * (wait.h). The most important difference is that the simple waitqueue allows
-+ * for deterministic behaviour -- IOW it has strictly bounded IRQ and lock hold
-+ * times.
-  *
-  * Mainly, this is accomplished by two things. Firstly not allowing swake_up_all
-  * from IRQ disabled, and dropping the lock upon every wakeup, giving a higher
-@@ -39,7 +26,7 @@
-  *    sleeper state.
-  *
-  *  - the !exclusive mode; because that leads to O(n) wakeups, everything is
-- *    exclusive.
-+ *    exclusive. As such swake_up_one will only ever awake _one_ waiter.
-  *
-  *  - custom wake callback functions; because you cannot give any guarantees
-  *    about random code. This also allows swait to be used in RT, such that
--- 
-2.16.4
-
+Applied and queued up for -stable.
