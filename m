@@ -2,98 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 42FC8190305
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 01:44:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AA06D19030A
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 01:45:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727134AbgCXAoS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Mar 2020 20:44:18 -0400
-Received: from lists.nic.cz ([217.31.204.67]:41998 "EHLO mail.nic.cz"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726986AbgCXAoR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Mar 2020 20:44:17 -0400
-Received: from dellmb.labs.office.nic.cz (unknown [IPv6:2001:1488:fffe:6:cac7:3539:7f1f:463])
-        by mail.nic.cz (Postfix) with ESMTP id E8F02143135;
-        Tue, 24 Mar 2020 01:44:14 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=nic.cz; s=default;
-        t=1585010655; bh=urXM1C/NpGF4/UVm2X2kN+vx+fSbzt7HMlncBR+atYU=;
-        h=From:To:Date;
-        b=CVM9sfsbZ2iyomoPJQb+U+lhUc9gLpDTK7gsLe1o+aXorP+jub31wV94Oun/oNLRH
-         HVtab5fuTWrFUBmCsKIkhx3w0DtwoVGIQRz5gunkqoLZilnh4asioeQncekGlU1odR
-         K4S0XwI44IOMy/0ais5mRrKfozLkgVt+hcO+xf5M=
-From:   =?UTF-8?q?Marek=20Beh=C3=BAn?= <marek.behun@nic.cz>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-        Andrew Lunn <andrew@lunn.ch>,
-        =?UTF-8?q?Marek=20Beh=C3=BAn?= <marek.behun@nic.cz>,
-        Peng Fan <peng.fan@nxp.com>
-Subject: [PATCH pinctrl REGRESSION] Revert "pinctrl: mvebu: armada-37xx: use use platform api"
-Date:   Tue, 24 Mar 2020 01:44:13 +0100
-Message-Id: <20200324004413.14355-1-marek.behun@nic.cz>
-X-Mailer: git-send-email 2.24.1
+        id S1727124AbgCXAp2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Mar 2020 20:45:28 -0400
+Received: from mail-out.m-online.net ([212.18.0.9]:59610 "EHLO
+        mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726986AbgCXAp2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Mar 2020 20:45:28 -0400
+Received: from frontend01.mail.m-online.net (unknown [192.168.8.182])
+        by mail-out.m-online.net (Postfix) with ESMTP id 48mXbR5r3Jz1qs45;
+        Tue, 24 Mar 2020 01:45:23 +0100 (CET)
+Received: from localhost (dynscan1.mnet-online.de [192.168.6.70])
+        by mail.m-online.net (Postfix) with ESMTP id 48mXbR568tz1qyF8;
+        Tue, 24 Mar 2020 01:45:23 +0100 (CET)
+X-Virus-Scanned: amavisd-new at mnet-online.de
+Received: from mail.mnet-online.de ([192.168.8.182])
+        by localhost (dynscan1.mail.m-online.net [192.168.6.70]) (amavisd-new, port 10024)
+        with ESMTP id FO-gghsvXtfJ; Tue, 24 Mar 2020 01:45:22 +0100 (CET)
+X-Auth-Info: ZGG/J4gwG3dOZ4fK596fd89O+wp6LvVr1WgV+S4kI0M=
+Received: from [IPv6:::1] (unknown [195.140.253.167])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.mnet-online.de (Postfix) with ESMTPSA;
+        Tue, 24 Mar 2020 01:45:22 +0100 (CET)
+Subject: Re: [10/12] mtd: rawnand: stm32_fmc2: use regmap APIs
+To:     Christophe Kerello <christophe.kerello@st.com>,
+        miquel.raynal@bootlin.com, richard@nod.at, vigneshr@ti.com,
+        lee.jones@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        tony@atomide.com
+Cc:     linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com
+References: <1584975532-8038-1-git-send-email-christophe.kerello@st.com>
+ <1584975532-8038-11-git-send-email-christophe.kerello@st.com>
+From:   Marek Vasut <marex@denx.de>
+Message-ID: <784fafd2-f1f3-f9c4-d6eb-1d2f6f8d38e4@denx.de>
+Date:   Tue, 24 Mar 2020 01:44:52 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on mail.nic.cz
-X-Spam-Status: No, score=0.00
-X-Spamd-Bar: /
-X-Virus-Scanned: clamav-milter 0.101.4 at mail
-X-Virus-Status: Clean
+In-Reply-To: <1584975532-8038-11-git-send-email-christophe.kerello@st.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This reverts commit 06e26b75f5e613b400116fdb7ff6206a681ab271.
+On 3/23/20 3:58 PM, Christophe Kerello wrote:
+[...]
+> @@ -531,11 +515,11 @@ static int stm32_fmc2_nfc_bch_correct(struct nand_chip *chip, u8 *dat,
+>  		return -ETIMEDOUT;
+>  	}
+>  
+> -	ecc_sta[0] = readl_relaxed(nfc->io_base + FMC2_BCHDSR0);
+> -	ecc_sta[1] = readl_relaxed(nfc->io_base + FMC2_BCHDSR1);
+> -	ecc_sta[2] = readl_relaxed(nfc->io_base + FMC2_BCHDSR2);
+> -	ecc_sta[3] = readl_relaxed(nfc->io_base + FMC2_BCHDSR3);
+> -	ecc_sta[4] = readl_relaxed(nfc->io_base + FMC2_BCHDSR4);
+> +	regmap_read(nfc->regmap, FMC2_BCHDSR0, &ecc_sta[0]);
+> +	regmap_read(nfc->regmap, FMC2_BCHDSR1, &ecc_sta[1]);
+> +	regmap_read(nfc->regmap, FMC2_BCHDSR2, &ecc_sta[2]);
+> +	regmap_read(nfc->regmap, FMC2_BCHDSR3, &ecc_sta[3]);
+> +	regmap_read(nfc->regmap, FMC2_BCHDSR4, &ecc_sta[4]);
 
-This commit caused a regression on Armada 37xx. The pinctrl driver says
-  armada-37xx-pinctrl d0013800.pinctrl: invalid or no IRQ
-  armada-37xx-pinctrl d0018800.pinctrl: invalid or no IRQ
-and afterwards other drivers cannot use GPIOs by this driver as IRQs.
-
-Fixes: 06e26b75f5e6 ("pinctrl: mvebu: armada-37xx: use use platform...")
-Signed-off-by: Marek Behún <marek.behun@nic.cz>
-Cc: Peng Fan <peng.fan@nxp.com>
----
- drivers/pinctrl/mvebu/pinctrl-armada-37xx.c | 12 +++---------
- 1 file changed, 3 insertions(+), 9 deletions(-)
-
-diff --git a/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c b/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c
-index 32f12a388b3c..5f125bd6279d 100644
---- a/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c
-+++ b/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c
-@@ -15,6 +15,7 @@
- #include <linux/of.h>
- #include <linux/of_address.h>
- #include <linux/of_device.h>
-+#include <linux/of_irq.h>
- #include <linux/pinctrl/pinconf-generic.h>
- #include <linux/pinctrl/pinconf.h>
- #include <linux/pinctrl/pinctrl.h>
-@@ -741,14 +742,7 @@ static int armada_37xx_irqchip_register(struct platform_device *pdev,
- 		return ret;
- 	}
- 
--	nr_irq_parent = platform_irq_count(pdev);
--	if (nr_irq_parent < 0) {
--		if (nr_irq_parent != -EPROBE_DEFER)
--			dev_err(dev, "Couldn't determine irq count: %pe\n",
--				ERR_PTR(nr_irq_parent));
--		return nr_irq_parent;
--	}
--
-+	nr_irq_parent = of_irq_count(np);
- 	spin_lock_init(&info->irq_lock);
- 
- 	if (!nr_irq_parent) {
-@@ -785,7 +779,7 @@ static int armada_37xx_irqchip_register(struct platform_device *pdev,
- 	if (!girq->parents)
- 		return -ENOMEM;
- 	for (i = 0; i < nr_irq_parent; i++) {
--		int irq = platform_get_irq(pdev, i);
-+		int irq = irq_of_parse_and_map(np, i);
- 
- 		if (irq < 0)
- 			continue;
--- 
-2.24.1
-
+Would regmap_bulk_read() work here ?
