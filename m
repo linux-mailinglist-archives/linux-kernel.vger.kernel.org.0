@@ -2,33 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 936B9190921
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 10:18:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 99557190928
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 10:18:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727725AbgCXJRD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 05:17:03 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:44024 "EHLO
+        id S1728065AbgCXJSi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 05:18:38 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:44044 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727672AbgCXJQ5 (ORCPT
+        with ESMTP id S1727697AbgCXJRB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 05:16:57 -0400
+        Tue, 24 Mar 2020 05:17:01 -0400
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1jGfg7-00089l-Kf; Tue, 24 Mar 2020 10:16:55 +0100
+        id 1jGfgA-0008As-1x; Tue, 24 Mar 2020 10:16:58 +0100
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 922871C0494;
-        Tue, 24 Mar 2020 10:16:46 +0100 (CET)
-Date:   Tue, 24 Mar 2020 09:16:46 -0000
-From:   "tip-bot2 for Paul E. McKenney" <tip-bot2@linutronix.de>
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 81AF11C04D4;
+        Tue, 24 Mar 2020 10:16:47 +0100 (CET)
+Date:   Tue, 24 Mar 2020 09:16:47 -0000
+From:   "tip-bot2 for Jules Irenge" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: core/rcu] rcu: Tighten rcu_lockdep_assert_cblist_protected() check
-Cc:     "Paul E. McKenney" <paulmck@kernel.org>, x86 <x86@kernel.org>,
+Subject: [tip: core/rcu] rcu/nocb: Add missing annotation for rcu_nocb_bypass_unlock()
+Cc:     Jules Irenge <jbi.octave@gmail.com>,
+        "Paul E. McKenney" <paulmck@kernel.org>,
+        Boqun Feng <boqun.feng@gmail.com>, x86 <x86@kernel.org>,
         LKML <linux-kernel@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <158504140622.28353.9212973365061809180.tip-bot2@tip-bot2>
+Message-ID: <158504140722.28353.13599324733441017238.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -44,39 +46,41 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the core/rcu branch of tip:
 
-Commit-ID:     13817dd589f426aee9c36e3670e7cb2a7f067d23
-Gitweb:        https://git.kernel.org/tip/13817dd589f426aee9c36e3670e7cb2a7f067d23
-Author:        Paul E. McKenney <paulmck@kernel.org>
-AuthorDate:    Tue, 04 Feb 2020 08:56:41 -08:00
+Commit-ID:     92c0b889f2ff6898710d49458b6eae1de50895c6
+Gitweb:        https://git.kernel.org/tip/92c0b889f2ff6898710d49458b6eae1de50895c6
+Author:        Jules Irenge <jbi.octave@gmail.com>
+AuthorDate:    Thu, 30 Jan 2020 00:30:09 
 Committer:     Paul E. McKenney <paulmck@kernel.org>
 CommitterDate: Thu, 20 Feb 2020 15:58:23 -08:00
 
-rcu: Tighten rcu_lockdep_assert_cblist_protected() check
+rcu/nocb: Add missing annotation for rcu_nocb_bypass_unlock()
 
-The ->nocb_lock lockdep assertion is currently guarded by cpu_online(),
-which is incorrect for no-CBs CPUs, whose callback lists must be
-protected by ->nocb_lock regardless of whether or not the corresponding
-CPU is online.  This situation could result in failure to detect bugs
-resulting from failing to hold ->nocb_lock for offline CPUs.
+Sparse reports warning at rcu_nocb_bypass_unlock()
 
-This commit therefore removes the cpu_online() guard.
+warning: context imbalance in rcu_nocb_bypass_unlock() - unexpected unlock
 
+The root cause is a missing annotation of rcu_nocb_bypass_unlock()
+which causes the warning.
+
+This commit therefore adds the missing __releases(&rdp->nocb_bypass_lock)
+annotation.
+
+Signed-off-by: Jules Irenge <jbi.octave@gmail.com>
 Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
+Acked-by: Boqun Feng <boqun.feng@gmail.com>
 ---
- kernel/rcu/tree_plugin.h | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ kernel/rcu/tree_plugin.h | 1 +
+ 1 file changed, 1 insertion(+)
 
 diff --git a/kernel/rcu/tree_plugin.h b/kernel/rcu/tree_plugin.h
-index 3846519..70b3c0f 100644
+index 6db2cad..3846519 100644
 --- a/kernel/rcu/tree_plugin.h
 +++ b/kernel/rcu/tree_plugin.h
-@@ -1579,8 +1579,7 @@ static void rcu_nocb_unlock_irqrestore(struct rcu_data *rdp,
- static void rcu_lockdep_assert_cblist_protected(struct rcu_data *rdp)
+@@ -1530,6 +1530,7 @@ static bool rcu_nocb_bypass_trylock(struct rcu_data *rdp)
+  * Release the specified rcu_data structure's ->nocb_bypass_lock.
+  */
+ static void rcu_nocb_bypass_unlock(struct rcu_data *rdp)
++	__releases(&rdp->nocb_bypass_lock)
  {
  	lockdep_assert_irqs_disabled();
--	if (rcu_segcblist_is_offloaded(&rdp->cblist) &&
--	    cpu_online(rdp->cpu))
-+	if (rcu_segcblist_is_offloaded(&rdp->cblist))
- 		lockdep_assert_held(&rdp->nocb_lock);
- }
- 
+ 	raw_spin_unlock(&rdp->nocb_bypass_lock);
