@@ -2,85 +2,67 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A38661913FC
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 16:15:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 33B6619140A
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 16:19:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728158AbgCXPPF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 11:15:05 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:58418 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727999AbgCXPPF (ORCPT
+        id S1728021AbgCXPRZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 11:17:25 -0400
+Received: from smtprelay0017.hostedemail.com ([216.40.44.17]:55732 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727168AbgCXPRZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 11:15:05 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=8TXwLdoUDxOFHArMszYS+qpN9z46iZMtciU0e+inYj0=; b=3dUmx8ntr/oFgCmMcBnnANMTip
-        21oGu0KzDc0Yd4MPZHFTTRzmuma8nxyj0/WHXe5fU8WqxJTKHCnKGjBZpOiY+EojAfNnxsg1IKuKj
-        kSKVslo7wUy77OdEkkt+aw3rnLT7cH0gsSE82Ijs81BVgx4EYFJBLxLfoI8iiQPm0MPFLLnk5Y9Ly
-        XGe9VWA5Y62NThk1OLH9bYisCLNtpucatBQ/0c9O+z2MWH9/02Wc/SbPcbkYb1hoyaTVLBt/Mj9Up
-        NFtY11fW51lvEeCM+cMUMNitrPSvFOBWWpUKL/zcTVREDkhgvZ/gP95Wq4ilQtqPoV7balMMqxsMB
-        fhzWWfgA==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jGlGg-0004yl-4h; Tue, 24 Mar 2020 15:15:02 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id AA687300096;
-        Tue, 24 Mar 2020 16:15:00 +0100 (CET)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 9549F29B3DAFF; Tue, 24 Mar 2020 16:15:00 +0100 (CET)
-Date:   Tue, 24 Mar 2020 16:15:00 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Al Viro <viro@ZenIV.linux.org.uk>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [RFC][PATCH 01/22] x86 user stack frame reads: switch to
- explicit __get_user()
-Message-ID: <20200324151500.GQ20696@hirez.programming.kicks-ass.net>
-References: <20200323183620.GD23230@ZenIV.linux.org.uk>
- <20200323183819.250124-1-viro@ZenIV.linux.org.uk>
+        Tue, 24 Mar 2020 11:17:25 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay08.hostedemail.com (Postfix) with ESMTP id 8D6D1182CED2A;
+        Tue, 24 Mar 2020 15:17:24 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 50,0,0,,d41d8cd98f00b204,joe@perches.com,,RULES_HIT:41:355:379:599:967:973:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1540:1568:1593:1594:1711:1714:1730:1747:1777:1792:2393:2525:2560:2563:2682:2685:2828:2859:2933:2937:2939:2942:2945:2947:2951:2954:3022:3138:3139:3140:3141:3142:3622:3865:3866:3867:3868:3870:3934:3936:3938:3941:3944:3947:3950:3953:3956:3959:4321:5007:6119:7522:9025:10004:10400:10848:11232:11658:11914:12043:12295:12297:12740:12760:12895:13069:13311:13357:13439:14181:14659:14721:21080:21451:21627:21990:30054:30091,0,RBL:none,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:1,LUA_SUMMARY:none
+X-HE-Tag: chair87_65693e825c5c
+X-Filterd-Recvd-Size: 1739
+Received: from XPS-9350.home (unknown [47.151.136.130])
+        (Authenticated sender: joe@perches.com)
+        by omf09.hostedemail.com (Postfix) with ESMTPA;
+        Tue, 24 Mar 2020 15:17:23 +0000 (UTC)
+Message-ID: <fb5a17c67f504f5761069ee446cc1b703dd8b54f.camel@perches.com>
+Subject: Re: [PATCH] rearrange the output text, cosmetic changes
+From:   Joe Perches <joe@perches.com>
+To:     Bhaskar Chowdhury <unixbhaskar@gmail.com>, linux@leemhuis.info,
+        rdunlap@infradead.org
+Cc:     linux-kernel@vger.kernel.org
+Date:   Tue, 24 Mar 2020 08:15:33 -0700
+In-Reply-To: <20200324084513.18237-1-unixbhaskar@gmail.com>
+References: <20200324084513.18237-1-unixbhaskar@gmail.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.34.1-2 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200323183819.250124-1-viro@ZenIV.linux.org.uk>
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 23, 2020 at 06:37:58PM +0000, Al Viro wrote:
-> From: Al Viro <viro@zeniv.linux.org.uk>
+On Tue, 2020-03-24 at 14:15 +0530, Bhaskar Chowdhury wrote:
+> As the subject like says, purely cosmetic changes to read cleanly.
+> Jumbled up the line.
+
+Subject line should show tools or kernel-chktaint
+
+and:
+
+> diff --git a/tools/debugging/kernel-chktaint b/tools/debugging/kernel-chktaint
+[]
+> @@ -195,8 +195,9 @@ else
+>  	echo " * kernel was built with the struct randomization plugin (#17)"
+>  fi
 > 
-> rather than relying upon the magic in raw_copy_from_user()
-> 
-> Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+> -echo "For a more detailed explanation of the various taint flags see"
+> -echo " Documentation/admin-guide/tainted-kernels.rst in the the Linux kernel sources"
+> -echo " or https://kernel.org/doc/html/latest/admin-guide/tainted-kernels.html"
+>  echo "Raw taint value as int/string: $taint/'$out'"
+> +echo
+> +echo "For a more detailed explanation of the various taint flags see below pointers:"
+> +echo "1) Documentation/admin-guide/tainted-kernels.rst in  the Linux kernel sources"
+
+One extra space between "in  the"
 
 
-> diff --git a/arch/x86/include/asm/uaccess.h b/arch/x86/include/asm/uaccess.h
-> index 61d93f062a36..ab8eab43a8a2 100644
-> --- a/arch/x86/include/asm/uaccess.h
-> +++ b/arch/x86/include/asm/uaccess.h
-> @@ -695,15 +695,6 @@ extern struct movsl_mask {
->  #endif
->  
->  /*
-> - * We rely on the nested NMI work to allow atomic faults from the NMI path; the
-> - * nested NMI paths are careful to preserve CR2.
-> - *
-> - * Caller must use pagefault_enable/disable, or run in interrupt context,
-> - * and also do a uaccess_ok() check
-> - */
-> -#define __copy_from_user_nmi __copy_from_user_inatomic
-> -
-> -/*
->   * The "unsafe" user accesses aren't really "unsafe", but the naming
->   * is a big fat warning: you have to not only do the access_ok()
->   * checking before using them, but you have to surround them with the
-
-Thanks for killing that remnant!
-
-Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
