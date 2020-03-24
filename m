@@ -2,37 +2,34 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CCA271908F7
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 10:18:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6CC0B19091C
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 10:18:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727831AbgCXJRN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 05:17:13 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:44064 "EHLO
+        id S1728032AbgCXJSV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 05:18:21 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:44075 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727720AbgCXJRE (ORCPT
+        with ESMTP id S1727736AbgCXJRF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 05:17:04 -0400
+        Tue, 24 Mar 2020 05:17:05 -0400
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1jGfgA-000883-9s; Tue, 24 Mar 2020 10:16:58 +0100
+        id 1jGfgC-00089L-8o; Tue, 24 Mar 2020 10:17:00 +0100
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id CDDE11C04CD;
-        Tue, 24 Mar 2020 10:16:44 +0100 (CET)
-Date:   Tue, 24 Mar 2020 09:16:44 -0000
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 258D51C04D1;
+        Tue, 24 Mar 2020 10:16:46 +0100 (CET)
+Date:   Tue, 24 Mar 2020 09:16:45 -0000
 From:   "tip-bot2 for Paul E. McKenney" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: core/rcu] locktorture: Print ratio of acquisitions, not failures
-Cc:     Will Deacon <will@kernel.org>,
-        "Paul E. McKenney" <paulmck@kernel.org>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Peter Zijlstra <peterz@infradead.org>, x86 <x86@kernel.org>,
+Subject: [tip: core/rcu] rcu: Make nocb_gp_wait() double-check
+ unexpected-callback warning
+Cc:     "Paul E. McKenney" <paulmck@kernel.org>, x86 <x86@kernel.org>,
         LKML <linux-kernel@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <158504140447.28353.5481545814274745771.tip-bot2@tip-bot2>
+Message-ID: <158504140582.28353.1542065767349968391.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -48,53 +45,56 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the core/rcu branch of tip:
 
-Commit-ID:     80c503e0e68fbe271680ab48f0fe29bc034b01b7
-Gitweb:        https://git.kernel.org/tip/80c503e0e68fbe271680ab48f0fe29bc034b01b7
+Commit-ID:     3d05031ae6de6ad084aa41263aed1343065233d5
+Gitweb:        https://git.kernel.org/tip/3d05031ae6de6ad084aa41263aed1343065233d5
 Author:        Paul E. McKenney <paulmck@kernel.org>
-AuthorDate:    Thu, 23 Jan 2020 09:19:01 -08:00
+AuthorDate:    Tue, 04 Feb 2020 14:55:29 -08:00
 Committer:     Paul E. McKenney <paulmck@kernel.org>
-CommitterDate: Thu, 20 Feb 2020 15:59:59 -08:00
+CommitterDate: Thu, 20 Feb 2020 15:58:23 -08:00
 
-locktorture: Print ratio of acquisitions, not failures
+rcu: Make nocb_gp_wait() double-check unexpected-callback warning
 
-The __torture_print_stats() function in locktorture.c carefully
-initializes local variable "min" to statp[0].n_lock_acquired, but
-then compares it to statp[i].n_lock_fail.  Given that the .n_lock_fail
-field should normally be zero, and given the initialization, it seems
-reasonable to display the maximum and minimum number acquisitions
-instead of miscomputing the maximum and minimum number of failures.
-This commit therefore switches from failures to acquisitions.
+Currently, nocb_gp_wait() unconditionally complains if there is a
+callback not already associated with a grace period.  This assumes that
+either there was no such callback initially on the one hand, or that
+the rcu_advance_cbs() function assigned all such callbacks to a grace
+period on the other.  However, in theory there are some situations that
+would prevent rcu_advance_cbs() from assigning all of the callbacks.
 
-And this turns out to be not only a day-zero bug, but entirely my
-own fault.  I hate it when that happens!
+This commit therefore checks for unassociated callbacks immediately after
+rcu_advance_cbs() returns, while the corresponding rcu_node structure's
+->lock is still held.  If there are unassociated callbacks at that point,
+the subsequent WARN_ON_ONCE() is disabled.
 
-Fixes: 0af3fe1efa53 ("locktorture: Add a lock-torture kernel module")
-Reported-by: Will Deacon <will@kernel.org>
 Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
-Acked-by: Will Deacon <will@kernel.org>
-Cc: Davidlohr Bueso <dave@stgolabs.net>
-Cc: Josh Triplett <josh@joshtriplett.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
 ---
- kernel/locking/locktorture.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ kernel/rcu/tree_plugin.h | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/kernel/locking/locktorture.c b/kernel/locking/locktorture.c
-index 99475a6..687c1d8 100644
---- a/kernel/locking/locktorture.c
-+++ b/kernel/locking/locktorture.c
-@@ -696,10 +696,10 @@ static void __torture_print_stats(char *page,
- 		if (statp[i].n_lock_fail)
- 			fail = true;
- 		sum += statp[i].n_lock_acquired;
--		if (max < statp[i].n_lock_fail)
--			max = statp[i].n_lock_fail;
--		if (min > statp[i].n_lock_fail)
--			min = statp[i].n_lock_fail;
-+		if (max < statp[i].n_lock_acquired)
-+			max = statp[i].n_lock_acquired;
-+		if (min > statp[i].n_lock_acquired)
-+			min = statp[i].n_lock_acquired;
- 	}
- 	page += sprintf(page,
- 			"%s:  Total: %lld  Max/Min: %ld/%ld %s  Fail: %d %s\n",
+diff --git a/kernel/rcu/tree_plugin.h b/kernel/rcu/tree_plugin.h
+index 70b3c0f..36e71c9 100644
+--- a/kernel/rcu/tree_plugin.h
++++ b/kernel/rcu/tree_plugin.h
+@@ -1931,6 +1931,7 @@ static void nocb_gp_wait(struct rcu_data *my_rdp)
+ 	struct rcu_data *rdp;
+ 	struct rcu_node *rnp;
+ 	unsigned long wait_gp_seq = 0; // Suppress "use uninitialized" warning.
++	bool wasempty = false;
+ 
+ 	/*
+ 	 * Each pass through the following loop checks for CBs and for the
+@@ -1970,10 +1971,13 @@ static void nocb_gp_wait(struct rcu_data *my_rdp)
+ 		     rcu_seq_done(&rnp->gp_seq, cur_gp_seq))) {
+ 			raw_spin_lock_rcu_node(rnp); /* irqs disabled. */
+ 			needwake_gp = rcu_advance_cbs(rnp, rdp);
++			wasempty = rcu_segcblist_restempty(&rdp->cblist,
++							   RCU_NEXT_READY_TAIL);
+ 			raw_spin_unlock_rcu_node(rnp); /* irqs disabled. */
+ 		}
+ 		// Need to wait on some grace period?
+-		WARN_ON_ONCE(!rcu_segcblist_restempty(&rdp->cblist,
++		WARN_ON_ONCE(wasempty &&
++			     !rcu_segcblist_restempty(&rdp->cblist,
+ 						      RCU_NEXT_READY_TAIL));
+ 		if (rcu_segcblist_nextgp(&rdp->cblist, &cur_gp_seq)) {
+ 			if (!needwait_gp ||
