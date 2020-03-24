@@ -2,124 +2,146 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3F8C3191B45
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 21:45:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 31CC1191B78
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 21:50:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728076AbgCXUp1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 16:45:27 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:51464 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727846AbgCXUp1 (ORCPT
+        id S1727279AbgCXUuh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 16:50:37 -0400
+Received: from mail27.static.mailgun.info ([104.130.122.27]:13852 "EHLO
+        mail27.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726673AbgCXUuh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 16:45:27 -0400
-Received: by mail-wm1-f67.google.com with SMTP id c187so29070wme.1
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Mar 2020 13:45:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=date:from:to:cc:subject:message-id:mail-followup-to:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=IXTMQkJ5+rGIRXyFRn2dpDyKMm30Z0L9/Y4UKQodmuM=;
-        b=XsbFwoILxMKcZdz37dHEuosq733I4y/GkVUwE3Ks/oGgxQIuhMcgJQ+j1AHHMx00qa
-         iBGiBj1V0+Yb2+bP8VryBHadvf3LASdLt9ZlUGU16dLFqszLw4MX1jpy+BeXp85NfjJy
-         H4L4vIc73H/yZQ3d6vVRr3Ch/zGJ+bCoUqIqA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :in-reply-to;
-        bh=IXTMQkJ5+rGIRXyFRn2dpDyKMm30Z0L9/Y4UKQodmuM=;
-        b=EKeVvXb7J+E4782JNtXBkmvovhz9cnHfR81UG+fsfxcz6ieYsKSBppaRCzrqswV5QS
-         5891O1LBqteIdbRLYwA2aw3a2etJcHkShPy7GsBzW3Nq0Kdnu9Jcv9gabVEAK0wRVFKW
-         zF8SjX17p3Qb92lbJx2j1fhrqDGMT8t6dCHPpQDs8Okh7mqt6MOM/lFqXc3dzDnruA4a
-         4AfV6MKejUwzJzGVjrc8jLGuPOS2HfYdoZBodfzaqB6k8B0YE4D10WJD8UtmMnVCyaKY
-         nAu2RGAp+W3vzUq0QaPoq1zAhNNVCtwxgaFk71Sp8WXjNmSWt8AYi5hsa0j1AWhg8j3h
-         61gQ==
-X-Gm-Message-State: ANhLgQ247sGmzlghFd82ji+ilAwB2U4Ig/cY9aHtk7WZCDDo9Qv8p2hk
-        ljOJ8ssyBsQjqF4Swb3OnfYAgg==
-X-Google-Smtp-Source: ADFU+vszfqEuuH6nexMj7L+36UtUSlCzZQx/S5+rMyLLsVooforcJdZKmTiZefaW7LZ9e0eRD4QV/Q==
-X-Received: by 2002:a05:600c:2051:: with SMTP id p17mr7516494wmg.153.1585082724489;
-        Tue, 24 Mar 2020 13:45:24 -0700 (PDT)
-Received: from phenom.ffwll.local ([2a02:168:57f4:0:efd0:b9e5:5ae6:c2fa])
-        by smtp.gmail.com with ESMTPSA id z188sm5992134wme.46.2020.03.24.13.45.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Mar 2020 13:45:23 -0700 (PDT)
-Date:   Tue, 24 Mar 2020 21:45:21 +0100
-From:   Daniel Vetter <daniel@ffwll.ch>
-To:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc:     linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, Andrzej Hajda <a.hajda@samsung.com>,
-        Sam Ravnborg <sam@ravnborg.org>
-Subject: Re: [PATCH v2 1/6] video: fbdev: controlfb: fix sparse warning about
- using incorrect type
-Message-ID: <20200324204521.GL2363188@phenom.ffwll.local>
-Mail-Followup-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, Andrzej Hajda <a.hajda@samsung.com>,
-        Sam Ravnborg <sam@ravnborg.org>
-References: <20200324134508.25120-1-b.zolnierkie@samsung.com>
- <CGME20200324134518eucas1p16e1a39c14dfd101f5a6d86218a9e19af@eucas1p1.samsung.com>
- <20200324134508.25120-2-b.zolnierkie@samsung.com>
+        Tue, 24 Mar 2020 16:50:37 -0400
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1585083036; h=Content-Transfer-Encoding: Content-Type:
+ In-Reply-To: MIME-Version: Date: Message-ID: From: References: Cc: To:
+ Subject: Sender; bh=ddvd2aTPOKAU2rsf+pwve6VGhBM2CcVIjGKqs4Lcb+4=; b=Avy3q3r3G9f9JlHjc8/ayh4/WqbPVjpRAsXW1C1AiB+E+VzSecHB59Ca0qjcR9U0jH4U+jQX
+ 8okEOU4OvqinrmmLjFcYzkL7HGztrGWDFZPwanlckx0VxKsZad27tDvC9Lw/fv2ExGR3Srvx
+ QgCgUuL7zn/v3WwYguOKD0r9N6E=
+X-Mailgun-Sending-Ip: 104.130.122.27
+X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
+ by mxa.mailgun.org with ESMTP id 5e7a728f.7f7a4c39c9d0-smtp-out-n05;
+ Tue, 24 Mar 2020 20:50:23 -0000 (UTC)
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 0C17DC43637; Tue, 24 Mar 2020 20:50:22 +0000 (UTC)
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        aws-us-west-2-caf-mail-1.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE,
+        URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+Received: from [10.110.95.232] (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: wcheng)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id CAF2AC433CB;
+        Tue, 24 Mar 2020 20:50:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org CAF2AC433CB
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=wcheng@codeaurora.org
+Subject: Re: [PATCH v2 2/4] phy: qcom-snps: Add SNPS USB PHY driver for QCOM
+ based SOCs
+To:     Philipp Zabel <pza@pengutronix.de>
+Cc:     agross@kernel.org, bjorn.andersson@linaro.org, kishon@ti.com,
+        robh+dt@kernel.org, mark.rutland@arm.com,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+References: <1584994632-31193-1-git-send-email-wcheng@codeaurora.org>
+ <1584994632-31193-3-git-send-email-wcheng@codeaurora.org>
+ <20200324094924.GA22281@pengutronix.de>
+From:   Wesley Cheng <wcheng@codeaurora.org>
+Message-ID: <047976bd-709e-d935-38f3-7c8767590e2b@codeaurora.org>
+Date:   Tue, 24 Mar 2020 13:50:19 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200324134508.25120-2-b.zolnierkie@samsung.com>
-X-Operating-System: Linux phenom 5.3.0-3-amd64 
+In-Reply-To: <20200324094924.GA22281@pengutronix.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 24, 2020 at 02:45:03PM +0100, Bartlomiej Zolnierkiewicz wrote:
-> Use in_le32() instead of le32_to_cpup() to fix sparse warning about
-> improper type of the argument.
-> 
-> Also add missing inline keyword to control_par_to_var() definition
-> (to match function prototype).
-> 
-> Acked-by: Sam Ravnborg <sam@ravnborg.org>
-> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-> ---
->  drivers/video/fbdev/controlfb.c | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/video/fbdev/controlfb.c b/drivers/video/fbdev/controlfb.c
-> index 38b61cdb5ca4..9625792f4413 100644
-> --- a/drivers/video/fbdev/controlfb.c
-> +++ b/drivers/video/fbdev/controlfb.c
-> @@ -313,7 +313,7 @@ static int controlfb_blank(int blank_mode, struct fb_info *info)
->  		container_of(info, struct fb_info_control, info);
->  	unsigned ctrl;
->  
-> -	ctrl = le32_to_cpup(CNTRL_REG(p,ctrl));
-> +	ctrl = in_le32(CNTRL_REG(p, ctrl));
->  	if (blank_mode > 0)
->  		switch (blank_mode) {
->  		case FB_BLANK_VSYNC_SUSPEND:
-> @@ -952,7 +952,8 @@ static int control_var_to_par(struct fb_var_screeninfo *var,
->   * Convert hardware data in par to an fb_var_screeninfo
->   */
->  
-> -static void control_par_to_var(struct fb_par_control *par, struct fb_var_screeninfo *var)
-> +static inline void control_par_to_var(struct fb_par_control *par,
+Hi Philipp,
 
-Just quick drive-by bikeshed, feel free to ignore: static inline within a
-.c file imo doesn't make sense anymore, compilers are smart enough
-nowadays. I'd just drop this.
--Daniel
-
-> +	struct fb_var_screeninfo *var)
->  {
->  	struct control_regints *rv;
->  	
-> -- 
-> 2.24.1
+On 3/24/2020 2:49 AM, Philipp Zabel wrote:
+> Hi Wesley,
 > 
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+> On Mon, Mar 23, 2020 at 01:17:10PM -0700, Wesley Cheng wrote:
+>> This adds the SNPS FemtoPHY driver used in QCOM SOCs.  There
+>> are potentially multiple instances of this UTMI PHY on the
+>> SOC, all which can utilize this driver.
+>>
+>> Signed-off-by: Wesley Cheng <wcheng@codeaurora.org>
+>> ---
+>>  drivers/phy/qualcomm/Kconfig             |  10 ++
+>>  drivers/phy/qualcomm/Makefile            |   1 +
+>>  drivers/phy/qualcomm/phy-qcom-snps-7nm.c | 294 +++++++++++++++++++++++++++++++
+>>  3 files changed, 305 insertions(+)
+>>  create mode 100644 drivers/phy/qualcomm/phy-qcom-snps-7nm.c
+>>
+> [...]
+>> diff --git a/drivers/phy/qualcomm/phy-qcom-snps-7nm.c b/drivers/phy/qualcomm/phy-qcom-snps-7nm.c
+>> new file mode 100644
+>> index 0000000..8d4ba53
+>> --- /dev/null
+>> +++ b/drivers/phy/qualcomm/phy-qcom-snps-7nm.c
+>> @@ -0,0 +1,294 @@
+> [...]
+>> +static int qcom_snps_hsphy_probe(struct platform_device *pdev)
+>> +{
+>> +	struct device *dev = &pdev->dev;
+>> +	struct qcom_snps_hsphy *hsphy;
+>> +	struct phy_provider *phy_provider;
+>> +	struct phy *generic_phy;
+>> +	struct resource *res;
+>> +	int ret, i;
+>> +	int num;
+>> +
+>> +	hsphy = devm_kzalloc(dev, sizeof(*hsphy), GFP_KERNEL);
+>> +	if (!hsphy)
+>> +		return -ENOMEM;
+>> +
+>> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+>> +	hsphy->base = devm_ioremap_resource(dev, res);
+>> +	if (IS_ERR(hsphy->base))
+>> +		return PTR_ERR(hsphy->base);
+>> +
+>> +	hsphy->ref_clk = devm_clk_get(dev, "ref");
+>> +	if (IS_ERR(hsphy->ref_clk)) {
+>> +		ret = PTR_ERR(hsphy->ref_clk);
+>> +		if (ret != -EPROBE_DEFER)
+>> +			dev_err(dev, "failed to get ref clk, %d\n", ret);
+>> +		return ret;
+>> +	}
+>> +
+>> +	hsphy->phy_reset = devm_reset_control_get_by_index(&pdev->dev, 0);
+>> +	if (IS_ERR(hsphy->phy_reset)) {
+>> +		dev_err(dev, "failed to get phy core reset\n");
+>> +		return PTR_ERR(hsphy->phy_reset);
+>> +	}
+> 
+> There is only a single reset specified, so there is no need for
+> _by_index. Also please explicitly request exclusive reset control
+> for this driver, I suggest:
+> 
+> 	hsphy->phy_reset = devm_reset_control_get_exclusive(&pdev->dev, NULL);
+> 
+> If you do want to prepare for future addition of other resets to the
+> bindings (but if so, why not specify those right now?), you should add
+> a reset-names property and request the reset control by id string
+> instead.
+> 
+> regards
+> Philipp
+> 
+
+Thanks for the feedback.  Sure, I will move to using
+devm_reset_control_get_exclusive, as we won't be having multiple resets
+for this particular PHY.  Will update a new patch series.
 
 -- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
