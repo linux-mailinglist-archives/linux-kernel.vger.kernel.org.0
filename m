@@ -2,33 +2,34 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AEBF1190918
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 10:18:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 529EA1908ED
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 10:18:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728002AbgCXJSQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 05:18:16 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:44073 "EHLO
+        id S1727744AbgCXJRF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 05:17:05 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:44018 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727732AbgCXJRG (ORCPT
+        with ESMTP id S1727652AbgCXJQ5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 05:17:06 -0400
+        Tue, 24 Mar 2020 05:16:57 -0400
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1jGfg9-00087B-E7; Tue, 24 Mar 2020 10:16:57 +0100
+        id 1jGfg5-00088S-SA; Tue, 24 Mar 2020 10:16:54 +0100
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id E81571C0493;
-        Tue, 24 Mar 2020 10:16:43 +0100 (CET)
-Date:   Tue, 24 Mar 2020 09:16:43 -0000
-From:   "tip-bot2 for Paul E. McKenney" <tip-bot2@linutronix.de>
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 3C04C1C04CE;
+        Tue, 24 Mar 2020 10:16:45 +0100 (CET)
+Date:   Tue, 24 Mar 2020 09:16:44 -0000
+From:   "tip-bot2 for Uladzislau Rezki (Sony)" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: core/rcu] locktorture: Use private random-number generators
-Cc:     "Paul E. McKenney" <paulmck@kernel.org>, x86 <x86@kernel.org>,
+Subject: [tip: core/rcu] rcu: Add a trace event for kfree_rcu() use of kfree_bulk()
+Cc:     "Uladzislau Rezki (Sony)" <urezki@gmail.com>,
+        "Paul E. McKenney" <paulmck@kernel.org>, x86 <x86@kernel.org>,
         LKML <linux-kernel@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <158504140357.28353.10447478189057385832.tip-bot2@tip-bot2>
+Message-ID: <158504140491.28353.12360538628522268701.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -44,47 +45,81 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the core/rcu branch of tip:
 
-Commit-ID:     c0e1472d80784206ead1dd803dd4bc10e282b17f
-Gitweb:        https://git.kernel.org/tip/c0e1472d80784206ead1dd803dd4bc10e282b17f
-Author:        Paul E. McKenney <paulmck@kernel.org>
-AuthorDate:    Fri, 24 Jan 2020 12:58:15 -08:00
+Commit-ID:     613707929b304737e6eb841588772f1994f6702b
+Gitweb:        https://git.kernel.org/tip/613707929b304737e6eb841588772f1994f6702b
+Author:        Uladzislau Rezki (Sony) <urezki@gmail.com>
+AuthorDate:    Mon, 20 Jan 2020 15:42:26 +01:00
 Committer:     Paul E. McKenney <paulmck@kernel.org>
-CommitterDate: Thu, 20 Feb 2020 15:59:59 -08:00
+CommitterDate: Thu, 20 Feb 2020 15:58:51 -08:00
 
-locktorture: Use private random-number generators
+rcu: Add a trace event for kfree_rcu() use of kfree_bulk()
 
-Both lock_torture_writer() and lock_torture_reader() use the "static"
-keyword on their DEFINE_TORTURE_RANDOM(rand) declarations, which means
-that a single instance of a random-number generator are shared among all
-the writers and another is shared among all the readers.  Unfortunately,
-this random-number generator was not designed for concurrent access.
-This commit therefore removes both "static" keywords so that each reader
-and each writer gets its own random-number generator.
+The event is given three parameters, first one is the name
+of RCU flavour, second one is the number of elements in array
+for free and last one is an address of the array holding
+pointers to be freed by the kfree_bulk() function.
 
+To enable the trace event your kernel has to be build with
+CONFIG_RCU_TRACE=y, after that it is possible to track the
+events using ftrace subsystem.
+
+Signed-off-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
 Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
 ---
- kernel/locking/locktorture.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ include/trace/events/rcu.h | 28 ++++++++++++++++++++++++++++
+ kernel/rcu/tree.c          |  3 +++
+ 2 files changed, 31 insertions(+)
 
-diff --git a/kernel/locking/locktorture.c b/kernel/locking/locktorture.c
-index 687c1d8..5baf904 100644
---- a/kernel/locking/locktorture.c
-+++ b/kernel/locking/locktorture.c
-@@ -618,7 +618,7 @@ static struct lock_torture_ops percpu_rwsem_lock_ops = {
- static int lock_torture_writer(void *arg)
- {
- 	struct lock_stress_stats *lwsp = arg;
--	static DEFINE_TORTURE_RANDOM(rand);
-+	DEFINE_TORTURE_RANDOM(rand);
+diff --git a/include/trace/events/rcu.h b/include/trace/events/rcu.h
+index 5e49b06..49a49e6 100644
+--- a/include/trace/events/rcu.h
++++ b/include/trace/events/rcu.h
+@@ -624,6 +624,34 @@ TRACE_EVENT_RCU(rcu_invoke_kfree_callback,
+ );
  
- 	VERBOSE_TOROUT_STRING("lock_torture_writer task started");
- 	set_user_nice(current, MAX_NICE);
-@@ -655,7 +655,7 @@ static int lock_torture_writer(void *arg)
- static int lock_torture_reader(void *arg)
- {
- 	struct lock_stress_stats *lrsp = arg;
--	static DEFINE_TORTURE_RANDOM(rand);
-+	DEFINE_TORTURE_RANDOM(rand);
+ /*
++ * Tracepoint for the invocation of a single RCU callback of the special
++ * kfree_bulk() form. The first argument is the RCU flavor, the second
++ * argument is a number of elements in array to free, the third is an
++ * address of the array holding nr_records entries.
++ */
++TRACE_EVENT_RCU(rcu_invoke_kfree_bulk_callback,
++
++	TP_PROTO(const char *rcuname, unsigned long nr_records, void **p),
++
++	TP_ARGS(rcuname, nr_records, p),
++
++	TP_STRUCT__entry(
++		__field(const char *, rcuname)
++		__field(unsigned long, nr_records)
++		__field(void **, p)
++	),
++
++	TP_fast_assign(
++		__entry->rcuname = rcuname;
++		__entry->nr_records = nr_records;
++		__entry->p = p;
++	),
++
++	TP_printk("%s bulk=0x%p nr_records=%lu",
++		__entry->rcuname, __entry->p, __entry->nr_records)
++);
++
++/*
+  * Tracepoint for exiting rcu_do_batch after RCU callbacks have been
+  * invoked.  The first argument is the name of the RCU flavor,
+  * the second argument is number of callbacks actually invoked,
+diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
+index 51a3aa8..909f97e 100644
+--- a/kernel/rcu/tree.c
++++ b/kernel/rcu/tree.c
+@@ -2792,6 +2792,9 @@ static void kfree_rcu_work(struct work_struct *work)
+ 		debug_rcu_head_unqueue_bulk(bhead->head_free_debug);
  
- 	VERBOSE_TOROUT_STRING("lock_torture_reader task started");
- 	set_user_nice(current, MAX_NICE);
+ 		rcu_lock_acquire(&rcu_callback_map);
++		trace_rcu_invoke_kfree_bulk_callback(rcu_state.name,
++			bhead->nr_records, bhead->records);
++
+ 		kfree_bulk(bhead->nr_records, bhead->records);
+ 		rcu_lock_release(&rcu_callback_map);
+ 
