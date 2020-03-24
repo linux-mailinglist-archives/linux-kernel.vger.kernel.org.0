@@ -2,44 +2,44 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8C5C21915B7
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 17:11:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 393041915D9
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 17:13:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728208AbgCXQLf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 12:11:35 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:50986 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727634AbgCXQLf (ORCPT
+        id S1729028AbgCXQNE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 12:13:04 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:36916 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728294AbgCXQLg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 12:11:35 -0400
+        Tue, 24 Mar 2020 12:11:36 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Type:MIME-Version:References:
+        d=infradead.org; s=merlin.20170209; h=Content-Type:MIME-Version:References:
         Subject:Cc:To:From:Date:Message-Id:Sender:Reply-To:Content-Transfer-Encoding:
         Content-ID:Content-Description:In-Reply-To;
-        bh=U/Z93ID0Ley3uabUn6Av4k+K52bsSIKdSRKwQpkQdic=; b=Wb5HwDO1V86ruJz1gq7Ry7JLZ1
-        VcWhGpds5RujG52EdswQmRtNlLpdZSFrxjZDH/AJs/pyC52308uTG4WvxPDeeMDUTrLf0NslGAGyb
-        fGhxdQ0VHTA6sd/QHan6Uxw7SA2O/XsWlTQ0WHSBekq/UmklEtJRsSlEyZhs14gW2EIpPQ3x8KWUz
-        yldkv81KbTp4loLPUHMLsbYGelr0cXst04rxyOlMN7R6zn5Xfl0ElaUFZvc06zYLivKgVRTN0rNuR
-        vBM9PRLgwAbdl7Z6ZTZCzDazIYY/B1H2ixwnoabvqq8iWgzusaKxGecyHJpC6MS7iRC0RqnaQ7jzY
-        0eoMMUtw==;
+        bh=heV7ZlB/DHsLTcnEevfvbwvxgJhlctXESkT1ov9n8cQ=; b=E/MzrpCvIY4vx/iWg4yKwVEaBl
+        esQCicKROBFlHX2+qToZ9J06Lzyc3u2V6i2a+ClL9xcYTgBENGaxOfW4zzuZvfGypozolIXm1PgUO
+        5ZPQ4NlzP5kDRuVbnNZa3gYCDX1qm+jRAfAjy4h0is45IUCawvgud1IQb/Mb96+V2CejWHjpaSCmd
+        nzVJmE25adVP41bZ0NMdaHvyQHteUHWgnIuHE+ow9j8yMPSrfhP/Kcuo2VcHVjed/9R4UGPGjCVJZ
+        NXeh4zCDhQ0pzmTFWF7xJ0dk2L/EIS7uxHc984uThBSdDQsoVcfCx51vMuv/ISjr86MbySmL8K0f5
+        89GlrPWA==;
 Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jGm9K-0000BS-9f; Tue, 24 Mar 2020 16:11:30 +0000
+        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jGm9J-0006bO-Or; Tue, 24 Mar 2020 16:11:29 +0000
 Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 31477306099;
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 33FB130610C;
         Tue, 24 Mar 2020 17:11:28 +0100 (CET)
 Received: by hirez.programming.kicks-ass.net (Postfix, from userid 0)
-        id 1FCEB29A490F4; Tue, 24 Mar 2020 17:11:28 +0100 (CET)
-Message-Id: <20200324160924.083720147@infradead.org>
+        id 2364D29A490F3; Tue, 24 Mar 2020 17:11:28 +0100 (CET)
+Message-Id: <20200324160924.143334345@infradead.org>
 User-Agent: quilt/0.65
-Date:   Tue, 24 Mar 2020 16:31:16 +0100
+Date:   Tue, 24 Mar 2020 16:31:17 +0100
 From:   Peter Zijlstra <peterz@infradead.org>
 To:     tglx@linutronix.de, jpoimboe@redhat.com
 Cc:     linux-kernel@vger.kernel.org, x86@kernel.org, peterz@infradead.org,
         mhiramat@kernel.org, mbenes@suse.cz, brgerst@gmail.com
-Subject: [PATCH v3 03/26] objtool: Rename func_for_each_insn_all()
+Subject: [PATCH v3 04/26] x86/kexec: Use RIP relative addressing
 References: <20200324153113.098167666@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -48,73 +48,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now that func_for_each_insn() is available, rename
-func_for_each_insn_all(). This gets us:
+Normally identity_mapped is not visible to objtool, due to:
 
-  sym_for_each_insn()  - iterate on symbol offset/len
-  func_for_each_insn() - iterate on insn->func
+  arch/x86/kernel/Makefile:OBJECT_FILES_NON_STANDARD_relocate_kernel_$(BITS).o := y
 
+However, when we want to run objtool on vmlinux.o there is no hiding
+it:
+
+  vmlinux.o: warning: objtool: .text+0x4c0f1: unsupported intra-function call
+
+Replace the (i386 inspired) pattern:
+
+	call 1f
+  1:	popq %r8
+	subq $(1b - relocate_kernel), %r8
+
+With a x86_64 RIP-relative LEA:
+
+	leaq relocate_kernel(%rip), %r8
+
+Suggested-by: Brian Gerst <brgerst@gmail.com>
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 Acked-by: Josh Poimboeuf <jpoimboe@redhat.com>
 ---
- tools/objtool/check.c |   12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ arch/x86/kernel/relocate_kernel_64.S |    5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
---- a/tools/objtool/check.c
-+++ b/tools/objtool/check.c
-@@ -72,7 +72,7 @@ static struct instruction *next_insn_sam
- 	return find_insn(file, func->cfunc->sec, func->cfunc->offset);
- }
+--- a/arch/x86/kernel/relocate_kernel_64.S
++++ b/arch/x86/kernel/relocate_kernel_64.S
+@@ -196,10 +196,7 @@ SYM_CODE_START_LOCAL_NOALIGN(identity_ma
  
--#define func_for_each_insn_all(file, func, insn)			\
-+#define func_for_each_insn(file, func, insn)				\
- 	for (insn = find_insn(file, func->sec, func->offset);		\
- 	     insn;							\
- 	     insn = next_insn_same_func(file, insn))
-@@ -165,7 +165,7 @@ static bool __dead_end_function(struct o
- 	if (!insn->func)
- 		return false;
- 
--	func_for_each_insn_all(file, func, insn) {
-+	func_for_each_insn(file, func, insn) {
- 		empty = false;
- 
- 		if (insn->type == INSN_RETURN)
-@@ -180,7 +180,7 @@ static bool __dead_end_function(struct o
- 	 * case, the function's dead-end status depends on whether the target
- 	 * of the sibling call returns.
- 	 */
--	func_for_each_insn_all(file, func, insn) {
-+	func_for_each_insn(file, func, insn) {
- 		if (is_sibling_call(insn)) {
- 			struct instruction *dest = insn->jump_dest;
- 
-@@ -425,7 +425,7 @@ static void add_ignores(struct objtool_f
- 			continue;
- 		}
- 
--		func_for_each_insn_all(file, func, insn)
-+		func_for_each_insn(file, func, insn)
- 			insn->ignore = true;
- 	}
- }
-@@ -1082,7 +1082,7 @@ static void mark_func_jump_tables(struct
- 	struct instruction *insn, *last = NULL;
- 	struct rela *rela;
- 
--	func_for_each_insn_all(file, func, insn) {
-+	func_for_each_insn(file, func, insn) {
- 		if (!last)
- 			last = insn;
- 
-@@ -1117,7 +1117,7 @@ static int add_func_jump_tables(struct o
- 	struct instruction *insn;
- 	int ret;
- 
--	func_for_each_insn_all(file, func, insn) {
-+	func_for_each_insn(file, func, insn) {
- 		if (!insn->jump_table)
- 			continue;
- 
+ 	/* get the re-entry point of the peer system */
+ 	movq	0(%rsp), %rbp
+-	call	1f
+-1:
+-	popq	%r8
+-	subq	$(1b - relocate_kernel), %r8
++	leaq	relocate_kernel(%rip), %r8
+ 	movq	CP_PA_SWAP_PAGE(%r8), %r10
+ 	movq	CP_PA_BACKUP_PAGES_MAP(%r8), %rdi
+ 	movq	CP_PA_TABLE_PAGE(%r8), %rax
 
 
