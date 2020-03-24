@@ -2,170 +2,126 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9AA76191C9D
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 23:26:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E4981191CA5
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 23:30:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728368AbgCXWZt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 18:25:49 -0400
-Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:33182 "EHLO
-        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728094AbgCXWZs (ORCPT
+        id S1728385AbgCXWaA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 18:30:00 -0400
+Received: from mail-pj1-f68.google.com ([209.85.216.68]:34504 "EHLO
+        mail-pj1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728094AbgCXWaA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 18:25:48 -0400
-Received: from pps.filterd (m0001303.ppops.net [127.0.0.1])
-        by m0001303.ppops.net (8.16.0.42/8.16.0.42) with SMTP id 02OMGQVf022454;
-        Tue, 24 Mar 2020 15:25:39 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
- : date : message-id : references : in-reply-to : content-type : content-id
- : content-transfer-encoding : mime-version; s=facebook;
- bh=dU4AYwVJ3ywBetTvmpAy5xfNdzAz4d/EDWEW+qIh8OY=;
- b=FcxBNDH5do7+xWTx1BX68WnGb8dNVRZyZPms8EYeK474lf0vo9JZ5mfshu8L89pnef5h
- 91vBAzyI7DlYK2UYM5VigX/bAf+Nt201Pcr/gzE7ChdfWWIjXsJscS4bcY4HigZ9Js6T
- a3H3F5Rb93Zyoh4EQ0lU+EZewbU/Mkzuub8= 
-Received: from maileast.thefacebook.com ([163.114.130.16])
-        by m0001303.ppops.net with ESMTP id 2ywekngad3-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-        Tue, 24 Mar 2020 15:25:39 -0700
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (100.104.31.183)
- by o365-in.thefacebook.com (100.104.36.100) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1847.3; Tue, 24 Mar 2020 15:25:38 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=D2utdutbpO5AAwqYGpemtLveC3Deoteza/DaYquCqxTI23jTy0BM1MdULWtrFA8rfZUUjBcc1HsCnYAKJSM4Pmty9C9qeJXWbHREdMmQxJDrSrfwP+0Q6fUAX7YHkdvrngIk5Xf7NCK74YRuJ+deYIKq3xGbj8sHy4NtWOm0jmCow9BPR+8EafSQJMdHQy2LL+bUkDnrcjdMaAeMQRSrE5vlYyjaKqo7r1OaVgOTiA8RpbRk2RI82/Dw2K4/9b7K2l8gEijLH+d7DTpPhyE/cyNCijw2tImm9RVHy4GIXFGjLj8A2sRK3Wn02AbskoUlFDlo5I4/oVVi40PbuCLFKg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=dU4AYwVJ3ywBetTvmpAy5xfNdzAz4d/EDWEW+qIh8OY=;
- b=GsRp8Syt52VWlBVNy9cYv0CScUGfTUWp05K51zSR/bJh1thHy+NP2OOcmNOQMCZViz5pKj7jS8SoFqRR8DaKZV4UY0Tk6zGSgQGa0+UV5kV/mF/K2VcyQw83rxo4xgvQXAJeiKwHaWNYZXXwGAnnB0a4AzG+CnBTr3b+m60E9RGFQ1/+04Qw8WTDwlCYTqrgFlll9ngE4PR1PWiDUL9YiAC/kHRdm4nERLQTven63M2UhIS2buiKtNzPC0++bx3d/7VD5PYdEyYBFKBFq/1utr4CQqhq097zU6LDhHQ89eXeYXXI/c3b3OVxrA0nP2xCUa4IOI4yLfWLRwLflTDFRw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=fb.com; dmarc=pass action=none header.from=fb.com; dkim=pass
- header.d=fb.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
- s=selector2-fb-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=dU4AYwVJ3ywBetTvmpAy5xfNdzAz4d/EDWEW+qIh8OY=;
- b=gDh5X72pwIpPT5Up82iHbxHVZuQGaIV7DCOnoengdMB/LQ+ENVbqnzKXPWyJSg6OPu5FyMamXcEGBZWxTmpD/uq59QH4FnHrmGSS/MktVO6IB5mE9+drDjOHWt/j0+T4Mwfi9UiermpfmrFDnjuJKx1sYAE4wCaDwS8JnfZghm0=
-Received: from MW3PR15MB3882.namprd15.prod.outlook.com (2603:10b6:303:49::11)
- by MW3PR15MB3963.namprd15.prod.outlook.com (2603:10b6:303:50::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2835.18; Tue, 24 Mar
- 2020 22:25:37 +0000
-Received: from MW3PR15MB3882.namprd15.prod.outlook.com
- ([fe80::c570:6c46:cc47:5ca5]) by MW3PR15MB3882.namprd15.prod.outlook.com
- ([fe80::c570:6c46:cc47:5ca5%5]) with mapi id 15.20.2835.023; Tue, 24 Mar 2020
- 22:25:37 +0000
-From:   Song Liu <songliubraving@fb.com>
-To:     linux-kernel <linux-kernel@vger.kernel.org>
-CC:     Kernel Team <Kernel-team@fb.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Alexey Budankov <alexey.budankov@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>, Tejun Heo <tj@kernel.org>
-Subject: Re: [PATCH v11] perf: Sharing PMU counters across compatible events
-Thread-Topic: [PATCH v11] perf: Sharing PMU counters across compatible events
-Thread-Index: AQHWAiT9KEupE+dDF0SaZgMOIv1+LqhYRjSAgAALyQA=
-Date:   Tue, 24 Mar 2020 22:25:37 +0000
-Message-ID: <92D9FFD5-D381-4E46-92BE-F981F0F91388@fb.com>
-References: <20200324214125.153584-1-songliubraving@fb.com>
- <4359BCB5-1FB5-4A5A-B528-10CDDA97A5DF@fb.com>
-In-Reply-To: <4359BCB5-1FB5-4A5A-B528-10CDDA97A5DF@fb.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-mailer: Apple Mail (2.3608.60.0.2.5)
-x-originating-ip: [2620:10d:c090:400::5:393e]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: ac079969-b72a-4660-fb94-08d7d0424741
-x-ms-traffictypediagnostic: MW3PR15MB3963:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <MW3PR15MB3963DC687AE8E9CD5FDF56E2B3F10@MW3PR15MB3963.namprd15.prod.outlook.com>
-x-fb-source: Internal
-x-ms-oob-tlc-oobclassifiers: OLM:3173;
-x-forefront-prvs: 03524FBD26
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(136003)(396003)(376002)(346002)(39860400002)(366004)(186003)(5660300002)(66946007)(76116006)(66556008)(66476007)(64756008)(66446008)(33656002)(478600001)(6916009)(2616005)(8676002)(8936002)(2906002)(36756003)(6486002)(316002)(71200400001)(81156014)(81166006)(6512007)(4326008)(53546011)(54906003)(86362001)(6506007);DIR:OUT;SFP:1102;SCL:1;SRVR:MW3PR15MB3963;H:MW3PR15MB3882.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;
-received-spf: None (protection.outlook.com: fb.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: FDUfSD4UiDQrDGt0rmBD/jBu3xrKXaDom5Ae1RwUmslki0phrB1lk1Qlji6dsnB99Zd/AES5wvrB+/vpdUW6TZ/TKvhBcr4l9XPrHWQZ4drXeG9rD54kouq4UsbgOuCa1TtjgTfUPJaanrnN8LxcH5cqDpSx1bQ/kSNJLHdq5iPODnFTx1to17nOijapombaCOr0aPk/J779GkKeLSA3JYLOvWOS1AopqL4JTS1LAnGmWidVB1z+jnOwKHU5TVKHx3lHx4XlYLyF543LeboKEubMJ+9Dx5x/6zT0Ir57IlRG9nB1g3tFHVVASyDY4Szq5nCRLcRqwL/jqjtRu3MpdBvSuw304KkaVTMZKyDduuSt8372fCI+PhsAaNluhwi4yKN0m+21oZsMbvtPklyy/KmO+l6ikZXr2/5O381HT7W2CMLsAIdKbNk6YUsbaVtj
-x-ms-exchange-antispam-messagedata: hhuxXTP7xt+GaV86YzPaBJYuNI7CHrJeoGV9Tpxwnq9ZHNoxnztVHELr3iTpUKdx+eaKON3KtTV9f82+OBb2k7/HN4OHiLDydA8w6iwuIPDUmSt91dx7D/VfkzLI7IB2HLcFp1P+PtJpbux9ClRvLX5QZKY+kN7Cg2sumRgWHoZiOFshwsKvY10TqI/RsAvK
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <7B633632D4FF5F46A7AEF8E3AE984A07@namprd15.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        Tue, 24 Mar 2020 18:30:00 -0400
+Received: by mail-pj1-f68.google.com with SMTP id q16so1631848pje.1
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Mar 2020 15:29:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mail-followup-to:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=x05q+wZ49/Pk/12UuvPipPbvrgDmK5ko/9El70Dqc1M=;
+        b=eD7IEbsqdA0EdD/6H0QwiA/EGsrPJQdYtlFQOYWrSXBeyMN9bdTuHuyh78rgG+fjJD
+         RKHRKGzqUKPoVTAif9N3I9MkyPKkLfXwYHfzMim9KbX49SAKChtq9cA02yLbhhJVMswK
+         C+XVNeiczmeyWyLeUcXOgujZLRCrOOr8aanHD7I/LIr6onAKDYUaZRtQcxR0bavT+YWF
+         XERP/n/kscfA1xMEQSJAxB6s9qxNL7rDfCleVkgBpXTEtjApSHAjPTn3NsQ82Qbvr9se
+         8MOIqcSd6XW5bv83I5CIFkYtg3GAMKP7Dd4qIIklG7oiA08EqbBv72t1lHlKJMtuUFi6
+         f84Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to:user-agent;
+        bh=x05q+wZ49/Pk/12UuvPipPbvrgDmK5ko/9El70Dqc1M=;
+        b=JFykygR2U8dhSfRB61ibLunKTwJyl4ZnVXwXCBJUUGt7XURKYnU946Jj8wUur3i8po
+         6FTTlHS+YkJvRdDUdzfnvM11UPRso7xaFvS9WMQCwM26AiFOkHPRz9q8UDxp/VEtzg+p
+         wh9HmtwkfmJC408ln6TeA8sApcMjCnJehajjEDX4I9jbzuKwTwZwqM4DFJLD4hD4Bi0f
+         Jug4rRssnq/UbbX3p+pwpmcAxPgRhwRtUltOy2W+y8xUGWXZ2cSJOyhlVZDazJYX531W
+         ZQBJfjTwdQ/ktXOVNfU6gncBvlZmaDnBMaYYLVPu23fGfRekGK6s7UKUHOcmmtmGHc91
+         IsXQ==
+X-Gm-Message-State: ANhLgQ0bfFggiuGhQgCf9aiwu0Ww7NS2bbJ58P95H7+E7dyTwGy59WT4
+        zIc5G08dyHq4rcALfJ9Q0/g=
+X-Google-Smtp-Source: ADFU+vtt1BEGsdHYbjJjJk3uLa12ICwoXGAunw/Rg1kDwGKfpOgAvQ3Tj2ZqDRVSYJ09FKBu2mN/OQ==
+X-Received: by 2002:a17:902:7886:: with SMTP id q6mr216928pll.237.1585088999126;
+        Tue, 24 Mar 2020 15:29:59 -0700 (PDT)
+Received: from Gentoo ([103.231.90.172])
+        by smtp.gmail.com with ESMTPSA id m13sm3101250pjq.26.2020.03.24.15.29.54
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 24 Mar 2020 15:29:58 -0700 (PDT)
+Date:   Wed, 25 Mar 2020 03:59:46 +0530
+From:   Bhaskar Chowdhury <unixbhaskar@gmail.com>
+To:     Joe Perches <joe@perches.com>
+Cc:     linux@leemhuis.info, rdunlap@infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] rearrange the output text, cosmetic changes
+Message-ID: <20200324222943.GA18504@Gentoo>
+Mail-Followup-To: Bhaskar Chowdhury <unixbhaskar@gmail.com>,
+        Joe Perches <joe@perches.com>, linux@leemhuis.info,
+        rdunlap@infradead.org, linux-kernel@vger.kernel.org
+References: <20200324084513.18237-1-unixbhaskar@gmail.com>
+ <fb5a17c67f504f5761069ee446cc1b703dd8b54f.camel@perches.com>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: ac079969-b72a-4660-fb94-08d7d0424741
-X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Mar 2020 22:25:37.5860
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: xS4AS0Ik26VnRmp0yFuREFFKMhlI1xzZpqehjQksRdq1bcfMYl1RJcMf6Oi+pcLTFg6y0WARV2T6z8V39b5s8g==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW3PR15MB3963
-X-OriginatorOrg: fb.com
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.645
- definitions=2020-03-24_09:2020-03-23,2020-03-24 signatures=0
-X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 bulkscore=0
- lowpriorityscore=0 mlxlogscore=999 spamscore=0 phishscore=0 suspectscore=0
- clxscore=1015 adultscore=0 mlxscore=0 impostorscore=0 malwarescore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2003020000 definitions=main-2003240111
-X-FB-Internal: deliver
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="C7zPtVaVf+AK4Oqc"
+Content-Disposition: inline
+In-Reply-To: <fb5a17c67f504f5761069ee446cc1b703dd8b54f.camel@perches.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
+--C7zPtVaVf+AK4Oqc
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> On Mar 24, 2020, at 2:43 PM, Song Liu <songliubraving@fb.com> wrote:
->=20
->=20
->=20
->> On Mar 24, 2020, at 2:41 PM, Song Liu <songliubraving@fb.com> wrote:
+On 08:15 Tue 24 Mar 2020, Joe Perches wrote:
+>On Tue, 2020-03-24 at 14:15 +0530, Bhaskar Chowdhury wrote:
+>> As the subject like says, purely cosmetic changes to read cleanly.
+>> Jumbled up the line.
+>
+>Subject line should show tools or kernel-chktaint
+>
+>and:
+>
+>> diff --git a/tools/debugging/kernel-chktaint b/tools/debugging/kernel-ch=
+ktaint
+>[]
+>> @@ -195,8 +195,9 @@ else
+>>  	echo " * kernel was built with the struct randomization plugin (#17)"
+>>  fi
 >>=20
->> This patch tries to enable PMU sharing. When multiple perf_events are
->> counting the same metric, they can share the hardware PMU counter. We
->> call these events as "compatible events".
->>=20
->> The PMU sharing are limited to events within the same perf_event_context
->> (ctx). When a event is installed or enabled, search the ctx for compatib=
-le
->> events. This is implemented in perf_event_setup_dup(). One of these
->> compatible events are picked as the master (stored in event->dup_master)=
-.
->> Similarly, when the event is removed or disabled, perf_event_remove_dup(=
-)
->> is used to clean up sharing.
->>=20
->> If the master event is a cgroup event or a event in a group, it is
->> possible that some slave events are ACTIVE, but the master event is not.
->> To handle this scenario, we introduced PERF_EVENT_STATE_ENABLED. Also,
->> since PMU drivers write into event->count, master event needs another
->> variable (master_count) for the reading of this event.
->>=20
->> On the critical paths (add, del read), sharing PMU counters doesn't
->> increase the complexity. Helper functions event_pmu_[add|del|read]() are
->> introduced to cover these cases. All these functions have O(1) time
->> complexity.
->>=20
->> Cc: Peter Zijlstra <peterz@infradead.org>
->> Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
->> Cc: Jiri Olsa <jolsa@kernel.org>
->> Cc: Alexey Budankov <alexey.budankov@linux.intel.com>
->> Cc: Namhyung Kim <namhyung@kernel.org>
->> Cc: Tejun Heo <tj@kernel.org>
->> Reported-by: kernel test robot <rong.a.chen@intel.com>
->> Signed-off-by: Song Liu <songliubraving@fb.com>
->>=20
->> ---
->> Changes in v12:
->> Fix new failures perf_event_tests. (kernel test robot)
->=20
-> Typo in subject. This is actually v12.=20
+>> -echo "For a more detailed explanation of the various taint flags see"
+>> -echo " Documentation/admin-guide/tainted-kernels.rst in the the Linux k=
+ernel sources"
+>> -echo " or https://kernel.org/doc/html/latest/admin-guide/tainted-kernel=
+s.html"
+>>  echo "Raw taint value as int/string: $taint/'$out'"
+>> +echo
+>> +echo "For a more detailed explanation of the various taint flags see be=
+low pointers:"
+>> +echo "1) Documentation/admin-guide/tainted-kernels.rst in  the Linux ke=
+rnel sources"
+>
+>One extra space between "in  the"
+>
+>
 
-I was stupid... This version didn't work... Please discard it.=20
+Thanks, Joe ...fixing! next patch should have fixed them.
 
-Song
+--C7zPtVaVf+AK4Oqc
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCAAdFiEEnwF+nWawchZUPOuwsjqdtxFLKRUFAl56idQACgkQsjqdtxFL
+KRU+FQgA0vWZXAC46/cFThHhqi3APYLNXvP1Za3YAOM6bPABw4++toTOsXlD+Bf0
+ezijTIc6cqeU8nQaiyQRjh4k3JQ0p6PAL53+Syqip4su+y3CoTSKg23o4r6S/hGi
+79zwSZWu0MZxIskiL25P+66QUOMM/AiLMNkibU7+MtPPEtB5xNVLmt/vepmXAtyy
+NQ9H9pP7I31d08Zjs3dwXuqo/rl36EEagQ1YfQ0LE34PqVR+PlVv5GE9t+ZSDwWH
+pYDcLwobvsfuMM60skTqS3w0GVxwctuSUjRtcg0UBnyqrLVUeLn+YZn8voYyvZWZ
+lV1YZ0oqOyfbVVEglxsnxslukJhj7Q==
+=aKGe
+-----END PGP SIGNATURE-----
+
+--C7zPtVaVf+AK4Oqc--
