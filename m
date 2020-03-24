@@ -2,58 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5C2FC1908C2
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 10:13:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DFDAD1908CD
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 10:14:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727324AbgCXJMU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 05:12:20 -0400
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:42394 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726413AbgCXJMT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 05:12:19 -0400
-Received: by mail-qt1-f193.google.com with SMTP id t9so10378559qto.9
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Mar 2020 02:12:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=oQSuTD2L8BoQU016DHWkTrPw5E7C1fwkKvLo6b8G8HE=;
-        b=FD2yKXHS7MWShqAR8frtN5qDf9ZWZI8JJ8/KQ32jMYljyiT2culFoZEv8AjfX+ZRVd
-         XKHYxDbU8xbDRFO4dujoAb1WKaArGVRAsoeFWPsMLImcBNPO35YmrgQ80SiVd/8Qe7Ae
-         psXjJhG9sb06jyyh0o1Ri/IKP/Jkgk6SLsWar4PS3cotblB8uWncB5DwtTS4PwkCSiSO
-         DLSqW0Ngqst0su2WuMyUfnIotaksurOnC9yFCPz4m2+ksdy9wh58x2t2OivptSazy/4e
-         sGWuLMxGAyaldcJgwVm7vMANMq+Inb1V+ohX7mlCYlWDepheywI38jvW70oeEtauEgle
-         z25g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=oQSuTD2L8BoQU016DHWkTrPw5E7C1fwkKvLo6b8G8HE=;
-        b=KlSWADTIgQUKOoaHemyfaN/d3uIEzjX0lNKdyy8zBm9w/+Xx3sO+0VwvcfivvHwMuZ
-         mcYJwp7/J/fW61af0YBg2mXC8aOeUNLBvQBZcDOi2Zh4KdU31+am0w/mcUplHlztYyby
-         jZazfQNzjRYFKdTH4WcxhnR68Dpu3fRKrKIa6yRz3be/69GAxZ8xg/gZY8cIzJxx4pGP
-         Rj9avsQeCocajJAe0kNK4sJ3nBYDT5hG+CfzUrRmUxTf812lmpISfF/1XpCx3dLu3Fza
-         uNMxwMFkwnd7wqlSWxmA6UKfTgJgYjLW7C0FbgnsUk/XIq6Ky0fZ2EmlS2hT/0xsx349
-         l1Mw==
-X-Gm-Message-State: ANhLgQ1k/ozA7ZkkUxYaMz6j1ARCPFJ4frGgeSPSCBtMUK43GbTB6SkV
-        ldVNabMBtP2qWBRdu7KcMdYXPbijLqe+WnWSYNI=
-X-Google-Smtp-Source: ADFU+vvq+SQs3i94vW7pE4kKM8z8bfdl7rECl+sJg/HNAMhAmUis/mlU8k/ZE8BsMkmlyj5vaOsReBO7/WFtOoCAJrE=
-X-Received: by 2002:ac8:1c72:: with SMTP id j47mr26104560qtk.377.1585041138976;
- Tue, 24 Mar 2020 02:12:18 -0700 (PDT)
+        id S1727152AbgCXJOq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 05:14:46 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:40670 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726129AbgCXJOq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Mar 2020 05:14:46 -0400
+Received: from zn.tnic (p200300EC2F0BC80045DE39F951CA54F5.dip0.t-ipconnect.de [IPv6:2003:ec:2f0b:c800:45de:39f9:51ca:54f5])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 8C4621EC0874;
+        Tue, 24 Mar 2020 10:14:44 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1585041284;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=uzzGGHDkBHLvDBgnszVbyyyHxRp3zjTrIEQ+Rqkl4nE=;
+        b=DHlZLzA0Ozf1SEQuf9H9gsOO/quv/ucrY162NxVhYPSYDSnVrWWIJTMSYRC+wA3Vw6nWu0
+        0wyshMOEvq/SSe0pYY4Al2UVnHIzzeO/pIAAOIBf/R4Bum29OBYeEfeSdjrK6bD3brIt+5
+        NInWino+MtYHOKIxxKlJkcyUg37cstw=
+Date:   Tue, 24 Mar 2020 10:14:37 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     Masahiro Yamada <masahiroy@kernel.org>
+Cc:     Kees Cook <keescook@chromium.org>,
+        "Jason A. Donenfeld" <Jason@zx2c4.com>,
+        Arvind Sankar <nivedita@alum.mit.edu>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, X86 ML <x86@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Thomas Lendacky <Thomas.Lendacky@amd.com>,
+        Mauro Rossi <issor.oruam@gmail.com>,
+        Michael Matz <matz@suse.de>
+Subject: Re: [PATCH] Documentation/changes: Raise minimum supported binutils
+ version to 2.23
+Message-ID: <20200324091437.GB22931@zn.tnic>
+References: <20200113161310.GA191743@rani.riverdale.lan>
+ <20200113195337.604646-1-nivedita@alum.mit.edu>
+ <202001131750.C1B8468@keescook>
+ <20200114165135.GK31032@zn.tnic>
+ <20200115002131.GA3258770@rani.riverdale.lan>
+ <20200115122458.GB20975@zn.tnic>
+ <20200316160259.GN26126@zn.tnic>
+ <20200323204454.GA2611336@zx2c4.com>
+ <202003231350.7D35351@keescook>
+ <CAK7LNARMBkc666kZ9jOG9sSThzA69JvKi++WZXMtCP9ddyqcBw@mail.gmail.com>
 MIME-Version: 1.0
-Received: by 2002:a0c:e00c:0:0:0:0:0 with HTTP; Tue, 24 Mar 2020 02:12:18
- -0700 (PDT)
-Reply-To: sgt.kayla12@gmail.com
-From:   Kayla <rohanmelvin2013@gmail.com>
-Date:   Tue, 24 Mar 2020 09:12:18 +0000
-Message-ID: <CADdOLZu5U9T=TufmzMZr1JEUXRHtbd5h+j7ZEHpdUJpiRRcTzA@mail.gmail.com>
-Subject: Hello my dear,
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAK7LNARMBkc666kZ9jOG9sSThzA69JvKi++WZXMtCP9ddyqcBw@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-How long should I wait before you respond to my message after sending
-an email to you?,
+On Tue, Mar 24, 2020 at 06:02:02PM +0900, Masahiro Yamada wrote:
+> Borislav,
+> 
+> When I forwarded this patch, I fixed up one more line.
+> (changes.rst duplicates the same information...)
+> 
+> Please see this. I hope this should be OK.
+> https://lore.kernel.org/patchwork/patch/1214519/
+
+Thanks.
+
+However, I wanted to queue this patch *after* 5.7-rc1 and so that it
+lands in 5.8 and so that it has a maximum cycle in testing - well, it is
+not really testing but getting more people to see it and have the chance
+to complain - and not queue it now.
+
+I did some searching on distrowatch.com last night and the couple of
+distros shipping binutils 2.23 I saw, were already EOL but the search
+was not exhaustive.
+
+And from looking at your patchset, I think it should get the max time
+testing in linux-next too, so that we have time to address any build
+issues it might uncover.
+
+IMO.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
