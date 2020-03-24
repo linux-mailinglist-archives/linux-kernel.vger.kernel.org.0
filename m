@@ -2,378 +2,152 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AE84C191821
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 18:50:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D4CEB19181B
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 18:50:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727868AbgCXRtb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 13:49:31 -0400
-Received: from mailoutvs44.siol.net ([185.57.226.235]:41667 "EHLO
-        mail.siol.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727257AbgCXRtb (ORCPT
+        id S1727652AbgCXRsZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 13:48:25 -0400
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:38062 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727273AbgCXRsZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 13:49:31 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by mail.siol.net (Zimbra) with ESMTP id C5D455203C2;
-        Tue, 24 Mar 2020 18:49:26 +0100 (CET)
-X-Virus-Scanned: amavisd-new at psrvmta12.zcs-production.pri
-Received: from mail.siol.net ([127.0.0.1])
-        by localhost (psrvmta12.zcs-production.pri [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id GHJdAO5FWp1p; Tue, 24 Mar 2020 18:49:26 +0100 (CET)
-Received: from mail.siol.net (localhost [127.0.0.1])
-        by mail.siol.net (Zimbra) with ESMTPS id 00C10524752;
-        Tue, 24 Mar 2020 18:49:25 +0100 (CET)
-Received: from jernej-laptop.localnet (cpe-194-152-20-232.static.triera.net [194.152.20.232])
-        (Authenticated sender: jernej.skrabec@siol.net)
-        by mail.siol.net (Zimbra) with ESMTPA id 8F7C45203C2;
-        Tue, 24 Mar 2020 18:49:21 +0100 (CET)
-From:   Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
-To:     mripard@kernel.org, wens@csie.org,
-        Roman Stratiienko <r.stratiienko@gmail.com>
-Cc:     airlied@linux.ie, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org,
-        Roman Stratiienko <r.stratiienko@gmail.com>
-Subject: Re: [PATCH v4 3/4] drm/sun4i: Add support for premulti/coverage blending mode handling
-Date:   Tue, 24 Mar 2020 18:49:21 +0100
-Message-ID: <20591297.EfDdHjke4D@jernej-laptop>
-In-Reply-To: <20200302103138.17916-4-r.stratiienko@gmail.com>
-References: <20200302103138.17916-4-r.stratiienko@gmail.com>
+        Tue, 24 Mar 2020 13:48:25 -0400
+Received: by mail-ot1-f68.google.com with SMTP id t28so17897685ott.5;
+        Tue, 24 Mar 2020 10:48:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=Mbs4aVDmRmC8J/4oqCxwDOIrrZvgADtwZ+k3MwNOOe4=;
+        b=qOVK6Fm/WfSe2eoaOGOghnA2TYwPL/GqS8fesDDQy/usdsJ6vXGscsxOYUQ3t372pa
+         m21MVUH8T6ehMTGaxy9ZwEwreiz3G5lKVn/UvBmnlcMvVG2j47ZflqvTQquplUMTkvaO
+         scCLZHN+uwj1p57pNi2gX+WRX4/fIYwXsys1j81SHxQu++H78vRg6+WcjanHqKweYGxl
+         fYkfStZWRciRAcgcrC89JOL4P9rlopDSrwjOttyKVcgDvaYauZl181ha48+DYQ5SFDSu
+         pHpZL+GIL8+Svli8H2zCBXN6iHHIcMTKpoyDVFQhklqfwZ9z4fcMfunxFeDYXdOk5IHl
+         ZkIg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=Mbs4aVDmRmC8J/4oqCxwDOIrrZvgADtwZ+k3MwNOOe4=;
+        b=WAjoWzIOLlsKVXnGqNsb33eKMImC3mu3OBUbF/qoTiPK8gsZGx7A7FF1V+1FbtJOnG
+         4fXykRYAgnEmppZG8AiKehbOCdJOV2fDWVSkfgMrRznbvoI/68IrwEZ9j4R3oOZRPJ4X
+         wQrkf4QkLEz+ZaF3ooi9mbtwC3EBkq1wcbwn/ZIoLKLbYvE/SK0S5YWfOcLC5NRmLQ0t
+         ByFV7VI2kK6PT/vruQ+GjATi1nvVLCyahP8SNmbrPnMLKkUX3lwUrvkXByeD2RD0AEM6
+         8sgRNs/9N8DFf0C8li5OWAcw8REUue/oUEExFCbz5rmNp2BAdNxzA8gd4hy4FFHNQxiK
+         OzIw==
+X-Gm-Message-State: ANhLgQ3ov235jwaw7aQ1OUxRqkOuR3e2fn35OnjNNYEQjWYzoltOhAR2
+        6wF96P6BORJgXncE81e8QPlyTeUqO0Zr6WiG/JE=
+X-Google-Smtp-Source: ADFU+vtqWwX4PrG3i0s/E4kJl5NwCDhplDK0CbdgH63HXzbjqGc2T4gLWdm434mcJ+rI/tovsUOo/EKM2Xm3holDqEw=
+X-Received: by 2002:a05:6830:1f39:: with SMTP id e25mr7931301oth.135.1585072104337;
+ Tue, 24 Mar 2020 10:48:24 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+References: <20200323164415.12943-1-kpsingh@chromium.org> <20200323164415.12943-5-kpsingh@chromium.org>
+ <CAEjxPJ4MukexdmAD=py0r7vkE6vnn6T1LVcybP_GSJYsAdRuxA@mail.gmail.com>
+ <20200324145003.GA2685@chromium.org> <CAEjxPJ4YnCCeQUTK36Ao550AWProHrkrW1a6K5RKuKYcPcfhyA@mail.gmail.com>
+ <d578d19f-1d3b-f60d-f803-2fcb46721a4a@schaufler-ca.com>
+In-Reply-To: <d578d19f-1d3b-f60d-f803-2fcb46721a4a@schaufler-ca.com>
+From:   Stephen Smalley <stephen.smalley.work@gmail.com>
+Date:   Tue, 24 Mar 2020 13:49:34 -0400
+Message-ID: <CAEjxPJ59wijpB=wa4ZhPyX_PRXrRAX2+PO6e8+f25wrb9xndRA@mail.gmail.com>
+Subject: Re: [PATCH bpf-next v5 4/7] bpf: lsm: Implement attach, detach and execution
+To:     Casey Schaufler <casey@schaufler-ca.com>
+Cc:     KP Singh <kpsingh@chromium.org>, linux-kernel@vger.kernel.org,
+        bpf@vger.kernel.org,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Brendan Jackman <jackmanb@google.com>,
+        Florent Revest <revest@google.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        James Morris <jmorris@namei.org>,
+        Kees Cook <keescook@chromium.org>,
+        Paul Turner <pjt@google.com>, Jann Horn <jannh@google.com>,
+        Florent Revest <revest@chromium.org>,
+        Brendan Jackman <jackmanb@chromium.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Paul Moore <paul@paul-moore.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi!
+On Tue, Mar 24, 2020 at 12:25 PM Casey Schaufler <casey@schaufler-ca.com> w=
+rote:
+>
+> On 3/24/2020 7:58 AM, Stephen Smalley wrote:
+> > On Tue, Mar 24, 2020 at 10:50 AM KP Singh <kpsingh@chromium.org> wrote:
+> >> On 24-M=C3=A4r 10:35, Stephen Smalley wrote:
+> >>> On Mon, Mar 23, 2020 at 12:46 PM KP Singh <kpsingh@chromium.org> wrot=
+e:
+> >>>> From: KP Singh <kpsingh@google.com>
+> >>>> diff --git a/kernel/bpf/bpf_lsm.c b/kernel/bpf/bpf_lsm.c
+> >>>> index 530d137f7a84..2a8131b640b8 100644
+> >>>> --- a/kernel/bpf/bpf_lsm.c
+> >>>> +++ b/kernel/bpf/bpf_lsm.c
+> >>>> @@ -9,6 +9,9 @@
+> >>>>  #include <linux/btf.h>
+> >>>>  #include <linux/lsm_hooks.h>
+> >>>>  #include <linux/bpf_lsm.h>
+> >>>> +#include <linux/jump_label.h>
+> >>>> +#include <linux/kallsyms.h>
+> >>>> +#include <linux/bpf_verifier.h>
+> >>>>
+> >>>>  /* For every LSM hook  that allows attachment of BPF programs, decl=
+are a NOP
+> >>>>   * function where a BPF program can be attached as an fexit trampol=
+ine.
+> >>>> @@ -27,6 +30,32 @@ noinline __weak void bpf_lsm_##NAME(__VA_ARGS__) =
+{}
+> >>>>  #include <linux/lsm_hook_names.h>
+> >>>>  #undef LSM_HOOK
+> >>>>
+> >>>> +#define BPF_LSM_SYM_PREFX  "bpf_lsm_"
+> >>>> +
+> >>>> +int bpf_lsm_verify_prog(struct bpf_verifier_log *vlog,
+> >>>> +                       const struct bpf_prog *prog)
+> >>>> +{
+> >>>> +       /* Only CAP_MAC_ADMIN users are allowed to make changes to L=
+SM hooks
+> >>>> +        */
+> >>>> +       if (!capable(CAP_MAC_ADMIN))
+> >>>> +               return -EPERM;
+> >>> I had asked before, and will ask again: please provide an explicit LS=
+M
+> >>> hook for mediating whether one can make changes to the LSM hooks.
+> >>> Neither CAP_MAC_ADMIN nor CAP_SYS_ADMIN suffices to check this for SE=
+Linux.
+> >> What do you think about:
+> >>
+> >>   int security_check_mutable_hooks(void)
+> >>
+> >> Do you have any suggestions on the signature of this hook? Does this
+> >> hook need to be BPF specific?
+> > I'd do something like int security_bpf_prog_attach_security(const
+> > struct bpf_prog *prog) or similar.
+> > Then the security module can do a check based on the current task
+> > and/or the prog.  We already have some bpf-specific hooks.
+>
+> I *strongly* disagree with Stephen on this. KRSI and SELinux are peers.
+> Just as Yama policy is independent of SELinux policy so KRSI policy shoul=
+d
+> be independent of SELinux policy. I understand the argument that BDF prog=
+rams
+> ought to be constrained by SELinux, but I don't think it's right. Further=
+,
+> we've got unholy layering when security modules call security_ functions.
+> I'm not saying there is no case where it would be appropriate, but this i=
+s not
+> one of them.
 
-Dne ponedeljek, 02. marec 2020 ob 11:31:37 CET je Roman Stratiienko 
-napisal(a):
-> Argument:
-> 
-> All information below is author's understanding of underlying processes.
-> This information was obtained from DE2.0-3.0 datasheet analysis and
-> analysis of different DRM driver source code and commit messages.
-> 
-> Input buffers could have 2 ways of holding pixel alpha channel value.
-> 1. Coverage means that in case of transparency - only alpha channel changes.
-> Example of 50% transparent white pixel: R=0xff B=0xff B=0xff A=0x7f
-> 
-> 2. Premultiply means that RGB pixel values should be dimmed proportional to
->    alpha channel value. Alpha channel value has also to be set in this case.
-> Example of 50% transparent white pixel: R=0x7f B=0x7f B=0x7f A=0x7f
-> 
-> Userspace informs DRM/KMS which blending type frame buffer uses with
-> 'pixel blend mode' property.
-> 
-> Allwinner DE2.0 and DE3.0 have 2 block of image processing:
-> Overlay and Blending. Both should aware of blending type are used in the
-> buffer.
-> 
-> Overlay block uses this information to:
-> 1. Unify blending types if more then 1 overlay channel are used. It can
-> unify it only as premultiplied by converting coverage to premultiplied.
-> 2. Calculate correct pixel value in case of applying plane alpha.
->    For coverage alpha only alpha channel should be affected:
->      [Ro=Ri, Go=Gi, Bo=Bi, Ao=Ai*AGlobal]
->    For premultiplied alpha all 4 channels should be affected:
->      [Ro=Ri*AGlobal, Go=Gi*AGlobal, Bo=Bi*AGlobal, Ao=Ai*AGlobal]
-> 
-> Blending functional block should aware of blending type each pipe
-> channel uses. Otherwise image can't blend correctly.
-> 
-> In case we've specified premultiplied format for blending PIPE0, blender
-> converts premultiplied RGB values to original (divides by normalized Alpha).
-> In case for some reason pixel value after division exceeds 0xff, blender
-> clamps it to 0xff. [Was discovered in experimental way]
-> If image that passed through PIPE1-3 restored to coverage before mixing or
-> used in premultiplied form still require testing and out of scope of this
-> patch.
-> 
-> Implementation:
-> 
-> 1. Add blend property to UI channel
-> 2. Add blend property to VI channel in case of DE3.0 used
-> 3. Make all DE2.0 UI and DE3.0 VI overlay channels to use premultiply
-> format. Mark all blending pipes as premultiply except DE2.0 VI plane.
-> 4. If DRM plane uses coverage blending format, set blending mode register
->    to convert it to premultiply.
-
-Regarding 3 and 4 - do we really need to convert everything to premultiply? 
-Currently only one overlay is used in each channel, so there is no need to 
-convert coverage to premultiply if I understand datasheet correctly. Just mark 
-it accordingly in BLD premultiply control register.
-
-> 
-> Signed-off-by: Roman Stratiienko <r.stratiienko@gmail.com>
-> 
-> --
-> 
-> v4:
-> - Initial version (Depends on unmerged patches from patchset)
-> ---
->  drivers/gpu/drm/sun4i/sun8i_mixer.h    |  2 ++
->  drivers/gpu/drm/sun4i/sun8i_ui_layer.c | 33 ++++++++++++++++++-----
->  drivers/gpu/drm/sun4i/sun8i_ui_layer.h |  5 ++++
->  drivers/gpu/drm/sun4i/sun8i_vi_layer.c | 36 +++++++++++++++++++++-----
->  drivers/gpu/drm/sun4i/sun8i_vi_layer.h |  5 ++++
->  5 files changed, 69 insertions(+), 12 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/sun4i/sun8i_mixer.h
-> b/drivers/gpu/drm/sun4i/sun8i_mixer.h index 915479cc3077..8a18372938d5
-> 100644
-> --- a/drivers/gpu/drm/sun4i/sun8i_mixer.h
-> +++ b/drivers/gpu/drm/sun4i/sun8i_mixer.h
-> @@ -70,6 +70,8 @@
->  #define SUN8I_MIXER_BLEND_ROUTE_PIPE_MSK(n)	(0xf << ((n) << 2))
->  #define SUN8I_MIXER_BLEND_ROUTE_PIPE_SHIFT(n)	((n) << 2)
-> 
-> +#define SUN8I_MIXER_BLEND_PREMULTIPLY_EN(pipe)	BIT(pipe)
-> +
->  #define SUN8I_MIXER_BLEND_OUTCTL_INTERLACED	BIT(1)
-> 
->  #define SUN50I_MIXER_BLEND_CSC_CTL_EN(ch)	BIT(ch)
-> diff --git a/drivers/gpu/drm/sun4i/sun8i_ui_layer.c
-> b/drivers/gpu/drm/sun4i/sun8i_ui_layer.c index 5278032567a3..dd6145f80c36
-> 100644
-> --- a/drivers/gpu/drm/sun4i/sun8i_ui_layer.c
-> +++ b/drivers/gpu/drm/sun4i/sun8i_ui_layer.c
-> @@ -73,10 +73,12 @@ static void sun8i_ui_layer_enable(struct sun8i_mixer
-> *mixer, int channel, }
-> 
->  static void sun8i_ui_layer_update_alpha(struct sun8i_mixer *mixer, int
-> channel, -					int overlay, struct 
-drm_plane *plane)
-> +					int overlay, struct 
-drm_plane *plane,
-> +					unsigned int zpos)
->  {
-> -	u32 mask, val, ch_base;
-> +	u32 mask, val, ch_base, bld_base;
-> 
-> +	bld_base = sun8i_blender_base(mixer);
->  	ch_base = sun8i_channel_base(mixer, channel);
-> 
->  	mask = SUN8I_MIXER_CHAN_UI_LAYER_ATTR_ALPHA_MODE_MASK |
-> @@ -84,13 +86,27 @@ static void sun8i_ui_layer_update_alpha(struct
-> sun8i_mixer *mixer, int channel,
-> 
->  	val = SUN8I_MIXER_CHAN_UI_LAYER_ATTR_ALPHA(plane->state->alpha >> 
-8);
-> 
-> -	val |= (plane->state->alpha == DRM_BLEND_ALPHA_OPAQUE) ?
-> -		SUN8I_MIXER_CHAN_UI_LAYER_ATTR_ALPHA_MODE_PIXEL :
-> -		SUN8I_MIXER_CHAN_UI_LAYER_ATTR_ALPHA_MODE_COMBINED;
-> +	if (plane->state->pixel_blend_mode == DRM_MODE_BLEND_PIXEL_NONE) {
-> +		val |= SUN8I_MIXER_CHAN_UI_LAYER_ATTR_ALPHA_MODE_LAYER;
-> +	} else {
-> +		val |= (plane->state->alpha == DRM_BLEND_ALPHA_OPAQUE) ?
-> +			
-SUN8I_MIXER_CHAN_UI_LAYER_ATTR_ALPHA_MODE_PIXEL :
-> +			
-SUN8I_MIXER_CHAN_UI_LAYER_ATTR_ALPHA_MODE_COMBINED;
-> +
-> +		if (plane->state->pixel_blend_mode == 
-DRM_MODE_BLEND_COVERAGE)
-> +			val |= 
-SUN8I_MIXER_CHAN_UI_LAYER_ATTR_BLEND_COV2PREMUL;
-> +		else
-> +			val |= 
-SUN8I_MIXER_CHAN_UI_LAYER_ATTR_BLEND_PREMULTI;
-> +	}
-> 
->  	regmap_update_bits(mixer->engine.regs,
->  			   SUN8I_MIXER_CHAN_UI_LAYER_ATTR(ch_base, 
-overlay),
->  			   mask, val);
-> +
-> +	regmap_update_bits(mixer->engine.regs,
-> +			   SUN8I_MIXER_BLEND_PREMULTIPLY(bld_base),
-> +			   SUN8I_MIXER_BLEND_PREMULTIPLY_EN(zpos),
-> +			   SUN8I_MIXER_BLEND_PREMULTIPLY_EN(zpos));
-
-As you already figured out in previous patch [1], register values based on zpos 
-can only be properly determined in sun8i_mixer_commit(). To be honest, I would 
-like to see patch [1] to go in before this.
-
-Note: Comment is also applicable to VI layer changes.
-
-Best regards,
-Jernej
-
-[1] https://patchwork.freedesktop.org/patch/346998/
-
->  }
-> 
->  static int sun8i_ui_layer_update_coord(struct sun8i_mixer *mixer, int
-> channel, @@ -280,7 +296,7 @@ static void
-> sun8i_ui_layer_atomic_update(struct drm_plane *plane,
-> sun8i_ui_layer_update_coord(mixer, layer->channel,
->  				    layer->overlay, plane, zpos);
->  	sun8i_ui_layer_update_alpha(mixer, layer->channel,
-> -				    layer->overlay, plane);
-> +				    layer->overlay, plane, zpos);
->  	sun8i_ui_layer_update_formats(mixer, layer->channel,
->  				      layer->overlay, plane);
->  	sun8i_ui_layer_update_buffer(mixer, layer->channel,
-> @@ -361,6 +377,11 @@ struct sun8i_ui_layer *sun8i_ui_layer_init_one(struct
-> drm_device *drm, return ERR_PTR(ret);
->  	}
-> 
-> +	drm_plane_create_blend_mode_property(&layer->plane,
-> +					     
-BIT(DRM_MODE_BLEND_PREMULTI) |
-> +					     
-BIT(DRM_MODE_BLEND_COVERAGE) |
-> +					     
-BIT(DRM_MODE_BLEND_PIXEL_NONE));
-> +
->  	ret = drm_plane_create_zpos_property(&layer->plane, channel,
->  					     0, plane_cnt - 
-1);
->  	if (ret) {
-> diff --git a/drivers/gpu/drm/sun4i/sun8i_ui_layer.h
-> b/drivers/gpu/drm/sun4i/sun8i_ui_layer.h index e3e32ee1178d..c5136f4841bc
-> 100644
-> --- a/drivers/gpu/drm/sun4i/sun8i_ui_layer.h
-> +++ b/drivers/gpu/drm/sun4i/sun8i_ui_layer.h
-> @@ -41,6 +41,11 @@
->  #define SUN8I_MIXER_CHAN_UI_LAYER_ATTR_FBFMT_OFFSET	8
->  #define SUN8I_MIXER_CHAN_UI_LAYER_ATTR_ALPHA_MASK	GENMASK(31, 24)
->  #define SUN8I_MIXER_CHAN_UI_LAYER_ATTR_ALPHA(x)		((x) << 24)
-> +#define SUN8I_MIXER_CHAN_UI_LAYER_ATTR_BLEND_MASK	GENMASK(16, 17)
-> +
-> +#define SUN8I_MIXER_CHAN_UI_LAYER_ATTR_BLEND_COVERAGE		
-((0) << 16)
-> +#define SUN8I_MIXER_CHAN_UI_LAYER_ATTR_BLEND_COV2PREMUL		
-((1) << 16)
-> +#define SUN8I_MIXER_CHAN_UI_LAYER_ATTR_BLEND_PREMULTI		
-((2) << 16)
-> 
->  #define SUN8I_MIXER_CHAN_UI_LAYER_ATTR_ALPHA_MODE_PIXEL		
-((0) << 1)
->  #define SUN8I_MIXER_CHAN_UI_LAYER_ATTR_ALPHA_MODE_LAYER		
-((1) << 1)
-> diff --git a/drivers/gpu/drm/sun4i/sun8i_vi_layer.c
-> b/drivers/gpu/drm/sun4i/sun8i_vi_layer.c index f2469b5e97ee..e6d8a539614f
-> 100644
-> --- a/drivers/gpu/drm/sun4i/sun8i_vi_layer.c
-> +++ b/drivers/gpu/drm/sun4i/sun8i_vi_layer.c
-> @@ -66,11 +66,13 @@ static void sun8i_vi_layer_enable(struct sun8i_mixer
-> *mixer, int channel, }
-> 
->  static void sun8i_vi_layer_update_alpha(struct sun8i_mixer *mixer, int
-> channel, -					int overlay, struct 
-drm_plane *plane)
-> +					int overlay, struct 
-drm_plane *plane,
-> +					unsigned int zpos)
->  {
-> -	u32 mask, val, ch_base;
-> +	u32 mask, val, ch_base, bld_base;
-> 
->  	ch_base = sun8i_channel_base(mixer, channel);
-> +	bld_base = sun8i_blender_base(mixer);
-> 
->  	if (mixer->cfg->is_de3) {
->  		mask = SUN50I_MIXER_CHAN_VI_LAYER_ATTR_ALPHA_MASK |
-> @@ -78,9 +80,18 @@ static void sun8i_vi_layer_update_alpha(struct
-> sun8i_mixer *mixer, int channel, val =
-> SUN50I_MIXER_CHAN_VI_LAYER_ATTR_ALPHA
->  			(plane->state->alpha >> 8);
-> 
-> -		val |= (plane->state->alpha == DRM_BLEND_ALPHA_OPAQUE) 
-?
-> -			
-SUN50I_MIXER_CHAN_VI_LAYER_ATTR_ALPHA_MODE_PIXEL :
-> -			
-SUN50I_MIXER_CHAN_VI_LAYER_ATTR_ALPHA_MODE_COMBINED;
-> +		if (plane->state->pixel_blend_mode == 
-DRM_MODE_BLEND_PIXEL_NONE) {
-> +			val |= 
-SUN50I_MIXER_CHAN_VI_LAYER_ATTR_ALPHA_MODE_LAYER;
-> +		} else {
-> +			val |= (plane->state->alpha == 
-DRM_BLEND_ALPHA_OPAQUE) ?
-> +				
-SUN50I_MIXER_CHAN_VI_LAYER_ATTR_ALPHA_MODE_PIXEL :
-> +				
-SUN50I_MIXER_CHAN_VI_LAYER_ATTR_ALPHA_MODE_COMBINED;
-> +
-> +			if (plane->state->pixel_blend_mode == 
-DRM_MODE_BLEND_COVERAGE)
-> +				val |= 
-SUN50I_MIXER_CHAN_VI_LAYER_ATTR_BLEND_COV2PREMUL;
-> +			else
-> +				val |= 
-SUN50I_MIXER_CHAN_VI_LAYER_ATTR_BLEND_PREMULTI;
-> +		}
-> 
->  		regmap_update_bits(mixer->engine.regs,
->  				   
-SUN8I_MIXER_CHAN_VI_LAYER_ATTR(ch_base,
-> @@ -93,6 +104,13 @@ static void sun8i_vi_layer_update_alpha(struct
-> sun8i_mixer *mixer, int channel, SUN8I_MIXER_FCC_GLOBAL_ALPHA
->  					(plane->state->alpha 
->> 8));
->  	}
-> +
-> +	regmap_update_bits(mixer->engine.regs,
-> +			   SUN8I_MIXER_BLEND_PREMULTIPLY(bld_base),
-> +			   SUN8I_MIXER_BLEND_PREMULTIPLY_EN(zpos),
-> +			   (mixer->cfg->is_de3) ?
-> +				
-SUN8I_MIXER_BLEND_PREMULTIPLY_EN(zpos) : 0);
-> +
->  }
-> 
->  static int sun8i_vi_layer_update_coord(struct sun8i_mixer *mixer, int
-> channel, @@ -396,7 +414,7 @@ static void
-> sun8i_vi_layer_atomic_update(struct drm_plane *plane,
-> sun8i_vi_layer_update_coord(mixer, layer->channel,
->  				    layer->overlay, plane, zpos);
->  	sun8i_vi_layer_update_alpha(mixer, layer->channel,
-> -				    layer->overlay, plane);
-> +				    layer->overlay, plane, zpos);
->  	sun8i_vi_layer_update_formats(mixer, layer->channel,
->  				      layer->overlay, plane);
->  	sun8i_vi_layer_update_buffer(mixer, layer->channel,
-> @@ -504,6 +522,12 @@ struct sun8i_vi_layer *sun8i_vi_layer_init_one(struct
-> drm_device *drm, }
->  	}
-> 
-> +	if (mixer->cfg->is_de3)
-> +		drm_plane_create_blend_mode_property
-> +			(&layer->plane, BIT(DRM_MODE_BLEND_PREMULTI) 
-|
-> +			 BIT(DRM_MODE_BLEND_COVERAGE) |
-> +			 BIT(DRM_MODE_BLEND_PIXEL_NONE));
-> +
->  	ret = drm_plane_create_zpos_property(&layer->plane, index,
->  					     0, plane_cnt - 
-1);
->  	if (ret) {
-> diff --git a/drivers/gpu/drm/sun4i/sun8i_vi_layer.h
-> b/drivers/gpu/drm/sun4i/sun8i_vi_layer.h index 48c399e1c86d..a1cf0ff16543
-> 100644
-> --- a/drivers/gpu/drm/sun4i/sun8i_vi_layer.h
-> +++ b/drivers/gpu/drm/sun4i/sun8i_vi_layer.h
-> @@ -43,6 +43,11 @@
->  #define SUN50I_MIXER_CHAN_VI_LAYER_ATTR_ALPHA_MODE_MASK	GENMASK(2, 1)
->  #define SUN50I_MIXER_CHAN_VI_LAYER_ATTR_ALPHA_MASK	GENMASK(31, 24)
->  #define SUN50I_MIXER_CHAN_VI_LAYER_ATTR_ALPHA(x)	((x) << 24)
-> +#define SUN50I_MIXER_CHAN_VI_LAYER_ATTR_BLEND_MASK	GENMASK(16, 17)
-> +
-> +#define SUN50I_MIXER_CHAN_VI_LAYER_ATTR_BLEND_COVERAGE		
-((0) << 16)
-> +#define SUN50I_MIXER_CHAN_VI_LAYER_ATTR_BLEND_COV2PREMUL	((1) << 16)
-> +#define SUN50I_MIXER_CHAN_VI_LAYER_ATTR_BLEND_PREMULTI		
-((2) << 16)
-> 
->  #define SUN50I_MIXER_CHAN_VI_LAYER_ATTR_ALPHA_MODE_PIXEL	((0) << 1)
->  #define SUN50I_MIXER_CHAN_VI_LAYER_ATTR_ALPHA_MODE_LAYER	((1) << 1)
-
-
-
-
+I explained this previously.  The difference is that the BPF programs
+are loaded from a userspace
+process, not a kernel-resident module.  They already recognize there
+is a difference here or
+they wouldn't have the CAP_MAC_ADMIN check above in their patch.  The
+problem with that
+check is just that CAP_MAC_ADMIN doesn't necessarily mean fully
+privileged with respect to
+SELinux, which is why I want an explicit hook.  This gets a NAK from
+me until there is such a hook.
