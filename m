@@ -2,177 +2,184 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 07F0C1918CA
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 19:20:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7AE0A1918EC
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 19:25:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727817AbgCXSUV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 14:20:21 -0400
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:37668 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727379AbgCXSUV (ORCPT
+        id S1727501AbgCXSXV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 14:23:21 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:45075 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727310AbgCXSXV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 14:20:21 -0400
-Received: by mail-oi1-f196.google.com with SMTP id w13so19439983oih.4;
-        Tue, 24 Mar 2020 11:20:20 -0700 (PDT)
+        Tue, 24 Mar 2020 14:23:21 -0400
+Received: by mail-lj1-f196.google.com with SMTP id t17so9026338ljc.12
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Mar 2020 11:23:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=google.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=QAsNqo91AZeBDE6F+SBZ53GrNbBmODwiTL6H1PjXDaY=;
-        b=nDPahvsxANLN/fCqy3jJsk5S4SDwZAZh3QOv6ulH4PESbA0kR6J5qkTP7HWSy6BEW1
-         X/Q32jC3wNDPfa7iFm7XMtXwwBXIO39cxoJBgpREBxAZFrZ6g5vCBcOBRCtMaAQUjJIn
-         PUeMNR1ubkrzX7LcAq7KtJ7OeU2GbHdTsckA2Q9MxLHxrF+gPePvSccJvifd2GA/EnZD
-         jA5CEWRHRUsLjBB4VH7Rz+CDALpVQVgVHxg2y0xqqE38hmor/aPO5hxziFl54TucYtIA
-         C0LAU/7IW+PF3nWO4ttq3MjfJgEUYxf5pOI+/2YzOTkuMg0fZu4YDGF2B8KTrX/hzepO
-         qsUQ==
+         :cc;
+        bh=1Z/XfnfAu9ceQUL+4esJL4zzfPg+m1cHaki8X5D0KAc=;
+        b=KH+efs8QWFsMXtP/1h3X/sZVN4O6JBvhGqQ/QniqRsRB4dOUGXJc3xrcAP4MHW/3o1
+         iUp7g4mfoMrys3LQFjsik+ziVbjTrKakyITo4+H5FlnmSwQYhMa5XPFBKDbM+zXJ7zjX
+         l2F9uapeml1zNWYKqAkM9C5/YiP7YFmHmKKgA3BRdsy0X19Xo7cD2jgpWqlWjVJKZ122
+         m5w8xV6nqv9PbAr1hsGAFq01pai5Bez2r6f2jRDBwNtEmg6KzrFWWAFUH4ydUUnQao8W
+         czmKV6uEz3k1pUYzoEMO7i6+TXlRu3SNHL+VyciXNe0XUuk3Jmpu0FeLR3k302qL2Aae
+         l1OQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=QAsNqo91AZeBDE6F+SBZ53GrNbBmODwiTL6H1PjXDaY=;
-        b=VCNRplK3b88b7x2YP4if3u9/AnsBQ01QZfUWa5OpMVVnA0OwYuFVktaKfL4Ge7GqER
-         fRFoQzVYzhrx6CWR1/aqGa6jTLO97qgJto/Y9ur//PqFJkipeF9h1f0D7dSAGZu1CuMD
-         wb919KzkYLyiHnAhopNKjd3XUEfWgjHagWjwreZE/AUQ34vbUyyW7Rxh6NuVgvTaFcjH
-         eIboDgoqA8jBLu7HNlnw08JAmGZsFlgJLgDhw7wzox3eX/EFzmsNhDCeLBQbVsgwJn6Y
-         5GC2un04U13NHHMOdbbuaGCH8CB44vUu61xPy5wceJRNV/6qYVSBv0Zk9DuSnsyTtYVm
-         17TQ==
-X-Gm-Message-State: ANhLgQ13o9RuLvVeTohxa6rfYbs0TYrVteox7MHjoZlRz3of9etyiI8a
-        Vwqj7D6CAczwZOvmWfR/9euPUBekaGTBHklO1z4=
-X-Google-Smtp-Source: ADFU+vsTTzOBEbslZ/jOchNxTsXwqzLL2kJQC2QNM2a0aY01y0dTE5CfqmANuyu7O3+wSM4ccC7AALy8hhTlaiFk5oo=
-X-Received: by 2002:aca:b803:: with SMTP id i3mr4303855oif.92.1585074020348;
- Tue, 24 Mar 2020 11:20:20 -0700 (PDT)
+         :message-id:subject:to:cc;
+        bh=1Z/XfnfAu9ceQUL+4esJL4zzfPg+m1cHaki8X5D0KAc=;
+        b=KDEr3E/MotEjAklm8rFXQwA+6D0kIY3MoG1g4T8yNyFJehTsI3QzTZaqXLH9bXS6we
+         wtRm9k3cFOZLbGFAzeF1RjFJVuVWhf0lbPbbz8XjnTw1YjgTxFNlx7UEU7cSoEaAEhF5
+         AM7DSFNbnqGll+do/x9RUxChyfyqLTcC9bKsQbOX4dpN0aLt5uUx7THka9/vSIRMfGyl
+         3AEYk1S9/k/Oxz+FxBNVVtSw3udpBdNuuPDjGf4olbeao2yGn75wo7BPwtdi8PbS46NK
+         8VZFiGj/GRWPSrN/OqXcnEVP8di42mTFxzxUvabBtXWj9jyPOnUZzOqFYT8W5QsT1+4e
+         w/GA==
+X-Gm-Message-State: ANhLgQ21dDHtgj3MZoUmt1gEyknbbkE/iQuSWRkbLMSBw5QMZc5DGEob
+        P0l134V6fzLq76TmotxWEM+re/nI9mLssWJjlJ/61A==
+X-Google-Smtp-Source: ADFU+vs4vBcP6AoNjrRm9G0VPxYcPaY9pUCxw+q08da5XNwtH22JNq/5i0gjNhfK0uvuBfmlzD1DCpEX4vcuS8BkITI=
+X-Received: by 2002:a2e:5048:: with SMTP id v8mr2434732ljd.99.1585074197138;
+ Tue, 24 Mar 2020 11:23:17 -0700 (PDT)
 MIME-Version: 1.0
-References: <20200323164415.12943-1-kpsingh@chromium.org> <20200323164415.12943-5-kpsingh@chromium.org>
- <CAEjxPJ4MukexdmAD=py0r7vkE6vnn6T1LVcybP_GSJYsAdRuxA@mail.gmail.com>
- <20200324145003.GA2685@chromium.org> <CAEjxPJ4YnCCeQUTK36Ao550AWProHrkrW1a6K5RKuKYcPcfhyA@mail.gmail.com>
- <d578d19f-1d3b-f60d-f803-2fcb46721a4a@schaufler-ca.com> <CAEjxPJ59wijpB=wa4ZhPyX_PRXrRAX2+PO6e8+f25wrb9xndRA@mail.gmail.com>
- <202003241100.279457EF@keescook> <20200324180652.GA11855@chromium.org>
-In-Reply-To: <20200324180652.GA11855@chromium.org>
-From:   Stephen Smalley <stephen.smalley.work@gmail.com>
-Date:   Tue, 24 Mar 2020 14:21:30 -0400
-Message-ID: <CAEjxPJ7ebh1FHBjfuoWquFLJi0TguipfRq5ozaSepLVt8+qaMQ@mail.gmail.com>
-Subject: Re: [PATCH bpf-next v5 4/7] bpf: lsm: Implement attach, detach and execution
-To:     KP Singh <kpsingh@chromium.org>
-Cc:     Kees Cook <keescook@chromium.org>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Brendan Jackman <jackmanb@google.com>,
-        Florent Revest <revest@google.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        James Morris <jmorris@namei.org>, Paul Turner <pjt@google.com>,
-        Jann Horn <jannh@google.com>,
-        Florent Revest <revest@chromium.org>,
-        Brendan Jackman <jackmanb@chromium.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Paul Moore <paul@paul-moore.com>
+References: <20200324153643.15527-1-will@kernel.org> <20200324153643.15527-4-will@kernel.org>
+ <CAG48ez1yTbbXn__Kf0csf8=LCFL+0hR0EyHNZsryN8p=SsLp5Q@mail.gmail.com>
+ <20200324162652.GA2518046@kroah.com> <CAG48ez1c5Rjo+RZRW-qR7h40zT4mT8iQv5m3h0qTjfFpsckEsg@mail.gmail.com>
+ <20200324165938.GA2521386@kroah.com>
+In-Reply-To: <20200324165938.GA2521386@kroah.com>
+From:   Jann Horn <jannh@google.com>
+Date:   Tue, 24 Mar 2020 19:22:50 +0100
+Message-ID: <CAG48ez1677ihowvvgLO6i-oEu=d_woxiQj52sx0k7-nWXrBpBg@mail.gmail.com>
+Subject: Re: [RFC PATCH 03/21] list: Annotate lockless list primitives with data_race()
+To:     Greg KH <greg@kroah.com>, Will Deacon <will@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>
+Cc:     kernel list <linux-kernel@vger.kernel.org>,
+        Eric Dumazet <edumazet@google.com>,
+        Kees Cook <keescook@chromium.org>,
+        Maddie Stone <maddiestone@google.com>,
+        Marco Elver <elver@google.com>,
+        "Paul E . McKenney" <paulmck@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        kernel-team <kernel-team@android.com>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Ingo Molnar <mingo@redhat.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 24, 2020 at 2:06 PM KP Singh <kpsingh@chromium.org> wrote:
->
-> On 24-M=C3=A4r 11:01, Kees Cook wrote:
-> > On Tue, Mar 24, 2020 at 01:49:34PM -0400, Stephen Smalley wrote:
-> > > On Tue, Mar 24, 2020 at 12:25 PM Casey Schaufler <casey@schaufler-ca.=
-com> wrote:
+On Tue, Mar 24, 2020 at 5:59 PM Greg KH <greg@kroah.com> wrote:
+> On Tue, Mar 24, 2020 at 05:38:30PM +0100, Jann Horn wrote:
+> > On Tue, Mar 24, 2020 at 5:26 PM Greg KH <greg@kroah.com> wrote:
+> > > On Tue, Mar 24, 2020 at 05:20:45PM +0100, Jann Horn wrote:
+> > > > On Tue, Mar 24, 2020 at 4:37 PM Will Deacon <will@kernel.org> wrote:
+> > > > > Some list predicates can be used locklessly even with the non-RCU list
+> > > > > implementations, since they effectively boil down to a test against
+> > > > > NULL. For example, checking whether or not a list is empty is safe even
+> > > > > in the presence of a concurrent, tearing write to the list head pointer.
+> > > > > Similarly, checking whether or not an hlist node has been hashed is safe
+> > > > > as well.
+> > > > >
+> > > > > Annotate these lockless list predicates with data_race() and READ_ONCE()
+> > > > > so that KCSAN and the compiler are aware of what's going on. The writer
+> > > > > side can then avoid having to use WRITE_ONCE() in the non-RCU
+> > > > > implementation.
+> > > > [...]
+> > > > >  static inline int list_empty(const struct list_head *head)
+> > > > >  {
+> > > > > -       return READ_ONCE(head->next) == head;
+> > > > > +       return data_race(READ_ONCE(head->next) == head);
+> > > > >  }
+> > > > [...]
+> > > > >  static inline int hlist_unhashed(const struct hlist_node *h)
+> > > > >  {
+> > > > > -       return !READ_ONCE(h->pprev);
+> > > > > +       return data_race(!READ_ONCE(h->pprev));
+> > > > >  }
 > > > >
-> > > > On 3/24/2020 7:58 AM, Stephen Smalley wrote:
-> > > > > On Tue, Mar 24, 2020 at 10:50 AM KP Singh <kpsingh@chromium.org> =
-wrote:
-> > > > >> On 24-M=C3=A4r 10:35, Stephen Smalley wrote:
-> > > > >>> On Mon, Mar 23, 2020 at 12:46 PM KP Singh <kpsingh@chromium.org=
-> wrote:
-> > > > >>>> From: KP Singh <kpsingh@google.com>
-> > > > >>>> diff --git a/kernel/bpf/bpf_lsm.c b/kernel/bpf/bpf_lsm.c
-> > > > >>>> index 530d137f7a84..2a8131b640b8 100644
-> > > > >>>> --- a/kernel/bpf/bpf_lsm.c
-> > > > >>>> +++ b/kernel/bpf/bpf_lsm.c
-> > > > >>>> @@ -9,6 +9,9 @@
-> > > > >>>>  #include <linux/btf.h>
-> > > > >>>>  #include <linux/lsm_hooks.h>
-> > > > >>>>  #include <linux/bpf_lsm.h>
-> > > > >>>> +#include <linux/jump_label.h>
-> > > > >>>> +#include <linux/kallsyms.h>
-> > > > >>>> +#include <linux/bpf_verifier.h>
-> > > > >>>>
-> > > > >>>>  /* For every LSM hook  that allows attachment of BPF programs=
-, declare a NOP
-> > > > >>>>   * function where a BPF program can be attached as an fexit t=
-rampoline.
-> > > > >>>> @@ -27,6 +30,32 @@ noinline __weak void bpf_lsm_##NAME(__VA_AR=
-GS__) {}
-> > > > >>>>  #include <linux/lsm_hook_names.h>
-> > > > >>>>  #undef LSM_HOOK
-> > > > >>>>
-> > > > >>>> +#define BPF_LSM_SYM_PREFX  "bpf_lsm_"
-> > > > >>>> +
-> > > > >>>> +int bpf_lsm_verify_prog(struct bpf_verifier_log *vlog,
-> > > > >>>> +                       const struct bpf_prog *prog)
-> > > > >>>> +{
-> > > > >>>> +       /* Only CAP_MAC_ADMIN users are allowed to make change=
-s to LSM hooks
-> > > > >>>> +        */
-> > > > >>>> +       if (!capable(CAP_MAC_ADMIN))
-> > > > >>>> +               return -EPERM;
-> > > > >>> I had asked before, and will ask again: please provide an expli=
-cit LSM
-> > > > >>> hook for mediating whether one can make changes to the LSM hook=
-s.
-> > > > >>> Neither CAP_MAC_ADMIN nor CAP_SYS_ADMIN suffices to check this =
-for SELinux.
-> > > > >> What do you think about:
-> > > > >>
-> > > > >>   int security_check_mutable_hooks(void)
-> > > > >>
-> > > > >> Do you have any suggestions on the signature of this hook? Does =
-this
-> > > > >> hook need to be BPF specific?
-> > > > > I'd do something like int security_bpf_prog_attach_security(const
-> > > > > struct bpf_prog *prog) or similar.
-> > > > > Then the security module can do a check based on the current task
-> > > > > and/or the prog.  We already have some bpf-specific hooks.
+> > > > This is probably valid in practice for hlist_unhashed(), which
+> > > > compares with NULL, as long as the most significant byte of all kernel
+> > > > pointers is non-zero; but I think list_empty() could realistically
+> > > > return false positives in the presence of a concurrent tearing store?
+> > > > This could break the following code pattern:
 > > > >
-> > > > I *strongly* disagree with Stephen on this. KRSI and SELinux are pe=
-ers.
-> > > > Just as Yama policy is independent of SELinux policy so KRSI policy=
- should
-> > > > be independent of SELinux policy. I understand the argument that BD=
-F programs
-> > > > ought to be constrained by SELinux, but I don't think it's right. F=
-urther,
-> > > > we've got unholy layering when security modules call security_ func=
-tions.
-> > > > I'm not saying there is no case where it would be appropriate, but =
-this is not
-> > > > one of them.
+> > > > /* optimistic lockless check */
+> > > > if (!list_empty(&some_list)) {
+> > > >   /* slowpath */
+> > > >   mutex_lock(&some_mutex);
+> > > >   list_for_each(tmp, &some_list) {
+> > > >     ...
+> > > >   }
+> > > >   mutex_unlock(&some_mutex);
+> > > > }
+> > > >
+> > > > (I'm not sure whether patterns like this appear commonly though.)
 > > >
-> > > I explained this previously.  The difference is that the BPF programs
-> > > are loaded from a userspace
-> > > process, not a kernel-resident module.  They already recognize there
-> > > is a difference here or
-> > > they wouldn't have the CAP_MAC_ADMIN check above in their patch.  The
-> > > problem with that
-> > > check is just that CAP_MAC_ADMIN doesn't necessarily mean fully
-> > > privileged with respect to
-> > > SELinux, which is why I want an explicit hook.  This gets a NAK from
-> > > me until there is such a hook.
+> > >
+> > > I would hope not as the list could go "empty" before the lock is
+> > > grabbed.  That pattern would be wrong.
 > >
-> > Doesn't the existing int (*bpf_prog)(struct bpf_prog *prog); cover
-> > SELinux's need here? I.e. it can already examine that a hook is being
-> > created for the LSM (since it has a distinct type, etc)?
+> > If the list becomes empty in between, the loop just iterates over
+> > nothing, and the effect is no different from what you'd get if you had
+> > bailed out before. But sure, you have to be aware that that can
+> > happen.
 >
-> I was about to say the same, specifically for the BPF use-case, we do
-> have the "bpf_prog" i.e. :
->
-> "Do a check when the kernel generate and return a file descriptor for
-> eBPF programs."
->
-> SELinux can implement its policy logic for BPF_PROG_TYPE_LSM by
-> providing a callback for this hook.
+> Doh, yeah, so it is safe, crazy, but safe :)
 
-Ok.  In that case do we really need the capable() check here at all?
+Here's an example of that pattern, I think (which I think is
+technically incorrect if what peterz said is accurate?):
+
+/**
+ * waitqueue_active -- locklessly test for waiters on the queue
+ * @wq_head: the waitqueue to test for waiters
+ *
+ * returns true if the wait list is not empty
+ *
+ * NOTE: this function is lockless and requires care, incorrect usage _will_
+ * lead to sporadic and non-obvious failure.
+ *
+ * Use either while holding wait_queue_head::lock or when used for wakeups
+ * with an extra smp_mb() like::
+ *
+ *      CPU0 - waker                    CPU1 - waiter
+ *
+ *                                      for (;;) {
+ *      @cond = true;                     prepare_to_wait(&wq_head,
+&wait, state);
+ *      smp_mb();                         // smp_mb() from set_current_state()
+ *      if (waitqueue_active(wq_head))         if (@cond)
+ *        wake_up(wq_head);                      break;
+ *                                        schedule();
+ *                                      }
+ *                                      finish_wait(&wq_head, &wait);
+ *
+ * Because without the explicit smp_mb() it's possible for the
+ * waitqueue_active() load to get hoisted over the @cond store such that we'll
+ * observe an empty wait list while the waiter might not observe @cond.
+ *
+ * Also note that this 'optimization' trades a spin_lock() for an smp_mb(),
+ * which (when the lock is uncontended) are of roughly equal cost.
+ */
+static inline int waitqueue_active(struct wait_queue_head *wq_head)
+{
+        return !list_empty(&wq_head->head);
+}
+
+void signalfd_cleanup(struct sighand_struct *sighand)
+{
+        wait_queue_head_t *wqh = &sighand->signalfd_wqh;
+        /*
+         * The lockless check can race with remove_wait_queue() in progress,
+         * but in this case its caller should run under rcu_read_lock() and
+         * sighand_cachep is SLAB_TYPESAFE_BY_RCU, we can safely return.
+         */
+        if (likely(!waitqueue_active(wqh)))
+                return;
+
+        /* wait_queue_entry_t->func(POLLFREE) should do remove_wait_queue() */
+        wake_up_poll(wqh, EPOLLHUP | POLLFREE);
+}
+
+and __add_wait_queue() just uses plain list_add(&wq_entry->entry,
+&wq_head->head) under a lock.
