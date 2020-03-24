@@ -2,204 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 82D4219161D
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 17:20:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EB7011915F7
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 17:18:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728866AbgCXQUI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 12:20:08 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:56062 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727951AbgCXQUG (ORCPT
+        id S1728567AbgCXQQO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 12:16:14 -0400
+Received: from conuserg-11.nifty.com ([210.131.2.78]:61249 "EHLO
+        conuserg-11.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727688AbgCXQQN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 12:20:06 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
-        :Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=yyuJrtfVyD3fUEUFSeqLWA3IrF2yJjSqrC/bf4Fe8oE=; b=aRhKBcCCDp5rWVHuLJVj2GR1VF
-        qk/OKAziUNpNfEjiYSZLkTOU11V5e3nwUyYl9IP1OO+LX5zJKHNipJ4WgQhlSYo2bwtiO4On2Cxf8
-        vhn4uf1XDH76MK4/rvHxTYula2UEomkUU75pRE9CfDDXfIub8UDjez6t8CM1N+h0emCQvQRrlzuYZ
-        h63Ov535QYsewymF4p4C/p1CY4tXa+q9pNNKKqbybvnpGV3hVjiyaY0GV+GADzMj9UDPbNtC3nYSL
-        91UVuhq8TLFJ80V58VrgM9sOU+Q/vCEVDrSLQ9EWCQCbIbco1Ey9XgOuBgqhG0rim6PVjGxiW9wCG
-        vq2lQGvw==;
-Received: from [2001:4bb8:18c:2a9e:999c:283e:b14a:9189] (helo=localhost)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jGmHc-0003PT-Vq; Tue, 24 Mar 2020 16:20:05 +0000
-From:   Christoph Hellwig <hch@lst.de>
-To:     Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-Cc:     linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 6/6] MIPS: use ioremap_page_range
-Date:   Tue, 24 Mar 2020 17:15:25 +0100
-Message-Id: <20200324161525.754181-7-hch@lst.de>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200324161525.754181-1-hch@lst.de>
-References: <20200324161525.754181-1-hch@lst.de>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+        Tue, 24 Mar 2020 12:16:13 -0400
+Received: from grover.flets-west.jp (softbank126093102113.bbtec.net [126.93.102.113]) (authenticated)
+        by conuserg-11.nifty.com with ESMTP id 02OGFgQZ015903;
+        Wed, 25 Mar 2020 01:15:43 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-11.nifty.com 02OGFgQZ015903
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1585066543;
+        bh=SHxHi5gK5rZIIYUYvBbvkIHDsBapKZs/OlS5DzaqpoA=;
+        h=From:To:Cc:Subject:Date:From;
+        b=j1MkgGRCnXStt4YVeJwYA4MBLvZJzYSi6RfmjZOwXGvsag0kl1/UlVDf4d6EJfkw1
+         4teW3iULx4yOqJJdzvXZTwfrpHmDPDt+DYHYqtqVALycfUsXIWf+fNTXapALPdOVCp
+         JdPkcGNtUj0pLJ/WbzYe0NP4B2obIwmFV7wmgJwot60weiwWjMRRQg86zTxECzMGrW
+         TEuyIJT8dvTer+EEPgcvK4nrsBB+t86pPejB24hrkZ+HwJFGkvbJeUcamGe008+iud
+         eBP5v8vWjOnEt+4Rx6/umhTtuQOG6SD2UFU7bqvASOx/x4bE5s/Dqp0ndll+0OzSP3
+         VWZZkPfRT17Lg==
+X-Nifty-SrcIP: [126.93.102.113]
+From:   Masahiro Yamada <masahiroy@kernel.org>
+To:     linux-kbuild@vger.kernel.org
+Cc:     "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Masahiro Yamada <masahiroy@kernel.org>
+Subject: [PATCH 1/3] net: wan: wanxl: use $(CC68K) instead of $(AS68K) for rebuilding firmware
+Date:   Wed, 25 Mar 2020 01:15:37 +0900
+Message-Id: <20200324161539.7538-1-masahiroy@kernel.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use the generic ioremap_page_range helper instead of reimplementing it.
+As far as I understood from the Kconfig help text, this build rule is
+used to rebuild the driver firmware, which runs on the QUICC, m68k-based
+Motorola 68360.
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
+The firmware source, wanxlfw.S, is currently compiled by the combo of
+$(CPP) and $(AS68K). This is not what we usually do for compiling *.S
+files. In fact, this is the only user of $(AS) in the kernel build.
+
+Moreover, $(CPP) is not likely to be a m68k tool because wanxl.c is a
+PCI driver, but CONFIG_M68K does not select CONFIG_HAVE_PCI.
+Instead of combining $(CPP) and (AS) from different tool sets, using
+single $(CC68K) seems simpler, and saner.
+
+After this commit, the firmware rebuild will require cc68k instead of
+as68k. I do not know how many people care about this, though.
+
+I do not have cc68k/ld68k in hand, but I was able to build it by using
+the kernel.org m68k toolchain. [1]
+
+[1] https://mirrors.edge.kernel.org/pub/tools/crosstool/files/bin/x86_64/9.2.0/x86_64-gcc-9.2.0-nolibc-m68k-linux.tar.xz
+
+Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
 ---
- arch/mips/mm/ioremap.c | 112 ++++-------------------------------------
- 1 file changed, 11 insertions(+), 101 deletions(-)
 
-diff --git a/arch/mips/mm/ioremap.c b/arch/mips/mm/ioremap.c
-index c5b5181c7cd0..b6dad2fd5575 100644
---- a/arch/mips/mm/ioremap.c
-+++ b/arch/mips/mm/ioremap.c
-@@ -14,99 +14,14 @@
- #include <linux/slab.h>
- #include <linux/vmalloc.h>
- #include <linux/mm_types.h>
-+#include <linux/io.h>
- #include <asm/cacheflush.h>
--#include <asm/io.h>
- #include <asm/tlbflush.h>
- #include <ioremap.h>
+ drivers/net/wan/Kconfig  | 2 +-
+ drivers/net/wan/Makefile | 6 +++---
+ 2 files changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/net/wan/Kconfig b/drivers/net/wan/Kconfig
+index 4530840e15ef..0f35ad097744 100644
+--- a/drivers/net/wan/Kconfig
++++ b/drivers/net/wan/Kconfig
+@@ -200,7 +200,7 @@ config WANXL_BUILD_FIRMWARE
+ 	depends on WANXL && !PREVENT_FIRMWARE_BUILD
+ 	help
+ 	  Allows you to rebuild firmware run by the QUICC processor.
+-	  It requires as68k, ld68k and hexdump programs.
++	  It requires cc68k, ld68k and hexdump programs.
  
- #define IS_LOW512(addr) (!((phys_addr_t)(addr) & (phys_addr_t) ~0x1fffffffULL))
- #define IS_KSEG1(addr) (((unsigned long)(addr) & ~0x1fffffffUL) == CKSEG1)
+ 	  You should never need this option, say N.
  
--static inline void remap_area_pte(pte_t * pte, unsigned long address,
--	phys_addr_t size, phys_addr_t phys_addr, unsigned long flags)
--{
--	phys_addr_t end;
--	unsigned long pfn;
--	pgprot_t pgprot = __pgprot(_PAGE_GLOBAL | _PAGE_PRESENT | __READABLE
--				   | __WRITEABLE | flags);
--
--	address &= ~PMD_MASK;
--	end = address + size;
--	if (end > PMD_SIZE)
--		end = PMD_SIZE;
--	BUG_ON(address >= end);
--	pfn = phys_addr >> PAGE_SHIFT;
--	do {
--		if (!pte_none(*pte)) {
--			printk("remap_area_pte: page already exists\n");
--			BUG();
--		}
--		set_pte(pte, pfn_pte(pfn, pgprot));
--		address += PAGE_SIZE;
--		pfn++;
--		pte++;
--	} while (address && (address < end));
--}
--
--static inline int remap_area_pmd(pmd_t * pmd, unsigned long address,
--	phys_addr_t size, phys_addr_t phys_addr, unsigned long flags)
--{
--	phys_addr_t end;
--
--	address &= ~PGDIR_MASK;
--	end = address + size;
--	if (end > PGDIR_SIZE)
--		end = PGDIR_SIZE;
--	phys_addr -= address;
--	BUG_ON(address >= end);
--	do {
--		pte_t * pte = pte_alloc_kernel(pmd, address);
--		if (!pte)
--			return -ENOMEM;
--		remap_area_pte(pte, address, end - address, address + phys_addr, flags);
--		address = (address + PMD_SIZE) & PMD_MASK;
--		pmd++;
--	} while (address && (address < end));
--	return 0;
--}
--
--static int remap_area_pages(unsigned long address, phys_addr_t phys_addr,
--	phys_addr_t size, unsigned long flags)
--{
--	int error;
--	pgd_t * dir;
--	unsigned long end = address + size;
--
--	phys_addr -= address;
--	dir = pgd_offset(&init_mm, address);
--	flush_cache_all();
--	BUG_ON(address >= end);
--	do {
--		p4d_t *p4d;
--		pud_t *pud;
--		pmd_t *pmd;
--
--		error = -ENOMEM;
--		p4d = p4d_alloc(&init_mm, dir, address);
--		if (!p4d)
--			break;
--		pud = pud_alloc(&init_mm, p4d, address);
--		if (!pud)
--			break;
--		pmd = pmd_alloc(&init_mm, pud, address);
--		if (!pmd)
--			break;
--		if (remap_area_pmd(pmd, address, end - address,
--					 phys_addr + address, flags))
--			break;
--		error = 0;
--		address = (address + PGDIR_SIZE) & PGDIR_MASK;
--		dir++;
--	} while (address && (address < end));
--	flush_tlb_all();
--	return error;
--}
--
- static int __ioremap_check_ram(unsigned long start_pfn, unsigned long nr_pages,
- 			       void *arg)
- {
-@@ -135,7 +50,7 @@ void __iomem *ioremap_prot(phys_addr_t phys_addr, unsigned long size,
- 	unsigned long offset, pfn, last_pfn;
- 	struct vm_struct *area;
- 	phys_addr_t last_addr;
--	void *addr;
-+	unsigned long vaddr;
- 	void __iomem *cpu_addr;
+diff --git a/drivers/net/wan/Makefile b/drivers/net/wan/Makefile
+index 701f5d2fe3b6..d21a99711070 100644
+--- a/drivers/net/wan/Makefile
++++ b/drivers/net/wan/Makefile
+@@ -40,16 +40,16 @@ $(obj)/wanxl.o:	$(obj)/wanxlfw.inc
  
- 	cpu_addr = plat_ioremap(phys_addr, size, flags);
-@@ -183,27 +98,22 @@ void __iomem *ioremap_prot(phys_addr_t phys_addr, unsigned long size,
- 	area = get_vm_area(size, VM_IOREMAP);
- 	if (!area)
- 		return NULL;
--	addr = area->addr;
--	if (remap_area_pages((unsigned long) addr, phys_addr, size, flags)) {
--		vunmap(addr);
-+	vaddr = (unsigned long)area->addr;
-+
-+	flags |= _PAGE_GLOBAL | _PAGE_PRESENT | __READABLE | __WRITEABLE;
-+	if (ioremap_page_range(vaddr, vaddr + size, phys_addr,
-+			__pgprot(flags))) {
-+		free_vm_area(area);
- 		return NULL;
- 	}
+ ifeq ($(CONFIG_WANXL_BUILD_FIRMWARE),y)
+ ifeq ($(ARCH),m68k)
+-  AS68K = $(AS)
++  CC68K = $(CC)
+   LD68K = $(LD)
+ else
+-  AS68K = as68k
++  CC68K = cc68k
+   LD68K = ld68k
+ endif
  
--	return (void __iomem *) (offset + (char *)addr);
-+	return (void __iomem *)(vaddr + offset);
- }
- EXPORT_SYMBOL(ioremap_prot);
- 
- void iounmap(const volatile void __iomem *addr)
- {
--	struct vm_struct *p;
--
--	if (plat_iounmap(addr) || IS_KSEG1(addr))
--		return;
--
--	p = remove_vm_area((void *) (PAGE_MASK & (unsigned long __force) addr));
--	if (!p)
--		printk(KERN_ERR "iounmap: bad address %p\n", addr);
--
--	kfree(p);
-+	if (!plat_iounmap(addr) && !IS_KSEG1(addr))
-+		vunmap((void *)((unsigned long)addr & PAGE_MASK));
- }
- EXPORT_SYMBOL(iounmap);
+ quiet_cmd_build_wanxlfw = BLD FW  $@
+       cmd_build_wanxlfw = \
+-	$(CPP) -D__ASSEMBLY__ -Wp,-MD,$(depfile) -I$(srctree)/include/uapi $< | $(AS68K) -m68360 -o $(obj)/wanxlfw.o; \
++	$(CC68K) -D__ASSEMBLY__ -Wp,-MD,$(depfile) -I$(srctree)/include/uapi -c -o $(obj)/wanxlfw.o $<; \
+ 	$(LD68K) --oformat binary -Ttext 0x1000 $(obj)/wanxlfw.o -o $(obj)/wanxlfw.bin; \
+ 	hexdump -ve '"\n" 16/1 "0x%02X,"' $(obj)/wanxlfw.bin | sed 's/0x  ,//g;1s/^/static const u8 firmware[]={/;$$s/,$$/\n};\n/' >$(obj)/wanxlfw.inc; \
+ 	rm -f $(obj)/wanxlfw.bin $(obj)/wanxlfw.o
 -- 
-2.25.1
+2.17.1
 
