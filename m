@@ -2,151 +2,126 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5C98319145C
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 16:28:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A815F191495
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 16:38:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728443AbgCXPZp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 11:25:45 -0400
-Received: from mga07.intel.com ([134.134.136.100]:19547 "EHLO mga07.intel.com"
+        id S1728430AbgCXPhH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 11:37:07 -0400
+Received: from mga05.intel.com ([192.55.52.43]:40198 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728424AbgCXPZo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 11:25:44 -0400
-IronPort-SDR: 5wNT/eGAiVBzJ7VabqLh6tyNvgfRsyjsNTQ8mBeAljQVXOz95Ao/MxFkfih061a6C0e3GZyXIw
- 3aCgIfjdMGeQ==
+        id S1727980AbgCXPhF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Mar 2020 11:37:05 -0400
+IronPort-SDR: LLb5cSzLtWtvLZow8PQek16+ibtPBzmxOii4zVNpooSmTneWwN8ZbvO6xfms3Mb63Gd0Sl/iFA
+ oJUuF1fBbo8Q==
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Mar 2020 08:25:42 -0700
-IronPort-SDR: u51fJ+Z0ZBbmP6QCfNUjTvwozWzNupiZsNbkcUKr1KzpRJD7fx4oNvUs51Yhdb4t9Pgc1U+U41
- 0MHk6Mh/sONw==
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Mar 2020 08:37:04 -0700
+IronPort-SDR: NW2j/PrriTw0QlQ/+lOlMn8Y1tzc6CVzaVQ2I5jYpByXrkvlhmdgGeOmwndNm65ka8Q/KZQbNV
+ jugDFZwqC/0w==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.72,300,1580803200"; 
-   d="scan'208";a="325939618"
-Received: from jacob-builder.jf.intel.com (HELO jacob-builder) ([10.7.199.155])
-  by orsmga001.jf.intel.com with ESMTP; 24 Mar 2020 08:25:42 -0700
-Date:   Tue, 24 Mar 2020 08:31:25 -0700
-From:   Jacob Pan <jacob.jun.pan@linux.intel.com>
-To:     Lu Baolu <baolu.lu@linux.intel.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        iommu@lists.linux-foundation.org, Joerg Roedel <joro@8bytes.org>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Raj Ashok <ashok.raj@intel.com>, Yi Liu <yi.l.liu@intel.com>,
-        jacob.jun.pan@linux.intel.com
-Subject: Re: [PATCH 1/3] iommu/vt-d: Remove redundant IOTLB flush
-Message-ID: <20200324083125.27b78594@jacob-builder>
-In-Reply-To: <06c9751a-417d-3c32-65af-0788593f811a@linux.intel.com>
-References: <1584678751-43169-1-git-send-email-jacob.jun.pan@linux.intel.com>
-        <1584678751-43169-2-git-send-email-jacob.jun.pan@linux.intel.com>
-        <26ab1917-f087-aafa-e861-6a2478000a6f@linux.intel.com>
-        <20200320092047.4a4cf551@jacob-builder>
-        <06c9751a-417d-3c32-65af-0788593f811a@linux.intel.com>
-Organization: OTC
-X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
+   d="scan'208";a="393319653"
+Received: from lxy-clx-4s.sh.intel.com ([10.239.43.39])
+  by orsmga004.jf.intel.com with ESMTP; 24 Mar 2020 08:37:00 -0700
+From:   Xiaoyao Li <xiaoyao.li@intel.com>
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        hpa@zytor.com, Paolo Bonzini <pbonzini@redhat.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>
+Cc:     x86@kernel.org, kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Andy Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Arvind Sankar <nivedita@alum.mit.edu>,
+        Fenghua Yu <fenghua.yu@intel.com>,
+        Tony Luck <tony.luck@intel.com>,
+        Xiaoyao Li <xiaoyao.li@intel.com>
+Subject: [PATCH v6 0/8] x86/split_lock: Fix and virtualization of split lock detection
+Date:   Tue, 24 Mar 2020 23:18:51 +0800
+Message-Id: <20200324151859.31068-1-xiaoyao.li@intel.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 21 Mar 2020 09:32:45 +0800
-Lu Baolu <baolu.lu@linux.intel.com> wrote:
+So sorry for the noise that I forgot to CC the maillist.
 
-> On 2020/3/21 0:20, Jacob Pan wrote:
-> > On Fri, 20 Mar 2020 21:45:26 +0800
-> > Lu Baolu <baolu.lu@linux.intel.com> wrote:
-> >   
-> >> On 2020/3/20 12:32, Jacob Pan wrote:  
-> >>> IOTLB flush already included in the PASID tear down process. There
-> >>> is no need to flush again.  
-> >>
-> >> It seems that intel_pasid_tear_down_entry() doesn't flush the pasid
-> >> based device TLB?
-> >>  
-> > I saw this code in intel_pasid_tear_down_entry(). Isn't the last
-> > line flush the devtlb? Not in guest of course since the passdown
-> > tlb flush is inclusive.
-> > 
-> > 	pasid_cache_invalidation_with_pasid(iommu, did, pasid);
-> > 	iotlb_invalidation_with_pasid(iommu, did, pasid);
-> > 
-> > 	/* Device IOTLB doesn't need to be flushed in caching mode.
-> > */ if (!cap_caching_mode(iommu->cap))
-> > 		devtlb_invalidation_with_pasid(iommu, dev, pasid);
-> >   
-> 
-> But devtlb_invalidation_with_pasid() doesn't do the right thing, it
-> flushes the device tlb, instead of pasid-based device tlb.
-> 
-Hmm, you are right. But the function name is misleading, pasid argument
-is not used, is there a reason why?
-This is used for PASID based device IOTLB flush, right?
+This series aims to add the virtualization of split lock detection for
+guest, while containing some fixes of native kernel split lock handling. 
 
-> static void
-> devtlb_invalidation_with_pasid(struct intel_iommu *iommu,
->                                 struct device *dev, int pasid)
-> {
->          struct device_domain_info *info;
->          u16 sid, qdep, pfsid;
-> 
->          info = dev->archdata.iommu;
->          if (!info || !info->ats_enabled)
->                  return;
-> 
->          sid = info->bus << 8 | info->devfn;
->          qdep = info->ats_qdep;
->          pfsid = info->pfsid;
-> 
->          qi_flush_dev_iotlb(iommu, sid, pfsid, qdep, 0, 64 - 
-> VTD_PAGE_SHIFT);
-> }
-> 
-> Best regards,
-> baolu
-> 
-> >> Best regards,
-> >> baolu
-> >>  
-> >>>
-> >>> Cc: Lu Baolu <baolu.lu@linux.intel.com>
-> >>> Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
-> >>> ---
-> >>>    drivers/iommu/intel-svm.c | 6 ++----
-> >>>    1 file changed, 2 insertions(+), 4 deletions(-)
-> >>>
-> >>> diff --git a/drivers/iommu/intel-svm.c b/drivers/iommu/intel-svm.c
-> >>> index 8f42d717d8d7..1483f1845762 100644
-> >>> --- a/drivers/iommu/intel-svm.c
-> >>> +++ b/drivers/iommu/intel-svm.c
-> >>> @@ -268,10 +268,9 @@ static void intel_mm_release(struct
-> >>> mmu_notifier *mn, struct mm_struct *mm)
-> >>>    	 * *has* to handle gracefully without affecting other
-> >>> processes. */
-> >>>    	rcu_read_lock();
-> >>> -	list_for_each_entry_rcu(sdev, &svm->devs, list) {
-> >>> +	list_for_each_entry_rcu(sdev, &svm->devs, list)
-> >>>    		intel_pasid_tear_down_entry(svm->iommu,
-> >>> sdev->dev, svm->pasid);
-> >>> -		intel_flush_svm_range_dev(svm, sdev, 0, -1, 0);
-> >>> -	}
-> >>> +
-> >>>    	rcu_read_unlock();
-> >>>    
-> >>>    }
-> >>> @@ -731,7 +730,6 @@ int intel_svm_unbind_mm(struct device *dev,
-> >>> int pasid)
-> >>>    			 * large and has to be physically
-> >>> contiguous. So it's
-> >>>    			 * hard to be as defensive as we might
-> >>> like. */ intel_pasid_tear_down_entry(iommu, dev, svm->pasid);
-> >>> -			intel_flush_svm_range_dev(svm, sdev, 0,
-> >>> -1, 0); kfree_rcu(sdev, rcu);
-> >>>    
-> >>>    			if (list_empty(&svm->devs)) {
-> >>>      
-> > 
-> > [Jacob Pan]
-> >   
+Note, this series is based on the kernel patch[1]. Patch 1-3 are x86
+kernel patches that based on the linux/master branch. Patch 4-8 are kvm
+patches that based on the kvm/queue branch.
 
-[Jacob Pan]
+Patch 1 is the fix and enhancement for kernel split lock detction. It
+ensures X86_FEATURE_SPLIT_LOCK_DETECT flag is set only when feature does
+exist and not disabled on kernel params. And it explicitly turn off split
+lock when sld_off instead of assuming BIOS/firmware leaves it cleared.
+
+Patch 2 optimizes the runtime MSR accessing.
+
+Patch 3 are the preparation for enabling split lock detection
+virtualization in KVM.
+
+Patch 4 fixes the issue that malicious guest may exploit kvm emulator to
+attcact host kernel.
+
+Patch 5 handles guest's split lock when host turns split lock detect on.
+
+Patch 6-8 implement the virtualization of split lock detection in kvm.
+
+[1]: https://lore.kernel.org/lkml/158031147976.396.8941798847364718785.tip-bot2@tip-bot2/ 
+
+Changes in v6:
+ - Drop the sld_not_exist flag and use X86_FEATURE_SPLIT_LOCK_DETECT to
+   check whether need to init split lock detection. [tglx]
+ - Use tglx's method to verify the existence of split lock detectoin.
+ - small optimization of sld_update_msr() that the default value of
+   msr_test_ctrl_cache has split_lock_detect bit cleared.
+ - Drop the patch3 in v5 that introducing kvm_only option. [tglx]
+ - Rebase patch4-8 to kvm/queue.
+ - use the new kvm-cpu-cap to expose X86_FEATURE_CORE_CAPABILITIES in
+   Patch 6.
+
+Changes in v5:
+ - Use X86_FEATURE_SPLIT_LOCK_DETECT flag in kvm to ensure split lock
+   detection is really supported.
+ - Add and export sld related helper functions in their related usecase 
+   kvm patches.
+
+Changes in v4:
+ - Add patch 1 to rework the initialization flow of split lock
+   detection.
+ - Drop percpu MSR_TEST_CTRL cache, just use a static variable to cache
+   the reserved/unused bit of MSR_TEST_CTRL. [Sean]
+ - Add new option for split_lock_detect kernel param.
+ - Changlog refinement. [Sean]
+ - Add a new patch to enable MSR_TEST_CTRL for intel guest. [Sean]
+
+Xiaoyao Li (8):
+  x86/split_lock: Rework the initialization flow of split lock detection
+  x86/split_lock: Avoid runtime reads of the TEST_CTRL MSR
+  x86/split_lock: Export handle_user_split_lock()
+  kvm: x86: Emulate split-lock access as a write in emulator
+  kvm: vmx: Extend VMX's #AC interceptor to handle split lock #AC
+    happens in guest
+  kvm: x86: Emulate MSR IA32_CORE_CAPABILITIES
+  kvm: vmx: Enable MSR_TEST_CTRL for intel guest
+  kvm: vmx: virtualize split lock detection
+
+ arch/x86/include/asm/cpu.h      |  21 +++++-
+ arch/x86/include/asm/kvm_host.h |   1 +
+ arch/x86/kernel/cpu/intel.c     | 114 +++++++++++++++++++-------------
+ arch/x86/kernel/traps.c         |   2 +-
+ arch/x86/kvm/cpuid.c            |   1 +
+ arch/x86/kvm/vmx/vmx.c          |  75 ++++++++++++++++++++-
+ arch/x86/kvm/vmx/vmx.h          |   1 +
+ arch/x86/kvm/x86.c              |  42 +++++++++++-
+ 8 files changed, 203 insertions(+), 54 deletions(-)
+
+-- 
+2.20.1
+
