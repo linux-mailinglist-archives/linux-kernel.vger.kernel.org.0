@@ -2,121 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6AED01913D2
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 16:03:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 664E01913D7
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 16:06:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727975AbgCXPDN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 11:03:13 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:45532 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727168AbgCXPDM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 11:03:12 -0400
-Received: by mail-lj1-f196.google.com with SMTP id t17so8270234ljc.12;
-        Tue, 24 Mar 2020 08:03:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:from:to:cc:references:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=I7ST19asnOGG0MvlKCXAazKkdXSFzwFfpgOHQe5IauY=;
-        b=C3p61EaT7Ansyr+VG6Zms58wIAIdlIeXUlQlRWHEzHgosPG4eTbCfxvVKOlyXpuMKJ
-         UMkA1qSBDLqjzZ516QFLp4yt/3qfUxBqxaJvBcj8LZRy5cJV/emrqMeNA2nm29VTd2LB
-         hiEAduSEjAUca7c2TVIcxwNXORz+W2Jp/c7HbXw49iP9KCTBTjVgORNWm9RkbmupOjSv
-         JEVaicWfU4oPm+je2fjhGZATErWWRg61aEQFM2ACPsTnQMSoVrgcqo9qraE09ZGwUs66
-         36Jk6bVFpRsAfcxYVr4XYYsPZgsAxbQbfj2lIAHEjvJvV51/QFoQMSrgcyRDIzF8qS8S
-         XR7g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=I7ST19asnOGG0MvlKCXAazKkdXSFzwFfpgOHQe5IauY=;
-        b=FZVoQR+j6Nf7EYVtVNvHf3AeXPz6/MQuJYn0Vbv6cokHAkMVdAmLbPwZDjn9v9wUZ8
-         X2nb4OIZOeICSVLWT59j6YN8LPg9D7RlNRD0sMSno6MaasItL/ruHdWXyPukL3huM4uS
-         P6ZmEV7dvdkgYjKaRI5zS6zB61L48JVaKRavg0DUc9Qat7TGgH8fupwWC60hkQ+mAOFU
-         0RbOoZU+G1+UwkoPMBwSe5ddgfLD+yUoGAz5YqyNx6/i0eORf2uWrldjIk0Pl48CIwmJ
-         9blFRgrh+eW3xEfDZP7VQseNxpVowuMIlmtrf7ABa4pUZqGAmkK1dlOl3uHKEJmBv7El
-         9/AA==
-X-Gm-Message-State: ANhLgQ0RarWSR7xuEm+XwzhcS5GA4jRqR/GzcNpUnSaWXYJIH+mS4H6c
-        wodMcWA4aDkeYrwXTfCNSz8=
-X-Google-Smtp-Source: ADFU+vsH+UIsIfX+xigBdx82/+KW5l3a/4mEXGfuKimOIM5aB97Q/HYnQwUG5Nhu8rQhgSr0M287WA==
-X-Received: by 2002:a05:651c:50e:: with SMTP id o14mr17295986ljp.241.1585062190955;
-        Tue, 24 Mar 2020 08:03:10 -0700 (PDT)
-Received: from [192.168.2.145] (94-29-39-224.dynamic.spd-mgts.ru. [94.29.39.224])
-        by smtp.googlemail.com with ESMTPSA id h10sm10347020ljg.38.2020.03.24.08.03.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 24 Mar 2020 08:03:10 -0700 (PDT)
-Subject: Re: [PATCH v7 00/48] atmel_mxt_ts misc
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     "Wang, Jiada" <jiada_wang@mentor.com>, jikos@kernel.org,
-        benjamin.tissoires@redhat.com, rydberg@bitmath.org,
-        dmitry.torokhov@gmail.com, nick@shmanahar.org, bsz@semihalf.com
-Cc:     linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
-        erosca@de.adit-jv.com, Andrew_Gabbasov@mentor.com
-References: <20200212084218.32344-1-jiada_wang@mentor.com>
- <c583d151-9243-cbde-a04b-bc0389d9be5a@gmail.com>
- <89e4bb0b-b2eb-0b67-4307-fb2af914b1c0@mentor.com>
- <f9b221e7-f189-3e47-adab-1cbc49490d4b@gmail.com>
- <bd3c487b-b065-3e4f-6ab1-f344a4113fcd@mentor.com>
- <5d8fdfc1-cc95-59db-b83e-87bb16ea79e8@gmail.com>
-Message-ID: <60f89c4e-91e0-e660-58e7-5b152bc3e8e7@gmail.com>
-Date:   Tue, 24 Mar 2020 18:03:09 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
-MIME-Version: 1.0
-In-Reply-To: <5d8fdfc1-cc95-59db-b83e-87bb16ea79e8@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        id S1727979AbgCXPF1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 11:05:27 -0400
+Received: from mga12.intel.com ([192.55.52.136]:12689 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727385AbgCXPF1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Mar 2020 11:05:27 -0400
+IronPort-SDR: Kkla0TiTvkB/k/s/h03etu3L7Lej9vj0brRjuSJ3VPyy0O1xMwigxU4PvPw4zK/LGKOCbMpyKm
+ gnptkoyYkIjw==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Mar 2020 08:05:26 -0700
+IronPort-SDR: YI/iSHDbntR4SkhZ3Kmf+3rHCw4xOcJMp4VU+wYFmWaEgp7ZnsDDtfSQ7YaiFQZKiaFsX2ORZf
+ zG+YBRtooeTw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.72,300,1580803200"; 
+   d="scan'208";a="393310990"
+Received: from ahunter-desktop.fi.intel.com ([10.237.72.87])
+  by orsmga004.jf.intel.com with ESMTP; 24 Mar 2020 08:05:24 -0700
+From:   Adrian Hunter <adrian.hunter@intel.com>
+To:     Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc:     Jiri Olsa <jolsa@redhat.com>, linux-kernel@vger.kernel.org
+Subject: [PATCH] perf tools: Add missing Intel CPU events to parser
+Date:   Tue, 24 Mar 2020 17:04:43 +0200
+Message-Id: <20200324150443.28832-1-adrian.hunter@intel.com>
+X-Mailer: git-send-email 2.17.1
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki, Business Identity Code: 0357606 - 4, Domiciled in Helsinki
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-24.03.2020 17:54, Dmitry Osipenko пишет:
-> 23.03.2020 05:25, Wang, Jiada пишет:
->> Hello Dmitry
->>
->> On 2020/03/21 0:53, Dmitry Osipenko wrote:
->>> Hello Jiada,
->>>
->>> 20.03.2020 06:37, Wang, Jiada пишет:
->>>> Hello Dmitry
->>>>
->>>> I have submitted v8 patch-set to address your comments towards v7
->>>> patch-set,
->>>> most of checkpatch warnings and errors have been addressed,
->>>>
->>>> But I didn't update for following two types of warnings
->>>> since I want to keep consistency with legacy code
->>>>
->>>> WARNING: DEVICE_ATTR unusual permissions '0600' used
->>>> #290: FILE: drivers/input/touchscreen/atmel_mxt_ts.c:3761:
->>>> +static DEVICE_ATTR(debug_v2_enable, 0600, NULL,
->>>
->>> What will happen if you'll use 0644? Will an empty line be returned or
->>> driver will crash?
->>>
->> debug_v2_enable doesn't have .show callback implemented, so after change
->> permission to 644, read of it results in an I/O error,
->>
->> for other 0600 permission interfaces (t38_data, t25 and debug_enable)
->> added in this series,
->> change to 644 can return expected information when read.
->>
->> Do you think it's better to change debug_v2_enable to 0200,
->> and others to 0644?
-> 
-> Since the debug_enable has mxt_debug_enable_show(), the same should be
-> done for debug_v2_enable, for consistency.
-> 
-> The permissions should be 0644 for everything that is read/write.
-> 
-> The 0200 should be used for everything that is root-only and write-only.
-> 
+perf list expects CPU events to be parseable by name, e.g.
 
-Also, please take a look at [1], see DEVICE_ATTR_WO() and
-DEVICE_BOOL_ATTR() macros, which should be handy.
+    # perf list | grep el-capacity-read
+      el-capacity-read OR cpu/el-capacity-read/          [Kernel PMU event]
 
-[1]
-https://elixir.bootlin.com/linux/v5.6-rc7/source/include/linux/device.h#L125
+But the event parser does not recognize them that way, e.g.
+
+    # perf test -v "Parse event"
+    <SNIP>
+    running test 54 'cycles//u'
+    running test 55 'cycles:k'
+    running test 0 'cpu/config=10,config1,config2=3,period=1000/u'
+    running test 1 'cpu/config=1,name=krava/u,cpu/config=2/u'
+    running test 2 'cpu/config=1,call-graph=fp,time,period=100000/,cpu/config=2,call-graph=no,time=0,period=2000/'
+    running test 3 'cpu/name='COMPLEX_CYCLES_NAME:orig=cycles,desc=chip-clock-ticks',period=0x1,event=0x2/ukp'
+    -> cpu/event=0,umask=0x11/
+    -> cpu/event=0,umask=0x13/
+    -> cpu/event=0x54,umask=0x1/
+    failed to parse event 'el-capacity-read:u,cpu/event=el-capacity-read/u', err 1, str 'parser error'
+    event syntax error: 'el-capacity-read:u,cpu/event=el-capacity-read/u'
+                           \___ parser error test child finished with 1
+    ---- end ----
+    Parse event definition strings: FAILED!
+
+Fix by adding missing Intel CPU events to the event parser.
+Missing events were found by using:
+
+    grep -r EVENT_ATTR_STR arch/x86/events/intel/core.c
+
+Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
+---
+ tools/perf/util/parse-events.l | 24 +++++++++++++++++++-----
+ 1 file changed, 19 insertions(+), 5 deletions(-)
+
+diff --git a/tools/perf/util/parse-events.l b/tools/perf/util/parse-events.l
+index 7b1c8ee537cf..a4012613cdcf 100644
+--- a/tools/perf/util/parse-events.l
++++ b/tools/perf/util/parse-events.l
+@@ -342,11 +342,25 @@ bpf-output					{ return sym(yyscanner, PERF_TYPE_SOFTWARE, PERF_COUNT_SW_BPF_OUT
+ 	 * Because the prefix cycles is mixed up with cpu-cycles.
+ 	 * loads and stores are mixed up with cache event
+ 	 */
+-cycles-ct					{ return str(yyscanner, PE_KERNEL_PMU_EVENT); }
+-cycles-t					{ return str(yyscanner, PE_KERNEL_PMU_EVENT); }
+-mem-loads					{ return str(yyscanner, PE_KERNEL_PMU_EVENT); }
+-mem-stores					{ return str(yyscanner, PE_KERNEL_PMU_EVENT); }
+-topdown-[a-z-]+					{ return str(yyscanner, PE_KERNEL_PMU_EVENT); }
++cycles-ct				|
++cycles-t				|
++mem-loads				|
++mem-stores				|
++topdown-[a-z-]+				|
++tx-start				|
++tx-commit				|
++tx-abort				|
++tx-capacity				|
++tx-conflict				|
++el-start				|
++el-commit				|
++el-abort				|
++el-capacity				|
++el-conflict				|
++tx-capacity-read			|
++tx-capacity-write			|
++el-capacity-read			|
++el-capacity-write			{ return str(yyscanner, PE_KERNEL_PMU_EVENT); }
+ 
+ L1-dcache|l1-d|l1d|L1-data		|
+ L1-icache|l1-i|l1i|L1-instruction	|
+-- 
+2.17.1
+
