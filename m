@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5DE55191001
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 14:30:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0A372191011
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 14:30:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729232AbgCXNYf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 09:24:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48144 "EHLO mail.kernel.org"
+        id S1729330AbgCXNZC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 09:25:02 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48224 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729667AbgCXNY3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 09:24:29 -0400
+        id S1729153AbgCXNYd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Mar 2020 09:24:33 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id ADF80208D6;
-        Tue, 24 Mar 2020 13:24:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D343C20775;
+        Tue, 24 Mar 2020 13:24:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585056269;
-        bh=Td0VTEA4giKMKVzXp4NT3S64O2tEPqFcHTgV4ped+YU=;
+        s=default; t=1585056273;
+        bh=Wb3XSpW7sXPdIm66GfIkxYb52Eo0vBHkMz/ezQ2dpBI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Wrbtfv8MLGKSr08jv7+mRDrPmpE6XEgJus88k3xw7W0wO6ry/aWm4bsv8dJ3veN+o
-         s/Raulko5zNHeaparurbiY3Zmv53nl1bmw6+v+/0p91PtFEIbiMeN9ZeGCaA7rsfJD
-         G7AnZCMOMFuw+K1XVOAC7OVRCjr0mM5BoV6RA8QA=
+        b=VZR5jrml/2kyW2oOtUNC1OY3mb2gf4X7jjmqGgnERMtd5hBbXRME58QG6i19W2zvL
+         ODmUnY/ugW/GGyFMuK6QQyRvTedVs48yWZSweQ3Q8vN++H8UHYPgbrZaHLu6NqjL+a
+         gWp9AkWE4/SB+V8A2q32zUP1cydOcv3IKa2CseKU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Subject: [PATCH 5.5 075/119] mmc: sdhci-acpi: Disable write protect detection on Acer Aspire Switch 10 (SW5-012)
-Date:   Tue, 24 Mar 2020 14:11:00 +0100
-Message-Id: <20200324130815.953085001@linuxfoundation.org>
+        stable@vger.kernel.org, Murphy Zhou <jencce.kernel@gmail.com>,
+        Steve French <stfrench@microsoft.com>,
+        Pavel Shilovsky <pshilov@microsoft.com>
+Subject: [PATCH 5.5 076/119] CIFS: fiemap: do not return EINVAL if get nothing
+Date:   Tue, 24 Mar 2020 14:11:01 +0100
+Message-Id: <20200324130816.018090229@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.2
 In-Reply-To: <20200324130808.041360967@linuxfoundation.org>
 References: <20200324130808.041360967@linuxfoundation.org>
@@ -44,68 +44,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hans de Goede <hdegoede@redhat.com>
+From: Murphy Zhou <jencce.kernel@gmail.com>
 
-commit 3397b251ea02003f47f0b1667f3fe30bb4f9ce90 upstream.
+commit 979a2665eb6c603ddce0ab374041ab101827b2e7 upstream.
 
-On the Acer Aspire Switch 10 (SW5-012) microSD slot always reports the card
-being write-protected even though microSD cards do not have a write-protect
-switch at all.
+If we call fiemap on a truncated file with none blocks allocated,
+it makes sense we get nothing from this call. No output means
+no blocks have been counted, but the call succeeded. It's a valid
+response.
 
-Add a new DMI_QUIRK_SD_NO_WRITE_PROTECT quirk which when set sets
-the MMC_CAP2_NO_WRITE_PROTECT flag on the controller for the external SD
-slot; and add a DMI quirk table entry which selects this quirk for the
-Acer SW5-012.
+Simple example reproducer:
+xfs_io -f 'truncate 2M' -c 'fiemap -v' /cifssch/testfile
+xfs_io: ioctl(FS_IOC_FIEMAP) ["/cifssch/testfile"]: Invalid argument
 
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-Acked-by: Adrian Hunter <adrian.hunter@intel.com>
-Cc: stable@vger.kernel.org
-Link: https://lore.kernel.org/r/20200316184753.393458-2-hdegoede@redhat.com
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+Signed-off-by: Murphy Zhou <jencce.kernel@gmail.com>
+Signed-off-by: Steve French <stfrench@microsoft.com>
+Reviewed-by: Pavel Shilovsky <pshilov@microsoft.com>
+CC: Stable <stable@vger.kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/mmc/host/sdhci-acpi.c |   16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+ fs/cifs/smb2ops.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/mmc/host/sdhci-acpi.c
-+++ b/drivers/mmc/host/sdhci-acpi.c
-@@ -80,6 +80,7 @@ struct sdhci_acpi_host {
+--- a/fs/cifs/smb2ops.c
++++ b/fs/cifs/smb2ops.c
+@@ -3315,7 +3315,7 @@ static int smb3_fiemap(struct cifs_tcon
+ 	if (rc)
+ 		goto out;
  
- enum {
- 	DMI_QUIRK_RESET_SD_SIGNAL_VOLT_ON_SUSP			= BIT(0),
-+	DMI_QUIRK_SD_NO_WRITE_PROTECT				= BIT(1),
- };
- 
- static inline void *sdhci_acpi_priv(struct sdhci_acpi_host *c)
-@@ -671,6 +672,18 @@ static const struct dmi_system_id sdhci_
- 		},
- 		.driver_data = (void *)DMI_QUIRK_RESET_SD_SIGNAL_VOLT_ON_SUSP,
- 	},
-+	{
-+		/*
-+		 * The Acer Aspire Switch 10 (SW5-012) microSD slot always
-+		 * reports the card being write-protected even though microSD
-+		 * cards do not have a write-protect switch at all.
-+		 */
-+		.matches = {
-+			DMI_MATCH(DMI_SYS_VENDOR, "Acer"),
-+			DMI_MATCH(DMI_PRODUCT_NAME, "Aspire SW5-012"),
-+		},
-+		.driver_data = (void *)DMI_QUIRK_SD_NO_WRITE_PROTECT,
-+	},
- 	{} /* Terminating entry */
- };
- 
-@@ -795,6 +808,9 @@ static int sdhci_acpi_probe(struct platf
- 
- 		if (quirks & DMI_QUIRK_RESET_SD_SIGNAL_VOLT_ON_SUSP)
- 			c->reset_signal_volt_on_suspend = true;
-+
-+		if (quirks & DMI_QUIRK_SD_NO_WRITE_PROTECT)
-+			host->mmc->caps2 |= MMC_CAP2_NO_WRITE_PROTECT;
+-	if (out_data_len < sizeof(struct file_allocated_range_buffer)) {
++	if (out_data_len && out_data_len < sizeof(struct file_allocated_range_buffer)) {
+ 		rc = -EINVAL;
+ 		goto out;
  	}
- 
- 	err = sdhci_setup_host(host);
 
 
