@@ -2,107 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5F9D6191CFF
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 23:45:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 98F2C191D14
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 23:48:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728367AbgCXWpi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 18:45:38 -0400
-Received: from mail-pj1-f67.google.com ([209.85.216.67]:52317 "EHLO
-        mail-pj1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727554AbgCXWph (ORCPT
+        id S1727478AbgCXWsz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 18:48:55 -0400
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:41954 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727132AbgCXWsy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 18:45:37 -0400
-Received: by mail-pj1-f67.google.com with SMTP id ng8so184144pjb.2;
-        Tue, 24 Mar 2020 15:45:36 -0700 (PDT)
+        Tue, 24 Mar 2020 18:48:54 -0400
+Received: by mail-lf1-f67.google.com with SMTP id z23so193453lfh.8;
+        Tue, 24 Mar 2020 15:48:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=PKMeyRQ3YhSpQkcTyPShJRWuaaPt570DhD0K201i24Y=;
-        b=VT4HeMXe1pYBCyO/8Jj2xQWubBmwbFGeXo5JKCqPHd5xsx2F+XgRd8MnWhxf2IswLL
-         PDRWkHUnGh7q4MRz3XYE4vUHSYo8iBArgYFXR3Uhz68F7vTTmSlGRa5lyU9yFT0qQrGa
-         5j5OtxLnMQ6Y/0/YIFr2Wqoq+nKccPSP9eC7XBdQTvbY6euDPwNw7lReUsh1I88mmPco
-         o5OO9pyyJDOODvk7BaXjfRs6QpXgz3DRYdse2sNJgLHvY//oHir1Nbtk0GLIuF5Zbz/0
-         1+kLIe+cEP7aUdUQSZaq9U2bGVY+RFC7LHAZv9eQmDosh3neklP1+FbqMhHM63nmNZq9
-         GcOw==
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=06QnBWO8zn+cTFjJT/eh0pa58Q14fQa5v5+3FeRp3t4=;
+        b=MO77Ne74Cfhjpls79rr17wj1ZBVWWXKzEDydAiRzRzdR8rt2wzq9QkOUNRDqH8Nw4a
+         0XOzzDIMqB5y3xp9Pm7C0DNddLYqeBHlfCQJnWP+rw2fK7pTY65Ghozj7XudxNxjqiDV
+         ZZHEt6WFDci88yVuLsuu3IP2hpcqfolekbDfS+eb9EqUTkzdRtcWYn2EDBWBsZ/U03sj
+         OJYvghWrFCghsaY1KskSnUK3ugnFN+anw7uTkNxBPIIDoBIdXqjAgX6KwA+fRPIktoQV
+         BUsENaVv+hTUl0foeDie69LuqXHgClu2egHLGet+bFBpNjfg8h+djRV5J8y9Os1cApLz
+         eB1w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=PKMeyRQ3YhSpQkcTyPShJRWuaaPt570DhD0K201i24Y=;
-        b=EIL6SYTBlBcW3VtwDjKOFv+kIa5PERQqXdPeX9YIsbtIoPsTk42dSKh92Bl99OqyRw
-         gfP3N0A2KRyVPNf6HJzZLtEkIwE72GhW0H9H39B6e9OvdwvQHK4XrYM9NkpXYmlcqXCc
-         ZQi0V4qkXUyh0dLQYfiePHUKqtXOoezT/u7/gHLqy4NtDyx69fCpAJp59PZecHp10s2d
-         tbjSdpY4fjqIvfu8nSKXnUia7VwQNnnMbYr1ovwCJv4L62apSKYojuyTu5arZWgPCyrZ
-         Y7xIug7LH8gFzvfGDPoR1DIVvhbO7968GFO5BuHA3qzgtU+9ofzA0kWlDemQFh59O4Tt
-         gV9g==
-X-Gm-Message-State: ANhLgQ0LVKtf0F0Vvnkj7i+MV9XtInHw1yMA051I6lgEUEUHnFhRERf/
-        ltcNnXdagL+SVpYeRKBBRxhaKSom
-X-Google-Smtp-Source: ADFU+vunt3Lf+DyFnjTw2mxQvuShMhU0fET7IsfLN9BexNWtrvdwbkM6MrM9WUkCTrOT9kDJpeHZfw==
-X-Received: by 2002:a17:90a:1f07:: with SMTP id u7mr247434pja.24.1585089935907;
-        Tue, 24 Mar 2020 15:45:35 -0700 (PDT)
-Received: from dtor-ws ([2620:15c:202:201:3c2a:73a9:c2cf:7f45])
-        by smtp.gmail.com with ESMTPSA id u18sm17162622pfl.40.2020.03.24.15.45.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Mar 2020 15:45:35 -0700 (PDT)
-Date:   Tue, 24 Mar 2020 15:45:33 -0700
-From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To:     Andrew Duggan <aduggan@synaptics.com>
-Cc:     linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Paul Hollinsky <phollinsky@holtechnik.com>,
-        Christopher Heiny <Cheiny@synaptics.com>,
-        Lucas Stach <l.stach@pengutronix.de>, kernel@pengutronix.de,
-        patchwork-lst@pengutronix.de
-Subject: Re: [PATCH] Input: synaptics-rmi4 - Do not set reduced reporting
- mode thresholds are not set by the driver
-Message-ID: <20200324224533.GF75430@dtor-ws>
-References: <20200312005549.29922-1-aduggan@synaptics.com>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=06QnBWO8zn+cTFjJT/eh0pa58Q14fQa5v5+3FeRp3t4=;
+        b=MCUeJWJNYq+xATQjT4VSvXmXy9hSocwLWsCtsdsI5JSiLaDO6TauHinsBlwghJ33df
+         7LdSepLi17M9Jxx+I7dgdX+hKLz5+FSTkmhwpjVJ2+B71jVcFDjZieEl1uuWmiEu49tz
+         aXEbGIHt5lhep00oiyQPZ1Vjf26U979bsv5Y5xWAkHvWSKC5SgXSlqMSqnozbV/R6B4w
+         tlL/DiSJoZ/ie7eY+/GaYs/UcuVCI1WMKwPn6ld2Hp2bvLTkfIJjBNJlMWnXIBir/87y
+         ieApfCRT1oA3P/8AQHV6zXmkk4ORjKDHpTdFmoEh1G0egxNybR41OsC329bh4FiYclPN
+         s4IQ==
+X-Gm-Message-State: ANhLgQ3nxSo69woSwN49wT7pxLe+kJV79Nk+OLApn/CWnOK1xggyK40M
+        qt67z7maK06xK7G8tTRmwRHLfnyi
+X-Google-Smtp-Source: ADFU+vuQcigS93PoEpzYdWodOt90VmZiOtPvZwRPlsbXFsu/ZgEPfg+RcDxU2teo88l133Vf2SbZVQ==
+X-Received: by 2002:a05:6512:108a:: with SMTP id j10mr224570lfg.35.1585090132092;
+        Tue, 24 Mar 2020 15:48:52 -0700 (PDT)
+Received: from [192.168.2.145] (94-29-39-224.dynamic.spd-mgts.ru. [94.29.39.224])
+        by smtp.googlemail.com with ESMTPSA id n23sm3143719lji.59.2020.03.24.15.48.50
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 24 Mar 2020 15:48:51 -0700 (PDT)
+Subject: Re: [RFC PATCH v5 9/9] arm64: tegra: Add Tegra VI CSI support in
+ device tree
+To:     Sowjanya Komatineni <skomatineni@nvidia.com>,
+        thierry.reding@gmail.com, jonathanh@nvidia.com, frankc@nvidia.com,
+        hverkuil@xs4all.nl, helen.koike@collabora.com
+Cc:     sboyd@kernel.org, linux-media@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1584985955-19101-1-git-send-email-skomatineni@nvidia.com>
+ <1584985955-19101-10-git-send-email-skomatineni@nvidia.com>
+ <672819ea-01d3-2eca-8bb7-84ffd64256d4@gmail.com>
+ <a218142f-295e-6bd5-b1d7-47d9ab8eba3e@nvidia.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <fee09e1e-48a3-e0a0-12dc-9aeeb3438ded@gmail.com>
+Date:   Wed, 25 Mar 2020 01:48:50 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200312005549.29922-1-aduggan@synaptics.com>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+In-Reply-To: <a218142f-295e-6bd5-b1d7-47d9ab8eba3e@nvidia.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 11, 2020 at 05:55:49PM -0700, Andrew Duggan wrote:
-> The previous patch "c5ccf2ad3d33 (Input: synaptics-rmi4 - switch to
-> reduced reporting mode)" enabled reduced reporting mode unintentionally
-> on some devices, if the firmware was configured with default Delta X/Y
-> threshold values. The result unintentionally degrade the performance of
-> some touchpads.
+25.03.2020 00:04, Sowjanya Komatineni пишет:
 > 
-> This patch checks to see that the driver is modifying the delta X/Y
-> thresholds before modifying the reporting mode.
-> 
-> Signed-off-by: Andrew Duggan <aduggan@synaptics.com>
+> On 3/24/20 12:19 PM, Dmitry Osipenko wrote:
+>> External email: Use caution opening links or attachments
+>>
+>>
+>> 23.03.2020 20:52, Sowjanya Komatineni пишет:
+>> ...
+>>> +                     pd_venc: venc {
+>>> +                             clocks = <&tegra_car TEGRA210_CLK_VI>,
+>>> +                                      <&tegra_car TEGRA210_CLK_CSI>;
+>>> +                             resets = <&mc TEGRA210_MC_RESET_VI>,
+>> The MC resetting should be needed only for a hardware hot-resetting. It
+>> should be wrong to add it to the power domain.
+> TRM recommends to do MC client hot-reset during VE power gate and ungate.
 
-Applied, thank you.
-
-> ---
->  drivers/input/rmi4/rmi_f11.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/input/rmi4/rmi_f11.c b/drivers/input/rmi4/rmi_f11.c
-> index 6adea8a3e8fb..ffa39ab153f2 100644
-> --- a/drivers/input/rmi4/rmi_f11.c
-> +++ b/drivers/input/rmi4/rmi_f11.c
-> @@ -1203,8 +1203,8 @@ static int rmi_f11_initialize(struct rmi_function *fn)
->  	 * If distance threshold values are set, switch to reduced reporting
->  	 * mode so they actually get used by the controller.
->  	 */
-> -	if (ctrl->ctrl0_11[RMI_F11_DELTA_X_THRESHOLD] ||
-> -	    ctrl->ctrl0_11[RMI_F11_DELTA_Y_THRESHOLD]) {
-> +	if (sensor->axis_align.delta_x_threshold ||
-> +	    sensor->axis_align.delta_y_threshold) {
->  		ctrl->ctrl0_11[0] &= ~RMI_F11_REPORT_MODE_MASK;
->  		ctrl->ctrl0_11[0] |= RMI_F11_REPORT_MODE_REDUCED;
->  	}
-> -- 
-> 2.20.1
-> 
-
--- 
-Dmitry
+Could you please tell what TRM it is and what's the page#?
