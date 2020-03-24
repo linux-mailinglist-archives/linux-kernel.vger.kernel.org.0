@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 05669190F96
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 14:29:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 80EC2190F0F
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 14:19:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727743AbgCXNVM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 09:21:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42880 "EHLO mail.kernel.org"
+        id S1727318AbgCXNRJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 09:17:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36772 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728727AbgCXNVK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 09:21:10 -0400
+        id S1728532AbgCXNRE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Mar 2020 09:17:04 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0D805208DB;
-        Tue, 24 Mar 2020 13:21:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 13961208E4;
+        Tue, 24 Mar 2020 13:17:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585056070;
-        bh=+YZAPcAAS0q81TrNb09xZY/jNelvp3jwoe0bSJrRCdE=;
+        s=default; t=1585055824;
+        bh=c89utpjyJCM1WC9RrJfhwK+FgjmLnvI7luTATiwF9VM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=NsRmuXHV+9IkqRf5JbyCJGYEf33TQEqodiX/2VJXLK933n70mhti3jblQOUPU7B4b
-         ZMEbQscLZX1ynqXos7FBvrkzr9/Mr07Tgw7xKEbZfk1Gxm73837Qry7BrjYHuH9cKm
-         KDLjNZfNAJ/t/XC1AwM5gfKxJ8PfTPm6lNVAg18Q=
+        b=WLRMk4vZQaQPpdBfsjxfJX1pxspneTg448M7COQBcuxeaKIysARI/gACfWF1g94fn
+         9J9lFm03KvTLZd6YsQ/TrJ0t68cNwc7boUbkWrO5Wr50Z/pPbjOp2Bc0kml3cyT66G
+         QI/9BqKcFTUzfh/qVxmyqXlpgr1n4kFoOtgB9ZUY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Steve French <stfrench@microsoft.com>,
-        Aurelien Aptel <aaptel@suse.com>,
+        stable@vger.kernel.org,
+        Grygorii Strashko <grygorii.strashko@ti.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.5 012/119] cifs: add missing mount option to /proc/mounts
+Subject: [PATCH 5.4 005/102] phy: ti: gmii-sel: fix set of copy-paste errors
 Date:   Tue, 24 Mar 2020 14:09:57 +0100
-Message-Id: <20200324130809.175431691@linuxfoundation.org>
+Message-Id: <20200324130807.051713049@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.2
-In-Reply-To: <20200324130808.041360967@linuxfoundation.org>
-References: <20200324130808.041360967@linuxfoundation.org>
+In-Reply-To: <20200324130806.544601211@linuxfoundation.org>
+References: <20200324130806.544601211@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,33 +45,56 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Steve French <stfrench@microsoft.com>
+From: Grygorii Strashko <grygorii.strashko@ti.com>
 
-[ Upstream commit ec57010acd03428a749d2600bf09bd537eaae993 ]
+[ Upstream commit eefed634eb61e4094b9fb8183cb8d43b26838517 ]
 
-We were not displaying the mount option "signloosely" in /proc/mounts
-for cifs mounts which some users found confusing recently
+- under PHY_INTERFACE_MODE_MII the 'mode' func parameter is assigned
+instead of 'gmii_sel_mode' and it's working only because the default value
+'gmii_sel_mode' is set to 0.
 
-Signed-off-by: Steve French <stfrench@microsoft.com>
-Reviewed-by: Aurelien Aptel <aaptel@suse.com>
+- console outputs use 'rgmii_id' and 'mode' values to print PHY mode
+instead of using 'submode' value which is representing PHY interface mode
+now.
+
+This patch fixes above two cases.
+
+Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
+Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/cifs/cifsfs.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/phy/ti/phy-gmii-sel.c | 9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
 
-diff --git a/fs/cifs/cifsfs.c b/fs/cifs/cifsfs.c
-index 92b9c8221f078..7659286954d3a 100644
---- a/fs/cifs/cifsfs.c
-+++ b/fs/cifs/cifsfs.c
-@@ -530,6 +530,8 @@ cifs_show_options(struct seq_file *s, struct dentry *root)
+diff --git a/drivers/phy/ti/phy-gmii-sel.c b/drivers/phy/ti/phy-gmii-sel.c
+index a28bd15297f53..e998e9cd8d1f8 100644
+--- a/drivers/phy/ti/phy-gmii-sel.c
++++ b/drivers/phy/ti/phy-gmii-sel.c
+@@ -80,20 +80,19 @@ static int phy_gmii_sel_mode(struct phy *phy, enum phy_mode mode, int submode)
+ 		break;
  
- 	if (tcon->seal)
- 		seq_puts(s, ",seal");
-+	else if (tcon->ses->server->ignore_signature)
-+		seq_puts(s, ",signloosely");
- 	if (tcon->nocase)
- 		seq_puts(s, ",nocase");
- 	if (tcon->local_lease)
+ 	case PHY_INTERFACE_MODE_MII:
+-		mode = AM33XX_GMII_SEL_MODE_MII;
++		gmii_sel_mode = AM33XX_GMII_SEL_MODE_MII;
+ 		break;
+ 
+ 	default:
+-		dev_warn(dev,
+-			 "port%u: unsupported mode: \"%s\". Defaulting to MII.\n",
+-			 if_phy->id, phy_modes(rgmii_id));
++		dev_warn(dev, "port%u: unsupported mode: \"%s\"\n",
++			 if_phy->id, phy_modes(submode));
+ 		return -EINVAL;
+ 	}
+ 
+ 	if_phy->phy_if_mode = submode;
+ 
+ 	dev_dbg(dev, "%s id:%u mode:%u rgmii_id:%d rmii_clk_ext:%d\n",
+-		__func__, if_phy->id, mode, rgmii_id,
++		__func__, if_phy->id, submode, rgmii_id,
+ 		if_phy->rmii_clock_external);
+ 
+ 	regfield = if_phy->fields[PHY_GMII_SEL_PORT_MODE];
 -- 
 2.20.1
 
