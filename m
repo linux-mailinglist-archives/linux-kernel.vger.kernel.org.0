@@ -2,107 +2,148 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9F39019155D
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 16:52:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 82C49191564
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 16:56:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728457AbgCXPuc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 11:50:32 -0400
-Received: from out1-smtp.messagingengine.com ([66.111.4.25]:55529 "EHLO
-        out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726915AbgCXPub (ORCPT
+        id S1727935AbgCXPyJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 11:54:09 -0400
+Received: from sender3-op-o12.zoho.com.cn ([124.251.121.243]:17826 "EHLO
+        sender3-op-o12.zoho.com.cn" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727426AbgCXPyJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 11:50:31 -0400
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-        by mailout.nyi.internal (Postfix) with ESMTP id 4A0815C01B1;
-        Tue, 24 Mar 2020 11:50:30 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute4.internal (MEProxy); Tue, 24 Mar 2020 11:50:30 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm2; bh=0Pu6HeLGr4uD+zkjxE9sHKczNd6
-        ZBYS3wZrKUtICS4c=; b=O/2P9cncGMHR3/iVHph7f5JHAMbpIKmR8PDg0jEKoYO
-        UQXd4cJmeI8oSj2Ax2UE43i+sxLSzCUn/mKlopSMX5B4MNAMOgNyRqDlGV0Mz5+c
-        1rrwW4InKYPjM+U80IYFcmlNriH3iWRCOmCZkZOgxo4hDiMlIENQmjAy8JgcQdFR
-        ccgTis6NUar4stMS+80cuVUtYV59dk8XJg5nFuJAYntLYQiDsSBfljGx2clV8Kkj
-        OArdTSlcD2JlddGLoDRaDH3Mf5Ov7Z7TusggmyiYpc8MiDCLJ2O55jKBpTZGET73
-        VS3fYShFmDeBj9cWBeRnf3N/7XV6Heg0rTIah86Rkew==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=0Pu6He
-        LGr4uD+zkjxE9sHKczNd6ZBYS3wZrKUtICS4c=; b=G0py85zP/R+q7eeXbXLFSB
-        bhA+l/ByNpPYszKXgXcXySnBZPyT2Kwskpp3SmRB7pSojncTvsq1UC0OmeuQp9FD
-        pSTT3cTbGi/JGOTIcfs9aSiBUL25THbFN6YPRQttBRnDyy9ObKfpv1Np6RsQths8
-        8tASQlcQej015l1nKkOAy2vg4kkefEpVpT+16AGlbWhE6/ql8evXICpO5hZkq+BO
-        sP9Sa9u9xjU8BfoZvzigv/aGi5ONAeQqBivKUYSpuCczcxFOtM6bWeONHFPMv7I9
-        I+yJ1Smh99giMMu6j1FHjr7U9uO/ag59r2Ca85asSvVH91f61Mm9JRjkI1RpC85A
-        ==
-X-ME-Sender: <xms:RSx6XtpCEMWc7fF82phOUnsZuBZykBayfx4CRDz2EYX50OZ_DLCSoQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedugedrudehuddgheduucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvffukfhfgggtuggjsehgtderredttddvnecuhfhrohhmpeforgigihhm
-    vgcutfhiphgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecukfhppeeltd
-    drkeelrdeikedrjeeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghi
-    lhhfrhhomhepmhgrgihimhgvsegtvghrnhhordhtvggthh
-X-ME-Proxy: <xmx:RSx6XutNXb9Z4FNRSsdyrOiTh1S89k_MsnhznGympRzMcSLpw6N_Ew>
-    <xmx:RSx6XgYN7IB4g6thHrGs_FirKgMaE4FBNBn_XrStpLWTZqexWnmTZA>
-    <xmx:RSx6XlYNpqIiGEZQ-paGpCME8mOoIJMnkEULbhFq8pYI2gatKMTORg>
-    <xmx:Rix6XlRlRRebrKt8Emc0WxGu755Edrxb11l-5bQT1t_2ZM2TkKikxQ>
-Received: from localhost (lfbn-tou-1-1502-76.w90-89.abo.wanadoo.fr [90.89.68.76])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 3B6843065273;
-        Tue, 24 Mar 2020 11:50:29 -0400 (EDT)
-Date:   Tue, 24 Mar 2020 16:50:28 +0100
-From:   Maxime Ripard <maxime@cerno.tech>
-To:     Stefan Mavrodiev <stefan@olimex.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Corentin Labbe <clabbe@baylibre.com>,
-        =?utf-8?B?Q2zDqW1lbnQgUMOpcm9u?= <peron.clem@gmail.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        "moderated list:ARM/Allwinner sunXi SoC support" 
-        <linux-arm-kernel@lists.infradead.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        linux-sunxi@googlegroups.com
-Subject: Re: [PATCH 0/2] Add A20-OLinuXino-LIME-eMMC
-Message-ID: <20200324155028.u3shfffoetuqii4x@gilmour.lan>
-References: <20200321075757.15853-1-stefan@olimex.com>
+        Tue, 24 Mar 2020 11:54:09 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1585065094;
+        s=mail; d=flygoat.com; i=jiaxun.yang@flygoat.com;
+        h=Date:In-Reply-To:References:MIME-Version:Content-Type:Content-Transfer-Encoding:Subject:To:CC:From:Message-ID;
+        bh=BaEVCVn7EuihrC0WZ985tTxPvg8aH8svi5ddVX2lo88=;
+        b=OQxAY7ij7bXQ9IynEq4NoRTd8DJDYjA/Eteh+hbdkV6Rkv+TtWa5y1sQHD7t3Be+
+        f4Iu3ClJnqwJtSg2vNzUyCAJZjYEWxQVv+dbpkaGZjs8G1RTLZGkiqbqZNK+4VOJPgr
+        ue4vALAg2oUHAsw8yshR9e2J5btJdPnE71W/GjC0=
+Received: from [10.233.233.252] (183.157.60.227 [183.157.60.227]) by mx.zoho.com.cn
+        with SMTPS id 1585065093493192.6854956797098; Tue, 24 Mar 2020 23:51:33 +0800 (CST)
+Date:   Tue, 24 Mar 2020 23:51:18 +0800
+User-Agent: K-9 Mail for Android
+In-Reply-To: <20200324154747.18e8ccd5@why>
+References: <20190827085302.5197-1-jiaxun.yang@flygoat.com> <20200324153624.23109-1-jiaxun.yang@flygoat.com> <20200324154747.18e8ccd5@why>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="kqrycw6rh2fpqmts"
-Content-Disposition: inline
-In-Reply-To: <20200321075757.15853-1-stefan@olimex.com>
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v6 00/11] Modernize Loongson64 Machine v6
+To:     Marc Zyngier <maz@kernel.org>
+CC:     linux-mips@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        Huacai Chen <chenhc@lemote.com>,
+        Allison Randal <allison@lohutok.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+From:   Jiaxun Yang <jiaxun.yang@flygoat.com>
+Message-ID: <8C3E32B2-11DB-40A6-A19E-162B8E42330C@flygoat.com>
+X-ZohoCNMailClient: External
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---kqrycw6rh2fpqmts
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 
-On Sat, Mar 21, 2020 at 09:57:55AM +0200, Stefan Mavrodiev wrote:
-> The board is the same as A20-OLinuXino-LIME with added eMMC chip. So the
-> dts is almost identical with A20-OLinuXino-LIME2.
+=E4=BA=8E 2020=E5=B9=B43=E6=9C=8824=E6=97=A5 GMT+08:00 =E4=B8=8B=E5=8D=881=
+1:47:47, Marc Zyngier <maz@kernel=2Eorg> =E5=86=99=E5=88=B0:
+>Jiaxun,
 >
-> This patch series adds a new dts file and appends the bindings
-> documentation.
+>On Tue, 24 Mar 2020 23:35:57 +0800
+>Jiaxun Yang <jiaxun=2Eyang@flygoat=2Ecom> wrote:
+>
+>> Loongson have a long history of contributing their code to mainline
+>kernel=2E
+>> However, it seems like recent years, they are focusing on maintain a
+>kernel by themselves
+>> rather than contribute there code to the community=2E
+>>=20
+>> Kernel is progress rapidly too=2E Their code slept in mainline for a
+>long peroid without proper
+>> maintainance and became outdated=2E
+>>=20
+>> This patchset brings modern DeviceTree and irqchip support to the
+>Loongson64 machine, and leaves
+>> Loongson 2e/f alone since they are too legacy to touch=2E
+>>=20
+>> PCI and some legacy I/O device will be converted later, together with
+>LS7A PCH support=2E
+>>=20
+>> v1:
+>> - dt-bindings fixup according to Rob's comments
+>> - irqchip fixup according to Marc's comments
+>> - ls3-iointc: Make Core&IP map per-IRQ
+>> - Regenerate kconfigs
+>> - Typo & style improvements
+>>=20
+>> v2:
+>> - dt-bindings: Fix IOINTC, collect Rob's review tag
+>> - dtbs: Drop CPU Node, merge different ways according to Huacai and
+>Paul's comments
+>>=20
+>> v3:
+>> - Split code have been merged
+>> - Fix IOINTC binding to allow map any child IRQ to and parent
+>> - Convert "HTINTC" into "HTPIC", which mixed HT vectors processing
+>and i8259
+>> - Naming style fix according to Huacai's suggestions
+>>=20
+>> v4:
+>> - More naming related fixes
+>>=20
+>> v5:
+>> - irqchip fixes thanks to maz (see per file changelog)
+>> - Remove unnecessary details in dt-bindings
+>> - Credit Huacai with Co-developed-by
+>>=20
+>> v6:
+>> - HTPIC minor fix
+>> - device binding naming fix=20
+>>=20
+>> ---
+>> Jiaxun Yang (11):
+>>   irqchip: Add driver for Loongson I/O Local Interrupt Controller
+>>   irqchip: loongson-liointc: Workaround LPC IRQ Errata
+>>   dt-bindings: interrupt-controller: Add Loongson LIOINTC
+>>   irqchip: Add driver for Loongson-3 HyperTransport PIC controller
+>>   dt-bindings: interrupt-controller: Add Loongson-3 HTPIC
+>>   irqchip: mips-cpu: Convert to simple domain
+>>   MIPS: Loongson64: Drop legacy IRQ code
+>>   dt-bindings: mips: Add loongson boards
+>>   MIPS: Loongson64: Add generic dts
+>>   MIPS: Loongson64: Load built-in dtbs
+>>   MIPS: Loongson64: Move MIPS_CPU_IRQ_BASE
+>
+>[=2E=2E=2E]
+>
+>How do you want to get these merged? I can take the first 6 patches
+>through the irqchip tree, and leave the rest to go via the MIPS tree=2E
+>
+>Otherwise, if you plan to have the whole thing go via the MIPS tree,
+>please add my:
+>
+>Reviewed-by: Marc Zyngier <maz@kernel=2Eorg>
+>
+>to patches 1, 2, 4 and 6=2E
+>
+>Please let me know quickly, as I'd like to close the irqchip tree
+>tomorrow=2E
 
-Queued for 5.8, thanks!
-Maxime
+I'd prefer all go through MIPS tree=2E
 
---kqrycw6rh2fpqmts
-Content-Type: application/pgp-signature; name="signature.asc"
+Thomas, could you please help with that?
 
------BEGIN PGP SIGNATURE-----
+Thanks=2E
 
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXnosRAAKCRDj7w1vZxhR
-xZN+AP9ijoVWA3V+WNmKTAKulfQEX3zkDy8h3UZ+xROn8wVLUAEA4IARh9UJTMFG
-Jyj0Lesrd9XoLwHm+hDZK/4dROMZHws=
-=ej6K
------END PGP SIGNATURE-----
+>
+>Thanks,
+>
+>	M=2E
 
---kqrycw6rh2fpqmts--
+--=20
+Jiaxun Yang
