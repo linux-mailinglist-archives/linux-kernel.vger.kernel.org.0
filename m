@@ -2,112 +2,149 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0D8AF190AD1
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 11:25:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2EDCB190ADB
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 11:25:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727201AbgCXKZE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 06:25:04 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:36962 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726524AbgCXKZD (ORCPT
+        id S1727272AbgCXKZb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 06:25:31 -0400
+Received: from us-smtp-delivery-74.mimecast.com ([216.205.24.74]:53799 "EHLO
+        us-smtp-delivery-74.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726697AbgCXKZa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 06:25:03 -0400
-Received: by mail-pg1-f194.google.com with SMTP id a32so8810157pga.4;
-        Tue, 24 Mar 2020 03:25:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=niMBZQskqIvvbvSQd3Vs9C4OFVhjiYiDfUEWD3hhgQU=;
-        b=WL57huwoohYOXgJDpFwNTccWhDvbdVj53HP9RTAYqeUArAowfq+8wm7C8xnQS+d7Xg
-         T6ZEXRd83CkutsSV26moPh6SFShAu8y5bgcdaa94+vyt5gv9L7FHOWY/xTwiS3ZXTJoo
-         mYyatVs+4JSkglhV/DZno5DkKWgsDuV6Nq3GIgrszTouv3+HdzH3Ue4zNWg9IJabYRM5
-         Yc/KKpuGqrb71fAUqQdj6kfvkI7Fc5ogXvzI4kRXgF1utZe1N1Trsq00q5ItgQsyJMa1
-         K51p515UguhiI4YjD4zkfxOZoju5Vs4RIc7CzfPQSFesYRhhKwf5f8kTncK3eqxsX1rE
-         yirA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=niMBZQskqIvvbvSQd3Vs9C4OFVhjiYiDfUEWD3hhgQU=;
-        b=MzFd2Jhj6NnyoTXDhkIDFXZaVVEeeRk7Ymt0c9yhAa02N+aUf3a2bgMGpJVsI0eyeb
-         dOiCM7PPIjQ7Vy9vzvWavWC/dB5HRgGAX84io8H7x8yQwYGe45tzV8kg3FmX5+KuoT5t
-         4deALsSaFDZjh44GUqT0q4JNNoF+98YMHrDsQhiKmkzRmTvZDXMjkjFRs22HbctASBKf
-         fsytqVC2ZwiG3APXDtOU2kuJmfobubjcFW+5LF70sJzJrqTcnH9PkrIyHA/F0/SmkjI4
-         u3ABbxCxzs7gfxoQZu9QRHtG5xcWiv9ikSPZ1eKCmWL/z1c0mU8DJnGlrg+/XBlexkNE
-         vtBQ==
-X-Gm-Message-State: ANhLgQ1JOAWWi5gPBJvE5LVcy14E2W0ND1MVLJbZRfqVsZSxIOEgewVQ
-        l7nJZI/CkU4AdsGKMvy4n0CbhmtUPRNG4ZxZcbc=
-X-Google-Smtp-Source: ADFU+vtRP5kcse4VydJXhIWcSQg5qG4qh1fLLlH+sYOY0YXmbvxSTKNtq7OW900chK9pK0hyoRdDWpT1dROadSow+qU=
-X-Received: by 2002:a05:6a00:2b4:: with SMTP id q20mr17417161pfs.36.1585045502171;
- Tue, 24 Mar 2020 03:25:02 -0700 (PDT)
-MIME-Version: 1.0
-References: <20200320131509.564059710@linutronix.de> <20200324060124.GC11705@shao2-debian>
-In-Reply-To: <20200324060124.GC11705@shao2-debian>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Tue, 24 Mar 2020 12:24:54 +0200
-Message-ID: <CAHp75VeeKZLeZ8E3Py7LECN54SPFHaRgkxrMzBYQWXM8x+4JhA@mail.gmail.com>
-Subject: Re: [cpufreq] 06c4d00466: will-it-scale.per_process_ops -53.4% regression
-To:     kernel test robot <rong.a.chen@intel.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
+        Tue, 24 Mar 2020 06:25:30 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1585045530;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=1uFndSPegRG+EuvCEPo50gmlgFaTjR12UYyGMB2agT0=;
+        b=WIISnCOc+jldKnVzt4gaRb4b7vpBLr9Ahtm3dFw9ZxLfF9KsmiAblX9rZWLkuQr7vMcjjK
+        4x7/DEgHa6Nc+0mnhwDCvDj6wQw5b+uURnnbB7vyuuZl7GjL1y6InNgZ0aGsgN5V9Wm1dI
+        zxcLIMvW8Uby6Ey8C3Ypv8lgI/FOcGM=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-383-fs7X8Db2OW-RqLYsS2OVOg-1; Tue, 24 Mar 2020 06:25:26 -0400
+X-MC-Unique: fs7X8Db2OW-RqLYsS2OVOg-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 2B67F1088383;
+        Tue, 24 Mar 2020 10:25:22 +0000 (UTC)
+Received: from krava (unknown [10.40.192.119])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id C3E915DA66;
+        Tue, 24 Mar 2020 10:25:05 +0000 (UTC)
+Date:   Tue, 24 Mar 2020 11:24:59 +0100
+From:   Jiri Olsa <jolsa@redhat.com>
+To:     Ian Rogers <irogers@google.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Martin KaFai Lau <kafai@fb.com>, Yonghong Song <yhs@fb.com>,
+        Andrii Nakryiko <andriin@fb.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Mark Gross <mgross@linux.intel.com>,
-        Tony Luck <tony.luck@intel.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-        Len Brown <lenb@kernel.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        linux-edac@vger.kernel.org,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        Jean Delvare <jdelvare@suse.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        linux-hwmon@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Amit Kucheria <amit.kucheria@verdurent.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Jacob Pan <jacob.jun.pan@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Igor Lubashev <ilubashe@akamai.com>,
+        Alexey Budankov <alexey.budankov@linux.intel.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
         Adrian Hunter <adrian.hunter@intel.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        linux-mmc <linux-mmc@vger.kernel.org>,
-        Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
-        Takashi Iwai <tiwai@suse.com>,
-        ALSA Development Mailing List <alsa-devel@alsa-project.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        linux-crypto <linux-crypto@vger.kernel.org>, lkp@lists.01.org
-Content-Type: text/plain; charset="UTF-8"
+        Andi Kleen <ak@linux.intel.com>,
+        Jiwei Sun <jiwei.sun@windriver.com>,
+        yuzhoujian <yuzhoujian@didichuxing.com>,
+        Kan Liang <kan.liang@linux.intel.com>,
+        Jin Yao <yao.jin@linux.intel.com>,
+        Leo Yan <leo.yan@linaro.org>,
+        John Garry <john.garry@huawei.com>,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        bpf@vger.kernel.org, linux-perf-users@vger.kernel.org,
+        Stephane Eranian <eranian@google.com>
+Subject: Re: [PATCH v5] perf tools: add support for libpfm4
+Message-ID: <20200324102459.GL1534489@krava>
+References: <20200323235846.104937-1-irogers@google.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200323235846.104937-1-irogers@google.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 24, 2020 at 8:02 AM kernel test robot <rong.a.chen@intel.com> wrote:
->
-> Greeting,
->
-> FYI, we noticed a -53.4% regression of will-it-scale.per_process_ops due to commit:
+On Mon, Mar 23, 2020 at 04:58:46PM -0700, Ian Rogers wrote:
 
-> commit: 06c4d00466eb374841bc84c39af19b3161ff6917 ("[patch 09/22] cpufreq: Convert to new X86 CPU match macros")
-> url: https://github.com/0day-ci/linux/commits/Thomas-Gleixner/x86-devicetable-Move-x86-specific-macro-out-of-generic-code/20200321-031729
-> base: https://git.kernel.org/cgit/linux/kernel/git/rafael/linux-pm.git linux-next
->
-> in testcase: will-it-scale
-> on test machine: 4 threads Intel(R) Core(TM) i3-3220 CPU @ 3.30GHz with 8G memory
-> with following parameters:
+SNIP
+
+> diff --git a/tools/perf/util/parse-events.c b/tools/perf/util/parse-events.c
+> index 10107747b361..31ed184566c8 100644
+> --- a/tools/perf/util/parse-events.c
+> +++ b/tools/perf/util/parse-events.c
+> @@ -37,6 +37,11 @@
+>  #include "util/evsel_config.h"
+>  #include "util/event.h"
+>  
+> +#ifdef HAVE_LIBPFM
+> +#include <perfmon/pfmlib_perf_event.h>
+> +static void print_libpfm_events(bool name_only);
+> +#endif
+> +
+>  #define MAX_NAME_LEN 100
+>  
+>  #ifdef PARSER_DEBUG
+> @@ -2794,6 +2799,10 @@ void print_events(const char *event_glob, bool name_only, bool quiet_flag,
+>  	print_sdt_events(NULL, NULL, name_only);
+>  
+>  	metricgroup__print(true, true, NULL, name_only, details_flag);
+> +
+> +#ifdef HAVE_LIBPFM
+> +	print_libpfm_events(name_only);
 
 
-drivers/cpufreq/speedstep-centrino.c change missed the terminator,
-perhaps it's a culprit, because I don't believe removing dups and
-reordering lines may affect this.
-Can you restore terminator there and re-test?
+we should make some effort to fit this into our current list shape,
+currently it looks like:
 
--- 
-With Best Regards,
-Andy Shevchenko
+	$ perf list
+	...
+
+	TopdownL1_SMT:
+	  Backend_Bound_SMT
+	       [This category represents fraction of slots where no uops are being delivered due to a lack of required resources for accepting new uops in the Backend>
+	  Bad_Speculation_SMT
+	       [This category represents fraction of slots wasted due to incorrect speculations. SMT version; use when SMT is enabled and measuring per logical CPU]
+	  Frontend_Bound_SMT
+	       [This category represents fraction of slots where the processor's Frontend undersupplies its Backend. SMT version; use when SMT is enabled and measurin>
+	  Retiring_SMT
+	       [This category represents fraction of slots utilized by useful work i.e. issued uops that eventually get retired. SMT version; use when SMT is enabled >
+
+
+	Name  : UNHALTED_CORE_CYCLES
+	PMU   : ix86arch
+	Desc  : count core clock cycles whenever the clock signal on the specific core is running (not halted)
+	Equiv : None
+	Code  : 0x3c
+	Modif : PMU: [e] : edge level (may require counter-mask >= 1) (boolean)
+	Modif : PMU: [i] : invert (boolean)
+	Modif : PMU: [c] : counter-mask in range [0-255] (integer)
+	Modif : PMU: [t] : measure any thread (boolean)
+	Modif : PMU: [intx] : monitor only inside transactional memory region (boolean)
+	Modif : PMU: [intxcp] : do not count occurrences inside aborted transactional memory region (boolean)
+	Modif : perf_event: [u] : monitor at user level (boolean)
+	Modif : perf_event: [k] : monitor at kernel level (boolean)
+	Modif : perf_event: [period] : sampling period (integer)
+	Modif : perf_event: [freq] : sampling frequency (Hz) (integer)
+	Modif : perf_event: [excl] : exclusive access (boolean)
+	Modif : perf_event: [mg] : monitor guest execution (boolean)
+	Modif : perf_event: [mh] : monitor host execution (boolean)
+	Modif : perf_event: [cpu] : CPU to program (integer)
+	Modif : perf_event: [pinned] : pin event to counters (boolean)
+
+it needs some header like 'libpfm events:' and then
+probably just name and doc for basic list and more
+verbose for -v
+
+jirka
+
