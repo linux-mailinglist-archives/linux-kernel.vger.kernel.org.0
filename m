@@ -2,112 +2,268 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F072D191459
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 16:27:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4B31219145E
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 16:28:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728421AbgCXPZn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 11:25:43 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:50918 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727491AbgCXPZn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 11:25:43 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 02OFOEua049070;
-        Tue, 24 Mar 2020 15:25:16 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2020-01-29;
- bh=wmt/AtPlazx7PxA08PU/xQuPcDJRywUgyLYzzhVKDWo=;
- b=HlxHhAZeFJAYDCA5fPvZT0XyZk1LtJIZKbYOmph4L9nsYBamLDoD/tnnT7M3MY8LWWjW
- Y0ed+dfyRQ+D7Aqj2BxzqWWyCnlmK87v7Ni2SZxdHuzm1rC1rIe293zxj8WmxRXnxqyW
- 5RJZ4Rv4+Plpi8RrD2WqK9xxzLs+0wFCIVTT7i/TVb5JAukeNu+INHfKC3Od9RBx3RWR
- cvCp1lRb1xwZV/8qd5wg+5aFNN79N9U2Zbro/l2gwWi/z4rdPS9u0RQ3wB5aaove+jJp
- C8VjRV7+tgNiC6j2sIPomHakY/vxF1EZnZGOxIwd+w9mfZNUOwwFs+uu4iGwiTSLVfCa 5g== 
-Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
-        by userp2120.oracle.com with ESMTP id 2yx8ac1x7m-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 24 Mar 2020 15:25:16 +0000
-Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 02OFMCS3150028;
-        Tue, 24 Mar 2020 15:25:15 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by userp3030.oracle.com with ESMTP id 2yxw4pg9dh-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 24 Mar 2020 15:25:15 +0000
-Received: from abhmp0015.oracle.com (abhmp0015.oracle.com [141.146.116.21])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 02OFPCct026939;
-        Tue, 24 Mar 2020 15:25:12 GMT
-Received: from [192.168.1.206] (/71.63.128.209)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 24 Mar 2020 08:25:12 -0700
-Subject: Re: [PATCH v2] mm/hugetlb: fix a addressing exception caused by
- huge_pte_offset()
-To:     Jason Gunthorpe <jgg@ziepe.ca>,
-        "Longpeng (Mike, Cloud Infrastructure Service Product Dept.)" 
-        <longpeng2@huawei.com>
-Cc:     akpm@linux-foundation.org, kirill.shutemov@linux.intel.com,
-        linux-kernel@vger.kernel.org, arei.gonglei@huawei.com,
-        weidong.huang@huawei.com, weifuqiang@huawei.com,
-        kvm@vger.kernel.org, linux-mm@kvack.org,
-        Matthew Wilcox <willy@infradead.org>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        stable@vger.kernel.org
-References: <1582342427-230392-1-git-send-email-longpeng2@huawei.com>
- <51a25d55-de49-4c0a-c994-bf1a8cfc8638@oracle.com>
- <20200323160955.GY20941@ziepe.ca>
- <69055395-e7e5-a8e2-7f3e-f61607149318@oracle.com>
- <20200323180706.GC20941@ziepe.ca>
- <88698dd7-eb87-4b0b-7ba7-44ef6eab6a6c@oracle.com>
- <20200323225225.GF20941@ziepe.ca>
- <e8e71ba4-d609-269a-6160-153e373e7563@huawei.com>
- <20200324115541.GH20941@ziepe.ca>
-From:   Mike Kravetz <mike.kravetz@oracle.com>
-Message-ID: <98d35563-8af0-2693-7e76-e6435da0bbee@oracle.com>
-Date:   Tue, 24 Mar 2020 08:25:09 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.6.0
-MIME-Version: 1.0
-In-Reply-To: <20200324115541.GH20941@ziepe.ca>
-Content-Type: text/plain; charset=utf-8
+        id S1728095AbgCXP1L (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 11:27:11 -0400
+Received: from mail-eopbgr50088.outbound.protection.outlook.com ([40.107.5.88]:13983
+        "EHLO EUR03-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727491AbgCXP1K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Mar 2020 11:27:10 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=MrMy6vSgOJ4kTKfN4mSbWhUZQ4oH+bp85T13gGVfWYqrOtXBa/PG7Sg3WVPrVMGo7xoi0KxfkMduAZsw2XUA4atpiQqxf4/5GQ/JqrNUEO2qFmXIitBsJ3cCcsrMtYqNfGYgIL3RyCB0t2bwHOyAKBlF5EkyiXFmuc1FmG9t7FtWBnHCdEr4IpxEPSah1pXnkYqTCPjkJuC5k7qBk8++IXzA8Lu5XqcJhWlnQGDAi1Tm7vtZHbjmQh7yzYfqckE4URVjpH2WTy9cLuO2M3dSLkv3Dfk1pI+xd7ynj/64bo443Pa1AutqkSawLgXc/DdhXEiR5ZgcOtb/0hKMbEWWrw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=yuJZuayat3lACbCJ0Ki+WPbx+dX4ZyH2LV+lm197IBM=;
+ b=a1h9F7qG72W76fsSHT5qS+IYUr7PlTp+jyZ+AuBogGkG47tCrJ/yNxfD6tYHiMpo/QfdHfLMX0rv++wuqMOxnzICAr9lAGMdKNVnhVglEv/nzMMU9/9eJyQtOJXBeVJ4FAB4OOMR0z50bm8E5OWNLWhcb6SeWZHCuycXecPsy4qF21fncQx0eyJaRAcN2TTP+6Ne+EJuP0QnpR0a81MTn8rk/Yzdd1AoCkeJBd/AyYtvvhmBOSw+0zDLYmTMnqR4n6Sg7kUcsZT2ZAvBAz556Qky32hK3N0UJu5Q5gX6/Z6agYs+jSdnr1oSdH1paHC6ytsCKXkCkRo6S6wirEU6SA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=yuJZuayat3lACbCJ0Ki+WPbx+dX4ZyH2LV+lm197IBM=;
+ b=RrrDjg6RJHAjogSg7gIhooTu6657Ox0OGB014OT0jDQazVNW2NY+P3KINqANVe8aQOl6QxuKpcF3ZaIlIb7lgLRVPuQRLa+i6/51tLgtNTjeoYXpAyEPXSkgMGx7ymGZfljvszWEaRvwA5aWxrylRNZKc+RgvX6o3UMQeWl5OOw=
+Received: from VI1PR04MB6941.eurprd04.prod.outlook.com (52.133.244.87) by
+ VI1PR04MB5741.eurprd04.prod.outlook.com (20.178.125.204) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2835.20; Tue, 24 Mar 2020 15:27:06 +0000
+Received: from VI1PR04MB6941.eurprd04.prod.outlook.com
+ ([fe80::289c:fdf8:faf0:3200]) by VI1PR04MB6941.eurprd04.prod.outlook.com
+ ([fe80::289c:fdf8:faf0:3200%2]) with mapi id 15.20.2835.021; Tue, 24 Mar 2020
+ 15:27:06 +0000
+From:   Leonard Crestez <leonard.crestez@nxp.com>
+To:     Michael Walle <michael@walle.cc>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Shawn Guo <shawnguo@kernel.org>
+CC:     "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Jiri Slaby <jslaby@suse.com>, Rob Herring <robh+dt@kernel.org>,
+        Aisheng Dong <aisheng.dong@nxp.com>,
+        Andy Duan <fugang.duan@nxp.com>,
+        Vabhav Sharma <vabhav.sharma@nxp.com>,
+        Andrey Smirnov <andrew.smirnov@gmail.com>,
+        Peng Fan <peng.fan@nxp.com>
+Subject: Re: [PATCH v4 1/4] tty: serial: fsl_lpuart: fix DMA operation when
+ using IOMMU
+Thread-Topic: [PATCH v4 1/4] tty: serial: fsl_lpuart: fix DMA operation when
+ using IOMMU
+Thread-Index: AQHV9AB7XTSsAtbd1E+3Etbi7F0aCA==
+Date:   Tue, 24 Mar 2020 15:27:06 +0000
+Message-ID: <VI1PR04MB69413E158203E33D42E3B3B3EEF10@VI1PR04MB6941.eurprd04.prod.outlook.com>
+References: <20200306214433.23215-1-michael@walle.cc>
+ <20200306214433.23215-2-michael@walle.cc>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9569 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 suspectscore=0
- spamscore=0 mlxlogscore=856 adultscore=0 phishscore=0 mlxscore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2003020000 definitions=main-2003240085
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9569 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 suspectscore=0 priorityscore=1501 malwarescore=0
- mlxscore=0 adultscore=0 phishscore=0 impostorscore=0 mlxlogscore=880
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2003020000 definitions=main-2003240085
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=leonard.crestez@nxp.com; 
+x-originating-ip: [89.37.124.34]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: 86f55109-45cb-4eb7-4f52-08d7d007cfe0
+x-ms-traffictypediagnostic: VI1PR04MB5741:|VI1PR04MB5741:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <VI1PR04MB574107754A0E12B3D8E86723EEF10@VI1PR04MB5741.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:9508;
+x-forefront-prvs: 03524FBD26
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(136003)(376002)(346002)(39860400002)(366004)(396003)(2906002)(55016002)(26005)(186003)(33656002)(110136005)(54906003)(4326008)(316002)(86362001)(52536014)(8676002)(81166006)(81156014)(71200400001)(8936002)(44832011)(5660300002)(66946007)(53546011)(6506007)(7696005)(66446008)(9686003)(76116006)(478600001)(66556008)(66476007)(91956017)(64756008);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB5741;H:VI1PR04MB6941.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: ynh+iOCSXO5X4qu/z03aCE7GrLDlUyubI9kSXQO9S5i8Mv5hZI5XXrMerLZROVDcJbTiHu7COJ0XoGToRy6Cpot2vwVtOy1pEktJpWf9isLIH8NQ2dDKgnIaIJAznxyhGUYrDPIutxuS03mSvACN69ChSggnF1v4KIW0VNYDeaVCI2m552VeqkSCEDVZp1Zg7nyUIgsBAWnyi28kEcB0LxRME6wKh+ukgqNoBMOu8oEMLvbpm39H4I9p7PV+VpOva2xxbeZc2mfIPe+qbA4IkvgqiKCq+jqvcFXOn6GunsYJYyeHXXFqAXOclJKHw7x17EM/t86I/TKO7jxa6rw3sguCV8t6/Hn0SNDAYBPzzXyr1d5hojBJfIWCQqS9zmPNZw9V8PI15BpsLfrfXojLUbOmuP1t00cPpvcUfrbW1T96Zr2k3qMr7VjogWgfQ0CZ
+x-ms-exchange-antispam-messagedata: ETxzSRRLdRJJeyIyaVjqyX2CkZfQnyNWXxtNeD0YimTxCGN5WhPBKPrsFNUhW8f21P+4gLOVQMgKPbRUXif4l2ngsqn0e0dLqqRM4yoNTA0N5t6fgmCQWKKdhE8lDUILulSQExyIf0Two2naNZM/qw==
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 86f55109-45cb-4eb7-4f52-08d7d007cfe0
+X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Mar 2020 15:27:06.5892
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: ys88zf+e90w92HGJfF4+Yu1CeK2UVLCCINAV8TnmRj6woSN4mpmnPB8Eg1v86eDxOEfXpP5RaO1mWok5Mzvvjw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB5741
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 3/24/20 4:55 AM, Jason Gunthorpe wrote:
-> Also, since CH moved all the get_user_pages_fast code out of the
-> arch's many/all archs can drop their arch specific version of this
-> routine. This is really just a specialized version of gup_fast's
-> algorithm..
-> 
-> (also the arch versions seem different, why do some return actual
->  ptes, not null?)
-
-Not sure I understand that last question.  The return value should be
-a *pte or null.
-
-/*
- * huge_pte_offset() - Walk the page table to resolve the hugepage
- * entry at address @addr
- *
- * Return: Pointer to page table or swap entry (PUD or PMD) for
- * address @addr, or NULL if a p*d_none() entry is encountered and the
- * size @sz doesn't match the hugepage size at this level of the page
- * table.
- */
--- 
-Mike Kravetz
+On 06.03.2020 23:44, Michael Walle wrote:=0A=
+> The DMA channel might not be available at probe time. This is esp. the=0A=
+> case if the DMA controller has an IOMMU mapping.=0A=
+> =0A=
+> There is also another caveat. If there is no DMA controller at all,=0A=
+> dma_request_chan() will also return -EPROBE_DEFER. Thus we cannot test=0A=
+> for -EPROBE_DEFER in probe(). Otherwise the lpuart driver will fail to=0A=
+> probe if, for example, the DMA driver is not enabled in the kernel=0A=
+> configuration.=0A=
+> =0A=
+> To workaround this, we request the DMA channel in _startup(). Other=0A=
+> serial drivers do it the same way.=0A=
+> =0A=
+> Signed-off-by: Michael Walle <michael@walle.cc>=0A=
+=0A=
+This appears to cause boot hangs on imx8qxp-mek (boards boots fine on =0A=
+next-20200324 if this patch is reverted)=0A=
+=0A=
+> ---=0A=
+>   drivers/tty/serial/fsl_lpuart.c | 88 +++++++++++++++++++++------------=
+=0A=
+>   1 file changed, 57 insertions(+), 31 deletions(-)=0A=
+> =0A=
+> diff --git a/drivers/tty/serial/fsl_lpuart.c b/drivers/tty/serial/fsl_lpu=
+art.c=0A=
+> index c31b8f3db6bf..33798df4d727 100644=0A=
+> --- a/drivers/tty/serial/fsl_lpuart.c=0A=
+> +++ b/drivers/tty/serial/fsl_lpuart.c=0A=
+> @@ -1493,36 +1493,67 @@ static void rx_dma_timer_init(struct lpuart_port =
+*sport)=0A=
+>   static void lpuart_tx_dma_startup(struct lpuart_port *sport)=0A=
+>   {=0A=
+>   	u32 uartbaud;=0A=
+> +	int ret;=0A=
+>   =0A=
+> -	if (sport->dma_tx_chan && !lpuart_dma_tx_request(&sport->port)) {=0A=
+> -		init_waitqueue_head(&sport->dma_wait);=0A=
+> -		sport->lpuart_dma_tx_use =3D true;=0A=
+> -		if (lpuart_is_32(sport)) {=0A=
+> -			uartbaud =3D lpuart32_read(&sport->port, UARTBAUD);=0A=
+> -			lpuart32_write(&sport->port,=0A=
+> -				       uartbaud | UARTBAUD_TDMAE, UARTBAUD);=0A=
+> -		} else {=0A=
+> -			writeb(readb(sport->port.membase + UARTCR5) |=0A=
+> -				UARTCR5_TDMAS, sport->port.membase + UARTCR5);=0A=
+> -		}=0A=
+> +	sport->dma_tx_chan =3D dma_request_chan(sport->port.dev, "tx");=0A=
+> +	if (IS_ERR(sport->dma_tx_chan)) {=0A=
+> +		dev_info_once(sport->port.dev,=0A=
+> +			      "DMA tx channel request failed, operating without tx DMA (%ld)\=
+n",=0A=
+> +			      PTR_ERR(sport->dma_tx_chan));=0A=
+=0A=
+It seems that this since this is called from lpuart32_startup with =0A=
+&sport->port.lock held and lpuart32_console_write takes the same lock it =
+=0A=
+can and hang.=0A=
+=0A=
+As a workaround I can just remove this print but there are other =0A=
+possible error conditions in dmaengine code which can cause a printk.=0A=
+=0A=
+Maybe the port lock should only be held around register manipulation?=0A=
+=0A=
+> +		sport->dma_tx_chan =3D NULL;=0A=
+> +		goto err;=0A=
+> +	}=0A=
+> +=0A=
+> +	ret =3D lpuart_dma_tx_request(&sport->port);=0A=
+> +	if (!ret)=0A=
+> +		goto err;=0A=
+=0A=
+This is backwards: lpuart_dma_tx_request returns negative errno on failure.=
+=0A=
+=0A=
+> +=0A=
+> +	init_waitqueue_head(&sport->dma_wait);=0A=
+> +	sport->lpuart_dma_tx_use =3D true;=0A=
+> +	if (lpuart_is_32(sport)) {=0A=
+> +		uartbaud =3D lpuart32_read(&sport->port, UARTBAUD);=0A=
+> +		lpuart32_write(&sport->port,=0A=
+> +			       uartbaud | UARTBAUD_TDMAE, UARTBAUD);=0A=
+>   	} else {=0A=
+> -		sport->lpuart_dma_tx_use =3D false;=0A=
+> +		writeb(readb(sport->port.membase + UARTCR5) |=0A=
+> +		       UARTCR5_TDMAS, sport->port.membase + UARTCR5);=0A=
+>   	}=0A=
+> +=0A=
+> +	return;=0A=
+> +=0A=
+> +err:=0A=
+> +	sport->lpuart_dma_tx_use =3D false;=0A=
+>   }=0A=
+>   =0A=
+>   static void lpuart_rx_dma_startup(struct lpuart_port *sport)=0A=
+>   {=0A=
+> -	if (sport->dma_rx_chan && !lpuart_start_rx_dma(sport)) {=0A=
+> -		/* set Rx DMA timeout */=0A=
+> -		sport->dma_rx_timeout =3D msecs_to_jiffies(DMA_RX_TIMEOUT);=0A=
+> -		if (!sport->dma_rx_timeout)=0A=
+> -			sport->dma_rx_timeout =3D 1;=0A=
+> +	int ret;=0A=
+>   =0A=
+> -		sport->lpuart_dma_rx_use =3D true;=0A=
+> -		rx_dma_timer_init(sport);=0A=
+> -	} else {=0A=
+> -		sport->lpuart_dma_rx_use =3D false;=0A=
+> +	sport->dma_rx_chan =3D dma_request_chan(sport->port.dev, "rx");=0A=
+> +	if (IS_ERR(sport->dma_rx_chan)) {=0A=
+> +		dev_info_once(sport->port.dev,=0A=
+> +			      "DMA rx channel request failed, operating without rx DMA (%ld)\=
+n",=0A=
+> +			      PTR_ERR(sport->dma_rx_chan));=0A=
+> +		sport->dma_rx_chan =3D NULL;=0A=
+> +		goto err;=0A=
+>   	}=0A=
+> +=0A=
+> +	ret =3D lpuart_start_rx_dma(sport);=0A=
+> +	if (ret)=0A=
+> +		goto err;=0A=
+=0A=
+This is not backwards.=0A=
+=0A=
+> +=0A=
+> +	/* set Rx DMA timeout */=0A=
+> +	sport->dma_rx_timeout =3D msecs_to_jiffies(DMA_RX_TIMEOUT);=0A=
+> +	if (!sport->dma_rx_timeout)=0A=
+> +		sport->dma_rx_timeout =3D 1;=0A=
+> +=0A=
+> +	sport->lpuart_dma_rx_use =3D true;=0A=
+> +	rx_dma_timer_init(sport);=0A=
+> +=0A=
+> +	return;=0A=
+> +=0A=
+> +err:=0A=
+> +	sport->lpuart_dma_rx_use =3D false;=0A=
+>   }=0A=
+>   =0A=
+>   static int lpuart_startup(struct uart_port *port)=0A=
+> @@ -1615,6 +1646,11 @@ static void lpuart_dma_shutdown(struct lpuart_port=
+ *sport)=0A=
+>   			dmaengine_terminate_all(sport->dma_tx_chan);=0A=
+>   		}=0A=
+>   	}=0A=
+> +=0A=
+> +	if (sport->dma_tx_chan)=0A=
+> +		dma_release_channel(sport->dma_tx_chan);=0A=
+> +	if (sport->dma_rx_chan)=0A=
+> +		dma_release_channel(sport->dma_rx_chan);=0A=
+>   }=0A=
+>   =0A=
+>   static void lpuart_shutdown(struct uart_port *port)=0A=
+> @@ -2520,16 +2556,6 @@ static int lpuart_probe(struct platform_device *pd=
+ev)=0A=
+>   =0A=
+>   	sport->port.rs485_config(&sport->port, &sport->port.rs485);=0A=
+>   =0A=
+> -	sport->dma_tx_chan =3D dma_request_slave_channel(sport->port.dev, "tx")=
+;=0A=
+> -	if (!sport->dma_tx_chan)=0A=
+> -		dev_info(sport->port.dev, "DMA tx channel request failed, "=0A=
+> -				"operating without tx DMA\n");=0A=
+> -=0A=
+> -	sport->dma_rx_chan =3D dma_request_slave_channel(sport->port.dev, "rx")=
+;=0A=
+> -	if (!sport->dma_rx_chan)=0A=
+> -		dev_info(sport->port.dev, "DMA rx channel request failed, "=0A=
+> -				"operating without rx DMA\n");=0A=
+> -=0A=
+>   	return 0;=0A=
+>   =0A=
+>   failed_attach_port:=0A=
+> =0A=
+=0A=
