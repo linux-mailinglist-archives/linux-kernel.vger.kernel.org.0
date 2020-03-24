@@ -2,40 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 93174190E69
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 14:12:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E7D53190FC8
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 14:29:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727443AbgCXNMD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 09:12:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57466 "EHLO mail.kernel.org"
+        id S1729017AbgCXNXC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 09:23:02 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45754 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727389AbgCXNMB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 09:12:01 -0400
+        id S1729197AbgCXNW7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Mar 2020 09:22:59 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 244D2208D6;
-        Tue, 24 Mar 2020 13:11:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5810F20870;
+        Tue, 24 Mar 2020 13:22:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585055520;
-        bh=54Z3IOKPM0nkcNth/I4oXAr63XpSif6SnvZmDt9Fi5Q=;
+        s=default; t=1585056177;
+        bh=mlERIezMSUR87vZkqlbgJBYeiGBo6RjW0u8RV2Ki8Rg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=myqAi8y5CcHo6kRH3gyU2p2xbJB0VC1uUMM96ECPWT3tQf+YD/3NTiJDcfwSZFoDn
-         x0LluwOaZiu7/JtOPCdkOfczpJtsdrZWuRCbclnQc9az3nrlxHTRjuakUINOQRI1xR
-         msn4sy5hWw/5UBL7eECMtwhTmP7lPcO6XMdb0GtM=
+        b=JZ6H9FeFEzdaV3Q0YaL26hxBZlbXfGQR3TVTeCXcFujKiLgze+F86M11O8bckEqVH
+         gF/orDfYKQ3Mlh5b2dpxwEIzYImalCkPXS6to5ftGnxBBh6nbIgHMNVYpQovdMViXu
+         3f96cO7n/NuqrVSktCTMDCf1uGkHrNp6gba3cnjI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 03/65] powerpc: Include .BTF section
+        stable@vger.kernel.org, Pavel Begunkov <asml.silence@gmail.com>,
+        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.5 039/119] io_uring: fix lockup with timeouts
 Date:   Tue, 24 Mar 2020 14:10:24 +0100
-Message-Id: <20200324130757.172126709@linuxfoundation.org>
+Message-Id: <20200324130812.288225410@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.2
-In-Reply-To: <20200324130756.679112147@linuxfoundation.org>
-References: <20200324130756.679112147@linuxfoundation.org>
+In-Reply-To: <20200324130808.041360967@linuxfoundation.org>
+References: <20200324130808.041360967@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,40 +43,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Naveen N. Rao <naveen.n.rao@linux.vnet.ibm.com>
+From: Pavel Begunkov <asml.silence@gmail.com>
 
-[ Upstream commit cb0cc635c7a9fa8a3a0f75d4d896721819c63add ]
+[ Upstream commit f0e20b8943509d81200cef5e30af2adfddba0f5c ]
 
-Selecting CONFIG_DEBUG_INFO_BTF results in the below warning from ld:
-  ld: warning: orphan section `.BTF' from `.btf.vmlinux.bin.o' being placed in section `.BTF'
+There is a recipe to deadlock the kernel: submit a timeout sqe with a
+linked_timeout (e.g.  test_single_link_timeout_ception() from liburing),
+and SIGKILL the process.
 
-Include .BTF section in vmlinux explicitly to fix the same.
+Then, io_kill_timeouts() takes @ctx->completion_lock, but the timeout
+isn't flagged with REQ_F_COMP_LOCKED, and will try to double grab it
+during io_put_free() to cancel the linked timeout. Probably, the same
+can happen with another io_kill_timeout() call site, that is
+io_commit_cqring().
 
-Signed-off-by: Naveen N. Rao <naveen.n.rao@linux.vnet.ibm.com>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
-Link: https://lore.kernel.org/r/20200220113132.857132-1-naveen.n.rao@linux.vnet.ibm.com
+Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/powerpc/kernel/vmlinux.lds.S | 6 ++++++
- 1 file changed, 6 insertions(+)
+ fs/io_uring.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/powerpc/kernel/vmlinux.lds.S b/arch/powerpc/kernel/vmlinux.lds.S
-index fd35eddf32669..d081d726ca8ea 100644
---- a/arch/powerpc/kernel/vmlinux.lds.S
-+++ b/arch/powerpc/kernel/vmlinux.lds.S
-@@ -322,6 +322,12 @@ SECTIONS
- 		*(.branch_lt)
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index 2547c6395d5e4..44ae2641b4b06 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -688,6 +688,7 @@ static void io_kill_timeout(struct io_kiocb *req)
+ 	if (ret != -1) {
+ 		atomic_inc(&req->ctx->cq_timeouts);
+ 		list_del_init(&req->list);
++		req->flags |= REQ_F_COMP_LOCKED;
+ 		io_cqring_fill_event(req, 0);
+ 		io_put_req(req);
  	}
- 
-+#ifdef CONFIG_DEBUG_INFO_BTF
-+	.BTF : AT(ADDR(.BTF) - LOAD_OFFSET) {
-+		*(.BTF)
-+	}
-+#endif
-+
- 	.opd : AT(ADDR(.opd) - LOAD_OFFSET) {
- 		__start_opd = .;
- 		KEEP(*(.opd))
 -- 
 2.20.1
 
