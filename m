@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8EAC9190E93
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 14:15:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A875E190F34
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 14:19:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727849AbgCXNNP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 09:13:15 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59346 "EHLO mail.kernel.org"
+        id S1728713AbgCXNS3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 09:18:29 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38572 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727826AbgCXNNM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 09:13:12 -0400
+        id S1727972AbgCXNSY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Mar 2020 09:18:24 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5C687208CA;
-        Tue, 24 Mar 2020 13:13:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2105E208CA;
+        Tue, 24 Mar 2020 13:18:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585055591;
-        bh=azruGpgbX4jKYBM0MnFTfpjG8pACRmPSnXbxvFF/byM=;
+        s=default; t=1585055903;
+        bh=mB8hwxF60k8fq1kjgKp5j7nNZ/XLg8D4GNOSc+RwuRw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=oJ8b7U/9x9uN0Wx8M3XmX5dPAA6oICue5FbHPcibOBOQpww5G+TqTouBiyiJQv+ma
-         MrJlGZZCnxWQb5VnyvaXoS6DK3aWrPNcNvVGHnhJEqy9KEBcvXlKtm4J7cWKfOV5ua
-         wfOSuxgLZbhBCPl3dRehXCmW369KyEKpM5l9WgvU=
+        b=MRqSy/p3YzJGgff68omAphxFkrf07L4gI+Q8ay+jhTRjTpyfqdAaLfATIL14GSjLC
+         ZqBbZgkbOKF64yXdpcce/EYIhy4rmELFfQNzK+Pyhemxsr/HUz/f1I7zbxfMVaXv2O
+         kdWc5GBb04kEUH2al5ieBLvWChFBqoqAldWb9CZc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Eugen Hristev <eugen.hristev@microchip.com>,
-        Stable@vger.kernel.org,
+        =?UTF-8?q?Guido=20G=C3=BCnther?= <agx@sigxcpu.org>,
+        Tomas Novotny <tomas@novotny.cz>, Stable@vger.kernel.org,
         Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Subject: [PATCH 4.19 34/65] iio: adc: at91-sama5d2_adc: fix differential channels in triggered mode
+Subject: [PATCH 5.4 063/102] iio: light: vcnl4000: update sampling periods for vcnl4200
 Date:   Tue, 24 Mar 2020 14:10:55 +0100
-Message-Id: <20200324130801.515328876@linuxfoundation.org>
+Message-Id: <20200324130813.028621687@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.2
-In-Reply-To: <20200324130756.679112147@linuxfoundation.org>
-References: <20200324130756.679112147@linuxfoundation.org>
+In-Reply-To: <20200324130806.544601211@linuxfoundation.org>
+References: <20200324130806.544601211@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,54 +45,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eugen Hristev <eugen.hristev@microchip.com>
+From: Tomas Novotny <tomas@novotny.cz>
 
-commit a500f3bd787f8224341e44b238f318c407b10897 upstream.
+commit b42aa97ed5f1169cfd37175ef388ea62ff2dcf43 upstream.
 
-The differential channels require writing the channel offset register (COR).
-Otherwise they do not work in differential mode.
-The configuration of COR is missing in triggered mode.
+Vishay has published a new version of "Designing the VCNL4200 Into an
+Application" application note in October 2019. The new version specifies
+that there is +-20% of part to part tolerance. This explains the drift
+seen during experiments. The proximity pulse width is also changed from
+32us to 30us. According to the support, the tolerance also applies to
+ambient light.
 
-Fixes: 5e1a1da0f8c9 ("iio: adc: at91-sama5d2_adc: add hw trigger and buffer support")
-Signed-off-by: Eugen Hristev <eugen.hristev@microchip.com>
+So update the sampling periods. As the reading is blocking, current
+users may notice slightly longer response time.
+
+Fixes: be38866fbb97 ("iio: vcnl4000: add support for VCNL4200")
+Reviewed-by: Guido Günther <agx@sigxcpu.org>
+Signed-off-by: Tomas Novotny <tomas@novotny.cz>
 Cc: <Stable@vger.kernel.org>
 Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/iio/adc/at91-sama5d2_adc.c |   15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+ drivers/iio/light/vcnl4000.c |    8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
---- a/drivers/iio/adc/at91-sama5d2_adc.c
-+++ b/drivers/iio/adc/at91-sama5d2_adc.c
-@@ -731,6 +731,7 @@ static int at91_adc_configure_trigger(st
- 
- 	for_each_set_bit(bit, indio->active_scan_mask, indio->num_channels) {
- 		struct iio_chan_spec const *chan = at91_adc_chan_get(indio, bit);
-+		u32 cor;
- 
- 		if (!chan)
- 			continue;
-@@ -740,6 +741,20 @@ static int at91_adc_configure_trigger(st
- 			continue;
- 
- 		if (state) {
-+			cor = at91_adc_readl(st, AT91_SAMA5D2_COR);
-+
-+			if (chan->differential)
-+				cor |= (BIT(chan->channel) |
-+					BIT(chan->channel2)) <<
-+					AT91_SAMA5D2_COR_DIFF_OFFSET;
-+			else
-+				cor &= ~(BIT(chan->channel) <<
-+				       AT91_SAMA5D2_COR_DIFF_OFFSET);
-+
-+			at91_adc_writel(st, AT91_SAMA5D2_COR, cor);
-+		}
-+
-+		if (state) {
- 			at91_adc_writel(st, AT91_SAMA5D2_CHER,
- 					BIT(chan->channel));
- 			/* enable irq only if not using DMA */
+--- a/drivers/iio/light/vcnl4000.c
++++ b/drivers/iio/light/vcnl4000.c
+@@ -167,10 +167,10 @@ static int vcnl4200_init(struct vcnl4000
+ 	data->vcnl4200_ps.reg = VCNL4200_PS_DATA;
+ 	switch (id) {
+ 	case VCNL4200_PROD_ID:
+-		/* Integration time is 50ms, but the experiments */
+-		/* show 54ms in total. */
+-		data->vcnl4200_al.sampling_rate = ktime_set(0, 54000 * 1000);
+-		data->vcnl4200_ps.sampling_rate = ktime_set(0, 4200 * 1000);
++		/* Default wait time is 50ms, add 20% tolerance. */
++		data->vcnl4200_al.sampling_rate = ktime_set(0, 60000 * 1000);
++		/* Default wait time is 4.8ms, add 20% tolerance. */
++		data->vcnl4200_ps.sampling_rate = ktime_set(0, 5760 * 1000);
+ 		data->al_scale = 24000;
+ 		break;
+ 	case VCNL4040_PROD_ID:
 
 
