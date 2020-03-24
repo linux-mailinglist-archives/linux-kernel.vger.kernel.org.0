@@ -2,66 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 00EB41912EC
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 15:24:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6C5431912E8
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 15:24:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728309AbgCXOYG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 10:24:06 -0400
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:43253 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728195AbgCXOYE (ORCPT
+        id S1728043AbgCXOYB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 10:24:01 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:45067 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727270AbgCXOYB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 10:24:04 -0400
-Received: by mail-ed1-f65.google.com with SMTP id bd14so7019956edb.10;
-        Tue, 24 Mar 2020 07:24:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=QvAJMhrVEj0lhCeXiD2t+Sf+5S8zcMc++t+oIIyFqcc=;
-        b=ofThQBp/FPnmd+jt3Us1RKqMosiZ3Ld7CXBzRMIDhVDoYmaAwBY7uU7UZ3mcqeAUgY
-         rOp/qmK2OCIZ3JC4VqMneHfH983Gy421XoLJQ3vwihZRiSeHlC5zsGZshWiwBQEJkWZ3
-         vJvDXa/1N/S4qiiHJuV1wyuw/LBvGPpg/zeT0km+IumovVdONxeBi34sAV0DE9r8RUCi
-         BnSbWEljnUCrx48XJBdTMfPDedTQ7Q26FY+sy3jqj3mZK6IqhcTkUiEws7qZDFzwCGF9
-         8qhYqIeqDEMJuXGAZ9boHindf0mteZyl3iCHYSf3f16vhvRUJmO4RehoU6COPpxa/pOG
-         SSLg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=QvAJMhrVEj0lhCeXiD2t+Sf+5S8zcMc++t+oIIyFqcc=;
-        b=dAYhBpdGWPKbfDZHR+Z4JFGDAgPIZKlsJpwogZGUogYyBnLskVgyn8E33Q8JoFwwBD
-         cLiozWb22ppVOS+W0zu2Iwm5nUao6Ziwq4cVortnxRXYYbHhYQ7X/QTr6OJQTYAc6ROI
-         tOAP2UbJ7lYAhO6l04rphpSHK08NPagJLpOmuILSQKrjvOoOmLwbU2Qc+Sl4amfDeFmU
-         gs/kH8WWbWUwFE8ZVOP1XMY/Qn5lkPQw1y3i55ldmfF6saTEpMkOicZxOAJ606hoQa+o
-         5YXPdhbSUZOsG5lK1e8HgIMzF/Lcy9kY042B1MSW8n2+y2cTBL6RcTcz0stwjJzbujxZ
-         umvA==
-X-Gm-Message-State: ANhLgQ2LsYOn+p9Mek6wLOokQPZL+KNx4fmom0r326J4mUdnhxWLW6lE
-        uxH/o45bn5pCR+ZJoWTV00Std99I/nD2s94Hf2s=
-X-Google-Smtp-Source: ADFU+vv3y/Han0bqNS7oHPaFZG+M0NVgMJpj16d4Bgc4iE3n14CjrUhR6lEygqPtDHjI6W5B/3MdAYQNafV5Vu0eBek=
-X-Received: by 2002:aa7:de13:: with SMTP id h19mr27875188edv.52.1585059842383;
- Tue, 24 Mar 2020 07:24:02 -0700 (PDT)
+        Tue, 24 Mar 2020 10:24:01 -0400
+Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tip-bot2@linutronix.de>)
+        id 1jGkTE-0006z6-7e; Tue, 24 Mar 2020 15:23:56 +0100
+Received: from [127.0.1.1] (localhost [IPv6:::1])
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 8D28B1C0451;
+        Tue, 24 Mar 2020 15:23:55 +0100 (CET)
+Date:   Tue, 24 Mar 2020 14:23:55 -0000
+From:   "tip-bot2 for Alexey Makhalov" <tip-bot2@linutronix.de>
+Reply-to: linux-kernel@vger.kernel.org
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/vmware] x86/vmware: Use bool type for vmw_sched_clock
+Cc:     Alexey Makhalov <amakhalov@vmware.com>,
+        Borislav Petkov <bp@suse.de>,
+        Thomas Gleixner <tglx@linutronix.de>, x86 <x86@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+In-Reply-To: <20200323195707.31242-6-amakhalov@vmware.com>
+References: <20200323195707.31242-6-amakhalov@vmware.com>
 MIME-Version: 1.0
-References: <20200324102030.31000-1-narmstrong@baylibre.com> <20200324102030.31000-5-narmstrong@baylibre.com>
-In-Reply-To: <20200324102030.31000-5-narmstrong@baylibre.com>
-From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date:   Tue, 24 Mar 2020 15:23:51 +0100
-Message-ID: <CAFBinCA4VwQmd5msALXUrPxJy9gmeRQ5-5=UdNvx2aCGkPq_sw@mail.gmail.com>
-Subject: Re: [PATCH 04/13] usb: dwc3: meson-g12a: get the reset as shared
-To:     Neil Armstrong <narmstrong@baylibre.com>
-Cc:     kishon@ti.com, balbi@kernel.org, khilman@baylibre.com,
-        linux-amlogic@lists.infradead.org, linux-usb@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Message-ID: <158505983520.28353.190987036145128922.tip-bot2@tip-bot2>
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot2.linutronix.de>
+Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 24, 2020 at 11:20 AM Neil Armstrong <narmstrong@baylibre.com> wrote:
->
-> In order to support the Amlogic GXL/GXM SoCs, the reset line must
-> be handled as shared since also used by the PHYs.
->
-> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
-Reviewed-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+The following commit has been merged into the x86/vmware branch of tip:
+
+Commit-ID:     8fefe9dacdb0a1347d3dac871bb1bba3cbc32945
+Gitweb:        https://git.kernel.org/tip/8fefe9dacdb0a1347d3dac871bb1bba3cbc32945
+Author:        Alexey Makhalov <amakhalov@vmware.com>
+AuthorDate:    Mon, 23 Mar 2020 19:57:07 
+Committer:     Borislav Petkov <bp@suse.de>
+CommitterDate: Tue, 24 Mar 2020 10:29:22 +01:00
+
+x86/vmware: Use bool type for vmw_sched_clock
+
+To be aligned with other bool variables.
+
+Signed-off-by: Alexey Makhalov <amakhalov@vmware.com>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
+Link: https://lkml.kernel.org/r/20200323195707.31242-6-amakhalov@vmware.com
+---
+ arch/x86/kernel/cpu/vmware.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/arch/x86/kernel/cpu/vmware.c b/arch/x86/kernel/cpu/vmware.c
+index e885f73..9b6fafa 100644
+--- a/arch/x86/kernel/cpu/vmware.c
++++ b/arch/x86/kernel/cpu/vmware.c
+@@ -122,14 +122,14 @@ static unsigned long vmware_get_tsc_khz(void)
+ 
+ #ifdef CONFIG_PARAVIRT
+ static struct cyc2ns_data vmware_cyc2ns __ro_after_init;
+-static int vmw_sched_clock __initdata = 1;
++static bool vmw_sched_clock __initdata = true;
+ static DEFINE_PER_CPU_DECRYPTED(struct vmware_steal_time, vmw_steal_time) __aligned(64);
+ static bool has_steal_clock;
+ static bool steal_acc __initdata = true; /* steal time accounting */
+ 
+ static __init int setup_vmw_sched_clock(char *s)
+ {
+-	vmw_sched_clock = 0;
++	vmw_sched_clock = false;
+ 	return 0;
+ }
+ early_param("no-vmw-sched-clock", setup_vmw_sched_clock);
