@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EE83A19118E
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 14:45:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BA182191184
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 14:45:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728742AbgCXNoR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 09:44:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39112 "EHLO mail.kernel.org"
+        id S1728584AbgCXNoA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 09:44:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39114 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727873AbgCXNnU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1727874AbgCXNnU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 24 Mar 2020 09:43:20 -0400
 Received: from mail.kernel.org (ip5f5ad4e9.dynamic.kabel-deutschland.de [95.90.212.233])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A655A20B80;
+        by mail.kernel.org (Postfix) with ESMTPSA id B026A20BED;
         Tue, 24 Mar 2020 13:43:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1585057398;
-        bh=Z4NTAwq0iX+fSarX+OK5e9Qzq8rS5PhgyAmDd4W8YA8=;
+        bh=PIDxz4PON1tXTrgxL90qolW3m/5TZ0UEZSh0QEWn66Q=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=y9Jku75JDvYkB1ZW0Zepm9BeRXj8SlP1/7Vuk5aH6dgZPBQ0DmDfPqdqfk1/jXHSY
-         Mv9/NhPzaPdcjQU4usgK5NffHdp4NjoBmljLO3+aApyucWRQLcntp62hqMm1RGE3uE
-         Jg0a9vSJuEKWic1Vjl/4qgBAETI2yImNFJZ+/lKI=
+        b=FowH8EHT5y4CafiZ1wdO/DYHYALzrruiGe0qNkXCCCYqExZ0icZWW8omVLGLrBKI8
+         9Rp2rjHKZUSA3XgnLEDRyrRt6gXmOvrgsU3Wq+UqeF6rSJFHNXyayPGluJUv7yx6Yn
+         ks57d9aAqDPjBJAFuSQ5SxQvhBjZVMYLgl44RA/A=
 Received: from mchehab by mail.kernel.org with local (Exim 4.92.3)
         (envelope-from <mchehab@kernel.org>)
-        id 1jGjps-0025ra-Tf; Tue, 24 Mar 2020 14:43:16 +0100
+        id 1jGjps-0025rf-V6; Tue, 24 Mar 2020 14:43:16 +0100
 From:   Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 To:     Linux Doc Mailing List <linux-doc@vger.kernel.org>
 Cc:     Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
         linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
         Ezequiel Garcia <ezequiel@collabora.com>
-Subject: [PATCH v2 12/20] media: Kconfig: move DVB-specific options to dvb-core/Kconfig
-Date:   Tue, 24 Mar 2020 14:43:05 +0100
-Message-Id: <05153eacab4ccb6cc2ca36dbd43e8c761c2d65c5.1585057134.git.mchehab+huawei@kernel.org>
+Subject: [PATCH v2 13/20] media: Kconfig: move V4L2 subdev API to v4l2-core/Kconfig
+Date:   Tue, 24 Mar 2020 14:43:06 +0100
+Message-Id: <0d4e432860f3f56e13d5dcda414f5f142831c04a.1585057134.git.mchehab+huawei@kernel.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <cover.1585057134.git.mchehab+huawei@kernel.org>
 References: <cover.1585057134.git.mchehab+huawei@kernel.org>
@@ -44,88 +44,56 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In order to cleanup the main media Kconfig, move the DVB-core
-specific options to dvb-core/Kconfig.
+This option is part of V4L2 API extra functionality set.
+Move it to be at the v4l2-core/Kconfig, where it belongs,
+cleaning the main Kconfig file.
 
 Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 ---
- drivers/media/Kconfig          | 21 ---------------------
- drivers/media/dvb-core/Kconfig | 26 ++++++++++++++++++++++++++
- 2 files changed, 26 insertions(+), 21 deletions(-)
+ drivers/media/Kconfig           | 9 ---------
+ drivers/media/v4l2-core/Kconfig | 9 +++++++++
+ 2 files changed, 9 insertions(+), 9 deletions(-)
 
 diff --git a/drivers/media/Kconfig b/drivers/media/Kconfig
-index 2f4360faed03..44aceb5e5b63 100644
+index 44aceb5e5b63..d6fb8411a8de 100644
 --- a/drivers/media/Kconfig
 +++ b/drivers/media/Kconfig
-@@ -164,31 +164,10 @@ config DVB_CORE
- 	default y
- 	select CRC32
+@@ -140,15 +140,6 @@ config VIDEO_DEV
+ 	depends on MEDIA_SUPPORT
+ 	default MEDIA_CAMERA_SUPPORT || MEDIA_ANALOG_TV_SUPPORT || MEDIA_RADIO_SUPPORT || MEDIA_SDR_SUPPORT || V4L_PLATFORM_DRIVERS
  
--config DVB_MMAP
--	bool "Enable DVB memory-mapped API (EXPERIMENTAL)"
--	depends on DVB_CORE
--	depends on VIDEO_V4L2=y || VIDEO_V4L2=DVB_CORE
--	select VIDEOBUF2_VMALLOC
- 	help
--	  This option enables DVB experimental memory-mapped API, which
--	  reduces the number of context switches to read DVB buffers, as
--	  the buffers can use mmap() syscalls.
- 
--	  Support for it is experimental. Use with care. If unsure,
--	  say N.
- 
--config DVB_NET
--	bool "DVB Network Support"
--	default (NET && INET)
--	depends on NET && INET && DVB_CORE
+-config VIDEO_V4L2_SUBDEV_API
+-	bool "V4L2 sub-device userspace API"
+-	depends on VIDEO_DEV && MEDIA_CONTROLLER
 -	help
--	  This option enables DVB Network Support which is a part of the DVB
--	  standard. It is used, for example, by automatic firmware updates used
--	  on Set-Top-Boxes. It can also be used to access the Internet via the
--	  DVB card, if the network provider supports it.
+-	  Enables the V4L2 sub-device pad-level userspace API used to configure
+-	  video format, size and frame rate between hardware blocks.
+-
+-	  This API is mostly used by camera interfaces in embedded platforms.
+-
+ source "drivers/media/v4l2-core/Kconfig"
  
--	  You may want to disable the network support on embedded devices. If
--	  unsure say Y.
- 
- # This Kconfig option is used by both PCI and USB drivers
- config TTPCI_EEPROM
-diff --git a/drivers/media/dvb-core/Kconfig b/drivers/media/dvb-core/Kconfig
-index 90e038d5ffd9..0f8e53692b86 100644
---- a/drivers/media/dvb-core/Kconfig
-+++ b/drivers/media/dvb-core/Kconfig
-@@ -3,6 +3,32 @@
- # DVB device configuration
  #
+diff --git a/drivers/media/v4l2-core/Kconfig b/drivers/media/v4l2-core/Kconfig
+index 26276b257eae..33aa7fe571f8 100644
+--- a/drivers/media/v4l2-core/Kconfig
++++ b/drivers/media/v4l2-core/Kconfig
+@@ -16,6 +16,15 @@ config VIDEO_V4L2_I2C
+ 	depends on I2C && VIDEO_V4L2
+ 	default y
  
-+config DVB_MMAP
-+	bool "Enable DVB memory-mapped API (EXPERIMENTAL)"
-+	depends on DVB_CORE
-+	depends on VIDEO_V4L2=y || VIDEO_V4L2=DVB_CORE
-+	select VIDEOBUF2_VMALLOC
++config VIDEO_V4L2_SUBDEV_API
++	bool "V4L2 sub-device userspace API"
++	depends on VIDEO_DEV && MEDIA_CONTROLLER
 +	help
-+	  This option enables DVB experimental memory-mapped API, which
-+	  reduces the number of context switches to read DVB buffers, as
-+	  the buffers can use mmap() syscalls.
++	  Enables the V4L2 sub-device pad-level userspace API used to configure
++	  video format, size and frame rate between hardware blocks.
 +
-+	  Support for it is experimental. Use with care. If unsure,
-+	  say N.
++	  This API is mostly used by camera interfaces in embedded platforms.
 +
-+config DVB_NET
-+	bool "DVB Network Support"
-+	default (NET && INET)
-+	depends on NET && INET && DVB_CORE
-+	help
-+	  This option enables DVB Network Support which is a part of the DVB
-+	  standard. It is used, for example, by automatic firmware updates used
-+	  on Set-Top-Boxes. It can also be used to access the Internet via the
-+	  DVB card, if the network provider supports it.
-+
-+	  You may want to disable the network support on embedded devices. If
-+	  unsure say Y.
-+
- config DVB_MAX_ADAPTERS
- 	int "maximum number of DVB/ATSC adapters"
- 	depends on DVB_CORE
+ config VIDEO_ADV_DEBUG
+ 	bool "Enable advanced debug functionality on V4L2 drivers"
+ 	help
 -- 
 2.24.1
 
