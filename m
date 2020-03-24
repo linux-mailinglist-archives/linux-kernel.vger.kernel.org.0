@@ -2,47 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8E9EB1917FE
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 18:45:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F33101917F8
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 18:45:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727993AbgCXRpK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 13:45:10 -0400
-Received: from mail.baikalelectronics.com ([87.245.175.226]:42992 "EHLO
+        id S1727938AbgCXRpF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 13:45:05 -0400
+Received: from mail.baikalelectronics.com ([87.245.175.226]:43022 "EHLO
         mail.baikalelectronics.ru" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727791AbgCXRpD (ORCPT
+        with ESMTP id S1727609AbgCXRpE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 13:45:03 -0400
+        Tue, 24 Mar 2020 13:45:04 -0400
 Received: from localhost (unknown [127.0.0.1])
-        by mail.baikalelectronics.ru (Postfix) with ESMTP id 23F4B803078E;
-        Tue, 24 Mar 2020 17:45:01 +0000 (UTC)
+        by mail.baikalelectronics.ru (Postfix) with ESMTP id 188D78030790;
+        Tue, 24 Mar 2020 17:45:02 +0000 (UTC)
 X-Virus-Scanned: amavisd-new at baikalelectronics.ru
 Received: from mail.baikalelectronics.ru ([127.0.0.1])
         by localhost (mail.baikalelectronics.ru [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id Lh46Dl5x4otu; Tue, 24 Mar 2020 20:45:00 +0300 (MSK)
+        with ESMTP id Z9-RRAwksDAn; Tue, 24 Mar 2020 20:45:01 +0300 (MSK)
 From:   <Sergey.Semin@baikalelectronics.ru>
 To:     Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Dinh Nguyen <dinguyen@altera.com>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Jamie Iles <jamie@jamieiles.com>,
-        Rob Herring <rob.herring@calxeda.com>
+        Thomas Gleixner <tglx@linutronix.de>
 CC:     Serge Semin <Sergey.Semin@baikalelectronics.ru>,
         Serge Semin <fancer.lancer@gmail.com>,
+        Paul Burton <paulburton@kernel.org>,
         Alexey Malahov <Alexey.Malahov@baikalelectronics.ru>,
         Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        Paul Burton <paulburton@kernel.org>,
         Ralf Baechle <ralf@linux-mips.org>,
+        Arnd Bergmann <arnd@arndb.de>,
         Andy Shevchenko <andy.shevchenko@gmail.com>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        <devicetree@vger.kernel.org>, Allison Randal <allison@lohutok.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Alexios Zavras <alexios.zavras@intel.com>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH v2 4/6] clocksource: dw_apb_timer_of: Fix missing clockevent timers
-Date:   Tue, 24 Mar 2020 20:43:23 +0300
-Message-ID: <20200324174325.14213-5-Sergey.Semin@baikalelectronics.ru>
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH v2 5/6] clocksource: mips-gic-timer: Register as sched_clock
+Date:   Tue, 24 Mar 2020 20:43:24 +0300
+Message-ID: <20200324174325.14213-6-Sergey.Semin@baikalelectronics.ru>
 In-Reply-To: <20200324174325.14213-1-Sergey.Semin@baikalelectronics.ru>
 References: <20200306125622.839ED80307C4@mail.baikalelectronics.ru>
  <20200324174325.14213-1-Sergey.Semin@baikalelectronics.ru>
@@ -55,31 +48,20 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Serge Semin <Sergey.Semin@baikalelectronics.ru>
+From: Paul Burton <paulburton@kernel.org>
 
-Commit 100214889973 ("clocksource: dw_apb_timer_of: use
-clocksource_of_init") replaced a publicly available driver
-initialization method with one called by the timer_probe() method
-available after CLKSRC_OF. In current implementation it traverses
-all the timers available in the system and calls their initialization
-methods if corresponding devices were either in dtb or in acpi. But
-if before the commit any number of available timers would be installed
-as clockevent and clocksource devices, after that there would be at most
-two. The rest are just ignored since default case branch doesn't do
-anything. I don't see a reason of such behaviour, neither the commit
-message explains it. Moreover this might be wrong if on some platforms
-these timers might be used for different purpose, as virtually CPU-local
-clockevent timers and as an independent broadcast timer. So in order
-to keep the compatibility with the platforms where the order of the
-timers detection has some meaning, lets add the secondly discovered
-timer to be of clocksource/sched_clock type, while the very first and
-the others would provide the clockevents service.
+The MIPS GIC timer is well suited for use as sched_clock, so register it
+as such.
 
-Fixes: 100214889973 ("clocksource: dw_apb_timer_of: use clocksource_of_init")
-Signed-off-by: Serge Semin <Sergey.Semin@baikalelectronics.ru>
+Whilst the existing gic_read_count() function matches the prototype
+needed by sched_clock_register() already, we split it into 2 functions
+in order to remove the need to evaluate the mips_cm_is64 condition
+within each call since sched_clock should be as fast as possible.
+
+Signed-off-by: Paul Burton <paulburton@kernel.org>
+Cc: Serge Semin <Sergey.Semin@baikalelectronics.ru>
 Cc: Alexey Malahov <Alexey.Malahov@baikalelectronics.ru>
 Cc: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-Cc: Paul Burton <paulburton@kernel.org>
 Cc: Ralf Baechle <ralf@linux-mips.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: Arnd Bergmann <arnd@arndb.de>
@@ -88,33 +70,67 @@ Cc: Rob Herring <robh+dt@kernel.org>
 Cc: Mark Rutland <mark.rutland@arm.com>
 Cc: devicetree@vger.kernel.org
 ---
- drivers/clocksource/dw_apb_timer_of.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ drivers/clocksource/mips-gic-timer.c | 23 +++++++++++++++++++----
+ 1 file changed, 19 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/clocksource/dw_apb_timer_of.c b/drivers/clocksource/dw_apb_timer_of.c
-index 0a2505b323d7..0b61b90a525e 100644
---- a/drivers/clocksource/dw_apb_timer_of.c
-+++ b/drivers/clocksource/dw_apb_timer_of.c
-@@ -146,10 +146,6 @@ static int num_called;
- static int __init dw_apb_timer_init(struct device_node *timer)
- {
- 	switch (num_called) {
--	case 0:
--		pr_debug("%s: found clockevent timer\n", __func__);
--		add_clockevent(timer);
--		break;
- 	case 1:
- 		pr_debug("%s: found clocksource timer\n", __func__);
- 		add_clocksource(timer);
-@@ -160,6 +156,8 @@ static int __init dw_apb_timer_init(struct device_node *timer)
- #endif
- 		break;
- 	default:
-+		pr_debug("%s: found clockevent timer\n", __func__);
-+		add_clockevent(timer);
- 		break;
- 	}
+diff --git a/drivers/clocksource/mips-gic-timer.c b/drivers/clocksource/mips-gic-timer.c
+index 37671a5d4ed9..8239ff99cfe4 100644
+--- a/drivers/clocksource/mips-gic-timer.c
++++ b/drivers/clocksource/mips-gic-timer.c
+@@ -16,6 +16,7 @@
+ #include <linux/notifier.h>
+ #include <linux/of_irq.h>
+ #include <linux/percpu.h>
++#include <linux/sched_clock.h>
+ #include <linux/smp.h>
+ #include <linux/time.h>
+ #include <asm/mips-cps.h>
+@@ -24,13 +25,10 @@ static DEFINE_PER_CPU(struct clock_event_device, gic_clockevent_device);
+ static int gic_timer_irq;
+ static unsigned int gic_frequency;
  
+-static u64 notrace gic_read_count(void)
++static u64 notrace gic_read_count_2x32(void)
+ {
+ 	unsigned int hi, hi2, lo;
+ 
+-	if (mips_cm_is64)
+-		return read_gic_counter();
+-
+ 	do {
+ 		hi = read_gic_counter_32h();
+ 		lo = read_gic_counter_32l();
+@@ -40,6 +38,19 @@ static u64 notrace gic_read_count(void)
+ 	return (((u64) hi) << 32) + lo;
+ }
+ 
++static u64 notrace gic_read_count_64(void)
++{
++	return read_gic_counter();
++}
++
++static u64 notrace gic_read_count(void)
++{
++	if (mips_cm_is64)
++		return gic_read_count_64();
++
++	return gic_read_count_2x32();
++}
++
+ static int gic_next_event(unsigned long delta, struct clock_event_device *evt)
+ {
+ 	int cpu = cpumask_first(evt->cpumask);
+@@ -228,6 +239,10 @@ static int __init gic_clocksource_of_init(struct device_node *node)
+ 	/* And finally start the counter */
+ 	clear_gic_config(GIC_CONFIG_COUNTSTOP);
+ 
++	sched_clock_register(mips_cm_is64 ?
++			     gic_read_count_64 : gic_read_count_2x32,
++			     64, gic_frequency);
++
+ 	return 0;
+ }
+ TIMER_OF_DECLARE(mips_gic_timer, "mti,gic-timer",
 -- 
 2.25.1
 
