@@ -2,347 +2,254 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 33BE219130B
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 15:25:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0087D191256
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 15:02:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728754AbgCXOZW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 10:25:22 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:53674 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728483AbgCXOYy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 10:24:54 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=Content-Type:MIME-Version:References:
-        Subject:Cc:To:From:Date:Message-Id:Sender:Reply-To:Content-Transfer-Encoding:
-        Content-ID:Content-Description:In-Reply-To;
-        bh=XZVv8XkxM9QWcVmY7RFKry2CjWqW6p5/DUZX7TjB8Q8=; b=s71UXnumciQtCwBjd4Cqftfxo1
-        b+vHKdI11zcro7o6ARfaSIbmJwUi0GW8x58rpmK2oKhV5AcGiL/jlgKA1xPn8oCM5RJMhavvlj8l6
-        4W7k1NqAMaRUGtZTR3ZCIt3vj9qaIFOiQcSMssT7G48FUti4/Pp1MgxWFhtcp3Y1Lpco5QDsAKRQO
-        xFVaT9oq1AUde0lkGuKHOi7SqNnmWflSBpv4LIMQ+MPkYhtwH2bBFWDRXPlzfNUUfEnMDU53eLCoD
-        +npER9j53VDUn3Mm3DJH3+IC+L43VfKaomOsfKk3wMmW07K+6RKHn7ZAUJA5XGCB6JSfzAMSwpIgP
-        JdfcJM7w==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jGkTw-0003p4-HZ; Tue, 24 Mar 2020 14:24:40 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 89EE4307970;
-        Tue, 24 Mar 2020 15:24:35 +0100 (CET)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 0)
-        id 3C10D286C13BE; Tue, 24 Mar 2020 15:24:35 +0100 (CET)
-Message-Id: <20200324142246.308204077@infradead.org>
-User-Agent: quilt/0.65
-Date:   Tue, 24 Mar 2020 14:56:20 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     x86@kernel.org
-Cc:     peterz@infradead.org, linux-kernel@vger.kernel.org,
-        rostedt@goodmis.org, mhiramat@kernel.org, bristot@redhat.com,
-        jbaron@akamai.com, torvalds@linux-foundation.org,
-        tglx@linutronix.de, mingo@kernel.org, namit@vmware.com,
-        hpa@zytor.com, luto@kernel.org, ard.biesheuvel@linaro.org,
-        jpoimboe@redhat.com
-Subject: [RESEND][PATCH v3 17/17] x86/perf, static_call: Optimize x86_pmu methods
-References: <20200324135603.483964896@infradead.org>
+        id S1727473AbgCXOBY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 10:01:24 -0400
+Received: from mga07.intel.com ([134.134.136.100]:12558 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726802AbgCXOBX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Mar 2020 10:01:23 -0400
+IronPort-SDR: bFybW5DKpMcXG25A8flaZJa7WLQjMPSDM8DVjTqi7cdEHLEMyKEcleMkx/OvFvDLjk+08/lu7o
+ vSf8P4hK4ijQ==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Mar 2020 07:01:22 -0700
+IronPort-SDR: v/OB6oJ7thMZUgQVoxnl0xpHqVRiihCXnEritz0YGzj0o+WYFiqkz+a3lazgQEA219es7n1W/Y
+ nz0mwwwGfujw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.72,300,1580803200"; 
+   d="scan'208";a="265167144"
+Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
+  by orsmga002.jf.intel.com with ESMTP; 24 Mar 2020 07:01:20 -0700
+Received: from kbuild by lkp-server01 with local (Exim 4.89)
+        (envelope-from <lkp@intel.com>)
+        id 1jGk7M-000Gtf-32; Tue, 24 Mar 2020 22:01:20 +0800
+Date:   Tue, 24 Mar 2020 22:00:35 +0800
+From:   kbuild test robot <lkp@intel.com>
+To:     "x86-ml" <x86@kernel.org>
+Cc:     linux-kernel@vger.kernel.org
+Subject: [tip:timers/core] BUILD SUCCESS
+ ca214e2c1793058e3a1387f9e343cc5b1731db15
+Message-ID: <5e7a1283.0zZlq0n7axnVJ352%lkp@intel.com>
+User-Agent: Heirloom mailx 12.5 6/20/10
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Replace many of the indirect calls with static_call().
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/peterz/queue.git  timers/core
+branch HEAD: ca214e2c1793058e3a1387f9e343cc5b1731db15  vdso: Fix clocksource.h macro detection
 
-XXX run performance numbers
+elapsed time: 884m
 
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+configs tested: 195
+configs skipped: 18
+
+The following configs have been built successfully.
+More configs may be tested in the coming days.
+
+arm                              allmodconfig
+arm                               allnoconfig
+arm                              allyesconfig
+arm64                            allmodconfig
+arm64                             allnoconfig
+arm64                            allyesconfig
+arm                           efm32_defconfig
+arm                         at91_dt_defconfig
+arm                        shmobile_defconfig
+arm64                               defconfig
+arm                          exynos_defconfig
+arm                        multi_v5_defconfig
+arm                           sunxi_defconfig
+arm                        multi_v7_defconfig
+sparc                            allyesconfig
+ia64                             alldefconfig
+i386                             alldefconfig
+i386                              allnoconfig
+i386                             allyesconfig
+i386                                defconfig
+ia64                             allmodconfig
+ia64                              allnoconfig
+ia64                             allyesconfig
+ia64                                defconfig
+nios2                         3c120_defconfig
+nios2                         10m50_defconfig
+c6x                        evmc6678_defconfig
+xtensa                          iss_defconfig
+c6x                              allyesconfig
+xtensa                       common_defconfig
+openrisc                 simple_smp_defconfig
+openrisc                    or1ksim_defconfig
+nds32                               defconfig
+nds32                             allnoconfig
+csky                                defconfig
+alpha                               defconfig
+h8300                       h8s-sim_defconfig
+h8300                     edosk2674_defconfig
+m68k                       m5475evb_defconfig
+h8300                    h8300h-sim_defconfig
+m68k                             allmodconfig
+m68k                          multi_defconfig
+m68k                           sun3_defconfig
+arc                                 defconfig
+arc                              allyesconfig
+microblaze                      mmu_defconfig
+microblaze                    nommu_defconfig
+powerpc                           allnoconfig
+powerpc                             defconfig
+powerpc                       ppc64_defconfig
+powerpc                          rhel-kconfig
+mips                           32r2_defconfig
+mips                         64r6el_defconfig
+mips                             allmodconfig
+mips                              allnoconfig
+mips                             allyesconfig
+mips                      fuloong2e_defconfig
+mips                      malta_kvm_defconfig
+parisc                            allnoconfig
+parisc                generic-64bit_defconfig
+parisc                generic-32bit_defconfig
+parisc                           allyesconfig
+i386                 randconfig-a002-20200324
+x86_64               randconfig-a002-20200324
+i386                 randconfig-a001-20200324
+x86_64               randconfig-a001-20200324
+i386                 randconfig-a003-20200324
+x86_64               randconfig-a003-20200324
+mips                 randconfig-a001-20200324
+nds32                randconfig-a001-20200324
+m68k                 randconfig-a001-20200324
+parisc               randconfig-a001-20200324
+alpha                randconfig-a001-20200324
+riscv                randconfig-a001-20200324
+alpha                randconfig-a001-20200323
+m68k                 randconfig-a001-20200323
+mips                 randconfig-a001-20200323
+nds32                randconfig-a001-20200323
+parisc               randconfig-a001-20200323
+riscv                randconfig-a001-20200323
+c6x                  randconfig-a001-20200323
+h8300                randconfig-a001-20200323
+microblaze           randconfig-a001-20200323
+nios2                randconfig-a001-20200323
+sparc64              randconfig-a001-20200323
+h8300                randconfig-a001-20200324
+microblaze           randconfig-a001-20200324
+nios2                randconfig-a001-20200324
+c6x                  randconfig-a001-20200324
+sparc64              randconfig-a001-20200324
+csky                 randconfig-a001-20200323
+openrisc             randconfig-a001-20200323
+s390                 randconfig-a001-20200323
+sh                   randconfig-a001-20200323
+xtensa               randconfig-a001-20200323
+s390                 randconfig-a001-20200324
+csky                 randconfig-a001-20200324
+xtensa               randconfig-a001-20200324
+openrisc             randconfig-a001-20200324
+sh                   randconfig-a001-20200324
+i386                 randconfig-b003-20200324
+i386                 randconfig-b001-20200324
+i386                 randconfig-b002-20200324
+x86_64               randconfig-b001-20200324
+x86_64               randconfig-b001-20200323
+x86_64               randconfig-b002-20200323
+x86_64               randconfig-b003-20200323
+i386                 randconfig-b001-20200323
+i386                 randconfig-b002-20200323
+i386                 randconfig-b003-20200323
+x86_64               randconfig-c003-20200324
+i386                 randconfig-c002-20200324
+x86_64               randconfig-c001-20200324
+x86_64               randconfig-c002-20200324
+i386                 randconfig-c003-20200324
+i386                 randconfig-c001-20200324
+i386                 randconfig-d003-20200324
+i386                 randconfig-d001-20200324
+x86_64               randconfig-d002-20200324
+x86_64               randconfig-d001-20200324
+i386                 randconfig-d002-20200324
+x86_64               randconfig-d003-20200324
+x86_64               randconfig-d001-20200323
+x86_64               randconfig-d002-20200323
+x86_64               randconfig-d003-20200323
+i386                 randconfig-d001-20200323
+i386                 randconfig-d002-20200323
+i386                 randconfig-d003-20200323
+x86_64               randconfig-e001-20200324
+i386                 randconfig-e002-20200324
+i386                 randconfig-e003-20200324
+x86_64               randconfig-e002-20200324
+i386                 randconfig-e001-20200324
+x86_64               randconfig-e001-20200323
+x86_64               randconfig-e002-20200323
+x86_64               randconfig-e003-20200323
+i386                 randconfig-e001-20200323
+i386                 randconfig-e002-20200323
+i386                 randconfig-e003-20200323
+i386                 randconfig-f001-20200324
+i386                 randconfig-f003-20200324
+i386                 randconfig-f002-20200324
+x86_64               randconfig-f002-20200324
+x86_64               randconfig-f003-20200324
+x86_64               randconfig-f001-20200324
+i386                 randconfig-g003-20200324
+x86_64               randconfig-g002-20200324
+i386                 randconfig-g001-20200324
+i386                 randconfig-g002-20200324
+x86_64               randconfig-g001-20200324
+x86_64               randconfig-g003-20200324
+x86_64               randconfig-g001-20200323
+x86_64               randconfig-g002-20200323
+x86_64               randconfig-g003-20200323
+i386                 randconfig-g001-20200323
+i386                 randconfig-g002-20200323
+i386                 randconfig-g003-20200323
+x86_64               randconfig-h002-20200324
+x86_64               randconfig-h003-20200324
+i386                 randconfig-h003-20200324
+i386                 randconfig-h001-20200324
+x86_64               randconfig-h001-20200324
+i386                 randconfig-h002-20200324
+arc                  randconfig-a001-20200324
+arm                  randconfig-a001-20200324
+arm64                randconfig-a001-20200324
+ia64                 randconfig-a001-20200324
+powerpc              randconfig-a001-20200324
+sparc                randconfig-a001-20200324
+riscv                            allmodconfig
+riscv                             allnoconfig
+riscv                            allyesconfig
+riscv                               defconfig
+riscv                    nommu_virt_defconfig
+riscv                          rv32_defconfig
+s390                       zfcpdump_defconfig
+s390                          debug_defconfig
+s390                              allnoconfig
+s390                             alldefconfig
+s390                                defconfig
+sh                          rsk7269_defconfig
+sparc                               defconfig
+sparc64                          allmodconfig
+sparc64                           allnoconfig
+sparc64                          allyesconfig
+sparc64                             defconfig
+um                           x86_64_defconfig
+um                             i386_defconfig
+um                                  defconfig
+x86_64                              fedora-25
+x86_64                                  kexec
+x86_64                                    lkp
+x86_64                                   rhel
+x86_64                         rhel-7.2-clear
+x86_64                               rhel-7.6
+
 ---
- arch/x86/events/core.c |  130 +++++++++++++++++++++++++++++++++----------------
- 1 file changed, 90 insertions(+), 40 deletions(-)
-
---- a/arch/x86/events/core.c
-+++ b/arch/x86/events/core.c
-@@ -28,6 +28,7 @@
- #include <linux/bitops.h>
- #include <linux/device.h>
- #include <linux/nospec.h>
-+#include <linux/static_call.h>
- 
- #include <asm/apic.h>
- #include <asm/stacktrace.h>
-@@ -52,6 +53,30 @@ DEFINE_PER_CPU(struct cpu_hw_events, cpu
- DEFINE_STATIC_KEY_FALSE(rdpmc_never_available_key);
- DEFINE_STATIC_KEY_FALSE(rdpmc_always_available_key);
- 
-+DEFINE_STATIC_COND_CALL(x86_pmu_handle_irq,  *x86_pmu.handle_irq);
-+DEFINE_STATIC_COND_CALL(x86_pmu_disable_all, *x86_pmu.disable_all);
-+DEFINE_STATIC_COND_CALL(x86_pmu_enable_all,  *x86_pmu.enable_all);
-+DEFINE_STATIC_COND_CALL(x86_pmu_enable,	     *x86_pmu.enable);
-+DEFINE_STATIC_COND_CALL(x86_pmu_disable,     *x86_pmu.disable);
-+
-+DEFINE_STATIC_COND_CALL(x86_pmu_add,  *x86_pmu.add);
-+DEFINE_STATIC_COND_CALL(x86_pmu_del,  *x86_pmu.del);
-+DEFINE_STATIC_COND_CALL(x86_pmu_read, *x86_pmu.read);
-+
-+DEFINE_STATIC_COND_CALL(x86_pmu_schedule_events,       *x86_pmu.schedule_events);
-+DEFINE_STATIC_COND_CALL(x86_pmu_get_event_constraints, *x86_pmu.get_event_constraints);
-+DEFINE_STATIC_COND_CALL(x86_pmu_put_event_constraints, *x86_pmu.put_event_constraints);
-+
-+DEFINE_STATIC_COND_CALL(x86_pmu_start_scheduling,  *x86_pmu.start_scheduling);
-+DEFINE_STATIC_COND_CALL(x86_pmu_commit_scheduling, *x86_pmu.commit_scheduling);
-+DEFINE_STATIC_COND_CALL(x86_pmu_stop_scheduling,   *x86_pmu.stop_scheduling);
-+
-+DEFINE_STATIC_COND_CALL(x86_pmu_sched_task,    *x86_pmu.sched_task);
-+DEFINE_STATIC_COND_CALL(x86_pmu_swap_task_ctx, *x86_pmu.swap_task_ctx);
-+
-+DEFINE_STATIC_COND_CALL(x86_pmu_drain_pebs,   *x86_pmu.drain_pebs);
-+DEFINE_STATIC_COND_CALL(x86_pmu_pebs_aliases, *x86_pmu.pebs_aliases);
-+
- u64 __read_mostly hw_cache_event_ids
- 				[PERF_COUNT_HW_CACHE_MAX]
- 				[PERF_COUNT_HW_CACHE_OP_MAX]
-@@ -660,7 +685,7 @@ static void x86_pmu_disable(struct pmu *
- 	cpuc->enabled = 0;
- 	barrier();
- 
--	x86_pmu.disable_all();
-+	static_call(x86_pmu_disable_all)();
- }
- 
- void x86_pmu_enable_all(int added)
-@@ -907,8 +932,7 @@ int x86_schedule_events(struct cpu_hw_ev
- 	if (cpuc->txn_flags & PERF_PMU_TXN_ADD)
- 		n0 -= cpuc->n_txn;
- 
--	if (x86_pmu.start_scheduling)
--		x86_pmu.start_scheduling(cpuc);
-+	static_cond_call(x86_pmu_start_scheduling)(cpuc);
- 
- 	for (i = 0, wmin = X86_PMC_IDX_MAX, wmax = 0; i < n; i++) {
- 		c = cpuc->event_constraint[i];
-@@ -925,7 +949,7 @@ int x86_schedule_events(struct cpu_hw_ev
- 		 * change due to external factors (sibling state, allow_tfa).
- 		 */
- 		if (!c || (c->flags & PERF_X86_EVENT_DYNAMIC)) {
--			c = x86_pmu.get_event_constraints(cpuc, i, cpuc->event_list[i]);
-+			c = static_call(x86_pmu_get_event_constraints)(cpuc, i, cpuc->event_list[i]);
- 			cpuc->event_constraint[i] = c;
- 		}
- 
-@@ -1008,8 +1032,7 @@ int x86_schedule_events(struct cpu_hw_ev
- 	if (!unsched && assign) {
- 		for (i = 0; i < n; i++) {
- 			e = cpuc->event_list[i];
--			if (x86_pmu.commit_scheduling)
--				x86_pmu.commit_scheduling(cpuc, i, assign[i]);
-+			static_cond_call(x86_pmu_commit_scheduling)(cpuc, i, assign[i]);
- 		}
- 	} else {
- 		for (i = n0; i < n; i++) {
-@@ -1018,15 +1041,13 @@ int x86_schedule_events(struct cpu_hw_ev
- 			/*
- 			 * release events that failed scheduling
- 			 */
--			if (x86_pmu.put_event_constraints)
--				x86_pmu.put_event_constraints(cpuc, e);
-+			static_cond_call(x86_pmu_put_event_constraints)(cpuc, e);
- 
- 			cpuc->event_constraint[i] = NULL;
- 		}
- 	}
- 
--	if (x86_pmu.stop_scheduling)
--		x86_pmu.stop_scheduling(cpuc);
-+	static_cond_call(x86_pmu_stop_scheduling)(cpuc);
- 
- 	return unsched ? -EINVAL : 0;
- }
-@@ -1217,7 +1238,7 @@ static void x86_pmu_enable(struct pmu *p
- 	cpuc->enabled = 1;
- 	barrier();
- 
--	x86_pmu.enable_all(added);
-+	static_call(x86_pmu_enable_all)(added);
- }
- 
- static DEFINE_PER_CPU(u64 [X86_PMC_IDX_MAX], pmc_prev_left);
-@@ -1338,7 +1359,7 @@ static int x86_pmu_add(struct perf_event
- 	if (cpuc->txn_flags & PERF_PMU_TXN_ADD)
- 		goto done_collect;
- 
--	ret = x86_pmu.schedule_events(cpuc, n, assign);
-+	ret = static_call(x86_pmu_schedule_events)(cpuc, n, assign);
- 	if (ret)
- 		goto out;
- 	/*
-@@ -1356,13 +1377,11 @@ static int x86_pmu_add(struct perf_event
- 	cpuc->n_added += n - n0;
- 	cpuc->n_txn += n - n0;
- 
--	if (x86_pmu.add) {
--		/*
--		 * This is before x86_pmu_enable() will call x86_pmu_start(),
--		 * so we enable LBRs before an event needs them etc..
--		 */
--		x86_pmu.add(event);
--	}
-+	/*
-+	 * This is before x86_pmu_enable() will call x86_pmu_start(),
-+	 * so we enable LBRs before an event needs them etc..
-+	 */
-+	static_cond_call(x86_pmu_add)(event);
- 
- 	ret = 0;
- out:
-@@ -1390,7 +1409,7 @@ static void x86_pmu_start(struct perf_ev
- 	cpuc->events[idx] = event;
- 	__set_bit(idx, cpuc->active_mask);
- 	__set_bit(idx, cpuc->running);
--	x86_pmu.enable(event);
-+	static_call(x86_pmu_enable)(event);
- 	perf_event_update_userpage(event);
- }
- 
-@@ -1460,7 +1479,7 @@ void x86_pmu_stop(struct perf_event *eve
- 	struct hw_perf_event *hwc = &event->hw;
- 
- 	if (test_bit(hwc->idx, cpuc->active_mask)) {
--		x86_pmu.disable(event);
-+		static_call(x86_pmu_disable)(event);
- 		__clear_bit(hwc->idx, cpuc->active_mask);
- 		cpuc->events[hwc->idx] = NULL;
- 		WARN_ON_ONCE(hwc->state & PERF_HES_STOPPED);
-@@ -1510,8 +1529,7 @@ static void x86_pmu_del(struct perf_even
- 	if (i >= cpuc->n_events - cpuc->n_added)
- 		--cpuc->n_added;
- 
--	if (x86_pmu.put_event_constraints)
--		x86_pmu.put_event_constraints(cpuc, event);
-+	static_cond_call(x86_pmu_put_event_constraints)(cpuc, event);
- 
- 	/* Delete the array entry. */
- 	while (++i < cpuc->n_events) {
-@@ -1524,13 +1542,12 @@ static void x86_pmu_del(struct perf_even
- 	perf_event_update_userpage(event);
- 
- do_del:
--	if (x86_pmu.del) {
--		/*
--		 * This is after x86_pmu_stop(); so we disable LBRs after any
--		 * event can need them etc..
--		 */
--		x86_pmu.del(event);
--	}
-+
-+	/*
-+	 * This is after x86_pmu_stop(); so we disable LBRs after any
-+	 * event can need them etc..
-+	 */
-+	static_cond_call(x86_pmu_del)(event);
- }
- 
- int x86_pmu_handle_irq(struct pt_regs *regs)
-@@ -1608,7 +1625,7 @@ perf_event_nmi_handler(unsigned int cmd,
- 		return NMI_DONE;
- 
- 	start_clock = sched_clock();
--	ret = x86_pmu.handle_irq(regs);
-+	ret = static_call(x86_pmu_handle_irq)(regs);
- 	finish_clock = sched_clock();
- 
- 	perf_sample_event_took(finish_clock - start_clock);
-@@ -1821,6 +1838,38 @@ ssize_t x86_event_sysfs_show(char *page,
- static struct attribute_group x86_pmu_attr_group;
- static struct attribute_group x86_pmu_caps_group;
- 
-+static void x86_pmu_static_call_update(void)
-+{
-+	static_call_update(x86_pmu_handle_irq, x86_pmu.handle_irq);
-+	static_call_update(x86_pmu_disable_all, x86_pmu.disable_all);
-+	static_call_update(x86_pmu_enable_all, x86_pmu.enable_all);
-+	static_call_update(x86_pmu_enable, x86_pmu.enable);
-+	static_call_update(x86_pmu_disable, x86_pmu.disable);
-+
-+	static_call_update(x86_pmu_add, x86_pmu.add);
-+	static_call_update(x86_pmu_del, x86_pmu.del);
-+	static_call_update(x86_pmu_read, x86_pmu.read);
-+
-+	static_call_update(x86_pmu_schedule_events, x86_pmu.schedule_events);
-+	static_call_update(x86_pmu_get_event_constraints, x86_pmu.get_event_constraints);
-+	static_call_update(x86_pmu_put_event_constraints, x86_pmu.put_event_constraints);
-+
-+	static_call_update(x86_pmu_start_scheduling, x86_pmu.start_scheduling);
-+	static_call_update(x86_pmu_commit_scheduling, x86_pmu.commit_scheduling);
-+	static_call_update(x86_pmu_stop_scheduling, x86_pmu.stop_scheduling);
-+
-+	static_call_update(x86_pmu_sched_task, x86_pmu.sched_task);
-+	static_call_update(x86_pmu_swap_task_ctx, x86_pmu.swap_task_ctx);
-+
-+	static_call_update(x86_pmu_drain_pebs, x86_pmu.drain_pebs);
-+	static_call_update(x86_pmu_pebs_aliases, x86_pmu.pebs_aliases);
-+}
-+
-+static void _x86_pmu_read(struct perf_event *event)
-+{
-+	x86_perf_event_update(event);
-+}
-+
- static int __init init_hw_perf_events(void)
- {
- 	struct x86_pmu_quirk *quirk;
-@@ -1885,6 +1934,11 @@ static int __init init_hw_perf_events(vo
- 	pr_info("... fixed-purpose events:   %d\n",     x86_pmu.num_counters_fixed);
- 	pr_info("... event mask:             %016Lx\n", x86_pmu.intel_ctrl);
- 
-+	if (!x86_pmu.read)
-+		x86_pmu.read = _x86_pmu_read;
-+
-+	x86_pmu_static_call_update();
-+
- 	/*
- 	 * Install callbacks. Core will call them for each online
- 	 * cpu.
-@@ -1921,11 +1975,9 @@ static int __init init_hw_perf_events(vo
- }
- early_initcall(init_hw_perf_events);
- 
--static inline void x86_pmu_read(struct perf_event *event)
-+static void x86_pmu_read(struct perf_event *event)
- {
--	if (x86_pmu.read)
--		return x86_pmu.read(event);
--	x86_perf_event_update(event);
-+	static_call(x86_pmu_read)(event);
- }
- 
- /*
-@@ -2002,7 +2054,7 @@ static int x86_pmu_commit_txn(struct pmu
- 	if (!x86_pmu_initialized())
- 		return -EAGAIN;
- 
--	ret = x86_pmu.schedule_events(cpuc, n, assign);
-+	ret = static_call(x86_pmu_schedule_events)(cpuc, n, assign);
- 	if (ret)
- 		return ret;
- 
-@@ -2300,15 +2352,13 @@ static const struct attribute_group *x86
- 
- static void x86_pmu_sched_task(struct perf_event_context *ctx, bool sched_in)
- {
--	if (x86_pmu.sched_task)
--		x86_pmu.sched_task(ctx, sched_in);
-+	static_cond_call(x86_pmu_sched_task)(ctx, sched_in);
- }
- 
- static void x86_pmu_swap_task_ctx(struct perf_event_context *prev,
- 				  struct perf_event_context *next)
- {
--	if (x86_pmu.swap_task_ctx)
--		x86_pmu.swap_task_ctx(prev, next);
-+	static_cond_call(x86_pmu_swap_task_ctx)(prev, next);
- }
- 
- void perf_check_microcode(void)
-
-
+0-DAY CI Kernel Test Service, Intel Corporation
+https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
