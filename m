@@ -2,42 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 98D98190564
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 07:01:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5ABE5190576
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 07:03:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727064AbgCXGBA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 02:01:00 -0400
-Received: from mga12.intel.com ([192.55.52.136]:31645 "EHLO mga12.intel.com"
+        id S1726697AbgCXGDw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 02:03:52 -0400
+Received: from mga02.intel.com ([134.134.136.20]:33340 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725853AbgCXGA7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 02:00:59 -0400
-IronPort-SDR: vrJN3Hn5FJG6NUyMlYIkIJCV2vDHgv+ySydmxR+IcGceYJO5a+qC+Kmc3E4x78kjwiGlyJjp8o
- 0+yl5pBifDDg==
+        id S1725853AbgCXGDv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Mar 2020 02:03:51 -0400
+IronPort-SDR: LKWCnw2TnGh8iWMMuxMrVMC/7iG+MwrS3RmYX9uRKuA5DauRACHfcloEgc+fusgzNSf4CCspQd
+ OcC16bSktx0w==
 X-Amp-Result: UNKNOWN
 X-Amp-Original-Verdict: FILE UNKNOWN
 X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Mar 2020 23:00:55 -0700
-IronPort-SDR: cYY8JzYgY37S9hTnjllB0vSDFhwk87SUwcJQw1TRuhBDq2drlZumznUYwDcSYEF4HkSJETmWpH
- /Fy49r8SLCJw==
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Mar 2020 23:03:30 -0700
+IronPort-SDR: 37NOzZnkpl9KjXkEvQHQTvuCBEbAcuw3PmaUCsMpL3pA0orPBYvE0uHdlu8khuPaSy4DTHEOSy
+ 7jhRaqYPSvAA==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.72,299,1580803200"; 
-   d="xz'?scan'208";a="249884161"
+   d="yaml'?scan'208";a="292920882"
 Received: from shao2-debian.sh.intel.com (HELO localhost) ([10.239.13.3])
-  by orsmga006.jf.intel.com with ESMTP; 23 Mar 2020 23:00:51 -0700
-Date:   Tue, 24 Mar 2020 14:00:33 +0800
+  by FMSMGA003.fm.intel.com with ESMTP; 23 Mar 2020 23:03:26 -0700
+Date:   Tue, 24 Mar 2020 14:03:09 +0800
 From:   kernel test robot <rong.a.chen@intel.com>
-To:     kan.liang@linux.intel.com
-Cc:     peterz@infradead.org, mingo@redhat.com,
-        linux-kernel@vger.kernel.org, irogers@google.com,
-        eranian@google.com, ak@linux.intel.com,
-        Kan Liang <kan.liang@linux.intel.com>, lkp@lists.01.org
-Subject: [perf/core] 92b1f046a2: BUG:kernel_NULL_pointer_dereference,address
-Message-ID: <20200324060033.GB11705@shao2-debian>
+To:     Joerg Roedel <jroedel@suse.de>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        kernel test robot <oliver.sang@intel.com>,
+        Shile Zhang <shile.zhang@linux.alibaba.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Borislav Petkov <bp@suse.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>, lkp@lists.01.org
+Subject: [x86/mm] 763802b53a: stress-ng.eventfd.ops_per_sec 11.1% improvement
+Message-ID: <20200324060309.GE11705@shao2-debian>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="AdjLlRqdF7kYRNze"
+Content-Type: multipart/mixed; boundary="p//XFgTqeVWI1epd"
 Content-Disposition: inline
-In-Reply-To: <20200303202819.3942-1-kan.liang@linux.intel.com>
+Content-Transfer-Encoding: 8bit
 User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -45,118 +52,315 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---AdjLlRqdF7kYRNze
+--p//XFgTqeVWI1epd
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 
-FYI, we noticed the following commit (built with gcc-7):
+Greeting,
 
-commit: 92b1f046a283a7dafd30067d93444fb6402b42d7 ("[PATCH] perf/core: Fix endless multiplex timer")
-url: https://github.com/0day-ci/linux/commits/kan-liang-linux-intel-com/perf-core-Fix-endless-multiplex-timer/20200304-050638
+FYI, we noticed a 11.1% improvement of stress-ng.eventfd.ops_per_sec due to commit:
 
 
-in testcase: kernel-selftests
+commit: 763802b53a427ed3cbd419dbba255c414fdd9e7c ("x86/mm: split vmalloc_sync_all()")
+https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git master
+
+in testcase: stress-ng
+on test machine: 96 threads Intel(R) Xeon(R) Gold 6252 CPU @ 2.10GHz with 192G memory
 with following parameters:
 
-	group: kselftests-00
-
-test-description: The kernel contains a set of "self tests" under the tools/testing/selftests/ directory. These are intended to be small unit tests to exercise individual code paths in the kernel.
-test-url: https://www.kernel.org/doc/Documentation/kselftest.txt
-
-
-on test machine: qemu-system-x86_64 -enable-kvm -cpu SandyBridge -smp 2 -m 8G
-
-caused below changes (please refer to attached dmesg/kmsg for entire log/backtrace):
+	nr_threads: 100%
+	disk: 1HDD
+	testtime: 1s
+	class: os
+	cpufreq_governor: performance
+	ucode: 0x500002c
+	fs: ext4
 
 
-+---------------------------------------------+------------+------------+
-|                                             | fdb6482244 | 92b1f046a2 |
-+---------------------------------------------+------------+------------+
-| boot_successes                              | 3          | 0          |
-| boot_failures                               | 21         | 9          |
-| BUG:kernel_in_stage                         | 21         | 9          |
-| BUG:kernel_NULL_pointer_dereference,address | 0          | 6          |
-| Oops:#[##]                                  | 0          | 6          |
-| RIP:__perf_event_disable                    | 0          | 6          |
-| Kernel_panic-not_syncing:Fatal_exception    | 0          | 6          |
-| Mem-Info                                    | 0          | 1          |
-+---------------------------------------------+------------+------------+
 
 
-If you fix the issue, kindly add following tag
-Reported-by: kernel test robot <rong.a.chen@intel.com>
 
 
-[   54.787532] BUG: kernel NULL pointer dereference, address: 0000000000000094
-[   54.788968] #PF: supervisor read access in kernel mode
-[   54.790070] #PF: error_code(0x0000) - not-present page
-[   54.791164] PGD 0 P4D 0 
-[   54.792019] Oops: 0000 [#1] SMP PTI
-[   54.792956] CPU: 0 PID: 9996 Comm: breakpoint_test Not tainted 5.6.0-rc1-00017-g92b1f046a283a7 #1
-[   54.794419] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.12.0-1 04/01/2014
-[   54.795898] RIP: 0010:__perf_event_disable+0x26/0x1a0
-[   54.797012] Code: 0f 1f 40 00 8b 87 a8 00 00 00 85 c0 0f 88 66 01 00 00 41 55 41 54 49 89 d4 55 53 48 89 f5 f6 82 98 00 00 00 04 48 89 fb 75 7c <8b> 85 94 00 00 00 39 85 90 00 00 00 74 09 83 f8 01 0f 84 39 01 00
-[   54.801211] RSP: 0018:ffffa93d05073d30 EFLAGS: 00010046
-[   54.803308] RAX: 0000000000000000 RBX: ffff9c35692e7000 RCX: 0000000000000000
-[   54.813087] RDX: ffff9c34f6499500 RSI: 0000000000000000 RDI: ffff9c35692e7000
-[   54.815527] RBP: 0000000000000000 R08: ffffa93d05073eac R09: 0000000000000000
-[   54.818026] R10: ffffa93d05073d18 R11: ffffffff9b663150 R12: ffff9c34f6499500
-[   54.820629] R13: 0000000000000000 R14: ffff9c34f6499508 R15: 0000000000000000
-[   54.823122] FS:  00007fa354f06540(0000) GS:ffff9c357fc00000(0000) knlGS:0000000000000000
-[   54.825834] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[   54.828126] CR2: 0000000000000094 CR3: 000000019fb0e000 CR4: 00000000000406f0
-[   54.830677] DR0: 0000556d8bb0a10b DR1: 0000000000000000 DR2: 0000000000000000
-[   54.833152] DR3: 0000000000000000 DR6: 00000000ffff0ff0 DR7: 0000000000000600
-[   54.835683] Call Trace:
-[   54.837844]  ? __perf_event_enable+0x1f0/0x1f0
-[   54.839834]  event_function_call+0xd0/0x130
-[   54.841771]  ? __perf_event_enable+0x1f0/0x1f0
-[   54.843696]  ? _cond_resched+0x19/0x30
-[   54.853765]  perf_event_disable+0x15/0x30
-[   54.855597]  modify_user_hw_breakpoint+0x43/0x80
-[   54.857481]  ptrace_modify_breakpoint+0x120/0x150
-[   54.859393]  ptrace_set_debugreg+0xc8/0x1a0
-[   54.861232]  arch_ptrace+0x2f4/0x440
-[   54.862927]  __x64_sys_ptrace+0xc9/0x140
-[   54.864687]  do_syscall_64+0x5b/0x1f0
-[   54.866422]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-[   54.868130] RIP: 0033:0x7fa354e378ff
-[   54.869124] Code: c7 44 24 10 08 00 00 00 48 89 44 24 18 48 8d 44 24 30 8b 70 08 48 8b 50 10 4c 0f 43 50 18 48 89 44 24 20 b8 65 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 41 48 85 c0 78 06 41 83 f8 02 76 1e 48 8b 4c
-[   54.872340] RSP: 002b:00007fffe648e1a0 EFLAGS: 00000202 ORIG_RAX: 0000000000000065
-[   54.873760] RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007fa354e378ff
-[   54.875136] RDX: 0000000000000388 RSI: 000000000000270d RDI: 0000000000000006
-[   54.876526] RBP: 00007fffe648e250 R08: 0000000000000005 R09: 0000000000000000
-[   54.877903] R10: 0000000000000000 R11: 0000000000000202 R12: 0000556d8bb09950
-[   54.879286] R13: 00007fffe648e7b0 R14: 0000000000000000 R15: 0000000000000000
-[   54.880682] Modules linked in: binfmt_misc intel_rapl_msr intel_rapl_common sr_mod cdrom crct10dif_pclmul sg crc32_pclmul ppdev crc32c_intel ghash_clmulni_intel bochs_drm drm_vram_helper drm_ttm_helper snd_pcm ttm snd_timer snd aesni_intel soundcore crypto_simd joydev ata_generic drm_kms_helper pata_acpi cryptd glue_helper pcspkr serio_raw syscopyarea sysfillrect sysimgblt fb_sys_fops parport_pc floppy drm parport ata_piix i2c_piix4 libata ip_tables
-[   54.887273] CR2: 0000000000000094
-[   54.888345] ---[ end trace 3c65e40013a20268 ]---
+Details are as below:
+-------------------------------------------------------------------------------------------------->
 
 
 To reproduce:
 
-        # build kernel
-	cd linux
-	cp config-5.6.0-rc1-00017-g92b1f046a283a7 .config
-	make HOSTCC=gcc-7 CC=gcc-7 ARCH=x86_64 olddefconfig prepare modules_prepare bzImage
-
         git clone https://github.com/intel/lkp-tests.git
         cd lkp-tests
-        bin/lkp qemu -k <bzImage> job-script # job-script is attached in this email
+        bin/lkp install job.yaml  # job file is attached in this email
+        bin/lkp run     job.yaml
 
+=========================================================================================
+class/compiler/cpufreq_governor/disk/fs/kconfig/nr_threads/rootfs/tbox_group/testcase/testtime/ucode:
+  os/gcc-7/performance/1HDD/ext4/x86_64-rhel-7.6/100%/debian-x86_64-20191114.cgz/lkp-csl-2sp5/stress-ng/1s/0x500002c
+
+commit: 
+  0715e6c516 ("mm, slub: prevent kmalloc_node crashes and memory leaks")
+  763802b53a ("x86/mm: split vmalloc_sync_all()")
+
+0715e6c516f106ed 763802b53a427ed3cbd419dbba2 
+---------------- --------------------------- 
+       fail:runs  %reproduction    fail:runs
+           |             |             |    
+          1:4          -25%            :4     dmesg.WARNING:at_ip__fsnotify_parent/0x
+           :4           25%           1:4     dmesg.WARNING:at_ip__slab_free/0x
+          1:4          -25%            :4     dmesg.WARNING:at_ip_perf_event_mmap_output/0x
+          0:4            0%           0:4     perf-profile.children.cycles-pp.error_entry
+         %stddev     %change         %stddev
+             \          |                \  
+    676172           +11.1%     751446        stress-ng.eventfd.ops
+    676084           +11.1%     751365        stress-ng.eventfd.ops_per_sec
+     10015 ±  9%     +67.8%      16808 ±  9%  stress-ng.opcode.ops
+      9972 ±  9%     +68.1%      16762 ±  9%  stress-ng.opcode.ops_per_sec
+      8718           +69.5%      14779 ±  2%  stress-ng.seccomp.ops
+      8717           +69.5%      14779 ±  2%  stress-ng.seccomp.ops_per_sec
+    890754 ±  3%     +17.2%    1043917 ±  3%  stress-ng.sigrt.ops
+    884276 ±  3%     +17.2%    1036699 ±  3%  stress-ng.sigrt.ops_per_sec
+    828196 ±  3%     +11.8%     925775 ±  3%  stress-ng.sigsuspend.ops
+    826776 ±  3%     +11.8%     924425 ±  3%  stress-ng.sigsuspend.ops_per_sec
+   2130447 ±  7%     -27.7%    1541253        stress-ng.switch.ops
+   2130009 ±  7%     -27.7%    1540958        stress-ng.switch.ops_per_sec
+  38755106            +3.6%   40159267        stress-ng.time.voluntary_context_switches
+    662944           +11.1%     736437 ±  2%  stress-ng.userfaultfd.ops
+    662942           +11.1%     736447 ±  2%  stress-ng.userfaultfd.ops_per_sec
+   7663774 ±  9%     -13.0%    6666649 ±  3%  cpuidle.POLL.time
+    197406 ±  5%     +80.3%     355925 ± 41%  numa-meminfo.node1.Mapped
+      6446 ±  9%     -10.0%       5803 ±  8%  numa-vmstat.node0.nr_page_table_pages
+     50338 ±  7%     +77.9%      89534 ± 42%  numa-vmstat.node1.nr_mapped
+    140973 ± 10%     -16.8%     117339 ± 13%  softirqs.CPU2.NET_RX
+    145464 ±  8%     -14.6%     124231 ± 11%  softirqs.CPU22.NET_RX
+      3847            +9.6%       4218 ±  2%  perf-stat.i.major-faults
+     43.17            +1.5       44.72        perf-stat.overall.node-load-miss-rate%
+      3655           +10.1%       4022        perf-stat.ps.major-faults
+      5694 ±  5%     -31.5%       3902 ±  5%  slabinfo.DCCP.active_objs
+    322.50 ±  6%     -31.8%     220.00 ±  5%  slabinfo.DCCP.active_slabs
+      5814 ±  6%     -31.8%       3968 ±  6%  slabinfo.DCCP.num_objs
+    322.50 ±  6%     -31.8%     220.00 ±  5%  slabinfo.DCCP.num_slabs
+      6748 ±  7%     -28.3%       4836 ±  2%  slabinfo.ccid2_hc_tx_sock.active_objs
+      6821 ±  8%     -28.4%       4881 ±  2%  slabinfo.ccid2_hc_tx_sock.num_objs
+      4.10 ± 39%      -2.7        1.45 ±173%  perf-profile.calltrace.cycles-pp.__sched_text_start.schedule.__x64_sys_sched_yield.do_syscall_64.entry_SYSCALL_64_after_hwframe
+      4.00 ±104%      -1.6        2.40 ±173%  perf-profile.calltrace.cycles-pp.__sched_yield
+      3.23 ±103%      -1.3        1.89 ±173%  perf-profile.calltrace.cycles-pp.entry_SYSCALL_64_after_hwframe.__sched_yield
+      3.11 ±103%      -1.3        1.82 ±173%  perf-profile.calltrace.cycles-pp.do_syscall_64.entry_SYSCALL_64_after_hwframe.__sched_yield
+      4.87 ± 39%      -3.1        1.72 ±173%  perf-profile.children.cycles-pp.__x64_sys_sched_yield
+      4.11 ±103%      -1.7        2.40 ±173%  perf-profile.children.cycles-pp.__sched_yield
+      0.16 ± 18%      +0.1        0.22 ±  8%  perf-profile.children.cycles-pp.prep_new_page
+      0.05 ± 58%      +0.1        0.13 ± 32%  perf-profile.children.cycles-pp.native_flush_tlb_one_user
+      0.09 ± 23%      +0.1        0.17 ± 37%  perf-profile.children.cycles-pp.__pte_alloc
+      0.57 ± 28%      +0.4        0.94 ± 23%  perf-profile.children.cycles-pp.get_page_from_freelist
+      0.63 ± 27%      +0.4        1.06 ± 23%  perf-profile.children.cycles-pp.__alloc_pages_nodemask
+      0.05 ± 58%      +0.1        0.13 ± 32%  perf-profile.self.cycles-pp.native_flush_tlb_one_user
+    597911 ± 37%     -73.5%     158203 ±132%  sched_debug.cfs_rq:/.MIN_vruntime.avg
+   5478739 ± 25%     -61.0%    2138711 ± 99%  sched_debug.cfs_rq:/.MIN_vruntime.max
+   1513560 ± 12%     -66.9%     501143 ±108%  sched_debug.cfs_rq:/.MIN_vruntime.stddev
+    597912 ± 37%     -73.5%     158203 ±132%  sched_debug.cfs_rq:/.max_vruntime.avg
+   5478808 ± 25%     -61.0%    2138713 ± 99%  sched_debug.cfs_rq:/.max_vruntime.max
+   1513567 ± 12%     -66.9%     501143 ±108%  sched_debug.cfs_rq:/.max_vruntime.stddev
+      0.65 ± 12%     +19.6%       0.78 ±  3%  sched_debug.cfs_rq:/.nr_running.avg
+    681.06 ± 11%     +23.1%     838.62 ±  4%  sched_debug.cfs_rq:/.util_avg.avg
+     11.96 ± 18%    +503.1%      72.12 ± 60%  sched_debug.cpu.clock.stddev
+     11.96 ± 18%    +503.1%      72.12 ± 60%  sched_debug.cpu.clock_task.stddev
+     28699 ± 15%     +56.3%      44844 ± 30%  sched_debug.cpu.nr_switches.stddev
+   1799168 ±  3%     +14.6%    2061693 ±  8%  sched_debug.cpu.sched_count.max
+    128733 ±  5%     +16.5%     149939 ±  5%  sched_debug.cpu.ttwu_local.max
+     12286 ± 17%     +52.3%      18712 ±  9%  sched_debug.cpu.ttwu_local.stddev
+   1477973 ±  4%     +16.5%    1722271 ± 10%  sched_debug.cpu.yld_count.max
+    199.75 ± 20%     +32.2%     264.00 ± 16%  interrupts.100:PCI-MSI.31981633-edge.i40e-eth0-TxRx-64
+    186.75 ± 19%     +45.2%     271.25 ± 15%  interrupts.102:PCI-MSI.31981635-edge.i40e-eth0-TxRx-66
+    185.75 ± 24%     +43.2%     266.00 ±  9%  interrupts.105:PCI-MSI.31981638-edge.i40e-eth0-TxRx-69
+    514.00 ± 53%     -52.1%     246.25 ± 17%  interrupts.121:PCI-MSI.31981654-edge.i40e-eth0-TxRx-85
+    165.75 ± 14%     +50.1%     248.75 ± 16%  interrupts.37:PCI-MSI.31981570-edge.i40e-eth0-TxRx-1
+    219.75 ±  5%     +19.3%     262.25 ±  8%  interrupts.74:PCI-MSI.31981607-edge.i40e-eth0-TxRx-38
+    163.50 ± 28%     +52.8%     249.75 ± 26%  interrupts.88:PCI-MSI.31981621-edge.i40e-eth0-TxRx-52
+    353.75 ± 30%     -30.1%     247.25 ±  9%  interrupts.92:PCI-MSI.31981625-edge.i40e-eth0-TxRx-56
+   5023300           +38.4%    6952194 ±  4%  interrupts.CAL:Function_call_interrupts
+     49997 ±  3%     +26.4%      63199 ±  5%  interrupts.CPU0.CAL:Function_call_interrupts
+    165.00 ± 14%     +50.3%     248.00 ± 16%  interrupts.CPU1.37:PCI-MSI.31981570-edge.i40e-eth0-TxRx-1
+     50367 ±  5%     +23.5%      62178 ±  5%  interrupts.CPU1.CAL:Function_call_interrupts
+     49188 ±  4%     +28.5%      63218 ±  4%  interrupts.CPU10.CAL:Function_call_interrupts
+     49113 ±  2%     +29.9%      63780 ±  4%  interrupts.CPU11.CAL:Function_call_interrupts
+      9008 ± 16%     +15.6%      10417 ± 13%  interrupts.CPU11.TLB:TLB_shootdowns
+     48444           +31.1%      63517 ±  4%  interrupts.CPU12.CAL:Function_call_interrupts
+      7854 ±  4%     +25.6%       9867 ±  7%  interrupts.CPU12.TLB:TLB_shootdowns
+     49604 ±  4%     +28.2%      63574 ±  5%  interrupts.CPU13.CAL:Function_call_interrupts
+     49028 ±  2%     +29.2%      63359 ±  5%  interrupts.CPU14.CAL:Function_call_interrupts
+     48957 ±  3%     +30.2%      63747 ±  5%  interrupts.CPU15.CAL:Function_call_interrupts
+     49046 ±  2%     +29.2%      63385 ±  4%  interrupts.CPU16.CAL:Function_call_interrupts
+     50026 ±  3%     +27.6%      63819 ±  5%  interrupts.CPU17.CAL:Function_call_interrupts
+     49931 ±  3%     +28.5%      64178 ±  5%  interrupts.CPU18.CAL:Function_call_interrupts
+     49739 ±  2%     +28.5%      63939 ±  5%  interrupts.CPU19.CAL:Function_call_interrupts
+     49687 ±  5%     +27.1%      63162 ±  4%  interrupts.CPU2.CAL:Function_call_interrupts
+     49652 ±  2%     +28.7%      63885 ±  5%  interrupts.CPU20.CAL:Function_call_interrupts
+     50193 ±  2%     +28.8%      64670 ±  5%  interrupts.CPU21.CAL:Function_call_interrupts
+     49557 ±  2%     +30.0%      64404 ±  5%  interrupts.CPU22.CAL:Function_call_interrupts
+     50152 ± 28%     -44.2%      27990 ± 55%  interrupts.CPU22.RES:Rescheduling_interrupts
+     51078 ±  5%     +26.9%      64811 ±  4%  interrupts.CPU23.CAL:Function_call_interrupts
+     51801 ±  2%     +29.2%      66939 ±  4%  interrupts.CPU24.CAL:Function_call_interrupts
+     50932 ±  3%     +30.1%      66261 ±  3%  interrupts.CPU25.CAL:Function_call_interrupts
+      9788 ± 11%     +22.0%      11940 ±  7%  interrupts.CPU25.TLB:TLB_shootdowns
+     50882 ±  2%     +30.2%      66235 ±  4%  interrupts.CPU26.CAL:Function_call_interrupts
+     51005           +30.6%      66598 ±  6%  interrupts.CPU27.CAL:Function_call_interrupts
+     51409           +27.3%      65447 ±  5%  interrupts.CPU28.CAL:Function_call_interrupts
+     51061           +30.0%      66375 ±  4%  interrupts.CPU29.CAL:Function_call_interrupts
+     49434 ±  3%     +26.7%      62656 ±  4%  interrupts.CPU3.CAL:Function_call_interrupts
+     50720           +31.4%      66654 ±  4%  interrupts.CPU30.CAL:Function_call_interrupts
+     51178           +31.3%      67202 ±  5%  interrupts.CPU31.CAL:Function_call_interrupts
+     50693 ±  2%     +32.1%      66987 ±  6%  interrupts.CPU32.CAL:Function_call_interrupts
+     50574           +33.1%      67302 ±  4%  interrupts.CPU33.CAL:Function_call_interrupts
+     50294 ±  2%     +37.0%      68886 ±  3%  interrupts.CPU34.CAL:Function_call_interrupts
+     33348 ± 15%     -53.5%      15505 ± 20%  interrupts.CPU34.RES:Rescheduling_interrupts
+      9363 ± 14%     +54.9%      14504 ±  7%  interrupts.CPU34.TLB:TLB_shootdowns
+     51489           +31.2%      67572 ±  5%  interrupts.CPU35.CAL:Function_call_interrupts
+     50404           +34.9%      67973 ±  4%  interrupts.CPU36.CAL:Function_call_interrupts
+      9037 ±  6%     +34.4%      12142 ± 13%  interrupts.CPU36.TLB:TLB_shootdowns
+     52030           +29.1%      67166 ±  5%  interrupts.CPU37.CAL:Function_call_interrupts
+    219.00 ±  6%     +19.3%     261.25 ±  8%  interrupts.CPU38.74:PCI-MSI.31981607-edge.i40e-eth0-TxRx-38
+     51469           +31.6%      67738 ±  4%  interrupts.CPU38.CAL:Function_call_interrupts
+     52479           +32.2%      69376 ±  6%  interrupts.CPU39.CAL:Function_call_interrupts
+     49292 ±  2%     +27.5%      62828 ±  4%  interrupts.CPU4.CAL:Function_call_interrupts
+     52398 ±  3%     +31.1%      68717 ±  5%  interrupts.CPU40.CAL:Function_call_interrupts
+     51368           +34.3%      68992 ±  5%  interrupts.CPU41.CAL:Function_call_interrupts
+     51143           +34.3%      68692 ±  5%  interrupts.CPU42.CAL:Function_call_interrupts
+     50781           +35.9%      69023 ±  5%  interrupts.CPU43.CAL:Function_call_interrupts
+     51994           +34.8%      70068 ±  5%  interrupts.CPU44.CAL:Function_call_interrupts
+     52166           +34.2%      70010 ±  5%  interrupts.CPU45.CAL:Function_call_interrupts
+     63778 ± 10%     -51.8%      30741 ± 62%  interrupts.CPU45.RES:Rescheduling_interrupts
+     50979           +37.4%      70043 ±  4%  interrupts.CPU46.CAL:Function_call_interrupts
+      8717 ± 10%     +34.8%      11751 ±  9%  interrupts.CPU46.TLB:TLB_shootdowns
+     52047           +34.2%      69854 ±  5%  interrupts.CPU47.CAL:Function_call_interrupts
+     38043 ± 34%     -57.5%      16167 ± 19%  interrupts.CPU47.RES:Rescheduling_interrupts
+     52734 ±  5%     +33.2%      70262 ±  5%  interrupts.CPU48.CAL:Function_call_interrupts
+     52017 ±  4%     +35.4%      70428 ±  5%  interrupts.CPU49.CAL:Function_call_interrupts
+     49061 ±  3%     +27.7%      62666 ±  5%  interrupts.CPU5.CAL:Function_call_interrupts
+     52911 ±  4%     +33.4%      70572 ±  4%  interrupts.CPU50.CAL:Function_call_interrupts
+     52317 ±  3%     +35.3%      70796 ±  4%  interrupts.CPU51.CAL:Function_call_interrupts
+    162.75 ± 28%     +53.0%     249.00 ± 26%  interrupts.CPU52.88:PCI-MSI.31981621-edge.i40e-eth0-TxRx-52
+     51758 ±  2%     +37.8%      71344 ±  4%  interrupts.CPU52.CAL:Function_call_interrupts
+     53500 ±  7%     +33.4%      71350 ±  4%  interrupts.CPU53.CAL:Function_call_interrupts
+     53055 ±  4%     +34.6%      71431 ±  4%  interrupts.CPU54.CAL:Function_call_interrupts
+     52696 ±  2%     +37.0%      72214 ±  4%  interrupts.CPU55.CAL:Function_call_interrupts
+    353.50 ± 30%     -30.1%     247.00 ± 10%  interrupts.CPU56.92:PCI-MSI.31981625-edge.i40e-eth0-TxRx-56
+     52234 ±  2%     +39.0%      72622 ±  5%  interrupts.CPU56.CAL:Function_call_interrupts
+     52386 ±  2%     +38.6%      72629 ±  5%  interrupts.CPU57.CAL:Function_call_interrupts
+     52690 ±  5%     +38.8%      73139 ±  4%  interrupts.CPU58.CAL:Function_call_interrupts
+     52458 ±  4%     +41.5%      74240 ±  3%  interrupts.CPU59.CAL:Function_call_interrupts
+     49151 ±  2%     +27.6%      62729 ±  5%  interrupts.CPU6.CAL:Function_call_interrupts
+     53260 ±  5%     +39.9%      74485 ±  4%  interrupts.CPU60.CAL:Function_call_interrupts
+     52369 ±  3%     +42.5%      74637 ±  4%  interrupts.CPU61.CAL:Function_call_interrupts
+     52702 ±  2%     +41.8%      74741 ±  4%  interrupts.CPU62.CAL:Function_call_interrupts
+     52506 ±  3%     +44.0%      75587 ±  4%  interrupts.CPU63.CAL:Function_call_interrupts
+     64174 ± 77%     -73.4%      17058 ± 22%  interrupts.CPU63.RES:Rescheduling_interrupts
+    199.00 ± 20%     +32.2%     263.00 ± 16%  interrupts.CPU64.100:PCI-MSI.31981633-edge.i40e-eth0-TxRx-64
+     52978           +41.9%      75180 ±  5%  interrupts.CPU64.CAL:Function_call_interrupts
+     53057 ±  2%     +43.1%      75930 ±  4%  interrupts.CPU65.CAL:Function_call_interrupts
+    186.00 ± 20%     +45.3%     270.25 ± 15%  interrupts.CPU66.102:PCI-MSI.31981635-edge.i40e-eth0-TxRx-66
+     52732           +45.7%      76822 ±  4%  interrupts.CPU66.CAL:Function_call_interrupts
+      8489 ±  4%     +18.5%      10063 ±  6%  interrupts.CPU66.TLB:TLB_shootdowns
+     52828           +45.1%      76660 ±  4%  interrupts.CPU67.CAL:Function_call_interrupts
+     55361 ± 18%     -51.5%      26858 ± 58%  interrupts.CPU67.RES:Rescheduling_interrupts
+     53993 ±  4%     +43.1%      77270 ±  4%  interrupts.CPU68.CAL:Function_call_interrupts
+    185.00 ± 25%     +43.5%     265.50 ±  9%  interrupts.CPU69.105:PCI-MSI.31981638-edge.i40e-eth0-TxRx-69
+     55097 ±  5%     +43.1%      78872 ±  3%  interrupts.CPU69.CAL:Function_call_interrupts
+     48734 ±  2%     +30.5%      63619 ±  5%  interrupts.CPU7.CAL:Function_call_interrupts
+     10300 ± 18%     +33.5%      13748 ± 14%  interrupts.CPU7.TLB:TLB_shootdowns
+     53283 ±  2%     +47.1%      78406 ±  4%  interrupts.CPU70.CAL:Function_call_interrupts
+     54946 ±  6%     +43.2%      78707 ±  4%  interrupts.CPU71.CAL:Function_call_interrupts
+     56696 ±  2%     +41.4%      80153 ±  4%  interrupts.CPU72.CAL:Function_call_interrupts
+     54954           +48.3%      81488 ±  5%  interrupts.CPU73.CAL:Function_call_interrupts
+     54304           +48.1%      80419 ±  4%  interrupts.CPU74.CAL:Function_call_interrupts
+     55555 ±  2%     +48.1%      82290 ±  6%  interrupts.CPU75.CAL:Function_call_interrupts
+     55435           +45.8%      80815 ±  5%  interrupts.CPU76.CAL:Function_call_interrupts
+     54668           +49.2%      81554 ±  4%  interrupts.CPU77.CAL:Function_call_interrupts
+     54432           +50.5%      81924 ±  5%  interrupts.CPU78.CAL:Function_call_interrupts
+     55232           +51.4%      83610 ±  5%  interrupts.CPU79.CAL:Function_call_interrupts
+     49125 ±  2%     +28.1%      62928 ±  5%  interrupts.CPU8.CAL:Function_call_interrupts
+     54689 ±  2%     +51.6%      82895 ±  5%  interrupts.CPU80.CAL:Function_call_interrupts
+     55099           +51.3%      83373 ±  4%  interrupts.CPU81.CAL:Function_call_interrupts
+     54596           +53.8%      83975 ±  5%  interrupts.CPU82.CAL:Function_call_interrupts
+      9389 ± 13%     +28.6%      12071 ± 14%  interrupts.CPU82.TLB:TLB_shootdowns
+     56002           +49.1%      83509 ±  4%  interrupts.CPU83.CAL:Function_call_interrupts
+     54713           +55.2%      84921 ±  5%  interrupts.CPU84.CAL:Function_call_interrupts
+    513.25 ± 53%     -52.2%     245.50 ± 18%  interrupts.CPU85.121:PCI-MSI.31981654-edge.i40e-eth0-TxRx-85
+     55910 ±  3%     +51.5%      84718 ±  5%  interrupts.CPU85.CAL:Function_call_interrupts
+     55008           +53.7%      84569 ±  4%  interrupts.CPU86.CAL:Function_call_interrupts
+     55946           +52.4%      85236 ±  5%  interrupts.CPU87.CAL:Function_call_interrupts
+     57153 ±  2%     +50.0%      85758 ±  5%  interrupts.CPU88.CAL:Function_call_interrupts
+     55969 ±  2%     +54.4%      86444 ±  4%  interrupts.CPU89.CAL:Function_call_interrupts
+     49276 ±  2%     +27.3%      62729 ±  5%  interrupts.CPU9.CAL:Function_call_interrupts
+     56219           +52.3%      85617 ±  5%  interrupts.CPU90.CAL:Function_call_interrupts
+     56359           +55.2%      87469 ±  4%  interrupts.CPU91.CAL:Function_call_interrupts
+     55887           +55.7%      87012 ±  4%  interrupts.CPU92.CAL:Function_call_interrupts
+     56339           +54.8%      87235 ±  5%  interrupts.CPU93.CAL:Function_call_interrupts
+     55958           +57.2%      87966 ±  4%  interrupts.CPU94.CAL:Function_call_interrupts
+      9443 ± 13%     +23.7%      11682 ±  6%  interrupts.CPU94.TLB:TLB_shootdowns
+     56661 ±  2%     +54.9%      87793 ±  4%  interrupts.CPU95.CAL:Function_call_interrupts
+      8398 ± 50%     -55.1%       3769 ± 58%  interrupts.IWI:IRQ_work_interrupts
+
+
+                                                                                
+                                stress-ng.seccomp.ops                           
+                                                                                
+  16000 +-------------------------------------------------------------------+   
+        |  O O  OO OO O  O OO                                               |   
+  14000 |-O   O        O      O                                             |   
+  12000 |-+                                                                 |   
+        |                                                                   |   
+  10000 |-+                                                                 |   
+        |. +.++.+  ++.++.+.+   +. +.++.+  +.++. +.++.+  ++.+. +.+ .++.++.++.|   
+   8000 |-+     :  :        +.+  +     :  :    +     :  :    +   +          |   
+        |       :  :                   :  :          :  :                   |   
+   6000 |-+     : :                    : :           : :                    |   
+   4000 |-+      ::                     ::            ::                    |   
+        |        ::                     ::            ::                    |   
+   2000 |-+      ::                     ::            ::                    |   
+        |        :                      :             :                     |   
+      0 +-------------------------------------------------------------------+   
+                                                                                
+                                                                                                                                                                
+                            stress-ng.seccomp.ops_per_sec                       
+                                                                                
+  16000 +-------------------------------------------------------------------+   
+        |  O O  OO OO O  O OO                                               |   
+  14000 |-O   O        O      O                                             |   
+  12000 |-+                                                                 |   
+        |                                                                   |   
+  10000 |-+                                                                 |   
+        |. +.++.+  ++.++.+.+   +. +.++.+  +.++. +.++.+  ++.+. +.+ .+ .++.++.|   
+   8000 |-+     :  :        +.+  +     :  :    +     :  :    +   +  +       |   
+        |       :  :                   :  :          :  :                   |   
+   6000 |-+     : :                    : :           : :                    |   
+   4000 |-+      ::                     ::            ::                    |   
+        |        ::                     ::            ::                    |   
+   2000 |-+      ::                     ::            ::                    |   
+        |        :                      :             :                     |   
+      0 +-------------------------------------------------------------------+   
+                                                                                
+                                                                                
+[*] bisect-good sample
+[O] bisect-bad  sample
+
+
+
+Disclaimer:
+Results have been estimated based on internal Intel analysis and are provided
+for informational purposes only. Any difference in system hardware or software
+design or configuration may affect actual performance.
 
 
 Thanks,
 Rong Chen
 
 
---AdjLlRqdF7kYRNze
+--p//XFgTqeVWI1epd
 Content-Type: text/plain; charset=us-ascii
-Content-Disposition: attachment; filename="config-5.6.0-rc1-00017-g92b1f046a283a7"
+Content-Disposition: attachment; filename="config-5.6.0-rc6-00128-g763802b53a427"
 
 #
 # Automatically generated file; DO NOT EDIT.
-# Linux/x86_64 5.6.0-rc1 Kernel Configuration
+# Linux/x86_64 5.6.0-rc6 Kernel Configuration
 #
 
 #
@@ -349,7 +553,7 @@ CONFIG_RD_LZMA=y
 CONFIG_RD_XZ=y
 CONFIG_RD_LZO=y
 CONFIG_RD_LZ4=y
-CONFIG_BOOT_CONFIG=y
+# CONFIG_BOOT_CONFIG is not set
 CONFIG_CC_OPTIMIZE_FOR_PERFORMANCE=y
 # CONFIG_CC_OPTIMIZE_FOR_SIZE is not set
 CONFIG_SYSCTL=y
@@ -873,6 +1077,7 @@ CONFIG_HAVE_KVM_IRQ_BYPASS=y
 CONFIG_HAVE_KVM_NO_POLL=y
 CONFIG_VIRTUALIZATION=y
 CONFIG_KVM=m
+CONFIG_KVM_WERROR=y
 CONFIG_KVM_INTEL=m
 CONFIG_KVM_AMD=m
 CONFIG_KVM_AMD_SEV=y
@@ -6520,7 +6725,6 @@ CONFIG_R8712U=m
 # Android
 #
 # CONFIG_ASHMEM is not set
-# CONFIG_ANDROID_VSOC is not set
 CONFIG_ION=y
 CONFIG_ION_SYSTEM_HEAP=y
 # CONFIG_ION_CMA_HEAP is not set
@@ -8070,7 +8274,6 @@ CONFIG_IRQ_POLL=y
 CONFIG_MPILIB=y
 CONFIG_SIGNATURE=y
 CONFIG_DIMLIB=y
-CONFIG_LIBXBC=y
 CONFIG_OID_REGISTRY=y
 CONFIG_UCS2_STRING=y
 CONFIG_HAVE_GENERIC_VDSO=y
@@ -8278,7 +8481,7 @@ CONFIG_TRACING=y
 CONFIG_GENERIC_TRACER=y
 CONFIG_TRACING_SUPPORT=y
 CONFIG_FTRACE=y
-CONFIG_BOOTTIME_TRACING=y
+# CONFIG_BOOTTIME_TRACING is not set
 CONFIG_FUNCTION_TRACER=y
 CONFIG_FUNCTION_GRAPH_TRACER=y
 CONFIG_DYNAMIC_FTRACE=y
@@ -8419,7 +8622,7 @@ CONFIG_TEST_LIVEPATCH=m
 # end of Kernel Testing and Coverage
 # end of Kernel hacking
 
---AdjLlRqdF7kYRNze
+--p//XFgTqeVWI1epd
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: attachment; filename=job-script
 
@@ -8427,65 +8630,74 @@ Content-Disposition: attachment; filename=job-script
 
 export_top_env()
 {
-	export suite='kernel-selftests'
-	export testcase='kernel-selftests'
-	export category='functional'
-	export need_memory='2G'
-	export need_cpu=2
-	export kernel_cmdline='erst_disable'
-	export job_origin='/lkp/lkp/.src-20200318-071257/allot/cyclic:vm-p1:linux-devel:devel-hourly/vm-snb/kernel-selftests.yaml'
+	export suite='stress-ng'
+	export testcase='stress-ng'
+	export category='benchmark'
+	export nr_threads=96
+	export testtime=1
+	export job_origin='/lkp/lkp/.src-20200320-113654/allot/cyclic:p1:linux-devel:devel-hourly/lkp-csl-2sp5/stress-ng.yaml'
 	export queue_cmdline_keys='branch
 commit
 queue_at_least_once'
 	export queue='validate'
-	export testbox='vm-snb-32'
-	export tbox_group='vm-snb'
-	export nr_vm=64
-	export submit_id='5e75d04817c5711d58180250'
-	export job_file='/lkp/jobs/scheduled/vm-snb-32/kernel-selftests-kselftests-00-debian-x86_64-20191114.cgz-92b1f046a283a7dafd30067d93444fb6402b42d7-20200321-7512-1w7cb8l-3.yaml'
-	export id='deb88aab3ea11b952abd1643df166361d063ae80'
+	export testbox='lkp-csl-2sp5'
+	export tbox_group='lkp-csl-2sp5'
+	export submit_id='5e79581cf4ea2cd523399b2a'
+	export job_file='/lkp/jobs/scheduled/lkp-csl-2sp5/stress-ng-os-performance-1HDD-ext4-100%-1s-ucode=0x500002c-debian-x86_64-20191114.cgz-763802b53a427ed3cbd419dbba255c414fdd9e7c-20200324-54563-1rfsaj7-3.yaml'
+	export id='1ce97bd20b5d9d5e4b40e29b07aec6575d8ba6a1'
 	export queuer_version='/lkp-src'
-	export model='qemu-system-x86_64 -enable-kvm -cpu SandyBridge'
-	export nr_cpu=2
-	export memory='8G'
-	export hdd_partitions='/dev/vda /dev/vdb /dev/vdc /dev/vdd /dev/vde /dev/vdf'
-	export swap_partitions='/dev/vdg'
-	export commit='92b1f046a283a7dafd30067d93444fb6402b42d7'
-	export need_kconfig='CONFIG_KVM_GUEST=y
-CONFIG_ANDROID=y ~ v(3\.[3-9]|3\.1[0-9]|4\.|5\.)
-CONFIG_ION=y ~ v(3\.1[4-9]|4\.|5\.)
-CONFIG_ION_SYSTEM_HEAP=y ~ v(4\.1[2-9]|4\.20|5\.)'
-	export ssh_base_port=23032
-	export need_kernel_headers=true
-	export need_kernel_selftests=true
+	export model='Cascade Lake'
+	export nr_node=2
+	export nr_cpu=96
+	export memory='192G'
+	export nr_hdd_partitions=1
+	export nr_ssd_partitions=1
+	export hdd_partitions='/dev/disk/by-id/ata-ST1000NM0011_Z1N2QGYK-part5'
+	export ssd_partitions='/dev/disk/by-id/ata-INTEL_SSDSC2BB800G4_PHWL4204006P800RGN-part1'
+	export swap_partitions=
+	export rootfs_partition='/dev/disk/by-id/ata-ST1000NM0011_Z1N2QGYK-part3'
+	export brand='Intel(R) Xeon(R) Gold 6252 CPU @ 2.10GHz'
+	export need_kconfig='CONFIG_BLK_DEV_SD
+CONFIG_SCSI
+CONFIG_BLOCK=y
+CONFIG_SATA_AHCI
+CONFIG_SATA_AHCI_PLATFORM
+CONFIG_ATA
+CONFIG_PCI=y
+CONFIG_SECURITY_APPARMOR=y
+CONFIG_EXT4_FS'
+	export commit='763802b53a427ed3cbd419dbba255c414fdd9e7c'
+	export need_kconfig_hw='CONFIG_I40E=y
+CONFIG_SATA_AHCI'
+	export ucode='0x500002c'
 	export kconfig='x86_64-rhel-7.6'
 	export compiler='gcc-7'
-	export enqueue_time='2020-03-21 16:28:58 +0800'
-	export _id='5e75d04b17c5711d58180251'
-	export _rt='/result/kernel-selftests/kselftests-00/vm-snb/debian-x86_64-20191114.cgz/x86_64-rhel-7.6/gcc-7/92b1f046a283a7dafd30067d93444fb6402b42d7'
+	export enqueue_time='2020-03-24 08:45:20 +0800'
+	export _id='5e795820f4ea2cd523399b2b'
+	export _rt='/result/stress-ng/os-performance-1HDD-ext4-100%-1s-ucode=0x500002c/lkp-csl-2sp5/debian-x86_64-20191114.cgz/x86_64-rhel-7.6/gcc-7/763802b53a427ed3cbd419dbba255c414fdd9e7c'
 	export user='lkp'
-	export head_commit='f2898ca084d2e42d4b3342c39400c32182f16519'
-	export base_commit='2c523b344dfa65a3738e7039832044aa133c75fb'
-	export branch='linux-devel/devel-hourly-2020031614'
+	export head_commit='df4cf97517149b1ae0bac95f20714320e235933c'
+	export base_commit='16fbf79b0f83bc752cee8589279f1ebfe57b3b6e'
+	export branch='linux-devel/devel-hourly-2020032315'
 	export rootfs='debian-x86_64-20191114.cgz'
-	export result_root='/result/kernel-selftests/kselftests-00/vm-snb/debian-x86_64-20191114.cgz/x86_64-rhel-7.6/gcc-7/92b1f046a283a7dafd30067d93444fb6402b42d7/3'
-	export scheduler_version='/lkp/lkp/.src-20200320-113654'
+	export result_root='/result/stress-ng/os-performance-1HDD-ext4-100%-1s-ucode=0x500002c/lkp-csl-2sp5/debian-x86_64-20191114.cgz/x86_64-rhel-7.6/gcc-7/763802b53a427ed3cbd419dbba255c414fdd9e7c/3'
+	export scheduler_version='/lkp/lkp/.src-20200323-150728'
 	export LKP_SERVER='inn'
 	export arch='x86_64'
-	export max_uptime=3600
+	export max_uptime=2019.6
 	export initrd='/osimage/debian/debian-x86_64-20191114.cgz'
 	export bootloader_append='root=/dev/ram0
 user=lkp
-job=/lkp/jobs/scheduled/vm-snb-32/kernel-selftests-kselftests-00-debian-x86_64-20191114.cgz-92b1f046a283a7dafd30067d93444fb6402b42d7-20200321-7512-1w7cb8l-3.yaml
+job=/lkp/jobs/scheduled/lkp-csl-2sp5/stress-ng-os-performance-1HDD-ext4-100%-1s-ucode=0x500002c-debian-x86_64-20191114.cgz-763802b53a427ed3cbd419dbba255c414fdd9e7c-20200324-54563-1rfsaj7-3.yaml
 ARCH=x86_64
 kconfig=x86_64-rhel-7.6
-branch=linux-devel/devel-hourly-2020031614
-commit=92b1f046a283a7dafd30067d93444fb6402b42d7
-BOOT_IMAGE=/pkg/linux/x86_64-rhel-7.6/gcc-7/92b1f046a283a7dafd30067d93444fb6402b42d7/vmlinuz-5.6.0-rc1-00017-g92b1f046a283a7
-erst_disable
-max_uptime=3600
-RESULT_ROOT=/result/kernel-selftests/kselftests-00/vm-snb/debian-x86_64-20191114.cgz/x86_64-rhel-7.6/gcc-7/92b1f046a283a7dafd30067d93444fb6402b42d7/3
+branch=linux-devel/devel-hourly-2020032315
+commit=763802b53a427ed3cbd419dbba255c414fdd9e7c
+BOOT_IMAGE=/pkg/linux/x86_64-rhel-7.6/gcc-7/763802b53a427ed3cbd419dbba255c414fdd9e7c/vmlinuz-5.6.0-rc6-00128-g763802b53a427
+max_uptime=2019
+RESULT_ROOT=/result/stress-ng/os-performance-1HDD-ext4-100%-1s-ucode=0x500002c/lkp-csl-2sp5/debian-x86_64-20191114.cgz/x86_64-rhel-7.6/gcc-7/763802b53a427ed3cbd419dbba255c414fdd9e7c/3
 LKP_SERVER=inn
+nokaslr
 selinux=0
 debug
 apic=debug
@@ -8507,20 +8719,19 @@ earlyprintk=ttyS0,115200
 console=ttyS0,115200
 vga=normal
 rw'
-	export modules_initrd='/pkg/linux/x86_64-rhel-7.6/gcc-7/92b1f046a283a7dafd30067d93444fb6402b42d7/modules.cgz'
-	export bm_initrd='/osimage/deps/debian-x86_64-20180403.cgz/run-ipconfig_2018-04-03.cgz,/osimage/deps/debian-x86_64-20180403.cgz/lkp_2019-08-05.cgz,/osimage/deps/debian-x86_64-20180403.cgz/rsync-rootfs_2018-04-03.cgz,/osimage/deps/debian-x86_64-20180403.cgz/kernel-selftests_20200313.cgz,/osimage/pkg/debian-x86_64-20180403.cgz/kernel-selftests-x86_64-92cfe326-1_20200310.cgz'
-	export linux_headers_initrd='/pkg/linux/x86_64-rhel-7.6/gcc-7/92b1f046a283a7dafd30067d93444fb6402b42d7/linux-headers.cgz'
-	export linux_selftests_initrd='/pkg/linux/x86_64-rhel-7.6/gcc-7/92b1f046a283a7dafd30067d93444fb6402b42d7/linux-selftests.cgz'
+	export modules_initrd='/pkg/linux/x86_64-rhel-7.6/gcc-7/763802b53a427ed3cbd419dbba255c414fdd9e7c/modules.cgz'
+	export bm_initrd='/osimage/deps/debian-x86_64-20180403.cgz/run-ipconfig_2018-04-03.cgz,/osimage/deps/debian-x86_64-20180403.cgz/lkp_2019-08-05.cgz,/osimage/deps/debian-x86_64-20180403.cgz/rsync-rootfs_2018-04-03.cgz,/osimage/deps/debian-x86_64-20180403.cgz/stress-ng_20200304.cgz,/osimage/pkg/debian-x86_64-20180403.cgz/stress-ng-x86_64-0.09-58_20200305.cgz,/osimage/deps/debian-x86_64-20180403.cgz/mpstat_2020-01-03.cgz,/osimage/deps/debian-x86_64-20180403.cgz/vmstat_2020-01-07.cgz,/osimage/deps/debian-x86_64-20180403.cgz/perf_2020-01-04.cgz,/osimage/pkg/debian-x86_64-20180403.cgz/perf-x86_64-98d54f81e36b-1_20200302.cgz,/osimage/pkg/debian-x86_64-20180403.cgz/sar-x86_64-e011d97-1_2020-01-03.cgz,/osimage/deps/debian-x86_64-20180403.cgz/fs_2020-01-02.cgz,/osimage/deps/debian-x86_64-20180403.cgz/hw_2020-01-02.cgz'
 	export lkp_initrd='/osimage/user/lkp/lkp-x86_64.cgz'
 	export site='inn'
 	export LKP_CGI_PORT=80
 	export LKP_CIFS_PORT=139
+	export last_kernel='5.6.0-rc7-08021-gdf4cf97517149'
 	export repeat_to=4
 	export schedule_notify_address=
 	export queue_at_least_once=1
-	export kernel='/pkg/linux/x86_64-rhel-7.6/gcc-7/92b1f046a283a7dafd30067d93444fb6402b42d7/vmlinuz-5.6.0-rc1-00017-g92b1f046a283a7'
-	export dequeue_time='2020-03-21 16:30:04 +0800'
-	export job_initrd='/lkp/jobs/scheduled/vm-snb-32/kernel-selftests-kselftests-00-debian-x86_64-20191114.cgz-92b1f046a283a7dafd30067d93444fb6402b42d7-20200321-7512-1w7cb8l-3.cgz'
+	export kernel='/pkg/linux/x86_64-rhel-7.6/gcc-7/763802b53a427ed3cbd419dbba255c414fdd9e7c/vmlinuz-5.6.0-rc6-00128-g763802b53a427'
+	export dequeue_time='2020-03-24 09:06:35 +0800'
+	export job_initrd='/lkp/jobs/scheduled/lkp-csl-2sp5/stress-ng-os-performance-1HDD-ext4-100%-1s-ucode=0x500002c-debian-x86_64-20191114.cgz-763802b53a427ed3cbd419dbba255c414fdd9e7c-20200324-54563-1rfsaj7-3.cgz'
 
 	[ -n "$LKP_SRC" ] ||
 	export LKP_SRC=/lkp/${user:-lkp}/src
@@ -8536,13 +8747,41 @@ run_job()
 
 	export_top_env
 
+	run_setup nr_hdd=1 $LKP_SRC/setup/disk
+
+	run_setup $LKP_SRC/setup/cpufreq_governor 'performance'
+
+	run_setup fs='ext4' $LKP_SRC/setup/fs
+
 	run_monitor $LKP_SRC/monitors/wrapper kmsg
+	run_monitor $LKP_SRC/monitors/no-stdout/wrapper boot-time
+	run_monitor $LKP_SRC/monitors/wrapper iostat
 	run_monitor $LKP_SRC/monitors/wrapper heartbeat
+	run_monitor $LKP_SRC/monitors/wrapper vmstat
+	run_monitor $LKP_SRC/monitors/wrapper numa-numastat
+	run_monitor $LKP_SRC/monitors/wrapper numa-vmstat
+	run_monitor $LKP_SRC/monitors/wrapper numa-meminfo
+	run_monitor $LKP_SRC/monitors/wrapper proc-vmstat
+	run_monitor $LKP_SRC/monitors/wrapper proc-stat
 	run_monitor $LKP_SRC/monitors/wrapper meminfo
+	run_monitor $LKP_SRC/monitors/wrapper slabinfo
+	run_monitor $LKP_SRC/monitors/wrapper interrupts
+	run_monitor $LKP_SRC/monitors/wrapper lock_stat
+	run_monitor $LKP_SRC/monitors/wrapper latency_stats
+	run_monitor $LKP_SRC/monitors/wrapper softirqs
+	run_monitor $LKP_SRC/monitors/one-shot/wrapper bdi_dev_mapping
+	run_monitor $LKP_SRC/monitors/wrapper diskstats
+	run_monitor $LKP_SRC/monitors/wrapper nfsstat
+	run_monitor $LKP_SRC/monitors/wrapper cpuidle
+	run_monitor $LKP_SRC/monitors/wrapper cpufreq-stats
+	run_monitor $LKP_SRC/monitors/wrapper sched_debug
+	run_monitor $LKP_SRC/monitors/wrapper perf-stat
+	run_monitor $LKP_SRC/monitors/wrapper mpstat
+	run_monitor $LKP_SRC/monitors/no-stdout/wrapper perf-profile
 	run_monitor $LKP_SRC/monitors/wrapper oom-killer
 	run_monitor $LKP_SRC/monitors/plain/watchdog
 
-	run_test group='kselftests-00' $LKP_SRC/tests/wrapper kernel-selftests
+	run_test class='os' $LKP_SRC/tests/wrapper stress-ng
 }
 
 extract_stats()
@@ -8550,11 +8789,30 @@ extract_stats()
 	export stats_part_begin=
 	export stats_part_end=
 
-	$LKP_SRC/stats/wrapper kernel-selftests
+	$LKP_SRC/stats/wrapper stress-ng
 	$LKP_SRC/stats/wrapper kmsg
+	$LKP_SRC/stats/wrapper boot-time
+	$LKP_SRC/stats/wrapper iostat
+	$LKP_SRC/stats/wrapper vmstat
+	$LKP_SRC/stats/wrapper numa-numastat
+	$LKP_SRC/stats/wrapper numa-vmstat
+	$LKP_SRC/stats/wrapper numa-meminfo
+	$LKP_SRC/stats/wrapper proc-vmstat
 	$LKP_SRC/stats/wrapper meminfo
+	$LKP_SRC/stats/wrapper slabinfo
+	$LKP_SRC/stats/wrapper interrupts
+	$LKP_SRC/stats/wrapper lock_stat
+	$LKP_SRC/stats/wrapper latency_stats
+	$LKP_SRC/stats/wrapper softirqs
+	$LKP_SRC/stats/wrapper diskstats
+	$LKP_SRC/stats/wrapper nfsstat
+	$LKP_SRC/stats/wrapper cpuidle
+	$LKP_SRC/stats/wrapper sched_debug
+	$LKP_SRC/stats/wrapper perf-stat
+	$LKP_SRC/stats/wrapper mpstat
+	$LKP_SRC/stats/wrapper perf-profile
 
-	$LKP_SRC/stats/wrapper time kernel-selftests.time
+	$LKP_SRC/stats/wrapper time stress-ng.time
 	$LKP_SRC/stats/wrapper dmesg
 	$LKP_SRC/stats/wrapper kmsg
 	$LKP_SRC/stats/wrapper last_state
@@ -8564,538 +8822,204 @@ extract_stats()
 
 "$@"
 
---AdjLlRqdF7kYRNze
-Content-Type: application/x-xz
-Content-Disposition: attachment; filename="dmesg.xz"
-Content-Transfer-Encoding: base64
+--p//XFgTqeVWI1epd
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: attachment; filename="job.yaml"
 
-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
-AAAABFla
+---
 
---AdjLlRqdF7kYRNze--
+#! jobs/stress-ng.yaml
+suite: stress-ng
+testcase: stress-ng
+category: benchmark
+nr_threads: 100%
+disk: 1HDD
+testtime: 1s
+stress-ng:
+  class: os
+job_origin: "/lkp/lkp/.src-20200320-113654/allot/cyclic:p1:linux-devel:devel-hourly/lkp-csl-2sp5/stress-ng.yaml"
+
+#! queue options
+queue_cmdline_keys:
+- branch
+- commit
+- queue_at_least_once
+queue: bisect
+testbox: lkp-csl-2sp5
+tbox_group: lkp-csl-2sp5
+submit_id: 5e78f92ff4ea2cce68262a32
+job_file: "/lkp/jobs/scheduled/lkp-csl-2sp5/stress-ng-os-performance-1HDD-ext4-100%-1s-ucode=0x500002c-debian-x86_64-20191114.cgz-763802b53a427ed3cbd419dbba255c414fdd9e7c-20200324-52840-19oxle3-0.yaml"
+id: a55ddcd7f96ebbea9c0a03ca836ac9d88c22b367
+queuer_version: "/lkp-src"
+
+#! hosts/lkp-csl-2sp5
+model: Cascade Lake
+nr_node: 2
+nr_cpu: 96
+memory: 192G
+nr_hdd_partitions: 1
+nr_ssd_partitions: 1
+hdd_partitions: "/dev/disk/by-id/ata-ST1000NM0011_Z1N2QGYK-part5"
+ssd_partitions: "/dev/disk/by-id/ata-INTEL_SSDSC2BB800G4_PHWL4204006P800RGN-part1"
+swap_partitions: 
+rootfs_partition: "/dev/disk/by-id/ata-ST1000NM0011_Z1N2QGYK-part3"
+brand: Intel(R) Xeon(R) Gold 6252 CPU @ 2.10GHz
+
+#! include/category/benchmark
+kmsg: 
+boot-time: 
+iostat: 
+heartbeat: 
+vmstat: 
+numa-numastat: 
+numa-vmstat: 
+numa-meminfo: 
+proc-vmstat: 
+proc-stat: 
+meminfo: 
+slabinfo: 
+interrupts: 
+lock_stat: 
+latency_stats: 
+softirqs: 
+bdi_dev_mapping: 
+diskstats: 
+nfsstat: 
+cpuidle: 
+cpufreq-stats: 
+sched_debug: 
+perf-stat: 
+mpstat: 
+perf-profile: 
+
+#! include/category/ALL
+cpufreq_governor: performance
+
+#! include/disk/nr_hdd
+need_kconfig:
+- CONFIG_BLK_DEV_SD
+- CONFIG_SCSI
+- CONFIG_BLOCK=y
+- CONFIG_SATA_AHCI
+- CONFIG_SATA_AHCI_PLATFORM
+- CONFIG_ATA
+- CONFIG_PCI=y
+- CONFIG_SECURITY_APPARMOR=y
+- CONFIG_EXT4_FS
+
+#! include/stress-ng
+
+#! include/queue/cyclic
+commit: 763802b53a427ed3cbd419dbba255c414fdd9e7c
+
+#! include/testbox/lkp-csl-2sp5
+need_kconfig_hw:
+- CONFIG_I40E=y
+- CONFIG_SATA_AHCI
+ucode: '0x500002c'
+
+#! include/fs/OTHERS
+fs: ext4
+
+#! default params
+kconfig: x86_64-rhel-7.6
+compiler: gcc-7
+enqueue_time: 2020-03-24 02:00:18.917684325 +08:00
+_id: 5e78f92ff4ea2cce68262a32
+_rt: "/result/stress-ng/os-performance-1HDD-ext4-100%-1s-ucode=0x500002c/lkp-csl-2sp5/debian-x86_64-20191114.cgz/x86_64-rhel-7.6/gcc-7/763802b53a427ed3cbd419dbba255c414fdd9e7c"
+
+#! schedule options
+user: lkp
+head_commit: df4cf97517149b1ae0bac95f20714320e235933c
+base_commit: 16fbf79b0f83bc752cee8589279f1ebfe57b3b6e
+branch: linux-devel/devel-hourly-2020032315
+rootfs: debian-x86_64-20191114.cgz
+result_root: "/result/stress-ng/os-performance-1HDD-ext4-100%-1s-ucode=0x500002c/lkp-csl-2sp5/debian-x86_64-20191114.cgz/x86_64-rhel-7.6/gcc-7/763802b53a427ed3cbd419dbba255c414fdd9e7c/0"
+scheduler_version: "/lkp/lkp/.src-20200323-150728"
+LKP_SERVER: inn
+arch: x86_64
+max_uptime: 2019.6
+initrd: "/osimage/debian/debian-x86_64-20191114.cgz"
+bootloader_append:
+- root=/dev/ram0
+- user=lkp
+- job=/lkp/jobs/scheduled/lkp-csl-2sp5/stress-ng-os-performance-1HDD-ext4-100%-1s-ucode=0x500002c-debian-x86_64-20191114.cgz-763802b53a427ed3cbd419dbba255c414fdd9e7c-20200324-52840-19oxle3-0.yaml
+- ARCH=x86_64
+- kconfig=x86_64-rhel-7.6
+- branch=linux-devel/devel-hourly-2020032315
+- commit=763802b53a427ed3cbd419dbba255c414fdd9e7c
+- BOOT_IMAGE=/pkg/linux/x86_64-rhel-7.6/gcc-7/763802b53a427ed3cbd419dbba255c414fdd9e7c/vmlinuz-5.6.0-rc6-00128-g763802b53a427
+- max_uptime=2019
+- RESULT_ROOT=/result/stress-ng/os-performance-1HDD-ext4-100%-1s-ucode=0x500002c/lkp-csl-2sp5/debian-x86_64-20191114.cgz/x86_64-rhel-7.6/gcc-7/763802b53a427ed3cbd419dbba255c414fdd9e7c/0
+- LKP_SERVER=inn
+- nokaslr
+- selinux=0
+- debug
+- apic=debug
+- sysrq_always_enabled
+- rcupdate.rcu_cpu_stall_timeout=100
+- net.ifnames=0
+- printk.devkmsg=on
+- panic=-1
+- softlockup_panic=1
+- nmi_watchdog=panic
+- oops=panic
+- load_ramdisk=2
+- prompt_ramdisk=0
+- drbd.minor_count=8
+- systemd.log_level=err
+- ignore_loglevel
+- console=tty0
+- earlyprintk=ttyS0,115200
+- console=ttyS0,115200
+- vga=normal
+- rw
+modules_initrd: "/pkg/linux/x86_64-rhel-7.6/gcc-7/763802b53a427ed3cbd419dbba255c414fdd9e7c/modules.cgz"
+bm_initrd: "/osimage/deps/debian-x86_64-20180403.cgz/run-ipconfig_2018-04-03.cgz,/osimage/deps/debian-x86_64-20180403.cgz/lkp_2019-08-05.cgz,/osimage/deps/debian-x86_64-20180403.cgz/rsync-rootfs_2018-04-03.cgz,/osimage/deps/debian-x86_64-20180403.cgz/stress-ng_20200304.cgz,/osimage/pkg/debian-x86_64-20180403.cgz/stress-ng-x86_64-0.09-58_20200305.cgz,/osimage/deps/debian-x86_64-20180403.cgz/mpstat_2020-01-03.cgz,/osimage/deps/debian-x86_64-20180403.cgz/vmstat_2020-01-07.cgz,/osimage/deps/debian-x86_64-20180403.cgz/perf_2020-01-04.cgz,/osimage/pkg/debian-x86_64-20180403.cgz/perf-x86_64-98d54f81e36b-1_20200302.cgz,/osimage/pkg/debian-x86_64-20180403.cgz/sar-x86_64-e011d97-1_2020-01-03.cgz,/osimage/deps/debian-x86_64-20180403.cgz/fs_2020-01-02.cgz,/osimage/deps/debian-x86_64-20180403.cgz/hw_2020-01-02.cgz"
+lkp_initrd: "/osimage/user/lkp/lkp-x86_64.cgz"
+site: inn
+
+#! /lkp/lkp/.src-20200323-150728/include/site/inn
+LKP_CGI_PORT: 80
+LKP_CIFS_PORT: 139
+oom-killer: 
+watchdog: 
+
+#! runtime status
+last_kernel: 5.6.0-rc7
+repeat_to: 2
+schedule_notify_address: 
+
+#! user overrides
+queue_at_least_once: 0
+kernel: "/pkg/linux/x86_64-rhel-7.6/gcc-7/763802b53a427ed3cbd419dbba255c414fdd9e7c/vmlinuz-5.6.0-rc6-00128-g763802b53a427"
+dequeue_time: 2020-03-24 02:35:13.441043625 +08:00
+job_state: failed
+loadavg: 95.71 67.56 28.15 1/2142 64324
+start_time: '1584988576'
+end_time: '1584988759'
+version: "/lkp/lkp/.src-20200323-150801:f24e4302:c9cd449c9"
+
+--p//XFgTqeVWI1epd
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: attachment; filename=reproduce
+
+
+for cpu_dir in /sys/devices/system/cpu/cpu[0-9]*
+do
+	online_file="$cpu_dir"/online
+	[ -f "$online_file" ] && [ "$(cat "$online_file")" -eq 0 ] && continue
+
+	file="$cpu_dir"/cpufreq/scaling_governor
+	[ -f "$file" ] && echo "performance" > "$file"
+done
+
+dmsetup remove_all
+wipefs -a --force /dev/sda5
+mkfs -t ext4 -q -F /dev/sda5
+mkdir -p /fs/sda5
+modprobe ext4
+mount -t ext4 /dev/sda5 /fs/sda5
+ "stress-ng" "--timeout" "1" "--times" "--verify" "--metrics-brief" "--sequential" "96" "--class" "os" "--minimize" "--exclude" "spawn,exec"
+
+--p//XFgTqeVWI1epd--
