@@ -2,314 +2,146 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A949F19173B
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 18:08:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 49FD1191741
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 18:08:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727389AbgCXRH2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 13:07:28 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:40442 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727133AbgCXRH1 (ORCPT
+        id S1727540AbgCXRIK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 13:08:10 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:52102 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725767AbgCXRIJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 13:07:27 -0400
-Received: by mail-pg1-f196.google.com with SMTP id t24so9328022pgj.7
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Mar 2020 10:07:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=z5FlNvobQwsE4JjWwpB9xpnt659VvIIkODecw7v6xFU=;
-        b=g5cCE+a9rK7Ol3/MxK290vxkbvYcslScmw4Nr9qn3XZwu0ijTMP1z+PmlO2i4DUDuh
-         odbIuC0CQyRRX7C5AXGljZt1f+6k0bOrmGL9+BeEH/y85DaCvC5iPR+d4fFkjOYlrAip
-         6l7sYzFlH0UWA+QzlWXS29QFzJq98TXQ3GR0U=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=z5FlNvobQwsE4JjWwpB9xpnt659VvIIkODecw7v6xFU=;
-        b=XEI7cCmstjtsrSdwh9xDiSy2iD+Ex2tAFFr5Ikb5ivy5sAhv+W9ktAMnrZkReqbtU3
-         +HYyWb0V+HR/fVhXtmW1O7eiGMEQZyUXj3bCz9tXg+Bbv9SPOvqPBUjfqkTu6pAwklq4
-         7kBKvyvwg8MWhVCJ2GtdADNGu6OlhNRddK+gaX/Ejljvaswjx9dhepIhFOZhcsDVREh1
-         VYAEbA09TlSvHGvbTs+PGHVclLcGurNwp/tlvPoDFuGvSl1RibG6Q/Fl/7vP20huzThy
-         6p6JASKKiuGP4brqBw++Rez6LKY7hnF15VYboolKAruUlIpNtVjB1E0Ir+iAqJBzS5YG
-         TrMw==
-X-Gm-Message-State: ANhLgQ2ru11DhF7fRLtMCBsyK1JHXBeKuDVzK0D+MOQtj4k8Gi2snhaw
-        t9tjb92fdkLmo2ob3pCsCYqm8Q==
-X-Google-Smtp-Source: ADFU+vtvr3BmpQ0r7UliDraOCB+NrvbJdWBUhpXYn1ZRKokM7FeOB5RH8ZUN3z/vSykcaXGb+X2LTQ==
-X-Received: by 2002:a62:3786:: with SMTP id e128mr31547438pfa.124.1585069645419;
-        Tue, 24 Mar 2020 10:07:25 -0700 (PDT)
-Received: from localhost ([2620:15c:202:1:4fff:7a6b:a335:8fde])
-        by smtp.gmail.com with ESMTPSA id x15sm16047493pfq.107.2020.03.24.10.07.24
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 24 Mar 2020 10:07:24 -0700 (PDT)
-Date:   Tue, 24 Mar 2020 10:07:22 -0700
-From:   Matthias Kaehlcke <mka@chromium.org>
-To:     "Sandeep Maheswaram (Temp)" <sanm@codeaurora.org>
-Cc:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Felipe Balbi <balbi@kernel.org>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Doug Anderson <dianders@chromium.org>,
-        linux-arm-msm@vger.kernel.org, linux-usb@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Manu Gautam <mgautam@codeaurora.org>,
-        Chandana Kishori Chiluveru <cchiluve@codeaurora.org>
-Subject: Re: [PATCH v5 2/3] usb: dwc3: qcom: Add interconnect support in dwc3
- driver
-Message-ID: <20200324170722.GD204494@google.com>
-References: <1581668684-4182-1-git-send-email-sanm@codeaurora.org>
- <1581668684-4182-3-git-send-email-sanm@codeaurora.org>
- <20200214201154.GB15781@google.com>
- <d381164d-b749-4c93-de6d-72eca3e51341@codeaurora.org>
+        Tue, 24 Mar 2020 13:08:09 -0400
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: eballetbo)
+        with ESMTPSA id AB285296B66
+Subject: Re: [PATCH v2] platform: x86: Add ACPI driver for ChromeOS
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org, vbendeb@chromium.org,
+        groeck@chromium.org, bleung@chromium.org, dtor@chromium.org,
+        gwendal@chromium.org, andy@infradead.org,
+        Collabora Kernel ML <kernel@collabora.com>,
+        Ayman Bagabas <ayman.bagabas@gmail.com>,
+        Darren Hart <dvhart@infradead.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Jeremy Soller <jeremy@system76.com>,
+        Mattias Jacobsson <2pi@mok.nu>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Rajat Jain <rajatja@google.com>,
+        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+        Yauhen Kharuzhy <jekhor@gmail.com>,
+        platform-driver-x86@vger.kernel.org
+References: <20200322094334.1872663-1-enric.balletbo@collabora.com>
+ <20200322111022.GA72939@kroah.com>
+ <c480f318-c326-d51c-e757-c65c2526ab4d@collabora.com>
+ <20200324164956.GE2518746@kroah.com>
+From:   Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Message-ID: <3444110c-d6c0-16df-9b5d-12578ed442c5@collabora.com>
+Date:   Tue, 24 Mar 2020 18:08:03 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
+In-Reply-To: <20200324164956.GE2518746@kroah.com>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <d381164d-b749-4c93-de6d-72eca3e51341@codeaurora.org>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 16, 2020 at 03:11:32PM +0530, Sandeep Maheswaram (Temp) wrote:
-> Hi Matthias
+Hi Greg,
+
+On 24/3/20 17:49, Greg Kroah-Hartman wrote:
+> On Tue, Mar 24, 2020 at 05:31:10PM +0100, Enric Balletbo i Serra wrote:
+>> Hi Greg,
+>>
+>> Many thanks for your quick answer, some comments below.
+>>
+>> On 22/3/20 12:10, Greg Kroah-Hartman wrote:
+>>> On Sun, Mar 22, 2020 at 10:43:34AM +0100, Enric Balletbo i Serra wrote:
+>>>> This driver attaches to the ChromeOS ACPI device and then exports the values
+>>>> reported by the ACPI in a sysfs directory. The ACPI values are presented in
+>>>> the string form (numbers as decimal values) or binary blobs, and can be
+>>>> accessed as the contents of the appropriate read only files in the sysfs
+>>>> directory tree originating in /sys/devices/platform/chromeos_acpi.
+>>>>
+>>>> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+>>>
+>>> What is wrong with the "default" ACPI sysfs access?  Why do you need a
+>>> special driver just for this specific ACPI firmware?
+>>>
+>>
+>> Please correct me if I am wrong, as I'm not an ACPI expert and I probably have
+>> some ACPI leaks and misunderstandings.
+>>
+>> What is exporting this driver is the attributes for the non-default Chromebook
+>> specific MLST ACPI method. Hence, I assumed we needed a special driver to expose
+>> these values that can't be done using "default" ACPI sysfs. Note that these
+>> attributes are dynamically created and are different between Chromebooks so need
+>> some parsing.
+>>
+>> I didn't find a "standard" way to expose these attributes to userspace, so,
+>> please kindly point me to one if there is one.
 > 
-> On 2/15/2020 1:41 AM, Matthias Kaehlcke wrote:
-> > Hi Sandeep,
-> > 
-> > On Fri, Feb 14, 2020 at 01:54:43PM +0530, Sandeep Maheswaram wrote:
-> > > Add interconnect support in dwc3-qcom driver to vote for bus
-> > > bandwidth.
-> > > 
-> > > This requires for two different paths - from USB master to
-> > > DDR slave. The other is from APPS master to USB slave.
-> > > 
-> > > Signed-off-by: Sandeep Maheswaram <sanm@codeaurora.org>
-> > > Signed-off-by: Chandana Kishori Chiluveru <cchiluve@codeaurora.org>
-> > > ---
-> > >   drivers/usb/dwc3/dwc3-qcom.c | 135 ++++++++++++++++++++++++++++++++++++++++++-
-> > >   1 file changed, 133 insertions(+), 2 deletions(-)
-> > > 
-> > > diff --git a/drivers/usb/dwc3/dwc3-qcom.c b/drivers/usb/dwc3/dwc3-qcom.c
-> > > index 261af9e..2ed6c20 100644
-> > > --- a/drivers/usb/dwc3/dwc3-qcom.c
-> > > +++ b/drivers/usb/dwc3/dwc3-qcom.c
-> > > @@ -13,6 +13,7 @@
-> > >   #include <linux/module.h>
-> > >   #include <linux/kernel.h>
-> > >   #include <linux/extcon.h>
-> > > +#include <linux/interconnect.h>
-> > >   #include <linux/of_platform.h>
-> > >   #include <linux/platform_device.h>
-> > >   #include <linux/phy/phy.h>
-> > > @@ -43,6 +44,14 @@
-> > >   #define SDM845_QSCRATCH_SIZE			0x400
-> > >   #define SDM845_DWC3_CORE_SIZE			0xcd00
-> > > +/* Interconnect path bandwidths in MBps */
-> > > +#define USB_MEMORY_AVG_HS_BW MBps_to_icc(240)
-> > > +#define USB_MEMORY_PEAK_HS_BW MBps_to_icc(700)
-> > > +#define USB_MEMORY_AVG_SS_BW  MBps_to_icc(1000)
-> > > +#define USB_MEMORY_PEAK_SS_BW MBps_to_icc(2500)
-> > > +#define APPS_USB_AVG_BW 0
-> > > +#define APPS_USB_PEAK_BW MBps_to_icc(40)
-> > > +
-> > >   struct dwc3_acpi_pdata {
-> > >   	u32			qscratch_base_offset;
-> > >   	u32			qscratch_base_size;
-> > > @@ -76,8 +85,13 @@ struct dwc3_qcom {
-> > >   	enum usb_dr_mode	mode;
-> > >   	bool			is_suspended;
-> > >   	bool			pm_suspended;
-> > > +	struct icc_path		*usb_ddr_icc_path;
-> > > +	struct icc_path		*apps_usb_icc_path;
-> > >   };
-> > > +static int dwc3_qcom_interconnect_enable(struct dwc3_qcom *qcom);
-> > > +static int dwc3_qcom_interconnect_disable(struct dwc3_qcom *qcom);
-> > > +
-> > >   static inline void dwc3_qcom_setbits(void __iomem *base, u32 offset, u32 val)
-> > >   {
-> > >   	u32 reg;
-> > > @@ -239,7 +253,7 @@ static void dwc3_qcom_enable_interrupts(struct dwc3_qcom *qcom)
-> > >   static int dwc3_qcom_suspend(struct dwc3_qcom *qcom)
-> > >   {
-> > >   	u32 val;
-> > > -	int i;
-> > > +	int i, ret;
-> > >   	if (qcom->is_suspended)
-> > >   		return 0;
-> > > @@ -251,6 +265,10 @@ static int dwc3_qcom_suspend(struct dwc3_qcom *qcom)
-> > >   	for (i = qcom->num_clocks - 1; i >= 0; i--)
-> > >   		clk_disable_unprepare(qcom->clks[i]);
-> > > +	ret = dwc3_qcom_interconnect_disable(qcom);
-> > > +	if (ret)
-> > > +		dev_warn(qcom->dev, "failed to disable interconnect %d\n", ret);
-> > > +
-> > This assumes that all QCA systems with a DWC3 have an interconnect
-> > configuration, however after applying this series SDM845 is the only
-> > platform. You need to track somewhere if the controller in question has
-> > an ICC config for not.
+> Are you sure they aren't already there under /sys/firmware/acpi/?  I
+> thought all tables and methods were exported there with no need to do
+> anything special.
 > 
-> This is handled in drivers <https://opengrok.qualcomm.com/source/xref/LC.UM.3.0/src/third_party/kernel/v5.4/drivers/>/interconnect <https://opengrok.qualcomm.com/source/xref/LC.UM.3.0/src/third_party/kernel/v5.4/drivers/interconnect/>/core.c <https://opengrok.qualcomm.com/source/xref/LC.UM.3.0/src/third_party/kernel/v5.4/drivers/interconnect/core.c> 
-> icc_set_bw function.
 
-Thanks for the clarification!
+That's the first I did when I started to forward port this patch from chromeos
+kernel to mainline.
 
-> > 
-> > >   	qcom->is_suspended = true;
-> > >   	dwc3_qcom_enable_interrupts(qcom);
-> > > @@ -276,6 +294,10 @@ static int dwc3_qcom_resume(struct dwc3_qcom *qcom)
-> > >   		}
-> > >   	}
-> > > +	ret = dwc3_qcom_interconnect_enable(qcom);
-> > > +	if (ret)
-> > > +		dev_warn(qcom->dev, "failed to enable interconnect %d\n", ret);
-> > > +
-> > same as above
-> This is handled in drivers <https://opengrok.qualcomm.com/source/xref/LC.UM.3.0/src/third_party/kernel/v5.4/drivers/>/interconnect <https://opengrok.qualcomm.com/source/xref/LC.UM.3.0/src/third_party/kernel/v5.4/drivers/interconnect/>/core.c <https://opengrok.qualcomm.com/source/xref/LC.UM.3.0/src/third_party/kernel/v5.4/drivers/interconnect/core.c> 
-> icc_set_bw function
+On my system I get:
 
-ok
+/sys/firmware/acpi/tables#
+APIC  DSDT  FACP  FACS  HPET  MCFG  SSDT  data  dynamic
 
-> > >   	/* Clear existing events from PHY related to L2 in/out */
-> > >   	dwc3_qcom_setbits(qcom->qscratch_base, PWR_EVNT_IRQ_STAT_REG,
-> > >   			  PWR_EVNT_LPM_IN_L2_MASK | PWR_EVNT_LPM_OUT_L2_MASK);
-> > > @@ -285,6 +307,108 @@ static int dwc3_qcom_resume(struct dwc3_qcom *qcom)
-> > >   	return 0;
-> > >   }
-> > > +
-> > > +/**
-> > > + * dwc3_qcom_interconnect_init() - Get interconnect path handles
-> > > + * @qcom:			Pointer to the concerned usb core.
-> > > + *
-> > > + */
-> > > +static int dwc3_qcom_interconnect_init(struct dwc3_qcom *qcom)
-> > > +{
-> > > +	struct device *dev = qcom->dev;
-> > > +	int ret;
-> > > +
-> > > +	if (!device_is_bound(&qcom->dwc3->dev))
-> > > +		return -EPROBE_DEFER;
-> > > +
-> > > +	qcom->usb_ddr_icc_path = of_icc_get(dev, "usb-ddr");
-> > > +	if (IS_ERR(qcom->usb_ddr_icc_path)) {
-> > > +		dev_err(dev, "Error: (%ld) failed getting usb-ddr path\n",
-> > > +			PTR_ERR(qcom->usb_ddr_icc_path));
-> > > +		return PTR_ERR(qcom->usb_ddr_icc_path);
-> > > +	}
-> > This will break all QCA platforms with DWC3, except SDM845. Instead of
-> > failing you could interpret the basence of the 'usb-ddr' patch in the DT
-> > as signal that the controller has no ICC configuration, and continue without
-> > it (i.e. return 0 from here, don't print an error, at most a dev_info() log),
-> > and track somewhere that the controller has no ICC config.
-> > 
-> > Alternatively you could check above with of_find_property() whether the
-> > controller has an 'interconnects' property at all. If it doesn't exist
-> > return zero, otherwise return an error if any of the paths doesn't exist,
-> > as you do now.
-> This is handled in drivers <https://opengrok.qualcomm.com/source/xref/LC.UM.3.0/src/third_party/kernel/v5.4/drivers/>/interconnect <https://opengrok.qualcomm.com/source/xref/LC.UM.3.0/src/third_party/kernel/v5.4/drivers/interconnect/>/core.c <https://opengrok.qualcomm.com/source/xref/LC.UM.3.0/src/third_party/kernel/v5.4/drivers/interconnect/core.c> 
-> of_icc_get function.
+(data and dynamic are empty directories)
 
-You are right, of_icc_get() returns NULL if the property doesn't exist, and this
-is handled gracefully by the other ICC functions.
+I quickly concluded (maybe wrong) that as there is no a MLST entry it was not
+exported, but maybe one of those already contains the info? Or, should I expect
+a MLST entry here?
 
-> > > +
-> > > +	qcom->apps_usb_icc_path = of_icc_get(dev, "apps-usb");
-> > > +	if (IS_ERR(qcom->apps_usb_icc_path)) {
-> > > +		dev_err(dev, "Error: (%ld) failed getting apps-usb path\n",
-> > > +				PTR_ERR(qcom->apps_usb_icc_path));
-> > > +		return PTR_ERR(qcom->apps_usb_icc_path);
-> > > +	}
-> > Failing here is ok, if 'usb-ddr' exists, we expect the rest of the config
-> > to be in place.
-> This may be required for error handling
+> What makes these attributes "special" from any other ACPI method?
+> 
 
-Agreed, my comment meant to say the above handling seems correct.
+I can't answer this question right now. I need to investigate more I guess ;-)
 
-> > > +
-> > > +	ret = dwc3_qcom_interconnect_enable(qcom);
-> > > +	if (ret) {
-> > > +		dev_err(dev, "failed to enable interconnect %d\n", ret);
-> > > +		return ret;
-> > > +	}
-> > > +
-> > > +	return 0;
-> > > +}
-> > > +
-> > > +/**
-> > > + * dwc3_qcom_interconnect_exit() - Release interconnect path handles
-> > > + * @qcom:			Pointer to the concerned usb core.
-> > > + *
-> > > + * This function is used to release interconnect path handle.
-> > > + */
-> > > +static void dwc3_qcom_interconnect_exit(struct dwc3_qcom *qcom)
-> > > +{
-> > > +	icc_put(qcom->usb_ddr_icc_path);
-> > > +	icc_put(qcom->apps_usb_icc_path);
-> > > +}
-> > > +
-> > > +/* Currently we only use bandwidth level, so just "enable" interconnects */
-> > > +static int dwc3_qcom_interconnect_enable(struct dwc3_qcom *qcom)
-> > > +{
-> > > +	struct dwc3 *dwc = platform_get_drvdata(qcom->dwc3);
-> > > +	int ret;
-> > > +
-> > > +	if (dwc->maximum_speed == USB_SPEED_SUPER) {
-> > > +		ret = icc_set_bw(qcom->usb_ddr_icc_path,
-> > > +			USB_MEMORY_AVG_SS_BW, USB_MEMORY_PEAK_SS_BW);
-> > > +	} else {
-> > > +		ret = icc_set_bw(qcom->usb_ddr_icc_path,
-> > > +			USB_MEMORY_AVG_HS_BW, USB_MEMORY_PEAK_HS_BW);
-> > > +	}
-> > nit: curly braces are not needed here
-> Will remove in next version.
-> > 
-> > > +
-> > > +	if (ret)
-> > > +		return ret;
-> > > +
-> > > +	ret = icc_set_bw(qcom->apps_usb_icc_path,
-> > > +		APPS_USB_AVG_BW, APPS_USB_PEAK_BW);
-> > > +	if (ret)
-> > > +		icc_set_bw(qcom->usb_ddr_icc_path, 0, 0);
-> > > +
-> > > +	return ret;
-> > > +}
-> > > +
-> > > +/* To disable an interconnect, we just set its bandwidth to 0 */
-> > > +static int dwc3_qcom_interconnect_disable(struct dwc3_qcom *qcom)
-> > > +{
-> > > +	struct dwc3 *dwc = platform_get_drvdata(qcom->dwc3);
-> > > +	int ret;
-> > > +
-> > > +	ret = icc_set_bw(qcom->usb_ddr_icc_path, 0, 0);
-> > > +	if (ret)
-> > > +		return ret;
-> > > +
-> > > +	ret = icc_set_bw(qcom->apps_usb_icc_path, 0, 0);
-> > > +	if (ret)
-> > > +		goto err_reenable_memory_path;
-> > > +
-> > > +	return 0;
-> > > +
-> > > +	/* Re-enable things in the event of an error */
-> > > +err_reenable_memory_path:
-> > > +	if (dwc->maximum_speed == USB_SPEED_SUPER)
-> > > +		icc_set_bw(qcom->usb_ddr_icc_path,
-> > > +			USB_MEMORY_AVG_SS_BW, USB_MEMORY_PEAK_SS_BW);
-> > > +	else
-> > > +		icc_set_bw(qcom->usb_ddr_icc_path,
-> > > +			USB_MEMORY_AVG_HS_BW, USB_MEMORY_PEAK_HS_BW);
-> > instead of the above:
-> > 
-> > 	dwc3_qcom_interconnect_enable(qcom);
-> Will change in next version.
+Thanks again for your answer,
+Enric
 
-With that changed:
-
-Reviewed-by: Matthias Kaehlcke <mka@chromium.org>
+>>>> +static int __init chromeos_acpi_init(void)
+>>>> +{
+>>>> +	int ret;
+>>>> +
+>>>> +	chromeos_acpi.pdev = platform_device_register_simple("chromeos_acpi",
+>>>> +						PLATFORM_DEVID_NONE, NULL, 0);
+>>>> +	if (IS_ERR(chromeos_acpi.pdev)) {
+>>>> +		pr_err("unable to register chromeos_acpi platform device\n");
+>>>> +		return PTR_ERR(chromeos_acpi.pdev);
+>>>> +	}
+>>>
+>>> Only use platform devices and drivers for things that are actually
+>>> platform devices and drivers.  That's not what this is, it is an ACPI
+>>> device and driver.  Don't abuse the platform interface please.
+>>>
+>>
+>> Ok. The purpose was to not break ChromeOS userspace since is looking for the
+>> attributes inside /sys/devices/platform/chromeos_acpi. Not a good reason, I
+>> know, and I assume we will need to change userspace instead, and convert this to
+>> a ACPI device and driver only, right?
+> 
+> How can any userspace be looking for anything that hasn't been submitted
+> before?  That's nothing to worry about, we don't have to support things
+> like that :)
+> 
+>> I'll investigate the different places in userspace where this is used and see
+>> how difficult it is to do the changes.
+> 
+> Look at /sys/firmware/acpi/ first please.
+> 
+> thanks,
+> 
+> greg k-h
+> 
