@@ -2,60 +2,48 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 254C9190402
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 04:57:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 31F111903F3
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 04:51:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727270AbgCXD5q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Mar 2020 23:57:46 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:55860 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727050AbgCXD5q (ORCPT
+        id S1727205AbgCXDu5 convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 23 Mar 2020 23:50:57 -0400
+Received: from hwsrv-698301.hostwindsdns.com ([142.11.243.114]:48684 "EHLO
+        hwsrv-698301.hostwindsdns.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727050AbgCXDu5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Mar 2020 23:57:46 -0400
-Received: from localhost (unknown [IPv6:2601:601:9f00:477::3d5])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 594D115513618;
-        Mon, 23 Mar 2020 20:57:45 -0700 (PDT)
-Date:   Mon, 23 Mar 2020 20:57:44 -0700 (PDT)
-Message-Id: <20200323.205744.1206748041598234398.davem@davemloft.net>
-To:     natechancellor@gmail.com
-Cc:     jiri@mellanox.com, idosch@mellanox.com, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mlxsw: spectrum_cnt: Fix 64-bit division in
- mlxsw_sp_counter_resources_register
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20200320021638.1916-1-natechancellor@gmail.com>
-References: <20200320021638.1916-1-natechancellor@gmail.com>
-X-Mailer: Mew version 6.8 on Emacs 26.1
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Mon, 23 Mar 2020 20:57:45 -0700 (PDT)
+        Mon, 23 Mar 2020 23:50:57 -0400
+X-Greylist: delayed 10367 seconds by postgrey-1.27 at vger.kernel.org; Mon, 23 Mar 2020 23:50:57 EDT
+Received: from hosted-by.blazingfast.io (localhost [127.0.0.1])
+        by hwsrv-698301.hostwindsdns.com (Postfix) with ESMTP id 926FE6C7E75
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Mar 2020 00:34:53 +0000 (UTC)
+Reply-To: procurement@ksbwholesale-trading.com
+From:   Piske Humbert-KSB <jeffandshari@rrranchco.com>
+To:     linux-kernel@vger.kernel.org
+Subject: [TOP URGENT]: Re : SV: Contract Purchase-KSB-PO452020
+Date:   24 Mar 2020 01:33:55 -0700
+Message-ID: <20200324013355.78A469BB59EC861D@rrranchco.com>
+MIME-Version: 1.0
+Content-Type: text/plain;
+        charset="utf-8"
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nathan Chancellor <natechancellor@gmail.com>
-Date: Thu, 19 Mar 2020 19:16:38 -0700
+Good day to you.
 
-> When building arm32 allyesconfig:
-> 
-> ld.lld: error: undefined symbol: __aeabi_uldivmod
->>>> referenced by spectrum_cnt.c
->>>>               net/ethernet/mellanox/mlxsw/spectrum_cnt.o:(mlxsw_sp_counter_resources_register) in archive drivers/built-in.a
->>>> did you mean: __aeabi_uidivmod
->>>> defined in: arch/arm/lib/lib.a(lib1funcs.o)
-> 
-> pool_size and bank_size are u64; use div64_u64 so that 32-bit platforms
-> do not error.
-> 
-> Fixes: ab8c4cc60420 ("mlxsw: spectrum_cnt: Move config validation along with resource register")
-> Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+We hope this finds you in good health & state of mind,
 
-Applied to net-next.
+My colleague Ms. Evelyn from KSB Wholesale Tradings (KSWT) last 
+week sent to you the same attached PO again.
 
-Please be clear about the intended target GIT tree for your changes in the
-Subject line in the future, thank you.
+Please kindly confirm to me now, did you receive it?.
+
+Awaiting your reply.
+
+Best regards
+
+Humbert Piske
+Procurement Manager
+KSB WHOLESALE TRADING
