@@ -2,93 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 774241915CE
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 17:13:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EEEAB191596
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 17:02:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728951AbgCXQMe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 12:12:34 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:36980 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728489AbgCXQLh (ORCPT
+        id S1727787AbgCXQCX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 12:02:23 -0400
+Received: from mail-qv1-f74.google.com ([209.85.219.74]:45942 "EHLO
+        mail-qv1-f74.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727164AbgCXQCW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 12:11:37 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=Content-Type:MIME-Version:References:
-        Subject:Cc:To:From:Date:Message-Id:Sender:Reply-To:Content-Transfer-Encoding:
-        Content-ID:Content-Description:In-Reply-To;
-        bh=/GjJ+xWr4L/UabC/x6T+Ol9cz+am4DeAa42o7EB3U2Q=; b=GzJjD8CCnGDSbMHlOu1Q/fM0sM
-        VyWh1BeZqdZb7/fZIhHdb9hK2voqWGMBrXLDME+wEFophKhxVgjB87dFnEeYPiGy7ffoIjO6Wb+RS
-        U3nsj1jbsGS8g77Oi6IpavsF14HJYFg5X8U405SUKoZuAzdjcxoNagMvB6LJkLQB7/o8cNjLZWhF5
-        B7spHViu1J6HUa7KLnwNYVIZB1n0CD2t0uM+GHZIFSXaoT5catXtTnsw2QautVPLWyfE6him3OVz+
-        Kc9G2uoe6ZaQVTE071+NjrrfF0Q6XD6ermT1MJ7j8bcGEV1IGgjVfBqZTzrI+bmZZ7OJ9K3hq/uEq
-        +PICBC8w==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jGm9N-0006c7-3l; Tue, 24 Mar 2020 16:11:33 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 8FD5E30793E;
-        Tue, 24 Mar 2020 17:11:28 +0100 (CET)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 0)
-        id 82A8929A490F1; Tue, 24 Mar 2020 17:11:28 +0100 (CET)
-Message-Id: <20200324160925.470421121@infradead.org>
-User-Agent: quilt/0.65
-Date:   Tue, 24 Mar 2020 16:31:39 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     tglx@linutronix.de, jpoimboe@redhat.com
-Cc:     linux-kernel@vger.kernel.org, x86@kernel.org, peterz@infradead.org,
-        mhiramat@kernel.org, mbenes@suse.cz, brgerst@gmail.com
-Subject: [PATCH v3 26/26] objtool: Add STT_NOTYPE noinstr validation
-References: <20200324153113.098167666@infradead.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+        Tue, 24 Mar 2020 12:02:22 -0400
+Received: by mail-qv1-f74.google.com with SMTP id d7so16114902qvq.12
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Mar 2020 09:02:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:in-reply-to:message-id:mime-version:references:subject:from:cc;
+        bh=0x/hnTcc2kjPvpKyUGqSSPPjkXWDC7wDxqwKdBvhNVI=;
+        b=DVQr77xZHndYQNTyk9eR1wUxut89ZPRTqVR/uvTz+HhIZCxy2cl1QRd3lxFpcc9t4N
+         XEOKB0oxsLBC5WWTCPJrmChFYD/L12HY4ihcpc3GM0u0VIlQirixO0xoLNJbiA20DYEN
+         nWOy6ozI+fywZNiwjeAhhiKfuB1dJFarDFA9/QsOxK3IBkce6IX+W1XFANV4XQggvYCD
+         mQPL+8FB4o1iMFLsHfeP9oUuPf9qLLy3YltBPowYTxO7KylXg+5jTaYq3aexZ4VKpVD9
+         ur5mMc6Zn7RTVsCizZcVl7T8RoUK/Duh8Y2AvZZVUsYF/vGQlSqZEXXFNshEzsxyPikR
+         lCpA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
+         :references:subject:from:cc;
+        bh=0x/hnTcc2kjPvpKyUGqSSPPjkXWDC7wDxqwKdBvhNVI=;
+        b=h0zWs4g8MucHUscEdQIpRSI4KtHd1LqpK7XkSDwJGLv0fwjjJK8khhGDaw0ihFRF+u
+         2plY3qsfM7V00xp02om7Ae7PV/inOibJkLxigm/xiAtg7T2asJ/bQRZnUwwZ/dcRdR+i
+         q9AR8MutwsYSGo7C5aTWzvgR8XH/Mn6fxGmUuuvdydR61j+vpuDs4xRFnXwBmjnQHvao
+         yUoT3MI9X3m0S04wayx+GjWOhDyUL5wTro8k77pic/apFHXd3qXZdBfJEBhdex34g9l5
+         AvO0YLrSBnEzBgFaIb7Vvvf/XxdK252BoqmeI3CfI4GC9Wypuh9CkQACcKdV3UT0tuzq
+         PCeg==
+X-Gm-Message-State: ANhLgQ3iCkxitYgx4IzDo+xXuFasjmG5SHAJDuJaJfmBPwOBKLcRxPDR
+        3flLdbyckGWTB9G2JSJns5VhZ5fBGXrd
+X-Google-Smtp-Source: ADFU+vt4nUw+kxEpkgVNrjtxIzP/E5x6J5Fp51tqyY49tAR6Jz1SAq64BXWbIZPWzdOz/ANvIwAu0IDIwkvC
+X-Received: by 2002:ac8:39a1:: with SMTP id v30mr27685736qte.112.1585065741247;
+ Tue, 24 Mar 2020 09:02:21 -0700 (PDT)
+Date:   Tue, 24 Mar 2020 17:02:02 +0100
+In-Reply-To: <20200323114207.222412-1-courbet@google.com>
+Message-Id: <20200324160203.99593-1-courbet@google.com>
+Mime-Version: 1.0
+References: <20200323114207.222412-1-courbet@google.com>
+X-Mailer: git-send-email 2.25.1.696.g5e7596f4ac-goog
+Subject: [PATCH]     x86: Alias memset to __builtin_memset.
+From:   Clement Courbet <courbet@google.com>
+Cc:     Nathan Chancellor <natechancellor@gmail.com>,
+        Kees Cook <keescook@chromium.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Joe Perches <joe@perches.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        Clement Courbet <courbet@google.com>,
+        linux-kernel@vger.kernel.org, clang-built-linux@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Make sure to also check STT_NOTYPE symbols for noinstr violations.
+> This shows the kernel getting smaller not larger.
+> Is this still reversed or is this correct?
 
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
----
- tools/objtool/check.c |   19 ++++++++++++++++++-
- 1 file changed, 18 insertions(+), 1 deletion(-)
-
---- a/tools/objtool/check.c
-+++ b/tools/objtool/check.c
-@@ -2563,7 +2563,7 @@ static int validate_symbol(struct objtoo
- 		return 1;
- 	}
- 
--	if (sym->pfunc != sym || sym->alias != sym)
-+	if ((sym->type == STT_FUNC && sym->pfunc != sym) || sym->alias != sym)
- 		return 0;
- 
- 	insn = find_insn(file, sec, sym->offset);
-@@ -2610,6 +2610,23 @@ static int validate_section(struct objto
- 		warnings += validate_symbol(file, sec, func, &state);
- 	}
- 
-+	if (state.noinstr) {
-+		/*
-+		 * In vmlinux mode we will not run validate_unwind_hints() by
-+		 * default which means we'll not otherwise visit STT_NOTYPE
-+		 * symbols.
-+		 *
-+		 * In case of --duplicate mode, insn->visited will avoid actual
-+		 * duplicate work being done.
-+		 */
-+		list_for_each_entry(func, &sec->symbol_list, list) {
-+			if (func->type != STT_NOTYPE)
-+				continue;
-+
-+			warnings += validate_symbol(file, sec, func, &state);
-+		}
-+	}
-+
- 	return warnings;
- }
- 
+Yes, sorry. This was wrong. The kernel actully shrinks. Fixed.
 
 
