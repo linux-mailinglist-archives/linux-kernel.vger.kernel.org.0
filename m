@@ -2,108 +2,151 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 38889191937
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 19:34:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B35EC191940
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 19:35:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727666AbgCXSdF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 14:33:05 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:33764 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727379AbgCXSdF (ORCPT
+        id S1727854AbgCXSfA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 14:35:00 -0400
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:39763 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727783AbgCXSe6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 14:33:05 -0400
-Received: by mail-pl1-f196.google.com with SMTP id g18so7773478plq.0
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Mar 2020 11:33:04 -0700 (PDT)
+        Tue, 24 Mar 2020 14:34:58 -0400
+Received: by mail-oi1-f194.google.com with SMTP id d63so19449850oig.6
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Mar 2020 11:34:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=2LDhmPGgksoORBYsVldX+awgJg6yM4TQVCLJOVvQyz4=;
-        b=T7DJhDYuMjXgKVhvaR13cI7YtMJw36RfORxHbnpmHSJHf+FJ4mzurw9+9eu3aG1hey
-         wcvVsWV+FhtMo6rF4IpFMCkwmg6T5aQU7rUmzCkMn+ucj+iWDSF9DiizOoNKLp+4WZzt
-         s+A5BBhj6yVmMsM1i4ia46rL5rNp+KTYOgDis=
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=A+Hf8XQxqxY4UfHSF//33kZkuadjj3xwWyydBPLRU5U=;
+        b=Tu1JdwQ2ug4UNUaYvLMTsqfF50ZqUF2Zq21MBnDvVPiDVLZJxDPWTdZlxQOUSPhoh9
+         6Jw0aHVgkxitN+wWRfKODDessLeaOPzM0DD25QjBUWzD21RjrogHgfJO+JKATvLKXWCd
+         wnXnAnWkSm/mzGj8V/e7sefJdZH0s42WUgG5iYRtr/2Nr1eu3FWJe55K3RYa0Tj+g8pZ
+         jPG4xFi+O4kWv+4DWaSR5fTt80JcniMoXc73MgQwUp03aDhrM34OMeeA+Yolcl8ca2w/
+         Y167PfUD7DM+Nou1MBAfs3W9p1KUtVkExWkaYigxvz3rnvn7ZMEKdFC0B2FD7YMWJqmw
+         +7LA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=2LDhmPGgksoORBYsVldX+awgJg6yM4TQVCLJOVvQyz4=;
-        b=FCMfr0C739lOrJeVe/kVttw7soEGy3FaL6mHfP+g8LaCuNLwMA/bfSJUeuSmB/q8gK
-         MM7/oTifHEchyDedsO/Ed7VeVjY/Xl7Z4iwUS3hX7qYSHaiKa4MxIgBWQJfQQIlh2CD1
-         25mhXCuPrq8OhDvd+JXsy8IpItWLYpJFYV1IWjfVrd+WSPAccmemyGLgstdghMvxZhYK
-         7H8be9s/rEs1c6NI/Zwxc/6M4OQsAJ+Rv3tBCB0321+QKuJz5wn/vf/9HiWTgvjd13k1
-         RjDw2AA9XakgJK8ELmO2vzCr77sSPVGr/LjcQe1mmnoJgS6toJnAE4reD17Dl5XXSByg
-         P4og==
-X-Gm-Message-State: ANhLgQ2BvNbGJnNpG0515UGXvOA2VkMcHrEHXmHoU6myOBOT0P/tswzi
-        FVrQmj2vl8avfZF5PVJ+bmkdtQ==
-X-Google-Smtp-Source: ADFU+vvgbcz6Wt/SKJaFRiL+RAA8RKi7rgtSKvXONvciu9Bb1JJtlU3ttRoKj0XWQ2BwU+GwGGqB7Q==
-X-Received: by 2002:a17:90b:3d1:: with SMTP id go17mr6230921pjb.99.1585074784269;
-        Tue, 24 Mar 2020 11:33:04 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id o20sm1095681pjr.35.2020.03.24.11.33.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Mar 2020 11:33:03 -0700 (PDT)
-Date:   Tue, 24 Mar 2020 11:33:02 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Stephen Smalley <stephen.smalley.work@gmail.com>
-Cc:     KP Singh <kpsingh@chromium.org>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Brendan Jackman <jackmanb@google.com>,
-        Florent Revest <revest@google.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        James Morris <jmorris@namei.org>, Paul Turner <pjt@google.com>,
-        Jann Horn <jannh@google.com>,
-        Florent Revest <revest@chromium.org>,
-        Brendan Jackman <jackmanb@chromium.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Paul Moore <paul@paul-moore.com>
-Subject: Re: [PATCH bpf-next v5 4/7] bpf: lsm: Implement attach, detach and
- execution
-Message-ID: <202003241132.8F46BC0A@keescook>
-References: <20200323164415.12943-1-kpsingh@chromium.org>
- <20200323164415.12943-5-kpsingh@chromium.org>
- <CAEjxPJ4MukexdmAD=py0r7vkE6vnn6T1LVcybP_GSJYsAdRuxA@mail.gmail.com>
- <20200324145003.GA2685@chromium.org>
- <CAEjxPJ4YnCCeQUTK36Ao550AWProHrkrW1a6K5RKuKYcPcfhyA@mail.gmail.com>
- <d578d19f-1d3b-f60d-f803-2fcb46721a4a@schaufler-ca.com>
- <CAEjxPJ59wijpB=wa4ZhPyX_PRXrRAX2+PO6e8+f25wrb9xndRA@mail.gmail.com>
- <202003241100.279457EF@keescook>
- <20200324180652.GA11855@chromium.org>
- <CAEjxPJ7ebh1FHBjfuoWquFLJi0TguipfRq5ozaSepLVt8+qaMQ@mail.gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=A+Hf8XQxqxY4UfHSF//33kZkuadjj3xwWyydBPLRU5U=;
+        b=p3hM9ivb9awo5mDdelw8U0QJOixj+DC9NHtHWUYB7IiG7FO3RJVWOoV55lyP1uPsM/
+         /PY4cO2wDQg1cW0DVJiXZSRz0O/r/NnPhMVRlc1gmVUjTGynhyaPAidcXerivGYJXDXk
+         1jhkoQg4lHWlsvT+ZUivV936nZXOf0erQ8PciyIJgc1gPC6nuTwVke7uid/9IL8emA0s
+         O1G7PrrRsmM1bauznGE+ikG1Nyhr6FCpfy/0CS7i/SXImVlLiKaTj+32Wpg+tnKijEaw
+         YyjhcVNRaDcT8cko4p/aH1K5me9cQGxCwKHmKIpWVZTGFD/3rWr6JQ7XFOfbWlJI7OHe
+         hSag==
+X-Gm-Message-State: ANhLgQ3e65hTJQnLfRtul/2XpjvFuFRAqfSyF5lLAZcVaXypez4w8bYH
+        3qsuJ+gXNP1Pj/l3/7CyUaWp26CKM5Dtl8tn2ju7/A==
+X-Google-Smtp-Source: ADFU+vt6tmJQI0f/riGMP7yFFDAaiOxqgRHsZVGg2HbVdrRbhCCg32XOxx+h+nAXwGT1IB5KqZ0CXoNIS6alpG1HzgI=
+X-Received: by 2002:aca:682:: with SMTP id 124mr4539925oig.69.1585074896515;
+ Tue, 24 Mar 2020 11:34:56 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAEjxPJ7ebh1FHBjfuoWquFLJi0TguipfRq5ozaSepLVt8+qaMQ@mail.gmail.com>
+References: <20200111052125.238212-1-saravanak@google.com> <158460766637.28353.11325960928759668587.tip-bot2@tip-bot2>
+ <20200324175955.GA16972@arm.com>
+In-Reply-To: <20200324175955.GA16972@arm.com>
+From:   Saravana Kannan <saravanak@google.com>
+Date:   Tue, 24 Mar 2020 11:34:20 -0700
+Message-ID: <CAGETcx8Qhy3y66vJyi8kRvg1+hXf-goDvyty-bsG5qFrA-CKgg@mail.gmail.com>
+Subject: Re: [tip: timers/core] clocksource/drivers/timer-probe: Avoid
+ creating dead devices
+To:     Ionela Voinescu <ionela.voinescu@arm.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        linux-tip-commits@vger.kernel.org, x86 <x86@kernel.org>,
+        liviu.dudau@arm.com, sudeep.holla@arm.com,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 24, 2020 at 02:21:30PM -0400, Stephen Smalley wrote:
-> On Tue, Mar 24, 2020 at 2:06 PM KP Singh <kpsingh@chromium.org> wrote:
+On Tue, Mar 24, 2020 at 11:00 AM Ionela Voinescu
+<ionela.voinescu@arm.com> wrote:
+>
+> Hi guys,
+>
+> On Thursday 19 Mar 2020 at 08:47:46 (-0000), tip-bot2 for Saravana Kannan wrote:
+> > The following commit has been merged into the timers/core branch of tip:
 > >
-> > On 24-Mär 11:01, Kees Cook wrote:
-> > > Doesn't the existing int (*bpf_prog)(struct bpf_prog *prog); cover
-> > > SELinux's need here? I.e. it can already examine that a hook is being
-> > > created for the LSM (since it has a distinct type, etc)?
+> > Commit-ID:     4f41fe386a94639cd9a1831298d4f85db5662f1e
+> > Gitweb:        https://git.kernel.org/tip/4f41fe386a94639cd9a1831298d4f85db5662f1e
+> > Author:        Saravana Kannan <saravanak@google.com>
+> > AuthorDate:    Fri, 10 Jan 2020 21:21:25 -08:00
+> > Committer:     Daniel Lezcano <daniel.lezcano@linaro.org>
+> > CommitterDate: Tue, 17 Mar 2020 13:10:07 +01:00
 > >
-> > I was about to say the same, specifically for the BPF use-case, we do
-> > have the "bpf_prog" i.e. :
+> > clocksource/drivers/timer-probe: Avoid creating dead devices
 > >
-> > "Do a check when the kernel generate and return a file descriptor for
-> > eBPF programs."
+> > Timer initialization is done during early boot way before the driver
+> > core starts processing devices and drivers. Timers initialized during
+> > this early boot period don't really need or use a struct device.
 > >
-> > SELinux can implement its policy logic for BPF_PROG_TYPE_LSM by
-> > providing a callback for this hook.
-> 
-> Ok.  In that case do we really need the capable() check here at all?
+> > However, for timers represented as device tree nodes, the struct devices
+> > are still created and sit around unused and wasting memory. This change
+> > avoid this by marking the device tree nodes as "populated" if the
+> > corresponding timer is successfully initialized.
+> >
+> > Signed-off-by: Saravana Kannan <saravanak@google.com>
+> > Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+> > Link: https://lore.kernel.org/r/20200111052125.238212-1-saravanak@google.com
+> > ---
+> >  drivers/clocksource/timer-probe.c | 2 ++
+> >  1 file changed, 2 insertions(+)
+> >
+> > diff --git a/drivers/clocksource/timer-probe.c b/drivers/clocksource/timer-probe.c
+> > index ee9574d..a10f28d 100644
+> > --- a/drivers/clocksource/timer-probe.c
+> > +++ b/drivers/clocksource/timer-probe.c
+> > @@ -27,8 +27,10 @@ void __init timer_probe(void)
+> >
+> >               init_func_ret = match->data;
+> >
+> > +             of_node_set_flag(np, OF_POPULATED);
+> >               ret = init_func_ret(np);
+> >               if (ret) {
+> > +                     of_node_clear_flag(np, OF_POPULATED);
+> >                       if (ret != -EPROBE_DEFER)
+> >                               pr_err("Failed to initialize '%pOF': %d\n", np,
+> >                                      ret);
+> >
+>
+> This patch is creating problems on some vexpress platforms - ones that
+> are using CLKSRC_VERSATILE (drivers/clocksource/timer-versatile.c).
+> I noticed issues on TC2 and FVPs (fixed virtual platforms) starting with
+> next-20200318 and still reproducible with next-20200323.
+>
+> It seems the issue this patch causes on TC2 and FVP is related to the
+> vexpress-sysreg node being used early for sched_clock_init
+> (timer_versatile.c: versatile_sched_clock_init). At this point (at
+> time_init) the node will be marked as OF_POPULATED, which flags that a
+> device is already created for it, but it is not, in this case.
+>
+> Later at sysreg_init (vexpress-sysreg.c) a device will fail to be created
+> for it, as one already exists. This will result in a failure to create a
+> bridge and a system controller for a bunch of devices (mostly clocks and
+> regulators).
+>
+> I think on the FVP it does not cause many issues as clocks are fixed and
+> regulator settings are probably nops so it boots fine and throws only
+> some warnings. On TC2 on the other hand it fails to boot and it hangs at
+> starting the kernel.
+>
+> In my opinion the idea of the patch is not bad, but I'm not an expert on
+> this so the most I can offer for now is the basic understanding of the
+> issue. I've Cc-ed a few folks to potentially suggest alternatives/fixes.
+>
+> For now, reverting this patch solves the problems on both platforms.
+> I tested this on next-20200318 which introduced the problem.
 
-IMO, this is for systems without SELinux, where they're using the
-capabilities as the basic policy for MAC management.
+I'll reply later today after I take a closer look. But will something
+like what timer-ingenic.c did work for you? You can clear the flag
+inside your early init.
 
--- 
-Kees Cook
+-Saravana
+
+
+>
+> Hope it helps,
+> Ionela.
