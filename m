@@ -2,38 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 68502190FC9
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 14:29:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 41ED8190EB4
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 14:15:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728057AbgCXNXE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 09:23:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45866 "EHLO mail.kernel.org"
+        id S1727609AbgCXNOQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 09:14:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60764 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729219AbgCXNXC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 09:23:02 -0400
+        id S1728020AbgCXNOO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Mar 2020 09:14:14 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id ADFE720775;
-        Tue, 24 Mar 2020 13:23:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9E2D820775;
+        Tue, 24 Mar 2020 13:14:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585056182;
-        bh=dsUFn1fct6hE7+Yo16X7dys63JfXbXmd3O1DfgNk3DY=;
+        s=default; t=1585055654;
+        bh=B7VCjfXUJJnPc9HcAd5IjQF9bDnM9fbTDTAhWgmBR34=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dQ/jjd3jacqhvMWpAGnPqdqSuRSASGl643PD2uwfrT1WeheBdmkBWS0Jk0mASsFRl
-         +Ajg6Zudo6ohh9AIMcZ6c0zWbP/eMyxE+oCmxsGwKwvDdNaZ/6SwmvtLMigUJPPv0A
-         ZazI30NtZy03JXRnLy/eAx7eILqtzSgFPicFzPm4=
+        b=IdQu27YwknJZ1fVWbzJNeFtiDTL8pYY0I1Phpc0O9JqMQtLw86nNMv789Anl9Yr5a
+         LaBRHjw52RdvDCvN3ilFJIBOrZoQW5d0kDmo74sD0pQSbsWuKeEJFhmaJV+dnBPPB/
+         n+2MBegSyOONRuG3GceC+s++3fxEOH9YB7Z45iuE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alberto Mattea <alberto@mattea.info>,
-        Mathias Nyman <mathias.nyman@linux.intel.com>
-Subject: [PATCH 5.5 048/119] usb: xhci: apply XHCI_SUSPEND_DELAY to AMD XHCI controller 1022:145c
-Date:   Tue, 24 Mar 2020 14:10:33 +0100
-Message-Id: <20200324130813.107317568@linuxfoundation.org>
+        stable@vger.kernel.org, Vincent Chen <vincent.chen@sifive.com>,
+        Alexandre Ghiti <alex@ghiti.fr>,
+        Anup Patel <anup@brainfault.org>,
+        Carlos de Paula <me@carlosedp.com>,
+        Palmer Dabbelt <palmerdabbelt@google.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 13/65] riscv: avoid the PIC offset of static percpu data in module beyond 2G limits
+Date:   Tue, 24 Mar 2020 14:10:34 +0100
+Message-Id: <20200324130758.553026737@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.2
-In-Reply-To: <20200324130808.041360967@linuxfoundation.org>
-References: <20200324130808.041360967@linuxfoundation.org>
+In-Reply-To: <20200324130756.679112147@linuxfoundation.org>
+References: <20200324130756.679112147@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,39 +47,65 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alberto Mattea <alberto@mattea.info>
+From: Vincent Chen <vincent.chen@sifive.com>
 
-commit 16263abc12d09871156a1c8650fb651f0e552f5e upstream.
+[ Upstream commit 0cff8bff7af886af0923d5c91776cd51603e531f ]
 
-This controller timeouts during suspend (S3) with
-[  240.521724] xhci_hcd 0000:30:00.3: WARN: xHC save state timeout
-[  240.521729] xhci_hcd 0000:30:00.3: ERROR mismatched command completion event
-thus preventing the system from entering S3.
-Moreover it remains in an undefined state where some connected devices stop
-working until a reboot.
-Apply the XHCI_SUSPEND_DELAY quirk to make it suspend properly.
+The compiler uses the PIC-relative method to access static variables
+instead of GOT when the code model is PIC. Therefore, the limitation of
+the access range from the instruction to the symbol address is +-2GB.
+Under this circumstance, the kernel cannot load a kernel module if this
+module has static per-CPU symbols declared by DEFINE_PER_CPU(). The reason
+is that kernel relocates the .data..percpu section of the kernel module to
+the end of kernel's .data..percpu. Hence, the distance between the per-CPU
+symbols and the instruction will exceed the 2GB limits. To solve this
+problem, the kernel should place the loaded module in the memory area
+[&_end-2G, VMALLOC_END].
 
-CC: stable@vger.kernel.org
-Signed-off-by: Alberto Mattea <alberto@mattea.info>
-Signed-off-by: Mathias Nyman <mathias.nyman@linux.intel.com>
-Link: https://lore.kernel.org/r/20200306150858.21904-3-mathias.nyman@linux.intel.com
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Vincent Chen <vincent.chen@sifive.com>
+Suggested-by: Alexandre Ghiti <alex@ghiti.fr>
+Suggested-by: Anup Patel <anup@brainfault.org>
+Tested-by: Alexandre Ghiti <alex@ghiti.fr>
+Tested-by: Carlos de Paula <me@carlosedp.com>
+Signed-off-by: Palmer Dabbelt <palmerdabbelt@google.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/usb/host/xhci-pci.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ arch/riscv/kernel/module.c | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
---- a/drivers/usb/host/xhci-pci.c
-+++ b/drivers/usb/host/xhci-pci.c
-@@ -136,7 +136,8 @@ static void xhci_pci_quirks(struct devic
- 		xhci->quirks |= XHCI_AMD_PLL_FIX;
+diff --git a/arch/riscv/kernel/module.c b/arch/riscv/kernel/module.c
+index 7dd308129b40f..7c012ad1d7ede 100644
+--- a/arch/riscv/kernel/module.c
++++ b/arch/riscv/kernel/module.c
+@@ -16,6 +16,10 @@
+ #include <linux/err.h>
+ #include <linux/errno.h>
+ #include <linux/moduleloader.h>
++#include <linux/vmalloc.h>
++#include <linux/sizes.h>
++#include <asm/pgtable.h>
++#include <asm/sections.h>
  
- 	if (pdev->vendor == PCI_VENDOR_ID_AMD &&
--		(pdev->device == 0x15e0 ||
-+		(pdev->device == 0x145c ||
-+		 pdev->device == 0x15e0 ||
- 		 pdev->device == 0x15e1 ||
- 		 pdev->device == 0x43bb))
- 		xhci->quirks |= XHCI_SUSPEND_DELAY;
+ static int apply_r_riscv_32_rela(struct module *me, u32 *location, Elf_Addr v)
+ {
+@@ -394,3 +398,15 @@ int apply_relocate_add(Elf_Shdr *sechdrs, const char *strtab,
+ 
+ 	return 0;
+ }
++
++#if defined(CONFIG_MMU) && defined(CONFIG_64BIT)
++#define VMALLOC_MODULE_START \
++	 max(PFN_ALIGN((unsigned long)&_end - SZ_2G), VMALLOC_START)
++void *module_alloc(unsigned long size)
++{
++	return __vmalloc_node_range(size, 1, VMALLOC_MODULE_START,
++				    VMALLOC_END, GFP_KERNEL,
++				    PAGE_KERNEL_EXEC, 0, NUMA_NO_NODE,
++				    __builtin_return_address(0));
++}
++#endif
+-- 
+2.20.1
+
 
 
