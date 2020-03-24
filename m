@@ -2,37 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BD2201910E8
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 14:32:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C803C1910E4
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 14:32:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727959AbgCXNSh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 09:18:37 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38782 "EHLO mail.kernel.org"
+        id S1728780AbgCXNS6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 09:18:58 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39300 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727829AbgCXNSc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 09:18:32 -0400
+        id S1728736AbgCXNSy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Mar 2020 09:18:54 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D2A68208D6;
-        Tue, 24 Mar 2020 13:18:31 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 15C62208CA;
+        Tue, 24 Mar 2020 13:18:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585055912;
-        bh=a9nhZwx9EI0wQiaVo+A5K9svhSVJKhXAV6X6EYX4Rws=;
+        s=default; t=1585055934;
+        bh=6OrOnoiINJv+m8teJLQrQHUPd38IaKQ8DMAFSfTiJIA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IlpLqZW1QK+tD3I1jIfgn/x8YkOwc20C+swPo3qA3NpJsf4PgV4UIVnftGSXs1Fqd
-         aiou/8iljdxRYClhvxVGjCvDTVxqc+803LhQB91LcbhqAb2BtcA3waa2m3o6EMGsAf
-         gqQP2QsxIkv/KvRpkeriJgBLIVUBfvc8xXltJWs0=
+        b=MElTBbU3MFf1ETKIMpzZHYfTm8//5NPAgT4aBFoHsMaFZ8fwRc1zdUmeGlfdnyQ1P
+         YLaEvXIHr1m4wxCPimdlfm4juVSbETx5Rctv8sC8ivADuRfL/zm+WluMVhHDr5MWCn
+         hkEh4V9DFoyVkFdu56UNruN7+Bp9Yit/xlxc/p2g=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Subject: [PATCH 5.4 066/102] mmc: sdhci-of-at91: fix cd-gpios for SAMA5D2
-Date:   Tue, 24 Mar 2020 14:10:58 +0100
-Message-Id: <20200324130813.314010108@linuxfoundation.org>
+        stable@vger.kernel.org, Kirk Reiser <kirk@reisers.ca>,
+        Janina Sajka <janina@rednote.net>,
+        Alexandr Epaneshnikov <aarnaarn2@gmail.com>,
+        Gregory Nowak <greg@gregn.net>,
+        deedra waters <deedra@the-brannons.com>,
+        Samuel Thibault <samuel.thibault@ens-lyon.org>,
+        Michael Taboada <michael@michaels.world>
+Subject: [PATCH 5.4 072/102] staging/speakup: fix get_word non-space look-ahead
+Date:   Tue, 24 Mar 2020 14:11:04 +0100
+Message-Id: <20200324130813.866708900@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.2
 In-Reply-To: <20200324130806.544601211@linuxfoundation.org>
 References: <20200324130806.544601211@linuxfoundation.org>
@@ -45,53 +48,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Michał Mirosław <mirq-linux@rere.qmqm.pl>
+From: Samuel Thibault <samuel.thibault@ens-lyon.org>
 
-commit 53dd0a7cd65edc83b0c243d1c08377c8b876b2ee upstream.
+commit 9d32c0cde4e2d1343dfb88a67b2ec6397705b32b upstream.
 
-SAMA5D2x doesn't drive CMD line if GPIO is used as CD line (at least
-SAMA5D27 doesn't). Fix this by forcing card-detect in the module
-if module-controlled CD is not used.
+get_char was erroneously given the address of the pointer to the text
+instead of the address of the text, thus leading to random crashes when
+the user requests speaking a word while the current position is on a space
+character and say_word_ctl is not enabled.
 
-Fixed commit addresses the problem only for non-removable cards. This
-amends it to also cover gpio-cd case.
-
-Cc: stable@vger.kernel.org
-Fixes: 7a1e3f143176 ("mmc: sdhci-of-at91: force card detect value for non removable devices")
-Signed-off-by: Michał Mirosław <mirq-linux@rere.qmqm.pl>
-Acked-by: Adrian Hunter <adrian.hunter@intel.com>
-Link: https://lore.kernel.org/r/8d10950d9940468577daef4772b82a071b204716.1584290561.git.mirq-linux@rere.qmqm.pl
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+Reported-on: https://github.com/bytefire/speakup/issues/1
+Reported-by: Kirk Reiser <kirk@reisers.ca>
+Reported-by: Janina Sajka <janina@rednote.net>
+Reported-by: Alexandr Epaneshnikov <aarnaarn2@gmail.com>
+Reported-by: Gregory Nowak <greg@gregn.net>
+Reported-by: deedra waters <deedra@the-brannons.com>
+Signed-off-by: Samuel Thibault <samuel.thibault@ens-lyon.org>
+Tested-by: Alexandr Epaneshnikov <aarnaarn2@gmail.com>
+Tested-by: Gregory Nowak <greg@gregn.net>
+Tested-by: Michael Taboada <michael@michaels.world>
+Cc: stable <stable@vger.kernel.org>
+Link: https://lore.kernel.org/r/20200306003047.thijtmqrnayd3dmw@function
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/mmc/host/sdhci-of-at91.c |    8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ drivers/staging/speakup/main.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/mmc/host/sdhci-of-at91.c
-+++ b/drivers/mmc/host/sdhci-of-at91.c
-@@ -118,7 +118,8 @@ static void sdhci_at91_reset(struct sdhc
- {
- 	sdhci_reset(host, mask);
- 
--	if (host->mmc->caps & MMC_CAP_NONREMOVABLE)
-+	if ((host->mmc->caps & MMC_CAP_NONREMOVABLE)
-+	    || mmc_gpio_get_cd(host->mmc) >= 0)
- 		sdhci_at91_set_force_card_detect(host);
- }
- 
-@@ -397,8 +398,11 @@ static int sdhci_at91_probe(struct platf
- 	 * detection procedure using the SDMCC_CD signal is bypassed.
- 	 * This bit is reset when a software reset for all command is performed
- 	 * so we need to implement our own reset function to set back this bit.
-+	 *
-+	 * WA: SAMA5D2 doesn't drive CMD if using CD GPIO line.
- 	 */
--	if (host->mmc->caps & MMC_CAP_NONREMOVABLE)
-+	if ((host->mmc->caps & MMC_CAP_NONREMOVABLE)
-+	    || mmc_gpio_get_cd(host->mmc) >= 0)
- 		sdhci_at91_set_force_card_detect(host);
- 
- 	pm_runtime_put_autosuspend(&pdev->dev);
+--- a/drivers/staging/speakup/main.c
++++ b/drivers/staging/speakup/main.c
+@@ -561,7 +561,7 @@ static u_long get_word(struct vc_data *v
+ 		return 0;
+ 	} else if (tmpx < vc->vc_cols - 2 &&
+ 		   (ch == SPACE || ch == 0 || (ch < 0x100 && IS_WDLM(ch))) &&
+-		   get_char(vc, (u_short *)&tmp_pos + 1, &temp) > SPACE) {
++		   get_char(vc, (u_short *)tmp_pos + 1, &temp) > SPACE) {
+ 		tmp_pos += 2;
+ 		tmpx++;
+ 	} else {
 
 
