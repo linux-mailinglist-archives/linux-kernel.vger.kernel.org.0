@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 41E5B19112A
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 14:39:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C45AB191099
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 14:31:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728132AbgCXNR6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 09:17:58 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37834 "EHLO mail.kernel.org"
+        id S1729464AbgCXNXv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 09:23:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46998 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727540AbgCXNRz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 09:17:55 -0400
+        id S1729050AbgCXNXr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Mar 2020 09:23:47 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6C303206F6;
-        Tue, 24 Mar 2020 13:17:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EFDA4208FE;
+        Tue, 24 Mar 2020 13:23:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585055873;
-        bh=+gXEn3kd3xuBUu2n+C9PRT5L3swFsgZIEmR7Fu5NEAE=;
+        s=default; t=1585056226;
+        bh=mjm9lXsDUkQcojDLhC25W/kDX2lM5gjy9tCWyqwiQg4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gAX48wzFsfrmr8IILT1HrYQYduMmHCSTX7YdbHJBkoOzE56SLJZMoeAqfmLB8Cr0g
-         TT8RZqF4xuhvT8P6Et2+qMRiFt8BwdSE3WYght9Ycdno+NgO5Zp9aOAlHlZIljKMpZ
-         LWJagCbfGDFF4fQBts2yovag9aiQFv+lQSnmrUvY=
+        b=GaXdxcVkdA8ix+/sorOfkJhu1CYuZ+jJMxYDX+fZq+1mImoPbmxAUo1PsNvh5yhG0
+         kO3+dk5oQL3WrlxYu1r+CjCOE2qgGx2fM51u9srhqXOTAG2CXkpn5SeDH6SRgQpbn7
+         p6RH7TKQQpG0AF/Ac89H9ixnUWDy8ncE5B32VSiM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        syzbot+8da9175e28eadcb203ce@syzkaller.appspotmail.com,
-        Eric Biggers <ebiggers@google.com>, Jiri Slaby <jslaby@suse.cz>
-Subject: [PATCH 5.4 054/102] tty: fix compat TIOCGSERIAL leaking uninitialized memory
-Date:   Tue, 24 Mar 2020 14:10:46 +0100
-Message-Id: <20200324130812.216364343@linuxfoundation.org>
+        =?UTF-8?q?Petr=20=C5=A0tetiar?= <ynezz@true.cz>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Subject: [PATCH 5.5 062/119] iio: chemical: sps30: fix missing triggered buffer dependency
+Date:   Tue, 24 Mar 2020 14:10:47 +0100
+Message-Id: <20200324130814.418252942@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.2
-In-Reply-To: <20200324130806.544601211@linuxfoundation.org>
-References: <20200324130806.544601211@linuxfoundation.org>
+In-Reply-To: <20200324130808.041360967@linuxfoundation.org>
+References: <20200324130808.041360967@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,44 +44,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eric Biggers <ebiggers@google.com>
+From: Petr Štetiar <ynezz@true.cz>
 
-commit 17329563a97df3ba474eca5037c1336e46e14ff8 upstream.
+commit 016a8845f6da65b2203f102f192046fbb624e250 upstream.
 
-Commit 77654350306a ("take compat TIOC[SG]SERIAL treatment into
-tty_compat_ioctl()") changed the compat version of TIOCGSERIAL to start
-copying a whole 'serial_struct32' to userspace rather than individual
-fields, but failed to initialize all padding and fields -- namely the
-hole after the 'iomem_reg_shift' field, and the 'reserved' field.
+SPS30 uses triggered buffer, but the dependency is not specified in the
+Kconfig file.  Fix this by selecting IIO_BUFFER and IIO_TRIGGERED_BUFFER
+config symbols.
 
-Fix this by initializing the struct to zero.
-
-[v2: use sizeof, and convert the adjacent line for consistency.]
-
-Reported-by: syzbot+8da9175e28eadcb203ce@syzkaller.appspotmail.com
-Fixes: 77654350306a ("take compat TIOC[SG]SERIAL treatment into tty_compat_ioctl()")
-Cc: <stable@vger.kernel.org> # v4.20+
-Signed-off-by: Eric Biggers <ebiggers@google.com>
-Acked-by: Jiri Slaby <jslaby@suse.cz>
-Link: https://lore.kernel.org/r/20200224182044.234553-2-ebiggers@kernel.org
+Cc: stable@vger.kernel.org
+Fixes: 232e0f6ddeae ("iio: chemical: add support for Sensirion SPS30 sensor")
+Signed-off-by: Petr Štetiar <ynezz@true.cz>
+Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/tty/tty_io.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/iio/chemical/Kconfig |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/tty/tty_io.c
-+++ b/drivers/tty/tty_io.c
-@@ -2731,7 +2731,9 @@ static int compat_tty_tiocgserial(struct
- 	struct serial_struct32 v32;
- 	struct serial_struct v;
- 	int err;
--	memset(&v, 0, sizeof(struct serial_struct));
-+
-+	memset(&v, 0, sizeof(v));
-+	memset(&v32, 0, sizeof(v32));
- 
- 	if (!tty->ops->set_serial)
- 		return -ENOTTY;
+--- a/drivers/iio/chemical/Kconfig
++++ b/drivers/iio/chemical/Kconfig
+@@ -91,6 +91,8 @@ config SPS30
+ 	tristate "SPS30 particulate matter sensor"
+ 	depends on I2C
+ 	select CRC8
++	select IIO_BUFFER
++	select IIO_TRIGGERED_BUFFER
+ 	help
+ 	  Say Y here to build support for the Sensirion SPS30 particulate
+ 	  matter sensor.
 
 
