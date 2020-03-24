@@ -2,39 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E1769190FFD
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 14:30:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 490F9190E99
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 14:15:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729666AbgCXNY3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 09:24:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48006 "EHLO mail.kernel.org"
+        id S1727879AbgCXNN3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 09:13:29 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59660 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728938AbgCXNYY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 09:24:24 -0400
+        id S1727752AbgCXNNZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Mar 2020 09:13:25 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8AD6B208C3;
-        Tue, 24 Mar 2020 13:24:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E69FE20B80;
+        Tue, 24 Mar 2020 13:13:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585056264;
-        bh=JMSM1luKAuE5kdgCyq1bEGHhHwVBpP6yWiX8i/xm41Y=;
+        s=default; t=1585055605;
+        bh=cWF3WUe2wPdnGgifyfwwVAofNRCsrR9G7UqKaQgj4Gw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Lq/A1tNEfHvtsqzfP27auLc0S7IWS/VBC6yCsmF3s6y/IwRrW9wf1DLkgHtfQ7cM0
-         okeyLTqUju22ml7QbzvKvBx1H7krsTykWt+tUSC62bJcevN+fdzQ8x9uy80N/405oo
-         JR8XLu8ovHcYyddH/zFcfID6WJWe9AYiE6DzUI/o=
+        b=d+t6PUq/vxPxYQ41TZnScuyhKYG63inwPDa4jGWmZ9e+ZH163tGaFSnxj4rVv0GyQ
+         7pC4T07UytQV7F3qZu8swMBracxIHd+svbv5Cv+MgFl0qu4POZM3dXZ01A+Qc3CCJ7
+         nU+baa4cF+wRm/kd6noiXsMgk42fbtRxCSXH4RiM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Subject: [PATCH 5.5 073/119] mmc: sdhci-cadence: set SDHCI_QUIRK2_PRESET_VALUE_BROKEN for UniPhier
+        stable@vger.kernel.org, Michael Straube <straube.linux@gmail.com>
+Subject: [PATCH 4.19 37/65] staging: rtl8188eu: Add device id for MERCUSYS MW150US v2
 Date:   Tue, 24 Mar 2020 14:10:58 +0100
-Message-Id: <20200324130815.526127999@linuxfoundation.org>
+Message-Id: <20200324130801.912227286@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.2
-In-Reply-To: <20200324130808.041360967@linuxfoundation.org>
-References: <20200324130808.041360967@linuxfoundation.org>
+In-Reply-To: <20200324130756.679112147@linuxfoundation.org>
+References: <20200324130756.679112147@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,89 +42,32 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
+From: Michael Straube <straube.linux@gmail.com>
 
-commit 18b587b45c13bb6a07ed0edac15f06892593d07a upstream.
+commit bb5786b9286c253557a0115bc8d21879e61b7b94 upstream.
 
-The SDHCI_PRESET_FOR_* registers are not set for the UniPhier platform
-integration. (They are all read as zeros).
+This device was added to the stand-alone driver on github.
+Add it to the staging driver as well.
 
-Set the SDHCI_QUIRK2_PRESET_VALUE_BROKEN quirk flag. Otherwise, the
-High Speed DDR mode on the eMMC controller (MMC_TIMING_MMC_DDR52)
-would not work.
-
-I split the platform data to give no impact to other platforms,
-although the UniPhier platform is currently only the upstream user
-of this IP.
-
-The SDHCI_QUIRK2_PRESET_VALUE_BROKEN flag is set if the compatible
-string matches to "socionext,uniphier-sd4hc".
-
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: stable@vger.kernel.org
-Link: https://lore.kernel.org/r/20200312104257.21017-1-yamada.masahiro@socionext.com
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+Link: https://github.com/lwfinger/rtl8188eu/commit/2141f244c3e7
+Signed-off-by: Michael Straube <straube.linux@gmail.com>
+Cc: stable <stable@vger.kernel.org>
+Link: https://lore.kernel.org/r/20200312093652.13918-1-straube.linux@gmail.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/mmc/host/sdhci-cadence.c |   18 ++++++++++++++++--
- 1 file changed, 16 insertions(+), 2 deletions(-)
+ drivers/staging/rtl8188eu/os_dep/usb_intf.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/mmc/host/sdhci-cadence.c
-+++ b/drivers/mmc/host/sdhci-cadence.c
-@@ -11,6 +11,7 @@
- #include <linux/mmc/host.h>
- #include <linux/mmc/mmc.h>
- #include <linux/of.h>
-+#include <linux/of_device.h>
- 
- #include "sdhci-pltfm.h"
- 
-@@ -235,6 +236,11 @@ static const struct sdhci_ops sdhci_cdns
- 	.set_uhs_signaling = sdhci_cdns_set_uhs_signaling,
- };
- 
-+static const struct sdhci_pltfm_data sdhci_cdns_uniphier_pltfm_data = {
-+	.ops = &sdhci_cdns_ops,
-+	.quirks2 = SDHCI_QUIRK2_PRESET_VALUE_BROKEN,
-+};
-+
- static const struct sdhci_pltfm_data sdhci_cdns_pltfm_data = {
- 	.ops = &sdhci_cdns_ops,
- };
-@@ -334,6 +340,7 @@ static void sdhci_cdns_hs400_enhanced_st
- static int sdhci_cdns_probe(struct platform_device *pdev)
- {
- 	struct sdhci_host *host;
-+	const struct sdhci_pltfm_data *data;
- 	struct sdhci_pltfm_host *pltfm_host;
- 	struct sdhci_cdns_priv *priv;
- 	struct clk *clk;
-@@ -350,8 +357,12 @@ static int sdhci_cdns_probe(struct platf
- 	if (ret)
- 		return ret;
- 
-+	data = of_device_get_match_data(dev);
-+	if (!data)
-+		data = &sdhci_cdns_pltfm_data;
-+
- 	nr_phy_params = sdhci_cdns_phy_param_count(dev->of_node);
--	host = sdhci_pltfm_init(pdev, &sdhci_cdns_pltfm_data,
-+	host = sdhci_pltfm_init(pdev, data,
- 				struct_size(priv, phy_params, nr_phy_params));
- 	if (IS_ERR(host)) {
- 		ret = PTR_ERR(host);
-@@ -431,7 +442,10 @@ static const struct dev_pm_ops sdhci_cdn
- };
- 
- static const struct of_device_id sdhci_cdns_match[] = {
--	{ .compatible = "socionext,uniphier-sd4hc" },
-+	{
-+		.compatible = "socionext,uniphier-sd4hc",
-+		.data = &sdhci_cdns_uniphier_pltfm_data,
-+	},
- 	{ .compatible = "cdns,sd4hc" },
- 	{ /* sentinel */ }
- };
+--- a/drivers/staging/rtl8188eu/os_dep/usb_intf.c
++++ b/drivers/staging/rtl8188eu/os_dep/usb_intf.c
+@@ -38,6 +38,7 @@ static const struct usb_device_id rtw_us
+ 	{USB_DEVICE(0x2001, 0x331B)}, /* D-Link DWA-121 rev B1 */
+ 	{USB_DEVICE(0x2357, 0x010c)}, /* TP-Link TL-WN722N v2 */
+ 	{USB_DEVICE(0x2357, 0x0111)}, /* TP-Link TL-WN727N v5.21 */
++	{USB_DEVICE(0x2C4E, 0x0102)}, /* MERCUSYS MW150US v2 */
+ 	{USB_DEVICE(0x0df6, 0x0076)}, /* Sitecom N150 v2 */
+ 	{USB_DEVICE(USB_VENDER_ID_REALTEK, 0xffef)}, /* Rosewill RNX-N150NUB */
+ 	{}	/* Terminating entry */
 
 
