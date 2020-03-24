@@ -2,41 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 40DB1190B6A
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 11:51:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 386E3190B6E
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 11:51:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727289AbgCXKuz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 06:50:55 -0400
-Received: from smtp-fw-33001.amazon.com ([207.171.190.10]:12308 "EHLO
-        smtp-fw-33001.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727159AbgCXKuz (ORCPT
+        id S1727347AbgCXKvF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 06:51:05 -0400
+Received: from smtp-fw-9102.amazon.com ([207.171.184.29]:54108 "EHLO
+        smtp-fw-9102.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727328AbgCXKvE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 06:50:55 -0400
+        Tue, 24 Mar 2020 06:51:04 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
   d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1585047054; x=1616583054;
+  t=1585047065; x=1616583065;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version;
-  bh=DEssGXIsB7EUj0Tn+8tY3DwWsX+hFqfa/2RyzoqrTJU=;
-  b=BRd8K3iINEITKDfwacB5b3Cw637gjNn+dWIN/LKv2nlz4lEG9O4reYk6
-   Sd9h+nA4a6Jb4GVP6QfWMK4bbtnchPgpEfF78h+JUMDvaSSAvhtahsoHu
-   DQBpiclGkAT9ysi1sfser+1torOd5adDPGTGbdvitq+C03oUIsnl1kC4C
+  bh=SL6BZmD4jmjWbjXl8N+TY5rCn4h74dxErtWXusGgkjc=;
+  b=Lp63uCE3XCSFiqFAoTHvl95odbPbe5+O9PTRg9zW7eMctcoz6zdv0uFC
+   1Yp1z7OfvgMaM7Pbe7UrMr4HqrAXrrVpVrPe6UYKL+l2OcuueTq8pvtCt
+   7n9Yf4pDzCTQrH/GhicKOumP4UXg1CT1DwORx3M6xSpmtoLBrfcolZwjD
    M=;
-IronPort-SDR: t2OByFNtQvfz4LeNNP3AsI1TsRO4qNTeJBOe8ViH86r6o+A37V/HKuL7U91z2Nzy9v6djO4Wvb
- b9E6FgwS+u6A==
+IronPort-SDR: gU+3AjFyXO7jYR/JCBhEIDO6IH/f78tNxyZmlrmaGOIufGEQ4SML9SyYjV1RE67pJWvkNULPE8
+ sVxdZot1yTOw==
 X-IronPort-AV: E=Sophos;i="5.72,300,1580774400"; 
-   d="scan'208";a="34501488"
-Received: from sea32-co-svc-lb4-vlan3.sea.corp.amazon.com (HELO email-inbound-relay-2a-d0be17ee.us-west-2.amazon.com) ([10.47.23.38])
-  by smtp-border-fw-out-33001.sea14.amazon.com with ESMTP; 24 Mar 2020 10:50:54 +0000
-Received: from EX13MTAUEA002.ant.amazon.com (pdx4-ws-svc-p6-lb7-vlan3.pdx.amazon.com [10.170.41.166])
-        by email-inbound-relay-2a-d0be17ee.us-west-2.amazon.com (Postfix) with ESMTPS id A3111A25D0;
-        Tue, 24 Mar 2020 10:50:52 +0000 (UTC)
+   d="scan'208";a="33103410"
+Received: from sea32-co-svc-lb4-vlan3.sea.corp.amazon.com (HELO email-inbound-relay-2b-baacba05.us-west-2.amazon.com) ([10.47.23.38])
+  by smtp-border-fw-out-9102.sea19.amazon.com with ESMTP; 24 Mar 2020 10:51:02 +0000
+Received: from EX13MTAUEA002.ant.amazon.com (pdx4-ws-svc-p6-lb7-vlan2.pdx.amazon.com [10.170.41.162])
+        by email-inbound-relay-2b-baacba05.us-west-2.amazon.com (Postfix) with ESMTPS id 194DAA21D5;
+        Tue, 24 Mar 2020 10:51:01 +0000 (UTC)
 Received: from EX13D19EUB003.ant.amazon.com (10.43.166.69) by
  EX13MTAUEA002.ant.amazon.com (10.43.61.77) with Microsoft SMTP Server (TLS)
- id 15.0.1236.3; Tue, 24 Mar 2020 10:50:51 +0000
+ id 15.0.1236.3; Tue, 24 Mar 2020 10:51:00 +0000
 Received: from u8a88181e7b2355.ant.amazon.com (10.43.162.241) by
  EX13D19EUB003.ant.amazon.com (10.43.166.69) with Microsoft SMTP Server (TLS)
- id 15.0.1497.2; Tue, 24 Mar 2020 10:50:42 +0000
+ id 15.0.1497.2; Tue, 24 Mar 2020 10:50:51 +0000
 From:   Hanna Hawa <hhhawa@amazon.com>
 To:     <robh+dt@kernel.org>, <mark.rutland@arm.com>,
         <tsahee@annapurnalabs.com>, <antoine.tenart@bootlin.com>,
@@ -48,9 +48,9 @@ CC:     <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>, <dwmw@amazon.co.uk>,
         <benh@amazon.com>, <ronenk@amazon.com>, <talel@amazon.com>,
         <jonnyc@amazon.com>, <hanochu@amazon.com>
-Subject: [PATCH v5 3/6] dt-bindings: arm: amazon: update maintainers of amazon,al DT bindings
-Date:   Tue, 24 Mar 2020 12:49:15 +0200
-Message-ID: <20200324104918.29578-4-hhhawa@amazon.com>
+Subject: [PATCH v5 4/6] dt-bindings: arm: amazon: add missing alpine-v2 DT binding
+Date:   Tue, 24 Mar 2020 12:49:16 +0200
+Message-ID: <20200324104918.29578-5-hhhawa@amazon.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200324104918.29578-1-hhhawa@amazon.com>
 References: <20200324104918.29578-1-hhhawa@amazon.com>
@@ -64,30 +64,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Update maintainers of amazon,al DT bindings.
+Amazon Annapurna Labs Alpine family includes: Alpine-v1, Alpine-v2.
+
+This patch adds the missing DT binding of Alpine-v2 in amazon,al.yaml.
 
 Signed-off-by: Hanna Hawa <hhhawa@amazon.com>
-Acked-by: Rob Herring <robh@kernel.org>
+Reviewed-by: Rob Herring <robh@kernel.org>
 ---
- Documentation/devicetree/bindings/arm/amazon,al.yaml | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ .../devicetree/bindings/arm/amazon,al.yaml        | 15 ++++++++++-----
+ 1 file changed, 10 insertions(+), 5 deletions(-)
 
 diff --git a/Documentation/devicetree/bindings/arm/amazon,al.yaml b/Documentation/devicetree/bindings/arm/amazon,al.yaml
-index 58eb4ad55a76..19ee489396f9 100644
+index 19ee489396f9..7de3a8c6e740 100644
 --- a/Documentation/devicetree/bindings/arm/amazon,al.yaml
 +++ b/Documentation/devicetree/bindings/arm/amazon,al.yaml
-@@ -7,8 +7,9 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
- title: Amazon's Annapurna Labs Alpine Platform Device Tree Bindings
- 
- maintainers:
--  - Tsahee Zidenberg <tsahee@annapurnalabs.com>
--  - Antoine Tenart <antoine.tenart@bootlin.com>
-+  - Hanna Hawa <hhhawa@amazon.com>
-+  - Talel Shenhar <talel@amazon.com>, <talelshenhar@gmail.com>
-+  - Ronen Krupnik <ronenk@amazon.com>
+@@ -13,10 +13,15 @@ maintainers:
  
  properties:
    compatible:
+-    items:
+-      - const: al,alpine
+-  model:
+-    items:
+-      - const: "Annapurna Labs Alpine Dev Board"
++    oneOf:
++      - description: Boards with Alpine V1 SoC
++        items:
++          - const: al,alpine
++
++      - description: Boards with Alpine V2 SoC
++        items:
++          - enum:
++              - al,alpine-v2-evp
++          - const: al,alpine-v2
+ 
+ ...
 -- 
 2.17.1
 
