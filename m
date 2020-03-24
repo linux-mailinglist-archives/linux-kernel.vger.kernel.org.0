@@ -2,135 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B648A190C63
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 12:26:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 58824190C6D
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 12:29:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727282AbgCXL0e (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 07:26:34 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:43821 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727186AbgCXL0d (ORCPT
+        id S1727213AbgCXL24 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 07:28:56 -0400
+Received: from us-smtp-delivery-74.mimecast.com ([216.205.24.74]:30033 "EHLO
+        us-smtp-delivery-74.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726944AbgCXL24 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 07:26:33 -0400
-Received: by mail-wr1-f65.google.com with SMTP id b2so20903247wrj.10
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Mar 2020 04:26:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=4Nuv+vT/40G+s+U11HxTd2nHnucA/xEkwNf5+XdxgYM=;
-        b=lAod/7RkxmphP5+Mnr15+MWx9JcjoONDzyS1XlqkRmyEa3iRQXXS/SVpfriHwkbZJv
-         4JwB0xAcSzb9UePrMkD5AIPD1j/oLXSonQMYe138++QjVV5EA1nMghy/GgnKPI8AhiPo
-         Rk1s1dWFSZdk40cO2ZIyfhzI0AO0yrNrk92rHPPSROZGRilkCp4HYZYmtv+odxQRWrJx
-         R2fy61uSHB2860GLur6btg+tUOwXlVvO4FuUHfhWknu2GZ47WJmz04HXUrx8vafSvSAN
-         WRHsQ3Glx7rR2JjxsCrQKrTEHg87Y5dpV3NrZ+p5VmjmO8CDf+JhW3GNABWEfj6uSc6G
-         ZApA==
+        Tue, 24 Mar 2020 07:28:56 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1585049335;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=ktuTLWFbdGaqqJxefhDZte1DvZgH9my8ZHHD853RboI=;
+        b=h2/eaB9dO98C0D0wrrv1zFAX4DQL8a0VXweX4Ld9Kf4IAg1/F4omhbbhxf3FE+wZeSbEBz
+        DCfl0SYW9WF7S3AAtRW78kvyNxXE4Q4387/vASSIvSmnrnapG46k2Ac0Zola+f8fUuUT0W
+        OK0QiMycqxLjFwDHSuTYcOWRpL8s2HI=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-377-BYBKLMgPNAO8drj4R4co0w-1; Tue, 24 Mar 2020 07:28:51 -0400
+X-MC-Unique: BYBKLMgPNAO8drj4R4co0w-1
+Received: by mail-wr1-f69.google.com with SMTP id f15so3702959wrt.4
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Mar 2020 04:28:51 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=4Nuv+vT/40G+s+U11HxTd2nHnucA/xEkwNf5+XdxgYM=;
-        b=jWSJlloGC5zluM5edqz5H/up7Zsiahpv9JsF8+COpsuUCO5607UXxEgoBz2mwanM8I
-         iud2EtF50p10nToIx6lQr5Lm2Q91j90rDkk2QJCttGI86luv1aulhBvW5mp5tnV11YPU
-         mRKMpOi3Hfnxetpjhcybc1c98qtsdeWoM4tBo1mADjhLBXM7WKKbpGOLKfvyMUrlQSFA
-         YzIe/Kyr7KolEUjKExfOeebKLHHS3dYO2jsYl6KDCa3wnFXYJdTSqsEjAKfFukiWb88J
-         sU7ex5TYz8hdUB9irDsxAYZaOR7wxDrQzR1JDiC8Ska5n5ykwey6JdO4M0K3QuvD06hV
-         xLOQ==
-X-Gm-Message-State: ANhLgQ1AZMOEhMt32XuBZHhSl33bPzYFxy6QxPj/m3UGa8347DLPbHcs
-        jqe3GC0LKluDuZy6O9n3LrQnys4KlOQ=
-X-Google-Smtp-Source: ADFU+vvOBFORbrm3QHz7h3Wbpeq+l/iNoNETQRykilff0C5d3YAY49VBDsuJHBu/pgJqFe6BxQ5qIw==
-X-Received: by 2002:a5d:6187:: with SMTP id j7mr12491220wru.419.1585049191921;
-        Tue, 24 Mar 2020 04:26:31 -0700 (PDT)
-Received: from dell ([2.27.35.213])
-        by smtp.gmail.com with ESMTPSA id s2sm10011241wru.68.2020.03.24.04.26.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Mar 2020 04:26:31 -0700 (PDT)
-Date:   Tue, 24 Mar 2020 11:27:20 +0000
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc:     Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Darren Hart <dvhart@infradead.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
-        Zha Qipeng <qipeng.zha@intel.com>,
-        "David E . Box" <david.e.box@linux.intel.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v8 18/19] platform/x86: intel_pmc_ipc: Convert to MFD
-Message-ID: <20200324112720.GA437932@dell>
-References: <20200303133649.39819-1-mika.westerberg@linux.intel.com>
- <20200303133649.39819-19-mika.westerberg@linux.intel.com>
- <CAHp75Ve3s1vy6tSgyYCTtxD6z-8+-gUwxOE9A6sX=eW4xViHiA@mail.gmail.com>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=ktuTLWFbdGaqqJxefhDZte1DvZgH9my8ZHHD853RboI=;
+        b=UrvbjqdUWksq5lr37Ny2oRHyl5VXgf60pwm9H7CbijrSSy3oFKsfn8qqy6+m+Z3VTO
+         dlIUD23d+qUqGaZcq05xOBT+Cy95rm7wbjEKD0u3V25QcUZ3zm96Bb5jUYyosLaNQHrK
+         MnEynanEeA1j5XGaGoIWLpbotZeaLmoSCT2gsauVXYTXJYr13dcAWQNouc382DvC5nDo
+         zMPf2kpsmQqO4HulVZaALEm4WL3R4KhaxgC5kxD15fTWj71kYr3lZCKYKal258cRVSKv
+         bugGAuBIARUQgKomAU7R8hTu1w4M1EBlvf8tPNu7YoZXYygIrGXaemYHdxc9kh0hwQqx
+         EZ9w==
+X-Gm-Message-State: ANhLgQ3Z9kZ26pKvAI1cs5/CIe2yreVmzUgI+gz1iOxbur1wLy+OnbsP
+        apggc/P0+mmsVG7sVy3WPSeGTmPr314yYtJcrSPN5kVwQcvVdPGzk8zCOod41BN+kC6qdKrvxG7
+        KBoq5wiBKkA26uiPj/y1U3gPq
+X-Received: by 2002:a05:600c:295e:: with SMTP id n30mr4362445wmd.78.1585049330623;
+        Tue, 24 Mar 2020 04:28:50 -0700 (PDT)
+X-Google-Smtp-Source: ADFU+vu8wwBP/1By0+yDJsZyGCHmSqEqyjVhDJVEFj/LdirTJpqlyAsnxBXSoDiLlerfPdX0RN46HA==
+X-Received: by 2002:a05:600c:295e:: with SMTP id n30mr4362433wmd.78.1585049330385;
+        Tue, 24 Mar 2020 04:28:50 -0700 (PDT)
+Received: from ?IPv6:2001:b07:6468:f312:7848:99b4:482a:e888? ([2001:b07:6468:f312:7848:99b4:482a:e888])
+        by smtp.gmail.com with ESMTPSA id i4sm29188405wrm.32.2020.03.24.04.28.47
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 24 Mar 2020 04:28:49 -0700 (PDT)
+Subject: Re: [PATCH 4/7] KVM: selftests: Add helpers to consolidate open coded
+ list operations
+To:     Peter Xu <peterx@redhat.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>
+Cc:     Christian Borntraeger <borntraeger@de.ibm.com>,
+        Janosch Frank <frankja@linux.ibm.com>,
+        David Hildenbrand <david@redhat.com>,
+        Cornelia Huck <cohuck@redhat.com>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Qian Cai <cai@lca.pw>
+References: <20200320205546.2396-1-sean.j.christopherson@intel.com>
+ <20200320205546.2396-5-sean.j.christopherson@intel.com>
+ <20200320224744.GG127076@xz-x1>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Message-ID: <23f62756-aca2-12d0-c2cc-baafafd76280@redhat.com>
+Date:   Tue, 24 Mar 2020 12:28:46 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
+In-Reply-To: <20200320224744.GG127076@xz-x1>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAHp75Ve3s1vy6tSgyYCTtxD6z-8+-gUwxOE9A6sX=eW4xViHiA@mail.gmail.com>
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 24 Mar 2020, Andy Shevchenko wrote:
+On 20/03/20 23:47, Peter Xu wrote:
+> I'm not sure whether we should start to use a common list, e.g.,
+> tools/include/linux/list.h, if we're going to rework them after all...
+> Even if this is preferred, maybe move to a header so kvm selftests can
+> use it in the future outside "vcpu" struct too and this file only?
 
-> On Tue, Mar 3, 2020 at 3:43 PM Mika Westerberg
-> <mika.westerberg@linux.intel.com> wrote:
-> >
-> > This driver only creates a bunch of platform devices sharing resources
-> > belonging to the PMC device. This is pretty much what MFD subsystem is
-> > for so move the driver there, renaming it to intel_pmc_bxt.c which
-> > should be more clear what it is.
-> >
-> > MFD subsystem provides nice helper APIs for subdevice creation so
-> > convert the driver to use those. Unfortunately the ACPI device includes
-> > separate resources for most of the subdevices so we cannot simply call
-> > mfd_add_devices() to create all of them but instead we need to call it
-> > separately for each device.
-> >
-> > The new MFD driver continues to expose two sysfs attributes that allow
-> > userspace to send IPC commands to the PMC/SCU to avoid breaking any
-> > existing applications that may use these. Generally this is bad idea so
-> > document this in the ABI documentation.
-> >
-> 
-> Lee, are you fine with this?
-> I can push it all via my tree and prepare IB for you.
+Yes, we should.
 
-Funny you should ask - it's next on my list.
+Paolo
 
-> > Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-> > Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> > ---
-> >  .../ABI/obsolete/sysfs-driver-intel_pmc_bxt   |  22 +
-> >  arch/x86/include/asm/intel_pmc_ipc.h          |  47 --
-> >  arch/x86/include/asm/intel_telemetry.h        |   1 +
-> >  drivers/mfd/Kconfig                           |  16 +-
-> >  drivers/mfd/Makefile                          |   1 +
-> >  drivers/mfd/intel_pmc_bxt.c                   | 504 ++++++++++++++
-> >  drivers/platform/x86/Kconfig                  |  16 +-
-> >  drivers/platform/x86/Makefile                 |   1 -
-> >  drivers/platform/x86/intel_pmc_ipc.c          | 645 ------------------
-> >  .../platform/x86/intel_telemetry_debugfs.c    |  12 +-
-> >  drivers/platform/x86/intel_telemetry_pltdrv.c |   2 +
-> >  drivers/usb/typec/tcpm/Kconfig                |   2 +-
-> >  include/linux/mfd/intel_pmc_bxt.h             |  43 ++
-> >  13 files changed, 602 insertions(+), 710 deletions(-)
-> >  create mode 100644 Documentation/ABI/obsolete/sysfs-driver-intel_pmc_bxt
-> >  delete mode 100644 arch/x86/include/asm/intel_pmc_ipc.h
-> >  create mode 100644 drivers/mfd/intel_pmc_bxt.c
-> >  delete mode 100644 drivers/platform/x86/intel_pmc_ipc.c
-> >  create mode 100644 include/linux/mfd/intel_pmc_bxt.h
-
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
