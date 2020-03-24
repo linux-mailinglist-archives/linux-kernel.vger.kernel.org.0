@@ -2,87 +2,56 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E47CA191174
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 14:45:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B19B919117F
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 14:45:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728214AbgCXNne (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 09:43:34 -0400
-Received: from mx2.suse.de ([195.135.220.15]:55924 "EHLO mx2.suse.de"
+        id S1728490AbgCXNnx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 09:43:53 -0400
+Received: from vps0.lunn.ch ([185.16.172.187]:54480 "EHLO vps0.lunn.ch"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727904AbgCXNnd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 09:43:33 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 0C7CEAC0C;
-        Tue, 24 Mar 2020 13:43:31 +0000 (UTC)
-Message-ID: <1585057397.7151.22.camel@suse.de>
-Subject: Re: KASAN: slab-out-of-bounds Read in garmin_read_process
-From:   Oliver Neukum <oneukum@suse.de>
-To:     syzbot <syzbot+d29e9263e13ce0b9f4fd@syzkaller.appspotmail.com>,
-        andreyknvl@google.com, gregkh@linuxfoundation.org,
-        johan@kernel.org, linux-kernel@vger.kernel.org,
-        linux-usb@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Date:   Tue, 24 Mar 2020 14:43:17 +0100
-In-Reply-To: <000000000000ca19c205a15d8aca@google.com>
-References: <000000000000ca19c205a15d8aca@google.com>
-Content-Type: multipart/mixed; boundary="=-uEHle+UyLTjyzWxu00zb"
-X-Mailer: Evolution 3.26.6 
-Mime-Version: 1.0
+        id S1728416AbgCXNnu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Mar 2020 09:43:50 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+        s=20171124; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=PGTJ624xy37YPjUynlw4h0mO/vuLMxq5CI5b1l8BwNQ=; b=Zigr7ijlBlsCbjDqY2gBPfgJ5B
+        9NpdDRp1mpKob3tjOb3hJ91xItaccKePY5zYCNI7qw0mhN10pZPgqBq6gdfY2ALZJ0XDq8oWFTbBz
+        oulDnAoomL3KCBwxFX6Z7cZ1pRfKOqHQpj8PQe54dF5f1B6VjomSzRDs+BL8el642XyI=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.93)
+        (envelope-from <andrew@lunn.ch>)
+        id 1jGjqC-0002NK-Vj; Tue, 24 Mar 2020 14:43:36 +0100
+Date:   Tue, 24 Mar 2020 14:43:36 +0100
+From:   Andrew Lunn <andrew@lunn.ch>
+To:     Andre Przywara <andre.przywara@arm.com>
+Cc:     "David S . Miller" <davem@davemloft.net>,
+        Radhey Shyam Pandey <radhey.shyam.pandey@xilinx.com>,
+        Michal Simek <michal.simek@xilinx.com>,
+        Robert Hancock <hancock@sedsystems.ca>, netdev@vger.kernel.org,
+        Russell King <rmk+kernel@arm.linux.org.uk>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 10/14] net: axienet: Add mii-tool support
+Message-ID: <20200324134336.GZ3819@lunn.ch>
+References: <20200324132347.23709-1-andre.przywara@arm.com>
+ <20200324132347.23709-11-andre.przywara@arm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200324132347.23709-11-andre.przywara@arm.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
---=-uEHle+UyLTjyzWxu00zb
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-
-Am Samstag, den 21.03.2020, 06:40 -0700 schrieb syzbot:
-> Hello,
+On Tue, Mar 24, 2020 at 01:23:43PM +0000, Andre Przywara wrote:
+> mii-tool is useful for debugging, and all it requires to work is to wire
+> up the ioctl ops function pointer.
+> Add this to the axienet driver to enable mii-tool.
 > 
-> syzbot found the following crash on:
-> 
-> HEAD commit:    e17994d1 usb: core: kcov: collect coverage from usb comple..
-> git tree:       https://github.com/google/kasan.git usb-fuzzer
-> console output: https://syzkaller.appspot.com/x/log.txt?x=16255ce5e00000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=5d64370c438bc60
-> dashboard link: https://syzkaller.appspot.com/bug?extid=d29e9263e13ce0b9f4fd
-> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1376a3f9e00000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14c65fe3e00000
+> Signed-off-by: Andre Przywara <andre.przywara@arm.com>
 
-#syz test: https://github.com/google/kasan.git e17994d1
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 
---=-uEHle+UyLTjyzWxu00zb
-Content-Disposition: attachment;
-	filename="0002-garmin_gps-add-sanity-checking-for-data-length.patch"
-Content-Transfer-Encoding: base64
-Content-Type: text/x-patch;
-	name="0002-garmin_gps-add-sanity-checking-for-data-length.patch";
-	charset="UTF-8"
-
-RnJvbSAzNmJhOWM2NDI1M2NjNDIzODM3NmI3NDIzNWExNjMyODhhZjU5NjM4IE1vbiBTZXAgMTcg
-MDA6MDA6MDAgMjAwMQpGcm9tOiBPbGl2ZXIgTmV1a3VtIDxvbmV1a3VtQHN1c2UuY29tPgpEYXRl
-OiBUdWUsIDI0IE1hciAyMDIwIDEzOjQ2OjMxICswMTAwClN1YmplY3Q6IFtQQVRDSCAyLzJdIGdh
-cm1pbl9ncHM6IGFkZCBzYW5pdHkgY2hlY2tpbmcgZm9yIGRhdGEgbGVuZ3RoCgpXZSBtdXN0IG5v
-dCBwcm9jZXNzIHBhY2tldHMgc2hvcnRlciB0aGFuIGEgcGFja2V0IElECgpTaWduZWQtb2ZmLWJ5
-OiBPbGl2ZXIgTmV1a3VtIDxvbmV1a3VtQHN1c2UuY29tPgotLS0KIGRyaXZlcnMvdXNiL3Nlcmlh
-bC9nYXJtaW5fZ3BzLmMgfCA0ICsrLS0KIDEgZmlsZSBjaGFuZ2VkLCAyIGluc2VydGlvbnMoKyks
-IDIgZGVsZXRpb25zKC0pCgpkaWZmIC0tZ2l0IGEvZHJpdmVycy91c2Ivc2VyaWFsL2dhcm1pbl9n
-cHMuYyBiL2RyaXZlcnMvdXNiL3NlcmlhbC9nYXJtaW5fZ3BzLmMKaW5kZXggZmZkOTg0MTQyMTcx
-Li5hNzJmYmJjNjU0MzYgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvdXNiL3NlcmlhbC9nYXJtaW5fZ3Bz
-LmMKKysrIGIvZHJpdmVycy91c2Ivc2VyaWFsL2dhcm1pbl9ncHMuYwpAQCAtMTEzOCw4ICsxMTM4
-LDggQEAgc3RhdGljIHZvaWQgZ2FybWluX3JlYWRfcHJvY2VzcyhzdHJ1Y3QgZ2FybWluX2RhdGEg
-Kmdhcm1pbl9kYXRhX3AsCiAJCSAgIHNlbmQgaXQgZGlyZWN0bHkgdG8gdGhlIHR0eSBwb3J0ICov
-CiAJCWlmIChnYXJtaW5fZGF0YV9wLT5mbGFncyAmIEZMQUdTX1FVRVVJTkcpIHsKIAkJCXBrdF9h
-ZGQoZ2FybWluX2RhdGFfcCwgZGF0YSwgZGF0YV9sZW5ndGgpOwotCQl9IGVsc2UgaWYgKGJ1bGtf
-ZGF0YSB8fAotCQkJICAgZ2V0TGF5ZXJJZChkYXRhKSA9PSBHQVJNSU5fTEFZRVJJRF9BUFBMKSB7
-CisJCX0gZWxzZSBpZiAoYnVsa19kYXRhIHx8IChkYXRhX2xlbmd0aCA+PSBzaXplb2YodTMyKSAm
-JgorCQkJICAgZ2V0TGF5ZXJJZChkYXRhKSA9PSBHQVJNSU5fTEFZRVJJRF9BUFBMKSkgewogCiAJ
-CQlzcGluX2xvY2tfaXJxc2F2ZSgmZ2FybWluX2RhdGFfcC0+bG9jaywgZmxhZ3MpOwogCQkJZ2Fy
-bWluX2RhdGFfcC0+ZmxhZ3MgfD0gQVBQX1JFU1BfU0VFTjsKLS0gCjIuMTYuNAoK
-
-
---=-uEHle+UyLTjyzWxu00zb--
-
+    Andrew
