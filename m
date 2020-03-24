@@ -2,42 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 29AB6190FBE
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 14:29:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 302F6190EFD
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 14:19:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728795AbgCXNWo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 09:22:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44990 "EHLO mail.kernel.org"
+        id S1728017AbgCXNQd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 09:16:33 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36076 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728209AbgCXNWf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 09:22:35 -0400
+        id S1728470AbgCXNQd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Mar 2020 09:16:33 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0DE98206F6;
-        Tue, 24 Mar 2020 13:22:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0AAC8206F6;
+        Tue, 24 Mar 2020 13:16:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585056154;
-        bh=kfUWbnTeMtmznHS2XI+DY12FQ9bzL1Ohz2f03135/Vs=;
+        s=default; t=1585055792;
+        bh=9dMFvrNqxpUvePmXG+6FIyrL9b0WiSp7fU/JGA6+lSs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=l/hjgWMFbtso5HccJaj9+ppsZNbojwnm3PMfjYYCjPqlIZ+MNEYbm6rmWso8+xEtK
-         xbpbbojl6U1WrVkr8JKK6Wo1j6mCChwOf9996TZd9r9gAgbAL1ou5zhBRtsX/EemFE
-         nuUiUxgqV9fNKxOiNZbbbcbdMiijIGhSKPKsTUx4=
+        b=wxoZQf1W5hEabs6qAVxAD7PebLk0cpS0xTco4QQk1XiTmkJZ6AYzA91pTJJs7w6QV
+         Zu8b3bC2BGdhmORpQq6NUZ2RWTwdPGpikYkdtcYJpWpAgubnvkOLLlo7ucGH6mJrJ0
+         gPq8Q3UOgMm7/G9/gAG0QkXNKx+yKu5wyfgEP61w=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        David Abdurachmanov <david.abdurachmanov@gmail.com>,
-        Tycho Andersen <tycho@tycho.ws>,
-        Kees Cook <keescook@chromium.org>,
-        Palmer Dabbelt <palmerdabbelt@google.com>,
+        stable@vger.kernel.org, Josip Pavic <Josip.Pavic@amd.com>,
+        Aric Cyr <Aric.Cyr@amd.com>,
+        Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.5 037/119] riscv: fix seccomp reject syscall code path
+Subject: [PATCH 5.4 030/102] drm/amd/display: fix dcc swath size calculations on dcn1
 Date:   Tue, 24 Mar 2020 14:10:22 +0100
-Message-Id: <20200324130812.092109755@linuxfoundation.org>
+Message-Id: <20200324130809.552286024@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.2
-In-Reply-To: <20200324130808.041360967@linuxfoundation.org>
-References: <20200324130808.041360967@linuxfoundation.org>
+In-Reply-To: <20200324130806.544601211@linuxfoundation.org>
+References: <20200324130806.544601211@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,147 +46,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tycho Andersen <tycho@tycho.ws>
+From: Josip Pavic <Josip.Pavic@amd.com>
 
-[ Upstream commit af33d2433b03d63ed31fcfda842f46676a5e1afc ]
+[ Upstream commit a0275dfc82c9034eefbeffd556cca6dd239d7925 ]
 
-If secure_computing() rejected a system call, we were previously setting
-the system call number to -1, to indicate to later code that the syscall
-failed. However, if something (e.g. a user notification) was sleeping, and
-received a signal, we may set a0 to -ERESTARTSYS and re-try the system call
-again.
+[Why]
+Swath sizes are being calculated incorrectly. The horizontal swath size
+should be the product of block height, viewport width, and bytes per
+element, but the calculation uses viewport height instead of width. The
+vertical swath size is similarly incorrectly calculated. The effect of
+this is that we report the wrong DCC caps.
 
-In this case, seccomp "denies" the syscall (because of the signal), and we
-would set a7 to -1, thus losing the value of the system call we want to
-restart.
+[How]
+Use viewport width in the horizontal swath size calculation and viewport
+height in the vertical swath size calculation.
 
-Instead, let's return -1 from do_syscall_trace_enter() to indicate that the
-syscall was rejected, so we don't clobber the value in case of -ERESTARTSYS
-or whatever.
-
-This commit fixes the user_notification_signal seccomp selftest on riscv to
-no longer hang. That test expects the system call to be re-issued after the
-signal, and it wasn't due to the above bug. Now that it is, everything
-works normally.
-
-Note that in the ptrace (tracer) case, the tracer can set the register
-values to whatever they want, so we still need to keep the code that
-handles out-of-bounds syscalls. However, we can drop the comment.
-
-We can also drop syscall_set_nr(), since it is no longer used anywhere, and
-the code that re-loads the value in a7 because of it.
-
-Reported in: https://lore.kernel.org/bpf/CAEn-LTp=ss0Dfv6J00=rCAy+N78U2AmhqJNjfqjr2FDpPYjxEQ@mail.gmail.com/
-
-Reported-by: David Abdurachmanov <david.abdurachmanov@gmail.com>
-Signed-off-by: Tycho Andersen <tycho@tycho.ws>
-Reviewed-by: Kees Cook <keescook@chromium.org>
-Signed-off-by: Palmer Dabbelt <palmerdabbelt@google.com>
+Signed-off-by: Josip Pavic <Josip.Pavic@amd.com>
+Reviewed-by: Aric Cyr <Aric.Cyr@amd.com>
+Acked-by: Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/riscv/include/asm/syscall.h |  7 -------
- arch/riscv/kernel/entry.S        | 11 +++--------
- arch/riscv/kernel/ptrace.c       | 11 +++++------
- 3 files changed, 8 insertions(+), 21 deletions(-)
+ drivers/gpu/drm/amd/display/dc/dcn10/dcn10_hubbub.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/riscv/include/asm/syscall.h b/arch/riscv/include/asm/syscall.h
-index 42347d0981e7e..49350c8bd7b09 100644
---- a/arch/riscv/include/asm/syscall.h
-+++ b/arch/riscv/include/asm/syscall.h
-@@ -28,13 +28,6 @@ static inline int syscall_get_nr(struct task_struct *task,
- 	return regs->a7;
- }
+diff --git a/drivers/gpu/drm/amd/display/dc/dcn10/dcn10_hubbub.c b/drivers/gpu/drm/amd/display/dc/dcn10/dcn10_hubbub.c
+index a02c10e23e0d6..d163388c99a06 100644
+--- a/drivers/gpu/drm/amd/display/dc/dcn10/dcn10_hubbub.c
++++ b/drivers/gpu/drm/amd/display/dc/dcn10/dcn10_hubbub.c
+@@ -840,8 +840,8 @@ static void hubbub1_det_request_size(
  
--static inline void syscall_set_nr(struct task_struct *task,
--				  struct pt_regs *regs,
--				  int sysno)
--{
--	regs->a7 = sysno;
--}
--
- static inline void syscall_rollback(struct task_struct *task,
- 				    struct pt_regs *regs)
- {
-diff --git a/arch/riscv/kernel/entry.S b/arch/riscv/kernel/entry.S
-index e163b7b64c86c..f6486d4956013 100644
---- a/arch/riscv/kernel/entry.S
-+++ b/arch/riscv/kernel/entry.S
-@@ -228,20 +228,13 @@ check_syscall_nr:
- 	/* Check to make sure we don't jump to a bogus syscall number. */
- 	li t0, __NR_syscalls
- 	la s0, sys_ni_syscall
--	/*
--	 * The tracer can change syscall number to valid/invalid value.
--	 * We use syscall_set_nr helper in syscall_trace_enter thus we
--	 * cannot trust the current value in a7 and have to reload from
--	 * the current task pt_regs.
--	 */
--	REG_L a7, PT_A7(sp)
- 	/*
- 	 * Syscall number held in a7.
- 	 * If syscall number is above allowed value, redirect to ni_syscall.
- 	 */
- 	bge a7, t0, 1f
- 	/*
--	 * Check if syscall is rejected by tracer or seccomp, i.e., a7 == -1.
-+	 * Check if syscall is rejected by tracer, i.e., a7 == -1.
- 	 * If yes, we pretend it was executed.
- 	 */
- 	li t1, -1
-@@ -334,6 +327,7 @@ work_resched:
- handle_syscall_trace_enter:
- 	move a0, sp
- 	call do_syscall_trace_enter
-+	move t0, a0
- 	REG_L a0, PT_A0(sp)
- 	REG_L a1, PT_A1(sp)
- 	REG_L a2, PT_A2(sp)
-@@ -342,6 +336,7 @@ handle_syscall_trace_enter:
- 	REG_L a5, PT_A5(sp)
- 	REG_L a6, PT_A6(sp)
- 	REG_L a7, PT_A7(sp)
-+	bnez t0, ret_from_syscall_rejected
- 	j check_syscall_nr
- handle_syscall_trace_exit:
- 	move a0, sp
-diff --git a/arch/riscv/kernel/ptrace.c b/arch/riscv/kernel/ptrace.c
-index 407464201b91e..444dc7b0fd78c 100644
---- a/arch/riscv/kernel/ptrace.c
-+++ b/arch/riscv/kernel/ptrace.c
-@@ -148,21 +148,19 @@ long arch_ptrace(struct task_struct *child, long request,
-  * Allows PTRACE_SYSCALL to work.  These are called from entry.S in
-  * {handle,ret_from}_syscall.
-  */
--__visible void do_syscall_trace_enter(struct pt_regs *regs)
-+__visible int do_syscall_trace_enter(struct pt_regs *regs)
- {
- 	if (test_thread_flag(TIF_SYSCALL_TRACE))
- 		if (tracehook_report_syscall_entry(regs))
--			syscall_set_nr(current, regs, -1);
-+			return -1;
+ 	hubbub1_get_blk256_size(&blk256_width, &blk256_height, bpe);
  
- 	/*
- 	 * Do the secure computing after ptrace; failures should be fast.
- 	 * If this fails we might have return value in a0 from seccomp
- 	 * (via SECCOMP_RET_ERRNO/TRACE).
- 	 */
--	if (secure_computing() == -1) {
--		syscall_set_nr(current, regs, -1);
--		return;
--	}
-+	if (secure_computing() == -1)
-+		return -1;
+-	swath_bytes_horz_wc = height * blk256_height * bpe;
+-	swath_bytes_vert_wc = width * blk256_width * bpe;
++	swath_bytes_horz_wc = width * blk256_height * bpe;
++	swath_bytes_vert_wc = height * blk256_width * bpe;
  
- #ifdef CONFIG_HAVE_SYSCALL_TRACEPOINTS
- 	if (test_thread_flag(TIF_SYSCALL_TRACEPOINT))
-@@ -170,6 +168,7 @@ __visible void do_syscall_trace_enter(struct pt_regs *regs)
- #endif
- 
- 	audit_syscall_entry(regs->a7, regs->a0, regs->a1, regs->a2, regs->a3);
-+	return 0;
- }
- 
- __visible void do_syscall_trace_exit(struct pt_regs *regs)
+ 	*req128_horz_wc = (2 * swath_bytes_horz_wc <= detile_buf_size) ?
+ 			false : /* full 256B request */
 -- 
 2.20.1
 
