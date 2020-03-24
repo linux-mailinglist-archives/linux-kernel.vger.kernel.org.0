@@ -2,83 +2,45 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F1CF31915F1
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 17:18:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E18B51915FF
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 17:18:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727947AbgCXQPz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 12:15:55 -0400
-Received: from conuserg-12.nifty.com ([210.131.2.79]:42697 "EHLO
-        conuserg-12.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727164AbgCXQPy (ORCPT
+        id S1727867AbgCXQRl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 12:17:41 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:54444 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727436AbgCXQRk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 12:15:54 -0400
-Received: from grover.flets-west.jp (softbank126093102113.bbtec.net [126.93.102.113]) (authenticated)
-        by conuserg-12.nifty.com with ESMTP id 02OGFI4f014851;
-        Wed, 25 Mar 2020 01:15:19 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-12.nifty.com 02OGFI4f014851
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1585066519;
-        bh=iERwpFIUsMeWrqbzCfka8i/KOvDD+eMi426uZLpMpHs=;
-        h=From:To:Cc:Subject:Date:From;
-        b=HXOoZPB4Hwl4LYPMuSbWnvmygN12M5DXYXftprC3eIeSln7gRtCZvphhqcjYmhId/
-         xVAFwaTJkW1Xg536IDeBxSf54E5fj+SGrgnTaQLUvqGIAng52OBY9HYgw1HcSY5aNv
-         jvB3y1Is+Sopc753kBeDlig5tJiY3fvZZjZnKO0mlcbUy5S10OtXwR2H5yX6dzam8i
-         aEg0V8TFeH7F9ylI5yo4UtybZ9lBmF4xcUAXrsULI/Bzqg0m3MICo5pmHcJpMgmjIT
-         SOzgRVBqelRi4jitECkgl/NtCL30nFx/mzWc1TQhBuTqr3Hb7Fjg0eoCPZt0qa1hi+
-         eIpNkGE0PkvPw==
-X-Nifty-SrcIP: [126.93.102.113]
-From:   Masahiro Yamada <masahiroy@kernel.org>
-To:     linux-kbuild@vger.kernel.org
-Cc:     "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Masahiro Yamada <masahiroy@kernel.org>,
-        Michal Marek <michal.lkml@markovi.net>,
-        clang-built-linux@googlegroups.com
-Subject: [PATCH] kbuild: remove AS variable
-Date:   Wed, 25 Mar 2020 01:15:07 +0900
-Message-Id: <20200324161507.7414-1-masahiroy@kernel.org>
-X-Mailer: git-send-email 2.17.1
+        Tue, 24 Mar 2020 12:17:40 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        MIME-Version:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+        Content-ID:Content-Description:In-Reply-To:References;
+        bh=cJZCZxr18Eu4c8zq5s+xLC2rvrX4EDKcokEHPt7/iWU=; b=YR1js5wMW5YjUHAFs3sDPYV7gE
+        8jFH6Wi8ayKebPXRPNt40wRGLAUeWYoqPWAXusE9uz0+hF8uyZtkVPanDfBr3vT9JJlcGHbK7IuVQ
+        pyVcHnq4CTeOdmwwvv1ImYCRhd7HdmcUg7ImhE0q0qGzlUULCh4qQUtox7FpbLv2yjH3F9si7l/kC
+        V0sEEEpW4xrKX2Qy+7i9Wf0FrYjfo8yo6FaW6r2XoWHSZUIwiEkiJxHtTsp5wuYFpLU65tMqVjl/e
+        OZMDHrxsJZ3wOVHpSqGjYEbtGcpzVpiRFY1HDQYw8Cmi1s2daG++liUVxctBB6XDrcpU/Ou/h8jCb
+        k8Qh73CA==;
+Received: from 213-225-10-87.nat.highway.a1.net ([213.225.10.87] helo=localhost)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jGmFG-0002sm-R1; Tue, 24 Mar 2020 16:17:39 +0000
+From:   Christoph Hellwig <hch@lst.de>
+To:     Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+Cc:     linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: MIPS ioremap cleanups
+Date:   Tue, 24 Mar 2020 17:15:19 +0100
+Message-Id: <20200324161525.754181-1-hch@lst.de>
+X-Mailer: git-send-email 2.25.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As commit 5ef872636ca7 ("kbuild: get rid of misleading $(AS) from
-documents") noted, we rarely use $(AS) in the kernel build.
+Hi Thomas,
 
-Now that the only/last user of $(AS) in drivers/net/wan/Makefile was
-converted to $(CC), $(AS) is no longer used in the build process.
-
-You can still pass in AS=clang, which is just a switch to turn on
-the LLVM integrated assembler.
-
-Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
----
-
- Makefile | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
-diff --git a/Makefile b/Makefile
-index 16d8271192d1..339e8c51a10b 100644
---- a/Makefile
-+++ b/Makefile
-@@ -405,7 +405,6 @@ KBUILD_HOSTLDFLAGS  := $(HOST_LFS_LDFLAGS) $(HOSTLDFLAGS)
- KBUILD_HOSTLDLIBS   := $(HOST_LFS_LIBS) $(HOSTLDLIBS)
- 
- # Make variables (CC, etc...)
--AS		= $(CROSS_COMPILE)as
- LD		= $(CROSS_COMPILE)ld
- CC		= $(CROSS_COMPILE)gcc
- CPP		= $(CC) -E
-@@ -472,7 +471,7 @@ KBUILD_LDFLAGS :=
- GCC_PLUGINS_CFLAGS :=
- CLANG_FLAGS :=
- 
--export ARCH SRCARCH CONFIG_SHELL BASH HOSTCC KBUILD_HOSTCFLAGS CROSS_COMPILE AS LD CC
-+export ARCH SRCARCH CONFIG_SHELL BASH HOSTCC KBUILD_HOSTCFLAGS CROSS_COMPILE LD CC
- export CPP AR NM STRIP OBJCOPY OBJDUMP OBJSIZE READELF PAHOLE LEX YACC AWK INSTALLKERNEL
- export PERL PYTHON PYTHON3 CHECK CHECKFLAGS MAKE UTS_MACHINE HOSTCXX
- export KBUILD_HOSTCXXFLAGS KBUILD_HOSTLDFLAGS KBUILD_HOSTLDLIBS LDFLAGS_MODULE
--- 
-2.17.1
-
+below is a bunch of cleanups for the MIPS ioremap code.  Compile tested
+only.
