@@ -2,43 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E6DBA190ED6
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 14:15:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 05B88190F46
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 14:19:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727822AbgCXNPY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 09:15:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34208 "EHLO mail.kernel.org"
+        id S1728807AbgCXNTJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 09:19:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39632 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727741AbgCXNPV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 09:15:21 -0400
+        id S1728458AbgCXNTI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Mar 2020 09:19:08 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9796D208E0;
-        Tue, 24 Mar 2020 13:15:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1F4E2206F6;
+        Tue, 24 Mar 2020 13:19:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585055721;
-        bh=FVqenkDT0r638d4jq3mOb7Gw4db6ULMoBAWQXGAlUwE=;
+        s=default; t=1585055947;
+        bh=5erQp7S9Ai6F7JoLyZX4Q1MogFFhHZTrNuPftQOXQk4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VDkMyWBAboYnnqnQ6QQwSU+AWNTuVARp1f6Z1G64CCSJ7GVRigdLClAUD96AAjx/a
-         o7MwY09Kbqumi3fuzhnv4T08VDj6DFTXdN0oEi/ayohxI5tyISGxEhE5TZcLiyOlQ3
-         /TQg+2mptfrioIGegjPAcNO9sAIxNTTF5KYVCA3Q=
+        b=QWZA/w93Eg8bHN1VBvD4ayQLlqqJt1TBaDFbimnqOpspCTlZkka4Otj+bdvqIOUtR
+         xgdgHCeP4ECh4f5rd/a3ujlUwFcp5rLziNJ9/vZXyTCsVhK6/2SGgUwzFu9NBoL67L
+         FaeB9RDs4wPGN2AHws+EFPcfkQltzbzg0QNJ68O8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chunguang Xu <brookxu@tencent.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.19 47/65] memcg: fix NULL pointer dereference in __mem_cgroup_usage_unregister_event
+        stable@vger.kernel.org, Matthias Maennich <maennich@google.com>,
+        Lucas De Marchi <lucas.demarchi@intel.com>,
+        Jessica Yu <jeyu@kernel.org>,
+        Masahiro Yamada <masahiroy@kernel.org>
+Subject: [PATCH 5.4 076/102] modpost: move the namespace field in Module.symvers last
 Date:   Tue, 24 Mar 2020 14:11:08 +0100
-Message-Id: <20200324130802.903212527@linuxfoundation.org>
+Message-Id: <20200324130814.241308606@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.2
-In-Reply-To: <20200324130756.679112147@linuxfoundation.org>
-References: <20200324130756.679112147@linuxfoundation.org>
+In-Reply-To: <20200324130806.544601211@linuxfoundation.org>
+References: <20200324130806.544601211@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -48,120 +45,126 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chunguang Xu <brookxu@tencent.com>
+From: Jessica Yu <jeyu@kernel.org>
 
-commit 7d36665a5886c27ca4c4d0afd3ecc50b400f3587 upstream.
+commit 5190044c2965514a973184ca68ef5fad57a24670 upstream.
 
-An eventfd monitors multiple memory thresholds of the cgroup, closes them,
-the kernel deletes all events related to this eventfd.  Before all events
-are deleted, another eventfd monitors the memory threshold of this cgroup,
-leading to a crash:
+In order to preserve backwards compatability with kmod tools, we have to
+move the namespace field in Module.symvers last, as the depmod -e -E
+option looks at the first three fields in Module.symvers to check symbol
+versions (and it's expected they stay in the original order of crc,
+symbol, module).
 
-  BUG: kernel NULL pointer dereference, address: 0000000000000004
-  #PF: supervisor write access in kernel mode
-  #PF: error_code(0x0002) - not-present page
-  PGD 800000033058e067 P4D 800000033058e067 PUD 3355ce067 PMD 0
-  Oops: 0002 [#1] SMP PTI
-  CPU: 2 PID: 14012 Comm: kworker/2:6 Kdump: loaded Not tainted 5.6.0-rc4 #3
-  Hardware name: LENOVO 20AWS01K00/20AWS01K00, BIOS GLET70WW (2.24 ) 05/21/2014
-  Workqueue: events memcg_event_remove
-  RIP: 0010:__mem_cgroup_usage_unregister_event+0xb3/0x190
-  RSP: 0018:ffffb47e01c4fe18 EFLAGS: 00010202
-  RAX: 0000000000000001 RBX: ffff8bb223a8a000 RCX: 0000000000000001
-  RDX: 0000000000000001 RSI: ffff8bb22fb83540 RDI: 0000000000000001
-  RBP: ffffb47e01c4fe48 R08: 0000000000000000 R09: 0000000000000010
-  R10: 000000000000000c R11: 071c71c71c71c71c R12: ffff8bb226aba880
-  R13: ffff8bb223a8a480 R14: 0000000000000000 R15: 0000000000000000
-  FS:  0000000000000000(0000) GS:ffff8bb242680000(0000) knlGS:0000000000000000
-  CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-  CR2: 0000000000000004 CR3: 000000032c29c003 CR4: 00000000001606e0
-  Call Trace:
-    memcg_event_remove+0x32/0x90
-    process_one_work+0x172/0x380
-    worker_thread+0x49/0x3f0
-    kthread+0xf8/0x130
-    ret_from_fork+0x35/0x40
-  CR2: 0000000000000004
+In addition, update an ancient comment above read_dump() in modpost that
+suggested that the export type field in Module.symvers was optional. I
+suspect that there were historical reasons behind that comment that are
+no longer accurate. We have been unconditionally printing the export
+type since 2.6.18 (commit bd5cbcedf44), which is over a decade ago now.
 
-We can reproduce this problem in the following ways:
+Fix up read_dump() to treat each field as non-optional. I suspect the
+original read_dump() code treated the export field as optional in order
+to support pre <= 2.6.18 Module.symvers (which did not have the export
+type field). Note that although symbol namespaces are optional, the
+field will not be omitted from Module.symvers if a symbol does not have
+a namespace. In this case, the field will simply be empty and the next
+delimiter or end of line will follow.
 
-1. We create a new cgroup subdirectory and a new eventfd, and then we
-   monitor multiple memory thresholds of the cgroup through this eventfd.
-
-2.  closing this eventfd, and __mem_cgroup_usage_unregister_event ()
-   will be called multiple times to delete all events related to this
-   eventfd.
-
-The first time __mem_cgroup_usage_unregister_event() is called, the
-kernel will clear all items related to this eventfd in thresholds->
-primary.
-
-Since there is currently only one eventfd, thresholds-> primary becomes
-empty, so the kernel will set thresholds-> primary and hresholds-> spare
-to NULL.  If at this time, the user creates a new eventfd and monitor
-the memory threshold of this cgroup, kernel will re-initialize
-thresholds-> primary.
-
-Then when __mem_cgroup_usage_unregister_event () is called for the
-second time, because thresholds-> primary is not empty, the system will
-access thresholds-> spare, but thresholds-> spare is NULL, which will
-trigger a crash.
-
-In general, the longer it takes to delete all events related to this
-eventfd, the easier it is to trigger this problem.
-
-The solution is to check whether the thresholds associated with the
-eventfd has been cleared when deleting the event.  If so, we do nothing.
-
-[akpm@linux-foundation.org: fix comment, per Kirill]
-Fixes: 907860ed381a ("cgroups: make cftype.unregister_event() void-returning")
-Signed-off-by: Chunguang Xu <brookxu@tencent.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Acked-by: Michal Hocko <mhocko@suse.com>
-Acked-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-Cc: Johannes Weiner <hannes@cmpxchg.org>
-Cc: Vladimir Davydov <vdavydov.dev@gmail.com>
-Cc: <stable@vger.kernel.org>
-Link: http://lkml.kernel.org/r/077a6f67-aefa-4591-efec-f2f3af2b0b02@gmail.com
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: stable@vger.kernel.org
+Fixes: cb9b55d21fe0 ("modpost: add support for symbol namespaces")
+Tested-by: Matthias Maennich <maennich@google.com>
+Reviewed-by: Matthias Maennich <maennich@google.com>
+Reviewed-by: Lucas De Marchi <lucas.demarchi@intel.com>
+Signed-off-by: Jessica Yu <jeyu@kernel.org>
+Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- mm/memcontrol.c |   10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+ Documentation/kbuild/modules.rst |    4 ++--
+ scripts/export_report.pl         |    2 +-
+ scripts/mod/modpost.c            |   24 ++++++++++++------------
+ 3 files changed, 15 insertions(+), 15 deletions(-)
 
---- a/mm/memcontrol.c
-+++ b/mm/memcontrol.c
-@@ -3759,7 +3759,7 @@ static void __mem_cgroup_usage_unregiste
- 	struct mem_cgroup_thresholds *thresholds;
- 	struct mem_cgroup_threshold_ary *new;
- 	unsigned long usage;
--	int i, j, size;
-+	int i, j, size, entries;
+--- a/Documentation/kbuild/modules.rst
++++ b/Documentation/kbuild/modules.rst
+@@ -470,9 +470,9 @@ build.
  
- 	mutex_lock(&memcg->thresholds_lock);
+ 	The syntax of the Module.symvers file is::
  
-@@ -3779,14 +3779,20 @@ static void __mem_cgroup_usage_unregiste
- 	__mem_cgroup_threshold(memcg, type == _MEMSWAP);
+-	<CRC>       <Symbol>          <Namespace>  <Module>                         <Export Type>
++	<CRC>       <Symbol>         <Module>                         <Export Type>     <Namespace>
  
- 	/* Calculate new number of threshold */
--	size = 0;
-+	size = entries = 0;
- 	for (i = 0; i < thresholds->primary->size; i++) {
- 		if (thresholds->primary->entries[i].eventfd != eventfd)
- 			size++;
-+		else
-+			entries++;
- 	}
+-	0xe1cc2a05  usb_stor_suspend  USB_STORAGE  drivers/usb/storage/usb-storage  EXPORT_SYMBOL_GPL
++	0xe1cc2a05  usb_stor_suspend drivers/usb/storage/usb-storage  EXPORT_SYMBOL_GPL USB_STORAGE
  
- 	new = thresholds->spare;
+ 	The fields are separated by tabs and values may be empty (e.g.
+ 	if no namespace is defined for an exported symbol).
+--- a/scripts/export_report.pl
++++ b/scripts/export_report.pl
+@@ -94,7 +94,7 @@ if (defined $opt{'o'}) {
+ #
+ while ( <$module_symvers> ) {
+ 	chomp;
+-	my (undef, $symbol, $namespace, $module, $gpl) = split('\t');
++	my (undef, $symbol, $module, $gpl, $namespace) = split('\t');
+ 	$SYMBOL { $symbol } =  [ $module , "0" , $symbol, $gpl];
+ }
+ close($module_symvers);
+--- a/scripts/mod/modpost.c
++++ b/scripts/mod/modpost.c
+@@ -2434,7 +2434,7 @@ static void write_if_changed(struct buff
+ }
  
-+	/* If no items related to eventfd have been cleared, nothing to do */
-+	if (!entries)
-+		goto unlock;
+ /* parse Module.symvers file. line format:
+- * 0x12345678<tab>symbol<tab>module[[<tab>export]<tab>something]
++ * 0x12345678<tab>symbol<tab>module<tab>export<tab>namespace
+  **/
+ static void read_dump(const char *fname, unsigned int kernel)
+ {
+@@ -2447,7 +2447,7 @@ static void read_dump(const char *fname,
+ 		return;
+ 
+ 	while ((line = get_next_line(&pos, file, size))) {
+-		char *symname, *namespace, *modname, *d, *export, *end;
++		char *symname, *namespace, *modname, *d, *export;
+ 		unsigned int crc;
+ 		struct module *mod;
+ 		struct symbol *s;
+@@ -2455,16 +2455,16 @@ static void read_dump(const char *fname,
+ 		if (!(symname = strchr(line, '\t')))
+ 			goto fail;
+ 		*symname++ = '\0';
+-		if (!(namespace = strchr(symname, '\t')))
+-			goto fail;
+-		*namespace++ = '\0';
+-		if (!(modname = strchr(namespace, '\t')))
++		if (!(modname = strchr(symname, '\t')))
+ 			goto fail;
+ 		*modname++ = '\0';
+-		if ((export = strchr(modname, '\t')) != NULL)
+-			*export++ = '\0';
+-		if (export && ((end = strchr(export, '\t')) != NULL))
+-			*end = '\0';
++		if (!(export = strchr(modname, '\t')))
++			goto fail;
++		*export++ = '\0';
++		if (!(namespace = strchr(export, '\t')))
++			goto fail;
++		*namespace++ = '\0';
 +
- 	/* Set thresholds array to NULL if we don't have thresholds */
- 	if (!size) {
- 		kfree(new);
+ 		crc = strtoul(line, &d, 16);
+ 		if (*symname == '\0' || *modname == '\0' || *d != '\0')
+ 			goto fail;
+@@ -2516,9 +2516,9 @@ static void write_dump(const char *fname
+ 				namespace = symbol->namespace;
+ 				buf_printf(&buf, "0x%08x\t%s\t%s\t%s\t%s\n",
+ 					   symbol->crc, symbol->name,
+-					   namespace ? namespace : "",
+ 					   symbol->module->name,
+-					   export_str(symbol->export));
++					   export_str(symbol->export),
++					   namespace ? namespace : "");
+ 			}
+ 			symbol = symbol->next;
+ 		}
 
 
