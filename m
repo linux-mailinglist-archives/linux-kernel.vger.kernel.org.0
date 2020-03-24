@@ -2,84 +2,66 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A959A1912E1
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 15:23:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 00EB41912EC
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 15:24:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728271AbgCXOXA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 10:23:00 -0400
-Received: from us-smtp-delivery-74.mimecast.com ([63.128.21.74]:44672 "EHLO
-        us-smtp-delivery-74.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727270AbgCXOXA (ORCPT
+        id S1728309AbgCXOYG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 10:24:06 -0400
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:43253 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728195AbgCXOYE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 10:23:00 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1585059779;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:in-reply-to:in-reply-to:references:references;
-        bh=zQWZEZmUvi4qR88INJygABxgVNbImLNogNiP/46ZYIU=;
-        b=BAq86NAsx+rymdUcLd3UkTN4PSphSVWGdE98raixIyC0MMmorXlSGzjJTBBHc6KEsEEnDf
-        MO2AIayBPBUDJygMRSjC8Q4oH/2MrY2a/PVijW41DMmV+yYuAroFJYo3W2JhBMNaCFBKkR
-        ve7P2c6COdqKlXfiVaIUjqs2rXlKeJQ=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-306-QyoWTaspMVCP-mDcxPeR4Q-1; Tue, 24 Mar 2020 10:22:56 -0400
-X-MC-Unique: QyoWTaspMVCP-mDcxPeR4Q-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 7B40B8024DB;
-        Tue, 24 Mar 2020 14:22:55 +0000 (UTC)
-Received: from MiWiFi-R3L-srv.redhat.com (ovpn-12-69.pek2.redhat.com [10.72.12.69])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id A3F835C241;
-        Tue, 24 Mar 2020 14:22:52 +0000 (UTC)
-From:   Baoquan He <bhe@redhat.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     linux-mm@kvack.org, akpm@linux-foundation.org,
-        iamjoonsoo.kim@lge.com, hannes@cmpxchg.org, mhocko@kernel.org,
-        vbabka@suse.cz, bhe@redhat.com
-Subject: [PATCH 5/5] mm/vmstat.c: remove the useless code
-Date:   Tue, 24 Mar 2020 22:22:29 +0800
-Message-Id: <20200324142229.12028-6-bhe@redhat.com>
-In-Reply-To: <20200324142229.12028-1-bhe@redhat.com>
-References: <20200324142229.12028-1-bhe@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+        Tue, 24 Mar 2020 10:24:04 -0400
+Received: by mail-ed1-f65.google.com with SMTP id bd14so7019956edb.10;
+        Tue, 24 Mar 2020 07:24:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlemail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=QvAJMhrVEj0lhCeXiD2t+Sf+5S8zcMc++t+oIIyFqcc=;
+        b=ofThQBp/FPnmd+jt3Us1RKqMosiZ3Ld7CXBzRMIDhVDoYmaAwBY7uU7UZ3mcqeAUgY
+         rOp/qmK2OCIZ3JC4VqMneHfH983Gy421XoLJQ3vwihZRiSeHlC5zsGZshWiwBQEJkWZ3
+         vJvDXa/1N/S4qiiHJuV1wyuw/LBvGPpg/zeT0km+IumovVdONxeBi34sAV0DE9r8RUCi
+         BnSbWEljnUCrx48XJBdTMfPDedTQ7Q26FY+sy3jqj3mZK6IqhcTkUiEws7qZDFzwCGF9
+         8qhYqIeqDEMJuXGAZ9boHindf0mteZyl3iCHYSf3f16vhvRUJmO4RehoU6COPpxa/pOG
+         SSLg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=QvAJMhrVEj0lhCeXiD2t+Sf+5S8zcMc++t+oIIyFqcc=;
+        b=dAYhBpdGWPKbfDZHR+Z4JFGDAgPIZKlsJpwogZGUogYyBnLskVgyn8E33Q8JoFwwBD
+         cLiozWb22ppVOS+W0zu2Iwm5nUao6Ziwq4cVortnxRXYYbHhYQ7X/QTr6OJQTYAc6ROI
+         tOAP2UbJ7lYAhO6l04rphpSHK08NPagJLpOmuILSQKrjvOoOmLwbU2Qc+Sl4amfDeFmU
+         gs/kH8WWbWUwFE8ZVOP1XMY/Qn5lkPQw1y3i55ldmfF6saTEpMkOicZxOAJ606hoQa+o
+         5YXPdhbSUZOsG5lK1e8HgIMzF/Lcy9kY042B1MSW8n2+y2cTBL6RcTcz0stwjJzbujxZ
+         umvA==
+X-Gm-Message-State: ANhLgQ2LsYOn+p9Mek6wLOokQPZL+KNx4fmom0r326J4mUdnhxWLW6lE
+        uxH/o45bn5pCR+ZJoWTV00Std99I/nD2s94Hf2s=
+X-Google-Smtp-Source: ADFU+vv3y/Han0bqNS7oHPaFZG+M0NVgMJpj16d4Bgc4iE3n14CjrUhR6lEygqPtDHjI6W5B/3MdAYQNafV5Vu0eBek=
+X-Received: by 2002:aa7:de13:: with SMTP id h19mr27875188edv.52.1585059842383;
+ Tue, 24 Mar 2020 07:24:02 -0700 (PDT)
+MIME-Version: 1.0
+References: <20200324102030.31000-1-narmstrong@baylibre.com> <20200324102030.31000-5-narmstrong@baylibre.com>
+In-Reply-To: <20200324102030.31000-5-narmstrong@baylibre.com>
+From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Date:   Tue, 24 Mar 2020 15:23:51 +0100
+Message-ID: <CAFBinCA4VwQmd5msALXUrPxJy9gmeRQ5-5=UdNvx2aCGkPq_sw@mail.gmail.com>
+Subject: Re: [PATCH 04/13] usb: dwc3: meson-g12a: get the reset as shared
+To:     Neil Armstrong <narmstrong@baylibre.com>
+Cc:     kishon@ti.com, balbi@kernel.org, khilman@baylibre.com,
+        linux-amlogic@lists.infradead.org, linux-usb@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-No one calls is_zone_first_populated(), remove it.
-
-Signed-off-by: Baoquan He <bhe@redhat.com>
----
- mm/vmstat.c | 14 --------------
- 1 file changed, 14 deletions(-)
-
-diff --git a/mm/vmstat.c b/mm/vmstat.c
-index 4bbf9be786da..7097eb99f30d 100644
---- a/mm/vmstat.c
-+++ b/mm/vmstat.c
-@@ -1548,20 +1548,6 @@ static const struct seq_operations pagetypeinfo_op = {
- 	.show	= pagetypeinfo_show,
- };
- 
--static bool is_zone_first_populated(pg_data_t *pgdat, struct zone *zone)
--{
--	int zid;
--
--	for (zid = 0; zid < MAX_NR_ZONES; zid++) {
--		struct zone *compare = &pgdat->node_zones[zid];
--
--		if (populated_zone(compare))
--			return zone == compare;
--	}
--
--	return false;
--}
--
- static void zoneinfo_show_print(struct seq_file *m, pg_data_t *pgdat,
- 							struct zone *zone)
- {
--- 
-2.17.2
-
+On Tue, Mar 24, 2020 at 11:20 AM Neil Armstrong <narmstrong@baylibre.com> wrote:
+>
+> In order to support the Amlogic GXL/GXM SoCs, the reset line must
+> be handled as shared since also used by the PHYs.
+>
+> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+Reviewed-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
