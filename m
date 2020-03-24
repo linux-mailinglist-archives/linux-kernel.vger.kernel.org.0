@@ -2,139 +2,63 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ED5A41914FB
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 16:42:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3F892191506
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 16:42:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728714AbgCXPjI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 11:39:08 -0400
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:45239 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728441AbgCXPjG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 11:39:06 -0400
-Received: by mail-ot1-f68.google.com with SMTP id c9so7259496otl.12
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Mar 2020 08:39:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=gdNgUyovH3fFL036Rwp6qFNO07syiek5Tdf11PTq7yM=;
-        b=ONu4l2SCV9dgZFVg2UfYC52IuLbDCEb5mUeYEhKuzsvwFmPCM5N8SJEEk4UafeWoac
-         DoP3VVqPJ1Dk2LAERFmDMuVGBO0TY89uQuoBp7MFHclOAMl3bheWXApCowCeUXM/iSYl
-         Nki8KGmmkSaOqM2fHh6N8WGQtlddbJhB3NDhpJ++w3NiESRoLgfLeVfr2rbE+cELcGxq
-         o2DKUdhGkONXExSAuo9kb0sL0NAcnUZsgjhHgPJPpfzcsj07J5frb6YO7TEkmwK/jufN
-         epMmVkXkVFOiJMmQSqJtLz6OILDjXl85QLHgLlYPCaP8HtfqS6wc3U9QgUQs5Zr3ATYI
-         g9ig==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=gdNgUyovH3fFL036Rwp6qFNO07syiek5Tdf11PTq7yM=;
-        b=ffLlfWVovlKobDzHDxaJNa0DVBRJ7nUTHQ9G2oze7Qtif7x1ByqZ6yY0YHB+H6Z/r8
-         eTqKELxReLdtapFZQvQVAErSuOlxMuZVBJZJ12e+tCDf+bLoMF39ATXXaf0uXyNHsOuM
-         J6Ni2P3DUhFO3zM/1xzjtwJYQYMYc+gueA9k4E5srPB98FujWE9+98V6pVSHeNwQKa5x
-         8bSayJ5I/m3IEx8ddxGo2hv9lSjf2O0WcZtZ2dXRkUWZy4NF/iPYRqwgvdasOJLUuWj6
-         /s5UDNpx36Q5W96I8bnMqN2UQofaIThtVl5Y7F7bJW18dryW3HJSuOBzqkCU+doWunF/
-         IE3Q==
-X-Gm-Message-State: ANhLgQ0Y5nblTSQDX1EBzNnvff2A207/BfJxZQnKwfNZaOXuft1ojO8j
-        y0GCTJSM69rsmU/79BTperPVuY+ieL+8TWLyjAxoWg==
-X-Google-Smtp-Source: ADFU+vtLsKQwanUzdtbf2Q0mesZdWrEI+84/TzmxAH6yGULo2vc9lF+1ZHeUnyQ0lDvVCPKemKF+dhoLeJTrSBfVjBc=
-X-Received: by 2002:a4a:e48a:: with SMTP id s10mr2128023oov.10.1585064345759;
- Tue, 24 Mar 2020 08:39:05 -0700 (PDT)
+        id S1728646AbgCXPj7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 11:39:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35208 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727216AbgCXPj6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Mar 2020 11:39:58 -0400
+Received: from localhost (unknown [104.132.1.66])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 66AC120714;
+        Tue, 24 Mar 2020 15:39:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1585064398;
+        bh=lGDpf82yhyBXP69b0NUOoaMPEW8UINXiLyyIVIv/9FI=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=TBo0lPlwRXSdnDE+bhsL/UEUB7N0XVLgFH+hU/exJbLOlwW6l8RIeGAHBtqAGTcn8
+         oRxxbw7wAaDleMZ7E11AEcjWbIIcAik+kexPMsReTLLghhpUoZSXSPR06MU6lp5L61
+         iJudVQ+Bw7LlGuG6kKh4jPNdimy8Zce/k4zMC+JQ=
+Date:   Tue, 24 Mar 2020 08:39:57 -0700
+From:   Jaegeuk Kim <jaegeuk@kernel.org>
+To:     Chao Yu <yuchao0@huawei.com>
+Cc:     linux-f2fs-devel@lists.sourceforge.net,
+        linux-kernel@vger.kernel.org, chao@kernel.org
+Subject: Re: [PATCH v2] f2fs: compress: support zstd compress algorithm
+Message-ID: <20200324153957.GA198420@google.com>
+References: <20200303094602.50372-1-yuchao0@huawei.com>
+ <1ee0c565-930b-2379-b22b-40ddca271de3@huawei.com>
 MIME-Version: 1.0
-References: <20200317135740.19412-1-robert.foss@linaro.org>
- <20200317135740.19412-7-robert.foss@linaro.org> <2523204.mvXUDI8C0e@g550jk>
-In-Reply-To: <2523204.mvXUDI8C0e@g550jk>
-From:   Robert Foss <robert.foss@linaro.org>
-Date:   Tue, 24 Mar 2020 16:38:54 +0100
-Message-ID: <CAG3jFyuiVFHfNVwCAEynH0j8fK91k32m+nvZYYR79gju9cwPKQ@mail.gmail.com>
-Subject: Re: [v2 6/6] arm64: defconfig: Enable QCOM CAMCC, CAMSS and CCI drivers
-To:     Luca Weiss <luca@z3ntu.xyz>
-Cc:     agross@kernel.org, Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, catalin.marinas@arm.com,
-        will@kernel.org, shawnguo@kernel.org, olof@lixom.net,
-        maxime@cerno.tech, Anson.Huang@nxp.com, dinguyen@kernel.org,
-        leonard.crestez@nxp.com,
-        Marcin Juszkiewicz <marcin.juszkiewicz@linaro.org>,
-        linux-arm-msm@vger.kernel.org,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        Loic Poulain <loic.poulain@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1ee0c565-930b-2379-b22b-40ddca271de3@huawei.com>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hey Luca,
-
-On Fri, 20 Mar 2020 at 20:52, Luca Weiss <luca@z3ntu.xyz> wrote:
->
-> Hi Robert,
->
-> On Dienstag, 17. M=C3=A4rz 2020 14:57:40 CET Robert Foss wrote:
-> > Build camera clock, isp and controller drivers as modules.
-> >
-> > Signed-off-by: Robert Foss <robert.foss@linaro.org>
-> > Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+On 03/24, Chao Yu wrote:
+> Hi Jaegeuk,
+> 
+> On 2020/3/3 17:46, Chao Yu wrote:
+> > Add zstd compress algorithm support, use "compress_algorithm=zstd"
+> > mountoption to enable it.
+> > 
+> > Signed-off-by: Chao Yu <yuchao0@huawei.com>
 > > ---
-> >  arch/arm64/configs/defconfig | 4 ++++
-> >  1 file changed, 4 insertions(+)
-> >
-> > diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfi=
-g
-> > index 4db223dbc549..7cb6989249ab 100644
-> > --- a/arch/arm64/configs/defconfig
-> > +++ b/arch/arm64/configs/defconfig
-> > @@ -376,6 +376,7 @@ CONFIG_I2C_MESON=3Dy
-> >  CONFIG_I2C_MV64XXX=3Dy
-> >  CONFIG_I2C_OWL=3Dy
-> >  CONFIG_I2C_PXA=3Dy
-> > +CONFIG_I2C_QCOM_CCI=3Dm
-> >  CONFIG_I2C_QCOM_GENI=3Dm
-> >  CONFIG_I2C_QUP=3Dy
-> >  CONFIG_I2C_RK3X=3Dy
-> > @@ -530,6 +531,7 @@ CONFIG_VIDEO_SAMSUNG_S5P_MFC=3Dm
-> >  CONFIG_VIDEO_SAMSUNG_EXYNOS_GSC=3Dm
-> >  CONFIG_VIDEO_RENESAS_FCP=3Dm
-> >  CONFIG_VIDEO_RENESAS_VSP1=3Dm
-> > +CONFIG_VIDEO_QCOM_CAMSS=3Dm
-> >  CONFIG_DRM=3Dm
-> >  CONFIG_DRM_I2C_NXP_TDA998X=3Dm
-> >  CONFIG_DRM_NOUVEAU=3Dm
-> > @@ -732,6 +734,7 @@ CONFIG_MSM_GCC_8994=3Dy
-> >  CONFIG_MSM_MMCC_8996=3Dy
-> >  CONFIG_MSM_GCC_8998=3Dy
-> >  CONFIG_QCS_GCC_404=3Dy
-> > +CONFIG_SDM_CAMCC_845=3Dm
->
-> You seem to have this option twice in this patch.
+> > v2:
+> > - avoid accessing invalid address
+> > - introduce .{init,destroy}_{,de}compress_ctx callback functions.
+> 
+> I guess we merged related patches with wrong sequence as this patch
+> depends on ("f2fs: compress: add .{init,destroy}_decompress_ctx callback").
 
-Thanks for catching this.
-I'll send out a fix in v3.
+Done.
 
->
-> >  CONFIG_SDM_GCC_845=3Dy
-> >  CONFIG_SM_GCC_8150=3Dy
-> >  CONFIG_QCOM_HFPLL=3Dy
-> > @@ -762,6 +765,7 @@ CONFIG_QCOM_COMMAND_DB=3Dy
-> >  CONFIG_QCOM_GENI_SE=3Dy
-> >  CONFIG_QCOM_GLINK_SSR=3Dm
-> >  CONFIG_QCOM_RMTFS_MEM=3Dm
-> > +CONFIG_SDM_CAMCC_845=3Dm
->
-> ^
->
-> >  CONFIG_QCOM_RPMH=3Dy
-> >  CONFIG_QCOM_RPMHPD=3Dy
-> >  CONFIG_QCOM_SMEM=3Dy
->
-> Regards
-> Luca
->
->
+> 
+> Thanks,
