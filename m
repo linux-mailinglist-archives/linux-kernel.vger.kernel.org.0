@@ -2,34 +2,33 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8B08C1908FC
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 10:18:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EFA80190914
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 10:18:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727860AbgCXJRP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 05:17:15 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:44094 "EHLO
+        id S1727992AbgCXJSJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 05:18:09 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:44093 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727766AbgCXJRI (ORCPT
+        with ESMTP id S1727750AbgCXJRH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 05:17:08 -0400
+        Tue, 24 Mar 2020 05:17:07 -0400
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1jGfgG-0008GN-Tu; Tue, 24 Mar 2020 10:17:05 +0100
+        id 1jGfgH-0008Gy-Ru; Tue, 24 Mar 2020 10:17:05 +0100
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 38D491C04D3;
-        Tue, 24 Mar 2020 10:16:52 +0100 (CET)
-Date:   Tue, 24 Mar 2020 09:16:51 -0000
-From:   "tip-bot2 for SeongJae Park" <tip-bot2@linutronix.de>
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 020581C0475;
+        Tue, 24 Mar 2020 10:16:53 +0100 (CET)
+Date:   Tue, 24 Mar 2020 09:16:52 -0000
+From:   "tip-bot2 for Paul E. McKenney" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: core/rcu] rcu: Fix typos in file-header comments
-Cc:     SeongJae Park <sjpark@amazon.de>,
-        "Paul E. McKenney" <paulmck@kernel.org>, x86 <x86@kernel.org>,
+Subject: [tip: core/rcu] rcu: Add READ_ONCE() to rcu_segcblist ->tails[]
+Cc:     "Paul E. McKenney" <paulmck@kernel.org>, x86 <x86@kernel.org>,
         LKML <linux-kernel@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <158504141186.28353.1181944922433200767.tip-bot2@tip-bot2>
+Message-ID: <158504141269.28353.5838672247760719625.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -45,53 +44,36 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the core/rcu branch of tip:
 
-Commit-ID:     65bb0dc437c3e57a6cde2b81170c8af4b9c90735
-Gitweb:        https://git.kernel.org/tip/65bb0dc437c3e57a6cde2b81170c8af4b9c90735
-Author:        SeongJae Park <sjpark@amazon.de>
-AuthorDate:    Mon, 06 Jan 2020 21:08:02 +01:00
+Commit-ID:     bfeebe24212d374f82bbf5b005371fe13acabb93
+Gitweb:        https://git.kernel.org/tip/bfeebe24212d374f82bbf5b005371fe13acabb93
+Author:        Paul E. McKenney <paulmck@kernel.org>
+AuthorDate:    Fri, 03 Jan 2020 16:14:08 -08:00
 Committer:     Paul E. McKenney <paulmck@kernel.org>
 CommitterDate: Thu, 20 Feb 2020 15:58:22 -08:00
 
-rcu: Fix typos in file-header comments
+rcu: Add READ_ONCE() to rcu_segcblist ->tails[]
 
-Convert to plural and add a note that this is for Tree RCU.
+The rcu_segcblist structure's ->tails[] array entries are read
+locklessly, so this commit adds the READ_ONCE() to a load in order to
+avoid destructive compiler optimizations.
 
-Signed-off-by: SeongJae Park <sjpark@amazon.de>
+This data race was reported by KCSAN.
+
 Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
 ---
- kernel/rcu/srcutree.c | 2 +-
- kernel/rcu/tree.c     | 4 ++--
- 2 files changed, 3 insertions(+), 3 deletions(-)
+ kernel/rcu/rcu_segcblist.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/kernel/rcu/srcutree.c b/kernel/rcu/srcutree.c
-index 657e6a7..7ddb29c 100644
---- a/kernel/rcu/srcutree.c
-+++ b/kernel/rcu/srcutree.c
-@@ -5,7 +5,7 @@
-  * Copyright (C) IBM Corporation, 2006
-  * Copyright (C) Fujitsu, 2012
-  *
-- * Author: Paul McKenney <paulmck@linux.ibm.com>
-+ * Authors: Paul McKenney <paulmck@linux.ibm.com>
-  *	   Lai Jiangshan <laijs@cn.fujitsu.com>
-  *
-  * For detailed explanation of Read-Copy Update mechanism see -
-diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
-index 53946b1..a70f56b 100644
---- a/kernel/rcu/tree.c
-+++ b/kernel/rcu/tree.c
-@@ -1,12 +1,12 @@
- // SPDX-License-Identifier: GPL-2.0+
+diff --git a/kernel/rcu/rcu_segcblist.c b/kernel/rcu/rcu_segcblist.c
+index 5f4fd3b..426a472 100644
+--- a/kernel/rcu/rcu_segcblist.c
++++ b/kernel/rcu/rcu_segcblist.c
+@@ -182,7 +182,7 @@ void rcu_segcblist_offload(struct rcu_segcblist *rsclp)
+ bool rcu_segcblist_ready_cbs(struct rcu_segcblist *rsclp)
+ {
+ 	return rcu_segcblist_is_enabled(rsclp) &&
+-	       &rsclp->head != rsclp->tails[RCU_DONE_TAIL];
++	       &rsclp->head != READ_ONCE(rsclp->tails[RCU_DONE_TAIL]);
+ }
+ 
  /*
-- * Read-Copy Update mechanism for mutual exclusion
-+ * Read-Copy Update mechanism for mutual exclusion (tree-based version)
-  *
-  * Copyright IBM Corporation, 2008
-  *
-  * Authors: Dipankar Sarma <dipankar@in.ibm.com>
-  *	    Manfred Spraul <manfred@colorfullife.com>
-- *	    Paul E. McKenney <paulmck@linux.ibm.com> Hierarchical version
-+ *	    Paul E. McKenney <paulmck@linux.ibm.com>
-  *
-  * Based on the original work by Paul McKenney <paulmck@linux.ibm.com>
-  * and inputs from Rusty Russell, Andrea Arcangeli and Andi Kleen.
