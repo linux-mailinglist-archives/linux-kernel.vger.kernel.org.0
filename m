@@ -2,124 +2,205 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2B564190E03
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 13:48:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 64AE1190DE9
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 13:47:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727698AbgCXMsQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 08:48:16 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:38267 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727592AbgCXMsP (ORCPT
+        id S1727492AbgCXMrD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 08:47:03 -0400
+Received: from ec2-3-21-30-127.us-east-2.compute.amazonaws.com ([3.21.30.127]:42912
+        "EHLO www.teo-en-ming.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725767AbgCXMrC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 08:48:15 -0400
-Received: from mail-qv1-f71.google.com ([209.85.219.71])
-        by youngberry.canonical.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <gpiccoli@canonical.com>)
-        id 1jGiwE-0002FY-V6
-        for linux-kernel@vger.kernel.org; Tue, 24 Mar 2020 12:46:03 +0000
-Received: by mail-qv1-f71.google.com with SMTP id z2so3622541qvw.7
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Mar 2020 05:45:46 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=1gaGCSvbUvFxUDYFtFdzOfLzBRbgwsoBtcQn8FrobJE=;
-        b=Fi1MqyWwQzK9shmxoKo5+J2RwsRTgEb5jcIFW+gT9mxfCVYGHQeJKS2TkDiPJbNoUh
-         AtK90mw0iTxIbWAYkh9ghXOonSVYxYmg4ewdqrxW4WdJjUHavRt965oqR+a6BU3DOpV3
-         bZINQbjts6/OZBVTlOgY5BZg8dBbK8Rqtz2TxZ9VUIJKOA+hJI/9X7PAa1a6EYMlTZBF
-         I8S4Aqg9zGEpSaKlVosbkaeeyXiKY3TQL6gx1VA2dTKnqYYGtiTk18nT80VgAyB0xpwt
-         m7Ewpcry/Pj7He1Emxr+Ai59lMx/vzbkXrbHNJdfS6t+aJyt0rV8TIWR1obFdZqRb8Eo
-         3AtQ==
-X-Gm-Message-State: ANhLgQ2FSU0V1LMWGAiOZjbCjXL9gJjDj4fCKSflP/1Md2VF9RpPNHuv
-        f+lCB8wNJlnOlYM75Myd0LRI5jPPgu9JPSV0pH95w/T9kdGHqqE16f9+N7u00xKz8g0Lc+dj4tj
-        GMq3WSKcLuRiCFJZy/nYTo0uKT3d1yb42mvigjJIicQ==
-X-Received: by 2002:ac8:7a72:: with SMTP id w18mr13890595qtt.260.1585053946093;
-        Tue, 24 Mar 2020 05:45:46 -0700 (PDT)
-X-Google-Smtp-Source: ADFU+vsJTKeG/ltjtIrAmk7rWlgqC0MDN+DIYegBWmCgJY1czFa1TCerbdXmWy488e+x3QMi/tk5bw==
-X-Received: by 2002:ac8:7a72:: with SMTP id w18mr13890575qtt.260.1585053945833;
-        Tue, 24 Mar 2020 05:45:45 -0700 (PDT)
-Received: from [192.168.1.75] (189-47-87-73.dsl.telesp.net.br. [189.47.87.73])
-        by smtp.gmail.com with ESMTPSA id t71sm13463643qke.55.2020.03.24.05.45.41
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 24 Mar 2020 05:45:45 -0700 (PDT)
-Subject: Re: [PATCH V2] kernel/hung_task.c: Introduce sysctl to print all
- traces when a hung task is detected
-To:     Vlastimil Babka <vbabka@suse.cz>, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Cc:     linux-doc@vger.kernel.org, mcgrof@kernel.org,
-        keescook@chromium.org, yzaikin@google.com, tglx@linutronix.de,
-        penguin-kernel@I-love.SAKURA.ne.jp, akpm@linux-foundation.org,
-        cocci@systeme.lip6.fr, linux-api@vger.kernel.org,
-        kernel@gpiccoli.net, randy Dunlap <rdunlap@infradead.org>
-References: <20200323214618.28429-1-gpiccoli@canonical.com>
- <b73a6519-0529-e36f-fac5-e4b638ceb3cf@suse.cz>
-From:   "Guilherme G. Piccoli" <gpiccoli@canonical.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=gpiccoli@canonical.com; prefer-encrypt=mutual; keydata=
- mQENBFpVBxcBCADPNKmu2iNKLepiv8+Ssx7+fVR8lrL7cvakMNFPXsXk+f0Bgq9NazNKWJIn
- Qxpa1iEWTZcLS8ikjatHMECJJqWlt2YcjU5MGbH1mZh+bT3RxrJRhxONz5e5YILyNp7jX+Vh
- 30rhj3J0vdrlIhPS8/bAt5tvTb3ceWEic9mWZMsosPavsKVcLIO6iZFlzXVu2WJ9cov8eQM/
- irIgzvmFEcRyiQ4K+XUhuA0ccGwgvoJv4/GWVPJFHfMX9+dat0Ev8HQEbN/mko/bUS4Wprdv
- 7HR5tP9efSLucnsVzay0O6niZ61e5c97oUa9bdqHyApkCnGgKCpg7OZqLMM9Y3EcdMIJABEB
- AAG0LUd1aWxoZXJtZSBHLiBQaWNjb2xpIDxncGljY29saUBjYW5vbmljYWwuY29tPokBNwQT
- AQgAIQUCWmClvQIbAwULCQgHAgYVCAkKCwIEFgIDAQIeAQIXgAAKCRDOR5EF9K/7Gza3B/9d
- 5yczvEwvlh6ksYq+juyuElLvNwMFuyMPsvMfP38UslU8S3lf+ETukN1S8XVdeq9yscwtsRW/
- 4YoUwHinJGRovqy8gFlm3SAtjfdqysgJqUJwBmOtcsHkmvFXJmPPGVoH9rMCUr9s6VDPox8f
- q2W5M7XE9YpsfchS/0fMn+DenhQpV3W6pbLtuDvH/81GKrhxO8whSEkByZbbc+mqRhUSTdN3
- iMpRL0sULKPVYbVMbQEAnfJJ1LDkPqlTikAgt3peP7AaSpGs1e3pFzSEEW1VD2jIUmmDku0D
- LmTHRl4t9KpbU/H2/OPZkrm7809QovJGRAxjLLPcYOAP7DUeltveuQENBFpVBxcBCADbxD6J
- aNw/KgiSsbx5Sv8nNqO1ObTjhDR1wJw+02Bar9DGuFvx5/qs3ArSZkl8qX0X9Vhptk8rYnkn
- pfcrtPBYLoux8zmrGPA5vRgK2ItvSc0WN31YR/6nqnMfeC4CumFa/yLl26uzHJa5RYYQ47jg
- kZPehpc7IqEQ5IKy6cCKjgAkuvM1rDP1kWQ9noVhTUFr2SYVTT/WBHqUWorjhu57/OREo+Tl
- nxI1KrnmW0DbF52tYoHLt85dK10HQrV35OEFXuz0QPSNrYJT0CZHpUprkUxrupDgkM+2F5LI
- bIcaIQ4uDMWRyHpDbczQtmTke0x41AeIND3GUc+PQ4hWGp9XABEBAAGJAR8EGAEIAAkFAlpV
- BxcCGwwACgkQzkeRBfSv+xv1wwgAj39/45O3eHN5pK0XMyiRF4ihH9p1+8JVfBoSQw7AJ6oU
- 1Hoa+sZnlag/l2GTjC8dfEGNoZd3aRxqfkTrpu2TcfT6jIAsxGjnu+fUCoRNZzmjvRziw3T8
- egSPz+GbNXrTXB8g/nc9mqHPPprOiVHDSK8aGoBqkQAPZDjUtRwVx112wtaQwArT2+bDbb/Y
- Yh6gTrYoRYHo6FuQl5YsHop/fmTahpTx11IMjuh6IJQ+lvdpdfYJ6hmAZ9kiVszDF6pGFVkY
- kHWtnE2Aa5qkxnA2HoFpqFifNWn5TyvJFpyqwVhVI8XYtXyVHub/WbXLWQwSJA4OHmqU8gDl
- X18zwLgdiQ==
-Message-ID: <eee335a2-e673-39bf-ae64-e49c66f74255@canonical.com>
-Date:   Tue, 24 Mar 2020 09:45:40 -0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        Tue, 24 Mar 2020 08:47:02 -0400
+Received: from localhost (localhost [IPv6:::1])
+        by www.teo-en-ming.com (Postfix) with ESMTPA id ADDD0412ECC;
+        Tue, 24 Mar 2020 20:47:01 +0800 (+08)
 MIME-Version: 1.0
-In-Reply-To: <b73a6519-0529-e36f-fac5-e4b638ceb3cf@suse.cz>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Date:   Tue, 24 Mar 2020 20:47:01 +0800
+From:   Turritopsis Dohrnii Teo En Ming <ceo@teo-en-ming.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     ceo@teo-en-ming.com
+Subject: Asus RT-AC1200G+ Wireless Router and All Commercial Wireless Routers
+ in the World Are Based on Linux
+Message-ID: <042fc473f2a108f0f23c19489dbe8be4@teo-en-ming.com>
+X-Sender: ceo@teo-en-ming.com
+User-Agent: Roundcube Webmail/1.2.3
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 24/03/2020 05:27, Vlastimil Babka wrote:
-> [...]
-> Before adding a new thing as both kernel parameter and sysctl, could we perhaps
-> not add the kernel parameter, in favor of the generic sysctl parameter solution?
-> [1] There were no objections and some support from Kees, so I will try to send a
-> new version ASAP that will work properly with all "static" sysctls - we don't
-> need to be blocked by a full solution for dynamically registered sysctls yet, I
-> guess?
-> 
-> Thanks,
-> Vlastimil
-> 
-> [1] https://lore.kernel.org/linux-api/20200317132105.24555-1-vbabka@suse.cz/
-> 
+Subject: Asus RT-AC1200G+ Wireless Router and All Commercial Wireless 
+Routers in the World Are Based on Linux
 
-Thanks Randy and Vlastimil for the comments. I really liked your
-approach Vlastimil, I agree that we have no reason to not have a generic
-sysctl setting via cmdline mechanism - I'll rework this patch removing
-the kernel parameter (same for other patch I just submitted).
+System Log - General Log of my Asus RT-AC1200G+ wireless router:
 
-If you can CC me on the new iterations of the generic sysctl patches
-Vlastimil, I appreciate - I can maybe test that, I'd like to see it in
-kernel.
+Mar 24 20:21:09 rc_service: httpd 390:notify_rc reboot
+Mar 24 20:21:10 kernel: Attempt to kill tasklet from interrupt
+Mar 24 20:21:11 iTunes: daemon is stoped
+Mar 24 20:21:11 FTP Server: daemon is stoped
+Mar 24 20:21:12 Samba Server: smb daemon is stoped
+Mar 24 20:21:12 kernel: gro disabled
+Aug  1 08:00:10 syslogd started: BusyBox v1.17.4
+Aug  1 08:00:10 kernel: klogd started: BusyBox v1.17.4 (2016-07-15 
+14:35:33 CST)
+Aug  1 08:00:10 kernel: Linux version 2.6.36.4brcmarm (root@asus) (gcc 
+version 4.5.3 (Buildroot 2012.02) ) #1 PREEMPT Fri Jul 15 14:44:31 CST 
+2016
+Aug  1 08:00:10 kernel: CPU: ARMv7 Processor [410fc075] revision 5 
+(ARMv7), cr=10c53c7f
+Aug  1 08:00:10 kernel: CPU: VIPT nonaliasing data cache, VIPT 
+nonaliasing instruction cache
+Aug  1 08:00:10 kernel: Machine: Northstar Prototype
+Aug  1 08:00:10 kernel: Ignoring unrecognised tag 0x00000000
+Aug  1 08:00:10 kernel: Memory policy: ECC disabled, Data cache 
+writealloc
+Aug  1 08:00:10 kernel: Built 1 zonelists in Zone order, mobility 
+grouping on.  Total pages: 32512
+Aug  1 08:00:10 kernel: Kernel command line: root=/dev/mtdblock2 
+console=ttyS0,115200 init=/sbin/preinit earlyprintk debug
+Aug  1 08:00:10 kernel: Memory: 125488k/125488k available, 5584k 
+reserved, 0K highmem
+Aug  1 08:00:10 kernel: Virtual kernel memory layout:
+Aug  1 08:00:10 kernel:     vector  : 0xffff0000 - 0xffff1000   (   4 
+kB)
+Aug  1 08:00:10 kernel:     fixmap  : 0xfff00000 - 0xfffe0000   ( 896 
+kB)
+Aug  1 08:00:10 kernel:     DMA     : 0xf7e00000 - 0xffe00000   ( 128 
+MB)
+Aug  1 08:00:10 kernel:     vmalloc : 0x88800000 - 0xf0000000   (1656 
+MB)
+Aug  1 08:00:10 kernel:     lowmem  : 0x80000000 - 0x88000000   ( 128 
+MB)
+Aug  1 08:00:10 kernel:     modules : 0x7f000000 - 0x80000000   (  16 
+MB)
+Aug  1 08:00:10 kernel:       .init : 0x80008000 - 0x80038000   ( 192 
+kB)
+Aug  1 08:00:10 kernel:       .text : 0x80038000 - 0x803e3000   (3756 
+kB)
+Aug  1 08:00:10 kernel:       .data : 0x803fc000 - 0x8041ef40   ( 140 
+kB)
+Aug  1 08:00:10 kernel: Mount-cache hash table entries: 512
+Aug  1 08:00:10 kernel: Found ST compatible serial flash with 256 64KB 
+blocks; total size 16MB
+Aug  1 08:00:10 kernel: ACP (Accelerator Coherence Port) enabled
+Aug  1 08:00:10 kernel: bio: create slab <bio-0> at 0
+Aug  1 08:00:10 kernel: PCI: no core
+Aug  1 08:00:10 kernel: PCI: no core
+Aug  1 08:00:10 kernel: PCI: Fixing up bus 0
+Aug  1 08:00:10 kernel: PCI: Fixing up bus 1
+Aug  1 08:00:10 kernel: PCI: scanning bus 0 !!!
+Aug  1 08:00:11 kernel: PCI: Fixing up bus 0
+Aug  1 08:00:11 kernel: VFS: Disk quotas dquot_6.5.2
+Aug  1 08:00:11 kernel: Dquot-cache hash table entries: 1024 (order 0, 
+4096 bytes)
+Aug  1 08:00:11 kernel: pflash: found no supported devices
+Aug  1 08:00:11 kernel: bcmsflash: squash filesystem found at block 30
+Aug  1 08:00:11 kernel: Creating 5 MTD partitions on "bcmsflash":
+Aug  1 08:00:11 kernel: 0x000000000000-0x000000040000 : "boot"
+Aug  1 08:00:11 kernel: 0x000000040000-0x000000ff0000 : "linux"
+Aug  1 08:00:11 kernel: 0x0000001ef1ec-0x000000d30000 : "rootfs"
+Aug  1 08:00:11 kernel: 0x000000d30000-0x000000ff0000 : "jffs2"
+Aug  1 08:00:11 kernel: 0x000000ff0000-0x000001000000 : "nvram"
+Aug  1 08:00:11 kernel: === PPTP init ===
+Aug  1 08:00:11 kernel: Registering the dns_resolver key type
+Aug  1 08:00:11 kernel: VFS: Mounted root (squashfs filesystem) readonly 
+on device 31:2.
+Aug  1 08:00:11 kernel: ctf: module license 'Proprietary' taints kernel.
+Aug  1 08:00:11 kernel: Disabling lock debugging due to kernel taint
+Aug  1 08:00:11 kernel: et_module_init: passivemode set to 0x0
+Aug  1 08:00:11 kernel: et_module_init: txworkq set to 0x1
+Aug  1 08:00:11 kernel: et_module_init: et_txq_thresh set to 0xce4
+Aug  1 08:00:11 kernel: et_module_init: et_rxlazy_timeout set to 0x3e8
+Aug  1 08:00:11 kernel: et_module_init: et_rxlazy_framecnt set to 0x20
+Aug  1 08:00:11 kernel: bcm_robo_enable_switch: EEE is disabled
+Aug  1 08:00:11 kernel: eth0: Broadcom BCM47XX 10/100/1000 Mbps Ethernet 
+Controller 9.10.178.27 (r584393)
+Aug  1 08:00:11 kernel: wl_module_init: passivemode set to 0x0
+Aug  1 08:00:11 kernel: wl_module_init: txworkq set to 0x1
+Aug  1 08:00:11 kernel: PCI: Enabling device 0001:01:00.0 (0140 -> 0142)
+Aug  1 08:00:11 kernel: eth1: Broadcom BCM43227 802.11 Wireless 
+Controller 9.10.178.27 (r584393)
+Aug  1 08:00:11 kernel: External imprecise Data abort at 
+addr=0x2ae2f004, fsr=0x1c06, pc=0x2ab647a8 lr=0x2acf716c ignored.
+Aug  1 08:00:11 kernel: eth2: Broadcom BCM43c8 802.11 Wireless 
+Controller 9.10.178.27 (r584393)
+Aug  1 08:00:12 stop_nat_rules: apply the redirect_rules!
+Aug  1 08:00:12 WAN Connection: ISP's DHCP did not function properly.
+Aug  1 08:00:17 RT-AC1200G+: start httpd
+Aug  1 08:00:18 syslog: Generating SSL certificate...
+Aug  1 08:00:18 jffs2: valid logs(1)
+Aug  1 08:00:18 disk monitor: be idle
+Aug  1 08:00:18 hour monitor: daemon is starting
+Aug  1 08:00:18 hour monitor: daemon terminates
+Aug  1 08:00:19 miniupnpd[427]: version 1.9 started
+Aug  1 08:00:19 miniupnpd[427]: HTTP listening on port 55652
+Aug  1 08:00:19 miniupnpd[427]: Listening for NAT-PMP/PCP traffic on 
+port 5351
+Aug  1 08:00:19 syslog: module ledtrig-usbdev not found in modules.dep
+Aug  1 08:00:19 rc_service: udhcpc 434:notify_rc start_firewall
+Aug  1 08:00:19 syslog: module leds-usb not found in modules.dep
+Aug  1 08:00:20 wan: finish adding multi routes
+Aug  1 08:00:20 rc_service: udhcpc 434:notify_rc stop_upnp
+Aug  1 08:00:20 rc_service: waitting "start_firewall" via udhcpc ...
+Aug  1 08:00:20 kernel: SCSI subsystem initialized
+Aug  1 08:00:22 WAN Connection: WAN was restored.
+Aug  1 08:00:24 start_nat_rules: apply the 
+nat_rules(/tmp/nat_rules_eth0_eth0)!
+Aug  1 08:00:26 kernel: nf_conntrack_rtsp v0.6.21 loading
+Aug  1 08:00:26 kernel: nf_nat_rtsp v0.6.21 loading
+Aug  1 08:00:27 rc_service: udhcpc 434:notify_rc start_upnp
+Aug  1 08:00:27 rc_service: waitting "stop_upnp" via udhcpc ...
+Aug  1 08:00:27 miniupnpd[427]: shutting down MiniUPnPd
+Aug  1 08:00:28 dhcp client: bound xxx.xxx.xxx.xxx via xxx.xxx.xxx.xxx 
+during 3600 seconds.
+Aug  1 08:00:29 miniupnpd[594]: version 1.9 started
+Aug  1 08:00:29 miniupnpd[594]: HTTP listening on port 36463
+Aug  1 08:00:29 miniupnpd[594]: Listening for NAT-PMP/PCP traffic on 
+port 5351
+Aug  1 08:00:31 ntp: start NTP update
+Mar 24 20:22:54 rc_service: ntp 592:notify_rc restart_upnp
+Mar 24 20:22:54 miniupnpd[594]: shutting down MiniUPnPd
+Mar 24 20:22:54 miniupnpd[608]: version 1.9 started
+Mar 24 20:22:54 miniupnpd[608]: HTTP listening on port 54320
+Mar 24 20:22:54 miniupnpd[608]: Listening for NAT-PMP/PCP traffic on 
+port 5351
+Mar 24 20:22:55 rc_service: ntp 592:notify_rc restart_diskmon
+Mar 24 20:22:55 disk_monitor: Finish
+Mar 24 20:22:56 disk monitor: be idle
 
-Thanks,
 
 
-Guilherme
+
+
+
+
+
+
+-----BEGIN EMAIL SIGNATURE-----
+
+The Gospel for all Targeted Individuals (TIs):
+
+[The New York Times] Microwave Weapons Are Prime Suspect in Ills of
+U.S. Embassy Workers
+
+Link: 
+https://www.nytimes.com/2018/09/01/science/sonic-attack-cuba-microwave.html
+
+********************************************************************************************
+
+Singaporean Mr. Turritopsis Dohrnii Teo En Ming's Academic
+Qualifications as at 14 Feb 2019 and refugee seeking attempts at the 
+United Nations Refugee Agency Bangkok (21 Mar 2017), in Taiwan (5 Aug 
+2019) and Australia (25 Dec 2019 to 9 Jan 2020):
+
+[1] https://tdtemcerts.wordpress.com/
+
+[2] https://tdtemcerts.blogspot.sg/
+
+[3] https://www.scribd.com/user/270125049/Teo-En-Ming
+
+-----END EMAIL SIGNATURE-----
