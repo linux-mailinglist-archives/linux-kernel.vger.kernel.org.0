@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 37ECE190E8C
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 14:14:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 70205190F2D
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 14:19:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727784AbgCXNND (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 09:13:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58990 "EHLO mail.kernel.org"
+        id S1727338AbgCXNSP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 09:18:15 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38244 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727736AbgCXNM5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 09:12:57 -0400
+        id S1728690AbgCXNSL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Mar 2020 09:18:11 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id ECC8F208D6;
-        Tue, 24 Mar 2020 13:12:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8BFE2206F6;
+        Tue, 24 Mar 2020 13:18:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585055577;
-        bh=AL7hoBSzUmkmWDlkQMwp9cp9Ui5kceVTauOdV7/oyJ4=;
+        s=default; t=1585055891;
+        bh=C6V82WfR0WiPhesQkqIHwf7eUT1pzEcPp6KnE4TR6zY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gc1X/JStsTWXQgOB5BCrzmDAQdUHJCy6taxbxde6FP0OKmKP+9zfWFyOQ43h/t0V8
-         exA0inf3ZvtvuYLc3WLnArc5ehu4fTGQMxr4EXLRMuB57M9MQhwCAWxeKAT+MRptzx
-         kjRLR+jCUr3lTzlJoyev9FQhxxad4S7JijAaN0A0=
+        b=XaF8Bx72C45xTvXhz83aRnd/ZVfwSusTO0O0zbzFqrFWDp9cNVHZ0NccyAAAbYum6
+         V+uBg1ox5J+UQ8f6HoNyUiqGdScLWzdE0d/ei+6bjNYvW0h5W5wea4AtHBOwiRf2kK
+         QNqNt6vKfL0oLFr11eKfbFzgcCDu3X2htwfuxkuI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        syzbot+e1fe9f44fb8ecf4fb5dd@syzkaller.appspotmail.com,
-        Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.19 29/65] ALSA: pcm: oss: Avoid plugin buffer overflow
-Date:   Tue, 24 Mar 2020 14:10:50 +0100
-Message-Id: <20200324130800.913385421@linuxfoundation.org>
+        Alexandru Tachici <alexandru.tachici@analog.com>,
+        Stable@vger.kernel.org,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Subject: [PATCH 5.4 059/102] iio: accel: adxl372: Set iio_chan BE
+Date:   Tue, 24 Mar 2020 14:10:51 +0100
+Message-Id: <20200324130812.670928703@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.2
-In-Reply-To: <20200324130756.679112147@linuxfoundation.org>
-References: <20200324130756.679112147@linuxfoundation.org>
+In-Reply-To: <20200324130806.544601211@linuxfoundation.org>
+References: <20200324130806.544601211@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,70 +45,32 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Takashi Iwai <tiwai@suse.de>
+From: Alexandru Tachici <alexandru.tachici@analog.com>
 
-commit f2ecf903ef06eb1bbbfa969db9889643d487e73a upstream.
+commit cb2116ff97859d34fda6cb561ac654415f4c6230 upstream.
 
-Each OSS PCM plugins allocate its internal buffer per pre-calculation
-of the max buffer size through the chain of plugins (calling
-src_frames and dst_frames callbacks).  This works for most plugins,
-but the rate plugin might behave incorrectly.  The calculation in the
-rate plugin involves with the fractional position, i.e. it may vary
-depending on the input position.  Since the buffer size
-pre-calculation is always done with the offset zero, it may return a
-shorter size than it might be; this may result in the out-of-bound
-access as spotted by fuzzer.
+Data stored in the iio-buffer is BE and this
+should be specified in the iio_chan_spec struct.
 
-This patch addresses those possible buffer overflow accesses by simply
-setting the upper limit per the given buffer size for each plugin
-before src_frames() and after dst_frames() calls.
-
-Reported-by: syzbot+e1fe9f44fb8ecf4fb5dd@syzkaller.appspotmail.com
-Cc: <stable@vger.kernel.org>
-Link: https://lore.kernel.org/r/000000000000b25ea005a02bcf21@google.com
-Link: https://lore.kernel.org/r/20200309082148.19855-1-tiwai@suse.de
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Fixes: f4f55ce38e5f8 ("iio:adxl372: Add FIFO and interrupts support")
+Signed-off-by: Alexandru Tachici <alexandru.tachici@analog.com>
+Cc: <Stable@vger.kernel.org>
+Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/core/oss/pcm_plugin.c |    8 ++++++++
- 1 file changed, 8 insertions(+)
+ drivers/iio/accel/adxl372.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/sound/core/oss/pcm_plugin.c
-+++ b/sound/core/oss/pcm_plugin.c
-@@ -209,6 +209,8 @@ snd_pcm_sframes_t snd_pcm_plug_client_si
- 	if (stream == SNDRV_PCM_STREAM_PLAYBACK) {
- 		plugin = snd_pcm_plug_last(plug);
- 		while (plugin && drv_frames > 0) {
-+			if (drv_frames > plugin->buf_frames)
-+				drv_frames = plugin->buf_frames;
- 			plugin_prev = plugin->prev;
- 			if (plugin->src_frames)
- 				drv_frames = plugin->src_frames(plugin, drv_frames);
-@@ -220,6 +222,8 @@ snd_pcm_sframes_t snd_pcm_plug_client_si
- 			plugin_next = plugin->next;
- 			if (plugin->dst_frames)
- 				drv_frames = plugin->dst_frames(plugin, drv_frames);
-+			if (drv_frames > plugin->buf_frames)
-+				drv_frames = plugin->buf_frames;
- 			plugin = plugin_next;
- 		}
- 	} else
-@@ -248,11 +252,15 @@ snd_pcm_sframes_t snd_pcm_plug_slave_siz
- 				if (frames < 0)
- 					return frames;
- 			}
-+			if (frames > plugin->buf_frames)
-+				frames = plugin->buf_frames;
- 			plugin = plugin_next;
- 		}
- 	} else if (stream == SNDRV_PCM_STREAM_CAPTURE) {
- 		plugin = snd_pcm_plug_last(plug);
- 		while (plugin) {
-+			if (frames > plugin->buf_frames)
-+				frames = plugin->buf_frames;
- 			plugin_prev = plugin->prev;
- 			if (plugin->src_frames) {
- 				frames = plugin->src_frames(plugin, frames);
+--- a/drivers/iio/accel/adxl372.c
++++ b/drivers/iio/accel/adxl372.c
+@@ -237,6 +237,7 @@ static const struct adxl372_axis_lookup
+ 		.realbits = 12,						\
+ 		.storagebits = 16,					\
+ 		.shift = 4,						\
++		.endianness = IIO_BE,					\
+ 	},								\
+ }
+ 
 
 
