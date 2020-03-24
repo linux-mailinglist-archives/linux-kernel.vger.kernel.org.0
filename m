@@ -2,165 +2,236 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 52D6C1910E5
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 14:32:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6822919106F
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 14:31:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728352AbgCXNb7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 09:31:59 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:50146 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728777AbgCXNS6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 09:18:58 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 02ODEJG6117997;
-        Tue, 24 Mar 2020 13:18:44 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2020-01-29;
- bh=MrZ138bhiXcJdJRI+ryfmNjwFfj6OQKyTqRsmXx8b3M=;
- b=y9LrjfN6LaK38tyOBzdQQyajEPc54XelAm8dn2sdmMElO+u+w6soTWRsOy/BitKZ9Muk
- ZJeEvKFirnwgUjE7R2zhj0K7uUtMC4cO2HiULO9ktUSEEZQVA6FeVFzHl4c5k4iQYgtL
- RR/wQy8IDCuyiRFyMuhVI0/WXiR4tYrm6wjyRWGU6039PVjfaeJwHudVeX30Au1qDOpq
- Nqh33P98lbxdMfHO/TOWPxJpk1R5hzFPtpP0SIqRNj5qin+orhB8m+0sJX2k4M7iqUks
- uxzMQEP8nRAOG/073p81PNlN3NBbf81hcvTcmSCKVKMAWjTww/U4BbjVsUVA0k7bEU8a KQ== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by userp2120.oracle.com with ESMTP id 2yx8ac15xe-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 24 Mar 2020 13:18:44 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 02ODDb8v087480;
-        Tue, 24 Mar 2020 13:18:43 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by userp3020.oracle.com with ESMTP id 2yxw6mpsak-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 24 Mar 2020 13:18:43 +0000
-Received: from abhmp0004.oracle.com (abhmp0004.oracle.com [141.146.116.10])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 02ODIcmT026864;
-        Tue, 24 Mar 2020 13:18:38 GMT
-Received: from kadam (/41.57.98.10)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 24 Mar 2020 06:18:38 -0700
-Date:   Tue, 24 Mar 2020 16:18:30 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Quentin Deslandes <quentin.deslandes@itdev.co.uk>
-Cc:     Oscar Carter <oscar.carter@gmx.com>,
-        Forest Bond <forest@alittletooquiet.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Malcolm Priestley <tvboxspy@gmail.com>,
-        Colin Ian King <colin.king@canonical.com>,
-        Gabriela Bittencourt <gabrielabittencourt00@gmail.com>,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] staging: vt6656: Use ARRAY_SIZE instead of hardcoded
- size
-Message-ID: <20200324131830.GD4672@kadam>
-References: <20200318174015.7515-1-oscar.carter@gmx.com>
- <20200324095456.GA7693@jiffies>
+        id S1729588AbgCXN2I (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 09:28:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54022 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727323AbgCXN2G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Mar 2020 09:28:06 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id E829820775;
+        Tue, 24 Mar 2020 13:28:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1585056485;
+        bh=56ZiM9ngvtgpS2+CpoNQGLLWww2zfE2Ii5Pgd1jL4ik=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=kIOfe6Br65Xs59Evt70ByRdrV7WuFJOQ6DUWcvyDT7UNBqPiicHp/2fFjVvNEpFkY
+         k7JfI8sMjCV7Mb1JHW/54/PZPGCu2puvRHh9STZHIroFdZh1GRHer8ErOufuASvlGT
+         i4T/jw2pCZl7Z2jAKUmnbEyXjQikYJu2k3LG03Mo=
+Date:   Tue, 24 Mar 2020 14:19:16 +0100
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Jaewon Kim <jaewon31.kim@samsung.com>
+Cc:     leon@kernel.org, vbabka@suse.cz, adobriyan@gmail.com,
+        akpm@linux-foundation.org, labbott@redhat.com,
+        sumit.semwal@linaro.org, minchan@kernel.org, ngupta@vflare.org,
+        sergey.senozhatsky.work@gmail.com, kasong@redhat.com,
+        bhe@redhat.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        jaewon31.kim@gmail.com, linux-api@vger.kernel.org,
+        kexec@lists.infradead.org
+Subject: Re: [RFC PATCH v2 1/3] meminfo_extra: introduce meminfo extra
+Message-ID: <20200324131916.GA2500287@kroah.com>
+References: <20200323080503.6224-1-jaewon31.kim@samsung.com>
+ <CGME20200323080508epcas1p387c9c19b480da53be40fe5d51e76a477@epcas1p3.samsung.com>
+ <20200323080503.6224-2-jaewon31.kim@samsung.com>
+ <20200323095344.GB425358@kroah.com>
+ <5E79CEB5.8070308@samsung.com>
+ <20200324101110.GA2218981@kroah.com>
+ <5E79F102.9080405@samsung.com>
+ <20200324114645.GA2330984@kroah.com>
+ <5E7A02BC.7020803@samsung.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20200324095456.GA7693@jiffies>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9569 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 adultscore=0
- malwarescore=0 mlxscore=0 spamscore=0 mlxlogscore=999 bulkscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2003020000 definitions=main-2003240071
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9569 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 suspectscore=0 priorityscore=1501 malwarescore=0
- mlxscore=0 adultscore=0 phishscore=0 impostorscore=0 mlxlogscore=999
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2003020000 definitions=main-2003240071
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <5E7A02BC.7020803@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 24, 2020 at 09:54:56AM +0000, Quentin Deslandes wrote:
-> On 03/18/20 18:40:15, Oscar Carter wrote:
-> > Use ARRAY_SIZE to replace the hardcoded size so we will never have a
-> > mismatch.
-> > 
-> > Signed-off-by: Oscar Carter <oscar.carter@gmx.com>
-> > ---
-> > Changelog v1 -> v2
-> > - Use ARRAY_SIZE(priv->cck_pwr_tbl) everywhere instead of introducing a new
-> >   variable to hold its value.
-> > 
-> >  drivers/staging/vt6656/main_usb.c | 7 ++++---
-> >  1 file changed, 4 insertions(+), 3 deletions(-)
-> > 
-> > diff --git a/drivers/staging/vt6656/main_usb.c b/drivers/staging/vt6656/main_usb.c
-> > index 5e48b3ddb94c..acfcc11c3b61 100644
-> > --- a/drivers/staging/vt6656/main_usb.c
-> > +++ b/drivers/staging/vt6656/main_usb.c
-> > @@ -23,6 +23,7 @@
-> > 
-> >  #include <linux/etherdevice.h>
-> >  #include <linux/file.h>
-> > +#include <linux/kernel.h>
-> >  #include "device.h"
-> >  #include "card.h"
-> >  #include "baseband.h"
-> > @@ -145,7 +146,7 @@ static int vnt_init_registers(struct vnt_private *priv)
-> > 
-> >  	init_cmd->init_class = DEVICE_INIT_COLD;
-> >  	init_cmd->exist_sw_net_addr = priv->exist_sw_net_addr;
-> > -	for (ii = 0; ii < 6; ii++)
-> > +	for (ii = 0; ii < ARRAY_SIZE(init_cmd->sw_net_addr); ii++)
-> >  		init_cmd->sw_net_addr[ii] = priv->current_net_addr[ii];
-> >  	init_cmd->short_retry_limit = priv->short_retry_limit;
-> >  	init_cmd->long_retry_limit = priv->long_retry_limit;
-> > @@ -184,7 +185,7 @@ static int vnt_init_registers(struct vnt_private *priv)
-> >  	priv->cck_pwr = priv->eeprom[EEP_OFS_PWR_CCK];
-> >  	priv->ofdm_pwr_g = priv->eeprom[EEP_OFS_PWR_OFDMG];
-> >  	/* load power table */
-> > -	for (ii = 0; ii < 14; ii++) {
-> > +	for (ii = 0; ii < ARRAY_SIZE(priv->cck_pwr_tbl); ii++) {
-> >  		priv->cck_pwr_tbl[ii] =
-> >  			priv->eeprom[ii + EEP_OFS_CCK_PWR_TBL];
-> >  		if (priv->cck_pwr_tbl[ii] == 0)
-> > @@ -200,7 +201,7 @@ static int vnt_init_registers(struct vnt_private *priv)
-> >  	 * original zonetype is USA, but custom zonetype is Europe,
-> >  	 * then need to recover 12, 13, 14 channels with 11 channel
-> >  	 */
-> > -	for (ii = 11; ii < 14; ii++) {
-> > +	for (ii = 11; ii < ARRAY_SIZE(priv->cck_pwr_tbl); ii++) {
-> >  		priv->cck_pwr_tbl[ii] = priv->cck_pwr_tbl[10];
-> >  		priv->ofdm_pwr_tbl[ii] = priv->ofdm_pwr_tbl[10];
-> >  	}
-> > --
-> > 2.20.1
-> > 
+On Tue, Mar 24, 2020 at 09:53:16PM +0900, Jaewon Kim wrote:
 > 
-> Looks good, however are we certain priv->cck_pwr_tbl and
-> priv->ofdm_pwr_tbl are always the same size?
 > 
-> What about using a macro for cck_pwr_tbl and ofdm_pwr_tbl size in
-> device.h? Or a BUILD_BUG() if array's sizes are different? It could be
-> helpful for future developers to say these arrays must be the same size.
+> On 2020년 03월 24일 20:46, Greg KH wrote:
+> > On Tue, Mar 24, 2020 at 08:37:38PM +0900, Jaewon Kim wrote:
+> >>
+> >> On 2020년 03월 24일 19:11, Greg KH wrote:
+> >>> On Tue, Mar 24, 2020 at 06:11:17PM +0900, Jaewon Kim wrote:
+> >>>> On 2020년 03월 23일 18:53, Greg KH wrote:
+> >>>>>> +int register_meminfo_extra(atomic_long_t *val, int shift, const char *name)
+> >>>>>> +{
+> >>>>>> +	struct meminfo_extra *meminfo, *memtemp;
+> >>>>>> +	int len;
+> >>>>>> +	int error = 0;
+> >>>>>> +
+> >>>>>> +	meminfo = kzalloc(sizeof(*meminfo), GFP_KERNEL);
+> >>>>>> +	if (!meminfo) {
+> >>>>>> +		error = -ENOMEM;
+> >>>>>> +		goto out;
+> >>>>>> +	}
+> >>>>>> +
+> >>>>>> +	meminfo->val = val;
+> >>>>>> +	meminfo->shift_for_page = shift;
+> >>>>>> +	strncpy(meminfo->name, name, NAME_SIZE);
+> >>>>>> +	len = strlen(meminfo->name);
+> >>>>>> +	meminfo->name[len] = ':';
+> >>>>>> +	strncpy(meminfo->name_pad, meminfo->name, NAME_BUF_SIZE);
+> >>>>>> +	while (++len < NAME_BUF_SIZE - 1)
+> >>>>>> +		meminfo->name_pad[len] = ' ';
+> >>>>>> +
+> >>>>>> +	spin_lock(&meminfo_lock);
+> >>>>>> +	list_for_each_entry_rcu(memtemp, &meminfo_head, list) {
+> >>>>>> +		if (memtemp->val == val) {
+> >>>>>> +			error = -EINVAL;
+> >>>>>> +			break;
+> >>>>>> +		}
+> >>>>>> +	}
+> >>>>>> +	if (!error)
+> >>>>>> +		list_add_tail_rcu(&meminfo->list, &meminfo_head);
+> >>>>>> +	spin_unlock(&meminfo_lock);
+> >>>>> If you have a lock, why are you needing rcu?
+> >>>> I think _rcu should be removed out of list_for_each_entry_rcu.
+> >>>> But I'm confused about what you meant.
+> >>>> I used rcu_read_lock on __meminfo_extra,
+> >>>> and I think spin_lock is also needed for addition and deletion to handle multiple modifiers.
+> >>> If that's the case, then that's fine, it just didn't seem like that was
+> >>> needed.  Or I might have been reading your rcu logic incorrectly...
+> >>>
+> >>>>>> +	if (error)
+> >>>>>> +		kfree(meminfo);
+> >>>>>> +out:
+> >>>>>> +
+> >>>>>> +	return error;
+> >>>>>> +}
+> >>>>>> +EXPORT_SYMBOL(register_meminfo_extra);
+> >>>>> EXPORT_SYMBOL_GPL()?  I have to ask :)
+> >>>> I can use EXPORT_SYMBOL_GPL.
+> >>>>> thanks,
+> >>>>>
+> >>>>> greg k-h
+> >>>>>
+> >>>>>
+> >>>> Hello
+> >>>> Thank you for your comment.
+> >>>>
+> >>>> By the way there was not resolved discussion on v1 patch as I mentioned on cover page.
+> >>>> I'd like to hear your opinion on this /proc/meminfo_extra node.
+> >>> I think it is the propagation of an old and obsolete interface that you
+> >>> will have to support for the next 20+ years and yet not actually be
+> >>> useful :)
+> >>>
+> >>>> Do you think this is meaningful or cannot co-exist with other future
+> >>>> sysfs based API.
+> >>> What sysfs-based API?
+> >> Please refer to mail thread on v1 patch set - https://protect2.fireeye.com/url?k=16e3accc-4b2f6548-16e22783-0cc47aa8f5ba-935fe828ac2f6656&u=https://lkml.org/lkml/fancy/2020/3/10/2102
+> >> especially discussion with Leon Romanovsky on https://protect2.fireeye.com/url?k=74208ed9-29ec475d-74210596-0cc47aa8f5ba-0bd4ef48931fec95&u=https://lkml.org/lkml/fancy/2020/3/16/140
+> > I really do not understand what you are referring to here, sorry.   I do
+> > not see any sysfs-based code in that thread.
+> Sorry. I also did not see actual code.
+> Hello Leon Romanovsky, could you elaborate your plan regarding sysfs stuff?
+> >
+> > And try to use lore.kernel.org, lkml.org doesn't always work and we have
+> > no control over that :(
+> >
+> >>> I still don't know _why_ you want this.  The ION stuff is not needed as
+> >>> that code is about to be deleted, so who else wants this?  What is the
+> >>> use-case for it that is so desperately needed that parsing
+> >>> yet-another-proc file is going to solve the problem?
+> >> In my Android device, there are graphic driver memory, zsmalloc memory except ION.
+> > Ok, so what does Android have to do with this?
+> Some driver in Android platform may use my API to show its memory usage.
 
-That's a bit over engineering something which is pretty trivial.
-Normally, we would just make the size a define instead of a magic number
-14.
+I do not understand what this means.
 
-	u8 cck_pwr_tbl[14];
-	u8 ofdm_pwr_tbl[14];
-	u8 ofdm_a_pwr_tbl[42];
+> >> I don't know other cases in other platform.
+> >> Not desperately needed but I think we need one userspace knob to see overall hidden huge memory.
+> > Why?  Who wants that?  What would userspace do with that?  And what
+> > exactly do you want to show?
+> >
+> > Is this just a debugging thing?  Then use debugfs for that, not proc.
+> > Isn't that what the DRM developers are starting to do?
+> >
+> >> Additionally I'd like to see all those hidden memory in OutOfMemory log.
+> > How is anything hidden, can't you see it in the slab information?
+> >
+> Let me explain more.
+> 
+> 0. slab
+> As I said in cover page, this is not for memory allocated by slab.
 
-If people change the size in the future (unlikely) and it causes a bug
-then they kind of deserve it because they need to ensure all the new
-stuff is initialized, right?  If they change it and it results in a
-buffer overflow then static checkers would complain.  If they changed it
-and it resulted in uninitialized data being used then it would be zero
-so that's okay.
+Great, then have the subsystem that allocates such memory, be the thing
+that exports the information.  Drivers "on their own" do not grab any
+memory without asking for it from other parts of the kernel.
 
-So, yeah.  Ideally we would figure out a reason for the magic number 14
-and create a define, but it's not strictly required.  This patch makes
-the code better and doesn't introduce any problems that weren't already
-there.
+Modify those "other parts", this isn't a driver-specific thing at all.
 
-regards,
-dan carpenter
+So, what "other parts" are involved here?
 
+> I'd like to know where huge memory has gone.
+> Those are directly allocated by alloc_pages instead of slab.
+> /proc/slabinfo does not show this information.
+
+Why isn't alloc_pages information exported anywhere?  Work on that.
+
+> 1. /proc/meminfo_extra
+> /proc/meminfo_extra could be debugging thing to see memory status at a certain time.
+
+If it is debugging, then use debugfs.
+
+> But it, I think, is also basic information rather than just for debugging.
+
+Who would use that information for anything except debugging?
+
+> It is similar with /proc/meminfo which is in procfs instead of debugfs.
+
+meminfo is older than debugfs and sysfs, can't change that today.
+
+> 2. oom log
+> oom log in show_mem is more than just debugging.
+
+Why?  Who sees this?
+
+> As existing oom log shows much memory information, I think we need the hidden memory info.
+> Without these information, we do NOT know oom reason because other traditional stats are not enough.
+
+Why not?  Kernel users of memory shouldn't be triggering OOM events.
+
+
+> >> This is useful to get clue to find memory hogger.
+> >> i.e.) show_mem on oom
+> >> <6>[  420.856428]  Mem-Info:
+> >> <6>[  420.856433]  IonSystemHeap:32813kB ZsPages:44114kB GraphicDriver::13091kB
+> >> <6>[  420.856450]  active_anon:957205 inactive_anon:159383 isolated_anon:0
+> > So what does this show you?  That someone is takign a ton of ION memory
+> > for some unknown use?  What can you do with that?  What would you do
+> > with that?
+> We may not know exact memory owner. But we can narrow down.
+> Anyway I think this is meaningful instead of no clue.
+
+Again, work on the subsystems that actually allocate the memory, not
+drivers.  And if you want to mess with drivers, do it in a
+device-specific way, not a driver-specific way.
+
+> > And memory is almost never assigned to a "driver", it is assigned to a
+> > "device" that uses it.  Drivers can handle multiple devices at the same
+> > time, so why would you break this down by drivers?  Are you assuming
+> > that a driver only talks to one piece of hardware?
+> Yes a driver may support several devices. I don't know if it same on an embedded device.
+
+Why wouldn't it be?  Is this new interface somehow only acceptable for
+systems with one-device-per-driver?  If so, that's not going to work at
+all.
+
+> Anyway I think the idea works even for several devices, although the driver should
+> distinguish memory usage for each device and should register each memory stat.
+
+And how would that happen?
+
+thanks,
+
+greg k-h
