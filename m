@@ -2,97 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9F6BE1910A4
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 14:31:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 401FC19109F
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 14:31:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729292AbgCXNXK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 09:23:10 -0400
-Received: from us-smtp-delivery-74.mimecast.com ([63.128.21.74]:27848 "EHLO
-        us-smtp-delivery-74.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727314AbgCXNXJ (ORCPT
+        id S1728453AbgCXNaN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 09:30:13 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:37135 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728980AbgCXNXW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 09:23:09 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1585056188;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=bj+syWUGD4r3R0D86dj8Q/vshU5KZeEnX6hBzRWSMqU=;
-        b=K9qoBkIGhfScewMr7UwdVb6BFgl5feuPV035X8iOcJaYDWl2TMzQwTGgQ8rtenuVYJHYlV
-        6Pw8A9P0P4DTaTSr5WQbSbKwBEUWxeSjtWFAfSo2LDSYsYftviJSsTqOoFm5p3IHs5EZbA
-        EeXjsfuX1EsEi5wlXZuAcP56kamFip4=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-458-zZjfUdNlMW6kbK16N0mU5A-1; Tue, 24 Mar 2020 09:23:06 -0400
-X-MC-Unique: zZjfUdNlMW6kbK16N0mU5A-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 415BE800D54;
-        Tue, 24 Mar 2020 13:23:05 +0000 (UTC)
-Received: from krava (unknown [10.40.192.119])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id E0B7560BEE;
-        Tue, 24 Mar 2020 13:23:01 +0000 (UTC)
-Date:   Tue, 24 Mar 2020 14:22:58 +0100
-From:   Jiri Olsa <jolsa@redhat.com>
-To:     Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-Cc:     acme@kernel.org, linux-kernel@vger.kernel.org, namhyung@kernel.org,
-        mark.rutland@arm.com, naveen.n.rao@linux.vnet.ibm.com
-Subject: Re: [PATCH] perf dso: Fix dso comparison
-Message-ID: <20200324132258.GX1534489@krava>
-References: <20200324042424.68366-1-ravi.bangoria@linux.ibm.com>
- <20200324104843.GS1534489@krava>
- <3cf2bd1b-e1c2-f82f-a06a-ce0d5e4b5eac@linux.ibm.com>
+        Tue, 24 Mar 2020 09:23:22 -0400
+Received: by mail-pf1-f194.google.com with SMTP id h72so7055681pfe.4;
+        Tue, 24 Mar 2020 06:23:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=H9W5asHoSbtI69dnrLRaFeOykWQKzVNx1ATwcX4bFlQ=;
+        b=cTEo3+rd8HjtvQG84BxeLG5XwUFWbasowEp0PVZ6AJ/I5pEqpW4uEbt3Wuk2CT+SCt
+         De2wcAyw3uw+IPmKMCPaFITdnf7zCEl9kM5er3APCB5PKEpirrz+U4dKfY0+2ZpWDm5g
+         9hz8y5gJDvNwfgilx3+eMuNGsqiEccHlKCNPyw1NrgHDn9o9O4JCm9posf1Sco1085zY
+         IxsIbbH+dmxoTN3oX85CHQhhKxuVHo+gKMCzDjn5eqWW3qrUJ8BsBRQ/8HBXfXiAEtyt
+         zb3NMACa4XBLpk1faZBKgIDplrvs0jDPyHvOvMMPnT8c0mA0OLTukH08sccg8nDez6xR
+         8iEw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=H9W5asHoSbtI69dnrLRaFeOykWQKzVNx1ATwcX4bFlQ=;
+        b=NsQdQP5AHbOHJgKH/XffMLrAnHpoSAqsPd13UIGYfPvI4sFdxy8TuRkB8d2vUynpMD
+         UrVcHeQGkMOKsPCbZB8aT6UKA73yBXl8MdcXotO+xEjal1CkLB1fF6pNNQQWcUz1HzKD
+         uYpdHBC0WDATYKMExHN9PRxbsz/TgXQBkal27InyMc8t2RC/aeQBoprMtc2me19BVhKT
+         jo4GLEVF/pvHGTkGPKTUJrS0xSzwEC2M2jakK2qHIQjFTkm6j6zH+MMk3+B4y/0X172J
+         ssfL/0RKx/v5iSjyDdF9F8Y1QbgsTIPRNH5rsZYl0rWN5RiuE3hFANyslLlBpQkCTPsC
+         bDpg==
+X-Gm-Message-State: ANhLgQ0PhghWoq51pszZSB0LT6KMis5wrb6okZgzPrKA43vjsJnOlgXi
+        tmhF1L1D4KBX6PuZ6dyn+hCtNq4K
+X-Google-Smtp-Source: ADFU+vvaV82cQxYW+iVQ8iL9mUZuQav300Ftc7kBv07XCthMCJNg/aF3ZNj3CMKOFKg++p2Xw3BLbA==
+X-Received: by 2002:a62:1745:: with SMTP id 66mr30225015pfx.291.1585056200107;
+        Tue, 24 Mar 2020 06:23:20 -0700 (PDT)
+Received: from suzukaze.ipads-lab.se.sjtu.edu.cn ([202.120.40.82])
+        by smtp.gmail.com with ESMTPSA id r189sm4187618pgr.31.2020.03.24.06.23.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 24 Mar 2020 06:23:19 -0700 (PDT)
+From:   Chuhong Yuan <hslester96@gmail.com>
+Cc:     Kristoffer Ericson <kristoffer.ericson@gmail.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Chuhong Yuan <hslester96@gmail.com>
+Subject: [PATCH v3] fbdev: s1d13xxxfb: add missed unregister_framebuffer in remove
+Date:   Tue, 24 Mar 2020 21:23:11 +0800
+Message-Id: <20200324132311.21729-1-hslester96@gmail.com>
+X-Mailer: git-send-email 2.25.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3cf2bd1b-e1c2-f82f-a06a-ce0d5e4b5eac@linux.ibm.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+Content-Transfer-Encoding: 8bit
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 24, 2020 at 06:07:23PM +0530, Ravi Bangoria wrote:
+The driver calls register_framebuffer() in probe but does not call
+unregister_framebuffer() in remove.
+Rename current remove to __s1d13xxxfb_remove() for error handler.
+Then add a new remove to call unregister_framebuffer().
 
-SNIP
+Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
+---
+Changes in v3:
+  - Fix code style.
+  - Set __s1d13xxxfb_remove() to return void.
+  - Remove redundant check for info.
 
-> > looks good, do we need to add the dso_id check to sort__dso_cmp?
-> 
-> I guess with different filename there is no need to compare dso_id.
-> But for same filename, adding dso_id cmp will separate out the
-> samples:
-> 
-> Ex, Without dso_id compare:
-> 
->   $ ./perf report -s dso,dso_size -v
->     66.63%  /home/ravi/a.out                                  4096
->     33.36%  /home/ravi/Workspace/linux/tools/perf/a.out       4096
-> 
->   $ ./perf report -s dso,dso_size
->     99.99%  a.out                 4096
-> 
-> 
-> With below diff:
-> 
->   -       return strcmp(dso_name_l, dso_name_r);
->   +       ret = strcmp(dso_name_l, dso_name_r);
->   +       if (ret)
->   +               return ret;
->   +       else
->   +               return dso__cmp_id(dso_l, dso_r);
-> 
-> 
->   $ ./perf report -s dso,dso_size
->     99.99%  a.out                 4096
->     33.36%  a.out                 4096
-> 
-> though, the o/p also depends which other sort keys are used along
-> with dso key. Do you think this change makes sense?
+ drivers/video/fbdev/s1d13xxxfb.c | 15 +++++++++++----
+ 1 file changed, 11 insertions(+), 4 deletions(-)
 
-the above behaviour is something I'd expect from 'dso'
-sort key to do - separate out different dsos, even with
-the same name
-
-jirka
+diff --git a/drivers/video/fbdev/s1d13xxxfb.c b/drivers/video/fbdev/s1d13xxxfb.c
+index 8048499e398d..d51ef7619115 100644
+--- a/drivers/video/fbdev/s1d13xxxfb.c
++++ b/drivers/video/fbdev/s1d13xxxfb.c
+@@ -721,9 +721,7 @@ static void s1d13xxxfb_fetch_hw_state(struct fb_info *info)
+ 		xres, yres, xres_virtual, yres_virtual, is_color, is_dual, is_tft);
+ }
+ 
+-
+-static int
+-s1d13xxxfb_remove(struct platform_device *pdev)
++static void __s1d13xxxfb_remove(struct platform_device *pdev)
+ {
+ 	struct fb_info *info = platform_get_drvdata(pdev);
+ 	struct s1d13xxxfb_par *par = NULL;
+@@ -749,9 +747,18 @@ s1d13xxxfb_remove(struct platform_device *pdev)
+ 			pdev->resource[0].end - pdev->resource[0].start +1);
+ 	release_mem_region(pdev->resource[1].start,
+ 			pdev->resource[1].end - pdev->resource[1].start +1);
++}
++
++static int s1d13xxxfb_remove(struct platform_device *pdev)
++{
++	struct fb_info *info = platform_get_drvdata(pdev);
++
++	unregister_framebuffer(info);
++	__s1d13xxxfb_remove(pdev);
+ 	return 0;
+ }
+ 
++
+ static int s1d13xxxfb_probe(struct platform_device *pdev)
+ {
+ 	struct s1d13xxxfb_par *default_par;
+@@ -895,7 +902,7 @@ static int s1d13xxxfb_probe(struct platform_device *pdev)
+ 	return 0;
+ 
+ bail:
+-	s1d13xxxfb_remove(pdev);
++	__s1d13xxxfb_remove(pdev);
+ 	return ret;
+ 
+ }
+-- 
+2.25.2
 
