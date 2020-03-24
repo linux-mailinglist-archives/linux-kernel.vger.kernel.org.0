@@ -2,149 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8EE0C1912C8
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 15:21:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B10561912DF
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 15:23:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728257AbgCXOUi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 10:20:38 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:51584 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728198AbgCXOUe (ORCPT
+        id S1728091AbgCXOW4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 10:22:56 -0400
+Received: from us-smtp-delivery-74.mimecast.com ([63.128.21.74]:33080 "EHLO
+        us-smtp-delivery-74.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727270AbgCXOWz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 10:20:34 -0400
-Received: by mail-wm1-f68.google.com with SMTP id c187so3392059wme.1
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Mar 2020 07:20:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=pMoqaL6yn4wVYVlvTr5RoruqY0oplnpZZkK4h3Bk1Vc=;
-        b=j1P7KuTVSjxrPEtajniTPWPfAOlurldgsF/xktOKR/xrk7/1/NQs15p+Wh7faGwx5J
-         31rujTLqTWRQMqH3/Qe4/2GOhv1LyhS6h3aQmndYeiWEtihu+gMRLJ8Mhsc4Atutwenr
-         P5yimGaHugk71bQO+JmtIQ7GkIpIRgbfPi0L04cCM3jPUZ8Yg6RBzuOGm+sOD+wR9+90
-         hG1wSKJEIKqlV5EB1NyWZFEzvJXJGDqbt4fg81lUn6ckvIHasxInI05zYHRS0tL/A6kF
-         wHF7icX/QfK7X5YWY18rNDRgIKKk1LgiCm6vJjVPQiHDPsc7B2m0Uhv6VF7NQFKGCV42
-         hC2g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=pMoqaL6yn4wVYVlvTr5RoruqY0oplnpZZkK4h3Bk1Vc=;
-        b=tVy/gbbcPKy5zQQAHbgjM9xA0k20TOhSevj27kgL+TxLMQC7qx9+rl01SCN5wurvVO
-         p0oUxrSJe7kpfRtUhXVuT7qBcZaNlzf9Oub4AOzr9LpGqLFwQ6mIUH0sRa7D3wurGbg6
-         j1dAQdDYbnCQS2iHn0KvPuG7CuLZsDAIkxyXKk8ZL4TxDpzMSy2D0Zc42uvkvybyZk+q
-         JXDs4sNrzb5n64JEg8zq7v92qKLFVF3nmlYO/Qu8DFi4ParISJ72eMdqG+/hpiKm6/oR
-         yK9f1rAb3dXPWH6K/rgDwoQRAC90CI4RZiZs8QaR2Xuh8LRxg8dsGMvF40/WFpuLRmqs
-         zFqQ==
-X-Gm-Message-State: ANhLgQ2tJvykdhC4Ngm8m1/OQfwaXwH/ShPZP6DT53ECIn/v81XsxHei
-        sgiPi/7u7zSNL9zTS2QZYkfxdA==
-X-Google-Smtp-Source: ADFU+vtdVs9Y/Tzl2+XQY7ViTUqyXqgfFO/2wOmSWtCEH4wZVZeKpxYXjUZe5vF6CoRkmPuskQbK2Q==
-X-Received: by 2002:a1c:6605:: with SMTP id a5mr5962156wmc.32.1585059632470;
-        Tue, 24 Mar 2020 07:20:32 -0700 (PDT)
-Received: from bender.baylibre.local ([2a01:e35:2ec0:82b0:5c5f:613e:f775:b6a2])
-        by smtp.gmail.com with ESMTPSA id o4sm28688472wrp.84.2020.03.24.07.20.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Mar 2020 07:20:32 -0700 (PDT)
-From:   Neil Armstrong <narmstrong@baylibre.com>
-To:     daniel@ffwll.ch, dri-devel@lists.freedesktop.org
-Cc:     ppaalanen@gmail.com, mjourdan@baylibre.com, brian.starkey@arm.com,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v3 7/7] drm/meson: overlay: setup overlay for Amlogic FBC Scatter Memory layout
-Date:   Tue, 24 Mar 2020 15:20:16 +0100
-Message-Id: <20200324142016.31824-8-narmstrong@baylibre.com>
-X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20200324142016.31824-1-narmstrong@baylibre.com>
-References: <20200324142016.31824-1-narmstrong@baylibre.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Tue, 24 Mar 2020 10:22:55 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1585059774;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc; bh=JCJHy18k9QJc+GlupAj+Hwcwpa9SELMxiXWh1QeV9l4=;
+        b=CYNQv3feP/wGOg+50axV6+wm+YWevznRWCRIKV/EcXvrZoKVAk0Ben7CYdEsCyn6NdETng
+        VqkQ19/syKHN8G8n61KhfBRz7oOgQCO9JM0X1qi9QO16D2Vx65PinV2kybAt0eNdvzFVsq
+        earh2ykEOuYnFTpMNGvWwB/tCNCBu5Y=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-160-ZVGxS3XOMIKJBlzaNmo8yg-1; Tue, 24 Mar 2020 10:22:36 -0400
+X-MC-Unique: ZVGxS3XOMIKJBlzaNmo8yg-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 2F53B13F6;
+        Tue, 24 Mar 2020 14:22:35 +0000 (UTC)
+Received: from MiWiFi-R3L-srv.redhat.com (ovpn-12-69.pek2.redhat.com [10.72.12.69])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id AE6015C1B2;
+        Tue, 24 Mar 2020 14:22:31 +0000 (UTC)
+From:   Baoquan He <bhe@redhat.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     linux-mm@kvack.org, akpm@linux-foundation.org,
+        iamjoonsoo.kim@lge.com, hannes@cmpxchg.org, mhocko@kernel.org,
+        vbabka@suse.cz, bhe@redhat.com
+Subject: [PATCH 0/5] improvements about lowmem_reserve and /proc/zoneinfo 
+Date:   Tue, 24 Mar 2020 22:22:24 +0800
+Message-Id: <20200324142229.12028-1-bhe@redhat.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Setup the Amlogic FBC decoder for the VD1 video overlay plane to use
-read the FBC header as Scatter Memory layout reference.
+When tried to review below patchset from Joonsoo, I found out there's
+some space to improve about lowmem_reserve and /proc/zoneinfo printing.
+So made this patchset to do it.
 
-Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
----
- drivers/gpu/drm/meson/meson_overlay.c | 48 +++++++++++++++++----------
- 1 file changed, 31 insertions(+), 17 deletions(-)
+[PATCH v3 0/2] integrate classzone_idx and high_zoneidx
+http://lkml.kernel.org/r/1584693135-4396-1-git-send-email-iamjoonsoo.kim@lge.com
 
-diff --git a/drivers/gpu/drm/meson/meson_overlay.c b/drivers/gpu/drm/meson/meson_overlay.c
-index 8b9d4984b2a7..af4698ae5281 100644
---- a/drivers/gpu/drm/meson/meson_overlay.c
-+++ b/drivers/gpu/drm/meson/meson_overlay.c
-@@ -487,6 +487,9 @@ static void meson_overlay_atomic_update(struct drm_plane *plane,
- 					  AFBC_HOLD_LINE_NUM(8) |
- 					  AFBC_BURST_LEN(2);
- 
-+		if (fb->modifier & DRM_FORMAT_MOD_AMLOGIC_FBC_SCATTER)
-+			priv->viu.vd1_afbc_mode |= AFBC_SCATTER_MODE;
-+
- 		if (fb->modifier & DRM_FORMAT_MOD_AMLOGIC_FBC_MEM_SAVING)
- 			priv->viu.vd1_afbc_mode |= AFBC_BLK_MEM_MODE;
- 
-@@ -675,23 +678,32 @@ static void meson_overlay_atomic_update(struct drm_plane *plane,
- 	}
- 
- 	if (priv->viu.vd1_afbc) {
--		/* Default mode is 4k per superblock */
--		unsigned long block_size = 4096;
--		unsigned long body_size;
--
--		/* 8bit mem saving mode is 3072bytes per superblock */
--		if (priv->viu.vd1_afbc_mode & AFBC_BLK_MEM_MODE)
--			block_size = 3072;
--
--		body_size = (ALIGN(priv->viu.vd1_stride0, 64) / 64) *
--			    (ALIGN(priv->viu.vd1_height0, 32) / 32) *
--			    block_size;
--
--		priv->viu.vd1_afbc_body_addr = priv->viu.vd1_addr0 >> 4;
--
--		/* Header is after body content */
--		priv->viu.vd1_afbc_head_addr = (priv->viu.vd1_addr0 +
--						body_size) >> 4;
-+		if (priv->viu.vd1_afbc_mode & AFBC_SCATTER_MODE) {
-+			/*
-+			 * In Scatter mode, the header contains the physical
-+			 * body content layout, thus the body content
-+			 * size isn't needed.
-+			 */
-+			priv->viu.vd1_afbc_head_addr = priv->viu.vd1_addr0 >> 4;
-+			priv->viu.vd1_afbc_body_addr = 0;
-+		} else {
-+			/* Default mode is 4k per superblock */
-+			unsigned long block_size = 4096;
-+			unsigned long body_size;
-+
-+			/* 8bit mem saving mode is 3072bytes per superblock */
-+			if (priv->viu.vd1_afbc_mode & AFBC_BLK_MEM_MODE)
-+				block_size = 3072;
-+
-+			body_size = (ALIGN(priv->viu.vd1_stride0, 64) / 64) *
-+				    (ALIGN(priv->viu.vd1_height0, 32) / 32) *
-+				    block_size;
-+
-+			priv->viu.vd1_afbc_body_addr = priv->viu.vd1_addr0 >> 4;
-+			/* Header is after body content */
-+			priv->viu.vd1_afbc_head_addr = (priv->viu.vd1_addr0 +
-+							body_size) >> 4;
-+		}
- 	}
- 
- 	priv->viu.vd1_enabled = true;
-@@ -771,6 +783,8 @@ static const uint32_t supported_drm_formats[] = {
- };
- 
- static const uint64_t format_modifiers[] = {
-+	DRM_FORMAT_MOD_AMLOGIC_FBC(DRM_FORMAT_MOD_AMLOGIC_FBC_LAYOUT_SCATTER |
-+				   DRM_FORMAT_MOD_AMLOGIC_FBC_MEM_SAVING),
- 	DRM_FORMAT_MOD_AMLOGIC_FBC(DRM_FORMAT_MOD_AMLOGIC_FBC_LAYOUT_BASIC |
- 				   DRM_FORMAT_MOD_AMLOGIC_FBC_MEM_SAVING),
- 	DRM_FORMAT_MOD_AMLOGIC_FBC(DRM_FORMAT_MOD_AMLOGIC_FBC_LAYOUT_BASIC),
+Baoquan He (5):
+  mm/page_alloc.c: only tune sysctl_lowmem_reserve_ratio value once when
+    changing it
+  mm/page_alloc.c: clear out zone->lowmem_reserve[] if the zone is empty
+  mm/vmstat.c: do not show lowmem reserve protection information of
+    empty zone
+  mm/vmstat.c: move the per-node stats to the front of /proc/zoneinfo
+  mm/vmstat.c: remove the useless code
+
+ mm/page_alloc.c | 13 +++++++++++--
+ mm/vmstat.c     | 44 +++++++++++++++++---------------------------
+ 2 files changed, 28 insertions(+), 29 deletions(-)
+
 -- 
-2.22.0
+2.17.2
 
