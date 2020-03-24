@@ -2,134 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9462719052D
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 06:29:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E09D6190539
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 06:34:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727324AbgCXF3T (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 01:29:19 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:41319 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727289AbgCXF3P (ORCPT
+        id S1726358AbgCXFeI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 01:34:08 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:36654 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725923AbgCXFeI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 01:29:15 -0400
-Received: by mail-pf1-f195.google.com with SMTP id z65so8715679pfz.8
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Mar 2020 22:29:14 -0700 (PDT)
+        Tue, 24 Mar 2020 01:34:08 -0400
+Received: by mail-pg1-f195.google.com with SMTP id j29so1584562pgl.3
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Mar 2020 22:34:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=VWBRcEyMTW+WEEQt5SQF5x0ROI7z/m3lM/vgJNL3hXc=;
-        b=iMrML+KBB5l6Ri6XlYTp/N4rYhFdoHCnP7QF50uxsXOpRFiKMrfs0dVaox9kc0xcpk
-         hDjTamvLPXs8Upj4Txl/ZHG7p5o0uh/h4CBrV7yV+cqh9b2XxArrbKrfNKS7mThX4n87
-         lh8OPKocwkJvWLbmZX6QAE0HQHdUs3bpdkUs/OgRPxtXRRP9LCE32J1PWeMPGXIhfLO3
-         fbLOb+gkZJEbUiZtlW1cDNsxO/3I7cck8/8NDOeazkFQSG+hVXlbBRhsRG4hIBNxfSBd
-         WF/XUlVoJlJVU4w5XTa67bZLj16R7bdlhJiwPTYveSpjX/bQIMr8cOg1aIx8hJF/Edc6
-         nD5A==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=/TSTUAS7pvP0ZmRkI5IZvXuFAdhabZBDiE+44x81ou8=;
+        b=ljrX+nzB2f3s76SBq9xehg+/86QsQkGMnIcSoYGsEbZa7O8l06KpvQs/FF5BMctmtL
+         mrEflGYwhfaLEK3EDeOTjWAMQWrjqfh9NPYq9yON4sVXTWqXM+Iceg9/797A0I5e89qT
+         mnPRpe0yvfHOvR7jQlWZBuB7+wAqCW8DOvXj2Z4nk2/xvQTNB6kNQ6ko9cQEQbtbQ6JF
+         oPMlyINi0QmmPZOMAea/auJ8fCBCTrPSjJ5ZePOaGazbmA5Ozs+UM65slt/JhpEIHzwD
+         j7D1qK1VSW2wg2UoQnUia+vKzkiVgcDDSFlIBUQrIji8z77ynhThUyhFshMMLf+AzDOY
+         sIcQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=VWBRcEyMTW+WEEQt5SQF5x0ROI7z/m3lM/vgJNL3hXc=;
-        b=p+U3rZDr+KdH03VlTBYo/6Cvj18uARHGPkqUnOhrVW+IBbdNb+tJly4juYSbDghbT7
-         It3Dx0FdO5yOV0yGLFhYH/ZBHAgyjxYRbrUqdTWNx20JPw7e5DXqi7rXl+uh+Sf2uEUU
-         fyDZRtfnhveN2BvabpCqS+O8y08RPBsEFn3E+V1wN05SguoBtXEi5tDOScdqIOGBSdD9
-         XihxSE0XjcEczUXKn2UvX5V78Q6QOra/U/AZNUCABPNuXpfc4UhAN0GfztfgzgaEnGPd
-         KOO/aRMN1ZJ1qZ+zkIDPuI+S2AhKkKFjf/Khd4jVTxwV81ToNSAIAYHeCy9Xt+38rCLH
-         LczQ==
-X-Gm-Message-State: ANhLgQ3zKI7fuEuqWts1IcU8zQeoHK+CRi+E1EKAgiSiRP8pqUc6k3QX
-        A7VoJ4rfOmKpHgBLINwxTwBY2A==
-X-Google-Smtp-Source: ADFU+vtOqgoS3fw1vbaf1mdZpAWooFoKkJLbDx+LEZkLb5acpopnw2DgJmwSlrkhIO+GwxuRyZ3Fww==
-X-Received: by 2002:a63:6a4a:: with SMTP id f71mr26576969pgc.365.1585027753896;
-        Mon, 23 Mar 2020 22:29:13 -0700 (PDT)
-Received: from localhost.localdomain (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id j14sm2795413pgk.74.2020.03.23.22.29.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 Mar 2020 22:29:13 -0700 (PDT)
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Ohad Ben-Cohen <ohad@wizery.com>
-Cc:     linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Mathieu Poirier <mathieu.poirier@linaro.org>
-Subject: [PATCH v5 4/4] remoteproc: qcom: Introduce panic handler for PAS and ADSP
-Date:   Mon, 23 Mar 2020 22:29:04 -0700
-Message-Id: <20200324052904.738594-5-bjorn.andersson@linaro.org>
-X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20200324052904.738594-1-bjorn.andersson@linaro.org>
-References: <20200324052904.738594-1-bjorn.andersson@linaro.org>
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=/TSTUAS7pvP0ZmRkI5IZvXuFAdhabZBDiE+44x81ou8=;
+        b=Eqn3Am/gdrYs91sN0KBWD07rv3L8j06AYdRHc8aodDgsm5minUr5EgneMjT1TDho+X
+         Y4kiT9tefAXnC7P0CphwiXopwrwP0YhcAm3GTiA+wG7GTRU++C6u4eV9Sm52StDUFZME
+         JOfK2fwxngQg9FdSoulkRRHzXoxibcar+kSqT1Umy6ZhdTH0ucTacWUy9NcDwVbLaRGd
+         /vrDkH4ghBT7TGGZlxwlMyCkgLMU1WMbEHk2jOqre+Bf/wJ5xwaTeGlncKLDbAHzXvuN
+         dvucjtNs/dUfYLmFOTyAXO9o5Eag+Z+tYYsyFnX9XC+18+Prs46/YkeRhsUXdionHqDn
+         NByw==
+X-Gm-Message-State: ANhLgQ0pzIbJ4Pi2D8TACW01/sPRHxkGFz5Y7AeqT8DCV2vcuYn0As/U
+        Eq0wFSXY9hsOJRd354QPGk58
+X-Google-Smtp-Source: ADFU+vvV0RUr88miCiQV1V7USfVHQnRUiV1da952qkZQH9yh+rNWjmRGD4aM1dM2OiD4dtIoOuuDfQ==
+X-Received: by 2002:a62:e107:: with SMTP id q7mr11066372pfh.190.1585028047098;
+        Mon, 23 Mar 2020 22:34:07 -0700 (PDT)
+Received: from Mani-XPS-13-9360 ([2409:4072:59b:91e:2dd6:dffe:3569:b473])
+        by smtp.gmail.com with ESMTPSA id z12sm16163241pfj.144.2020.03.23.22.34.00
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 23 Mar 2020 22:34:06 -0700 (PDT)
+Date:   Tue, 24 Mar 2020 11:03:58 +0530
+From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To:     Kalle Valo <kvalo@codeaurora.org>
+Cc:     gregkh@linuxfoundation.org, davem@davemloft.net,
+        smohanad@codeaurora.org, jhugo@codeaurora.org,
+        bjorn.andersson@linaro.org, hemantk@codeaurora.org,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org
+Subject: Re: [PATCH v2 7/7] net: qrtr: Do not depend on ARCH_QCOM
+Message-ID: <20200324053358.GA11834@Mani-XPS-13-9360>
+References: <20200323123102.13992-1-manivannan.sadhasivam@linaro.org>
+ <20200323123102.13992-8-manivannan.sadhasivam@linaro.org>
+ <87lfnravao.fsf@kamboji.qca.qualcomm.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87lfnravao.fsf@kamboji.qca.qualcomm.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Make the PAS and ADSP/CDSP remoteproc drivers implement the panic
-handler that will invoke a stop to prepare the remoteprocs for post
-mortem debugging.
+On Mon, Mar 23, 2020 at 06:30:07PM +0200, Kalle Valo wrote:
+> Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org> writes:
+> 
+> > IPC Router protocol is also used by external modems for exchanging the QMI
+> > messages. Hence, it doesn't always depend on Qualcomm platforms. One such
+> > instance is the QCA6390 modem connected to x86 machine.
+> 
+> QCA6390 is not a modem, it's a Wi-Fi 6 (802.11ax) device :)
+> 
 
-Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
----
+Ah, yes ;) Will fix it in next revision.
 
-Changes since v4:
-- Picked up Mathieu's r-b
+Thanks,
+Mani
 
- drivers/remoteproc/qcom_q6v5_adsp.c | 8 ++++++++
- drivers/remoteproc/qcom_q6v5_pas.c  | 8 ++++++++
- 2 files changed, 16 insertions(+)
-
-diff --git a/drivers/remoteproc/qcom_q6v5_adsp.c b/drivers/remoteproc/qcom_q6v5_adsp.c
-index 2b01f2282062..24a3db961d5e 100644
---- a/drivers/remoteproc/qcom_q6v5_adsp.c
-+++ b/drivers/remoteproc/qcom_q6v5_adsp.c
-@@ -282,12 +282,20 @@ static void *adsp_da_to_va(struct rproc *rproc, u64 da, size_t len)
- 	return adsp->mem_region + offset;
- }
- 
-+static unsigned long adsp_panic(struct rproc *rproc)
-+{
-+	struct qcom_adsp *adsp = rproc->priv;
-+
-+	return qcom_q6v5_panic(&adsp->q6v5);
-+}
-+
- static const struct rproc_ops adsp_ops = {
- 	.start = adsp_start,
- 	.stop = adsp_stop,
- 	.da_to_va = adsp_da_to_va,
- 	.parse_fw = qcom_register_dump_segments,
- 	.load = adsp_load,
-+	.panic = adsp_panic,
- };
- 
- static int adsp_init_clock(struct qcom_adsp *adsp, const char **clk_ids)
-diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
-index a41860d2243a..7a63efb85405 100644
---- a/drivers/remoteproc/qcom_q6v5_pas.c
-+++ b/drivers/remoteproc/qcom_q6v5_pas.c
-@@ -234,12 +234,20 @@ static void *adsp_da_to_va(struct rproc *rproc, u64 da, size_t len)
- 	return adsp->mem_region + offset;
- }
- 
-+static unsigned long adsp_panic(struct rproc *rproc)
-+{
-+	struct qcom_adsp *adsp = (struct qcom_adsp *)rproc->priv;
-+
-+	return qcom_q6v5_panic(&adsp->q6v5);
-+}
-+
- static const struct rproc_ops adsp_ops = {
- 	.start = adsp_start,
- 	.stop = adsp_stop,
- 	.da_to_va = adsp_da_to_va,
- 	.parse_fw = qcom_register_dump_segments,
- 	.load = adsp_load,
-+	.panic = adsp_panic,
- };
- 
- static int adsp_init_clock(struct qcom_adsp *adsp)
--- 
-2.24.0
-
+> -- 
+> https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
