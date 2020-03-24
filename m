@@ -2,135 +2,149 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 008C6191664
+	by mail.lfdr.de (Postfix) with ESMTP id E869B191666
 	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 17:28:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728177AbgCXQ2D (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 12:28:03 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:42620 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727806AbgCXQ2D (ORCPT
+        id S1728802AbgCXQ2d (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 12:28:33 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:39762 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728534AbgCXQ2d (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 12:28:03 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 02OGDKIV071454;
-        Tue, 24 Mar 2020 16:27:50 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2020-01-29;
- bh=O2BVh03YvNi1joghI7zvQ/8mPcvJPWxXuGFSrPPipr8=;
- b=yh3DLpJ+6PiKNrEk1LyNDTZnktsvzbFnXxipD84INpShisnxCxmQabtyHAM4eCukdxu0
- 1LC2REVBAQ7cLdLRNDDc8h7f0OvJhcaImHXrEJg/Zj2F9Kcg4yALJ0r1hibEZKt4yTxn
- Xsrxc+3ZN1Fbm0GqOJpa1zsHwVUCABU9D+hdbjZpCkthBTQ/W7wLRx7KzM2F0WDLH1dl
- FnolCG0fyNS1iLcNpMt3YRjAAmqByP0m1eU6usX2iTVq+BIcP9gPuA6yVPMltZ7al72X
- jmU7I5kIKMjsBaEG69zizjS0LaiEfm+MlShtyK/c8kY2nHxNx2dNajTU1aKsm2T4hh60 pQ== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by aserp2120.oracle.com with ESMTP id 2ywavm5bqs-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 24 Mar 2020 16:27:50 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 02OGJnkO185961;
-        Tue, 24 Mar 2020 16:27:49 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by userp3020.oracle.com with ESMTP id 2yxw6n1tbd-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 24 Mar 2020 16:27:49 +0000
-Received: from abhmp0011.oracle.com (abhmp0011.oracle.com [141.146.116.17])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 02OGRmWk001475;
-        Tue, 24 Mar 2020 16:27:48 GMT
-Received: from [10.175.222.8] (/10.175.222.8)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 24 Mar 2020 09:27:48 -0700
-Subject: Re: [PATCH 12/12] device-dax: Introduce 'mapping' devices
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     linux-mm@kvack.org, dave.hansen@linux.intel.com, hch@lst.de,
-        linux-nvdimm@lists.01.org, linux-kernel@vger.kernel.org
-References: <158500767138.2088294.17131646259803932461.stgit@dwillia2-desk3.amr.corp.intel.com>
- <158500774067.2088294.1260962550701501447.stgit@dwillia2-desk3.amr.corp.intel.com>
-From:   Joao Martins <joao.m.martins@oracle.com>
-Message-ID: <27ba42ac-ec08-fd9c-dee2-53414eb0bc58@oracle.com>
-Date:   Tue, 24 Mar 2020 16:27:44 +0000
+        Tue, 24 Mar 2020 12:28:33 -0400
+Received: by mail-lj1-f195.google.com with SMTP id i20so7195954ljn.6;
+        Tue, 24 Mar 2020 09:28:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=F4RDqLUZsSxRiEPC5uE5/znG8mVAMvfJqVjLtVuPTYI=;
+        b=LuLLrr4er+BSGhKQjssI8NHtdlFNa4e25P6w8rHTsubuRQi9V8BqJQzt40rl89NpJi
+         TUFxBSyW6blqX9rxpUa8KALUUkOoERwYy5okleCaFKiPS0eQF8mhZD9ELr4U2+vm0XX4
+         zklFKOFjLfGXBjbaY4siIbb7tsK0BeShh2w9R9D2j4oRvUrlLNo5C+7cH4FfYF7qeTuo
+         kWZlk5UGv8ZOZ7Uf+O9C0DnHXMpMwb52fs0BZ91dCysjWGpBPMMSB5X89iAYaUNt09Vd
+         /ORqgTrpH2BznN/YlN+4p0bojHgjD4pZuFa+J9wq1OISsSbwcln0MlvDPICDXdRFXC0R
+         P0bQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=F4RDqLUZsSxRiEPC5uE5/znG8mVAMvfJqVjLtVuPTYI=;
+        b=Rqdc2w2j1wuV8UklJAjDa2LslBNdS0HeYJNOI6fyCHLa4U7m83ckokXSgKufpl83UL
+         qU6dGxlXjZjT3JVxUuHMYr+e2GDLCBQ+w0J+saKHZhJ0HbKLy8wPTouBcRZRF4n7kp3j
+         KjVHN/DS2AnF28vHScrukt7bHo2/DV9eLojDlPofpmZe7cn9eKUFciuWisTgVNlE/A7b
+         nLB9K3idOIG+zo3khqEV7u1U4n/FexIIrFeeW4fbz2Es1mO3YIJORL01/seaVFU8nhRP
+         f1zUd4mH/a3byPPYm2xP8X8xp+DHHQ7J0QeSQZEDvaxeObvb3osT1XnxXtz0N3Y3rdD1
+         LMWg==
+X-Gm-Message-State: ANhLgQ2wdz185UIvCj5xLr/zhgqIC2qTBnt6iL1dlEf6WrV49gvJIo0w
+        zn3XdC7SHduja0IF7yLZ5FUMYp606quljsGfhaA=
+X-Google-Smtp-Source: ADFU+vv3dG23NpLsI31feEsoXfT8VQ+G9TfKP8XIgS8J/aJehLJHzaIF4s5x+DNyat0Dt1V6dnQNgBL+w6VWcAfNkJM=
+X-Received: by 2002:a2e:9949:: with SMTP id r9mr18249406ljj.135.1585067309896;
+ Tue, 24 Mar 2020 09:28:29 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <158500774067.2088294.1260962550701501447.stgit@dwillia2-desk3.amr.corp.intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9570 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=5 adultscore=0
- malwarescore=0 mlxscore=0 spamscore=0 mlxlogscore=999 bulkscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2003020000 definitions=main-2003240087
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9570 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 malwarescore=0
- priorityscore=1501 mlxscore=0 bulkscore=0 clxscore=1015 impostorscore=0
- phishscore=0 suspectscore=5 mlxlogscore=999 spamscore=0 lowpriorityscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2003020000
- definitions=main-2003240087
+References: <20200324141722.21308-1-ap420073@gmail.com> <20200324154449.GC2513347@kroah.com>
+In-Reply-To: <20200324154449.GC2513347@kroah.com>
+From:   Taehee Yoo <ap420073@gmail.com>
+Date:   Wed, 25 Mar 2020 01:28:18 +0900
+Message-ID: <CAMArcTVhqxgZ1X+TgruDSGPEXbZS0M86h6y-4WAB8z8OOSgLzg@mail.gmail.com>
+Subject: Re: [PATCH RESEND net 1/3] class: add class_find_and_get_file_ns()
+ helper function
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     David Miller <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>, rafael@kernel.org,
+        j.vosburgh@gmail.com, vfalico@gmail.com,
+        Andy Gospodarek <andy@greyhouse.net>,
+        Netdev <netdev@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, mitch.a.williams@intel.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 3/23/20 11:55 PM, Dan Williams wrote:
-> In support of interrogating the physical address layout of a device with
-> dis-contiguous ranges, introduce a sysfs directory with 'start', 'end',
-> and 'page_offset' attributes. The alternative is trying to parse
-> /proc/iomem, and that file will not reflect the extent layout until the
-> device is enabled.
-> 
-> Signed-off-by: Dan Williams <dan.j.williams@intel.com>
-> ---
->  drivers/dax/bus.c         |  190 +++++++++++++++++++++++++++++++++++++++++++++
->  drivers/dax/dax-private.h |   14 +++
->  2 files changed, 202 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/dax/bus.c b/drivers/dax/bus.c
-> index 07aeb8fa9ee8..645449a079bd 100644
-> --- a/drivers/dax/bus.c
-> +++ b/drivers/dax/bus.c
-> @@ -558,6 +558,167 @@ struct dax_region *alloc_dax_region(struct device *parent, int region_id,
->  }
->  EXPORT_SYMBOL_GPL(alloc_dax_region);
->  
-> +static void dax_mapping_release(struct device *dev)
-> +{
-> +	struct dax_mapping *mapping = to_dax_mapping(dev);
-> +	struct dev_dax *dev_dax = to_dev_dax(dev->parent);
-> +
-> +	ida_free(&dev_dax->ida, mapping->id);
-> +	kfree(mapping);
-> +}
-> +
-> +static void unregister_dax_mapping(void *data)
-> +{
-> +	struct device *dev = data;
-> +	struct dax_mapping *mapping = to_dax_mapping(dev);
-> +	struct dev_dax *dev_dax = to_dev_dax(dev->parent);
-> +	struct dax_region *dax_region = dev_dax->region;
-> +
-> +	dev_dbg(dev, "%s\n", __func__);
-> +
-> +	device_lock_assert(dax_region->dev);
-> +
-> +	dev_dax->ranges[mapping->range_id].mapping = NULL;
-> +	mapping->range_id = -1;
-> +
-> +	device_del(dev);
-> +	put_device(dev);
-> +}
-> +
-> +static struct dev_dax_range *get_dax_range(struct device *dev)
-> +{
-> +	struct dax_mapping *mapping = to_dax_mapping(dev);
-> +	struct dev_dax *dev_dax = to_dev_dax(dev->parent);
-> +	struct dax_region *dax_region = dev_dax->region;
-> +
-> +	device_lock(dax_region->dev);
-> +	if (mapping->range_id < 1) {
-            ^^^^^^^^^^^^^^^^^^^^^ perhaps "mapping->range_id < 0" ?
+On Wed, 25 Mar 2020 at 00:44, Greg KH <gregkh@linuxfoundation.org> wrote:
+>
 
-AFAICT, invalid/disabled ranges have id to -1.
+Hi Greg,
+Thank you for the review!
 
-Otherwise we can't use mapping0 entry fields.
+> On Tue, Mar 24, 2020 at 02:17:22PM +0000, Taehee Yoo wrote:
+> > The new helper function is to find and get a class file.
+> > This function is useful for checking whether the class file is existing
+> > or not. This function will be used by networking stack to
+> > check "/sys/class/net/*" file.
+> >
+> > Reported-by: syzbot+830c6dbfc71edc4f0b8f@syzkaller.appspotmail.com
+> > Fixes: b76cdba9cdb2 ("[PATCH] bonding: add sysfs functionality to bonding (large)")
+> > Signed-off-by: Taehee Yoo <ap420073@gmail.com>
+> > ---
+> >  drivers/base/class.c         | 12 ++++++++++++
+> >  include/linux/device/class.h |  4 +++-
+> >  2 files changed, 15 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/base/class.c b/drivers/base/class.c
+> > index bcd410e6d70a..dedf41f32f0d 100644
+> > --- a/drivers/base/class.c
+> > +++ b/drivers/base/class.c
+> > @@ -105,6 +105,17 @@ void class_remove_file_ns(struct class *cls, const struct class_attribute *attr,
+> >               sysfs_remove_file_ns(&cls->p->subsys.kobj, &attr->attr, ns);
+> >  }
+> >
+> > +struct kernfs_node *class_find_and_get_file_ns(struct class *cls,
+> > +                                            const char *name,
+> > +                                            const void *ns)
+> > +{
+> > +     struct kernfs_node *kn = NULL;
+> > +
+> > +     if (cls)
+> > +             kn = kernfs_find_and_get_ns(cls->p->subsys.kobj.sd, name, ns);
+> > +     return kn;
+> > +}
+> > +
+>
+> You can put the EXPORT_SYMBOL_GPL() under here.
+>
 
- Joao
+Okay, I will change this.
+
+> And can you document what this function actually is in some kerneldoc?
+>
+
+Thanks, I will add some kernel-doc comment.
+
+> But, returning a kernfs_node from a driver core is _REALLY_ odd.  Why do
+> you need this and who cares about kernfs here?
+>
+
+I fully agree with that.
+My previous version of this function was here:
+
+bool class_has_file_ns(struct class *cls, const char *name,
+                       const void *ns)
+{
+        struct kernfs_node *kn = NULL;
+
+        if (cls) {
+                kn = kernfs_find_and_get_ns(cls->p->subsys.kobj.sd, name, ns);
+                if (kn) {
+                        kernfs_put(kn);
+                        return true;
+                }
+        }
+        return false;
+}
+
+I wanted this function could be used in general cases.
+But I thought this function couldn't be used in general cases.
+So, I made class_find_and_get_file_ns() but I couldn't find
+a more appropriate return type.
+I think I'd rather to use class_has_file_ns() instead of
+class_find_and_get_file_ns() because of an awkward return type.
+How do you think about it?
+
+> thanks,
+>
+> greg k-h
+
+Thanks a lot,
+Taehee Yoo
