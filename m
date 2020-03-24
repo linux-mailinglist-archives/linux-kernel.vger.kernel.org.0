@@ -2,42 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D9570190EF8
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 14:19:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 29AB6190FBE
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 14:29:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728464AbgCXNQ3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 09:16:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35938 "EHLO mail.kernel.org"
+        id S1728795AbgCXNWo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 09:22:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44990 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728385AbgCXNQ2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 09:16:28 -0400
+        id S1728209AbgCXNWf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Mar 2020 09:22:35 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 03D88206F6;
-        Tue, 24 Mar 2020 13:16:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0DE98206F6;
+        Tue, 24 Mar 2020 13:22:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585055787;
-        bh=4rTwBD89a4CagL9gDyOgg/0Xk9ZXmPQVpF4kNNBT5fQ=;
+        s=default; t=1585056154;
+        bh=kfUWbnTeMtmznHS2XI+DY12FQ9bzL1Ohz2f03135/Vs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=u2N7Ss9g9pRtTJ06NcQgvliJIvfJGj7118RXGsPcp6gPq4uaETTiQwwJZHd7dIEP4
-         QkgoGWUWbvCFXU+kKQBgtofs/XFEL63yrgi5VSFe84ICmWVuYYp7pKxp9ILWJ+AUf8
-         kShKSjcLCqtjSYv6bhsZ3xfgqd+Ip/xaAUVHURB0=
+        b=l/hjgWMFbtso5HccJaj9+ppsZNbojwnm3PMfjYYCjPqlIZ+MNEYbm6rmWso8+xEtK
+         xbpbbojl6U1WrVkr8JKK6Wo1j6mCChwOf9996TZd9r9gAgbAL1ou5zhBRtsX/EemFE
+         nuUiUxgqV9fNKxOiNZbbbcbdMiijIGhSKPKsTUx4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Bhawanpreet Lakha <Bhawanpreet.Lakha@amd.com>,
-        Hersen Wu <hersenxs.wu@amd.com>,
-        Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
+        David Abdurachmanov <david.abdurachmanov@gmail.com>,
+        Tycho Andersen <tycho@tycho.ws>,
+        Kees Cook <keescook@chromium.org>,
+        Palmer Dabbelt <palmerdabbelt@google.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 029/102] drm/amd/display: Clear link settings on MST disable connector
-Date:   Tue, 24 Mar 2020 14:10:21 +0100
-Message-Id: <20200324130809.444508184@linuxfoundation.org>
+Subject: [PATCH 5.5 037/119] riscv: fix seccomp reject syscall code path
+Date:   Tue, 24 Mar 2020 14:10:22 +0100
+Message-Id: <20200324130812.092109755@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.2
-In-Reply-To: <20200324130806.544601211@linuxfoundation.org>
-References: <20200324130806.544601211@linuxfoundation.org>
+In-Reply-To: <20200324130808.041360967@linuxfoundation.org>
+References: <20200324130808.041360967@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,90 +47,147 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bhawanpreet Lakha <Bhawanpreet.Lakha@amd.com>
+From: Tycho Andersen <tycho@tycho.ws>
 
-[ Upstream commit 5ac7fd2f597b88ee81f4748ee50cab06192a8dc3 ]
+[ Upstream commit af33d2433b03d63ed31fcfda842f46676a5e1afc ]
 
-[Why]
-If we have a single MST display and we disconnect it, we dont disable that
-link. This causes the old link settings to still exist
+If secure_computing() rejected a system call, we were previously setting
+the system call number to -1, to indicate to later code that the syscall
+failed. However, if something (e.g. a user notification) was sleeping, and
+received a signal, we may set a0 to -ERESTARTSYS and re-try the system call
+again.
 
-Now on a replug for MST we think its a link loss and will try to reallocate
-mst payload which will fail, throwing warning below.
+In this case, seccomp "denies" the syscall (because of the signal), and we
+would set a7 to -1, thus losing the value of the system call we want to
+restart.
 
-[  129.374192] [drm] Failed to updateMST allocation table forpipe idx:0
-[  129.374206] ------------[ cut here ]------------
-[  129.374284] WARNING: CPU: 14 PID: 1710 at
-drivers/gpu/drm/amd/amdgpu/../dal-dev/dc/core/dc_link.c:3153
-dc_link_allocate_mst_payload+0x1f7/0x220 [amdgpu]
+Instead, let's return -1 from do_syscall_trace_enter() to indicate that the
+syscall was rejected, so we don't clobber the value in case of -ERESTARTSYS
+or whatever.
 
-[  129.374285] Modules linked in: amdgpu(OE) amd_iommu_v2 gpu_sched ttm
-drm_kms_helper drm fb_sys_fops syscopyarea sysfillrect sysimgblt
-binfmt_misc nls_iso8859_1 edac_mce_amd snd_hda_codec_realtek
-snd_hda_codec_generic ledtrig_audio kvm snd_hda_codec_hdmi snd_hda_intel
-snd_intel_nhlt snd_hda_codec irqbypass snd_hda_core snd_hwdep snd_pcm
-snd_seq_midi snd_seq_midi_event snd_rawmidi crct10dif_pclmul snd_seq
-crc32_pclmul ghash_clmulni_intel snd_seq_device snd_timer snd aesni_intel
-eeepc_wmi crypto_simd asus_wmi joydev cryptd sparse_keymap input_leds
-soundcore video glue_helper wmi_bmof mxm_wmi k10temp ccp mac_hid
-sch_fq_codel parport_pc ppdev lp parport ip_tables x_tables autofs4
-hid_generic usbhid hid igb i2c_algo_bit ahci dca i2c_piix4 libahci
-gpio_amdpt wmi gpio_generic
+This commit fixes the user_notification_signal seccomp selftest on riscv to
+no longer hang. That test expects the system call to be re-issued after the
+signal, and it wasn't due to the above bug. Now that it is, everything
+works normally.
 
-[  129.374318] CPU: 14 PID: 1710 Comm: kworker/14:2 Tainted: G        W  OE     5.4.0-rc7bhawan+ #480
-[  129.374318] Hardware name: System manufacturer System Product Name/PRIME X370-PRO, BIOS 0515 03/30/2017
-[  129.374397] Workqueue: events dm_irq_work_func [amdgpu]
-[  129.374468] RIP: 0010:dc_link_allocate_mst_payload+0x1f7/0x220 [amdgpu]
-[  129.374470] Code: 52 20 e8 1c 63 ad f4 48 8b 5d d0 65 48 33 1c 25 28 00
-00 00 b8 01 00 00 00 75 16 48 8d 65 d8 5b 41 5c 41 5d 41 5e 41 5f 5d c3
-<0f> 0b e9 fa fe ff ff e8 ed 5b d6 f3 41 0f b6 b6 c4 02 00 00 48 c7
-[  129.374471] RSP: 0018:ffff9f9141e7fcc0 EFLAGS: 00010246
-[  129.374472] RAX: 0000000000000000 RBX: ffff91ef0762f800 RCX: 0000000000000000
-[  129.374473] RDX: 0000000000000005 RSI: ffffffffc0c4a988 RDI: 0000000000000004
-[  129.374474] RBP: ffff9f9141e7fd10 R08: 0000000000000005 R09: 0000000000000000
-[  129.374475] R10: 0000000000000002 R11: 0000000000000001 R12: ffff91eebd510c00
-[  129.374475] R13: ffff91eebd510e58 R14: ffff91ef052c01b8 R15: 0000000000000006
-[  129.374476] FS:  0000000000000000(0000) GS:ffff91ef0ef80000(0000) knlGS:0000000000000000
-[  129.374477] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[  129.374478] CR2: 000055623ea01d50 CR3: 0000000408a8c000 CR4: 00000000003406e0
-[  129.374479] Call Trace:
-[  129.374550]  dc_link_reallocate_mst_payload+0x12e/0x150 [amdgpu]
-[  129.374617]  dc_link_handle_hpd_rx_irq+0x6d4/0x6e0 [amdgpu]
-[  129.374693]  handle_hpd_rx_irq+0x77/0x310 [amdgpu]
-[  129.374768]  dm_irq_work_func+0x53/0x70 [amdgpu]
-[  129.374774]  process_one_work+0x1fd/0x3f0
-[  129.374776]  worker_thread+0x255/0x410
-[  129.374778]  kthread+0x121/0x140
-[  129.374780]  ? process_one_work+0x3f0/0x3f0
-[  129.374781]  ? kthread_park+0x90/0x90
-[  129.374785]  ret_from_fork+0x22/0x40
+Note that in the ptrace (tracer) case, the tracer can set the register
+values to whatever they want, so we still need to keep the code that
+handles out-of-bounds syscalls. However, we can drop the comment.
 
-[How]
-when we disable MST we should clear the cur link settings (lane_count=0 is
-good enough). This will cause us to not reallocate payloads earlier than
-expected and not throw the warning
+We can also drop syscall_set_nr(), since it is no longer used anywhere, and
+the code that re-loads the value in a7 because of it.
 
-Signed-off-by: Bhawanpreet Lakha <Bhawanpreet.Lakha@amd.com>
-Reviewed-by: Hersen Wu <hersenxs.wu@amd.com>
-Acked-by: Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+Reported in: https://lore.kernel.org/bpf/CAEn-LTp=ss0Dfv6J00=rCAy+N78U2AmhqJNjfqjr2FDpPYjxEQ@mail.gmail.com/
+
+Reported-by: David Abdurachmanov <david.abdurachmanov@gmail.com>
+Signed-off-by: Tycho Andersen <tycho@tycho.ws>
+Reviewed-by: Kees Cook <keescook@chromium.org>
+Signed-off-by: Palmer Dabbelt <palmerdabbelt@google.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_mst_types.c | 1 +
- 1 file changed, 1 insertion(+)
+ arch/riscv/include/asm/syscall.h |  7 -------
+ arch/riscv/kernel/entry.S        | 11 +++--------
+ arch/riscv/kernel/ptrace.c       | 11 +++++------
+ 3 files changed, 8 insertions(+), 21 deletions(-)
 
-diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_mst_types.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_mst_types.c
-index 16218a202b591..28a6c7b2ef4bb 100644
---- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_mst_types.c
-+++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_mst_types.c
-@@ -379,6 +379,7 @@ static void dm_dp_destroy_mst_connector(struct drm_dp_mst_topology_mgr *mgr,
- 					   aconnector->dc_sink);
- 		dc_sink_release(aconnector->dc_sink);
- 		aconnector->dc_sink = NULL;
-+		aconnector->dc_link->cur_link_settings.lane_count = 0;
- 	}
+diff --git a/arch/riscv/include/asm/syscall.h b/arch/riscv/include/asm/syscall.h
+index 42347d0981e7e..49350c8bd7b09 100644
+--- a/arch/riscv/include/asm/syscall.h
++++ b/arch/riscv/include/asm/syscall.h
+@@ -28,13 +28,6 @@ static inline int syscall_get_nr(struct task_struct *task,
+ 	return regs->a7;
+ }
  
- 	drm_connector_unregister(connector);
+-static inline void syscall_set_nr(struct task_struct *task,
+-				  struct pt_regs *regs,
+-				  int sysno)
+-{
+-	regs->a7 = sysno;
+-}
+-
+ static inline void syscall_rollback(struct task_struct *task,
+ 				    struct pt_regs *regs)
+ {
+diff --git a/arch/riscv/kernel/entry.S b/arch/riscv/kernel/entry.S
+index e163b7b64c86c..f6486d4956013 100644
+--- a/arch/riscv/kernel/entry.S
++++ b/arch/riscv/kernel/entry.S
+@@ -228,20 +228,13 @@ check_syscall_nr:
+ 	/* Check to make sure we don't jump to a bogus syscall number. */
+ 	li t0, __NR_syscalls
+ 	la s0, sys_ni_syscall
+-	/*
+-	 * The tracer can change syscall number to valid/invalid value.
+-	 * We use syscall_set_nr helper in syscall_trace_enter thus we
+-	 * cannot trust the current value in a7 and have to reload from
+-	 * the current task pt_regs.
+-	 */
+-	REG_L a7, PT_A7(sp)
+ 	/*
+ 	 * Syscall number held in a7.
+ 	 * If syscall number is above allowed value, redirect to ni_syscall.
+ 	 */
+ 	bge a7, t0, 1f
+ 	/*
+-	 * Check if syscall is rejected by tracer or seccomp, i.e., a7 == -1.
++	 * Check if syscall is rejected by tracer, i.e., a7 == -1.
+ 	 * If yes, we pretend it was executed.
+ 	 */
+ 	li t1, -1
+@@ -334,6 +327,7 @@ work_resched:
+ handle_syscall_trace_enter:
+ 	move a0, sp
+ 	call do_syscall_trace_enter
++	move t0, a0
+ 	REG_L a0, PT_A0(sp)
+ 	REG_L a1, PT_A1(sp)
+ 	REG_L a2, PT_A2(sp)
+@@ -342,6 +336,7 @@ handle_syscall_trace_enter:
+ 	REG_L a5, PT_A5(sp)
+ 	REG_L a6, PT_A6(sp)
+ 	REG_L a7, PT_A7(sp)
++	bnez t0, ret_from_syscall_rejected
+ 	j check_syscall_nr
+ handle_syscall_trace_exit:
+ 	move a0, sp
+diff --git a/arch/riscv/kernel/ptrace.c b/arch/riscv/kernel/ptrace.c
+index 407464201b91e..444dc7b0fd78c 100644
+--- a/arch/riscv/kernel/ptrace.c
++++ b/arch/riscv/kernel/ptrace.c
+@@ -148,21 +148,19 @@ long arch_ptrace(struct task_struct *child, long request,
+  * Allows PTRACE_SYSCALL to work.  These are called from entry.S in
+  * {handle,ret_from}_syscall.
+  */
+-__visible void do_syscall_trace_enter(struct pt_regs *regs)
++__visible int do_syscall_trace_enter(struct pt_regs *regs)
+ {
+ 	if (test_thread_flag(TIF_SYSCALL_TRACE))
+ 		if (tracehook_report_syscall_entry(regs))
+-			syscall_set_nr(current, regs, -1);
++			return -1;
+ 
+ 	/*
+ 	 * Do the secure computing after ptrace; failures should be fast.
+ 	 * If this fails we might have return value in a0 from seccomp
+ 	 * (via SECCOMP_RET_ERRNO/TRACE).
+ 	 */
+-	if (secure_computing() == -1) {
+-		syscall_set_nr(current, regs, -1);
+-		return;
+-	}
++	if (secure_computing() == -1)
++		return -1;
+ 
+ #ifdef CONFIG_HAVE_SYSCALL_TRACEPOINTS
+ 	if (test_thread_flag(TIF_SYSCALL_TRACEPOINT))
+@@ -170,6 +168,7 @@ __visible void do_syscall_trace_enter(struct pt_regs *regs)
+ #endif
+ 
+ 	audit_syscall_entry(regs->a7, regs->a0, regs->a1, regs->a2, regs->a3);
++	return 0;
+ }
+ 
+ __visible void do_syscall_trace_exit(struct pt_regs *regs)
 -- 
 2.20.1
 
