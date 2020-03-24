@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3C7BD190FD1
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 14:30:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1C000190E78
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 14:12:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729348AbgCXNXZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 09:23:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46426 "EHLO mail.kernel.org"
+        id S1727641AbgCXNMc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 09:12:32 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58252 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729324AbgCXNXX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 09:23:23 -0400
+        id S1727612AbgCXNM1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Mar 2020 09:12:27 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 40513206F6;
-        Tue, 24 Mar 2020 13:23:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 08D9220775;
+        Tue, 24 Mar 2020 13:12:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585056202;
-        bh=iSHuwUJG/NcAT5Ue2QUNID8qtWpaoPKHRKW/XE8HZqQ=;
+        s=default; t=1585055547;
+        bh=EEvvfhmxdev/pFSM7PgnHtvM1QPYghNhCKh9PDwsrys=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rf8x2tYfpqwqJHx2oKlqKE6ymrVLjZ0LF7rvJ8K5hKx5Iq1ouXEB8QO5j6OjD0CZz
-         +yIe8BYokmH4ZcRgquScIm+1pC4nZ1k5aquvJWodE04MoRLLEuPb27yodFEb2cCGPM
-         CikK3NYsZ+3q7hw2XCcClL2CZYdlVLizhdfwYcMY=
+        b=zo8Yj7ByhHi8Mk31aI/sLgUc9zEtlqb6BK+13MtXWON2hUr26c+yQ8jTyccaF4n7p
+         7u61jYkfPQm19xxllgpR5J6/3deO1047I0vFe/to9lM5vS0DOWg72nWQVl/xx3VhJt
+         S+Tpb2SsOm8qQzbdwtjKzlrllj9WGWHMDQVw/stA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jian-Hong Pan <jian-hong@endlessm.com>,
-        Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 5.5 055/119] ALSA: hda/realtek - Enable the headset of Acer N50-600 with ALC662
-Date:   Tue, 24 Mar 2020 14:10:40 +0100
-Message-Id: <20200324130813.740243028@linuxfoundation.org>
+        stable@vger.kernel.org, Alan Stern <stern@rowland.harvard.edu>,
+        Kai-Heng Feng <kai.heng.feng@canonical.com>
+Subject: [PATCH 4.19 20/65] USB: Disable LPM on WD19s Realtek Hub
+Date:   Tue, 24 Mar 2020 14:10:41 +0100
+Message-Id: <20200324130759.582082027@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.2
-In-Reply-To: <20200324130808.041360967@linuxfoundation.org>
-References: <20200324130808.041360967@linuxfoundation.org>
+In-Reply-To: <20200324130756.679112147@linuxfoundation.org>
+References: <20200324130756.679112147@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,57 +43,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jian-Hong Pan <jian-hong@endlessm.com>
+From: Kai-Heng Feng <kai.heng.feng@canonical.com>
 
-commit a124458a127ccd7629e20cd7bae3e1f758ed32aa upstream.
+commit b63e48fb50e1ca71db301ca9082befa6f16c55c4 upstream.
 
-A headset on the desktop like Acer N50-600 does not work, until quirk
-ALC662_FIXUP_ACER_NITRO_HEADSET_MODE is applied.
+Realtek Hub (0bda:0x0487) used in Dell Dock WD19 sometimes drops off the
+bus when bringing underlying ports from U3 to U0.
 
-Signed-off-by: Jian-Hong Pan <jian-hong@endlessm.com>
-Cc: <stable@vger.kernel.org>
-Link: https://lore.kernel.org/r/20200317082806.73194-3-jian-hong@endlessm.com
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Disabling LPM on the hub during setting link state is not enough, so
+let's disable LPM completely for this hub.
+
+Acked-by: Alan Stern <stern@rowland.harvard.edu>
+Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
+Cc: stable <stable@vger.kernel.org>
+Link: https://lore.kernel.org/r/20200205112633.25995-3-kai.heng.feng@canonical.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/pci/hda/patch_realtek.c |   12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ drivers/usb/core/quirks.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/sound/pci/hda/patch_realtek.c
-+++ b/sound/pci/hda/patch_realtek.c
-@@ -8611,6 +8611,7 @@ enum {
- 	ALC669_FIXUP_ACER_ASPIRE_ETHOS_HEADSET,
- 	ALC671_FIXUP_HP_HEADSET_MIC2,
- 	ALC662_FIXUP_ACER_X2660G_HEADSET_MODE,
-+	ALC662_FIXUP_ACER_NITRO_HEADSET_MODE,
- };
+--- a/drivers/usb/core/quirks.c
++++ b/drivers/usb/core/quirks.c
+@@ -378,6 +378,9 @@ static const struct usb_device_id usb_qu
+ 	{ USB_DEVICE(0x0b05, 0x17e0), .driver_info =
+ 			USB_QUIRK_IGNORE_REMOTE_WAKEUP },
  
- static const struct hda_fixup alc662_fixups[] = {
-@@ -8965,6 +8966,16 @@ static const struct hda_fixup alc662_fix
- 		.chained = true,
- 		.chain_id = ALC662_FIXUP_USI_FUNC
- 	},
-+	[ALC662_FIXUP_ACER_NITRO_HEADSET_MODE] = {
-+		.type = HDA_FIXUP_PINS,
-+		.v.pins = (const struct hda_pintbl[]) {
-+			{ 0x1a, 0x01a11140 }, /* use as headset mic, without its own jack detect */
-+			{ 0x1b, 0x0221144f },
-+			{ }
-+		},
-+		.chained = true,
-+		.chain_id = ALC662_FIXUP_USI_FUNC
-+	},
- };
- 
- static const struct snd_pci_quirk alc662_fixup_tbl[] = {
-@@ -8976,6 +8987,7 @@ static const struct snd_pci_quirk alc662
- 	SND_PCI_QUIRK(0x1025, 0x0349, "eMachines eM250", ALC662_FIXUP_INV_DMIC),
- 	SND_PCI_QUIRK(0x1025, 0x034a, "Gateway LT27", ALC662_FIXUP_INV_DMIC),
- 	SND_PCI_QUIRK(0x1025, 0x038b, "Acer Aspire 8943G", ALC662_FIXUP_ASPIRE),
-+	SND_PCI_QUIRK(0x1025, 0x123c, "Acer Nitro N50-600", ALC662_FIXUP_ACER_NITRO_HEADSET_MODE),
- 	SND_PCI_QUIRK(0x1025, 0x124e, "Acer 2660G", ALC662_FIXUP_ACER_X2660G_HEADSET_MODE),
- 	SND_PCI_QUIRK(0x1028, 0x05d8, "Dell", ALC668_FIXUP_DELL_MIC_NO_PRESENCE),
- 	SND_PCI_QUIRK(0x1028, 0x05db, "Dell", ALC668_FIXUP_DELL_MIC_NO_PRESENCE),
++	/* Realtek hub in Dell WD19 (Type-C) */
++	{ USB_DEVICE(0x0bda, 0x0487), .driver_info = USB_QUIRK_NO_LPM },
++
+ 	/* Action Semiconductor flash disk */
+ 	{ USB_DEVICE(0x10d6, 0x2200), .driver_info =
+ 			USB_QUIRK_STRING_FETCH_255 },
 
 
