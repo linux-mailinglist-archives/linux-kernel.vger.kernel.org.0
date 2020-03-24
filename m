@@ -2,65 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 73CBA19132D
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 15:28:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 39C70191340
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 15:33:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728128AbgCXO2E (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 10:28:04 -0400
-Received: from mail-io1-f70.google.com ([209.85.166.70]:54571 "EHLO
-        mail-io1-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727509AbgCXO2E (ORCPT
+        id S1727592AbgCXOdF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 10:33:05 -0400
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:44908 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726988AbgCXOdE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 10:28:04 -0400
-Received: by mail-io1-f70.google.com with SMTP id f20so8672727iof.21
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Mar 2020 07:28:03 -0700 (PDT)
+        Tue, 24 Mar 2020 10:33:04 -0400
+Received: by mail-ed1-f65.google.com with SMTP id z3so20868572edq.11
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Mar 2020 07:33:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to
+         :content-transfer-encoding;
+        bh=uvYuMONV5D/BPZpN2htT3fz+ouH24/Gi/bpnEJ7bhFQ=;
+        b=esVFFFQsRN5eKIEc1I+/Wndf3/ucsz/JxDD2xRagQzYKHpklj+UBLhh00OB/horN/v
+         FPG/5+mjv6GnOV7JAN+igDz2++Z2xCBdbmrYNnlcKn79+6XhH0TvpKKDdWZhNQs3L5LH
+         eBHV5Us6beOulEsXyS5bbZNoGn+hzMVyPdQjg1y9wlms31mfpW70i96C0I1QcqOArFqg
+         nu5bZtyQVQpGLW7LcUioCncjsWVyBoySOUx8su5LmSWduI+WBGxgA23Adeu78PxXtrIe
+         o5hECrZQA7dUmwTSoOsSGjBol2jtv0GvjyEwmuWQOwoOw4KZIlY9290tzfuVbNlSF1CS
+         2t9w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
-         :from:to;
-        bh=5DUdY94kcJjDfuPtHucA1+AoxiUtVx9ckQVqLZpRdfk=;
-        b=pk+JkJ3M7tPkYG670uG/9v9bQKbNx/8zcLG7+lSLktptm9F2AYbo8wvGHXg0JnmZKR
-         fT5Xdscyq4WinoVvLnWD1V/dGLL04kVJXyJRych7DSvZmHfIzsFxSFUMO4j6Eund4jAU
-         1tk+oGOu27OS576bh1Rh61ml/z2v1/X6VnRwj3LF4EV8drssmAwyqZmPofuZI8vuLe6x
-         Jm0Fj4ui+l0YhC/+Kbi6qpxg1Azzl3MwyRZcakBtzHXv792E85kXfboePcDtfrhP1LOc
-         JPfe5/On/PyJttnbsEZTu+sw+SnobDB5jbjvotD9LsNyVX9vC59wEnhpequT+depA39p
-         GDVQ==
-X-Gm-Message-State: ANhLgQ2uXmxOrOj399DKwgt1tvofA/6THlW3Vz4eD5SMZy5gC4uVywYv
-        yVyFtnF06b2S+IsF1tdK3R8KVseihvxGaVBKtKYcRBPNE5d4
-X-Google-Smtp-Source: ADFU+vvS/QTynF8HliyIxM1iRtSlvS+NCm14vMAPvj/NIh43tNV8t9FSiC82R5IcAwB/rWk4CQIMzKiftWKUeamPt5Vex8ADmLfc
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to:content-transfer-encoding;
+        bh=uvYuMONV5D/BPZpN2htT3fz+ouH24/Gi/bpnEJ7bhFQ=;
+        b=Jv0lu472Ck2MnSeDGO0EQu1sn4polMTufRisEIHHLwBeZcHtSCn4VR+THEMLwMSQQt
+         j3fA+fI8YOfhEVndvxUnKD1qbH+FhMlde7vgVX0qgy/wvb+EwGmAEWgIeMsW/IxA6ME8
+         JmZiO1sgF1TwyEJCtBc0jfDtV/ka+0LK1MaghZPj115VdFI9zGWOwlRd5EUvJ/+Z7G1X
+         dnuC1wQIHWKLDLKhX3wYmEkkJXb7jbBTytuw5G57Sw6RuggIzMKSi8m5n6+cSwY4XMCi
+         z2GIYGF0NOcucCVUS6R0EXeSFkeCNbzcftGNObPRs04RSQsZchXwKE87L2YyQ5ZjZw52
+         cLPA==
+X-Gm-Message-State: ANhLgQ1shAy6hxSZUC1FWUptGIMmugRbN2tCzUUFL8rXTnbphdT4S+a9
+        rHVtJHWRar8huhqRe2nwG5WKIsCn9rUDwa/UZuQ=
+X-Google-Smtp-Source: ADFU+vvijgUC/ZzQkYwxMudX9UgHiC9X4C4SlchYAP/AyqjeNZzS5B77OIZsR4EhKQWPcygU5cRD4eRHPb0w1DfbGBg=
+X-Received: by 2002:a05:6402:8d6:: with SMTP id d22mr7047124edz.35.1585060382771;
+ Tue, 24 Mar 2020 07:33:02 -0700 (PDT)
 MIME-Version: 1.0
-X-Received: by 2002:a5e:8401:: with SMTP id h1mr11507780ioj.167.1585060083276;
- Tue, 24 Mar 2020 07:28:03 -0700 (PDT)
-Date:   Tue, 24 Mar 2020 07:28:03 -0700
-In-Reply-To: <1585057397.7151.22.camel@suse.de>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000036236e05a19a8f6b@google.com>
-Subject: Re: KASAN: slab-out-of-bounds Read in garmin_read_process
-From:   syzbot <syzbot+d29e9263e13ce0b9f4fd@syzkaller.appspotmail.com>
-To:     andreyknvl@google.com, gregkh@linuxfoundation.org,
-        johan@kernel.org, linux-kernel@vger.kernel.org,
-        linux-usb@vger.kernel.org, oneukum@suse.de,
-        syzkaller-bugs@googlegroups.com
+Received: by 2002:a17:906:7a48:0:0:0:0 with HTTP; Tue, 24 Mar 2020 07:33:02
+ -0700 (PDT)
+Reply-To: barristermorrrrison@gmail.com
+From:   Abraham Morrison <okekeangel538@gmail.com>
+Date:   Tue, 24 Mar 2020 07:33:02 -0700
+Message-ID: <CA+q1MUDbFY6mPeO7esUOhb1QSWGm3ezMfgRVTwK10n0aHGMxnA@mail.gmail.com>
+Subject: Good day!
+To:     undisclosed-recipients:;
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
-
-syzbot has tested the proposed patch and the reproducer did not trigger crash:
-
-Reported-and-tested-by: syzbot+d29e9263e13ce0b9f4fd@syzkaller.appspotmail.com
-
-Tested on:
-
-commit:         e17994d1 usb: core: kcov: collect coverage from usb comple..
-git tree:       https://github.com/google/kasan.git
-kernel config:  https://syzkaller.appspot.com/x/.config?x=5d64370c438bc60
-dashboard link: https://syzkaller.appspot.com/bug?extid=d29e9263e13ce0b9f4fd
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=17315ad3e00000
-
-Note: testing is done by a robot and is best-effort only.
+K=C3=A6re ven,
+Jeg er barrister Abraham Morrison. Modtog du min forrige besked til
+dig? Jeg har en vigtig information til dig om din arvsfond til en
+v=C3=A6rdi af ($ 20.500.000,00) million, som blev overladt til dig af din
+sene sl=C3=A6gtning, Mr. Carlos. S=C3=A5 hvis du er interesseret, kom tilba=
+ge
+til mig for flere detaljer.
+Tak skal du have.
+Barrister Abraham Morrison.
+.......................
+Dear Friend,
+I am Barrister Abraham Morrison, Did you receive my previous message
+to you? I have an important information for you about your inheritance
+fund worth of ($20,500,000.00) Million which was left for you by your
+late relative, Mr. Carlos. So if you are interested get back to me for
+more details.
+Thank you.
+Barrister Abraham Morrison.
