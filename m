@@ -2,54 +2,54 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1E410191AF8
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 21:28:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0CE21191AFE
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 21:28:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728080AbgCXU14 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 16:27:56 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:45654 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727919AbgCXU1x (ORCPT
+        id S1728327AbgCXU2Y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 16:28:24 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:39143 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727910AbgCXU1x (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 24 Mar 2020 16:27:53 -0400
-Received: by mail-pl1-f196.google.com with SMTP id b9so7882174pls.12
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Mar 2020 13:27:51 -0700 (PDT)
+Received: by mail-pf1-f196.google.com with SMTP id d25so9886167pfn.6
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Mar 2020 13:27:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=ZpnS/j1XfTEAxa697JfCqGh5bEfIShtd5fhuG2l93l8=;
-        b=ijO5I9xYJrPv9CaECBq+rp2MoCRZ6HJH87CVQD9pH86IYXdVtpQivHTYyHrnoLld/3
-         TKUEe9UuDwZ1fVvAIu4nZXlGJu2l/Z/tiJl00A6VBgPDugHEeqPvtzvGKsCBwxK4ATP+
-         RpHN9MYEcmMQDWAXLKJ3WrJDVJFOy932tV8GA=
+        bh=ZigHEZ9wEtW9T2r5IUfNO5JfwDcLltP6YCkvQNLzMZg=;
+        b=EEj5rKgfO0GiydsW11KRCtfxlT6VWJWdckQbFJAHocKf9zxE4sh7bI+ssRJReWY5z+
+         NxlCQ7c95xJJJHBpzr4JznrxpF1Ugd+4ZaUHlfueHs3/NwQBCrXZ6lWOrabQWVYc+cB3
+         NxO81PWs+9IL3pXbOF6sghze+pvWw45GjQCIE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=ZpnS/j1XfTEAxa697JfCqGh5bEfIShtd5fhuG2l93l8=;
-        b=lA/wBsVCSENsxfsS6ptC9zsBNQS4kDp4qF8Q2ehwXhXA4T7jwb9egVMW8TMv/XQdtw
-         aI5xyahniiIHxF8TAVcjwphCzeV5UmVZmogGDx3wbXldSnXa9V+Y4uYD2Sx3BcJCgIW+
-         ZLexMk853oFSbLTGpkSLJKu9E68260ghcxJ9qUFdUoytV0Vkcdbu6BSPv865Hb8+6jY1
-         EEln/me0yYcqmUqfXaQhC535VNx3EK3tQjpduXU5CrLjb4UAO8xmrlSVEEl4mi7WOJJI
-         r3Q0oLRM/5OiBccCwe1hmZliEjbcYIWVGFw66FqaZRhtmGy0wBfVAq859L2BDDHpKX/5
-         NiHA==
-X-Gm-Message-State: ANhLgQ1R0sg7fMWsgI1NcxCkxS2ODd53AOZGdRvTgkVADoShCnMtH4O0
-        nW8lxsoSFgwTRpVtGDNQZ6okUA==
-X-Google-Smtp-Source: ADFU+vteWSjntoj8aZ+Nx0AIgMc07uFZI7ZIcP0H9/Q7LWpXp1fHUENvhsVnOSCkEv+TAQt64R8dYg==
-X-Received: by 2002:a17:90a:a102:: with SMTP id s2mr7671363pjp.44.1585081671127;
-        Tue, 24 Mar 2020 13:27:51 -0700 (PDT)
+        bh=ZigHEZ9wEtW9T2r5IUfNO5JfwDcLltP6YCkvQNLzMZg=;
+        b=kl0KUXDvTbiiEq6aRnf0+5WDglgfO2/S0w3UXJDZD7opc106a39wLFEvpdWS7RR2EV
+         h0zaMWA/Dzbm0lKzO8JEcLQDRTrN2FAwlyQMSTrFl1JvrPDox2Je5mJfbEmz+VSri4At
+         PmFoLuJA75VDrs2CUz27uc4SCxhs7ILDaCelKIpHQof7D+pwyJj2/xygVQIXmXo68Zoi
+         Ezq32iDdwZXgvHWP4QC5kUu1+BR94AX64R6/HyielwLk5IkUWUZlCGbJM5msAjpHfkNb
+         ZSmT62XtYTUETuViojuSsAn8XEc7DwCtJ2w5WtCDbrFcx5sZyN719uBuiw/P0OXsgZ6v
+         QTmw==
+X-Gm-Message-State: ANhLgQ0a0oSJ+pQjduMPtgQxsHq6sVKaevQuXMNT4xJwP7/Xf5fS+oEY
+        mfkRJB1BgK+DARXHBzb0gRttaA==
+X-Google-Smtp-Source: ADFU+vtrlDmTwEE9oYXJAOdQ/zBHf+vMnBKpgHdCBI82QuEAs/PG/g2Tsj9vSxggT8MDEeA66ZFpyQ==
+X-Received: by 2002:a63:4f0c:: with SMTP id d12mr26233420pgb.199.1585081672376;
+        Tue, 24 Mar 2020 13:27:52 -0700 (PDT)
 Received: from localhost ([2620:15c:202:1:4cc0:7eee:97c9:3c1a])
-        by smtp.gmail.com with ESMTPSA id j19sm16613872pfe.102.2020.03.24.13.27.50
+        by smtp.gmail.com with ESMTPSA id o33sm2993992pje.19.2020.03.24.13.27.51
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 24 Mar 2020 13:27:50 -0700 (PDT)
+        Tue, 24 Mar 2020 13:27:51 -0700 (PDT)
 From:   Gwendal Grignou <gwendal@chromium.org>
 To:     bleung@chromium.org, enric.balletbo@collabora.com,
         Jonathan.Cameron@huawei.com
 Cc:     linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
         Gwendal Grignou <gwendal@chromium.org>
-Subject: [PATCH v6 04/11] iio: cros_ec: Move function description to .c file
-Date:   Tue, 24 Mar 2020 13:27:29 -0700
-Message-Id: <20200324202736.243314-5-gwendal@chromium.org>
+Subject: [PATCH v6 05/11] iio: expose iio_device_set_clock
+Date:   Tue, 24 Mar 2020 13:27:30 -0700
+Message-Id: <20200324202736.243314-6-gwendal@chromium.org>
 X-Mailer: git-send-email 2.25.1.696.g5e7596f4ac-goog
 In-Reply-To: <20200324202736.243314-1-gwendal@chromium.org>
 References: <20200324202736.243314-1-gwendal@chromium.org>
@@ -60,265 +60,63 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-To prevent comment rot, move function description to
-cros_ec_sensors_core.c.
+Some IIO devices may want to override the default (realtime) to another
+clock source by default.
+It can beneficial when timestamps coming from the hardware or underlying
+drivers are already in that format.
+It can always be overridden by attribute current_timestamp_clock.
 
-Acked-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Acked-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 Signed-off-by: Gwendal Grignou <gwendal@chromium.org>
 ---
 Changes in v6:
 - No changes.
 Changes in v5:
-  Added ack.
-No changes in v4.
-Changes in v3:
-  fix spelling.
-New in v2.
+- New in v5.
 
- .../cros_ec_sensors/cros_ec_sensors_core.c    | 69 ++++++++++++++++
- .../linux/iio/common/cros_ec_sensors_core.h   | 80 -------------------
- 2 files changed, 69 insertions(+), 80 deletions(-)
+ drivers/iio/industrialio-core.c | 8 +++++++-
+ include/linux/iio/iio.h         | 2 ++
+ 2 files changed, 9 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/iio/common/cros_ec_sensors/cros_ec_sensors_core.c b/drivers/iio/common/cros_ec_sensors/cros_ec_sensors_core.c
-index d3a3626c7cd83..f3c000448b90e 100644
---- a/drivers/iio/common/cros_ec_sensors/cros_ec_sensors_core.c
-+++ b/drivers/iio/common/cros_ec_sensors/cros_ec_sensors_core.c
-@@ -82,6 +82,14 @@ static void get_default_min_max_freq(enum motionsensor_type type,
- 	}
+diff --git a/drivers/iio/industrialio-core.c b/drivers/iio/industrialio-core.c
+index 65ff0d0670188..26e963483bab0 100644
+--- a/drivers/iio/industrialio-core.c
++++ b/drivers/iio/industrialio-core.c
+@@ -189,7 +189,12 @@ ssize_t iio_read_const_attr(struct device *dev,
  }
+ EXPORT_SYMBOL(iio_read_const_attr);
  
+-static int iio_device_set_clock(struct iio_dev *indio_dev, clockid_t clock_id)
 +/**
-+ * cros_ec_sensors_core_init() - basic initialization of the core structure
-+ * @pdev:		platform device created for the sensors
-+ * @indio_dev:		iio device structure of the device
-+ * @physical_device:	true if the device refers to a physical device
-+ *
-+ * Return: 0 on success, -errno on failure.
++ * iio_device_set_clock() - Set current timestamping clock for the device
++ * @indio_dev: IIO device structure containing the device
++ * @clock_id: timestamping clock posix identifier to set.
 + */
- int cros_ec_sensors_core_init(struct platform_device *pdev,
- 			      struct iio_dev *indio_dev,
- 			      bool physical_device)
-@@ -159,6 +167,16 @@ int cros_ec_sensors_core_init(struct platform_device *pdev,
- }
- EXPORT_SYMBOL_GPL(cros_ec_sensors_core_init);
- 
-+/**
-+ * cros_ec_motion_send_host_cmd() - send motion sense host command
-+ * @state:		pointer to state information for device
-+ * @opt_length:	optional length to reduce the response size, useful on the data
-+ *		path. Otherwise, the maximal allowed response size is used
-+ *
-+ * When called, the sub-command is assumed to be set in param->cmd.
-+ *
-+ * Return: 0 on success, -errno on failure.
-+ */
- int cros_ec_motion_send_host_cmd(struct cros_ec_sensors_core_state *state,
- 				 u16 opt_length)
++int iio_device_set_clock(struct iio_dev *indio_dev, clockid_t clock_id)
  {
-@@ -421,6 +439,14 @@ int cros_ec_sensors_read_lpc(struct iio_dev *indio_dev,
+ 	int ret;
+ 	const struct iio_event_interface *ev_int = indio_dev->event_interface;
+@@ -207,6 +212,7 @@ static int iio_device_set_clock(struct iio_dev *indio_dev, clockid_t clock_id)
+ 
+ 	return 0;
  }
- EXPORT_SYMBOL_GPL(cros_ec_sensors_read_lpc);
++EXPORT_SYMBOL(iio_device_set_clock);
  
-+/**
-+ * cros_ec_sensors_read_cmd() - retrieve data using the EC command protocol
-+ * @indio_dev:	pointer to IIO device
-+ * @scan_mask:	bitmap of the sensor indices to scan
-+ * @data:	location to store data
-+ *
-+ * Return: 0 on success, -errno on failure.
-+ */
- int cros_ec_sensors_read_cmd(struct iio_dev *indio_dev,
- 			     unsigned long scan_mask, s16 *data)
- {
-@@ -445,6 +471,18 @@ int cros_ec_sensors_read_cmd(struct iio_dev *indio_dev,
+ /**
+  * iio_get_time_ns() - utility function to get a time stamp for events etc
+diff --git a/include/linux/iio/iio.h b/include/linux/iio/iio.h
+index 862ce0019eba5..b18f34a8901f3 100644
+--- a/include/linux/iio/iio.h
++++ b/include/linux/iio/iio.h
+@@ -627,6 +627,8 @@ static inline clockid_t iio_device_get_clock(const struct iio_dev *indio_dev)
+ 	return indio_dev->clock_id;
  }
- EXPORT_SYMBOL_GPL(cros_ec_sensors_read_cmd);
  
-+/**
-+ * cros_ec_sensors_capture() - the trigger handler function
-+ * @irq:	the interrupt number.
-+ * @p:		a pointer to the poll function.
-+ *
-+ * On a trigger event occurring, if the pollfunc is attached then this
-+ * handler is called as a threaded interrupt (and hence may sleep). It
-+ * is responsible for grabbing data from the device and pushing it into
-+ * the associated buffer.
-+ *
-+ * Return: IRQ_HANDLED
-+ */
- irqreturn_t cros_ec_sensors_capture(int irq, void *p)
- {
- 	struct iio_poll_func *pf = p;
-@@ -480,6 +518,16 @@ irqreturn_t cros_ec_sensors_capture(int irq, void *p)
- }
- EXPORT_SYMBOL_GPL(cros_ec_sensors_capture);
- 
-+/**
-+ * cros_ec_sensors_core_read() - function to request a value from the sensor
-+ * @st:		pointer to state information for device
-+ * @chan:	channel specification structure table
-+ * @val:	will contain one element making up the returned value
-+ * @val2:	will contain another element making up the returned value
-+ * @mask:	specifies which values to be requested
-+ *
-+ * Return:	the type of value returned by the device
-+ */
- int cros_ec_sensors_core_read(struct cros_ec_sensors_core_state *st,
- 			  struct iio_chan_spec const *chan,
- 			  int *val, int *val2, long mask)
-@@ -520,6 +568,17 @@ int cros_ec_sensors_core_read(struct cros_ec_sensors_core_state *st,
- }
- EXPORT_SYMBOL_GPL(cros_ec_sensors_core_read);
- 
-+/**
-+ * cros_ec_sensors_core_read_avail() - get available values
-+ * @indio_dev:		pointer to state information for device
-+ * @chan:	channel specification structure table
-+ * @vals:	list of available values
-+ * @type:	type of data returned
-+ * @length:	number of data returned in the array
-+ * @mask:	specifies which values to be requested
-+ *
-+ * Return:	an error code, IIO_AVAIL_RANGE or IIO_AVAIL_LIST
-+ */
- int cros_ec_sensors_core_read_avail(struct iio_dev *indio_dev,
- 				    struct iio_chan_spec const *chan,
- 				    const int **vals,
-@@ -541,6 +600,16 @@ int cros_ec_sensors_core_read_avail(struct iio_dev *indio_dev,
- }
- EXPORT_SYMBOL_GPL(cros_ec_sensors_core_read_avail);
- 
-+/**
-+ * cros_ec_sensors_core_write() - function to write a value to the sensor
-+ * @st:		pointer to state information for device
-+ * @chan:	channel specification structure table
-+ * @val:	first part of value to write
-+ * @val2:	second part of value to write
-+ * @mask:	specifies which values to write
-+ *
-+ * Return:	the type of value returned by the device
-+ */
- int cros_ec_sensors_core_write(struct cros_ec_sensors_core_state *st,
- 			       struct iio_chan_spec const *chan,
- 			       int val, int val2, long mask)
-diff --git a/include/linux/iio/common/cros_ec_sensors_core.h b/include/linux/iio/common/cros_ec_sensors_core.h
-index bb331e6356a9c..0af918978f975 100644
---- a/include/linux/iio/common/cros_ec_sensors_core.h
-+++ b/include/linux/iio/common/cros_ec_sensors_core.h
-@@ -79,95 +79,25 @@ struct cros_ec_sensors_core_state {
- 	int frequencies[3];
- };
- 
--/**
-- * cros_ec_sensors_read_lpc() - retrieve data from EC shared memory
-- * @indio_dev:	pointer to IIO device
-- * @scan_mask:	bitmap of the sensor indices to scan
-- * @data:	location to store data
-- *
-- * This is the safe function for reading the EC data. It guarantees that the
-- * data sampled was not modified by the EC while being read.
-- *
-- * Return: 0 on success, -errno on failure.
-- */
- int cros_ec_sensors_read_lpc(struct iio_dev *indio_dev, unsigned long scan_mask,
- 			     s16 *data);
- 
--/**
-- * cros_ec_sensors_read_cmd() - retrieve data using the EC command protocol
-- * @indio_dev:	pointer to IIO device
-- * @scan_mask:	bitmap of the sensor indices to scan
-- * @data:	location to store data
-- *
-- * Return: 0 on success, -errno on failure.
-- */
- int cros_ec_sensors_read_cmd(struct iio_dev *indio_dev, unsigned long scan_mask,
- 			     s16 *data);
- 
- struct platform_device;
--/**
-- * cros_ec_sensors_core_init() - basic initialization of the core structure
-- * @pdev:		platform device created for the sensors
-- * @indio_dev:		iio device structure of the device
-- * @physical_device:	true if the device refers to a physical device
-- *
-- * Return: 0 on success, -errno on failure.
-- */
- int cros_ec_sensors_core_init(struct platform_device *pdev,
- 			      struct iio_dev *indio_dev, bool physical_device);
- 
--/**
-- * cros_ec_sensors_capture() - the trigger handler function
-- * @irq:	the interrupt number.
-- * @p:		a pointer to the poll function.
-- *
-- * On a trigger event occurring, if the pollfunc is attached then this
-- * handler is called as a threaded interrupt (and hence may sleep). It
-- * is responsible for grabbing data from the device and pushing it into
-- * the associated buffer.
-- *
-- * Return: IRQ_HANDLED
-- */
- irqreturn_t cros_ec_sensors_capture(int irq, void *p);
- 
--/**
-- * cros_ec_motion_send_host_cmd() - send motion sense host command
-- * @st:		pointer to state information for device
-- * @opt_length:	optional length to reduce the response size, useful on the data
-- *		path. Otherwise, the maximal allowed response size is used
-- *
-- * When called, the sub-command is assumed to be set in param->cmd.
-- *
-- * Return: 0 on success, -errno on failure.
-- */
- int cros_ec_motion_send_host_cmd(struct cros_ec_sensors_core_state *st,
- 				 u16 opt_length);
- 
--/**
-- * cros_ec_sensors_core_read() - function to request a value from the sensor
-- * @st:		pointer to state information for device
-- * @chan:	channel specification structure table
-- * @val:	will contain one element making up the returned value
-- * @val2:	will contain another element making up the returned value
-- * @mask:	specifies which values to be requested
-- *
-- * Return:	the type of value returned by the device
-- */
- int cros_ec_sensors_core_read(struct cros_ec_sensors_core_state *st,
- 			      struct iio_chan_spec const *chan,
- 			      int *val, int *val2, long mask);
- 
--/**
-- * cros_ec_sensors_core_read_avail() - get available values
-- * @indio_dev:		pointer to state information for device
-- * @chan:	channel specification structure table
-- * @vals:	list of available values
-- * @type:	type of data returned
-- * @length:	number of data returned in the array
-- * @mask:	specifies which values to be requested
-- *
-- * Return:	an error code, IIO_AVAIL_RANGE or IIO_AVAIL_LIST
-- */
- int cros_ec_sensors_core_read_avail(struct iio_dev *indio_dev,
- 				    struct iio_chan_spec const *chan,
- 				    const int **vals,
-@@ -175,16 +105,6 @@ int cros_ec_sensors_core_read_avail(struct iio_dev *indio_dev,
- 				    int *length,
- 				    long mask);
- 
--/**
-- * cros_ec_sensors_core_write() - function to write a value to the sensor
-- * @st:		pointer to state information for device
-- * @chan:	channel specification structure table
-- * @val:	first part of value to write
-- * @val2:	second part of value to write
-- * @mask:	specifies which values to write
-- *
-- * Return:	the type of value returned by the device
-- */
- int cros_ec_sensors_core_write(struct cros_ec_sensors_core_state *st,
- 			       struct iio_chan_spec const *chan,
- 			       int val, int val2, long mask);
++int iio_device_set_clock(struct iio_dev *indio_dev, clockid_t clock_id);
++
+ /**
+  * dev_to_iio_dev() - Get IIO device struct from a device struct
+  * @dev: 		The device embedded in the IIO device
 -- 
 2.25.1.696.g5e7596f4ac-goog
 
