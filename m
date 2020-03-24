@@ -2,67 +2,135 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 33B6619140A
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 16:19:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E7C551913FF
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 16:16:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728021AbgCXPRZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 11:17:25 -0400
-Received: from smtprelay0017.hostedemail.com ([216.40.44.17]:55732 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727168AbgCXPRZ (ORCPT
+        id S1727686AbgCXPQh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 11:16:37 -0400
+Received: from esa5.hc3370-68.iphmx.com ([216.71.155.168]:37888 "EHLO
+        esa5.hc3370-68.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727168AbgCXPQg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 11:17:25 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay08.hostedemail.com (Postfix) with ESMTP id 8D6D1182CED2A;
-        Tue, 24 Mar 2020 15:17:24 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 50,0,0,,d41d8cd98f00b204,joe@perches.com,,RULES_HIT:41:355:379:599:967:973:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1540:1568:1593:1594:1711:1714:1730:1747:1777:1792:2393:2525:2560:2563:2682:2685:2828:2859:2933:2937:2939:2942:2945:2947:2951:2954:3022:3138:3139:3140:3141:3142:3622:3865:3866:3867:3868:3870:3934:3936:3938:3941:3944:3947:3950:3953:3956:3959:4321:5007:6119:7522:9025:10004:10400:10848:11232:11658:11914:12043:12295:12297:12740:12760:12895:13069:13311:13357:13439:14181:14659:14721:21080:21451:21627:21990:30054:30091,0,RBL:none,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:1,LUA_SUMMARY:none
-X-HE-Tag: chair87_65693e825c5c
-X-Filterd-Recvd-Size: 1739
-Received: from XPS-9350.home (unknown [47.151.136.130])
-        (Authenticated sender: joe@perches.com)
-        by omf09.hostedemail.com (Postfix) with ESMTPA;
-        Tue, 24 Mar 2020 15:17:23 +0000 (UTC)
-Message-ID: <fb5a17c67f504f5761069ee446cc1b703dd8b54f.camel@perches.com>
-Subject: Re: [PATCH] rearrange the output text, cosmetic changes
-From:   Joe Perches <joe@perches.com>
-To:     Bhaskar Chowdhury <unixbhaskar@gmail.com>, linux@leemhuis.info,
-        rdunlap@infradead.org
-Cc:     linux-kernel@vger.kernel.org
-Date:   Tue, 24 Mar 2020 08:15:33 -0700
-In-Reply-To: <20200324084513.18237-1-unixbhaskar@gmail.com>
-References: <20200324084513.18237-1-unixbhaskar@gmail.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.34.1-2 
+        Tue, 24 Mar 2020 11:16:36 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=citrix.com; s=securemail; t=1585062995;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=RseeQCj2NR8Swtya70snFlU0fchG/HJCbgy6RmMHvWY=;
+  b=D3mk1+ttRkRGz9gxKjc8OBS0BgFgsWB+bkUbNdgkhxRRAiX903nAxFoG
+   yYIqg9WUiwCMxZhCtL5/mShfLEhm6gMvJlSshtLGW1PGAYgxiTUtK3lGY
+   UKt3uZjy8uFPVcTSbaVWNe1fOzyJeiaYRNv70GaIxj3CpJhQtQlwHzIQd
+   I=;
+Authentication-Results: esa5.hc3370-68.iphmx.com; dkim=none (message not signed) header.i=none; spf=None smtp.pra=roger.pau@citrix.com; spf=Pass smtp.mailfrom=roger.pau@citrix.com; spf=None smtp.helo=postmaster@mail.citrix.com
+Received-SPF: None (esa5.hc3370-68.iphmx.com: no sender
+  authenticity information available from domain of
+  roger.pau@citrix.com) identity=pra; client-ip=162.221.158.21;
+  receiver=esa5.hc3370-68.iphmx.com;
+  envelope-from="roger.pau@citrix.com";
+  x-sender="roger.pau@citrix.com";
+  x-conformance=sidf_compatible
+Received-SPF: Pass (esa5.hc3370-68.iphmx.com: domain of
+  roger.pau@citrix.com designates 162.221.158.21 as permitted
+  sender) identity=mailfrom; client-ip=162.221.158.21;
+  receiver=esa5.hc3370-68.iphmx.com;
+  envelope-from="roger.pau@citrix.com";
+  x-sender="roger.pau@citrix.com";
+  x-conformance=sidf_compatible; x-record-type="v=spf1";
+  x-record-text="v=spf1 ip4:209.167.231.154 ip4:178.63.86.133
+  ip4:195.66.111.40/30 ip4:85.115.9.32/28 ip4:199.102.83.4
+  ip4:192.28.146.160 ip4:192.28.146.107 ip4:216.52.6.88
+  ip4:216.52.6.188 ip4:162.221.158.21 ip4:162.221.156.83
+  ip4:168.245.78.127 ~all"
+Received-SPF: None (esa5.hc3370-68.iphmx.com: no sender
+  authenticity information available from domain of
+  postmaster@mail.citrix.com) identity=helo;
+  client-ip=162.221.158.21; receiver=esa5.hc3370-68.iphmx.com;
+  envelope-from="roger.pau@citrix.com";
+  x-sender="postmaster@mail.citrix.com";
+  x-conformance=sidf_compatible
+IronPort-SDR: GoWcsj6Go6zh231OquFT09PHhau9utSPaHE2uxd1+btY+8jwzhWMlGKU9W7XlNkIJUJ6JuFvxp
+ Dngq1bmuboh97C3KVBpPpQj73soJYHVctl5f5ejvCNs1SYSX5Dw3dtGbq4AJCf5Ql8GO7DrBS4
+ 6jK0jLV11NAokk5rql/vH0LxZrvX8x7OJXdFHw2xzsU9WZc2T02wXbCHM/Ur6teoN10wW6TrK2
+ /i/hnQvUMat51SyZwHUryhv8cFBMPPnIhjhBwV8DhaHr5mBHQ4JQZtdcWq8uDKTIrOJNDvtAtE
+ aic=
+X-SBRS: 2.7
+X-MesageID: 14880194
+X-Ironport-Server: esa5.hc3370-68.iphmx.com
+X-Remote-IP: 162.221.158.21
+X-Policy: $RELAYED
+X-IronPort-AV: E=Sophos;i="5.72,300,1580792400"; 
+   d="scan'208";a="14880194"
+Date:   Tue, 24 Mar 2020 16:16:28 +0100
+From:   Roger Pau =?utf-8?B?TW9ubsOp?= <roger.pau@citrix.com>
+To:     =?utf-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>
+CC:     <linux-kernel@vger.kernel.org>,
+        Ian Jackson <ian.jackson@eu.citrix.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Stefano Stabellini <sstabellini@kernel.org>,
+        <xen-devel@lists.xenproject.org>
+Subject: Re: [PATCH 2/2] xen: enable BALLOON_MEMORY_HOTPLUG by default
+Message-ID: <20200324151628.GM24458@Air-de-Roger.citrite.net>
+References: <20200324150015.50496-1-roger.pau@citrix.com>
+ <20200324150015.50496-2-roger.pau@citrix.com>
+ <f4ce1d95-c80a-8727-7ddc-9199bb2036c4@suse.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <f4ce1d95-c80a-8727-7ddc-9199bb2036c4@suse.com>
+X-ClientProxiedBy: AMSPEX02CAS02.citrite.net (10.69.22.113) To
+ AMSPEX02CL02.citrite.net (10.69.22.126)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2020-03-24 at 14:15 +0530, Bhaskar Chowdhury wrote:
-> As the subject like says, purely cosmetic changes to read cleanly.
-> Jumbled up the line.
-
-Subject line should show tools or kernel-chktaint
-
-and:
-
-> diff --git a/tools/debugging/kernel-chktaint b/tools/debugging/kernel-chktaint
-[]
-> @@ -195,8 +195,9 @@ else
->  	echo " * kernel was built with the struct randomization plugin (#17)"
->  fi
+On Tue, Mar 24, 2020 at 04:09:35PM +0100, Jürgen Groß wrote:
+> On 24.03.20 16:00, Roger Pau Monne wrote:
+> > Without it a PVH dom0 is mostly useless, as it would balloon down huge
+> > amounts of RAM in order get physical address space to map foreign
+> > memory and grants, ultimately leading to an out of memory situation.
+> > 
+> > Such option is also needed for HVM or PVH driver domains, since they
+> > also require mapping grants into physical memory regions.
+> > 
+> > Suggested-by: Ian Jackson <ian.jackson@eu.citrix.com>
+> > Signed-off-by: Roger Pau Monné <roger.pau@citrix.com>
+> > ---
+> > Cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+> > Cc: Juergen Gross <jgross@suse.com>
+> > Cc: Stefano Stabellini <sstabellini@kernel.org>
+> > Cc: xen-devel@lists.xenproject.org
+> > ---
+> >   drivers/xen/Kconfig | 1 +
+> >   1 file changed, 1 insertion(+)
+> > 
+> > diff --git a/drivers/xen/Kconfig b/drivers/xen/Kconfig
+> > index 57ddd6f4b729..c344bcffd89d 100644
+> > --- a/drivers/xen/Kconfig
+> > +++ b/drivers/xen/Kconfig
+> > @@ -13,6 +13,7 @@ config XEN_BALLOON
+> >   config XEN_BALLOON_MEMORY_HOTPLUG
+> >   	bool "Memory hotplug support for Xen balloon driver"
+> >   	depends on XEN_BALLOON && MEMORY_HOTPLUG
+> > +	default y
+> >   	help
+> >   	  Memory hotplug support for Xen balloon driver allows expanding memory
+> >   	  available for the system above limit declared at system startup.
+> > 
 > 
-> -echo "For a more detailed explanation of the various taint flags see"
-> -echo " Documentation/admin-guide/tainted-kernels.rst in the the Linux kernel sources"
-> -echo " or https://kernel.org/doc/html/latest/admin-guide/tainted-kernels.html"
->  echo "Raw taint value as int/string: $taint/'$out'"
-> +echo
-> +echo "For a more detailed explanation of the various taint flags see below pointers:"
-> +echo "1) Documentation/admin-guide/tainted-kernels.rst in  the Linux kernel sources"
+> Another variant would be to set: default XEN_BACKEND
+> 
+> This would match the reasoning for switching it on.
 
-One extra space between "in  the"
+I would rather have it always on if possible, as gntdev or privcmd
+(when used to map foreign pages from user-space) will also require it,
+and they are not gated on XEN_BACKEND AFAICT.
 
+> Either way would be fine with me, so you can add
+> 
+> Reviewed-by: Juergen Gross <jgross@suse.com>
 
+Thanks!
+
+Roger.
