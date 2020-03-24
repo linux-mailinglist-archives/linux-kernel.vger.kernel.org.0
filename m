@@ -2,110 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BBC03190291
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 01:14:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F069A1902AD
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 01:17:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727459AbgCXANr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Mar 2020 20:13:47 -0400
-Received: from mail-pg1-f202.google.com ([209.85.215.202]:43524 "EHLO
-        mail-pg1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727421AbgCXANr (ORCPT
+        id S1727678AbgCXAQS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Mar 2020 20:16:18 -0400
+Received: from conuserg-09.nifty.com ([210.131.2.76]:30520 "EHLO
+        conuserg-09.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727464AbgCXAQR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Mar 2020 20:13:47 -0400
-Received: by mail-pg1-f202.google.com with SMTP id v11so12175220pgs.10
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Mar 2020 17:13:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
-         :cc;
-        bh=5zop4gGexKIVuUBB/XuZx8+PSEnhloPSs1GUWTBRoug=;
-        b=Jf4pz+xxWi1KLV5c9bDhFE8MrJh2Z8f07O3zUs2S+qlfcK2qJtUoYANW2BzQQaoT8L
-         IRTh8WIS1U0hVw30sN77abfdN2QIxNYkE46rMnTB6cmzUzo9eYxmipwUvo3NefssikD9
-         UZ8rxuOKe6gWEBeIoGWxhJWfPgHUO3d2wq6FIuMfyiZXiRQ/t6nvN6CNCAV1R+kL4mXo
-         hjrhcL8mL0+D+GgO5Vp6RLcQ3RsArsOwwBbLbga8FNvMteKjYyH/Im+ruWp0X34xa3+X
-         mGD0Nq1uEhXYgvEEumDLNHBlmF6NtGZGTZojYYNjsQIp0CbiPoQ6bYrnXbqrUi76vPH0
-         A9oQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=5zop4gGexKIVuUBB/XuZx8+PSEnhloPSs1GUWTBRoug=;
-        b=GMKLfQf2LriFBzUvWntLDcc7M+zriotDHuJAdbruK0XSDVe2mdFWVqjLqlhuFb9nY8
-         EO4bnS2IUgGMFyMV0PiuZ4qVwxoTeOWYDtQMeH+CAGWfOpxN9ZTzjh7cmCEKajcp81zL
-         MqOgbRN14dsoLg1SLWAcoLsG2zYZrYK1eWGsERwuBvTxc0Uv58v0tY9SDDeMD7TuDap6
-         2d277t3mFkSXzy0XUuj+gG9zsECZxD9HmBAIArSTnPfFXrPIU/lslX52Czzh+rBp6ENM
-         jeGuOmCaHpEPU4PXg9OdAUipJuYV/8YCgmsLsapMe7vjXA7RhUKgnyBqdycpuXn+Fd+L
-         InHg==
-X-Gm-Message-State: ANhLgQ3HWzcUEGd9DXh/HlM9jyhOlcJXYPg8+WxvQ6R+lAXYXOsRCUMP
-        7XXmQReRtP7dXShPvGKRNHDwUCKkj2sSJWVYUdY=
-X-Google-Smtp-Source: ADFU+vt3lydh3JoLaoOtiqK4WlY5WttupzLLsNDbgg1w+lBrgP7ionKzEtTS+zugoiiIHVVSt6oD9WuWyJ28ZfLgK1w=
-X-Received: by 2002:a63:c44b:: with SMTP id m11mr9425702pgg.313.1585008824657;
- Mon, 23 Mar 2020 17:13:44 -0700 (PDT)
-Date:   Mon, 23 Mar 2020 17:13:20 -0700
-In-Reply-To: <20200323212538.GN2452@worktop.programming.kicks-ass.net>
-Message-Id: <20200324001321.39562-1-ndesaulniers@google.com>
-Mime-Version: 1.0
-References: <20200323212538.GN2452@worktop.programming.kicks-ass.net>
-X-Mailer: git-send-email 2.25.1.696.g5e7596f4ac-goog
-Subject: [PATCH] objtool: Documentation: document UACCESS warnings
-From:   Nick Desaulniers <ndesaulniers@google.com>
-To:     jpoimboe@redhat.com, peterz@infradead.org
-Cc:     Nick Desaulniers <ndesaulniers@google.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>,
-        Raphael Gault <raphael.gault@arm.com>,
-        linux-kernel@vger.kernel.org, clang-built-linux@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+        Mon, 23 Mar 2020 20:16:17 -0400
+Received: from grover.flets-west.jp (softbank126093102113.bbtec.net [126.93.102.113]) (authenticated)
+        by conuserg-09.nifty.com with ESMTP id 02O0EHnn026701;
+        Tue, 24 Mar 2020 09:14:18 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-09.nifty.com 02O0EHnn026701
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1585008859;
+        bh=AK5ED2xHmoH0oAFvRY1nFJ+Uo32DkkXlg/b7H5WM2LE=;
+        h=From:To:Cc:Subject:Date:From;
+        b=tMsQDW5QY1p/zxjGYXdrSK43/KLEAWGHV5zzBXogS9Fmukv+UITuDSA/nctKFlbV7
+         eB/37RLi+SMClEqCwtyy12NtEmPVD9osWTvnRYurU2Iy2IqKj9hSJhUOTxs2Nr8dmJ
+         JQ6gHtET3+9iKbwgxdnVkc7pf1twgrVvmqIpMYx0udk27w9oob5PgTVXwifhNVHNFZ
+         0D/KzY+2DGK5FEfo/BWNclI1PkFVrHHFjSDC6la6OQ3Y3X/ggKR4hGpiILy16hBDOn
+         XgfXXFtYp8BVTb/lkjPMGxKxPQXjYqW+gN7vps1tGxcFj/grMo6WjbWSYjtCq6CCVR
+         wjp61iiKaeqCA==
+X-Nifty-SrcIP: [126.93.102.113]
+From:   Masahiro Yamada <masahiroy@kernel.org>
+To:     x86@kernel.org, Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>,
+        "H . Peter Anvin" <hpa@zytor.com>, linux-crypto@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org,
+        "Jason A . Donenfeld" <Jason@zx2c4.com>,
+        Masahiro Yamada <masahiroy@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Ingo Molnar <mingo@redhat.com>,
+        Jim Kukunas <james.t.kukunas@linux.intel.com>,
+        NeilBrown <neilb@suse.de>,
+        Yuanhan Liu <yuanhan.liu@linux.intel.com>,
+        clang-built-linux@googlegroups.com
+Subject: [PATCH v2 0/9] x86: remove always-defined CONFIG_AS_* options
+Date:   Tue, 24 Mar 2020 09:13:49 +0900
+Message-Id: <20200324001358.4520-1-masahiroy@kernel.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Compiling with Clang and CONFIG_KASAN=y was exposing a few warnings:
-  call to memset() with UACCESS enabled
 
-Document how to fix these for future travelers.
+arch/x86/Makefile tests instruction code by $(call as-instr, ...)
 
-Link: https://github.com/ClangBuiltLinux/linux/issues/876
-Suggested-by: Peter Zijlstra <peterz@infradead.org>
-Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
----
- .../Documentation/stack-validation.txt        | 20 +++++++++++++++++++
- 1 file changed, 20 insertions(+)
+Some of them are very old.
+For example, the check for CONFIG_AS_CFI dates back to 2006.
 
-diff --git a/tools/objtool/Documentation/stack-validation.txt b/tools/objtool/Documentation/stack-validation.txt
-index de094670050b..156fee13ba02 100644
---- a/tools/objtool/Documentation/stack-validation.txt
-+++ b/tools/objtool/Documentation/stack-validation.txt
-@@ -289,6 +289,26 @@ they mean, and suggestions for how to fix them.
-       might be corrupt due to a gcc bug.  For more details, see:
-       https://gcc.gnu.org/bugzilla/show_bug.cgi?id=70646
- 
-+9. file.o: warning: objtool: funcA() call to funcB() with UACCESS enabled
-+
-+   This means that an unexpected call to a non-whitelisted function exists
-+   outside of arch-specific guards.
-+   X86: SMAP (stac/clac): __uaccess_begin()/__uaccess_end()
-+   ARM: PAN: uaccess_enable()/uaccess_enable()
-+
-+   These functions should called to denote a minimal critical section around
-+   access to __user variables. See also: https://lwn.net/Articles/517475/
-+
-+   The intention of the warning is to prevent calls to funcB() from eventually
-+   calling schedule(), potentially leaking the AC flags state, and not
-+   restoring them correctly.
-+
-+   To fix, either:
-+   1) add the correct guards before and after calls to low level functions like
-+      __get_user_size()/__put_user_size().
-+   2) add funcB to uaccess_safe_builtin whitelist in tools/objtool/check.c, if
-+      funcB obviously does not call schedule().
-+
- 
- If the error doesn't seem to make sense, it could be a bug in objtool.
- Feel free to ask the objtool maintainer for help.
+We raise GCC versions from time to time, and we clean old code away.
+The same policy applied to binutils.
+
+The current minimal supported version of binutils is 2.21
+
+This is new enough to recognize the instruction in most of
+as-instr calls.
+
+If this series looks good, how to merge it?
+Via x86 tree or maybe crypto ?
+
+
+Changes in v2:
+  - New patch
+  - Remove CFI_SIGNAL_FRAME entirely (per Nick)
+  - add ifdef CONFIG_X86 to fix build errors on non-x86 arches
+
+Masahiro Yamada (9):
+  lib/raid6/test: fix build on distros whose /bin/sh is not bash
+  x86: remove unneeded defined(__ASSEMBLY__) check from asm/dwarf2.h
+  x86: remove always-defined CONFIG_AS_CFI
+  x86: remove unneeded (CONFIG_AS_)CFI_SIGNAL_FRAME
+  x86: remove always-defined CONFIG_AS_CFI_SECTIONS
+  x86: remove always-defined CONFIG_AS_SSSE3
+  x86: remove always-defined CONFIG_AS_AVX
+  x86: add comments about the binutils version to support code in
+    as-instr
+  x86: replace arch macros from compiler with CONFIG_X86_{32,64}
+
+ arch/x86/Makefile                             | 21 +++------
+ arch/x86/crypto/Makefile                      | 32 +++++---------
+ arch/x86/crypto/aesni-intel_avx-x86_64.S      |  3 --
+ arch/x86/crypto/aesni-intel_glue.c            | 14 +-----
+ arch/x86/crypto/blake2s-core.S                |  2 -
+ arch/x86/crypto/poly1305-x86_64-cryptogams.pl |  8 ----
+ arch/x86/crypto/poly1305_glue.c               |  6 +--
+ arch/x86/crypto/sha1_ssse3_asm.S              |  4 --
+ arch/x86/crypto/sha1_ssse3_glue.c             |  9 +---
+ arch/x86/crypto/sha256-avx-asm.S              |  3 --
+ arch/x86/crypto/sha256_ssse3_glue.c           |  8 +---
+ arch/x86/crypto/sha512-avx-asm.S              |  2 -
+ arch/x86/crypto/sha512_ssse3_glue.c           |  7 +--
+ arch/x86/include/asm/dwarf2.h                 | 44 -------------------
+ arch/x86/include/asm/xor_avx.h                |  9 ----
+ kernel/signal.c                               |  2 +-
+ lib/raid6/algos.c                             |  6 +--
+ lib/raid6/recov_ssse3.c                       |  6 ---
+ lib/raid6/test/Makefile                       |  8 ++--
+ 19 files changed, 33 insertions(+), 161 deletions(-)
+
 -- 
-2.25.1.696.g5e7596f4ac-goog
+2.17.1
 
