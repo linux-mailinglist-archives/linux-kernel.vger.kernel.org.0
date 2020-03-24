@@ -2,126 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6DD8A1912E6
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 15:24:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EA5C5191304
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 15:25:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727653AbgCXOX5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 10:23:57 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:45227 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727270AbgCXOX4 (ORCPT
+        id S1728610AbgCXOZB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 10:25:01 -0400
+Received: from mail-pg1-f181.google.com ([209.85.215.181]:40457 "EHLO
+        mail-pg1-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728448AbgCXOY5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 10:23:56 -0400
-Received: by mail-wr1-f66.google.com with SMTP id t7so16996492wrw.12
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Mar 2020 07:23:54 -0700 (PDT)
+        Tue, 24 Mar 2020 10:24:57 -0400
+Received: by mail-pg1-f181.google.com with SMTP id t24so9081577pgj.7
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Mar 2020 07:24:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=cKmeib+BmWwd47DgxcgoVOMPKvAp+uPr4gwXndY1O5I=;
-        b=Ce3yOBCPqf7VZXVox52EqtYVXwJmCTDBc4rPpj21E1LEXlSyWAWPpoO3IXOyacoBvV
-         OPgcpgxn5NjhVaIDt+zAvy5+UtjOV/cQnl0nXkQMvPO7aw7V7L0Nu9pbz1AnO05QY0n4
-         BeT08PMENEfpbDVVhnyfCE4hEenLxGYJs78gdR/3IgD9pKkhJaXbj10IpQSdREvsRAhg
-         oMO/smrg6JtZ4Shi97Wp1/RP26dRPQVbpY8F4EPEA72GrhFXToBKKdg2B+xQdgGJJ2vZ
-         f2OdT6atGc6tDEHNZ3v5g2Os9ohn+lfi1UqtMOP30U5uAMJEClhlBGzyP7GZijgmL5k/
-         0qwg==
+        d=android.com; s=20161025;
+        h=to:from:subject:message-id:date:user-agent:mime-version
+         :content-transfer-encoding:content-language;
+        bh=M+b5EPoZFy9O+3BjnkpArQ2labuMLhCHX8xcr7BhQw4=;
+        b=EZvggVIeGhevoh5NNxYlACMHgWkmY/K0mXslP/icPJXJARfdHiBzYBbP2AAXKsTKWf
+         Y+0DkJJBOrWgL+qFV/AZXq6+jssUvCKdQLzQ5rnEmnSKQkEMm66E+WY2BdwdpdlypYW7
+         3TXISRmLCUK8iy9hTpd51B8hIocqvSzGxUsmhAu8z0YPV65dX4jK4g1TTngz41IOSxDJ
+         D0L+MFnG0876R9ojtX3MKplkVwKiex+gs9GdmUgzfzyIbFEofrR8E+XmyORULQms7ce9
+         FCyT615Ds3QxgoVubGxDxNt4cU2+05u4A2aZF0H63HsNm+NMq1jpwurBWvzagR/3iOhz
+         7pKw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=cKmeib+BmWwd47DgxcgoVOMPKvAp+uPr4gwXndY1O5I=;
-        b=ICrAa8FQSIdpFptO+CIKufn8pnJCddamFVvLVCZFLmrcMKhw7jsxRinQHh7f+/IAMq
-         wfoTuqDIYCS390MO3nOd6gG+sd1qrXqdXLjh3a+65WibhWDjc5xFdsJKF8l+nTzOXX/u
-         xOaFB3dSI92xhRxte8h0e6y+tPJDV+yD0wVuXYPZCcC4cclQQ3E+bwkiI/d/LlthDSDs
-         aPglgH/sfyhNdjwT0UaFYffiFliNKrPAHicMius5S6ZZuoIpGr9aa3Kl6JDgVnr4X3qB
-         3T3Vv969G5O2Jc2aEyWI4tzyDgbltlnJ36WZaWPTPzGhmLy5c05T93xOGN2m1EidHIXs
-         sAiQ==
-X-Gm-Message-State: ANhLgQ1/nrS2YHo+zZi05ZsfmCx05FvKxRqpOXGkTb40hCwLMRJJbRPE
-        cAiZ9ribZNp8+FTWQpimVHCB/A==
-X-Google-Smtp-Source: ADFU+vvHmRGGnvo0nzP7x/ozCt+1LNA6o+Q2xPy5/8uHRCz+FM1auNFVHF2NF74leUS+Zr/IBljAKw==
-X-Received: by 2002:a5d:6044:: with SMTP id j4mr35092009wrt.232.1585059833617;
-        Tue, 24 Mar 2020 07:23:53 -0700 (PDT)
-Received: from dell ([2.27.35.213])
-        by smtp.gmail.com with ESMTPSA id n2sm30986951wro.25.2020.03.24.07.23.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Mar 2020 07:23:52 -0700 (PDT)
-Date:   Tue, 24 Mar 2020 14:24:41 +0000
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Daniel Thompson <daniel.thompson@linaro.org>
-Cc:     Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Guru Das Srinagesh <gurus@codeaurora.org>,
-        linux-pwm@vger.kernel.org,
-        Subbaraman Narayanamurthy <subbaram@codeaurora.org>,
-        linux-kernel@vger.kernel.org, Jingoo Han <jingoohan1@gmail.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org
-Subject: Re: [PATCH v11 10/12] backlight: pwm_bl: Use 64-bit division function
-Message-ID: <20200324142441.GD442973@dell>
-References: <cover.1584667964.git.gurus@codeaurora.org>
- <17fc1dcf8b9b392d1e37dc7e3e67409e3c502840.1584667964.git.gurus@codeaurora.org>
- <20200320133123.GD5477@dell>
- <20200324110710.GL5477@dell>
- <20200324125735.2mjuvbxt5bpon2ft@pengutronix.de>
- <20200324130410.dwlg767ku6kwequv@holly.lan>
+        h=x-gm-message-state:to:from:subject:message-id:date:user-agent
+         :mime-version:content-transfer-encoding:content-language;
+        bh=M+b5EPoZFy9O+3BjnkpArQ2labuMLhCHX8xcr7BhQw4=;
+        b=ODT/Ihw0FQfi7UR5FI2EBrRHXSvr2AYKvl6dn3xLf6oG8+CrATqnefCHgo09dwG0P/
+         pZMwLtLVORgdIX2/xM/tGvLETjCVywmcFnAwOvgSXv3lxX6NC1HFK0zWlo5Rl3S8GuPI
+         6jhwOrMBEZcektpAfenzJNzzAQnznhfknJIMxR95Hdz5cCTprHoUOmu+7YfllvvHXPbA
+         CeA623FFhit6T2Y+8CqAH9L7XTcnKhe4w/QiT/7ZTDThIRbfQENRahGOunEpdYUV2MnD
+         +/W6Qs5Tf/Z9LUuuSxcoLVSuxZXBDt+wBoT311W1kjKHjH0TjQHbkSdoyYRKmjHuJkPf
+         nkVQ==
+X-Gm-Message-State: ANhLgQ1e4BgXyKQ6OIl3m9o+TttFtc/frDqSEF12DZh8+WFUVcyjtETn
+        4Ue4Abc8OhQDGj96TVTo6oKFYi/6bj7sFA==
+X-Google-Smtp-Source: ADFU+vs4Vjoxi8fKdz2fa2151B1/wWCQtLfuaxVIsCssdZtu8du9Kphyj1xLW+Es30aScCdl4gd6IQ==
+X-Received: by 2002:aa7:8f03:: with SMTP id x3mr30431553pfr.40.1585059895835;
+        Tue, 24 Mar 2020 07:24:55 -0700 (PDT)
+Received: from nebulus.mtv.corp.google.com ([2620:15c:211:200:5404:91ba:59dc:9400])
+        by smtp.googlemail.com with ESMTPSA id s76sm6680650pgc.64.2020.03.24.07.24.54
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 24 Mar 2020 07:24:55 -0700 (PDT)
+To:     stable <stable@vger.kernel.org>,
+        Android Kernel Team <kernel-team@android.com>,
+        LKML <linux-kernel@vger.kernel.org>
+From:   Mark Salyzyn <salyzyn@android.com>
+Subject: locks use-after-free stable request
+Message-ID: <52be02d3-3a6a-c8b8-4177-5cc1d67aedd4@android.com>
+Date:   Tue, 24 Mar 2020 07:24:49 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20200324130410.dwlg767ku6kwequv@holly.lan>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-GB
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 24 Mar 2020, Daniel Thompson wrote:
+Referencing upstream fixes commit 
+dcf23ac3e846ca0cf626c155a0e3fcbbcf4fae8a ("locks: reinstate 
+locks_delete_block optimization") and commit 
+6d390e4b5d48ec03bb87e63cf0a2bff5f4e116da ("locks: fix a potential 
+use-after-free problem when wakeup a waiter") and possibly address 
+CVE-2019-19769.
 
-> On Tue, Mar 24, 2020 at 01:57:35PM +0100, Uwe Kleine-König wrote:
-> > Hello Lee,
-> > 
-> > On Tue, Mar 24, 2020 at 11:07:10AM +0000, Lee Jones wrote:
-> > > On Fri, 20 Mar 2020, Lee Jones wrote:
-> > > 
-> > > > On Thu, 19 Mar 2020, Guru Das Srinagesh wrote:
-> > > > 
-> > > > > Since the PWM framework is switching struct pwm_state.period's datatype
-> > > > > to u64, prepare for this transition by using div_u64 to handle a 64-bit
-> > > > > dividend instead of a straight division operation.
-> > > > > 
-> > > > > Cc: Lee Jones <lee.jones@linaro.org>
-> > > > > Cc: Daniel Thompson <daniel.thompson@linaro.org>
-> > > > > Cc: Jingoo Han <jingoohan1@gmail.com>
-> > > > > Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-> > > > > Cc: linux-pwm@vger.kernel.org
-> > > > > Cc: dri-devel@lists.freedesktop.org
-> > > > > Cc: linux-fbdev@vger.kernel.org
-> > > > > 
-> > > > > Signed-off-by: Guru Das Srinagesh <gurus@codeaurora.org>
-> > > > > Reviewed-by: Daniel Thompson <daniel.thompson@linaro.org>
-> > > > > ---
-> > > > >  drivers/video/backlight/pwm_bl.c | 3 ++-
-> > > > >  1 file changed, 2 insertions(+), 1 deletion(-)
-> > > > 
-> > > > Can this patch be taken on its own?
-> > > 
-> > > Hellooooo ...
-> > 
-> > Conceptually it can. As the last patch depends on this one (and the
-> > others) some coordination might be beneficial. But that's up to Thierry
-> > to decide how (and if) he want this series to be applied.
-> 
-> ... and on the backlight side we definitely need to know about the "if"
-> otherwise there's no point in taking it.
+Please apply to all relevant stable trees including 5.4, 4.19 and below. 
+Confirmed they apply cleanly to 5.4 and 4.19.
 
-Right.
 
-I'm happy to wait for Thierry.  Although this isn't the only set he's
-currently blocking.  Is he okay?  On holiday perhaps?
+Signed-off-by: Mark Salyzyn <salyzyn@android.com>
 
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+Cc: stable@vger.kernel.org
+
+Cc: linux-kernel@vger.kernel.org
+
+Cc: kernel-team@android.com
+
