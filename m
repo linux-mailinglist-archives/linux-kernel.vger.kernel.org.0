@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AD355190E8D
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 14:14:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5D0ED190F2F
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 14:19:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727799AbgCXNNF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 09:13:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59088 "EHLO mail.kernel.org"
+        id S1728711AbgCXNSS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 09:18:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38342 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727778AbgCXNND (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 09:13:03 -0400
+        id S1728701AbgCXNSP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Mar 2020 09:18:15 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 35A2620775;
-        Tue, 24 Mar 2020 13:13:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DAE6D208CA;
+        Tue, 24 Mar 2020 13:18:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585055582;
-        bh=pvum1kVpUeItsIGWQuaWqatYwcao3S6sMp1wgDsZe/w=;
+        s=default; t=1585055894;
+        bh=fgCakXjwGY+rUhPIQxjVi1O2wIJkX+bF8EbPDUz0qfU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2ffPwiJkNVPEBji4PjSzfoeZMBL07nz0SQm4+Z7oZrXJG2PWARzaqT+8xrFxHJymb
-         eTJhCefBRp7B6Mo/09vUh+twBops2RyVq/z2pxR0mqXptWVWSZ67DxzAIWA0JvWj04
-         lPK1CD+0HMAQ4dCjysmG4Vg5VWm9NXpRKcLWXGLQ=
+        b=vLfvnR1GURgpfapItce9trVLHOv+8ql6cbbdVAapUtr/qzMDMEef3iMDFtxMoohiA
+         zSMKObCbDWgZU69dvF99JloTF4U2Va8zrgmD0+4+NhFKHM9rEJGUzGLrHjOaAJG3Ye
+         yBsrdKjt8pHV/Qzo9K7kXupF5ueISreCJSqWWXUQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Wen-chien Jesse Sung <jesse.sung@canonical.com>,
-        Hans de Goede <hdegoede@redhat.com>, Stable@vger.kernel.org,
+        stable@vger.kernel.org, Stephan Gerhold <stephan@gerhold.net>,
+        Linus Waleij <linus.walleij@linaro.org>,
+        Stable@vger.kernel.org,
         Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Subject: [PATCH 4.19 31/65] iio: st_sensors: remap SMO8840 to LIS2DH12
+Subject: [PATCH 5.4 060/102] iio: magnetometer: ak8974: Fix negative raw values in sysfs
 Date:   Tue, 24 Mar 2020 14:10:52 +0100
-Message-Id: <20200324130801.152178747@linuxfoundation.org>
+Message-Id: <20200324130812.757689015@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.2
-In-Reply-To: <20200324130756.679112147@linuxfoundation.org>
-References: <20200324130756.679112147@linuxfoundation.org>
+In-Reply-To: <20200324130806.544601211@linuxfoundation.org>
+References: <20200324130806.544601211@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,34 +45,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Wen-chien Jesse Sung <jesse.sung@canonical.com>
+From: Stephan Gerhold <stephan@gerhold.net>
 
-commit e43d110cdc206b6df4dd438cd10c81d1da910aad upstream.
+commit b500c086e4110829a308c23e83a7cdc65b26228a upstream.
 
-According to ST, the HID is for LIS2DH12.
+At the moment, reading from in_magn_*_raw in sysfs tends to return
+large values around 65000, even though the output of ak8974 is actually
+limited to ±32768. This happens because the value is never converted
+to the signed 16-bit integer variant.
 
-Fixes: 3d56e19815b3 ("iio: accel: st_accel: Add support for the SMO8840 ACPI id")
-Signed-off-by: Wen-chien Jesse Sung <jesse.sung@canonical.com>
-Tested-by: Hans de Goede <hdegoede@redhat.com>
-Reviewed-by: Hans de Goede <hdegoede@redhat.com>
+Add an explicit cast to s16 to fix this.
+
+Fixes: 7c94a8b2ee8c ("iio: magn: add a driver for AK8974")
+Signed-off-by: Stephan Gerhold <stephan@gerhold.net>
+Reviewed-by: Linus Waleij <linus.walleij@linaro.org>
 Cc: <Stable@vger.kernel.org>
 Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/iio/accel/st_accel_i2c.c |    2 +-
+ drivers/iio/magnetometer/ak8974.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/iio/accel/st_accel_i2c.c
-+++ b/drivers/iio/accel/st_accel_i2c.c
-@@ -107,7 +107,7 @@ MODULE_DEVICE_TABLE(of, st_accel_of_matc
+--- a/drivers/iio/magnetometer/ak8974.c
++++ b/drivers/iio/magnetometer/ak8974.c
+@@ -564,7 +564,7 @@ static int ak8974_read_raw(struct iio_de
+ 		 * We read all axes and discard all but one, for optimized
+ 		 * reading, use the triggered buffer.
+ 		 */
+-		*val = le16_to_cpu(hw_values[chan->address]);
++		*val = (s16)le16_to_cpu(hw_values[chan->address]);
  
- #ifdef CONFIG_ACPI
- static const struct acpi_device_id st_accel_acpi_match[] = {
--	{"SMO8840", (kernel_ulong_t)LNG2DM_ACCEL_DEV_NAME},
-+	{"SMO8840", (kernel_ulong_t)LIS2DH12_ACCEL_DEV_NAME},
- 	{"SMO8A90", (kernel_ulong_t)LNG2DM_ACCEL_DEV_NAME},
- 	{ },
- };
+ 		ret = IIO_VAL_INT;
+ 	}
 
 
