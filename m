@@ -2,122 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 55865190BEF
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 12:06:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E9EA7190BFB
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 12:08:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727267AbgCXLGY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 07:06:24 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:53758 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726524AbgCXLGY (ORCPT
+        id S1727283AbgCXLH4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 07:07:56 -0400
+Received: from us-smtp-delivery-74.mimecast.com ([63.128.21.74]:57495 "EHLO
+        us-smtp-delivery-74.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727133AbgCXLH4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 07:06:24 -0400
-Received: by mail-wm1-f67.google.com with SMTP id b12so2696981wmj.3
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Mar 2020 04:06:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=85coQpfIuRs+sPyYMKP16shkvF4ULZs9j9T/GaUTXMA=;
-        b=VT9q5/jF2VHIjb1DZzmV5uWK7Uk3Y+xVfuIZA7l+c4XrodjvqMvAkW8PC0kNkLrgYM
-         3iana2G8gyGAfBnuD3tWiwwsYyndM+xe6dTnJx4myohK1jgaOQlQisQ7OTsUcVb4TiHA
-         02CR0L4AmTwZ6TWYAuBgOaGihewpebEYX1AZBguETu6kswW6pM8vMDVrOiQXeCUsunFq
-         kEXdn3pTTM5sKdZAVZryI6XQZDdohQZwEGPxqePgXmdn6YyIfmajV2Z0g6BrJMMfVDSZ
-         3pxXnSFuuNvVcIbxrbVnimLoPa7kg7P2p0ab+jA5qME9NUdm6UCRGEBAySrUTOyPCHYo
-         wC6w==
+        Tue, 24 Mar 2020 07:07:56 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1585048075;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=zG8RK9BOQ+DeO4IAkLRYrCB5fJrkacKNwyoRhJalGZg=;
+        b=JB3tNJVlDSdYjf40mpAFJdnoOQHJ8tJhz2ySTPc8q9B/ZC11uwxh85T1vrRdjn89/aCyMK
+        ETlI588xVaQlH0dvdMPzwyAVZxxiYji7RCyRDZgHp+0qutaoBd3estPi9I797r+sH0WZjf
+        kgc3O4VNofa4Nzs2unuE/YEufTmE7/s=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-166-N7T2JRWNPLGwHQPvmm0tHA-1; Tue, 24 Mar 2020 07:07:53 -0400
+X-MC-Unique: N7T2JRWNPLGwHQPvmm0tHA-1
+Received: by mail-wm1-f72.google.com with SMTP id f185so1124535wmf.8
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Mar 2020 04:07:53 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=85coQpfIuRs+sPyYMKP16shkvF4ULZs9j9T/GaUTXMA=;
-        b=JCuxO3+fp9cSIiwNrMeUusKrk7nvmUCcOcoFsPSkOxIXLNQnWqiLwTHBh9NH85UtuM
-         EsfBspWiG1xYBtJQlyGmB8VjaC+LBJH+4JkKURstUXADvXSvu3+J9Ddr0EP+tM6CjgTe
-         0g478OprqSko1LvkoGulMrVQA3kd47TjLmZCI9bv7JcE+aQ4kPJLVZVlO4UCaYuFwtbR
-         RSt+NaBs26h6PnsNSnL+m4iVlENr1AA3MqUxQy7ShWVn/EWVfMD3hA4CNxQxed2HkpkY
-         mhYglJDnec6pYhr1K41cfYHBY4hniLuzBOcauCqsW/M/6g9dHrpaPxdr/VHeQ0+q4KLD
-         KV9w==
-X-Gm-Message-State: ANhLgQ2AeAmsjwlfEohFUiYJg2hK9hyg2i85hkHjCun3as7xX/EUDBxL
-        GfYJACaTcmt6LYTKflWVhzR7pA==
-X-Google-Smtp-Source: ADFU+vvewfCSPSJ/JtfjkuAPYyDeLB/atTsI2+R8ZuR0hHyIJno3qS1Oa/lOKqJLRVXNnbIQOwCyQA==
-X-Received: by 2002:a05:600c:20d:: with SMTP id 13mr4980605wmi.74.1585047981072;
-        Tue, 24 Mar 2020 04:06:21 -0700 (PDT)
-Received: from dell ([2.27.35.213])
-        by smtp.gmail.com with ESMTPSA id 98sm28341407wrk.52.2020.03.24.04.06.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Mar 2020 04:06:20 -0700 (PDT)
-Date:   Tue, 24 Mar 2020 11:07:10 +0000
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Guru Das Srinagesh <gurus@codeaurora.org>
-Cc:     linux-pwm@vger.kernel.org,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>,
-        Subbaraman Narayanamurthy <subbaram@codeaurora.org>,
-        linux-kernel@vger.kernel.org,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org
-Subject: Re: [PATCH v11 10/12] backlight: pwm_bl: Use 64-bit division function
-Message-ID: <20200324110710.GL5477@dell>
-References: <cover.1584667964.git.gurus@codeaurora.org>
- <17fc1dcf8b9b392d1e37dc7e3e67409e3c502840.1584667964.git.gurus@codeaurora.org>
- <20200320133123.GD5477@dell>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=zG8RK9BOQ+DeO4IAkLRYrCB5fJrkacKNwyoRhJalGZg=;
+        b=D/oGco5F41zk1QLKr8eWw4F/JG8pTTJeNV7aSnfx6l8Zf4O66znE4AI1uZ6rx7aJjI
+         Gz06MyKxVIBpy006uLFhEfANekzNi9iIs94yATlREHyg6qpXXruZ+JETfqjC0jrmI0sp
+         QJkIzuCLkpV7jmV3jiu28qIslvbyJVmJcSWrSk1RugEtGHhH5UKuOheHQJ1tsA+Mm/t7
+         1If7fP0mckVtdFhgIp+7IuqKIrR+9LD/DW527tMBFi3N6d4FQM8+nU88xRe+Efeg8Kg3
+         JSOEyZuVKgastXqTYZ8haUeUIYrcZ5/ZQ6HmuBjK9gSVnOKzvXGiaG7gebl8axBtEU7d
+         2S0w==
+X-Gm-Message-State: ANhLgQ2QB/Zp7brKusixHYl3znQKTJLshPRL0eMF6bCd2VI1bcd84+uR
+        Z7mAsZn7ZE3wdPNhQtmXG32xrSvhoTxBZpDQenyStCj6TPy2X4+Ii0vGitunL71zUeo5tx2q7LT
+        GJiA4awXpJwo9u8XIe27vgUpS
+X-Received: by 2002:a5d:4fcf:: with SMTP id h15mr29634745wrw.262.1585048072740;
+        Tue, 24 Mar 2020 04:07:52 -0700 (PDT)
+X-Google-Smtp-Source: ADFU+vu/UT8MN6YxcWR3YXGd/k11KtMYJrljPCwBesOx54uQRTbpk4R6hZP/ktXslgwbAdbPtItyQg==
+X-Received: by 2002:a5d:4fcf:: with SMTP id h15mr29634705wrw.262.1585048072432;
+        Tue, 24 Mar 2020 04:07:52 -0700 (PDT)
+Received: from ?IPv6:2001:b07:6468:f312:7848:99b4:482a:e888? ([2001:b07:6468:f312:7848:99b4:482a:e888])
+        by smtp.gmail.com with ESMTPSA id u5sm21502309wrp.81.2020.03.24.04.07.50
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 24 Mar 2020 04:07:51 -0700 (PDT)
+Subject: Re: [PATCH v3 31/37] KVM: x86/mmu: Add separate override for MMU sync
+ during fast CR3 switch
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
+Cc:     Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Ben Gardon <bgardon@google.com>,
+        Junaid Shahid <junaids@google.com>,
+        Liran Alon <liran.alon@oracle.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        John Haxby <john.haxby@oracle.com>,
+        Miaohe Lin <linmiaohe@huawei.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>
+References: <20200320212833.3507-1-sean.j.christopherson@intel.com>
+ <20200320212833.3507-32-sean.j.christopherson@intel.com>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Message-ID: <1227ad9e-0b91-f9a7-10b0-b02203ba52ca@redhat.com>
+Date:   Tue, 24 Mar 2020 12:07:50 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20200320133123.GD5477@dell>
+In-Reply-To: <20200320212833.3507-32-sean.j.christopherson@intel.com>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 20 Mar 2020, Lee Jones wrote:
-
-> On Thu, 19 Mar 2020, Guru Das Srinagesh wrote:
+On 20/03/20 22:28, Sean Christopherson wrote:
+> Add a separate "skip" override for MMU sync, a future change to avoid
+> TLB flushes on nested VMX transitions may need to sync the MMU even if
+> the TLB flush is unnecessary.
 > 
-> > Since the PWM framework is switching struct pwm_state.period's datatype
-> > to u64, prepare for this transition by using div_u64 to handle a 64-bit
-> > dividend instead of a straight division operation.
-> > 
-> > Cc: Lee Jones <lee.jones@linaro.org>
-> > Cc: Daniel Thompson <daniel.thompson@linaro.org>
-> > Cc: Jingoo Han <jingoohan1@gmail.com>
-> > Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-> > Cc: linux-pwm@vger.kernel.org
-> > Cc: dri-devel@lists.freedesktop.org
-> > Cc: linux-fbdev@vger.kernel.org
-> > 
-> > Signed-off-by: Guru Das Srinagesh <gurus@codeaurora.org>
-> > Reviewed-by: Daniel Thompson <daniel.thompson@linaro.org>
-> > ---
-> >  drivers/video/backlight/pwm_bl.c | 3 ++-
-> >  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> Can this patch be taken on its own?
+> Suggested-by: Paolo Bonzini <pbonzini@redhat.com>
+> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
 
-Hellooooo ...
+I added a WARN_ON(skip_tlb_flush && !skip_mmu_sync); which could help
+catching misordered parameters.
 
-> > diff --git a/drivers/video/backlight/pwm_bl.c b/drivers/video/backlight/pwm_bl.c
-> > index efb4efc..3e5dbcf 100644
-> > --- a/drivers/video/backlight/pwm_bl.c
-> > +++ b/drivers/video/backlight/pwm_bl.c
-> > @@ -625,7 +625,8 @@ static int pwm_backlight_probe(struct platform_device *pdev)
-> >  		pb->scale = data->max_brightness;
-> >  	}
-> >  
-> > -	pb->lth_brightness = data->lth_brightness * (state.period / pb->scale);
-> > +	pb->lth_brightness = data->lth_brightness * (div_u64(state.period,
-> > +				pb->scale));
-> >  
-> >  	props.type = BACKLIGHT_RAW;
-> >  	props.max_brightness = data->max_brightness;
-> 
+Paolo
 
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
