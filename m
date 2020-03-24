@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0F65F1910D8
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 14:32:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 43306191036
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 14:30:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728179AbgCXNbc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 09:31:32 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40912 "EHLO mail.kernel.org"
+        id S1728950AbgCXN0X (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 09:26:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51046 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728701AbgCXNT4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 09:19:56 -0400
+        id S1729153AbgCXN0U (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Mar 2020 09:26:20 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A217F208FE;
-        Tue, 24 Mar 2020 13:19:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2E1B7206F6;
+        Tue, 24 Mar 2020 13:26:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585055995;
-        bh=8D71hQD/03lTr+XgQno0BDGmgGfxR9qJXHJh2/1h4KI=;
+        s=default; t=1585056379;
+        bh=qtlVM3TioO5SQTtBvaei2mTd6WZeFE8JFjePzxDJcMw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SIXP3n8g5UCGg3TgqNEcCSJcpNeyLEAQeumleAYsyLPpDE4e6Teu8F9HyjwhNlQa8
-         D7Nwqyu7vaaewLbmLMvjjov5jh3wKfyqld0Fs8Ll+Alksb2A9DW6D6T+H/bqsMxgeh
-         vE2GNIGyo0a5AqJa0y7AHEtiTTQ76zMaY3CEpU64=
+        b=T3woAcey44gnfgeqkqXAUOAv3+En6X9n4CexYmklhfc4MeaRaiHfu1Fh5APU+2qwU
+         +dxhkSC+QhsY3b97Xz/4LkUGlUFReACtXFSOlDdU1hGj86BaINmItlWjz6S7r1Is57
+         mXu7XLdmiXNzn4e0eioAHYxthk9rYlHkYupAdR24=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -38,12 +38,12 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Ingo Molnar <mingo@redhat.com>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>
-Subject: [PATCH 5.4 093/102] x86/mm: split vmalloc_sync_all()
-Date:   Tue, 24 Mar 2020 14:11:25 +0100
-Message-Id: <20200324130816.253021445@linuxfoundation.org>
+Subject: [PATCH 5.5 101/119] x86/mm: split vmalloc_sync_all()
+Date:   Tue, 24 Mar 2020 14:11:26 +0100
+Message-Id: <20200324130818.153980158@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.2
-In-Reply-To: <20200324130806.544601211@linuxfoundation.org>
-References: <20200324130806.544601211@linuxfoundation.org>
+In-Reply-To: <20200324130808.041360967@linuxfoundation.org>
+References: <20200324130808.041360967@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -176,7 +176,7 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
  	if (rc)
 --- a/include/linux/vmalloc.h
 +++ b/include/linux/vmalloc.h
-@@ -126,8 +126,9 @@ extern int remap_vmalloc_range_partial(s
+@@ -139,8 +139,9 @@ extern int remap_vmalloc_range_partial(s
  
  extern int remap_vmalloc_range(struct vm_area_struct *vma, void *addr,
  							unsigned long pgoff);
@@ -190,7 +190,7 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
   */
 --- a/kernel/notifier.c
 +++ b/kernel/notifier.c
-@@ -554,7 +554,7 @@ NOKPROBE_SYMBOL(notify_die);
+@@ -519,7 +519,7 @@ NOKPROBE_SYMBOL(notify_die);
  
  int register_die_notifier(struct notifier_block *nb)
  {
@@ -201,7 +201,7 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
  EXPORT_SYMBOL_GPL(register_die_notifier);
 --- a/mm/nommu.c
 +++ b/mm/nommu.c
-@@ -359,10 +359,14 @@ void vm_unmap_aliases(void)
+@@ -370,10 +370,14 @@ void vm_unmap_aliases(void)
  EXPORT_SYMBOL_GPL(vm_unmap_aliases);
  
  /*
@@ -221,7 +221,7 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
  
 --- a/mm/vmalloc.c
 +++ b/mm/vmalloc.c
-@@ -1259,7 +1259,7 @@ static bool __purge_vmap_area_lazy(unsig
+@@ -1287,7 +1287,7 @@ static bool __purge_vmap_area_lazy(unsig
  	 * First make sure the mappings are removed from all page-tables
  	 * before they are freed.
  	 */
@@ -230,7 +230,7 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
  
  	/*
  	 * TODO: to calculate a flush range without looping.
-@@ -3050,16 +3050,19 @@ int remap_vmalloc_range(struct vm_area_s
+@@ -3120,16 +3120,19 @@ int remap_vmalloc_range(struct vm_area_s
  EXPORT_SYMBOL(remap_vmalloc_range);
  
  /*
