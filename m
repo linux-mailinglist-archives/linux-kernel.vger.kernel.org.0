@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 93168190F0D
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 14:19:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 05669190F96
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 14:29:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727884AbgCXNRG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 09:17:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36708 "EHLO mail.kernel.org"
+        id S1727743AbgCXNVM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 09:21:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42880 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727303AbgCXNRD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 09:17:03 -0400
+        id S1728727AbgCXNVK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Mar 2020 09:21:10 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 98EA4208CA;
-        Tue, 24 Mar 2020 13:17:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0D805208DB;
+        Tue, 24 Mar 2020 13:21:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585055822;
-        bh=EfynZ2r+tu0Bi5hPFBx1U/emhKKCOtF0JEBjFuUVq5U=;
+        s=default; t=1585056070;
+        bh=+YZAPcAAS0q81TrNb09xZY/jNelvp3jwoe0bSJrRCdE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=iO35KHpQxuyaYSUXHlo2qo9ejldTp4yNZtOtYEDmRZ65vRYVFNnYWpYZw+Ik62XyO
-         xcqp8eaMf0yRy1MraqJGKRWDlXnlV6F3iw6jk6upZwLrp9rPxSh2qJTTUVx19HpMgl
-         g4OxtvTV1969l5VNuvQ6aRpoxDzwHJdepU/A+CX0=
+        b=NsRmuXHV+9IkqRf5JbyCJGYEf33TQEqodiX/2VJXLK933n70mhti3jblQOUPU7B4b
+         ZMEbQscLZX1ynqXos7FBvrkzr9/Mr07Tgw7xKEbZfk1Gxm73837Qry7BrjYHuH9cKm
+         KDLjNZfNAJ/t/XC1AwM5gfKxJ8PfTPm6lNVAg18Q=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Evan Benn <evanbenn@chromium.org>,
-        Sean Paul <seanpaul@chromium.org>, CK Hu <ck.hu@mediatek.com>,
+        stable@vger.kernel.org, Steve French <stfrench@microsoft.com>,
+        Aurelien Aptel <aaptel@suse.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 004/102] drm/mediatek: Find the cursor plane instead of hard coding it
-Date:   Tue, 24 Mar 2020 14:09:56 +0100
-Message-Id: <20200324130806.941240400@linuxfoundation.org>
+Subject: [PATCH 5.5 012/119] cifs: add missing mount option to /proc/mounts
+Date:   Tue, 24 Mar 2020 14:09:57 +0100
+Message-Id: <20200324130809.175431691@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.2
-In-Reply-To: <20200324130806.544601211@linuxfoundation.org>
-References: <20200324130806.544601211@linuxfoundation.org>
+In-Reply-To: <20200324130808.041360967@linuxfoundation.org>
+References: <20200324130808.041360967@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,58 +44,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Evan Benn <evanbenn@chromium.org>
+From: Steve French <stfrench@microsoft.com>
 
-[ Upstream commit 318caac7c81cdf5806df30c3d72385659a5f0f53 ]
+[ Upstream commit ec57010acd03428a749d2600bf09bd537eaae993 ]
 
-The cursor and primary planes were hard coded.
-Now search for them for passing to drm_crtc_init_with_planes
+We were not displaying the mount option "signloosely" in /proc/mounts
+for cifs mounts which some users found confusing recently
 
-Signed-off-by: Evan Benn <evanbenn@chromium.org>
-Reviewed-by: Sean Paul <seanpaul@chromium.org>
-Signed-off-by: CK Hu <ck.hu@mediatek.com>
+Signed-off-by: Steve French <stfrench@microsoft.com>
+Reviewed-by: Aurelien Aptel <aaptel@suse.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/mediatek/mtk_drm_crtc.c | 18 ++++++++++++------
- 1 file changed, 12 insertions(+), 6 deletions(-)
+ fs/cifs/cifsfs.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/gpu/drm/mediatek/mtk_drm_crtc.c b/drivers/gpu/drm/mediatek/mtk_drm_crtc.c
-index e6c049f4f08bb..f9455f2724d23 100644
---- a/drivers/gpu/drm/mediatek/mtk_drm_crtc.c
-+++ b/drivers/gpu/drm/mediatek/mtk_drm_crtc.c
-@@ -496,10 +496,18 @@ static const struct drm_crtc_helper_funcs mtk_crtc_helper_funcs = {
+diff --git a/fs/cifs/cifsfs.c b/fs/cifs/cifsfs.c
+index 92b9c8221f078..7659286954d3a 100644
+--- a/fs/cifs/cifsfs.c
++++ b/fs/cifs/cifsfs.c
+@@ -530,6 +530,8 @@ cifs_show_options(struct seq_file *s, struct dentry *root)
  
- static int mtk_drm_crtc_init(struct drm_device *drm,
- 			     struct mtk_drm_crtc *mtk_crtc,
--			     struct drm_plane *primary,
--			     struct drm_plane *cursor, unsigned int pipe)
-+			     unsigned int pipe)
- {
--	int ret;
-+	struct drm_plane *primary = NULL;
-+	struct drm_plane *cursor = NULL;
-+	int i, ret;
-+
-+	for (i = 0; i < mtk_crtc->layer_nr; i++) {
-+		if (mtk_crtc->planes[i].type == DRM_PLANE_TYPE_PRIMARY)
-+			primary = &mtk_crtc->planes[i];
-+		else if (mtk_crtc->planes[i].type == DRM_PLANE_TYPE_CURSOR)
-+			cursor = &mtk_crtc->planes[i];
-+	}
- 
- 	ret = drm_crtc_init_with_planes(drm, &mtk_crtc->base, primary, cursor,
- 					&mtk_crtc_funcs, NULL);
-@@ -608,9 +616,7 @@ int mtk_drm_crtc_create(struct drm_device *drm_dev,
- 			return ret;
- 	}
- 
--	ret = mtk_drm_crtc_init(drm_dev, mtk_crtc, &mtk_crtc->planes[0],
--				mtk_crtc->layer_nr > 1 ? &mtk_crtc->planes[1] :
--				NULL, pipe);
-+	ret = mtk_drm_crtc_init(drm_dev, mtk_crtc, pipe);
- 	if (ret < 0)
- 		return ret;
- 
+ 	if (tcon->seal)
+ 		seq_puts(s, ",seal");
++	else if (tcon->ses->server->ignore_signature)
++		seq_puts(s, ",signloosely");
+ 	if (tcon->nocase)
+ 		seq_puts(s, ",nocase");
+ 	if (tcon->local_lease)
 -- 
 2.20.1
 
