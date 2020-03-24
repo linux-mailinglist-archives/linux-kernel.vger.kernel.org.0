@@ -2,82 +2,177 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 028D71918E4
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 19:22:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 07F0C1918CA
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 19:20:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728153AbgCXSU7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 14:20:59 -0400
-Received: from mail-pj1-f65.google.com ([209.85.216.65]:55724 "EHLO
-        mail-pj1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728047AbgCXSU6 (ORCPT
+        id S1727817AbgCXSUV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 14:20:21 -0400
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:37668 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727379AbgCXSUV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 14:20:58 -0400
-Received: by mail-pj1-f65.google.com with SMTP id mj6so1952381pjb.5
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Mar 2020 11:20:57 -0700 (PDT)
+        Tue, 24 Mar 2020 14:20:21 -0400
+Received: by mail-oi1-f196.google.com with SMTP id w13so19439983oih.4;
+        Tue, 24 Mar 2020 11:20:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=pT25UnZw8GM7Hd21OQrxHvPDWru16NnMVVxodL4fKVA=;
-        b=iyhktkumgD/jnOyy/wrt8dXzir+rVbxsCaX0F1NIU968y/5PKrYcKlaC+EUgsXxoD1
-         qRnZuBoGJVEq/iPtymBbiQq/d0t+3o76Vg7pmHHpXjJtM7UuE+MA3iFeocbUrYXAjiQM
-         Z6sejDHA46aOnvzsmPK6WvTcsSKcktL/hzcag=
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=QAsNqo91AZeBDE6F+SBZ53GrNbBmODwiTL6H1PjXDaY=;
+        b=nDPahvsxANLN/fCqy3jJsk5S4SDwZAZh3QOv6ulH4PESbA0kR6J5qkTP7HWSy6BEW1
+         X/Q32jC3wNDPfa7iFm7XMtXwwBXIO39cxoJBgpREBxAZFrZ6g5vCBcOBRCtMaAQUjJIn
+         PUeMNR1ubkrzX7LcAq7KtJ7OeU2GbHdTsckA2Q9MxLHxrF+gPePvSccJvifd2GA/EnZD
+         jA5CEWRHRUsLjBB4VH7Rz+CDALpVQVgVHxg2y0xqqE38hmor/aPO5hxziFl54TucYtIA
+         C0LAU/7IW+PF3nWO4ttq3MjfJgEUYxf5pOI+/2YzOTkuMg0fZu4YDGF2B8KTrX/hzepO
+         qsUQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=pT25UnZw8GM7Hd21OQrxHvPDWru16NnMVVxodL4fKVA=;
-        b=kobMJq0IJ+yGFTNYwlwuTlNcWYg3gGJmCAanoY7podpJxY0U2eK/+uJMMtbtAIKh8q
-         m8xr/2TsYb8HeksqI8ZXx0UUKdnQm0RyvJRiFDVSx90s7zjwbY2FofucdkteSzfqkKre
-         dUokTbHc2Q8hCJ88VSFa0ADUIcUd+4o/IH22bhDcpb7SywC598z6m/OYKoAGm5K88Qps
-         YpEizR15zQJacqkJPGjljyUkw/gswdEB2aORjHrncdTXYID9f4kDe6DkZ24PHnURWhi1
-         Pq0zyw/04MuX5ISaot7n56usC2vhL6H9VTbDDnLYnfEvQmqYrgnMYgBbD189rDLXQikr
-         8HnQ==
-X-Gm-Message-State: ANhLgQ2XGUhh7Jqr+C8gZMbRFT7Vxx3LVj5xNRe35ZXMWziiVFiR4y/A
-        nCUfwRJ1vV/rKvkGGx7sBYQvi3+EiEY=
-X-Google-Smtp-Source: ADFU+vsbUZvpEd+JNrfXu3SDrVaKk1GB6LCcXwZqBJNz0+KcmuSLdw3UClszpGNl3JJHmzGTOgzQXQ==
-X-Received: by 2002:a17:90a:3349:: with SMTP id m67mr6643283pjb.175.1585074057290;
-        Tue, 24 Mar 2020 11:20:57 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id w31sm15114250pgl.84.2020.03.24.11.20.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Mar 2020 11:20:56 -0700 (PDT)
-Date:   Tue, 24 Mar 2020 11:20:55 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     "Guilherme G. Piccoli" <gpiccoli@canonical.com>
-Cc:     Vlastimil Babka <vbabka@suse.cz>, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
-        mcgrof@kernel.org, yzaikin@google.com, tglx@linutronix.de,
-        penguin-kernel@I-love.SAKURA.ne.jp, akpm@linux-foundation.org,
-        cocci@systeme.lip6.fr, linux-api@vger.kernel.org,
-        kernel@gpiccoli.net, randy Dunlap <rdunlap@infradead.org>
-Subject: Re: [PATCH V2] kernel/hung_task.c: Introduce sysctl to print all
- traces when a hung task is detected
-Message-ID: <202003241119.A666E1C694@keescook>
-References: <20200323214618.28429-1-gpiccoli@canonical.com>
- <b73a6519-0529-e36f-fac5-e4b638ceb3cf@suse.cz>
- <eee335a2-e673-39bf-ae64-e49c66f74255@canonical.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=QAsNqo91AZeBDE6F+SBZ53GrNbBmODwiTL6H1PjXDaY=;
+        b=VCNRplK3b88b7x2YP4if3u9/AnsBQ01QZfUWa5OpMVVnA0OwYuFVktaKfL4Ge7GqER
+         fRFoQzVYzhrx6CWR1/aqGa6jTLO97qgJto/Y9ur//PqFJkipeF9h1f0D7dSAGZu1CuMD
+         wb919KzkYLyiHnAhopNKjd3XUEfWgjHagWjwreZE/AUQ34vbUyyW7Rxh6NuVgvTaFcjH
+         eIboDgoqA8jBLu7HNlnw08JAmGZsFlgJLgDhw7wzox3eX/EFzmsNhDCeLBQbVsgwJn6Y
+         5GC2un04U13NHHMOdbbuaGCH8CB44vUu61xPy5wceJRNV/6qYVSBv0Zk9DuSnsyTtYVm
+         17TQ==
+X-Gm-Message-State: ANhLgQ13o9RuLvVeTohxa6rfYbs0TYrVteox7MHjoZlRz3of9etyiI8a
+        Vwqj7D6CAczwZOvmWfR/9euPUBekaGTBHklO1z4=
+X-Google-Smtp-Source: ADFU+vsTTzOBEbslZ/jOchNxTsXwqzLL2kJQC2QNM2a0aY01y0dTE5CfqmANuyu7O3+wSM4ccC7AALy8hhTlaiFk5oo=
+X-Received: by 2002:aca:b803:: with SMTP id i3mr4303855oif.92.1585074020348;
+ Tue, 24 Mar 2020 11:20:20 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <eee335a2-e673-39bf-ae64-e49c66f74255@canonical.com>
+References: <20200323164415.12943-1-kpsingh@chromium.org> <20200323164415.12943-5-kpsingh@chromium.org>
+ <CAEjxPJ4MukexdmAD=py0r7vkE6vnn6T1LVcybP_GSJYsAdRuxA@mail.gmail.com>
+ <20200324145003.GA2685@chromium.org> <CAEjxPJ4YnCCeQUTK36Ao550AWProHrkrW1a6K5RKuKYcPcfhyA@mail.gmail.com>
+ <d578d19f-1d3b-f60d-f803-2fcb46721a4a@schaufler-ca.com> <CAEjxPJ59wijpB=wa4ZhPyX_PRXrRAX2+PO6e8+f25wrb9xndRA@mail.gmail.com>
+ <202003241100.279457EF@keescook> <20200324180652.GA11855@chromium.org>
+In-Reply-To: <20200324180652.GA11855@chromium.org>
+From:   Stephen Smalley <stephen.smalley.work@gmail.com>
+Date:   Tue, 24 Mar 2020 14:21:30 -0400
+Message-ID: <CAEjxPJ7ebh1FHBjfuoWquFLJi0TguipfRq5ozaSepLVt8+qaMQ@mail.gmail.com>
+Subject: Re: [PATCH bpf-next v5 4/7] bpf: lsm: Implement attach, detach and execution
+To:     KP Singh <kpsingh@chromium.org>
+Cc:     Kees Cook <keescook@chromium.org>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Brendan Jackman <jackmanb@google.com>,
+        Florent Revest <revest@google.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        James Morris <jmorris@namei.org>, Paul Turner <pjt@google.com>,
+        Jann Horn <jannh@google.com>,
+        Florent Revest <revest@chromium.org>,
+        Brendan Jackman <jackmanb@chromium.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Paul Moore <paul@paul-moore.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 24, 2020 at 09:45:40AM -0300, Guilherme G. Piccoli wrote:
-> Thanks Randy and Vlastimil for the comments. I really liked your
-> approach Vlastimil, I agree that we have no reason to not have a generic
-> sysctl setting via cmdline mechanism - I'll rework this patch removing
-> the kernel parameter (same for other patch I just submitted).
+On Tue, Mar 24, 2020 at 2:06 PM KP Singh <kpsingh@chromium.org> wrote:
+>
+> On 24-M=C3=A4r 11:01, Kees Cook wrote:
+> > On Tue, Mar 24, 2020 at 01:49:34PM -0400, Stephen Smalley wrote:
+> > > On Tue, Mar 24, 2020 at 12:25 PM Casey Schaufler <casey@schaufler-ca.=
+com> wrote:
+> > > >
+> > > > On 3/24/2020 7:58 AM, Stephen Smalley wrote:
+> > > > > On Tue, Mar 24, 2020 at 10:50 AM KP Singh <kpsingh@chromium.org> =
+wrote:
+> > > > >> On 24-M=C3=A4r 10:35, Stephen Smalley wrote:
+> > > > >>> On Mon, Mar 23, 2020 at 12:46 PM KP Singh <kpsingh@chromium.org=
+> wrote:
+> > > > >>>> From: KP Singh <kpsingh@google.com>
+> > > > >>>> diff --git a/kernel/bpf/bpf_lsm.c b/kernel/bpf/bpf_lsm.c
+> > > > >>>> index 530d137f7a84..2a8131b640b8 100644
+> > > > >>>> --- a/kernel/bpf/bpf_lsm.c
+> > > > >>>> +++ b/kernel/bpf/bpf_lsm.c
+> > > > >>>> @@ -9,6 +9,9 @@
+> > > > >>>>  #include <linux/btf.h>
+> > > > >>>>  #include <linux/lsm_hooks.h>
+> > > > >>>>  #include <linux/bpf_lsm.h>
+> > > > >>>> +#include <linux/jump_label.h>
+> > > > >>>> +#include <linux/kallsyms.h>
+> > > > >>>> +#include <linux/bpf_verifier.h>
+> > > > >>>>
+> > > > >>>>  /* For every LSM hook  that allows attachment of BPF programs=
+, declare a NOP
+> > > > >>>>   * function where a BPF program can be attached as an fexit t=
+rampoline.
+> > > > >>>> @@ -27,6 +30,32 @@ noinline __weak void bpf_lsm_##NAME(__VA_AR=
+GS__) {}
+> > > > >>>>  #include <linux/lsm_hook_names.h>
+> > > > >>>>  #undef LSM_HOOK
+> > > > >>>>
+> > > > >>>> +#define BPF_LSM_SYM_PREFX  "bpf_lsm_"
+> > > > >>>> +
+> > > > >>>> +int bpf_lsm_verify_prog(struct bpf_verifier_log *vlog,
+> > > > >>>> +                       const struct bpf_prog *prog)
+> > > > >>>> +{
+> > > > >>>> +       /* Only CAP_MAC_ADMIN users are allowed to make change=
+s to LSM hooks
+> > > > >>>> +        */
+> > > > >>>> +       if (!capable(CAP_MAC_ADMIN))
+> > > > >>>> +               return -EPERM;
+> > > > >>> I had asked before, and will ask again: please provide an expli=
+cit LSM
+> > > > >>> hook for mediating whether one can make changes to the LSM hook=
+s.
+> > > > >>> Neither CAP_MAC_ADMIN nor CAP_SYS_ADMIN suffices to check this =
+for SELinux.
+> > > > >> What do you think about:
+> > > > >>
+> > > > >>   int security_check_mutable_hooks(void)
+> > > > >>
+> > > > >> Do you have any suggestions on the signature of this hook? Does =
+this
+> > > > >> hook need to be BPF specific?
+> > > > > I'd do something like int security_bpf_prog_attach_security(const
+> > > > > struct bpf_prog *prog) or similar.
+> > > > > Then the security module can do a check based on the current task
+> > > > > and/or the prog.  We already have some bpf-specific hooks.
+> > > >
+> > > > I *strongly* disagree with Stephen on this. KRSI and SELinux are pe=
+ers.
+> > > > Just as Yama policy is independent of SELinux policy so KRSI policy=
+ should
+> > > > be independent of SELinux policy. I understand the argument that BD=
+F programs
+> > > > ought to be constrained by SELinux, but I don't think it's right. F=
+urther,
+> > > > we've got unholy layering when security modules call security_ func=
+tions.
+> > > > I'm not saying there is no case where it would be appropriate, but =
+this is not
+> > > > one of them.
+> > >
+> > > I explained this previously.  The difference is that the BPF programs
+> > > are loaded from a userspace
+> > > process, not a kernel-resident module.  They already recognize there
+> > > is a difference here or
+> > > they wouldn't have the CAP_MAC_ADMIN check above in their patch.  The
+> > > problem with that
+> > > check is just that CAP_MAC_ADMIN doesn't necessarily mean fully
+> > > privileged with respect to
+> > > SELinux, which is why I want an explicit hook.  This gets a NAK from
+> > > me until there is such a hook.
+> >
+> > Doesn't the existing int (*bpf_prog)(struct bpf_prog *prog); cover
+> > SELinux's need here? I.e. it can already examine that a hook is being
+> > created for the LSM (since it has a distinct type, etc)?
+>
+> I was about to say the same, specifically for the BPF use-case, we do
+> have the "bpf_prog" i.e. :
+>
+> "Do a check when the kernel generate and return a file descriptor for
+> eBPF programs."
+>
+> SELinux can implement its policy logic for BPF_PROG_TYPE_LSM by
+> providing a callback for this hook.
 
-I've been thinking we'll likely want to have a big patch series that
-removes all the old "duplicate" boot params and adds some kind of
-"alias" mechanism.
-
-Vlastimil, have you happened to keep a list of other "redundant" boot
-params you've noticed in the kernel? I bet there are a lot. :)
-
--- 
-Kees Cook
+Ok.  In that case do we really need the capable() check here at all?
