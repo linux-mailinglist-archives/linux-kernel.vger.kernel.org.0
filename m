@@ -2,127 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 20D8A190D3C
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 13:21:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A6E45190D34
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 13:20:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727540AbgCXMUz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 08:20:55 -0400
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:37705 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727422AbgCXMUy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 08:20:54 -0400
-Received: by mail-lf1-f68.google.com with SMTP id j11so12978055lfg.4
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Mar 2020 05:20:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=xE4MP5AqUCPd9XtoEWD/FK2YPE6NfLNz1ySPK/KUqcg=;
-        b=XS7FO5quXRQMzlcU6oLgb0XC3ZGpFmBkGVb2+urTxc0RoXE+LhQwMcjmE1iMAOa4zj
-         5PDAtVRds458I1ZL9d59wLIw4CZpPrU4m4igICIiVAXvDor0bsq0DssE4nmVlA1PDTlr
-         9Juvmpsk6zwiXtmO5tbpYKysU5GPTSeag89VuFevHBL8HovL4xeC2CptKa/9avBarldI
-         TNKRCuIdtZyWoZlwAcrKcb4Cq5dHK9UKgDmiunIO8+8Ty4coajwPeKXNmvWqU9OBiiIQ
-         YkQFBoINbMMKzAyLh7/C9VyRE7zFm2KikI2U9i1pS66meUqbKQlBhvdRAOHMPTiLB293
-         udYg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=xE4MP5AqUCPd9XtoEWD/FK2YPE6NfLNz1ySPK/KUqcg=;
-        b=grj27stl3DT+ceT9W8TjI3vM7JJPbxmTopqHICDSkHbEYaBYiat33xTcUxa2HUuJ14
-         3hpn3zncw0LU85bAIAqnVeJxUYJaSCw21q2VppXGOKdMqNphGQXboGwbdiiPADz8YRtY
-         7b8NskihlvkRRpnwUnulWf7l3xuk9zKtileBMhB6Meo7SvH7+2UJeOtKJks0ezlbA8Om
-         4HfaFHzbAkTS8amCm5QvQnTDs1zTjo2Hxdapm+jN66945h3+70eZyi9h8ijuU3IVlyMX
-         t4a/AE9V51XAwfDQJH0Vf7qL2hOEg/obJjuxcXAmpicKEkfD4k3QSzlPLHBBFC9DJmnU
-         e+Xg==
-X-Gm-Message-State: ANhLgQ3u89l5l2wRVBylfMYxwAuFuMb1XdtpREv7in6nb6VPZeoESRcs
-        T4Ex5X7CidCeHxEK+0kcyQ46IBXEv8+9CA5RNo/veA==
-X-Google-Smtp-Source: ADFU+vvOwzEWB/KB6v68gGlAUeCZXrHF76lOWQJ2agZ6yCYIP2gtQNst0yT5ZM3f+idvKa0KVyZTDM7DqQh+3t9vivQ=
-X-Received: by 2002:ac2:5b49:: with SMTP id i9mr2148928lfp.21.1585052452258;
- Tue, 24 Mar 2020 05:20:52 -0700 (PDT)
+        id S1727323AbgCXMUW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 08:20:22 -0400
+Received: from vps0.lunn.ch ([185.16.172.187]:54156 "EHLO vps0.lunn.ch"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727161AbgCXMUW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Mar 2020 08:20:22 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+        s=20171124; h=In-Reply-To:Content-Transfer-Encoding:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=pXWFCcdJO8akl4rGuYz9ZIQj1bJiMdcrPKoInwmnqv0=; b=6XdVZySdOeqUJwBUZiP1uu6hSJ
+        RNqKrZKoX1H5ErMOy/+4NEuUpXD3WEHZgxinaQR0j0mBwW8WqzyYKSP1FDFYhSmT6ocWBEc7vLvJe
+        XOhUsnq1Qbx92j8YMcbi5OH556mcZ2mwtYRZ2q1LgrFhWh3IN5yY14foEMd/m2J6lDkg=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.93)
+        (envelope-from <andrew@lunn.ch>)
+        id 1jGiXZ-0001TW-SD; Tue, 24 Mar 2020 13:20:17 +0100
+Date:   Tue, 24 Mar 2020 13:20:17 +0100
+From:   Andrew Lunn <andrew@lunn.ch>
+To:     Marek =?iso-8859-1?Q?Beh=FAn?= <marek.behun@nic.cz>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+        Peng Fan <peng.fan@nxp.com>
+Subject: Re: [PATCH pinctrl REGRESSION] Revert "pinctrl: mvebu: armada-37xx:
+ use use platform api"
+Message-ID: <20200324122017.GR3819@lunn.ch>
+References: <20200324004413.14355-1-marek.behun@nic.cz>
 MIME-Version: 1.0
-References: <20200323234505.226919-1-rajatja@google.com> <20200324115059.GA2333340@kroah.com>
-In-Reply-To: <20200324115059.GA2333340@kroah.com>
-From:   Rajat Jain <rajatja@google.com>
-Date:   Tue, 24 Mar 2020 05:20:14 -0700
-Message-ID: <CACK8Z6EHAv03XGXT0sY2H3TSjS4-yQtCscbHG_o1qCuG94zb6g@mail.gmail.com>
-Subject: Re: [PATCH RESEND 1/5] input/serio/i8042: Attach fwnode to serio
- i8042 kbd device
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Dmitry Torokhov <dtor@google.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Enrico Weigelt <info@metux.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Allison Randal <allison@lohutok.net>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Stephen Boyd <swboyd@chromium.org>,
-        linux-input <linux-input@vger.kernel.org>,
-        devicetree@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Furquan Shaikh <furquan@google.com>,
-        Duncan Laurie <dlaurie@google.com>,
-        Benson Leung <bleung@google.com>,
-        Zentaro Kavanagh <zentaro@google.com>,
-        Dominik Behr <dbehr@google.com>,
-        Rajat Jain <rajatxjain@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200324004413.14355-1-marek.behun@nic.cz>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On Tue, Mar 24, 2020 at 01:44:13AM +0100, Marek Behún wrote:
+> This reverts commit 06e26b75f5e613b400116fdb7ff6206a681ab271.
+> 
+> This commit caused a regression on Armada 37xx. The pinctrl driver says
+>   armada-37xx-pinctrl d0013800.pinctrl: invalid or no IRQ
+>   armada-37xx-pinctrl d0018800.pinctrl: invalid or no IRQ
+> and afterwards other drivers cannot use GPIOs by this driver as IRQs.
+> 
+> Fixes: 06e26b75f5e6 ("pinctrl: mvebu: armada-37xx: use use platform...")
+> Signed-off-by: Marek Behún <marek.behun@nic.cz>
+> Cc: Peng Fan <peng.fan@nxp.com>
+> ---
+>  drivers/pinctrl/mvebu/pinctrl-armada-37xx.c | 12 +++---------
+>  1 file changed, 3 insertions(+), 9 deletions(-)
+> 
+> diff --git a/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c b/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c
+> index 32f12a388b3c..5f125bd6279d 100644
+> --- a/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c
+> +++ b/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c
+> @@ -15,6 +15,7 @@
+>  #include <linux/of.h>
+>  #include <linux/of_address.h>
+>  #include <linux/of_device.h>
+> +#include <linux/of_irq.h>
+>  #include <linux/pinctrl/pinconf-generic.h>
+>  #include <linux/pinctrl/pinconf.h>
+>  #include <linux/pinctrl/pinctrl.h>
+> @@ -741,14 +742,7 @@ static int armada_37xx_irqchip_register(struct platform_device *pdev,
+>  		return ret;
+>  	}
+>  
+> -	nr_irq_parent = platform_irq_count(pdev);
 
-On Tue, Mar 24, 2020 at 4:51 AM Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> On Mon, Mar 23, 2020 at 04:45:01PM -0700, Rajat Jain wrote:
-> > Attach the firmware node to the serio i8042 kbd device so that device
-> > properties can be passed from the firmware.
-> >
-> > Signed-off-by: Rajat Jain <rajatja@google.com>
-> > Change-Id: I36032f4bdee1dc52f26b57734068fd0ee7a6db0b
->
-> Didn't you run checkpatch.pl on your patches which told you to remove
-> all of these Change-Id: values?
+Hi Marek
 
-My apologies. However I did run checkpatch.pl on my patches before
-sending (also checked just now again) and it did not complain about
-the Change-Id values in the commit log. Not sure if I'm running the
-command incorrectly?
+Could you determine the value of nr_irq_parent(). Is it -EPROBE_DEFER?
+This patch has removed the handling of that.
 
-rajatja@rajat2:~/stock_kernel/linux$ ./scripts/checkpatch.pl
-../patches/input_atkbd/v1/000*
------------------------------------------------------------------------------------------
-../patches/input_atkbd/v1/0001-input-serio-i8042-Attach-fwnode-to-serio-i8042-kbd-d.patch
------------------------------------------------------------------------------------------
-total: 0 errors, 0 warnings, 28 lines checked
+> -	if (nr_irq_parent < 0) {
+> -		if (nr_irq_parent != -EPROBE_DEFER)
+> -			dev_err(dev, "Couldn't determine irq count: %pe\n",
+> -				ERR_PTR(nr_irq_parent));
+> -		return nr_irq_parent;
+> -	}
 
-../patches/input_atkbd/v1/0001-input-serio-i8042-Attach-fwnode-to-serio-i8042-kbd-d.patch
-has no obvious style problems and is ready for submission.
------------------------------------------------------------------------------------------
-../patches/input_atkbd/v1/0002-Input-atkbd-Expose-function-row-physical-map-to-user.patch
------------------------------------------------------------------------------------------
-total: 0 errors, 0 warnings, 106 lines checked
-../patches/input_atkbd/v1/0002-Input-atkbd-Expose-function-row-physical-map-to-user.patch
-has no obvious style problems and is ready for submission.
-......
-<snip>
-......
-
-I will now resubmit the patches removing the Change-Id(s).
-
-Thanks & Best Regards,
-
-Rajat
-
-
-
->
-> Please do so...
->
-> greg k-h
+Thanks
+	Andrew
