@@ -2,90 +2,55 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 817E519105C
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 14:31:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 986F219111E
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 14:39:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729813AbgCXN11 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 09:27:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53054 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727738AbgCXN1Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 09:27:25 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 06294208D6;
-        Tue, 24 Mar 2020 13:27:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585056445;
-        bh=TJSgWLjZqZ062BhG1QYysmN7zPRFVUmoSPFqx57+PJs=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xcBmoupzQioQVudl0w/xeAgwFjLEWmh8lzc2FKvy8moAwCWBaBZQRvuGr5KzINnSW
-         5Th/cVIQi5dQZMb7qP5XPZLVzeh8qZwYPIcWpKbI957je2DjgSMGpzPM5KYPXuRM2R
-         pgrPBkV5Eg8x7fS3qWLAbcGwTyQ7JmA/UQ9YJMfg=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, George Spelvin <lkml@sdf.org>,
-        Masahiro Yamada <masahiroy@kernel.org>
-Subject: [PATCH 5.5 119/119] int128: fix __uint128_t compiler test in Kconfig
-Date:   Tue, 24 Mar 2020 14:11:44 +0100
-Message-Id: <20200324130819.391456542@linuxfoundation.org>
-X-Mailer: git-send-email 2.25.2
-In-Reply-To: <20200324130808.041360967@linuxfoundation.org>
-References: <20200324130808.041360967@linuxfoundation.org>
-User-Agent: quilt/0.66
+        id S1728405AbgCXNQQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 09:16:16 -0400
+Received: from mail-io1-f65.google.com ([209.85.166.65]:34503 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727706AbgCXNQK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Mar 2020 09:16:10 -0400
+Received: by mail-io1-f65.google.com with SMTP id h131so18059104iof.1
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Mar 2020 06:16:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:from:date:message-id:subject:to;
+        bh=tCoFcfIl2BF339l9XKecEMlfVSOedolEbV4Wp8R4ir8=;
+        b=kJTQZJz16ttl9AhXH0wSKW3bc0+4kxHEr2PBq8dYgxtOrOJMvAAV/tlqOvMi5kSUpA
+         CJ3B+wqcGLhc35CxbZS1OO6IUg2RPwiX+br2zzYKtaPD+4dsGXqdZmhAHZSLbhU26xXo
+         yuEzAALXR0B5VOqDDGA82UvIU3SQiRccDyA3UV4+LRD027FN1Dt+bOL703t6XLiwLUnE
+         DiWxMJ/leu2QrTqk0rcvoRiGFk/2QLC+lCQ8OtJTJ0oqc7det83iX4M9Is0tcqpw0DEU
+         jkHT6FHFJz2xqp7CSAaj36zS+j+LcHd4HvsXa5bxS3eip4423cVOk8NapOVcBVSGwllG
+         jEZw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
+        bh=tCoFcfIl2BF339l9XKecEMlfVSOedolEbV4Wp8R4ir8=;
+        b=Lfi6dw8FOyXjpqbkubsFqiRxJGGe3UkzHQf6/N24PFS6KgXt8VHtgcijHL++H1/95D
+         OMHFNOJBahaO+T1ZpBnxs4ozZy9YACMv0diApjTn/+kIUrHAHKDHGiepYibbp6j+C7Lu
+         w9E179stiuslVz+6gDgRQ478VAs2vqI/iLJwsBP0Zu9jZrlaL5zxoZluqH9Nvja7V2bp
+         y9xfTipy+EP616BVOv8L/HLA/hpMrSTteALhpCyO9dKbYSQM01V/PgzYXIksOzvn5xWA
+         2h3yUxtxrYsWA4UxD7OWVY1DTUZbCmvsmBcAUAapfFe325LK/VXYBqOMORUB3KPtxOEf
+         Sm5A==
+X-Gm-Message-State: ANhLgQ2PHkYzdFEvObR0pGwIu/iiJvLln0Vzbsg9Jlky6ucZAyln6mZX
+        nR46SHdjLoHNgzaysiJpYQpkplS82NsdIfyPIxc=
+X-Google-Smtp-Source: ADFU+vvWDA0iEnIZqjKTdy4epfAohnOcp42E+PfVxg5Qr2j2iZS+GWKwyywcsQSXwggIvCw532panE0CuX4UBXrE7iA=
+X-Received: by 2002:a02:6055:: with SMTP id d21mr2410441jaf.21.1585055769894;
+ Tue, 24 Mar 2020 06:16:09 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Received: by 2002:a02:374f:0:0:0:0:0 with HTTP; Tue, 24 Mar 2020 06:16:09
+ -0700 (PDT)
+From:   Tam david <bnrdkojo@gmail.com>
+Date:   Tue, 24 Mar 2020 14:16:09 +0100
+Message-ID: <CAMKMxnd3jHdQ6Efg+ynJnqKx0GJBsW6-LbMTpdM7BgOvOi9mww@mail.gmail.com>
+Subject: ??
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Masahiro Yamada <masahiroy@kernel.org>
-
-commit 3a7c733165a4799fa1beb262fe244bfbcdd1c163 upstream.
-
-The support for __uint128_t is dependent on the target bit size.
-
-GCC that defaults to the 32-bit can still build the 64-bit kernel
-with -m64 flag passed.
-
-However, $(cc-option,-D__SIZEOF_INT128__=0) is evaluated against the
-default machine bit, which may not match to the kernel it is building.
-
-Theoretically, this could be evaluated separately for 64BIT/32BIT.
-
-  config CC_HAS_INT128
-          bool
-          default !$(cc-option,$(m64-flag) -D__SIZEOF_INT128__=0) if 64BIT
-          default !$(cc-option,$(m32-flag) -D__SIZEOF_INT128__=0)
-
-I simplified it more because the 32-bit compiler is unlikely to support
-__uint128_t.
-
-Fixes: c12d3362a74b ("int128: move __uint128_t compiler test to Kconfig")
-Reported-by: George Spelvin <lkml@sdf.org>
-Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
-Tested-by: George Spelvin <lkml@sdf.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
----
- init/Kconfig |    3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
---- a/init/Kconfig
-+++ b/init/Kconfig
-@@ -767,8 +767,7 @@ config ARCH_WANT_BATCHED_UNMAP_TLB_FLUSH
- 	bool
- 
- config CC_HAS_INT128
--	def_bool y
--	depends on !$(cc-option,-D__SIZEOF_INT128__=0)
-+	def_bool !$(cc-option,$(m64-flag) -D__SIZEOF_INT128__=0) && 64BIT
- 
- #
- # For architectures that know their GCC __int128 support is sound
-
-
+Good afternoon, please, did you receive my previous message?
