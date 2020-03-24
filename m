@@ -2,65 +2,58 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A4A671904A8
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 05:52:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1629C1904AD
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 05:54:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727145AbgCXEwx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 00:52:53 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:56382 "EHLO
+        id S1727205AbgCXEyY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 00:54:24 -0400
+Received: from shards.monkeyblade.net ([23.128.96.9]:56398 "EHLO
         shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725827AbgCXEwx (ORCPT
+        with ESMTP id S1725827AbgCXEyX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 00:52:53 -0400
+        Tue, 24 Mar 2020 00:54:23 -0400
 Received: from localhost (unknown [IPv6:2601:601:9f00:477::3d5])
         (using TLSv1 with cipher AES256-SHA (256/256 bits))
         (Client did not present a certificate)
         (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id DC450157A57E8;
-        Mon, 23 Mar 2020 21:52:52 -0700 (PDT)
-Date:   Mon, 23 Mar 2020 21:52:51 -0700 (PDT)
-Message-Id: <20200323.215251.2231810044873788090.davem@davemloft.net>
-To:     mkubecek@suse.cz
-Cc:     kuba@kernel.org, netdev@vger.kernel.org, andrew@lunn.ch,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net v2] ethtool: fix reference leak in some *_SET
- handlers
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id 233D3157A5EBC;
+        Mon, 23 Mar 2020 21:54:23 -0700 (PDT)
+Date:   Mon, 23 Mar 2020 21:54:22 -0700 (PDT)
+Message-Id: <20200323.215422.456286022120023020.davem@davemloft.net>
+To:     zhengzengkai@huawei.com
+Cc:     sgoutham@marvell.com, rrichter@marvell.com, ast@kernel.org,
+        linux-arm-kernel@lists.infradead.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, bpf@vger.kernel.org
+Subject: Re: [PATCH net-next] net: thunderx: remove set but not used
+ variable 'tail'
 From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20200322212421.4A8B1E0FD3@unicorn.suse.cz>
-References: <20200322212421.4A8B1E0FD3@unicorn.suse.cz>
+In-Reply-To: <20200323065116.45399-1-zhengzengkai@huawei.com>
+References: <20200323065116.45399-1-zhengzengkai@huawei.com>
 X-Mailer: Mew version 6.8 on Emacs 26.1
 Mime-Version: 1.0
 Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Mon, 23 Mar 2020 21:52:53 -0700 (PDT)
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Mon, 23 Mar 2020 21:54:23 -0700 (PDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Michal Kubecek <mkubecek@suse.cz>
-Date: Sun, 22 Mar 2020 22:24:21 +0100 (CET)
+From: Zheng Zengkai <zhengzengkai@huawei.com>
+Date: Mon, 23 Mar 2020 14:51:16 +0800
 
-> Andrew noticed that some handlers for *_SET commands leak a netdev
-> reference if required ethtool_ops callbacks do not exist. A simple
-> reproducer would be e.g.
+> From: Zheng zengkai <zhengzengkai@huawei.com>
 > 
->   ip link add veth1 type veth peer name veth2
->   ethtool -s veth1 wol g
->   ip link del veth1
+> Fixes gcc '-Wunused-but-set-variable' warning:
 > 
-> Make sure dev_put() is called when ethtool_ops check fails.
+> drivers/net/ethernet/cavium/thunder/nicvf_queues.c: In function nicvf_sq_free_used_descs:
+> drivers/net/ethernet/cavium/thunder/nicvf_queues.c:1182:12: warning:
+>  variable tail set but not used [-Wunused-but-set-variable]
 > 
-> v2: add Fixes tags
+> It's not used since commit 4863dea3fab01("net: Adding support for Cavium ThunderX network controller"),
+> so remove it.
 > 
-> Fixes: a53f3d41e4d3 ("ethtool: set link settings with LINKINFO_SET request")
-> Fixes: bfbcfe2032e7 ("ethtool: set link modes related data with LINKMODES_SET request")
-> Fixes: e54d04e3afea ("ethtool: set message mask with DEBUG_SET request")
-> Fixes: 8d425b19b305 ("ethtool: set wake-on-lan settings with WOL_SET request")
-> Reported-by: Andrew Lunn <andrew@lunn.ch>
-> Signed-off-by: Michal Kubecek <mkubecek@suse.cz>
-> Reviewed-by: Andrew Lunn <andrew@lunn.ch>
-> Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
-> Reviewed-by: Jakub Kicinski <kuba@kernel.org>
+> Reported-by: Hulk Robot <hulkci@huawei.com>
+> Signed-off-by: Zheng zengkai <zhengzengkai@huawei.com>
 
-Applied, thanks Michal.
+Applied, thank you.
