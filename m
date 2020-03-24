@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 80EC2190F0F
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 14:19:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6ECCE190F11
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 14:19:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727318AbgCXNRJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 09:17:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36772 "EHLO mail.kernel.org"
+        id S1728550AbgCXNRP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 09:17:15 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36796 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728532AbgCXNRE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 09:17:04 -0400
+        id S1728541AbgCXNRH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Mar 2020 09:17:07 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 13961208E4;
-        Tue, 24 Mar 2020 13:17:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8C40B208CA;
+        Tue, 24 Mar 2020 13:17:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585055824;
-        bh=c89utpjyJCM1WC9RrJfhwK+FgjmLnvI7luTATiwF9VM=;
+        s=default; t=1585055827;
+        bh=r2X6fsZEwcykOYrQSgZiDy/C07x8LDvGB1GD/s6K1Dc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=WLRMk4vZQaQPpdBfsjxfJX1pxspneTg448M7COQBcuxeaKIysARI/gACfWF1g94fn
-         9J9lFm03KvTLZd6YsQ/TrJ0t68cNwc7boUbkWrO5Wr50Z/pPbjOp2Bc0kml3cyT66G
-         QI/9BqKcFTUzfh/qVxmyqXlpgr1n4kFoOtgB9ZUY=
+        b=iz48MhSeiZmzHiTDkk8jD8NSUoYgZOfKVbR2LSYltxpj/Q3SZu9jo0HubNdvV4ohb
+         liiKRTynUw5qg4EYB13xwpjeIWfVKrsX5pzVD3WVVyiE0e9LSY/MfZnbD0xMxPyMQH
+         g/r9aP1j7TU165ItrsEak3+6qq59ESm4ggCB880k=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -30,9 +30,9 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Grygorii Strashko <grygorii.strashko@ti.com>,
         Kishon Vijay Abraham I <kishon@ti.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 005/102] phy: ti: gmii-sel: fix set of copy-paste errors
-Date:   Tue, 24 Mar 2020 14:09:57 +0100
-Message-Id: <20200324130807.051713049@linuxfoundation.org>
+Subject: [PATCH 5.4 006/102] phy: ti: gmii-sel: do not fail in case of gmii
+Date:   Tue, 24 Mar 2020 14:09:58 +0100
+Message-Id: <20200324130807.161725813@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.2
 In-Reply-To: <20200324130806.544601211@linuxfoundation.org>
 References: <20200324130806.544601211@linuxfoundation.org>
@@ -47,54 +47,30 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Grygorii Strashko <grygorii.strashko@ti.com>
 
-[ Upstream commit eefed634eb61e4094b9fb8183cb8d43b26838517 ]
+[ Upstream commit 58aa7729310db04ffcc022c98002dd8fcb486c58 ]
 
-- under PHY_INTERFACE_MODE_MII the 'mode' func parameter is assigned
-instead of 'gmii_sel_mode' and it's working only because the default value
-'gmii_sel_mode' is set to 0.
-
-- console outputs use 'rgmii_id' and 'mode' values to print PHY mode
-instead of using 'submode' value which is representing PHY interface mode
-now.
-
-This patch fixes above two cases.
+The "gmii" PHY interface mode is supported on TI AM335x/437x/5xx SoCs, so
+don't fail if it's selected.
 
 Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
 Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/phy/ti/phy-gmii-sel.c | 9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
+ drivers/phy/ti/phy-gmii-sel.c | 1 +
+ 1 file changed, 1 insertion(+)
 
 diff --git a/drivers/phy/ti/phy-gmii-sel.c b/drivers/phy/ti/phy-gmii-sel.c
-index a28bd15297f53..e998e9cd8d1f8 100644
+index e998e9cd8d1f8..1c536fc03c83c 100644
 --- a/drivers/phy/ti/phy-gmii-sel.c
 +++ b/drivers/phy/ti/phy-gmii-sel.c
-@@ -80,20 +80,19 @@ static int phy_gmii_sel_mode(struct phy *phy, enum phy_mode mode, int submode)
+@@ -80,6 +80,7 @@ static int phy_gmii_sel_mode(struct phy *phy, enum phy_mode mode, int submode)
  		break;
  
  	case PHY_INTERFACE_MODE_MII:
--		mode = AM33XX_GMII_SEL_MODE_MII;
-+		gmii_sel_mode = AM33XX_GMII_SEL_MODE_MII;
++	case PHY_INTERFACE_MODE_GMII:
+ 		gmii_sel_mode = AM33XX_GMII_SEL_MODE_MII;
  		break;
  
- 	default:
--		dev_warn(dev,
--			 "port%u: unsupported mode: \"%s\". Defaulting to MII.\n",
--			 if_phy->id, phy_modes(rgmii_id));
-+		dev_warn(dev, "port%u: unsupported mode: \"%s\"\n",
-+			 if_phy->id, phy_modes(submode));
- 		return -EINVAL;
- 	}
- 
- 	if_phy->phy_if_mode = submode;
- 
- 	dev_dbg(dev, "%s id:%u mode:%u rgmii_id:%d rmii_clk_ext:%d\n",
--		__func__, if_phy->id, mode, rgmii_id,
-+		__func__, if_phy->id, submode, rgmii_id,
- 		if_phy->rmii_clock_external);
- 
- 	regfield = if_phy->fields[PHY_GMII_SEL_PORT_MODE];
 -- 
 2.20.1
 
