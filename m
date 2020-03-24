@@ -2,89 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 016761909B8
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 10:43:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D58BA1909C4
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 10:43:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727298AbgCXJmC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 05:42:02 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:38406 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726413AbgCXJmB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 05:42:01 -0400
-Received: by mail-wr1-f67.google.com with SMTP id s1so20538423wrv.5;
-        Tue, 24 Mar 2020 02:41:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=dfxSm/ZXM3N66X722SNsL52L/LGFXqsTtz+9P19Vsaw=;
-        b=t3N5twz1dwcUQlv/08FOM9GloZJW4uZFPOoAGwANFxm+gRTe7xCqofDI6qPDLyif0I
-         EKQz1253Y/rNmPOh+fUE4y4OiDiLPLkrhoI+TKhmK5sjXDtCL1D/LuEtCUxjkMZaId07
-         o8mmzuIja7j7REE1UdenUBxgPbbhXKBA4dwFA35SfT6ap1e8zFHy1RkAomULznQlAi+0
-         As9q2Ey7X3TXiHSzybimrHuKLKdRiuRPnt49y9lb9QB86QNEIv8xMi1pn2RW97lwZ1E5
-         KagS2B/fuqU5oVwOCble67kAx9WmHsXkcznJRjUbSoe/wtRfhnhF7FZoQbaImvc6yha/
-         2JJg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=dfxSm/ZXM3N66X722SNsL52L/LGFXqsTtz+9P19Vsaw=;
-        b=T/GdH9XMtzb3A6VaAhLe3kOxamZ/bT/6dAITYG5a32ajYH/8KPOQLTNSCf8bypuUOr
-         dF5yJolwz+Mc0Py+136eDPFlamnP4U6OgcQ0zrHIrf2Mk4YUgQjGWNVaD9MPCjrb2Ulv
-         KmcKSZiAV1ffRxp/hh1T7BIPduMLe35/HBRfPx+DThhtJJXxZsHAAJlKV5E0ZYFHCwbG
-         T9EkFmU1dwt36ds+bWE0vs4ErBgzZDpvfcwMEBLF34jmvJGRtOXVWXaMTj+negtBMu0E
-         w0gVqt5su49DkWhh03ZVIFRgwadDvmG/pz1HBosieOqztqbQqcfIynsRWyJALDBbzFlj
-         MRQw==
-X-Gm-Message-State: ANhLgQ3VhfIiXJnu9GU36Mh0BnJ8K7MMrvPnpL9gs9xyluTvLT2S6+K6
-        vhKNZGmFccBZ4cmVF+hdt54=
-X-Google-Smtp-Source: ADFU+vvzCwo910TMGcnGtFYdDqZ3y/Vb2IoyGQ7eCMIcLg9baIfRO2Gk1omipjrbpyK3LZsE5oNM2A==
-X-Received: by 2002:adf:d0cb:: with SMTP id z11mr13022001wrh.1.1585042919263;
-        Tue, 24 Mar 2020 02:41:59 -0700 (PDT)
-Received: from debian.home (ip51ccf9cd.speed.planet.nl. [81.204.249.205])
-        by smtp.gmail.com with ESMTPSA id r15sm22489916wra.19.2020.03.24.02.41.58
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 24 Mar 2020 02:41:58 -0700 (PDT)
-From:   Johan Jonker <jbx6244@gmail.com>
-To:     lgirdwood@gmail.com
-Cc:     broonie@kernel.org, heiko@sntech.de, robh+dt@kernel.org,
-        alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 3/3] dt-bindings: sound: rockchip-i2s: add power-domains property
-Date:   Tue, 24 Mar 2020 10:41:49 +0100
-Message-Id: <20200324094149.6904-3-jbx6244@gmail.com>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20200324094149.6904-1-jbx6244@gmail.com>
-References: <20200324094149.6904-1-jbx6244@gmail.com>
+        id S1727452AbgCXJmW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 05:42:22 -0400
+Received: from 8bytes.org ([81.169.241.247]:55346 "EHLO theia.8bytes.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727230AbgCXJmA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Mar 2020 05:42:00 -0400
+Received: by theia.8bytes.org (Postfix, from userid 1000)
+        id 279EF2E2; Tue, 24 Mar 2020 10:41:59 +0100 (CET)
+From:   Joerg Roedel <joro@8bytes.org>
+To:     Paolo Bonzini <pbonzini@redhat.com>
+Cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Ashish Kalra <Ashish.Kalra@amd.com>,
+        Brijesh Singh <brijesh.singh@amd.com>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 0/4] KVM: SVM: Move and split up svm.c
+Date:   Tue, 24 Mar 2020 10:41:50 +0100
+Message-Id: <20200324094154.32352-1-joro@8bytes.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In the old txt situation we add/describe only properties that are used
-by the driver/hardware itself. With yaml it also filters things in a
-node that are used by other drivers like 'power-domains' for rk3399,
-so add it to 'rockchip-i2s.yaml'.
+Hi,
 
-Signed-off-by: Johan Jonker <jbx6244@gmail.com>
----
- Documentation/devicetree/bindings/sound/rockchip-i2s.yaml | 3 +++
- 1 file changed, 3 insertions(+)
+here is a patch-set agains kvm/queue which moves svm.c into its own
+subdirectory arch/x86/kvm/svm/ and splits moves parts of it into
+separate source files:
 
-diff --git a/Documentation/devicetree/bindings/sound/rockchip-i2s.yaml b/Documentation/devicetree/bindings/sound/rockchip-i2s.yaml
-index 7cd0e278e..a3ba2186d 100644
---- a/Documentation/devicetree/bindings/sound/rockchip-i2s.yaml
-+++ b/Documentation/devicetree/bindings/sound/rockchip-i2s.yaml
-@@ -56,6 +56,9 @@ properties:
-       - const: tx
-       - const: rx
- 
-+  power-domains:
-+    maxItems: 1
-+
-   rockchip,capture-channels:
-     allOf:
-       - $ref: /schemas/types.yaml#/definitions/uint32
+	- The parts related to nested SVM to nested.c
+
+	- AVIC implementation to avic.c
+
+	- The SEV parts to sev.c
+
+I have tested the changes in a guest with and without SEV.
+
+Please review.
+
+Thanks,
+
+	Joerg
+
+Joerg Roedel (4):
+  kVM SVM: Move SVM related files to own sub-directory
+  KVM: SVM: Move Nested SVM Implementation to nested.c
+  KVM: SVM: Move AVIC code to separate file
+  KVM: SVM: Move SEV code to separate file
+
+ arch/x86/kvm/Makefile                 |    2 +-
+ arch/x86/kvm/svm/avic.c               | 1025 ++++
+ arch/x86/kvm/svm/nested.c             |  823 ++++
+ arch/x86/kvm/{pmu_amd.c => svm/pmu.c} |    0
+ arch/x86/kvm/svm/sev.c                | 1178 +++++
+ arch/x86/kvm/{ => svm}/svm.c          | 6546 ++++++-------------------
+ arch/x86/kvm/svm/svm.h                |  491 ++
+ 7 files changed, 5106 insertions(+), 4959 deletions(-)
+ create mode 100644 arch/x86/kvm/svm/avic.c
+ create mode 100644 arch/x86/kvm/svm/nested.c
+ rename arch/x86/kvm/{pmu_amd.c => svm/pmu.c} (100%)
+ create mode 100644 arch/x86/kvm/svm/sev.c
+ rename arch/x86/kvm/{ => svm}/svm.c (56%)
+ create mode 100644 arch/x86/kvm/svm/svm.h
+
 -- 
-2.11.0
+2.17.1
 
