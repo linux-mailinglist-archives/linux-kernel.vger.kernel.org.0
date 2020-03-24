@@ -2,88 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CE2D5191537
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 16:45:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 590FD191549
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 16:48:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728316AbgCXPoy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 11:44:54 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39420 "EHLO mail.kernel.org"
+        id S1728041AbgCXPrC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 11:47:02 -0400
+Received: from mga04.intel.com ([192.55.52.120]:21508 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727702AbgCXPoy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 11:44:54 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2993C2076F;
-        Tue, 24 Mar 2020 15:44:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585064693;
-        bh=Xcme7gvaoaEler/5XOMTCI6mA3soOPviGtN4FCyopho=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=qF9LrS4kelpe748kQlZ5E8wVhuGMgtSb4SMICjdzWOLop+7bwmwbLk1wgw5XTOVJC
-         G0aaPPPVVqJ9s9DLzTw1nhQynvTrJJgUgGPocEx927cPJD2fe5etKi9WJrFqxA2G3D
-         /KpZY85qQteOcCtoWrWzNLXzVhPxpXNuw41LHihU=
-Date:   Tue, 24 Mar 2020 16:44:49 +0100
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Taehee Yoo <ap420073@gmail.com>
-Cc:     davem@davemloft.net, kuba@kernel.org, rafael@kernel.org,
-        j.vosburgh@gmail.com, vfalico@gmail.com, andy@greyhouse.net,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        mitch.a.williams@intel.com
-Subject: Re: [PATCH RESEND net 1/3] class: add class_find_and_get_file_ns()
- helper function
-Message-ID: <20200324154449.GC2513347@kroah.com>
-References: <20200324141722.21308-1-ap420073@gmail.com>
+        id S1727678AbgCXPrC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Mar 2020 11:47:02 -0400
+IronPort-SDR: uiF6sACUtv361W6mPKjOmHze75lhDg10tJTIgAWGEdVcLUF/HiAXnvWRSJx6R3CzgQQTmch0hG
+ ZRTNO4yFs5Xg==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Mar 2020 08:47:01 -0700
+IronPort-SDR: 88Vm/iaJ5JzgBwlVh6o6UXLS1iKGkcgdhPzit2FTxm7emrUtmOdXaHAaWP3eB1mkjEFYw+Edl1
+ Ux6vl9GIVuNA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.72,300,1580803200"; 
+   d="scan'208";a="447916586"
+Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
+  by fmsmga006.fm.intel.com with ESMTP; 24 Mar 2020 08:46:59 -0700
+Received: from andy by smile with local (Exim 4.93)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1jGlld-00CZUm-Ob; Tue, 24 Mar 2020 17:47:01 +0200
+Date:   Tue, 24 Mar 2020 17:47:01 +0200
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     "Rafael J. Wysocki" <rafael@kernel.org>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Artem Bityutskiy <artem.bityutskiy@linux.intel.com>,
+        Mark Brown <broonie@kernel.org>,
+        Felipe Balbi <balbi@kernel.org>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Peter Ujfalusi <peter.ujfalusi@ti.com>,
+        Ferry Toth <fntoth@gmail.com>
+Subject: Re: [PATCH v2 1/3] driver core: Break infinite loop when deferred
+ probe can't be satisfied
+Message-ID: <20200324154701.GQ1922688@smile.fi.intel.com>
+References: <20200324122023.9649-1-andriy.shevchenko@linux.intel.com>
+ <CAJZ5v0hQ2vRE8QAWfxwN1auQd5bQS_ROd6do1bMt8GtLtRypRQ@mail.gmail.com>
+ <20200324133903.GK1922688@smile.fi.intel.com>
+ <CAJZ5v0gcLkymFNktG=46rxRc=KUGyztxYXmSZ51UxkKM6POnow@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200324141722.21308-1-ap420073@gmail.com>
+In-Reply-To: <CAJZ5v0gcLkymFNktG=46rxRc=KUGyztxYXmSZ51UxkKM6POnow@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 24, 2020 at 02:17:22PM +0000, Taehee Yoo wrote:
-> The new helper function is to find and get a class file.
-> This function is useful for checking whether the class file is existing
-> or not. This function will be used by networking stack to
-> check "/sys/class/net/*" file.
+On Tue, Mar 24, 2020 at 04:36:56PM +0100, Rafael J. Wysocki wrote:
+>  On Tue, Mar 24, 2020 at 2:39 PM Andy Shevchenko
+> <andriy.shevchenko@linux.intel.com> wrote:
+> > On Tue, Mar 24, 2020 at 01:52:00PM +0100, Rafael J. Wysocki wrote:
+> > > On Tue, Mar 24, 2020 at 1:20 PM Andy Shevchenko
+> > > <andriy.shevchenko@linux.intel.com> wrote:
+
+...
+
+> > > > +               atomic_dec(&probe_okay);
+> > >
+> > > Why is this needed?
+> >
+> > Under successful probe the following is comprehended. When probe of the driver
+> > happens it may be discarded (as in above case) as it was initiated by another
+> > driver which got deferred.
+> >
+> > We also discussed this with Peter [1] during his review.
+> >
+> > [1]: https://lkml.org/lkml/2020/3/12/347
 > 
-> Reported-by: syzbot+830c6dbfc71edc4f0b8f@syzkaller.appspotmail.com
-> Fixes: b76cdba9cdb2 ("[PATCH] bonding: add sysfs functionality to bonding (large)")
-> Signed-off-by: Taehee Yoo <ap420073@gmail.com>
-> ---
->  drivers/base/class.c         | 12 ++++++++++++
->  include/linux/device/class.h |  4 +++-
->  2 files changed, 15 insertions(+), 1 deletion(-)
+> OK, but I would add a comment explaining that to the code.
 > 
-> diff --git a/drivers/base/class.c b/drivers/base/class.c
-> index bcd410e6d70a..dedf41f32f0d 100644
-> --- a/drivers/base/class.c
-> +++ b/drivers/base/class.c
-> @@ -105,6 +105,17 @@ void class_remove_file_ns(struct class *cls, const struct class_attribute *attr,
->  		sysfs_remove_file_ns(&cls->p->subsys.kobj, &attr->attr, ns);
->  }
->  
-> +struct kernfs_node *class_find_and_get_file_ns(struct class *cls,
-> +					       const char *name,
-> +					       const void *ns)
-> +{
-> +	struct kernfs_node *kn = NULL;
-> +
-> +	if (cls)
-> +		kn = kernfs_find_and_get_ns(cls->p->subsys.kobj.sd, name, ns);
-> +	return kn;
-> +}
-> +
+> Also it would be good to explain why probe_okay cannot go below zero
+> here in the changelog.
 
-You can put the EXPORT_SYMBOL_GPL() under here.
+Will do, thank you for review!
 
-And can you document what this function actually is in some kerneldoc?
+-- 
+With Best Regards,
+Andy Shevchenko
 
-But, returning a kernfs_node from a driver core is _REALLY_ odd.  Why do
-you need this and who cares about kernfs here?
 
-thanks,
-
-greg k-h
