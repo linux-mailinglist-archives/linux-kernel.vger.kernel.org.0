@@ -2,408 +2,242 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C0822190BC9
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 12:02:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 19926190BAD
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 12:00:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727509AbgCXLBc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 07:01:32 -0400
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:50384 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727491AbgCXLB3 (ORCPT
+        id S1727145AbgCXLAj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 07:00:39 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:40556 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726911AbgCXLAi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 07:01:29 -0400
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 02OB1SBU081902;
-        Tue, 24 Mar 2020 06:01:28 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1585047688;
-        bh=pvoITDVlUnuFJXR3DHKhZPKyq4n4XoawGLSt0a/ahSU=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=uvzm4QbhJ/Nu1YIZoA0BhU+dUJa9IJXwws4CDKBzfabnkTTk9T7QwsJRRxcdz0le9
-         GxjYHaeB1CInhOD1bH1ltyDjRYTkIP7+7QWjhJP2McpLePfvKJW8ih8+Etcqe0zs6c
-         6AjGfOg8X3wwJHRgxyV5b1RUitatcQRUljr8Y5SI=
-Received: from DLEE105.ent.ti.com (dlee105.ent.ti.com [157.170.170.35])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id 02OB1S9q109626;
-        Tue, 24 Mar 2020 06:01:28 -0500
-Received: from DLEE103.ent.ti.com (157.170.170.33) by DLEE105.ent.ti.com
- (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Tue, 24
- Mar 2020 06:01:26 -0500
-Received: from fllv0039.itg.ti.com (10.64.41.19) by DLEE103.ent.ti.com
- (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Tue, 24 Mar 2020 06:01:26 -0500
-Received: from sokoban.bb.dnainternet.fi (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id 02OB0rB0008648;
-        Tue, 24 Mar 2020 06:01:25 -0500
-From:   Tero Kristo <t-kristo@ti.com>
-To:     <bjorn.andersson@linaro.org>, <ohad@wizery.com>,
-        <linux-remoteproc@vger.kernel.org>
-CC:     <linux-kernel@vger.kernel.org>, <mathieu.poirier@linaro.org>,
-        <s-anna@ti.com>, <afd@ti.com>, Tero Kristo <t-kristo@ti.com>
-Subject: [PATCHv9 14/15] remoteproc/omap: Add watchdog functionality for remote processors
-Date:   Tue, 24 Mar 2020 13:00:34 +0200
-Message-ID: <20200324110035.29907-15-t-kristo@ti.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200324110035.29907-1-t-kristo@ti.com>
-References: <20200324110035.29907-1-t-kristo@ti.com>
+        Tue, 24 Mar 2020 07:00:38 -0400
+Received: by mail-wr1-f66.google.com with SMTP id u10so471134wro.7;
+        Tue, 24 Mar 2020 04:00:37 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=n793+N5lafHuxLCXbklTX9PGJ8abrUMy/bsZdO3BHXE=;
+        b=L0ig301cruRhaztFjrNkXhQnVe8+eq9nPmks+6obXrOwdTaImMAkaYIcvOmrQqclLe
+         gWHdtDBj9BPD23Ym8Mz051CenviwmcAV0AnF+K+dRLrU3wp66Vxcn5SyxGLvVBQD7YAB
+         XnHVSr0U6HHrsrtW2tGhZo416YKNzF5AYa0onomM9TPW8nbIDMGML8wNHd2WwCtYwNyD
+         cGTG2lhCDbPaU+5fx+ESf1zeMGNzcTVyOqZTRkxyOaKM9QzS5yf5QV367BJ6GFMBpx5f
+         A5GrQ4PzC6+k3hrhpxpTPrKG4WaDMf4I+bSg5FBemUawB1vytLDuqiYhx9EwplXpFk6O
+         ZDKg==
+X-Gm-Message-State: ANhLgQ1ykI6r6Whe9bXi6vvdD5l6avKtk2hUOkH2EYAk6JepIgR411dd
+        E6mffe1lUGtiGZYIqL/Bhh8=
+X-Google-Smtp-Source: ADFU+vttJHbTykv3bsiyFteYS1kKC4oA4ArKrccVigs3ZQS+tWqcGmFS4TEdaOPdpYeOU3dYOVEB3Q==
+X-Received: by 2002:a5d:6146:: with SMTP id y6mr36218034wrt.107.1585047636442;
+        Tue, 24 Mar 2020 04:00:36 -0700 (PDT)
+Received: from localhost (ip-37-188-135-150.eurotel.cz. [37.188.135.150])
+        by smtp.gmail.com with ESMTPSA id z21sm3790196wmf.28.2020.03.24.04.00.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 24 Mar 2020 04:00:35 -0700 (PDT)
+Date:   Tue, 24 Mar 2020 12:00:34 +0100
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Hui Zhu <teawater@gmail.com>
+Cc:     hannes@cmpxchg.org, vdavydov.dev@gmail.com,
+        akpm@linux-foundation.org, hughd@google.com,
+        yang.shi@linux.alibaba.com, kirill@shutemov.name,
+        dan.j.williams@intel.com, aneesh.kumar@linux.ibm.com,
+        sean.j.christopherson@intel.com, thellstrom@vmware.com,
+        guro@fb.com, shakeelb@google.com, chris@chrisdown.name,
+        tj@kernel.org, tglx@linutronix.de, linux-kernel@vger.kernel.org,
+        cgroups@vger.kernel.org, linux-mm@kvack.org,
+        Hui Zhu <teawaterz@linux.alibaba.com>
+Subject: Re: [PATCH] mm, memcg: Add memory.transparent_hugepage_disabled
+Message-ID: <20200324110034.GH19542@dhcp22.suse.cz>
+References: <1585045916-27339-1-git-send-email-teawater@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1585045916-27339-1-git-send-email-teawater@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Suman Anna <s-anna@ti.com>
+On Tue 24-03-20 18:31:56, Hui Zhu wrote:
+> /sys/kernel/mm/transparent_hugepage/enabled is the only interface to
+> control if the application can use THP in system level.
+> Sometime, we would not want an application use THP even if
+> transparent_hugepage/enabled is set to "always" or "madvise" because
+> thp may need more cpu and memory resources in some cases.
 
-Remote processors can be stuck in a loop, and may not be recoverable
-if they do not have a built-in watchdog. The watchdog implementation
-for OMAP remote processors uses external gptimers that can be used
-to interrupt both the Linux host as well as the remote processor.
+Could you specify that sometime by a real usecase in the memcg context
+please?
 
-Each remote processor is responsible for refreshing the timer during
-normal behavior - during OS task scheduling or entering the idle loop
-properly. During a watchdog condition (executing a tight loop causing
-no scheduling), the host processor gets interrupts and schedules a
-recovery for the corresponding remote processor. The remote processor
-may also get interrupted to be able to print a back trace.
+> This commit add a new interface memory.transparent_hugepage_disabled
+> in memcg.
+> When it set to 1, the application inside the cgroup cannot use THP
+> except dax.
 
-A menuconfig option has also been added to enable/disable the Watchdog
-functionality, with the default as disabled.
+Why should this interface differ from the global semantic. How does it
+relate to the kcompactd. Your patch also doesn't seem to define this
+knob to have hierarchical semantic. Why?
 
-Signed-off-by: Suman Anna <s-anna@ti.com>
-Signed-off-by: Tero Kristo <t-kristo@ti.com>
-Reviewed-by: Andrew F. Davis <afd@ti.com>
----
-v9:
-  * split out the counting of watchdog timers to separate func, and added this behind the config flag
- drivers/remoteproc/Kconfig           |  12 ++
- drivers/remoteproc/omap_remoteproc.c | 166 +++++++++++++++++++++++++--
- 2 files changed, 167 insertions(+), 11 deletions(-)
+All that being said, this patch is lacking both proper justification and
+the semantic is dubious to be honest. I have also say that I am not a
+great fan. THP semantic is overly complex already and adding more on top
+would require really strong usecase.
 
-diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
-index b52abc2268cc..5f33358eb2f1 100644
---- a/drivers/remoteproc/Kconfig
-+++ b/drivers/remoteproc/Kconfig
-@@ -52,6 +52,18 @@ config OMAP_REMOTEPROC
- 	  It's safe to say N here if you're not interested in multimedia
- 	  offloading or just want a bare minimum kernel.
- 
-+config OMAP_REMOTEPROC_WATCHDOG
-+	bool "OMAP remoteproc watchdog timer"
-+	depends on OMAP_REMOTEPROC
-+	default n
-+	help
-+	  Say Y here to enable watchdog timer for remote processors.
-+
-+	  This option controls the watchdog functionality for the remote
-+	  processors in OMAP. Dedicated OMAP DMTimers are used by the remote
-+	  processors and triggers the timer interrupt upon a watchdog
-+	  detection.
-+
- config WKUP_M3_RPROC
- 	tristate "AMx3xx Wakeup M3 remoteproc support"
- 	depends on SOC_AM33XX || SOC_AM43XX
-diff --git a/drivers/remoteproc/omap_remoteproc.c b/drivers/remoteproc/omap_remoteproc.c
-index cee6c33869b3..cdb546f7232e 100644
---- a/drivers/remoteproc/omap_remoteproc.c
-+++ b/drivers/remoteproc/omap_remoteproc.c
-@@ -24,6 +24,7 @@
- #include <linux/platform_device.h>
- #include <linux/pm_runtime.h>
- #include <linux/dma-mapping.h>
-+#include <linux/interrupt.h>
- #include <linux/remoteproc.h>
- #include <linux/mailbox_client.h>
- #include <linux/omap-iommu.h>
-@@ -72,10 +73,12 @@ struct omap_rproc_mem {
-  * struct omap_rproc_timer - data structure for a timer used by a omap rproc
-  * @odt: timer pointer
-  * @timer_ops: OMAP dmtimer ops for @odt timer
-+ * @irq: timer irq
-  */
- struct omap_rproc_timer {
- 	struct omap_dm_timer *odt;
- 	const struct omap_dm_timer_ops *timer_ops;
-+	int irq;
- };
- 
- /**
-@@ -86,6 +89,7 @@ struct omap_rproc_timer {
-  * @mem: internal memory regions data
-  * @num_mems: number of internal memory regions
-  * @num_timers: number of rproc timer(s)
-+ * @num_wd_timers: number of rproc watchdog timers
-  * @timers: timer(s) info used by rproc
-  * @autosuspend_delay: auto-suspend delay value to be used for runtime pm
-  * @need_resume: if true a resume is needed in the system resume callback
-@@ -102,6 +106,7 @@ struct omap_rproc {
- 	struct omap_rproc_mem *mem;
- 	int num_mems;
- 	int num_timers;
-+	int num_wd_timers;
- 	struct omap_rproc_timer *timers;
- 	int autosuspend_delay;
- 	bool need_resume;
-@@ -219,6 +224,79 @@ static inline int omap_rproc_release_timer(struct omap_rproc_timer *timer)
- 	return timer->timer_ops->free(timer->odt);
- }
- 
-+/**
-+ * omap_rproc_get_timer_irq() - get the irq for a timer
-+ * @timer: handle to a OMAP rproc timer
-+ *
-+ * This function is used to get the irq associated with a watchdog timer. The
-+ * function is called by the OMAP remoteproc driver to register a interrupt
-+ * handler to handle watchdog events on the remote processor.
-+ *
-+ * Return: irq id on success, otherwise a failure as returned by DMTimer ops
-+ */
-+static inline int omap_rproc_get_timer_irq(struct omap_rproc_timer *timer)
-+{
-+	return timer->timer_ops->get_irq(timer->odt);
-+}
-+
-+/**
-+ * omap_rproc_ack_timer_irq() - acknowledge a timer irq
-+ * @timer: handle to a OMAP rproc timer
-+ *
-+ * This function is used to clear the irq associated with a watchdog timer. The
-+ * The function is called by the OMAP remoteproc upon a watchdog event on the
-+ * remote processor to clear the interrupt status of the watchdog timer.
-+ */
-+static inline void omap_rproc_ack_timer_irq(struct omap_rproc_timer *timer)
-+{
-+	timer->timer_ops->write_status(timer->odt, OMAP_TIMER_INT_OVERFLOW);
-+}
-+
-+/**
-+ * omap_rproc_watchdog_isr() - Watchdog ISR handler for remoteproc device
-+ * @irq: IRQ number associated with a watchdog timer
-+ * @data: IRQ handler data
-+ *
-+ * This ISR routine executes the required necessary low-level code to
-+ * acknowledge a watchdog timer interrupt. There can be multiple watchdog
-+ * timers associated with a rproc (like IPUs which have 2 watchdog timers,
-+ * one per Cortex M3/M4 core), so a lookup has to be performed to identify
-+ * the timer to acknowledge its interrupt.
-+ *
-+ * The function also invokes rproc_report_crash to report the watchdog event
-+ * to the remoteproc driver core, to trigger a recovery.
-+ *
-+ * Return: IRQ_HANDLED on success, otherwise IRQ_NONE
-+ */
-+static irqreturn_t omap_rproc_watchdog_isr(int irq, void *data)
-+{
-+	struct rproc *rproc = data;
-+	struct omap_rproc *oproc = rproc->priv;
-+	struct device *dev = rproc->dev.parent;
-+	struct omap_rproc_timer *timers = oproc->timers;
-+	struct omap_rproc_timer *wd_timer = NULL;
-+	int num_timers = oproc->num_timers + oproc->num_wd_timers;
-+	int i;
-+
-+	for (i = oproc->num_timers; i < num_timers; i++) {
-+		if (timers[i].irq > 0 && irq == timers[i].irq) {
-+			wd_timer = &timers[i];
-+			break;
-+		}
-+	}
-+
-+	if (!wd_timer) {
-+		dev_err(dev, "invalid timer\n");
-+		return IRQ_NONE;
-+	}
-+
-+	omap_rproc_ack_timer_irq(wd_timer);
-+
-+	rproc_report_crash(rproc, RPROC_WATCHDOG);
-+
-+	return IRQ_HANDLED;
-+}
-+
- /**
-  * omap_rproc_enable_timers() - enable the timers for a remoteproc
-  * @rproc: handle of a remote processor
-@@ -242,19 +320,26 @@ static int omap_rproc_enable_timers(struct rproc *rproc, bool configure)
- 	struct omap_rproc_timer *timers = oproc->timers;
- 	struct device *dev = rproc->dev.parent;
- 	struct device_node *np = NULL;
-+	int num_timers = oproc->num_timers + oproc->num_wd_timers;
- 
--	if (!oproc->num_timers)
-+	if (!num_timers)
- 		return 0;
- 
- 	if (!configure)
- 		goto start_timers;
- 
--	for (i = 0; i < oproc->num_timers; i++) {
--		np = of_parse_phandle(dev->of_node, "ti,timers", i);
-+	for (i = 0; i < num_timers; i++) {
-+		if (i < oproc->num_timers)
-+			np = of_parse_phandle(dev->of_node, "ti,timers", i);
-+		else
-+			np = of_parse_phandle(dev->of_node,
-+					      "ti,watchdog-timers",
-+					      (i - oproc->num_timers));
- 		if (!np) {
- 			ret = -ENXIO;
- 			dev_err(dev, "device node lookup for timer at index %d failed: %d\n",
--				i, ret);
-+				i < oproc->num_timers ? i :
-+				i - oproc->num_timers, ret);
- 			goto free_timers;
- 		}
- 
-@@ -277,12 +362,14 @@ static int omap_rproc_enable_timers(struct rproc *rproc, bool configure)
- 		if (!timer_ops || !timer_ops->request_by_node ||
- 		    !timer_ops->set_source || !timer_ops->set_load ||
- 		    !timer_ops->free || !timer_ops->start ||
--		    !timer_ops->stop) {
-+		    !timer_ops->stop || !timer_ops->get_irq ||
-+		    !timer_ops->write_status) {
- 			ret = -EINVAL;
- 			dev_err(dev, "device does not have required timer ops\n");
- 			goto put_node;
- 		}
- 
-+		timers[i].irq = -1;
- 		timers[i].timer_ops = timer_ops;
- 		ret = omap_rproc_request_timer(dev, np, &timers[i]);
- 		if (ret) {
-@@ -291,10 +378,33 @@ static int omap_rproc_enable_timers(struct rproc *rproc, bool configure)
- 			goto put_node;
- 		}
- 		of_node_put(np);
-+
-+		if (i >= oproc->num_timers) {
-+			timers[i].irq = omap_rproc_get_timer_irq(&timers[i]);
-+			if (timers[i].irq < 0) {
-+				dev_err(dev, "get_irq for timer %p failed: %d\n",
-+					np, timers[i].irq);
-+				ret = -EBUSY;
-+				goto free_timers;
-+			}
-+
-+			ret = request_irq(timers[i].irq,
-+					  omap_rproc_watchdog_isr, IRQF_SHARED,
-+					  "rproc-wdt", rproc);
-+			if (ret) {
-+				dev_err(dev, "error requesting irq for timer %p\n",
-+					np);
-+				omap_rproc_release_timer(&timers[i]);
-+				timers[i].odt = NULL;
-+				timers[i].timer_ops = NULL;
-+				timers[i].irq = -1;
-+				goto free_timers;
-+			}
-+		}
- 	}
- 
- start_timers:
--	for (i = 0; i < oproc->num_timers; i++) {
-+	for (i = 0; i < num_timers; i++) {
- 		ret = omap_rproc_start_timer(&timers[i]);
- 		if (ret) {
- 			dev_err(dev, "start timer %p failed failed: %d\n", np,
-@@ -316,9 +426,12 @@ static int omap_rproc_enable_timers(struct rproc *rproc, bool configure)
- 		of_node_put(np);
- free_timers:
- 	while (i--) {
-+		if (i >= oproc->num_timers)
-+			free_irq(timers[i].irq, rproc);
- 		omap_rproc_release_timer(&timers[i]);
- 		timers[i].odt = NULL;
- 		timers[i].timer_ops = NULL;
-+		timers[i].irq = -1;
- 	}
- 
- 	return ret;
-@@ -341,16 +454,20 @@ static int omap_rproc_disable_timers(struct rproc *rproc, bool configure)
- 	int i;
- 	struct omap_rproc *oproc = rproc->priv;
- 	struct omap_rproc_timer *timers = oproc->timers;
-+	int num_timers = oproc->num_timers + oproc->num_wd_timers;
- 
--	if (!oproc->num_timers)
-+	if (!num_timers)
- 		return 0;
- 
--	for (i = 0; i < oproc->num_timers; i++) {
-+	for (i = 0; i < num_timers; i++) {
- 		omap_rproc_stop_timer(&timers[i]);
- 		if (configure) {
-+			if (i >= oproc->num_timers)
-+				free_irq(timers[i].irq, rproc);
- 			omap_rproc_release_timer(&timers[i]);
- 			timers[i].odt = NULL;
- 			timers[i].timer_ops = NULL;
-+			timers[i].irq = -1;
- 		}
- 	}
- 
-@@ -1104,12 +1221,35 @@ static int omap_rproc_of_get_internal_memories(struct platform_device *pdev,
- 	return 0;
- }
- 
-+#ifdef CONFIG_OMAP_REMOTEPROC_WATCHDOG
-+static int omap_rproc_count_wdog_timers(struct device *dev)
-+{
-+	struct device_node *np = dev->of_node;
-+	int ret;
-+
-+	ret = of_count_phandle_with_args(np, "ti,watchdog-timers", NULL);
-+	if (ret <= 0) {
-+		dev_dbg(dev, "device does not have watchdog timers, status = %d\n",
-+			ret);
-+		ret = 0;
-+	}
-+
-+	return ret;
-+}
-+#else
-+static int omap_rproc_count_wdog_timers(struct device *dev)
-+{
-+	return 0;
-+}
-+#endif
-+
- static int omap_rproc_of_get_timers(struct platform_device *pdev,
- 				    struct rproc *rproc)
- {
- 	struct device_node *np = pdev->dev.of_node;
- 	struct omap_rproc *oproc = rproc->priv;
- 	struct device *dev = &pdev->dev;
-+	int num_timers;
- 
- 	/*
- 	 * Timer nodes are directly used in client nodes as phandles, so
-@@ -1122,14 +1262,18 @@ static int omap_rproc_of_get_timers(struct platform_device *pdev,
- 		oproc->num_timers = 0;
- 	}
- 
--	if (oproc->num_timers) {
--		oproc->timers = devm_kcalloc(dev, oproc->num_timers,
-+	oproc->num_wd_timers = omap_rproc_count_wdog_timers(dev);
-+
-+	num_timers = oproc->num_timers + oproc->num_wd_timers;
-+	if (num_timers) {
-+		oproc->timers = devm_kcalloc(dev, num_timers,
- 					     sizeof(*oproc->timers),
- 					     GFP_KERNEL);
- 		if (!oproc->timers)
- 			return -ENOMEM;
- 
--		dev_dbg(dev, "device has %d tick timers\n", oproc->num_timers);
-+		dev_dbg(dev, "device has %d tick timers and %d watchdog timers\n",
-+			oproc->num_timers, oproc->num_wd_timers);
- 	}
- 
- 	return 0;
+> Signed-off-by: Hui Zhu <teawaterz@linux.alibaba.com>
+> ---
+>  include/linux/huge_mm.h    | 18 ++++++++++++++++--
+>  include/linux/memcontrol.h |  2 ++
+>  mm/memcontrol.c            | 42 ++++++++++++++++++++++++++++++++++++++++++
+>  mm/shmem.c                 |  4 ++++
+>  4 files changed, 64 insertions(+), 2 deletions(-)
+> 
+> diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
+> index 5aca3d1..fd81479 100644
+> --- a/include/linux/huge_mm.h
+> +++ b/include/linux/huge_mm.h
+> @@ -91,6 +91,16 @@ extern bool is_vma_temporary_stack(struct vm_area_struct *vma);
+>  
+>  extern unsigned long transparent_hugepage_flags;
+>  
+> +#ifdef CONFIG_MEMCG
+> +extern bool memcg_transparent_hugepage_disabled(struct vm_area_struct *vma);
+> +#else
+> +static inline bool
+> +memcg_transparent_hugepage_disabled(struct vm_area_struct *vma)
+> +{
+> +	return false;
+> +}
+> +#endif
+> +
+>  /*
+>   * to be used on vmas which are known to support THP.
+>   * Use transparent_hugepage_enabled otherwise
+> @@ -106,8 +116,6 @@ static inline bool __transparent_hugepage_enabled(struct vm_area_struct *vma)
+>  	if (test_bit(MMF_DISABLE_THP, &vma->vm_mm->flags))
+>  		return false;
+>  
+> -	if (transparent_hugepage_flags & (1 << TRANSPARENT_HUGEPAGE_FLAG))
+> -		return true;
+>  	/*
+>  	 * For dax vmas, try to always use hugepage mappings. If the kernel does
+>  	 * not support hugepages, fsdax mappings will fallback to PAGE_SIZE
+> @@ -117,6 +125,12 @@ static inline bool __transparent_hugepage_enabled(struct vm_area_struct *vma)
+>  	if (vma_is_dax(vma))
+>  		return true;
+>  
+> +	if (memcg_transparent_hugepage_disabled(vma))
+> +		return false;
+> +
+> +	if (transparent_hugepage_flags & (1 << TRANSPARENT_HUGEPAGE_FLAG))
+> +		return true;
+> +
+>  	if (transparent_hugepage_flags &
+>  				(1 << TRANSPARENT_HUGEPAGE_REQ_MADV_FLAG))
+>  		return !!(vma->vm_flags & VM_HUGEPAGE);
+> diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
+> index a7a0a1a5..abc3142 100644
+> --- a/include/linux/memcontrol.h
+> +++ b/include/linux/memcontrol.h
+> @@ -320,6 +320,8 @@ struct mem_cgroup {
+>  
+>  #ifdef CONFIG_TRANSPARENT_HUGEPAGE
+>  	struct deferred_split deferred_split_queue;
+> +
+> +	bool transparent_hugepage_disabled;
+>  #endif
+>  
+>  	struct mem_cgroup_per_node *nodeinfo[0];
+> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+> index 7a4bd8b..b6d91b6 100644
+> --- a/mm/memcontrol.c
+> +++ b/mm/memcontrol.c
+> @@ -5011,6 +5011,14 @@ mem_cgroup_css_alloc(struct cgroup_subsys_state *parent_css)
+>  	if (parent) {
+>  		memcg->swappiness = mem_cgroup_swappiness(parent);
+>  		memcg->oom_kill_disable = parent->oom_kill_disable;
+> +#ifdef CONFIG_TRANSPARENT_HUGEPAGE
+> +		memcg->transparent_hugepage_disabled
+> +			= parent->transparent_hugepage_disabled;
+> +#endif
+> +	} else {
+> +#ifdef CONFIG_TRANSPARENT_HUGEPAGE
+> +		memcg->transparent_hugepage_disabled = false;
+> +#endif
+>  	}
+>  	if (parent && parent->use_hierarchy) {
+>  		memcg->use_hierarchy = true;
+> @@ -6126,6 +6134,24 @@ static ssize_t memory_oom_group_write(struct kernfs_open_file *of,
+>  	return nbytes;
+>  }
+>  
+> +static u64 transparent_hugepage_disabled_read(struct cgroup_subsys_state *css,
+> +					      struct cftype *cft)
+> +{
+> +	struct mem_cgroup *memcg = mem_cgroup_from_css(css);
+> +
+> +	return memcg->transparent_hugepage_disabled;
+> +}
+> +
+> +static int transparent_hugepage_disabled_write(struct cgroup_subsys_state *css,
+> +					       struct cftype *cft, u64 val)
+> +{
+> +	struct mem_cgroup *memcg = mem_cgroup_from_css(css);
+> +
+> +	memcg->transparent_hugepage_disabled = !!val;
+> +
+> +	return 0;
+> +}
+> +
+>  static struct cftype memory_files[] = {
+>  	{
+>  		.name = "current",
+> @@ -6179,6 +6205,12 @@ static struct cftype memory_files[] = {
+>  		.seq_show = memory_oom_group_show,
+>  		.write = memory_oom_group_write,
+>  	},
+> +	{
+> +		.name = "transparent_hugepage_disabled",
+> +		.flags = CFTYPE_NOT_ON_ROOT,
+> +		.read_u64 = transparent_hugepage_disabled_read,
+> +		.write_u64 = transparent_hugepage_disabled_write,
+> +	},
+>  	{ }	/* terminate */
+>  };
+>  
+> @@ -6787,6 +6819,16 @@ void mem_cgroup_uncharge_skmem(struct mem_cgroup *memcg, unsigned int nr_pages)
+>  	refill_stock(memcg, nr_pages);
+>  }
+>  
+> +bool memcg_transparent_hugepage_disabled(struct vm_area_struct *vma)
+> +{
+> +	struct mem_cgroup *memcg = get_mem_cgroup_from_mm(vma->vm_mm);
+> +
+> +	if (memcg && memcg->transparent_hugepage_disabled)
+> +		return true;
+> +
+> +	return false;
+> +}
+> +
+>  static int __init cgroup_memory(char *s)
+>  {
+>  	char *token;
+> diff --git a/mm/shmem.c b/mm/shmem.c
+> index aad3ba7..253b63b 100644
+> --- a/mm/shmem.c
+> +++ b/mm/shmem.c
+> @@ -1810,6 +1810,10 @@ static int shmem_getpage_gfp(struct inode *inode, pgoff_t index,
+>  		goto alloc_nohuge;
+>  	if (shmem_huge == SHMEM_HUGE_DENY || sgp_huge == SGP_NOHUGE)
+>  		goto alloc_nohuge;
+> +#ifdef CONFIG_TRANSPARENT_HUGEPAGE
+> +	if (memcg_transparent_hugepage_disabled(vma))
+> +		goto alloc_nohuge;
+> +#endif
+>  	if (shmem_huge == SHMEM_HUGE_FORCE)
+>  		goto alloc_huge;
+>  	switch (sbinfo->huge) {
+> -- 
+> 2.7.4
+
 -- 
-2.17.1
-
---
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+Michal Hocko
+SUSE Labs
