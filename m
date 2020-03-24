@@ -2,117 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B0BDA1907E4
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 09:41:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 27C1F190855
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 09:54:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727145AbgCXIl1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 04:41:27 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:23114 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726129AbgCXIl0 (ORCPT
+        id S1727129AbgCXIyA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 04:54:00 -0400
+Received: from mail-pj1-f66.google.com ([209.85.216.66]:38140 "EHLO
+        mail-pj1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726944AbgCXIyA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 04:41:26 -0400
-Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 02O8XtGS058800
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Mar 2020 04:41:25 -0400
-Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2ywbuv4uyg-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Mar 2020 04:41:25 -0400
-Received: from localhost
-        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <kamalesh@linux.vnet.ibm.com>;
-        Tue, 24 Mar 2020 08:41:22 -0000
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
-        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 24 Mar 2020 08:41:17 -0000
-Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 02O8fHBa58327132
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 24 Mar 2020 08:41:17 GMT
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 87A22A4051;
-        Tue, 24 Mar 2020 08:41:17 +0000 (GMT)
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 62EAAA4069;
-        Tue, 24 Mar 2020 08:41:15 +0000 (GMT)
-Received: from JAVRIS.in.ibm.com (unknown [9.199.56.74])
-        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Tue, 24 Mar 2020 08:41:15 +0000 (GMT)
-Subject: Re: [PATCH] objtool: Documentation: document UACCESS warnings
-To:     Nick Desaulniers <ndesaulniers@google.com>, jpoimboe@redhat.com,
-        peterz@infradead.org
-Cc:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        Raphael Gault <raphael.gault@arm.com>,
-        linux-kernel@vger.kernel.org, clang-built-linux@googlegroups.com
-References: <20200323212538.GN2452@worktop.programming.kicks-ass.net>
- <20200324001321.39562-1-ndesaulniers@google.com>
-From:   Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
-Date:   Tue, 24 Mar 2020 14:11:13 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.6.0
+        Tue, 24 Mar 2020 04:54:00 -0400
+Received: by mail-pj1-f66.google.com with SMTP id m15so1141791pje.3
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Mar 2020 01:53:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=RRPCgJIscfkoaZkuKu6vD2HdLKZ1Q3Ue4LqlGy+vaWU=;
+        b=UFI4t5GzR6KAi870daDmfxXau80Q8z5OYoEbYUjBPlp1KtkzpPEBGgw0h299Uqzf/j
+         vR0MHWalO9YuF0loS9SVZnNNVC6/gP/m1/CvKgxB5CMh31y0AsZtUKpgSJdmmHQ3AX9D
+         OcCp5PDvrO22stqSno9+QM1h9prQ5ukrJ40/GjDDBTJM1yxd9+lEiY2WtTDK0g3+xOfu
+         TGAGkhsg0zNQrT9L4Tf+GXPJVa4ry9gS9Mf1D6MD+cWO7gxuMcXmlM1WXgaZcb3MJ6nq
+         be146EPKhpxLupFCggSB3OZqnNeJvytXthsZMByofXLr/CDbUOu6n5yfUZ0Xdjl/m75C
+         LHxw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=RRPCgJIscfkoaZkuKu6vD2HdLKZ1Q3Ue4LqlGy+vaWU=;
+        b=Ii8cgPYI61H4wR4UUBQORX4M5v0N4fRxjbsiu7HnpFCiklHIjHuYZmIMY4PVns+jro
+         bVay84w2o+KSX1hJtnG64IqmvTR6OAIeR+OGGGRNL5MNj3h2+A3R4ynVngvENvixcYHA
+         HFRr4nEih4uDIJF8CwCMRJyBEuH+kDapfS62lYAPXnkkf60VGZz/M2m7kOu1YAoan365
+         4ZC7BMfqiuG9KSvWC403baYSiOR2BNgfnYyQg/7bvK24GKR9aLWk4Z5yWfVryJKYJmbv
+         ldFGPYXjVnBdNiOUmijKVHz+CT3Q2fSFvJ1nrc9DV+xHC2bFY7Rd3sO6yPxmqVwNQfA9
+         MVbQ==
+X-Gm-Message-State: ANhLgQ1YWbtcQJ+wusBECC0QaDsnqoKzEMMwkvxPnxVe/7swhquu9J6k
+        oUzJuJkn5jU8VOLhNwzZJWA=
+X-Google-Smtp-Source: ADFU+vsAdgckar4S2FjoMmzYD7pXTdSjgdyhkzZ6YmJimQLRgYVO4W/Jw9uKMW2M8GASusgEYR89vQ==
+X-Received: by 2002:a17:90a:e003:: with SMTP id u3mr2354684pjy.157.1585040038735;
+        Tue, 24 Mar 2020 01:53:58 -0700 (PDT)
+Received: from localhost.localdomain ([103.231.90.171])
+        by smtp.gmail.com with ESMTPSA id d3sm14658695pfn.113.2020.03.24.01.53.53
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 24 Mar 2020 01:53:57 -0700 (PDT)
+From:   Bhaskar Chowdhury <unixbhaskar@gmail.com>
+To:     linux@leemhuis.info, rdunlap@infradead.org
+Cc:     linux-kernel@vger.kernel.org,
+        Bhaskar Chowdhury <unixbhaskar@gmail.com>
+Subject: [PATCH] rearrange the output text, cosmetic changes
+Date:   Tue, 24 Mar 2020 14:15:13 +0530
+Message-Id: <20200324084513.18237-1-unixbhaskar@gmail.com>
+X-Mailer: git-send-email 2.24.1
 MIME-Version: 1.0
-In-Reply-To: <20200324001321.39562-1-ndesaulniers@google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 20032408-0008-0000-0000-00000362E1E3
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 20032408-0009-0000-0000-00004A844D4C
-Message-Id: <90c16f02-9364-651e-6dea-8758a698d2ce@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.645
- definitions=2020-03-24_02:2020-03-23,2020-03-24 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015
- priorityscore=1501 lowpriorityscore=0 malwarescore=0 bulkscore=0
- adultscore=0 mlxscore=0 phishscore=0 impostorscore=0 mlxlogscore=999
- suspectscore=0 spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2003020000 definitions=main-2003240042
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 3/24/20 5:43 AM, Nick Desaulniers wrote:
-> Compiling with Clang and CONFIG_KASAN=y was exposing a few warnings:
->   call to memset() with UACCESS enabled
-> 
-> Document how to fix these for future travelers.
-> 
-> Link: https://github.com/ClangBuiltLinux/linux/issues/876
-> Suggested-by: Peter Zijlstra <peterz@infradead.org>
-> Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
+As the subject like says, purely cosmetic changes to read cleanly.
+Jumbled up the line.
 
-Looks good, a minor nitpick below.
+Signed-off-by: Bhaskar Chowdhury <unixbhaskar@gmail.com>
+---
+ tools/debugging/kernel-chktaint | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-> ---
->  .../Documentation/stack-validation.txt        | 20 +++++++++++++++++++
->  1 file changed, 20 insertions(+)
-> 
-> diff --git a/tools/objtool/Documentation/stack-validation.txt b/tools/objtool/Documentation/stack-validation.txt
-> index de094670050b..156fee13ba02 100644
-> --- a/tools/objtool/Documentation/stack-validation.txt
-> +++ b/tools/objtool/Documentation/stack-validation.txt
-> @@ -289,6 +289,26 @@ they mean, and suggestions for how to fix them.
->        might be corrupt due to a gcc bug.  For more details, see:
->        https://gcc.gnu.org/bugzilla/show_bug.cgi?id=70646
-> 
-> +9. file.o: warning: objtool: funcA() call to funcB() with UACCESS enabled
-> +
-> +   This means that an unexpected call to a non-whitelisted function exists
-> +   outside of arch-specific guards.
-> +   X86: SMAP (stac/clac): __uaccess_begin()/__uaccess_end()
-> +   ARM: PAN: uaccess_enable()/uaccess_enable()
-                                 ^^^^^^ 
-                                uaccess_disable() 
+diff --git a/tools/debugging/kernel-chktaint b/tools/debugging/kernel-chktaint
+index 2240cb56e6e5..74fd3282aa1b 100755
+--- a/tools/debugging/kernel-chktaint
++++ b/tools/debugging/kernel-chktaint
+@@ -195,8 +195,9 @@ else
+ 	echo " * kernel was built with the struct randomization plugin (#17)"
+ fi
 
-> +
-> +   These functions should called to denote a minimal critical section around
-> +   access to __user variables. See also: https://lwn.net/Articles/517475/
-
--- 
-Kamalesh
+-echo "For a more detailed explanation of the various taint flags see"
+-echo " Documentation/admin-guide/tainted-kernels.rst in the the Linux kernel sources"
+-echo " or https://kernel.org/doc/html/latest/admin-guide/tainted-kernels.html"
+ echo "Raw taint value as int/string: $taint/'$out'"
++echo
++echo "For a more detailed explanation of the various taint flags see below pointers:"
++echo "1) Documentation/admin-guide/tainted-kernels.rst in  the Linux kernel sources"
++echo "2)  https://kernel.org/doc/html/latest/admin-guide/tainted-kernels.html"
+ #EOF#
+--
+2.24.1
 
