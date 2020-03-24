@@ -2,76 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E2417190597
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 07:14:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E3AC81905A6
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 07:21:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727313AbgCXGOI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 02:14:08 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:56462 "EHLO huawei.com"
+        id S1727261AbgCXGV2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 02:21:28 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:12183 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725951AbgCXGOH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 02:14:07 -0400
-Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 423F98E17D8711737378;
-        Tue, 24 Mar 2020 14:13:33 +0800 (CST)
-Received: from [10.134.22.195] (10.134.22.195) by smtp.huawei.com
- (10.3.19.211) with Microsoft SMTP Server (TLS) id 14.3.487.0; Tue, 24 Mar
- 2020 14:13:29 +0800
-Subject: Re: [PATCH v5] f2fs: fix potential .flags overflow on 32bit
- architecture
-To:     Jaegeuk Kim <jaegeuk@kernel.org>, Joe Perches <joe@perches.com>
-CC:     <linux-f2fs-devel@lists.sourceforge.net>,
-        <linux-kernel@vger.kernel.org>, <chao@kernel.org>
-References: <20200323031807.94473-1-yuchao0@huawei.com>
- <afa74570dacebb3b93d4b9c27d6c8a87186cef2d.camel@perches.com>
- <20200323151027.GA123526@google.com>
+        id S1725869AbgCXGV2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Mar 2020 02:21:28 -0400
+Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 217FDB9B832C6BE91BF2;
+        Tue, 24 Mar 2020 14:21:09 +0800 (CST)
+Received: from szvp000203569.huawei.com (10.120.216.130) by
+ DGGEMS412-HUB.china.huawei.com (10.3.19.212) with Microsoft SMTP Server id
+ 14.3.487.0; Tue, 24 Mar 2020 14:21:00 +0800
 From:   Chao Yu <yuchao0@huawei.com>
-Message-ID: <e811683f-8906-a152-5d76-cd284fca6a2f@huawei.com>
-Date:   Tue, 24 Mar 2020 14:13:28 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+To:     <jaegeuk@kernel.org>
+CC:     <linux-f2fs-devel@lists.sourceforge.net>,
+        <linux-kernel@vger.kernel.org>, <chao@kernel.org>,
+        Chao Yu <yuchao0@huawei.com>
+Subject: [PATCH] f2fs: fix to avoid double unlock
+Date:   Tue, 24 Mar 2020 14:20:57 +0800
+Message-ID: <20200324062057.52222-1-yuchao0@huawei.com>
+X-Mailer: git-send-email 2.18.0.rc1
 MIME-Version: 1.0
-In-Reply-To: <20200323151027.GA123526@google.com>
-Content-Type: text/plain; charset="windows-1252"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.134.22.195]
+Content-Type: text/plain
+X-Originating-IP: [10.120.216.130]
 X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2020/3/23 23:10, Jaegeuk Kim wrote:
-> On 03/23, Joe Perches wrote:
->> On Mon, 2020-03-23 at 11:18 +0800, Chao Yu wrote:
->>> f2fs_inode_info.flags is unsigned long variable, it has 32 bits
->>> in 32bit architecture, since we introduced FI_MMAP_FILE flag
->>> when we support data compression, we may access memory cross
->>> the border of .flags field, corrupting .i_sem field, result in
->>> below deadlock.
->> []
->>> diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
->> []
->>> @@ -362,7 +362,7 @@ static int do_read_inode(struct inode *inode)
->>>  	fi->i_flags = le32_to_cpu(ri->i_flags);
->>>  	if (S_ISREG(inode->i_mode))
->>>  		fi->i_flags &= ~F2FS_PROJINHERIT_FL;
->>> -	fi->flags = 0;
->>> +	bitmap_zero(fi->flags, BITS_TO_LONGS(FI_MAX));
->>
->> Sorry, I misled you here, this should be
->>
->> 	bitmap_zero(fi->flags, FI_MAX);
+On image that has verity and compression feature, if compressed pages
+and non-compressed pages are mixed in one bio, we may double unlock
+non-compressed page in below flow:
 
-Oh, I missed to check that as well. :(
+- f2fs_post_read_work
+ - f2fs_decompress_work
+  - f2fs_decompress_bio
+   - __read_end_io
+    - unlock_page
+ - fsverity_enqueue_verify_work
+  - f2fs_verity_work
+   - f2fs_verify_bio
+    - unlock_page
 
-> 
-> Thanks, I applied this directly in the f2fs tree.
+So it should skip handling non-compressed page in f2fs_decompress_work()
+if verity is on.
 
-Thanks for the help.
+Besides, add missing dec_page_count() in f2fs_verify_bio().
 
-Thanks,
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+---
+ fs/f2fs/data.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-> .
-> 
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 0197b7b80d19..24643680489b 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -139,6 +139,8 @@ static void __read_end_io(struct bio *bio, bool compr, bool verity)
+ 			f2fs_decompress_pages(bio, page, verity);
+ 			continue;
+ 		}
++		if (verity)
++			continue;
+ #endif
+ 
+ 		/* PG_error was set if any post_read step failed */
+@@ -216,6 +218,7 @@ static void f2fs_verify_bio(struct bio *bio)
+ 		ClearPageUptodate(page);
+ 		ClearPageError(page);
+ unlock:
++		dec_page_count(F2FS_P_SB(page), __read_io_type(page));
+ 		unlock_page(page);
+ 	}
+ }
+-- 
+2.18.0.rc1
+
