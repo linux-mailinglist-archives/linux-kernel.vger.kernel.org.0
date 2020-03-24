@@ -2,120 +2,174 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2DD30191A94
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 21:10:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B6933191A8E
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 21:09:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728100AbgCXUKI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 16:10:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34934 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727513AbgCXUJ6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 16:09:58 -0400
-Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1727754AbgCXUJj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 16:09:39 -0400
+Received: from us-smtp-delivery-74.mimecast.com ([63.128.21.74]:31987 "EHLO
+        us-smtp-delivery-74.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725866AbgCXUJj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Mar 2020 16:09:39 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1585080578;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=eqAkWy7IXNHN9M1BZ9stUZFEkaMutV+Lz4dKs1zB6M8=;
+        b=hDjq3SVIEQXN39zniQiTWOpm6xtjlq8Tbdnjx00Eqerd5JoLuWFl4GY9TaYkw3VDlNq0sh
+        oD2lehB8wHOTyy4V6mVQ/yZHIVQGofGVck6LnRu+5cAXHBwLmRaIba+DLi9+J3yFuu8EDU
+        JXpxd0aUI/c8LsIVFc1ooFV39glS3vA=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-482-__sf59ASPoC-UQUUxMQR7Q-1; Tue, 24 Mar 2020 16:09:36 -0400
+X-MC-Unique: __sf59ASPoC-UQUUxMQR7Q-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0B55E20B80;
-        Tue, 24 Mar 2020 20:09:58 +0000 (UTC)
-Received: from rostedt by gandalf.local.home with local (Exim 4.93)
-        (envelope-from <rostedt@goodmis.org>)
-        id 1jGps4-001hRE-UT; Tue, 24 Mar 2020 16:09:56 -0400
-Message-Id: <20200324200956.821799393@goodmis.org>
-User-Agent: quilt/0.65
-Date:   Tue, 24 Mar 2020 16:08:48 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     linux-kernel@vger.kernel.org, linux-trace-devel@vger.kernel.org
-Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Ingo Molnar <mingo@kernel.org>, Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        Jaewon Kim <jaewon31.kim@samsung.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Kees Cook <keescook@chromium.org>
-Subject: [PATCH 3/3] tools lib traceevent: Add handler for __builtin_expect()
-References: <20200324200845.763565368@goodmis.org>
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 20091800EB6;
+        Tue, 24 Mar 2020 20:09:35 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.40.192.27])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 3F62419C6A;
+        Tue, 24 Mar 2020 20:09:33 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+        oleg@redhat.com; Tue, 24 Mar 2020 21:09:34 +0100 (CET)
+Date:   Tue, 24 Mar 2020 21:09:32 +0100
+From:   Oleg Nesterov <oleg@redhat.com>
+To:     Andrew Morton <akpm@linux-foundation.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     Davidlohr Bueso <dave@stgolabs.net>,
+        Manfred Spraul <manfred@colorfullife.com>,
+        Markus Elfring <elfring@users.sourceforge.net>,
+        Yoji <yoji.fujihar.min@gmail.com>, linux-kernel@vger.kernel.org
+Subject: [PATCH V2] ipc/mqueue.c: change __do_notify() to bypass
+ check_kill_permission()
+Message-ID: <20200324200932.GB24230@redhat.com>
+References: <20200322110901.GA25108@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-15
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200322110901.GA25108@redhat.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+Commit cc731525f26a ("signal: Remove kernel interal si_code magic")
+changed the value of SI_FROMUSER(SI_MESGQ), this means that mq_notify()
+no longer works if the sender doesn't have rights to send a signal.
 
-In order to move pointer checks like IS_ERR_VALUE() out of the hotpath and
-into the reader path of a trace event, user space tools need to be able to
-parse that. IS_ERR_VALUE() is defined as:
+Change __do_notify() to use do_send_sig_info() instead of kill_pid_info()
+to avoid check_kill_permission().
 
- #define IS_ERR_VALUE() unlikely((unsigned long)(void *)(x) >= (unsigned long)-MAX_ERRNO)
+This needs the additional notify.sigev_signo != 0 check, shouldn't we
+change do_mq_notify() to deny sigev_signo == 0 ?
 
-Which eventually turns into:
+Test-case:
 
-  __builtin_expect(!!((unsigned long)(void *)(x) >= (unsigned long)-4095), 0)
+	#include <signal.h>
+	#include <mqueue.h>
+	#include <unistd.h>
+	#include <sys/wait.h>
+	#include <assert.h>
 
-Now the traceevent parser can handle most of that except for the
-__builtin_expect(), which needs to be added.
+	static int notified;
 
-Link: https://lore.kernel.org/linux-mm/20200320055823.27089-3-jaewon31.kim@samsung.com/
+	static void sigh(int sig)
+	{
+		notified = 1;
+	}
 
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+	int main(void)
+	{
+		signal(SIGIO, sigh);
+
+		int fd = mq_open("/mq", O_RDWR|O_CREAT, 0666, NULL);
+		assert(fd >= 0);
+
+		struct sigevent se = {
+			.sigev_notify	= SIGEV_SIGNAL,
+			.sigev_signo	= SIGIO,
+		};
+		assert(mq_notify(fd, &se) == 0);
+
+		if (!fork()) {
+			assert(setuid(1) == 0);
+			mq_send(fd, "",1,0);
+			return 0;
+		}
+
+		wait(NULL);
+		mq_unlink("/mq");
+		assert(notified);
+		return 0;
+	}
+
+Reported-by: Yoji <yoji.fujihar.min@gmail.com>
+Fixes: cc731525f26a ("signal: Remove kernel interal si_code magic")
+Cc: stable <stable@vger.kernel.org>
+Signed-off-by: Oleg Nesterov <oleg@redhat.com>
 ---
- tools/lib/traceevent/event-parse.c | 35 ++++++++++++++++++++++++++++++
- 1 file changed, 35 insertions(+)
+ ipc/mqueue.c | 28 ++++++++++++++++++++--------
+ 1 file changed, 20 insertions(+), 8 deletions(-)
 
-diff --git a/tools/lib/traceevent/event-parse.c b/tools/lib/traceevent/event-parse.c
-index 010e60d5a081..5b36c589a029 100644
---- a/tools/lib/traceevent/event-parse.c
-+++ b/tools/lib/traceevent/event-parse.c
-@@ -3084,6 +3084,37 @@ process_func_handler(struct tep_event *event, struct tep_function_handler *func,
- 	return TEP_EVENT_ERROR;
- }
+diff --git a/ipc/mqueue.c b/ipc/mqueue.c
+index 49a05ba3000d..63b164932ffd 100644
+--- a/ipc/mqueue.c
++++ b/ipc/mqueue.c
+@@ -774,28 +774,40 @@ static void __do_notify(struct mqueue_inode_info *info)
+ 	 * synchronously. */
+ 	if (info->notify_owner &&
+ 	    info->attr.mq_curmsgs == 1) {
+-		struct kernel_siginfo sig_i;
+ 		switch (info->notify.sigev_notify) {
+ 		case SIGEV_NONE:
+ 			break;
+-		case SIGEV_SIGNAL:
+-			/* sends signal */
++		case SIGEV_SIGNAL: {
++			struct kernel_siginfo sig_i;
++			struct task_struct *task;
++
++			/* do_mq_notify() accepts sigev_signo == 0, why?? */
++			if (!info->notify.sigev_signo)
++				break;
  
-+static enum tep_event_type
-+process_builtin_expect(struct tep_event *event, struct tep_print_arg *arg, char **tok)
-+{
-+	enum tep_event_type type;
-+	char *token = NULL;
-+
-+	/* Handle __builtin_expect( cond, #) */
-+	type = process_arg(event, arg, &token);
-+
-+	if (type != TEP_EVENT_DELIM || token[0] != ',')
-+		goto out_free;
-+
-+	free_token(token);
-+
-+	/* We don't care what the second parameter is of the __builtin_expect() */
-+	if (read_expect_type(TEP_EVENT_ITEM, &token) < 0)
-+		goto out_free;
-+
-+	if (read_expected(TEP_EVENT_DELIM, ")") < 0)
-+		goto out_free;
-+
-+	free_token(token);
-+	type = read_token_item(tok);
-+	return type;
-+
-+out_free:
-+	free_token(token);
-+	*tok = NULL;
-+	return TEP_EVENT_ERROR;
-+}
-+
- static enum tep_event_type
- process_function(struct tep_event *event, struct tep_print_arg *arg,
- 		 char *token, char **tok)
-@@ -3128,6 +3159,10 @@ process_function(struct tep_event *event, struct tep_print_arg *arg,
- 		free_token(token);
- 		return process_dynamic_array_len(event, arg, tok);
- 	}
-+	if (strcmp(token, "__builtin_expect") == 0) {
-+		free_token(token);
-+		return process_builtin_expect(event, arg, tok);
-+	}
- 
- 	func = find_func_handler(event->tep, token);
- 	if (func) {
+ 			clear_siginfo(&sig_i);
+ 			sig_i.si_signo = info->notify.sigev_signo;
+ 			sig_i.si_errno = 0;
+ 			sig_i.si_code = SI_MESGQ;
+ 			sig_i.si_value = info->notify.sigev_value;
+-			/* map current pid/uid into info->owner's namespaces */
+ 			rcu_read_lock();
++			/* map current pid/uid into info->owner's namespaces */
+ 			sig_i.si_pid = task_tgid_nr_ns(current,
+ 						ns_of_pid(info->notify_owner));
+-			sig_i.si_uid = from_kuid_munged(info->notify_user_ns, current_uid());
++			sig_i.si_uid = from_kuid_munged(info->notify_user_ns,
++						current_uid());
++			/*
++			 * We can't use kill_pid_info(), this signal should
++			 * bypass check_kill_permission(). It is from kernel
++			 * but si_fromuser() can't know this.
++			 */
++			task = pid_task(info->notify_owner, PIDTYPE_PID);
++			if (task)
++				do_send_sig_info(info->notify.sigev_signo,
++						&sig_i, task, PIDTYPE_TGID);
+ 			rcu_read_unlock();
+-
+-			kill_pid_info(info->notify.sigev_signo,
+-				      &sig_i, info->notify_owner);
+ 			break;
++		}
+ 		case SIGEV_THREAD:
+ 			set_cookie(info->notify_cookie, NOTIFY_WOKENUP);
+ 			netlink_sendskb(info->notify_sock, info->notify_cookie);
 -- 
-2.25.1
+2.25.1.362.g51ebf55
 
 
