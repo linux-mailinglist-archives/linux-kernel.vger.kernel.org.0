@@ -2,121 +2,177 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 563B9191AF1
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 21:28:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4FA51191AFF
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 21:28:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728031AbgCXU2F (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 16:28:05 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:34330 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728219AbgCXU2B (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 16:28:01 -0400
-Received: by mail-pf1-f196.google.com with SMTP id 23so9930870pfj.1
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Mar 2020 13:28:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=aG3ZG/JseQ9SHgEGTa48Huh2O7B5gsYW9O6b0GiUzZo=;
-        b=eEVyWcqXnp/Fdd1gQU3vtTzHqjyGFSC1Gxxb4UYfyVOoa84+V7sy/oZDeYU7mJ3sOP
-         S5ULEOjK3Bl5+CfiQGxI0p6lUuKqqQ2tmriaS0oqV7384B+05d3ZeTctCsvGUqWoAQ3E
-         p0F1fBYGAsHKJmdkX/WDt9UvI9Xf37h8ZxQek=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=aG3ZG/JseQ9SHgEGTa48Huh2O7B5gsYW9O6b0GiUzZo=;
-        b=UXEVePzZNDAghdbuEHhiCqzoMpYaVv1LQ3tkNU+NtMV387vLUYVB6m4MEE+yKsL6wD
-         12LplyJaRt4t3fyGxHqd+VCNTvvH8RPAATmiAAWhBAvOEhX+dqHMa5wSTpmDB3ld0v+A
-         kHczsr9sNVdtcsyngboxm/2hT6D0262vRioJVoUsro6UQ1Z/tLMhWqyIMqR5dvqA7aqL
-         IDa6Bu0Sqxi9t9GOhlMtUedfiEOIfU4J85fVm9mf8Y5np7cE3nQydPYddNTuCC5XcKqP
-         jdVtZf5qy+wHiv0/kAVS020YVQB8j3Z65FNtfw+ZKjtNrnnOExhocasTTv0RYhHP9OVE
-         pz0A==
-X-Gm-Message-State: ANhLgQ21DU/rH+dzxeJRzX8AuOOLJ1wsCqErernXnsNCeYQX1f1s9Myd
-        zNQJ97H5OVmeUwZRZt/Asso9jg==
-X-Google-Smtp-Source: ADFU+vsZBe8JrbNa0VLrHSDVrWMSTj1DEaHQdKmwz64a+ux0d1WYmgQc5n2eh8ePMaAouYw7QryK9w==
-X-Received: by 2002:a65:5846:: with SMTP id s6mr29062581pgr.179.1585081680649;
-        Tue, 24 Mar 2020 13:28:00 -0700 (PDT)
-Received: from localhost ([2620:15c:202:1:4cc0:7eee:97c9:3c1a])
-        by smtp.gmail.com with ESMTPSA id 193sm9900116pfa.182.2020.03.24.13.27.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 24 Mar 2020 13:28:00 -0700 (PDT)
-From:   Gwendal Grignou <gwendal@chromium.org>
-To:     bleung@chromium.org, enric.balletbo@collabora.com,
-        Jonathan.Cameron@huawei.com
-Cc:     linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Gwendal Grignou <gwendal@chromium.org>
-Subject: [PATCH v6 11/11] iio: cros_ec: flush as hwfifo attribute
-Date:   Tue, 24 Mar 2020 13:27:36 -0700
-Message-Id: <20200324202736.243314-12-gwendal@chromium.org>
-X-Mailer: git-send-email 2.25.1.696.g5e7596f4ac-goog
-In-Reply-To: <20200324202736.243314-1-gwendal@chromium.org>
-References: <20200324202736.243314-1-gwendal@chromium.org>
+        id S1728333AbgCXU2m (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 16:28:42 -0400
+Received: from mga02.intel.com ([134.134.136.20]:38276 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726560AbgCXU2l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Mar 2020 16:28:41 -0400
+IronPort-SDR: jUkO/aiB4XFg5I8KFzD4JbWN+9472nkSTAEyH5FI1i4gavV/38OtZV/s+2PscFAWYBAaLP1FSb
+ 5HhRuEAxVZAw==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Mar 2020 13:28:36 -0700
+IronPort-SDR: RX1YExsZbu7vv6thxTlS6nm6CXxfaNx9lcGZMBwl7zWY9fWGhYLiMIZOy7gprETyEQ3qYZ6G3S
+ rEaaTuW76+XQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.72,301,1580803200"; 
+   d="scan'208";a="357540319"
+Received: from linux.intel.com ([10.54.29.200])
+  by fmsmga001.fm.intel.com with ESMTP; 24 Mar 2020 13:28:35 -0700
+Received: from [10.125.248.60] (rsudarik-mobl.ccr.corp.intel.com [10.125.248.60])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by linux.intel.com (Postfix) with ESMTPS id 201CE580569;
+        Tue, 24 Mar 2020 13:28:31 -0700 (PDT)
+Subject: Re: [PATCH v8 1/3] perf x86: Infrastructure for exposing an Uncore
+ unit to PMON mapping
+To:     peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
+        mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
+        jolsa@redhat.com, namhyung@kernel.org,
+        linux-kernel@vger.kernel.org, eranian@google.com,
+        bgregg@netflix.com, ak@linux.intel.com, kan.liang@linux.intel.com
+Cc:     alexander.antonov@intel.com, roman.sudarikov@linux.intel.com
+References: <20200320073110.4761-1-roman.sudarikov@linux.intel.com>
+ <20200320073110.4761-2-roman.sudarikov@linux.intel.com>
+From:   "Sudarikov, Roman" <roman.sudarikov@linux.intel.com>
+Message-ID: <9e26689c-3d50-6bac-909f-041745a44a22@linux.intel.com>
+Date:   Tue, 24 Mar 2020 23:28:28 +0300
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.6.0
 MIME-Version: 1.0
+In-Reply-To: <20200320073110.4761-2-roman.sudarikov@linux.intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add buffer/hwfifo_flush. It is not part of the ABI, but it follows ST
-and HID lead: Tells the sensor hub to send to the host all pending
-sensor events.
+On 20.03.2020 10:31, roman.sudarikov@linux.intel.com wrote:
+> From: Roman Sudarikov <roman.sudarikov@linux.intel.com>
+>
+> Intel® Xeon® Scalable processor family (code name Skylake-SP) makes
+> significant changes in the integrated I/O (IIO) architecture. The new
+> solution introduces IIO stacks which are responsible for managing traffic
+> between the PCIe domain and the Mesh domain. Each IIO stack has its own
+> PMON block and can handle either DMI port, x16 PCIe root port, MCP-Link
+> or various built-in accelerators. IIO PMON blocks allow concurrent
+> monitoring of I/O flows up to 4 x4 bifurcation within each IIO stack.
+>
+> Software is supposed to program required perf counters within each IIO
+> stack and gather performance data. The tricky thing here is that IIO PMON
+> reports data per IIO stack but users have no idea what IIO stacks are -
+> they only know devices which are connected to the platform.
+>
+> Understanding IIO stack concept to find which IIO stack that particular
+> IO device is connected to, or to identify an IIO PMON block to program
+> for monitoring specific IIO stack assumes a lot of implicit knowledge
+> about given Intel server platform architecture.
+>
+> Usage example:
+>      ls /sys/devices/uncore_<type>_<pmu_idx>/die*
+>
+> Each Uncore unit type, by its nature, can be mapped to its own context,
+> for example:
+> 1. CHA - each uncore_cha_<pmu_idx> is assigned to manage a distinct slice
+>     of LLC capacity;
+> 2. UPI - each uncore_upi_<pmu_idx> is assigned to manage one link of Intel
+>     UPI Subsystem;
+> 3. IIO - each uncore_iio_<pmu_idx> is assigned to manage one stack of the
+>     IIO module;
+> 4. IMC - each uncore_imc_<pmu_idx> is assigned to manage one channel of
+>     Memory Controller.
+>
+> Implementation details:
+> Optional callbacks added to struct intel_uncore_type to discover and map
+> Uncore units to PMONs:
+>      int (*set_mapping)(struct intel_uncore_type *type)
+>      void (*cleanup_mapping)(struct intel_uncore_type *type)
+>
+> Details of IIO Uncore unit mapping to IIO PMON:
+> Each IIO stack is either DMI port, x16 PCIe root port, MCP-Link or various
+> built-in accelerators. For Uncore IIO Unit type, the mapping file
+> holds bus numbers of devices, which can be monitored by that IIO PMON block
+> on each die.
+>
+> Co-developed-by: Alexander Antonov <alexander.antonov@intel.com>
+> Signed-off-by: Alexander Antonov <alexander.antonov@intel.com>
+> Signed-off-by: Roman Sudarikov <roman.sudarikov@linux.intel.com>
+> Reviewed-by: Kan Liang <kan.liang@linux.intel.com>
+> ---
+>   arch/x86/events/intel/uncore.c | 8 ++++++++
+>   arch/x86/events/intel/uncore.h | 6 ++++++
+>   2 files changed, 14 insertions(+)
+>
+> diff --git a/arch/x86/events/intel/uncore.c b/arch/x86/events/intel/uncore.c
+> index 86467f85c383..fb693608c223 100644
+> --- a/arch/x86/events/intel/uncore.c
+> +++ b/arch/x86/events/intel/uncore.c
+> @@ -843,10 +843,12 @@ static int uncore_pmu_register(struct intel_uncore_pmu *pmu)
+>   			.read		= uncore_pmu_event_read,
+>   			.module		= THIS_MODULE,
+>   			.capabilities	= PERF_PMU_CAP_NO_EXCLUDE,
+> +			.attr_update	= pmu->type->attr_update,
+>   		};
+>   	} else {
+>   		pmu->pmu = *pmu->type->pmu;
+>   		pmu->pmu.attr_groups = pmu->type->attr_groups;
+> +		pmu->pmu.attr_update = pmu->type->attr_update;
+>   	}
+>   
+>   	if (pmu->type->num_boxes == 1) {
+> @@ -887,6 +889,9 @@ static void uncore_type_exit(struct intel_uncore_type *type)
+>   	struct intel_uncore_pmu *pmu = type->pmus;
+>   	int i;
+>   
+> +	if (type->cleanup_mapping)
+> +		type->cleanup_mapping(type);
+> +
+>   	if (pmu) {
+>   		for (i = 0; i < type->num_boxes; i++, pmu++) {
+>   			uncore_pmu_unregister(pmu);
+> @@ -954,6 +959,9 @@ static int __init uncore_type_init(struct intel_uncore_type *type, bool setid)
+>   
+>   	type->pmu_group = &uncore_pmu_attr_group;
+>   
+> +	if (type->set_mapping)
+> +		type->set_mapping(type);
+> +
+>   	return 0;
+>   
+>   err:
+> diff --git a/arch/x86/events/intel/uncore.h b/arch/x86/events/intel/uncore.h
+> index bbfdaa720b45..d41f8874adc5 100644
+> --- a/arch/x86/events/intel/uncore.h
+> +++ b/arch/x86/events/intel/uncore.h
+> @@ -72,7 +72,13 @@ struct intel_uncore_type {
+>   	struct uncore_event_desc *event_descs;
+>   	struct freerunning_counters *freerunning;
+>   	const struct attribute_group *attr_groups[4];
+> +	const struct attribute_group **attr_update;
+>   	struct pmu *pmu; /* for custom pmu ops */
+> +	/* PMON's topologies */
+> +	u64 *topology;
+> +	/* mapping Uncore units to PMON ranges */
+> +	int (*set_mapping)(struct intel_uncore_type *type);
+> +	void (*cleanup_mapping)(struct intel_uncore_type *type);
+>   };
+>   
+>   #define pmu_group attr_groups[0]
+Hello Peter,
+are you waiting for some further review/ack on this, or is it just in your
+pending review queue?
 
-Signed-off-by: Gwendal Grignou <gwendal@chromium.org>
----
-New in v6.
+Sorry for bothering you several times, but the feature will add value to 
+users.
 
- .../cros_ec_sensors/cros_ec_sensors_core.c    | 28 +++++++++++++++++++
- 1 file changed, 28 insertions(+)
+Thanks,
+Roman
 
-diff --git a/drivers/iio/common/cros_ec_sensors/cros_ec_sensors_core.c b/drivers/iio/common/cros_ec_sensors/cros_ec_sensors_core.c
-index c831915ca7e56..aaf124a82e0e4 100644
---- a/drivers/iio/common/cros_ec_sensors/cros_ec_sensors_core.c
-+++ b/drivers/iio/common/cros_ec_sensors/cros_ec_sensors_core.c
-@@ -113,6 +113,33 @@ static int cros_ec_sensor_set_ec_rate(struct cros_ec_sensors_core_state *st,
- 	return ret;
- }
- 
-+static ssize_t cros_ec_sensors_flush(struct device *dev,
-+				     struct device_attribute *attr,
-+				     const char *buf, size_t len)
-+{
-+	struct iio_dev *indio_dev = dev_to_iio_dev(dev);
-+	struct cros_ec_sensors_core_state *st = iio_priv(indio_dev);
-+	int ret = 0;
-+	bool flush;
-+
-+	ret = strtobool(buf, &flush);
-+	if (ret < 0)
-+		return ret;
-+	if (!flush)
-+		return -EINVAL;
-+
-+	mutex_lock(&st->cmd_lock);
-+	st->param.cmd = MOTIONSENSE_CMD_FIFO_FLUSH;
-+	ret = cros_ec_motion_send_host_cmd(st, 0);
-+	if (ret != 0)
-+		dev_warn(&indio_dev->dev, "Unable to flush sensor\n");
-+	mutex_unlock(&st->cmd_lock);
-+	return ret ? ret : len;
-+}
-+
-+static IIO_DEVICE_ATTR(hwfifo_flush, 0644, NULL,
-+		       cros_ec_sensors_flush, 0);
-+
- static ssize_t cros_ec_sensor_set_report_latency(struct device *dev,
- 						 struct device_attribute *attr,
- 						 const char *buf, size_t len)
-@@ -175,6 +202,7 @@ static ssize_t hwfifo_watermark_max_show(struct device *dev,
- static IIO_DEVICE_ATTR_RO(hwfifo_watermark_max, 0);
- 
- const struct attribute *cros_ec_sensor_fifo_attributes[] = {
-+	&iio_dev_attr_hwfifo_flush.dev_attr.attr,
- 	&iio_dev_attr_hwfifo_timeout.dev_attr.attr,
- 	&iio_dev_attr_hwfifo_watermark_max.dev_attr.attr,
- 	NULL,
--- 
-2.25.1.696.g5e7596f4ac-goog
 
