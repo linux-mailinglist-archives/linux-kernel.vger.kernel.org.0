@@ -2,212 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2C1D7191708
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 17:56:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9550E191715
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 17:59:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727684AbgCXQ4d (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 12:56:33 -0400
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:37119 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727432AbgCXQ4c (ORCPT
+        id S1727544AbgCXQ6s (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 12:58:48 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:55399 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725767AbgCXQ6r (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 12:56:32 -0400
-Received: by mail-pl1-f193.google.com with SMTP id x1so3605198plm.4
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Mar 2020 09:56:31 -0700 (PDT)
+        Tue, 24 Mar 2020 12:58:47 -0400
+Received: by mail-wm1-f67.google.com with SMTP id v25so2179732wmh.5
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Mar 2020 09:58:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=1TpragRZcw0zTQSnhep+0z7BDuiqv6MvTdfAt2UZcKM=;
-        b=Nwb+jWCcjn9NJR+RcjP+pCjNIX2TKnhvcn+CdukBInhiqxe+4kpWzx2XVvwiTs35Db
-         anejDfFLvHXMjlN6esfQebSFDE8jvNPruDjNGL6XPn6CGHHyFV8odwMG/yp8y6kBQymw
-         moMX6fYvrelX7azVNFr/hCPmqFY+neNjc/5cKDmwiE3G+uL2H81syN4cqut0ZAis2Rh/
-         BY70gmW0BFqnSevWKZ56xJOWzHhmmLVXuVFKynMpEj8G1eyxoJgKhRCe5r1quU8HPll3
-         J+V0cb32oz++wAtJyG0Wwb9AJwdDA3BS+qMgrtZTKDtX307UWH6uu9kQbHuze+YcIBeO
-         4S1Q==
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=fcKTtzzKji9c9XNYOWFuZoh2VuIHjU5tnEWXTkyl2mI=;
+        b=fbBj1mWzQ0EXEjikZVBjhISRBfYqUM34AmyqYSrJnYcb0j7XAeE9Of1XR/oWDft8MA
+         PASTbUS+qkIAXFuvgP6we35AzquIA6e5vKCTMh17VQOUzUdWXfhRK/vk0YU7Hxw1FAjJ
+         ixfaAafUZhPe0+kE2MTLDyoQdTkQdad13rB/Gq4Q2HnO/COXI3b9iu+erxI4KwybRz4Y
+         jMC4fHcO89XzVWSaGeeqAChy8GeTtX5T0w0vnBGnt2nhPWSgFXfDgIl/ewZsVW6OGTol
+         whhe0V3CTd0O9MeoXfRI9K7bB3aVwotehM8gBJ+ep9qhHwFsVABuUpJ3dvynN6w1rwdl
+         RBJw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=1TpragRZcw0zTQSnhep+0z7BDuiqv6MvTdfAt2UZcKM=;
-        b=NB+C4y3ROm2Q31wcrBGlOzWktKyYMusgaCDxp29Ffh22OePDZGWd7Bum9390s+gQ4W
-         PZhoRWDl3HvrDHGcnMSsJiLGpGpJn8o/X8Mwo3MhaQUJ10rHqxSEUR+1BqHZjo81/51M
-         0w9DOkf1KS8wiSD+Xefa6m7QjNVKpN05ozj2T9KpIc1V93RoJ7NcmAW1DKdZeI7JvxD4
-         dJU9Et0pXANakaE+qqlXDny8N4uwua5ubeYpZP2CO4bIvaKBvdVPeSo02x3OyrQMEWQT
-         AIYKKu2loSi44Obe+V6BQkyZaNjpSisGzp1OD1XcSCIZnpc66eFMTlFYyynYWt4+Q/w8
-         woEQ==
-X-Gm-Message-State: ANhLgQ1EBqDVxMdf5ubF1OGgMf05ouAbDYJ7VCoT5KGjmxibUnIFskT2
-        wQikoFfL690qPqYYpXhPvJYpRrlBzB+VaWt/GrgSoA==
-X-Google-Smtp-Source: ADFU+vtw53dprFB9oag0X9HXc73Rj1Tqjmp7Haecp9myvzWRS4U3Q+BL3AsSaJXvT2i+fS/FCIiRFkU8ta8vOSlVCEc=
-X-Received: by 2002:a17:902:6bc8:: with SMTP id m8mr21047743plt.223.1585068990536;
- Tue, 24 Mar 2020 09:56:30 -0700 (PDT)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=fcKTtzzKji9c9XNYOWFuZoh2VuIHjU5tnEWXTkyl2mI=;
+        b=eywR61r/WsXlyobU1tia5dCBUMhJDJq+RSsS2n+FE5nEhdBIBpA5OeO8YVylO6kXcL
+         G9DKthFsNdAGgtCPg1EmPR4h/AvAbDnn7akJKoiP7PGl9Xq/1GZrjLjdzT2galylhVnJ
+         FwUio4eLxB7pgMt5nWgX57l+7gNVgul+iEJwDk1aotpZHoz/9A7Zvx7TsL6rcRm2A0b+
+         id98a+fGFHhGjz+M7geM5oOHYr3fETqjzbgwmtCVpSi5OtnFoVVxRecIQ5bwUld0bGzI
+         qAcVJt7PqggCzy3BQCvxz8Dq79Bj74YefVhSt+ldt+TWHUvxy3J0V7+lA3GP+gQdBV1K
+         /HLA==
+X-Gm-Message-State: ANhLgQ1ULKbrVwsy9MZIk2+5u8D+HoTq6yWFp3VT9f6pEoQdDvv7USAG
+        Nr8Blyo4ODrtaM/3PhrVD5eHH5QJgQI=
+X-Google-Smtp-Source: ADFU+vs2R2xRRs7U3Sw5mhut6OVBEplfNXf8X5OKc3Gwd+LDMsa3yMxvc887bM/9ecy2Ets46/EjKA==
+X-Received: by 2002:a1c:1d4d:: with SMTP id d74mr6535688wmd.123.1585069125252;
+        Tue, 24 Mar 2020 09:58:45 -0700 (PDT)
+Received: from [192.168.86.34] (cpc89974-aztw32-2-0-cust43.18-1.cable.virginm.net. [86.30.250.44])
+        by smtp.googlemail.com with ESMTPSA id s8sm25146243wrv.97.2020.03.24.09.58.44
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 24 Mar 2020 09:58:44 -0700 (PDT)
+Subject: Re: [PATCH 5/5] nvmem: Add support for write-only instances
+To:     Nicholas Johnson <nicholas.johnson-opensource@outlook.com.au>
+Cc:     Greg KH <gregkh@linuxfoundation.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20200323150007.7487-1-srinivas.kandagatla@linaro.org>
+ <20200323150007.7487-6-srinivas.kandagatla@linaro.org>
+ <20200323190505.GB632476@kroah.com>
+ <4820047d-9a99-749c-491d-dbb91a2f5447@linaro.org>
+ <20200324122939.GA2348009@kroah.com>
+ <300e8095-3af4-15a2-069f-87ac7cbb83bb@linaro.org>
+ <PSXP216MB04387C07F1E4C827245DE98380F10@PSXP216MB0438.KORP216.PROD.OUTLOOK.COM>
+From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Message-ID: <45ae656e-aeac-ecbd-b882-496ea2a2e655@linaro.org>
+Date:   Tue, 24 Mar 2020 16:58:43 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-References: <20200324084821.29944-1-masahiroy@kernel.org> <20200324084821.29944-7-masahiroy@kernel.org>
-In-Reply-To: <20200324084821.29944-7-masahiroy@kernel.org>
-From:   Nick Desaulniers <ndesaulniers@google.com>
-Date:   Tue, 24 Mar 2020 09:56:18 -0700
-Message-ID: <CAKwvOdkc6WgW7Knnk8rb92iYUOjc7bBZ6Ln69jjRa+N=-JLz+g@mail.gmail.com>
-Subject: Re: [PATCH 06/16] x86: remove always-defined CONFIG_AS_SSSE3
-To:     Masahiro Yamada <masahiroy@kernel.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Kees Cook <keescook@chromium.org>,
-        clang-built-linux <clang-built-linux@googlegroups.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
-        <linux-crypto@vger.kernel.org>, Ingo Molnar <mingo@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <PSXP216MB04387C07F1E4C827245DE98380F10@PSXP216MB0438.KORP216.PROD.OUTLOOK.COM>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 24, 2020 at 1:49 AM Masahiro Yamada <masahiroy@kernel.org> wrote:
->
-> CONFIG_AS_SSSE3 was introduced by commit 75aaf4c3e6a4 ("x86/raid6:
-> correctly check for assembler capabilities").
->
-> We raise the minimal supported binutils version from time to time.
-> The last bump was commit 1fb12b35e5ff ("kbuild: Raise the minimum
-> required binutils version to 2.21").
 
-Looks like binutils gained SSE3 support in 2005; 2.21 was released in 2010.
-Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
 
->
-> I confirmed the code in $(call as-instr,...) can be assembled by the
-> binutils 2.21 assembler and also by LLVM integrated assembler.
->
-> Remove CONFIG_AS_SSSE3, which is always defined.
->
-> I added ifdef CONFIG_X86 to lib/raid6/algos.c to avoid link errors
-> on non-x86 architectures.
->
-> lib/raid6/algos.c is built not only for the kernel but also for
-> testing the library code from userspace. I added -DCONFIG_X86 to
-> lib/raid6/test/Makefile to cator to this usecase.
->
-> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
-> Acked-by: Jason A. Donenfeld <Jason@zx2c4.com>
-> ---
->
->  arch/x86/Makefile              | 5 ++---
->  arch/x86/crypto/blake2s-core.S | 2 --
->  lib/raid6/algos.c              | 2 +-
->  lib/raid6/recov_ssse3.c        | 6 ------
->  lib/raid6/test/Makefile        | 4 +---
->  5 files changed, 4 insertions(+), 15 deletions(-)
->
-> diff --git a/arch/x86/Makefile b/arch/x86/Makefile
-> index e4a062313bb0..94f89612e024 100644
-> --- a/arch/x86/Makefile
-> +++ b/arch/x86/Makefile
-> @@ -178,7 +178,6 @@ ifeq ($(ACCUMULATE_OUTGOING_ARGS), 1)
->  endif
->
->  # does binutils support specific instructions?
-> -asinstr += $(call as-instr,pshufb %xmm0$(comma)%xmm0,-DCONFIG_AS_SSSE3=1)
->  avx_instr := $(call as-instr,vxorps %ymm0$(comma)%ymm1$(comma)%ymm2,-DCONFIG_AS_AVX=1)
->  avx2_instr :=$(call as-instr,vpbroadcastb %xmm0$(comma)%ymm1,-DCONFIG_AS_AVX2=1)
->  avx512_instr :=$(call as-instr,vpmovm2b %k1$(comma)%zmm5,-DCONFIG_AS_AVX512=1)
-> @@ -186,8 +185,8 @@ sha1_ni_instr :=$(call as-instr,sha1msg1 %xmm0$(comma)%xmm1,-DCONFIG_AS_SHA1_NI=
->  sha256_ni_instr :=$(call as-instr,sha256msg1 %xmm0$(comma)%xmm1,-DCONFIG_AS_SHA256_NI=1)
->  adx_instr := $(call as-instr,adox %r10$(comma)%r10,-DCONFIG_AS_ADX=1)
->
-> -KBUILD_AFLAGS += $(asinstr) $(avx_instr) $(avx2_instr) $(avx512_instr) $(sha1_ni_instr) $(sha256_ni_instr) $(adx_instr)
-> -KBUILD_CFLAGS += $(asinstr) $(avx_instr) $(avx2_instr) $(avx512_instr) $(sha1_ni_instr) $(sha256_ni_instr) $(adx_instr)
-> +KBUILD_AFLAGS += $(avx_instr) $(avx2_instr) $(avx512_instr) $(sha1_ni_instr) $(sha256_ni_instr) $(adx_instr)
-> +KBUILD_CFLAGS += $(avx_instr) $(avx2_instr) $(avx512_instr) $(sha1_ni_instr) $(sha256_ni_instr) $(adx_instr)
->
->  KBUILD_LDFLAGS := -m elf_$(UTS_MACHINE)
->
-> diff --git a/arch/x86/crypto/blake2s-core.S b/arch/x86/crypto/blake2s-core.S
-> index 24910b766bdd..2ca79974f819 100644
-> --- a/arch/x86/crypto/blake2s-core.S
-> +++ b/arch/x86/crypto/blake2s-core.S
-> @@ -46,7 +46,6 @@ SIGMA2:
->  #endif /* CONFIG_AS_AVX512 */
->
->  .text
-> -#ifdef CONFIG_AS_SSSE3
->  SYM_FUNC_START(blake2s_compress_ssse3)
->         testq           %rdx,%rdx
->         je              .Lendofloop
-> @@ -174,7 +173,6 @@ SYM_FUNC_START(blake2s_compress_ssse3)
->  .Lendofloop:
->         ret
->  SYM_FUNC_END(blake2s_compress_ssse3)
-> -#endif /* CONFIG_AS_SSSE3 */
->
->  #ifdef CONFIG_AS_AVX512
->  SYM_FUNC_START(blake2s_compress_avx512)
-> diff --git a/lib/raid6/algos.c b/lib/raid6/algos.c
-> index bf1b4765c8f6..df08664d3432 100644
-> --- a/lib/raid6/algos.c
-> +++ b/lib/raid6/algos.c
-> @@ -97,13 +97,13 @@ void (*raid6_datap_recov)(int, size_t, int, void **);
->  EXPORT_SYMBOL_GPL(raid6_datap_recov);
->
->  const struct raid6_recov_calls *const raid6_recov_algos[] = {
-> +#ifdef CONFIG_X86
->  #ifdef CONFIG_AS_AVX512
->         &raid6_recov_avx512,
->  #endif
->  #ifdef CONFIG_AS_AVX2
->         &raid6_recov_avx2,
->  #endif
-> -#ifdef CONFIG_AS_SSSE3
->         &raid6_recov_ssse3,
->  #endif
->  #ifdef CONFIG_S390
-> diff --git a/lib/raid6/recov_ssse3.c b/lib/raid6/recov_ssse3.c
-> index 1de97d2405d0..4bfa3c6b60de 100644
-> --- a/lib/raid6/recov_ssse3.c
-> +++ b/lib/raid6/recov_ssse3.c
-> @@ -3,8 +3,6 @@
->   * Copyright (C) 2012 Intel Corporation
->   */
->
-> -#ifdef CONFIG_AS_SSSE3
-> -
->  #include <linux/raid/pq.h>
->  #include "x86.h"
->
-> @@ -328,7 +326,3 @@ const struct raid6_recov_calls raid6_recov_ssse3 = {
->  #endif
->         .priority = 1,
->  };
-> -
-> -#else
-> -#warning "your version of binutils lacks SSSE3 support"
-> -#endif
-> diff --git a/lib/raid6/test/Makefile b/lib/raid6/test/Makefile
-> index b9e6c3648be1..60021319ac78 100644
-> --- a/lib/raid6/test/Makefile
-> +++ b/lib/raid6/test/Makefile
-> @@ -34,9 +34,7 @@ endif
->
->  ifeq ($(IS_X86),yes)
->          OBJS   += mmx.o sse1.o sse2.o avx2.o recov_ssse3.o recov_avx2.o avx512.o recov_avx512.o
-> -        CFLAGS += $(shell echo "pshufb %xmm0, %xmm0" |         \
-> -                    gcc -c -x assembler - >/dev/null 2>&1 &&   \
-> -                    rm ./-.o && echo -DCONFIG_AS_SSSE3=1)
-> +        CFLAGS += -DCONFIG_X86
->          CFLAGS += $(shell echo "vpbroadcastb %xmm0, %ymm1" |   \
->                      gcc -c -x assembler - >/dev/null 2>&1 &&   \
->                      rm ./-.o && echo -DCONFIG_AS_AVX2=1)
-> --
-> 2.17.1
->
-> --
+On 24/03/2020 14:24, Nicholas Johnson wrote:
+>> Am guessing you are referring to is_bin_visible callback?
+>>
+>> I will try to clean this up!
+> I am still onboard and willing do the work, but we may need to discuss
+> to be on the same page with new plans. How do you wish to do this?
+I have done some cleanup of old code to use is_bin_visible.
 
--- 
-Thanks,
-~Nick Desaulniers
+https://git.linaro.org/people/srinivas.kandagatla/linux.git/log/?h=topic/is_bin_visible
+
+Can you try these two patches along with your new patch?
+
+--srini
