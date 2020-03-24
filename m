@@ -2,40 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6FB03190F99
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 14:29:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5DA23190F13
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 14:19:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729027AbgCXNVT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 09:21:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43040 "EHLO mail.kernel.org"
+        id S1728137AbgCXNRS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 09:17:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36942 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727935AbgCXNVR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 09:21:17 -0400
+        id S1728475AbgCXNRP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Mar 2020 09:17:15 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6076320775;
-        Tue, 24 Mar 2020 13:21:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 25457208E4;
+        Tue, 24 Mar 2020 13:17:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585056076;
-        bh=Kp7cGM0B3OtQxFLtBbwdZXKte8DH6Gpfo+yfsvS2ha0=;
+        s=default; t=1585055834;
+        bh=sagaxxPBDu0NGQWOqfrmvT5ZLXJ0mZtSQz96D2dNjy8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SLqrqxhpfDTFQdlAyNyn8HAnb85v+5Og8QzMaGMpgS2UbGgMHVvvAHJAFWiKwzWjX
-         T6NYB+tFhgpVfwJdNuTcbv/Jw4erHcW+pfPWG80Nf7PvyO/Gp5fcwt1OuL72oEXiG4
-         hmatWUu3c9ofqSGbcajNPh8RDx83q/FQ2QC/2zZ8=
+        b=116l9mv2DPFYvOS+9wDEs6Vam755R+bXzzSbElLURV4f+GUtmpm0XaIRWDS6mOPsu
+         6rnaYpV6JVe1w7QNIZLmEAd4FyXqDCDhp1DcGdE1JHtOlyrQt12gDuMdWHf7kqs28w
+         ki8d7UDE5Se8UmAhuNha5569f2dB6ntX4ykE5Aco=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Rajat Jain <rajatja@google.com>,
-        Evan Green <evgreen@chromium.org>,
-        Mark Brown <broonie@kernel.org>,
+        stable@vger.kernel.org,
+        Grygorii Strashko <grygorii.strashko@ti.com>,
+        Lokesh Vutla <lokeshvutla@ti.com>,
+        Tony Lindgren <tony@atomide.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.5 014/119] spi: pxa2xx: Add CS control clock quirk
+Subject: [PATCH 5.4 007/102] ARM: dts: dra7-l4: mark timer13-16 as pwm capable
 Date:   Tue, 24 Mar 2020 14:09:59 +0100
-Message-Id: <20200324130809.356215662@linuxfoundation.org>
+Message-Id: <20200324130807.262365313@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.2
-In-Reply-To: <20200324130808.041360967@linuxfoundation.org>
-References: <20200324130808.041360967@linuxfoundation.org>
+In-Reply-To: <20200324130806.544601211@linuxfoundation.org>
+References: <20200324130806.544601211@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,85 +46,57 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Evan Green <evgreen@chromium.org>
+From: Grygorii Strashko <grygorii.strashko@ti.com>
 
-[ Upstream commit 683f65ded66a9a7ff01ed7280804d2132ebfdf7e ]
+[ Upstream commit 00a39c92c8ab94727f021297d1748531af113fcd ]
 
-In some circumstances on Intel LPSS controllers, toggling the LPSS
-CS control register doesn't actually cause the CS line to toggle.
-This seems to be failure of dynamic clock gating that occurs after
-going through a suspend/resume transition, where the controller
-is sent through a reset transition. This ruins SPI transactions
-that either rely on delay_usecs, or toggle the CS line without
-sending data.
+DMTimers 13 - 16 are PWM capable and also can be used for CPTS input
+signals generation. Hence, mark them as "ti,timer-pwm".
 
-Whenever CS is toggled, momentarily set the clock gating register
-to "Force On" to poke the controller into acting on CS.
-
-Signed-off-by: Rajat Jain <rajatja@google.com>
-Signed-off-by: Evan Green <evgreen@chromium.org>
-Link: https://lore.kernel.org/r/20200211223700.110252-1-rajatja@google.com
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
+Reviewed-by: Lokesh Vutla <lokeshvutla@ti.com>
+Signed-off-by: Tony Lindgren <tony@atomide.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/spi/spi-pxa2xx.c | 23 +++++++++++++++++++++++
- 1 file changed, 23 insertions(+)
+ arch/arm/boot/dts/dra7-l4.dtsi | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/spi/spi-pxa2xx.c b/drivers/spi/spi-pxa2xx.c
-index 9071333ebdd86..cabd1a85d71e3 100644
---- a/drivers/spi/spi-pxa2xx.c
-+++ b/drivers/spi/spi-pxa2xx.c
-@@ -70,6 +70,10 @@ MODULE_ALIAS("platform:pxa2xx-spi");
- #define LPSS_CAPS_CS_EN_SHIFT			9
- #define LPSS_CAPS_CS_EN_MASK			(0xf << LPSS_CAPS_CS_EN_SHIFT)
+diff --git a/arch/arm/boot/dts/dra7-l4.dtsi b/arch/arm/boot/dts/dra7-l4.dtsi
+index c3954e34835b8..3ae4f6358da41 100644
+--- a/arch/arm/boot/dts/dra7-l4.dtsi
++++ b/arch/arm/boot/dts/dra7-l4.dtsi
+@@ -3413,6 +3413,7 @@
+ 				clocks = <&l4per3_clkctrl DRA7_L4PER3_TIMER13_CLKCTRL 24>;
+ 				clock-names = "fck";
+ 				interrupts = <GIC_SPI 339 IRQ_TYPE_LEVEL_HIGH>;
++				ti,timer-pwm;
+ 			};
+ 		};
  
-+#define LPSS_PRIV_CLOCK_GATE 0x38
-+#define LPSS_PRIV_CLOCK_GATE_CLK_CTL_MASK 0x3
-+#define LPSS_PRIV_CLOCK_GATE_CLK_CTL_FORCE_ON 0x3
-+
- struct lpss_config {
- 	/* LPSS offset from drv_data->ioaddr */
- 	unsigned offset;
-@@ -86,6 +90,8 @@ struct lpss_config {
- 	unsigned cs_sel_shift;
- 	unsigned cs_sel_mask;
- 	unsigned cs_num;
-+	/* Quirks */
-+	unsigned cs_clk_stays_gated : 1;
- };
+@@ -3441,6 +3442,7 @@
+ 				clocks = <&l4per3_clkctrl DRA7_L4PER3_TIMER14_CLKCTRL 24>;
+ 				clock-names = "fck";
+ 				interrupts = <GIC_SPI 340 IRQ_TYPE_LEVEL_HIGH>;
++				ti,timer-pwm;
+ 			};
+ 		};
  
- /* Keep these sorted with enum pxa_ssp_type */
-@@ -156,6 +162,7 @@ static const struct lpss_config lpss_platforms[] = {
- 		.tx_threshold_hi = 56,
- 		.cs_sel_shift = 8,
- 		.cs_sel_mask = 3 << 8,
-+		.cs_clk_stays_gated = true,
- 	},
- };
+@@ -3469,6 +3471,7 @@
+ 				clocks = <&l4per3_clkctrl DRA7_L4PER3_TIMER15_CLKCTRL 24>;
+ 				clock-names = "fck";
+ 				interrupts = <GIC_SPI 341 IRQ_TYPE_LEVEL_HIGH>;
++				ti,timer-pwm;
+ 			};
+ 		};
  
-@@ -383,6 +390,22 @@ static void lpss_ssp_cs_control(struct spi_device *spi, bool enable)
- 	else
- 		value |= LPSS_CS_CONTROL_CS_HIGH;
- 	__lpss_ssp_write_priv(drv_data, config->reg_cs_ctrl, value);
-+	if (config->cs_clk_stays_gated) {
-+		u32 clkgate;
-+
-+		/*
-+		 * Changing CS alone when dynamic clock gating is on won't
-+		 * actually flip CS at that time. This ruins SPI transfers
-+		 * that specify delays, or have no data. Toggle the clock mode
-+		 * to force on briefly to poke the CS pin to move.
-+		 */
-+		clkgate = __lpss_ssp_read_priv(drv_data, LPSS_PRIV_CLOCK_GATE);
-+		value = (clkgate & ~LPSS_PRIV_CLOCK_GATE_CLK_CTL_MASK) |
-+			LPSS_PRIV_CLOCK_GATE_CLK_CTL_FORCE_ON;
-+
-+		__lpss_ssp_write_priv(drv_data, LPSS_PRIV_CLOCK_GATE, value);
-+		__lpss_ssp_write_priv(drv_data, LPSS_PRIV_CLOCK_GATE, clkgate);
-+	}
- }
+@@ -3497,6 +3500,7 @@
+ 				clocks = <&l4per3_clkctrl DRA7_L4PER3_TIMER16_CLKCTRL 24>;
+ 				clock-names = "fck";
+ 				interrupts = <GIC_SPI 342 IRQ_TYPE_LEVEL_HIGH>;
++				ti,timer-pwm;
+ 			};
+ 		};
  
- static void cs_assert(struct spi_device *spi)
 -- 
 2.20.1
 
