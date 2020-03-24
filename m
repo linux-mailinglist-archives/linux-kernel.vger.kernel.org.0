@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ECBFC191015
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 14:30:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 56616190EB0
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 14:15:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729355AbgCXNZM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 09:25:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49184 "EHLO mail.kernel.org"
+        id S1728009AbgCXNOJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 09:14:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60604 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728157AbgCXNZJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 09:25:09 -0400
+        id S1727592AbgCXNOH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Mar 2020 09:14:07 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2EB4F208CA;
-        Tue, 24 Mar 2020 13:25:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 921832145D;
+        Tue, 24 Mar 2020 13:14:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585056308;
-        bh=YP9kf057tH2Tbe3j4Vuv9Pk7wPTqiiXehZSJrWwcUck=;
+        s=default; t=1585055647;
+        bh=6LKp/oRxKgmott8F39xSSbLgaXXdxdcuUA0dT6lBzm8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=a2Bql7SBRgeef4UeWjoHm3IRzHw/mY+EVVEL9cvr0yvFuU9u72cH7TqVBOAEchNMX
-         W0NwWvEhJhNaakUK8oOLnOz6F/moYslT1VmM1fh/UrQg/UTp77Y7YjExW/Er74rI3n
-         7XkrxiCHbRs6C0JPr9XhtgJ3JVyTDSJc5Vvmet+c=
+        b=hjIzI6UDSaYum27yOyBXsec9lzmwf+zwpPjFA4sXTCjHPP0a6PoD1k51IRJwkadSH
+         YDewEm4VhyatSyFr0Ak7XN6nIs79b+k2MwLQ+L+HXqh0nuFwrP1167aIg1w+KrLpi/
+         FQZEgAh3LndOFsoF6miK2JpkMepaJC7hsPPNH8l0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Scott Chen <scott@labau.com.tw>,
-        Johan Hovold <johan@kernel.org>
-Subject: [PATCH 5.5 047/119] USB: serial: pl2303: add device-id for HP LD381
+        stable@vger.kernel.org, Mikulas Patocka <mpatocka@redhat.com>,
+        Mike Snitzer <snitzer@redhat.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 11/65] dm bio record: save/restore bi_end_io and bi_integrity
 Date:   Tue, 24 Mar 2020 14:10:32 +0100
-Message-Id: <20200324130813.013044618@linuxfoundation.org>
+Message-Id: <20200324130758.218652527@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.2
-In-Reply-To: <20200324130808.041360967@linuxfoundation.org>
-References: <20200324130808.041360967@linuxfoundation.org>
+In-Reply-To: <20200324130756.679112147@linuxfoundation.org>
+References: <20200324130756.679112147@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,42 +44,64 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Scott Chen <scott@labau.com.tw>
+From: Mike Snitzer <snitzer@redhat.com>
 
-commit cecc113c1af0dd41ccf265c1fdb84dbd05e63423 upstream.
+[ Upstream commit 1b17159e52bb31f982f82a6278acd7fab1d3f67b ]
 
-Add a device id for HP LD381 Display
-LD381:   03f0:0f7f
+Also, save/restore __bi_remaining in case the bio was used in a
+BIO_CHAIN (e.g. due to blk_queue_split).
 
-Signed-off-by: Scott Chen <scott@labau.com.tw>
-Cc: stable <stable@vger.kernel.org>
-Signed-off-by: Johan Hovold <johan@kernel.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Suggested-by: Mikulas Patocka <mpatocka@redhat.com>
+Signed-off-by: Mike Snitzer <snitzer@redhat.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/usb/serial/pl2303.c |    1 +
- drivers/usb/serial/pl2303.h |    1 +
- 2 files changed, 2 insertions(+)
+ drivers/md/dm-bio-record.h | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
 
---- a/drivers/usb/serial/pl2303.c
-+++ b/drivers/usb/serial/pl2303.c
-@@ -99,6 +99,7 @@ static const struct usb_device_id id_tab
- 	{ USB_DEVICE(SUPERIAL_VENDOR_ID, SUPERIAL_PRODUCT_ID) },
- 	{ USB_DEVICE(HP_VENDOR_ID, HP_LD220_PRODUCT_ID) },
- 	{ USB_DEVICE(HP_VENDOR_ID, HP_LD220TA_PRODUCT_ID) },
-+	{ USB_DEVICE(HP_VENDOR_ID, HP_LD381_PRODUCT_ID) },
- 	{ USB_DEVICE(HP_VENDOR_ID, HP_LD960_PRODUCT_ID) },
- 	{ USB_DEVICE(HP_VENDOR_ID, HP_LD960TA_PRODUCT_ID) },
- 	{ USB_DEVICE(HP_VENDOR_ID, HP_LCM220_PRODUCT_ID) },
---- a/drivers/usb/serial/pl2303.h
-+++ b/drivers/usb/serial/pl2303.h
-@@ -130,6 +130,7 @@
- #define HP_LM920_PRODUCT_ID	0x026b
- #define HP_TD620_PRODUCT_ID	0x0956
- #define HP_LD960_PRODUCT_ID	0x0b39
-+#define HP_LD381_PRODUCT_ID	0x0f7f
- #define HP_LCM220_PRODUCT_ID	0x3139
- #define HP_LCM960_PRODUCT_ID	0x3239
- #define HP_LD220_PRODUCT_ID	0x3524
+diff --git a/drivers/md/dm-bio-record.h b/drivers/md/dm-bio-record.h
+index c82578af56a5b..2ea0360108e1d 100644
+--- a/drivers/md/dm-bio-record.h
++++ b/drivers/md/dm-bio-record.h
+@@ -20,8 +20,13 @@
+ struct dm_bio_details {
+ 	struct gendisk *bi_disk;
+ 	u8 bi_partno;
++	int __bi_remaining;
+ 	unsigned long bi_flags;
+ 	struct bvec_iter bi_iter;
++	bio_end_io_t *bi_end_io;
++#if defined(CONFIG_BLK_DEV_INTEGRITY)
++	struct bio_integrity_payload *bi_integrity;
++#endif
+ };
+ 
+ static inline void dm_bio_record(struct dm_bio_details *bd, struct bio *bio)
+@@ -30,6 +35,11 @@ static inline void dm_bio_record(struct dm_bio_details *bd, struct bio *bio)
+ 	bd->bi_partno = bio->bi_partno;
+ 	bd->bi_flags = bio->bi_flags;
+ 	bd->bi_iter = bio->bi_iter;
++	bd->__bi_remaining = atomic_read(&bio->__bi_remaining);
++	bd->bi_end_io = bio->bi_end_io;
++#if defined(CONFIG_BLK_DEV_INTEGRITY)
++	bd->bi_integrity = bio_integrity(bio);
++#endif
+ }
+ 
+ static inline void dm_bio_restore(struct dm_bio_details *bd, struct bio *bio)
+@@ -38,6 +48,11 @@ static inline void dm_bio_restore(struct dm_bio_details *bd, struct bio *bio)
+ 	bio->bi_partno = bd->bi_partno;
+ 	bio->bi_flags = bd->bi_flags;
+ 	bio->bi_iter = bd->bi_iter;
++	atomic_set(&bio->__bi_remaining, bd->__bi_remaining);
++	bio->bi_end_io = bd->bi_end_io;
++#if defined(CONFIG_BLK_DEV_INTEGRITY)
++	bio->bi_integrity = bd->bi_integrity;
++#endif
+ }
+ 
+ #endif
+-- 
+2.20.1
+
 
 
