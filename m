@@ -2,131 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1546F191BE4
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 22:25:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F2630191BEC
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 22:27:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728049AbgCXVZM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 17:25:12 -0400
-Received: from mga04.intel.com ([192.55.52.120]:51063 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727023AbgCXVZL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 17:25:11 -0400
-IronPort-SDR: aTiYPWRRZI44Mc9Jr8IYnfPbtBwcjtHEpAYFsDNqxT8hv0toer9TnbxMdFS9mQZ8jKq4ZyAt2u
- Bkd9UBNui91w==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Mar 2020 14:25:11 -0700
-IronPort-SDR: mN5mW36bByfx8u23caSwnMSwzlVG0gkUNRt7tD/10fEzNJJZ2RY/DgvZQ40y7vKwPOVR487G31
- vY7WdAYs8ORA==
-X-IronPort-AV: E=Sophos;i="5.72,301,1580803200"; 
-   d="scan'208";a="265298598"
-Received: from kcaccard-mobl.amr.corp.intel.com (HELO kcaccard-mobl1.jf.intel.com) ([10.251.4.28])
-  by orsmga002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Mar 2020 14:25:09 -0700
-Message-ID: <a01e6b2f0a19f0ace0b5f2c8a50cafccc9b4ef60.camel@linux.intel.com>
-Subject: Re: [RFC PATCH 05/11] x86: Makefile: Add build and config option
- for CONFIG_FG_KASLR
-From:   Kristen Carlson Accardi <kristen@linux.intel.com>
-To:     Arvind Sankar <nivedita@alum.mit.edu>
-Cc:     tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
-        arjan@linux.intel.com, keescook@chromium.org,
-        rick.p.edgecombe@intel.com, x86@kernel.org,
-        linux-kernel@vger.kernel.org, kernel-hardening@lists.openwall.com
-Date:   Tue, 24 Mar 2020 14:24:51 -0700
-In-Reply-To: <20200225175544.GA1385238@rani.riverdale.lan>
-References: <20200205223950.1212394-1-kristen@linux.intel.com>
-         <20200205223950.1212394-6-kristen@linux.intel.com>
-         <20200225175544.GA1385238@rani.riverdale.lan>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.30.5 (3.30.5-1.fc29) 
+        id S1728250AbgCXV13 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 17:27:29 -0400
+Received: from mail-qk1-f195.google.com ([209.85.222.195]:45120 "EHLO
+        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726673AbgCXV12 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Mar 2020 17:27:28 -0400
+Received: by mail-qk1-f195.google.com with SMTP id c145so160962qke.12;
+        Tue, 24 Mar 2020 14:27:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:user-agent:in-reply-to:references:mime-version
+         :content-transfer-encoding:subject:to:cc:from:message-id;
+        bh=1QM8CveRQhCE6XJRJPAlMs7ApDPghnQQSQVpjxsUQj0=;
+        b=BdZM4QZuz9C2CEPCw0eLZ9854zPru32+2mw6iCPsknrDFfoR3g6XnBgpmZ4YTvs0vg
+         QtZEd1asA5kIWaZz21+QYV7klCNZPy9x/4GI6fXE/Ty73Zc2jIWi1FdGPxea0oTcUreM
+         cgIhC2Xo6mJrs39PkT8QbLeE2bIfhZNviRS6lyRT0vH0rIIXoXOZYKtMq1Bb73ONiFWO
+         DMiK59/oGV6hpjvcxFq+ySy6J/t4IRfVoYgCGLZ8EW3qgecW+MuYLwVKhHtE/suD75T/
+         LX7o7SSiiNm8l0pidQFckgmfn4Hjh9jx2DEIPT6Am5poErc4OGuZUzKH0nGuWGja8npF
+         sTeQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:user-agent:in-reply-to:references
+         :mime-version:content-transfer-encoding:subject:to:cc:from
+         :message-id;
+        bh=1QM8CveRQhCE6XJRJPAlMs7ApDPghnQQSQVpjxsUQj0=;
+        b=RqrZrMMl2m0hXway5VFAJna421FXz81NVQuWSEf4D0cp8xc5JoEx3PIAwoxBjJF316
+         OtT/ZIQNBbH4tR1mr0rny3SZOiI+ssFbIiTtut+penspS+nn8NDW7/+7PuvMIvR5l7J5
+         CQCYyMztkKyVXnO6Y+2f8U9sXWQUts/7Wrl+pw2mcZctKt0XGxdUq0IbY/xwRO/qTA+k
+         Rlb4wGF6j3WY93S6Rixfcp2P62OOxLZRtXXPgfvFbDA5lxmfS6BVdYAmY+yeyvckaJof
+         408CSRuLuPRCo9PlFt2QqWz2USKv+GRg2zNnh6aa+econyYdFMozo/jHHf4agwoR0nbo
+         jvSA==
+X-Gm-Message-State: ANhLgQ3EvE3nXqFne4H+ks9W0iqm4i9YAlX38Kgw3cdJEvIarcv/xB8p
+        l3DcD35mCZ/Y/NaEZVaL1W9H0LaZ
+X-Google-Smtp-Source: ADFU+vtXNdvfgJj9BkbhIMMi7iTvUPc4Q4KRrKCGBYbFXoVqvFFRyh8q88hsY2Y767R3U/TL7RiEuw==
+X-Received: by 2002:ae9:eb11:: with SMTP id b17mr27974091qkg.501.1585085247337;
+        Tue, 24 Mar 2020 14:27:27 -0700 (PDT)
+Received: from [192.168.86.185] ([179.97.37.151])
+        by smtp.gmail.com with ESMTPSA id x89sm15080681qtd.43.2020.03.24.14.27.26
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 24 Mar 2020 14:27:26 -0700 (PDT)
+Date:   Tue, 24 Mar 2020 18:26:29 -0300
+User-Agent: K-9 Mail for Android
+In-Reply-To: <21c81775-876a-4dd2-f52f-42645963350f@redhat.com>
+References: <20200320151355.66302-1-agerstmayr@redhat.com> <7176b535-f95b-bf6d-c181-6ccb91425f96@amd.com> <21c81775-876a-4dd2-f52f-42645963350f@redhat.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH] perf script: add flamegraph.py script
+To:     Andreas Gerstmayr <agerstmayr@redhat.com>,
+        Kim Phillips <kim.phillips@amd.com>,
+        linux-perf-users@vger.kernel.org
+CC:     Martin Spier <mspier@netflix.com>,
+        Brendan Gregg <bgregg@netflix.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        linux-kernel@vger.kernel.org
+From:   Arnaldo Melo <arnaldo.melo@gmail.com>
+Message-ID: <BCB65A54-D7A4-40DC-8862-B98422ED107B@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2020-02-25 at 12:55 -0500, Arvind Sankar wrote:
-> On Wed, Feb 05, 2020 at 02:39:44PM -0800, Kristen Carlson Accardi
-> wrote:
-> > Allow user to select CONFIG_FG_KASLR if dependencies are met.
-> > Change
-> > the make file to build with -ffunction-sections if CONFIG_FG_KASLR
-> > 
-> > Signed-off-by: Kristen Carlson Accardi <kristen@linux.intel.com>
-> > ---
-> >  Makefile         |  4 ++++
-> >  arch/x86/Kconfig | 13 +++++++++++++
-> >  2 files changed, 17 insertions(+)
-> > 
-> > diff --git a/Makefile b/Makefile
-> > index c50ef91f6136..41438a921666 100644
-> > --- a/Makefile
-> > +++ b/Makefile
-> > @@ -846,6 +846,10 @@ ifdef CONFIG_LIVEPATCH
-> >  KBUILD_CFLAGS += $(call cc-option, -flive-patching=inline-clone)
-> >  endif
-> >  
-> > +ifdef CONFIG_FG_KASLR
-> > +KBUILD_CFLAGS += -ffunction-sections
-> > +endif
-> > +
-> 
-> With -ffunction-sections I get a few unreachable code warnings from
-> objtool.
-> 
-> arch/x86/kernel/dumpstack.o: warning: objtool: show_iret_regs()+0x10:
-> unreachable instruction
-> fs/sysfs/dir.o: warning: objtool: sysfs_create_mount_point()+0x4f:
-> unreachable instruction
-> kernel/time/clocksource.o: warning: objtool:
-> __clocksource_register_scale()+0x21: unreachable instruction
-> drivers/tty/sysrq.o: warning: objtool: sysrq_filter()+0x2ef:
-> unreachable instruction
-> arch/x86/mm/fault.o: warning: objtool: pgtable_bad()+0x3f:
-> unreachable instruction
-> drivers/acpi/pci_root.o: warning: objtool:
-> acpi_pci_osc_control_set()+0x123: unreachable instruction
-> drivers/rtc/class.o: warning: objtool:
-> devm_rtc_device_register()+0x40: unreachable instruction
-> kernel/power/process.o: warning: objtool:
-> freeze_processes.cold()+0x0: unreachable instruction
-> drivers/pnp/quirks.o: warning: objtool: quirk_awe32_resources()+0x42:
-> unreachable instruction
-> drivers/acpi/utils.o: warning: objtool: acpi_evaluate_dsm()+0xf1:
-> unreachable instruction
-> kernel/reboot.o: warning: objtool: __do_sys_reboot()+0x1b6:
-> unreachable instruction
-> kernel/power/swap.o: warning: objtool: swsusp_read()+0x185:
-> unreachable instruction
-> drivers/hid/hid-core.o: warning: objtool: hid_hw_start()+0x38:
-> unreachable instruction
-> drivers/acpi/battery.o: warning: objtool:
-> sysfs_add_battery.cold()+0x1a: unreachable instruction
-> arch/x86/kernel/cpu/mce/core.o: warning: objtool:
-> do_machine_check.cold()+0x33: unreachable instruction
-> drivers/pcmcia/cistpl.o: warning: objtool: pccard_store_cis()+0x4e:
-> unreachable instruction
-> drivers/gpu/vga/vgaarb.o: warning: objtool: pci_notify()+0x35:
-> unreachable instruction
-> arch/x86/kernel/tsc.o: warning: objtool:
-> determine_cpu_tsc_frequencies()+0x45: unreachable instruction
-> drivers/pcmcia/yenta_socket.o: warning: objtool:
-> ti1250_override()+0x50: unreachable instruction
-> fs/proc/proc_sysctl.o: warning: objtool:
-> sysctl_print_dir.isra.0()+0x19: unreachable instruction
-> drivers/iommu/intel-iommu.o: warning: objtool:
-> intel_iommu_init()+0x4f4: unreachable instruction
-> net/mac80211/ibss.o: warning: objtool:
-> ieee80211_ibss_work.cold()+0x157: unreachable instruction
-> drivers/net/ethernet/intel/e1000/e1000_main.o: warning: objtool:
-> e1000_clean.cold()+0x0: unreachable instruction
-> net/core/skbuff.o: warning: objtool: skb_dump.cold()+0x3fd:
-> unreachable instruction
 
-I'm still working on a solution, but the issue here is that any .cold
-function is going to be in a different section than the related
-function, and when objtool is searching for instructions in
-find_insn(), it assumes that it must be in the same section as the
-caller.
 
+On March 24, 2020 4:05:15 PM GMT-03:00, Andreas Gerstmayr <agerstmayr@redh=
+at=2Ecom> wrote:
+>On 24=2E03=2E20 17:16, Kim Phillips wrote:
+>> On Ubuntu 19=2E10, where python 2=2E7 is still the default, I get:
+>>=20
+>> $ perf script report flamegraph
+>>    File "/usr/libexec/perf-core/scripts/python/flamegraph=2Epy", line
+>46
+>>      print(f"Flame Graph template {self=2Eargs=2Etemplate} does not " +
+>>                                                                 ^
+>> SyntaxError: invalid syntax
+>> Error running python script
+>/usr/libexec/perf-core/scripts/python/flamegraph=2Epy
+>>=20
+>> Installing libpython3-dev doesn't help=2E
+>
+>Hmm, I was hoping that I can drop support for Python 2 in 2020 ;) (it's
+>
+>officially EOL since Jan 1, 2020)
+>
+>The Ubuntu 18=2E04 release notes mention that "Python 2 is no longer=20
+>installed by default=2E Python 3 has been updated to 3=2E6=2E This is the
+>last=20
+>LTS release to include Python 2 in main=2E"=20
+>(https://wiki=2Eubuntu=2Ecom/BionicBeaver/ReleaseNotes) - so imho it shou=
+ld
+>
+>be fine to drop Python 2 support=2E
+>
+>I tested it with a Ubuntu VM, and by default the Python bindings aren't
+>
+>enabled in perf (see=20
+>https://bugs=2Elaunchpad=2Enet/ubuntu/+source/linux/+bug/1707875)=2E
+>
+>But you can compile perf and select Python 3:
+>
+>$ make -j2 PYTHON=3Dpython3
+>
+
+I plan to make this the default soon=2E
+
+- Arnaldo
+>in the perf source directory (libpython3-dev must be installed)=2E
+>
+>
+>Does this work for you?
+>
+>
+>Cheers,
+>Andreas
+
+--=20
+Sent from my Android device with K-9 Mail=2E Please excuse my brevity=2E
