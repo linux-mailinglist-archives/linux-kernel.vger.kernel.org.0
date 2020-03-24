@@ -2,58 +2,58 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5F58A190AB3
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 11:22:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 84E06190AA3
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 11:22:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727561AbgCXKVW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 06:21:22 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:50874 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727402AbgCXKUt (ORCPT
+        id S1727468AbgCXKUx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 06:20:53 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:36200 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727425AbgCXKUu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 06:20:49 -0400
-Received: by mail-wm1-f67.google.com with SMTP id d198so2551197wmd.0
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Mar 2020 03:20:48 -0700 (PDT)
+        Tue, 24 Mar 2020 06:20:50 -0400
+Received: by mail-wr1-f67.google.com with SMTP id 31so14663383wrs.3
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Mar 2020 03:20:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=LAt+HdDto2gFeGUw4ztWf5Rpdip/FjGrs7cpqwQNhSQ=;
-        b=r3YYIIXWo1CNzzCPPmO7j+2H6A7TCKHz2xQF9BT6aNiJNQ8RnNBzd1UxrAJccxqmmk
-         krIOaubpkJtZtcEKW8weSa+9ZCtrw01enYSCqjI96lWPli3kDnvRBiosdpVYa4j4IYoQ
-         VmvuGozP58hTOxpei3Y8J+b1AJuh3hd3s4ZsGeeCGGFlYtkZrv75/eV2NY3moeurf8uy
-         ARM+QHrd8igOo7/Z3ZAgte1CJeEdhrm4ne90Gb5CMhkoNRYulqj2hnZrtUCtQ2PfAztS
-         7yks/oclmXesLLhZyFAvyAhKM7HxS1KuICQXwpPx5ASEhBmLm99Pu4ux4DBCreOCuEfR
-         ktOA==
+        bh=F8WnUqvvgv0bNfMxu+Z5YIurl03M0THSbpRLL/FtCLA=;
+        b=UXNAKlUji6QXYFoez6B97lqRSxFp/2RaSBUajI/Aedr8apB3h4H0VwDndhYnZ2JzEl
+         FC197RxKDT6g/K2nCZytul9HfEymSllr9Q7w8zycHJglWhsQvd/NnmacjzPdNUBypmt+
+         pzWLOVwh9eThhAXlJ/IiU6V2xCVyHEGaXEhTuDW424ORmOq1zl1s7l5kUtEBZ8UXzeL2
+         gIhBPC98CkroePDhRzoUlLvWf+FoMyRr4mTfYyIvtFrB7qqZOwBjI09mbxypMANFLNe6
+         n02vnUzOyT0hgD8l1+y9xrFd9+BgY8fWZKVgprNxLMdl5wwlveVsxKCarHVkZ6krz6P4
+         7pKg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=LAt+HdDto2gFeGUw4ztWf5Rpdip/FjGrs7cpqwQNhSQ=;
-        b=RB4CA/q8cOPbrQ3YMBj2wdC6g9HzKbWBYDcC33ZUpPG/RfPuwhM0/Xc+LEj2J5EEtX
-         NK80CzurxiX5mhNyNXAdQvnzAtE5u5m8aWXT3X7r2zV5LxlEPwcIoZk+cwoGhqnrr5UT
-         5SFU2B3OwopN9nhGq1HYxpSfmLzFXAVfqRKDiaFqwb/xrZxpwOda5kvMrhaavC80cBNO
-         75pNUUYokguIgXaHj0ugE4HUZ0uTlOcSOOd8tXWk5QKWaECTk2eNCM/RUR0zq2dp77pL
-         sVStI52SDidrsDOOMxVo6v2yUyOgcJQYbMaSUpubjVWcqSdCb6d1onbASs4mOejIWH6N
-         sVeQ==
-X-Gm-Message-State: ANhLgQ32YX5/PkASbUzl4zo8RIQWliCDvZ4pEWLpyFgzd44JjBB18gzU
-        2by6sCvz4NzGm8jqH8W8ibfL+WdLh0ueEg==
-X-Google-Smtp-Source: ADFU+vvrml3+ybJ3VeVfRgDYJVaxmt4+SDOcYN4kMnq4qe5+1jf3MqolpUDfWJHUw2xnpPJMQI+5bQ==
-X-Received: by 2002:a05:600c:1:: with SMTP id g1mr4434252wmc.49.1585045247270;
-        Tue, 24 Mar 2020 03:20:47 -0700 (PDT)
+        bh=F8WnUqvvgv0bNfMxu+Z5YIurl03M0THSbpRLL/FtCLA=;
+        b=YiklX9G+JUJY1X24Gk9Jt/yzh0w+nEwninkD1hgbaL0292VlTAEENpCGq9bewDCDCF
+         iOsQTLLlytEk5I7aAmfHPNN6vb5Fqg251KPlvX7KiB6J99nWeSDM+NAN6uQbmqpku5Cq
+         9BkBBz+RydA9sVa0q1sDZT5P6DqZ13/sSf2xjlu6E4g8a1VNf1bprKNOicjo5B4wSe11
+         kf1chNT76GoPyeiPdLspA+bsLluskY9v4U9qxdfaV+jrkSPFPq/cEBt961TwbktDV7Bh
+         1ImocoiJ+HbU7ETpoK7q53C/2Dtxk7U71o15Uq84SO/bTUo9QprP9O86vz2+nr+kyi8P
+         bg7g==
+X-Gm-Message-State: ANhLgQ3nmDPNJcKiNaLwjYVJN8kqZOhaC53SINW2fIPxu/1+V1M0Vtu7
+        +gLIdTQB+xFZlz3t9Sht/mmVBhFD7NhxFg==
+X-Google-Smtp-Source: ADFU+vt4c9bVq+V9ThHlYHhvr0dTYvJh1OeYeXaukx1RGe0MyWTMfPzs2/OuGR+x8sfuT/D6tEHg4w==
+X-Received: by 2002:adf:efc9:: with SMTP id i9mr15183815wrp.23.1585045248510;
+        Tue, 24 Mar 2020 03:20:48 -0700 (PDT)
 Received: from bender.baylibre.local ([2a01:e35:2ec0:82b0:5c5f:613e:f775:b6a2])
-        by smtp.gmail.com with ESMTPSA id h5sm2879527wro.83.2020.03.24.03.20.46
+        by smtp.gmail.com with ESMTPSA id h5sm2879527wro.83.2020.03.24.03.20.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Mar 2020 03:20:46 -0700 (PDT)
+        Tue, 24 Mar 2020 03:20:48 -0700 (PDT)
 From:   Neil Armstrong <narmstrong@baylibre.com>
 To:     kishon@ti.com, balbi@kernel.org, khilman@baylibre.com,
         martin.blumenstingl@googlemail.com
 Cc:     Neil Armstrong <narmstrong@baylibre.com>,
         linux-amlogic@lists.infradead.org, linux-usb@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 07/13] usb: dwc3: meson-g12a: support the GXL/GXM DWC3 host phy disconnect
-Date:   Tue, 24 Mar 2020 11:20:24 +0100
-Message-Id: <20200324102030.31000-8-narmstrong@baylibre.com>
+Subject: [PATCH 08/13] usb: dwc3: meson-g12a: add support for GXL and GXM SoCs
+Date:   Tue, 24 Mar 2020 11:20:25 +0100
+Message-Id: <20200324102030.31000-9-narmstrong@baylibre.com>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20200324102030.31000-1-narmstrong@baylibre.com>
 References: <20200324102030.31000-1-narmstrong@baylibre.com>
@@ -64,96 +64,182 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On the Amlogic GXL/GXM SoCs, the OTG PHY status signals are always
-connected to the DWC3 controller, thus crashing the controller when
-switching to OTG mode when port is not populated with a device/cable to
-Host.
-
-Amlogic added a bit to disconnect the OTG PHY status signals from the DWC3
-to be used when switching the OTG PHY as Device to the DWC2 controller.
-
-The drawback is that it makes the DWC3 port state machine stall and needs
-a full reset of the DWC3 controller to get connect status to the port
-connected to the OTG PHY, but not the other one.
+In order to add support for the Amlogic GXL/GXM USB Glue, this adds
+the corresponding :
+- PHY names
+- clock names
+- USB2 PHY init and mode set
+- regmap setup
 
 Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
 ---
- drivers/usb/dwc3/dwc3-meson-g12a.c | 34 ++++++++++++++++++++++++++++++
- 1 file changed, 34 insertions(+)
+ drivers/usb/dwc3/dwc3-meson-g12a.c | 102 ++++++++++++++++++++++++++++-
+ 1 file changed, 101 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/usb/dwc3/dwc3-meson-g12a.c b/drivers/usb/dwc3/dwc3-meson-g12a.c
-index 65c220b577d0..04ef70661711 100644
+index 04ef70661711..0eae5945e82e 100644
 --- a/drivers/usb/dwc3/dwc3-meson-g12a.c
 +++ b/drivers/usb/dwc3/dwc3-meson-g12a.c
-@@ -123,6 +123,7 @@ struct dwc3_meson_g12a;
+@@ -101,6 +101,11 @@
+ #define PHY_COUNT						3
+ #define USB2_OTG_PHY						1
  
- struct dwc3_meson_g12a_drvdata {
- 	bool otg_switch_supported;
-+	bool otg_phy_host_port_disable;
- 	struct clk_bulk_data *clks;
- 	int num_clks;
- 	const char **phy_names;
-@@ -147,6 +148,19 @@ static int dwc3_meson_g12a_set_phy_mode(struct dwc3_meson_g12a *priv,
++static struct clk_bulk_data meson_gxl_clocks[] = {
++	{ .id = "usb_ctrl" },
++	{ .id = "ddr" },
++};
++
+ static struct clk_bulk_data meson_g12a_clocks[] = {
+ 	{ .id = NULL },
+ };
+@@ -111,6 +116,10 @@ static struct clk_bulk_data meson_a1_clocks[] = {
+ 	{ .id = "xtal_usb_ctrl" },
+ };
+ 
++static const char *meson_gxm_phy_names[] = {
++	"usb2-phy0", "usb2-phy1", "usb2-phy2",
++};
++
+ static const char *meson_g12a_phy_names[] = {
+ 	"usb2-phy0", "usb2-phy1", "usb3-phy0",
+ };
+@@ -137,16 +146,53 @@ struct dwc3_meson_g12a_drvdata {
+ 	int (*usb_post_init)(struct dwc3_meson_g12a *priv);
+ };
+ 
++static int dwc3_meson_gxl_setup_regmaps(struct dwc3_meson_g12a *priv,
++					void __iomem *base);
+ static int dwc3_meson_g12a_setup_regmaps(struct dwc3_meson_g12a *priv,
+ 					 void __iomem *base);
+ 
+ static int dwc3_meson_g12a_usb2_init_phy(struct dwc3_meson_g12a *priv, int i,
+-					  enum phy_mode mode);
++					 enum phy_mode mode);
++static int dwc3_meson_gxl_usb2_init_phy(struct dwc3_meson_g12a *priv, int i,
++					enum phy_mode mode);
+ 
+ static int dwc3_meson_g12a_set_phy_mode(struct dwc3_meson_g12a *priv,
+ 					int i, enum phy_mode mode);
++static int dwc3_meson_gxl_set_phy_mode(struct dwc3_meson_g12a *priv,
++				       int i, enum phy_mode mode);
  
  static int dwc3_meson_g12a_usb_init(struct dwc3_meson_g12a *priv);
- 
-+/*
-+ * For GXL and GXM SoCs:
-+ * USB Phy muxing between the DWC2 Device controller and the DWC3 Host
-+ * controller is buggy when switching from Device to Host when USB port
-+ * is unpopulated, it causes the DWC3 to hard crash.
-+ * When populated (including OTG switching with ID pin), the switch works
-+ * like a charm like on the G12A platforms.
-+ * In order to still switch from Host to Device on an USB Type-A port,
-+ * an U2_PORT_DISABLE bit has been added to disconnect the DWC3 Host
-+ * controller from the port, but when used the DWC3 controller must be
-+ * reset to recover usage of the port.
-+ */
++static int dwc3_meson_gxl_usb_init(struct dwc3_meson_g12a *priv);
 +
- static struct dwc3_meson_g12a_drvdata g12a_drvdata = {
- 	.otg_switch_supported = true,
- 	.clks = meson_g12a_clocks,
-@@ -282,6 +296,13 @@ static void dwc3_meson_g12a_usb_otg_apply_mode(struct dwc3_meson_g12a *priv,
- 					       enum phy_mode mode)
++static int dwc3_meson_gxl_usb_post_init(struct dwc3_meson_g12a *priv);
++
++static struct dwc3_meson_g12a_drvdata gxl_drvdata = {
++	.otg_switch_supported = true,
++	.otg_phy_host_port_disable = true,
++	.clks = meson_gxl_clocks,
++	.num_clks = ARRAY_SIZE(meson_g12a_clocks),
++	.phy_names = meson_a1_phy_names,
++	.num_phys = ARRAY_SIZE(meson_a1_phy_names),
++	.setup_regmaps = dwc3_meson_gxl_setup_regmaps,
++	.usb2_init_phy = dwc3_meson_gxl_usb2_init_phy,
++	.set_phy_mode = dwc3_meson_gxl_set_phy_mode,
++	.usb_init = dwc3_meson_gxl_usb_init,
++	.usb_post_init = dwc3_meson_gxl_usb_post_init,
++};
++
++static struct dwc3_meson_g12a_drvdata gxm_drvdata = {
++	.otg_switch_supported = true,
++	.otg_phy_host_port_disable = true,
++	.clks = meson_gxl_clocks,
++	.num_clks = ARRAY_SIZE(meson_g12a_clocks),
++	.phy_names = meson_gxm_phy_names,
++	.num_phys = ARRAY_SIZE(meson_gxm_phy_names),
++	.setup_regmaps = dwc3_meson_gxl_setup_regmaps,
++	.usb2_init_phy = dwc3_meson_gxl_usb2_init_phy,
++	.set_phy_mode = dwc3_meson_gxl_set_phy_mode,
++	.usb_init = dwc3_meson_gxl_usb_init,
++	.usb_post_init = dwc3_meson_gxl_usb_post_init,
++};
+ 
+ /*
+  * For GXL and GXM SoCs:
+@@ -201,6 +247,21 @@ struct dwc3_meson_g12a {
+ 	const struct dwc3_meson_g12a_drvdata *drvdata;
+ };
+ 
++static int dwc3_meson_gxl_set_phy_mode(struct dwc3_meson_g12a *priv,
++					 int i, enum phy_mode mode)
++{
++	return phy_set_mode(priv->phys[i], mode);
++}
++
++static int dwc3_meson_gxl_usb2_init_phy(struct dwc3_meson_g12a *priv, int i,
++					enum phy_mode mode)
++{
++	/* On GXL PHY must be started in device mode for DWC2 init */
++	return priv->drvdata->set_phy_mode(priv, i,
++				(i == USB2_OTG_PHY) ? PHY_MODE_USB_DEVICE
++						    : PHY_MODE_USB_HOST);
++}
++
+ static int dwc3_meson_g12a_set_phy_mode(struct dwc3_meson_g12a *priv,
+ 					 int i, enum phy_mode mode)
  {
- 	if (mode == PHY_MODE_USB_DEVICE) {
-+		if (priv->otg_mode != USB_DR_MODE_OTG &&
-+		    priv->drvdata->otg_phy_host_port_disable)
-+			/* Isolate the OTG PHY port from the Host Controller */
-+			regmap_update_bits(priv->usb_glue_regmap, USB_R1,
-+				USB_R1_U3H_HOST_U2_PORT_DISABLE_MASK,
-+				FIELD_PREP(USB_R1_U3H_HOST_U2_PORT_DISABLE_MASK,
-+					   BIT(USB2_OTG_PHY)));
- 		regmap_update_bits(priv->usb_glue_regmap, USB_R0,
- 				USB_R0_U2D_ACT, USB_R0_U2D_ACT);
- 		regmap_update_bits(priv->usb_glue_regmap, USB_R0,
-@@ -289,6 +310,12 @@ static void dwc3_meson_g12a_usb_otg_apply_mode(struct dwc3_meson_g12a *priv,
- 		regmap_update_bits(priv->usb_glue_regmap, USB_R4,
- 				USB_R4_P21_SLEEP_M0, USB_R4_P21_SLEEP_M0);
- 	} else {
-+		if (priv->otg_mode != USB_DR_MODE_OTG &&
-+		    priv->drvdata->otg_phy_host_port_disable) {
-+			regmap_update_bits(priv->usb_glue_regmap, USB_R1,
-+				USB_R1_U3H_HOST_U2_PORT_DISABLE_MASK, 0);
-+			msleep(500);
-+		}
- 		regmap_update_bits(priv->usb_glue_regmap, USB_R0,
- 				USB_R0_U2D_ACT, 0);
- 		regmap_update_bits(priv->usb_glue_regmap, USB_R4,
-@@ -421,6 +448,13 @@ static int dwc3_meson_g12a_role_set(struct device *dev, enum usb_role role)
- 	if (mode == priv->otg_phy_mode)
- 		return 0;
- 
-+	if (priv->drvdata->otg_phy_host_port_disable)
-+		dev_warn_once(priv->dev, "Manual OTG switch is broken on this "\
-+					 "SoC, when manual switching from "\
-+					 "Host to device, DWC3 controller "\
-+					 "will need to be resetted in order "\
-+					 "to recover usage of the Host port");
-+
- 	return dwc3_meson_g12a_otg_mode_set(priv, mode);
+@@ -548,6 +609,18 @@ static int dwc3_meson_g12a_otg_init(struct platform_device *pdev,
+ 	return 0;
  }
  
++static int dwc3_meson_gxl_setup_regmaps(struct dwc3_meson_g12a *priv,
++					void __iomem *base)
++{
++	/* GXL controls the PHY mode in the PHY registers unlike G12A */
++	priv->usb_glue_regmap = devm_regmap_init_mmio(priv->dev, base,
++					&phy_meson_g12a_usb_glue_regmap_conf);
++	if (IS_ERR(priv->usb_glue_regmap))
++		return PTR_ERR(priv->usb_glue_regmap);
++
++	return 0;
++}
++
+ static int dwc3_meson_g12a_setup_regmaps(struct dwc3_meson_g12a *priv,
+ 					 void __iomem *base)
+ {
+@@ -588,6 +661,25 @@ static int dwc3_meson_g12a_usb_init(struct dwc3_meson_g12a *priv)
+ 	return dwc3_meson_g12a_usb_init_glue(priv, priv->otg_phy_mode);
+ }
+ 
++static int dwc3_meson_gxl_usb_init(struct dwc3_meson_g12a *priv)
++{
++	return dwc3_meson_g12a_usb_init_glue(priv, PHY_MODE_USB_DEVICE);
++}
++
++static int dwc3_meson_gxl_usb_post_init(struct dwc3_meson_g12a *priv)
++{
++	int ret;
++
++	ret = priv->drvdata->set_phy_mode(priv, USB2_OTG_PHY,
++					  priv->otg_phy_mode);
++	if (ret)
++		return ret;
++
++	dwc3_meson_g12a_usb_otg_apply_mode(priv,  priv->otg_phy_mode);
++
++	return 0;
++}
++
+ static int dwc3_meson_g12a_probe(struct platform_device *pdev)
+ {
+ 	struct dwc3_meson_g12a	*priv;
+@@ -817,6 +909,14 @@ static const struct dev_pm_ops dwc3_meson_g12a_dev_pm_ops = {
+ };
+ 
+ static const struct of_device_id dwc3_meson_g12a_match[] = {
++	{
++		.compatible = "amlogic,meson-gxl-usb-ctrl",
++		.data = &gxl_drvdata,
++	},
++	{
++		.compatible = "amlogic,meson-gxm-usb-ctrl",
++		.data = &gxm_drvdata,
++	},
+ 	{
+ 		.compatible = "amlogic,meson-g12a-usb-ctrl",
+ 		.data = &g12a_drvdata,
 -- 
 2.22.0
 
