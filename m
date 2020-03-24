@@ -2,33 +2,33 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 26946190902
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 10:18:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 43822190917
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 10:18:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727900AbgCXJRT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 05:17:19 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:44098 "EHLO
+        id S1727450AbgCXJSO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 05:18:14 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:44084 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727675AbgCXJRK (ORCPT
+        with ESMTP id S1727745AbgCXJRG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 05:17:10 -0400
+        Tue, 24 Mar 2020 05:17:06 -0400
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1jGfgF-0008Ba-I1; Tue, 24 Mar 2020 10:17:03 +0100
+        id 1jGfgH-0008DJ-7D; Tue, 24 Mar 2020 10:17:05 +0100
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 49AD91C04DF;
-        Tue, 24 Mar 2020 10:16:48 +0100 (CET)
-Date:   Tue, 24 Mar 2020 09:16:47 -0000
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 2CC3A1C048C;
+        Tue, 24 Mar 2020 10:16:49 +0100 (CET)
+Date:   Tue, 24 Mar 2020 09:16:48 -0000
 From:   "tip-bot2 for Paul E. McKenney" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: core/rcu] rcu: Don't flag non-starting GPs before GP kthread is running
-Cc:     Qian Cai <cai@lca.pw>, "Paul E. McKenney" <paulmck@kernel.org>,
-        x86 <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>
+Subject: [tip: core/rcu] rcu: Fix rcu_barrier_callback() race condition
+Cc:     "Paul E. McKenney" <paulmck@kernel.org>, x86 <x86@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <158504140797.28353.607331076665025873.tip-bot2@tip-bot2>
+Message-ID: <158504140877.28353.8781282513260518428.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -44,128 +44,85 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the core/rcu branch of tip:
 
-Commit-ID:     5648d6591230c811972543ff146ce969babdd732
-Gitweb:        https://git.kernel.org/tip/5648d6591230c811972543ff146ce969babdd732
+Commit-ID:     aa24f93753e256c4b14fe46f7261f150cff2a50c
+Gitweb:        https://git.kernel.org/tip/aa24f93753e256c4b14fe46f7261f150cff2a50c
 Author:        Paul E. McKenney <paulmck@kernel.org>
-AuthorDate:    Tue, 21 Jan 2020 12:30:22 -08:00
+AuthorDate:    Mon, 20 Jan 2020 15:43:45 -08:00
 Committer:     Paul E. McKenney <paulmck@kernel.org>
 CommitterDate: Thu, 20 Feb 2020 15:58:23 -08:00
 
-rcu: Don't flag non-starting GPs before GP kthread is running
+rcu: Fix rcu_barrier_callback() race condition
 
-Currently rcu_check_gp_start_stall() complains if a grace period takes
-too long to start, where "too long" is roughly one RCU CPU stall-warning
-interval.  This has worked well, but there are some debugging Kconfig
-options (such as CONFIG_EFI_PGT_DUMP=y) that can make booting take a
-very long time, so much so that the stall-warning interval has expired
-before RCU's grace-period kthread has even been spawned.
+The rcu_barrier_callback() function does an atomic_dec_and_test(), and
+if it is the last CPU to check in, does the required wakeup.  Either way,
+it does an event trace.  Unfortunately, this is susceptible to the
+following sequence of events:
 
-This commit therefore resets the rcu_state.gp_req_activity and
-rcu_state.gp_activity timestamps just before the grace-period kthread
-is spawned, and modifies the checks and adds ordering to ensure that
-if rcu_check_gp_start_stall() sees that the grace-period kthread
-has been spawned, that it will also see the resets applied to the
-rcu_state.gp_req_activity and rcu_state.gp_activity timestamps.
+o	CPU 0 invokes rcu_barrier_callback(), but atomic_dec_and_test()
+	says that it is not last.  But at this point, CPU 0 is delayed,
+	perhaps due to an NMI, SMI, or vCPU preemption.
 
-Reported-by: Qian Cai <cai@lca.pw>
+o	CPU 1 invokes rcu_barrier_callback(), and atomic_dec_and_test()
+	says that it is last.  So CPU 1 traces completion and does
+	the needed wakeup.
+
+o	The awakened rcu_barrier() function does cleanup and releases
+	rcu_state.barrier_mutex.
+
+o	Another CPU now acquires rcu_state.barrier_mutex and starts
+	another round of rcu_barrier() processing, including updating
+	rcu_state.barrier_sequence.
+
+o	CPU 0 gets its act back together and does its tracing.  Except
+	that rcu_state.barrier_sequence has already been updated, so
+	its tracing is incorrect and probably quite confusing.
+	(Wait!  Why did this CPU check in twice for one rcu_barrier()
+	invocation???)
+
+This commit therefore causes rcu_barrier_callback() to take a
+snapshot of the value of rcu_state.barrier_sequence before invoking
+atomic_dec_and_test(), thus guaranteeing that the event-trace output
+is sensible, even if the timing of the event-trace output might still
+be confusing.  (Wait!  Why did the old rcu_barrier() complete before
+all of its CPUs checked in???)  But being that this is RCU, only so much
+confusion can reasonably be eliminated.
+
+This data race was reported by KCSAN.  Not appropriate for backporting
+due to failure being unlikely and due to the mild consequences of the
+failure, namely a confusing event trace.
+
 Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
-[ paulmck: Fix whitespace issues reported by Qian Cai. ]
-Tested-by: Qian Cai <cai@lca.pw>
-[ paulmck: Simplify grace-period wakeup check per Steve Rostedt feedback. ]
 ---
- kernel/rcu/tree.c       | 28 ++++++++++++++++------------
- kernel/rcu/tree_stall.h |  7 ++++---
- 2 files changed, 20 insertions(+), 15 deletions(-)
+ kernel/rcu/tree.c | 13 ++++++++++---
+ 1 file changed, 10 insertions(+), 3 deletions(-)
 
 diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
-index 62383ce..4a4a975 100644
+index be59a5d..62383ce 100644
 --- a/kernel/rcu/tree.c
 +++ b/kernel/rcu/tree.c
-@@ -1202,7 +1202,7 @@ static bool rcu_start_this_gp(struct rcu_node *rnp_start, struct rcu_data *rdp,
- 	trace_rcu_this_gp(rnp, rdp, gp_seq_req, TPS("Startedroot"));
- 	WRITE_ONCE(rcu_state.gp_flags, rcu_state.gp_flags | RCU_GP_FLAG_INIT);
- 	WRITE_ONCE(rcu_state.gp_req_activity, jiffies);
--	if (!rcu_state.gp_kthread) {
-+	if (!READ_ONCE(rcu_state.gp_kthread)) {
- 		trace_rcu_this_gp(rnp, rdp, gp_seq_req, TPS("NoGPkthread"));
- 		goto unlock_out;
+@@ -3077,15 +3077,22 @@ static void rcu_barrier_trace(const char *s, int cpu, unsigned long done)
+ /*
+  * RCU callback function for rcu_barrier().  If we are last, wake
+  * up the task executing rcu_barrier().
++ *
++ * Note that the value of rcu_state.barrier_sequence must be captured
++ * before the atomic_dec_and_test().  Otherwise, if this CPU is not last,
++ * other CPUs might count the value down to zero before this CPU gets
++ * around to invoking rcu_barrier_trace(), which might result in bogus
++ * data from the next instance of rcu_barrier().
+  */
+ static void rcu_barrier_callback(struct rcu_head *rhp)
+ {
++	unsigned long __maybe_unused s = rcu_state.barrier_sequence;
++
+ 	if (atomic_dec_and_test(&rcu_state.barrier_cpu_count)) {
+-		rcu_barrier_trace(TPS("LastCB"), -1,
+-				  rcu_state.barrier_sequence);
++		rcu_barrier_trace(TPS("LastCB"), -1, s);
+ 		complete(&rcu_state.barrier_completion);
+ 	} else {
+-		rcu_barrier_trace(TPS("CB"), -1, rcu_state.barrier_sequence);
++		rcu_barrier_trace(TPS("CB"), -1, s);
  	}
-@@ -1237,12 +1237,13 @@ static bool rcu_future_gp_cleanup(struct rcu_node *rnp)
  }
  
- /*
-- * Awaken the grace-period kthread.  Don't do a self-awaken (unless in
-- * an interrupt or softirq handler), and don't bother awakening when there
-- * is nothing for the grace-period kthread to do (as in several CPUs raced
-- * to awaken, and we lost), and finally don't try to awaken a kthread that
-- * has not yet been created.  If all those checks are passed, track some
-- * debug information and awaken.
-+ * Awaken the grace-period kthread.  Don't do a self-awaken (unless in an
-+ * interrupt or softirq handler, in which case we just might immediately
-+ * sleep upon return, resulting in a grace-period hang), and don't bother
-+ * awakening when there is nothing for the grace-period kthread to do
-+ * (as in several CPUs raced to awaken, we lost), and finally don't try
-+ * to awaken a kthread that has not yet been created.  If all those checks
-+ * are passed, track some debug information and awaken.
-  *
-  * So why do the self-wakeup when in an interrupt or softirq handler
-  * in the grace-period kthread's context?  Because the kthread might have
-@@ -1252,10 +1253,10 @@ static bool rcu_future_gp_cleanup(struct rcu_node *rnp)
-  */
- static void rcu_gp_kthread_wake(void)
- {
--	if ((current == rcu_state.gp_kthread &&
--	     !in_irq() && !in_serving_softirq()) ||
--	    !READ_ONCE(rcu_state.gp_flags) ||
--	    !rcu_state.gp_kthread)
-+	struct task_struct *t = READ_ONCE(rcu_state.gp_kthread);
-+
-+	if ((current == t && !in_irq() && !in_serving_softirq()) ||
-+	    !READ_ONCE(rcu_state.gp_flags) || !t)
- 		return;
- 	WRITE_ONCE(rcu_state.gp_wake_time, jiffies);
- 	WRITE_ONCE(rcu_state.gp_wake_seq, READ_ONCE(rcu_state.gp_seq));
-@@ -3554,7 +3555,10 @@ static int __init rcu_spawn_gp_kthread(void)
- 	}
- 	rnp = rcu_get_root();
- 	raw_spin_lock_irqsave_rcu_node(rnp, flags);
--	rcu_state.gp_kthread = t;
-+	WRITE_ONCE(rcu_state.gp_activity, jiffies);
-+	WRITE_ONCE(rcu_state.gp_req_activity, jiffies);
-+	// Reset .gp_activity and .gp_req_activity before setting .gp_kthread.
-+	smp_store_release(&rcu_state.gp_kthread, t);  /* ^^^ */
- 	raw_spin_unlock_irqrestore_rcu_node(rnp, flags);
- 	wake_up_process(t);
- 	rcu_spawn_nocb_kthreads();
-diff --git a/kernel/rcu/tree_stall.h b/kernel/rcu/tree_stall.h
-index 488b71d..16ad7ad 100644
---- a/kernel/rcu/tree_stall.h
-+++ b/kernel/rcu/tree_stall.h
-@@ -578,6 +578,7 @@ void show_rcu_gp_kthreads(void)
- 	unsigned long jw;
- 	struct rcu_data *rdp;
- 	struct rcu_node *rnp;
-+	struct task_struct *t = READ_ONCE(rcu_state.gp_kthread);
- 
- 	j = jiffies;
- 	ja = j - READ_ONCE(rcu_state.gp_activity);
-@@ -585,8 +586,7 @@ void show_rcu_gp_kthreads(void)
- 	jw = j - READ_ONCE(rcu_state.gp_wake_time);
- 	pr_info("%s: wait state: %s(%d) ->state: %#lx delta ->gp_activity %lu ->gp_req_activity %lu ->gp_wake_time %lu ->gp_wake_seq %ld ->gp_seq %ld ->gp_seq_needed %ld ->gp_flags %#x\n",
- 		rcu_state.name, gp_state_getname(rcu_state.gp_state),
--		rcu_state.gp_state,
--		rcu_state.gp_kthread ? rcu_state.gp_kthread->state : 0x1ffffL,
-+		rcu_state.gp_state, t ? t->state : 0x1ffffL,
- 		ja, jr, jw, (long)READ_ONCE(rcu_state.gp_wake_seq),
- 		(long)READ_ONCE(rcu_state.gp_seq),
- 		(long)READ_ONCE(rcu_get_root()->gp_seq_needed),
-@@ -633,7 +633,8 @@ static void rcu_check_gp_start_stall(struct rcu_node *rnp, struct rcu_data *rdp,
- 
- 	if (!IS_ENABLED(CONFIG_PROVE_RCU) || rcu_gp_in_progress() ||
- 	    ULONG_CMP_GE(READ_ONCE(rnp_root->gp_seq),
--			 READ_ONCE(rnp_root->gp_seq_needed)))
-+			 READ_ONCE(rnp_root->gp_seq_needed)) ||
-+	    !smp_load_acquire(&rcu_state.gp_kthread)) // Get stable kthread.
- 		return;
- 	j = jiffies; /* Expensive access, and in common case don't get here. */
- 	if (time_before(j, READ_ONCE(rcu_state.gp_req_activity) + gpssdelay) ||
