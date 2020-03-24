@@ -2,85 +2,128 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C45B419098E
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 10:30:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CBB53190995
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 10:31:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727137AbgCXJab (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 05:30:31 -0400
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:43919 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726944AbgCXJab (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 05:30:31 -0400
-Received: by mail-oi1-f194.google.com with SMTP id p125so17811926oif.10
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Mar 2020 02:30:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=A/0KAii201T0LPKgB9S97/7pdilYmedqXQq8pqjza4Q=;
-        b=tsydS4fNF/NawIXvCg86I+MG1NzHQ1Sa5aWtwNl2oRuLaKpZpgjMBqEGWsOebtxBGu
-         HgTGGtTqAVow1EuCXBYEsugpLRv4MeF4EcqFZm8G9TvZ5vYFPe0+Q/k/Oyvk3yMKufao
-         zNqNtY+HOKv6RHNb6OJxhEtNRs4dQbGREfJb2j68SkGuy3KP2QG0QCpBWwSRcUGrotxp
-         JMuXFWaKR38pz4ZRwKJmyCekeU11PFwWMjcSDbgkJfIBbE56TkKtKc8JTei+oSNq/bZW
-         vFHB9Kbtjx8hFcxsCYtpNfFXCsmy4CAlsmR12tOBoKVkemjrqRiaZyTQV6sNyvQjUb3R
-         pAwA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=A/0KAii201T0LPKgB9S97/7pdilYmedqXQq8pqjza4Q=;
-        b=iOg2aGYdn/JBc27WFkcl7SfX+XsR0C+h6xnR7BaF8nSeEWWGZB05a9kQfrtjPVWiIB
-         7duPDwoQe+V0euOjAMEcQ3mYL76tYW7k16jEN3CmNcUOE5Aabf90yzpincDb0jSbuGu7
-         K4NAo1s9XUC6zmvkGf2qjXOvu+qhop+gUU3kcttDwQ/k0FMjdM8wU2NvVIvsJsL+DH5q
-         kQucPC1S71j+RZD8zcFNYMyV67UHRpDPBLCrMsdXiS7jgkhsB+523QuRilxUge5ki8kj
-         rlUhOmVW2s051ydGTJc3FCJe5PzffASqmuDzmW15AU49KyGwt1A+nA4lNrytqhgz0QMt
-         EbNg==
-X-Gm-Message-State: ANhLgQ3Oo09muaoDBBecuMmdPSQHlBprODdFUROHHwifwqJzthW6qLP3
-        uVCuwW9Ti9CviNWPf4+1JToWgYUvWPoUAegBmiMNNQ==
-X-Google-Smtp-Source: ADFU+vuOZ0TaE14JHbGrFtk3euPj/osHZ1tI+cYnZozht7DZ4yncreGiYl/Si8YEggMCgqSWkJUGUDjg4REmWEjwE60=
-X-Received: by 2002:a05:6808:8db:: with SMTP id k27mr2729131oij.175.1585042228749;
- Tue, 24 Mar 2020 02:30:28 -0700 (PDT)
+        id S1727283AbgCXJb3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 05:31:29 -0400
+Received: from mail.loongson.cn ([114.242.206.163]:38172 "EHLO loongson.cn"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726565AbgCXJb3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Mar 2020 05:31:29 -0400
+Received: from [10.130.0.79] (unknown [113.200.148.30])
+        by mail.loongson.cn (Coremail) with SMTP id AQAAf9Dxn91c03lezXAfAA--.4S3;
+        Tue, 24 Mar 2020 17:31:10 +0800 (CST)
+Subject: Re: [PATCH v2 0/3] Add basic support for Loongson 7A1000 bridge chip
+To:     Jiaxun Yang <jiaxun.yang@flygoat.com>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        Huacai Chen <chenhc@lemote.com>
+References: <1584932355-3642-1-git-send-email-yangtiezhu@loongson.cn>
+ <F85A21BA-31A2-4230-BFF8-7B5F355BB125@flygoat.com>
+Cc:     linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Xuefeng Li <lixuefeng@loongson.cn>
+From:   Tiezhu Yang <yangtiezhu@loongson.cn>
+Message-ID: <79f960cc-4360-8941-a89d-a61dd86a16bd@loongson.cn>
+Date:   Tue, 24 Mar 2020 17:31:08 +0800
+User-Agent: Mozilla/5.0 (X11; Linux mips64; rv:45.0) Gecko/20100101
+ Thunderbird/45.4.0
 MIME-Version: 1.0
-References: <20200305220657.46800-1-jannh@google.com>
-In-Reply-To: <20200305220657.46800-1-jannh@google.com>
-From:   Jann Horn <jannh@google.com>
-Date:   Tue, 24 Mar 2020 10:30:02 +0100
-Message-ID: <CAG48ez2qd6r6FfDBHbqpoqKFU1oA64Usx86Ps33wHjCZmxYmbA@mail.gmail.com>
-Subject: Re: [PATCH v2] exit: Move preemption fixup up, move blocking
- operations down
-To:     Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Frederic Weisbecker <fweisbec@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        kernel list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <F85A21BA-31A2-4230-BFF8-7B5F355BB125@flygoat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID: AQAAf9Dxn91c03lezXAfAA--.4S3
+X-Coremail-Antispam: 1UD129KBjvJXoWxWr4UGw45ZF4rXw48WFWkXrb_yoW5Cryfpa
+        y5uanIgFs8Wry7AFyfuw48CFWYyrs3XrZrW3W7Gr1kCas8ZF10qr929a15G3W7ur92k3W2
+        vryUW3yDGa15CaDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDU0xBIdaVrnRJUUUvv14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+        rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+        1l84ACjcxK6xIIjxv20xvE14v26r1I6r4UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
+        6F4UM28EF7xvwVC2z280aVAFwI0_Cr1j6rxdM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+        Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
+        I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Gr0_Cr1lOx8S6xCaFVCjc4AY6r1j6r
+        4UM4x0Y48IcVAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwCYjI0SjxkI62AI1cAE67vI
+        Y487MxkIecxEwVAFwVW8uwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8Jw
+        C20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAF
+        wI0_JF0_Jw1lIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjx
+        v20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6rW3Jr0E3s1lIxAIcVC2
+        z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVWUJVW8JbIYCTnIWIevJa73Uj
+        IFyTuYvjfUeID7DUUUU
+X-CM-SenderInfo: p1dqw3xlh2x3gn0dqz5rrqw2lrqou0/
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 5, 2020 at 11:07 PM Jann Horn <jannh@google.com> wrote:
-> With CONFIG_DEBUG_ATOMIC_SLEEP=y and CONFIG_CGROUPS=y, kernel oopses in
-> non-preemptible context look untidy; after the main oops, the kernel prints
-> a "sleeping function called from invalid context" report because
-> exit_signals() -> cgroup_threadgroup_change_begin() -> percpu_down_read()
-> can sleep, and that happens before the preempt_count_set(PREEMPT_ENABLED)
-> fixup.
+On 03/24/2020 03:49 PM, Jiaxun Yang wrote:
 >
-> It looks like the same thing applies to profile_task_exit() and
-> kcov_task_exit().
->
-> Fix it by moving the preemption fixup up and the calls to
-> profile_task_exit() and kcov_task_exit() down.
->
-> Fixes: 1dc0fffc48af ("sched/core: Robustify preemption leak checks")
-> Signed-off-by: Jann Horn <jannh@google.com>
-> ---
-> As so often, I have no idea which tree this should go through. tip? mm?
+> 于 2020年3月23日 GMT+08:00 上午10:59:12, Tiezhu Yang <yangtiezhu@loongson.cn> 写到:
+>> The Loongson 7A1000 bridge chip has been released for several years
+>> since the second half of 2017, but it is not supported by the Linux
+>> mainline kernel while it only works well with the Loongson internal
+>> kernel version. When I update the latest version of Linux mainline
+>> kernel on the Loongson 3A3000 CPU and 7A1000 bridge chip system,
+>> the boot process failed and I feel depressed.
+>>
+>> The 7A1000 bridge chip is used a lot with 3A3000 or 3A4000 CPU in
+>> the most Loongson desktop and sever products, it is important to
+>> support Loongson 7A1000 bridge chip by the Linux mainline kernel.
+>>
+>> This patch series adds the basic support for the Loongson 7A1000
+>> bridge chip, when apply these patches based on linux-5.6-rc7, the
+>> boot process is successful and we can login normally used with the
+> Is it still true without IRQ driver?
 
-Do the tip folks want to take this, since it's vaguely locking-related
-and the fixed commit also came that way? Or should it go through
-akpm's tree?
+No, I will modify the description.
+
+>
+>> latest firmware and discrete graphics card, the next work to do is
+>> power management and some other controller device drivers.
+>>
+>> Additionally, when I git clone mips code [1], the speed is too slow
+>> and clone always failed, so this patch series is based on the latest
+>> linux-5.6-rc7 [2].
+> You can clone stable tree from mirrors in China[1] at first,
+> then add mips tree as a remote and fetch from it.
+> In this way it will only download a minimal difference set from foreign server so won't spend a lot of time.
+
+Thanks for your suggestion.
+
+>
+>
+> [1]: https://mirrors.tuna.tsinghua.edu.cn/git/linux-stable.git
+>
+>> If you have any questions and suggestions, please let me know.
+>>
+>> Thanks,
+>>
+>> Tiezhu Yang
+>>
+>> v2:
+>>   - The split patch series about Loongson vendor ID and SATA controller
+>>     has been merged into the linux-block.git by Jens Axboe [3].
+>>
+>>   - Think about using hierarchy IRQ domain in the patch of interrupt
+>>     controller, and this maybe depend on the patch series by Jiaxun
+>>     ("Modernize Loongson64 Machine"), so the patch about interrupt is
+>>     not included in this v2 patch series.
+>>
+>> [1] git clone
+>> https://git.kernel.org/pub/scm/linux/kernel/git/mips/linux.git
+>> [2] git clone https://github.com/torvalds/linux.git
+>> [3]
+>> https://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux-block.git/commit/?h=for-next&id=9acb9fe18d86
+>> https://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux-block.git/commit/?h=for-next&id=e49bd683e00b
+>>
+>> Tiezhu Yang (3):
+>>   MIPS: Loongson: Get host bridge information
+>>   MIPS: Loongson: Add DMA support for 7A1000
+>>   MIPS: Loongson: Add PCI support for 7A1000
+>>
+>> arch/mips/include/asm/mach-loongson64/boot_param.h | 20 ++++++
+>> arch/mips/loongson64/dma.c                         |  9 ++-
+>> arch/mips/loongson64/env.c                         | 20 ++++++
+>> arch/mips/loongson64/init.c                        | 17 +++++
+>> arch/mips/pci/ops-loongson3.c                      | 72
+>> ++++++++++++++++++++--
+>> 5 files changed, 131 insertions(+), 7 deletions(-)
+
