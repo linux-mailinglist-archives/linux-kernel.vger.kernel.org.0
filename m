@@ -2,98 +2,117 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B8AB51902B3
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 01:17:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 72C671902C9
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 01:25:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727698AbgCXAQ6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Mar 2020 20:16:58 -0400
-Received: from ozlabs.org ([203.11.71.1]:53415 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727438AbgCXAQ6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Mar 2020 20:16:58 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 48mWyb184lz9sSJ;
-        Tue, 24 Mar 2020 11:16:55 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1585009015;
-        bh=UyAyFRUUjQ9pV8eiOPAkzACSHmb6g27IvMDSbEpjDRk=;
-        h=Date:From:To:Cc:Subject:From;
-        b=BQyaiOLeINODXxsqwsABi5YDLuWkCLcEvH9F140P9h4NdRizxWFDbSVF6tCLYfSuA
-         XesN15TPaz/75RDP9c4HLeZP1k3lcAykSmOHpAibDxYzPlMrWrI6myk8rr1cXpsXr0
-         tDinj2rOsJAhMnEJNQCyiZO54a3We1EfvdLsXE5ej7p0nAjXFTTuPtPii6s4b3VvPD
-         CYeQkB0IPHl6O5k2UuPcihUEZcyi1/dyYoPToe53iv5ywCp8XSTRcNzfaq6u/NUng0
-         lGXSFoXNPZ18rPA9rPYfQYLcOKPyU4/CjTlEk9H1KXy18iM8L0aoL09N2BVuPDOf0i
-         vGzB2N7q5vUew==
-Date:   Tue, 24 Mar 2020 11:16:53 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Kalle Valo <kvalo@codeaurora.org>,
-        Wireless <linux-wireless@vger.kernel.org>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Luca Coelho <luciano.coelho@intel.com>
-Subject: linux-next: manual merge of the wireless-drivers-next tree with the
- wireless-drivers tree
-Message-ID: <20200324111653.35c368e4@canb.auug.org.au>
+        id S1727567AbgCXAWk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Mar 2020 20:22:40 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:32779 "EHLO
+        mail.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727299AbgCXAWj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Mar 2020 20:22:39 -0400
+Received: from hanvin-mobl2.amr.corp.intel.com (jfdmzpr05-ext.jf.intel.com [134.134.139.74])
+        (authenticated bits=0)
+        by mail.zytor.com (8.15.2/8.15.2) with ESMTPSA id 02O0MGjT2855350
+        (version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+        Mon, 23 Mar 2020 17:22:19 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 02O0MGjT2855350
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+        s=2020022001; t=1585009340;
+        bh=6ozD22oNmLz3Eyc6szHUH/qbiZMeaSJjOryDYbDBROQ=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=YH+7nYPt7tPJkMOnFeE1w2qg3kxk+wLUW1H4sj2UxJ0ND9QdKXu6Cc/QTBdPpuZkV
+         fCu1dUPtFuB9k2XOo4HQcF8VDk8XBtONfFAXwugcx1jQUIGMZg2miJKZ1p66PdgW0L
+         PXP44TvuJ2sVVWL3RbKAvh8T1QmsDAaKrjfv3NK36p18mTqjFuhWs49AVg1gW0Pgiq
+         1iyFs2Rff45bUJ2B7V1KzXjPIiDXOP04KbaXZnp5WEBtG2XWFfXKrupmF5WmktQP+s
+         WtSsVb7RLeJ64WNNQFPpIgWuEi/kiqge9/iB29Dm6RX5tW8zh4yTzWY2x7/MniOCTd
+         R6aRAu1H5JvBg==
+Subject: Re: [PATCH v2 1/9] lib/raid6/test: fix build on distros whose /bin/sh
+ is not bash
+To:     Masahiro Yamada <masahiroy@kernel.org>, x86@kernel.org,
+        Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>, linux-crypto@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org,
+        "Jason A . Donenfeld" <Jason@zx2c4.com>,
+        Jim Kukunas <james.t.kukunas@linux.intel.com>,
+        NeilBrown <neilb@suse.de>,
+        Yuanhan Liu <yuanhan.liu@linux.intel.com>
+References: <20200324001358.4520-1-masahiroy@kernel.org>
+ <20200324001358.4520-2-masahiroy@kernel.org>
+From:   "H. Peter Anvin" <hpa@zytor.com>
+Message-ID: <56f56703-9771-8d64-3820-0ffbbe8dd3bc@zytor.com>
+Date:   Mon, 23 Mar 2020 17:22:11 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.6.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/1iuFxirNRaHI1rvguqsXKpC";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+In-Reply-To: <20200324001358.4520-2-masahiroy@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/1iuFxirNRaHI1rvguqsXKpC
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On 2020-03-23 17:13, Masahiro Yamada wrote:
+> You can test raid6 library code from user-space, like this:
+> 
+>   $ cd lib/raid6/test
+>   $ make
+> 
+> The command in $(shell ...) function is evaluated by /bin/sh by default.
+> (or, you can change the default shell by setting 'SHELL' in Makefile)
+> 
+> Currently '>&/dev/null' is used to sink both stdout and stderr. Because
+> this code is bash-ism, it only works when /bin/sh is a symbolic link to
+> bash (this is the case on RHEL etc.)
+> 
+> This does not work on Ubuntu where /bin/sh is a symbolic link to dash.
+> 
+> I see lots of
+> 
+>   /bin/sh: 1: Syntax error: Bad fd number
+> 
+> and
+> 
+>   warning "your version of binutils lacks ... support"
+> 
+> Replace it with portable '>/dev/null 2>&1'.
+> 
+> Fixes: 4f8c55c5ad49 ("lib/raid6: build proper files on corresponding arch")
+> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
 
-Hi all,
+Acked-by: H. Peter Anvin (Intel) <hpa@zytor.com>
 
-Today's linux-next merge of the wireless-drivers-next tree got a
-conflict in:
+> ---
+> 
+> Changes in v2:
+>   - New patch
+> 
+>  lib/raid6/test/Makefile | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/lib/raid6/test/Makefile b/lib/raid6/test/Makefile
+> index 3ab8720aa2f8..b9e6c3648be1 100644
+> --- a/lib/raid6/test/Makefile
+> +++ b/lib/raid6/test/Makefile
+> @@ -35,13 +35,13 @@ endif
+>  ifeq ($(IS_X86),yes)
+>          OBJS   += mmx.o sse1.o sse2.o avx2.o recov_ssse3.o recov_avx2.o avx512.o recov_avx512.o
+>          CFLAGS += $(shell echo "pshufb %xmm0, %xmm0" |		\
+> -                    gcc -c -x assembler - >&/dev/null &&	\
+> +                    gcc -c -x assembler - >/dev/null 2>&1 &&	\
+>                      rm ./-.o && echo -DCONFIG_AS_SSSE3=1)
+>          CFLAGS += $(shell echo "vpbroadcastb %xmm0, %ymm1" |	\
+> -                    gcc -c -x assembler - >&/dev/null &&	\
+> +                    gcc -c -x assembler - >/dev/null 2>&1 &&	\
+>                      rm ./-.o && echo -DCONFIG_AS_AVX2=1)
+>  	CFLAGS += $(shell echo "vpmovm2b %k1, %zmm5" |          \
+> -		    gcc -c -x assembler - >&/dev/null &&        \
+> +		    gcc -c -x assembler - >/dev/null 2>&1 &&	\
+>  		    rm ./-.o && echo -DCONFIG_AS_AVX512=1)
+>  else ifeq ($(HAS_NEON),yes)
+>          OBJS   += neon.o neon1.o neon2.o neon4.o neon8.o recov_neon.o recov_neon_inner.o
+> 
 
-  drivers/net/wireless/intel/iwlwifi/pcie/drv.c
-
-between commit:
-
-  cf52c8a776d1 ("iwlwifi: pcie: add 0x2526/0x401* devices back to cfg detec=
-tion")
-
-from the wireless-drivers tree and commits:
-
-  67eb556da609 ("iwlwifi: combine 9260 cfgs that only change names")
-  d6f2134a3831 ("iwlwifi: add mac/rf types and 160MHz to the device tables")
-
-from the wireless-drivers-next tree.
-
-I fixed it up (I am not sure wat to do with this, so I just dropped
-the former changes for now) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/1iuFxirNRaHI1rvguqsXKpC
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl55UXUACgkQAVBC80lX
-0GypWAf/ULY84JHkgyu2HVudGAMWzb0lPVYilJbpv8ZXO915xTphftU7gEPLMf8t
-AmRbVQfP1Aw54fr87F4dKOO3gSsquJuIpQhthS9KJBTaxa4Cmms6DuT7J1WrRus8
-pHSXpbOTs9AabtvbkPgjuFdT/4CGFeHoSC6nY6vWIF0BZ0Ox7aeDymCuhyeI0WCO
-Y9sQP4pTMPainFgWi160afa7JZ1eFeVGyI3iNkoAbCsn6trZ0qtdRGOIevABJWhX
-kdFCL8X3MZqGPuduLq44TQJqkYDxs81+XahCtXj2V+hDQlYUf0I52WU6CMyNqPRD
-d+nVfbP533IQz/lNvfK/aPF4sK855A==
-=E1Ol
------END PGP SIGNATURE-----
-
---Sig_/1iuFxirNRaHI1rvguqsXKpC--
