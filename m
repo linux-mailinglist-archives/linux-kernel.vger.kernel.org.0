@@ -2,41 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 42F80190FA1
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 14:29:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7A6D4190EE2
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 14:19:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729064AbgCXNVi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 09:21:38 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43422 "EHLO mail.kernel.org"
+        id S1728286AbgCXNPj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 09:15:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34612 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728786AbgCXNVc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 09:21:32 -0400
+        id S1727744AbgCXNPh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Mar 2020 09:15:37 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CA36E20775;
-        Tue, 24 Mar 2020 13:21:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 13F5C208D6;
+        Tue, 24 Mar 2020 13:15:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585056091;
-        bh=s2rFdOl3aT69qdT0TYXPhW8yEmrIvhPkYwNwwsXfbxU=;
+        s=default; t=1585055736;
+        bh=VNN/Ba9Qk+2mQeF62pFxERDG8oGP0Rl7oa62vD0FBsU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rszbBwchHt6F9sak70EMzksDAUBCoL4hsxosPen14Ad8p7P1AMmWMs4A/8zwfHydV
-         +U+6IulP2pUM7OjKtIllu60FgICln5l4wixIrkDMzj5eQlrjfpoc17gW5NDlfIJM+c
-         iNew9elgER9xpfZUtGZklmSGVDcYd5i8WuPdBYYg=
+        b=ZMOM5x6axhYEa6IaMzRUo34NpIKPx9pwpJJjWpoX2UmSiNl3ePBsUkUsq/F0nqftg
+         hoYzxlezxX8Yyzc8/Gdyr2fTPBjU4Tiw2W7dQd22r9YpbhT/95mE3ODp1kdBV4IZ21
+         TbnZuHcWn4l9CYtV+HuMdgZOFtkWnW5qH6wFXVp4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Inki Dae <inki.dae@samsung.com>,
+        stable@vger.kernel.org, Rajat Jain <rajatja@google.com>,
+        Evan Green <evgreen@chromium.org>,
+        Mark Brown <broonie@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.5 019/119] drm/exynos: hdmi: dont leak enable HDMI_EN regulator if probe fails
-Date:   Tue, 24 Mar 2020 14:10:04 +0100
-Message-Id: <20200324130810.390884047@linuxfoundation.org>
+Subject: [PATCH 5.4 013/102] spi: pxa2xx: Add CS control clock quirk
+Date:   Tue, 24 Mar 2020 14:10:05 +0100
+Message-Id: <20200324130807.885432626@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.2
-In-Reply-To: <20200324130808.041360967@linuxfoundation.org>
-References: <20200324130808.041360967@linuxfoundation.org>
+In-Reply-To: <20200324130806.544601211@linuxfoundation.org>
+References: <20200324130806.544601211@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,104 +45,85 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Marek Szyprowski <m.szyprowski@samsung.com>
+From: Evan Green <evgreen@chromium.org>
 
-[ Upstream commit 3b6a9b19ab652efac7ad4c392add6f1235019568 ]
+[ Upstream commit 683f65ded66a9a7ff01ed7280804d2132ebfdf7e ]
 
-Move enabling and disabling HDMI_EN optional regulator to probe() function
-to keep track on the regulator status. This fixes following warning if
-probe() fails (for example when I2C DDC adapter cannot be yet gathered
-due to the missing driver). This fixes following warning observed on
-Arndale5250 board with multi_v7_defconfig:
+In some circumstances on Intel LPSS controllers, toggling the LPSS
+CS control register doesn't actually cause the CS line to toggle.
+This seems to be failure of dynamic clock gating that occurs after
+going through a suspend/resume transition, where the controller
+is sent through a reset transition. This ruins SPI transactions
+that either rely on delay_usecs, or toggle the CS line without
+sending data.
 
-[drm] Failed to get ddc i2c adapter by node
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 214 at drivers/regulator/core.c:2051 _regulator_put+0x16c/0x184
-Modules linked in: ...
-CPU: 0 PID: 214 Comm: systemd-udevd Not tainted 5.6.0-rc2-next-20200219-00040-g38af1dfafdbb #7570
-Hardware name: Samsung Exynos (Flattened Device Tree)
-[<c0312258>] (unwind_backtrace) from [<c030cc10>] (show_stack+0x10/0x14)
-[<c030cc10>] (show_stack) from [<c0f0d3a0>] (dump_stack+0xcc/0xe0)
-[<c0f0d3a0>] (dump_stack) from [<c0346a58>] (__warn+0xe0/0xf8)
-[<c0346a58>] (__warn) from [<c0346b20>] (warn_slowpath_fmt+0xb0/0xb8)
-[<c0346b20>] (warn_slowpath_fmt) from [<c0893f58>] (_regulator_put+0x16c/0x184)
-[<c0893f58>] (_regulator_put) from [<c0893f8c>] (regulator_put+0x1c/0x2c)
-[<c0893f8c>] (regulator_put) from [<c09b2664>] (release_nodes+0x17c/0x200)
-[<c09b2664>] (release_nodes) from [<c09aebe8>] (really_probe+0x10c/0x350)
-[<c09aebe8>] (really_probe) from [<c09aefa8>] (driver_probe_device+0x60/0x1a0)
-[<c09aefa8>] (driver_probe_device) from [<c09af288>] (device_driver_attach+0x58/0x60)
-[<c09af288>] (device_driver_attach) from [<c09af310>] (__driver_attach+0x80/0xbc)
-[<c09af310>] (__driver_attach) from [<c09ace34>] (bus_for_each_dev+0x68/0xb4)
-[<c09ace34>] (bus_for_each_dev) from [<c09ae00c>] (bus_add_driver+0x130/0x1e8)
-[<c09ae00c>] (bus_add_driver) from [<c09afd98>] (driver_register+0x78/0x110)
-[<c09afd98>] (driver_register) from [<bf139558>] (exynos_drm_init+0xe8/0x11c [exynosdrm])
-[<bf139558>] (exynos_drm_init [exynosdrm]) from [<c0302fa8>] (do_one_initcall+0x50/0x220)
-[<c0302fa8>] (do_one_initcall) from [<c03dc02c>] (do_init_module+0x60/0x210)
-[<c03dc02c>] (do_init_module) from [<c03daf44>] (load_module+0x1c0c/0x2310)
-[<c03daf44>] (load_module) from [<c03db85c>] (sys_finit_module+0xac/0xbc)
-[<c03db85c>] (sys_finit_module) from [<c0301000>] (ret_fast_syscall+0x0/0x54)
-Exception stack(0xecca3fa8 to 0xecca3ff0)
-...
----[ end trace 276c91214635905c ]---
+Whenever CS is toggled, momentarily set the clock gating register
+to "Force On" to poke the controller into acting on CS.
 
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
-Signed-off-by: Inki Dae <inki.dae@samsung.com>
+Signed-off-by: Rajat Jain <rajatja@google.com>
+Signed-off-by: Evan Green <evgreen@chromium.org>
+Link: https://lore.kernel.org/r/20200211223700.110252-1-rajatja@google.com
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/exynos/exynos_hdmi.c | 22 ++++++++++++----------
- 1 file changed, 12 insertions(+), 10 deletions(-)
+ drivers/spi/spi-pxa2xx.c | 23 +++++++++++++++++++++++
+ 1 file changed, 23 insertions(+)
 
-diff --git a/drivers/gpu/drm/exynos/exynos_hdmi.c b/drivers/gpu/drm/exynos/exynos_hdmi.c
-index 48159d5d22144..d85e15e816e99 100644
---- a/drivers/gpu/drm/exynos/exynos_hdmi.c
-+++ b/drivers/gpu/drm/exynos/exynos_hdmi.c
-@@ -1803,18 +1803,10 @@ static int hdmi_resources_init(struct hdmi_context *hdata)
+diff --git a/drivers/spi/spi-pxa2xx.c b/drivers/spi/spi-pxa2xx.c
+index 2fd843b18297d..7231456732068 100644
+--- a/drivers/spi/spi-pxa2xx.c
++++ b/drivers/spi/spi-pxa2xx.c
+@@ -68,6 +68,10 @@ MODULE_ALIAS("platform:pxa2xx-spi");
+ #define LPSS_CAPS_CS_EN_SHIFT			9
+ #define LPSS_CAPS_CS_EN_MASK			(0xf << LPSS_CAPS_CS_EN_SHIFT)
  
- 	hdata->reg_hdmi_en = devm_regulator_get_optional(dev, "hdmi-en");
++#define LPSS_PRIV_CLOCK_GATE 0x38
++#define LPSS_PRIV_CLOCK_GATE_CLK_CTL_MASK 0x3
++#define LPSS_PRIV_CLOCK_GATE_CLK_CTL_FORCE_ON 0x3
++
+ struct lpss_config {
+ 	/* LPSS offset from drv_data->ioaddr */
+ 	unsigned offset;
+@@ -84,6 +88,8 @@ struct lpss_config {
+ 	unsigned cs_sel_shift;
+ 	unsigned cs_sel_mask;
+ 	unsigned cs_num;
++	/* Quirks */
++	unsigned cs_clk_stays_gated : 1;
+ };
  
--	if (PTR_ERR(hdata->reg_hdmi_en) != -ENODEV) {
-+	if (PTR_ERR(hdata->reg_hdmi_en) != -ENODEV)
- 		if (IS_ERR(hdata->reg_hdmi_en))
- 			return PTR_ERR(hdata->reg_hdmi_en);
+ /* Keep these sorted with enum pxa_ssp_type */
+@@ -154,6 +160,7 @@ static const struct lpss_config lpss_platforms[] = {
+ 		.tx_threshold_hi = 56,
+ 		.cs_sel_shift = 8,
+ 		.cs_sel_mask = 3 << 8,
++		.cs_clk_stays_gated = true,
+ 	},
+ };
  
--		ret = regulator_enable(hdata->reg_hdmi_en);
--		if (ret) {
--			DRM_DEV_ERROR(dev,
--				      "failed to enable hdmi-en regulator\n");
--			return ret;
--		}
--	}
--
- 	return hdmi_bridge_init(hdata);
+@@ -381,6 +388,22 @@ static void lpss_ssp_cs_control(struct spi_device *spi, bool enable)
+ 	else
+ 		value |= LPSS_CS_CONTROL_CS_HIGH;
+ 	__lpss_ssp_write_priv(drv_data, config->reg_cs_ctrl, value);
++	if (config->cs_clk_stays_gated) {
++		u32 clkgate;
++
++		/*
++		 * Changing CS alone when dynamic clock gating is on won't
++		 * actually flip CS at that time. This ruins SPI transfers
++		 * that specify delays, or have no data. Toggle the clock mode
++		 * to force on briefly to poke the CS pin to move.
++		 */
++		clkgate = __lpss_ssp_read_priv(drv_data, LPSS_PRIV_CLOCK_GATE);
++		value = (clkgate & ~LPSS_PRIV_CLOCK_GATE_CLK_CTL_MASK) |
++			LPSS_PRIV_CLOCK_GATE_CLK_CTL_FORCE_ON;
++
++		__lpss_ssp_write_priv(drv_data, LPSS_PRIV_CLOCK_GATE, value);
++		__lpss_ssp_write_priv(drv_data, LPSS_PRIV_CLOCK_GATE, clkgate);
++	}
  }
  
-@@ -2021,6 +2013,15 @@ static int hdmi_probe(struct platform_device *pdev)
- 		}
- 	}
- 
-+	if (!IS_ERR(hdata->reg_hdmi_en)) {
-+		ret = regulator_enable(hdata->reg_hdmi_en);
-+		if (ret) {
-+			DRM_DEV_ERROR(dev,
-+			      "failed to enable hdmi-en regulator\n");
-+			goto err_hdmiphy;
-+		}
-+	}
-+
- 	pm_runtime_enable(dev);
- 
- 	audio_infoframe = &hdata->audio.infoframe;
-@@ -2045,7 +2046,8 @@ static int hdmi_probe(struct platform_device *pdev)
- 
- err_rpm_disable:
- 	pm_runtime_disable(dev);
--
-+	if (!IS_ERR(hdata->reg_hdmi_en))
-+		regulator_disable(hdata->reg_hdmi_en);
- err_hdmiphy:
- 	if (hdata->hdmiphy_port)
- 		put_device(&hdata->hdmiphy_port->dev);
+ static void cs_assert(struct spi_device *spi)
 -- 
 2.20.1
 
