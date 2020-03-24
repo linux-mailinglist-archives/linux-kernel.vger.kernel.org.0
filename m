@@ -2,97 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D9C4119187F
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 19:08:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 595DF191887
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 19:08:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727697AbgCXSHO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 14:07:14 -0400
-Received: from relay6-d.mail.gandi.net ([217.70.183.198]:33159 "EHLO
-        relay6-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727611AbgCXSHO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 14:07:14 -0400
-X-Originating-IP: 86.202.105.35
-Received: from localhost (lfbn-lyo-1-9-35.w86-202.abo.wanadoo.fr [86.202.105.35])
-        (Authenticated sender: alexandre.belloni@bootlin.com)
-        by relay6-d.mail.gandi.net (Postfix) with ESMTPSA id 77F59C000B;
-        Tue, 24 Mar 2020 18:07:09 +0000 (UTC)
-Date:   Tue, 24 Mar 2020 19:07:09 +0100
-From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
-To:     Sergey.Semin@baikalelectronics.ru
-Cc:     Alessandro Zummo <a.zummo@towertech.it>,
+        id S1727958AbgCXSHk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 14:07:40 -0400
+Received: from elvis.franken.de ([193.175.24.41]:60751 "EHLO elvis.franken.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727318AbgCXSHj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Mar 2020 14:07:39 -0400
+Received: from uucp (helo=alpha)
+        by elvis.franken.de with local-bsmtp (Exim 3.36 #1)
+        id 1jGnxb-0002Bo-01; Tue, 24 Mar 2020 19:07:31 +0100
+Received: by alpha.franken.de (Postfix, from userid 1000)
+        id 74B47C09A5; Tue, 24 Mar 2020 19:07:18 +0100 (CET)
+Date:   Tue, 24 Mar 2020 19:07:18 +0100
+From:   Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+To:     Jiaxun Yang <jiaxun.yang@flygoat.com>
+Cc:     Marc Zyngier <maz@kernel.org>, linux-mips@vger.kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Serge Semin <fancer.lancer@gmail.com>,
-        Alexey Malahov <Alexey.Malahov@baikalelectronics.ru>,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        Paul Burton <paulburton@kernel.org>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        devicetree@vger.kernel.org, linux-rtc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/6] dt-bindings: rtc: Convert snps,dw-apb-timer to DT
- schema
-Message-ID: <20200324180709.GO5504@piout.net>
-References: <20200306125622.839ED80307C4@mail.baikalelectronics.ru>
- <20200324174325.14213-1-Sergey.Semin@baikalelectronics.ru>
- <20200324174325.14213-2-Sergey.Semin@baikalelectronics.ru>
+        Huacai Chen <chenhc@lemote.com>,
+        Allison Randal <allison@lohutok.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v6 00/11] Modernize Loongson64 Machine v6
+Message-ID: <20200324180718.GB8911@alpha.franken.de>
+References: <20190827085302.5197-1-jiaxun.yang@flygoat.com>
+ <20200324153624.23109-1-jiaxun.yang@flygoat.com>
+ <20200324154747.18e8ccd5@why>
+ <8C3E32B2-11DB-40A6-A19E-162B8E42330C@flygoat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200324174325.14213-2-Sergey.Semin@baikalelectronics.ru>
+In-Reply-To: <8C3E32B2-11DB-40A6-A19E-162B8E42330C@flygoat.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Tue, Mar 24, 2020 at 11:51:18PM +0800, Jiaxun Yang wrote:
+> >How do you want to get these merged? I can take the first 6 patches
+> >through the irqchip tree, and leave the rest to go via the MIPS tree.
+> >
+> >Otherwise, if you plan to have the whole thing go via the MIPS tree,
+> >please add my:
+> >
+> >Reviewed-by: Marc Zyngier <maz@kernel.org>
+> >
+> >to patches 1, 2, 4 and 6.
+> >
+> >Please let me know quickly, as I'd like to close the irqchip tree
+> >tomorrow.
+> 
+> I'd prefer all go through MIPS tree.
+> 
+> Thomas, could you please help with that?
 
-On 24/03/2020 20:43:20+0300, Sergey.Semin@baikalelectronics.ru wrote:
-> From: Serge Semin <Sergey.Semin@baikalelectronics.ru>
-> 
-> Modern device tree bindings are supposed to be created as YAML-files
-> in accordance with DT schema. This commit replaces Synopsys DW Timer
-> legacy bare text binding with YAML file. As before the binding file
-> states that the corresponding dts node is supposed to be compatible
-> with generic DW APB Timer indicated by the "snps,dw-apb-timer"
-> compatible string and to provide a mandatory registers memory range,
-> one timer interrupt, either reference clock source or a fixed clock
-> rate value. It may also have an optional APB bus reference clock
-> phandle specified.
-> 
-> Signed-off-by: Serge Semin <Sergey.Semin@baikalelectronics.ru>
-> Cc: Alexey Malahov <Alexey.Malahov@baikalelectronics.ru>
-> Cc: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-> Cc: Paul Burton <paulburton@kernel.org>
-> Cc: Ralf Baechle <ralf@linux-mips.org>
-> Cc: Alessandro Zummo <a.zummo@towertech.it>
-> Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>
-> Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Arnd Bergmann <arnd@arndb.de>
-> Cc: Andy Shevchenko <andy.shevchenko@gmail.com>
-> Cc: Rob Herring <robh+dt@kernel.org>
-> Cc: Mark Rutland <mark.rutland@arm.com>
-> Cc: devicetree@vger.kernel.org
-> Cc: linux-rtc@vger.kernel.org
-> 
-> ---
-> 
-> I have doubts that this binding file belongs to the bindings/rtc
-> directory seeing it's a pure timer with no rtc facilities like
-> days/months/years counting and alarms. What about moving it to the
-> "Documentation/devicetree/bindings/timer/" directory?
-> 
+I'm fine taking them. Could you please add Signed-offs from your
+co-developer and look at the remaining checkpatch warnings ?
 
-Exactly my reaction when seeing the patch, please move it out of
-bindings/rtc/
-
+Thomas.
 
 -- 
-Alexandre Belloni, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Crap can work. Given enough thrust pigs will fly, but it's not necessarily a
+good idea.                                                [ RFC1925, 2.3 ]
