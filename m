@@ -2,81 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 35C8A190CC0
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 12:51:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 501D8190CC4
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 12:52:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727334AbgCXLv0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 07:51:26 -0400
-Received: from mga03.intel.com ([134.134.136.65]:2897 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727066AbgCXLvZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 07:51:25 -0400
-IronPort-SDR: IM2lJRtS7FizZg8tbY0NNQIKsCDxTL6/j5HutJV1zPzm7wMSSJ7gcy3bnSuczrCe/k/Qr4bjhw
- BSFFuWCmidPw==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Mar 2020 04:51:25 -0700
-IronPort-SDR: 4NeQXEQVZQq9wxOWEzgjsdjrdaWE32X2663rhZruOpKxRR7PERlSHOxJ+3KSFASTMRzbv/GXtK
- 0Hq3GY9QNxkg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.72,300,1580803200"; 
-   d="scan'208";a="270356888"
-Received: from xiaoyaol-mobl.ccr.corp.intel.com (HELO [10.255.31.120]) ([10.255.31.120])
-  by fmsmga004.fm.intel.com with ESMTP; 24 Mar 2020 04:51:20 -0700
-Subject: Re: [PATCH v5 1/9] x86/split_lock: Rework the initialization flow of
- split lock detection
-To:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        hpa@zytor.com, Paolo Bonzini <pbonzini@redhat.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        kvm@vger.kernel.org, x86@kernel.org, linux-kernel@vger.kernel.org
-Cc:     Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Arvind Sankar <nivedita@alum.mit.edu>,
-        Fenghua Yu <fenghua.yu@intel.com>,
-        Tony Luck <tony.luck@intel.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Jim Mattson <jmattson@google.com>
-References: <20200315050517.127446-1-xiaoyao.li@intel.com>
- <20200315050517.127446-2-xiaoyao.li@intel.com>
- <87zhc7ovhj.fsf@nanos.tec.linutronix.de>
-From:   Xiaoyao Li <xiaoyao.li@intel.com>
-Message-ID: <95093fb0-df88-0543-c7eb-32b94ac4f99e@intel.com>
-Date:   Tue, 24 Mar 2020 19:51:19 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.6.0
+        id S1727398AbgCXLwU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 07:52:20 -0400
+Received: from us-smtp-delivery-74.mimecast.com ([216.205.24.74]:58080 "EHLO
+        us-smtp-delivery-74.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727231AbgCXLwU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Mar 2020 07:52:20 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1585050739;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=HDcbnhb2CZmJ8WitnXmrm/BJAQp0xMBlNqjvRvVjyfc=;
+        b=RSjzwYXimve50dMpmqxtKAZmm9cdysQlVDsphVLFEC0bTtgxSC3HO2Phyyz5I56y0fwZcp
+        6t/GLterJzA5/YBMXAU288/OKSqRdVbIeYpykPocPZW8FDA63oTYWQGcos5l3KE6Y5v3qp
+        69Rnou5mPnZRXDRf3BQLaQt0p3ayS6M=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-43-G05fTsOFNwWCiWaLAYf4aw-1; Tue, 24 Mar 2020 07:52:17 -0400
+X-MC-Unique: G05fTsOFNwWCiWaLAYf4aw-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id CC9B21005516;
+        Tue, 24 Mar 2020 11:52:15 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.40.195.28])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 0254294979;
+        Tue, 24 Mar 2020 11:52:13 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+        oleg@redhat.com; Tue, 24 Mar 2020 12:52:15 +0100 (CET)
+Date:   Tue, 24 Mar 2020 12:52:12 +0100
+From:   Oleg Nesterov <oleg@redhat.com>
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Manfred Spraul <manfred@colorfullife.com>,
+        Markus Elfring <elfring@users.sourceforge.net>,
+        Yoji <yoji.fujihar.min@gmail.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ipc/mqueue.c: change __do_notify() to bypass
+ check_kill_permission()
+Message-ID: <20200324115212.GA10095@redhat.com>
+References: <20200322110901.GA25108@redhat.com>
+ <87lfnsh3tm.fsf@x220.int.ebiederm.org>
+ <20200322202929.GA1614@redhat.com>
+ <87imivc92n.fsf@x220.int.ebiederm.org>
+ <20200323191214.81a60c4ae1a59fdbd5c5d46d@linux-foundation.org>
+ <87bloma29h.fsf@x220.int.ebiederm.org>
 MIME-Version: 1.0
-In-Reply-To: <87zhc7ovhj.fsf@nanos.tec.linutronix.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87bloma29h.fsf@x220.int.ebiederm.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 3/24/2020 1:02 AM, Thomas Gleixner wrote:
-> Xiaoyao Li <xiaoyao.li@intel.com> writes:
-> 
->> Current initialization flow of split lock detection has following issues:
->> 1. It assumes the initial value of MSR_TEST_CTRL.SPLIT_LOCK_DETECT to be
->>     zero. However, it's possible that BIOS/firmware has set it.
-> 
-> Ok.
-> 
->> 2. X86_FEATURE_SPLIT_LOCK_DETECT flag is unconditionally set even if
->>     there is a virtualization flaw that FMS indicates the existence while
->>     it's actually not supported.
->>
->> 3. Because of #2, KVM cannot rely on X86_FEATURE_SPLIT_LOCK_DETECT flag
->>     to check verify if feature does exist, so cannot expose it to
->>     guest.
-> 
-> Sorry this does not make anny sense. KVM is the hypervisor, so it better
-> can rely on the detect flag. Unless you talk about nested virt and a
-> broken L1 hypervisor.
-> 
+On 03/23, Eric W. Biederman wrote:
+>
+> So far what we have is a report Oleg has read somewhere that some
+> program doing something regressed, and his patch to fix that specific
+> program.  This problem was not noticed for several years.
 
-Yeah. It is for the nested virt on a broken L1 hypervisor.
+Yes, this was reported on bugzilla.redhat.com, I'll add you to CC list.
+
+> Presumably the problem is that a message queue was written to by one
+> user and was read by another user to cause check_kill_permission to
+> fail. Can someone tell me if that was the case?
+
+I do not know. Yoji, did you hit this bug or did you find it by code
+inspection ?
+
+> So I am looking for something that makes it clear we are not removing
+> a permission checking and backporting a security hole.
+
+Yes, I thought about this too. I can be easily wrong, please correct me,
+but I came to conclusion the old behaviour (no permission check) is fine
+security-wise.
+
+> Further even if in the common case it is the right thing to do to remove
+> the permission check, the handling around exec looks bad enough that we
+> will be backporting a security hole if we don't fix that and backport
+> that at the same time.
+
+could you explain what exactly you do not like wrt mq_notify/exec ?
+I must have missed something.
+
+> p.s. I am grouchy as temporary fixes in this part of the code base
+>      don't tend to be temporary  and the entire signal/exec/ptrace world
+>      is bordering on unmaintainble and incomprehensible as a result.
+
+Eric, please feel free to make another fix you like more. I know that
+I can't convince you anyway, I won't argue.
+Oleg.
 
