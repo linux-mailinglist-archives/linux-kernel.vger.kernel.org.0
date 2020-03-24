@@ -2,109 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5467B190316
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 01:53:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 85486190320
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 02:01:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727110AbgCXAw6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Mar 2020 20:52:58 -0400
-Received: from conssluserg-05.nifty.com ([210.131.2.90]:56151 "EHLO
-        conssluserg-05.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726986AbgCXAw6 (ORCPT
+        id S1727113AbgCXBBW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Mar 2020 21:01:22 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:43138 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727031AbgCXBBW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Mar 2020 20:52:58 -0400
-Received: from mail-vs1-f54.google.com (mail-vs1-f54.google.com [209.85.217.54]) (authenticated)
-        by conssluserg-05.nifty.com with ESMTP id 02O0qspu005826;
-        Tue, 24 Mar 2020 09:52:54 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-05.nifty.com 02O0qspu005826
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1585011174;
-        bh=P2oNbCx5t1xyZdNzp1UD6mwTvprw3BqkCsk+lW4PZQw=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=c9jILnI8FrdGLPp0pGPJcRtLjQHvX7eFFN3+IDW6FPEQ3Oeaxt0rjoT0YwU4h7/TM
-         fNJjXmEinnE3k1p7YdrbIABva1LtHFhIhRD2Bc+4GHE9KdaRbTMzVexV4dEBBHSk46
-         KodvW7nOuVYPjFy96P70UMRa7G5RMvFOaVjrKcwOczThx3fq5TZfrc1jzWPC18EIO/
-         Yiep+svzoYyRVxR3NlOL1Qch/Btnw46FZ0jiBJacGUGUQ2blI5IAgkd+5Gd9iP70qf
-         g8mhthc1XFwNyff02rv9A8gopNQZish7Wb6qbTrE3HsWvPYpzeIUZA2CT2I39RXI0w
-         PgedNKSbLGXEg==
-X-Nifty-SrcIP: [209.85.217.54]
-Received: by mail-vs1-f54.google.com with SMTP id u11so168618vsg.2;
-        Mon, 23 Mar 2020 17:52:54 -0700 (PDT)
-X-Gm-Message-State: ANhLgQ0ciHSIo0gehdjsz5Rg2d69VIAeQyj0l4ebfejqy+8Qcnyk0a4i
-        PVOiHnjcSsBklyJTcmKd7vylFoNKDQqJU77/fkk=
-X-Google-Smtp-Source: ADFU+vvCqvboIcw4CBVM2i5u1rShQTwzICVwT7haDdL6BKrZF/0unDcF9eXZ2vWPJuONpYCzDIZaElvtm+vGoY9t7KQ=
-X-Received: by 2002:a67:2d55:: with SMTP id t82mr17504165vst.215.1585011173169;
- Mon, 23 Mar 2020 17:52:53 -0700 (PDT)
-MIME-Version: 1.0
-References: <20200324001358.4520-1-masahiroy@kernel.org> <CAHmME9rdoo2Q3n4YA59GrVEh8uaCY_0-q+QVghjgG3WwcHkmug@mail.gmail.com>
-In-Reply-To: <CAHmME9rdoo2Q3n4YA59GrVEh8uaCY_0-q+QVghjgG3WwcHkmug@mail.gmail.com>
-From:   Masahiro Yamada <masahiroy@kernel.org>
-Date:   Tue, 24 Mar 2020 09:52:17 +0900
-X-Gmail-Original-Message-ID: <CAK7LNATQG4ABWxkShbgTpW78M4FYY_9Fmg2GSxXDTE51yWF=MQ@mail.gmail.com>
-Message-ID: <CAK7LNATQG4ABWxkShbgTpW78M4FYY_9Fmg2GSxXDTE51yWF=MQ@mail.gmail.com>
-Subject: Re: [PATCH v2 0/9] x86: remove always-defined CONFIG_AS_* options
-To:     "Jason A. Donenfeld" <Jason@zx2c4.com>
-Cc:     X86 ML <x86@kernel.org>, Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
+        Mon, 23 Mar 2020 21:01:22 -0400
+Received: from p5de0bf0b.dip0.t-ipconnect.de ([93.224.191.11] helo=nanos.tec.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1jGXwP-0001lB-Rn; Tue, 24 Mar 2020 02:01:14 +0100
+Received: by nanos.tec.linutronix.de (Postfix, from userid 1000)
+        id 5C672100292; Tue, 24 Mar 2020 02:01:13 +0100 (CET)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Cong Wang <xiyou.wangcong@gmail.com>
+Cc:     syzbot <syzbot+46f513c3033d592409d2@syzkaller.appspotmail.com>,
+        David Miller <davem@davemloft.net>,
+        Jamal Hadi Salim <jhs@mojatatu.com>,
+        Jiri Pirko <jiri@resnulli.us>,
+        Jakub Kicinski <kuba@kernel.org>,
         LKML <linux-kernel@vger.kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Ingo Molnar <mingo@redhat.com>,
-        Jim Kukunas <james.t.kukunas@linux.intel.com>,
-        NeilBrown <neilb@suse.de>,
-        Yuanhan Liu <yuanhan.liu@linux.intel.com>,
-        clang-built-linux <clang-built-linux@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+        Linux Kernel Network Developers <netdev@vger.kernel.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        "Paul E . McKenney" <paulmck@kernel.org>
+Subject: Re: WARNING: ODEBUG bug in tcindex_destroy_work (3)
+In-Reply-To: <CAM_iQpVR8Ve3Jy8bb9VB6RcQ=p22ZTyTqjxJxL11RZmO7rkWeg@mail.gmail.com>
+References: <000000000000742e9e05a10170bc@google.com> <87a74arown.fsf@nanos.tec.linutronix.de> <CAM_iQpV3S0xv5xzSrA5COYa3uyy_TBGpDA9Wcj9Qt_vn1n3jBQ@mail.gmail.com> <87ftdypyec.fsf@nanos.tec.linutronix.de> <CAM_iQpVR8Ve3Jy8bb9VB6RcQ=p22ZTyTqjxJxL11RZmO7rkWeg@mail.gmail.com>
+Date:   Tue, 24 Mar 2020 02:01:13 +0100
+Message-ID: <875zeuftwm.fsf@nanos.tec.linutronix.de>
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 24, 2020 at 9:29 AM Jason A. Donenfeld <Jason@zx2c4.com> wrote:
+Cong Wang <xiyou.wangcong@gmail.com> writes:
+> On Mon, Mar 23, 2020 at 2:14 PM Thomas Gleixner <tglx@linutronix.de> wrote:
+>> > We use an ordered workqueue for tc filters, so these two
+>> > works are executed in the same order as they are queued.
+>>
+>> The workqueue is ordered, but look how the work is queued on the work
+>> queue:
+>>
+>> tcf_queue_work()
+>>   queue_rcu_work()
+>>     call_rcu(&rwork->rcu, rcu_work_rcufn);
+>>
+>> So after the grace period elapses rcu_work_rcufn() queues it in the
+>> actual work queue.
+>>
+>> Now tcindex_destroy() is invoked via tcf_proto_destroy() which can be
+>> invoked from preemtible context. Now assume the following:
+>>
+>> CPU0
+>>   tcf_queue_work()
+>>     tcf_queue_work(&r->rwork, tcindex_destroy_rexts_work);
+>>
+>> -> Migration
+>>
+>> CPU1
+>>    tcf_queue_work(&p->rwork, tcindex_destroy_work);
+>>
+>> So your RCU callbacks can be placed on different CPUs which obviously
+>> has no ordering guarantee at all. See also:
 >
-> On Mon, Mar 23, 2020 at 6:15 PM Masahiro Yamada <masahiroy@kernel.org> wrote:
-> >
-> >
-> > arch/x86/Makefile tests instruction code by $(call as-instr, ...)
-> >
-> > Some of them are very old.
-> > For example, the check for CONFIG_AS_CFI dates back to 2006.
-> >
-> > We raise GCC versions from time to time, and we clean old code away.
-> > The same policy applied to binutils.
-> >
-> > The current minimal supported version of binutils is 2.21
-> >
-> > This is new enough to recognize the instruction in most of
-> > as-instr calls.
-> >
-> > If this series looks good, how to merge it?
-> > Via x86 tree or maybe crypto ?
+> Good catch!
 >
-> This series looks fine, but why is it still incomplete? That is, it's
-> missing your drm commit plus the 4 I layered on top for moving to a
-> Kconfig-based approach and accounting for the bump to binutils 2.23.
-> Everything is now rebased here:
-> https://git.zx2c4.com/linux-dev/log/?h=jd/kconfig-assembler-support
->
-> Would you be up for resubmitting those all together so we can handle
-> this in one go?
+> I thought about this when I added this ordered workqueue, but it
+> seems I misinterpret max_active, so despite we have max_active==1,
+> more than 1 work could still be queued on different CPU's here.
 
+The workqueue is not the problem. it works perfectly fine. The way how
+the work gets queued is the issue.
 
-The drm one was independent of the others,
-so I just sent it to drm ML separately.
+> I don't know how to fix this properly, I think essentially RCU work
+> should be guaranteed the same ordering with regular work. But this
+> seems impossible unless RCU offers some API to achieve that.
 
-As for your 4, I just thought you would
-send a fixed version.
+I don't think that's possible w/o putting constraints on the flexibility
+of RCU (Paul of course might disagree).
 
-But, folding everything in a series will clarify
-the patch dependency.
-OK, I will do it.
-Who/which ML should I send it to?
+I assume that the filters which hang of tcindex_data::perfect and
+tcindex_data:p must be freed before tcindex_data, right?
 
+Refcounting of tcindex_data should do the trick. I.e. any element which
+you add to a tcindex_data instance takes a refcount and when that is
+destroyed then the rcu/work callback drops a reference which once it
+reaches 0 triggers tcindex_data to be freed.
 
---
-Best Regards
-Masahiro Yamada
+Thanks,
+
+        tglx
