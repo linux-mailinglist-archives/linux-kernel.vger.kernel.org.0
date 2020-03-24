@@ -2,99 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EE64419113E
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 14:39:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CE515191140
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 14:40:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727580AbgCXNew (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 09:34:52 -0400
-Received: from ec2-3-21-30-127.us-east-2.compute.amazonaws.com ([3.21.30.127]:43266
-        "EHLO www.teo-en-ming.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727338AbgCXNev (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 09:34:51 -0400
-Received: from localhost (localhost [IPv6:::1])
-        by www.teo-en-ming.com (Postfix) with ESMTPA id 33D4A426B9A;
-        Tue, 24 Mar 2020 21:34:51 +0800 (+08)
+        id S1727630AbgCXNfJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 09:35:09 -0400
+Received: from foss.arm.com ([217.140.110.172]:35222 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726188AbgCXNfJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Mar 2020 09:35:09 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 798F91FB;
+        Tue, 24 Mar 2020 06:35:08 -0700 (PDT)
+Received: from localhost (unknown [10.37.6.21])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id F16843F52E;
+        Tue, 24 Mar 2020 06:35:07 -0700 (PDT)
+Date:   Tue, 24 Mar 2020 13:35:06 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     Johan Jonker <jbx6244@gmail.com>
+Cc:     lgirdwood@gmail.com, heiko@sntech.de, robh+dt@kernel.org,
+        alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/3] dt-bindings: sound: convert rockchip spdif
+ bindings to yaml
+Message-ID: <20200324133506.GC7039@sirena.org.uk>
+References: <20200324123155.11858-1-jbx6244@gmail.com>
 MIME-Version: 1.0
-Date:   Tue, 24 Mar 2020 21:34:51 +0800
-From:   Turritopsis Dohrnii Teo En Ming <ceo@teo-en-ming.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     ceo@teo-en-ming.com
-Subject: Teo En Ming's Computer Rescue CD/DVD 20200319 is available for
- download
-Message-ID: <f465f27b690da1b2a02cef9e8883bd4f@teo-en-ming.com>
-X-Sender: ceo@teo-en-ming.com
-User-Agent: Roundcube Webmail/1.2.3
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="ALfTUftag+2gvp1h"
+Content-Disposition: inline
+In-Reply-To: <20200324123155.11858-1-jbx6244@gmail.com>
+X-Cookie: I feel ... JUGULAR ...
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Subject: Teo En Ming's Computer Rescue CD/DVD 20200319 is available for 
-download
 
-Teo En Ming's Computer Rescue CD/DVD 20200319 is available for download. 
-It is based on Martin L. Purschke's work and Linux kernel 4.10.1.
+--ALfTUftag+2gvp1h
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-I used Martin L. Purschke's template, and with a little knowledge of 
-Linux shell scripting, I modified his template to create
-Teo En Ming's Computer Rescue CD/DVD 20200319. Teo En Ming's Computer 
-Rescue CD/DVD 20200319 aims to be similar to the project SystemRescueCd.
+On Tue, Mar 24, 2020 at 01:31:53PM +0100, Johan Jonker wrote:
+> Current dts files with 'spdif' nodes are manually verified.
+> In order to automate this process rockchip-spdif.txt
+> has to be converted to yaml.
 
-You can visit Martin L. Purschke's official website at the Brookhaven 
-National Laboratory, U.S.A.
+> Signed-off-by: Johan Jonker <jbx6244@gmail.com>
+> ---
+> Changed V2:
+>   dmas and dma-names layout
 
-URL: https://www.phenix.bnl.gov/~purschke/RescueCD/
+This is the second v2 you've sent of this today - it adds these but
+drops Rob's ack?
 
-Redundant Google Drive download links for Teo En Ming's Computer Rescue 
-CD/DVD 20200319:
+--ALfTUftag+2gvp1h
+Content-Type: application/pgp-signature; name="signature.asc"
 
-[1] https://drive.google.com/open?id=1DnVKmo0VeUHUnJ9ehC2KK0YjLVbw7e5d
+-----BEGIN PGP SIGNATURE-----
 
-[2] https://drive.google.com/open?id=1mQ9jK9sbS5lTv1DNLOTwMW9JKLV8QUHF
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl56DIkACgkQJNaLcl1U
+h9AN6Af+MtKFdLKwXOq0ZSd3pZudYzkK/o1iRhCoZguoCb361prSfHsrNxVH7UgS
+NoCl9lTGtnOnD0dSRW08nP6R1Uzy6S4RUHXymuSFsbFoE807UgdMhI2SlwOkSwYF
+3LqiuhploNOIFoQaW3InXfrzV1Xf5DQoC2765ifQGd/WvEMD42tBSLLWHZHtS2uU
+KykRMKF9TMjBko2J1usbH41ye2j5a/ubelF180cqOOdjGD+3hZ9V7CYqcEAS8zVX
+CRdNEpBGVl8EDKzzcnJAR1+cjxdUAO3bC0vtcN1HD+71ut9ZN6hc5SyMvBTL2/FU
+1m9eFraFsZ2Jpr4U0N4/N/LTdSmjTw==
+=I6tW
+-----END PGP SIGNATURE-----
 
-[3] https://drive.google.com/open?id=1_RgcT8JhtRDq90dicjMI4KsT18C22YGL
-
-[4] https://drive.google.com/open?id=1opK-CxGK2BJXSBDHBW3XjKxmERBNITte
-
-[5] https://drive.google.com/open?id=1g3rOEVvSgy-tyvEiIO_tktD718SabsxN
-
-My next project:
-
-Teo En Ming's Debian 10.3.0 Live CD/DVD/USB.
-
-Stay tuned!
-
-
-
-
-
-
--- 
------BEGIN EMAIL SIGNATURE-----
-
-The Gospel for all Targeted Individuals (TIs):
-
-[The New York Times] Microwave Weapons Are Prime Suspect in Ills of
-U.S. Embassy Workers
-
-Link: 
-https://www.nytimes.com/2018/09/01/science/sonic-attack-cuba-microwave.html
-
-********************************************************************************************
-
-Singaporean Mr. Turritopsis Dohrnii Teo En Ming's Academic
-Qualifications as at 14 Feb 2019 and refugee seeking attempts at the 
-United Nations Refugee Agency Bangkok (21 Mar 2017), in Taiwan (5 Aug 
-2019) and Australia (25 Dec 2019 to 9 Jan 2020):
-
-[1] https://tdtemcerts.wordpress.com/
-
-[2] https://tdtemcerts.blogspot.sg/
-
-[3] https://www.scribd.com/user/270125049/Teo-En-Ming
-
------END EMAIL SIGNATURE-----
+--ALfTUftag+2gvp1h--
