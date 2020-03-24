@@ -2,66 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8C03A1915B2
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 17:10:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B1A351915C3
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 17:12:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728137AbgCXQKS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 12:10:18 -0400
-Received: from foss.arm.com ([217.140.110.172]:37608 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727545AbgCXQKS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 12:10:18 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1A9B31FB;
-        Tue, 24 Mar 2020 09:10:18 -0700 (PDT)
-Received: from donnerap.arm.com (donnerap.cambridge.arm.com [10.1.197.25])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D99F33F52E;
-        Tue, 24 Mar 2020 09:10:16 -0700 (PDT)
-From:   Andre Przywara <andre.przywara@arm.com>
-To:     Andrew Lunn <andrew@lunn.ch>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Heiner Kallweit <hkallweit1@gmail.com>
-Cc:     Russell King <linux@armlinux.org.uk>,
-        "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Doug Berger <opendmb@gmail.com>
-Subject: [PATCH] net: PHY: bcm-unimac: Fix clock handling
-Date:   Tue, 24 Mar 2020 16:10:10 +0000
-Message-Id: <20200324161010.81107-1-andre.przywara@arm.com>
-X-Mailer: git-send-email 2.17.1
+        id S1728826AbgCXQMF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 12:12:05 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:51070 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728571AbgCXQME (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Mar 2020 12:12:04 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
+        Subject:Sender:Reply-To:Content-ID:Content-Description;
+        bh=1UNukJNSl6CmN8g/B7TvDZCfcdT81GU+Tg6yepq83q4=; b=aSyqwGewwRNOrGoIu6iHCe9UD5
+        cMkwEsYYlKnhJytvjpQPofzS4feDAZYgCfgDICk2nYjB4CfLbIVVdHuP6I/z2i+bPhKlEcPoiaGUa
+        FpR7ktwZqyCKkmjzzEiW1UoT7f8w9uCyB+f179J4TFBGeUfaonh5ODahgZizmvDnSgNY1wEZBy+tr
+        wp3gww3r7iuw6i0IbPxueTA+EQ7alq9AQ33OvobMnK4LS/I+sIhtaE1w4WbOfgeCobv2SByfb5WE8
+        yBbO1XwqtLfDwtRlqCOHX5T8fOUMpfUlQofsA5DPi6f4zh8PwjK2zQNh1kXaubQZuXQbh0QaHpvon
+        GzeJivlQ==;
+Received: from [2601:1c0:6280:3f0::19c2]
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jGm9s-0000Ix-02; Tue, 24 Mar 2020 16:12:04 +0000
+Subject: Re: [PATCH 1/1] x86 support for the initrd= command line option
+To:     ron minnich <rminnich@gmail.com>, "H. Peter Anvin" <hpa@zytor.com>
+Cc:     Matthew Garrett <mjg59@google.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "maintainer:X86 ARCHITECTURE..." <x86@kernel.org>,
+        lkml - Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <CAP6exY+LnUXaOVRZUXmi2wajCPZoJVMFFAwbCzN3YywWyhi8ZA@mail.gmail.com>
+ <D31718CF-1755-4846-8043-6E62D57E4937@zytor.com>
+ <CAP6exYJHgqsNq84DCjgNP=nOjp1Aud9J5JAiEZMXe=+dtm-QGA@mail.gmail.com>
+ <8E80838A-7A3F-4600-AF58-923EDA3DE91D@zytor.com>
+ <CACdnJusmAHJYauKvHEXNZKaUWPqZoabB_pSn5WokSy_gOnRtTw@mail.gmail.com>
+ <A814A71D-0450-4724-885B-859BCD2B7CBD@zytor.com>
+ <CAP6exYJdCzG5EOPB9uaWz+uG-KKt+j7aJMGMfqqD3vthco_Y_g@mail.gmail.com>
+ <CF1457CD-0BE2-4806-9703-E99146218BEC@zytor.com>
+ <CAP6exYJj5n8tLibwnAPA554ax9gjUFvyMntCx4OYULUOknWQ0g@mail.gmail.com>
+ <C2B3BE61-665A-47FD-87E0-BDB5C30CEFF4@zytor.com>
+ <CAP6exY+avh0G3nuqbxJj2ZgKkRdvwGTKeWyazqXJHbp+X-2u+A@mail.gmail.com>
+ <CAP6exYLEg+iu4Hs0+vdk0b6rgB5ZT7ZTvuhe--biCg9dGbNCTQ@mail.gmail.com>
+ <CAP6exYLCFp8AMFx_d3XJtYiSibF76Fo-km4vB5MwSbqE8D8DNA@mail.gmail.com>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <2837291a-b682-bd6d-4e08-ffa76d3097b0@infradead.org>
+Date:   Tue, 24 Mar 2020 09:12:02 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.6.0
+MIME-Version: 1.0
+In-Reply-To: <CAP6exYLCFp8AMFx_d3XJtYiSibF76Fo-km4vB5MwSbqE8D8DNA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The DT binding for this PHY describes an *optional* clock property.
-Due to a bug in the error handling logic, we are actually ignoring this
-clock *all* of the time so far.
+On 3/24/20 9:05 AM, ron minnich wrote:
+> diff --git a/Documentation/admin-guide/kernel-parameters.txt
+> b/Documentation/admin-guide/kernel-parameters.txt
+> index c07815d230bc..9cd356958a7f 100644
+> --- a/Documentation/admin-guide/kernel-parameters.txt
+> +++ b/Documentation/admin-guide/kernel-parameters.txt
+> @@ -1714,6 +1714,13 @@
+> 
+>      initrd=        [BOOT] Specify the location of the initial ramdisk
+> 
+> +    initrdmem=    [KNL] Specify a physical adddress and size from which
+> +            to load the inird. If an initrd is compiled in or
 
-Fix this by using devm_clk_get_optional() to handle this clock properly.
+                           initrd.
 
-Signed-off-by: Andre Przywara <andre.przywara@arm.com>
----
- drivers/net/phy/mdio-bcm-unimac.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+> +            specified in the bootparams, it takes priority
+> +            over this setting.
+> +            Format: ss[KMG],nn[KMG]
+> +            Defaut is 0, 0
 
-diff --git a/drivers/net/phy/mdio-bcm-unimac.c b/drivers/net/phy/mdio-bcm-unimac.c
-index 4a28fb29adaa..fbd36891ee64 100644
---- a/drivers/net/phy/mdio-bcm-unimac.c
-+++ b/drivers/net/phy/mdio-bcm-unimac.c
-@@ -242,11 +242,9 @@ static int unimac_mdio_probe(struct platform_device *pdev)
- 		return -ENOMEM;
- 	}
- 
--	priv->clk = devm_clk_get(&pdev->dev, NULL);
--	if (PTR_ERR(priv->clk) == -EPROBE_DEFER)
-+	priv->clk = devm_clk_get_optional(&pdev->dev, NULL);
-+	if (IS_ERR(priv->clk))
- 		return PTR_ERR(priv->clk);
--	else
--		priv->clk = NULL;
- 
- 	ret = clk_prepare_enable(priv->clk);
- 	if (ret)
+               Default
+
+> +
+>      init_on_alloc=    [MM] Fill newly allocated pages and heap objects with
+>              zeroes.
+>              Format: 0 | 1
+
+
 -- 
-2.17.1
+~Randy
 
