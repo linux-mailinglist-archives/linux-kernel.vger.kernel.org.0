@@ -2,196 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 08482191BEA
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 22:27:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B0850191BF1
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 22:29:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728175AbgCXV1J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 17:27:09 -0400
-Received: from mail-qv1-f67.google.com ([209.85.219.67]:42070 "EHLO
-        mail-qv1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726673AbgCXV1I (ORCPT
+        id S1728256AbgCXV3F (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 17:29:05 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:44042 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727270AbgCXV3F (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 17:27:08 -0400
-Received: by mail-qv1-f67.google.com with SMTP id ca9so10048958qvb.9;
-        Tue, 24 Mar 2020 14:27:07 -0700 (PDT)
+        Tue, 24 Mar 2020 17:29:05 -0400
+Received: by mail-lj1-f196.google.com with SMTP id p14so245324lji.11
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Mar 2020 14:29:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=google.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=VEJoT2ftN3/J+JzBUUMUSAFQV5uekS8p6QQqfLbkw4A=;
-        b=oFV80YsDBCCQS0H4uydp2GAraoKy7ypaOl2OlD8XbZYroGuz5VpxBZxfoVMgGBvuQc
-         TAiLpIF5hcEfbtGLKjdqpM7ILoJvZ77DINUgNK+ljR2xi72jnvWddbKxIvlaEAkzGQz0
-         jfbHfUrL7KAIm2RBEoyYfRUy6GRc4G6BwQbOgsHunw7c4GDpx1tXhGWJ2efEdhX1JEve
-         PXSCvO38IkqekjcBSShUg+QPHwEeWr8xAO1AejfTANdqvPGSRfWKYyGa9mR98hazvVGe
-         asS4dfkNHeWJgd8fNvwgSRQQNONdT8/31nSsRRJVI8wvjD8QwQmKmJltOXDL6R8+WyQA
-         AwfQ==
+         :cc;
+        bh=mt9R6MAwAgMsRiTLzlySm2VmV71YyEXXijbHmE8WTzk=;
+        b=YSCmWxRY40BGiMze1Yvin1YLkJXXl+PFUME/YQdtuWumwzPRmAdvKghADmWKlRrN0K
+         f9xnko63sgT0KH37iYw/9/MXZe1oLeb2jpfOZFVn6TSxlkYn1LgOxa54s9Ewh6bUAMOy
+         BTu90myx9FunEp53IT4emC25nbXXzPJhnl84W6vhgEIa5wtgGP30cMvv/5ZskWvr8+4O
+         Nr3uuT2MSmd1BDUPB1tsmSRiIQExkkO/w1eNM2f0qE61UeZwTTOh9IfxQOOmNTpezIgO
+         mLkwFd5DYS6Gf4stv1h7MySVYHXya5QyIbq/2+4YJQUlIUc7dad9mqPuRzul6/Z7nzr+
+         FAAw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=VEJoT2ftN3/J+JzBUUMUSAFQV5uekS8p6QQqfLbkw4A=;
-        b=RUf/ivsbbPqhMBIMgV3NBq72E8Lt0ykepGzQPT11t0Njbi+OkgF8IuLYGKrxQn7tF+
-         cLMCEMo8txjKQxoOBV8JAkHj+uDEgrK5uzN1L4JTijtmQRFZRgLeJo6T5QtGEBf62bxi
-         xUQReLHqbvn6KoXdqB2+RlWksKsGIyVWvZq0NYWiXpffchLX/GzAr7p3I5pUdIo+2oSU
-         kwrMSvmcrnovd1xX/Z8+FojJ/ziWESKhLFifDg60E/ezMx9Sl43/eNxYVAPqpIU8PAIX
-         RtskwiR4A6yV1ODAmhURTvSVwTHWU6FM58QjtkCVYM//6iwxXxLiE9VMpFE12WKVoWhM
-         Qb8w==
-X-Gm-Message-State: ANhLgQ3BvvZiOXX2bu7AnJyFcVpqMkZj83qIygsIFUv6itlUI5LktzSz
-        J9fPTiQahaQRvNzCZ87vYx5VegRRNEH5KkTon10=
-X-Google-Smtp-Source: ADFU+vvnlC2tuBiX08DOSzyNzyZRiEDqPSX5ECF8NjcPaR1qvgPpgcPX+NbxgqdXH4UO5KxsSJRb91QXeEmgiswfoFM=
-X-Received: by 2002:a0c:ee28:: with SMTP id l8mr178148qvs.196.1585085226618;
- Tue, 24 Mar 2020 14:27:06 -0700 (PDT)
+         :message-id:subject:to:cc;
+        bh=mt9R6MAwAgMsRiTLzlySm2VmV71YyEXXijbHmE8WTzk=;
+        b=JSD2COL/yUZny+wx8FbZCxoW0CrUxxZsDzfvOuWfKu+r7TUVMBe8lr5yaqyzzD9sLi
+         aUy0ykQ6WHkMmDgIWUiV0ghUVnrud02hkZN44Vo17XPbwUfM/1YKWRuq7YUvDdV0t7e9
+         DcHguRTExABoa9inG0oIb9Q6I2YnJjwlGl7GYaGAay4AW8xC43XUUsAqf3wp5YpBcRpx
+         Q07wFw+pG57rWj4nKntr0Z/P7UbLtpxLkLW8iNV6HuiWp3wxwWPIS2t2ofNVoqc06B9p
+         +c3oglHyoqXsK1cE/m5/wvdWlb+kNbo6oYG+AybDistSL8557wq7Zqio3pEN2vr34CEZ
+         wNZA==
+X-Gm-Message-State: ANhLgQ0bd9P/JjRKRrXd9QIy+dYa6KEG4+/Ds79CTHVsEMwLx+Y1WEVo
+        GpoDng5piN1GHPSym0G/8acTuly4bOWmsPSQ0uoCag==
+X-Google-Smtp-Source: ADFU+vv8d+tvt43tW6wjpsme/liCuo5+2rssm9plm9lpdQXp8OhLUCZZ8xFwlvpxLM+HptNYxGF5KgkzMO7Hg0NPccQ=
+X-Received: by 2002:a2e:89c1:: with SMTP id c1mr17348550ljk.215.1585085342690;
+ Tue, 24 Mar 2020 14:29:02 -0700 (PDT)
 MIME-Version: 1.0
-References: <20200323164415.12943-1-kpsingh@chromium.org> <20200323164415.12943-4-kpsingh@chromium.org>
- <CAEf4BzbRivYO=gVjuQw8Z8snN+RFwXswvNxs67c=5g6U3o9rmw@mail.gmail.com>
- <20200324103910.GA7135@chromium.org> <20200324161211.GA11227@chromium.org>
-In-Reply-To: <20200324161211.GA11227@chromium.org>
-From:   Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date:   Tue, 24 Mar 2020 14:26:55 -0700
-Message-ID: <CAEf4BzZZLBf3xRsV4khGCFdTxDFV61KbFfV1mHwM5yiCr4P37w@mail.gmail.com>
-Subject: Re: [PATCH bpf-next v5 3/7] bpf: lsm: provide attachment points for
- BPF LSM programs
-To:     KP Singh <kpsingh@chromium.org>
-Cc:     open list <linux-kernel@vger.kernel.org>,
-        bpf <bpf@vger.kernel.org>, linux-security-module@vger.kernel.org,
-        Brendan Jackman <jackmanb@google.com>,
-        Florent Revest <revest@google.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        James Morris <jmorris@namei.org>,
-        Kees Cook <keescook@chromium.org>,
-        Paul Turner <pjt@google.com>, Jann Horn <jannh@google.com>,
-        Florent Revest <revest@chromium.org>,
-        Brendan Jackman <jackmanb@chromium.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+References: <20200324203231.64324-1-keescook@chromium.org>
+In-Reply-To: <20200324203231.64324-1-keescook@chromium.org>
+From:   Jann Horn <jannh@google.com>
+Date:   Tue, 24 Mar 2020 22:28:35 +0100
+Message-ID: <CAG48ez3yYkMdxEEW6sJzBC5BZSbzEZKnpWzco32p-TJx7y_srg@mail.gmail.com>
+Subject: Re: [PATCH v2 0/5] Optionally randomize kernel stack offset each syscall
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Elena Reshetova <elena.reshetova@intel.com>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Potapenko <glider@google.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        "Perla, Enrico" <enrico.perla@intel.com>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        linux-arm-kernel@lists.infradead.org,
+        Linux-MM <linux-mm@kvack.org>,
+        kernel list <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 24, 2020 at 9:12 AM KP Singh <kpsingh@chromium.org> wrote:
->
-> On 24-M=C3=A4r 11:39, KP Singh wrote:
-> > On 23-M=C3=A4r 12:59, Andrii Nakryiko wrote:
-> > > On Mon, Mar 23, 2020 at 9:45 AM KP Singh <kpsingh@chromium.org> wrote=
-:
-> > > >
-> > > > From: KP Singh <kpsingh@google.com>
-> > > >
-> > > > When CONFIG_BPF_LSM is enabled, nops functions, bpf_lsm_<hook_name>=
-, are
-> > > > generated for each LSM hook. These nops are initialized as LSM hook=
-s in
-> > > > a subsequent patch.
-> > > >
-> > > > Signed-off-by: KP Singh <kpsingh@google.com>
-> > > > Reviewed-by: Brendan Jackman <jackmanb@google.com>
-> > > > Reviewed-by: Florent Revest <revest@google.com>
-> > > > ---
-> > > >  include/linux/bpf_lsm.h | 21 +++++++++++++++++++++
-> > > >  kernel/bpf/bpf_lsm.c    | 19 +++++++++++++++++++
-> > > >  2 files changed, 40 insertions(+)
-> > > >  create mode 100644 include/linux/bpf_lsm.h
-> > > >
-> > > > diff --git a/include/linux/bpf_lsm.h b/include/linux/bpf_lsm.h
-> > > > new file mode 100644
-> > > > index 000000000000..c6423a140220
-> > > > --- /dev/null
-> > > > +++ b/include/linux/bpf_lsm.h
-> > > > @@ -0,0 +1,21 @@
-> > > > +/* SPDX-License-Identifier: GPL-2.0 */
-> > > > +
-> > > > +/*
-> > > > + * Copyright (C) 2020 Google LLC.
-> > > > + */
-> > > > +
-> > > > +#ifndef _LINUX_BPF_LSM_H
-> > > > +#define _LINUX_BPF_LSM_H
-> > > > +
-> > > > +#include <linux/bpf.h>
-> > > > +#include <linux/lsm_hooks.h>
-> > > > +
-> > > > +#ifdef CONFIG_BPF_LSM
-> > > > +
-> > > > +#define LSM_HOOK(RET, NAME, ...) RET bpf_lsm_##NAME(__VA_ARGS__);
-> > > > +#include <linux/lsm_hook_names.h>
-> > > > +#undef LSM_HOOK
-> > > > +
-> > > > +#endif /* CONFIG_BPF_LSM */
-> > > > +
-> > > > +#endif /* _LINUX_BPF_LSM_H */
-> > > > diff --git a/kernel/bpf/bpf_lsm.c b/kernel/bpf/bpf_lsm.c
-> > > > index 82875039ca90..530d137f7a84 100644
-> > > > --- a/kernel/bpf/bpf_lsm.c
-> > > > +++ b/kernel/bpf/bpf_lsm.c
-> > > > @@ -7,6 +7,25 @@
-> > > >  #include <linux/filter.h>
-> > > >  #include <linux/bpf.h>
-> > > >  #include <linux/btf.h>
-> > > > +#include <linux/lsm_hooks.h>
-> > > > +#include <linux/bpf_lsm.h>
-> > > > +
-> > > > +/* For every LSM hook  that allows attachment of BPF programs, dec=
-lare a NOP
-> > > > + * function where a BPF program can be attached as an fexit trampo=
-line.
-> > > > + */
-> > > > +#define LSM_HOOK(RET, NAME, ...) LSM_HOOK_##RET(NAME, __VA_ARGS__)
-> > > > +
-> > > > +#define LSM_HOOK_int(NAME, ...)                        \
-> > > > +noinline __weak int bpf_lsm_##NAME(__VA_ARGS__)        \
-> > > > +{                                              \
-> > > > +       return 0;                               \
-> > > > +}
-> > > > +
-> > > > +#define LSM_HOOK_void(NAME, ...) \
-> > > > +noinline __weak void bpf_lsm_##NAME(__VA_ARGS__) {}
-> > > > +
-> > >
-> > > Could unify with:
-> > >
-> > > #define LSM_HOOK(RET, NAME, ...) noinline __weak RET bpf_lsm_##NAME(_=
-_VA_ARGS__)
-> > > {
-> > >     return (RET)0;
-> > > }
-> > >
-> > > then you don't need LSM_HOOK_int and LSM_HOOK_void.
-> >
-> > Nice.
-> >
-> > But, given that we are adding default values and that
-> > they are only needed for int hooks, we will need to keep the macros
-> > separate for int and void. Or, Am I missing a trick here?
-> >
-> > - KP
->
-> Actually, was able to get it work. not setting a default for void
-> hooks makes the macros messier. So i just set it void. For example:
->
->   LSM_HOOK(void, void, bprm_committing_creds, struct linux_binprm *bprm)
+On Tue, Mar 24, 2020 at 9:32 PM Kees Cook <keescook@chromium.org> wrote:
+> This is a continuation and refactoring of Elena's earlier effort to add
+> kernel stack base offset randomization. In the time since the previous
+> discussions, two attacks[1][2] were made public that depended on stack
+> determinism, so we're no longer in the position of "this is a good idea
+> but we have no examples of attacks". :)
+[...]
+> [1] https://a13xp0p0v.github.io/2020/02/15/CVE-2019-18683.html
 
-surprised this works, was going to propose to specify `(void)0` as
-default value :)
+This one only starts using the stack's location after having parsed
+it out of dmesg (which in any environment that wants to provide a
+reasonable level of security really ought to be restricted to root),
+right? If you give people read access to dmesg, they can leak all
+sorts of pointers; not just the stack pointer, but also whatever else
+happens to be in the registers at that point - which is likely to give
+the attacker more ways to place controlled data at a known location.
+See e.g. <https://googleprojectzero.blogspot.com/2018/09/a-cache-invalidation-bug-in-linux.html>,
+which leaks the pointer to a BPF map out of dmesg.
 
->
-> This also allows me to use the cleanup you suggested and not having
-> to split every usage into int and void.
->
+Also, are you sure that it isn't possible to make the syscall that
+leaked its stack pointer never return to userspace (via ptrace or
+SIGSTOP or something like that), and therefore never realign its
+stack, while keeping some controlled data present on the syscall's
+stack?
 
-Nice, one of the reasons for proposing this.
+> [2] https://repositorio-aberto.up.pt/bitstream/10216/125357/2/374717.pdf
 
-> - KP
->
-> >
-> > >
-> > > > +#include <linux/lsm_hook_names.h>
-> > > > +#undef LSM_HOOK
-> > > >
-> > > >  const struct bpf_prog_ops lsm_prog_ops =3D {
-> > > >  };
-> > > > --
-> > > > 2.20.1
-> > > >
+That's a moderately large document; which specific part are you referencing?
