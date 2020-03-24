@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A56C0191178
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 14:45:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1A6EE19118C
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 14:45:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728280AbgCXNnk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 09:43:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39094 "EHLO mail.kernel.org"
+        id S1728701AbgCXNoO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 09:44:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39152 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727919AbgCXNnU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1727933AbgCXNnU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 24 Mar 2020 09:43:20 -0400
 Received: from mail.kernel.org (ip5f5ad4e9.dynamic.kabel-deutschland.de [95.90.212.233])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0189D21841;
+        by mail.kernel.org (Postfix) with ESMTPSA id 0D6F221924;
         Tue, 24 Mar 2020 13:43:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1585057399;
-        bh=UlVlNM0FLSUH7YYtNY9HtjBUnh0YugA1ybPJXdnSUj4=;
+        bh=1nHoIlvAAtgS9/1HbiXy6FKLACLGKOljzYG5G1rnyUU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YZDt84OFsCQfTda7Rk+LXPUbMTSqUy2JuQCHMa3Na/K0ED2vkka/nlzX6o5/u6wo1
-         p5JGq1dLGZvUlLnnZSoVnGXd3VHBPpDM+H/6kVLuexHM0LlwMbKKEekVAiPF6H+jyK
-         hquXtfVdWPkHzesCZ8WzVkwZWtxX1Rh2QMa+MnaU=
+        b=gZNu6eQGDwNRn29cvysnV8SePP7I9FZpLgnoZEACXXUbSw1hYXfB9NjJntF4FfnrV
+         ONmxMJzDAwNaBUf79a8Hydq+qXgeHm2E5ArFD3uagwv0u9iTn+2UpT2fzZtFrMPWXV
+         ZaUmSZf70pJ5IIemRXMg8RQGb9e6exAbJNRjnHXQ=
 Received: from mchehab by mail.kernel.org with local (Exim 4.92.3)
         (envelope-from <mchehab@kernel.org>)
-        id 1jGjpt-0025s9-7G; Tue, 24 Mar 2020 14:43:17 +0100
+        id 1jGjpt-0025sE-8X; Tue, 24 Mar 2020 14:43:17 +0100
 From:   Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 To:     Linux Doc Mailing List <linux-doc@vger.kernel.org>
 Cc:     Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
         linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
         Ezequiel Garcia <ezequiel@collabora.com>
-Subject: [PATCH v2 19/20] media: Kconfig: move the position of sub-driver autoselection
-Date:   Tue, 24 Mar 2020 14:43:12 +0100
-Message-Id: <dc63b3f9dfa70ce47e305667381c88325472c9f5.1585057134.git.mchehab+huawei@kernel.org>
+Subject: [PATCH v2 20/20] media: Kconfig: on !EMBEDDED && !EXPERT, enable driver filtering
+Date:   Tue, 24 Mar 2020 14:43:13 +0100
+Message-Id: <a308d449c0ca3f808fe9d0e88dbc4e3cbfea2075.1585057134.git.mchehab+huawei@kernel.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <cover.1585057134.git.mchehab+huawei@kernel.org>
 References: <cover.1585057134.git.mchehab+huawei@kernel.org>
@@ -44,92 +44,31 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Let's place the sub-driver-autoselection option just below
-the device filtering one, as it also controls a filter menu,
-with is not even visible if !EXPERT && !EMBEDDED.
+Advanced and embedded users know what to do, so, by default,
+they will likely want to be able to open the entire set of
+Kconfig media options.
+
+Normal "poor" users usually needs more help when setting
+stuff, so let's open an more simplified version to them by
+default.
 
 Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 ---
- drivers/media/Kconfig | 50 +++++++++++++++++++++----------------------
- 1 file changed, 25 insertions(+), 25 deletions(-)
+ drivers/media/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
 diff --git a/drivers/media/Kconfig b/drivers/media/Kconfig
-index 6c55d20458ee..81259287ffa3 100644
+index 81259287ffa3..ef71cc03c1c5 100644
 --- a/drivers/media/Kconfig
 +++ b/drivers/media/Kconfig
-@@ -33,6 +33,28 @@ config MEDIA_SUPPORT_FILTER
- 	   needed to support media drivers will be enabled. Also, all
- 	   media device drivers should be shown.
- 
-+config MEDIA_SUBDRV_AUTOSELECT
-+	bool "Autoselect ancillary drivers (tuners, sensors, i2c, spi, frontends)"
-+	depends on HAS_IOMEM
-+	select I2C
-+	select I2C_MUX
-+	default y if MEDIA_SUPPORT_FILTER
-+	help
-+	  By default, a media driver auto-selects all possible ancillary
-+	  devices such as tuners, sensors, video encoders/decoders and
-+	  frontends, that are used by any of the supported devices.
-+
-+	  This is generally the right thing to do, except when there
-+	  are strict constraints with regards to the kernel size,
-+	  like on embedded systems.
-+
-+	  Use this option with care, as deselecting ancillary drivers which
-+	  are, in fact, necessary will result in the lack of the needed
-+	  functionality for your device (it may not tune or may not have
-+	  the needed demodulators).
-+
-+	  If unsure say Y.
-+
- menu "Media device types"
- 	visible if MEDIA_SUPPORT_FILTER
- 
-@@ -191,40 +213,18 @@ source "drivers/media/firewire/Kconfig"
- 
- endmenu
- 
--menu "Media ancillary drivers (tuners, sensors, i2c, spi, frontends)"
--
- #
- # Ancillary drivers (tuners, i2c, spi, frontends)
- #
- 
--config MEDIA_SUBDRV_AUTOSELECT
--	bool "Autoselect ancillary drivers (tuners, sensors, i2c, spi, frontends)"
--	depends on MEDIA_ANALOG_TV_SUPPORT || MEDIA_DIGITAL_TV_SUPPORT || MEDIA_CAMERA_SUPPORT || MEDIA_SDR_SUPPORT
--	depends on HAS_IOMEM
--	select I2C
--	select I2C_MUX
--	default y if !EMBEDDED
--	help
--	  By default, a media driver auto-selects all possible ancillary
--	  devices such as tuners, sensors, video encoders/decoders and
--	  frontends, that are used by any of the supported devices.
--
--	  This is generally the right thing to do, except when there
--	  are strict constraints with regards to the kernel size,
--	  like on embedded systems.
--
--	  Use this option with care, as deselecting ancillary drivers which
--	  are, in fact, necessary will result in the lack of the needed
--	  functionality for your device (it may not tune or may not have
--	  the needed demodulators).
--
--	  If unsure say Y.
--
- config MEDIA_HIDE_ANCILLARY_SUBDRV
- 	bool
- 	depends on MEDIA_SUBDRV_AUTOSELECT && !COMPILE_TEST && !EXPERT
- 	default y
- 
-+menu "Media ancillary drivers"
-+	visible if !MEDIA_HIDE_ANCILLARY_SUBDRV
-+
- config MEDIA_ATTACH
- 	bool
- 	depends on MEDIA_ANALOG_TV_SUPPORT || MEDIA_DIGITAL_TV_SUPPORT || MEDIA_RADIO_SUPPORT
+@@ -21,6 +21,7 @@ if MEDIA_SUPPORT
+ config MEDIA_SUPPORT_FILTER
+ 	bool "Filter devices by their types"
+ 	depends on MEDIA_SUPPORT
++	default y if !EMBEDDED && !EXPERT
+ 	help
+ 	   Configuring the media subsystem can be complex, as there are
+ 	   hundreds of drivers and other config options.
 -- 
 2.24.1
 
