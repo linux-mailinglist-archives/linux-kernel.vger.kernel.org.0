@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ECDD2190F03
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 14:19:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A96BC190FD5
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 14:30:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727904AbgCXNQt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 09:16:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36364 "EHLO mail.kernel.org"
+        id S1729438AbgCXNXe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 09:23:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46618 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727755AbgCXNQr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 09:16:47 -0400
+        id S1729422AbgCXNXc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Mar 2020 09:23:32 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0DCA420775;
-        Tue, 24 Mar 2020 13:16:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 419E9208D6;
+        Tue, 24 Mar 2020 13:23:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585055806;
-        bh=OGv4NJMH6egSO3CM+oM4/EP7ikbuiFpvtEs66GSlFxA=;
+        s=default; t=1585056211;
+        bh=oEOJMqvdsCj6GYOHbmui3Nl1PCCd6blChJqMhhQrgQI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DrSFie3XAyKWVovOa6ruKIm7D47K1YvwahT3gP/AAZZ0Ykj0eca7bWcDlkKho84Nw
-         ZBYAAbhDuHRzntopNoJ1RWNZMqt6xTvJGNGfBXZnHzJm3xx7LEUE/OEozz3Gn3MqCp
-         ZcaFUn3dvnWPZsdb4wSARYvc4c/cXIFZkQ0pfL34=
+        b=hDqnbOutvaSlsdMx4DqAcP/yehHB8EdL6JxTi8s8/Rk88t0ARyviatYWw4ESds9Hj
+         0JYlfDoYYPaoUQwzQRTLIhDF6Cs7lVue0g/b1lIOYhguLKTL40cfclcI30nWq290Ck
+         K+F2ClLv3DOLWN1qYVkC/I2n+ytdSc20rrPGvy/o=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kwon Je Oh <kwonje.oh2@gmail.com>,
-        Carlo Nonato <carlo.nonato95@gmail.com>,
-        Paolo Valente <paolo.valente@linaro.org>,
-        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 033/102] block, bfq: fix overwrite of bfq_group pointer in bfq_find_set_group()
+        stable@vger.kernel.org, Naresh Kamboju <naresh.kamboju@linaro.org>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Todd Kjos <tkjos@google.com>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.5 040/119] binderfs: use refcount for binder control devices too
 Date:   Tue, 24 Mar 2020 14:10:25 +0100
-Message-Id: <20200324130810.126577787@linuxfoundation.org>
+Message-Id: <20200324130812.380720407@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.2
-In-Reply-To: <20200324130806.544601211@linuxfoundation.org>
-References: <20200324130806.544601211@linuxfoundation.org>
+In-Reply-To: <20200324130808.041360967@linuxfoundation.org>
+References: <20200324130808.041360967@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,59 +44,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Carlo Nonato <carlo.nonato95@gmail.com>
+From: Christian Brauner <christian.brauner@ubuntu.com>
 
-[ Upstream commit 14afc59361976c0ba39e3a9589c3eaa43ebc7e1d ]
+[ Upstream commit 211b64e4b5b6bd5fdc19cd525c2cc9a90e6b0ec9 ]
 
-The bfq_find_set_group() function takes as input a blkcg (which represents
-a cgroup) and retrieves the corresponding bfq_group, then it updates the
-bfq internal group hierarchy (see comments inside the function for why
-this is needed) and finally it returns the bfq_group.
-In the hierarchy update cycle, the pointer holding the correct bfq_group
-that has to be returned is mistakenly used to traverse the hierarchy
-bottom to top, meaning that in each iteration it gets overwritten with the
-parent of the current group. Since the update cycle stops at root's
-children (depth = 2), the overwrite becomes a problem only if the blkcg
-describes a cgroup at a hierarchy level deeper than that (depth > 2). In
-this case the root's child that happens to be also an ancestor of the
-correct bfq_group is returned. The main consequence is that processes
-contained in a cgroup at depth greater than 2 are wrongly placed in the
-group described above by BFQ.
+Binderfs binder-control devices are cleaned up via binderfs_evict_inode
+too() which will use refcount_dec_and_test(). However, we missed to set
+the refcount for binderfs binder-control devices and so we underflowed
+when the binderfs instance got unmounted. Pretty obvious oversight and
+should have been part of the more general UAF fix. The good news is that
+having test cases (suprisingly) helps.
 
-This commits fixes this problem by using a different bfq_group pointer in
-the update cycle in order to avoid the overwrite of the variable holding
-the original group reference.
+Technically, we could detect that we're about to cleanup the
+binder-control dentry in binderfs_evict_inode() and then simply clean it
+up. But that makes the assumption that the binder driver itself will
+never make use of a binderfs binder-control device after the binderfs
+instance it belongs to has been unmounted and the superblock for it been
+destroyed. While it is unlikely to ever come to this let's be on the
+safe side. Performance-wise this also really doesn't matter since the
+binder-control device is only every really when creating the binderfs
+filesystem or creating additional binder devices. Both operations are
+pretty rare.
 
-Reported-by: Kwon Je Oh <kwonje.oh2@gmail.com>
-Signed-off-by: Carlo Nonato <carlo.nonato95@gmail.com>
-Signed-off-by: Paolo Valente <paolo.valente@linaro.org>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Fixes: f0fe2c0f050d ("binder: prevent UAF for binderfs devices II")
+Link: https://lore.kernel.org/r/CA+G9fYusdfg7PMfC9Xce-xLT7NiyKSbgojpK35GOm=Pf9jXXrA@mail.gmail.com
+Reported-by: Naresh Kamboju <naresh.kamboju@linaro.org>
+Cc: stable@vger.kernel.org
+Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
+Acked-by: Todd Kjos <tkjos@google.com>
+Link: https://lore.kernel.org/r/20200311105309.1742827-1-christian.brauner@ubuntu.com
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- block/bfq-cgroup.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+ drivers/android/binderfs.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/block/bfq-cgroup.c b/block/bfq-cgroup.c
-index d0e36d6522649..86cd718e0380b 100644
---- a/block/bfq-cgroup.c
-+++ b/block/bfq-cgroup.c
-@@ -593,12 +593,13 @@ struct bfq_group *bfq_find_set_group(struct bfq_data *bfqd,
- 	 */
- 	entity = &bfqg->entity;
- 	for_each_entity(entity) {
--		bfqg = container_of(entity, struct bfq_group, entity);
--		if (bfqg != bfqd->root_group) {
--			parent = bfqg_parent(bfqg);
-+		struct bfq_group *curr_bfqg = container_of(entity,
-+						struct bfq_group, entity);
-+		if (curr_bfqg != bfqd->root_group) {
-+			parent = bfqg_parent(curr_bfqg);
- 			if (!parent)
- 				parent = bfqd->root_group;
--			bfq_group_set_parent(bfqg, parent);
-+			bfq_group_set_parent(curr_bfqg, parent);
- 		}
- 	}
+diff --git a/drivers/android/binderfs.c b/drivers/android/binderfs.c
+index 110e41f920c27..f303106b3362b 100644
+--- a/drivers/android/binderfs.c
++++ b/drivers/android/binderfs.c
+@@ -448,6 +448,7 @@ static int binderfs_binder_ctl_create(struct super_block *sb)
+ 	inode->i_uid = info->root_uid;
+ 	inode->i_gid = info->root_gid;
+ 
++	refcount_set(&device->ref, 1);
+ 	device->binderfs_inode = inode;
+ 	device->miscdev.minor = minor;
  
 -- 
 2.20.1
