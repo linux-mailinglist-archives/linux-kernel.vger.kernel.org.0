@@ -2,130 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4A312191B90
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 21:56:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E4AB3191B94
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 21:57:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728297AbgCXU4i (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 16:56:38 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:34954 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727753AbgCXU4i (ORCPT
+        id S1728120AbgCXU5j (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 16:57:39 -0400
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:38947 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725941AbgCXU5i (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 16:56:38 -0400
-Received: by mail-pf1-f193.google.com with SMTP id u68so9940984pfb.2;
-        Tue, 24 Mar 2020 13:56:37 -0700 (PDT)
+        Tue, 24 Mar 2020 16:57:38 -0400
+Received: by mail-lf1-f65.google.com with SMTP id j15so14468630lfk.6
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Mar 2020 13:57:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:subject:to:cc:references:from:autocrypt:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=3DEBNdMaNJAXpR3AZDBkUvL0YabvLwnchUK926agYFE=;
-        b=RVyUZfStRmZUieGoDeXNTSQm8W4OtXZum/MDW5tDsgt4qRYs/G8sUW/Pc48wdy2zQu
-         jqtG4j6GM8OrZJFSFD3qTZ7mxveeeP1FzI2a4lpPCi2063IzH0I6VtkuYygyvGHkIUko
-         FTlyV71h4ZegNvrxDxR7KM3ZojKQn/EJkAM7ZwZxIk5SLYA/jp8LW67usforyTcXzL7+
-         twjGwJZyrB/XHX/kxUM6rPnzFfuHIWryJkG2dsNZFFetQtL7LNNgIDFASlF5q5/wkEVu
-         FL/zYfobOiO7CvBZoZoqM1HKkkqMAufnGk9wrxVM8gUvSc6s6Bby1N8zQySJbD0RcqQq
-         n8dA==
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=AfkpZBONhIm2kahgF1k041JWmTwgX7aXtGtLwbGmno8=;
+        b=ZrWYfmkROhgW5Qe30qGiRWtsa4lPXPRYSJ7cqapGER4PzRqCxwEF+dJguyJZ7FF6Ll
+         u/Zi1t2urAAq25y6dQ5ynQLQXoBhsw2Q+tNanRBglZqULb7gJYp6SanwRrt7FLa3qIeu
+         9Ib7NWaVYv+Fkb7oj9J2ClZWHS6IY4kKUJ5J0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:subject:to:cc:references:from:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=3DEBNdMaNJAXpR3AZDBkUvL0YabvLwnchUK926agYFE=;
-        b=RQKVFUuoJfSuYDPD9v6NCTt6tu0MQOMvcUS1xBI7x9ywVN5fjHLdtBUxF02fj8qJvo
-         N3NNa7hA0lGPJnhQqWIghbmx2I1DvO9ublLCpM5WhOOEdyuG+osuCvYQYX1c2MwFDhox
-         QQSrL3ZLOpNSr1Oy2oj1s3OjO2lwO0oiZ/WtKKBoYws0sMZtHXgeVow9S1BCLLLGDEDL
-         txCYtHXSDOGqMWJyZREKxWkqe/H2qQR+cndZy4RzW0zOR9523V5SGw9Y3je6ce1DQwqX
-         sJ3Zx6QFjBTVcuOsQRxoGo2N5rHd2UkxN6Yuoy9lZVgoyLxXkOqiMq3ByHfFRpXJYOX+
-         ZYMg==
-X-Gm-Message-State: ANhLgQ0U/m9ENs1S3yUk+JnUtKj1FBqj5OX1LfXD+O7iUX/Ki2FmJe3N
-        h6hXFPrkYRNc91NPPI9W8iuqGl9S
-X-Google-Smtp-Source: ADFU+vs+CN7hzjjXbYWFPZFKzz0g+ZJ5n4DscIMxbWrZ0LUZoKKuo/PDHoS67D8nzjxfkhZyPHB7OA==
-X-Received: by 2002:a63:d143:: with SMTP id c3mr28398624pgj.171.1585083396566;
-        Tue, 24 Mar 2020 13:56:36 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id 79sm16877567pfz.23.2020.03.24.13.56.35
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=AfkpZBONhIm2kahgF1k041JWmTwgX7aXtGtLwbGmno8=;
+        b=ZmCURyv73CTweP0bB1M/7mWX2nujmX6I18TvS91YnG+bEmIu59svG3dC6mQwQWFG2g
+         q1ZFbW8ovuLfYU+DQgKPjPzIkX9qyqNaxeajKFnJqmbtXAkJUPy+RnqVh6dzpA8HIlLY
+         TdT9QfkQNfq7GfSQNHjxEjob5K3H1WbtAd3g0ZvQfva4GAUcR3sGZfVl27OzJFPGNT42
+         lFfTgDb1VjuGkSduVPo/JXgnR/ujvoigiakldItX8akJRo8sJKt1WW9qVoJ7jrC2l5IZ
+         hV+fa/+hfW6uf9ghDzhbhRZqJDpHb5BuKiKsHdM6GaeKbVEVdxVgJx2X0y04pHRidecV
+         2n4w==
+X-Gm-Message-State: ANhLgQ33Ebgd0UPz2d83ReLmlsqsteXV2vgXyYkzQdjVcrGFfQnTTnU3
+        YkPlDTgbm1bD5JDVmJyjNqMLAEYcayo=
+X-Google-Smtp-Source: ADFU+vuKI2lTlunwmj6jcCOmLpFfBLbJp4l1z65ZMQqnuUx9phz2RL79OSTiKc3AysWWIVmCJ2wYmQ==
+X-Received: by 2002:ac2:4116:: with SMTP id b22mr16708923lfi.172.1585083456749;
+        Tue, 24 Mar 2020 13:57:36 -0700 (PDT)
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com. [209.85.167.53])
+        by smtp.gmail.com with ESMTPSA id l7sm3980311lfp.65.2020.03.24.13.57.35
+        for <linux-kernel@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 24 Mar 2020 13:56:36 -0700 (PDT)
-Subject: Re: [PATCH 5.5 000/119] 5.5.12-rc1 review
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-Cc:     torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
-References: <20200324130808.041360967@linuxfoundation.org>
-From:   Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- xsFNBE6H1WcBEACu6jIcw5kZ5dGeJ7E7B2uweQR/4FGxH10/H1O1+ApmcQ9i87XdZQiB9cpN
- RYHA7RCEK2dh6dDccykQk3bC90xXMPg+O3R+C/SkwcnUak1UZaeK/SwQbq/t0tkMzYDRxfJ7
- nyFiKxUehbNF3r9qlJgPqONwX5vJy4/GvDHdddSCxV41P/ejsZ8PykxyJs98UWhF54tGRWFl
- 7i1xvaDB9lN5WTLRKSO7wICuLiSz5WZHXMkyF4d+/O5ll7yz/o/JxK5vO/sduYDIlFTvBZDh
- gzaEtNf5tQjsjG4io8E0Yq0ViobLkS2RTNZT8ICq/Jmvl0SpbHRvYwa2DhNsK0YjHFQBB0FX
- IdhdUEzNefcNcYvqigJpdICoP2e4yJSyflHFO4dr0OrdnGLe1Zi/8Xo/2+M1dSSEt196rXaC
- kwu2KgIgmkRBb3cp2vIBBIIowU8W3qC1+w+RdMUrZxKGWJ3juwcgveJlzMpMZNyM1jobSXZ0
- VHGMNJ3MwXlrEFPXaYJgibcg6brM6wGfX/LBvc/haWw4yO24lT5eitm4UBdIy9pKkKmHHh7s
- jfZJkB5fWKVdoCv/omy6UyH6ykLOPFugl+hVL2Prf8xrXuZe1CMS7ID9Lc8FaL1ROIN/W8Vk
- BIsJMaWOhks//7d92Uf3EArDlDShwR2+D+AMon8NULuLBHiEUQARAQABzTJHdWVudGVyIFJv
- ZWNrIChMaW51eCBhY2NvdW50KSA8bGludXhAcm9lY2stdXMubmV0PsLBgQQTAQIAKwIbAwYL
- CQgHAwIGFQgCCQoLBBYCAwECHgECF4ACGQEFAlVcphcFCRmg06EACgkQyx8mb86fmYFg0RAA
- nzXJzuPkLJaOmSIzPAqqnutACchT/meCOgMEpS5oLf6xn5ySZkl23OxuhpMZTVX+49c9pvBx
- hpvl5bCWFu5qC1jC2eWRYU+aZZE4sxMaAGeWenQJsiG9lP8wkfCJP3ockNu0ZXXAXwIbY1O1
- c+l11zQkZw89zNgWgKobKzrDMBFOYtAh0pAInZ9TSn7oA4Ctejouo5wUugmk8MrDtUVXmEA9
- 7f9fgKYSwl/H7dfKKsS1bDOpyJlqhEAH94BHJdK/b1tzwJCFAXFhMlmlbYEk8kWjcxQgDWMu
- GAthQzSuAyhqyZwFcOlMCNbAcTSQawSo3B9yM9mHJne5RrAbVz4TWLnEaX8gA5xK3uCNCeyI
- sqYuzA4OzcMwnnTASvzsGZoYHTFP3DQwf2nzxD6yBGCfwNGIYfS0i8YN8XcBgEcDFMWpOQhT
- Pu3HeztMnF3HXrc0t7e5rDW9zCh3k2PA6D2NV4fews9KDFhLlTfCVzf0PS1dRVVWM+4jVl6l
- HRIAgWp+2/f8dx5vPc4Ycp4IsZN0l1h9uT7qm1KTwz+sSl1zOqKD/BpfGNZfLRRxrXthvvY8
- BltcuZ4+PGFTcRkMytUbMDFMF9Cjd2W9dXD35PEtvj8wnEyzIos8bbgtLrGTv/SYhmPpahJA
- l8hPhYvmAvpOmusUUyB30StsHIU2LLccUPPOwU0ETofVZwEQALlLbQeBDTDbwQYrj0gbx3bq
- 7kpKABxN2MqeuqGr02DpS9883d/t7ontxasXoEz2GTioevvRmllJlPQERVxM8gQoNg22twF7
- pB/zsrIjxkE9heE4wYfN1AyzT+AxgYN6f8hVQ7Nrc9XgZZe+8IkuW/Nf64KzNJXnSH4u6nJM
- J2+Dt274YoFcXR1nG76Q259mKwzbCukKbd6piL+VsT/qBrLhZe9Ivbjq5WMdkQKnP7gYKCAi
- pNVJC4enWfivZsYupMd9qn7Uv/oCZDYoBTdMSBUblaLMwlcjnPpOYK5rfHvC4opxl+P/Vzyz
- 6WC2TLkPtKvYvXmdsI6rnEI4Uucg0Au/Ulg7aqqKhzGPIbVaL+U0Wk82nz6hz+WP2ggTrY1w
- ZlPlRt8WM9w6WfLf2j+PuGklj37m+KvaOEfLsF1v464dSpy1tQVHhhp8LFTxh/6RWkRIR2uF
- I4v3Xu/k5D0LhaZHpQ4C+xKsQxpTGuYh2tnRaRL14YMW1dlI3HfeB2gj7Yc8XdHh9vkpPyuT
- nY/ZsFbnvBtiw7GchKKri2gDhRb2QNNDyBnQn5mRFw7CyuFclAksOdV/sdpQnYlYcRQWOUGY
- HhQ5eqTRZjm9z+qQe/T0HQpmiPTqQcIaG/edgKVTUjITfA7AJMKLQHgp04Vylb+G6jocnQQX
- JqvvP09whbqrABEBAAHCwWUEGAECAA8CGwwFAlVcpi8FCRmg08MACgkQyx8mb86fmYHNRQ/+
- J0OZsBYP4leJvQF8lx9zif+v4ZY/6C9tTcUv/KNAE5leyrD4IKbnV4PnbrVhjq861it/zRQW
- cFpWQszZyWRwNPWUUz7ejmm9lAwPbr8xWT4qMSA43VKQ7ZCeTQJ4TC8kjqtcbw41SjkjrcTG
- wF52zFO4bOWyovVAPncvV9eGA/vtnd3xEZXQiSt91kBSqK28yjxAqK/c3G6i7IX2rg6pzgqh
- hiH3/1qM2M/LSuqAv0Rwrt/k+pZXE+B4Ud42hwmMr0TfhNxG+X7YKvjKC+SjPjqp0CaztQ0H
- nsDLSLElVROxCd9m8CAUuHplgmR3seYCOrT4jriMFBtKNPtj2EE4DNV4s7k0Zy+6iRQ8G8ng
- QjsSqYJx8iAR8JRB7Gm2rQOMv8lSRdjva++GT0VLXtHULdlzg8VjDnFZ3lfz5PWEOeIMk7Rj
- trjv82EZtrhLuLjHRCaG50OOm0hwPSk1J64R8O3HjSLdertmw7eyAYOo4RuWJguYMg5DRnBk
- WkRwrSuCn7UG+qVWZeKEsFKFOkynOs3pVbcbq1pxbhk3TRWCGRU5JolI4ohy/7JV1TVbjiDI
- HP/aVnm6NC8of26P40Pg8EdAhajZnHHjA7FrJXsy3cyIGqvg9os4rNkUWmrCfLLsZDHD8FnU
- mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
-Message-ID: <9e8c7d9d-cbed-7738-a6f6-c658b0adb542@roeck-us.net>
-Date:   Tue, 24 Mar 2020 13:56:35 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        Tue, 24 Mar 2020 13:57:35 -0700 (PDT)
+Received: by mail-lf1-f53.google.com with SMTP id j15so14468577lfk.6
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Mar 2020 13:57:35 -0700 (PDT)
+X-Received: by 2002:a19:6712:: with SMTP id b18mr573410lfc.152.1585083455357;
+ Tue, 24 Mar 2020 13:57:35 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20200324130808.041360967@linuxfoundation.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20200323185057.GE23230@ZenIV.linux.org.uk> <20200323185127.252501-1-viro@ZenIV.linux.org.uk>
+ <20200323185127.252501-5-viro@ZenIV.linux.org.uk> <CAHk-=wgMmmnQTFT7U9+q2BsyV6Ge+LAnnhPmv0SUtFBV1D4tVw@mail.gmail.com>
+ <20200324020846.GG23230@ZenIV.linux.org.uk> <CAHk-=whTwaUZZ5Aj_Viapf2tdvcd65WdM4jjXJ3tdOTDmgkW0g@mail.gmail.com>
+ <20200324204246.GH23230@ZenIV.linux.org.uk>
+In-Reply-To: <20200324204246.GH23230@ZenIV.linux.org.uk>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Tue, 24 Mar 2020 13:57:19 -0700
+X-Gmail-Original-Message-ID: <CAHk-=whnTRF5yA2MrPGcmMm=hXaGHfC2HEDtNzA=_1=szhJ4-w@mail.gmail.com>
+Message-ID: <CAHk-=whnTRF5yA2MrPGcmMm=hXaGHfC2HEDtNzA=_1=szhJ4-w@mail.gmail.com>
+Subject: Re: [RFC][PATCH 5/7] x86: convert arch_futex_atomic_op_inuser() to user_access_begin/user_access_end()
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 3/24/20 6:09 AM, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 5.5.12 release.
-> There are 119 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Thu, 26 Mar 2020 13:06:42 +0000.
-> Anything received after that time might be too late.
-> 
+On Tue, Mar 24, 2020 at 1:45 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
+>
+> OK...  BTW, I'd been trying to recall the reasons for the way
+> __futex_atomic_op2() loop is done; ISTR some discussion along
+> the lines of cacheline ping-pong prevention, but I'd been unable
+> to reconstruct enough details to find it and I'm not sure it
+> hadn't been about some other code ;-/
 
-Build results:
-	total: 157 pass: 157 fail: 0
-Qemu test results:
-	total: 428 pass: 428 fail: 0
+No, that doesn't look like any cacheline advantage I can think of -
+quite the reverse.
 
-Guenter
+I suspect it's just lazy code, with the reload being unnecessary. Or
+it might be written that way because you avoid an extra variable.
+
+In fact, from a cacheline optimization standpoint, there are
+advantages to not doing the load even on the initial run: if you know
+a certain value is particularly likely, there are advantages to just
+_assuming_ that value, rather than loading it. So no initial load at
+all, and just initialize the first value to the likely case.
+
+That can avoid an unnecessary "load for shared ownership" cacheline
+state transition (since the cmpxchg will want to turn it into an
+exclusive modified cacheline anyway).
+
+But I don't think that optimization is likely the case here, and
+you're right, the loop would be better written with the initial load
+outside the loop.
+
+           Linus
