@@ -2,71 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 595DF191887
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 19:08:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CD4C91918A6
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 19:12:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727958AbgCXSHk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 14:07:40 -0400
-Received: from elvis.franken.de ([193.175.24.41]:60751 "EHLO elvis.franken.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727318AbgCXSHj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 14:07:39 -0400
-Received: from uucp (helo=alpha)
-        by elvis.franken.de with local-bsmtp (Exim 3.36 #1)
-        id 1jGnxb-0002Bo-01; Tue, 24 Mar 2020 19:07:31 +0100
-Received: by alpha.franken.de (Postfix, from userid 1000)
-        id 74B47C09A5; Tue, 24 Mar 2020 19:07:18 +0100 (CET)
-Date:   Tue, 24 Mar 2020 19:07:18 +0100
-From:   Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-To:     Jiaxun Yang <jiaxun.yang@flygoat.com>
-Cc:     Marc Zyngier <maz@kernel.org>, linux-mips@vger.kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Huacai Chen <chenhc@lemote.com>,
-        Allison Randal <allison@lohutok.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v6 00/11] Modernize Loongson64 Machine v6
-Message-ID: <20200324180718.GB8911@alpha.franken.de>
-References: <20190827085302.5197-1-jiaxun.yang@flygoat.com>
- <20200324153624.23109-1-jiaxun.yang@flygoat.com>
- <20200324154747.18e8ccd5@why>
- <8C3E32B2-11DB-40A6-A19E-162B8E42330C@flygoat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8C3E32B2-11DB-40A6-A19E-162B8E42330C@flygoat.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+        id S1727553AbgCXSL3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 14:11:29 -0400
+Received: from mail-pg1-f202.google.com ([209.85.215.202]:48982 "EHLO
+        mail-pg1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727257AbgCXSL3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Mar 2020 14:11:29 -0400
+Received: by mail-pg1-f202.google.com with SMTP id f14so14225680pgj.15
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Mar 2020 11:11:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=A1s+GlgKu1KUfIn178l7zMrQpVDU7CgjURg8+2s0rx0=;
+        b=SVxEUhNeN50/tJOoGdm1YPrsE8PoywLqO3Yl9kMDqrYxa36vAeD+6wR7wR7J7QOWyE
+         ip2oVxNRex/Mi8jHuiDXdDUp84P8MPhhEQsVhOwxnmAdJzd07bqVaS0roszymXjJBMCS
+         96A3iWFVeKuVRUAM1V7ui9moS+JO1uSeCz/0OII7G8rGpMK5s7UQ+ebypdumuZMUmMV0
+         ClvmegIw6r+n3RrV26cxyzWgKhA8NS/49BubQKJuwpt/+Kdz8jkiLZTWmy3l/b7cFON7
+         y76F4LzO6V9x8KQZxBTWyrLKMWoiEDzloS/oV645tpUpbVheztN+ecPGg6M24lvixRNS
+         S7Yg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=A1s+GlgKu1KUfIn178l7zMrQpVDU7CgjURg8+2s0rx0=;
+        b=XrFKw+AhCDm7jCpg5YEd8xlWu5934sItKttbqJvbK1BixS8VNrjIOnyC2bSsqfWI7u
+         3znq9MGrOs1elNJVfh6aCuwN29XV1XjuQfEcmQGHMj189Qg/uPzR6LJwtLNnN+HkVpHQ
+         n6aAtr/FzcGTaa6ia4aGfxswfMXErGvz19w1GF59cLx0jKDTQvv4etjzvkXHOtpYCqML
+         vPGjbUwMX4KhiI0l7YbWTomkqXEOQx4kdUPmMUtCmdtpk28Kz+IoruKZZl1uNrXFXy6j
+         TiGtNb+PqqnhVbNX2M/w9MVTYPMpYrB9xkb+Na7RuYD5QV0tx2hpw0fDhD91/TgQzbFd
+         9lQw==
+X-Gm-Message-State: ANhLgQ35QTqqI9tzabvygwscGzruXUduhMx0HN8WHn/u3maZC7G067ev
+        U7wjYQ7yVqSWe4c1UAoQA8q5TdnTCtfJLKhJjxuEwB8OfQz+PxRMfPZq9TC1skP6/ZVKSQrMo1+
+        hNwjFdNwjdgk94qxeqMPOtzmLoNUKjX2FV+iXHBdofeP+tOKrpnRnZyaHKBGpMFiLSmd8XA+U
+X-Google-Smtp-Source: ADFU+vsZHgZzwzSAnX9z0GCt66DRx1pqOylPa4FAFI8S9DOESAJemQ/MuyhGH5nTQ1jcoCiw7ugGea+65lvW
+X-Received: by 2002:a63:e70d:: with SMTP id b13mr28393578pgi.8.1585073486180;
+ Tue, 24 Mar 2020 11:11:26 -0700 (PDT)
+Date:   Tue, 24 Mar 2020 11:10:20 -0700
+Message-Id: <20200324181020.229914-1-eranian@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.25.1.696.g5e7596f4ac-goog
+Subject: [PATCH] perf/tools: fix perf_evsel__fallback() for paranoid=2 and -b
+From:   Stephane Eranian <eranian@google.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     peterz@infradead.org, mingo@elte.hu, acme@redhat.com,
+        jolsa@redhat.com, irogers@google.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 24, 2020 at 11:51:18PM +0800, Jiaxun Yang wrote:
-> >How do you want to get these merged? I can take the first 6 patches
-> >through the irqchip tree, and leave the rest to go via the MIPS tree.
-> >
-> >Otherwise, if you plan to have the whole thing go via the MIPS tree,
-> >please add my:
-> >
-> >Reviewed-by: Marc Zyngier <maz@kernel.org>
-> >
-> >to patches 1, 2, 4 and 6.
-> >
-> >Please let me know quickly, as I'd like to close the irqchip tree
-> >tomorrow.
-> 
-> I'd prefer all go through MIPS tree.
-> 
-> Thomas, could you please help with that?
+When perf_event_paranoid=2, regular users are prevented from sampling
+at the kernel level. However, it the user passes an event without
+a privilege level, the tool will force :u when it detects paranoid>1.
+This works well, except when branch sampling is requested. It has a more
+stringent requirement especially with exclude_hv.
+$ perf record ls
+[ perf record: Woken up 1 times to write data ]
+[ perf record: Captured and wrote 0.001 MB /tmp/perf.data ]
 
-I'm fine taking them. Could you please add Signed-offs from your
-co-developer and look at the remaining checkpatch warnings ?
+But:
+$ perf record -b ls
+Error:
+You may not have permission to collect stats.
 
-Thomas.
+Consider tweaking /proc/sys/kernel/perf_event_paranoid,
+which controls use of the performance events system by
+unprivileged users (without CAP_SYS_ADMIN).
 
+The current value is 2:
+
+      -1: Allow use of (almost) all events by all users
+    >= 0: Disallow raw tracepoint access by users without CAP_IOC_LOCK
+    >= 1: Disallow CPU event access by users without CAP_SYS_ADMIN
+    >= 2: Disallow kernel profiling by users without CAP_SYS_ADMIN
+
+To make this setting permanent, edit /etc/sysctl.conf too, e.g.:
+
+    kernel.perf_event_paranoid = -1
+
+The problem is that in the fallback cod only exclude_kernel is checked and
+if set, then exclude_hv is not forced to 1. When branch sampling is enabled
+exclude_hv must be set.
+
+This patch fixes the bug in the fallback code by considering the value of
+exclude_hv and not just exclude_kernel. We prefer this approach to give a
+chance to exclude_hv=0.
+
+Signed-off-by: Stephane Eranian <eranian@google.com>
+---
+ tools/perf/util/evsel.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
+index 816d930d774e7..db0e6112992e5 100644
+--- a/tools/perf/util/evsel.c
++++ b/tools/perf/util/evsel.c
+@@ -2424,7 +2424,8 @@ bool perf_evsel__fallback(struct evsel *evsel, int err,
+ 
+ 		zfree(&evsel->name);
+ 		return true;
+-	} else if (err == EACCES && !evsel->core.attr.exclude_kernel &&
++	} else if (err == EACCES &&
++		   (!evsel->core.attr.exclude_kernel || !evsel->core.attr.exclude_hv) &&
+ 		   (paranoid = perf_event_paranoid()) > 1) {
+ 		const char *name = perf_evsel__name(evsel);
+ 		char *new_name;
 -- 
-Crap can work. Given enough thrust pigs will fly, but it's not necessarily a
-good idea.                                                [ RFC1925, 2.3 ]
+2.25.1.696.g5e7596f4ac-goog
+
