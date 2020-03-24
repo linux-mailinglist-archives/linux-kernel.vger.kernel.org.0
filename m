@@ -2,35 +2,34 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 99557190928
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 10:18:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 71E19190924
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 10:18:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728065AbgCXJSi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 05:18:38 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:44044 "EHLO
+        id S1727753AbgCXJSa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 05:18:30 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:44053 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727697AbgCXJRB (ORCPT
+        with ESMTP id S1727706AbgCXJRC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 05:17:01 -0400
+        Tue, 24 Mar 2020 05:17:02 -0400
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1jGfgA-0008As-1x; Tue, 24 Mar 2020 10:16:58 +0100
+        id 1jGfgB-0008BC-5g; Tue, 24 Mar 2020 10:16:59 +0100
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 81AF11C04D4;
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id DD56B1C04DD;
         Tue, 24 Mar 2020 10:16:47 +0100 (CET)
 Date:   Tue, 24 Mar 2020 09:16:47 -0000
 From:   "tip-bot2 for Jules Irenge" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: core/rcu] rcu/nocb: Add missing annotation for rcu_nocb_bypass_unlock()
+Subject: [tip: core/rcu] rcu: Add missing annotation for rcu_nocb_bypass_lock()
 Cc:     Jules Irenge <jbi.octave@gmail.com>,
-        "Paul E. McKenney" <paulmck@kernel.org>,
-        Boqun Feng <boqun.feng@gmail.com>, x86 <x86@kernel.org>,
+        "Paul E. McKenney" <paulmck@kernel.org>, x86 <x86@kernel.org>,
         LKML <linux-kernel@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <158504140722.28353.13599324733441017238.tip-bot2@tip-bot2>
+Message-ID: <158504140759.28353.5316247654362289852.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -46,41 +45,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the core/rcu branch of tip:
 
-Commit-ID:     92c0b889f2ff6898710d49458b6eae1de50895c6
-Gitweb:        https://git.kernel.org/tip/92c0b889f2ff6898710d49458b6eae1de50895c6
+Commit-ID:     9ced454807191e44ef093aeeee68194be9ce3a1a
+Gitweb:        https://git.kernel.org/tip/9ced454807191e44ef093aeeee68194be9ce3a1a
 Author:        Jules Irenge <jbi.octave@gmail.com>
-AuthorDate:    Thu, 30 Jan 2020 00:30:09 
+AuthorDate:    Mon, 20 Jan 2020 22:42:15 
 Committer:     Paul E. McKenney <paulmck@kernel.org>
 CommitterDate: Thu, 20 Feb 2020 15:58:23 -08:00
 
-rcu/nocb: Add missing annotation for rcu_nocb_bypass_unlock()
+rcu: Add missing annotation for rcu_nocb_bypass_lock()
 
-Sparse reports warning at rcu_nocb_bypass_unlock()
+Sparse reports warning at rcu_nocb_bypass_lock()
 
-warning: context imbalance in rcu_nocb_bypass_unlock() - unexpected unlock
+|warning: context imbalance in rcu_nocb_bypass_lock() - wrong count at exit
 
-The root cause is a missing annotation of rcu_nocb_bypass_unlock()
-which causes the warning.
-
-This commit therefore adds the missing __releases(&rdp->nocb_bypass_lock)
-annotation.
+To fix this, this commit adds an __acquires(&rdp->nocb_bypass_lock).
+Given that rcu_nocb_bypass_lock() does actually call raw_spin_lock()
+when raw_spin_trylock() fails, this not only fixes the warning but also
+improves on the readability of the code.
 
 Signed-off-by: Jules Irenge <jbi.octave@gmail.com>
 Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
-Acked-by: Boqun Feng <boqun.feng@gmail.com>
 ---
  kernel/rcu/tree_plugin.h | 1 +
  1 file changed, 1 insertion(+)
 
 diff --git a/kernel/rcu/tree_plugin.h b/kernel/rcu/tree_plugin.h
-index 6db2cad..3846519 100644
+index 0f8b714..6db2cad 100644
 --- a/kernel/rcu/tree_plugin.h
 +++ b/kernel/rcu/tree_plugin.h
-@@ -1530,6 +1530,7 @@ static bool rcu_nocb_bypass_trylock(struct rcu_data *rdp)
-  * Release the specified rcu_data structure's ->nocb_bypass_lock.
+@@ -1486,6 +1486,7 @@ module_param(nocb_nobypass_lim_per_jiffy, int, 0);
+  * flag the contention.
   */
- static void rcu_nocb_bypass_unlock(struct rcu_data *rdp)
-+	__releases(&rdp->nocb_bypass_lock)
+ static void rcu_nocb_bypass_lock(struct rcu_data *rdp)
++	__acquires(&rdp->nocb_bypass_lock)
  {
  	lockdep_assert_irqs_disabled();
- 	raw_spin_unlock(&rdp->nocb_bypass_lock);
+ 	if (raw_spin_trylock(&rdp->nocb_bypass_lock))
