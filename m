@@ -2,128 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7BA07190AAE
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 11:22:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0D8AF190AD1
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 11:25:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727542AbgCXKVJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 06:21:09 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:40019 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727217AbgCXKU5 (ORCPT
+        id S1727201AbgCXKZE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 06:25:04 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:36962 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726524AbgCXKZD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 06:20:57 -0400
-Received: by mail-wr1-f66.google.com with SMTP id u10so319409wro.7
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Mar 2020 03:20:56 -0700 (PDT)
+        Tue, 24 Mar 2020 06:25:03 -0400
+Received: by mail-pg1-f194.google.com with SMTP id a32so8810157pga.4;
+        Tue, 24 Mar 2020 03:25:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=67sFvVtkG1ivlSk+fGwbgHaYe6cmIRn/pWHBZ0lu9g4=;
-        b=G9GUxZPZnPhLAajMtiZxgmUxpYrGOcJIkPozWgUDMvAuy8EBmZbwC30xlR9wHUDnJV
-         ALFika3tbYFYgOcbEy6lLg62lZVK5VultjcamVietFmwqmduFKScAs2xljobVRPKpRXB
-         i+0XwLWm2dPB3T/cVEbeziTgctq2IaB8JoXEKasglnWC/N+nQosrtmb+n8kp06GIIR0w
-         30OWNQB2zwjvbXX5cMH+cNlV+3NUfzEfVtxBP2DaojGqjDvF5egj+tn0DSOrKutBLBFj
-         t77PxOjT7DJ0Obl93NXUkDItQyzWrNOnIQ9JmQ3KbXHMtLKZy6nVXVOBML4RvL87vvDb
-         rSqg==
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=niMBZQskqIvvbvSQd3Vs9C4OFVhjiYiDfUEWD3hhgQU=;
+        b=WL57huwoohYOXgJDpFwNTccWhDvbdVj53HP9RTAYqeUArAowfq+8wm7C8xnQS+d7Xg
+         T6ZEXRd83CkutsSV26moPh6SFShAu8y5bgcdaa94+vyt5gv9L7FHOWY/xTwiS3ZXTJoo
+         mYyatVs+4JSkglhV/DZno5DkKWgsDuV6Nq3GIgrszTouv3+HdzH3Ue4zNWg9IJabYRM5
+         Yc/KKpuGqrb71fAUqQdj6kfvkI7Fc5ogXvzI4kRXgF1utZe1N1Trsq00q5ItgQsyJMa1
+         K51p515UguhiI4YjD4zkfxOZoju5Vs4RIc7CzfPQSFesYRhhKwf5f8kTncK3eqxsX1rE
+         yirA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=67sFvVtkG1ivlSk+fGwbgHaYe6cmIRn/pWHBZ0lu9g4=;
-        b=Y8T+AL1OF+rD/S4LpW/Mx37beMW0rOqREN/6l+XQHs0SMcDjZQj6OgCBsmavOxGGYk
-         zjDahGxeSzCCvv7RaLdMGzc0sG7PkLFVFkCAHDkHqfWNZ4Ul6u2EOoIPtQwDcBprgUto
-         r+XrvROtk5820T5uIo5XPl58Nky5OR8jdoS4u2+WhSrBlbRWIZUMJsNoDNF01NJcUKJT
-         CCNhCvKcSfCZMQwJVPNzj8JJdtRrDMKilwJCVaYsincNauPTXGgz6dehDOq3OlrjECjo
-         AAt6Z8bKVuL9sknvHiJPHxgxsY8R62JmtCmYFrT23za4aRECT/P5sj7TFcgUhL/vjAdA
-         rErw==
-X-Gm-Message-State: ANhLgQ0SRNzI8v1pfU2DFXEYsHLW3OA9DCgP6q3SGmjuunFNqYmcE+wE
-        cxUU/bD0hcwr0/M79fM7COLlSQ==
-X-Google-Smtp-Source: ADFU+vuGwhRTHhtQBh24wMOPnFqWmD8WEDTDqhBcn0GQZbxNq7+HwZ5AGbojto+87MT0Z8I4IEGjhQ==
-X-Received: by 2002:adf:fd87:: with SMTP id d7mr35578867wrr.393.1585045255321;
-        Tue, 24 Mar 2020 03:20:55 -0700 (PDT)
-Received: from bender.baylibre.local ([2a01:e35:2ec0:82b0:5c5f:613e:f775:b6a2])
-        by smtp.gmail.com with ESMTPSA id h5sm2879527wro.83.2020.03.24.03.20.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Mar 2020 03:20:54 -0700 (PDT)
-From:   Neil Armstrong <narmstrong@baylibre.com>
-To:     kishon@ti.com, balbi@kernel.org, khilman@baylibre.com,
-        martin.blumenstingl@googlemail.com, devicetree@vger.kernel.org
-Cc:     linux-amlogic@lists.infradead.org, linux-usb@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Neil Armstrong <narmstrong@baylibre.com>
-Subject: [PATCH 13/13] dt-bindings: usb: amlogic,dwc3: remove old DWC3 wrapper
-Date:   Tue, 24 Mar 2020 11:20:30 +0100
-Message-Id: <20200324102030.31000-14-narmstrong@baylibre.com>
-X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20200324102030.31000-1-narmstrong@baylibre.com>
-References: <20200324102030.31000-1-narmstrong@baylibre.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=niMBZQskqIvvbvSQd3Vs9C4OFVhjiYiDfUEWD3hhgQU=;
+        b=MzFd2Jhj6NnyoTXDhkIDFXZaVVEeeRk7Ymt0c9yhAa02N+aUf3a2bgMGpJVsI0eyeb
+         dOiCM7PPIjQ7Vy9vzvWavWC/dB5HRgGAX84io8H7x8yQwYGe45tzV8kg3FmX5+KuoT5t
+         4deALsSaFDZjh44GUqT0q4JNNoF+98YMHrDsQhiKmkzRmTvZDXMjkjFRs22HbctASBKf
+         fsytqVC2ZwiG3APXDtOU2kuJmfobubjcFW+5LF70sJzJrqTcnH9PkrIyHA/F0/SmkjI4
+         u3ABbxCxzs7gfxoQZu9QRHtG5xcWiv9ikSPZ1eKCmWL/z1c0mU8DJnGlrg+/XBlexkNE
+         vtBQ==
+X-Gm-Message-State: ANhLgQ1JOAWWi5gPBJvE5LVcy14E2W0ND1MVLJbZRfqVsZSxIOEgewVQ
+        l7nJZI/CkU4AdsGKMvy4n0CbhmtUPRNG4ZxZcbc=
+X-Google-Smtp-Source: ADFU+vtRP5kcse4VydJXhIWcSQg5qG4qh1fLLlH+sYOY0YXmbvxSTKNtq7OW900chK9pK0hyoRdDWpT1dROadSow+qU=
+X-Received: by 2002:a05:6a00:2b4:: with SMTP id q20mr17417161pfs.36.1585045502171;
+ Tue, 24 Mar 2020 03:25:02 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20200320131509.564059710@linutronix.de> <20200324060124.GC11705@shao2-debian>
+In-Reply-To: <20200324060124.GC11705@shao2-debian>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Tue, 24 Mar 2020 12:24:54 +0200
+Message-ID: <CAHp75VeeKZLeZ8E3Py7LECN54SPFHaRgkxrMzBYQWXM8x+4JhA@mail.gmail.com>
+Subject: Re: [cpufreq] 06c4d00466: will-it-scale.per_process_ops -53.4% regression
+To:     kernel test robot <rong.a.chen@intel.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Mark Gross <mgross@linux.intel.com>,
+        Tony Luck <tony.luck@intel.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+        Len Brown <lenb@kernel.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        linux-edac@vger.kernel.org,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        Jean Delvare <jdelvare@suse.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        linux-hwmon@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Amit Kucheria <amit.kucheria@verdurent.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Jacob Pan <jacob.jun.pan@linux.intel.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        linux-mmc <linux-mmc@vger.kernel.org>,
+        Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
+        Takashi Iwai <tiwai@suse.com>,
+        ALSA Development Mailing List <alsa-devel@alsa-project.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        linux-crypto <linux-crypto@vger.kernel.org>, lkp@lists.01.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+On Tue, Mar 24, 2020 at 8:02 AM kernel test robot <rong.a.chen@intel.com> wrote:
+>
+> Greeting,
+>
+> FYI, we noticed a -53.4% regression of will-it-scale.per_process_ops due to commit:
 
-There is now an updated bindings for these SoCs making the old
-compatible obsolete.
+> commit: 06c4d00466eb374841bc84c39af19b3161ff6917 ("[patch 09/22] cpufreq: Convert to new X86 CPU match macros")
+> url: https://github.com/0day-ci/linux/commits/Thomas-Gleixner/x86-devicetable-Move-x86-specific-macro-out-of-generic-code/20200321-031729
+> base: https://git.kernel.org/cgit/linux/kernel/git/rafael/linux-pm.git linux-next
+>
+> in testcase: will-it-scale
+> on test machine: 4 threads Intel(R) Core(TM) i3-3220 CPU @ 3.30GHz with 8G memory
+> with following parameters:
 
-Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
----
- .../devicetree/bindings/usb/amlogic,dwc3.txt  | 42 -------------------
- 1 file changed, 42 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/usb/amlogic,dwc3.txt
 
-diff --git a/Documentation/devicetree/bindings/usb/amlogic,dwc3.txt b/Documentation/devicetree/bindings/usb/amlogic,dwc3.txt
-deleted file mode 100644
-index 9a8b631904fd..000000000000
---- a/Documentation/devicetree/bindings/usb/amlogic,dwc3.txt
-+++ /dev/null
-@@ -1,42 +0,0 @@
--Amlogic Meson GX DWC3 USB SoC controller
--
--Required properties:
--- compatible:	depending on the SoC this should contain one of:
--			* amlogic,meson-axg-dwc3
--			* amlogic,meson-gxl-dwc3
--- clocks:	a handle for the "USB general" clock
--- clock-names:	must be "usb_general"
--- resets:	a handle for the shared "USB OTG" reset line
--- reset-names:	must be "usb_otg"
--
--Required child node:
--A child node must exist to represent the core DWC3 IP block. The name of
--the node is not important. The content of the node is defined in dwc3.txt.
--
--PHY documentation is provided in the following places:
--- Documentation/devicetree/bindings/phy/meson-gxl-usb2-phy.txt
--- Documentation/devicetree/bindings/phy/meson-gxl-usb3-phy.txt
--
--Example device nodes:
--		usb0: usb@ff500000 {
--			compatible = "amlogic,meson-axg-dwc3";
--			#address-cells = <2>;
--			#size-cells = <2>;
--			ranges;
--
--			clocks = <&clkc CLKID_USB>;
--			clock-names = "usb_general";
--			resets = <&reset RESET_USB_OTG>;
--			reset-names = "usb_otg";
--
--			dwc3: dwc3@ff500000 {
--				compatible = "snps,dwc3";
--				reg = <0x0 0xff500000 0x0 0x100000>;
--				interrupts = <GIC_SPI 30 IRQ_TYPE_LEVEL_HIGH>;
--				dr_mode = "host";
--				maximum-speed = "high-speed";
--				snps,dis_u2_susphy_quirk;
--				phys = <&usb3_phy>, <&usb2_phy0>;
--				phy-names = "usb2-phy", "usb3-phy";
--			};
--		};
+drivers/cpufreq/speedstep-centrino.c change missed the terminator,
+perhaps it's a culprit, because I don't believe removing dups and
+reordering lines may affect this.
+Can you restore terminator there and re-test?
+
 -- 
-2.22.0
-
+With Best Regards,
+Andy Shevchenko
