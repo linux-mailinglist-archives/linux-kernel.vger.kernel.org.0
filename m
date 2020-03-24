@@ -2,34 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9406B1910A6
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 14:31:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AA5F01910A2
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 14:31:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728695AbgCXNaX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 09:30:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46130 "EHLO mail.kernel.org"
+        id S1728769AbgCXNXV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 09:23:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46308 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729297AbgCXNXL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 09:23:11 -0400
+        id S1729267AbgCXNXR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Mar 2020 09:23:17 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AACAC20775;
-        Tue, 24 Mar 2020 13:23:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3B9DE206F6;
+        Tue, 24 Mar 2020 13:23:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585056191;
-        bh=npr2SWUuqVngmrPJq9R8bHzxLm6ewalMKQis6F4g21E=;
+        s=default; t=1585056196;
+        bh=Zh6Q81xz4S7Uy/uL5Zghtt2qm145iElh7QjBAawbpiU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=cMvdcz+zt21yS73JaA4qAGY2eSBdRhmRJ3bH6DYh0bwnypvY0mOqNWeVbXK2Nr0uU
-         C4lQv4uWw2rLaXCBoz0GlmaxZnsA5AcOfml/6Sj8VAlSx6B61IMdR96KrO/CXKLCDd
-         opRb+cMVA6HRgZEixVKvL8t1Zle51ur3kOu6CUVo=
+        b=2o7DBriDfwwCbjzA/saf2aNRFw6gpX1fW93cYCRwWnQQIK9C1fPQjlxHuamb1kqnI
+         JVHoaUENWMZ+6OvPhv7aiCcAIWNa8aui7pBEVVmduqnQH3cuWYgSrJEI6jwlWblnua
+         aOBAPJXOnEfmQYnaBmRz1r2njIMOymar36w7Jst0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Anthony Mallet <anthony.mallet@laas.fr>
-Subject: [PATCH 5.5 051/119] USB: cdc-acm: fix close_delay and closing_wait units in TIOCSSERIAL
-Date:   Tue, 24 Mar 2020 14:10:36 +0100
-Message-Id: <20200324130813.371575958@linuxfoundation.org>
+        stable@vger.kernel.org,
+        syzbot+cce32521ee0a824c21f7@syzkaller.appspotmail.com,
+        Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 5.5 053/119] ALSA: line6: Fix endless MIDI read loop
+Date:   Tue, 24 Mar 2020 14:10:38 +0100
+Message-Id: <20200324130813.545459545@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.2
 In-Reply-To: <20200324130808.041360967@linuxfoundation.org>
 References: <20200324130808.041360967@linuxfoundation.org>
@@ -42,50 +44,55 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Anthony Mallet <anthony.mallet@laas.fr>
+From: Takashi Iwai <tiwai@suse.de>
 
-commit 633e2b2ded739a34bd0fb1d8b5b871f7e489ea29 upstream.
+commit d683469b3c93d7e2afd39e6e1970f24700eb7a68 upstream.
 
-close_delay and closing_wait are specified in hundredth of a second but stored
-internally in jiffies. Use the jiffies_to_msecs() and msecs_to_jiffies()
-functions to convert from each other.
+The MIDI input event parser of the LINE6 driver may enter into an
+endless loop when the unexpected data sequence is given, as it tries
+to continue the secondary bytes without termination.  Also, when the
+input data is too short, the parser returns a negative error, while
+the caller doesn't handle it properly.  This would lead to the
+unexpected behavior as well.
 
-Signed-off-by: Anthony Mallet <anthony.mallet@laas.fr>
-Cc: stable <stable@vger.kernel.org>
-Link: https://lore.kernel.org/r/20200312133101.7096-1-anthony.mallet@laas.fr
+This patch addresses those issues by checking the return value
+correctly and handling the one-byte event in the parser properly.
+
+The bug was reported by syzkaller.
+
+Reported-by: syzbot+cce32521ee0a824c21f7@syzkaller.appspotmail.com
+Cc: <stable@vger.kernel.org>
+Link: https://lore.kernel.org/r/000000000000033087059f8f8fa3@google.com
+Link: https://lore.kernel.org/r/20200309095922.30269-1-tiwai@suse.de
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/class/cdc-acm.c |    9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+ sound/usb/line6/driver.c  |    2 +-
+ sound/usb/line6/midibuf.c |    2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/usb/class/cdc-acm.c
-+++ b/drivers/usb/class/cdc-acm.c
-@@ -896,10 +896,10 @@ static int get_serial_info(struct tty_st
+--- a/sound/usb/line6/driver.c
++++ b/sound/usb/line6/driver.c
+@@ -305,7 +305,7 @@ static void line6_data_received(struct u
+ 				line6_midibuf_read(mb, line6->buffer_message,
+ 						LINE6_MIDI_MESSAGE_MAXLEN);
  
- 	ss->xmit_fifo_size = acm->writesize;
- 	ss->baud_base = le32_to_cpu(acm->line.dwDTERate);
--	ss->close_delay	= acm->port.close_delay / 10;
-+	ss->close_delay	= jiffies_to_msecs(acm->port.close_delay) / 10;
- 	ss->closing_wait = acm->port.closing_wait == ASYNC_CLOSING_WAIT_NONE ?
- 				ASYNC_CLOSING_WAIT_NONE :
--				acm->port.closing_wait / 10;
-+				jiffies_to_msecs(acm->port.closing_wait) / 10;
- 	return 0;
- }
+-			if (done == 0)
++			if (done <= 0)
+ 				break;
  
-@@ -909,9 +909,10 @@ static int set_serial_info(struct tty_st
- 	unsigned int closing_wait, close_delay;
- 	int retval = 0;
+ 			line6->message_length = done;
+--- a/sound/usb/line6/midibuf.c
++++ b/sound/usb/line6/midibuf.c
+@@ -159,7 +159,7 @@ int line6_midibuf_read(struct midi_buffe
+ 			int midi_length_prev =
+ 			    midibuf_message_length(this->command_prev);
  
--	close_delay = ss->close_delay * 10;
-+	close_delay = msecs_to_jiffies(ss->close_delay * 10);
- 	closing_wait = ss->closing_wait == ASYNC_CLOSING_WAIT_NONE ?
--			ASYNC_CLOSING_WAIT_NONE : ss->closing_wait * 10;
-+			ASYNC_CLOSING_WAIT_NONE :
-+			msecs_to_jiffies(ss->closing_wait * 10);
- 
- 	mutex_lock(&acm->port.mutex);
- 
+-			if (midi_length_prev > 0) {
++			if (midi_length_prev > 1) {
+ 				midi_length = midi_length_prev - 1;
+ 				repeat = 1;
+ 			} else
 
 
