@@ -2,592 +2,314 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9B8B919173F
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 18:08:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A949F19173B
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 18:08:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727490AbgCXRIA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 13:08:00 -0400
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:50388 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725767AbgCXRH7 (ORCPT
+        id S1727389AbgCXRH2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 13:07:28 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:40442 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727133AbgCXRH1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 13:07:59 -0400
-Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 02OH3rc6023086;
-        Tue, 24 Mar 2020 18:05:43 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
- : date : message-id : in-reply-to : references : mime-version :
- content-type; s=STMicroelectronics;
- bh=IMVRc8Jg3Pc4HLVetQgSSAASQbLgwd3tFF0LRvsBS+Q=;
- b=T/Rnu2CASvSD83EQgWCGG6/01coD00Ry02On/fi89Sr137PyMJ0itJTdpK+VkHypRXu6
- M/fxbeEZcY37Oufh8IH//mzqw8yUIO/JvGX8fmiRQhJmzNqBos/m+YehU1uaoFDEKcJX
- RlxPJkzDq5IF3qZtj16ISyrZSPbYzZVDIHcF3/Az1lR2EXC+oJUxb4Z+ZlObCnCY4NXU
- MxMT3iko5RTvkOrcYEjk1fPIM3eB4LeacUVQH7QRZmt2r5aBRAd32hHsFNPKey/xuzou
- O3ttR1B/dr1VwqD7glY9iV6P6JBkhCequiF6UOYUUVm2Gl+02pojlTagxRkETcwWvgYt KA== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 2ywapp0jfh-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 24 Mar 2020 18:05:42 +0100
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 6C043100034;
-        Tue, 24 Mar 2020 18:05:42 +0100 (CET)
-Received: from Webmail-eu.st.com (sfhdag3node1.st.com [10.75.127.7])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 5C86A2BE250;
-        Tue, 24 Mar 2020 18:05:42 +0100 (CET)
-Received: from localhost (10.75.127.46) by SFHDAG3NODE1.st.com (10.75.127.7)
- with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 24 Mar 2020 18:05:39
- +0100
-From:   Arnaud Pouliquen <arnaud.pouliquen@st.com>
-To:     Ohad Ben-Cohen <ohad@wizery.com>,
+        Tue, 24 Mar 2020 13:07:27 -0400
+Received: by mail-pg1-f196.google.com with SMTP id t24so9328022pgj.7
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Mar 2020 10:07:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=z5FlNvobQwsE4JjWwpB9xpnt659VvIIkODecw7v6xFU=;
+        b=g5cCE+a9rK7Ol3/MxK290vxkbvYcslScmw4Nr9qn3XZwu0ijTMP1z+PmlO2i4DUDuh
+         odbIuC0CQyRRX7C5AXGljZt1f+6k0bOrmGL9+BeEH/y85DaCvC5iPR+d4fFkjOYlrAip
+         6l7sYzFlH0UWA+QzlWXS29QFzJq98TXQ3GR0U=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=z5FlNvobQwsE4JjWwpB9xpnt659VvIIkODecw7v6xFU=;
+        b=XEI7cCmstjtsrSdwh9xDiSy2iD+Ex2tAFFr5Ikb5ivy5sAhv+W9ktAMnrZkReqbtU3
+         +HYyWb0V+HR/fVhXtmW1O7eiGMEQZyUXj3bCz9tXg+Bbv9SPOvqPBUjfqkTu6pAwklq4
+         7kBKvyvwg8MWhVCJ2GtdADNGu6OlhNRddK+gaX/Ejljvaswjx9dhepIhFOZhcsDVREh1
+         VYAEbA09TlSvHGvbTs+PGHVclLcGurNwp/tlvPoDFuGvSl1RibG6Q/Fl/7vP20huzThy
+         6p6JASKKiuGP4brqBw++Rez6LKY7hnF15VYboolKAruUlIpNtVjB1E0Ir+iAqJBzS5YG
+         TrMw==
+X-Gm-Message-State: ANhLgQ2ru11DhF7fRLtMCBsyK1JHXBeKuDVzK0D+MOQtj4k8Gi2snhaw
+        t9tjb92fdkLmo2ob3pCsCYqm8Q==
+X-Google-Smtp-Source: ADFU+vtvr3BmpQ0r7UliDraOCB+NrvbJdWBUhpXYn1ZRKokM7FeOB5RH8ZUN3z/vSykcaXGb+X2LTQ==
+X-Received: by 2002:a62:3786:: with SMTP id e128mr31547438pfa.124.1585069645419;
+        Tue, 24 Mar 2020 10:07:25 -0700 (PDT)
+Received: from localhost ([2620:15c:202:1:4fff:7a6b:a335:8fde])
+        by smtp.gmail.com with ESMTPSA id x15sm16047493pfq.107.2020.03.24.10.07.24
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 24 Mar 2020 10:07:24 -0700 (PDT)
+Date:   Tue, 24 Mar 2020 10:07:22 -0700
+From:   Matthias Kaehlcke <mka@chromium.org>
+To:     "Sandeep Maheswaram (Temp)" <sanm@codeaurora.org>
+Cc:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>, <linux-kernel@vger.kernel.org>,
-        <linux-remoteproc@vger.kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>
-CC:     <arnaud.pouliquen@st.com>, Suman Anna <s-anna@ti.com>,
-        Fabien DESSENNE <fabien.dessenne@st.com>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        Alan Cox <gnomes@lxorguk.ukuu.org.uk>,
-        xiang xiao <xiaoxiang781216@gmail.com>
-Subject: [PATCH v7 2/2] tty: add rpmsg driver
-Date:   Tue, 24 Mar 2020 18:04:07 +0100
-Message-ID: <20200324170407.16470-3-arnaud.pouliquen@st.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200324170407.16470-1-arnaud.pouliquen@st.com>
-References: <20200324170407.16470-1-arnaud.pouliquen@st.com>
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Felipe Balbi <balbi@kernel.org>,
+        Stephen Boyd <swboyd@chromium.org>,
+        Doug Anderson <dianders@chromium.org>,
+        linux-arm-msm@vger.kernel.org, linux-usb@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Manu Gautam <mgautam@codeaurora.org>,
+        Chandana Kishori Chiluveru <cchiluve@codeaurora.org>
+Subject: Re: [PATCH v5 2/3] usb: dwc3: qcom: Add interconnect support in dwc3
+ driver
+Message-ID: <20200324170722.GD204494@google.com>
+References: <1581668684-4182-1-git-send-email-sanm@codeaurora.org>
+ <1581668684-4182-3-git-send-email-sanm@codeaurora.org>
+ <20200214201154.GB15781@google.com>
+ <d381164d-b749-4c93-de6d-72eca3e51341@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.75.127.46]
-X-ClientProxiedBy: SFHDAG7NODE3.st.com (10.75.127.21) To SFHDAG3NODE1.st.com
- (10.75.127.7)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.645
- definitions=2020-03-24_05:2020-03-23,2020-03-24 signatures=0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <d381164d-b749-4c93-de6d-72eca3e51341@codeaurora.org>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This driver exposes a standard TTY interface on top of the rpmsg
-framework through a rpmsg service.
+On Mon, Mar 16, 2020 at 03:11:32PM +0530, Sandeep Maheswaram (Temp) wrote:
+> Hi Matthias
+> 
+> On 2/15/2020 1:41 AM, Matthias Kaehlcke wrote:
+> > Hi Sandeep,
+> > 
+> > On Fri, Feb 14, 2020 at 01:54:43PM +0530, Sandeep Maheswaram wrote:
+> > > Add interconnect support in dwc3-qcom driver to vote for bus
+> > > bandwidth.
+> > > 
+> > > This requires for two different paths - from USB master to
+> > > DDR slave. The other is from APPS master to USB slave.
+> > > 
+> > > Signed-off-by: Sandeep Maheswaram <sanm@codeaurora.org>
+> > > Signed-off-by: Chandana Kishori Chiluveru <cchiluve@codeaurora.org>
+> > > ---
+> > >   drivers/usb/dwc3/dwc3-qcom.c | 135 ++++++++++++++++++++++++++++++++++++++++++-
+> > >   1 file changed, 133 insertions(+), 2 deletions(-)
+> > > 
+> > > diff --git a/drivers/usb/dwc3/dwc3-qcom.c b/drivers/usb/dwc3/dwc3-qcom.c
+> > > index 261af9e..2ed6c20 100644
+> > > --- a/drivers/usb/dwc3/dwc3-qcom.c
+> > > +++ b/drivers/usb/dwc3/dwc3-qcom.c
+> > > @@ -13,6 +13,7 @@
+> > >   #include <linux/module.h>
+> > >   #include <linux/kernel.h>
+> > >   #include <linux/extcon.h>
+> > > +#include <linux/interconnect.h>
+> > >   #include <linux/of_platform.h>
+> > >   #include <linux/platform_device.h>
+> > >   #include <linux/phy/phy.h>
+> > > @@ -43,6 +44,14 @@
+> > >   #define SDM845_QSCRATCH_SIZE			0x400
+> > >   #define SDM845_DWC3_CORE_SIZE			0xcd00
+> > > +/* Interconnect path bandwidths in MBps */
+> > > +#define USB_MEMORY_AVG_HS_BW MBps_to_icc(240)
+> > > +#define USB_MEMORY_PEAK_HS_BW MBps_to_icc(700)
+> > > +#define USB_MEMORY_AVG_SS_BW  MBps_to_icc(1000)
+> > > +#define USB_MEMORY_PEAK_SS_BW MBps_to_icc(2500)
+> > > +#define APPS_USB_AVG_BW 0
+> > > +#define APPS_USB_PEAK_BW MBps_to_icc(40)
+> > > +
+> > >   struct dwc3_acpi_pdata {
+> > >   	u32			qscratch_base_offset;
+> > >   	u32			qscratch_base_size;
+> > > @@ -76,8 +85,13 @@ struct dwc3_qcom {
+> > >   	enum usb_dr_mode	mode;
+> > >   	bool			is_suspended;
+> > >   	bool			pm_suspended;
+> > > +	struct icc_path		*usb_ddr_icc_path;
+> > > +	struct icc_path		*apps_usb_icc_path;
+> > >   };
+> > > +static int dwc3_qcom_interconnect_enable(struct dwc3_qcom *qcom);
+> > > +static int dwc3_qcom_interconnect_disable(struct dwc3_qcom *qcom);
+> > > +
+> > >   static inline void dwc3_qcom_setbits(void __iomem *base, u32 offset, u32 val)
+> > >   {
+> > >   	u32 reg;
+> > > @@ -239,7 +253,7 @@ static void dwc3_qcom_enable_interrupts(struct dwc3_qcom *qcom)
+> > >   static int dwc3_qcom_suspend(struct dwc3_qcom *qcom)
+> > >   {
+> > >   	u32 val;
+> > > -	int i;
+> > > +	int i, ret;
+> > >   	if (qcom->is_suspended)
+> > >   		return 0;
+> > > @@ -251,6 +265,10 @@ static int dwc3_qcom_suspend(struct dwc3_qcom *qcom)
+> > >   	for (i = qcom->num_clocks - 1; i >= 0; i--)
+> > >   		clk_disable_unprepare(qcom->clks[i]);
+> > > +	ret = dwc3_qcom_interconnect_disable(qcom);
+> > > +	if (ret)
+> > > +		dev_warn(qcom->dev, "failed to disable interconnect %d\n", ret);
+> > > +
+> > This assumes that all QCA systems with a DWC3 have an interconnect
+> > configuration, however after applying this series SDM845 is the only
+> > platform. You need to track somewhere if the controller in question has
+> > an ICC config for not.
+> 
+> This is handled in drivers <https://opengrok.qualcomm.com/source/xref/LC.UM.3.0/src/third_party/kernel/v5.4/drivers/>/interconnect <https://opengrok.qualcomm.com/source/xref/LC.UM.3.0/src/third_party/kernel/v5.4/drivers/interconnect/>/core.c <https://opengrok.qualcomm.com/source/xref/LC.UM.3.0/src/third_party/kernel/v5.4/drivers/interconnect/core.c> 
+> icc_set_bw function.
 
-This driver supports multi-instances, offering a /dev/ttyRPMSGx entry
-per rpmsg endpoint.
+Thanks for the clarification!
 
-Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@st.com>
----
- Documentation/serial/tty_rpmsg.rst |  45 ++++
- drivers/tty/Kconfig                |   9 +
- drivers/tty/Makefile               |   1 +
- drivers/tty/rpmsg_tty.c            | 417 +++++++++++++++++++++++++++++
- 4 files changed, 472 insertions(+)
- create mode 100644 Documentation/serial/tty_rpmsg.rst
- create mode 100644 drivers/tty/rpmsg_tty.c
+> > 
+> > >   	qcom->is_suspended = true;
+> > >   	dwc3_qcom_enable_interrupts(qcom);
+> > > @@ -276,6 +294,10 @@ static int dwc3_qcom_resume(struct dwc3_qcom *qcom)
+> > >   		}
+> > >   	}
+> > > +	ret = dwc3_qcom_interconnect_enable(qcom);
+> > > +	if (ret)
+> > > +		dev_warn(qcom->dev, "failed to enable interconnect %d\n", ret);
+> > > +
+> > same as above
+> This is handled in drivers <https://opengrok.qualcomm.com/source/xref/LC.UM.3.0/src/third_party/kernel/v5.4/drivers/>/interconnect <https://opengrok.qualcomm.com/source/xref/LC.UM.3.0/src/third_party/kernel/v5.4/drivers/interconnect/>/core.c <https://opengrok.qualcomm.com/source/xref/LC.UM.3.0/src/third_party/kernel/v5.4/drivers/interconnect/core.c> 
+> icc_set_bw function
 
-diff --git a/Documentation/serial/tty_rpmsg.rst b/Documentation/serial/tty_rpmsg.rst
-new file mode 100644
-index 000000000000..fc1d3fba73c5
---- /dev/null
-+++ b/Documentation/serial/tty_rpmsg.rst
-@@ -0,0 +1,45 @@
-+.. SPDX-License-Identifier: GPL-2.0
-+
-+=============
-+The rpmsg TTY
-+=============
-+
-+The rpmsg tty driver implements serial communication on the RPMsg bus to makes possible for user-space programs to send and receive rpmsg messages as a standard tty protocol.
-+
-+The remote processor can instantiate a new tty by requesting:
-+- a "rpmsg-tty-raw" RPMsg service, for TTY raw data support without flow control
-+- a "rpmsg-tty-ctrl" RPMSg service, for TTY support with flow control.
-+
-+Information related to the RPMsg and associated tty device is available in
-+/sys/bus/rpmsg/devices/.
-+
-+RPMsg TTY without control
-+---------------------
-+
-+The default end point associated with the "rpmsg-tty-raw" service is directly
-+used for data exchange. No flow control is available.
-+
-+To be compliant with this driver, the remote firmware must create its data end point associated with the "rpmsg-tty-raw" service.
-+
-+RPMsg TTY with control
-+---------------------
-+
-+The default end point associated with the "rpmsg-tty-ctrl" service is reserved for
-+the control. A second endpoint must be created for data exchange.
-+
-+The control channel is used to transmit to the remote processor the CTS status,
-+as well as the end point address for data transfer.
-+
-+To be compatible with this driver, the remote firmware must create or use its end point associated with "rpmsg-tty-ctrl" service, plus a second endpoint for the data flow.
-+On Linux rpmsg_tty probes, the data endpoint address and the CTS (set to disable)
-+is sent to the remote processor.
-+The remote processor has to respect following rules:
-+- It only transmits data when Linux remote cts is enable, otherwise message
-+  could be lost.
-+- It can pause/resume reception by sending a control message (rely on CTS state).
-+
-+Control message structure:
-+struct rpmsg_tty_ctrl {
-+	u8 cts;			/* remote reception status */
-+	u16 d_ept_addr;		/* data endpoint address */
-+};
-diff --git a/drivers/tty/Kconfig b/drivers/tty/Kconfig
-index a312cb33a99b..9d3ff6df9f25 100644
---- a/drivers/tty/Kconfig
-+++ b/drivers/tty/Kconfig
-@@ -454,6 +454,15 @@ config VCC
- 	help
- 	  Support for Sun logical domain consoles.
- 
-+config RPMSG_TTY
-+	tristate "RPMSG tty driver"
-+	depends on RPMSG
-+	help
-+	  Say y here to export rpmsg endpoints as tty devices, usually found
-+	  in /dev/ttyRPMSGx.
-+	  This makes it possible for user-space programs to send and receive
-+	  rpmsg messages as a standard tty protocol.
-+
- config LDISC_AUTOLOAD
- 	bool "Automatically load TTY Line Disciplines"
- 	default y
-diff --git a/drivers/tty/Makefile b/drivers/tty/Makefile
-index 020b1cd9294f..c2465e7ebc2a 100644
---- a/drivers/tty/Makefile
-+++ b/drivers/tty/Makefile
-@@ -34,5 +34,6 @@ obj-$(CONFIG_PPC_EPAPR_HV_BYTECHAN) += ehv_bytechan.o
- obj-$(CONFIG_GOLDFISH_TTY)	+= goldfish.o
- obj-$(CONFIG_MIPS_EJTAG_FDC_TTY) += mips_ejtag_fdc.o
- obj-$(CONFIG_VCC)		+= vcc.o
-+obj-$(CONFIG_RPMSG_TTY)		+= rpmsg_tty.o
- 
- obj-y += ipwireless/
-diff --git a/drivers/tty/rpmsg_tty.c b/drivers/tty/rpmsg_tty.c
-new file mode 100644
-index 000000000000..49ce3b72781a
---- /dev/null
-+++ b/drivers/tty/rpmsg_tty.c
-@@ -0,0 +1,417 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (C) STMicroelectronics 2020 - All Rights Reserved
-+ * Authors: Arnaud Pouliquen <arnaud.pouliquen@st.com> for STMicroelectronics.
-+ */
-+
-+#include <linux/module.h>
-+#include <linux/rpmsg.h>
-+#include <linux/slab.h>
-+#include <linux/tty.h>
-+#include <linux/tty_flip.h>
-+
-+#define MAX_TTY_RPMSG	32
-+
-+#define TTY_CH_NAME_RAW		"rpmsg-tty-raw"
-+#define TTY_CH_NAME_WITH_CTS	"rpmsg-tty-ctrl"
-+
-+static DEFINE_IDR(tty_idr);	/* tty instance id */
-+static DEFINE_MUTEX(idr_lock);	/* protects tty_idr */
-+
-+static struct tty_driver *rpmsg_tty_driver;
-+
-+struct rpmsg_tty_ctrl {
-+	u16 d_ept_addr;		/* data endpoint address */
-+	u8 cts;			/* remote reception status */
-+} __packed;
-+
-+struct rpmsg_tty_port {
-+	struct tty_port		port;	 /* TTY port data */
-+	int			id;	 /* TTY rpmsg index */
-+	bool			cts;	 /* remote reception status */
-+	struct rpmsg_device	*rpdev;	 /* rpmsg device */
-+	struct rpmsg_endpoint   *cs_ept; /* channel control endpoint */
-+	struct rpmsg_endpoint   *d_ept;  /* data endpoint */
-+	u32 data_dst;			 /* data destination endpoint address */
-+};
-+
-+typedef void (*rpmsg_tty_rx_cb_t)(struct rpmsg_device *, void *, int, void *,
-+				  u32);
-+
-+static int rpmsg_tty_cb(struct rpmsg_device *rpdev, void *data, int len,
-+			void *priv, u32 src)
-+{
-+	struct rpmsg_tty_port *cport = dev_get_drvdata(&rpdev->dev);
-+	int copied;
-+
-+	if (src == cport->data_dst) {
-+		/* data message */
-+		if (!len)
-+			return -EINVAL;
-+		copied = tty_insert_flip_string_fixed_flag(&cport->port, data,
-+							   TTY_NORMAL, len);
-+		if (copied != len)
-+			dev_dbg(&rpdev->dev, "trunc buffer: available space is %d\n",
-+				copied);
-+		tty_flip_buffer_push(&cport->port);
-+	} else {
-+		/* control message */
-+		struct rpmsg_tty_ctrl *msg = data;
-+
-+		if (len != sizeof(*msg))
-+			return -EINVAL;
-+
-+		cport->data_dst = msg->d_ept_addr;
-+
-+		/* Update remote cts state */
-+		cport->cts = msg->cts ? 1 : 0;
-+
-+		if (cport->cts)
-+			tty_port_tty_wakeup(&cport->port);
-+	}
-+
-+	return 0;
-+}
-+
-+static void rpmsg_tty_send_term_ready(struct tty_struct *tty, u8 state)
-+{
-+	struct rpmsg_tty_port *cport = tty->driver_data;
-+	struct rpmsg_tty_ctrl m_ctrl;
-+	int ret;
-+
-+	m_ctrl.cts = state;
-+	m_ctrl.d_ept_addr = cport->d_ept->addr;
-+
-+	ret = rpmsg_trysend(cport->cs_ept, &m_ctrl, sizeof(m_ctrl));
-+	if (ret < 0)
-+		dev_dbg(tty->dev, "cannot send control (%d)\n", ret);
-+};
-+
-+static void rpmsg_tty_throttle(struct tty_struct *tty)
-+{
-+	struct rpmsg_tty_port *cport = tty->driver_data;
-+
-+	/* Disable remote transmission */
-+	if (cport->cs_ept)
-+		rpmsg_tty_send_term_ready(tty, 0);
-+};
-+
-+static void rpmsg_tty_unthrottle(struct tty_struct *tty)
-+{
-+	struct rpmsg_tty_port *cport = tty->driver_data;
-+
-+	/* Enable remote transmission */
-+	if (cport->cs_ept)
-+		rpmsg_tty_send_term_ready(tty, 1);
-+};
-+
-+static int rpmsg_tty_install(struct tty_driver *driver, struct tty_struct *tty)
-+{
-+	struct rpmsg_tty_port *cport = idr_find(&tty_idr, tty->index);
-+
-+	if (!cport) {
-+		dev_err(tty->dev, "cannot get cport\n");
-+		return -ENODEV;
-+	}
-+
-+	tty->driver_data = cport;
-+
-+	return tty_port_install(&cport->port, driver, tty);
-+}
-+
-+static int rpmsg_tty_open(struct tty_struct *tty, struct file *filp)
-+{
-+	return tty_port_open(tty->port, tty, filp);
-+}
-+
-+static void rpmsg_tty_close(struct tty_struct *tty, struct file *filp)
-+{
-+	return tty_port_close(tty->port, tty, filp);
-+}
-+
-+static int rpmsg_tty_write(struct tty_struct *tty, const u8 *buf, int len)
-+{
-+	struct rpmsg_tty_port *cport = tty->driver_data;
-+	struct rpmsg_device *rpdev;
-+	int msg_max_size, msg_size;
-+	int ret;
-+	u8 *tmpbuf;
-+
-+	/* If cts not set, the message is not sent*/
-+	if (!cport->cts)
-+		return 0;
-+
-+	rpdev = cport->rpdev;
-+
-+	dev_dbg(&rpdev->dev, "%s: send msg from tty->index = %d, len = %d\n",
-+		__func__, tty->index, len);
-+
-+	msg_max_size = rpmsg_get_mtu(rpdev->ept);
-+
-+	msg_size = min(len, msg_max_size);
-+	tmpbuf = kzalloc(msg_size, GFP_KERNEL);
-+	if (!tmpbuf)
-+		return -ENOMEM;
-+
-+	memcpy(tmpbuf, buf, msg_size);
-+
-+	/*
-+	 * Try to send the message to remote processor, if failed return 0 as
-+	 * no data sent
-+	 */
-+	ret = rpmsg_trysendto(cport->d_ept, tmpbuf, msg_size, cport->data_dst);
-+	kfree(tmpbuf);
-+	if (ret) {
-+		dev_dbg(&rpdev->dev, "rpmsg_send failed: %d\n", ret);
-+		return 0;
-+	}
-+
-+	return msg_size;
-+}
-+
-+static int rpmsg_tty_write_room(struct tty_struct *tty)
-+{
-+	struct rpmsg_tty_port *cport = tty->driver_data;
-+
-+	return cport->cts ? rpmsg_get_mtu(cport->rpdev->ept) : 0;
-+}
-+
-+static const struct tty_operations rpmsg_tty_ops = {
-+	.install	= rpmsg_tty_install,
-+	.open		= rpmsg_tty_open,
-+	.close		= rpmsg_tty_close,
-+	.write		= rpmsg_tty_write,
-+	.write_room	= rpmsg_tty_write_room,
-+	.throttle	= rpmsg_tty_throttle,
-+	.unthrottle	= rpmsg_tty_unthrottle,
-+};
-+
-+static struct rpmsg_tty_port *rpmsg_tty_alloc_cport(void)
-+{
-+	struct rpmsg_tty_port *cport;
-+
-+	cport = kzalloc(sizeof(*cport), GFP_KERNEL);
-+	if (!cport)
-+		return ERR_PTR(-ENOMEM);
-+
-+	mutex_lock(&idr_lock);
-+	cport->id = idr_alloc(&tty_idr, cport, 0, MAX_TTY_RPMSG, GFP_KERNEL);
-+	mutex_unlock(&idr_lock);
-+
-+	if (cport->id < 0) {
-+		kfree(cport);
-+		return ERR_PTR(-ENOSPC);
-+	}
-+
-+	return cport;
-+}
-+
-+static void rpmsg_tty_release_cport(struct rpmsg_tty_port *cport)
-+{
-+	mutex_lock(&idr_lock);
-+	idr_remove(&tty_idr, cport->id);
-+	mutex_unlock(&idr_lock);
-+
-+	kfree(cport);
-+}
-+
-+static int rpmsg_tty_port_activate(struct tty_port *p, struct tty_struct *tty)
-+{
-+	p->low_latency = (p->flags & ASYNC_LOW_LATENCY) ? 1 : 0;
-+
-+	/* Allocate the buffer we use for writing data */
-+	return tty_port_alloc_xmit_buf(p);
-+}
-+
-+static void rpmsg_tty_port_shutdown(struct tty_port *p)
-+{
-+	/* Free the write buffer */
-+	tty_port_free_xmit_buf(p);
-+}
-+
-+static void rpmsg_tty_dtr_rts(struct tty_port *port, int raise)
-+{
-+	dev_dbg(port->tty->dev, "%s: dtr_rts state %d\n", __func__, raise);
-+
-+	if (raise)
-+		rpmsg_tty_unthrottle(port->tty);
-+	else
-+		rpmsg_tty_throttle(port->tty);
-+}
-+
-+static const struct tty_port_operations rpmsg_tty_port_ops = {
-+	.activate = rpmsg_tty_port_activate,
-+	.shutdown = rpmsg_tty_port_shutdown,
-+	.dtr_rts  = rpmsg_tty_dtr_rts,
-+};
-+
-+static int rpmsg_tty_probe(struct rpmsg_device *rpdev)
-+{
-+	struct rpmsg_tty_port *cport;
-+	struct device *dev = &rpdev->dev;
-+	struct rpmsg_channel_info chinfo;
-+	struct device *tty_dev;
-+	int ret;
-+
-+	cport = rpmsg_tty_alloc_cport();
-+	if (IS_ERR(cport)) {
-+		dev_err(dev, "failed to alloc tty port\n");
-+		return PTR_ERR(cport);
-+	}
-+
-+	if (!strncmp(rpdev->id.name, TTY_CH_NAME_WITH_CTS,
-+		     sizeof(TTY_CH_NAME_WITH_CTS))) {
-+		/*
-+		 * the default endpoint is used for control. Create a second
-+		 * endpoint for the data that would be exchanges trough control
-+		 * endpoint. address of the data endpoint will be provided with
-+		 * the cts state
-+		 */
-+		cport->cs_ept = rpdev->ept;
-+		cport->data_dst = RPMSG_ADDR_ANY;
-+
-+		strscpy(chinfo.name, TTY_CH_NAME_WITH_CTS, sizeof(chinfo.name));
-+		chinfo.src = RPMSG_ADDR_ANY;
-+		chinfo.dst = RPMSG_ADDR_ANY;
-+
-+		cport->d_ept = rpmsg_create_ept(rpdev, rpmsg_tty_cb, cport,
-+						chinfo);
-+		if (!cport->d_ept) {
-+			dev_err(dev, "failed to create tty control channel\n");
-+			ret = -ENOMEM;
-+			goto err_r_cport;
-+		}
-+		dev_dbg(dev, "%s: creating data endpoint with address %#x\n",
-+			__func__, cport->d_ept->addr);
-+	} else {
-+		/*
-+		 * TTY over rpmsg without CTS management the default endpoint
-+		 * is use for raw data transmission.
-+		 */
-+		cport->cs_ept = NULL;
-+		cport->cts = 1;
-+		cport->d_ept = rpdev->ept;
-+		cport->data_dst = rpdev->dst;
-+	}
-+
-+	tty_port_init(&cport->port);
-+	cport->port.ops = &rpmsg_tty_port_ops;
-+
-+	tty_dev = tty_port_register_device(&cport->port, rpmsg_tty_driver,
-+					   cport->id, dev);
-+	if (IS_ERR(tty_dev)) {
-+		dev_err(dev, "failed to register tty port\n");
-+		ret = PTR_ERR(tty_dev);
-+		goto  err_destroy;
-+	}
-+
-+	cport->rpdev = rpdev;
-+
-+	dev_set_drvdata(dev, cport);
-+
-+	dev_dbg(dev, "new channel: 0x%x -> 0x%x : ttyRPMSG%d\n",
-+		rpdev->src, rpdev->dst, cport->id);
-+
-+	return 0;
-+
-+err_destroy:
-+	tty_port_destroy(&cport->port);
-+	if (cport->cs_ept)
-+		rpmsg_destroy_ept(cport->d_ept);
-+err_r_cport:
-+	rpmsg_tty_release_cport(cport);
-+
-+	return ret;
-+}
-+
-+static void rpmsg_tty_remove(struct rpmsg_device *rpdev)
-+{
-+	struct rpmsg_tty_port *cport = dev_get_drvdata(&rpdev->dev);
-+
-+	dev_dbg(&rpdev->dev, "removing rpmsg tty device %d\n", cport->id);
-+
-+	/* User hang up to release the tty */
-+	if (tty_port_initialized(&cport->port))
-+		tty_port_tty_hangup(&cport->port, false);
-+
-+	tty_unregister_device(rpmsg_tty_driver, cport->id);
-+
-+	tty_port_destroy(&cport->port);
-+	if (cport->cs_ept)
-+		rpmsg_destroy_ept(cport->d_ept);
-+	rpmsg_tty_release_cport(cport);
-+}
-+
-+static struct rpmsg_device_id rpmsg_driver_tty_id_table[] = {
-+	{ .name	= TTY_CH_NAME_RAW },
-+	{ .name	= TTY_CH_NAME_WITH_CTS},
-+	{ },
-+};
-+MODULE_DEVICE_TABLE(rpmsg, rpmsg_driver_tty_id_table);
-+
-+static struct rpmsg_driver rpmsg_tty_rpmsg_drv = {
-+	.drv.name	= KBUILD_MODNAME,
-+	.id_table	= rpmsg_driver_tty_id_table,
-+	.probe		= rpmsg_tty_probe,
-+	.callback	= rpmsg_tty_cb,
-+	.remove		= rpmsg_tty_remove,
-+};
-+
-+static int __init rpmsg_tty_init(void)
-+{
-+	int err;
-+
-+	rpmsg_tty_driver = tty_alloc_driver(MAX_TTY_RPMSG, TTY_DRIVER_REAL_RAW |
-+					    TTY_DRIVER_DYNAMIC_DEV);
-+	if (IS_ERR(rpmsg_tty_driver))
-+		return PTR_ERR(rpmsg_tty_driver);
-+
-+	rpmsg_tty_driver->driver_name = "rpmsg_tty";
-+	rpmsg_tty_driver->name = "ttyRPMSG";
-+	rpmsg_tty_driver->major = 0;
-+	rpmsg_tty_driver->type = TTY_DRIVER_TYPE_CONSOLE;
-+
-+	/* Disable unused mode by default */
-+	rpmsg_tty_driver->init_termios = tty_std_termios;
-+	rpmsg_tty_driver->init_termios.c_lflag &= ~(ECHO | ICANON);
-+	rpmsg_tty_driver->init_termios.c_oflag &= ~(OPOST | ONLCR);
-+
-+	tty_set_operations(rpmsg_tty_driver, &rpmsg_tty_ops);
-+
-+	err = tty_register_driver(rpmsg_tty_driver);
-+	if (err < 0) {
-+		pr_err("Couldn't install rpmsg tty driver: err %d\n", err);
-+		goto error_put;
-+	}
-+
-+	err = register_rpmsg_driver(&rpmsg_tty_rpmsg_drv);
-+	if (err < 0) {
-+		pr_err("Couldn't register rpmsg tty driver: err %d\n", err);
-+		goto error_unregister;
-+	}
-+
-+	return 0;
-+
-+error_unregister:
-+	tty_unregister_driver(rpmsg_tty_driver);
-+
-+error_put:
-+	put_tty_driver(rpmsg_tty_driver);
-+
-+	return err;
-+}
-+
-+static void __exit rpmsg_tty_exit(void)
-+{
-+	unregister_rpmsg_driver(&rpmsg_tty_rpmsg_drv);
-+	tty_unregister_driver(rpmsg_tty_driver);
-+	put_tty_driver(rpmsg_tty_driver);
-+	idr_destroy(&tty_idr);
-+}
-+
-+module_init(rpmsg_tty_init);
-+module_exit(rpmsg_tty_exit);
-+
-+MODULE_AUTHOR("Arnaud Pouliquen <arnaud.pouliquen@st.com>");
-+MODULE_DESCRIPTION("remote processor messaging tty driver");
-+MODULE_LICENSE("GPL v2");
--- 
-2.17.1
+ok
 
+> > >   	/* Clear existing events from PHY related to L2 in/out */
+> > >   	dwc3_qcom_setbits(qcom->qscratch_base, PWR_EVNT_IRQ_STAT_REG,
+> > >   			  PWR_EVNT_LPM_IN_L2_MASK | PWR_EVNT_LPM_OUT_L2_MASK);
+> > > @@ -285,6 +307,108 @@ static int dwc3_qcom_resume(struct dwc3_qcom *qcom)
+> > >   	return 0;
+> > >   }
+> > > +
+> > > +/**
+> > > + * dwc3_qcom_interconnect_init() - Get interconnect path handles
+> > > + * @qcom:			Pointer to the concerned usb core.
+> > > + *
+> > > + */
+> > > +static int dwc3_qcom_interconnect_init(struct dwc3_qcom *qcom)
+> > > +{
+> > > +	struct device *dev = qcom->dev;
+> > > +	int ret;
+> > > +
+> > > +	if (!device_is_bound(&qcom->dwc3->dev))
+> > > +		return -EPROBE_DEFER;
+> > > +
+> > > +	qcom->usb_ddr_icc_path = of_icc_get(dev, "usb-ddr");
+> > > +	if (IS_ERR(qcom->usb_ddr_icc_path)) {
+> > > +		dev_err(dev, "Error: (%ld) failed getting usb-ddr path\n",
+> > > +			PTR_ERR(qcom->usb_ddr_icc_path));
+> > > +		return PTR_ERR(qcom->usb_ddr_icc_path);
+> > > +	}
+> > This will break all QCA platforms with DWC3, except SDM845. Instead of
+> > failing you could interpret the basence of the 'usb-ddr' patch in the DT
+> > as signal that the controller has no ICC configuration, and continue without
+> > it (i.e. return 0 from here, don't print an error, at most a dev_info() log),
+> > and track somewhere that the controller has no ICC config.
+> > 
+> > Alternatively you could check above with of_find_property() whether the
+> > controller has an 'interconnects' property at all. If it doesn't exist
+> > return zero, otherwise return an error if any of the paths doesn't exist,
+> > as you do now.
+> This is handled in drivers <https://opengrok.qualcomm.com/source/xref/LC.UM.3.0/src/third_party/kernel/v5.4/drivers/>/interconnect <https://opengrok.qualcomm.com/source/xref/LC.UM.3.0/src/third_party/kernel/v5.4/drivers/interconnect/>/core.c <https://opengrok.qualcomm.com/source/xref/LC.UM.3.0/src/third_party/kernel/v5.4/drivers/interconnect/core.c> 
+> of_icc_get function.
+
+You are right, of_icc_get() returns NULL if the property doesn't exist, and this
+is handled gracefully by the other ICC functions.
+
+> > > +
+> > > +	qcom->apps_usb_icc_path = of_icc_get(dev, "apps-usb");
+> > > +	if (IS_ERR(qcom->apps_usb_icc_path)) {
+> > > +		dev_err(dev, "Error: (%ld) failed getting apps-usb path\n",
+> > > +				PTR_ERR(qcom->apps_usb_icc_path));
+> > > +		return PTR_ERR(qcom->apps_usb_icc_path);
+> > > +	}
+> > Failing here is ok, if 'usb-ddr' exists, we expect the rest of the config
+> > to be in place.
+> This may be required for error handling
+
+Agreed, my comment meant to say the above handling seems correct.
+
+> > > +
+> > > +	ret = dwc3_qcom_interconnect_enable(qcom);
+> > > +	if (ret) {
+> > > +		dev_err(dev, "failed to enable interconnect %d\n", ret);
+> > > +		return ret;
+> > > +	}
+> > > +
+> > > +	return 0;
+> > > +}
+> > > +
+> > > +/**
+> > > + * dwc3_qcom_interconnect_exit() - Release interconnect path handles
+> > > + * @qcom:			Pointer to the concerned usb core.
+> > > + *
+> > > + * This function is used to release interconnect path handle.
+> > > + */
+> > > +static void dwc3_qcom_interconnect_exit(struct dwc3_qcom *qcom)
+> > > +{
+> > > +	icc_put(qcom->usb_ddr_icc_path);
+> > > +	icc_put(qcom->apps_usb_icc_path);
+> > > +}
+> > > +
+> > > +/* Currently we only use bandwidth level, so just "enable" interconnects */
+> > > +static int dwc3_qcom_interconnect_enable(struct dwc3_qcom *qcom)
+> > > +{
+> > > +	struct dwc3 *dwc = platform_get_drvdata(qcom->dwc3);
+> > > +	int ret;
+> > > +
+> > > +	if (dwc->maximum_speed == USB_SPEED_SUPER) {
+> > > +		ret = icc_set_bw(qcom->usb_ddr_icc_path,
+> > > +			USB_MEMORY_AVG_SS_BW, USB_MEMORY_PEAK_SS_BW);
+> > > +	} else {
+> > > +		ret = icc_set_bw(qcom->usb_ddr_icc_path,
+> > > +			USB_MEMORY_AVG_HS_BW, USB_MEMORY_PEAK_HS_BW);
+> > > +	}
+> > nit: curly braces are not needed here
+> Will remove in next version.
+> > 
+> > > +
+> > > +	if (ret)
+> > > +		return ret;
+> > > +
+> > > +	ret = icc_set_bw(qcom->apps_usb_icc_path,
+> > > +		APPS_USB_AVG_BW, APPS_USB_PEAK_BW);
+> > > +	if (ret)
+> > > +		icc_set_bw(qcom->usb_ddr_icc_path, 0, 0);
+> > > +
+> > > +	return ret;
+> > > +}
+> > > +
+> > > +/* To disable an interconnect, we just set its bandwidth to 0 */
+> > > +static int dwc3_qcom_interconnect_disable(struct dwc3_qcom *qcom)
+> > > +{
+> > > +	struct dwc3 *dwc = platform_get_drvdata(qcom->dwc3);
+> > > +	int ret;
+> > > +
+> > > +	ret = icc_set_bw(qcom->usb_ddr_icc_path, 0, 0);
+> > > +	if (ret)
+> > > +		return ret;
+> > > +
+> > > +	ret = icc_set_bw(qcom->apps_usb_icc_path, 0, 0);
+> > > +	if (ret)
+> > > +		goto err_reenable_memory_path;
+> > > +
+> > > +	return 0;
+> > > +
+> > > +	/* Re-enable things in the event of an error */
+> > > +err_reenable_memory_path:
+> > > +	if (dwc->maximum_speed == USB_SPEED_SUPER)
+> > > +		icc_set_bw(qcom->usb_ddr_icc_path,
+> > > +			USB_MEMORY_AVG_SS_BW, USB_MEMORY_PEAK_SS_BW);
+> > > +	else
+> > > +		icc_set_bw(qcom->usb_ddr_icc_path,
+> > > +			USB_MEMORY_AVG_HS_BW, USB_MEMORY_PEAK_HS_BW);
+> > instead of the above:
+> > 
+> > 	dwc3_qcom_interconnect_enable(qcom);
+> Will change in next version.
+
+With that changed:
+
+Reviewed-by: Matthias Kaehlcke <mka@chromium.org>
