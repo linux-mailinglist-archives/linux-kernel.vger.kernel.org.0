@@ -2,813 +2,288 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 348031914A8
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 16:38:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9ED88191497
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 16:38:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728793AbgCXPhq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 11:37:46 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60748 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728769AbgCXPho (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 11:37:44 -0400
-Received: from localhost.localdomain (236.31.169.217.in-addr.arpa [217.169.31.236])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6B19520789;
-        Tue, 24 Mar 2020 15:37:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585064262;
-        bh=/+w15zcKOcmgqe23AgjGWFM0gT80vqtCSWcEwhZiIJY=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CJXQJ93HTkEI4jfBGVE74y5sLzvl16jl0zlJJ3xUJDVhDNJlh/GEDLokjGDr/gn7N
-         eRkP9dyh2GgbZB1XfI1NyeCsAiboLZ524esMiPSm7+GnDsyETim7urN/ZOR8/0yC7W
-         TnXf7C4dyXu7cBjjAtiVU8kBmddt52oyrgxqHRRw=
-From:   Will Deacon <will@kernel.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Will Deacon <will@kernel.org>, Eric Dumazet <edumazet@google.com>,
-        Jann Horn <jannh@google.com>,
-        Kees Cook <keescook@chromium.org>,
-        Maddie Stone <maddiestone@google.com>,
-        Marco Elver <elver@google.com>,
-        "Paul E . McKenney" <paulmck@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>, kernel-team@android.com,
-        kernel-hardening@lists.openwall.com
-Subject: [RFC PATCH 21/21] lkdtm: Extend list corruption checks
-Date:   Tue, 24 Mar 2020 15:36:43 +0000
-Message-Id: <20200324153643.15527-22-will@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200324153643.15527-1-will@kernel.org>
-References: <20200324153643.15527-1-will@kernel.org>
+        id S1728470AbgCXPhL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 11:37:11 -0400
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:34619 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728436AbgCXPhI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Mar 2020 11:37:08 -0400
+Received: by mail-ot1-f68.google.com with SMTP id j16so17442822otl.1;
+        Tue, 24 Mar 2020 08:37:07 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=dpKWcTtYfJkcrBHvFfzJku+MLQY6lxbOZB8F+HOOKXM=;
+        b=tzhX6TT3k/Yv2PMRqpOk5QPunxA0JoWg8jlwrWkLPpdRHjZi04u44lqaEW3EZh+ukg
+         ie6Bh+U+UP7figKNr13rSkzcjubg/bpypvaElHutm5HkIZwcHawAENTLVDvIXp81dN5J
+         L+OH95h+Z7R2FiQl6Fd/4C1/P6J84JNJIEEEwbgtG6VpDeLXAPeqFqK4wnqIzGJWnbt8
+         DBscFB5iTQEzi6hruOXoDR3nWvrYzoiHwMXpboi6saDYi93lakgu0Og8X/JpHykylQvc
+         DY6WVMT2VR3aXW2Ff7dIPQX+Fgr1IQR0b7cgreKNq2rloqso3b6z/d3oZ70k866Cz2f2
+         g4fg==
+X-Gm-Message-State: ANhLgQ3GTMXHsPRyl7r+HiI89V7ZlNo8YDp8LA8LFhJTgmD5tJ6+LO2Q
+        6J5D19Nrdc+Be1wFxeqs45IL39TROBP/5Yz7OgM=
+X-Google-Smtp-Source: ADFU+vtHL5bbU977lKfSMMxKLSbNXcskXcY4u4Fle2EZmT/+x3QED6tTvde4NIJFSIbHUs7GcJo4dvioS7091bfEXqM=
+X-Received: by 2002:a05:6830:14cc:: with SMTP id t12mr21590189otq.118.1585064227461;
+ Tue, 24 Mar 2020 08:37:07 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20200324122023.9649-1-andriy.shevchenko@linux.intel.com>
+ <CAJZ5v0hQ2vRE8QAWfxwN1auQd5bQS_ROd6do1bMt8GtLtRypRQ@mail.gmail.com> <20200324133903.GK1922688@smile.fi.intel.com>
+In-Reply-To: <20200324133903.GK1922688@smile.fi.intel.com>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Tue, 24 Mar 2020 16:36:56 +0100
+Message-ID: <CAJZ5v0gcLkymFNktG=46rxRc=KUGyztxYXmSZ51UxkKM6POnow@mail.gmail.com>
+Subject: Re: [PATCH v2 1/3] driver core: Break infinite loop when deferred
+ probe can't be satisfied
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Artem Bityutskiy <artem.bityutskiy@linux.intel.com>,
+        Mark Brown <broonie@kernel.org>,
+        Felipe Balbi <balbi@kernel.org>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Peter Ujfalusi <peter.ujfalusi@ti.com>,
+        Ferry Toth <fntoth@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Although lkdtm has a couple of simple tests for triggering list
-corruption, there are plenty of things it doesn't trigger, particularly
-now that we have forms of integrity checking for other list types.
+ On Tue, Mar 24, 2020 at 2:39 PM Andy Shevchenko
+<andriy.shevchenko@linux.intel.com> wrote:
+>
+> On Tue, Mar 24, 2020 at 01:52:00PM +0100, Rafael J. Wysocki wrote:
+> > On Tue, Mar 24, 2020 at 1:20 PM Andy Shevchenko
+> > <andriy.shevchenko@linux.intel.com> wrote:
+> > >
+> > > Consider the following scenario.
+> > >
+> > > The main driver of USB OTG controller (dwc3-pci), which has the following
+> > > functional dependencies on certain platform:
+> > > - ULPI (tusb1210)
+> > > - extcon (tested with extcon-intel-mrfld)
+> > >
+> > > Note, that first driver, tusb1210, is available at the moment of
+> > > dwc3-pci probing, while extcon-intel-mrfld is built as a module and
+> > > won't appear till user space does something about it.
+> > >
+> > > This is depicted by kernel configuration excerpt:
+> > >
+> > >         CONFIG_PHY_TUSB1210=y
+> > >         CONFIG_USB_DWC3=y
+> > >         CONFIG_USB_DWC3_ULPI=y
+> > >         CONFIG_USB_DWC3_DUAL_ROLE=y
+> > >         CONFIG_USB_DWC3_PCI=y
+> > >         CONFIG_EXTCON_INTEL_MRFLD=m
+> > >
+> > > In the Buildroot environment the modules are probed by alphabetical ordering
+> > > of their modaliases. The latter comes to the case when USB OTG driver will be
+> > > probed first followed by extcon one.
+> > >
+> > > So, if the platform anticipates extcon device to be appeared, in the above case
+> > > we will get deferred probe of USB OTG, because of ordering.
+> > >
+> > > Since current implementation, done by the commit 58b116bce136 ("drivercore:
+> > > deferral race condition fix") counts the amount of triggered deferred probe,
+> > > we never advance the situation -- the change makes it to be an infinite loop.
+> > >
+> > > ---8<---8<---
+> > >
+> > > [   22.187127] driver_deferred_probe_trigger <<< 1
+> > >
+> > > ...here is the late initcall triggers deferred probe...
+> > >
+> > > [   22.191725] platform dwc3.0.auto: deferred_probe_work_func in deferred list
+> > >
+> > > ...dwc3.0.auto is the only device in the deferred list...
+> > >
+> > > [   22.198727] platform dwc3.0.auto: deferred_probe_work_func 1 <<< counter 1
+> > >
+> > > ...the counter before mutex is unlocked is kept the same...
+> > >
+> > > [   22.205663] platform dwc3.0.auto: Retrying from deferred list
+> > >
+> > > ...mutes has been unlocked, we try to re-probe the driver...
+> > >
+> > > [   22.211487] bus: 'platform': driver_probe_device: matched device dwc3.0.auto with driver dwc3
+> > > [   22.220060] bus: 'platform': really_probe: probing driver dwc3 with device dwc3.0.auto
+> > > [   22.238735] bus: 'ulpi': driver_probe_device: matched device dwc3.0.auto.ulpi with driver tusb1210
+> > > [   22.247743] bus: 'ulpi': really_probe: probing driver tusb1210 with device dwc3.0.auto.ulpi
+> > > [   22.256292] driver: 'tusb1210': driver_bound: bound to device 'dwc3.0.auto.ulpi'
+> > > [   22.263723] driver_deferred_probe_trigger <<< 2
+> > >
+> > > ...the dwc3.0.auto probes ULPI, we got successful bound and bumped counter...
+> > >
+> > > [   22.268304] bus: 'ulpi': really_probe: bound device dwc3.0.auto.ulpi to driver tusb1210
+> > > [   22.276697] platform dwc3.0.auto: Driver dwc3 requests probe deferral
+> > >
+> > > ...but extcon driver is still missing...
+> > >
+> > > [   22.283174] platform dwc3.0.auto: Added to deferred list
+> > > [   22.288513] platform dwc3.0.auto: driver_deferred_probe_add_trigger local counter: 1 new counter 2
+> > >
+> > > ...and since we had a successful probe, we got counter mismatch...
+> > >
+> > > [   22.297490] driver_deferred_probe_trigger <<< 3
+> > > [   22.302074] platform dwc3.0.auto: deferred_probe_work_func 2 <<< counter 3
+> > >
+> > > ...at the end we have a new counter and loop repeats again, see 22.198727...
+> > >
+> > > ---8<---8<---
+> > >
+> > > Revert of the commit helps, but it is probably not helpful for the initially
+> > > found regression. Artem Bityutskiy suggested to use counter of the successful
+> > > probes instead. This fixes above mentioned case and shouldn't prevent driver
+> > > to reprobe deferred ones.
+> > >
+> > > Fixes: 58b116bce136 ("drivercore: deferral race condition fix")
+> > > Suggested-by: Artem Bityutskiy <artem.bityutskiy@linux.intel.com>
+> > > Cc: Grant Likely grant.likely@arm.com
+> > > Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> > > Cc: Mark Brown <broonie@kernel.org>
+> > > Cc: Felipe Balbi <balbi@kernel.org>
+> > > Cc: Andrzej Hajda <a.hajda@samsung.com>
+> > > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> > > Reviewed-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
+> > > Tested-by: Ferry Toth <fntoth@gmail.com>
+> > > ---
+> > > v2: picked up tags, update Grant's email (Peter)
+> > >  drivers/base/dd.c | 39 +++++++++++++++++++++------------------
+> > >  1 file changed, 21 insertions(+), 18 deletions(-)
+> > >
+> > > diff --git a/drivers/base/dd.c b/drivers/base/dd.c
+> > > index b25bcab2a26b..43720beb5300 100644
+> > > --- a/drivers/base/dd.c
+> > > +++ b/drivers/base/dd.c
+> > > @@ -53,7 +53,6 @@
+> > >  static DEFINE_MUTEX(deferred_probe_mutex);
+> > >  static LIST_HEAD(deferred_probe_pending_list);
+> > >  static LIST_HEAD(deferred_probe_active_list);
+> > > -static atomic_t deferred_trigger_count = ATOMIC_INIT(0);
+> > >  static struct dentry *deferred_devices;
+> > >  static bool initcalls_done;
+> > >
+> > > @@ -147,17 +146,6 @@ static bool driver_deferred_probe_enable = false;
+> > >   * This functions moves all devices from the pending list to the active
+> > >   * list and schedules the deferred probe workqueue to process them.  It
+> > >   * should be called anytime a driver is successfully bound to a device.
+> > > - *
+> > > - * Note, there is a race condition in multi-threaded probe. In the case where
+> > > - * more than one device is probing at the same time, it is possible for one
+> > > - * probe to complete successfully while another is about to defer. If the second
+> > > - * depends on the first, then it will get put on the pending list after the
+> > > - * trigger event has already occurred and will be stuck there.
+> > > - *
+> > > - * The atomic 'deferred_trigger_count' is used to determine if a successful
+> > > - * trigger has occurred in the midst of probing a driver. If the trigger count
+> > > - * changes in the midst of a probe, then deferred processing should be triggered
+> > > - * again.
+> > >   */
+> > >  static void driver_deferred_probe_trigger(void)
+> > >  {
+> > > @@ -170,7 +158,6 @@ static void driver_deferred_probe_trigger(void)
+> > >          * into the active list so they can be retried by the workqueue
+> > >          */
+> > >         mutex_lock(&deferred_probe_mutex);
+> > > -       atomic_inc(&deferred_trigger_count);
+> > >         list_splice_tail_init(&deferred_probe_pending_list,
+> > >                               &deferred_probe_active_list);
+> > >         mutex_unlock(&deferred_probe_mutex);
+> > > @@ -350,6 +337,19 @@ static void __exit deferred_probe_exit(void)
+> > >  }
+> > >  __exitcall(deferred_probe_exit);
+> > >
+> > > +/*
+> > > + * Note, there is a race condition in multi-threaded probe. In the case where
+> > > + * more than one device is probing at the same time, it is possible for one
+> > > + * probe to complete successfully while another is about to defer. If the second
+> > > + * depends on the first, then it will get put on the pending list after the
+> > > + * trigger event has already occurred and will be stuck there.
+> > > + *
+> > > + * The atomic 'probe_okay' is used to determine if a successful probe has
+> > > + * occurred in the midst of probing another driver. If the count changes in
+> > > + * the midst of a probe, then deferred processing should be triggered again.
+> > > + */
+> > > +static atomic_t probe_okay = ATOMIC_INIT(0);
+> > > +
+> > >  /**
+> > >   * device_is_bound() - Check if device is bound to a driver
+> > >   * @dev: device to check
+> > > @@ -375,6 +375,7 @@ static void driver_bound(struct device *dev)
+> > >         pr_debug("driver: '%s': %s: bound to device '%s'\n", dev->driver->name,
+> > >                  __func__, dev_name(dev));
+> > >
+> > > +       atomic_inc(&probe_okay);
+> > >         klist_add_tail(&dev->p->knode_driver, &dev->driver->p->klist_devices);
+> > >         device_links_driver_bound(dev);
+> > >
+> > > @@ -481,18 +482,18 @@ static atomic_t probe_count = ATOMIC_INIT(0);
+> > >  static DECLARE_WAIT_QUEUE_HEAD(probe_waitqueue);
+> > >
+> > >  static void driver_deferred_probe_add_trigger(struct device *dev,
+> > > -                                             int local_trigger_count)
+> > > +                                             int local_probe_okay_count)
+> > >  {
+> > >         driver_deferred_probe_add(dev);
+> > >         /* Did a trigger occur while probing? Need to re-trigger if yes */
+> > > -       if (local_trigger_count != atomic_read(&deferred_trigger_count))
+> > > +       if (local_probe_okay_count != atomic_read(&probe_okay))
+> > >                 driver_deferred_probe_trigger();
+> > >  }
+> > >
+> > >  static int really_probe(struct device *dev, struct device_driver *drv)
+> > >  {
+> > >         int ret = -EPROBE_DEFER;
+> > > -       int local_trigger_count = atomic_read(&deferred_trigger_count);
+> > > +       int local_probe_okay_count = atomic_read(&probe_okay);
+> > >         bool test_remove = IS_ENABLED(CONFIG_DEBUG_TEST_DRIVER_REMOVE) &&
+> > >                            !drv->suppress_bind_attrs;
+> > >
+> > > @@ -509,7 +510,7 @@ static int really_probe(struct device *dev, struct device_driver *drv)
+> > >
+> > >         ret = device_links_check_suppliers(dev);
+> > >         if (ret == -EPROBE_DEFER)
+> > > -               driver_deferred_probe_add_trigger(dev, local_trigger_count);
+> > > +               driver_deferred_probe_add_trigger(dev, local_probe_okay_count);
+> > >         if (ret)
+> > >                 return ret;
+> > >
+> > > @@ -619,7 +620,7 @@ static int really_probe(struct device *dev, struct device_driver *drv)
+> > >         case -EPROBE_DEFER:
+> > >                 /* Driver requested deferred probing */
+> > >                 dev_dbg(dev, "Driver %s requests probe deferral\n", drv->name);
+> > > -               driver_deferred_probe_add_trigger(dev, local_trigger_count);
+> > > +               driver_deferred_probe_add_trigger(dev, local_probe_okay_count);
+> > >                 break;
+> > >         case -ENODEV:
+> > >         case -ENXIO:
+> > > @@ -1148,6 +1149,8 @@ static void __device_release_driver(struct device *dev, struct device *parent)
+> > >                 dev_pm_set_driver_flags(dev, 0);
+> > >
+> > >                 klist_remove(&dev->p->knode_driver);
+> > > +               atomic_dec(&probe_okay);
+> > > +
+> >
+> > Why is this needed?
+>
+> Under successful probe the following is comprehended. When probe of the driver
+> happens it may be discarded (as in above case) as it was initiated by another
+> driver which got deferred.
+>
+> We also discussed this with Peter [1] during his review.
+>
+> [1]: https://lkml.org/lkml/2020/3/12/347
 
-Extend lkdtm to check a variety of list insertion and deletion routines.
+OK, but I would add a comment explaining that to the code.
 
-Cc: Kees Cook <keescook@chromium.org>
-Signed-off-by: Will Deacon <will@kernel.org>
----
- drivers/misc/lkdtm/Makefile             |   1 +
- drivers/misc/lkdtm/bugs.c               |  68 ----
- drivers/misc/lkdtm/core.c               |  31 +-
- drivers/misc/lkdtm/list.c               | 489 ++++++++++++++++++++++++
- drivers/misc/lkdtm/lkdtm.h              |  33 +-
- tools/testing/selftests/lkdtm/tests.txt |  31 +-
- 6 files changed, 579 insertions(+), 74 deletions(-)
- create mode 100644 drivers/misc/lkdtm/list.c
+Also it would be good to explain why probe_okay cannot go below zero
+here in the changelog.
 
-diff --git a/drivers/misc/lkdtm/Makefile b/drivers/misc/lkdtm/Makefile
-index c70b3822013f..833c6f7c78a3 100644
---- a/drivers/misc/lkdtm/Makefile
-+++ b/drivers/misc/lkdtm/Makefile
-@@ -10,6 +10,7 @@ lkdtm-$(CONFIG_LKDTM)		+= rodata_objcopy.o
- lkdtm-$(CONFIG_LKDTM)		+= usercopy.o
- lkdtm-$(CONFIG_LKDTM)		+= stackleak.o
- lkdtm-$(CONFIG_LKDTM)		+= cfi.o
-+lkdtm-$(CONFIG_LKDTM)		+= list.o
- 
- KASAN_SANITIZE_stackleak.o	:= n
- KCOV_INSTRUMENT_rodata.o	:= n
-diff --git a/drivers/misc/lkdtm/bugs.c b/drivers/misc/lkdtm/bugs.c
-index de87693cf557..de0c54c8fac3 100644
---- a/drivers/misc/lkdtm/bugs.c
-+++ b/drivers/misc/lkdtm/bugs.c
-@@ -6,7 +6,6 @@
-  * test source files.
-  */
- #include "lkdtm.h"
--#include <linux/list.h>
- #include <linux/sched.h>
- #include <linux/sched/signal.h>
- #include <linux/sched/task_stack.h>
-@@ -16,10 +15,6 @@
- #include <asm/desc.h>
- #endif
- 
--struct lkdtm_list {
--	struct list_head node;
--};
--
- /*
-  * Make sure our attempts to over run the kernel stack doesn't trigger
-  * a compiler warning when CONFIG_FRAME_WARN is set. Then make sure we
-@@ -175,69 +170,6 @@ void lkdtm_HUNG_TASK(void)
- 	schedule();
- }
- 
--void lkdtm_CORRUPT_LIST_ADD(void)
--{
--	/*
--	 * Initially, an empty list via LIST_HEAD:
--	 *	test_head.next = &test_head
--	 *	test_head.prev = &test_head
--	 */
--	LIST_HEAD(test_head);
--	struct lkdtm_list good, bad;
--	void *target[2] = { };
--	void *redirection = &target;
--
--	pr_info("attempting good list addition\n");
--
--	/*
--	 * Adding to the list performs these actions:
--	 *	test_head.next->prev = &good.node
--	 *	good.node.next = test_head.next
--	 *	good.node.prev = test_head
--	 *	test_head.next = good.node
--	 */
--	list_add(&good.node, &test_head);
--
--	pr_info("attempting corrupted list addition\n");
--	/*
--	 * In simulating this "write what where" primitive, the "what" is
--	 * the address of &bad.node, and the "where" is the address held
--	 * by "redirection".
--	 */
--	test_head.next = redirection;
--	list_add(&bad.node, &test_head);
--
--	if (target[0] == NULL && target[1] == NULL)
--		pr_err("Overwrite did not happen, but no BUG?!\n");
--	else
--		pr_err("list_add() corruption not detected!\n");
--}
--
--void lkdtm_CORRUPT_LIST_DEL(void)
--{
--	LIST_HEAD(test_head);
--	struct lkdtm_list item;
--	void *target[2] = { };
--	void *redirection = &target;
--
--	list_add(&item.node, &test_head);
--
--	pr_info("attempting good list removal\n");
--	list_del(&item.node);
--
--	pr_info("attempting corrupted list removal\n");
--	list_add(&item.node, &test_head);
--
--	/* As with the list_add() test above, this corrupts "next". */
--	item.node.next = redirection;
--	list_del(&item.node);
--
--	if (target[0] == NULL && target[1] == NULL)
--		pr_err("Overwrite did not happen, but no BUG?!\n");
--	else
--		pr_err("list_del() corruption not detected!\n");
--}
--
- /* Test if unbalanced set_fs(KERNEL_DS)/set_fs(USER_DS) check exists. */
- void lkdtm_CORRUPT_USER_DS(void)
- {
-diff --git a/drivers/misc/lkdtm/core.c b/drivers/misc/lkdtm/core.c
-index ee0d6e721441..28aace88474f 100644
---- a/drivers/misc/lkdtm/core.c
-+++ b/drivers/misc/lkdtm/core.c
-@@ -110,8 +110,6 @@ static const struct crashtype crashtypes[] = {
- 	CRASHTYPE(EXHAUST_STACK),
- 	CRASHTYPE(CORRUPT_STACK),
- 	CRASHTYPE(CORRUPT_STACK_STRONG),
--	CRASHTYPE(CORRUPT_LIST_ADD),
--	CRASHTYPE(CORRUPT_LIST_DEL),
- 	CRASHTYPE(CORRUPT_USER_DS),
- 	CRASHTYPE(STACK_GUARD_PAGE_LEADING),
- 	CRASHTYPE(STACK_GUARD_PAGE_TRAILING),
-@@ -174,6 +172,35 @@ static const struct crashtype crashtypes[] = {
- #ifdef CONFIG_X86_32
- 	CRASHTYPE(DOUBLE_FAULT),
- #endif
-+	CRASHTYPE(LIST_ADD_NEXT_CORRUPTION),
-+	CRASHTYPE(LIST_ADD_PREV_CORRUPTION),
-+	CRASHTYPE(LIST_ADD_TWICE),
-+	CRASHTYPE(LIST_DEL_NEXT_CORRUPTION),
-+	CRASHTYPE(LIST_DEL_PREV_CORRUPTION),
-+	CRASHTYPE(LIST_DEL_TWICE),
-+	CRASHTYPE(HLIST_ADD_HEAD_CORRUPTION),
-+	CRASHTYPE(HLIST_ADD_HEAD_TWICE),
-+	CRASHTYPE(HLIST_ADD_BEFORE_CORRUPTION),
-+	CRASHTYPE(HLIST_ADD_BEFORE_TWICE),
-+	CRASHTYPE(HLIST_ADD_BEHIND_CORRUPTION),
-+	CRASHTYPE(HLIST_ADD_BEHIND_TWICE),
-+	CRASHTYPE(HLIST_DEL_PREV_CORRUPTION),
-+	CRASHTYPE(HLIST_DEL_NEXT_CORRUPTION),
-+	CRASHTYPE(HLIST_DEL_TWICE),
-+	CRASHTYPE(HLIST_NULLS_ADD_HEAD_CORRUPTION),
-+	CRASHTYPE(HLIST_NULLS_ADD_HEAD_TWICE),
-+	CRASHTYPE(HLIST_NULLS_DEL_PREV_CORRUPTION),
-+	CRASHTYPE(HLIST_NULLS_DEL_NEXT_CORRUPTION),
-+	CRASHTYPE(HLIST_NULLS_DEL_TWICE),
-+	CRASHTYPE(HLIST_BL_ADD_HEAD_UNLOCKED),
-+	CRASHTYPE(HLIST_BL_ADD_HEAD_NODE_LOCKED),
-+	CRASHTYPE(HLIST_BL_ADD_HEAD_CORRUPTION),
-+	CRASHTYPE(HLIST_BL_ADD_HEAD_TWICE),
-+	CRASHTYPE(HLIST_BL_DEL_NODE_LOCKED),
-+	CRASHTYPE(HLIST_BL_DEL_NEXT_LOCKED),
-+	CRASHTYPE(HLIST_BL_DEL_PREV_CORRUPTION),
-+	CRASHTYPE(HLIST_BL_DEL_NEXT_CORRUPTION),
-+	CRASHTYPE(HLIST_BL_DEL_TWICE),
- };
- 
- 
-diff --git a/drivers/misc/lkdtm/list.c b/drivers/misc/lkdtm/list.c
-new file mode 100644
-index 000000000000..e62a7de51eac
---- /dev/null
-+++ b/drivers/misc/lkdtm/list.c
-@@ -0,0 +1,489 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+/*
-+ * This is for all the tests related to list integrity checking.
-+ */
-+
-+#include "lkdtm.h"
-+#include <linux/list.h>
-+
-+#define LIST_REDIR_BUF(type, name)				\
-+union {								\
-+	type	list;						\
-+	char	buf[sizeof(type)];				\
-+} name = { }
-+
-+static void __check_list_redir_buf(const char *str, char *buf, size_t sz)
-+{
-+	for (; sz && !buf[sz - 1]; sz--);
-+	if (sz)
-+		pr_err("%s: corruption not detected!\n", str);
-+	else
-+		pr_err("%s: overwrite did not happen, but no BUG?!\n", str);
-+}
-+
-+#define check_list_redir_buf(s, b)	\
-+	__check_list_redir_buf((s), (b).buf, sizeof(b.buf))
-+
-+void lkdtm_LIST_ADD_NEXT_CORRUPTION(void)
-+{
-+	LIST_HEAD(head);
-+	LIST_HEAD(mid);
-+	LIST_HEAD(tail);
-+	LIST_REDIR_BUF(struct list_head, target);
-+
-+	list_add(&tail, &head);
-+	head.next = &target.list;
-+	list_add(&mid, &head);
-+	check_list_redir_buf("list_add()", target);
-+}
-+
-+void lkdtm_LIST_ADD_PREV_CORRUPTION(void)
-+{
-+	LIST_HEAD(head);
-+	LIST_HEAD(mid);
-+	LIST_HEAD(tail);
-+	LIST_REDIR_BUF(struct list_head, target);
-+
-+	list_add(&tail, &head);
-+	tail.prev = &target.list;
-+	list_add_tail(&mid, &tail);
-+	check_list_redir_buf("list_add()", target);
-+}
-+
-+void lkdtm_LIST_ADD_TWICE(void)
-+{
-+	LIST_HEAD(head);
-+	LIST_HEAD(mid);
-+	LIST_HEAD(tail);
-+
-+	list_add(&tail, &head);
-+	mid = tail;
-+	list_add(&tail, &head);
-+
-+	if (mid.prev != tail.prev || mid.next != tail.next)
-+		pr_err("list_add(): adding twice not detected!\n");
-+	else
-+		pr_err("list_add(): could not add twice, but no BUG?!\n");
-+}
-+
-+void lkdtm_LIST_DEL_NEXT_CORRUPTION(void)
-+{
-+	LIST_HEAD(head);
-+	LIST_HEAD(mid);
-+	LIST_HEAD(tail);
-+	LIST_REDIR_BUF(struct list_head, target);
-+
-+	list_add(&tail, &head);
-+	list_add(&mid, &head);
-+	mid.next = &target.list;
-+	list_del(&mid);
-+	check_list_redir_buf("list_del()", target);
-+}
-+
-+void lkdtm_LIST_DEL_PREV_CORRUPTION(void)
-+{
-+	LIST_HEAD(head);
-+	LIST_HEAD(mid);
-+	LIST_HEAD(tail);
-+	LIST_REDIR_BUF(struct list_head, target);
-+
-+	list_add(&tail, &head);
-+	list_add(&mid, &head);
-+	mid.prev = &target.list;
-+	list_del(&mid);
-+	check_list_redir_buf("list_del()", target);
-+}
-+
-+void lkdtm_LIST_DEL_TWICE(void)
-+{
-+	LIST_HEAD(head);
-+	LIST_HEAD(tail);
-+
-+	list_add(&tail, &head);
-+	list_del(&tail);
-+
-+	if (tail.prev != LIST_POISON2 || tail.next != LIST_POISON1) {
-+		pr_err("list_del(): prev/next pointers not poisoned!\n");
-+	} else {
-+		list_del(&tail);
-+		pr_err("list_del(): could not delete twice, but no BUG?!\n");
-+	}
-+}
-+
-+void lkdtm_HLIST_ADD_HEAD_CORRUPTION(void)
-+{
-+	HLIST_HEAD(head);
-+	LIST_REDIR_BUF(struct hlist_node, target);
-+	struct hlist_node mid, tail;
-+
-+	INIT_HLIST_NODE(&mid);
-+	INIT_HLIST_NODE(&tail);
-+	hlist_add_head(&tail, &head);
-+	head.first = &target.list;
-+	hlist_add_head(&mid, &head);
-+	check_list_redir_buf("hlist_add_head()", target);
-+}
-+
-+void lkdtm_HLIST_ADD_HEAD_TWICE(void)
-+{
-+	HLIST_HEAD(head);
-+	struct hlist_node mid, tail;
-+
-+	INIT_HLIST_NODE(&mid);
-+	INIT_HLIST_NODE(&tail);
-+	hlist_add_head(&tail, &head);
-+	mid = tail;
-+	hlist_add_head(&tail, &head);
-+
-+	if (mid.next != tail.next || mid.pprev != tail.pprev)
-+		pr_err("hlist_add_head(): adding twice not detected!\n");
-+	else
-+		pr_err("hlist_add_head(): could not add twice, but no BUG?!\n");
-+}
-+
-+void lkdtm_HLIST_ADD_BEFORE_CORRUPTION(void)
-+{
-+	HLIST_HEAD(head);
-+	LIST_REDIR_BUF(struct hlist_node, target);
-+	struct hlist_node mid, tail;
-+
-+	INIT_HLIST_NODE(&mid);
-+	INIT_HLIST_NODE(&tail);
-+	hlist_add_head(&tail, &head);
-+	tail.pprev = &target.list.next;
-+	hlist_add_before(&mid, &tail);
-+	check_list_redir_buf("hlist_add_before()", target);
-+}
-+
-+void lkdtm_HLIST_ADD_BEFORE_TWICE(void)
-+{
-+	HLIST_HEAD(head);
-+	struct hlist_node mid, tail;
-+
-+	INIT_HLIST_NODE(&mid);
-+	INIT_HLIST_NODE(&tail);
-+	hlist_add_head(&tail, &head);
-+	mid = tail;
-+	hlist_add_before(&tail, &tail);
-+
-+	if (mid.next != tail.next || mid.pprev != tail.pprev)
-+		pr_err("hlist_add_before(): adding twice not detected!\n");
-+	else
-+		pr_err("hlist_add_before(): could not add twice, but no BUG?!\n");
-+}
-+
-+void lkdtm_HLIST_ADD_BEHIND_CORRUPTION(void)
-+{
-+	HLIST_HEAD(head);
-+	LIST_REDIR_BUF(struct hlist_node, target);
-+	struct hlist_node mid, tail;
-+
-+	INIT_HLIST_NODE(&mid);
-+	INIT_HLIST_NODE(&tail);
-+	hlist_add_head(&mid, &head);
-+	mid.next = &target.list;
-+	hlist_add_behind(&tail, &mid);
-+	check_list_redir_buf("hlist_add_behind()", target);
-+}
-+
-+void lkdtm_HLIST_ADD_BEHIND_TWICE(void)
-+{
-+	HLIST_HEAD(head);
-+	struct hlist_node mid, tail;
-+
-+	INIT_HLIST_NODE(&mid);
-+	INIT_HLIST_NODE(&tail);
-+	hlist_add_head(&tail, &head);
-+	mid = tail;
-+	hlist_add_behind(&tail, &tail);
-+
-+	if (mid.next != tail.next || mid.pprev != tail.pprev)
-+		pr_err("hlist_add_behind(): adding twice not detected!\n");
-+	else
-+		pr_err("hlist_add_behind(): could not add twice, but no BUG?!\n");
-+}
-+
-+void lkdtm_HLIST_DEL_PREV_CORRUPTION(void)
-+{
-+	HLIST_HEAD(head);
-+	LIST_REDIR_BUF(struct hlist_node, target);
-+	struct hlist_node mid, tail;
-+
-+	INIT_HLIST_NODE(&mid);
-+	INIT_HLIST_NODE(&tail);
-+	hlist_add_head(&tail, &head);
-+	hlist_add_head(&mid, &head);
-+	mid.pprev = &target.list.next;
-+	hlist_del(&mid);
-+	check_list_redir_buf("hlist_del()", target);
-+}
-+
-+void lkdtm_HLIST_DEL_NEXT_CORRUPTION(void)
-+{
-+	HLIST_HEAD(head);
-+	LIST_REDIR_BUF(struct hlist_node, target);
-+	struct hlist_node mid, tail;
-+
-+	INIT_HLIST_NODE(&mid);
-+	INIT_HLIST_NODE(&tail);
-+	hlist_add_head(&tail, &head);
-+	hlist_add_head(&mid, &head);
-+	mid.next = &target.list;
-+	hlist_del(&mid);
-+	check_list_redir_buf("hlist_del()", target);
-+}
-+
-+void lkdtm_HLIST_DEL_TWICE(void)
-+{
-+	HLIST_HEAD(head);
-+	struct hlist_node tail;
-+
-+	INIT_HLIST_NODE(&tail);
-+	hlist_add_head(&tail, &head);
-+	hlist_del(&tail);
-+
-+	if (tail.next != LIST_POISON1 || tail.pprev != LIST_POISON2) {
-+		pr_err("hlist_del(): pprev/next pointers not poisoned!\n");
-+	} else {
-+		hlist_del(&tail);
-+		pr_err("hlist_del(): could not delete twice, but no BUG?!\n");
-+	}
-+}
-+
-+#include <linux/list_nulls.h>
-+
-+void lkdtm_HLIST_NULLS_ADD_HEAD_CORRUPTION(void)
-+{
-+	LIST_REDIR_BUF(struct hlist_nulls_node, target);
-+	struct hlist_nulls_head head;
-+	struct hlist_nulls_node mid, tail;
-+
-+	INIT_HLIST_NULLS_HEAD(&head, 0);
-+	hlist_nulls_add_head(&tail, &head);
-+	head.first = &target.list;
-+	hlist_nulls_add_head(&mid, &head);
-+	check_list_redir_buf("hlist_nulls_add_head()", target);
-+}
-+
-+void lkdtm_HLIST_NULLS_ADD_HEAD_TWICE(void)
-+{
-+	struct hlist_nulls_head head;
-+	struct hlist_nulls_node mid, tail;
-+
-+	INIT_HLIST_NULLS_HEAD(&head, 0);
-+	hlist_nulls_add_head(&tail, &head);
-+	mid = tail;
-+	hlist_nulls_add_head(&tail, &head);
-+
-+	if (mid.next != tail.next || mid.pprev != tail.pprev)
-+		pr_err("hlist_nulls_add_head(): adding twice not detected!\n");
-+	else
-+		pr_err("hlist_nulls_add_head(): could not add twice, but no BUG?!\n");
-+}
-+
-+void lkdtm_HLIST_NULLS_DEL_PREV_CORRUPTION(void)
-+{
-+	LIST_REDIR_BUF(struct hlist_nulls_node, target);
-+	struct hlist_nulls_head head;
-+	struct hlist_nulls_node mid, tail;
-+
-+	INIT_HLIST_NULLS_HEAD(&head, 0);
-+	hlist_nulls_add_head(&tail, &head);
-+	hlist_nulls_add_head(&mid, &head);
-+	mid.pprev = &target.list.next;
-+	hlist_nulls_del(&mid);
-+	check_list_redir_buf("hlist_nulls_del()", target);
-+}
-+
-+void lkdtm_HLIST_NULLS_DEL_NEXT_CORRUPTION(void)
-+{
-+	LIST_REDIR_BUF(struct hlist_nulls_node, target);
-+	struct hlist_nulls_head head;
-+	struct hlist_nulls_node mid, tail;
-+
-+	INIT_HLIST_NULLS_HEAD(&head, 0);
-+	hlist_nulls_add_head(&tail, &head);
-+	hlist_nulls_add_head(&mid, &head);
-+	mid.next = &target.list;
-+	hlist_nulls_del(&mid);
-+	check_list_redir_buf("hlist_nulls_del()", target);
-+}
-+
-+void lkdtm_HLIST_NULLS_DEL_TWICE(void)
-+{
-+	struct hlist_nulls_head head;
-+	struct hlist_nulls_node tail;
-+
-+	INIT_HLIST_NULLS_HEAD(&head, 0);
-+	hlist_nulls_add_head(&tail, &head);
-+	hlist_nulls_del(&tail);
-+
-+	if (tail.next != LIST_POISON1 || tail.pprev != LIST_POISON2) {
-+		pr_err("hlist_nulls_del(): pprev/next pointers not poisoned!\n");
-+	} else {
-+		hlist_nulls_del(&tail);
-+		pr_err("hlist_nulls_del(): could not delete twice, but no BUG?!\n");
-+	}
-+}
-+
-+#include <linux/list_bl.h>
-+
-+void lkdtm_HLIST_BL_ADD_HEAD_UNLOCKED(void)
-+{
-+	LIST_REDIR_BUF(struct hlist_bl_node, target);
-+	struct hlist_bl_head head;
-+
-+	INIT_HLIST_BL_HEAD(&head);
-+	hlist_bl_add_head(&target.list, &head);
-+	check_list_redir_buf("hlist_bl_add()", target);
-+}
-+
-+void lkdtm_HLIST_BL_ADD_HEAD_NODE_LOCKED(void)
-+{
-+	LIST_REDIR_BUF(struct hlist_bl_node, target);
-+	struct hlist_bl_head head;
-+	unsigned long nval;
-+
-+	INIT_HLIST_BL_HEAD(&head);
-+	hlist_bl_lock(&head);
-+	nval = (unsigned long)&target.list | LIST_BL_LOCKMASK;
-+	hlist_bl_add_head((struct hlist_bl_node *)nval, &head);
-+	hlist_bl_unlock(&head);
-+
-+	check_list_redir_buf("hlist_bl_add()", target);
-+}
-+
-+void lkdtm_HLIST_BL_ADD_HEAD_CORRUPTION(void)
-+{
-+	LIST_REDIR_BUF(struct hlist_bl_node, target);
-+	struct hlist_bl_head head;
-+	struct hlist_bl_node mid, tail;
-+	unsigned long nval;
-+
-+	INIT_HLIST_BL_HEAD(&head);
-+	hlist_bl_lock(&head);
-+	hlist_bl_add_head(&tail, &head);
-+	nval = (unsigned long)&target.list | LIST_BL_LOCKMASK;
-+	head.first = (struct hlist_bl_node *)nval;
-+	hlist_bl_add_head(&mid, &head);
-+	hlist_bl_unlock(&head);
-+
-+	check_list_redir_buf("hlist_bl_add_head()", target);
-+}
-+
-+void lkdtm_HLIST_BL_ADD_HEAD_TWICE(void)
-+{
-+	struct hlist_bl_head head;
-+	struct hlist_bl_node mid, tail;
-+
-+	INIT_HLIST_BL_HEAD(&head);
-+	hlist_bl_lock(&head);
-+	hlist_bl_add_head(&tail, &head);
-+	mid = tail;
-+	hlist_bl_add_head(&tail, &head);
-+	hlist_bl_unlock(&head);
-+
-+	if (mid.next != tail.next || mid.pprev != tail.pprev)
-+		pr_err("hlist_bl_add_head(): adding twice not detected!\n");
-+	else
-+		pr_err("hlist_bl_add_head(): could not add twice, but no BUG?!\n");
-+}
-+
-+void lkdtm_HLIST_BL_DEL_NODE_LOCKED(void)
-+{
-+	struct hlist_bl_head head;
-+	struct hlist_bl_node mid, tail;
-+	unsigned long nval;
-+
-+	INIT_HLIST_BL_HEAD(&head);
-+	hlist_bl_lock(&head);
-+	hlist_bl_add_head(&tail, &head);
-+	hlist_bl_add_head(&mid, &head);
-+	hlist_bl_unlock(&head);
-+
-+	nval = (unsigned long)&mid | LIST_BL_LOCKMASK;
-+	/* hlist_bl_del() poisons ->next, so don't use it with a locked node */
-+	__hlist_bl_del((struct hlist_bl_node *)nval);
-+
-+	if (head.first != &mid || tail.pprev != &mid.next)
-+		pr_err("hlist_bl_del(): deleting locked node not detected!\n");
-+	else
-+		pr_err("hlist_bl_del(): could not delete locked node, but no BUG?!\n");
-+}
-+
-+void lkdtm_HLIST_BL_DEL_NEXT_LOCKED(void)
-+{
-+	struct hlist_bl_head head;
-+	struct hlist_bl_node mid, tail;
-+	unsigned long nval;
-+
-+	INIT_HLIST_BL_HEAD(&head);
-+	hlist_bl_lock(&head);
-+	hlist_bl_add_head(&tail, &head);
-+	hlist_bl_add_head(&mid, &head);
-+	hlist_bl_unlock(&head);
-+
-+	nval = (unsigned long)mid.next | LIST_BL_LOCKMASK;
-+	mid.next = (struct hlist_bl_node *)nval;
-+	hlist_bl_del(&mid);
-+
-+	if (head.first != &mid || tail.pprev != &mid.next)
-+		pr_err("hlist_bl_del(): deleting node with locked ->next not detected!\n");
-+	else
-+		pr_err("hlist_bl_del(): could not delete node with locked ->next, but no BUG?!\n");
-+}
-+
-+void lkdtm_HLIST_BL_DEL_PREV_CORRUPTION(void)
-+{
-+	LIST_REDIR_BUF(struct hlist_bl_node, target);
-+	struct hlist_bl_head head;
-+	struct hlist_bl_node mid, tail;
-+
-+	INIT_HLIST_BL_HEAD(&head);
-+	hlist_bl_lock(&head);
-+	hlist_bl_add_head(&tail, &head);
-+	hlist_bl_add_head(&mid, &head);
-+	hlist_bl_unlock(&head);
-+
-+	mid.pprev = &target.list.next;
-+	hlist_bl_del(&mid);
-+	check_list_redir_buf("hlist_bl_del()", target);
-+}
-+
-+void lkdtm_HLIST_BL_DEL_NEXT_CORRUPTION(void)
-+{
-+	LIST_REDIR_BUF(struct hlist_bl_node, target);
-+	struct hlist_bl_head head;
-+	struct hlist_bl_node mid, tail;
-+
-+	INIT_HLIST_BL_HEAD(&head);
-+	hlist_bl_lock(&head);
-+	hlist_bl_add_head(&tail, &head);
-+	hlist_bl_add_head(&mid, &head);
-+	hlist_bl_unlock(&head);
-+
-+	mid.next = &target.list;
-+	hlist_bl_del(&mid);
-+	check_list_redir_buf("hlist_bl_del()", target);
-+}
-+
-+void lkdtm_HLIST_BL_DEL_TWICE(void)
-+{
-+	struct hlist_bl_head head;
-+	struct hlist_bl_node tail;
-+
-+	INIT_HLIST_BL_HEAD(&head);
-+	hlist_bl_lock(&head);
-+	hlist_bl_add_head(&tail, &head);
-+	hlist_bl_unlock(&head);
-+
-+	hlist_bl_del(&tail);
-+
-+	if (tail.next != LIST_POISON1 || tail.pprev != LIST_POISON2) {
-+		pr_err("hlist_bl_del(): pprev/next pointers not poisoned!\n");
-+	} else {
-+		hlist_bl_del(&tail);
-+		pr_err("hlist_bl_del(): could not delete twice, but no BUG?!\n");
-+	}
-+}
-diff --git a/drivers/misc/lkdtm/lkdtm.h b/drivers/misc/lkdtm/lkdtm.h
-index c56d23e37643..b5acce183473 100644
---- a/drivers/misc/lkdtm/lkdtm.h
-+++ b/drivers/misc/lkdtm/lkdtm.h
-@@ -22,8 +22,6 @@ void lkdtm_SOFTLOCKUP(void);
- void lkdtm_HARDLOCKUP(void);
- void lkdtm_SPINLOCKUP(void);
- void lkdtm_HUNG_TASK(void);
--void lkdtm_CORRUPT_LIST_ADD(void);
--void lkdtm_CORRUPT_LIST_DEL(void);
- void lkdtm_CORRUPT_USER_DS(void);
- void lkdtm_STACK_GUARD_PAGE_LEADING(void);
- void lkdtm_STACK_GUARD_PAGE_TRAILING(void);
-@@ -102,4 +100,35 @@ void lkdtm_STACKLEAK_ERASING(void);
- /* cfi.c */
- void lkdtm_CFI_FORWARD_PROTO(void);
- 
-+/* list.c */
-+void lkdtm_LIST_ADD_NEXT_CORRUPTION(void);
-+void lkdtm_LIST_ADD_PREV_CORRUPTION(void);
-+void lkdtm_LIST_ADD_TWICE(void);
-+void lkdtm_LIST_DEL_NEXT_CORRUPTION(void);
-+void lkdtm_LIST_DEL_PREV_CORRUPTION(void);
-+void lkdtm_LIST_DEL_TWICE(void);
-+void lkdtm_HLIST_ADD_HEAD_CORRUPTION(void);
-+void lkdtm_HLIST_ADD_HEAD_TWICE(void);
-+void lkdtm_HLIST_ADD_BEFORE_CORRUPTION(void);
-+void lkdtm_HLIST_ADD_BEFORE_TWICE(void);
-+void lkdtm_HLIST_ADD_BEHIND_CORRUPTION(void);
-+void lkdtm_HLIST_ADD_BEHIND_TWICE(void);
-+void lkdtm_HLIST_DEL_PREV_CORRUPTION(void);
-+void lkdtm_HLIST_DEL_NEXT_CORRUPTION(void);
-+void lkdtm_HLIST_DEL_TWICE(void);
-+void lkdtm_HLIST_NULLS_ADD_HEAD_CORRUPTION(void);
-+void lkdtm_HLIST_NULLS_ADD_HEAD_TWICE(void);
-+void lkdtm_HLIST_NULLS_DEL_PREV_CORRUPTION(void);
-+void lkdtm_HLIST_NULLS_DEL_NEXT_CORRUPTION(void);
-+void lkdtm_HLIST_NULLS_DEL_TWICE(void);
-+void lkdtm_HLIST_BL_ADD_HEAD_UNLOCKED(void);
-+void lkdtm_HLIST_BL_ADD_HEAD_NODE_LOCKED(void);
-+void lkdtm_HLIST_BL_ADD_HEAD_CORRUPTION(void);
-+void lkdtm_HLIST_BL_ADD_HEAD_TWICE(void);
-+void lkdtm_HLIST_BL_DEL_NODE_LOCKED(void);
-+void lkdtm_HLIST_BL_DEL_NEXT_LOCKED(void);
-+void lkdtm_HLIST_BL_DEL_PREV_CORRUPTION(void);
-+void lkdtm_HLIST_BL_DEL_NEXT_CORRUPTION(void);
-+void lkdtm_HLIST_BL_DEL_TWICE(void);
-+
- #endif
-diff --git a/tools/testing/selftests/lkdtm/tests.txt b/tools/testing/selftests/lkdtm/tests.txt
-index 92ca32143ae5..93901506a72f 100644
---- a/tools/testing/selftests/lkdtm/tests.txt
-+++ b/tools/testing/selftests/lkdtm/tests.txt
-@@ -7,8 +7,6 @@ EXCEPTION
- #EXHAUST_STACK Corrupts memory on failure
- #CORRUPT_STACK Crashes entire system on success
- #CORRUPT_STACK_STRONG Crashes entire system on success
--CORRUPT_LIST_ADD list_add corruption
--CORRUPT_LIST_DEL list_del corruption
- CORRUPT_USER_DS Invalid address limit on user-mode return
- STACK_GUARD_PAGE_LEADING
- STACK_GUARD_PAGE_TRAILING
-@@ -69,3 +67,32 @@ USERCOPY_KERNEL
- USERCOPY_KERNEL_DS
- STACKLEAK_ERASING OK: the rest of the thread stack is properly erased
- CFI_FORWARD_PROTO
-+LIST_ADD_NEXT_CORRUPTION list_add corruption: next->prev should be prev
-+LIST_ADD_PREV_CORRUPTION list_add corruption: prev->next should be next
-+LIST_ADD_TWICE list_add double add:
-+LIST_DEL_NEXT_CORRUPTION list_del corruption: next->prev should be
-+LIST_DEL_PREV_CORRUPTION list_del corruption: prev->next should be
-+LIST_DEL_TWICE list_del corruption:
-+HLIST_ADD_HEAD_CORRUPTION hlist_add_head corruption: first->pprev should be &head->first
-+HLIST_ADD_HEAD_TWICE hlist_add_head double add:
-+HLIST_ADD_BEFORE_CORRUPTION hlist_add corruption: prev->next should be next
-+HLIST_ADD_BEFORE_TWICE hlist_add double add:
-+HLIST_ADD_BEHIND_CORRUPTION hlist_add corruption: next->pprev should be &prev->next
-+HLIST_ADD_BEHIND_TWICE hlist_add double add:
-+HLIST_DEL_PREV_CORRUPTION hlist_del corruption: prev->next should be
-+HLIST_DEL_NEXT_CORRUPTION hlist_del corruption: next->pprev should be
-+HLIST_DEL_TWICE hlist_del corruption:
-+HLIST_NULLS_ADD_HEAD_CORRUPTION hlist_nulls_add_head corruption: first->pprev should be &head->first
-+HLIST_NULLS_ADD_HEAD_TWICE hlist_nulls_add_head double add:
-+HLIST_NULLS_DEL_PREV_CORRUPTION hlist_nulls_del corruption: prev->next should be
-+HLIST_NULLS_DEL_NEXT_CORRUPTION hlist_nulls_del corruption: next->pprev should be
-+HLIST_NULLS_DEL_TWICE hlist_nulls_del corruption:
-+HLIST_BL_ADD_HEAD_UNLOCKED hlist_bl_add_head: head is unlocked
-+#HLIST_BL_ADD_HEAD_NODE_LOCKED Corrupts memory on failure
-+HLIST_BL_ADD_HEAD_CORRUPTION hlist_bl_add_head corruption: first->pprev should be &head->first
-+HLIST_BL_ADD_HEAD_TWICE hlist_bl_add_head double add:
-+#HLIST_BL_DEL_NODE_LOCKED Corrupts memory on failure
-+#HLIST_BL_DEL_NEXT_LOCKED Corrupts memory on failure
-+HLIST_BL_DEL_PREV_CORRUPTION hlist_bl_del corruption: prev->next should be
-+HLIST_BL_DEL_NEXT_CORRUPTION hlist_bl_del corruption: next->pprev should be
-+HLIST_BL_DEL_TWICE hlist_bl_del corruption:
--- 
-2.20.1
-
+Cheers!
