@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 730B4190E7F
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 14:14:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 50395190F22
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 14:19:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727686AbgCXNMk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 09:12:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58482 "EHLO mail.kernel.org"
+        id S1728654AbgCXNRw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 09:17:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37762 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727666AbgCXNMh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 09:12:37 -0400
+        id S1728629AbgCXNRu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Mar 2020 09:17:50 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6940B20775;
-        Tue, 24 Mar 2020 13:12:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2A472208D5;
+        Tue, 24 Mar 2020 13:17:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585055556;
-        bh=tpBnPSTv1xrJEYQtI9hj455MYVnSPgo7ITKi6PeqekA=;
+        s=default; t=1585055869;
+        bh=wyLKa9e4fnj7moQyCDcCfUz9jCeCcmM9gRIIhMtIa1U=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mx9jXCdtQV133qlC/s8tZQLmY2Whx82p/g51VoybtkIGE1eljqwuw5DkqntF9GUXu
-         XHGHfEpFG0gWld1ETteYJGnrKVkA6SgFG5UPo+EFZUGpTzaC4h8f52s0lOgJyWkpv1
-         QEy3zFjWfBrTt0/MSg429mTDtI13NfiktKQ0y/mE=
+        b=OTc6MXNs+TQKG8XL9qh++llQQJaUpQMpn3rz4lpRhWxSDdNLij6eB7chSPNxZdD7N
+         6WVSirWtCgXMqLBF3FkAzVT4Dd59HsGWrI+f9Y8B8XiIsGMXbjQSbfK34b6F7qL3Lg
+         j+eMC0PcJ1AhHgUTtGZ/ZmR+W21wUOG2xlW8ab0A=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ran Wang <ran.wang_1@nxp.com>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Peter Chen <peter.chen@nxp.com>
-Subject: [PATCH 4.19 23/65] usb: host: xhci-plat: add a shutdown
-Date:   Tue, 24 Mar 2020 14:10:44 +0100
-Message-Id: <20200324130759.994494849@linuxfoundation.org>
+        stable@vger.kernel.org,
+        syzbot+2a59ee7a9831b264f45e@syzkaller.appspotmail.com,
+        Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 5.4 053/102] ALSA: pcm: oss: Remove WARNING from snd_pcm_plug_alloc() checks
+Date:   Tue, 24 Mar 2020 14:10:45 +0100
+Message-Id: <20200324130812.124888737@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.2
-In-Reply-To: <20200324130756.679112147@linuxfoundation.org>
-References: <20200324130756.679112147@linuxfoundation.org>
+In-Reply-To: <20200324130806.544601211@linuxfoundation.org>
+References: <20200324130806.544601211@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,33 +44,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ran Wang <ran.wang_1@nxp.com>
+From: Takashi Iwai <tiwai@suse.de>
 
-commit b433e340e7565110b0ce9ca4b3e26f4b97a1decf upstream.
+commit 5461e0530c222129dfc941058be114b5cbc00837 upstream.
 
-When loading new kernel via kexec, we need to shutdown host controller to
-avoid any un-expected memory accessing during new kernel boot.
+The return value checks in snd_pcm_plug_alloc() are covered with
+snd_BUG_ON() macro that may trigger a kernel WARNING depending on the
+kconfig.  But since the error condition can be triggered by a weird
+user space parameter passed to OSS layer, we shouldn't give the kernel
+stack trace just for that.  As it's a normal error condition, let's
+remove snd_BUG_ON() macro usage there.
 
-Signed-off-by: Ran Wang <ran.wang_1@nxp.com>
-Cc: stable <stable@vger.kernel.org>
-Tested-by: Stephen Boyd <swboyd@chromium.org>
-Reviewed-by: Peter Chen <peter.chen@nxp.com>
-Link: https://lore.kernel.org/r/20200306092328.41253-1-ran.wang_1@nxp.com
+Reported-by: syzbot+2a59ee7a9831b264f45e@syzkaller.appspotmail.com
+Cc: <stable@vger.kernel.org>
+Link: https://lore.kernel.org/r/20200312155730.7520-1-tiwai@suse.de
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/host/xhci-plat.c |    1 +
- 1 file changed, 1 insertion(+)
+ sound/core/oss/pcm_plugin.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/usb/host/xhci-plat.c
-+++ b/drivers/usb/host/xhci-plat.c
-@@ -443,6 +443,7 @@ MODULE_DEVICE_TABLE(acpi, usb_xhci_acpi_
- static struct platform_driver usb_xhci_driver = {
- 	.probe	= xhci_plat_probe,
- 	.remove	= xhci_plat_remove,
-+	.shutdown = usb_hcd_platform_shutdown,
- 	.driver	= {
- 		.name = "xhci-hcd",
- 		.pm = &xhci_plat_pm_ops,
+--- a/sound/core/oss/pcm_plugin.c
++++ b/sound/core/oss/pcm_plugin.c
+@@ -111,7 +111,7 @@ int snd_pcm_plug_alloc(struct snd_pcm_su
+ 		while (plugin->next) {
+ 			if (plugin->dst_frames)
+ 				frames = plugin->dst_frames(plugin, frames);
+-			if (snd_BUG_ON((snd_pcm_sframes_t)frames <= 0))
++			if ((snd_pcm_sframes_t)frames <= 0)
+ 				return -ENXIO;
+ 			plugin = plugin->next;
+ 			err = snd_pcm_plugin_alloc(plugin, frames);
+@@ -123,7 +123,7 @@ int snd_pcm_plug_alloc(struct snd_pcm_su
+ 		while (plugin->prev) {
+ 			if (plugin->src_frames)
+ 				frames = plugin->src_frames(plugin, frames);
+-			if (snd_BUG_ON((snd_pcm_sframes_t)frames <= 0))
++			if ((snd_pcm_sframes_t)frames <= 0)
+ 				return -ENXIO;
+ 			plugin = plugin->prev;
+ 			err = snd_pcm_plugin_alloc(plugin, frames);
 
 
