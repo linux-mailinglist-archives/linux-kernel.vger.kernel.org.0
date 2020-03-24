@@ -2,41 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4C9D1190EB2
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 14:15:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 68502190FC9
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 14:29:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728024AbgCXNOO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 09:14:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60708 "EHLO mail.kernel.org"
+        id S1728057AbgCXNXE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 09:23:04 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45866 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727592AbgCXNOM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 09:14:12 -0400
+        id S1729219AbgCXNXC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Mar 2020 09:23:02 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F2A1920936;
-        Tue, 24 Mar 2020 13:14:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id ADFE720775;
+        Tue, 24 Mar 2020 13:23:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585055651;
-        bh=NFkaruU0VVDJR0UpDc2JMXjGorQN1M34yxFfETQdM5Q=;
+        s=default; t=1585056182;
+        bh=dsUFn1fct6hE7+Yo16X7dys63JfXbXmd3O1DfgNk3DY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=zeKoLHgjpQqZcz9o4anPp5pqAuYWx9t4ZIIvuXmdxu+1MBFtflz8nrNTQ6fDzTSYt
-         uPOF6zlQOw6EKOJemuNngRPPeSyHKmuxJ6pg2PGon4/dzrHz9t6E+frHDknwx5BV0T
-         HsqAlDQmENpHcYOQSN/n4KA6UxwqB0IEfTORPj9c=
+        b=dQ/jjd3jacqhvMWpAGnPqdqSuRSASGl643PD2uwfrT1WeheBdmkBWS0Jk0mASsFRl
+         +Ajg6Zudo6ohh9AIMcZ6c0zWbP/eMyxE+oCmxsGwKwvDdNaZ/6SwmvtLMigUJPPv0A
+         ZazI30NtZy03JXRnLy/eAx7eILqtzSgFPicFzPm4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        =?UTF-8?q?Daniel=20Gl=C3=B6ckner?= <dg@emlix.com>,
-        Mikulas Patocka <mpatocka@redhat.com>,
-        Mike Snitzer <snitzer@redhat.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 12/65] dm integrity: use dm_bio_record and dm_bio_restore
+        stable@vger.kernel.org, Alberto Mattea <alberto@mattea.info>,
+        Mathias Nyman <mathias.nyman@linux.intel.com>
+Subject: [PATCH 5.5 048/119] usb: xhci: apply XHCI_SUSPEND_DELAY to AMD XHCI controller 1022:145c
 Date:   Tue, 24 Mar 2020 14:10:33 +0100
-Message-Id: <20200324130758.374948749@linuxfoundation.org>
+Message-Id: <20200324130813.107317568@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.2
-In-Reply-To: <20200324130756.679112147@linuxfoundation.org>
-References: <20200324130756.679112147@linuxfoundation.org>
+In-Reply-To: <20200324130808.041360967@linuxfoundation.org>
+References: <20200324130808.041360967@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,113 +43,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Mike Snitzer <snitzer@redhat.com>
+From: Alberto Mattea <alberto@mattea.info>
 
-[ Upstream commit 248aa2645aa7fc9175d1107c2593cc90d4af5a4e ]
+commit 16263abc12d09871156a1c8650fb651f0e552f5e upstream.
 
-In cases where dec_in_flight() has to requeue the integrity_bio_wait
-work to transfer the rest of the data, the bio's __bi_remaining might
-already have been decremented to 0, e.g.: if bio passed to underlying
-data device was split via blk_queue_split().
+This controller timeouts during suspend (S3) with
+[  240.521724] xhci_hcd 0000:30:00.3: WARN: xHC save state timeout
+[  240.521729] xhci_hcd 0000:30:00.3: ERROR mismatched command completion event
+thus preventing the system from entering S3.
+Moreover it remains in an undefined state where some connected devices stop
+working until a reboot.
+Apply the XHCI_SUSPEND_DELAY quirk to make it suspend properly.
 
-Use dm_bio_{record,restore} rather than effectively open-coding them in
-dm-integrity -- these methods now manage __bi_remaining too.
+CC: stable@vger.kernel.org
+Signed-off-by: Alberto Mattea <alberto@mattea.info>
+Signed-off-by: Mathias Nyman <mathias.nyman@linux.intel.com>
+Link: https://lore.kernel.org/r/20200306150858.21904-3-mathias.nyman@linux.intel.com
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-Depends-on: f7f0b057a9c1 ("dm bio record: save/restore bi_end_io and bi_integrity")
-Reported-by: Daniel Glöckner <dg@emlix.com>
-Suggested-by: Mikulas Patocka <mpatocka@redhat.com>
-Signed-off-by: Mike Snitzer <snitzer@redhat.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/md/dm-integrity.c | 32 +++++++++-----------------------
- 1 file changed, 9 insertions(+), 23 deletions(-)
+ drivers/usb/host/xhci-pci.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/md/dm-integrity.c b/drivers/md/dm-integrity.c
-index 5885239cc1f85..d75a4ce7d12ae 100644
---- a/drivers/md/dm-integrity.c
-+++ b/drivers/md/dm-integrity.c
-@@ -6,6 +6,8 @@
-  * This file is released under the GPL.
-  */
+--- a/drivers/usb/host/xhci-pci.c
++++ b/drivers/usb/host/xhci-pci.c
+@@ -136,7 +136,8 @@ static void xhci_pci_quirks(struct devic
+ 		xhci->quirks |= XHCI_AMD_PLL_FIX;
  
-+#include "dm-bio-record.h"
-+
- #include <linux/compiler.h>
- #include <linux/module.h>
- #include <linux/device-mapper.h>
-@@ -276,11 +278,7 @@ struct dm_integrity_io {
- 
- 	struct completion *completion;
- 
--	struct gendisk *orig_bi_disk;
--	u8 orig_bi_partno;
--	bio_end_io_t *orig_bi_end_io;
--	struct bio_integrity_payload *orig_bi_integrity;
--	struct bvec_iter orig_bi_iter;
-+	struct dm_bio_details bio_details;
- };
- 
- struct journal_completion {
-@@ -1249,14 +1247,9 @@ static void integrity_end_io(struct bio *bio)
- {
- 	struct dm_integrity_io *dio = dm_per_bio_data(bio, sizeof(struct dm_integrity_io));
- 
--	bio->bi_iter = dio->orig_bi_iter;
--	bio->bi_disk = dio->orig_bi_disk;
--	bio->bi_partno = dio->orig_bi_partno;
--	if (dio->orig_bi_integrity) {
--		bio->bi_integrity = dio->orig_bi_integrity;
-+	dm_bio_restore(&dio->bio_details, bio);
-+	if (bio->bi_integrity)
- 		bio->bi_opf |= REQ_INTEGRITY;
--	}
--	bio->bi_end_io = dio->orig_bi_end_io;
- 
- 	if (dio->completion)
- 		complete(dio->completion);
-@@ -1336,7 +1329,7 @@ static void integrity_metadata(struct work_struct *w)
- 		if (!checksums)
- 			checksums = checksums_onstack;
- 
--		__bio_for_each_segment(bv, bio, iter, dio->orig_bi_iter) {
-+		__bio_for_each_segment(bv, bio, iter, dio->bio_details.bi_iter) {
- 			unsigned pos;
- 			char *mem, *checksums_ptr;
- 
-@@ -1380,7 +1373,7 @@ static void integrity_metadata(struct work_struct *w)
- 		if (likely(checksums != checksums_onstack))
- 			kfree(checksums);
- 	} else {
--		struct bio_integrity_payload *bip = dio->orig_bi_integrity;
-+		struct bio_integrity_payload *bip = dio->bio_details.bi_integrity;
- 
- 		if (bip) {
- 			struct bio_vec biv;
-@@ -1784,20 +1777,13 @@ static void dm_integrity_map_continue(struct dm_integrity_io *dio, bool from_map
- 	} else
- 		dio->completion = NULL;
- 
--	dio->orig_bi_iter = bio->bi_iter;
--
--	dio->orig_bi_disk = bio->bi_disk;
--	dio->orig_bi_partno = bio->bi_partno;
-+	dm_bio_record(&dio->bio_details, bio);
- 	bio_set_dev(bio, ic->dev->bdev);
--
--	dio->orig_bi_integrity = bio_integrity(bio);
- 	bio->bi_integrity = NULL;
- 	bio->bi_opf &= ~REQ_INTEGRITY;
--
--	dio->orig_bi_end_io = bio->bi_end_io;
- 	bio->bi_end_io = integrity_end_io;
--
- 	bio->bi_iter.bi_size = dio->range.n_sectors << SECTOR_SHIFT;
-+
- 	generic_make_request(bio);
- 
- 	if (need_sync_io) {
--- 
-2.20.1
-
+ 	if (pdev->vendor == PCI_VENDOR_ID_AMD &&
+-		(pdev->device == 0x15e0 ||
++		(pdev->device == 0x145c ||
++		 pdev->device == 0x15e0 ||
+ 		 pdev->device == 0x15e1 ||
+ 		 pdev->device == 0x43bb))
+ 		xhci->quirks |= XHCI_SUSPEND_DELAY;
 
 
