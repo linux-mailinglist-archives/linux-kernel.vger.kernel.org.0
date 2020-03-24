@@ -2,188 +2,176 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D81F61915C8
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 17:13:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7C8DC1915D5
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 17:13:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728883AbgCXQMR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 12:12:17 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:46497 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728868AbgCXQMQ (ORCPT
+        id S1729003AbgCXQMu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 12:12:50 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:57020 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728910AbgCXQMn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 12:12:16 -0400
-Received: by mail-wr1-f66.google.com with SMTP id j17so18799834wru.13
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Mar 2020 09:12:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=6s+JUpZZOeulwwQp3hTdTer/dFhcYZR33uwW9/Pdmj8=;
-        b=SggCZsD1MrTRy4N8yYgCYH48EYAh1jPTaqstdjfJmC1qrv87NVo4Pg4S2ZxTvxznBP
-         1et1wVMZn2T1Va6fNb9fpoMZOF9c4yGcHHrHTIO9FIakp+uewzN24xryCxMz8BpF0A5k
-         Wxu82j5SMx2RDgnEf0rvZHa9ZB+onHB2wwcGE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=6s+JUpZZOeulwwQp3hTdTer/dFhcYZR33uwW9/Pdmj8=;
-        b=FKFQoK5AstvGEpjWN2Wr/xwhhQP9uXPxEko4K+854XENxCOB5Q4yN39M8r1gJ8n+cl
-         k8RX2V0XBdfksGrMwdZ4HY7fjv+FPUOJu60eh9JkJXeJT1sRlqHNhWz6CsHr9MB5MN1p
-         +Xsz7yhR1pklL2lbL2VrQMrqdIZui2hbbnR+5s9KtiZ81tg//QL3YpWRbjHxo1NUl/R1
-         6Kyy9j/4mbT3XXz8gAElWrH0FV2HBUFom+ahAtPf5usWsd1AKHgIshDKb3S4RnfeU4SB
-         2F6lHQlY4TedWdk7IVfgPbw8VkJ+thpxCzEHEt2fAeQ+cdeaY02WKd/HwLK9a2AGLQnG
-         XyjA==
-X-Gm-Message-State: ANhLgQ2l6s7e8GtfOzf9e3GQk8V3tCjcydL4m2l+ctwtmlnhuF5VToM8
-        EtCkcuMkqA2thu8Cn1+//SAdTQ==
-X-Google-Smtp-Source: ADFU+vuvN4rP+Kw/5KMx38ZbYgcOIc+Am32bNafbVVbJjxFCaDUxwfDZcgFtKLY10ged/UtQTzp9Rw==
-X-Received: by 2002:adf:ead1:: with SMTP id o17mr8491178wrn.14.1585066334052;
-        Tue, 24 Mar 2020 09:12:14 -0700 (PDT)
-Received: from chromium.org (77-56-209-237.dclient.hispeed.ch. [77.56.209.237])
-        by smtp.gmail.com with ESMTPSA id i19sm4864977wmb.44.2020.03.24.09.12.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Mar 2020 09:12:13 -0700 (PDT)
-From:   KP Singh <kpsingh@chromium.org>
-X-Google-Original-From: KP Singh <kpsingh>
-Date:   Tue, 24 Mar 2020 17:12:11 +0100
-To:     Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc:     open list <linux-kernel@vger.kernel.org>,
-        bpf <bpf@vger.kernel.org>, linux-security-module@vger.kernel.org,
-        Brendan Jackman <jackmanb@google.com>,
-        Florent Revest <revest@google.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        James Morris <jmorris@namei.org>,
-        Kees Cook <keescook@chromium.org>,
-        Paul Turner <pjt@google.com>, Jann Horn <jannh@google.com>,
-        Florent Revest <revest@chromium.org>,
-        Brendan Jackman <jackmanb@chromium.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH bpf-next v5 3/7] bpf: lsm: provide attachment points for
- BPF LSM programs
-Message-ID: <20200324161211.GA11227@chromium.org>
-References: <20200323164415.12943-1-kpsingh@chromium.org>
- <20200323164415.12943-4-kpsingh@chromium.org>
- <CAEf4BzbRivYO=gVjuQw8Z8snN+RFwXswvNxs67c=5g6U3o9rmw@mail.gmail.com>
- <20200324103910.GA7135@chromium.org>
+        Tue, 24 Mar 2020 12:12:43 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 02OG9JZO066496;
+        Tue, 24 Mar 2020 16:12:33 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2020-01-29;
+ bh=j2oyooX0rAq76SY5WS1UWzfXaOSBSc7XLdbFb+EV+As=;
+ b=D35IUL8cJIekvD/+YVC2smWxK7eGoPcY1Lih0c+aRi1v/zUPOETfSVsBrLrGqRwNTqm7
+ T00wHpKBMIF3NOaxB04lNrFFTGl3aVQDihBf5gDbwQmWJga/qju1JMCtIIQgHMT3PaZu
+ c+McHlDKNDl37wHhCvLVKTV4xSd779hq8zMKkHi4eX4ydnqphicynXiaJO2xKoEYdm9c
+ z/LCJSpV56Yi73WeqOeMyySlrYjP51VDyVfElwB9iqEH3X3zAuQClODGQt0XmoDkX2Ml
+ FxfpkMCZO5nV4tEndI7KkvD6dCyfEsUuR9A2CmhQBdEBri6w+rd68y8F3Z1l3RT8u3/8 tA== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by aserp2120.oracle.com with ESMTP id 2ywavm58vg-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 24 Mar 2020 16:12:32 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 02OGBonB079385;
+        Tue, 24 Mar 2020 16:12:32 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by aserp3030.oracle.com with ESMTP id 2yxw92wr2t-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 24 Mar 2020 16:12:31 +0000
+Received: from abhmp0011.oracle.com (abhmp0011.oracle.com [141.146.116.17])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 02OGCPoj014077;
+        Tue, 24 Mar 2020 16:12:25 GMT
+Received: from [10.175.222.8] (/10.175.222.8)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 24 Mar 2020 09:12:24 -0700
+Subject: Re: [PATCH 11/12] device-dax: Add dis-contiguous resource support
+To:     Dan Williams <dan.j.williams@intel.com>
+Cc:     linux-mm@kvack.org, dave.hansen@linux.intel.com, hch@lst.de,
+        linux-nvdimm@lists.01.org, linux-kernel@vger.kernel.org
+References: <158500767138.2088294.17131646259803932461.stgit@dwillia2-desk3.amr.corp.intel.com>
+ <158500773552.2088294.8756587190550753100.stgit@dwillia2-desk3.amr.corp.intel.com>
+From:   Joao Martins <joao.m.martins@oracle.com>
+Message-ID: <9a6ff83f-095c-0689-d6d1-693a6e9c07e6@oracle.com>
+Date:   Tue, 24 Mar 2020 16:12:21 +0000
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20200324103910.GA7135@chromium.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <158500773552.2088294.8756587190550753100.stgit@dwillia2-desk3.amr.corp.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9570 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 spamscore=0 bulkscore=0
+ adultscore=0 mlxscore=0 malwarescore=0 mlxlogscore=999 suspectscore=5
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2003020000
+ definitions=main-2003240087
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9570 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 malwarescore=0
+ priorityscore=1501 mlxscore=0 bulkscore=0 clxscore=1011 impostorscore=0
+ phishscore=0 suspectscore=5 mlxlogscore=999 spamscore=0 lowpriorityscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2003020000
+ definitions=main-2003240086
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 24-Mär 11:39, KP Singh wrote:
-> On 23-Mär 12:59, Andrii Nakryiko wrote:
-> > On Mon, Mar 23, 2020 at 9:45 AM KP Singh <kpsingh@chromium.org> wrote:
-> > >
-> > > From: KP Singh <kpsingh@google.com>
-> > >
-> > > When CONFIG_BPF_LSM is enabled, nops functions, bpf_lsm_<hook_name>, are
-> > > generated for each LSM hook. These nops are initialized as LSM hooks in
-> > > a subsequent patch.
-> > >
-> > > Signed-off-by: KP Singh <kpsingh@google.com>
-> > > Reviewed-by: Brendan Jackman <jackmanb@google.com>
-> > > Reviewed-by: Florent Revest <revest@google.com>
-> > > ---
-> > >  include/linux/bpf_lsm.h | 21 +++++++++++++++++++++
-> > >  kernel/bpf/bpf_lsm.c    | 19 +++++++++++++++++++
-> > >  2 files changed, 40 insertions(+)
-> > >  create mode 100644 include/linux/bpf_lsm.h
-> > >
-> > > diff --git a/include/linux/bpf_lsm.h b/include/linux/bpf_lsm.h
-> > > new file mode 100644
-> > > index 000000000000..c6423a140220
-> > > --- /dev/null
-> > > +++ b/include/linux/bpf_lsm.h
-> > > @@ -0,0 +1,21 @@
-> > > +/* SPDX-License-Identifier: GPL-2.0 */
-> > > +
-> > > +/*
-> > > + * Copyright (C) 2020 Google LLC.
-> > > + */
-> > > +
-> > > +#ifndef _LINUX_BPF_LSM_H
-> > > +#define _LINUX_BPF_LSM_H
-> > > +
-> > > +#include <linux/bpf.h>
-> > > +#include <linux/lsm_hooks.h>
-> > > +
-> > > +#ifdef CONFIG_BPF_LSM
-> > > +
-> > > +#define LSM_HOOK(RET, NAME, ...) RET bpf_lsm_##NAME(__VA_ARGS__);
-> > > +#include <linux/lsm_hook_names.h>
-> > > +#undef LSM_HOOK
-> > > +
-> > > +#endif /* CONFIG_BPF_LSM */
-> > > +
-> > > +#endif /* _LINUX_BPF_LSM_H */
-> > > diff --git a/kernel/bpf/bpf_lsm.c b/kernel/bpf/bpf_lsm.c
-> > > index 82875039ca90..530d137f7a84 100644
-> > > --- a/kernel/bpf/bpf_lsm.c
-> > > +++ b/kernel/bpf/bpf_lsm.c
-> > > @@ -7,6 +7,25 @@
-> > >  #include <linux/filter.h>
-> > >  #include <linux/bpf.h>
-> > >  #include <linux/btf.h>
-> > > +#include <linux/lsm_hooks.h>
-> > > +#include <linux/bpf_lsm.h>
-> > > +
-> > > +/* For every LSM hook  that allows attachment of BPF programs, declare a NOP
-> > > + * function where a BPF program can be attached as an fexit trampoline.
-> > > + */
-> > > +#define LSM_HOOK(RET, NAME, ...) LSM_HOOK_##RET(NAME, __VA_ARGS__)
-> > > +
-> > > +#define LSM_HOOK_int(NAME, ...)                        \
-> > > +noinline __weak int bpf_lsm_##NAME(__VA_ARGS__)        \
-> > > +{                                              \
-> > > +       return 0;                               \
-> > > +}
-> > > +
-> > > +#define LSM_HOOK_void(NAME, ...) \
-> > > +noinline __weak void bpf_lsm_##NAME(__VA_ARGS__) {}
-> > > +
-> > 
-> > Could unify with:
-> > 
-> > #define LSM_HOOK(RET, NAME, ...) noinline __weak RET bpf_lsm_##NAME(__VA_ARGS__)
-> > {
-> >     return (RET)0;
-> > }
-> > 
-> > then you don't need LSM_HOOK_int and LSM_HOOK_void.
-> 
-> Nice.
-> 
-> But, given that we are adding default values and that
-> they are only needed for int hooks, we will need to keep the macros
-> separate for int and void. Or, Am I missing a trick here?
-> 
-> - KP
+On 3/23/20 11:55 PM, Dan Williams wrote:
+>  static ssize_t dev_dax_resize(struct dax_region *dax_region,
+>  		struct dev_dax *dev_dax, resource_size_t size)
+>  {
+>  	resource_size_t avail = dax_region_avail_size(dax_region), to_alloc;
+> -	resource_size_t dev_size = range_len(&dev_dax->range);
+> +	resource_size_t dev_size = dev_dax_size(dev_dax);
+>  	struct resource *region_res = &dax_region->res;
+>  	struct device *dev = &dev_dax->dev;
+> -	const char *name = dev_name(dev);
+>  	struct resource *res, *first;
+> +	resource_size_t alloc = 0;
+> +	int rc;
+>  
+>  	if (dev->driver)
+>  		return -EBUSY;
+> @@ -684,38 +766,47 @@ static ssize_t dev_dax_resize(struct dax_region *dax_region,
+>  	 * allocating a new resource.
+>  	 */
+>  	first = region_res->child;
+> -	if (!first)
+> -		return __alloc_dev_dax_range(dev_dax, dax_region->res.start,
+> -				to_alloc);
 
-Actually, was able to get it work. not setting a default for void
-hooks makes the macros messier. So i just set it void. For example:
+You probably want to retain the condition above?
 
-  LSM_HOOK(void, void, bprm_committing_creds, struct linux_binprm *bprm)
+Otherwise it removes the ability to create new devices or resizing it , once we
+have zero-ed the last one.
 
-This also allows me to use the cleanup you suggested and not having
-to split every usage into int and void.
+> -	for (res = first; to_alloc && res; res = res->sibling) {
+> +retry:
+> +	rc = -ENOSPC;
+> +	for (res = first; res; res = res->sibling) {
+>  		struct resource *next = res->sibling;
+> -		resource_size_t free;
+>  
+>  		/* space at the beginning of the region */
+> -		free = 0;
+> -		if (res == first && res->start > dax_region->res.start)
+> -			free = res->start - dax_region->res.start;
+> -		if (free >= to_alloc && dev_size == 0)
+> -			return __alloc_dev_dax_range(dev_dax,
+> -					dax_region->res.start, to_alloc);
+> -
+> -		free = 0;
+> +		if (res == first && res->start > dax_region->res.start) {
+> +			alloc = min(res->start - dax_region->res.start,
+> +					to_alloc);
+> +			rc = __alloc_dev_dax_range(dev_dax,
+> +					dax_region->res.start, alloc);
+> +			break;
+> +		}
+> +
+> +		alloc = 0;
+>  		/* space between allocations */
+>  		if (next && next->start > res->end + 1)
+> -			free = next->start - res->end + 1;
+> +			alloc = min(next->start - (res->end + 1), to_alloc);
+>  
+>  		/* space at the end of the region */
+> -		if (free < to_alloc && !next && res->end < region_res->end)
+> -			free = region_res->end - res->end;
+> -
+> -		if (free >= to_alloc && strcmp(name, res->name) == 0)
+> -			return __adjust_dev_dax_range(dev_dax, res,
+> -					resource_size(res) + to_alloc);
+> -		else if (free >= to_alloc && dev_size == 0)
+> -			return __alloc_dev_dax_range(dev_dax, res->end + 1,
+> -					to_alloc);
+> +		if (!alloc && !next && res->end < region_res->end)
+> +			alloc = min(region_res->end - res->end, to_alloc);
+> +
+> +		if (!alloc)
+> +			continue;
+> +
+> +		if (adjust_ok(dev_dax, res)) {
+> +			rc = __adjust_dev_dax_range(dev_dax, res,
+> +					resource_size(res) + alloc);
+> +			break;
+> +		}
+> +		rc = __alloc_dev_dax_range(dev_dax, res->end + 1,
+> +				alloc);
 
-- KP
+I am wondering if we should switch to:
 
-> 
-> > 
-> > > +#include <linux/lsm_hook_names.h>
-> > > +#undef LSM_HOOK
-> > >
-> > >  const struct bpf_prog_ops lsm_prog_ops = {
-> > >  };
-> > > --
-> > > 2.20.1
-> > >
+	if (adjust_ok(...))
+		rc = __adjust_dev_dax_range(...);
+	else
+		rc = __alloc_dev_dax_range(...);
+
+And then a debug print at the end depicting whether and how did we grabbed
+space? Something like:
+
+	dev_dbg(&dev_dax->dev, "%s(%d) %d", action, location, rc);
+
+Assuming we set @location to its values when we allocate space at the end,
+beginning or middle; and @action to whether we adjusted up/down or allocated new
+range.
+
+Essentially, something similar to namespaces scan_allocate() just to help
+troubleshoot?
+
+Regards,
+ Joao
