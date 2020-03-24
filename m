@@ -2,199 +2,181 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 295391907BA
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 09:35:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5699019079F
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 09:32:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727283AbgCXIfn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 04:35:43 -0400
-Received: from mga03.intel.com ([134.134.136.65]:53578 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727111AbgCXIfl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 04:35:41 -0400
-IronPort-SDR: ow1KTnLHpSS/QSqyE+XpR9V1kyoZr+bclvrrS5j9d95OPJtr/ZCqov9wND7VLlTisG3vnyne69
- 9DzI4G/1jkxA==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Mar 2020 01:35:41 -0700
-IronPort-SDR: jkCuV6WsqJn8Fhl0ND9uVXnovrtax7udYxiaM70I5Y80kDKC+bZzG0/EAYGcgkzNtjKteIOO1S
- +srK9DjB4//A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.72,299,1580803200"; 
-   d="scan'208";a="446143839"
-Received: from yilunxu-optiplex-7050.sh.intel.com ([10.239.159.141])
-  by fmsmga005.fm.intel.com with ESMTP; 24 Mar 2020 01:35:39 -0700
-From:   Xu Yilun <yilun.xu@intel.com>
-To:     mdf@kernel.org, linux-fpga@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     trix@redhat.com, bhu@redhat.com, Xu Yilun <yilun.xu@intel.com>,
-        Luwei Kang <luwei.kang@intel.com>, Wu Hao <hao.wu@intel.com>
-Subject: [PATCH v3 6/7] fpga: dfl: afu: add user interrupt support
-Date:   Tue, 24 Mar 2020 16:32:42 +0800
-Message-Id: <1585038763-22944-7-git-send-email-yilun.xu@intel.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1585038763-22944-1-git-send-email-yilun.xu@intel.com>
-References: <1585038763-22944-1-git-send-email-yilun.xu@intel.com>
+        id S1727186AbgCXIcz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 04:32:55 -0400
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:39258 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726091AbgCXIcz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Mar 2020 04:32:55 -0400
+Received: by mail-lf1-f68.google.com with SMTP id j15so12467306lfk.6;
+        Tue, 24 Mar 2020 01:32:52 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=IjEhO5KyVk/mLcThJc5nXrYak70vFV8lM7HnSm/e624=;
+        b=iSfp+yokQFXJu02saPFgRFF5uu1zAUJUfM+mrHxAJ5YBhX6H3dip6pxhCtEh+9leN+
+         tihKJX8C5g0uRtDcJ7yjONen/Y//0v3nK3/UJoiFut1/jOZNC4f5XuGMxjsF1lLoFXAj
+         I7t3Nq5h8/p95xWbd1iEPjFORPw43IkhkPQr02TNLlypYnLmxIzWwyiONHRLbBW4YKKh
+         0uMW8Ixi2sFiGmnzJ8qWYFqMjoUmLSqPeawroX08LM38/Q65S4tAPhcnggq4eslWvGHc
+         PlFyISkiQgfqsjozYi//1iKO7SduXCdM+amVCzdKJl6mx4szLj3M3VXpofmxyvkk5xQ+
+         fibw==
+X-Gm-Message-State: ANhLgQ3qj/An1UFdw3yMR6GxNyMndwAKfvKoy2YjrVFVwQUDIPrDp1IQ
+        c1POUQ12epENh1HJ/tV+wqk=
+X-Google-Smtp-Source: ADFU+vuC45OXgiz6TjtQcTQMN3L5NES8EFGGHuoS2ueBD2YrdjSO5K8ew9zzfTU1QU/wwYGsXD/iBQ==
+X-Received: by 2002:a19:41c5:: with SMTP id o188mr4980992lfa.52.1585038771993;
+        Tue, 24 Mar 2020 01:32:51 -0700 (PDT)
+Received: from localhost.localdomain (dc7t7ryyyyyyyyyyyyybt-3.rev.dnainternet.fi. [2001:14ba:16e1:b700::3])
+        by smtp.gmail.com with ESMTPSA id g21sm9431033lfh.12.2020.03.24.01.32.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 24 Mar 2020 01:32:51 -0700 (PDT)
+Date:   Tue, 24 Mar 2020 10:32:43 +0200
+From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+To:     matti.vaittinen@fi.rohmeurope.com, mazziesaccount@gmail.com
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Mikko Mutanen <mikko.mutanen@fi.rohmeurope.com>,
+        Markus Laine <markus.laine@fi.rohmeurope.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Ard Biesheuvel <ardb@kernel.org>, Borislav Petkov <bp@suse.de>,
+        Brendan Higgins <brendanhiggins@google.com>,
+        Changbin Du <changbin.du@intel.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        David Gow <davidgow@google.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        devicetree@vger.kernel.org, Gary Hook <Gary.Hook@amd.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        Mark Rutland <mark.rutland@arm.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+        Mikhail Zaslonko <zaslonko@linux.ibm.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Sebastian Reichel <sre@kernel.org>,
+        Shuah Khan <skhan@linuxfoundation.org>,
+        Tal Gilboa <talgi@mellanox.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <uwe@kleine-koenig.org>,
+        Vincenzo Frascino <vincenzo.frascino@arm.com>,
+        Vladimir Oltean <olteanv@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>
+Subject: [PATCH v6 10/10] power: supply: Fix Kconfig help text indentiation
+Message-ID: <4301575089b89ff8953d5c94613c17cfd33bfdbf.1584977512.git.matti.vaittinen@fi.rohmeurope.com>
+References: <cover.1584977512.git.matti.vaittinen@fi.rohmeurope.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cover.1584977512.git.matti.vaittinen@fi.rohmeurope.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-AFU (Accelerated Function Unit) is dynamic region of the DFL based FPGA,
-and always defined by users. Some DFL based FPGA cards allow users to
-implement their own interrupts in AFU. In order to support this,
-hardware implements a new UINT (User Interrupt) private feature with
-related capability register which describes the number of supported
-user interrupts as well as the local index of the interrupts for
-software enumeration, and from software side, driver follows the common
-DFL interrupt notification and handling mechanism, and it implements
-two ioctls below for user to query number of irqs supported and set/unset
-interrupt triggers.
+Indent the help text as explained in
+Documentation/process/coding-style.rst
 
- Ioctls:
- * DFL_FPGA_PORT_UINT_GET_IRQ_NUM
-   get the number of irqs, which is used to determine how many interrupts
-   UINT feature supports.
-
- * DFL_FPGA_PORT_UINT_SET_IRQ
-   set/unset eventfds as AFU user interrupt triggers.
-
-Signed-off-by: Luwei Kang <luwei.kang@intel.com>
-Signed-off-by: Wu Hao <hao.wu@intel.com>
-Signed-off-by: Xu Yilun <yilun.xu@intel.com>
-----
-v2: use DFL_FPGA_PORT_UINT_GET_IRQ_NUM instead of
-    DFL_FPGA_PORT_UINT_GET_INFO
-    Delete flags field for DFL_FPGA_PORT_UINT_SET_IRQ
-v3: put_user() instead of copy_to_user()
-    improves comments
 ---
- drivers/fpga/dfl-afu-main.c   | 70 +++++++++++++++++++++++++++++++++++++++++++
- include/uapi/linux/fpga-dfl.h | 23 ++++++++++++++
- 2 files changed, 93 insertions(+)
 
-diff --git a/drivers/fpga/dfl-afu-main.c b/drivers/fpga/dfl-afu-main.c
-index 357cd5d..d2db5b6 100644
---- a/drivers/fpga/dfl-afu-main.c
-+++ b/drivers/fpga/dfl-afu-main.c
-@@ -529,6 +529,72 @@ static const struct dfl_feature_ops port_stp_ops = {
- 	.init = port_stp_init,
- };
+I just learned the help text in Kconfigs should be indented by two
+spaces. I fixed this for BD99954 as suggested by Randy and decided
+that I could do this for few other entries as well while I was at
+it anyways.
+
+Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+---
+ drivers/power/supply/Kconfig | 24 ++++++++++++------------
+ 1 file changed, 12 insertions(+), 12 deletions(-)
+
+diff --git a/drivers/power/supply/Kconfig b/drivers/power/supply/Kconfig
+index af96d7fa56b1..f606ba069e4e 100644
+--- a/drivers/power/supply/Kconfig
++++ b/drivers/power/supply/Kconfig
+@@ -415,7 +415,7 @@ config CHARGER_PCF50633
+ 	tristate "NXP PCF50633 MBC"
+ 	depends on MFD_PCF50633
+ 	help
+-	 Say Y to include support for NXP PCF50633 Main Battery Charger.
++	  Say Y to include support for NXP PCF50633 Main Battery Charger.
  
-+static long
-+port_uint_get_num_irqs(struct platform_device *pdev,
-+		       struct dfl_feature *feature, unsigned long arg)
-+{
-+	return put_user(feature->nr_irqs, (__u32 __user *)arg);
-+}
-+
-+static long port_uint_set_irq(struct platform_device *pdev,
-+			      struct dfl_feature *feature, unsigned long arg)
-+{
-+	struct dfl_feature_platform_data *pdata = dev_get_platdata(&pdev->dev);
-+	struct dfl_fpga_irq_set hdr;
-+	s32 *fds;
-+	long ret;
-+
-+	if (!feature->nr_irqs)
-+		return -ENOENT;
-+
-+	if (copy_from_user(&hdr, (void __user *)arg, sizeof(hdr)))
-+		return -EFAULT;
-+
-+	if (!hdr.count || (hdr.start + hdr.count > feature->nr_irqs) ||
-+	    (hdr.start + hdr.count < hdr.start))
-+		return -EINVAL;
-+
-+	fds = memdup_user((void __user *)(arg + sizeof(hdr)),
-+			  hdr.count * sizeof(s32));
-+	if (IS_ERR(fds))
-+		return PTR_ERR(fds);
-+
-+	mutex_lock(&pdata->lock);
-+	ret = dfl_fpga_set_irq_triggers(feature, hdr.start, hdr.count, fds);
-+	mutex_unlock(&pdata->lock);
-+
-+	kfree(fds);
-+	return ret;
-+}
-+
-+static long
-+port_uint_ioctl(struct platform_device *pdev, struct dfl_feature *feature,
-+		unsigned int cmd, unsigned long arg)
-+{
-+	long ret = -ENODEV;
-+
-+	switch (cmd) {
-+	case DFL_FPGA_PORT_UINT_GET_IRQ_NUM:
-+		ret = port_uint_get_num_irqs(pdev, feature, arg);
-+		break;
-+	case DFL_FPGA_PORT_UINT_SET_IRQ:
-+		ret = port_uint_set_irq(pdev, feature, arg);
-+		break;
-+	default:
-+		dev_dbg(&pdev->dev, "%x cmd not handled", cmd);
-+	}
-+	return ret;
-+}
-+
-+static const struct dfl_feature_id port_uint_id_table[] = {
-+	{.id = PORT_FEATURE_ID_UINT,},
-+	{0,}
-+};
-+
-+static const struct dfl_feature_ops port_uint_ops = {
-+	.ioctl = port_uint_ioctl,
-+};
-+
- static struct dfl_feature_driver port_feature_drvs[] = {
- 	{
- 		.id_table = port_hdr_id_table,
-@@ -547,6 +613,10 @@ static struct dfl_feature_driver port_feature_drvs[] = {
- 		.ops = &port_stp_ops,
- 	},
- 	{
-+		.id_table = port_uint_id_table,
-+		.ops = &port_uint_ops,
-+	},
-+	{
- 		.ops = NULL,
- 	}
- };
-diff --git a/include/uapi/linux/fpga-dfl.h b/include/uapi/linux/fpga-dfl.h
-index 206bad9..5f885a8 100644
---- a/include/uapi/linux/fpga-dfl.h
-+++ b/include/uapi/linux/fpga-dfl.h
-@@ -180,6 +180,29 @@ struct dfl_fpga_irq_set {
- 					     DFL_PORT_BASE + 6,	\
- 					     struct dfl_fpga_irq_set)
+ config BATTERY_RX51
+ 	tristate "Nokia RX-51 (N900) battery driver"
+@@ -609,15 +609,15 @@ config CHARGER_TPS65090
+ 	tristate "TPS65090 battery charger driver"
+ 	depends on MFD_TPS65090
+ 	help
+-	 Say Y here to enable support for battery charging with TPS65090
+-	 PMIC chips.
++	  Say Y here to enable support for battery charging with TPS65090
++	  PMIC chips.
  
-+/**
-+ * DFL_FPGA_PORT_UINT_GET_IRQ_NUM - _IOR(DFL_FPGA_MAGIC, DFL_PORT_BASE + 7,
-+ *								__u32 num_irqs)
-+ *
-+ * Get the number of irqs supported by the fpga AFU user interrupt private
-+ * feature.
-+ * Return: 0 on success, -errno on failure.
-+ */
-+#define DFL_FPGA_PORT_UINT_GET_IRQ_NUM	_IOR(DFL_FPGA_MAGIC,	\
-+					     DFL_PORT_BASE + 7, __u32)
-+
-+/**
-+ * DFL_FPGA_PORT_UINT_SET_IRQ - _IOW(DFL_FPGA_MAGIC, DFL_PORT_BASE + 8,
-+ *						struct dfl_fpga_irq_set)
-+ *
-+ * Set fpga afu user interrupt trigger if evtfds[n] is valid.
-+ * Unset related interrupt trigger if evtfds[n] is a negative value.
-+ * Return: 0 on success, -errno on failure.
-+ */
-+#define DFL_FPGA_PORT_UINT_SET_IRQ	_IOW(DFL_FPGA_MAGIC,	\
-+					     DFL_PORT_BASE + 8,	\
-+					     struct dfl_fpga_irq_set)
-+
- /* IOCTLs for FME file descriptor */
+ config CHARGER_TPS65217
+ 	tristate "TPS65217 battery charger driver"
+ 	depends on MFD_TPS65217
+ 	help
+-	 Say Y here to enable support for battery charging with TPS65217
+-	 PMIC chips.
++	  Say Y here to enable support for battery charging with TPS65217
++	  PMIC chips.
  
- /**
+ config BATTERY_GAUGE_LTC2941
+ 	tristate "LTC2941/LTC2943 Battery Gauge Driver"
+@@ -671,16 +671,16 @@ config CHARGER_SC2731
+ 	tristate "Spreadtrum SC2731 charger driver"
+ 	depends on MFD_SC27XX_PMIC || COMPILE_TEST
+ 	help
+-	 Say Y here to enable support for battery charging with SC2731
+-	 PMIC chips.
++	  Say Y here to enable support for battery charging with SC2731
++	  PMIC chips.
+ 
+ config FUEL_GAUGE_SC27XX
+ 	tristate "Spreadtrum SC27XX fuel gauge driver"
+ 	depends on MFD_SC27XX_PMIC || COMPILE_TEST
+ 	depends on IIO
+ 	help
+-	 Say Y here to enable support for fuel gauge with SC27XX
+-	 PMIC chips.
++	  Say Y here to enable support for fuel gauge with SC27XX
++	  PMIC chips.
+ 
+ config CHARGER_UCS1002
+ 	tristate "Microchip UCS1002 USB Port Power Controller"
+@@ -698,9 +698,9 @@ config CHARGER_BD70528
+ 	select LINEAR_RANGES
+ 	default n
+ 	help
+-	 Say Y here to enable support for getting battery status
+-	 information and altering charger configurations from charger
+-	 block of the ROHM BD70528 Power Management IC.
++	  Say Y here to enable support for getting battery status
++	  information and altering charger configurations from charger
++	  block of the ROHM BD70528 Power Management IC.
+ 
+ config CHARGER_BD99954
+ 	tristate "ROHM bd99954 charger driver"
 -- 
-2.7.4
+2.21.0
 
+
+-- 
+Matti Vaittinen, Linux device drivers
+ROHM Semiconductors, Finland SWDC
+Kiviharjunlenkki 1E
+90220 OULU
+FINLAND
+
+~~~ "I don't think so," said Rene Descartes. Just then he vanished ~~~
+Simon says - in Latin please.
+~~~ "non cogito me" dixit Rene Descarte, deinde evanescavit ~~~
+Thanks to Simon Glass for the translation =] 
