@@ -2,86 +2,134 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9C192190F91
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 14:29:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7BDAE190E62
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 14:11:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728983AbgCXNU7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 09:20:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42518 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728216AbgCXNU5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 09:20:57 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1727270AbgCXNLm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 09:11:42 -0400
+Received: from us-smtp-delivery-74.mimecast.com ([63.128.21.74]:35493 "EHLO
+        us-smtp-delivery-74.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726915AbgCXNLm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Mar 2020 09:11:42 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1585055501;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=cd6KV/emetvr0s6RZCThEP3Rmoq7QiPbyQdz5ZsuYJo=;
+        b=Mz3AaVGyLr2vyI1pSkVCHL/mz2qblEpDtsAosS0MHzDw0fGWxwwTbbdw7M3ZT6WvPb/wPD
+        8R/ce1e4Wicb4bcQRzFla3FMAk6CoT6lkPs5HyErqYETxx5N3yxcbFIMmwnyefYF90ykvq
+        e79PwC/JWJNujoD8kyWoLk3TCo1h6GY=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-154-K2fQwpdFM1ycnE_NYyjqzQ-1; Tue, 24 Mar 2020 09:11:37 -0400
+X-MC-Unique: K2fQwpdFM1ycnE_NYyjqzQ-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4AC9A206F6;
-        Tue, 24 Mar 2020 13:20:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585056056;
-        bh=Z5FxSyPJC7kfqSb+SR+NLLQKQ4hXFbtl1+58+r7ITPg=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FMylzH208cAeeI0yLKTeukgN5u7lphjYYQHMuOVvH7bcp6t8h8fo70CMOqCGd1+lF
-         M+MqJ22e7UinKrq9OTaIsLscEfy1mIErq5Fh9j7M5CD9IV+AShmti0nNHSw88u/ZqX
-         AaxWgjIoJA4pwYqxn3vvkyZkmk5lqXU4OBTfVyD4=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Filipe Manana <fdmanana@suse.com>,
-        David Sterba <dsterba@suse.com>
-Subject: [PATCH 5.4 080/102] btrfs: fix log context list corruption after rename whiteout error
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 0ADEB801E67;
+        Tue, 24 Mar 2020 13:11:34 +0000 (UTC)
+Received: from krava (unknown [10.40.192.119])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 859B290CF1;
+        Tue, 24 Mar 2020 13:11:21 +0000 (UTC)
 Date:   Tue, 24 Mar 2020 14:11:12 +0100
-Message-Id: <20200324130814.650267244@linuxfoundation.org>
-X-Mailer: git-send-email 2.25.2
-In-Reply-To: <20200324130806.544601211@linuxfoundation.org>
-References: <20200324130806.544601211@linuxfoundation.org>
-User-Agent: quilt/0.66
+From:   Jiri Olsa <jolsa@redhat.com>
+To:     Kajol Jain <kjain@linux.ibm.com>
+Cc:     acme@kernel.org, linuxppc-dev@lists.ozlabs.org, mpe@ellerman.id.au,
+        sukadev@linux.vnet.ibm.com, linux-kernel@vger.kernel.org,
+        linux-perf-users@vger.kernel.org, anju@linux.vnet.ibm.com,
+        maddy@linux.vnet.ibm.com, ravi.bangoria@linux.ibm.com,
+        peterz@infradead.org, yao.jin@linux.intel.com, ak@linux.intel.com,
+        jolsa@kernel.org, kan.liang@linux.intel.com, jmario@redhat.com,
+        alexander.shishkin@linux.intel.com, mingo@kernel.org,
+        paulus@ozlabs.org, namhyung@kernel.org, mpetlan@redhat.com,
+        gregkh@linuxfoundation.org, benh@kernel.crashing.org,
+        mamatha4@linux.vnet.ibm.com, mark.rutland@arm.com,
+        tglx@linutronix.de
+Subject: Re: [PATCH v6 09/11] perf/tools: Enhance JSON/metric infrastructure
+ to handle "?"
+Message-ID: <20200324131112.GU1534489@krava>
+References: <20200320125406.30995-1-kjain@linux.ibm.com>
+ <20200320125406.30995-10-kjain@linux.ibm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200320125406.30995-10-kjain@linux.ibm.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Filipe Manana <fdmanana@suse.com>
+On Fri, Mar 20, 2020 at 06:24:04PM +0530, Kajol Jain wrote:
 
-commit 236ebc20d9afc5e9ff52f3cf3f365a91583aac10 upstream.
+SNIP
 
-During a rename whiteout, if btrfs_whiteout_for_rename() returns an error
-we can end up returning from btrfs_rename() with the log context object
-still in the root's log context list - this happens if 'sync_log' was
-set to true before we called btrfs_whiteout_for_rename() and it is
-dangerous because we end up with a corrupt linked list (root->log_ctxs)
-as the log context object was allocated on the stack.
+> diff --git a/tools/perf/util/metricgroup.c b/tools/perf/util/metricgroup.c
+> index 52fb119d25c8..b4b91d8ad5be 100644
+> --- a/tools/perf/util/metricgroup.c
+> +++ b/tools/perf/util/metricgroup.c
+> @@ -474,8 +474,13 @@ static bool metricgroup__has_constraint(struct pmu_event *pe)
+>  	return false;
+>  }
+>  
+> +int __weak arch_get_runtimeparam(void)
+> +{
+> +	return 1;
+> +}
+> +
+>  static int metricgroup__add_metric_param(struct strbuf *events,
+> -			struct list_head *group_list, struct pmu_event *pe)
+> +		struct list_head *group_list, struct pmu_event *pe, int param)
+>  {
+>  
+>  	const char **ids;
+> @@ -483,7 +488,7 @@ static int metricgroup__add_metric_param(struct strbuf *events,
 
-After btrfs_rename() returns, any task that is running btrfs_sync_log()
-concurrently can end up crashing because that linked list is traversed by
-btrfs_sync_log() (through btrfs_remove_all_log_ctxs()). That results in
-the same issue that commit e6c617102c7e4 ("Btrfs: fix log context list
-corruption after rename exchange operation") fixed.
+could you please call this function __metricgroup__add_metric instead?
 
-Fixes: d4682ba03ef618 ("Btrfs: sync log after logging new name")
-CC: stable@vger.kernel.org # 4.19+
-Signed-off-by: Filipe Manana <fdmanana@suse.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+>  	struct egroup *eg;
+>  	int ret = -EINVAL;
+>  
+> -	if (expr__find_other(pe->metric_expr, NULL, &ids, &idnum) < 0)
+> +	if (expr__find_other(pe->metric_expr, NULL, &ids, &idnum, param) < 0)
+>  		return ret;
+>  
+>  	if (events->len > 0)
+> @@ -502,11 +507,21 @@ static int metricgroup__add_metric_param(struct strbuf *events,
+>  
+>  	eg->ids = ids;
+>  	eg->idnum = idnum;
+> -	eg->metric_name = pe->metric_name;
+> +	if (strstr(pe->metric_expr, "?")) {
+> +		char value[PATH_MAX];
+> +
+> +		sprintf(value, "%s%c%d", pe->metric_name, '_', param);
+> +		eg->metric_name = strdup(value);
 
----
- fs/btrfs/inode.c |    4 ++++
- 1 file changed, 4 insertions(+)
+how is eg->metric_name getting released?
 
---- a/fs/btrfs/inode.c
-+++ b/fs/btrfs/inode.c
-@@ -10142,6 +10142,10 @@ out_fail:
- 		ret = btrfs_sync_log(trans, BTRFS_I(old_inode)->root, &ctx);
- 		if (ret)
- 			commit_transaction = true;
-+	} else if (sync_log) {
-+		mutex_lock(&root->log_mutex);
-+		list_del(&ctx.list);
-+		mutex_unlock(&root->log_mutex);
- 	}
- 	if (commit_transaction) {
- 		ret = btrfs_commit_transaction(trans);
+> +		if (!eg->metric_name) {
+> +			ret = -ENOMEM;
+> +			return ret;
 
+		return -ENOMEM; ??
+
+> +		}
+> +	}
+> +	else
+> +		eg->metric_name = pe->metric_name;
+>  	eg->metric_expr = pe->metric_expr;
+>  	eg->metric_unit = pe->unit;
+>  	list_add_tail(&eg->nd, group_list);
+> -
+>  	return 0;
+>  }
+>  
+
+SNIP
+
+thanks,
+jirka
 
