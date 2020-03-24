@@ -2,36 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8C6E2190FAC
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 14:29:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 76AF9190FB0
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 14:29:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729126AbgCXNWH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 09:22:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44228 "EHLO mail.kernel.org"
+        id S1729149AbgCXNWN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 09:22:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44372 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727341AbgCXNWE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 09:22:04 -0400
+        id S1729131AbgCXNWJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Mar 2020 09:22:09 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A6405208CA;
-        Tue, 24 Mar 2020 13:22:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9397A206F6;
+        Tue, 24 Mar 2020 13:22:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585056124;
-        bh=sbcOsYXnhpXmaQx4myG3ua1PjG2xin3piGkzhpcyMI8=;
+        s=default; t=1585056129;
+        bh=bsVMTFks6CJCc2U67i947WHYTc+3oSIbcH7Igvdr4us=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=un71z1DK/fJVsNgydZFRtzrTwn7RMUeKZSeHbgbbHvliUTHACNueWn3jePYo5truY
-         1obSAr5B5sO+0EyGx2rox0GAxKawFZO4cgNTUR2zMmFMpSYnwi0ifnMvLi7xhXdt2q
-         Z+HjMYmzWrE+PPyokJsk9YpE/RI3SzN+Wcou+tJE=
+        b=kIapsORghSOHhxRGWcoHiAtbqE53NIcblY1AgryimtAfmJhJQ/9zBM2kFY7J9wQZs
+         X+i0VXr99UcudD1bbnwY185/S/YaJMMxR44IO2Hxq6ZorcnhrV5fRGQuRFuAmQITYo
+         Cccdk8W761Pp6gx4eOxs3Y8WhJNPyQs5hCzurQac=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Aaro Koskinen <aaro.koskinen@nokia.com>,
-        Mark Brown <broonie@kernel.org>,
+        stable@vger.kernel.org, Damien Le Moal <damien.lemoal@wdc.com>,
+        Anup Patel <anup@brainfault.org>,
+        Palmer Dabbelt <palmerdabbelt@google.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.5 029/119] spi: spi_register_controller(): free bus id on error paths
-Date:   Tue, 24 Mar 2020 14:10:14 +0100
-Message-Id: <20200324130811.287685284@linuxfoundation.org>
+Subject: [PATCH 5.5 030/119] riscv: Force flat memory model with no-mmu
+Date:   Tue, 24 Mar 2020 14:10:15 +0100
+Message-Id: <20200324130811.391353825@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.2
 In-Reply-To: <20200324130808.041360967@linuxfoundation.org>
 References: <20200324130808.041360967@linuxfoundation.org>
@@ -44,95 +45,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Aaro Koskinen <aaro.koskinen@nokia.com>
+From: Damien Le Moal <damien.lemoal@wdc.com>
 
-[ Upstream commit f9981d4f50b475d7dbb70f3022b87a3c8bba9fd6 ]
+[ Upstream commit aa2734202acc506d09c8e641db4da161f902df27 ]
 
-Some error paths leave the bus id allocated. As a result the IDR
-allocation will fail after a deferred probe. Fix by freeing the bus id
-always on error.
+Compilation errors trigger if ARCH_SPARSEMEM_ENABLE is enabled for
+a nommu kernel. Since the sparsemem model does not make sense anyway
+for the nommu case, do not allow selecting this option to always use
+the flatmem model.
 
-Signed-off-by: Aaro Koskinen <aaro.koskinen@nokia.com>
-Message-Id: <20200304111740.27915-1-aaro.koskinen@nokia.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Damien Le Moal <damien.lemoal@wdc.com>
+Reviewed-by: Anup Patel <anup@brainfault.org>
+Reviewed-by: Palmer Dabbelt <palmerdabbelt@google.com>
+Signed-off-by: Palmer Dabbelt <palmerdabbelt@google.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/spi/spi.c | 32 +++++++++++++++-----------------
- 1 file changed, 15 insertions(+), 17 deletions(-)
+ arch/riscv/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/spi/spi.c b/drivers/spi/spi.c
-index 8994545367a2d..0e70af2677fee 100644
---- a/drivers/spi/spi.c
-+++ b/drivers/spi/spi.c
-@@ -2615,7 +2615,7 @@ int spi_register_controller(struct spi_controller *ctlr)
- 		if (ctlr->use_gpio_descriptors) {
- 			status = spi_get_gpio_descs(ctlr);
- 			if (status)
--				return status;
-+				goto free_bus_id;
- 			/*
- 			 * A controller using GPIO descriptors always
- 			 * supports SPI_CS_HIGH if need be.
-@@ -2625,7 +2625,7 @@ int spi_register_controller(struct spi_controller *ctlr)
- 			/* Legacy code path for GPIOs from DT */
- 			status = of_spi_get_gpio_numbers(ctlr);
- 			if (status)
--				return status;
-+				goto free_bus_id;
- 		}
- 	}
+diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
+index fa7dc03459e7f..1be11c23fa335 100644
+--- a/arch/riscv/Kconfig
++++ b/arch/riscv/Kconfig
+@@ -121,6 +121,7 @@ config ARCH_FLATMEM_ENABLE
  
-@@ -2633,17 +2633,14 @@ int spi_register_controller(struct spi_controller *ctlr)
- 	 * Even if it's just one always-selected device, there must
- 	 * be at least one chipselect.
- 	 */
--	if (!ctlr->num_chipselect)
--		return -EINVAL;
-+	if (!ctlr->num_chipselect) {
-+		status = -EINVAL;
-+		goto free_bus_id;
-+	}
+ config ARCH_SPARSEMEM_ENABLE
+ 	def_bool y
++	depends on MMU
+ 	select SPARSEMEM_VMEMMAP_ENABLE
  
- 	status = device_add(&ctlr->dev);
--	if (status < 0) {
--		/* free bus id */
--		mutex_lock(&board_lock);
--		idr_remove(&spi_master_idr, ctlr->bus_num);
--		mutex_unlock(&board_lock);
--		goto done;
--	}
-+	if (status < 0)
-+		goto free_bus_id;
- 	dev_dbg(dev, "registered %s %s\n",
- 			spi_controller_is_slave(ctlr) ? "slave" : "master",
- 			dev_name(&ctlr->dev));
-@@ -2659,11 +2656,7 @@ int spi_register_controller(struct spi_controller *ctlr)
- 		status = spi_controller_initialize_queue(ctlr);
- 		if (status) {
- 			device_del(&ctlr->dev);
--			/* free bus id */
--			mutex_lock(&board_lock);
--			idr_remove(&spi_master_idr, ctlr->bus_num);
--			mutex_unlock(&board_lock);
--			goto done;
-+			goto free_bus_id;
- 		}
- 	}
- 	/* add statistics */
-@@ -2678,7 +2671,12 @@ int spi_register_controller(struct spi_controller *ctlr)
- 	/* Register devices from the device tree and ACPI */
- 	of_register_spi_devices(ctlr);
- 	acpi_register_spi_devices(ctlr);
--done:
-+	return status;
-+
-+free_bus_id:
-+	mutex_lock(&board_lock);
-+	idr_remove(&spi_master_idr, ctlr->bus_num);
-+	mutex_unlock(&board_lock);
- 	return status;
- }
- EXPORT_SYMBOL_GPL(spi_register_controller);
+ config ARCH_SELECT_MEMORY_MODEL
 -- 
 2.20.1
 
