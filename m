@@ -2,89 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5D83819043B
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 05:15:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 38DAF190460
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 05:18:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726124AbgCXEP3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 00:15:29 -0400
-Received: from us-smtp-delivery-74.mimecast.com ([63.128.21.74]:40773 "EHLO
-        us-smtp-delivery-74.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725867AbgCXEP3 (ORCPT
+        id S1727443AbgCXERH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 00:17:07 -0400
+Received: from shards.monkeyblade.net ([23.128.96.9]:56058 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726162AbgCXERF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 00:15:29 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1585023328;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type;
-        bh=n4RxvffG/7IgthqLXT54eLe3yEn0o9kSt/husDShtPU=;
-        b=NyOhGHxvFwP/nXALD6JAHjAQTshzYRmrZyZqgOHFjjj/9zSbUqSC9twjUB77xDIaPrjG9Z
-        W/eWsRkjS0WDRuGrC/2jR/5NC2eCVyfckCJcMTgX/53rEHbDzzEMsu/Ri4DAcgIpJMgzil
-        DCmNumqKbnbZ9jY4SQfFCe4cBlBDep8=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-288-V0B4BEPsNgCU0Ga8yp8c_Q-1; Tue, 24 Mar 2020 00:15:23 -0400
-X-MC-Unique: V0B4BEPsNgCU0Ga8yp8c_Q-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 7A1C813F5;
-        Tue, 24 Mar 2020 04:15:22 +0000 (UTC)
-Received: from asgard.redhat.com (unknown [10.36.110.53])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 3C9135C1B5;
-        Tue, 24 Mar 2020 04:15:20 +0000 (UTC)
-Date:   Tue, 24 Mar 2020 05:15:26 +0100
-From:   Eugene Syromiatnikov <esyr@redhat.com>
-To:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Cc:     Daniel Lezcano <daniel.lezcano@linaro.org>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        "Dmitry V. Levin" <ldv@altlinux.org>
-Subject: [PATCH] drivers: firmware: psci: avoid BIT() macro usage in
- PSCI_1_0_OS_INITIATED
-Message-ID: <20200324041526.GA1978@asgard.redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.23 (2014-03-12)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+        Tue, 24 Mar 2020 00:17:05 -0400
+Received: from localhost (unknown [IPv6:2601:601:9f00:477::3d5])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id CCD25157141E6;
+        Mon, 23 Mar 2020 21:17:04 -0700 (PDT)
+Date:   Mon, 23 Mar 2020 21:17:03 -0700 (PDT)
+Message-Id: <20200323.211703.1079926018361499605.davem@davemloft.net>
+To:     grygorii.strashko@ti.com
+Cc:     richardcochran@gmail.com, lokeshvutla@ti.com, tony@atomide.com,
+        nsekhar@ti.com, m-karicheri2@ti.com, netdev@vger.kernel.org,
+        linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next v3 00/11] net: ethernet: ti: cpts: add irq and
+ HW_TS_PUSH events
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <20200320194244.4703-1-grygorii.strashko@ti.com>
+References: <20200320194244.4703-1-grygorii.strashko@ti.com>
+X-Mailer: Mew version 6.8 on Emacs 26.1
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Mon, 23 Mar 2020 21:17:05 -0700 (PDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The BIT() macro is not available in UAPI headers, so let's replace
-it with similarly defined _BITUL() macro provided by <linux/const.h>.
+From: Grygorii Strashko <grygorii.strashko@ti.com>
+Date: Fri, 20 Mar 2020 21:42:33 +0200
 
-Fixes: 60dd1ead65e8 ("drivers: firmware: psci: Announce support for OS initiated suspend mode")
-Signed-off-by: Eugene Syromiatnikov <esyr@redhat.com>
----
- include/uapi/linux/psci.h | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+> Dependency:
+>  ff7cf1822b93 kthread: mark timer used by delayed kthread works as IRQ safe
+>  which was merged in -next, but has to be back-ported for testing with earlier
+>  versions
 
-diff --git a/include/uapi/linux/psci.h b/include/uapi/linux/psci.h
-index 2fcad1d..87afdeb 100644
---- a/include/uapi/linux/psci.h
-+++ b/include/uapi/linux/psci.h
-@@ -12,6 +12,8 @@
- #ifndef _UAPI_LINUX_PSCI_H
- #define _UAPI_LINUX_PSCI_H
- 
-+#include <linux/const.h>
-+
- /*
-  * PSCI v0.1 interface
-  *
-@@ -100,7 +102,7 @@
- #define PSCI_1_0_FEATURES_CPU_SUSPEND_PF_MASK	\
- 			(0x1 << PSCI_1_0_FEATURES_CPU_SUSPEND_PF_SHIFT)
- 
--#define PSCI_1_0_OS_INITIATED			BIT(0)
-+#define PSCI_1_0_OS_INITIATED			_BITUL(0)
- #define PSCI_1_0_SUSPEND_MODE_PC		0
- #define PSCI_1_0_SUSPEND_MODE_OSI		1
- 
--- 
-2.1.4
-
+I don't see this commit in my net-next tree so I cannot merge this.
