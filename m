@@ -2,34 +2,33 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 17DF719096F
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 10:21:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 414F3190968
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 10:21:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727855AbgCXJUd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 05:20:33 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:43882 "EHLO
+        id S1727975AbgCXJUK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 05:20:10 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:43913 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727285AbgCXJQd (ORCPT
+        with ESMTP id S1727416AbgCXJQi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 05:16:33 -0400
+        Tue, 24 Mar 2020 05:16:38 -0400
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1jGffh-0007vo-Pl; Tue, 24 Mar 2020 10:16:29 +0100
+        id 1jGffo-0007wb-Gt; Tue, 24 Mar 2020 10:16:36 +0100
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 6C8831C0470;
-        Tue, 24 Mar 2020 10:16:29 +0100 (CET)
-Date:   Tue, 24 Mar 2020 09:16:29 -0000
-From:   "tip-bot2 for SeongJae Park" <tip-bot2@linutronix.de>
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 2801C1C0470;
+        Tue, 24 Mar 2020 10:16:31 +0100 (CET)
+Date:   Tue, 24 Mar 2020 09:16:30 -0000
+From:   "tip-bot2 for Paul E. McKenney" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: core/rcu] doc/RCU/listRCU: Fix typos in a example code snippets
-Cc:     SeongJae Park <sjpark@amazon.de>,
-        "Paul E. McKenney" <paulmck@kernel.org>, x86 <x86@kernel.org>,
+Subject: [tip: core/rcu] rcutorture: Manually clean up after rcu_barrier() failure
+Cc:     "Paul E. McKenney" <paulmck@kernel.org>, x86 <x86@kernel.org>,
         LKML <linux-kernel@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <158504138911.28353.7021878257400945600.tip-bot2@tip-bot2>
+Message-ID: <158504139074.28353.12661964318347740564.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -45,40 +44,57 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the core/rcu branch of tip:
 
-Commit-ID:     c50a871409dc664f2f89d11926d9a6b8ab7f5b07
-Gitweb:        https://git.kernel.org/tip/c50a871409dc664f2f89d11926d9a6b8ab7f5b07
-Author:        SeongJae Park <sjpark@amazon.de>
-AuthorDate:    Mon, 06 Jan 2020 21:07:57 +01:00
+Commit-ID:     9470a18fabd056e67ee12059dab04faf6e1f253c
+Gitweb:        https://git.kernel.org/tip/9470a18fabd056e67ee12059dab04faf6e1f253c
+Author:        Paul E. McKenney <paulmck@kernel.org>
+AuthorDate:    Wed, 05 Feb 2020 12:54:34 -08:00
 Committer:     Paul E. McKenney <paulmck@kernel.org>
-CommitterDate: Thu, 27 Feb 2020 07:03:13 -08:00
+CommitterDate: Thu, 20 Feb 2020 16:03:31 -08:00
 
-doc/RCU/listRCU: Fix typos in a example code snippets
+rcutorture: Manually clean up after rcu_barrier() failure
 
-Signed-off-by: SeongJae Park <sjpark@amazon.de>
+Currently, if rcu_barrier() returns too soon, the test waits 100ms and
+then does another instance of the test.  However, if rcu_barrier() were
+to have waited for more than 100ms too short a time, this could cause
+the test's rcu_head structures to be reused while they were still on
+RCU's callback lists.  This can result in knock-on errors that obscure
+the original rcu_barrier() test failure.
+
+This commit therefore adds code that attempts to wait until all of
+the test's callbacks have been invoked.  Of course, if RCU completely
+lost track of the corresponding rcu_head structures, this wait could be
+forever.  This commit therefore also complains if this attempted recovery
+takes more than one second, and it also gives up when the test ends.
+
 Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
 ---
- Documentation/RCU/listRCU.rst | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ kernel/rcu/rcutorture.c | 16 +++++++++++++++-
+ 1 file changed, 15 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/RCU/listRCU.rst b/Documentation/RCU/listRCU.rst
-index 55d2b30..e768f56 100644
---- a/Documentation/RCU/listRCU.rst
-+++ b/Documentation/RCU/listRCU.rst
-@@ -226,7 +226,7 @@ need to be filled in)::
- 		list_for_each_entry(e, list, list) {
- 			if (!audit_compare_rule(rule, &e->rule)) {
- 				e->rule.action = newaction;
--				e->rule.file_count = newfield_count;
-+				e->rule.field_count = newfield_count;
- 				write_unlock(&auditsc_lock);
- 				return 0;
- 			}
-@@ -255,7 +255,7 @@ RCU (*read-copy update*) its name.  The RCU code is as follows::
- 					return -ENOMEM;
- 				audit_copy_rule(&ne->rule, &e->rule);
- 				ne->rule.action = newaction;
--				ne->rule.file_count = newfield_count;
-+				ne->rule.field_count = newfield_count;
- 				list_replace_rcu(&e->list, &ne->list);
- 				call_rcu(&e->rcu, audit_free_rule);
- 				return 0;
+diff --git a/kernel/rcu/rcutorture.c b/kernel/rcu/rcutorture.c
+index f82515c..5453bd5 100644
+--- a/kernel/rcu/rcutorture.c
++++ b/kernel/rcu/rcutorture.c
+@@ -2124,7 +2124,21 @@ static int rcu_torture_barrier(void *arg)
+ 			pr_err("barrier_cbs_invoked = %d, n_barrier_cbs = %d\n",
+ 			       atomic_read(&barrier_cbs_invoked),
+ 			       n_barrier_cbs);
+-			WARN_ON_ONCE(1);
++			WARN_ON(1);
++			// Wait manually for the remaining callbacks
++			i = 0;
++			do {
++				if (WARN_ON(i++ > HZ))
++					i = INT_MIN;
++				schedule_timeout_interruptible(1);
++				cur_ops->cb_barrier();
++			} while (atomic_read(&barrier_cbs_invoked) !=
++				 n_barrier_cbs &&
++				 !torture_must_stop());
++			smp_mb(); // Can't trust ordering if broken.
++			if (!torture_must_stop())
++				pr_err("Recovered: barrier_cbs_invoked = %d\n",
++				       atomic_read(&barrier_cbs_invoked));
+ 		} else {
+ 			n_barrier_successes++;
+ 		}
