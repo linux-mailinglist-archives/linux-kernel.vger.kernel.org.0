@@ -2,21 +2,21 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 30743191AAB
+	by mail.lfdr.de (Postfix) with ESMTP id A1230191AAC
 	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 21:12:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728258AbgCXUMB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 16:12:01 -0400
-Received: from ste-pvt-msa2.bahnhof.se ([213.80.101.71]:14470 "EHLO
-        ste-pvt-msa2.bahnhof.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728216AbgCXUL7 (ORCPT
+        id S1728147AbgCXUME (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 16:12:04 -0400
+Received: from ste-pvt-msa1.bahnhof.se ([213.80.101.70]:41972 "EHLO
+        ste-pvt-msa1.bahnhof.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728225AbgCXUMB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 16:11:59 -0400
+        Tue, 24 Mar 2020 16:12:01 -0400
 Received: from localhost (localhost [127.0.0.1])
-        by ste-pvt-msa2.bahnhof.se (Postfix) with ESMTP id 71FB33FA05;
-        Tue, 24 Mar 2020 21:11:57 +0100 (CET)
-Authentication-Results: ste-pvt-msa2.bahnhof.se;
-        dkim=pass (1024-bit key; unprotected) header.d=shipmail.org header.i=@shipmail.org header.b=QwuNjPm0;
+        by ste-pvt-msa1.bahnhof.se (Postfix) with ESMTP id 739123F622;
+        Tue, 24 Mar 2020 21:11:59 +0100 (CET)
+Authentication-Results: ste-pvt-msa1.bahnhof.se;
+        dkim=pass (1024-bit key; unprotected) header.d=shipmail.org header.i=@shipmail.org header.b=Kl8o1BtF;
         dkim-atps=neutral
 X-Virus-Scanned: Debian amavisd-new at bahnhof.se
 X-Spam-Flag: NO
@@ -26,24 +26,22 @@ X-Spam-Status: No, score=-2.099 tagged_above=-999 required=6.31
         tests=[BAYES_00=-1.9, DKIM_SIGNED=0.1, DKIM_VALID=-0.1,
         DKIM_VALID_AU=-0.1, DKIM_VALID_EF=-0.1, URIBL_BLOCKED=0.001]
         autolearn=ham autolearn_force=no
-Authentication-Results: ste-ftg-msa2.bahnhof.se (amavisd-new);
-        dkim=pass (1024-bit key) header.d=shipmail.org
-Received: from ste-pvt-msa2.bahnhof.se ([127.0.0.1])
-        by localhost (ste-ftg-msa2.bahnhof.se [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id 3TYpGHG7Uuzt; Tue, 24 Mar 2020 21:11:56 +0100 (CET)
+Received: from ste-pvt-msa1.bahnhof.se ([127.0.0.1])
+        by localhost (ste-pvt-msa1.bahnhof.se [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id H1yL9sC9zG1m; Tue, 24 Mar 2020 21:11:58 +0100 (CET)
 Received: from mail1.shipmail.org (h-205-35.A357.priv.bahnhof.se [155.4.205.35])
         (Authenticated sender: mb878879)
-        by ste-pvt-msa2.bahnhof.se (Postfix) with ESMTPA id 7D34C3F5ED;
-        Tue, 24 Mar 2020 21:11:56 +0100 (CET)
+        by ste-pvt-msa1.bahnhof.se (Postfix) with ESMTPA id 50ADC3F2C1;
+        Tue, 24 Mar 2020 21:11:58 +0100 (CET)
 Received: from localhost.localdomain.localdomain (h-205-35.A357.priv.bahnhof.se [155.4.205.35])
-        by mail1.shipmail.org (Postfix) with ESMTPSA id E0F86360153;
-        Tue, 24 Mar 2020 21:11:53 +0100 (CET)
+        by mail1.shipmail.org (Postfix) with ESMTPSA id A42093602F7;
+        Tue, 24 Mar 2020 21:11:56 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=shipmail.org; s=mail;
-        t=1585080716; bh=jZNQfzsD6JXjZ9tLUdJsD9+S7bjBimMtbZtd2w2Jn3I=;
+        t=1585080718; bh=dge3pNJVvGiKNp3sQJQFaMfk+pmcdaLcKhPFLMuRR/s=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QwuNjPm0Q8kgfWJ0ZdiJVaU37AjFNrM6sgv4jK98doCygzJu3SmeFHwPiN3hIbuTk
-         cGrOh+AVKfT3qX5+huA/xkavUkjvaBfKMigsb1vc9emGkErqbEGewnVFIpPF7axd+M
-         CvWHrNBhlpxCoVKDOI3uJM+053E6O3B457AA5XtI=
+        b=Kl8o1BtFZy8oqt7W50ge8DqKF/0i+NxXwf3Gt+O1+JBQgqu5ii1uE59nwHIM1tYku
+         AqVqqRYQ7K1bZpASYeqwa9r7iy8wVt1YT0dMaO98pH0D6YIfg6d3ytCsGuWkdhts7l
+         CB0Ww5omotebFfKJM3ARhwymLYwOkZ1Y+Ql32tyY=
 From:   =?UTF-8?q?Thomas=20Hellstr=C3=B6m=20=28VMware=29?= 
         <thomas_os@shipmail.org>
 To:     linux-mm@kvack.org, dri-devel@lists.freedesktop.org,
@@ -59,9 +57,9 @@ Cc:     pv-drivers@vmware.com, linux-graphics-maintainer@vmware.com,
         =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
         Dan Williams <dan.j.williams@intel.com>,
         Roland Scheidegger <sroland@vmware.com>
-Subject: [PATCH v7 8/9] drm/vmwgfx: Introduce a huge page aligning TTM range manager
-Date:   Tue, 24 Mar 2020 21:11:22 +0100
-Message-Id: <20200324201123.3118-9-thomas_os@shipmail.org>
+Subject: [PATCH v7 9/9] drm/vmwgfx: Hook up the helpers to align buffer objects
+Date:   Tue, 24 Mar 2020 21:11:23 +0100
+Message-Id: <20200324201123.3118-10-thomas_os@shipmail.org>
 X-Mailer: git-send-email 2.21.1
 In-Reply-To: <20200324201123.3118-1-thomas_os@shipmail.org>
 References: <20200324201123.3118-1-thomas_os@shipmail.org>
@@ -75,14 +73,9 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: "Thomas Hellstrom (VMware)" <thomas_os@shipmail.org>
 
-Using huge page-table entries requires that the physical address of the
-start of a buffer object is huge page size aligned.
-Make a special version of the TTM range manager that accomplishes this,
-but falls back to a smaller page size alignment (PUD->PMD, PMD->NORMAL)
-to avoid eviction.
-If other drivers want to use it in the future, it can be made a
-TTM generic helper. Note that drivers can force eviction for a certain
-alignment by assigning the TTM GPU alignment correspondingly.
+Start using the helpers that align buffer object user-space addresses and
+buffer object vram addresses to huge page boundaries.
+This is to improve the chances of allowing huge page-table entries.
 
 Cc: Andrew Morton <akpm@linux-foundation.org>
 Cc: Michal Hocko <mhocko@suse.com>
@@ -96,212 +89,78 @@ Signed-off-by: Thomas Hellstrom (VMware) <thomas_os@shipmail.org>
 Reviewed-by: Roland Scheidegger <sroland@vmware.com>
 Acked-by: Christian König <christian.koenig@amd.com>
 ---
- drivers/gpu/drm/vmwgfx/Makefile     |   1 +
- drivers/gpu/drm/vmwgfx/vmwgfx_drv.h |   7 ++
- drivers/gpu/drm/vmwgfx/vmwgfx_thp.c | 166 ++++++++++++++++++++++++++++
- 3 files changed, 174 insertions(+)
- create mode 100644 drivers/gpu/drm/vmwgfx/vmwgfx_thp.c
+ drivers/gpu/drm/drm_file.c                 |  1 +
+ drivers/gpu/drm/vmwgfx/vmwgfx_drv.c        | 13 +++++++++++++
+ drivers/gpu/drm/vmwgfx/vmwgfx_drv.h        |  1 +
+ drivers/gpu/drm/vmwgfx/vmwgfx_ttm_buffer.c |  2 +-
+ 4 files changed, 16 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/vmwgfx/Makefile b/drivers/gpu/drm/vmwgfx/Makefile
-index c877a21a0739..421dd2a497a5 100644
---- a/drivers/gpu/drm/vmwgfx/Makefile
-+++ b/drivers/gpu/drm/vmwgfx/Makefile
-@@ -11,4 +11,5 @@ vmwgfx-y := vmwgfx_execbuf.o vmwgfx_gmr.o vmwgfx_kms.o vmwgfx_drv.o \
- 	    vmwgfx_validation.o vmwgfx_page_dirty.o \
- 	    ttm_object.o ttm_lock.o
+diff --git a/drivers/gpu/drm/drm_file.c b/drivers/gpu/drm/drm_file.c
+index d1fcb0c61622..eb009d3ab48f 100644
+--- a/drivers/gpu/drm/drm_file.c
++++ b/drivers/gpu/drm/drm_file.c
+@@ -1011,4 +1011,5 @@ unsigned long drm_get_unmapped_area(struct file *file,
+ 	return current->mm->get_unmapped_area(file, uaddr, len, pgoff, flags);
+ }
+ #endif /* CONFIG_TRANSPARENT_HUGEPAGE */
++EXPORT_SYMBOL_GPL(drm_get_unmapped_area);
+ #endif /* CONFIG_MMU */
+diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_drv.c b/drivers/gpu/drm/vmwgfx/vmwgfx_drv.c
+index 4f58364421ce..f0b7a891cbad 100644
+--- a/drivers/gpu/drm/vmwgfx/vmwgfx_drv.c
++++ b/drivers/gpu/drm/vmwgfx/vmwgfx_drv.c
+@@ -1230,6 +1230,18 @@ static void vmw_remove(struct pci_dev *pdev)
+ 	pci_disable_device(pdev);
+ }
  
-+vmwgfx-$(CONFIG_TRANSPARENT_HUGEPAGE) += vmwgfx_thp.o
- obj-$(CONFIG_DRM_VMWGFX) := vmwgfx.o
++static unsigned long
++vmw_get_unmapped_area(struct file *file, unsigned long uaddr,
++		      unsigned long len, unsigned long pgoff,
++		      unsigned long flags)
++{
++	struct drm_file *file_priv = file->private_data;
++	struct vmw_private *dev_priv = vmw_priv(file_priv->minor->dev);
++
++	return drm_get_unmapped_area(file, uaddr, len, pgoff, flags,
++				     &dev_priv->vma_manager);
++}
++
+ static int vmwgfx_pm_notifier(struct notifier_block *nb, unsigned long val,
+ 			      void *ptr)
+ {
+@@ -1401,6 +1413,7 @@ static const struct file_operations vmwgfx_driver_fops = {
+ 	.compat_ioctl = vmw_compat_ioctl,
+ #endif
+ 	.llseek = noop_llseek,
++	.get_unmapped_area = vmw_get_unmapped_area,
+ };
+ 
+ static struct drm_driver driver = {
 diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_drv.h b/drivers/gpu/drm/vmwgfx/vmwgfx_drv.h
-index 6fc8d5c171c6..d19d28c13671 100644
+index d19d28c13671..fc98622caf87 100644
 --- a/drivers/gpu/drm/vmwgfx/vmwgfx_drv.h
 +++ b/drivers/gpu/drm/vmwgfx/vmwgfx_drv.h
-@@ -1407,6 +1407,13 @@ vm_fault_t vmw_bo_vm_huge_fault(struct vm_fault *vmf,
- 				enum page_entry_size pe_size);
- #endif
+@@ -915,6 +915,7 @@ extern int vmw_mmap(struct file *filp, struct vm_area_struct *vma);
  
-+/* Transparent hugepage support - vmwgfx_thp.c */
-+#ifdef CONFIG_TRANSPARENT_HUGEPAGE
-+extern const struct ttm_mem_type_manager_func vmw_thp_func;
-+#else
-+#define vmw_thp_func ttm_bo_manager_func
-+#endif
+ extern void vmw_validation_mem_init_ttm(struct vmw_private *dev_priv,
+ 					size_t gran);
 +
  /**
-  * VMW_DEBUG_KMS - Debug output for kernel mode-setting
-  *
-diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_thp.c b/drivers/gpu/drm/vmwgfx/vmwgfx_thp.c
-new file mode 100644
-index 000000000000..b7c816ba7166
---- /dev/null
-+++ b/drivers/gpu/drm/vmwgfx/vmwgfx_thp.c
-@@ -0,0 +1,166 @@
-+// SPDX-License-Identifier: GPL-2.0 OR MIT
-+/*
-+ * Huge page-table-entry support for IO memory.
-+ *
-+ * Copyright (C) 2007-2019 Vmware, Inc. All rights reservedd.
-+ */
-+#include "vmwgfx_drv.h"
-+#include <drm/ttm/ttm_module.h>
-+#include <drm/ttm/ttm_bo_driver.h>
-+#include <drm/ttm/ttm_placement.h>
-+
-+/**
-+ * struct vmw_thp_manager - Range manager implementing huge page alignment
-+ *
-+ * @mm: The underlying range manager. Protected by @lock.
-+ * @lock: Manager lock.
-+ */
-+struct vmw_thp_manager {
-+	struct drm_mm mm;
-+	spinlock_t lock;
-+};
-+
-+static int vmw_thp_insert_aligned(struct drm_mm *mm, struct drm_mm_node *node,
-+				  unsigned long align_pages,
-+				  const struct ttm_place *place,
-+				  struct ttm_mem_reg *mem,
-+				  unsigned long lpfn,
-+				  enum drm_mm_insert_mode mode)
-+{
-+	if (align_pages >= mem->page_alignment &&
-+	    (!mem->page_alignment || align_pages % mem->page_alignment == 0)) {
-+		return drm_mm_insert_node_in_range(mm, node,
-+						   mem->num_pages,
-+						   align_pages, 0,
-+						   place->fpfn, lpfn, mode);
-+	}
-+
-+	return -ENOSPC;
-+}
-+
-+static int vmw_thp_get_node(struct ttm_mem_type_manager *man,
-+			    struct ttm_buffer_object *bo,
-+			    const struct ttm_place *place,
-+			    struct ttm_mem_reg *mem)
-+{
-+	struct vmw_thp_manager *rman = (struct vmw_thp_manager *) man->priv;
-+	struct drm_mm *mm = &rman->mm;
-+	struct drm_mm_node *node;
-+	unsigned long align_pages;
-+	unsigned long lpfn;
-+	enum drm_mm_insert_mode mode = DRM_MM_INSERT_BEST;
-+	int ret;
-+
-+	node = kzalloc(sizeof(*node), GFP_KERNEL);
-+	if (!node)
-+		return -ENOMEM;
-+
-+	lpfn = place->lpfn;
-+	if (!lpfn)
-+		lpfn = man->size;
-+
-+	mode = DRM_MM_INSERT_BEST;
-+	if (place->flags & TTM_PL_FLAG_TOPDOWN)
-+		mode = DRM_MM_INSERT_HIGH;
-+
-+	spin_lock(&rman->lock);
-+	if (IS_ENABLED(CONFIG_HAVE_ARCH_TRANSPARENT_HUGEPAGE_PUD)) {
-+		align_pages = (HPAGE_PUD_SIZE >> PAGE_SHIFT);
-+		if (mem->num_pages >= align_pages) {
-+			ret = vmw_thp_insert_aligned(mm, node, align_pages,
-+						     place, mem, lpfn, mode);
-+			if (!ret)
-+				goto found_unlock;
-+		}
-+	}
-+
-+	align_pages = (HPAGE_PMD_SIZE >> PAGE_SHIFT);
-+	if (mem->num_pages >= align_pages) {
-+		ret = vmw_thp_insert_aligned(mm, node, align_pages, place, mem,
-+					     lpfn, mode);
-+		if (!ret)
-+			goto found_unlock;
-+	}
-+
-+	ret = drm_mm_insert_node_in_range(mm, node, mem->num_pages,
-+					  mem->page_alignment, 0,
-+					  place->fpfn, lpfn, mode);
-+found_unlock:
-+	spin_unlock(&rman->lock);
-+
-+	if (unlikely(ret)) {
-+		kfree(node);
-+	} else {
-+		mem->mm_node = node;
-+		mem->start = node->start;
-+	}
-+
-+	return 0;
-+}
-+
-+
-+
-+static void vmw_thp_put_node(struct ttm_mem_type_manager *man,
-+			     struct ttm_mem_reg *mem)
-+{
-+	struct vmw_thp_manager *rman = (struct vmw_thp_manager *) man->priv;
-+
-+	if (mem->mm_node) {
-+		spin_lock(&rman->lock);
-+		drm_mm_remove_node(mem->mm_node);
-+		spin_unlock(&rman->lock);
-+
-+		kfree(mem->mm_node);
-+		mem->mm_node = NULL;
-+	}
-+}
-+
-+static int vmw_thp_init(struct ttm_mem_type_manager *man,
-+			unsigned long p_size)
-+{
-+	struct vmw_thp_manager *rman;
-+
-+	rman = kzalloc(sizeof(*rman), GFP_KERNEL);
-+	if (!rman)
-+		return -ENOMEM;
-+
-+	drm_mm_init(&rman->mm, 0, p_size);
-+	spin_lock_init(&rman->lock);
-+	man->priv = rman;
-+	return 0;
-+}
-+
-+static int vmw_thp_takedown(struct ttm_mem_type_manager *man)
-+{
-+	struct vmw_thp_manager *rman = (struct vmw_thp_manager *) man->priv;
-+	struct drm_mm *mm = &rman->mm;
-+
-+	spin_lock(&rman->lock);
-+	if (drm_mm_clean(mm)) {
-+		drm_mm_takedown(mm);
-+		spin_unlock(&rman->lock);
-+		kfree(rman);
-+		man->priv = NULL;
-+		return 0;
-+	}
-+	spin_unlock(&rman->lock);
-+	return -EBUSY;
-+}
-+
-+static void vmw_thp_debug(struct ttm_mem_type_manager *man,
-+			  struct drm_printer *printer)
-+{
-+	struct vmw_thp_manager *rman = (struct vmw_thp_manager *) man->priv;
-+
-+	spin_lock(&rman->lock);
-+	drm_mm_print(&rman->mm, printer);
-+	spin_unlock(&rman->lock);
-+}
-+
-+const struct ttm_mem_type_manager_func vmw_thp_func = {
-+	.init = vmw_thp_init,
-+	.takedown = vmw_thp_takedown,
-+	.get_node = vmw_thp_get_node,
-+	.put_node = vmw_thp_put_node,
-+	.debug = vmw_thp_debug
-+};
+  * TTM buffer object driver - vmwgfx_ttm_buffer.c
+  */
+diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_ttm_buffer.c b/drivers/gpu/drm/vmwgfx/vmwgfx_ttm_buffer.c
+index 3f3b2c7a208a..bf0bc4697959 100644
+--- a/drivers/gpu/drm/vmwgfx/vmwgfx_ttm_buffer.c
++++ b/drivers/gpu/drm/vmwgfx/vmwgfx_ttm_buffer.c
+@@ -749,7 +749,7 @@ static int vmw_init_mem_type(struct ttm_bo_device *bdev, uint32_t type,
+ 		break;
+ 	case TTM_PL_VRAM:
+ 		/* "On-card" video ram */
+-		man->func = &ttm_bo_manager_func;
++		man->func = &vmw_thp_func;
+ 		man->gpu_offset = 0;
+ 		man->flags = TTM_MEMTYPE_FLAG_FIXED | TTM_MEMTYPE_FLAG_MAPPABLE;
+ 		man->available_caching = TTM_PL_FLAG_CACHED;
 -- 
 2.21.1
 
