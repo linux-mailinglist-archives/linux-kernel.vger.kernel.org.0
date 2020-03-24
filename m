@@ -2,113 +2,188 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8055F1912ED
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 15:24:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 410AA1912F6
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 15:25:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728279AbgCXOYF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 10:24:05 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:45078 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728026AbgCXOYD (ORCPT
+        id S1728331AbgCXOYK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 10:24:10 -0400
+Received: from relay9-d.mail.gandi.net ([217.70.183.199]:60135 "EHLO
+        relay9-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727681AbgCXOYJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 10:24:03 -0400
-Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tip-bot2@linutronix.de>)
-        id 1jGkTF-0006zS-7c; Tue, 24 Mar 2020 15:23:57 +0100
-Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id C82EE1C0451;
-        Tue, 24 Mar 2020 15:23:56 +0100 (CET)
-Date:   Tue, 24 Mar 2020 14:23:56 -0000
-From:   "tip-bot2 for Alexey Makhalov" <tip-bot2@linutronix.de>
-Reply-to: linux-kernel@vger.kernel.org
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/vmware] x86/vmware: Remove vmware_sched_clock_setup()
-Cc:     Alexey Makhalov <amakhalov@vmware.com>,
-        Borislav Petkov <bp@suse.de>,
-        Thomas Hellstrom <thellstrom@vmware.com>,
-        Thomas Gleixner <tglx@linutronix.de>, x86 <x86@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-In-Reply-To: <20200323195707.31242-3-amakhalov@vmware.com>
-References: <20200323195707.31242-3-amakhalov@vmware.com>
+        Tue, 24 Mar 2020 10:24:09 -0400
+X-Originating-IP: 83.155.44.161
+Received: from classic (mon69-7-83-155-44-161.fbx.proxad.net [83.155.44.161])
+        (Authenticated sender: hadess@hadess.net)
+        by relay9-d.mail.gandi.net (Postfix) with ESMTPSA id EBFE9FF814;
+        Tue, 24 Mar 2020 14:24:03 +0000 (UTC)
+Message-ID: <8d28db34b3075c524c7e5fec49c3f2e252d24552.camel@hadess.net>
+Subject: Re: [PATCH v2] HID: logitech-dj: issue udev change event on device
+ connection
+From:   Bastien Nocera <hadess@hadess.net>
+To:     Filipe =?ISO-8859-1?Q?La=EDns?= <lains@archlinux.org>,
+        Jiri Kosina <jikos@kernel.org>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Peter Hutterer <peter.hutterer@redhat.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Mario Limonciello <superm1@gmail.com>,
+        Richard Hughes <hughsient@gmail.com>
+Date:   Tue, 24 Mar 2020 15:24:02 +0100
+In-Reply-To: <3c20624ea9d88f13d6f1a768735f08a4a8a59ea6.camel@archlinux.org>
+References: <20200318161906.3340959-1-lains@archlinux.org>
+         <20200318192721.390630-1-lains@archlinux.org>
+         <92f48f409e913299c12322d195c88792bb4e5c9c.camel@hadess.net>
+         <b9a26e3bb00212afd960f98dba8f7bb58cdd49e5.camel@archlinux.org>
+         <220e8421f8ee0cf80375bfc4635e3eaa2bb8daf1.camel@hadess.net>
+         <3c20624ea9d88f13d6f1a768735f08a4a8a59ea6.camel@archlinux.org>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.36.0 (3.36.0-1.fc32) 
 MIME-Version: 1.0
-Message-ID: <158505983648.28353.2870003990478698787.tip-bot2@tip-bot2>
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot2.linutronix.de>
-Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following commit has been merged into the x86/vmware branch of tip:
+On Tue, 2020-03-24 at 14:10 +0000, Filipe Laíns wrote:
+> On Tue, 2020-03-24 at 15:03 +0100, Bastien Nocera wrote:
+> > On Tue, 2020-03-24 at 13:46 +0000, Filipe Laíns wrote:
+> > > On Tue, 2020-03-24 at 11:20 +0100, Bastien Nocera wrote:
+> > > > On Wed, 2020-03-18 at 19:27 +0000, Filipe Laíns wrote:
+> > > > > As discussed in the mailing list:
+> > > > > 
+> > > > > > Right now the hid-logitech-dj driver will export one node
+> > > > > > for
+> > > > > > each
+> > > > > > connected device, even when the device is not connected.
+> > > > > > That
+> > > > > > causes
+> > > > > > some trouble because in userspace we don't have have any
+> > > > > > way to
+> > > > > > know if
+> > > > > > the device is connected or not, so when we try to
+> > > > > > communicate,
+> > > > > > if
+> > > > > > the
+> > > > > > device is disconnected it will fail.
+> > > > 
+> > > > Why is it a problem that user-space communication fails? Note
+> > > > that
+> > > > sending a signal without any way to fetch the state means that
+> > > > it's
+> > > > always going to be racy.
+> > > 
+> > > It failing is not the problem. The problem is knowing when the
+> > > device
+> > > is available again. Right now the only way to do that is to
+> > > listen
+> > > for
+> > > events or periodically ping it.
+> > > 
+> > > We want to only export the HID++ hidraw node when the device is
+> > > available but that will take a while. We will have to test and
+> > > sync
+> > > up
+> > > userspace. I also want to write tests for the driver before, to
+> > > make
+> > > sure there are no regressions. We had a thread discussing this,
+> > > IIRC
+> > > you were in CC.
+> > 
+> > If I need to remember some old thread to know what we're talking
+> > about,
+> > then that means that the commit message is probably not good
+> > enough...
+> 
+> Should I put in the commit message what is planned next?
 
-Commit-ID:     dd735f4707e603ac5b541b5f30de87c3c7bd60dd
-Gitweb:        https://git.kernel.org/tip/dd735f4707e603ac5b541b5f30de87c3c7bd60dd
-Author:        Alexey Makhalov <amakhalov@vmware.com>
-AuthorDate:    Mon, 23 Mar 2020 19:57:04 
-Committer:     Borislav Petkov <bp@suse.de>
-CommitterDate: Tue, 24 Mar 2020 09:31:06 +01:00
+You should put in everything that explains why this change is needed,
+and how user-space is supposed to use that information. Nobody should
+have to refer back to the mailing-list thread to find this out.
 
-x86/vmware: Remove vmware_sched_clock_setup()
+> > Please add some links to the relevant discussion on bug forums if
+> > there's interesting data there too.
+> 
+> You can find the discussion in [1][2].
+> 
+> [1] https://www.spinics.net/lists/linux-input/thrd2.html#65615
+> [2] https://www.spinics.net/lists/linux-input/msg65615.html
 
-Move cyc2ns setup logic to separate function.
-This separation will allow to use cyc2ns mult/shift pair
-not only for the sched_clock but also for other clocks
-such as steal_clock.
+I was in CC: because "might be maintaining one of the affected
+userspace stacks", but I don't know what that stack might be for me. Is
+it for upower (which I only work on seldom and definitely don't
+maintain), or something else?
 
-Signed-off-by: Alexey Makhalov <amakhalov@vmware.com>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Reviewed-by: Thomas Hellstrom <thellstrom@vmware.com>
-Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lkml.kernel.org/r/20200323195707.31242-3-amakhalov@vmware.com
----
- arch/x86/kernel/cpu/vmware.c | 15 ++++++++++-----
- 1 file changed, 10 insertions(+), 5 deletions(-)
+> > > > > The solution reached to solve this issue is to trigger an
+> > > > > udev
+> > > > > change
+> > > > > event when the device connects, this way userspace can just
+> > > > > wait
+> > > > > on
+> > > > > those connections instead of trying to ping the device.
+> > > > > 
+> > > > > Signed-off-by: Filipe Laíns <lains@archlinux.org>
+> > > > > 
+> > > > > ---
+> > > > > 
+> > > > > v2:
+> > > > >   - Issue udev change event on the connected hid device, not
+> > > > > on
+> > > > > the
+> > > > >   receiver
+> > > > > 
+> > > > > ---
+> > > > >  drivers/hid/hid-logitech-dj.c | 7 ++++++-
+> > > > >  1 file changed, 6 insertions(+), 1 deletion(-)
+> > > > > 
+> > > > > diff --git a/drivers/hid/hid-logitech-dj.c b/drivers/hid/hid-
+> > > > > logitech-dj.c
+> > > > > index 48dff5d6b605..282e57dd467d 100644
+> > > > > --- a/drivers/hid/hid-logitech-dj.c
+> > > > > +++ b/drivers/hid/hid-logitech-dj.c
+> > > > > @@ -1412,6 +1412,7 @@ static int logi_dj_dj_event(struct
+> > > > > hid_device
+> > > > > *hdev,
+> > > > >  {
+> > > > >  	struct dj_receiver_dev *djrcv_dev =
+> > > > > hid_get_drvdata(hdev);
+> > > > >  	struct dj_report *dj_report = (struct dj_report *)
+> > > > > data;
+> > > > > +	struct dj_device *dj_dev;
+> > > > >  	unsigned long flags;
+> > > > >  
+> > > > >  	/*
+> > > > > @@ -1447,7 +1448,9 @@ static int logi_dj_dj_event(struct
+> > > > > hid_device
+> > > > > *hdev,
+> > > > >  
+> > > > >  	spin_lock_irqsave(&djrcv_dev->lock, flags);
+> > > > >  
+> > > > > -	if (!djrcv_dev->paired_dj_devices[dj_report-
+> > > > > >device_index]) {
+> > > > > +	dj_dev = djrcv_dev->paired_dj_devices[dj_report-
+> > > > > >device_index];
+> > > > > +
+> > > > > +	if (!dj_dev) {
+> > > > >  		/* received an event for an unknown device,
+> > > > > bail out */
+> > > > >  		logi_dj_recv_queue_notification(djrcv_dev,
+> > > > > dj_report);
+> > > > >  		goto out;
+> > > > > @@ -1464,6 +1467,8 @@ static int logi_dj_dj_event(struct
+> > > > > hid_device
+> > > > > *hdev,
+> > > > >  		if (dj_report-
+> > > > > > report_params[CONNECTION_STATUS_PARAM_STATUS] ==
+> > > > >  		    STATUS_LINKLOSS) {
+> > > > >  			logi_dj_recv_forward_null_report(djrcv_
+> > > > > dev,
+> > > > > dj_report);
+> > > > > +		} else {
+> > > > > +			kobject_uevent(&dj_dev->hdev->dev.kobj,
+> > > > > KOBJ_CHANGE);
+> > > > >  		}
+> > > > >  		break;
+> > > > >  	default:
 
-diff --git a/arch/x86/kernel/cpu/vmware.c b/arch/x86/kernel/cpu/vmware.c
-index d280560..efb22fa 100644
---- a/arch/x86/kernel/cpu/vmware.c
-+++ b/arch/x86/kernel/cpu/vmware.c
-@@ -122,7 +122,7 @@ static unsigned long long notrace vmware_sched_clock(void)
- 	return ns;
- }
- 
--static void __init vmware_sched_clock_setup(void)
-+static void __init vmware_cyc2ns_setup(void)
- {
- 	struct cyc2ns_data *d = &vmware_cyc2ns;
- 	unsigned long long tsc_now = rdtsc();
-@@ -132,8 +132,7 @@ static void __init vmware_sched_clock_setup(void)
- 	d->cyc2ns_offset = mul_u64_u32_shr(tsc_now, d->cyc2ns_mul,
- 					   d->cyc2ns_shift);
- 
--	pv_ops.time.sched_clock = vmware_sched_clock;
--	pr_info("using sched offset of %llu ns\n", d->cyc2ns_offset);
-+	pr_info("using clock offset of %llu ns\n", d->cyc2ns_offset);
- }
- 
- static void __init vmware_paravirt_ops_setup(void)
-@@ -141,8 +140,14 @@ static void __init vmware_paravirt_ops_setup(void)
- 	pv_info.name = "VMware hypervisor";
- 	pv_ops.cpu.io_delay = paravirt_nop;
- 
--	if (vmware_tsc_khz && vmw_sched_clock)
--		vmware_sched_clock_setup();
-+	if (vmware_tsc_khz == 0)
-+		return;
-+
-+	vmware_cyc2ns_setup();
-+
-+	if (vmw_sched_clock)
-+		pv_ops.time.sched_clock = vmware_sched_clock;
-+
- }
- #else
- #define vmware_paravirt_ops_setup() do {} while (0)
