@@ -2,139 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8B9B11918E1
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 19:22:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 524AA1918E9
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 19:22:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728106AbgCXSUy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 14:20:54 -0400
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:46613 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728047AbgCXSUw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 14:20:52 -0400
-Received: by mail-lf1-f65.google.com with SMTP id q5so2203146lfb.13;
-        Tue, 24 Mar 2020 11:20:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=vZ2grX9EdtsDCTdMZUk+KGs8dumK5Lsw3WmRUPsPmLQ=;
-        b=g9/9A+OyX8xJITb28HO9MKB6+cdg+n52KnynJT9xR6eCDDU3Xgg0ucNRZ6fgDnzsSf
-         LjC5k/hBDKSg6GWsUm+VdneNJMaVgFNOaGB/xKBKIVcQAmEB/xjZ/3M8YEkJeCUjmB9M
-         GzHm4Ctk5/9bkQt7bpe1K3Qdtn/ut2kVeTk48xb7qKCqo27MV7thqXYBmvDkm4KKHvcO
-         gC5L4Uq2D3dyC59Moj++lKKAHRqfj6o3WliVPfJ+jSG16H+L0SWaIqzGKlaBYeKcAI80
-         y8BGym5dGtclGStfcNoFa39gvxtFXj/Bks7ZG8EhJEZphRbld5Mf07Dy7Vz9+I35cMNF
-         nysw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=vZ2grX9EdtsDCTdMZUk+KGs8dumK5Lsw3WmRUPsPmLQ=;
-        b=pehOLrjkfV53m51U+DQOZoYNoMeKeReKgJEjaB3t9jGoNxW3qZ8XP1Drm5VbhEXlhZ
-         rl7htfsT5RFtb4mrcCWWKoY6opCk5OEDW4Z1TSuV8fOqBG0ZAbTrwHPkQOOdyW+vz0ay
-         OcP6wg66DtzNbKDPjL4hpd+qtp19iWVWishhOOY7YyN/GAp02TTmwpeCjwmLfwJR33+g
-         rQ5gP4QvGdNbq9IpBiYEKgFVNMknlkZ+3YXHV3FkM4/6l7vqGpFk0e6BYHb8k2Ok/LUH
-         JN3cgaPjy9mvYlGN4Db91iFvH4Ci6Z5BOBKoCQbLIy/nossX/IyS1i63avvaLwLnM4xi
-         dPzg==
-X-Gm-Message-State: ANhLgQ0gHruR62C9u5uXnrbixVMW5HOAEKQ6jMI6CMBMbi+sof3M/wu3
-        DQIYwQ1i7hu9gn7VQyllpls=
-X-Google-Smtp-Source: ADFU+vtFvpq0POhOnkLU430bk6n5oSPRbp8Bisgt5nf1Ld/HAQp/Rad6pPPa6Xb4zIivCVN1cWWmVg==
-X-Received: by 2002:a19:6f07:: with SMTP id k7mr13886435lfc.79.1585074050889;
-        Tue, 24 Mar 2020 11:20:50 -0700 (PDT)
-Received: from mobilestation ([95.79.136.110])
-        by smtp.gmail.com with ESMTPSA id h10sm10603614ljg.38.2020.03.24.11.20.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Mar 2020 11:20:50 -0700 (PDT)
-Date:   Tue, 24 Mar 2020 21:20:47 +0300
-From:   Serge Semin <fancer.lancer@gmail.com>
-To:     Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc:     Sergey.Semin@baikalelectronics.ru,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexey Malahov <Alexey.Malahov@baikalelectronics.ru>,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        Paul Burton <paulburton@kernel.org>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        devicetree@vger.kernel.org, linux-rtc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/6] dt-bindings: rtc: Convert snps,dw-apb-timer to DT
- schema
-Message-ID: <20200324182047.iziujb7n7slqtzck@mobilestation>
-References: <20200306125622.839ED80307C4@mail.baikalelectronics.ru>
- <20200324174325.14213-1-Sergey.Semin@baikalelectronics.ru>
- <20200324174325.14213-2-Sergey.Semin@baikalelectronics.ru>
- <20200324180709.GO5504@piout.net>
+        id S1728178AbgCXSVG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 14:21:06 -0400
+Received: from mga07.intel.com ([134.134.136.100]:33976 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727379AbgCXSVF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Mar 2020 14:21:05 -0400
+IronPort-SDR: YQ3IlUFAH0UZqrqfbHRQFKDbyJPAoPvGXPiPAD5m7KxpOAgbGtqmui7L6Ir88TyoRaoHDXx9Uj
+ Q7HOy6mgj47w==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Mar 2020 11:20:50 -0700
+IronPort-SDR: y/USM2b3SPl0LjjMZJcqAmjb2PYOuW/QAtqFht1aEDTm2RWTprcUGxDRQvFy8adhtqpy78sfUX
+ 6Y7gyFMhw+XA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.72,301,1580803200"; 
+   d="scan'208";a="246803473"
+Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.202])
+  by orsmga003.jf.intel.com with ESMTP; 24 Mar 2020 11:20:48 -0700
+Date:   Tue, 24 Mar 2020 11:20:48 -0700
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     Christian Borntraeger <borntraeger@de.ibm.com>
+Cc:     James Hogan <jhogan@kernel.org>,
+        Paul Mackerras <paulus@ozlabs.org>,
+        Janosch Frank <frankja@linux.ibm.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Marc Zyngier <maz@kernel.org>,
+        David Hildenbrand <david@redhat.com>,
+        Cornelia Huck <cohuck@redhat.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        James Morse <james.morse@arm.com>,
+        Julien Thierry <julien.thierry.kdev@gmail.com>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        linux-mips@vger.kernel.org, kvm-ppc@vger.kernel.org,
+        kvm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        kvmarm@lists.cs.columbia.edu, linux-kernel@vger.kernel.org,
+        Christoffer Dall <christoffer.dall@arm.com>,
+        Philippe =?iso-8859-1?Q?Mathieu-Daud=E9?= <f4bug@amsat.org>
+Subject: Re: [PATCH v4 19/19] KVM: selftests: Add test for
+ KVM_SET_USER_MEMORY_REGION
+Message-ID: <20200324182048.GF5998@linux.intel.com>
+References: <20191217204041.10815-1-sean.j.christopherson@intel.com>
+ <20191217204041.10815-20-sean.j.christopherson@intel.com>
+ <f962fafb-3956-746f-d077-3dbcefaae7c8@de.ibm.com>
+ <20191218163958.GC25201@linux.intel.com>
+ <78b21097-52e4-b851-fc78-da3442fd0904@de.ibm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200324180709.GO5504@piout.net>
+In-Reply-To: <78b21097-52e4-b851-fc78-da3442fd0904@de.ibm.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Alexandre
-
-On Tue, Mar 24, 2020 at 07:07:09PM +0100, Alexandre Belloni wrote:
-> Hi,
+On Tue, Mar 24, 2020 at 10:43:07AM +0100, Christian Borntraeger wrote:
 > 
-> On 24/03/2020 20:43:20+0300, Sergey.Semin@baikalelectronics.ru wrote:
-> > From: Serge Semin <Sergey.Semin@baikalelectronics.ru>
-> > 
-> > Modern device tree bindings are supposed to be created as YAML-files
-> > in accordance with DT schema. This commit replaces Synopsys DW Timer
-> > legacy bare text binding with YAML file. As before the binding file
-> > states that the corresponding dts node is supposed to be compatible
-> > with generic DW APB Timer indicated by the "snps,dw-apb-timer"
-> > compatible string and to provide a mandatory registers memory range,
-> > one timer interrupt, either reference clock source or a fixed clock
-> > rate value. It may also have an optional APB bus reference clock
-> > phandle specified.
-> > 
-> > Signed-off-by: Serge Semin <Sergey.Semin@baikalelectronics.ru>
-> > Cc: Alexey Malahov <Alexey.Malahov@baikalelectronics.ru>
-> > Cc: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-> > Cc: Paul Burton <paulburton@kernel.org>
-> > Cc: Ralf Baechle <ralf@linux-mips.org>
-> > Cc: Alessandro Zummo <a.zummo@towertech.it>
-> > Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>
-> > Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
-> > Cc: Thomas Gleixner <tglx@linutronix.de>
-> > Cc: Arnd Bergmann <arnd@arndb.de>
-> > Cc: Andy Shevchenko <andy.shevchenko@gmail.com>
-> > Cc: Rob Herring <robh+dt@kernel.org>
-> > Cc: Mark Rutland <mark.rutland@arm.com>
-> > Cc: devicetree@vger.kernel.org
-> > Cc: linux-rtc@vger.kernel.org
-> > 
-> > ---
-> > 
-> > I have doubts that this binding file belongs to the bindings/rtc
-> > directory seeing it's a pure timer with no rtc facilities like
-> > days/months/years counting and alarms. What about moving it to the
-> > "Documentation/devicetree/bindings/timer/" directory?
-> > 
+> On 18.12.19 17:39, Sean Christopherson wrote:
+> > On Wed, Dec 18, 2019 at 12:39:43PM +0100, Christian Borntraeger wrote:
+> >>
+> I started looking into this what it would cost to implement this on s390.
+> s390 is also returning EFAULT if no memory slot is available.
 > 
-> Exactly my reaction when seeing the patch, please move it out of
-> bindings/rtc/
+> According to the doc this is not documented at all. So this part of the test
+>         vm = vm_create(VM_MODE_DEFAULT, 0, O_RDWR);
+>         vm_vcpu_add(vm, VCPU_ID);
+>         /* Fails with ENOSPC because the MMU can't create pages (no slots). */
+>         TEST_ASSERT(_vcpu_run(vm, VCPU_ID) == -1 && errno == ENOSPC,
+>                     "Unexpected error code = %d", errno);
+>         kvm_vm_free(vm);
 > 
+> is actually just testing that the implementation for x86 does not change the error
+> from ENOSPC to something else.
 
-Agreed. I am pretty sure Rob find something to be fixed and the main part
-of the patchset still hasn't been reviewed. So v3 will be necessary for sure.
-I'll move this binding out of rtc in a dedicated patch then.
+It's even worse than that.  There error isn't directly due to no having
+a memslots, it occurs because the limit on number of pages in the MMU is
+zero.  On x86, that limit is automatically derived from the total size of
+memslots.
 
--Sergey
+The selftest could add an explicit ioctl() call to manually override the
+number of allowed MMU pages, but that didn't seem any cleaner as it'd still
+rely on undocumented internal KVM behavior.
 
-P.S. For some reason your email still hasn't been delivered to my corporate
-email, so responding from the private one.
+TL;DR: I'm not a huge fan of the code either.
 
-> 
-> -- 
-> Alexandre Belloni, Bootlin
-> Embedded Linux and Kernel engineering
-> https://bootlin.com
+> The question is: do we want to document the error for the "no memslot" case
+> and then change all existing platforms?
+
+At first blush, I like the idea of adding an explicit check in KVM_RUN to
+return an error if there isn't at least one usable memslot.  But, it'd be a
+little weird/kludgy on x86/VMX due to the existence of "private" memslots,
+i.e. the check should really fire on "no public memslots".  At that point,
+I'm not sure whether the well defined errno would be worth the extra code.
