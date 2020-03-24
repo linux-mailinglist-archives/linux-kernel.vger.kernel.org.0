@@ -2,44 +2,44 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E5B871915D6
+	by mail.lfdr.de (Postfix) with ESMTP id 131C51915D4
 	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 17:13:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729015AbgCXQMx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 12:12:53 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:36930 "EHLO
+        id S1728993AbgCXQMq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 12:12:46 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:36938 "EHLO
         merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728314AbgCXQLg (ORCPT
+        with ESMTP id S1728326AbgCXQLg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 24 Mar 2020 12:11:36 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=merlin.20170209; h=Content-Type:MIME-Version:References:
         Subject:Cc:To:From:Date:Message-Id:Sender:Reply-To:Content-Transfer-Encoding:
         Content-ID:Content-Description:In-Reply-To;
-        bh=pSGP6r2NLE6dzWu1sb8wNttMOQP+/GZ86JZyVLYhiRo=; b=PEc2stQ8jB0ujDASoy8qNKNtVX
-        HZzWZJkfqdJ5K94nUKqqeRA1ESXJI1UtZI2lhRPnDRjE7XiKygCqwYgCLI9pkunVfUPy3GBbqvBSL
-        gX9LpS4cs1c6RqFtmF7JL0ypxG7uBnNLHnE9PHlIgzWhGGq/cJJXkYm2ZLaSZFKFBENnxBB8qxKzO
-        u3xRshEcchDxiN83PXgxUiemEGl78WnyXvmbEvTnvtYbpGTDZbydtLm5AfZkBdPOc9CM0EZoMdt4k
-        a/Isl/M4dF7q4ByN2MZBMQhgSFt7aXiSaFhzM1Qp488UivTw5TBQ+PzhdjcjXKzhahC4iqK/FbEBI
-        O4Kjs/9A==;
+        bh=bHViUYn2WcHseQxPinoO46/JAMoTuoepqjfRfjgii/4=; b=2uulhsunWH0ht5QXZNDD1lx26M
+        BSvCXVQZ1qKXpZCOxEWWBtH1a4GMixDnjU35OXpwLtOQpWfzsjUbtqPq+zY39rKBfrlSeLNjF8nBF
+        7RkzBYSK/0y2m6+5yESpmxAjU8QLW2kCTmVeF5tsAMarZnyq3g34gSUoIMxlRbResLUD/zpDDX7Qg
+        Dc+bjo1ULKCpP1pLsbJMhZcvKoq0XONQE44lq2btdOyZaaugO0lBSeW7TglprWTybInU5kS4zpyye
+        hBnQFjj83yPoT1Ea6G6fidfUKZjIHlngqbDGtCUg1cAxbviQdCPtCQBIkrePVv4xTXmYdeb4rjqUe
+        Wn++H7sQ==;
 Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
         by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jGm9L-0006bT-6i; Tue, 24 Mar 2020 16:11:31 +0000
+        id 1jGm9L-0006bV-LR; Tue, 24 Mar 2020 16:11:31 +0000
 Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 448E4306118;
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 456663062B3;
         Tue, 24 Mar 2020 17:11:28 +0100 (CET)
 Received: by hirez.programming.kicks-ass.net (Postfix, from userid 0)
-        id 271E729A490F6; Tue, 24 Mar 2020 17:11:28 +0100 (CET)
-Message-Id: <20200324160924.202621656@infradead.org>
+        id 2A8FA29A490F5; Tue, 24 Mar 2020 17:11:28 +0100 (CET)
+Message-Id: <20200324160924.261852348@infradead.org>
 User-Agent: quilt/0.65
-Date:   Tue, 24 Mar 2020 16:31:18 +0100
+Date:   Tue, 24 Mar 2020 16:31:19 +0100
 From:   Peter Zijlstra <peterz@infradead.org>
 To:     tglx@linutronix.de, jpoimboe@redhat.com
 Cc:     linux-kernel@vger.kernel.org, x86@kernel.org, peterz@infradead.org,
         mhiramat@kernel.org, mbenes@suse.cz, brgerst@gmail.com
-Subject: [PATCH v3 05/26] x86/kexec: Make relocate_kernel_64.S objtool clean
+Subject: [PATCH v3 06/26] objtool: Optimize find_symbol_by_index()
 References: <20200324153113.098167666@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -48,76 +48,91 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Having fixed the biggest objtool issue in this file; fix up the rest
-and remove the exception.
+The symbol index is object wide, not per section, so it makes no sense
+to have the symbol_hash be part of the section object. By moving it to
+the elf object we avoid the linear sections iteration.
 
-Suggested-by: Josh Poimboeuf <jpoimboe@redhat.com>
+This reduces the runtime of objtool on vmlinux.o from over 3 hours (I
+gave up) to a few minutes. The defconfig vmlinux.o has around 20k
+sections.
+
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Acked-by: Josh Poimboeuf <jpoimboe@redhat.com>
 ---
- arch/x86/kernel/Makefile             |    1 -
- arch/x86/kernel/relocate_kernel_64.S |    7 +++++++
- 2 files changed, 7 insertions(+), 1 deletion(-)
+ tools/objtool/elf.c |   13 +++++--------
+ tools/objtool/elf.h |    3 +--
+ 2 files changed, 6 insertions(+), 10 deletions(-)
 
---- a/arch/x86/kernel/Makefile
-+++ b/arch/x86/kernel/Makefile
-@@ -32,7 +32,6 @@ KASAN_SANITIZE_paravirt.o				:= n
- # by several compilation units. To be safe, disable all instrumentation.
- KCSAN_SANITIZE := n
+--- a/tools/objtool/elf.c
++++ b/tools/objtool/elf.c
+@@ -46,13 +46,11 @@ static struct section *find_section_by_i
  
--OBJECT_FILES_NON_STANDARD_relocate_kernel_$(BITS).o	:= y
- OBJECT_FILES_NON_STANDARD_test_nx.o			:= y
- OBJECT_FILES_NON_STANDARD_paravirt_patch.o		:= y
+ static struct symbol *find_symbol_by_index(struct elf *elf, unsigned int idx)
+ {
+-	struct section *sec;
+ 	struct symbol *sym;
  
---- a/arch/x86/kernel/relocate_kernel_64.S
-+++ b/arch/x86/kernel/relocate_kernel_64.S
-@@ -9,6 +9,8 @@
- #include <asm/kexec.h>
- #include <asm/processor-flags.h>
- #include <asm/pgtable_types.h>
-+#include <asm/nospec-branch.h>
-+#include <asm/unwind_hints.h>
+-	list_for_each_entry(sec, &elf->sections, list)
+-		hash_for_each_possible(sec->symbol_hash, sym, hash, idx)
+-			if (sym->idx == idx)
+-				return sym;
++	hash_for_each_possible(elf->symbol_hash, sym, hash, idx)
++		if (sym->idx == idx)
++			return sym;
  
- /*
-  * Must be relocatable PIC code callable as a C function
-@@ -39,6 +41,7 @@
- 	.align PAGE_SIZE
- 	.code64
- SYM_CODE_START_NOALIGN(relocate_kernel)
-+	UNWIND_HINT_EMPTY
- 	/*
- 	 * %rdi indirection_page
- 	 * %rsi page_list
-@@ -105,6 +108,7 @@ SYM_CODE_START_NOALIGN(relocate_kernel)
- SYM_CODE_END(relocate_kernel)
+ 	return NULL;
+ }
+@@ -166,7 +164,6 @@ static int read_sections(struct elf *elf
+ 		INIT_LIST_HEAD(&sec->symbol_list);
+ 		INIT_LIST_HEAD(&sec->rela_list);
+ 		hash_init(sec->rela_hash);
+-		hash_init(sec->symbol_hash);
  
- SYM_CODE_START_LOCAL_NOALIGN(identity_mapped)
-+	UNWIND_HINT_EMPTY
- 	/* set return address to 0 if not preserving context */
- 	pushq	$0
- 	/* store the start address on the stack */
-@@ -192,6 +196,7 @@ SYM_CODE_START_LOCAL_NOALIGN(identity_ma
- 1:
- 	popq	%rdx
- 	leaq	PAGE_SIZE(%r10), %rsp
-+	ANNOTATE_RETPOLINE_SAFE
- 	call	*%rdx
+ 		list_add_tail(&sec->list, &elf->sections);
  
- 	/* get the re-entry point of the peer system */
-@@ -209,6 +214,7 @@ SYM_CODE_START_LOCAL_NOALIGN(identity_ma
- SYM_CODE_END(identity_mapped)
+@@ -299,7 +296,7 @@ static int read_symbols(struct elf *elf)
+ 		}
+ 		sym->alias = alias;
+ 		list_add(&sym->list, entry);
+-		hash_add(sym->sec->symbol_hash, &sym->hash, sym->idx);
++		hash_add(elf->symbol_hash, &sym->hash, sym->idx);
+ 	}
  
- SYM_CODE_START_LOCAL_NOALIGN(virtual_mapped)
-+	UNWIND_HINT_EMPTY
- 	movq	RSP(%r8), %rsp
- 	movq	CR4(%r8), %rax
- 	movq	%rax, %cr4
-@@ -230,6 +236,7 @@ SYM_CODE_END(virtual_mapped)
+ 	/* Create parent/child links for any cold subfunctions */
+@@ -425,6 +422,7 @@ struct elf *elf_read(const char *name, i
+ 	}
+ 	memset(elf, 0, sizeof(*elf));
  
- 	/* Do the copies */
- SYM_CODE_START_LOCAL_NOALIGN(swap_pages)
-+	UNWIND_HINT_EMPTY
- 	movq	%rdi, %rcx 	/* Put the page_list in %rcx */
- 	xorl	%edi, %edi
- 	xorl	%esi, %esi
++	hash_init(elf->symbol_hash);
+ 	INIT_LIST_HEAD(&elf->sections);
+ 
+ 	elf->fd = open(name, flags);
+@@ -486,7 +484,6 @@ struct section *elf_create_section(struc
+ 	INIT_LIST_HEAD(&sec->symbol_list);
+ 	INIT_LIST_HEAD(&sec->rela_list);
+ 	hash_init(sec->rela_hash);
+-	hash_init(sec->symbol_hash);
+ 
+ 	list_add_tail(&sec->list, &elf->sections);
+ 
+--- a/tools/objtool/elf.h
++++ b/tools/objtool/elf.h
+@@ -27,7 +27,6 @@ struct section {
+ 	struct list_head list;
+ 	GElf_Shdr sh;
+ 	struct list_head symbol_list;
+-	DECLARE_HASHTABLE(symbol_hash, 8);
+ 	struct list_head rela_list;
+ 	DECLARE_HASHTABLE(rela_hash, 16);
+ 	struct section *base, *rela;
+@@ -71,7 +70,7 @@ struct elf {
+ 	int fd;
+ 	char *name;
+ 	struct list_head sections;
+-	DECLARE_HASHTABLE(rela_hash, 16);
++	DECLARE_HASHTABLE(symbol_hash, 20);
+ };
+ 
+ 
 
 
