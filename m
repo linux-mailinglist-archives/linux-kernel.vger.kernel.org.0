@@ -2,102 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 64A35190701
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 09:07:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B6AAA19070B
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 09:08:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726185AbgCXIHK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 04:07:10 -0400
-Received: from mail27.static.mailgun.info ([104.130.122.27]:57442 "EHLO
-        mail27.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726083AbgCXIHK (ORCPT
+        id S1727066AbgCXIIN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 04:08:13 -0400
+Received: from mail-io1-f72.google.com ([209.85.166.72]:50229 "EHLO
+        mail-io1-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726107AbgCXIIM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 04:07:10 -0400
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1585037229; h=Content-Type: MIME-Version: Message-ID:
- In-Reply-To: Date: References: Subject: Cc: To: From: Sender;
- bh=OexxCsDxMktm3qYhK0o2fjls+ZpSajpQ4OCMAhLYhHk=; b=Nulezsxmr3eepNJsSCWkiJp219yFIlhsZe541L110YYL8Age6fWLMHi8N+KuD1D2F/YqyPpR
- To1da0k9+DaOOhT3JeKq19WR2ThZOeTst5BOnl/b8/Q+tFJ8+YkgeEyeWT+DkUBGEkwnzl2e
- 4HDnHn9bVYvSkP7S3XAl95aklnM=
-X-Mailgun-Sending-Ip: 104.130.122.27
-X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
- by mxa.mailgun.org with ESMTP id 5e79bfac.7f3b07aa85e0-smtp-out-n03;
- Tue, 24 Mar 2020 08:07:08 -0000 (UTC)
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id AFCC2C432C2; Tue, 24 Mar 2020 08:07:08 +0000 (UTC)
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        aws-us-west-2-caf-mail-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE,
-        URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
-Received: from potku.adurom.net (88-114-240-156.elisa-laajakaista.fi [88.114.240.156])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: kvalo)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 4E6E2C433CB;
-        Tue, 24 Mar 2020 08:07:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4E6E2C433CB
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
-From:   Kalle Valo <kvalo@codeaurora.org>
-To:     Luca Coelho <luca@coelho.fi>
-Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        Wireless <linux-wireless@vger.kernel.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: linux-next: manual merge of the wireless-drivers-next tree with the wireless-drivers tree
-References: <20200324111653.35c368e4@canb.auug.org.au>
-        <87wo7a8cex.fsf@kamboji.qca.qualcomm.com>
-        <122b75308eea43076367d06879552270e11dfbb4.camel@coelho.fi>
-Date:   Tue, 24 Mar 2020 10:07:03 +0200
-In-Reply-To: <122b75308eea43076367d06879552270e11dfbb4.camel@coelho.fi> (Luca
-        Coelho's message of "Tue, 24 Mar 2020 09:29:08 +0200")
-Message-ID: <87sghy89co.fsf@kamboji.qca.qualcomm.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
+        Tue, 24 Mar 2020 04:08:12 -0400
+Received: by mail-io1-f72.google.com with SMTP id s2so14267651iot.17
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Mar 2020 01:08:12 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=hHXlzX2YhutrAXAO/2d9zPrQ+gr2qIaq8tPdZuhbzNc=;
+        b=U4R2ZBpiKIz16FWVQzLmPWov7A34TZHr61uAbO7eOjMOhnlEEyR4AhLERk9n+3Gnhf
+         +yXglMDs7+jwl+jdPsUmrtikCruLnG7h5GM9o7jnjr/CU4t7PQMJfdSPHU4MwJbNBRbU
+         VZulKSOzCrJj1eiVaeg+b3EbmMuByN5f0/GJZV+2MNUesH9ihTbiIm7DzIFuFk7DP2Gt
+         VgBUeQGyYtyBP7DryYqIrQp1hPItLphHqcLaolbL3tlswmhc4o3lcHnluyLQK2XmSmoB
+         ukOMY2S0kyreSsughc9uCQWJO44iVBETO8TVr5QbhGGipK/ChTXUBUkQaLAbWv+8/2t0
+         NQdw==
+X-Gm-Message-State: ANhLgQ3j5UG96n4VmMiO+fbV487bp+2vqKWRqbjNHcv9m8IVpZWZTTBY
+        5z202OB9yBV4fDNQ+PxrDUuhZAiGxBg4NMyf8FiV5hWXbgir
+X-Google-Smtp-Source: ADFU+vveVCtjZFe00P8L3XaLLQqnYWVVmmBwqGMbFCFoBQ1tSt95B7Zv+mSEhz6cOYO8MKdGXim2hF2cI87+uh34wivVtdtgOkSM
 MIME-Version: 1.0
-Content-Type: text/plain
+X-Received: by 2002:a02:3808:: with SMTP id b8mr24506069jaa.136.1585037291793;
+ Tue, 24 Mar 2020 01:08:11 -0700 (PDT)
+Date:   Tue, 24 Mar 2020 01:08:11 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000bbb17d05a19540cd@google.com>
+Subject: KCSAN: data-race in decode_data.part.0 / sixpack_receive_buf
+From:   syzbot <syzbot+673c2668e8c71c021637@syzkaller.appspotmail.com>
+To:     ajk@comnets.uni-bremen.de, davem@davemloft.net, elver@google.com,
+        linux-hams@vger.kernel.org, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Luca Coelho <luca@coelho.fi> writes:
+Hello,
 
-> On Tue, 2020-03-24 at 09:00 +0200, Kalle Valo wrote:
->> Stephen Rothwell <sfr@canb.auug.org.au> writes:
->> 
->> > Today's linux-next merge of the wireless-drivers-next tree got a
->> > conflict in:
->> > 
->> >   drivers/net/wireless/intel/iwlwifi/pcie/drv.c
->> > 
->> > between commit:
->> > 
->> >   cf52c8a776d1 ("iwlwifi: pcie: add 0x2526/0x401* devices back to cfg detection")
->> > 
->> > from the wireless-drivers tree and commits:
->> > 
->> >   67eb556da609 ("iwlwifi: combine 9260 cfgs that only change names")
->> >   d6f2134a3831 ("iwlwifi: add mac/rf types and 160MHz to the device tables")
->> > 
->> > from the wireless-drivers-next tree.
->> > 
->> > I fixed it up (I am not sure wat to do with this, so I just dropped
->> > the former changes for now) and can carry the fix as necessary. This
->> > is now fixed as far as linux-next is concerned, but any non trivial
->> > conflicts should be mentioned to your upstream maintainer when your tree
->> > is submitted for merging.  You may also want to consider cooperating
->> > with the maintainer of the conflicting tree to minimise any particularly
->> > complex conflicts.
->> 
->> Thanks Stephen. Luca, how do you propose to fix this conflict?
->
-> The resolution is correct.  Just drop the cf52c8a776d1 changes, since
-> the list of specific subsytem device IDs are not necessary after
-> d6f2134a3831 anymore.  The detection is based on other characteristics
-> of the devices.
+syzbot found the following crash on:
 
-Thanks, I'll mention this in my pull request to Dave.
+HEAD commit:    245a4300 Merge branch 'rcu/kcsan' into tip/locking/kcsan
+git tree:       https://github.com/google/ktsan.git kcsan
+console output: https://syzkaller.appspot.com/x/log.txt?x=16543101e00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=a4b9db179318d21f
+dashboard link: https://syzkaller.appspot.com/bug?extid=673c2668e8c71c021637
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
 
--- 
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+Unfortunately, I don't have any reproducer for this crash yet.
+
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+673c2668e8c71c021637@syzkaller.appspotmail.com
+
+==================================================================
+BUG: KCSAN: data-race in decode_data.part.0 / sixpack_receive_buf
+
+read to 0xffff8880a68aa8f6 of 1 bytes by task 8699 on cpu 1:
+ decode_data.part.0+0x8d/0x120 drivers/net/hamradio/6pack.c:846
+ decode_data drivers/net/hamradio/6pack.c:965 [inline]
+ sixpack_decode drivers/net/hamradio/6pack.c:968 [inline]
+ sixpack_receive_buf+0x901/0xb90 drivers/net/hamradio/6pack.c:458
+ tiocsti drivers/tty/tty_io.c:2200 [inline]
+ tty_ioctl+0xb75/0xe10 drivers/tty/tty_io.c:2576
+ vfs_ioctl fs/ioctl.c:47 [inline]
+ file_ioctl fs/ioctl.c:545 [inline]
+ do_vfs_ioctl+0x84f/0xcf0 fs/ioctl.c:732
+ ksys_ioctl+0xbd/0xe0 fs/ioctl.c:749
+ __do_sys_ioctl fs/ioctl.c:756 [inline]
+ __se_sys_ioctl fs/ioctl.c:754 [inline]
+ __x64_sys_ioctl+0x4c/0x60 fs/ioctl.c:754
+ do_syscall_64+0xcc/0x3a0 arch/x86/entry/common.c:294
+ entry_SYSCALL_64_after_hwframe+0x44/0xa9
+
+write to 0xffff8880a68aa8f6 of 1 bytes by task 8154 on cpu 0:
+ decode_data drivers/net/hamradio/6pack.c:837 [inline]
+ sixpack_decode drivers/net/hamradio/6pack.c:968 [inline]
+ sixpack_receive_buf+0x40e/0xb90 drivers/net/hamradio/6pack.c:458
+ tty_ldisc_receive_buf+0xeb/0xf0 drivers/tty/tty_buffer.c:465
+ tty_port_default_receive_buf+0x87/0xd0 drivers/tty/tty_port.c:38
+ receive_buf drivers/tty/tty_buffer.c:481 [inline]
+ flush_to_ldisc+0x1d5/0x260 drivers/tty/tty_buffer.c:533
+ process_one_work+0x3d4/0x890 kernel/workqueue.c:2264
+ worker_thread+0xa0/0x800 kernel/workqueue.c:2410
+ kthread+0x1d4/0x200 drivers/block/aoe/aoecmd.c:1253
+ ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:352
+
+Reported by Kernel Concurrency Sanitizer on:
+CPU: 0 PID: 8154 Comm: kworker/u4:5 Not tainted 5.5.0-rc1-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Workqueue: events_unbound flush_to_ldisc
+==================================================================
+
+
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
