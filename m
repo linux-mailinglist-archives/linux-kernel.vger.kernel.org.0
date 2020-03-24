@@ -2,176 +2,140 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7C8DC1915D5
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 17:13:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 349951915D2
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 17:13:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729003AbgCXQMu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 12:12:50 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:57020 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728910AbgCXQMn (ORCPT
+        id S1728969AbgCXQMj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 12:12:39 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:45828 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728910AbgCXQM0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 12:12:43 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 02OG9JZO066496;
-        Tue, 24 Mar 2020 16:12:33 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2020-01-29;
- bh=j2oyooX0rAq76SY5WS1UWzfXaOSBSc7XLdbFb+EV+As=;
- b=D35IUL8cJIekvD/+YVC2smWxK7eGoPcY1Lih0c+aRi1v/zUPOETfSVsBrLrGqRwNTqm7
- T00wHpKBMIF3NOaxB04lNrFFTGl3aVQDihBf5gDbwQmWJga/qju1JMCtIIQgHMT3PaZu
- c+McHlDKNDl37wHhCvLVKTV4xSd779hq8zMKkHi4eX4ydnqphicynXiaJO2xKoEYdm9c
- z/LCJSpV56Yi73WeqOeMyySlrYjP51VDyVfElwB9iqEH3X3zAuQClODGQt0XmoDkX2Ml
- FxfpkMCZO5nV4tEndI7KkvD6dCyfEsUuR9A2CmhQBdEBri6w+rd68y8F3Z1l3RT8u3/8 tA== 
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by aserp2120.oracle.com with ESMTP id 2ywavm58vg-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 24 Mar 2020 16:12:32 +0000
-Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
-        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 02OGBonB079385;
-        Tue, 24 Mar 2020 16:12:32 GMT
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by aserp3030.oracle.com with ESMTP id 2yxw92wr2t-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 24 Mar 2020 16:12:31 +0000
-Received: from abhmp0011.oracle.com (abhmp0011.oracle.com [141.146.116.17])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 02OGCPoj014077;
-        Tue, 24 Mar 2020 16:12:25 GMT
-Received: from [10.175.222.8] (/10.175.222.8)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 24 Mar 2020 09:12:24 -0700
-Subject: Re: [PATCH 11/12] device-dax: Add dis-contiguous resource support
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     linux-mm@kvack.org, dave.hansen@linux.intel.com, hch@lst.de,
-        linux-nvdimm@lists.01.org, linux-kernel@vger.kernel.org
-References: <158500767138.2088294.17131646259803932461.stgit@dwillia2-desk3.amr.corp.intel.com>
- <158500773552.2088294.8756587190550753100.stgit@dwillia2-desk3.amr.corp.intel.com>
-From:   Joao Martins <joao.m.martins@oracle.com>
-Message-ID: <9a6ff83f-095c-0689-d6d1-693a6e9c07e6@oracle.com>
-Date:   Tue, 24 Mar 2020 16:12:21 +0000
+        Tue, 24 Mar 2020 12:12:26 -0400
+Received: from pendragon.ideasonboard.com (81-175-216-236.bb.dnainternet.fi [81.175.216.236])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 0CB43308;
+        Tue, 24 Mar 2020 17:12:23 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1585066344;
+        bh=h9AU8lIpV7OHn82ip0Jw12bYSRW82NU8UY8yuWnDD/A=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=jhEyVSolpqtVGQVGQ7ZsK5akEab88MiGhWEvbC4a6HAJothOGvP7rBw4+LTm2kv0x
+         y1e8bNcrGWMkklZyBCMKRgPkxOhFV4YXN0t5YMPn8WIZ9z+KUQsjYmK/kUnZKeJZNw
+         oyuI3ypKkx8sJze7gPlnVR/a+roJIFn2QjyRGBCw=
+Date:   Tue, 24 Mar 2020 18:12:21 +0200
+From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To:     "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Cc:     Maxime Ripard <maxime@cerno.tech>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Ezequiel Garcia <ezequiel@collabora.com>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Fabio Estevam <festevam@gmail.com>,
+        linux-media <linux-media@vger.kernel.org>,
+        LAK <linux-arm-kernel@lists.infradead.org>,
+        NXP Linux Team <linux-imx@nxp.com>
+Subject: Re: [PATCH v3 1/4] media: dt-bindings: media: i2c: Switch to
+ assigned-clock-rates
+Message-ID: <20200324161221.GA27805@pendragon.ideasonboard.com>
+References: <1584133954-6953-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <1584133954-6953-2-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20200319124452.3yfcvq754vi4q2rv@gilmour.lan>
+ <20200319130348.GC4872@pendragon.ideasonboard.com>
+ <CA+V-a8s-GZsYuBLyGnzURZfGD42f0c+QEan6FSwb2ew1=7Gj3g@mail.gmail.com>
+ <20200324154045.whiy6uvlg2mrjv5a@gilmour.lan>
+ <CA+V-a8tMVoJOdgM_S0sJ0WEGhwBirCC4mi-TtxLCn1SKVXXiBQ@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <158500773552.2088294.8756587190550753100.stgit@dwillia2-desk3.amr.corp.intel.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9570 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 spamscore=0 bulkscore=0
- adultscore=0 mlxscore=0 malwarescore=0 mlxlogscore=999 suspectscore=5
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2003020000
- definitions=main-2003240087
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9570 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 malwarescore=0
- priorityscore=1501 mlxscore=0 bulkscore=0 clxscore=1011 impostorscore=0
- phishscore=0 suspectscore=5 mlxlogscore=999 spamscore=0 lowpriorityscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2003020000
- definitions=main-2003240086
+Content-Disposition: inline
+In-Reply-To: <CA+V-a8tMVoJOdgM_S0sJ0WEGhwBirCC4mi-TtxLCn1SKVXXiBQ@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 3/23/20 11:55 PM, Dan Williams wrote:
->  static ssize_t dev_dax_resize(struct dax_region *dax_region,
->  		struct dev_dax *dev_dax, resource_size_t size)
->  {
->  	resource_size_t avail = dax_region_avail_size(dax_region), to_alloc;
-> -	resource_size_t dev_size = range_len(&dev_dax->range);
-> +	resource_size_t dev_size = dev_dax_size(dev_dax);
->  	struct resource *region_res = &dax_region->res;
->  	struct device *dev = &dev_dax->dev;
-> -	const char *name = dev_name(dev);
->  	struct resource *res, *first;
-> +	resource_size_t alloc = 0;
-> +	int rc;
->  
->  	if (dev->driver)
->  		return -EBUSY;
-> @@ -684,38 +766,47 @@ static ssize_t dev_dax_resize(struct dax_region *dax_region,
->  	 * allocating a new resource.
->  	 */
->  	first = region_res->child;
-> -	if (!first)
-> -		return __alloc_dev_dax_range(dev_dax, dax_region->res.start,
-> -				to_alloc);
+Hi Prabhakar,
 
-You probably want to retain the condition above?
+On Tue, Mar 24, 2020 at 04:04:43PM +0000, Lad, Prabhakar wrote:
+> On Tue, Mar 24, 2020 at 3:40 PM Maxime Ripard <maxime@cerno.tech> wrote:
+> > On Thu, Mar 19, 2020 at 01:17:51PM +0000, Lad, Prabhakar wrote:
+> > > On Thu, Mar 19, 2020 at 1:04 PM Laurent Pinchart wrote:
+> > > > On Thu, Mar 19, 2020 at 01:44:52PM +0100, Maxime Ripard wrote:
+> > > > > On Fri, Mar 13, 2020 at 09:12:31PM +0000, Lad Prabhakar wrote:
+> > > > > > Use assigned-clock-rates to specify the clock rate. Also mark
+> > > > > > clock-frequency property as deprecated.
+> > > > > >
+> > > > > > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > > > > > ---
+> > > > > >  Documentation/devicetree/bindings/media/i2c/ov5645.txt | 5 +++--
+> > > > > >  1 file changed, 3 insertions(+), 2 deletions(-)
+> > > > > >
+> > > > > > diff --git a/Documentation/devicetree/bindings/media/i2c/ov5645.txt b/Documentation/devicetree/bindings/media/i2c/ov5645.txt
+> > > > > > index 72ad992..e62fe82 100644
+> > > > > > --- a/Documentation/devicetree/bindings/media/i2c/ov5645.txt
+> > > > > > +++ b/Documentation/devicetree/bindings/media/i2c/ov5645.txt
+> > > > > > @@ -8,7 +8,7 @@ Required Properties:
+> > > > > >  - compatible: Value should be "ovti,ov5645".
+> > > > > >  - clocks: Reference to the xclk clock.
+> > > > > >  - clock-names: Should be "xclk".
+> > > > > > -- clock-frequency: Frequency of the xclk clock.
+> > > > > > +- clock-frequency (deprecated): Frequency of the xclk clock.
+> > > > > >  - enable-gpios: Chip enable GPIO. Polarity is GPIO_ACTIVE_HIGH. This corresponds
+> > > > > >    to the hardware pin PWDNB which is physically active low.
+> > > > > >  - reset-gpios: Chip reset GPIO. Polarity is GPIO_ACTIVE_LOW. This corresponds to
+> > > > > > @@ -37,7 +37,8 @@ Example:
+> > > > > >
+> > > > > >                     clocks = <&clks 200>;
+> > > > > >                     clock-names = "xclk";
+> > > > > > -                   clock-frequency = <24000000>;
+> > > > > > +                   assigned-clocks = <&clks 200>;
+> > > > > > +                   assigned-clock-rates = <24000000>;
+> > > > > >
+> > > > > >                     vdddo-supply = <&camera_dovdd_1v8>;
+> > > > > >                     vdda-supply = <&camera_avdd_2v8>;
+> > > > >
+> > > > > clock-frequency is quite different from assigned-clock-rates though,
+> > > > > semantically speaking. clock-frequency is only about what the clock
+> > > > > frequency is, while assigned-clock-rates will change the rate as well,
+> > > > > and you have no idea how long it will last.
+> > > >
+> > > > The driver currently reads the clock-frequency property and then calls
+> > > > clk_set_rate(). I agree tht assigned-clock-rates isn't a panacea, but I
+> > > > think it's less of a hack than what we currently have.
+> > > >
+> > > > As discussed on IRC, maybe the best option in this specific case is to
+> > > > drop clock-frequency and assigned-clok-rates, and call clk_set_rate()
+> > > > with a hardcoded frequency of 24MHz in the driver, as that's the only
+> > > > frequency the driver supports.
+> > > >
+> > > Does this mean any driver which has a fixed clock requirement shouldn't be a
+> > > DT property and should be just handled by the drivers internally ?
+> >
+> > It's hard to give a generic policy, but here, the hardware is pretty
+> > flexible since it can deal with anything between 6MHz to 50-something
+> > MHz, it's the driver that chooses to enforce a 24MHz and be pedantic
+> > about it, so it's up to the driver to enforce that policy, not to the
+> > DT since it's essentially a software limitation, not a hardware one.
+>
+> Thank you for the clarification, Ill drop patches 1-4 from this series.
 
-Otherwise it removes the ability to create new devices or resizing it , once we
-have zero-ed the last one.
+That's the whole series... :-) I think you should keep patch 1/4 but
+just remove the clock-frequency from the bindings, then remove it from
+the DT files, and patch the driver to set the clock rate to 24MHz
+unconditionally in patch 4/4.
 
-> -	for (res = first; to_alloc && res; res = res->sibling) {
-> +retry:
-> +	rc = -ENOSPC;
-> +	for (res = first; res; res = res->sibling) {
->  		struct resource *next = res->sibling;
-> -		resource_size_t free;
->  
->  		/* space at the beginning of the region */
-> -		free = 0;
-> -		if (res == first && res->start > dax_region->res.start)
-> -			free = res->start - dax_region->res.start;
-> -		if (free >= to_alloc && dev_size == 0)
-> -			return __alloc_dev_dax_range(dev_dax,
-> -					dax_region->res.start, to_alloc);
-> -
-> -		free = 0;
-> +		if (res == first && res->start > dax_region->res.start) {
-> +			alloc = min(res->start - dax_region->res.start,
-> +					to_alloc);
-> +			rc = __alloc_dev_dax_range(dev_dax,
-> +					dax_region->res.start, alloc);
-> +			break;
-> +		}
-> +
-> +		alloc = 0;
->  		/* space between allocations */
->  		if (next && next->start > res->end + 1)
-> -			free = next->start - res->end + 1;
-> +			alloc = min(next->start - (res->end + 1), to_alloc);
->  
->  		/* space at the end of the region */
-> -		if (free < to_alloc && !next && res->end < region_res->end)
-> -			free = region_res->end - res->end;
-> -
-> -		if (free >= to_alloc && strcmp(name, res->name) == 0)
-> -			return __adjust_dev_dax_range(dev_dax, res,
-> -					resource_size(res) + to_alloc);
-> -		else if (free >= to_alloc && dev_size == 0)
-> -			return __alloc_dev_dax_range(dev_dax, res->end + 1,
-> -					to_alloc);
-> +		if (!alloc && !next && res->end < region_res->end)
-> +			alloc = min(region_res->end - res->end, to_alloc);
-> +
-> +		if (!alloc)
-> +			continue;
-> +
-> +		if (adjust_ok(dev_dax, res)) {
-> +			rc = __adjust_dev_dax_range(dev_dax, res,
-> +					resource_size(res) + alloc);
-> +			break;
-> +		}
-> +		rc = __alloc_dev_dax_range(dev_dax, res->end + 1,
-> +				alloc);
-
-I am wondering if we should switch to:
-
-	if (adjust_ok(...))
-		rc = __adjust_dev_dax_range(...);
-	else
-		rc = __alloc_dev_dax_range(...);
-
-And then a debug print at the end depicting whether and how did we grabbed
-space? Something like:
-
-	dev_dbg(&dev_dax->dev, "%s(%d) %d", action, location, rc);
-
-Assuming we set @location to its values when we allocate space at the end,
-beginning or middle; and @action to whether we adjusted up/down or allocated new
-range.
-
-Essentially, something similar to namespaces scan_allocate() just to help
-troubleshoot?
-
+-- 
 Regards,
- Joao
+
+Laurent Pinchart
