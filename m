@@ -2,170 +2,381 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 126C3191D9F
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 00:45:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B6E7D191DCA
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 00:55:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727092AbgCXXpe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 19:45:34 -0400
-Received: from mailout1.samsung.com ([203.254.224.24]:48002 "EHLO
-        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726943AbgCXXpe (ORCPT
+        id S1727229AbgCXXzM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 19:55:12 -0400
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:34258 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727008AbgCXXzM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 19:45:34 -0400
-Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
-        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20200324234531epoutp011ebcfa25b181fd909806c2144719d3ac~-YitIIE8a0168401684epoutp01F
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Mar 2020 23:45:31 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20200324234531epoutp011ebcfa25b181fd909806c2144719d3ac~-YitIIE8a0168401684epoutp01F
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1585093531;
-        bh=cPEoOT/55PEypTYCIUSKLWGTHMtlhHI38aByhNhavak=;
-        h=To:Cc:From:Subject:Date:References:From;
-        b=LCg3k/VaobUVwGxAtSlpG91rfqc3lB+IKcEvzv+UUsg5rixUi3cXwE/JOxmtukue6
-         KADmGxqJBox3faue4JxEV4cswl6iJ1+J1BRszsZw9MHB2U7k9jej7C81gidfOAfrKG
-         5k+8PaesVv5koXzB6BDL/WcZpObS5DQaCKxMjef0=
-Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
-        epcas1p3.samsung.com (KnoxPortal) with ESMTP id
-        20200324234531epcas1p371d8fb08a69a80adcc4477882f184339~-Yispv3zk0669306693epcas1p3z;
-        Tue, 24 Mar 2020 23:45:31 +0000 (GMT)
-Received: from epsmges1p4.samsung.com (unknown [182.195.40.157]) by
-        epsnrtp3.localdomain (Postfix) with ESMTP id 48n7Cq6P9dzMqYkb; Tue, 24 Mar
-        2020 23:45:27 +0000 (GMT)
-Received: from epcas1p4.samsung.com ( [182.195.41.48]) by
-        epsmges1p4.samsung.com (Symantec Messaging Gateway) with SMTP id
-        57.BE.04160.79B9A7E5; Wed, 25 Mar 2020 08:45:27 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-        epcas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20200324234525epcas1p28f4150423112c61645bc19e3742b22bf~-YinjJiAD2642926429epcas1p2K;
-        Tue, 24 Mar 2020 23:45:25 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20200324234525epsmtrp2e8f852ef0442b6026956bc62258e8caf~-YiniXXCc0725607256epsmtrp2q;
-        Tue, 24 Mar 2020 23:45:25 +0000 (GMT)
-X-AuditID: b6c32a38-2afff70000001040-a1-5e7a9b9761c2
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        B4.D0.04024.59B9A7E5; Wed, 25 Mar 2020 08:45:25 +0900 (KST)
-Received: from [10.113.221.102] (unknown [10.113.221.102]) by
-        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20200324234525epsmtip2f2d68676863e37f5bca41ed04ee36409~-YinXQP581161211612epsmtip2D;
-        Tue, 24 Mar 2020 23:45:25 +0000 (GMT)
-To:     "Rafael J. Wysocki <rjw@rjwysocki.net>" <rjw@rjwysocki.net>
-Cc:     "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Chanwoo Choi (samsung.com)" <cw00.choi@samsung.com>,
-        "Chanwoo Choi (samsung.com)" <chanwoo@kernel.org>,
-        =?UTF-8?B?7ZWo66qF7KO8?= <myungjoo.ham@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>
-From:   Chanwoo Choi <cw00.choi@samsung.com>
-Subject: [GIT PULL] devfreq next for v5.7
-Organization: Samsung Electronics
-Message-ID: <21bd6b76-5a3e-96c1-4184-49e96ea5f594@samsung.com>
-Date:   Wed, 25 Mar 2020 08:54:21 +0900
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:59.0) Gecko/20100101
-        Thunderbird/59.0
+        Tue, 24 Mar 2020 19:55:12 -0400
+Received: by mail-qt1-f194.google.com with SMTP id 10so677482qtp.1;
+        Tue, 24 Mar 2020 16:55:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=x4taz7mXl8pptyKy6vTsxg6OtEjU4FBkuE1nJ/DIKuA=;
+        b=RoJn6fp1RJn8aZlfOCSg3bf8t0mKDJrGg4m+LHhDBZQFbF20gzLqL9NlP5RqwqGpXz
+         evGuJZIK10Jngzmu4bLBPmwZ3Dkj64w0RLl/1nBW31qbA77gaKhyNLsURbDB4cvqcElw
+         ijZ2dWBJMsT6oMsn6SM3dawVros6CKVA4P6vJKavXXqvdDvMrlm8RYmgVJ6RRu1Yr4Zd
+         bzsz2H29+FhNg+B81wCZ24Ktiv0MnP60a1YY0MpSL+aVEwVsNVlvzdNdDkbORqKoX6G1
+         C2bhcN/htFQH6W/2ga0awyd675P1FYrwpGvJczFhWVfbARM8xdaxDjHG2eFCAZljtLoh
+         H6cg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=x4taz7mXl8pptyKy6vTsxg6OtEjU4FBkuE1nJ/DIKuA=;
+        b=C/6q2o2f2Rh1x+KzmRD1ojYLSz7lRkGUSjWIGVcVMvi0oWt7c4dGwCZ/XmthHVEyz2
+         L/lmrND9YIqErSEhWfQ3otdcsrcQpFaGsaLYPnN/Cw6Wj5IangbQmKz1eqAp9w3fUw4e
+         wGY2dv0FQn1ge2vVCudVYT3+kONOGv7nYbP0MtoLHBP+MF89xXkJEtAhzalMcEZNCsAQ
+         hWVmhvNf+wPUhxoWf/GgvYxkeSyh3RVG0RR+FnvpHZxW7DrQZ2QMNk7GYDkayWduwpMD
+         mQMmzwvbg8UK49KQ6sWHdzVZ9hsZfJwdcAQvtlg0MmTuT1NKxXm06aqN2puYrocPTsPn
+         UsSQ==
+X-Gm-Message-State: ANhLgQ2q9zgvRbFUXrPfNlkOCfCIHc2alV3ocdSH6pQJ+aemNcEz5iAG
+        7c2OXoP2dnsi/ZzZYWBU9lt+qjRWgEKrS9SA97w=
+X-Google-Smtp-Source: ADFU+vvjtuH2GgiZHGdGFZLEpP9ltYzxWBH9++ulCCIuTz1xtjwtmXEQpwGNTPGEc1XYNHIHWCdk5Em7vkw3NQu8ZFM=
+X-Received: by 2002:ac8:6f1b:: with SMTP id g27mr431798qtv.117.1585094109999;
+ Tue, 24 Mar 2020 16:55:09 -0700 (PDT)
 MIME-Version: 1.0
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrAJsWRmVeSWpSXmKPExsWy7bCmge702VVxBrMPsVlMvHGFxeL6l+es
-        Fmeb3rBbXN41h83ic+8RRovbjSvYLM6cvsTqwO6xaVUnm8eWq+0sHn1bVjF6fN4kF8ASlW2T
-        kZqYklqkkJqXnJ+SmZduq+QdHO8cb2pmYKhraGlhrqSQl5ibaqvk4hOg65aZA3SBkkJZYk4p
-        UCggsbhYSd/Opii/tCRVISO/uMRWKbUgJafAskCvODG3uDQvXS85P9fK0MDAyBSoMCE7492q
-        fvaCuwIVnd+XMDYwLuLtYuTkkBAwkVjy9Bh7FyMXh5DADkaJW529bBDOJ0aJVzc3QznfGCXa
-        73QywrS8+rgSqmUvo8Tkr49ZIZz3jBI7erqBHA4OEQF7iY4PmSBxZoGTTBLXzn5mBulmE9CS
-        2P/iBhuILSygKXF7zicmEJtfQFHi6o/HYBt4Bewk1q17zwpiswioSlx8swGsV1QgTOLkthao
-        GkGJkzOfsIDYzALiEreezGeCsOUltr+dwwyyWELgMptEz9JPLCAHSQi4SNz4LgTxgbDEq+Nb
-        2CFsKYnP7/ayQdjVEitPHmGD6O1glNiy/wIrRMJYYv/SyUwgc5iBjl6/Sx8irCix8/dcRoi9
-        fBLvvvawQqzilehog1qlLHH5wV0mCFtSYnF7J9QqD4mj+3ezTmBUnIXkm1lIvpmF5JtZCIsX
-        MLKsYhRLLSjOTU8tNiwwQY7tTYzg1KllsYNxzzmfQ4wCHIxKPLwNjyvjhFgTy4orcw8xSnAw
-        K4nwbk6tiBPiTUmsrEotyo8vKs1JLT7EaAoM7InMUqLJ+cC0nlcSb2hqZGxsbGFiaGZqaKgk
-        zjv1ek6ckEB6YklqdmpqQWoRTB8TB6dUA2O982IHhf+yK3bwrzxT8al6B1e3gO/fOWYunKZM
-        s4oNDn8NDAnv81lXF/Jl6aGwmrsLg0w11mhOYG6ovrzTLMRxyvLX6jfnLXP8MPcx68wPjk+X
-        HONZmDLtc9W3pI1PrSvny2fUvba49/JBixmnZ0DQjtXuhy8eVjpf57TiynP1/qSgs37X1AuU
-        WIozEg21mIuKEwHFcdM0swMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrILMWRmVeSWpSXmKPExsWy7bCSvO7U2VVxBofXGVpMvHGFxeL6l+es
-        Fmeb3rBbXN41h83ic+8RRovbjSvYLM6cvsTqwO6xaVUnm8eWq+0sHn1bVjF6fN4kF8ASxWWT
-        kpqTWZZapG+XwJXxblU/e8FdgYrO70sYGxgX8XYxcnJICJhIvPq4kr2LkYtDSGA3o8SEx1dY
-        IRKSEtMuHmXuYuQAsoUlDh8uhqh5yyhxquEiO0hcRMBeouNDJkg5s8BpJok1dxxBbDYBLYn9
-        L26wgdjCApoSt+d8YgKx+QUUJa7+eMwIYvMK2EmsW/cebBWLgKrExTcbmEFsUYEwiZ1LHjNB
-        1AhKnJz5hAVivrrEn3mXmCFscYlbT+YzQdjyEtvfzmGewCg4C0nLLCQts5C0zELSsoCRZRWj
-        ZGpBcW56brFhgWFearlecWJucWleul5yfu4mRnBEaGnuYLy8JP4QowAHoxIPr9bDyjgh1sSy
-        4srcQ4wSHMxKIrybUyvihHhTEiurUovy44tKc1KLDzFKc7AoifM+zTsWKSSQnliSmp2aWpBa
-        BJNl4uCUamBMTj/7kuP7pjq7JYtNuI6cjqstCPoqzSAgFL7tkNijLZ2X0hxnG50KKDZ+F8ts
-        97YqTfrzz/x/snYLM6M0TqQt2KUWtLv0mhcT4687payaKb7Xnz2wP68/2em9d4VR5CWDjtzd
-        2zluPSzwlK3/W6T6+NcuwXbLdJabU+wrI61v2VYf4Lx1rVmJpTgj0VCLuag4EQBmtjwmhAIA
-        AA==
-X-CMS-MailID: 20200324234525epcas1p28f4150423112c61645bc19e3742b22bf
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: SVC_REQ_APPROVE
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20200324234525epcas1p28f4150423112c61645bc19e3742b22bf
-References: <CGME20200324234525epcas1p28f4150423112c61645bc19e3742b22bf@epcas1p2.samsung.com>
+References: <20200323164415.12943-1-kpsingh@chromium.org> <20200323164415.12943-8-kpsingh@chromium.org>
+In-Reply-To: <20200323164415.12943-8-kpsingh@chromium.org>
+From:   Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date:   Tue, 24 Mar 2020 16:54:59 -0700
+Message-ID: <CAEf4BzZCVqpUDqGetxa=Nx1ZC7Q+2yX2D9FMwywWkFDoN8JHDA@mail.gmail.com>
+Subject: Re: [PATCH bpf-next v5 7/7] bpf: lsm: Add selftests for BPF_PROG_TYPE_LSM
+To:     KP Singh <kpsingh@chromium.org>
+Cc:     open list <linux-kernel@vger.kernel.org>,
+        bpf <bpf@vger.kernel.org>, linux-security-module@vger.kernel.org,
+        Brendan Jackman <jackmanb@google.com>,
+        Florent Revest <revest@google.com>,
+        Thomas Garnier <thgarnie@google.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        James Morris <jmorris@namei.org>,
+        Kees Cook <keescook@chromium.org>,
+        Paul Turner <pjt@google.com>, Jann Horn <jannh@google.com>,
+        Florent Revest <revest@chromium.org>,
+        Brendan Jackman <jackmanb@chromium.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dear Rafael,
+On Mon, Mar 23, 2020 at 9:45 AM KP Singh <kpsingh@chromium.org> wrote:
+>
+> From: KP Singh <kpsingh@google.com>
+>
+> * Load/attach a BPF program to the file_mprotect (int) and
+>   bprm_committed_creds (void) LSM hooks.
+> * Perform an action that triggers the hook.
+> * Verify if the audit event was received using a shared global
+>   result variable.
+>
+> Signed-off-by: KP Singh <kpsingh@google.com>
+> Reviewed-by: Brendan Jackman <jackmanb@google.com>
+> Reviewed-by: Florent Revest <revest@google.com>
+> Reviewed-by: Thomas Garnier <thgarnie@google.com>
+> ---
+>  tools/testing/selftests/bpf/lsm_helpers.h     |  19 +++
+>  .../selftests/bpf/prog_tests/lsm_test.c       | 112 ++++++++++++++++++
+>  .../selftests/bpf/progs/lsm_int_hook.c        |  54 +++++++++
+>  .../selftests/bpf/progs/lsm_void_hook.c       |  41 +++++++
+>  4 files changed, 226 insertions(+)
+>  create mode 100644 tools/testing/selftests/bpf/lsm_helpers.h
+>  create mode 100644 tools/testing/selftests/bpf/prog_tests/lsm_test.c
+>  create mode 100644 tools/testing/selftests/bpf/progs/lsm_int_hook.c
+>  create mode 100644 tools/testing/selftests/bpf/progs/lsm_void_hook.c
+>
+> diff --git a/tools/testing/selftests/bpf/lsm_helpers.h b/tools/testing/selftests/bpf/lsm_helpers.h
+> new file mode 100644
+> index 000000000000..3de230df93db
+> --- /dev/null
+> +++ b/tools/testing/selftests/bpf/lsm_helpers.h
+> @@ -0,0 +1,19 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +
+> +/*
+> + * Copyright (C) 2020 Google LLC.
+> + */
+> +#ifndef _LSM_HELPERS_H
+> +#define _LSM_HELPERS_H
+> +
+> +struct lsm_prog_result {
+> +       /* This ensures that the LSM Hook only monitors the PID requested
+> +        * by the loader
+> +        */
+> +       __u32 monitored_pid;
+> +       /* The number of calls to the prog for the monitored PID.
+> +        */
+> +       __u32 count;
+> +};
+> +
 
-This is devfreq-next pull request for v5.7-rc1. I add detailed description of
-this pull request on the following tag. Please pull devfreq with following updates.
-- tag name : devfreq-next-for-5.7
+Having this extra header just for this simple struct... On BPF side
+it's easier and nicer to just use global variables. Can you please
+drop helper and just pass two variables in prog_test part?
 
-Best Regards,
-Chanwoo Choi
+> +#endif /* _LSM_HELPERS_H */
+> diff --git a/tools/testing/selftests/bpf/prog_tests/lsm_test.c b/tools/testing/selftests/bpf/prog_tests/lsm_test.c
+> new file mode 100644
+> index 000000000000..5fd6b8f569f7
+> --- /dev/null
+> +++ b/tools/testing/selftests/bpf/prog_tests/lsm_test.c
+> @@ -0,0 +1,112 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +
+> +/*
+> + * Copyright (C) 2020 Google LLC.
+> + */
+> +
+> +#include <test_progs.h>
+> +#include <sys/mman.h>
+> +#include <sys/wait.h>
+> +#include <unistd.h>
+> +#include <malloc.h>
+> +#include <stdlib.h>
+> +
+> +#include "lsm_helpers.h"
+> +#include "lsm_void_hook.skel.h"
+> +#include "lsm_int_hook.skel.h"
+> +
+> +char *LS_ARGS[] = {"true", NULL};
+> +
+> +int heap_mprotect(void)
+> +{
+> +       void *buf;
+> +       long sz;
+> +
+> +       sz = sysconf(_SC_PAGESIZE);
+> +       if (sz < 0)
+> +               return sz;
+> +
+> +       buf = memalign(sz, 2 * sz);
+> +       if (buf == NULL)
+> +               return -ENOMEM;
+> +
+> +       return mprotect(buf, sz, PROT_READ | PROT_EXEC);
+> +}
+> +
+> +int exec_ls(struct lsm_prog_result *result)
+> +{
+> +       int child_pid;
+> +
+> +       child_pid = fork();
+> +       if (child_pid == 0) {
+> +               result->monitored_pid = getpid();
 
-The following changes since commit 16fbf79b0f83bc752cee8589279f1ebfe57b3b6e:
+monitored_pid needed here only
 
-  Linux 5.6-rc7 (2020-03-22 18:31:56 -0700)
+> +               execvp(LS_ARGS[0], LS_ARGS);
+> +               return -EINVAL;
+> +       } else if (child_pid > 0)
+> +               return wait(NULL);
+> +
+> +       return -EINVAL;
+> +}
+> +
+> +void test_lsm_void_hook(void)
+> +{
+> +       struct lsm_prog_result *result;
+> +       struct lsm_void_hook *skel = NULL;
+> +       int err, duration = 0;
+> +
+> +       skel = lsm_void_hook__open_and_load();
+> +       if (CHECK(!skel, "skel_load", "lsm_void_hook skeleton failed\n"))
+> +               goto close_prog;
+> +
+> +       err = lsm_void_hook__attach(skel);
+> +       if (CHECK(err, "attach", "lsm_void_hook attach failed: %d\n", err))
+> +               goto close_prog;
+> +
+> +       result = &skel->bss->result;
 
-are available in the Git repository at:
+if you define variables directly, you'll access them easily as
+skel->bss->monitored_pid and skel->bss->count, no problem, right?
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/chanwoo/linux.git tags/devfreq-next-for-5.7
+> +
+> +       err = exec_ls(result);
+> +       if (CHECK(err < 0, "exec_ls", "err %d errno %d\n", err, errno))
+> +               goto close_prog;
+> +
+> +       if (CHECK(result->count != 1, "count", "count = %d", result->count))
+> +               goto close_prog;
+> +
+> +       CHECK_FAIL(result->count != 1);
+> +
+> +close_prog:
+> +       lsm_void_hook__destroy(skel);
+> +}
+> +
+> +void test_lsm_int_hook(void)
+> +{
+> +       struct lsm_prog_result *result;
+> +       struct lsm_int_hook *skel = NULL;
+> +       int err, duration = 0;
+> +
+> +       skel = lsm_int_hook__open_and_load();
+> +       if (CHECK(!skel, "skel_load", "lsm_int_hook skeleton failed\n"))
+> +               goto close_prog;
+> +
+> +       err = lsm_int_hook__attach(skel);
+> +       if (CHECK(err, "attach", "lsm_int_hook attach failed: %d\n", err))
+> +               goto close_prog;
+> +
+> +       result = &skel->bss->result;
+> +       result->monitored_pid = getpid();
+> +
+> +       err = heap_mprotect();
+> +       if (CHECK(errno != EPERM, "heap_mprotect", "want errno=EPERM, got %d\n",
+> +                 errno))
+> +               goto close_prog;
+> +
+> +       CHECK_FAIL(result->count != 1);
+> +
+> +close_prog:
+> +       lsm_int_hook__destroy(skel);
+> +}
+> +
+> +void test_lsm_test(void)
+> +{
+> +       test_lsm_void_hook();
+> +       test_lsm_int_hook();
 
-for you to fetch changes up to 7a51320ecd394202d80131ad7837a72ca2213e64:
+These should be subtests (see test__start_subtest() usage). Also, I'm
+not sure why you need two separate BPF programs, why not create one
+and use it for two subtests?
 
-  PM / devfreq: Get rid of some doc warnings (2020-03-25 08:35:03 +0900)
 
-----------------------------------------------------------------
+> +}
+> diff --git a/tools/testing/selftests/bpf/progs/lsm_int_hook.c b/tools/testing/selftests/bpf/progs/lsm_int_hook.c
+> new file mode 100644
+> index 000000000000..1c5028ddca61
+> --- /dev/null
+> +++ b/tools/testing/selftests/bpf/progs/lsm_int_hook.c
 
-Detailed description for this pull request:
-1. Update devfreq code with minor issue:
-- Remove unneeded extern keyword from devfreq header file.
+consider it a nit because not every test follows this, but using
+progs/test_whatever.c for BPF side and prog_test/whatever.c makes my
+life a bit easier.
 
-- Change to DEVFREQ_GOV_UPDATE_INTERNAL event name because
-  old DEVFREQ_GOV_INTERNAL name doesn't specify exactly what to do.
 
-- Fix handling code of return value of dev_pm_qos_remove_request().
+> @@ -0,0 +1,54 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +
+> +/*
+> + * Copyright 2020 Google LLC.
+> + */
+> +
+> +#include <linux/bpf.h>
+> +#include <stdbool.h>
+> +#include <bpf/bpf_helpers.h>
+> +#include <bpf/bpf_tracing.h>
+> +#include  <errno.h>
+> +#include "lsm_helpers.h"
+> +
+> +char _license[] SEC("license") = "GPL";
+> +
+> +struct lsm_prog_result result = {
+> +       .monitored_pid = 0,
+> +       .count = 0,
+> +};
+> +
+> +/*
+> + * Define some of the structs used in the BPF program.
+> + * Only the field names and their sizes need to be the
+> + * same as the kernel type, the order is irrelevant.
+> + */
+> +struct mm_struct {
+> +       unsigned long start_brk, brk;
+> +} __attribute__((preserve_access_index));
+> +
+> +struct vm_area_struct {
+> +       unsigned long vm_start, vm_end;
+> +       struct mm_struct *vm_mm;
+> +} __attribute__((preserve_access_index));
 
-- Use constant name for userspace governor with DEVFREQ_GOV_USERSPACE.
+Why not just using vmlinux.h instead?
 
-- Get rid of doc warnings and  fix typo.
+> +
+> +SEC("lsm/file_mprotect")
+> +int BPF_PROG(test_int_hook, struct vm_area_struct *vma,
+> +            unsigned long reqprot, unsigned long prot, int ret)
+> +{
+> +       if (ret != 0)
+> +               return ret;
+> +
+> +       __u32 pid = bpf_get_current_pid_tgid();
+> +       int is_heap = 0;
+> +
+> +       is_heap = (vma->vm_start >= vma->vm_mm->start_brk &&
+> +                  vma->vm_end <= vma->vm_mm->brk);
+> +
+> +       if (is_heap && result.monitored_pid == pid) {
+> +               result.count++;
+> +               ret = -EPERM;
+> +       }
+> +
+> +       return ret;
+> +}
+> diff --git a/tools/testing/selftests/bpf/progs/lsm_void_hook.c b/tools/testing/selftests/bpf/progs/lsm_void_hook.c
+> new file mode 100644
+> index 000000000000..4d01a8536413
+> --- /dev/null
+> +++ b/tools/testing/selftests/bpf/progs/lsm_void_hook.c
+> @@ -0,0 +1,41 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +
+> +/*
+> + * Copyright (C) 2020 Google LLC.
+> + */
+> +
+> +#include <linux/bpf.h>
+> +#include <stdbool.h>
+> +#include <bpf/bpf_helpers.h>
+> +#include <bpf/bpf_tracing.h>
+> +#include  <errno.h>
+> +#include "lsm_helpers.h"
+> +
+> +char _license[] SEC("license") = "GPL";
+> +
+> +struct lsm_prog_result result = {
+> +       .monitored_pid = 0,
+> +       .count = 0,
+> +};
+> +
+> +/*
+> + * Define some of the structs used in the BPF program.
+> + * Only the field names and their sizes need to be the
+> + * same as the kernel type, the order is irrelevant.
+> + */
+> +struct linux_binprm {
+> +       const char *filename;
+> +} __attribute__((preserve_access_index));
+> +
+> +SEC("lsm/bprm_committed_creds")
+> +int BPF_PROG(test_void_hook, struct linux_binprm *bprm)
+> +{
+> +       __u32 pid = bpf_get_current_pid_tgid();
+> +       char fmt[] = "lsm(bprm_committed_creds): process executed %s\n";
 
-----------------------------------------------------------------
+Try static char fmt[] = "..." instead and then compare BPF assembly
+before and after, you'll be amazed ;)
 
-Chanwoo Choi (2):
-      PM / devfreq: Remove unneeded extern keyword
-      PM / devfreq: Change to DEVFREQ_GOV_UPDATE_INTERVAL event name
+> +
+> +       bpf_trace_printk(fmt, sizeof(fmt), bprm->filename);
 
-Christophe JAILLET (1):
-      PM / devfreq: Fix a typo in a comment
+is this part of test?
 
-Leonard Crestez (1):
-      PM / devfreq: Fix handling dev_pm_qos_remove_request result
-
-Mauro Carvalho Chehab (1):
-      PM / devfreq: Get rid of some doc warnings
-
-pierre Kuo (1):
-      PM / devfreq: Use constant name of userspace governor
-
- drivers/devfreq/devfreq.c                 |  14 ++--
- drivers/devfreq/governor.h                |  21 +++---
- drivers/devfreq/governor_simpleondemand.c |   4 +-
- drivers/devfreq/governor_userspace.c      |   2 +-
- drivers/devfreq/tegra30-devfreq.c         |   4 +-
- include/linux/devfreq.h                   | 106 +++++++++++++++---------------
- 6 files changed, 74 insertions(+), 77 deletions(-)
+> +       if (result.monitored_pid == pid)
+> +               result.count++;
+> +
+> +       return 0;
+> +}
+> --
+> 2.20.1
+>
