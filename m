@@ -2,196 +2,170 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5306B191DC8
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 00:54:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 126C3191D9F
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 00:45:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727190AbgCXXyN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 19:54:13 -0400
-Received: from mail-qk1-f193.google.com ([209.85.222.193]:41492 "EHLO
-        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726968AbgCXXyN (ORCPT
+        id S1727092AbgCXXpe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 19:45:34 -0400
+Received: from mailout1.samsung.com ([203.254.224.24]:48002 "EHLO
+        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726943AbgCXXpe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 19:54:13 -0400
-Received: by mail-qk1-f193.google.com with SMTP id q188so593043qke.8;
-        Tue, 24 Mar 2020 16:54:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=bWdQrSC8E4qph62LTErgxscMGGiPy7reC5vJ9ah9h8k=;
-        b=nNAICxcBx0Pd+m7pJ2cu767ivyvG+BJBZ7CnmIRNMGl1+j5Qv4Hioi0DGMhn0udMwC
-         0Sj+v2o4t2wmAjP4WNZr8YjuKF1Rq0hxXvGvKD6ZGXd3QbJ9okgMYT1FwxIUeRJFSXdS
-         i4d9ZDEUQ7jrRM371rEkYhxGU655fTzy1yJ2aOcv4/wlSL3m8g6ARfwOz++ZSbRJIHr/
-         9hR8rmjizVcSSdAncaxPMSx6ERntT2iXWLX3bpMk+OjPExyiTGAXjg0QeUibDEy5V7js
-         H2VvNMBkK3akQBiiot6BhL7noTLbdljNVc/SORkSDu9mXccRtM7u8/ogVMZ48YmqCETs
-         eptQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=bWdQrSC8E4qph62LTErgxscMGGiPy7reC5vJ9ah9h8k=;
-        b=HeYIaUgSKBj9WoGDUy6dmgSXvfXAU5T2+hunSDj5MdaBe5AMkO+Vv1leLBufb1FfLP
-         bQWGUQRpHBp4di0cEmDetjrbqYuAsbXqGmjyJUFYdjIGuClD89EDlMvZswUNykG53dnP
-         H1c3tIFGPt6j9o8Plm/zdl40J0oC/66WDRPI0Q2dJob1VofCEQqIHMa4v7yyZwG5FS1g
-         7e9n/2zopgvtc9hXfqO6ENpDJGu1Mh/FUyWEyFjgtn3JyqsYS3SQ9p3HPel18t90+h/d
-         Gd/tV+yXltHQFXQ0YuUxyRAr7IdvooQr83YWBephPdw4pQvjIhsf9utb6IkxJL8ybLfP
-         43eg==
-X-Gm-Message-State: ANhLgQ3CKM5FEB1zRlo6viAdYgr84QQ/X1hgM3H+PJQXc53fmQZTeRrG
-        1aTW/31Ji1xAlRJHMGKKLGGBQ6ZKWRWJlwTQIX8=
-X-Google-Smtp-Source: ADFU+vu8TmmTFhtp932LiK5RXfQw1JiikKNrT3JD96Mn5TJPqPZzPw9VhGygP/zkNCp4+8rHf5Myv3bSXCNTnDLS6WY=
-X-Received: by 2002:a37:4015:: with SMTP id n21mr447066qka.76.1585094051677;
- Tue, 24 Mar 2020 16:54:11 -0700 (PDT)
+        Tue, 24 Mar 2020 19:45:34 -0400
+Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
+        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20200324234531epoutp011ebcfa25b181fd909806c2144719d3ac~-YitIIE8a0168401684epoutp01F
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Mar 2020 23:45:31 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20200324234531epoutp011ebcfa25b181fd909806c2144719d3ac~-YitIIE8a0168401684epoutp01F
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1585093531;
+        bh=cPEoOT/55PEypTYCIUSKLWGTHMtlhHI38aByhNhavak=;
+        h=To:Cc:From:Subject:Date:References:From;
+        b=LCg3k/VaobUVwGxAtSlpG91rfqc3lB+IKcEvzv+UUsg5rixUi3cXwE/JOxmtukue6
+         KADmGxqJBox3faue4JxEV4cswl6iJ1+J1BRszsZw9MHB2U7k9jej7C81gidfOAfrKG
+         5k+8PaesVv5koXzB6BDL/WcZpObS5DQaCKxMjef0=
+Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
+        epcas1p3.samsung.com (KnoxPortal) with ESMTP id
+        20200324234531epcas1p371d8fb08a69a80adcc4477882f184339~-Yispv3zk0669306693epcas1p3z;
+        Tue, 24 Mar 2020 23:45:31 +0000 (GMT)
+Received: from epsmges1p4.samsung.com (unknown [182.195.40.157]) by
+        epsnrtp3.localdomain (Postfix) with ESMTP id 48n7Cq6P9dzMqYkb; Tue, 24 Mar
+        2020 23:45:27 +0000 (GMT)
+Received: from epcas1p4.samsung.com ( [182.195.41.48]) by
+        epsmges1p4.samsung.com (Symantec Messaging Gateway) with SMTP id
+        57.BE.04160.79B9A7E5; Wed, 25 Mar 2020 08:45:27 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+        epcas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20200324234525epcas1p28f4150423112c61645bc19e3742b22bf~-YinjJiAD2642926429epcas1p2K;
+        Tue, 24 Mar 2020 23:45:25 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20200324234525epsmtrp2e8f852ef0442b6026956bc62258e8caf~-YiniXXCc0725607256epsmtrp2q;
+        Tue, 24 Mar 2020 23:45:25 +0000 (GMT)
+X-AuditID: b6c32a38-2afff70000001040-a1-5e7a9b9761c2
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        B4.D0.04024.59B9A7E5; Wed, 25 Mar 2020 08:45:25 +0900 (KST)
+Received: from [10.113.221.102] (unknown [10.113.221.102]) by
+        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20200324234525epsmtip2f2d68676863e37f5bca41ed04ee36409~-YinXQP581161211612epsmtip2D;
+        Tue, 24 Mar 2020 23:45:25 +0000 (GMT)
+To:     "Rafael J. Wysocki <rjw@rjwysocki.net>" <rjw@rjwysocki.net>
+Cc:     "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Chanwoo Choi (samsung.com)" <cw00.choi@samsung.com>,
+        "Chanwoo Choi (samsung.com)" <chanwoo@kernel.org>,
+        =?UTF-8?B?7ZWo66qF7KO8?= <myungjoo.ham@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>
+From:   Chanwoo Choi <cw00.choi@samsung.com>
+Subject: [GIT PULL] devfreq next for v5.7
+Organization: Samsung Electronics
+Message-ID: <21bd6b76-5a3e-96c1-4184-49e96ea5f594@samsung.com>
+Date:   Wed, 25 Mar 2020 08:54:21 +0900
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:59.0) Gecko/20100101
+        Thunderbird/59.0
 MIME-Version: 1.0
-References: <20190813204513.4790-1-skunberg.kelsey@gmail.com>
- <20190815153352.86143-2-skunberg.kelsey@gmail.com> <CAB=otbSYozS-ZfxB0nCiNnxcbqxwrHOSYxJJtDKa63KzXbXgpw@mail.gmail.com>
- <20200314112022.GA53794@kroah.com> <CAFVqi1T1Fipajca8exrzs6uQAorSZeke80LYy43aCBpT45nFdA@mail.gmail.com>
- <20200324062422.GA1977781@kroah.com>
-In-Reply-To: <20200324062422.GA1977781@kroah.com>
-From:   Kelsey <skunberg.kelsey@gmail.com>
-Date:   Tue, 24 Mar 2020 17:53:59 -0600
-Message-ID: <CAFVqi1Sqnn6L9xLQ0=BZp6D=aYz74tRMP0WYEXXVsz2cYXaoHA@mail.gmail.com>
-Subject: Re: [PATCH v3 1/4] PCI: sysfs: Define device attributes with DEVICE_ATTR*
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
-        Ruslan Bilovol <ruslan.bilovol@gmail.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Shuah Khan <skhan@linuxfoundation.org>,
-        linux-kernel-mentees@lists.linuxfoundation.org,
-        Bodong Wang <bodong@mellanox.com>,
-        Don Dutile <ddutile@redhat.com>, rbilovol@cisco.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrAJsWRmVeSWpSXmKPExsWy7bCmge702VVxBrMPsVlMvHGFxeL6l+es
+        Fmeb3rBbXN41h83ic+8RRovbjSvYLM6cvsTqwO6xaVUnm8eWq+0sHn1bVjF6fN4kF8ASlW2T
+        kZqYklqkkJqXnJ+SmZduq+QdHO8cb2pmYKhraGlhrqSQl5ibaqvk4hOg65aZA3SBkkJZYk4p
+        UCggsbhYSd/Opii/tCRVISO/uMRWKbUgJafAskCvODG3uDQvXS85P9fK0MDAyBSoMCE7492q
+        fvaCuwIVnd+XMDYwLuLtYuTkkBAwkVjy9Bh7FyMXh5DADkaJW529bBDOJ0aJVzc3QznfGCXa
+        73QywrS8+rgSqmUvo8Tkr49ZIZz3jBI7erqBHA4OEQF7iY4PmSBxZoGTTBLXzn5mBulmE9CS
+        2P/iBhuILSygKXF7zicmEJtfQFHi6o/HYBt4Bewk1q17zwpiswioSlx8swGsV1QgTOLkthao
+        GkGJkzOfsIDYzALiEreezGeCsOUltr+dwwyyWELgMptEz9JPLCAHSQi4SNz4LgTxgbDEq+Nb
+        2CFsKYnP7/ayQdjVEitPHmGD6O1glNiy/wIrRMJYYv/SyUwgc5iBjl6/Sx8irCix8/dcRoi9
+        fBLvvvawQqzilehog1qlLHH5wV0mCFtSYnF7J9QqD4mj+3ezTmBUnIXkm1lIvpmF5JtZCIsX
+        MLKsYhRLLSjOTU8tNiwwQY7tTYzg1KllsYNxzzmfQ4wCHIxKPLwNjyvjhFgTy4orcw8xSnAw
+        K4nwbk6tiBPiTUmsrEotyo8vKs1JLT7EaAoM7InMUqLJ+cC0nlcSb2hqZGxsbGFiaGZqaKgk
+        zjv1ek6ckEB6YklqdmpqQWoRTB8TB6dUA2O982IHhf+yK3bwrzxT8al6B1e3gO/fOWYunKZM
+        s4oNDn8NDAnv81lXF/Jl6aGwmrsLg0w11mhOYG6ovrzTLMRxyvLX6jfnLXP8MPcx68wPjk+X
+        HONZmDLtc9W3pI1PrSvny2fUvba49/JBixmnZ0DQjtXuhy8eVjpf57TiynP1/qSgs37X1AuU
+        WIozEg21mIuKEwHFcdM0swMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrILMWRmVeSWpSXmKPExsWy7bCSvO7U2VVxBofXGVpMvHGFxeL6l+es
+        Fmeb3rBbXN41h83ic+8RRovbjSvYLM6cvsTqwO6xaVUnm8eWq+0sHn1bVjF6fN4kF8ASxWWT
+        kpqTWZZapG+XwJXxblU/e8FdgYrO70sYGxgX8XYxcnJICJhIvPq4kr2LkYtDSGA3o8SEx1dY
+        IRKSEtMuHmXuYuQAsoUlDh8uhqh5yyhxquEiO0hcRMBeouNDJkg5s8BpJok1dxxBbDYBLYn9
+        L26wgdjCApoSt+d8YgKx+QUUJa7+eMwIYvMK2EmsW/cebBWLgKrExTcbmEFsUYEwiZ1LHjNB
+        1AhKnJz5hAVivrrEn3mXmCFscYlbT+YzQdjyEtvfzmGewCg4C0nLLCQts5C0zELSsoCRZRWj
+        ZGpBcW56brFhgWFearlecWJucWleul5yfu4mRnBEaGnuYLy8JP4QowAHoxIPr9bDyjgh1sSy
+        4srcQ4wSHMxKIrybUyvihHhTEiurUovy44tKc1KLDzFKc7AoifM+zTsWKSSQnliSmp2aWpBa
+        BJNl4uCUamBMTj/7kuP7pjq7JYtNuI6cjqstCPoqzSAgFL7tkNijLZ2X0hxnG50KKDZ+F8ts
+        97YqTfrzz/x/snYLM6M0TqQt2KUWtLv0mhcT4687payaKb7Xnz2wP68/2em9d4VR5CWDjtzd
+        2zluPSzwlK3/W6T6+NcuwXbLdJabU+wrI61v2VYf4Lx1rVmJpTgj0VCLuag4EQBmtjwmhAIA
+        AA==
+X-CMS-MailID: 20200324234525epcas1p28f4150423112c61645bc19e3742b22bf
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: SVC_REQ_APPROVE
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20200324234525epcas1p28f4150423112c61645bc19e3742b22bf
+References: <CGME20200324234525epcas1p28f4150423112c61645bc19e3742b22bf@epcas1p2.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 24, 2020 at 12:24 AM Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> On Tue, Mar 24, 2020 at 12:10:33AM -0600, Kelsey wrote:
-> > On Sat, Mar 14, 2020 at 5:20 AM Greg Kroah-Hartman
-> > <gregkh@linuxfoundation.org> wrote:
-> > >
-> > > On Sat, Mar 14, 2020 at 12:51:47PM +0200, Ruslan Bilovol wrote:
-> > > > On Thu, Aug 15, 2019 at 7:01 PM Kelsey Skunberg
-> > > > <skunberg.kelsey@gmail.com> wrote:
-> > > > >
-> > > > > Defining device attributes should be done through the helper
-> > > > > DEVICE_ATTR_RO(), DEVICE_ATTR_WO(), or similar. Change all instances using
-> > > > > __ATTR* to now use its equivalent DEVICE_ATTR*.
-> > > > >
-> > > > > Example of old:
-> > > > >
-> > > > > static struct device_attribute dev_name_##_attr=__ATTR_RO(_name);
-> > > > >
-> > > > > Example of new:
-> > > > >
-> > > > > static DEVICE_ATTR_RO(_name);
-> > > > >
-> > > > > Signed-off-by: Kelsey Skunberg <skunberg.kelsey@gmail.com>
-> > > > > ---
-> > > > >  drivers/pci/pci-sysfs.c | 59 +++++++++++++++++++----------------------
-> > > > >  1 file changed, 27 insertions(+), 32 deletions(-)
-> > > > >
-> > > > > diff --git a/drivers/pci/pci-sysfs.c b/drivers/pci/pci-sysfs.c
-> > > > > index 965c72104150..8af7944fdccb 100644
-> > > > > --- a/drivers/pci/pci-sysfs.c
-> > > > > +++ b/drivers/pci/pci-sysfs.c
-> > > > > @@ -464,9 +464,7 @@ static ssize_t dev_rescan_store(struct device *dev,
-> > > > >         }
-> > > > >         return count;
-> > > > >  }
-> > > > > -static struct device_attribute dev_rescan_attr = __ATTR(rescan,
-> > > > > -                                                       (S_IWUSR|S_IWGRP),
-> > > > > -                                                       NULL, dev_rescan_store);
-> > > > > +static DEVICE_ATTR(rescan, (S_IWUSR | S_IWGRP), NULL, dev_rescan_store);
-> > > > >
-> > > > >  static ssize_t remove_store(struct device *dev, struct device_attribute *attr,
-> > > > >                             const char *buf, size_t count)
-> > > > > @@ -480,9 +478,8 @@ static ssize_t remove_store(struct device *dev, struct device_attribute *attr,
-> > > > >                 pci_stop_and_remove_bus_device_locked(to_pci_dev(dev));
-> > > > >         return count;
-> > > > >  }
-> > > > > -static struct device_attribute dev_remove_attr = __ATTR_IGNORE_LOCKDEP(remove,
-> > > > > -                                                       (S_IWUSR|S_IWGRP),
-> > > > > -                                                       NULL, remove_store);
-> > > > > +static DEVICE_ATTR_IGNORE_LOCKDEP(remove, (S_IWUSR | S_IWGRP), NULL,
-> > > > > +                                 remove_store);
-> > > > >
-> > > > >  static ssize_t dev_bus_rescan_store(struct device *dev,
-> > > > >                                     struct device_attribute *attr,
-> > > > > @@ -504,7 +501,7 @@ static ssize_t dev_bus_rescan_store(struct device *dev,
-> > > > >         }
-> > > > >         return count;
-> > > > >  }
-> > > > > -static DEVICE_ATTR(rescan, (S_IWUSR|S_IWGRP), NULL, dev_bus_rescan_store);
-> > > > > +static DEVICE_ATTR(bus_rescan, (S_IWUSR | S_IWGRP), NULL, dev_bus_rescan_store);
-> > > >
-> > > > This patch renamed 'rescan' to 'bus_rescan' and broke my userspace application.
-> > > > There is also mismatch now between real functionality and documentation
-> > > > Documentation/ABI/testing/sysfs-bus-pci which still contains old "rescan"
-> > > > descriptions.
-> > > >
-> > > > Another patch from this patch series also renamed 'rescan' to 'dev_rescan'
-> > > >
-> > > > Here is a comparison between two stable kernels (with and without this
-> > > > patch series):
-> > > >
-> > > > v5.4
-> > > > # find /sys -name '*rescan'
-> > > > /sys/devices/pci0000:00/0000:00:01.2/dev_rescan
-> > > > /sys/devices/pci0000:00/0000:00:01.0/dev_rescan
-> > > > /sys/devices/pci0000:00/0000:00:04.0/dev_rescan
-> > > > /sys/devices/pci0000:00/0000:00:00.0/dev_rescan
-> > > > /sys/devices/pci0000:00/pci_bus/0000:00/bus_rescan
-> > > > /sys/devices/pci0000:00/0000:00:01.3/dev_rescan
-> > > > /sys/devices/pci0000:00/0000:00:03.0/dev_rescan
-> > > > /sys/devices/pci0000:00/0000:00:01.1/dev_rescan
-> > > > /sys/devices/pci0000:00/0000:00:02.0/dev_rescan
-> > > > /sys/devices/pci0000:00/0000:00:05.0/dev_rescan
-> > > > /sys/bus/pci/rescan
-> > > >
-> > > > v4.19
-> > > > # find /sys -name '*rescan'
-> > > > /sys/devices/pci0000:00/0000:00:01.2/rescan
-> > > > /sys/devices/pci0000:00/0000:00:01.0/rescan
-> > > > /sys/devices/pci0000:00/0000:00:04.0/rescan
-> > > > /sys/devices/pci0000:00/0000:00:00.0/rescan
-> > > > /sys/devices/pci0000:00/pci_bus/0000:00/rescan
-> > > > /sys/devices/pci0000:00/0000:00:01.3/rescan
-> > > > /sys/devices/pci0000:00/0000:00:03.0/rescan
-> > > > /sys/devices/pci0000:00/0000:00:01.1/rescan
-> > > > /sys/devices/pci0000:00/0000:00:02.0/rescan
-> > > > /sys/devices/pci0000:00/0000:00:05.0/rescan
-> > > > /sys/bus/pci/rescan
-> > > >
-> > > > Do we maintain this kind of API as non-changeable?
-> > >
-> > > Yeah, that's a bug and should be fixed, sorry for missing that on
-> > > review.
-> > >
-> > > Kelsey, can you fix this up?
-> > >
-> > > thanks,
-> > >
-> > > greg k-h
-> >
-> > I'd be happy to help get this fixed up.
-> >
-> > Would it be proper to go back to using DEVICE_ATTR() for 'bus_rescan'
-> > and 'dev_rescan' in order to change their names back to 'rescan'?
->
-> Yes.
->
-> thanks,
->
-> greg k-h
+Dear Rafael,
 
+This is devfreq-next pull request for v5.7-rc1. I add detailed description of
+this pull request on the following tag. Please pull devfreq with following updates.
+- tag name : devfreq-next-for-5.7
 
-Ack. Sent a patch out. Will stay posted in case any updates need to be made.
+Best Regards,
+Chanwoo Choi
 
-commit 4cb9e42d3226 ("PCI: sysfs: Change bus_rescan and dev_rescan to rescan")
+The following changes since commit 16fbf79b0f83bc752cee8589279f1ebfe57b3b6e:
 
-Thanks!
+  Linux 5.6-rc7 (2020-03-22 18:31:56 -0700)
 
-- Kelsey
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/chanwoo/linux.git tags/devfreq-next-for-5.7
+
+for you to fetch changes up to 7a51320ecd394202d80131ad7837a72ca2213e64:
+
+  PM / devfreq: Get rid of some doc warnings (2020-03-25 08:35:03 +0900)
+
+----------------------------------------------------------------
+
+Detailed description for this pull request:
+1. Update devfreq code with minor issue:
+- Remove unneeded extern keyword from devfreq header file.
+
+- Change to DEVFREQ_GOV_UPDATE_INTERNAL event name because
+  old DEVFREQ_GOV_INTERNAL name doesn't specify exactly what to do.
+
+- Fix handling code of return value of dev_pm_qos_remove_request().
+
+- Use constant name for userspace governor with DEVFREQ_GOV_USERSPACE.
+
+- Get rid of doc warnings and  fix typo.
+
+----------------------------------------------------------------
+
+Chanwoo Choi (2):
+      PM / devfreq: Remove unneeded extern keyword
+      PM / devfreq: Change to DEVFREQ_GOV_UPDATE_INTERVAL event name
+
+Christophe JAILLET (1):
+      PM / devfreq: Fix a typo in a comment
+
+Leonard Crestez (1):
+      PM / devfreq: Fix handling dev_pm_qos_remove_request result
+
+Mauro Carvalho Chehab (1):
+      PM / devfreq: Get rid of some doc warnings
+
+pierre Kuo (1):
+      PM / devfreq: Use constant name of userspace governor
+
+ drivers/devfreq/devfreq.c                 |  14 ++--
+ drivers/devfreq/governor.h                |  21 +++---
+ drivers/devfreq/governor_simpleondemand.c |   4 +-
+ drivers/devfreq/governor_userspace.c      |   2 +-
+ drivers/devfreq/tegra30-devfreq.c         |   4 +-
+ include/linux/devfreq.h                   | 106 +++++++++++++++---------------
+ 6 files changed, 74 insertions(+), 77 deletions(-)
