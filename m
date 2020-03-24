@@ -2,161 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 38BFD191C0F
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 22:43:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 815B0191C3A
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 22:50:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728036AbgCXVnh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 17:43:37 -0400
-Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:48100 "EHLO
-        mx0b-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727023AbgCXVng (ORCPT
+        id S1728339AbgCXVsw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 17:48:52 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:38056 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728277AbgCXVsw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 17:43:36 -0400
-Received: from pps.filterd (m0109331.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 02OLg8r6012855;
-        Tue, 24 Mar 2020 14:43:30 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
- : date : message-id : references : in-reply-to : content-type : content-id
- : content-transfer-encoding : mime-version; s=facebook;
- bh=REZ9KNkd7/1KtehiIGE20PfHNFrIWc1oDW1NFt4iWR4=;
- b=GvyVZ71defOtueCgCT5wVtIzsRDeq158B4t3gqfgeHmaA70GD5hLSwCoZtldiAoFVtiH
- vY0pOemOh8K1KuGWATQpX+9IMgTgZDdb3C7MBKiNNi4lClHpZIxe5115XHeXZ6cSgF6c
- 9mTUf+HKiMoznbRP/4KFVh1Xe0/QXW3zty4= 
-Received: from maileast.thefacebook.com ([163.114.130.16])
-        by mx0a-00082601.pphosted.com with ESMTP id 2yy3gy65f2-4
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-        Tue, 24 Mar 2020 14:43:30 -0700
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (100.104.31.183)
- by o365-in.thefacebook.com (100.104.36.103) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1847.3; Tue, 24 Mar 2020 14:43:28 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=H5GtcHBo8W5OwFnmmli9eKHztwaYxT4PRv5nPO4CSxByZCheWjo4U8HL+xIjQ5UPmm9yNcWBgqTsGWeUY1Sv8Tr+MR71d6GzKV2ombTKjZIRpOR9NQfc0aFvgd+jJ1GUw7kRVzW9LwxYKEzN0l3MgqTn8VBArzBwwKx1mrYjGxUaYyo/G+zoZWYSbZjUFzce/aTvAoIxlYtTmIq01a8ZdHWAOjQnqMrc9LSD0cokMlHaUjbq1dIrUu7JEZXPYpR3J84RYgnOr/heM85tWrIRVvfiK2JI5p9HwcQSzEkT5ob5RciIxOOk4HR66qyaEn3FTRP/GMIeRkuTKTQlcmCQRg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=REZ9KNkd7/1KtehiIGE20PfHNFrIWc1oDW1NFt4iWR4=;
- b=VXgdOAy/PDNrzJKdNGw7WurbEW02z4c2pfdShwBRUQ5wcI1bExLPIYviSeAKdEnubIJcOm0OfgSvMuhQCWob7B71ukPAjQpq7tyCTWPIzJNhG8isSu7HEBfe/i4z/dckwvmEQ6kgCCjQqu2CQW/0xG61y4FA5LFUDdxA+sb2M/AyDuIPxka+qAlQ0DUITIoseJ27dQh+410v8FrWos82G7Tlof5GTCmSVEpAs3xs7HOzVSHAHc62DmVFfwV8jcBGMae1C/X+aA/SXrYn6CwK8FFW6AM3ujgG9oa3ACiMgJ4kiG0cVoGnHsOj+HuQqz7cFOs42o6SxotpjQLzgJqTEA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=fb.com; dmarc=pass action=none header.from=fb.com; dkim=pass
- header.d=fb.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
- s=selector2-fb-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=REZ9KNkd7/1KtehiIGE20PfHNFrIWc1oDW1NFt4iWR4=;
- b=Dcl3NM76327AaPD9AerkKuh551ah1hN/RidAi0T95z1GFpoT1X4U4da6FvGQkGF2VbnEyg3VWRoJTZYM6jcVHFlfb4ujv54muod0QwN0nMm6IExfEFoUCog6CTDw9Fk9aOkK5Fgp5WWn4yzHtSWevJSuisvet/Ac95g9a8DRue0=
-Received: from MW3PR15MB3882.namprd15.prod.outlook.com (2603:10b6:303:49::11)
- by MW3PR15MB3930.namprd15.prod.outlook.com (2603:10b6:303:46::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2835.20; Tue, 24 Mar
- 2020 21:43:26 +0000
-Received: from MW3PR15MB3882.namprd15.prod.outlook.com
- ([fe80::c570:6c46:cc47:5ca5]) by MW3PR15MB3882.namprd15.prod.outlook.com
- ([fe80::c570:6c46:cc47:5ca5%5]) with mapi id 15.20.2835.023; Tue, 24 Mar 2020
- 21:43:26 +0000
-From:   Song Liu <songliubraving@fb.com>
-To:     linux-kernel <linux-kernel@vger.kernel.org>
-CC:     Kernel Team <Kernel-team@fb.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Alexey Budankov <alexey.budankov@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>, Tejun Heo <tj@kernel.org>
-Subject: Re: [PATCH v11] perf: Sharing PMU counters across compatible events
-Thread-Topic: [PATCH v11] perf: Sharing PMU counters across compatible events
-Thread-Index: AQHWAiT9KEupE+dDF0SaZgMOIv1+LqhYRjSA
-Date:   Tue, 24 Mar 2020 21:43:26 +0000
-Message-ID: <4359BCB5-1FB5-4A5A-B528-10CDDA97A5DF@fb.com>
-References: <20200324214125.153584-1-songliubraving@fb.com>
-In-Reply-To: <20200324214125.153584-1-songliubraving@fb.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-mailer: Apple Mail (2.3608.60.0.2.5)
-x-originating-ip: [2620:10d:c090:400::5:393e]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: b138d1bb-b0a2-41a3-1475-08d7d03c6281
-x-ms-traffictypediagnostic: MW3PR15MB3930:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <MW3PR15MB3930C41833098B580DBE9FE4B3F10@MW3PR15MB3930.namprd15.prod.outlook.com>
-x-fb-source: Internal
-x-ms-oob-tlc-oobclassifiers: OLM:9508;
-x-forefront-prvs: 03524FBD26
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(36756003)(4326008)(71200400001)(6506007)(64756008)(66476007)(498600001)(66946007)(53546011)(76116006)(66446008)(86362001)(54906003)(66556008)(6916009)(2906002)(2616005)(186003)(8936002)(33656002)(8676002)(81156014)(81166006)(5660300002)(6512007)(6486002);DIR:OUT;SFP:1102;SCL:1;SRVR:MW3PR15MB3930;H:MW3PR15MB3882.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;
-received-spf: None (protection.outlook.com: fb.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: lvQSCLXzKYapZvu3QPLypZWMKCHvSyWObDJv2ecI+AbFTMGrCgSDS3PMYpiMijUYwoipCn8lXJdwEujEWpGj40c12bpoZUO7KmxDZhbDuVgleTzpy4Je3rLF1ab8av+165CPlum8uiRyzXuKyBBD4uUOEIZio8gviU6Mn4/l3XHPS7uRVo4dBLZeJURC1TFyWHNFu199KRAxCoH9Vb1ETLz13oIeaj/ZdE0D118u3/K8C8NgHfEX9O1mR9erwsXW/ng0ZP2DLIW8A+N2yUkuuYMOLjLYVQuLJk8/XemKW0xExLxPmiaJ2LDRiv5Si0UnjnWlrMv9bmdNX327LDWx1WbB1xlnU+8ZeNjC+72+bxQa1wZdP4PbgFckmf1gi3oBNVbpNn38PUU+B0oZwjFFYVFosZ16x0YG3Y3D5HuRTK33ghyHDppJfklN/CG5Hiiv
-x-ms-exchange-antispam-messagedata: sG03FACtJ2otRgnHgb87fX3bD8UGZS6AZWqUWs1FX9nQQxO0PcrhpY8nztrgzHSK7g9x4R//l2+vb5Y69NixJQaW3EaA6FAYPjSCX+6ikSYas/m+hzu9dGHOaQv5RIMWNUehlCFVWxmvNpt4vUCGVdS+nr1EgaXnr++BSZdL9TNf0dH5nWew3SrIUqOj0DGw
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <AB3101DA2E09574EBC7726AE5D31101C@namprd15.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        Tue, 24 Mar 2020 17:48:52 -0400
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jGrNd-001z3G-WE; Tue, 24 Mar 2020 21:46:38 +0000
+Date:   Tue, 24 Mar 2020 21:46:37 +0000
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Qian Cai <cai@lca.pw>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: Null-ptr-deref due to "sanitized pathwalk machinery (v4)"
+Message-ID: <20200324214637.GI23230@ZenIV.linux.org.uk>
+References: <4CBDE0F3-FB73-43F3-8535-6C75BA004233@lca.pw>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: b138d1bb-b0a2-41a3-1475-08d7d03c6281
-X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Mar 2020 21:43:26.3644
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: c33/M54/ayXV/AO715hw98SPxWBNneUhVt/ZnOn5mfRg5hdKoojvZ8sYTrcvmJEBejQ+hSNKd939F6zVMrS5Fw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW3PR15MB3930
-X-OriginatorOrg: fb.com
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.645
- definitions=2020-03-24_09:2020-03-23,2020-03-24 signatures=0
-X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 priorityscore=1501
- bulkscore=0 adultscore=0 mlxscore=0 phishscore=0 lowpriorityscore=0
- clxscore=1015 malwarescore=0 mlxlogscore=995 spamscore=0 suspectscore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2003020000 definitions=main-2003240108
-X-FB-Internal: deliver
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4CBDE0F3-FB73-43F3-8535-6C75BA004233@lca.pw>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, Mar 24, 2020 at 05:06:03PM -0400, Qian Cai wrote:
+> Reverted the series on the top of today's linux-next fixed boot crashes.
+
+Umm...  How about a reproducer (or bisect of vfs.git#work.dotdot, assuming
+it reproduces there)?
+
+> [   53.027443][ T3519] BUG: Kernel NULL pointer dereference on read at 0x00000000
+> [   53.027480][ T3519] Faulting instruction address: 0xc0000000004dbfa4
+> [   53.027498][ T3519] Oops: Kernel access of bad area, sig: 11 [#1]
+> [   53.027521][ T3519] LE PAGE_SIZE=64K MMU=Radix SMP NR_CPUS=256 DEBUG_PAGEALLOC NUMA PowerNV
+> [   53.027538][ T3519] Modules linked in: kvm_hv kvm ip_tables x_tables xfs sd_mod bnx2x ahci libahci mdio libata tg3 libphy firmware_class dm_mirror dm_region_hash dm_log dm_mod
+> [   53.027594][ T3519] CPU: 36 PID: 3519 Comm: polkitd Not tainted 5.6.0-rc7-next-20200324 #1
+> [   53.027618][ T3519] NIP:  c0000000004dbfa4 LR: c0000000004dc040 CTR: 0000000000000000
+> [   53.027634][ T3519] REGS: c0002013879af810 TRAP: 0300   Not tainted  (5.6.0-rc7-next-20200324)
+> [   53.027668][ T3519] MSR:  9000000000009033 <SF,HV,EE,ME,IR,DR,RI,LE>  CR: 24004422  XER: 20040000
+> [   53.027708][ T3519] CFAR: c0000000004dc044 DAR: 0000000000000000 DSISR: 40000000 IRQMASK: 0 
+> [   53.027708][ T3519] GPR00: c0000000004dc040 c0002013879afaa0 c00000000165a500 0000000000000000 
+> [   53.027708][ T3519] GPR04: c000000001511408 0000000000000000 c0002013879af834 0000000000000002 
+> [   53.027708][ T3519] GPR08: 0000000000000001 0000000000000000 0000000000000000 0000000000000001 
+> [   53.027708][ T3519] GPR12: 0000000000004000 c000001ffffe1e00 0000000000000000 0000000000000000 
+> [   53.027708][ T3519] GPR16: 0000000000000000 0000000000000001 0000000000000000 0000000000000000 
+> [   53.027708][ T3519] GPR20: c000200ea1eacf38 c000201c8102f043 2f2f2f2f2f2f2f2f 0000000000000003 
+> [   53.027708][ T3519] GPR24: 0000000000000000 c0002013879afbc8 fffffffffffff000 0000000000200000 
+> [   53.027708][ T3519] GPR28: ffffffffffffffff 61c8864680b583eb 0000000000000000 0000000000002e2e 
+> [   53.027931][ T3519] NIP [c0000000004dbfa4] link_path_walk+0x284/0x4c0
+> __d_entry_type at include/linux/dcache.h:389
+> (inlined by) d_can_lookup at include/linux/dcache.h:404
+> (inlined by) link_path_walk at fs/namei.c:2178
+
+... and apparently NULL nd->path.dentry there.  After walk_component()
+having returned NULL.  Which means either handle_dots() returning NULL
+or step_into() doing the same.  The former means either (for "..")
+step_into() having returned NULL, or nd->path.dentry left unchanged.
+
+So we either have step_into() returning NULL with nd->path.dentry ending up
+NULL, or we'd entered link_path_walk() with nd->path.dentry being NULL (it
+must have been that way on the entry, or we would've barfed on the previous
+iteration).
+
+1) step_into() returns NULL either after
+        if (likely(!d_is_symlink(path.dentry)) ||
+           ((flags & WALK_TRAILING) && !(nd->flags & LOOKUP_FOLLOW)) ||
+           (flags & WALK_NOFOLLOW)) {
+                /* not a symlink or should not follow */
+                if (!(nd->flags & LOOKUP_RCU)) {
+                        dput(nd->path.dentry);
+                        if (nd->path.mnt != path.mnt)
+                                mntput(nd->path.mnt);
+                }  
+                nd->path = path;
+                nd->inode = inode;
+                nd->seq = seq;
+                return NULL;
+in which case nd->path.dentry is left equal to path.dentry, which can't be
+NULL (we would've oopsed on d_is_symlink() if it had been) or it's
+pick_link() returning NULL and leaving NULL nd->path.dentry.
+
+pick_link() either leaves nd->path unchanged (in which case we are back to
+the "had NULL nd->path.dentry on entry into link_path_walk()") or does
+nd_jump_root() (absolute symlinks) or has ->get_link() call nd_jump_link().
+nd_jump_root() cannot survive leaving NULL in ->path.dentry - it hits
+either
+                d = nd->path.dentry;
+                nd->inode = d->d_inode;
+or
+                nd->inode = nd->path.dentry->d_inode;
+and either would've ooped right there.
+nd_jump_link() hits
+        nd->inode = nd->path.dentry->d_inode;
+on the way out, which also should be impossible to survive.
+
+So we appear to have hit link_path_walk() with NULL nd->path.dentry.  And
+it's path_lookupat() from vfs_statx(), so we don't have LOOKUP_DOWN there.
+Which means either path_init() leaving NULL nd->path.dentry or lookup_last()
+returning NULL and leaving NULL nd->path.dentry...  The latter is basically
+walk_component(), so we would've had left link_path_walk() without an
+error, with symlink picked and with NULL nd->path.dentry.  Which means
+having the previous call of link_path_walk() also entered with NULL
+nd->path.dentry...
+
+OK, so it looks like path_init() returning a string and leaving that...
+And I don't see any way for that to happen...
 
 
-> On Mar 24, 2020, at 2:41 PM, Song Liu <songliubraving@fb.com> wrote:
->=20
-> This patch tries to enable PMU sharing. When multiple perf_events are
-> counting the same metric, they can share the hardware PMU counter. We
-> call these events as "compatible events".
->=20
-> The PMU sharing are limited to events within the same perf_event_context
-> (ctx). When a event is installed or enabled, search the ctx for compatibl=
-e
-> events. This is implemented in perf_event_setup_dup(). One of these
-> compatible events are picked as the master (stored in event->dup_master).
-> Similarly, when the event is removed or disabled, perf_event_remove_dup()
-> is used to clean up sharing.
->=20
-> If the master event is a cgroup event or a event in a group, it is
-> possible that some slave events are ACTIVE, but the master event is not.
-> To handle this scenario, we introduced PERF_EVENT_STATE_ENABLED. Also,
-> since PMU drivers write into event->count, master event needs another
-> variable (master_count) for the reading of this event.
->=20
-> On the critical paths (add, del read), sharing PMU counters doesn't
-> increase the complexity. Helper functions event_pmu_[add|del|read]() are
-> introduced to cover these cases. All these functions have O(1) time
-> complexity.
->=20
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
-> Cc: Jiri Olsa <jolsa@kernel.org>
-> Cc: Alexey Budankov <alexey.budankov@linux.intel.com>
-> Cc: Namhyung Kim <namhyung@kernel.org>
-> Cc: Tejun Heo <tj@kernel.org>
-> Reported-by: kernel test robot <rong.a.chen@intel.com>
-> Signed-off-by: Song Liu <songliubraving@fb.com>
->=20
-> ---
-> Changes in v12:
-> Fix new failures perf_event_tests. (kernel test robot)
+Right, so...  Could you slap the following
+	if (WARN_ON(!nd->path.dentry))
+		printk(KERN_ERR "pathname = %s\n", nd->name->name);
+1) into beginning of link_path_walk(), right before
+        while (*name=='/')
+                name++;
+        if (!*name)
+                return 0;
+in there.
+2) into pick_link(), right after
+all_done: // pure jump
 
-Typo in subject. This is actually v12.=20
-
-Thanks,
-Song
+and see what your reproducer catches?
