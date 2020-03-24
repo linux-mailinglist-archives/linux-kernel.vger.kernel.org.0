@@ -2,66 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C463F190581
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 07:11:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A3A7E190589
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 07:11:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727291AbgCXGK7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 02:10:59 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:12182 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725922AbgCXGK6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 02:10:58 -0400
-Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 44FDDFF01C84AB352606;
-        Tue, 24 Mar 2020 14:10:50 +0800 (CST)
-Received: from [10.134.22.195] (10.134.22.195) by smtp.huawei.com
- (10.3.19.201) with Microsoft SMTP Server (TLS) id 14.3.487.0; Tue, 24 Mar
- 2020 14:10:46 +0800
-Subject: Re: [PATCH] f2fs: remove redundant compress inode check
-To:     <jaegeuk@kernel.org>
-CC:     <linux-f2fs-devel@lists.sourceforge.net>,
-        <linux-kernel@vger.kernel.org>, <chao@kernel.org>
-References: <20200229104906.12061-1-yuchao0@huawei.com>
-From:   Chao Yu <yuchao0@huawei.com>
-Message-ID: <6aab59b9-6e33-5b01-acf8-ccbacd9318e3@huawei.com>
-Date:   Tue, 24 Mar 2020 14:10:46 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <20200229104906.12061-1-yuchao0@huawei.com>
-Content-Type: text/plain; charset="windows-1252"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.134.22.195]
-X-CFilter-Loop: Reflected
+        id S1727402AbgCXGLT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 02:11:19 -0400
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:36606 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727389AbgCXGLS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Mar 2020 02:11:18 -0400
+Received: by mail-pl1-f194.google.com with SMTP id g2so6983168plo.3
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Mar 2020 23:11:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=unGw6c2ZufitdrNu+5YBhFURhwCE/NrCJkMv+/OxkYg=;
+        b=mmLkHpFKTPFen+ZlFBI6Y5O7t5YQ+gxaypgDSVkVsy6No15tBsYyZBcivmIjXfDksv
+         b8nhz4EZZ2iBHdAZ7Tf53h3eN7oiBb36Drk1mSKlYwOTqmSdtbBLdT8D520MXrTRurDo
+         7xqv+yuWmiIwS9kVde5JkGflRvjNS1N0smgCb/x/OBmVu/h62TxHhWMIA3vf2r5q0HI7
+         EV90UIZSFydnGLXruPL0t4iOGrEzSIZNZJwJkn4ydW3o9zWPxu8ET4+SGNZpv3TXtIK9
+         Q9+q6KYZv4mAmT9CO61IAZeT3ycG053BCwPz8IEDllMnFHISUO5In3GGDuJQEk0jA6yf
+         qM3A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=unGw6c2ZufitdrNu+5YBhFURhwCE/NrCJkMv+/OxkYg=;
+        b=YeGu707wZLaUgjoumawU4R9jM/3sDJP34BrKzfMxUAsfl0dRRDCRzoDHs9kbshYfdj
+         NCcNXoaAqTzy3H1XmgzdXQRmYO3oYByxOv5VMPR/zYKifBY5cYsdhoJkpfIJwll+xqGI
+         u+Y2tr44L3yOXxdCdn5VPTmRGK+PVmGyk/JNX01KT8hVu0LdYg6R8Oir6Ww6QF8bVABO
+         dzUXm9Y5vdj9d52fWUwUk7lNm8zbNR/Kq4oqsc5/tc1PintUu4ld5xiS5hVxVHzv/dFt
+         koOrXGHkppPDBLrkNoPGBLTQw7gME6HDo3HMfOFvPjr6Q/L+BoKcDlbPEyLQPLAkJao+
+         hn9w==
+X-Gm-Message-State: ANhLgQ3FHSkon/etyPFUIFuWKh8WJ1bAkM3j0yi6AHqimwbXKXrp0OdE
+        gEo73zXfoZJd4uvvIz8fGydk
+X-Google-Smtp-Source: ADFU+vtFqc4TbjsXoMhXd7IiEHDc7u0CViodMZ/TFGvHx0UxE3d9nvIjRCj5jVigaJYM4lcFty4yXg==
+X-Received: by 2002:a17:90a:d101:: with SMTP id l1mr3604492pju.130.1585030277624;
+        Mon, 23 Mar 2020 23:11:17 -0700 (PDT)
+Received: from localhost.localdomain ([2409:4072:59b:91e:2dd6:dffe:3569:b473])
+        by smtp.gmail.com with ESMTPSA id d3sm1198230pjc.42.2020.03.23.23.11.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 23 Mar 2020 23:11:17 -0700 (PDT)
+From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To:     gregkh@linuxfoundation.org, davem@davemloft.net
+Cc:     smohanad@codeaurora.org, jhugo@codeaurora.org,
+        kvalo@codeaurora.org, bjorn.andersson@linaro.org,
+        hemantk@codeaurora.org, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Subject: [PATCH v3 3/7] bus: mhi: core: Initialize bhie field in mhi_cntrl for RDDM capture
+Date:   Tue, 24 Mar 2020 11:40:46 +0530
+Message-Id: <20200324061050.14845-4-manivannan.sadhasivam@linaro.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20200324061050.14845-1-manivannan.sadhasivam@linaro.org>
+References: <20200324061050.14845-1-manivannan.sadhasivam@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Jaegeuk,
+The bhie field in mhi_cntrl needs to be initialized to proper register
+base in order to make mhi_rddm_prepare() to work. Otherwise,
+mhi_rddm_prepare() will cause NULL pointer dereference.
 
-Missed to apply this patch?
+Fixes: 6fdfdd27328c ("bus: mhi: core: Add support for downloading RDDM image during panic")
+Reported-by: Hemant Kumar <hemantk@codeaurora.org>
+Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+---
+ drivers/bus/mhi/core/init.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-On 2020/2/29 18:49, Chao Yu wrote:
-> due to f2fs_post_read_required() has did that.
-> 
-> Signed-off-by: Chao Yu <yuchao0@huawei.com>
-> ---
->  fs/f2fs/f2fs.h | 2 --
->  1 file changed, 2 deletions(-)
-> 
-> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> index f4bcbbd5e9ed..882f9ad3445b 100644
-> --- a/fs/f2fs/f2fs.h
-> +++ b/fs/f2fs/f2fs.h
-> @@ -4006,8 +4006,6 @@ static inline bool f2fs_force_buffered_io(struct inode *inode,
->  		return true;
->  	if (f2fs_is_multi_device(sbi))
->  		return true;
-> -	if (f2fs_compressed_file(inode))
-> -		return true;
->  	/*
->  	 * for blkzoned device, fallback direct IO to buffered IO, so
->  	 * all IOs can be serialized by log-structured write.
-> 
+diff --git a/drivers/bus/mhi/core/init.c b/drivers/bus/mhi/core/init.c
+index d136f6c6ca78..f6e3c16225a7 100644
+--- a/drivers/bus/mhi/core/init.c
++++ b/drivers/bus/mhi/core/init.c
+@@ -979,7 +979,8 @@ int mhi_prepare_for_power_up(struct mhi_controller *mhi_cntrl)
+ 			goto bhie_error;
+ 		}
+ 
+-		memset_io(mhi_cntrl->regs + bhie_off + BHIE_RXVECADDR_LOW_OFFS,
++		mhi_cntrl->bhie = mhi_cntrl->regs + bhie_off;
++		memset_io(mhi_cntrl->bhie + BHIE_RXVECADDR_LOW_OFFS,
+ 			  0, BHIE_RXVECSTATUS_OFFS - BHIE_RXVECADDR_LOW_OFFS +
+ 			  4);
+ 
+-- 
+2.17.1
+
