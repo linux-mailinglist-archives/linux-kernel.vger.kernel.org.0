@@ -2,44 +2,44 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F20361915BD
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 17:12:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 98D041915CC
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 17:13:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728469AbgCXQLm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 12:11:42 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:51020 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728479AbgCXQLg (ORCPT
+        id S1728121AbgCXQM3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 12:12:29 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:36988 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727865AbgCXQLh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 12:11:36 -0400
+        Tue, 24 Mar 2020 12:11:37 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Type:MIME-Version:References:
+        d=infradead.org; s=merlin.20170209; h=Content-Type:MIME-Version:References:
         Subject:Cc:To:From:Date:Message-Id:Sender:Reply-To:Content-Transfer-Encoding:
         Content-ID:Content-Description:In-Reply-To;
-        bh=GbPqE3mfOetHUtuB+gPFjnQNDr1UBAvzbfzHTV0Kr/8=; b=itiBfiXgPdm8X0n4yXqoEyfKan
-        BXj/RBY9rPU9Ppf6DE2lcZq19DK6ER+vNfbJAPiKVsuXjKytbCzMMahdszhc9jd6pVa6Jf+/J7t8j
-        cW+dewSBfFipfOhKhJav0IJZmDsCOlA5RLQRZssFmDJVIy/xc+Hc/nGLBAp/pIPxA4LHlLE2iau8w
-        5Dfu/zZGQtVTEz86zeeF31AJjURcfMNRlfzCnFBO4bT/N/Do9d39UWDGGTXYLu14GJgHan/sfyzEE
-        XDzaHMiQ0qDbbMVHogWrlyjOaCKS1gji16jDIU4ROk2gp83CJz5u2T+y5U4P+g7UzA1QK1DWO4dA2
-        jiw8R6HA==;
+        bh=RUqRo9vG84+1LZFxLKWC7SbfbHqwUSufAn6jASMpDJI=; b=GoyXwy9/73nrtX8MjTPy1pE2AZ
+        /Nna2L61pm264HuUrPHUPN0P53cmODOM4bcqkUjCSmPYnoScPQnFt1KBddq/9WTAFKJbvBZKQGrIS
+        tAieSQgmhT1O0a15Cqc73QvHPIVS4XwNIecEYqKALYIIeGMyywabUnnw7U8dCxU3sMmHgkG2K0muu
+        eaRtRdshn6JTm9VvADdOTFUjq5aYmlyMZGm9g0ymVV/+gJ6KG4JYItFxEr0DpDZV2WHhIjM0tgSYy
+        sRWje4vqkLxsCeQ3qHkJFNCX9l66hKPSpvNxYBbC49S5ZYDBblTpWgzJ3FjKm1GYIoCOlBtxhRitc
+        V2UgOoLw==;
 Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jGm9N-0000CR-Fb; Tue, 24 Mar 2020 16:11:33 +0000
+        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jGm9N-0006c6-3p; Tue, 24 Mar 2020 16:11:33 +0000
 Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 794E1307770;
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 812A230782A;
         Tue, 24 Mar 2020 17:11:28 +0100 (CET)
 Received: by hirez.programming.kicks-ass.net (Postfix, from userid 0)
-        id 6AE8B20250FC4; Tue, 24 Mar 2020 17:11:28 +0100 (CET)
-Message-Id: <20200324160925.288855432@infradead.org>
+        id 73D7729A490F3; Tue, 24 Mar 2020 17:11:28 +0100 (CET)
+Message-Id: <20200324160925.350445809@infradead.org>
 User-Agent: quilt/0.65
-Date:   Tue, 24 Mar 2020 16:31:36 +0100
+Date:   Tue, 24 Mar 2020 16:31:37 +0100
 From:   Peter Zijlstra <peterz@infradead.org>
 To:     tglx@linutronix.de, jpoimboe@redhat.com
 Cc:     linux-kernel@vger.kernel.org, x86@kernel.org, peterz@infradead.org,
         mhiramat@kernel.org, mbenes@suse.cz, brgerst@gmail.com
-Subject: [PATCH v3 23/26] kbuild/objtool: Add objtool-vmlinux.o pass
+Subject: [PATCH v3 24/26] objtool: Avoid iterating !text section symbols
 References: <20200324153113.098167666@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -48,71 +48,30 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now that objtool is capable of processing vmlinux.o and actually has
-something useful to do there, (conditionally) add it to the final link
-pass.
-
-This will increase build time by a few seconds.
+validate_functions() iterates all sections their symbols; this is
+pointless to do for !text sections as they won't have instructions
+anyway.
 
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 ---
- lib/Kconfig.debug       |    5 +++++
- scripts/link-vmlinux.sh |   24 ++++++++++++++++++++++++
- 2 files changed, 29 insertions(+)
+ tools/objtool/check.c |    6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
---- a/lib/Kconfig.debug
-+++ b/lib/Kconfig.debug
-@@ -379,6 +379,11 @@ config STACK_VALIDATION
- 	  For more information, see
- 	  tools/objtool/Documentation/stack-validation.txt.
+--- a/tools/objtool/check.c
++++ b/tools/objtool/check.c
+@@ -2621,8 +2621,12 @@ static int validate_functions(struct obj
+ 	struct section *sec;
+ 	int warnings = 0;
  
-+config VMLINUX_VALIDATION
-+	bool
-+	depends on STACK_VALIDATION && DEBUG_ENTRY && !PARAVIRT
-+	default y
+-	for_each_sec(file, sec)
++	for_each_sec(file, sec) {
++		if (!(sec->sh.sh_flags & SHF_EXECINSTR))
++			continue;
 +
- config DEBUG_FORCE_WEAK_PER_CPU
- 	bool "Force weak per-cpu definitions"
- 	depends on DEBUG_KERNEL
---- a/scripts/link-vmlinux.sh
-+++ b/scripts/link-vmlinux.sh
-@@ -55,6 +55,29 @@ modpost_link()
- 	${LD} ${KBUILD_LDFLAGS} -r -o ${1} ${objects}
+ 		warnings += validate_section(file, sec);
++	}
+ 
+ 	return warnings;
  }
- 
-+objtool_link()
-+{
-+	local objtoolopt;
-+
-+	if [ -n "${CONFIG_VMLINUX_VALIDATION}" ]; then
-+		objtoolopt="check"
-+		if [ -z "${CONFIG_FRAME_POINTER}" ]; then
-+			objtoolopt="${objtoolopt} --no-fp"
-+		fi
-+		if [ -n "${CONFIG_GCOV_KERNEL}" ]; then
-+			objtoolopt="${objtoolopt} --no-unreachable"
-+		fi
-+		if [ -n "${CONFIG_RETPOLINE}" ]; then
-+			objtoolopt="${objtoolopt} --retpoline"
-+		fi
-+		if [ -n "${CONFIG_X86_SMAP}" ]; then
-+			objtoolopt="${objtoolopt} --uaccess"
-+		fi
-+		info OBJTOOL ${1}
-+		tools/objtool/objtool ${objtoolopt} ${1}
-+	fi
-+}
-+
- # Link of vmlinux
- # ${1} - output file
- # ${2}, ${3}, ... - optional extra .o files
-@@ -244,6 +267,7 @@ ${MAKE} -f "${srctree}/scripts/Makefile.
- #link vmlinux.o
- info LD vmlinux.o
- modpost_link vmlinux.o
-+objtool_link vmlinux.o
- 
- # modpost vmlinux.o to check for section mismatches
- ${MAKE} -f "${srctree}/scripts/Makefile.modpost" MODPOST_VMLINUX=1
 
 
