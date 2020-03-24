@@ -2,182 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 51F13191CA2
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 23:29:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BAAF9191CAA
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 23:32:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728338AbgCXW3K (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 18:29:10 -0400
-Received: from mailout3.samsung.com ([203.254.224.33]:43386 "EHLO
-        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728184AbgCXW3K (ORCPT
+        id S1728442AbgCXWcT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 18:32:19 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:46362 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728216AbgCXWcT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 18:29:10 -0400
-Received: from epcas1p1.samsung.com (unknown [182.195.41.45])
-        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20200324222907epoutp03b8738b0c8168366f595c376665e685be~-Xf-jOK6C2667226672epoutp03M
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Mar 2020 22:29:07 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20200324222907epoutp03b8738b0c8168366f595c376665e685be~-Xf-jOK6C2667226672epoutp03M
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1585088947;
-        bh=Nx1yBUUy5HsYqeDfSoeruzmyY780DIbR3vsGN0YWcNk=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=NTK8kBzw2O7Z5RjzXzkGr8bCgf1lecEiNni3zpcCgcnt+EQrgBAUCOJR0k3J/m0K0
-         kVhuhhoo1pyt2jpXP92Q0ySCp8Go2Xlk+qy+gOXebwrzwzlxu7ZKoYjPAvrLlejiRW
-         oS8JN+kcctg/ocTFvDKMR4EpnO+dot2hqYZoBW+o=
-Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
-        epcas1p3.samsung.com (KnoxPortal) with ESMTP id
-        20200324222907epcas1p3bd1ca82cc2fc87f328d9c555e6240ad6~-Xf-IzWAM1889418894epcas1p3R;
-        Tue, 24 Mar 2020 22:29:07 +0000 (GMT)
-Received: from epsmges1p3.samsung.com (unknown [182.195.40.156]) by
-        epsnrtp2.localdomain (Postfix) with ESMTP id 48n5Wh5sCKzMqYkW; Tue, 24 Mar
-        2020 22:29:04 +0000 (GMT)
-Received: from epcas1p2.samsung.com ( [182.195.41.46]) by
-        epsmges1p3.samsung.com (Symantec Messaging Gateway) with SMTP id
-        16.4B.04071.0B98A7E5; Wed, 25 Mar 2020 07:29:04 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-        epcas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20200324222903epcas1p241bb9a19d8e75e784c6f7dcd4214b24b~-Xf8NzcDG0883108831epcas1p2O;
-        Tue, 24 Mar 2020 22:29:03 +0000 (GMT)
-Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
-        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20200324222903epsmtrp27fd01daea93f40c2c6e6da95bdd5b427~-Xf8NDc-E3079530795epsmtrp2c;
-        Tue, 24 Mar 2020 22:29:03 +0000 (GMT)
-X-AuditID: b6c32a37-7afff70000000fe7-a3-5e7a89b0627f
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-        epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        4B.8E.04158.FA98A7E5; Wed, 25 Mar 2020 07:29:03 +0900 (KST)
-Received: from [10.113.221.102] (unknown [10.113.221.102]) by
-        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20200324222903epsmtip13cc70bfe80a456013b5f396cb8a161e3~-Xf8GJX7f0788207882epsmtip1-;
-        Tue, 24 Mar 2020 22:29:03 +0000 (GMT)
-Subject: Re: [PATCH resend] extcon: axp288: Add wakeup support
-To:     Hans de Goede <hdegoede@redhat.com>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Chen-Yu Tsai <wens@csie.org>
-Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-From:   Chanwoo Choi <cw00.choi@samsung.com>
-Organization: Samsung Electronics
-Message-ID: <cf0700cf-caed-0451-f8ba-b536e01488f6@samsung.com>
-Date:   Wed, 25 Mar 2020 07:37:59 +0900
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:59.0) Gecko/20100101
-        Thunderbird/59.0
+        Tue, 24 Mar 2020 18:32:19 -0400
+Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tip-bot2@linutronix.de>)
+        id 1jGs5m-0006rX-BB; Tue, 24 Mar 2020 23:32:14 +0100
+Received: from [127.0.1.1] (localhost [IPv6:::1])
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id C21B91C0451;
+        Tue, 24 Mar 2020 23:32:13 +0100 (CET)
+Date:   Tue, 24 Mar 2020 22:32:13 -0000
+From:   "tip-bot2 for Thomas Gleixner" <tip-bot2@linutronix.de>
+Reply-to: linux-kernel@vger.kernel.org
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/cpu] x86/cpu: Cleanup the now unused CPU match macros
+Cc:     Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@suse.de>,
+        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+        x86 <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>
+In-Reply-To: <20200320131510.900226233@linutronix.de>
+References: <20200320131510.900226233@linutronix.de>
 MIME-Version: 1.0
-In-Reply-To: <20200323215939.79008-1-hdegoede@redhat.com>
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA01Sa0hTYRjm29mOR2l6nGlv+1HzSJSK5nHOjpISZLHIQAj6IbF1mJ+buJs7
-        UzIJNCKvSRJZahfByktIOuelwgwviUUWSBcVJbSrqZVSGSG0eYz897zv+zzf8z3f91KEoppU
-        UllWJ3ZYeTND+km7BsKjo9pKT+liXC6Wmx++LOHG7l8lucmiJpKrb59B3O/+55J9Mm3bzB2Z
-        9uvDl6S20t2CtMuubWnS9Oy9JsxnYIcKWw22jCyrMYk5fFS/X6+Jj2Gj2ARuD6Oy8hacxKSk
-        pkUdzDJ7fBlVHm/O9bTSeEFgdifvddhynVhlsgnOJAbbM8z2BHu0wFuEXKsx2mCzJLIxMbEa
-        D/FEtqnmZgdpHww8+evJDVSIqv3LkC8FdBycr3sgLUN+lILuQdD4uAOJxRKCuqGx9eInghdz
-        85J/kiH3Nx9x0Ivgs/stKRZfEVS2dhJeVhCdDMVXZtcUm2k7FK10eUgURdAcFPdpvG2SjoC+
-        T29ILw6gQ+HlyizyYrlHWvdsQebFUnoHzFyeWDsmmD4GI11n1zmBMFLzTurFvnQCNLYOrJ1D
-        0Ftg4t0NiYi3Q/fCVcJ7N6AnSXjfMYrEBClQU7qyniYI5obdPiJWwvJiLyniAmgeGSRFcQkC
-        d98LmThQQ9+tixIxTDjcvb9bbIfCvT/XkGjsD4s/KmReCtByKDmnEClhMPZ2at12KzQUl5IX
-        EFO7IU7thgi1GyLU/jerR9IWFILtgsWIBdau3vjbLrS2kxF7elDbaGo/oinEbJIXzubrFDI+
-        T8i39COgCGazvAOf1CnkGXz+Keyw6R25Ziz0I43ntasIZbDB5tlwq1PPamLVajUXx8ZrWJbZ
-        Ir/02qxT0EbeibMxtmPHP52E8lUWoiDtxKg+kU2KHA9aamLrF12WsO/pxe0543OhyurTZX4h
-        JqJLd9y/c7Q8X1h1fqhsnOZTbmduLeAnrifS1c2PKqZ8JxtWu1sP1O1a2hl8RpUzbfgY1/jF
-        aijLuViQ57PqxzeUDyDjkfRM/0UccKCos+oQcY+L8on882ryaWBOLCMVTDwbQTgE/i/JF3ED
-        qQMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrPLMWRmVeSWpSXmKPExsWy7bCSnO76zqo4g7enjS3eHJ/OZHF51xw2
-        i9uNK9gsFmx8xGjx89B5JgdWjw2PVrN6vN93lc2jb8sqRo/Pm+QCWKK4bFJSczLLUov07RK4
-        MmYu2cxWcESw4vup+YwNjNP4uhg5OSQETCSObvnA3sXIxSEksJtR4v7hD6wQCUmJaRePMncx
-        cgDZwhKHDxdD1LxllNg2Yy8zSI2wgJ1E+4zHTCA1IgIFEn3fKkFMZgELifb9phDlPYwSbz6+
-        AytnE9CS2P/iBhuIzS+gKHH1x2NGEJsXaMzss2/B1rIIqEo8mn6LCcQWFQiT2LnkMRNEjaDE
-        yZlPWEBsTgFLieVrD4PNYRZQl/gz7xIzhC0ucevJfCYIW15i+9s5zBMYhWchaZ+FpGUWkpZZ
-        SFoWMLKsYpRMLSjOTc8tNiwwykst1ytOzC0uzUvXS87P3cQIjhYtrR2MJ07EH2IU4GBU4uHV
-        eFgZJ8SaWFZcmXuIUYKDWUmEd3NqRZwQb0piZVVqUX58UWlOavEhRmkOFiVxXvn8Y5FCAumJ
-        JanZqakFqUUwWSYOTqkGRqUwq7Uyl76zz9hoeHDZt8oHv/hXMpR6HPs0oSEvuXHth5z+G78Z
-        LjqZSWeunrtHZlP2kU0CpXX6H+zVbkTJp9+fl3aJK6X6zMnp6zJq/v5XP5Dgw/ZPM/Duuk8J
-        jyqd039WH1Np/8vCpBjQtvDx2lpTAb97zIEMyU+fW3tmZdwMapsyZ42gmxJLcUaioRZzUXEi
-        AI3B2a6SAgAA
-X-CMS-MailID: 20200324222903epcas1p241bb9a19d8e75e784c6f7dcd4214b24b
-X-Msg-Generator: CA
+Message-ID: <158508913336.28353.6318318172252313940.tip-bot2@tip-bot2>
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot2.linutronix.de>
+Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
 Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: SVC_REQ_APPROVE
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20200323215949epcas1p33af2bba09c458dd09ed22e3de200955a
-References: <CGME20200323215949epcas1p33af2bba09c458dd09ed22e3de200955a@epcas1p3.samsung.com>
-        <20200323215939.79008-1-hdegoede@redhat.com>
+Content-Transfer-Encoding: 7bit
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 3/24/20 6:59 AM, Hans de Goede wrote:
-> On devices with an AXP288, we need to wakeup from suspend when a charger
-> is plugged in, so that we can do charger-type detection and so that the
-> axp288-charger driver, which listens for our extcon events, can configure
-> the input-current-limit accordingly.
-> 
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-> ---
->  drivers/extcon/extcon-axp288.c | 32 ++++++++++++++++++++++++++++++++
->  1 file changed, 32 insertions(+)
-> 
-> diff --git a/drivers/extcon/extcon-axp288.c b/drivers/extcon/extcon-axp288.c
-> index a7f216191493..710a3bb66e95 100644
-> --- a/drivers/extcon/extcon-axp288.c
-> +++ b/drivers/extcon/extcon-axp288.c
-> @@ -443,9 +443,40 @@ static int axp288_extcon_probe(struct platform_device *pdev)
->  	/* Start charger cable type detection */
->  	axp288_extcon_enable(info);
->  
-> +	device_init_wakeup(dev, true);
-> +	platform_set_drvdata(pdev, info);
-> +
-> +	return 0;
-> +}
-> +
-> +static int __maybe_unused axp288_extcon_suspend(struct device *dev)
-> +{
-> +	struct axp288_extcon_info *info = dev_get_drvdata(dev);
-> +
-> +	if (device_may_wakeup(dev))
-> +		enable_irq_wake(info->irq[VBUS_RISING_IRQ]);
-> +
->  	return 0;
->  }
->  
-> +static int __maybe_unused axp288_extcon_resume(struct device *dev)
-> +{
-> +	struct axp288_extcon_info *info = dev_get_drvdata(dev);
-> +
-> +	/*
-> +	 * Wakeup when a charger is connected to do charger-type
-> +	 * connection and generate an extcon event which makes the
-> +	 * axp288 charger driver set the input current limit.
-> +	 */
-> +	if (device_may_wakeup(dev))
-> +		disable_irq_wake(info->irq[VBUS_RISING_IRQ]);
-> +
-> +	return 0;
-> +}
-> +
-> +static SIMPLE_DEV_PM_OPS(axp288_extcon_pm_ops, axp288_extcon_suspend,
-> +			 axp288_extcon_resume);
-> +
->  static const struct platform_device_id axp288_extcon_table[] = {
->  	{ .name = "axp288_extcon" },
->  	{},
-> @@ -457,6 +488,7 @@ static struct platform_driver axp288_extcon_driver = {
->  	.id_table = axp288_extcon_table,
->  	.driver = {
->  		.name = "axp288_extcon",
-> +		.pm = &axp288_extcon_pm_ops,
->  	},
->  };
->  
-> 
+The following commit has been merged into the x86/cpu branch of tip:
 
-Applied it. Thanks.
+Commit-ID:     1826d56bcef9c38287f7c1a8e3b7778863e0b9d7
+Gitweb:        https://git.kernel.org/tip/1826d56bcef9c38287f7c1a8e3b7778863e0b9d7
+Author:        Thomas Gleixner <tglx@linutronix.de>
+AuthorDate:    Fri, 20 Mar 2020 14:14:07 +01:00
+Committer:     Borislav Petkov <bp@suse.de>
+CommitterDate: Tue, 24 Mar 2020 21:37:23 +01:00
 
+x86/cpu: Cleanup the now unused CPU match macros
 
--- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+No more users.
+
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Link: https://lkml.kernel.org/r/20200320131510.900226233@linutronix.de
+---
+ arch/x86/include/asm/cpu_device_id.h |  3 ---
+ arch/x86/include/asm/intel-family.h  | 13 -------------
+ 2 files changed, 16 deletions(-)
+
+diff --git a/arch/x86/include/asm/cpu_device_id.h b/arch/x86/include/asm/cpu_device_id.h
+index f11770f..cf3d621 100644
+--- a/arch/x86/include/asm/cpu_device_id.h
++++ b/arch/x86/include/asm/cpu_device_id.h
+@@ -91,9 +91,6 @@
+ #define X86_MATCH_FEATURE(feature, data)				\
+ 	X86_MATCH_VENDOR_FEATURE(ANY, feature, data)
+ 
+-/* Transitional to keep the existing code working */
+-#define X86_FEATURE_MATCH(feature)	X86_MATCH_FEATURE(feature, NULL)
+-
+ /**
+  * X86_MATCH_VENDOR_FAM_MODEL - Match vendor, family and model
+  * @vendor:	The vendor name, e.g. INTEL, AMD, HYGON, ..., ANY
+diff --git a/arch/x86/include/asm/intel-family.h b/arch/x86/include/asm/intel-family.h
+index 236a87a..8f1e94f 100644
+--- a/arch/x86/include/asm/intel-family.h
++++ b/arch/x86/include/asm/intel-family.h
+@@ -124,17 +124,4 @@
+ /* Family 5 */
+ #define INTEL_FAM5_QUARK_X1000		0x09 /* Quark X1000 SoC */
+ 
+-/* Useful macros */
+-#define INTEL_CPU_FAM_ANY(_family, _model, _driver_data)	\
+-{								\
+-	.vendor		= X86_VENDOR_INTEL,			\
+-	.family		= _family,				\
+-	.model		= _model,				\
+-	.feature	= X86_FEATURE_ANY,			\
+-	.driver_data	= (kernel_ulong_t)&_driver_data		\
+-}
+-
+-#define INTEL_CPU_FAM6(_model, _driver_data)			\
+-	INTEL_CPU_FAM_ANY(6, INTEL_FAM6_##_model, _driver_data)
+-
+ #endif /* _ASM_X86_INTEL_FAMILY_H */
