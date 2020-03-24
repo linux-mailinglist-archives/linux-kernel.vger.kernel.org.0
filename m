@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 07427191302
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 15:25:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1388219130F
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 15:25:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728569AbgCXOY6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 10:24:58 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:36240 "EHLO
+        id S1728780AbgCXOZk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 10:25:40 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:36106 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728475AbgCXOYx (ORCPT
+        with ESMTP id S1728413AbgCXOYv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 10:24:53 -0400
+        Tue, 24 Mar 2020 10:24:51 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=Content-Type:MIME-Version:References:
         Subject:Cc:To:From:Date:Message-Id:Sender:Reply-To:Content-Transfer-Encoding:
         Content-ID:Content-Description:In-Reply-To;
-        bh=BilAV98/xyLJ3rbbbATq+anaMYfZWr9rp+kix4JP/Vc=; b=RQ16tyMhg3v/DXDAtMI7QGZpKI
-        E6D5YHlLu4jXeF2ogb56sXdPbd52pw/bGOStKLkgXZxt7kRQAgNY3C4jFTDPXitvXOMSfo3cY4RZ7
-        1qVdE/DpB7mLllNVKgpSk6D5m3lVb/tkKt5Pk8k3ScaR64a8Q0JuRDBGnUvl2DH07OUYH/dPMJ+8t
-        XveGudeDx5jckhtCl0OucQ0yULa3odzlFZpTsZRDnWJFXAs065yTjwtCFS2uz9PCNxRCqYW7N8Jl6
-        k1SdP6bmQcK10VmATcpwZMDfa6Gem7z2vH9Z2iSPfX0COndo5Kji4cCFR1jwTE2XhXubPpeZ59/7V
-        qqMS7MIg==;
+        bh=2Qsfk0HOB3x9nc2pqsOJnCHVpv340CkHcue6gSdP15s=; b=aCwRm6eRhy2j4SD2NOzM/vKFTM
+        0lKCrv0vIbvkypOEH5o50Qo7HrQc1suavNkJr/tma/L3PAfP4+8TYAHYaHZD05AjkCYXuQNrqOk7k
+        zfrjps0GqbOqi0uFvELU5kwUV2gZYgjy5GoNYx1uMaGsHdxSbScmfBt2Zfwt40PIhKxzQAFBwRPFO
+        7AtQn8/SiQQ2OrHzMcwwZothMX9YZnc9/N73JSBvzmKl979N3WfY1tingxGBVZyoXOx6MWADobr+3
+        QpNmkhEnLQQ+wdrGbfFAuDhxHTfxgSyMpIZdth288P5rOkjzl+GC2x+FuqwLcTtvsBDv9v1Np9XqE
+        C3cIX9LQ==;
 Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
         by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jGkTt-0001fd-KH; Tue, 24 Mar 2020 14:24:37 +0000
+        id 1jGkTt-0001fa-KF; Tue, 24 Mar 2020 14:24:37 +0000
 Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 0F19F307444;
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 18FC2307770;
         Tue, 24 Mar 2020 15:24:35 +0100 (CET)
 Received: by hirez.programming.kicks-ass.net (Postfix, from userid 0)
-        id ED5BF286C13B0; Tue, 24 Mar 2020 15:24:34 +0100 (CET)
-Message-Id: <20200324142245.445253190@infradead.org>
+        id F3889286C13B1; Tue, 24 Mar 2020 15:24:34 +0100 (CET)
+Message-Id: <20200324142245.509814003@infradead.org>
 User-Agent: quilt/0.65
-Date:   Tue, 24 Mar 2020 14:56:06 +0100
+Date:   Tue, 24 Mar 2020 14:56:07 +0100
 From:   Peter Zijlstra <peterz@infradead.org>
 To:     x86@kernel.org
 Cc:     peterz@infradead.org, linux-kernel@vger.kernel.org,
@@ -42,8 +42,8 @@ Cc:     peterz@infradead.org, linux-kernel@vger.kernel.org,
         jbaron@akamai.com, torvalds@linux-foundation.org,
         tglx@linutronix.de, mingo@kernel.org, namit@vmware.com,
         hpa@zytor.com, luto@kernel.org, ard.biesheuvel@linaro.org,
-        jpoimboe@redhat.com, jeyu@kernel.org
-Subject: [RESEND][PATCH v3 03/17] module: Properly propagate MODULE_STATE_COMING failure
+        jpoimboe@redhat.com
+Subject: [RESEND][PATCH v3 04/17] jump_label,module: Fix module lifetime for __jump_label_mod_text_reserved
 References: <20200324135603.483964896@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -52,41 +52,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now that notifiers got unbroken; use the proper interface to handle
-notifier errors and propagate them.
-
-There were already MODULE_STATE_COMING notifiers that failed; notably:
-
- - jump_label_module_notifier()
- - tracepoint_module_notify()
- - bpf_event_notify()
-
-By propagating this error, we fix those users.
+Nothing ensures the module exists while we're iterating
+mod->jump_entries in __jump_label_mod_text_reserved(), take a module
+reference to ensure the module sticks around.
 
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: jeyu@kernel.org
+Reviewed-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 ---
- kernel/module.c |   10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+ kernel/jump_label.c |   10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
---- a/kernel/module.c
-+++ b/kernel/module.c
-@@ -3751,9 +3751,13 @@ static int prepare_coming_module(struct
- 	if (err)
- 		return err;
+--- a/kernel/jump_label.c
++++ b/kernel/jump_label.c
+@@ -539,19 +539,25 @@ static void static_key_set_mod(struct st
+ static int __jump_label_mod_text_reserved(void *start, void *end)
+ {
+ 	struct module *mod;
++	int ret;
  
--	blocking_notifier_call_chain(&module_notify_list,
--				     MODULE_STATE_COMING, mod);
--	return 0;
-+	err = blocking_notifier_call_chain_robust(&module_notify_list,
-+			MODULE_STATE_COMING, MODULE_STATE_GOING, mod);
-+	err = notifier_to_errno(err);
-+	if (err)
-+		klp_module_going(mod);
+ 	preempt_disable();
+ 	mod = __module_text_address((unsigned long)start);
+ 	WARN_ON_ONCE(__module_text_address((unsigned long)end) != mod);
++	if (!try_module_get(mod))
++		mod = NULL;
+ 	preempt_enable();
+ 
+ 	if (!mod)
+ 		return 0;
+ 
+-
+-	return __jump_label_text_reserved(mod->jump_entries,
++	ret = __jump_label_text_reserved(mod->jump_entries,
+ 				mod->jump_entries + mod->num_jump_entries,
+ 				start, end);
 +
-+	return err;
++	module_put(mod);
++
++	return ret;
  }
  
- static int unknown_module_param_cb(char *param, char *val, const char *modname,
+ static void __jump_label_mod_update(struct static_key *key)
 
 
