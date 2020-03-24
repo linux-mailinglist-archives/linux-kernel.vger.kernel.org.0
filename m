@@ -2,106 +2,164 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3BE6A1908B3
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 10:12:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AC6991908C9
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 10:13:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727563AbgCXJLf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 05:11:35 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:44583 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727543AbgCXJLa (ORCPT
+        id S1727495AbgCXJMs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 05:12:48 -0400
+Received: from conssluserg-05.nifty.com ([210.131.2.90]:21903 "EHLO
+        conssluserg-05.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726129AbgCXJMs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 05:11:30 -0400
-Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <pza@pengutronix.de>)
-        id 1jGfao-0004NC-H9; Tue, 24 Mar 2020 10:11:26 +0100
-Received: from pza by ptx.hi.pengutronix.de with local (Exim 4.92)
-        (envelope-from <pza@pengutronix.de>)
-        id 1jGfan-0005DC-Ou; Tue, 24 Mar 2020 10:11:25 +0100
-Date:   Tue, 24 Mar 2020 10:11:25 +0100
-From:   Philipp Zabel <pza@pengutronix.de>
-To:     Adrian Ratiu <adrian.ratiu@collabora.com>
-Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Ezequiel Garcia <ezequiel@collabora.com>, kernel@collabora.com,
-        kernel@pengutronix.de, Tim Harvey <tharvey@gateworks.com>
-Subject: Re: [PATCH 1/2] media: coda: jpeg: support optimized huffman tables
-Message-ID: <20200324091125.GA12488@pengutronix.de>
-References: <20200323130937.3666244-1-adrian.ratiu@collabora.com>
- <20200323130937.3666244-2-adrian.ratiu@collabora.com>
+        Tue, 24 Mar 2020 05:12:48 -0400
+Received: from mail-vs1-f47.google.com (mail-vs1-f47.google.com [209.85.217.47]) (authenticated)
+        by conssluserg-05.nifty.com with ESMTP id 02O9Cd40007119
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Mar 2020 18:12:39 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-05.nifty.com 02O9Cd40007119
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1585041159;
+        bh=swDS97mEzML7M+UgdPS2qRvo+g9Z1BxodzvheYPexOU=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=VXFqjHQUpXPnM3EbJTrh//kdquO34vop+pt+NH4INJf+F9mu6j/ATHRApSVQUlRQm
+         BPl3+YRHAoKfJRlWRKwMxPSXpaXTAcMCFSUPnWGm5ld0W+BwYd3FsZpijan1XwPxJA
+         ljsDK2cWC6GA8Mty60EhDjJDGMTLDyERjRZhK1dlODYm8IhoJq1A04BDdYf8afQfat
+         LNg07S+gaevNcjvL/+IpnwSte9qxdDxOtrM4+wAb9uV9OBa0hbToZpnYoDcXEykazb
+         Pmxa+NXsFxgn1g5qjBaiM8MRFSSUFYRCW4qaer0lM4uib8gcIUx+81MvH6sU9krzYl
+         m374HH+iaQW5A==
+X-Nifty-SrcIP: [209.85.217.47]
+Received: by mail-vs1-f47.google.com with SMTP id u11so715517vsg.2
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Mar 2020 02:12:39 -0700 (PDT)
+X-Gm-Message-State: ANhLgQ1qdfW/iUrATWLLPuis6UQCONlFLc4+Ta0vDgDycDXhHnrqG6yu
+        kXha8n3T87lK97HjBpJgsc3pyXmbPwEU2Hu6Odk=
+X-Google-Smtp-Source: ADFU+vuE4DNCdSn6UWfz14oVMVXG4qgoUTYHKqZxfC5M7JxfwigwrK0PbzxrGqAixYqAa52fua5rFT9AxBsaYi7UWVA=
+X-Received: by 2002:a67:8745:: with SMTP id j66mr17620480vsd.181.1585041158484;
+ Tue, 24 Mar 2020 02:12:38 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200323130937.3666244-2-adrian.ratiu@collabora.com>
-X-Sent-From: Pengutronix Hildesheim
-X-URL:  http://www.pengutronix.de/
-X-IRC:  #ptxdist @freenode
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-Uptime: 09:58:04 up 33 days, 16:28, 77 users,  load average: 0.06, 0.14,
- 0.19
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
-X-SA-Exim-Mail-From: pza@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+References: <20200113161310.GA191743@rani.riverdale.lan> <20200113195337.604646-1-nivedita@alum.mit.edu>
+ <202001131750.C1B8468@keescook> <20200114165135.GK31032@zn.tnic>
+ <20200115002131.GA3258770@rani.riverdale.lan> <20200115122458.GB20975@zn.tnic>
+ <20200316160259.GN26126@zn.tnic> <20200323204454.GA2611336@zx2c4.com>
+ <202003231350.7D35351@keescook> <CAK7LNARMBkc666kZ9jOG9sSThzA69JvKi++WZXMtCP9ddyqcBw@mail.gmail.com>
+In-Reply-To: <CAK7LNARMBkc666kZ9jOG9sSThzA69JvKi++WZXMtCP9ddyqcBw@mail.gmail.com>
+From:   Masahiro Yamada <masahiroy@kernel.org>
+Date:   Tue, 24 Mar 2020 18:12:01 +0900
+X-Gmail-Original-Message-ID: <CAK7LNARDb4SmQ2Y94CHAzP2qh_Ju7pu-w7kb0XKdP=2P-T+njQ@mail.gmail.com>
+Message-ID: <CAK7LNARDb4SmQ2Y94CHAzP2qh_Ju7pu-w7kb0XKdP=2P-T+njQ@mail.gmail.com>
+Subject: Re: [PATCH] Documentation/changes: Raise minimum supported binutils
+ version to 2.23
+To:     Kees Cook <keescook@chromium.org>, Borislav Petkov <bp@alien8.de>
+Cc:     "Jason A. Donenfeld" <Jason@zx2c4.com>,
+        Arvind Sankar <nivedita@alum.mit.edu>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, X86 ML <x86@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Thomas Lendacky <Thomas.Lendacky@amd.com>,
+        Mauro Rossi <issor.oruam@gmail.com>,
+        Michael Matz <matz@suse.de>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Adrian,
+On Tue, Mar 24, 2020 at 6:02 PM Masahiro Yamada <masahiroy@kernel.org> wrote:
+>
+> Hi.
+>
+>
+>
+> On Tue, Mar 24, 2020 at 5:51 AM Kees Cook <keescook@chromium.org> wrote:
+> >
+> > On Mon, Mar 23, 2020 at 02:44:54PM -0600, Jason A. Donenfeld wrote:
+> > > On Mon, Mar 16, 2020 at 05:02:59PM +0100, Borislav Petkov wrote:
+> > > > Long overdue patch, see below.
+> > > >
+> > > > Plan is to queue it after 5.7-rc1.
+> > > >
+> > > > ---
+> > > > From: Borislav Petkov <bp@suse.de>
+> > > > Date: Mon, 16 Mar 2020 16:28:36 +0100
+> > > > Subject: [PATCH] Documentation/changes: Raise minimum supported binutilsa version to 2.23
+> > > >
+> > > > The currently minimum-supported binutils version 2.21 has the problem of
+> > > > promoting symbols which are defined outside of a section into absolute.
+> > > > According to Arvind:
+> > > >
+> > > >   binutils-2.21 and -2.22. An x86-64 defconfig will fail with
+> > > >           Invalid absolute R_X86_64_32S relocation: _etext
+> > > >   and after fixing that one, with
+> > > >           Invalid absolute R_X86_64_32S relocation: __end_of_kernel_reserve
+> > > >
+> > > > Those two versions of binutils have a bug when it comes to handling
+> > > > symbols defined outside of a section and binutils 2.23 has the proper
+> > > > fix, see: https://sourceware.org/legacy-ml/binutils/2012-06/msg00155.html
 
-On Mon, Mar 23, 2020 at 03:09:36PM +0200, Adrian Ratiu wrote:
-> Each jpeg can have the huffman tables optimized for its specific content
-> meaning that the table lenghts and values don't match the standard table
-> of substitutions so there's no reason to hardcode and expect the sandard
-> lenghts, otherwise we just end up rejecting optimized jpegs altogether.
 
-Thank you, that is a great improvement. There's one issue remaining
-below:
+This seems to be also related to
+7883a14339299773b2ce08dcfd97c63c199a9289
 
-> Tested on CODA960.
-> 
-> Signed-off-by: Adrian Ratiu <adrian.ratiu@collabora.com>
-> ---
->  drivers/media/platform/coda/coda-jpeg.c | 13 ++++++++-----
->  1 file changed, 8 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/media/platform/coda/coda-jpeg.c b/drivers/media/platform/coda/coda-jpeg.c
-> index 6a11b64efb6b..162ba28a6b95 100644
-> --- a/drivers/media/platform/coda/coda-jpeg.c
-> +++ b/drivers/media/platform/coda/coda-jpeg.c
-> @@ -343,7 +343,8 @@ int coda_jpeg_decode_header(struct coda_ctx *ctx, struct vb2_buffer *vb)
->  			v4l2_err(&dev->v4l2_dev, "missing Huffman table\n");
->  			return -EINVAL;
->  		}
-> -		if (huffman_tables[i].length != ((i & 2) ? 178 : 28)) {
-> +		if (huffman_tables[i].length < 17 ||
-> +		    huffman_tables[i].length > 178) {
 
-The maximum length of the DC tables is 16 + 12, so this should
-still be checked for a maximum length of 28 if (i & 2) == 0.
+I had noticed the symbol "_text"
+was absolute on binutils <= 2.22,
+but I was not sure whether it was a bug of the tool.
 
->  			v4l2_err(&dev->v4l2_dev,
->  				 "invalid Huffman table %d length: %zu\n",
->  				 i, huffman_tables[i].length);
-> @@ -357,10 +358,12 @@ int coda_jpeg_decode_header(struct coda_ctx *ctx, struct vb2_buffer *vb)
->  			return -ENOMEM;
->  		ctx->params.jpeg_huff_tab = huff_tab;
->  	}
-> -	memcpy(huff_tab->luma_dc, huffman_tables[0].start, 16 + 12);
-> -	memcpy(huff_tab->chroma_dc, huffman_tables[1].start, 16 + 12);
-> -	memcpy(huff_tab->luma_ac, huffman_tables[2].start, 16 + 162);
-> -	memcpy(huff_tab->chroma_ac, huffman_tables[3].start, 16 + 162);
-> +
-> +	memset(huff_tab, 0, sizeof(*huff_tab));
-> +	memcpy(huff_tab->luma_dc, huffman_tables[0].start, huffman_tables[0].length);
-> +	memcpy(huff_tab->chroma_dc, huffman_tables[1].start, huffman_tables[1].length);
+I applied the fix.
+Perhaps, it was unneeded given that
+we require the binutils 2.23
 
-Otherwise these two might overflow the luma_dc and chroma_dc arrays.
 
-regards
-Philipp
+
+
+
+> > > >
+> > > > Therefore, up to the fixed version directly, skipping the broken ones.
+> > > >
+> > > > Currently shipping distros already have the fixed binutils version so
+> > > > there should be no breakage resulting from this.
+> > > >
+> > > > For more details about the whole thing, see the thread in Link.
+> > >
+> > > That sounds very good to me. Then we'll be able to use ADX instructions
+> > > without ifdefs.
+> > >
+> > > Acked-by: Jason A. Donenfeld <Jason@zx2c4.com>
+> >
+> > Can you send these now and we can land in 5.7 with the doc change?
+> >
+> > -Kees
+>
+>
+> Kees,
+>
+> I folded this patch into the following series (16 patches):
+> https://lore.kernel.org/patchwork/project/lkml/list/?series=435391
+>
+> This patch (14/16) is a prerequisite for 15/16.
+>
+>
+>
+> Borislav,
+>
+> When I forwarded this patch, I fixed up one more line.
+> (changes.rst duplicates the same information...)
+>
+> Please see this. I hope this should be OK.
+> https://lore.kernel.org/patchwork/patch/1214519/
+>
+>
+>
+> > --
+> > Kees Cook
+>
+>
+>
+> --
+> Best Regards
+> Masahiro Yamada
+
+
+
+-- 
+Best Regards
+Masahiro Yamada
