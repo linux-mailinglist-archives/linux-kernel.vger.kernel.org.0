@@ -2,57 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 06459191754
+	by mail.lfdr.de (Postfix) with ESMTP id DA166191756
 	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 18:17:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727601AbgCXRQR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 13:16:17 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:35893 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727571AbgCXRQQ (ORCPT
+        id S1727699AbgCXRQT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 13:16:19 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:35895 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727571AbgCXRQS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 13:16:16 -0400
-Received: by mail-wm1-f66.google.com with SMTP id g62so4444012wme.1
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Mar 2020 10:16:15 -0700 (PDT)
+        Tue, 24 Mar 2020 13:16:18 -0400
+Received: by mail-wm1-f67.google.com with SMTP id g62so4444062wme.1
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Mar 2020 10:16:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=BRGTc9IAY79JGkxpMI7o35GI//PMDT5D2HixNe1aVms=;
-        b=NjWU8qZYawyV+2qEJBBMHOfkbMLTpxRR98WLKLPc0II5PXuprwHYmIK8qaZSoMN1If
-         wFfFVKd24L9ijVXMW31gGDJsw/jjPmo3sekPgaQt904VXyyu80UMcH9glvkfzuXMBc9M
-         N5AWLwdfhCTz/H5J8HlhW6kQzAVkqAhu6byMYACQtynlNUZZvMUIc1qvYEdSGw/vhoOY
-         ASQpWsphLM+EYfg/PM4fqsnzlNbp8QtCPwDVto1Tma9rGcqln+HpjISjO0Wcand7hay2
-         lyjoptpDU7ahPv9GEaKOcWMPTjL/vVyS4YgIh1Yg9GdU/MOTRIQygr7MBelzdxJWBQyB
-         elJg==
+        bh=oIHNfLP97i+iXHu3Xs3oiPWqbaiyFrdjyqDTxXvHYmc=;
+        b=wsW374mOQPitsWt3vt2KwtkDWsZMU8m6589gm4fuard7w9RdhLRNpaxiCYlzBVhmHY
+         DpsETlUEE7c7bXqL7kkVolG+owKSIL8oAy8seQua82SE6rHhrmFK6oFLeddvk+nr4REO
+         mS1Rm7KDRdlwyE2GGQtBpx6hlDVF8jbe7fHes0LjrDuKgm4GGUfqT76E9IN2yQ2Vpm+h
+         uoeAJSM9ULRBt22HlqkTzCFGNIejwmZTky1R70wV/4Il6Uoo+RUVuRqayfn0+kbim9KL
+         4Kj7J+UmbDOlcB+owNGDxyBFR9LeYhDK7E3tjaJsgKy6JcNSJZGoH2XR/P3uaAvQujT6
+         gNQg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=BRGTc9IAY79JGkxpMI7o35GI//PMDT5D2HixNe1aVms=;
-        b=G3LXY5f7zHjpNboed0hiCjGGaf8ZrXfhsANzcd5WM2fev+eDaypsmkmZZSH93n7Ywq
-         Nl4Kz8xWZSLM9qzbn0IzQvn9BUrmrDkM8BX6KdQBL3z8K1CkIgCPxOTRQWfImOKngrSw
-         /DKtVb1Lo/sj8pi+gHToSjSaNNLwTqO/4ivbYLQmZM7LTRc49Zpc2T0uRm3DynKgnpKb
-         IbyVsQiOEwGoJIIb4PO221V1d5K+gz4UkIR1niN5nzwoVArMY4NRq7sZDRjJfQ3ctYik
-         hDKuxEtskeJHFuUpV0K3myXV62gpUkgyb3BBdIC5f/b+WAr16Zz58SveymxUTfzzDlDY
-         sPWQ==
-X-Gm-Message-State: ANhLgQ1e1QulMnrckZ7Eqm31s0eImyn+MSTXTL+oaeTGbV/ImRGWz6ZD
-        nipJlfv0CfYaFzpJif1w8XQARQ==
-X-Google-Smtp-Source: ADFU+vsd/oT2fspHScHAAtwcf0fZG0zaoER91AqIsPIMI0i8I4DVNOs9QBj7uQK3jGUpDBBka1zJUA==
-X-Received: by 2002:a05:600c:22c1:: with SMTP id 1mr6335694wmg.29.1585070175124;
-        Tue, 24 Mar 2020 10:16:15 -0700 (PDT)
+        bh=oIHNfLP97i+iXHu3Xs3oiPWqbaiyFrdjyqDTxXvHYmc=;
+        b=L7MkGQjxJ8nr3A8Red2JaZ6AnR1GPpiGRFMaKX76xRuMUr5hxCly955dJXLxpnJQ6A
+         3AQZxADFa4LC0zs8egvXwjeAIYYEJ9kuDF/oD36UenXzqaDXDZOzKfS5BsbdeV9usrhb
+         k0r1Q9mTPJ+k7KQr/GzjiAeo29UIOsR0wLpM7SFclaCygH5h5iMqwNTG6+pGTj97l98c
+         kyeJ8Ue9j+xgU5UZ6XwvOrffVyCSG4y4Lozhyra32UiJ78SFZW2SHcOYDrdUk/AXsAQH
+         v4pjK2q3/0kny+2Odull6Jqu5CcORAg3zSLqX0vc0RZBdDqXfYcOTNVMxhU/hyTf9+e3
+         Pcog==
+X-Gm-Message-State: ANhLgQ0A2ywgrOeyZLTfDzxtJthWnN+xAfWPFAsa86jLZtG6aZoxKcvE
+        4cU+nWoYbRpQg80i/N7vBiImBA==
+X-Google-Smtp-Source: ADFU+vvQ5gJrLjUC0Ps8+Mdl46TuSA289oQWJE8tPldAqsVm3GVu6GL2qoBfiv4UroZ9aqCsPf7LyQ==
+X-Received: by 2002:a1c:648b:: with SMTP id y133mr6570766wmb.173.1585070176382;
+        Tue, 24 Mar 2020 10:16:16 -0700 (PDT)
 Received: from srini-hackbox.lan (cpc89974-aztw32-2-0-cust43.18-1.cable.virginm.net. [86.30.250.44])
-        by smtp.gmail.com with ESMTPSA id m11sm5269514wmf.9.2020.03.24.10.16.13
+        by smtp.gmail.com with ESMTPSA id m11sm5269514wmf.9.2020.03.24.10.16.15
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Mar 2020 10:16:14 -0700 (PDT)
+        Tue, 24 Mar 2020 10:16:15 -0700 (PDT)
 From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 To:     gregkh@linuxfoundation.org
 Cc:     linux-kernel@vger.kernel.org,
         nicholas.johnson-opensource@outlook.com.au,
         Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Subject: [PATCH 1/3] nvmem: core: use device_register and device_unregister
-Date:   Tue, 24 Mar 2020 17:15:58 +0000
-Message-Id: <20200324171600.15606-2-srinivas.kandagatla@linaro.org>
+Subject: [PATCH 2/3] nvmem: core: add root_only member to nvmem device struct
+Date:   Tue, 24 Mar 2020 17:15:59 +0000
+Message-Id: <20200324171600.15606-3-srinivas.kandagatla@linaro.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20200324171600.15606-1-srinivas.kandagatla@linaro.org>
 References: <20200324171600.15606-1-srinivas.kandagatla@linaro.org>
@@ -63,40 +63,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-use device_register/unregister instead of spliting them with no use.
+As we are planning to move to use sysfs is_bin_visible callback,
+having root_only as part of nvmem_device will help decide correct
+permissions.
 
 Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 ---
- drivers/nvmem/core.c | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
+ drivers/nvmem/core.c  | 1 +
+ drivers/nvmem/nvmem.h | 1 +
+ 2 files changed, 2 insertions(+)
 
 diff --git a/drivers/nvmem/core.c b/drivers/nvmem/core.c
-index 77d890d3623d..e8f7bea93abf 100644
+index e8f7bea93abf..7d28e1cca4e0 100644
 --- a/drivers/nvmem/core.c
 +++ b/drivers/nvmem/core.c
-@@ -397,11 +397,9 @@ struct nvmem_device *nvmem_register(const struct nvmem_config *config)
- 
- 	nvmem->dev.groups = nvmem_sysfs_get_groups(nvmem, config);
- 
--	device_initialize(&nvmem->dev);
--
- 	dev_dbg(&nvmem->dev, "Registering nvmem device %s\n", config->name);
- 
--	rval = device_add(&nvmem->dev);
-+	rval = device_register(&nvmem->dev);
- 	if (rval)
- 		goto err_put_device;
- 
-@@ -455,8 +453,7 @@ static void nvmem_device_release(struct kref *kref)
- 		device_remove_bin_file(nvmem->base_dev, &nvmem->eeprom);
- 
- 	nvmem_device_remove_all_cells(nvmem);
--	device_del(&nvmem->dev);
--	put_device(&nvmem->dev);
-+	device_unregister(&nvmem->dev);
- }
- 
- /**
+@@ -377,6 +377,7 @@ struct nvmem_device *nvmem_register(const struct nvmem_config *config)
+ 	nvmem->dev.type = &nvmem_provider_type;
+ 	nvmem->dev.bus = &nvmem_bus_type;
+ 	nvmem->dev.parent = config->dev;
++	nvmem->root_only = config->root_only;
+ 	nvmem->priv = config->priv;
+ 	nvmem->type = config->type;
+ 	nvmem->reg_read = config->reg_read;
+diff --git a/drivers/nvmem/nvmem.h b/drivers/nvmem/nvmem.h
+index be0d66d75c8a..16c0d3ad6679 100644
+--- a/drivers/nvmem/nvmem.h
++++ b/drivers/nvmem/nvmem.h
+@@ -20,6 +20,7 @@ struct nvmem_device {
+ 	struct kref		refcnt;
+ 	size_t			size;
+ 	bool			read_only;
++	bool			root_only;
+ 	int			flags;
+ 	enum nvmem_type		type;
+ 	struct bin_attribute	eeprom;
 -- 
 2.21.0
 
