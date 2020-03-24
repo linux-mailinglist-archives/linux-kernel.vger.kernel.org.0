@@ -2,113 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 79F32191398
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 15:50:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7AE1B1913A1
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 15:51:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728167AbgCXOuQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 10:50:16 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:36784 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727856AbgCXOuO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 10:50:14 -0400
-Received: by mail-lj1-f195.google.com with SMTP id g12so18891066ljj.3
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Mar 2020 07:50:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:organization:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=46/qQ50l1vh+J9wzA3xpUZxvvo8d7tioQFsg4+TJ/o8=;
-        b=bvYpkG8m/ns3rG4ZA+zT/M4MjsHPmDeoGGnpZ5cpYzMvSfGA4iOGMFepedJZweWbNe
-         2iyBmESEUeF6IAQJfDmsoYgZ5UsV0INu6mmp3Yare9tsponpOhbkMHgg+tPLmXvgBtpe
-         8jeYLQx+pLubdj8l4AUXte+u0jX5TjBmNmpw79Qd/FNhuoQS4mUrMfs6399CzGjQNsxt
-         +cIiJC7mz00fj6BWt/lAM9WLf99bZ7mzCNNef1hULoqwBw6HjopoNZdlf8423OjoRHx+
-         34/AGy3xW1NxXaHFhRAmQu0tBqSNYOitMsFSXZBpS8G4+ZNExQxXFjHa75IYB247HWho
-         VgYw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:organization
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=46/qQ50l1vh+J9wzA3xpUZxvvo8d7tioQFsg4+TJ/o8=;
-        b=QzUOeWDfH9kt/rhdZvldeO4KcD6LIIpKja/E2GcH5QHQ+PTOTGQy6mrMpWRw3dedwi
-         BJ9qSoVCbWFOjGJL/vT8gsUlJXyolbxYpce8YzowMBx84lvdJcVCFHeIMfZGG5XGFdk2
-         uuwJzcPw7R7YiGHTaWtwZ6s+Rjss+LDa8XZVLmppmnV6GD06HIoV/ieL/jfB0y4IgwcV
-         C5G0gOasIBz8tDP7o5mhmQDb5/SaZU/HXStwZwGJT072o7xVnQa+dr67tmFpEA2sZHM7
-         8v4MbSCD7/D2ZWe3EgtrlHByFoKcm6r04ohJsSHhJXOvI+VnMXorRIbOk3WC+kVwQDFv
-         SU7g==
-X-Gm-Message-State: ANhLgQ1qhdPlRMoGQesTr+W5QXfQNqoAcD+ykphWMc3PP9maN5D3gfuz
-        cRTvKziDAUZDSb5MLw5g6KeDOPsOGdpwJQ==
-X-Google-Smtp-Source: ADFU+vsduWqt1Gs363mlpwe4KUHBbe4xPS+tER4rFbeA45hsI3KGrYgm1BWdEuzCSeE6tQZKCp8hmQ==
-X-Received: by 2002:a2e:9f07:: with SMTP id u7mr11833365ljk.115.1585061409797;
-        Tue, 24 Mar 2020 07:50:09 -0700 (PDT)
-Received: from wasted.cogentembedded.com ([2a00:1fa0:42d3:3567:1f77:9f32:8c0:b337])
-        by smtp.gmail.com with ESMTPSA id x11sm1431543ljm.7.2020.03.24.07.50.08
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 24 Mar 2020 07:50:09 -0700 (PDT)
-Subject: Re: [PATCH v2]usb: gadget: bcm63xx_udc:remove redundant variable
- assignment
-To:     Tang Bin <tangbin@cmss.chinamobile.com>, cernekee@gmail.com,
-        balbi@kernel.org, gregkh@linuxfoundation.org
-Cc:     f.fainelli@gmail.com, bcm-kernel-feedback-list@broadcom.com,
-        linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-References: <20200324132029.16296-1-tangbin@cmss.chinamobile.com>
-From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Organization: Cogent Embedded
-Message-ID: <a0afd44f-177d-ad21-02b5-93b15b29399e@cogentembedded.com>
-Date:   Tue, 24 Mar 2020 17:50:07 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
+        id S1727927AbgCXOvh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 10:51:37 -0400
+Received: from foss.arm.com ([217.140.110.172]:36566 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727065AbgCXOvh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Mar 2020 10:51:37 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5C9681FB;
+        Tue, 24 Mar 2020 07:51:36 -0700 (PDT)
+Received: from e119884-lin.cambridge.arm.com (e119884-lin.cambridge.arm.com [10.1.196.72])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 775303F52E;
+        Tue, 24 Mar 2020 07:51:35 -0700 (PDT)
+From:   Vincenzo Frascino <vincenzo.frascino@arm.com>
+To:     linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
+Cc:     Vincenzo Frascino <vincenzo.frascino@arm.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Andy Lutomirski <luto@kernel.org>
+Subject: [PATCH 0/3] kselftest: Extend vDSO tests
+Date:   Tue, 24 Mar 2020 14:51:17 +0000
+Message-Id: <20200324145120.42194-1-vincenzo.frascino@arm.com>
+X-Mailer: git-send-email 2.25.2
 MIME-Version: 1.0
-In-Reply-To: <20200324132029.16296-1-tangbin@cmss.chinamobile.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello!
+This series extends the kselftests for the vDSO library making sure: that
+they compile correctly on non x86 platforms, that they can be cross
+compiled and introducing new tests that verify the correctness of the
+library.
 
-On 03/24/2020 04:20 PM, Tang Bin wrote:
+The so extended vDSO kselftests have been verified on all the platforms
+supported by the unified vDSO library [1].
 
-> --v1------------------------------------
-> In this function, the variable 'rc' is assigned after this place,
-> so the definition is invalid.
-> 
-> --v2------------------------------------
-> In this function, the variable 'rc' will be assigned by the function
-> 'usb_add_gadget_udc()',so the assignment here is redundant,we should
-> remove it.
-> 
-> Signed-off-by: Tang Bin <tangbin@cmss.chinamobile.com>
+The only new patch that this series introduces is the first one, patch 2 and
+patch 3 have already been reviewed in past as part of other series [2] [3].
 
-   NAK.
+[1] https://lore.kernel.org/lkml/20190621095252.32307-1-vincenzo.frascino@arm.com
+[2] https://lore.kernel.org/lkml/20190621095252.32307-26-vincenzo.frascino@arm.com
+[3] https://lore.kernel.org/lkml/20190523112116.19233-4-vincenzo.frascino@arm.com
 
-> ---
->  drivers/usb/gadget/udc/bcm63xx_udc.c | 2 --
->  1 file changed, 2 deletions(-)
-> 
-> diff --git a/drivers/usb/gadget/udc/bcm63xx_udc.c b/drivers/usb/gadget/udc/bcm63xx_udc.c
-> index 54501814d..a7afa8c35 100644
-> --- a/drivers/usb/gadget/udc/bcm63xx_udc.c
-> +++ b/drivers/usb/gadget/udc/bcm63xx_udc.c
-> @@ -2321,8 +2321,6 @@ static int bcm63xx_udc_probe(struct platform_device *pdev)
->  	if (rc)
->  		return rc;
->  
-> -	rc = -ENXIO;
-> -
->  	/* IRQ resource #0: control interrupt (VBUS, speed, etc.) */
->  	irq = platform_get_irq(pdev, 0);
->  	if (irq < 0)
+Cc: Shuah Khan <shuah@kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Andy Lutomirski <luto@kernel.org>
+Signed-off-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
 
-   This *if* branch goes to the 'out_uninit' label which uses 'rc' (and it should
-be negative).
-   In principle, if you change 'rc' to 'irq' below, this patch would be sane.
-It's not as is.
+Vincenzo Frascino (3):
+  kselftest: Enable vDSO test on non x86 platforms
+  kselftest: Extend vDSO selftest
+  kselftest: Extend vDSO selftest to clock_getres
 
-MBR, Sergei
+ tools/testing/selftests/Makefile              |   1 +
+ tools/testing/selftests/vDSO/Makefile         |   6 +-
+ .../selftests/vDSO/vdso_clock_getres.c        | 124 +++++++++
+ tools/testing/selftests/vDSO/vdso_config.h    |  90 +++++++
+ tools/testing/selftests/vDSO/vdso_full_test.c | 244 ++++++++++++++++++
+ 5 files changed, 463 insertions(+), 2 deletions(-)
+ create mode 100644 tools/testing/selftests/vDSO/vdso_clock_getres.c
+ create mode 100644 tools/testing/selftests/vDSO/vdso_config.h
+ create mode 100644 tools/testing/selftests/vDSO/vdso_full_test.c
+
+-- 
+2.25.2
+
