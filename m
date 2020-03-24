@@ -2,296 +2,202 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6CD4B190579
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 07:04:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 65CE9190580
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 07:10:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727337AbgCXGD5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 02:03:57 -0400
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:46370 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727290AbgCXGD4 (ORCPT
+        id S1726697AbgCXGKq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 02:10:46 -0400
+Received: from mail-qk1-f196.google.com ([209.85.222.196]:38016 "EHLO
+        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725922AbgCXGKq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 02:03:56 -0400
-Received: by mail-oi1-f196.google.com with SMTP id q204so9585556oia.13;
-        Mon, 23 Mar 2020 23:03:55 -0700 (PDT)
+        Tue, 24 Mar 2020 02:10:46 -0400
+Received: by mail-qk1-f196.google.com with SMTP id h14so18193028qke.5;
+        Mon, 23 Mar 2020 23:10:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=aXQM/Z3C9ha9QAmAw435ry6xAMlfP4zDG5mwMXzRu3g=;
-        b=gNyrtl15zm/hO468YqsyQhJEAQyPObRHT8I0nVnAgRS0W9k0+BGmVnC4oL6ah2oZ9t
-         6nHXrVkgY5pJGL/gyiwen7KZfyI0vp5wtyUJimFoEZ2In2OJWklpem2Sk0sBgopNzx0N
-         w8hN3cn6T6LwjnqCK6DxmY3CsA4P0PkSUMrCzC9GRqyVOje+5/7wegQqXSbZ/c62L/II
-         WrnMhgg6MredeAKtniUKBY8kMrGAS2qAsQg876Y54YM/0m88mMk55+fyrJx+TDrZLBMQ
-         nBbk6DmHfu4C3NdgnK0nwF0NG0Jt/Ln03nHgfrFamkovOa9Os7Ud3dxz8DQ6HafiB50X
-         /g2g==
+        bh=NHyvhEFOA+6ht5C5Md9yO/2NBro540fuAK71xdfGAyw=;
+        b=gcAgnWaUi4IvLI3keqVWWIEPRpN5wENXb/k3U4hQ1wxVUGZjy35Q1DnW7yBDa28gqW
+         4yVwTfMkRDLB4tyiRLTmHmgO9j/tc+0wsEaxDIb8sWervzIdgGakXaUNkZtFKj6bs5N4
+         TOukkcEOGU6PGKai9pZ1/b9kC+veZJvFvfn0YT+qc45rWUQUCb5MvocCJcaYrOkfD5Nz
+         /6PlKtjCTcbNCRWsEWgksBXiXUBNxGRzeb65+wB3O0Q1/4UD8f5MbtpKusDJ0NB/N1Dr
+         Ki6+cXKTgQNxzEnrvURP/dQjRHoo22Ll6y3hMArE/YNtZ/20sp7GASaPwqGsqB2cj7aK
+         L8/A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=aXQM/Z3C9ha9QAmAw435ry6xAMlfP4zDG5mwMXzRu3g=;
-        b=c1SDqntxGhwB73NV9fpT0c4XDFJ9gLPPgPgmz+/KhgwGrrXgl628uDZ2PrZgMNkuU6
-         GyDxNv5OTJkeWnvbAXK+VLe6IwaOW5KZI44oYA6cFxLx5UP6BL58QIichJ51aRi9LfBj
-         4jlPG23CEfhtmQrjTl4+FUOVzGf9nmnFnacGQtT1LgM/+DpjH/Vkao6LaXNE2Q6m7BOW
-         b3O+4ZFJJ7AoKykq9NaOBu6YGGptxR53xzpzXneaTsnw8O+CrBah5S8eJGGPDa33damq
-         ErfQQvYh5E7gDbaelIYeCq2rMSoZnA96z6sMQYm9Y12Yk2ptqctYvlkfQMW70muc9CbN
-         6Tow==
-X-Gm-Message-State: ANhLgQ0a+G7nTvWSFHYud+zfKr6WIpEGeBoolfQKJPF35j5xZGutGxrk
-        FT2vvxHlS3Ul5hhI9azDgc56TxJ5JJLwLi7FmQc=
-X-Google-Smtp-Source: ADFU+vu7falTnsahQ3umrzlRN0AwhFE8EjYM5c+7pXlH9L9V86/xRBkpsnoUNyQUeg73t1CI2yMuRiVmOtIqGCbdqJo=
-X-Received: by 2002:a54:4e13:: with SMTP id a19mr2343456oiy.108.1585029835381;
- Mon, 23 Mar 2020 23:03:55 -0700 (PDT)
+        bh=NHyvhEFOA+6ht5C5Md9yO/2NBro540fuAK71xdfGAyw=;
+        b=T0YduisK2P29R4qwrn7GzS+6Gli8AABjK/N9kSXb4qqB7Mkeyfw3BHMhOA1uO+uuI9
+         zpVSbm/5uVfDTEwGHN+RPmCuT2ZAulU1y/XY/6mFggadE6C/pBaXXpwSK2j2B8ZH/E40
+         LxmMwlF1NuffQeMbLQt/U7EjC/M5Yj7AdeRYpIJZUHxuykr4COT7aDOwpub+MmAsxaIa
+         WmnaEOsk6FOGGO5qkRaccTVuOcKDPNHyEVMZ75KiqT7dCJ24NezS64SHZ/3Iw1msituY
+         hgYGcdZWtm/jgad7DRd9EODRYXZY+XlcRA0MWNyeDi6gALD77YIUpoCS9+ZLBOhYQW1E
+         rTXg==
+X-Gm-Message-State: ANhLgQ0Set5UbNpcYxQcGpyPmUd1vJ2mOp+HPOcQ8s/ZtZaqkkLI4MI+
+        jeM4CgmqZNng5teKTl+13Sruwi9sreMkgj2ISg4=
+X-Google-Smtp-Source: ADFU+vsSdNX04/CnwDNqaQSoUMpaW5OmZpb0wl8ctm6k3wTZloWyqMcRPtERngxtZnn6mOwFSIjHuHYtVx9xxQdqjDg=
+X-Received: by 2002:a37:66c9:: with SMTP id a192mr19240643qkc.10.1585030244645;
+ Mon, 23 Mar 2020 23:10:44 -0700 (PDT)
 MIME-Version: 1.0
-References: <20200320231928.137720-1-abhishekpandit@chromium.org>
- <20200320161922.v2.1.I17e2220fd0c0822c76a15ef89b882fb4cfe3fe89@changeid>
- <C09DCA09-A2C9-4675-B17B-05CE0B5DE172@holtmann.org> <CANFp7mXG1HXKNQKn2YTsEOX6puNz=8WY6AHWac4UOiVMVQyEkg@mail.gmail.com>
-In-Reply-To: <CANFp7mXG1HXKNQKn2YTsEOX6puNz=8WY6AHWac4UOiVMVQyEkg@mail.gmail.com>
-From:   Luiz Augusto von Dentz <luiz.dentz@gmail.com>
-Date:   Mon, 23 Mar 2020 23:03:43 -0700
-Message-ID: <CABBYNZLBvyjDnLpH40u1Vq9DftyC0dty2NMf9QEsazas9Ktwvw@mail.gmail.com>
-Subject: Re: [PATCH v2 1/1] Bluetooth: Prioritize SCO traffic
-To:     Abhishek Pandit-Subedi <abhishekpandit@chromium.org>
-Cc:     Marcel Holtmann <marcel@holtmann.org>,
-        Bluetooth Kernel Mailing List 
-        <linux-bluetooth@vger.kernel.org>,
-        ChromeOS Bluetooth Upstreaming 
-        <chromeos-bluetooth-upstreaming@chromium.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Johan Hedberg <johan.hedberg@gmail.com>,
-        netdev <netdev@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Jakub Kicinski <kuba@kernel.org>
+References: <20190813204513.4790-1-skunberg.kelsey@gmail.com>
+ <20190815153352.86143-2-skunberg.kelsey@gmail.com> <CAB=otbSYozS-ZfxB0nCiNnxcbqxwrHOSYxJJtDKa63KzXbXgpw@mail.gmail.com>
+ <20200314112022.GA53794@kroah.com>
+In-Reply-To: <20200314112022.GA53794@kroah.com>
+From:   Kelsey <skunberg.kelsey@gmail.com>
+Date:   Tue, 24 Mar 2020 00:10:33 -0600
+Message-ID: <CAFVqi1T1Fipajca8exrzs6uQAorSZeke80LYy43aCBpT45nFdA@mail.gmail.com>
+Subject: Re: [PATCH v3 1/4] PCI: sysfs: Define device attributes with DEVICE_ATTR*
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Bjorn Helgaas <bhelgaas@google.com>
+Cc:     linux-pci@vger.kernel.org,
+        Ruslan Bilovol <ruslan.bilovol@gmail.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Shuah Khan <skhan@linuxfoundation.org>,
+        linux-kernel-mentees@lists.linuxfoundation.org,
+        Bodong Wang <bodong@mellanox.com>,
+        Don Dutile <ddutile@redhat.com>, rbilovol@cisco.com
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Abhishek, Marcel,
-
-On Mon, Mar 23, 2020 at 12:12 PM Abhishek Pandit-Subedi
-<abhishekpandit@chromium.org> wrote:
+On Sat, Mar 14, 2020 at 5:20 AM Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
 >
-> On Mon, Mar 23, 2020 at 11:58 AM Marcel Holtmann <marcel@holtmann.org> wrote:
-> >
-> > Hi Abhishek,
-> >
-> > > When scheduling TX packets, send all SCO/eSCO packets first, check for
-> > > pending SCO/eSCO packets after every ACL/LE packet and send them if any
-> > > are pending.  This is done to make sure that we can meet SCO deadlines
-> > > on slow interfaces like UART.
+> On Sat, Mar 14, 2020 at 12:51:47PM +0200, Ruslan Bilovol wrote:
+> > On Thu, Aug 15, 2019 at 7:01 PM Kelsey Skunberg
+> > <skunberg.kelsey@gmail.com> wrote:
 > > >
-> > > If we were to queue up multiple ACL packets without checking for a SCO
-> > > packet, we might miss the SCO timing. For example:
+> > > Defining device attributes should be done through the helper
+> > > DEVICE_ATTR_RO(), DEVICE_ATTR_WO(), or similar. Change all instances using
+> > > __ATTR* to now use its equivalent DEVICE_ATTR*.
 > > >
-> > > The time it takes to send a maximum size ACL packet (1024 bytes):
-> > > t = 10/8 * 1024 bytes * 8 bits/byte * 1 packet / baudrate
-> > >        where 10/8 is uart overhead due to start/stop bits per byte
+> > > Example of old:
 > > >
-> > > Replace t = 3.75ms (SCO deadline), which gives us a baudrate of 2730666.
+> > > static struct device_attribute dev_name_##_attr=__ATTR_RO(_name);
 > > >
-> > > At a baudrate of 3000000, if we didn't check for SCO packets within 1024
-> > > bytes, we would miss the 3.75ms timing window.
+> > > Example of new:
 > > >
-> > > Signed-off-by: Abhishek Pandit-Subedi <abhishekpandit@chromium.org>
+> > > static DEVICE_ATTR_RO(_name);
+> > >
+> > > Signed-off-by: Kelsey Skunberg <skunberg.kelsey@gmail.com>
 > > > ---
+> > >  drivers/pci/pci-sysfs.c | 59 +++++++++++++++++++----------------------
+> > >  1 file changed, 27 insertions(+), 32 deletions(-)
 > > >
-> > > Changes in v2:
-> > > * Refactor to check for SCO/eSCO after each ACL/LE packet sent
-> > > * Enabled SCO priority all the time and removed the sched_limit variable
+> > > diff --git a/drivers/pci/pci-sysfs.c b/drivers/pci/pci-sysfs.c
+> > > index 965c72104150..8af7944fdccb 100644
+> > > --- a/drivers/pci/pci-sysfs.c
+> > > +++ b/drivers/pci/pci-sysfs.c
+> > > @@ -464,9 +464,7 @@ static ssize_t dev_rescan_store(struct device *dev,
+> > >         }
+> > >         return count;
+> > >  }
+> > > -static struct device_attribute dev_rescan_attr = __ATTR(rescan,
+> > > -                                                       (S_IWUSR|S_IWGRP),
+> > > -                                                       NULL, dev_rescan_store);
+> > > +static DEVICE_ATTR(rescan, (S_IWUSR | S_IWGRP), NULL, dev_rescan_store);
 > > >
-> > > net/bluetooth/hci_core.c | 111 +++++++++++++++++++++------------------
-> > > 1 file changed, 61 insertions(+), 50 deletions(-)
+> > >  static ssize_t remove_store(struct device *dev, struct device_attribute *attr,
+> > >                             const char *buf, size_t count)
+> > > @@ -480,9 +478,8 @@ static ssize_t remove_store(struct device *dev, struct device_attribute *attr,
+> > >                 pci_stop_and_remove_bus_device_locked(to_pci_dev(dev));
+> > >         return count;
+> > >  }
+> > > -static struct device_attribute dev_remove_attr = __ATTR_IGNORE_LOCKDEP(remove,
+> > > -                                                       (S_IWUSR|S_IWGRP),
+> > > -                                                       NULL, remove_store);
+> > > +static DEVICE_ATTR_IGNORE_LOCKDEP(remove, (S_IWUSR | S_IWGRP), NULL,
+> > > +                                 remove_store);
 > > >
-> > > diff --git a/net/bluetooth/hci_core.c b/net/bluetooth/hci_core.c
-> > > index dbd2ad3a26ed..a29177e1a9d0 100644
-> > > --- a/net/bluetooth/hci_core.c
-> > > +++ b/net/bluetooth/hci_core.c
-> > > @@ -4239,6 +4239,60 @@ static void __check_timeout(struct hci_dev *hdev, unsigned int cnt)
-> > >       }
-> > > }
-> > >
-> > > +/* Schedule SCO */
-> > > +static void hci_sched_sco(struct hci_dev *hdev)
-> > > +{
-> > > +     struct hci_conn *conn;
-> > > +     struct sk_buff *skb;
-> > > +     int quote;
-> > > +
-> > > +     BT_DBG("%s", hdev->name);
-> > > +
-> > > +     if (!hci_conn_num(hdev, SCO_LINK))
-> > > +             return;
-> > > +
-> > > +     while (hdev->sco_cnt && (conn = hci_low_sent(hdev, SCO_LINK, &quote))) {
-> > > +             while (quote-- && (skb = skb_dequeue(&conn->data_q))) {
-> > > +                     BT_DBG("skb %p len %d", skb, skb->len);
-> > > +                     hci_send_frame(hdev, skb);
-> > > +
-> > > +                     conn->sent++;
-> > > +                     if (conn->sent == ~0)
-> > > +                             conn->sent = 0;
-> > > +             }
-> > > +     }
-> > > +}
-> > > +
-> > > +static void hci_sched_esco(struct hci_dev *hdev)
-> > > +{
-> > > +     struct hci_conn *conn;
-> > > +     struct sk_buff *skb;
-> > > +     int quote;
-> > > +
-> > > +     BT_DBG("%s", hdev->name);
-> > > +
-> > > +     if (!hci_conn_num(hdev, ESCO_LINK))
-> > > +             return;
-> > > +
-> > > +     while (hdev->sco_cnt && (conn = hci_low_sent(hdev, ESCO_LINK,
-> > > +                                                  &quote))) {
-> > > +             while (quote-- && (skb = skb_dequeue(&conn->data_q))) {
-> > > +                     BT_DBG("skb %p len %d", skb, skb->len);
-> > > +                     hci_send_frame(hdev, skb);
-> > > +
-> > > +                     conn->sent++;
-> > > +                     if (conn->sent == ~0)
-> > > +                             conn->sent = 0;
-> > > +             }
-> > > +     }
-> > > +}
-> > > +
-> > > +static void hci_sched_sync(struct hci_dev *hdev)
-> > > +{
-> > > +     hci_sched_sco(hdev);
-> > > +     hci_sched_esco(hdev);
-> > > +}
-> > > +
+> > >  static ssize_t dev_bus_rescan_store(struct device *dev,
+> > >                                     struct device_attribute *attr,
+> > > @@ -504,7 +501,7 @@ static ssize_t dev_bus_rescan_store(struct device *dev,
+> > >         }
+> > >         return count;
+> > >  }
+> > > -static DEVICE_ATTR(rescan, (S_IWUSR|S_IWGRP), NULL, dev_bus_rescan_store);
+> > > +static DEVICE_ATTR(bus_rescan, (S_IWUSR | S_IWGRP), NULL, dev_bus_rescan_store);
 > >
-> > scrap this function. It has almost zero benefit.
+> > This patch renamed 'rescan' to 'bus_rescan' and broke my userspace application.
+> > There is also mismatch now between real functionality and documentation
+> > Documentation/ABI/testing/sysfs-bus-pci which still contains old "rescan"
+> > descriptions.
+> >
+> > Another patch from this patch series also renamed 'rescan' to 'dev_rescan'
+> >
+> > Here is a comparison between two stable kernels (with and without this
+> > patch series):
+> >
+> > v5.4
+> > # find /sys -name '*rescan'
+> > /sys/devices/pci0000:00/0000:00:01.2/dev_rescan
+> > /sys/devices/pci0000:00/0000:00:01.0/dev_rescan
+> > /sys/devices/pci0000:00/0000:00:04.0/dev_rescan
+> > /sys/devices/pci0000:00/0000:00:00.0/dev_rescan
+> > /sys/devices/pci0000:00/pci_bus/0000:00/bus_rescan
+> > /sys/devices/pci0000:00/0000:00:01.3/dev_rescan
+> > /sys/devices/pci0000:00/0000:00:03.0/dev_rescan
+> > /sys/devices/pci0000:00/0000:00:01.1/dev_rescan
+> > /sys/devices/pci0000:00/0000:00:02.0/dev_rescan
+> > /sys/devices/pci0000:00/0000:00:05.0/dev_rescan
+> > /sys/bus/pci/rescan
+> >
+> > v4.19
+> > # find /sys -name '*rescan'
+> > /sys/devices/pci0000:00/0000:00:01.2/rescan
+> > /sys/devices/pci0000:00/0000:00:01.0/rescan
+> > /sys/devices/pci0000:00/0000:00:04.0/rescan
+> > /sys/devices/pci0000:00/0000:00:00.0/rescan
+> > /sys/devices/pci0000:00/pci_bus/0000:00/rescan
+> > /sys/devices/pci0000:00/0000:00:01.3/rescan
+> > /sys/devices/pci0000:00/0000:00:03.0/rescan
+> > /sys/devices/pci0000:00/0000:00:01.1/rescan
+> > /sys/devices/pci0000:00/0000:00:02.0/rescan
+> > /sys/devices/pci0000:00/0000:00:05.0/rescan
+> > /sys/bus/pci/rescan
+> >
+> > Do we maintain this kind of API as non-changeable?
 >
-> Done.
+> Yeah, that's a bug and should be fixed, sorry for missing that on
+> review.
 >
-> >
-> > > static void hci_sched_acl_pkt(struct hci_dev *hdev)
-> > > {
-> > >       unsigned int cnt = hdev->acl_cnt;
-> > > @@ -4270,6 +4324,9 @@ static void hci_sched_acl_pkt(struct hci_dev *hdev)
-> > >                       hdev->acl_cnt--;
-> > >                       chan->sent++;
-> > >                       chan->conn->sent++;
-> > > +
-> > > +                     /* Send pending SCO packets right away */
-> > > +                     hci_sched_sync(hdev);
-> >
-> >                         hci_sched_esco();
-> >                         hci_sched_sco();
-> >
-> > >               }
-> > >       }
-> > >
-> > > @@ -4354,54 +4411,6 @@ static void hci_sched_acl(struct hci_dev *hdev)
-> > >       }
-> > > }
-> > >
-> > > -/* Schedule SCO */
-> > > -static void hci_sched_sco(struct hci_dev *hdev)
-> > > -{
-> > > -     struct hci_conn *conn;
-> > > -     struct sk_buff *skb;
-> > > -     int quote;
-> > > -
-> > > -     BT_DBG("%s", hdev->name);
-> > > -
-> > > -     if (!hci_conn_num(hdev, SCO_LINK))
-> > > -             return;
-> > > -
-> > > -     while (hdev->sco_cnt && (conn = hci_low_sent(hdev, SCO_LINK, &quote))) {
-> > > -             while (quote-- && (skb = skb_dequeue(&conn->data_q))) {
-> > > -                     BT_DBG("skb %p len %d", skb, skb->len);
-> > > -                     hci_send_frame(hdev, skb);
-> > > -
-> > > -                     conn->sent++;
-> > > -                     if (conn->sent == ~0)
-> > > -                             conn->sent = 0;
-> > > -             }
-> > > -     }
-> > > -}
-> > > -
-> > > -static void hci_sched_esco(struct hci_dev *hdev)
-> > > -{
-> > > -     struct hci_conn *conn;
-> > > -     struct sk_buff *skb;
-> > > -     int quote;
-> > > -
-> > > -     BT_DBG("%s", hdev->name);
-> > > -
-> > > -     if (!hci_conn_num(hdev, ESCO_LINK))
-> > > -             return;
-> > > -
-> > > -     while (hdev->sco_cnt && (conn = hci_low_sent(hdev, ESCO_LINK,
-> > > -                                                  &quote))) {
-> > > -             while (quote-- && (skb = skb_dequeue(&conn->data_q))) {
-> > > -                     BT_DBG("skb %p len %d", skb, skb->len);
-> > > -                     hci_send_frame(hdev, skb);
-> > > -
-> > > -                     conn->sent++;
-> > > -                     if (conn->sent == ~0)
-> > > -                             conn->sent = 0;
-> > > -             }
-> > > -     }
-> > > -}
-> > > -
-> > > static void hci_sched_le(struct hci_dev *hdev)
-> > > {
-> > >       struct hci_chan *chan;
-> > > @@ -4436,6 +4445,9 @@ static void hci_sched_le(struct hci_dev *hdev)
-> > >                       cnt--;
-> > >                       chan->sent++;
-> > >                       chan->conn->sent++;
-> > > +
-> > > +                     /* Send pending SCO packets right away */
-> > > +                     hci_sched_sync(hdev);
-> >
-> > Same as above. Just call the two functions.
+> Kelsey, can you fix this up?
 >
-> Done
+> thanks,
 >
-> >
-> > >               }
-> > >       }
-> > >
-> > > @@ -4458,9 +4470,8 @@ static void hci_tx_work(struct work_struct *work)
-> > >
-> > >       if (!hci_dev_test_flag(hdev, HCI_USER_CHANNEL)) {
-> > >               /* Schedule queues and send stuff to HCI driver */
-> > > +             hci_sched_sync(hdev);
-> > >               hci_sched_acl(hdev);
-> > > -             hci_sched_sco(hdev);
-> > > -             hci_sched_esco(hdev);
-> > >               hci_sched_le(hdev);
-> >
-> > I would actually just move _le up after _acl and then keep _sco and _esco at the bottom. The calls here are just for the case there are no ACL nor LE packets.
->
-> Then we would send at least 1 ACL/LE packet before SCO even if there
-> were SCO pending when we entered this function. I think it is still
-> better to keep SCO/eSCO at the top.
+> greg k-h
 
-I wonder it wouldn't be better to have such prioritization done by the
-driver though, since this might just be spending extra cpu cycles in
-case there is enough bandwidth at the transport chances are the
-reordering here just doesn't make any difference in the end, you
-probably don't even need any changes to the core in order for the
-driver to detect what type of frame it is based on the skb, I recall
-we do already have such information in the driver so it just a matter
-to reorder the frames as needed there.
+I'd be happy to help get this fixed up.
 
->
-> >
-> > Regards
-> >
-> > Marcel
-> >
+Would it be proper to go back to using DEVICE_ATTR() for 'bus_rescan'
+and 'dev_rescan' in order to change their names back to 'rescan'?
 
+The name changes were done so the correct *_store() would still be
+called. When using DEVICE_ATTR() the *_store() name is passed as the
+last argument, as seen here:
 
+    static DEVICE_ATTR(rescan, (S_IWUSR|S_IWGRP), NULL, dev_bus_rescan_store);
 
--- 
-Luiz Augusto von Dentz
+When using the helper, only the name is passed and it assumes default
+<name>_show(), as seen here:
+
+    static DEVICE_ATTR_WO(dev_rescan);   # (This would assume
+dev_rescan_store())
+
+This can be verified in Documentation/filesystems/sysfs.txt.
+
+There is already a rescan attribute using rescan_store(), so changing
+at least one of these to DEVICE_ATTR_WO(rescan) would be conflicting.
+
+I understand it's ideal to stay away from using DEVICE_ATTR() unless
+an unusual mode is needed. Would having a different name vs
+name_store() be another reason to justify using DEVICE_ATTR()?
+
+Thank you Ruslan for pointing this out!
+
+- Kelsey
