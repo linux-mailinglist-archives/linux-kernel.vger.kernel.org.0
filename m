@@ -2,1262 +2,585 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A21101916D3
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 17:48:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 03F0B1916DE
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 17:50:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728081AbgCXQsh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 12:48:37 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:37354 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725767AbgCXQsg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 12:48:36 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 02OGiFlW193376;
-        Tue, 24 Mar 2020 16:48:20 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : in-reply-to : message-id : references : mime-version :
- content-type; s=corp-2020-01-29;
- bh=lk3W1CTWzxaKTIaDivWovqzCVvRIRnj4hYDTGvM5aqM=;
- b=tmbRsvypVfurZIlwcDE5EVn7pjYpy6ZI4VgPCsH+f8DFvw1bZ0Wqs39qATaWK+MdEkWm
- DYlHT1oRA2tZB5SfukQ/9/g+/aotA/g8L91jtaqiv8ZvDLv7IeYYZNnjrlR5DN7tl328
- ao2ylq4MYGuP0952dALQ6zvfDkyj/diZk1ivSmQ15wdEj72qL1ShaGTKjP9qDqAIe40q
- 5ibtfUUWP+ehDBcqHE1B+/ttBNHhzueUFzMTeF0PakInZU7Z4Sy2Y32W1R4XFsF6fdnF
- +Og/z0K0DbIEJLAp7IR3xLIYnq9QqOd1kUwAM/B/q0VvpGVDxKHmOkADSrKpxX46wcAu Gg== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by userp2120.oracle.com with ESMTP id 2yx8ac2ec0-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 24 Mar 2020 16:48:19 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 02OGfbQT043393;
-        Tue, 24 Mar 2020 16:48:19 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by userp3020.oracle.com with ESMTP id 2yxw6n2x70-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 24 Mar 2020 16:48:18 +0000
-Received: from abhmp0011.oracle.com (abhmp0011.oracle.com [141.146.116.17])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 02OGmHc1012481;
-        Tue, 24 Mar 2020 16:48:17 GMT
-Received: from dhcp-10-175-162-99.vpn.oracle.com (/10.175.162.99)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 24 Mar 2020 09:48:16 -0700
-Date:   Tue, 24 Mar 2020 16:48:12 +0000 (GMT)
-From:   Alan Maguire <alan.maguire@oracle.com>
-X-X-Sender: alan@localhost
-To:     Patricia Alfonso <trishalfonso@google.com>
-cc:     davidgow@google.com, brendanhiggins@google.com,
-        aryabinin@virtuozzo.com, dvyukov@google.com, mingo@redhat.com,
-        peterz@infradead.org, juri.lelli@redhat.com,
-        vincent.guittot@linaro.org, linux-kernel@vger.kernel.org,
-        kasan-dev@googlegroups.com, kunit-dev@googlegroups.com,
-        linux-kselftest@vger.kernel.org
-Subject: Re: [RFC PATCH v2 3/3] KASAN: Port KASAN Tests to KUnit
-In-Reply-To: <20200319164227.87419-4-trishalfonso@google.com>
-Message-ID: <alpine.LRH.2.21.2003241645240.30637@localhost>
-References: <20200319164227.87419-1-trishalfonso@google.com> <20200319164227.87419-4-trishalfonso@google.com>
-User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
+        id S1727801AbgCXQuS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 12:50:18 -0400
+Received: from mga18.intel.com ([134.134.136.126]:61683 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725767AbgCXQuS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Mar 2020 12:50:18 -0400
+IronPort-SDR: r/p0RrXBosZWXeiNc0Or5LOzl7qTGEkeRWEHylQawIrD7V2y/dvETaH4KYYIXKZunc+CdYCCAT
+ PXVGxpHBlmWw==
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Mar 2020 09:50:16 -0700
+IronPort-SDR: zQPdfvGGB94dI5ayAy1N4/Muis6dNL1ZyUBS7XuHwZpgzfsVBj+yKSfgSrZuOntP5wGvibyyM8
+ HcfUJSZizLKg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.72,301,1580803200"; 
+   d="gz'50?scan'50,208,50";a="357476613"
+Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
+  by fmsmga001.fm.intel.com with ESMTP; 24 Mar 2020 09:50:13 -0700
+Received: from kbuild by lkp-server01 with local (Exim 4.89)
+        (envelope-from <lkp@intel.com>)
+        id 1jGmkm-0003Ls-Vd; Wed, 25 Mar 2020 00:50:12 +0800
+Date:   Wed, 25 Mar 2020 00:49:37 +0800
+From:   kbuild test robot <lkp@intel.com>
+To:     yuechao.zhao@advantech.com.cn
+Cc:     kbuild-all@lists.01.org,
+        "345351830@qq.com, Jean Delvare" <jdelvare@suse.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org,
+        amy.shih@advantech.com.tw, oakley.ding@advantech.com.tw,
+        jia.sui@advantech.com.cn, shengkui.leng@advantech.com.cn,
+        Yuechao Zhao <yuechao.zhao@advantech.com.cn>
+Subject: Re: [v1,1/1] hwmon: (nct7904) Add watchdog function
+Message-ID: <202003250043.yiYJDhVk%lkp@intel.com>
+References: <20200324014619.14276-1-yuechao.zhao@advantech.com.cn>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9570 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=11 adultscore=0
- malwarescore=0 mlxscore=0 spamscore=0 mlxlogscore=999 bulkscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2003020000 definitions=main-2003240088
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9570 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 suspectscore=11 priorityscore=1501 malwarescore=0
- mlxscore=0 adultscore=0 phishscore=0 impostorscore=0 mlxlogscore=999
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2003020000 definitions=main-2003240088
+Content-Type: multipart/mixed; boundary="+QahgC5+KEYLbs62"
+Content-Disposition: inline
+In-Reply-To: <20200324014619.14276-1-yuechao.zhao@advantech.com.cn>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 19 Mar 2020, Patricia Alfonso wrote:
 
-> Transfer all previous tests for KASAN to KUnit so they can be run
-> more easily. Using kunit_tool, developers can run these tests with their
-> other KUnit tests and see "pass" or "fail" with the appropriate KASAN
-> report instead of needing to parse each KASAN report to test KASAN
-> functionalities. All KASAN reports are still printed to dmesg.
-> 
-> Stack tests do not work in UML so those tests are protected inside an
-> "#if IS_ENABLED(CONFIG_KASAN_STACK)" so this only runs if stack
-> instrumentation is enabled.
-> 
-> copy_user_test cannot be run in KUnit so there is a separate test file
-> for those tests, which can be run as before as a module.
-> 
-> Signed-off-by: Patricia Alfonso <trishalfonso@google.com>
-> ---
->  lib/Kconfig.kasan          |  13 +-
->  lib/Makefile               |   1 +
->  lib/test_kasan.c           | 606 ++++++++++++++-----------------------
->  lib/test_kasan_copy_user.c |  75 +++++
->  4 files changed, 309 insertions(+), 386 deletions(-)
->  create mode 100644 lib/test_kasan_copy_user.c
-> 
-> diff --git a/lib/Kconfig.kasan b/lib/Kconfig.kasan
-> index 5b54f3c9a741..f026c2e62b1d 100644
-> --- a/lib/Kconfig.kasan
-> +++ b/lib/Kconfig.kasan
-> @@ -159,9 +159,16 @@ config KASAN_VMALLOC
->  	  stacks), but at the cost of higher memory usage.
->  
->  config TEST_KASAN
-> -	tristate "Module for testing KASAN for bug detection"
-> -	depends on m && KASAN
-> +	tristate "KUnit testing KASAN for bug detection"
-> +	depends on KASAN && KUNIT=y
+--+QahgC5+KEYLbs62
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-could just be depends on KASAN && KUNIT I think.
+Hi,
 
->  	help
-> -	  This is a test module doing various nasty things like
-> +	  This is a test suite doing various nasty things like
->  	  out of bounds accesses, use after free. It is useful for testing
->  	  kernel debugging features like KASAN.
-> +
-> +config TEST_KASAN_USER
-> +	tristate "Module testing KASAN for bug detection on copy user tests"
-> +	depends on m && KASAN
-> +	help
-> +	  This is a test module for copy_user_tests because these functions
-> +	  cannot be tested by KUnit so they must be their own module.
-> diff --git a/lib/Makefile b/lib/Makefile
-> index 5d64890d6b6a..e0dc4430e405 100644
-> --- a/lib/Makefile
-> +++ b/lib/Makefile
-> @@ -62,6 +62,7 @@ obj-$(CONFIG_TEST_IDA) += test_ida.o
->  obj-$(CONFIG_TEST_KASAN) += test_kasan.o
->  CFLAGS_test_kasan.o += -fno-builtin
->  CFLAGS_test_kasan.o += $(call cc-disable-warning, vla)
-> +obj-$(CONFIG_TEST_KASAN_USER) += test_kasan_copy_user.o
->  obj-$(CONFIG_TEST_UBSAN) += test_ubsan.o
->  CFLAGS_test_ubsan.o += $(call cc-disable-warning, vla)
->  UBSAN_SANITIZE_test_ubsan.o := y
-> diff --git a/lib/test_kasan.c b/lib/test_kasan.c
-> index cf73c6bee81b..c255495e6ce3 100644
-> --- a/lib/test_kasan.c
-> +++ b/lib/test_kasan.c
-> @@ -5,8 +5,6 @@
->   * Author: Andrey Ryabinin <a.ryabinin@samsung.com>
->   */
->  
-> -#define pr_fmt(fmt) "kasan test: %s " fmt, __func__
-> -
->  #include <linux/bitops.h>
->  #include <linux/delay.h>
->  #include <linux/kasan.h>
-> @@ -25,8 +23,26 @@
->  
->  #include <kunit/test.h>
->  
-> +#if IS_BUILTIN(CONFIG_KUNIT)
+Thank you for the patch! Yet something to improve:
 
-fix here to be IS_ENABLED(CONFIG_KUNIT)
+[auto build test ERROR on hwmon/hwmon-next]
+[also build test ERROR on next-20200324]
+[cannot apply to v5.6-rc7]
+[if your patch is applied to the wrong git tree, please drop us a note to help
+improve the system. BTW, we also suggest to use '--base' option to specify the
+base tree in git format-patch, please see https://stackoverflow.com/a/37406982]
 
-> +
->  struct kunit_resource resource;
->  struct kunit_kasan_expectation fail_data;
-> +bool multishot;
-> +
-> +int kasan_multi_shot_init(struct kunit *test)
-> +{
-> +	/*
-> +	 * Temporarily enable multi-shot mode. Otherwise, we'd only get a
-> +	 * report for the first case.
-> +	 */
-> +	multishot = kasan_save_enable_multi_shot();
-> +	return 0;
-> +}
-> +
-> +void kasan_multi_shot_exit(struct kunit *test)
-> +{
-> +	kasan_restore_multi_shot(multishot);
-> +}
->  
->  #define KUNIT_SET_KASAN_DATA(test) do { \
->  	fail_data.report_expected = true; \
-> @@ -60,61 +76,44 @@ struct kunit_kasan_expectation fail_data;
->  	KUNIT_DO_EXPECT_KASAN_FAIL(test, condition); \
->  } while (0)
->  
-> -/*
-> - * Note: test functions are marked noinline so that their names appear in
-> - * reports.
-> - */
-> -
-> -static noinline void __init kmalloc_oob_right(void)
-> +static void kmalloc_oob_right(struct kunit *test)
->  {
->  	char *ptr;
->  	size_t size = 123;
->  
-> -	pr_info("out-of-bounds to right\n");
->  	ptr = kmalloc(size, GFP_KERNEL);
-> -	if (!ptr) {
-> -		pr_err("Allocation failed\n");
-> -		return;
-> -	}
-> +	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, ptr);
->  
-> -	ptr[size] = 'x';
-> +	KUNIT_EXPECT_KASAN_FAIL(test, ptr[size] = 'x');
->  	kfree(ptr);
->  }
->  
-> -static noinline void __init kmalloc_oob_left(void)
-> +static void kmalloc_oob_left(struct kunit *test)
->  {
->  	char *ptr;
->  	size_t size = 15;
->  
-> -	pr_info("out-of-bounds to left\n");
->  	ptr = kmalloc(size, GFP_KERNEL);
-> -	if (!ptr) {
-> -		pr_err("Allocation failed\n");
-> -		return;
-> -	}
-> +	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, ptr);
->  
-> -	*ptr = *(ptr - 1);
-> +	KUNIT_EXPECT_KASAN_FAIL(test, *ptr = *(ptr - 1));
->  	kfree(ptr);
->  }
->  
-> -static noinline void __init kmalloc_node_oob_right(void)
-> +static void kmalloc_node_oob_right(struct kunit *test)
->  {
->  	char *ptr;
->  	size_t size = 4096;
->  
-> -	pr_info("kmalloc_node(): out-of-bounds to right\n");
->  	ptr = kmalloc_node(size, GFP_KERNEL, 0);
-> -	if (!ptr) {
-> -		pr_err("Allocation failed\n");
-> -		return;
-> -	}
-> +	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, ptr);
->  
-> -	ptr[size] = 0;
-> +	KUNIT_EXPECT_KASAN_FAIL(test, ptr[size] = 0);
->  	kfree(ptr);
->  }
->  
->  #ifdef CONFIG_SLUB
-> -static noinline void __init kmalloc_pagealloc_oob_right(void)
-> +static void kmalloc_pagealloc_oob_right(struct kunit *test)
->  {
->  	char *ptr;
->  	size_t size = KMALLOC_MAX_CACHE_SIZE + 10;
-> @@ -122,324 +121,253 @@ static noinline void __init kmalloc_pagealloc_oob_right(void)
->  	/* Allocate a chunk that does not fit into a SLUB cache to trigger
->  	 * the page allocator fallback.
->  	 */
-> -	pr_info("kmalloc pagealloc allocation: out-of-bounds to right\n");
->  	ptr = kmalloc(size, GFP_KERNEL);
-> -	if (!ptr) {
-> -		pr_err("Allocation failed\n");
-> -		return;
-> -	}
-> +	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, ptr);
->  
-> -	ptr[size] = 0;
-> +	KUNIT_EXPECT_KASAN_FAIL(test, ptr[size] = 0);
->  	kfree(ptr);
->  }
->  
-> -static noinline void __init kmalloc_pagealloc_uaf(void)
-> +static void kmalloc_pagealloc_uaf(struct kunit *test)
->  {
->  	char *ptr;
->  	size_t size = KMALLOC_MAX_CACHE_SIZE + 10;
->  
-> -	pr_info("kmalloc pagealloc allocation: use-after-free\n");
->  	ptr = kmalloc(size, GFP_KERNEL);
-> -	if (!ptr) {
-> -		pr_err("Allocation failed\n");
-> -		return;
-> -	}
-> +	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, ptr);
->  
->  	kfree(ptr);
-> -	ptr[0] = 0;
-> +	KUNIT_EXPECT_KASAN_FAIL(test, ptr[0] = 0);
->  }
->  
-> -static noinline void __init kmalloc_pagealloc_invalid_free(void)
-> +static void kmalloc_pagealloc_invalid_free(struct kunit *test)
->  {
->  	char *ptr;
->  	size_t size = KMALLOC_MAX_CACHE_SIZE + 10;
->  
-> -	pr_info("kmalloc pagealloc allocation: invalid-free\n");
->  	ptr = kmalloc(size, GFP_KERNEL);
-> -	if (!ptr) {
-> -		pr_err("Allocation failed\n");
-> -		return;
-> -	}
-> +	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, ptr);
->  
-> -	kfree(ptr + 1);
-> +	KUNIT_EXPECT_KASAN_FAIL(test, kfree(ptr + 1));
->  }
-> -#endif
-> +#endif /* CONFIG_SLUB */
->  
-> -static noinline void __init kmalloc_large_oob_right(void)
-> +static void kmalloc_large_oob_right(struct kunit *test)
->  {
->  	char *ptr;
->  	size_t size = KMALLOC_MAX_CACHE_SIZE - 256;
->  	/* Allocate a chunk that is large enough, but still fits into a slab
->  	 * and does not trigger the page allocator fallback in SLUB.
->  	 */
-> -	pr_info("kmalloc large allocation: out-of-bounds to right\n");
->  	ptr = kmalloc(size, GFP_KERNEL);
-> -	if (!ptr) {
-> -		pr_err("Allocation failed\n");
-> -		return;
-> -	}
-> +	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, ptr);
->  
-> -	ptr[size] = 0;
-> +	KUNIT_EXPECT_KASAN_FAIL(test, ptr[size] = 0);
->  	kfree(ptr);
->  }
->  
-> -static noinline void __init kmalloc_oob_krealloc_more(void)
-> +static void kmalloc_oob_krealloc_more(struct kunit *test)
->  {
->  	char *ptr1, *ptr2;
->  	size_t size1 = 17;
->  	size_t size2 = 19;
->  
-> -	pr_info("out-of-bounds after krealloc more\n");
->  	ptr1 = kmalloc(size1, GFP_KERNEL);
-> +	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, ptr1);
-> +
->  	ptr2 = krealloc(ptr1, size2, GFP_KERNEL);
-> -	if (!ptr1 || !ptr2) {
-> -		pr_err("Allocation failed\n");
-> -		kfree(ptr1);
-> -		kfree(ptr2);
-> -		return;
-> -	}
-> +	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, ptr2);
->  
-> -	ptr2[size2] = 'x';
-> +	KUNIT_EXPECT_KASAN_FAIL(test, ptr2[size2] = 'x');
->  	kfree(ptr2);
->  }
->  
-> -static noinline void __init kmalloc_oob_krealloc_less(void)
-> +static void kmalloc_oob_krealloc_less(struct kunit *test)
->  {
->  	char *ptr1, *ptr2;
->  	size_t size1 = 17;
->  	size_t size2 = 15;
->  
-> -	pr_info("out-of-bounds after krealloc less\n");
->  	ptr1 = kmalloc(size1, GFP_KERNEL);
-> +	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, ptr1);
-> +
->  	ptr2 = krealloc(ptr1, size2, GFP_KERNEL);
-> -	if (!ptr1 || !ptr2) {
-> -		pr_err("Allocation failed\n");
-> -		kfree(ptr1);
-> -		return;
-> -	}
-> -	ptr2[size2] = 'x';
-> +	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, ptr2);
-> +
-> +	KUNIT_EXPECT_KASAN_FAIL(test, ptr2[size2] = 'x');
->  	kfree(ptr2);
->  }
->  
-> -static noinline void __init kmalloc_oob_16(void)
-> +static void kmalloc_oob_16(struct kunit *test)
->  {
->  	struct {
->  		u64 words[2];
->  	} *ptr1, *ptr2;
->  
-> -	pr_info("kmalloc out-of-bounds for 16-bytes access\n");
->  	ptr1 = kmalloc(sizeof(*ptr1) - 3, GFP_KERNEL);
-> +	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, ptr1);
-> +
->  	ptr2 = kmalloc(sizeof(*ptr2), GFP_KERNEL);
-> -	if (!ptr1 || !ptr2) {
-> -		pr_err("Allocation failed\n");
-> -		kfree(ptr1);
-> -		kfree(ptr2);
-> -		return;
-> -	}
-> -	*ptr1 = *ptr2;
-> +	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, ptr2);
-> +
-> +	KUNIT_EXPECT_KASAN_FAIL(test, *ptr1 = *ptr2);
->  	kfree(ptr1);
->  	kfree(ptr2);
->  }
->  
-> -static noinline void __init kmalloc_oob_memset_2(void)
-> +static void kmalloc_oob_memset_2(struct kunit *test)
->  {
->  	char *ptr;
->  	size_t size = 8;
->  
-> -	pr_info("out-of-bounds in memset2\n");
->  	ptr = kmalloc(size, GFP_KERNEL);
-> -	if (!ptr) {
-> -		pr_err("Allocation failed\n");
-> -		return;
-> -	}
-> +	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, ptr);
->  
-> -	memset(ptr+7, 0, 2);
-> +	KUNIT_EXPECT_KASAN_FAIL(test, memset(ptr+7, 0, 2));
->  	kfree(ptr);
->  }
->  
-> -static noinline void __init kmalloc_oob_memset_4(void)
-> +static void kmalloc_oob_memset_4(struct kunit *test)
->  {
->  	char *ptr;
->  	size_t size = 8;
->  
-> -	pr_info("out-of-bounds in memset4\n");
->  	ptr = kmalloc(size, GFP_KERNEL);
-> -	if (!ptr) {
-> -		pr_err("Allocation failed\n");
-> -		return;
-> -	}
-> +	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, ptr);
->  
-> -	memset(ptr+5, 0, 4);
-> +	KUNIT_EXPECT_KASAN_FAIL(test, memset(ptr+5, 0, 4));
->  	kfree(ptr);
->  }
->  
->  
-> -static noinline void __init kmalloc_oob_memset_8(void)
-> +static void kmalloc_oob_memset_8(struct kunit *test)
->  {
->  	char *ptr;
->  	size_t size = 8;
->  
-> -	pr_info("out-of-bounds in memset8\n");
->  	ptr = kmalloc(size, GFP_KERNEL);
-> -	if (!ptr) {
-> -		pr_err("Allocation failed\n");
-> -		return;
-> -	}
-> +	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, ptr);
->  
-> -	memset(ptr+1, 0, 8);
-> +	KUNIT_EXPECT_KASAN_FAIL(test, memset(ptr+1, 0, 8));
->  	kfree(ptr);
->  }
->  
-> -static noinline void __init kmalloc_oob_memset_16(void)
-> +static void kmalloc_oob_memset_16(struct kunit *test)
->  {
->  	char *ptr;
->  	size_t size = 16;
->  
-> -	pr_info("out-of-bounds in memset16\n");
->  	ptr = kmalloc(size, GFP_KERNEL);
-> -	if (!ptr) {
-> -		pr_err("Allocation failed\n");
-> -		return;
-> -	}
-> +	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, ptr);
->  
-> -	memset(ptr+1, 0, 16);
-> +	KUNIT_EXPECT_KASAN_FAIL(test, memset(ptr+1, 0, 16));
->  	kfree(ptr);
->  }
->  
-> -static noinline void __init kmalloc_oob_in_memset(void)
-> +static void kmalloc_oob_in_memset(struct kunit *test)
->  {
->  	char *ptr;
->  	size_t size = 666;
->  
-> -	pr_info("out-of-bounds in memset\n");
->  	ptr = kmalloc(size, GFP_KERNEL);
-> -	if (!ptr) {
-> -		pr_err("Allocation failed\n");
-> -		return;
-> -	}
-> +	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, ptr);
->  
-> -	memset(ptr, 0, size+5);
-> +	KUNIT_EXPECT_KASAN_FAIL(test, memset(ptr, 0, size+5));
->  	kfree(ptr);
->  }
->  
-> -static noinline void __init kmalloc_uaf(void)
-> +static void kmalloc_uaf(struct kunit *test)
->  {
->  	char *ptr;
->  	size_t size = 10;
->  
-> -	pr_info("use-after-free\n");
->  	ptr = kmalloc(size, GFP_KERNEL);
-> -	if (!ptr) {
-> -		pr_err("Allocation failed\n");
-> -		return;
-> -	}
-> +	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, ptr);
->  
->  	kfree(ptr);
-> -	*(ptr + 8) = 'x';
-> +	KUNIT_EXPECT_KASAN_FAIL(test, *(ptr + 8) = 'x');
->  }
->  
-> -static noinline void __init kmalloc_uaf_memset(void)
-> +static void kmalloc_uaf_memset(struct kunit *test)
->  {
->  	char *ptr;
->  	size_t size = 33;
->  
-> -	pr_info("use-after-free in memset\n");
->  	ptr = kmalloc(size, GFP_KERNEL);
-> -	if (!ptr) {
-> -		pr_err("Allocation failed\n");
-> -		return;
-> -	}
-> +	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, ptr);
->  
->  	kfree(ptr);
-> -	memset(ptr, 0, size);
-> +	KUNIT_EXPECT_KASAN_FAIL(test, memset(ptr, 0, size));
->  }
->  
-> -static noinline void __init kmalloc_uaf2(void)
-> +static void kmalloc_uaf2(struct kunit *test)
->  {
->  	char *ptr1, *ptr2;
->  	size_t size = 43;
->  
-> -	pr_info("use-after-free after another kmalloc\n");
->  	ptr1 = kmalloc(size, GFP_KERNEL);
-> -	if (!ptr1) {
-> -		pr_err("Allocation failed\n");
-> -		return;
-> -	}
-> +	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, ptr1);
->  
->  	kfree(ptr1);
-> +
->  	ptr2 = kmalloc(size, GFP_KERNEL);
-> -	if (!ptr2) {
-> -		pr_err("Allocation failed\n");
-> -		return;
-> -	}
-> +	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, ptr2);
-> +
-> +	KUNIT_EXPECT_KASAN_FAIL(test, ptr1[40] = 'x');
-> +	KUNIT_EXPECT_PTR_NE(test, ptr1, ptr2);
->  
-> -	ptr1[40] = 'x';
-> -	if (ptr1 == ptr2)
-> -		pr_err("Could not detect use-after-free: ptr1 == ptr2\n");
->  	kfree(ptr2);
->  }
->  
-> -static noinline void __init kfree_via_page(void)
-> +static void kfree_via_page(struct kunit *test)
->  {
->  	char *ptr;
->  	size_t size = 8;
->  	struct page *page;
->  	unsigned long offset;
->  
-> -	pr_info("invalid-free false positive (via page)\n");
->  	ptr = kmalloc(size, GFP_KERNEL);
-> -	if (!ptr) {
-> -		pr_err("Allocation failed\n");
-> -		return;
-> -	}
-> +	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, ptr);
->  
->  	page = virt_to_page(ptr);
->  	offset = offset_in_page(ptr);
->  	kfree(page_address(page) + offset);
->  }
->  
-> -static noinline void __init kfree_via_phys(void)
-> +static void kfree_via_phys(struct kunit *test)
->  {
->  	char *ptr;
->  	size_t size = 8;
->  	phys_addr_t phys;
->  
-> -	pr_info("invalid-free false positive (via phys)\n");
->  	ptr = kmalloc(size, GFP_KERNEL);
-> -	if (!ptr) {
-> -		pr_err("Allocation failed\n");
-> -		return;
-> -	}
-> +	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, ptr);
->  
->  	phys = virt_to_phys(ptr);
->  	kfree(phys_to_virt(phys));
->  }
->  
-> -static noinline void __init kmem_cache_oob(void)
-> +static void kmem_cache_oob(struct kunit *test)
->  {
->  	char *p;
->  	size_t size = 200;
->  	struct kmem_cache *cache = kmem_cache_create("test_cache",
->  						size, 0,
->  						0, NULL);
-> -	if (!cache) {
-> -		pr_err("Cache allocation failed\n");
-> -		return;
-> -	}
-> -	pr_info("out-of-bounds in kmem_cache_alloc\n");
-> +	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, cache);
->  	p = kmem_cache_alloc(cache, GFP_KERNEL);
->  	if (!p) {
-> -		pr_err("Allocation failed\n");
-> +		kunit_err(test, "Allocation failed: %s\n", __func__);
->  		kmem_cache_destroy(cache);
->  		return;
->  	}
->  
-> -	*p = p[size];
-> +	KUNIT_EXPECT_KASAN_FAIL(test, *p = p[size]);
->  	kmem_cache_free(cache, p);
->  	kmem_cache_destroy(cache);
->  }
->  
-> -static noinline void __init memcg_accounted_kmem_cache(void)
-> +static void memcg_accounted_kmem_cache(struct kunit *test)
->  {
->  	int i;
->  	char *p;
-> @@ -447,12 +375,8 @@ static noinline void __init memcg_accounted_kmem_cache(void)
->  	struct kmem_cache *cache;
->  
->  	cache = kmem_cache_create("test_cache", size, 0, SLAB_ACCOUNT, NULL);
-> -	if (!cache) {
-> -		pr_err("Cache allocation failed\n");
-> -		return;
-> -	}
-> +	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, cache);
->  
-> -	pr_info("allocate memcg accounted object\n");
->  	/*
->  	 * Several allocations with a delay to allow for lazy per memcg kmem
->  	 * cache creation.
-> @@ -472,134 +396,80 @@ static noinline void __init memcg_accounted_kmem_cache(void)
->  
->  static char global_array[10];
->  
-> -static noinline void __init kasan_global_oob(void)
-> +static void kasan_global_oob(struct kunit *test)
->  {
->  	volatile int i = 3;
->  	char *p = &global_array[ARRAY_SIZE(global_array) + i];
->  
-> -	pr_info("out-of-bounds global variable\n");
-> -	*(volatile char *)p;
-> -}
-> -
-> -static noinline void __init kasan_stack_oob(void)
-> -{
-> -	char stack_array[10];
-> -	volatile int i = 0;
-> -	char *p = &stack_array[ARRAY_SIZE(stack_array) + i];
-> -
-> -	pr_info("out-of-bounds on stack\n");
-> -	*(volatile char *)p;
-> +	KUNIT_EXPECT_KASAN_FAIL(test, *(volatile char *)p);
->  }
->  
-> -static noinline void __init ksize_unpoisons_memory(void)
-> +static void ksize_unpoisons_memory(struct kunit *test)
->  {
->  	char *ptr;
->  	size_t size = 123, real_size;
->  
-> -	pr_info("ksize() unpoisons the whole allocated chunk\n");
->  	ptr = kmalloc(size, GFP_KERNEL);
-> -	if (!ptr) {
-> -		pr_err("Allocation failed\n");
-> -		return;
-> -	}
-> +	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, ptr);
->  	real_size = ksize(ptr);
->  	/* This access doesn't trigger an error. */
->  	ptr[size] = 'x';
->  	/* This one does. */
-> -	ptr[real_size] = 'y';
-> +	KUNIT_EXPECT_KASAN_FAIL(test, ptr[real_size] = 'y');
->  	kfree(ptr);
->  }
->  
-> -static noinline void __init copy_user_test(void)
-> +#if (IS_ENABLED(CONFIG_KASAN_STACK))
-> +static void kasan_stack_oob(struct kunit *test)
->  {
-> -	char *kmem;
-> -	char __user *usermem;
-> -	size_t size = 10;
-> -	int unused;
-> -
-> -	kmem = kmalloc(size, GFP_KERNEL);
-> -	if (!kmem)
-> -		return;
-> -
-> -	usermem = (char __user *)vm_mmap(NULL, 0, PAGE_SIZE,
-> -			    PROT_READ | PROT_WRITE | PROT_EXEC,
-> -			    MAP_ANONYMOUS | MAP_PRIVATE, 0);
-> -	if (IS_ERR(usermem)) {
-> -		pr_err("Failed to allocate user memory\n");
-> -		kfree(kmem);
-> -		return;
-> -	}
-> -
-> -	pr_info("out-of-bounds in copy_from_user()\n");
-> -	unused = copy_from_user(kmem, usermem, size + 1);
-> -
-> -	pr_info("out-of-bounds in copy_to_user()\n");
-> -	unused = copy_to_user(usermem, kmem, size + 1);
-> -
-> -	pr_info("out-of-bounds in __copy_from_user()\n");
-> -	unused = __copy_from_user(kmem, usermem, size + 1);
-> -
-> -	pr_info("out-of-bounds in __copy_to_user()\n");
-> -	unused = __copy_to_user(usermem, kmem, size + 1);
-> -
-> -	pr_info("out-of-bounds in __copy_from_user_inatomic()\n");
-> -	unused = __copy_from_user_inatomic(kmem, usermem, size + 1);
-> -
-> -	pr_info("out-of-bounds in __copy_to_user_inatomic()\n");
-> -	unused = __copy_to_user_inatomic(usermem, kmem, size + 1);
-> -
-> -	pr_info("out-of-bounds in strncpy_from_user()\n");
-> -	unused = strncpy_from_user(kmem, usermem, size + 1);
-> +	char stack_array[10];
-> +	volatile int i = 0;
-> +	char *p = &stack_array[ARRAY_SIZE(stack_array) + i];
->  
-> -	vm_munmap((unsigned long)usermem, PAGE_SIZE);
-> -	kfree(kmem);
-> +	KUNIT_EXPECT_KASAN_FAIL(test, *(volatile char *)p);
->  }
->  
-> -static noinline void __init kasan_alloca_oob_left(void)
-> +static void kasan_alloca_oob_left(struct kunit *test)
->  {
->  	volatile int i = 10;
->  	char alloca_array[i];
->  	char *p = alloca_array - 1;
->  
-> -	pr_info("out-of-bounds to left on alloca\n");
-> -	*(volatile char *)p;
-> +	KUNIT_EXPECT_KASAN_FAIL(test, *(volatile char *)p);
->  }
->  
-> -static noinline void __init kasan_alloca_oob_right(void)
-> +static void kasan_alloca_oob_right(struct kunit *test)
->  {
->  	volatile int i = 10;
->  	char alloca_array[i];
->  	char *p = alloca_array + i;
->  
-> -	pr_info("out-of-bounds to right on alloca\n");
-> -	*(volatile char *)p;
-> +	KUNIT_EXPECT_KASAN_FAIL(test, *(volatile char *)p);
->  }
-> +#endif /* CONFIG_KASAN_STACK */
->  
-> -static noinline void __init kmem_cache_double_free(void)
-> +static void kmem_cache_double_free(struct kunit *test)
->  {
->  	char *p;
->  	size_t size = 200;
->  	struct kmem_cache *cache;
->  
->  	cache = kmem_cache_create("test_cache", size, 0, 0, NULL);
-> -	if (!cache) {
-> -		pr_err("Cache allocation failed\n");
-> -		return;
-> -	}
-> -	pr_info("double-free on heap object\n");
-> +	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, cache);
-> +
->  	p = kmem_cache_alloc(cache, GFP_KERNEL);
->  	if (!p) {
-> -		pr_err("Allocation failed\n");
-> +		kunit_err(test, "Allocation failed: %s\n", __func__);
->  		kmem_cache_destroy(cache);
->  		return;
->  	}
->  
->  	kmem_cache_free(cache, p);
-> -	kmem_cache_free(cache, p);
-> +	KUNIT_EXPECT_KASAN_FAIL(test, kmem_cache_free(cache, p));
->  	kmem_cache_destroy(cache);
->  }
->  
-> -static noinline void __init kmem_cache_invalid_free(void)
-> +static void kmem_cache_invalid_free(struct kunit *test)
->  {
->  	char *p;
->  	size_t size = 200;
-> @@ -607,20 +477,17 @@ static noinline void __init kmem_cache_invalid_free(void)
->  
->  	cache = kmem_cache_create("test_cache", size, 0, SLAB_TYPESAFE_BY_RCU,
->  				  NULL);
-> -	if (!cache) {
-> -		pr_err("Cache allocation failed\n");
-> -		return;
-> -	}
-> -	pr_info("invalid-free of heap object\n");
-> +	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, cache);
-> +
->  	p = kmem_cache_alloc(cache, GFP_KERNEL);
->  	if (!p) {
-> -		pr_err("Allocation failed\n");
-> +		kunit_err(test, "Allocation failed: %s\n", __func__);
->  		kmem_cache_destroy(cache);
->  		return;
->  	}
->  
->  	/* Trigger invalid free, the object doesn't get freed */
-> -	kmem_cache_free(cache, p + 1);
-> +	KUNIT_EXPECT_KASAN_FAIL(test, kmem_cache_free(cache, p + 1));
->  
->  	/*
->  	 * Properly free the object to prevent the "Objects remaining in
-> @@ -631,45 +498,39 @@ static noinline void __init kmem_cache_invalid_free(void)
->  	kmem_cache_destroy(cache);
->  }
->  
-> -static noinline void __init kasan_memchr(void)
-> +static void kasan_memchr(struct kunit *test)
->  {
->  	char *ptr;
->  	size_t size = 24;
->  
-> -	pr_info("out-of-bounds in memchr\n");
->  	ptr = kmalloc(size, GFP_KERNEL | __GFP_ZERO);
-> -	if (!ptr)
-> -		return;
-> +	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, ptr);
->  
-> -	memchr(ptr, '1', size + 1);
-> +	KUNIT_EXPECT_KASAN_FAIL(test, memchr(ptr, '1', size + 1));
->  	kfree(ptr);
->  }
->  
-> -static noinline void __init kasan_memcmp(void)
-> +static void kasan_memcmp(struct kunit *test)
->  {
->  	char *ptr;
->  	size_t size = 24;
->  	int arr[9];
->  
-> -	pr_info("out-of-bounds in memcmp\n");
->  	ptr = kmalloc(size, GFP_KERNEL | __GFP_ZERO);
-> -	if (!ptr)
-> -		return;
-> +	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, ptr);
->  
->  	memset(arr, 0, sizeof(arr));
-> -	memcmp(ptr, arr, size+1);
-> +	KUNIT_EXPECT_KASAN_FAIL(test, memcmp(ptr, arr, size+1));
->  	kfree(ptr);
->  }
->  
-> -static noinline void __init kasan_strings(void)
-> +static void kasan_strings(struct kunit *test)
->  {
->  	char *ptr;
->  	size_t size = 24;
->  
-> -	pr_info("use-after-free in strchr\n");
->  	ptr = kmalloc(size, GFP_KERNEL | __GFP_ZERO);
-> -	if (!ptr)
-> -		return;
-> +	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, ptr);
->  
->  	kfree(ptr);
->  
-> @@ -680,188 +541,167 @@ static noinline void __init kasan_strings(void)
->  	 * will likely point to zeroed byte.
->  	 */
->  	ptr += 16;
-> -	strchr(ptr, '1');
-> +	KUNIT_EXPECT_KASAN_FAIL(test, strchr(ptr, '1'));
->  
-> -	pr_info("use-after-free in strrchr\n");
-> -	strrchr(ptr, '1');
-> +	KUNIT_EXPECT_KASAN_FAIL(test, strrchr(ptr, '1'));
->  
-> -	pr_info("use-after-free in strcmp\n");
-> -	strcmp(ptr, "2");
-> +	KUNIT_EXPECT_KASAN_FAIL(test, strcmp(ptr, "2"));
->  
-> -	pr_info("use-after-free in strncmp\n");
-> -	strncmp(ptr, "2", 1);
-> +	KUNIT_EXPECT_KASAN_FAIL(test, strncmp(ptr, "2", 1));
->  
-> -	pr_info("use-after-free in strlen\n");
-> -	strlen(ptr);
-> +	KUNIT_EXPECT_KASAN_FAIL(test, strlen(ptr));
->  
-> -	pr_info("use-after-free in strnlen\n");
-> -	strnlen(ptr, 1);
-> +	KUNIT_EXPECT_KASAN_FAIL(test, strnlen(ptr, 1));
->  }
->  
-> -static noinline void __init kasan_bitops(void)
-> +static void kasan_bitops(struct kunit *test)
->  {
->  	/*
->  	 * Allocate 1 more byte, which causes kzalloc to round up to 16-bytes;
->  	 * this way we do not actually corrupt other memory.
->  	 */
->  	long *bits = kzalloc(sizeof(*bits) + 1, GFP_KERNEL);
-> -	if (!bits)
-> -		return;
-> +	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, bits);
->  
->  	/*
->  	 * Below calls try to access bit within allocated memory; however, the
->  	 * below accesses are still out-of-bounds, since bitops are defined to
->  	 * operate on the whole long the bit is in.
->  	 */
-> -	pr_info("out-of-bounds in set_bit\n");
-> -	set_bit(BITS_PER_LONG, bits);
-> +	KUNIT_EXPECT_KASAN_FAIL(test, set_bit(BITS_PER_LONG, bits));
->  
-> -	pr_info("out-of-bounds in __set_bit\n");
-> -	__set_bit(BITS_PER_LONG, bits);
-> +	KUNIT_EXPECT_KASAN_FAIL(test, __set_bit(BITS_PER_LONG, bits));
->  
-> -	pr_info("out-of-bounds in clear_bit\n");
-> -	clear_bit(BITS_PER_LONG, bits);
-> +	KUNIT_EXPECT_KASAN_FAIL(test, clear_bit(BITS_PER_LONG, bits));
->  
-> -	pr_info("out-of-bounds in __clear_bit\n");
-> -	__clear_bit(BITS_PER_LONG, bits);
-> +	KUNIT_EXPECT_KASAN_FAIL(test, __clear_bit(BITS_PER_LONG, bits));
->  
-> -	pr_info("out-of-bounds in clear_bit_unlock\n");
-> -	clear_bit_unlock(BITS_PER_LONG, bits);
-> +	KUNIT_EXPECT_KASAN_FAIL(test, clear_bit_unlock(BITS_PER_LONG, bits));
->  
-> -	pr_info("out-of-bounds in __clear_bit_unlock\n");
-> -	__clear_bit_unlock(BITS_PER_LONG, bits);
-> +	KUNIT_EXPECT_KASAN_FAIL(test, __clear_bit_unlock(BITS_PER_LONG, bits));
->  
-> -	pr_info("out-of-bounds in change_bit\n");
-> -	change_bit(BITS_PER_LONG, bits);
-> +	KUNIT_EXPECT_KASAN_FAIL(test, change_bit(BITS_PER_LONG, bits));
->  
-> -	pr_info("out-of-bounds in __change_bit\n");
-> -	__change_bit(BITS_PER_LONG, bits);
-> +	KUNIT_EXPECT_KASAN_FAIL(test, __change_bit(BITS_PER_LONG, bits));
->  
->  	/*
->  	 * Below calls try to access bit beyond allocated memory.
->  	 */
-> -	pr_info("out-of-bounds in test_and_set_bit\n");
-> -	test_and_set_bit(BITS_PER_LONG + BITS_PER_BYTE, bits);
-> +	KUNIT_EXPECT_KASAN_FAIL(test,
-> +		test_and_set_bit(BITS_PER_LONG + BITS_PER_BYTE, bits));
->  
-> -	pr_info("out-of-bounds in __test_and_set_bit\n");
-> -	__test_and_set_bit(BITS_PER_LONG + BITS_PER_BYTE, bits);
-> +	KUNIT_EXPECT_KASAN_FAIL(test,
-> +		__test_and_set_bit(BITS_PER_LONG + BITS_PER_BYTE, bits));
->  
-> -	pr_info("out-of-bounds in test_and_set_bit_lock\n");
-> -	test_and_set_bit_lock(BITS_PER_LONG + BITS_PER_BYTE, bits);
-> +	KUNIT_EXPECT_KASAN_FAIL(test,
-> +		test_and_set_bit_lock(BITS_PER_LONG + BITS_PER_BYTE, bits));
->  
-> -	pr_info("out-of-bounds in test_and_clear_bit\n");
-> -	test_and_clear_bit(BITS_PER_LONG + BITS_PER_BYTE, bits);
-> +	KUNIT_EXPECT_KASAN_FAIL(test,
-> +		test_and_clear_bit(BITS_PER_LONG + BITS_PER_BYTE, bits));
->  
-> -	pr_info("out-of-bounds in __test_and_clear_bit\n");
-> -	__test_and_clear_bit(BITS_PER_LONG + BITS_PER_BYTE, bits);
-> +	KUNIT_EXPECT_KASAN_FAIL(test,
-> +		__test_and_clear_bit(BITS_PER_LONG + BITS_PER_BYTE, bits));
->  
-> -	pr_info("out-of-bounds in test_and_change_bit\n");
-> -	test_and_change_bit(BITS_PER_LONG + BITS_PER_BYTE, bits);
-> +	KUNIT_EXPECT_KASAN_FAIL(test,
-> +		test_and_change_bit(BITS_PER_LONG + BITS_PER_BYTE, bits));
->  
-> -	pr_info("out-of-bounds in __test_and_change_bit\n");
-> -	__test_and_change_bit(BITS_PER_LONG + BITS_PER_BYTE, bits);
-> +	KUNIT_EXPECT_KASAN_FAIL(test,
-> +		__test_and_change_bit(BITS_PER_LONG + BITS_PER_BYTE, bits));
->  
-> -	pr_info("out-of-bounds in test_bit\n");
-> -	(void)test_bit(BITS_PER_LONG + BITS_PER_BYTE, bits);
-> +	KUNIT_EXPECT_KASAN_FAIL(test,
-> +		(void)test_bit(BITS_PER_LONG + BITS_PER_BYTE, bits));
->  
->  #if defined(clear_bit_unlock_is_negative_byte)
-> -	pr_info("out-of-bounds in clear_bit_unlock_is_negative_byte\n");
-> -	clear_bit_unlock_is_negative_byte(BITS_PER_LONG + BITS_PER_BYTE, bits);
-> +	KUNIT_EXPECT_KASAN_FAIL(test,
-> +		clear_bit_unlock_is_negative_byte(BITS_PER_LONG + BITS_PER_BYTE,
-> +						bits));
->  #endif
->  	kfree(bits);
->  }
->  
-> -static noinline void __init kmalloc_double_kzfree(void)
-> +static void kmalloc_double_kzfree(struct kunit *test)
->  {
->  	char *ptr;
->  	size_t size = 16;
->  
-> -	pr_info("double-free (kzfree)\n");
->  	ptr = kmalloc(size, GFP_KERNEL);
-> -	if (!ptr) {
-> -		pr_err("Allocation failed\n");
-> -		return;
-> -	}
-> +	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, ptr);
->  
->  	kzfree(ptr);
-> -	kzfree(ptr);
-> +	KUNIT_EXPECT_KASAN_FAIL(test, kzfree(ptr));
->  }
->  
->  #ifdef CONFIG_KASAN_VMALLOC
-> -static noinline void __init vmalloc_oob(void)
-> +static void vmalloc_oob(struct kunit *test)
->  {
->  	void *area;
->  
-> -	pr_info("vmalloc out-of-bounds\n");
-> -
->  	/*
->  	 * We have to be careful not to hit the guard page.
->  	 * The MMU will catch that and crash us.
->  	 */
->  	area = vmalloc(3000);
-> -	if (!area) {
-> -		pr_err("Allocation failed\n");
-> -		return;
-> -	}
-> +	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, area);
->  
-> -	((volatile char *)area)[3100];
-> +	KUNIT_EXPECT_KASAN_FAIL(test, ((volatile char *)area)[3100]);
->  	vfree(area);
->  }
->  #else
-> -static void __init vmalloc_oob(void) {}
-> +static void vmalloc_oob(struct kunit *test) {}
->  #endif
->  
-> -static int __init kmalloc_tests_init(void)
-> -{
-> -	/*
-> -	 * Temporarily enable multi-shot mode. Otherwise, we'd only get a
-> -	 * report for the first case.
-> -	 */
-> -	bool multishot = kasan_save_enable_multi_shot();
-> -
-> -	kmalloc_oob_right();
-> -	kmalloc_oob_left();
-> -	kmalloc_node_oob_right();
-> +static struct kunit_case kasan_kunit_test_cases[] = {
-> +	KUNIT_CASE(kmalloc_oob_right),
-> +	KUNIT_CASE(kmalloc_oob_left),
-> +	KUNIT_CASE(kmalloc_node_oob_right),
->  #ifdef CONFIG_SLUB
-> -	kmalloc_pagealloc_oob_right();
-> -	kmalloc_pagealloc_uaf();
-> -	kmalloc_pagealloc_invalid_free();
-> -#endif
-> -	kmalloc_large_oob_right();
-> -	kmalloc_oob_krealloc_more();
-> -	kmalloc_oob_krealloc_less();
-> -	kmalloc_oob_16();
-> -	kmalloc_oob_in_memset();
-> -	kmalloc_oob_memset_2();
-> -	kmalloc_oob_memset_4();
-> -	kmalloc_oob_memset_8();
-> -	kmalloc_oob_memset_16();
-> -	kmalloc_uaf();
-> -	kmalloc_uaf_memset();
-> -	kmalloc_uaf2();
-> -	kfree_via_page();
-> -	kfree_via_phys();
-> -	kmem_cache_oob();
-> -	memcg_accounted_kmem_cache();
-> -	kasan_stack_oob();
-> -	kasan_global_oob();
-> -	kasan_alloca_oob_left();
-> -	kasan_alloca_oob_right();
-> -	ksize_unpoisons_memory();
-> -	copy_user_test();
-> -	kmem_cache_double_free();
-> -	kmem_cache_invalid_free();
-> -	kasan_memchr();
-> -	kasan_memcmp();
-> -	kasan_strings();
-> -	kasan_bitops();
-> -	kmalloc_double_kzfree();
-> -	vmalloc_oob();
-> -
-> -	kasan_restore_multi_shot(multishot);
-> -
-> -	return -EAGAIN;
-> -}
-> +	KUNIT_CASE(kmalloc_pagealloc_oob_right),
-> +	KUNIT_CASE(kmalloc_pagealloc_uaf),
-> +	KUNIT_CASE(kmalloc_pagealloc_invalid_free),
-> +#endif /* CONFIG_SLUB */
-> +	KUNIT_CASE(kmalloc_large_oob_right),
-> +	KUNIT_CASE(kmalloc_oob_krealloc_more),
-> +	KUNIT_CASE(kmalloc_oob_krealloc_less),
-> +	KUNIT_CASE(kmalloc_oob_16),
-> +	KUNIT_CASE(kmalloc_oob_in_memset),
-> +	KUNIT_CASE(kmalloc_oob_memset_2),
-> +	KUNIT_CASE(kmalloc_oob_memset_4),
-> +	KUNIT_CASE(kmalloc_oob_memset_8),
-> +	KUNIT_CASE(kmalloc_oob_memset_16),
-> +	KUNIT_CASE(kmalloc_uaf),
-> +	KUNIT_CASE(kmalloc_uaf_memset),
-> +	KUNIT_CASE(kmalloc_uaf2),
-> +	KUNIT_CASE(kfree_via_page),
-> +	KUNIT_CASE(kfree_via_phys),
-> +	KUNIT_CASE(kmem_cache_oob),
-> +	KUNIT_CASE(memcg_accounted_kmem_cache),
-> +	KUNIT_CASE(kasan_global_oob),
-> +#if (IS_ENABLED(CONFIG_KASAN_STACK))
-> +	KUNIT_CASE(kasan_stack_oob), // need stack protection
-> +	KUNIT_CASE(kasan_alloca_oob_left),
-> +	KUNIT_CASE(kasan_alloca_oob_right),
-> +#endif /*CONFIG_KASAN_STACK*/
-> +	KUNIT_CASE(ksize_unpoisons_memory),
-> +	KUNIT_CASE(kmem_cache_double_free),
-> +	KUNIT_CASE(kmem_cache_invalid_free),
-> +	KUNIT_CASE(kasan_memchr),
-> +	KUNIT_CASE(kasan_memcmp),
-> +	KUNIT_CASE(kasan_strings),
-> +	KUNIT_CASE(kasan_bitops),
-> +	KUNIT_CASE(kmalloc_double_kzfree),
-> +	KUNIT_CASE(vmalloc_oob),
-> +	{}
-> +};
-> +
-> +static struct kunit_suite kasan_kunit_test_suite = {
-> +	.name = "kasan_kunit_test",
-> +	.init = kasan_multi_shot_init,
-> +	.test_cases = kasan_kunit_test_cases,
-> +	.exit = kasan_multi_shot_exit,
-> +};
-> +
-> +kunit_test_suite(kasan_kunit_test_suite);
-> +
-> +#endif /* BUILTIN(CONFIG_KUNIT) */
->  
-> -module_init(kmalloc_tests_init);
->  MODULE_LICENSE("GPL");
-> diff --git a/lib/test_kasan_copy_user.c b/lib/test_kasan_copy_user.c
-> new file mode 100644
-> index 000000000000..9523cbc332ec
-> --- /dev/null
-> +++ b/lib/test_kasan_copy_user.c
-> @@ -0,0 +1,75 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/*
-> + *
-> + * Copyright (c) 2014 Samsung Electronics Co., Ltd.
-> + * Author: Andrey Ryabinin <a.ryabinin@samsung.com>
-> + */
-> +
-> +#define pr_fmt(fmt) "kasan test: %s " fmt, __func__
-> +
-> +#include <linux/mman.h>
-> +#include <linux/module.h>
-> +#include <linux/printk.h>
-> +#include <linux/slab.h>
-> +#include <linux/uaccess.h>
-> +
-> +static noinline void __init copy_user_test(void)
-> +{
-> +	char *kmem;
-> +	char __user *usermem;
-> +	size_t size = 10;
-> +	int unused;
-> +
-> +	kmem = kmalloc(size, GFP_KERNEL);
-> +	if (!kmem)
-> +		return;
-> +
-> +	usermem = (char __user *)vm_mmap(NULL, 0, PAGE_SIZE,
-> +			    PROT_READ | PROT_WRITE | PROT_EXEC,
-> +			    MAP_ANONYMOUS | MAP_PRIVATE, 0);
-> +	if (IS_ERR(usermem)) {
-> +		pr_err("Failed to allocate user memory\n");
-> +		kfree(kmem);
-> +		return;
-> +	}
-> +
-> +	pr_info("out-of-bounds in copy_from_user()\n");
-> +	unused = copy_from_user(kmem, usermem, size + 1);
-> +
-> +	pr_info("out-of-bounds in copy_to_user()\n");
-> +	unused = copy_to_user(usermem, kmem, size + 1);
-> +
-> +	pr_info("out-of-bounds in __copy_from_user()\n");
-> +	unused = __copy_from_user(kmem, usermem, size + 1);
-> +
-> +	pr_info("out-of-bounds in __copy_to_user()\n");
-> +	unused = __copy_to_user(usermem, kmem, size + 1);
-> +
-> +	pr_info("out-of-bounds in __copy_from_user_inatomic()\n");
-> +	unused = __copy_from_user_inatomic(kmem, usermem, size + 1);
-> +
-> +	pr_info("out-of-bounds in __copy_to_user_inatomic()\n");
-> +	unused = __copy_to_user_inatomic(usermem, kmem, size + 1);
-> +
-> +	pr_info("out-of-bounds in strncpy_from_user()\n");
-> +	unused = strncpy_from_user(kmem, usermem, size + 1);
-> +
-> +	vm_munmap((unsigned long)usermem, PAGE_SIZE);
-> +	kfree(kmem);
-> +}
-> +
-> +static int __init copy_user_tests_init(void)
-> +{
-> +	/*
-> +	 * Temporarily enable multi-shot mode. Otherwise, we'd only get a
-> +	 * report for the first case.
-> +	 */
-> +	bool multishot = kasan_save_enable_multi_shot();
-> +
-> +	copy_user_test();
-> +	kasan_restore_multi_shot(multishot);
-> +	return -EAGAIN;
-> +}
-> +
-> +module_init(copy_user_tests_init);
-> +MODULE_LICENSE("GPL");
-> -- 
-> 2.25.1.696.g5e7596f4ac-goog
-> 
-> 
+url:    https://github.com/0day-ci/linux/commits/yuechao-zhao-advantech-com-cn/hwmon-nct7904-Add-watchdog-function/20200324-095738
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/groeck/linux-staging.git hwmon-next
+config: h8300-randconfig-a001-20200324 (attached as .config)
+compiler: h8300-linux-gcc (GCC) 9.2.0
+reproduce:
+        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+        chmod +x ~/bin/make.cross
+        # save the attached .config to linux build tree
+        GCC_VERSION=9.2.0 make.cross ARCH=h8300 
+
+If you fix the issue, kindly add following tag
+Reported-by: kbuild test robot <lkp@intel.com>
+
+All errors (new ones prefixed by >>):
+
+   h8300-linux-ld: drivers/hwmon/nct7904.o: in function `nct7904_remove':
+   drivers/hwmon/nct7904.c:1165: undefined reference to `watchdog_unregister_device'
+   h8300-linux-ld: drivers/hwmon/nct7904.o: in function `nct7904_probe':
+   drivers/hwmon/nct7904.c:1138: undefined reference to `watchdog_init_timeout'
+>> h8300-linux-ld: drivers/hwmon/nct7904.c:1144: undefined reference to `watchdog_register_device'
+
+---
+0-DAY CI Kernel Test Service, Intel Corporation
+https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
+
+--+QahgC5+KEYLbs62
+Content-Type: application/gzip
+Content-Disposition: attachment; filename=".config.gz"
+Content-Transfer-Encoding: base64
+
+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
+4y39D7k1ll+MmgEA
+
+--+QahgC5+KEYLbs62--
