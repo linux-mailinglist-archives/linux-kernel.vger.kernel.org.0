@@ -2,60 +2,156 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 52E03191812
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 18:47:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4720D19181E
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 18:50:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727770AbgCXRrg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 13:47:36 -0400
-Received: from mga17.intel.com ([192.55.52.151]:51824 "EHLO mga17.intel.com"
+        id S1727880AbgCXRse (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 13:48:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34700 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727273AbgCXRrg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 13:47:36 -0400
-IronPort-SDR: EroJeWM1GSU6O0nw+pToeQpaFecXktvrz7bevrCx0XGcYGuoBLqgE2NDX+l1piqiO6rLISYmQQ
- 10fHSqMl+0Hw==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Mar 2020 10:47:35 -0700
-IronPort-SDR: /Dba8g1Ev7Mt3HAEAox+SqruuocqzRX7jLtMhq7XVwvIcFQbFonm31L4t/247hd6XIYy1CqKRg
- NWEL4XlR62kQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.72,301,1580803200"; 
-   d="scan'208";a="240115983"
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.202])
-  by fmsmga008.fm.intel.com with ESMTP; 24 Mar 2020 10:47:35 -0700
-Date:   Tue, 24 Mar 2020 10:47:35 -0700
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Xiaoyao Li <xiaoyao.li@intel.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        hpa@zytor.com, Paolo Bonzini <pbonzini@redhat.com>, x86@kernel.org,
-        kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Arvind Sankar <nivedita@alum.mit.edu>,
-        Fenghua Yu <fenghua.yu@intel.com>,
-        Tony Luck <tony.luck@intel.com>
-Subject: Re: [PATCH v6 0/8] x86/split_lock: Fix and virtualization of split
- lock detection
-Message-ID: <20200324174735.GC5998@linux.intel.com>
-References: <20200324151859.31068-1-xiaoyao.li@intel.com>
+        id S1727697AbgCXRsd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Mar 2020 13:48:33 -0400
+Received: from localhost (mobile-166-175-186-165.mycingular.net [166.175.186.165])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 53D66206F6;
+        Tue, 24 Mar 2020 17:48:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1585072112;
+        bh=uz6dZ8KjquQEnzTFgFMOWuGSPMl35b+hJQ9PsfmtP1o=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:From;
+        b=HDmUvDwhN0NNi3buz6ULiO3RwIqxewBzxYY5RXqBT+AlYyb9a6dh3zMpZ54g+YEWo
+         wVE3sFLhij7SVsj5j9WgrwhF2erYI0jtBibNlyz8n+UbXRhAMu+TwgiohNfMhCTU53
+         22lDOD7W+pKCZ6Xx4zD1JhefC6+T+wSLDeWCmNZg=
+Date:   Tue, 24 Mar 2020 12:48:30 -0500
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Karol Herbst <kherbst@redhat.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>, Lyude Paul <lyude@redhat.com>,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Mika Westerberg <mika.westerberg@intel.com>,
+        Linux PCI <linux-pci@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        nouveau <nouveau@lists.freedesktop.org>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>
+Subject: Re: [PATCH v7] pci: prevent putting nvidia GPUs into lower device
+ states on certain intel bridges
+Message-ID: <20200324174830.GA32194@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200324151859.31068-1-xiaoyao.li@intel.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <CACO55tsamLG5WE16U=psJpRWfz=7Fy5K8haGKHnhic1h0WAmqA@mail.gmail.com>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 24, 2020 at 11:18:51PM +0800, Xiaoyao Li wrote:
-> So sorry for the noise that I forgot to CC the maillist.
+On Sat, Mar 21, 2020 at 02:02:22AM +0100, Karol Herbst wrote:
+> On Fri, Mar 20, 2020 at 11:19 PM Bjorn Helgaas <helgaas@kernel.org> wrote:
+> >
+> > On Tue, Mar 10, 2020 at 08:26:27PM +0100, Karol Herbst wrote:
+> > > Fixes the infamous 'runtime PM' bug many users are facing on Laptops with
+> > > Nvidia Pascal GPUs by skipping said PCI power state changes on the GPU.
+> > >
+> > > Depending on the used kernel there might be messages like those in demsg:
+> > >
+> > > "nouveau 0000:01:00.0: Refused to change power state, currently in D3"
+> > > "nouveau 0000:01:00.0: can't change power state from D3cold to D0 (config
+> > > space inaccessible)"
+> > > followed by backtraces of kernel crashes or timeouts within nouveau.
+> > >
+> > > It's still unkown why this issue exists, but this is a reliable workaround
+> > > and solves a very annoying issue for user having to choose between a
+> > > crashing kernel or higher power consumption of their Laptops.
+> >
+> > Thanks for the bugzilla link.  The bugzilla mentions lots of mailing
+> > list discussion.  Can you include links to some of that?
+> >
+> > IIUC this basically just turns off PCI power management for the GPU.
+> > Can you do that with something like the following?  I don't know
+> > anything about DRM, so I don't know where you could save the pm_cap,
+> > but I'm sure the driver could keep it somewhere.
+> 
+> Sure this would work? From a quick look over the pci code, it looks
+> like a of code would be skipped we really need, like the platform
+> code to turn off the GPU via ACPI. But I could also remember
+> incorrectly on how all of that worked again. I can of course try and
+> see what the effect of this patch would be. 
 
-You also forgot to add RESEND :-)  Tagging the patches like so
+I'm not in a position to test this myself.  I would expect that if a
+device lacks a PCI power management capability, we could still use
+ACPI power management.  My idea with this patch was to simulate that
+situation by clearing pdev->pm_cap so we treat the GPU as though it
+had no PCI PM capability.
 
-  [PATCH RESEND v6 0/8] x86/split_lock: Fix and virtualization of split lock detection
+> And would the parent bus even go into D3hot if it knows one of its
+> children is still at D0? Because that's what the result of that
+> would be as well, no? And I know that if the bus stays in D0, that
+> it has a negative impact on power consumption.
 
-lets folks that received the originals identify and respond to the "new"
-thread.
+I don't understand this part.  Are you saying you want the GPU in D0
+and the upstream component (root port or switch) in D3hot?
+
+I think the rule for the upstream component (the root port or switch
+leading to the GPU) is in PCIe spec 5.0, sec 5.3.2.  Basically it says
+the upstream component cannot be in a lower power state than the GPU,
+i.e.,
+
+  - if the GPU is in D0, the upstream component must be in D0;
+  - if the GPU is in D2, the upstream component can be in D0-D2;
+  - if the GPU is in D3hot, the upstream component can be in D0-D3hot
+
+So I don't understand how we *could* have the GPU in D0 and the
+upstream component in D3hot.
+
+> Anyway, I will try that out, I am just not seeing how that would help.
+> 
+> > diff --git a/drivers/gpu/drm/nouveau/nouveau_drm.c b/drivers/gpu/drm/nouveau/nouveau_drm.c
+> > index b65ae817eabf..2ad825e8891c 100644
+> > --- a/drivers/gpu/drm/nouveau/nouveau_drm.c
+> > +++ b/drivers/gpu/drm/nouveau/nouveau_drm.c
+> > @@ -618,6 +618,23 @@ nouveau_drm_device_fini(struct drm_device *dev)
+> >         kfree(drm);
+> >  }
+> >
+> > +static void quirk_broken_nv_runpm(struct drm_device *drm_dev)
+> > +{
+> > +       struct pci_dev *pdev = drm_dev->pdev;
+> > +       struct pci_dev *bridge = pci_upstream_bridge(pdev);
+> > +
+> > +       if (!bridge || bridge->vendor != PCI_VENDOR_ID_INTEL)
+> > +               return;
+> > +
+> > +       switch (bridge->device) {
+> > +       case 0x1901:
+> > +               STASH->pm_cap = pdev->pm_cap;
+> > +               pdev->pm_cap = 0;
+> > +               NV_INFO(drm_dev, "Disabling PCI power management to avoid bug\n");
+> > +               break;
+> > +       }
+> > +}
+> > +
+> >  static int nouveau_drm_probe(struct pci_dev *pdev,
+> >                              const struct pci_device_id *pent)
+> >  {
+> > @@ -699,6 +716,7 @@ static int nouveau_drm_probe(struct pci_dev *pdev,
+> >         if (ret)
+> >                 goto fail_drm_dev_init;
+> >
+> > +       quirk_broken_nv_runpm(drm_dev);
+> >         return 0;
+> >
+> >  fail_drm_dev_init:
+> > @@ -735,6 +753,9 @@ nouveau_drm_remove(struct pci_dev *pdev)
+> >  {
+> >         struct drm_device *dev = pci_get_drvdata(pdev);
+> >
+> > +       /* If we disabled PCI power management, restore it */
+> > +       if (STASH->pm_cap)
+> > +               pdev->pm_cap = STASH->pm_cap;
+> >         nouveau_drm_device_remove(dev);
+> >         pci_disable_device(pdev);
+> >  }
+> >
+> 
