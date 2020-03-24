@@ -2,36 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2A00F1910BA
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 14:31:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BF4401910B5
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 14:31:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729111AbgCXNau (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 09:30:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43650 "EHLO mail.kernel.org"
+        id S1729088AbgCXNVv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 09:21:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43788 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729070AbgCXNVk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 09:21:40 -0400
+        id S1729060AbgCXNVq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Mar 2020 09:21:46 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8D30020870;
-        Tue, 24 Mar 2020 13:21:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4A29220775;
+        Tue, 24 Mar 2020 13:21:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585056100;
-        bh=jM7Fews3e1MESegyezgjrz7anoNSo3IuYP4oG7HKigc=;
+        s=default; t=1585056105;
+        bh=glIX5Z7bJqEDQ5JgvMe9Z3yqwXPHOV3ppkP4+fwmd/g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=pcgbAeLCXHVkbBfEOuCMCngWYVZa0u3mwQhYhcM9vgC5Jg1ioC6Rwp71ik1XF9qn+
-         Rj9E300XmBtJAy2p11C7r1QG9U2jZQgwzZbgjbkZP+pxwPmPLEi4mq18LJ7DmluZpx
-         jGS+9cTwo0GF6lTbChLgZpmvnI5Kr1e0vyRUhr+s=
+        b=hIqLrVaBAyfR855SVPQbFkUd6/o0XF2/wgpqOh7NAR8VPP3xs3io8pXQ7tLJiRjwA
+         lPC9l0dg8LsKK5xKaCJN/8XVGftV54QQJ+FW9Xe9eorPl15PsE9Zodiht6hBSbnsH2
+         QWmepOaGbeufd3v7DY+COYWEiiVEJZxFprCTHrmo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Liguang Zhang <zhangliguang@linux.alibaba.com>,
-        Will Deacon <will@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.5 021/119] drivers/perf: arm_pmu_acpi: Fix incorrect checking of gicc pointer
-Date:   Tue, 24 Mar 2020 14:10:06 +0100
-Message-Id: <20200324130810.523304486@linuxfoundation.org>
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Stefan Wahren <stefan.wahren@i2se.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.5 023/119] ARM: bcm2835_defconfig: Explicitly restore CONFIG_DEBUG_FS
+Date:   Tue, 24 Mar 2020 14:10:08 +0100
+Message-Id: <20200324130810.692890651@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.2
 In-Reply-To: <20200324130808.041360967@linuxfoundation.org>
 References: <20200324130808.041360967@linuxfoundation.org>
@@ -44,47 +46,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: luanshi <zhangliguang@linux.alibaba.com>
+From: Stefan Wahren <stefan.wahren@i2se.com>
 
-[ Upstream commit 3ba52ad55b533760a1f65836aa0ec9d35e36bb4f ]
+[ Upstream commit 1bba60808404b873defa0f3560497eb2e8fe86b8 ]
 
-Fix bogus NULL checks on the return value of acpi_cpu_get_madt_gicc()
-by checking for a 0 'gicc->performance_interrupt' value instead.
+The commit 0e4a459f56c3 ("tracing: Remove unnecessary DEBUG_FS dependency")
+accidentally dropped the DEBUG FS support in bcm2835_defconfig. So
+restore the config as before the commit.
 
-Signed-off-by: Liguang Zhang <zhangliguang@linux.alibaba.com>
-Signed-off-by: Will Deacon <will@kernel.org>
+Reported-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Fixes: 0e4a459f56c3 ("tracing: Remove unnecessary DEBUG_FS dependency")
+Signed-off-by: Stefan Wahren <stefan.wahren@i2se.com>
+Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/perf/arm_pmu_acpi.c | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
+ arch/arm/configs/bcm2835_defconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/perf/arm_pmu_acpi.c b/drivers/perf/arm_pmu_acpi.c
-index acce8781c456c..f5c7a845cd7bf 100644
---- a/drivers/perf/arm_pmu_acpi.c
-+++ b/drivers/perf/arm_pmu_acpi.c
-@@ -24,8 +24,6 @@ static int arm_pmu_acpi_register_irq(int cpu)
- 	int gsi, trigger;
- 
- 	gicc = acpi_cpu_get_madt_gicc(cpu);
--	if (WARN_ON(!gicc))
--		return -EINVAL;
- 
- 	gsi = gicc->performance_interrupt;
- 
-@@ -64,11 +62,10 @@ static void arm_pmu_acpi_unregister_irq(int cpu)
- 	int gsi;
- 
- 	gicc = acpi_cpu_get_madt_gicc(cpu);
--	if (!gicc)
--		return;
- 
- 	gsi = gicc->performance_interrupt;
--	acpi_unregister_gsi(gsi);
-+	if (gsi)
-+		acpi_unregister_gsi(gsi);
- }
- 
- #if IS_ENABLED(CONFIG_ARM_SPE_PMU)
+diff --git a/arch/arm/configs/bcm2835_defconfig b/arch/arm/configs/bcm2835_defconfig
+index 519ff58e67b30..0afcae9f7cf8a 100644
+--- a/arch/arm/configs/bcm2835_defconfig
++++ b/arch/arm/configs/bcm2835_defconfig
+@@ -178,6 +178,7 @@ CONFIG_SCHED_TRACER=y
+ CONFIG_STACK_TRACER=y
+ CONFIG_FUNCTION_PROFILER=y
+ CONFIG_TEST_KSTRTOX=y
++CONFIG_DEBUG_FS=y
+ CONFIG_KGDB=y
+ CONFIG_KGDB_KDB=y
+ CONFIG_STRICT_DEVMEM=y
 -- 
 2.20.1
 
