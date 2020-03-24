@@ -2,134 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 53C531908AF
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 10:12:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3BE6A1908B3
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 10:12:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727540AbgCXJL3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 05:11:29 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:42424 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727400AbgCXJLY (ORCPT
+        id S1727563AbgCXJLf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 05:11:35 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:44583 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727543AbgCXJLa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 05:11:24 -0400
-Received: by mail-wr1-f68.google.com with SMTP id h15so8210562wrx.9;
-        Tue, 24 Mar 2020 02:11:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=XU6XS71vZD5h367wTsAuXGp1pePjRbXlg3MdVLDgs/E=;
-        b=Fk3DrakuZEPTZ7rNK9JW5lgHsO8nGSlYevrmzq89VsAzQvNxRdnT0/h5zqjglgmeRy
-         HyOAxa9Aw8iqvZ7giDD0Lihv7NPTHQmbZEq0l0tzzsxIuzxThsW3wgA2kOsiN6/6WgTO
-         VIZYmvygplNy5SZvfUAXsBxxNxddTzGpPkaVGPDoK/G+de+FFZUFw7XREWLykeI+Mm0y
-         k5e6gvvbBmzXXfel5OJSkmUCvGM+HzFbcjJP9VW5afnUmzK9d9ztB0Y/hLDzjh/JiTUj
-         pPvnk6i1kxBNg8D0DLWUUSDQqre+LyhZSWg8MAYfpmEOMpesttE/st8wwirqmMseKMVU
-         +7nQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=XU6XS71vZD5h367wTsAuXGp1pePjRbXlg3MdVLDgs/E=;
-        b=WOma7CBsxvEpK54TSKWhR/AakB+KgdQga+eTv2Iy7btdqDQ52iJu9ivQMGUsvDAQM1
-         F0s/f/malluoiELCzvdQIdk9PkO/7UjrfSeADbirC1iesg5pEc/ykPSMNNoRiLEoK9MX
-         lBUglqAQuQGO+tslPymQ67kQKCKdENxKCrRiqq7QJt6sYtQTaSwYqdTT88Lf8dHtCMmK
-         vV7RMU4VCx9YLig9gghOnZ5S1m+INlygY9VqT4Lg2dTIPdddW3C0y5vbCaPMtc2poq9L
-         iuhbDi7ri95764K2KSOniqBR0ftEePdYo6YJOEdNPvYAXYGgIRTbm2D5Rds0Ov1BsMIL
-         x3kQ==
-X-Gm-Message-State: ANhLgQ0m3Z6FU8rAq1xfHTj5S+Fnujpon6uGWkWAPFkv05GetJwcsMKy
-        VQDxhvlGy9ypHc6AxDN/J/I=
-X-Google-Smtp-Source: ADFU+vslunnyHEgVmY63uRmcj5eC1ZlILCO4/vaylFhdr+LjZyYIcstghFw1QnXWPWvGdU8nnm7M5Q==
-X-Received: by 2002:adf:bb06:: with SMTP id r6mr35981331wrg.324.1585041083187;
-        Tue, 24 Mar 2020 02:11:23 -0700 (PDT)
-Received: from gmail.com (54033286.catv.pool.telekom.hu. [84.3.50.134])
-        by smtp.gmail.com with ESMTPSA id c18sm26318367wrx.5.2020.03.24.02.11.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Mar 2020 02:11:22 -0700 (PDT)
-Date:   Tue, 24 Mar 2020 10:11:20 +0100
-From:   Ingo Molnar <mingo@kernel.org>
-To:     "Paul E. McKenney" <paulmck@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, rcu@vger.kernel.org,
-        colin.king@canonical.com, edumazet@google.com, frextrite@gmail.com,
-        jbi.octave@gmail.com, joel@joelfernandes.org,
-        madhuparnabhowmik04@gmail.com, sjpark@amazon.de, urezki@gmail.com
-Subject: Re: [GIT PULL v2 rcu/next] RCU commits for v5.7
-Message-ID: <20200324091120.GB48322@gmail.com>
-References: <20200312211047.GA6096@paulmck-ThinkPad-P72>
- <20200322145310.GA7379@paulmck-ThinkPad-P72>
+        Tue, 24 Mar 2020 05:11:30 -0400
+Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <pza@pengutronix.de>)
+        id 1jGfao-0004NC-H9; Tue, 24 Mar 2020 10:11:26 +0100
+Received: from pza by ptx.hi.pengutronix.de with local (Exim 4.92)
+        (envelope-from <pza@pengutronix.de>)
+        id 1jGfan-0005DC-Ou; Tue, 24 Mar 2020 10:11:25 +0100
+Date:   Tue, 24 Mar 2020 10:11:25 +0100
+From:   Philipp Zabel <pza@pengutronix.de>
+To:     Adrian Ratiu <adrian.ratiu@collabora.com>
+Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Ezequiel Garcia <ezequiel@collabora.com>, kernel@collabora.com,
+        kernel@pengutronix.de, Tim Harvey <tharvey@gateworks.com>
+Subject: Re: [PATCH 1/2] media: coda: jpeg: support optimized huffman tables
+Message-ID: <20200324091125.GA12488@pengutronix.de>
+References: <20200323130937.3666244-1-adrian.ratiu@collabora.com>
+ <20200323130937.3666244-2-adrian.ratiu@collabora.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200322145310.GA7379@paulmck-ThinkPad-P72>
+In-Reply-To: <20200323130937.3666244-2-adrian.ratiu@collabora.com>
+X-Sent-From: Pengutronix Hildesheim
+X-URL:  http://www.pengutronix.de/
+X-IRC:  #ptxdist @freenode
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-Uptime: 09:58:04 up 33 days, 16:28, 77 users,  load average: 0.06, 0.14,
+ 0.19
 User-Agent: Mutt/1.10.1 (2018-07-13)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
+X-SA-Exim-Mail-From: pza@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Adrian,
 
-* Paul E. McKenney <paulmck@kernel.org> wrote:
+On Mon, Mar 23, 2020 at 03:09:36PM +0200, Adrian Ratiu wrote:
+> Each jpeg can have the huffman tables optimized for its specific content
+> meaning that the table lenghts and values don't match the standard table
+> of substitutions so there's no reason to hardcode and expect the sandard
+> lenghts, otherwise we just end up rejecting optimized jpegs altogether.
 
-> Hello, Ingo!
-> 
-> As discussed off-list, my earlier RCU pull request contained a commit with
-> KCSAN dependencies, which caused build failures in the absence of KCSAN.
-> These dependencies went undetected due to a flaw in my testing process
-> that erroneously included the KCSAN commits.  This revised pull request
-> removes those dependencies by pushing them to the post-v5.7 of the
-> -rcu tree.  Non-KCSAN builds are unaffected.
-> 
-> As before, this pull request contains the following changes:
-> 
-> 1.	Documentation updates.
-> 
-> 	https://lore.kernel.org/lkml/20200214233848.GA12744@paulmck-ThinkPad-P72
-> 
-> 2.	Miscellaneous fixes.
-> 
-> 	https://lore.kernel.org/lkml/20200214235536.GA13364@paulmck-ThinkPad-P72
-> 
-> 3.	Make kfree_rcu() use kfree_bulk() for added performance.
-> 
-> 	https://lore.kernel.org/lkml/20200215000031.GA14315@paulmck-ThinkPad-P72
-> 
-> 4.	Locking torture-test updates.
-> 
-> 	https://lore.kernel.org/lkml/20200215000312.GA14585@paulmck-ThinkPad-P72
-> 
-> 5.	Callback-overload handling updates.
-> 
-> 	https://lore.kernel.org/lkml/20200215001816.GA15284@paulmck-ThinkPad-P72
-> 
-> 6.	Tasks-RCU KCSAN and sparse updates.
-> 
-> 	https://lore.kernel.org/lkml/20200215002446.GA15663@paulmck-ThinkPad-P72
-> 
-> 7.	SRCU updates.
-> 
-> 	https://lore.kernel.org/lkml/20200215002907.GA15895@paulmck-ThinkPad-P72
-> 
-> 8.	Torture-test updates.
-> 
-> 	https://lore.kernel.org/lkml/20200215003634.GA16227@paulmck-ThinkPad-P72
-> 
-> All of these have been subjected to the kbuild test robot testing,
-> will get -next testing in the next -next, and are available in the git
-> repository at:
-> 
->   git://git.kernel.org/pub/scm/linux/kernel/git/paulmck/linux-rcu.git for-mingo
-> 
-> for you to fetch changes up to aa93ec620be378cce1454286122915533ff8fa48:
-> 
->   Merge branches 'doc.2020.02.27a', 'fixes.2020.03.21a', 'kfree_rcu.2020.02.20a', 'locktorture.2020.02.20a', 'ovld.2020.02.20a', 'rcu-tasks.2020.02.20a', 'srcu.2020.02.20a' and 'torture.2020.02.20a' into HEAD (2020-03-21 17:15:11 -0700)
-> 
-> There is a modest increase in code size of about 700 lines.  About 300
-> of these added lines were documentation, almost 200 more from adding
-> kfree_bulk() support to kfree_rcu(), about 150 from torture-test
-> improvements, and about 80 lines from improved callback-overload handling.
-> All in all, good value from this expansion.
+Thank you, that is a great improvement. There's one issue remaining
+below:
 
->  34 files changed, 1015 insertions(+), 294 deletions(-)
+> Tested on CODA960.
+> 
+> Signed-off-by: Adrian Ratiu <adrian.ratiu@collabora.com>
+> ---
+>  drivers/media/platform/coda/coda-jpeg.c | 13 ++++++++-----
+>  1 file changed, 8 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/media/platform/coda/coda-jpeg.c b/drivers/media/platform/coda/coda-jpeg.c
+> index 6a11b64efb6b..162ba28a6b95 100644
+> --- a/drivers/media/platform/coda/coda-jpeg.c
+> +++ b/drivers/media/platform/coda/coda-jpeg.c
+> @@ -343,7 +343,8 @@ int coda_jpeg_decode_header(struct coda_ctx *ctx, struct vb2_buffer *vb)
+>  			v4l2_err(&dev->v4l2_dev, "missing Huffman table\n");
+>  			return -EINVAL;
+>  		}
+> -		if (huffman_tables[i].length != ((i & 2) ? 178 : 28)) {
+> +		if (huffman_tables[i].length < 17 ||
+> +		    huffman_tables[i].length > 178) {
 
-Pulled, thanks a lot Paul!
+The maximum length of the DC tables is 16 + 12, so this should
+still be checked for a maximum length of 28 if (i & 2) == 0.
 
-	Ingo
+>  			v4l2_err(&dev->v4l2_dev,
+>  				 "invalid Huffman table %d length: %zu\n",
+>  				 i, huffman_tables[i].length);
+> @@ -357,10 +358,12 @@ int coda_jpeg_decode_header(struct coda_ctx *ctx, struct vb2_buffer *vb)
+>  			return -ENOMEM;
+>  		ctx->params.jpeg_huff_tab = huff_tab;
+>  	}
+> -	memcpy(huff_tab->luma_dc, huffman_tables[0].start, 16 + 12);
+> -	memcpy(huff_tab->chroma_dc, huffman_tables[1].start, 16 + 12);
+> -	memcpy(huff_tab->luma_ac, huffman_tables[2].start, 16 + 162);
+> -	memcpy(huff_tab->chroma_ac, huffman_tables[3].start, 16 + 162);
+> +
+> +	memset(huff_tab, 0, sizeof(*huff_tab));
+> +	memcpy(huff_tab->luma_dc, huffman_tables[0].start, huffman_tables[0].length);
+> +	memcpy(huff_tab->chroma_dc, huffman_tables[1].start, huffman_tables[1].length);
+
+Otherwise these two might overflow the luma_dc and chroma_dc arrays.
+
+regards
+Philipp
