@@ -2,97 +2,151 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F3C31191463
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 16:28:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5C98319145C
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 16:28:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728171AbgCXP2Z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 11:28:25 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:46420 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727736AbgCXP2Z (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 11:28:25 -0400
-Received: from 61-220-137-37.hinet-ip.hinet.net ([61.220.137.37] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <kai.heng.feng@canonical.com>)
-        id 1jGlTX-0000IV-P5; Tue, 24 Mar 2020 15:28:20 +0000
-From:   Kai-Heng Feng <kai.heng.feng@canonical.com>
-To:     ajayg@nvidia.com
-Cc:     Kai-Heng Feng <kai.heng.feng@canonical.com>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        linux-i2c@vger.kernel.org (open list:I2C CONTROLLER DRIVER FOR NVIDIA
-        GPU), linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v3] i2c: nvidia-gpu: Handle timeout correctly in gpu_i2c_check_status()
-Date:   Tue, 24 Mar 2020 23:28:11 +0800
-Message-Id: <20200324152812.20231-1-kai.heng.feng@canonical.com>
-X-Mailer: git-send-email 2.17.1
+        id S1728443AbgCXPZp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 11:25:45 -0400
+Received: from mga07.intel.com ([134.134.136.100]:19547 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728424AbgCXPZo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Mar 2020 11:25:44 -0400
+IronPort-SDR: 5wNT/eGAiVBzJ7VabqLh6tyNvgfRsyjsNTQ8mBeAljQVXOz95Ao/MxFkfih061a6C0e3GZyXIw
+ 3aCgIfjdMGeQ==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Mar 2020 08:25:42 -0700
+IronPort-SDR: u51fJ+Z0ZBbmP6QCfNUjTvwozWzNupiZsNbkcUKr1KzpRJD7fx4oNvUs51Yhdb4t9Pgc1U+U41
+ 0MHk6Mh/sONw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.72,300,1580803200"; 
+   d="scan'208";a="325939618"
+Received: from jacob-builder.jf.intel.com (HELO jacob-builder) ([10.7.199.155])
+  by orsmga001.jf.intel.com with ESMTP; 24 Mar 2020 08:25:42 -0700
+Date:   Tue, 24 Mar 2020 08:31:25 -0700
+From:   Jacob Pan <jacob.jun.pan@linux.intel.com>
+To:     Lu Baolu <baolu.lu@linux.intel.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        iommu@lists.linux-foundation.org, Joerg Roedel <joro@8bytes.org>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Raj Ashok <ashok.raj@intel.com>, Yi Liu <yi.l.liu@intel.com>,
+        jacob.jun.pan@linux.intel.com
+Subject: Re: [PATCH 1/3] iommu/vt-d: Remove redundant IOTLB flush
+Message-ID: <20200324083125.27b78594@jacob-builder>
+In-Reply-To: <06c9751a-417d-3c32-65af-0788593f811a@linux.intel.com>
+References: <1584678751-43169-1-git-send-email-jacob.jun.pan@linux.intel.com>
+        <1584678751-43169-2-git-send-email-jacob.jun.pan@linux.intel.com>
+        <26ab1917-f087-aafa-e861-6a2478000a6f@linux.intel.com>
+        <20200320092047.4a4cf551@jacob-builder>
+        <06c9751a-417d-3c32-65af-0788593f811a@linux.intel.com>
+Organization: OTC
+X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Nvidia card may come with a "phantom" UCSI device, and its driver gets
-stuck in probe routine, prevents any system PM operations like suspend.
+On Sat, 21 Mar 2020 09:32:45 +0800
+Lu Baolu <baolu.lu@linux.intel.com> wrote:
 
-There's an unaccounted case that the target time can equal to jiffies in
-gpu_i2c_check_status(), let's solve that by using readl_poll_timeout()
-instead of jiffies comparison functions. 
+> On 2020/3/21 0:20, Jacob Pan wrote:
+> > On Fri, 20 Mar 2020 21:45:26 +0800
+> > Lu Baolu <baolu.lu@linux.intel.com> wrote:
+> >   
+> >> On 2020/3/20 12:32, Jacob Pan wrote:  
+> >>> IOTLB flush already included in the PASID tear down process. There
+> >>> is no need to flush again.  
+> >>
+> >> It seems that intel_pasid_tear_down_entry() doesn't flush the pasid
+> >> based device TLB?
+> >>  
+> > I saw this code in intel_pasid_tear_down_entry(). Isn't the last
+> > line flush the devtlb? Not in guest of course since the passdown
+> > tlb flush is inclusive.
+> > 
+> > 	pasid_cache_invalidation_with_pasid(iommu, did, pasid);
+> > 	iotlb_invalidation_with_pasid(iommu, did, pasid);
+> > 
+> > 	/* Device IOTLB doesn't need to be flushed in caching mode.
+> > */ if (!cap_caching_mode(iommu->cap))
+> > 		devtlb_invalidation_with_pasid(iommu, dev, pasid);
+> >   
+> 
+> But devtlb_invalidation_with_pasid() doesn't do the right thing, it
+> flushes the device tlb, instead of pasid-based device tlb.
+> 
+Hmm, you are right. But the function name is misleading, pasid argument
+is not used, is there a reason why?
+This is used for PASID based device IOTLB flush, right?
 
-Fixes: c71bcdcb42a7 ("i2c: add i2c bus driver for NVIDIA GPU")
-Suggested-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
----
-v3:
-- Use readl_poll_timeout to make the retry loop simpler.
+> static void
+> devtlb_invalidation_with_pasid(struct intel_iommu *iommu,
+>                                 struct device *dev, int pasid)
+> {
+>          struct device_domain_info *info;
+>          u16 sid, qdep, pfsid;
+> 
+>          info = dev->archdata.iommu;
+>          if (!info || !info->ats_enabled)
+>                  return;
+> 
+>          sid = info->bus << 8 | info->devfn;
+>          qdep = info->ats_qdep;
+>          pfsid = info->pfsid;
+> 
+>          qi_flush_dev_iotlb(iommu, sid, pfsid, qdep, 0, 64 - 
+> VTD_PAGE_SHIFT);
+> }
+> 
+> Best regards,
+> baolu
+> 
+> >> Best regards,
+> >> baolu
+> >>  
+> >>>
+> >>> Cc: Lu Baolu <baolu.lu@linux.intel.com>
+> >>> Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
+> >>> ---
+> >>>    drivers/iommu/intel-svm.c | 6 ++----
+> >>>    1 file changed, 2 insertions(+), 4 deletions(-)
+> >>>
+> >>> diff --git a/drivers/iommu/intel-svm.c b/drivers/iommu/intel-svm.c
+> >>> index 8f42d717d8d7..1483f1845762 100644
+> >>> --- a/drivers/iommu/intel-svm.c
+> >>> +++ b/drivers/iommu/intel-svm.c
+> >>> @@ -268,10 +268,9 @@ static void intel_mm_release(struct
+> >>> mmu_notifier *mn, struct mm_struct *mm)
+> >>>    	 * *has* to handle gracefully without affecting other
+> >>> processes. */
+> >>>    	rcu_read_lock();
+> >>> -	list_for_each_entry_rcu(sdev, &svm->devs, list) {
+> >>> +	list_for_each_entry_rcu(sdev, &svm->devs, list)
+> >>>    		intel_pasid_tear_down_entry(svm->iommu,
+> >>> sdev->dev, svm->pasid);
+> >>> -		intel_flush_svm_range_dev(svm, sdev, 0, -1, 0);
+> >>> -	}
+> >>> +
+> >>>    	rcu_read_unlock();
+> >>>    
+> >>>    }
+> >>> @@ -731,7 +730,6 @@ int intel_svm_unbind_mm(struct device *dev,
+> >>> int pasid)
+> >>>    			 * large and has to be physically
+> >>> contiguous. So it's
+> >>>    			 * hard to be as defensive as we might
+> >>> like. */ intel_pasid_tear_down_entry(iommu, dev, svm->pasid);
+> >>> -			intel_flush_svm_range_dev(svm, sdev, 0,
+> >>> -1, 0); kfree_rcu(sdev, rcu);
+> >>>    
+> >>>    			if (list_empty(&svm->devs)) {
+> >>>      
+> > 
+> > [Jacob Pan]
+> >   
 
-v2:
-- Use a boolean to make sure the operation is timeout or not.
-
- drivers/i2c/busses/i2c-nvidia-gpu.c | 20 ++++++++------------
- 1 file changed, 8 insertions(+), 12 deletions(-)
-
-diff --git a/drivers/i2c/busses/i2c-nvidia-gpu.c b/drivers/i2c/busses/i2c-nvidia-gpu.c
-index 62e18b4db0ed..f5d25ce00f03 100644
---- a/drivers/i2c/busses/i2c-nvidia-gpu.c
-+++ b/drivers/i2c/busses/i2c-nvidia-gpu.c
-@@ -8,6 +8,7 @@
- #include <linux/delay.h>
- #include <linux/i2c.h>
- #include <linux/interrupt.h>
-+#include <linux/iopoll.h>
- #include <linux/module.h>
- #include <linux/pci.h>
- #include <linux/platform_device.h>
-@@ -75,20 +76,15 @@ static void gpu_enable_i2c_bus(struct gpu_i2c_dev *i2cd)
- 
- static int gpu_i2c_check_status(struct gpu_i2c_dev *i2cd)
- {
--	unsigned long target = jiffies + msecs_to_jiffies(1000);
- 	u32 val;
-+	int ret;
- 
--	do {
--		val = readl(i2cd->regs + I2C_MST_CNTL);
--		if (!(val & I2C_MST_CNTL_CYCLE_TRIGGER))
--			break;
--		if ((val & I2C_MST_CNTL_STATUS) !=
--				I2C_MST_CNTL_STATUS_BUS_BUSY)
--			break;
--		usleep_range(500, 600);
--	} while (time_is_after_jiffies(target));
--
--	if (time_is_before_jiffies(target)) {
-+	ret = readl_poll_timeout(i2cd->regs + I2C_MST_CNTL, val,
-+				 !(val & I2C_MST_CNTL_CYCLE_TRIGGER) ||
-+				 (val & I2C_MST_CNTL_STATUS) != I2C_MST_CNTL_STATUS_BUS_BUSY,
-+				 500, 1000 * USEC_PER_MSEC);
-+
-+	if (ret) {
- 		dev_err(i2cd->dev, "i2c timeout error %x\n", val);
- 		return -ETIMEDOUT;
- 	}
--- 
-2.17.1
-
+[Jacob Pan]
