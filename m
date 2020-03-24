@@ -2,148 +2,187 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E3F02190F9A
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 14:29:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 635F8191018
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 14:30:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729031AbgCXNVX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 09:21:23 -0400
-Received: from mail-qk1-f193.google.com ([209.85.222.193]:37929 "EHLO
-        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727935AbgCXNVV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 09:21:21 -0400
-Received: by mail-qk1-f193.google.com with SMTP id h14so19134306qke.5
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Mar 2020 06:21:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=8QBITZjIR4pheuB5mAYI2KGr93iBluj8FwnRHc9ZWCY=;
-        b=lA7vh+zR0j5LdbHCX7FXW60ldc6hPRFUcl6ux03aWSVFthh5H/wds/lNTLI4yWVEYP
-         znYDCnk1KO3oYNSB0z5vPPb6ZRTq42broPxA01HYp84XieK5ZD7ZToBZS/lj088tb0iH
-         IQYzRP7uF8vWC37NxuZr/wQw9CdhyOgVpljdsKkcwdc1+noCTfc5VGxNQuQfOLNf5EOA
-         tZ2dlpJzHAgXWwhBL0fmmF1V25pJezPA9Et5ciymcv/MVUlrLNDqWObQhF0x8Bs1+KYq
-         IgIIe82NVnETQnhwSLioYA1aOJem5JLjlKiHLOy90ro5mLm12/Nnc2CGS3qc+BWi0b/g
-         KhDQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=8QBITZjIR4pheuB5mAYI2KGr93iBluj8FwnRHc9ZWCY=;
-        b=DIs4K/j4YsmWrd2vc9NdBwHkGoEXWI/XoEJhAqs7Kl0JqYiTVVaw89raJ9OJG45NUD
-         YjniNHCoSoLXaIjiWdmpaWb6AR/t/udj9IrMl7W1kATSn49ST6BiO2kxbsXhFSt/d4Sg
-         ZJq5VWgScDegagA58CjQpPIxcDnOtryWnOH7XhoZBXbxFodKp4p5uMpFiDBdcN6ltHpR
-         tvXeivJQZkF3ERB6qiDTr+aeM/AF8st9epLYkogIEFviKkFJY01o4VD4Lc0vuY0V4L12
-         9gtgpGcP48GIAsfH2sBvcLq2owo7JF+izwNnVcj1c5G7j4v0VndalVRSvklRwRQYuC6/
-         gc/w==
-X-Gm-Message-State: ANhLgQ1AYoFEjka/soTOj5PCj0pajgvFHrK9f8cJX2SMwfLqiDAxCzJb
-        DSkx/4aFIbn/irEMr8Sm4Xo=
-X-Google-Smtp-Source: ADFU+vuCof1/7g7lALMRZpRgYkbzzBRJX70t2Sw0boAxJmscMh0J0RbY3G8eZFv35mffkkWA8xDFUQ==
-X-Received: by 2002:a37:b902:: with SMTP id j2mr26151898qkf.247.1585056078665;
-        Tue, 24 Mar 2020 06:21:18 -0700 (PDT)
-Received: from quaco.ghostprotocols.net ([179.97.37.151])
-        by smtp.gmail.com with ESMTPSA id d2sm13080985qkf.117.2020.03.24.06.21.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Mar 2020 06:21:18 -0700 (PDT)
-From:   Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
-X-Google-Original-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
-        id B89FE40F77; Tue, 24 Mar 2020 10:21:15 -0300 (-03)
-Date:   Tue, 24 Mar 2020 10:21:15 -0300
-To:     Jiri Olsa <jolsa@redhat.com>
-Cc:     Ravi Bangoria <ravi.bangoria@linux.ibm.com>,
-        linux-kernel@vger.kernel.org, namhyung@kernel.org,
-        mark.rutland@arm.com, naveen.n.rao@linux.vnet.ibm.com
-Subject: Re: [PATCH] perf dso: Fix dso comparison
-Message-ID: <20200324132115.GC21569@kernel.org>
-References: <20200324042424.68366-1-ravi.bangoria@linux.ibm.com>
- <20200324104843.GS1534489@krava>
- <20200324130052.GB21569@kernel.org>
+        id S1729365AbgCXNZP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 09:25:15 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:53734 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728543AbgCXNZM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Mar 2020 09:25:12 -0400
+Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 1DA525CE02A283122618;
+        Tue, 24 Mar 2020 21:24:41 +0800 (CST)
+Received: from huawei.com (10.175.124.28) by DGGEMS403-HUB.china.huawei.com
+ (10.3.19.203) with Microsoft SMTP Server id 14.3.487.0; Tue, 24 Mar 2020
+ 21:24:32 +0800
+From:   yu kuai <yukuai3@huawei.com>
+To:     <axboe@kernel.dk>, <ming.lei@redhat.com>
+CC:     <linux-block@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <yukuai3@huawei.com>, <yi.zhang@huawei.com>, <houtao1@huawei.com>
+Subject: [PATCH V3] block: rename 'q->debugfs_dir' and 'q->blk_trace->dir' in blk_unregister_queue()
+Date:   Tue, 24 Mar 2020 21:23:15 +0800
+Message-ID: <20200324132315.22133-1-yukuai3@huawei.com>
+X-Mailer: git-send-email 2.17.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200324130052.GB21569@kernel.org>
-X-Url:  http://acmel.wordpress.com
+Content-Type: text/plain
+X-Originating-IP: [10.175.124.28]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Tue, Mar 24, 2020 at 10:00:52AM -0300, Arnaldo Carvalho de Melo escreveu:
-> Em Tue, Mar 24, 2020 at 11:48:43AM +0100, Jiri Olsa escreveu:
-> > On Tue, Mar 24, 2020 at 09:54:24AM +0530, Ravi Bangoria wrote:
-> > > Perf gets dso details from two different sources. 1st, from builid
-> > > headers in perf.data and 2nd from MMAP2 samples. Dso from buildid
-> > > header does not have dso_id detail. And dso from MMAP2 samples does
-> > > not have buildid information. If detail of the same dso is present
-> > > at both the places, filename is common.
-> > > 
-> > > Previously, __dsos__findnew_link_by_longname_id() used to compare only
-> > > long or short names, but Commit 0e3149f86b99 ("perf dso: Move dso_id
-> > > from 'struct map' to 'struct dso'") also added a dso_id comparison.
-> > > Because of that, now perf is creating two different dso objects of the
-> > > same file, one from buildid header (with dso_id but without buildid)
-> > > and second from MMAP2 sample (with buildid but without dso_id).
-> > > 
-> > > This is causing issues with archive, buildid-list etc subcommands. Fix
-> > > this by comparing dso_id only when it's present. And incase dso is
-> > > present in 'dsos' list without dso_id, inject dso_id detail as well.
-> > > 
-> > > Before:
-> > > 
-> > >   $ sudo ./perf buildid-list -H
-> > >   0000000000000000000000000000000000000000 /usr/bin/ls
-> > >   0000000000000000000000000000000000000000 /usr/lib64/ld-2.30.so
-> > >   0000000000000000000000000000000000000000 /usr/lib64/libc-2.30.so
-> > > 
-> > >   $ ./perf archive
-> > >   perf archive: no build-ids found
-> > > 
-> > > After:
-> > > 
-> > >   $ ./perf buildid-list -H
-> > >   b6b1291d0cead046ed0fa5734037fa87a579adee /usr/bin/ls
-> > >   641f0c90cfa15779352f12c0ec3c7a2b2b6f41e8 /usr/lib64/ld-2.30.so
-> > >   675ace3ca07a0b863df01f461a7b0984c65c8b37 /usr/lib64/libc-2.30.so
-> > > 
-> > >   $ ./perf archive
-> > >   Now please run:
-> > > 
-> > >   $ tar xvf perf.data.tar.bz2 -C ~/.debug
-> > > 
-> > >   wherever you need to run 'perf report' on.
+syzbot is reporting use after free bug in debugfs_remove[1].
 
-This improves the situation, but something else is still amiss:
+This is because in request_queue, 'q->debugfs_dir' and
+'q->blk_trace->dir' could be the same dir. And in __blk_release_queue(),
+blk_mq_debugfs_unregister() will remove everything inside the dir.
 
-[root@five ~]# perf buildid-list -H | grep ^000000000000 | while read -a line ; do path=${line[1]} ; nlines=$(perf buildid-list -H -i perf.data | grep $path | tee /tmp/lines | wc -l) ;[ $nlines -eq 2 ] && cat /tmp/lines ; done
-641f0c90cfa15779352f12c0ec3c7a2b2b6f41e8 /usr/lib64/ld-2.30.so
-0000000000000000000000000000000000000000 /usr/lib64/ld-2.30.so
-d40c8da7371d8adea464ae2b099590b2c4465574 /usr/lib64/libpthread-2.30.so
-0000000000000000000000000000000000000000 /usr/lib64/libpthread-2.30.so
-aec38b95c2b305c9f1943b2dd988aeb58c17a5d9 /usr/lib64/libm-2.30.so
-0000000000000000000000000000000000000000 /usr/lib64/libm-2.30.so
-675ace3ca07a0b863df01f461a7b0984c65c8b37 /usr/lib64/libc-2.30.so
-0000000000000000000000000000000000000000 /usr/lib64/libc-2.30.so
-8286f22591b0be26730eea306a22a0f30475590b /usr/bin/bash
-0000000000000000000000000000000000000000 /usr/bin/bash
-[root@five ~]#
+With futher investigation of the reporduce repro, the problem can be
+reporduced by following procedure:
 
-I.e. DSOs that have not changed:
+1. LOOP_CTL_ADD, create a request_queue q1, blk_mq_debugfs_register() will
+create the dir.
+2. LOOP_CTL_REMOVE, blk_release_queue() will add q1 to release queue.
+3. LOOP_CTL_ADD, create another request_queue q2,blk_mq_debugfs_register()
+will fail because the dir aready exist.
+4. BLKTRACESETUP, create two files(msg and dropped) inside the dir.
+5. call __blk_release_queue() for q1, debugfs_remove_recursive() will
+delete the files created in step 4.
+6. LOOP_CTL_REMOVE, blk_release_queue() will add q2 to release queue.
+And when __blk_release_queue() is called for q2, blk_trace_shutdown() will
+try to release the two files created in step 4, wich are aready released
+in step 5.
 
-[root@five ~]# grep libpthread /proc/*/maps | cut -d' ' -f6- | sort  | uniq -c
-    690                    /usr/lib64/libpthread-2.30.so
-[root@five ~]#
+thread1		         |kworker                   |thread2
+ ----------------------- | ------------------------ | --------------------
+loop_control_ioctl       |                          |
+ loop_add                |                          |
+  blk_mq_debugfs_register|                          |
+   debugfs_create_dir    |                          |
+loop_control_ioctl       |                          |
+ loop_remove		 |                          |
+  blk_release_queue      |                          |
+   schedule_work         |                          |
+                         |                          |loop_control_ioctl
+                         |                          | loop_add
+                         |                          |  ...
+                         |                          |blk_trace_ioctl
+                         |                          | __blk_trace_setup
+                         |                          |   debugfs_create_file
+                         |__blk_release_queue       |
+                         | blk_mq_debugfs_unregister|
+                         |  debugfs_remove_recursive|
+                         |                          |loop_control_ioctl
+                         |                          | loop_remove
+                         |                          |  ...
+                         |__blk_release_queue       |
+                         | blk_trace_shutdown       |
+                         |  debugfs_remove          |
 
-[root@five ~]# file /usr/lib64/libpthread-2.30.so
-/usr/lib64/libpthread-2.30.so: ELF 64-bit LSB shared object, x86-64, version 1 (SYSV), dynamically linked, interpreter /lib64/ld-linux-x86-64.so.2, BuildID[sha1]=d40c8da7371d8adea464ae2b099590b2c4465574, for GNU/Linux 3.2.0, not stripped
-[root@five ~]#
-[root@five ~]# perf buildid-list -i /usr/lib64/libpthread-2.30.so
-d40c8da7371d8adea464ae2b099590b2c4465574
-[root@five ~]#
+commit dc9edc44de6c ("block: Fix a blk_exit_rl() regression") pushed the
+final release of request_queue to a workqueue, so, when loop_add() is
+called again(step 3), __blk_release_queue() might not been called yet,
+which causes the problem.
 
-Appear with/without build-id in 'perf buildid-list'.
+Fix the problem by renaming 'q->debugfs_dir' or 'q->blk_trace->dir'
+in blk_unregister_queue() if they exist.
 
-I'm checking a bit more to see if I figure this out, I'll keep your
-patch in, maybe this is a diferent issue, will combine if needed.
+[1] https://syzkaller.appspot.com/bug?extid=903b72a010ad6b7a40f2
+References: CVE-2019-19770
+Fixes: commit dc9edc44de6c ("block: Fix a blk_exit_rl() regression")
+Reported-by: syzbot <syz...@syzkaller.appspotmail.com>
+Signed-off-by: yu kuai <yukuai3@huawei.com>
+---
+Changes in V2:
+ add device name to the new dir name
+ fix compile err when 'CONFIG_BLK_DEBUG_FS' is not enabled
+ add treatment of 'q->blk_trace->dir'
+Changes in V3:
+ handle 'q->debugfs-dir' and 'q->blk_trace->dir' respectivly
+ remove dev name to avoid memory leek when dev name is too long
+ warn_on when debugfs_rename failed, don't keep trying in a loop
 
-- Arnaldo
+ block/blk-sysfs.c | 51 +++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 51 insertions(+)
+
+diff --git a/block/blk-sysfs.c b/block/blk-sysfs.c
+index fca9b158f4a0..8cd124117e29 100644
+--- a/block/blk-sysfs.c
++++ b/block/blk-sysfs.c
+@@ -11,6 +11,8 @@
+ #include <linux/blktrace_api.h>
+ #include <linux/blk-mq.h>
+ #include <linux/blk-cgroup.h>
++#include <linux/debugfs.h>
++#include <linux/atomic.h>
+ 
+ #include "blk.h"
+ #include "blk-mq.h"
+@@ -1011,6 +1013,53 @@ int blk_register_queue(struct gendisk *disk)
+ }
+ EXPORT_SYMBOL_GPL(blk_register_queue);
+ 
++#ifdef CONFIG_DEBUG_FS
++
++void blk_rename_debugfs_dir(struct dentry **old)
++{
++	static atomic_t i = ATOMIC_INIT(0);
++	struct dentry *new;
++	char name[DNAME_INLINE_LEN];
++	u32 index = atomic_fetch_inc(&i);
++
++	snprintf(name, sizeof(name), "ready_to_remove_%u", index);
++	new = debugfs_lookup(name, blk_debugfs_root);
++	if (WARN_ON(new)) {
++		dput(new);
++		return;
++	}
++	new = debugfs_rename(blk_debugfs_root, *old, blk_debugfs_root, name);
++	if (WARN_ON(!new))
++		return;
++	*old = new;
++}
++/*
++ * blk_prepare_release_queue - rename q->debugfs_dir and q->blk_trace->dir
++ * @q: request_queue of which the dir to be renamed belong to.
++ *
++ * Because the final release of request_queue is in a workqueue, the
++ * cleanup might not been finished yet while the same device start to
++ * create. It's not correct if q->debugfs_dir still exist while trying
++ * to create a new one.
++ */
++static void blk_prepare_release_queue(struct request_queue *q)
++{
++#ifdef CONFIG_BLK_DEBUG_FS
++	if (!IS_ERR_OR_NULL(q->debugfs_dir))
++		blk_rename_debugfs_dir(&q->debugfs_dir);
++
++#endif
++#ifdef CONFIG_BLK_DEV_IO_TRACE
++	mutex_lock(&q->blk_trace_mutex);
++	if (q->blk_trace && !IS_ERR_OR_NULL(q->blk_trace->dir))
++		blk_rename_debugfs_dir(&q->blk_trace->dir);
++	mutex_unlock(&q->blk_trace_mutex);
++#endif
++}
++#else
++#define blk_prepare_release_queue(q)		do { } while (0)
++#endif
++
+ /**
+  * blk_unregister_queue - counterpart of blk_register_queue()
+  * @disk: Disk of which the request queue should be unregistered from sysfs.
+@@ -1039,6 +1088,7 @@ void blk_unregister_queue(struct gendisk *disk)
+ 	mutex_unlock(&q->sysfs_lock);
+ 
+ 	mutex_lock(&q->sysfs_dir_lock);
++	blk_prepare_release_queue(q);
+ 	/*
+ 	 * Remove the sysfs attributes before unregistering the queue data
+ 	 * structures that can be modified through sysfs.
+-- 
+2.17.2
+
