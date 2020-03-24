@@ -2,238 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3D279190AF8
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 11:29:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DB49C190B56
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 11:46:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727298AbgCXK3f (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 06:29:35 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:44335 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726524AbgCXK3f (ORCPT
+        id S1727124AbgCXKqC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 06:46:02 -0400
+Received: from mailgate1.rohmeurope.com ([87.129.152.131]:61998 "EHLO
+        mailgate1.rohmeurope.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726563AbgCXKqC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 06:29:35 -0400
-Received: from p5de0bf0b.dip0.t-ipconnect.de ([93.224.191.11] helo=nanos.tec.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1jGgoE-0001ho-Az; Tue, 24 Mar 2020 11:29:22 +0100
-Received: by nanos.tec.linutronix.de (Postfix, from userid 1000)
-        id 95A0F100292; Tue, 24 Mar 2020 11:29:21 +0100 (CET)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Xiaoyao Li <xiaoyao.li@intel.com>, Ingo Molnar <mingo@redhat.com>,
-        Borislav Petkov <bp@alien8.de>, hpa@zytor.com,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        kvm@vger.kernel.org, x86@kernel.org, linux-kernel@vger.kernel.org
-Cc:     Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Arvind Sankar <nivedita@alum.mit.edu>,
-        Fenghua Yu <fenghua.yu@intel.com>,
-        Tony Luck <tony.luck@intel.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Jim Mattson <jmattson@google.com>
-Subject: Re: [PATCH v5 1/9] x86/split_lock: Rework the initialization flow of split lock detection
-In-Reply-To: <beb9ab5c-a50d-2ec6-1c23-e426508cdf4e@intel.com>
-References: <20200315050517.127446-1-xiaoyao.li@intel.com> <20200315050517.127446-2-xiaoyao.li@intel.com> <87zhc7ovhj.fsf@nanos.tec.linutronix.de> <87lfnqq0oo.fsf@nanos.tec.linutronix.de> <beb9ab5c-a50d-2ec6-1c23-e426508cdf4e@intel.com>
-Date:   Tue, 24 Mar 2020 11:29:21 +0100
-Message-ID: <87tv2edp1a.fsf@nanos.tec.linutronix.de>
+        Tue, 24 Mar 2020 06:46:02 -0400
+X-Greylist: delayed 901 seconds by postgrey-1.27 at vger.kernel.org; Tue, 24 Mar 2020 06:46:01 EDT
+X-AuditID: c0a8fbf4-473ff70000004419-8b-5e79e1633674
+Received: from smtp.reu.rohmeu.com (will-cas002.reu.rohmeu.com [192.168.251.178])
+        by mailgate1.rohmeurope.com (Symantec Messaging Gateway) with SMTP id 2E.BD.17433.361E97E5; Tue, 24 Mar 2020 11:30:59 +0100 (CET)
+Received: from WILL-MAIL001.REu.RohmEu.com ([fe80::2915:304f:d22c:c6ba]) by
+ WILL-CAS002.REu.RohmEu.com ([fe80::fc24:4cbc:e287:8659%12]) with mapi id
+ 14.03.0487.000; Tue, 24 Mar 2020 11:30:54 +0100
+From:   "Vaittinen, Matti" <Matti.Vaittinen@fi.rohmeurope.com>
+To:     "andriy.shevchenko@linux.intel.com" 
+        <andriy.shevchenko@linux.intel.com>
+CC:     "tglx@linutronix.de" <tglx@linutronix.de>,
+        "dan.j.williams@intel.com" <dan.j.williams@intel.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "talgi@mellanox.com" <talgi@mellanox.com>,
+        "brendanhiggins@google.com" <brendanhiggins@google.com>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+        "Gary.Hook@amd.com" <Gary.Hook@amd.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "davidgow@google.com" <davidgow@google.com>,
+        "changbin.du@intel.com" <changbin.du@intel.com>,
+        "broonie@kernel.org" <broonie@kernel.org>,
+        "herbert@gondor.apana.org.au" <herbert@gondor.apana.org.au>,
+        "olteanv@gmail.com" <olteanv@gmail.com>,
+        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
+        "rdunlap@infradead.org" <rdunlap@infradead.org>,
+        "yamada.masahiro@socionext.com" <yamada.masahiro@socionext.com>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "Mutanen, Mikko" <Mikko.Mutanen@fi.rohmeurope.com>,
+        "bp@suse.de" <bp@suse.de>,
+        "mhiramat@kernel.org" <mhiramat@kernel.org>,
+        "krzk@kernel.org" <krzk@kernel.org>,
+        "mazziesaccount@gmail.com" <mazziesaccount@gmail.com>,
+        "skhan@linuxfoundation.org" <skhan@linuxfoundation.org>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "Laine, Markus" <Markus.Laine@fi.rohmeurope.com>,
+        "vincenzo.frascino@arm.com" <vincenzo.frascino@arm.com>,
+        "sre@kernel.org" <sre@kernel.org>,
+        "ardb@kernel.org" <ardb@kernel.org>,
+        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
+        "zaslonko@linux.ibm.com" <zaslonko@linux.ibm.com>,
+        "uwe@kleine-koenig.org" <uwe@kleine-koenig.org>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>
+Subject: Re: [PATCH v6 09/10] power: supply: Support ROHM bd99954 charger
+Thread-Topic: [PATCH v6 09/10] power: supply: Support ROHM bd99954 charger
+Thread-Index: AQHWAbbAyLpT1a+wPEGvvo/J38Wk46hXbxYAgAAAaoCAAArrAA==
+Date:   Tue, 24 Mar 2020 10:30:53 +0000
+Message-ID: <e9d1cdafb6b048147eae318e0d6843601442725a.camel@fi.rohmeurope.com>
+References: <cover.1584977512.git.matti.vaittinen@fi.rohmeurope.com>
+         <1bf2431b80489ae412e774519a92616a9aa2bcca.1584977512.git.matti.vaittinen@fi.rohmeurope.com>
+         <20200324095024.GE1922688@smile.fi.intel.com>
+         <20200324095153.GF1922688@smile.fi.intel.com>
+In-Reply-To: <20200324095153.GF1922688@smile.fi.intel.com>
+Accept-Language: en-US, de-DE
+Content-Language: de-DE
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [62.78.225.252]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <2BE73F2C85064547B8F97E281684098C@de.rohmeurope.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+X-Brightmail-Tracker: H4sIAAAAAAAAA02TbVBUVRjH59x79t7Dy22uK8pptQ9saSMGZtHMqaHGmj5cc8oa8oOZSxe5
+        7JL7wuyLQVMTyZKI44gvhCwLbiCCtgksjhjtjrizo0ANK2gBzq5KMU3gQL6NG1HUXq4Kn87/
+        nP/ze/7Ph+cgWn2W1aBCs12ymkWjlkmEPa2zvowdYyW65wfLMom7zcuQ/btrKDJz/09ADh5Y
+        QwZHDtOkemycIR2DlyhSU30ZEHfYCUlvRzskx0IDKvLX1UOQlDW1MWTf5EoSDrez5MHVCooc
+        +aeFIle63Qy5tz8ESPPwIEXczb2QNLWsJu2dMYpMRWogKQ+EWBKoOaEiP/5gJ1/XB1jS6aum
+        yfDdaxQJzM1AErh+D5CLd2bAhjShfOhfRvA2eIFw5uQoJXzvirLC2Z5VgsfnEDpb04Um/wQl
+        +E7tZYRDJxpVQuQXPyNMDwywQu/RWShUNfYAoaHvPeF8vZd9N+WDpOw80b4rp1BvXvfaR0mG
+        qF9XdA0VO6eisBT4USVIQJjPwrfqLtOVIBGp+Z8BLrv9B1AuvQCP9nlUlQAhhs/GlaOsDKTw
+        m/Df0yPzNTTv53DFVIiSjaX8Rtx6Y0ilFL2FW74KMIp+A58ed87DkF+Fa7taoKw5/h08W/fl
+        w+RyCgf3zMwDCfwr+NvwdVrWgH8K7y2dng+g+VTs+z2mUsbm8XF/mFb0Mjzx29zD9zTcFTsN
+        5aFpfg1u616noBtw4MBhqOg0fGTfGKvMsAT31Y7DKrDctSjBtUC7FtGuRbRrEe0BqlMAm8RC
+        o160S+szrZIj02oxmOLHDovJB5Q9vH8O/BfcGAQUAkHwJKK0y7iPb5bo1E/kWfJLDKLNkGt1
+        GCVbEGBEa1O4TqlYp+byxZJPJavlkbUCQW0q9+zYwe1qXs7aKUlFkvWRuxIhLeZy5KZLrJJe
+        Ki4oNNoXbAolyM0TNSk2yZwvWUWH3ZAr70euLb4gspUcz90s45ytSDTFXxW0H6xFVRP1jTQK
+        1Tc30mpotpglTSpnlEt5udTgMD8OmgSpCGiXckWymxz/jI/7TMYjqHiE3vWJHGEXFyxNKfj8
+        9cgZsS5ni/D+yBcfvvTgTuQuE4tqnBkdGT/t8T/NdI1HoicvmZ7pF8+/ulOf7X4h4bu65KGq
+        7U23n9td8E2W/jjtTZoObRmIOWzHbvarq2E4yzO8CRWsfXvrjTfNSc7N58S8Cyu26Tz5L++6
+        ld59xffixK/L5z7bNloR7qplLjZc0EKbQVyfTltt4v+caEJkSQQAAA==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Xiaoyao Li <xiaoyao.li@intel.com> writes:
-> On 3/24/2020 4:24 AM, Thomas Gleixner wrote:
->> --- a/arch/x86/kernel/cpu/intel.c
->> +++ b/arch/x86/kernel/cpu/intel.c
->> @@ -45,6 +45,7 @@ enum split_lock_detect_state {
->>    * split lock detect, unless there is a command line override.
->>    */
->>   static enum split_lock_detect_state sld_state = sld_off;
->> +static DEFINE_PER_CPU(u64, msr_test_ctrl_cache);
->
-> I used percpu cache in v3, but people prefer Tony's cache for reserved 
-> bits[1].
->
-> If you prefer percpu cache, I'll use it in next version.
-
-I'm fine with the single variable.
-
->>   static void __init split_lock_setup(void)
->>   {
->>   	char arg[20];
->>   	int i, ret;
->>   
->> +	if (!split_lock_verify_msr(true) || !split_lock_verify_msr(false)) {
->> +		pr_info("MSR access failed: Disabled\n");
->> +		return;
->> +	}
->> +
->
-> I did similar thing like this in my v3, however Sean raised concern that 
-> toggling MSR bit before parsing kernel param is bad behavior. [2]
-
-That's trivial enough to fix.
-
-Thanks,
-
-        tglx
-
-8<---------------
---- a/arch/x86/kernel/cpu/intel.c
-+++ b/arch/x86/kernel/cpu/intel.c
-@@ -44,7 +44,8 @@ enum split_lock_detect_state {
-  * split_lock_setup() will switch this to sld_warn on systems that support
-  * split lock detect, unless there is a command line override.
-  */
--static enum split_lock_detect_state sld_state = sld_off;
-+static enum split_lock_detect_state sld_state __ro_after_init = sld_off;
-+static u64 msr_test_ctrl_cache __ro_after_init;
- 
- /*
-  * Processors which have self-snooping capability can handle conflicting
-@@ -984,78 +985,85 @@ static inline bool match_option(const ch
- 	return len == arglen && !strncmp(arg, opt, len);
- }
- 
-+static bool __init split_lock_verify_msr(bool on)
-+{
-+	u64 ctrl, tmp;
-+
-+	if (rdmsrl_safe(MSR_TEST_CTRL, &ctrl))
-+		return false;
-+	if (on)
-+		ctrl |= MSR_TEST_CTRL_SPLIT_LOCK_DETECT;
-+	else
-+		ctrl &= ~MSR_TEST_CTRL_SPLIT_LOCK_DETECT;
-+	if (wrmsrl_safe(MSR_TEST_CTRL, ctrl))
-+		return false;
-+	rdmsrl(MSR_TEST_CTRL, tmp);
-+	return ctrl == tmp;
-+}
-+
- static void __init split_lock_setup(void)
- {
-+	enum split_lock_detect_state state = sld_warn;
- 	char arg[20];
- 	int i, ret;
- 
--	setup_force_cpu_cap(X86_FEATURE_SPLIT_LOCK_DETECT);
--	sld_state = sld_warn;
-+	if (!split_lock_verify_msr(false)) {
-+		pr_info("MSR access failed: Disabled\n");
-+		return;
-+	}
- 
- 	ret = cmdline_find_option(boot_command_line, "split_lock_detect",
- 				  arg, sizeof(arg));
- 	if (ret >= 0) {
- 		for (i = 0; i < ARRAY_SIZE(sld_options); i++) {
- 			if (match_option(arg, ret, sld_options[i].option)) {
--				sld_state = sld_options[i].state;
-+				state = sld_options[i].state;
- 				break;
- 			}
- 		}
- 	}
- 
--	switch (sld_state) {
-+	switch (state) {
- 	case sld_off:
- 		pr_info("disabled\n");
--		break;
--
-+		return;
- 	case sld_warn:
- 		pr_info("warning about user-space split_locks\n");
- 		break;
--
- 	case sld_fatal:
- 		pr_info("sending SIGBUS on user-space split_locks\n");
- 		break;
- 	}
-+
-+	rdmsrl(MSR_TEST_CTRL, msr_test_ctrl_cache);
-+
-+	if (!split_lock_verify_msr(true)) {
-+		pr_info("MSR access failed: Disabled\n");
-+		return;
-+	}
-+
-+	sld_state = state;
-+	setup_force_cpu_cap(X86_FEATURE_SPLIT_LOCK_DETECT);
- }
- 
- /*
-- * Locking is not required at the moment because only bit 29 of this
-- * MSR is implemented and locking would not prevent that the operation
-- * of one thread is immediately undone by the sibling thread.
-- * Use the "safe" versions of rdmsr/wrmsr here because although code
-- * checks CPUID and MSR bits to make sure the TEST_CTRL MSR should
-- * exist, there may be glitches in virtualization that leave a guest
-- * with an incorrect view of real h/w capabilities.
-+ * MSR_TEST_CTRL is per core, but we treat it like a per CPU MSR. Locking
-+ * is not implemented as one thread could undo the setting of the other
-+ * thread immediately after dropping the lock anyway.
-  */
--static bool __sld_msr_set(bool on)
-+static void sld_update_msr(bool on)
- {
--	u64 test_ctrl_val;
--
--	if (rdmsrl_safe(MSR_TEST_CTRL, &test_ctrl_val))
--		return false;
-+	u64 ctrl = msr_test_ctrl_cache;
- 
- 	if (on)
--		test_ctrl_val |= MSR_TEST_CTRL_SPLIT_LOCK_DETECT;
--	else
--		test_ctrl_val &= ~MSR_TEST_CTRL_SPLIT_LOCK_DETECT;
--
--	return !wrmsrl_safe(MSR_TEST_CTRL, test_ctrl_val);
-+		ctrl |= MSR_TEST_CTRL_SPLIT_LOCK_DETECT;
-+	wrmsrl(MSR_TEST_CTRL, ctrl);
- }
- 
- static void split_lock_init(void)
- {
--	if (sld_state == sld_off)
--		return;
--
--	if (__sld_msr_set(true))
--		return;
--
--	/*
--	 * If this is anything other than the boot-cpu, you've done
--	 * funny things and you get to keep whatever pieces.
--	 */
--	pr_warn("MSR fail -- disabled\n");
--	sld_state = sld_off;
-+	if (boot_cpu_has(X86_FEATURE_SPLIT_LOCK_DETECT))
-+		sld_update_msr(sld_state != sld_off);
- }
- 
- bool handle_user_split_lock(struct pt_regs *regs, long error_code)
-@@ -1071,7 +1079,7 @@ bool handle_user_split_lock(struct pt_re
- 	 * progress and set TIF_SLD so the detection is re-enabled via
- 	 * switch_to_sld() when the task is scheduled out.
- 	 */
--	__sld_msr_set(false);
-+	sld_update_msr(false);
- 	set_tsk_thread_flag(current, TIF_SLD);
- 	return true;
- }
-@@ -1085,7 +1093,7 @@ bool handle_user_split_lock(struct pt_re
-  */
- void switch_to_sld(unsigned long tifn)
- {
--	__sld_msr_set(!(tifn & _TIF_SLD));
-+	sld_update_msr(!(tifn & _TIF_SLD));
- }
- 
- #define SPLIT_LOCK_CPU(model) {X86_VENDOR_INTEL, 6, model, X86_FEATURE_ANY}
+SGVsbG8gQW5keSwNCg0KVGhhbmtzIGZvciB0YWtpbmcgdGhlIHRpbWUgYW5kIHJldmlld2luZyB0
+aGlzIDopIEFwcHJlY2lhdGVkLg0KDQpPbiBUdWUsIDIwMjAtMDMtMjQgYXQgMTE6NTEgKzAyMDAs
+IEFuZHkgU2hldmNoZW5rbyB3cm90ZToNCj4gT24gVHVlLCBNYXIgMjQsIDIwMjAgYXQgMTE6NTA6
+MjRBTSArMDIwMCwgQW5keSBTaGV2Y2hlbmtvIHdyb3RlOg0KPiA+IE9uIFR1ZSwgTWFyIDI0LCAy
+MDIwIGF0IDEwOjMyOjE5QU0gKzAyMDAsIE1hdHRpIFZhaXR0aW5lbiB3cm90ZToNCj4gPiA+ICtz
+dGF0aWMgaW50IGJkOTk5NXhfZ2V0X3Byb3BfYmF0dF9wcmVzZW50KHN0cnVjdCBiZDk5OTV4X2Rl
+dmljZQ0KPiA+ID4gKmJkKQ0KPiA+ID4gK3sNCj4gPiA+ICsJaW50IHJldCwgdG1wOw0KPiA+ID4g
+Kw0KPiA+ID4gKwlyZXQgPSByZWdtYXBfZmllbGRfcmVhZChiZC0+cm1hcF9maWVsZHNbRl9CQVRU
+RU1QXSwgJnRtcCk7DQo+ID4gPiArCWlmIChyZXQpDQo+ID4gPiArCQlyZXR1cm4gZmFsc2U7DQo+
+ID4gPiArDQo+ID4gPiArCXJldHVybiAodG1wICE9IEJBVFRfT1BFTikgPyB0cnVlIDogZmFsc2U7
+DQo+ID4gDQo+ID4gQyAxMDEgKEkgc2F3IHNvbWV3aGVyZSBjb2NjaW5lbGxlIHNjcmlwdCBmb3Ig
+dGhpcyk6DQo+ID4gDQo+ID4gCXJldHVybiB0bXAgIT0gQkFUVF9PUEVOOw0KPiA+IA0KPiA+ID4g
+K30NCj4gDQo+IEFoLCBhbmQgZXZlbiBtb3JlLiBNaXN0eXBlIG9mIGZ1bmN0aW9uIGFuZCByZXR1
+cm4gdmFsdWUuDQo+IA0KUmlnaHQuIEFuZCBzYW1lIGlzIGRvbmUgaW4gcmV0dXJuIGFib3ZlLiBJ
+J2xsIGZpeCB0aGlzLg0K
