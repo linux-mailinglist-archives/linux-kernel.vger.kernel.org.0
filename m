@@ -2,236 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D0C1119061F
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 08:13:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E283A19062F
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 08:22:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727426AbgCXHNx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 03:13:53 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:23944 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725905AbgCXHNw (ORCPT
+        id S1727455AbgCXHW6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 03:22:58 -0400
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:46608 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727304AbgCXHW6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 03:13:52 -0400
-Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 02O73tpT095384;
-        Tue, 24 Mar 2020 03:13:41 -0400
-Received: from ppma02dal.us.ibm.com (a.bd.3ea9.ip4.static.sl-reverse.com [169.62.189.10])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2ywbuv2b88-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 24 Mar 2020 03:13:41 -0400
-Received: from pps.filterd (ppma02dal.us.ibm.com [127.0.0.1])
-        by ppma02dal.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id 02O75stb017615;
-        Tue, 24 Mar 2020 07:13:40 GMT
-Received: from b03cxnp08028.gho.boulder.ibm.com (b03cxnp08028.gho.boulder.ibm.com [9.17.130.20])
-        by ppma02dal.us.ibm.com with ESMTP id 2ywaw1v8p0-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 24 Mar 2020 07:13:40 +0000
-Received: from b03ledav002.gho.boulder.ibm.com (b03ledav002.gho.boulder.ibm.com [9.17.130.233])
-        by b03cxnp08028.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 02O7Dc9O38011136
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 24 Mar 2020 07:13:38 GMT
-Received: from b03ledav002.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id D59AF13604F;
-        Tue, 24 Mar 2020 07:13:38 +0000 (GMT)
-Received: from b03ledav002.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 9D884136051;
-        Tue, 24 Mar 2020 07:13:34 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.199.58.144])
-        by b03ledav002.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Tue, 24 Mar 2020 07:13:34 +0000 (GMT)
-Subject: Re: [PATCH v4] tools/perf/metricgroup: Fix printing event names of
- metric group with multiple events incase of overlapping events
-To:     Joakim Zhang <qiangqing.zhang@nxp.com>,
-        "acme@kernel.org" <acme@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
-        Andi Kleen <ak@linux.intel.com>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-perf-users@vger.kernel.org" <linux-perf-users@vger.kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Kan Liang <kan.liang@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Jin Yao <yao.jin@linux.intel.com>,
-        Madhavan Srinivasan <maddy@linux.vnet.ibm.com>,
-        Anju T Sudhakar <anju@linux.vnet.ibm.com>,
-        Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-References: <20200212054102.9259-1-kjain@linux.ibm.com>
- <DB7PR04MB46186AB5557F4D04FD5C4FEAE6160@DB7PR04MB4618.eurprd04.prod.outlook.com>
- <be86ba99-ab5a-c845-46b6-8081edee00ca@linux.ibm.com>
- <DB7PR04MB461807389FDF9629ACA04533E6130@DB7PR04MB4618.eurprd04.prod.outlook.com>
- <cb9b353b-c18a-0064-eb72-a6c91d5fdec9@linux.ibm.com>
- <DB7PR04MB4618D0696D39AC5D44FF5A51E6F50@DB7PR04MB4618.eurprd04.prod.outlook.com>
-From:   kajoljain <kjain@linux.ibm.com>
-Message-ID: <648e08fb-ffd2-16f6-005d-527ac3fee6c0@linux.ibm.com>
-Date:   Tue, 24 Mar 2020 12:43:32 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Tue, 24 Mar 2020 03:22:58 -0400
+Received: by mail-ed1-f68.google.com with SMTP id cf14so10381409edb.13;
+        Tue, 24 Mar 2020 00:22:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=xbAGFRUEc8WSi1m7tXd4QfoMkZSNw03YADtsowLEzJc=;
+        b=QyOmm5ahPvMwOgaXbRvjRYuAGztnFHABZ1ay5NdVP4sQfwveT2bJtwcHD/pdhafXym
+         U3nmrRDDkm5CH57XGUjkFfhcFTqtJ75wBKA3D/xK7YIDkeLMc+peRX1DdELLta4aIJYW
+         PFvq29PXNTvktpqhI6OftKvvikVNkcVqeCnHmKBAmUndElIMXBm0eo+GM/ZOdieYzlY6
+         25Bz8T61jhZNAQv0c3H5ISif/2X9CWiVJKD38SFMLDkdG+a0Zw7ZjFJf9y7h1xWkdq6C
+         oJbZGXWj7p7T3mP82mNa9QxOQMm4/t33FJyobBTT2RRm+liOgYAGhAMxZ3DlNvxHm0Rm
+         MntA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=xbAGFRUEc8WSi1m7tXd4QfoMkZSNw03YADtsowLEzJc=;
+        b=giSg/4H0Rp8ieq2yvdC558N9SSIXkeI8LZVDf77iP5YbeYQhFiK45//aAH6kbLdcIA
+         SNhpKf63DONfi99DwPaktb6ctIgJ9M3OwVvirm0GrEY2HG2tGPzftIZxrh9sysyzKKOx
+         /uEYe6vNjLypDnDAqUImBju05c5zpbxQTw3qZR8ig81cXrm/fJfHwyQrQV0jXXa/RA60
+         vlDAqFkNhJNaJKD1Lfp29kAZN3jAg9vI8yy1Tuhj1VBOye2QEYTiobiX5WIaVwvJYcjF
+         7i5NoTFJbVeR5L7xbkVtvHV8BH7BwA8OVVSrufTaaxuJMDaGY4jkCq6kcndsmNzUz9jr
+         yW8g==
+X-Gm-Message-State: ANhLgQ26HIFIEtH1tRKcgivVNOeaNFSDPJsLo24FUnlUIVjdvY9vbgZo
+        u2tD+TadmdYrHvaBax0NKMg=
+X-Google-Smtp-Source: ADFU+vvv3nq9kXL78yrg4zvv6t3eZQV3/PwSXUQ6OlTRVy235ugMyeReRt5WE1ttXU1U9XZsmbHKeA==
+X-Received: by 2002:a17:906:5c43:: with SMTP id c3mr21253612ejr.3.1585034576216;
+        Tue, 24 Mar 2020 00:22:56 -0700 (PDT)
+Received: from localhost.localdomain (45.239.197.178.dynamic.wless.lssmb00p-cgnat.res.cust.swisscom.ch. [178.197.239.45])
+        by smtp.googlemail.com with ESMTPSA id bc11sm12420edb.34.2020.03.24.00.22.55
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 24 Mar 2020 00:22:55 -0700 (PDT)
+From:   Jean-Philippe Menil <jpmenil@gmail.com>
+To:     yhs@fb.com
+Cc:     kernel-janitors@vger.kernel.org, jpmenil@gmail.com,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Song Liu <songliubraving@fb.com>,
+        Andrii Nakryiko <andriin@fb.com>, netdev@vger.kernel.org,
+        bpf@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2] bpf: fix build warning - missing prototype
+Date:   Tue, 24 Mar 2020 08:22:31 +0100
+Message-Id: <20200324072231.5780-1-jpmenil@gmail.com>
+X-Mailer: git-send-email 2.25.2
+In-Reply-To: <7c27e51f-6a64-7374-b705-450cad42146c@fb.com>
+References: <7c27e51f-6a64-7374-b705-450cad42146c@fb.com>
 MIME-Version: 1.0
-In-Reply-To: <DB7PR04MB4618D0696D39AC5D44FF5A51E6F50@DB7PR04MB4618.eurprd04.prod.outlook.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.645
- definitions=2020-03-24_01:2020-03-23,2020-03-24 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015
- priorityscore=1501 lowpriorityscore=0 malwarescore=0 bulkscore=0
- adultscore=0 mlxscore=0 phishscore=0 impostorscore=0 mlxlogscore=999
- suspectscore=0 spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2003020000 definitions=main-2003240032
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Fix build warnings when building net/bpf/test_run.o with W=1 due
+to missing prototype for bpf_fentry_test{1..6}.
 
+Declare prototypes in order to silence warnings.
 
-On 3/20/20 12:17 PM, Joakim Zhang wrote:
-> 
-> [...]
->>>>> Hi Kajol,
->>>>>
->>>>> I am not sure if it is good to ask a question here :-)
->>>>>
->>>>> I encountered a perf metricgroup issue, the result is incorrect when
->>>>> the
->>>> metric includes more than 2 events.
->>>>>
->>>>> git log --oneline tools/perf/util/metricgroup.c
->>>>> 3635b27cc058 perf metricgroup: Fix printing event names of metric
->>>>> group with multiple events f01642e4912b perf metricgroup: Support
->>>>> multiple events for metricgroup
->>>>> 287f2649f791 perf metricgroup: Scale the metric result
->>>>>
->>>>> I did a simple test, below is the JSON file and result.
->>>>> [
->>>>>         {
->>>>>              "PublicDescription": "Calculate DDR0 bus actual
->>>>> utilization
->>>> which vary from DDR0 controller clock frequency",
->>>>>              "BriefDescription": "imx8qm: ddr0 bus actual utilization",
->>>>>              "MetricName": "imx8qm-ddr0-bus-util",
->>>>>              "MetricExpr": "( imx8_ddr0\\/read\\-cycles\\/ +
->>>> imx8_ddr0\\/write\\-cycles\\/ )",
->>>>>              "MetricGroup": "i.MX8QM_DDR0_BUS_UTIL"
->>>>>         }
->>>>> ]
->>>>> ./perf stat -I 1000 -M imx8qm-ddr0-bus-util
->>>>> #           time             counts unit events
->>>>>      1.000104250              16720      imx8_ddr0/read-cycles/
->>>> #  22921.0 imx8qm-ddr0-bus-util
->>>>>      1.000104250               6201
->> imx8_ddr0/write-cycles/
->>>>>      2.000525625               8316      imx8_ddr0/read-cycles/
->>>> #  12785.5 imx8qm-ddr0-bus-util
->>>>>      2.000525625               2738
->> imx8_ddr0/write-cycles/
->>>>>      3.000819125               1056      imx8_ddr0/read-cycles/
->>>> #   4136.7 imx8qm-ddr0-bus-util
->>>>>      3.000819125                303
->> imx8_ddr0/write-cycles/
->>>>>      4.001103750               6260      imx8_ddr0/read-cycles/
->>>> #   9149.8 imx8qm-ddr0-bus-util
->>>>>      4.001103750               2317
->> imx8_ddr0/write-cycles/
->>>>>      5.001392750               2084      imx8_ddr0/read-cycles/
->>>> #   4516.0 imx8qm-ddr0-bus-util
->>>>>      5.001392750                601
->> imx8_ddr0/write-cycles/
->>>>>
->>>>> You can see that only the first result is correct, could this be
->>>>> reproduced at
->>>> you side?
->>>>
->>>> Hi Joakim,
->>>>         Will try to look into it from my side.
->>>
->>
->>> Thanks Kajol for your help, I look into this issue, but don't know how to fix it.
->>>
->>> The results are always correct if signal event used in "MetricExpr" with "-I"
->> parameters, but the results are incorrect when more than one events used in
->> "MetricExpr".
->>>
->>
->> Hi Joakim,
->>     So, I try to look into this issue and understand the flow. From my
->> understanding, whenever we do
->>     calculation of metric expression we don't use exact count we are getting.
->>     Basically we use mean value of each event in the calculation of metric
->> expression.
->>
->> So, I am taking same example you refer.
->>
->> Metric Event: imx8qm-ddr0-bus-util
->> MetricExpr": "( imx8_ddr0\\/read\\-cycles\\/ + imx8_ddr0\\/write\\-cycles\\/ )"
->>
->> command#: ./perf stat -I 1000 -M imx8qm-ddr0-bus-util
->>
->> #           time             counts unit events
->>      1.000104250              16720      imx8_ddr0/read-cycles/
->> #  22921.0 imx8qm-ddr0-bus-util
->>      1.000104250               6201      imx8_ddr0/write-cycles/
->>      2.000525625               8316      imx8_ddr0/read-cycles/
->> #  12785.5 imx8qm-ddr0-bus-util
->>      2.000525625               2738      imx8_ddr0/write-cycles/
->>      3.000819125               1056      imx8_ddr0/read-cycles/
->> #   4136.7 imx8qm-ddr0-bus-util
->>      3.000819125                303      imx8_ddr0/write-cycles/
->>      4.001103750               6260      imx8_ddr0/read-cycles/
->> #   9149.8 imx8qm-ddr0-bus-util
->>      4.001103750               2317      imx8_ddr0/write-cycles/
->>      5.001392750               2084      imx8_ddr0/read-cycles/
->> #   4516.0 imx8qm-ddr0-bus-util
->>      5.001392750                601      imx8_ddr0/write-cycles/
->>
->> If you see we have a function called 'update_stats' in file util/stat.c where we
->> do this calculation and updating stats->mean value. And this mean value is
->> what we are using actually in our metric expression calculation.
->>
->> We call this function in each iteration where we update stats->mean and
->> stats->n for each event.
->> But one weird issue is, for very first event, stat->n is always 1 that is why we
->> are getting mean same as count.
->> So this is the reason for single event you get exact aggregate of metric
->> expression.
->> So doesn't matter how many events you have in your metric expression, every
->> time you take exact count for first one and normalized value for rest which is
->> weird.
->>
->> According to update_stats function:  We are updating mean as:
->>
->> stats->mean += delta / stats->n where,  delta = val - stats->mean.
->>
->> If we take write-cycles here. Initially mean = 0 and n = 1.
->>
->> 1st iteration: n=1, write cycle : 6201 and mean = 6201  (Final agg value: 16720
->> + 6201 = 22921) 2nd iteration: n=2, write cycles:  6201 + (2738 - 6201)/2 =
->> 4469.5  (Final aggr value: 8316 + 4469.5 = 12785.5) 3rd iteration: n=3, write
->> cycles: 4469.5 + (303 - 4469.5)/3 = 3080.6667 (Final aggr value: 1056 +
->> 3080.6667 = 4136.7)
->>
->> Andi and Jiri, I am not sure if its expected behavior. I mean shouldn't we either
->> take mean value of each event or take n as 1 for each event. And one more
->> question, Should we add an option to say whether user want exact aggregate
->> or this normalize aggregate to remove the confusion? I try to find it out if we
->> already have one but didn't get.
->> Please let me know if my understanding is fine.
-> 
-> Hi Kajol,
-> 
-> Sorry, your reply was buried in a sea of emails, it comes into my eyes when I searched any feedback from you. Much thanks for your great details!!!!!
-> 
-> I can quite understand what you explained. As a user, I think we always want to get the exact result according to the metric expression.
-> 
-> Can you take this case as an example then send out a formal email into mailing list to reflect this weird issue, more people can participate and discuss about it. Or you need me clear up and sent out the email?
-> This could attract maintainers' attention.
-> 
+Signed-off-by: Jean-Philippe Menil <jpmenil@gmail.com>
+---
+ net/bpf/test_run.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-Hi Joakim,
-    Yes you are right, I will send separate mail on lkml. That way it will be better.
+diff --git a/net/bpf/test_run.c b/net/bpf/test_run.c
+index d555c0d8657d..cdf87fb0b6eb 100644
+--- a/net/bpf/test_run.c
++++ b/net/bpf/test_run.c
+@@ -113,31 +113,37 @@ static int bpf_test_finish(const union bpf_attr *kattr,
+  * architecture dependent calling conventions. 7+ can be supported in the
+  * future.
+  */
++int noinline bpf_fentry_test1(int a);
+ int noinline bpf_fentry_test1(int a)
+ {
+ 	return a + 1;
+ }
+ 
++int noinline bpf_fentry_test2(int a, u64 b);
+ int noinline bpf_fentry_test2(int a, u64 b)
+ {
+ 	return a + b;
+ }
+ 
++int noinline bpf_fentry_test3(char a, int b, u64 c);
+ int noinline bpf_fentry_test3(char a, int b, u64 c)
+ {
+ 	return a + b + c;
+ }
+ 
++int noinline bpf_fentry_test4(void *a, char b, int c, u64 d);
+ int noinline bpf_fentry_test4(void *a, char b, int c, u64 d)
+ {
+ 	return (long)a + b + c + d;
+ }
+ 
++int noinline bpf_fentry_test5(u64 a, void *b, short c, int d, u64 e);
+ int noinline bpf_fentry_test5(u64 a, void *b, short c, int d, u64 e)
+ {
+ 	return a + (long)b + c + d + e;
+ }
+ 
++int noinline bpf_fentry_test6(u64 a, void *b, short c, int d, void *e, u64 f);
+ int noinline bpf_fentry_test6(u64 a, void *b, short c, int d, void *e, u64 f)
+ {
+ 	return a + (long)b + c + d + (long)e + f;
+-- 
+2.25.2
 
-Thanks,
-Kajol
-
-> Best Regards,
-> Joakim Zhang
-> 
