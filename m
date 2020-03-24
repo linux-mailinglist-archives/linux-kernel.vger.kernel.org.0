@@ -2,118 +2,61 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2FDAA1905BB
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 07:28:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A733A1905BE
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 07:29:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727313AbgCXG2u (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 02:28:50 -0400
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:40153 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725905AbgCXG2t (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 02:28:49 -0400
-Received: by mail-qt1-f193.google.com with SMTP id c9so7118092qtw.7
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Mar 2020 23:28:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=UeR+WctkiQFjyudT58ukpFLDVLpreIAvF+0Uils+20U=;
-        b=f9VAvmlq/OnYPz8TdXl8tGTtShIl3d4rinP15u1VrlUSmUaaOVVs2YhocxdpOrf/8C
-         QhLKXiAJSrwJfZuppp2XDyMR5W3u0jKrM6kyT0af3Y+2vH6eV2j5K5Fmp3mElRmHPcR5
-         XeIZbUzDOycVk1fumI+fnQ0Rvy1MML/808QzQdMZikscRt3F5nHJPhRcNmVUJAD7L/Ml
-         ELw4DmQHl6EuSJ4ap4HFhlhO57nDlUFlkc7n+Kofy5Ju2sd50ijHeZgQpYfxBdHT3A2R
-         NTJA/7XIKo3YyWK77imovp1xPv5POMJr4lQZYBDUmYoIqEHX10AZXcewU05fw7e5o9q6
-         IeBw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=UeR+WctkiQFjyudT58ukpFLDVLpreIAvF+0Uils+20U=;
-        b=ZQJwvXfkZK0gTM7TbugNkNKhbmabpe12iy0W6qF10dCmccl08g56L0btpZjbgoy7sn
-         J4+Tf1aL9jO7SsUWNGSKIP4bLK6UZVca3YUOO4/ry6Htz+97YNoUctC8lf6EoKaChzWX
-         VhUi32344ooO11yOjWkQyenPa+A837um4zpC4Cl4d0o+GvpVV4ZmsZuMBLvCc2sAuVuZ
-         lPyLHSz45O16rVkf2Fri0XHMKxZCt3bL6d1ivDsobz+P51yEahisQP+hctuQyIy7H95O
-         XUD5uvTrkka80xfQQYGYnsfNtGttDXAIN9rThtGtYF5yvM59h/l5Y9MTv6qI5B2SVjKL
-         Nfmw==
-X-Gm-Message-State: ANhLgQ26GAZmfz/t1OUOt3oq8+lPoNyXFDL0RPxGZ9jGAJdpna/eSBZG
-        smoJntP53FaxRgszBlxntWC4ogIvZ8ojB2r3qxA=
-X-Google-Smtp-Source: ADFU+vs0c/6r9rUWsVmVu8Uq/NXxjewHjvbCESmshY1cW5DQswDnY3jgZwOm8Wsg0dI+KC6zSYPSRMS0hGd4qZDgnmA=
-X-Received: by 2002:aed:34e6:: with SMTP id x93mr24599704qtd.194.1585031326961;
- Mon, 23 Mar 2020 23:28:46 -0700 (PDT)
+        id S1727420AbgCXG25 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 02:28:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49128 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725905AbgCXG25 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Mar 2020 02:28:57 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8597820663;
+        Tue, 24 Mar 2020 06:28:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1585031336;
+        bh=QXnZDI5i54nlP9QF18vP1OcNbhYUp6bbcas64dls10w=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=u3rPCmFCYMNcFFoItsXZ1KUwNaD8tLa+PdkbHJKkOV+ddwKoY18kRUINpBbhW/ISl
+         E3AzpcFkEWRa+PhPYD/y3eLdxUcYi1fHqLLItvVkx1TJtCpzWWNn5aWlhNAWmspXaV
+         tSNOFKKHcnWruNLDgCtldVvr/dUrKJkeXBKu3fWs=
+Date:   Tue, 24 Mar 2020 07:28:53 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Eugene Syromiatnikov <esyr@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        Pratik Patel <pratikp@codeaurora.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Michael Williams <michael.williams@arm.com>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Chunyan Zhang <zhang.chunyan@linaro.org>,
+        "Dmitry V. Levin" <ldv@altlinux.org>
+Subject: Re: [PATCH] coresight: do not use the BIT() macro in the UAPI header
+Message-ID: <20200324062853.GD1977781@kroah.com>
+References: <20200324042213.GA10452@asgard.redhat.com>
 MIME-Version: 1.0
-References: <1584942732-2184-1-git-send-email-iamjoonsoo.kim@lge.com>
- <1584942732-2184-9-git-send-email-iamjoonsoo.kim@lge.com> <20200323174257.GF204561@cmpxchg.org>
-In-Reply-To: <20200323174257.GF204561@cmpxchg.org>
-From:   Joonsoo Kim <js1304@gmail.com>
-Date:   Tue, 24 Mar 2020 15:28:36 +0900
-Message-ID: <CAAmzW4Mts-EbsYGWbdJyAR01dsoVNR4OYbRDCxfp_eD_p4fD0w@mail.gmail.com>
-Subject: Re: [PATCH v4 8/8] mm/swap: count a new anonymous page as a
- reclaim_state's rotate
-To:     Johannes Weiner <hannes@cmpxchg.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Hugh Dickins <hughd@google.com>,
-        Minchan Kim <minchan@kernel.org>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Mel Gorman <mgorman@techsingularity.net>, kernel-team@lge.com,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200324042213.GA10452@asgard.redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2020=EB=85=84 3=EC=9B=94 24=EC=9D=BC (=ED=99=94) =EC=98=A4=EC=A0=84 2:43, J=
-ohannes Weiner <hannes@cmpxchg.org>=EB=8B=98=EC=9D=B4 =EC=9E=91=EC=84=B1:
->
-> On Mon, Mar 23, 2020 at 02:52:12PM +0900, js1304@gmail.com wrote:
-> > From: Joonsoo Kim <iamjoonsoo.kim@lge.com>
-> >
-> > reclaim_stat's rotate is used for controlling the ratio of scanning pag=
-e
-> > between file and anonymous LRU. All new anonymous pages are counted
-> > for rotate before the patch, protecting anonymous pages on active LRU, =
-and,
-> > it makes that reclaim on anonymous LRU is less happened than file LRU.
-> >
-> > Now, situation is changed. all new anonymous pages are not added
-> > to the active LRU so rotate would be far less than before. It will caus=
-e
-> > that reclaim on anonymous LRU happens more and it would result in bad
-> > effect on some system that is optimized for previous setting.
-> >
-> > Therefore, this patch counts a new anonymous page as a reclaim_state's
-> > rotate. Although it is non-logical to add this count to
-> > the reclaim_state's rotate in current algorithm, reducing the regressio=
-n
-> > would be more important.
-> >
-> > I found this regression on kernel-build test and it is roughly 2~5%
-> > performance degradation. With this workaround, performance is completel=
-y
-> > restored.
-> >
-> > v2: fix a bug that reuses the rotate value for previous page
->
-> I agree with the rationale, but the magic bit in the page->lru list
-> pointers seems pretty ugly.
+On Tue, Mar 24, 2020 at 05:22:13AM +0100, Eugene Syromiatnikov wrote:
+> The BIT() macro definition is not available for the UAPI headers
+> (moreover, it can be defined differently in the user space); replace
+> its usage with the _BITUL() macro that is defined in <linux/const.h>.
 
-Yes, pretty ugly.
+Why is somehow _BITUL() ok to use here instead?
 
-> I wrote a patch a few years ago that split lru_add_pvecs into an add
-> and a putback component. This was to avoid unintentional balancing
-> effects of LRU isolations, but I think you can benefit from that
-> cleanup here as well. Would you mind taking a look at it and maybe
-> take it up into your series?
->
-> https://lore.kernel.org/patchwork/patch/685708/
+Just open-code it, I didn't think we could use any BIT()-like macros in
+uapi .h files.
 
-Thanks for pointing that.
-I will remove the magic bit and imitate your patch to solve the problem
-of this patch.
+thanks,
 
-Thanks.
+greg k-h
