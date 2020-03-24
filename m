@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1388219130F
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 15:25:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9684619130E
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 15:25:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728780AbgCXOZk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 10:25:40 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:36106 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728413AbgCXOYv (ORCPT
+        id S1728776AbgCXOZd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 10:25:33 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:53636 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728441AbgCXOYw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 10:24:51 -0400
+        Tue, 24 Mar 2020 10:24:52 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Type:MIME-Version:References:
+        d=infradead.org; s=merlin.20170209; h=Content-Type:MIME-Version:References:
         Subject:Cc:To:From:Date:Message-Id:Sender:Reply-To:Content-Transfer-Encoding:
         Content-ID:Content-Description:In-Reply-To;
-        bh=2Qsfk0HOB3x9nc2pqsOJnCHVpv340CkHcue6gSdP15s=; b=aCwRm6eRhy2j4SD2NOzM/vKFTM
-        0lKCrv0vIbvkypOEH5o50Qo7HrQc1suavNkJr/tma/L3PAfP4+8TYAHYaHZD05AjkCYXuQNrqOk7k
-        zfrjps0GqbOqi0uFvELU5kwUV2gZYgjy5GoNYx1uMaGsHdxSbScmfBt2Zfwt40PIhKxzQAFBwRPFO
-        7AtQn8/SiQQ2OrHzMcwwZothMX9YZnc9/N73JSBvzmKl979N3WfY1tingxGBVZyoXOx6MWADobr+3
-        QpNmkhEnLQQ+wdrGbfFAuDhxHTfxgSyMpIZdth288P5rOkjzl+GC2x+FuqwLcTtvsBDv9v1Np9XqE
-        C3cIX9LQ==;
+        bh=BjuFbwXCXjsGFf/yKNz82zlPTTh+u+uBacKL0meRtkY=; b=v9LPHmj7TTb3xkhGiVcWVLLBOy
+        XzxrDb+UE98Z9xpLgUEpkX4njI5bNTwEFq8nvJgRAY3Y6meKsQ7dngqNPHJAZRbw36iFC0puvLm3a
+        DB4nJaqIIl5BILlETpKlAkPRCUdK5iJ43VQNGgrkOR71UShsBnNyy45F0HPkCFIKOWVSBIKtRzW++
+        wRbX6Owok4nsdQOoqzKgeFO6yd+rDPOSx6q44C0i31Ho/2/FdmciRdk1CoIYddOhaYWsvZ53HEMnv
+        2KYGhPT1MpTTt13NxXFbEgQ4dGY2HLV3P9e8YYuu3hRp27s9INDFz8W/W8W30s1fvxZZGaTEHUEbB
+        35rTbYcA==;
 Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jGkTt-0001fa-KF; Tue, 24 Mar 2020 14:24:37 +0000
+        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jGkTv-0003ok-3J; Tue, 24 Mar 2020 14:24:39 +0000
 Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 18FC2307770;
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 6D9C830785A;
         Tue, 24 Mar 2020 15:24:35 +0100 (CET)
 Received: by hirez.programming.kicks-ass.net (Postfix, from userid 0)
-        id F3889286C13B1; Tue, 24 Mar 2020 15:24:34 +0100 (CET)
-Message-Id: <20200324142245.509814003@infradead.org>
+        id 01998286C13AF; Tue, 24 Mar 2020 15:24:35 +0100 (CET)
+Message-Id: <20200324142245.571450580@infradead.org>
 User-Agent: quilt/0.65
-Date:   Tue, 24 Mar 2020 14:56:07 +0100
+Date:   Tue, 24 Mar 2020 14:56:08 +0100
 From:   Peter Zijlstra <peterz@infradead.org>
 To:     x86@kernel.org
 Cc:     peterz@infradead.org, linux-kernel@vger.kernel.org,
@@ -43,7 +43,7 @@ Cc:     peterz@infradead.org, linux-kernel@vger.kernel.org,
         tglx@linutronix.de, mingo@kernel.org, namit@vmware.com,
         hpa@zytor.com, luto@kernel.org, ard.biesheuvel@linaro.org,
         jpoimboe@redhat.com
-Subject: [RESEND][PATCH v3 04/17] jump_label,module: Fix module lifetime for __jump_label_mod_text_reserved
+Subject: [RESEND][PATCH v3 05/17] compiler.h: Make __ADDRESSABLE() symbol truly unique
 References: <20200324135603.483964896@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -52,45 +52,31 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Nothing ensures the module exists while we're iterating
-mod->jump_entries in __jump_label_mod_text_reserved(), take a module
-reference to ensure the module sticks around.
+The __ADDRESSABLE() macro uses the __LINE__ macro to create a temporary
+symbol which has a unique name.  However, if the macro is used multiple
+times from within another macro, the line number will always be the
+same, resulting in duplicate symbols.
 
+Make the temporary symbols truly unique by using __UNIQUE_ID instead of
+__LINE__.
+
+Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Reviewed-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Acked-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 ---
- kernel/jump_label.c |   10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+ include/linux/compiler.h |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/kernel/jump_label.c
-+++ b/kernel/jump_label.c
-@@ -539,19 +539,25 @@ static void static_key_set_mod(struct st
- static int __jump_label_mod_text_reserved(void *start, void *end)
- {
- 	struct module *mod;
-+	int ret;
+--- a/include/linux/compiler.h
++++ b/include/linux/compiler.h
+@@ -299,7 +299,7 @@ unsigned long read_word_at_a_time(const
+  */
+ #define __ADDRESSABLE(sym) \
+ 	static void * __section(.discard.addressable) __used \
+-		__PASTE(__addressable_##sym, __LINE__) = (void *)&sym;
++		__UNIQUE_ID(__PASTE(__addressable_,sym)) = (void *)&sym;
  
- 	preempt_disable();
- 	mod = __module_text_address((unsigned long)start);
- 	WARN_ON_ONCE(__module_text_address((unsigned long)end) != mod);
-+	if (!try_module_get(mod))
-+		mod = NULL;
- 	preempt_enable();
- 
- 	if (!mod)
- 		return 0;
- 
--
--	return __jump_label_text_reserved(mod->jump_entries,
-+	ret = __jump_label_text_reserved(mod->jump_entries,
- 				mod->jump_entries + mod->num_jump_entries,
- 				start, end);
-+
-+	module_put(mod);
-+
-+	return ret;
- }
- 
- static void __jump_label_mod_update(struct static_key *key)
+ /**
+  * offset_to_ptr - convert a relative memory offset to an absolute pointer
 
 
