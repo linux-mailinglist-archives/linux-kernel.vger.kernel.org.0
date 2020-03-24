@@ -2,120 +2,248 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BCEEA190A14
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 11:01:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6AA28190A1F
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 11:02:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727230AbgCXKBu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 06:01:50 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:46877 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726563AbgCXKBu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 06:01:50 -0400
-Received: by mail-wr1-f68.google.com with SMTP id j17so17208211wru.13
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Mar 2020 03:01:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=resnulli-us.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=YXwXXyf4FFoH6g7bKxTH+XMwT8dvCco8fnyGy8BbH0U=;
-        b=QDAlHA9bG8dxJapJMUVdl7SSfzjRwftlM0jT/kCptr/tZzU0kY2soxUAM3ezP1rj/K
-         NLWi5HDGR2pSC0+mTbUvx3FNzvBl6v4EJo03KBnlB1svpO4emsIa8635EHUgU9/1iOGe
-         Po5VJK/wDQ/keZp1zbUujB4U5LdA/uzELiJlako/i0PxNdyYZU7HFbGz/7woBdChgpWh
-         wKHuLwTYxPKxdy76wZie4l6JXj1pfcUCW1iXMfAhrl/kNTsXubyLICwVmXHTouEsreeJ
-         sVYV5p6rX6yW2GfD+w+zg7pwq8J3EqXT2rRKwfkk8HORngkZ8bW6OVP8FXTLoUHE2wLF
-         X8GQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=YXwXXyf4FFoH6g7bKxTH+XMwT8dvCco8fnyGy8BbH0U=;
-        b=ltVl3LtexHW9aODodAWTJ14H0ztfSqxScmRFCW3QRZL0s7yM3PR3OS3rhTchdYHNRL
-         DJwjmY002aRuD0Lt5YK71UBGBZLI7oeCb23zmJNZRDCKxUW84UklLi3fffFE4VkhiW4q
-         VXec04ZvuhmOT34YvEkDDD2ZzagmCYKH3mwuS6LVr5zmTV6LuISzRg0pUA2DybuZAjty
-         lS6PHKtdy3pkAuVthJqL2agVoig/6nmst7cMPItb5BD5SDle+y0KOxGQLXDI0AwDsdVQ
-         we/Pi8wD3XZjAnWgcaMhqLamVdUwId6w3U8HGVqrkhx1dIakFxFCWIOi5nCaeSvdtdCw
-         WJKA==
-X-Gm-Message-State: ANhLgQ0TqT3pNgYIHz4kNfELU2l/IfJIQalrJ8UvobO9gyV+vzJsRlKZ
-        XbijV/so8kiQe1zJBE03Uk+g6Q==
-X-Google-Smtp-Source: ADFU+vs+oZMrTA+XjIVihEjmm3kkuM0VpBBT6FouF1t7AnwQf9AWhrAkOA5fgdwclkEuWXDSzOly8A==
-X-Received: by 2002:adf:9dc6:: with SMTP id q6mr34986704wre.70.1585044109070;
-        Tue, 24 Mar 2020 03:01:49 -0700 (PDT)
-Received: from localhost (jirka.pirko.cz. [84.16.102.26])
-        by smtp.gmail.com with ESMTPSA id t81sm3607126wmb.15.2020.03.24.03.01.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Mar 2020 03:01:47 -0700 (PDT)
-Date:   Tue, 24 Mar 2020 11:01:46 +0100
-From:   Jiri Pirko <jiri@resnulli.us>
-To:     Po Liu <Po.Liu@nxp.com>
-Cc:     davem@davemloft.net, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, vinicius.gomes@intel.com,
-        claudiu.manoil@nxp.com, vladimir.oltean@nxp.com,
-        alexandru.marginean@nxp.com, xiaoliang.yang_1@nxp.com,
-        roy.zang@nxp.com, mingkai.hu@nxp.com, jerry.huang@nxp.com,
-        leoyang.li@nxp.com, michael.chan@broadcom.com, vishal@chelsio.com,
-        saeedm@mellanox.com, leon@kernel.org, jiri@mellanox.com,
-        idosch@mellanox.com, alexandre.belloni@bootlin.com,
-        UNGLinuxDriver@microchip.com, kuba@kernel.org, jhs@mojatatu.com,
-        xiyou.wangcong@gmail.com, simon.horman@netronome.com,
-        pablo@netfilter.org, moshe@mellanox.com, m-karicheri2@ti.com,
-        andre.guedes@linux.intel.com, stephen@networkplumber.org
-Subject: Re: [v1,net-next  1/5] net: qos offload add flow status with dropped
- count
-Message-ID: <20200324100146.GR11304@nanopsycho.orion>
-References: <20200306125608.11717-11-Po.Liu@nxp.com>
- <20200324034745.30979-1-Po.Liu@nxp.com>
- <20200324034745.30979-2-Po.Liu@nxp.com>
+        id S1727323AbgCXKC1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 06:02:27 -0400
+Received: from mail.loongson.cn ([114.242.206.163]:43818 "EHLO loongson.cn"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726994AbgCXKC0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Mar 2020 06:02:26 -0400
+Received: from [10.130.0.79] (unknown [113.200.148.30])
+        by mail.loongson.cn (Coremail) with SMTP id AQAAf9Axpumr2nlecnMfAA--.28S3;
+        Tue, 24 Mar 2020 18:02:19 +0800 (CST)
+Subject: Re: [PATCH v2 3/3] MIPS: Loongson: Add PCI support for 7A1000
+To:     Jiaxun Yang <jiaxun.yang@flygoat.com>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        Huacai Chen <chenhc@lemote.com>
+References: <1584932355-3642-1-git-send-email-yangtiezhu@loongson.cn>
+ <1584932355-3642-4-git-send-email-yangtiezhu@loongson.cn>
+ <2518452B-57E0-4327-8154-0FBD9D2EC27A@flygoat.com>
+Cc:     linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Xuefeng Li <lixuefeng@loongson.cn>
+From:   Tiezhu Yang <yangtiezhu@loongson.cn>
+Message-ID: <e95cb514-11aa-96f4-a934-533db8515d9e@loongson.cn>
+Date:   Tue, 24 Mar 2020 18:02:18 +0800
+User-Agent: Mozilla/5.0 (X11; Linux mips64; rv:45.0) Gecko/20100101
+ Thunderbird/45.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200324034745.30979-2-Po.Liu@nxp.com>
+In-Reply-To: <2518452B-57E0-4327-8154-0FBD9D2EC27A@flygoat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID: AQAAf9Axpumr2nlecnMfAA--.28S3
+X-Coremail-Antispam: 1UD129KBjvJXoWxtr45tFWrCF1DZFyUJFyxXwb_yoWxAF18pr
+        43J3WUKr4FqF1fGFnYv398GF1fAFsxJF92kFW7tFyjv3sIvryFqryUWF15Kr4S9r4DZa4j
+        9FWSgF17G3W0kaDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDU0xBIdaVrnRJUUUvv14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+        rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+        1l84ACjcxK6xIIjxv20xvE14v26r4j6ryUM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
+        6F4UM28EF7xvwVC2z280aVAFwI0_Cr1j6rxdM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+        Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
+        I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Gr0_Cr1lOx8S6xCaFVCjc4AY6r1j6r
+        4UM4x0Y48IcVAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwCYjI0SjxkI62AI1cAE67vI
+        Y487MxkIecxEwVAFwVW8twCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8Jw
+        C20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAF
+        wI0_JF0_Jw1lIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjx
+        v20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6Fyj6rWUJwCI42IY6I8E
+        87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73Uj
+        IFyTuYvjfUOlkVUUUUU
+X-CM-SenderInfo: p1dqw3xlh2x3gn0dqz5rrqw2lrqou0/
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Tue, Mar 24, 2020 at 04:47:39AM CET, Po.Liu@nxp.com wrote:
->Add the hardware tc flower offloading with dropped frame counter for
->status update. action ops->stats_update only loaded by the
->tcf_exts_stats_update() and tcf_exts_stats_update() only loaded by
->matchall and tc flower hardware filter. But the stats_update only set
->the dropped count as default false in the ops->stats_update. This
->patch add the dropped counter to action stats update. Its dropped counter
->update by the hardware offloading driver.
->This is changed by replacing the drop flag with dropped frame counter.
+On 03/24/2020 03:28 PM, Jiaxun Yang wrote:
+>
+> 于 2020年3月23日 GMT+08:00 上午10:59:15, Tiezhu Yang <yangtiezhu@loongson.cn> 写到:
+>> Add PCI support for 7A1000 to detect PCI device.
+>>
+>> Signed-off-by: Tiezhu Yang <yangtiezhu@loongson.cn>
+> Hi Tiezhu,
+>
+> See my comments below.
+>
+>> ---
+>> arch/mips/include/asm/mach-loongson64/boot_param.h |  9 +++
+>> arch/mips/loongson64/env.c                         |  2 +
+>> arch/mips/pci/ops-loongson3.c                      | 72
+>> ++++++++++++++++++++--
+>> 3 files changed, 79 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/arch/mips/include/asm/mach-loongson64/boot_param.h
+>> b/arch/mips/include/asm/mach-loongson64/boot_param.h
+>> index c759b7c..d766a36 100644
+>> --- a/arch/mips/include/asm/mach-loongson64/boot_param.h
+>> +++ b/arch/mips/include/asm/mach-loongson64/boot_param.h
+>> @@ -195,6 +195,7 @@ enum loongson_bridge_type {
+>> 	LS7A1000 = 2
+>> };
+>>
+>> +struct pci_bus;
+>> struct loongson_system_configuration {
+>> 	u32 nr_cpus;
+>> 	u32 nr_nodes;
+>> @@ -220,6 +221,8 @@ struct loongson_system_configuration {
+>> 	struct sensor_device sensors[MAX_SENSORS];
+>> 	u64 workarounds;
+>> 	void (*early_config)(void);
+>> +	int (*pci_config_access)(unsigned char access_type, struct pci_bus
+>> *bus,
+>> +				 unsigned int devfn, int where, u32 *data);
+>> };
+>>
+>> extern struct efi_memory_map_loongson *loongson_memmap;
+>> @@ -228,5 +231,11 @@ extern struct loongson_system_configuration
+>> loongson_sysconf;
+>> extern u32 node_id_offset;
+>> extern void rs780e_early_config(void);
+>> extern void ls7a1000_early_config(void);
+>> +extern int rs780e_pci_config_access(unsigned char access_type,
+>> +		struct pci_bus *bus, unsigned int devfn,
+>> +		int where, u32 *data);
+>> +extern int ls7a1000_pci_config_access(unsigned char access_type,
+>> +		struct pci_bus *bus, unsigned int devfn,
+>> +		int where, u32 *data);
+>>
+>> #endif
+>> diff --git a/arch/mips/loongson64/env.c b/arch/mips/loongson64/env.c
+>> index 32a3822..1c27f46 100644
+>> --- a/arch/mips/loongson64/env.c
+>> +++ b/arch/mips/loongson64/env.c
+>> @@ -168,9 +168,11 @@ void __init prom_init_env(void)
+>> 		pr_info("The bridge chip is Loongson 7A1000\n");
+>> 		loongson_sysconf.bridgetype = LS7A1000;
+>> 		loongson_sysconf.early_config = ls7a1000_early_config;
+>> +		loongson_sysconf.pci_config_access = ls7a1000_pci_config_access;
+>> 	} else {
+>> 		pr_info("The bridge chip is AMD RS780E or SR5690\n");
+>> 		loongson_sysconf.bridgetype = RS780E;
+>> 		loongson_sysconf.early_config = rs780e_early_config;
+>> +		loongson_sysconf.pci_config_access = rs780e_pci_config_access;
+>> 	}
+>> }
+>> diff --git a/arch/mips/pci/ops-loongson3.c
+>> b/arch/mips/pci/ops-loongson3.c
+>> index 2f6ad36..0b8fc5e 100644
+>> --- a/arch/mips/pci/ops-loongson3.c
+>> +++ b/arch/mips/pci/ops-loongson3.c
+>> @@ -13,7 +13,10 @@
+>> #define HT1LO_PCICFG_BASE      0x1a000000
+>> #define HT1LO_PCICFG_BASE_TP1  0x1b000000
+>>
+>> -static int loongson3_pci_config_access(unsigned char access_type,
+>> +#define HT1LO_PCICFG_BASE_EXT 0xefe00000000
+>> +#define HT1LO_PCICFG_BASE_TP1_EXT 0xefe10000000
+>> +
+>> +int rs780e_pci_config_access(unsigned char access_type,
+>> 		struct pci_bus *bus, unsigned int devfn,
+>> 		int where, u32 *data)
+>> {
+>> @@ -62,11 +65,72 @@ static int loongson3_pci_config_access(unsigned
+>> char access_type,
+>> 	return PCIBIOS_SUCCESSFUL;
+>> }
+>>
+>> +
+>> +int ls7a1000_pci_config_access(unsigned char access_type,
+>> +		struct pci_bus *bus, unsigned int devfn,
+>> +		int where, u32 *data)
+>> +{
+>> +	u_int64_t addr;
+>> +	void *addrp;
+>> +	unsigned char busnum = bus->number;
+>> +	int device = PCI_SLOT(devfn);
+>> +	int function = PCI_FUNC(devfn);
+>> +	int reg = where & ~3;
+>> +
+>> +	if (where >= PCI_CFG_SPACE_EXP_SIZE)
+>> +		return PCIBIOS_DEVICE_NOT_FOUND;
+>> +
+>> +	if (busnum == 0 && device > 23)
+>> +		return PCIBIOS_DEVICE_NOT_FOUND;
+>> +
+>> +	if (where < PCI_CFG_SPACE_SIZE) { /* standard config */
+>> +		addr = (busnum << 16) | (device << 11) | (function << 8) | reg;
+>> +		if (busnum == 0) {
+>> +			addr = HT1LO_PCICFG_BASE | addr;
+>> +			addrp = (void *)TO_UNCAC(addr);
+>> +		} else {
+>> +			addr = HT1LO_PCICFG_BASE_TP1 | addr;
+>> +			addrp = (void *)TO_UNCAC(addr);
+>> +		}
+>> +	} else { /* extended config */
+>> +		reg = (reg & 0xff) | ((reg & 0xf00) << 16);
+>> +		addr = (busnum << 16) | (device << 11) | (function << 8) | reg;
+>> +		if (busnum == 0) {
+>> +			addr = HT1LO_PCICFG_BASE_EXT | addr;
+>> +			addrp = (void *)TO_UNCAC(addr);
+>> +		} else {
+>> +			addr = HT1LO_PCICFG_BASE_TP1_EXT | addr;
+>> +			addrp = (void *)TO_UNCAC(addr);
+>> +		}
+>> +	}
+>> +
+>> +	if (access_type == PCI_ACCESS_WRITE)
+>> +		*(unsigned int *)addrp = cpu_to_le32(*data);
+>> +	else {
+>> +		*data = le32_to_cpu(*(unsigned int *)addrp);
+>> +		if (*data == 0xffffffff) {
+>> +			*data = -1;
+>> +			return PCIBIOS_DEVICE_NOT_FOUND;
+>> +		}
+>> +	}
+>> +
+>> +	return PCIBIOS_SUCCESSFUL;
+>> +}
+>> +
+>> +static void ls7a1000_pci_class_quirk(struct pci_dev *dev)
+>> +{
+>> +	dev->class = PCI_CLASS_BRIDGE_PCI << 8;
+>> +}
+>> +
+>> +DECLARE_PCI_FIXUP_EARLY(0x0014, 0x7a09, ls7a1000_pci_class_quirk);
+>> +DECLARE_PCI_FIXUP_EARLY(0x0014, 0x7a19, ls7a1000_pci_class_quirk);
+>> +DECLARE_PCI_FIXUP_EARLY(0x0014, 0x7a29, ls7a1000_pci_class_quirk);
+> Please place them to fixup-loongson3.c,
+> don't mess up with operations.
+>
+> And you've already added vendor ID to pci_ids.h.
+> You can use it and tell us "it depends on pci-next tree's commit".
 
-I just read this paragraph 3 times, I'm unable to decypher :(
-
-
+OK, I will do it. Thank you very much.
 
 >
->Driver side should update how many "packets" it filtered and how many
->"dropped" in those "packets".
->
+>> +
+>> static int loongson3_pci_pcibios_read(struct pci_bus *bus, unsigned int
+>> devfn,
+>> 				 int where, int size, u32 *val)
+>> {
+>> 	u32 data = 0;
+>> -	int ret = loongson3_pci_config_access(PCI_ACCESS_READ,
+>> +	int ret = loongson_sysconf.pci_config_access(PCI_ACCESS_READ,
+>> 			bus, devfn, where, &data);
+>>
+>> 	if (ret != PCIBIOS_SUCCESSFUL)
+>> @@ -91,7 +155,7 @@ static int loongson3_pci_pcibios_write(struct
+>> pci_bus *bus, unsigned int devfn,
+>> 	if (size == 4)
+>> 		data = val;
+>> 	else {
+>> -		ret = loongson3_pci_config_access(PCI_ACCESS_READ,
+>> +		ret = loongson_sysconf.pci_config_access(PCI_ACCESS_READ,
+>> 				bus, devfn, where, &data);
+>> 		if (ret != PCIBIOS_SUCCESSFUL)
+>> 			return ret;
+>> @@ -104,7 +168,7 @@ static int loongson3_pci_pcibios_write(struct
+>> pci_bus *bus, unsigned int devfn,
+>> 			    (val << ((where & 3) << 3));
+>> 	}
+>>
+>> -	ret = loongson3_pci_config_access(PCI_ACCESS_WRITE,
+>> +	ret = loongson_sysconf.pci_config_access(PCI_ACCESS_WRITE,
+>> 			bus, devfn, where, &data);
+>>
+>> 	return ret;
 
-[...]
-
-
-> 	return action;
-> }
-> 
->-static void tcf_gact_stats_update(struct tc_action *a, u64 bytes, u32 packets,
->-				  u64 lastuse, bool hw)
->+static void tcf_gact_stats_update(struct tc_action *a, u64 bytes, u64 packets,
->+				  u64 lastuse, u64 dropped, bool hw)
-> {
-> 	struct tcf_gact *gact = to_gact(a);
-> 	int action = READ_ONCE(gact->tcf_action);
-> 	struct tcf_t *tm = &gact->tcf_tm;
-> 
->-	tcf_action_update_stats(a, bytes, packets, action == TC_ACT_SHOT, hw);
->+	tcf_action_update_stats(a, bytes, packets,
->+				(action == TC_ACT_SHOT) ? packets : 0, hw);
-
-Avoid ()s here.
-
-
-> 	tm->lastuse = max_t(u64, tm->lastuse, lastuse);
-> }
-> 
