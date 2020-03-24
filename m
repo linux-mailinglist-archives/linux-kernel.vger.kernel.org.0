@@ -2,64 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3BFC11905BD
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 07:29:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 755BC1905C4
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 07:30:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727401AbgCXG2y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 02:28:54 -0400
-Received: from cmccmta3.chinamobile.com ([221.176.66.81]:4880 "EHLO
-        cmccmta3.chinamobile.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725905AbgCXG2x (ORCPT
+        id S1727304AbgCXGac (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 02:30:32 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:3216 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725867AbgCXGac (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 02:28:53 -0400
-Received: from spf.mail.chinamobile.com (unknown[172.16.121.1]) by rmmx-syy-dmz-app10-12010 (RichMail) with SMTP id 2eea5e79a88206c-87f20; Tue, 24 Mar 2020 14:28:19 +0800 (CST)
-X-RM-TRANSID: 2eea5e79a88206c-87f20
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG: 00000000
-Received: from localhost.localdomain (unknown[112.25.154.146])
-        by rmsmtp-syy-appsvr01-12001 (RichMail) with SMTP id 2ee15e79a88069e-da2b2;
-        Tue, 24 Mar 2020 14:28:18 +0800 (CST)
-X-RM-TRANSID: 2ee15e79a88069e-da2b2
-From:   Tang Bin <tangbin@cmss.chinamobile.com>
-To:     cernekee@gmail.com, balbi@kernel.org
-Cc:     gregkh@linuxfoundation.org, f.fainelli@gmail.com,
-        bcm-kernel-feedback-list@broadcom.com, linux-usb@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Tang Bin <tangbin@cmss.chinamobile.com>
-Subject: [PATCH] usb: gadget: bcm63xx_udc:remove useless variable definition
-Date:   Tue, 24 Mar 2020 14:29:32 +0800
-Message-Id: <20200324062932.8364-1-tangbin@cmss.chinamobile.com>
-X-Mailer: git-send-email 2.20.1.windows.1
+        Tue, 24 Mar 2020 02:30:32 -0400
+Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 02O64B86078773;
+        Tue, 24 Mar 2020 02:30:16 -0400
+Received: from ppma03dal.us.ibm.com (b.bd.3ea9.ip4.static.sl-reverse.com [169.62.189.11])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2yxw7cxyp7-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 24 Mar 2020 02:30:16 -0400
+Received: from pps.filterd (ppma03dal.us.ibm.com [127.0.0.1])
+        by ppma03dal.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id 02O6R1cx020237;
+        Tue, 24 Mar 2020 06:30:15 GMT
+Received: from b01cxnp23034.gho.pok.ibm.com (b01cxnp23034.gho.pok.ibm.com [9.57.198.29])
+        by ppma03dal.us.ibm.com with ESMTP id 2ywaw9bxwb-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 24 Mar 2020 06:30:15 +0000
+Received: from b01ledav004.gho.pok.ibm.com (b01ledav004.gho.pok.ibm.com [9.57.199.109])
+        by b01cxnp23034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 02O6UFad53346570
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 24 Mar 2020 06:30:15 GMT
+Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 1180E112064;
+        Tue, 24 Mar 2020 06:30:15 +0000 (GMT)
+Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id DAD05112063;
+        Tue, 24 Mar 2020 06:30:11 +0000 (GMT)
+Received: from skywalker.linux.ibm.com (unknown [9.85.116.254])
+        by b01ledav004.gho.pok.ibm.com (Postfix) with ESMTP;
+        Tue, 24 Mar 2020 06:30:11 +0000 (GMT)
+X-Mailer: emacs 27.0.90 (via feedmail 11-beta-1 I)
+From:   "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
+To:     Alexey Kardashevskiy <aik@ozlabs.ru>,
+        Christoph Hellwig <hch@lst.de>
+Cc:     iommu@lists.linux-foundation.org, linuxppc-dev@lists.ozlabs.org,
+        Lu Baolu <baolu.lu@linux.intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Joerg Roedel <joro@8bytes.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] dma-mapping: add a dma_ops_bypass flag to struct
+ device
+In-Reply-To: <ffce1af6-a215-dee8-7b5c-2111f43accfd@ozlabs.ru>
+References: <20200320141640.366360-1-hch@lst.de>
+ <20200320141640.366360-2-hch@lst.de>
+ <2f31d0dd-aa7e-8b76-c8a1-5759fda5afc9@ozlabs.ru>
+ <20200323083705.GA31245@lst.de> <20200323085059.GA32528@lst.de>
+ <87sghz2ibh.fsf@linux.ibm.com> <20200323172256.GB31269@lst.de>
+ <ffce1af6-a215-dee8-7b5c-2111f43accfd@ozlabs.ru>
+Date:   Tue, 24 Mar 2020 12:00:09 +0530
+Message-ID: <87pnd22rke.fsf@linux.ibm.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.645
+ definitions=2020-03-23_10:2020-03-23,2020-03-23 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ lowpriorityscore=0 malwarescore=0 spamscore=0 adultscore=0 mlxlogscore=999
+ mlxscore=0 suspectscore=18 bulkscore=0 priorityscore=1501 phishscore=0
+ clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2003020000 definitions=main-2003240027
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In this function, the variable 'rc' is assigned after this place,
-so the definition is invalid.
+Alexey Kardashevskiy <aik@ozlabs.ru> writes:
 
-Signed-off-by: Tang Bin <tangbin@cmss.chinamobile.com>
----
- drivers/usb/gadget/udc/bcm63xx_udc.c | 2 --
- 1 file changed, 2 deletions(-)
+> On 24/03/2020 04:22, Christoph Hellwig wrote:
+>> On Mon, Mar 23, 2020 at 09:07:38PM +0530, Aneesh Kumar K.V wrote:
+>>>
+>>> This is what I was trying, but considering I am new to DMA subsystem, I
+>>> am not sure I got all the details correct. The idea is to look at the
+>>> cpu addr and see if that can be used in direct map fashion(is
+>>> bus_dma_limit the right restriction here?) if not fallback to dynamic
+>>> IOMMU mapping.
+>> 
+>> I don't think we can throw all these complications into the dma
+>> mapping code.  At some point I also wonder what the point is,
+>> especially for scatterlist mappings, where the iommu can coalesce.
+>
+> This is for persistent memory which you can DMA to/from but yet it does
+> not appear in the system as a normal memory and therefore requires
+> special handling anyway (O_DIRECT or DAX, I do not know the exact
+> mechanics). All other devices in the system should just run as usual,
+> i.e. use 1:1 mapping if possible.
 
-diff --git a/drivers/usb/gadget/udc/bcm63xx_udc.c b/drivers/usb/gadget/udc/bcm63xx_udc.c
-index 54501814d..a7afa8c35 100644
---- a/drivers/usb/gadget/udc/bcm63xx_udc.c
-+++ b/drivers/usb/gadget/udc/bcm63xx_udc.c
-@@ -2321,8 +2321,6 @@ static int bcm63xx_udc_probe(struct platform_device *pdev)
- 	if (rc)
- 		return rc;
- 
--	rc = -ENXIO;
--
- 	/* IRQ resource #0: control interrupt (VBUS, speed, etc.) */
- 	irq = platform_get_irq(pdev, 0);
- 	if (irq < 0)
--- 
-2.20.1.windows.1
+This is O_DIRECT with a user buffer that is actually mmap from a dax
+mounted file system.
+
+What we really need is something that will falback to iommu_map_page
+based on dma_addr. ie. Something equivalent to current
+dma_direct_map_page(), but instead of fallback to swiotlb_map page we
+should fallback to iommu_map_page().
+
+Something like?
+
+dma_addr_t dma_direct_map_page(struct device *dev, struct page *page,
+		unsigned long offset, size_t size, enum dma_data_direction dir,
+		unsigned long attrs)
+{
+	phys_addr_t phys = page_to_phys(page) + offset;
+	dma_addr_t dma_addr = phys_to_dma(dev, phys);
+
+	if (unlikely(!dma_capable(dev, dma_addr, size, true))) {
+			return iommu_map(dev, phys, size, dir, attrs);
+
+		return DMA_MAPPING_ERROR;
+	}
+
+....
+...
 
 
-
+-aneesh
