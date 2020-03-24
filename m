@@ -2,58 +2,58 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A5B25190A9F
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 11:22:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2010A190AB7
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 11:22:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727393AbgCXKUq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 06:20:46 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:37903 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727266AbgCXKUn (ORCPT
+        id S1727585AbgCXKVb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 06:21:31 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:53932 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727338AbgCXKUo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 06:20:43 -0400
-Received: by mail-wm1-f68.google.com with SMTP id l20so2792022wmi.3
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Mar 2020 03:20:41 -0700 (PDT)
+        Tue, 24 Mar 2020 06:20:44 -0400
+Received: by mail-wm1-f65.google.com with SMTP id b12so2542818wmj.3
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Mar 2020 03:20:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=vevMugysMeZ18EOmMAcbQ1H4E68kSGbbm2Ev/+c6lUw=;
-        b=rEaAC2+Cy/ijpd7Vap0HEzeSfQwjvK1gYaAKrWDLtlEaS5nXJWcDYXj5JKHU809eNt
-         ZECNK8P+m+WV3n64pvxlKNqbPnB+DdPWqc+ijN9p/WxhygbFunNLTjJdJjPT30CbGW4b
-         VVQ4cL0J7cz0kFKonq4tCj+07l3f196VMI+mpvuRyZCL9TuVnBl8VC9WcsydEFaTgtgE
-         0kmmcM4p+vXYFPYGlIeemEwsP3i9xL3B/aG3rY6nj/shLyUZwIWcIR8s9IXEc+7N93GT
-         J46RTHadc+rt3sL+3piUE2dF+tYsOLOVj2ndAA2lm20xKEcXlpv5fR7SAtd3ZcUf7f4K
-         btig==
+        bh=qIi6DStEnKK85qo3VXkqHwhPK4JPG6SYpmkviudAtgo=;
+        b=yNB0vrfUae1bLhDDueD6IvkRVuFx+DHjpDQpIGvD4juprP0hNjyDUcYTYlHtAYEBaa
+         JYMCZ5rqzkKBY4RU8VZGe/4ogm+t3lVUycNOlOe0hMxkL6hGtULugWapBH5LuuBDiC4J
+         eMiRw3sCcfZ6v295bJaMwl7DVXRi/eYGwzR2h4yqY8xbXPDxiJFrkVGw90PHdtbJqz2j
+         vCyYwxM/QpwIUiHNzKTACYLt6C0/a8qCm7zgESBPnaD1r/lG1b/Z00GGwAdZ37BtlOhK
+         gKBEqHbFQu4pkd1QGRZFfLtafMnT1LH25i9laotZDmv6xjjx9h5kbgTL85731DtzFr5w
+         Ghig==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=vevMugysMeZ18EOmMAcbQ1H4E68kSGbbm2Ev/+c6lUw=;
-        b=jc3E07bIFrMFTRo6bOVxeEp3y9bqQiOEGDTO6Gevq4OSWk09MUBbScyqts+cbE9erF
-         zlmU/4ycjAcDkDcJzA3tZfmBK5+UN4DKWh8Z8h88aFoSKpsogJYMu0Q/8rvYmszsyrkk
-         m9Gp5Q28xmRYV3rPce3oIvp6F00HZnAdURXo9LOAHdaYPM6iT+09HyU0XvLKHtp1IU//
-         8/0CvmFnJ//n3tFBh8520S8hwl42mraYEaLZ8CH1envy2lC0o8f4jIHLVs74MF975kBx
-         XbmRDv0Be5pmbSw7YNkgN/sRBvZjuJt16dHWmv4UBJF7WltMT/m625ij/mX4rOOtzJZw
-         9KhA==
-X-Gm-Message-State: ANhLgQ11S717V9tq86wpkdtNW7xw/ocfF2kxWRZa1KYP7fAFeNL1DiaD
-        oHR3BZRHfprzdyfkOSgbutinYw==
-X-Google-Smtp-Source: ADFU+vvDJf2Avo97Xe5bVFATihkIhVjh0/x6nK0MsmtW3Bm46KvS5uiWic5eD6DBiajtLLmcLTZZoQ==
-X-Received: by 2002:a1c:f00a:: with SMTP id a10mr4838622wmb.102.1585045240690;
-        Tue, 24 Mar 2020 03:20:40 -0700 (PDT)
+        bh=qIi6DStEnKK85qo3VXkqHwhPK4JPG6SYpmkviudAtgo=;
+        b=TfUGSsyqL9BJW49+kXw5aGfnAGMjKtrV1auKch5AVoPY97IkoHBaDXioFMMfH4EJsk
+         4gSdbaFhgM6hQXjHnNtefKp6nDZiZbg1BdKioQtXSIXJSa+z2z2l75GvyfHpNTwkPYOC
+         kBE/XHlqk7r+hi3k3O8J3TQ+DctiWhrFaAWtnkSTxVuoPhGxX0f8vw1c4s0tivV5yCVB
+         zwkvfejT8u1GUSEpwF4Sotj5XiD72ZQXV01JjffdGkYecZM+1cpaTnFlm8/Q0jzboXqH
+         xAZoYaNvdsL7Cdz33uzX2IhnzMzP89aUyw4JNIo+ez5H6LKwTD0HtYg6MEmLChXamyQo
+         RE7g==
+X-Gm-Message-State: ANhLgQ3m46VvFVIEuCUpsOaJSrnCkypM/qKpua+Q1ZsTLEk3KYje307/
+        WR+9FNj/zhXEBF8rj0rOCGZwRQ==
+X-Google-Smtp-Source: ADFU+vtmo5MWC9IiaCXoDBxQdHzo7bTNA0LL3bh8P71KLYlXVHnAQvVAEFRZ9ikMDI6Ar21/Htk4Hw==
+X-Received: by 2002:a1c:bc84:: with SMTP id m126mr4669314wmf.171.1585045242170;
+        Tue, 24 Mar 2020 03:20:42 -0700 (PDT)
 Received: from bender.baylibre.local ([2a01:e35:2ec0:82b0:5c5f:613e:f775:b6a2])
-        by smtp.gmail.com with ESMTPSA id h5sm2879527wro.83.2020.03.24.03.20.39
+        by smtp.gmail.com with ESMTPSA id h5sm2879527wro.83.2020.03.24.03.20.40
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Mar 2020 03:20:40 -0700 (PDT)
+        Tue, 24 Mar 2020 03:20:41 -0700 (PDT)
 From:   Neil Armstrong <narmstrong@baylibre.com>
 To:     kishon@ti.com, balbi@kernel.org, khilman@baylibre.com,
         martin.blumenstingl@googlemail.com
 Cc:     Neil Armstrong <narmstrong@baylibre.com>,
         linux-amlogic@lists.infradead.org, linux-usb@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 02/13] usb: dwc3: meson-g12a: specify phy names in soc data
-Date:   Tue, 24 Mar 2020 11:20:19 +0100
-Message-Id: <20200324102030.31000-3-narmstrong@baylibre.com>
+Subject: [PATCH 03/13] usb: dwc3: meson-g12a: handle the phy and glue registers separately
+Date:   Tue, 24 Mar 2020 11:20:20 +0100
+Message-Id: <20200324102030.31000-4-narmstrong@baylibre.com>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20200324102030.31000-1-narmstrong@baylibre.com>
 References: <20200324102030.31000-1-narmstrong@baylibre.com>
@@ -64,112 +64,353 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-To handle the variable USB2 PHY counts on GXL and GXM SoCs, add the
-possible PHY names for each SoC in the compatible match data.
+On the Amlogic GXL/GXM SoCs, only the USB control registers are available,
+the PHY mode being handled in the PHY registers.
+
+Thus, handle the PHY mode registers in separate regmaps and prepare
+support for Amlogic GXL/GXM SoCs by moving the regmap setup in a callback
+set in the SoC match data.
 
 Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
 ---
- drivers/usb/dwc3/dwc3-meson-g12a.c | 39 +++++++++++++++++++-----------
- 1 file changed, 25 insertions(+), 14 deletions(-)
+ drivers/usb/dwc3/dwc3-meson-g12a.c | 124 ++++++++++++++++++++---------
+ 1 file changed, 85 insertions(+), 39 deletions(-)
 
 diff --git a/drivers/usb/dwc3/dwc3-meson-g12a.c b/drivers/usb/dwc3/dwc3-meson-g12a.c
-index 902553f39889..7ba5fb3d0e22 100644
+index 7ba5fb3d0e22..f608ffb059b3 100644
 --- a/drivers/usb/dwc3/dwc3-meson-g12a.c
 +++ b/drivers/usb/dwc3/dwc3-meson-g12a.c
-@@ -96,16 +96,8 @@
- 	#define USB_R5_ID_DIG_TH_MASK				GENMASK(15, 8)
- 	#define USB_R5_ID_DIG_CNT_MASK				GENMASK(23, 16)
+@@ -30,7 +30,7 @@
+ #include <linux/usb/role.h>
+ #include <linux/regulator/consumer.h>
  
--enum {
--	USB2_HOST_PHY = 0,
--	USB2_OTG_PHY,
--	USB3_HOST_PHY,
--	PHY_COUNT,
--};
--
--static const char *phy_names[PHY_COUNT] = {
--	"usb2-phy0", "usb2-phy1", "usb3-phy0",
--};
-+#define PHY_COUNT						3
-+#define USB2_OTG_PHY						1
+-/* USB2 Ports Control Registers */
++/* USB2 Ports Control Registers, offsets are per-port */
  
- static struct clk_bulk_data meson_g12a_clocks[] = {
- 	{ .id = NULL },
-@@ -117,22 +109,36 @@ static struct clk_bulk_data meson_a1_clocks[] = {
- 	{ .id = "xtal_usb_ctrl" },
+ #define U2P_REG_SIZE						0x20
+ 
+@@ -50,14 +50,16 @@
+ 
+ /* USB Glue Control Registers */
+ 
+-#define USB_R0							0x80
++#define G12A_GLUE_OFFSET					0x80
++
++#define USB_R0							0x00
+ 	#define USB_R0_P30_LANE0_TX2RX_LOOPBACK			BIT(17)
+ 	#define USB_R0_P30_LANE0_EXT_PCLK_REQ			BIT(18)
+ 	#define USB_R0_P30_PCS_RX_LOS_MASK_VAL_MASK		GENMASK(28, 19)
+ 	#define USB_R0_U2D_SS_SCALEDOWN_MODE_MASK		GENMASK(30, 29)
+ 	#define USB_R0_U2D_ACT					BIT(31)
+ 
+-#define USB_R1							0x84
++#define USB_R1							0x04
+ 	#define USB_R1_U3H_BIGENDIAN_GS				BIT(0)
+ 	#define USB_R1_U3H_PME_ENABLE				BIT(1)
+ 	#define USB_R1_U3H_HUB_PORT_OVERCURRENT_MASK		GENMASK(4, 2)
+@@ -69,23 +71,23 @@
+ 	#define USB_R1_U3H_FLADJ_30MHZ_REG_MASK			GENMASK(24, 19)
+ 	#define USB_R1_P30_PCS_TX_SWING_FULL_MASK		GENMASK(31, 25)
+ 
+-#define USB_R2							0x88
++#define USB_R2							0x08
+ 	#define USB_R2_P30_PCS_TX_DEEMPH_3P5DB_MASK		GENMASK(25, 20)
+ 	#define USB_R2_P30_PCS_TX_DEEMPH_6DB_MASK		GENMASK(31, 26)
+ 
+-#define USB_R3							0x8c
++#define USB_R3							0x0c
+ 	#define USB_R3_P30_SSC_ENABLE				BIT(0)
+ 	#define USB_R3_P30_SSC_RANGE_MASK			GENMASK(3, 1)
+ 	#define USB_R3_P30_SSC_REF_CLK_SEL_MASK			GENMASK(12, 4)
+ 	#define USB_R3_P30_REF_SSP_EN				BIT(13)
+ 
+-#define USB_R4							0x90
++#define USB_R4							0x10
+ 	#define USB_R4_P21_PORT_RESET_0				BIT(0)
+ 	#define USB_R4_P21_SLEEP_M0				BIT(1)
+ 	#define USB_R4_MEM_PD_MASK				GENMASK(3, 2)
+ 	#define USB_R4_P21_ONLY					BIT(4)
+ 
+-#define USB_R5							0x94
++#define USB_R5							0x14
+ 	#define USB_R5_ID_DIG_SYNC				BIT(0)
+ 	#define USB_R5_ID_DIG_REG				BIT(1)
+ 	#define USB_R5_ID_DIG_CFG_MASK				GENMASK(3, 2)
+@@ -117,20 +119,27 @@ static const char *meson_a1_phy_names[] = {
+ 	"usb2-phy0", "usb2-phy1"
  };
  
-+static const char *meson_g12a_phy_names[] = {
-+	"usb2-phy0", "usb2-phy1", "usb3-phy0",
-+};
-+
-+static const char *meson_a1_phy_names[] = {
-+	"usb2-phy0", "usb2-phy1"
-+};
++struct dwc3_meson_g12a;
 +
  struct dwc3_meson_g12a_drvdata {
  	bool otg_switch_supported;
  	struct clk_bulk_data *clks;
  	int num_clks;
-+	const char **phy_names;
-+	int num_phys;
+ 	const char **phy_names;
+ 	int num_phys;
++	int (*setup_regmaps)(struct dwc3_meson_g12a *priv, void __iomem *base);
  };
  
++static int dwc3_meson_g12a_setup_regmaps(struct dwc3_meson_g12a *priv,
++					 void __iomem *base);
++
  static struct dwc3_meson_g12a_drvdata g12a_drvdata = {
  	.otg_switch_supported = true,
  	.clks = meson_g12a_clocks,
  	.num_clks = ARRAY_SIZE(meson_g12a_clocks),
-+	.phy_names = meson_g12a_phy_names,
-+	.num_phys = ARRAY_SIZE(meson_g12a_phy_names),
+ 	.phy_names = meson_g12a_phy_names,
+ 	.num_phys = ARRAY_SIZE(meson_g12a_phy_names),
++	.setup_regmaps = dwc3_meson_g12a_setup_regmaps,
  };
  
  static struct dwc3_meson_g12a_drvdata a1_drvdata = {
- 	.otg_switch_supported = false,
- 	.clks = meson_a1_clocks,
+@@ -139,11 +148,13 @@ static struct dwc3_meson_g12a_drvdata a1_drvdata = {
  	.num_clks = ARRAY_SIZE(meson_a1_clocks),
-+	.phy_names = meson_a1_phy_names,
-+	.num_phys = ARRAY_SIZE(meson_a1_phy_names),
+ 	.phy_names = meson_a1_phy_names,
+ 	.num_phys = ARRAY_SIZE(meson_a1_phy_names),
++	.setup_regmaps = dwc3_meson_g12a_setup_regmaps,
  };
  
  struct dwc3_meson_g12a {
-@@ -171,10 +177,13 @@ static int dwc3_meson_g12a_usb2_init(struct dwc3_meson_g12a *priv)
+ 	struct device		*dev;
+-	struct regmap		*regmap;
++	struct regmap		*u2p_regmap[PHY_COUNT];
++	struct regmap		*usb_glue_regmap;
+ 	struct reset_control	*reset;
+ 	struct phy		*phys[PHY_COUNT];
+ 	enum usb_dr_mode	otg_mode;
+@@ -160,11 +171,11 @@ static void dwc3_meson_g12a_usb2_set_mode(struct dwc3_meson_g12a *priv,
+ 					  int i, enum phy_mode mode)
+ {
+ 	if (mode == PHY_MODE_USB_HOST)
+-		regmap_update_bits(priv->regmap, U2P_R0 + (U2P_REG_SIZE * i),
++		regmap_update_bits(priv->u2p_regmap[i], U2P_R0,
+ 				U2P_R0_HOST_DEVICE,
+ 				U2P_R0_HOST_DEVICE);
  	else
- 		priv->otg_phy_mode = PHY_MODE_USB_HOST;
+-		regmap_update_bits(priv->regmap, U2P_R0 + (U2P_REG_SIZE * i),
++		regmap_update_bits(priv->u2p_regmap[i], U2P_R0,
+ 				U2P_R0_HOST_DEVICE, 0);
+ }
  
--	for (i = 0 ; i < USB3_HOST_PHY ; ++i) {
-+	for (i = 0; i < priv->drvdata->num_phys; ++i) {
- 		if (!priv->phys[i])
+@@ -184,13 +195,12 @@ static int dwc3_meson_g12a_usb2_init(struct dwc3_meson_g12a *priv)
+ 		if (!strstr(priv->drvdata->phy_names[i], "usb2"))
  			continue;
  
-+		if (!strstr(priv->drvdata->phy_names[i], "usb2"))
-+			continue;
-+
- 		regmap_update_bits(priv->regmap, U2P_R0 + (U2P_REG_SIZE * i),
+-		regmap_update_bits(priv->regmap, U2P_R0 + (U2P_REG_SIZE * i),
++		regmap_update_bits(priv->u2p_regmap[i], U2P_R0,
  				   U2P_R0_POWER_ON_RESET,
  				   U2P_R0_POWER_ON_RESET);
-@@ -284,17 +293,19 @@ static const struct regmap_config phy_meson_g12a_usb3_regmap_conf = {
  
- static int dwc3_meson_g12a_get_phys(struct dwc3_meson_g12a *priv)
+ 		if (priv->drvdata->otg_switch_supported && i == USB2_OTG_PHY) {
+-			regmap_update_bits(priv->regmap,
+-				U2P_R0 + (U2P_REG_SIZE * i),
++			regmap_update_bits(priv->u2p_regmap[i], U2P_R0,
+ 				U2P_R0_ID_PULLUP | U2P_R0_DRV_VBUS,
+ 				U2P_R0_ID_PULLUP | U2P_R0_DRV_VBUS);
+ 
+@@ -200,7 +210,7 @@ static int dwc3_meson_g12a_usb2_init(struct dwc3_meson_g12a *priv)
+ 			dwc3_meson_g12a_usb2_set_mode(priv, i,
+ 						      PHY_MODE_USB_HOST);
+ 
+-		regmap_update_bits(priv->regmap, U2P_R0 + (U2P_REG_SIZE * i),
++		regmap_update_bits(priv->u2p_regmap[i], U2P_R0,
+ 				   U2P_R0_POWER_ON_RESET, 0);
+ 	}
+ 
+@@ -209,7 +219,7 @@ static int dwc3_meson_g12a_usb2_init(struct dwc3_meson_g12a *priv)
+ 
+ static void dwc3_meson_g12a_usb3_init(struct dwc3_meson_g12a *priv)
  {
-+	const char *phy_name;
- 	int i;
+-	regmap_update_bits(priv->regmap, USB_R3,
++	regmap_update_bits(priv->usb_glue_regmap, USB_R3,
+ 			USB_R3_P30_SSC_RANGE_MASK |
+ 			USB_R3_P30_REF_SSP_EN,
+ 			USB_R3_P30_SSC_ENABLE |
+@@ -217,21 +227,21 @@ static void dwc3_meson_g12a_usb3_init(struct dwc3_meson_g12a *priv)
+ 			USB_R3_P30_REF_SSP_EN);
+ 	udelay(2);
  
--	for (i = 0 ; i < PHY_COUNT ; ++i) {
--		priv->phys[i] = devm_phy_optional_get(priv->dev, phy_names[i]);
-+	for (i = 0 ; i < priv->drvdata->num_phys ; ++i) {
-+		phy_name = priv->drvdata->phy_names[i];
-+		priv->phys[i] = devm_phy_optional_get(priv->dev, phy_name);
- 		if (!priv->phys[i])
- 			continue;
+-	regmap_update_bits(priv->regmap, USB_R2,
++	regmap_update_bits(priv->usb_glue_regmap, USB_R2,
+ 			USB_R2_P30_PCS_TX_DEEMPH_3P5DB_MASK,
+ 			FIELD_PREP(USB_R2_P30_PCS_TX_DEEMPH_3P5DB_MASK, 0x15));
  
- 		if (IS_ERR(priv->phys[i]))
- 			return PTR_ERR(priv->phys[i]);
+-	regmap_update_bits(priv->regmap, USB_R2,
++	regmap_update_bits(priv->usb_glue_regmap, USB_R2,
+ 			USB_R2_P30_PCS_TX_DEEMPH_6DB_MASK,
+ 			FIELD_PREP(USB_R2_P30_PCS_TX_DEEMPH_6DB_MASK, 0x20));
  
--		if (i == USB3_HOST_PHY)
-+		if (strstr(phy_name, "usb3"))
- 			priv->usb3_ports++;
- 		else
- 			priv->usb2_ports++;
+ 	udelay(2);
+ 
+-	regmap_update_bits(priv->regmap, USB_R1,
++	regmap_update_bits(priv->usb_glue_regmap, USB_R1,
+ 			USB_R1_U3H_HOST_PORT_POWER_CONTROL_PRESENT,
+ 			USB_R1_U3H_HOST_PORT_POWER_CONTROL_PRESENT);
+ 
+-	regmap_update_bits(priv->regmap, USB_R1,
++	regmap_update_bits(priv->usb_glue_regmap, USB_R1,
+ 			USB_R1_P30_PCS_TX_SWING_FULL_MASK,
+ 			FIELD_PREP(USB_R1_P30_PCS_TX_SWING_FULL_MASK, 127));
+ }
+@@ -239,16 +249,16 @@ static void dwc3_meson_g12a_usb3_init(struct dwc3_meson_g12a *priv)
+ static void dwc3_meson_g12a_usb_otg_apply_mode(struct dwc3_meson_g12a *priv)
+ {
+ 	if (priv->otg_phy_mode == PHY_MODE_USB_DEVICE) {
+-		regmap_update_bits(priv->regmap, USB_R0,
++		regmap_update_bits(priv->usb_glue_regmap, USB_R0,
+ 				USB_R0_U2D_ACT, USB_R0_U2D_ACT);
+-		regmap_update_bits(priv->regmap, USB_R0,
++		regmap_update_bits(priv->usb_glue_regmap, USB_R0,
+ 				USB_R0_U2D_SS_SCALEDOWN_MODE_MASK, 0);
+-		regmap_update_bits(priv->regmap, USB_R4,
++		regmap_update_bits(priv->usb_glue_regmap, USB_R4,
+ 				USB_R4_P21_SLEEP_M0, USB_R4_P21_SLEEP_M0);
+ 	} else {
+-		regmap_update_bits(priv->regmap, USB_R0,
++		regmap_update_bits(priv->usb_glue_regmap, USB_R0,
+ 				USB_R0_U2D_ACT, 0);
+-		regmap_update_bits(priv->regmap, USB_R4,
++		regmap_update_bits(priv->usb_glue_regmap, USB_R4,
+ 				USB_R4_P21_SLEEP_M0, 0);
+ 	}
+ }
+@@ -261,17 +271,17 @@ static int dwc3_meson_g12a_usb_init(struct dwc3_meson_g12a *priv)
+ 	if (ret)
+ 		return ret;
+ 
+-	regmap_update_bits(priv->regmap, USB_R1,
++	regmap_update_bits(priv->usb_glue_regmap, USB_R1,
+ 			USB_R1_U3H_FLADJ_30MHZ_REG_MASK,
+ 			FIELD_PREP(USB_R1_U3H_FLADJ_30MHZ_REG_MASK, 0x20));
+ 
+-	regmap_update_bits(priv->regmap, USB_R5,
++	regmap_update_bits(priv->usb_glue_regmap, USB_R5,
+ 			USB_R5_ID_DIG_EN_0,
+ 			USB_R5_ID_DIG_EN_0);
+-	regmap_update_bits(priv->regmap, USB_R5,
++	regmap_update_bits(priv->usb_glue_regmap, USB_R5,
+ 			USB_R5_ID_DIG_EN_1,
+ 			USB_R5_ID_DIG_EN_1);
+-	regmap_update_bits(priv->regmap, USB_R5,
++	regmap_update_bits(priv->usb_glue_regmap, USB_R5,
+ 			USB_R5_ID_DIG_TH_MASK,
+ 			FIELD_PREP(USB_R5_ID_DIG_TH_MASK, 0xff));
+ 
+@@ -284,7 +294,8 @@ static int dwc3_meson_g12a_usb_init(struct dwc3_meson_g12a *priv)
+ 	return 0;
+ }
+ 
+-static const struct regmap_config phy_meson_g12a_usb3_regmap_conf = {
++static const struct regmap_config phy_meson_g12a_usb_glue_regmap_conf = {
++	.name = "usb-glue",
+ 	.reg_bits = 8,
+ 	.val_bits = 32,
+ 	.reg_stride = 4,
+@@ -321,7 +332,7 @@ static enum phy_mode dwc3_meson_g12a_get_id(struct dwc3_meson_g12a *priv)
+ {
+ 	u32 reg;
+ 
+-	regmap_read(priv->regmap, USB_R5, &reg);
++	regmap_read(priv->usb_glue_regmap, USB_R5, &reg);
+ 
+ 	if (reg & (USB_R5_ID_DIG_SYNC | USB_R5_ID_DIG_REG))
+ 		return PHY_MODE_USB_DEVICE;
+@@ -396,7 +407,8 @@ static irqreturn_t dwc3_meson_g12a_irq_thread(int irq, void *data)
+ 			dev_warn(priv->dev, "Failed to switch OTG mode\n");
+ 	}
+ 
+-	regmap_update_bits(priv->regmap, USB_R5, USB_R5_ID_DIG_IRQ, 0);
++	regmap_update_bits(priv->usb_glue_regmap, USB_R5,
++			   USB_R5_ID_DIG_IRQ, 0);
+ 
+ 	return IRQ_HANDLED;
+ }
+@@ -431,7 +443,7 @@ static int dwc3_meson_g12a_otg_init(struct platform_device *pdev,
+ 
+ 	if (priv->otg_mode == USB_DR_MODE_OTG) {
+ 		/* Ack irq before registering */
+-		regmap_update_bits(priv->regmap, USB_R5,
++		regmap_update_bits(priv->usb_glue_regmap, USB_R5,
+ 				   USB_R5_ID_DIG_IRQ, 0);
+ 
+ 		irq = platform_get_irq(pdev, 0);
+@@ -466,6 +478,41 @@ static int dwc3_meson_g12a_otg_init(struct platform_device *pdev,
+ 	return 0;
+ }
+ 
++static int dwc3_meson_g12a_setup_regmaps(struct dwc3_meson_g12a *priv,
++					 void __iomem *base)
++{
++	int i;
++
++	priv->usb_glue_regmap = devm_regmap_init_mmio(priv->dev,
++					base + G12A_GLUE_OFFSET,
++					&phy_meson_g12a_usb_glue_regmap_conf);
++	if (IS_ERR(priv->usb_glue_regmap))
++		return PTR_ERR(priv->usb_glue_regmap);
++
++	/* Create a regmap for each USB2 PHY control register set */
++	for (i = 0; i < priv->usb2_ports; i++) {
++		struct regmap_config u2p_regmap_config = {
++			.reg_bits = 8,
++			.val_bits = 32,
++			.reg_stride = 4,
++			.max_register = U2P_R1,
++		};
++
++		u2p_regmap_config.name = devm_kasprintf(priv->dev, GFP_KERNEL,
++							"u2p-%d", i);
++		if (!u2p_regmap_config.name)
++			return -ENOMEM;
++
++		priv->u2p_regmap[i] = devm_regmap_init_mmio(priv->dev,
++						base + (i * U2P_REG_SIZE),
++						&u2p_regmap_config);
++		if (IS_ERR(priv->u2p_regmap[i]))
++			return PTR_ERR(priv->u2p_regmap[i]);
++	}
++
++	return 0;
++}
++
+ static int dwc3_meson_g12a_probe(struct platform_device *pdev)
+ {
+ 	struct dwc3_meson_g12a	*priv;
+@@ -482,10 +529,12 @@ static int dwc3_meson_g12a_probe(struct platform_device *pdev)
+ 	if (IS_ERR(base))
+ 		return PTR_ERR(base);
+ 
+-	priv->regmap = devm_regmap_init_mmio(dev, base,
+-					     &phy_meson_g12a_usb3_regmap_conf);
+-	if (IS_ERR(priv->regmap))
+-		return PTR_ERR(priv->regmap);
++	priv->drvdata = of_device_get_match_data(&pdev->dev);
++
++	priv->dev = dev;
++	ret = priv->drvdata->setup_regmaps(priv, base);
++	if (ret)
++		return ret;
+ 
+ 	priv->vbus = devm_regulator_get_optional(dev, "vbus");
+ 	if (IS_ERR(priv->vbus)) {
+@@ -494,8 +543,6 @@ static int dwc3_meson_g12a_probe(struct platform_device *pdev)
+ 		priv->vbus = NULL;
+ 	}
+ 
+-	priv->drvdata = of_device_get_match_data(&pdev->dev);
+-
+ 	ret = devm_clk_bulk_get(dev,
+ 				priv->drvdata->num_clks,
+ 				priv->drvdata->clks);
+@@ -508,7 +555,6 @@ static int dwc3_meson_g12a_probe(struct platform_device *pdev)
+ 		return ret;
+ 
+ 	platform_set_drvdata(pdev, priv);
+-	priv->dev = dev;
+ 
+ 	priv->reset = devm_reset_control_get(dev, NULL);
+ 	if (IS_ERR(priv->reset)) {
 -- 
 2.22.0
 
