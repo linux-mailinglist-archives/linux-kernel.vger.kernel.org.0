@@ -2,22 +2,22 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4FF3A191757
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 18:17:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2563819175B
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 18:17:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727667AbgCXRQT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 13:16:19 -0400
-Received: from foss.arm.com ([217.140.110.172]:38478 "EHLO foss.arm.com"
+        id S1727811AbgCXRQY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 13:16:24 -0400
+Received: from foss.arm.com ([217.140.110.172]:38500 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727613AbgCXRQR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 13:16:17 -0400
+        id S1727732AbgCXRQW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Mar 2020 13:16:22 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7CDB5FEC;
-        Tue, 24 Mar 2020 10:16:17 -0700 (PDT)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0B19B1FB;
+        Tue, 24 Mar 2020 10:16:22 -0700 (PDT)
 Received: from localhost (unknown [10.37.6.21])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 001543F71F;
-        Tue, 24 Mar 2020 10:16:16 -0700 (PDT)
-Date:   Tue, 24 Mar 2020 17:16:15 +0000
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7A1B53F71F;
+        Tue, 24 Mar 2020 10:16:21 -0700 (PDT)
+Date:   Tue, 24 Mar 2020 17:16:20 +0000
 From:   Mark Brown <broonie@kernel.org>
 To:     Paul Cercueil <paul@crapouillou.net>
 Cc:     alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
@@ -28,9 +28,9 @@ Cc:     alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
         Rob Herring <robh+dt@kernel.org>,
         Takashi Iwai <tiwai@suse.com>,
         Zhou Yanjie <zhouyanjie@wanyeetech.com>
-Subject: Applied "ASoC: jz4740-i2s: Add support for the JZ4770" to the asoc tree
-In-Reply-To:  <20200306222931.39664-6-paul@crapouillou.net>
-Message-Id:  <applied-20200306222931.39664-6-paul@crapouillou.net>
+Subject: Applied "ASoC: jz4740-i2s: Add support for the JZ4760" to the asoc tree
+In-Reply-To:  <20200306222931.39664-5-paul@crapouillou.net>
+Message-Id:  <applied-20200306222931.39664-5-paul@crapouillou.net>
 X-Patchwork-Hint: ignore
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -39,7 +39,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: jz4740-i2s: Add support for the JZ4770
+   ASoC: jz4740-i2s: Add support for the JZ4760
 
 has been applied to the asoc tree at
 
@@ -64,72 +64,78 @@ to this mail.
 Thanks,
 Mark
 
-From a3434a497a2f33324e0f47bc1500a400959b4b25 Mon Sep 17 00:00:00 2001
+From bde8ca7c87d4388e24195f6c84cd9ac775344d2b Mon Sep 17 00:00:00 2001
 From: Paul Cercueil <paul@crapouillou.net>
-Date: Fri, 6 Mar 2020 23:29:31 +0100
-Subject: [PATCH] ASoC: jz4740-i2s: Add support for the JZ4770
+Date: Fri, 6 Mar 2020 23:29:30 +0100
+Subject: [PATCH] ASoC: jz4740-i2s: Add support for the JZ4760
 
-Before the JZ4770, the playback and capture sampling rates had to match.
-The JZ4770 supports independent sampling rates for both.
+The change of offset for the {rx,tx}_threshold fields in the conf
+register predates the JZ4780, and was first introduced in the JZ4760.
 
 Signed-off-by: Paul Cercueil <paul@crapouillou.net>
-Link: https://lore.kernel.org/r/20200306222931.39664-6-paul@crapouillou.net
+Link: https://lore.kernel.org/r/20200306222931.39664-5-paul@crapouillou.net
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/jz4740/jz4740-i2s.c | 13 ++++++++++---
- 1 file changed, 10 insertions(+), 3 deletions(-)
+ sound/soc/jz4740/jz4740-i2s.c | 21 ++++++++++++---------
+ 1 file changed, 12 insertions(+), 9 deletions(-)
 
 diff --git a/sound/soc/jz4740/jz4740-i2s.c b/sound/soc/jz4740/jz4740-i2s.c
-index 253f8d8ba273..6f6f8dad0356 100644
+index 3f9b2e1b4747..253f8d8ba273 100644
 --- a/sound/soc/jz4740/jz4740-i2s.c
 +++ b/sound/soc/jz4740/jz4740-i2s.c
-@@ -87,6 +87,7 @@
+@@ -49,12 +49,8 @@
+ 
+ #define JZ_AIC_CONF_FIFO_RX_THRESHOLD_OFFSET 12
+ #define JZ_AIC_CONF_FIFO_TX_THRESHOLD_OFFSET 8
+-#define JZ4780_AIC_CONF_FIFO_RX_THRESHOLD_OFFSET 24
+-#define JZ4780_AIC_CONF_FIFO_TX_THRESHOLD_OFFSET 16
+-#define JZ4780_AIC_CONF_FIFO_RX_THRESHOLD_MASK \
+-			(0xf << JZ4780_AIC_CONF_FIFO_RX_THRESHOLD_OFFSET)
+-#define JZ4780_AIC_CONF_FIFO_TX_THRESHOLD_MASK \
+-			(0x1f <<  JZ4780_AIC_CONF_FIFO_TX_THRESHOLD_OFFSET)
++#define JZ4760_AIC_CONF_FIFO_RX_THRESHOLD_OFFSET 24
++#define JZ4760_AIC_CONF_FIFO_TX_THRESHOLD_OFFSET 16
+ 
+ #define JZ_AIC_CTRL_OUTPUT_SAMPLE_SIZE_MASK (0x7 << 19)
+ #define JZ_AIC_CTRL_INPUT_SAMPLE_SIZE_MASK (0x7 << 16)
+@@ -90,6 +86,7 @@
+ 
  enum jz47xx_i2s_version {
  	JZ_I2S_JZ4740,
- 	JZ_I2S_JZ4760,
-+	JZ_I2S_JZ4770,
++	JZ_I2S_JZ4760,
  	JZ_I2S_JZ4780,
  };
  
-@@ -286,7 +287,7 @@ static int jz4740_i2s_hw_params(struct snd_pcm_substream *substream,
- 		ctrl &= ~JZ_AIC_CTRL_INPUT_SAMPLE_SIZE_MASK;
- 		ctrl |= sample_size << JZ_AIC_CTRL_INPUT_SAMPLE_SIZE_OFFSET;
+@@ -403,9 +400,9 @@ static int jz4740_i2s_dai_probe(struct snd_soc_dai *dai)
+ 	snd_soc_dai_init_dma_data(dai, &i2s->playback_dma_data,
+ 		&i2s->capture_dma_data);
  
--		if (i2s->soc_info->version >= JZ_I2S_JZ4780) {
-+		if (i2s->soc_info->version >= JZ_I2S_JZ4770) {
- 			div_reg &= ~I2SDIV_IDV_MASK;
- 			div_reg |= (div - 1) << I2SDIV_IDV_SHIFT;
- 		} else {
-@@ -469,7 +470,7 @@ static const struct i2s_soc_info jz4760_i2s_soc_info = {
+-	if (i2s->soc_info->version >= JZ_I2S_JZ4780) {
+-		conf = (7 << JZ4780_AIC_CONF_FIFO_RX_THRESHOLD_OFFSET) |
+-			(8 << JZ4780_AIC_CONF_FIFO_TX_THRESHOLD_OFFSET) |
++	if (i2s->soc_info->version >= JZ_I2S_JZ4760) {
++		conf = (7 << JZ4760_AIC_CONF_FIFO_RX_THRESHOLD_OFFSET) |
++			(8 << JZ4760_AIC_CONF_FIFO_TX_THRESHOLD_OFFSET) |
+ 			JZ_AIC_CONF_OVERFLOW_PLAY_LAST |
+ 			JZ_AIC_CONF_I2S |
+ 			JZ_AIC_CONF_INTERNAL_CODEC;
+@@ -467,6 +464,11 @@ static const struct i2s_soc_info jz4740_i2s_soc_info = {
  	.dai = &jz4740_i2s_dai,
  };
  
--static struct snd_soc_dai_driver jz4780_i2s_dai = {
-+static struct snd_soc_dai_driver jz4770_i2s_dai = {
- 	.probe = jz4740_i2s_dai_probe,
- 	.remove = jz4740_i2s_dai_remove,
- 	.playback = {
-@@ -487,9 +488,14 @@ static struct snd_soc_dai_driver jz4780_i2s_dai = {
- 	.ops = &jz4740_i2s_dai_ops,
- };
- 
-+static const struct i2s_soc_info jz4770_i2s_soc_info = {
-+	.version = JZ_I2S_JZ4770,
-+	.dai = &jz4770_i2s_dai,
++static const struct i2s_soc_info jz4760_i2s_soc_info = {
++	.version = JZ_I2S_JZ4760,
++	.dai = &jz4740_i2s_dai,
 +};
 +
- static const struct i2s_soc_info jz4780_i2s_soc_info = {
- 	.version = JZ_I2S_JZ4780,
--	.dai = &jz4780_i2s_dai,
-+	.dai = &jz4770_i2s_dai,
- };
- 
- static const struct snd_soc_component_driver jz4740_i2s_component = {
-@@ -502,6 +508,7 @@ static const struct snd_soc_component_driver jz4740_i2s_component = {
+ static struct snd_soc_dai_driver jz4780_i2s_dai = {
+ 	.probe = jz4740_i2s_dai_probe,
+ 	.remove = jz4740_i2s_dai_remove,
+@@ -499,6 +501,7 @@ static const struct snd_soc_component_driver jz4740_i2s_component = {
+ #ifdef CONFIG_OF
  static const struct of_device_id jz4740_of_matches[] = {
  	{ .compatible = "ingenic,jz4740-i2s", .data = &jz4740_i2s_soc_info },
- 	{ .compatible = "ingenic,jz4760-i2s", .data = &jz4760_i2s_soc_info },
-+	{ .compatible = "ingenic,jz4770-i2s", .data = &jz4770_i2s_soc_info },
++	{ .compatible = "ingenic,jz4760-i2s", .data = &jz4760_i2s_soc_info },
  	{ .compatible = "ingenic,jz4780-i2s", .data = &jz4780_i2s_soc_info },
  	{ /* sentinel */ }
  };
