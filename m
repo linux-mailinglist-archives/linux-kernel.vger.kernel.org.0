@@ -2,99 +2,245 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AE5F2191413
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 16:20:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1962F19141D
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 16:21:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728259AbgCXPTo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 11:19:44 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:42066 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727682AbgCXPTn (ORCPT
+        id S1728355AbgCXPUy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 11:20:54 -0400
+Received: from us-smtp-delivery-74.mimecast.com ([216.205.24.74]:57776 "EHLO
+        us-smtp-delivery-74.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727589AbgCXPUw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 11:19:43 -0400
-Received: by mail-pf1-f193.google.com with SMTP id 22so5824223pfa.9;
-        Tue, 24 Mar 2020 08:19:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=n2bDSotzBV6UN70AN/x4Bcm38lByfTVVoEFkAkDjweA=;
-        b=OmLhxF9ZFVLR3cLvu2hvEXiJVZLEW9VIbiFqQByCXZuRn/KhUiK2zv6Mvg6sKq+CAg
-         q9O1ZbWbHnalD7JeFSzNLz0bFns4QEwF3wbIwXmGHenIFHdCdwCBJ/kSkUbcPgkOF6eA
-         EWNaH7YgnVKAh0I0y+BKBhC9I8EC0ErWT2tbJW83d9o6C0u11u5iJuKOoN8X8qbhpcVY
-         HXEMgS0GoaNGdRHBf0y7EhGhxlo9tnWob2DeC5SrXiPo1Nt5L1z7W19xy3aCcdVRXVqv
-         me/m1TGSk3SAByCWrp0c/q4FY1CmsSj1G+XFMBZLIbHPVdW2jKoBatFr65OFQchzKDlg
-         CWDw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=n2bDSotzBV6UN70AN/x4Bcm38lByfTVVoEFkAkDjweA=;
-        b=i9CeetRX/r9Bz10clNpaJrJsY83QbLkF9Ile8GOGMj0ZasnY8rLDV7iwlpjq+wIcvZ
-         mztmNh+jxNG4oiOM6Xmx5zTnpXNOpFVVBW0QPs1466F2zjMpkSu+PQYg8vOxJy0pBaTS
-         9lcy/d1r84onLlyRKGtmABIyZX3QJadSDtaQyQz/Zs5VWu0H9Pv7Y5+2rdSNZeba0Cdd
-         PF/BHBPRl6moiL50S2SdRkuyZuBkZeY0f6tNhCCACeAaU/PgoD1qjrGredUsZ20TeqPo
-         PtBpxafuShoN6/dEVsaQeg4BP0md6FKzhTtkwSITg6ENuYlV1UISlozD33KpMy4lTs1D
-         700w==
-X-Gm-Message-State: ANhLgQ2BRtFcF1qBxSgb+H6JGAdPbQflC3X9xoHrAlbOTpUIWRqVBYgT
-        qNTfpBsmHSvXkaLMBNPjMhw=
-X-Google-Smtp-Source: ADFU+vvDuPBa6Bp3Vi7dqS80D3QlME/zrmJ3O5IWsimloMvVF5/5KG/Vn8rPXGaL7RAM+9AVYlOUdw==
-X-Received: by 2002:a63:1e57:: with SMTP id p23mr28693676pgm.316.1585063182250;
-        Tue, 24 Mar 2020 08:19:42 -0700 (PDT)
-Received: from localhost.corp.microsoft.com ([167.220.2.210])
-        by smtp.googlemail.com with ESMTPSA id x11sm13807073pgq.48.2020.03.24.08.19.41
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 24 Mar 2020 08:19:41 -0700 (PDT)
-From:   Yubo Xie <ltykernel@gmail.com>
-X-Google-Original-From: Yubo Xie <yuboxie@microsoft.com>
-To:     kys@microsoft.com, haiyangz@microsoft.com, sthemmin@microsoft.com,
-        liuwe@microsoft.com, daniel.lezcano@linaro.org, tglx@linutronix.de,
-        michael.h.kelley@microsoft.com
-Cc:     Yubo Xie <yuboxie@microsoft.com>, linux-hyperv@vger.kernel.org,
-        linux-kernel@vger.kernel.org, vkuznets@redhat.com,
-        stable@vger.kernel.org, Tianyu Lan <Tianyu.Lan@microsoft.com>
-Subject: [PATCH] x86/Hyper-V: Fix hv sched clock function return wrong time unit
-Date:   Tue, 24 Mar 2020 08:19:35 -0700
-Message-Id: <20200324151935.15814-1-yuboxie@microsoft.com>
-X-Mailer: git-send-email 2.14.5
+        Tue, 24 Mar 2020 11:20:52 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1585063250;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=PsOvQBlzuy3xnUZlgfJeTMdXK5YEHhrw4gbm6DAYH3A=;
+        b=FVMJqjGchEpEl9Gy5oCDj1O/KkjFlyAiU2q6U9f5Ef92hYvah9wh8jKAGRKOvooDXHVCnB
+        6AGwF3I4Tcd2WjiRI5LWKo5RIXb5SO50TQ7RDRdvMLx5UExXTFwCY/FYmSXJzgjKgevbAU
+        LyuumphgxDayUnvTzEh9B18U4M7UwNE=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-301-1Ol68rMINbiaMZT6kIM8vQ-1; Tue, 24 Mar 2020 11:20:44 -0400
+X-MC-Unique: 1Ol68rMINbiaMZT6kIM8vQ-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 8B07918CA244;
+        Tue, 24 Mar 2020 15:20:42 +0000 (UTC)
+Received: from fuller.cnet (ovpn-116-9.gru2.redhat.com [10.97.116.9])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 0CCA61001938;
+        Tue, 24 Mar 2020 15:20:42 +0000 (UTC)
+Received: by fuller.cnet (Postfix, from userid 1000)
+        id 773EF4198B3A; Tue, 24 Mar 2020 12:20:16 -0300 (-03)
+Date:   Tue, 24 Mar 2020 12:20:16 -0300
+From:   Marcelo Tosatti <mtosatti@redhat.com>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     Chris Friesen <chris.friesen@windriver.com>,
+        linux-kernel@vger.kernel.org, Christoph Lameter <cl@linux.com>,
+        Jim Somerville <Jim.Somerville@windriver.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Frederic Weisbecker <fweisbec@gmail.com>,
+        Peter Zijlstra <peterz@infradead.org>
+Subject: [PATCH v2] isolcpus: affine kernel threads to specified cpumask
+Message-ID: <20200324152016.GA25422@fuller.cnet>
+References: <20200323135414.GA28634@fuller.cnet>
+ <87k13boxcn.fsf@nanos.tec.linutronix.de>
+ <af285c22-2a3f-5aa6-3fdb-27fba73389bd@windriver.com>
+ <87imiuq0cg.fsf@nanos.tec.linutronix.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87imiuq0cg.fsf@nanos.tec.linutronix.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-sched clock callback should return time with nano second as unit
-but current hv callback returns time with 100ns. Fix it.
 
-Cc: stable@vger.kernel.org
-Signed-off-by: Yubo Xie <yuboxie@microsoft.com>
-Signed-off-by: Tianyu Lan <Tianyu.Lan@microsoft.com>
-Fixes: adb87ff4f96c ("clocksource/drivers/hyperv: Allocate Hyper-V TSC page statically")
+This is a kernel enhancement to configure the cpu affinity of kernel
+threads via kernel boot option isolcpus=no_kthreads,<isolcpus_params>,<cpulist>
+
+When this option is specified, the cpumask is immediately applied upon
+thread launch. This does not affect kernel threads that specify cpu
+and node.
+
+This allows CPU isolation (that is not allowing certain threads
+to execute on certain CPUs) without using the isolcpus=domain parameter,
+making it possible to enable load balancing on such CPUs
+during runtime (see
+
+Note-1: this is based off on Wind River's patch at
+https://github.com/starlingx-staging/stx-integ/blob/master/kernel/kernel-std/centos/patches/affine-compute-kernel-threads.patch
+
+Difference being that this patch is limited to modifying
+kernel thread cpumask: Behaviour of other threads can
+be controlled via cgroups or sched_setaffinity.
+
+Note-2: MontaVista's patch was based off Christoph Lameter's patch at
+https://lwn.net/Articles/565932/ with the only difference being
+the kernel parameter changed from kthread to kthread_cpus.
+
+Signed-off-by: Marcelo Tosatti <mtosatti@redhat.com>
+
 ---
- drivers/clocksource/hyperv_timer.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clocksource/hyperv_timer.c b/drivers/clocksource/hyperv_timer.c
-index 9d808d595ca8..662ed978fa24 100644
---- a/drivers/clocksource/hyperv_timer.c
-+++ b/drivers/clocksource/hyperv_timer.c
-@@ -343,7 +343,8 @@ static u64 notrace read_hv_clock_tsc_cs(struct clocksource *arg)
+v2: use isolcpus= subcommand (Thomas Gleixner)
+
+ Documentation/admin-guide/kernel-parameters.txt |    8 ++++++++
+ include/linux/cpumask.h                         |    5 +++++
+ include/linux/sched/isolation.h                 |    1 +
+ init/main.c                                     |    1 +
+ kernel/cpu.c                                    |   13 +++++++++++++
+ kernel/kthread.c                                |    4 ++--
+ kernel/sched/isolation.c                        |    6 ++++++
+ 7 files changed, 36 insertions(+), 2 deletions(-)
+
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index c07815d230bc..7318e3057383 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -1959,6 +1959,14 @@
+ 			  the CPU affinity syscalls or cpuset.
+ 			  <cpu number> begins at 0 and the maximum value is
+ 			  "number of CPUs in system - 1".
++			  When using cpusets, use the isolcpus option no_kthreads
++			  to avoid creation of kernel threads on isolated CPUs.
++
++			no_kthreads
++			  Adjust the CPU affinity mask of unbound kernel threads to
++			  not contain CPUs on the isolated list. This complements
++			  the isolation provided by the cpusets mechanism described
++			  above.
  
- static u64 read_hv_sched_clock_tsc(void)
- {
--	return read_hv_clock_tsc() - hv_sched_clock_offset;
-+	return (read_hv_clock_tsc() - hv_sched_clock_offset)
-+		* (NSEC_PER_SEC / HV_CLOCK_HZ);
+ 			managed_irq
+ 
+diff --git a/include/linux/cpumask.h b/include/linux/cpumask.h
+index d5cc88514aee..a0dc4b12e048 100644
+--- a/include/linux/cpumask.h
++++ b/include/linux/cpumask.h
+@@ -55,6 +55,7 @@ extern unsigned int nr_cpu_ids;
+  *     cpu_present_mask - has bit 'cpu' set iff cpu is populated
+  *     cpu_online_mask  - has bit 'cpu' set iff cpu available to scheduler
+  *     cpu_active_mask  - has bit 'cpu' set iff cpu available to migration
++ *     cpu_kthread_mask - has bit 'cpu' set iff general kernel threads allowed
+  *
+  *  If !CONFIG_HOTPLUG_CPU, present == possible, and active == online.
+  *
+@@ -91,10 +92,12 @@ extern struct cpumask __cpu_possible_mask;
+ extern struct cpumask __cpu_online_mask;
+ extern struct cpumask __cpu_present_mask;
+ extern struct cpumask __cpu_active_mask;
++extern struct cpumask __cpu_kthread_mask;
+ #define cpu_possible_mask ((const struct cpumask *)&__cpu_possible_mask)
+ #define cpu_online_mask   ((const struct cpumask *)&__cpu_online_mask)
+ #define cpu_present_mask  ((const struct cpumask *)&__cpu_present_mask)
+ #define cpu_active_mask   ((const struct cpumask *)&__cpu_active_mask)
++#define cpu_kthread_mask  ((const struct cpumask *)&__cpu_kthread_mask)
+ 
+ extern atomic_t __num_online_cpus;
+ 
+@@ -145,6 +148,8 @@ static inline unsigned int cpumask_check(unsigned int cpu)
+ 	return cpu;
  }
  
- static void suspend_hv_clock_tsc(struct clocksource *arg)
-@@ -398,7 +399,8 @@ static u64 notrace read_hv_clock_msr_cs(struct clocksource *arg)
++int __init init_kthread_cpumask(void);
++
+ #if NR_CPUS == 1
+ /* Uniprocessor.  Assume all masks are "1". */
+ static inline unsigned int cpumask_first(const struct cpumask *srcp)
+diff --git a/include/linux/sched/isolation.h b/include/linux/sched/isolation.h
+index 0fbcbacd1b29..d002332d00eb 100644
+--- a/include/linux/sched/isolation.h
++++ b/include/linux/sched/isolation.h
+@@ -14,6 +14,7 @@ enum hk_flags {
+ 	HK_FLAG_DOMAIN		= (1 << 5),
+ 	HK_FLAG_WQ		= (1 << 6),
+ 	HK_FLAG_MANAGED_IRQ	= (1 << 7),
++	HK_FLAG_NO_KTHREADS	= (1 << 8),
+ };
  
- static u64 read_hv_sched_clock_msr(void)
+ #ifdef CONFIG_CPU_ISOLATION
+diff --git a/init/main.c b/init/main.c
+index ee4947af823f..69f528ddc477 100644
+--- a/init/main.c
++++ b/init/main.c
+@@ -618,6 +618,7 @@ noinline void __ref rest_init(void)
+ 	int pid;
+ 
+ 	rcu_scheduler_starting();
++	init_kthread_cpumask();
+ 	/*
+ 	 * We need to spawn init first so that it obtains pid 1, however
+ 	 * the init task will end up wanting to create kthreads, which, if
+diff --git a/kernel/cpu.c b/kernel/cpu.c
+index 9c706af713fb..c549ad8e6596 100644
+--- a/kernel/cpu.c
++++ b/kernel/cpu.c
+@@ -2311,9 +2311,22 @@ EXPORT_SYMBOL(__cpu_present_mask);
+ struct cpumask __cpu_active_mask __read_mostly;
+ EXPORT_SYMBOL(__cpu_active_mask);
+ 
++struct cpumask __cpu_kthread_mask __read_mostly;
++EXPORT_SYMBOL(__cpu_kthread_mask);
++
+ atomic_t __num_online_cpus __read_mostly;
+ EXPORT_SYMBOL(__num_online_cpus);
+ 
++int __init init_kthread_cpumask(void)
++{
++	const struct cpumask *kthread_mask;
++
++	kthread_mask = housekeeping_cpumask(HK_FLAG_NO_KTHREADS);
++	cpumask_copy(&__cpu_kthread_mask, kthread_mask);
++
++	return 0;
++}
++
+ void init_cpu_present(const struct cpumask *src)
  {
--	return read_hv_clock_msr() - hv_sched_clock_offset;
-+	return (read_hv_clock_msr() - hv_sched_clock_offset)
-+		* (NSEC_PER_SEC / HV_CLOCK_HZ);
- }
+ 	cpumask_copy(&__cpu_present_mask, src);
+diff --git a/kernel/kthread.c b/kernel/kthread.c
+index b262f47046ca..be9c8d53a986 100644
+--- a/kernel/kthread.c
++++ b/kernel/kthread.c
+@@ -347,7 +347,7 @@ struct task_struct *__kthread_create_on_node(int (*threadfn)(void *data),
+ 		 * The kernel thread should not inherit these properties.
+ 		 */
+ 		sched_setscheduler_nocheck(task, SCHED_NORMAL, &param);
+-		set_cpus_allowed_ptr(task, cpu_all_mask);
++		set_cpus_allowed_ptr(task, cpu_kthread_mask);
+ 	}
+ 	kfree(create);
+ 	return task;
+@@ -572,7 +572,7 @@ int kthreadd(void *unused)
+ 	/* Setup a clean context for our children to inherit. */
+ 	set_task_comm(tsk, "kthreadd");
+ 	ignore_signals(tsk);
+-	set_cpus_allowed_ptr(tsk, cpu_all_mask);
++	set_cpus_allowed_ptr(tsk, cpu_kthread_mask);
+ 	set_mems_allowed(node_states[N_MEMORY]);
  
- static struct clocksource hyperv_cs_msr = {
--- 
-2.14.5
+ 	current->flags |= PF_NOFREEZE;
+diff --git a/kernel/sched/isolation.c b/kernel/sched/isolation.c
+index 008d6ac2342b..e9d48729efd4 100644
+--- a/kernel/sched/isolation.c
++++ b/kernel/sched/isolation.c
+@@ -169,6 +169,12 @@ static int __init housekeeping_isolcpus_setup(char *str)
+ 			continue;
+ 		}
+ 
++		if (!strncmp(str, "no_kthreads,", 12)) {
++			str += 12;
++			flags |= HK_FLAG_NO_KTHREADS;
++			continue;
++		}
++
+ 		pr_warn("isolcpus: Error, unknown flag\n");
+ 		return 0;
+ 	}
 
