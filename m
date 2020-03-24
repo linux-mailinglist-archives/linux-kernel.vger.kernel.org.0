@@ -2,34 +2,34 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6BCB9190941
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 10:21:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D5C57190963
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 10:21:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727422AbgCXJQi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 05:16:38 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:43892 "EHLO
+        id S1727907AbgCXJT4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 05:19:56 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:43923 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727323AbgCXJQg (ORCPT
+        with ESMTP id S1727455AbgCXJQk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 05:16:36 -0400
+        Tue, 24 Mar 2020 05:16:40 -0400
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1jGffk-0007x8-Ls; Tue, 24 Mar 2020 10:16:32 +0100
+        id 1jGffq-0007xE-9c; Tue, 24 Mar 2020 10:16:38 +0100
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id F30371C048C;
-        Tue, 24 Mar 2020 10:16:31 +0100 (CET)
-Date:   Tue, 24 Mar 2020 09:16:31 -0000
-From:   "tip-bot2 for Joel Fernandes (Google)" <tip-bot2@linutronix.de>
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 654A81C0481;
+        Tue, 24 Mar 2020 10:16:32 +0100 (CET)
+Date:   Tue, 24 Mar 2020 09:16:32 -0000
+From:   "tip-bot2 for Paul E. McKenney" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: core/rcu] rcuperf: Measure memory footprint during kfree_rcu() test
-Cc:     "Joel Fernandes (Google)" <joel@joelfernandes.org>,
-        "Paul E. McKenney" <paulmck@kernel.org>, x86 <x86@kernel.org>,
+Subject: [tip: core/rcu] rcutorture: Annotation lockless accesses to
+ rcu_torture_current
+Cc:     "Paul E. McKenney" <paulmck@kernel.org>, x86 <x86@kernel.org>,
         LKML <linux-kernel@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <158504139161.28353.17549436590999126020.tip-bot2@tip-bot2>
+Message-ID: <158504139206.28353.15957833602515900228.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -45,76 +45,60 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the core/rcu branch of tip:
 
-Commit-ID:     12af660321263d7744d5d06b765c7b03fade3858
-Gitweb:        https://git.kernel.org/tip/12af660321263d7744d5d06b765c7b03fade3858
-Author:        Joel Fernandes (Google) <joel@joelfernandes.org>
-AuthorDate:    Thu, 19 Dec 2019 11:22:42 -05:00
+Commit-ID:     5396d31d3a396039502f75a128bd8064819cba61
+Gitweb:        https://git.kernel.org/tip/5396d31d3a396039502f75a128bd8064819cba61
+Author:        Paul E. McKenney <paulmck@kernel.org>
+AuthorDate:    Wed, 08 Jan 2020 19:58:13 -08:00
 Committer:     Paul E. McKenney <paulmck@kernel.org>
 CommitterDate: Thu, 20 Feb 2020 16:03:31 -08:00
 
-rcuperf: Measure memory footprint during kfree_rcu() test
+rcutorture: Annotation lockless accesses to rcu_torture_current
 
-During changes to kfree_rcu() code, we often check the amount of free
-memory.  As an alternative to checking this manually, this commit adds a
-measurement in the test itself.  It measures four times during the test
-for available memory, digitally filters these measurements to produce a
-running average with a weight of 0.5, and compares this digitally filtered
-value with the amount of available memory at the beginning of the test.
+The rcutorture global variable rcu_torture_current is accessed locklessly,
+so it must use the RCU pointer load/store primitives.  This commit
+therefore adds several that were missed.
 
-Something like the following is printed at the end of the run:
+This data race was reported by KCSAN.  Not appropriate for backporting due
+to failure being unlikely and due to this being used only by rcutorture.
 
-Total time taken by all kfree'ers: 6369738407 ns, loops: 10000, batches: 764, memory footprint: 216MB
-
-Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
 Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
 ---
- kernel/rcu/rcuperf.c | 14 ++++++++++++--
- 1 file changed, 12 insertions(+), 2 deletions(-)
+ kernel/rcu/rcutorture.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
-diff --git a/kernel/rcu/rcuperf.c b/kernel/rcu/rcuperf.c
-index da94b89..a4a8d09 100644
---- a/kernel/rcu/rcuperf.c
-+++ b/kernel/rcu/rcuperf.c
-@@ -12,6 +12,7 @@
- #include <linux/types.h>
- #include <linux/kernel.h>
- #include <linux/init.h>
-+#include <linux/mm.h>
- #include <linux/module.h>
- #include <linux/kthread.h>
- #include <linux/err.h>
-@@ -611,6 +612,7 @@ kfree_perf_thread(void *arg)
- 	long me = (long)arg;
- 	struct kfree_obj *alloc_ptr;
- 	u64 start_time, end_time;
-+	long long mem_begin, mem_during = 0;
- 
- 	VERBOSE_PERFOUT_STRING("kfree_perf_thread task started");
- 	set_cpus_allowed_ptr(current, cpumask_of(me % nr_cpu_ids));
-@@ -626,6 +628,12 @@ kfree_perf_thread(void *arg)
+diff --git a/kernel/rcu/rcutorture.c b/kernel/rcu/rcutorture.c
+index 0b9ce9a..7e01e9a 100644
+--- a/kernel/rcu/rcutorture.c
++++ b/kernel/rcu/rcutorture.c
+@@ -1407,6 +1407,7 @@ rcu_torture_stats_print(void)
+ 	int i;
+ 	long pipesummary[RCU_TORTURE_PIPE_LEN + 1] = { 0 };
+ 	long batchsummary[RCU_TORTURE_PIPE_LEN + 1] = { 0 };
++	struct rcu_torture *rtcp;
+ 	static unsigned long rtcv_snap = ULONG_MAX;
+ 	static bool splatted;
+ 	struct task_struct *wtp;
+@@ -1423,10 +1424,10 @@ rcu_torture_stats_print(void)
  	}
  
- 	do {
-+		if (!mem_during) {
-+			mem_during = mem_begin = si_mem_available();
-+		} else if (loop % (kfree_loops / 4) == 0) {
-+			mem_during = (mem_during + si_mem_available()) / 2;
-+		}
-+
- 		for (i = 0; i < kfree_alloc_num; i++) {
- 			alloc_ptr = kmalloc(sizeof(struct kfree_obj), GFP_KERNEL);
- 			if (!alloc_ptr)
-@@ -645,9 +653,11 @@ kfree_perf_thread(void *arg)
- 		else
- 			b_rcu_gp_test_finished = cur_ops->get_gp_seq();
+ 	pr_alert("%s%s ", torture_type, TORTURE_FLAG);
++	rtcp = rcu_access_pointer(rcu_torture_current);
+ 	pr_cont("rtc: %p %s: %lu tfle: %d rta: %d rtaf: %d rtf: %d ",
+-		rcu_torture_current,
+-		rcu_torture_current && !rcu_stall_is_suppressed_at_boot()
+-			? "ver" : "VER",
++		rtcp,
++		rtcp && !rcu_stall_is_suppressed_at_boot() ? "ver" : "VER",
+ 		rcu_torture_current_version,
+ 		list_empty(&rcu_torture_freelist),
+ 		atomic_read(&n_rcu_torture_alloc),
+@@ -1482,7 +1483,8 @@ rcu_torture_stats_print(void)
+ 	if (cur_ops->stats)
+ 		cur_ops->stats();
+ 	if (rtcv_snap == rcu_torture_current_version &&
+-	    rcu_torture_current != NULL && !rcu_stall_is_suppressed()) {
++	    rcu_access_pointer(rcu_torture_current) &&
++	    !rcu_stall_is_suppressed()) {
+ 		int __maybe_unused flags = 0;
+ 		unsigned long __maybe_unused gp_seq = 0;
  
--		pr_alert("Total time taken by all kfree'ers: %llu ns, loops: %d, batches: %ld\n",
-+		pr_alert("Total time taken by all kfree'ers: %llu ns, loops: %d, batches: %ld, memory footprint: %lldMB\n",
- 		       (unsigned long long)(end_time - start_time), kfree_loops,
--		       rcuperf_seq_diff(b_rcu_gp_test_finished, b_rcu_gp_test_started));
-+		       rcuperf_seq_diff(b_rcu_gp_test_finished, b_rcu_gp_test_started),
-+		       (mem_begin - mem_during) >> (20 - PAGE_SHIFT));
-+
- 		if (shutdown) {
- 			smp_mb(); /* Assign before wake. */
- 			wake_up(&shutdown_wq);
