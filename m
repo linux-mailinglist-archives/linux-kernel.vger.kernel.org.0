@@ -2,118 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1EC8F190B7D
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 11:53:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B780D190B96
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 11:57:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727179AbgCXKw1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 06:52:27 -0400
-Received: from foss.arm.com ([217.140.110.172]:60636 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726818AbgCXKw1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 06:52:27 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AC0B330E;
-        Tue, 24 Mar 2020 03:52:26 -0700 (PDT)
-Received: from C02TD0UTHF1T.local (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2425D3F792;
-        Tue, 24 Mar 2020 03:52:24 -0700 (PDT)
-Date:   Tue, 24 Mar 2020 10:52:17 +0000
-From:   Mark Rutland <mark.rutland@arm.com>
-To:     =?utf-8?B?UsOpbWk=?= Denis-Courmont <remi@remlab.net>
-Cc:     Catalin Marinas <catalin.marinas@arm.com>, will@kernel.org,
-        james.morse@arm.com, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/3] arm64: clean up trampoline vector loads
-Message-ID: <20200324105217.GA20256@C02TD0UTHF1T.local>
-References: <1938400.7m7sAWtiY1@basile.remlab.net>
- <20200323121437.GC2597@C02TD0UTHF1T.local>
- <20200323190408.GE4892@mbp>
- <2067644.cOvikPKVsA@basile.remlab.net>
+        id S1727179AbgCXK5M (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 06:57:12 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:36340 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727111AbgCXK5M (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Mar 2020 06:57:12 -0400
+Received: by mail-wr1-f65.google.com with SMTP id 31so14801652wrs.3
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Mar 2020 03:57:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=rxfBoUcTAjy/KXQNUn7YUvrT2t4HIupwqUhZ33S66ss=;
+        b=c1xTKH3BAJuomeNyz2i+suC7oboh1pmfXLPPnrnJtADS55zxZadAuhFVqWZpQflV4E
+         WACXYT7z9kMKrZBJ9a3O20E2Q8OYBg9NX2uWhKaXIdiqKRUFmzpSQum6gsv5bWN2TLai
+         8Blo1IYYk0myZ+R16jwLesrB2gmLQA3KEsK75uXPhFgGSsg4Xx8WUHm24wbmetV3EGMq
+         kN8UbbcflEF6GQ3GoiZ65hJugQur6GrLDD9bYIljFPFMJrq21t2mFJ50X1EoWwLs8zlx
+         yUtePUy9qDaN70PuJdDARuGl3K04koFAvgEkDaYKmCXUnxmMDyNTZUmkVPPH044AcQgT
+         7sEA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=rxfBoUcTAjy/KXQNUn7YUvrT2t4HIupwqUhZ33S66ss=;
+        b=SwkeCdnNwQot2TBRBouuuZ6O7tR0QOtdxCmTJHySxMbQ09d3kG76NPFNTgMM7SXatx
+         y+0E+IlS7xj6JKpFWZbAqlH09eSPcUnpJ8ksXPHyk9My7mdoIZ5xNd8tgRi+iA1sNReN
+         EyzNRQm/e+xPwWJR3cguJCoGvo54EyOCDfSHZCiBWPyKUunM6mm4zcVeQXGVm6mF+7sg
+         s8T4rZiaLtj1bBZ+impeLNBelBMUmStMZzjN+akLzkRhrgH8X8k0o9G0V6LuuJ7og5On
+         k7vRpKsiqVzI11Bao64AlrcQQ00jjZEv0TB5LLRMPVro4RIE/Q1JNau5/ClRgTt7U776
+         vh0g==
+X-Gm-Message-State: ANhLgQ0s7dHDtpTiX8V6rkeqQGS8Xpm/kP1gEo5SdZEREraNL5bnprfc
+        qnDN50EVXTpIlEYnGmqUoocmbg==
+X-Google-Smtp-Source: ADFU+vu/Xqcc5SljHMAFXyLi9BXIlptXWFB94z0f4tJWF2QaBlwACgFlkmLPeyXxq4y2mK7N7ncepA==
+X-Received: by 2002:adf:b6a5:: with SMTP id j37mr35424592wre.412.1585047431070;
+        Tue, 24 Mar 2020 03:57:11 -0700 (PDT)
+Received: from dell ([2.27.35.213])
+        by smtp.gmail.com with ESMTPSA id h132sm2862295wmf.18.2020.03.24.03.57.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 24 Mar 2020 03:57:10 -0700 (PDT)
+Date:   Tue, 24 Mar 2020 10:57:59 +0000
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Andreas Kemnade <andreas@kemnade.info>
+Cc:     robh+dt@kernel.org, mark.rutland@arm.com, a.zummo@towertech.it,
+        alexandre.belloni@bootlin.com, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-rtc@vger.kernel.org,
+        stefan@agner.ch, b.galvani@gmail.com, phh@phh.me,
+        letux-kernel@openphoenux.org, knaack.h@gmx.de, lars@metafoo.de,
+        pmeerw@pmeerw.net, linux-iio@vger.kernel.org, jic23@kernel.org
+Subject: Re: [PATCH v7 4/7] mfd: rn5t618: add more subdevices
+Message-ID: <20200324105759.GI5477@dell>
+References: <20200320081105.12026-1-andreas@kemnade.info>
+ <20200320081105.12026-5-andreas@kemnade.info>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <2067644.cOvikPKVsA@basile.remlab.net>
+In-Reply-To: <20200320081105.12026-5-andreas@kemnade.info>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 23, 2020 at 10:42:30PM +0200, Rémi Denis-Courmont wrote:
-> Le maanantaina 23. maaliskuuta 2020, 21.04.09 EET Catalin Marinas a écrit :
-> > On Mon, Mar 23, 2020 at 12:14:37PM +0000, Mark Rutland wrote:
-> > > On Mon, Mar 23, 2020 at 02:08:53PM +0200, Rémi Denis-Courmont wrote:
-> > > > Le maanantaina 23. maaliskuuta 2020, 14.07.00 EET Mark Rutland a écrit :
-> > > > > On Thu, Mar 19, 2020 at 11:14:05AM +0200, Rémi Denis-Courmont wrote:
-> > > > > > From: Rémi Denis-Courmont <remi.denis.courmont@huawei.com>
-> > > > > > 
-> > > > > > This switches from custom instruction patterns to the regular large
-> > > > > > memory model sequence with ADRP and LDR. In doing so, the ADD
-> > > > > > instruction can be eliminated in the SDEI handler, and the code no
-> > > > > > longer assumes that the trampoline vectors and the vectors address
-> > > > > > both
-> > > > > > start on a page boundary.
-> > > > > > 
-> > > > > > Signed-off-by: Rémi Denis-Courmont <remi.denis.courmont@huawei.com>
-> > > > > > ---
-> > > > > > 
-> > > > > >  arch/arm64/kernel/entry.S | 9 ++++-----
-> > > > > >  1 file changed, 4 insertions(+), 5 deletions(-)
-> > > > > > 
-> > > > > > diff --git a/arch/arm64/kernel/entry.S b/arch/arm64/kernel/entry.S
-> > > > > > index e5d4e30ee242..24f828739696 100644
-> > > > > > --- a/arch/arm64/kernel/entry.S
-> > > > > > +++ b/arch/arm64/kernel/entry.S
-> > > > > > @@ -805,9 +805,9 @@ alternative_else_nop_endif
-> > > > > > 
-> > > > > >  2:
-> > > > > >  	tramp_map_kernel	x30
-> > > > > >  
-> > > > > >  #ifdef CONFIG_RANDOMIZE_BASE
-> > > > > > 
-> > > > > > -	adr	x30, tramp_vectors + PAGE_SIZE
-> > > > > > +	adrp	x30, tramp_vectors + PAGE_SIZE
-> > > > > > 
-> > > > > >  alternative_insn isb, nop, ARM64_WORKAROUND_QCOM_FALKOR_E1003
-> > > > > > 
-> > > > > > -	ldr	x30, [x30]
-> > > > > > +	ldr	x30, [x30, #:lo12:__entry_tramp_data_start]
-> > > > > 
-> > > > > I think this is busted for !4K kernels once we reduce the alignment of
-> > > > > __entry_tramp_data_start.
-> > > > > 
-> > > > > The ADRP gives us a 64K aligned address (with bits 15:0 clear). The
-> > > > > lo12
-> > > > > relocation gives us bits 11:0, so we haven't accounted for bits 15:12.
-> > > > 
-> > > > IMU, ADRP gives a 4K aligned value, regardless of MMU (TCR) settings.
-> > > 
-> > > Sorry, I had erroneously assumed tramp_vectors was page aligned. The
-> > > issue still stands -- we haven't accounted for bits 15:12, as those can
-> > > differ between tramp_vectors and __entry_tramp_data_start.
+On Fri, 20 Mar 2020, Andreas Kemnade wrote:
+
+> Since the RC5T619 has a RTC, use a separate subdevice list for that.
+> The ADC should be the same as in the RN5T618, according to drivers
+> in the wild, but since it is not tested, the ADC is only added for
+> the RC5T619.
 > 
-> Does that mean that the SDEI code never worked with page size > 4 KiB?
-
-I think this happens to work, but is fragile. Because nothing happens to
-get placed in .rodata between the _entry_tramp_data_start data and the
-__sdei_asm_trampoline_next_handler data, the
-__sdei_asm_trampoline_next_handler data doesn't spill into a separate
-page from the _entry_tramp_data_start data.
-
-If we did start adding stuff into .rodata between those two, there'd be
-a bigger risk of things going wrong. That was why I suggested a
-.entry.tramp.data section previously.
-
-> > Should we just use adrp on __entry_tramp_data_start? Anyway, the diff
-> > below doesn't solve the issue I'm seeing (only reverting patch 3).
+> Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
+> ---
+> Changes in v6:
+> - squashed with patch from former ADC patchset
 > 
-> AFAIU, the preexisting code uses the manual PAGE_SIZE offset because the offset 
-> in the main vmlinux does not match the architected offset inside the fixmap. If 
-> so, then using the symbol directly will not work at all.
+> Changes in v3:
+> - alignment cleanup
+>  drivers/mfd/rn5t618.c | 20 ++++++++++++++++++--
+>  1 file changed, 18 insertions(+), 2 deletions(-)
 
-Indeed. I can't see a neat way of avoiding this right now, so should we
-drop these patches and leave the code as-is (but with comments as to the
-special requirements that it has)?
+For my own reference:
+  Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
 
-Thanks,
-Mark.
+-- 
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
