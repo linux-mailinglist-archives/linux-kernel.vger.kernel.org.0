@@ -2,140 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 349951915D2
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 17:13:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E16041915E2
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 17:14:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728969AbgCXQMj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 12:12:39 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:45828 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728910AbgCXQM0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 12:12:26 -0400
-Received: from pendragon.ideasonboard.com (81-175-216-236.bb.dnainternet.fi [81.175.216.236])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 0CB43308;
-        Tue, 24 Mar 2020 17:12:23 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1585066344;
-        bh=h9AU8lIpV7OHn82ip0Jw12bYSRW82NU8UY8yuWnDD/A=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=jhEyVSolpqtVGQVGQ7ZsK5akEab88MiGhWEvbC4a6HAJothOGvP7rBw4+LTm2kv0x
-         y1e8bNcrGWMkklZyBCMKRgPkxOhFV4YXN0t5YMPn8WIZ9z+KUQsjYmK/kUnZKeJZNw
-         oyuI3ypKkx8sJze7gPlnVR/a+roJIFn2QjyRGBCw=
-Date:   Tue, 24 Mar 2020 18:12:21 +0200
-From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To:     "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Cc:     Maxime Ripard <maxime@cerno.tech>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Ezequiel Garcia <ezequiel@collabora.com>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Fabio Estevam <festevam@gmail.com>,
-        linux-media <linux-media@vger.kernel.org>,
-        LAK <linux-arm-kernel@lists.infradead.org>,
-        NXP Linux Team <linux-imx@nxp.com>
-Subject: Re: [PATCH v3 1/4] media: dt-bindings: media: i2c: Switch to
- assigned-clock-rates
-Message-ID: <20200324161221.GA27805@pendragon.ideasonboard.com>
-References: <1584133954-6953-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <1584133954-6953-2-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20200319124452.3yfcvq754vi4q2rv@gilmour.lan>
- <20200319130348.GC4872@pendragon.ideasonboard.com>
- <CA+V-a8s-GZsYuBLyGnzURZfGD42f0c+QEan6FSwb2ew1=7Gj3g@mail.gmail.com>
- <20200324154045.whiy6uvlg2mrjv5a@gilmour.lan>
- <CA+V-a8tMVoJOdgM_S0sJ0WEGhwBirCC4mi-TtxLCn1SKVXXiBQ@mail.gmail.com>
+        id S1728239AbgCXQNw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 12:13:52 -0400
+Received: from mga18.intel.com ([134.134.136.126]:58638 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727681AbgCXQNw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Mar 2020 12:13:52 -0400
+IronPort-SDR: GKb0EOgvfEjWC88/8TiHNeaUZSlGp7SN06JnaH7RcCAywxmQjb3RL/MRmlNzthNknsvdtj0GMm
+ raX7HMSzG3bA==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Mar 2020 09:13:51 -0700
+IronPort-SDR: W8SciJsflDt7I1KWp22n6eTJA7U0Ua/WogD7R+qVo6jLLLwyy64NWdjac5turEh7gfGs2gJwPy
+ ixWURD/+G7gA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.72,301,1580803200"; 
+   d="scan'208";a="393330458"
+Received: from rjwysock-mobl1.ger.corp.intel.com (HELO [10.249.142.176]) ([10.249.142.176])
+  by orsmga004.jf.intel.com with ESMTP; 24 Mar 2020 09:13:50 -0700
+Subject: Re: [PATCH][next] pnpbios: pnpbios.h: Replace zero-length array with
+ flexible-array member
+To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Cc:     linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org
+References: <20200320231827.GA21969@embeddedor.com>
+From:   "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+Organization: Intel Technology Poland Sp. z o. o., KRS 101882, ul. Slowackiego
+ 173, 80-298 Gdansk
+Message-ID: <bd76497e-7d37-a38b-b12c-d6069714f2f0@intel.com>
+Date:   Tue, 24 Mar 2020 17:13:50 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CA+V-a8tMVoJOdgM_S0sJ0WEGhwBirCC4mi-TtxLCn1SKVXXiBQ@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20200320231827.GA21969@embeddedor.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Prabhakar,
-
-On Tue, Mar 24, 2020 at 04:04:43PM +0000, Lad, Prabhakar wrote:
-> On Tue, Mar 24, 2020 at 3:40 PM Maxime Ripard <maxime@cerno.tech> wrote:
-> > On Thu, Mar 19, 2020 at 01:17:51PM +0000, Lad, Prabhakar wrote:
-> > > On Thu, Mar 19, 2020 at 1:04 PM Laurent Pinchart wrote:
-> > > > On Thu, Mar 19, 2020 at 01:44:52PM +0100, Maxime Ripard wrote:
-> > > > > On Fri, Mar 13, 2020 at 09:12:31PM +0000, Lad Prabhakar wrote:
-> > > > > > Use assigned-clock-rates to specify the clock rate. Also mark
-> > > > > > clock-frequency property as deprecated.
-> > > > > >
-> > > > > > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> > > > > > ---
-> > > > > >  Documentation/devicetree/bindings/media/i2c/ov5645.txt | 5 +++--
-> > > > > >  1 file changed, 3 insertions(+), 2 deletions(-)
-> > > > > >
-> > > > > > diff --git a/Documentation/devicetree/bindings/media/i2c/ov5645.txt b/Documentation/devicetree/bindings/media/i2c/ov5645.txt
-> > > > > > index 72ad992..e62fe82 100644
-> > > > > > --- a/Documentation/devicetree/bindings/media/i2c/ov5645.txt
-> > > > > > +++ b/Documentation/devicetree/bindings/media/i2c/ov5645.txt
-> > > > > > @@ -8,7 +8,7 @@ Required Properties:
-> > > > > >  - compatible: Value should be "ovti,ov5645".
-> > > > > >  - clocks: Reference to the xclk clock.
-> > > > > >  - clock-names: Should be "xclk".
-> > > > > > -- clock-frequency: Frequency of the xclk clock.
-> > > > > > +- clock-frequency (deprecated): Frequency of the xclk clock.
-> > > > > >  - enable-gpios: Chip enable GPIO. Polarity is GPIO_ACTIVE_HIGH. This corresponds
-> > > > > >    to the hardware pin PWDNB which is physically active low.
-> > > > > >  - reset-gpios: Chip reset GPIO. Polarity is GPIO_ACTIVE_LOW. This corresponds to
-> > > > > > @@ -37,7 +37,8 @@ Example:
-> > > > > >
-> > > > > >                     clocks = <&clks 200>;
-> > > > > >                     clock-names = "xclk";
-> > > > > > -                   clock-frequency = <24000000>;
-> > > > > > +                   assigned-clocks = <&clks 200>;
-> > > > > > +                   assigned-clock-rates = <24000000>;
-> > > > > >
-> > > > > >                     vdddo-supply = <&camera_dovdd_1v8>;
-> > > > > >                     vdda-supply = <&camera_avdd_2v8>;
-> > > > >
-> > > > > clock-frequency is quite different from assigned-clock-rates though,
-> > > > > semantically speaking. clock-frequency is only about what the clock
-> > > > > frequency is, while assigned-clock-rates will change the rate as well,
-> > > > > and you have no idea how long it will last.
-> > > >
-> > > > The driver currently reads the clock-frequency property and then calls
-> > > > clk_set_rate(). I agree tht assigned-clock-rates isn't a panacea, but I
-> > > > think it's less of a hack than what we currently have.
-> > > >
-> > > > As discussed on IRC, maybe the best option in this specific case is to
-> > > > drop clock-frequency and assigned-clok-rates, and call clk_set_rate()
-> > > > with a hardcoded frequency of 24MHz in the driver, as that's the only
-> > > > frequency the driver supports.
-> > > >
-> > > Does this mean any driver which has a fixed clock requirement shouldn't be a
-> > > DT property and should be just handled by the drivers internally ?
-> >
-> > It's hard to give a generic policy, but here, the hardware is pretty
-> > flexible since it can deal with anything between 6MHz to 50-something
-> > MHz, it's the driver that chooses to enforce a 24MHz and be pedantic
-> > about it, so it's up to the driver to enforce that policy, not to the
-> > DT since it's essentially a software limitation, not a hardware one.
+On 3/21/2020 12:18 AM, Gustavo A. R. Silva wrote:
+> The current codebase makes use of the zero-length array language
+> extension to the C90 standard, but the preferred mechanism to declare
+> variable-length types such as these ones is a flexible array member[1][2],
+> introduced in C99:
 >
-> Thank you for the clarification, Ill drop patches 1-4 from this series.
+> struct foo {
+>          int stuff;
+>          struct boo array[];
+> };
+>
+> By making use of the mechanism above, we will get a compiler warning
+> in case the flexible array does not occur last in the structure, which
+> will help us prevent some kind of undefined behavior bugs from being
+> inadvertently introduced[3] to the codebase from now on.
+>
+> Also, notice that, dynamic memory allocations won't be affected by
+> this change:
+>
+> "Flexible array members have incomplete type, and so the sizeof operator
+> may not be applied. As a quirk of the original implementation of
+> zero-length arrays, sizeof evaluates to zero."[1]
+>
+> This issue was found with the help of Coccinelle.
+>
+> [1] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
+> [2] https://github.com/KSPP/linux/issues/21
+> [3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
+>
+> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+> ---
+>   drivers/pnp/pnpbios/pnpbios.h | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/pnp/pnpbios/pnpbios.h b/drivers/pnp/pnpbios/pnpbios.h
+> index 37acb8378f39..2ce739ff9c1a 100644
+> --- a/drivers/pnp/pnpbios/pnpbios.h
+> +++ b/drivers/pnp/pnpbios/pnpbios.h
+> @@ -107,7 +107,7 @@ struct pnp_bios_node {
+>   	__u32 eisa_id;
+>   	__u8 type_code[3];
+>   	__u16 flags;
+> -	__u8 data[0];
+> +	__u8 data[];
+>   };
+>   #pragma pack()
+>   
 
-That's the whole series... :-) I think you should keep patch 1/4 but
-just remove the clock-frequency from the bindings, then remove it from
-the DT files, and patch the driver to set the clock rate to 24MHz
-unconditionally in patch 4/4.
+Please resend this with a CC to linux-acpi, thanks!
 
--- 
-Regards,
 
-Laurent Pinchart
