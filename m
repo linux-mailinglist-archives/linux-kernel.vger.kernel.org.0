@@ -2,38 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B362D1910EA
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 14:32:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9406B1910A6
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 14:31:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728088AbgCXNcI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 09:32:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38900 "EHLO mail.kernel.org"
+        id S1728695AbgCXNaX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 09:30:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46130 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728712AbgCXNSi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 09:18:38 -0400
+        id S1729297AbgCXNXL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Mar 2020 09:23:11 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 79C4E208CA;
-        Tue, 24 Mar 2020 13:18:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AACAC20775;
+        Tue, 24 Mar 2020 13:23:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585055917;
-        bh=/yUkgZdWto5X5Jvg8caTaNLBPOv3Z7TfKUnt0YercZw=;
+        s=default; t=1585056191;
+        bh=npr2SWUuqVngmrPJq9R8bHzxLm6ewalMKQis6F4g21E=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=uSwXuNxyNTPaEw5gZk0lsbSPTzqQvATE6c+Qhuw2naJdrqHFHqMl091z4p6KJ6RDJ
-         EYSnQenN55QRLrP9v5h3DwA8jb4AAqa6/qu6jDnVfTD2Gtan76cW0f6+xAjPgdFMLz
-         GrmCyyJzXL2Y2ikBCdJ4a1PRSiViwuBfbjK/ccFA=
+        b=cMvdcz+zt21yS73JaA4qAGY2eSBdRhmRJ3bH6DYh0bwnypvY0mOqNWeVbXK2Nr0uU
+         C4lQv4uWw2rLaXCBoz0GlmaxZnsA5AcOfml/6Sj8VAlSx6B61IMdR96KrO/CXKLCDd
+         opRb+cMVA6HRgZEixVKvL8t1Zle51ur3kOu6CUVo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Scott Chen <scott@labau.com.tw>,
-        Johan Hovold <johan@kernel.org>
-Subject: [PATCH 5.4 041/102] USB: serial: pl2303: add device-id for HP LD381
-Date:   Tue, 24 Mar 2020 14:10:33 +0100
-Message-Id: <20200324130810.893677411@linuxfoundation.org>
+        stable@vger.kernel.org, Anthony Mallet <anthony.mallet@laas.fr>
+Subject: [PATCH 5.5 051/119] USB: cdc-acm: fix close_delay and closing_wait units in TIOCSSERIAL
+Date:   Tue, 24 Mar 2020 14:10:36 +0100
+Message-Id: <20200324130813.371575958@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.2
-In-Reply-To: <20200324130806.544601211@linuxfoundation.org>
-References: <20200324130806.544601211@linuxfoundation.org>
+In-Reply-To: <20200324130808.041360967@linuxfoundation.org>
+References: <20200324130808.041360967@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,42 +42,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Scott Chen <scott@labau.com.tw>
+From: Anthony Mallet <anthony.mallet@laas.fr>
 
-commit cecc113c1af0dd41ccf265c1fdb84dbd05e63423 upstream.
+commit 633e2b2ded739a34bd0fb1d8b5b871f7e489ea29 upstream.
 
-Add a device id for HP LD381 Display
-LD381:   03f0:0f7f
+close_delay and closing_wait are specified in hundredth of a second but stored
+internally in jiffies. Use the jiffies_to_msecs() and msecs_to_jiffies()
+functions to convert from each other.
 
-Signed-off-by: Scott Chen <scott@labau.com.tw>
+Signed-off-by: Anthony Mallet <anthony.mallet@laas.fr>
 Cc: stable <stable@vger.kernel.org>
-Signed-off-by: Johan Hovold <johan@kernel.org>
+Link: https://lore.kernel.org/r/20200312133101.7096-1-anthony.mallet@laas.fr
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/serial/pl2303.c |    1 +
- drivers/usb/serial/pl2303.h |    1 +
- 2 files changed, 2 insertions(+)
+ drivers/usb/class/cdc-acm.c |    9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
---- a/drivers/usb/serial/pl2303.c
-+++ b/drivers/usb/serial/pl2303.c
-@@ -93,6 +93,7 @@ static const struct usb_device_id id_tab
- 	{ USB_DEVICE(SUPERIAL_VENDOR_ID, SUPERIAL_PRODUCT_ID) },
- 	{ USB_DEVICE(HP_VENDOR_ID, HP_LD220_PRODUCT_ID) },
- 	{ USB_DEVICE(HP_VENDOR_ID, HP_LD220TA_PRODUCT_ID) },
-+	{ USB_DEVICE(HP_VENDOR_ID, HP_LD381_PRODUCT_ID) },
- 	{ USB_DEVICE(HP_VENDOR_ID, HP_LD960_PRODUCT_ID) },
- 	{ USB_DEVICE(HP_VENDOR_ID, HP_LD960TA_PRODUCT_ID) },
- 	{ USB_DEVICE(HP_VENDOR_ID, HP_LCM220_PRODUCT_ID) },
---- a/drivers/usb/serial/pl2303.h
-+++ b/drivers/usb/serial/pl2303.h
-@@ -124,6 +124,7 @@
- #define HP_LM920_PRODUCT_ID	0x026b
- #define HP_TD620_PRODUCT_ID	0x0956
- #define HP_LD960_PRODUCT_ID	0x0b39
-+#define HP_LD381_PRODUCT_ID	0x0f7f
- #define HP_LCM220_PRODUCT_ID	0x3139
- #define HP_LCM960_PRODUCT_ID	0x3239
- #define HP_LD220_PRODUCT_ID	0x3524
+--- a/drivers/usb/class/cdc-acm.c
++++ b/drivers/usb/class/cdc-acm.c
+@@ -896,10 +896,10 @@ static int get_serial_info(struct tty_st
+ 
+ 	ss->xmit_fifo_size = acm->writesize;
+ 	ss->baud_base = le32_to_cpu(acm->line.dwDTERate);
+-	ss->close_delay	= acm->port.close_delay / 10;
++	ss->close_delay	= jiffies_to_msecs(acm->port.close_delay) / 10;
+ 	ss->closing_wait = acm->port.closing_wait == ASYNC_CLOSING_WAIT_NONE ?
+ 				ASYNC_CLOSING_WAIT_NONE :
+-				acm->port.closing_wait / 10;
++				jiffies_to_msecs(acm->port.closing_wait) / 10;
+ 	return 0;
+ }
+ 
+@@ -909,9 +909,10 @@ static int set_serial_info(struct tty_st
+ 	unsigned int closing_wait, close_delay;
+ 	int retval = 0;
+ 
+-	close_delay = ss->close_delay * 10;
++	close_delay = msecs_to_jiffies(ss->close_delay * 10);
+ 	closing_wait = ss->closing_wait == ASYNC_CLOSING_WAIT_NONE ?
+-			ASYNC_CLOSING_WAIT_NONE : ss->closing_wait * 10;
++			ASYNC_CLOSING_WAIT_NONE :
++			msecs_to_jiffies(ss->closing_wait * 10);
+ 
+ 	mutex_lock(&acm->port.mutex);
+ 
 
 
