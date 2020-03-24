@@ -2,44 +2,44 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C41F81915D8
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 17:13:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BA1B31915CA
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 17:13:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729022AbgCXQM7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 12:12:59 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:51016 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728445AbgCXQLg (ORCPT
+        id S1727545AbgCXQMX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 12:12:23 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:36984 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728506AbgCXQLh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 12:11:36 -0400
+        Tue, 24 Mar 2020 12:11:37 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Type:MIME-Version:References:
+        d=infradead.org; s=merlin.20170209; h=Content-Type:MIME-Version:References:
         Subject:Cc:To:From:Date:Message-Id:Sender:Reply-To:Content-Transfer-Encoding:
         Content-ID:Content-Description:In-Reply-To;
-        bh=AjyCcnknx5JNjHLXsKwxMk0QOyXUEAMXcY0+YVRRcwM=; b=Y5/+J5A3qN9dWxZt+mDsgmI0SS
-        PWOyvO73Fxu5Cz70x7nITUSdBEfeQbPOTp3WBZUjKYPgTi3JT7vZ2A4D6Dk8IqNwjQAXg9vL3/F3z
-        WgdSIq+zZKXOXQ+tR6aGOBFs7pk2yyU7D+VasDvRYxcBYpTe398zpzVosMJdpgAlmCRM6HBwTrBZg
-        D4IzfNAtOJEYqWO0eGv7Y2TFBUyYlL6b/U4FA1Ul2GbhKJvBOqyNx6+8UJ0yXP0/6FoumkLO2ZamE
-        nN9GdPvK1P4lRQDzscITgcwoy4fg1Cn4vrkQ15F6EK/W4oAy/9FqJZ0Env/ioiXVueNiUuichVl8B
-        agSDABOQ==;
+        bh=6YoF6lOc7lq8HzssHakGnaDRnQUZuv12iEDQuZw5FxU=; b=JpkVCL0+VrR88/28J43umZphQu
+        BJDJG74hlxR9rf6JyuF4E/b96DKO9fYjaexpT0qoYAR5qMUrAmoXWjakJSRznPzsG1Fqe3zIhGTYO
+        Du7ELRBGC6VrMIMlmBpy8Sw8dj88LRVbCxWSStgHvIIU/89i+q7cse+919dHowOsHFFO/7q3bm8Ow
+        dj8rmo+StRu4Py4chjSgsH5rrTFS+w0jAArbTfUjXWDhMH1k7PbhTkI8YcfTOFsUvfluynJlwxvKs
+        U6/M+2zMuXp95xEwo98c0gY8Z/s09DNf/5YLsGhLViKoFVB8MFzRmzhqHtckq+zsXYh1AU+7yb1pr
+        Vg9Ilqeg==;
 Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jGm9N-0000CE-2S; Tue, 24 Mar 2020 16:11:33 +0000
+        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jGm9M-0006c0-U7; Tue, 24 Mar 2020 16:11:33 +0000
 Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 61E58307418;
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 649D830743D;
         Tue, 24 Mar 2020 17:11:28 +0100 (CET)
 Received: by hirez.programming.kicks-ass.net (Postfix, from userid 0)
-        id 565BD29A490F7; Tue, 24 Mar 2020 17:11:28 +0100 (CET)
-Message-Id: <20200324160924.987489248@infradead.org>
+        id 5863729A490F5; Tue, 24 Mar 2020 17:11:28 +0100 (CET)
+Message-Id: <20200324160925.047300866@infradead.org>
 User-Agent: quilt/0.65
-Date:   Tue, 24 Mar 2020 16:31:31 +0100
+Date:   Tue, 24 Mar 2020 16:31:32 +0100
 From:   Peter Zijlstra <peterz@infradead.org>
 To:     tglx@linutronix.de, jpoimboe@redhat.com
 Cc:     linux-kernel@vger.kernel.org, x86@kernel.org, peterz@infradead.org,
         mhiramat@kernel.org, mbenes@suse.cz, brgerst@gmail.com
-Subject: [PATCH v3 18/26] objtool: Fix !CFI insn_state propagation
+Subject: [PATCH v3 19/26] objtool: Implement noinstr validation
 References: <20200324153113.098167666@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -48,148 +48,278 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Objtool keeps per instruction CFI state in struct insn_state and will
-save/restore this where required. However, insn_state has grown some
-!CFI state, and this must not be saved/restored (and thus lost).
+Validate that any call out of .noinstr.text is in between
+instr_begin() and instr_end() annotations.
 
-Fix this by explicitly preserving the !CFI state and clarify by
-restucturing the code and adding a comment.
+This annotation is useful to ensure correct behaviour wrt tracing
+sensitive code like entry/exit and idle code. When we run code in a
+sensitive context we want a guarantee no unknown code is ran.
 
-XXX, the insn==first condition is not handled right.
+Since this validation relies on knowing the section of call
+destination symbols, we must run it on vmlinux.o instead of on
+individual object files.
+
+Add two options:
+
+ -d/--duplicate "duplicate validation for vmlinux"
+ -l/--vmlinux "vmlinux.o validation"
+
+Where the latter auto-detects when objname ends with "vmlinux.o" and
+the former will force all validations, also those already done on
+!vmlinux object files.
 
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 ---
- tools/objtool/check.c |   95 +++++++++++++++++++++++++++++---------------------
- tools/objtool/check.h |    8 ++++
- 2 files changed, 64 insertions(+), 39 deletions(-)
+ tools/objtool/builtin-check.c |   11 +++-
+ tools/objtool/builtin.h       |    2 
+ tools/objtool/check.c         |   97 ++++++++++++++++++++++++++++++++++++++++++
+ tools/objtool/check.h         |    3 +
+ tools/objtool/elf.h           |    2 
+ 5 files changed, 111 insertions(+), 4 deletions(-)
 
+--- a/tools/objtool/builtin-check.c
++++ b/tools/objtool/builtin-check.c
+@@ -14,10 +14,11 @@
+  */
+ 
+ #include <subcmd/parse-options.h>
++#include <string.h>
+ #include "builtin.h"
+ #include "check.h"
+ 
+-bool no_fp, no_unreachable, retpoline, module, backtrace, uaccess, stats;
++bool no_fp, no_unreachable, retpoline, module, backtrace, uaccess, stats, validate_dup, vmlinux;
+ 
+ static const char * const check_usage[] = {
+ 	"objtool check [<options>] file.o",
+@@ -32,12 +33,14 @@ const struct option check_options[] = {
+ 	OPT_BOOLEAN('b', "backtrace", &backtrace, "unwind on error"),
+ 	OPT_BOOLEAN('a', "uaccess", &uaccess, "enable uaccess checking"),
+ 	OPT_BOOLEAN('s', "stats", &stats, "print statistics"),
++	OPT_BOOLEAN('d', "duplicate", &validate_dup, "duplicate validation for vmlinux.o"),
++	OPT_BOOLEAN('l', "vmlinux", &vmlinux, "vmlinux.o validation"),
+ 	OPT_END(),
+ };
+ 
+ int cmd_check(int argc, const char **argv)
+ {
+-	const char *objname;
++	const char *objname, *s;
+ 
+ 	argc = parse_options(argc, argv, check_options, check_usage, 0);
+ 
+@@ -46,5 +49,9 @@ int cmd_check(int argc, const char **arg
+ 
+ 	objname = argv[0];
+ 
++	s = strstr(objname, "vmlinux.o");
++	if (s && !s[9])
++		vmlinux = true;
++
+ 	return check(objname, false);
+ }
+--- a/tools/objtool/builtin.h
++++ b/tools/objtool/builtin.h
+@@ -8,7 +8,7 @@
+ #include <subcmd/parse-options.h>
+ 
+ extern const struct option check_options[];
+-extern bool no_fp, no_unreachable, retpoline, module, backtrace, uaccess, stats;
++extern bool no_fp, no_unreachable, retpoline, module, backtrace, uaccess, stats, validate_dup, vmlinux;
+ 
+ extern int cmd_check(int argc, const char **argv);
+ extern int cmd_orc(int argc, const char **argv);
 --- a/tools/objtool/check.c
 +++ b/tools/objtool/check.c
-@@ -2033,6 +2033,59 @@ static int validate_return(struct symbol
+@@ -252,6 +252,9 @@ static int decode_instructions(struct ob
+ 		    strncmp(sec->name, ".discard.", 9))
+ 			sec->text = true;
+ 
++		if (!strcmp(sec->name, ".noinstr.text"))
++			sec->noinstr = true;
++
+ 		for (offset = 0; offset < sec->len; offset += insn->len) {
+ 			insn = malloc(sizeof(*insn));
+ 			if (!insn) {
+@@ -1350,6 +1353,53 @@ static int read_retpoline_hints(struct o
  	return 0;
  }
  
-+static int apply_insn_hint(struct objtool_file *file, struct section *sec,
-+			   struct symbol *func, struct instruction *first,
-+			   struct instruction *insn, struct insn_state *state)
++static int read_instr_hints(struct objtool_file *file)
 +{
-+	struct insn_state old = *state;
++	struct section *sec;
++	struct instruction *insn;
++	struct rela *rela;
 +
-+	if (insn->restore) {
-+		struct instruction *save_insn, *i;
++	sec = find_section_by_name(file->elf, ".rela.discard.instr_end");
++	if (!sec)
++		return 0;
 +
-+		i = insn;
-+		save_insn = NULL;
-+		sym_for_each_insn_continue_reverse(file, func, i) {
-+			if (i->save) {
-+				save_insn = i;
-+				break;
-+			}
++	list_for_each_entry(rela, &sec->rela_list, list) {
++		if (rela->sym->type != STT_SECTION) {
++			WARN("unexpected relocation symbol type in %s", sec->name);
++			return -1;
 +		}
 +
-+		if (!save_insn) {
-+			WARN_FUNC("no corresponding CFI save for CFI restore",
-+					sec, insn->offset);
-+			return 1;
++		insn = find_insn(file, rela->sym->sec, rela->addend);
++		if (!insn) {
++			WARN("bad .discard.instr_end entry");
++			return -1;
 +		}
 +
-+		if (!save_insn->visited) {
-+			/*
-+			 * Oops, no state to copy yet.
-+			 * Hopefully we can reach this
-+			 * instruction from another branch
-+			 * after the save insn has been
-+			 * visited.
-+			 */
-+			if (insn == first)
-+				return 0; // XXX
-+
-+			WARN_FUNC("objtool isn't smart enough to handle this CFI save/restore combo",
-+					sec, insn->offset);
-+			return 1;
-+		}
-+
-+		insn->state = save_insn->state;
++		insn->instr--;
 +	}
 +
-+	*state = insn->state;
++	sec = find_section_by_name(file->elf, ".rela.discard.instr_begin");
++	if (!sec)
++		return 0;
 +
-+	/* restore !CFI state */
-+	state->df = old.df;
-+	state->uaccess = old.uaccess;
-+	state->uaccess_stack = old.uaccess_stack;
++	list_for_each_entry(rela, &sec->rela_list, list) {
++		if (rela->sym->type != STT_SECTION) {
++			WARN("unexpected relocation symbol type in %s", sec->name);
++			return -1;
++		}
++
++		insn = find_insn(file, rela->sym->sec, rela->addend);
++		if (!insn) {
++			WARN("bad .discard.instr_begin entry");
++			return -1;
++		}
++
++		insn->instr++;
++	}
 +
 +	return 0;
 +}
 +
- /*
-  * Follow the branch starting at the given instruction, and recursively follow
-  * any other branches (jumps).  Meanwhile, track the frame pointer state at
-@@ -2082,45 +2135,9 @@ static int validate_branch(struct objtoo
- 		}
+ static void mark_rodata(struct objtool_file *file)
+ {
+ 	struct section *sec;
+@@ -1421,6 +1471,10 @@ static int decode_sections(struct objtoo
+ 	if (ret)
+ 		return ret;
  
- 		if (insn->hint) {
--			if (insn->restore) {
--				struct instruction *save_insn, *i;
--
--				i = insn;
--				save_insn = NULL;
--				sym_for_each_insn_continue_reverse(file, func, i) {
--					if (i->save) {
--						save_insn = i;
--						break;
--					}
--				}
--
--				if (!save_insn) {
--					WARN_FUNC("no corresponding CFI save for CFI restore",
--						  sec, insn->offset);
--					return 1;
--				}
--
--				if (!save_insn->visited) {
--					/*
--					 * Oops, no state to copy yet.
--					 * Hopefully we can reach this
--					 * instruction from another branch
--					 * after the save insn has been
--					 * visited.
--					 */
--					if (insn == first)
--						return 0;
--
--					WARN_FUNC("objtool isn't smart enough to handle this CFI save/restore combo",
--						  sec, insn->offset);
--					return 1;
--				}
--
--				insn->state = save_insn->state;
--			}
--
--			state = insn->state;
--
-+			ret = apply_insn_hint(file, sec, func, first, insn, &state);
-+			if (ret)
-+				return ret;
- 		} else
- 			insn->state = state;
++	ret = read_instr_hints(file);
++	if (ret)
++		return ret;
++
+ 	return 0;
+ }
  
+@@ -1972,6 +2026,13 @@ static inline const char *call_dest_name
+ 
+ static int validate_call(struct instruction *insn, struct insn_state *state)
+ {
++	if (state->noinstr && state->instr <= 0 &&
++	    (!insn->call_dest || insn->call_dest->sec != insn->sec)) {
++		WARN_FUNC("call to %s() leaves .noinstr.text section",
++				insn->sec, insn->offset, call_dest_name(insn));
++		return 1;
++	}
++
+ 	if (state->uaccess && !func_uaccess_safe(insn->call_dest)) {
+ 		WARN_FUNC("call to %s() with UACCESS enabled",
+ 				insn->sec, insn->offset, call_dest_name(insn));
+@@ -2000,6 +2061,12 @@ static int validate_sibling_call(struct
+ 
+ static int validate_return(struct symbol *func, struct instruction *insn, struct insn_state *state)
+ {
++	if (state->noinstr && state->instr > 0) {
++		WARN_FUNC("return with instrumentation enabled",
++			  insn->sec, insn->offset);
++		return 1;
++	}
++
+ 	if (state->uaccess && !func_uaccess_safe(func)) {
+ 		WARN_FUNC("return with UACCESS enabled",
+ 			  insn->sec, insn->offset);
+@@ -2082,6 +2149,8 @@ static int apply_insn_hint(struct objtoo
+ 	state->df = old.df;
+ 	state->uaccess = old.uaccess;
+ 	state->uaccess_stack = old.uaccess_stack;
++	state->noinstr = old.noinstr;
++	state->instr = old.instr;
+ 
+ 	return 0;
+ }
+@@ -2444,6 +2513,14 @@ static int validate_section(struct objto
+ 	       CFI_NUM_REGS * sizeof(struct cfi_reg));
+ 	state.stack_size = initial_func_cfi.cfa.offset;
+ 
++	/*
++	 * We need the full vmlinux for noinstr validation, otherwise we can
++	 * not correctly determine insn->call_dest->sec (external symbols do
++	 * not have a section).
++	 */
++	if (vmlinux)
++		state.noinstr = sec->noinstr;
++
+ 	list_for_each_entry(func, &sec->symbol_list, list) {
+ 		if (func->type != STT_FUNC)
+ 			continue;
+@@ -2472,6 +2549,17 @@ static int validate_section(struct objto
+ 	return warnings;
+ }
+ 
++static int validate_vmlinux_functions(struct objtool_file *file)
++{
++	struct section *sec;
++
++	sec = find_section_by_name(file->elf, ".noinstr.text");
++	if (!sec)
++		return 0;
++
++	return validate_section(file, sec);
++}
++
+ static int validate_functions(struct objtool_file *file)
+ {
+ 	struct section *sec;
+@@ -2529,6 +2617,15 @@ int check(const char *_objname, bool orc
+ 	if (list_empty(&file.insn_list))
+ 		goto out;
+ 
++	if (vmlinux && !validate_dup) {
++		ret = validate_vmlinux_functions(&file);
++		if (ret < 0)
++			goto out;
++
++		warnings += ret;
++		goto out;
++	}
++
+ 	if (retpoline) {
+ 		ret = validate_retpoline(&file);
+ 		if (ret < 0)
 --- a/tools/objtool/check.h
 +++ b/tools/objtool/check.h
-@@ -13,6 +13,14 @@
- #include "orc.h"
- #include <linux/hashtable.h>
+@@ -28,6 +28,8 @@ struct insn_state {
+ 	unsigned char type;
+ 	bool bp_scratch;
+ 	bool drap, end, uaccess, df;
++	bool noinstr;
++	s8 instr;
+ 	unsigned int uaccess_stack;
+ 	int drap_reg, drap_offset;
+ 	struct cfi_reg vals[CFI_NUM_REGS];
+@@ -43,6 +45,7 @@ struct instruction {
+ 	unsigned long immediate;
+ 	bool alt_group, dead_end, ignore, hint, save, restore, ignore_alts;
+ 	bool retpoline_safe;
++	s8 instr;
+ 	u8 visited;
+ 	struct symbol *call_dest;
+ 	struct instruction *jump_dest;
+--- a/tools/objtool/elf.h
++++ b/tools/objtool/elf.h
+@@ -39,7 +39,7 @@ struct section {
+ 	char *name;
+ 	int idx;
+ 	unsigned int len;
+-	bool changed, text, rodata;
++	bool changed, text, rodata, noinstr;
+ };
  
-+/*
-+ * This structure (mostly) contains the instruction level CFI (Call Frame
-+ * Information) and is saved/restored where appropriate; see validate_branch().
-+ *
-+ * However it does also contain a limited amount of !CFI state; this state must
-+ * not be saved/restored along with the CFI information and is manually
-+ * preserved. See apply_insn_hint().
-+ */
- struct insn_state {
- 	struct cfi_reg cfa;
- 	struct cfi_reg regs[CFI_NUM_REGS];
+ struct symbol {
 
 
