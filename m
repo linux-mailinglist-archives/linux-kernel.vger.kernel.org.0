@@ -2,100 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2725E191D07
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 23:45:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5F9D6191CFF
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 23:45:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728552AbgCXWpr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 18:45:47 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:46382 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728496AbgCXWpo (ORCPT
+        id S1728367AbgCXWpi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 18:45:38 -0400
+Received: from mail-pj1-f67.google.com ([209.85.216.67]:52317 "EHLO
+        mail-pj1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727554AbgCXWph (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 18:45:44 -0400
-Received: by mail-lj1-f195.google.com with SMTP id v16so400033ljk.13;
-        Tue, 24 Mar 2020 15:45:42 -0700 (PDT)
+        Tue, 24 Mar 2020 18:45:37 -0400
+Received: by mail-pj1-f67.google.com with SMTP id ng8so184144pjb.2;
+        Tue, 24 Mar 2020 15:45:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=+Hy+gQXXd2yXLzvlo+vKQ0DCaXHroqYu+Fy+jYraxjM=;
-        b=IGbRH++VoABOyGXkuQVc93OU/loUgy9XQLhh0juQ/zuocAHQcRI5jaBnikUVcEFxyi
-         IcYfdYX18WPtyyLqg+cnNVHG/XhI38r/7fBrK4J6pGh4fZQ3LxE3hKuRXxeYRJvJmuw3
-         mTYaQgXYE/0pqWM7BkRWCMoRblZD2IgrPMvkbWtFk42uvq3DXOE3lZ4ek+24ea37xzYS
-         0prL0TKHL+48w79UFWvui7h4krG4fUery12qRMLlYcdbn82MvowHrgwe1tTnrY/LdzUe
-         ksNX33NJOuywRiQ9ChlJ6Jheg98NyMNhn1FFpEnedcO0RUxMa/LDr5zTO8eUkHlMPBug
-         EkdQ==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=PKMeyRQ3YhSpQkcTyPShJRWuaaPt570DhD0K201i24Y=;
+        b=VT4HeMXe1pYBCyO/8Jj2xQWubBmwbFGeXo5JKCqPHd5xsx2F+XgRd8MnWhxf2IswLL
+         PDRWkHUnGh7q4MRz3XYE4vUHSYo8iBArgYFXR3Uhz68F7vTTmSlGRa5lyU9yFT0qQrGa
+         5j5OtxLnMQ6Y/0/YIFr2Wqoq+nKccPSP9eC7XBdQTvbY6euDPwNw7lReUsh1I88mmPco
+         o5OO9pyyJDOODvk7BaXjfRs6QpXgz3DRYdse2sNJgLHvY//oHir1Nbtk0GLIuF5Zbz/0
+         1+kLIe+cEP7aUdUQSZaq9U2bGVY+RFC7LHAZv9eQmDosh3neklP1+FbqMhHM63nmNZq9
+         GcOw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=+Hy+gQXXd2yXLzvlo+vKQ0DCaXHroqYu+Fy+jYraxjM=;
-        b=qlScfDfn2/iVqmbstCFgUvJo8t7qazF5ztfdtfgRAshI38OfPErwTjCOqIHaYpEoj1
-         YmIKCTQgRIQCDXSTgUq8Y5dBvTl2qS+91cD08cYl+xILcPfMm3QykBQweAGlIfK+kciQ
-         KMfeEcQAYIIPngixtJoOoa0oVoIRYLprpSWVN+Dk2mDX/siR8qiwF02tA+cbXRQv/xcx
-         qNP8cZcsQGRbp7Pj4tUjb832sou4Sae4kMDuHFAgt/uKFhkAKXyfywDvvj5PJJwoEU6y
-         p2JRfyjoSuTYE/1nmqan4Dg4S5fukYrR03FM2x4uLssgzvVkE3UT+bWmrekyWAkcwU/6
-         bsdQ==
-X-Gm-Message-State: AGi0PubJmYdXs9PVdW8hQDSDXgyf3rVX7BMm7IrPyoKTDiBaf2motUNz
-        4ylYnuM29pF3ogtg9j72A68xDiqG
-X-Google-Smtp-Source: APiQypJTc7454E7D3MdGDJTaCybxAhN7+8nt5udksXN5OeHNHwUkZ2VMvrRG/S2bIdDirFVEf3HnWg==
-X-Received: by 2002:a2e:989a:: with SMTP id b26mr23227ljj.274.1585089942074;
-        Tue, 24 Mar 2020 15:45:42 -0700 (PDT)
-Received: from localhost.localdomain (94-29-39-224.dynamic.spd-mgts.ru. [94.29.39.224])
-        by smtp.gmail.com with ESMTPSA id d4sm10534279lfa.75.2020.03.24.15.45.41
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=PKMeyRQ3YhSpQkcTyPShJRWuaaPt570DhD0K201i24Y=;
+        b=EIL6SYTBlBcW3VtwDjKOFv+kIa5PERQqXdPeX9YIsbtIoPsTk42dSKh92Bl99OqyRw
+         gfP3N0A2KRyVPNf6HJzZLtEkIwE72GhW0H9H39B6e9OvdwvQHK4XrYM9NkpXYmlcqXCc
+         ZQi0V4qkXUyh0dLQYfiePHUKqtXOoezT/u7/gHLqy4NtDyx69fCpAJp59PZecHp10s2d
+         tbjSdpY4fjqIvfu8nSKXnUia7VwQNnnMbYr1ovwCJv4L62apSKYojuyTu5arZWgPCyrZ
+         Y7xIug7LH8gFzvfGDPoR1DIVvhbO7968GFO5BuHA3qzgtU+9ofzA0kWlDemQFh59O4Tt
+         gV9g==
+X-Gm-Message-State: ANhLgQ0LVKtf0F0Vvnkj7i+MV9XtInHw1yMA051I6lgEUEUHnFhRERf/
+        ltcNnXdagL+SVpYeRKBBRxhaKSom
+X-Google-Smtp-Source: ADFU+vunt3Lf+DyFnjTw2mxQvuShMhU0fET7IsfLN9BexNWtrvdwbkM6MrM9WUkCTrOT9kDJpeHZfw==
+X-Received: by 2002:a17:90a:1f07:: with SMTP id u7mr247434pja.24.1585089935907;
+        Tue, 24 Mar 2020 15:45:35 -0700 (PDT)
+Received: from dtor-ws ([2620:15c:202:201:3c2a:73a9:c2cf:7f45])
+        by smtp.gmail.com with ESMTPSA id u18sm17162622pfl.40.2020.03.24.15.45.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Mar 2020 15:45:41 -0700 (PDT)
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>,
-        Jasper Korten <jja2000@gmail.com>,
-        David Heidelberg <david@ixit.cz>,
-        Peter Geis <pgwipeout@gmail.com>
-Cc:     linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v1 3/3] cpuidle: tegra: Support CPU cluster power-down state on Tegra30
-Date:   Wed, 25 Mar 2020 01:43:35 +0300
-Message-Id: <20200324224335.5825-4-digetx@gmail.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200324224335.5825-1-digetx@gmail.com>
-References: <20200324224335.5825-1-digetx@gmail.com>
+        Tue, 24 Mar 2020 15:45:35 -0700 (PDT)
+Date:   Tue, 24 Mar 2020 15:45:33 -0700
+From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To:     Andrew Duggan <aduggan@synaptics.com>
+Cc:     linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Paul Hollinsky <phollinsky@holtechnik.com>,
+        Christopher Heiny <Cheiny@synaptics.com>,
+        Lucas Stach <l.stach@pengutronix.de>, kernel@pengutronix.de,
+        patchwork-lst@pengutronix.de
+Subject: Re: [PATCH] Input: synaptics-rmi4 - Do not set reduced reporting
+ mode thresholds are not set by the driver
+Message-ID: <20200324224533.GF75430@dtor-ws>
+References: <20200312005549.29922-1-aduggan@synaptics.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200312005549.29922-1-aduggan@synaptics.com>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The new Tegra CPU Idle driver now has a unified code path for the coupled
-CC6 (LP2) state, this allows to enable the deepest idling state on Tegra30
-SoC where the whole CPU cluster is power-gated.
+On Wed, Mar 11, 2020 at 05:55:49PM -0700, Andrew Duggan wrote:
+> The previous patch "c5ccf2ad3d33 (Input: synaptics-rmi4 - switch to
+> reduced reporting mode)" enabled reduced reporting mode unintentionally
+> on some devices, if the firmware was configured with default Delta X/Y
+> threshold values. The result unintentionally degrade the performance of
+> some touchpads.
+> 
+> This patch checks to see that the driver is modifying the delta X/Y
+> thresholds before modifying the reporting mode.
+> 
+> Signed-off-by: Andrew Duggan <aduggan@synaptics.com>
 
-Tested-by: Michał Mirosław <mirq-linux@rere.qmqm.pl>
-Tested-by: Jasper Korten <jja2000@gmail.com>
-Tested-by: David Heidelberg <david@ixit.cz>
-Tested-by: Peter Geis <pgwipeout@gmail.com>
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
----
- drivers/cpuidle/cpuidle-tegra.c | 1 -
- 1 file changed, 1 deletion(-)
+Applied, thank you.
 
-diff --git a/drivers/cpuidle/cpuidle-tegra.c b/drivers/cpuidle/cpuidle-tegra.c
-index 313b0290e97b..150045849d78 100644
---- a/drivers/cpuidle/cpuidle-tegra.c
-+++ b/drivers/cpuidle/cpuidle-tegra.c
-@@ -365,7 +365,6 @@ static int tegra_cpuidle_probe(struct platform_device *pdev)
- 		break;
- 
- 	case TEGRA30:
--		tegra_cpuidle_disable_state(TEGRA_CC6);
- 		break;
- 
- 	case TEGRA114:
+> ---
+>  drivers/input/rmi4/rmi_f11.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/input/rmi4/rmi_f11.c b/drivers/input/rmi4/rmi_f11.c
+> index 6adea8a3e8fb..ffa39ab153f2 100644
+> --- a/drivers/input/rmi4/rmi_f11.c
+> +++ b/drivers/input/rmi4/rmi_f11.c
+> @@ -1203,8 +1203,8 @@ static int rmi_f11_initialize(struct rmi_function *fn)
+>  	 * If distance threshold values are set, switch to reduced reporting
+>  	 * mode so they actually get used by the controller.
+>  	 */
+> -	if (ctrl->ctrl0_11[RMI_F11_DELTA_X_THRESHOLD] ||
+> -	    ctrl->ctrl0_11[RMI_F11_DELTA_Y_THRESHOLD]) {
+> +	if (sensor->axis_align.delta_x_threshold ||
+> +	    sensor->axis_align.delta_y_threshold) {
+>  		ctrl->ctrl0_11[0] &= ~RMI_F11_REPORT_MODE_MASK;
+>  		ctrl->ctrl0_11[0] |= RMI_F11_REPORT_MODE_REDUCED;
+>  	}
+> -- 
+> 2.20.1
+> 
+
 -- 
-2.25.1
-
+Dmitry
