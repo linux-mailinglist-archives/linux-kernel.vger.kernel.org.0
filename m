@@ -2,295 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F3CCB1902BA
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 01:19:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6D24F1902AE
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 01:17:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727542AbgCXASN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Mar 2020 20:18:13 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:60864 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727485AbgCXASN (ORCPT
+        id S1727685AbgCXAQw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Mar 2020 20:16:52 -0400
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:33245 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727551AbgCXAQw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Mar 2020 20:18:13 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 02O09YG8101123;
-        Tue, 24 Mar 2020 00:16:57 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2020-01-29;
- bh=qucvghpoTdILPTGy1ayS/oGNuZVW39YLrBCxVQGMlkI=;
- b=aqvpMirKBt1NJdtlsrSKhG0fCcNDi73oMY445HOPQD+iQDukide0Gq6NBKjUZ2dn9zUA
- moSyOm1QxcZjgH/GkKKncTrzTpECJnoALJ7Zu1eGMPYX9OqD1CJJOX55NEDWgMGpm5rh
- gv9qoNBF1/gVOpiIhxNFWUdF8eHT+5vcXg/Of8GzT1/ehfvJAsncLuNWSlubn/OxjzwC
- iU7SxxMYR2MJLx8/26Ws0FrylblAoVfzLWJ88IGseK6X67t2WS6Bei/Lhk6oPBjFhEky
- I30desApPc5awCny1pkMcA5X1oy9E/f+MhCdLYASjcAUKrO2ga1OrqnSfu4Cgk0uW5ka Wg== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by userp2130.oracle.com with ESMTP id 2ywabr1hu4-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 24 Mar 2020 00:16:57 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 02O07oaW152173;
-        Tue, 24 Mar 2020 00:16:56 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by userp3020.oracle.com with ESMTP id 2yxw6kj6yb-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 24 Mar 2020 00:16:56 +0000
-Received: from abhmp0001.oracle.com (abhmp0001.oracle.com [141.146.116.7])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 02O0Gh8a030687;
-        Tue, 24 Mar 2020 00:16:43 GMT
-Received: from [192.168.1.206] (/71.63.128.209)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 23 Mar 2020 17:16:43 -0700
-Subject: Re: [PATCH 3/4] hugetlbfs: remove hugetlb_add_hstate() warning for
- existing hstate
-To:     Mina Almasry <almasrymina@google.com>
-Cc:     Linux-MM <linux-mm@kvack.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org,
-        linux-s390@vger.kernel.org, sparclinux@vger.kernel.org,
-        linux-doc@vger.kernel.org,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        "David S.Miller" <davem@davemloft.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Longpeng <longpeng2@huawei.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-References: <20200318220634.32100-1-mike.kravetz@oracle.com>
- <20200318220634.32100-4-mike.kravetz@oracle.com>
- <CAHS8izN1Q+yiZq8zcU8hoojafcQ19W7XQx-HyFm3Ud8hSvN1Nw@mail.gmail.com>
-From:   Mike Kravetz <mike.kravetz@oracle.com>
-Message-ID: <54fd7234-bdd9-de78-9351-16706bae2c08@oracle.com>
-Date:   Mon, 23 Mar 2020 17:16:38 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.6.0
+        Mon, 23 Mar 2020 20:16:52 -0400
+Received: by mail-ed1-f67.google.com with SMTP id z65so18675423ede.0
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Mar 2020 17:16:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=d/2Y64PABVXdc9ONlMpskyvi+SAnumMA7Crj5Bt/DBQ=;
+        b=Pw/jLYEtjS/ATrpjcImP2D5HPDWiFMBcBAxJVSOwIOaspT/epTOM9IydWFzxho9yua
+         oazmW6QWguLgtIbfTk74PkycIDjFDPzKqyzaoh+DhJAVrmkuDU/uAM53LPP8DVs9E40Q
+         tUZMoTzJY+STJT3ur0XbLBaDl6VIvIN8N0+HMJRRBPnxJx3Fysg9dQsHduc19AT8XqUR
+         Z+R5dqyHsad39E8wBrmCN6RWKFaLpPh9SfxtI2Y1DRQLG2Yf+1AwZidHAvD5ViWXYqSy
+         a907RgFuMp40UgoEATMPqB/Btt7FRTYbwdl5UG8XBt+aLoRiYnvjPwNK2Qw9OiPVrwLO
+         +WDg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=d/2Y64PABVXdc9ONlMpskyvi+SAnumMA7Crj5Bt/DBQ=;
+        b=BqJHNNjfpgJaGDPxk18s3M5rN1EghZNpj8ukHqCrV2MdjdfjZjWHOcYfcrvlhyABRG
+         y+JSq5EZKok5tPW3WqPymV7uvdwyDk9T15IcCfwowWl8M5xihTIA2DRS2pH5nNDKNUuK
+         zuGk9RM0n9dIMpU6Sx8VVP8XriPZT58AFxQbaP4zQidg7Hjk1nWjZL3gxuBww+DGcX+M
+         m98oKm4O1goR95fLJpvQCITgLYIb/lCjbOkFquAPXRsGHKoAgn/lAi0VSoUatxnbY+oJ
+         44s9kRdvtr+RJI//wmWm8vvRAoZ3S8yT+HsOyYhaf4WrNMiI+eFQqq3RxCLbK9rlYx4A
+         8VGw==
+X-Gm-Message-State: ANhLgQ0SsixIC28S6BzjiIx6kV6o+Vj6OVSY0PUa8xEZZfTnhMSy3mbU
+        t0Jh83U2uhaOkJR6f5bVv1Tsx/1WO/7/NslTn1CF
+X-Google-Smtp-Source: ADFU+vsjQok/w3GcfT1LJO6k41X3syl3c/RCvqnEbN1LGDpZdSJHQ9PBkLkvozzz1CLw+59ARBWSon4cJDwpW8rrY9U=
+X-Received: by 2002:a17:906:4b52:: with SMTP id j18mr13098102ejv.272.1585009010419;
+ Mon, 23 Mar 2020 17:16:50 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <CAHS8izN1Q+yiZq8zcU8hoojafcQ19W7XQx-HyFm3Ud8hSvN1Nw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9569 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 adultscore=0
- malwarescore=0 mlxscore=0 spamscore=0 mlxlogscore=999 bulkscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2003020000 definitions=main-2003230120
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9569 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 suspectscore=0
- lowpriorityscore=0 malwarescore=0 phishscore=0 priorityscore=1501
- clxscore=1015 adultscore=0 mlxscore=0 mlxlogscore=999 bulkscore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2003020000 definitions=main-2003230120
+References: <CAHC9VhTiCHQbp2SwK0Xb1QgpUZxOQ26JKKPsVGT0ZvMqx28oPQ@mail.gmail.com>
+ <CAHC9VhS09b_fM19tn7pHZzxfyxcHnK+PJx80Z9Z1hn8-==4oLA@mail.gmail.com>
+ <20200312193037.2tb5f53yeisfq4ta@madcap2.tricolour.ca> <CAHC9VhQoVOzy_b9W6h+kmizKr1rPkC4cy5aYoKT2i0ZgsceNDg@mail.gmail.com>
+ <20200313185900.y44yvrfm4zxa5lfk@madcap2.tricolour.ca> <CAHC9VhR2zCCE5bjH75rSwfLC7TJGFj4RBnrtcOoUiqVp9q5TaA@mail.gmail.com>
+ <20200318212630.mw2geg4ykhnbtr3k@madcap2.tricolour.ca> <CAHC9VhRYvGAru3aOMwWKCCWDktS+2pGr+=vV4SjHW_0yewD98A@mail.gmail.com>
+ <20200318215550.es4stkjwnefrfen2@madcap2.tricolour.ca> <CAHC9VhSdDDP7Ec-w61NhGxZG5ZiekmrBCAg=Y=VJvEZcgQh46g@mail.gmail.com>
+ <20200319220249.jyr6xmwvflya5mks@madcap2.tricolour.ca>
+In-Reply-To: <20200319220249.jyr6xmwvflya5mks@madcap2.tricolour.ca>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Mon, 23 Mar 2020 20:16:38 -0400
+Message-ID: <CAHC9VhR84aN72yNB_j61zZgrQV1y6yvrBLNY7jp7BqQiEDL+cw@mail.gmail.com>
+Subject: Re: [PATCH ghak90 V8 07/16] audit: add contid support for signalling
+ the audit daemon
+To:     Richard Guy Briggs <rgb@redhat.com>
+Cc:     Steve Grubb <sgrubb@redhat.com>, linux-audit@redhat.com,
+        nhorman@tuxdriver.com, linux-api@vger.kernel.org,
+        containers@lists.linux-foundation.org,
+        LKML <linux-kernel@vger.kernel.org>, dhowells@redhat.com,
+        netfilter-devel@vger.kernel.org, ebiederm@xmission.com,
+        simo@redhat.com, netdev@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, Eric Paris <eparis@parisplace.org>,
+        mpatel@redhat.com, Serge Hallyn <serge@hallyn.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 3/23/20 5:01 PM, Mina Almasry wrote:
-> On Wed, Mar 18, 2020 at 3:07 PM Mike Kravetz <mike.kravetz@oracle.com> wrote:
->>
->> The routine hugetlb_add_hstate prints a warning if the hstate already
->> exists.  This was originally done as part of kernel command line
->> parsing.  If 'hugepagesz=' was specified more than once, the warning
->>         pr_warn("hugepagesz= specified twice, ignoring\n");
->> would be printed.
->>
->> Some architectures want to enable all huge page sizes.  They would
->> call hugetlb_add_hstate for all supported sizes.  However, this was
->> done after command line processing and as a result hstates could have
->> already been created for some sizes.  To make sure no warning were
->> printed, there would often be code like:
->>         if (!size_to_hstate(size)
->>                 hugetlb_add_hstate(ilog2(size) - PAGE_SHIFT)
->>
->> The only time we want to print the warning is as the result of command
->> line processing.  So, remove the warning from hugetlb_add_hstate and
->> add it to the single arch independent routine processing "hugepagesz=".
->> After this, calls to size_to_hstate() in arch specific code can be
->> removed and hugetlb_add_hstate can be called without worrying about
->> warning messages.
->>
->> Signed-off-by: Mike Kravetz <mike.kravetz@oracle.com>
->> ---
->>  arch/arm64/mm/hugetlbpage.c   | 16 ++++------------
->>  arch/powerpc/mm/hugetlbpage.c |  3 +--
->>  arch/riscv/mm/hugetlbpage.c   |  2 +-
->>  arch/sparc/mm/init_64.c       | 19 ++++---------------
->>  arch/x86/mm/hugetlbpage.c     |  2 +-
->>  mm/hugetlb.c                  | 10 +++++++---
->>  6 files changed, 18 insertions(+), 34 deletions(-)
->>
->> diff --git a/arch/arm64/mm/hugetlbpage.c b/arch/arm64/mm/hugetlbpage.c
->> index 4aa9534a45d7..050809e6f0a9 100644
->> --- a/arch/arm64/mm/hugetlbpage.c
->> +++ b/arch/arm64/mm/hugetlbpage.c
->> @@ -441,22 +441,14 @@ void huge_ptep_clear_flush(struct vm_area_struct *vma,
->>         clear_flush(vma->vm_mm, addr, ptep, pgsize, ncontig);
->>  }
->>
->> -static void __init add_huge_page_size(unsigned long size)
->> -{
->> -       if (size_to_hstate(size))
->> -               return;
->> -
->> -       hugetlb_add_hstate(ilog2(size) - PAGE_SHIFT);
->> -}
->> -
->>  static int __init hugetlbpage_init(void)
->>  {
->>  #ifdef CONFIG_ARM64_4K_PAGES
->> -       add_huge_page_size(PUD_SIZE);
->> +       hugetlb_add_hstate(ilog2(PUD_SIZE) - PAGE_SHIFT);
->>  #endif
->> -       add_huge_page_size(CONT_PMD_SIZE);
->> -       add_huge_page_size(PMD_SIZE);
->> -       add_huge_page_size(CONT_PTE_SIZE);
->> +       hugetlb_add_hstate(ilog2(CONT_PMD_SIZE) - PAGE_SHIFT);
->> +       hugetlb_add_hstate(ilog2(PMD_SIZE) - PAGE_SHIFT);
->> +       hugetlb_add_hstate(ilog2(CONT_PTE_SIZE) - PAGE_SHIFT);
->>
->>         return 0;
->>  }
->> diff --git a/arch/powerpc/mm/hugetlbpage.c b/arch/powerpc/mm/hugetlbpage.c
->> index 166960ba1236..f46464ba6fb4 100644
->> --- a/arch/powerpc/mm/hugetlbpage.c
->> +++ b/arch/powerpc/mm/hugetlbpage.c
->> @@ -584,8 +584,7 @@ static int __init add_huge_page_size(unsigned long long size)
->>         if (!arch_hugetlb_valid_size(size))
->>                 return -EINVAL;
->>
->> -       if (!size_to_hstate(size))
->> -               hugetlb_add_hstate(shift - PAGE_SHIFT);
->> +       hugetlb_add_hstate(shift - PAGE_SHIFT);
->>         return 0;
->>  }
->>
->> diff --git a/arch/riscv/mm/hugetlbpage.c b/arch/riscv/mm/hugetlbpage.c
->> index bdf89d7eb714..beaa91941db8 100644
->> --- a/arch/riscv/mm/hugetlbpage.c
->> +++ b/arch/riscv/mm/hugetlbpage.c
->> @@ -26,7 +26,7 @@ bool __init arch_hugetlb_valid_size(unsigned long long size)
->>  static __init int gigantic_pages_init(void)
->>  {
->>         /* With CONTIG_ALLOC, we can allocate gigantic pages at runtime */
->> -       if (IS_ENABLED(CONFIG_64BIT) && !size_to_hstate(1UL << PUD_SHIFT))
->> +       if (IS_ENABLED(CONFIG_64BIT))
->>                 hugetlb_add_hstate(PUD_SHIFT - PAGE_SHIFT);
->>         return 0;
->>  }
->> diff --git a/arch/sparc/mm/init_64.c b/arch/sparc/mm/init_64.c
->> index 5c29203fd460..8f619edc8f8c 100644
->> --- a/arch/sparc/mm/init_64.c
->> +++ b/arch/sparc/mm/init_64.c
->> @@ -325,23 +325,12 @@ static void __update_mmu_tsb_insert(struct mm_struct *mm, unsigned long tsb_inde
->>  }
->>
->>  #ifdef CONFIG_HUGETLB_PAGE
->> -static void __init add_huge_page_size(unsigned long size)
->> -{
->> -       unsigned int order;
->> -
->> -       if (size_to_hstate(size))
->> -               return;
->> -
->> -       order = ilog2(size) - PAGE_SHIFT;
->> -       hugetlb_add_hstate(order);
->> -}
->> -
->>  static int __init hugetlbpage_init(void)
->>  {
->> -       add_huge_page_size(1UL << HPAGE_64K_SHIFT);
->> -       add_huge_page_size(1UL << HPAGE_SHIFT);
->> -       add_huge_page_size(1UL << HPAGE_256MB_SHIFT);
->> -       add_huge_page_size(1UL << HPAGE_2GB_SHIFT);
->> +       hugetlb_add_hstate(HPAGE_64K_SHIFT - PAGE_SHIFT);
->> +       hugetlb_add_hstate(HPAGE_SHIFT - PAGE_SHIFT);
->> +       hugetlb_add_hstate(HPAGE_256MB_SHIFT - PAGE_SHIFT);
->> +       hugetlb_add_hstate(HPAGE_2GB_SHIFT - PAGE_SHIFT);
->>
->>         return 0;
->>  }
->> diff --git a/arch/x86/mm/hugetlbpage.c b/arch/x86/mm/hugetlbpage.c
->> index dd3ed09f6c23..8a3f586e1217 100644
->> --- a/arch/x86/mm/hugetlbpage.c
->> +++ b/arch/x86/mm/hugetlbpage.c
->> @@ -195,7 +195,7 @@ bool __init arch_hugetlb_valid_size(unsigned long long size)
->>  static __init int gigantic_pages_init(void)
->>  {
->>         /* With compaction or CMA we can allocate gigantic pages at runtime */
->> -       if (boot_cpu_has(X86_FEATURE_GBPAGES) && !size_to_hstate(1UL << PUD_SHIFT))
->> +       if (boot_cpu_has(X86_FEATURE_GBPAGES))
->>                 hugetlb_add_hstate(PUD_SHIFT - PAGE_SHIFT);
->>         return 0;
->>  }
->> diff --git a/mm/hugetlb.c b/mm/hugetlb.c
->> index cd4ec07080fb..cc85b4f156ca 100644
->> --- a/mm/hugetlb.c
->> +++ b/mm/hugetlb.c
->> @@ -3116,8 +3116,7 @@ static int __init hugetlb_init(void)
->>                 }
->>
->>                 default_hstate_size = HPAGE_SIZE;
->> -               if (!size_to_hstate(default_hstate_size))
->> -                       hugetlb_add_hstate(HUGETLB_PAGE_ORDER);
->> +               hugetlb_add_hstate(HUGETLB_PAGE_ORDER);
->>         }
->>         default_hstate_idx = hstate_index(size_to_hstate(default_hstate_size));
->>         if (default_hstate_max_huge_pages) {
->> @@ -3155,7 +3154,6 @@ void __init hugetlb_add_hstate(unsigned int order)
->>         unsigned long i;
->>
->>         if (size_to_hstate(PAGE_SIZE << order)) {
->> -               pr_warn("hugepagesz= specified twice, ignoring\n");
->>                 return;
->>         }
->>         BUG_ON(hugetlb_max_hstate >= HUGE_MAX_HSTATE);
->> @@ -3231,6 +3229,12 @@ static int __init hugepagesz_setup(char *s)
->>                 return 0;
->>         }
->>
->> +       if (size_to_hstate(size)) {
->> +               pr_warn("HugeTLB: hugepagesz %s specified twice, ignoring\n",
->> +                       saved_s);
->> +               return 0;
->> +       }
->> +
-> 
-> Not too familiar with the code but I'm a bit confused by this print.
-> AFAICT this prints the warning when hugepagesz= refers to a hugepage
-> that is already added via hugetlb_add_hstate, but there is a default
-> hstate added here without the user specifying hugepagesz, no?
+On Thu, Mar 19, 2020 at 6:03 PM Richard Guy Briggs <rgb@redhat.com> wrote:
+> On 2020-03-18 18:06, Paul Moore wrote:
 
-Correct.
+...
 
->                                                               Does
-> that mean the warning prints if you specify this size?
+> > I hope we can do better than string manipulations in the kernel.  I'd
+> > much rather defer generating the ACID list (if possible), than
+> > generating a list only to keep copying and editing it as the record is
+> > sent.
+>
+> At the moment we are stuck with a string-only format.
 
-The code which adds the default hstate (in hugetlb_init) runs after this
-code which is reading/processing command line options.  So, the case you
-are concerned with will not happen.
+Yes, we are.  That is another topic, and another set of changes I've
+been deferring so as to not disrupt the audit container ID work.
 
-Thanks for taking a look,
+I was thinking of what we do inside the kernel between when the record
+triggering event happens and when we actually emit the record to
+userspace.  Perhaps we collect the ACID information while the event is
+occurring, but we defer generating the record until later when we have
+a better understanding of what should be included in the ACID list.
+It is somewhat similar (but obviously different) to what we do for
+PATH records (we collect the pathname info when the path is being
+resolved).
+
 -- 
-Mike Kravetz
-
-> 'HugeTLB: hugepage size already supported: xxxxx' or
-> 'HugeTLB: hugepage size xxxx specified twice or is default size, ignoring.'
-> 
-> Or don't print anything if it's the default size.
-> 
->>         hugetlb_add_hstate(ilog2(size) - PAGE_SHIFT);
->>         return 1;
->>  }
->> --
->> 2.24.1
+paul moore
+www.paul-moore.com
