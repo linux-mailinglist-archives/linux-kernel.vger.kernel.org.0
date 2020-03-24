@@ -2,56 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 50F1119174A
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 18:15:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D1D2019174F
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 18:15:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727341AbgCXRPI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 13:15:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51588 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727161AbgCXRPI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 13:15:08 -0400
-Subject: Re: [GIT PULL] perf fixes
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585070108;
-        bh=Ptf2h+wtQSYQ+KyO+iq5FjGWavjKdwW24pR9LTKnnMs=;
-        h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=f6Yq5ExFf4XC+wDmuGLD7WCdsxoHgFaNlyPgPc2ZXr2oY/9Hbv6xLH8vWTlCCZVTc
-         7vt1OyDxI25OSSDBEngDAsTW2Goz3nqmyicpECPBQaJZ9SKWgMia/GMJ7RqX3xyteP
-         IOuPFai593AAurjBCq+0QQBa9kbi7l0zPpa+9Cc4=
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20200324091952.GA66321@gmail.com>
-References: <20200324091952.GA66321@gmail.com>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20200324091952.GA66321@gmail.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git
- perf-urgent-for-linus
-X-PR-Tracked-Commit-Id: 564200ed8e71d91327d337e46bc778cee02da866
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 76ccd234269bd05debdbc12c96eafe62dd9a6180
-Message-Id: <158507010827.16590.2535992708509912561.pr-tracker-bot@kernel.org>
-Date:   Tue, 24 Mar 2020 17:15:08 +0000
-To:     Ingo Molnar <mingo@kernel.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-kernel@vger.kernel.org,
-        Arnaldo Carvalho de Melo <acme@infradead.org>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Thomas Gleixner <tglx@linutronix.de>
+        id S1727525AbgCXRPZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 13:15:25 -0400
+Received: from mail-io1-f52.google.com ([209.85.166.52]:34556 "EHLO
+        mail-io1-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727161AbgCXRPZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Mar 2020 13:15:25 -0400
+Received: by mail-io1-f52.google.com with SMTP id h131so18955512iof.1;
+        Tue, 24 Mar 2020 10:15:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:from:date:message-id:subject:to;
+        bh=YiXRlBrRsNARFfivt+q4M19L7ch08HlBHiwWszT73K4=;
+        b=dUr9VmaxL5yXvGB0B5Pqvr6qpjK6TdoMypHZquv7a109cusjUgT7mSHaEEx0ZgUYr+
+         4bwaQ2Sg1eAoonfdHK/ATuT776XjJT4HmK3OwKLdeAgDQvWV/9WWoIW6hudgi42fevJG
+         rb2Fp4qXZSfU2MNZ0U/nSBxZ5JYVHl4BPGth0ALr0e6SaP/b8QreuwRndREC6DWbQNga
+         nI6S9QFTqr4W5u3grizAJz+xa3uP5QjxYQZgufvB/K+NPBsiX8LPvqGoboQ+nIplafVu
+         2Srmw3E3frsSHKjxiwwJg8qVdlCrfNUPe4r6A5viZ/OEJ3CPO/fZxKX2ea7tysEHaU32
+         Ab3g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
+        bh=YiXRlBrRsNARFfivt+q4M19L7ch08HlBHiwWszT73K4=;
+        b=KAGM6I01ogLis9Pkjh7oC17HzHvdUshY8WEI+bZZmwYutNRv6fhd396nD3o++E0vXc
+         +daHVusV+ecaEys6mxIHZFQImbPGqiMA+HRYZ7gCSgBsKpIyiieSSa5D9DPHTyexcgbP
+         0jpDK76zSMgzjWfBlnbJs/TNSYSJI0yaq+xwRqNf09sxvECRGrdTJc5dCzxrhRZt6zhQ
+         iFitNerK2qUtBM01ih+vpGPXsic3g6VO8K5Rq1LmEdCadtJGhHIS82uZEWxHddQ8IOH1
+         3uD4jrHrp3kpOzmoTUDu5dIrQ7DOzUb0uldySBSIpYKn5fDKst2rgMChzDFBF/frqWWq
+         YtAg==
+X-Gm-Message-State: ANhLgQ3Yak+sewCCTyvXMvHjnPWGnvfpb5v8SEbwO8WYavUm8GMZ4WD9
+        Vl3J2FdHUz9joNnFBcbuHFmI7stCTwvWU+sNHWg=
+X-Google-Smtp-Source: ADFU+vvnlaAvK69mWlXDrcnkigXzx9IDgu1uxA1gabe6NFL7UpARiED1mD5R3sbffSU67zdCIqOcSFCArfW+SPrhQ1o=
+X-Received: by 2002:a02:86:: with SMTP id 128mr25665426jaa.3.1585070124273;
+ Tue, 24 Mar 2020 10:15:24 -0700 (PDT)
+MIME-Version: 1.0
+From:   Adam Ford <aford173@gmail.com>
+Date:   Tue, 24 Mar 2020 12:15:12 -0500
+Message-ID: <CAHCN7xLbV5BxD9PYfxNC7M64WK1nf3Y=zfeg=PqF+XgwvyZBjw@mail.gmail.com>
+Subject: Versaclock usage and improvement question
+To:     Marek Vasut <marek.vasut@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Tue, 24 Mar 2020 10:19:52 +0100:
+Marek,
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git perf-urgent-for-linus
+I am working on a board that uses two versaclock chips using different
+i2c buses, but it appears to the driver is hard-coding the names of
+the clocks.  This appears to be a problem when the second instance is
+loaded, it fails, because the clock names already exist.  I am
+inquiring to you as how you'd prefer to see the clock names generated
+so we can do multiple instances. I am planning on using kasprintf and
+following a pattern similar to drivers/clk/keystone/sci-clk.c.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/76ccd234269bd05debdbc12c96eafe62dd9a6180
+Secondly, our Versaclock chips are un-programmed, so we need to both
+enable the clock signal and set the output type which means adding a
+few device tree options.  I am curious to know if you have an opinion
+on how the new flags should be named.
 
-Thank you!
+Lastly, we're going to use the versaclock to drive multiple devices,
+and some of them do not call the function to enable the clocks, so we
+need some method to force the clocks on.  Is there a method to forcing
+the clock outputs on similar to a gpio-hog holding a GPIO line in a
+known state?
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/prtracker
+thank you,
+
+adam
