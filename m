@@ -2,53 +2,52 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4EB5B191A05
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 20:35:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0C4FC191A12
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 20:35:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727451AbgCXTeZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 15:34:25 -0400
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:45602 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727150AbgCXTeY (ORCPT
+        id S1728034AbgCXTfF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 15:35:05 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:46366 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727088AbgCXTfE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 15:34:24 -0400
-Received: by mail-lf1-f68.google.com with SMTP id v4so10587115lfo.12;
-        Tue, 24 Mar 2020 12:34:22 -0700 (PDT)
+        Tue, 24 Mar 2020 15:35:04 -0400
+Received: by mail-lj1-f195.google.com with SMTP id v16so12877539ljk.13;
+        Tue, 24 Mar 2020 12:35:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc:content-transfer-encoding;
-        bh=BuW1pgtMi1nFDluniTHUYAMhP+ECNJICP5kvAttrp90=;
-        b=djAXMRGpfX/uYnxHJ3wl2qCQUySXiH6H9DG4JMMCYNMq+CNKLKGF43SapUWG/r/Sf4
-         9jJQY9v5nX2vWjGcBkQV6PJN0djRJL8yL7kzP7wOERKNka2dR1DI6/7IZ1iDLorQSymH
-         g4ha+k4Hg7vSp7GajygnZJtjf2DJuxcohHO4EZ6207TwbQg2DpmeWx425DGGClfDKQds
-         9pl/yqXmqdStvtaXrMDpMHP/+g3ZF+mlT1jkDlTJN5lZ3clkfzHhb5YCor7FDdD7Q5R5
-         ogEIx2Fuiom+0hLoUv/fY2iD3A3SXawE2a/bd3OenLkmaq6gxfuSXqBlTV1Hoxo5m1au
-         dc8A==
+        bh=e0wTObJ08RVlnsiArj9gwShr2d4p9qtkVTHwSjLAzow=;
+        b=DK2S9+6j9KGtB+U8ylYOlNV2DVU70arttAXObYJ0oTXa6BOrLf9+gbnyj/PqN3X0mt
+         RjjtcailfvOx5tUiFPKTJUGP7rWdHY24ZVQqaamiy/JF82tIAI/V71JtbY//N2BlJNP4
+         OZpyzlmPdfcfisxOkGgJc0m+yfqTvbEuaAp7ZPXu+Ygs63V+tBXgi7mp8CeuH8RxaBVs
+         eNHas9j3FuVOFysmaI3aTA2xkFi8t3ksU3AXqi5DSpRz/NoeEfiJjrxrlSXkZ5nq3Fwx
+         KGLl6ThOEcQOg/Tm1LKmg+GfIx0KsT/WFnzvyf3ofAgXBNSzV9js8J/VPiK3JWh1VUDv
+         CNuQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc:content-transfer-encoding;
-        bh=BuW1pgtMi1nFDluniTHUYAMhP+ECNJICP5kvAttrp90=;
-        b=pTFJtmhBmky5JCLfCL0x6HJIG54oFw70qWIOccmM619f2A7+czr6X+AlbbyciRvr0R
-         wwN/EUdgJ3/88C2R3VjYkUxqdRWjchBSXcZ0JiF7m/QET0Nf6go39GN30l8a4IVqULBS
-         qMV4d6WlQkYWWxVPIMWyWzii6l7lEI5MWfcoMddBMhwFhI9Ep03KId7tH1WVgQhWcoet
-         0pptcAH6r6QgpiRKSvUDUnGNBrlBwNjIij56kYc3gnzm8JBTwZqH9wkEIDKtLd8MrP8c
-         ytJ48jQBjplFvfJiqmafNNoSfpTHD2+nq5vRfnZoMqx7DRrbZzVFrcKlt/31rE/cBssG
-         wK/Q==
-X-Gm-Message-State: ANhLgQ3p3SdykDZMx21Xx6pVo7FQIvRP4AA7XAsv+BEHY0nVobIUoLp3
-        mzJ9nIHgjgPr+2qiZt/vHBzpJdyZyo1ApfKGjDk=
-X-Google-Smtp-Source: ADFU+vtCUdIkmuQsY4QzJUMqNYV6lYZDkx1LNuGCgcfEy8vGbUSEMIGt5lO92LiWyGxs7J1Z7ulaFxz0Vq1YTqoUtYA=
-X-Received: by 2002:a05:6512:3b7:: with SMTP id v23mr1260787lfp.66.1585078462025;
- Tue, 24 Mar 2020 12:34:22 -0700 (PDT)
+        bh=e0wTObJ08RVlnsiArj9gwShr2d4p9qtkVTHwSjLAzow=;
+        b=Za17Kd5clrxdhweKFMF8Ecr7MGeNwqsbo0hZbtnLfu2ktrz83hRo12ja9GyrlROhMn
+         WJape7k2/X0AwVMFmAUga96GOGG5QBGJTQBFavcJZ0TnUnH7YyZ00Zry86mSYnPwsJIa
+         MiPYnDP63xeDoNsiBxYIfXtjipTnvCIO89MOFG9GgPneD9R3OMypf84++v9C6ukqzxW3
+         BRzo+7RjbF/zixMtQRRFZvJ3XAIK33MW1hQrj9S1PH1UyuHyY+B3aYePtKxULcj2Xhjo
+         HQizqNTXo1w411UGq+Bh12Lh51AVfqdrEgz81q5F7BWaDxUE+Ydogiyq6q38I0Vb1Rxs
+         MwCw==
+X-Gm-Message-State: ANhLgQ3GNeVs4NCq3/Me7hnjOzERW75hEDroqj4fgTi7wUuWTMR1VPoO
+        lu0RvqNJEITBS22GuhMGBi/uIUa+UTEJp+B/plw=
+X-Google-Smtp-Source: ADFU+vtR0T6QWse42XxH9cPngbBhP7L+wmNFP2DjiGQUffZhWB/3y876D0GfC4X3TViS4JAgfxSBjxgnaT5p6bewcwk=
+X-Received: by 2002:a05:651c:30b:: with SMTP id a11mr7059917ljp.164.1585078502370;
+ Tue, 24 Mar 2020 12:35:02 -0700 (PDT)
 MIME-Version: 1.0
-References: <cover.1584730033.git.agx@sigxcpu.org> <c7fd138e00608a108dae3651ab10d583a60040fc.1584730033.git.agx@sigxcpu.org>
-In-Reply-To: <c7fd138e00608a108dae3651ab10d583a60040fc.1584730033.git.agx@sigxcpu.org>
+References: <cover.1584730033.git.agx@sigxcpu.org> <22f34fb7cf7ee4262cf63372aee90bc8e5ae3f35.1584730033.git.agx@sigxcpu.org>
+In-Reply-To: <22f34fb7cf7ee4262cf63372aee90bc8e5ae3f35.1584730033.git.agx@sigxcpu.org>
 From:   Fabio Estevam <festevam@gmail.com>
-Date:   Tue, 24 Mar 2020 16:34:13 -0300
-Message-ID: <CAOMZO5Dhy7ahcR-S=QG=pumxXa8HnQoWpg0TdFyeu_Levdh9_Q@mail.gmail.com>
-Subject: Re: [PATCH v10 1/2] dt-bindings: display/bridge: Add binding for NWL
- mipi dsi host controller
+Date:   Tue, 24 Mar 2020 16:34:53 -0300
+Message-ID: <CAOMZO5Du-ZP7Wxm2eh8WaFoCk_kWomgH57ayJrBB0PzhuAA+mw@mail.gmail.com>
+Subject: Re: [PATCH v10 2/2] drm/bridge: Add NWL MIPI DSI host controller support
 To:     =?UTF-8?Q?Guido_G=C3=BCnther?= <agx@sigxcpu.org>
 Cc:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
         Rob Herring <robh+dt@kernel.org>,
@@ -80,11 +79,18 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 On Fri, Mar 20, 2020 at 3:49 PM Guido G=C3=BCnther <agx@sigxcpu.org> wrote:
 >
-> The Northwest Logic MIPI DSI IP core can be found in NXPs i.MX8 SoCs.
+> This adds initial support for the NWL MIPI DSI Host controller found on
+> i.MX8 SoCs.
+>
+> It adds support for the i.MX8MQ but the same IP can be found on
+> e.g. the i.MX8QXP.
+>
+> It has been tested on the Librem 5 devkit using mxsfb.
 >
 > Signed-off-by: Guido G=C3=BCnther <agx@sigxcpu.org>
+> Co-developed-by: Robert Chiras <robert.chiras@nxp.com>
+> Signed-off-by: Robert Chiras <robert.chiras@nxp.com>
 > Tested-by: Robert Chiras <robert.chiras@nxp.com>
-> Reviewed-by: Rob Herring <robh@kernel.org>
-> Acked-by: Sam Ravnborg <sam@ravnborg.org>
+> Tested-by: Martin Kepplinger <martin.kepplinger@puri.sm>
 
 Reviewed-by: Fabio Estevam <festevam@gmail.com>
