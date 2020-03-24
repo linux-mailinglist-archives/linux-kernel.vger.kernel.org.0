@@ -2,117 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C1280191076
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 14:31:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 88254191086
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 14:31:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729754AbgCXN2d (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 09:28:33 -0400
-Received: from foss.arm.com ([217.140.110.172]:34670 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729622AbgCXNYO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 09:24:14 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 60701FEC;
-        Tue, 24 Mar 2020 06:24:14 -0700 (PDT)
-Received: from donnerap.arm.com (donnerap.cambridge.arm.com [10.1.197.25])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 121633F52E;
-        Tue, 24 Mar 2020 06:24:12 -0700 (PDT)
-From:   Andre Przywara <andre.przywara@arm.com>
-To:     "David S . Miller" <davem@davemloft.net>,
-        Radhey Shyam Pandey <radhey.shyam.pandey@xilinx.com>
-Cc:     Michal Simek <michal.simek@xilinx.com>,
-        Robert Hancock <hancock@sedsystems.ca>, netdev@vger.kernel.org,
-        Russell King <rmk+kernel@arm.linux.org.uk>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Andrew Lunn <andrew@lunn.ch>
-Subject: [PATCH v3 13/14] net: axienet: Autodetect 64-bit DMA capability
-Date:   Tue, 24 Mar 2020 13:23:46 +0000
-Message-Id: <20200324132347.23709-14-andre.przywara@arm.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200324132347.23709-1-andre.przywara@arm.com>
-References: <20200324132347.23709-1-andre.przywara@arm.com>
+        id S1727957AbgCXN3W (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 09:29:22 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:42068 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729518AbgCXNYC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Mar 2020 09:24:02 -0400
+Received: by mail-pf1-f194.google.com with SMTP id 22so5666440pfa.9;
+        Tue, 24 Mar 2020 06:24:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=J59vOQButIA7wOzAY9wmajFYSXUMpXsPzQxaHYbQv0o=;
+        b=duqJNACteTZSXSWcZF+gw1gKTJ4q1aUrfnAY8rwv1olCQqbbh2Ieil2rGE28zWqW3N
+         jGzY6h6Xgd0f/k30hX8o57PFadqh2jKETuPVzX8vwAssZlz5pPGqwJiuzZSM3aR4swVU
+         FxmlGfJLVFvEMBi0/LJjGqquKL866NuDSzfVlWxpAuXd/1BWw/1+mXcJ0mVVVIUSKKWz
+         y+BKGvYDHary7SK/O5BJ3X/8vmBQy0a6K+GmIYS96bRriWhDd85terlO2mrXxQ8xdu52
+         U52SS2J29H1F4dqDlA4XfVa/KRcJ/u7GKgELhyNTAUFciHaVFdDDX5Kd5eWqg2UG3r5X
+         1Qqg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=J59vOQButIA7wOzAY9wmajFYSXUMpXsPzQxaHYbQv0o=;
+        b=G26+GEc+7lY1wDuwBpI3QgRIhB/Ot7mGNJUrudUFGykbLIBmgvCOdcA2jrm6t6W67m
+         B1NvpJTMkgNnNBtAI4BIz5OKgBYVlx0armIiz/20cR0KSqgf6qxv9Orf7Ziqf7MTXLYI
+         3p5q9WRAl9qxRY/kbYeJ0L9nBbiDBRcosvKDeCOkDmoxnsZdJM85b68MY0gVzM6Xr7ag
+         ylTqoZk37CUt9FsR261+FB7mrcOJP5NbAwSycYM6ISvV6nAVcRPKoq/q9ztx0d1Irz2P
+         TGyuALJoC0XRodqAAkUkzXBzweZZkAcYn6NA1gCBt2UpWfKtDP9l2PvoWGIZbWtPdd7h
+         cq9A==
+X-Gm-Message-State: ANhLgQ2fJO787p43Kz/Tq8jS8J7N76xbNk/JZNUVXRb1fQazsyhOz8DT
+        duuyH0yEk8v45favuW4dGAE=
+X-Google-Smtp-Source: ADFU+vuGRwIJvFbAqb+kj/0gocMW4ppLpIEgYm9sWVVBwJaPcIjDZns5zlU0AC9H0zhDUZoQKzK5OQ==
+X-Received: by 2002:a65:6910:: with SMTP id s16mr1545967pgq.426.1585056241100;
+        Tue, 24 Mar 2020 06:24:01 -0700 (PDT)
+Received: from suzukaze.ipads-lab.se.sjtu.edu.cn ([202.120.40.82])
+        by smtp.gmail.com with ESMTPSA id g11sm15874883pfm.4.2020.03.24.06.23.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 24 Mar 2020 06:24:00 -0700 (PDT)
+From:   Chuhong Yuan <hslester96@gmail.com>
+Cc:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Chuhong Yuan <hslester96@gmail.com>
+Subject: [PATCH v4] video: fbdev: arcfb: add missed free_irq and fix the order of request_irq
+Date:   Tue, 24 Mar 2020 21:23:53 +0800
+Message-Id: <20200324132353.21785-1-hslester96@gmail.com>
+X-Mailer: git-send-email 2.25.2
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When newer revisions of the Axienet IP are configured for a 64-bit bus,
-we *need* to write to the MSB part of the an address registers,
-otherwise the IP won't recognise this as a DMA start condition.
-This is even true when the actual DMA address comes from the lower 4 GB.
+The driver forgets to free irq in remove which is requested in
+probe.
+Add the missed call to fix it.
+Also, the position of request_irq() in probe should be put before
+register_framebuffer().
 
-To autodetect this configuration, at probe time we write all 1's to such
-an MSB register, and see if any bits stick. If this is configured for a
-32-bit bus, those MSB registers are RES0, so reading back 0 indicates
-that no MSB writes are necessary.
-On the other hands reading anything other than 0 indicated the need to
-write the MSB registers, so we set the respective flag.
-
-The actual DMA mask stays at 32-bit for now. To help bisecting, a
-separate patch will enable allocations from higher addresses.
-
-Signed-off-by: Andre Przywara <andre.przywara@arm.com>
+Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
 ---
- drivers/net/ethernet/xilinx/xilinx_axienet.h  |  1 +
- .../net/ethernet/xilinx/xilinx_axienet_main.c | 26 +++++++++++++++++++
- 2 files changed, 27 insertions(+)
+Changes in v4:
+  - Use info->par->irq instead of par->irq to avoid dereferencing NULL pointer.
 
-diff --git a/drivers/net/ethernet/xilinx/xilinx_axienet.h b/drivers/net/ethernet/xilinx/xilinx_axienet.h
-index 84c4c3655516..fbaf3c987d9c 100644
---- a/drivers/net/ethernet/xilinx/xilinx_axienet.h
-+++ b/drivers/net/ethernet/xilinx/xilinx_axienet.h
-@@ -161,6 +161,7 @@
- #define XAE_FCC_OFFSET		0x0000040C /* Flow Control Configuration */
- #define XAE_EMMC_OFFSET		0x00000410 /* EMAC mode configuration */
- #define XAE_PHYC_OFFSET		0x00000414 /* RGMII/SGMII configuration */
-+#define XAE_ID_OFFSET		0x000004F8 /* Identification register */
- #define XAE_MDIO_MC_OFFSET	0x00000500 /* MII Management Config */
- #define XAE_MDIO_MCR_OFFSET	0x00000504 /* MII Management Control */
- #define XAE_MDIO_MWD_OFFSET	0x00000508 /* MII Management Write Data */
-diff --git a/drivers/net/ethernet/xilinx/xilinx_axienet_main.c b/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
-index 6ecd1bb5f81d..a54a5c754da0 100644
---- a/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
-+++ b/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
-@@ -151,6 +151,9 @@ static void axienet_dma_out_addr(struct axienet_local *lp, off_t reg,
- 				 dma_addr_t addr)
- {
- 	axienet_dma_out32(lp, reg, lower_32_bits(addr));
-+
-+	if (lp->features & XAE_FEATURE_DMA_64BIT)
-+		axienet_dma_out32(lp, reg + 4, upper_32_bits(addr));
- }
- 
- static void desc_set_phys_addr(struct axienet_local *lp, dma_addr_t addr,
-@@ -1928,6 +1931,29 @@ static int axienet_probe(struct platform_device *pdev)
- 		goto free_netdev;
+ drivers/video/fbdev/arcfb.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/video/fbdev/arcfb.c b/drivers/video/fbdev/arcfb.c
+index 314ab82e01c0..6f7838979f0a 100644
+--- a/drivers/video/fbdev/arcfb.c
++++ b/drivers/video/fbdev/arcfb.c
+@@ -544,10 +544,6 @@ static int arcfb_probe(struct platform_device *dev)
+ 	par->cslut[1] = 0x06;
+ 	info->flags = FBINFO_FLAG_DEFAULT;
+ 	spin_lock_init(&par->lock);
+-	retval = register_framebuffer(info);
+-	if (retval < 0)
+-		goto err1;
+-	platform_set_drvdata(dev, info);
+ 	if (irq) {
+ 		par->irq = irq;
+ 		if (request_irq(par->irq, &arcfb_interrupt, IRQF_SHARED,
+@@ -558,6 +554,10 @@ static int arcfb_probe(struct platform_device *dev)
+ 			goto err1;
+ 		}
  	}
++	retval = register_framebuffer(info);
++	if (retval < 0)
++		goto err1;
++	platform_set_drvdata(dev, info);
+ 	fb_info(info, "Arc frame buffer device, using %dK of video memory\n",
+ 		videomemorysize >> 10);
  
-+	/* Autodetect the need for 64-bit DMA pointers.
-+	 * When the IP is configured for a bus width bigger than 32 bits,
-+	 * writing the MSB registers is mandatory, even if they are all 0.
-+	 * We can detect this case by writing all 1's to one such register
-+	 * and see if that sticks: when the IP is configured for 32 bits
-+	 * only, those registers are RES0.
-+	 * Those MSB registers were introduced in IP v7.1, which we check first.
-+	 */
-+	if ((axienet_ior(lp, XAE_ID_OFFSET) >> 24) >= 0x9) {
-+		void __iomem *desc = lp->dma_regs + XAXIDMA_TX_CDESC_OFFSET + 4;
-+
-+		iowrite32(0x0, desc);
-+		if (ioread32(desc) == 0) {	/* sanity check */
-+			iowrite32(0xffffffff, desc);
-+			if (ioread32(desc) > 0) {
-+				lp->features |= XAE_FEATURE_DMA_64BIT;
-+				dev_info(&pdev->dev,
-+					 "autodetected 64-bit DMA range\n");
-+			}
-+			iowrite32(0x0, desc);
-+		}
-+	}
-+
- 	/* Check for Ethernet core IRQ (optional) */
- 	if (lp->eth_irq <= 0)
- 		dev_info(&pdev->dev, "Ethernet core IRQ not defined\n");
+@@ -593,6 +593,8 @@ static int arcfb_remove(struct platform_device *dev)
+ 
+ 	if (info) {
+ 		unregister_framebuffer(info);
++		if (irq)
++			free_irq(((struct arcfb_par *)(info->par))->irq, info);
+ 		vfree((void __force *)info->screen_base);
+ 		framebuffer_release(info);
+ 	}
 -- 
-2.17.1
+2.25.2
 
