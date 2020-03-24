@@ -2,80 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 25C80190319
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 01:55:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DA4FC190309
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 01:45:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727067AbgCXAzs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Mar 2020 20:55:48 -0400
-Received: from bilbo.ozlabs.org ([203.11.71.1]:54251 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727031AbgCXAzr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Mar 2020 20:55:47 -0400
-Received: by ozlabs.org (Postfix, from userid 1003)
-        id 48mXqP2FhXz9sSJ; Tue, 24 Mar 2020 11:55:45 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ozlabs.org; s=201707;
-        t=1585011345; bh=LoDPTy8hotXOVNxAbYYkoDWHTyQTtTLTM+W7YwaCFqQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=WkLFZ009uhYM/bD3ncmLk6wAuvUncEP6zj7yGZc+Ly5tPhpxlI/q8n0HkjPxIiLRl
-         r8tvEKgm0zkkntTWtzip2lvRCduiVnXS/EInxK0Ab20OJPU+NMFOREJkOGHBmqnpZA
-         710DKCqOZcYqE/o+zbYvF8sNhXd8wOXjqr7by/CX2r4SLQk4fwL07Uktw8QIe6tRKd
-         aYitSdz9++x2M7fEArmKUIu8X+bLqzCdRp4q9m3f0O40bDQpaIMsEGis9oOo4hZ/y1
-         QJo4PWmvAQFEqor4dl9ubPzD8FbYW/hJMEDVF4iu74c9NEt7dESqCGUiZyyv9wxYaL
-         zyOaiUWTJhncg==
-Date:   Tue, 24 Mar 2020 10:43:23 +1100
-From:   Paul Mackerras <paulus@ozlabs.org>
-To:     Greg Kurz <groug@kaod.org>
-Cc:     Laurent Dufour <ldufour@linux.ibm.com>,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        kvm-ppc@vger.kernel.org, Bharata B Rao <bharata@linux.ibm.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Subject: Re: [PATCH 1/2] KVM: PPC: Book3S HV: check caller of H_SVM_* Hcalls
-Message-ID: <20200323234323.GA5604@blackberry>
-References: <20200320102643.15516-1-ldufour@linux.ibm.com>
- <20200320102643.15516-2-ldufour@linux.ibm.com>
- <20200320132248.44b81b3b@bahia.lan>
+        id S1727092AbgCXAp1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Mar 2020 20:45:27 -0400
+Received: from mail-out.m-online.net ([212.18.0.10]:33284 "EHLO
+        mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727005AbgCXAp1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Mar 2020 20:45:27 -0400
+Received: from frontend01.mail.m-online.net (unknown [192.168.8.182])
+        by mail-out.m-online.net (Postfix) with ESMTP id 48mXbQ0SMCz1rx8j;
+        Tue, 24 Mar 2020 01:45:21 +0100 (CET)
+Received: from localhost (dynscan1.mnet-online.de [192.168.6.70])
+        by mail.m-online.net (Postfix) with ESMTP id 48mXbP5Kc0z1qyF7;
+        Tue, 24 Mar 2020 01:45:21 +0100 (CET)
+X-Virus-Scanned: amavisd-new at mnet-online.de
+Received: from mail.mnet-online.de ([192.168.8.182])
+        by localhost (dynscan1.mail.m-online.net [192.168.6.70]) (amavisd-new, port 10024)
+        with ESMTP id gC2vLJWwutXk; Tue, 24 Mar 2020 01:45:20 +0100 (CET)
+X-Auth-Info: ksnt2ePpOv6cIiM3lWTVPmpZXSXFGTDMcknb+ITNjK0=
+Received: from [IPv6:::1] (unknown [195.140.253.167])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.mnet-online.de (Postfix) with ESMTPSA;
+        Tue, 24 Mar 2020 01:45:20 +0100 (CET)
+Subject: Re: [00/12] add STM32 FMC2 controller drivers
+To:     Christophe Kerello <christophe.kerello@st.com>,
+        miquel.raynal@bootlin.com, richard@nod.at, vigneshr@ti.com,
+        lee.jones@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        tony@atomide.com
+Cc:     linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com
+References: <1584975532-8038-1-git-send-email-christophe.kerello@st.com>
+From:   Marek Vasut <marex@denx.de>
+Message-ID: <466cf542-7575-d791-da81-da32c0919505@denx.de>
+Date:   Tue, 24 Mar 2020 01:37:21 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200320132248.44b81b3b@bahia.lan>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <1584975532-8038-1-git-send-email-christophe.kerello@st.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 20, 2020 at 01:22:48PM +0100, Greg Kurz wrote:
-> On Fri, 20 Mar 2020 11:26:42 +0100
-> Laurent Dufour <ldufour@linux.ibm.com> wrote:
+On 3/23/20 3:58 PM, Christophe Kerello wrote:
+> The FMC2 functional block makes the interface with: synchronous and
+> asynchronous static devices (such as PSNOR, PSRAM or other memory-mapped
+> peripherals) and NAND flash memories.
+> Its main purposes are:
+>   - to translate AXI transactions into the appropriate external device
+>     protocol
+>   - to meet the access time requirements of the external devices
+> All external devices share the addresses, data and control signals with the
+> controller. Each external device is accessed by means of a unique Chip
+> Select. The FMC2 performs only one access at a time to an external device.
 > 
-> > The Hcall named H_SVM_* are reserved to the Ultravisor. However, nothing
-> > prevent a malicious VM or SVM to call them. This could lead to weird result
-> > and should be filtered out.
-> > 
-> > Checking the Secure bit of the calling MSR ensure that the call is coming
-> > from either the Ultravisor or a SVM. But any system call made from a SVM
-> > are going through the Ultravisor, and the Ultravisor should filter out
-> > these malicious call. This way, only the Ultravisor is able to make such a
-> > Hcall.
-> 
-> "Ultravisor should filter" ? And what if it doesn't (eg. because of a bug) ?
-> 
-> Shouldn't we also check the HV bit of the calling MSR as well to
-> disambiguate SVM and UV ?
+> Christophe Kerello (12):
+>   dt-bindings: mfd: stm32-fmc2: add STM32 FMC2 controller documentation
+>   mfd: stm32-fmc2: add STM32 FMC2 controller driver
+>   bus: stm32-fmc2-ebi: add STM32 FMC2 EBI controller driver
+>   mtd: rawnand: stm32_fmc2: manage all errors cases at probe time
+>   mtd: rawnand: stm32_fmc2: remove useless inline comments
+>   mtd: rawnand: stm32_fmc2: use FMC2_TIMEOUT_MS for timeouts
+>   mtd: rawnand: stm32_fmc2: cleanup
+>   mtd: rawnand: stm32_fmc2: use FIELD_PREP/FIELD_GET macros
+>   mtd: rawnand: stm32_fmc2: move all registers
+>   mtd: rawnand: stm32_fmc2: use regmap APIs
+>   mtd: rawnand: stm32_fmc2: use stm32_fmc2 structure in nfc controller
+>   mtd: rawnand: stm32_fmc2: add new MP1 compatible string
 
-The trouble with doing that (checking the HV bit) is that KVM does not
-expect to see the HV bit set on an interrupt that occurred while we
-were in the guest, and if it is set, it indicates a serious problem,
-i.e. that an interrupt occurred while we were in the code that
-transitions from host context to guest context, or from guest context
-to host context.  In those cases we don't know how much of the
-transition has been completed and therefore whether we have guest
-values or host values in the CPU registers (GPRs, FPRs/VSRs, SPRs).
-If we do see HV set then KVM reports a severe error to userspace which
-should cause userspace to terminate the guest.
-
-Therefore the UV should *always* have the HV bit clear in HSRR1/SRR1
-when transitioning to KVM.
-
-Paul.
+This doesn't apply to either next or 5.6-rc7, do you have a tree
+somewhere with those patches applied ?
