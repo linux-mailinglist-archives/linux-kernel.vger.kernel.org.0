@@ -2,123 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9397E191BDF
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 22:22:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 320ED191BE5
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 22:25:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727992AbgCXVWT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 17:22:19 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:46342 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726673AbgCXVWS (ORCPT
+        id S1728199AbgCXVZP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 17:25:15 -0400
+Received: from mail-qk1-f169.google.com ([209.85.222.169]:44994 "EHLO
+        mail-qk1-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727664AbgCXVZP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 17:22:18 -0400
-Received: by mail-lj1-f193.google.com with SMTP id v16so213180ljk.13
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Mar 2020 14:22:16 -0700 (PDT)
+        Tue, 24 Mar 2020 17:25:15 -0400
+Received: by mail-qk1-f169.google.com with SMTP id j4so158996qkc.11;
+        Tue, 24 Mar 2020 14:25:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=K0AQOrscsNAyPOgnjIz1wdZ8BwbWscK7BvSW7dZFNMU=;
-        b=TU+v6vgTqqL8DSRyHNIS3zPA2Au3s8bOdz4RjYVrI59y/xJG37DuCzUkFedo8prEM1
-         kEhbDC8RUbuZ44J4woqibSX2DnsCF77IrNvFFBgUdsgFnP87BEfOj65kKyLU5UPa/XiH
-         yLDUovevdVM9pFj6antE7mF1/9gnUPays5DSg=
+        d=gmail.com; s=20161025;
+        h=date:user-agent:in-reply-to:references:mime-version
+         :content-transfer-encoding:subject:to:cc:from:message-id;
+        bh=eD5Dd9pQbOHWz1I/VV0+OE79XLSILdsUaoiPbisRrS4=;
+        b=A56HSAs5W4MoYsCQD0IJ27zH7qXr4WarPRwLMYsoIKuqgVjnp12ohAe1IsdLnOhpRe
+         WQywVo/+d97g+ZHXCgLp8p7ulnyALWbZ+FfEYRoW07rSn1XumwVxm9v3sbLOG3AC1Yak
+         sAslDG8PtSKGb0MN+p9VvzwIy8m7NAJglRi81PNty/+dGsGQ4mtEU2SxT0UpZ/61ULny
+         By6kpeh19BrJqd3ER7g7UggpaKB6j1oelycJuhPgwkLwfKUJidERq5Ku68uER8pAJfRl
+         XhuQk1mP6zii2J1RRD/CDvqHnqOjEYQ2/nymVIbSMZjW4jtZkx3NhAIWE5uYYInZRJk1
+         edPw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=K0AQOrscsNAyPOgnjIz1wdZ8BwbWscK7BvSW7dZFNMU=;
-        b=Mau47tj/vxmXRguB0cinbmpu0kY/ERXDf4tRTW8biTDmyD9m6Ice6zbmuMdcjcL/bx
-         0vdY1xzqSnBvyT3uwrxJvz43TWWUGbBvsbkPBhnq+fiwirmDhnjLunAkBkNAdo4mPAtQ
-         Wu79+oku7BbnNgPAPqay2R9W5/qJeH/DPG0L+foRAm196XyQTazUyaYKZ6CipDogVV3K
-         U2P20GXKaOB+uSAzjL8t8mMgpupOpNoCPmkGdCaFsIEh5L2gZ2vkLa4MhDEHlKuo/i6N
-         G6wiY+oHt0DaenCGKwmnZDAEn5KIVmoLxJf3Y9WcqBPLE6L0qIMxkTemn6Tz6zOgPV7h
-         XWKg==
-X-Gm-Message-State: ANhLgQ0f812tmcz7coJ8S46F0a1zCpu5Ni8X/AV2qj2SVh9Ka+g1sr5s
-        GkQMnLHPMvvVnaUtI1KoRg4Xpr1ZQgk=
-X-Google-Smtp-Source: ADFU+vv1guZMSt2tjhx3HD9nfghEKRjSMy0ZQlf7MIKaUGGlXOc5kKzqVWQOEgZC2Ok1zUrAt+PB4Q==
-X-Received: by 2002:a2e:3206:: with SMTP id y6mr6666471ljy.231.1585084936008;
-        Tue, 24 Mar 2020 14:22:16 -0700 (PDT)
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com. [209.85.167.53])
-        by smtp.gmail.com with ESMTPSA id d23sm937823lji.62.2020.03.24.14.22.15
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 24 Mar 2020 14:22:15 -0700 (PDT)
-Received: by mail-lf1-f53.google.com with SMTP id j11so46903lfg.4
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Mar 2020 14:22:15 -0700 (PDT)
-X-Received: by 2002:a19:f015:: with SMTP id p21mr60990lfc.10.1585084934903;
- Tue, 24 Mar 2020 14:22:14 -0700 (PDT)
+        h=x-gm-message-state:date:user-agent:in-reply-to:references
+         :mime-version:content-transfer-encoding:subject:to:cc:from
+         :message-id;
+        bh=eD5Dd9pQbOHWz1I/VV0+OE79XLSILdsUaoiPbisRrS4=;
+        b=MUuuL8LujgjFIplJk1yaI6Y9TkMkf4tf89KmhTlI05YoI+CbVdv1G7s0DOuMmfJ+gY
+         WHt/+T4VadiJzccyuEmXKX/0o5sdrqOQstVXmyrOg5noxSiFinWzzyBYBn/0Fo29Up4W
+         5u2yDYfInfgwk8TJp53D5GOYPix5LoU7v8ZeP2VPnDuYdO6uU0eyJH1XDqZgiUjJcHUN
+         Q/7zFngJ0d9DIRZ5/P0bZQsiJbhj6FTzA2eLbY7rXZVFWaktiEPMJk9/4bI7BTj4VVrj
+         FmCIGj6efVXk1YsUvwjREcO6BH6WMiXBvFXmPQWKnkpbgEBjBE9uDzTxkrEq8KAi6+ZO
+         4hPQ==
+X-Gm-Message-State: ANhLgQ3VncbHNOy/Q5F03g7PQiHV9nart6IXoSkhMjgGjgjn9H6eGp4d
+        aLcN56uuH5xAyBpi+uge1oY=
+X-Google-Smtp-Source: ADFU+vvnnFRV7+6xiqxA3i5iiKElP3U5xxZpyKTU4/vSJHEGHvZcSKJGxDfKdnL83o61CEENS29iUA==
+X-Received: by 2002:a05:620a:13a7:: with SMTP id m7mr24976009qki.181.1585085113730;
+        Tue, 24 Mar 2020 14:25:13 -0700 (PDT)
+Received: from [192.168.86.185] ([179.97.37.151])
+        by smtp.gmail.com with ESMTPSA id u15sm15911755qte.91.2020.03.24.14.25.12
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 24 Mar 2020 14:25:12 -0700 (PDT)
+Date:   Tue, 24 Mar 2020 18:24:09 -0300
+User-Agent: K-9 Mail for Android
+In-Reply-To: <20200324201522.GP2452@worktop.programming.kicks-ass.net>
+References: <20200224043749.69466-1-namhyung@kernel.org> <CAM9d7chneHzibiQFopmN1rED=mf-nBpy58kauXWSOSYy2zCtzQ@mail.gmail.com> <20200324163444.GA162390@mtj.duckdns.org> <20200324201522.GP2452@worktop.programming.kicks-ass.net>
 MIME-Version: 1.0
-References: <20200324204449.7263-1-gladkov.alexey@gmail.com> <20200324204449.7263-4-gladkov.alexey@gmail.com>
-In-Reply-To: <20200324204449.7263-4-gladkov.alexey@gmail.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Tue, 24 Mar 2020 14:21:59 -0700
-X-Gmail-Original-Message-ID: <CAHk-=whXbgW7-FYL4Rkaoh8qX+CkS5saVGP2hsJPV0c+EZ6K7A@mail.gmail.com>
-Message-ID: <CAHk-=whXbgW7-FYL4Rkaoh8qX+CkS5saVGP2hsJPV0c+EZ6K7A@mail.gmail.com>
-Subject: Re: [PATCH RESEND v9 3/8] proc: move hide_pid, pid_gid from
- pid_namespace to proc_fs_info
-To:     Alexey Gladkov <gladkov.alexey@gmail.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Linux Security Module <linux-security-module@vger.kernel.org>,
-        Akinobu Mita <akinobu.mita@gmail.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Alexey Gladkov <legion@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Daniel Micay <danielmicay@gmail.com>,
-        Djalal Harouni <tixxdz@gmail.com>,
-        "Dmitry V . Levin" <ldv@altlinux.org>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        "J . Bruce Fields" <bfields@fieldses.org>,
-        Jeff Layton <jlayton@poochiereds.net>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Oleg Nesterov <oleg@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCHSET 00/10] perf: Improve cgroup profiling (v5)
+To:     Peter Zijlstra <peterz@infradead.org>, Tejun Heo <tj@kernel.org>
+CC:     Namhyung Kim <namhyung@kernel.org>, Ingo Molnar <mingo@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Stephane Eranian <eranian@google.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-perf-users <linux-perf-users@vger.kernel.org>,
+        Li Zefan <lizefan@huawei.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Adrian Hunter <adrian.hunter@intel.com>
+From:   Arnaldo Melo <arnaldo.melo@gmail.com>
+Message-ID: <D53AD1F8-4B2B-4B30-BC72-59CCA7F0D268@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 24, 2020 at 1:46 PM Alexey Gladkov <gladkov.alexey@gmail.com> wrote:
+
+
+On March 24, 2020 5:15:22 PM GMT-03:00, Peter Zijlstra <peterz@infradead=
+=2Eorg> wrote:
+>On Tue, Mar 24, 2020 at 12:34:44PM -0400, Tejun Heo wrote:
+>> On Mon, Mar 23, 2020 at 08:58:04AM +0900, Namhyung Kim wrote:
+>> > Hello Peter, Tejun and folks=2E
+>> >=20
+>> > Do you have any other comments on the kernel side?
+>> > If not, can I get your Ack?
+>>=20
+>> Everything looks good from cgroup side=2E I think I acked all cgroup
+>parts already
+>> but if not please feel free to add
+>>=20
+>>  Acked-by: Tejun Heo <tj@kernel=2Eorg>
 >
-> +/* definitions for hide_pid field */
-> +enum {
-> +       HIDEPID_OFF       = 0,
-> +       HIDEPID_NO_ACCESS = 1,
-> +       HIDEPID_INVISIBLE = 2,
-> +};
+>Yeah, looks good to me too=2E Since it's mostly userspace patches, will
+>you route it Arnaldo?
+>
+>Acked-by: Peter Zijlstra (Intel) <peterz@infradead=2Eorg>
 
-Should this enum be named...
-
->  struct proc_fs_info {
->         struct pid_namespace *pid_ns;
->         struct dentry *proc_self;        /* For /proc/self */
->         struct dentry *proc_thread_self; /* For /proc/thread-self */
-> +       kgid_t pid_gid;
-> +       int hide_pid;
->  };
-
-.. and then used here instead of "int"?
-
-Same goes for 'struct proc_fs_context' too, for that matter?
-
-And maybe in the function declarations and definitions too? In things
-like 'has_pid_permissions()' (the series adds some other cases later,
-like hidepid2str() etc)
-
-Yeah, enums and ints are kind of interchangeable in C, but even if it
-wouldn't give us any more typechecking (except perhaps with sparse if
-you mark it so), it would be documenting the use.
-
-Or am I missing something?
-
-Anyway, I continue to think the series looks fine, bnut would love to
-see it in -next and perhaps comments from Al and Alexey Dobriyan..
-
-            Linus
+Thanks for the acks, I'll process it tomorrow, so tests passing it'll go I=
+ngo's way for 5=2E7 tomorrow=2E
+--=20
+Sent from my Android device with K-9 Mail=2E Please excuse my brevity=2E
