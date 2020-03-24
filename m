@@ -2,64 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2FC0A191697
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 17:37:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E46A81916B2
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 17:43:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728281AbgCXQhQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 12:37:16 -0400
-Received: from muru.com ([72.249.23.125]:33086 "EHLO muru.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727768AbgCXQhP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 12:37:15 -0400
-Received: from atomide.com (localhost [127.0.0.1])
-        by muru.com (Postfix) with ESMTPS id 63E6C8198;
-        Tue, 24 Mar 2020 16:38:01 +0000 (UTC)
-Date:   Tue, 24 Mar 2020 09:37:11 -0700
-From:   Tony Lindgren <tony@atomide.com>
-To:     Lee Jones <lee.jones@linaro.org>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rob Herring <robh@kernel.org>,
-        Alan Cox <gnomes@lxorguk.ukuu.org.uk>,
-        Jiri Slaby <jslaby@suse.cz>, Johan Hovold <johan@kernel.org>,
-        Merlijn Wajer <merlijn@wizzup.org>,
-        Pavel Machek <pavel@ucw.cz>,
-        Peter Hurley <peter@hurleysoftware.com>,
-        Sebastian Reichel <sre@kernel.org>,
-        linux-serial@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org
-Subject: Re: [PATCH 3/4] dt-bindings: mfd: motmdm: Add binding for
- motorola-mdm
-Message-ID: <20200324163711.GA37466@atomide.com>
-References: <20200319173755.65082-1-tony@atomide.com>
- <20200319173755.65082-4-tony@atomide.com>
- <20200324115852.GB442973@dell>
+        id S1727921AbgCXQnN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 12:43:13 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:45396 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726988AbgCXQnM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Mar 2020 12:43:12 -0400
+Received: by mail-lj1-f195.google.com with SMTP id t17so8660322ljc.12
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Mar 2020 09:43:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=yNlWnerAXVLzObnsd9PaDqNQnqdC4nXPbLaZYzKZiHQ=;
+        b=cp8PDwcdLi3Sx58HhqjwAnXvUGvkwrx3sFIA6iBiDHu3GALAAUoI3vIIUjOizXWj4j
+         iX4GZZ/pr7nXuay4pa/+Yx8d4j12ZdP3tLJHe+wBHTtAG+Cao64AGMaYtL5taPTgjbtU
+         4/ILHSvXmFYSYfVeVdLpSGUboEgrpHYHi7pes=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=yNlWnerAXVLzObnsd9PaDqNQnqdC4nXPbLaZYzKZiHQ=;
+        b=rLhBuxnkCSTwqkCxaPxmSpXCfVmTROmgSDJc7+62fbjgUt5FnBa6rA9nwhQZsAE/fe
+         qWsX5JNjSjT6R011CZSwb2wI0X6DhYQh5AVOMvrP+aoVD5CM2yng1LXQJQIZycLxGIXi
+         l46wPPIvL4MCAR4Y1XhX+2/7fBHgQUwmuZ1cqBADV1tulzbzMf6wh01Iv2WJZtTDkpHL
+         +ooVdVrHG9dln4QxggpS7WMcuDz/coGkmJ9/kDomcK57ea/qS5ySPI+7OS2z9LYHGrhT
+         1V+9KhcC1c/0uXP3xtlGFNDkuJy5vioOvPs5oSuvLYOp5KLnC2ihcNgmzeLuD17MVT0G
+         9MdQ==
+X-Gm-Message-State: ANhLgQ3ABLPsHvn2onK6S2Gr+Ro9aQQpubRmyEFfOtMAkKez365ZO9LQ
+        vtnGcZVeO3z+hrUY5ELuHDuU4uk8eBg=
+X-Google-Smtp-Source: ADFU+vuIICIYsSaYKtEobh95fle15FLg+tRBELBXaTXaO9ZySQgIDTj1WS4GcqPUgjHI6kXPDY0pqQ==
+X-Received: by 2002:a2e:b4a1:: with SMTP id q1mr8602491ljm.262.1585068190323;
+        Tue, 24 Mar 2020 09:43:10 -0700 (PDT)
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com. [209.85.167.53])
+        by smtp.gmail.com with ESMTPSA id d12sm10089704lfi.86.2020.03.24.09.43.09
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 24 Mar 2020 09:43:10 -0700 (PDT)
+Received: by mail-lf1-f53.google.com with SMTP id j188so9951844lfj.11
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Mar 2020 09:43:09 -0700 (PDT)
+X-Received: by 2002:a19:c3cf:: with SMTP id t198mr11909345lff.30.1585067849259;
+ Tue, 24 Mar 2020 09:37:29 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200324115852.GB442973@dell>
+References: <202001131750.C1B8468@keescook> <20200114165135.GK31032@zn.tnic>
+ <20200115002131.GA3258770@rani.riverdale.lan> <20200115122458.GB20975@zn.tnic>
+ <20200316160259.GN26126@zn.tnic> <20200323204454.GA2611336@zx2c4.com>
+ <202003231350.7D35351@keescook> <CAK7LNARMBkc666kZ9jOG9sSThzA69JvKi++WZXMtCP9ddyqcBw@mail.gmail.com>
+ <20200324091437.GB22931@zn.tnic> <CAHmME9q2VuhN+Dhi-nzuJKPjXo8dZq013cZ-0x0t9StZFXCAJQ@mail.gmail.com>
+ <20200324162843.GE22931@zn.tnic>
+In-Reply-To: <20200324162843.GE22931@zn.tnic>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Tue, 24 Mar 2020 09:37:13 -0700
+X-Gmail-Original-Message-ID: <CAHk-=whXBO-Z=Ra_UX=w_LefG1r6iLXcPT=sLuZ+EaKFtWtCBQ@mail.gmail.com>
+Message-ID: <CAHk-=whXBO-Z=Ra_UX=w_LefG1r6iLXcPT=sLuZ+EaKFtWtCBQ@mail.gmail.com>
+Subject: Re: [PATCH] Documentation/changes: Raise minimum supported binutils
+ version to 2.23
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     "Jason A. Donenfeld" <Jason@zx2c4.com>,
+        Masahiro Yamada <masahiroy@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Arvind Sankar <nivedita@alum.mit.edu>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, X86 ML <x86@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Thomas Lendacky <Thomas.Lendacky@amd.com>,
+        Mauro Rossi <issor.oruam@gmail.com>,
+        Michael Matz <matz@suse.de>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* Lee Jones <lee.jones@linaro.org> [200324 11:58]:
-> > Add a binding document for Motorola modems controllable by
-> > TS 27.010 UART line discipline using serdev drivers.
-> > 
-> > Reviewed-by: Rob Herring <robh@kernel.org>
-> > [tony@atomide.com: moved to live under bindings/serdev]
-> > Signed-off-by: Tony Lindgren <tony@atomide.com>
-> > ---
-> >  .../serdev/motorola,mapphone-mdm6600.yaml     | 34 +++++++++++++++++++
-> >  1 file changed, 34 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/serdev/motorola,mapphone-mdm6600.yaml
-> 
-> Nit: subject line is out of date.
+On Tue, Mar 24, 2020 at 9:28 AM Borislav Petkov <bp@alien8.de> wrote:
+>
+> Are you or Kees going to deal with any fallout from upping the binutils
+> version, rushed in in the last week before the merge window?
 
-Thanks for spotting that, will change it to use the following:
+I think it's ok. It's not going to cause any _subtle_ failures, it's
+going to cause very clear "oh, now it doesn't build" errors.
 
-dt-bindings: serdev: motmdm: Add binding for motorola-mdm
+No?
 
-Regards,
+And binutils 2.23 is what, 7+ years old by now and apparently had
+known failure cases too.
 
-Tony
+But if there are silent and subtle failures, that might be a reason to
+be careful. Are there?
+
+              Linus
