@@ -2,89 +2,144 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A48AB19126C
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 15:07:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 109E7191274
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 15:08:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727796AbgCXOHL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 10:07:11 -0400
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:35716 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727111AbgCXOHL (ORCPT
+        id S1727915AbgCXOHw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 10:07:52 -0400
+Received: from mail-vs1-f74.google.com ([209.85.217.74]:48336 "EHLO
+        mail-vs1-f74.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727376AbgCXOHv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 10:07:11 -0400
-Received: by mail-ed1-f65.google.com with SMTP id a20so20847637edj.2;
-        Tue, 24 Mar 2020 07:07:09 -0700 (PDT)
+        Tue, 24 Mar 2020 10:07:51 -0400
+Received: by mail-vs1-f74.google.com with SMTP id x185so2211436vsc.15
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Mar 2020 07:07:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=dcUgHF1GDuuSunaZUU4Ruocj0GZ4ddqSxRhaLtXqkcM=;
-        b=dvJVWQ0O8hlSN/WBTtGXC50vG9ZJsG5B93vJTJkLUCehGXLNA7WiOPqhxSiXPhvxSQ
-         tOj7bM0T5W9KTOferZhZUOyGqo0WT7kVcvYhb76IspBlhdKXyvZmq+EUoZfZwWazY1UW
-         HbYAq1mKiuaFo5UjFpQvGh5IQ9HKyn0ZBjewWugORhupS/tsE3xXNBR5yGU6r03Ve3qg
-         h82gUAI0taleDBc/RB3m/Q6cwpslgv65JWBeiWge9O2p7DlFJJ4W2u4LfLz3QJWoSdyH
-         acqk0DLuJ/Dx8CbymfYh3loG/49JveFdfInVQkuMKAur2NH3+HUGXG+nlEtRaI8mCUJ6
-         YOFQ==
+        d=google.com; s=20161025;
+        h=date:in-reply-to:message-id:mime-version:references:subject:from:cc;
+        bh=/WDuZWap/v8Iy/M+2OXxOt9NiRFVqlUjqdsfClorLXo=;
+        b=Sr2qjPRlgPkAUNThsPMi7tdJY4FEjCggCaBkUOigBm1BPouHiNu4N9XGxCUTgGGGo7
+         MBN3x8/tke0Di7ut7R4kVF415AmL5EALBGN1f7adO6qTl1UrHDEwEHjAmmxqU4Dv4rWx
+         mZpwn771XICjrXe7cL/CytU0ujh3ncZp/3LDdL0/9b3gJy/8VDTfn8Mcd4WYVIosktJg
+         Ws9kAMw8OvJp7IA6PX7D2WE/sG38WGTxXDYK/EPAk3loQUu09yDdoj2WoYZimBl1EUtN
+         ioHjfxFO1LysVbJPIzqUSX9WaWiaX97coUvoitmtypDCDNgdyZw2dvOxZhJpnGn7dXLW
+         J3lQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=dcUgHF1GDuuSunaZUU4Ruocj0GZ4ddqSxRhaLtXqkcM=;
-        b=j4Q/Bu3bIsgogtzVoDPJOvnYVTcZRpkxVq6/XQF+m7zYQFJ9tZerwPhJcZnXI2w63/
-         qpcnbMT5w1QwEBspM5QrkN174dkhT+a0+U61yR0Hj+InmWuMX8JIs1Nhoy0jy2w+2R/f
-         +Ae6EpkUxgsww17Lg5YLgRNH2Nun0nbd7g4bFHFiYRmHlK3sM3SVLYCzd8IPaDSXxUfj
-         QRItAFjUuges1QUio1ykyk0fipGLx/oNlIiE7VllvCJ5p8ISixf1l0fsWVx8+g7aVomU
-         xXA/KY7e9WxcmD7J/TA+/m2EsVdj6ufvVJtWU5NSei1cmDLb7bW29Vy1LVSIKdFpVtLQ
-         VpFA==
-X-Gm-Message-State: ANhLgQ2rC8jBsC3hXjuPSTxijwkbjEfZY2++wM15eRct0PO7ZI+yvTED
-        Ca9TpCmDvPVjpcEm//73MWwJ6Zmytj+bJLChY2M=
-X-Google-Smtp-Source: ADFU+vuGEjDeb/L8U1c1UJ2A93v1OboeO9Zew62wGydVRx2aXkWZiMP1AE1wliFtVf6Ap3fpngvz6Yw78DvnnxMnQcw=
-X-Received: by 2002:a05:6402:17aa:: with SMTP id j10mr20114633edy.146.1585058828747;
- Tue, 24 Mar 2020 07:07:08 -0700 (PDT)
-MIME-Version: 1.0
-References: <20200324102030.31000-1-narmstrong@baylibre.com> <20200324102030.31000-2-narmstrong@baylibre.com>
-In-Reply-To: <20200324102030.31000-2-narmstrong@baylibre.com>
-From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date:   Tue, 24 Mar 2020 15:06:57 +0100
-Message-ID: <CAFBinCCaMopoza5CFCC7=mStH8Ocni4GjGr+etn=dMKOgr_5fg@mail.gmail.com>
-Subject: Re: [PATCH 01/13] dt-bindings: usb: amlogic,meson-g12a-usb-ctrl: add
- the Amlogic GXL and GXM Families USB Glue Bindings
-To:     Neil Armstrong <narmstrong@baylibre.com>
-Cc:     kishon@ti.com, balbi@kernel.org, khilman@baylibre.com,
-        devicetree@vger.kernel.org, linux-amlogic@lists.infradead.org,
-        linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
+        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
+         :references:subject:from:cc;
+        bh=/WDuZWap/v8Iy/M+2OXxOt9NiRFVqlUjqdsfClorLXo=;
+        b=MAD6Q62UrTWBLjTbek1aoeyFWWjkD4ZXrOPq1IWTK53ea/Zvm7nLpW83KSBPuIeRqD
+         HN9n67EUG2qAJNOrdWWoaHk3S4vpKztIn6ark8cyLfUDMCtPzkPFZNLGhR5Hue/IvEVP
+         jyIfnWPyUP0YsA98kwOVxOnubaLLu61r6q0W0RDmxRasJGkuRSDRtROCLafsQAzL+yox
+         dyJX7bD7NiEPidIDkt/wI2p4nlS+hciBPfgmW/ny78C4iXOT8usC7wZKtiyxRP2ZRXv0
+         JxuobTRLEGSa5hKWK+3VBzAVIRJ3siTJNdWRtjyFOJ5j1d0wab52Q5W2hgyh0mHkbtQs
+         79bQ==
+X-Gm-Message-State: ANhLgQ2hLqTX0faUYpxM6rKgsrwgoMJz2QH/jpG3vYDVa6+MzyHwhitH
+        WB007oczA0zAd7niFWdoGamXVhjoOIF/
+X-Google-Smtp-Source: ADFU+vvWAWa1ZME92RpGWIUWGOme/tyDXMElIiMWTIu0OsBqcrvCNBV955//MSXX4aTdS5Ml+8SZD/DlZaHM
+X-Received: by 2002:a1f:3fc8:: with SMTP id m191mr16816183vka.71.1585058870481;
+ Tue, 24 Mar 2020 07:07:50 -0700 (PDT)
+Date:   Tue, 24 Mar 2020 15:07:41 +0100
+In-Reply-To: <20200323114207.222412-1-courbet@google.com>
+Message-Id: <20200324140742.71850-1-courbet@google.com>
+Mime-Version: 1.0
+References: <20200323114207.222412-1-courbet@google.com>
+X-Mailer: git-send-email 2.25.1.696.g5e7596f4ac-goog
+Subject: [PATCH v2]     x86: Alias memset to __builtin_memset.
+From:   Clement Courbet <courbet@google.com>
+Cc:     Nathan Chancellor <natechancellor@gmail.com>,
+        Kees Cook <keescook@chromium.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Clement Courbet <courbet@google.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        linux-kernel@vger.kernel.org, clang-built-linux@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Neil,
+    Recent compilers know the meaning of builtins (`memset`,
+    `memcpy`, ...) and can replace calls by inline code when
+    deemed better. For example, `memset(p, 0, 4)` will be lowered
+    to a four-byte zero store.
 
-On Tue, Mar 24, 2020 at 11:20 AM Neil Armstrong <narmstrong@baylibre.com> wrote:
-[...]
-> --- a/Documentation/devicetree/bindings/usb/amlogic,meson-g12a-usb-ctrl.yaml
-> +++ b/Documentation/devicetree/bindings/usb/amlogic,meson-g12a-usb-ctrl.yaml
-> @@ -25,9 +25,13 @@ description: |
->    The Amlogic A1 embeds a DWC3 USB IP Core configured for USB2 in
->    host-only mode.
->
-> +  The Amlogic GXL & GXM SoCs doesn't embed an USB3 PHY.
-> +
->  properties:
->    compatible:
->      enum:
-> +      - amlogic,meson-gxl-usb-ctrl
-> +      - amlogic,meson-gxm-usb-ctrl
->        - amlogic,meson-g12a-usb-ctrl
->        - amlogic,meson-a1-usb-ctrl
-the phy-names property is described below which you don't update
-please add usb2-phy2 to the list of allowed phy-names so the dt
-binding validation for the .dtsi patche (#9) won't complain
+    When using -ffreestanding (this is the case e.g. building on
+    clang), these optimizations are disabled. This means that **all**
+    memsets, including those with small, constant sizes, will result
+    in an actual call to memset.
 
-With that fixed:
-Reviewed-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+    We have identified several spots where we have high CPU usage
+    because of this. For example, a single one of these memsets is
+    responsible for about 0.3% of our total CPU usage in the kernel.
 
+    Aliasing `memset` to `__builtin_memset` allows the compiler to
+    perform this optimization even when -ffreestanding is used.
+    There is no change when -ffreestanding is not used.
 
-Martin
+    Below is a diff (clang) for `update_sg_lb_stats()`, which
+    includes the aforementionned hot memset:
+        memset(sgs, 0, sizeof(*sgs));
+
+    Diff:
+        movq %rsi, %rbx        ~~~>  movq $0x0, 0x40(%r8)
+        movq %rdi, %r15        ~~~>  movq $0x0, 0x38(%r8)
+        movl $0x48, %edx       ~~~>  movq $0x0, 0x30(%r8)
+        movq %r8, %rdi         ~~~>  movq $0x0, 0x28(%r8)
+        xorl %esi, %esi        ~~~>  movq $0x0, 0x20(%r8)
+        callq <memset>         ~~~>  movq $0x0, 0x18(%r8)
+                               ~~~>  movq $0x0, 0x10(%r8)
+                               ~~~>  movq $0x0, 0x8(%r8)
+                               ~~~>  movq $0x0, (%r8)
+
+    In terms of code size, this grows the clang-built kernel a
+    bit (+0.022%):
+    440285512 vmlinux.clang.after
+    440383608 vmlinux.clang.before
+
+Signed-off-by: Clement Courbet <courbet@google.com>
+
+---
+
+changes in v2:
+  - Removed ifdef(GNUC >= 4).
+  - Disabled change when CONFIG_FORTIFY_SOURCE is set.
+---
+ arch/x86/include/asm/string_64.h | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
+
+diff --git a/arch/x86/include/asm/string_64.h b/arch/x86/include/asm/string_64.h
+index 75314c3dbe47..9cfce0a840a4 100644
+--- a/arch/x86/include/asm/string_64.h
++++ b/arch/x86/include/asm/string_64.h
+@@ -18,6 +18,15 @@ extern void *__memcpy(void *to, const void *from, size_t len);
+ void *memset(void *s, int c, size_t n);
+ void *__memset(void *s, int c, size_t n);
+ 
++/* Recent compilers can generate much better code for known size and/or
++ * fill values, and will fallback on `memset` if they fail.
++ * We alias `memset` to `__builtin_memset` explicitly to inform the compiler to
++ * perform this optimization even when -ffreestanding is used.
++ */
++#if !defined(CONFIG_FORTIFY_SOURCE)
++#define memset(s, c, count) __builtin_memset(s, c, count)
++#endif
++
+ #define __HAVE_ARCH_MEMSET16
+ static inline void *memset16(uint16_t *s, uint16_t v, size_t n)
+ {
+@@ -74,6 +83,7 @@ int strcmp(const char *cs, const char *ct);
+ #undef memcpy
+ #define memcpy(dst, src, len) __memcpy(dst, src, len)
+ #define memmove(dst, src, len) __memmove(dst, src, len)
++#undef memset
+ #define memset(s, c, n) __memset(s, c, n)
+ 
+ #ifndef __NO_FORTIFY
+-- 
+2.25.1.696.g5e7596f4ac-goog
+
