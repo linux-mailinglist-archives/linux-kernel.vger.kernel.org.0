@@ -2,37 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 940A01910BD
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 14:31:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2A00F1910BA
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 14:31:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729189AbgCXNa4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 09:30:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43206 "EHLO mail.kernel.org"
+        id S1729111AbgCXNau (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 09:30:50 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43650 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728825AbgCXNVW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 09:21:22 -0400
+        id S1729070AbgCXNVk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Mar 2020 09:21:40 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 14BBF206F6;
-        Tue, 24 Mar 2020 13:21:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8D30020870;
+        Tue, 24 Mar 2020 13:21:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585056082;
-        bh=Unh3rPOkR4ko5NKQUaz+SBxCMdPJ9H1YJmGubzUTjOo=;
+        s=default; t=1585056100;
+        bh=jM7Fews3e1MESegyezgjrz7anoNSo3IuYP4oG7HKigc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=wSDfz0FFDcvDAx+fzBAocp5ytK7yAg0IGWtUR6t7MUyw3R172M1opjuB75CU6z96o
-         Jy0G2vxMdqNoR0RoPW4TdYLHwQwEL+mIIzfUQKbL9odAbg4WVmiLo4Ypw21IAkmcDD
-         sm7fJD19bqzQkGmDiaEXyvwRRIoNRjVk0EaJkidg=
+        b=pcgbAeLCXHVkbBfEOuCMCngWYVZa0u3mwQhYhcM9vgC5Jg1ioC6Rwp71ik1XF9qn+
+         Rj9E300XmBtJAy2p11C7r1QG9U2jZQgwzZbgjbkZP+pxwPmPLEi4mq18LJ7DmluZpx
+         jGS+9cTwo0GF6lTbChLgZpmvnI5Kr1e0vyRUhr+s=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Stefan Wahren <stefan.wahren@i2se.com>,
-        Peter Robinson <pbrobinson@gmail.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.5 016/119] ARM: dts: bcm283x: Add missing properties to the PWR LED
-Date:   Tue, 24 Mar 2020 14:10:01 +0100
-Message-Id: <20200324130809.545443654@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Liguang Zhang <zhangliguang@linux.alibaba.com>,
+        Will Deacon <will@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.5 021/119] drivers/perf: arm_pmu_acpi: Fix incorrect checking of gicc pointer
+Date:   Tue, 24 Mar 2020 14:10:06 +0100
+Message-Id: <20200324130810.523304486@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.2
 In-Reply-To: <20200324130808.041360967@linuxfoundation.org>
 References: <20200324130808.041360967@linuxfoundation.org>
@@ -45,63 +44,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Stefan Wahren <stefan.wahren@i2se.com>
+From: luanshi <zhangliguang@linux.alibaba.com>
 
-[ Upstream commit bff211bab301db890e38de872d43cbb459940daa ]
+[ Upstream commit 3ba52ad55b533760a1f65836aa0ec9d35e36bb4f ]
 
-This adds the missing properties to the PWR LED for the RPi 3 & 4 boards,
-which are already set for the other boards. Without them we will lose
-the LED state after suspend.
+Fix bogus NULL checks on the return value of acpi_cpu_get_madt_gicc()
+by checking for a 0 'gicc->performance_interrupt' value instead.
 
-Signed-off-by: Stefan Wahren <stefan.wahren@i2se.com>
-Tested-by: Peter Robinson <pbrobinson@gmail.com>
-Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+Signed-off-by: Liguang Zhang <zhangliguang@linux.alibaba.com>
+Signed-off-by: Will Deacon <will@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/boot/dts/bcm2711-rpi-4-b.dts      | 2 ++
- arch/arm/boot/dts/bcm2837-rpi-3-a-plus.dts | 2 ++
- arch/arm/boot/dts/bcm2837-rpi-3-b-plus.dts | 2 ++
- 3 files changed, 6 insertions(+)
+ drivers/perf/arm_pmu_acpi.c | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
 
-diff --git a/arch/arm/boot/dts/bcm2711-rpi-4-b.dts b/arch/arm/boot/dts/bcm2711-rpi-4-b.dts
-index 1b5a835f66bd3..b8c4b5bb265a9 100644
---- a/arch/arm/boot/dts/bcm2711-rpi-4-b.dts
-+++ b/arch/arm/boot/dts/bcm2711-rpi-4-b.dts
-@@ -31,6 +31,8 @@
- 		pwr {
- 			label = "PWR";
- 			gpios = <&expgpio 2 GPIO_ACTIVE_LOW>;
-+			default-state = "keep";
-+			linux,default-trigger = "default-on";
- 		};
- 	};
+diff --git a/drivers/perf/arm_pmu_acpi.c b/drivers/perf/arm_pmu_acpi.c
+index acce8781c456c..f5c7a845cd7bf 100644
+--- a/drivers/perf/arm_pmu_acpi.c
++++ b/drivers/perf/arm_pmu_acpi.c
+@@ -24,8 +24,6 @@ static int arm_pmu_acpi_register_irq(int cpu)
+ 	int gsi, trigger;
  
-diff --git a/arch/arm/boot/dts/bcm2837-rpi-3-a-plus.dts b/arch/arm/boot/dts/bcm2837-rpi-3-a-plus.dts
-index 66ab35eccba7b..28be0332c1c81 100644
---- a/arch/arm/boot/dts/bcm2837-rpi-3-a-plus.dts
-+++ b/arch/arm/boot/dts/bcm2837-rpi-3-a-plus.dts
-@@ -26,6 +26,8 @@
- 		pwr {
- 			label = "PWR";
- 			gpios = <&expgpio 2 GPIO_ACTIVE_LOW>;
-+			default-state = "keep";
-+			linux,default-trigger = "default-on";
- 		};
- 	};
- };
-diff --git a/arch/arm/boot/dts/bcm2837-rpi-3-b-plus.dts b/arch/arm/boot/dts/bcm2837-rpi-3-b-plus.dts
-index 74ed6d0478070..37343148643db 100644
---- a/arch/arm/boot/dts/bcm2837-rpi-3-b-plus.dts
-+++ b/arch/arm/boot/dts/bcm2837-rpi-3-b-plus.dts
-@@ -27,6 +27,8 @@
- 		pwr {
- 			label = "PWR";
- 			gpios = <&expgpio 2 GPIO_ACTIVE_LOW>;
-+			default-state = "keep";
-+			linux,default-trigger = "default-on";
- 		};
- 	};
+ 	gicc = acpi_cpu_get_madt_gicc(cpu);
+-	if (WARN_ON(!gicc))
+-		return -EINVAL;
  
+ 	gsi = gicc->performance_interrupt;
+ 
+@@ -64,11 +62,10 @@ static void arm_pmu_acpi_unregister_irq(int cpu)
+ 	int gsi;
+ 
+ 	gicc = acpi_cpu_get_madt_gicc(cpu);
+-	if (!gicc)
+-		return;
+ 
+ 	gsi = gicc->performance_interrupt;
+-	acpi_unregister_gsi(gsi);
++	if (gsi)
++		acpi_unregister_gsi(gsi);
+ }
+ 
+ #if IS_ENABLED(CONFIG_ARM_SPE_PMU)
 -- 
 2.20.1
 
