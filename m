@@ -2,33 +2,33 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E03DC190961
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 10:21:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D5749190944
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 10:21:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727903AbgCXJTu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 05:19:50 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:43930 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727474AbgCXJQm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
+        id S1727501AbgCXJQm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
         Tue, 24 Mar 2020 05:16:42 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:43917 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727431AbgCXJQj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Mar 2020 05:16:39 -0400
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1jGffs-0007xx-Ev; Tue, 24 Mar 2020 10:16:40 +0100
+        id 1jGffo-0007yl-Uu; Tue, 24 Mar 2020 10:16:37 +0100
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 341981C048C;
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id F04AC1C04CC;
         Tue, 24 Mar 2020 10:16:33 +0100 (CET)
-Date:   Tue, 24 Mar 2020 09:16:32 -0000
+Date:   Tue, 24 Mar 2020 09:16:33 -0000
 From:   "tip-bot2 for Paul E. McKenney" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: core/rcu] rcutorture: Fix stray access to rcu_fwd_cb_nodelay
+Subject: [tip: core/rcu] rcutorture: Make kvm-find-errors.sh abort on bad directory
 Cc:     "Paul E. McKenney" <paulmck@kernel.org>, x86 <x86@kernel.org>,
         LKML <linux-kernel@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <158504139290.28353.6911043287008731885.tip-bot2@tip-bot2>
+Message-ID: <158504139365.28353.989843788203325097.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -44,39 +44,36 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the core/rcu branch of tip:
 
-Commit-ID:     102c14d2f87976e8390d2cb892ccd14e3532e020
-Gitweb:        https://git.kernel.org/tip/102c14d2f87976e8390d2cb892ccd14e3532e020
+Commit-ID:     beabc806f5aaa158fc90a939215e8b44ee9d7acc
+Gitweb:        https://git.kernel.org/tip/beabc806f5aaa158fc90a939215e8b44ee9d7acc
 Author:        Paul E. McKenney <paulmck@kernel.org>
-AuthorDate:    Sat, 21 Dec 2019 11:23:50 -08:00
+AuthorDate:    Mon, 16 Dec 2019 12:08:31 -08:00
 Committer:     Paul E. McKenney <paulmck@kernel.org>
-CommitterDate: Thu, 20 Feb 2020 16:03:31 -08:00
+CommitterDate: Thu, 20 Feb 2020 16:03:30 -08:00
 
-rcutorture: Fix stray access to rcu_fwd_cb_nodelay
+rcutorture: Make kvm-find-errors.sh abort on bad directory
 
-The rcu_fwd_cb_nodelay variable suppresses excessively long read-side
-delays while carrying out an rcutorture forward-progress test.  As such,
-it is accessed both by readers and updaters, and most of the accesses
-therefore use *_ONCE().  Except for one in rcu_read_delay(), which this
-commit fixes.
-
-This data race was reported by KCSAN.  Not appropriate for backporting
-due to this being rcutorture.
+Currently, kvm-find-errors.sh gives a usage prompt when given a bad
+directory, but then soldiers on, giving a series of confusing error
+messages.  This commit therefore prints an error message and exits when
+given a bad directory, hopefully reducing confusion.
 
 Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
 ---
- kernel/rcu/rcutorture.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ tools/testing/selftests/rcutorture/bin/kvm-find-errors.sh | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/kernel/rcu/rcutorture.c b/kernel/rcu/rcutorture.c
-index edd9746..124160a 100644
---- a/kernel/rcu/rcutorture.c
-+++ b/kernel/rcu/rcutorture.c
-@@ -339,7 +339,7 @@ rcu_read_delay(struct torture_random_state *rrsp, struct rt_read_seg *rtrsp)
- 	 * period, and we want a long delay occasionally to trigger
- 	 * force_quiescent_state. */
+diff --git a/tools/testing/selftests/rcutorture/bin/kvm-find-errors.sh b/tools/testing/selftests/rcutorture/bin/kvm-find-errors.sh
+index 1871d00..6f50722 100755
+--- a/tools/testing/selftests/rcutorture/bin/kvm-find-errors.sh
++++ b/tools/testing/selftests/rcutorture/bin/kvm-find-errors.sh
+@@ -20,7 +20,9 @@
+ rundir="${1}"
+ if test -z "$rundir" -o ! -d "$rundir"
+ then
++	echo Directory "$rundir" not found.
+ 	echo Usage: $0 directory
++	exit 1
+ fi
+ editor=${EDITOR-vi}
  
--	if (!rcu_fwd_cb_nodelay &&
-+	if (!READ_ONCE(rcu_fwd_cb_nodelay) &&
- 	    !(torture_random(rrsp) % (nrealreaders * 2000 * longdelay_ms))) {
- 		started = cur_ops->get_gp_seq();
- 		ts = rcu_trace_clock_local();
