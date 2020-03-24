@@ -2,112 +2,210 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8E1D6190834
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 09:51:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DEBCF1907F9
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 09:48:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727461AbgCXIv3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 04:51:29 -0400
-Received: from conuserg-09.nifty.com ([210.131.2.76]:17668 "EHLO
-        conuserg-09.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727388AbgCXIv0 (ORCPT
+        id S1727111AbgCXIs2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 04:48:28 -0400
+Received: from mail-pj1-f67.google.com ([209.85.216.67]:38762 "EHLO
+        mail-pj1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726462AbgCXIs2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 04:51:26 -0400
-Received: from pug.e01.socionext.com (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
-        by conuserg-09.nifty.com with ESMTP id 02O8mgsl011219;
-        Tue, 24 Mar 2020 17:49:01 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-09.nifty.com 02O8mgsl011219
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1585039742;
-        bh=s0I5SOuN4Cdii5q1Bnu+2uo8oY7Phl6nmh/yFk4bv3o=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=db6hzkHI/NUH249ZqcRDYDfDe7GjyhgWCZVEEqEZfEZI3S6EwdYG1NtOgjiK171el
-         MjI3tcpwCT0daxXBK+R/TOqQzVneYQsbupnIcxgg2QCaB7ZzDGOzLCDxr8rMTUUFXa
-         B3UBz9H/dfpDiBg64mTb2KNZZOHa85gzYOvTQCyDQ2Yf8CEdnNfKhDbXMhXnTlme5T
-         /vwMJ9P7KSCRdM8GtxROlB105f7gzUPGdScoGbm6cf/CFMcios3IkyOf+f8QRAHZG+
-         NKByMqsLhIOfmKaV0z6CaT+GIjfDMUF/whvLdFouvk7Zjffqz5Aw24Sn/M5pdVEQMU
-         crRjI6Rw5wUNg==
-X-Nifty-SrcIP: [153.142.97.92]
-From:   Masahiro Yamada <masahiroy@kernel.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     "David S . Miller" <davem@davemloft.net>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Kees Cook <keescook@chromium.org>,
-        clang-built-linux@googlegroups.com,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        linux-crypto@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        linux-kbuild@vger.kernel.org, Borislav Petkov <bp@suse.de>,
+        Tue, 24 Mar 2020 04:48:28 -0400
+Received: by mail-pj1-f67.google.com with SMTP id m15so1136077pje.3;
+        Tue, 24 Mar 2020 01:48:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:subject:to:cc:references:in-reply-to:mime-version
+         :user-agent:message-id:content-transfer-encoding;
+        bh=bt3cOsdr0C8cVmPItgi4WdtrPk2V3/FsORYh/CBY/lI=;
+        b=vA3p3t11FbBNkJKydmTaNNK3N5QW4gtpYzmlrgSF1JIT3wXicBoyZQ6X2qPv4Qvl27
+         atW1VCrGbGDlTg1jxwlWdC53pfi5pO12GqKqWwzjPJCi8yZkG6OkVtvJw1OLGhqdMKWJ
+         YVITCgHIF79H5pfiZs2gYUgZSyX4kEOcNHQAOMwGVYaxcpUJsAqTXPerqQZwYHyBEzGP
+         +AvKs5zDXWGhMNjVuH2KjgkSnFMBn/CbVRXP9QCpCiofOD2/GVjOn735K6I/pb/gBuj3
+         IWQbe9lei2ON6VbPeMLYajngQQ1HgV/7UZkMxmMQH9Ng01J1kjTH9anTeMvW0mB2L1lX
+         KhRw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:subject:to:cc:references:in-reply-to
+         :mime-version:user-agent:message-id:content-transfer-encoding;
+        bh=bt3cOsdr0C8cVmPItgi4WdtrPk2V3/FsORYh/CBY/lI=;
+        b=BuT+swMKDciqMfV1Rt6b9L2ej13W46AaJH+nVcnlpLSEvMRgWhqVvEMlbPx0O1YQC9
+         Yts21G3x83lNM0WDFqrTtd6Vvoeh8v7hRSlzqdiaNgp+P+Yk1S0Scm9C2QYzvAQBni35
+         j1OjkBuMgmaMQ5IMAXvZp5p3rykDi7l3j92hy8ogMbDhRkHUodak1UmkyyaRL9Dz5Zjo
+         pwKyyaqClj4WRk7Or93WOs0ytCCwzD8r2QlTmeoKtPnAOvxYiH54ZySEDgCM2R1yt0Ql
+         b/aovxDs72u2Cpv+rwsja1I9yHm2IndN+msDJSle5b7pGg/ST/jVuMZsHl5FtOBgfmwY
+         0P5w==
+X-Gm-Message-State: ANhLgQ1kIirLbHksAVKFZvd36dbcWNzsFfXdJKR2uY1WiK//NFUwKKs4
+        DmmHF9mz15q0B5qvRnc6q5w=
+X-Google-Smtp-Source: ADFU+vvkxp5PNoeenVejrf8tpB2gV5C4JXUjlzG5rk+czBLRFZq2ATdOuyQvst6hI/VEssCwU4vvrg==
+X-Received: by 2002:a17:90a:37c4:: with SMTP id v62mr4006668pjb.151.1585039706935;
+        Tue, 24 Mar 2020 01:48:26 -0700 (PDT)
+Received: from localhost (14-202-190-183.tpgi.com.au. [14.202.190.183])
+        by smtp.gmail.com with ESMTPSA id f22sm10687021pgl.20.2020.03.24.01.48.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 24 Mar 2020 01:48:26 -0700 (PDT)
+Date:   Tue, 24 Mar 2020 18:48:20 +1000
+From:   Nicholas Piggin <npiggin@gmail.com>
+Subject: Re: [PATCH v11 3/8] powerpc/perf: consolidate read_user_stack_32
+To:     linuxppc-dev@lists.ozlabs.org, Michal Suchanek <msuchanek@suse.de>
+Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Allison Randal <allison@lohutok.net>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Thiago Jung Bauermann <bauerman@linux.ibm.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Claudio Carvalho <cclaudio@linux.ibm.com>,
+        Christophe Leroy <christophe.leroy@c-s.fr>,
+        "David S. Miller" <davem@davemloft.net>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Eric Richter <erichte@linux.ibm.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Gustavo Luiz Duarte <gustavold@linux.ibm.com>,
+        Hari Bathini <hbathini@linux.ibm.com>,
+        Jordan Niethe <jniethe5@gmail.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Mark Rutland <mark.rutland@arm.com>,
         Masahiro Yamada <masahiroy@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org
-Subject: [PATCH 14/16] Documentation/changes: Raise minimum supported binutils version to 2.23
-Date:   Tue, 24 Mar 2020 17:48:19 +0900
-Message-Id: <20200324084821.29944-15-masahiroy@kernel.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200324084821.29944-1-masahiroy@kernel.org>
-References: <20200324084821.29944-1-masahiroy@kernel.org>
+        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+        Michael Neuling <mikey@neuling.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Nayna Jain <nayna@linux.ibm.com>,
+        Paul Mackerras <paulus@samba.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Rob Herring <robh@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Valentin Schneider <valentin.schneider@arm.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>
+References: <20200225173541.1549955-1-npiggin@gmail.com>
+        <cover.1584620202.git.msuchanek@suse.de>
+        <184347595442b4ca664613008a09e8cea7188c36.1584620202.git.msuchanek@suse.de>
+In-Reply-To: <184347595442b4ca664613008a09e8cea7188c36.1584620202.git.msuchanek@suse.de>
+MIME-Version: 1.0
+User-Agent: astroid/0.15.0 (https://github.com/astroidmail/astroid)
+Message-Id: <1585039473.da4762n2s0.astroid@bobo.none>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Borislav Petkov <bp@suse.de>
+Michal Suchanek's on March 19, 2020 10:19 pm:
+> There are two almost identical copies for 32bit and 64bit.
+>=20
+> The function is used only in 32bit code which will be split out in next
+> patch so consolidate to one function.
+>=20
+> Signed-off-by: Michal Suchanek <msuchanek@suse.de>
+> Reviewed-by: Christophe Leroy <christophe.leroy@c-s.fr>
+> ---
+> v6:  new patch
+> v8:  move the consolidated function out of the ifdef block.
+> v11: rebase on top of def0bfdbd603
+> ---
+>  arch/powerpc/perf/callchain.c | 48 +++++++++++++++++------------------
+>  1 file changed, 24 insertions(+), 24 deletions(-)
+>=20
+> diff --git a/arch/powerpc/perf/callchain.c b/arch/powerpc/perf/callchain.=
+c
+> index cbc251981209..c9a78c6e4361 100644
+> --- a/arch/powerpc/perf/callchain.c
+> +++ b/arch/powerpc/perf/callchain.c
+> @@ -161,18 +161,6 @@ static int read_user_stack_64(unsigned long __user *=
+ptr, unsigned long *ret)
+>  	return read_user_stack_slow(ptr, ret, 8);
+>  }
+> =20
+> -static int read_user_stack_32(unsigned int __user *ptr, unsigned int *re=
+t)
+> -{
+> -	if ((unsigned long)ptr > TASK_SIZE - sizeof(unsigned int) ||
+> -	    ((unsigned long)ptr & 3))
+> -		return -EFAULT;
+> -
+> -	if (!probe_user_read(ret, ptr, sizeof(*ret)))
+> -		return 0;
+> -
+> -	return read_user_stack_slow(ptr, ret, 4);
+> -}
+> -
+>  static inline int valid_user_sp(unsigned long sp, int is_64)
+>  {
+>  	if (!sp || (sp & 7) || sp > (is_64 ? TASK_SIZE : 0x100000000UL) - 32)
+> @@ -277,19 +265,9 @@ static void perf_callchain_user_64(struct perf_callc=
+hain_entry_ctx *entry,
+>  }
+> =20
+>  #else  /* CONFIG_PPC64 */
+> -/*
+> - * On 32-bit we just access the address and let hash_page create a
+> - * HPTE if necessary, so there is no need to fall back to reading
+> - * the page tables.  Since this is called at interrupt level,
+> - * do_page_fault() won't treat a DSI as a page fault.
+> - */
+> -static int read_user_stack_32(unsigned int __user *ptr, unsigned int *re=
+t)
+> +static int read_user_stack_slow(void __user *ptr, void *buf, int nb)
+>  {
+> -	if ((unsigned long)ptr > TASK_SIZE - sizeof(unsigned int) ||
+> -	    ((unsigned long)ptr & 3))
+> -		return -EFAULT;
+> -
+> -	return probe_user_read(ret, ptr, sizeof(*ret));
+> +	return 0;
+>  }
+> =20
+>  static inline void perf_callchain_user_64(struct perf_callchain_entry_ct=
+x *entry,
+> @@ -312,6 +290,28 @@ static inline int valid_user_sp(unsigned long sp, in=
+t is_64)
+> =20
+>  #endif /* CONFIG_PPC64 */
+> =20
+> +/*
+> + * On 32-bit we just access the address and let hash_page create a
+> + * HPTE if necessary, so there is no need to fall back to reading
+> + * the page tables.  Since this is called at interrupt level,
+> + * do_page_fault() won't treat a DSI as a page fault.
+> + */
 
-The currently minimum-supported binutils version 2.21 has the problem of
-promoting symbols which are defined outside of a section into absolute.
-According to Arvind:
+The comment is actually probably better to stay in the 32-bit
+read_user_stack_slow implementation. Is that function defined
+on 32-bit purely so that you can use IS_ENABLED()? In that case
+I would prefer to put a BUG() there which makes it self documenting.
 
-  binutils-2.21 and -2.22. An x86-64 defconfig will fail with
-          Invalid absolute R_X86_64_32S relocation: _etext
-  and after fixing that one, with
-          Invalid absolute R_X86_64_32S relocation: __end_of_kernel_reserve
+Thanks,
+Nick
 
-Those two versions of binutils have a bug when it comes to handling
-symbols defined outside of a section and binutils 2.23 has the proper
-fix, see: https://sourceware.org/legacy-ml/binutils/2012-06/msg00155.html
-
-Therefore, up to the fixed version directly, skipping the broken ones.
-
-Currently shipping distros already have the fixed binutils version so
-there should be no breakage resulting from this.
-
-For more details about the whole thing, see the thread in Link.
-
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Link: https://lkml.kernel.org/r/20200110202349.1881840-1-nivedita@alum.mit.edu
-Acked-by: Kees Cook <keescook@chromium.org>
-Acked-by: Jason A. Donenfeld <Jason@zx2c4.com>
-Acked-by: Nick Desaulniers <ndesaulniers@google.com>
-Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
----
-
- Documentation/process/changes.rst | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/Documentation/process/changes.rst b/Documentation/process/changes.rst
-index e47863575917..91c5ff8e161e 100644
---- a/Documentation/process/changes.rst
-+++ b/Documentation/process/changes.rst
-@@ -31,7 +31,7 @@ you probably needn't concern yourself with pcmciautils.
- ====================== ===============  ========================================
- GNU C                  4.6              gcc --version
- GNU make               3.81             make --version
--binutils               2.21             ld -v
-+binutils               2.23             ld -v
- flex                   2.5.35           flex --version
- bison                  2.0              bison --version
- util-linux             2.10o            fdformat --version
-@@ -76,7 +76,7 @@ You will need GNU make 3.81 or later to build the kernel.
- Binutils
- --------
- 
--Binutils 2.21 or newer is needed to build the kernel.
-+Binutils 2.23 or newer is needed to build the kernel.
- 
- pkg-config
- ----------
--- 
-2.17.1
-
+> +static int read_user_stack_32(unsigned int __user *ptr, unsigned int *re=
+t)
+> +{
+> +	int rc;
+> +
+> +	if ((unsigned long)ptr > TASK_SIZE - sizeof(unsigned int) ||
+> +	    ((unsigned long)ptr & 3))
+> +		return -EFAULT;
+> +
+> +	rc =3D probe_user_read(ret, ptr, sizeof(*ret));
+> +
+> +	if (IS_ENABLED(CONFIG_PPC64) && rc)
+> +		return read_user_stack_slow(ptr, ret, 4);
+> +
+> +	return rc;
+> +}
+> +
+>  /*
+>   * Layout for non-RT signal frames
+>   */
+> --=20
+> 2.23.0
+>=20
+>=20
+=
