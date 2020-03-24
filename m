@@ -2,76 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6D0271903AC
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 03:47:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 55D671903B7
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 03:56:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727209AbgCXCrE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Mar 2020 22:47:04 -0400
-Received: from mail-io1-f70.google.com ([209.85.166.70]:34488 "EHLO
-        mail-io1-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727047AbgCXCrE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Mar 2020 22:47:04 -0400
-Received: by mail-io1-f70.google.com with SMTP id n26so13762004iop.1
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Mar 2020 19:47:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
-         :from:to;
-        bh=LOv2WyxOQNJMMiel1AjLpQJL3nLG4+bZfZZebAkOi9k=;
-        b=M2T59pDtmOc5UydVdnoAMTgaXYW9Q358cNleNGWqJ8PNSG2etBJpaq6b8t9s/cT7I7
-         GwNnuVdhmxAGeSyDAvpQ+Qx41tCD4WFG3olG5x2Wl0ly0dPpjgAw+vap1BUipkg0hVNv
-         I7V9udGhUWwQa6qXYDffos/kO3Me7clAld3GnNdr3Jb59yCRM5fu7x7IChmUDUkqqi/5
-         ZxAvHuCi8cezGjCJQ4cRMwepb8oizMbQE/7IP04ccpROKzpMScSdBpseDX6brG4j+8Tf
-         5qwNWfokgajGHhI038GyOD4m2VDrkncBsWMcFreLhob51xo6roiuwjwgBO/ddhgXTkKI
-         LPWQ==
-X-Gm-Message-State: ANhLgQ3SynH1D5CjuashEzFcG2m19+pqeVdg54M7MBbq30d6IHDm3z6X
-        UUjNiWDk2FyLgYdjn5ELC66LCry/eI2qgSBWtWyJQNZ3fy9G
-X-Google-Smtp-Source: ADFU+vstiI7NkY8P0sLiaAwA1tlgY+DAUVfkvxxrtQc1GUcIriiMD4ZAGZsTUHBhY7pwHk2p3ulODfmE2r7ZpymGWtd3GqW4WeUB
+        id S1727253AbgCXC43 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Mar 2020 22:56:29 -0400
+Received: from bilbo.ozlabs.org ([203.11.71.1]:34297 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727060AbgCXC43 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Mar 2020 22:56:29 -0400
+Received: by ozlabs.org (Postfix, from userid 1003)
+        id 48mbVg1D2nz9sSH; Tue, 24 Mar 2020 13:56:26 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ozlabs.org; s=201707;
+        t=1585018587; bh=qcqkAGfatCcdaSF4JecPaLJRR36leDyxRC3RwY8oO3U=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=b1S6P/UZ1s9Q7htiPyHTtAlm1CEfR6MJvQadZpArIv5YrDEMKNc+Zkd73fIwGD3IX
+         HS+zH7c5SS13rccwa7v0NYBzLVY/7uELpZMD5FFPUcmUbeTsU+AnsKET43qGKnS2S/
+         CKm3NjDvUrwZEG3zvZpY2VIEGBri+iCC2PPkeVctiVSUBdpdbI6EiOkwquLkXzLd7u
+         4V9/iAr9M6Z+E5X8kPkYCQrOBNg9Ri6Eszroac4IZGcxoTZ+VKnCj+Ooc3YZtt/MmY
+         4COXK9PBfN7EgldeacQ4ySFbgWaarKd2CSEL6OS5ZTSPJ1lISoAv4LO/qbkmEr46ty
+         bPHlD35Z1l10g==
+Date:   Tue, 24 Mar 2020 13:54:29 +1100
+From:   Paul Mackerras <paulus@ozlabs.org>
+To:     Laurent Dufour <ldufour@linux.ibm.com>
+Cc:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        kvm-ppc@vger.kernel.org
+Subject: Re: [PATCH 0/2] Fix SVM hang at startup
+Message-ID: <20200324025429.GD5604@blackberry>
+References: <20200320102643.15516-1-ldufour@linux.ibm.com>
 MIME-Version: 1.0
-X-Received: by 2002:a02:6cd5:: with SMTP id w204mr22866930jab.43.1585018023533;
- Mon, 23 Mar 2020 19:47:03 -0700 (PDT)
-Date:   Mon, 23 Mar 2020 19:47:03 -0700
-In-Reply-To: <000000000000a6f2030598bbe38c@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000004162e805a190c456@google.com>
-Subject: Re: WARNING in wp_page_copy
-From:   syzbot <syzbot+9301f2f33873407d5b33@syzkaller.appspotmail.com>
-To:     akpm@linux-foundation.org, andriin@fb.com, ast@kernel.org,
-        bjorn.topel@intel.com, bpf@vger.kernel.org,
-        catalin.marinas@arm.com, daniel@iogearbox.net, davem@davemloft.net,
-        hawk@kernel.org, jakub.kicinski@netronome.com, jmoyer@redhat.com,
-        john.fastabend@gmail.com, jonathan.lemon@gmail.com,
-        justin.he@arm.com, kafai@fb.com, kirill.shutemov@linux.intel.com,
-        kirill@shutemov.name, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, magnus.karlsson@gmail.com,
-        magnus.karlsson@intel.com, netdev@vger.kernel.org,
-        songliubraving@fb.com, syzkaller-bugs@googlegroups.com,
-        torvalds@linux-foundation.org, yhs@fb.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200320102643.15516-1-ldufour@linux.ibm.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-syzbot suspects this bug was fixed by commit:
+On Fri, Mar 20, 2020 at 11:26:41AM +0100, Laurent Dufour wrote:
+> This series is fixing a SVM hang occurring when starting a SVM requiring
+> more secure memory than available. The hang happens in the SVM when calling
+> UV_ESM.
+> 
+> The following is happening:
+> 
+> 1. SVM calls UV_ESM
+> 2. Ultravisor (UV) calls H_SVM_INIT_START
+> 3. Hypervisor (HV) calls UV_REGISTER_MEM_SLOT
+> 4. UV returns error because there is not enough free secure memory
+> 5. HV enter the error path in kvmppc_h_svm_init_start()
+> 6. In the return path, since kvm->arch.secure_guest is not yet set hrfid is
+>    called
+> 7. As the HV doesn't know the SVM calling context hrfid is jumping to
+>    unknown address in the SVM leading to various expections.
+> 
+> This series fixes the setting of kvm->arch.secure_guest in
+> kvmppc_h_svm_init_start() to ensure that UV_RETURN is called on the return
+> path to get back to the UV.
+> 
+> In addition to ensure that a malicious VM will not call UV reserved Hcall,
+> a check of the Secure bit in the calling MSR is addded to reject such a
+> call.
+> 
+> It is assumed that the UV will filtered out such Hcalls made by a malicious
+> SVM.
+> 
+> Laurent Dufour (2):
+>   KVM: PPC: Book3S HV: check caller of H_SVM_* Hcalls
+>   KVM: PPC: Book3S HV: H_SVM_INIT_START must call UV_RETURN
+> 
+>  arch/powerpc/kvm/book3s_hv.c       | 32 ++++++++++++++++++++----------
+>  arch/powerpc/kvm/book3s_hv_uvmem.c |  3 ++-
+>  2 files changed, 23 insertions(+), 12 deletions(-)
 
-commit c3e5ea6ee574ae5e845a40ac8198de1fb63bb3ab
-Author: Kirill A. Shutemov <kirill@shutemov.name>
-Date:   Fri Mar 6 06:28:32 2020 +0000
+Thanks, series applied to my kvm-ppc-next branch.
 
-    mm: avoid data corruption on CoW fault into PFN-mapped VMA
-
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1170c813e00000
-start commit:   e31736d9 Merge tag 'nios2-v5.5-rc2' of git://git.kernel.or..
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=79f79de2a27d3e3d
-dashboard link: https://syzkaller.appspot.com/bug?extid=9301f2f33873407d5b33
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10fd9fb1e00000
-
-If the result looks correct, please mark the bug fixed by replying with:
-
-#syz fix: mm: avoid data corruption on CoW fault into PFN-mapped VMA
-
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+Paul.
