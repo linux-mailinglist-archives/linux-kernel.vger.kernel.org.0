@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5664C190FF8
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 14:30:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 848C0190F38
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 14:19:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729653AbgCXNYX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 09:24:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47842 "EHLO mail.kernel.org"
+        id S1728296AbgCXNSj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 09:18:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38718 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729646AbgCXNYU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 09:24:20 -0400
+        id S1728732AbgCXNSa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Mar 2020 09:18:30 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 88EB8208CA;
-        Tue, 24 Mar 2020 13:24:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 44C1B208CA;
+        Tue, 24 Mar 2020 13:18:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585056259;
-        bh=RoZ8agsEE4KqdyRCkx4QfPMY8pgzmjbSfaHHk1Sl6Gs=;
+        s=default; t=1585055909;
+        bh=1x7vDx1172FE2OYIBcvAkwUtPgmvf7mRCanQDUU3EI0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YSuHi5XPQw6uTAJsp2ZZXPPHmvjbpoXbq85i4kp7R8Ctjxu3098THjFaMOVOrWGwZ
-         OmAyoeYbSD4DDvtGTND+b+DtQZpz/LfMuqlkfD3qIWZpVcZ7xWN56SeOYbR//BlBTE
-         zptGw003vKqCcVtsFtlrpiN7mjHJ+7AMgsXlTEsE=
+        b=QRS9TYJW/r4X5XPb/QyFgP7zIH60lupIrPH0ZY5sl/0e/R3ckEW3WaXHiUolp7Mx6
+         TptTfqfL9u2KEwikFEZf5hsHpNV4tTCwKNHRLIICkxP8r//s4PmCoJy+FvJbY3+JMh
+         gJ1Lje6X2/5um3sXICTkB38bVq52yWA38nhvzWbo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Ricky Wu <ricky_wu@realtek.com>,
         Ulf Hansson <ulf.hansson@linaro.org>
-Subject: [PATCH 5.5 071/119] mmc: rtsx_pci: Fix support for speed-modes that relies on tuning
-Date:   Tue, 24 Mar 2020 14:10:56 +0100
-Message-Id: <20200324130815.318529585@linuxfoundation.org>
+Subject: [PATCH 5.4 065/102] mmc: rtsx_pci: Fix support for speed-modes that relies on tuning
+Date:   Tue, 24 Mar 2020 14:10:57 +0100
+Message-Id: <20200324130813.218773951@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.2
-In-Reply-To: <20200324130808.041360967@linuxfoundation.org>
-References: <20200324130808.041360967@linuxfoundation.org>
+In-Reply-To: <20200324130806.544601211@linuxfoundation.org>
+References: <20200324130806.544601211@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -62,9 +62,8 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
  drivers/misc/cardreader/rts5227.c |    2 +-
  drivers/misc/cardreader/rts5249.c |    2 ++
  drivers/misc/cardreader/rts5260.c |    2 +-
- drivers/misc/cardreader/rts5261.c |    2 +-
  drivers/mmc/host/rtsx_pci_sdmmc.c |   13 ++++++++-----
- 5 files changed, 13 insertions(+), 8 deletions(-)
+ 4 files changed, 12 insertions(+), 7 deletions(-)
 
 --- a/drivers/misc/cardreader/rts5227.c
 +++ b/drivers/misc/cardreader/rts5227.c
@@ -97,7 +96,7 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
  		LTR_L1OFF_SNOOZE_SSPWRGATE_5250_DEF;
 --- a/drivers/misc/cardreader/rts5260.c
 +++ b/drivers/misc/cardreader/rts5260.c
-@@ -662,7 +662,7 @@ void rts5260_init_params(struct rtsx_pcr
+@@ -663,7 +663,7 @@ void rts5260_init_params(struct rtsx_pcr
  	pcr->sd30_drive_sel_1v8 = CFG_DRIVER_TYPE_B;
  	pcr->sd30_drive_sel_3v3 = CFG_DRIVER_TYPE_B;
  	pcr->aspm_en = ASPM_L1_EN;
@@ -106,17 +105,6 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
  	pcr->rx_initial_phase = SET_CLOCK_PHASE(24, 6, 5);
  
  	pcr->ic_version = rts5260_get_ic_version(pcr);
---- a/drivers/misc/cardreader/rts5261.c
-+++ b/drivers/misc/cardreader/rts5261.c
-@@ -763,7 +763,7 @@ void rts5261_init_params(struct rtsx_pcr
- 	pcr->sd30_drive_sel_1v8 = CFG_DRIVER_TYPE_B;
- 	pcr->sd30_drive_sel_3v3 = CFG_DRIVER_TYPE_B;
- 	pcr->aspm_en = ASPM_L1_EN;
--	pcr->tx_initial_phase = SET_CLOCK_PHASE(20, 27, 16);
-+	pcr->tx_initial_phase = SET_CLOCK_PHASE(27, 27, 11);
- 	pcr->rx_initial_phase = SET_CLOCK_PHASE(24, 6, 5);
- 
- 	pcr->ic_version = rts5261_get_ic_version(pcr);
 --- a/drivers/mmc/host/rtsx_pci_sdmmc.c
 +++ b/drivers/mmc/host/rtsx_pci_sdmmc.c
 @@ -606,19 +606,22 @@ static int sd_change_phase(struct realte
