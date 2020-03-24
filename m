@@ -2,184 +2,133 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B6E49191640
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 17:27:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 899FE191658
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 17:27:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728341AbgCXQ0f (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 12:26:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51422 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727466AbgCXQ0f (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 12:26:35 -0400
-Received: from paulmck-ThinkPad-P72.home (50-39-105-78.bvtn.or.frontiernet.net [50.39.105.78])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5FB3D20774;
-        Tue, 24 Mar 2020 16:26:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585067194;
-        bh=v6vmrl85KvdqDMSCspqrKS6nIKJJeoQe5XN+cjpOJhs=;
-        h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-        b=lYiS3iZ6NudRBIRvd7aKEUydXiJr+RP4Hm2TGEej4tB12a3Esuzwf1Or5Vk0/+vdR
-         +N3W0sW/2Uae6P6iNA8qKBYo48Zg8AHGjWLMPQp3nq8QB9OD/ipaGfk9WQjVt/YKCk
-         CPft9ZtHXWH63nIRcns9NUrKziQQajFB/cSnwxKc=
-Received: by paulmck-ThinkPad-P72.home (Postfix, from userid 1000)
-        id 32052352275F; Tue, 24 Mar 2020 09:26:34 -0700 (PDT)
-Date:   Tue, 24 Mar 2020 09:26:34 -0700
-From:   "Paul E. McKenney" <paulmck@kernel.org>
-To:     Joel Fernandes <joel@joelfernandes.org>
-Cc:     Steven Rostedt <rostedt@goodmis.org>, rcu@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-team@fb.com, mingo@kernel.org,
-        jiangshanlai@gmail.com, dipankar@in.ibm.com,
-        akpm@linux-foundation.org, mathieu.desnoyers@efficios.com,
-        josh@joshtriplett.org, tglx@linutronix.de, peterz@infradead.org,
-        dhowells@redhat.com, edumazet@google.com, fweisbec@gmail.com,
-        oleg@redhat.com, Ingo Molnar <mingo@redhat.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>
-Subject: Re: [PATCH RFC v2 tip/core/rcu 01/22] sched/core: Add function to
- sample state of locked-down task
-Message-ID: <20200324162634.GG19865@paulmck-ThinkPad-P72>
-Reply-To: paulmck@kernel.org
-References: <20200319001024.GA28798@paulmck-ThinkPad-P72>
- <20200319001100.24917-1-paulmck@kernel.org>
- <20200319132238.75a034c3@gandalf.local.home>
- <20200319173525.GI3199@paulmck-ThinkPad-P72>
- <20200320024943.GA29649@paulmck-ThinkPad-P72>
- <20200324000639.GA29340@google.com>
- <20200324001549.GB42910@google.com>
+        id S1728954AbgCXQ1K (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 12:27:10 -0400
+Received: from new3-smtp.messagingengine.com ([66.111.4.229]:36509 "EHLO
+        new3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728878AbgCXQ04 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Mar 2020 12:26:56 -0400
+Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
+        by mailnew.nyi.internal (Postfix) with ESMTP id C7F8D5801E3;
+        Tue, 24 Mar 2020 12:26:54 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute1.internal (MEProxy); Tue, 24 Mar 2020 12:26:54 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=
+        date:from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=fm3; bh=EpjqqXTd+1Wm5pAE5NoGcCzxGJn
+        bee7TfJZCxnuYzD0=; b=gYvbvIshEDx22jkTpGIMePKB3NCO/GN6qnZKifTgqPq
+        oFirJjhFA7A44jHh68nRCpIb4tbEgC30nb/rml1oa0jT50C88klHj0+NlSO/+6u9
+        5HNLcAYCDlCKTxgVW5oXZn+JWbvv3gXA5EAqHIZt5N9Kd4gO47XK8Zt6Ov7+1Qyn
+        FXlX5A8tAbTXtnwc/0PAwgmQ5b4ybiHFR2X6dNC2KXqagQzTonJZP+zzarq5gMPo
+        0kJZmZKn1rkjZv+rgvMsuOGnKp60WMbMC85npE3eyprkadgIIzZZ3bnAj19xlhN+
+        NrBZQl+0knvDt5MfBZjk1NcYpLP+fqAj34RqdtsKMTQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=EpjqqX
+        Td+1Wm5pAE5NoGcCzxGJnbee7TfJZCxnuYzD0=; b=nqv6WQH/3CNd1NSkwjxbFI
+        2TIlVYxUexN25jq2Cu0q0BW3aOgs3a+K0qc273BKDDxd+zVWhWgLYy2W0QkaHPE7
+        DIeUkBYjo1+RcNCPPEhGlViuAc+bUcUQT3mPuFUQlWSGCxfMOa4DM44zBU8dNGH3
+        OhfPeO181JH6lVWrO2IoYZ/In7Sth1rtMD/zogVKd+qiztyAtMStBGFZS1kLXZTQ
+        TDi4ewAkVhp6ZVUGmSLzM/j11L+PcTUwBvs/f+5ql64FCqgGJOtYFvrACewpsD6k
+        n5XT3gxeicX5MP/4lFMTqUkMUjM4vHiJYBpx86A+83PPoZnrB0dfE3Dkxi9grbtw
+        ==
+X-ME-Sender: <xms:zjR6XsLKxKOHmtRuzFjtnT40px7bnOUZPR1IuetYnC0JPXjYG8_wFA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedugedrudehuddgheejucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepfffhvffukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpefirhgvghcu
+    mffjuceoghhrvghgsehkrhhorghhrdgtohhmqeenucfkphepkeefrdekiedrkeelrddutd
+    ejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepghhr
+    vghgsehkrhhorghhrdgtohhm
+X-ME-Proxy: <xmx:zjR6XslWbsGIq12_Wy0aIpl7m9MmgUY2dak-DR-A8KYpvG2uvW78mw>
+    <xmx:zjR6XtaFRpZ7cb4a44MM96SH0ibR5b0talUZiA3_MLVUi74AbH05LA>
+    <xmx:zjR6Xg8nWcUJ9U5DabvvdSyeHTATHxZLy1BDIkJUCGqz7zZV4E_dDA>
+    <xmx:zjR6Xryl4vNZ-FbjwtUnyYoySDfaCn_nogWHZO52F-oOhqMUVzhymw>
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 9FF5C3065177;
+        Tue, 24 Mar 2020 12:26:53 -0400 (EDT)
+Date:   Tue, 24 Mar 2020 17:26:52 +0100
+From:   Greg KH <greg@kroah.com>
+To:     Jann Horn <jannh@google.com>
+Cc:     Will Deacon <will@kernel.org>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        Eric Dumazet <edumazet@google.com>,
+        Kees Cook <keescook@chromium.org>,
+        Maddie Stone <maddiestone@google.com>,
+        Marco Elver <elver@google.com>,
+        "Paul E . McKenney" <paulmck@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        kernel-team <kernel-team@android.com>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>
+Subject: Re: [RFC PATCH 03/21] list: Annotate lockless list primitives with
+ data_race()
+Message-ID: <20200324162652.GA2518046@kroah.com>
+References: <20200324153643.15527-1-will@kernel.org>
+ <20200324153643.15527-4-will@kernel.org>
+ <CAG48ez1yTbbXn__Kf0csf8=LCFL+0hR0EyHNZsryN8p=SsLp5Q@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200324001549.GB42910@google.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <CAG48ez1yTbbXn__Kf0csf8=LCFL+0hR0EyHNZsryN8p=SsLp5Q@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 23, 2020 at 08:15:49PM -0400, Joel Fernandes wrote:
-> On Mon, Mar 23, 2020 at 08:06:39PM -0400, Joel Fernandes wrote:
-> > On Thu, Mar 19, 2020 at 07:49:43PM -0700, Paul E. McKenney wrote:
-> > [...] 
-> > > 							Thanx, Paul
-> > > 
-> > > ------------------------------------------------------------------------
-> > > 
-> > > commit e26a234c1205bf02b62b62cd7f15f8086fc0b13b
-> > > Author: Paul E. McKenney <paulmck@kernel.org>
-> > > Date:   Thu Mar 19 15:33:12 2020 -0700
-> > > 
-> > >     rcu-tasks: Avoid IPIing userspace/idle tasks if kernel is so built
-> > >     
-> > >     Systems running CPU-bound real-time task do not want IPIs sent to CPUs
-> > >     executing nohz_full userspace tasks.  Battery-powered systems don't
-> > >     want IPIs sent to idle CPUs in low-power mode.  Unfortunately, RCU tasks
-> > >     trace can and will send such IPIs in some cases.
-> > >     
-> > >     Both of these situations occur only when the target CPU is in RCU
-> > >     dyntick-idle mode, in other words, when RCU is not watching the
-> > >     target CPU.  This suggests that CPUs in dyntick-idle mode should use
-> > >     memory barriers in outermost invocations of rcu_read_lock_trace()
-> > >     and rcu_read_unlock_trace(), which would allow the RCU tasks trace
-> > >     grace period to directly read out the target CPU's read-side state.
-> > >     One challenge is that RCU tasks trace is not targeting a specific
-> > >     CPU, but rather a task.  And that task could switch from one CPU to
-> > >     another at any time.
-> > >     
-> > >     This commit therefore uses try_invoke_on_locked_down_task()
-> > >     and checks for task_curr() in trc_inspect_reader_notrunning().
-> > >     When this condition holds, the target task is running and cannot move.
-> > >     If CONFIG_TASKS_TRACE_RCU_READ_MB=y, the new rcu_dynticks_zero_in_eqs()
-> > >     function can be used to check if the specified integer (in this case,
-> > >     t->trc_reader_nesting) is zero while the target CPU remains in that same
-> > >     dyntick-idle sojourn.  If so, the target task is in a quiescent state.
-> > >     If not, trc_read_check_handler() must indicate failure so that the
-> > >     grace-period kthread can take appropriate action or retry after an
-> > >     appropriate delay, as the case may be.
-> > >     
-> > >     With this change, given CONFIG_TASKS_TRACE_RCU_READ_MB=y, if a given
-> > >     CPU remains idle or a given task continues executing in nohz_full mode,
-> > >     the RCU tasks trace grace-period kthread will detect this without the
-> > >     need to send an IPI.
-> > >     
-> > >     Suggested-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-> > >     Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
-> > > 
-> > > diff --git a/kernel/rcu/rcu.h b/kernel/rcu/rcu.h
-> > > index e1089fd..296f926 100644
-> > > --- a/kernel/rcu/rcu.h
-> > > +++ b/kernel/rcu/rcu.h
-> > > @@ -501,6 +501,7 @@ void srcutorture_get_gp_data(enum rcutorture_type test_type,
-> > >  #endif
-> > >  
-> > >  #ifdef CONFIG_TINY_RCU
-> > > +static inline bool rcu_dynticks_zero_in_eqs(int cpu, int *vp) { return false; }
-> > >  static inline unsigned long rcu_get_gp_seq(void) { return 0; }
-> > >  static inline unsigned long rcu_exp_batches_completed(void) { return 0; }
-> > >  static inline unsigned long
-> > > @@ -510,6 +511,7 @@ static inline void show_rcu_gp_kthreads(void) { }
-> > >  static inline int rcu_get_gp_kthreads_prio(void) { return 0; }
-> > >  static inline void rcu_fwd_progress_check(unsigned long j) { }
-> > >  #else /* #ifdef CONFIG_TINY_RCU */
-> > > +bool rcu_dynticks_zero_in_eqs(int cpu, int *vp);
-> > >  unsigned long rcu_get_gp_seq(void);
-> > >  unsigned long rcu_exp_batches_completed(void);
-> > >  unsigned long srcu_batches_completed(struct srcu_struct *sp);
-> > > diff --git a/kernel/rcu/tasks.h b/kernel/rcu/tasks.h
-> > > index d31ed74..36f03d3 100644
-> > > --- a/kernel/rcu/tasks.h
-> > > +++ b/kernel/rcu/tasks.h
-> > > @@ -802,22 +802,38 @@ static void trc_read_check_handler(void *t_in)
-> > >  /* Callback function for scheduler to check non-running) task.  */
-> > >  static bool trc_inspect_reader_notrunning(struct task_struct *t, void *arg)
-> > 
-> > This function name is a bit confusing. The task could be running when this
-> > function is called. Below you are detecting that the task is running, by
-> > calling task_curr().
-> > 
-> > Maybe just trc_inspect_reader() is better?
-> > 
-> > [..]
-> > 
-> > > diff --git a/kernel/rcu/tree.h b/kernel/rcu/tree.h
-> > > index 44edd0a..43991a4 100644
-> > > --- a/kernel/rcu/tree.h
-> > > +++ b/kernel/rcu/tree.h
-> > > @@ -455,6 +455,8 @@ static void rcu_bind_gp_kthread(void);
-> > >  static bool rcu_nohz_full_cpu(void);
-> > >  static void rcu_dynticks_task_enter(void);
-> > >  static void rcu_dynticks_task_exit(void);
-> > > +static void rcu_dynticks_task_trace_enter(void);
-> > > +static void rcu_dynticks_task_trace_exit(void);
-> > >  
-> > >  /* Forward declarations for tree_stall.h */
-> > >  static void record_gp_stall_check_time(void);
-> > > diff --git a/kernel/rcu/tree_plugin.h b/kernel/rcu/tree_plugin.h
-> > > index 9355536..f4a344e 100644
-> > > --- a/kernel/rcu/tree_plugin.h
-> > > +++ b/kernel/rcu/tree_plugin.h
-> > > @@ -2553,3 +2553,21 @@ static void rcu_dynticks_task_exit(void)
-> > >  	WRITE_ONCE(current->rcu_tasks_idle_cpu, -1);
-> > >  #endif /* #if defined(CONFIG_TASKS_RCU) && defined(CONFIG_NO_HZ_FULL) */
-> > >  }
-> > > +
-> > > +/* Turn on heavyweight RCU tasks trace readers on idle/user entry. */
-> > > +static void rcu_dynticks_task_trace_enter(void)
-> > > +{
-> > > +#ifdef CONFIG_TASKS_RCU_TRACE
-> > > +	if (IS_ENABLED(CONFIG_TASKS_TRACE_RCU_READ_MB))
-> > > +		current->trc_reader_special.b.need_mb = true;
-> > 
-> > If this is every called from middle of a reader section (that is we
-> > transition from IPI-mode to using heavier reader-sections), then is a memory
-> > barrier needed here just to protect the reader section that already started?
+On Tue, Mar 24, 2020 at 05:20:45PM +0100, Jann Horn wrote:
+> On Tue, Mar 24, 2020 at 4:37 PM Will Deacon <will@kernel.org> wrote:
+> > Some list predicates can be used locklessly even with the non-RCU list
+> > implementations, since they effectively boil down to a test against
+> > NULL. For example, checking whether or not a list is empty is safe even
+> > in the presence of a concurrent, tearing write to the list head pointer.
+> > Similarly, checking whether or not an hlist node has been hashed is safe
+> > as well.
+> >
+> > Annotate these lockless list predicates with data_race() and READ_ONCE()
+> > so that KCSAN and the compiler are aware of what's going on. The writer
+> > side can then avoid having to use WRITE_ONCE() in the non-RCU
+> > implementation.
+> [...]
+> >  static inline int list_empty(const struct list_head *head)
+> >  {
+> > -       return READ_ONCE(head->next) == head;
+> > +       return data_race(READ_ONCE(head->next) == head);
+> >  }
+> [...]
+> >  static inline int hlist_unhashed(const struct hlist_node *h)
+> >  {
+> > -       return !READ_ONCE(h->pprev);
+> > +       return data_race(!READ_ONCE(h->pprev));
+> >  }
 > 
-> Forgot to add:
-> Reviewed-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+> This is probably valid in practice for hlist_unhashed(), which
+> compares with NULL, as long as the most significant byte of all kernel
+> pointers is non-zero; but I think list_empty() could realistically
+> return false positives in the presence of a concurrent tearing store?
+> This could break the following code pattern:
+> 
+> /* optimistic lockless check */
+> if (!list_empty(&some_list)) {
+>   /* slowpath */
+>   mutex_lock(&some_mutex);
+>   list_for_each(tmp, &some_list) {
+>     ...
+>   }
+>   mutex_unlock(&some_mutex);
+> }
+> 
+> (I'm not sure whether patterns like this appear commonly though.)
 
-Applied, thank you!
 
-							Thanx, Paul
+I would hope not as the list could go "empty" before the lock is
+grabbed.  That pattern would be wrong.
+
+thanks,
+
+greg k-h
