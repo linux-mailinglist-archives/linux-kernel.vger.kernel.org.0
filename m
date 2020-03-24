@@ -2,298 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 27C5E190BDE
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 12:05:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B3604190BE1
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 12:05:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727238AbgCXLEx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 07:04:53 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:49603 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727111AbgCXLEx (ORCPT
+        id S1727289AbgCXLFH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 07:05:07 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:41061 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726524AbgCXLFG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 07:04:53 -0400
-Received: from dude.hi.pengutronix.de ([2001:67c:670:100:1d::7])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ore@pengutronix.de>)
-        id 1jGhML-0000j9-UJ; Tue, 24 Mar 2020 12:04:37 +0100
-Received: from ore by dude.hi.pengutronix.de with local (Exim 4.92)
-        (envelope-from <ore@pengutronix.de>)
-        id 1jGhML-0006ad-Ec; Tue, 24 Mar 2020 12:04:37 +0100
-From:   Oleksij Rempel <o.rempel@pengutronix.de>
-To:     Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Shawn Guo <shawnguo@kernel.org>
-Cc:     Oleksij Rempel <o.rempel@pengutronix.de>,
-        David Jander <david@protonic.nl>, devicetree@vger.kernel.org,
-        Fabio Estevam <festevam@gmail.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>
-Subject: [PATCH v3 5/5] ARM: dts: add Protonic RVT board
-Date:   Tue, 24 Mar 2020 12:04:32 +0100
-Message-Id: <20200324110432.25062-6-o.rempel@pengutronix.de>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200324110432.25062-1-o.rempel@pengutronix.de>
-References: <20200324110432.25062-1-o.rempel@pengutronix.de>
+        Tue, 24 Mar 2020 07:05:06 -0400
+Received: by mail-wr1-f68.google.com with SMTP id h9so20845697wrc.8
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Mar 2020 04:05:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=G3sOKfxAiTkgMzwoQvFSfy7O4/M81GdK6MDeVbYl4ik=;
+        b=bDaVq8t1q87wO1/aQ+z0qhYyrE5upfY7ktRhrPBlWmSSloDVy2/dlXSJGaqy+/+F9o
+         4Ba7cHRQMKmzpZKbg+S27CiUIBaEfOFLln5Y+s1lfxQqPVNnlluGXrQvWD3m2R7jcEBO
+         zBfszPriPgQ+b+W5ghF2wYR7DKAfWYsXWQFYodcsONAta6CJWqV0/ZYPqTDXIpI/WX8i
+         /ltryVnJQZkJjDTMcr9OJ/aaUHJfg2ZurriQLbLEeEgafQ/WqjJ/GCbKVl535RVhEJL0
+         boMUWR1p6gBbyM2ZUO+5d39/wyTdlZIg6DzSba4jUyPnf+Ek3j52BYmNHIxibhNmvp4G
+         Rp0g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=G3sOKfxAiTkgMzwoQvFSfy7O4/M81GdK6MDeVbYl4ik=;
+        b=lu77uxcDTKL5vScR1FqBP1/TMCXLqBjZeZY8zIgLoHdEIfp9R8BQPpyJzCh0z+17kd
+         YitDrKqxsWg0IoXEfgrJc/f7eXbconYGMKlxKcDOSHB48yMXpU+CA9W2a2rLzhkETWRI
+         5z1X9XPPDfRw4/2LYQWG1zJS+2FYMkqhocoK80LE470kYqlIBY3DN1/vAc35shZgotUr
+         HDD36bitVSTMG5fpXENj3gUZlQO3pxP/0uvQAo2s4rywhqlGTGMkvbKJdgXQPbLW7DWK
+         JA6nRYPs5WcqkZqzSjpeaWEzatMoki/u+KfY+nX60JV8HT6JjeiKUEkSHRlw4YyY0x/A
+         KJUQ==
+X-Gm-Message-State: ANhLgQ0HL3mJfFW3Ab0AR72IOUyfcHSstiwh+HeoISxOTdrqGAvJ/Hnc
+        /KjgzW8Dn+s4iEpiVoWc2riVgA==
+X-Google-Smtp-Source: ADFU+vsqkxx0FE6VDtzLflUP6KQEoIBVv3Qm57V2Wz7s8smAbZIezE8pE9zVtUUy+E72r3qDRN2HqQ==
+X-Received: by 2002:adf:9ccb:: with SMTP id h11mr15761030wre.22.1585047905050;
+        Tue, 24 Mar 2020 04:05:05 -0700 (PDT)
+Received: from dell ([2.27.35.213])
+        by smtp.gmail.com with ESMTPSA id v10sm3810994wml.44.2020.03.24.04.05.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 24 Mar 2020 04:05:04 -0700 (PDT)
+Date:   Tue, 24 Mar 2020 11:05:53 +0000
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Shreyas Joshi <shreyasjoshi15@gmail.com>
+Cc:     Support.Opensource@diasemi.com,
+        Adam.Thomson.Opensource@diasemi.com, linus.walleij@linaro.org,
+        linux-kernel@vger.kernel.org,
+        Shreyas Joshi <shreyas.joshi@biamp.com>
+Subject: Re: [PATCH V6] mfd: da9062: Add support for interrupt polarity
+ defined in device tree
+Message-ID: <20200324110553.GK5477@dell>
+References: <AM6PR10MB22635CBCBF559AEB9A5C2BFF80120@AM6PR10MB2263.EURPRD10.PROD.OUTLOOK.COM>
+ <20200226010722.2042-1-shreyas.joshi@biamp.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::7
-X-SA-Exim-Mail-From: ore@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+In-Reply-To: <20200226010722.2042-1-shreyas.joshi@biamp.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Protonic RVT is an internal development platform for a wireless ISObus
-Virtual Terminal based on COTS tablets, and the predecessor of the WD2
-platform.
+On Wed, 26 Feb 2020, Shreyas Joshi wrote:
 
-Signed-off-by: David Jander <david@protonic.nl>
-Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
----
- .../devicetree/bindings/arm/fsl.yaml          |   1 +
- arch/arm/boot/dts/Makefile                    |   1 +
- arch/arm/boot/dts/imx6dl-prtrvt.dts           | 203 ++++++++++++++++++
- 3 files changed, 205 insertions(+)
- create mode 100644 arch/arm/boot/dts/imx6dl-prtrvt.dts
+> The da9062 interrupt handler cannot necessarily be low active.
+> Add a function to configure the interrupt type based on what is defined in the device tree.
+> The allowable interrupt type is either low or high level trigger.
+> 
+> Signed-off-by: Shreyas Joshi <shreyas.joshi@biamp.com>
+> ---
+> 
+> V6:
+>   Changed regmap_reg_range to exclude DA9062AA_CONFIG_B for writeable
+>   Added regmap_reg_range DA9062AA_CONFIG_A for readable
+> 
+> V5:
+>   Added #define for DA9062_IRQ_HIGH and DA9062_IRQ_LOW 
+> 
+> V4:
+>   Changed return code to EINVAL rather than EIO for incorrect irq type
+>   Corrected regmap_update_bits usage
+>   
+> V3:
+>   Changed regmap_write to regmap_update_bits
+> 
+> V2:
+>   Added function to update the polarity of CONFIG_A IRQ_TYPE
+>   
+>  drivers/mfd/da9062-core.c | 44 ++++++++++++++++++++++++++++++++++++---
+>  1 file changed, 41 insertions(+), 3 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/arm/fsl.yaml b/Documentation/devicetree/bindings/arm/fsl.yaml
-index 424be1edf005..2e8a03ef5c95 100644
---- a/Documentation/devicetree/bindings/arm/fsl.yaml
-+++ b/Documentation/devicetree/bindings/arm/fsl.yaml
-@@ -168,6 +168,7 @@ properties:
-               - emtrion,emcon-mx6-avari   # emCON-MX6S or emCON-MX6DL SoM on Avari Base
-               - fsl,imx6dl-sabreauto      # i.MX6 DualLite/Solo SABRE Automotive Board
-               - fsl,imx6dl-sabresd        # i.MX6 DualLite SABRE Smart Device Board
-+              - prt,prtrvt                # Protonic RVT board
-               - prt,prtvt7                # Protonic VT7 board
-               - technologic,imx6dl-ts4900
-               - technologic,imx6dl-ts7970
-diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-index e53abe1de259..afaccc9bc645 100644
---- a/arch/arm/boot/dts/Makefile
-+++ b/arch/arm/boot/dts/Makefile
-@@ -446,6 +446,7 @@ dtb-$(CONFIG_SOC_IMX6Q) += \
- 	imx6dl-nitrogen6x.dtb \
- 	imx6dl-phytec-mira-rdk-nand.dtb \
- 	imx6dl-phytec-pbab01.dtb \
-+	imx6dl-prtrvt.dtb \
- 	imx6dl-prtvt7.dtb \
- 	imx6dl-rex-basic.dtb \
- 	imx6dl-riotboard.dtb \
-diff --git a/arch/arm/boot/dts/imx6dl-prtrvt.dts b/arch/arm/boot/dts/imx6dl-prtrvt.dts
-new file mode 100644
-index 000000000000..cf097437b276
---- /dev/null
-+++ b/arch/arm/boot/dts/imx6dl-prtrvt.dts
-@@ -0,0 +1,203 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later OR MIT
-+/*
-+ * Copyright (c) 2014 Protonic Holland
-+ */
-+
-+/dts-v1/;
-+#include "imx6dl.dtsi"
-+#include "imx6qdl-prti6q.dtsi"
-+#include <dt-bindings/leds/common.h>
-+
-+/ {
-+	model = "Protonic RVT board";
-+	compatible = "prt,prtrvt", "fsl,imx6dl";
-+
-+	memory@10000000 {
-+		device_type = "memory";
-+		reg = <0x10000000 0x10000000>;
-+	};
-+
-+	leds {
-+		compatible = "gpio-leds";
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&pinctrl_leds>;
-+
-+		led-debug0 {
-+			function = LED_FUNCTION_STATUS;
-+			gpios = <&gpio1 8 GPIO_ACTIVE_HIGH>;
-+			linux,default-trigger = "heartbeat";
-+		};
-+	};
-+};
-+
-+&can1 {
-+	pinctrl-0 = <&pinctrl_can1 &pinctrl_can1phy>;
-+};
-+
-+&ecspi1 {
-+	cs-gpios = <&gpio3 19 GPIO_ACTIVE_HIGH>;
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_ecspi1>;
-+	status = "okay";
-+
-+	flash@0 {
-+		compatible = "winbond,w25q64", "jedec,spi-nor";
-+		reg = <0>;
-+		spi-max-frequency = <20000000>;
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+
-+		partitions {
-+			compatible = "fixed-partitions";
-+			#address-cells = <1>;
-+			#size-cells = <1>;
-+
-+			partition@0 {
-+				label = "boot";
-+				reg = <0x0 0x80000>;
-+			};
-+
-+			partition@80000 {
-+				label = "env";
-+				reg = <0x80000 0x10000>;
-+			};
-+
-+			partition@90000 {
-+				label = "spare";
-+				reg = <0x90000 0x370000>;
-+			};
-+		};
-+	};
-+};
-+
-+&ecspi3 {
-+	cs-gpios = <&gpio4 24 GPIO_ACTIVE_HIGH>;
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_ecspi3>;
-+	status = "okay";
-+
-+	nfc@0 {
-+		compatible = "ti,trf7970a";
-+		reg = <0>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&pinctrl_nfc>;
-+		spi-max-frequency = <2000000>;
-+		interrupts-extended = <&gpio5 14 IRQ_TYPE_LEVEL_LOW>;
-+		ti,enable-gpios = <&gpio5 12 GPIO_ACTIVE_LOW>,
-+				  <&gpio5 11 GPIO_ACTIVE_LOW>;
-+		vin-supply = <&reg_3v3>;
-+		vin-voltage-override = <3100000>;
-+		autosuspend-delay = <30000>;
-+		irq-status-read-quirk;
-+		en2-rf-quirk;
-+		t5t-rmb-extra-byte-quirk;
-+		status = "okay";
-+	};
-+};
-+
-+&i2c3 {
-+	adc@49 {
-+		compatible = "ti,ads1015";
-+		reg = <0x49>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		/* nc */
-+		channel@4 {
-+			reg = <4>;
-+			ti,gain = <3>;
-+			ti,datarate = <3>;
-+		};
-+
-+		/* nc */
-+		channel@5 {
-+			reg = <5>;
-+			ti,gain = <3>;
-+			ti,datarate = <3>;
-+		};
-+
-+		/* can1_l */
-+		channel@6 {
-+			reg = <6>;
-+			ti,gain = <3>;
-+			ti,datarate = <3>;
-+		};
-+
-+		/* can1_h */
-+		channel@7 {
-+			reg = <7>;
-+			ti,gain = <3>;
-+			ti,datarate = <3>;
-+		};
-+	};
-+
-+	rtc@51 {
-+		compatible = "nxp,pcf8563";
-+		reg = <0x51>;
-+	};
-+};
-+
-+&pcie {
-+	status = "okay";
-+};
-+
-+&usbh1 {
-+	status = "disabled";
-+};
-+
-+&vpu {
-+	status = "disabled";
-+};
-+
-+&iomuxc {
-+	pinctrl_can1phy: can1phy {
-+		fsl,pins = <
-+			/* CAN1_SR */
-+			MX6QDL_PAD_KEY_COL3__GPIO4_IO12	0x13070
-+			/* CAN1_TERM */
-+			MX6QDL_PAD_GPIO_0__GPIO1_IO00	0x1b0b0
-+		>;
-+	};
-+
-+	pinctrl_ecspi1: ecspi1grp {
-+		fsl,pins = <
-+			MX6QDL_PAD_EIM_D17__ECSPI1_MISO		0x100b1
-+			MX6QDL_PAD_EIM_D18__ECSPI1_MOSI		0x100b1
-+			MX6QDL_PAD_EIM_D16__ECSPI1_SCLK		0x100b1
-+			/* CS */
-+			MX6QDL_PAD_EIM_D19__GPIO3_IO19		0x000b1
-+		>;
-+	};
-+
-+	pinctrl_ecspi3: ecspi3grp {
-+		fsl,pins = <
-+			MX6QDL_PAD_DISP0_DAT0__ECSPI3_SCLK	0x100b1
-+			MX6QDL_PAD_DISP0_DAT1__ECSPI3_MOSI	0x100b1
-+			MX6QDL_PAD_DISP0_DAT2__ECSPI3_MISO	0x100b1
-+			MX6QDL_PAD_DISP0_DAT3__GPIO4_IO24	0x000b1
-+		>;
-+	};
-+
-+	pinctrl_leds: ledsgrp {
-+		fsl,pins = <
-+			MX6QDL_PAD_GPIO_8__GPIO1_IO08		0x1b0b0
-+		>;
-+	};
-+
-+	pinctrl_nfc: nfcgrp {
-+		fsl,pins = <
-+			/* NFC_ASK_OOK */
-+			MX6QDL_PAD_DISP0_DAT15__GPIO5_IO09	0x100b1
-+			/* NFC_PWR_EN */
-+			MX6QDL_PAD_DISP0_DAT16__GPIO5_IO10	0x100b1
-+			/* NFC_EN2 */
-+			MX6QDL_PAD_DISP0_DAT17__GPIO5_IO11	0x100b1
-+			/* NFC_EN */
-+			MX6QDL_PAD_DISP0_DAT18__GPIO5_IO12	0x100b1
-+			/* NFC_MOD */
-+			MX6QDL_PAD_DISP0_DAT19__GPIO5_IO13	0x100b1
-+			/* NFC_IRQ */
-+			MX6QDL_PAD_DISP0_DAT20__GPIO5_IO14	0x100b1
-+		>;
-+	};
-+};
+Applied, thanks.
+
 -- 
-2.25.1
-
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
