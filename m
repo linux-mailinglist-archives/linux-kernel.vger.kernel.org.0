@@ -2,322 +2,243 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2045A1903EC
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 04:47:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 175041903F5
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 04:51:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727261AbgCXDrn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Mar 2020 23:47:43 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:12181 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727060AbgCXDrn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Mar 2020 23:47:43 -0400
-Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 7CA9B539151FD28DDA6A;
-        Tue, 24 Mar 2020 11:47:38 +0800 (CST)
-Received: from [10.173.228.124] (10.173.228.124) by smtp.huawei.com
- (10.3.19.202) with Microsoft SMTP Server (TLS) id 14.3.487.0; Tue, 24 Mar
- 2020 11:47:36 +0800
-Subject: Re: [PATCH 4/4] hugetlbfs: clean up command line processing
-To:     Mina Almasry <almasrymina@google.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>
-CC:     Linux-MM <linux-mm@kvack.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linuxppc-dev@lists.ozlabs.org>, <linux-riscv@lists.infradead.org>,
-        <linux-s390@vger.kernel.org>, <sparclinux@vger.kernel.org>,
-        <linux-doc@vger.kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        "Benjamin Herrenschmidt" <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        "Christian Borntraeger" <borntraeger@de.ibm.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        "Jonathan Corbet" <corbet@lwn.net>,
-        Andrew Morton <akpm@linux-foundation.org>
-References: <20200318220634.32100-1-mike.kravetz@oracle.com>
- <20200318220634.32100-5-mike.kravetz@oracle.com>
- <CAHS8izOhjvNVDXsx_SqP_oUQhCw-i_xcG9hxbvV86fFDeY_SAw@mail.gmail.com>
-From:   "Longpeng (Mike, Cloud Infrastructure Service Product Dept.)" 
-        <longpeng2@huawei.com>
-Message-ID: <d067c5d1-89b8-a71b-7b71-a8bbbd613efa@huawei.com>
-Date:   Tue, 24 Mar 2020 11:47:35 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        id S1727277AbgCXDvN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Mar 2020 23:51:13 -0400
+Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:4989 "EHLO
+        hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727050AbgCXDvN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Mar 2020 23:51:13 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5e7983820000>; Mon, 23 Mar 2020 20:50:26 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Mon, 23 Mar 2020 20:51:10 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Mon, 23 Mar 2020 20:51:10 -0700
+Received: from HQMAIL111.nvidia.com (172.20.187.18) by HQMAIL111.nvidia.com
+ (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 24 Mar
+ 2020 03:51:10 +0000
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (104.47.70.102)
+ by HQMAIL111.nvidia.com (172.20.187.18) with Microsoft SMTP Server (TLS) id
+ 15.0.1473.3 via Frontend Transport; Tue, 24 Mar 2020 03:51:10 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=hXPINR709ziFwU+VDLtwzVTAynbkQdgc5UpJZAkNGvSJOMHWIHgYc3AsXA5eVKublbCtpHZ6Lf9D5uwd+77mxCUla71mh2qy7ylae8/7dX453ae5016QHoGuGGSIde5iB7z1jh/Llha/McDl6H9Bx4QPHQqTCLpxYPenBZTEBxmBtBwkIpOc9+8TTGSM67uw1epU3PAolsodvPtCnJvDgBIckNbrDjdfa8x25xOaC8sJrzZKfpNZkzw5XMEJM53VUgmfP8AcuvMh8RRgS6MYbUW2oyA3aD2xplyALU04+m70rCniP9zgIFVUUM4dXGEsiuJ+q5NbgdB7SMVl9mTGJw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=iU3l0hKHebzvA0hQ77JENKXmGpG0NLH34MUrCP9l0Ho=;
+ b=TrWkFENhcDTZc6LJqGha58eFP6mRDA8KwHW+HpMMRn2wBOgBcOwHrwsM6AkqPBwkW+cCn/a2RTR2UTf0NIIDnTGM9+fu/aVtXNNIG5iyEkQBAoS8n4hJiwehhLEqsKmyKRY5MQgEjG13AJZ6GbsXO4p4GnNTYXvhaZ7lfSygQR8ocqc7SZRsge5ijB7eAIeNw2pidrqUms8Jc88x6hXFhYN68yqHkwVgt3clJG7YfWpHQDmE2k+Y1h+3wytEA5fV/XjBQtSvw0/EDXhHHhI9q/p5e/zX0JLuSudqiNS/EdaXiRxowsrftBkSJ0elXr8W6G3m+p3PMDHeQ0jtz0CU0Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+Received: from BYAPR12MB2727.namprd12.prod.outlook.com (2603:10b6:a03:71::22)
+ by BYAPR12MB3352.namprd12.prod.outlook.com (2603:10b6:a03:a8::25) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2835.20; Tue, 24 Mar
+ 2020 03:51:09 +0000
+Received: from BYAPR12MB2727.namprd12.prod.outlook.com
+ ([fe80::b874:508d:247f:e4f6]) by BYAPR12MB2727.namprd12.prod.outlook.com
+ ([fe80::b874:508d:247f:e4f6%4]) with mapi id 15.20.2835.021; Tue, 24 Mar 2020
+ 03:51:08 +0000
+From:   Ajay Gupta <ajayg@nvidia.com>
+To:     Kai-Heng Feng <kai.heng.feng@canonical.com>
+CC:     Wolfram Sang <wsa@the-dreams.de>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        "open list:I2C CONTROLLER DRIVER FOR NVIDIA GPU" 
+        <linux-i2c@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH] i2c: nvidia-gpu: Handle timeout correctly in
+ gpu_i2c_check_status()
+Thread-Topic: [PATCH] i2c: nvidia-gpu: Handle timeout correctly in
+ gpu_i2c_check_status()
+Thread-Index: AQHV98ZNTFr9lYhuHEKRpwz8oAZByahVuuuAgACzuwCAABCCgIAArD4Q
+Date:   Tue, 24 Mar 2020 03:51:08 +0000
+Message-ID: <BYAPR12MB2727F872ED47A1862C8A9CF9DCF10@BYAPR12MB2727.namprd12.prod.outlook.com>
+References: <20200311165806.12365-1-kai.heng.feng@canonical.com>
+ <DA56E103-CAA7-4C28-9528-9EAFF2C717CD@canonical.com>
+ <BYAPR12MB2727B1862E56594E4B6A3E0ADCF00@BYAPR12MB2727.namprd12.prod.outlook.com>
+ <E6C41EAE-C56D-4FAB-969F-0842F4FF5C18@canonical.com>
+In-Reply-To: <E6C41EAE-C56D-4FAB-969F-0842F4FF5C18@canonical.com>
+Accept-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+msip_labels: MSIP_Label_6b558183-044c-4105-8d9c-cea02a2a3d86_Enabled=True;
+ MSIP_Label_6b558183-044c-4105-8d9c-cea02a2a3d86_SiteId=43083d15-7273-40c1-b7db-39efd9ccc17a;
+ MSIP_Label_6b558183-044c-4105-8d9c-cea02a2a3d86_Owner=ajayg@nvidia.com;
+ MSIP_Label_6b558183-044c-4105-8d9c-cea02a2a3d86_SetDate=2020-03-24T03:51:07.5824598Z;
+ MSIP_Label_6b558183-044c-4105-8d9c-cea02a2a3d86_Name=Unrestricted;
+ MSIP_Label_6b558183-044c-4105-8d9c-cea02a2a3d86_Application=Microsoft Azure
+ Information Protection;
+ MSIP_Label_6b558183-044c-4105-8d9c-cea02a2a3d86_ActionId=b4303885-5bd7-4a17-be7e-84d84813a564;
+ MSIP_Label_6b558183-044c-4105-8d9c-cea02a2a3d86_Extended_MSFT_Method=Automatic
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=ajayg@nvidia.com; 
+x-originating-ip: [2601:647:5500:817:e4cd:8d36:b72a:5b9e]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 0142defe-e140-4c4c-9f34-08d7cfa69651
+x-ms-traffictypediagnostic: BYAPR12MB3352:
+x-microsoft-antispam-prvs: <BYAPR12MB33526FB3EDE77D09AB6E9BF0DCF10@BYAPR12MB3352.namprd12.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:8273;
+x-forefront-prvs: 03524FBD26
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(39860400002)(136003)(366004)(396003)(376002)(6916009)(186003)(4326008)(86362001)(6506007)(81166006)(8676002)(8936002)(7696005)(81156014)(53546011)(33656002)(76116006)(52536014)(64756008)(316002)(55016002)(66476007)(66556008)(54906003)(66946007)(9686003)(2906002)(5660300002)(71200400001)(478600001)(66446008)(70780200001);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR12MB3352;H:BYAPR12MB2727.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;
+received-spf: None (protection.outlook.com: nvidia.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: 6oydTxwzOl+YEKm6PRpWf7gu9IQRsxVrcmNEcpG7DQVNdo/OZ+sy6oirlFQfT92Ogvs/q2mENq6f/4yZYR2XCVhzOFStgLIHnZqBXVM1TI4rdJj3iMFKxshou8fXBCq9kK0IoWso6edhK/y1iIqWCMR1jUMQ7YdQS66cWe9EQ3nTUgUxBJDrCuhT4inKl/aNv4r0Pv2jd5oGpj01YKbOgI5fO0ZM9acNep55U+Aa/rmbfqJUY2qMR3BaSIcSjs+b/ufdMs86ry1OlM/29KULt29g69Y7FndRf5ynu2yw7vvB65hCVOz58iRHJtAkqviK0ikKv97V0o316MNEIeCUFIXR6AGx3UGSP2NRuWvU5PDS93xWLz6aHDV+EE1L7cnTmDbFZbhAFDbKEhE7IoVEKVLGp6TnO4rhWzwRAZKEJCDaQ0KTVuQxy6Dk0miEyLWuB8oZL0ljX80T1iKck3UQPXXp8bXFs4vxynN/3jEiP7kimj6VdNDuDoiJ4OPQiXYM
+x-ms-exchange-antispam-messagedata: 2kfQXs8KYV7C8vpU+DdbULkS3Hp16WiA0qoLBEvg3y8b5ymFi2rjwmGBnKxl4LbFeTyzZuXuwfVLzHMBt8myc1fOupXNoeyOTAvJOci4MDbZZIrNAll+yNsP7IdD15ORwayu7xPncM5AAdF9QfOIe9DAWr+d/tFhzxmQEGMDXcj9kAfi1PunU4Tc9Pr4NlgtAxz1ffqlLbLxC+4m2hgYzA==
+x-ms-exchange-transport-forked: True
 MIME-Version: 1.0
-In-Reply-To: <CAHS8izOhjvNVDXsx_SqP_oUQhCw-i_xcG9hxbvV86fFDeY_SAw@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0142defe-e140-4c4c-9f34-08d7cfa69651
+X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Mar 2020 03:51:08.7528
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: jJ2pJgAUHmeW4VMzJlQUD0kAx8PVaBYMcV/0j+Cqx/Z0tUC7ZOQH/7+Tmrtsf9D+84MoeuULVcWTSQ/OYT4OmA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR12MB3352
+X-OriginatorOrg: Nvidia.com
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.173.228.124]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1585021826; bh=iU3l0hKHebzvA0hQ77JENKXmGpG0NLH34MUrCP9l0Ho=;
+        h=X-PGP-Universal:ARC-Seal:ARC-Message-Signature:
+         ARC-Authentication-Results:From:To:CC:Subject:Thread-Topic:
+         Thread-Index:Date:Message-ID:References:In-Reply-To:
+         Accept-Language:X-MS-Has-Attach:X-MS-TNEF-Correlator:msip_labels:
+         authentication-results:x-originating-ip:x-ms-publictraffictype:
+         x-ms-office365-filtering-correlation-id:x-ms-traffictypediagnostic:
+         x-microsoft-antispam-prvs:x-ms-oob-tlc-oobclassifiers:
+         x-forefront-prvs:x-forefront-antispam-report:received-spf:
+         x-ms-exchange-senderadcheck:x-microsoft-antispam:
+         x-microsoft-antispam-message-info:
+         x-ms-exchange-antispam-messagedata:x-ms-exchange-transport-forked:
+         MIME-Version:X-MS-Exchange-CrossTenant-Network-Message-Id:
+         X-MS-Exchange-CrossTenant-originalarrivaltime:
+         X-MS-Exchange-CrossTenant-fromentityheader:
+         X-MS-Exchange-CrossTenant-id:X-MS-Exchange-CrossTenant-mailboxtype:
+         X-MS-Exchange-CrossTenant-userprincipalname:
+         X-MS-Exchange-Transport-CrossTenantHeadersStamped:X-OriginatorOrg:
+         Content-Language:Content-Type:Content-Transfer-Encoding;
+        b=CUap3Hf5MggmkR4DPPf3Gqk/9K4s02NyaVcDhDWR7NEL1Xi4+khPhPSZi6DwMh2Uy
+         ZfhjwjoW0FELOug+CL9cUmWzggTCGwl2GNsq3187MsqwHnftANJSZ0DSlCPIq5q5uA
+         XU1tmAoGv/AzBBYd6U1HBFwEbOBiFB4Vu0gKDgTH2V1Etq+RSsoJO8STZYiR6epZ5H
+         nELanEXlULkIVUdo5nzo8UtivwvuKIXl5aaH00CwM3P/soJ4UE3prOSzmZIHtvmg9a
+         nGu4fDV6iYYRzZp1rH88Bl9X6Ecnmf9zC/Kq7B+5cItDcWAuLfBXVxWRowCyijNjBm
+         grU0nz9bb8Cpg==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Kai-Heng
 
+> -----Original Message-----
+> From: linux-i2c-owner@vger.kernel.org <linux-i2c-owner@vger.kernel.org>
+> On Behalf Of Kai-Heng Feng
+> Sent: Monday, March 23, 2020 10:21 AM
+> To: Ajay Gupta <ajayg@nvidia.com>
+> Cc: Wolfram Sang <wsa@the-dreams.de>; Andy Shevchenko
+> <andriy.shevchenko@linux.intel.com>; open list:I2C CONTROLLER DRIVER
+> FOR NVIDIA GPU <linux-i2c@vger.kernel.org>; open list <linux-
+> kernel@vger.kernel.org>
+> Subject: Re: [PATCH] i2c: nvidia-gpu: Handle timeout correctly in
+> gpu_i2c_check_status()
+>=20
+> External email: Use caution opening links or attachments
+>=20
+>=20
+> Hi Ajay,
+>=20
+> > On Mar 24, 2020, at 00:47, Ajay Gupta <ajayg@nvidia.com> wrote:
+> >
+> > Kai-Heng
+> >
+> >> -----Original Message-----
+> >> From: Kai-Heng Feng <kai.heng.feng@canonical.com>
+> >> Sent: Sunday, March 22, 2020 10:38 PM
+> >> To: Ajay Gupta <ajayg@nvidia.com>
+> >> Cc: Wolfram Sang <wsa@the-dreams.de>; Andy Shevchenko
+> >> <andriy.shevchenko@linux.intel.com>; open list:I2C CONTROLLER DRIVER
+> >> FOR NVIDIA GPU <linux-i2c@vger.kernel.org>; open list <linux-
+> >> kernel@vger.kernel.org>
+> >> Subject: Re: [PATCH] i2c: nvidia-gpu: Handle timeout correctly in
+> >> gpu_i2c_check_status()
+> >>
+> >> External email: Use caution opening links or attachments
+> >>
+> >>
+> >>> On Mar 12, 2020, at 00:58, Kai-Heng Feng
+> >>> <kai.heng.feng@canonical.com>
+> >> wrote:
+> >>>
+> >>> Nvidia card may come with a "phantom" UCSI device, and its driver
+> >>> gets stuck in probe routine, prevents any system PM operations like
+> suspend.
+> >>>
+> >>> Let's handle the unaccounted case that the target time equals to
+> >>> jiffies in gpu_i2c_check_status(), so the UCSI driver can let the
+> >>> probe fail as it should.
+> > If status is not seen in 999.5 ms then I don't see any reason why it
+> > will come exactly at 1000ms. In fact,  we expect status to be seen
+> > within 160ms as per I2C_MST_I2C0_TIMING_TIMEOUT_CLK_CNT (16
+> cycle) and
+> > I2C_MST_I2C0_TIMING_SCL_PERIOD_100KHZ (10ms/cycle) programmed in
+> > I2C_MST_I2C0_TIMING Register. We already have enough extra time to
+> > look For response.
+>=20
+> This is to handle when there's no response.
+>=20
+> When the while loop terminates because of "time_is_after_jiffies(target)"
+> (i.e. target <=3D jiffies), we also need to to handle "target =3D=3D jiff=
+ies" case in the
+> following if clause to properly timeout.
+Ok got it. The change looks fine to me.
 
-On 2020/3/24 8:43, Mina Almasry wrote:
-> On Wed, Mar 18, 2020 at 3:07 PM Mike Kravetz <mike.kravetz@oracle.com> wrote:
->>
->> With all hugetlb page processing done in a single file clean up code.
-> 
-> Now that all hugepage page processing is done in a single file, clean
-> up the code.
-> 
->> - Make code match desired semantics
->>   - Update documentation with semantics
->> - Make all warnings and errors messages start with 'HugeTLB:'.
->> - Consistently name command line parsing routines.
->> - Add comments to code
->>   - Describe some of the subtle interactions
->>   - Describe semantics of command line arguments
->>
->> Signed-off-by: Mike Kravetz <mike.kravetz@oracle.com>
->> ---
->>  Documentation/admin-guide/mm/hugetlbpage.rst | 26 +++++++
->>  mm/hugetlb.c                                 | 78 +++++++++++++++-----
->>  2 files changed, 87 insertions(+), 17 deletions(-)
->>
->> diff --git a/Documentation/admin-guide/mm/hugetlbpage.rst b/Documentation/admin-guide/mm/hugetlbpage.rst
->> index 1cc0bc78d10e..afc8888f33c3 100644
->> --- a/Documentation/admin-guide/mm/hugetlbpage.rst
->> +++ b/Documentation/admin-guide/mm/hugetlbpage.rst
->> @@ -100,6 +100,32 @@ with a huge page size selection parameter "hugepagesz=<size>".  <size> must
->>  be specified in bytes with optional scale suffix [kKmMgG].  The default huge
->>  page size may be selected with the "default_hugepagesz=<size>" boot parameter.
->>
->> +Hugetlb boot command line parameter semantics
->> +hugepagesz - Specify a huge page size.  Used in conjunction with hugepages
->> +       parameter to preallocate a number of huge pages of the specified
->> +       size.  Hence, hugepagesz and hugepages are typically specified in
->> +       pairs such as:
->> +               hugepagesz=2M hugepages=512
->> +       hugepagesz can only be specified once on the command line for a
->> +       specific huge page size.  Valid huge page sizes are architecture
->> +       dependent.
->> +hugepages - Specify the number of huge pages to preallocate.  This typically
->> +       follows a valid hugepagesz parameter.  However, if hugepages is the
->> +       first or only hugetlb command line parameter it specifies the number
->> +       of huge pages of default size to allocate.  The number of huge pages
->> +       of default size specified in this manner can be overwritten by a
->> +       hugepagesz,hugepages parameter pair for the default size.
->> +       For example, on an architecture with 2M default huge page size:
->> +               hugepages=256 hugepagesz=2M hugepages=512
->> +       will result in 512 2M huge pages being allocated.  If a hugepages
->> +       parameter is preceded by an invalid hugepagesz parameter, it will
->> +       be ignored.
->> +default_hugepagesz - Specify the default huge page size.  This parameter can
->> +       only be specified on the command line.  No other hugetlb command line
->> +       parameter is associated with default_hugepagesz.  Therefore, it can
->> +       appear anywhere on the command line.  Valid default huge page size is
->> +       architecture dependent.
-> 
-> Maybe specify what happens/should happen in a case like:
-> 
-> hugepages=100 default_hugepagesz=1G
-> 
-> Does that allocate 100 2MB pages or 100 1G pages? Assuming the default
-> size is 2MB.
-> 
-> Also, regarding Randy's comment. It may be nice to keep these docs in
-> one place only, so we don't have to maintain 2 docs in sync.
-> 
-> 
->> +
->>  When multiple huge page sizes are supported, ``/proc/sys/vm/nr_hugepages``
->>  indicates the current number of pre-allocated huge pages of the default size.
->>  Thus, one can use the following command to dynamically allocate/deallocate
->> diff --git a/mm/hugetlb.c b/mm/hugetlb.c
->> index cc85b4f156ca..2b9bf01db2b6 100644
->> --- a/mm/hugetlb.c
->> +++ b/mm/hugetlb.c
->> @@ -2954,7 +2954,7 @@ static void __init hugetlb_sysfs_init(void)
->>                 err = hugetlb_sysfs_add_hstate(h, hugepages_kobj,
->>                                          hstate_kobjs, &hstate_attr_group);
->>                 if (err)
->> -                       pr_err("Hugetlb: Unable to add hstate %s", h->name);
->> +                       pr_err("HugeTLB: Unable to add hstate %s", h->name);
->>         }
->>  }
->>
->> @@ -3058,7 +3058,7 @@ static void hugetlb_register_node(struct node *node)
->>                                                 nhs->hstate_kobjs,
->>                                                 &per_node_hstate_attr_group);
->>                 if (err) {
->> -                       pr_err("Hugetlb: Unable to add hstate %s for node %d\n",
->> +                       pr_err("HugeTLB: Unable to add hstate %s for node %d\n",
->>                                 h->name, node->dev.id);
->>                         hugetlb_unregister_node(node);
->>                         break;
->> @@ -3109,19 +3109,35 @@ static int __init hugetlb_init(void)
->>         if (!hugepages_supported())
->>                 return 0;
->>
->> -       if (!size_to_hstate(default_hstate_size)) {
->> -               if (default_hstate_size != 0) {
->> -                       pr_err("HugeTLB: unsupported default_hugepagesz %lu. Reverting to %lu\n",
->> -                              default_hstate_size, HPAGE_SIZE);
->> -               }
->> -
->> +       /*
->> +        * Make sure HPAGE_SIZE (HUGETLB_PAGE_ORDER) hstate exists.  Some
->> +        * architectures depend on setup being done here.
->> +        *
->> +        * If a valid default huge page size was specified on the command line,
->> +        * add associated hstate if necessary.  If not, set default_hstate_size
->> +        * to default size.  default_hstate_idx is used at runtime to identify
->> +        * the default huge page size/hstate.
->> +        */
->> +       hugetlb_add_hstate(HUGETLB_PAGE_ORDER);
->> +       if (default_hstate_size)
->> +               hugetlb_add_hstate(ilog2(default_hstate_size) - PAGE_SHIFT);
->> +       else
->>                 default_hstate_size = HPAGE_SIZE;
->> -               hugetlb_add_hstate(HUGETLB_PAGE_ORDER);
->> -       }
->>         default_hstate_idx = hstate_index(size_to_hstate(default_hstate_size));
->> +
->> +       /*
->> +        * default_hstate_max_huge_pages != 0 indicates a count (hugepages=)
->> +        * specified before a size (hugepagesz=).  Use this count for the
->> +        * default huge page size, unless a specific value was specified for
->> +        * this size in a hugepagesz/hugepages pair.
->> +        */
->>         if (default_hstate_max_huge_pages) {
->>                 if (!default_hstate.max_huge_pages)
->> -                       default_hstate.max_huge_pages = default_hstate_max_huge_pages;
->> +                       default_hstate.max_huge_pages =
->> +                               default_hstate_max_huge_pages;
->> +               else
->> +                       pr_warn("HugeTLB: First hugepages=%lu kB ignored\n",
->> +                               default_hstate_max_huge_pages);
->>         }
->>
->>         hugetlb_init_hstates();
->> @@ -3174,20 +3190,27 @@ void __init hugetlb_add_hstate(unsigned int order)
->>         parsed_hstate = h;
->>  }
->>
->> -static int __init hugetlb_nrpages_setup(char *s)
->> +/*
->> + * hugepages command line processing
->> + * hugepages must normally follows a valid hugepagsz specification.  If not,
-> 
-> 'hugepages must' or 'hugepages normally follows'
->> + * ignore the hugepages value.  hugepages can also be the first huge page
->> + * command line option in which case it specifies the number of huge pages
->> + * for the default size.
->> + */
->> +static int __init hugepages_setup(char *s)
->>  {
->>         unsigned long *mhp;
->>         static unsigned long *last_mhp;
->>
->>         if (!parsed_valid_hugepagesz) {
->> -               pr_warn("hugepages = %s preceded by "
->> +               pr_warn("HugeTLB: hugepages = %s preceded by "
->>                         "an unsupported hugepagesz, ignoring\n", s);
->>                 parsed_valid_hugepagesz = true;
->>                 return 1;
->>         }
->>         /*
->> -        * !hugetlb_max_hstate means we haven't parsed a hugepagesz= parameter yet,
->> -        * so this hugepages= parameter goes to the "default hstate".
->> +        * !hugetlb_max_hstate means we haven't parsed a hugepagesz= parameter
->> +        * yet, so this hugepages= parameter goes to the "default hstate".
->>          */
->>         else if (!hugetlb_max_hstate)
->>                 mhp = &default_hstate_max_huge_pages;
-> 
-> We don't set parsed_valid_hugepagesz to false at the end of this
-> function, shouldn't we? Parsing a hugepages= value should 'consume' a
-> previously defined hugepagesz= value, so that this is invalid IIUC:
-> 
-> hugepagesz=x hugepages=z hugepages=y
-> 
-In this case, we'll get:
-"HugeTLB: hugepages= specified twice without interleaving hugepagesz=, ignoring
-hugepages=y"
+Acked-by: Ajay Gupta <ajayg@nvidia.com>
 
->> @@ -3195,7 +3218,8 @@ static int __init hugetlb_nrpages_setup(char *s)
->>                 mhp = &parsed_hstate->max_huge_pages;
->>
->>         if (mhp == last_mhp) {
->> -               pr_warn("hugepages= specified twice without interleaving hugepagesz=, ignoring\n");
->> +               pr_warn("HugeTLB: hugepages= specified twice without interleaving hugepagesz=, ignoring hugepages=%s\n",
->> +                       s);
->>                 return 1;
->>         }
->>
->> @@ -3214,8 +3238,15 @@ static int __init hugetlb_nrpages_setup(char *s)
->>
->>         return 1;
->>  }
->> -__setup("hugepages=", hugetlb_nrpages_setup);
->> +__setup("hugepages=", hugepages_setup);
->>
->> +/*
->> + * hugepagesz command line processing
->> + * A specific huge page size can only be specified once with hugepagesz.
->> + * hugepagesz is followed by hugepages on the commnad line.  The global
->> + * variable 'parsed_valid_hugepagesz' is used to determine if prior
->> + * hugepagesz argument was valid.
->> + */
->>  static int __init hugepagesz_setup(char *s)
->>  {
->>         unsigned long long size;
->> @@ -3230,16 +3261,23 @@ static int __init hugepagesz_setup(char *s)
->>         }
->>
->>         if (size_to_hstate(size)) {
->> +               parsed_valid_hugepagesz = false;
->>                 pr_warn("HugeTLB: hugepagesz %s specified twice, ignoring\n",
->>                         saved_s);
->>                 return 0;
->>         }
->>
->> +       parsed_valid_hugepagesz = true;
->>         hugetlb_add_hstate(ilog2(size) - PAGE_SHIFT);
->>         return 1;
->>  }
->>  __setup("hugepagesz=", hugepagesz_setup);
->>
->> +/*
->> + * default_hugepagesz command line input
->> + * Only one instance of default_hugepagesz allowed on command line.  Do not
->> + * add hstate here as that will confuse hugepagesz/hugepages processing.
->> + */
->>  static int __init default_hugepagesz_setup(char *s)
->>  {
->>         unsigned long long size;
->> @@ -3252,6 +3290,12 @@ static int __init default_hugepagesz_setup(char *s)
->>                 return 0;
->>         }
->>
->> +       if (default_hstate_size) {
->> +               pr_err("HugeTLB: default_hugepagesz previously specified, ignoring %s\n",
->> +                       saved_s);
->> +               return 0;
->> +       }
->> +
->>         default_hstate_size = size;
->>         return 1;
->>  }
->> --
->> 2.24.1
->>
->>
-> .
->
----
-Regards,
-Longpeng(Mike)
+Thanks
+> nvpublic
+>=20
+> I don't think I2C timings here can affect jiffies.
+>=20
+> Kai-Heng
+>=20
+> >
+> > Thanks
+> >> nvpublic
+> >>>
+> >>> Fixes: c71bcdcb42a7 ("i2c: add i2c bus driver for NVIDIA GPU")
+> >>> Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
+> >>
+> >> A gentle ping...
+> >>
+> >>> ---
+> >>> drivers/i2c/busses/i2c-nvidia-gpu.c | 2 +-
+> >>> 1 file changed, 1 insertion(+), 1 deletion(-)
+> >>>
+> >>> diff --git a/drivers/i2c/busses/i2c-nvidia-gpu.c
+> >>> b/drivers/i2c/busses/i2c-nvidia-gpu.c
+> >>> index 62e18b4db0ed..1988e93c7925 100644
+> >>> --- a/drivers/i2c/busses/i2c-nvidia-gpu.c
+> >>> +++ b/drivers/i2c/busses/i2c-nvidia-gpu.c
+> >>> @@ -88,7 +88,7 @@ static int gpu_i2c_check_status(struct gpu_i2c_dev
+> >> *i2cd)
+> >>>              usleep_range(500, 600);
+> >>>      } while (time_is_after_jiffies(target));
+> >>>
+> >>> -     if (time_is_before_jiffies(target)) {
+> >>> +     if (time_is_before_eq_jiffies(target)) {
+> >>>              dev_err(i2cd->dev, "i2c timeout error %x\n", val);
+> >>>              return -ETIMEDOUT;
+> >>>      }
+> >>> --
+> >>> 2.17.1
+> >>>
+> >
+
