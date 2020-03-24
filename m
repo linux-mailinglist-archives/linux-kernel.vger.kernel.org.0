@@ -2,109 +2,126 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 06A93191552
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 16:49:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 203DA19155A
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 16:51:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728189AbgCXPt0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 11:49:26 -0400
-Received: from new2-smtp.messagingengine.com ([66.111.4.224]:44235 "EHLO
-        new2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727634AbgCXPtZ (ORCPT
+        id S1728687AbgCXPtl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 11:49:41 -0400
+Received: from us-smtp-delivery-74.mimecast.com ([216.205.24.74]:40486 "EHLO
+        us-smtp-delivery-74.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728555AbgCXPtk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 11:49:25 -0400
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-        by mailnew.nyi.internal (Postfix) with ESMTP id 963E4580208;
-        Tue, 24 Mar 2020 11:49:24 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute4.internal (MEProxy); Tue, 24 Mar 2020 11:49:24 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm2; bh=i7HBmzxid/ci7fk+gbb7Mxl+YrD
-        WbK/5oiBZwSKFtdo=; b=omQWnEiN35VVoWHD5HNnqs+mGwGhtQ/DUI+4MwgSrOI
-        5xKUariUf8Hqcn5hsOp6ol5Oldyos3xuIURl6a7E1e8kFBL4WdsKpy8/n1XpdYD3
-        YwXSjFpaojQ+uMJu0GusJTUOTF9PG/RGvqFMCve4mIBYTNVA0B9tD2edyv8agphF
-        Oi70ygmukHOdawpsnx3HWEdUcRVbcL+e6u5Ee5AEz8kri/obJgykARX8hSJAcO/B
-        r7b6dM+sZYYgvE910PS4Guc6gXcfo4YPRGGiQr7lQlEz8Q201je4xzxSt9yQDl7p
-        txJns9ytOdaTpLqs0DBeTrtLHIlIowuFh91Ylm2rfmg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=i7HBmz
-        xid/ci7fk+gbb7Mxl+YrDWbK/5oiBZwSKFtdo=; b=Sa24C2bMReuBLUxas1IqsB
-        t7aUDg2OcLRo5hBwzT1O/hU+WJDqz5gP3v6s8ziTfuIANB/G7qmGMwXaUkax03Zd
-        bIH3jYRQ2GM2EJEBOyZcuP7A9qDHf0tB3Lp2gbNdnKv7uhOt1u+t5vHt0Qzv22Zk
-        UvYoBBW0sAWEMceUhydqsUI9Ulo6RNCsm1Gcbi7linSp3+viSn1RzUX6itf5BTgn
-        tObmpbNk8JVKJb3thFuYKJrizSuLSoE/J71K+q0H9CTDGT3/M99iik+83YvrycWy
-        ORPwwIdCWOHS9w9FQaE0wkzHOaDnBuB6VL5VCc+VIL+BeMh+LwwRwk6cFRMnJK+A
-        ==
-X-ME-Sender: <xms:Aix6XggI_XoaSRKF1cTbec_S__4Ws_hUKhL7Xb3u3gCW7Xv6gxjBCQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedugedrudehuddghedtucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvffukfhfgggtuggjsehgtderredttddvnecuhfhrohhmpeforgigihhm
-    vgcutfhiphgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecukfhppeeltd
-    drkeelrdeikedrjeeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghi
-    lhhfrhhomhepmhgrgihimhgvsegtvghrnhhordhtvggthh
-X-ME-Proxy: <xmx:Aix6Xi_hiquxvOuvSn2hh2bm6t0Ev4R1CVq4EpwP6xkG6H-f7ZZuFw>
-    <xmx:Aix6Xp8kpUGnmlgCJGyrT29fExKE_3YhPocZYrvHIBj2wPJZ95M9LQ>
-    <xmx:Aix6Xsvw0sz2LWAqfvg33JkDn5xh228gLSdXctVhd1TWNba11nskxQ>
-    <xmx:BCx6XkBm-5giGTWGlsOJG8qvnhn90YLLEpzTGbzJvoJqa-zuVlPQSQ>
-Received: from localhost (lfbn-tou-1-1502-76.w90-89.abo.wanadoo.fr [90.89.68.76])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 85815328005A;
-        Tue, 24 Mar 2020 11:49:22 -0400 (EDT)
-Date:   Tue, 24 Mar 2020 16:49:20 +0100
-From:   Maxime Ripard <maxime@cerno.tech>
-To:     Pascal Roeleven <dev@pascalroeleven.nl>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Mark Brown <broonie@kernel.org>, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v2 0/5] Add support for Topwise A721 tablet
-Message-ID: <20200324154920.sof6pu7eolnhwkrg@gilmour.lan>
-References: <20200320112205.7100-1-dev@pascalroeleven.nl>
+        Tue, 24 Mar 2020 11:49:40 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1585064979;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=gDeYcAUSbBq7ywkS5vACQpnT9b7hAluwSzLUAQ2Mkuo=;
+        b=UWyq109aARiETWzOJF2nSEcrF78b/fpxAMDOEblWVBaKVZRkAvuh9FgICyU5P3OL/PIKGY
+        d2aZaLMp4lkQ5L64NdKbuj0fWXA6ZBciuJaAV+xpFr2fcWLCSghBhfH7GDI19QyqB3ykfW
+        1mu6ajt+nzYY4jbimbsOy67zr+Yg5gg=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-105-4OmS1QYJMHWRFLqq5-9pww-1; Tue, 24 Mar 2020 11:49:35 -0400
+X-MC-Unique: 4OmS1QYJMHWRFLqq5-9pww-1
+Received: by mail-wr1-f71.google.com with SMTP id v14so832991wrq.13
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Mar 2020 08:49:35 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
+         :message-id:mime-version;
+        bh=gDeYcAUSbBq7ywkS5vACQpnT9b7hAluwSzLUAQ2Mkuo=;
+        b=G7WvxHCugCULHpN+LIlmvx83GsQe78BnHSkX3FRgOqv4AGGMx9AT6Acef6rdjJD6lu
+         gFD5jwc8cjhRkWjIX2vbaEbNPgxqGR/4+azuuDp1OydL88+722ZOnIcaL0IalUbGVDVl
+         4KiYpouFTtblX8TM7JW33HX77OgBrDmAKCZLRz6+s/eBYwISQbhp154Ugmz+oYBjchCQ
+         9p00o4SLYsY0VPjfgQuCZ/PMgMAuzmBe6souzPcw8kao/07jBUD/C+VIN/pimMVUaVTo
+         6lNh8IdyBMXnHJtiqRaT0j64vPSZYyf7mko4Pe6KyvqESw2Rn2E3YnK78x6U4nadsOeU
+         trnA==
+X-Gm-Message-State: ANhLgQ0dauKL8cmQ78KKa65t0YAZcKdO6/0xnf2lwo5M1ZyHLeEqAPcK
+        PL/1AIz28M/IEruE2c0cA4Arrv+pmd7m7hoMpSmyJkFj4IbP6k6B4LzBBmFs410URTTjrvyK9tS
+        yNxlQP+7THGu+QYAxdXssPH8t
+X-Received: by 2002:adf:ce8d:: with SMTP id r13mr21284978wrn.253.1585064974714;
+        Tue, 24 Mar 2020 08:49:34 -0700 (PDT)
+X-Google-Smtp-Source: ADFU+vvieeuVU2W0zTxEOUqjpUVow4Ua37PmuvDaQdo6jPYZN+iJoR9w2Z7lCsv/HlVC3WP9EqY7jg==
+X-Received: by 2002:adf:ce8d:: with SMTP id r13mr21284953wrn.253.1585064974406;
+        Tue, 24 Mar 2020 08:49:34 -0700 (PDT)
+Received: from vitty.brq.redhat.com (g-server-2.ign.cz. [91.219.240.2])
+        by smtp.gmail.com with ESMTPSA id y7sm6862882wrq.54.2020.03.24.08.49.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 24 Mar 2020 08:49:33 -0700 (PDT)
+From:   Vitaly Kuznetsov <vkuznets@redhat.com>
+To:     Yubo Xie <ltykernel@gmail.com>
+Cc:     Yubo Xie <yuboxie@microsoft.com>, linux-hyperv@vger.kernel.org,
+        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        Tianyu Lan <Tianyu.Lan@microsoft.com>, kys@microsoft.com,
+        haiyangz@microsoft.com, sthemmin@microsoft.com,
+        liuwe@microsoft.com, daniel.lezcano@linaro.org, tglx@linutronix.de,
+        michael.h.kelley@microsoft.com
+Subject: Re: [PATCH] x86/Hyper-V: Fix hv sched clock function return wrong time unit
+In-Reply-To: <20200324151935.15814-1-yuboxie@microsoft.com>
+References: <20200324151935.15814-1-yuboxie@microsoft.com>
+Date:   Tue, 24 Mar 2020 16:49:32 +0100
+Message-ID: <87ftdx7nxv.fsf@vitty.brq.redhat.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="6vyavs63upj3cdfk"
-Content-Disposition: inline
-In-Reply-To: <20200320112205.7100-1-dev@pascalroeleven.nl>
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Yubo Xie <ltykernel@gmail.com> writes:
 
---6vyavs63upj3cdfk
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> sched clock callback should return time with nano second as unit
+> but current hv callback returns time with 100ns. Fix it.
+>
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Yubo Xie <yuboxie@microsoft.com>
+> Signed-off-by: Tianyu Lan <Tianyu.Lan@microsoft.com>
+> Fixes: adb87ff4f96c ("clocksource/drivers/hyperv: Allocate Hyper-V TSC page statically")
 
-Hi,
+I don't think this is the right commit to reference, 
 
-On Fri, Mar 20, 2020 at 12:21:31PM +0100, Pascal Roeleven wrote:
-> This series add support for the Topwise A721 tablet and it's display.
-> It is an old tablet (around 2012) but it might be useful as reference
-> as the devicetree is pretty complete.
+commit bd00cd52d5be655a2f217e2ed74b91a71cb2b14f
+Author: Tianyu Lan <Tianyu.Lan@microsoft.com>
+Date:   Wed Aug 14 20:32:16 2019 +0800
 
-It looks good to me for the last 2 patches, I'll wait for feedback
-=66rom Thierry or Sam on the panel side.
+    clocksource/drivers/hyperv: Add Hyper-V specific sched clock function
 
-Maxime
+looks like the one.
 
---6vyavs63upj3cdfk
-Content-Type: application/pgp-signature; name="signature.asc"
+> ---
+>  drivers/clocksource/hyperv_timer.c | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/clocksource/hyperv_timer.c b/drivers/clocksource/hyperv_timer.c
+> index 9d808d595ca8..662ed978fa24 100644
+> --- a/drivers/clocksource/hyperv_timer.c
+> +++ b/drivers/clocksource/hyperv_timer.c
+> @@ -343,7 +343,8 @@ static u64 notrace read_hv_clock_tsc_cs(struct clocksource *arg)
+>  
+>  static u64 read_hv_sched_clock_tsc(void)
+>  {
+> -	return read_hv_clock_tsc() - hv_sched_clock_offset;
+> +	return (read_hv_clock_tsc() - hv_sched_clock_offset)
+> +		* (NSEC_PER_SEC / HV_CLOCK_HZ);
+>  }
+>  
+>  static void suspend_hv_clock_tsc(struct clocksource *arg)
+> @@ -398,7 +399,8 @@ static u64 notrace read_hv_clock_msr_cs(struct clocksource *arg)
+>  
+>  static u64 read_hv_sched_clock_msr(void)
+>  {
+> -	return read_hv_clock_msr() - hv_sched_clock_offset;
+> +	return (read_hv_clock_msr() - hv_sched_clock_offset)
+> +		* (NSEC_PER_SEC / HV_CLOCK_HZ);
+>  }
 
------BEGIN PGP SIGNATURE-----
+kvmclock seems to have the same (pre-patch) code ...
 
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXnosAAAKCRDj7w1vZxhR
-xeQMAQC1tUnrU73kvtF/6Q8eBOkIo4PsfbA/FzLXnyX9q4izkgD/UhROpt15xFmZ
-fjKg+K19nxzSkwcl7IBQrED6L4Ok1wk=
-=SI+q
------END PGP SIGNATURE-----
+>  
+>  static struct clocksource hyperv_cs_msr = {
 
---6vyavs63upj3cdfk--
+-- 
+Vitaly
+
