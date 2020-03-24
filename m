@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C803C1910E4
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 14:32:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 70C9319106A
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 14:31:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728780AbgCXNS6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 09:18:58 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39300 "EHLO mail.kernel.org"
+        id S1729846AbgCXN1y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 09:27:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53674 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728736AbgCXNSy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 09:18:54 -0400
+        id S1729979AbgCXN1r (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Mar 2020 09:27:47 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 15C62208CA;
-        Tue, 24 Mar 2020 13:18:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 88167206F6;
+        Tue, 24 Mar 2020 13:27:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585055934;
+        s=default; t=1585056467;
         bh=6OrOnoiINJv+m8teJLQrQHUPd38IaKQ8DMAFSfTiJIA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MElTBbU3MFf1ETKIMpzZHYfTm8//5NPAgT4aBFoHsMaFZ8fwRc1zdUmeGlfdnyQ1P
-         YLaEvXIHr1m4wxCPimdlfm4juVSbETx5Rctv8sC8ivADuRfL/zm+WluMVhHDr5MWCn
-         hkEh4V9DFoyVkFdu56UNruN7+Bp9Yit/xlxc/p2g=
+        b=hup1sxAApOxMQNkUd8PISehSgxzgEw97Z2et7bzceWOgnaW7iNAiQemyIDk/9DVvd
+         mihXpWayijry7wCLWA3IM8OYlnaInQr+5aR3vNzlvRZ56LCZCy28s3bhQtbW4g8pZt
+         uIzue0NN5mBu7llj4j1BOcaLD9nNjLXIK2VUGh0A=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -33,12 +33,12 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         deedra waters <deedra@the-brannons.com>,
         Samuel Thibault <samuel.thibault@ens-lyon.org>,
         Michael Taboada <michael@michaels.world>
-Subject: [PATCH 5.4 072/102] staging/speakup: fix get_word non-space look-ahead
-Date:   Tue, 24 Mar 2020 14:11:04 +0100
-Message-Id: <20200324130813.866708900@linuxfoundation.org>
+Subject: [PATCH 5.5 080/119] staging/speakup: fix get_word non-space look-ahead
+Date:   Tue, 24 Mar 2020 14:11:05 +0100
+Message-Id: <20200324130816.307081927@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.2
-In-Reply-To: <20200324130806.544601211@linuxfoundation.org>
-References: <20200324130806.544601211@linuxfoundation.org>
+In-Reply-To: <20200324130808.041360967@linuxfoundation.org>
+References: <20200324130808.041360967@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
