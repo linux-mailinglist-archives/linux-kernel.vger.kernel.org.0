@@ -2,44 +2,44 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0C84D1915B8
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 17:11:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 039CF1915E0
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 17:14:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728613AbgCXQLj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 12:11:39 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:51000 "EHLO
+        id S1728513AbgCXQNU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 12:13:20 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:51008 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728269AbgCXQLf (ORCPT
+        with ESMTP id S1728300AbgCXQLg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 12:11:35 -0400
+        Tue, 24 Mar 2020 12:11:36 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=Content-Type:MIME-Version:References:
         Subject:Cc:To:From:Date:Message-Id:Sender:Reply-To:Content-Transfer-Encoding:
         Content-ID:Content-Description:In-Reply-To;
-        bh=Cy2e8d8r2EeYsPcs3bN1j4h/+vSR4Z4ATu57KwV18bw=; b=KixbN58tBktZceo8jIsC3lZA2P
-        JLh1mjuc1WzyyxKEmLXQ6jqDJh5WkDLmKI6KUaCKHQJZAnfpXcpqlXxrI1DsaWzbhf0nfZ3bIu6K8
-        aD51OsbNj+P95MLKgF47TqCrT+xHS+Og9ZbdYuxOm/7oMNlA4SM6sm3OgEWw6BGpVVkN0cGxT9Ao2
-        hhYRFMak5BGgix4nYH1K0xXQH4ISxA+4aT+/QKX0qaxhGeAtHSZ9Jz3lgh8z/XOr+PWZZ2W32/SUU
-        FXCX3iUbPBgVwm7eiXbxKiHGHxMu3+eBSAR+Ya/udDi+ltOCjpYmRrXHtNu+sEXIEA3kz5f8ikLfL
-        XoKuiWpQ==;
+        bh=jwgEEOd4ZUX1emQHXqcmhMhJCIdkOarwSHLwmdJ45iw=; b=mJi3B5I5omvfe4n7tRyObhXRDH
+        kqYZsSFXq7L4vyfaVYVeZixhTvnIoCxpykUblWQp/qmjMMhpaIjsFRPmg7Au7MGNSLJOdUjEaKJjD
+        bpBl5nG6/Hl/0Eg+C3Jk2Q0RWAhtDytctE3U+gciteRsIGmkE7fA+FL3TF+PdFahpdObTHzibA2Mh
+        OgTfJ6qU3nMPB/I9Iysb4QuBvGuAkjyWph2u0bmrsMET+Gr4Q7BVynKNI2aULAu1GwQYgHsQiQQtf
+        cSSI7hctEws5dtl38zRor4cQpT58OLlf6Ajw1tXm5ZzILQyQ5jDezzCrLaF3agFEs+5rxukGwuGuf
+        o9l9U2DA==;
 Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
         by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jGm9L-0000Bk-IZ; Tue, 24 Mar 2020 16:11:31 +0000
+        id 1jGm9M-0000Bu-0F; Tue, 24 Mar 2020 16:11:32 +0000
 Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 466DF306C6F;
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 48A073070FF;
         Tue, 24 Mar 2020 17:11:28 +0100 (CET)
 Received: by hirez.programming.kicks-ass.net (Postfix, from userid 0)
-        id 2FE5329A490F8; Tue, 24 Mar 2020 17:11:28 +0100 (CET)
-Message-Id: <20200324160924.381249993@infradead.org>
+        id 34B2929A490FA; Tue, 24 Mar 2020 17:11:28 +0100 (CET)
+Message-Id: <20200324160924.440174280@infradead.org>
 User-Agent: quilt/0.65
-Date:   Tue, 24 Mar 2020 16:31:21 +0100
+Date:   Tue, 24 Mar 2020 16:31:22 +0100
 From:   Peter Zijlstra <peterz@infradead.org>
 To:     tglx@linutronix.de, jpoimboe@redhat.com
 Cc:     linux-kernel@vger.kernel.org, x86@kernel.org, peterz@infradead.org,
         mhiramat@kernel.org, mbenes@suse.cz, brgerst@gmail.com
-Subject: [PATCH v3 08/26] objtool: Optimize find_section_by_index()
+Subject: [PATCH v3 09/26] objtool: Optimize find_section_by_name()
 References: <20200324153113.098167666@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -48,91 +48,85 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In order to avoid a linear search (over 20k entries), add an
-section_hash to the elf object.
+In order to avoid yet another linear search of (20k) sections, add a
+name based hash.
 
-This reduces objtool on vmlinux.o from a few minutes to around 45
-seconds.
+This reduces objtool runtime on vmlinux.o by some 10s to around 35s.
 
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 Acked-by: Josh Poimboeuf <jpoimboe@redhat.com>
 ---
- tools/objtool/elf.c |   13 ++++++++-----
- tools/objtool/elf.h |    2 ++
- 2 files changed, 10 insertions(+), 5 deletions(-)
+ tools/objtool/elf.c |   10 +++++++++-
+ tools/objtool/elf.h |    3 +++
+ 2 files changed, 12 insertions(+), 1 deletion(-)
 
 --- a/tools/objtool/elf.c
 +++ b/tools/objtool/elf.c
-@@ -38,7 +38,7 @@ static struct section *find_section_by_i
+@@ -22,11 +22,16 @@
+ 
+ #define MAX_NAME_LEN 128
+ 
++static inline u32 str_hash(const char *str)
++{
++	return jhash(str, strlen(str), 0);
++}
++
+ struct section *find_section_by_name(struct elf *elf, const char *name)
  {
  	struct section *sec;
  
 -	list_for_each_entry(sec, &elf->sections, list)
-+	hash_for_each_possible(elf->section_hash, sec, hash, idx)
- 		if (sec->idx == idx)
++	hash_for_each_possible(elf->section_name_hash, sec, name_hash, str_hash(name))
+ 		if (!strcmp(sec->name, name))
  			return sec;
  
-@@ -166,8 +166,6 @@ static int read_sections(struct elf *elf
- 		INIT_LIST_HEAD(&sec->rela_list);
- 		hash_init(sec->rela_hash);
+@@ -202,6 +207,7 @@ static int read_sections(struct elf *elf
  
--		list_add_tail(&sec->list, &elf->sections);
--
- 		s = elf_getscn(elf->elf, i);
- 		if (!s) {
- 			WARN_ELF("elf_getscn");
-@@ -201,6 +199,9 @@ static int read_sections(struct elf *elf
- 			}
- 		}
- 		sec->len = sec->sh.sh_size;
-+
-+		list_add_tail(&sec->list, &elf->sections);
-+		hash_add(elf->section_hash, &sec->hash, sec->idx);
+ 		list_add_tail(&sec->list, &elf->sections);
+ 		hash_add(elf->section_hash, &sec->hash, sec->idx);
++		hash_add(elf->section_name_hash, &sec->name_hash, str_hash(sec->name));
  	}
  
  	if (stats)
-@@ -439,6 +440,7 @@ struct elf *elf_read(const char *name, i
- 	memset(elf, 0, sizeof(*elf));
+@@ -441,6 +447,7 @@ struct elf *elf_read(const char *name, i
  
  	hash_init(elf->symbol_hash);
-+	hash_init(elf->section_hash);
+ 	hash_init(elf->section_hash);
++	hash_init(elf->section_name_hash);
  	INIT_LIST_HEAD(&elf->sections);
  
  	elf->fd = open(name, flags);
-@@ -501,8 +503,6 @@ struct section *elf_create_section(struc
- 	INIT_LIST_HEAD(&sec->rela_list);
- 	hash_init(sec->rela_hash);
+@@ -581,6 +588,7 @@ struct section *elf_create_section(struc
  
--	list_add_tail(&sec->list, &elf->sections);
--
- 	s = elf_newscn(elf->elf);
- 	if (!s) {
- 		WARN_ELF("elf_newscn");
-@@ -579,6 +579,9 @@ struct section *elf_create_section(struc
- 	shstrtab->len += strlen(name) + 1;
- 	shstrtab->changed = true;
+ 	list_add_tail(&sec->list, &elf->sections);
+ 	hash_add(elf->section_hash, &sec->hash, sec->idx);
++	hash_add(elf->section_name_hash, &sec->name_hash, str_hash(sec->name));
  
-+	list_add_tail(&sec->list, &elf->sections);
-+	hash_add(elf->section_hash, &sec->hash, sec->idx);
-+
  	return sec;
  }
- 
 --- a/tools/objtool/elf.h
 +++ b/tools/objtool/elf.h
-@@ -25,6 +25,7 @@
+@@ -10,6 +10,7 @@
+ #include <gelf.h>
+ #include <linux/list.h>
+ #include <linux/hashtable.h>
++#include <linux/jhash.h>
  
+ #ifdef LIBELF_USE_DEPRECATED
+ # define elf_getshdrnum    elf_getshnum
+@@ -26,6 +27,7 @@
  struct section {
  	struct list_head list;
-+	struct hlist_node hash;
+ 	struct hlist_node hash;
++	struct hlist_node name_hash;
  	GElf_Shdr sh;
  	struct list_head symbol_list;
  	struct list_head rela_list;
-@@ -71,6 +72,7 @@ struct elf {
- 	char *name;
+@@ -73,6 +75,7 @@ struct elf {
  	struct list_head sections;
  	DECLARE_HASHTABLE(symbol_hash, 20);
-+	DECLARE_HASHTABLE(section_hash, 16);
+ 	DECLARE_HASHTABLE(section_hash, 16);
++	DECLARE_HASHTABLE(section_name_hash, 16);
  };
  
  
