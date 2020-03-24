@@ -2,49 +2,48 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A0CD9190BCF
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 12:02:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1D3F5190BB8
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 12:01:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727556AbgCXLBq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 07:01:46 -0400
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:47140 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727304AbgCXLBI (ORCPT
+        id S1727368AbgCXLBN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 07:01:13 -0400
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:50356 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727130AbgCXLBL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 07:01:08 -0400
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 02OB17ZJ096508;
-        Tue, 24 Mar 2020 06:01:07 -0500
+        Tue, 24 Mar 2020 07:01:11 -0400
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 02OB1ArJ081790;
+        Tue, 24 Mar 2020 06:01:10 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1585047667;
-        bh=vhrB3829DrdgTQY3EkaCRcbbRHL0MAwarCSWCJkRDVw=;
+        s=ti-com-17Q1; t=1585047670;
+        bh=j+M6du1H6eXDpMQBOZ/7So7/YdtQoEvvD6YC8yWUirQ=;
         h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=aMDwjYBq030LSGxoNYdZxmBbY+lk05tbK093QKRcY+U0ylKVzrLXTMkXYWg929pOL
-         f5krdCQFqLtOr7outsNl2DCw81CpTHXNZcv5TB99v+95uaWNqcMO8vwyFJJ/C60j2X
-         GS/RfTha0hXSjb4g+GPSF7d42FAUeO5Hj6enzPhA=
-Received: from DFLE110.ent.ti.com (dfle110.ent.ti.com [10.64.6.31])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 02OB17hF112239
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 24 Mar 2020 06:01:07 -0500
-Received: from DFLE113.ent.ti.com (10.64.6.34) by DFLE110.ent.ti.com
- (10.64.6.31) with Microsoft SMTP Server (version=TLS1_2,
+        b=fYhEYL1NZfyoiZChJkBTfel+mTrD/wUtPPWy30kxCHymqyObvgQQo2k4QXqU399dw
+         AUkK2tkd6we19vKs6bX71xkco5iEF5Em7FyztXp4/RE4EXHesr3c07usQNv1h6Tobi
+         V1jKHirjrTFqekzV2x0ET2zlkcfyL5DvycwCWCzk=
+Received: from DLEE100.ent.ti.com (dlee100.ent.ti.com [157.170.170.30])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id 02OB1AWG109342;
+        Tue, 24 Mar 2020 06:01:10 -0500
+Received: from DLEE102.ent.ti.com (157.170.170.32) by DLEE100.ent.ti.com
+ (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Tue, 24
- Mar 2020 06:01:06 -0500
-Received: from fllv0039.itg.ti.com (10.64.41.19) by DFLE113.ent.ti.com
- (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
+ Mar 2020 06:01:08 -0500
+Received: from fllv0039.itg.ti.com (10.64.41.19) by DLEE102.ent.ti.com
+ (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Tue, 24 Mar 2020 06:01:06 -0500
+ Frontend Transport; Tue, 24 Mar 2020 06:01:08 -0500
 Received: from sokoban.bb.dnainternet.fi (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id 02OB0rAp008648;
-        Tue, 24 Mar 2020 06:01:04 -0500
+        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id 02OB0rAq008648;
+        Tue, 24 Mar 2020 06:01:07 -0500
 From:   Tero Kristo <t-kristo@ti.com>
 To:     <bjorn.andersson@linaro.org>, <ohad@wizery.com>,
         <linux-remoteproc@vger.kernel.org>
 CC:     <linux-kernel@vger.kernel.org>, <mathieu.poirier@linaro.org>,
         <s-anna@ti.com>, <afd@ti.com>, Tero Kristo <t-kristo@ti.com>
-Subject: [PATCHv9 05/15] remoteproc/omap: Add the rproc ops .da_to_va() implementation
-Date:   Tue, 24 Mar 2020 13:00:25 +0200
-Message-ID: <20200324110035.29907-6-t-kristo@ti.com>
+Subject: [PATCHv9 06/15] remoteproc/omap: Initialize and assign reserved memory node
+Date:   Tue, 24 Mar 2020 13:00:26 +0200
+Message-ID: <20200324110035.29907-7-t-kristo@ti.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200324110035.29907-1-t-kristo@ti.com>
 References: <20200324110035.29907-1-t-kristo@ti.com>
@@ -58,83 +57,77 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Suman Anna <s-anna@ti.com>
 
-An implementation for the rproc ops .da_to_va() has been added
-that provides the address translation between device addresses
-to kernel virtual addresses for internal RAMs present on that
-particular remote processor device. The implementation provides
-the translations based on the addresses parsed and stored during
-the probe.
+The reserved memory nodes are not assigned to platform devices by
+default in the driver core to avoid the lookup for every platform
+device and incur a penalty as the real users are expected to be
+only a few devices.
 
-This ops gets invoked by the exported rproc_da_to_va() function
-and allows the remoteproc core's ELF loader to be able to load
-program data directly into the internal memories.
+OMAP remoteproc devices fall into the above category and the OMAP
+remoteproc driver _requires_ specific CMA pools to be assigned
+for each device at the moment to align on the location of the
+vrings and vring buffers in the RTOS-side firmware images. So,
+use the of_reserved_mem_device_init/release() API appropriately
+to assign the corresponding reserved memory region to the OMAP
+remoteproc device. Note that only one region per device is
+allowed by the framework.
 
 Signed-off-by: Suman Anna <s-anna@ti.com>
 Signed-off-by: Tero Kristo <t-kristo@ti.com>
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 Reviewed-by: Andrew F. Davis <afd@ti.com>
 Acked-by: Mathieu Poirier <mathieu.poirier@linaro.org>
 ---
 v9:
-  * compile fix against rproc-next (fixed len parameter type for omap_rproc_da_to_va)
+  * no changes
 
- drivers/remoteproc/omap_remoteproc.c | 40 ++++++++++++++++++++++++++++
- 1 file changed, 40 insertions(+)
+ drivers/remoteproc/omap_remoteproc.c | 13 ++++++++++++-
+ 1 file changed, 12 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/remoteproc/omap_remoteproc.c b/drivers/remoteproc/omap_remoteproc.c
-index cdcc9c227b96..fecc68e6d3a8 100644
+index fecc68e6d3a8..473d7e3cdef8 100644
 --- a/drivers/remoteproc/omap_remoteproc.c
 +++ b/drivers/remoteproc/omap_remoteproc.c
-@@ -245,10 +245,50 @@ static int omap_rproc_stop(struct rproc *rproc)
- 	return 0;
- }
+@@ -17,6 +17,7 @@
+ #include <linux/module.h>
+ #include <linux/err.h>
+ #include <linux/of_device.h>
++#include <linux/of_reserved_mem.h>
+ #include <linux/platform_device.h>
+ #include <linux/dma-mapping.h>
+ #include <linux/remoteproc.h>
+@@ -486,14 +487,23 @@ static int omap_rproc_probe(struct platform_device *pdev)
+ 	if (ret)
+ 		goto free_rproc;
  
-+/**
-+ * omap_rproc_da_to_va() - internal memory translation helper
-+ * @rproc: remote processor to apply the address translation for
-+ * @da: device address to translate
-+ * @len: length of the memory buffer
-+ *
-+ * Custom function implementing the rproc .da_to_va ops to provide address
-+ * translation (device address to kernel virtual address) for internal RAMs
-+ * present in a DSP or IPU device). The translated addresses can be used
-+ * either by the remoteproc core for loading, or by any rpmsg bus drivers.
-+ *
-+ * Return: translated virtual address in kernel memory space on success,
-+ *         or NULL on failure.
-+ */
-+static void *omap_rproc_da_to_va(struct rproc *rproc, u64 da, size_t len)
-+{
-+	struct omap_rproc *oproc = rproc->priv;
-+	int i;
-+	u32 offset;
-+
-+	if (len <= 0)
-+		return NULL;
-+
-+	if (!oproc->num_mems)
-+		return NULL;
-+
-+	for (i = 0; i < oproc->num_mems; i++) {
-+		if (da >= oproc->mem[i].dev_addr && da + len <=
-+		    oproc->mem[i].dev_addr + oproc->mem[i].size) {
-+			offset = da - oproc->mem[i].dev_addr;
-+			/* __force to make sparse happy with type conversion */
-+			return (__force void *)(oproc->mem[i].cpu_addr +
-+						offset);
-+		}
++	ret = of_reserved_mem_device_init(&pdev->dev);
++	if (ret) {
++		dev_warn(&pdev->dev, "device does not have specific CMA pool.\n");
++		dev_warn(&pdev->dev, "Typically this should be provided,\n");
++		dev_warn(&pdev->dev, "only omit if you know what you are doing.\n");
 +	}
 +
-+	return NULL;
-+}
-+
- static const struct rproc_ops omap_rproc_ops = {
- 	.start		= omap_rproc_start,
- 	.stop		= omap_rproc_stop,
- 	.kick		= omap_rproc_kick,
-+	.da_to_va	= omap_rproc_da_to_va,
- };
+ 	platform_set_drvdata(pdev, rproc);
  
- static const struct omap_rproc_mem_data ipu_mems[] = {
+ 	ret = rproc_add(rproc);
+ 	if (ret)
+-		goto free_rproc;
++		goto release_mem;
+ 
+ 	return 0;
+ 
++release_mem:
++	of_reserved_mem_device_release(&pdev->dev);
+ free_rproc:
+ 	rproc_free(rproc);
+ 	return ret;
+@@ -505,6 +515,7 @@ static int omap_rproc_remove(struct platform_device *pdev)
+ 
+ 	rproc_del(rproc);
+ 	rproc_free(rproc);
++	of_reserved_mem_device_release(&pdev->dev);
+ 
+ 	return 0;
+ }
 -- 
 2.17.1
 
