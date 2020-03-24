@@ -2,87 +2,208 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B5129190E33
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 13:55:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E6224190E39
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 13:56:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727542AbgCXMzM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 08:55:12 -0400
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:44021 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727171AbgCXMzM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 08:55:12 -0400
-Received: by mail-oi1-f193.google.com with SMTP id p125so18305877oif.10;
-        Tue, 24 Mar 2020 05:55:11 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=qLKgIYJQEqHTqd+u1W76X3WMfphIXILu6cZ8FvSyZwA=;
-        b=cqdJ4fradQTITllQb5Kcz2AD5XM5gjkRFksVV7Vp/ZX/CkekUWBawHEDIurVnuh7m2
-         Vk7PWLVIIo4frFIym8naLVMOH6yoxcDwafmioLaESy4hkbgKU2GYr/luO/ZOuZ/vyJnK
-         nT0t/dKpZ+bTh5hmsFSSDfeWTRnGuvZPX1uIW+pNoVqFYNp2ZCNevnTjGC3kBeEL15YM
-         cs3rmpY2FYkT66i9xrbYeMQX3UwBCyfLgvXidmcWv/u+GM2NSzVVsY3hj3nqb3uw4OM3
-         JVnhrz+k77ZqJaSfOIUxOpJi6qCVlRAQIOEWQfCTz82NM+05sXXnZYFb3/stRwcK6RXW
-         PfCA==
-X-Gm-Message-State: ANhLgQ3tg8nfljGSXp4iVTmbFrnlsTL5WUHlHgf/LRI57wXOl8jKanmi
-        r+Y4uWuzmmg8AwVmyHsv9pxXz6vSYcRI2xtkywdo9w==
-X-Google-Smtp-Source: ADFU+vveVI0u0rTnuGesTqV06iz9TMXQNxEAnNwAOUYhvLCWQhsyd1sdoK7k3745+LO4xGe9z3GI62OkaoNJC5rmQ14=
-X-Received: by 2002:a05:6808:8f:: with SMTP id s15mr3366415oic.110.1585054511257;
- Tue, 24 Mar 2020 05:55:11 -0700 (PDT)
+        id S1727496AbgCXM4q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 08:56:46 -0400
+Received: from foss.arm.com ([217.140.110.172]:33900 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727083AbgCXM4q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Mar 2020 08:56:46 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D39E21FB;
+        Tue, 24 Mar 2020 05:56:45 -0700 (PDT)
+Received: from e113632-lin.cambridge.arm.com (e113632-lin.cambridge.arm.com [10.1.194.46])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id B88DF3F52E;
+        Tue, 24 Mar 2020 05:56:44 -0700 (PDT)
+From:   Valentin Schneider <valentin.schneider@arm.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     peterz@infradead.org, mingo@kernel.org, vincent.guittot@linaro.org,
+        dietmar.eggemann@arm.com, morten.rasmussen@arm.com,
+        mgorman@techsingularity.net
+Subject: [PATCH] sched/topology: Fix overlapping sched_group build
+Date:   Tue, 24 Mar 2020 12:55:33 +0000
+Message-Id: <20200324125533.17447-1-valentin.schneider@arm.com>
+X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
-References: <20200324122023.9649-1-andriy.shevchenko@linux.intel.com> <20200324122023.9649-2-andriy.shevchenko@linux.intel.com>
-In-Reply-To: <20200324122023.9649-2-andriy.shevchenko@linux.intel.com>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Tue, 24 Mar 2020 13:55:00 +0100
-Message-ID: <CAJZ5v0jounauixe8jt1_z9zKmT5BdqhG6hvWREDDrP-VAUUNKQ@mail.gmail.com>
-Subject: Re: [PATCH v2 2/3] driver core: Read atomic counter once in driver_probe_done()
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Ferry Toth <fntoth@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 24, 2020 at 1:20 PM Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> wrote:
->
-> Between printing the debug message and actual check atomic counter can be
-> altered. For better debugging experience read atomic counter value only once.
->
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> Tested-by: Ferry Toth <fntoth@gmail.com>
+Platform
+========
 
-Reviewed-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+I've been investigating an assertion failure on a D06 board (Kunpeng 920
+based), which AFAIA is 2 sockets, each with 2 dies, each with 24 CPUs and
+its own memory controller (4 nodes total).
 
-> ---
-> v2: picked up tags
->  drivers/base/dd.c | 7 ++++---
->  1 file changed, 4 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/base/dd.c b/drivers/base/dd.c
-> index 43720beb5300..efd0e4c16ba5 100644
-> --- a/drivers/base/dd.c
-> +++ b/drivers/base/dd.c
-> @@ -669,9 +669,10 @@ static int really_probe_debug(struct device *dev, struct device_driver *drv)
->   */
->  int driver_probe_done(void)
->  {
-> -       pr_debug("%s: probe_count = %d\n", __func__,
-> -                atomic_read(&probe_count));
-> -       if (atomic_read(&probe_count))
-> +       int local_probe_count = atomic_read(&probe_count);
-> +
-> +       pr_debug("%s: probe_count = %d\n", __func__, local_probe_count);
-> +       if (local_probe_count)
->                 return -EBUSY;
->         return 0;
->  }
-> --
-> 2.25.1
->
+The default distance table I get is:
+
+  node   0   1   2   3
+    0:  10  12  20  22
+    1:  12  10  22  24
+    2:  20  22  10  12
+    3:  22  24  12  10
+
+Which can be summarised as:
+
+      2       10      2
+  0 <---> 1 <---> 2 <---> 3
+
+Error
+=====
+
+Using sched_debug=1, I get an assertion error for every single CPU. This is
+for CPU0:
+
+  [344276.794534] CPU0 attaching sched-domain(s):
+  [344276.794536]  domain-0: span=0-23 level=MC
+  [344276.794539]   groups: 0:{ span=0 }, 1:{ span=1 }, 2:{ span=2 }, 3:{ span=3 }, 4:{ span=4 }, 5:{ span=5 }, 6:{ span=6 }, 7:{ span=7 }, 8:{ span=8 }, 9:{ span=9 }, 10:{ span=10 }, 11:{ span=11 }, 12:{ span=12 }, 13:{ span=13 }, 14:{ span=14 }, 15:{ span=15 }, 16:{ span=16 }, 17:{ span=17 }, 18:{ span=18 }, 19:{ span=19 }, 20:{ span=20 }, 21:{ span=21 }, 22:{ span=22 }, 23:{ span=23 }
+  [344276.794554]   domain-1: span=0-47 level=NUMA
+  [344276.794555]    groups: 0:{ span=0-23 cap=24576 }, 24:{ span=24-47 cap=24576 }
+  [344276.794558]    domain-2: span=0-71 level=NUMA
+  [344276.794560]     groups: 0:{ span=0-47 cap=49152 }, 48:{ span=48-95 cap=49152 }
+  [344276.794563] ERROR: groups don't span domain->span
+  [344276.799346]     domain-3: span=0-95 level=NUMA
+  [344276.799353]      groups: 0:{ span=0-71 mask=0-23 cap=73728 }, 72:{ span=48-95 mask=72-95 cap=49152 }
+
+Root cause
+==========
+
+The NUMA distance setup is correct for node 0 (despite the deduplicating
+sort not liking this distance table - that's for another day), and so are
+the sched_domain spans (CPU0 PoV):
+
+	     node0    node1     node2     node3
+	   /^^^^^^\ /^^^^^^^\ /^^^^^^^\ /^^^^^^^\
+	   0 ... 23 24 ... 47 48 ... 71 72 ... 95
+MC         [      ]
+NUMA(<=12) [                ]
+NUMA(<=20) [                          ]
+NUMA(<=22) [                                     ]
+
+The problem lies in the *groups* of that middle NUMA domain: they are
+{[0-47], [48-95]}, IOW it includes node3 when it really shouldn't. Let me
+try to explain why:
+
+[]: domain span
+(): group span
+CPU0 perspective:
+,----
+|              node0        node1     node2     node3
+|            /^^^^^^^^^^\ /^^^^^^^\ /^^^^^^^\ /^^^^^^^\
+|	     0 ....... 23 24 ... 47 48 ... 71 72 ... 95
+| MC         [(0)...(23)]
+| NUMA(<=12) [ (0 - 23)  (24 - 47)]
+`----
+
+CPU48 perspective:
+,----
+|              node0    node1     node2         node3
+|            /^^^^^^\ /^^^^^^^\ /^^^^^^^^^^^\ /^^^^^^^\
+|	     0 ... 23 24 ... 47 48 ....... 71 72 ... 95
+| MC                            [(48)...(71)]
+| NUMA(<=12)                    [ (48 - 23)  (72 - 95)]
+`----
+
+When we go through build_overlap_sched_groups() for CPU0's NUMA(<=20)
+domain, we'll first use CPU0's NUMA(<=20) child (i.e. NUMA(<=12)) as span
+for the first group, which will be (0-47). The next CPU we'll iterate over
+will be CPU48; we'll do the same thing and use its NUMA(<=20) child span as
+group span, which here will be (48-95) - despite CPUs (72-95) *not* being
+<= 20 hops away from CPU0 (but 22)!
+
+AFAICT this isn't too complicated to reproduce. For instance, a ring of 6
+CPUs with no interlink in the middle (indegree(v) == 2 for all v) would
+trigger the same issue.
+
+Fix
+===
+
+Sanitize the groups we get out of build_group_from_child_sched_domain()
+with the span of the domain we're currently building - this ensures the
+groups we build only contain CPUs that are the right distance away from the
+base CPU. This also requires modifying build_balance_mask().
+
+With the patch applied:
+
+  [   83.177623]  domain-0: span=0-23 level=MC
+  [   83.177626]   groups: 0:{ span=0 }, 1:{ span=1 }, 2:{ span=2 }, 3:{ span=3 }, 4:{ span=4 }, 5:{ span=5 }, 6:{ span=6 }, 7:{ span=7 }, 8:{ span=8 }, 9:{ span=9 }, 10:{ span=10 }, 11:{ span=11 }, 12:{ span=12 }, 13:{ span=13 }, 14:{ span=14 }, 15:{ span=15 }, 16:{ span=16 }, 17:{ span=17 }, 18:{ span=18 }, 19:{ span=19 }, 20:{ span=20 }, 21:{ span=21 }, 22:{ span=22 }, 23:{ span=23 }
+  [   83.177641]   domain-1: span=0-47 level=NUMA
+  [   83.177642]    groups: 0:{ span=0-23 cap=24576 }, 24:{ span=24-47 cap=24576 }
+  [   83.177645]    domain-2: span=0-71 level=NUMA
+  [   83.177646]     groups: 0:{ span=0-47 cap=49152 }, 48:{ span=48-71 cap=49152 }
+  [   83.177649]     domain-3: span=0-95 level=NUMA
+  [   83.177651]      groups: 0:{ span=0-71 mask=0-23 cap=73728 }, 48:{ span=48-95 cap=73728 }
+
+Note that the modification of build_balance_mask() feels icky, but I
+couldn't think of topologies it would break. AFAICT the masks for the
+topology pointed out in commit 73bb059f9b8a ("sched/topology: Fix
+overlapping sched_group_mask") would remain unchanged.
+
+Signed-off-by: Valentin Schneider <valentin.schneider@arm.com>
+---
+ kernel/sched/topology.c | 23 ++++++++++++++++++++---
+ 1 file changed, 20 insertions(+), 3 deletions(-)
+
+diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
+index 8344757bba6e..7033b27e5162 100644
+--- a/kernel/sched/topology.c
++++ b/kernel/sched/topology.c
+@@ -866,7 +866,7 @@ build_balance_mask(struct sched_domain *sd, struct sched_group *sg, struct cpuma
+ 			continue;
+ 
+ 		/* If we would not end up here, we can't continue from here */
+-		if (!cpumask_equal(sg_span, sched_domain_span(sibling->child)))
++		if (!cpumask_subset(sg_span, sched_domain_span(sibling->child)))
+ 			continue;
+ 
+ 		cpumask_set_cpu(i, mask);
+@@ -882,7 +882,9 @@ build_balance_mask(struct sched_domain *sd, struct sched_group *sg, struct cpuma
+  * statistics having the groups node local is of dubious benefit.
+  */
+ static struct sched_group *
+-build_group_from_child_sched_domain(struct sched_domain *sd, int cpu)
++build_group_from_child_sched_domain(struct sched_domain *sd,
++				    int cpu,
++				    const struct cpumask *level_span)
+ {
+ 	struct sched_group *sg;
+ 	struct cpumask *sg_span;
+@@ -899,6 +901,21 @@ build_group_from_child_sched_domain(struct sched_domain *sd, int cpu)
+ 	else
+ 		cpumask_copy(sg_span, sched_domain_span(sd));
+ 
++	/*
++	 * We're using sibling sched_domains to build up the groups of our NUMA
++	 * domains, and those are built up from the point of view of their
++	 * respective base CPU. This means that when we copy the span of said
++	 * sibling->child domain, we are including CPUs that are
++	 * sched_domains_numa_distance[level-1] hops away from the *sibling*
++	 * base CPU, not the base CPU of the domain we are currently building
++	 * for.
++	 *
++	 * Correct this by trimming the newly built sched_group with the current
++	 * domain span which is known to only include CPUs that are the correct
++	 * distance away from the current base CPU.
++	 */
++	cpumask_and(sg_span, sg_span, level_span);
++
+ 	atomic_inc(&sg->ref);
+ 	return sg;
+ }
+@@ -964,7 +981,7 @@ build_overlap_sched_groups(struct sched_domain *sd, int cpu)
+ 		if (!cpumask_test_cpu(i, sched_domain_span(sibling)))
+ 			continue;
+ 
+-		sg = build_group_from_child_sched_domain(sibling, cpu);
++		sg = build_group_from_child_sched_domain(sibling, cpu, span);
+ 		if (!sg)
+ 			goto fail;
+ 
+-- 
+2.24.0
+
