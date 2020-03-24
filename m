@@ -2,188 +2,171 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 410AA1912F6
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 15:25:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8F9CA1912FB
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 15:25:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728331AbgCXOYK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 10:24:10 -0400
-Received: from relay9-d.mail.gandi.net ([217.70.183.199]:60135 "EHLO
-        relay9-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727681AbgCXOYJ (ORCPT
+        id S1728261AbgCXOYV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 10:24:21 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:41241 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727496AbgCXOYU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 10:24:09 -0400
-X-Originating-IP: 83.155.44.161
-Received: from classic (mon69-7-83-155-44-161.fbx.proxad.net [83.155.44.161])
-        (Authenticated sender: hadess@hadess.net)
-        by relay9-d.mail.gandi.net (Postfix) with ESMTPSA id EBFE9FF814;
-        Tue, 24 Mar 2020 14:24:03 +0000 (UTC)
-Message-ID: <8d28db34b3075c524c7e5fec49c3f2e252d24552.camel@hadess.net>
-Subject: Re: [PATCH v2] HID: logitech-dj: issue udev change event on device
- connection
-From:   Bastien Nocera <hadess@hadess.net>
-To:     Filipe =?ISO-8859-1?Q?La=EDns?= <lains@archlinux.org>,
-        Jiri Kosina <jikos@kernel.org>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Peter Hutterer <peter.hutterer@redhat.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Mario Limonciello <superm1@gmail.com>,
-        Richard Hughes <hughsient@gmail.com>
-Date:   Tue, 24 Mar 2020 15:24:02 +0100
-In-Reply-To: <3c20624ea9d88f13d6f1a768735f08a4a8a59ea6.camel@archlinux.org>
-References: <20200318161906.3340959-1-lains@archlinux.org>
-         <20200318192721.390630-1-lains@archlinux.org>
-         <92f48f409e913299c12322d195c88792bb4e5c9c.camel@hadess.net>
-         <b9a26e3bb00212afd960f98dba8f7bb58cdd49e5.camel@archlinux.org>
-         <220e8421f8ee0cf80375bfc4635e3eaa2bb8daf1.camel@hadess.net>
-         <3c20624ea9d88f13d6f1a768735f08a4a8a59ea6.camel@archlinux.org>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.36.0 (3.36.0-1.fc32) 
+        Tue, 24 Mar 2020 10:24:20 -0400
+Received: by mail-wr1-f66.google.com with SMTP id h9so21673842wrc.8
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Mar 2020 07:24:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:autocrypt:organization:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=W59hMPJ3MBOlOz+nstlg61GCr1II2YZNKGokA96Ka3Y=;
+        b=bF95E75ZbHF4bltt0flEXWimvDmZwYIVOAHOON+rk4yv3rlnqoFZd1mAem6cpnEP2k
+         2C2/+YRPbwzX2em+Ea9ykPo2B5zhRDMmpxS3EWKODWsJQCB42i+x8e2wB1KkrA7WFRz0
+         WJylrNwpLdpU9p/+Quw+KhURey8h/mLKqi0GmTxZ1dQrvALHqagSlkyJyMDAWwjzzd6x
+         z92sIxf/wtiV2iZ5INfAcgQcHRiuwd3TA0H7DLNBmumJ2ao5PkiLHjTbw1MuhAzvSGx0
+         AgEiLSPgrtUJIQE8MzbZ+EiAhmtXr8Ltkf0Fopj61Xoj6ML2q3dlsZPY9jd+AxreJprg
+         1vlA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:autocrypt
+         :organization:message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=W59hMPJ3MBOlOz+nstlg61GCr1II2YZNKGokA96Ka3Y=;
+        b=sxJcDqV8ljxlKOK48MDFKF+bdJarahFajINm7Esc0Mb7P3iRmIhitj1jyoftCBtqoj
+         kKVB8fT3bfUoriQZGF5K6997o5PMdXU47KlkXEXPi1WXayNSFRUCPmF8gG6yYedmhmJw
+         aWbOagZ/jifYUOTZoSOF5dCZ8pkEHl6Y65F6TV0mkolNg11mej8z3trXCMA8mFDSid2M
+         FFmGlUGMe9ljjYAjQIWQ/vzMZ3DbcN5En4SAjiJWonoHrMjafbGH1AhDMlemHQPnRY8T
+         ppI+3Jhxib2Fc9hf8OArbYBHrT2uBsh96V7SogCd9zDPR/t9H6pNLQ4ciSvdvM8EJCzJ
+         B/7A==
+X-Gm-Message-State: ANhLgQ2qY96k3LdG1VUdD0Jx0tDo3x8Ntccuto8nlOm2WE3H0oinvbZ3
+        hGoK36EsK7VmS+t/nt4Y/0+fAq/sGTLSCA==
+X-Google-Smtp-Source: ADFU+vvyxr95jCX/2rV/XOcDppnOWCfL+Fvg56S/LxiVdgHdFzGDxvgseHm3o7OhEcX3qFUTmsbrpg==
+X-Received: by 2002:a5d:45c7:: with SMTP id b7mr8857427wrs.44.1585059858483;
+        Tue, 24 Mar 2020 07:24:18 -0700 (PDT)
+Received: from ?IPv6:2a01:e35:2ec0:82b0:5c5f:613e:f775:b6a2? ([2a01:e35:2ec0:82b0:5c5f:613e:f775:b6a2])
+        by smtp.gmail.com with ESMTPSA id u16sm29323057wro.23.2020.03.24.07.24.17
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 24 Mar 2020 07:24:18 -0700 (PDT)
+Subject: Re: [PATCH v3 6/7] drm/meson: overlay: setup overlay for Amlogic FBC
+ Memory Saving mode
+To:     daniel@ffwll.ch, dri-devel@lists.freedesktop.org
+Cc:     ppaalanen@gmail.com, mjourdan@baylibre.com, brian.starkey@arm.com,
+        linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20200324142016.31824-1-narmstrong@baylibre.com>
+ <20200324142016.31824-7-narmstrong@baylibre.com>
+From:   Neil Armstrong <narmstrong@baylibre.com>
+Autocrypt: addr=narmstrong@baylibre.com; prefer-encrypt=mutual; keydata=
+ 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
+ BSwxi7g3Mu7u5kUByanqHyA=
+Organization: Baylibre
+Message-ID: <1bb8c27c-7dcf-8833-ee13-f7227336179b@baylibre.com>
+Date:   Tue, 24 Mar 2020 15:24:17 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200324142016.31824-7-narmstrong@baylibre.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2020-03-24 at 14:10 +0000, Filipe Laíns wrote:
-> On Tue, 2020-03-24 at 15:03 +0100, Bastien Nocera wrote:
-> > On Tue, 2020-03-24 at 13:46 +0000, Filipe Laíns wrote:
-> > > On Tue, 2020-03-24 at 11:20 +0100, Bastien Nocera wrote:
-> > > > On Wed, 2020-03-18 at 19:27 +0000, Filipe Laíns wrote:
-> > > > > As discussed in the mailing list:
-> > > > > 
-> > > > > > Right now the hid-logitech-dj driver will export one node
-> > > > > > for
-> > > > > > each
-> > > > > > connected device, even when the device is not connected.
-> > > > > > That
-> > > > > > causes
-> > > > > > some trouble because in userspace we don't have have any
-> > > > > > way to
-> > > > > > know if
-> > > > > > the device is connected or not, so when we try to
-> > > > > > communicate,
-> > > > > > if
-> > > > > > the
-> > > > > > device is disconnected it will fail.
-> > > > 
-> > > > Why is it a problem that user-space communication fails? Note
-> > > > that
-> > > > sending a signal without any way to fetch the state means that
-> > > > it's
-> > > > always going to be racy.
-> > > 
-> > > It failing is not the problem. The problem is knowing when the
-> > > device
-> > > is available again. Right now the only way to do that is to
-> > > listen
-> > > for
-> > > events or periodically ping it.
-> > > 
-> > > We want to only export the HID++ hidraw node when the device is
-> > > available but that will take a while. We will have to test and
-> > > sync
-> > > up
-> > > userspace. I also want to write tests for the driver before, to
-> > > make
-> > > sure there are no regressions. We had a thread discussing this,
-> > > IIRC
-> > > you were in CC.
-> > 
-> > If I need to remember some old thread to know what we're talking
-> > about,
-> > then that means that the commit message is probably not good
-> > enough...
+On 24/03/2020 15:20, Neil Armstrong wrote:
+> Setup the Amlogic FBC decoder for the VD1 video overlay plane to use
+> a different superblock size for the Memory Saving mode.
 > 
-> Should I put in the commit message what is planned next?
-
-You should put in everything that explains why this change is needed,
-and how user-space is supposed to use that information. Nobody should
-have to refer back to the mailing-list thread to find this out.
-
-> > Please add some links to the relevant discussion on bug forums if
-> > there's interesting data there too.
+> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+> ---
+>  drivers/gpu/drm/meson/meson_overlay.c | 14 ++++++++++++--
+>  include/uapi/drm/drm_fourcc.h         | 16 +++++++++++++++-
+>  2 files changed, 27 insertions(+), 3 deletions(-)
 > 
-> You can find the discussion in [1][2].
+
+[...]
+
+> --- a/include/uapi/drm/drm_fourcc.h
+> +++ b/include/uapi/drm/drm_fourcc.h
+> @@ -840,6 +840,19 @@ extern "C" {
+>   */
+>  #define DRM_FORMAT_MOD_AMLOGIC_FBC_LAYOUT_BASIC		(1ULL << 0)
+>  
+> +/*
+> + * Amlogic FBC Scatter Memory layout
+> + *
+> + * Indicates the header contains IOMMU references to the compressed
+> + * frames content to optimize memory access and layout.
+> + *
+> + * In this mode, only the header memory address is needed, thus the
+> + * content memory organization is tied to the current producer
+> + * execution and cannot be saved/dumped neither transferrable between
+> + * Amlogic SoCs supporting this modifier.
+> + */
+> +#define DRM_FORMAT_MOD_AMLOGIC_FBC_LAYOUT_SCATTER	(2ULL << 0)
+> +
+>  /*
+>   * Amlogic FBC Layout Options
+>   */
+> @@ -852,7 +865,8 @@ extern "C" {
+>   * memory.
+>   *
+>   * This mode reduces body layout to 3072 bytes per 64x32 superblock with
+> - * the basic layout.
+> + * the basic layout and 3200 bytes per 64x32 superblock combined with
+> + * the scatter layout.
+>   */
+>  #define DRM_FORMAT_MOD_AMLOGIC_FBC_MEM_SAVING	(1ULL << 8)
+>  
 > 
-> [1] https://www.spinics.net/lists/linux-input/thrd2.html#65615
-> [2] https://www.spinics.net/lists/linux-input/msg65615.html
 
-I was in CC: because "might be maintaining one of the affected
-userspace stacks", but I don't know what that stack might be for me. Is
-it for upower (which I only work on seldom and definitely don't
-maintain), or something else?
+Oops a commit got lost in the process... this change should be independent.
 
-> > > > > The solution reached to solve this issue is to trigger an
-> > > > > udev
-> > > > > change
-> > > > > event when the device connects, this way userspace can just
-> > > > > wait
-> > > > > on
-> > > > > those connections instead of trying to ping the device.
-> > > > > 
-> > > > > Signed-off-by: Filipe Laíns <lains@archlinux.org>
-> > > > > 
-> > > > > ---
-> > > > > 
-> > > > > v2:
-> > > > >   - Issue udev change event on the connected hid device, not
-> > > > > on
-> > > > > the
-> > > > >   receiver
-> > > > > 
-> > > > > ---
-> > > > >  drivers/hid/hid-logitech-dj.c | 7 ++++++-
-> > > > >  1 file changed, 6 insertions(+), 1 deletion(-)
-> > > > > 
-> > > > > diff --git a/drivers/hid/hid-logitech-dj.c b/drivers/hid/hid-
-> > > > > logitech-dj.c
-> > > > > index 48dff5d6b605..282e57dd467d 100644
-> > > > > --- a/drivers/hid/hid-logitech-dj.c
-> > > > > +++ b/drivers/hid/hid-logitech-dj.c
-> > > > > @@ -1412,6 +1412,7 @@ static int logi_dj_dj_event(struct
-> > > > > hid_device
-> > > > > *hdev,
-> > > > >  {
-> > > > >  	struct dj_receiver_dev *djrcv_dev =
-> > > > > hid_get_drvdata(hdev);
-> > > > >  	struct dj_report *dj_report = (struct dj_report *)
-> > > > > data;
-> > > > > +	struct dj_device *dj_dev;
-> > > > >  	unsigned long flags;
-> > > > >  
-> > > > >  	/*
-> > > > > @@ -1447,7 +1448,9 @@ static int logi_dj_dj_event(struct
-> > > > > hid_device
-> > > > > *hdev,
-> > > > >  
-> > > > >  	spin_lock_irqsave(&djrcv_dev->lock, flags);
-> > > > >  
-> > > > > -	if (!djrcv_dev->paired_dj_devices[dj_report-
-> > > > > >device_index]) {
-> > > > > +	dj_dev = djrcv_dev->paired_dj_devices[dj_report-
-> > > > > >device_index];
-> > > > > +
-> > > > > +	if (!dj_dev) {
-> > > > >  		/* received an event for an unknown device,
-> > > > > bail out */
-> > > > >  		logi_dj_recv_queue_notification(djrcv_dev,
-> > > > > dj_report);
-> > > > >  		goto out;
-> > > > > @@ -1464,6 +1467,8 @@ static int logi_dj_dj_event(struct
-> > > > > hid_device
-> > > > > *hdev,
-> > > > >  		if (dj_report-
-> > > > > > report_params[CONNECTION_STATUS_PARAM_STATUS] ==
-> > > > >  		    STATUS_LINKLOSS) {
-> > > > >  			logi_dj_recv_forward_null_report(djrcv_
-> > > > > dev,
-> > > > > dj_report);
-> > > > > +		} else {
-> > > > > +			kobject_uevent(&dj_dev->hdev->dev.kobj,
-> > > > > KOBJ_CHANGE);
-> > > > >  		}
-> > > > >  		break;
-> > > > >  	default:
-
+Neil
