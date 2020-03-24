@@ -2,33 +2,34 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 121D7190930
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 10:18:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BC55B1908EE
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 10:18:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727946AbgCXJSt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 05:18:49 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:44019 "EHLO
+        id S1727769AbgCXJRH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 05:17:07 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:44025 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727653AbgCXJQ5 (ORCPT
+        with ESMTP id S1727675AbgCXJQ6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 05:16:57 -0400
+        Tue, 24 Mar 2020 05:16:58 -0400
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1jGfg6-00084W-Gl; Tue, 24 Mar 2020 10:16:54 +0100
+        id 1jGfg3-00085F-Iu; Tue, 24 Mar 2020 10:16:51 +0100
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 23B081C0470;
-        Tue, 24 Mar 2020 10:16:42 +0100 (CET)
-Date:   Tue, 24 Mar 2020 09:16:41 -0000
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 0A03D1C04D5;
+        Tue, 24 Mar 2020 10:16:43 +0100 (CET)
+Date:   Tue, 24 Mar 2020 09:16:42 -0000
 From:   "tip-bot2 for Paul E. McKenney" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: core/rcu] rcu: React to callback overload by boosting RCU readers
-Cc:     "Paul E. McKenney" <paulmck@kernel.org>, x86 <x86@kernel.org>,
+Subject: [tip: core/rcu] rcu: Clear ->core_needs_qs at GP end or self-reported QS
+Cc:     kernel test robot <rong.a.chen@intel.com>,
+        "Paul E. McKenney" <paulmck@kernel.org>, x86 <x86@kernel.org>,
         LKML <linux-kernel@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <158504140178.28353.17369551335801939291.tip-bot2@tip-bot2>
+Message-ID: <158504140265.28353.2212857641481536328.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -44,41 +45,88 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the core/rcu branch of tip:
 
-Commit-ID:     8c14263d351b4766a040346ee917b8d81583a460
-Gitweb:        https://git.kernel.org/tip/8c14263d351b4766a040346ee917b8d81583a460
+Commit-ID:     b5ea03709d12e98fa341aecfa6940cc9f49e8817
+Gitweb:        https://git.kernel.org/tip/b5ea03709d12e98fa341aecfa6940cc9f49e8817
 Author:        Paul E. McKenney <paulmck@kernel.org>
-AuthorDate:    Thu, 07 Nov 2019 01:10:55 -08:00
+AuthorDate:    Mon, 09 Dec 2019 15:19:45 -08:00
 Committer:     Paul E. McKenney <paulmck@kernel.org>
 CommitterDate: Thu, 20 Feb 2020 16:00:20 -08:00
 
-rcu: React to callback overload by boosting RCU readers
+rcu: Clear ->core_needs_qs at GP end or self-reported QS
 
-RCU priority boosting currently is not applied until the grace period
-is at least 250 milliseconds old (or the number of milliseconds specified
-by the CONFIG_RCU_BOOST_DELAY Kconfig option).  Although this has worked
-well, it can result in OOM under conditions of RCU callback flooding.
-One can argue that the real-time systems using RCU priority boosting
-should carefully avoid RCU callback flooding, but one can just as well
-argue that an OOM is a rather obnoxious error message.
+The rcu_data structure's ->core_needs_qs field does not necessarily get
+cleared in a timely fashion after the corresponding CPUs' quiescent state
+has been reported.  From a functional viewpoint, no harm done, but this
+can result in excessive invocation of RCU core processing, as witnessed
+by the kernel test robot, which saw greatly increased softirq overhead.
 
-This commit therefore disables the RCU priority boosting delay when
-there are excessive numbers of callbacks queued.
+This commit therefore restores the rcu_report_qs_rdp() function's
+clearing of this field, but only when running on the corresponding CPU.
+Cases where some other CPU reports the quiescent state (for example, on
+behalf of an idle CPU) are handled by setting this field appropriately
+within the __note_gp_changes() function's end-of-grace-period checks.
+This handling is carried out regardless of whether the end of a grace
+period actually happened, thus handling the case where a CPU goes non-idle
+after a quiescent state is reported on its behalf, but before the grace
+period ends.  This fix also avoids cross-CPU updates to ->core_needs_qs,
 
+While in the area, this commit changes the __note_gp_changes() need_gp
+variable's name to need_qs because it is a quiescent state that is needed
+from the CPU in question.
+
+Fixes: ed93dfc6bc00 ("rcu: Confine ->core_needs_qs accesses to the corresponding CPU")
+Reported-by: kernel test robot <rong.a.chen@intel.com>
 Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
 ---
- kernel/rcu/tree_plugin.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ kernel/rcu/tree.c | 13 +++++++++----
+ 1 file changed, 9 insertions(+), 4 deletions(-)
 
-diff --git a/kernel/rcu/tree_plugin.h b/kernel/rcu/tree_plugin.h
-index 0be8fad..4d4637c 100644
---- a/kernel/rcu/tree_plugin.h
-+++ b/kernel/rcu/tree_plugin.h
-@@ -1079,7 +1079,7 @@ static void rcu_initiate_boost(struct rcu_node *rnp, unsigned long flags)
- 	    (rnp->gp_tasks != NULL &&
- 	     rnp->boost_tasks == NULL &&
- 	     rnp->qsmask == 0 &&
--	     ULONG_CMP_GE(jiffies, rnp->boost_time))) {
-+	     (ULONG_CMP_GE(jiffies, rnp->boost_time) || rcu_state.cbovld))) {
- 		if (rnp->exp_tasks == NULL)
- 			rnp->boost_tasks = rnp->gp_tasks;
+diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
+index d91c915..31d01f8 100644
+--- a/kernel/rcu/tree.c
++++ b/kernel/rcu/tree.c
+@@ -1386,7 +1386,7 @@ static void __maybe_unused rcu_advance_cbs_nowake(struct rcu_node *rnp,
+ static bool __note_gp_changes(struct rcu_node *rnp, struct rcu_data *rdp)
+ {
+ 	bool ret = false;
+-	bool need_gp;
++	bool need_qs;
+ 	const bool offloaded = IS_ENABLED(CONFIG_RCU_NOCB_CPU) &&
+ 			       rcu_segcblist_is_offloaded(&rdp->cblist);
+ 
+@@ -1400,10 +1400,13 @@ static bool __note_gp_changes(struct rcu_node *rnp, struct rcu_data *rdp)
+ 	    unlikely(READ_ONCE(rdp->gpwrap))) {
+ 		if (!offloaded)
+ 			ret = rcu_advance_cbs(rnp, rdp); /* Advance CBs. */
++		rdp->core_needs_qs = false;
+ 		trace_rcu_grace_period(rcu_state.name, rdp->gp_seq, TPS("cpuend"));
+ 	} else {
+ 		if (!offloaded)
+ 			ret = rcu_accelerate_cbs(rnp, rdp); /* Recent CBs. */
++		if (rdp->core_needs_qs)
++			rdp->core_needs_qs = !!(rnp->qsmask & rdp->grpmask);
+ 	}
+ 
+ 	/* Now handle the beginnings of any new-to-this-CPU grace periods. */
+@@ -1415,9 +1418,9 @@ static bool __note_gp_changes(struct rcu_node *rnp, struct rcu_data *rdp)
+ 		 * go looking for one.
+ 		 */
+ 		trace_rcu_grace_period(rcu_state.name, rnp->gp_seq, TPS("cpustart"));
+-		need_gp = !!(rnp->qsmask & rdp->grpmask);
+-		rdp->cpu_no_qs.b.norm = need_gp;
+-		rdp->core_needs_qs = need_gp;
++		need_qs = !!(rnp->qsmask & rdp->grpmask);
++		rdp->cpu_no_qs.b.norm = need_qs;
++		rdp->core_needs_qs = need_qs;
+ 		zero_cpu_stall_ticks(rdp);
+ 	}
+ 	rdp->gp_seq = rnp->gp_seq;  /* Remember new grace-period state. */
+@@ -1987,6 +1990,8 @@ rcu_report_qs_rdp(int cpu, struct rcu_data *rdp)
+ 		return;
+ 	}
+ 	mask = rdp->grpmask;
++	if (rdp->cpu == smp_processor_id())
++		rdp->core_needs_qs = false;
+ 	if ((rnp->qsmask & mask) == 0) {
  		raw_spin_unlock_irqrestore_rcu_node(rnp, flags);
+ 	} else {
