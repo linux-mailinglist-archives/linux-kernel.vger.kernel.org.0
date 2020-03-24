@@ -2,177 +2,277 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6C1AA191847
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 18:59:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BED4A19184C
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 18:59:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727581AbgCXR5I (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 13:57:08 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:51828 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727466AbgCXR5I (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 13:57:08 -0400
-Received: from ip5f5bf7ec.dynamic.kabel-deutschland.de ([95.91.247.236] helo=wittgenstein)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <christian.brauner@ubuntu.com>)
-        id 1jGnnH-0005ms-Ii; Tue, 24 Mar 2020 17:56:51 +0000
-Date:   Tue, 24 Mar 2020 18:56:49 +0100
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     Adrian Reber <areber@redhat.com>
-Cc:     Andrei Vagin <avagin@gmail.com>, Arnd Bergmann <arnd@arndb.de>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Pavel Emelyanov <ovzxemul@gmail.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Dmitry Safonov <0x7f454c46@gmail.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Radostin Stoyanov <rstoyanov1@gmail.com>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Cyrill Gorcunov <gorcunov@openvz.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        Linux API <linux-api@vger.kernel.org>
-Subject: Re: clone3: allow creation of time namespace with offset
-Message-ID: <20200324175649.fqkwiuvs2drk26ln@wittgenstein>
-References: <20200317083043.226593-1-areber@redhat.com>
- <CAK8P3a2-qQhpRdF0+iVrpp=vEvgwtndQL89CUm_QzoW2QYX1Jw@mail.gmail.com>
- <20200319081137.GC223854@dcbz.redhat.com>
- <CAK8P3a18YySozk6P77JpS58Hbtz=QQmLKw+PrzXbdOwtOQQuJA@mail.gmail.com>
- <20200319102955.i7slokibkkysz6g6@wittgenstein>
- <20200320183355.GA118769@gmail.com>
- <20200324160945.orcm75avj2ol3eop@wittgenstein>
- <20200324162546.GG358599@dcbz.redhat.com>
+        id S1727822AbgCXR50 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 13:57:26 -0400
+Received: from mga03.intel.com ([134.134.136.65]:33112 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727223AbgCXR5Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Mar 2020 13:57:25 -0400
+IronPort-SDR: HKz9JT8q9GZBFdO+uuadV2usjTU+WGWW7LWM/28F6BzaicLCa37lLsaZ2IFZnwFZX122MFguMj
+ OrTYgND2JFAA==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Mar 2020 10:57:24 -0700
+IronPort-SDR: /7em/tC57Hlahgo/ij8+RSSSt1kqvBcgt9qUzXV9CN0qThGJAEeZSKDrxrdZaq2xahNKdVPMN/
+ 3u11mIBQrIPQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.72,301,1580803200"; 
+   d="scan'208";a="270472523"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmsmga004.fm.intel.com with ESMTP; 24 Mar 2020 10:57:21 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+        id 6A78E11D; Tue, 24 Mar 2020 19:57:20 +0200 (EET)
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org,
+        "Rafael J. Wysocki" <rafael@kernel.org>, linux-pm@vger.kernel.org
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Artem Bityutskiy <artem.bityutskiy@linux.intel.com>,
+        Grant Likely <grant.likely@arm.com>,
+        Mark Brown <broonie@kernel.org>,
+        Felipe Balbi <balbi@kernel.org>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Peter Ujfalusi <peter.ujfalusi@ti.com>,
+        Ferry Toth <fntoth@gmail.com>
+Subject: [PATCH v3] driver core: Break infinite loop when deferred probe can't be satisfied
+Date:   Tue, 24 Mar 2020 19:57:19 +0200
+Message-Id: <20200324175719.62496-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20200324162546.GG358599@dcbz.redhat.com>
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 24, 2020 at 05:25:46PM +0100, Adrian Reber wrote:
-> On Tue, Mar 24, 2020 at 05:09:45PM +0100, Christian Brauner wrote:
-> > On Fri, Mar 20, 2020 at 11:33:55AM -0700, Andrei Vagin wrote:
-> > > On Thu, Mar 19, 2020 at 11:29:55AM +0100, Christian Brauner wrote:
-> > > > On Thu, Mar 19, 2020 at 09:16:43AM +0100, Arnd Bergmann wrote:
-> > > > > On Thu, Mar 19, 2020 at 9:11 AM Adrian Reber <areber@redhat.com> wrote:
-> > > > > 
-> > > > > > With Arnd's idea of only using nanoseconds, timens_offset would then
-> > > > > > contain something like this:
-> > > > > >
-> > > > > > struct timens_offset {
-> > > > > >         __aligned_s64 monotonic_offset_ns;
-> > > > > >         __aligned_s64 boottime_offset_ns;
-> > > > > > };
-> > > > > >
-> > > > > > I kind of prefer adding boottime and monotonic directly to struct clone_args
-> > > > > >
-> > > > > >         __aligned_u64 tls;
-> > > > > >         __aligned_u64 set_tid;
-> > > > > >         __aligned_u64 set_tid_size;
-> > > > > > +       __aligned_s64 monotonic_offset_ns;
-> > > > > > +       __aligned_s64 boottime_offset_ns;
-> > > > > >  };
-> > > > > 
-> > > > > I would also prefer the second approach using two 64-bit integers
-> > > > > instead of a pointer, as it keeps the interface simpler to implement
-> > > > > and simpler to interpret by other tools.
-> > > > 
-> > > > Why I don't like has two reasons. There's the scenario where we have
-> > > > added new extensions after the new boottime member and then we introduce
-> > > > another offset. Then you'd be looking at:
-> > > > 
-> > > > __aligned_u64 tls;
-> > > > __aligned_u64 set_tid;
-> > > > __aligned_u64 set_tid_size;
-> > > > + __aligned_s64 monotonic_offset_ns;
-> > > > + __aligned_s64 boottime_offset_ns;
-> > > > __aligned_s64 something_1
-> > > > __aligned_s64 anything_2
-> > > > + __aligned_s64 sometime_offset_ns
-> > > > 
-> > > > which bothers me just by looking at it. That's in addition to adding two
-> > > > new members to the struct when most people will never set CLONE_NEWTIME.
-> > > > We'll also likely have more features in the future that will want to
-> > > > pass down more info than we want to directly expose in struct
-> > > > clone_args, e.g. for a long time I have been thinking about adding a
-> > > > struct for CLONE_NEWUSER that allows you to specify the id mappings you
-> > > > want the new user namespace to get. We surely don't want to force all
-> > > > new info into the uppermost struct. So I'm not convinced we should here.
-> > > 
-> > > I think here we can start thinking about a netlink-like interface.
-> > 
-> > I think netlink is just not a great model for an API and I would not
-> > want us to go down that route.
-> > 
-> > I kept thinking about this for a bit and I think that we will end up
-> > growing more namespace-related functionality. So one thing that came to
-> > my mind is the following layout:
-> > 
-> > struct {
-> > 	struct {
-> > 		__s64 monotonic;
-> > 		__s64 boot;
-> > 	} time;
-> > } namespaces;
-> > 
-> > struct _clone_args {
-> > 	__aligned_u64 flags;
-> > 	__aligned_u64 pidfd;
-> > 	__aligned_u64 child_tid;
-> > 	__aligned_u64 parent_tid;
-> > 	__aligned_u64 exit_signal;
-> > 	__aligned_u64 stack;
-> > 	__aligned_u64 stack_size;
-> > 	__aligned_u64 tls;
-> > 	__aligned_u64 set_tid;
-> > 	__aligned_u64 set_tid_size;
-> > 	__aligned_u64 namespaces;
-> > 	__aligned_u64 namespaces_size;
-> > };
-> > 
-> > Then when we end up adding id mapping support for CLONE_NEWUSER we can
-> > extend this with:
-> > 
-> > struct {
-> > 	struct {
-> > 		__aligned_u64 monotonic;
-> > 		__aligned_u64 boot;
+Consider the following scenario.
 
-s/__aligned_u64/__s64/g
+The main driver of USB OTG controller (dwc3-pci), which has the following
+functional dependencies on certain platform:
+- ULPI (tusb1210)
+- extcon (tested with extcon-intel-mrfld)
 
-Sorry, leftover from my first draft.
+Note, that first driver, tusb1210, is available at the moment of
+dwc3-pci probing, while extcon-intel-mrfld is built as a module and
+won't appear till user space does something about it.
 
-> > 	} time;
-> > 
-> > 	struct {
-> > 		/* id mapping members */
-> > 	} user;
-> > } namespaces;
-> > 
-> > Thoughts? Other ideas?
-> 
-> Works for me.
-> 
-> If we add the user namespace id mappings and then at some point a third
-> element for the time namespace appears it would also start to be mixed.
-> Just as you mentioned that a few mails ago.
+This is depicted by kernel configuration excerpt:
 
-I think you misunderstand me or I'm misunderstanding you. That new time
-namespace member would go into struct time {} so
+	CONFIG_PHY_TUSB1210=y
+	CONFIG_USB_DWC3=y
+	CONFIG_USB_DWC3_ULPI=y
+	CONFIG_USB_DWC3_DUAL_ROLE=y
+	CONFIG_USB_DWC3_PCI=y
+	CONFIG_EXTCON_INTEL_MRFLD=m
 
-struct {
-	struct {
-		__s64 monotonic;
-		__s64 boot;
-		__s64 someothertime;
-	} time;
+In the Buildroot environment the modules are probed by alphabetical ordering
+of their modaliases. The latter comes to the case when USB OTG driver will be
+probed first followed by extcon one.
 
-	struct {
-		/* id mapping members */
-	} user;
-} namespaces;
+So, if the platform anticipates extcon device to be appeared, in the above case
+we will get deferred probe of USB OTG, because of ordering.
 
-Christian
+Since current implementation, done by the commit 58b116bce136 ("drivercore:
+deferral race condition fix") counts the amount of triggered deferred probe,
+we never advance the situation -- the change makes it to be an infinite loop.
+
+---8<---8<---
+
+[   22.187127] driver_deferred_probe_trigger <<< 1
+
+...here is the late initcall triggers deferred probe...
+
+[   22.191725] platform dwc3.0.auto: deferred_probe_work_func in deferred list
+
+...dwc3.0.auto is the only device in the deferred list...
+
+[   22.198727] platform dwc3.0.auto: deferred_probe_work_func 1 <<< counter 1
+
+...the counter before mutex is unlocked is kept the same...
+
+[   22.205663] platform dwc3.0.auto: Retrying from deferred list
+
+...mutes has been unlocked, we try to re-probe the driver...
+
+[   22.211487] bus: 'platform': driver_probe_device: matched device dwc3.0.auto with driver dwc3
+[   22.220060] bus: 'platform': really_probe: probing driver dwc3 with device dwc3.0.auto
+[   22.238735] bus: 'ulpi': driver_probe_device: matched device dwc3.0.auto.ulpi with driver tusb1210
+[   22.247743] bus: 'ulpi': really_probe: probing driver tusb1210 with device dwc3.0.auto.ulpi
+[   22.256292] driver: 'tusb1210': driver_bound: bound to device 'dwc3.0.auto.ulpi'
+[   22.263723] driver_deferred_probe_trigger <<< 2
+
+...the dwc3.0.auto probes ULPI, we got successful bound and bumped counter...
+
+[   22.268304] bus: 'ulpi': really_probe: bound device dwc3.0.auto.ulpi to driver tusb1210
+[   22.276697] platform dwc3.0.auto: Driver dwc3 requests probe deferral
+
+...but extcon driver is still missing...
+
+[   22.283174] platform dwc3.0.auto: Added to deferred list
+[   22.288513] platform dwc3.0.auto: driver_deferred_probe_add_trigger local counter: 1 new counter 2
+
+...and since we had a successful probe, we got counter mismatch...
+
+[   22.297490] driver_deferred_probe_trigger <<< 3
+[   22.302074] platform dwc3.0.auto: deferred_probe_work_func 2 <<< counter 3
+
+...at the end we have a new counter and loop repeats again, see 22.198727...
+
+---8<---8<---
+
+Revert of the commit helps, but it is probably not helpful for the initially
+found regression. Artem Bityutskiy suggested to use counter of the successful
+probes instead. This fixes above mentioned case and shouldn't prevent driver
+to reprobe deferred ones.
+
+Under "successful probe" we understand the state when a driver of the certain
+device is being kept bound after deferred probe trigger cycle. For instance,
+in the above mentioned case probing of tusb1210 is not successful because dwc3
+driver unbinds device dwc3.0.auto.ulpi. The atomic_dec() call is used to keep
+track of this. The amount of bindings is always great than or equal to the
+amount of unbindings as guaranteed by design of the driver binding mechanism.
+
+Fixes: 58b116bce136 ("drivercore: deferral race condition fix")
+Suggested-by: Artem Bityutskiy <artem.bityutskiy@linux.intel.com>
+Cc: Grant Likely <grant.likely@arm.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Mark Brown <broonie@kernel.org>
+Cc: Felipe Balbi <balbi@kernel.org>
+Cc: Andrzej Hajda <a.hajda@samsung.com>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Reviewed-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
+Tested-by: Ferry Toth <fntoth@gmail.com>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+v3: added comment about atomic_dec() to the commit message and code (Rafael)
+
+ drivers/base/dd.c | 44 ++++++++++++++++++++++++++------------------
+ 1 file changed, 26 insertions(+), 18 deletions(-)
+
+diff --git a/drivers/base/dd.c b/drivers/base/dd.c
+index b25bcab2a26b..c1b445733150 100644
+--- a/drivers/base/dd.c
++++ b/drivers/base/dd.c
+@@ -53,7 +53,6 @@
+ static DEFINE_MUTEX(deferred_probe_mutex);
+ static LIST_HEAD(deferred_probe_pending_list);
+ static LIST_HEAD(deferred_probe_active_list);
+-static atomic_t deferred_trigger_count = ATOMIC_INIT(0);
+ static struct dentry *deferred_devices;
+ static bool initcalls_done;
+ 
+@@ -147,17 +146,6 @@ static bool driver_deferred_probe_enable = false;
+  * This functions moves all devices from the pending list to the active
+  * list and schedules the deferred probe workqueue to process them.  It
+  * should be called anytime a driver is successfully bound to a device.
+- *
+- * Note, there is a race condition in multi-threaded probe. In the case where
+- * more than one device is probing at the same time, it is possible for one
+- * probe to complete successfully while another is about to defer. If the second
+- * depends on the first, then it will get put on the pending list after the
+- * trigger event has already occurred and will be stuck there.
+- *
+- * The atomic 'deferred_trigger_count' is used to determine if a successful
+- * trigger has occurred in the midst of probing a driver. If the trigger count
+- * changes in the midst of a probe, then deferred processing should be triggered
+- * again.
+  */
+ static void driver_deferred_probe_trigger(void)
+ {
+@@ -170,7 +158,6 @@ static void driver_deferred_probe_trigger(void)
+ 	 * into the active list so they can be retried by the workqueue
+ 	 */
+ 	mutex_lock(&deferred_probe_mutex);
+-	atomic_inc(&deferred_trigger_count);
+ 	list_splice_tail_init(&deferred_probe_pending_list,
+ 			      &deferred_probe_active_list);
+ 	mutex_unlock(&deferred_probe_mutex);
+@@ -350,6 +337,19 @@ static void __exit deferred_probe_exit(void)
+ }
+ __exitcall(deferred_probe_exit);
+ 
++/*
++ * Note, there is a race condition in multi-threaded probe. In the case where
++ * more than one device is probing at the same time, it is possible for one
++ * probe to complete successfully while another is about to defer. If the second
++ * depends on the first, then it will get put on the pending list after the
++ * trigger event has already occurred and will be stuck there.
++ *
++ * The atomic 'probe_okay' is used to determine if a successful probe has
++ * occurred in the midst of probing another driver. If the count changes in
++ * the midst of a probe, then deferred processing should be triggered again.
++ */
++static atomic_t probe_okay = ATOMIC_INIT(0);
++
+ /**
+  * device_is_bound() - Check if device is bound to a driver
+  * @dev: device to check
+@@ -375,6 +375,7 @@ static void driver_bound(struct device *dev)
+ 	pr_debug("driver: '%s': %s: bound to device '%s'\n", dev->driver->name,
+ 		 __func__, dev_name(dev));
+ 
++	atomic_inc(&probe_okay);
+ 	klist_add_tail(&dev->p->knode_driver, &dev->driver->p->klist_devices);
+ 	device_links_driver_bound(dev);
+ 
+@@ -481,18 +482,18 @@ static atomic_t probe_count = ATOMIC_INIT(0);
+ static DECLARE_WAIT_QUEUE_HEAD(probe_waitqueue);
+ 
+ static void driver_deferred_probe_add_trigger(struct device *dev,
+-					      int local_trigger_count)
++					      int local_probe_okay_count)
+ {
+ 	driver_deferred_probe_add(dev);
+ 	/* Did a trigger occur while probing? Need to re-trigger if yes */
+-	if (local_trigger_count != atomic_read(&deferred_trigger_count))
++	if (local_probe_okay_count != atomic_read(&probe_okay))
+ 		driver_deferred_probe_trigger();
+ }
+ 
+ static int really_probe(struct device *dev, struct device_driver *drv)
+ {
+ 	int ret = -EPROBE_DEFER;
+-	int local_trigger_count = atomic_read(&deferred_trigger_count);
++	int local_probe_okay_count = atomic_read(&probe_okay);
+ 	bool test_remove = IS_ENABLED(CONFIG_DEBUG_TEST_DRIVER_REMOVE) &&
+ 			   !drv->suppress_bind_attrs;
+ 
+@@ -509,7 +510,7 @@ static int really_probe(struct device *dev, struct device_driver *drv)
+ 
+ 	ret = device_links_check_suppliers(dev);
+ 	if (ret == -EPROBE_DEFER)
+-		driver_deferred_probe_add_trigger(dev, local_trigger_count);
++		driver_deferred_probe_add_trigger(dev, local_probe_okay_count);
+ 	if (ret)
+ 		return ret;
+ 
+@@ -619,7 +620,7 @@ static int really_probe(struct device *dev, struct device_driver *drv)
+ 	case -EPROBE_DEFER:
+ 		/* Driver requested deferred probing */
+ 		dev_dbg(dev, "Driver %s requests probe deferral\n", drv->name);
+-		driver_deferred_probe_add_trigger(dev, local_trigger_count);
++		driver_deferred_probe_add_trigger(dev, local_probe_okay_count);
+ 		break;
+ 	case -ENODEV:
+ 	case -ENXIO:
+@@ -1148,6 +1149,13 @@ static void __device_release_driver(struct device *dev, struct device *parent)
+ 		dev_pm_set_driver_flags(dev, 0);
+ 
+ 		klist_remove(&dev->p->knode_driver);
++		/*
++		 * If a driver has been unbound from the device
++		 * we won't consider the probe of the device
++		 * successful.
++		 */
++		atomic_dec(&probe_okay);
++
+ 		device_pm_check_callbacks(dev);
+ 		if (dev->bus)
+ 			blocking_notifier_call_chain(&dev->bus->p->bus_notifier,
+-- 
+2.25.1
+
