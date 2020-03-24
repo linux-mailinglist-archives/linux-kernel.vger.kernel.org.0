@@ -2,177 +2,460 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0F6F4191512
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 16:43:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 52CEA19152A
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 16:43:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728609AbgCXPkt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 11:40:49 -0400
-Received: from new2-smtp.messagingengine.com ([66.111.4.224]:49655 "EHLO
-        new2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727510AbgCXPkt (ORCPT
+        id S1728573AbgCXPmX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 11:42:23 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:39898 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727771AbgCXPmW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 11:40:49 -0400
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-        by mailnew.nyi.internal (Postfix) with ESMTP id 6EC37580187;
-        Tue, 24 Mar 2020 11:40:47 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute4.internal (MEProxy); Tue, 24 Mar 2020 11:40:47 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm2; bh=lR0eBIanF6SDCnxFLTSyE8ziSKg
-        i9ZA+hhtsHfD2qAA=; b=TixMqDr3fI806sOY6xWM1xXk/HuR5Sl4JafhqvNyYCh
-        B0WnbHWQLOO/1xO3PFhETsvKzKyyEM88a0AaojKb7Z7jEAY7iBfwNSPkX7HeNFhP
-        EpVoSgsuZtGVDGoBCmKTFfXrDkcnCGOxzvDPtk7CplrnmncsR3pI089wwgutQyOl
-        r9c4STe+YabsAQZyWWaej1FAM3C2S7RoT2JjIigyyOE4sFLStzFrVqAlujo5Y7Vu
-        duNNH6cgHIIj02nefyBxBJcAJneMRe7HJ+0/UkxGCKKLuzYUEBgya224oMv9FJQ8
-        hfkxFh4t20pQdpM7EhYCvXT2s9wHPi5dnalEcb5Rayg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=lR0eBI
-        anF6SDCnxFLTSyE8ziSKgi9ZA+hhtsHfD2qAA=; b=BjBkNffjGWUc/5jO4przwO
-        m59Z+khlWSZ+YRhAy0e926I4p4hSBXhtqDoIV/ttcdvFNvFP7jrBppP4f8ENR3fy
-        x1uQbKV6JcLOBipoIyP3jrVTNTedqJHP4cSabAQ/rYi8ndXBL33kHLHOjodHgE6D
-        Fnqe3JIsYpplYmQHIuQ6PIKdNyDshuUMRlWDC/n4fsQ9ElI1YNkfeiIVkoZ4Q8vp
-        fQDoCqp7yY3eY7AHpOL/ZNL5CBDO8jHaulswREydapxFOLUDBt+Hh+HyqJq4RhAn
-        q6eymUBCE4G0MWyZYWMxTTJNsdGOtrkVqk7c0stXqR13ZtgqmC9VVNcaRhkKph6w
-        ==
-X-ME-Sender: <xms:_il6Xt4ksL-jhcvZmkMCViNSBNo_RZcE01s0-7JRpOaAC5BY7DBs2Q>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedugedrudehuddggeelucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvffukfhfgggtuggjsehgtderredttddvnecuhfhrohhmpeforgigihhm
-    vgcutfhiphgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecukfhppeeltd
-    drkeelrdeikedrjeeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghi
-    lhhfrhhomhepmhgrgihimhgvsegtvghrnhhordhtvggthh
-X-ME-Proxy: <xmx:_il6XrOD7fk_9C_XwgCcc_S_KP163e5_Z8_eD_LWJkl0VBKflvYB0Q>
-    <xmx:_il6XopYb_SZOG4texGiaC00k_z4vPuvlVbEHFAJ4hOcMuQW7FPmEQ>
-    <xmx:_il6XtKI1PhRtOFQ3CLV-Slek7_CFFK3anEYIZsnEFTNFkZcbvKM3A>
-    <xmx:_yl6XjBaAJpG6w4gxocQIXvtVa5yNQPAsyZ6cZubr3X6ZjCqfUjYGQ>
-Received: from localhost (lfbn-tou-1-1502-76.w90-89.abo.wanadoo.fr [90.89.68.76])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 1E4E63280064;
-        Tue, 24 Mar 2020 11:40:46 -0400 (EDT)
-Date:   Tue, 24 Mar 2020 16:40:45 +0100
-From:   Maxime Ripard <maxime@cerno.tech>
-To:     "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Cc:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, Fabio Estevam <festevam@gmail.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Ezequiel Garcia <ezequiel@collabora.com>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        Tue, 24 Mar 2020 11:42:22 -0400
+Received: by mail-wm1-f65.google.com with SMTP id a9so4013872wmj.4;
+        Tue, 24 Mar 2020 08:42:21 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=4JldSzOOAQ1uFnO6uNHLIic9Y166PHtnRU+95Y+VD6I=;
+        b=VA/9CaDWh/owfBDM+vucc2QmCMzr2aWIqK43HWGv1P8yMeoM3fzBR4lCGY45zqzyau
+         BN3N5m9E8uuEzH4Y57h2Xkr2RMXoColDbQbQY83DdxcAbaobQpXipWkRdn6Hk8UukfjJ
+         bPWyr4XZBUUW6XwX/o4MG7DzKtDqK4kYPeMsWjEqJreIQTHHjr1cxt+aO0bKOzjkWpGv
+         UC0HmQGe2nYIYFL7ydGZHLBjfQdznoq8vP0GNiZmrQh6ST4+BqxQ8ynMlow1kkz/XCXP
+         hsZforWuQ2tHKRM9QBjFkExfai6rmwnZU0RLKLL1jgFVeKSVSN7ZhalYP5GM3TPCQi/c
+         FMXA==
+X-Gm-Message-State: ANhLgQ2RUQz/7Ac76WziGINyxtS0UpnJ3Jy6jB40nv8qd6cy3NCChQmf
+        YukLMxQ4HEMF3JbgVJxD0575JkLR
+X-Google-Smtp-Source: ADFU+vvy8S8JrfAc5+9m22UHbkoUxAKyyp1YJFXtqfnz9F3n7tKmxiJwPzxxuz3hgBYXuVPXR9FnAg==
+X-Received: by 2002:a05:600c:2050:: with SMTP id p16mr4480502wmg.23.1585064540625;
+        Tue, 24 Mar 2020 08:42:20 -0700 (PDT)
+Received: from localhost (ip-37-188-135-150.eurotel.cz. [37.188.135.150])
+        by smtp.gmail.com with ESMTPSA id w3sm23833673wrn.31.2020.03.24.08.42.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 24 Mar 2020 08:42:19 -0700 (PDT)
+Date:   Tue, 24 Mar 2020 16:42:18 +0100
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Rafael Aquini <aquini@redhat.com>
+Cc:     Shakeel Butt <shakeelb@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
         LKML <linux-kernel@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        LAK <linux-arm-kernel@lists.infradead.org>,
-        linux-media <linux-media@vger.kernel.org>
-Subject: Re: [PATCH v3 1/4] media: dt-bindings: media: i2c: Switch to
- assigned-clock-rates
-Message-ID: <20200324154045.whiy6uvlg2mrjv5a@gilmour.lan>
-References: <1584133954-6953-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <1584133954-6953-2-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20200319124452.3yfcvq754vi4q2rv@gilmour.lan>
- <20200319130348.GC4872@pendragon.ideasonboard.com>
- <CA+V-a8s-GZsYuBLyGnzURZfGD42f0c+QEan6FSwb2ew1=7Gj3g@mail.gmail.com>
+        linux-kselftest@vger.kernel.org, shuah@kernel.org,
+        Eric B Munson <emunson@akamai.com>
+Subject: Re: [PATCH] tools/testing/selftests/vm/mlock2-tests: fix mlock2
+ false-negative errors
+Message-ID: <20200324154218.GS19542@dhcp22.suse.cz>
+References: <20200321213142.597e23af955de653fc4db7a1@linux-foundation.org>
+ <CALvZod7LiMiK1JtfdvvU3W36cGSUKhhKf6dMZpsNZv6nMiJ5=g@mail.gmail.com>
+ <20200323075208.GC7524@dhcp22.suse.cz>
+ <20200323144240.GB23364@optiplex-lnx>
+ <20200323145106.GM7524@dhcp22.suse.cz>
+ <20200323150259.GD23364@optiplex-lnx>
+ <20200323151256.GP7524@dhcp22.suse.cz>
+ <20200323154159.GF23364@optiplex-lnx>
+ <20200323155111.GQ7524@dhcp22.suse.cz>
+ <20200323155449.GG23364@optiplex-lnx>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="766st27slgtqfmag"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CA+V-a8s-GZsYuBLyGnzURZfGD42f0c+QEan6FSwb2ew1=7Gj3g@mail.gmail.com>
+In-Reply-To: <20200323155449.GG23364@optiplex-lnx>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+[Cc Eric - the email thread starts http://lkml.kernel.org/r/20200322013525.1095493-1-aquini@redhat.com]
 
---766st27slgtqfmag
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On Mon 23-03-20 11:54:49, Rafael Aquini wrote:
+[...]
+> I'm OK with it, if you want to go ahead and do the kill.
 
-On Thu, Mar 19, 2020 at 01:17:51PM +0000, Lad, Prabhakar wrote:
-> Hi Laurent,
->
-> On Thu, Mar 19, 2020 at 1:04 PM Laurent Pinchart
-> <laurent.pinchart@ideasonboard.com> wrote:
-> >
-> > Hi Maxime,
-> >
-> > On Thu, Mar 19, 2020 at 01:44:52PM +0100, Maxime Ripard wrote:
-> > > On Fri, Mar 13, 2020 at 09:12:31PM +0000, Lad Prabhakar wrote:
-> > > > Use assigned-clock-rates to specify the clock rate. Also mark
-> > > > clock-frequency property as deprecated.
-> > > >
-> > > > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> > > > ---
-> > > >  Documentation/devicetree/bindings/media/i2c/ov5645.txt | 5 +++--
-> > > >  1 file changed, 3 insertions(+), 2 deletions(-)
-> > > >
-> > > > diff --git a/Documentation/devicetree/bindings/media/i2c/ov5645.txt b/Documentation/devicetree/bindings/media/i2c/ov5645.txt
-> > > > index 72ad992..e62fe82 100644
-> > > > --- a/Documentation/devicetree/bindings/media/i2c/ov5645.txt
-> > > > +++ b/Documentation/devicetree/bindings/media/i2c/ov5645.txt
-> > > > @@ -8,7 +8,7 @@ Required Properties:
-> > > >  - compatible: Value should be "ovti,ov5645".
-> > > >  - clocks: Reference to the xclk clock.
-> > > >  - clock-names: Should be "xclk".
-> > > > -- clock-frequency: Frequency of the xclk clock.
-> > > > +- clock-frequency (deprecated): Frequency of the xclk clock.
-> > > >  - enable-gpios: Chip enable GPIO. Polarity is GPIO_ACTIVE_HIGH. This corresponds
-> > > >    to the hardware pin PWDNB which is physically active low.
-> > > >  - reset-gpios: Chip reset GPIO. Polarity is GPIO_ACTIVE_LOW. This corresponds to
-> > > > @@ -37,7 +37,8 @@ Example:
-> > > >
-> > > >                     clocks = <&clks 200>;
-> > > >                     clock-names = "xclk";
-> > > > -                   clock-frequency = <24000000>;
-> > > > +                   assigned-clocks = <&clks 200>;
-> > > > +                   assigned-clock-rates = <24000000>;
-> > > >
-> > > >                     vdddo-supply = <&camera_dovdd_1v8>;
-> > > >                     vdda-supply = <&camera_avdd_2v8>;
-> > >
-> > > clock-frequency is quite different from assigned-clock-rates though,
-> > > semantically speaking. clock-frequency is only about what the clock
-> > > frequency is, while assigned-clock-rates will change the rate as well,
-> > > and you have no idea how long it will last.
-> >
-> > The driver currently reads the clock-frequency property and then calls
-> > clk_set_rate(). I agree tht assigned-clock-rates isn't a panacea, but I
-> > think it's less of a hack than what we currently have.
-> >
-> > As discussed on IRC, maybe the best option in this specific case is to
-> > drop clock-frequency and assigned-clok-rates, and call clk_set_rate()
-> > with a hardcoded frequency of 24MHz in the driver, as that's the only
-> > frequency the driver supports.
-> >
-> Does this mean any driver which has a fixed clock requirement shouldn't be a
-> DT property and should be just handled by the drivers internally ?
+See the patch below
 
-It's hard to give a generic policy, but here, the hardware is pretty
-flexible since it can deal with anything between 6MHz to 50-something
-MHz, it's the driver that chooses to enforce a 24MHz and be pedantic
-about it, so it's up to the driver to enforce that policy, not to the
-DT since it's essentially a software limitation, not a hardware one.
+From 07c08f387d036c70239d4060ffd30534cf77a0a5 Mon Sep 17 00:00:00 2001
+From: Michal Hocko <mhocko@suse.com>
+Date: Mon, 23 Mar 2020 17:33:46 +0100
+Subject: [PATCH] selftests: vm: drop dependencies on page flags from mlock2
+ tests
 
-Maxime
+It was noticed that mlock2 tests are failing after 9c4e6b1a7027f
+("mm, mlock, vmscan: no more skipping pagevecs") because the patch has
+changed the timing on when the page is added to the unevictable LRU list
+and thus gains the unevictable page flag.
 
---766st27slgtqfmag
-Content-Type: application/pgp-signature; name="signature.asc"
+The test was just too dependent on the implementation details which were
+true at the time when it was introduced. Page flags and the timing when
+they are set is something no userspace should ever depend on. The test
+should be testing only for the user observable contract of the tested
+syscalls. Those are defined pretty well for the mlock and there are
+other means for testing them. In fact this is already done and testing
+for page flags can be safely dropped to achieve the aimed purpose.
+Present bits can be checked by /proc/<pid>/smaps RSS field and the
+locking state by VmFlags although I would argue that Locked: field would
+be more appropriate.
 
------BEGIN PGP SIGNATURE-----
+Drop all the page flag machinery and considerably simplify the test.
+This should be more robust for future kernel changes while checking the
+promised contract is still valid.
 
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXnop/QAKCRDj7w1vZxhR
-xUp3AQC4CpS3+gKsDPAnZm8pakj0NLuoi+oYlCsyVqEEtPSmBQD/W0Fnywv9KUiq
-QETeY979lVRzXw6cNCOb1qDBjB9TGQE=
-=nwfk
------END PGP SIGNATURE-----
+Reported-by: Rafael Aquini <aquini@redhat.com>
+Signed-off-by: Michal Hocko <mhocko@suse.com>
+---
+ tools/testing/selftests/vm/mlock2-tests.c | 233 ++++------------------
+ 1 file changed, 37 insertions(+), 196 deletions(-)
 
---766st27slgtqfmag--
+diff --git a/tools/testing/selftests/vm/mlock2-tests.c b/tools/testing/selftests/vm/mlock2-tests.c
+index 637b6d0ac0d0..11b2301f3aa3 100644
+--- a/tools/testing/selftests/vm/mlock2-tests.c
++++ b/tools/testing/selftests/vm/mlock2-tests.c
+@@ -67,59 +67,6 @@ static int get_vm_area(unsigned long addr, struct vm_boundaries *area)
+ 	return ret;
+ }
+ 
+-static uint64_t get_pageflags(unsigned long addr)
+-{
+-	FILE *file;
+-	uint64_t pfn;
+-	unsigned long offset;
+-
+-	file = fopen("/proc/self/pagemap", "r");
+-	if (!file) {
+-		perror("fopen pagemap");
+-		_exit(1);
+-	}
+-
+-	offset = addr / getpagesize() * sizeof(pfn);
+-
+-	if (fseek(file, offset, SEEK_SET)) {
+-		perror("fseek pagemap");
+-		_exit(1);
+-	}
+-
+-	if (fread(&pfn, sizeof(pfn), 1, file) != 1) {
+-		perror("fread pagemap");
+-		_exit(1);
+-	}
+-
+-	fclose(file);
+-	return pfn;
+-}
+-
+-static uint64_t get_kpageflags(unsigned long pfn)
+-{
+-	uint64_t flags;
+-	FILE *file;
+-
+-	file = fopen("/proc/kpageflags", "r");
+-	if (!file) {
+-		perror("fopen kpageflags");
+-		_exit(1);
+-	}
+-
+-	if (fseek(file, pfn * sizeof(flags), SEEK_SET)) {
+-		perror("fseek kpageflags");
+-		_exit(1);
+-	}
+-
+-	if (fread(&flags, sizeof(flags), 1, file) != 1) {
+-		perror("fread kpageflags");
+-		_exit(1);
+-	}
+-
+-	fclose(file);
+-	return flags;
+-}
+-
+ #define VMFLAGS "VmFlags:"
+ 
+ static bool is_vmflag_set(unsigned long addr, const char *vmflag)
+@@ -159,19 +106,13 @@ static bool is_vmflag_set(unsigned long addr, const char *vmflag)
+ #define RSS  "Rss:"
+ #define LOCKED "lo"
+ 
+-static bool is_vma_lock_on_fault(unsigned long addr)
++static unsigned long get_value_for_name(unsigned long addr, const char *name)
+ {
+-	bool ret = false;
+-	bool locked;
+-	FILE *smaps = NULL;
+-	unsigned long vma_size, vma_rss;
+ 	char *line = NULL;
+-	char *value;
+ 	size_t size = 0;
+-
+-	locked = is_vmflag_set(addr, LOCKED);
+-	if (!locked)
+-		goto out;
++	char *value_ptr;
++	FILE *smaps = NULL;
++	unsigned long value = -1UL;
+ 
+ 	smaps = seek_to_smaps_entry(addr);
+ 	if (!smaps) {
+@@ -180,112 +121,70 @@ static bool is_vma_lock_on_fault(unsigned long addr)
+ 	}
+ 
+ 	while (getline(&line, &size, smaps) > 0) {
+-		if (!strstr(line, SIZE)) {
++		if (!strstr(line, name)) {
+ 			free(line);
+ 			line = NULL;
+ 			size = 0;
+ 			continue;
+ 		}
+ 
+-		value = line + strlen(SIZE);
+-		if (sscanf(value, "%lu kB", &vma_size) < 1) {
++		value_ptr = line + strlen(name);
++		if (sscanf(value_ptr, "%lu kB", &value) < 1) {
+ 			printf("Unable to parse smaps entry for Size\n");
+ 			goto out;
+ 		}
+ 		break;
+ 	}
+ 
+-	while (getline(&line, &size, smaps) > 0) {
+-		if (!strstr(line, RSS)) {
+-			free(line);
+-			line = NULL;
+-			size = 0;
+-			continue;
+-		}
+-
+-		value = line + strlen(RSS);
+-		if (sscanf(value, "%lu kB", &vma_rss) < 1) {
+-			printf("Unable to parse smaps entry for Rss\n");
+-			goto out;
+-		}
+-		break;
+-	}
+-
+-	ret = locked && (vma_rss < vma_size);
+ out:
+-	free(line);
+ 	if (smaps)
+ 		fclose(smaps);
+-	return ret;
++	free(line);
++	return value;
+ }
+ 
+-#define PRESENT_BIT     0x8000000000000000ULL
+-#define PFN_MASK        0x007FFFFFFFFFFFFFULL
+-#define UNEVICTABLE_BIT (1UL << 18)
+-
+-static int lock_check(char *map)
++static bool is_vma_lock_on_fault(unsigned long addr)
+ {
+-	unsigned long page_size = getpagesize();
+-	uint64_t page1_flags, page2_flags;
++	bool locked;
++	unsigned long vma_size, vma_rss;
+ 
+-	page1_flags = get_pageflags((unsigned long)map);
+-	page2_flags = get_pageflags((unsigned long)map + page_size);
++	locked = is_vmflag_set(addr, LOCKED);
++	if (!locked)
++		return false;
+ 
+-	/* Both pages should be present */
+-	if (((page1_flags & PRESENT_BIT) == 0) ||
+-	    ((page2_flags & PRESENT_BIT) == 0)) {
+-		printf("Failed to make both pages present\n");
+-		return 1;
+-	}
++	vma_size = get_value_for_name(addr, SIZE);
++	vma_rss = get_value_for_name(addr, RSS);
+ 
+-	page1_flags = get_kpageflags(page1_flags & PFN_MASK);
+-	page2_flags = get_kpageflags(page2_flags & PFN_MASK);
++	/* only one page is faulted in */
++	return (vma_rss < vma_size);
++}
+ 
+-	/* Both pages should be unevictable */
+-	if (((page1_flags & UNEVICTABLE_BIT) == 0) ||
+-	    ((page2_flags & UNEVICTABLE_BIT) == 0)) {
+-		printf("Failed to make both pages unevictable\n");
+-		return 1;
+-	}
++#define PRESENT_BIT     0x8000000000000000ULL
++#define PFN_MASK        0x007FFFFFFFFFFFFFULL
++#define UNEVICTABLE_BIT (1UL << 18)
+ 
+-	if (!is_vmflag_set((unsigned long)map, LOCKED)) {
+-		printf("VMA flag %s is missing on page 1\n", LOCKED);
+-		return 1;
+-	}
++static int lock_check(unsigned long addr)
++{
++	bool locked;
++	unsigned long vma_size, vma_rss;
+ 
+-	if (!is_vmflag_set((unsigned long)map + page_size, LOCKED)) {
+-		printf("VMA flag %s is missing on page 2\n", LOCKED);
+-		return 1;
+-	}
++	locked = is_vmflag_set(addr, LOCKED);
++	if (!locked)
++		return false;
+ 
+-	return 0;
++	vma_size = get_value_for_name(addr, SIZE);
++	vma_rss = get_value_for_name(addr, RSS);
++
++	return (vma_rss == vma_size);
+ }
+ 
+ static int unlock_lock_check(char *map)
+ {
+-	unsigned long page_size = getpagesize();
+-	uint64_t page1_flags, page2_flags;
+-
+-	page1_flags = get_pageflags((unsigned long)map);
+-	page2_flags = get_pageflags((unsigned long)map + page_size);
+-	page1_flags = get_kpageflags(page1_flags & PFN_MASK);
+-	page2_flags = get_kpageflags(page2_flags & PFN_MASK);
+-
+-	if ((page1_flags & UNEVICTABLE_BIT) || (page2_flags & UNEVICTABLE_BIT)) {
+-		printf("A page is still marked unevictable after unlock\n");
+-		return 1;
+-	}
+-
+ 	if (is_vmflag_set((unsigned long)map, LOCKED)) {
+ 		printf("VMA flag %s is present on page 1 after unlock\n", LOCKED);
+ 		return 1;
+ 	}
+ 
+-	if (is_vmflag_set((unsigned long)map + page_size, LOCKED)) {
+-		printf("VMA flag %s is present on page 2 after unlock\n", LOCKED);
+-		return 1;
+-	}
+-
+ 	return 0;
+ }
+ 
+@@ -311,7 +210,7 @@ static int test_mlock_lock()
+ 		goto unmap;
+ 	}
+ 
+-	if (lock_check(map))
++	if (!lock_check((unsigned long)map))
+ 		goto unmap;
+ 
+ 	/* Now unlock and recheck attributes */
+@@ -330,64 +229,18 @@ static int test_mlock_lock()
+ 
+ static int onfault_check(char *map)
+ {
+-	unsigned long page_size = getpagesize();
+-	uint64_t page1_flags, page2_flags;
+-
+-	page1_flags = get_pageflags((unsigned long)map);
+-	page2_flags = get_pageflags((unsigned long)map + page_size);
+-
+-	/* Neither page should be present */
+-	if ((page1_flags & PRESENT_BIT) || (page2_flags & PRESENT_BIT)) {
+-		printf("Pages were made present by MLOCK_ONFAULT\n");
+-		return 1;
+-	}
+-
+ 	*map = 'a';
+-	page1_flags = get_pageflags((unsigned long)map);
+-	page2_flags = get_pageflags((unsigned long)map + page_size);
+-
+-	/* Only page 1 should be present */
+-	if ((page1_flags & PRESENT_BIT) == 0) {
+-		printf("Page 1 is not present after fault\n");
+-		return 1;
+-	} else if (page2_flags & PRESENT_BIT) {
+-		printf("Page 2 was made present\n");
+-		return 1;
+-	}
+-
+-	page1_flags = get_kpageflags(page1_flags & PFN_MASK);
+-
+-	/* Page 1 should be unevictable */
+-	if ((page1_flags & UNEVICTABLE_BIT) == 0) {
+-		printf("Failed to make faulted page unevictable\n");
+-		return 1;
+-	}
+-
+ 	if (!is_vma_lock_on_fault((unsigned long)map)) {
+ 		printf("VMA is not marked for lock on fault\n");
+ 		return 1;
+ 	}
+ 
+-	if (!is_vma_lock_on_fault((unsigned long)map + page_size)) {
+-		printf("VMA is not marked for lock on fault\n");
+-		return 1;
+-	}
+-
+ 	return 0;
+ }
+ 
+ static int unlock_onfault_check(char *map)
+ {
+ 	unsigned long page_size = getpagesize();
+-	uint64_t page1_flags;
+-
+-	page1_flags = get_pageflags((unsigned long)map);
+-	page1_flags = get_kpageflags(page1_flags & PFN_MASK);
+-
+-	if (page1_flags & UNEVICTABLE_BIT) {
+-		printf("Page 1 is still marked unevictable after unlock\n");
+-		return 1;
+-	}
+ 
+ 	if (is_vma_lock_on_fault((unsigned long)map) ||
+ 	    is_vma_lock_on_fault((unsigned long)map + page_size)) {
+@@ -445,7 +298,6 @@ static int test_lock_onfault_of_present()
+ 	char *map;
+ 	int ret = 1;
+ 	unsigned long page_size = getpagesize();
+-	uint64_t page1_flags, page2_flags;
+ 
+ 	map = mmap(NULL, 2 * page_size, PROT_READ | PROT_WRITE,
+ 		   MAP_ANONYMOUS | MAP_PRIVATE, -1, 0);
+@@ -465,17 +317,6 @@ static int test_lock_onfault_of_present()
+ 		goto unmap;
+ 	}
+ 
+-	page1_flags = get_pageflags((unsigned long)map);
+-	page2_flags = get_pageflags((unsigned long)map + page_size);
+-	page1_flags = get_kpageflags(page1_flags & PFN_MASK);
+-	page2_flags = get_kpageflags(page2_flags & PFN_MASK);
+-
+-	/* Page 1 should be unevictable */
+-	if ((page1_flags & UNEVICTABLE_BIT) == 0) {
+-		printf("Failed to make present page unevictable\n");
+-		goto unmap;
+-	}
+-
+ 	if (!is_vma_lock_on_fault((unsigned long)map) ||
+ 	    !is_vma_lock_on_fault((unsigned long)map + page_size)) {
+ 		printf("VMA with present pages is not marked lock on fault\n");
+@@ -507,7 +348,7 @@ static int test_munlockall()
+ 		goto out;
+ 	}
+ 
+-	if (lock_check(map))
++	if (!lock_check((unsigned long)map))
+ 		goto unmap;
+ 
+ 	if (munlockall()) {
+@@ -549,7 +390,7 @@ static int test_munlockall()
+ 		goto out;
+ 	}
+ 
+-	if (lock_check(map))
++	if (!lock_check((unsigned long)map))
+ 		goto unmap;
+ 
+ 	if (munlockall()) {
+-- 
+2.25.1
+
+-- 
+Michal Hocko
+SUSE Labs
