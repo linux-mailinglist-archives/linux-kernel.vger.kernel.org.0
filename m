@@ -2,77 +2,138 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F1423191516
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 16:43:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AE3D519148C
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 16:38:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728598AbgCXPlG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 11:41:06 -0400
-Received: from sender3-op-o12.zoho.com.cn ([124.251.121.243]:17804 "EHLO
-        sender3-op-o12.zoho.com.cn" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727724AbgCXPlF (ORCPT
+        id S1728052AbgCXPgP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 11:36:15 -0400
+Received: from wout3-smtp.messagingengine.com ([64.147.123.19]:57505 "EHLO
+        wout3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727216AbgCXPgP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 11:41:05 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1585064385;
-        s=mail; d=flygoat.com; i=jiaxun.yang@flygoat.com;
-        h=From:To:Cc:Message-ID:Subject:Date:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Content-Type;
-        bh=9Rcu36G6rAVdZubjv9nlWJ08myU9AyosJCykkETK6LQ=;
-        b=SgUP4D369C7SKyMXxahyltWu5BVmrAk2rj7jc//i9zPZLh4IHz4Z5KHrNhvFzwPf
-        oaaTjwURl/0hiUzf7p+8VqUsHPbI5SnBJj/1sZw4xU0bVfplETP3vHBaIZIkaLzvCrY
-        oueWeGjdZUoj2xxZz4LQj7WhZjm5C2wgFIRgcSt0=
-Received: from localhost.localdomain (39.155.141.144 [39.155.141.144]) by mx.zoho.com.cn
-        with SMTPS id 15850643829481008.2720751464285; Tue, 24 Mar 2020 23:39:42 +0800 (CST)
-From:   Jiaxun Yang <jiaxun.yang@flygoat.com>
-To:     linux-mips@vger.kernel.org
-Cc:     Jiaxun Yang <jiaxun.yang@flygoat.com>,
-        Huacai Chen <chenhc@lemote.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <maz@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Allison Randal <allison@lohutok.net>,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Message-ID: <20200324153624.23109-12-jiaxun.yang@flygoat.com>
-Subject: [PATCH v6 11/11] MIPS: Loongson64: Move MIPS_CPU_IRQ_BASE
-Date:   Tue, 24 Mar 2020 23:36:08 +0800
-X-Mailer: git-send-email 2.26.0.rc2
-In-Reply-To: <20200324153624.23109-1-jiaxun.yang@flygoat.com>
-References: <20200324153624.23109-1-jiaxun.yang@flygoat.com>
+        Tue, 24 Mar 2020 11:36:15 -0400
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+        by mailout.west.internal (Postfix) with ESMTP id 6EEF388B;
+        Tue, 24 Mar 2020 11:36:13 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute4.internal (MEProxy); Tue, 24 Mar 2020 11:36:13 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=
+        date:from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=fm2; bh=ey6ezPmPMaFgVvNxPoggC0JkyMH
+        IxDXhR6IcAX+U6aA=; b=fJ31mfSc7adxHOZK4W+MnOgd9hIgs5ks1T/cTcU5+4Y
+        Et3OI2qzFtjXZclKPQ/YbDrqfAJhz9McMFo5uLbFTTVDg346dhXcPuQfqeOKYfC8
+        xNX5PnLrbjlAAqfpDqaaHqwUcNJKUOccrdbq8xAfyeceQ49bafxI069u71znWNC0
+        /jCN3FCFjDic/etAR4RCPxL2MRuKoH8nJTBHONNyn5BUdlDymZTJ+C2gvbSxIKUI
+        qPzKC7C+tfv13S7t/lEkKZk4mHHQrK+Xz6cmqOHJERVnvrnuv04vLhWO7XsnTEEz
+        ZoTzNhgllnZcVKdlRLO1KrnsKw5j32dJ3KeHTaa27rg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=ey6ezP
+        mPMaFgVvNxPoggC0JkyMHIxDXhR6IcAX+U6aA=; b=ovIGcrrCcsEyK2ppIfv5Uq
+        jik3pR9HU2lWBXmbmB1W9bXT/sZdqxIMiRuESBfXNWotpv8p2Ek6xuLhdxZf/+Nv
+        Evm6wcHEr1Eaa+X9DJriaJb6wygXstKQG929k+atlO6qKlsOVFqMkyt9Q5xbTkYi
+        MGCOBZrTXdV4QqmREXZ12JvjMOH6uf9ZtppuDQfsl7iv+KiCBrEr1thiVsuOrm4Y
+        2NTDTjX5ODxiO0hsLLMNrx6+3skk9bB1PERr07atUGtrIk6XzdRI7Ju2rHoVdkPc
+        tCOjzJ8yhj/plcRB4NZl5P4AqCorymOMplmzbvVPJyLErjd6yffM0EdwDfJ0njng
+        ==
+X-ME-Sender: <xms:6ih6XtXVSOq43UO0FDOpgLJ18ttTtEIsM7QiB_QaILv4xodIpZBbIA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedugedrudehuddggeekucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepfffhvffukfhfgggtuggjsehgtderredttddvnecuhfhrohhmpeforgigihhm
+    vgcutfhiphgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecukfhppeeltd
+    drkeelrdeikedrjeeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghi
+    lhhfrhhomhepmhgrgihimhgvsegtvghrnhhordhtvggthh
+X-ME-Proxy: <xmx:6ih6Xld0JyIQmOZpiwYz5EoM49Rx27fWfUcjbq0tXzW0Xhl5cXdQCw>
+    <xmx:6ih6XowSOmMeHITMFY9Dc62vLfOnwn4yygSHFRUC2rwjl7XXPVUYuQ>
+    <xmx:6ih6XoE1xQEBpYtGSZmlNG6Z0eE72hPN6OYQBHnHMXjpOF9GyHK5qA>
+    <xmx:7Sh6Xuz-u5DZ_tiu-AknL7VKYfMOUAVjvE67zNPWHtV7Lxw4Xj5QDg>
+Received: from localhost (lfbn-tou-1-1502-76.w90-89.abo.wanadoo.fr [90.89.68.76])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 9CCA2328005E;
+        Tue, 24 Mar 2020 11:36:10 -0400 (EDT)
+Date:   Tue, 24 Mar 2020 16:36:08 +0100
+From:   Maxime Ripard <maxime@cerno.tech>
+To:     Roman Stratiienko <r.stratiienko@gmail.com>
+Cc:     jernej.skrabec@siol.net, wens@csie.org, airlied@linux.ie,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v4 4/4] RFC: drm/sun4i: Process alpha channel of most
+ bottom layer
+Message-ID: <20200324153608.6whowf2b77k75uhj@gilmour.lan>
+References: <.>
+ <20200302103138.17916-1-r.stratiienko@gmail.com>
+ <20200302103138.17916-5-r.stratiienko@gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-ZohoCNMailClient: External
-Content-Type: text/plain; charset=utf8
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="adiczxgoolyaz7j5"
+Content-Disposition: inline
+In-Reply-To: <20200302103138.17916-5-r.stratiienko@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-To prevent CPU IRQ collide with PCH IRQ, we move down
-CPU IRQ BASE to 16.
 
-Co-developed-by: Huacai Chen <chenhc@lemote.com>
-Signed-off-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
----
- arch/mips/include/asm/mach-loongson64/irq.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+--adiczxgoolyaz7j5
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-diff --git a/arch/mips/include/asm/mach-loongson64/irq.h b/arch/mips/includ=
-e/asm/mach-loongson64/irq.h
-index d41dc4a76e6d..0041bd490ab8 100644
---- a/arch/mips/include/asm/mach-loongson64/irq.h
-+++ b/arch/mips/include/asm/mach-loongson64/irq.h
-@@ -5,7 +5,7 @@
- #include <boot_param.h>
-=20
- /* cpu core interrupt numbers */
--#define MIPS_CPU_IRQ_BASE 56
-+#define MIPS_CPU_IRQ_BASE 16
-=20
- #include <asm/mach-generic/irq.h>
-=20
---=20
-2.26.0.rc2
+On Mon, Mar 02, 2020 at 12:31:38PM +0200, Roman Stratiienko wrote:
+> Allwinner display engine blender consists of 3 pipelined blending units.
+>
+> PIPE0->\
+>         BLD0-\
+> PIPE1->/      BLD1-\
+> PIPE2->------/      BLD2->OUT
+> PIPE3->------------/
+>
+> This pipeline produces incorrect composition if PIPE0 buffer has alpha.
 
+Why? What happens in that case?
 
+> Correct solution is to add one more blending step and mix PIPE0 with
+> background, but it is not supported by the hardware.
+>
+> Use premultiplied alpha buffer of PIPE0 overlay channel as is.
+> In this case we got same effect as mixing PIPE0 with black background.
+>
+> Signed-off-by: Roman Stratiienko <r.stratiienko@gmail.com>
+>
+> ---
+>
+> v4:
+> - Initial version, depends on other unmerged patches in the patchset.
+> ---
+>  drivers/gpu/drm/sun4i/sun8i_ui_layer.c | 2 +-
+>  drivers/gpu/drm/sun4i/sun8i_vi_layer.c | 2 +-
+>  2 files changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/sun4i/sun8i_ui_layer.c b/drivers/gpu/drm/sun4i/sun8i_ui_layer.c
+> index dd6145f80c36..d94f4d8b9128 100644
+> --- a/drivers/gpu/drm/sun4i/sun8i_ui_layer.c
+> +++ b/drivers/gpu/drm/sun4i/sun8i_ui_layer.c
+> @@ -106,7 +106,7 @@ static void sun8i_ui_layer_update_alpha(struct sun8i_mixer *mixer, int channel,
+>  	regmap_update_bits(mixer->engine.regs,
+>  			   SUN8I_MIXER_BLEND_PREMULTIPLY(bld_base),
+>  			   SUN8I_MIXER_BLEND_PREMULTIPLY_EN(zpos),
+> -			   SUN8I_MIXER_BLEND_PREMULTIPLY_EN(zpos));
+> +			   zpos ? SUN8I_MIXER_BLEND_PREMULTIPLY_EN(zpos) : 0);
+
+Can you really use the zpos here? What happens if the zpos doesn't
+match the pipe?
+
+Maxime
+
+--adiczxgoolyaz7j5
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXnoo6AAKCRDj7w1vZxhR
+xQ3qAQDi1pvffHHMR3iuY4S1QReEhrb2tXea5b4qGXQRNlFXLgEAoSrDjZzD7BFx
+uqqs3+pIlvIeZFNloU3TyvpOGtTEowo=
+=WfNJ
+-----END PGP SIGNATURE-----
+
+--adiczxgoolyaz7j5--
