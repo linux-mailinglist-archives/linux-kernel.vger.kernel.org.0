@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 00D45190E82
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 14:14:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 08338190FDE
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 14:30:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727697AbgCXNMo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 09:12:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58576 "EHLO mail.kernel.org"
+        id S1729460AbgCXNXt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 09:23:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46946 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727681AbgCXNMj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 09:12:39 -0400
+        id S1728243AbgCXNXo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Mar 2020 09:23:44 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E3045208CA;
-        Tue, 24 Mar 2020 13:12:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 368D3208D6;
+        Tue, 24 Mar 2020 13:23:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585055559;
-        bh=/yUkgZdWto5X5Jvg8caTaNLBPOv3Z7TfKUnt0YercZw=;
+        s=default; t=1585056223;
+        bh=N4fXa6BWlAkxno12kmSG/DrQ+vfBVHlWoVdXT7PuMXE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CJirrFxCqNN0XOrxwZ109EIEGpw/yDwMl7VC19ze6QEi+y/rLjb7QWWCV9SgcnY/5
-         o6DCz+gren7pH6i5QfyX3MYrtbqUaOspJKadTNLl+PUD3dMiUnoTXRra3SuAbeLYuy
-         se8Af29hhpNpPaE7nGI+TPChPT/bExomlClEtnTM=
+        b=xK1eEyvANQg0VRZ1i0zXDNhMg73+9NhDblCsd5iBnSA29HnMPA3vBx2FKxHbFFDVC
+         head/FJZ6qydt6XNJZhSB9NvOLavapsPq6KqMvx4GPUmDwrQCnHhC9UicIPoGqx1ae
+         6EyUec0pwDHCDRA3ZKkF+089MjD2zNP/oreuMhrw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Scott Chen <scott@labau.com.tw>,
-        Johan Hovold <johan@kernel.org>
-Subject: [PATCH 4.19 24/65] USB: serial: pl2303: add device-id for HP LD381
-Date:   Tue, 24 Mar 2020 14:10:45 +0100
-Message-Id: <20200324130800.217686671@linuxfoundation.org>
+        stable@vger.kernel.org, Eric Biggers <ebiggers@google.com>,
+        Jiri Slaby <jslaby@suse.cz>
+Subject: [PATCH 5.5 061/119] tty: fix compat TIOCGSERIAL checking wrong function ptr
+Date:   Tue, 24 Mar 2020 14:10:46 +0100
+Message-Id: <20200324130814.308198624@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.2
-In-Reply-To: <20200324130756.679112147@linuxfoundation.org>
-References: <20200324130756.679112147@linuxfoundation.org>
+In-Reply-To: <20200324130808.041360967@linuxfoundation.org>
+References: <20200324130808.041360967@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,42 +43,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Scott Chen <scott@labau.com.tw>
+From: Eric Biggers <ebiggers@google.com>
 
-commit cecc113c1af0dd41ccf265c1fdb84dbd05e63423 upstream.
+commit 6e622cd8bd888c7fa3ee2b7dfb3514ab53b21570 upstream.
 
-Add a device id for HP LD381 Display
-LD381:   03f0:0f7f
+Commit 77654350306a ("take compat TIOC[SG]SERIAL treatment into
+tty_compat_ioctl()") changed the compat version of TIOCGSERIAL to start
+checking for the presence of the ->set_serial function pointer rather
+than ->get_serial.  This appears to be a copy-and-paste error, since
+->get_serial is the function pointer that is called as well as the
+pointer that is checked by the non-compat version of TIOCGSERIAL.
 
-Signed-off-by: Scott Chen <scott@labau.com.tw>
-Cc: stable <stable@vger.kernel.org>
-Signed-off-by: Johan Hovold <johan@kernel.org>
+Fix this by checking the correct function pointer.
+
+Fixes: 77654350306a ("take compat TIOC[SG]SERIAL treatment into tty_compat_ioctl()")
+Cc: <stable@vger.kernel.org> # v4.20+
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+Acked-by: Jiri Slaby <jslaby@suse.cz>
+Link: https://lore.kernel.org/r/20200224182044.234553-3-ebiggers@kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/serial/pl2303.c |    1 +
- drivers/usb/serial/pl2303.h |    1 +
- 2 files changed, 2 insertions(+)
+ drivers/tty/tty_io.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/usb/serial/pl2303.c
-+++ b/drivers/usb/serial/pl2303.c
-@@ -93,6 +93,7 @@ static const struct usb_device_id id_tab
- 	{ USB_DEVICE(SUPERIAL_VENDOR_ID, SUPERIAL_PRODUCT_ID) },
- 	{ USB_DEVICE(HP_VENDOR_ID, HP_LD220_PRODUCT_ID) },
- 	{ USB_DEVICE(HP_VENDOR_ID, HP_LD220TA_PRODUCT_ID) },
-+	{ USB_DEVICE(HP_VENDOR_ID, HP_LD381_PRODUCT_ID) },
- 	{ USB_DEVICE(HP_VENDOR_ID, HP_LD960_PRODUCT_ID) },
- 	{ USB_DEVICE(HP_VENDOR_ID, HP_LD960TA_PRODUCT_ID) },
- 	{ USB_DEVICE(HP_VENDOR_ID, HP_LCM220_PRODUCT_ID) },
---- a/drivers/usb/serial/pl2303.h
-+++ b/drivers/usb/serial/pl2303.h
-@@ -124,6 +124,7 @@
- #define HP_LM920_PRODUCT_ID	0x026b
- #define HP_TD620_PRODUCT_ID	0x0956
- #define HP_LD960_PRODUCT_ID	0x0b39
-+#define HP_LD381_PRODUCT_ID	0x0f7f
- #define HP_LCM220_PRODUCT_ID	0x3139
- #define HP_LCM960_PRODUCT_ID	0x3239
- #define HP_LD220_PRODUCT_ID	0x3524
+--- a/drivers/tty/tty_io.c
++++ b/drivers/tty/tty_io.c
+@@ -2738,7 +2738,7 @@ static int compat_tty_tiocgserial(struct
+ 	memset(&v, 0, sizeof(v));
+ 	memset(&v32, 0, sizeof(v32));
+ 
+-	if (!tty->ops->set_serial)
++	if (!tty->ops->get_serial)
+ 		return -ENOTTY;
+ 	err = tty->ops->get_serial(tty, &v);
+ 	if (!err) {
 
 
