@@ -2,164 +2,58 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AC6991908C9
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 10:13:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5C2FC1908C2
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 10:13:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727495AbgCXJMs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 05:12:48 -0400
-Received: from conssluserg-05.nifty.com ([210.131.2.90]:21903 "EHLO
-        conssluserg-05.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726129AbgCXJMs (ORCPT
+        id S1727324AbgCXJMU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 05:12:20 -0400
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:42394 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726413AbgCXJMT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 05:12:48 -0400
-Received: from mail-vs1-f47.google.com (mail-vs1-f47.google.com [209.85.217.47]) (authenticated)
-        by conssluserg-05.nifty.com with ESMTP id 02O9Cd40007119
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Mar 2020 18:12:39 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-05.nifty.com 02O9Cd40007119
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1585041159;
-        bh=swDS97mEzML7M+UgdPS2qRvo+g9Z1BxodzvheYPexOU=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=VXFqjHQUpXPnM3EbJTrh//kdquO34vop+pt+NH4INJf+F9mu6j/ATHRApSVQUlRQm
-         BPl3+YRHAoKfJRlWRKwMxPSXpaXTAcMCFSUPnWGm5ld0W+BwYd3FsZpijan1XwPxJA
-         ljsDK2cWC6GA8Mty60EhDjJDGMTLDyERjRZhK1dlODYm8IhoJq1A04BDdYf8afQfat
-         LNg07S+gaevNcjvL/+IpnwSte9qxdDxOtrM4+wAb9uV9OBa0hbToZpnYoDcXEykazb
-         Pmxa+NXsFxgn1g5qjBaiM8MRFSSUFYRCW4qaer0lM4uib8gcIUx+81MvH6sU9krzYl
-         m374HH+iaQW5A==
-X-Nifty-SrcIP: [209.85.217.47]
-Received: by mail-vs1-f47.google.com with SMTP id u11so715517vsg.2
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Mar 2020 02:12:39 -0700 (PDT)
-X-Gm-Message-State: ANhLgQ1qdfW/iUrATWLLPuis6UQCONlFLc4+Ta0vDgDycDXhHnrqG6yu
-        kXha8n3T87lK97HjBpJgsc3pyXmbPwEU2Hu6Odk=
-X-Google-Smtp-Source: ADFU+vuE4DNCdSn6UWfz14oVMVXG4qgoUTYHKqZxfC5M7JxfwigwrK0PbzxrGqAixYqAa52fua5rFT9AxBsaYi7UWVA=
-X-Received: by 2002:a67:8745:: with SMTP id j66mr17620480vsd.181.1585041158484;
- Tue, 24 Mar 2020 02:12:38 -0700 (PDT)
+        Tue, 24 Mar 2020 05:12:19 -0400
+Received: by mail-qt1-f193.google.com with SMTP id t9so10378559qto.9
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Mar 2020 02:12:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=oQSuTD2L8BoQU016DHWkTrPw5E7C1fwkKvLo6b8G8HE=;
+        b=FD2yKXHS7MWShqAR8frtN5qDf9ZWZI8JJ8/KQ32jMYljyiT2culFoZEv8AjfX+ZRVd
+         XKHYxDbU8xbDRFO4dujoAb1WKaArGVRAsoeFWPsMLImcBNPO35YmrgQ80SiVd/8Qe7Ae
+         psXjJhG9sb06jyyh0o1Ri/IKP/Jkgk6SLsWar4PS3cotblB8uWncB5DwtTS4PwkCSiSO
+         DLSqW0Ngqst0su2WuMyUfnIotaksurOnC9yFCPz4m2+ksdy9wh58x2t2OivptSazy/4e
+         sGWuLMxGAyaldcJgwVm7vMANMq+Inb1V+ohX7mlCYlWDepheywI38jvW70oeEtauEgle
+         z25g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=oQSuTD2L8BoQU016DHWkTrPw5E7C1fwkKvLo6b8G8HE=;
+        b=KlSWADTIgQUKOoaHemyfaN/d3uIEzjX0lNKdyy8zBm9w/+Xx3sO+0VwvcfivvHwMuZ
+         mcYJwp7/J/fW61af0YBg2mXC8aOeUNLBvQBZcDOi2Zh4KdU31+am0w/mcUplHlztYyby
+         jZazfQNzjRYFKdTH4WcxhnR68Dpu3fRKrKIa6yRz3be/69GAxZ8xg/gZY8cIzJxx4pGP
+         Rj9avsQeCocajJAe0kNK4sJ3nBYDT5hG+CfzUrRmUxTf812lmpISfF/1XpCx3dLu3Fza
+         uNMxwMFkwnd7wqlSWxmA6UKfTgJgYjLW7C0FbgnsUk/XIq6Ky0fZ2EmlS2hT/0xsx349
+         l1Mw==
+X-Gm-Message-State: ANhLgQ1k/ozA7ZkkUxYaMz6j1ARCPFJ4frGgeSPSCBtMUK43GbTB6SkV
+        ldVNabMBtP2qWBRdu7KcMdYXPbijLqe+WnWSYNI=
+X-Google-Smtp-Source: ADFU+vvq+SQs3i94vW7pE4kKM8z8bfdl7rECl+sJg/HNAMhAmUis/mlU8k/ZE8BsMkmlyj5vaOsReBO7/WFtOoCAJrE=
+X-Received: by 2002:ac8:1c72:: with SMTP id j47mr26104560qtk.377.1585041138976;
+ Tue, 24 Mar 2020 02:12:18 -0700 (PDT)
 MIME-Version: 1.0
-References: <20200113161310.GA191743@rani.riverdale.lan> <20200113195337.604646-1-nivedita@alum.mit.edu>
- <202001131750.C1B8468@keescook> <20200114165135.GK31032@zn.tnic>
- <20200115002131.GA3258770@rani.riverdale.lan> <20200115122458.GB20975@zn.tnic>
- <20200316160259.GN26126@zn.tnic> <20200323204454.GA2611336@zx2c4.com>
- <202003231350.7D35351@keescook> <CAK7LNARMBkc666kZ9jOG9sSThzA69JvKi++WZXMtCP9ddyqcBw@mail.gmail.com>
-In-Reply-To: <CAK7LNARMBkc666kZ9jOG9sSThzA69JvKi++WZXMtCP9ddyqcBw@mail.gmail.com>
-From:   Masahiro Yamada <masahiroy@kernel.org>
-Date:   Tue, 24 Mar 2020 18:12:01 +0900
-X-Gmail-Original-Message-ID: <CAK7LNARDb4SmQ2Y94CHAzP2qh_Ju7pu-w7kb0XKdP=2P-T+njQ@mail.gmail.com>
-Message-ID: <CAK7LNARDb4SmQ2Y94CHAzP2qh_Ju7pu-w7kb0XKdP=2P-T+njQ@mail.gmail.com>
-Subject: Re: [PATCH] Documentation/changes: Raise minimum supported binutils
- version to 2.23
-To:     Kees Cook <keescook@chromium.org>, Borislav Petkov <bp@alien8.de>
-Cc:     "Jason A. Donenfeld" <Jason@zx2c4.com>,
-        Arvind Sankar <nivedita@alum.mit.edu>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, X86 ML <x86@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Thomas Lendacky <Thomas.Lendacky@amd.com>,
-        Mauro Rossi <issor.oruam@gmail.com>,
-        Michael Matz <matz@suse.de>
+Received: by 2002:a0c:e00c:0:0:0:0:0 with HTTP; Tue, 24 Mar 2020 02:12:18
+ -0700 (PDT)
+Reply-To: sgt.kayla12@gmail.com
+From:   Kayla <rohanmelvin2013@gmail.com>
+Date:   Tue, 24 Mar 2020 09:12:18 +0000
+Message-ID: <CADdOLZu5U9T=TufmzMZr1JEUXRHtbd5h+j7ZEHpdUJpiRRcTzA@mail.gmail.com>
+Subject: Hello my dear,
+To:     undisclosed-recipients:;
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 24, 2020 at 6:02 PM Masahiro Yamada <masahiroy@kernel.org> wrote:
->
-> Hi.
->
->
->
-> On Tue, Mar 24, 2020 at 5:51 AM Kees Cook <keescook@chromium.org> wrote:
-> >
-> > On Mon, Mar 23, 2020 at 02:44:54PM -0600, Jason A. Donenfeld wrote:
-> > > On Mon, Mar 16, 2020 at 05:02:59PM +0100, Borislav Petkov wrote:
-> > > > Long overdue patch, see below.
-> > > >
-> > > > Plan is to queue it after 5.7-rc1.
-> > > >
-> > > > ---
-> > > > From: Borislav Petkov <bp@suse.de>
-> > > > Date: Mon, 16 Mar 2020 16:28:36 +0100
-> > > > Subject: [PATCH] Documentation/changes: Raise minimum supported binutilsa version to 2.23
-> > > >
-> > > > The currently minimum-supported binutils version 2.21 has the problem of
-> > > > promoting symbols which are defined outside of a section into absolute.
-> > > > According to Arvind:
-> > > >
-> > > >   binutils-2.21 and -2.22. An x86-64 defconfig will fail with
-> > > >           Invalid absolute R_X86_64_32S relocation: _etext
-> > > >   and after fixing that one, with
-> > > >           Invalid absolute R_X86_64_32S relocation: __end_of_kernel_reserve
-> > > >
-> > > > Those two versions of binutils have a bug when it comes to handling
-> > > > symbols defined outside of a section and binutils 2.23 has the proper
-> > > > fix, see: https://sourceware.org/legacy-ml/binutils/2012-06/msg00155.html
-
-
-This seems to be also related to
-7883a14339299773b2ce08dcfd97c63c199a9289
-
-
-I had noticed the symbol "_text"
-was absolute on binutils <= 2.22,
-but I was not sure whether it was a bug of the tool.
-
-I applied the fix.
-Perhaps, it was unneeded given that
-we require the binutils 2.23
-
-
-
-
-
-> > > >
-> > > > Therefore, up to the fixed version directly, skipping the broken ones.
-> > > >
-> > > > Currently shipping distros already have the fixed binutils version so
-> > > > there should be no breakage resulting from this.
-> > > >
-> > > > For more details about the whole thing, see the thread in Link.
-> > >
-> > > That sounds very good to me. Then we'll be able to use ADX instructions
-> > > without ifdefs.
-> > >
-> > > Acked-by: Jason A. Donenfeld <Jason@zx2c4.com>
-> >
-> > Can you send these now and we can land in 5.7 with the doc change?
-> >
-> > -Kees
->
->
-> Kees,
->
-> I folded this patch into the following series (16 patches):
-> https://lore.kernel.org/patchwork/project/lkml/list/?series=435391
->
-> This patch (14/16) is a prerequisite for 15/16.
->
->
->
-> Borislav,
->
-> When I forwarded this patch, I fixed up one more line.
-> (changes.rst duplicates the same information...)
->
-> Please see this. I hope this should be OK.
-> https://lore.kernel.org/patchwork/patch/1214519/
->
->
->
-> > --
-> > Kees Cook
->
->
->
-> --
-> Best Regards
-> Masahiro Yamada
-
-
-
--- 
-Best Regards
-Masahiro Yamada
+How long should I wait before you respond to my message after sending
+an email to you?,
