@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B1D40190ECE
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 14:15:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5BCA1190F80
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 14:29:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728130AbgCXNPJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 09:15:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33864 "EHLO mail.kernel.org"
+        id S1728527AbgCXNUV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 09:20:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41478 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727717AbgCXNPH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 09:15:07 -0400
+        id S1728916AbgCXNUQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Mar 2020 09:20:16 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 213E7208D5;
-        Tue, 24 Mar 2020 13:15:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0E18F20775;
+        Tue, 24 Mar 2020 13:20:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585055706;
-        bh=HrAzwTQxkW5nFCS4hF9w7WLyIphCQYAPQfRP45tJzBs=;
+        s=default; t=1585056016;
+        bh=3xW+pscrqJeC5q3xuuLfk72SfIQsKV4XoV/9Yx9ilGo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hs4H1QMfY+/ObUYvM161kR10jUeeIF3hyFNzfpsXFFhF/IQrSNJUZryFvndDjcysv
-         svH12LyG1yZnbb7DrRV58eTyGwW6OnUCOPX0zyr9FYva/TQzZsXQVbi9c9a2ANwZkB
-         gAwJZ8T/j08VVqHVxhqAznDhOgmVOKGJv/lfSAtk=
+        b=qOmwJc+Nkm6AeMTtXQBN1BeXTsNngWqGWoFCINjrXqdy3pu19BrP3FBKzY8D/V+je
+         bTAoVYv85glfYC3SCt5b8lJdiNiyavXhd+KR3JtFjvkj/g4DV8kx3OJcF3JkcERCB5
+         SAWk4PHKQjjI0Ej7RFMnSDRvcKHPsYCPo2rVh7B0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Anthony Mallet <anthony.mallet@laas.fr>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 52/65] USB: cdc-acm: fix close_delay and closing_wait units in TIOCSSERIAL
-Date:   Tue, 24 Mar 2020 14:11:13 +0100
-Message-Id: <20200324130803.459320435@linuxfoundation.org>
+        stable@vger.kernel.org, Qiujun Huang <hqjagain@gmail.com>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        syzbot+05835159fe322770fe3d@syzkaller.appspotmail.com
+Subject: [PATCH 5.4 082/102] drm/lease: fix WARNING in idr_destroy
+Date:   Tue, 24 Mar 2020 14:11:14 +0100
+Message-Id: <20200324130814.847513002@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.2
-In-Reply-To: <20200324130756.679112147@linuxfoundation.org>
-References: <20200324130756.679112147@linuxfoundation.org>
+In-Reply-To: <20200324130806.544601211@linuxfoundation.org>
+References: <20200324130806.544601211@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,55 +44,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Anthony Mallet <anthony.mallet@laas.fr>
+From: Qiujun Huang <hqjagain@gmail.com>
 
-[ Upstream commit 633e2b2ded739a34bd0fb1d8b5b871f7e489ea29 ]
+commit b216a8e7908cd750550c0480cf7d2b3a37f06954 upstream.
 
-close_delay and closing_wait are specified in hundredth of a second but stored
-internally in jiffies. Use the jiffies_to_msecs() and msecs_to_jiffies()
-functions to convert from each other.
+drm_lease_create takes ownership of leases. And leases will be released
+by drm_master_put.
 
-Signed-off-by: Anthony Mallet <anthony.mallet@laas.fr>
-Cc: stable <stable@vger.kernel.org>
-Link: https://lore.kernel.org/r/20200312133101.7096-1-anthony.mallet@laas.fr
+drm_master_put
+    ->drm_master_destroy
+            ->idr_destroy
+
+So we needn't call idr_destroy again.
+
+Reported-and-tested-by: syzbot+05835159fe322770fe3d@syzkaller.appspotmail.com
+Signed-off-by: Qiujun Huang <hqjagain@gmail.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+Link: https://patchwork.freedesktop.org/patch/msgid/1584518030-4173-1-git-send-email-hqjagain@gmail.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+
 ---
- drivers/usb/class/cdc-acm.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+ drivers/gpu/drm/drm_lease.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/usb/class/cdc-acm.c b/drivers/usb/class/cdc-acm.c
-index 59675cc7aa017..709884b99b3e3 100644
---- a/drivers/usb/class/cdc-acm.c
-+++ b/drivers/usb/class/cdc-acm.c
-@@ -914,10 +914,10 @@ static int get_serial_info(struct acm *acm, struct serial_struct __user *info)
- 	memset(&tmp, 0, sizeof(tmp));
- 	tmp.xmit_fifo_size = acm->writesize;
- 	tmp.baud_base = le32_to_cpu(acm->line.dwDTERate);
--	tmp.close_delay	= acm->port.close_delay / 10;
-+	tmp.close_delay	= jiffies_to_msecs(acm->port.close_delay) / 10;
- 	tmp.closing_wait = acm->port.closing_wait == ASYNC_CLOSING_WAIT_NONE ?
- 				ASYNC_CLOSING_WAIT_NONE :
--				acm->port.closing_wait / 10;
-+				jiffies_to_msecs(acm->port.closing_wait) / 10;
+--- a/drivers/gpu/drm/drm_lease.c
++++ b/drivers/gpu/drm/drm_lease.c
+@@ -542,10 +542,12 @@ int drm_mode_create_lease_ioctl(struct d
+ 	}
  
- 	if (copy_to_user(info, &tmp, sizeof(tmp)))
- 		return -EFAULT;
-@@ -935,9 +935,10 @@ static int set_serial_info(struct acm *acm,
- 	if (copy_from_user(&new_serial, newinfo, sizeof(new_serial)))
- 		return -EFAULT;
+ 	DRM_DEBUG_LEASE("Creating lease\n");
++	/* lessee will take the ownership of leases */
+ 	lessee = drm_lease_create(lessor, &leases);
  
--	close_delay = new_serial.close_delay * 10;
-+	close_delay = msecs_to_jiffies(new_serial.close_delay * 10);
- 	closing_wait = new_serial.closing_wait == ASYNC_CLOSING_WAIT_NONE ?
--			ASYNC_CLOSING_WAIT_NONE : new_serial.closing_wait * 10;
-+			ASYNC_CLOSING_WAIT_NONE :
-+			msecs_to_jiffies(new_serial.closing_wait * 10);
+ 	if (IS_ERR(lessee)) {
+ 		ret = PTR_ERR(lessee);
++		idr_destroy(&leases);
+ 		goto out_leases;
+ 	}
  
- 	mutex_lock(&acm->port.mutex);
+@@ -580,7 +582,6 @@ out_lessee:
  
--- 
-2.20.1
-
+ out_leases:
+ 	put_unused_fd(fd);
+-	idr_destroy(&leases);
+ 
+ 	DRM_DEBUG_LEASE("drm_mode_create_lease_ioctl failed: %d\n", ret);
+ 	return ret;
 
 
