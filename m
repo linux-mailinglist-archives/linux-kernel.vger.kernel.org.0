@@ -2,74 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3948D190B88
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 11:53:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4AB6D190B45
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 11:40:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727474AbgCXKxA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 06:53:00 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33126 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727444AbgCXKw4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 06:52:56 -0400
-Received: from localhost.localdomain (236.31.169.217.in-addr.arpa [217.169.31.236])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2CBB1208D6;
-        Tue, 24 Mar 2020 10:52:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585047176;
-        bh=4AeA8qWdzDTXrdHBQNY6oqVXBpONA5xeP0MnGuOm3ws=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=B9iQT6/H/5Xzq0o5fj8/mJPPykRqVvFDZd+Iu3LD/DFJ2124mZU0uBeaVbbb3zEEr
-         PwjG8wArYlccQ+1WL4hCBdLvOYHbwLSHf05qoj+foYATyS+3w6+GlXPr8S3LFfydPd
-         LiWJRA0Jiku5UnMwGZq5U3lutrGCxpLUHeoWu0vg=
-From:   Will Deacon <will@kernel.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     kernel-team@android.com, Will Deacon <will@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
+        id S1727382AbgCXKk1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 06:40:27 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:44365 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727084AbgCXKk1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Mar 2020 06:40:27 -0400
+Received: from p5de0bf0b.dip0.t-ipconnect.de ([93.224.191.11] helo=nanos.tec.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1jGgyo-0001rl-RA; Tue, 24 Mar 2020 11:40:19 +0100
+Received: by nanos.tec.linutronix.de (Postfix, from userid 1000)
+        id 4616C100292; Tue, 24 Mar 2020 11:40:18 +0100 (CET)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Xiaoyao Li <xiaoyao.li@intel.com>, Ingo Molnar <mingo@redhat.com>,
+        Borislav Petkov <bp@alien8.de>, hpa@zytor.com,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        kvm@vger.kernel.org, x86@kernel.org, linux-kernel@vger.kernel.org
+Cc:     Andy Lutomirski <luto@kernel.org>,
         Peter Zijlstra <peterz@infradead.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Matt Fleming <matt@codeblueprint.co.uk>,
-        sparclinux@vger.kernel.org
-Subject: [PATCH 4/4] sparc32: mm: Reduce allocation size for PMD and PTE tables
-Date:   Tue, 24 Mar 2020 10:40:05 +0000
-Message-Id: <20200324104005.11279-5-will@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200324104005.11279-1-will@kernel.org>
-References: <20200324104005.11279-1-will@kernel.org>
+        Arvind Sankar <nivedita@alum.mit.edu>,
+        Fenghua Yu <fenghua.yu@intel.com>,
+        Tony Luck <tony.luck@intel.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Jim Mattson <jmattson@google.com>
+Subject: Re: [PATCH v5 3/9] x86/split_lock: Re-define the kernel param option for split_lock_detect
+In-Reply-To: <e708f6d2-8f96-903c-0bce-2eeecc4a237d@intel.com>
+References: <20200315050517.127446-1-xiaoyao.li@intel.com> <20200315050517.127446-4-xiaoyao.li@intel.com> <87r1xjov3a.fsf@nanos.tec.linutronix.de> <e708f6d2-8f96-903c-0bce-2eeecc4a237d@intel.com>
+Date:   Tue, 24 Mar 2020 11:40:18 +0100
+Message-ID: <87r1xidoj1.fsf@nanos.tec.linutronix.de>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now that the page table allocator can free page table allocations
-smaller than PAGE_SIZE, reduce the size of the PMD and PTE allocations
-to avoid needlessly wasting memory.
+Xiaoyao Li <xiaoyao.li@intel.com> writes:
+> On 3/24/2020 1:10 AM, Thomas Gleixner wrote:
+>> Xiaoyao Li <xiaoyao.li@intel.com> writes:
+>> 
+>>> Change sld_off to sld_disable, which means disabling feature split lock
+>>> detection and it cannot be used in kernel nor can kvm expose it guest.
+>>> Of course, the X86_FEATURE_SPLIT_LOCK_DETECT is not set.
+>>>
+>>> Add a new optioin sld_kvm_only, which means kernel turns split lock
+>>> detection off, but kvm can expose it to guest.
+>> 
+>> What's the point of this? If the host is not clean, then you better fix
+>> the host first before trying to expose it to guests.
+>
+> It's not about whether or not host is clean. It's for the cases that 
+> users just don't want it enabled on host, to not break the applications 
+> or drivers that do have split lock issue.
 
-Cc: "David S. Miller" <davem@davemloft.net>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Signed-off-by: Will Deacon <will@kernel.org>
----
- arch/sparc/include/asm/pgtsrmmu.h | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+It's very much about whether the host is split lock clean.
 
-diff --git a/arch/sparc/include/asm/pgtsrmmu.h b/arch/sparc/include/asm/pgtsrmmu.h
-index 58ea8e8c6ee7..7708d015712b 100644
---- a/arch/sparc/include/asm/pgtsrmmu.h
-+++ b/arch/sparc/include/asm/pgtsrmmu.h
-@@ -17,8 +17,8 @@
- /* Number of contexts is implementation-dependent; 64k is the most we support */
- #define SRMMU_MAX_CONTEXTS	65536
- 
--#define SRMMU_PTE_TABLE_SIZE		(PAGE_SIZE)
--#define SRMMU_PMD_TABLE_SIZE		(PAGE_SIZE)
-+#define SRMMU_PTE_TABLE_SIZE		(PTRS_PER_PTE*4)
-+#define SRMMU_PMD_TABLE_SIZE		(PTRS_PER_PMD*4)
- #define SRMMU_PGD_TABLE_SIZE		(PTRS_PER_PGD*4)
- 
- /* Definition of the values in the ET field of PTD's and PTE's */
--- 
-2.20.1
+If your host kernel is not, then this wants to be fixed first. If your
+host application is broken, then either fix it or use "warn".
 
+Stop proliferating crap.
+
+Thanks,
+
+        tglx
