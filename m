@@ -2,79 +2,127 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 61EBB190D2E
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 13:18:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 20D8A190D3C
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 13:21:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727383AbgCXMSB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 08:18:01 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:38083 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727241AbgCXMSB (ORCPT
+        id S1727540AbgCXMUz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 08:20:55 -0400
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:37705 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727422AbgCXMUy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 08:18:01 -0400
-Received: by mail-lj1-f193.google.com with SMTP id w1so18296585ljh.5
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Mar 2020 05:17:59 -0700 (PDT)
+        Tue, 24 Mar 2020 08:20:54 -0400
+Received: by mail-lf1-f68.google.com with SMTP id j11so12978055lfg.4
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Mar 2020 05:20:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=1SPUCMMR/pnomJcGWLTMgKFX0vHSGUAZoz9GUYMTj4o=;
-        b=tilrUvK9V7AIYx6emcjcWpLXFQEyHa+05bdQDIoIywZX2y3SMoEqBFiAybQqeaoQmH
-         qCW38SL4fJ5VBAOb8iFlk///0sNWC25UhpYQQWKRgBijygrHu0xvBAtqsphh+EUTl/O2
-         G/N7sSiUT0spzki5rmzIRfzFDkF3rhztgtSZFIbBY7oBrWXTwy66j+A3LVnCQDsi7qDk
-         /Mt7MYFlctk0gdfk6O3vSL+Tj6CY4O0eXlyiZi2ju9Ktl4TK6O0hsWQBgPzPB8PW2grU
-         HFeLO7sow8tEfwRFWJ+cSErDCMq4U85TpHZyFV3YvgQJyUfiAMty/XMOrODGeLxAgSoU
-         xXgg==
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=xE4MP5AqUCPd9XtoEWD/FK2YPE6NfLNz1ySPK/KUqcg=;
+        b=XS7FO5quXRQMzlcU6oLgb0XC3ZGpFmBkGVb2+urTxc0RoXE+LhQwMcjmE1iMAOa4zj
+         5PDAtVRds458I1ZL9d59wLIw4CZpPrU4m4igICIiVAXvDor0bsq0DssE4nmVlA1PDTlr
+         9Juvmpsk6zwiXtmO5tbpYKysU5GPTSeag89VuFevHBL8HovL4xeC2CptKa/9avBarldI
+         TNKRCuIdtZyWoZlwAcrKcb4Cq5dHK9UKgDmiunIO8+8Ty4coajwPeKXNmvWqU9OBiiIQ
+         YkQFBoINbMMKzAyLh7/C9VyRE7zFm2KikI2U9i1pS66meUqbKQlBhvdRAOHMPTiLB293
+         udYg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=1SPUCMMR/pnomJcGWLTMgKFX0vHSGUAZoz9GUYMTj4o=;
-        b=KWEh1UGKz2dR4WeS/GufxAn35kxb3bGUpxy7AXnvwtecOTZrWiM8ZGbU1keiqBEgzv
-         2tR0iPMopzVV7LdksphCIGtgdgFSiKSacTuBoz84/fVVuJ1s06YINm2wv1vvf2uB48R8
-         8dI8Y/QBkV0xKAUM7kW2a/XWw6og9dOEjPoUqF57TjyrTWmWc2wFTQRqpTTO9CciyhL3
-         pO/csgJgqwwEaP8+m+9RSG58RwNZJnKfTMCtWAiGC7XTyTUK5Ih1K1oUI0cQ6DB19cJC
-         VUEhXFr5Yh0f8U71C13eLW1Gb2a13nkXhJOZT7wF6NpJfFnaBFWiJmx1Z6e0GJnf+m2K
-         +pWA==
-X-Gm-Message-State: ANhLgQ1S/nEgtiHNcJMzuEucRMk8G/sdzmGYU1RQgnHsAoZwL15ePgle
-        mBsGitJ536X+vpRbwCm2z7Z7kw==
-X-Google-Smtp-Source: ADFU+vv7lKNVww4QN95L6mxFqLdHghRsIBPHCaknhAn/jJAnLJ98SKxvbprs0oZ3hACQ1WILAjzmhw==
-X-Received: by 2002:a2e:9e16:: with SMTP id e22mr17842543ljk.220.1585052278511;
-        Tue, 24 Mar 2020 05:17:58 -0700 (PDT)
-Received: from box.localdomain ([86.57.175.117])
-        by smtp.gmail.com with ESMTPSA id f28sm2195911lfh.10.2020.03.24.05.17.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Mar 2020 05:17:57 -0700 (PDT)
-Received: by box.localdomain (Postfix, from userid 1000)
-        id A56051012C3; Tue, 24 Mar 2020 15:17:58 +0300 (+03)
-Date:   Tue, 24 Mar 2020 15:17:58 +0300
-From:   "Kirill A. Shutemov" <kirill@shutemov.name>
-To:     Hui Zhu <teawater@gmail.com>
-Cc:     hannes@cmpxchg.org, mhocko@kernel.org, vdavydov.dev@gmail.com,
-        akpm@linux-foundation.org, hughd@google.com,
-        yang.shi@linux.alibaba.com, dan.j.williams@intel.com,
-        aneesh.kumar@linux.ibm.com, sean.j.christopherson@intel.com,
-        thellstrom@vmware.com, guro@fb.com, shakeelb@google.com,
-        chris@chrisdown.name, tj@kernel.org, tglx@linutronix.de,
-        linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
-        linux-mm@kvack.org, Hui Zhu <teawaterz@linux.alibaba.com>
-Subject: Re: [PATCH] mm, memcg: Add memory.transparent_hugepage_disabled
-Message-ID: <20200324121758.paxxthsi2f4hngfa@box>
-References: <1585045916-27339-1-git-send-email-teawater@gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=xE4MP5AqUCPd9XtoEWD/FK2YPE6NfLNz1ySPK/KUqcg=;
+        b=grj27stl3DT+ceT9W8TjI3vM7JJPbxmTopqHICDSkHbEYaBYiat33xTcUxa2HUuJ14
+         3hpn3zncw0LU85bAIAqnVeJxUYJaSCw21q2VppXGOKdMqNphGQXboGwbdiiPADz8YRtY
+         7b8NskihlvkRRpnwUnulWf7l3xuk9zKtileBMhB6Meo7SvH7+2UJeOtKJks0ezlbA8Om
+         4HfaFHzbAkTS8amCm5QvQnTDs1zTjo2Hxdapm+jN66945h3+70eZyi9h8ijuU3IVlyMX
+         t4a/AE9V51XAwfDQJH0Vf7qL2hOEg/obJjuxcXAmpicKEkfD4k3QSzlPLHBBFC9DJmnU
+         e+Xg==
+X-Gm-Message-State: ANhLgQ3u89l5l2wRVBylfMYxwAuFuMb1XdtpREv7in6nb6VPZeoESRcs
+        T4Ex5X7CidCeHxEK+0kcyQ46IBXEv8+9CA5RNo/veA==
+X-Google-Smtp-Source: ADFU+vvOwzEWB/KB6v68gGlAUeCZXrHF76lOWQJ2agZ6yCYIP2gtQNst0yT5ZM3f+idvKa0KVyZTDM7DqQh+3t9vivQ=
+X-Received: by 2002:ac2:5b49:: with SMTP id i9mr2148928lfp.21.1585052452258;
+ Tue, 24 Mar 2020 05:20:52 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1585045916-27339-1-git-send-email-teawater@gmail.com>
+References: <20200323234505.226919-1-rajatja@google.com> <20200324115059.GA2333340@kroah.com>
+In-Reply-To: <20200324115059.GA2333340@kroah.com>
+From:   Rajat Jain <rajatja@google.com>
+Date:   Tue, 24 Mar 2020 05:20:14 -0700
+Message-ID: <CACK8Z6EHAv03XGXT0sY2H3TSjS4-yQtCscbHG_o1qCuG94zb6g@mail.gmail.com>
+Subject: Re: [PATCH RESEND 1/5] input/serio/i8042: Attach fwnode to serio
+ i8042 kbd device
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Dmitry Torokhov <dtor@google.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Enrico Weigelt <info@metux.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Allison Randal <allison@lohutok.net>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Stephen Boyd <swboyd@chromium.org>,
+        linux-input <linux-input@vger.kernel.org>,
+        devicetree@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Furquan Shaikh <furquan@google.com>,
+        Duncan Laurie <dlaurie@google.com>,
+        Benson Leung <bleung@google.com>,
+        Zentaro Kavanagh <zentaro@google.com>,
+        Dominik Behr <dbehr@google.com>,
+        Rajat Jain <rajatxjain@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 24, 2020 at 06:31:56PM +0800, Hui Zhu wrote:
-> /sys/kernel/mm/transparent_hugepage/enabled is the only interface to
-> control if the application can use THP in system level.
+Hello,
 
-No. We have prctl(PR_SET_THP_DISABLE) too.
+On Tue, Mar 24, 2020 at 4:51 AM Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> On Mon, Mar 23, 2020 at 04:45:01PM -0700, Rajat Jain wrote:
+> > Attach the firmware node to the serio i8042 kbd device so that device
+> > properties can be passed from the firmware.
+> >
+> > Signed-off-by: Rajat Jain <rajatja@google.com>
+> > Change-Id: I36032f4bdee1dc52f26b57734068fd0ee7a6db0b
+>
+> Didn't you run checkpatch.pl on your patches which told you to remove
+> all of these Change-Id: values?
 
--- 
- Kirill A. Shutemov
+My apologies. However I did run checkpatch.pl on my patches before
+sending (also checked just now again) and it did not complain about
+the Change-Id values in the commit log. Not sure if I'm running the
+command incorrectly?
+
+rajatja@rajat2:~/stock_kernel/linux$ ./scripts/checkpatch.pl
+../patches/input_atkbd/v1/000*
+-----------------------------------------------------------------------------------------
+../patches/input_atkbd/v1/0001-input-serio-i8042-Attach-fwnode-to-serio-i8042-kbd-d.patch
+-----------------------------------------------------------------------------------------
+total: 0 errors, 0 warnings, 28 lines checked
+
+../patches/input_atkbd/v1/0001-input-serio-i8042-Attach-fwnode-to-serio-i8042-kbd-d.patch
+has no obvious style problems and is ready for submission.
+-----------------------------------------------------------------------------------------
+../patches/input_atkbd/v1/0002-Input-atkbd-Expose-function-row-physical-map-to-user.patch
+-----------------------------------------------------------------------------------------
+total: 0 errors, 0 warnings, 106 lines checked
+../patches/input_atkbd/v1/0002-Input-atkbd-Expose-function-row-physical-map-to-user.patch
+has no obvious style problems and is ready for submission.
+......
+<snip>
+......
+
+I will now resubmit the patches removing the Change-Id(s).
+
+Thanks & Best Regards,
+
+Rajat
+
+
+
+>
+> Please do so...
+>
+> greg k-h
