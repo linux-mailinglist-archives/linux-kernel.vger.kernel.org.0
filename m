@@ -2,113 +2,148 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DF27A191588
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 17:00:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8E20119158F
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 17:00:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728529AbgCXP7E (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 11:59:04 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:46536 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728294AbgCXP7A (ORCPT
+        id S1728596AbgCXP72 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 11:59:28 -0400
+Received: from mail-wr1-f73.google.com ([209.85.221.73]:42129 "EHLO
+        mail-wr1-f73.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727665AbgCXP72 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 11:59:00 -0400
-Received: by mail-wr1-f66.google.com with SMTP id j17so18734492wru.13
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Mar 2020 08:58:58 -0700 (PDT)
+        Tue, 24 Mar 2020 11:59:28 -0400
+Received: by mail-wr1-f73.google.com with SMTP id o18so6027748wrx.9
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Mar 2020 08:59:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=SMq/EEyYYz6HWydBGjI4fuaJGHB5g+sKYV8/ecTsfnw=;
-        b=Cbo4qeBnndE69etkLuKizylOxVcCmcdaFqQ8/ct9sDJJikWNyXNk8ZZ6zLf4hRPrMW
-         l56jslKnUGo83vKTVAvhBIxzyrrH/9UvzP8GGTkw269WE/tUp1c5vHiI3guPOPFx+2jU
-         otpKMEXqs7w3tXsYyzTrwAL1f6ht3I7RTewqEhEXXRtrQzXmOIhfZ6BZtuNaDtX/QGhF
-         d8uR2xGZ+x+amFl+Pc1YODdzgdpqURlYziqetHbkrNP+k9GzC8A+XSTszxlNST78rD5I
-         N+YlxU5l68N9n294cQoT7qG53b102vbtwQluMbmo2KHjKF2Aq6dijxo1T53f39+1yEEf
-         G90g==
+        d=google.com; s=20161025;
+        h=date:in-reply-to:message-id:mime-version:references:subject:from:cc;
+        bh=6vaPWbP6ANUHUHOz8sns0zk878oxF/Up8fDXRsjlrW0=;
+        b=PhzSoHHgm6kzqXckUj1hMJQQ00oWqkLQlPCoaVh2BlJzOv7otdTlVHco/J8wUFyoyU
+         sRv2K12f0v7HbtkZXjfqo14K+kBYEg4LIDXNNy7rcLtJqtN9kl0lOAUuaFiYVB1wt7F1
+         LdfNOyWEu1SSkJ4wpcuhs+fE990IJV/sELuU0t7W/miqEVL0y/OjIZLDbwJq8ERXC/lJ
+         /xDui9edLVHi+oUutjdZCSf02cK8rFjNrS6Puql6opfvPr954sxDjsDzjIO4CgR3tAqr
+         m9x7M30492yYD+ZzIfzSCvTVWvNR0tSoSOXTrWN9caBXY34h9BOLbXI4arRUz0YpywxJ
+         y6aw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=SMq/EEyYYz6HWydBGjI4fuaJGHB5g+sKYV8/ecTsfnw=;
-        b=siWRtwHC9SpK5IjWH+Em+7ryiYUStd8xTeNtCm6EKrpdLBv8xRVRxX1wOPmpbJeDvJ
-         jLGRtdTsLVNQ5jamBw6X0to0htwYAfTZ7CBhZ2Bs33sNZRoSQ3ingk8zil5oe17npDYj
-         RllVX6mF87gCAxeN6Bf11p5LX74Hpe+IADvbGLyjaCJZQpbM1eaxigmSK0430KfijTvc
-         bNcf1J9sLZS+eEkcPjRe8C3owcGoabppIWwcTBK3KmlmdkvKbjtcJZDjE6ny2VJB6LD5
-         GwFHRcLaAnsSwf7UkezvoqEIMtvXVchs2tZLPoBgpJUiZv1EsLYdwF0F9lojHFg2HBxT
-         5J3Q==
-X-Gm-Message-State: ANhLgQ0mlnhThDPUOi6/o5YkBahB7vHS4aKzEXL5RvY8qRpbnsDsCmKR
-        rnSdQe19eBPpDckQWhHF10RYLw==
-X-Google-Smtp-Source: ADFU+vubkYQyMAvXnpVSqfNhDN699hpGdG7F6l9ggO5EBX7SXW1DGYqomCS6qxOHeD7C5nHYtfLhYg==
-X-Received: by 2002:adf:db02:: with SMTP id s2mr29329992wri.273.1585065537393;
-        Tue, 24 Mar 2020 08:58:57 -0700 (PDT)
-Received: from xps7590.local ([2a02:2450:102f:13b8:e15d:2127:89a:e5dc])
-        by smtp.gmail.com with ESMTPSA id t124sm4993321wmg.13.2020.03.24.08.58.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Mar 2020 08:58:56 -0700 (PDT)
-From:   Robert Foss <robert.foss@linaro.org>
-To:     agross@kernel.org, bjorn.andersson@linaro.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, catalin.marinas@arm.com, will@kernel.org,
-        shawnguo@kernel.org, olof@lixom.net, Anson.Huang@nxp.com,
-        dinguyen@kernel.org, leonard.crestez@nxp.com,
-        marcin.juszkiewicz@linaro.org, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Loic Poulain <loic.poulain@linaro.org>,
-        Luca Weiss <luca@z3ntu.xyz>
-Cc:     Robert Foss <robert.foss@linaro.org>
-Subject: [v3 6/6] arm64: defconfig: Enable QCOM CAMCC, CAMSS and CCI drivers
-Date:   Tue, 24 Mar 2020 16:58:42 +0100
-Message-Id: <20200324155843.10719-7-robert.foss@linaro.org>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200324155843.10719-1-robert.foss@linaro.org>
-References: <20200324155843.10719-1-robert.foss@linaro.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
+         :references:subject:from:cc;
+        bh=6vaPWbP6ANUHUHOz8sns0zk878oxF/Up8fDXRsjlrW0=;
+        b=QxgGt5xy4kvg3TzJRrPEcPG8NDhK0cNSk8uzIOdHLEJ07ya+qbeyAh2myiFIXecRmG
+         3zVS+djRh6qZj0hUZ2gGGZIp2g6yAmttJJLhZswurpqL2I02qT6n/SXeQkrY+39llGea
+         JLm5BsZshQFUoUKILDKwS/ait8zwLY8GJvGk48EehZrg9XK4Kf9jcTyilaKmAzzcWPaC
+         TQ8GMnV0z2b00FMF4+MbeCRvpJ6otFSO51I0DV8C5lBBjdFDkULoCky/sN4W1tyYBzqA
+         WsLjdBKo9mPRHiuG26/q0793q2WjSm5rJG36y4YxUNzOFH1U6qNDWR9sEKBjf63/Fu9b
+         5pCw==
+X-Gm-Message-State: ANhLgQ3582C1hxfsLFIYF5PnkfW9CtWg9vE8siE+60BuOWWGpQbcfQ5G
+        B3/r2tCPCXFKunqoqp3H8IiUuXGtImBz
+X-Google-Smtp-Source: ADFU+vtxu3m5pblacH64/JBEURHgvUseOlvDCPG7Bzrb+FzT2BiQR6E0wX3uqBX79CwEAjXozWmw9aPIHC/v
+X-Received: by 2002:a5d:69c7:: with SMTP id s7mr36849068wrw.165.1585065564454;
+ Tue, 24 Mar 2020 08:59:24 -0700 (PDT)
+Date:   Tue, 24 Mar 2020 16:59:06 +0100
+In-Reply-To: <20200323114207.222412-1-courbet@google.com>
+Message-Id: <20200324155907.97184-1-courbet@google.com>
+Mime-Version: 1.0
+References: <20200323114207.222412-1-courbet@google.com>
+X-Mailer: git-send-email 2.25.1.696.g5e7596f4ac-goog
+Subject: [PATCH v3]     x86: Alias memset to __builtin_memset.
+From:   Clement Courbet <courbet@google.com>
+Cc:     Nathan Chancellor <natechancellor@gmail.com>,
+        Kees Cook <keescook@chromium.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Joe Perches <joe@perches.com>,
+        Clement Courbet <courbet@google.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        linux-kernel@vger.kernel.org, clang-built-linux@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Build camera clock, isp and controller drivers as modules.
+    Recent compilers know the meaning of builtins (`memset`,
+    `memcpy`, ...) and can replace calls by inline code when
+    deemed better. For example, `memset(p, 0, 4)` will be lowered
+    to a four-byte zero store.
 
-Signed-off-by: Robert Foss <robert.foss@linaro.org>
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+    When using -ffreestanding (this is the case e.g. building on
+    clang), these optimizations are disabled. This means that **all**
+    memsets, including those with small, constant sizes, will result
+    in an actual call to memset.
+
+    We have identified several spots where we have high CPU usage
+    because of this. For example, a single one of these memsets is
+    responsible for about 0.3% of our total CPU usage in the kernel.
+
+    Aliasing `memset` to `__builtin_memset` allows the compiler to
+    perform this optimization even when -ffreestanding is used.
+    There is no change when -ffreestanding is not used.
+
+    Below is a diff (clang) for `update_sg_lb_stats()`, which
+    includes the aforementionned hot memset:
+        memset(sgs, 0, sizeof(*sgs));
+
+    Diff:
+        movq %rsi, %rbx        ~~~>  movq $0x0, 0x40(%r8)
+        movq %rdi, %r15        ~~~>  movq $0x0, 0x38(%r8)
+        movl $0x48, %edx       ~~~>  movq $0x0, 0x30(%r8)
+        movq %r8, %rdi         ~~~>  movq $0x0, 0x28(%r8)
+        xorl %esi, %esi        ~~~>  movq $0x0, 0x20(%r8)
+        callq <memset>         ~~~>  movq $0x0, 0x18(%r8)
+                               ~~~>  movq $0x0, 0x10(%r8)
+                               ~~~>  movq $0x0, 0x8(%r8)
+                               ~~~>  movq $0x0, (%r8)
+
+    In terms of code size, this shrins the clang-built kernel a
+    bit (-0.022%):
+    440383608 vmlinux.clang.before
+    440285512 vmlinux.clang.after
+
+Signed-off-by: Clement Courbet <courbet@google.com>
+
 ---
 
-Changes since v2:
- - Removed duplicated CONFIG_SDM_CAMCC_845 defconfig
+changes in v2:
+  - Removed ifdef(GNUC >= 4).
+  - Disabled change when CONFIG_FORTIFY_SOURCE is set.
 
- arch/arm64/configs/defconfig | 3 +++
- 1 file changed, 3 insertions(+)
+changes in v3:
+  - Fixed commit message: the kernel shrinks in size.
+---
+ arch/x86/include/asm/string_64.h | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index 4db223dbc549..676bb53fb8cc 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -376,6 +376,7 @@ CONFIG_I2C_MESON=y
- CONFIG_I2C_MV64XXX=y
- CONFIG_I2C_OWL=y
- CONFIG_I2C_PXA=y
-+CONFIG_I2C_QCOM_CCI=m
- CONFIG_I2C_QCOM_GENI=m
- CONFIG_I2C_QUP=y
- CONFIG_I2C_RK3X=y
-@@ -530,6 +531,7 @@ CONFIG_VIDEO_SAMSUNG_S5P_MFC=m
- CONFIG_VIDEO_SAMSUNG_EXYNOS_GSC=m
- CONFIG_VIDEO_RENESAS_FCP=m
- CONFIG_VIDEO_RENESAS_VSP1=m
-+CONFIG_VIDEO_QCOM_CAMSS=m
- CONFIG_DRM=m
- CONFIG_DRM_I2C_NXP_TDA998X=m
- CONFIG_DRM_NOUVEAU=m
-@@ -732,6 +734,7 @@ CONFIG_MSM_GCC_8994=y
- CONFIG_MSM_MMCC_8996=y
- CONFIG_MSM_GCC_8998=y
- CONFIG_QCS_GCC_404=y
-+CONFIG_SDM_CAMCC_845=m
- CONFIG_SDM_GCC_845=y
- CONFIG_SM_GCC_8150=y
- CONFIG_QCOM_HFPLL=y
+diff --git a/arch/x86/include/asm/string_64.h b/arch/x86/include/asm/string_64.h
+index 75314c3dbe47..9cfce0a840a4 100644
+--- a/arch/x86/include/asm/string_64.h
++++ b/arch/x86/include/asm/string_64.h
+@@ -18,6 +18,15 @@ extern void *__memcpy(void *to, const void *from, size_t len);
+ void *memset(void *s, int c, size_t n);
+ void *__memset(void *s, int c, size_t n);
+ 
++/* Recent compilers can generate much better code for known size and/or
++ * fill values, and will fallback on `memset` if they fail.
++ * We alias `memset` to `__builtin_memset` explicitly to inform the compiler to
++ * perform this optimization even when -ffreestanding is used.
++ */
++#if !defined(CONFIG_FORTIFY_SOURCE)
++#define memset(s, c, count) __builtin_memset(s, c, count)
++#endif
++
+ #define __HAVE_ARCH_MEMSET16
+ static inline void *memset16(uint16_t *s, uint16_t v, size_t n)
+ {
+@@ -74,6 +83,7 @@ int strcmp(const char *cs, const char *ct);
+ #undef memcpy
+ #define memcpy(dst, src, len) __memcpy(dst, src, len)
+ #define memmove(dst, src, len) __memmove(dst, src, len)
++#undef memset
+ #define memset(s, c, n) __memset(s, c, n)
+ 
+ #ifndef __NO_FORTIFY
 -- 
-2.25.1
+2.25.1.696.g5e7596f4ac-goog
 
