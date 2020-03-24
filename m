@@ -2,37 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0BCFB190F53
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 14:20:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 47D49190FCF
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 14:29:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728850AbgCXNTg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 09:19:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40286 "EHLO mail.kernel.org"
+        id S1729321AbgCXNXW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 09:23:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46374 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727770AbgCXNTe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 09:19:34 -0400
+        id S1728721AbgCXNXT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Mar 2020 09:23:19 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8901C208D5;
-        Tue, 24 Mar 2020 13:19:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B66BB21655;
+        Tue, 24 Mar 2020 13:23:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585055973;
-        bh=6gexxwiQdA9Su+qvuekL8GGkNoASq2gcrDkAT0Kh84Q=;
+        s=default; t=1585056199;
+        bh=WlyH3cE+6cb5nVtekQpS9NpS+0uYYMseAd9YBmZX2Ys=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Z/tLLnvZXZ6X6ml49GY6Ir+sF2DFOkdj0uLD4cVSOwxlpV4XleOKrkqVWgMPyz/U8
-         CjEq6L54xCpOND/7xWvMdoHGyxDsDl/b3f+KCUKTQrTJuo2oGF3eigLhUk6bI/x5fl
-         CC+VY4S13Bjdi8Srt3aZF7dATtwwOvmfEUrJDA5o=
+        b=NCXczKJ8Hz+8+4EPJ5sXNGCoO6aA3DJg85B6WS5rwzk8mPdi3Hgsy9dlb4UCsy+04
+         4bXE6jm/5BAohjszsUjhRGphhcFBEJv0PW7oFfT1w2pBun8YF9z4bVz3U2x+ABBb11
+         yGc5x0dSANgpWo6mzUTt02LhAsctKJnD39apohbc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Anthony Mallet <anthony.mallet@laas.fr>
-Subject: [PATCH 5.4 046/102] USB: cdc-acm: fix rounding error in TIOCSSERIAL
-Date:   Tue, 24 Mar 2020 14:10:38 +0100
-Message-Id: <20200324130811.411479386@linuxfoundation.org>
+        stable@vger.kernel.org, Jian-Hong Pan <jian-hong@endlessm.com>,
+        Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 5.5 054/119] ALSA: hda/realtek - Enable headset mic of Acer X2660G with ALC662
+Date:   Tue, 24 Mar 2020 14:10:39 +0100
+Message-Id: <20200324130813.635742822@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.2
-In-Reply-To: <20200324130806.544601211@linuxfoundation.org>
-References: <20200324130806.544601211@linuxfoundation.org>
+In-Reply-To: <20200324130808.041360967@linuxfoundation.org>
+References: <20200324130808.041360967@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -42,79 +43,56 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Anthony Mallet <anthony.mallet@laas.fr>
+From: Jian-Hong Pan <jian-hong@endlessm.com>
 
-commit b401f8c4f492cbf74f3f59c9141e5be3071071bb upstream.
+commit d858c706bdca97698752bd26b60c21ec07ef04f2 upstream.
 
-By default, tty_port_init() initializes those parameters to a multiple
-of HZ. For instance in line 69 of tty_port.c:
-   port->close_delay = (50 * HZ) / 100;
-https://github.com/torvalds/linux/blob/master/drivers/tty/tty_port.c#L69
+The Acer desktop X2660G with ALC662 can't detect the headset microphone
+until ALC662_FIXUP_ACER_X2660G_HEADSET_MODE quirk applied.
 
-With e.g. CONFIG_HZ = 250 (as this is the case for Ubuntu 18.04
-linux-image-4.15.0-37-generic), the default setting for close_delay is
-thus 125.
-
-When ioctl(fd, TIOCGSERIAL, &s) is executed, the setting returned in
-user space is '12' (125/10). When ioctl(fd, TIOCSSERIAL, &s) is then
-executed with the same setting '12', the value is interpreted as '120'
-which is different from the current setting and a EPERM error may be
-raised by set_serial_info() if !CAP_SYS_ADMIN.
-https://github.com/torvalds/linux/blob/master/drivers/usb/class/cdc-acm.c#L919
-
-Fixes: ba2d8ce9db0a6 ("cdc-acm: implement TIOCSSERIAL to avoid blocking close(2)")
-Signed-off-by: Anthony Mallet <anthony.mallet@laas.fr>
-Cc: stable <stable@vger.kernel.org>
-Link: https://lore.kernel.org/r/20200312133101.7096-2-anthony.mallet@laas.fr
+Signed-off-by: Jian-Hong Pan <jian-hong@endlessm.com>
+Cc: <stable@vger.kernel.org>
+Link: https://lore.kernel.org/r/20200317082806.73194-2-jian-hong@endlessm.com
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/class/cdc-acm.c |   25 ++++++++++++++++---------
- 1 file changed, 16 insertions(+), 9 deletions(-)
+ sound/pci/hda/patch_realtek.c |   11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
---- a/drivers/usb/class/cdc-acm.c
-+++ b/drivers/usb/class/cdc-acm.c
-@@ -907,6 +907,7 @@ static int set_serial_info(struct tty_st
- {
- 	struct acm *acm = tty->driver_data;
- 	unsigned int closing_wait, close_delay;
-+	unsigned int old_closing_wait, old_close_delay;
- 	int retval = 0;
+--- a/sound/pci/hda/patch_realtek.c
++++ b/sound/pci/hda/patch_realtek.c
+@@ -8610,6 +8610,7 @@ enum {
+ 	ALC669_FIXUP_ACER_ASPIRE_ETHOS,
+ 	ALC669_FIXUP_ACER_ASPIRE_ETHOS_HEADSET,
+ 	ALC671_FIXUP_HP_HEADSET_MIC2,
++	ALC662_FIXUP_ACER_X2660G_HEADSET_MODE,
+ };
  
- 	close_delay = msecs_to_jiffies(ss->close_delay * 10);
-@@ -914,18 +915,24 @@ static int set_serial_info(struct tty_st
- 			ASYNC_CLOSING_WAIT_NONE :
- 			msecs_to_jiffies(ss->closing_wait * 10);
+ static const struct hda_fixup alc662_fixups[] = {
+@@ -8955,6 +8956,15 @@ static const struct hda_fixup alc662_fix
+ 		.type = HDA_FIXUP_FUNC,
+ 		.v.func = alc671_fixup_hp_headset_mic2,
+ 	},
++	[ALC662_FIXUP_ACER_X2660G_HEADSET_MODE] = {
++		.type = HDA_FIXUP_PINS,
++		.v.pins = (const struct hda_pintbl[]) {
++			{ 0x1a, 0x02a1113c }, /* use as headset mic, without its own jack detect */
++			{ }
++		},
++		.chained = true,
++		.chain_id = ALC662_FIXUP_USI_FUNC
++	},
+ };
  
-+	/* we must redo the rounding here, so that the values match */
-+	old_close_delay	= jiffies_to_msecs(acm->port.close_delay) / 10;
-+	old_closing_wait = acm->port.closing_wait == ASYNC_CLOSING_WAIT_NONE ?
-+				ASYNC_CLOSING_WAIT_NONE :
-+				jiffies_to_msecs(acm->port.closing_wait) / 10;
-+
- 	mutex_lock(&acm->port.mutex);
- 
--	if (!capable(CAP_SYS_ADMIN)) {
--		if ((close_delay != acm->port.close_delay) ||
--		    (closing_wait != acm->port.closing_wait))
-+	if ((ss->close_delay != old_close_delay) ||
-+            (ss->closing_wait != old_closing_wait)) {
-+		if (!capable(CAP_SYS_ADMIN))
- 			retval = -EPERM;
--		else
--			retval = -EOPNOTSUPP;
--	} else {
--		acm->port.close_delay  = close_delay;
--		acm->port.closing_wait = closing_wait;
--	}
-+		else {
-+			acm->port.close_delay  = close_delay;
-+			acm->port.closing_wait = closing_wait;
-+		}
-+	} else
-+		retval = -EOPNOTSUPP;
- 
- 	mutex_unlock(&acm->port.mutex);
- 	return retval;
+ static const struct snd_pci_quirk alc662_fixup_tbl[] = {
+@@ -8966,6 +8976,7 @@ static const struct snd_pci_quirk alc662
+ 	SND_PCI_QUIRK(0x1025, 0x0349, "eMachines eM250", ALC662_FIXUP_INV_DMIC),
+ 	SND_PCI_QUIRK(0x1025, 0x034a, "Gateway LT27", ALC662_FIXUP_INV_DMIC),
+ 	SND_PCI_QUIRK(0x1025, 0x038b, "Acer Aspire 8943G", ALC662_FIXUP_ASPIRE),
++	SND_PCI_QUIRK(0x1025, 0x124e, "Acer 2660G", ALC662_FIXUP_ACER_X2660G_HEADSET_MODE),
+ 	SND_PCI_QUIRK(0x1028, 0x05d8, "Dell", ALC668_FIXUP_DELL_MIC_NO_PRESENCE),
+ 	SND_PCI_QUIRK(0x1028, 0x05db, "Dell", ALC668_FIXUP_DELL_MIC_NO_PRESENCE),
+ 	SND_PCI_QUIRK(0x1028, 0x05fe, "Dell XPS 15", ALC668_FIXUP_DELL_XPS13),
 
 
