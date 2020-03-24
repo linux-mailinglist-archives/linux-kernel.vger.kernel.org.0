@@ -2,94 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AF3BD1909E7
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 10:47:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5AD2E1909EB
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 10:48:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727209AbgCXJrg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 05:47:36 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:56240 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726129AbgCXJrf (ORCPT
+        id S1727289AbgCXJrz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 05:47:55 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:44248 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726129AbgCXJry (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 05:47:35 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Subject:Cc:To:
-        From:Date:Sender:Reply-To:Content-ID:Content-Description;
-        bh=vcY4LovXnAkMYtSUeDtTCNCAPqqsgEMMoWrKTOHbwH8=; b=FAjTXzDcqNzo1++ZRsUSgcFXi1
-        zyNeO7lMM62SghpMdM7XRp/8rwmY/7lVSKnrijfHzpDAULrq4aCsFFXsTyAF/DqpdtzuM7h0G4CUF
-        U8rFLyYIHtzwLtHzt2BSxUlkzoU1YS1PC8cu4tshMMuGoUwa0b6K8HbMb56O2XaRCZ3u+hzs6tjYp
-        u6iM711EH3dfBbckOxVX9TndURmTMq4XzcEXVaMO0BHoAECK9s8mPIFTYWkr6c3UGcOVotrBqLNGz
-        bSf3/QCJdIkvvf4dMSTNJ/FsKjoGj1KElJszq1jMs6SURqDvhoEuiXqcjwXSZf/5evvJ+tTme7jOd
-        4K7HXM5Q==;
-Received: from ip5f5ad4e9.dynamic.kabel-deutschland.de ([95.90.212.233] helo=coco.lan)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jGg9h-00027h-ST; Tue, 24 Mar 2020 09:47:30 +0000
-Date:   Tue, 24 Mar 2020 10:47:22 +0100
-From:   Mauro Carvalho Chehab <mchehab@kernel.org>
-To:     Ezequiel Garcia <ezequiel@collabora.com>
-Cc:     linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Tomasz Figa <tfiga@chromium.org>,
-        Nicolas Dufresne <nicolas@ndufresne.ca>, kernel@collabora.com,
-        Hans Verkuil <hverkuil@xs4all.nl>, Sean Young <sean@mess.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Sakari Ailus <sakari.ailus@iki.fi>,
-        Michael Ira Krufky <mkrufky@gmail.com>,
-        Helen Koike <helen.koike@collabora.com>
-Subject: Re: [PATCH 2/2] media: Remove VIDEO_DEV unneeded dependency
-Message-ID: <20200324104722.1c605792@coco.lan>
-In-Reply-To: <20200323211022.28297-3-ezequiel@collabora.com>
-References: <20200323211022.28297-1-ezequiel@collabora.com>
-        <20200323211022.28297-3-ezequiel@collabora.com>
-X-Mailer: Claws Mail 3.17.5 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+        Tue, 24 Mar 2020 05:47:54 -0400
+Received: from p5de0bf0b.dip0.t-ipconnect.de ([93.224.191.11] helo=nanos.tec.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1jGg9j-0000xm-7b; Tue, 24 Mar 2020 10:47:31 +0100
+Received: by nanos.tec.linutronix.de (Postfix, from userid 1000)
+        id 39C86100292; Tue, 24 Mar 2020 10:47:30 +0100 (CET)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Masami Hiramatsu <mhiramat@kernel.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>, x86@kernel.org,
+        Paul McKenney <paulmck@kernel.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        "Joel Fernandes \(Google\)" <joel@joelfernandes.org>,
+        "Steven Rostedt \(VMware\)" <rostedt@goodmis.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Brian Gerst <brgerst@gmail.com>,
+        Juergen Gross <jgross@suse.com>,
+        Alexandre Chartre <alexandre.chartre@oracle.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org
+Subject: Re: [patch V3 04/23] kprobes: Prevent probes in .noinstr.text section
+In-Reply-To: <20200324144953.eec3e73f249901582bdf564e@kernel.org>
+References: <20200320175956.033706968@linutronix.de> <20200320180032.799569116@linutronix.de> <20200323230025.a24f949a2143dbd5f208f00c@kernel.org> <87mu87oy7n.fsf@nanos.tec.linutronix.de> <20200324144953.eec3e73f249901582bdf564e@kernel.org>
+Date:   Tue, 24 Mar 2020 10:47:30 +0100
+Message-ID: <87369yf5jh.fsf@nanos.tec.linutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Mon, 23 Mar 2020 18:10:22 -0300
-Ezequiel Garcia <ezequiel@collabora.com> escreveu:
+Masami Hiramatsu <mhiramat@kernel.org> writes:
+> On Mon, 23 Mar 2020 17:03:24 +0100
+> Thomas Gleixner <tglx@linutronix.de> wrote:
+>> > @@ -2212,6 +2212,10 @@ static int __init populate_kprobe_blacklist(unsigned long *start,
+>> >  	ret = kprobe_add_area_blacklist((unsigned long)__kprobes_text_start,
+>> >  					(unsigned long)__kprobes_text_end);
+>> >  
+>> > +	/* Symbols in noinstr section are blacklisted */
+>> > +	ret = kprobe_add_area_blacklist((unsigned long)__noinstr_text_start,
+>> > +					(unsigned long)__noinstr_text_end);
+>> > +
+>> >  	return ret ? : arch_populate_kprobe_blacklist();
+>> >  }
+>> 
+>> So that extra function is not required when adding that, right?
+>
+> That's right :)
+>
+>> 
+>> >> +/* Functions in .noinstr.text must not be probed */
+>> >> +static bool within_noinstr_text(unsigned long addr)
+>> >> +{
+>> >> +	/* FIXME: Handle module .noinstr.text */
+>
+> And this reminds me that the module .kprobes.text is not handled yet :(.
 
-> Enable VIDEO_DEV (which compiles Video4Linux core)
-> when MEDIA_SUPPORT is selected. This is needed, in order
-> to be able to enable devices such as stateless codecs.
-> 
-> Signed-off-by: Ezequiel Garcia <ezequiel@collabora.com>
-> ---
->  drivers/media/Kconfig | 2 --
->  1 file changed, 2 deletions(-)
-> 
-> diff --git a/drivers/media/Kconfig b/drivers/media/Kconfig
-> index b36a41332867..7de472ad07a2 100644
-> --- a/drivers/media/Kconfig
-> +++ b/drivers/media/Kconfig
-> @@ -93,13 +93,11 @@ source "drivers/media/mc/Kconfig"
->  
->  #
->  # Video4Linux support
-> -#	Only enables if one of the V4L2 types (ATV, webcam, radio) is selected
->  #
->  
->  config VIDEO_DEV
->  	tristate
->  	depends on MEDIA_SUPPORT
-> -	depends on MEDIA_CAMERA_SUPPORT || MEDIA_ANALOG_TV_SUPPORT || MEDIA_RADIO_SUPPORT || MEDIA_SDR_SUPPORT
->  	default y
->  
->  config VIDEO_V4L2_SUBDEV_API
-
-The rationale of the above is to exclude Digital TV and remote
-controller.
-
-Removing the above will make the V4L2 core available every time, even
-if all the user wants is remote controller or Digital TV support.
-
-I'm working on a patchset that should hopefully address the issues
-you're concerning.
+Correct. Any idea how to do that with a simple oneliner like the above?
 
 Thanks,
-Mauro
+
+        tglx
