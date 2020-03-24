@@ -2,68 +2,60 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0E153190883
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 10:08:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2E0E0190885
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 10:09:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727164AbgCXJIw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 05:08:52 -0400
-Received: from mx2.suse.de ([195.135.220.15]:39006 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726845AbgCXJIw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 05:08:52 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id EB2D0ACCA;
-        Tue, 24 Mar 2020 09:08:50 +0000 (UTC)
-Message-ID: <1585040918.7151.6.camel@suse.de>
-Subject: Re: lockdep warning in urb.c:363 usb_submit_urb
-From:   Oliver Neukum <oneukum@suse.de>
-To:     Qais Yousef <qais.yousef@arm.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Tue, 24 Mar 2020 10:08:38 +0100
-In-Reply-To: <20200323172932.5s7txy2juhut5qdv@e107158-lin.cambridge.arm.com>
-References: <20200323143857.db5zphxhq4hz3hmd@e107158-lin.cambridge.arm.com>
-         <1584977769.27949.18.camel@suse.de>
-         <20200323172932.5s7txy2juhut5qdv@e107158-lin.cambridge.arm.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.6 
-Mime-Version: 1.0
+        id S1727207AbgCXJJD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 05:09:03 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:12185 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726845AbgCXJJD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Mar 2020 05:09:03 -0400
+Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 91A9F400B6F2CCFD201C;
+        Tue, 24 Mar 2020 17:09:00 +0800 (CST)
+Received: from [10.134.22.195] (10.134.22.195) by smtp.huawei.com
+ (10.3.19.213) with Microsoft SMTP Server (TLS) id 14.3.487.0; Tue, 24 Mar
+ 2020 17:08:58 +0800
+Subject: Re: [PATCH] f2fs: fix long latency due to discard during umount
+To:     Sahitya Tummala <stummala@codeaurora.org>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
+        <linux-f2fs-devel@lists.sourceforge.net>
+CC:     <linux-kernel@vger.kernel.org>
+References: <1584506689-5041-1-git-send-email-stummala@codeaurora.org>
+From:   Chao Yu <yuchao0@huawei.com>
+Message-ID: <54ae330b-ac9b-7968-fa0a-95db6737e3ea@huawei.com>
+Date:   Tue, 24 Mar 2020 17:08:58 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <1584506689-5041-1-git-send-email-stummala@codeaurora.org>
+Content-Type: text/plain; charset="windows-1252"
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.134.22.195]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am Montag, den 23.03.2020, 17:29 +0000 schrieb Qais Yousef:
-> Hi Oliver
+On 2020/3/18 12:44, Sahitya Tummala wrote:
+> F2FS already has a default timeout of 5 secs for discards that
+> can be issued during umount, but it can take more than the 5 sec
+> timeout if the underlying UFS device queue is already full and there
+> are no more available free tags to be used. In that case, submit_bio()
+> will wait for the already queued discard requests to complete to get
+> a free tag, which can potentially take way more than 5 sec.
+> 
+> Fix this by submitting the discard requests with REQ_NOWAIT
+> flags during umount. This will return -EAGAIN for UFS queue/tag full
+> scenario without waiting in the context of submit_bio(). The FS can
+> then handle these requests by retrying again within the stipulated
+> discard timeout period to avoid long latencies.
+> 
+> Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
 
-Hi,
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
 
-> First time I use dynamic debugging, hopefully I've done correctly.
-
-I am afraid not.
-
-> 	echo "file drivers/usb/* +p" > /sys/kernel/debug/dynamic_debug/control
-
-Overkill but correct. +mpf would be even better
-
-> 	$REPRODUCE
-
-Good
-
-> 	cat /sys/kernel/debug/dynamic_debug/control | grep usb > usb.debug
-
-No.
-
-/sys/kernel/debug/dynamic_debug/control holds the collection of the
-messages that may be triggered, but it does not tell you which messages
-are triggered and in which order. The triggered messages end up
-in syslog. So you would use 'dmesg'
-I am afraid you redid the test correctly and then threw away the
-result.
-Could you redo it and just attach the output of dmesg?
-
-	Sorry
-		Oliver
-
+Thanks,
