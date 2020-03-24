@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7D73D190F54
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 14:20:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 27F4B190E76
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 14:12:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728853AbgCXNTk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 09:19:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40390 "EHLO mail.kernel.org"
+        id S1727620AbgCXNM2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 09:12:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58188 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728617AbgCXNTg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 09:19:36 -0400
+        id S1727595AbgCXNMX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Mar 2020 09:12:23 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 32A2620775;
-        Tue, 24 Mar 2020 13:19:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F249D20775;
+        Tue, 24 Mar 2020 13:12:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585055975;
-        bh=Zh6Q81xz4S7Uy/uL5Zghtt2qm145iElh7QjBAawbpiU=;
+        s=default; t=1585055543;
+        bh=SrkKK2cHQEUZID7PZ8xTPnqkOQtsZ2PQBLGVpEUQFQ0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=n0hiXq1J9EMue4iEkcyN0wdpx8FhvLi40mh8hNnSyeg2XlZ0a7jPW2haeJ1oMeCpH
-         JFE00XCZSFLJ+8QD7o1Y866EvgFgKY2RTUSWWhmAwaRp8NSWKcYjOReN5Jly1hmlq4
-         iKKUoKpRoy/1Zp69Qqt+szWlbh5hH9AdLvWab3G4=
+        b=rVoDFJVnPZJCfbcMt3WYLHnb8Yw9XvNlzh3qCWaZdoTWerYUCFPpKyVIONYTL0Zr+
+         +mzrodpawH3yJheLeLw8nI0qfVJdvEAhmMIU3xUsKRBd/reM5N0WxBIgDSeq3GmPTV
+         vaD6XgqfL7o+dSI+lWcsLinRenIygouSj7ruDAlQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        syzbot+cce32521ee0a824c21f7@syzkaller.appspotmail.com,
-        Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 5.4 047/102] ALSA: line6: Fix endless MIDI read loop
-Date:   Tue, 24 Mar 2020 14:10:39 +0100
-Message-Id: <20200324130811.517312000@linuxfoundation.org>
+        =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 19/65] parse-maintainers: Mark as executable
+Date:   Tue, 24 Mar 2020 14:10:40 +0100
+Message-Id: <20200324130759.445503124@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.2
-In-Reply-To: <20200324130806.544601211@linuxfoundation.org>
-References: <20200324130806.544601211@linuxfoundation.org>
+In-Reply-To: <20200324130756.679112147@linuxfoundation.org>
+References: <20200324130756.679112147@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,55 +45,25 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Takashi Iwai <tiwai@suse.de>
+From: Jonathan Neuschäfer <j.neuschaefer@gmx.net>
 
-commit d683469b3c93d7e2afd39e6e1970f24700eb7a68 upstream.
+[ Upstream commit 611d61f9ac99dc9e1494473fb90117a960a89dfa ]
 
-The MIDI input event parser of the LINE6 driver may enter into an
-endless loop when the unexpected data sequence is given, as it tries
-to continue the secondary bytes without termination.  Also, when the
-input data is too short, the parser returns a negative error, while
-the caller doesn't handle it properly.  This would lead to the
-unexpected behavior as well.
+This makes the script more convenient to run.
 
-This patch addresses those issues by checking the return value
-correctly and handling the one-byte event in the parser properly.
-
-The bug was reported by syzkaller.
-
-Reported-by: syzbot+cce32521ee0a824c21f7@syzkaller.appspotmail.com
-Cc: <stable@vger.kernel.org>
-Link: https://lore.kernel.org/r/000000000000033087059f8f8fa3@google.com
-Link: https://lore.kernel.org/r/20200309095922.30269-1-tiwai@suse.de
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Jonathan Neuschäfer <j.neuschaefer@gmx.net>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/usb/line6/driver.c  |    2 +-
- sound/usb/line6/midibuf.c |    2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ scripts/parse-maintainers.pl | 0
+ 1 file changed, 0 insertions(+), 0 deletions(-)
+ mode change 100644 => 100755 scripts/parse-maintainers.pl
 
---- a/sound/usb/line6/driver.c
-+++ b/sound/usb/line6/driver.c
-@@ -305,7 +305,7 @@ static void line6_data_received(struct u
- 				line6_midibuf_read(mb, line6->buffer_message,
- 						LINE6_MIDI_MESSAGE_MAXLEN);
- 
--			if (done == 0)
-+			if (done <= 0)
- 				break;
- 
- 			line6->message_length = done;
---- a/sound/usb/line6/midibuf.c
-+++ b/sound/usb/line6/midibuf.c
-@@ -159,7 +159,7 @@ int line6_midibuf_read(struct midi_buffe
- 			int midi_length_prev =
- 			    midibuf_message_length(this->command_prev);
- 
--			if (midi_length_prev > 0) {
-+			if (midi_length_prev > 1) {
- 				midi_length = midi_length_prev - 1;
- 				repeat = 1;
- 			} else
+diff --git a/scripts/parse-maintainers.pl b/scripts/parse-maintainers.pl
+old mode 100644
+new mode 100755
+-- 
+2.20.1
+
 
 
