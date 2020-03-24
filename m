@@ -2,36 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9F1A2190EA2
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 14:15:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1592B190EA5
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 14:15:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727929AbgCXNNq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 09:13:46 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60030 "EHLO mail.kernel.org"
+        id S1727934AbgCXNNu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 09:13:50 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60102 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727923AbgCXNNn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 09:13:43 -0400
+        id S1727926AbgCXNNq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Mar 2020 09:13:46 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1653F208E4;
-        Tue, 24 Mar 2020 13:13:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 89A86208D6;
+        Tue, 24 Mar 2020 13:13:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585055623;
-        bh=c8Ossrdy1Yc5s1av6pvM1gV6hSja7f5RxRWIQRqnYt4=;
+        s=default; t=1585055626;
+        bh=Li3XAKpFi3SfzT1r61AYTJ0slB2G1nF5v0Cud+G0CHs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ToVcoIw1JQWTHXXqifBbChQBIrwiz7wAdT5nAf39grcdELJGLAIlt35FADTJ+8fEh
-         hsEr5CWMVzAQgWZj8JLMbf24H8TRAJB+1V15gx30hSyQEHYvTvlNJbqimPpMdd+vOs
-         Ddl9Jk3SdKCgm76ZO/Uz9glnFLemTMQC7tgDHCa0=
+        b=xfXIrTKz+hXP6OipMp64XR5EASkXe6DQ6rMYO/QCPPIB7e/vc9otpkiZfTRD/uaCP
+         6JdoyT579TdYv+7z7+zdn0MXp/Q146U34GcGR7RoKvTv1pG9NnllDUq0U1hybDjFIM
+         ls1dzX+H7ujEcytvZ3T3DZxL3d35BMIY84iHQClU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH 4.19 41/65] intel_th: pci: Add Elkhart Lake CPU support
-Date:   Tue, 24 Mar 2020 14:11:02 +0100
-Message-Id: <20200324130802.323936604@linuxfoundation.org>
+        stable@vger.kernel.org, Corentin Labbe <clabbe@baylibre.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.19 42/65] rtc: max8907: add missing select REGMAP_IRQ
+Date:   Tue, 24 Mar 2020 14:11:03 +0100
+Message-Id: <20200324130802.421243636@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.2
 In-Reply-To: <20200324130756.679112147@linuxfoundation.org>
 References: <20200324130756.679112147@linuxfoundation.org>
@@ -44,35 +43,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+From: Corentin Labbe <clabbe@baylibre.com>
 
-commit add492d2e9446a77ede9bb43699ec85ca8fc1aba upstream.
+commit 5d892919fdd0cefd361697472d4e1b174a594991 upstream.
 
-This adds support for the Trace Hub in Elkhart Lake CPU.
+I have hit the following build error:
 
-Signed-off-by: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: stable@vger.kernel.org
-Link: https://lore.kernel.org/r/20200317062215.15598-7-alexander.shishkin@linux.intel.com
+  armv7a-hardfloat-linux-gnueabi-ld: drivers/rtc/rtc-max8907.o: in function `max8907_rtc_probe':
+  rtc-max8907.c:(.text+0x400): undefined reference to `regmap_irq_get_virq'
+
+max8907 should select REGMAP_IRQ
+
+Fixes: 94c01ab6d7544 ("rtc: add MAX8907 RTC driver")
+Cc: stable <stable@vger.kernel.org>
+Signed-off-by: Corentin Labbe <clabbe@baylibre.com>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/hwtracing/intel_th/pci.c |    5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/rtc/Kconfig |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/hwtracing/intel_th/pci.c
-+++ b/drivers/hwtracing/intel_th/pci.c
-@@ -211,6 +211,11 @@ static const struct pci_device_id intel_
- 		.driver_data = (kernel_ulong_t)&intel_th_2x,
- 	},
- 	{
-+		/* Elkhart Lake CPU */
-+		PCI_DEVICE(PCI_VENDOR_ID_INTEL, 0x4529),
-+		.driver_data = (kernel_ulong_t)&intel_th_2x,
-+	},
-+	{
- 		/* Elkhart Lake */
- 		PCI_DEVICE(PCI_VENDOR_ID_INTEL, 0x4b26),
- 		.driver_data = (kernel_ulong_t)&intel_th_2x,
+--- a/drivers/rtc/Kconfig
++++ b/drivers/rtc/Kconfig
+@@ -314,6 +314,7 @@ config RTC_DRV_MAX6900
+ config RTC_DRV_MAX8907
+ 	tristate "Maxim MAX8907"
+ 	depends on MFD_MAX8907 || COMPILE_TEST
++	select REGMAP_IRQ
+ 	help
+ 	  If you say yes here you will get support for the
+ 	  RTC of Maxim MAX8907 PMIC.
 
 
