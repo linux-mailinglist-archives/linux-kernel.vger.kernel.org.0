@@ -2,69 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CD5B51918A4
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 19:12:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4E8481918A9
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 19:12:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727565AbgCXSKc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 14:10:32 -0400
-Received: from mga04.intel.com ([192.55.52.120]:35222 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727257AbgCXSKc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 14:10:32 -0400
-IronPort-SDR: MBUfyfrPolWdpckycSeZ99xoPXlxRTowbdVVQKFGoXg82r+OHGf3Axw6SZCjdSGE9rPQQoX7w0
- gEaryGlfzZaw==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Mar 2020 11:10:32 -0700
-IronPort-SDR: 8UCukCbZ6REd+9cLNVuWAjMAa45dVXVUIcGdlW3sQiFstMuiTksNOTT106b0rQWvPrG+Z2QunH
- 1e+xi0nTWK7g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.72,301,1580803200"; 
-   d="scan'208";a="270479707"
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.202])
-  by fmsmga004.fm.intel.com with ESMTP; 24 Mar 2020 11:10:31 -0700
-Date:   Tue, 24 Mar 2020 11:10:31 -0700
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Paolo Bonzini <pbonzini@redhat.com>
-Cc:     Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Ben Gardon <bgardon@google.com>,
-        Junaid Shahid <junaids@google.com>,
-        Liran Alon <liran.alon@oracle.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        John Haxby <john.haxby@oracle.com>,
-        Miaohe Lin <linmiaohe@huawei.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>
-Subject: Re: [PATCH v3 34/37] KVM: nVMX: Don't flush TLB on nested VMX
- transition
-Message-ID: <20200324181031.GE5998@linux.intel.com>
-References: <20200320212833.3507-1-sean.j.christopherson@intel.com>
- <20200320212833.3507-35-sean.j.christopherson@intel.com>
- <4e2b2b82-278e-72d9-4db3-5047b678049c@redhat.com>
+        id S1727577AbgCXSMg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 14:12:36 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:34762 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727334AbgCXSMg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Mar 2020 14:12:36 -0400
+Received: by mail-pf1-f194.google.com with SMTP id 23so9732533pfj.1
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Mar 2020 11:12:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=/d+L7ssZFGD9dUL+ow/dGUzskuUeNpi5SPqcS5kNRuo=;
+        b=vCq7M3Tc1lLHXr9n/N862MpDzTCtytaQvIq+JmiawJy9j05bJoR2iqJNRAM1tStFY7
+         P2W5/YEQ9QHDtl35ojZqvWsSn6l4gE1D/MbGTkRB1aeeTlTgZsFYJkbTHn2ln1WpODSt
+         lk3xCCgJ3awYMY7rOou/PAr+QJRX5AAW5nel9mxbr5sXZveXLWYMDsBhfX0jqa6gFC6k
+         OUKpH/jp6tfcgNmO9GsM2bZ7sPqeS+GuHn9OvlBg1D569qRfnJ67OWq4OVkEMQH5j7ZY
+         Na6WqZ83FI6Z0RPLKZHqIRdQ4aiN1qaWVvQoqGr7CWxZCW83bXff+z6GWqauWhED9Nfx
+         sXbg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=/d+L7ssZFGD9dUL+ow/dGUzskuUeNpi5SPqcS5kNRuo=;
+        b=H2l1Pn3d+soJxLUc83ZZiTZUngGPjOaiSZFwCDMx5JCg3LIPCzT2vTiy1RIeap1PQW
+         mRrYYzJk/ydjmziQg34zYUb1rxCtGh+edwOQqhm9mVrXjtCcTn/3k+2JC2APFUUWEtrh
+         Ier0NswF+EcqH/ppEYyDSLeLmPhTc6YwmyKeprqnPpuRIH/XVT/GHkQ6p8YvYKPgu0L1
+         CdL32ZttDny71oq2Ax+a5IZsJQjtPs5bPlMz2UVgiJFPMErHyphxRPSYpdUpws3venc6
+         Zjrfc5up82eqBMsNJAD+tiNav/gnENmqLgVoLfGYzaM3JVn/845g2+sxJgFyVjrSLRoG
+         sxGg==
+X-Gm-Message-State: ANhLgQ0dKFzJ/HoszJ45+4zByJBUWGL+y3ZhX+/A3mGSiZcsAprEbVHT
+        xLQWMLuj96wHsrNErNmUsce/N/JebPy54DHMmUOM6w==
+X-Google-Smtp-Source: ADFU+vvCkt/oMnQzN3IFjfQIOnsxcbtfBjZKvB+whQOCB12Ag8K7ov4Os1+7zDXZl/j+vOqCKXAOBKogHskuiE7+Kqo=
+X-Received: by 2002:a63:ff59:: with SMTP id s25mr12612787pgk.159.1585073554861;
+ Tue, 24 Mar 2020 11:12:34 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4e2b2b82-278e-72d9-4db3-5047b678049c@redhat.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+References: <20200319164227.87419-1-trishalfonso@google.com> <20200319164227.87419-2-trishalfonso@google.com>
+In-Reply-To: <20200319164227.87419-2-trishalfonso@google.com>
+From:   Brendan Higgins <brendanhiggins@google.com>
+Date:   Tue, 24 Mar 2020 11:12:23 -0700
+Message-ID: <CAFd5g44XDamNNib1=a2Zxm7R3WUbbAF4u0jiWZoYMSQbPKKOyw@mail.gmail.com>
+Subject: Re: [RFC PATCH v2 1/3] Add KUnit Struct to Current Task
+To:     Patricia Alfonso <trishalfonso@google.com>
+Cc:     David Gow <davidgow@google.com>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        kasan-dev <kasan-dev@googlegroups.com>,
+        KUnit Development <kunit-dev@googlegroups.com>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 24, 2020 at 12:20:31PM +0100, Paolo Bonzini wrote:
-> On 20/03/20 22:28, Sean Christopherson wrote:
-> > Unconditionally skip the TLB flush triggered when reusing a root for a
-> > nested transition as nested_vmx_transition_tlb_flush() ensures the TLB
-> > is flushed when needed, regardless of whether the MMU can reuse a cached
-> > root (or the last root).
-> > 
-> > Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-> 
-> So much for my WARN_ON. :)
+On Thu, Mar 19, 2020 at 9:42 AM Patricia Alfonso
+<trishalfonso@google.com> wrote:
+>
+> In order to integrate debugging tools like KASAN into the KUnit
+> framework, add KUnit struct to the current task to keep track of the
+> current KUnit test.
+>
+> Signed-off-by: Patricia Alfonso <trishalfonso@google.com>
 
-Ha, yeah.  The double boolean also makes me nervous, but since there are
-only two options, it seemed cleaner overall than a single mask-based param,
-a ala EMULTYPE.
+Reviewed-by: Brendan Higgins <brendanhiggins@google.com>
