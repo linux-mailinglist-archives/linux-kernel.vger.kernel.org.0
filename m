@@ -2,124 +2,158 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 38C3E19148B
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 16:38:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5AD491914E1
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 16:42:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728022AbgCXPfV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 11:35:21 -0400
-Received: from mga04.intel.com ([192.55.52.120]:20383 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727216AbgCXPfU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 11:35:20 -0400
-IronPort-SDR: LgWswiGKgRZcEtQCpX5S3ORFudk+2Zo0lp6rRUAYot75geEy27RdMTAuyYsvdHp0Hn1BWk/mLa
- x5MxbtF0ZSqQ==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Mar 2020 08:35:20 -0700
-IronPort-SDR: DjgDT7YuDwbDWYF1HGq2qCo2JezbGlElTudi5lGD2km4UWW+ArvxX+SXNRQf/xcxzNHEj84W24
- iUl24loeegPA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.72,300,1580803200"; 
-   d="scan'208";a="235616865"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
-  by orsmga007.jf.intel.com with ESMTP; 24 Mar 2020 08:35:16 -0700
-Received: from andy by smile with local (Exim 4.93)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1jGlaI-00CZJi-U8; Tue, 24 Mar 2020 17:35:18 +0200
-Date:   Tue, 24 Mar 2020 17:35:18 +0200
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Kai-Heng Feng <kai.heng.feng@canonical.com>
-Cc:     ajayg@nvidia.com, Wolfram Sang <wsa@the-dreams.de>,
-        "open list:I2C CONTROLLER DRIVER FOR NVIDIA GPU" 
-        <linux-i2c@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3] i2c: nvidia-gpu: Handle timeout correctly in
- gpu_i2c_check_status()
-Message-ID: <20200324153518.GP1922688@smile.fi.intel.com>
-References: <20200324152812.20231-1-kai.heng.feng@canonical.com>
+        id S1728844AbgCXPi3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 11:38:29 -0400
+Received: from sender3-op-o12.zoho.com.cn ([124.251.121.243]:17886 "EHLO
+        sender3-op-o12.zoho.com.cn" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728825AbgCXPi0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Mar 2020 11:38:26 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1585064195;
+        s=mail; d=flygoat.com; i=jiaxun.yang@flygoat.com;
+        h=From:To:Cc:Message-ID:Subject:Date:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Content-Type;
+        bh=c4pSrPeSV97w8bFNlp6bOa+S5k3Nj7plLKxawsPWKIg=;
+        b=GJRBWI+Z5Ih2aPsDC2w+GUjLIPH1sGyVT9eooJwiZBI8LEPaDgdYtnyDJ7NRMSiG
+        EDqyADUSQBNsbgM7fz60D+nIzcGzdCyhpy8e35tVHG4bch1MSJRwlVaehn8DwD3zev2
+        pMHpO9B8dx8Ll5Vn0AcdJWHjEmGakbtwQBCh/BYg=
+Received: from localhost.localdomain (39.155.141.144 [39.155.141.144]) by mx.zoho.com.cn
+        with SMTPS id 1585064191128266.1534878130593; Tue, 24 Mar 2020 23:36:31 +0800 (CST)
+From:   Jiaxun Yang <jiaxun.yang@flygoat.com>
+To:     linux-mips@vger.kernel.org
+Cc:     Jiaxun Yang <jiaxun.yang@flygoat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <maz@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        Huacai Chen <chenhc@lemote.com>,
+        Allison Randal <allison@lohutok.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Message-ID: <20200324153624.23109-1-jiaxun.yang@flygoat.com>
+Subject: [PATCH v6 00/11] Modernize Loongson64 Machine v6
+Date:   Tue, 24 Mar 2020 23:35:57 +0800
+X-Mailer: git-send-email 2.26.0.rc2
+In-Reply-To: <20190827085302.5197-1-jiaxun.yang@flygoat.com>
+References: 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200324152812.20231-1-kai.heng.feng@canonical.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: quoted-printable
+X-ZohoCNMailClient: External
+Content-Type: text/plain; charset=utf8
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 24, 2020 at 11:28:11PM +0800, Kai-Heng Feng wrote:
-> Nvidia card may come with a "phantom" UCSI device, and its driver gets
-> stuck in probe routine, prevents any system PM operations like suspend.
-> 
-> There's an unaccounted case that the target time can equal to jiffies in
-> gpu_i2c_check_status(), let's solve that by using readl_poll_timeout()
-> instead of jiffies comparison functions. 
-> 
+Loongson have a long history of contributing their code to mainline kernel.
+However, it seems like recent years, they are focusing on maintain a kernel=
+ by themselves
+rather than contribute there code to the community.
 
-Thank you!
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Kernel is progress rapidly too. Their code slept in mainline for a long per=
+oid without proper
+maintainance and became outdated.
 
+This patchset brings modern DeviceTree and irqchip support to the Loongson6=
+4 machine, and leaves
+Loongson 2e/f alone since they are too legacy to touch.
 
-> Fixes: c71bcdcb42a7 ("i2c: add i2c bus driver for NVIDIA GPU")
-> Suggested-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
-> ---
-> v3:
-> - Use readl_poll_timeout to make the retry loop simpler.
-> 
-> v2:
-> - Use a boolean to make sure the operation is timeout or not.
-> 
->  drivers/i2c/busses/i2c-nvidia-gpu.c | 20 ++++++++------------
->  1 file changed, 8 insertions(+), 12 deletions(-)
-> 
-> diff --git a/drivers/i2c/busses/i2c-nvidia-gpu.c b/drivers/i2c/busses/i2c-nvidia-gpu.c
-> index 62e18b4db0ed..f5d25ce00f03 100644
-> --- a/drivers/i2c/busses/i2c-nvidia-gpu.c
-> +++ b/drivers/i2c/busses/i2c-nvidia-gpu.c
-> @@ -8,6 +8,7 @@
->  #include <linux/delay.h>
->  #include <linux/i2c.h>
->  #include <linux/interrupt.h>
-> +#include <linux/iopoll.h>
->  #include <linux/module.h>
->  #include <linux/pci.h>
->  #include <linux/platform_device.h>
-> @@ -75,20 +76,15 @@ static void gpu_enable_i2c_bus(struct gpu_i2c_dev *i2cd)
->  
->  static int gpu_i2c_check_status(struct gpu_i2c_dev *i2cd)
->  {
-> -	unsigned long target = jiffies + msecs_to_jiffies(1000);
->  	u32 val;
-> +	int ret;
->  
-> -	do {
-> -		val = readl(i2cd->regs + I2C_MST_CNTL);
-> -		if (!(val & I2C_MST_CNTL_CYCLE_TRIGGER))
-> -			break;
-> -		if ((val & I2C_MST_CNTL_STATUS) !=
-> -				I2C_MST_CNTL_STATUS_BUS_BUSY)
-> -			break;
-> -		usleep_range(500, 600);
-> -	} while (time_is_after_jiffies(target));
-> -
-> -	if (time_is_before_jiffies(target)) {
-> +	ret = readl_poll_timeout(i2cd->regs + I2C_MST_CNTL, val,
-> +				 !(val & I2C_MST_CNTL_CYCLE_TRIGGER) ||
-> +				 (val & I2C_MST_CNTL_STATUS) != I2C_MST_CNTL_STATUS_BUS_BUSY,
-> +				 500, 1000 * USEC_PER_MSEC);
-> +
-> +	if (ret) {
->  		dev_err(i2cd->dev, "i2c timeout error %x\n", val);
->  		return -ETIMEDOUT;
->  	}
-> -- 
-> 2.17.1
-> 
+PCI and some legacy I/O device will be converted later, together with LS7A =
+PCH support.
 
--- 
-With Best Regards,
-Andy Shevchenko
+v1:
+- dt-bindings fixup according to Rob's comments
+- irqchip fixup according to Marc's comments
+- ls3-iointc: Make Core&IP map per-IRQ
+- Regenerate kconfigs
+- Typo & style improvements
+
+v2:
+- dt-bindings: Fix IOINTC, collect Rob's review tag
+- dtbs: Drop CPU Node, merge different ways according to Huacai and Paul's =
+comments
+
+v3:
+- Split code have been merged
+- Fix IOINTC binding to allow map any child IRQ to and parent
+- Convert "HTINTC" into "HTPIC", which mixed HT vectors processing and i825=
+9
+- Naming style fix according to Huacai's suggestions
+
+v4:
+- More naming related fixes
+
+v5:
+- irqchip fixes thanks to maz (see per file changelog)
+- Remove unnecessary details in dt-bindings
+- Credit Huacai with Co-developed-by
+
+v6:
+- HTPIC minor fix
+- device binding naming fix=20
+
+---
+Jiaxun Yang (11):
+  irqchip: Add driver for Loongson I/O Local Interrupt Controller
+  irqchip: loongson-liointc: Workaround LPC IRQ Errata
+  dt-bindings: interrupt-controller: Add Loongson LIOINTC
+  irqchip: Add driver for Loongson-3 HyperTransport PIC controller
+  dt-bindings: interrupt-controller: Add Loongson-3 HTPIC
+  irqchip: mips-cpu: Convert to simple domain
+  MIPS: Loongson64: Drop legacy IRQ code
+  dt-bindings: mips: Add loongson boards
+  MIPS: Loongson64: Add generic dts
+  MIPS: Loongson64: Load built-in dtbs
+  MIPS: Loongson64: Move MIPS_CPU_IRQ_BASE
+
+ .../interrupt-controller/loongson,htpic.yaml  |  59 ++++
+ .../loongson,liointc.yaml                     |  93 ++++++
+ .../bindings/mips/loongson/devices.yaml       |  27 ++
+ arch/mips/Kconfig                             |   6 +-
+ arch/mips/boot/dts/Makefile                   |   1 +
+ arch/mips/boot/dts/loongson/Makefile          |   4 +
+ .../boot/dts/loongson/loongson3-package.dtsi  |  62 ++++
+ .../dts/loongson/loongson3_4core_rs780e.dts   |  25 ++
+ .../dts/loongson/loongson3_8core_rs780e.dts   |  25 ++
+ arch/mips/boot/dts/loongson/rs780e-pch.dtsi   |  26 ++
+ arch/mips/include/asm/i8259.h                 |   1 +
+ .../include/asm/mach-loongson64/boot_param.h  |   2 +
+ .../asm/mach-loongson64/builtin_dtbs.h        |  13 +
+ arch/mips/include/asm/mach-loongson64/irq.h   |  32 +--
+ .../include/asm/mach-loongson64/loongson.h    |   1 +
+ arch/mips/loongson64/Makefile                 |   2 +-
+ arch/mips/loongson64/env.c                    |  23 ++
+ arch/mips/loongson64/init.c                   |   6 +
+ arch/mips/loongson64/irq.c                    | 162 -----------
+ arch/mips/loongson64/setup.c                  |  16 ++
+ arch/mips/loongson64/smp.c                    |  28 +-
+ drivers/irqchip/Kconfig                       |  19 ++
+ drivers/irqchip/Makefile                      |   2 +
+ drivers/irqchip/irq-loongson-htpic.c          | 149 ++++++++++
+ drivers/irqchip/irq-loongson-liointc.c        | 271 ++++++++++++++++++
+ drivers/irqchip/irq-mips-cpu.c                |   2 +-
+ 26 files changed, 844 insertions(+), 213 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/interrupt-controller/=
+loongson,htpic.yaml
+ create mode 100644 Documentation/devicetree/bindings/interrupt-controller/=
+loongson,liointc.yaml
+ create mode 100644 Documentation/devicetree/bindings/mips/loongson/devices=
+.yaml
+ create mode 100644 arch/mips/boot/dts/loongson/Makefile
+ create mode 100644 arch/mips/boot/dts/loongson/loongson3-package.dtsi
+ create mode 100644 arch/mips/boot/dts/loongson/loongson3_4core_rs780e.dts
+ create mode 100644 arch/mips/boot/dts/loongson/loongson3_8core_rs780e.dts
+ create mode 100644 arch/mips/boot/dts/loongson/rs780e-pch.dtsi
+ create mode 100644 arch/mips/include/asm/mach-loongson64/builtin_dtbs.h
+ delete mode 100644 arch/mips/loongson64/irq.c
+ create mode 100644 drivers/irqchip/irq-loongson-htpic.c
+ create mode 100644 drivers/irqchip/irq-loongson-liointc.c
+
+--=20
+2.26.0.rc2
 
 
