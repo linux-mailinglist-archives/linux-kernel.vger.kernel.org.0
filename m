@@ -2,108 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A6A7B191476
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 16:31:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 67902191480
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 16:34:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727920AbgCXPb1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 11:31:27 -0400
-Received: from mail-io1-f68.google.com ([209.85.166.68]:38328 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727624AbgCXPb1 (ORCPT
+        id S1727809AbgCXPep (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 11:34:45 -0400
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:48900 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727216AbgCXPeo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 11:31:27 -0400
-Received: by mail-io1-f68.google.com with SMTP id m15so13430861iob.5
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Mar 2020 08:31:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=TvsXpRudrZXefQZMYk6cuc0cWu2RbTQ4gqZzuO1RbrE=;
-        b=BjHea3wsg4pgRhuX5WvEm0e9slsyWVMuRNw2u5Xiba9mrWowe3NHzi4SMiyOfhRZl2
-         VHDjDIl3XwbleetS0cuDb3fDQmZNs4rtS5UMl6A/IqxHlA8aVz2dgfdAnwibWW3zHMJO
-         n2aHiBktj1ddQWYVNRo/NJaqEgppcrEZFUixzc7tqvXoNjZCCbBfSXvlXCxi0tSpDzgn
-         PnB0zxefpTre2CedKpmwwlVJvSdiN/tui9ky+kB2VGxExJ2YYcZvF97AiqIUV1iHsU44
-         8PeuvVizzF3Lv/O2Bjg/nLDrz3V3einDnFaD6unLfWe0DvAjH7zUFur458nDcdXefd/A
-         OWMA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=TvsXpRudrZXefQZMYk6cuc0cWu2RbTQ4gqZzuO1RbrE=;
-        b=gj9uw+79Zu713AWAB7KkO6fiNPIdtrDfRe0uqMcVBa5a0Ba+juKEuj/IfLN4DaYFoa
-         P5SaVzJWHXvXpxw4Y4OWKrI0KI2hsNDeRE3IJB93qIG+Vp6EEGaWeck1RcT+/ZB6RC+2
-         +4stUMsLgZg1LA9NUj6sWu11sJMALbeiwP9STmEdLp11Jb6752Nr1ordLUY/76wDR4So
-         wSYTO9y1EmbPlRBUp1sVtqmKjMVhAZf3NH4LEc0dUYA5hAu/1maCT1jkcuD4jGGMAmyU
-         ie1NPkb50yY0EsDnFvFKvRxKT6EvamLwQHMeRsj9jGFpVuntmbE91Qv1ZxDWvEzs/EAu
-         /uFA==
-X-Gm-Message-State: ANhLgQ3upKvOx0lVzub5aZleVC4XmHkpUy66VdbHt4amNO64I0c+b3eP
-        VUpl1emGB4JhhuoM85zynWQBWPFyP+7FfS6Cra8/ug==
-X-Google-Smtp-Source: ADFU+vuvx4HnHO0hvtSOlMwQMQBrgQYOkwH/y5TjDGcYLA1l6gQGvtVy1A0STfXLgY8fOuyRtSObqclduiOLIK8p0pg=
-X-Received: by 2002:a6b:ed17:: with SMTP id n23mr24380151iog.165.1585063886297;
- Tue, 24 Mar 2020 08:31:26 -0700 (PDT)
+        Tue, 24 Mar 2020 11:34:44 -0400
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 02OFYc1E035547;
+        Tue, 24 Mar 2020 10:34:38 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1585064078;
+        bh=dvT9zIe0HW8eK6lubfuxUENKvXb1n0fXjwpBdTggZFE=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=eOYTtfo2N3zZmjmIBQj120udaJv32/dlX0mgjvFl1n/OxqqCA058Uu9N+k3aNyaTg
+         GzNN7qLG9GP/H5UhCCu2lOyh+nS+P0A1Al4kDGShTnF0pWYLD6qzuFZf1SLBDszYoO
+         qm1MgJe6qCzHC7xeQpB6QwGyHmvtbO5MTpaxwrEo=
+Received: from DFLE109.ent.ti.com (dfle109.ent.ti.com [10.64.6.30])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 02OFYcrU114939
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 24 Mar 2020 10:34:38 -0500
+Received: from DFLE103.ent.ti.com (10.64.6.24) by DFLE109.ent.ti.com
+ (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Tue, 24
+ Mar 2020 10:34:38 -0500
+Received: from fllv0039.itg.ti.com (10.64.41.19) by DFLE103.ent.ti.com
+ (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Tue, 24 Mar 2020 10:34:38 -0500
+Received: from [10.250.100.73] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id 02OFYY1E107017;
+        Tue, 24 Mar 2020 10:34:35 -0500
+Subject: Re: [PATCH net-next v3 08/11] net: ethernet: ti: cpts: move rx
+ timestamp processing to ptp worker only
+To:     Richard Cochran <richardcochran@gmail.com>
+CC:     "David S . Miller" <davem@davemloft.net>,
+        Lokesh Vutla <lokeshvutla@ti.com>,
+        Tony Lindgren <tony@atomide.com>, Sekhar Nori <nsekhar@ti.com>,
+        Murali Karicheri <m-karicheri2@ti.com>,
+        netdev <netdev@vger.kernel.org>, <linux-omap@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20200320194244.4703-1-grygorii.strashko@ti.com>
+ <20200320194244.4703-9-grygorii.strashko@ti.com>
+ <20200324134343.GD18149@localhost>
+From:   Grygorii Strashko <grygorii.strashko@ti.com>
+Message-ID: <13dd9d58-7417-2f39-aa7d-dceae946482c@ti.com>
+Date:   Tue, 24 Mar 2020 17:34:34 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
-References: <20200324042213.GA10452@asgard.redhat.com>
-In-Reply-To: <20200324042213.GA10452@asgard.redhat.com>
-From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-Date:   Tue, 24 Mar 2020 09:31:15 -0600
-Message-ID: <CANLsYkwVybRG9L6gDJTzZ=eXut66vJYfuEtOfLzaYaVpdybT1A@mail.gmail.com>
-Subject: Re: [PATCH] coresight: do not use the BIT() macro in the UAPI header
-To:     Eugene Syromiatnikov <esyr@redhat.com>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-stm32@st-md-mailman.stormreply.com,
-        Pratik Patel <pratikp@codeaurora.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Michael Williams <michael.williams@arm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Chunyan Zhang <zhang.chunyan@linaro.org>,
-        "Dmitry V. Levin" <ldv@altlinux.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20200324134343.GD18149@localhost>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 23 Mar 2020 at 22:22, Eugene Syromiatnikov <esyr@redhat.com> wrote:
->
-> The BIT() macro definition is not available for the UAPI headers
-> (moreover, it can be defined differently in the user space); replace
-> its usage with the _BITUL() macro that is defined in <linux/const.h>.
->
-> Fixes: 237483aa5cf4 ("coresight: stm: adding driver for CoreSight STM component")
-> Signed-off-by: Eugene Syromiatnikov <esyr@redhat.com>
-> ---
->  include/uapi/linux/coresight-stm.h | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
->
-> diff --git a/include/uapi/linux/coresight-stm.h b/include/uapi/linux/coresight-stm.h
-> index aac550a..8847dbf 100644
-> --- a/include/uapi/linux/coresight-stm.h
-> +++ b/include/uapi/linux/coresight-stm.h
-> @@ -2,8 +2,10 @@
->  #ifndef __UAPI_CORESIGHT_STM_H_
->  #define __UAPI_CORESIGHT_STM_H_
->
-> -#define STM_FLAG_TIMESTAMPED   BIT(3)
-> -#define STM_FLAG_GUARANTEED    BIT(7)
-> +#include <linux/const.h>
-> +
-> +#define STM_FLAG_TIMESTAMPED   _BITUL(3)
-> +#define STM_FLAG_GUARANTEED    _BITUL(7)
 
-Greg, if you want to pick this up right away:
 
-Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+On 24/03/2020 15:43, Richard Cochran wrote:
+> On Fri, Mar 20, 2020 at 09:42:41PM +0200, Grygorii Strashko wrote:
+>> Once CPTS IRQ will be enabled the CPTS irq handler may compete with netif
+>> RX sofirq path and so RX timestamp might not be ready at the moment packet
+>> is processed. As result, packet has to be deferred and processed later.
+> 
+> This change is not necessary.  The Rx path can simply take a spinlock,
+> check the event list and the HW queue.
+>   
+>> This patch moves RX timestamp processing tx timestamp processing to PTP
+>> worker always the same way as it's been done for TX timestamps.
+> 
+> There is no advantage to delaying Rx time stamp delivery.  In fact, it
+> can degrade synchronization performance.  The only reason the
+> implementation delays Tx time stamps delivery is because there is no
+> other way.
 
-Otherwise let me know and I'll add it to my next tree.
+I tested both ways and kept this version as i'v not seen any degradation,
+but, of course, i'll redo the test (or may be you can advise what test to run).
 
-Thanks,
-Mathieu
+My thoughts were - network stack might not immediately deliver packet to the application
+and PTP worker can be tuned (pri and smp_affinity), resulted code will be more structured,
+less locks and less time spent in softirq context.
 
->
->  /*
->   * The CoreSight STM supports guaranteed and invariant timing
-> --
-> 2.1.4
->
+I also can drop it.
+
+-- 
+Best regards,
+grygorii
