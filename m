@@ -2,56 +2,56 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A175A190644
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 08:31:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2094719064F
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 08:31:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727474AbgCXHbC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 03:31:02 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:35817 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725905AbgCXHbA (ORCPT
+        id S1727510AbgCXHbI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 03:31:08 -0400
+Received: from mail-pj1-f67.google.com ([209.85.216.67]:40541 "EHLO
+        mail-pj1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727443AbgCXHbB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 03:31:00 -0400
-Received: by mail-pl1-f196.google.com with SMTP id g6so7073182plt.2
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Mar 2020 00:30:59 -0700 (PDT)
+        Tue, 24 Mar 2020 03:31:01 -0400
+Received: by mail-pj1-f67.google.com with SMTP id kx8so1045949pjb.5
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Mar 2020 00:31:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=sifive.com; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=rI7k74kFCx75JJFZ6P5OAIxYXRc1E3R4Ch5Nvkd/PLg=;
-        b=dEevPmr87gMs/zwZYhDr7kBAchZIIxA4j5XE/SWfIF4tf1bkYVtCjmF3HsMceLOm/f
-         yMUMX1CJJOm8dr2xxEoJWUbfGXvxESvk3D0nxnwpGXEjuBCmUsgS16u0WGb8owp6HQw4
-         IEug9xf/t27S0CWLebeXEEqDTvoaWjbkL720nZutV1M8l8cdL588L5zelE+ZOKxiTCS+
-         vbMGHNscXpKxbnk87V5VOYQz2ImoBQUmms6OABHlwE0fY7e3BGB4yTliJXWw0s0KJMwR
-         34bOJFpvs9St2+5ZOCOEN7S9LcoDAIhATu3a1S1NGHc8lMXQbEUh2u2WKje+RTRJjySE
-         088Q==
+        bh=klBEcTaZTM89My6NFvl8X/nEuMTFhvIx/ugZCt3MXO4=;
+        b=AG+9uC/8nRSOJB+P5ypaf3gqmhSCEHjRpdinGoG0ihkvqs00uicArdKU/RauncEVNS
+         /jr4FM3waJ7m3kgA0/YlE9Y/s2AXXDgjbcVvws87Q+asnKzmm0lO8BVXx4qHBuS+Zdac
+         utC7Is/6yjR+1eC5kX1thCIKZAwGmuq+3OJT6bOgObDpguY3PMR3hGE+qaVesFwDMmx6
+         3g/jgTiZ2VJSx0ct7YhuzgCBmxpGWsUXxl+v5d4+UMOczw0qWBkSS6RxXqATJlLs63bp
+         TnETxvwb0viDn668uejcqivlG5/kLXFfhOtcIHeJvDtfYmKios0w0AS4V3YtK6DnRdye
+         zAcA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=rI7k74kFCx75JJFZ6P5OAIxYXRc1E3R4Ch5Nvkd/PLg=;
-        b=TQ3pQ6qWLMid2yiz0BoRuN7W/Hi/hv94eQ8w360fcf7Z49JMhXayMwjdl/nN6wy80Q
-         x+GW1zlXwbQsw9Uje83+zdtcu+6YkVDTQ2U1FC92QLrryMvTxN+erBSox8xeDSv/hdjX
-         V8HQgkzEtcjSLDFfQsiPDkc9FbVWASFyjQjOLzhQ1AB+4N6gyQDsJWEiyJmbZpgVw9X6
-         obAJIn0qVW8o+qrTMysACDK6h7oiHAV287xHauBlFu5Fzk+avy9aadd3kSwlslWBxaEJ
-         5Y087iMO8zaPE6agpLv/ZuCsNOOIP4ck4Zs96c+Hcd9e0qkroqTvHn9r3Sb5FsEf5n7M
-         D67A==
-X-Gm-Message-State: ANhLgQ0Yca20gPdZixr7hJxUK299ZnZQN+XwnLTdNNsK3pywbmRA5rvT
-        fL6ngD0iJtYCqYKJaXUkBc/qsT92Z0M=
-X-Google-Smtp-Source: ADFU+vslTkhtG9uiit3rXTJkBTjyUlQnzV2opL3cYdGTfGD2f0Xo7eaCNuOpvpfefHtqiXeUtLDX/Q==
-X-Received: by 2002:a17:90a:3606:: with SMTP id s6mr3821002pjb.195.1585035058819;
-        Tue, 24 Mar 2020 00:30:58 -0700 (PDT)
+        bh=klBEcTaZTM89My6NFvl8X/nEuMTFhvIx/ugZCt3MXO4=;
+        b=jhQ794TeEUkpqkZbLo+PNMWJLox6G/2eJPtOOPfRgUozqjKSF8BwIH+eB9m9Mt5SAA
+         LothuVm3Hpv+0cfGvQlwYpI02YJEBHU7jVND9RIPOiRtz7Ahew+z0R49oNjfAlQeI21E
+         K9fUxUPHTSBTNg7fhxNAr4uTC3zPLOxOnpw4KWhTUtl0CrxPKGl/sC5ejwTrPTiCdaJL
+         p7XzNIzyzviIEqU6K167oIzcNg4gmZpE89nqgInoRUBZbNUH1Fr792wn62jUIygskJDc
+         GCePnrtNtj6r+d2/hGtF5DA/Xx53APlBDiJ0cyaDp+O91NqwLCgdqmmDPuYwfYSMgVpz
+         kAEQ==
+X-Gm-Message-State: ANhLgQ0H7sph6a/xN9Q+cm1Jph0egQRrpsiXJdjR5DrG2xbbzXMo3KnO
+        XLre0T5/uDHmXPp8W1QeUbvwEw==
+X-Google-Smtp-Source: ADFU+vurevye9kGuwfX5gxdkntd88xuvY3Fgsvd35C31e8AXMXuwYNW3TYUL5f30GFG46lLBGeJy6Q==
+X-Received: by 2002:a17:90a:628a:: with SMTP id d10mr3826207pjj.25.1585035060570;
+        Tue, 24 Mar 2020 00:31:00 -0700 (PDT)
 Received: from hsinchu02.internal.sifive.com (220-132-236-182.HINET-IP.hinet.net. [220.132.236.182])
-        by smtp.gmail.com with ESMTPSA id i187sm15124648pfg.33.2020.03.24.00.30.57
+        by smtp.gmail.com with ESMTPSA id i187sm15124648pfg.33.2020.03.24.00.30.59
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Mar 2020 00:30:58 -0700 (PDT)
+        Tue, 24 Mar 2020 00:31:00 -0700 (PDT)
 From:   Zong Li <zong.li@sifive.com>
 To:     palmer@dabbelt.com, paul.walmsley@sifive.com, alex@ghiti.fr,
         linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
 Cc:     Zong Li <zong.li@sifive.com>
-Subject: [PATCH RFC 1/8] riscv/kaslr: add interface to get kaslr offset
-Date:   Tue, 24 Mar 2020 15:30:46 +0800
-Message-Id: <cf8585177e6798095b1af02f28dad5a3271a761e.1584352425.git.zong.li@sifive.com>
+Subject: [PATCH RFC 2/8] riscv/kaslr: introduce functions to clear page table
+Date:   Tue, 24 Mar 2020 15:30:47 +0800
+Message-Id: <286a940ef8fbc4480c63679271eea440d167a258.1584352425.git.zong.li@sifive.com>
 X-Mailer: git-send-email 2.25.2
 In-Reply-To: <cover.1584352425.git.zong.li@sifive.com>
 References: <cover.1584352425.git.zong.li@sifive.com>
@@ -62,29 +62,97 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add interface to get the random offset.
+In KASLR, we need to re-create page table after getting a random
+destination. Introduce clear function to clear old content. Also, the
+page table entries allow writing value when it's empty, so we have to
+clear the early page table.
+
+This patch is a preparation to support KASLR.
 
 Signed-off-by: Zong Li <zong.li@sifive.com>
 ---
- arch/riscv/include/asm/page.h | 5 +++++
- 1 file changed, 5 insertions(+)
+ arch/riscv/mm/init.c | 54 ++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 54 insertions(+)
 
-diff --git a/arch/riscv/include/asm/page.h b/arch/riscv/include/asm/page.h
-index 92848e172a40..e2c2020f0a8d 100644
---- a/arch/riscv/include/asm/page.h
-+++ b/arch/riscv/include/asm/page.h
-@@ -101,6 +101,11 @@ extern unsigned long kernel_virt_addr;
- extern unsigned long max_low_pfn;
- extern unsigned long min_low_pfn;
+diff --git a/arch/riscv/mm/init.c b/arch/riscv/mm/init.c
+index ace5d74fd939..51e263c04fa2 100644
+--- a/arch/riscv/mm/init.c
++++ b/arch/riscv/mm/init.c
+@@ -315,6 +315,7 @@ static void __init create_pmd_mapping(pmd_t *pmdp,
+ #define get_pgd_next_virt(__pa)	get_pmd_virt(__pa)
+ #define create_pgd_next_mapping(__nextp, __va, __pa, __sz, __prot)	\
+ 	create_pmd_mapping(__nextp, __va, __pa, __sz, __prot)
++#define clear_pgd_next_mapping(__nextp)	clear_pmd(__nextp)
+ #define fixmap_pgd_next		fixmap_pmd
+ #else
+ #define pgd_next_t		pte_t
+@@ -322,6 +323,7 @@ static void __init create_pmd_mapping(pmd_t *pmdp,
+ #define get_pgd_next_virt(__pa)	get_pte_virt(__pa)
+ #define create_pgd_next_mapping(__nextp, __va, __pa, __sz, __prot)	\
+ 	create_pte_mapping(__nextp, __va, __pa, __sz, __prot)
++#define clear_pgd_next_mapping(__nextp)	clear_pte(__nextp)
+ #define fixmap_pgd_next		fixmap_pte
+ #endif
  
-+static inline unsigned long get_kaslr_offset(void)
+@@ -361,6 +363,58 @@ static uintptr_t __init best_map_size(phys_addr_t base, phys_addr_t size)
+ 	return PMD_SIZE;
+ }
+ 
++#ifdef CONFIG_RANDOMIZE_BASE
++static void __init clear_pte(pte_t *ptep)
 +{
-+	return kernel_virt_addr - PAGE_OFFSET;
++	unsigned int i;
++
++	for (i = 0; i < PTRS_PER_PTE; i++)
++		if (!pte_none(ptep[i]))
++			ptep[i] = __pte(0);
 +}
 +
- #define __pa_to_va_nodebug(x)	((void *)((unsigned long) (x) + va_pa_offset))
- #define __va_to_pa_nodebug(x)	((unsigned long)(x) - va_pa_offset)
- 
++static void __init clear_pmd(pmd_t *pmdp)
++{
++	unsigned int i;
++	pte_t *ptep;
++	phys_addr_t pte_phys;
++	uintptr_t kaslr_offset = get_kaslr_offset();
++
++	for (i = 0; i < PTRS_PER_PMD; i++)
++		if (!pmd_none(pmdp[i])) {
++			if (pmd_leaf(pmdp[i])) {
++				pmd_clear(&pmdp[i]);
++			} else {
++				pte_phys = PFN_PHYS(_pmd_pfn(pmdp[i]));
++				ptep = get_pte_virt(pte_phys + kaslr_offset);
++				clear_pte(ptep);
++				pmd_clear(&pmdp[i]);
++			}
++		}
++}
++
++static void __init clear_pgd(pgd_t *pgdp)
++{
++	unsigned int i;
++	pgd_next_t *nextp;
++	phys_addr_t next_phys;
++	uintptr_t kaslr_offset = get_kaslr_offset();
++
++	for (i = 0; i < PTRS_PER_PGD; i++)
++		if (pgd_val(pgdp[i]) != 0) {
++			if (pgd_leaf(pgd_val(pgdp[i]))) {
++				set_pgd(&pgdp[i], __pgd(0));
++			} else {
++				next_phys = PFN_PHYS(_pgd_pfn(pgdp[i]));
++				nextp = get_pgd_next_virt(next_phys +
++							  kaslr_offset);
++				clear_pgd_next_mapping(nextp);
++				set_pgd(&pgdp[i], __pgd(0));
++			}
++		}
++}
++#endif
++
+ /*
+  * setup_vm() is called from head.S with MMU-off.
+  *
 -- 
 2.25.1
 
