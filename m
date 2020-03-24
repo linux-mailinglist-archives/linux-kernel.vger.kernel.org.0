@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2C6FD190FD6
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 14:30:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 085FE190E7C
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 14:12:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729094AbgCXNXh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 09:23:37 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46686 "EHLO mail.kernel.org"
+        id S1727672AbgCXNMh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 09:12:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58414 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728899AbgCXNXe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 09:23:34 -0400
+        id S1727652AbgCXNMe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Mar 2020 09:12:34 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D12EA208DB;
-        Tue, 24 Mar 2020 13:23:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E694720775;
+        Tue, 24 Mar 2020 13:12:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585056214;
-        bh=AL7hoBSzUmkmWDlkQMwp9cp9Ui5kceVTauOdV7/oyJ4=;
+        s=default; t=1585055554;
+        bh=GWy6tmGEEcVt6nH/teAPu97o9qVvgBZbqgNUofs01Tw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ivJ4EKDpV2dBPkT87sSzBtlBzydmitc6+zCZb5dXMkhCMYFz4kuwBfEakGnOyV/DM
-         Sa44P8krb1hNyZS4YMcnl+uY3JkOvTAt7I8DH2ZjNLjtJxKJLFAgQIft+xSNqv4S1Z
-         uUS2ebIJeIDm9rwK12k7EASSg4uZY39VN/A0rdmo=
+        b=GNpNRK+K6LhMLRtYegW3sFgamdSzrUoKlZMsJ+ZQ1797/UNo6OaW3k5ybALbsB+AG
+         LGhNaLD+2Hd24XcxMXT/OGzvF4RPTQ3wz1QRe23zCnyPuk/ICbAHt89CILvT3ILgDy
+         4n3XkGEq+uz/d8f7PC3BFs7l593bP8Q4AyJaMkrk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+e1fe9f44fb8ecf4fb5dd@syzkaller.appspotmail.com,
-        Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 5.5 058/119] ALSA: pcm: oss: Avoid plugin buffer overflow
+        stable@vger.kernel.org, Daniele Palmas <dnlplm@gmail.com>,
+        Johan Hovold <johan@kernel.org>
+Subject: [PATCH 4.19 22/65] USB: serial: option: add ME910G1 ECM composition 0x110b
 Date:   Tue, 24 Mar 2020 14:10:43 +0100
-Message-Id: <20200324130814.025319543@linuxfoundation.org>
+Message-Id: <20200324130759.850045670@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.2
-In-Reply-To: <20200324130808.041360967@linuxfoundation.org>
-References: <20200324130808.041360967@linuxfoundation.org>
+In-Reply-To: <20200324130756.679112147@linuxfoundation.org>
+References: <20200324130756.679112147@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,70 +43,32 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Takashi Iwai <tiwai@suse.de>
+From: Daniele Palmas <dnlplm@gmail.com>
 
-commit f2ecf903ef06eb1bbbfa969db9889643d487e73a upstream.
+commit 8e852a7953be2a6ee371449f7257fe15ace6a1fc upstream.
 
-Each OSS PCM plugins allocate its internal buffer per pre-calculation
-of the max buffer size through the chain of plugins (calling
-src_frames and dst_frames callbacks).  This works for most plugins,
-but the rate plugin might behave incorrectly.  The calculation in the
-rate plugin involves with the fractional position, i.e. it may vary
-depending on the input position.  Since the buffer size
-pre-calculation is always done with the offset zero, it may return a
-shorter size than it might be; this may result in the out-of-bound
-access as spotted by fuzzer.
+Add ME910G1 ECM composition 0x110b: tty, tty, tty, ecm
 
-This patch addresses those possible buffer overflow accesses by simply
-setting the upper limit per the given buffer size for each plugin
-before src_frames() and after dst_frames() calls.
-
-Reported-by: syzbot+e1fe9f44fb8ecf4fb5dd@syzkaller.appspotmail.com
-Cc: <stable@vger.kernel.org>
-Link: https://lore.kernel.org/r/000000000000b25ea005a02bcf21@google.com
-Link: https://lore.kernel.org/r/20200309082148.19855-1-tiwai@suse.de
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Signed-off-by: Daniele Palmas <dnlplm@gmail.com>
+Link: https://lore.kernel.org/r/20200304104310.2938-1-dnlplm@gmail.com
+Cc: stable <stable@vger.kernel.org>
+Signed-off-by: Johan Hovold <johan@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/core/oss/pcm_plugin.c |    8 ++++++++
- 1 file changed, 8 insertions(+)
+ drivers/usb/serial/option.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/sound/core/oss/pcm_plugin.c
-+++ b/sound/core/oss/pcm_plugin.c
-@@ -209,6 +209,8 @@ snd_pcm_sframes_t snd_pcm_plug_client_si
- 	if (stream == SNDRV_PCM_STREAM_PLAYBACK) {
- 		plugin = snd_pcm_plug_last(plug);
- 		while (plugin && drv_frames > 0) {
-+			if (drv_frames > plugin->buf_frames)
-+				drv_frames = plugin->buf_frames;
- 			plugin_prev = plugin->prev;
- 			if (plugin->src_frames)
- 				drv_frames = plugin->src_frames(plugin, drv_frames);
-@@ -220,6 +222,8 @@ snd_pcm_sframes_t snd_pcm_plug_client_si
- 			plugin_next = plugin->next;
- 			if (plugin->dst_frames)
- 				drv_frames = plugin->dst_frames(plugin, drv_frames);
-+			if (drv_frames > plugin->buf_frames)
-+				drv_frames = plugin->buf_frames;
- 			plugin = plugin_next;
- 		}
- 	} else
-@@ -248,11 +252,15 @@ snd_pcm_sframes_t snd_pcm_plug_slave_siz
- 				if (frames < 0)
- 					return frames;
- 			}
-+			if (frames > plugin->buf_frames)
-+				frames = plugin->buf_frames;
- 			plugin = plugin_next;
- 		}
- 	} else if (stream == SNDRV_PCM_STREAM_CAPTURE) {
- 		plugin = snd_pcm_plug_last(plug);
- 		while (plugin) {
-+			if (frames > plugin->buf_frames)
-+				frames = plugin->buf_frames;
- 			plugin_prev = plugin->prev;
- 			if (plugin->src_frames) {
- 				frames = plugin->src_frames(plugin, frames);
+--- a/drivers/usb/serial/option.c
++++ b/drivers/usb/serial/option.c
+@@ -1183,6 +1183,8 @@ static const struct usb_device_id option
+ 	  .driver_info = NCTRL(0) },
+ 	{ USB_DEVICE_INTERFACE_CLASS(TELIT_VENDOR_ID, 0x110a, 0xff),	/* Telit ME910G1 */
+ 	  .driver_info = NCTRL(0) | RSVD(3) },
++	{ USB_DEVICE_INTERFACE_CLASS(TELIT_VENDOR_ID, 0x110b, 0xff),	/* Telit ME910G1 (ECM) */
++	  .driver_info = NCTRL(0) },
+ 	{ USB_DEVICE(TELIT_VENDOR_ID, TELIT_PRODUCT_LE910),
+ 	  .driver_info = NCTRL(0) | RSVD(1) | RSVD(2) },
+ 	{ USB_DEVICE(TELIT_VENDOR_ID, TELIT_PRODUCT_LE910_USBCFG4),
 
 
