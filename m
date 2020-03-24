@@ -2,99 +2,128 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E0864191C62
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 22:59:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 86DA0191C66
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 23:01:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728293AbgCXV7Y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 17:59:24 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:36165 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727040AbgCXV7Y (ORCPT
+        id S1728248AbgCXWBv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 18:01:51 -0400
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:34386 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727040AbgCXWBv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 17:59:24 -0400
-Received: by mail-pf1-f196.google.com with SMTP id i13so10029690pfe.3
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Mar 2020 14:59:22 -0700 (PDT)
+        Tue, 24 Mar 2020 18:01:51 -0400
+Received: by mail-qt1-f193.google.com with SMTP id 10so431517qtp.1
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Mar 2020 15:01:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=networkplumber-org.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=oYZJ5wco7JJuTDAxaIpsWcgx8KVREzLx7l31AjoBp64=;
-        b=DEAfs6gW3ASPQcEXUoJf0ITDVQ6oe7LgZ3p93IWuh8Jo8EPp5BxvDh48gkmgSQbNpJ
-         Gu3d/vTzT7phk8mHFXeDh/bpynDnRlCn061b/bRHN2QbVzWMmrdBJt3PPKr5KDQt8F3c
-         8l/SnPsA6hVHURgUhFmdHzOJzIQUaIfVXf0Wlc9Msx9sYKhdVNaajn7LU7Db1bEcjfpc
-         snzmeJk9EtiM14RiDhEY8/tNTLvbS0xJfRTtbjKxfB8nO1didpQcVuDwn2U6Y8tzH5Ku
-         750K1aIH7kSsDIaEqQsL728McNdYoyzOxB6MzgnE+HN91GH8cmBH0A+bmjyLEm/M3b0F
-         HPJA==
+        d=gmail.com; s=20161025;
+        h=sender:from:date:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=6LQiM/oiHlOdvbe9Zjo6nFmhV//jY0W79rboX0wJ6ks=;
+        b=bGI5dSTlEP4McaHIhW2swe7VBaWjxLJjEb9R29+Zh671fr4Y/q0xHT5EEHlNKJ9JEw
+         m62jvP3wvny29rhGRwWwQHhXDj0Y5bejOCNZ0uegFTspOcxKwdmbBSBEsOPxKrBg6dG3
+         j/+yvQ40FKiGlXOSgMQJvZG9i8dbcKK5WpXOncu9simEL/E3d9ZbJhuewri3bpc8ZFT+
+         uUuuhn1mC3clzZun7CSqCSA/5Key3bKoTE9k8aUVP2GZUFyoJPKxHPH8QNen5aCJOyNO
+         WZt0YCEnzeYykiSELrYZNJzrj2+iTyYPX7cTt3/7pT4y2rST3Gbbr6BU1wWisNvAsSJE
+         7YpA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=oYZJ5wco7JJuTDAxaIpsWcgx8KVREzLx7l31AjoBp64=;
-        b=cKfm7kYGqXZXFMw9VK1sZrFd2N+qCmOTJQNq7SX336AgEhcSpYcDIegjcO6S0/aJof
-         qUnMc8JWoxSoRavBdDE/N+kfpKMF1inGLVAxU7GEBmHx0s2L7vBb0VfaUa4DuohzCIJ+
-         jzfEWU9S8BctoO4xy33RlxOEwEaUUl1Nd2kQ6ZFAk+n0c1dArMCARNHoHDdqJcJPEuRf
-         6XV4zIOBJvKyruY3Kgq47FwPYPe4HMf6nbcvawvqsj7rL1XIkbFPnrC3dHyvECETNCrH
-         ghGgsKtMLUNti7nadp75TR3SNJ9OZY6JCDe3xPJq3olZVR01Gek6+DbdLn3DK3PlOm94
-         zNRg==
-X-Gm-Message-State: ANhLgQ0RbpTy26R1vF2xNaBfSeKQPdPRkLUjQ034ZMbyMjVpdceehm5K
-        WkSz1WDxKT6wLfQmvk2uiX79bw==
-X-Google-Smtp-Source: ADFU+vt+M7LGCyF1UcbD0UlNws/nSWDa25m8e7ZJ4d0D7w+8K75DE9GAD7MYf9dYU+8PTrXDxfKwOA==
-X-Received: by 2002:a63:7015:: with SMTP id l21mr2199075pgc.200.1585087161635;
-        Tue, 24 Mar 2020 14:59:21 -0700 (PDT)
-Received: from hermes.lan (204-195-22-127.wavecable.com. [204.195.22.127])
-        by smtp.gmail.com with ESMTPSA id fa16sm74957pjb.39.2020.03.24.14.59.19
+        h=x-gm-message-state:sender:from:date:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=6LQiM/oiHlOdvbe9Zjo6nFmhV//jY0W79rboX0wJ6ks=;
+        b=CLPzESBxAZwst0espyEpOUEh45G2XU47LHLmZmcOu70r/pOUoqVoU6boYrDnIs/NNS
+         RxFswyiMR4/TYJdZDAnIAkE0j18Aptsz1Vc5NEfEpIVPc/LGBHjOIJk8OOiW8QxipYMn
+         NTWc1m5ITabwX86zCf65DFkksNgeKEJ5hWB0INyxTPoNtNdhfWm+lCoaMS5BmlEU/oD+
+         5DGvsyJ95IpC3DU9m4KdbOKSBv19d1jpGR1AhkFIyuKxfmczFbdljFL8rY2OugmXEbUk
+         cHg5g1Al1klWBGHqMZbf5b4z75ke5uoVMDaeOM9T5qCk9Vi4NZD0pXLL/egGhoH4uTxb
+         3YHQ==
+X-Gm-Message-State: ANhLgQ36gJOTZwEzORvCPRXs1mJmhGhS1QsTXnaXOpJUpeXF0K3zjN0G
+        x7nAGOE6BcIxC88JoKguLq0=
+X-Google-Smtp-Source: ADFU+vvSu//9WABHZWRBUHb0iK5A96tEirBjKnTPu73adm8gR92EBBoeASXuuz6LIsZiBzF8hWM3aw==
+X-Received: by 2002:ac8:110a:: with SMTP id c10mr28393372qtj.365.1585087309761;
+        Tue, 24 Mar 2020 15:01:49 -0700 (PDT)
+Received: from rani.riverdale.lan ([2001:470:1f07:5f3::b55f])
+        by smtp.gmail.com with ESMTPSA id u40sm15584424qtc.62.2020.03.24.15.01.49
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Mar 2020 14:59:21 -0700 (PDT)
-Date:   Tue, 24 Mar 2020 14:59:12 -0700
-From:   Stephen Hemminger <stephen@networkplumber.org>
-To:     Po Liu <Po.Liu@nxp.com>
-Cc:     davem@davemloft.net, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, vinicius.gomes@intel.com,
-        claudiu.manoil@nxp.com, vladimir.oltean@nxp.com,
-        alexandru.marginean@nxp.com, xiaoliang.yang_1@nxp.com,
-        roy.zang@nxp.com, mingkai.hu@nxp.com, jerry.huang@nxp.com,
-        leoyang.li@nxp.com, michael.chan@broadcom.com, vishal@chelsio.com,
-        saeedm@mellanox.com, leon@kernel.org, jiri@mellanox.com,
-        idosch@mellanox.com, alexandre.belloni@bootlin.com,
-        UNGLinuxDriver@microchip.com, kuba@kernel.org, jhs@mojatatu.com,
-        xiyou.wangcong@gmail.com, simon.horman@netronome.com,
-        pablo@netfilter.org, moshe@mellanox.com, m-karicheri2@ti.com,
-        andre.guedes@linux.intel.com, David Ahern <dsahern@gmail.com>
-Subject: Re: [v1,iproute2  1/2] iproute2:tc:action: add a gate control
- action
-Message-ID: <20200324145912.657f2c9e@hermes.lan>
-In-Reply-To: <20200324034745.30979-7-Po.Liu@nxp.com>
-References: <20200306125608.11717-11-Po.Liu@nxp.com>
-        <20200324034745.30979-1-Po.Liu@nxp.com>
-        <20200324034745.30979-7-Po.Liu@nxp.com>
+        Tue, 24 Mar 2020 15:01:49 -0700 (PDT)
+From:   Arvind Sankar <nivedita@alum.mit.edu>
+X-Google-Original-From: Arvind Sankar <arvind@rani.riverdale.lan>
+Date:   Tue, 24 Mar 2020 18:01:47 -0400
+To:     Arvind Sankar <nivedita@alum.mit.edu>
+Cc:     Borislav Petkov <bp@alien8.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        "Jason A. Donenfeld" <Jason@zx2c4.com>,
+        Masahiro Yamada <masahiroy@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, X86 ML <x86@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Thomas Lendacky <Thomas.Lendacky@amd.com>,
+        Mauro Rossi <issor.oruam@gmail.com>,
+        Michael Matz <matz@suse.de>
+Subject: Re: [PATCH] Documentation/changes: Raise minimum supported binutils
+ version to 2.23
+Message-ID: <20200324220147.GA3253486@rani.riverdale.lan>
+References: <20200316160259.GN26126@zn.tnic>
+ <20200323204454.GA2611336@zx2c4.com>
+ <202003231350.7D35351@keescook>
+ <CAK7LNARMBkc666kZ9jOG9sSThzA69JvKi++WZXMtCP9ddyqcBw@mail.gmail.com>
+ <20200324091437.GB22931@zn.tnic>
+ <CAHmME9q2VuhN+Dhi-nzuJKPjXo8dZq013cZ-0x0t9StZFXCAJQ@mail.gmail.com>
+ <20200324162843.GE22931@zn.tnic>
+ <CAHk-=whXBO-Z=Ra_UX=w_LefG1r6iLXcPT=sLuZ+EaKFtWtCBQ@mail.gmail.com>
+ <20200324164812.GG22931@zn.tnic>
+ <20200324214204.GB3220053@rani.riverdale.lan>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20200324214204.GB3220053@rani.riverdale.lan>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 24 Mar 2020 11:47:44 +0800
-Po Liu <Po.Liu@nxp.com> wrote:
+On Tue, Mar 24, 2020 at 05:42:05PM -0400, Arvind Sankar wrote:
+> On Tue, Mar 24, 2020 at 05:48:12PM +0100, Borislav Petkov wrote:
+> > On Tue, Mar 24, 2020 at 09:37:13AM -0700, Linus Torvalds wrote:
+> > > I think it's ok. It's not going to cause any _subtle_ failures, it's
+> > > going to cause very clear "oh, now it doesn't build" errors.
+> > > 
+> > > No?
+> > > 
+> > > And binutils 2.23 is what, 7+ years old by now and apparently had
+> > > known failure cases too.
+> > > 
+> > > But if there are silent and subtle failures, that might be a reason to
+> > > be careful. Are there?
+> > 
+> > Well, not that I know of and that's why I'm being overly cautious. Maybe
+> > too cautious but a lot of hectic testing of last minute fixes in the
+> > past have taught me to take my time.
+> > 
+> > And since it doesn't really matter when the patch goes in - there's
+> > always the next merge window - I would prefer to take our time and have
+> > it simmer in -next for max period.
+> > 
+> > So yeah, 2.23 has been tested for a long time now and it is very likely
+> > that nothing would happen and if you think it's ok, then sure. Then if
+> > you happen to see urgent pull requests with build or some other fixes,
+> > at least you'll be prepared. :-)
+> > 
+> 
+> This is just a documentation patch right? Nothing actually changes with
+> the build. The only possible thing that we would potentially have to
+> deal with is
+> 
+> (1) people noticing the doc change and complaining that they
+> still need to use binutils-2.21 for some reason -- but they can't
+> currently build an x86 kernel without patches anyway, so...
 
-> diff --git a/include/uapi/linux/pkt_cls.h b/include/uapi/linux/pkt_cls.h
-> index a6aa466..7a047a9 100644
-> --- a/include/uapi/linux/pkt_cls.h
-> +++ b/include/uapi/linux/pkt_cls.h
-> @@ -106,6 +106,7 @@ enum tca_id {
->  	TCA_ID_SAMPLE = TCA_ACT_SAMPLE,
->  	TCA_ID_CTINFO,
->  	TCA_ID_MPLS,
-> +	TCA_ID_GATE,
->  	TCA_ID_CT,
->  	/* other actions go here */
->  	__TCA_ID_MAX = 255
+The __end_of_kernel_reserve symbol that breaks with the 2.21-2.22
+binutils was added in v5.3, so we've already gone 3 kernel versions
+without complaints.
 
-All uapi headers need to come from checked in kernel.
-
-This is an example of why, you have an out of date version because
-this version would have broken ABI.
-
-
-This patch should be against iproute2-next since because it depends on net-next.
+> 
+> (2) people noticing the doc change and suggesting moving to 2.26 or some
+> later version instead of 2.23.
