@@ -2,78 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3C408191704
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 17:55:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B94BF191709
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 17:56:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727492AbgCXQzX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 12:55:23 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:42708 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725767AbgCXQzW (ORCPT
+        id S1727736AbgCXQ4o (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 12:56:44 -0400
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:41541 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727382AbgCXQ4o (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 12:55:22 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=A0ojL14BqOuhudwXrers//6Y4R0jtCChC5fidi/X22w=; b=j68qL3vmM3RwzBBTQ+9Yhd1Wif
-        wVcKyM8VC/1JnZ8JktLxZ7gMe+8u0DF51w6z959S65beMOMmux0PgTtp6Da9UG/nSy2J7iQAPRvAr
-        XMVyadEkWSB3att8VgPXRwB/3lnUavIb4OGSCRQn9mOZz306rdb3y3vprbti4mmCshhw5yECazS9I
-        6BsEOA2MlM/LdDfjHGE6ZRVSHN1KGOzqAfmIdKIJJTyX3lLq5FVigxGXCShY2nGJXDNdpNJCeAuJE
-        lKCbaAZh7dnT2aWbE+6e8LApfvPkMEpMp2hJeimHWSL5PsH0om58yBJzULXR+RY5GT9NToLLimqUt
-        BjZS7vPg==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jGmpM-0007kH-2r; Tue, 24 Mar 2020 16:54:56 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 5584E300235;
-        Tue, 24 Mar 2020 17:54:54 +0100 (CET)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 2D85429942924; Tue, 24 Mar 2020 17:54:54 +0100 (CET)
-Date:   Tue, 24 Mar 2020 17:54:54 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     the arch/x86 maintainers <x86@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Daniel Bristot de Oliveira <bristot@redhat.com>,
-        Jason Baron <jbaron@akamai.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>, Nadav Amit <namit@vmware.com>,
-        Peter Anvin <hpa@zytor.com>,
-        Andrew Lutomirski <luto@kernel.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>
-Subject: Re: [RESEND][PATCH v3 14/17] static_call: Add static_cond_call()
-Message-ID: <20200324165454.GT20696@hirez.programming.kicks-ass.net>
-References: <20200324135603.483964896@infradead.org>
- <20200324142246.127013582@infradead.org>
- <CAHk-=wiumU4QxAkT+GqhBt5f-iUsoLNC0sqVfRKp0xypA6aNYg@mail.gmail.com>
+        Tue, 24 Mar 2020 12:56:44 -0400
+Received: by mail-lf1-f68.google.com with SMTP id z23so2132760lfh.8
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Mar 2020 09:56:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=XFIGNUpDtx5h3b6b+QEOb2QoBDkARJdMv8Frt7I6mcA=;
+        b=QxhaqVRqxE0tPjxrjiFFHwiVs8u2p615mXSrju0U3UuWgoLLYUWEQU+OKjgjF53E9c
+         q5jtVRTHsvMjYvRETJyKjbrLGxHHYT278X1y0HsDX/H+j7Tq8y25cJmSkPVjbnclwjOH
+         Y6XGY+xWWe229Z8UWWIo1D/YiQ9kPJC5idX6IFKK/1MZtnKtL2TXRieh3d08F2EI2PWT
+         AfWmBbNVlKl0O+Gy7tLu+op1tpAXWzcSVj53v2/JJjS3GKfGybabnAsy9OaQ6/5bP/QQ
+         CpGjLqa9p84STUG0co/tM5DY38XvrfrMhoE3ofKqSBC2JtAuuDkr1DXqPTEFYJNqNK/U
+         CtTw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=XFIGNUpDtx5h3b6b+QEOb2QoBDkARJdMv8Frt7I6mcA=;
+        b=YdMqO30cSfQldLHFHf5FZ21fFusHb/Slhmqnz/P5cxApOx/t1yzmhXFsPrtFCrJC1J
+         MXtd7uQ4xqKUXpodlkwmNiAYVd45jv0cpdlYzUh/OiZLpSR/zhe/+JLZNcqZNb8lPriR
+         tWGBwd9/5RhwqRhie+79aBx1VWNwb13AgIe1BPHtHj4WtC+VqG1g2xnVIx7h/15xaePL
+         bwAg4UzT9465Rzf63V/3I8z9cwaTVfzYclFHCee3sIA3/wyT0XPrSMcm+01LHLa38z8m
+         Nf5iTH5QZi8kPEoIugc8JOSxjWf0Ytctnd5t6jghZ60eLY4Dw6Pj5K3yaPwd7RHQSFAt
+         uxGA==
+X-Gm-Message-State: ANhLgQ1p+lTcsZ3DaEdAaCnYMqaL5TVVaKzb5VQ1eo6N3mSoiCq9frri
+        Ebvx2qvGIvnbF8KQKEP5W5o5SowupGeA5k85r/nzeQ==
+X-Google-Smtp-Source: ADFU+vv3k8ZkJQxHJmVmXT2nkkdi7lVh9FsmwbzVxxYv13+3VtTq5l/toW1odvSLvnTLqAuk7oiHpfiw6M+O+7TBNRI=
+X-Received: by 2002:a19:ad43:: with SMTP id s3mr10218645lfd.63.1585069002228;
+ Tue, 24 Mar 2020 09:56:42 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wiumU4QxAkT+GqhBt5f-iUsoLNC0sqVfRKp0xypA6aNYg@mail.gmail.com>
+References: <20200324153643.15527-1-will@kernel.org> <20200324153643.15527-4-will@kernel.org>
+ <20200324165128.GS20696@hirez.programming.kicks-ass.net>
+In-Reply-To: <20200324165128.GS20696@hirez.programming.kicks-ass.net>
+From:   Jann Horn <jannh@google.com>
+Date:   Tue, 24 Mar 2020 17:56:15 +0100
+Message-ID: <CAG48ez2WJo5+wqWi1nxstR=WWyseVfZPMnpdDBsZKW5G+Tt3KQ@mail.gmail.com>
+Subject: Re: [RFC PATCH 03/21] list: Annotate lockless list primitives with data_race()
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Will Deacon <will@kernel.org>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        Eric Dumazet <edumazet@google.com>,
+        Kees Cook <keescook@chromium.org>,
+        Maddie Stone <maddiestone@google.com>,
+        Marco Elver <elver@google.com>,
+        "Paul E . McKenney" <paulmck@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        kernel-team <kernel-team@android.com>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Oleg Nesterov <oleg@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 24, 2020 at 09:14:03AM -0700, Linus Torvalds wrote:
-> On Tue, Mar 24, 2020 at 7:25 AM Peter Zijlstra <peterz@infradead.org> wrote:
-> >
-> > Extend the static_call infrastructure to optimize the following common
-> > pattern:
-> >
-> >         if (func_ptr)
-> >                 func_ptr(args...)
-> 
-> Is there any reason why this shouldn't be the default static call pattern?
-> 
-> IOW, do we need the special "cond" versions at all? Couldn't we just
-> say that this is how static calls fundamentally work - if the function
-> is NULL, they are nops?
+On Tue, Mar 24, 2020 at 5:51 PM Peter Zijlstra <peterz@infradead.org> wrote:
+> On Tue, Mar 24, 2020 at 03:36:25PM +0000, Will Deacon wrote:
+> > diff --git a/include/linux/list.h b/include/linux/list.h
+> > index 4fed5a0f9b77..4d9f5f9ed1a8 100644
+> > --- a/include/linux/list.h
+> > +++ b/include/linux/list.h
+> > @@ -279,7 +279,7 @@ static inline int list_is_last(const struct list_head *list,
+> >   */
+> >  static inline int list_empty(const struct list_head *head)
+> >  {
+> > -     return READ_ONCE(head->next) == head;
+> > +     return data_race(READ_ONCE(head->next) == head);
+> >  }
+>
+> list_empty() isn't lockless safe, that's what we have
+> list_empty_careful() for.
 
-That doesn't work for functions that have a return value ...
+That thing looks like it could also use some READ_ONCE() sprinkled in...
