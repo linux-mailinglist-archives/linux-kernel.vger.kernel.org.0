@@ -2,123 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2FD2E190A0C
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 10:59:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4F62919098F
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 10:30:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727179AbgCXJ7Y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 05:59:24 -0400
-Received: from pecan2-mail.exetel.com.au ([220.233.0.71]:37923 "EHLO
-        pecan2.exetel.com.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727145AbgCXJ7Y (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 05:59:24 -0400
-X-Greylist: delayed 2927 seconds by postgrey-1.27 at vger.kernel.org; Tue, 24 Mar 2020 05:59:21 EDT
-Received: from 41.68.233.220.static.exetel.com.au ([220.233.68.41] helo=localhost.localdomain)
-        by pecan2.exetel.com.au with esmtp (Exim 4.91)
-        (envelope-from <flatmax@flatmax.org>)
-        id 1jGfZc-0000Zd-ME; Tue, 24 Mar 2020 20:10:12 +1100
-From:   Matt Flax <flatmax@flatmax.org>
-Cc:     Matt Flax <flatmax@flatmax.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        bcm-kernel-feedback-list@broadcom.com,
-        YueHaibing <yuehaibing@huawei.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Allison Randal <allison@lohutok.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        alsa-devel@alsa-project.org, linux-rpi-kernel@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] ASoC: bcm2835-i2s: substream alignment now independent in hwparams
-Date:   Tue, 24 Mar 2020 20:08:21 +1100
-Message-Id: <20200324090823.20754-1-flatmax@flatmax.org>
-X-Mailer: git-send-email 2.20.1
+        id S1727209AbgCXJaf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 05:30:35 -0400
+Received: from mga12.intel.com ([192.55.52.136]:48654 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726944AbgCXJae (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Mar 2020 05:30:34 -0400
+IronPort-SDR: v2znpTQB3eJtJdRfdXFoAfgQE2DZlB5OTHd55fScwJy4hPu41IxbT9yMaUAZaVRcAPOQrChGAZ
+ iYKYfyr8aA0Q==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Mar 2020 02:30:34 -0700
+IronPort-SDR: 1OYImAC0DclsHar7+GK4ODpVJmtGgaMQv3RRJKfFtRt1FYyHpx/Zbx7tVqlBA1zz3jOhDEkkjA
+ 8bEnj5c2A6VQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.72,299,1580803200"; 
+   d="scan'208";a="240215118"
+Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.87]) ([10.237.72.87])
+  by orsmga008.jf.intel.com with ESMTP; 24 Mar 2020 02:30:30 -0700
+Subject: Re: [PATCH V4 00/13] perf/x86: Add perf text poke events
+From:   Adrian Hunter <adrian.hunter@intel.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Ingo Molnar <mingo@redhat.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Borislav Petkov <bp@alien8.de>,
+        "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Leo Yan <leo.yan@linaro.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Jiri Olsa <jolsa@redhat.com>, linux-kernel@vger.kernel.org
+References: <20200304090633.420-1-adrian.hunter@intel.com>
+ <2daf9e8e-cd3a-8201-6443-8c17f215552e@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+Message-ID: <25dee9c8-afcc-2541-6456-41ea17f9150b@intel.com>
+Date:   Tue, 24 Mar 2020 11:29:49 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-To:     unlisted-recipients:; (no To-header on input)
+In-Reply-To: <2daf9e8e-cd3a-8201-6443-8c17f215552e@intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Substream sample alignment was being set in hwparams for both
-substreams at the same time. This became a problem when	the Audio
-Injector isolated sound card needed to offset sample alignment
-for high sample	rates. The latency difference between playback
-and capture occurs because of the digital isolation chip
-propagation time, particularly when the codec is master and
-the DAC return is twice delayed.
+On 16/03/20 9:07 am, Adrian Hunter wrote:
+> On 4/03/20 11:06 am, Adrian Hunter wrote:
+>> Hi
+>>
+>> Here are patches to add a text poke event to record changes to kernel text
+>> (i.e. self-modifying code) in order to support tracers like Intel PT
+>> decoding through jump labels, kprobes and ftrace trampolines.
+>>
+>> The first 8 patches make the kernel changes and the subsequent patches are
+>> tools changes.
+>>
+>> The next 4 patches add support for updating perf tools' data cache
+>> with the changed bytes.
+>>
+>> The last patch is an Intel PT specific tools change.
+>>
+>> Patches also here:
+>>
+>> 	git://git.infradead.org/users/ahunter/linux-perf.git text_poke
+> 
+> Any comments?
 
-This patch sets sample alignment registers  based on the substream
-direction in hwparams. This gives the machine driver more control
-over sample alignment in the bcm2835 i2s driver.
-
-Signed-off-by: Matt Flax <flatmax@flatmax.org>
----
- sound/soc/bcm/bcm2835-i2s.c | 36 +++++++++++++++++++-----------------
- 1 file changed, 19 insertions(+), 17 deletions(-)
-
-diff --git a/sound/soc/bcm/bcm2835-i2s.c b/sound/soc/bcm/bcm2835-i2s.c
-index e6a12e271b07..9db542699a13 100644
---- a/sound/soc/bcm/bcm2835-i2s.c
-+++ b/sound/soc/bcm/bcm2835-i2s.c
-@@ -493,11 +493,6 @@ static int bcm2835_i2s_hw_params(struct snd_pcm_substream *substream,
- 		return -EINVAL;
- 	}
- 
--	bcm2835_i2s_calc_channel_pos(&rx_ch1_pos, &rx_ch2_pos,
--		rx_mask, slot_width, data_delay, odd_slot_offset);
--	bcm2835_i2s_calc_channel_pos(&tx_ch1_pos, &tx_ch2_pos,
--		tx_mask, slot_width, data_delay, odd_slot_offset);
--
- 	/*
- 	 * Transmitting data immediately after frame start, eg
- 	 * in left-justified or DSP mode A, only works stable
-@@ -508,19 +503,26 @@ static int bcm2835_i2s_hw_params(struct snd_pcm_substream *substream,
- 			"Unstable slave config detected, L/R may be swapped");
- 
- 	/*
--	 * Set format for both streams.
--	 * We cannot set another frame length
--	 * (and therefore word length) anyway,
--	 * so the format will be the same.
-+	 * Set format on a per stream basis.
-+	 * The alignment format can be different depending on direction.
- 	 */
--	regmap_write(dev->i2s_regmap, BCM2835_I2S_RXC_A_REG, 
--		  format
--		| BCM2835_I2S_CH1_POS(rx_ch1_pos)
--		| BCM2835_I2S_CH2_POS(rx_ch2_pos));
--	regmap_write(dev->i2s_regmap, BCM2835_I2S_TXC_A_REG, 
--		  format
--		| BCM2835_I2S_CH1_POS(tx_ch1_pos)
--		| BCM2835_I2S_CH2_POS(tx_ch2_pos));
-+	if (substream->stream == SNDRV_PCM_STREAM_CAPTURE) {
-+		bcm2835_i2s_calc_channel_pos(&rx_ch1_pos, &rx_ch2_pos,
-+			rx_mask, slot_width, data_delay, odd_slot_offset);
-+		regmap_write(dev->i2s_regmap, BCM2835_I2S_RXC_A_REG,
-+			  format
-+			| BCM2835_I2S_CH1_POS(rx_ch1_pos)
-+			| BCM2835_I2S_CH2_POS(rx_ch2_pos));
-+	}
-+
-+	if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK) {
-+		bcm2835_i2s_calc_channel_pos(&tx_ch1_pos, &tx_ch2_pos,
-+			tx_mask, slot_width, data_delay, odd_slot_offset);
-+		regmap_write(dev->i2s_regmap, BCM2835_I2S_TXC_A_REG,
-+			  format
-+			| BCM2835_I2S_CH1_POS(tx_ch1_pos)
-+			| BCM2835_I2S_CH2_POS(tx_ch2_pos));
-+	}
- 
- 	/* Setup the I2S mode */
- 
--- 
-2.20.1
-
+Peter, do you have any comments on the first 2 patches?  They are pretty
+much what we have already discussed.
