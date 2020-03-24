@@ -2,104 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1F29719064D
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 08:31:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 02D2119065C
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 08:34:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727549AbgCXHbO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 03:31:14 -0400
-Received: from mail-pj1-f67.google.com ([209.85.216.67]:36488 "EHLO
-        mail-pj1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727535AbgCXHbL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 03:31:11 -0400
-Received: by mail-pj1-f67.google.com with SMTP id nu11so1056479pjb.1
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Mar 2020 00:31:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=54p31XcZy9VY/uTSVV1VAo6tqKUeT0iaZ8T4Yx3sR7Y=;
-        b=iEXF+9cxq8xsvBHmABzfWbJjn41vgvA6oKrfEkKliYoY7j4OI83K0ywdq9cODsiA2Z
-         v6OCCQIEj68L96a+WLVMjjt6ALm+CsD3j0D4KebwyuwLrDSgVo6P9mlbgoXk12+g8hYq
-         h3HZjhPy1S8gcvtOkooUJKx59NBgXDGs9v2+7xxixk90ggSaHgyDTC4fWJPtMQM6OEfo
-         1wP2sr8P3cQdvqRJvgyEiw6sOtpJrqjA4X1skfY4hFk5KMDcO1X3+K0WPyoE+Y3vNWP+
-         0/At0OSgtSowO8eLWPmOYfifL5cMVVVHKwjfRwnTsOBdpeyiYvdATTYSilWaUKS0Ndx7
-         0slw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=54p31XcZy9VY/uTSVV1VAo6tqKUeT0iaZ8T4Yx3sR7Y=;
-        b=Kmw2HQR3BTApcBy7pckdw6vYZnv2ASegpKkCEZe8fqLahpAec4hfAat4XFSXZb5wqo
-         Me63TuLaBqohQZX/+I2/Cnuk22BvvyaUPk2cJg4SO8CeKb0zDM2zACQnGnkMa82+/6ak
-         QHqCzqgOmolVUYEQjEE8bNvrlIkHfxLcNEgG+5ZAuZk2Jd4kf9kIt6QpwHIgygJLrYZu
-         VPU7AYFhb4H8Kjh0WGIwSMa5rPqB5H7KM1E6KIDIoJhFu3EmM5QN1hTbWn/GUPD6ZRC9
-         Bk4G3l0hmDKeTCx98/7WiOECODZZjk6LWZv4Z2pwc/S1+ue1hgnXRVhHWNk+nJUDYC/C
-         KKTg==
-X-Gm-Message-State: ANhLgQ1p/r1AYutGO859RvpvMAvD5Jv9OVF8akrb3Xjr6xPbtjRPvH6U
-        aafkAGagSVQQaOpTwHG1rSlOjw==
-X-Google-Smtp-Source: ADFU+vv2b4TrS7mtJtADgnbvhx9fw/lDSwAZQDta7SAXFjV1VN2AFgelMDsi76samQ/8v1L0pkUKOA==
-X-Received: by 2002:a17:90a:cc14:: with SMTP id b20mr3916243pju.75.1585035071082;
-        Tue, 24 Mar 2020 00:31:11 -0700 (PDT)
-Received: from hsinchu02.internal.sifive.com (220-132-236-182.HINET-IP.hinet.net. [220.132.236.182])
-        by smtp.gmail.com with ESMTPSA id i187sm15124648pfg.33.2020.03.24.00.31.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Mar 2020 00:31:10 -0700 (PDT)
-From:   Zong Li <zong.li@sifive.com>
-To:     palmer@dabbelt.com, paul.walmsley@sifive.com, alex@ghiti.fr,
-        linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc:     Zong Li <zong.li@sifive.com>
-Subject: [PATCH RFC 8/8] riscv/kaslr: dump out kernel offset information on panic
-Date:   Tue, 24 Mar 2020 15:30:53 +0800
-Message-Id: <ea7c01b7c969ddc269a8f94cc9646fc48b7ff790.1584352425.git.zong.li@sifive.com>
-X-Mailer: git-send-email 2.25.2
-In-Reply-To: <cover.1584352425.git.zong.li@sifive.com>
-References: <cover.1584352425.git.zong.li@sifive.com>
+        id S1727462AbgCXHex (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 03:34:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55130 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725869AbgCXHex (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Mar 2020 03:34:53 -0400
+Received: from localhost.localdomain (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 643CF20719;
+        Tue, 24 Mar 2020 07:34:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1585035292;
+        bh=3p7k+XNYmJjEY9kaw0/x9dsFk6M+aGq/xpxVRBNIW6g=;
+        h=From:To:Cc:Subject:Date:From;
+        b=WLx84AyFiLEd8mViP9DzGOGsOyXycwW2BzJapP8bMB0CzgHxOyaJm0o4eUsEx6RVt
+         1wfXJqb7JRlB6OhWt9RAFGQlQ3hExGRbkQjLXviuYiIY1+zHAfuMF2ZggrKKFxs+Fk
+         IVKKV9j6Une21dUYoU0G2tjADbY0KwCSq+w03OlM=
+From:   Masami Hiramatsu <mhiramat@kernel.org>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     Masami Hiramatsu <mhiramat@kernel.org>,
+        linux-kernel@vger.kernel.org,
+        Taeung Song <treeze.taeung@gmail.com>,
+        linux-trace-users@vger.kernel.org,
+        "David S . Miller" <davem@davemloft.net>,
+        Alban Crequy <alban@kinvolk.io>
+Subject: [PATCH] ftrace/kprobe: Show the maxactive number on kprobe_events
+Date:   Tue, 24 Mar 2020 16:34:48 +0900
+Message-Id: <158503528846.22706.5549974121212526020.stgit@devnote2>
+X-Mailer: git-send-email 2.20.1
+User-Agent: StGit/0.17.1-dirty
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dump out the kernel offset when panic to help debug kernel.
+Show maxactive parameter on kprobe_events.
+This allows user to save the current configuration and
+restore it without losing maxactive parameter.
 
-Signed-off-by: Zong Li <zong.li@sifive.com>
+Reported-by: Taeung Song <treeze.taeung@gmail.com>
+Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
 ---
- arch/riscv/kernel/setup.c | 23 +++++++++++++++++++++++
- 1 file changed, 23 insertions(+)
+ kernel/trace/trace_kprobe.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/arch/riscv/kernel/setup.c b/arch/riscv/kernel/setup.c
-index 913d25e4b9fa..3ce50bf628ba 100644
---- a/arch/riscv/kernel/setup.c
-+++ b/arch/riscv/kernel/setup.c
-@@ -85,3 +85,26 @@ void __init setup_arch(char **cmdline_p)
+diff --git a/kernel/trace/trace_kprobe.c b/kernel/trace/trace_kprobe.c
+index 362cca52f5de..d0568af4a0ef 100644
+--- a/kernel/trace/trace_kprobe.c
++++ b/kernel/trace/trace_kprobe.c
+@@ -1078,6 +1078,8 @@ static int trace_kprobe_show(struct seq_file *m, struct dyn_event *ev)
+ 	int i;
  
- 	riscv_fill_hwcap();
- }
-+
-+static int dump_kernel_offset(struct notifier_block *self, unsigned long v,
-+			      void *p)
-+{
-+	pr_emerg("Kernel Offset: 0x%lx from 0x%lx\n",
-+		 get_kaslr_offset(), PAGE_OFFSET);
-+
-+	return 0;
-+}
-+
-+static struct notifier_block kernel_offset_notifier = {
-+	.notifier_call = dump_kernel_offset
-+};
-+
-+static int __init register_kernel_offset_dumper(void)
-+{
-+	if (IS_ENABLED(CONFIG_RANDOMIZE_BASE) && get_kaslr_offset() > 0)
-+		atomic_notifier_chain_register(&panic_notifier_list,
-+					       &kernel_offset_notifier);
-+
-+	return 0;
-+}
-+__initcall(register_kernel_offset_dumper);
--- 
-2.25.1
+ 	seq_putc(m, trace_kprobe_is_return(tk) ? 'r' : 'p');
++	if (trace_kprobe_is_return(tk) && tk->rp.maxactive)
++		seq_printf(m, "%d", tk->rp.maxactive);
+ 	seq_printf(m, ":%s/%s", trace_probe_group_name(&tk->tp),
+ 				trace_probe_name(&tk->tp));
+ 
 
