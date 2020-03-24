@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 990F2190F43
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 14:19:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6A8BF190EAC
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 14:15:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728750AbgCXNTD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 09:19:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39452 "EHLO mail.kernel.org"
+        id S1727986AbgCXNOD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 09:14:03 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60436 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728458AbgCXNTA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 09:19:00 -0400
+        id S1727981AbgCXNOA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Mar 2020 09:14:00 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E5DEC206F6;
-        Tue, 24 Mar 2020 13:18:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9926420775;
+        Tue, 24 Mar 2020 13:13:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585055940;
-        bh=uF8p+kKfTbQZnrrDmwGuexdP/vbwIBhvNjHnVVCYJR8=;
+        s=default; t=1585055640;
+        bh=6s9uy5xzX1sLLBScjhMoyQS+vuc5nqn5RX1vfWZv+xc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=PbYiU7C4xN6u+gZcHZ9zM7cIc4rq6Zo/JC2WMu/Sd4AocqTQeVWqH/NXyxamW0rfz
-         Le0PTKlWqXKAsQehajxWUsGcnjjDu6K34awZ7joeriomwyi0hMPQA5bL5xLE5EdMtz
-         jY9JetOewlV0DQpM2y6/jrL8wtObPVb1jokpgC7E=
+        b=w0RXHJDcekxxSGfq0UcgYTD1AtISue6agP86AtKbRrbraPEBQGxcJGRi/DKSt+9zN
+         PoAjeYHeUcxG0EfpfhtdOEd4C5JC8JD5txyyjj0IxnZQukiO/69LHaZ//5SCh6WJ5h
+         vmFvVu1RuBt881T8BVK3VtBWLBZLryiwt3KGfdMQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH 5.4 074/102] intel_th: Fix user-visible error codes
-Date:   Tue, 24 Mar 2020 14:11:06 +0100
-Message-Id: <20200324130814.065022480@linuxfoundation.org>
+        stable@vger.kernel.org, Qiujun Huang <hqjagain@gmail.com>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        syzbot+05835159fe322770fe3d@syzkaller.appspotmail.com
+Subject: [PATCH 4.19 46/65] drm/lease: fix WARNING in idr_destroy
+Date:   Tue, 24 Mar 2020 14:11:07 +0100
+Message-Id: <20200324130802.802517861@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.2
-In-Reply-To: <20200324130806.544601211@linuxfoundation.org>
-References: <20200324130806.544601211@linuxfoundation.org>
+In-Reply-To: <20200324130756.679112147@linuxfoundation.org>
+References: <20200324130756.679112147@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,52 +44,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+From: Qiujun Huang <hqjagain@gmail.com>
 
-commit ce666be89a8a09c5924ff08fc32e119f974bdab6 upstream.
+commit b216a8e7908cd750550c0480cf7d2b3a37f06954 upstream.
 
-There are a few places in the driver that end up returning ENOTSUPP to
-the user, replace those with EINVAL.
+drm_lease_create takes ownership of leases. And leases will be released
+by drm_master_put.
 
-Signed-off-by: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Fixes: ba82664c134ef ("intel_th: Add Memory Storage Unit driver")
-Cc: stable@vger.kernel.org # v4.4+
-Link: https://lore.kernel.org/r/20200317062215.15598-6-alexander.shishkin@linux.intel.com
+drm_master_put
+    ->drm_master_destroy
+            ->idr_destroy
+
+So we needn't call idr_destroy again.
+
+Reported-and-tested-by: syzbot+05835159fe322770fe3d@syzkaller.appspotmail.com
+Signed-off-by: Qiujun Huang <hqjagain@gmail.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+Link: https://patchwork.freedesktop.org/patch/msgid/1584518030-4173-1-git-send-email-hqjagain@gmail.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/hwtracing/intel_th/msu.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/gpu/drm/drm_lease.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/hwtracing/intel_th/msu.c
-+++ b/drivers/hwtracing/intel_th/msu.c
-@@ -761,7 +761,7 @@ static int msc_configure(struct msc *msc
- 	lockdep_assert_held(&msc->buf_mutex);
- 
- 	if (msc->mode > MSC_MODE_MULTI)
--		return -ENOTSUPP;
-+		return -EINVAL;
- 
- 	if (msc->mode == MSC_MODE_MULTI) {
- 		if (msc_win_set_lockout(msc->cur_win, WIN_READY, WIN_INUSE))
-@@ -1295,7 +1295,7 @@ static int msc_buffer_alloc(struct msc *
- 	} else if (msc->mode == MSC_MODE_MULTI) {
- 		ret = msc_buffer_multi_alloc(msc, nr_pages, nr_wins);
- 	} else {
--		ret = -ENOTSUPP;
-+		ret = -EINVAL;
+--- a/drivers/gpu/drm/drm_lease.c
++++ b/drivers/gpu/drm/drm_lease.c
+@@ -545,10 +545,12 @@ int drm_mode_create_lease_ioctl(struct d
  	}
  
- 	if (!ret) {
-@@ -1531,7 +1531,7 @@ static ssize_t intel_th_msc_read(struct
- 		if (ret >= 0)
- 			*ppos = iter->offset;
- 	} else {
--		ret = -ENOTSUPP;
-+		ret = -EINVAL;
+ 	DRM_DEBUG_LEASE("Creating lease\n");
++	/* lessee will take the ownership of leases */
+ 	lessee = drm_lease_create(lessor, &leases);
+ 
+ 	if (IS_ERR(lessee)) {
+ 		ret = PTR_ERR(lessee);
++		idr_destroy(&leases);
+ 		goto out_leases;
  	}
  
- put_count:
+@@ -583,7 +585,6 @@ out_lessee:
+ 
+ out_leases:
+ 	put_unused_fd(fd);
+-	idr_destroy(&leases);
+ 
+ 	DRM_DEBUG_LEASE("drm_mode_create_lease_ioctl failed: %d\n", ret);
+ 	return ret;
 
 
