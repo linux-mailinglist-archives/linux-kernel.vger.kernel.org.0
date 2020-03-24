@@ -2,38 +2,61 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E7A68190A8E
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 11:20:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8FEBA190AA1
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 11:22:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727213AbgCXKU1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 06:20:27 -0400
-Received: from relay12.mail.gandi.net ([217.70.178.232]:35115 "EHLO
-        relay12.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727150AbgCXKU1 (ORCPT
+        id S1727272AbgCXKUt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 06:20:49 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:55022 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727347AbgCXKUq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 06:20:27 -0400
-Received: from classic (mon69-7-83-155-44-161.fbx.proxad.net [83.155.44.161])
-        (Authenticated sender: hadess@hadess.net)
-        by relay12.mail.gandi.net (Postfix) with ESMTPSA id A326D200011;
-        Tue, 24 Mar 2020 10:20:22 +0000 (UTC)
-Message-ID: <92f48f409e913299c12322d195c88792bb4e5c9c.camel@hadess.net>
-Subject: Re: [PATCH v2] HID: logitech-dj: issue udev change event on device
- connection
-From:   Bastien Nocera <hadess@hadess.net>
-To:     Filipe =?ISO-8859-1?Q?La=EDns?= <lains@archlinux.org>,
-        Jiri Kosina <jikos@kernel.org>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Peter Hutterer <peter.hutterer@redhat.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Mario Limonciello <superm1@gmail.com>,
-        Richard Hughes <hughsient@gmail.com>
-Date:   Tue, 24 Mar 2020 11:20:21 +0100
-In-Reply-To: <20200318192721.390630-1-lains@archlinux.org>
-References: <20200318161906.3340959-1-lains@archlinux.org>
-         <20200318192721.390630-1-lains@archlinux.org>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.36.0 (3.36.0-1.fc32) 
+        Tue, 24 Mar 2020 06:20:46 -0400
+Received: by mail-wm1-f65.google.com with SMTP id c81so2537781wmd.4
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Mar 2020 03:20:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=Hou80d0MTLDZlmlJ355AXofbOfe1zM2AnQR9J4KSFMs=;
+        b=BDdKQ/eg8GJU3rw7bt27fdm7JD3LunTPYvS5foLjXlk4+2x7IYUyC7tnZt6YzZhH2r
+         9uf+TxyolQ+b4d2ef/p/TCQzFfXAof7MK/MNyf1ecfF35Wzp0YGJXE20TnTghPKI4Tgc
+         GamPL4GSpVlSgFzZqzk4KgESYQRvNR3ipm7ci5zm8oT1ImNDZz0c2/Kji2v93/U3iiKI
+         QhgMoCZmRNAper4dB07FIQHCj5k4nF+chUBp4THzOSSXtHZ17q6+H5lbj7QcN1jzt4gT
+         BLzaXw2yw0qAmTxEhoraNq4/z9QdkzP9g6PSxxlcyWn4YYNfdydP6KGuC+232xsszbq7
+         VIhw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=Hou80d0MTLDZlmlJ355AXofbOfe1zM2AnQR9J4KSFMs=;
+        b=BqCuT2/jBPKbYdeybGBL/g5aEAhl4Bx2ATgvRDSiuhmTeuGIE+7kOL5PXz6IOSNfwt
+         9EmlPicelxldBioK37A0CLBINP+cXIOzBkh229u5B74v42sWuo140s8yKD7LWzy4guTv
+         pNdy5S9uu0d6mzHNoWBDiB8wA4X7MtmYgtoVbHwSlj7pYb0Ftb0jHZTZkOuSKQ+LA8Xa
+         ewAMMl0B10P8YhuSP/qPWNqPKOEW9CR7m6jfO/qeILKi202Ugk2GS665Y5USdNk1ulR+
+         CtREdcKP43lWnjxn+Afuc70pz500pjI6ss7am6JMp0p0aEZfMUc35bB2piUze6A2u247
+         +Y5w==
+X-Gm-Message-State: ANhLgQ204nerC6/UhmkQYRzXDKfq51sejZcAU4+hcSqlXWEtraPdsENV
+        BjBtNpnKCBePdpGpdKnXhp0ISA==
+X-Google-Smtp-Source: ADFU+vtln9Fd09Sl/Kyd/Fvp8vW2oxUjrs33nYEZF8jMY4c/JzrfP10IB/KaIRhHlM25wSbaiW9FkA==
+X-Received: by 2002:a1c:5604:: with SMTP id k4mr4510320wmb.57.1585045244803;
+        Tue, 24 Mar 2020 03:20:44 -0700 (PDT)
+Received: from bender.baylibre.local ([2a01:e35:2ec0:82b0:5c5f:613e:f775:b6a2])
+        by smtp.gmail.com with ESMTPSA id h5sm2879527wro.83.2020.03.24.03.20.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 24 Mar 2020 03:20:44 -0700 (PDT)
+From:   Neil Armstrong <narmstrong@baylibre.com>
+To:     kishon@ti.com, balbi@kernel.org, khilman@baylibre.com,
+        martin.blumenstingl@googlemail.com
+Cc:     Neil Armstrong <narmstrong@baylibre.com>,
+        linux-amlogic@lists.infradead.org, linux-usb@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 05/13] usb: dwc3: meson-g12a: refactor usb2 phy init
+Date:   Tue, 24 Mar 2020 11:20:22 +0100
+Message-Id: <20200324102030.31000-6-narmstrong@baylibre.com>
+X-Mailer: git-send-email 2.22.0
+In-Reply-To: <20200324102030.31000-1-narmstrong@baylibre.com>
+References: <20200324102030.31000-1-narmstrong@baylibre.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -41,75 +64,166 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2020-03-18 at 19:27 +0000, Filipe Laíns wrote:
-> As discussed in the mailing list:
-> 
-> > Right now the hid-logitech-dj driver will export one node for each
-> > connected device, even when the device is not connected. That
-> > causes
-> > some trouble because in userspace we don't have have any way to
-> > know if
-> > the device is connected or not, so when we try to communicate, if
-> > the
-> > device is disconnected it will fail.
+Refactor the USB2 PHY init code patch to handle the Amlogic GXL/GXM
+not having the PHY mode control registers in the Glue but in the PHY
+registers.
 
-Why is it a problem that user-space communication fails? Note that
-sending a signal without any way to fetch the state means that it's
-always going to be racy.
+The Amlogic GXL/GXM will call phy_set_mode() instead of programming the
+PHY mode control registers, thus add two new callbacks to the SoC match
+data.
 
-> The solution reached to solve this issue is to trigger an udev change
-> event when the device connects, this way userspace can just wait on
-> those connections instead of trying to ping the device.
-> 
-> Signed-off-by: Filipe Laíns <lains@archlinux.org>
-> 
-> ---
-> 
-> v2:
->   - Issue udev change event on the connected hid device, not on the
->   receiver
-> 
-> ---
->  drivers/hid/hid-logitech-dj.c | 7 ++++++-
->  1 file changed, 6 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/hid/hid-logitech-dj.c b/drivers/hid/hid-
-> logitech-dj.c
-> index 48dff5d6b605..282e57dd467d 100644
-> --- a/drivers/hid/hid-logitech-dj.c
-> +++ b/drivers/hid/hid-logitech-dj.c
-> @@ -1412,6 +1412,7 @@ static int logi_dj_dj_event(struct hid_device
-> *hdev,
->  {
->  	struct dj_receiver_dev *djrcv_dev = hid_get_drvdata(hdev);
->  	struct dj_report *dj_report = (struct dj_report *) data;
-> +	struct dj_device *dj_dev;
->  	unsigned long flags;
->  
->  	/*
-> @@ -1447,7 +1448,9 @@ static int logi_dj_dj_event(struct hid_device
-> *hdev,
->  
->  	spin_lock_irqsave(&djrcv_dev->lock, flags);
->  
-> -	if (!djrcv_dev->paired_dj_devices[dj_report->device_index]) {
-> +	dj_dev = djrcv_dev->paired_dj_devices[dj_report->device_index];
-> +
-> +	if (!dj_dev) {
->  		/* received an event for an unknown device, bail out */
->  		logi_dj_recv_queue_notification(djrcv_dev, dj_report);
->  		goto out;
-> @@ -1464,6 +1467,8 @@ static int logi_dj_dj_event(struct hid_device
-> *hdev,
->  		if (dj_report-
-> >report_params[CONNECTION_STATUS_PARAM_STATUS] ==
->  		    STATUS_LINKLOSS) {
->  			logi_dj_recv_forward_null_report(djrcv_dev,
-> dj_report);
-> +		} else {
-> +			kobject_uevent(&dj_dev->hdev->dev.kobj,
-> KOBJ_CHANGE);
->  		}
->  		break;
->  	default:
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+---
+ drivers/usb/dwc3/dwc3-meson-g12a.c | 78 +++++++++++++++++++++---------
+ 1 file changed, 56 insertions(+), 22 deletions(-)
+
+diff --git a/drivers/usb/dwc3/dwc3-meson-g12a.c b/drivers/usb/dwc3/dwc3-meson-g12a.c
+index 24a50dde685c..74d07ded8a7e 100644
+--- a/drivers/usb/dwc3/dwc3-meson-g12a.c
++++ b/drivers/usb/dwc3/dwc3-meson-g12a.c
+@@ -128,11 +128,21 @@ struct dwc3_meson_g12a_drvdata {
+ 	const char **phy_names;
+ 	int num_phys;
+ 	int (*setup_regmaps)(struct dwc3_meson_g12a *priv, void __iomem *base);
++	int (*usb2_init_phy)(struct dwc3_meson_g12a *priv, int i,
++			     enum phy_mode mode);
++	int (*set_phy_mode)(struct dwc3_meson_g12a *priv, int i,
++			    enum phy_mode mode);
+ };
+ 
+ static int dwc3_meson_g12a_setup_regmaps(struct dwc3_meson_g12a *priv,
+ 					 void __iomem *base);
+ 
++static int dwc3_meson_g12a_usb2_init_phy(struct dwc3_meson_g12a *priv, int i,
++					  enum phy_mode mode);
++
++static int dwc3_meson_g12a_set_phy_mode(struct dwc3_meson_g12a *priv,
++					int i, enum phy_mode mode);
++
+ static struct dwc3_meson_g12a_drvdata g12a_drvdata = {
+ 	.otg_switch_supported = true,
+ 	.clks = meson_g12a_clocks,
+@@ -140,6 +150,8 @@ static struct dwc3_meson_g12a_drvdata g12a_drvdata = {
+ 	.phy_names = meson_g12a_phy_names,
+ 	.num_phys = ARRAY_SIZE(meson_g12a_phy_names),
+ 	.setup_regmaps = dwc3_meson_g12a_setup_regmaps,
++	.usb2_init_phy = dwc3_meson_g12a_usb2_init_phy,
++	.set_phy_mode = dwc3_meson_g12a_set_phy_mode,
+ };
+ 
+ static struct dwc3_meson_g12a_drvdata a1_drvdata = {
+@@ -149,6 +161,8 @@ static struct dwc3_meson_g12a_drvdata a1_drvdata = {
+ 	.phy_names = meson_a1_phy_names,
+ 	.num_phys = ARRAY_SIZE(meson_a1_phy_names),
+ 	.setup_regmaps = dwc3_meson_g12a_setup_regmaps,
++	.usb2_init_phy = dwc3_meson_g12a_usb2_init_phy,
++	.set_phy_mode = dwc3_meson_g12a_set_phy_mode,
+ };
+ 
+ struct dwc3_meson_g12a {
+@@ -167,8 +181,8 @@ struct dwc3_meson_g12a {
+ 	const struct dwc3_meson_g12a_drvdata *drvdata;
+ };
+ 
+-static void dwc3_meson_g12a_usb2_set_mode(struct dwc3_meson_g12a *priv,
+-					  int i, enum phy_mode mode)
++static int dwc3_meson_g12a_set_phy_mode(struct dwc3_meson_g12a *priv,
++					 int i, enum phy_mode mode)
+ {
+ 	if (mode == PHY_MODE_USB_HOST)
+ 		regmap_update_bits(priv->u2p_regmap[i], U2P_R0,
+@@ -177,11 +191,41 @@ static void dwc3_meson_g12a_usb2_set_mode(struct dwc3_meson_g12a *priv,
+ 	else
+ 		regmap_update_bits(priv->u2p_regmap[i], U2P_R0,
+ 				U2P_R0_HOST_DEVICE, 0);
++
++	return 0;
++}
++
++static int dwc3_meson_g12a_usb2_init_phy(struct dwc3_meson_g12a *priv, int i,
++					 enum phy_mode mode)
++{
++	int ret;
++
++	regmap_update_bits(priv->u2p_regmap[i], U2P_R0,
++			U2P_R0_POWER_ON_RESET,
++			U2P_R0_POWER_ON_RESET);
++
++	if (priv->drvdata->otg_switch_supported && i == USB2_OTG_PHY) {
++		regmap_update_bits(priv->u2p_regmap[i], U2P_R0,
++				   U2P_R0_ID_PULLUP | U2P_R0_DRV_VBUS,
++				   U2P_R0_ID_PULLUP | U2P_R0_DRV_VBUS);
++
++		ret = priv->drvdata->set_phy_mode(priv, i, mode);
++	} else
++		ret = priv->drvdata->set_phy_mode(priv, i,
++						  PHY_MODE_USB_HOST);
++
++	if (ret)
++		return ret;
++
++	regmap_update_bits(priv->u2p_regmap[i], U2P_R0,
++			U2P_R0_POWER_ON_RESET, 0);
++
++	return 0;
+ }
+ 
+ static int dwc3_meson_g12a_usb2_init(struct dwc3_meson_g12a *priv)
+ {
+-	int i;
++	int i, ret;
+ 
+ 	if (priv->otg_mode == USB_DR_MODE_PERIPHERAL)
+ 		priv->otg_phy_mode = PHY_MODE_USB_DEVICE;
+@@ -195,23 +239,9 @@ static int dwc3_meson_g12a_usb2_init(struct dwc3_meson_g12a *priv)
+ 		if (!strstr(priv->drvdata->phy_names[i], "usb2"))
+ 			continue;
+ 
+-		regmap_update_bits(priv->u2p_regmap[i], U2P_R0,
+-				   U2P_R0_POWER_ON_RESET,
+-				   U2P_R0_POWER_ON_RESET);
+-
+-		if (priv->drvdata->otg_switch_supported && i == USB2_OTG_PHY) {
+-			regmap_update_bits(priv->u2p_regmap[i], U2P_R0,
+-				U2P_R0_ID_PULLUP | U2P_R0_DRV_VBUS,
+-				U2P_R0_ID_PULLUP | U2P_R0_DRV_VBUS);
+-
+-			dwc3_meson_g12a_usb2_set_mode(priv, i,
+-						      priv->otg_phy_mode);
+-		} else
+-			dwc3_meson_g12a_usb2_set_mode(priv, i,
+-						      PHY_MODE_USB_HOST);
+-
+-		regmap_update_bits(priv->u2p_regmap[i], U2P_R0,
+-				   U2P_R0_POWER_ON_RESET, 0);
++		ret = priv->drvdata->usb2_init_phy(priv, i, mode);
++		if (ret)
++			return ret;
+ 	}
+ 
+ 	return 0;
+@@ -364,7 +394,9 @@ static int dwc3_meson_g12a_otg_mode_set(struct dwc3_meson_g12a *priv,
+ 
+ 	priv->otg_phy_mode = mode;
+ 
+-	dwc3_meson_g12a_usb2_set_mode(priv, USB2_OTG_PHY, mode);
++	ret = priv->drvdata->set_phy_mode(priv, USB2_OTG_PHY, mode);
++	if (ret)
++		return ret;
+ 
+ 	dwc3_meson_g12a_usb_otg_apply_mode(priv);
+ 
+@@ -580,7 +612,9 @@ static int dwc3_meson_g12a_probe(struct platform_device *pdev)
+ 	/* Get dr_mode */
+ 	priv->otg_mode = usb_get_dr_mode(dev);
+ 
+-	dwc3_meson_g12a_usb_init(priv);
++	ret = dwc3_meson_g12a_usb_init(priv);
++	if (ret)
++		goto err_disable_clks;
+ 
+ 	/* Init PHYs */
+ 	for (i = 0 ; i < PHY_COUNT ; ++i) {
+-- 
+2.22.0
 
