@@ -2,84 +2,117 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B04911917A9
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 18:32:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 124671917A5
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 18:32:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727612AbgCXRbZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 13:31:25 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:44158 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727223AbgCXRbZ (ORCPT
+        id S1727338AbgCXRaB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 13:30:01 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:38632 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727223AbgCXRaB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 13:31:25 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 02OHEvCk005056;
-        Tue, 24 Mar 2020 17:31:06 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2020-01-29;
- bh=wIeRi4ao8R5b/EkoPra/HUsoNLDCY4TwY0SR/Vhrc+0=;
- b=c5Q4svt25cC7qi2Iw+EfmWqN5wZPEMEtLNnFz28V0tf5c4+wbt4wMrflyu/zY4vMTQyl
- 5t86WanbVUQe/wg8moPrvNrmj5amiVxmKvB7a7QsvwT5tijnnJoS1PJAoStyqNQYwl0v
- 3u6oVIbp3jc/z5VZjopTnV1giOnD0Oy+Y+aRS8mqZO4TyympOCKfjFCXeoIu5AJh4pfk
- HvkjqMISeQyP1PPtv/tfANcypyjxyU7P8cc4jAJ7Yb6+YIBVQm+J7KegZBPaO0pfJGfo
- 89riBNdBo/PkJ69auZQ1sxSJsMULa4kzTOI/VKherv5Xo6eS561PMns8DZK2bZdETUBg uw== 
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by userp2120.oracle.com with ESMTP id 2yx8ac2ng1-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 24 Mar 2020 17:31:06 +0000
-Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
-        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 02OHJsXd076303;
-        Tue, 24 Mar 2020 17:29:05 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by aserp3030.oracle.com with ESMTP id 2yxw931bkw-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 24 Mar 2020 17:29:05 +0000
-Received: from abhmp0010.oracle.com (abhmp0010.oracle.com [141.146.116.16])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 02OHT2qd012403;
-        Tue, 24 Mar 2020 17:29:02 GMT
-Received: from kadam (/41.57.98.10)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 24 Mar 2020 10:29:01 -0700
-Date:   Tue, 24 Mar 2020 20:28:50 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     "John B. Wyatt IV" <jbwyatt4@gmail.com>
-Cc:     outreachy-kernel@googlegroups.com,
-        Julia Lawall <julia.lawall@inria.fr>,
-        Forest Bond <forest@alittletooquiet.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Quentin Deslandes <quentin.deslandes@itdev.co.uk>,
-        Colin Ian King <colin.king@canonical.com>,
-        Malcolm Priestley <tvboxspy@gmail.com>,
-        Oscar Carter <oscar.carter@gmx.com>,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/2] staging: vt6656: change function from always
- returning 0 to void
-Message-ID: <20200324172850.GG26299@kadam>
-References: <20200324064545.1832227-1-jbwyatt4@gmail.com>
+        Tue, 24 Mar 2020 13:30:01 -0400
+Received: by mail-pf1-f193.google.com with SMTP id z25so5298195pfa.5
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Mar 2020 10:30:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=kq+FYdniWIla4pk5nZSbH7cg3uuV8JkCybEVH1HaxnI=;
+        b=m46TPzI0nrj30YVTG7qLQejHAv7snUYYtbN2Pdjv2gzb4sBZajt9MO/hkb9Y9uEqWh
+         qa4JiXYKikVNjVFlogSQb4lcN4+OycFM6og456ZiK4VuXHyVK6vqVD2IKbLZp8L+8udE
+         g9nOq7xk0uimdDmZPVa1XV3YcU9UW6FUrEcffLo6Hs8fuCImxoDAP7YN+xrZanoeKywK
+         BwlDpHyNkycj77W9BZUyAl3PfnbNNyz+lMse/iogu/pe8JseEPhAovXxnHBUXZuRRgsT
+         rvPZQbC1wQiPwpphWmzKrmz4CdeUHnHGry/FMvkA+OdWCdXpFVwCnM2O20JyX1CiODsb
+         Juqw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=kq+FYdniWIla4pk5nZSbH7cg3uuV8JkCybEVH1HaxnI=;
+        b=fepIUG9yE4gIT7MWkF0DRFOZyPD74yhabYM8mPvfharAHA/nsUQRDe//Sd+LVR0q4i
+         peD9YmLbWujun9q4TdCGs3fVczbu9ubho3JtZ39CnG+/rd6qKvBAGvjGWvKMyzH6dUbc
+         FXtVXVV2IhzdrgsYlLM0uHyAWfeh19obeGHRzPmT/la+9c2QRMO3g/bkHvq6kbNqbQof
+         mwiFhbs9kgbL8hZuAP28tFKjXudOgf7G1Kxk+A8zRPElaWKVYQx4SuILTl2jIHyarLo8
+         mxiTPEYORwQT00nuQEmCX3DG+WMmJd/+dxL6juxrPxplOUI1DZmkR/Duf7WefH3gx3xa
+         J+jA==
+X-Gm-Message-State: ANhLgQ0jFFxNgJSJByFJ9tp5sjflcbS2ksB0vcIdnjh/7fHQO8Cd1NB5
+        VhOWzfprgVQlzV2GCRoHOBik+J3mXuXclzG99L2k3g==
+X-Google-Smtp-Source: ADFU+vsKpVcyMN7SHaU5E8bZ8b6YqqyPsLUiZ2gvHBO0FlZ4uEXUmmLB4IgRNlvnII9SZxMoTSrz6TwW9egAt+ohX00=
+X-Received: by 2002:a63:4e22:: with SMTP id c34mr29126500pgb.263.1585070999349;
+ Tue, 24 Mar 2020 10:29:59 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200324064545.1832227-1-jbwyatt4@gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9570 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 spamscore=0 bulkscore=0
- adultscore=0 mlxscore=0 malwarescore=0 mlxlogscore=937 suspectscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2003020000
- definitions=main-2003240089
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9570 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 suspectscore=0 priorityscore=1501 malwarescore=0
- mlxscore=0 adultscore=0 phishscore=0 impostorscore=0 mlxlogscore=999
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2003020000 definitions=main-2003240089
+References: <20200323114207.222412-1-courbet@google.com> <20200324140639.70079-1-courbet@google.com>
+In-Reply-To: <20200324140639.70079-1-courbet@google.com>
+From:   Nick Desaulniers <ndesaulniers@google.com>
+Date:   Tue, 24 Mar 2020 10:29:47 -0700
+Message-ID: <CAKwvOdm6GH4nqMkK99g5y5q0VfE9J70AdBP4C-xkxQbgJf_tzw@mail.gmail.com>
+Subject: Re: [PATCH] x86: Alias memset to __builtin_memset.
+To:     Clement Courbet <courbet@google.com>
+Cc:     Nathan Chancellor <natechancellor@gmail.com>,
+        Kees Cook <keescook@chromium.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        clang-built-linux <clang-built-linux@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fold these two patches together so its just one patch.
+On Tue, Mar 24, 2020 at 7:06 AM Clement Courbet <courbet@google.com> wrote:
+>
+> Thanks for the comments. Answers below.
+>
+> > This ifdef is unnecessary
+> > This needs to be within #ifndef CONFIG_FORTIFY_SOURCE
+>
+> Thanks, fixed.
+>
+> > shouldn't this just be done universally ?
+>
+> It looks like every architecture does its own magic with memory
+> functions. I'm not very familiar with how the linux kernel is
+> organized, do you have a pointer for where this would go if enabled
+> globally ?
+>
+> > Who's adding it for 64b?
+> > Any idea where it's coming from in your
+> > build? Maybe a local modification to be removed?
+>
+> Actually this is from our local build configuration. Apparently this
 
-regards,
-dan carpenter
+Not sure we should modify this for someone's downstream tree to work
+around an issue they introduced.  If you want to file a bug
+internally, I'd be happy to comment on it.
 
+Does __builtin_memset detect support for `rep stosb`, then patch the
+kernel to always use it or not?  The kernel is limited in that we use
+-mno-sse and friends to avoid saving/restoring vector registers on
+context switch unless kernel_fpu_{begin|end}() is called, which the
+compiler doesn't insert for memcpy's.
+
+Did you verify what this change does for other compilers?
+
+> is needed to build on some architectures that redefine common
+> symbols, but the authors seemed to feel strongly that this should be
+
+Sounds like a linkage error or issue with symbol visibility; I don't
+see how -ffreestanding should have any bearing on that.
+
+> on for all architectures. I've reached out to the authors for an
+> extended rationale.
+> On the other hand I think that there is no reason to prevent people
+> from building with freestanding if we can easily allow them to.
+
+I disagree.  The codegen in the kernel is very tricky to get right;
+it's somewhat an embedded system, yet provides many symbols that would
+have been provided by libc, yet it doesn't use vector operations for
+the general case.  Adding -ffreestanding to optimize one hot memset in
+one function is using a really big hammer to solve the wrong problem.
+-- 
+Thanks,
+~Nick Desaulniers
