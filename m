@@ -2,40 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DE19F190ED8
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 14:15:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 59813190F9D
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 14:29:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728267AbgCXNP3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 09:15:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34404 "EHLO mail.kernel.org"
+        id S1729048AbgCXNVa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 09:21:30 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43250 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727846AbgCXNP1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 09:15:27 -0400
+        id S1729039AbgCXNVZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Mar 2020 09:21:25 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 94FDC206F6;
-        Tue, 24 Mar 2020 13:15:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 84CDF20775;
+        Tue, 24 Mar 2020 13:21:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585055727;
-        bh=Wj+RQiMF4N/W2DnvCyurilLMP/PbjLwa2tX/gYzI2wA=;
+        s=default; t=1585056085;
+        bh=FTweWN98BoOY115uzLhzfrdwPwGcwkAI9w3aSqZ/KUs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=oKzYr3fRBFd0v61MoRrmR0C7xlusW/agQlKcqVV+RdeeW3qx3OnKnNMX5KsvyIAL3
-         jEwWtY2+nzwgce1FJEPT6fD+dDhpJ2OhvnKVobNgCms0c9ctvs0oYrqt7uidww2q52
-         tCKzoQzUxb4qH7BJs2icNHoWhIf1x1a5HxfAvmi0=
+        b=p667t+PXgVjmpEpS9k8xkhZ4tOqpt+QFuOHthnGW6SSw8J0aB+IZ9480zFMI0BvEN
+         mLlFFTqOrBmzzaXKJBkco1QDIZMMRuAawppz9512POWO/+24Dmx2ERj5XxtsZd4qMS
+         6Ay2uIlFH6h5rk1/OLKN+F7PwP1XzrN+e/zlc3HQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "Paulo Alcantara (SUSE)" <pc@cjr.nz>,
-        Steve French <stfrench@microsoft.com>,
-        Ronnie Sahlberg <lsahlber@redhat.com>,
+        stable@vger.kernel.org,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Inki Dae <inki.dae@samsung.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 010/102] cifs: fix potential mismatch of UNC paths
+Subject: [PATCH 5.5 017/119] drm/exynos: dsi: propagate error value and silence meaningless warning
 Date:   Tue, 24 Mar 2020 14:10:02 +0100
-Message-Id: <20200324130807.607238608@linuxfoundation.org>
+Message-Id: <20200324130809.654597043@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.2
-In-Reply-To: <20200324130806.544601211@linuxfoundation.org>
-References: <20200324130806.544601211@linuxfoundation.org>
+In-Reply-To: <20200324130808.041360967@linuxfoundation.org>
+References: <20200324130808.041360967@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,38 +46,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Paulo Alcantara (SUSE) <pc@cjr.nz>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
 
-[ Upstream commit 154255233830e1e4dd0d99ac929a5dce588c0b81 ]
+[ Upstream commit 0a9d1e3f3f038785ebc72d53f1c409d07f6b4ff5 ]
 
-Ensure that full_path is an UNC path that contains '\\' as delimiter,
-which is required by cifs_build_devname().
+Properly propagate error value from devm_regulator_bulk_get() and don't
+confuse user with meaningless warning about failure in getting regulators
+in case of deferred probe.
 
-The build_path_from_dentry_optional_prefix() function may return a
-path with '/' as delimiter when using SMB1 UNIX extensions, for
-example.
-
-Signed-off-by: Paulo Alcantara (SUSE) <pc@cjr.nz>
-Signed-off-by: Steve French <stfrench@microsoft.com>
-Acked-by: Ronnie Sahlberg <lsahlber@redhat.com>
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+Signed-off-by: Inki Dae <inki.dae@samsung.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/cifs/cifs_dfs_ref.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/gpu/drm/exynos/exynos_drm_dsi.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/fs/cifs/cifs_dfs_ref.c b/fs/cifs/cifs_dfs_ref.c
-index 606f26d862dc1..cc3ada12848d9 100644
---- a/fs/cifs/cifs_dfs_ref.c
-+++ b/fs/cifs/cifs_dfs_ref.c
-@@ -324,6 +324,8 @@ static struct vfsmount *cifs_dfs_do_automount(struct dentry *mntpt)
- 	if (full_path == NULL)
- 		goto cdda_exit;
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+index 72726f2c7a9fb..8d880012b5876 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+@@ -1751,8 +1751,9 @@ static int exynos_dsi_probe(struct platform_device *pdev)
+ 	ret = devm_regulator_bulk_get(dev, ARRAY_SIZE(dsi->supplies),
+ 				      dsi->supplies);
+ 	if (ret) {
+-		dev_info(dev, "failed to get regulators: %d\n", ret);
+-		return -EPROBE_DEFER;
++		if (ret != -EPROBE_DEFER)
++			dev_info(dev, "failed to get regulators: %d\n", ret);
++		return ret;
+ 	}
  
-+	convert_delimiter(full_path, '\\');
-+
- 	cifs_dbg(FYI, "%s: full_path: %s\n", __func__, full_path);
- 
- 	if (!cifs_sb_master_tlink(cifs_sb)) {
+ 	dsi->clks = devm_kcalloc(dev,
 -- 
 2.20.1
 
