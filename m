@@ -2,39 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 812AD190EE0
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 14:19:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 42F80190FA1
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 14:29:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728277AbgCXNPg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 09:15:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34570 "EHLO mail.kernel.org"
+        id S1729064AbgCXNVi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 09:21:38 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43422 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728186AbgCXNPe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 09:15:34 -0400
+        id S1728786AbgCXNVc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Mar 2020 09:21:32 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 952AD20B80;
-        Tue, 24 Mar 2020 13:15:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CA36E20775;
+        Tue, 24 Mar 2020 13:21:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585055734;
-        bh=Yif/MN9EuU1cH8MxcNoZmPCJ/pA6Q1Lff4fYJ2Nk1PA=;
+        s=default; t=1585056091;
+        bh=s2rFdOl3aT69qdT0TYXPhW8yEmrIvhPkYwNwwsXfbxU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Gph/AP7S6muFgfAPN8wugok8sp1UorHWARa3qI0wtkRIZSoG66NCPERJbLll85d2p
-         t+/8dYGryFJmJn3Z68IrlnaV34DhttMZFJbgTS0HDDQZ4mS1VIqeJDKP7a9O1gSKub
-         DrO1Orw5PAwCD3k2uUeJh2MN0AvpPbO8DyyLLoWE=
+        b=rszbBwchHt6F9sak70EMzksDAUBCoL4hsxosPen14Ad8p7P1AMmWMs4A/8zwfHydV
+         +U+6IulP2pUM7OjKtIllu60FgICln5l4wixIrkDMzj5eQlrjfpoc17gW5NDlfIJM+c
+         iNew9elgER9xpfZUtGZklmSGVDcYd5i8WuPdBYYg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kishon Vijay Abraham I <kishon@ti.com>,
-        Tony Lindgren <tony@atomide.com>,
+        stable@vger.kernel.org,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Inki Dae <inki.dae@samsung.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 012/102] ARM: dts: dra7: Add "dma-ranges" property to PCIe RC DT nodes
+Subject: [PATCH 5.5 019/119] drm/exynos: hdmi: dont leak enable HDMI_EN regulator if probe fails
 Date:   Tue, 24 Mar 2020 14:10:04 +0100
-Message-Id: <20200324130807.793640564@linuxfoundation.org>
+Message-Id: <20200324130810.390884047@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.2
-In-Reply-To: <20200324130806.544601211@linuxfoundation.org>
-References: <20200324130806.544601211@linuxfoundation.org>
+In-Reply-To: <20200324130808.041360967@linuxfoundation.org>
+References: <20200324130808.041360967@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,44 +46,104 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kishon Vijay Abraham I <kishon@ti.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
 
-[ Upstream commit 27f13774654ea6bd0b6fc9b97cce8d19e5735661 ]
+[ Upstream commit 3b6a9b19ab652efac7ad4c392add6f1235019568 ]
 
-'dma-ranges' in a PCI bridge node does correctly set dma masks for PCI
-devices not described in the DT. Certain DRA7 platforms (e.g., DRA76)
-has RAM above 32-bit boundary (accessible with LPAE config) though the
-PCIe bridge will be able to access only 32-bits. Add 'dma-ranges'
-property in PCIe RC DT nodes to indicate the host bridge can access
-only 32 bits.
+Move enabling and disabling HDMI_EN optional regulator to probe() function
+to keep track on the regulator status. This fixes following warning if
+probe() fails (for example when I2C DDC adapter cannot be yet gathered
+due to the missing driver). This fixes following warning observed on
+Arndale5250 board with multi_v7_defconfig:
 
-Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
-Signed-off-by: Tony Lindgren <tony@atomide.com>
+[drm] Failed to get ddc i2c adapter by node
+------------[ cut here ]------------
+WARNING: CPU: 0 PID: 214 at drivers/regulator/core.c:2051 _regulator_put+0x16c/0x184
+Modules linked in: ...
+CPU: 0 PID: 214 Comm: systemd-udevd Not tainted 5.6.0-rc2-next-20200219-00040-g38af1dfafdbb #7570
+Hardware name: Samsung Exynos (Flattened Device Tree)
+[<c0312258>] (unwind_backtrace) from [<c030cc10>] (show_stack+0x10/0x14)
+[<c030cc10>] (show_stack) from [<c0f0d3a0>] (dump_stack+0xcc/0xe0)
+[<c0f0d3a0>] (dump_stack) from [<c0346a58>] (__warn+0xe0/0xf8)
+[<c0346a58>] (__warn) from [<c0346b20>] (warn_slowpath_fmt+0xb0/0xb8)
+[<c0346b20>] (warn_slowpath_fmt) from [<c0893f58>] (_regulator_put+0x16c/0x184)
+[<c0893f58>] (_regulator_put) from [<c0893f8c>] (regulator_put+0x1c/0x2c)
+[<c0893f8c>] (regulator_put) from [<c09b2664>] (release_nodes+0x17c/0x200)
+[<c09b2664>] (release_nodes) from [<c09aebe8>] (really_probe+0x10c/0x350)
+[<c09aebe8>] (really_probe) from [<c09aefa8>] (driver_probe_device+0x60/0x1a0)
+[<c09aefa8>] (driver_probe_device) from [<c09af288>] (device_driver_attach+0x58/0x60)
+[<c09af288>] (device_driver_attach) from [<c09af310>] (__driver_attach+0x80/0xbc)
+[<c09af310>] (__driver_attach) from [<c09ace34>] (bus_for_each_dev+0x68/0xb4)
+[<c09ace34>] (bus_for_each_dev) from [<c09ae00c>] (bus_add_driver+0x130/0x1e8)
+[<c09ae00c>] (bus_add_driver) from [<c09afd98>] (driver_register+0x78/0x110)
+[<c09afd98>] (driver_register) from [<bf139558>] (exynos_drm_init+0xe8/0x11c [exynosdrm])
+[<bf139558>] (exynos_drm_init [exynosdrm]) from [<c0302fa8>] (do_one_initcall+0x50/0x220)
+[<c0302fa8>] (do_one_initcall) from [<c03dc02c>] (do_init_module+0x60/0x210)
+[<c03dc02c>] (do_init_module) from [<c03daf44>] (load_module+0x1c0c/0x2310)
+[<c03daf44>] (load_module) from [<c03db85c>] (sys_finit_module+0xac/0xbc)
+[<c03db85c>] (sys_finit_module) from [<c0301000>] (ret_fast_syscall+0x0/0x54)
+Exception stack(0xecca3fa8 to 0xecca3ff0)
+...
+---[ end trace 276c91214635905c ]---
+
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
+Signed-off-by: Inki Dae <inki.dae@samsung.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/boot/dts/dra7.dtsi | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/gpu/drm/exynos/exynos_hdmi.c | 22 ++++++++++++----------
+ 1 file changed, 12 insertions(+), 10 deletions(-)
 
-diff --git a/arch/arm/boot/dts/dra7.dtsi b/arch/arm/boot/dts/dra7.dtsi
-index 953f0ffce2a90..6481d2b7d6b6f 100644
---- a/arch/arm/boot/dts/dra7.dtsi
-+++ b/arch/arm/boot/dts/dra7.dtsi
-@@ -184,6 +184,7 @@
- 				device_type = "pci";
- 				ranges = <0x81000000 0 0          0x03000 0 0x00010000
- 					  0x82000000 0 0x20013000 0x13000 0 0xffed000>;
-+				dma-ranges = <0x02000000 0x0 0x00000000 0x00000000 0x1 0x00000000>;
- 				bus-range = <0x00 0xff>;
- 				#interrupt-cells = <1>;
- 				num-lanes = <1>;
-@@ -238,6 +239,7 @@
- 				device_type = "pci";
- 				ranges = <0x81000000 0 0          0x03000 0 0x00010000
- 					  0x82000000 0 0x30013000 0x13000 0 0xffed000>;
-+				dma-ranges = <0x02000000 0x0 0x00000000 0x00000000 0x1 0x00000000>;
- 				bus-range = <0x00 0xff>;
- 				#interrupt-cells = <1>;
- 				num-lanes = <1>;
+diff --git a/drivers/gpu/drm/exynos/exynos_hdmi.c b/drivers/gpu/drm/exynos/exynos_hdmi.c
+index 48159d5d22144..d85e15e816e99 100644
+--- a/drivers/gpu/drm/exynos/exynos_hdmi.c
++++ b/drivers/gpu/drm/exynos/exynos_hdmi.c
+@@ -1803,18 +1803,10 @@ static int hdmi_resources_init(struct hdmi_context *hdata)
+ 
+ 	hdata->reg_hdmi_en = devm_regulator_get_optional(dev, "hdmi-en");
+ 
+-	if (PTR_ERR(hdata->reg_hdmi_en) != -ENODEV) {
++	if (PTR_ERR(hdata->reg_hdmi_en) != -ENODEV)
+ 		if (IS_ERR(hdata->reg_hdmi_en))
+ 			return PTR_ERR(hdata->reg_hdmi_en);
+ 
+-		ret = regulator_enable(hdata->reg_hdmi_en);
+-		if (ret) {
+-			DRM_DEV_ERROR(dev,
+-				      "failed to enable hdmi-en regulator\n");
+-			return ret;
+-		}
+-	}
+-
+ 	return hdmi_bridge_init(hdata);
+ }
+ 
+@@ -2021,6 +2013,15 @@ static int hdmi_probe(struct platform_device *pdev)
+ 		}
+ 	}
+ 
++	if (!IS_ERR(hdata->reg_hdmi_en)) {
++		ret = regulator_enable(hdata->reg_hdmi_en);
++		if (ret) {
++			DRM_DEV_ERROR(dev,
++			      "failed to enable hdmi-en regulator\n");
++			goto err_hdmiphy;
++		}
++	}
++
+ 	pm_runtime_enable(dev);
+ 
+ 	audio_infoframe = &hdata->audio.infoframe;
+@@ -2045,7 +2046,8 @@ static int hdmi_probe(struct platform_device *pdev)
+ 
+ err_rpm_disable:
+ 	pm_runtime_disable(dev);
+-
++	if (!IS_ERR(hdata->reg_hdmi_en))
++		regulator_disable(hdata->reg_hdmi_en);
+ err_hdmiphy:
+ 	if (hdata->hdmiphy_port)
+ 		put_device(&hdata->hdmiphy_port->dev);
 -- 
 2.20.1
 
