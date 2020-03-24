@@ -2,118 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9028119185A
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 19:00:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 99EE1191883
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 19:08:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727882AbgCXR76 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 13:59:58 -0400
-Received: from foss.arm.com ([217.140.110.172]:39104 "EHLO foss.arm.com"
+        id S1727855AbgCXSHh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 14:07:37 -0400
+Received: from elvis.franken.de ([193.175.24.41]:60741 "EHLO elvis.franken.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727509AbgCXR76 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 13:59:58 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 328D031B;
-        Tue, 24 Mar 2020 10:59:57 -0700 (PDT)
-Received: from localhost (unknown [10.1.198.53])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C79FA3F71F;
-        Tue, 24 Mar 2020 10:59:56 -0700 (PDT)
-Date:   Tue, 24 Mar 2020 17:59:55 +0000
-From:   Ionela Voinescu <ionela.voinescu@arm.com>
-To:     linux-kernel@vger.kernel.org,
-        Saravana Kannan <saravanak@google.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc:     linux-tip-commits@vger.kernel.org, x86 <x86@kernel.org>,
-        liviu.dudau@arm.com, sudeep.holla@arm.com,
-        lorenzo.pieralisi@arm.com
-Subject: Re: [tip: timers/core] clocksource/drivers/timer-probe: Avoid
- creating dead devices
-Message-ID: <20200324175955.GA16972@arm.com>
-References: <20200111052125.238212-1-saravanak@google.com>
- <158460766637.28353.11325960928759668587.tip-bot2@tip-bot2>
+        id S1727611AbgCXSHh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Mar 2020 14:07:37 -0400
+Received: from uucp (helo=alpha)
+        by elvis.franken.de with local-bsmtp (Exim 3.36 #1)
+        id 1jGnxb-0002Bo-00; Tue, 24 Mar 2020 19:07:31 +0100
+Received: by alpha.franken.de (Postfix, from userid 1000)
+        id 5CA33C09A4; Tue, 24 Mar 2020 18:57:05 +0100 (CET)
+Date:   Tue, 24 Mar 2020 18:57:05 +0100
+From:   Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+To:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc:     "David S . Miller" <davem@davemloft.net>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>,
+        James Hogan <jhogan@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Manuel Lauss <manuel.lauss@gmail.com>,
+        Christoph Hellwig <hch@lst.de>, linux-ide@vger.kernel.org,
+        linux-mips@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 0/3] ide/MIPS/docs: remove no longer used au1xxx-ide
+ driver
+Message-ID: <20200324175705.GA8911@alpha.franken.de>
+References: <CGME20200324111437eucas1p1a898c365a825deb9d0dc6c99202e2f57@eucas1p1.samsung.com>
+ <20200324111420.31793-1-b.zolnierkie@samsung.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <158460766637.28353.11325960928759668587.tip-bot2@tip-bot2>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20200324111420.31793-1-b.zolnierkie@samsung.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi guys,
-
-On Thursday 19 Mar 2020 at 08:47:46 (-0000), tip-bot2 for Saravana Kannan wrote:
-> The following commit has been merged into the timers/core branch of tip:
+On Tue, Mar 24, 2020 at 12:14:17PM +0100, Bartlomiej Zolnierkiewicz wrote:
+> Hi,
 > 
-> Commit-ID:     4f41fe386a94639cd9a1831298d4f85db5662f1e
-> Gitweb:        https://git.kernel.org/tip/4f41fe386a94639cd9a1831298d4f85db5662f1e
-> Author:        Saravana Kannan <saravanak@google.com>
-> AuthorDate:    Fri, 10 Jan 2020 21:21:25 -08:00
-> Committer:     Daniel Lezcano <daniel.lezcano@linaro.org>
-> CommitterDate: Tue, 17 Mar 2020 13:10:07 +01:00
+> Commit 54ff4a1d1732 ("MIPS: Alchemy: pata_platform for DB1200")
+> from year 2014 converted the only user of au1xxx-ide IDE host
+> driver (MIPS Alchemy DB1200 platform) to use pata_platform libata
+> host driver instead. This patch series removes dead au1xxx-ide
+> driver code & co.
 > 
-> clocksource/drivers/timer-probe: Avoid creating dead devices
+> Please merge through mips tree (IDE changes have been Acked by
+> David Miller).
 > 
-> Timer initialization is done during early boot way before the driver
-> core starts processing devices and drivers. Timers initialized during
-> this early boot period don't really need or use a struct device.
+> Changes since v1
+> (https://lore.kernel.org/linux-ide/20200116122938.20789-1-b.zolnierkie@samsung.com/):
+> - added ACKs
 > 
-> However, for timers represented as device tree nodes, the struct devices
-> are still created and sit around unused and wasting memory. This change
-> avoid this by marking the device tree nodes as "populated" if the
-> corresponding timer is successfully initialized.
+> Best regards,
+> --
+> Bartlomiej Zolnierkiewicz
+> Samsung R&D Institute Poland
+> Samsung Electronics
 > 
-> Signed-off-by: Saravana Kannan <saravanak@google.com>
-> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-> Link: https://lore.kernel.org/r/20200111052125.238212-1-saravanak@google.com
-> ---
->  drivers/clocksource/timer-probe.c | 2 ++
->  1 file changed, 2 insertions(+)
 > 
-> diff --git a/drivers/clocksource/timer-probe.c b/drivers/clocksource/timer-probe.c
-> index ee9574d..a10f28d 100644
-> --- a/drivers/clocksource/timer-probe.c
-> +++ b/drivers/clocksource/timer-probe.c
-> @@ -27,8 +27,10 @@ void __init timer_probe(void)
->  
->  		init_func_ret = match->data;
->  
-> +		of_node_set_flag(np, OF_POPULATED);
->  		ret = init_func_ret(np);
->  		if (ret) {
-> +			of_node_clear_flag(np, OF_POPULATED);
->  			if (ret != -EPROBE_DEFER)
->  				pr_err("Failed to initialize '%pOF': %d\n", np,
->  				       ret);
+> Bartlomiej Zolnierkiewicz (3):
+>   ide: remove no longer used au1xxx-ide driver
+>   MIPS: Alchemy: remove no longer used au1xxx_ide.h header
+>   docs: mips: remove no longer needed au1xxx_ide.rst documentation
 > 
+>  Documentation/mips/au1xxx_ide.rst             | 130 ----
+>  Documentation/mips/index.rst                  |   2 -
+>  .../mips/include/asm/mach-au1x00/au1xxx_ide.h | 178 ------
+>  drivers/ide/Kconfig                           |  17 -
+>  drivers/ide/Makefile                          |   2 -
+>  drivers/ide/au1xxx-ide.c                      | 597 ------------------
+>  6 files changed, 926 deletions(-)
+>  delete mode 100644 Documentation/mips/au1xxx_ide.rst
+>  delete mode 100644 arch/mips/include/asm/mach-au1x00/au1xxx_ide.h
+>  delete mode 100644 drivers/ide/au1xxx-ide.c
 
-This patch is creating problems on some vexpress platforms - ones that
-are using CLKSRC_VERSATILE (drivers/clocksource/timer-versatile.c).
-I noticed issues on TC2 and FVPs (fixed virtual platforms) starting with
-next-20200318 and still reproducible with next-20200323.
+applied series to mips-next. While applying I've removed the one leftover
+BLK_DEV_IDE_AU1XXX_MDMA2_DBDMA in drivers/ide/Kconfig in patch 1.
 
-It seems the issue this patch causes on TC2 and FVP is related to the
-vexpress-sysreg node being used early for sched_clock_init
-(timer_versatile.c: versatile_sched_clock_init). At this point (at
-time_init) the node will be marked as OF_POPULATED, which flags that a
-device is already created for it, but it is not, in this case.
+Thomas.
 
-Later at sysreg_init (vexpress-sysreg.c) a device will fail to be created
-for it, as one already exists. This will result in a failure to create a
-bridge and a system controller for a bunch of devices (mostly clocks and
-regulators).
-
-I think on the FVP it does not cause many issues as clocks are fixed and
-regulator settings are probably nops so it boots fine and throws only
-some warnings. On TC2 on the other hand it fails to boot and it hangs at
-starting the kernel.
-
-In my opinion the idea of the patch is not bad, but I'm not an expert on
-this so the most I can offer for now is the basic understanding of the
-issue. I've Cc-ed a few folks to potentially suggest alternatives/fixes.
-
-For now, reverting this patch solves the problems on both platforms.
-I tested this on next-20200318 which introduced the problem.
-
-Hope it helps,
-Ionela.
+-- 
+Crap can work. Given enough thrust pigs will fly, but it's not necessarily a
+good idea.                                                [ RFC1925, 2.3 ]
