@@ -2,321 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C6696190A1B
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 11:02:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BCEEA190A14
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 11:01:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727302AbgCXKB6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 06:01:58 -0400
-Received: from alexa-out-blr-01.qualcomm.com ([103.229.18.197]:50588 "EHLO
-        alexa-out-blr-01.qualcomm.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726563AbgCXKB4 (ORCPT
+        id S1727230AbgCXKBu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 06:01:50 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:46877 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726563AbgCXKBu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 06:01:56 -0400
-Received: from ironmsg01-blr.qualcomm.com ([10.86.208.130])
-  by alexa-out-blr-01.qualcomm.com with ESMTP/TLS/AES256-SHA; 24 Mar 2020 15:31:47 +0530
-Received: from kalyant-linux.qualcomm.com ([10.204.66.210])
-  by ironmsg01-blr.qualcomm.com with ESMTP; 24 Mar 2020 15:31:30 +0530
-Received: by kalyant-linux.qualcomm.com (Postfix, from userid 94428)
-        id 67F1A4718; Tue, 24 Mar 2020 15:31:29 +0530 (IST)
-From:   Kalyan Thota <kalyan_t@codeaurora.org>
-To:     dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
-        freedreno@lists.freedesktop.org, devicetree@vger.kernel.org
-Cc:     Kalyan Thota <kalyan_t@codeaurora.org>,
-        linux-kernel@vger.kernel.org, robdclark@gmail.com,
-        seanpaul@chromium.org, hoegsberg@chromium.org,
-        dianders@chromium.org, jsanka@codeaurora.org,
-        mkrishn@codeaurora.org, travitej@codeaurora.org,
-        nganji@codeaurora.org
-Subject: [PATCH 2/2] drm/msm/dpu: add support for pcc color block in dpu driver
-Date:   Tue, 24 Mar 2020 15:31:19 +0530
-Message-Id: <1585044079-358-2-git-send-email-kalyan_t@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1585044079-358-1-git-send-email-kalyan_t@codeaurora.org>
-References: <1585044079-358-1-git-send-email-kalyan_t@codeaurora.org>
+        Tue, 24 Mar 2020 06:01:50 -0400
+Received: by mail-wr1-f68.google.com with SMTP id j17so17208211wru.13
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Mar 2020 03:01:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=resnulli-us.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=YXwXXyf4FFoH6g7bKxTH+XMwT8dvCco8fnyGy8BbH0U=;
+        b=QDAlHA9bG8dxJapJMUVdl7SSfzjRwftlM0jT/kCptr/tZzU0kY2soxUAM3ezP1rj/K
+         NLWi5HDGR2pSC0+mTbUvx3FNzvBl6v4EJo03KBnlB1svpO4emsIa8635EHUgU9/1iOGe
+         Po5VJK/wDQ/keZp1zbUujB4U5LdA/uzELiJlako/i0PxNdyYZU7HFbGz/7woBdChgpWh
+         wKHuLwTYxPKxdy76wZie4l6JXj1pfcUCW1iXMfAhrl/kNTsXubyLICwVmXHTouEsreeJ
+         sVYV5p6rX6yW2GfD+w+zg7pwq8J3EqXT2rRKwfkk8HORngkZ8bW6OVP8FXTLoUHE2wLF
+         X8GQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=YXwXXyf4FFoH6g7bKxTH+XMwT8dvCco8fnyGy8BbH0U=;
+        b=ltVl3LtexHW9aODodAWTJ14H0ztfSqxScmRFCW3QRZL0s7yM3PR3OS3rhTchdYHNRL
+         DJwjmY002aRuD0Lt5YK71UBGBZLI7oeCb23zmJNZRDCKxUW84UklLi3fffFE4VkhiW4q
+         VXec04ZvuhmOT34YvEkDDD2ZzagmCYKH3mwuS6LVr5zmTV6LuISzRg0pUA2DybuZAjty
+         lS6PHKtdy3pkAuVthJqL2agVoig/6nmst7cMPItb5BD5SDle+y0KOxGQLXDI0AwDsdVQ
+         we/Pi8wD3XZjAnWgcaMhqLamVdUwId6w3U8HGVqrkhx1dIakFxFCWIOi5nCaeSvdtdCw
+         WJKA==
+X-Gm-Message-State: ANhLgQ0TqT3pNgYIHz4kNfELU2l/IfJIQalrJ8UvobO9gyV+vzJsRlKZ
+        XbijV/so8kiQe1zJBE03Uk+g6Q==
+X-Google-Smtp-Source: ADFU+vs+oZMrTA+XjIVihEjmm3kkuM0VpBBT6FouF1t7AnwQf9AWhrAkOA5fgdwclkEuWXDSzOly8A==
+X-Received: by 2002:adf:9dc6:: with SMTP id q6mr34986704wre.70.1585044109070;
+        Tue, 24 Mar 2020 03:01:49 -0700 (PDT)
+Received: from localhost (jirka.pirko.cz. [84.16.102.26])
+        by smtp.gmail.com with ESMTPSA id t81sm3607126wmb.15.2020.03.24.03.01.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 24 Mar 2020 03:01:47 -0700 (PDT)
+Date:   Tue, 24 Mar 2020 11:01:46 +0100
+From:   Jiri Pirko <jiri@resnulli.us>
+To:     Po Liu <Po.Liu@nxp.com>
+Cc:     davem@davemloft.net, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, vinicius.gomes@intel.com,
+        claudiu.manoil@nxp.com, vladimir.oltean@nxp.com,
+        alexandru.marginean@nxp.com, xiaoliang.yang_1@nxp.com,
+        roy.zang@nxp.com, mingkai.hu@nxp.com, jerry.huang@nxp.com,
+        leoyang.li@nxp.com, michael.chan@broadcom.com, vishal@chelsio.com,
+        saeedm@mellanox.com, leon@kernel.org, jiri@mellanox.com,
+        idosch@mellanox.com, alexandre.belloni@bootlin.com,
+        UNGLinuxDriver@microchip.com, kuba@kernel.org, jhs@mojatatu.com,
+        xiyou.wangcong@gmail.com, simon.horman@netronome.com,
+        pablo@netfilter.org, moshe@mellanox.com, m-karicheri2@ti.com,
+        andre.guedes@linux.intel.com, stephen@networkplumber.org
+Subject: Re: [v1,net-next  1/5] net: qos offload add flow status with dropped
+ count
+Message-ID: <20200324100146.GR11304@nanopsycho.orion>
+References: <20200306125608.11717-11-Po.Liu@nxp.com>
+ <20200324034745.30979-1-Po.Liu@nxp.com>
+ <20200324034745.30979-2-Po.Liu@nxp.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200324034745.30979-2-Po.Liu@nxp.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This change adds support for color correction sub block
-for SC7180 device.
+Tue, Mar 24, 2020 at 04:47:39AM CET, Po.Liu@nxp.com wrote:
+>Add the hardware tc flower offloading with dropped frame counter for
+>status update. action ops->stats_update only loaded by the
+>tcf_exts_stats_update() and tcf_exts_stats_update() only loaded by
+>matchall and tc flower hardware filter. But the stats_update only set
+>the dropped count as default false in the ops->stats_update. This
+>patch add the dropped counter to action stats update. Its dropped counter
+>update by the hardware offloading driver.
+>This is changed by replacing the drop flag with dropped frame counter.
 
-Signed-off-by: Kalyan Thota <kalyan_t@codeaurora.org>
----
- drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c       | 77 ++++++++++++++++++++++++++
- drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.c |  9 ++-
- drivers/gpu/drm/msm/disp/dpu1/dpu_hw_dspp.c    | 49 +++++++++++++++-
- drivers/gpu/drm/msm/disp/dpu1/dpu_hw_dspp.h    | 33 ++++++++++-
- 4 files changed, 164 insertions(+), 4 deletions(-)
+I just read this paragraph 3 times, I'm unable to decypher :(
 
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
-index bf51341..156a997 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
-+++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
-@@ -9,6 +9,7 @@
- #include <linux/sort.h>
- #include <linux/debugfs.h>
- #include <linux/ktime.h>
-+#include <linux/bits.h>
- 
- #include <drm/drm_crtc.h>
- #include <drm/drm_flip_work.h>
-@@ -20,6 +21,7 @@
- #include "dpu_kms.h"
- #include "dpu_hw_lm.h"
- #include "dpu_hw_ctl.h"
-+#include "dpu_hw_dspp.h"
- #include "dpu_crtc.h"
- #include "dpu_plane.h"
- #include "dpu_encoder.h"
-@@ -40,6 +42,9 @@
- /* timeout in ms waiting for frame done */
- #define DPU_CRTC_FRAME_DONE_TIMEOUT_MS	60
- 
-+#define	CONVERT_S3_15(val) \
-+	(((((u64)val) & ~BIT_ULL(63)) >> 17) & GENMASK_ULL(17, 0))
-+
- static struct dpu_kms *_dpu_crtc_get_kms(struct drm_crtc *crtc)
- {
- 	struct msm_drm_private *priv = crtc->dev->dev_private;
-@@ -422,6 +427,74 @@ static void _dpu_crtc_setup_lm_bounds(struct drm_crtc *crtc,
- 	drm_mode_debug_printmodeline(adj_mode);
- }
- 
-+static void _dpu_crtc_get_pcc_coeff(struct drm_crtc_state *state,
-+		struct dpu_hw_pcc_cfg *cfg)
-+{
-+	struct drm_color_ctm *ctm;
-+
-+	memset(cfg, 0, sizeof(struct dpu_hw_pcc_cfg));
-+
-+	ctm = (struct drm_color_ctm *)state->ctm->data;
-+
-+	if (!ctm)
-+		return;
-+
-+	cfg->r.r = CONVERT_S3_15(ctm->matrix[0]);
-+	cfg->g.r = CONVERT_S3_15(ctm->matrix[1]);
-+	cfg->b.r = CONVERT_S3_15(ctm->matrix[2]);
-+
-+	cfg->r.g = CONVERT_S3_15(ctm->matrix[3]);
-+	cfg->g.g = CONVERT_S3_15(ctm->matrix[4]);
-+	cfg->b.g = CONVERT_S3_15(ctm->matrix[5]);
-+
-+	cfg->r.b = CONVERT_S3_15(ctm->matrix[6]);
-+	cfg->g.b = CONVERT_S3_15(ctm->matrix[7]);
-+	cfg->b.b = CONVERT_S3_15(ctm->matrix[8]);
-+}
-+
-+static void _dpu_crtc_setup_cp_blocks(struct drm_crtc *crtc)
-+{
-+	struct drm_crtc_state *state = crtc->state;
-+	struct dpu_crtc_state *cstate = to_dpu_crtc_state(crtc->state);
-+	struct dpu_crtc_mixer *mixer = cstate->mixers;
-+	struct dpu_hw_pcc_cfg cfg;
-+	struct dpu_hw_ctl *ctl;
-+	struct dpu_hw_mixer *lm;
-+	struct dpu_hw_dspp *dspp;
-+	int i;
-+
-+
-+	if (!state->color_mgmt_changed)
-+		return;
-+
-+	for (i = 0; i < cstate->num_mixers; i++) {
-+		ctl = mixer[i].lm_ctl;
-+		lm = mixer[i].hw_lm;
-+		dspp = mixer[i].hw_dspp;
-+
-+		if (!dspp || !dspp->ops.setup_pcc)
-+			continue;
-+
-+		if (!state->ctm) {
-+			dspp->ops.setup_pcc(dspp, NULL);
-+		} else {
-+			_dpu_crtc_get_pcc_coeff(state, &cfg);
-+			dspp->ops.setup_pcc(dspp, &cfg);
-+		}
-+
-+		mixer[i].flush_mask |= ctl->ops.get_bitmask_dspp(ctl,
-+			mixer[i].hw_dspp->idx);
-+
-+		/* stage config flush mask */
-+		ctl->ops.update_pending_flush(ctl, mixer[i].flush_mask);
-+
-+		DPU_DEBUG("lm %d, ctl %d, flush mask 0x%x\n",
-+			mixer[i].hw_lm->idx - DSPP_0,
-+			ctl->idx - CTL_0,
-+			mixer[i].flush_mask);
-+	}
-+}
-+
- static void dpu_crtc_atomic_begin(struct drm_crtc *crtc,
- 		struct drm_crtc_state *old_state)
- {
-@@ -475,6 +548,8 @@ static void dpu_crtc_atomic_begin(struct drm_crtc *crtc,
- 
- 	_dpu_crtc_blend_setup(crtc);
- 
-+	_dpu_crtc_setup_cp_blocks(crtc);
-+
- 	/*
- 	 * PP_DONE irq is only used by command mode for now.
- 	 * It is better to request pending before FLUSH and START trigger
-@@ -1317,6 +1392,8 @@ struct drm_crtc *dpu_crtc_init(struct drm_device *dev, struct drm_plane *plane,
- 
- 	drm_crtc_helper_add(crtc, &dpu_crtc_helper_funcs);
- 
-+	drm_crtc_enable_color_mgmt(crtc, 0, true, 0);
-+
- 	/* save user friendly CRTC name for later */
- 	snprintf(dpu_crtc->name, DPU_CRTC_NAME_SIZE, "crtc%u", crtc->base.id);
- 
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.c
-index 19d065a..731b4fb 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.c
-+++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.c
-@@ -41,7 +41,7 @@
- #define PINGPONG_SDM845_SPLIT_MASK \
- 	(PINGPONG_SDM845_MASK | BIT(DPU_PINGPONG_TE2))
- 
--#define DSPP_SC7180_MASK 0
-+#define DSPP_SC7180_MASK BIT(DPU_DSPP_PCC)
- 
- #define DEFAULT_PIXEL_RAM_SIZE		(50 * 1024)
- #define DEFAULT_DPU_LINE_WIDTH		2048
-@@ -339,12 +339,17 @@
- /*************************************************************
-  * DSPP sub blocks config
-  *************************************************************/
-+static const struct dpu_dspp_sub_blks sc7180_dspp_sblk = {
-+	.pcc = {.id = DPU_DSPP_PCC, .base = 0x1700,
-+		.len = 0x90, .version = 0x10000},
-+};
-+
- #define DSPP_BLK(_name, _id, _base) \
- 		{\
- 		.name = _name, .id = _id, \
- 		.base = _base, .len = 0x1800, \
- 		.features = DSPP_SC7180_MASK, \
--		.sblk = NULL, \
-+		.sblk = &sc7180_dspp_sblk \
- 		}
- 
- static const struct dpu_dspp_cfg sc7180_dspp[] = {
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_dspp.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_dspp.c
-index 75c82e9..b5189ce 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_dspp.c
-+++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_dspp.c
-@@ -9,10 +9,57 @@
- #include "dpu_kms.h"
- 
- 
-+/* DSPP_PCC */
-+#define PCC_EN BIT(0)
-+#define PCC_DIS 0
-+#define PCC_RED_R_OFF 0x10
-+#define PCC_RED_G_OFF 0x1C
-+#define PCC_RED_B_OFF 0x28
-+#define PCC_GREEN_R_OFF 0x14
-+#define PCC_GREEN_G_OFF 0x20
-+#define PCC_GREEN_B_OFF 0x2C
-+#define PCC_BLUE_R_OFF 0x18
-+#define PCC_BLUE_G_OFF 0x24
-+#define PCC_BLUE_B_OFF 0x30
-+
-+void dpu_setup_dspp_pcc(struct dpu_hw_dspp *ctx,
-+		struct dpu_hw_pcc_cfg *cfg)
-+{
-+
-+	u32 base = ctx->cap->sblk->pcc.base;
-+
-+	if (!ctx || !base) {
-+		DRM_ERROR("invalid ctx %pK pcc base 0x%x\n", ctx, base);
-+		return;
-+	}
-+
-+	if (!cfg) {
-+		DRM_DEBUG_DRIVER("disable pcc feature\n");
-+		DPU_REG_WRITE(&ctx->hw, base, PCC_DIS);
-+		return;
-+	}
-+
-+	DPU_REG_WRITE(&ctx->hw, base + PCC_RED_R_OFF, cfg->r.r);
-+	DPU_REG_WRITE(&ctx->hw, base + PCC_RED_G_OFF, cfg->r.g);
-+	DPU_REG_WRITE(&ctx->hw, base + PCC_RED_B_OFF, cfg->r.b);
-+
-+	DPU_REG_WRITE(&ctx->hw, base + PCC_GREEN_R_OFF, cfg->g.r);
-+	DPU_REG_WRITE(&ctx->hw, base + PCC_GREEN_G_OFF, cfg->g.g);
-+	DPU_REG_WRITE(&ctx->hw, base + PCC_GREEN_B_OFF, cfg->g.b);
-+
-+	DPU_REG_WRITE(&ctx->hw, base + PCC_BLUE_R_OFF, cfg->b.r);
-+	DPU_REG_WRITE(&ctx->hw, base + PCC_BLUE_G_OFF, cfg->b.g);
-+	DPU_REG_WRITE(&ctx->hw, base + PCC_BLUE_B_OFF, cfg->b.b);
-+
-+	DPU_REG_WRITE(&ctx->hw, base, PCC_EN);
-+}
-+
- static void _setup_dspp_ops(struct dpu_hw_dspp *c,
- 		unsigned long features)
- {
--	return;
-+	if (test_bit(DPU_DSPP_PCC, &features) &&
-+		IS_SC7180_TARGET(c->hw.hwversion))
-+		c->ops.setup_pcc = dpu_setup_dspp_pcc;
- }
- 
- static const struct dpu_dspp_cfg *_dspp_offset(enum dpu_dspp dspp,
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_dspp.h b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_dspp.h
-index 09807ea..7fa189c 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_dspp.h
-+++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_dspp.h
-@@ -10,13 +10,44 @@
- struct dpu_hw_dspp;
- 
- /**
-+ * struct dpu_hw_pcc_coeff - PCC coefficient structure for each color
-+ *                            component.
-+ * @r: red coefficient.
-+ * @g: green coefficient.
-+ * @b: blue coefficient.
-+ */
-+
-+struct dpu_hw_pcc_coeff {
-+	__u32 r;
-+	__u32 g;
-+	__u32 b;
-+};
-+
-+/**
-+ * struct dpu_hw_pcc - pcc feature structure
-+ * @r: red coefficients.
-+ * @g: green coefficients.
-+ * @b: blue coefficients.
-+ */
-+struct dpu_hw_pcc_cfg {
-+	struct dpu_hw_pcc_coeff r;
-+	struct dpu_hw_pcc_coeff g;
-+	struct dpu_hw_pcc_coeff b;
-+};
-+
-+/**
-  * struct dpu_hw_dspp_ops - interface to the dspp hardware driver functions
-  * Caller must call the init function to get the dspp context for each dspp
-  * Assumption is these functions will be called after clocks are enabled
-  */
- struct dpu_hw_dspp_ops {
-+	/**
-+	 * setup_pcc - setup dspp pcc
-+	 * @ctx: Pointer to dspp context
-+	 * @cfg: Pointer to configuration
-+	 */
-+	void (*setup_pcc)(struct dpu_hw_dspp *ctx, struct dpu_hw_pcc_cfg *cfg);
- 
--	void (*dummy)(struct dpu_hw_dspp *ctx);
- };
- 
- /**
--- 
-1.9.1
 
+
+>
+>Driver side should update how many "packets" it filtered and how many
+>"dropped" in those "packets".
+>
+
+[...]
+
+
+> 	return action;
+> }
+> 
+>-static void tcf_gact_stats_update(struct tc_action *a, u64 bytes, u32 packets,
+>-				  u64 lastuse, bool hw)
+>+static void tcf_gact_stats_update(struct tc_action *a, u64 bytes, u64 packets,
+>+				  u64 lastuse, u64 dropped, bool hw)
+> {
+> 	struct tcf_gact *gact = to_gact(a);
+> 	int action = READ_ONCE(gact->tcf_action);
+> 	struct tcf_t *tm = &gact->tcf_tm;
+> 
+>-	tcf_action_update_stats(a, bytes, packets, action == TC_ACT_SHOT, hw);
+>+	tcf_action_update_stats(a, bytes, packets,
+>+				(action == TC_ACT_SHOT) ? packets : 0, hw);
+
+Avoid ()s here.
+
+
+> 	tm->lastuse = max_t(u64, tm->lastuse, lastuse);
+> }
+> 
