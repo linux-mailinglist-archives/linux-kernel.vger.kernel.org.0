@@ -2,318 +2,413 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C658A191561
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 16:53:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BC05819154F
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 16:48:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727749AbgCXPxY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 11:53:24 -0400
-Received: from mail-eopbgr1410120.outbound.protection.outlook.com ([40.107.141.120]:29668
-        "EHLO JPN01-OS2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727443AbgCXPxX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 11:53:23 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=g2RsX+B3hPaNYhqCWTFlVVio1nf1GxAr8lsxHwmJ3oJXrhVV1fBcz0aE34Y8b7F07esiUoZ4NudVqGfHYLeE6AjJFcwdBiRqcJ3knnSe+rlwn/0d21s1r5hSw80BdwliV9/8fFeDKAofa2ReJ0hfmCsbbQYlvFs5yPUdt5Ady1LszEkSvBqEh8JmZ/hD7QC5BhkuvZ3LoQ6z2WJ0zYfvMTwtAoZuCKxA/UpGM2W6qujSzvhnaUjOdWCS+7FCNr3KZ7xW1RQE7V8yEU4vgB85pqyvsM7QxgJK0qtSamTF72vQt/LTUDnt4l+z4XF+FlvcMGNj/Tf9jJ9MevfH3MANMg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Jwh4pt085SgN7RBMl9M500hpkbl2vLQCuJ7qipnrXto=;
- b=RL7+co15NRITuPjN6VcUOLJva86tWGa45dzN8GjiA94fRETF9oXWBv85Z/t+Ci45uXupvZ3tqKgmOKTNQHZLcvOxyFo4sTlEayrj3/aSFNBNnfL7+l43Jw96BWzr9SutGCDtT+ub2xQonJPpUs2ctWiyRrW/OSKMjKG7qpNvs1z3WH6cLqBUKmHSRqeE0G+1HhOAmNZlmUC975ZIkhDkqZPBhzrCpLbHPibA33+swIUXxEJKgJGZ6E6IfI1NIwBEhycN0+PHoIyeK0Xqa2BTJQDwb5xneHfYg8FvEClBKqui26j+Yl2HoE+M48IPYpEb3XVtCzQ+ex8shoR32BElUA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=renesas.com; dmarc=pass action=none header.from=renesas.com;
- dkim=pass header.d=renesas.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=renesasgroup.onmicrosoft.com; s=selector2-renesasgroup-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Jwh4pt085SgN7RBMl9M500hpkbl2vLQCuJ7qipnrXto=;
- b=gPyYjp0F3BMZeN91By6KwU8fyXEeTleh9y/C9mJtObtU/9xQONjTanOlMHmAFasFGB5SFwu+lt5WY3ynkodk6ozhFiR5C1QCrBa4HmKb3IiHZam2cB/zwZEPtnmeNRIOqhYXVsNYVCdUkjKuXjFxfr/EVzy1t7+YMVorrQT4WvM=
-Received: from TYAPR01MB2285.jpnprd01.prod.outlook.com (52.133.177.145) by
- TYAPR01MB4285.jpnprd01.prod.outlook.com (20.179.187.148) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2835.19; Tue, 24 Mar 2020 15:53:09 +0000
-Received: from TYAPR01MB2285.jpnprd01.prod.outlook.com
- ([fe80::a882:860e:5745:25e1]) by TYAPR01MB2285.jpnprd01.prod.outlook.com
- ([fe80::a882:860e:5745:25e1%6]) with mapi id 15.20.2835.021; Tue, 24 Mar 2020
- 15:53:09 +0000
-From:   Chris Paterson <Chris.Paterson2@renesas.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "linux@roeck-us.net" <linux@roeck-us.net>,
-        "shuah@kernel.org" <shuah@kernel.org>,
-        "patches@kernelci.org" <patches@kernelci.org>,
-        "ben.hutchings@codethink.co.uk" <ben.hutchings@codethink.co.uk>,
-        "lkft-triage@lists.linaro.org" <lkft-triage@lists.linaro.org>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>
-Subject: RE: [PATCH 4.19 00/65] 4.19.113-rc1 review
-Thread-Topic: [PATCH 4.19 00/65] 4.19.113-rc1 review
-Thread-Index: AQHWAd3WL+Rk2rcgGkCLYWlYskYDI6hX5HXQ
-Date:   Tue, 24 Mar 2020 15:53:08 +0000
-Message-ID: <TYAPR01MB2285F125B18FC506ABE82414B7F10@TYAPR01MB2285.jpnprd01.prod.outlook.com>
-References: <20200324130756.679112147@linuxfoundation.org>
-In-Reply-To: <20200324130756.679112147@linuxfoundation.org>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Chris.Paterson2@renesas.com; 
-x-originating-ip: [193.141.220.21]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 4e8c1272-3474-43c3-6250-08d7d00b731c
-x-ms-traffictypediagnostic: TYAPR01MB4285:
-x-microsoft-antispam-prvs: <TYAPR01MB42858C183F7B6D2CF66298E6B7F10@TYAPR01MB4285.jpnprd01.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:9508;
-x-forefront-prvs: 03524FBD26
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(4636009)(366004)(4326008)(76116006)(66476007)(6506007)(33656002)(498600001)(66446008)(71200400001)(54906003)(110136005)(66946007)(64756008)(66556008)(186003)(26005)(7416002)(66574012)(7696005)(86362001)(9686003)(966005)(2906002)(5660300002)(81166006)(52536014)(81156014)(55016002)(8936002)(8676002)(6606295002);DIR:OUT;SFP:1102;SCL:1;SRVR:TYAPR01MB4285;H:TYAPR01MB2285.jpnprd01.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;
-received-spf: None (protection.outlook.com: renesas.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: ixogffKNiBDlcSpywUfsg/4ytJbjLOjp4q7+G5aNARjHG3QMI2NCJWwHVkKlQH/V8qmpQZ7Nn6T/c88DgaMUuczSJ4zECt634ef7u2gAXsSie2v2XkiSYVCtE8X3g6201Ec02ieNQ7Wf0sdutsiy7XSkxclEqmlmlzPWLXPiP4SZieDwYtufV4LY7Lin/sPEkRWhTeEyNexvnzlactuUX98IaXHLurDJfJ2alEHKNcGENmOp0ZAbgbVbAB9BAJUcpP0PH+KjSxknANQb/y0nflcYLhFC+Vgea6g8jXtfdwHZkLavzOfuX4OWL9wUVb0hrOhEp7Ma0N65dFYemZGUHcKtUNPmE5jB+oeWlJft7zFXORNxKna1mulxos8d8IrqE8FJqS243Rcz5r15sBZIQGZeh4A7yQb2NrLSyzq/3vzv8hAQrJ+l/jcx1Rf4zbQ02dixz6b+56i4gA0XKBOU7JD+MpbrtpK5TRPXOCV7wH/7PreGzuPFI7rrrt1i48mP2zA8kHRFtOaFFpUGN4Vwc3dGuTZyWGgWi5h5ZcSAC63TZNAOgIQHEj/ljKQwQzR0idCAq27BeY6lV+neb2COQQ==
-x-ms-exchange-antispam-messagedata: sFsJLjJQd41cpVDqgIsU9nj3i7V1tlcXVvLyWs7eQif+D3F88/FEDZgKLyhYvuvZXnd87or6kXExhfuF1mxrOfTTMJCw078pFSBp8BWfVfKhPwa1FFfJrP4n/D0ZTs22ZRf0sSj7aL7zoCAzrsr3og==
-x-ms-exchange-transport-forked: True
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        id S1728500AbgCXPsP convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 24 Mar 2020 11:48:15 -0400
+Received: from mga11.intel.com ([192.55.52.93]:32877 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727847AbgCXPsO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Mar 2020 11:48:14 -0400
+IronPort-SDR: 5glEzXVEhApY7SvY6mam7u2pdjppm58XCXGPw67gO1KC9HIQtXVC+bf0yiYHl4U3EgfTDGdihx
+ aXjdO4mHxAgQ==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Mar 2020 08:48:13 -0700
+IronPort-SDR: /3TviJPiPGIiX5u5mtsR+VfG5tYCSytp+4NuPBMOSeO8k3LBM5E9P6El05mhD1Ec6Ap3qorrZv
+ Mnn6EgS1k81A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.72,300,1580803200"; 
+   d="scan'208";a="393322380"
+Received: from jacob-builder.jf.intel.com (HELO jacob-builder) ([10.7.199.155])
+  by orsmga004.jf.intel.com with ESMTP; 24 Mar 2020 08:48:13 -0700
+Date:   Tue, 24 Mar 2020 08:53:56 -0700
+From:   Jacob Pan <jacob.jun.pan@linux.intel.com>
+To:     Jean-Philippe Brucker <jean-philippe@linaro.org>
+Cc:     iommu@lists.linux-foundation.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Lu Baolu <baolu.lu@linux.intel.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Yi Liu <yi.l.liu@intel.com>,
+        "Tian, Kevin" <kevin.tian@intel.com>,
+        Raj Ashok <ashok.raj@intel.com>,
+        Jean-Philippe Brucker <jean-philippe@linaro.com>,
+        Eric Auger <eric.auger@redhat.com>,
+        Dave Jiang <dave.jiang@intel.com>,
+        jacob.jun.pan@linux.intel.com
+Subject: Re: [PATCH 2/2] iommu/vt-d: Replace intel SVM APIs with generic SVA
+ APIs
+Message-ID: <20200324085356.64f6a904@jacob-builder>
+In-Reply-To: <20200320092955.GA1702630@myrica>
+References: <1582586797-61697-1-git-send-email-jacob.jun.pan@linux.intel.com>
+        <1582586797-61697-4-git-send-email-jacob.jun.pan@linux.intel.com>
+        <20200320092955.GA1702630@myrica>
+Organization: OTC
+X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-X-OriginatorOrg: renesas.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4e8c1272-3474-43c3-6250-08d7d00b731c
-X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Mar 2020 15:53:08.9293
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: iOUMw8xGA+SLsSJA+QpmCe3VGetjvLEy97yCfHtx2cgcJbdMuoRpb8SuNm+Cl5ReFiJqtJ3YqtZfy3kYc4GPcTwQ06hHPDE9d6wPFiqN1EY=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYAPR01MB4285
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGkgR3JlZywNCg0KPiBGcm9tOiBzdGFibGUtb3duZXJAdmdlci5rZXJuZWwub3JnIDxzdGFibGUt
-b3duZXJAdmdlci5rZXJuZWwub3JnPiBPbg0KPiBCZWhhbGYgT2YgR3JlZyBLcm9haC1IYXJ0bWFu
-DQo+IFNlbnQ6IDI0IE1hcmNoIDIwMjAgMTM6MTANCj4gDQo+IFRoaXMgaXMgdGhlIHN0YXJ0IG9m
-IHRoZSBzdGFibGUgcmV2aWV3IGN5Y2xlIGZvciB0aGUgNC4xOS4xMTMgcmVsZWFzZS4NCj4gVGhl
-cmUgYXJlIDY1IHBhdGNoZXMgaW4gdGhpcyBzZXJpZXMsIGFsbCB3aWxsIGJlIHBvc3RlZCBhcyBh
-IHJlc3BvbnNlDQo+IHRvIHRoaXMgb25lLiAgSWYgYW55b25lIGhhcyBhbnkgaXNzdWVzIHdpdGgg
-dGhlc2UgYmVpbmcgYXBwbGllZCwgcGxlYXNlDQo+IGxldCBtZSBrbm93Lg0KPiANCj4gUmVzcG9u
-c2VzIHNob3VsZCBiZSBtYWRlIGJ5IFRodSwgMjYgTWFyIDIwMjAgMTM6MDY6NDIgKzAwMDAuDQo+
-IEFueXRoaW5nIHJlY2VpdmVkIGFmdGVyIHRoYXQgdGltZSBtaWdodCBiZSB0b28gbGF0ZS4NCg0K
-Tm8gYnVpbGQvYm9vdCBpc3N1ZXMgc2VlbiBmb3IgQ0lQIGNvbmZpZ3MgZm9yIExpbnV4IDQuMTku
-MTEzLXJjMSAoNjllNzEzN2RlMzFjKS4NCg0KQnVpbGQvdGVzdCBwaXBlbGluZS9sb2dzOiBodHRw
-czovL2dpdGxhYi5jb20vY2lwLXByb2plY3QvY2lwLXRlc3RpbmcvbGludXgtc3RhYmxlLXJjLWNp
-L3BpcGVsaW5lcy8xMjkyMTIzNzANCkdpdExhYiBDSSBwaXBlbGluZTogaHR0cHM6Ly9naXRsYWIu
-Y29tL2NpcC1wcm9qZWN0L2NpcC10ZXN0aW5nL2xpbnV4LWNpcC1waXBlbGluZXMvLS9ibG9iL21h
-c3Rlci90cmVlcy9saW51eC00LjE5LnkueW1sDQoNCktpbmQgcmVnYXJkcywgQ2hyaXMNCg0KPiAN
-Cj4gVGhlIHdob2xlIHBhdGNoIHNlcmllcyBjYW4gYmUgZm91bmQgaW4gb25lIHBhdGNoIGF0Og0K
-PiAJaHR0cHM6Ly93d3cua2VybmVsLm9yZy9wdWIvbGludXgva2VybmVsL3Y0Lngvc3RhYmxlLXJl
-dmlldy9wYXRjaC0NCj4gNC4xOS4xMTMtcmMxLmd6DQo+IG9yIGluIHRoZSBnaXQgdHJlZSBhbmQg
-YnJhbmNoIGF0Og0KPiAJZ2l0Oi8vZ2l0Lmtlcm5lbC5vcmcvcHViL3NjbS9saW51eC9rZXJuZWwv
-Z2l0L3N0YWJsZS9saW51eC1zdGFibGUtcmMuZ2l0DQo+IGxpbnV4LTQuMTkueQ0KPiBhbmQgdGhl
-IGRpZmZzdGF0IGNhbiBiZSBmb3VuZCBiZWxvdy4NCj4gDQo+IHRoYW5rcywNCj4gDQo+IGdyZWcg
-ay1oDQo+IA0KPiAtLS0tLS0tLS0tLS0tDQo+IFBzZXVkby1TaG9ydGxvZyBvZiBjb21taXRzOg0K
-PiANCj4gR3JlZyBLcm9haC1IYXJ0bWFuIDxncmVna2hAbGludXhmb3VuZGF0aW9uLm9yZz4NCj4g
-ICAgIExpbnV4IDQuMTkuMTEzLXJjMQ0KPiANCj4gSm9oYW4gSG92b2xkIDxqb2hhbkBrZXJuZWwu
-b3JnPg0KPiAgICAgc3RhZ2luZzogZ3JleWJ1czogbG9vcGJhY2tfdGVzdDogZml4IHBvdGVudGlh
-bCBwYXRoIHRydW5jYXRpb25zDQo+IA0KPiBKb2hhbiBIb3ZvbGQgPGpvaGFuQGtlcm5lbC5vcmc+
-DQo+ICAgICBzdGFnaW5nOiBncmV5YnVzOiBsb29wYmFja190ZXN0OiBmaXggcG90ZW50aWFsIHBh
-dGggdHJ1bmNhdGlvbg0KPiANCj4gSmVybmVqIFNrcmFiZWMgPGplcm5lai5za3JhYmVjQHNpb2wu
-bmV0Pg0KPiAgICAgZHJtL2JyaWRnZTogZHctaGRtaTogZml4IEFWSSBmcmFtZSBjb2xvcmltZXRy
-eQ0KPiANCj4gQ3Jpc3RpYW4gTWFydXNzaSA8Y3Jpc3RpYW4ubWFydXNzaUBhcm0uY29tPg0KPiAg
-ICAgYXJtNjQ6IHNtcDogZml4IGNyYXNoX3NtcF9zZW5kX3N0b3AoKSBiZWhhdmlvdXINCj4gDQo+
-IENyaXN0aWFuIE1hcnVzc2kgPGNyaXN0aWFuLm1hcnVzc2lAYXJtLmNvbT4NCj4gICAgIGFybTY0
-OiBzbXA6IGZpeCBzbXBfc2VuZF9zdG9wKCkgYmVoYXZpb3VyDQo+IA0KPiBLYWktSGVuZyBGZW5n
-IDxrYWkuaGVuZy5mZW5nQGNhbm9uaWNhbC5jb20+DQo+ICAgICBBTFNBOiBoZGEvcmVhbHRlazog
-Rml4IHBvcCBub2lzZSBvbiBBTEMyMjUNCj4gDQo+IFNhc2hhIExldmluIDxzYXNoYWxAa2VybmVs
-Lm9yZz4NCj4gICAgIFJldmVydCAiaXB2NjogRml4IGhhbmRsaW5nIG9mIExMQSB3aXRoIFZSRiBh
-bmQgc29ja2V0cyBib3VuZCB0byBWUkYiDQo+IA0KPiBTYXNoYSBMZXZpbiA8c2FzaGFsQGtlcm5l
-bC5vcmc+DQo+ICAgICBSZXZlcnQgInZyZjogbWFyayBza2IgZm9yIG11bHRpY2FzdCBvciBsaW5r
-LWxvY2FsIGFzIGVuc2xhdmVkIHRvIFZSRiINCj4gDQo+IFRob21hcyBHbGVpeG5lciA8dGdseEBs
-aW51dHJvbml4LmRlPg0KPiAgICAgZnV0ZXg6IFVuYnJlYWsgZnV0ZXggaGFzaGluZw0KPiANCj4g
-UGV0ZXIgWmlqbHN0cmEgPHBldGVyekBpbmZyYWRlYWQub3JnPg0KPiAgICAgZnV0ZXg6IEZpeCBp
-bm9kZSBsaWZlLXRpbWUgaXNzdWUNCj4gDQo+IE5hdGhhbiBDaGFuY2VsbG9yIDxuYXRlY2hhbmNl
-bGxvckBnbWFpbC5jb20+DQo+ICAgICBrYnVpbGQ6IERpc2FibGUgLVdwb2ludGVyLXRvLWVudW0t
-Y2FzdA0KPiANCj4gVG9tYXMgTm92b3RueSA8dG9tYXNAbm92b3RueS5jej4NCj4gICAgIGlpbzog
-bGlnaHQ6IHZjbmw0MDAwOiB1cGRhdGUgc2FtcGxpbmcgcGVyaW9kcyBmb3IgdmNubDQyMDANCj4g
-DQo+IEFudGhvbnkgTWFsbGV0IDxhbnRob255Lm1hbGxldEBsYWFzLmZyPg0KPiAgICAgVVNCOiBj
-ZGMtYWNtOiBmaXggcm91bmRpbmcgZXJyb3IgaW4gVElPQ1NTRVJJQUwNCj4gDQo+IEFudGhvbnkg
-TWFsbGV0IDxhbnRob255Lm1hbGxldEBsYWFzLmZyPg0KPiAgICAgVVNCOiBjZGMtYWNtOiBmaXgg
-Y2xvc2VfZGVsYXkgYW5kIGNsb3Npbmdfd2FpdCB1bml0cyBpbiBUSU9DU1NFUklBTA0KPiANCj4g
-Sm9lcmcgUm9lZGVsIDxqcm9lZGVsQHN1c2UuZGU+DQo+ICAgICB4ODYvbW06IHNwbGl0IHZtYWxs
-b2Nfc3luY19hbGwoKQ0KPiANCj4gUWlhbiBDYWkgPGNhaUBsY2EucHc+DQo+ICAgICBwYWdlLWZs
-YWdzOiBmaXggYSBjcmFzaCBhdCBTZXRQYWdlRXJyb3IoVEhQX1NXQVApDQo+IA0KPiBWbGFzdGlt
-aWwgQmFia2EgPHZiYWJrYUBzdXNlLmN6Pg0KPiAgICAgbW0sIHNsdWI6IHByZXZlbnQga21hbGxv
-Y19ub2RlIGNyYXNoZXMgYW5kIG1lbW9yeSBsZWFrcw0KPiANCj4gTGludXMgVG9ydmFsZHMgPHRv
-cnZhbGRzQGxpbnV4LWZvdW5kYXRpb24ub3JnPg0KPiAgICAgbW06IHNsdWI6IGJlIG1vcmUgY2Fy
-ZWZ1bCBhYm91dCB0aGUgZG91YmxlIGNtcHhjaGcgb2YgZnJlZWxpc3QNCj4gDQo+IENodW5ndWFu
-ZyBYdSA8YnJvb2t4dUB0ZW5jZW50LmNvbT4NCj4gICAgIG1lbWNnOiBmaXggTlVMTCBwb2ludGVy
-IGRlcmVmZXJlbmNlIGluDQo+IF9fbWVtX2Nncm91cF91c2FnZV91bnJlZ2lzdGVyX2V2ZW50DQo+
-IA0KPiBRaXVqdW4gSHVhbmcgPGhxamFnYWluQGdtYWlsLmNvbT4NCj4gICAgIGRybS9sZWFzZTog
-Zml4IFdBUk5JTkcgaW4gaWRyX2Rlc3Ryb3kNCj4gDQo+IFRvbSBTdCBEZW5pcyA8dG9tLnN0ZGVu
-aXNAYW1kLmNvbT4NCj4gICAgIGRybS9hbWQvYW1kZ3B1OiBGaXggR1BSIHJlYWQgZnJvbSBkZWJ1
-Z2ZzICh2MikNCj4gDQo+IEZpbGlwZSBNYW5hbmEgPGZkbWFuYW5hQHN1c2UuY29tPg0KPiAgICAg
-YnRyZnM6IGZpeCBsb2cgY29udGV4dCBsaXN0IGNvcnJ1cHRpb24gYWZ0ZXIgcmVuYW1lIHdoaXRl
-b3V0IGVycm9yDQo+IA0KPiBTdGV2ZW4gUm9zdGVkdCAoVk13YXJlKSA8cm9zdGVkdEBnb29kbWlz
-Lm9yZz4NCj4gICAgIHhoY2k6IERvIG5vdCBvcGVuIGNvZGUgX19wcmludF9zeW1ib2xpYygpIGlu
-IHhoY2kgdHJhY2UgZXZlbnRzDQo+IA0KPiBDb3JlbnRpbiBMYWJiZSA8Y2xhYmJlQGJheWxpYnJl
-LmNvbT4NCj4gICAgIHJ0YzogbWF4ODkwNzogYWRkIG1pc3Npbmcgc2VsZWN0IFJFR01BUF9JUlEN
-Cj4gDQo+IEFsZXhhbmRlciBTaGlzaGtpbiA8YWxleGFuZGVyLnNoaXNoa2luQGxpbnV4LmludGVs
-LmNvbT4NCj4gICAgIGludGVsX3RoOiBwY2k6IEFkZCBFbGtoYXJ0IExha2UgQ1BVIHN1cHBvcnQN
-Cj4gDQo+IEFsZXhhbmRlciBTaGlzaGtpbiA8YWxleGFuZGVyLnNoaXNoa2luQGxpbnV4LmludGVs
-LmNvbT4NCj4gICAgIGludGVsX3RoOiBGaXggdXNlci12aXNpYmxlIGVycm9yIGNvZGVzDQo+IA0K
-PiBTYW11ZWwgVGhpYmF1bHQgPHNhbXVlbC50aGliYXVsdEBlbnMtbHlvbi5vcmc+DQo+ICAgICBz
-dGFnaW5nL3NwZWFrdXA6IGZpeCBnZXRfd29yZCBub24tc3BhY2UgbG9vay1haGVhZA0KPiANCj4g
-Sm9oYW4gSG92b2xkIDxqb2hhbkBrZXJuZWwub3JnPg0KPiAgICAgc3RhZ2luZzogZ3JleWJ1czog
-bG9vcGJhY2tfdGVzdDogZml4IHBvbGwtbWFzayBidWlsZCBicmVha2FnZQ0KPiANCj4gTWljaGFl
-bCBTdHJhdWJlIDxzdHJhdWJlLmxpbnV4QGdtYWlsLmNvbT4NCj4gICAgIHN0YWdpbmc6IHJ0bDgx
-ODhldTogQWRkIGRldmljZSBpZCBmb3IgTUVSQ1VTWVMgTVcxNTBVUyB2Mg0KPiANCj4gTWljaGHF
-giBNaXJvc8WCYXcgPG1pcnEtbGludXhAcmVyZS5xbXFtLnBsPg0KPiAgICAgbW1jOiBzZGhjaS1v
-Zi1hdDkxOiBmaXggY2QtZ3Bpb3MgZm9yIFNBTUE1RDINCj4gDQo+IFJpY2t5IFd1IDxyaWNreV93
-dUByZWFsdGVrLmNvbT4NCj4gICAgIG1tYzogcnRzeF9wY2k6IEZpeCBzdXBwb3J0IGZvciBzcGVl
-ZC1tb2RlcyB0aGF0IHJlbGllcyBvbiB0dW5pbmcNCj4gDQo+IEV1Z2VuIEhyaXN0ZXYgPGV1Z2Vu
-LmhyaXN0ZXZAbWljcm9jaGlwLmNvbT4NCj4gICAgIGlpbzogYWRjOiBhdDkxLXNhbWE1ZDJfYWRj
-OiBmaXggZGlmZmVyZW50aWFsIGNoYW5uZWxzIGluIHRyaWdnZXJlZCBtb2RlDQo+IA0KPiBTdGVw
-aGFuIEdlcmhvbGQgPHN0ZXBoYW5AZ2VyaG9sZC5uZXQ+DQo+ICAgICBpaW86IG1hZ25ldG9tZXRl
-cjogYWs4OTc0OiBGaXggbmVnYXRpdmUgcmF3IHZhbHVlcyBpbiBzeXNmcw0KPiANCj4gRmFicmlj
-ZSBHYXNuaWVyIDxmYWJyaWNlLmdhc25pZXJAc3QuY29tPg0KPiAgICAgaWlvOiB0cmlnZ2VyOiBz
-dG0zMi10aW1lcjogZGlzYWJsZSBtYXN0ZXIgbW9kZSB3aGVuIHN0b3BwaW5nDQo+IA0KPiBXZW4t
-Y2hpZW4gSmVzc2UgU3VuZyA8amVzc2Uuc3VuZ0BjYW5vbmljYWwuY29tPg0KPiAgICAgaWlvOiBz
-dF9zZW5zb3JzOiByZW1hcCBTTU84ODQwIHRvIExJUzJESDEyDQo+IA0KPiBUYWthc2hpIEl3YWkg
-PHRpd2FpQHN1c2UuZGU+DQo+ICAgICBBTFNBOiBwY206IG9zczogUmVtb3ZlIFdBUk5JTkcgZnJv
-bSBzbmRfcGNtX3BsdWdfYWxsb2MoKSBjaGVja3MNCj4gDQo+IFRha2FzaGkgSXdhaSA8dGl3YWlA
-c3VzZS5kZT4NCj4gICAgIEFMU0E6IHBjbTogb3NzOiBBdm9pZCBwbHVnaW4gYnVmZmVyIG92ZXJm
-bG93DQo+IA0KPiBUYWthc2hpIEl3YWkgPHRpd2FpQHN1c2UuZGU+DQo+ICAgICBBTFNBOiBzZXE6
-IG9zczogRml4IHJ1bm5pbmcgc3RhdHVzIGFmdGVyIHJlY2VpdmluZyBzeXNleA0KPiANCj4gVGFr
-YXNoaSBJd2FpIDx0aXdhaUBzdXNlLmRlPg0KPiAgICAgQUxTQTogc2VxOiB2aXJtaWRpOiBGaXgg
-cnVubmluZyBzdGF0dXMgYWZ0ZXIgcmVjZWl2aW5nIHN5c2V4DQo+IA0KPiBUYWthc2hpIEl3YWkg
-PHRpd2FpQHN1c2UuZGU+DQo+ICAgICBBTFNBOiBsaW5lNjogRml4IGVuZGxlc3MgTUlESSByZWFk
-IGxvb3ANCj4gDQo+IEFsYmVydG8gTWF0dGVhIDxhbGJlcnRvQG1hdHRlYS5pbmZvPg0KPiAgICAg
-dXNiOiB4aGNpOiBhcHBseSBYSENJX1NVU1BFTkRfREVMQVkgdG8gQU1EIFhIQ0kgY29udHJvbGxl
-ciAxMDIyOjE0NWMNCj4gDQo+IFNjb3R0IENoZW4gPHNjb3R0QGxhYmF1LmNvbS50dz4NCj4gICAg
-IFVTQjogc2VyaWFsOiBwbDIzMDM6IGFkZCBkZXZpY2UtaWQgZm9yIEhQIExEMzgxDQo+IA0KPiBS
-YW4gV2FuZyA8cmFuLndhbmdfMUBueHAuY29tPg0KPiAgICAgdXNiOiBob3N0OiB4aGNpLXBsYXQ6
-IGFkZCBhIHNodXRkb3duDQo+IA0KPiBEYW5pZWxlIFBhbG1hcyA8ZG5scGxtQGdtYWlsLmNvbT4N
-Cj4gICAgIFVTQjogc2VyaWFsOiBvcHRpb246IGFkZCBNRTkxMEcxIEVDTSBjb21wb3NpdGlvbiAw
-eDExMGINCj4gDQo+IEhhbnMgZGUgR29lZGUgPGhkZWdvZWRlQHJlZGhhdC5jb20+DQo+ICAgICB1
-c2I6IHF1aXJrczogYWRkIE5PX0xQTSBxdWlyayBmb3IgUlRMODE1MyBiYXNlZCBldGhlcm5ldCBh
-ZGFwdGVycw0KPiANCj4gS2FpLUhlbmcgRmVuZyA8a2FpLmhlbmcuZmVuZ0BjYW5vbmljYWwuY29t
-Pg0KPiAgICAgVVNCOiBEaXNhYmxlIExQTSBvbiBXRDE5J3MgUmVhbHRlayBIdWINCj4gDQo+IEpv
-bmF0aGFuIE5ldXNjaMOkZmVyIDxqLm5ldXNjaGFlZmVyQGdteC5uZXQ+DQo+ICAgICBwYXJzZS1t
-YWludGFpbmVyczogTWFyayBhcyBleGVjdXRhYmxlDQo+IA0KPiBDYXJsbyBOb25hdG8gPGNhcmxv
-Lm5vbmF0bzk1QGdtYWlsLmNvbT4NCj4gICAgIGJsb2NrLCBiZnE6IGZpeCBvdmVyd3JpdGUgb2Yg
-YmZxX2dyb3VwIHBvaW50ZXIgaW4gYmZxX2ZpbmRfc2V0X2dyb3VwKCkNCj4gDQo+IERvbmdsaSBa
-aGFuZyA8ZG9uZ2xpLnpoYW5nQG9yYWNsZS5jb20+DQo+ICAgICB4ZW5idXM6IHJlcS0+ZXJyIHNo
-b3VsZCBiZSB1cGRhdGVkIGJlZm9yZSByZXEtPnN0YXRlDQo+IA0KPiBEb25nbGkgWmhhbmcgPGRv
-bmdsaS56aGFuZ0BvcmFjbGUuY29tPg0KPiAgICAgeGVuYnVzOiByZXEtPmJvZHkgc2hvdWxkIGJl
-IHVwZGF0ZWQgYmVmb3JlIHJlcS0+c3RhdGUNCj4gDQo+IEpvc2lwIFBhdmljIDxKb3NpcC5QYXZp
-Y0BhbWQuY29tPg0KPiAgICAgZHJtL2FtZC9kaXNwbGF5OiBmaXggZGNjIHN3YXRoIHNpemUgY2Fs
-Y3VsYXRpb25zIG9uIGRjbjENCj4gDQo+IEJoYXdhbnByZWV0IExha2hhIDxCaGF3YW5wcmVldC5M
-YWtoYUBhbWQuY29tPg0KPiAgICAgZHJtL2FtZC9kaXNwbGF5OiBDbGVhciBsaW5rIHNldHRpbmdz
-IG9uIE1TVCBkaXNhYmxlIGNvbm5lY3Rvcg0KPiANCj4gVmluY2VudCBDaGVuIDx2aW5jZW50LmNo
-ZW5Ac2lmaXZlLmNvbT4NCj4gICAgIHJpc2N2OiBhdm9pZCB0aGUgUElDIG9mZnNldCBvZiBzdGF0
-aWMgcGVyY3B1IGRhdGEgaW4gbW9kdWxlIGJleW9uZCAyRyBsaW1pdHMNCj4gDQo+IE1pa2UgU25p
-dHplciA8c25pdHplckByZWRoYXQuY29tPg0KPiAgICAgZG0gaW50ZWdyaXR5OiB1c2UgZG1fYmlv
-X3JlY29yZCBhbmQgZG1fYmlvX3Jlc3RvcmUNCj4gDQo+IE1pa2UgU25pdHplciA8c25pdHplckBy
-ZWRoYXQuY29tPg0KPiAgICAgZG0gYmlvIHJlY29yZDogc2F2ZS9yZXN0b3JlIGJpX2VuZF9pbyBh
-bmQgYmlfaW50ZWdyaXR5DQo+IA0KPiBEYW5pZWwgQXh0ZW5zIDxkamFAYXh0ZW5zLm5ldD4NCj4g
-ICAgIGFsdGVyYS1zdGFwbDogYWx0ZXJhX2dldF9ub3RlOiBwcmV2ZW50IHdyaXRlIGJleW9uZCBl
-bmQgb2YgJ2tleScNCj4gDQo+IGx1YW5zaGkgPHpoYW5nbGlndWFuZ0BsaW51eC5hbGliYWJhLmNv
-bT4NCj4gICAgIGRyaXZlcnMvcGVyZjogYXJtX3BtdV9hY3BpOiBGaXggaW5jb3JyZWN0IGNoZWNr
-aW5nIG9mIGdpY2MgcG9pbnRlcg0KPiANCj4gTWFyZWsgU3p5cHJvd3NraSA8bS5zenlwcm93c2tp
-QHNhbXN1bmcuY29tPg0KPiAgICAgZHJtL2V4eW5vczogZHNpOiBmaXggd29ya2Fyb3VuZCBmb3Ig
-dGhlIGxlZ2FjeSBjbG9jayBuYW1lDQo+IA0KPiBNYXJlayBTenlwcm93c2tpIDxtLnN6eXByb3dz
-a2lAc2Ftc3VuZy5jb20+DQo+ICAgICBkcm0vZXh5bm9zOiBkc2k6IHByb3BhZ2F0ZSBlcnJvciB2
-YWx1ZSBhbmQgc2lsZW5jZSBtZWFuaW5nbGVzcyB3YXJuaW5nDQo+IA0KPiBUaG9tbXkgSmFrb2Jz
-c29uIDx0aG9tbXlqQGdtYWlsLmNvbT4NCj4gICAgIHNwaS96eW5xbXA6IHJlbW92ZSBlbnRyeSB0
-aGF0IGNhdXNlcyBhIGNzIGdsaXRjaA0KPiANCj4gRXZhbiBHcmVlbiA8ZXZncmVlbkBjaHJvbWl1
-bS5vcmc+DQo+ICAgICBzcGk6IHB4YTJ4eDogQWRkIENTIGNvbnRyb2wgY2xvY2sgcXVpcmsNCj4g
-DQo+IEtpc2hvbiBWaWpheSBBYnJhaGFtIEkgPGtpc2hvbkB0aS5jb20+DQo+ICAgICBBUk06IGR0
-czogZHJhNzogQWRkICJkbWEtcmFuZ2VzIiBwcm9wZXJ0eSB0byBQQ0llIFJDIERUIG5vZGVzDQo+
-IA0KPiBOYXZlZW4gTi4gUmFvIDxuYXZlZW4ubi5yYW9AbGludXgudm5ldC5pYm0uY29tPg0KPiAg
-ICAgcG93ZXJwYzogSW5jbHVkZSAuQlRGIHNlY3Rpb24NCj4gDQo+IFl1amkgU2FzYWtpIDxzYXNh
-a2l5QGNocm9taXVtLm9yZz4NCj4gICAgIHNwaTogcXVwOiBjYWxsIHNwaV9xdXBfcG1fcmVzdW1l
-X3J1bnRpbWUgYmVmb3JlIHN1c3BlbmRpbmcNCj4gDQo+IEV2YW4gQmVubiA8ZXZhbmJlbm5AY2hy
-b21pdW0ub3JnPg0KPiAgICAgZHJtL21lZGlhdGVrOiBGaW5kIHRoZSBjdXJzb3IgcGxhbmUgaW5z
-dGVhZCBvZiBoYXJkIGNvZGluZyBpdA0KPiANCj4gDQo+IC0tLS0tLS0tLS0tLS0NCj4gDQo+IERp
-ZmZzdGF0Og0KPiANCj4gIE1ha2VmaWxlICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgIHwgIDQgKy0NCj4gIGFyY2gvYXJtL2Jvb3QvZHRzL2RyYTcuZHRzaSAgICAgICAg
-ICAgICAgICAgICAgICAgIHwgIDIgKw0KPiAgYXJjaC9hcm02NC9rZXJuZWwvc21wLmMgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgfCAyNSArKysrLS0NCj4gIGFyY2gvcG93ZXJwYy9rZXJuZWwv
-dm1saW51eC5sZHMuUyAgICAgICAgICAgICAgICAgIHwgIDYgKysNCj4gIGFyY2gvcmlzY3Yva2Vy
-bmVsL21vZHVsZS5jICAgICAgICAgICAgICAgICAgICAgICAgIHwgMTYgKysrKw0KPiAgYXJjaC94
-ODYvbW0vZmF1bHQuYyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgfCAyNiArKysrKy0N
-Cj4gIGJsb2NrL2JmcS1jZ3JvdXAuYyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHwg
-IDkgKystDQo+ICBkcml2ZXJzL2FjcGkvYXBlaS9naGVzLmMgICAgICAgICAgICAgICAgICAgICAg
-ICAgICB8ICAyICstDQo+ICBkcml2ZXJzL2dwdS9kcm0vYW1kL2FtZGdwdS9hbWRncHVfZGVidWdm
-cy5jICAgICAgICB8ICA2ICstDQo+ICAuLi4vYW1kL2Rpc3BsYXkvYW1kZ3B1X2RtL2FtZGdwdV9k
-bV9tc3RfdHlwZXMuYyAgICB8ICAxICsNCj4gIC4uLi9ncHUvZHJtL2FtZC9kaXNwbGF5L2RjL2Rj
-bjEwL2RjbjEwX2h1YmJ1Yi5jICAgIHwgIDQgKy0NCj4gIGRyaXZlcnMvZ3B1L2RybS9icmlkZ2Uv
-c3lub3BzeXMvZHctaGRtaS5jICAgICAgICAgIHwgNDYgKysrKysrLS0tLS0NCj4gIGRyaXZlcnMv
-Z3B1L2RybS9kcm1fbGVhc2UuYyAgICAgICAgICAgICAgICAgICAgICAgIHwgIDMgKy0NCj4gIGRy
-aXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kc2kuYyAgICAgICAgICAgIHwgMTIgKy0t
-DQo+ICBkcml2ZXJzL2dwdS9kcm0vbWVkaWF0ZWsvbXRrX2RybV9jcnRjLmMgICAgICAgICAgICB8
-IDE4ICsrKy0tDQo+ICBkcml2ZXJzL2h3dHJhY2luZy9pbnRlbF90aC9tc3UuYyAgICAgICAgICAg
-ICAgICAgICB8ICA2ICstDQo+ICBkcml2ZXJzL2h3dHJhY2luZy9pbnRlbF90aC9wY2kuYyAgICAg
-ICAgICAgICAgICAgICB8ICA1ICsrDQo+ICBkcml2ZXJzL2lpby9hY2NlbC9zdF9hY2NlbF9pMmMu
-YyAgICAgICAgICAgICAgICAgICB8ICAyICstDQo+ICBkcml2ZXJzL2lpby9hZGMvYXQ5MS1zYW1h
-NWQyX2FkYy5jICAgICAgICAgICAgICAgICB8IDE1ICsrKysNCj4gIGRyaXZlcnMvaWlvL2xpZ2h0
-L3Zjbmw0MDAwLmMgICAgICAgICAgICAgICAgICAgICAgIHwgIDcgKy0NCj4gIGRyaXZlcnMvaWlv
-L21hZ25ldG9tZXRlci9hazg5NzQuYyAgICAgICAgICAgICAgICAgIHwgIDIgKy0NCj4gIGRyaXZl
-cnMvaWlvL3RyaWdnZXIvc3RtMzItdGltZXItdHJpZ2dlci5jICAgICAgICAgIHwgMTEgKystDQo+
-ICBkcml2ZXJzL21kL2RtLWJpby1yZWNvcmQuaCAgICAgICAgICAgICAgICAgICAgICAgICB8IDE1
-ICsrKysNCj4gIGRyaXZlcnMvbWQvZG0taW50ZWdyaXR5LmMgICAgICAgICAgICAgICAgICAgICAg
-ICAgIHwgMzIgKysrLS0tLS0NCj4gIGRyaXZlcnMvbWlzYy9hbHRlcmEtc3RhcGwvYWx0ZXJhLmMg
-ICAgICAgICAgICAgICAgIHwgMTIgKy0tDQo+ICBkcml2ZXJzL21pc2MvY2FyZHJlYWRlci9ydHM1
-MjI3LmMgICAgICAgICAgICAgICAgICB8ICAyICstDQo+ICBkcml2ZXJzL21pc2MvY2FyZHJlYWRl
-ci9ydHM1MjQ5LmMgICAgICAgICAgICAgICAgICB8ICAyICsNCj4gIGRyaXZlcnMvbWlzYy9jYXJk
-cmVhZGVyL3J0czUyNjAuYyAgICAgICAgICAgICAgICAgIHwgIDIgKy0NCj4gIGRyaXZlcnMvbW1j
-L2hvc3QvcnRzeF9wY2lfc2RtbWMuYyAgICAgICAgICAgICAgICAgIHwgMTMgKy0tDQo+ICBkcml2
-ZXJzL21tYy9ob3N0L3NkaGNpLW9mLWF0OTEuYyAgICAgICAgICAgICAgICAgICB8ICA4ICstDQo+
-ICBkcml2ZXJzL25ldC92cmYuYyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICB8IDE5
-ICsrLS0tDQo+ICBkcml2ZXJzL3BlcmYvYXJtX3BtdV9hY3BpLmMgICAgICAgICAgICAgICAgICAg
-ICAgICB8ICA3ICstDQo+ICBkcml2ZXJzL3J0Yy9LY29uZmlnICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICB8ICAxICsNCj4gIGRyaXZlcnMvc3BpL3NwaS1weGEyeHguYyAgICAgICAgICAg
-ICAgICAgICAgICAgICAgIHwgMjMgKysrKysrDQo+ICBkcml2ZXJzL3NwaS9zcGktcXVwLmMgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICB8IDExICsrLQ0KPiAgZHJpdmVycy9zcGkvc3BpLXp5
-bnFtcC1ncXNwaS5jICAgICAgICAgICAgICAgICAgICAgfCAgMyAtDQo+ICBkcml2ZXJzL3N0YWdp
-bmcvZ3JleWJ1cy90b29scy9sb29wYmFja190ZXN0LmMgICAgICB8IDIxICsrLS0tDQo+ICBkcml2
-ZXJzL3N0YWdpbmcvcnRsODE4OGV1L29zX2RlcC91c2JfaW50Zi5jICAgICAgICB8ICAxICsNCj4g
-IGRyaXZlcnMvc3RhZ2luZy9zcGVha3VwL21haW4uYyAgICAgICAgICAgICAgICAgICAgIHwgIDIg
-Ky0NCj4gIGRyaXZlcnMvdXNiL2NsYXNzL2NkYy1hY20uYyAgICAgICAgICAgICAgICAgICAgICAg
-IHwgMzQgKysrKystLS0NCj4gIGRyaXZlcnMvdXNiL2NvcmUvcXVpcmtzLmMgICAgICAgICAgICAg
-ICAgICAgICAgICAgIHwgIDYgKysNCj4gIGRyaXZlcnMvdXNiL2hvc3QveGhjaS1wY2kuYyAgICAg
-ICAgICAgICAgICAgICAgICAgIHwgIDMgKy0NCj4gIGRyaXZlcnMvdXNiL2hvc3QveGhjaS1wbGF0
-LmMgICAgICAgICAgICAgICAgICAgICAgIHwgIDEgKw0KPiAgZHJpdmVycy91c2IvaG9zdC94aGNp
-LXRyYWNlLmggICAgICAgICAgICAgICAgICAgICAgfCAyMyArKy0tLS0NCj4gIGRyaXZlcnMvdXNi
-L3NlcmlhbC9vcHRpb24uYyAgICAgICAgICAgICAgICAgICAgICAgIHwgIDIgKw0KPiAgZHJpdmVy
-cy91c2Ivc2VyaWFsL3BsMjMwMy5jICAgICAgICAgICAgICAgICAgICAgICAgfCAgMSArDQo+ICBk
-cml2ZXJzL3VzYi9zZXJpYWwvcGwyMzAzLmggICAgICAgICAgICAgICAgICAgICAgICB8ICAxICsN
-Cj4gIGRyaXZlcnMveGVuL3hlbmJ1cy94ZW5idXNfY29tbXMuYyAgICAgICAgICAgICAgICAgIHwg
-IDQgKw0KPiAgZHJpdmVycy94ZW4veGVuYnVzL3hlbmJ1c194cy5jICAgICAgICAgICAgICAgICAg
-ICAgfCAgOSArKy0NCj4gIGZzL2J0cmZzL2lub2RlLmMgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgIHwgIDQgKw0KPiAgZnMvaW5vZGUuYyAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgfCAgMSArDQo+ICBpbmNsdWRlL2xpbnV4L2ZzLmggICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICB8ICAxICsNCj4gIGluY2x1ZGUvbGludXgvZnV0ZXguaCAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgIHwgMTcgKystLQ0KPiAgaW5jbHVkZS9saW51eC9wYWdl
-LWZsYWdzLmggICAgICAgICAgICAgICAgICAgICAgICAgfCAgMiArLQ0KPiAgaW5jbHVkZS9saW51
-eC92bWFsbG9jLmggICAgICAgICAgICAgICAgICAgICAgICAgICAgfCAgNSArLQ0KPiAga2VybmVs
-L2Z1dGV4LmMgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgfCA5MyArKysrKysr
-KysrKysrLS0tLS0tLS0tDQo+ICBrZXJuZWwvbm90aWZpZXIuYyAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICB8ICAyICstDQo+ICBtbS9tZW1jb250cm9sLmMgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICB8IDEwICsrLQ0KPiAgbW0vbm9tbXUuYyAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgfCAxMCArKy0NCj4gIG1tL3NsdWIuYyAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHwgMzIgKysrKystLS0NCj4gIG1tL3Zt
-YWxsb2MuYyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHwgMTEgKystDQo+
-ICBuZXQvaXB2Ni90Y3BfaXB2Ni5jICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICB8ICAz
-ICstDQo+ICBzY3JpcHRzL01ha2VmaWxlLmV4dHJhd2FybiAgICAgICAgICAgICAgICAgICAgICAg
-ICB8ICAxICsNCj4gIHNjcmlwdHMvcGFyc2UtbWFpbnRhaW5lcnMucGwgICAgICAgICAgICAgICAg
-ICAgICAgIHwgIDANCj4gIHNvdW5kL2NvcmUvb3NzL3BjbV9wbHVnaW4uYyAgICAgICAgICAgICAg
-ICAgICAgICAgIHwgMTIgKystDQo+ICBzb3VuZC9jb3JlL3NlcS9vc3Mvc2VxX29zc19taWRpLmMg
-ICAgICAgICAgICAgICAgICB8ICAxICsNCj4gIHNvdW5kL2NvcmUvc2VxL3NlcV92aXJtaWRpLmMg
-ICAgICAgICAgICAgICAgICAgICAgIHwgIDEgKw0KPiAgc291bmQvcGNpL2hkYS9wYXRjaF9yZWFs
-dGVrLmMgICAgICAgICAgICAgICAgICAgICAgfCAgMiArDQo+ICBzb3VuZC91c2IvbGluZTYvZHJp
-dmVyLmMgICAgICAgICAgICAgICAgICAgICAgICAgICB8ICAyICstDQo+ICBzb3VuZC91c2IvbGlu
-ZTYvbWlkaWJ1Zi5jICAgICAgICAgICAgICAgICAgICAgICAgICB8ICAyICstDQo+ICA3MCBmaWxl
-cyBjaGFuZ2VkLCA0NTggaW5zZXJ0aW9ucygrKSwgMjQwIGRlbGV0aW9ucygtKQ0KPiANCg0K
+On Fri, 20 Mar 2020 10:29:55 +0100
+Jean-Philippe Brucker <jean-philippe@linaro.org> wrote:
+
+> Hi Jacob,
+> 
+> I think this step is really useful and the patch looks good overall,
+> thanks for doing this. Some commments inline
+> 
+> On Mon, Feb 24, 2020 at 03:26:37PM -0800, Jacob Pan wrote:
+> > This patch is an initial step to replace Intel SVM code with the
+> > following IOMMU SVA ops:
+> > intel_svm_bind_mm() => iommu_sva_bind_device()
+> > intel_svm_unbind_mm() => iommu_sva_unbind_device()
+> > intel_svm_is_pasid_valid() => iommu_sva_get_pasid()
+> > 
+> > The features below will continue to work but are not included in
+> > this patch in that they are handled mostly within the IOMMU
+> > subsystem.
+> > - IO page fault
+> > - mmu notifier
+> > 
+> > Consolidation of the above will come after merging generic IOMMU sva
+> > code[1]. There should not be any changes needed for SVA users such
+> > as accelerator device drivers during this time.
+> > 
+> > [1] http://jpbrucker.net/sva/
+> > 
+> > Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
+> > ---
+> >  drivers/iommu/intel-iommu.c |   3 ++
+> >  drivers/iommu/intel-svm.c   | 123
+> > ++++++++++++++++++++++++--------------------
+> > include/linux/intel-iommu.h |   7 +++ include/linux/intel-svm.h
+> > |  85 ------------------------------ 4 files changed, 78
+> > insertions(+), 140 deletions(-)
+> > 
+> > diff --git a/drivers/iommu/intel-iommu.c
+> > b/drivers/iommu/intel-iommu.c index 5eca6e10d2a4..ccfa5adfd06d
+> > 100644 --- a/drivers/iommu/intel-iommu.c
+> > +++ b/drivers/iommu/intel-iommu.c
+> > @@ -6475,6 +6475,9 @@ const struct iommu_ops intel_iommu_ops = {
+> >  	.cache_invalidate	= intel_iommu_sva_invalidate,
+> >  	.sva_bind_gpasid	= intel_svm_bind_gpasid,
+> >  	.sva_unbind_gpasid	= intel_svm_unbind_gpasid,
+> > +	.sva_bind		= intel_svm_bind,
+> > +	.sva_unbind		= intel_svm_unbind,
+> > +	.sva_get_pasid		= intel_svm_get_pasid,
+> >  #endif
+> >  };
+> >  
+> > diff --git a/drivers/iommu/intel-svm.c b/drivers/iommu/intel-svm.c
+> > index 1d7a95372f8c..35d949513728 100644
+> > --- a/drivers/iommu/intel-svm.c
+> > +++ b/drivers/iommu/intel-svm.c
+> > @@ -516,13 +516,14 @@ int intel_svm_unbind_gpasid(struct device
+> > *dev, int pasid) return ret;
+> >  }
+> >  
+> > -int intel_svm_bind_mm(struct device *dev, int *pasid, int flags,
+> > struct svm_dev_ops *ops) +/* Caller must hold pasid_mutex, mm
+> > reference */ +static int intel_svm_bind_mm(struct device *dev, int
+> > flags, struct svm_dev_ops *ops,
+> > +		      struct mm_struct *mm, struct intel_svm_dev
+> > **sd) {
+> >  	struct intel_iommu *iommu = intel_svm_device_to_iommu(dev);
+> >  	struct device_domain_info *info;
+> >  	struct intel_svm_dev *sdev;
+> >  	struct intel_svm *svm = NULL;
+> > -	struct mm_struct *mm = NULL;
+> >  	int pasid_max;
+> >  	int ret;
+> >  
+> > @@ -539,16 +540,15 @@ int intel_svm_bind_mm(struct device *dev, int
+> > *pasid, int flags, struct svm_dev_ } else
+> >  		pasid_max = 1 << 20;
+> >  
+> > +	/* Bind supervisor PASID shuld have mm = NULL */  
+> 
+> should
+> 
+> >  	if (flags & SVM_FLAG_SUPERVISOR_MODE) {
+> > -		if (!ecap_srs(iommu->ecap))
+> > +		if (!ecap_srs(iommu->ecap) || mm) {
+> > +			pr_err("Supervisor PASID with user
+> > provided mm.\n"); return -EINVAL;
+> > -	} else if (pasid) {
+> > -		mm = get_task_mm(current);
+> > -		BUG_ON(!mm);
+> > +		}
+> >  	}
+> >  
+> > -	mutex_lock(&pasid_mutex);
+> > -	if (pasid && !(flags & SVM_FLAG_PRIVATE_PASID)) {
+> > +	if (!(flags & SVM_FLAG_PRIVATE_PASID)) {
+> >  		struct intel_svm *t;
+> >  
+> >  		list_for_each_entry(t, &global_svm_list, list) {
+> > @@ -586,9 +586,7 @@ int intel_svm_bind_mm(struct device *dev, int
+> > *pasid, int flags, struct svm_dev_ sdev->dev = dev;
+> >  
+> >  	ret = intel_iommu_enable_pasid(iommu, dev);
+> > -	if (ret || !pasid) {
+> > -		/* If they don't actually want to assign a PASID,
+> > this is
+> > -		 * just an enabling check/preparation. */
+> > +	if (ret) {
+> >  		kfree(sdev);
+> >  		goto out;
+> >  	}
+> > @@ -688,18 +686,17 @@ int intel_svm_bind_mm(struct device *dev, int
+> > *pasid, int flags, struct svm_dev_ }
+> >  	}
+> >  	list_add_rcu(&sdev->list, &svm->devs);
+> > -
+> > - success:
+> > -	*pasid = svm->pasid;
+> > +success:
+> > +	sdev->pasid = svm->pasid;
+> > +	sdev->sva.dev = dev;
+> > +	if (sd)
+> > +		*sd = sdev;  
+> 
+> One thing that might be missing: calling bind() multiple times with
+> the same (dev, mm) pair should take references to the svm struct, so
+> device drivers can call unbind() on it that many times.
+> 
+> >  	ret = 0;
+> >   out:
+> > -	mutex_unlock(&pasid_mutex);
+> > -	if (mm)
+> > -		mmput(mm);
+> >  	return ret;
+> >  }
+> > -EXPORT_SYMBOL_GPL(intel_svm_bind_mm);
+> >  
+> > +/* Caller must hold pasid_mutex */
+> >  int intel_svm_unbind_mm(struct device *dev, int pasid)
+> >  {
+> >  	struct intel_svm_dev *sdev;
+> > @@ -707,7 +704,6 @@ int intel_svm_unbind_mm(struct device *dev, int
+> > pasid) struct intel_svm *svm;
+> >  	int ret = -EINVAL;
+> >  
+> > -	mutex_lock(&pasid_mutex);
+> >  	iommu = intel_svm_device_to_iommu(dev);
+> >  	if (!iommu)
+> >  		goto out;
+> > @@ -753,45 +749,9 @@ int intel_svm_unbind_mm(struct device *dev,
+> > int pasid) break;
+> >  	}
+> >   out:
+> > -	mutex_unlock(&pasid_mutex);
+> >  
+> >  	return ret;
+> >  }
+> > -EXPORT_SYMBOL_GPL(intel_svm_unbind_mm);
+> > -
+> > -int intel_svm_is_pasid_valid(struct device *dev, int pasid)
+> > -{
+> > -	struct intel_iommu *iommu;
+> > -	struct intel_svm *svm;
+> > -	int ret = -EINVAL;
+> > -
+> > -	mutex_lock(&pasid_mutex);
+> > -	iommu = intel_svm_device_to_iommu(dev);
+> > -	if (!iommu)
+> > -		goto out;
+> > -
+> > -	svm = ioasid_find(NULL, pasid, NULL);
+> > -	if (!svm)
+> > -		goto out;
+> > -
+> > -	if (IS_ERR(svm)) {
+> > -		ret = PTR_ERR(svm);
+> > -		goto out;
+> > -	}
+> > -	/* init_mm is used in this case */
+> > -	if (!svm->mm)
+> > -		ret = 1;
+> > -	else if (atomic_read(&svm->mm->mm_users) > 0)
+> > -		ret = 1;
+> > -	else
+> > -		ret = 0;
+> > -
+> > - out:
+> > -	mutex_unlock(&pasid_mutex);
+> > -
+> > -	return ret;
+> > -}
+> > -EXPORT_SYMBOL_GPL(intel_svm_is_pasid_valid);
+> >  
+> >  /* Page request queue descriptor */
+> >  struct page_req_dsc {
+> > @@ -984,3 +944,56 @@ static irqreturn_t prq_event_thread(int irq,
+> > void *d) 
+> >  	return IRQ_RETVAL(handled);
+> >  }
+> > +
+> > +#define to_intel_svm_dev(handle) container_of(handle, struct
+> > intel_svm_dev, sva) +struct iommu_sva *
+> > +intel_svm_bind(struct device *dev, struct mm_struct *mm, void
+> > *drvdata) +{
+> > +	struct iommu_sva *sva = ERR_PTR(-EINVAL);
+> > +	struct intel_svm_dev *sdev = NULL;
+> > +	int flags = 0;
+> > +	int ret;
+> > +
+> > +	/*
+> > +	 * TODO: Consolidate with generic iommu-sva bind after it
+> > is merged.
+> > +	 * It will require shared SVM data structures, i.e.
+> > combine io_mm
+> > +	 * and intel_svm etc.
+> > +	 */
+> > +	if (drvdata)
+> > +		flags = *(int *)drvdata;  
+> 
+> drvdata is more for storing device driver contexts that can be passed
+> to iommu_sva_ops, but I get that this is temporary.
+> 
+> As usual I'm dreading supervisor mode making it into the common API.
+> What are your plans regarding SUPERVISOR_MODE and PRIVATE_PASID
+> flags?  The previous discussion on the subject [1] had me hoping that
+> you could replace supervisor mode with normal mappings (auxiliary
+> domains?) I'm less worried about PRIVATE_PASID, it would just add
+> complexity into the API and iommu-sva implementation, but doesn't
+> really have security implications.
+> 
+> [1]
+> https://lore.kernel.org/linux-iommu/20190228220449.GA12682@araj-mobl1.jf.intel.com/
+> 
+> > +	mutex_lock(&pasid_mutex);
+> > +	ret = intel_svm_bind_mm(dev, flags, NULL, mm, &sdev);
+> > +	if (ret)
+> > +		sva = ERR_PTR(ret);
+> > +	else if (sdev)
+> > +		sva = &sdev->sva;
+> > +	else
+> > +		WARN(!sdev, "SVM bind succeeded with no sdev!\n");
+> > +
+> > +	mutex_unlock(&pasid_mutex);
+> > +
+> > +	return sva;
+> > +}
+> > +
+> > +void intel_svm_unbind(struct iommu_sva *sva)
+> > +{
+> > +	struct intel_svm_dev *sdev;
+> > +
+> > +	mutex_lock(&pasid_mutex);
+> > +	sdev = to_intel_svm_dev(sva);
+> > +	intel_svm_unbind_mm(sdev->dev, sdev->pasid);
+> > +	mutex_unlock(&pasid_mutex);
+> > +}
+> > +
+> > +int intel_svm_get_pasid(struct iommu_sva *sva)
+> > +{
+> > +	struct intel_svm_dev *sdev;
+> > +	int pasid;
+> > +
+> > +	mutex_lock(&pasid_mutex);
+> > +	sdev = to_intel_svm_dev(sva);
+> > +	pasid = sdev->pasid;
+> > +	mutex_unlock(&pasid_mutex);
+> > +
+> > +	return pasid;
+> > +}
+> > diff --git a/include/linux/intel-iommu.h
+> > b/include/linux/intel-iommu.h index 37cfd35b7ccf..044493a11dce
+> > 100644 --- a/include/linux/intel-iommu.h
+> > +++ b/include/linux/intel-iommu.h
+> > @@ -702,6 +702,11 @@ extern int intel_svm_finish_prq(struct
+> > intel_iommu *iommu); extern int intel_svm_bind_gpasid(struct
+> > iommu_domain *domain, struct device *dev, struct
+> > iommu_gpasid_bind_data *data); extern int
+> > intel_svm_unbind_gpasid(struct device *dev, int pasid); +extern
+> > struct iommu_sva * +intel_svm_bind(struct device *dev, struct
+> > mm_struct *mm, void *drvdata); +extern void intel_svm_unbind(struct
+> > iommu_sva *handle); +extern int intel_svm_get_pasid(struct
+> > iommu_sva *handle); +
+> >  struct svm_dev_ops;
+> >  
+> >  struct intel_svm_dev {
+> > @@ -709,6 +714,8 @@ struct intel_svm_dev {
+> >  	struct rcu_head rcu;
+> >  	struct device *dev;
+> >  	struct svm_dev_ops *ops;
+> > +	struct iommu_sva sva;
+> > +	int pasid;
+> >  	int users;
+> >  	u16 did;
+> >  	u16 dev_iotlb:1;
+> > diff --git a/include/linux/intel-svm.h b/include/linux/intel-svm.h
+> > index a2c189ad0b01..fb7e786d8877 100644
+> > --- a/include/linux/intel-svm.h
+> > +++ b/include/linux/intel-svm.h
+> > @@ -62,89 +62,4 @@ struct svm_dev_ops {
+> >   */
+> >  #define SVM_FLAG_GUEST_PASID	(1<<3)
+> >  
+> > -#ifdef CONFIG_INTEL_IOMMU_SVM
+> > -
+> > -/**
+> > - * intel_svm_bind_mm() - Bind the current process to a PASID
+> > - * @dev:	Device to be granted access
+> > - * @pasid:	Address for allocated PASID
+> > - * @flags:	Flags. Later for requesting supervisor mode, etc.
+> > - * @ops:	Callbacks to device driver
+> > - *
+> > - * This function attempts to enable PASID support for the given
+> > device.
+> > - * If the @pasid argument is non-%NULL, a PASID is allocated for
+> > access
+> > - * to the MM of the current process.
+> > - *
+> > - * By using a %NULL value for the @pasid argument, this function
+> > can
+> > - * be used to simply validate that PASID support is available for
+> > the
+> > - * given device — i.e. that it is behind an IOMMU which has the
+> > - * requisite support, and is enabled.
+> > - *
+> > - * Page faults are handled transparently by the IOMMU code, and
+> > there
+> > - * should be no need for the device driver to be involved. If a
+> > page
+> > - * fault cannot be handled (i.e. is an invalid address rather than
+> > - * just needs paging in), then the page request will be completed
+> > by
+> > - * the core IOMMU code with appropriate status, and the device
+> > itself
+> > - * can then report the resulting fault to its driver via whatever
+> > - * mechanism is appropriate.
+> > - *
+> > - * Multiple calls from the same process may result in the same
+> > PASID
+> > - * being re-used. A reference count is kept.
+> > - */
+> > -extern int intel_svm_bind_mm(struct device *dev, int *pasid, int
+> > flags,
+> > -			     struct svm_dev_ops *ops);  
+> 
+> I notice svm_dev_ops isn't used anymore. Will you remove it entirely,
+> or do you think we should move svm_dev_ops::fault_cb() to
+> iommu_sva_ops?
+> 
+I don;t think fault_cb() is useful anymore since we have per device
+fault reporting APIs. I will remove it. Thanks for the reminder.
+
+> iommu_sva_ops::mm_exit() is also missing, but I plan to send a RFC to
+> remove it shortly, so don't bother :)
+Remove iommu_sva_ops? I will wait for the patch.
+
+Thanks,
+
+Jacob
