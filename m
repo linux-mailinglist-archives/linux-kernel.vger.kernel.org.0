@@ -2,59 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CB3C4190BEB
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 12:06:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 11DF6190BF4
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Mar 2020 12:06:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727297AbgCXLGH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 07:06:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36556 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726524AbgCXLGH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 07:06:07 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8A02F20786;
-        Tue, 24 Mar 2020 11:06:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585047967;
-        bh=2LvE4EYXx6S7St3XOfLekrr0TlyAbuI62HGedV7PVfQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=BMhjKYnTWQPLqClRhwzeajd6cZLTTFORXjkcvfQmEmIVUg7JPlcZsMrANTFof7NHd
-         wlWlxdOGa8LS/D11JaFVyXerSDI6CgWlFZtnDC2IKK2L+gWLquXQla4/5eWmsPKoTQ
-         WgB2JPDT362mDWfTZOs1hyoYL2NDudE1kUbt6Hoo=
-Date:   Tue, 24 Mar 2020 12:06:04 +0100
-From:   gregkh <gregkh@linuxfoundation.org>
-To:     =?utf-8?B?5ZSQ5b2s?= <tangbin@cmss.chinamobile.com>
-Cc:     Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        cernekee <cernekee@gmail.com>, balbi <balbi@kernel.org>,
-        "f.fainelli" <f.fainelli@gmail.com>,
-        bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>,
-        linux-usb <linux-usb@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: Re: [PATCH] usb: gadget: bcm63xx_udc:remove useless variable
- definition
-Message-ID: <20200324110604.GA2225782@kroah.com>
-References: <20200324062932.8364-1-tangbin@cmss.chinamobile.com>
- <5f67315d-18c1-e444-03e7-a79a21d48b02@cogentembedded.com>
- <202003241719218101862@cmss.chinamobile.com>
+        id S1727275AbgCXLGl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 07:06:41 -0400
+Received: from mail-pj1-f67.google.com ([209.85.216.67]:55417 "EHLO
+        mail-pj1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726524AbgCXLGk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Mar 2020 07:06:40 -0400
+Received: by mail-pj1-f67.google.com with SMTP id mj6so1324705pjb.5
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Mar 2020 04:06:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=W2zZIBrFIUdIwJtiA0rHIIgEIRNeZEGmX6yVzyUZvcU=;
+        b=oVX4yLyb5aLdnDPwC6UADVmWbjxBpmsWAqZNIVQkDWjtUja3ZmwH6bPKE/lhYj1E+z
+         KZHq73DSe3wsRdhB9iQwRmYAzFvLXQW0h9v8Q86SqDWGvMKkJ7p0aN05ttV0BPbHXXmb
+         EW56hwB8e8dgWPV2NLU8m0mvyOFwbsTqiyDe/Jie768Nr64T9YbDj5EgYlgPShbhyyhe
+         aRaWjSdG+i0mA6veN8WOGvvUr2K8jaxFuLzkz9V51b3ue0nq3qNeCL91Ram/rNqzFdaq
+         9YSADk86aYG33/NL+L6aNw4kyS2HnEhF5skYdNoV87DNAuB+R9diYHZcOzYZ8R7XxaRe
+         qNHQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=W2zZIBrFIUdIwJtiA0rHIIgEIRNeZEGmX6yVzyUZvcU=;
+        b=ircoqlsa4cxM3IA4LTfKxM3du1rKgHXTpgSkpuBzHPX0s1qR1+qIkE7G6vMRoKnL9b
+         ovLRtdl1DiR3k3K6piNnX0d+Vo8o4MKZp88F45xg3TmYs/m2j53yVYlO2lQYet+7lTCW
+         icaXOooTa2pGf0ZXRVenL7xi3N14rYzGFUGqGlSmlMFKmqYc1AFSApEnNK0BXOLcEhG3
+         wMx4dWBSz+ehixhOS7LIqVuUoqUatU6XQDypQQ1v6tPkSQ2UgFV5V1AnGD6C2wi72FDY
+         zyRs4dw+S0il8BvF2Gth+fTI9kgcXiwlHTcPN3wjFPO8cIOvursPHXke4s2uWLCj97Dn
+         UOFw==
+X-Gm-Message-State: ANhLgQ2tD6t5NzHdcBrebPiPrqr5dOQOz1jV2TvjFpU5dfXPgVIeD4Fd
+        aFgMFB0dFv9qY/6LqTJ5rTo=
+X-Google-Smtp-Source: ADFU+vukAws34i1riRLz0FLNUO0kB8kxFAaHg2peUeXCCNis1uXRRG22cmYupdWicicN+fxtnlNVvA==
+X-Received: by 2002:a17:90a:e003:: with SMTP id u3mr2981827pjy.157.1585047999939;
+        Tue, 24 Mar 2020 04:06:39 -0700 (PDT)
+Received: from localhost ([49.207.53.57])
+        by smtp.gmail.com with ESMTPSA id g7sm1997709pjl.17.2020.03.24.04.06.38
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 24 Mar 2020 04:06:39 -0700 (PDT)
+Date:   Tue, 24 Mar 2020 16:36:37 +0530
+From:   afzal mohammed <afzal.mohd.ma@gmail.com>
+To:     Michael Ellerman <mpe@ellerman.id.au>,
+        Thomas Gleixner <tglx@linutronix.de>
+Cc:     Christophe Leroy <christophe.leroy@c-s.fr>,
+        Scott Wood <oss@buserror.net>,
+        Kumar Gala <galak@kernel.crashing.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Vitaly Bordug <vitb@kernel.crashing.org>,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4] powerpc: Replace setup_irq() by request_irq()
+Message-ID: <20200324110637.GA5836@afzalpc>
+References: <20200304004746.4557-1-afzal.mohd.ma@gmail.com>
+ <20200312064256.18735-1-afzal.mohd.ma@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <202003241719218101862@cmss.chinamobile.com>
+In-Reply-To: <20200312064256.18735-1-afzal.mohd.ma@gmail.com>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 24, 2020 at 05:19:22PM +0800, 唐彬 wrote:
-> Dear Sir：
->         I'm glad for you replay。Yes。I think the variable assignment here can be deleted。
+Hi Michael Ellerman,
 
-Great, can you please fix up your patch to say that?
+On Thu, Mar 12, 2020 at 12:12:55PM +0530, afzal mohammed wrote:
 
-thanks,
+> request_irq() is preferred over setup_irq(). Invocations of setup_irq()
+> occur after memory allocators are ready.
+> 
+> Per tglx[1], setup_irq() existed in olden days when allocators were not
+> ready by the time early interrupts were initialized.
+> 
+> Hence replace setup_irq() by request_irq().
+> 
+> [1] https://lkml.kernel.org/r/alpine.DEB.2.20.1710191609480.1971@nanos
+> 
+> Signed-off-by: afzal mohammed <afzal.mohd.ma@gmail.com>
 
-greg k-h
+This patch is seen in next-test branch for last 4-5 days, i don't know
+exactly how powerpc workflow happens, so a question - this would be
+appear in linux-next soon right ? (for last 4-5 days i had been daily
+checking -next, but not appearing there).
+
+Sorry for the query for this trivial patch, i am asking because Thomas
+had mentioned [1] to get setup_irq() cleanup thr' respective
+maintainers (earlier it was part of tree-wide series), check -next after
+-rc6 & resubmit ignored ones to him, this patch is neither in -next,
+neither ignored, so i am at a loss what to do :(
+
+And i would prefer to let each patch go thr' respective maintainers so
+that only least patches has to be sent to Thomas. Bigger problem is that
+core removal patch of setup_irq() can be sent to him only after making
+sure that it's tree-wide usage has been removed.
+
+Regards
+afzal
+
+
+[1] https://lkml.kernel.org/r/87y2somido.fsf@nanos.tec.linutronix.de
