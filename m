@@ -2,256 +2,170 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9D199192C67
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 16:27:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A95CD192C7B
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 16:28:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727794AbgCYP07 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Mar 2020 11:26:59 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:45990 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727904AbgCYP0z (ORCPT
+        id S1727854AbgCYP2j (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Mar 2020 11:28:39 -0400
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:36816 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727828AbgCYP2j (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Mar 2020 11:26:55 -0400
-Received: by mail-wr1-f68.google.com with SMTP id t7so3589005wrw.12
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Mar 2020 08:26:53 -0700 (PDT)
+        Wed, 25 Mar 2020 11:28:39 -0400
+Received: by mail-lf1-f66.google.com with SMTP id s1so2149600lfd.3
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Mar 2020 08:28:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=/Gyxp2a9zGP5hZ4HP4Fi/8eZQmOLnr2Z8mMtXGHkhuU=;
-        b=UHPsytR5w/jCg5MAHnUVTTsWgxse5E4WIwTLE3qFcFmv73tU9y0/HD8qPVWODPHv6d
-         vegQD/OiKN9Os/0B1hig2WgcQV1wnCjPS1o1CTuIOgQZfVfQ2ex5RvLDMbeknpwTLWx4
-         E7q5fJoO1BZZc+xfYU88K6zdtVv8tNGz6JGlU=
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=MAfXLeK4jv3GCXZEXdtxljvjsSAfg9wpjX0t8Ep/xn0=;
+        b=aDW1feaQrj/vQbwncf35ZAbIJQv6QoVYZCbKz9TCT9fUH98JKwEEaGp+U3VA4/RSxj
+         M2U1pJCxnd/u57YPJBO93DEX2pyVd5yTcvNeo3knsXJMSZXsjuSwyZbLvyiU1biwWm6p
+         CGrF1GW7glPm10woi2K7MCSpOd6gPGxgfI5wUW4egp3qRlpv0tElS6C3iexVg400nWrW
+         jFLalqO3PixJa/k6GxgaWExvLfeARawYBJhoYg6e2BCtnChUG8KMqaG1szJeWQ2KoZpY
+         BHHVvBAmrzGU9sAO4d+K7uYZ0ONthZXN1RMD0zzJ5xLy4buThs8hGRL8hQeUor+yr0S0
+         i15A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=/Gyxp2a9zGP5hZ4HP4Fi/8eZQmOLnr2Z8mMtXGHkhuU=;
-        b=kc+4nA2wkbUK7x77LDKVNg0F3embqEOthYXn5IagiJe0Nwl4CfsswesCnYtVNXXUEx
-         uZHffKSqwJyXYMgsPPqRaLEcly3smt8MTWZrih5TGi7WRt0WboEBJl7bsCoyEoAHZDmZ
-         iEQ53b2/TlzFEDaehq7IScjxvH1bmYbj3SiLcRT0ad/273td8DL9W3LZjWzqo35vL8Xa
-         ANGR3o1HOj30gdjyhqrDZ1kS0UkgR3D98Ohu7NiP1/Rs47yed+q07nFKqVw9SbdMi4Dg
-         yyL7FYGcFgAILiltl4gv6Ia/EMvQPE3c18sFhFExshZnwuwojVY78R2sf5iHMohfPaGS
-         7DkQ==
-X-Gm-Message-State: ANhLgQ1KSuUwYPrCQmX1GLK0zJNctv5tHMocYkX81/gT4VMByTvyssvS
-        32CBWFKDhRJwJJdqSXHcP+bD85DNf9s=
-X-Google-Smtp-Source: ADFU+vuCFYAQx8wKjzFjm8yswfCPHsfxDJ967YK931GekZSj8QKSDOtlqCPKU2ihNiJEHFVQi4Hxhw==
-X-Received: by 2002:adf:ce8d:: with SMTP id r13mr3965059wrn.253.1585150012222;
-        Wed, 25 Mar 2020 08:26:52 -0700 (PDT)
-Received: from kpsingh-kernel.localdomain (77-56-209-237.dclient.hispeed.ch. [77.56.209.237])
-        by smtp.gmail.com with ESMTPSA id a2sm4033701wrp.13.2020.03.25.08.26.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Mar 2020 08:26:51 -0700 (PDT)
-From:   KP Singh <kpsingh@chromium.org>
-To:     linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Cc:     Brendan Jackman <jackmanb@google.com>,
-        Florent Revest <revest@google.com>,
-        Thomas Garnier <thgarnie@google.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        James Morris <jmorris@namei.org>,
-        Kees Cook <keescook@chromium.org>,
-        Paul Turner <pjt@google.com>, Jann Horn <jannh@google.com>,
-        Florent Revest <revest@chromium.org>,
-        Brendan Jackman <jackmanb@chromium.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: [PATCH bpf-next v6 8/8] bpf: lsm: Add Documentation
-Date:   Wed, 25 Mar 2020 16:26:29 +0100
-Message-Id: <20200325152629.6904-9-kpsingh@chromium.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200325152629.6904-1-kpsingh@chromium.org>
-References: <20200325152629.6904-1-kpsingh@chromium.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=MAfXLeK4jv3GCXZEXdtxljvjsSAfg9wpjX0t8Ep/xn0=;
+        b=Re2EFhcPg9yVMMj2hGGH4FKFIIu1PaKMUDEFGhlV9EUDXgMPjfxq9GDcWlrUJnRxFz
+         4bdAOkMsvHi5X9wQqAqFRlZB07uLKxDf3KR7zX3dbs6hwJZPhEadEiUR/5pBelotuAjG
+         tzuogVfQ7u0rtfak/fo6V3hYaAHVArk0f1jQf6x1w+lLYLwxonsfQCYi+hAq/XwS/KbW
+         QR1vsSb2YtqLEy5p3nMSdmT8xpDix3H2NsaIIaGCw2/BfcgKvKccFIk4w3AKeaXKqMNI
+         /br+KwBXISMoTj7xsSSpyXYFXqyC+tMBkQa2FZgtTrGRLgeEzFgnBVND3Pmz8wNx2bR2
+         Wr8w==
+X-Gm-Message-State: ANhLgQ38WzH9lyG8wWrSmANES/SFRaZmIfF3WpSQJa8XMJl/fLY5lQYQ
+        UbgreHoumA7Apj6KBZJOz6tFcJVGGJSeJZm9Y1mhLQ==
+X-Google-Smtp-Source: ADFU+vvPsxfhLZkuw1zm3DaRk4jDzbr+V6wKm8OS63ckoV6lXpkrggY1jnKk/LQr1ujMiOa33DUQuJWItnCXDLsD8jE=
+X-Received: by 2002:ac2:43a8:: with SMTP id t8mr2721177lfl.82.1585150114380;
+ Wed, 25 Mar 2020 08:28:34 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <cover.1585117436.git.amit.kucheria@linaro.org>
+ <1ee4240e29edefc36b5d410d4792971c2bb4c5d5.1585117436.git.amit.kucheria@linaro.org>
+ <a89df770-eeb9-e4f2-2a46-ee4389720597@arm.com>
+In-Reply-To: <a89df770-eeb9-e4f2-2a46-ee4389720597@arm.com>
+From:   Amit Kucheria <amit.kucheria@linaro.org>
+Date:   Wed, 25 Mar 2020 20:58:23 +0530
+Message-ID: <CAP245DX04zTMhNep46MNB7yhxnBshX0bb7sQmaSq_6KScvH2jg@mail.gmail.com>
+Subject: Re: [PATCH v3 2/3] dt-bindings: thermal: Add yaml bindings for
+ thermal cooling-devices
+To:     Lukasz Luba <lukasz.luba@arm.com>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Stephen Boyd <swboyd@chromium.org>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Amit Kucheria <amit.kucheria@verdurent.com>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        DTML <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: KP Singh <kpsingh@google.com>
+On Wed, Mar 25, 2020 at 3:51 PM Lukasz Luba <lukasz.luba@arm.com> wrote:
+>
+> Hi Amit,
+>
+> On 3/25/20 6:34 AM, Amit Kucheria wrote:
+> > As part of moving the thermal bindings to YAML, split it up into 3
+> > bindings: thermal sensors, cooling devices and thermal zones.
+> >
+> > The property #cooling-cells is required in each device that acts as a
+> > cooling device - whether active or passive. So any device that can
+> > throttle its performance to passively reduce heat dissipation (e.g.
+> > cpus, gpus) and any device that can actively dissipate heat at different
+> > levels (e.g. fans) will contain this property.
+> >
+> > Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
+> > ---
+> >   .../thermal/thermal-cooling-devices.yaml      | 116 ++++++++++++++++++
+> >   1 file changed, 116 insertions(+)
+> >   create mode 100644 Documentation/devicetree/bindings/thermal/thermal-cooling-devices.yaml
+> >
+> > diff --git a/Documentation/devicetree/bindings/thermal/thermal-cooling-devices.yaml b/Documentation/devicetree/bindings/thermal/thermal-cooling-devices.yaml
+> > new file mode 100644
+> > index 000000000000..b5599f7859f8
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/thermal/thermal-cooling-devices.yaml
+> > @@ -0,0 +1,116 @@
+> > +# SPDX-License-Identifier: (GPL-2.0)
+> > +# Copyright 2020 Linaro Ltd.
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/thermal/thermal-cooling-devices.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: Thermal cooling device binding
+> > +
+> > +maintainers:
+> > +  - Amit Kucheria <amitk@kernel.org>
+> > +
+> > +description: |
+> > +  Thermal management is achieved in devicetree by describing the sensor hardware
+> > +  and the software abstraction of cooling devices and thermal zones required to
+> > +  take appropriate action to mitigate thermal overload.
+> > +
+> > +  The following node types are used to completely describe a thermal management
+> > +  system in devicetree:
+> > +   - thermal-sensor: device that measures temperature, has SoC-specific bindings
+> > +   - cooling-device: device used to dissipate heat either passively or artively
+> > +   - thermal-zones: a container of the following node types used to describe all
+> > +     thermal data for the platform
+> > +
+> > +  This binding describes the cooling devices.
+> > +
+> > +  There are essentially two ways to provide control on power dissipation:
+> > +    - Passive cooling: by means of regulating device performance. A typical
+> > +      passive cooling mechanism is a CPU that has dynamic voltage and frequency
+> > +      scaling (DVFS), and uses lower frequencies as cooling states.
+> > +    - Active cooling: by means of activating devices in order to remove the
+> > +      dissipated heat, e.g. regulating fan speeds.
+> > +
+> > +  Any cooling device has a range of cooling states (i.e. different levels of
+> > +  heat dissipation). They also have a way to determine the state of cooling in
+> > +  which the device is. For example, a fan's cooling states correspond to the
+> > +  different fan speeds possible. Cooling states are referred to by single
+> > +  unsigned integers, where larger numbers mean greater heat dissipation. The
+> > +  precise set of cooling states associated with a device should be defined in
+> > +  a particular device's binding.
+>
+> [snip]
+>
+> > +
+> > +    thermal-zones {
+> > +            cpu0-thermal {
+> > +                    polling-delay-passive = <250>;
+> > +                    polling-delay = <1000>;
+> > +
+> > +                    thermal-sensors = <&tsens0 1>;
+> > +
+> > +                    trips {
+> > +                            cpu0_alert0: trip-point0 {
+> > +                                    temperature = <90000>;
+> > +                                    hysteresis = <2000>;
+> > +                                    type = "passive";
+> > +                            };
+> > +                    };
+> > +
+> > +                    cooling-maps {
+> > +                            map0 {
+> > +                                    trip = <&cpu0_alert0>;
+> > +                                    cooling-device = <&CPU0 THERMAL_NO_LIMIT
+> > +                                                            THERMAL_NO_LIMIT>;
+>
+> Maybe add something like this, to better reflect the description:
+>
+>                         trip = <&cpu0_alert0>;
+>                         /* Corresponds to 1000MHz in OPP table */
+>                         cooling-device = <&CPU0 5 5>;
+>
+> This is less confusing than THERMAL_NO_LIMIT.
 
-Document how eBPF programs (BPF_PROG_TYPE_LSM) can be loaded and
-attached (BPF_LSM_MAC) to the LSM hooks.
+Thanks for the review.
 
-Signed-off-by: KP Singh <kpsingh@google.com>
-Reviewed-by: Brendan Jackman <jackmanb@google.com>
-Reviewed-by: Florent Revest <revest@google.com>
-Reviewed-by: Thomas Garnier <thgarnie@google.com>
----
- Documentation/bpf/bpf_lsm.rst | 150 ++++++++++++++++++++++++++++++++++
- Documentation/bpf/index.rst   |   1 +
- 2 files changed, 151 insertions(+)
- create mode 100644 Documentation/bpf/bpf_lsm.rst
-
-diff --git a/Documentation/bpf/bpf_lsm.rst b/Documentation/bpf/bpf_lsm.rst
-new file mode 100644
-index 000000000000..2a2c3b4a74d4
---- /dev/null
-+++ b/Documentation/bpf/bpf_lsm.rst
-@@ -0,0 +1,150 @@
-+.. SPDX-License-Identifier: GPL-2.0+
-+.. Copyright (C) 2020 Google LLC.
-+
-+================
-+LSM BPF Programs
-+================
-+
-+These BPF programs allow runtime instrumentation of the LSM hooks by privileged
-+users to implement system-wide MAC (Mandatory Access Control) and Audit
-+policies using eBPF. Since these program end up modifying the MAC policies of
-+the system, they require both ``CAP_MAC_ADMIN`` and also require
-+``CAP_SYS_ADMIN`` for the loading of BPF programs.
-+
-+Structure
-+---------
-+
-+The example shows an eBPF program that can be attached to the ``file_mprotect``
-+LSM hook:
-+
-+.. c:function:: int file_mprotect(struct vm_area_struct *vma, unsigned long reqprot, unsigned long prot);
-+
-+Other LSM hooks which can be instrumented can be found in
-+``include/linux/lsm_hooks.h``.
-+
-+eBPF programs that use :doc:`/bpf/btf` do not need to include kernel headers
-+for accessing information from the attached eBPF program's context. They can
-+simply declare the structures in the eBPF program and only specify the fields
-+that need to be accessed.
-+
-+.. code-block:: c
-+
-+	struct mm_struct {
-+		unsigned long start_brk, brk, start_stack;
-+	} __attribute__((preserve_access_index));
-+
-+	struct vm_area_struct {
-+		unsigned long start_brk, brk, start_stack;
-+		unsigned long vm_start, vm_end;
-+		struct mm_struct *vm_mm;
-+	} __attribute__((preserve_access_index));
-+
-+
-+.. note:: Only the size and the names of the fields must match the type in the
-+	  kernel and the order of the fields is irrelevant.
-+
-+This can be further simplified (if one has access to the BTF information at
-+build time) by generating the ``vmlinux.h`` with:
-+
-+.. code-block:: console
-+
-+        # bpftool dump file <path-to-btf-vmlinux> format c > vmlinux.h
-+
-+.. note:: ``path-to-btf-vmlinux`` can be ``/sys/kernel/btf/vmlinux`` if the
-+	  build environment matches the environment the BPF programs are
-+	  deployed in.
-+
-+The ``vmlinux.h`` can then simply be included in the BPF programs without
-+requiring the definition of the types.
-+
-+The eBPF programs can be declared using the``BPF_PROG``
-+macros defined in `tools/lib/bpf/bpf_tracing.h`_. In this
-+example:
-+
-+	* ``"lsm/file_mprotect"`` indicates the LSM hook that the program must
-+	  be attached to
-+	* ``mprotect_audit`` is the name of the eBPF program
-+
-+.. code-block:: c
-+
-+        SEC("lsm/file_mprotect")
-+        int BPF_PROG(mprotect_audit, struct vm_area_struct *vma,
-+                     unsigned long reqprot, unsigned long prot, int ret)
-+	{
-+                /* Ret is the return value from the previous BPF program
-+                 * or 0 if it's the first hook.
-+                 */
-+                if (ret != 0)
-+                        return ret;
-+
-+		int is_heap;
-+
-+		is_heap = (vma->vm_start >= vma->vm_mm->start_brk &&
-+			   vma->vm_end <= vma->vm_mm->brk);
-+
-+		/* Return an -EPERM or write information to the perf events buffer
-+		 * for auditing
-+		 */
-+	}
-+
-+The ``__attribute__((preserve_access_index))`` is a clang feature that allows
-+the BPF verifier to update the offsets for the access at runtime using the
-+:doc:`/bpf/btf` information. Since the BPF verifier is aware of the types, it
-+also validates all the accesses made to the various types in the eBPF program.
-+
-+Loading
-+-------
-+
-+eBPF programs can be loaded with the :manpage:`bpf(2)` syscall's
-+``BPF_PROG_LOAD`` operation or more simply by using the the libbpf helper
-+``bpf_prog_load_xattr``:
-+
-+
-+.. code-block:: c
-+
-+	struct bpf_prog_load_attr attr = {
-+		.file = "./prog.o",
-+	};
-+	struct bpf_object *prog_obj;
-+	struct bpf_program *prog;
-+	int prog_fd;
-+
-+	bpf_prog_load_xattr(&attr, &prog_obj, &prog_fd);
-+
-+Attachment to LSM Hooks
-+-----------------------
-+
-+The LSM allows attachment of eBPF programs as LSM hooks using :manpage:`bpf(2)`
-+syscall's ``BPF_PROG_ATTACH`` operation or more simply by
-+using the libbpf helper ``bpf_program__attach_lsm``. In the code shown below
-+``prog`` is the eBPF program loaded using ``BPF_PROG_LOAD``:
-+
-+.. code-block:: c
-+
-+	struct bpf_link *link;
-+
-+	link = bpf_program__attach_lsm(prog);
-+
-+The program can be detached from the LSM hook by *destroying* the ``link``
-+link returned by ``bpf_program__attach_lsm``:
-+
-+.. code-block:: c
-+
-+	link->destroy();
-+
-+Examples
-+--------
-+
-+An example eBPF programs can be found in
-+`tools/testing/selftests/bpf/progs/lsm.c`_ and the corresponding
-+userspace code in `tools/testing/selftests/bpf/prog_tests/test_lsm.c`_
-+
-+.. Links
-+.. _tools/lib/bpf/bpf_tracing.h:
-+   https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/tree/tools/lib/bpf/bpf_tracing.h
-+.. _tools/testing/selftests/bpf/progs/lsm.c:
-+   https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/tree/tools/testing/selftests/bpf/progs/lsm.c
-+.. _tools/testing/selftests/bpf/progs/lsm_void_hook.c:
-+   https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/tree/tools/testing/selftests/bpf/progs/lsm_void_hook.c
-+.. _tools/testing/selftests/bpf/prog_tests/test_lsm.c:
-+   https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/tree/tools/testing/selftests/bpf/prog_tests/test_lsm.c
-diff --git a/Documentation/bpf/index.rst b/Documentation/bpf/index.rst
-index 4f5410b61441..2c3d3c0cb7bb 100644
---- a/Documentation/bpf/index.rst
-+++ b/Documentation/bpf/index.rst
-@@ -45,6 +45,7 @@ Program types
-    prog_cgroup_sockopt
-    prog_cgroup_sysctl
-    prog_flow_dissector
-+   bpf_lsm
- 
- 
- Testing BPF
--- 
-2.20.1
-
+Will fix.
