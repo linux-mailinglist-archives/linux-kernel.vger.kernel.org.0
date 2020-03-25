@@ -2,139 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 98DE5192E2F
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 17:27:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5F4F7192E35
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 17:28:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728106AbgCYQ1S convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 25 Mar 2020 12:27:18 -0400
-Received: from lhrrgout.huawei.com ([185.176.76.210]:2605 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727386AbgCYQ1S (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Mar 2020 12:27:18 -0400
-Received: from lhreml702-cah.china.huawei.com (unknown [172.18.7.107])
-        by Forcepoint Email with ESMTP id 7C7B644093CAB3F291D8;
-        Wed, 25 Mar 2020 16:27:16 +0000 (GMT)
-Received: from lhreml715-chm.china.huawei.com (10.201.108.66) by
- lhreml702-cah.china.huawei.com (10.201.108.43) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Wed, 25 Mar 2020 16:27:16 +0000
-Received: from lhreml715-chm.china.huawei.com (10.201.108.66) by
- lhreml715-chm.china.huawei.com (10.201.108.66) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1713.5; Wed, 25 Mar 2020 16:27:16 +0000
-Received: from lhreml715-chm.china.huawei.com ([10.201.108.66]) by
- lhreml715-chm.china.huawei.com ([10.201.108.66]) with mapi id 15.01.1713.004;
- Wed, 25 Mar 2020 16:27:16 +0000
-From:   Shiju Jose <shiju.jose@huawei.com>
-To:     Bjorn Helgaas <helgaas@kernel.org>
-CC:     "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "rjw@rjwysocki.net" <rjw@rjwysocki.net>,
-        "lenb@kernel.org" <lenb@kernel.org>, "bp@alien8.de" <bp@alien8.de>,
-        "james.morse@arm.com" <james.morse@arm.com>,
-        "tony.luck@intel.com" <tony.luck@intel.com>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "zhangliguang@linux.alibaba.com" <zhangliguang@linux.alibaba.com>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        Linuxarm <linuxarm@huawei.com>,
-        Jonathan Cameron <jonathan.cameron@huawei.com>,
-        tanxiaofei <tanxiaofei@huawei.com>,
-        yangyicong <yangyicong@huawei.com>
-Subject: RE: [PATCH v5 0/2] ACPI: APEI: Add support to notify the vendor
- specific HW errors
-Thread-Topic: [PATCH v5 0/2] ACPI: APEI: Add support to notify the vendor
- specific HW errors
-Thread-Index: AQHWArk9LTp1thyJ80ifFE8yZh20/KhZdCmQ
-Date:   Wed, 25 Mar 2020 16:27:15 +0000
-Message-ID: <84a30116698a49cda1e8b580ee35ce1f@huawei.com>
-References: <8aa40a48-39c9-ba6b-ea70-bcb60907a733@huawei.com>
- <20200325152220.GA261586@google.com>
-In-Reply-To: <20200325152220.GA261586@google.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.47.86.66]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        id S1728140AbgCYQ2T (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Mar 2020 12:28:19 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:36320 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727600AbgCYQ2S (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Mar 2020 12:28:18 -0400
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: eballetbo)
+        with ESMTPSA id ABBB928B90C
+Subject: Re: [PATCH v6 01/11] platform: chrome: sensorhub: Add FIFO support
+To:     Gwendal Grignou <gwendal@chromium.org>, bleung@chromium.org,
+        Jonathan.Cameron@huawei.com
+Cc:     linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20200324202736.243314-1-gwendal@chromium.org>
+ <20200324202736.243314-2-gwendal@chromium.org>
+From:   Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Message-ID: <399a282a-e6a6-a1ed-26c4-1999008f242d@collabora.com>
+Date:   Wed, 25 Mar 2020 17:28:05 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-X-CFilter-Loop: Reflected
+In-Reply-To: <20200324202736.243314-2-gwendal@chromium.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Bjorn,
+Hi Gwendal,
 
->-----Original Message-----
->From: Bjorn Helgaas [mailto:helgaas@kernel.org]
->Sent: 25 March 2020 15:22
->To: Shiju Jose <shiju.jose@huawei.com>
->Cc: linux-acpi@vger.kernel.org; linux-pci@vger.kernel.org; linux-
->kernel@vger.kernel.org; rjw@rjwysocki.net; lenb@kernel.org; bp@alien8.de;
->james.morse@arm.com; tony.luck@intel.com; gregkh@linuxfoundation.org;
->zhangliguang@linux.alibaba.com; tglx@linutronix.de; Linuxarm
-><linuxarm@huawei.com>; Jonathan Cameron
-><jonathan.cameron@huawei.com>; tanxiaofei <tanxiaofei@huawei.com>;
->yangyicong <yangyicong@huawei.com>
->Subject: Re: [PATCH v5 0/2] ACPI: APEI: Add support to notify the vendor
->specific HW errors
->
->1) If you can post things as a series, i.e., with patch 1/2 and patch
->2/2 being responses to the 0/2 cover letter, that makes things easier.
->It looks like you did this for the previous postings.
-I will send the patches as series after fixing the issues in the patch subject lines. 
+Many thanks for sending this series upstream. Just one comment, other than that
+looks good to me.
 
->
->2) When applying these, "git am" complained (but they did apply
->cleanly):
->
->  warning: Patch sent with format=flowed; space at the end of lines might be
->lost.
->  Applying: APEI: Add support to notify the vendor specific HW errors
->  warning: Patch sent with format=flowed; space at the end of lines might be
->lost.
->  Applying: PCI: HIP: Add handling of HiSilicon HIP PCIe controller errors
->
->3) drivers/pci/controller/pcie-hisi-error.c should be next to
->drivers/pci/controller/dwc/pcie-hisi.c, shouldn't it?
-Our hip PCIe controller doesn't use DWC ip.
+On 24/3/20 21:27, Gwendal Grignou wrote:
+> cros_ec_sensorhub registers a listener and query motion sense FIFO,
+> spread to iio sensors registers.
+> 
+> To test, we can use libiio:
+> iiod&
+> iio_readdev -u ip:localhost -T 10000 -s 25 -b 16 cros-ec-gyro | od -x
+> 
+> Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> Signed-off-by: Gwendal Grignou <gwendal@chromium.org>
 
->
->4) Your subject lines don't match the convention.  "git log --oneline
->drivers/acpi/apei" says:
->
->  011077d8fbfe ("APEI: Add support to notify the vendor specific HW errors")
->  cea79e7e2f24 ("apei/ghes: Do not delay GHES polling")
->  933ca4e323de ("acpi: Use pr_warn instead of pr_warning")
->  6abc7622271d ("ACPI / APEI: Release resources if gen_pool_add() fails")
->  bb100b64763c ("ACPI / APEI: Get rid of NULL_UUID_LE constant")
->  371b86897d01 ("ACPI / APEI: Remove needless __ghes_check_estatus()
->calls")
->
->and "git log --oneline --follow drivers/pci/controller/dwc/pcie-hisi*"
->says:
->
->  6e0832fa432e ("PCI: Collect all native drivers under drivers/pci/controller/")
->  8cfab3cf63cf ("PCI: Add SPDX GPL-2.0 to replace GPL v2 boilerplate")
->  5a4751680189 ("PCI: hisi: Constify dw_pcie_host_ops structure")
->  b379d385bbaa ("PCI: hisi: Remove unused variable driver")
->  a5f40e8098fe ("PCI: Don't allow unbinding host controllers that aren't
->prepared")
->  e313a447e735 ("PCI: hisi: Update PCI config space remap function")
->  b9c1153f7a9c ("PCI: hisi: Fix DT binding (hisi-pcie-almost-ecam)")
->
->So your subject lines should be:
->
->  ACPI / APEI: ...
-Sure. I will fix this.
+[snip]
 
->  PCI: hisi: ...
-Can we use PCI: hip because this driver is for the HIP hardware devices. 
+> +/**
+> + * cros_ec_sensorhub_ring_handler() - The trigger handler function
+> + *
+> + * @sensorhub: Sensor Hub object.
+> + *
+> + * Called by the notifier, process the EC sensor FIFO queue.
+> + */
+> +static void cros_ec_sensorhub_ring_handler(struct cros_ec_sensorhub *sensorhub)
+> +{
+> +	struct cros_ec_fifo_info *fifo_info = &sensorhub->fifo_info;
+> +	struct cros_ec_dev *ec = sensorhub->ec;
+> +	ktime_t fifo_timestamp, current_timestamp;
+> +	int i, j, number_data, ret;
+> +	unsigned long sensor_mask = 0;
+> +	struct ec_response_motion_sensor_data *in;
+> +	struct cros_ec_sensors_ring_sample *out, *last_out;
+> +
+> +	mutex_lock(&sensorhub->cmd_lock);
+> +
+> +	/* Get FIFO information if there are lost vectors. */
+> +	if (fifo_info->info.total_lost) {
+> +		/* Need to retrieve the number of lost vectors per sensor */
+> +		sensorhub->params->cmd = MOTIONSENSE_CMD_FIFO_INFO;
+> +		sensorhub->msg->outsize = 1;
+> +		sensorhub->msg->insize =
+> +			sizeof(struct ec_response_motion_sense_fifo_info) +
+> +			sizeof(u16) * CROS_EC_SENSOR_MAX;
+> +
+> +		if (cros_ec_cmd_xfer_status(ec->ec_dev, sensorhub->msg) < 0)
+> +			goto error;
+> +
+> +		memcpy(fifo_info, &sensorhub->resp->fifo_info,
+> +		       sizeof(*fifo_info));
+> +
 
-[...]
->> --
->> 2.17.1
+Smatch is reporting:
+
+cros_ec_sensorhub_ring_handler() error: memcpy() '&sensorhub->resp->fifo_info'
+too small (10 vs 42)
+
+Is it fine and safe to copy always the 42 bytes? I suspect that we should only
+copy the number of lost events, total_lost , not always the maximum (16). Or the
+EC is always sending the full array (16 bytes)?
 
 Thanks,
-Shiju
+Enric
+
