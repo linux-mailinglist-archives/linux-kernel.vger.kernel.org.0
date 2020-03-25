@@ -2,141 +2,160 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 63D3019245F
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 10:42:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 35F5019246C
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 10:43:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727432AbgCYJmk convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 25 Mar 2020 05:42:40 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:48268 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727332AbgCYJmk (ORCPT
+        id S1726239AbgCYJnK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Mar 2020 05:43:10 -0400
+Received: from mail-il1-f194.google.com ([209.85.166.194]:45045 "EHLO
+        mail-il1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727487AbgCYJnJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Mar 2020 05:42:40 -0400
-Received: from mail-pj1-f70.google.com ([209.85.216.70])
-        by youngberry.canonical.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <kai.heng.feng@canonical.com>)
-        id 1jH2YY-00004u-LI
-        for linux-kernel@vger.kernel.org; Wed, 25 Mar 2020 09:42:38 +0000
-Received: by mail-pj1-f70.google.com with SMTP id p14so1193925pjo.4
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Mar 2020 02:42:38 -0700 (PDT)
+        Wed, 25 Mar 2020 05:43:09 -0400
+Received: by mail-il1-f194.google.com with SMTP id j69so1198585ila.11
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Mar 2020 02:43:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=WJC80u+Ifj4HCTJaBhCcmeQxlknM9aDMikhj5e78Hk4=;
+        b=DMyiJnazMqjl2qfzafo7tIFEtefoZjrSvPvqu5sHfAPRBEZ/A1uRJU7icYztbxoEQB
+         g5CF3/s4HPa6oNzbsswDGOeOH6b8cPtSAM9SODfnMoawOYaqGUMD64MMEV4CyYGxaNCK
+         u3cNVaqIoy9X6Y4p8jTdkYJcnnoetQuPBsAYU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=WEm/Oq7JATNH4WpMbMOCRGSUs1m+s06ist0t7Zd6Gyc=;
-        b=otKy7daa+Kr8A51DR8IM9y6mJ2mG23YGiD80O53zHra5Y3BkPPyEiyK+SDbXK7Or3e
-         U+8bZvtqaQOHms7yqjNsexT63j7HMTRZBalDcakA5a+nPgGYDrUUxlA5/qaiMs7H+b0c
-         X1dfHzmKStgyEVohluE5g+VIOtvitH7e9O5tE7vQaNkLtHnogsboEbwnXRVYzNzmW1Mk
-         u1vbasE3OUsOMfrgFjN7mlBhgjd4vKy5Pd8gSAAvIFYqojhBlTx8QU+zYJ9afj7u4k46
-         wFV4mGp8c5WcG66qo0X0Os+4/iiMJada80heVPRzZDOg8FhyAOi7+05UCnOoaCq7sMwf
-         buBA==
-X-Gm-Message-State: ANhLgQ27YS8qgnEoHP2cAR1WBBjMKe8S09YE6M1ThN3OJSUOl8vrWYJg
-        2WEx8bFklhvCjRMwUqiLnZKY78FSmKk34ci771KkV9m/q6AWy4NKpLLl+nJ8NUypDx/hP998DaZ
-        w8mq5dFRJcDQqAZG4dUXWsMw/ZwoULHqP1yvzq1kFzA==
-X-Received: by 2002:a65:4544:: with SMTP id x4mr2187633pgr.388.1585129356916;
-        Wed, 25 Mar 2020 02:42:36 -0700 (PDT)
-X-Google-Smtp-Source: ADFU+vvj90gfcJU2r68Oskg+mmyv4M+UId2JeQ2EkaQMMLSubnjDUsbz8zp/Sd05+Pt1LoN+2fiWQQ==
-X-Received: by 2002:a65:4544:: with SMTP id x4mr2187604pgr.388.1585129356561;
-        Wed, 25 Mar 2020 02:42:36 -0700 (PDT)
-Received: from [192.168.1.208] (220-133-187-190.HINET-IP.hinet.net. [220.133.187.190])
-        by smtp.gmail.com with ESMTPSA id c1sm4168751pje.24.2020.03.25.02.42.34
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 25 Mar 2020 02:42:36 -0700 (PDT)
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 13.0 \(3608.60.0.2.5\))
-Subject: Re: [Intel-wired-lan] [PATCH v3 1/2] igb: Use device_lock() insead of
- rtnl_lock()
-From:   Kai-Heng Feng <kai.heng.feng@canonical.com>
-In-Reply-To: <309B89C4C689E141A5FF6A0C5FB2118B97224361@ORSMSX103.amr.corp.intel.com>
-Date:   Wed, 25 Mar 2020 17:42:33 +0800
-Cc:     "davem@davemloft.net" <davem@davemloft.net>,
-        "mkubecek@suse.cz" <mkubecek@suse.cz>,
-        "Kirsher, Jeffrey T" <jeffrey.t.kirsher@intel.com>,
-        "open list:NETWORKING DRIVERS" <netdev@vger.kernel.org>,
-        "moderated list:INTEL ETHERNET DRIVERS" 
-        <intel-wired-lan@lists.osuosl.org>,
-        open list <linux-kernel@vger.kernel.org>
-Content-Transfer-Encoding: 8BIT
-Message-Id: <4A655203-7609-434C-9225-269A39AD5B35@canonical.com>
-References: <20200207101005.4454-1-kai.heng.feng@canonical.com>
- <309B89C4C689E141A5FF6A0C5FB2118B971F9210@ORSMSX103.amr.corp.intel.com>
- <3CA021B0-FEB8-4DAA-9CF2-224F305A8C8A@canonical.com>
- <309B89C4C689E141A5FF6A0C5FB2118B97224361@ORSMSX103.amr.corp.intel.com>
-To:     "Brown, Aaron F" <aaron.f.brown@intel.com>
-X-Mailer: Apple Mail (2.3608.60.0.2.5)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=WJC80u+Ifj4HCTJaBhCcmeQxlknM9aDMikhj5e78Hk4=;
+        b=dvreXsW4Ei3zfNjii+v+DEixCaYeMDJOviHsMki66b2kGFYFRwFiZlN+/6W4RrF+bb
+         Y1VABst+ZQbb+cOeRQSwO7549tBEf2GbTNjFDcKIyJ8JlrcL8JhOidFI5y0JO1vHm0jS
+         wxjSAcDu+bFEBU5X0jucmYtZ4K9nuXb0636OzZWIb+7DzZp7rdIg7Zi9/VUw5V2t8iiW
+         owRncvdu+PrJj9jA3infBaDHJmXltdZJSZCPJiLVxVACbg2lO/c9JkjSIsUw1SdK3Ua3
+         KvP0hEEVa9BqyGTneoIABJkIchtqDvtePsjZmtJms9k0vDJ9RdXngcjXrQ6oHEG2UlRO
+         578Q==
+X-Gm-Message-State: ANhLgQ0oNhTwEadx03eooyLiA2ORHRVzbSzFAsPDoJjlOhGe3CqR63yg
+        8eUZGISBKC0Wr2PdDyV93xQDqM9xaa6lIlATu9Zdsg==
+X-Google-Smtp-Source: ADFU+vsgfIWqTVfFvZZGiDAww03tclKMezpcFsmTHkThxRNJbwZiwKmblFARFxQj+PxAwoovscn7WyTAXThKOCyBwVE=
+X-Received: by 2002:a92:9fd0:: with SMTP id z77mr2593848ilk.257.1585129387289;
+ Wed, 25 Mar 2020 02:43:07 -0700 (PDT)
+MIME-Version: 1.0
+References: <20200323202259.13363-1-willy@infradead.org> <20200323202259.13363-25-willy@infradead.org>
+In-Reply-To: <20200323202259.13363-25-willy@infradead.org>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Wed, 25 Mar 2020 10:42:56 +0100
+Message-ID: <CAJfpegu7EFcWrg3bP+-2BX_kb52RrzBCo_U3QKYzUkZfe4EjDA@mail.gmail.com>
+Subject: Re: [PATCH v10 24/25] fuse: Convert from readpages to readahead
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, linux-btrfs@vger.kernel.org,
+        linux-erofs@lists.ozlabs.org, linux-ext4@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net, cluster-devel@redhat.com,
+        ocfs2-devel@oss.oracle.com, linux-xfs <linux-xfs@vger.kernel.org>,
+        Dave Chinner <dchinner@redhat.com>,
+        William Kucharski <william.kucharski@oracle.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Aaron,
+On Mon, Mar 23, 2020 at 9:23 PM Matthew Wilcox <willy@infradead.org> wrote:
+>
+> From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+>
+> Use the new readahead operation in fuse.  Switching away from the
+> read_cache_pages() helper gets rid of an implicit call to put_page(),
+> so we can get rid of the get_page() call in fuse_readpages_fill().
+>
+> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+> Reviewed-by: Dave Chinner <dchinner@redhat.com>
+> Reviewed-by: William Kucharski <william.kucharski@oracle.com>
+> ---
+>  fs/fuse/file.c | 46 +++++++++++++++++++---------------------------
+>  1 file changed, 19 insertions(+), 27 deletions(-)
+>
+> diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+> index 9d67b830fb7a..5749505bcff6 100644
+> --- a/fs/fuse/file.c
+> +++ b/fs/fuse/file.c
+> @@ -923,9 +923,8 @@ struct fuse_fill_data {
+>         unsigned int max_pages;
+>  };
+>
+> -static int fuse_readpages_fill(void *_data, struct page *page)
+> +static int fuse_readpages_fill(struct fuse_fill_data *data, struct page *page)
+>  {
+> -       struct fuse_fill_data *data = _data;
+>         struct fuse_io_args *ia = data->ia;
+>         struct fuse_args_pages *ap = &ia->ap;
+>         struct inode *inode = data->inode;
+> @@ -941,10 +940,8 @@ static int fuse_readpages_fill(void *_data, struct page *page)
+>                                         fc->max_pages);
+>                 fuse_send_readpages(ia, data->file);
+>                 data->ia = ia = fuse_io_alloc(NULL, data->max_pages);
+> -               if (!ia) {
+> -                       unlock_page(page);
+> +               if (!ia)
+>                         return -ENOMEM;
+> -               }
+>                 ap = &ia->ap;
+>         }
+>
+> @@ -954,7 +951,6 @@ static int fuse_readpages_fill(void *_data, struct page *page)
+>                 return -EIO;
+>         }
+>
+> -       get_page(page);
+>         ap->pages[ap->num_pages] = page;
+>         ap->descs[ap->num_pages].length = PAGE_SIZE;
+>         ap->num_pages++;
+> @@ -962,37 +958,33 @@ static int fuse_readpages_fill(void *_data, struct page *page)
+>         return 0;
+>  }
+>
+> -static int fuse_readpages(struct file *file, struct address_space *mapping,
+> -                         struct list_head *pages, unsigned nr_pages)
+> +static void fuse_readahead(struct readahead_control *rac)
+>  {
+> -       struct inode *inode = mapping->host;
+> +       struct inode *inode = rac->mapping->host;
+>         struct fuse_conn *fc = get_fuse_conn(inode);
+>         struct fuse_fill_data data;
+> -       int err;
+> +       struct page *page;
+>
+> -       err = -EIO;
+>         if (is_bad_inode(inode))
+> -               goto out;
+> +               return;
+>
+> -       data.file = file;
+> +       data.file = rac->file;
+>         data.inode = inode;
+> -       data.nr_pages = nr_pages;
+> -       data.max_pages = min_t(unsigned int, nr_pages, fc->max_pages);
+> -;
+> +       data.nr_pages = readahead_count(rac);
+> +       data.max_pages = min_t(unsigned int, data.nr_pages, fc->max_pages);
+>         data.ia = fuse_io_alloc(NULL, data.max_pages);
+> -       err = -ENOMEM;
+>         if (!data.ia)
+> -               goto out;
+> +               return;
+>
+> -       err = read_cache_pages(mapping, pages, fuse_readpages_fill, &data);
+> -       if (!err) {
+> -               if (data.ia->ap.num_pages)
+> -                       fuse_send_readpages(data.ia, file);
+> -               else
+> -                       fuse_io_free(data.ia);
+> +       while ((page = readahead_page(rac))) {
+> +               if (fuse_readpages_fill(&data, page) != 0)
 
-> On Mar 20, 2020, at 15:00, Brown, Aaron F <aaron.f.brown@intel.com> wrote:
-> 
->> From: Kai-Heng Feng <kai.heng.feng@canonical.com>
->> Sent: Monday, February 24, 2020 3:02 AM
->> To: Brown, Aaron F <aaron.f.brown@intel.com>
->> Cc: davem@davemloft.net; mkubecek@suse.cz; Kirsher, Jeffrey T
->> <jeffrey.t.kirsher@intel.com>; open list:NETWORKING DRIVERS
->> <netdev@vger.kernel.org>; moderated list:INTEL ETHERNET DRIVERS <intel-
->> wired-lan@lists.osuosl.org>; open list <linux-kernel@vger.kernel.org>
->> Subject: Re: [Intel-wired-lan] [PATCH v3 1/2] igb: Use device_lock() insead of
->> rtnl_lock()
->> 
->> 
->> 
->>> On Feb 22, 2020, at 08:30, Brown, Aaron F <aaron.f.brown@intel.com> wrote:
->>> 
->>> 
->>> 
->>>> -----Original Message-----
->>>> From: Intel-wired-lan <intel-wired-lan-bounces@osuosl.org> On Behalf Of
->>>> Kai-Heng Feng
->>>> Sent: Friday, February 7, 2020 2:10 AM
->>>> To: davem@davemloft.net; mkubecek@suse.cz; Kirsher, Jeffrey T
->>>> <jeffrey.t.kirsher@intel.com>
->>>> Cc: open list:NETWORKING DRIVERS <netdev@vger.kernel.org>; Kai-Heng
->>>> Feng <kai.heng.feng@canonical.com>; moderated list:INTEL ETHERNET
->>>> DRIVERS <intel-wired-lan@lists.osuosl.org>; open list <linux-
->>>> kernel@vger.kernel.org>
->>>> Subject: [Intel-wired-lan] [PATCH v3 1/2] igb: Use device_lock() insead of
->>>> rtnl_lock()
->>>> 
->>>> Commit 9474933caf21 ("igb: close/suspend race in netif_device_detach")
->>>> fixed race condition between close and power management ops by using
->>>> rtnl_lock().
->>>> 
->>>> However we can achieve the same by using device_lock() since all power
->>>> management ops are protected by device_lock().
->>>> 
->>>> This fix is a preparation for next patch, to prevent a dead lock under
->>>> rtnl_lock() when calling runtime resume routine.
->>>> 
->>>> Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
->>>> ---
->>>> v3:
->>>> - Fix unreleased lock reported by 0-day test bot.
->>>> v2:
->>>> - No change.
->>>> 
->>>> drivers/net/ethernet/intel/igb/igb_main.c | 14 ++++++++------
->>>> 1 file changed, 8 insertions(+), 6 deletions(-)
->>> 
->>> This patch introduces the following call trace / RIP when I sleep / resume (via
->> rtcwake) a system that has an igb port with link up:  I'm not sure if it introduces
->> the issue or just exposes / displays it as it only shows up on the first sleep /
->> resume cycle and the systems I have that were stable for many sleep / resume
->> cycles (arbitrarily 50+) continue to be so.
->> 
->> I can't reproduce the issue here.
->> 
-> 
-> I just got back to looking at the igb driver and  found a similar call trace / RIP with this patch.  Turns out any of my igb systems will freeze if the igb driver is unloaded while the interface is logically up with link.  The system continues to run if I switch to another console, but any attempt to look at the network (ifconfig, ethtool, etc...) makes that other session freeze up.  Then about 5 minutes later a trace appears on the screen and continues to do so every few minutes.  Here's what I pulled out of the system log for this instance:
+Shouldn't this unlock + put page on error?
 
-Yes I can reproduce the bug by removing the module while link is up.
-I am currently finding a fix for this issue.
+Otherwise looks good.
 
-Kai-Heng
-
+Thanks,
+Miklos
