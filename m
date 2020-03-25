@@ -2,158 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 51E5D192AB0
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 15:02:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D4573192AEA
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 15:19:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727607AbgCYOCd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Mar 2020 10:02:33 -0400
-Received: from sender3-op-o12.zoho.com.cn ([124.251.121.243]:17883 "EHLO
-        sender3-op-o12.zoho.com.cn" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727277AbgCYOCd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Mar 2020 10:02:33 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1585144813;
-        s=mail; d=flygoat.com; i=jiaxun.yang@flygoat.com;
-        h=Date:In-Reply-To:References:MIME-Version:Content-Type:Content-Transfer-Encoding:Subject:To:CC:From:Message-ID;
-        bh=0hHXYnYNII7mGIm2v16HLCOx2cRmye6GqMXRKnA3vJ4=;
-        b=WOFm42Ii8iI5DgSbTfMU0gu/xED5H4wiX54RudmowAC78CYQPQ5o1GZtJf3nwEyz
-        gkMlXcUGQt8mUgaP6Is47OSX8AjDkJ5neJX/tl23ESVnL/tCbdfpK2/yq8+SjjkyFyF
-        w5apgFY4ihRNYr/4w0T0lFM5YfdHHO0EZEqKtm5I=
-Received: from [10.233.233.252] (183.157.60.227 [183.157.60.227]) by mx.zoho.com.cn
-        with SMTPS id 1585144812520696.7889863442692; Wed, 25 Mar 2020 22:00:12 +0800 (CST)
-Date:   Wed, 25 Mar 2020 21:59:59 +0800
-User-Agent: K-9 Mail for Android
-In-Reply-To: <5eb9ce9ea665ee32da40779f00fc9b37@kernel.org>
-References: <20200325035537.156911-1-jiaxun.yang@flygoat.com> <20200325035537.156911-7-jiaxun.yang@flygoat.com> <20200325123742.GA9911@alpha.franken.de> <a69f727d37daac6e20ac08de022245b1@kernel.org> <C4892878-8463-448D-897B-5F2C56F5A340@flygoat.com> <5eb9ce9ea665ee32da40779f00fc9b37@kernel.org>
+        id S1727690AbgCYOTL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Mar 2020 10:19:11 -0400
+Received: from mga04.intel.com ([192.55.52.120]:42324 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727549AbgCYOTK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Mar 2020 10:19:10 -0400
+IronPort-SDR: vCZkbwfm1OYWK4CBuTCsjI40i8ujIwCA4UpbwjtOfGh/9VcZ+wjjYtvCxGMr5otFDZucngBZdx
+ tbxwnu59fqfw==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Mar 2020 07:19:10 -0700
+IronPort-SDR: 4j5oJBDaQj2KzJ63xjdYy/OcamE8di33XJj7oIvv1g7nyN7ulox6D2Kwj7ntvS4qQBbqzX6vbQ
+ QM7tIkCXSlnQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.72,304,1580803200"; 
+   d="scan'208";a="270811071"
+Received: from lxy-clx-4s.sh.intel.com ([10.239.43.39])
+  by fmsmga004.fm.intel.com with ESMTP; 25 Mar 2020 07:19:08 -0700
+From:   Xiaoyao Li <xiaoyao.li@intel.com>
+To:     Shuah Khan <shuah@kernel.org>, Paolo Bonzini <pbonzini@redhat.com>
+Cc:     kvm@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Xiaoyao Li <xiaoyao.li@intel.com>
+Subject: [PATCH v2 0/6] Fix errors when try to build kvm selftests on specified output
+Date:   Wed, 25 Mar 2020 22:01:27 +0800
+Message-Id: <20200325140133.103236-1-xiaoyao.li@intel.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v8 06/11] irqchip: mips-cpu: Convert to simple domain
-To:     Marc Zyngier <maz@kernel.org>
-CC:     Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        linux-mips@vger.kernel.org, Huacai Chen <chenhc@lemote.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Allison Randal <allison@lohutok.net>,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-From:   Jiaxun Yang <jiaxun.yang@flygoat.com>
-Message-ID: <4BB367D3-B8AD-47B6-ACC2-30752137BC1B@flygoat.com>
-X-ZohoCNMailClient: External
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+I attempted to build KVM selftests on a specified dir, unfortunately
+neither	"make O=/path/to/mydir TARGETS=kvm" in tools/testing/selftests, nor
+"make OUTPUT=/path/to/mydir" in tools/testing/selftests/kvm work.
 
+This series aims to fix them.
 
-=E4=BA=8E 2020=E5=B9=B43=E6=9C=8825=E6=97=A5 GMT+08:00 =E4=B8=8B=E5=8D=889=
-:57:49, Marc Zyngier <maz@kernel=2Eorg> =E5=86=99=E5=88=B0:
->On 2020-03-25 13:07, Jiaxun Yang wrote:
->> =E4=BA=8E 2020=E5=B9=B43=E6=9C=8825=E6=97=A5 GMT+08:00 =E4=B8=8B=E5=8D=
-=889:00:01, Marc Zyngier <maz@kernel=2Eorg> =E5=86=99=E5=88=B0:
->>> On 2020-03-25 12:37, Thomas Bogendoerfer wrote:
->>>> On Wed, Mar 25, 2020 at 11:54:59AM +0800, Jiaxun Yang wrote:
->>>>> The old code is using legacy domain to setup irq_domain for CPU
->>>>> interrupts
->>>>> which requires irq_desc to be preallocated=2E
->>>>>=20
->>>>> However, when MIPS_CPU_IRQ_BASE >=3D 16, irq_desc for CPU IRQs may
->end
->>>=20
->>>>> up
->>>>> unallocated and lead to incorrect behavior=2E
->>>>>=20
->>>>> Thus we convert the legacy domain to simple domain which can
->>> allocate
->>>>> irq_desc during initialization=2E
->>>>>=20
->>>>> Signed-off-by: Jiaxun Yang <jiaxun=2Eyang@flygoat=2Ecom>
->>>>> Co-developed-by: Huacai Chen <chenhc@lemote=2Ecom>
->>>>> Signed-off-by: Huacai Chen <chenhc@lemote=2Ecom>
->>>>> Reviewed-by: Marc Zyngier <maz@kernel=2Eorg>
->>>>> ---
->>>>>  drivers/irqchip/irq-mips-cpu=2Ec | 2 +-
->>>>>  1 file changed, 1 insertion(+), 1 deletion(-)
->>>>>=20
->>>>> diff --git a/drivers/irqchip/irq-mips-cpu=2Ec
->>>>> b/drivers/irqchip/irq-mips-cpu=2Ec
->>>>> index 95d4fd8f7a96=2E=2Ec3cf7fa76424 100644
->>>>> --- a/drivers/irqchip/irq-mips-cpu=2Ec
->>>>> +++ b/drivers/irqchip/irq-mips-cpu=2Ec
->>>>> @@ -251,7 +251,7 @@ static void __init __mips_cpu_irq_init(struct
->>>>> device_node *of_node)
->>>>>  	clear_c0_status(ST0_IM);
->>>>>  	clear_c0_cause(CAUSEF_IP);
->>>>>=20
->>>>> -	irq_domain =3D irq_domain_add_legacy(of_node, 8,
->MIPS_CPU_IRQ_BASE,
->>> 0,
->>>>> +	irq_domain =3D irq_domain_add_simple(of_node, 8,
->MIPS_CPU_IRQ_BASE,
->>>>>  					   &mips_cpu_intc_irq_domain_ops,
->>>>>  					   NULL);
->>>>=20
->>>> this breaks at least IP30 and guess it will break every platform
->>> where
->>>> MIPS_CPU_IRQ_BASE =3D=3D 0=2E add_legacy will always do
->>>> irq_domain_associate_many(),
->>>> while add_simple doesn't do it, if first_irq =3D=3D 0=2E
->>>>=20
->>>> Marc, what is the reason not doing it all the time ? What's the
->>> correct
->>>> way here to work with irq_domain_add_simple() in this case ?
->>>=20
->>> On a fully DT-ified platform, using non-legacy irqdomains, virtual
->>> interrupts
->>> are allocated as a "random" number, depending on the order of
->>> allocation,
->>> and on demand=2E
->>>=20
->>> The first_irq hack in irq_domain_add_simple() is just a way to still
->>> allocate
->>> descriptors upfront (and I wish we could drop it=2E=2E=2E)=2E
->>>=20
->>> If you have legacy code that "knows" about the relationship between
->>> Linux's
->>> virtual interrupt and the hwirq (that is only meaningful to the
->>> interrupt
->>> controller), you're screwed, and need to stick to the legacy=20
->>> irqdomain=2E
->>>=20
->>> It feels like the MIPS code is squarely in the latter case, so I
->guess
->>> this
->>> patch is probably the wrong thing to do for this architecture=2E
->>=20
->> So probably we can use legacy domain when  MIPS IRQ BASE is in the
->> range of legacy IRQ
->> and switch to simple domain when it's not in that range?
->
->No, see below=2E
->
->> Here in Loongson systems IRQ 0-15 is occupied by I8259 so I did this=20
->> hack=2E
->
->Well, if you have to consider which Linux IRQ gets assigned,
->then your platform is definitely not ready for non-legacy
->irqdomains=2E Just stick to legacy for now until you have removed
->all the code that knows the hwirq mapping=2E
+Patch 1 fixes the issue that output directory is not exist.
 
-Thanks=2E
+Patch 2 and 3 are the preparation for kvm to get the right path of
+installed linux headers.
 
-So I have to allocate irq_desc here in driver manually?
+Patch 4 and 6 prepare the INSTALL_HDR_PATH to tell sub TARGET where the
+linux headers are installed.
 
+Patch 5 fixes the issue that with OUTPUT specified, it still make the
+linux tree dirty.
 
->
->         M=2E
+I only test the sub TARGET of kvm.
+In theory, it won't break other TARGET of selftests.
 
---=20
-Jiaxun Yang
+Changes in v2:
+ - fix the no directory issue in lib.mk
+ - make kvm fixes seperate patch
+ - Add the patch to fix linux src tree not clean issue
+
+v1:
+https://lore.kernel.org/kvm/20200315093425.33600-1-xiaoyao.li@intel.com/
+
+Xiaoyao Li (6):
+  selftests: Create directory when OUTPUT specified
+  selftests: kvm: Include lib.mk earlier
+  selftests: kvm: Use the default linux header path only when
+    INSTALL_HDR_PATH not defined
+  selftests: Create variable INSTALL_HDR_PATH if need to install linux
+    headers to $(OUTPUT)/usr
+  selftests: Generate build output of linux headers to
+    $(OUTPUT)/linux-header-build
+  selftests: export INSTALL_HDR_PATH if using "O" to specify output dir
+
+ tools/testing/selftests/Makefile     |  6 +++++-
+ tools/testing/selftests/kvm/Makefile |  9 +++++----
+ tools/testing/selftests/lib.mk       | 19 ++++++++++++++++++-
+ 3 files changed, 28 insertions(+), 6 deletions(-)
+
+-- 
+2.20.1
+
