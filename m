@@ -2,101 +2,166 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9103F1930D7
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 20:05:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 856681930E0
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 20:07:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727902AbgCYTFn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Mar 2020 15:05:43 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:39064 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727279AbgCYTFn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Mar 2020 15:05:43 -0400
-Received: by mail-lj1-f193.google.com with SMTP id i20so3740233ljn.6;
-        Wed, 25 Mar 2020 12:05:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=pcRErvm2Q518gCbI05/42E3zgrQBPnKUjsE254rV4i8=;
-        b=jOsvlDmAnsWF8Zgi1Kc+OAsbG3gWnfkPWsVsEAuywtsKrez7awraN/gAflS+VbGpgi
-         lTb+NL7GMqfRW6s9+bLM4tq5JXPaRTnpJQJmzpbZMUsMKaLogF/62JoIQws11Q2bz4Q3
-         kN/q/qbygHS9gbZrwgeP3stxTlSaXTAQB2tLTdVrTk5AZISotzbrm9fUhQddE8Qhp57Q
-         vmcrjRIT5KEr16szoVRPVX9XZpfEia+hbwv14K9xL0XSS116ExAvKiJVMqzwNUOhj3U4
-         Ehspp7hOpL4MalroyZbd3HkMeCw2OmCrO1o/WDTFKkxu9nDrazlcmxDwFmTMOraeEopO
-         kANQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=pcRErvm2Q518gCbI05/42E3zgrQBPnKUjsE254rV4i8=;
-        b=CpSO9ng2HxSRENHsqLi8NeR7p2tOMWk6Di29Lz0CCpwaZGPxMSfhnLqPHBUbHVgAfS
-         MMka3msRsHyt+cE8WAVfAyWCQ28EGbXR7JJwZ2SbLuPDB3VqtC1x8xvq3JAqkkf3InWp
-         qgtrM+DIt8WwY2wKSpO5l9jV35zA3BTUOSM8WvnqR1dbYulCakueBLw+lUIxh0ZeTX9R
-         mdNzguAxgn42y5/QfHOZlkUoQ3sLIRXn2urtT68FnvxZIZHeoWFu+XkuzhJXW9+4XeMO
-         TuiRoSiRFSmhTwVXGPW1gIB7Nxbo/AZNoXmvOV8X/cPN/oIj3mP6V7zBE0iiGNumSbn4
-         E0tg==
-X-Gm-Message-State: ANhLgQ2Pjc9+c6fSvjGVF9h0fyXw0mU0ritWV+gc9gVKqAlkIWNh37LA
-        g3oGCremauC8pWoDk6ZQ74U=
-X-Google-Smtp-Source: ADFU+vtNtlANgH6ZU/SxscTh0o9bgRwziu95+xWxmtzh+N/lwSGsvM5yQMpXh/Hd6K53fTv+dhxjBg==
-X-Received: by 2002:a2e:854e:: with SMTP id u14mr2793589ljj.95.1585163140593;
-        Wed, 25 Mar 2020 12:05:40 -0700 (PDT)
-Received: from [192.168.2.145] (ppp91-78-208-152.pppoe.mtu-net.ru. [91.78.208.152])
-        by smtp.googlemail.com with ESMTPSA id t23sm4927602lfq.4.2020.03.25.12.05.39
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 25 Mar 2020 12:05:39 -0700 (PDT)
-Subject: Re: [PATCH v9 13/55] Input: atmel_mxt_ts - add regulator control
- support
-To:     Jiada Wang <jiada_wang@mentor.com>, nick@shmanahar.org,
-        dmitry.torokhov@gmail.com, jikos@kernel.org,
-        benjamin.tissoires@redhat.com, bsz@semihalf.com,
-        rydberg@bitmath.org
-Cc:     linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
-        erosca@de.adit-jv.com, Andrew_Gabbasov@mentor.com
-References: <20200325133334.19346-1-jiada_wang@mentor.com>
- <20200325133334.19346-14-jiada_wang@mentor.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <672615bc-adce-213f-9e44-864163c0a770@gmail.com>
-Date:   Wed, 25 Mar 2020 22:05:39 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        id S1727636AbgCYTHl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Mar 2020 15:07:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58320 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727399AbgCYTHk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Mar 2020 15:07:40 -0400
+Received: from paulmck-ThinkPad-P72.home (50-39-105-78.bvtn.or.frontiernet.net [50.39.105.78])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8FD3820714;
+        Wed, 25 Mar 2020 19:07:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1585163259;
+        bh=lhy+Eu3yict1wi7voNpWry2+n+0EtZmY4ZR96Tpx/lk=;
+        h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+        b=covR7fziSsoadZsZ3tfWGwczdeUG39GhVnWXCKG+7tq8E1HYiSz1PYd3ELksGojq2
+         rPjZ7AvTthbbsa3jKaD1DrCwkSzWKIliKuXK7H0OJEDATfGIy2Ul1oZeLwElqrnj++
+         VZuuljk7mYTga+VGE220XaFoAartJ1pigV1vzOBo=
+Received: by paulmck-ThinkPad-P72.home (Postfix, from userid 1000)
+        id 631D33520BDC; Wed, 25 Mar 2020 12:07:39 -0700 (PDT)
+Date:   Wed, 25 Mar 2020 12:07:39 -0700
+From:   "Paul E. McKenney" <paulmck@kernel.org>
+To:     Cong Wang <xiyou.wangcong@gmail.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        syzbot <syzbot+46f513c3033d592409d2@syzkaller.appspotmail.com>,
+        David Miller <davem@davemloft.net>,
+        Jamal Hadi Salim <jhs@mojatatu.com>,
+        Jiri Pirko <jiri@resnulli.us>,
+        Jakub Kicinski <kuba@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux Kernel Network Developers <netdev@vger.kernel.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
+Subject: Re: WARNING: ODEBUG bug in tcindex_destroy_work (3)
+Message-ID: <20200325190739.GA19865@paulmck-ThinkPad-P72>
+Reply-To: paulmck@kernel.org
+References: <000000000000742e9e05a10170bc@google.com>
+ <87a74arown.fsf@nanos.tec.linutronix.de>
+ <CAM_iQpV3S0xv5xzSrA5COYa3uyy_TBGpDA9Wcj9Qt_vn1n3jBQ@mail.gmail.com>
+ <87ftdypyec.fsf@nanos.tec.linutronix.de>
+ <CAM_iQpVR8Ve3Jy8bb9VB6RcQ=p22ZTyTqjxJxL11RZmO7rkWeg@mail.gmail.com>
+ <875zeuftwm.fsf@nanos.tec.linutronix.de>
+ <20200324020504.GR3199@paulmck-ThinkPad-P72>
+ <CAM_iQpVK5tNrer3UnnBVU82cRcdNAVtn5bxCm4rDVZM1_ffPAQ@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20200325133334.19346-14-jiada_wang@mentor.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAM_iQpVK5tNrer3UnnBVU82cRcdNAVtn5bxCm4rDVZM1_ffPAQ@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-25.03.2020 16:32, Jiada Wang пишет:
-> From: Nick Dyer <nick.dyer@itdev.co.uk>
+On Wed, Mar 25, 2020 at 11:53:51AM -0700, Cong Wang wrote:
+> On Mon, Mar 23, 2020 at 7:05 PM Paul E. McKenney <paulmck@kernel.org> wrote:
+> >
+> > On Tue, Mar 24, 2020 at 02:01:13AM +0100, Thomas Gleixner wrote:
+> > > Cong Wang <xiyou.wangcong@gmail.com> writes:
+> > > > On Mon, Mar 23, 2020 at 2:14 PM Thomas Gleixner <tglx@linutronix.de> wrote:
+> > > >> > We use an ordered workqueue for tc filters, so these two
+> > > >> > works are executed in the same order as they are queued.
+> > > >>
+> > > >> The workqueue is ordered, but look how the work is queued on the work
+> > > >> queue:
+> > > >>
+> > > >> tcf_queue_work()
+> > > >>   queue_rcu_work()
+> > > >>     call_rcu(&rwork->rcu, rcu_work_rcufn);
+> > > >>
+> > > >> So after the grace period elapses rcu_work_rcufn() queues it in the
+> > > >> actual work queue.
+> > > >>
+> > > >> Now tcindex_destroy() is invoked via tcf_proto_destroy() which can be
+> > > >> invoked from preemtible context. Now assume the following:
+> > > >>
+> > > >> CPU0
+> > > >>   tcf_queue_work()
+> > > >>     tcf_queue_work(&r->rwork, tcindex_destroy_rexts_work);
+> > > >>
+> > > >> -> Migration
+> > > >>
+> > > >> CPU1
+> > > >>    tcf_queue_work(&p->rwork, tcindex_destroy_work);
+> > > >>
+> > > >> So your RCU callbacks can be placed on different CPUs which obviously
+> > > >> has no ordering guarantee at all. See also:
+> > > >
+> > > > Good catch!
+> > > >
+> > > > I thought about this when I added this ordered workqueue, but it
+> > > > seems I misinterpret max_active, so despite we have max_active==1,
+> > > > more than 1 work could still be queued on different CPU's here.
+> > >
+> > > The workqueue is not the problem. it works perfectly fine. The way how
+> > > the work gets queued is the issue.
+> > >
+> > > > I don't know how to fix this properly, I think essentially RCU work
+> > > > should be guaranteed the same ordering with regular work. But this
+> > > > seems impossible unless RCU offers some API to achieve that.
+> > >
+> > > I don't think that's possible w/o putting constraints on the flexibility
+> > > of RCU (Paul of course might disagree).
+> >
+> > It is possible, but it does not come for free.
+> >
+> > From an RCU/workqueues perspective, if I understand the scenario, you
+> > can do the following:
+> >
+> >         tcf_queue_work(&r->rwork, tcindex_destroy_rexts_work);
+> >
+> >         rcu_barrier(); // Wait for the RCU callback.
+> >         flush_work(...); // Wait for the workqueue handler.
+> >                          // But maybe for quite a few of them...
+> >
+> >         // All the earlier handlers have completed.
+> >         tcf_queue_work(&p->rwork, tcindex_destroy_work);
+> >
+> > This of course introduces overhead and latency.  Maybe that is not a
+> > problem at teardown time, or maybe the final tcf_queue_work() can itself
+> > be dumped into a workqueue in order to get it off of the critical path.
 > 
-> Allow the driver to optionally manage enabling/disable power to the touch
-> controller itself. If the regulators are not present then use the deep
-> sleep power mode instead.
+> I personally agree, but nowadays NIC vendors care about tc filter
+> slow path performance as well. :-/
+
+I bet that they do!  ;-)
+
+But have you actually tried the rcu_barrier()/flush_work() approach?
+It is reasonably simple to implement, even if you do have to use multiple
+flush_work() calls, and who knows?  Maybe it is fast enough.
+
+So why not try it?
+
+Hmmm...  Another approach would be to associate a counter with this group
+of requests, incrementing this count in tcf_queue_work() and capturing
+the prior value of the count, then in tcindex_destroy_work() waiting
+for the count to reach the captured value.  This would avoid needless
+waiting in tcindex_destroy_rexts_work().  Such needless waiting would
+be hard to avoid within the confines of either RCU or workqueues, and
+such needless waiting might well slow down this slowpath, which again
+might make the NIC vendors unhappy.
+
+> > However, depending on your constraints ...
+> >
+> > > I assume that the filters which hang of tcindex_data::perfect and
+> > > tcindex_data:p must be freed before tcindex_data, right?
+> > >
+> > > Refcounting of tcindex_data should do the trick. I.e. any element which
+> > > you add to a tcindex_data instance takes a refcount and when that is
+> > > destroyed then the rcu/work callback drops a reference which once it
+> > > reaches 0 triggers tcindex_data to be freed.
+> >
+> > ... reference counts might work much better for you.
 > 
-> For a correct power on sequence, it is required that we have control over
-> the RESET line.
+> I need to think about how much work is needed for refcnting, given
+> other filters have the same assumption.
 
-...
-> +	data->reg_vdd = devm_regulator_get(dev, "vdd");
-> +	if (IS_ERR(data->reg_vdd)) {
-> +		error = PTR_ERR(data->reg_vdd);
-> +		dev_err(dev, "Error %d getting vdd regulator\n", error);
-> +		goto fail;
-> +	}
-> +
-> +	data->reg_avdd = devm_regulator_get(dev, "avdd");
-> +	if (IS_ERR(data->reg_avdd)) {
-> +		error = PTR_ERR(data->reg_avdd);
-> +		dev_err(dev, "Error %d getting avdd regulator\n", error);
-> +		goto fail_release;
-> +	}
+Perhaps you can create some common code to handle this situation, which
+can then be shared among those various filters.
 
-Hello Jiada,
-
-The new regulator properties should be documented in the device-tree
-binding.
+							Thanx, Paul
