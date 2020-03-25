@@ -2,99 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3E07D192FA7
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 18:44:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C2311192FA8
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 18:45:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728157AbgCYRoa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Mar 2020 13:44:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60892 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727843AbgCYRoa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Mar 2020 13:44:30 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1727932AbgCYRpA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Mar 2020 13:45:00 -0400
+Received: from us-smtp-delivery-74.mimecast.com ([63.128.21.74]:55103 "EHLO
+        us-smtp-delivery-74.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727787AbgCYRpA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Mar 2020 13:45:00 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1585158299;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=t4Qfjdrf/9hR5jWluXLfGirtkwElAUjeNbM8dtmiVo0=;
+        b=R36N4MAQr1tlbFkHPCjhBUlrLgSIyfuwg/nNoMyeHxMYI515a3QNEQ0Of6VQ5puxsqWTpQ
+        mibf1rXMWAHhhGMFoykpLgJ7f6wDddX4zyoxA68OSrbquv0oQJO6shlyn6XA73nOl1v98u
+        oHB86GF4Ns1QM2i4clkvAjYrONagDAQ=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-416-JPvNj2qTMvGHPkchAgUJ7A-1; Wed, 25 Mar 2020 13:44:57 -0400
+X-MC-Unique: JPvNj2qTMvGHPkchAgUJ7A-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 67F8A20777;
-        Wed, 25 Mar 2020 17:44:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585158269;
-        bh=mISHSjoMsIZ+fxJ0QKRj3gwZ7fgFWGgkHXQgCsKxo5o=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=I3Ea4zUMbkESFEf7+hBBwqkHO8YVxddfJ+/IOi7LkWOVyoD2XzKkGj1dI4WIp1DHA
-         z5aM03RnyzWLZbNJGadWBpM/DM4TtqaGKfS0z2DQjZt/QuJ/7+d3hQpN8xz8pcvCc3
-         sR5dtKZkddb26d7cszp/nMnrd8Pn3mkn0yzeRZL4=
-Date:   Wed, 25 Mar 2020 18:44:27 +0100
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        torvalds@linux-foundation.org, stable@vger.kernel.org
-Cc:     lwn@lwn.net, Jiri Slaby <jslaby@suse.cz>
-Subject: Re: Linux 5.5.13
-Message-ID: <20200325174427.GB3764758@kroah.com>
-References: <20200325174421.GA3764758@kroah.com>
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 2A249149CC;
+        Wed, 25 Mar 2020 17:44:56 +0000 (UTC)
+Received: from krava (unknown [10.40.192.119])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 1358190A13;
+        Wed, 25 Mar 2020 17:44:54 +0000 (UTC)
+Date:   Wed, 25 Mar 2020 18:44:49 +0100
+From:   Jiri Olsa <jolsa@redhat.com>
+To:     Adrian Hunter <adrian.hunter@intel.com>
+Cc:     Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>,
+        linux-kernel@vger.kernel.org, Kan Liang <kan.liang@intel.com>
+Subject: Re: [PATCH] perf tools: Add missing Intel CPU events to parser
+Message-ID: <20200325174449.GB1934048@krava>
+References: <20200324150443.28832-1-adrian.hunter@intel.com>
+ <20200325103345.GA1856035@krava>
+ <20200325131549.GB14102@kernel.org>
+ <20200325135350.GA1888042@krava>
+ <20200325142214.GD14102@kernel.org>
+ <ea516b26-6249-e870-20bf-819ea1a2d2c2@intel.com>
+ <20200325152211.GA1908530@krava>
+ <fc3c4dee-981e-4c39-566a-4163ee0bcc02@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200325174421.GA3764758@kroah.com>
+In-Reply-To: <fc3c4dee-981e-4c39-566a-4163ee0bcc02@intel.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-diff --git a/Makefile b/Makefile
-index d962fe0f26ce..d1574c99f83c 100644
---- a/Makefile
-+++ b/Makefile
-@@ -1,7 +1,7 @@
- # SPDX-License-Identifier: GPL-2.0
- VERSION = 5
- PATCHLEVEL = 5
--SUBLEVEL = 12
-+SUBLEVEL = 13
- EXTRAVERSION =
- NAME = Kleptomaniac Octopus
- 
-diff --git a/drivers/base/core.c b/drivers/base/core.c
-index 3306d5ae92a6..dbb0f9130f42 100644
---- a/drivers/base/core.c
-+++ b/drivers/base/core.c
-@@ -718,6 +718,8 @@ static void __device_links_queue_sync_state(struct device *dev,
- {
- 	struct device_link *link;
- 
-+	if (!dev_has_sync_state(dev))
-+		return;
- 	if (dev->state_synced)
- 		return;
- 
-@@ -819,7 +821,7 @@ late_initcall(sync_state_resume_initcall);
- 
- static void __device_links_supplier_defer_sync(struct device *sup)
- {
--	if (list_empty(&sup->links.defer_sync))
-+	if (list_empty(&sup->links.defer_sync) && dev_has_sync_state(sup))
- 		list_add_tail(&sup->links.defer_sync, &deferred_sync);
- }
- 
-diff --git a/include/linux/device.h b/include/linux/device.h
-index 96ff76731e93..50d97767d8d6 100644
---- a/include/linux/device.h
-+++ b/include/linux/device.h
-@@ -1522,6 +1522,17 @@ static inline struct device_node *dev_of_node(struct device *dev)
- 
- void driver_init(void);
- 
-+static inline bool dev_has_sync_state(struct device *dev)
-+{
-+	if (!dev)
-+		return false;
-+	if (dev->driver && dev->driver->sync_state)
-+		return true;
-+	if (dev->bus && dev->bus->sync_state)
-+		return true;
-+	return false;
-+}
-+
- /*
-  * High level routines for use by the bus drivers
-  */
+On Wed, Mar 25, 2020 at 07:10:44PM +0200, Adrian Hunter wrote:
+
+SNIP
+
+> > ---
+> > diff --git a/tools/perf/util/parse-events.l b/tools/perf/util/parse-events.l
+> > index 7b1c8ee537cf..347eb3e6794a 100644
+> > --- a/tools/perf/util/parse-events.l
+> > +++ b/tools/perf/util/parse-events.l
+> > @@ -342,11 +342,15 @@ bpf-output					{ return sym(yyscanner, PERF_TYPE_SOFTWARE, PERF_COUNT_SW_BPF_OUT
+> >  	 * Because the prefix cycles is mixed up with cpu-cycles.
+> >  	 * loads and stores are mixed up with cache event
+> >  	 */
+> > -cycles-ct					{ return str(yyscanner, PE_KERNEL_PMU_EVENT); }
+> > -cycles-t					{ return str(yyscanner, PE_KERNEL_PMU_EVENT); }
+> > -mem-loads					{ return str(yyscanner, PE_KERNEL_PMU_EVENT); }
+> > -mem-stores					{ return str(yyscanner, PE_KERNEL_PMU_EVENT); }
+> > -topdown-[a-z-]+					{ return str(yyscanner, PE_KERNEL_PMU_EVENT); }
+> > +cycles-ct				|
+> > +cycles-t				|
+> > +mem-loads				|
+> > +mem-stores				|
+> > +topdown-[a-z-]+				|
+> > +tx-capacity-read			|
+> > +tx-capacity-write			|
+> > +el-capacity-read			|
+> > +el-capacity-write			{ return str(yyscanner, PE_KERNEL_PMU_EVENT); }
+> 
+> Yes that works, as does
+> 
+> tx-capacity-[a-z-]+
+> el-capacity-[a-z-]+
+> 
+> Do we have an explanation for why we cannot make it accept 3-part names
+> without handling them as special cases?
+
+check the pmu_str_check, I guess it could be more generic,
+but it gets complicated later on, so I'm not sure there's
+some other obstacle..
+
+CC-ing Kan Liang, who wrote that
+
+jirka
+
+> 
+> I just tried but it didn't work.
+> 
+
