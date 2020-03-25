@@ -2,20 +2,20 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DF22819235B
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 09:55:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0FA9B19236E
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 09:56:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727549AbgCYIzo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Mar 2020 04:55:44 -0400
-Received: from smtp2207-205.mail.aliyun.com ([121.197.207.205]:43573 "EHLO
+        id S1727684AbgCYI4H (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Mar 2020 04:56:07 -0400
+Received: from smtp2207-205.mail.aliyun.com ([121.197.207.205]:54913 "EHLO
         smtp2207-205.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727376AbgCYIzm (ORCPT
+        by vger.kernel.org with ESMTP id S1727457AbgCYI4F (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Mar 2020 04:55:42 -0400
-X-Alimail-AntiSpam: AC=CONTINUE;BC=0.07436282|-1;CH=green;DM=|CONTINUE|false|;DS=CONTINUE|ham_system_inform|0.196746-0.000294681-0.802959;FP=0|0|0|0|0|-1|-1|-1;HT=e01a16378;MF=liaoweixiong@allwinnertech.com;NM=1;PH=DS;RN=17;RT=17;SR=0;TI=SMTPD_---.H50xpyL_1585126516;
+        Wed, 25 Mar 2020 04:56:05 -0400
+X-Alimail-AntiSpam: AC=CONTINUE;BC=0.07436282|-1;CH=green;DM=|CONTINUE|false|;DS=CONTINUE|ham_system_inform|0.0775484-0.000381191-0.92207;FP=0|0|0|0|0|-1|-1|-1;HT=e02c03301;MF=liaoweixiong@allwinnertech.com;NM=1;PH=DS;RN=17;RT=17;SR=0;TI=SMTPD_---.H50xpyL_1585126516;
 Received: from PC-liaoweixiong.allwinnertech.com(mailfrom:liaoweixiong@allwinnertech.com fp:SMTPD_---.H50xpyL_1585126516)
           by smtp.aliyun-inc.com(10.147.42.241);
-          Wed, 25 Mar 2020 16:55:30 +0800
+          Wed, 25 Mar 2020 16:55:31 +0800
 From:   WeiXiong Liao <liaoweixiong@allwinnertech.com>
 To:     Kees Cook <keescook@chromium.org>,
         Anton Vorontsov <anton@enomsg.org>,
@@ -33,9 +33,9 @@ To:     Kees Cook <keescook@chromium.org>,
 Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-mtd@lists.infradead.org,
         WeiXiong Liao <liaoweixiong@allwinnertech.com>
-Subject: [PATCH v3 05/11] pstore/blk: blkoops: support console recorder
-Date:   Wed, 25 Mar 2020 16:55:00 +0800
-Message-Id: <1585126506-18635-6-git-send-email-liaoweixiong@allwinnertech.com>
+Subject: [PATCH v3 06/11] pstore/blk: blkoops: support ftrace recorder
+Date:   Wed, 25 Mar 2020 16:55:01 +0800
+Message-Id: <1585126506-18635-7-git-send-email-liaoweixiong@allwinnertech.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1585126506-18635-1-git-send-email-liaoweixiong@allwinnertech.com>
 References: <1585126506-18635-1-git-send-email-liaoweixiong@allwinnertech.com>
@@ -44,32 +44,32 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Support recorder for console. To enable console recorder, just make
-console_size be greater than 0 and a multiple of 4096.
+Support recorder for ftrace. To enable ftrace recorder, just make
+ftrace_size be greater than 0 and a multiple of 4096.
 
 Signed-off-by: WeiXiong Liao <liaoweixiong@allwinnertech.com>
 ---
- fs/pstore/Kconfig           | 12 ++++++++
- fs/pstore/pstore_blk.c      | 12 +++++++-
- fs/pstore/pstore_zone.c     | 70 +++++++++++++++++++++++++++++++++++++++++----
- include/linux/pstore_zone.h |  4 ++-
- 4 files changed, 91 insertions(+), 7 deletions(-)
+ fs/pstore/Kconfig           |  12 ++++
+ fs/pstore/pstore_blk.c      |   9 +++
+ fs/pstore/pstore_zone.c     | 172 +++++++++++++++++++++++++++++++++++++++++++-
+ include/linux/pstore_zone.h |   2 +
+ 4 files changed, 193 insertions(+), 2 deletions(-)
 
 diff --git a/fs/pstore/Kconfig b/fs/pstore/Kconfig
-index 8cead860dcfc..bf90de48ad3c 100644
+index bf90de48ad3c..55ce726be795 100644
 --- a/fs/pstore/Kconfig
 +++ b/fs/pstore/Kconfig
-@@ -225,6 +225,18 @@ config PSTORE_BLK_PMSG_SIZE
+@@ -237,6 +237,18 @@ config PSTORE_BLK_CONSOLE_SIZE
  	  NOTE that, both Kconfig and module parameters can configure
  	  pstore/blk, but module parameters have priority over Kconfig.
  
-+config PSTORE_BLK_CONSOLE_SIZE
-+	int "Size in Kbytes of console to store"
++config PSTORE_BLK_FTRACE_SIZE
++	int "Size in Kbytes of ftarce to store"
 +	depends on PSTORE_BLK
-+	depends on PSTORE_CONSOLE
++	depends on PSTORE_FTRACE
 +	default 64
 +	help
-+	  This just sets size of console (console_size) for pstore/blk. The
++	  This just sets size of ftrace (ftrace_size) for pstore/blk. The
 +	  size is in KB and must be a multiple of 4.
 +
 +	  NOTE that, both Kconfig and module parameters can configure
@@ -79,280 +79,351 @@ index 8cead860dcfc..bf90de48ad3c 100644
  	bool "dump oops"
  	depends on PSTORE_BLK
 diff --git a/fs/pstore/pstore_blk.c b/fs/pstore/pstore_blk.c
-index 85cd9f2335be..2b513acaa18f 100644
+index 2b513acaa18f..560e7b3f0945 100644
 --- a/fs/pstore/pstore_blk.c
 +++ b/fs/pstore/pstore_blk.c
-@@ -26,6 +26,14 @@
- module_param(pmsg_size, long, 0400);
- MODULE_PARM_DESC(pmsg_size, "pmsg size in kbytes");
+@@ -34,6 +34,14 @@
+ module_param(console_size, long, 0400);
+ MODULE_PARM_DESC(console_size, "console size in kbytes");
  
-+#if IS_ENABLED(CONFIG_PSTORE_CONSOLE)
-+static long console_size = CONFIG_PSTORE_BLK_CONSOLE_SIZE;
++#if IS_ENABLED(CONFIG_PSTORE_FTRACE)
++static long ftrace_size = CONFIG_PSTORE_BLK_FTRACE_SIZE;
 +#else
-+static long console_size = -1;
++static long ftrace_size = -1;
 +#endif
-+module_param(console_size, long, 0400);
-+MODULE_PARM_DESC(console_size, "console size in kbytes");
++module_param(ftrace_size, long, 0400);
++MODULE_PARM_DESC(ftrace_size, "ftrace size in kbytes");
 +
  static int dump_oops = CONFIG_PSTORE_BLK_DUMP_OOPS;
  module_param(dump_oops, int, 0400);
  MODULE_PARM_DESC(total_size, "whether dump oops");
-@@ -81,7 +89,8 @@
-  *		whole disk).
-  *		On success, the number of bytes should be returned, others
-  *		means error.
-- * @write:	The same as @read.
-+ * @write:	The same as @read, but the following error number:
-+ *		-EBUSY means try to write again later.
-  * @panic_write:The write operation only used for panic case. It's optional
-  *		if you do not care panic log. The parameters and return value
-  *		are the same as @read.
-@@ -131,6 +140,7 @@ static int psblk_register_do(struct psblk_device *dev)
- 
+@@ -141,6 +149,7 @@ static int psblk_register_do(struct psblk_device *dev)
  	verify_size(oops_size, 4096, dev->flags & PSTORE_FLAGS_DMESG);
  	verify_size(pmsg_size, 4096, dev->flags & PSTORE_FLAGS_PMSG);
-+	verify_size(console_size, 4096, dev->flags & PSTORE_FLAGS_CONSOLE);
+ 	verify_size(console_size, 4096, dev->flags & PSTORE_FLAGS_CONSOLE);
++	verify_size(ftrace_size, 4096, dev->flags & PSTORE_FLAGS_FTRACE);
  #undef verify_size
  	dump_oops = dump_oops <= 0 ? 0 : 1;
  
 diff --git a/fs/pstore/pstore_zone.c b/fs/pstore/pstore_zone.c
-index 444bce7f9ac3..e1e84505b046 100644
+index e1e84505b046..1da4fc760d31 100644
 --- a/fs/pstore/pstore_zone.c
 +++ b/fs/pstore/pstore_zone.c
-@@ -87,10 +87,12 @@ struct psz_zone {
-  *
+@@ -88,11 +88,14 @@ struct psz_zone {
   * @opszs: oops/panic storage zones
   * @ppsz: pmsg storage zone
-+ * @cpsz: console storage zone
+  * @cpsz: console storage zone
++ * @fpszs: ftrace storage zones
   * @oops_max_cnt: max count of @opszs
   * @oops_read_cnt: counter to read oops zone
   * @oops_write_cnt: counter to write
   * @pmsg_read_cnt: counter to read pmsg zone
-+ * @console_read_cnt: counter to read console zone
+  * @console_read_cnt: counter to read console zone
++ * @ftrace_max_cnt: max count of @fpszs
++ * @ftrace_read_cnt: counter to read ftrace zone
   * @oops_counter: counter to oops
   * @panic_counter: counter to panic
   * @recovered: whether finish recovering data from storage
-@@ -102,10 +104,12 @@ struct psz_zone {
- struct psz_context {
+@@ -105,11 +108,14 @@ struct psz_context {
  	struct psz_zone **opszs;
  	struct psz_zone *ppsz;
-+	struct psz_zone *cpsz;
+ 	struct psz_zone *cpsz;
++	struct psz_zone **fpszs;
  	unsigned int oops_max_cnt;
  	unsigned int oops_read_cnt;
  	unsigned int oops_write_cnt;
  	unsigned int pmsg_read_cnt;
-+	unsigned int console_read_cnt;
+ 	unsigned int console_read_cnt;
++	unsigned int ftrace_max_cnt;
++	unsigned int ftrace_read_cnt;
  	/*
  	 * the counter should be recovered when recover.
  	 * It records the oops/panic times after burning rather than booting.
-@@ -125,6 +129,9 @@ struct psz_context {
- };
- static struct psz_context psz_cxt;
- 
-+static void psz_flush_all_dirty_zones(struct work_struct *);
-+static DECLARE_WORK(psz_cleaner, psz_flush_all_dirty_zones);
-+
- /**
-  * enum psz_flush_mode - flush mode for psz_zone_write()
-  *
-@@ -235,6 +242,9 @@ static int psz_zone_write(struct psz_zone *zone,
- 	return 0;
- dirty:
- 	atomic_set(&zone->dirty, true);
-+	/* flush dirty zones nicely */
-+	if (wcnt == -EBUSY && !is_on_panic())
-+		schedule_work(&psz_cleaner);
- 	return -EBUSY;
+@@ -308,6 +314,7 @@ static void psz_flush_all_dirty_zones(struct work_struct *work)
+ 	psz_flush_dirty_zone(cxt->ppsz);
+ 	psz_flush_dirty_zone(cxt->cpsz);
+ 	psz_flush_dirty_zones(cxt->opszs, cxt->oops_max_cnt);
++	psz_flush_dirty_zones(cxt->fpszs, cxt->ftrace_max_cnt);
  }
  
-@@ -291,6 +301,15 @@ static int psz_move_zone(struct psz_zone *old, struct psz_zone *new)
- 	return 0;
+ static int psz_recover_oops_data(struct psz_context *cxt)
+@@ -542,6 +549,31 @@ static int psz_recover_zone(struct psz_context *cxt, struct psz_zone *zone)
+ 	return ret;
  }
  
-+static void psz_flush_all_dirty_zones(struct work_struct *work)
++static int psz_recover_zones(struct psz_context *cxt,
++		struct psz_zone **zones, unsigned int cnt)
 +{
-+	struct psz_context *cxt = &psz_cxt;
++	int ret;
++	unsigned int i;
++	struct psz_zone *zone;
 +
-+	psz_flush_dirty_zone(cxt->ppsz);
-+	psz_flush_dirty_zone(cxt->cpsz);
-+	psz_flush_dirty_zones(cxt->opszs, cxt->oops_max_cnt);
++	if (!zones)
++		return 0;
++
++	for (i = 0; i < cnt; i++) {
++		zone = zones[i];
++		if (unlikely(!zone))
++			continue;
++		ret = psz_recover_zone(cxt, zone);
++		if (ret)
++			goto recover_fail;
++	}
++
++	return 0;
++recover_fail:
++	pr_debug("recover %s[%u] failed\n", zone->name, i);
++	return ret;
 +}
 +
- static int psz_recover_oops_data(struct psz_context *cxt)
- {
- 	struct psz_info *info = cxt->psz_info;
-@@ -546,6 +565,10 @@ static inline int psz_recovery(struct psz_context *cxt)
+ /**
+  * psz_recovery() - recover data from storage
+  * @cxt: the context of pstore/zone
+@@ -569,6 +601,10 @@ static inline int psz_recovery(struct psz_context *cxt)
  	if (ret)
  		goto recover_fail;
  
-+	ret = psz_recover_zone(cxt, cxt->cpsz);
++	ret = psz_recover_zones(cxt, cxt->fpszs, cxt->ftrace_max_cnt);
 +	if (ret)
 +		goto recover_fail;
 +
  	pr_debug("recover end!\n");
  	atomic_set(&cxt->recovered, 1);
  	return 0;
-@@ -561,6 +584,7 @@ static int psz_pstore_open(struct pstore_info *psi)
- 
+@@ -585,6 +621,7 @@ static int psz_pstore_open(struct pstore_info *psi)
  	cxt->oops_read_cnt = 0;
  	cxt->pmsg_read_cnt = 0;
-+	cxt->console_read_cnt = 0;
+ 	cxt->console_read_cnt = 0;
++	cxt->ftrace_read_cnt = 0;
  	return 0;
  }
  
-@@ -625,8 +649,9 @@ static int psz_pstore_erase(struct pstore_record *record)
- 		return psz_oops_erase(cxt, cxt->opszs[record->id], record);
- 	case PSTORE_TYPE_PMSG:
+@@ -651,6 +688,10 @@ static int psz_pstore_erase(struct pstore_record *record)
  		return psz_record_erase(cxt, cxt->ppsz);
--	default:
--		return -EINVAL;
-+	case PSTORE_TYPE_CONSOLE:
-+		return psz_record_erase(cxt, cxt->cpsz);
-+	default: return -EINVAL;
+ 	case PSTORE_TYPE_CONSOLE:
+ 		return psz_record_erase(cxt, cxt->cpsz);
++	case PSTORE_TYPE_FTRACE:
++		if (record->id >= cxt->ftrace_max_cnt)
++			return -EINVAL;
++		return psz_record_erase(cxt, cxt->fpszs[record->id]);
+ 	default: return -EINVAL;
  	}
  }
- 
-@@ -767,9 +792,18 @@ static int notrace psz_pstore_write(struct pstore_record *record)
- 			record->reason == KMSG_DUMP_PANIC)
- 		atomic_set(&cxt->on_panic, 1);
- 
-+	/*
-+	 * if on panic, do not write except panic records
-+	 * Fix case that panic_write prints log which wakes up console recorder.
-+	 */
-+	if (is_on_panic() && record->type != PSTORE_TYPE_DMESG)
-+		return -EBUSY;
-+
- 	switch (record->type) {
- 	case PSTORE_TYPE_DMESG:
- 		return psz_oops_write(cxt, record);
-+	case PSTORE_TYPE_CONSOLE:
-+		return psz_record_write(cxt->cpsz, record);
+@@ -806,6 +847,13 @@ static int notrace psz_pstore_write(struct pstore_record *record)
+ 		return psz_record_write(cxt->cpsz, record);
  	case PSTORE_TYPE_PMSG:
  		return psz_record_write(cxt->ppsz, record);
++	case PSTORE_TYPE_FTRACE: {
++		int zonenum = smp_processor_id();
++
++		if (!cxt->fpszs)
++			return -ENOSPC;
++		return psz_record_write(cxt->fpszs[zonenum], record);
++	}
  	default:
-@@ -794,6 +828,13 @@ static struct psz_zone *psz_read_next_zone(struct psz_context *cxt)
+ 		return -EINVAL;
+ 	}
+@@ -821,6 +869,14 @@ static struct psz_zone *psz_read_next_zone(struct psz_context *cxt)
  			return zone;
  	}
  
-+	if (cxt->console_read_cnt == 0) {
-+		cxt->console_read_cnt++;
-+		zone = cxt->cpsz;
-+		if (psz_old_ok(zone))
-+			return zone;
-+	}
++	if (cxt->ftrace_read_cnt < cxt->ftrace_max_cnt)
++		/*
++		 * No need psz_old_ok(). Let psz_ftrace_read() do so for
++		 * combination. psz_ftrace_read() should traverse over
++		 * all zones in case of some zone without data.
++		 */
++		return cxt->fpszs[cxt->ftrace_read_cnt++];
 +
- 	return NULL;
+ 	if (cxt->pmsg_read_cnt == 0) {
+ 		cxt->pmsg_read_cnt++;
+ 		zone = cxt->ppsz;
+@@ -894,6 +950,98 @@ static ssize_t psz_oops_read(struct psz_zone *zone,
+ 	return size + hlen;
  }
  
-@@ -903,6 +944,8 @@ static ssize_t psz_pstore_read(struct pstore_record *record)
++static int psz_ftrace_combine(char *src1_buf, size_t src1_size,
++		char *src2_buf, size_t src2_size,
++		char **dest_buf, size_t *dest_size)
++{
++	size_t src1_off, src2_off, total;
++	size_t src1_idx = 0, src2_idx = 0, merged_idx = 0;
++	void *merged_buf;
++	struct pstore_ftrace_record *mrec, *s1rec, *s2rec;
++	size_t record_size = sizeof(struct pstore_ftrace_record);
++
++	src1_off = src1_size % record_size;
++	src1_size -= src1_off;
++
++	src2_off = src2_size % record_size;
++	src2_size -= src2_off;
++
++	total = src1_size + src2_size;
++	merged_buf = kmalloc(total, GFP_KERNEL);
++	if (!merged_buf)
++		return -ENOMEM;
++
++	s1rec = (struct pstore_ftrace_record *)(src1_buf + src1_off);
++	s2rec = (struct pstore_ftrace_record *)(src2_buf + src2_off);
++	mrec = (struct pstore_ftrace_record *)(merged_buf);
++
++	while (src1_size > 0 && src2_size > 0) {
++		u64 s1_ts, s2_ts;
++
++		s1_ts = pstore_ftrace_read_timestamp(&s1rec[src1_idx]);
++		s2_ts = pstore_ftrace_read_timestamp(&s2rec[src2_idx]);
++		if (s1_ts < s2_ts) {
++			mrec[merged_idx++] = s1rec[src1_idx++];
++			src1_size -= record_size;
++		} else {
++			mrec[merged_idx++] = s2rec[src2_idx++];
++			src2_size -= record_size;
++		}
++	}
++
++	while (src1_size > 0) {
++		mrec[merged_idx++] = s1rec[src1_idx++];
++		src1_size -= record_size;
++	}
++
++	while (src2_size > 0) {
++		mrec[merged_idx++] = s2rec[src2_idx++];
++		src2_size -= record_size;
++	}
++
++	*dest_buf = merged_buf;
++	*dest_size = total;
++	return 0;
++}
++
++/* try to combine all ftrace zones */
++static ssize_t psz_ftrace_read(struct psz_zone *zone,
++		struct pstore_record *record)
++{
++	struct psz_context *cxt = record->psi->data;
++	struct psz_buffer *buf;
++	char *dest;
++	size_t dest_size;
++	int ret;
++
++	if (!zone || !record)
++		return -ENOSPC;
++
++	if (!psz_old_ok(zone))
++		goto out;
++
++	buf = (struct psz_buffer *)zone->oldbuf;
++	if (!buf)
++		return -ENOMSG;
++
++	ret = psz_ftrace_combine(record->buf, record->size,
++			(char *)buf->data, atomic_read(&buf->datalen),
++			&dest, &dest_size);
++	if (unlikely(ret))
++		return ret;
++
++	kfree(record->buf);
++	record->buf = dest;
++	record->size = dest_size;
++
++out:
++	if (cxt->ftrace_read_cnt < cxt->ftrace_max_cnt)
++		/* then, read next ftrace zone */
++		return -ENOMSG;
++	record->id = 0;
++	return record->size ? record->size : -ENOMSG;
++}
++
+ static ssize_t psz_record_read(struct psz_zone *zone,
+ 		struct pstore_record *record)
+ {
+@@ -944,6 +1092,9 @@ static ssize_t psz_pstore_read(struct pstore_record *record)
  		readop = psz_oops_read;
  		record->id = cxt->oops_read_cnt - 1;
  		break;
-+	case PSTORE_TYPE_CONSOLE:
-+		fallthrough;
++	case PSTORE_TYPE_FTRACE:
++		readop = psz_ftrace_read;
++		break;
+ 	case PSTORE_TYPE_CONSOLE:
+ 		fallthrough;
  	case PSTORE_TYPE_PMSG:
- 		readop = psz_record_read;
- 		break;
-@@ -1050,6 +1093,8 @@ static void psz_free_all_zones(struct psz_context *cxt)
- 		psz_free_zones(&cxt->opszs, &cxt->oops_max_cnt);
- 	if (cxt->ppsz)
+@@ -1095,6 +1246,8 @@ static void psz_free_all_zones(struct psz_context *cxt)
  		psz_free_zone(&cxt->ppsz);
-+	if (cxt->cpsz)
-+		psz_free_zone(&cxt->cpsz);
+ 	if (cxt->cpsz)
+ 		psz_free_zone(&cxt->cpsz);
++	if (cxt->fpszs)
++		psz_free_zones(&cxt->fpszs, &cxt->ftrace_max_cnt);
  }
  
  static int psz_alloc_zones(struct psz_context *cxt)
-@@ -1066,6 +1111,14 @@ static int psz_alloc_zones(struct psz_context *cxt)
+@@ -1119,6 +1272,16 @@ static int psz_alloc_zones(struct psz_context *cxt)
  		goto free_out;
  	}
  
-+	off_size += info->console_size;
-+	cxt->cpsz = psz_init_zone(PSTORE_TYPE_CONSOLE, &off,
-+			info->console_size);
-+	if (IS_ERR(cxt->cpsz)) {
-+		err = PTR_ERR(cxt->cpsz);
++	off_size += info->ftrace_size;
++	cxt->fpszs = psz_init_zones(PSTORE_TYPE_FTRACE, &off,
++			info->ftrace_size,
++			info->ftrace_size / nr_cpu_ids,
++			&cxt->ftrace_max_cnt);
++	if (IS_ERR(cxt->fpszs)) {
++		err = PTR_ERR(cxt->fpszs);
 +		goto free_out;
 +	}
 +
  	cxt->opszs = psz_init_zones(PSTORE_TYPE_DMESG, &off,
  			info->total_size - off_size,
  			info->oops_size, &cxt->oops_max_cnt);
-@@ -1100,7 +1153,7 @@ int psz_register(struct psz_info *info)
- 		return -EINVAL;
- 	}
- 
--	if (!info->oops_size && !info->pmsg_size) {
-+	if (!info->oops_size && !info->pmsg_size && !info->console_size) {
- 		pr_warn("at least one of the records be non-zero\n");
- 		return -EINVAL;
- 	}
-@@ -1128,6 +1181,7 @@ int psz_register(struct psz_info *info)
- 	check_size(total_size, 4096);
+@@ -1182,6 +1345,7 @@ int psz_register(struct psz_info *info)
  	check_size(oops_size, SECTOR_SIZE);
  	check_size(pmsg_size, SECTOR_SIZE);
-+	check_size(console_size, SECTOR_SIZE);
+ 	check_size(console_size, SECTOR_SIZE);
++	check_size(ftrace_size, SECTOR_SIZE);
  
  #undef check_size
  
-@@ -1160,6 +1214,7 @@ int psz_register(struct psz_info *info)
- 	pr_debug("\ttotal size : %ld Bytes\n", info->total_size);
+@@ -1215,6 +1379,7 @@ int psz_register(struct psz_info *info)
  	pr_debug("\toops size : %ld Bytes\n", info->oops_size);
  	pr_debug("\tpmsg size : %ld Bytes\n", info->pmsg_size);
-+	pr_debug("\tconsole size : %ld Bytes\n", info->console_size);
+ 	pr_debug("\tconsole size : %ld Bytes\n", info->console_size);
++	pr_debug("\tftrace size : %ld Bytes\n", info->ftrace_size);
  
  	err = psz_alloc_zones(cxt);
  	if (err) {
-@@ -1181,11 +1236,14 @@ int psz_register(struct psz_info *info)
- 		cxt->pstore.flags |= PSTORE_FLAGS_DMESG;
- 	if (info->pmsg_size)
+@@ -1238,12 +1403,15 @@ int psz_register(struct psz_info *info)
  		cxt->pstore.flags |= PSTORE_FLAGS_PMSG;
-+	if (info->console_size)
-+		cxt->pstore.flags |= PSTORE_FLAGS_CONSOLE;
+ 	if (info->console_size)
+ 		cxt->pstore.flags |= PSTORE_FLAGS_CONSOLE;
++	if (info->ftrace_size)
++		cxt->pstore.flags |= PSTORE_FLAGS_FTRACE;
  
--	pr_info("Registered %s as pszone backend for%s%s%s\n", info->name,
-+	pr_info("Registered %s as pszone backend for%s%s%s%s\n", info->name,
+-	pr_info("Registered %s as pszone backend for%s%s%s%s\n", info->name,
++	pr_info("Registered %s as pszone backend for%s%s%s%s%s\n", info->name,
  			cxt->opszs && cxt->psz_info->dump_oops ? " Oops" : "",
  			cxt->opszs && cxt->psz_info->panic_write ? " Panic" : "",
--			cxt->ppsz ? " Pmsg" : "");
-+			cxt->ppsz ? " Pmsg" : "",
-+			cxt->cpsz ? " Console" : "");
+ 			cxt->ppsz ? " Pmsg" : "",
+-			cxt->cpsz ? " Console" : "");
++			cxt->cpsz ? " Console" : "",
++			cxt->fpszs ? " Ftrace" : "");
  
  	err = pstore_register(&cxt->pstore);
  	if (err) {
-@@ -1219,6 +1277,8 @@ void psz_unregister(struct psz_info *info)
- {
- 	struct psz_context *cxt = &psz_cxt;
- 
-+	flush_work(&psz_cleaner);
-+
- 	pstore_unregister(&cxt->pstore);
- 	kfree(cxt->pstore.buf);
- 	cxt->pstore.bufsize = 0;
 diff --git a/include/linux/pstore_zone.h b/include/linux/pstore_zone.h
-index 85e159d8f935..8a1838633010 100644
+index 8a1838633010..a138e8b7dc20 100644
 --- a/include/linux/pstore_zone.h
 +++ b/include/linux/pstore_zone.h
-@@ -17,12 +17,13 @@
-  * @oops_size:	The size of oops/panic zone. Zero means disabled, otherwise,
+@@ -18,6 +18,7 @@
   *		it must be multiple of SECTOR_SIZE(512 Bytes).
   * @pmsg_size:	The size of pmsg zone which is the same as @oops_size.
-+ * @console_size:The size of console zone which is the same as @oops_size.
+  * @console_size:The size of console zone which is the same as @oops_size.
++ * @ftrace_size:The size of ftrace zone which is the same as @oops_size.
   * @dump_oops:	Whether to dump oops log.
   * @read:	The general read operation. Both of the function parameters
   *		@size and @offset are relative value to storage.
-  *		On success, the number of bytes should be returned, others
-  *		means error.
-- * @write:	The same as @read.
-+ * @write:	The same as @read, but -EBUSY means try to write again later.
-  * @panic_write:The write operation only used for panic case. It's optional
-  *		if you do not care panic log. The parameters and return value
-  *		are the same as @read.
-@@ -34,6 +35,7 @@ struct psz_info {
- 	unsigned long total_size;
+@@ -36,6 +37,7 @@ struct psz_info {
  	unsigned long oops_size;
  	unsigned long pmsg_size;
-+	unsigned long console_size;
+ 	unsigned long console_size;
++	unsigned long ftrace_size;
  	int dump_oops;
  	psz_read_op read;
  	psz_write_op write;
