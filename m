@@ -2,94 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 24A1D191E2B
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 01:37:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A1488191E1C
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 01:31:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727261AbgCYAhu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 20:37:50 -0400
-Received: from mta01.start.ca ([162.250.196.97]:55166 "EHLO mta01.start.ca"
+        id S1727261AbgCYAb3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 20:31:29 -0400
+Received: from mga02.intel.com ([134.134.136.20]:50410 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727099AbgCYAht (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 20:37:49 -0400
-X-Greylist: delayed 506 seconds by postgrey-1.27 at vger.kernel.org; Tue, 24 Mar 2020 20:37:49 EDT
-Received: from mta01.start.ca (localhost [127.0.0.1])
-        by mta01.start.ca (Postfix) with ESMTP id 7F76D4266E;
-        Tue, 24 Mar 2020 20:29:21 -0400 (EDT)
-Received: from localhost (dhcp-24-53-240-163.cable.user.start.ca [24.53.240.163])
-        by mta01.start.ca (Postfix) with ESMTPS id 5527941F7F;
-        Tue, 24 Mar 2020 20:29:18 -0400 (EDT)
-From:   Nick Bowler <nbowler@draconx.ca>
-To:     linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] nvme: Fix NVME_IOCTL_ADMIN_CMD compat address handling.
-Date:   Tue, 24 Mar 2020 20:28:48 -0400
-Message-Id: <20200325002847.2140-1-nbowler@draconx.ca>
-X-Mailer: git-send-email 2.24.1
+        id S1727099AbgCYAb3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Mar 2020 20:31:29 -0400
+IronPort-SDR: cJLDkC3wCpyVIDqxd/RlQc1sxSrdn77yTQ0+nsEmn/cpy7pRLStIGZj/0247dIXo0kDdCiZ6Tq
+ FhDhlGj7vm5A==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Mar 2020 17:31:28 -0700
+IronPort-SDR: IjDW8Fh1RUSOFjUVHr7o4ibU5xKTGeVUQee9K8tvntMfUqnWaInjyv5w2zhX6vi475LzLbiXuF
+ rufpamoCH23A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.72,302,1580803200"; 
+   d="scan'208";a="446451454"
+Received: from xiaoyaol-mobl.ccr.corp.intel.com (HELO [10.249.170.28]) ([10.249.170.28])
+  by fmsmga005.fm.intel.com with ESMTP; 24 Mar 2020 17:31:25 -0700
+Subject: Re: [PATCH v6 4/8] kvm: x86: Emulate split-lock access as a write in
+ emulator
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        hpa@zytor.com, Paolo Bonzini <pbonzini@redhat.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>
+Cc:     x86@kernel.org, kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Andy Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Arvind Sankar <nivedita@alum.mit.edu>,
+        Fenghua Yu <fenghua.yu@intel.com>,
+        Tony Luck <tony.luck@intel.com>
+References: <20200324151859.31068-1-xiaoyao.li@intel.com>
+ <20200324151859.31068-5-xiaoyao.li@intel.com>
+ <87lfnpz4k2.fsf@nanos.tec.linutronix.de>
+From:   Xiaoyao Li <xiaoyao.li@intel.com>
+Message-ID: <afd05186-dd2d-5610-d03e-98f4ed93d15f@intel.com>
+Date:   Wed, 25 Mar 2020 08:31:24 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.6.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Virus-Scanned: ClamAV using ClamSMTP
+In-Reply-To: <87lfnpz4k2.fsf@nanos.tec.linutronix.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On a real 32-bit kernel, the upper bits of userspace addresses passed
-to NVME_IOCTL_ADMIN_CMD via the nvme_passthru_cmd structure are silently
-ignored by the nvme driver.
+On 3/25/2020 8:00 AM, Thomas Gleixner wrote:
+> Xiaoyao Li <xiaoyao.li@intel.com> writes:
+>>   
+>> +bool split_lock_detect_on(void)
+>> +{
+>> +	return sld_state != sld_off;
+>> +}
+>> +EXPORT_SYMBOL_GPL(split_lock_detect_on);
+> 
+> 1) You export this function here
+> 
+> 2) You change that in one of the next patches to something else
+> 
+> 3) According to patch 1/8 X86_FEATURE_SPLIT_LOCK_DETECT is not set when
+>     sld_state == sld_off. FYI, I did that on purpose.
+> 
+> AFAICT #1 and #2 are just historical leftovers of your previous patch
+> series and the extra step was just adding more changed lines per patch
+> for no value.
+> 
+> #3 changed the detection mechanism and at the same time the semantics of
+> the feature flag.
+> 
+> So what's the point of this exercise?
 
-However on a 64-bit kernel running a compat task, these upper bits are
-not ignored and are in fact required to be zero for the ioctl to work.
+Right. In this series, setting X86_FEATURE_SPLIT_LOCK_DETECT flag means 
+SLD is turned on. Need to remove split_lock_detect_on(). Thanks for 
+pointing out this.
 
-Unfortunately, this difference matters.  32-bit smartctl submits garbage
-in these upper bits because it seems the pointer value it puts into the
-nvme_passthru_cmd structure is sign extended.  This works fine on a real
-32-bit kernel but fails on a 64-bit one because (at least on my setup)
-the addresses smartctl uses are consistently above 2G.  For example:
-
-  # smartctl -x /dev/nvme0n1p1
-  smartctl 7.1 2019-12-30 r5022 [x86_64-linux-5.5.11] (local build)
-  Copyright (C) 2002-19, Bruce Allen, Christian Franke, www.smartmontools.org
-
-  Read NVMe Identify Controller failed: NVME_IOCTL_ADMIN_CMD: Bad address
-
-Since changing 32-bit kernels to actually check all of the submitted
-address bits now would break existing userspace, this patch fixes the
-problem by explicitly zeroing the upper bits in the compat case.  This
-enables 32-bit smartctl to work on a 64-bit kernel.
-
-Signed-off-by: Nick Bowler <nbowler@draconx.ca>
----
- drivers/nvme/host/core.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
-
-diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
-index a4d8c90ee7cc..afb7b76d1d8a 100644
---- a/drivers/nvme/host/core.c
-+++ b/drivers/nvme/host/core.c
-@@ -6,6 +6,7 @@
- 
- #include <linux/blkdev.h>
- #include <linux/blk-mq.h>
-+#include <linux/compat.h>
- #include <linux/delay.h>
- #include <linux/errno.h>
- #include <linux/hdreg.h>
-@@ -1412,6 +1413,16 @@ static int nvme_user_cmd(struct nvme_ctrl *ctrl, struct nvme_ns *ns,
- 	if (cmd.timeout_ms)
- 		timeout = msecs_to_jiffies(cmd.timeout_ms);
- 
-+	if (in_compat_syscall()) {
-+		/*
-+		 * On real 32-bit kernels this implementation ignores the
-+		 * upper bits of address fields so we must replicate that
-+		 * behaviour in the compat case.
-+		 */
-+		cmd.addr = (compat_uptr_t)cmd.addr;
-+		cmd.metadata = (compat_uptr_t)cmd.metadata;
-+	}
-+
- 	effects = nvme_passthru_start(ctrl, ns, cmd.opcode);
- 	status = nvme_submit_user_cmd(ns ? ns->queue : ctrl->admin_q, &c,
- 			(void __user *)(uintptr_t)cmd.addr, cmd.data_len,
--- 
-2.24.1
+> Thanks,
+> 
+>          tglx
+> 
 
