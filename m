@@ -2,130 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B35F4193145
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 20:43:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F1722193153
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 20:45:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727501AbgCYTnK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Mar 2020 15:43:10 -0400
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:44673 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727236AbgCYTnJ (ORCPT
+        id S1727606AbgCYTn5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Mar 2020 15:43:57 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:50976 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727401AbgCYTn4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Mar 2020 15:43:09 -0400
-Received: by mail-qt1-f194.google.com with SMTP id x16so3265828qts.11
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Mar 2020 12:43:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lca.pw; s=google;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=WhXRLeHWCC3uLvHj6QkFXcigLiU7sl1EvrP+2UphyIo=;
-        b=WxeYWiQYlJp7FXNnqc3T8fkMKogqDooYJGlv91eChixvfStUViUK80270XGj/bGCLf
-         HI9T3lP9cwzOsLdMAEoon5oG3vlIeHqL4doT/2TqzYLaTas04SYUZqKDVqxNufI/lVRW
-         mEEumNvV7TFtN/p0l4Nv27iemj3gT+W9igrngkSZpJzcROzCUEElz7FPJs2w8ef0HaTv
-         sOwNHZf9uEjIE8QMm0w0mkywjagE1Z7SZTvG0PCg/EsIT/PfAiiCi9MPv5/lhuqQ5ZR8
-         W9AVneYAVCQTXMWcvBFptWaGUAqeP1ycKNzCRSwBjsMbuSFcTqbwMJIzi4Q093T3PFnx
-         wBUw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=WhXRLeHWCC3uLvHj6QkFXcigLiU7sl1EvrP+2UphyIo=;
-        b=hJL73qws1mJxCLIA19AHzLRoUVyT1H+uRyUt2GHpN5VxzkHKKaSv3RVns9KYBepic/
-         GYOR9p4RDKguynNNdVoQP9tzEC+zULVko1w+/d/8PtxwJopNN+yAJQKgHwOnhGEEbE67
-         sxgsry+TXbS3ksN/abLA2p1UYCcPpEeMHdTjcibT5pESLpxJwKPa8Y4t67WU48KoW3uP
-         V0CMdo7A2FJHPaxW+7tJvGGyUY5uWijrwZjOADmpzxr5SMcNXr8A93fwYlb0zMjTZR2S
-         CBao2Ivz7YHpQTD8BjeedHAch+g7pspTevKCc9e3kvhWGoEieGyao2Bx1KkzGXBXkoat
-         danw==
-X-Gm-Message-State: ANhLgQ3RO+T/YRzcxkD8K9dQGJKI82tGXc83PFeSW9KPvn6GyWUTju5w
-        x1b6r9RZW9+4e32wXvowL1oY4w==
-X-Google-Smtp-Source: ADFU+vv7zuv6fuqpv4PKPxn/GujcUf/QIwRy+o0HN8sc9H5K2J573zl7iknDBQphPntRkIUaNv/7Jg==
-X-Received: by 2002:aed:2ee1:: with SMTP id k88mr4831835qtd.268.1585165388512;
-        Wed, 25 Mar 2020 12:43:08 -0700 (PDT)
-Received: from [192.168.1.153] (pool-71-184-117-43.bstnma.fios.verizon.net. [71.184.117.43])
-        by smtp.gmail.com with ESMTPSA id g3sm15894644qke.89.2020.03.25.12.43.07
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 25 Mar 2020 12:43:07 -0700 (PDT)
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 13.0 \(3608.60.0.2.5\))
-Subject: Re: Null-ptr-deref due to "sanitized pathwalk machinery (v4)"
-From:   Qian Cai <cai@lca.pw>
-In-Reply-To: <20200325055830.GL23230@ZenIV.linux.org.uk>
+        Wed, 25 Mar 2020 15:43:56 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 02PJeNUl126879;
+        Wed, 25 Mar 2020 19:43:28 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id : in-reply-to : references : mime-version :
+ content-transfer-encoding; s=corp-2020-01-29;
+ bh=HSRsOOQW8bntMDbaRCFyx56wyw0QuBUro13yxcUuNss=;
+ b=iioRgsX+XuhHsjk2/si5lx5hh3Y5WB+JQFstUTYCV4hFdfu4EYgd732gEQ9sIxYXSQ/p
+ gxfuntP8h7GG5MgFCoC3M2FovJy4IwaZ7QW5PzecyJZzppPIQunhaiy5fys733/d4Ngc
+ BkKW/7m8cx3JXUvyOKliRn5vEj89Q05nXQKQ2zJqao/SyOG/cr8AY6mEmacZNIUmv1O9
+ k+HPCnI2pAC6QrsgdkNNBZC0lCQot9GfwRYbG307yVaquZxaM8nDiqXW+EeoMGV3tDHT
+ 7Qg7pXnm2pZ9s66HB+32skcIqSaGr02gk40V7PtkrTH1b0flBRhwHCk+wwFqk06Y4NfO 2A== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by userp2120.oracle.com with ESMTP id 3005kvasxv-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 25 Mar 2020 19:43:28 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 02PJgYw9072475;
+        Wed, 25 Mar 2020 19:43:27 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by aserp3020.oracle.com with ESMTP id 30073b1tvw-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 25 Mar 2020 19:43:27 +0000
+Received: from abhmp0016.oracle.com (abhmp0016.oracle.com [141.146.116.22])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 02PJhPs2025269;
+        Wed, 25 Mar 2020 19:43:25 GMT
+Received: from pneuma.us.oracle.com (/10.39.203.246)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 25 Mar 2020 12:43:25 -0700
+From:   Ross Philipson <ross.philipson@oracle.com>
+To:     linux-kernel@vger.kernel.org, x86@kernel.org,
+        linux-doc@vger.kernel.org
+Cc:     ross.philipson@oracle.com, dpsmith@apertussolutions.com,
+        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
+        trenchboot-devel@googlegroups.com
+Subject: [RFC PATCH 01/12] x86: Secure Launch Kconfig
 Date:   Wed, 25 Mar 2020 15:43:06 -0400
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <C2554121-109E-450A-965F-B8DFE2B0E528@lca.pw>
-References: <4CBDE0F3-FB73-43F3-8535-6C75BA004233@lca.pw>
- <20200324214637.GI23230@ZenIV.linux.org.uk>
- <A32DAE66-ADBA-46C7-BD26-F9BA8F12BC18@lca.pw>
- <20200325021327.GJ23230@ZenIV.linux.org.uk>
- <5281297D-B66E-4A4C-9B41-D2242F6B7AE7@lca.pw>
- <20200325040359.GK23230@ZenIV.linux.org.uk>
- <20200325055830.GL23230@ZenIV.linux.org.uk>
-To:     Al Viro <viro@zeniv.linux.org.uk>
-X-Mailer: Apple Mail (2.3608.60.0.2.5)
+Message-Id: <20200325194317.526492-2-ross.philipson@oracle.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20200325194317.526492-1-ross.philipson@oracle.com>
+References: <20200325194317.526492-1-ross.philipson@oracle.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9571 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 adultscore=0
+ suspectscore=0 mlxscore=0 phishscore=0 bulkscore=0 spamscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2003020000 definitions=main-2003250157
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9571 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 bulkscore=0 phishscore=0
+ suspectscore=0 impostorscore=0 spamscore=0 adultscore=0 priorityscore=1501
+ mlxlogscore=999 lowpriorityscore=0 mlxscore=0 clxscore=1015
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2003020000
+ definitions=main-2003250156
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Initial bits to bring in Secure Launch functionality. Add Kconfig
+options for compiling in/out the Secure Launch code.
 
+Signed-off-by: Ross Philipson <ross.philipson@oracle.com>
+---
+ arch/x86/Kconfig | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-> On Mar 25, 2020, at 1:58 AM, Al Viro <viro@zeniv.linux.org.uk> wrote:
->=20
-> On Wed, Mar 25, 2020 at 04:03:59AM +0000, Al Viro wrote:
->=20
->> Lovely.  So
->> 	* we really do get NULL nd->path.dentry there; I've not misread =
-the
->> trace.
->> 	* on the entry into link_path_walk() nd->path.dentry is =
-non-NULL.
->> 	* *ALL* components should've been LAST_NORM ones
->> 	* not a single symlink in sight, unless the setup is rather =
-unusual
->> 	* possibly not even a single mountpoint along the way (depending
->> upon the userland used)
->=20
-> OK, I see one place where that could occur, but I really don't see how =
-that
-> could be triggered on this pathname, short of very odd symlink layout =
-in
-> the filesystem on the testbox.  Does the following fix your =
-reproducer?
->=20
-> diff --git a/fs/namei.c b/fs/namei.c
-> index 311e33dbac63..4082b70f32ff 100644
-> --- a/fs/namei.c
-> +++ b/fs/namei.c
-> @@ -1805,6 +1805,8 @@ static const char *handle_dots(struct nameidata =
-*nd, int type)
-> 			error =3D step_into(nd, WALK_NOFOLLOW,
-> 					 parent, inode, seq);
-> 		}
-> +		if (unlikely(error))
-> +			return ERR_PTR(error);
->=20
-> 		if (unlikely(nd->flags & LOOKUP_IS_SCOPED)) {
-> 			/*
-
-Since that one has a compilation warning, I have tested this patch and =
-seen no crash so far.
-
-diff --git a/fs/namei.c b/fs/namei.c
-index 311e33dbac63..73851acdbf3a 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -1806,6 +1806,9 @@ static const char *handle_dots(struct nameidata =
-*nd, int type)
-                                         parent, inode, seq);
-                }
-=20
-+               if (unlikely(error))
-+                       return error;
+diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+index 5e8949953660..7f3406a9948b 100644
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@ -2014,6 +2014,17 @@ config EFI_MIXED
+ 
+ 	   If unsure, say N.
+ 
++config SECURE_LAUNCH
++	bool "Secure Launch support"
++	default n
++	depends on X86_64
++	help
++	  This Secure Launch kernel feature allows a bzImage to be loaded
++	  directly through Intel TXT or AMD SKINIT measured launch. This
++	  allows extablishing a Dynamic Root of Trust Measurement (DRTM)
++	  of all the modules and configuration information used for
++	  boooting the operating system.
 +
-                if (unlikely(nd->flags & LOOKUP_IS_SCOPED)) {
-                        /*
-                         * If there was a racing rename or mount along =
-our=
+ config SECCOMP
+ 	def_bool y
+ 	prompt "Enable seccomp to safely compute untrusted bytecode"
+-- 
+2.25.1
+
