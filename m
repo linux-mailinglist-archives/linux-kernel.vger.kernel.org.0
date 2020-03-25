@@ -2,139 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 86385192EAC
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 17:51:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 98A6B192EB6
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 17:54:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727792AbgCYQu6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Mar 2020 12:50:58 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:53548 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727357AbgCYQu6 (ORCPT
+        id S1727770AbgCYQys convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 25 Mar 2020 12:54:48 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:48640 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727539AbgCYQyr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Mar 2020 12:50:58 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=s7ImFkVNzd0EVebzyqYWogl6KMDAeW152fkisQem/34=; b=adSrmU5EieOTos2teFmSTYPrUe
-        dVFksML2LS5o4ZTBtjE83p4dvcmSydcNY12P8B7YU7+eNqX3aDHgxPac23YFQzKTNK296nnp3zGY2
-        nwrtCCZ5EFLotBZfWPX0GMinEfBfD/GqNBWFO5bUAiB3ACQTmmR5fMs8P8+8IHDUMd12TniM258TO
-        A8d9+7ZIIeTf6/VmYHnMv5L0ncvOR14S0djRM2Lsg7NzvaaJC93aD4toMDqVejyTkA5mFYXr5mxvX
-        UuuFBo848h7U90EFUopT3XTEgeL+dKF9Q0MFIv5OxuMeSpj6GSM2qfCQmjhh19phRZWwfwUKQCnaR
-        p5GJa82w==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jH9Ey-0002hx-Tk; Wed, 25 Mar 2020 16:50:53 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 3A1373011DE;
-        Wed, 25 Mar 2020 17:50:50 +0100 (CET)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 2481529A7FAFE; Wed, 25 Mar 2020 17:50:50 +0100 (CET)
-Date:   Wed, 25 Mar 2020 17:50:50 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Josh Poimboeuf <jpoimboe@redhat.com>
-Cc:     tglx@linutronix.de, linux-kernel@vger.kernel.org, x86@kernel.org,
-        mhiramat@kernel.org, mbenes@suse.cz, brgerst@gmail.com,
-        jthierry@redhat.com
-Subject: Re: [PATCH v3 26/26] objtool: Add STT_NOTYPE noinstr validation
-Message-ID: <20200325165050.GC20696@hirez.programming.kicks-ass.net>
-References: <20200324153113.098167666@infradead.org>
- <20200324160925.470421121@infradead.org>
- <20200324221616.2tdljgyay37aiw2t@treble>
- <20200324223455.GV2452@worktop.programming.kicks-ass.net>
- <20200325144211.irnwnly37fyhapvx@treble>
- <20200325155348.GA20696@hirez.programming.kicks-ass.net>
- <20200325164046.p2oxemcjnj2tnxbz@treble>
+        Wed, 25 Mar 2020 12:54:47 -0400
+Received: from bigeasy by Galois.linutronix.de with local (Exim 4.80)
+        (envelope-from <bigeasy@linutronix.de>)
+        id 1jH9IM-00061w-Lf; Wed, 25 Mar 2020 17:54:22 +0100
+Date:   Wed, 25 Mar 2020 17:54:22 +0100
+From:   Sebastian Siewior <bigeasy@linutronix.de>
+To:     "Paul E. McKenney" <paulmck@kernel.org>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Kurt Schwemmer <kurt.schwemmer@microsemi.com>,
+        linux-pci@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Felipe Balbi <balbi@kernel.org>, linux-usb@vger.kernel.org,
+        Kalle Valo <kvalo@codeaurora.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        platform-driver-x86@vger.kernel.org,
+        Zhang Rui <rui.zhang@intel.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        linux-pm@vger.kernel.org, Len Brown <lenb@kernel.org>,
+        linux-acpi@vger.kernel.org, kbuild test robot <lkp@intel.com>,
+        Nick Hu <nickhu@andestech.com>,
+        Greentime Hu <green.hu@gmail.com>,
+        Vincent Chen <deanbo422@gmail.com>,
+        Guo Ren <guoren@kernel.org>, linux-csky@vger.kernel.org,
+        Brian Cain <bcain@codeaurora.org>,
+        linux-hexagon@vger.kernel.org, Tony Luck <tony.luck@intel.com>,
+        Fenghua Yu <fenghua.yu@intel.com>, linux-ia64@vger.kernel.org,
+        Michal Simek <monstr@monstr.eu>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Geoff Levand <geoff@infradead.org>,
+        linuxppc-dev@lists.ozlabs.org, Davidlohr Bueso <dbueso@suse.de>
+Subject: Re: Documentation/locking/locktypes: Further clarifications and
+ wordsmithing
+Message-ID: <20200325165422.hfxzkxcj3jhqcstr@linutronix.de>
+References: <20200323025501.GE3199@paulmck-ThinkPad-P72>
+ <87r1xhz6qp.fsf@nanos.tec.linutronix.de>
+ <20200325002811.GO19865@paulmck-ThinkPad-P72>
+ <87wo78y5yy.fsf@nanos.tec.linutronix.de>
+ <20200325160212.oavrni7gmzudnczv@linutronix.de>
+ <20200325163919.GU19865@paulmck-ThinkPad-P72>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20200325164046.p2oxemcjnj2tnxbz@treble>
+Content-Transfer-Encoding: 8BIT
+In-Reply-To: <20200325163919.GU19865@paulmck-ThinkPad-P72>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 25, 2020 at 11:40:46AM -0500, Josh Poimboeuf wrote:
-> On Wed, Mar 25, 2020 at 04:53:48PM +0100, Peter Zijlstra wrote:
-> > On Wed, Mar 25, 2020 at 09:42:11AM -0500, Josh Poimboeuf wrote:
-> > > Sure, but couldn't validate_unwind_hints() and
-> > > validate_reachable_instructions() be changed to *only* run on
-> > > .noinstr.text, for the vmlinux case?  That might help converge the
-> > > vmlinux and !vmlinux paths.
+On 2020-03-25 09:39:19 [-0700], Paul E. McKenney wrote:
+> > > --- a/Documentation/locking/locktypes.rst
+> > > +++ b/Documentation/locking/locktypes.rst
+> > …
+> > > +rw_semaphore
+> > > +============
+> > > +
+> > > +rw_semaphore is a multiple readers and single writer lock mechanism.
+> > > +
+> > > +On non-PREEMPT_RT kernels the implementation is fair, thus preventing
+> > > +writer starvation.
+> > > +
+> > > +rw_semaphore complies by default with the strict owner semantics, but there
+> > > +exist special-purpose interfaces that allow non-owner release for readers.
+> > > +These work independent of the kernel configuration.
 > > 
-> > You're thinking something like so then?
+> > This reads funny, could be my English. "This works independent …" maybe?
 > 
-> Not exactly.  But I don't want to keep churning this patch set.  I can
-> add more patches later, so don't worry about it.
+> The "These" refers to "interfaces", which is plural, so "These" rather
+> than "This".  But yes, it is a bit awkward, because you have to skip
+> back past "readers", "release", and "non-owner" to find the implied
+> subject of that last sentence.
 > 
-> But I was thinking it would eventually be good to have the top-level
-> check() be like
+> So how about this instead, making the implied subject explicit?
 > 
-> 	sec = NULL;
-> 	if (!validate_all)
-> 		sec = find_section_by_name(file->elf, ".noinstr.text");
-> 
-> 	ret = validate_functions(&file, sec);
-> 	if (ret < 0)
-> 		goto out;
-> 	warnings += ret;
-> 
-> 	ret = validate_unwind_hints(&file, sec);
-> 	if (ret < 0)
-> 		goto out;
-> 	warnings += ret;
-> 
-> 	if (!warnings) {
-> 		ret = validate_reachable_instructions(&file, sec);
-> 		if (ret < 0)
-> 			goto out;
-> 		warnings += ret;
-> 	}
-> 
-> 	if (!validate_all)
-> 		goto out;
-> 
-> 	ret = validate_retpoline(&file);
-> 	....
-> 
-> that way the general flow is the same regardless...
+> rw_semaphore complies by default with the strict owner semantics, but there
+> exist special-purpose interfaces that allow non-owner release for readers.
+> These interfaces work independent of the kernel configuration.
 
-Ah,... I see what you mean, there's two little wrinkles with that:
+Yes, perfect. Thank you.
 
- - validate_reachable_instructions() is strictly superluous, it does no
-   additional validation between the !vmlinux and vmlinux mode, so I'd
-   put that if (!validate_all) goto out, one up.
+> 							Thanx, Paul
 
- - tglx has a patch adding .entry.text to be considered as noinstr as a
-   whole, which has:
-
-
-@@ -2636,11 +2637,16 @@ static int validate_vmlinux_functions(st
- 	int warnings = 0;
- 
- 	sec = find_section_by_name(file->elf, ".noinstr.text");
--	if (!sec)
--		return 0;
-+	if (sec) {
-+		warnings += validate_section(file, sec);
-+		warnings += validate_unwind_hints(file, sec);
-+	}
- 
--	warnings += validate_section(file, sec);
--	warnings += validate_unwind_hints(file, sec);
-+	sec = find_section_by_name(file->elf, ".entry.text");
-+	if (sec) {
-+		warnings += validate_section(file, sec);
-+		warnings += validate_unwind_hints(file, sec);
-+	}
- 
- 	return warnings;
- }
-
-Anyway, yes, we can do this on top.
-
-I was going to commit the first 17 patches to tip/core/objtool and
-repost the remaining 13 once more. And then see how much pain I did to
-Julien's patches :-)
+Sebastian
