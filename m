@@ -2,55 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A3DA3192FC1
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 18:49:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 73401192FE1
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 18:52:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727935AbgCYRta (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Mar 2020 13:49:30 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:47398 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727253AbgCYRt3 (ORCPT
+        id S1727701AbgCYRwJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Mar 2020 13:52:09 -0400
+Received: from mail-wm1-f48.google.com ([209.85.128.48]:56007 "EHLO
+        mail-wm1-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727280AbgCYRwI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Mar 2020 13:49:29 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=0eVq4oJ1vlTkxZBuPQihBCIZvhQk/iP6m567vFaX8KA=; b=cPYN1CHouqwpjHeGqGnQtzJfTr
-        l2X1bfE8eWQIhLEA3HVfpKcukkH3yi5fNMap7L0qj2aNk3YiMP1C+h73yX+yKzxrN5NXIJAQ1+6J2
-        NINptjPEevMLMU+bik9Shf+F+wcW4toHqZ5HjVYNBC5rIKnH6gnReirgq6sSoICnCMKVz5hvNB1WT
-        TxaJU0kJ5UevGLn04qkL6cahPFkY/Tybc8xrqt7wdVH+YB1/1zJV2sjon6Onl3IhLT6ytL/WHA/BS
-        wRWVqpdyryahtKuFb6D6DbeHsEdPpwRYaoDpQ/LqAiG9qQlXimAxVcQJfjuoQMZx6XNECXsgNX1ZL
-        k3GjvlUw==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jHA9Z-0000Ae-E5; Wed, 25 Mar 2020 17:49:21 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 9D3813023D1;
-        Wed, 25 Mar 2020 18:49:19 +0100 (CET)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 394DE20206085; Wed, 25 Mar 2020 18:49:19 +0100 (CET)
-Date:   Wed, 25 Mar 2020 18:49:19 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     x86@kernel.org
-Cc:     linux-kernel@vger.kernel.org, rostedt@goodmis.org,
-        mhiramat@kernel.org, bristot@redhat.com, jbaron@akamai.com,
-        torvalds@linux-foundation.org, tglx@linutronix.de,
-        mingo@kernel.org, namit@vmware.com, hpa@zytor.com, luto@kernel.org,
-        ard.biesheuvel@linaro.org, jpoimboe@redhat.com
-Subject: Re: [RESEND][PATCH v3 00/17] Add static_call()
-Message-ID: <20200325174919.GJ20713@hirez.programming.kicks-ass.net>
-References: <20200324135603.483964896@infradead.org>
+        Wed, 25 Mar 2020 13:52:08 -0400
+Received: by mail-wm1-f48.google.com with SMTP id z5so3471428wml.5
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Mar 2020 10:52:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=yif9NVG5qM8UtBHACYI/xY6SaBYSsuiUhHBQ73NO1N8=;
+        b=HCINmJCDnfcY8ewgVE3xtasrXb2Z2dK1xZ52g5yfs86Xu+IPOOFxFN0RMEDaM8WTn5
+         MBdmdXdsuHYmIT/0c28kx9D2hOfJEBzEGOgkI4t4fDVyVoPXlSfq3fAJ8VTv/meZB2BF
+         LxFLM5khMPsp0u2AaYEte0XdIlWmo0hPm0hrRpR0huyXcqinP6Eg9uZjMj05l/oKvdFx
+         tawr0bAcJpT2ZyavV1b9qFOeXFOTOpQbBOTgIpdpKp/4D58sRQaEEwZcUkRIg9U2T5mg
+         lSsMwVf97o2lFZ51zDH/XXzC9GApnYJOM8pGTbj6DEbxombPZbRtXzrcsKMm+3YS+5uS
+         ynjw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=yif9NVG5qM8UtBHACYI/xY6SaBYSsuiUhHBQ73NO1N8=;
+        b=S93oIFVLExl/eb0ubyPwbtKPSj6bQBxkm7qPLVZazl9Gyz7rxFJJENHIwHqFHmwN30
+         QA6u9BNxFYy3kYWTgpU0siFkXFtadG6yzzAC1fiJEGYTJmCxsu+X+UesAKlPK8X3SPAo
+         IB/m2zG4hyAbf/SsO1+OZXdh2hV270eTdw3DZ9aMnYFUsdGkLLSZFuP2twsRQaebcI3g
+         K6eJKuUOzd/XBald5GvSslIO3dl5Px9L25o/+mfHklrVAKxi9+dR5rt5Civs4w+LsKTB
+         jHftRpHkGE8GRp2bo8u40JP53CF+HEiLKcwg2QwwX/6BFc0Qs0FSap6BxcBrIKno+amt
+         Twvw==
+X-Gm-Message-State: ANhLgQ1XTe1/JNxIru9ALgCyf9yG+xaCyqDxMvG2FZpPt0ADbj0UnIi/
+        qYXKHczw3y5N3gM3X6iVSr+itvGGH+ZXnTmun48=
+X-Google-Smtp-Source: ADFU+vsZ41U9VmICHzULJAe9eA3jQXQ/NCx1Q5ewlweYb1D4ftz0Lh9iocVH1RbzinRjkmpFzePMZ07vmsIXgYG/B/s=
+X-Received: by 2002:a1c:cc11:: with SMTP id h17mr4549621wmb.39.1585158727066;
+ Wed, 25 Mar 2020 10:52:07 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200324135603.483964896@infradead.org>
+References: <20200325023250.163321-1-chenzhou10@huawei.com>
+In-Reply-To: <20200325023250.163321-1-chenzhou10@huawei.com>
+From:   Alex Deucher <alexdeucher@gmail.com>
+Date:   Wed, 25 Mar 2020 13:51:55 -0400
+Message-ID: <CADnq5_NQgugmHe0U_-b6EZB6JHX-qqcu0ATKVKKy105sANgHxQ@mail.gmail.com>
+Subject: Re: [PATCH -next] drm/amdgpu/uvd7: remove unnecessary conversion to bool
+To:     Chen Zhou <chenzhou10@huawei.com>
+Cc:     "Deucher, Alexander" <alexander.deucher@amd.com>,
+        Christian Koenig <christian.koenig@amd.com>,
+        Chunming Zhou <David1.Zhou@amd.com>,
+        Dave Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Maling list - DRI developers 
+        <dri-devel@lists.freedesktop.org>,
+        amd-gfx list <amd-gfx@lists.freedesktop.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, Mar 25, 2020 at 4:17 AM Chen Zhou <chenzhou10@huawei.com> wrote:
+>
+> The conversion to bool is not needed, remove it.
+>
+> Signed-off-by: Chen Zhou <chenzhou10@huawei.com>
 
-To clafiry, quilt ate the From: Josh on patches 5,6,7 and 9.
+Applied.  Thanks!
+
+Alex
+
+> ---
+>  drivers/gpu/drm/amd/amdgpu/uvd_v7_0.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/gpu/drm/amd/amdgpu/uvd_v7_0.c b/drivers/gpu/drm/amd/amdgpu/uvd_v7_0.c
+> index 0995378..20f10a5 100644
+> --- a/drivers/gpu/drm/amd/amdgpu/uvd_v7_0.c
+> +++ b/drivers/gpu/drm/amd/amdgpu/uvd_v7_0.c
+> @@ -1694,7 +1694,7 @@ static int uvd_v7_0_set_clockgating_state(void *handle,
+>                                           enum amd_clockgating_state state)
+>  {
+>         struct amdgpu_device *adev = (struct amdgpu_device *)handle;
+> -       bool enable = (state == AMD_CG_STATE_GATE) ? true : false;
+> +       bool enable = (state == AMD_CG_STATE_GATE);
+>
+>         uvd_v7_0_set_bypass_mode(adev, enable);
+>
+> --
+> 2.7.4
+>
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
