@@ -2,139 +2,179 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 28B801929A9
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 14:30:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5EA4F1929B5
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 14:31:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727356AbgCYNaT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Mar 2020 09:30:19 -0400
-Received: from mail-qv1-f66.google.com ([209.85.219.66]:45114 "EHLO
-        mail-qv1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726967AbgCYNaT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Mar 2020 09:30:19 -0400
-Received: by mail-qv1-f66.google.com with SMTP id g4so975072qvo.12
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Mar 2020 06:30:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=uWPS7PjoiY9R8TaTiA5QpjnYh9arIvd3P3PvhKcV++I=;
-        b=HGCmcGSGlRDNCmP0Jhf2uCs5OygM7WjiumSyx+Xl6GteDLbyDJ0zWp6KCvZ6ErjC7A
-         UoU+/jERRkcNX+mNfTm4puy4dmMcs84JSqTgMzJJ4vzB3RmDO2LmmRe6fj72GqYW6zmm
-         w/Dhb0u4Codfnzfr7HU1qS3GqBQNDTj892Y4MdOzj6pUhxIz3VwlRsFhN9l85OSlDNX3
-         MO5mN80hBJzvOUfF3t78W7R6hPXfe6vOA7DX7MKziOQGkCfNjr4vHlOyzmiYvxfIc5kj
-         NMwMtdC4z7qIBbGAocB4xJTH61QRgszVD6wNfdKzjjF5bm9NBcweu8OW4juosyUY9KK9
-         zh8Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=uWPS7PjoiY9R8TaTiA5QpjnYh9arIvd3P3PvhKcV++I=;
-        b=R8KGOTj3E5r8/DCZ3Luw68PMANHcBf9iriMB6Qio9DRQwMeemXcwrEdN3FX73gzmf0
-         s1qnLJhBV3srr74HOuK0phe4jKT5P298rV/ObprB8PoB6NZpbpqV7ffC9smnnLjJiS1I
-         +VFLS3i3s4Dw9Zh1DeK71zgj1nZHYRSPd8OrLJ9G8WCjbfl+rd0WZiokb3Q7KAwYo87J
-         iEgvMks/Nk10tMluntQ40T+W217b4Q9aobDUKRaRskyslMsdEdLWUkBVhEbr8ERbZvkr
-         tjCah5RYhHaj2l7Q6sHoTS5g2Ok86QM5NVqEapUHy1hWbvW9QmKWdqool+MXTX13FTj9
-         tHdQ==
-X-Gm-Message-State: ANhLgQ1PLZpwiMguZYe4oTvzgp5POF2L67XSJ3Gl3qbCZrhJ4nWjQmsh
-        EwJgaIrAcGqMECCXMO1jRpw=
-X-Google-Smtp-Source: ADFU+vuJMLXE7T6HLEU4+q2yuldglAuXi642aB1S1Kg4oQePb3ikWpuWfow4XE19do+HiYQw6zBxcg==
-X-Received: by 2002:a05:6214:1412:: with SMTP id n18mr3167697qvx.219.1585143016012;
-        Wed, 25 Mar 2020 06:30:16 -0700 (PDT)
-Received: from quaco.ghostprotocols.net ([179.97.37.151])
-        by smtp.gmail.com with ESMTPSA id x51sm17665716qtj.82.2020.03.25.06.30.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Mar 2020 06:30:15 -0700 (PDT)
-From:   Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
-X-Google-Original-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
-        id 3BAD340F77; Wed, 25 Mar 2020 10:30:12 -0300 (-03)
-Date:   Wed, 25 Mar 2020 10:30:12 -0300
-To:     He Zhe <zhe.he@windriver.com>
-Cc:     Jiri Olsa <jolsa@redhat.com>, peterz@infradead.org,
-        mingo@redhat.com, mark.rutland@arm.com,
-        alexander.shishkin@linux.intel.com, namhyung@kernel.org,
-        linux-kernel@vger.kernel.org, Sam Lunt <samueljlunt@gmail.com>
-Subject: Re: [PATCH 1/2] perf: Be compatible with all python versions when
- fetching ldflags
-Message-ID: <20200325133012.GC14102@kernel.org>
-References: <1581618066-187262-1-git-send-email-zhe.he@windriver.com>
- <20200216222148.GA161771@krava>
- <8cc46abf-208d-4aa4-8d0d-4922106bee6e@windriver.com>
+        id S1727438AbgCYNbm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Mar 2020 09:31:42 -0400
+Received: from mx2.suse.de ([195.135.220.15]:58700 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726842AbgCYNbk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Mar 2020 09:31:40 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 12DC3AD7C;
+        Wed, 25 Mar 2020 13:31:38 +0000 (UTC)
+Subject: Re: [PATCH v7 2/2] tty: add rpmsg driver
+To:     Arnaud POULIQUEN <arnaud.pouliquen@st.com>,
+        Ohad Ben-Cohen <ohad@wizery.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc:     Suman Anna <s-anna@ti.com>,
+        Fabien DESSENNE <fabien.dessenne@st.com>,
+        linux-stm32@st-md-mailman.stormreply.com,
+        xiang xiao <xiaoxiang781216@gmail.com>
+References: <20200324170407.16470-1-arnaud.pouliquen@st.com>
+ <20200324170407.16470-3-arnaud.pouliquen@st.com>
+ <e458f805-c746-c88e-98f4-d874a7552933@suse.cz>
+ <1e4ce821-dd9b-bb04-774b-58a255834cf5@st.com>
+From:   Jiri Slaby <jslaby@suse.cz>
+Autocrypt: addr=jslaby@suse.cz; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <ec061c30-eace-1df9-fa7b-71a61e5710a2@suse.cz>
+Date:   Wed, 25 Mar 2020 14:31:36 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8cc46abf-208d-4aa4-8d0d-4922106bee6e@windriver.com>
-X-Url:  http://acmel.wordpress.com
+In-Reply-To: <1e4ce821-dd9b-bb04-774b-58a255834cf5@st.com>
+Content-Type: text/plain; charset=iso-8859-2
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Mon, Feb 17, 2020 at 10:24:27AM +0800, He Zhe escreveu:
+On 25. 03. 20, 14:15, Arnaud POULIQUEN wrote:
+>>> +		if (copied != len)
+>>> +			dev_dbg(&rpdev->dev, "trunc buffer: available space is %d\n",
+>>> +				copied);
+>>> +		tty_flip_buffer_push(&cport->port);
+>>> +	} else {
+>>> +		/* control message */
+>>> +		struct rpmsg_tty_ctrl *msg = data;
+>>> +
+>>> +		if (len != sizeof(*msg))
+>>> +			return -EINVAL;
+>>> +
+>>> +		cport->data_dst = msg->d_ept_addr;
+>>> +
+>>> +		/* Update remote cts state */
+>>> +		cport->cts = msg->cts ? 1 : 0;
+>>
+>> Number to bool implicit conversion needs no magic, just do:
+>> cport->cts = msg->cts;
 > 
+> In this case i would prefer  cport->cts = (msg->cts != 1);
+> for the conversion
+
+That still looks confusing. In the ternary operator above, you used
+msg->cts as a bool implicitly and now you are trying to artificially
+create one :)?
+
+IOW in a bool context, "msg->cts ? 1 : 0" is the same as "msg->cts".
+
+>>> +	/*
+>>> +	 * Try to send the message to remote processor, if failed return 0 as
+>>> +	 * no data sent
+>>> +	 */
+>>> +	ret = rpmsg_trysendto(cport->d_ept, tmpbuf, msg_size, cport->data_dst);
+>>
+>> data of rpmsg_trysendto is not const. OK, you seem you need to change
+>> that first, I see no blocker for that.
 > 
-> On 2/17/20 6:22 AM, Jiri Olsa wrote:
-> > On Fri, Feb 14, 2020 at 02:21:05AM +0800, zhe.he@windriver.com wrote:
-> >> From: He Zhe <zhe.he@windriver.com>
-> >>
-> >> Since Python v3.8.0, with the following commit
-> >> 0a8e57248b91 ("bpo-36721: Add --embed option to python-config (GH-13500)"),
-> > we got similar change recently.. might have not been picked up yet
-> >
-> >   https://lore.kernel.org/lkml/20200131181123.tmamivhq4b7uqasr@gmail.com/
+> I created a temporary buffer to ensure that buffer to sent does not exceed the 
+> MTU size.
+> But perhaps this is an useless protection as the rpmsg_tty_write_room already
+> return the MTU value, and so the 'len' variable can not be higher that value
+> returned by the write_room?
+
+You still can limit it by msg_size without cloning the buffer, right?
+
+>>> +static int rpmsg_tty_port_activate(struct tty_port *p, struct tty_struct *tty)
+>>> +{
+>>> +	p->low_latency = (p->flags & ASYNC_LOW_LATENCY) ? 1 : 0;
+>>> +
+>>> +	/* Allocate the buffer we use for writing data */
+>>
+>> Where exactly -- am I missing something?
 > 
-> Thanks for pointing out.
+> in tty_port_alloc_xmit_buf. it's a copy past from mips_ejtag_fdc.c,
+> I will clean this line if it's confusing.
 
-So, just with your patch:
+No, I mean where do you use the allocated buffer? mips_ejtag_fdc.c uses it.
 
-[acme@five perf]$ rm -rf /tmp/build/perf ; mkdir -p /tmp/build/perf
-[acme@five perf]$ make PYTHON=python3 -C tools/perf O=/tmp/build/perf install-bin |& grep python
-...                     libpython: [ OFF ]
-Makefile.config:750: No 'Python.h' (for Python 2.x support) was found: disables Python support - please install python-devel/python-dev
-  CC       /tmp/build/perf/tests/python-use.o
-[acme@five perf]$
+>>> +static int rpmsg_tty_probe(struct rpmsg_device *rpdev)
+>>> +{
+>>> +	struct rpmsg_tty_port *cport;
+>>> +	struct device *dev = &rpdev->dev;
+>>> +	struct rpmsg_channel_info chinfo;
+>>> +	struct device *tty_dev;
+>>> +	int ret;
+>>> +
+>>> +	cport = rpmsg_tty_alloc_cport();
+>>> +	if (IS_ERR(cport)) {
+>>> +		dev_err(dev, "failed to alloc tty port\n");
+>>> +		return PTR_ERR(cport);
+>>> +	}
+>>> +
+>>> +	if (!strncmp(rpdev->id.name, TTY_CH_NAME_WITH_CTS,
+>>> +		     sizeof(TTY_CH_NAME_WITH_CTS))) {
+>>
+>> sizeof of a string feels unnatural, but will work in this case. Can a
+>> compiler optimize strlen of a static string?
+> 
+> I don't know if a compiler can do this...
+> what about replacing sizeof by strlen function? 
+> i saw some code example that use strlen with static string...
+> (e.g  https://elixir.bootlin.com/linux/latest/source/drivers/edac/edac_mc.c#L1193)
 
-[acme@five perf]$ rpm -q python2-devel python3-devel python-devel
-package python2-devel is not installed
-python3-devel-3.7.6-2.fc31.x86_64
-package python-devel is not installed
-[acme@five perf]$
+The question was exactly about that: can a compiler optimize it to a
+bare number or will strlen call remain there?
 
-[acme@five perf]$ cat /tmp/build/perf/feature/test-libpython.make.output
-/bin/sh: --configdir: command not found
-[acme@five perf]$ cat /tmp/build/perf/feature/test-libpython
-test-libpython.make.output          test-libpython-version.make.output
-[acme@five perf]$ cat /tmp/build/perf/feature/test-libpython-version.make.output
-/bin/sh: --configdir: command not found
-[acme@five perf]$
-
-
-Without your patch:
-
-[acme@five perf]$ rm -rf /tmp/build/perf ; mkdir -p /tmp/build/perf
-[acme@five perf]$ make PYTHON=python3 -C tools/perf O=/tmp/build/perf install-bin |& grep python
-...                     libpython: [ on  ]
-  GEN      /tmp/build/perf/python/perf.so
-  MKDIR    /tmp/build/perf/scripts/python/Perf-Trace-Util/
-  CC       /tmp/build/perf/scripts/python/Perf-Trace-Util/Context.o
-  LD       /tmp/build/perf/scripts/python/Perf-Trace-Util/perf-in.o
-  CC       /tmp/build/perf/tests/python-use.o
-  CC       /tmp/build/perf/util/scripting-engines/trace-event-python.o
-  INSTALL  python-scripts
-[acme@five perf]$
-
-[acme@five perf]$ ldd /tmp/build/perf/perf |& grep python
-	libpython3.7m.so.1.0 => /lib64/libpython3.7m.so.1.0 (0x00007f11dd1ee000)
-[acme@five perf]$ perf -vv |& grep -i python
-             libpython: [ on  ]  # HAVE_LIBPYTHON_SUPPORT
-[acme@five perf]$
-
-What am I missing?
-
-
-[acme@five perf]$ cat /etc/redhat-release
-Fedora release 31 (Thirty One)
-[acme@five perf]$
-
-- Arnaldo
+thanks,
+-- 
+js
+suse labs
