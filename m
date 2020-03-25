@@ -2,62 +2,62 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CCEDE192305
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 09:42:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A4AE119230B
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 09:42:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727523AbgCYImZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Mar 2020 04:42:25 -0400
-Received: from us-smtp-delivery-74.mimecast.com ([63.128.21.74]:55423 "EHLO
+        id S1727586AbgCYImk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Mar 2020 04:42:40 -0400
+Received: from us-smtp-delivery-74.mimecast.com ([63.128.21.74]:30197 "EHLO
         us-smtp-delivery-74.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727493AbgCYImW (ORCPT
+        by vger.kernel.org with ESMTP id S1727442AbgCYImX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Mar 2020 04:42:22 -0400
+        Wed, 25 Mar 2020 04:42:23 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1585125741;
+        s=mimecast20190719; t=1585125742;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=ULivbGLl6KTUozKoE2Gy/bIJGSFm1/wS+8k3cIB+Rtw=;
-        b=NOaRnVXcM3LhOOzp6h4teZvVBQKfHGQx35WXTluKFW1TVfY/DAH5CPImWBk+PYNWSobFxz
-        SiSNdLe6YqYsLjIbio7sT6XyoqUsMfk211GHdEI5ZgoJ37BLHiSKCxZYucFsrvA0N+SrZB
-        D0QkoERcMT8nidJFGhRHBbAPRg1h38E=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-122-RiZHKgODPYWcoPR_VIi-AQ-1; Wed, 25 Mar 2020 04:42:18 -0400
-X-MC-Unique: RiZHKgODPYWcoPR_VIi-AQ-1
-Received: by mail-wr1-f70.google.com with SMTP id u18so792435wrn.11
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Mar 2020 01:42:18 -0700 (PDT)
+        bh=5HVI2W6fr/+4cyEErTt71G4IXrR6DcIMT5jhV/dd41c=;
+        b=N3LZN0My+Qxg4HNYqcqEJiqiVzUWs3la2aQ0bIIOeffocm0ZK/sla2ZQCehJ/ggQUpYA8N
+        pymMi7XyKZowTRDgH9d+x6AQmr/0N1JP9vC/uudgAT/wQQUcZgtDlATpZSZQT3QvKUQDeL
+        m8ONMg3yY8LWR2rdXs/M/Hvx4uwEgOg=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-476-qPL4pY1sPXu54ysXbQD7hQ-1; Wed, 25 Mar 2020 04:42:20 -0400
+X-MC-Unique: qPL4pY1sPXu54ysXbQD7hQ-1
+Received: by mail-wr1-f69.google.com with SMTP id i18so790833wrx.17
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Mar 2020 01:42:19 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=ULivbGLl6KTUozKoE2Gy/bIJGSFm1/wS+8k3cIB+Rtw=;
-        b=lFrp2e4zkxxMjr80E7i8UWXC/kE0x57hvPFDHyg0rveyhfdtpT7eAUQKmzisUj9SHl
-         JlLAGEetQWJRYLicLY6CDBAJ+yxr40O1NQWhozCEzZd+Elr8oaeilwkl5S/RGyyLqy5G
-         CNzuYxRmIbe80nUts/2qaw1e/1sv9Wdj3w3eSdh9ypGxg/EfnvsQg6pXVOalbmQvWusD
-         JhVrwsTsjw3/+NShNdr+Ge8gADQ7IUMaUOx/XLA/xLkINNs41aB9/8eQAd4K6AvDE4bB
-         CfEaz1/DNdKcw7zcRTEzc56GrG+Y1hD2sqNu0LeaIgcPKpjjixn0z5p3akA/fjNqiajQ
-         G4pQ==
-X-Gm-Message-State: ANhLgQ2VpYmbn7eKxmUClkFeYx02Wo9Im6tvecll95ltpd1zuJpXec+N
-        y7liksGvyic3p9gI5v3KCHp8/wm4fcX/hS93mRZ+Cv4uCXyllY1MeV4R4YCacBLKMWg70F8GcbO
-        N4ywn4hQfFAu8OJX80doGoSiH
-X-Received: by 2002:adf:ed86:: with SMTP id c6mr2091121wro.286.1585125737029;
-        Wed, 25 Mar 2020 01:42:17 -0700 (PDT)
-X-Google-Smtp-Source: ADFU+vs1j8VE04/AKRhD+HSmkabsGG0dF+IBe9t888FWrsiLeSacz0MPxj2x7sEQYxBKOtPfHIfBsA==
-X-Received: by 2002:adf:ed86:: with SMTP id c6mr2091090wro.286.1585125736732;
-        Wed, 25 Mar 2020 01:42:16 -0700 (PDT)
+        bh=5HVI2W6fr/+4cyEErTt71G4IXrR6DcIMT5jhV/dd41c=;
+        b=fBajI1XkglEB0vXtkbQUCYl04FikgJrPkJoLkBRHxaunfMfx9ZD5kuc7VIgWrFr0Pa
+         kAfQH7fSpAglWp/uOfNhk5EWi8Ph4IyvjwyoDxRLCxA7mBRDJ+7qYNOQxOCi9m0o31q/
+         7Yuz0u4+8n+sHAW3vARaDe4S7Un+Go11Db31gX3PhAGxPJwAKs70XnQ7Dpoiv6cLR/FW
+         pufev/mn1tPF1HIRf0wkRSquRsZ8SXcjMbzVlCvrljGhZmN9zVYx8UsZzWHIGEZh0p8k
+         tRPFrvRpw9KcUkHzgqOrLjU+OhfuEdfWG05p97BJEx8OnJASvS5TptYqHhov+ng1IjMD
+         Pegg==
+X-Gm-Message-State: ANhLgQ0aAdhqQNOA+M0FyWkJvraG3h+1qNXo4LggQtajv0O0jjN6KCYG
+        cxB0r6mB98hHN0WIMH8l3dznLPi9xXo/cvqN4B++pm35Yi2bVsPkvBLfidzCTEjrqIGbHW/I/q3
+        gHBv6fuJTiaVx52IfJfb7pgDv
+X-Received: by 2002:adf:9465:: with SMTP id 92mr2204017wrq.122.1585125738390;
+        Wed, 25 Mar 2020 01:42:18 -0700 (PDT)
+X-Google-Smtp-Source: ADFU+vv7BwDD2SdbvU1R3h86Qs9oxq8u1/0pJB6Ih7oQviZ3JSRocjcPar/MmJCMD68sh+RJF3DJMQ==
+X-Received: by 2002:adf:9465:: with SMTP id 92mr2204004wrq.122.1585125738252;
+        Wed, 25 Mar 2020 01:42:18 -0700 (PDT)
 Received: from redfedo.redhat.com ([2a01:cb14:58d:8400:ecf6:58e2:9c06:a308])
-        by smtp.gmail.com with ESMTPSA id f12sm8055323wmf.24.2020.03.25.01.42.15
+        by smtp.gmail.com with ESMTPSA id f12sm8055323wmf.24.2020.03.25.01.42.16
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Mar 2020 01:42:15 -0700 (PDT)
+        Wed, 25 Mar 2020 01:42:17 -0700 (PDT)
 From:   Julien Thierry <jthierry@redhat.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     jpoimboe@redhat.com, peterz@infradead.org, raphael.gault@arm.com,
         Julien Thierry <jthierry@redhat.com>
-Subject: [PATCH 05/10] objtool: check: Remove check preventing branches within alternative
-Date:   Wed, 25 Mar 2020 08:41:58 +0000
-Message-Id: <20200325084203.17005-6-jthierry@redhat.com>
+Subject: [PATCH 06/10] objtool: check: Use arch specific values in restore_reg()
+Date:   Wed, 25 Mar 2020 08:41:59 +0000
+Message-Id: <20200325084203.17005-7-jthierry@redhat.com>
 X-Mailer: git-send-email 2.21.1
 In-Reply-To: <20200325084203.17005-1-jthierry@redhat.com>
 References: <20200325084203.17005-1-jthierry@redhat.com>
@@ -68,38 +68,30 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-While jumping from outside an alternative region to the middle of an
-alternative region is very likely wrong, jumping from an alternative
-region into the same region is valid. It is a common pattern on arm64.
+Initial register state is set up by arch specific code. Use the value
+the arch code has set when restoring registers from the stack.
 
-The first pattern is unlikely to happen in practice and checking only
-for this adds a lot of complexity.
-
-Just remove the current check.
-
-Suggested-by: Josh Poimboeuf <jpoimboe@redhat.com>
+Suggested-by: Raphael Gault <raphael.gault@arm.com>
 Signed-off-by: Julien Thierry <jthierry@redhat.com>
 ---
- tools/objtool/check.c | 6 ------
- 1 file changed, 6 deletions(-)
+ tools/objtool/check.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/tools/objtool/check.c b/tools/objtool/check.c
-index 75ebaa0a6216..b8c288c02c99 100644
+index b8c288c02c99..7bf4dbc2e31f 100644
 --- a/tools/objtool/check.c
 +++ b/tools/objtool/check.c
-@@ -2015,12 +2015,6 @@ static int validate_branch(struct objtool_file *file, struct symbol *func,
- 	insn = first;
- 	sec = insn->sec;
+@@ -1501,8 +1501,8 @@ static void save_reg(struct insn_state *state, unsigned char reg, int base,
  
--	if (insn->alt_group && list_empty(&insn->alts)) {
--		WARN_FUNC("don't know how to handle branch to middle of alternative instruction group",
--			  sec, insn->offset);
--		return 1;
--	}
--
- 	while (1) {
- 		next_insn = next_insn_same_sec(file, insn);
+ static void restore_reg(struct insn_state *state, unsigned char reg)
+ {
+-	state->regs[reg].base = CFI_UNDEFINED;
+-	state->regs[reg].offset = 0;
++	state->regs[reg].base = initial_func_cfi.regs[reg].base;
++	state->regs[reg].offset = initial_func_cfi.regs[reg].offset;
+ }
  
+ /*
 -- 
 2.21.1
 
