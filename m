@@ -2,185 +2,167 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D019C192E3B
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 17:30:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3909B192E51
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 17:38:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728078AbgCYQar (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Mar 2020 12:30:47 -0400
-Received: from mailout2.samsung.com ([203.254.224.25]:17986 "EHLO
-        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727901AbgCYQaq (ORCPT
+        id S1727406AbgCYQi0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Mar 2020 12:38:26 -0400
+Received: from aer-iport-2.cisco.com ([173.38.203.52]:39205 "EHLO
+        aer-iport-2.cisco.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727275AbgCYQi0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Mar 2020 12:30:46 -0400
-Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
-        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20200325163043epoutp027bbd19c68a2464221210e85a047fc76e~-mQWmj0rN1594015940epoutp02j
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Mar 2020 16:30:43 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20200325163043epoutp027bbd19c68a2464221210e85a047fc76e~-mQWmj0rN1594015940epoutp02j
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1585153843;
-        bh=Jjid3OCbf405YB87bLFZtPVycg3uhmaHWUs/g5VJJ6o=;
-        h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-        b=dtJhSVngi3l9NjEsi0h0YOJ4cIW28aUohWkSm7yKxPXdJ8Q7b7x86W9bK8q7t3kBy
-         E24sdUyngiWb8+/tsMSmTgZWRRuasboiJDSZr3Wi53bT0nPdbBbONOLECv03N3MFRg
-         lqiDbYTYUHZPO2+dw+LisyhqoSbjAHtN7zevo7Bg=
-Received: from epsmges5p2new.samsung.com (unknown [182.195.42.74]) by
-        epcas5p4.samsung.com (KnoxPortal) with ESMTP id
-        20200325163042epcas5p490063c18b7538d1328925e36189482ea~-mQWHQaXG0752507525epcas5p4C;
-        Wed, 25 Mar 2020 16:30:42 +0000 (GMT)
-Received: from epcas5p2.samsung.com ( [182.195.41.40]) by
-        epsmges5p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        C8.C7.04778.2378B7E5; Thu, 26 Mar 2020 01:30:42 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
-        20200325163042epcas5p370e8e189e6a49f1f50cf5a68b52ab99e~-mQVZsL361415414154epcas5p3t;
-        Wed, 25 Mar 2020 16:30:42 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20200325163042epsmtrp1c75f9412873cb3f7e4cfa973ceae2ae1~-mQVYxR4d2393323933epsmtrp19;
-        Wed, 25 Mar 2020 16:30:42 +0000 (GMT)
-X-AuditID: b6c32a4a-33bff700000012aa-b1-5e7b87328ab7
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        9D.FB.04024.1378B7E5; Thu, 26 Mar 2020 01:30:41 +0900 (KST)
-Received: from alimakhtar02 (unknown [107.108.234.165]) by
-        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20200325163038epsmtip228d90d395f59346c5ee1c4bc0a1d66fa~-mQSd_lDM3252832528epsmtip2c;
-        Wed, 25 Mar 2020 16:30:38 +0000 (GMT)
-From:   "Alim Akhtar" <alim.akhtar@samsung.com>
-To:     "'Avri Altman'" <Avri.Altman@wdc.com>, <robh+dt@kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-scsi@vger.kernel.org>
-Cc:     <krzk@kernel.org>, <martin.petersen@oracle.com>,
-        <kwmad.kim@samsung.com>, <stanley.chu@mediatek.com>,
-        <cang@codeaurora.org>, <linux-samsung-soc@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-In-Reply-To: <SN6PR04MB46404847C78F62BA2D5CD2A0FCF30@SN6PR04MB4640.namprd04.prod.outlook.com>
-Subject: RE: [PATCH v3 4/5] scsi: ufs-exynos: add UFS host support for
- Exynos SoCs
-Date:   Wed, 25 Mar 2020 22:00:36 +0530
-Message-ID: <000001d602c2$b9a15f80$2ce41e80$@samsung.com>
+        Wed, 25 Mar 2020 12:38:26 -0400
+X-Greylist: delayed 429 seconds by postgrey-1.27 at vger.kernel.org; Wed, 25 Mar 2020 12:38:24 EDT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=cisco.com; i=@cisco.com; l=3706; q=dns/txt; s=iport;
+  t=1585154305; x=1586363905;
+  h=subject:to:cc:references:from:message-id:date:
+   mime-version:in-reply-to:content-transfer-encoding;
+  bh=XODqsNkzk78qQBBhDHsB4Un4cvki1BxKm7wKbk22n68=;
+  b=JAbr8OsV6a3zLgK9aBr+d6zHSeHq+Xu40ocCmSIkjRbRKM+UexwD74ob
+   IVWsJHmDEGki1wB7rpRxUzo1D2AGmiw5etbqVi5SflRxXBbnvi7V8q71Z
+   Wq0UoIlCC2e37LI9Rc2l3mCo1InaXP55i9zRSMHx0Azvf3UExUIZP3hyu
+   Q=;
+X-IronPort-Anti-Spam-Filtered: true
+X-IronPort-Anti-Spam-Result: =?us-ascii?q?A0ANAAAgh3te/xbLJq1mGgEBAQEBAQE?=
+ =?us-ascii?q?BAQMBAQEBEQEBAQICAQEBAYFpAwEBAQELAYF8gW0gEiqEGYkCh2sIJYlsj2C?=
+ =?us-ascii?q?BewoBAQEMAQEvBAEBhEQCgkw2Bw4CAwEBCwEBBQEBAQIBBQRthWKFYwEBAQE?=
+ =?us-ascii?q?CASMVQRALFQMCAiYCAiE2BgEMBgIBAYMigkwDDiCtN3WBMoVLgmsNYoE+gQ4?=
+ =?us-ascii?q?qAYxIgUE/gREnDIJhPoIbhUGCXgSNWIk3cZgRRIJGkkuENwYdjyeMNy2OZIt?=
+ =?us-ascii?q?HkC0CBAsCFYFZAjCBWDMaCBsVgydQGA2OKReBBAEIjRo/AzCPJwEB?=
+X-IronPort-AV: E=Sophos;i="5.72,304,1580774400"; 
+   d="scan'208";a="24752855"
+Received: from aer-iport-nat.cisco.com (HELO aer-core-2.cisco.com) ([173.38.203.22])
+  by aer-iport-2.cisco.com with ESMTP/TLS/DHE-RSA-SEED-SHA; 25 Mar 2020 16:31:14 +0000
+Received: from [10.63.114.242] ([10.63.114.242])
+        (authenticated bits=0)
+        by aer-core-2.cisco.com (8.15.2/8.15.2) with ESMTPSA id 02PGVCim026801
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
+        Wed, 25 Mar 2020 16:31:13 GMT
+Subject: Re: [PATCH v2] PCI: sysfs: Change bus_rescan and dev_rescan to rescan
+To:     Kelsey Skunberg <skunberg.kelsey@gmail.com>,
+        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
+Cc:     ddutile@redhat.com, bodong@mellanox.com,
+        linux-kernel-mentees@lists.linuxfoundation.org,
+        skhan@linuxfoundation.org, ruslan.bilovol@gmail.com,
+        bhelgaas@google.com, Kelsey Skunberg <kelsey.skunberg@gmail.com>,
+        stable <stable@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+References: <20200325151708.32612-1-skunberg.kelsey@gmail.com>
+From:   Ruslan Bilovol <rbilovol@cisco.com>
+Message-ID: <bf3ffd93-5dac-0c38-9029-9e58bfb187a5@cisco.com>
+Date:   Wed, 25 Mar 2020 18:31:12 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQG8Fm24XBW91IxNCpc3FyucYAw+uQGZ6IyRAhOVxEQCiTgOcqhboVgA
-Content-Language: en-in
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrIKsWRmVeSWpSXmKPExsWy7bCmhq5Re3Wcwer5hhYvf15ls/i0fhmr
-        xfwj51gtzp/fwG5xc8tRFotNj6+xWlzeNYfNYsb5fUwW3dd3sFksP/6PyaJ17xF2i6VbbzI6
-        8Hhc7utl8ti0qpPNY/OSeo+Wk/tZPD4+vcXi0bdlFaPH501yHu0HupkCOKK4bFJSczLLUov0
-        7RK4MlZOEy54JFExce9hxgbGOUJdjJwcEgImEj/nHGPqYuTiEBLYzSjx5e99KOcTo8Th5gus
-        EM43RokDV2+wwLQ0dV1kArGFBPYyShxfbwZR9IZR4s6xm2BFbAK6EjsWt7GB2CICtRKLJ3eA
-        TWIGGftt72SwIk6BWIkZB2+wg9jCAiESbbd/gDWwCKhKvPnaxwpi8wpYSny52cYOYQtKnJz5
-        BKyXWUBbYtnC18wQFylI/Hy6jBVimZvE7T3H2SBqxCWO/uyBqlnGLrGkWwzCdpH49+QSK4Qt
-        LPHq+BZ2CFtK4mU/yC4OIDtbomeXMUS4RmLpvGNQz9tLHLgyhwWkhFlAU2L9Ln2ITXwSvb+f
-        MEF08kp0tEFDV1Wi+d1VqE5piYnd3VBLPSR+LjzDOIFRcRaSv2Yh+WsWkvtnISxbwMiyilEy
-        taA4Nz212LTAKC+1XK84Mbe4NC9dLzk/dxMjOKFpee1gXHbO5xCjAAejEg/vBsvqOCHWxLLi
-        ytxDjBIczEoivJtTK+KEeFMSK6tSi/Lji0pzUosPMUpzsCiJ805ivRojJJCeWJKanZpakFoE
-        k2Xi4JRqYDxyYO5zfxmhS5t/Pd9ydrNBX1KzxvTPGxe9dE+vWxDmliO0pUrr7ft1EXY7TfVX
-        eXi3Zx99leSyan71BceTj6ffVju/Iv/dZde6Js+XR2VCLxj+njSNd8p30yVlTBY2tW+X1l9y
-        frRoZX5CS7H1vdzwE+WLSzeFsGZ7XWCaGcr9cH1SY9umNxOVWIozEg21mIuKEwHN3JwvZAMA
-        AA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrJIsWRmVeSWpSXmKPExsWy7bCSvK5he3WcwbGHlhYvf15ls/i0fhmr
-        xfwj51gtzp/fwG5xc8tRFotNj6+xWlzeNYfNYsb5fUwW3dd3sFksP/6PyaJ17xF2i6VbbzI6
-        8Hhc7utl8ti0qpPNY/OSeo+Wk/tZPD4+vcXi0bdlFaPH501yHu0HupkCOKK4bFJSczLLUov0
-        7RK4Mqae/8JUsFyioqnhGEsD433BLkZODgkBE4mmrotMXYxcHEICuxklvp96yAyRkJa4vnEC
-        O4QtLLHy33N2iKJXjBK/ri8DS7AJ6ErsWNzGBpIQEWhklFj8bwkjiMMs8ItR4snah0wgVUIC
-        E5gkJkwXBbE5BWIlZhy8AdYtLBAksWTxSlYQm0VAVeLN1z4wm1fAUuLLzTZ2CFtQ4uTMJywg
-        NrOAtsTTm0/h7GULX0OdqiDx8+kysF4RATeJ23uOs0HUiEsc/dnDPIFReBaSUbOQjJqFZNQs
-        JC0LGFlWMUqmFhTnpucWGxYY5qWW6xUn5haX5qXrJefnbmIER6iW5g7Gy0viDzEKcDAq8fBu
-        sKyOE2JNLCuuzD3EKMHBrCTCuzm1Ik6INyWxsiq1KD++qDQntfgQozQHi5I479O8Y5FCAumJ
-        JanZqakFqUUwWSYOTqkGRu2HqxlvNE7YtUX5mazw7Pxr2ip+Wgnb+k4kJu3/vj+4/GFcKce9
-        Cqu/3t/8/+omtwSdaWs58/VR6F/N9a6eex8WXcoK0vn5f93fhZrF5zqkmn13iu44n6Gj2s+e
-        P0ky5X9o5wGviKV3Fqh+YeKLWp7x/WH4gz8frgrmO22J93jvv/yngI/JSSWW4oxEQy3mouJE
-        AIp7gdjMAgAA
-X-CMS-MailID: 20200325163042epcas5p370e8e189e6a49f1f50cf5a68b52ab99e
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-X-CMS-RootMailID: 20200319150710epcas5p11411da0ec2d56b403b80a206ce38a92b
-References: <20200319150031.11024-1-alim.akhtar@samsung.com>
-        <CGME20200319150710epcas5p11411da0ec2d56b403b80a206ce38a92b@epcas5p1.samsung.com>
-        <20200319150031.11024-5-alim.akhtar@samsung.com>
-        <SN6PR04MB46404847C78F62BA2D5CD2A0FCF30@SN6PR04MB4640.namprd04.prod.outlook.com>
+In-Reply-To: <20200325151708.32612-1-skunberg.kelsey@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Authenticated-User: rbilovol
+X-Outbound-SMTP-Client: 10.63.114.242, [10.63.114.242]
+X-Outbound-Node: aer-core-2.cisco.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Avri
-Thanks for review, see my comment inline below
+On 3/25/20 5:17 PM, Kelsey Skunberg wrote:
+> From: Kelsey Skunberg <kelsey.skunberg@gmail.com>
+> 
+> rename device attribute name arguments 'bus_rescan' and 'dev_rescan' to 'rescan'
+> to avoid breaking userspace applications.
+> 
+> The attribute argument names were changed in the following commits:
+> 8bdfa145f582 ("PCI: sysfs: Define device attributes with DEVICE_ATTR*()")
+> 4e2b79436e4f ("PCI: sysfs: Change DEVICE_ATTR() to DEVICE_ATTR_WO()")
+> 
+> Revert the names used for attributes back to the names used before the above
+> patches were applied. This also requires to change DEVICE_ATTR_WO() to
+> DEVICE_ATTR() and __ATTR().
+> 
+> Note when using DEVICE_ATTR() the attribute is automatically named
+> dev_attr_<name>.attr. To avoid duplicated names between attributes, use
+> __ATTR() instead of DEVICE_ATTR() to a assign a custom attribute name for
+> dev_rescan.
+> 
+> change bus_rescan_store() to dev_bus_rescan_store() to complete matching the
+> names used before the mentioned patches were applied.
+> 
+> Fixes: 8bdfa145f582 ("PCI: sysfs: Define device attributes with DEVICE_ATTR*()")
+> Fixes: 4e2b79436e4f ("PCI: sysfs: Change DEVICE_ATTR() to DEVICE_ATTR_WO()")
 
-> -----Original Message-----
-> From: Avri Altman <Avri.Altman=40wdc.com>
-> Sent: 22 March 2020 17:54
-> To: Alim Akhtar <alim.akhtar=40samsung.com>; robh+dt=40kernel.org;
-> devicetree=40vger.kernel.org; linux-scsi=40vger.kernel.org
-> Cc: krzk=40kernel.org; martin.petersen=40oracle.com; kwmad.kim=40samsung.=
-com;
-> stanley.chu=40mediatek.com; cang=40codeaurora.org; linux-samsung-
-> soc=40vger.kernel.org; linux-arm-kernel=40lists.infradead.org; linux-
-> kernel=40vger.kernel.org
-> Subject: RE: =5BPATCH v3 4/5=5D scsi: ufs-exynos: add UFS host support fo=
-r Exynos
-> SoCs
->=20
-> > +static int exynos7_ufs_pre_link(struct exynos_ufs *ufs) =7B
-> > +       struct ufs_hba *hba =3D ufs->hba;
-> > +       u32 val =3D ufs->drv_data->uic_attr->pa_dbg_option_suite;
-> Can pa_dbg_option_suite be replaced by a macro?
->=20
-Going forward, I have plan to add multiple Samsung/Exynos SoC variants, whi=
-ch will have its own drv_data. For that reason I kept it.
-Let me have a relook on this.
+Thanks Kelsey for the quick fix.
 
-> > +       exynos_ufs_disable_ov_tm(hba);
-> > +
-> > +       ufshcd_dme_set(hba, UIC_ARG_MIB(PA_DBG_OPTION_SUITE_DYN),
-> > 0xf);
-> > +       ufshcd_dme_set(hba, UIC_ARG_MIB(PA_DBG_OPTION_SUITE_DYN),
-> > 0xf);
-> A typo? Set PA_DBG_OPTION_SUITE_DYN twice?
->=20
-Ack, will change
+Tested-by: Ruslan Bilovol <rbilovol@cisco.com>
 
-> > +=23define PWR_MODE_STR_LEN       64
-> > +static int exynos_ufs_post_pwr_mode(struct ufs_hba *hba,
-> > +                               struct ufs_pa_layer_attr *pwr_max,
-> > +                               struct ufs_pa_layer_attr *pwr_req) =7B
-> > +       struct exynos_ufs *ufs =3D ufshcd_get_variant(hba);
-> > +       struct phy *generic_phy =3D ufs->phy;
-> > +       struct uic_pwr_mode *pwr =3D &ufs->pwr_act;
-> > +       char pwr_str=5BPWR_MODE_STR_LEN=5D =3D =22=22;
-> Un-needed complication IMO - all those snprintf that is.
->=20
-You mean pwr_str initialization is not needed here?
-
-> > +
-> > +static void exynos_ufs_fit_aggr_timeout(struct exynos_ufs *ufs) =7B
-> > +       const u8 cntr_div =3D 40;
-> Can be replaced by a macro?
->=20
-Sure, will change.
-
-> > +struct exynos_ufs_drv_data exynos_ufs_drvs =3D =7B
-> > +
-> > +       .compatible             =3D =22samsung,exynos7-ufs=22,
-> > +       .uic_attr               =3D &exynos7_uic_attr,
-> > +       .quirks                 =3D UFSHCD_QUIRK_PRDT_BYTE_GRAN =7C
-> > +                                 UFSHCI_QUIRK_BROKEN_REQ_LIST_CLR =7C
-> > +                                 UFSHCI_QUIRK_BROKEN_HCE =7C
-> > +                                 UFSHCI_QUIRK_SKIP_RESET_INTR_AGGR,
-> > +       .opts                   =3D EXYNOS_UFS_OPT_HAS_APB_CLK_CTRL =7C
-> > +                                 EXYNOS_UFS_OPT_BROKEN_AUTO_CLK_CTRL =
-=7C
-> > +                                 EXYNOS_UFS_OPT_BROKEN_RX_SEL_IDX,
-> In what way opts are different from quirks?
->=20
-Similar to quirks, but only specific to controller local control, like rela=
-ted to APB interface and clock control.
-These doesn't need a change in common ufshcd core. So kept as opts.
-Will fix your comments and submit v4 soon.
-Thanks.
->=20
-> Thanks,
-> Avri
-
+> 
+> Cc: stable <stable@vger.kernel.org>
+> Signed-off-by: Kelsey Skunberg <kelsey.skunberg@gmail.com>
+> Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> ---
+> 
+> v2 updates:
+> 	commit log updated to include 'Fixes: *' and Cc: stable to aid commit
+> 	being backported properly.
+> 
+>   drivers/pci/pci-sysfs.c | 17 ++++++++++-------
+>   1 file changed, 10 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/pci/pci-sysfs.c b/drivers/pci/pci-sysfs.c
+> index 13f766db0684..667e13d597ff 100644
+> --- a/drivers/pci/pci-sysfs.c
+> +++ b/drivers/pci/pci-sysfs.c
+> @@ -464,7 +464,10 @@ static ssize_t dev_rescan_store(struct device *dev,
+>   	}
+>   	return count;
+>   }
+> -static DEVICE_ATTR_WO(dev_rescan);
+> +static struct device_attribute dev_rescan_attr = __ATTR(rescan,
+> +							0220, NULL,
+> +							dev_rescan_store);
+> +
+>   
+>   static ssize_t remove_store(struct device *dev, struct device_attribute *attr,
+>   			    const char *buf, size_t count)
+> @@ -481,9 +484,9 @@ static ssize_t remove_store(struct device *dev, struct device_attribute *attr,
+>   static DEVICE_ATTR_IGNORE_LOCKDEP(remove, 0220, NULL,
+>   				  remove_store);
+>   
+> -static ssize_t bus_rescan_store(struct device *dev,
+> -				struct device_attribute *attr,
+> -				const char *buf, size_t count)
+> +static ssize_t dev_bus_rescan_store(struct device *dev,
+> +				    struct device_attribute *attr,
+> +				    const char *buf, size_t count)
+>   {
+>   	unsigned long val;
+>   	struct pci_bus *bus = to_pci_bus(dev);
+> @@ -501,7 +504,7 @@ static ssize_t bus_rescan_store(struct device *dev,
+>   	}
+>   	return count;
+>   }
+> -static DEVICE_ATTR_WO(bus_rescan);
+> +static DEVICE_ATTR(rescan, 0220, NULL, dev_bus_rescan_store);
+>   
+>   #if defined(CONFIG_PM) && defined(CONFIG_ACPI)
+>   static ssize_t d3cold_allowed_store(struct device *dev,
+> @@ -641,7 +644,7 @@ static struct attribute *pcie_dev_attrs[] = {
+>   };
+>   
+>   static struct attribute *pcibus_attrs[] = {
+> -	&dev_attr_bus_rescan.attr,
+> +	&dev_attr_rescan.attr,
+>   	&dev_attr_cpuaffinity.attr,
+>   	&dev_attr_cpulistaffinity.attr,
+>   	NULL,
+> @@ -1487,7 +1490,7 @@ static umode_t pci_dev_attrs_are_visible(struct kobject *kobj,
+>   
+>   static struct attribute *pci_dev_hp_attrs[] = {
+>   	&dev_attr_remove.attr,
+> -	&dev_attr_dev_rescan.attr,
+> +	&dev_rescan_attr.attr,
+>   	NULL,
+>   };
+>   
+> 
