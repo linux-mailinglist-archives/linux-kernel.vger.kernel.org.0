@@ -2,219 +2,231 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 60C491928B6
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 13:43:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9CC551928C2
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 13:44:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727750AbgCYMm6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Mar 2020 08:42:58 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:51710 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727721AbgCYMm4 (ORCPT
+        id S1727464AbgCYMoD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Mar 2020 08:44:03 -0400
+Received: from ssl.serverraum.org ([176.9.125.105]:57235 "EHLO
+        ssl.serverraum.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727316AbgCYMoD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Mar 2020 08:42:56 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 02PCdUAM052990;
-        Wed, 25 Mar 2020 12:42:46 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : in-reply-to : message-id : references : mime-version :
- content-type; s=corp-2020-01-29;
- bh=4CxQcsvrlZYbDGdz/Ttr6KfahZweiekg6E11FnAAvqQ=;
- b=uk1q+G09jPjs/Xk0XW9zqaw5RKL8v9liO+PN/isnJJAvmqlwJeuzWLdeNdbKib3e+mmO
- L7LX4yKvvkLumMwzcBqMQQsFo5DfEJKlHwTjETBuRLEfz6O+eHkUfRcOoZL1/rN1PgY2
- TZihFYkzEPRuZQTKYRp08Cqx1mkDSd//FEaAhiEdEGsTD+bbo2kBNmwfxt+Dw5CG1o8t
- dyuEFEwRn3XWvLVtDxgsT+AAwrCQ6Rf3vsrPSNyKkXaiYW/uUdGl9UtXK8eOSVhmdp/m
- lFXlfYtIW6nfwVO65+IRRxNSwK1rQeK5YREWN/BWkhlAwNtC+JwLSveakxxHnQBywlCl nw== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by aserp2120.oracle.com with ESMTP id 2ywavm9dj5-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 25 Mar 2020 12:42:46 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 02PCfbXI165088;
-        Wed, 25 Mar 2020 12:42:45 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by userp3020.oracle.com with ESMTP id 3003ghnayj-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 25 Mar 2020 12:42:45 +0000
-Received: from abhmp0012.oracle.com (abhmp0012.oracle.com [141.146.116.18])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 02PCgh08017482;
-        Wed, 25 Mar 2020 12:42:43 GMT
-Received: from dhcp-10-175-163-133.vpn.oracle.com (/10.175.163.133)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 25 Mar 2020 05:42:43 -0700
-Date:   Wed, 25 Mar 2020 12:42:36 +0000 (GMT)
-From:   Alan Maguire <alan.maguire@oracle.com>
-X-X-Sender: alan@localhost
-To:     Patricia Alfonso <trishalfonso@google.com>
-cc:     Alan Maguire <alan.maguire@oracle.com>,
-        David Gow <davidgow@google.com>,
-        Brendan Higgins <brendanhiggins@google.com>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        kasan-dev <kasan-dev@googlegroups.com>,
-        kunit-dev@googlegroups.com,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>
-Subject: Re: [RFC PATCH v2 1/3] Add KUnit Struct to Current Task
-In-Reply-To: <CAKFsvULUx3qi_kMGJx69ndzCgq=m2xf4XWrYRYBCViud0P7qqA@mail.gmail.com>
-Message-ID: <alpine.LRH.2.21.2003251242200.9650@localhost>
-References: <20200319164227.87419-1-trishalfonso@google.com> <20200319164227.87419-2-trishalfonso@google.com> <alpine.LRH.2.21.2003241635230.30637@localhost> <CAKFsvULUx3qi_kMGJx69ndzCgq=m2xf4XWrYRYBCViud0P7qqA@mail.gmail.com>
-User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
+        Wed, 25 Mar 2020 08:44:03 -0400
+Received: from ssl.serverraum.org (web.serverraum.org [172.16.0.2])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ssl.serverraum.org (Postfix) with ESMTPSA id 3E35523066;
+        Wed, 25 Mar 2020 13:44:00 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=walle.cc; s=mail2016061301;
+        t=1585140240;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=gFjOWM3zPNpG9EbncGNtT6aW5p6VygvkHoOTUB9/h6Q=;
+        b=p+V8zAWjlLRNBQDe9bxI1Dbo6NjhbYPd60krnAvXvmkWi4tUY3+bjgJz2hejaJZlyR0Mvd
+        8n8c7uPwGCOdykzbmHpac0Flh/9yBA8Umy95YNiMDd53LrtOa2E/xM26NTx8+j2CGiOIk3
+        POY9G3VgYddpfBS8YKEPVv7h55bimZg=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9570 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 mlxlogscore=999 bulkscore=0
- phishscore=0 adultscore=0 spamscore=0 malwarescore=0 suspectscore=3
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2003020000
- definitions=main-2003250106
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9570 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 malwarescore=0
- priorityscore=1501 mlxscore=0 bulkscore=0 clxscore=1015 impostorscore=0
- phishscore=0 suspectscore=3 mlxlogscore=999 spamscore=0 lowpriorityscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2003020000
- definitions=main-2003250105
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Wed, 25 Mar 2020 13:44:00 +0100
+From:   Michael Walle <michael@walle.cc>
+To:     Leonard Crestez <leonard.crestez@nxp.com>
+Cc:     Andy Duan <fugang.duan@nxp.com>, linux-serial@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Jiri Slaby <jslaby@suse.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        shawnguo@kernel.org, dl-linux-imx <linux-imx@nxp.com>
+Subject: Re: [RFC PATCH 3/3] tty: serial: fsl_lpuart: fix possible console
+ deadlock
+In-Reply-To: <VI1PR04MB6941AD02204DF50B8D24D23AEECE0@VI1PR04MB6941.eurprd04.prod.outlook.com>
+References: <VI1PR04MB69413E158203E33D42E3B3B3EEF10@VI1PR04MB6941.eurprd04.prod.outlook.com>
+ <20200324184758.8204-1-michael@walle.cc>
+ <20200324184758.8204-3-michael@walle.cc>
+ <VI1PR04MB6941AD02204DF50B8D24D23AEECE0@VI1PR04MB6941.eurprd04.prod.outlook.com>
+Message-ID: <201514c22f86f3599385d4ddbeb71f1a@walle.cc>
+X-Sender: michael@walle.cc
+User-Agent: Roundcube Webmail/1.3.10
+X-Spamd-Bar: /
+X-Spam-Status: No, score=-0.10
+X-Rspamd-Server: web
+X-Spam-Score: -0.10
+X-Rspamd-Queue-Id: 3E35523066
+X-Spamd-Result: default: False [-0.10 / 15.00];
+         FROM_HAS_DN(0.00)[];
+         TO_DN_SOME(0.00)[];
+         TO_MATCH_ENVRCPT_ALL(0.00)[];
+         MIME_GOOD(-0.10)[text/plain];
+         DKIM_SIGNED(0.00)[];
+         RCPT_COUNT_SEVEN(0.00)[8];
+         NEURAL_HAM(-0.00)[-0.846];
+         RCVD_COUNT_ZERO(0.00)[0];
+         FROM_EQ_ENVFROM(0.00)[];
+         MIME_TRACE(0.00)[0:+];
+         MID_RHS_MATCH_FROM(0.00)[]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-On Tue, 24 Mar 2020, Patricia Alfonso wrote:
-
-> On Tue, Mar 24, 2020 at 9:40 AM Alan Maguire <alan.maguire@oracle.com> wrote:
-> >
-> >
-> > On Thu, 19 Mar 2020, Patricia Alfonso wrote:
-> >
-> > > In order to integrate debugging tools like KASAN into the KUnit
-> > > framework, add KUnit struct to the current task to keep track of the
-> > > current KUnit test.
-> > >
-> > > Signed-off-by: Patricia Alfonso <trishalfonso@google.com>
-> > > ---
-> > >  include/linux/sched.h | 4 ++++
-> > >  1 file changed, 4 insertions(+)
-> > >
-> > > diff --git a/include/linux/sched.h b/include/linux/sched.h
-> > > index 04278493bf15..1fbfa0634776 100644
-> > > --- a/include/linux/sched.h
-> > > +++ b/include/linux/sched.h
-> > > @@ -1180,6 +1180,10 @@ struct task_struct {
-> > >       unsigned int                    kasan_depth;
-> > >  #endif
-> > >
-> > > +#if IS_BUILTIN(CONFIG_KUNIT)
-> >
-> > This patch set looks great! You might have noticed I
-> > refreshed the kunit resources stuff to incorporate
-> > feedback from Brendan, but I don't think any API changes
-> > were made that should have consequences for your code
-> > (I'm building with your patches on top to make sure).
-> > I'd suggest promoting from RFC to v3 on the next round
-> > unless anyone objects.
-> >
-> > As Dmitry suggested, the above could likely be changed to be
-> > "#ifdef CONFIG_KUNIT" as kunit can be built as a
-> > module also. More on this in patch 2..
-> >
-> I suppose this could be changed so that this can be used in possible
-> future scenarios, but for now, since built-in things can't rely on
-> modules, the KASAN integration relies on KUnit being built-in.
->
-
-I think we can get around that. I've tried tweaking the resources
-patchset such that the functions you need in KASAN (which
-is builtin) are declared as "static inline" in include/kunit/test.h;
-doing this allows us to build kunit and test_kasan as a
-module while supporting the builtin functionality required to
-retrieve and use kunit resources within KASAN itself.  
-
-The impact of this amounts to a few functions, but it would
-require a rebase of your changes. I'll send out a  v3 of the
-resources patches shortly; I just want to do some additional
-testing on them. I can also send you the modified versions of
-your patches that I used to test with.
-
-With these changes I can run the tests on baremetal
-x86_64 by modprobe'ing test_kasan. However I see a few failures:
-
-[   87.577012]  # kasan_memchr: EXPECTATION FAILED at lib/test_kasan.c:509
-        Expected kasan_data->report_expected == kasan_data->report_found, 
-but
-                kasan_data->report_expected == 1
-                kasan_data->report_found == 0
-[   87.577104]  not ok 30 - kasan_memchr
-[   87.603823]  # kasan_memcmp: EXPECTATION FAILED at lib/test_kasan.c:523
-        Expected kasan_data->report_expected == kasan_data->report_found, 
-but
-                kasan_data->report_expected == 1
-                kasan_data->report_found == 0
-[   87.603929]  not ok 31 - kasan_memcmp
-[   87.630644]  # kasan_strings: EXPECTATION FAILED at 
-lib/test_kasan.c:544
-        Expected kasan_data->report_expected == kasan_data->report_found, 
-but
-                kasan_data->report_expected == 1
-                kasan_data->report_found == 0
-[   87.630910]  # kasan_strings: EXPECTATION FAILED at 
-lib/test_kasan.c:546
-        Expected kasan_data->report_expected == kasan_data->report_found, 
-but
-                kasan_data->report_expected == 1
-                kasan_data->report_found == 0
-[   87.654037]  # kasan_strings: EXPECTATION FAILED at 
-lib/test_kasan.c:548
-        Expected kasan_data->report_expected == kasan_data->report_found, 
-but
-                kasan_data->report_expected == 1
-                kasan_data->report_found == 0
-[   87.677179]  # kasan_strings: EXPECTATION FAILED at 
-lib/test_kasan.c:550
-        Expected kasan_data->report_expected == kasan_data->report_found, 
-but
-                kasan_data->report_expected == 1
-                kasan_data->report_found == 0
-[   87.700242]  # kasan_strings: EXPECTATION FAILED at 
-lib/test_kasan.c:552
-        Expected kasan_data->report_expected == kasan_data->report_found, 
-but
-                kasan_data->report_expected == 1
-                kasan_data->report_found == 0
-[   87.723336]  # kasan_strings: EXPECTATION FAILED at 
-lib/test_kasan.c:554
-        Expected kasan_data->report_expected == kasan_data->report_found, 
-but
-                kasan_data->report_expected == 1
-                kasan_data->report_found == 0
-[   87.746304]  not ok 32 - kasan_strings
-
-The above three tests consistently fail while everything
-else passes, and happen irrespective of whether kunit
-is built as a module or built-in.  Let me know if you 
-need any more info to debug (I built the kernel with
-CONFIG_SLUB=y if that matters).
-
-Thanks!
-
-Alan
-
-
-> > > +     struct kunit                    *kunit_test;
-> > > +#endif /* IS_BUILTIN(CONFIG_KUNIT) */
-> > > +
-> > >  #ifdef CONFIG_FUNCTION_GRAPH_TRACER
-> > >       /* Index of current stored address in ret_stack: */
-> > >       int                             curr_ret_stack;
-> > > --
-> > > 2.25.1.696.g5e7596f4ac-goog
-> > >
-> > >
+Am 2020-03-25 13:21, schrieb Leonard Crestez:
+> On 2020-03-24 8:48 PM, Michael Walle wrote:
+>> If the kernel console output is on this console any
+>> dev_{err,warn,info}() may result in a deadlock if the sport->port.lock
+>> spinlock is already held. This is because the _console_write() try to
+>> aquire this lock, too. Remove any error messages where the spinlock is
+>> taken or print after the lock is released.
+>> 
+>> Reported-by: Leonard Crestez <leonard.crestez@nxp.com>
+>> Signed-off-by: Michael Walle <michael@walle.cc>
 > 
-> -- 
-> Best,
-> Patricia
+> It seems that this was an issue even before commit 159381df1442 ("tty:
+> serial: fsl_lpuart: fix DMA operation when using IOMMU") but these 
+> error
+> prints never triggered.
+
+Yeah, it just triggers because there is now a print by default (if DMA 
+is
+not available) thus this RFC doesn't contain the Fixes: tag.
+
+> Would it be possible to move all the dma alloc/config/prep outside the
+> serial port lock? As it stands this still calls into dmaengine coode 
+> and
+> that might decide to print as well.
+
+TBH I don't want to refactor the whole driver. All I wanted to do was to
+add LS1028A support to this driver which already resulted in a 7 patches
+series with various other bugfixes. Could NXP take this over? I could
+certainly do rewiews/testing on my board, though.
+
+> Really I don't think the lock needs to protect more than bits like
+> TDMAE/RDMAE.
 > 
+> BTW: You should add more people in CC for reviews, for example
+> linux-imx@nxp.com is checked by a lot of people.
+
+It would be good to have N: lpuart (or fsl_lpuart?) in the
+corresponding entry in MAINTAINERS, so it will automatically added.
+I'll try to remember for the next patches though.
+
+-michael
+> 
+>> ---
+>>   drivers/tty/serial/fsl_lpuart.c | 35 
+>> +++++++--------------------------
+>>   1 file changed, 7 insertions(+), 28 deletions(-)
+>> 
+>> diff --git a/drivers/tty/serial/fsl_lpuart.c 
+>> b/drivers/tty/serial/fsl_lpuart.c
+>> index bbba298b68a4..0910308b38b1 100644
+>> --- a/drivers/tty/serial/fsl_lpuart.c
+>> +++ b/drivers/tty/serial/fsl_lpuart.c
+>> @@ -420,7 +420,6 @@ static void lpuart_dma_tx(struct lpuart_port 
+>> *sport)
+>>   {
+>>   	struct circ_buf *xmit = &sport->port.state->xmit;
+>>   	struct scatterlist *sgl = sport->tx_sgl;
+>> -	struct device *dev = sport->port.dev;
+>>   	struct dma_chan *chan = sport->dma_tx_chan;
+>>   	int ret;
+>> 
+>> @@ -442,10 +441,8 @@ static void lpuart_dma_tx(struct lpuart_port 
+>> *sport)
+>> 
+>>   	ret = dma_map_sg(chan->device->dev, sgl, sport->dma_tx_nents,
+>>   			 DMA_TO_DEVICE);
+>> -	if (!ret) {
+>> -		dev_err(dev, "DMA mapping error for TX.\n");
+>> +	if (!ret)
+>>   		return;
+>> -	}
+>> 
+>>   	sport->dma_tx_desc = dmaengine_prep_slave_sg(chan, sgl,
+>>   					ret, DMA_MEM_TO_DEV,
+>> @@ -453,7 +450,6 @@ static void lpuart_dma_tx(struct lpuart_port 
+>> *sport)
+>>   	if (!sport->dma_tx_desc) {
+>>   		dma_unmap_sg(chan->device->dev, sgl, sport->dma_tx_nents,
+>>   			      DMA_TO_DEVICE);
+>> -		dev_err(dev, "Cannot prepare TX slave DMA!\n");
+>>   		return;
+>>   	}
+>> 
+>> @@ -520,21 +516,12 @@ static int lpuart_dma_tx_request(struct 
+>> uart_port *port)
+>>   	struct lpuart_port *sport = container_of(port,
+>>   					struct lpuart_port, port);
+>>   	struct dma_slave_config dma_tx_sconfig = {};
+>> -	int ret;
+>> 
+>>   	dma_tx_sconfig.dst_addr = lpuart_dma_datareg_addr(sport);
+>>   	dma_tx_sconfig.dst_addr_width = DMA_SLAVE_BUSWIDTH_1_BYTE;
+>>   	dma_tx_sconfig.dst_maxburst = 1;
+>>   	dma_tx_sconfig.direction = DMA_MEM_TO_DEV;
+>> -	ret = dmaengine_slave_config(sport->dma_tx_chan, &dma_tx_sconfig);
+>> -
+>> -	if (ret) {
+>> -		dev_err(sport->port.dev,
+>> -				"DMA slave config failed, err = %d\n", ret);
+>> -		return ret;
+>> -	}
+>> -
+>> -	return 0;
+>> +	return dmaengine_slave_config(sport->dma_tx_chan, &dma_tx_sconfig);
+>>   }
+>> 
+>>   static bool lpuart_is_32(struct lpuart_port *sport)
+>> @@ -1074,8 +1061,8 @@ static void lpuart_copy_rx_to_tty(struct 
+>> lpuart_port *sport)
+>> 
+>>   	dmastat = dmaengine_tx_status(chan, sport->dma_rx_cookie, &state);
+>>   	if (dmastat == DMA_ERROR) {
+>> -		dev_err(sport->port.dev, "Rx DMA transfer failed!\n");
+>>   		spin_unlock_irqrestore(&sport->port.lock, flags);
+>> +		dev_err(sport->port.dev, "Rx DMA transfer failed!\n");
+>>   		return;
+>>   	}
+>> 
+>> @@ -1179,23 +1166,17 @@ static inline int lpuart_start_rx_dma(struct 
+>> lpuart_port *sport)
+>>   	sg_init_one(&sport->rx_sgl, ring->buf, sport->rx_dma_rng_buf_len);
+>>   	nent = dma_map_sg(chan->device->dev, &sport->rx_sgl, 1,
+>>   			  DMA_FROM_DEVICE);
+>> -
+>> -	if (!nent) {
+>> -		dev_err(sport->port.dev, "DMA Rx mapping error\n");
+>> +	if (!nent)
+>>   		return -EINVAL;
+>> -	}
+>> 
+>>   	dma_rx_sconfig.src_addr = lpuart_dma_datareg_addr(sport);
+>>   	dma_rx_sconfig.src_addr_width = DMA_SLAVE_BUSWIDTH_1_BYTE;
+>>   	dma_rx_sconfig.src_maxburst = 1;
+>>   	dma_rx_sconfig.direction = DMA_DEV_TO_MEM;
+>> -	ret = dmaengine_slave_config(chan, &dma_rx_sconfig);
+>> 
+>> -	if (ret < 0) {
+>> -		dev_err(sport->port.dev,
+>> -				"DMA Rx slave config failed, err = %d\n", ret);
+>> +	ret = dmaengine_slave_config(chan, &dma_rx_sconfig);
+>> +	if (ret < 0)
+>>   		return ret;
+>> -	}
+>> 
+>>   	sport->dma_rx_desc = dmaengine_prep_dma_cyclic(chan,
+>>   				 sg_dma_address(&sport->rx_sgl),
+>> @@ -1203,10 +1184,8 @@ static inline int lpuart_start_rx_dma(struct 
+>> lpuart_port *sport)
+>>   				 sport->rx_sgl.length / 2,
+>>   				 DMA_DEV_TO_MEM,
+>>   				 DMA_PREP_INTERRUPT);
+>> -	if (!sport->dma_rx_desc) {
+>> -		dev_err(sport->port.dev, "Cannot prepare cyclic DMA\n");
+>> +	if (!sport->dma_rx_desc)
+>>   		return -EFAULT;
+>> -	}
+>> 
+>>   	sport->dma_rx_desc->callback = lpuart_dma_rx_complete;
+>>   	sport->dma_rx_desc->callback_param = sport;
+>> 
