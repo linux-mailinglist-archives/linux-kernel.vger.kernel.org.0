@@ -2,121 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 52A981923E2
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 10:19:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F422A1923F0
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 10:22:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727275AbgCYJTS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Mar 2020 05:19:18 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:41933 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725873AbgCYJTS (ORCPT
+        id S1727158AbgCYJWe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Mar 2020 05:22:34 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:56353 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1725907AbgCYJWe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Mar 2020 05:19:18 -0400
-Received: by mail-wr1-f65.google.com with SMTP id h9so1923930wrc.8
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Mar 2020 02:19:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=jNQsElt5CknsQbyuzbClTNd1rNuCD5PB0IFY7FEkEZE=;
-        b=Zbj6ldZYm/mR4aIkxVyvY0IPEf0i16ypXx5eYF0TkoVSDTejJNAwc128AVd2WXPFvo
-         xZ4lSV5Z37VyDD4C0CeoUTKuDVd97oJKvHvnUYhKiNnQf0iMWhCO8Jr2TQgTe8tIOtdM
-         6humiowd7FhUMmlsTlfTvB6RKGIWWCqQ7EVNY6qNUHIJZTFtA+WcFM8HGw/gPSmA2DVJ
-         zcBaHh6jKvUjRHNl5Rd/1CWV8sZ51VL+znHwfW2zFnzcM0MUB2ME0GFN828xxmA5BQBT
-         K9PL+VfT2szihueuddUB3PiYHcUerLFe4r+gqKQW7/X7MJslYafLSu9W/qEWxyA0VQUI
-         WbyA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=jNQsElt5CknsQbyuzbClTNd1rNuCD5PB0IFY7FEkEZE=;
-        b=G1+nfQkYoN4QFWkW07TsiHsJAlmt+/adMRaR/wUmuM4c6pXqKvCsYJRAIGQJe49TkH
-         jX7fnPI2E414sKTvROBt9Vp2B/bfv4CISZPozH0syptqdORYhcKIvxHcDi6a2HG7yb0E
-         YcKleWN1DVIa/I43st7XTwvN0DrdmtSyJQWLuJ4hi7w8IJEemlfA/Mnn/y1HIfN5Yhe4
-         nIDOvBrYQ65upcwU6TB+hjBu7yZX+FDUcKDNkmJlc4P2RTMxLZu/0WqSXQeE0c9psqv0
-         QyI5a38lVq6DX7f3JLgIqUoHRKcZe1T99hXIKFWY9G5cih81R+/tOfjDmLbLL9Ct3FgH
-         a8tg==
-X-Gm-Message-State: ANhLgQ3lyxvboeVuMSM97+PJ8XFZT/8q9FwJ2mw7pA+apB1132acpjlo
-        b7qiR+506Esd8Dao21xNs5gG1g==
-X-Google-Smtp-Source: ADFU+vt92TEy1uQV/pgVv75Mxe1VsUGqvn6nRZAGARmxAmaHNRKw1/pBPR5pqT6ZOGKIR2rc2xfxew==
-X-Received: by 2002:a5d:6646:: with SMTP id f6mr2228715wrw.235.1585127955840;
-        Wed, 25 Mar 2020 02:19:15 -0700 (PDT)
-Received: from dell ([2.27.35.213])
-        by smtp.gmail.com with ESMTPSA id o9sm33495181wrw.20.2020.03.25.02.19.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Mar 2020 02:19:15 -0700 (PDT)
-Date:   Wed, 25 Mar 2020 09:20:04 +0000
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Rob Herring <robh@kernel.org>
-Cc:     Benjamin Gaignard <benjamin.gaignard@st.com>,
-        dmitry.torokhov@gmail.com, robh+dt@kernel.org,
-        mark.rutland@arm.com, lgirdwood@gmail.com, broonie@kernel.org,
-        wim@linux-watchdog.org, linux@roeck-us.net, p.paillet@st.com,
-        linux-input@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org
-Subject: Re: [PATCH v5] dt-bindings: mfd: Convert stpmic1 bindings to
- json-schema
-Message-ID: <20200325092004.GF442973@dell>
-References: <20200304094220.28156-1-benjamin.gaignard@st.com>
- <20200310211849.GA13562@bogus>
+        Wed, 25 Mar 2020 05:22:34 -0400
+X-UUID: b76f619bb6e049fc9be921327f75bc92-20200325
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+        h=Content-Transfer-Encoding:MIME-Version:Content-Type:References:In-Reply-To:Date:CC:To:From:Subject:Message-ID; bh=BVyTHhelUjx59FjyxWQdpVbGtCVCGjT0t0rY/9a/ceg=;
+        b=Yg1qvMxPnQhw33GbmLfbB9dTN00UUkRGXdhqb8HRojugEDEWgnpVwZgZIUS5Xct0/xypCoWJyuT0YyTUQxmqCatwBt4xqWeTr2+8ElGTWw5Bt2yJV+RhcZx4Mg5/RcqrnYXpEqQDAtdmyljEVz2YU+XFXR4eW5PsbZVzV/6M0Gk=;
+X-UUID: b76f619bb6e049fc9be921327f75bc92-20200325
+Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw02.mediatek.com
+        (envelope-from <yingjoe.chen@mediatek.com>)
+        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
+        with ESMTP id 1257327960; Wed, 25 Mar 2020 17:22:24 +0800
+Received: from mtkcas07.mediatek.inc (172.21.101.84) by
+ mtkmbs07n2.mediatek.inc (172.21.101.141) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Wed, 25 Mar 2020 17:22:22 +0800
+Received: from [172.21.77.4] (172.21.77.4) by mtkcas07.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Wed, 25 Mar 2020 17:22:22 +0800
+Message-ID: <1585128143.18052.3.camel@mtksdaap41>
+Subject: Re: [PATCH v4 3/6] pinctrl: mediatek: avoid virtual gpio trying to
+ set reg
+From:   Yingjoe Chen <yingjoe.chen@mediatek.com>
+To:     Hanks Chen <hanks.chen@mediatek.com>
+CC:     Linus Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "Matthias Brugger" <matthias.bgg@gmail.com>,
+        Sean Wang <sean.wang@kernel.org>, <devicetree@vger.kernel.org>,
+        <wsd_upstream@mediatek.com>, Andy Teng <andy.teng@mediatek.com>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>,
+        Mars Cheng <mars.cheng@mediatek.com>
+Date:   Wed, 25 Mar 2020 17:22:23 +0800
+In-Reply-To: <1585123964-10791-4-git-send-email-hanks.chen@mediatek.com>
+References: <1585123964-10791-1-git-send-email-hanks.chen@mediatek.com>
+         <1585123964-10791-4-git-send-email-hanks.chen@mediatek.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.10.4-0ubuntu2 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20200310211849.GA13562@bogus>
+X-MTK:  N
+Content-Transfer-Encoding: base64
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 10 Mar 2020, Rob Herring wrote:
+T24gV2VkLCAyMDIwLTAzLTI1IGF0IDE2OjEyICswODAwLCBIYW5rcyBDaGVuIHdyb3RlOg0KPiBm
+b3IgdmlydHVhbCBncGlvcywgdGhleSBzaG91bGQgbm90IGRvIHJlZyBzZXR0aW5nIGFuZA0KPiBz
+aG91bGQgYmVoYXZlIGFzIGV4cGVjdGVkIGZvciBlaW50IGZ1bmN0aW9uLg0KPiANCj4gQ2hhbmdl
+LUlkOiBJOTEzNTAxZjIxYzg0MWMyY2I5ODE1MzBjZDM4NzM5NTY0OGY4Mzk4NA0KDQpQbGVhc2Ug
+cmVtb3ZlIENoYW5nZS1JZDoNCg0KDQo+IFNpZ25lZC1vZmYtYnk6IEhhbmtzIENoZW4gPGhhbmtz
+LmNoZW5AbWVkaWF0ZWsuY29tPg0KPiBTaWduZWQtb2ZmLWJ5OiBNYXJzIENoZW5nIDxtYXJzLmNo
+ZW5nQG1lZGlhdGVrLmNvbT4NCj4gLS0tDQo+ICBkcml2ZXJzL3BpbmN0cmwvbWVkaWF0ZWsvcGlu
+Y3RybC1tdGstY29tbW9uLXYyLmMgfCAgIDI4ICsrKysrKysrKysrKysrKysrKysrKysNCj4gIGRy
+aXZlcnMvcGluY3RybC9tZWRpYXRlay9waW5jdHJsLW10ay1jb21tb24tdjIuaCB8ICAgIDEgKw0K
+PiAgZHJpdmVycy9waW5jdHJsL21lZGlhdGVrL3BpbmN0cmwtcGFyaXMuYyAgICAgICAgIHwgICAg
+NyArKysrKysNCj4gIDMgZmlsZXMgY2hhbmdlZCwgMzYgaW5zZXJ0aW9ucygrKQ0KPiANCj4gZGlm
+ZiAtLWdpdCBhL2RyaXZlcnMvcGluY3RybC9tZWRpYXRlay9waW5jdHJsLW10ay1jb21tb24tdjIu
+YyBiL2RyaXZlcnMvcGluY3RybC9tZWRpYXRlay9waW5jdHJsLW10ay1jb21tb24tdjIuYw0KPiBp
+bmRleCAyMGUxYzg5Li4wODdkMjMzIDEwMDY0NA0KPiAtLS0gYS9kcml2ZXJzL3BpbmN0cmwvbWVk
+aWF0ZWsvcGluY3RybC1tdGstY29tbW9uLXYyLmMNCj4gKysrIGIvZHJpdmVycy9waW5jdHJsL21l
+ZGlhdGVrL3BpbmN0cmwtbXRrLWNvbW1vbi12Mi5jDQo+IEBAIC0yMjYsNiArMjI2LDMxIEBAIHN0
+YXRpYyBpbnQgbXRrX3h0X2ZpbmRfZWludF9udW0oc3RydWN0IG10a19waW5jdHJsICpodywgdW5z
+aWduZWQgbG9uZyBlaW50X24pDQo+ICAJcmV0dXJuIEVJTlRfTkE7DQo+ICB9DQo+ICANCj4gKy8q
+DQo+ICsgKiBWaXJ0dWFsIEdQSU8gb25seSB1c2VkIGluc2lkZSBTT0MgYW5kIG5vdCBiZWluZyBl
+eHBvcnRlZCB0byBvdXRzaWRlIFNPQy4NCj4gKyAqIFNvbWUgbW9kdWxlcyB1c2UgdmlydHVhbCBH
+UElPIGFzIGVpbnQgKGUuZy4gcG1pZiBvciB1c2IpLg0KPiArICogSW4gTVRLIHBsYXRmb3JtLCBl
+eHRlcm5hbCBpbnRlcnJ1cHQgKEVJTlQpIGFuZCBHUElPIGlzIDEtMSBtYXBwaW5nDQo+ICsgKiBh
+bmQgd2UgY2FuIHNldCBHUElPIGFzIGVpbnQuDQo+ICsgKiBCdXQgc29tZSBtb2R1bGVzIHVzZSBz
+cGVjaWZpYyBlaW50IHdoaWNoIGRvZXNuJ3QgaGF2ZSByZWFsIEdQSU8gcGluLg0KPiArICogU28g
+d2UgdXNlIHZpcnR1YWwgR1BJTyB0byBtYXAgaXQuDQo+ICsgKi8NCj4gKw0KPiArYm9vbCBtdGtf
+aXNfdmlydF9ncGlvKHN0cnVjdCBtdGtfcGluY3RybCAqaHcsIHVuc2lnbmVkIGludCBncGlvX24p
+DQo+ICt7DQo+ICsJY29uc3Qgc3RydWN0IG10a19waW5fZGVzYyAqZGVzYzsNCj4gKwlib29sIHZp
+cnRfZ3BpbyA9IGZhbHNlOw0KPiArDQo+ICsJaWYgKGdwaW9fbiA+PSBody0+c29jLT5ucGlucykN
+Cj4gKwkJcmV0dXJuIHZpcnRfZ3BpbzsNCj4gKw0KPiArCWRlc2MgPSAoY29uc3Qgc3RydWN0IG10
+a19waW5fZGVzYyAqKSZody0+c29jLT5waW5zW2dwaW9fbl07DQo+ICsNCj4gKwlpZiAoZGVzYy0+
+ZnVuY3MgJiYgIWRlc2MtPmZ1bmNzW2Rlc2MtPmVpbnQuZWludF9tXS5uYW1lKQ0KPiArCQl2aXJ0
+X2dwaW8gPSB0cnVlOw0KDQpJIHRoaW5rIHJlbW92aW5nIHZpcnRfZ3BpbyBhbmQganVzdCByZXR1
+cm4gdHJ1ZS9mYWxzZSBmb3IgdGhpcyBmdW5jdGlvbg0Kd2lsbCBtYWtlIGl0IGVhc2llciB0byBy
+ZWFkLg0KDQpKb2UuQw0KDQo+ICsNCj4gKwlyZXR1cm4gdmlydF9ncGlvOw0KPiArfQ0KDQoNCg==
 
-> On Wed, 4 Mar 2020 10:42:20 +0100, Benjamin Gaignard wrote:
-> > Convert stpmic1 bindings to json-schema.
-> > 
-> > Signed-off-by: Benjamin Gaignard <benjamin.gaignard@st.com>
-> > ---
-> > version 5:
-> > - move $ref regulator.yaml under a patternProperties
-> > - move remain fixed strings under properties field
-> > 
-> > version 4:
-> > - move on uppder node $ref: ../regulator/regulator.yaml 
-> > - move fixed strings under properties field
-> > - remove unneeded () in patternProperties
-> > - keep ldo3 separate from other ldo properties
-> > Note:
-> > - 'st,mask-reset' property stay in each subnode, I don't find
-> >   the syntax to avoid dupliquate it. 
-> > - ldo6-supply and all possible *-supply are describe by this regular
-> >   expression: ^(buck[1-4]|ldo[1-6]|boost|pwr_sw[1-2])-supply$":
-> > 
-> > version 3:
-> > - put $ref under allOf keyword
-> > - for each regulator node add the list of supported regulator properties
-> > 
-> >  .../devicetree/bindings/input/st,stpmic1-onkey.txt |  28 --
-> >  .../devicetree/bindings/mfd/st,stpmic1.txt         |  61 ----
-> >  .../devicetree/bindings/mfd/st,stpmic1.yaml        | 339 +++++++++++++++++++++
-> >  .../bindings/regulator/st,stpmic1-regulator.txt    |  64 ----
-> >  .../bindings/watchdog/st,stpmic1-wdt.txt           |  11 -
-> >  5 files changed, 339 insertions(+), 164 deletions(-)
-> >  delete mode 100644 Documentation/devicetree/bindings/input/st,stpmic1-onkey.txt
-> >  delete mode 100644 Documentation/devicetree/bindings/mfd/st,stpmic1.txt
-> >  create mode 100644 Documentation/devicetree/bindings/mfd/st,stpmic1.yaml
-> >  delete mode 100644 Documentation/devicetree/bindings/regulator/st,stpmic1-regulator.txt
-> >  delete mode 100644 Documentation/devicetree/bindings/watchdog/st,stpmic1-wdt.txt
-> > 
-> 
-> Reviewed-by: Rob Herring <robh@kernel.org>
-
-Can you take this please Rob?
-
-It would save an IB and PR.
-
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
