@@ -2,221 +2,222 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6842B19219F
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 08:12:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AEAFC1921A9
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 08:15:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727421AbgCYHMF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Mar 2020 03:12:05 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:37882 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727262AbgCYHMF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Mar 2020 03:12:05 -0400
-Received: from pendragon.ideasonboard.com (81-175-216-236.bb.dnainternet.fi [81.175.216.236])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id D2BCB80C;
-        Wed, 25 Mar 2020 08:12:00 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1585120321;
-        bh=FSqDVsI6A0y3vtyhZ1Fm263/rnwL70jwXZ95f1VAuQY=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=VHRKpkF3nDa+UlyBfoi8825Haq86enBr9HrqHxchx/izp68QwhV/YTlYkFlz7nu9T
-         jR6e71qbJ7mraZyHGduB8A+lRpX8bniR++WO7VWdamfYzxG4sWq1/zdkJCE5z4UiX1
-         bjor2Vh2bxkw4ioUiJrMI0pCoMP55ZdYZ5l7I6bM=
-Date:   Wed, 25 Mar 2020 09:11:57 +0200
-From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To:     Dafna Hirschfeld <dafna3@gmail.com>
-Cc:     Hans Verkuil <hverkuil@xs4all.nl>,
-        Helen Koike <helen.koike@collabora.com>,
-        hans.verkuil@cisco.com, linux-rockchip@lists.infradead.org,
-        devicetree@vger.kernel.org, eddie.cai.linux@gmail.com,
-        mchehab@kernel.org, heiko@sntech.de, jacob2.chen@rock-chips.com,
-        jeffy.chen@rock-chips.com, zyc@rock-chips.com,
-        linux-kernel@vger.kernel.org, Tomasz Figa <tfiga@chromium.org>,
-        sakari.ailus@linux.intel.com, kernel@collabora.com,
-        Ezequiel Garcia <ezequiel@collabora.com>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        linux-arm-kernel@lists.infradead.org, zhengsq@rock-chips.com,
-        Jacob Chen <cc@rock-chips.com>,
-        Allon Huang <allon.huang@rock-chips.com>
-Subject: Re: [PATCH v8 05/14] media: rkisp1: add Rockchip ISP1 subdev driver
-Message-ID: <20200325071157.GA4760@pendragon.ideasonboard.com>
-References: <20190730184256.30338-1-helen.koike@collabora.com>
- <20190730184256.30338-6-helen.koike@collabora.com>
- <86e17716-193f-ca49-1104-9c599a667eeb@collabora.com>
- <f229a840-bcf3-50c8-27c6-363c72de1d01@xs4all.nl>
- <20190815193511.GB5011@pendragon.ideasonboard.com>
- <CAJ1myNREvdbfw5t7RCX1RtBZnarXy7O6_+Cg89w7njWutijNqQ@mail.gmail.com>
+        id S1727285AbgCYHP0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Mar 2020 03:15:26 -0400
+Received: from mga17.intel.com ([192.55.52.151]:37140 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726276AbgCYHP0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Mar 2020 03:15:26 -0400
+IronPort-SDR: doOGr04Ejd5RbuN4Usg0l+gOiDV+xAMlJ8mkcxwu1A3HfuTMX0nrDBsF226OQfNuOaknDrRopm
+ WIaYmDh1jSxQ==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Mar 2020 00:15:25 -0700
+IronPort-SDR: ufgKdX6nZu0I/KT3CbCpizxpZhREsuvarfu9lIgfsESQHJYhcKOyK7w+Gc1xAVVRNj1SvyLgKB
+ ctVFCfOXj1Tg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.72,303,1580803200"; 
+   d="scan'208";a="293274097"
+Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
+  by FMSMGA003.fm.intel.com with ESMTP; 25 Mar 2020 00:15:24 -0700
+Received: from kbuild by lkp-server01 with local (Exim 4.89)
+        (envelope-from <lkp@intel.com>)
+        id 1jH0G3-000BAw-UW; Wed, 25 Mar 2020 15:15:23 +0800
+Date:   Wed, 25 Mar 2020 15:14:47 +0800
+From:   kbuild test robot <lkp@intel.com>
+To:     "x86-ml" <x86@kernel.org>
+Cc:     linux-kernel@vger.kernel.org
+Subject: [tip:x86/vmware] BUILD SUCCESS
+ 8fefe9dacdb0a1347d3dac871bb1bba3cbc32945
+Message-ID: <5e7b04e7.5SosBEfLqhKcTJY7%lkp@intel.com>
+User-Agent: Heirloom mailx 12.5 6/20/10
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAJ1myNREvdbfw5t7RCX1RtBZnarXy7O6_+Cg89w7njWutijNqQ@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Dafna,
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git  x86/vmware
+branch HEAD: 8fefe9dacdb0a1347d3dac871bb1bba3cbc32945  x86/vmware: Use bool type for vmw_sched_clock
 
-On Wed, Mar 25, 2020 at 07:34:37AM +0100, Dafna Hirschfeld wrote:
-> On Thu, Aug 15, 2019 at 10:17 PM Laurent Pinchart wrote:
-> > On Wed, Aug 07, 2019 at 12:39:17PM +0200, Hans Verkuil wrote:
-> > > On 8/6/19 8:51 PM, Helen Koike wrote:
-> > > > On 7/30/19 3:42 PM, Helen Koike wrote:
-> > > >> From: Jacob Chen <jacob2.chen@rock-chips.com>
-> > > >>
-> > > >> Add the subdev driver for rockchip isp1.
-> > > >>
-> > > >> Signed-off-by: Jacob Chen <jacob2.chen@rock-chips.com>
-> > > >> Signed-off-by: Shunqian Zheng <zhengsq@rock-chips.com>
-> > > >> Signed-off-by: Yichong Zhong <zyc@rock-chips.com>
-> > > >> Signed-off-by: Jacob Chen <cc@rock-chips.com>
-> > > >> Signed-off-by: Eddie Cai <eddie.cai.linux@gmail.com>
-> > > >> Signed-off-by: Jeffy Chen <jeffy.chen@rock-chips.com>
-> > > >> Signed-off-by: Allon Huang <allon.huang@rock-chips.com>
-> > > >> Signed-off-by: Tomasz Figa <tfiga@chromium.org>
-> > > >> [fixed unknown entity type / switched to PIXEL_RATE]
-> > > >> Signed-off-by: Ezequiel Garcia <ezequiel@collabora.com>
-> > > >> [update for upstream]
-> > > >> Signed-off-by: Helen Koike <helen.koike@collabora.com>
-> > > >>
-> > > >> ---
-> > > >>
-> > > >> Changes in v8: None
-> > > >> Changes in v7:
-> > > >> - fixed warning because of unknown entity type
-> > > >> - fixed v4l2-compliance errors regarding rkisp1 formats, try formats
-> > > >> and default values
-> > > >> - fix typo riksp1/rkisp1
-> > > >> - redesign: remove mipi/csi subdevice, sensors connect directly to the
-> > > >> isp subdevice in the media topology now. As a consequence, remove the
-> > > >> hack in mipidphy_g_mbus_config() where information from the sensor was
-> > > >> being propagated through the topology.
-> > > >> - From the old dphy:
-> > > >>         * cache get_remote_sensor() in s_stream
-> > > >>         * use V4L2_CID_PIXEL_RATE instead of V4L2_CID_LINK_FREQ
-> > > >> - Replace stream state with a boolean
-> > > >> - code styling and checkpatch fixes
-> > > >> - fix stop_stream (return after calling stop, do not reenable the stream)
-> > > >> - fix rkisp1_isp_sd_get_selection when V4L2_SUBDEV_FORMAT_TRY is set
-> > > >> - fix get format in output (isp_sd->out_fmt.mbus_code was being ignored)
-> > > >> - s/intput/input
-> > > >> - remove #define sd_to_isp_sd(_sd), add a static inline as it will be
-> > > >> reused by the capture
-> > > >>
-> > > >>  drivers/media/platform/rockchip/isp1/rkisp1.c | 1286 +++++++++++++++++
-> > > >>  drivers/media/platform/rockchip/isp1/rkisp1.h |  111 ++
-> > > >>  2 files changed, 1397 insertions(+)
-> > > >>  create mode 100644 drivers/media/platform/rockchip/isp1/rkisp1.c
-> > > >>  create mode 100644 drivers/media/platform/rockchip/isp1/rkisp1.h
-> > > >>
-> > > >> diff --git a/drivers/media/platform/rockchip/isp1/rkisp1.c b/drivers/media/platform/rockchip/isp1/rkisp1.c
-> > > >> new file mode 100644
-> > > >> index 000000000000..6d0c0ffb5e03
-> > > >> --- /dev/null
-> > > >> +++ b/drivers/media/platform/rockchip/isp1/rkisp1.c
-> > > >> @@ -0,0 +1,1286 @@
-> > >
-> > > <snip>
-> > >
-> > > >> +static int rkisp1_isp_sd_get_fmt(struct v4l2_subdev *sd,
-> > > >> +                           struct v4l2_subdev_pad_config *cfg,
-> > > >> +                           struct v4l2_subdev_format *fmt)
-> > > >> +{
-> > > >> +  struct rkisp1_isp_subdev *isp_sd = sd_to_isp_sd(sd);
-> > > >> +  struct v4l2_mbus_framefmt *mf = &fmt->format;
-> > > >> +
-> > > >> +  if ((fmt->pad != RKISP1_ISP_PAD_SINK) &&
-> > > >> +      (fmt->pad != RKISP1_ISP_PAD_SOURCE_PATH)) {
-> > > >> +          fmt->format.code = MEDIA_BUS_FMT_FIXED;
-> > > >> +          /*
-> > > >> +           * NOTE: setting a format here doesn't make much sense
-> > > >> +           * but v4l2-compliance complains
-> > > >> +           */
-> > > >> +          fmt->format.width = RKISP1_DEFAULT_WIDTH;
-> > > >> +          fmt->format.height = RKISP1_DEFAULT_HEIGHT;
-> > > >
-> > > > As I had mentioned to you, this is called for the isp pads connected to the
-> > > > DMA engines for statistics and parameters (meta data).
-> > > >
-> > > > If I remove those, I get the following errors:
-> > > >
-> > > > Sub-Device ioctls (Sink Pad 1):
-> > > >         test Try VIDIOC_SUBDEV_ENUM_MBUS_CODE/FRAME_SIZE/FRAME_INTERVAL: OK
-> > > >                 fail: v4l2-test-subdevs.cpp(311): fmt.width == 0 || fmt.width > 65536
-> > > >                 fail: v4l2-test-subdevs.cpp(356): checkMBusFrameFmt(node, fmt.format)
-> > > >         test Try VIDIOC_SUBDEV_G/S_FMT: FAIL
-> > > >         test Try VIDIOC_SUBDEV_G/S_SELECTION/CROP: OK
-> > > >         test Active VIDIOC_SUBDEV_ENUM_MBUS_CODE/FRAME_SIZE/FRAME_INTERVAL: OK
-> > > >                 fail: v4l2-test-subdevs.cpp(311): fmt.width == 0 || fmt.width > 65536
-> > > >                 fail: v4l2-test-subdevs.cpp(356): checkMBusFrameFmt(node, fmt.format)
-> > > >         test Active VIDIOC_SUBDEV_G/S_FMT: FAIL
-> > > >         test Active VIDIOC_SUBDEV_G/S_SELECTION/CROP: OK
-> > > >         test VIDIOC_SUBDEV_G/S_FRAME_INTERVAL: OK (Not Supported)
-> > > >
-> > > > Here is the full log: http://ix.io/1QNt
-> > > >
-> > > > Is this a bug in v4l2-compliance?
-> > >
-> > > Yes and no :-)
-> > >
-> > > Currently v4l2-compliance assumes that only video is transferred over a media bus.
-> > > But that's not the case here, and testing the code field doesn't help v4l2-compliance
-> > > since MEDIA_BUS_FMT_FIXED is also still used by some older subdev drivers for video.
-> > >
-> > > I think we need a new bus format: MEDIA_BUS_FMT_FIXED_METADATA. Then v4l2-compliance
-> > > can tell it apart from the regular fixed video bus format.
-> >
-> > Wouldn't a pad flag that identifies the type of data transmitted by a
-> > pad be a better, backward-compatible option ? This could be useful for
-> > audio as well.
-> 
-> Hi,
-> Can you explain what pad flag do you mean?
-> Do you mean adding a flag in the 'MEDIA_LNK_FL_*' list ?
+elapsed time: 732m
 
-I meant MEDIA_PAD_FL_*. We could reserve a few bits in
-media_pad_desc.flags to tell what type of data is being transported.
+configs tested: 163
+configs skipped: 0
 
-> Also, some valid value should be set to  'fmt->format.code' so with
-> the flags solution
-> that you suggest it should stay  MEDIA_BUS_FMT_FIXED ?
+The following configs have been built successfully.
+More configs may be tested in the coming days.
 
-Correct.
+arm                              allmodconfig
+arm                               allnoconfig
+arm                              allyesconfig
+arm64                            allmodconfig
+arm64                             allnoconfig
+arm64                            allyesconfig
+arm                         at91_dt_defconfig
+arm                           efm32_defconfig
+arm                          exynos_defconfig
+arm                        multi_v5_defconfig
+arm                        multi_v7_defconfig
+arm                        shmobile_defconfig
+arm                           sunxi_defconfig
+arm64                               defconfig
+sparc                            allyesconfig
+parisc                generic-64bit_defconfig
+powerpc                       ppc64_defconfig
+s390                             alldefconfig
+um                             i386_defconfig
+nds32                               defconfig
+i386                                defconfig
+m68k                       m5475evb_defconfig
+sparc                               defconfig
+sparc64                             defconfig
+i386                             allyesconfig
+i386                             alldefconfig
+i386                              allnoconfig
+ia64                             alldefconfig
+ia64                             allmodconfig
+ia64                              allnoconfig
+ia64                             allyesconfig
+ia64                                defconfig
+c6x                              allyesconfig
+c6x                        evmc6678_defconfig
+nios2                         10m50_defconfig
+nios2                         3c120_defconfig
+openrisc                    or1ksim_defconfig
+openrisc                 simple_smp_defconfig
+xtensa                       common_defconfig
+xtensa                          iss_defconfig
+nds32                             allnoconfig
+csky                                defconfig
+alpha                               defconfig
+h8300                     edosk2674_defconfig
+h8300                    h8300h-sim_defconfig
+h8300                       h8s-sim_defconfig
+m68k                             allmodconfig
+m68k                          multi_defconfig
+m68k                           sun3_defconfig
+mips                           32r2_defconfig
+mips                         64r6el_defconfig
+mips                             allmodconfig
+mips                              allnoconfig
+mips                             allyesconfig
+mips                      fuloong2e_defconfig
+mips                      malta_kvm_defconfig
+parisc                            allnoconfig
+parisc                           allyesconfig
+parisc                generic-32bit_defconfig
+x86_64               randconfig-a001-20200324
+x86_64               randconfig-a002-20200324
+x86_64               randconfig-a003-20200324
+i386                 randconfig-a001-20200324
+i386                 randconfig-a002-20200324
+i386                 randconfig-a003-20200324
+alpha                randconfig-a001-20200324
+m68k                 randconfig-a001-20200324
+mips                 randconfig-a001-20200324
+nds32                randconfig-a001-20200324
+parisc               randconfig-a001-20200324
+riscv                randconfig-a001-20200324
+c6x                  randconfig-a001-20200324
+h8300                randconfig-a001-20200324
+microblaze           randconfig-a001-20200324
+nios2                randconfig-a001-20200324
+sparc64              randconfig-a001-20200324
+csky                 randconfig-a001-20200324
+openrisc             randconfig-a001-20200324
+s390                 randconfig-a001-20200324
+xtensa               randconfig-a001-20200324
+sh                   randconfig-a001-20200324
+x86_64               randconfig-b001-20200324
+x86_64               randconfig-b002-20200324
+x86_64               randconfig-b003-20200324
+i386                 randconfig-b001-20200324
+i386                 randconfig-b002-20200324
+i386                 randconfig-b003-20200324
+x86_64               randconfig-c001-20200324
+x86_64               randconfig-c002-20200324
+x86_64               randconfig-c003-20200324
+i386                 randconfig-c001-20200324
+i386                 randconfig-c002-20200324
+i386                 randconfig-c003-20200324
+x86_64               randconfig-d001-20200324
+x86_64               randconfig-d002-20200324
+x86_64               randconfig-d003-20200324
+i386                 randconfig-d001-20200324
+i386                 randconfig-d002-20200324
+i386                 randconfig-d003-20200324
+x86_64               randconfig-e001-20200324
+x86_64               randconfig-e002-20200324
+x86_64               randconfig-e003-20200324
+i386                 randconfig-e001-20200324
+i386                 randconfig-e002-20200324
+i386                 randconfig-e003-20200324
+x86_64               randconfig-f001-20200324
+x86_64               randconfig-f002-20200324
+x86_64               randconfig-f003-20200324
+i386                 randconfig-f001-20200324
+i386                 randconfig-f002-20200324
+i386                 randconfig-f003-20200324
+x86_64               randconfig-g001-20200324
+x86_64               randconfig-g002-20200324
+x86_64               randconfig-g003-20200324
+i386                 randconfig-g001-20200324
+i386                 randconfig-g002-20200324
+i386                 randconfig-g003-20200324
+x86_64               randconfig-g001-20200325
+x86_64               randconfig-g002-20200325
+x86_64               randconfig-g003-20200325
+i386                 randconfig-g001-20200325
+i386                 randconfig-g002-20200325
+i386                 randconfig-g003-20200325
+x86_64               randconfig-h001-20200324
+x86_64               randconfig-h002-20200324
+x86_64               randconfig-h003-20200324
+i386                 randconfig-h001-20200324
+i386                 randconfig-h002-20200324
+i386                 randconfig-h003-20200324
+arc                  randconfig-a001-20200324
+arm                  randconfig-a001-20200324
+arm64                randconfig-a001-20200324
+ia64                 randconfig-a001-20200324
+powerpc              randconfig-a001-20200324
+sparc                randconfig-a001-20200324
+riscv                             allnoconfig
+riscv                            allyesconfig
+riscv                               defconfig
+riscv                    nommu_virt_defconfig
+riscv                          rv32_defconfig
+riscv                            allmodconfig
+s390                             allmodconfig
+s390                              allnoconfig
+s390                             allyesconfig
+s390                          debug_defconfig
+s390                                defconfig
+s390                       zfcpdump_defconfig
+sh                               allmodconfig
+sh                                allnoconfig
+sh                          rsk7269_defconfig
+sh                  sh7785lcr_32bit_defconfig
+sh                            titan_defconfig
+sparc64                          allmodconfig
+sparc64                           allnoconfig
+sparc64                          allyesconfig
+um                           x86_64_defconfig
+um                                  defconfig
+x86_64                              fedora-25
+x86_64                                  kexec
+x86_64                                    lkp
+x86_64                                   rhel
+x86_64                         rhel-7.2-clear
+x86_64                               rhel-7.6
 
-> > > If I do a 'git grep MEDIA_BUS_FMT_FIXED' then I see that it is also in use by vsp1
-> > > for histogram information, so that should also be converted to use the new FIXED_METADATA
-> > > format, although that might be too late (there might be userspace complications).
-> >
-> > Yes, probably not a good idea.
-> >
-> > > >> +          fmt->format.field = V4L2_FIELD_NONE;
-> > > >> +          return 0;
-> > > >> +  }
-> > > >> +
-> > > >> +  if (fmt->which == V4L2_SUBDEV_FORMAT_TRY) {
-> > > >> +          mf = v4l2_subdev_get_try_format(sd, cfg, fmt->pad);
-> > > >> +          fmt->format = *mf;
-> > > >> +          return 0;
-> > > >> +  }
-> > > >> +
-> > > >> +  if (fmt->pad == RKISP1_ISP_PAD_SINK) {
-> > > >> +          *mf = isp_sd->in_frm;
-> > > >> +  } else if (fmt->pad == RKISP1_ISP_PAD_SOURCE_PATH) {
-> > > >> +          /* format of source pad */
-> > > >> +          *mf = isp_sd->in_frm;
-> > > >> +          mf->code = isp_sd->out_fmt.mbus_code;
-> > > >> +          /* window size of source pad */
-> > > >> +          mf->width = isp_sd->out_crop.width;
-> > > >> +          mf->height = isp_sd->out_crop.height;
-> > > >> +          mf->quantization = isp_sd->quantization;
-> > > >> +  }
-> > > >> +  mf->field = V4L2_FIELD_NONE;
-> > > >> +
-> > > >> +  return 0;
-> > > >> +}
-
--- 
-Regards,
-
-Laurent Pinchart
+---
+0-DAY CI Kernel Test Service, Intel Corporation
+https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
