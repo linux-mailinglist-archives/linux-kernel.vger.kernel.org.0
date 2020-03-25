@@ -2,44 +2,138 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3BF9F19304D
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 19:26:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 088A119304F
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 19:26:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727830AbgCYS0M (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Mar 2020 14:26:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45220 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727129AbgCYS0L (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Mar 2020 14:26:11 -0400
-Received: from redsun51.ssa.fujisawa.hgst.com (unknown [199.255.47.7])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 472A320740;
-        Wed, 25 Mar 2020 18:26:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585160771;
-        bh=6Q+CrQ602tmxDcWOlZL6ufQEyLdb6veHata9Ej2DLPU=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=s9nDuL/OQSVs9yDeSg0VIZhceIqy4WFDzhhjqt2M33MT1llbQOCI8Bh4gMbHb1+Xo
-         A8ueEhVPB5veTp5WBrwa5NgoRml5vDRsubWCY3Onw1vw67uXe0w8RjUALavx98foGC
-         e2ydlGazdYoSxj065nxyFm9UBTjnpDnhZTVlU2Qc=
-Date:   Thu, 26 Mar 2020 03:26:07 +0900
-From:   Keith Busch <kbusch@kernel.org>
-To:     Sagi Grimberg <sagi@grimberg.me>
-Cc:     Nick Bowler <nbowler@draconx.ca>, linux-nvme@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] nvme: Fix NVME_IOCTL_ADMIN_CMD compat address handling.
-Message-ID: <20200325182607.GA5290@redsun51.ssa.fujisawa.hgst.com>
-References: <20200325002847.2140-1-nbowler@draconx.ca>
- <3eed9434-d1af-b0d9-e972-ddd393d1ab4b@grimberg.me>
+        id S1727847AbgCYS01 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Mar 2020 14:26:27 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:40519 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727129AbgCYS00 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Mar 2020 14:26:26 -0400
+Received: by mail-pf1-f195.google.com with SMTP id l184so1453372pfl.7
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Mar 2020 11:26:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=rdOwQ11n3cpKxP1BnmbKbCp9D6XytaUHGx7F/xFAJIw=;
+        b=YLQ5jdqMUqkf5nUdhOeIqGBUKQMvKSU5dOE/f/on/yy1ZjkRYbO+QC0yH3loc1RBrI
+         8vq2BARKAuVLS4B4rkewceFxkPUnbVuNcwx2TvXQGBJ/uyM5cua7oqCYDdFD4x3Qcf0P
+         MVGIUCA8QeCEVWeuBNNruftZGmJfbxGwCw+w6rJpBshpXXluQcFANXQ3c0FkhgzZYold
+         xF/N7snIgVzB7mPP3fxPlFSbTWs4Ln5Y9VO1dBgN8ri9Gy0O8IL1IC2rNKJS/Tcc0JBW
+         Dr8qmOckxGoJMz/fdhJbasckqIEXNxe2IeItDFu9BvwmDJi8TL9a7Dqris43Fi0Ru1AX
+         TkGg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=rdOwQ11n3cpKxP1BnmbKbCp9D6XytaUHGx7F/xFAJIw=;
+        b=oVb91LojawCMIXlEIxhm5RQ/DwQbREWJ1lyBULCCDd4siKHtgKeWPwdM3KVDeDpphR
+         9AecPUnS+vwt1HB+7V+lv2aP+zx0gVtYgiE/Fp4fCbjdxgklxz+uIgl0Ra+EIOxqxM2P
+         OFdmU1NbDk+hocnINjCoH6cincZdd4ivmjwSuMVSkLll1L3/oWLkqzOaps1r4O0JpFel
+         AE/2u0xfJwgmMVO/gP6AS5tm2URo/nDjmlTi25B9qvaQBPpLapvpD1Asvgvgw61oHu78
+         Ipg1elZGMejUGsZE+7QPdZt87Omy9M8R3Iwuh1Ard3VBs4g+2OOQoiQGDvFO+QlxPAmz
+         8oMg==
+X-Gm-Message-State: ANhLgQ0NmthtUbnF3VEteBaiGe/7OQcPShPbnBH+pIkDKNcMyKxl0GCp
+        Om+RLMQm+UEJCc3S6Ukmd8w=
+X-Google-Smtp-Source: ADFU+vsM45qbZaWKmVwyap6q+4eaKiz8s3B6hIo9eHBtONe002wIdWM4MSOoHZzu9/ZTnRrNQxFHIA==
+X-Received: by 2002:a63:df15:: with SMTP id u21mr4022987pgg.95.1585160785420;
+        Wed, 25 Mar 2020 11:26:25 -0700 (PDT)
+Received: from simran-Inspiron-5558 ([2409:4052:78f:bb47:8124:5e4b:ea06:7595])
+        by smtp.gmail.com with ESMTPSA id k6sm4160953pfa.214.2020.03.25.11.26.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 25 Mar 2020 11:26:24 -0700 (PDT)
+Date:   Wed, 25 Mar 2020 23:56:17 +0530
+From:   Simran Singhal <singhalsimran0@gmail.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
+        outreachy-kernel@googlegroups.com
+Subject: [PATCH] staging: rtl8723bs: Remove blank line before '}' brace
+Message-ID: <20200325182617.GA9411@simran-Inspiron-5558>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <3eed9434-d1af-b0d9-e972-ddd393d1ab4b@grimberg.me>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Queued up for nvme-5.7, thanks.
+Remove unneeded blank line before a close brace '}'.
+Issue found by checkpatch.pl:
+CHECK: Blank lines aren't necessary before a close brace '}'
+
+Signed-off-by: Simran Singhal <singhalsimran0@gmail.com>
+---
+ drivers/staging/rtl8723bs/core/rtw_security.c | 8 --------
+ 1 file changed, 8 deletions(-)
+
+diff --git a/drivers/staging/rtl8723bs/core/rtw_security.c b/drivers/staging/rtl8723bs/core/rtw_security.c
+index 9c4607114cea..5ebf691bd743 100644
+--- a/drivers/staging/rtl8723bs/core/rtw_security.c
++++ b/drivers/staging/rtl8723bs/core/rtw_security.c
+@@ -434,7 +434,6 @@ void rtw_seccalctkipmic(u8 *key, u8 *header, u8 *data, u32 data_len, u8 *mic_cod
+ 			rtw_secmicappend(&micdata, &header[16], 6);
+ 		else
+ 			rtw_secmicappend(&micdata, &header[10], 6);
+-
+ 	}
+ 	rtw_secmicappend(&micdata, &priority[0], 4);
+ 
+@@ -723,7 +722,6 @@ u32 rtw_tkip_encrypt(struct adapter *padapter, u8 *pxmitframe)
+ 
+ 			TKIP_SW_ENC_CNT_INC(psecuritypriv, pattrib->ra);
+ 		}
+-
+ 	}
+ 	return res;
+ }
+@@ -829,11 +827,9 @@ u32 rtw_tkip_decrypt(struct adapter *padapter, u8 *precvframe)
+ 			RT_TRACE(_module_rtl871x_security_c_, _drv_err_, ("%s: stainfo == NULL!!!\n", __func__));
+ 			res = _FAIL;
+ 		}
+-
+ 	}
+ exit:
+ 	return res;
+-
+ }
+ 
+ 
+@@ -1219,7 +1215,6 @@ static void construct_mic_header2(
+ 		if (!qc_exists && a4_exists) {
+ 			for (i = 0; i < 6; i++)
+ 				mic_header2[8+i] = mpdu[24+i];   /* A4 */
+-
+ 		}
+ 
+ 		if (qc_exists && !a4_exists) {
+@@ -1234,7 +1229,6 @@ static void construct_mic_header2(
+ 			mic_header2[14] = mpdu[30] & 0x0f;
+ 			mic_header2[15] = mpdu[31] & 0x00;
+ 		}
+-
+ }
+ 
+ /************************************************/
+@@ -1413,7 +1407,6 @@ static sint aes_cipher(u8 *key, uint	hdrlen,
+ 		}
+ 		bitwise_xor(aes_out, padded_buffer, chain_buffer);
+ 		aes128k128d(key, chain_buffer, aes_out);
+-
+ 	}
+ 
+ 	for (j = 0 ; j < 8; j++)
+@@ -1719,7 +1712,6 @@ static sint aes_decipher(u8 *key, uint	hdrlen,
+ 		}
+ 		bitwise_xor(aes_out, padded_buffer, chain_buffer);
+ 		aes128k128d(key, chain_buffer, aes_out);
+-
+ 	}
+ 
+ 	for (j = 0; j < 8; j++)
+-- 
+2.17.1
+
