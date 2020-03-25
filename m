@@ -2,107 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A88F3192396
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 10:02:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A1B3019239A
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 10:04:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727417AbgCYJB5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Mar 2020 05:01:57 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:43432 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726276AbgCYJB5 (ORCPT
+        id S1727348AbgCYJES (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Mar 2020 05:04:18 -0400
+Received: from mail1.protonmail.ch ([185.70.40.18]:51117 "EHLO
+        mail1.protonmail.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726276AbgCYJES (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Mar 2020 05:01:57 -0400
-Received: by mail-wr1-f67.google.com with SMTP id b2so1816046wrj.10;
-        Wed, 25 Mar 2020 02:01:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=nbiq64+XzLhBz/5xIW7PmevCceTu0q5VBUbnWqborHc=;
-        b=bhpzp8yk8Uwxp4ei1Ow0WJmAdcLW53JUOHAu5oHAlZ9dKYDKkqJ6pzz4nv1/jBieA+
-         YAE7AMPZF085cFPz8Dt/KDJRESWtQFWxwdZZXBjf7CVM9YpflrPFWfZ2vCHtWeB25OU5
-         JjzaZ7szVCGPTivODh9rzYa/PYBvUhsNdP/TwKigAG3FO55a2gcCsOdE7HSzSbZfBML6
-         kOJzyfRHxRjwtAnhl4cdIjH9zNFiI9jdf6XPKoVa1TNxdZpPOSvnVBMQt5p8SfjeeZkH
-         BZ3E5NmvNBkzwYk/hAKIrICcM2UHrkfU31v4XBXq3xCYLO2SD8M+GRG9Laywc0cYNati
-         73Kg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=nbiq64+XzLhBz/5xIW7PmevCceTu0q5VBUbnWqborHc=;
-        b=pXZAX1+YxfDQKp65mahzTV2zhy8OE2o1KQQEkDpxCbvSCk/yt8000QT1bdnY9WU+X2
-         i+aBKZkk2GyFkwSoWDEOWXKzoPpY7PE16/bG0ALee83j7968jVIOzwmyWewMrTZxcTVu
-         QXCOA6oUqcPr/rl3yox1EWkWOz3zRmClS0j9xopJkRje37WgAKKaMSQ8ViQq9vHgNsBU
-         Bhg9pz6kZqiRQXpxQrT/4L8oNe9x2QK4Ps1KoFmCx0RbOj67dDAUsw3iaHVkPbC0YUAp
-         SoT7GUPlLBKsCpIdefW8H+7+UE0zLI3eU8ig5TTORon07TqXAhPqFxycsd+jA17T1C+H
-         EE2w==
-X-Gm-Message-State: ANhLgQ24ehlSvcwT+3gV/N6lwopCgmE2PwVj8GdKWPEo/UEdW881wK/b
-        TP2f/XihdFSi4RfGxgy8v+g7eNkLWSw=
-X-Google-Smtp-Source: ADFU+vsYtlC0mqbY2opJhHZeQt2yJWwUXpodXoYAxLr8opxwERXjUC+5rmFS04nEeXR1cnzG7CzhVA==
-X-Received: by 2002:adf:9b96:: with SMTP id d22mr2381487wrc.249.1585126915420;
-        Wed, 25 Mar 2020 02:01:55 -0700 (PDT)
-Received: from localhost.localdomain ([185.239.71.98])
-        by smtp.gmail.com with ESMTPSA id s131sm8148776wmf.35.2020.03.25.02.01.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Mar 2020 02:01:54 -0700 (PDT)
-From:   Xiaolong Huang <butterflyhuangxx@gmail.com>
-To:     mchehab@kernel.org, hverkuil-cisco@xs4all.nl, tglx@linutronix.de,
-        mpe@ellerman.id.au, allison@lohutok.net
-Cc:     linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Xiaolong Huang <butterflyhuangxx@gmail.com>
-Subject: [PATCH] media: media/pci: prevent memory leak in bttv_probe
-Date:   Wed, 25 Mar 2020 17:01:22 +0800
-Message-Id: <20200325090122.9308-1-butterflyhuangxx@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Wed, 25 Mar 2020 05:04:18 -0400
+Date:   Wed, 25 Mar 2020 09:04:09 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=emersion.fr;
+        s=protonmail; t=1585127056;
+        bh=Guy2vOhTyBfZhuCrDbubTIeu//kaLb6ip8d00QcbKFc=;
+        h=Date:To:From:Cc:Reply-To:Subject:In-Reply-To:References:From;
+        b=UQwj5mzFaHihXW13WpxBcrPWmbIGaA8H7Qj+3IufGWtq8INdISQG6sVlJn+S4In/9
+         PNcaW1d2j3KDPhCsoCgbgouJj2J1wgZimNSJCD73RXSstTyFiXvNANX31Fd+bqxpU2
+         zh9IMKKqAuoKSdZ9hI2GOhyoKL+jj1bU9/CxHvGE=
+To:     Neil Armstrong <narmstrong@baylibre.com>
+From:   Simon Ser <contact@emersion.fr>
+Cc:     "daniel@ffwll.ch" <daniel@ffwll.ch>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "mjourdan@baylibre.com" <mjourdan@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-amlogic@lists.infradead.org" 
+        <linux-amlogic@lists.infradead.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>
+Reply-To: Simon Ser <contact@emersion.fr>
+Subject: Re: [PATCH v4 7/8] drm/fourcc: amlogic: Add modifier definitions for the Scatter layout
+Message-ID: <JgBZ7eZYMgXRNu_-E4ItS1bud9mEe15xptZEX_XhsM_h8_iIZTOmPokEVxPJYwX0wP0pmb5p-ymubyyZP3kVbcfuDNdmM0__L8wBR5IykfE=@emersion.fr>
+In-Reply-To: <20200325085025.30631-8-narmstrong@baylibre.com>
+References: <20200325085025.30631-1-narmstrong@baylibre.com>
+ <20200325085025.30631-8-narmstrong@baylibre.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-1.2 required=7.0 tests=ALL_TRUSTED,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF shortcircuit=no
+        autolearn=disabled version=3.4.4
+X-Spam-Checker-Version: SpamAssassin 3.4.4 (2020-01-24) on mail.protonmail.ch
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In bttv_probe if some functions such as pci_enable_device,
-pci_set_dma_mask and request_mem_region fails the allocated
- memory for btv should be released.
+On Wednesday, March 25, 2020 9:50 AM, Neil Armstrong <narmstrong@baylibre.c=
+om> wrote:
 
-Signed-off-by: Xiaolong Huang <butterflyhuangxx@gmail.com>
----
- drivers/media/pci/bt8xx/bttv-driver.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+> Amlogic uses a proprietary lossless image compression protocol and format
+> for their hardware video codec accelerators, either video decoders or
+> video input encoders.
+>
+> This introduces the Scatter Memory layout, means the header contains IOMM=
+U
+> references to the compressed frames content to optimize memory access
+> and layout.
+>
+> In this mode, only the header memory address is needed, thus the content
+> memory organization is tied to the current producer execution and cannot
+> be saved/dumped neither transferrable between Amlogic SoCs supporting thi=
+s
+> modifier.
 
-diff --git a/drivers/media/pci/bt8xx/bttv-driver.c b/drivers/media/pci/bt8xx/bttv-driver.c
-index a359da7773a9..37ac59110383 100644
---- a/drivers/media/pci/bt8xx/bttv-driver.c
-+++ b/drivers/media/pci/bt8xx/bttv-driver.c
-@@ -4013,10 +4013,14 @@ static int bttv_probe(struct pci_dev *dev, const struct pci_device_id *pci_id)
- 	btv->id  = dev->device;
- 	if (pci_enable_device(dev)) {
- 		pr_warn("%d: Can't enable device\n", btv->c.nr);
-+		bttvs[btv->c.nr] = NULL;
-+		kfree(btv);
- 		return -EIO;
- 	}
- 	if (pci_set_dma_mask(dev, DMA_BIT_MASK(32))) {
- 		pr_warn("%d: No suitable DMA available\n", btv->c.nr);
-+		bttvs[btv->c.nr] = NULL;
-+		kfree(btv);
- 		return -EIO;
- 	}
- 	if (!request_mem_region(pci_resource_start(dev,0),
-@@ -4025,6 +4029,8 @@ static int bttv_probe(struct pci_dev *dev, const struct pci_device_id *pci_id)
- 		pr_warn("%d: can't request iomem (0x%llx)\n",
- 			btv->c.nr,
- 			(unsigned long long)pci_resource_start(dev, 0));
-+		bttvs[btv->c.nr] = NULL;
-+		kfree(btv);
- 		return -EBUSY;
- 	}
- 	pci_set_master(dev);
-@@ -4211,6 +4217,8 @@ static int bttv_probe(struct pci_dev *dev, const struct pci_device_id *pci_id)
- 	release_mem_region(pci_resource_start(btv->c.pci,0),
- 			   pci_resource_len(btv->c.pci,0));
- 	pci_disable_device(btv->c.pci);
-+	bttvs[btv->c.nr] = NULL;
-+	kfree(btv);
- 	return result;
- }
- 
--- 
-2.17.1
+I don't think this is suitable for modifiers. User-space relies on
+being able to copy a buffer from one machine to another over the
+network. It would be pretty annoying for user-space to have a blacklist
+of modifiers that don't work this way.
 
+Example of such user-space:
+https://gitlab.freedesktop.org/mstoeckl/waypipe/
