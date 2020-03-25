@@ -2,91 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F422A1923F0
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 10:22:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B45651923FA
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 10:25:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727158AbgCYJWe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Mar 2020 05:22:34 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:56353 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1725907AbgCYJWe (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Mar 2020 05:22:34 -0400
-X-UUID: b76f619bb6e049fc9be921327f75bc92-20200325
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-        h=Content-Transfer-Encoding:MIME-Version:Content-Type:References:In-Reply-To:Date:CC:To:From:Subject:Message-ID; bh=BVyTHhelUjx59FjyxWQdpVbGtCVCGjT0t0rY/9a/ceg=;
-        b=Yg1qvMxPnQhw33GbmLfbB9dTN00UUkRGXdhqb8HRojugEDEWgnpVwZgZIUS5Xct0/xypCoWJyuT0YyTUQxmqCatwBt4xqWeTr2+8ElGTWw5Bt2yJV+RhcZx4Mg5/RcqrnYXpEqQDAtdmyljEVz2YU+XFXR4eW5PsbZVzV/6M0Gk=;
-X-UUID: b76f619bb6e049fc9be921327f75bc92-20200325
-Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw02.mediatek.com
-        (envelope-from <yingjoe.chen@mediatek.com>)
-        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
-        with ESMTP id 1257327960; Wed, 25 Mar 2020 17:22:24 +0800
-Received: from mtkcas07.mediatek.inc (172.21.101.84) by
- mtkmbs07n2.mediatek.inc (172.21.101.141) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Wed, 25 Mar 2020 17:22:22 +0800
-Received: from [172.21.77.4] (172.21.77.4) by mtkcas07.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Wed, 25 Mar 2020 17:22:22 +0800
-Message-ID: <1585128143.18052.3.camel@mtksdaap41>
-Subject: Re: [PATCH v4 3/6] pinctrl: mediatek: avoid virtual gpio trying to
- set reg
-From:   Yingjoe Chen <yingjoe.chen@mediatek.com>
-To:     Hanks Chen <hanks.chen@mediatek.com>
-CC:     Linus Walleij <linus.walleij@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "Matthias Brugger" <matthias.bgg@gmail.com>,
-        Sean Wang <sean.wang@kernel.org>, <devicetree@vger.kernel.org>,
-        <wsd_upstream@mediatek.com>, Andy Teng <andy.teng@mediatek.com>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>,
-        Mars Cheng <mars.cheng@mediatek.com>
-Date:   Wed, 25 Mar 2020 17:22:23 +0800
-In-Reply-To: <1585123964-10791-4-git-send-email-hanks.chen@mediatek.com>
-References: <1585123964-10791-1-git-send-email-hanks.chen@mediatek.com>
-         <1585123964-10791-4-git-send-email-hanks.chen@mediatek.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.10.4-0ubuntu2 
+        id S1727285AbgCYJZX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Mar 2020 05:25:23 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:12127 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726116AbgCYJZX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Mar 2020 05:25:23 -0400
+Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 8D90EB79BF7B9AB480BF;
+        Wed, 25 Mar 2020 17:25:20 +0800 (CST)
+Received: from szvp000203569.huawei.com (10.120.216.130) by
+ DGGEMS412-HUB.china.huawei.com (10.3.19.212) with Microsoft SMTP Server id
+ 14.3.487.0; Wed, 25 Mar 2020 17:25:11 +0800
+From:   Chao Yu <yuchao0@huawei.com>
+To:     <jaegeuk@kernel.org>
+CC:     <linux-f2fs-devel@lists.sourceforge.net>,
+        <linux-kernel@vger.kernel.org>, <chao@kernel.org>,
+        Chao Yu <yuchao0@huawei.com>
+Subject: [PATCH] f2fs: clean up dic->tpages assignment
+Date:   Wed, 25 Mar 2020 17:25:07 +0800
+Message-ID: <20200325092507.62977-1-yuchao0@huawei.com>
+X-Mailer: git-send-email 2.18.0.rc1
 MIME-Version: 1.0
-X-MTK:  N
-Content-Transfer-Encoding: base64
+Content-Type: text/plain
+X-Originating-IP: [10.120.216.130]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gV2VkLCAyMDIwLTAzLTI1IGF0IDE2OjEyICswODAwLCBIYW5rcyBDaGVuIHdyb3RlOg0KPiBm
-b3IgdmlydHVhbCBncGlvcywgdGhleSBzaG91bGQgbm90IGRvIHJlZyBzZXR0aW5nIGFuZA0KPiBz
-aG91bGQgYmVoYXZlIGFzIGV4cGVjdGVkIGZvciBlaW50IGZ1bmN0aW9uLg0KPiANCj4gQ2hhbmdl
-LUlkOiBJOTEzNTAxZjIxYzg0MWMyY2I5ODE1MzBjZDM4NzM5NTY0OGY4Mzk4NA0KDQpQbGVhc2Ug
-cmVtb3ZlIENoYW5nZS1JZDoNCg0KDQo+IFNpZ25lZC1vZmYtYnk6IEhhbmtzIENoZW4gPGhhbmtz
-LmNoZW5AbWVkaWF0ZWsuY29tPg0KPiBTaWduZWQtb2ZmLWJ5OiBNYXJzIENoZW5nIDxtYXJzLmNo
-ZW5nQG1lZGlhdGVrLmNvbT4NCj4gLS0tDQo+ICBkcml2ZXJzL3BpbmN0cmwvbWVkaWF0ZWsvcGlu
-Y3RybC1tdGstY29tbW9uLXYyLmMgfCAgIDI4ICsrKysrKysrKysrKysrKysrKysrKysNCj4gIGRy
-aXZlcnMvcGluY3RybC9tZWRpYXRlay9waW5jdHJsLW10ay1jb21tb24tdjIuaCB8ICAgIDEgKw0K
-PiAgZHJpdmVycy9waW5jdHJsL21lZGlhdGVrL3BpbmN0cmwtcGFyaXMuYyAgICAgICAgIHwgICAg
-NyArKysrKysNCj4gIDMgZmlsZXMgY2hhbmdlZCwgMzYgaW5zZXJ0aW9ucygrKQ0KPiANCj4gZGlm
-ZiAtLWdpdCBhL2RyaXZlcnMvcGluY3RybC9tZWRpYXRlay9waW5jdHJsLW10ay1jb21tb24tdjIu
-YyBiL2RyaXZlcnMvcGluY3RybC9tZWRpYXRlay9waW5jdHJsLW10ay1jb21tb24tdjIuYw0KPiBp
-bmRleCAyMGUxYzg5Li4wODdkMjMzIDEwMDY0NA0KPiAtLS0gYS9kcml2ZXJzL3BpbmN0cmwvbWVk
-aWF0ZWsvcGluY3RybC1tdGstY29tbW9uLXYyLmMNCj4gKysrIGIvZHJpdmVycy9waW5jdHJsL21l
-ZGlhdGVrL3BpbmN0cmwtbXRrLWNvbW1vbi12Mi5jDQo+IEBAIC0yMjYsNiArMjI2LDMxIEBAIHN0
-YXRpYyBpbnQgbXRrX3h0X2ZpbmRfZWludF9udW0oc3RydWN0IG10a19waW5jdHJsICpodywgdW5z
-aWduZWQgbG9uZyBlaW50X24pDQo+ICAJcmV0dXJuIEVJTlRfTkE7DQo+ICB9DQo+ICANCj4gKy8q
-DQo+ICsgKiBWaXJ0dWFsIEdQSU8gb25seSB1c2VkIGluc2lkZSBTT0MgYW5kIG5vdCBiZWluZyBl
-eHBvcnRlZCB0byBvdXRzaWRlIFNPQy4NCj4gKyAqIFNvbWUgbW9kdWxlcyB1c2UgdmlydHVhbCBH
-UElPIGFzIGVpbnQgKGUuZy4gcG1pZiBvciB1c2IpLg0KPiArICogSW4gTVRLIHBsYXRmb3JtLCBl
-eHRlcm5hbCBpbnRlcnJ1cHQgKEVJTlQpIGFuZCBHUElPIGlzIDEtMSBtYXBwaW5nDQo+ICsgKiBh
-bmQgd2UgY2FuIHNldCBHUElPIGFzIGVpbnQuDQo+ICsgKiBCdXQgc29tZSBtb2R1bGVzIHVzZSBz
-cGVjaWZpYyBlaW50IHdoaWNoIGRvZXNuJ3QgaGF2ZSByZWFsIEdQSU8gcGluLg0KPiArICogU28g
-d2UgdXNlIHZpcnR1YWwgR1BJTyB0byBtYXAgaXQuDQo+ICsgKi8NCj4gKw0KPiArYm9vbCBtdGtf
-aXNfdmlydF9ncGlvKHN0cnVjdCBtdGtfcGluY3RybCAqaHcsIHVuc2lnbmVkIGludCBncGlvX24p
-DQo+ICt7DQo+ICsJY29uc3Qgc3RydWN0IG10a19waW5fZGVzYyAqZGVzYzsNCj4gKwlib29sIHZp
-cnRfZ3BpbyA9IGZhbHNlOw0KPiArDQo+ICsJaWYgKGdwaW9fbiA+PSBody0+c29jLT5ucGlucykN
-Cj4gKwkJcmV0dXJuIHZpcnRfZ3BpbzsNCj4gKw0KPiArCWRlc2MgPSAoY29uc3Qgc3RydWN0IG10
-a19waW5fZGVzYyAqKSZody0+c29jLT5waW5zW2dwaW9fbl07DQo+ICsNCj4gKwlpZiAoZGVzYy0+
-ZnVuY3MgJiYgIWRlc2MtPmZ1bmNzW2Rlc2MtPmVpbnQuZWludF9tXS5uYW1lKQ0KPiArCQl2aXJ0
-X2dwaW8gPSB0cnVlOw0KDQpJIHRoaW5rIHJlbW92aW5nIHZpcnRfZ3BpbyBhbmQganVzdCByZXR1
-cm4gdHJ1ZS9mYWxzZSBmb3IgdGhpcyBmdW5jdGlvbg0Kd2lsbCBtYWtlIGl0IGVhc2llciB0byBy
-ZWFkLg0KDQpKb2UuQw0KDQo+ICsNCj4gKwlyZXR1cm4gdmlydF9ncGlvOw0KPiArfQ0KDQoNCg==
+Just cleanup, no logic change.
+
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+---
+ fs/f2fs/compress.c | 10 +++-------
+ 1 file changed, 3 insertions(+), 7 deletions(-)
+
+diff --git a/fs/f2fs/compress.c b/fs/f2fs/compress.c
+index c82ebba26e75..9cc279ea3bfb 100644
+--- a/fs/f2fs/compress.c
++++ b/fs/f2fs/compress.c
+@@ -1363,20 +1363,16 @@ struct decompress_io_ctx *f2fs_alloc_dic(struct compress_ctx *cc)
+ 		goto out_free;
+ 
+ 	for (i = 0; i < dic->cluster_size; i++) {
+-		if (cc->rpages[i])
++		if (cc->rpages[i]) {
++			dic->tpages[i] = cc->rpages[i];
+ 			continue;
++		}
+ 
+ 		dic->tpages[i] = f2fs_grab_page();
+ 		if (!dic->tpages[i])
+ 			goto out_free;
+ 	}
+ 
+-	for (i = 0; i < dic->cluster_size; i++) {
+-		if (dic->tpages[i])
+-			continue;
+-		dic->tpages[i] = cc->rpages[i];
+-	}
+-
+ 	return dic;
+ 
+ out_free:
+-- 
+2.18.0.rc1
 
