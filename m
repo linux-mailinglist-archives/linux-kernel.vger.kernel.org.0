@@ -2,72 +2,61 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9156F192C12
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 16:18:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F10E4192C1F
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 16:20:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727611AbgCYPSM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Mar 2020 11:18:12 -0400
-Received: from cloudserver094114.home.pl ([79.96.170.134]:51317 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726969AbgCYPSM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Mar 2020 11:18:12 -0400
-Received: from 185.80.35.16 (185.80.35.16) (HELO kreacher.localnet)
- by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.341)
- id 37eb982999ca91a4; Wed, 25 Mar 2020 16:18:09 +0100
-From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To:     Linux PM <linux-pm@vger.kernel.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Subject: [PATCH] cpufreq: intel_pstate: Simplify intel_pstate_cpu_init()
-Date:   Wed, 25 Mar 2020 16:18:09 +0100
-Message-ID: <2521958.mvXUDI8C0e@kreacher>
+        id S1727675AbgCYPUc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Mar 2020 11:20:32 -0400
+Received: from mx2.suse.de ([195.135.220.15]:56852 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727319AbgCYPUc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Mar 2020 11:20:32 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id EEBAAAD07;
+        Wed, 25 Mar 2020 15:20:29 +0000 (UTC)
+Subject: Re: [PATCH v4 2/2] mm/page_alloc: integrate classzone_idx and
+ high_zoneidx
+To:     js1304@gmail.com, Andrew Morton <akpm@linux-foundation.org>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Minchan Kim <minchan@kernel.org>,
+        Mel Gorman <mgorman@techsingularity.net>, kernel-team@lge.com,
+        Ye Xiaolong <xiaolong.ye@intel.com>,
+        David Rientjes <rientjes@google.com>,
+        Baoquan He <bhe@redhat.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>
+References: <1584938972-7430-1-git-send-email-iamjoonsoo.kim@lge.com>
+ <1584938972-7430-3-git-send-email-iamjoonsoo.kim@lge.com>
+From:   Vlastimil Babka <vbabka@suse.cz>
+Message-ID: <f64519a0-c392-ca25-4f83-2a5e00485b8f@suse.cz>
+Date:   Wed, 25 Mar 2020 16:20:28 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <1584938972-7430-3-git-send-email-iamjoonsoo.kim@lge.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+On 3/23/20 5:49 AM, js1304@gmail.com wrote:
+> From: Joonsoo Kim <iamjoonsoo.kim@lge.com>
+> 
+> classzone_idx is just different name for high_zoneidx now.
+> So, integrate them and add some comment to struct alloc_context
+> in order to reduce future confusion about the meaning of this variable.
+> 
+> The accessor, ac_classzone_idx() is also removed since it isn't needed
+> after integration.
+> 
+> In addition to integration, this patch also renames high_zoneidx
+> to highest_zoneidx since it represents more precise meaning.
+> 
+> Signed-off-by: Joonsoo Kim <iamjoonsoo.kim@lge.com>
 
-The initial policy value set by intel_pstate_cpu_init() depends on
-whether or not CONFIG_CPU_FREQ_DEFAULT_GOV_PERFORMANCE is set, but
-that is not necessary, because the core will set the policy to
-"performance" in cpufreq_init_policy() if the default governor is
-"performance" anyway.
-
-Accordingly, change intel_pstate_cpu_init() to always set policy
-to CPUFREQ_POLICY_POWERSAVE initially to provide a valid fallback
-value to cpufreq_init_policy() in case the default cpufreq governor
-is neither "powersave" nor "performance".
-
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
----
- drivers/cpufreq/intel_pstate.c |    9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
-
-Index: linux-pm/drivers/cpufreq/intel_pstate.c
-===================================================================
---- linux-pm.orig/drivers/cpufreq/intel_pstate.c
-+++ linux-pm/drivers/cpufreq/intel_pstate.c
-@@ -2247,10 +2247,11 @@ static int intel_pstate_cpu_init(struct
- 	if (ret)
- 		return ret;
- 
--	if (IS_ENABLED(CONFIG_CPU_FREQ_DEFAULT_GOV_PERFORMANCE))
--		policy->policy = CPUFREQ_POLICY_PERFORMANCE;
--	else
--		policy->policy = CPUFREQ_POLICY_POWERSAVE;
-+	/*
-+	 * Set the policy to powersave to provide a valid fallback value in case
-+	 * the default cpufreq governor is neither powersave nor performance.
-+	 */
-+	policy->policy = CPUFREQ_POLICY_POWERSAVE;
- 
- 	return 0;
- }
-
-
-
+Acked-by: Vlastimil Babka <vbabka@suse.cz>
