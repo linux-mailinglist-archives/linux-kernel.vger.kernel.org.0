@@ -2,129 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 40C8B191EB0
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 02:45:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0F1F4191EC1
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 02:59:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727279AbgCYBpm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 21:45:42 -0400
-Received: from mail-il1-f193.google.com ([209.85.166.193]:37014 "EHLO
-        mail-il1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727189AbgCYBpm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 21:45:42 -0400
-Received: by mail-il1-f193.google.com with SMTP id a6so441213ilr.4;
-        Tue, 24 Mar 2020 18:45:41 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=f4D6B9MrkGLZB2AIEqGTRqzOxW30N5+6gdlWcIa45lc=;
-        b=J3uwS3Cec42SW6eWzYZzfp/8fGv/eaXm0osEKAnUNcgI2KvfNjbRRAI8V+foDst3sX
-         FTZ9zlvc/loEyxQWJQJm45lILHveMvIdsWVZ0xTlYOxmzYGkwwBo1XHiYv22cTBcryud
-         pKgZIOJC6evk7oxxK3EUJYqBtIWF5Nyjm+iCj5TgtlpWsDCE3kReQcEWpcGIFx/7r54L
-         uf7CSyZGWZpV9FInZPdmRhdCBAtTqxfUXrRaBmXSuzlZMmBzIHC1A3WxHmYuh4B0G28E
-         U11yg5DnBfUSkFyaJ0Mex/+gJdxuFFxsVy9FtlRxevE/XjRSlw3nCivA2kZRp3QY3zju
-         l69w==
-X-Gm-Message-State: ANhLgQ09t1mBmMTWuKgg8i6gM3ssaRGL7+8iHTuTOAdAGjdjiN6JSxMR
-        veKqC/P0ax8o68pVajnmgU5JpuLMzPRfuWKu5D0m2Eam
-X-Google-Smtp-Source: ADFU+vuSQONXJlK8DCLnl3/KGz7ZQKK5ZiNMyS2gUS4INYXRJmqEDqZCv0Gd42u4BjkIiTkvjaXHVHVh/8X3OVHllyM=
-X-Received: by 2002:a92:8510:: with SMTP id f16mr1332299ilh.208.1585100741368;
- Tue, 24 Mar 2020 18:45:41 -0700 (PDT)
+        id S1727279AbgCYB72 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 21:59:28 -0400
+Received: from ozlabs.org ([203.11.71.1]:34371 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727189AbgCYB72 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Mar 2020 21:59:28 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 48nBBP1jKDz9sQt;
+        Wed, 25 Mar 2020 12:59:23 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ellerman.id.au;
+        s=201909; t=1585101566;
+        bh=DbtFmqRT8V9GpajJ1kFCBoHEqZgLl/5/UANC/xKI3s0=;
+        h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+        b=BkZ9AsjDqXY8v+ztK0YKORVmsZMcDINt9MZK0b/uxGLYdi9Coy+Bz+Ubi9x6rHiS4
+         YociJuOWuZmr41ZDgMWphIS2vP/JI2F4YWmAsGsE5KcLrK5EWamNPzxi3jg3eyhcP5
+         u4jS63ly4k/YU6faqB/XVJa9grwHX7l/mWZnnJkiDnlSoflH9NC3Y0tHf7CohJZ74m
+         nXrO5b8UBQg/7OPLaglOpfYQzhKQ7rVnA93tTMu9l0WywejpwoV/c2gnW/xB/G9P9S
+         jIXwkxXK+iaAlt3BJSj/IhLVWlmPWHeCLnalZ7f/MVJCXg2o2SMfqUPCdPGa85QI4u
+         QKJOerRLbJeag==
+From:   Michael Ellerman <mpe@ellerman.id.au>
+To:     Chris Packham <chris.packham@alliedtelesis.co.nz>,
+        robh+dt@kernel.org, mark.rutland@arm.com, paulus@samba.org,
+        benh@kernel.crashing.org
+Cc:     Hamish Martin <hamish.martin@alliedtelesis.co.nz>,
+        devicetree@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-kernel@vger.kernel.org,
+        Chris Packham <chris.packham@alliedtelesis.co.nz>,
+        Scott Wood <oss@buserror.net>
+Subject: Re: [PATCH] powerpc/fsl: Add cache properties for T2080/T2081
+In-Reply-To: <20200324213612.31614-1-chris.packham@alliedtelesis.co.nz>
+References: <20200324213612.31614-1-chris.packham@alliedtelesis.co.nz>
+Date:   Wed, 25 Mar 2020 12:59:28 +1100
+Message-ID: <877dz9xkhr.fsf@mpe.ellerman.id.au>
 MIME-Version: 1.0
-References: <20200324153624.23109-1-jiaxun.yang@flygoat.com> <20200324153624.23109-3-jiaxun.yang@flygoat.com>
-In-Reply-To: <20200324153624.23109-3-jiaxun.yang@flygoat.com>
-From:   Huacai Chen <chenhc@lemote.com>
-Date:   Wed, 25 Mar 2020 09:52:26 +0800
-Message-ID: <CAAhV-H7__WmeWZ4w8Kc37WztRZ+-du9nKbVkRJeK7=ZhPaVY3g@mail.gmail.com>
-Subject: Re: [PATCH v6 02/11] irqchip: loongson-liointc: Workaround LPC IRQ Errata
-To:     Jiaxun Yang <jiaxun.yang@flygoat.com>
-Cc:     "open list:MIPS" <linux-mips@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <maz@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Allison Randal <allison@lohutok.net>,
-        LKML <linux-kernel@vger.kernel.org>, devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi, Jiaxun,
-
-On Tue, Mar 24, 2020 at 11:39 PM Jiaxun Yang <jiaxun.yang@flygoat.com> wrote:
+Chris Packham <chris.packham@alliedtelesis.co.nz> writes:
+> Add the d-cache/i-cache properties for the T208x SoCs. The L1 cache on
+> these SoCs is 32KiB and is split into 64 byte blocks (lines).
 >
-> The 1.0 version of that controller has a bug that status bit
-> of LPC IRQ sometimes doesn't get set correctly.
->
-> So we can always blame LPC IRQ when spurious interrupt happens
-> at the parent interrupt line which LPC IRQ supposed to route
-> to.
->
-> Co-developed-by: Huacai Chen <chenhc@lemote.com>
-> Signed-off-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
+> Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
 > ---
->  drivers/irqchip/irq-loongson-liointc.c | 16 ++++++++++++++--
->  1 file changed, 14 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/irqchip/irq-loongson-liointc.c b/drivers/irqchip/irq-loongson-liointc.c
-> index 8b6d7b8ddaca..d5054e90eab8 100644
-> --- a/drivers/irqchip/irq-loongson-liointc.c
-> +++ b/drivers/irqchip/irq-loongson-liointc.c
-> @@ -32,6 +32,8 @@
->
->  #define LIOINTC_SHIFT_INTx     4
->
-> +#define LIOINTC_ERRATA_IRQ     10
-> +
->  struct liointc_handler_data {
->         struct liointc_priv     *priv;
->         u32                     parent_int_map;
-> @@ -41,6 +43,7 @@ struct liointc_priv {
->         struct irq_chip_generic         *gc;
->         struct liointc_handler_data     handler[LIOINTC_NUM_PARENT];
->         u8                              map_cache[LIOINTC_CHIP_IRQ];
-> +       bool                            have_lpc_irq_errata;
-Maybe has_lpc_irq_errata?
+>  arch/powerpc/boot/dts/fsl/t208xsi-pre.dtsi | 16 ++++++++++++++++
+>  1 file changed, 16 insertions(+)
 
->  };
->
->  static void liointc_chained_handle_irq(struct irq_desc *desc)
-> @@ -54,8 +57,14 @@ static void liointc_chained_handle_irq(struct irq_desc *desc)
->
->         pending = readl(gc->reg_base + LIOINTC_REG_INTC_STATUS);
->
-> -       if (!pending)
-> -               spurious_interrupt();
-> +       if (!pending) {
-> +               /* Always blame LPC IRQ if we have that bug and LPC IRQ is enabled */
-> +               if (handler->priv->have_lpc_irq_errata &&
-> +                       (handler->parent_int_map & ~gc->mask_cache & BIT(LIOINTC_ERRATA_IRQ)))
-> +                       pending = BIT(LIOINTC_ERRATA_IRQ);
-> +               else
-> +                       spurious_interrupt();
-> +       }
->
->         while (pending) {
->                 int bit = __ffs(pending);
-> @@ -164,6 +173,9 @@ int __init liointc_of_init(struct device_node *node,
->                 goto out_iounmap;
->         }
->
-> +       if (of_device_is_compatible(node, "loongson,liointc-1.0"))
-> +               priv->have_lpc_irq_errata = true;
-> +
->         sz = of_property_read_variable_u32_array(node, "loongson,parent_int_map",
->                                                 &of_parent_int_map[0], LIOINTC_NUM_PARENT,
->                                                 LIOINTC_NUM_PARENT);
-> --
-> 2.26.0.rc2
->
->
+LGTM.
 
-Regards,
-Huacai Chen
+I'll wait a few days to see if Scott wants to ack it.
+
+cheers
+
+
+> diff --git a/arch/powerpc/boot/dts/fsl/t208xsi-pre.dtsi b/arch/powerpc/boot/dts/fsl/t208xsi-pre.dtsi
+> index 3f745de44284..2ad27e16ac16 100644
+> --- a/arch/powerpc/boot/dts/fsl/t208xsi-pre.dtsi
+> +++ b/arch/powerpc/boot/dts/fsl/t208xsi-pre.dtsi
+> @@ -81,6 +81,10 @@ cpus {
+>  		cpu0: PowerPC,e6500@0 {
+>  			device_type = "cpu";
+>  			reg = <0 1>;
+> +			d-cache-line-size = <64>;
+> +			i-cache-line-size = <64>;
+> +			d-cache-size = <32768>;
+> +			i-cache-size = <32768>;
+>  			clocks = <&clockgen 1 0>;
+>  			next-level-cache = <&L2_1>;
+>  			fsl,portid-mapping = <0x80000000>;
+> @@ -88,6 +92,10 @@ cpu0: PowerPC,e6500@0 {
+>  		cpu1: PowerPC,e6500@2 {
+>  			device_type = "cpu";
+>  			reg = <2 3>;
+> +			d-cache-line-size = <64>;
+> +			i-cache-line-size = <64>;
+> +			d-cache-size = <32768>;
+> +			i-cache-size = <32768>;
+>  			clocks = <&clockgen 1 0>;
+>  			next-level-cache = <&L2_1>;
+>  			fsl,portid-mapping = <0x80000000>;
+> @@ -95,6 +103,10 @@ cpu1: PowerPC,e6500@2 {
+>  		cpu2: PowerPC,e6500@4 {
+>  			device_type = "cpu";
+>  			reg = <4 5>;
+> +			d-cache-line-size = <64>;
+> +			i-cache-line-size = <64>;
+> +			d-cache-size = <32768>;
+> +			i-cache-size = <32768>;
+>  			clocks = <&clockgen 1 0>;
+>  			next-level-cache = <&L2_1>;
+>  			fsl,portid-mapping = <0x80000000>;
+> @@ -102,6 +114,10 @@ cpu2: PowerPC,e6500@4 {
+>  		cpu3: PowerPC,e6500@6 {
+>  			device_type = "cpu";
+>  			reg = <6 7>;
+> +			d-cache-line-size = <64>;
+> +			i-cache-line-size = <64>;
+> +			d-cache-size = <32768>;
+> +			i-cache-size = <32768>;
+>  			clocks = <&clockgen 1 0>;
+>  			next-level-cache = <&L2_1>;
+>  			fsl,portid-mapping = <0x80000000>;
+> -- 
+> 2.25.1
