@@ -2,190 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ABC7919269E
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 12:05:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 65A2A1926AB
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 12:06:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727438AbgCYLFF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Mar 2020 07:05:05 -0400
-Received: from mail26.static.mailgun.info ([104.130.122.26]:27961 "EHLO
-        mail26.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726043AbgCYLFF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Mar 2020 07:05:05 -0400
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1585134304; h=Content-Transfer-Encoding: Content-Type:
- MIME-Version: Message-ID: Date: Subject: In-Reply-To: References: Cc:
- To: From: Sender; bh=JepPCPGEarX1ss6ZbVvaIoXfTJutoTJE1MiruN2+lF8=; b=gkxn3/JvzBNYUl9VAT2ZR3vql5376nucZF5G6CvwG7ZUpwcN6LXwMKLqBzlJZKfu191nHqZ4
- ARtSt1P96TES5pfKFbXGgF1x6Cr47lM5zlvyOlSC40B0C1i9lTuEBLVPvxCuk64Pf6f2u/Uo
- olammCC4SvYEGvtqq1Oz7yH0kdg=
-X-Mailgun-Sending-Ip: 104.130.122.26
-X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
- by mxa.mailgun.org with ESMTP id 5e7b3adf.7f09eaada1b8-smtp-out-n02;
- Wed, 25 Mar 2020 11:05:03 -0000 (UTC)
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 5D206C433BA; Wed, 25 Mar 2020 11:05:02 +0000 (UTC)
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        aws-us-west-2-caf-mail-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE
-        autolearn=unavailable autolearn_force=no version=3.4.0
-Received: from Pillair (unknown [183.83.66.17])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: pillair)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 83978C433F2;
-        Wed, 25 Mar 2020 11:04:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 83978C433F2
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=pillair@codeaurora.org
-From:   <pillair@codeaurora.org>
-To:     "'Evan Green'" <evgreen@chromium.org>
-Cc:     "'open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS'" 
-        <devicetree@vger.kernel.org>,
-        "'linux-arm Mailing List'" <linux-arm-kernel@lists.infradead.org>,
-        "'LKML'" <linux-kernel@vger.kernel.org>,
-        "'linux-arm-msm'" <linux-arm-msm@vger.kernel.org>
-References: <1580822300-4491-1-git-send-email-pillair@codeaurora.org> <CAE=gft7EOALEMUWzoR3+pjoxCUTYWbiXoXY=dXH1BDhS3KwBzg@mail.gmail.com>
-In-Reply-To: <CAE=gft7EOALEMUWzoR3+pjoxCUTYWbiXoXY=dXH1BDhS3KwBzg@mail.gmail.com>
-Subject: RE: [PATCH v6] arm64: dts: qcom: sc7180: Add WCN3990 WLAN module device node
-Date:   Wed, 25 Mar 2020 16:34:54 +0530
-Message-ID: <000901d60295$3acc79b0$b0656d10$@codeaurora.org>
+        id S1727542AbgCYLF7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Mar 2020 07:05:59 -0400
+Received: from foss.arm.com ([217.140.110.172]:46662 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727380AbgCYLF5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Mar 2020 07:05:57 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 55A1A31B;
+        Wed, 25 Mar 2020 04:05:57 -0700 (PDT)
+Received: from [192.168.1.19] (unknown [172.31.20.19])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id EA1DC3F71F;
+        Wed, 25 Mar 2020 04:05:55 -0700 (PDT)
+Subject: Re: [PATCH] sched/topology: Fix overlapping sched_group build
+To:     Valentin Schneider <valentin.schneider@arm.com>,
+        linux-kernel@vger.kernel.org
+Cc:     peterz@infradead.org, mingo@kernel.org, vincent.guittot@linaro.org,
+        morten.rasmussen@arm.com, mgorman@techsingularity.net
+References: <20200324125533.17447-1-valentin.schneider@arm.com>
+ <jhjmu85sm8b.mognet@arm.com>
+From:   Dietmar Eggemann <dietmar.eggemann@arm.com>
+Message-ID: <4aa814d5-abcd-23b3-323c-5a3503ae3d0a@arm.com>
+Date:   Wed, 25 Mar 2020 12:05:52 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Type: text/plain;
-        charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQIr1eNiqDxek+JigOIeIUW3T4FxSwDFrKGDp6dQ2yA=
-Content-Language: en-us
+In-Reply-To: <jhjmu85sm8b.mognet@arm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Evan,
+On 24.03.20 18:20, Valentin Schneider wrote:
+> 
+> On Tue, Mar 24 2020, Valentin Schneider wrote:
+>> Fix
+>> ===
+>>
+>> Sanitize the groups we get out of build_group_from_child_sched_domain()
+>> with the span of the domain we're currently building - this ensures the
+>> groups we build only contain CPUs that are the right distance away from the
+>> base CPU. This also requires modifying build_balance_mask().
+>>
+> 
+> I somehow missed that this triggers the WARN_ON_ONCE() in
+> init_overlap_sched_group(). Gotta figure out why.
 
-I will send out a v7 for this patchset.
-Since I have to configure the S2 SIDs, it is dependent on below ath10k =
-patchset.
-https://patchwork.kernel.org/project/linux-wireless/list/?series=3D261367=
+Cool, seems like qemu can emulate this!
 
 
-Thanks,
-Rakesh Pillai.
+qemu-system-aarch64 -kernel Image -hda ./qemu-image-aarch64.img -append
+'root=/dev/vda console=ttyAMA0 loglevel=8 sched_debug' -smp cores=8
+--nographic -m 512 -cpu cortex-a53 -machine virt -numa
+node,cpus=0-1,nodeid=0 -numa node,cpus=2-3,nodeid=1, -numa
+node,cpus=4-5,nodeid=2, -numa node,cpus=6-7,nodeid=3, -numa
+dist,src=0,dst=1,val=12, -numa dist,src=0,dst=2,val=20, -numa
+dist,src=0,dst=3,val=22, -numa dist,src=1,dst=2,val=22, -numa
+dist,src=1,dst=3,val=24, -numa dist,src=2,dst=3,val=12
 
-> -----Original Message-----
-> From: Evan Green <evgreen@chromium.org>
-> Sent: Tuesday, March 24, 2020 11:10 PM
-> To: Rakesh Pillai <pillair@codeaurora.org>
-> Cc: open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS
-> <devicetree@vger.kernel.org>; linux-arm Mailing List <linux-arm-
-> kernel@lists.infradead.org>; LKML <linux-kernel@vger.kernel.org>; =
-linux-
-> arm-msm <linux-arm-msm@vger.kernel.org>
-> Subject: Re: [PATCH v6] arm64: dts: qcom: sc7180: Add WCN3990 WLAN
-> module device node
->=20
-> Hi Rakesh,
->=20
-> On Tue, Feb 4, 2020 at 5:21 AM Rakesh Pillai <pillair@codeaurora.org> =
-wrote:
-> >
-> > Add device node for the ath10k SNOC platform driver probe
-> > and add resources required for WCN3990 on sc7180 soc.
-> >
-> > Signed-off-by: Rakesh Pillai <pillair@codeaurora.org>
->=20
-> What is the status of this? Looks like you have some feedback from
-> Sibi. Can you reply and spin this? Also a comment below:
->=20
-> > ---
-> >  arch/arm64/boot/dts/qcom/sc7180-idp.dts |  5 +++++
-> >  arch/arm64/boot/dts/qcom/sc7180.dtsi    | 27
-> +++++++++++++++++++++++++++
-> >  2 files changed, 32 insertions(+)
-> >
-> > diff --git a/arch/arm64/boot/dts/qcom/sc7180-idp.dts
-> b/arch/arm64/boot/dts/qcom/sc7180-idp.dts
-> > index 388f50a..167f68ac 100644
-> > --- a/arch/arm64/boot/dts/qcom/sc7180-idp.dts
-> > +++ b/arch/arm64/boot/dts/qcom/sc7180-idp.dts
-> > @@ -287,6 +287,11 @@
-> >         vdda-pll-supply =3D <&vreg_l4a_0p8>;
-> >  };
-> >
-> > +&wifi {
-> > +       status =3D "okay";
-> > +       qcom,msa-fixed-perm;
-> > +};
-> > +
-> >  /* PINCTRL - additions to nodes defined in sc7180.dtsi */
-> >
-> >  &qspi_clk {
-> > diff --git a/arch/arm64/boot/dts/qcom/sc7180.dtsi
-> b/arch/arm64/boot/dts/qcom/sc7180.dtsi
-> > index 8011c5f..e3e8610 100644
-> > --- a/arch/arm64/boot/dts/qcom/sc7180.dtsi
-> > +++ b/arch/arm64/boot/dts/qcom/sc7180.dtsi
-> > @@ -75,6 +75,11 @@
-> >                         reg =3D <0x0 0x80900000 0x0 0x200000>;
-> >                         no-map;
-> >                 };
-> > +
-> > +               wlan_fw_mem: memory@93900000 {
-> > +                       reg =3D <0 0x93900000 0 0x200000>;
-> > +                       no-map;
-> > +               };
-> >         };
-> >
-> >         cpus {
-> > @@ -1490,6 +1495,28 @@
-> >
-> >                         #freq-domain-cells =3D <1>;
-> >                 };
-> > +
-> > +               wifi: wifi@18800000 {
-> > +                       compatible =3D "qcom,wcn3990-wifi";
-> > +                       reg =3D <0 0x18800000 0 0x800000>;
-> > +                       reg-names =3D "membase";
-> > +                       iommus =3D <&apps_smmu 0xc0 0x1>;
-> > +                       interrupts =3D
-> > +                               <GIC_SPI 414 IRQ_TYPE_LEVEL_HIGH /* =
-CE0 */ >,
-> > +                               <GIC_SPI 415 IRQ_TYPE_LEVEL_HIGH /* =
-CE1 */ >,
-> > +                               <GIC_SPI 416 IRQ_TYPE_LEVEL_HIGH /* =
-CE2 */ >,
-> > +                               <GIC_SPI 417 IRQ_TYPE_LEVEL_HIGH /* =
-CE3 */ >,
-> > +                               <GIC_SPI 418 IRQ_TYPE_LEVEL_HIGH /* =
-CE4 */ >,
-> > +                               <GIC_SPI 419 IRQ_TYPE_LEVEL_HIGH /* =
-CE5 */ >,
-> > +                               <GIC_SPI 420 IRQ_TYPE_LEVEL_HIGH /* =
-CE6 */ >,
-> > +                               <GIC_SPI 421 IRQ_TYPE_LEVEL_HIGH /* =
-CE7 */ >,
-> > +                               <GIC_SPI 422 IRQ_TYPE_LEVEL_HIGH /* =
-CE8 */ >,
-> > +                               <GIC_SPI 423 IRQ_TYPE_LEVEL_HIGH /* =
-CE9 */ >,
-> > +                               <GIC_SPI 424 IRQ_TYPE_LEVEL_HIGH /* =
-CE10 */>,
-> > +                               <GIC_SPI 425 IRQ_TYPE_LEVEL_HIGH /* =
-CE11 */>;
-> > +                       memory-region =3D <&wlan_fw_mem>;
->=20
-> The clocks are missing:
->=20
-> clocks =3D <&rpmhcc RPMH_RF_CLK2>;
-> clock-names =3D "cxo_ref_clk_pin";
->=20
-> > +                       status =3D "disabled";
-> > +               };
-> >         };
-> >
-> >         thermal-zones {
-> > --
-> > 2.7.4
-> >
+...
+[    0.711685]
+[    0.711767]   10 12 20 22
+[    0.711860]   12 10 22 24
+[    0.711917]   20 22 10 12
+[    0.711970]   22 24 12 10
+[    0.712036]
+[    0.718356] CPU0 attaching sched-domain(s):
+[    0.718433]  domain-0: span=0-1 level=MC
+[    0.718646]   groups: 0:{ span=0 cap=1006 }, 1:{ span=1 cap=1015 }
+[    0.718865]   domain-1: span=0-3 level=NUMA
+[    0.718906]    groups: 0:{ span=0-1 cap=2021 }, 2:{ span=2-3 cap=2014 }
+[    0.719044]    domain-2: span=0-5 level=NUMA
+[    0.719082]     groups: 0:{ span=0-3 cap=4035 }, 4:{ span=4-7 cap=3855 }
+[    0.719164] ERROR: groups don't span domain->span
+[    0.719191]     domain-3: span=0-7 level=NUMA
+[    0.719228]      groups: 0:{ span=0-5 mask=0-1 cap=5974 }, 6:{
+span=4-7 mask=6-7 cap=3964 }
+[    0.719961] CPU1 attaching sched-domain(s):
+...
+
+cat /proc/sys/kernel/sched_domain/cpu0/domain*/{name,flags}
+MC
+NUMA
+NUMA
+NUMA
+4655
+25647
+25647
+25647
