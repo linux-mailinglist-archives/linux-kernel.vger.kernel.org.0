@@ -2,62 +2,62 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 21C2A19230C
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 09:42:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CCEDE192305
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 09:42:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727600AbgCYImr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Mar 2020 04:42:47 -0400
-Received: from us-smtp-delivery-74.mimecast.com ([63.128.21.74]:58935 "EHLO
+        id S1727523AbgCYImZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Mar 2020 04:42:25 -0400
+Received: from us-smtp-delivery-74.mimecast.com ([63.128.21.74]:55423 "EHLO
         us-smtp-delivery-74.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727448AbgCYImT (ORCPT
+        by vger.kernel.org with ESMTP id S1727493AbgCYImW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Mar 2020 04:42:19 -0400
+        Wed, 25 Mar 2020 04:42:22 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1585125738;
+        s=mimecast20190719; t=1585125741;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=LkILQqLeJ/zPMBY6DkeS39fjniyl7+maeMVPF6b4gpE=;
-        b=NDFxItVO0x35OnXSK7ypuPjMC10V1FZa/ET2eRqoy6x5Tj+TMHxyCDnY2TYr8PzF3Hv6Ek
-        2Qf8tA8XPa4aevoFtBo/0Yvw1Gdhm0NWlVBbOfEWmDJbZ1+oE3sbQ/qCcO66FNdRkTTKbn
-        hNlGwjKgEJ50vsHWxuvtuA18tfCTWW0=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-128-nF1_sdJtPE-xukzyOnMqtg-1; Wed, 25 Mar 2020 04:42:17 -0400
-X-MC-Unique: nF1_sdJtPE-xukzyOnMqtg-1
-Received: by mail-wr1-f69.google.com with SMTP id h17so795735wru.16
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Mar 2020 01:42:16 -0700 (PDT)
+        bh=ULivbGLl6KTUozKoE2Gy/bIJGSFm1/wS+8k3cIB+Rtw=;
+        b=NOaRnVXcM3LhOOzp6h4teZvVBQKfHGQx35WXTluKFW1TVfY/DAH5CPImWBk+PYNWSobFxz
+        SiSNdLe6YqYsLjIbio7sT6XyoqUsMfk211GHdEI5ZgoJ37BLHiSKCxZYucFsrvA0N+SrZB
+        D0QkoERcMT8nidJFGhRHBbAPRg1h38E=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-122-RiZHKgODPYWcoPR_VIi-AQ-1; Wed, 25 Mar 2020 04:42:18 -0400
+X-MC-Unique: RiZHKgODPYWcoPR_VIi-AQ-1
+Received: by mail-wr1-f70.google.com with SMTP id u18so792435wrn.11
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Mar 2020 01:42:18 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=LkILQqLeJ/zPMBY6DkeS39fjniyl7+maeMVPF6b4gpE=;
-        b=t9TZElxee7KiF4jbOlOZ86V9UP/8nhflg49uC67GxfD3eOUHEjRMjLyPBHLlDAtZud
-         4zvG5aAd5dDhpMqpcrkS4zfRC2AzpRN7RMH+9oFZMG0mK76T4IDSQkoHQGNAr8dwx70h
-         pXAe60vJ91ox+AlfmPxOhe2LisjInlpUVlb/pqEGEUoxlB5ghpk2+4UvNE5xTDVep2/e
-         gk2DsGqSK8ZN0MQnKtaeBkOtXASqxdehxHKb+emvqjDZcT411I1n6saeeMBMProEVfkJ
-         LCclYjjthrob2JaTpWMbHG7ic/fBljFvILHqBIgXGxAA4p352EJrHejPUG+NN3uduTOq
-         S6Xg==
-X-Gm-Message-State: ANhLgQ2tNBesMNCp/xe/qyelR2J0+/R8fQkqdR1Mjq7dDagJDxdFaOe2
-        yKcdUxez4t3X7xvlw3MtvfuXljR7ivgvK5XSyVN9HltITs7TW7DLezQtbOx75YpSTAFrVNiq7L5
-        vnh3qEbfK7jIGq/GF/AKMC8xt
-X-Received: by 2002:adf:eb0c:: with SMTP id s12mr2146701wrn.293.1585125735569;
-        Wed, 25 Mar 2020 01:42:15 -0700 (PDT)
-X-Google-Smtp-Source: ADFU+vtvHkIQdl9JjQlSF5P+Gi1rUMMc2pSmPDbMM39ShVd694myUMdKbxgUgxmolVWbomDOiO6XEg==
-X-Received: by 2002:adf:eb0c:: with SMTP id s12mr2146674wrn.293.1585125735325;
-        Wed, 25 Mar 2020 01:42:15 -0700 (PDT)
+        bh=ULivbGLl6KTUozKoE2Gy/bIJGSFm1/wS+8k3cIB+Rtw=;
+        b=lFrp2e4zkxxMjr80E7i8UWXC/kE0x57hvPFDHyg0rveyhfdtpT7eAUQKmzisUj9SHl
+         JlLAGEetQWJRYLicLY6CDBAJ+yxr40O1NQWhozCEzZd+Elr8oaeilwkl5S/RGyyLqy5G
+         CNzuYxRmIbe80nUts/2qaw1e/1sv9Wdj3w3eSdh9ypGxg/EfnvsQg6pXVOalbmQvWusD
+         JhVrwsTsjw3/+NShNdr+Ge8gADQ7IUMaUOx/XLA/xLkINNs41aB9/8eQAd4K6AvDE4bB
+         CfEaz1/DNdKcw7zcRTEzc56GrG+Y1hD2sqNu0LeaIgcPKpjjixn0z5p3akA/fjNqiajQ
+         G4pQ==
+X-Gm-Message-State: ANhLgQ2VpYmbn7eKxmUClkFeYx02Wo9Im6tvecll95ltpd1zuJpXec+N
+        y7liksGvyic3p9gI5v3KCHp8/wm4fcX/hS93mRZ+Cv4uCXyllY1MeV4R4YCacBLKMWg70F8GcbO
+        N4ywn4hQfFAu8OJX80doGoSiH
+X-Received: by 2002:adf:ed86:: with SMTP id c6mr2091121wro.286.1585125737029;
+        Wed, 25 Mar 2020 01:42:17 -0700 (PDT)
+X-Google-Smtp-Source: ADFU+vs1j8VE04/AKRhD+HSmkabsGG0dF+IBe9t888FWrsiLeSacz0MPxj2x7sEQYxBKOtPfHIfBsA==
+X-Received: by 2002:adf:ed86:: with SMTP id c6mr2091090wro.286.1585125736732;
+        Wed, 25 Mar 2020 01:42:16 -0700 (PDT)
 Received: from redfedo.redhat.com ([2a01:cb14:58d:8400:ecf6:58e2:9c06:a308])
-        by smtp.gmail.com with ESMTPSA id f12sm8055323wmf.24.2020.03.25.01.42.13
+        by smtp.gmail.com with ESMTPSA id f12sm8055323wmf.24.2020.03.25.01.42.15
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Mar 2020 01:42:14 -0700 (PDT)
+        Wed, 25 Mar 2020 01:42:15 -0700 (PDT)
 From:   Julien Thierry <jthierry@redhat.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     jpoimboe@redhat.com, peterz@infradead.org, raphael.gault@arm.com,
         Julien Thierry <jthierry@redhat.com>
-Subject: [PATCH 04/10] objtool: check: Ignore empty alternative groups
-Date:   Wed, 25 Mar 2020 08:41:57 +0000
-Message-Id: <20200325084203.17005-5-jthierry@redhat.com>
+Subject: [PATCH 05/10] objtool: check: Remove check preventing branches within alternative
+Date:   Wed, 25 Mar 2020 08:41:58 +0000
+Message-Id: <20200325084203.17005-6-jthierry@redhat.com>
 X-Mailer: git-send-email 2.21.1
 In-Reply-To: <20200325084203.17005-1-jthierry@redhat.com>
 References: <20200325084203.17005-1-jthierry@redhat.com>
@@ -68,34 +68,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Atlernative section can contain entries for alternatives with no
-instructions. Objtool will currently crash when handling such an entry.
+While jumping from outside an alternative region to the middle of an
+alternative region is very likely wrong, jumping from an alternative
+region into the same region is valid. It is a common pattern on arm64.
 
-Just skip that entry, but still give a warning to discourage useless
-entries.
+The first pattern is unlikely to happen in practice and checking only
+for this adds a lot of complexity.
 
+Just remove the current check.
+
+Suggested-by: Josh Poimboeuf <jpoimboe@redhat.com>
 Signed-off-by: Julien Thierry <jthierry@redhat.com>
 ---
- tools/objtool/check.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+ tools/objtool/check.c | 6 ------
+ 1 file changed, 6 deletions(-)
 
 diff --git a/tools/objtool/check.c b/tools/objtool/check.c
-index 0ccf6882d8ce..75ebaa0a6216 100644
+index 75ebaa0a6216..b8c288c02c99 100644
 --- a/tools/objtool/check.c
 +++ b/tools/objtool/check.c
-@@ -917,6 +917,12 @@ static int add_special_section_alts(struct objtool_file *file)
- 		}
+@@ -2015,12 +2015,6 @@ static int validate_branch(struct objtool_file *file, struct symbol *func,
+ 	insn = first;
+ 	sec = insn->sec;
  
- 		if (special_alt->group) {
-+			if (!special_alt->orig_len) {
-+				WARN_FUNC("empty alternative entry",
-+					  orig_insn->sec, orig_insn->offset);
-+				continue;
-+			}
-+
- 			ret = handle_group_alt(file, special_alt, orig_insn,
- 					       &new_insn);
- 			if (ret)
+-	if (insn->alt_group && list_empty(&insn->alts)) {
+-		WARN_FUNC("don't know how to handle branch to middle of alternative instruction group",
+-			  sec, insn->offset);
+-		return 1;
+-	}
+-
+ 	while (1) {
+ 		next_insn = next_insn_same_sec(file, insn);
+ 
 -- 
 2.21.1
 
