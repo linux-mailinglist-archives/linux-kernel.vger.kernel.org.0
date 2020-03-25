@@ -2,195 +2,147 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 62459192FD3
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 18:50:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C229D192FF9
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 18:57:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728077AbgCYRtz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Mar 2020 13:49:55 -0400
-Received: from mga12.intel.com ([192.55.52.136]:57499 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728118AbgCYRtv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Mar 2020 13:49:51 -0400
-IronPort-SDR: 3d3KpTqmEumRq1ptZHbXornniSnJje2O00hmepeaLEkrAdr4nKDYJPZynWRALPluH3NSXN2qMO
- uDP8H+U71DAA==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Mar 2020 10:49:49 -0700
-IronPort-SDR: ARQgIwOFa7uTee97rp4tMpDfZY+JUyOLRBrt94THE7WOzu42tL43ONqjxD+4Pcv8CZNjHDOXtX
- YTGKWz//BP6A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.72,305,1580803200"; 
-   d="scan'208";a="393702219"
-Received: from jacob-builder.jf.intel.com ([10.7.199.155])
-  by orsmga004.jf.intel.com with ESMTP; 25 Mar 2020 10:49:48 -0700
-From:   Jacob Pan <jacob.jun.pan@linux.intel.com>
-To:     Joerg Roedel <joro@8bytes.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        "Lu Baolu" <baolu.lu@linux.intel.com>,
-        iommu@lists.linux-foundation.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Jean-Philippe Brucker <jean-philippe@linaro.com>
-Cc:     "Yi Liu" <yi.l.liu@intel.com>,
-        "Tian, Kevin" <kevin.tian@intel.com>,
-        Raj Ashok <ashok.raj@intel.com>,
-        "Christoph Hellwig" <hch@infradead.org>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Eric Auger <eric.auger@redhat.com>,
-        Jacob Pan <jacob.jun.pan@linux.intel.com>
-Subject: [PATCH 10/10] iommu/vt-d: Register PASID notifier for status change
-Date:   Wed, 25 Mar 2020 10:55:31 -0700
-Message-Id: <1585158931-1825-11-git-send-email-jacob.jun.pan@linux.intel.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1585158931-1825-1-git-send-email-jacob.jun.pan@linux.intel.com>
-References: <1585158931-1825-1-git-send-email-jacob.jun.pan@linux.intel.com>
+        id S1727607AbgCYR5w (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Mar 2020 13:57:52 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:45861 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726102AbgCYR5w (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Mar 2020 13:57:52 -0400
+Received: by mail-pg1-f194.google.com with SMTP id o26so1497457pgc.12
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Mar 2020 10:57:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=v8BBQ/NBtZ7/svHHcq03U0gLUqYdrhj6Lz0G3zU1PZk=;
+        b=xxOLDXKqmlAPgVZPURyhUio7imVBwD48q3OcN7j2P85LUP3lxGm5Mk/Tm8pPHw10eI
+         vbE5+pkVsEppVEfULBlRPczZdcqip6pa+PKdUp9igsoq+5a+x9Vg7AF8uwSzEMV9WIuu
+         bzxDrrftAq5zBAsmX1uNJQhCv0KtcyQeFMNx9gWi0itxl3d+EURtNZ6qixJHcW5ryHVg
+         HKqdhtMKs6j5MZMeplB52sstUwEhrd9cHd2ul0nwwq51EQVcasu1PUNSVT++oIcUnFy6
+         2ajhKjYZHCUqtKf5CQw6slx2CA8ilZPX6MWLIPYZ5InxiQEidt7990CHj9B1wf/jADud
+         1Ldg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=v8BBQ/NBtZ7/svHHcq03U0gLUqYdrhj6Lz0G3zU1PZk=;
+        b=YfBiXNfXV4WiAKO/8PUq73YGN0R/dtrBo581U6cumroe6nwkMq15V+Hk2YRuwSvpsm
+         svX+P8tfDti5meMCUr7vFnils0WuJq+aMLG+LIZOA8NkSQ+eqRGGNJWQQbMmo+wFgUxC
+         H0jYziMcFQCKwWoPUjPr+mPterZzrqQGAHc+xL9cHJd9V89E+fEBbIJg13gjpfkOKv0/
+         dVmYr50YcOishqnF8yAOkdyMpN9cf7jRKpXXl9PShWkOliPSg3MJe3XJJh0CltTIkjS4
+         EZ1mjyQVPQA1Kyl/9Jro3Prls7aA+g/+iIN7ChV22LLq11O+OrZQkQb9bg1kyWfUroOJ
+         Hu2w==
+X-Gm-Message-State: ANhLgQ19Z9xxZkJ5TGqIrA9+iLltjGbGDkeui/xULAnn4B+jKRKCWAKM
+        uZgRQmzjbr50SrSbHqB2jtvftw==
+X-Google-Smtp-Source: ADFU+vtV4WUFtlIPFuBfmrUAdAu0jGk7d8jlvipZz8y0G5/pXyJQR3Ta7TXq2tr5swRu+s2P+IRGSg==
+X-Received: by 2002:a63:3d06:: with SMTP id k6mr4118268pga.418.1585159069695;
+        Wed, 25 Mar 2020 10:57:49 -0700 (PDT)
+Received: from xps15 (S0106002369de4dac.cg.shawcable.net. [68.147.8.254])
+        by smtp.gmail.com with ESMTPSA id l15sm7213709pgk.59.2020.03.25.10.57.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 25 Mar 2020 10:57:48 -0700 (PDT)
+Date:   Wed, 25 Mar 2020 11:57:46 -0600
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+To:     Loic Pallardy <loic.pallardy@st.com>
+Cc:     bjorn.andersson@linaro.org, ohad@wizery.com,
+        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        arnaud.pouliquen@st.com, benjamin.gaignard@linaro.org,
+        fabien.dessenne@st.com, s-anna@ti.com
+Subject: Re: [RFC 1/2] remoteproc: sysfs: authorize rproc shutdown when rproc
+ is crashed
+Message-ID: <20200325175746.GA6227@xps15>
+References: <1583924072-20648-1-git-send-email-loic.pallardy@st.com>
+ <1583924072-20648-2-git-send-email-loic.pallardy@st.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1583924072-20648-2-git-send-email-loic.pallardy@st.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In bare metal SVA, IOMMU driver ensures that IOASID free call always comes
-after IOASID unbind operation.
+Hi Loic,
 
-However, for guest SVA the unbind and free call come from user space
-via VFIO, which could be out of order. This patch registers a notifier
-block in case IOASID free() comes before unbind such that VT-d driver
-can take action to clean up PASID context and data.
+On Wed, Mar 11, 2020 at 11:54:31AM +0100, Loic Pallardy wrote:
+> When remoteproc recovery is disabled and rproc crashed, user space
+> client has no way to reboot co-processor except by a complete platform
+> reboot.
+> Indeed rproc_shutdown() is called by sysfs state_store() only is rproc
+> state is RPROC_RUNNING.
+> 
+> This patch offers the possibility to shutdown the co-processor if
+> it is in RPROC_CRASHED state and so to restart properly co-processor
+> from sysfs interface.
 
-Signed-off-by: Liu Yi L <yi.l.liu@intel.com>
-Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
----
- drivers/iommu/intel-svm.c   | 68 ++++++++++++++++++++++++++++++++++++++++++++-
- include/linux/intel-iommu.h |  1 +
- 2 files changed, 68 insertions(+), 1 deletion(-)
+If recovery is disabled on an rproc the platform likely intended to have a hard
+reboot and as such we should not be concerned about this case.
 
-diff --git a/drivers/iommu/intel-svm.c b/drivers/iommu/intel-svm.c
-index f511855d187b..779dd2c6f9e1 100644
---- a/drivers/iommu/intel-svm.c
-+++ b/drivers/iommu/intel-svm.c
-@@ -23,6 +23,7 @@
- #include "intel-pasid.h"
- 
- static irqreturn_t prq_event_thread(int irq, void *d);
-+static DEFINE_MUTEX(pasid_mutex);
- 
- #define PRQ_ORDER 0
- 
-@@ -92,6 +93,65 @@ static inline bool intel_svm_capable(struct intel_iommu *iommu)
- 	return iommu->flags & VTD_FLAG_SVM_CAPABLE;
- }
- 
-+#define pasid_lock_held() lock_is_held(&pasid_mutex.dep_map)
-+
-+static int pasid_status_change(struct notifier_block *nb,
-+				unsigned long code, void *data)
-+{
-+	struct ioasid_nb_args *args = (struct ioasid_nb_args *)data;
-+	struct intel_svm_dev *sdev;
-+	struct intel_svm *svm;
-+	int ret = NOTIFY_DONE;
-+
-+	if (code == IOASID_FREE) {
-+		/*
-+		 * Unbind all devices associated with this PASID which is
-+		 * being freed by other users such as VFIO.
-+		 */
-+		mutex_lock(&pasid_mutex);
-+		svm = ioasid_find(INVALID_IOASID_SET, args->id, NULL);
-+		if (!svm || !svm->iommu)
-+			goto done_unlock;
-+
-+		if (IS_ERR(svm)) {
-+			ret = NOTIFY_BAD;
-+			goto done_unlock;
-+		}
-+
-+		list_for_each_entry_rcu(sdev, &svm->devs, list, pasid_lock_held()) {
-+			/* Does not poison forward pointer */
-+			list_del_rcu(&sdev->list);
-+			intel_pasid_tear_down_entry(svm->iommu, sdev->dev,
-+						    svm->pasid);
-+			kfree_rcu(sdev, rcu);
-+
-+			/*
-+			 * Free before unbind only happens with guest usaged
-+			 * host PASIDs. IOASID free will detach private data
-+			 * and free the IOASID entry.
-+			 */
-+			if (list_empty(&svm->devs))
-+				kfree(svm);
-+		}
-+		mutex_unlock(&pasid_mutex);
-+
-+		return NOTIFY_OK;
-+	}
-+
-+done_unlock:
-+	mutex_unlock(&pasid_mutex);
-+	return ret;
-+}
-+
-+static struct notifier_block pasid_nb = {
-+		.notifier_call = pasid_status_change,
-+};
-+
-+void intel_svm_add_pasid_notifier(void)
-+{
-+	ioasid_add_notifier(&pasid_nb);
-+}
-+
- void intel_svm_check(struct intel_iommu *iommu)
- {
- 	if (!pasid_supported(iommu))
-@@ -219,7 +279,6 @@ static const struct mmu_notifier_ops intel_mmuops = {
- 	.invalidate_range = intel_invalidate_range,
- };
- 
--static DEFINE_MUTEX(pasid_mutex);
- static LIST_HEAD(global_svm_list);
- 
- #define for_each_svm_dev(sdev, svm, d)			\
-@@ -319,6 +378,7 @@ int intel_svm_bind_gpasid(struct iommu_domain *domain,
- 			svm->gpasid = data->gpasid;
- 			svm->flags |= SVM_FLAG_GUEST_PASID;
- 		}
-+		svm->iommu = iommu;
- 
- 		ioasid_attach_data(data->hpasid, svm);
- 		INIT_LIST_HEAD_RCU(&svm->devs);
-@@ -383,6 +443,11 @@ int intel_svm_bind_gpasid(struct iommu_domain *domain,
- 	}
- 	svm->flags |= SVM_FLAG_GUEST_MODE;
- 
-+	/*
-+	 * Notify KVM new host-guest PASID bind is ready. KVM will set up
-+	 * PASID translation table to support guest ENQCMD.
-+	 */
-+	ioasid_notify(data->hpasid, IOASID_BIND);
- 	init_rcu_head(&sdev->rcu);
- 	list_add_rcu(&sdev->list, &svm->devs);
-  out:
-@@ -440,6 +505,7 @@ int intel_svm_unbind_gpasid(struct device *dev, int pasid)
- 				 * used by another.
- 				 */
- 				ioasid_attach_data(pasid, NULL);
-+				ioasid_notify(pasid, IOASID_UNBIND);
- 				kfree(svm);
- 			}
- 		}
-diff --git a/include/linux/intel-iommu.h b/include/linux/intel-iommu.h
-index f8504a980981..64799067ea58 100644
---- a/include/linux/intel-iommu.h
-+++ b/include/linux/intel-iommu.h
-@@ -708,6 +708,7 @@ extern struct iommu_sva *
- intel_svm_bind(struct device *dev, struct mm_struct *mm, void *drvdata);
- extern void intel_svm_unbind(struct iommu_sva *handle);
- extern int intel_svm_get_pasid(struct iommu_sva *handle);
-+extern void intel_svm_add_pasid_notifier(void);
- 
- struct svm_dev_ops;
- 
--- 
-2.7.4
+Where I think we have a problem, something that is asserted by looking at your 2
+patches, is cases where rproc_trigger_recovery() fails.  That leaves the system
+in a state where it can't be recovered, something the remoteproc core should not
+allow. 
 
+> 
+> Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
+> ---
+>  drivers/remoteproc/remoteproc_core.c  | 2 +-
+>  drivers/remoteproc/remoteproc_sysfs.c | 2 +-
+>  2 files changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+> index 097f33e4f1f3..7ac87a75cd1b 100644
+> --- a/drivers/remoteproc/remoteproc_core.c
+> +++ b/drivers/remoteproc/remoteproc_core.c
+> @@ -1812,7 +1812,7 @@ void rproc_shutdown(struct rproc *rproc)
+>  	if (!atomic_dec_and_test(&rproc->power))
+>  		goto out;
+>  
+> -	ret = rproc_stop(rproc, false);
+> +	ret = rproc_stop(rproc, rproc->state == RPROC_CRASHED);
+
+Please add a comment that explains how we can be in rproc_shutdown() when the
+processor has crashed and point to rproc_trigger_recovery().  See below for more
+details. 
+
+>  	if (ret) {
+>  		atomic_inc(&rproc->power);
+>  		goto out;
+> diff --git a/drivers/remoteproc/remoteproc_sysfs.c b/drivers/remoteproc/remoteproc_sysfs.c
+> index 7f8536b73295..1029458a4678 100644
+> --- a/drivers/remoteproc/remoteproc_sysfs.c
+> +++ b/drivers/remoteproc/remoteproc_sysfs.c
+> @@ -101,7 +101,7 @@ static ssize_t state_store(struct device *dev,
+>  		if (ret)
+>  			dev_err(&rproc->dev, "Boot failed: %d\n", ret);
+>  	} else if (sysfs_streq(buf, "stop")) {
+> -		if (rproc->state != RPROC_RUNNING)
+> +		if (rproc->state != RPROC_RUNNING && rproc->state != RPROC_CRASHED)
+>  			return -EINVAL;
+
+Wouldn't it be better to just prevent the MCU to stay in a crashed state (when
+recovery is not disabled)?
+
+I like what you did in the next patch where the state of the MCU is set to
+RPROC_CRASHED in case of failure, so that we keep.  I also think the hunk
+above is correct.  All that is left is to call rproc_shutdown() directly in
+rproc_trigger_recovery() when something goes wrong.  I would also add a
+dev_err() so that users have a clue of what happened.
+
+That would leave the system in a stable state without having to add intelligence
+to state_store().
+
+Let me know that you think...
+
+Mathieu
+
+>  
+>  		rproc_shutdown(rproc);
+> -- 
+> 2.7.4
+> 
