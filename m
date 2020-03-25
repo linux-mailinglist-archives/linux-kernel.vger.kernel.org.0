@@ -2,85 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6A8D8191E77
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 02:14:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A27BA191E67
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 02:08:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727332AbgCYBOC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 21:14:02 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:46700 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727298AbgCYBOC (ORCPT
+        id S1727275AbgCYBIx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 21:08:53 -0400
+Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:16847 "EHLO
+        hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727119AbgCYBIx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 21:14:02 -0400
-Received: from p5de0bf0b.dip0.t-ipconnect.de ([93.224.191.11] helo=nanos.tec.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1jGuSb-0000rB-FO; Wed, 25 Mar 2020 02:03:57 +0100
-Received: by nanos.tec.linutronix.de (Postfix, from userid 1000)
-        id E240E100C51; Wed, 25 Mar 2020 02:03:56 +0100 (CET)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Xiaoyao Li <xiaoyao.li@intel.com>, Ingo Molnar <mingo@redhat.com>,
-        Borislav Petkov <bp@alien8.de>, hpa@zytor.com,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        kvm@vger.kernel.org, x86@kernel.org, linux-kernel@vger.kernel.org
-Cc:     Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Arvind Sankar <nivedita@alum.mit.edu>,
-        Fenghua Yu <fenghua.yu@intel.com>,
-        Tony Luck <tony.luck@intel.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Jim Mattson <jmattson@google.com>
-Subject: Re: [PATCH v5 3/9] x86/split_lock: Re-define the kernel param option for split_lock_detect
-In-Reply-To: <54b2b9b5-2307-b5da-6b63-319e9626bcc1@intel.com>
-References: <20200315050517.127446-1-xiaoyao.li@intel.com> <20200315050517.127446-4-xiaoyao.li@intel.com> <87r1xjov3a.fsf@nanos.tec.linutronix.de> <e708f6d2-8f96-903c-0bce-2eeecc4a237d@intel.com> <87r1xidoj1.fsf@nanos.tec.linutronix.de> <54b2b9b5-2307-b5da-6b63-319e9626bcc1@intel.com>
-Date:   Wed, 25 Mar 2020 02:03:56 +0100
-Message-ID: <878sjpz1mr.fsf@nanos.tec.linutronix.de>
+        Tue, 24 Mar 2020 21:08:53 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5e7aaef70000>; Tue, 24 Mar 2020 18:08:07 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Tue, 24 Mar 2020 18:08:52 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Tue, 24 Mar 2020 18:08:52 -0700
+Received: from [10.2.160.81] (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 25 Mar
+ 2020 01:08:51 +0000
+Subject: Re: [RFC PATCH v5 6/9] media: tegra: Add Tegra210 Video input driver
+To:     Dmitry Osipenko <digetx@gmail.com>, <thierry.reding@gmail.com>,
+        <jonathanh@nvidia.com>, <frankc@nvidia.com>, <hverkuil@xs4all.nl>,
+        <helen.koike@collabora.com>
+CC:     <sboyd@kernel.org>, <linux-media@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <1584985955-19101-1-git-send-email-skomatineni@nvidia.com>
+ <1584985955-19101-7-git-send-email-skomatineni@nvidia.com>
+ <8f44e42d-2008-fe53-f4fb-b57502da91a8@gmail.com>
+From:   Sowjanya Komatineni <skomatineni@nvidia.com>
+Message-ID: <5695fc27-6839-dda3-9d06-77ef36ecfd43@nvidia.com>
+Date:   Tue, 24 Mar 2020 18:08:52 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+In-Reply-To: <8f44e42d-2008-fe53-f4fb-b57502da91a8@gmail.com>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: quoted-printable
+Content-Language: en-US
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1585098487; bh=aKHthfLue+1H2XDz473VqkpiUrB/NbryW9pP8d76r+s=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Transfer-Encoding:
+         Content-Language;
+        b=and8LT/30BHlj1Hs1vFx5H2aqxApXzDkDdNer+loRB+Wgj+01QrMDvgjzESzdwwxd
+         ChtlCFqZQPGZmdLWJzx/x22OQ94pCqO3R0jismKLaALCIUtlesptrkE/fxP1CjLca2
+         jCU4ugZjhQ2n1Kd6KriXNfve5uSN/5KC6JpGGCOF4EUDEzlE3sV1vXPjQxA6m+ijg5
+         wr5E/1sX3iF0JjJAE4mmwDI+MciU9rfJd7Q/0zczolkJQBXUTmTUeJmDs06vD/ZbtF
+         5dbYP/EJ5QxPkoff0zwMjk/SNPEFuxKOMOSf8HfSGvZBfsfWUguUEGkVao+Duojqf/
+         D952W4A2bjHdg==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Xiaoyao Li <xiaoyao.li@intel.com> writes:
 
-> On 3/24/2020 6:40 PM, Thomas Gleixner wrote:
->> Xiaoyao Li <xiaoyao.li@intel.com> writes:
->>> On 3/24/2020 1:10 AM, Thomas Gleixner wrote:
->>>> Xiaoyao Li <xiaoyao.li@intel.com> writes:
->>>>
->>>>> Change sld_off to sld_disable, which means disabling feature split lock
->>>>> detection and it cannot be used in kernel nor can kvm expose it guest.
->>>>> Of course, the X86_FEATURE_SPLIT_LOCK_DETECT is not set.
->>>>>
->>>>> Add a new optioin sld_kvm_only, which means kernel turns split lock
->>>>> detection off, but kvm can expose it to guest.
->>>>
->>>> What's the point of this? If the host is not clean, then you better fix
->>>> the host first before trying to expose it to guests.
->>>
->>> It's not about whether or not host is clean. It's for the cases that
->>> users just don't want it enabled on host, to not break the applications
->>> or drivers that do have split lock issue.
->> 
->> It's very much about whether the host is split lock clean.
->> 
->> If your host kernel is not, then this wants to be fixed first. If your
->> host application is broken, then either fix it or use "warn".
->> 
+On 3/24/20 5:34 PM, Dmitry Osipenko wrote:
+> External email: Use caution opening links or attachments
 >
-> My thought is for CSPs that they might not turn on SLD on their product 
-> environment. Any split lock in kernel or drivers may break their service 
-> for tenants.
-
-Again you are proliferating crap and making excuses for Common Sense
-violating Purposes (CSP).
-
-Thanks,
-
-        tglx
+>
+> 23.03.2020 20:52, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+>> +static void tegra_channel_vi_soft_reset(struct tegra_vi_channel *chan)
+>> +{
+>> +     /* disable clock gating to enable continuous clock */
+>> +     tegra_vi_write(chan, TEGRA_VI_CFG_CG_CTRL, 0);
+>> +     /*
+>> +      * Soft reset memory client interface, pixel format logic, sensor
+>> +      * control logic, and a shadow copy logic to bring VI to clean sta=
+te.
+>> +      */
+>> +     vi_csi_write(chan, TEGRA_VI_CSI_SW_RESET, 0xf);
+>> +     usleep_range(100, 200);
+>> +     vi_csi_write(chan, TEGRA_VI_CSI_SW_RESET, 0x0);
+> Is it safe to reset MCCIF without blocking and flushing memory requests
+> at first?
+Yes to bring VI to clean state on errors its recommended by HW design team.
