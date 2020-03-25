@@ -2,122 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D11CF19312F
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 20:33:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C4BF4193133
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 20:35:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727854AbgCYTdm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Mar 2020 15:33:42 -0400
-Received: from mail-eopbgr130057.outbound.protection.outlook.com ([40.107.13.57]:15691
-        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727281AbgCYTdl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Mar 2020 15:33:41 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=mxe1ENjE3g9rB/ViA+O+ORh9NzD1oX1fYQZbvN6neFTxp/OkGi3xxbv+eMNxJdFaMhhvLrQONWf1j6nWPAJ7zG4RLsnfyZCCJ0BLYOJO2aqcwjcFdJBx153TKR2HUyJyiuLQwjqsN/xxzu9R4rk3q+qzjcS8T9Wo+km8JjsxgbUCGN3BXBpKXFQC5L8w+4BN7oPYITtvJkCMeU2GyCsWl8zrUjzilK7H6vbjeSPF02zn7ez9fKIm2w/w/x3OTJu6tOEv+CSqiYBL8ESI6UtHSV8p10YAan0ebq7JoXkIZrQHbimQIZCnlxz8Zyhs5Rv5Hvu42luswT/zGnfuFmvgPA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=lDBogbVoKMie9tnySLKVK5jJArdvLeL8wyFfsy0pT+w=;
- b=OnBpDPiPZzA+X9NP8DTMMk3F8tmBEMWdk4bv8odtbFUmBYtIdApppo1WWOavWtaN4qJwCH37nkDoFj85LlfYqiuXi9dMWA0BiAnEy8hICWKfNYav02XZmGx8p/ubzAY3YsH+GLWWFt7QAYNcGPGpRrvn0c3XpQkb9ylHmjsk2GeJgHzq05+vXRUs0Pe9GELO5oICzx2I0KOzUNijfv2iXY82adZ3F3klCcJAQ4en/Br1KinzOTFLC2z25jmV9YjFUsQbnhblSvi9Pw5T3ZqF7WhEBoU9J1YV7Mvz3AIWBviuV7TrPU/po2CNOACrJbEYyPzuNuHyR7ScsoDOwr8eXQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=mellanox.com; dmarc=pass action=none header.from=mellanox.com;
- dkim=pass header.d=mellanox.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Mellanox.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=lDBogbVoKMie9tnySLKVK5jJArdvLeL8wyFfsy0pT+w=;
- b=KLpOdTTjChGn+KkxEN/alVz/2NYBViIesCfJ6NiepzXD/3cv7LP4XomkTA442qi8mMvPM7SfVoy+Dcx0faHl3/Z1xLXbahF1tKJRIvFIBCkJxJPtjejv+x6tzz5CmFOzUNNHQiH8N7fQViT10zHMoNRA/XEwWYJMSealhIUJ8RY=
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=moshe@mellanox.com; 
-Received: from AM0PR05MB4290.eurprd05.prod.outlook.com (52.134.124.144) by
- AM0PR05MB4148.eurprd05.prod.outlook.com (52.134.95.24) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2835.19; Wed, 25 Mar 2020 19:33:38 +0000
-Received: from AM0PR05MB4290.eurprd05.prod.outlook.com
- ([fe80::b5c9:35a1:4e5d:af3b]) by AM0PR05MB4290.eurprd05.prod.outlook.com
- ([fe80::b5c9:35a1:4e5d:af3b%3]) with mapi id 15.20.2835.023; Wed, 25 Mar 2020
- 19:33:38 +0000
-Subject: Re: No networking due to "net/mlx5e: Add support for devlink-port in
- non-representors mode"
-To:     Qian Cai <cai@lca.pw>, Vladyslav Tarasiuk <vladyslavt@mellanox.com>
-Cc:     Jiri Pirko <jiri@mellanox.com>,
-        Saeed Mahameed <saeedm@mellanox.com>,
-        Parav Pandit <parav@mellanox.com>,
-        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>
-References: <0DF043A6-F507-4CB4-9764-9BD472ABCF01@lca.pw>
-From:   Moshe Shemesh <moshe@mellanox.com>
-Message-ID: <52874e86-a8ae-dcf0-a798-a10e8c97d09e@mellanox.com>
-Date:   Wed, 25 Mar 2020 21:33:34 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.2
-In-Reply-To: <0DF043A6-F507-4CB4-9764-9BD472ABCF01@lca.pw>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-ClientProxiedBy: ZR0P278CA0053.CHEP278.PROD.OUTLOOK.COM
- (2603:10a6:910:1d::22) To AM0PR05MB4290.eurprd05.prod.outlook.com
- (2603:10a6:208:63::16)
+        id S1727868AbgCYTfd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Mar 2020 15:35:33 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:34647 "EHLO
+        mail.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727281AbgCYTfc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Mar 2020 15:35:32 -0400
+Received: from [IPv6:2601:646:8600:3281:c898:2a71:8b3c:1618] ([IPv6:2601:646:8600:3281:c898:2a71:8b3c:1618])
+        (authenticated bits=0)
+        by mail.zytor.com (8.15.2/8.15.2) with ESMTPSA id 02PJYkiZ3555937
+        (version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+        Wed, 25 Mar 2020 12:34:49 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 02PJYkiZ3555937
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+        s=2020032201; t=1585164890;
+        bh=p0YpVfwC+aoOZ4NgH84gzFe9XflqvVIEwlLHk9I94xA=;
+        h=Date:In-Reply-To:References:Subject:To:CC:From:From;
+        b=e8AX+oNZ3XoGngvL1o9eHvVCjpXknqO1c5smzu6gqK+9OZm9gKkng3M7x6ndALLgW
+         y8RECtMR8Jg3FI1QsnLC+eGpt8yoSPqTJ+DKnJj9VhtXkGRvpR8CAxIyPvkPvjXFKm
+         LrNsjOTu0OVkCl1lHUu3h6t840jrpGXNcx/LMG3pT1QPRCrUdG9w7fwSNR5De/Feqx
+         4D65DGdOjZUxOKNWsCm+vJakJul8P5LEyFBzgNK77GYt/ad5VWpDDD+ziIFlzYwYsy
+         0/gjVTeIB+JcQmgvjmQ6HexUR1rEj3rlXj0FHGmcth1fGLC6i9cKlcYGLtkWGX5PtN
+         diHHRYlzCLJzw==
+Date:   Wed, 25 Mar 2020 12:34:38 -0700
+User-Agent: K-9 Mail for Android
+In-Reply-To: <CAHk-=wim-2aaFi_GNs5KmX4ykkgQjnRo5D4B9ZK+1Oz=kpp_2A@mail.gmail.com>
+References: <CAHk-=wiumU4QxAkT+GqhBt5f-iUsoLNC0sqVfRKp0xypA6aNYg@mail.gmail.com> <86D80EA7-9087-4042-8119-12DD5FCEAA87@amacapital.net> <CAHk-=wim-2aaFi_GNs5KmX4ykkgQjnRo5D4B9ZK+1Oz=kpp_2A@mail.gmail.com>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from [10.0.0.5] (5.22.133.156) by ZR0P278CA0053.CHEP278.PROD.OUTLOOK.COM (2603:10a6:910:1d::22) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2835.19 via Frontend Transport; Wed, 25 Mar 2020 19:33:37 +0000
-X-Originating-IP: [5.22.133.156]
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-HT: Tenant
-X-MS-Office365-Filtering-Correlation-Id: b5e3d20e-db1f-435c-6fe6-08d7d0f36a8f
-X-MS-TrafficTypeDiagnostic: AM0PR05MB4148:|AM0PR05MB4148:
-X-MS-Exchange-Transport-Forked: True
-X-Microsoft-Antispam-PRVS: <AM0PR05MB41488E567A0AC4444B51D595D9CE0@AM0PR05MB4148.eurprd05.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:605;
-X-Forefront-PRVS: 0353563E2B
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(4636009)(376002)(366004)(396003)(39860400002)(346002)(136003)(316002)(2906002)(478600001)(6666004)(36756003)(5660300002)(16576012)(81166006)(81156014)(8936002)(8676002)(86362001)(31696002)(31686004)(2616005)(26005)(66476007)(4326008)(110136005)(6636002)(16526019)(186003)(54906003)(6486002)(66946007)(52116002)(66556008)(53546011)(956004);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR05MB4148;H:AM0PR05MB4290.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;
-Received-SPF: None (protection.outlook.com: mellanox.com does not designate
- permitted sender hosts)
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: QVsI6P4UfX83SpbkvnK9T3NLjjhez5UEzinrdCHLZ0V4i5kZMhwYQA7+sU0C09pz6QTsNKvjllAvqedDyHXBcZQHD3yyUE7eXpmJtlVHm+LTwG3fh4s1ehfZlEkgRgF3jVDh9sh0jR1bDfEwAj2Gx/JYU1xNo41W6zI+1SHUfeebLmKdz7jg2clFhIgyqNctOfhfJFF5NdbtPRKrTRrfyJluyXmwfDtjYBG+4m+9HQuPdDJuEJIq5AYJUjdUydQ23pbII/eolAzMikMOhBEOZJNqHB2VB4YeCaONGTyZdZG7lK9O3tfb37TSd2qobeIcPzplQA7Kt31elFfRZHai1/EJ+P3in0ug9i1KtCJHl46f7OsMnDpFKlud/fVcppb/ilf4C/MRZiNJIMXUPBh4FFtXn6HHkEMUfwaII6ugfrfhMuSotNDHjHt23tXHxYx9
-X-MS-Exchange-AntiSpam-MessageData: G0wLJqFcDrWrdpNkYmRz93ELfLJptzkNvRaCWTuOCgtCcF58uT86H4jFl+3W/csZ0ZjaDn83AOmRzhgwldfIUmv/MT8y7N1YBAimskTT0WqIKjYLCdfpozjI/M0N40AN0OASxdoG/eNuCg5DZceTfQ==
-X-OriginatorOrg: Mellanox.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b5e3d20e-db1f-435c-6fe6-08d7d0f36a8f
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Mar 2020 19:33:38.1109
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: a652971c-7d2e-4d9b-a6a4-d149256f461b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: LLVV+C3bowhLTS76JAbmUuEsHgRb89yjNIMzIrBbM55sNGVu2eIaMaMLby6yAnsKqkj0rOkl0EUB0Z4s/wadrw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR05MB4148
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [RESEND][PATCH v3 14/17] static_call: Add static_cond_call()
+To:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Andy Lutomirski <luto@amacapital.net>
+CC:     Peter Zijlstra <peterz@infradead.org>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Daniel Bristot de Oliveira <bristot@redhat.com>,
+        Jason Baron <jbaron@akamai.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>, Nadav Amit <namit@vmware.com>,
+        Andrew Lutomirski <luto@kernel.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>
+From:   hpa@zytor.com
+Message-ID: <59FDEFC1-9353-453F-84E5-F94995157B27@zytor.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-On 3/25/2020 6:01 AM, Qian Cai wrote:
-> Reverted the linux-next commit c6acd629ee (“net/mlx5e: Add support for devlink-port in non-representors mode”)
-> and its dependencies,
+On March 24, 2020 9:33:21 AM PDT, Linus Torvalds <torvalds@linux-foundation=
+=2Eorg> wrote:
+>On Tue, Mar 24, 2020 at 9:22 AM Andy Lutomirski <luto@amacapital=2Enet>
+>wrote:
+>>
+>> I haven=E2=80=99t checked if static calls currently support return valu=
+es,
+>but
+>> the conditional case only makes sense for functions that return void=2E
+>>
+>> Aside from that, it might be nice for passing NULL in to warn or bug
+>> when the NULL pointer is stored instead of silently NOPping out the
+>> call in cases where having a real implementation isn=E2=80=99t optional=
+=2E
 >
-> 162add8cbae4 (“net/mlx5e: Use devlink virtual flavour for VF devlink port”)
-> 31e87b39ba9d (“net/mlx5e: Fix devlink port register sequence”)
+>Both good points=2E I take back my question=2E
 >
-> on the top of next-20200324 allowed NICs to obtain an IPv4 address from DHCP again.
-
-
-These patches should not interfere DHCP.
-
-You might have dependencies on interface name which was changed by this 
-patch, please check.
-
-> 0b:00.0 Ethernet controller: Mellanox Technologies MT27710 Family [ConnectX-4 Lx]
-> 0b:00.1 Ethernet controller: Mellanox Technologies MT27710 Family [ConnectX-4 Lx]
+>And it aside from warning about passing in NULL then it doesn't work,
+>I wonder if we could warn - at build time - when then using the COND
+>version with a function that doesn't return void?
 >
-> [  223.280777][   T13] mlx5_core 0000:0b:00.0: firmware version: 14.21.1000
-> [  223.287753][   T13] mlx5_core 0000:0b:00.0: 63.008 Gb/s available PCIe bandwidth (8.0 GT/s PCIe x8 link)
-> [  226.292153][    C0] mlx5_core 0000:0b:00.0: Port module event: module 0, Cable plugged
-> [  226.874100][ T2023] mlx5_core 0000:0b:00.1: Adding to iommu group 2
-> [  227.343553][   T13] mlx5_core 0000:0b:00.1: firmware version: 14.21.1000
-> [  227.350467][   T13] mlx5_core 0000:0b:00.1: 63.008 Gb/s available PCIe bandwidth (8.0 GT/s PCIe x8 link)
-> [  230.026346][    C0] mlx5_core 0000:0b:00.1: Port module event: module 1, Cable unplugged
-> [  230.522660][ T2023] mlx5_core 0000:0b:00.0: MLX5E: StrdRq(0) RqSz(1024) StrdSz(256) RxCqeCmprss(0)
-> [  231.448493][ T2023] mlx5_core 0000:0b:00.1: MLX5E: StrdRq(0) RqSz(1024) StrdSz(256) RxCqeCmprss(0)
-> [  232.436993][ T2007] mlx5_core 0000:0b:00.1 enp11s0f1np1: renamed from eth1
-> [  232.690895][ T2013] mlx5_core 0000:0b:00.0 enp11s0f0np0: renamed from eth0
+>Of course, one alternative is to just say "instead of using NOP, use
+>'xorl %eax,%eax'", and then we'd have the rule that a NULL conditional
+>function returns zero (or NULL)=2E
+>
+>I _think_ a "xorl %eax,%eax ; retq" is just three bytes and would fit
+>in the tailcall slot too=2E
+>
+>                Linus
+
+"movl $0,%eax" is five bytes, the same length as a call=2E Doesn't work fo=
+r a tailcall, still, although if the sequence:
+
+    jmp tailcall
+    retq
+
+=2E=2E=2E can be generated at the tailcall site then the jmp can get patch=
+ed out=2E
+
+This would be equivalent to disabling tailcalls except that the stack fram=
+e is normally not unwound until between the call and the ret, so just disab=
+ling tailcalls from the compiler pov doesn't work=2E
+--=20
+Sent from my Android device with K-9 Mail=2E Please excuse my brevity=2E
