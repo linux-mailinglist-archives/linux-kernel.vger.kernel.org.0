@@ -2,141 +2,155 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7B358192EF1
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 18:10:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0C822192EF7
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 18:11:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727702AbgCYRKx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Mar 2020 13:10:53 -0400
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:42422 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727357AbgCYRKx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Mar 2020 13:10:53 -0400
-Received: by mail-ed1-f66.google.com with SMTP id cw6so2697617edb.9
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Mar 2020 10:10:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=3TB/V3cS5dQRTb7u6NS+KlfC79/CqRkvKXs/fm6g34w=;
-        b=eHcC+28qlTy7M88OlVi6MBXlOrqK6YikB2zKmxyH4Yh1II3FzBdkQrjEEUT5Zt3lJu
-         ckS7jpRPAdgt6whblMJd4ptrhZCQL79TrQz8EbzL0SeL83J/LyAjkzbRTsOj4IE/KEeE
-         s2Cx4bQIQCOK5OekxWCKafQD5/kxGKWTNVCCl4E/5W9kzq593H6wZiiDm60ecwOxStL2
-         LeujouVThMSlNjsaf48F3Yw3But0ebd1m3dEIw4LmAEfh2yIpX1peWDg7aUtH9KwQIa8
-         ruxLdm7gd+iIRBKXSIwL4KQlpkNOOyUGpbdyDdyC5u5j4vY/p7zfHHalqOU/fQZAlsKW
-         n5lQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=3TB/V3cS5dQRTb7u6NS+KlfC79/CqRkvKXs/fm6g34w=;
-        b=kiq1jCdFX74+k2/W+RuLfn4bVZE16/xNos6fMAUR6/QS74SREAWOfOPOLQ0aPMZDvW
-         JrJqXoM01T/d+rJjoKkrk7ON1AHjNkFYlIFHPfwvqYpTjFgvdkisUe9Uk+5YxGE6bSvw
-         vsR/qiMLupad9/3s9GWkDjLZ+zFu7VCFWjLJBvYEJTo8m8vtw1mi7mNMYGFNGNQyCs/D
-         CC+8mO4G3mDeWwBggkFqFE7OwnUy1GXPkwhCsozh8qC79fjBOt4VPDqPi+uobVw/fl6N
-         2W/VVViI10z7di+PNhaynkc86MDVIbnHqLk01c6NDlHkjUU+E/QXrZd9Orc1qkgnLkv2
-         16ig==
-X-Gm-Message-State: ANhLgQ15EpiuWCCQ8FY2+aNEc1YyIrOMLEu5ItiYWLMqZQR4Bq2H0N0H
-        iYfx48viZAi/8fH9zi6ktgEYH0iJwkZPTymrEwU89g==
-X-Google-Smtp-Source: ADFU+vsMpfwwBF1AU4XFYsAjtIxydM3lmExgrwiqtzAko7x2yr0UVmhQyTxicjQSFrrQLSYnbAn1QFVDiy2ZTJ11JoQ=
-X-Received: by 2002:a17:906:1e8a:: with SMTP id e10mr4231020ejj.56.1585156250955;
- Wed, 25 Mar 2020 10:10:50 -0700 (PDT)
+        id S1727774AbgCYRL3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Mar 2020 13:11:29 -0400
+Received: from mga18.intel.com ([134.134.136.126]:18529 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727236AbgCYRL3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Mar 2020 13:11:29 -0400
+IronPort-SDR: 8bnQmxiLvNKkXOGvXSBIGR8SKO9XsY937nqDTPKsSwe6uRrBZNWZlO3u83Sh82F7lA4KTnt8Eu
+ l+E1yLvgKs+w==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Mar 2020 10:11:28 -0700
+IronPort-SDR: Hgk5JsRye62SfxXWbRs7QcZEYKfPtXiRGFHqkAp3QoFWBNsnRwGSJ2deMLcU1HSu1VN9Ekp38k
+ OO8jmTFth/SA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.72,304,1580803200"; 
+   d="scan'208";a="270872870"
+Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.87]) ([10.237.72.87])
+  by fmsmga004.fm.intel.com with ESMTP; 25 Mar 2020 10:11:26 -0700
+Subject: Re: [PATCH] perf tools: Add missing Intel CPU events to parser
+To:     Jiri Olsa <jolsa@redhat.com>
+Cc:     Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>,
+        linux-kernel@vger.kernel.org
+References: <20200324150443.28832-1-adrian.hunter@intel.com>
+ <20200325103345.GA1856035@krava> <20200325131549.GB14102@kernel.org>
+ <20200325135350.GA1888042@krava> <20200325142214.GD14102@kernel.org>
+ <ea516b26-6249-e870-20bf-819ea1a2d2c2@intel.com>
+ <20200325152211.GA1908530@krava>
+From:   Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+Message-ID: <fc3c4dee-981e-4c39-566a-4163ee0bcc02@intel.com>
+Date:   Wed, 25 Mar 2020 19:10:44 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-References: <158489354353.1457606.8327903161927980740.stgit@dwillia2-desk3.amr.corp.intel.com>
- <158489357825.1457606.17352509511987748598.stgit@dwillia2-desk3.amr.corp.intel.com>
- <20200325111039.GA32109@willie-the-truck>
-In-Reply-To: <20200325111039.GA32109@willie-the-truck>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Wed, 25 Mar 2020 10:10:36 -0700
-Message-ID: <CAPcyv4jQDbdUN3pwjkDx-R6Dd3adDSWq+50+O7mqZw5ezNXHeg@mail.gmail.com>
-Subject: Re: [PATCH v2 6/6] ACPI: HMAT: Attach a device for each soft-reserved range
-To:     Will Deacon <will@kernel.org>
-Cc:     Linux ACPI <linux-acpi@vger.kernel.org>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        Brice Goglin <Brice.Goglin@inria.fr>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Jeff Moyer <jmoyer@redhat.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        X86 ML <x86@kernel.org>,
-        Joao Martins <joao.m.martins@oracle.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20200325152211.GA1908530@krava>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 25, 2020 at 4:10 AM Will Deacon <will@kernel.org> wrote:
->
-> On Sun, Mar 22, 2020 at 09:12:58AM -0700, Dan Williams wrote:
-> > The hmem enabling in commit 'cf8741ac57ed ("ACPI: NUMA: HMAT: Register
-> > "soft reserved" memory as an "hmem" device")' only registered ranges to
-> > the hmem driver for each soft-reservation that also appeared in the
-> > HMAT. While this is meant to encourage platform firmware to "do the
-> > right thing" and publish an HMAT, the corollary is that platforms that
-> > fail to publish an accurate HMAT will strand memory from Linux usage.
-> > Additionally, the "efi_fake_mem" kernel command line option enabling
-> > will strand memory by default without an HMAT.
-> >
-> > Arrange for "soft reserved" memory that goes unclaimed by HMAT entries
-> > to be published as raw resource ranges for the hmem driver to consume.
-> >
-> > Include a module parameter to disable either this fallback behavior, or
-> > the hmat enabling from creating hmem devices. The module parameter
-> > requires the hmem device enabling to have unique name in the module
-> > namespace: "device_hmem".
-> >
-> > Rather than mark this x86-only, include an interim phys_to_target_node()
-> > implementation for arm64.
-> >
-> > Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-> > Cc: Brice Goglin <Brice.Goglin@inria.fr>
-> > Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-> > Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-> > Cc: Jeff Moyer <jmoyer@redhat.com>
-> > Cc: Catalin Marinas <catalin.marinas@arm.com>
-> > Cc: Will Deacon <will@kernel.org>
-> > Signed-off-by: Dan Williams <dan.j.williams@intel.com>
-> > ---
-> >  arch/arm64/mm/numa.c      |   13 +++++++++++++
-> >  drivers/dax/Kconfig       |    1 +
-> >  drivers/dax/hmem/Makefile |    3 ++-
-> >  drivers/dax/hmem/device.c |   33 +++++++++++++++++++++++++++++++++
-> >  4 files changed, 49 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/arch/arm64/mm/numa.c b/arch/arm64/mm/numa.c
-> > index 4decf1659700..00fba21eaec0 100644
-> > --- a/arch/arm64/mm/numa.c
-> > +++ b/arch/arm64/mm/numa.c
-> > @@ -468,3 +468,16 @@ int memory_add_physaddr_to_nid(u64 addr)
-> >       pr_warn("Unknown node for memory at 0x%llx, assuming node 0\n", addr);
-> >       return 0;
-> >  }
-> > +
-> > +/*
-> > + * device-dax instance registrations want a valid target-node in case
-> > + * they are ever onlined as memory (see hmem_register_device()).
-> > + *
-> > + * TODO: consult cached numa info
-> > + */
-> > +int phys_to_target_node(phys_addr_t addr)
-> > +{
-> > +     pr_warn_once("Unknown target node for memory at 0x%llx, assuming node 0\n",
-> > +                     addr);
-> > +     return 0;
-> > +}
->
-> Could you implement a generic version of this by iterating over the nodes
-> with for_each_{,online_}node() and checking for intersection with
-> node_{start,end}_pfn()?
+On 25/03/20 5:22 pm, Jiri Olsa wrote:
+> On Wed, Mar 25, 2020 at 04:24:58PM +0200, Adrian Hunter wrote:
+>> On 25/03/20 4:22 pm, Arnaldo Carvalho de Melo wrote:
+>>> Em Wed, Mar 25, 2020 at 02:53:50PM +0100, Jiri Olsa escreveu:
+>>>> On Wed, Mar 25, 2020 at 10:15:49AM -0300, Arnaldo Carvalho de Melo wrote:
+>>>>> Em Wed, Mar 25, 2020 at 11:33:45AM +0100, Jiri Olsa escreveu:
+>>>>>> On Tue, Mar 24, 2020 at 05:04:43PM +0200, Adrian Hunter wrote:
+>>>>>>> perf list expects CPU events to be parseable by name, e.g.
+>>>>>
+>>>>>>>     # perf list | grep el-capacity-read
+>>>>>>>       el-capacity-read OR cpu/el-capacity-read/          [Kernel PMU event]
+>>>>>
+>>>>>>> But the event parser does not recognize them that way, e.g.
+>>>>>
+>>>>>>>     # perf test -v "Parse event"
+>>>>>>>     <SNIP>
+>>>>>>>     running test 54 'cycles//u'
+>>>>>>>     running test 55 'cycles:k'
+>>>>>>>     running test 0 'cpu/config=10,config1,config2=3,period=1000/u'
+>>>>>>>     running test 1 'cpu/config=1,name=krava/u,cpu/config=2/u'
+>>>>>>>     running test 2 'cpu/config=1,call-graph=fp,time,period=100000/,cpu/config=2,call-graph=no,time=0,period=2000/'
+>>>>>>>     running test 3 'cpu/name='COMPLEX_CYCLES_NAME:orig=cycles,desc=chip-clock-ticks',period=0x1,event=0x2/ukp'
+>>>>>>>     -> cpu/event=0,umask=0x11/
+>>>>>>>     -> cpu/event=0,umask=0x13/
+>>>>>>>     -> cpu/event=0x54,umask=0x1/
+>>>>>>>     failed to parse event 'el-capacity-read:u,cpu/event=el-capacity-read/u', err 1, str 'parser error'
+>>>>>>>     event syntax error: 'el-capacity-read:u,cpu/event=el-capacity-read/u'
+>>>>>>>                            \___ parser error test child finished with 1
+>>>>>>>     ---- end ----
+>>>>>>>     Parse event definition strings: FAILED!
+>>>>>
+>>>>>>> Fix by adding missing Intel CPU events to the event parser.
+>>>>>>> Missing events were found by using:
+>>>>>
+>>>>>>>     grep -r EVENT_ATTR_STR arch/x86/events/intel/core.c
+>>>>>>>
+>>>>>>> Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
+>>>>>>
+>>>>>> Acked-by: Jiri Olsa <jolsa@redhat.com>
+>>>>>
+>>>>> So, I'm not being able to reproduce this, what an I missing?
+>>>>
+>>>> I think you need to be on some really recent intel
+>>>> which defines events which we did not covered yet
+>>>> like el-capacity-write in icelake
+>>>
+>>> That is why I tried with el-capacity, which is moved to the parser as
+>>> well, I've replaced el-capacity-read, which I don't have in this Kaby
+>>> Lake machine, with el-capacity, that is present:
+>>>
+>>> [root@seventh ~]# perf list | grep el-capacity
+>>>   el-capacity OR cpu/el-capacity/                    [Kernel PMU event]
+>>> [root@seventh ~]#
+>>
+>> I just checked that and it seems to be a "feature" of the parser that it
+>> gets confused between el-capacity and el-capacity-read.
+>>
+>> Making them explicit in parse-events.l makes the problem go away, but I
+>> wonder now if the parser could be better in this regard.
+> 
+> so we have that PRE/SUFFIX logic that allows us
+> to specify any sysfs event term as standalone event
+> 
+> the lexer in this case below was used to handle special cases..
+> and IIUC think having more than one '-' is one of them
+> 
+> could you check if the patch below will fix that for you?
+> 
+> jirka
+> 
+> 
+> ---
+> diff --git a/tools/perf/util/parse-events.l b/tools/perf/util/parse-events.l
+> index 7b1c8ee537cf..347eb3e6794a 100644
+> --- a/tools/perf/util/parse-events.l
+> +++ b/tools/perf/util/parse-events.l
+> @@ -342,11 +342,15 @@ bpf-output					{ return sym(yyscanner, PERF_TYPE_SOFTWARE, PERF_COUNT_SW_BPF_OUT
+>  	 * Because the prefix cycles is mixed up with cpu-cycles.
+>  	 * loads and stores are mixed up with cache event
+>  	 */
+> -cycles-ct					{ return str(yyscanner, PE_KERNEL_PMU_EVENT); }
+> -cycles-t					{ return str(yyscanner, PE_KERNEL_PMU_EVENT); }
+> -mem-loads					{ return str(yyscanner, PE_KERNEL_PMU_EVENT); }
+> -mem-stores					{ return str(yyscanner, PE_KERNEL_PMU_EVENT); }
+> -topdown-[a-z-]+					{ return str(yyscanner, PE_KERNEL_PMU_EVENT); }
+> +cycles-ct				|
+> +cycles-t				|
+> +mem-loads				|
+> +mem-stores				|
+> +topdown-[a-z-]+				|
+> +tx-capacity-read			|
+> +tx-capacity-write			|
+> +el-capacity-read			|
+> +el-capacity-write			{ return str(yyscanner, PE_KERNEL_PMU_EVENT); }
 
-Interesting. The gap is that node_{start,end}_pfn() requires
-node_data[] which to date architectures have only setup for online
-nodes. Recall a target node is an offline node that could come online
-later. However, reworking offline data into node_data could be the
-local solution for arm64, I'd just ask that each of the 6
-memory-hotplug capable archs go make that opt-in decision themselves.
+Yes that works, as does
+
+tx-capacity-[a-z-]+
+el-capacity-[a-z-]+
+
+Do we have an explanation for why we cannot make it accept 3-part names
+without handling them as special cases?
+
+I just tried but it didn't work.
