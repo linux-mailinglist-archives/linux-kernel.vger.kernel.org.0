@@ -2,116 +2,54 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5D8A61933C3
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 23:29:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6C7161933C7
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 23:32:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727420AbgCYW3Q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Mar 2020 18:29:16 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:34620 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727358AbgCYW3Q (ORCPT
+        id S1727451AbgCYWb6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Mar 2020 18:31:58 -0400
+Received: from mail.aslcaserta.it ([2.228.254.8]:38423 "EHLO
+        mail.aslcaserta.it" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727358AbgCYWb6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Mar 2020 18:29:16 -0400
-Received: by mail-pg1-f194.google.com with SMTP id d37so1360227pgl.1
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Mar 2020 15:29:15 -0700 (PDT)
+        Wed, 25 Mar 2020 18:31:58 -0400
+X-Greylist: delayed 310 seconds by postgrey-1.27 at vger.kernel.org; Wed, 25 Mar 2020 18:31:57 EDT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=LyYXufOUFN5oWBOpcmZRLdaTepJDZ4LbjSQe+KjRvBE=;
-        b=I0LQdQfYqfNHczc5FQJqWphRXlzTHmVhPGME+4aT+Ilzoe8LG3uOCvcu28FImaWJb/
-         ioLl16u2QiATn4zBW7UhDlJLfax8+0z1CHkw+aKwhU2QKAxS+oYyY24YZhtOaIf1fz0x
-         R7U2Zl12Yb9fA67w6yzcdbvksYK/jrEKu8+7L988J04CgE6QYM8XR2yBx1WeRsLJGrR6
-         ST/YLPsroAsBaLG+BmmQWPMz/EHFQtX6sjxr9Urd7HC0WOh0y5Of/AO+FzSXMD2B/0hi
-         ITbX7G4tNsJK5VoeM1kfVcjo9esgd92BTt+pR/oAGpl5gsVOqcFE8uUwmff/eDQHIMGi
-         Stlg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=LyYXufOUFN5oWBOpcmZRLdaTepJDZ4LbjSQe+KjRvBE=;
-        b=hrnSwbs296iQdqy50Gxj0qizkyj+uKacGlW0GlWTPcaFsu6tOjHkLE7fTrpNk/soWp
-         YW2KAHC9yBpkM9vO6fS6QTdDhi5yHKk1a9ZYeNYLXda87JwestdtAgmGrEgcQ4uonQIo
-         lM4Sd+jIfZVsS25N+27GUs746dtqvAkFPlEM5Z36bW0zJVNUjl4b8ZngA1v124tHZJYS
-         iE7pXccNzB6SA/9KDXrq1LAsrQLz+y0u/KktspHXjwx7OiphHF2YFuhKvAlr+jnK7pAq
-         ZZ9Mop11IW66BqrQ09/PFy4otJU2OJ2P13sr+aV5RiWtStXj5/XzTBkCy0H2d/++d9CV
-         q9Hw==
-X-Gm-Message-State: ANhLgQ2MS/KKi5oCKUZqIpLgRFF5UpviUjpvYW6Or3+bGJNlcr0L8u+N
-        V7u13XY0HORnLdTVV70beBA=
-X-Google-Smtp-Source: ADFU+vskN9dl4CYBR4iDfuGwX4JISYcceiwBsa4I0J+YF6SJDdgg9p3v8JvtXd0mzKn7fMZ2j1IUKg==
-X-Received: by 2002:a63:ef41:: with SMTP id c1mr5068479pgk.195.1585175354567;
-        Wed, 25 Mar 2020 15:29:14 -0700 (PDT)
-Received: from simran-Inspiron-5558 ([2409:4052:78f:bb47:8124:5e4b:ea06:7595])
-        by smtp.gmail.com with ESMTPSA id k3sm129301pfp.142.2020.03.25.15.29.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Mar 2020 15:29:13 -0700 (PDT)
-Date:   Thu, 26 Mar 2020 03:59:08 +0530
-From:   Simran Singhal <singhalsimran0@gmail.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
-        outreachy-kernel <outreachy-kernel@googlegroups.com>
-Subject: [PATCH] staging: rtl8723bs: Clean up tests if NULL returned on
- failure
-Message-ID: <20200325222908.GA5370@simran-Inspiron-5558>
+    s=s1024; d=aslcaserta.it;
+    h=from:subject:date:message-id:content-type:mime-version;
+    bh=AxuaOWwuJfbckGo9/YYNK9v3Mrv961/wL5lC2rbYWy4=;
+    b=LlHK3elfwiNGJM8OEpgk4IZ8Mb76WH9SoKv2rS6Y1cpnEnCb/0qwEOmv7HjNAk
+      J3w24wlZ5IOd3tk2jyGoksKVqvBT//UNtpLHoNgW7dB19xxLA8xLjw1XUADDCo
+      wMbfLRttI3xhK0x4R5SzZiXsMEEJQ+lWSbGNZWNfDVin4gc=
+Received: from EXCHANGE2010.aslcaserta1.locale ([::1]) by
+ EXCHANGE2010.aslcaserta1.locale ([::1]) with mapi id 14.03.0468.000; Wed, 25
+ Mar 2020 23:26:34 +0100
+From:   alfonso florio <alfonso.florio@aslcaserta.it>
+Subject: =?iso-8859-1?Q?Dringend_(Antwort_<leungw43@gmail.com>_f=FCr_weitere_Detai?=
+ =?iso-8859-1?Q?ls)?=
+Thread-Topic: =?iso-8859-1?Q?Dringend_(Antwort_<leungw43@gmail.com>_f=FCr_weitere_Detai?=
+ =?iso-8859-1?Q?ls)?=
+Thread-Index: AdYC9HBxvaPL9PQ5RYGEvKkiw7c0rA==
+Date:   Wed, 25 Mar 2020 22:26:33 +0000
+Message-ID: <267ED79389CFEB40827BCBF1D52E4D7755AD0E91@EXCHANGE2010.aslcaserta1.locale>
+Accept-Language: it-IT, en-US
+Content-Language: it-IT
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [84.17.58.175]
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Some functions like kmalloc/kzalloc return NULL on failure.
-When NULL represents failure, !x is commonly used.
+K=F6nnen Sie ein Gesch=E4ft von 24,5 Mio. USD abwickeln? Wenn ja, kontaktie=
+ren Sie mich bitte per E-Mail, um weitere Informationen zu erhalten.
 
-This was done using Coccinelle:
-@@
-expression *e;
-identifier l1;
-@@
+E-Mail: leungw43@gmail.com<mailto:leungw43@gmail.com>
 
-e = \(kmalloc\|kzalloc\|kcalloc\|devm_kzalloc\)(...);
-...
-- e == NULL
-+ !e
+Gr=FC=DFe,
 
-Signed-off-by: Simran Singhal <singhalsimran0@gmail.com>
----
- drivers/staging/rtl8723bs/os_dep/ioctl_linux.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/staging/rtl8723bs/os_dep/ioctl_linux.c b/drivers/staging/rtl8723bs/os_dep/ioctl_linux.c
-index 29f36cca3972..5c27c11f006a 100644
---- a/drivers/staging/rtl8723bs/os_dep/ioctl_linux.c
-+++ b/drivers/staging/rtl8723bs/os_dep/ioctl_linux.c
-@@ -474,7 +474,7 @@ static int wpa_set_encryption(struct net_device *dev, struct ieee_param *param,
- 			wep_key_len = wep_key_len <= 5 ? 5 : 13;
- 			wep_total_len = wep_key_len + FIELD_OFFSET(struct ndis_802_11_wep, KeyMaterial);
- 			pwep = kzalloc(wep_total_len, GFP_KERNEL);
--			if (pwep == NULL) {
-+			if (!pwep) {
- 				RT_TRACE(_module_rtl871x_ioctl_os_c, _drv_err_, (" wpa_set_encryption: pwep allocate fail !!!\n"));
- 				goto exit;
- 			}
-@@ -2137,7 +2137,7 @@ static int rtw_wx_set_enc_ext(struct net_device *dev,
- 
- 	param_len = sizeof(struct ieee_param) + pext->key_len;
- 	param = kzalloc(param_len, GFP_KERNEL);
--	if (param == NULL)
-+	if (!param)
- 		return -1;
- 
- 	param->cmd = IEEE_CMD_SET_ENCRYPTION;
-@@ -3491,7 +3491,7 @@ static int rtw_set_encryption(struct net_device *dev, struct ieee_param *param,
- 			wep_key_len = wep_key_len <= 5 ? 5 : 13;
- 			wep_total_len = wep_key_len + FIELD_OFFSET(struct ndis_802_11_wep, KeyMaterial);
- 			pwep = kzalloc(wep_total_len, GFP_KERNEL);
--			if (pwep == NULL) {
-+			if (!pwep) {
- 				DBG_871X(" r871x_set_encryption: pwep allocate fail !!!\n");
- 				goto exit;
- 			}
--- 
-2.17.1
-
+William.
