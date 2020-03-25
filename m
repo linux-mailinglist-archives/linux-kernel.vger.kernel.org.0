@@ -2,26 +2,26 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F19E619344C
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 00:11:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E8B3619344E
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 00:11:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727549AbgCYXLZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        id S1727585AbgCYXLZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
         Wed, 25 Mar 2020 19:11:25 -0400
 Received: from mga03.intel.com ([134.134.136.65]:3368 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727389AbgCYXLY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Mar 2020 19:11:24 -0400
-IronPort-SDR: C4ajVmlgzXTXLPpb7jkEnusiLd822e8LlcZcWEpvZBCluPrvc6x6DtlxgPzpmbKDGe9EfetV4Q
- cy4s+CPFEiHA==
+        id S1727487AbgCYXLZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Mar 2020 19:11:25 -0400
+IronPort-SDR: acbVRKwsqd8jjsA9EcdrrR8Z76lv2zO9wLhxDUlzpu7AsHe/wW63YnlJ54DnlVaT4SDqb2zMd1
+ qspXUvnG0HqA==
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga007.jf.intel.com ([10.7.209.58])
   by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Mar 2020 16:11:24 -0700
-IronPort-SDR: w231FeYMX1qlC26S1fobhpS9w1G2THEmgk6xNgH7LXe0Z9HxNZ77GcXYtv+d1jHOU6Ca6tjMw/
- jLHcWy2nOa6Q==
+IronPort-SDR: q1SfkvZ/eKjh21PLtsAMc9gjXTkvpsc68UU2/mRAJlJVCfyeGhTw56vpaYrL2GVtkx0J0w0q4z
+ OlX+tXSt+WwA==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.72,306,1580803200"; 
-   d="scan'208";a="236083686"
+   d="scan'208";a="236083689"
 Received: from jacob-builder.jf.intel.com ([10.7.199.155])
   by orsmga007.jf.intel.com with ESMTP; 25 Mar 2020 16:11:24 -0700
 From:   Jacob Pan <jacob.jun.pan@linux.intel.com>
@@ -37,61 +37,101 @@ Cc:     "Yi Liu" <yi.l.liu@intel.com>,
         Raj Ashok <ashok.raj@intel.com>,
         Eric Auger <eric.auger@redhat.com>,
         Jacob Pan <jacob.jun.pan@linux.intel.com>
-Subject: [PATCH v2 0/3] IOMMU user API enhancement
-Date:   Wed, 25 Mar 2020 16:17:04 -0700
-Message-Id: <1585178227-17061-1-git-send-email-jacob.jun.pan@linux.intel.com>
+Subject: [PATCH v2 1/3] iommu/uapi: Define uapi version and capabilities
+Date:   Wed, 25 Mar 2020 16:17:05 -0700
+Message-Id: <1585178227-17061-2-git-send-email-jacob.jun.pan@linux.intel.com>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1585178227-17061-1-git-send-email-jacob.jun.pan@linux.intel.com>
+References: <1585178227-17061-1-git-send-email-jacob.jun.pan@linux.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-IOMMU user API header was introduced to support nested DMA translation and
-related fault handling. The current UAPI data structures consist of three
-areas that cover the interactions between host kernel and guest:
- - fault handling
- - cache invalidation
- - bind guest page tables, i.e. guest PASID
+Having a single UAPI version to govern the user-kernel data structures
+makes compatibility check straightforward. On the contrary, supporting
+combinations of multiple versions of the data can be a nightmare to
+maintain.
 
-With future extensions in mind, the UAPI structures passed from user to kernel
-always starts with a mandatory version field (u32). While this is flexible
-for extensions of individual structures, it is difficult to maintain support
-of combinations of version numbers.
+This patch defines a unified UAPI version to be used for compatibility
+checks between user and kernel.
 
-This patchset introduces a unified UAPI version number that governs all the
-UAPI data structure versions. When userspace query UAPI version for check on
-compatibility, a single match would be sufficient.
+---
+v2: Rewrite extension rules to disallow adding new members. Use padding
+    and union extensions only.
+---
 
-After UAPI version check, users such as VFIO can also retrieve the matching
-data structure size based on version and type. Kernel IOMMU UAPI support is
-always backward compatible. Data structures are also only open to extension
-and closed to modifications.
+Signed-off-by: Liu Yi L <yi.l.liu@intel.com>
+Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
+Link: https://lkml.org/lkml/2020/2/3/1126
+---
+ include/uapi/linux/iommu.h | 53 ++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 53 insertions(+)
 
-The introduction of UAPI version does not change the existing UAPI but rather
-simplify the data structure version and size matching.
-
-Changelog:
-- v2 Rewrite the extension rules that disallows adding new members at the end
-     of each UAPI data structures. Only padding bytes and union can be extended.
-     Clarified size look up array extension rules with examples.
-
-Thanks,
-
-Jacob
-
-
-Jacob Pan (3):
-  iommu/uapi: Define uapi version and capabilities
-  iommu/uapi: Use unified UAPI version
-  iommu/uapi: Add helper function for size lookup
-
- drivers/iommu/intel-iommu.c |  3 +-
- drivers/iommu/intel-svm.c   |  2 +-
- drivers/iommu/iommu.c       | 75 ++++++++++++++++++++++++++++++++++++++++++++-
- include/linux/iommu.h       |  6 ++++
- include/uapi/linux/iommu.h  | 62 +++++++++++++++++++++++++++++++++----
- 5 files changed, 139 insertions(+), 9 deletions(-)
-
+diff --git a/include/uapi/linux/iommu.h b/include/uapi/linux/iommu.h
+index d7bcbc5f79b0..25dba9198d7f 100644
+--- a/include/uapi/linux/iommu.h
++++ b/include/uapi/linux/iommu.h
+@@ -8,6 +8,59 @@
+ 
+ #include <linux/types.h>
+ 
++/**
++ * Current version of the IOMMU user API. This is intended for query
++ * between user and kernel to determine compatible data structures.
++ *
++ * UAPI version can be bumped up with the following rules:
++ * 1. All data structures passed between user and kernel space share
++ *    the same version number. i.e. any extension to any structure
++ *    results in version number increment.
++ *
++ * 2. Data structures are open to extension but closed to modification.
++ *    Extensions are allowed in two places:
++ *    - the padding bytes with a flag bit for each new member
++ *    - new union members at the end of each structure
++ *
++ *    No new members can be added after padding bytes are exhausted.
++ *    The reason is that the union size can change when new members are
++ *    added, having new member at the end would break backward
++ *    compatibility. Expansion of the union would move the new member
++ *    to different offset between versions.
++ *
++ *    Flag bits can be added without size change but existing ones
++ *    cannot be altered.
++ *
++ * 3. Versions are backward compatible.
++ *
++ * 4. Version to size lookup is supported by kernel internal API for each
++ *    API function type. @version is mandatory for new data structures
++ *    and must be at the beginning with type of __u32.
++ */
++#define IOMMU_UAPI_VERSION	1
++static inline int iommu_get_uapi_version(void)
++{
++	return IOMMU_UAPI_VERSION;
++}
++
++/*
++ * Supported UAPI features that can be reported to user space.
++ * These types represent the capability available in the kernel.
++ *
++ * REVISIT: UAPI version also implies the capabilities. Should we
++ * report them explicitly?
++ */
++enum IOMMU_UAPI_DATA_TYPES {
++	IOMMU_UAPI_BIND_GPASID,
++	IOMMU_UAPI_CACHE_INVAL,
++	IOMMU_UAPI_PAGE_RESP,
++	NR_IOMMU_UAPI_TYPE,
++};
++
++#define IOMMU_UAPI_CAP_MASK ((1 << IOMMU_UAPI_BIND_GPASID) |	\
++				(1 << IOMMU_UAPI_CACHE_INVAL) |	\
++				(1 << IOMMU_UAPI_PAGE_RESP))
++
+ #define IOMMU_FAULT_PERM_READ	(1 << 0) /* read */
+ #define IOMMU_FAULT_PERM_WRITE	(1 << 1) /* write */
+ #define IOMMU_FAULT_PERM_EXEC	(1 << 2) /* exec */
 -- 
 2.7.4
 
