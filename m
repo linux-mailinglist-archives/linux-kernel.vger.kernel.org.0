@@ -2,88 +2,151 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3D839192D5C
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 16:50:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7294F192D66
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 16:51:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727888AbgCYPuP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Mar 2020 11:50:15 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48458 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727775AbgCYPuP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Mar 2020 11:50:15 -0400
-Received: from localhost (unknown [104.132.1.66])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CE17620719;
-        Wed, 25 Mar 2020 15:50:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585151414;
-        bh=Qc+lueq98MrFHqfASz6/dsAD2vvazTjCL6wnKN7LNls=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=LD8m9jlhLcMakKgtin97JBf2XNfXsnSTrsqZMF/LAlhDAdpi/ITpe5K8r242NJPgV
-         QT0g5P1o+BQe8/+MzOI7ev3bv9TitGtvSFmdQYLobauqmReoNQ9w7hiuSmTsI9yEeA
-         gwEiTsVRCygqBzOgDXJNx2r+hnbyY57pVW+tdEF0=
-Date:   Wed, 25 Mar 2020 08:50:14 -0700
-From:   Jaegeuk Kim <jaegeuk@kernel.org>
-To:     Chao Yu <yuchao0@huawei.com>
-Cc:     linux-f2fs-devel@lists.sourceforge.net,
-        linux-kernel@vger.kernel.org, chao@kernel.org
-Subject: Re: [PATCH v2 3/5] f2fs: fix to avoid NULL pointer dereference
-Message-ID: <20200325155014.GB65658@google.com>
-References: <20200325091811.60725-1-yuchao0@huawei.com>
+        id S1727820AbgCYPvN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Mar 2020 11:51:13 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:42552 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727592AbgCYPvN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Mar 2020 11:51:13 -0400
+Received: by mail-wr1-f65.google.com with SMTP id h15so3737260wrx.9
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Mar 2020 08:51:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=jdzCJSQMgm0oyL98baNgXzwRjxVHoWxbruLDM0oUMk4=;
+        b=BX/mueElGQ2pf5TxuXX1CUbBcr7X3BOPwGSt2wLZHkfy08N/rTANbsO/1zOe1fkxGE
+         4XZAV/FMJvqzZZyr6Wv4pXgV0+Fip/4hAZs5GPTXS2vDmoC8VA76e0QA8XEGwSGvxNrf
+         zYigoBJngcvnWPAFT4E10OhZ7R+76I0d0w7MN7nrfqpV3GKVqxxaUdzS3GjbVLD9TRML
+         rregJC2ikLGw+s59YJ/ActxK4orduHalzGtdQKpIML/MvCQ2lMlI7NZvr44yANbgI+rz
+         hVLc/W9TKopWDTISoc0dn5PgSIu6lX63hlQbFbv3cFWxf4iPByzQsAxns94rQFpz9p1/
+         rE+A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=jdzCJSQMgm0oyL98baNgXzwRjxVHoWxbruLDM0oUMk4=;
+        b=nY2oa8qtTIt2djhp7uuaHn/xTygfmnvAU44R5vGHuNNo6XDCjaLLJIGbVYBIvOEDlH
+         kSL2csK5Pwf8sx2i7oy36W734nE4a92LOKC7CkFhQZfxbNarfFxuSJ8aZV0JeGNZVkBz
+         x6Dtxcrv0hMhxF9CV0SmTp4RSIPicwfLknFADlmi48UNA5zYEVo1dU286B0qKbBJl9X3
+         Abzv6gAIXPopJLyvFpkmTN9FExeSruLS5ES/akUckILbtB+eX99pk0U4GUO8Ah0pDZxV
+         OaKhfhksQKz1YlTkMMa4kuOArxB26NK1gVG3fQe4Ybf1vDqQKazpSqYrnGx+6uohLoA0
+         E3rg==
+X-Gm-Message-State: ANhLgQ2bK589r0A42/HmL3E3vzvsemucoLZd9lLTpOFMtn8Ceunn6yPV
+        AjWOY3SOMrF2xsypU9MUp0MI0LmACSoJiE9fp+bVyA==
+X-Google-Smtp-Source: ADFU+vv+tNQ8YPWvfibugvCnhwLOYJlgXo6GRSCXcpR6TQyErbNU+Sksiez3chDL5nslTuI6gv9Wi3hMfyEPl8slG1Q=
+X-Received: by 2002:a05:6000:111:: with SMTP id o17mr4069115wrx.111.1585151471221;
+ Wed, 25 Mar 2020 08:51:11 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200325091811.60725-1-yuchao0@huawei.com>
+References: <20200213153928.28407-1-masahiroy@kernel.org> <CAK7LNARvxFk=ct9AoRLwjZ9cKRsA_bjiLaq0di12TRe5+fpmGA@mail.gmail.com>
+ <CADnq5_Mieh9G-8hheKRdKe=qMbAQjwTheM2TWWSaZjeGU3635Q@mail.gmail.com> <CAK7LNAT2r3Octg-Pdjn6xNzGM49_PiGqoJSTzbmL4iBpH6_AaQ@mail.gmail.com>
+In-Reply-To: <CAK7LNAT2r3Octg-Pdjn6xNzGM49_PiGqoJSTzbmL4iBpH6_AaQ@mail.gmail.com>
+From:   Alex Deucher <alexdeucher@gmail.com>
+Date:   Wed, 25 Mar 2020 11:50:59 -0400
+Message-ID: <CADnq5_PN4orASM4F9VMtrmuL6W7B4MwvgOX00_Tdw2c-UJ6WrA@mail.gmail.com>
+Subject: Re: [PATCH 1/4] drm/radeon: remove unneeded header include path
+To:     Masahiro Yamada <masahiroy@kernel.org>
+Cc:     David Zhou <David1.Zhou@amd.com>, David Airlie <airlied@linux.ie>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        amd-gfx list <amd-gfx@lists.freedesktop.org>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        =?UTF-8?B?Q2hyaXN0aWFuIEvvv73vv73Dk25pZw==?= 
+        <christian.koenig@amd.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Chao,
+On Tue, Mar 24, 2020 at 9:14 PM Masahiro Yamada <masahiroy@kernel.org> wrote:
+>
+> On Wed, Mar 25, 2020 at 4:42 AM Alex Deucher <alexdeucher@gmail.com> wrote:
+> >
+> > On Tue, Mar 24, 2020 at 12:48 PM Masahiro Yamada <masahiroy@kernel.org> wrote:
+> > >
+> > > Hi,
+> > >
+> > > I think this series is a good clean-up.
+> > >
+> > > Could you take a look at this please?
+> >
+> > Can you resend?  I don't seem to have gotten it.  Must have ended up
+> > getting flagged a spam or something.
+>
+>
+> Can you take it from patchwork ?  (4 patches)
+>
+> https://lore.kernel.org/patchwork/project/lkml/list/?series=429491
 
-I don't want to rebase old commit at this moment, so applied on top of the tree.
 
-Thanks,
+Applied.  thanks!
 
-On 03/25, Chao Yu wrote:
-> Unable to handle kernel NULL pointer dereference at virtual address 00000000
-> PC is at f2fs_free_dic+0x60/0x2c8
-> LR is at f2fs_decompress_pages+0x3c4/0x3e8
-> f2fs_free_dic+0x60/0x2c8
-> f2fs_decompress_pages+0x3c4/0x3e8
-> __read_end_io+0x78/0x19c
-> f2fs_post_read_work+0x6c/0x94
-> process_one_work+0x210/0x48c
-> worker_thread+0x2e8/0x44c
-> kthread+0x110/0x120
-> ret_from_fork+0x10/0x18
-> 
-> In f2fs_free_dic(), we can not use f2fs_put_page(,1) to release dic->tpages[i],
-> as the page's mapping is NULL.
-> 
-> Signed-off-by: Chao Yu <yuchao0@huawei.com>
-> ---
-> v2:
-> - fix to skip release tpages[i] if it is NULL in error path.
->  fs/f2fs/compress.c | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/f2fs/compress.c b/fs/f2fs/compress.c
-> index ef7dd04312fe..6e10800729b6 100644
-> --- a/fs/f2fs/compress.c
-> +++ b/fs/f2fs/compress.c
-> @@ -1137,7 +1137,10 @@ void f2fs_free_dic(struct decompress_io_ctx *dic)
->  		for (i = 0; i < dic->cluster_size; i++) {
->  			if (dic->rpages[i])
->  				continue;
-> -			f2fs_put_page(dic->tpages[i], 1);
-> +			if (!dic->tpages[i])
-> +				continue;
-> +			unlock_page(dic->tpages[i]);
-> +			put_page(dic->tpages[i]);
->  		}
->  		kfree(dic->tpages);
->  	}
-> -- 
-> 2.18.0.rc1
+Alex
+
+>
+>
+> Thanks.
+>
+>
+>
+>
+>
+>
+> > Alex
+> >
+> > >
+> > >
+> > >
+> > > On Fri, Feb 14, 2020 at 12:40 AM Masahiro Yamada <masahiroy@kernel.org> wrote:
+> > > >
+> > > > A header include path without $(srctree)/ is suspicious because it does
+> > > > not work with O= builds.
+> > > >
+> > > > You can build drivers/gpu/drm/radeon/ without this include path.
+> > > >
+> > > > Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+> > > > ---
+> > > >
+> > > >  drivers/gpu/drm/radeon/Makefile | 2 --
+> > > >  1 file changed, 2 deletions(-)
+> > > >
+> > > > diff --git a/drivers/gpu/drm/radeon/Makefile b/drivers/gpu/drm/radeon/Makefile
+> > > > index c693b2ca0329..9d5d3dc1011f 100644
+> > > > --- a/drivers/gpu/drm/radeon/Makefile
+> > > > +++ b/drivers/gpu/drm/radeon/Makefile
+> > > > @@ -3,8 +3,6 @@
+> > > >  # Makefile for the drm device driver.  This driver provides support for the
+> > > >  # Direct Rendering Infrastructure (DRI) in XFree86 4.1.0 and higher.
+> > > >
+> > > > -ccflags-y := -Idrivers/gpu/drm/amd/include
+> > > > -
+> > > >  hostprogs := mkregtable
+> > > >  clean-files := rn50_reg_safe.h r100_reg_safe.h r200_reg_safe.h rv515_reg_safe.h r300_reg_safe.h r420_reg_safe.h rs600_reg_safe.h r600_reg_safe.h evergreen_reg_safe.h cayman_reg_safe.h
+> > > >
+> > > > --
+> > > > 2.17.1
+> > > >
+> > >
+> > >
+> > > --
+> > > Best Regards
+> > > Masahiro Yamada
+> > > _______________________________________________
+> > > dri-devel mailing list
+> > > dri-devel@lists.freedesktop.org
+> > > https://lists.freedesktop.org/mailman/listinfo/dri-devel
+>
+>
+>
+> --
+> Best Regards
+> Masahiro Yamada
+> _______________________________________________
+> amd-gfx mailing list
+> amd-gfx@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/amd-gfx
