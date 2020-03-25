@@ -2,145 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AB67119295E
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 14:15:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 17BC219296E
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 14:19:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727406AbgCYNPy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Mar 2020 09:15:54 -0400
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:42255 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727046AbgCYNPx (ORCPT
+        id S1727381AbgCYNTz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Mar 2020 09:19:55 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:53843 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726998AbgCYNTz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Mar 2020 09:15:53 -0400
-Received: by mail-qt1-f194.google.com with SMTP id t9so2016628qto.9
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Mar 2020 06:15:53 -0700 (PDT)
+        Wed, 25 Mar 2020 09:19:55 -0400
+Received: by mail-wm1-f65.google.com with SMTP id b12so2434788wmj.3
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Mar 2020 06:19:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=9jjYGmCdWOxDHKljO3oneNL13klBtbY9s960pcoSP18=;
-        b=qq2lxYQPPNi7TJbXZxU1nygbmeLSrjEBh9cV5Knr7kWRe4Biv6O2zmw6KANaAJqLBu
-         sZvIAZAjFEfUAkZLKm5oJ16jf03sv1NWaf/rQiWqESePwcNaxKKvvDx9zqtFRmwA1qjD
-         Uc4KF8c2V9D2va9MTwgbFUQ7X8gmplPQGhBGTyaNdahQsmpShtkERqtwv2xws67atLoq
-         iAF8DMoGC5tjtJ1J8JovAYhRaG2JrEsVgbMT2+xJNUrxBArv20z7us3kBtJkHObcZftJ
-         foNfYsqQfnkUxOMFJ4vzJBhE2HrmcHTSA3VeWZtof+ErJuqQ9x5anLXy3BPScQDEkili
-         1vLg==
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=qiuKH82RkkinscpVT5MDmCf35SBcMm8Pn5gqUPKg/6U=;
+        b=l8vxYG2im6WxUeb7IB2kpYSjpoQnWUR+97IRP6w4deFbTZaCnijIjb6gg4s0ipUYga
+         aDiziknssB202MurD0oRGObbJrZ6pC9rBRVKm5EAxs40ju4BSOzcaobkDBSqDRPle941
+         s2IbfcP/GN2EhrGlh6FSS3aJXxj77aSaoWxxE/ytxIn2PmQi2pgWQT031BNrKvG/fIs4
+         058pMdsMkeqk9dfyiz4g1jvWSorByC4/F3gAOjFXtTkOC3i8Qfw1g9IbM1UXWcFK4jwV
+         4cs5KKhTNrCY6waUyDhoZ938kBfBLzyukOEwF85fYatG037I6kDP6bNu7frb2jQW5/Ls
+         YD2Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=9jjYGmCdWOxDHKljO3oneNL13klBtbY9s960pcoSP18=;
-        b=qxB9Rgf8BJ+tjIYyBTn/EhL2t90Da//EAXioBMRJCq1jSnc1fulGuUTt7tSkeWyq4G
-         HuZrGuG9PEcJySs6IP/Wotm9hTjS1gQ5BxT6KoaqGei1bq6HqLnqEw7D4ay1ez6GvzTX
-         MSPcz/pqt59eRkIRYuSFb5yoLPSpaqVGk+l0oiZ1W7GcVNDhMEjzvg9A+HfS2I3RIE1N
-         Yq2FZEAW3l5FgX/DaI6RWm8CFcq5EjgohUjc/irAhg4SM5qtlqO0hiB84poVKGWviUnH
-         /dx+g8oANRnJj0+7QKuHbm1WKEMKJ3eZfsiOnTFDmNSgapJiR8i5cNMdbiY2tZqvXqbP
-         Jk4A==
-X-Gm-Message-State: ANhLgQ0c66r/ZF6RKO2P4/hHb9AL20cP+khKiVgaiEX/163HTKIcbsRN
-        l+WqqcOeWCiaKtVynqYhj8I=
-X-Google-Smtp-Source: ADFU+vubdijCEmwrjMtmsILWJUfAPGFtm9m/4iHYXKyx/919lpHT1gjmv74JhRpTgemXavZoF00hdw==
-X-Received: by 2002:ac8:2f5c:: with SMTP id k28mr2877215qta.301.1585142152607;
-        Wed, 25 Mar 2020 06:15:52 -0700 (PDT)
-Received: from quaco.ghostprotocols.net ([179.97.37.151])
-        by smtp.gmail.com with ESMTPSA id r207sm15029180qke.136.2020.03.25.06.15.51
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=qiuKH82RkkinscpVT5MDmCf35SBcMm8Pn5gqUPKg/6U=;
+        b=GR7SS1qbeVfw0GLHdFIY2FSdka0F8pON6oQjpMYHfhCItHUyrDIdLphOJHwpBamqo5
+         Lza/bbcR0MzTw5P4GItAMf40FHEfSEHdNqsIzPdNgsWjur7N+7sefrvYgXqr8pe5FYpg
+         1wIm1QkrI2okCVD9R3NbnB6BA46pwySIYCntTqpYPjsl8XZu7a6AwmLKaAelNCe111p/
+         FLsNCyijIP3PtN75G+hzjQ9OlzdGLQ2gcOtAgMdUDI7NdYcl7J5Ft9XtKHNbnaEQ5VBR
+         l6SEuphMqkZ9Dw/tSSsCgJqs4n1bJwOq5Tb0QSnphao3UFVoNri5QIRS+JwcIWqxic5d
+         CGZA==
+X-Gm-Message-State: ANhLgQ3Cx9I4ofWb33iUOqLuwGL44qBFBRoSL2C26eE/vRHQVehnynli
+        KIK7XnIJe7E5WkUpLhp6v8sq7g==
+X-Google-Smtp-Source: ADFU+vtBvgsiUIDz2IOhLAYWwC7bAlWL2ptxwgaCU9+pyFs+9zVqAbJO0hvpZK91PNF/2pa3kIQDvg==
+X-Received: by 2002:a1c:7f8e:: with SMTP id a136mr3548626wmd.33.1585142393979;
+        Wed, 25 Mar 2020 06:19:53 -0700 (PDT)
+Received: from srini-hackbox.lan (cpc89974-aztw32-2-0-cust43.18-1.cable.virginm.net. [86.30.250.44])
+        by smtp.gmail.com with ESMTPSA id d21sm33558302wrb.51.2020.03.25.06.19.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Mar 2020 06:15:51 -0700 (PDT)
-From:   Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
-X-Google-Original-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
-        id D67F140F77; Wed, 25 Mar 2020 10:15:49 -0300 (-03)
-Date:   Wed, 25 Mar 2020 10:15:49 -0300
-To:     Jiri Olsa <jolsa@redhat.com>
-Cc:     Adrian Hunter <adrian.hunter@intel.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] perf tools: Add missing Intel CPU events to parser
-Message-ID: <20200325131549.GB14102@kernel.org>
-References: <20200324150443.28832-1-adrian.hunter@intel.com>
- <20200325103345.GA1856035@krava>
+        Wed, 25 Mar 2020 06:19:53 -0700 (PDT)
+From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+To:     gregkh@linuxfoundation.org
+Cc:     linux-kernel@vger.kernel.org,
+        nicholas.johnson-opensource@outlook.com.au,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Subject: [PATCH v4 0/2] nvmem: use is_bin_visible callback
+Date:   Wed, 25 Mar 2020 13:19:49 +0000
+Message-Id: <20200325131951.31887-1-srinivas.kandagatla@linaro.org>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200325103345.GA1856035@krava>
-X-Url:  http://acmel.wordpress.com
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Wed, Mar 25, 2020 at 11:33:45AM +0100, Jiri Olsa escreveu:
-> On Tue, Mar 24, 2020 at 05:04:43PM +0200, Adrian Hunter wrote:
-> > perf list expects CPU events to be parseable by name, e.g.
+As suggested I managed to use is_bin_visible for the existing code
+and also added few more checks for callbacks before setting
+permissions on the file. Which also means that Thunderbolt case
+for write-only should be fixed automatically with this patch.
 
-> >     # perf list | grep el-capacity-read
-> >       el-capacity-read OR cpu/el-capacity-read/          [Kernel PMU event]
+As part of this cleanup it does not make any sense to keep
+nvmem-sysfs.c and nvmem.h anymore, so move all the relevant
+code to core.c
 
-> > But the event parser does not recognize them that way, e.g.
+Changes since v3:
+	- Split patch2 in to two patches for better review.
+	- drop first patch to add root_only as its queued
 
-> >     # perf test -v "Parse event"
-> >     <SNIP>
-> >     running test 54 'cycles//u'
-> >     running test 55 'cycles:k'
-> >     running test 0 'cpu/config=10,config1,config2=3,period=1000/u'
-> >     running test 1 'cpu/config=1,name=krava/u,cpu/config=2/u'
-> >     running test 2 'cpu/config=1,call-graph=fp,time,period=100000/,cpu/config=2,call-graph=no,time=0,period=2000/'
-> >     running test 3 'cpu/name='COMPLEX_CYCLES_NAME:orig=cycles,desc=chip-clock-ticks',period=0x1,event=0x2/ukp'
-> >     -> cpu/event=0,umask=0x11/
-> >     -> cpu/event=0,umask=0x13/
-> >     -> cpu/event=0x54,umask=0x1/
-> >     failed to parse event 'el-capacity-read:u,cpu/event=el-capacity-read/u', err 1, str 'parser error'
-> >     event syntax error: 'el-capacity-read:u,cpu/event=el-capacity-read/u'
-> >                            \___ parser error test child finished with 1
-> >     ---- end ----
-> >     Parse event definition strings: FAILED!
+Changes since v2:
+        - Remove nvmem_sysfs_get_groups()
+        - remove nvmem-sysfs.c and nvmem.h and move all
+        relevant code to core.c
 
-> > Fix by adding missing Intel CPU events to the event parser.
-> > Missing events were found by using:
+Changes since v1:
+	- Updated permissions setup logic as suggested by Greg
+	- Added checks for callbacks.
 
-> >     grep -r EVENT_ATTR_STR arch/x86/events/intel/core.c
-> > 
-> > Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
-> 
-> Acked-by: Jiri Olsa <jolsa@redhat.com>
+Srinivas Kandagatla (2):
+  nvmem: core: use is_bin_visible for permissions
+  nvmem: core: remove nvmem_sysfs_get_groups()
 
-So, I'm not being able to reproduce this, what an I missing?
+ drivers/nvmem/Makefile      |   3 -
+ drivers/nvmem/core.c        | 274 +++++++++++++++++++++++++++++++++++-
+ drivers/nvmem/nvmem-sysfs.c | 269 -----------------------------------
+ drivers/nvmem/nvmem.h       |  65 ---------
+ 4 files changed, 272 insertions(+), 339 deletions(-)
+ delete mode 100644 drivers/nvmem/nvmem-sysfs.c
+ delete mode 100644 drivers/nvmem/nvmem.h
 
-[root@seventh ~]# grep -m1 'model name' /proc/cpuinfo
-model name	: Intel(R) Core(TM) i5-7500 CPU @ 3.40GHz
-[root@seventh ~]#
+-- 
+2.21.0
 
-[root@seventh ~]# perf list | grep el-capacity
-  el-capacity OR cpu/el-capacity/                    [Kernel PMU event]
-[root@seventh ~]# perf test -v "Parse event" |& grep el-capacity
-el-capacity -> cpu/event=0x54,umask=0x2/
-[root@seventh ~]# perf stat -e el-capacity:u,cpu/event=el-capacity/u
-^C
- Performance counter stats for 'system wide':
-
-                 0      el-capacity:u
-                 0      cpu/event=el-capacity/u
-
-       2.315736828 seconds time elapsed
-
-
-[root@seventh ~]#
-
-[root@seventh ~]# perf test -v "Parse event" |& grep el-capacity -B5
-running test 55 'cycles:k'
-running test 0 'cpu/config=10,config1,config2=3,period=1000/u'
-running test 1 'cpu/config=1,name=krava/u,cpu/config=2/u'
-running test 2 'cpu/config=1,call-graph=fp,time,period=100000/,cpu/config=2,call-graph=no,time=0,period=2000/'
-running test 3 'cpu/name='COMPLEX_CYCLES_NAME:orig=cycles,desc=chip-clock-ticks',period=0x1,event=0x2/ukp'
-el-capacity -> cpu/event=0x54,umask=0x2/
-[root@seventh ~]# perf test -v "Parse event" |& grep el-capacity -B5 -A5
-running test 55 'cycles:k'
-running test 0 'cpu/config=10,config1,config2=3,period=1000/u'
-running test 1 'cpu/config=1,name=krava/u,cpu/config=2/u'
-running test 2 'cpu/config=1,call-graph=fp,time,period=100000/,cpu/config=2,call-graph=no,time=0,period=2000/'
-running test 3 'cpu/name='COMPLEX_CYCLES_NAME:orig=cycles,desc=chip-clock-ticks',period=0x1,event=0x2/ukp'
-el-capacity -> cpu/event=0x54,umask=0x2/
-el-conflict -> cpu/event=0x54,umask=0x1/
-el-start -> cpu/event=0xc8,umask=0x1/
-tx-abort -> cpu/event=0xc9,umask=0x4/
-topdown-slots-issued -> cpu/event=0xe,umask=0x1/
-tx-capacity -> cpu/event=0x54,umask=0x2/
-[root@seventh ~]#
