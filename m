@@ -2,751 +2,238 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D6652192818
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 13:21:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1BDB719281B
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 13:21:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727527AbgCYMV2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Mar 2020 08:21:28 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:50232 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727491AbgCYMV0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Mar 2020 08:21:26 -0400
-Received: by mail-wm1-f66.google.com with SMTP id d198so2252732wmd.0
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Mar 2020 05:21:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=Byz7rsR0K5y30S2TSjEmmlIlr4XLpAFozkFL1rCflRw=;
-        b=gYGYQuklE3QTXv3Zme7afp9jxPQg3Y54PKqUiOfiAiWba9J7pKaPXXTitUKY48tTdn
-         yFpJwgQ5wjyqBmMMCnoBeN4ArcOchsqjlcnxdXW+ed9Cg08LA/WXQuLY0x8ahLuu1fLI
-         5LFaTFjr5ONkTMEhNrxWvUhGygFLT0J+8vIzTDj/h64MnNtyZ14z54eRGFtnWZcftmZz
-         17sIAnVLIP9ix4QiWw23MGMnGrBNGIWjXuDr+LccXXRT6PUHl5hzYTpDidP7w3qnha1I
-         BYZhWgNUtjsw/okQNnWdvXI9F6Xxmvp3F7XVY2zJ/7IgDsiOGyldq500pL9BFalwK0J4
-         ZK7A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=Byz7rsR0K5y30S2TSjEmmlIlr4XLpAFozkFL1rCflRw=;
-        b=TQCNDIxnSbxtNuRsyZs8c/UuaeMFapZ+f7MC6rVI339YnEg7s5rVEwIlDPN3PpTQeU
-         HCSAoW/kdDjz8xGCMFvOM5tMPIygTWF3cR4EvRzYHdQlPEbNDZFQnvUBEjLLiNBTGb1K
-         L4yxz0mi0Xf8XSuN+xbh7inEGwYW5DcvjIaZW81zfm2gWigOC7FhW9Ryo28DOuMOWIyr
-         ixAcRubPFAgGXghnqy5luQUHtbDTr2n0BeSPFf+t3ZzK1JLPhbpZiW935AETGD+lmgUa
-         NuYxc7r5k87vLraN6mE30/Guc0f/ZrqUoe7zDkaWxU82FFHo/4I0iCbFQTav3YgpHxKW
-         rdQA==
-X-Gm-Message-State: ANhLgQ22t+RhOLWA3ZXSio2i1zUzBY2W+XMPpty7rjLfJCPr976R2YQ1
-        ZIDrZOysKVN7LFEfXEckQ9b0YA==
-X-Google-Smtp-Source: ADFU+vtw54wAS1qDX7LbsXQYiAGfMxqamOmac/sOltigQ5m2tsYbZkC0yD5dkp7smCjYVtX+dUkmKw==
-X-Received: by 2002:a1c:b789:: with SMTP id h131mr3020937wmf.141.1585138884181;
-        Wed, 25 Mar 2020 05:21:24 -0700 (PDT)
-Received: from srini-hackbox.lan (cpc89974-aztw32-2-0-cust43.18-1.cable.virginm.net. [86.30.250.44])
-        by smtp.gmail.com with ESMTPSA id n1sm33620159wrj.77.2020.03.25.05.21.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Mar 2020 05:21:23 -0700 (PDT)
-From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-To:     gregkh@linuxfoundation.org
-Cc:     linux-kernel@vger.kernel.org,
-        nicholas.johnson-opensource@outlook.com.au,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Subject: [PATCH v3 2/2] nvmem: core: use is_bin_visible for permissions
-Date:   Wed, 25 Mar 2020 12:21:16 +0000
-Message-Id: <20200325122116.15096-3-srinivas.kandagatla@linaro.org>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20200325122116.15096-1-srinivas.kandagatla@linaro.org>
-References: <20200325122116.15096-1-srinivas.kandagatla@linaro.org>
+        id S1727538AbgCYMVx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Mar 2020 08:21:53 -0400
+Received: from mail-eopbgr60044.outbound.protection.outlook.com ([40.107.6.44]:5750
+        "EHLO EUR04-DB3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727046AbgCYMVx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Mar 2020 08:21:53 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=JOqCEksFhCxOhafqg8tvgo+ZGNzFM+EsRlBZd3c8Y09VPCIMSyoXxG/XHgBHSFpQQ5Zo2mWlm8ti1FbOQSwjiNo5+d8Mp/49bOcdYla8/FlN9loRwrnMwHsBwyrAQR9n5OqBTz45yUkDVG29vTnipjrlMz4f5FWaG6caKYz27vRfXJ7gRNFd09k29iwrB0ZN5VVtmsorgUAGEnztQrS42myi4xKQtMUbvQ7+JSjvKxZPlFRxGmNZoWBzl8Oit4zY1XCkyVai7OyMnl2BOhi3eKEY/1kCJzIKEDf8IE8UEldoHrp34Teu7zhfsWObSO8/5/WdJQRo5bKBxrzHDdyE5A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=B8Yl7WR3MoOPQIIqZfLHo2mMB0b/TWBvsp1m8XtOysg=;
+ b=SAfCEpxuhzUPTVfflTFh/C89oXzB+3/Y+/LFtOg+WWAfB+NhqhVWUUk0itRng40ggn0vGYB2Wg4kUYLc3Xb+LZeWy80z9KFiK3meILJ09vjJ/BMEW3OTaSxENc+nOE3XQ0PqYgS0M8Z+jNAkgB1PomliFIqIgtIpQ5KJOgpieuQ9QudvQTDlf6ugaUaotPsbB5uEPLLmE1vpZFvta6leLNZkIvelAKsfTSxTvVtj4lj2fYm30b1ZbPzRA2wAGIFw8TwL7R0uEl0/+Sg9u0qeg5FKH86i1zm0HrIqXTtFa8x6ZAIghy3IRqlGLDOM/kHjgA1jd+hfnWD0IHlwbXLRAQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=B8Yl7WR3MoOPQIIqZfLHo2mMB0b/TWBvsp1m8XtOysg=;
+ b=fLTCTl7v7xCixNt+xdwZOWBQvNOWcDzTmHD5Ur1eQgkp22PXrC3W5RB+vasY1g/V7zCaeSdVLbxzfnXSCcP9qAPY9AoNB0q8olXnzq+wCOPFsC3Fs/tPAO2Q+5X5oouBvKwNEVgQ33s7pKx8HAGXAOSE1R9tfuHH1R9GafZN8h0=
+Received: from VI1PR04MB6941.eurprd04.prod.outlook.com (52.133.244.87) by
+ VI1PR04MB5344.eurprd04.prod.outlook.com (52.134.123.159) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2835.20; Wed, 25 Mar 2020 12:21:50 +0000
+Received: from VI1PR04MB6941.eurprd04.prod.outlook.com
+ ([fe80::289c:fdf8:faf0:3200]) by VI1PR04MB6941.eurprd04.prod.outlook.com
+ ([fe80::289c:fdf8:faf0:3200%2]) with mapi id 15.20.2835.023; Wed, 25 Mar 2020
+ 12:21:50 +0000
+From:   Leonard Crestez <leonard.crestez@nxp.com>
+To:     Michael Walle <michael@walle.cc>, Andy Duan <fugang.duan@nxp.com>
+CC:     "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Jiri Slaby <jslaby@suse.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        dl-linux-imx <linux-imx@nxp.com>
+Subject: Re: [RFC PATCH 3/3] tty: serial: fsl_lpuart: fix possible console
+ deadlock
+Thread-Topic: [RFC PATCH 3/3] tty: serial: fsl_lpuart: fix possible console
+ deadlock
+Thread-Index: AQHWAgzKEoI3mdcAQEisgh3SMoTgrg==
+Date:   Wed, 25 Mar 2020 12:21:49 +0000
+Message-ID: <VI1PR04MB6941AD02204DF50B8D24D23AEECE0@VI1PR04MB6941.eurprd04.prod.outlook.com>
+References: <VI1PR04MB69413E158203E33D42E3B3B3EEF10@VI1PR04MB6941.eurprd04.prod.outlook.com>
+ <20200324184758.8204-1-michael@walle.cc>
+ <20200324184758.8204-3-michael@walle.cc>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=leonard.crestez@nxp.com; 
+x-originating-ip: [92.121.36.197]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: 90c51c9d-a5e3-4d69-21c0-08d7d0b7183e
+x-ms-traffictypediagnostic: VI1PR04MB5344:|VI1PR04MB5344:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <VI1PR04MB534486C09AB6A2F43BE906A1EECE0@VI1PR04MB5344.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:4941;
+x-forefront-prvs: 0353563E2B
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(136003)(366004)(376002)(396003)(346002)(39860400002)(2906002)(5660300002)(8676002)(81156014)(8936002)(81166006)(66946007)(52536014)(71200400001)(91956017)(76116006)(86362001)(66556008)(66476007)(33656002)(64756008)(66446008)(478600001)(4326008)(44832011)(186003)(6636002)(7696005)(55016002)(9686003)(26005)(53546011)(6506007)(316002)(54906003)(110136005);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB5344;H:VI1PR04MB6941.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: O01gT4VoW6J0+5DAtu88Qlp6boJR2W1/+26cHoxKortFF8CXfphCbRyG44yEUs5OHCmH42fBlX6oBH3eEREbLlG71NL0ua3B+QsEr4sqRJRT2sOpFm6+VI36vre/4zJlllMMhxq5R8GMflfXlD+K55zdwi+9nR3IKHwElqVTe7PkxF1w1Bqzz/sDbGVtBzV0Q6jRrtpNlNPaI8hkLEG2IDIxM70BJbQxN37LskkasDd1VhnsbGwRXQny7ahlSXv+fuLSvVs88rdG6IN08j4FQm8r/NRQUcXqkdC8rMNQ+kpJMeo/iS3UWw+xhyyygWZfHAHkx52RMhR7Kj2zLwsh8QjsbU0vbHzdYfU2ehVKAA1cDHsAQe2BWeR4onh2KQVMEYTKvVW07i84//QpKT8WZvfMuW0t4mp+VnkD0ahRwCNZ9rp0yfBamJRxcPnZIoPL
+x-ms-exchange-antispam-messagedata: Lqj8SZzGp5SA3MeKYPdi44TnPqxXe4seyui80iyi0l0cEcMzUn1RsMDk/kwH28aPrK1KKz/74VZ9n1Orgc2hGy0iE/c1vhdUnvDp+MGTant/J1A9WaLGVghE22MY98e0iKuFJR2W06AnkKW+Uq+/gw==
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 90c51c9d-a5e3-4d69-21c0-08d7d0b7183e
+X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Mar 2020 12:21:49.8789
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: agI5BRr8Q/q1NLgXX3LxOphIBMCa3NpoFzlWJafFEGpRpvdM2bVvaFfXPvE+6KBjcXPJvl4VrnwF7Sf8I7MoBw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB5344
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-By using is_bin_visible callback to set permissions will remove a
-large list of attribute groups. These group permissions can be
-dynamically derived in the callback.
-
-Also add checks for read/write callbacks and set permissions accordingly.
-
-As part of this cleanup it does not make sense to have a separate
-nvmem-sysfs.c and nvmem.h file anymore, so move all the relevant
-data structures and functions to core.c
-
-Suggested-by: Greg KH <gregkh@linuxfoundation.org>
-Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
----
-Changes since v2:
- - Remove nvmem_sysfs_get_groups()
- - remove nvmem-sysfs.c and nvmem.h and move all relevant code to core.c
-
- drivers/nvmem/Makefile      |   3 -
- drivers/nvmem/core.c        | 274 +++++++++++++++++++++++++++++++++++-
- drivers/nvmem/nvmem-sysfs.c | 269 -----------------------------------
- drivers/nvmem/nvmem.h       |  65 ---------
- 4 files changed, 272 insertions(+), 339 deletions(-)
- delete mode 100644 drivers/nvmem/nvmem-sysfs.c
- delete mode 100644 drivers/nvmem/nvmem.h
-
-diff --git a/drivers/nvmem/Makefile b/drivers/nvmem/Makefile
-index 65a268d17807..a7c377218341 100644
---- a/drivers/nvmem/Makefile
-+++ b/drivers/nvmem/Makefile
-@@ -6,9 +6,6 @@
- obj-$(CONFIG_NVMEM)		+= nvmem_core.o
- nvmem_core-y			:= core.o
- 
--obj-$(CONFIG_NVMEM_SYSFS)	+= nvmem_sysfs.o
--nvmem_sysfs-y			:= nvmem-sysfs.o
--
- # Devices
- obj-$(CONFIG_NVMEM_BCM_OCOTP)	+= nvmem-bcm-ocotp.o
- nvmem-bcm-ocotp-y		:= bcm-ocotp.o
-diff --git a/drivers/nvmem/core.c b/drivers/nvmem/core.c
-index 7d28e1cca4e0..05c6ae4b0b97 100644
---- a/drivers/nvmem/core.c
-+++ b/drivers/nvmem/core.c
-@@ -18,7 +18,31 @@
- #include <linux/gpio/consumer.h>
- #include <linux/of.h>
- #include <linux/slab.h>
--#include "nvmem.h"
-+
-+struct nvmem_device {
-+	struct module		*owner;
-+	struct device		dev;
-+	int			stride;
-+	int			word_size;
-+	int			id;
-+	struct kref		refcnt;
-+	size_t			size;
-+	bool			read_only;
-+	bool			root_only;
-+	int			flags;
-+	enum nvmem_type		type;
-+	struct bin_attribute	eeprom;
-+	struct device		*base_dev;
-+	struct list_head	cells;
-+	nvmem_reg_read_t	reg_read;
-+	nvmem_reg_write_t	reg_write;
-+	struct gpio_desc	*wp_gpio;
-+	void *priv;
-+};
-+
-+#define to_nvmem_device(d) container_of(d, struct nvmem_device, dev)
-+
-+#define FLAG_COMPAT		BIT(0)
- 
- struct nvmem_cell {
- 	const char		*name;
-@@ -42,6 +66,250 @@ static LIST_HEAD(nvmem_lookup_list);
- 
- static BLOCKING_NOTIFIER_HEAD(nvmem_notifier);
- 
-+#ifdef CONFIG_NVMEM_SYSFS
-+static const char * const nvmem_type_str[] = {
-+	[NVMEM_TYPE_UNKNOWN] = "Unknown",
-+	[NVMEM_TYPE_EEPROM] = "EEPROM",
-+	[NVMEM_TYPE_OTP] = "OTP",
-+	[NVMEM_TYPE_BATTERY_BACKED] = "Battery backed",
-+};
-+
-+#ifdef CONFIG_DEBUG_LOCK_ALLOC
-+static struct lock_class_key eeprom_lock_key;
-+#endif
-+
-+static ssize_t type_show(struct device *dev,
-+			 struct device_attribute *attr, char *buf)
-+{
-+	struct nvmem_device *nvmem = to_nvmem_device(dev);
-+
-+	return sprintf(buf, "%s\n", nvmem_type_str[nvmem->type]);
-+}
-+
-+static DEVICE_ATTR_RO(type);
-+
-+static struct attribute *nvmem_attrs[] = {
-+	&dev_attr_type.attr,
-+	NULL,
-+};
-+
-+static ssize_t bin_attr_nvmem_read(struct file *filp, struct kobject *kobj,
-+				   struct bin_attribute *attr, char *buf,
-+				   loff_t pos, size_t count)
-+{
-+	struct device *dev;
-+	struct nvmem_device *nvmem;
-+	int rc;
-+
-+	if (attr->private)
-+		dev = attr->private;
-+	else
-+		dev = container_of(kobj, struct device, kobj);
-+	nvmem = to_nvmem_device(dev);
-+
-+	/* Stop the user from reading */
-+	if (pos >= nvmem->size)
-+		return 0;
-+
-+	if (count < nvmem->word_size)
-+		return -EINVAL;
-+
-+	if (pos + count > nvmem->size)
-+		count = nvmem->size - pos;
-+
-+	count = round_down(count, nvmem->word_size);
-+
-+	if (!nvmem->reg_read)
-+		return -EPERM;
-+
-+	rc = nvmem->reg_read(nvmem->priv, pos, buf, count);
-+
-+	if (rc)
-+		return rc;
-+
-+	return count;
-+}
-+
-+static ssize_t bin_attr_nvmem_write(struct file *filp, struct kobject *kobj,
-+				    struct bin_attribute *attr, char *buf,
-+				    loff_t pos, size_t count)
-+{
-+	struct device *dev;
-+	struct nvmem_device *nvmem;
-+	int rc;
-+
-+	if (attr->private)
-+		dev = attr->private;
-+	else
-+		dev = container_of(kobj, struct device, kobj);
-+	nvmem = to_nvmem_device(dev);
-+
-+	/* Stop the user from writing */
-+	if (pos >= nvmem->size)
-+		return -EFBIG;
-+
-+	if (count < nvmem->word_size)
-+		return -EINVAL;
-+
-+	if (pos + count > nvmem->size)
-+		count = nvmem->size - pos;
-+
-+	count = round_down(count, nvmem->word_size);
-+
-+	if (!nvmem->reg_write)
-+		return -EPERM;
-+
-+	rc = nvmem->reg_write(nvmem->priv, pos, buf, count);
-+
-+	if (rc)
-+		return rc;
-+
-+	return count;
-+}
-+
-+static umode_t nvmem_bin_attr_is_visible(struct kobject *kobj,
-+					 struct bin_attribute *attr, int i)
-+{
-+	struct device *dev = container_of(kobj, struct device, kobj);
-+	struct nvmem_device *nvmem = to_nvmem_device(dev);
-+	umode_t mode = 0400;
-+
-+	if (!nvmem->root_only)
-+		mode |= 0044;
-+
-+	if (!nvmem->read_only)
-+		mode |= 0200;
-+
-+	if (!nvmem->reg_write)
-+		mode &= ~0200;
-+
-+	if (!nvmem->reg_read)
-+		mode &= ~0444;
-+
-+	return mode;
-+}
-+
-+/* default read/write permissions */
-+static struct bin_attribute bin_attr_rw_nvmem = {
-+	.attr	= {
-+		.name	= "nvmem",
-+		.mode	= 0644,
-+	},
-+	.read	= bin_attr_nvmem_read,
-+	.write	= bin_attr_nvmem_write,
-+};
-+
-+static struct bin_attribute *nvmem_bin_attributes[] = {
-+	&bin_attr_rw_nvmem,
-+	NULL,
-+};
-+
-+static const struct attribute_group nvmem_bin_group = {
-+	.bin_attrs	= nvmem_bin_attributes,
-+	.attrs		= nvmem_attrs,
-+	.is_bin_visible = nvmem_bin_attr_is_visible,
-+};
-+
-+static const struct attribute_group *nvmem_dev_groups[] = {
-+	&nvmem_bin_group,
-+	NULL,
-+};
-+
-+/* read only permission */
-+static struct bin_attribute bin_attr_ro_nvmem = {
-+	.attr	= {
-+		.name	= "nvmem",
-+		.mode	= 0444,
-+	},
-+	.read	= bin_attr_nvmem_read,
-+};
-+
-+/* default read/write permissions, root only */
-+static struct bin_attribute bin_attr_rw_root_nvmem = {
-+	.attr	= {
-+		.name	= "nvmem",
-+		.mode	= 0600,
-+	},
-+	.read	= bin_attr_nvmem_read,
-+	.write	= bin_attr_nvmem_write,
-+};
-+
-+/* read only permission, root only */
-+static struct bin_attribute bin_attr_ro_root_nvmem = {
-+	.attr	= {
-+		.name	= "nvmem",
-+		.mode	= 0400,
-+	},
-+	.read	= bin_attr_nvmem_read,
-+};
-+
-+/*
-+ * nvmem_setup_compat() - Create an additional binary entry in
-+ * drivers sys directory, to be backwards compatible with the older
-+ * drivers/misc/eeprom drivers.
-+ */
-+static int nvmem_sysfs_setup_compat(struct nvmem_device *nvmem,
-+				    const struct nvmem_config *config)
-+{
-+	int rval;
-+
-+	if (!config->compat)
-+		return 0;
-+
-+	if (!config->base_dev)
-+		return -EINVAL;
-+
-+	if (nvmem->read_only) {
-+		if (config->root_only)
-+			nvmem->eeprom = bin_attr_ro_root_nvmem;
-+		else
-+			nvmem->eeprom = bin_attr_ro_nvmem;
-+	} else {
-+		if (config->root_only)
-+			nvmem->eeprom = bin_attr_rw_root_nvmem;
-+		else
-+			nvmem->eeprom = bin_attr_rw_nvmem;
-+	}
-+	nvmem->eeprom.attr.name = "eeprom";
-+	nvmem->eeprom.size = nvmem->size;
-+#ifdef CONFIG_DEBUG_LOCK_ALLOC
-+	nvmem->eeprom.attr.key = &eeprom_lock_key;
-+#endif
-+	nvmem->eeprom.private = &nvmem->dev;
-+	nvmem->base_dev = config->base_dev;
-+
-+	rval = device_create_bin_file(nvmem->base_dev, &nvmem->eeprom);
-+	if (rval) {
-+		dev_err(&nvmem->dev,
-+			"Failed to create eeprom binary file %d\n", rval);
-+		return rval;
-+	}
-+
-+	nvmem->flags |= FLAG_COMPAT;
-+
-+	return 0;
-+}
-+
-+static void nvmem_sysfs_remove_compat(struct nvmem_device *nvmem,
-+			      const struct nvmem_config *config)
-+{
-+	if (config->compat)
-+		device_remove_bin_file(nvmem->base_dev, &nvmem->eeprom);
-+}
-+
-+#else /* CONFIG_NVMEM_SYSFS */
-+
-+static int nvmem_sysfs_setup_compat(struct nvmem_device *nvmem,
-+				    const struct nvmem_config *config)
-+{
-+	return -ENOSYS;
-+}
-+static void nvmem_sysfs_remove_compat(struct nvmem_device *nvmem,
-+				      const struct nvmem_config *config)
-+{
-+}
-+
-+#endif /* CONFIG_NVMEM_SYSFS */
- 
- static int nvmem_reg_read(struct nvmem_device *nvmem, unsigned int offset,
- 			  void *val, size_t bytes)
-@@ -396,7 +664,9 @@ struct nvmem_device *nvmem_register(const struct nvmem_config *config)
- 	nvmem->read_only = device_property_present(config->dev, "read-only") ||
- 			   config->read_only || !nvmem->reg_write;
- 
--	nvmem->dev.groups = nvmem_sysfs_get_groups(nvmem, config);
-+#ifdef CONFIG_NVMEM_SYSFS
-+	nvmem->dev.groups = nvmem_dev_groups;
-+#endif
- 
- 	dev_dbg(&nvmem->dev, "Registering nvmem device %s\n", config->name);
- 
-diff --git a/drivers/nvmem/nvmem-sysfs.c b/drivers/nvmem/nvmem-sysfs.c
-deleted file mode 100644
-index 8759c4470012..000000000000
---- a/drivers/nvmem/nvmem-sysfs.c
-+++ /dev/null
-@@ -1,269 +0,0 @@
--// SPDX-License-Identifier: GPL-2.0
--/*
-- * Copyright (c) 2019, Linaro Limited
-- */
--#include "nvmem.h"
--
--static const char * const nvmem_type_str[] = {
--	[NVMEM_TYPE_UNKNOWN] = "Unknown",
--	[NVMEM_TYPE_EEPROM] = "EEPROM",
--	[NVMEM_TYPE_OTP] = "OTP",
--	[NVMEM_TYPE_BATTERY_BACKED] = "Battery backed",
--};
--
--#ifdef CONFIG_DEBUG_LOCK_ALLOC
--static struct lock_class_key eeprom_lock_key;
--#endif
--
--static ssize_t type_show(struct device *dev,
--			 struct device_attribute *attr, char *buf)
--{
--	struct nvmem_device *nvmem = to_nvmem_device(dev);
--
--	return sprintf(buf, "%s\n", nvmem_type_str[nvmem->type]);
--}
--
--static DEVICE_ATTR_RO(type);
--
--static struct attribute *nvmem_attrs[] = {
--	&dev_attr_type.attr,
--	NULL,
--};
--
--static ssize_t bin_attr_nvmem_read(struct file *filp, struct kobject *kobj,
--				    struct bin_attribute *attr,
--				    char *buf, loff_t pos, size_t count)
--{
--	struct device *dev;
--	struct nvmem_device *nvmem;
--	int rc;
--
--	if (attr->private)
--		dev = attr->private;
--	else
--		dev = container_of(kobj, struct device, kobj);
--	nvmem = to_nvmem_device(dev);
--
--	/* Stop the user from reading */
--	if (pos >= nvmem->size)
--		return 0;
--
--	if (count < nvmem->word_size)
--		return -EINVAL;
--
--	if (pos + count > nvmem->size)
--		count = nvmem->size - pos;
--
--	count = round_down(count, nvmem->word_size);
--
--	if (!nvmem->reg_read)
--		return -EPERM;
--
--	rc = nvmem->reg_read(nvmem->priv, pos, buf, count);
--
--	if (rc)
--		return rc;
--
--	return count;
--}
--
--static ssize_t bin_attr_nvmem_write(struct file *filp, struct kobject *kobj,
--				     struct bin_attribute *attr,
--				     char *buf, loff_t pos, size_t count)
--{
--	struct device *dev;
--	struct nvmem_device *nvmem;
--	int rc;
--
--	if (attr->private)
--		dev = attr->private;
--	else
--		dev = container_of(kobj, struct device, kobj);
--	nvmem = to_nvmem_device(dev);
--
--	/* Stop the user from writing */
--	if (pos >= nvmem->size)
--		return -EFBIG;
--
--	if (count < nvmem->word_size)
--		return -EINVAL;
--
--	if (pos + count > nvmem->size)
--		count = nvmem->size - pos;
--
--	count = round_down(count, nvmem->word_size);
--
--	if (!nvmem->reg_write)
--		return -EPERM;
--
--	rc = nvmem->reg_write(nvmem->priv, pos, buf, count);
--
--	if (rc)
--		return rc;
--
--	return count;
--}
--
--/* default read/write permissions */
--static struct bin_attribute bin_attr_rw_nvmem = {
--	.attr	= {
--		.name	= "nvmem",
--		.mode	= 0644,
--	},
--	.read	= bin_attr_nvmem_read,
--	.write	= bin_attr_nvmem_write,
--};
--
--static struct bin_attribute *nvmem_bin_rw_attributes[] = {
--	&bin_attr_rw_nvmem,
--	NULL,
--};
--
--static const struct attribute_group nvmem_bin_rw_group = {
--	.bin_attrs	= nvmem_bin_rw_attributes,
--	.attrs		= nvmem_attrs,
--};
--
--static const struct attribute_group *nvmem_rw_dev_groups[] = {
--	&nvmem_bin_rw_group,
--	NULL,
--};
--
--/* read only permission */
--static struct bin_attribute bin_attr_ro_nvmem = {
--	.attr	= {
--		.name	= "nvmem",
--		.mode	= 0444,
--	},
--	.read	= bin_attr_nvmem_read,
--};
--
--static struct bin_attribute *nvmem_bin_ro_attributes[] = {
--	&bin_attr_ro_nvmem,
--	NULL,
--};
--
--static const struct attribute_group nvmem_bin_ro_group = {
--	.bin_attrs	= nvmem_bin_ro_attributes,
--	.attrs		= nvmem_attrs,
--};
--
--static const struct attribute_group *nvmem_ro_dev_groups[] = {
--	&nvmem_bin_ro_group,
--	NULL,
--};
--
--/* default read/write permissions, root only */
--static struct bin_attribute bin_attr_rw_root_nvmem = {
--	.attr	= {
--		.name	= "nvmem",
--		.mode	= 0600,
--	},
--	.read	= bin_attr_nvmem_read,
--	.write	= bin_attr_nvmem_write,
--};
--
--static struct bin_attribute *nvmem_bin_rw_root_attributes[] = {
--	&bin_attr_rw_root_nvmem,
--	NULL,
--};
--
--static const struct attribute_group nvmem_bin_rw_root_group = {
--	.bin_attrs	= nvmem_bin_rw_root_attributes,
--	.attrs		= nvmem_attrs,
--};
--
--static const struct attribute_group *nvmem_rw_root_dev_groups[] = {
--	&nvmem_bin_rw_root_group,
--	NULL,
--};
--
--/* read only permission, root only */
--static struct bin_attribute bin_attr_ro_root_nvmem = {
--	.attr	= {
--		.name	= "nvmem",
--		.mode	= 0400,
--	},
--	.read	= bin_attr_nvmem_read,
--};
--
--static struct bin_attribute *nvmem_bin_ro_root_attributes[] = {
--	&bin_attr_ro_root_nvmem,
--	NULL,
--};
--
--static const struct attribute_group nvmem_bin_ro_root_group = {
--	.bin_attrs	= nvmem_bin_ro_root_attributes,
--	.attrs		= nvmem_attrs,
--};
--
--static const struct attribute_group *nvmem_ro_root_dev_groups[] = {
--	&nvmem_bin_ro_root_group,
--	NULL,
--};
--
--const struct attribute_group **nvmem_sysfs_get_groups(
--					struct nvmem_device *nvmem,
--					const struct nvmem_config *config)
--{
--	if (config->root_only)
--		return nvmem->read_only ?
--			nvmem_ro_root_dev_groups :
--			nvmem_rw_root_dev_groups;
--
--	return nvmem->read_only ? nvmem_ro_dev_groups : nvmem_rw_dev_groups;
--}
--
--/*
-- * nvmem_setup_compat() - Create an additional binary entry in
-- * drivers sys directory, to be backwards compatible with the older
-- * drivers/misc/eeprom drivers.
-- */
--int nvmem_sysfs_setup_compat(struct nvmem_device *nvmem,
--			      const struct nvmem_config *config)
--{
--	int rval;
--
--	if (!config->compat)
--		return 0;
--
--	if (!config->base_dev)
--		return -EINVAL;
--
--	if (nvmem->read_only) {
--		if (config->root_only)
--			nvmem->eeprom = bin_attr_ro_root_nvmem;
--		else
--			nvmem->eeprom = bin_attr_ro_nvmem;
--	} else {
--		if (config->root_only)
--			nvmem->eeprom = bin_attr_rw_root_nvmem;
--		else
--			nvmem->eeprom = bin_attr_rw_nvmem;
--	}
--	nvmem->eeprom.attr.name = "eeprom";
--	nvmem->eeprom.size = nvmem->size;
--#ifdef CONFIG_DEBUG_LOCK_ALLOC
--	nvmem->eeprom.attr.key = &eeprom_lock_key;
--#endif
--	nvmem->eeprom.private = &nvmem->dev;
--	nvmem->base_dev = config->base_dev;
--
--	rval = device_create_bin_file(nvmem->base_dev, &nvmem->eeprom);
--	if (rval) {
--		dev_err(&nvmem->dev,
--			"Failed to create eeprom binary file %d\n", rval);
--		return rval;
--	}
--
--	nvmem->flags |= FLAG_COMPAT;
--
--	return 0;
--}
--
--void nvmem_sysfs_remove_compat(struct nvmem_device *nvmem,
--			      const struct nvmem_config *config)
--{
--	if (config->compat)
--		device_remove_bin_file(nvmem->base_dev, &nvmem->eeprom);
--}
-diff --git a/drivers/nvmem/nvmem.h b/drivers/nvmem/nvmem.h
-deleted file mode 100644
-index 16c0d3ad6679..000000000000
---- a/drivers/nvmem/nvmem.h
-+++ /dev/null
-@@ -1,65 +0,0 @@
--/* SPDX-License-Identifier: GPL-2.0 */
--
--#ifndef _DRIVERS_NVMEM_H
--#define _DRIVERS_NVMEM_H
--
--#include <linux/device.h>
--#include <linux/fs.h>
--#include <linux/kref.h>
--#include <linux/list.h>
--#include <linux/nvmem-consumer.h>
--#include <linux/nvmem-provider.h>
--#include <linux/gpio/consumer.h>
--
--struct nvmem_device {
--	struct module		*owner;
--	struct device		dev;
--	int			stride;
--	int			word_size;
--	int			id;
--	struct kref		refcnt;
--	size_t			size;
--	bool			read_only;
--	bool			root_only;
--	int			flags;
--	enum nvmem_type		type;
--	struct bin_attribute	eeprom;
--	struct device		*base_dev;
--	struct list_head	cells;
--	nvmem_reg_read_t	reg_read;
--	nvmem_reg_write_t	reg_write;
--	struct gpio_desc	*wp_gpio;
--	void *priv;
--};
--
--#define to_nvmem_device(d) container_of(d, struct nvmem_device, dev)
--#define FLAG_COMPAT		BIT(0)
--
--#ifdef CONFIG_NVMEM_SYSFS
--const struct attribute_group **nvmem_sysfs_get_groups(
--					struct nvmem_device *nvmem,
--					const struct nvmem_config *config);
--int nvmem_sysfs_setup_compat(struct nvmem_device *nvmem,
--			      const struct nvmem_config *config);
--void nvmem_sysfs_remove_compat(struct nvmem_device *nvmem,
--			      const struct nvmem_config *config);
--#else
--static inline const struct attribute_group **nvmem_sysfs_get_groups(
--					struct nvmem_device *nvmem,
--					const struct nvmem_config *config)
--{
--	return NULL;
--}
--
--static inline int nvmem_sysfs_setup_compat(struct nvmem_device *nvmem,
--				      const struct nvmem_config *config)
--{
--	return -ENOSYS;
--}
--static inline void nvmem_sysfs_remove_compat(struct nvmem_device *nvmem,
--			      const struct nvmem_config *config)
--{
--}
--#endif /* CONFIG_NVMEM_SYSFS */
--
--#endif /* _DRIVERS_NVMEM_H */
--- 
-2.21.0
-
+On 2020-03-24 8:48 PM, Michael Walle wrote:=0A=
+> If the kernel console output is on this console any=0A=
+> dev_{err,warn,info}() may result in a deadlock if the sport->port.lock=0A=
+> spinlock is already held. This is because the _console_write() try to=0A=
+> aquire this lock, too. Remove any error messages where the spinlock is=0A=
+> taken or print after the lock is released.=0A=
+> =0A=
+> Reported-by: Leonard Crestez <leonard.crestez@nxp.com>=0A=
+> Signed-off-by: Michael Walle <michael@walle.cc>=0A=
+=0A=
+It seems that this was an issue even before commit 159381df1442 ("tty: =0A=
+serial: fsl_lpuart: fix DMA operation when using IOMMU") but these error =
+=0A=
+prints never triggered.=0A=
+=0A=
+Would it be possible to move all the dma alloc/config/prep outside the =0A=
+serial port lock? As it stands this still calls into dmaengine coode and =
+=0A=
+that might decide to print as well.=0A=
+=0A=
+Really I don't think the lock needs to protect more than bits like =0A=
+TDMAE/RDMAE.=0A=
+=0A=
+BTW: You should add more people in CC for reviews, for example =0A=
+linux-imx@nxp.com is checked by a lot of people.=0A=
+=0A=
+> ---=0A=
+>   drivers/tty/serial/fsl_lpuart.c | 35 +++++++--------------------------=
+=0A=
+>   1 file changed, 7 insertions(+), 28 deletions(-)=0A=
+> =0A=
+> diff --git a/drivers/tty/serial/fsl_lpuart.c b/drivers/tty/serial/fsl_lpu=
+art.c=0A=
+> index bbba298b68a4..0910308b38b1 100644=0A=
+> --- a/drivers/tty/serial/fsl_lpuart.c=0A=
+> +++ b/drivers/tty/serial/fsl_lpuart.c=0A=
+> @@ -420,7 +420,6 @@ static void lpuart_dma_tx(struct lpuart_port *sport)=
+=0A=
+>   {=0A=
+>   	struct circ_buf *xmit =3D &sport->port.state->xmit;=0A=
+>   	struct scatterlist *sgl =3D sport->tx_sgl;=0A=
+> -	struct device *dev =3D sport->port.dev;=0A=
+>   	struct dma_chan *chan =3D sport->dma_tx_chan;=0A=
+>   	int ret;=0A=
+>   =0A=
+> @@ -442,10 +441,8 @@ static void lpuart_dma_tx(struct lpuart_port *sport)=
+=0A=
+>   =0A=
+>   	ret =3D dma_map_sg(chan->device->dev, sgl, sport->dma_tx_nents,=0A=
+>   			 DMA_TO_DEVICE);=0A=
+> -	if (!ret) {=0A=
+> -		dev_err(dev, "DMA mapping error for TX.\n");=0A=
+> +	if (!ret)=0A=
+>   		return;=0A=
+> -	}=0A=
+>   =0A=
+>   	sport->dma_tx_desc =3D dmaengine_prep_slave_sg(chan, sgl,=0A=
+>   					ret, DMA_MEM_TO_DEV,=0A=
+> @@ -453,7 +450,6 @@ static void lpuart_dma_tx(struct lpuart_port *sport)=
+=0A=
+>   	if (!sport->dma_tx_desc) {=0A=
+>   		dma_unmap_sg(chan->device->dev, sgl, sport->dma_tx_nents,=0A=
+>   			      DMA_TO_DEVICE);=0A=
+> -		dev_err(dev, "Cannot prepare TX slave DMA!\n");=0A=
+>   		return;=0A=
+>   	}=0A=
+>   =0A=
+> @@ -520,21 +516,12 @@ static int lpuart_dma_tx_request(struct uart_port *=
+port)=0A=
+>   	struct lpuart_port *sport =3D container_of(port,=0A=
+>   					struct lpuart_port, port);=0A=
+>   	struct dma_slave_config dma_tx_sconfig =3D {};=0A=
+> -	int ret;=0A=
+>   =0A=
+>   	dma_tx_sconfig.dst_addr =3D lpuart_dma_datareg_addr(sport);=0A=
+>   	dma_tx_sconfig.dst_addr_width =3D DMA_SLAVE_BUSWIDTH_1_BYTE;=0A=
+>   	dma_tx_sconfig.dst_maxburst =3D 1;=0A=
+>   	dma_tx_sconfig.direction =3D DMA_MEM_TO_DEV;=0A=
+> -	ret =3D dmaengine_slave_config(sport->dma_tx_chan, &dma_tx_sconfig);=0A=
+> -=0A=
+> -	if (ret) {=0A=
+> -		dev_err(sport->port.dev,=0A=
+> -				"DMA slave config failed, err =3D %d\n", ret);=0A=
+> -		return ret;=0A=
+> -	}=0A=
+> -=0A=
+> -	return 0;=0A=
+> +	return dmaengine_slave_config(sport->dma_tx_chan, &dma_tx_sconfig);=0A=
+>   }=0A=
+>   =0A=
+>   static bool lpuart_is_32(struct lpuart_port *sport)=0A=
+> @@ -1074,8 +1061,8 @@ static void lpuart_copy_rx_to_tty(struct lpuart_por=
+t *sport)=0A=
+>   =0A=
+>   	dmastat =3D dmaengine_tx_status(chan, sport->dma_rx_cookie, &state);=
+=0A=
+>   	if (dmastat =3D=3D DMA_ERROR) {=0A=
+> -		dev_err(sport->port.dev, "Rx DMA transfer failed!\n");=0A=
+>   		spin_unlock_irqrestore(&sport->port.lock, flags);=0A=
+> +		dev_err(sport->port.dev, "Rx DMA transfer failed!\n");=0A=
+>   		return;=0A=
+>   	}=0A=
+>   =0A=
+> @@ -1179,23 +1166,17 @@ static inline int lpuart_start_rx_dma(struct lpua=
+rt_port *sport)=0A=
+>   	sg_init_one(&sport->rx_sgl, ring->buf, sport->rx_dma_rng_buf_len);=0A=
+>   	nent =3D dma_map_sg(chan->device->dev, &sport->rx_sgl, 1,=0A=
+>   			  DMA_FROM_DEVICE);=0A=
+> -=0A=
+> -	if (!nent) {=0A=
+> -		dev_err(sport->port.dev, "DMA Rx mapping error\n");=0A=
+> +	if (!nent)=0A=
+>   		return -EINVAL;=0A=
+> -	}=0A=
+>   =0A=
+>   	dma_rx_sconfig.src_addr =3D lpuart_dma_datareg_addr(sport);=0A=
+>   	dma_rx_sconfig.src_addr_width =3D DMA_SLAVE_BUSWIDTH_1_BYTE;=0A=
+>   	dma_rx_sconfig.src_maxburst =3D 1;=0A=
+>   	dma_rx_sconfig.direction =3D DMA_DEV_TO_MEM;=0A=
+> -	ret =3D dmaengine_slave_config(chan, &dma_rx_sconfig);=0A=
+>   =0A=
+> -	if (ret < 0) {=0A=
+> -		dev_err(sport->port.dev,=0A=
+> -				"DMA Rx slave config failed, err =3D %d\n", ret);=0A=
+> +	ret =3D dmaengine_slave_config(chan, &dma_rx_sconfig);=0A=
+> +	if (ret < 0)=0A=
+>   		return ret;=0A=
+> -	}=0A=
+>   =0A=
+>   	sport->dma_rx_desc =3D dmaengine_prep_dma_cyclic(chan,=0A=
+>   				 sg_dma_address(&sport->rx_sgl),=0A=
+> @@ -1203,10 +1184,8 @@ static inline int lpuart_start_rx_dma(struct lpuar=
+t_port *sport)=0A=
+>   				 sport->rx_sgl.length / 2,=0A=
+>   				 DMA_DEV_TO_MEM,=0A=
+>   				 DMA_PREP_INTERRUPT);=0A=
+> -	if (!sport->dma_rx_desc) {=0A=
+> -		dev_err(sport->port.dev, "Cannot prepare cyclic DMA\n");=0A=
+> +	if (!sport->dma_rx_desc)=0A=
+>   		return -EFAULT;=0A=
+> -	}=0A=
+>   =0A=
+>   	sport->dma_rx_desc->callback =3D lpuart_dma_rx_complete;=0A=
+>   	sport->dma_rx_desc->callback_param =3D sport;=0A=
+> =0A=
+=0A=
