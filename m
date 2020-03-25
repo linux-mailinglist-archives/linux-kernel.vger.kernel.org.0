@@ -2,126 +2,173 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E006C1923A4
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 10:06:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 47ADC1923A8
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 10:07:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727462AbgCYJGn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Mar 2020 05:06:43 -0400
-Received: from conssluserg-06.nifty.com ([210.131.2.91]:16700 "EHLO
-        conssluserg-06.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726276AbgCYJGm (ORCPT
+        id S1727473AbgCYJHK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Mar 2020 05:07:10 -0400
+Received: from ssl.serverraum.org ([176.9.125.105]:49625 "EHLO
+        ssl.serverraum.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725873AbgCYJHK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Mar 2020 05:06:42 -0400
-Received: from mail-ua1-f44.google.com (mail-ua1-f44.google.com [209.85.222.44]) (authenticated)
-        by conssluserg-06.nifty.com with ESMTP id 02P96ZbM027674;
-        Wed, 25 Mar 2020 18:06:36 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-06.nifty.com 02P96ZbM027674
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1585127196;
-        bh=jQcvOgKqTGSzHXwDHncWQg6w6pf0v6SEzzk1QrsBys8=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=CMKxaS/UhOBp5QlmO8Ozw/yJ+COqMcOMUEkDDeVpiRe3S+QsviZwQGNCob05lcdoH
-         U2JjEB5E9LvP6ep/wAU7PV0nq5l2CoiociIscD4feY9qrLxDV+jso8D31spvbpHkhs
-         9W2OQVx5qOCF/kEJOa/AEm0dAaFwj+ZOMS2XsTBmhZcz7OxmNJ7E/v4K4P1TR2EumA
-         g23ng5yhxKv40xT3wZwpYQ1Xi3X8qTHXO1MvenNEXtPYuCg8Kg4B4vyq0vzg1ChV89
-         IoJbSOLCngwQ8nd1s/jJf/YbPB1OKOvzPv35HQNumb9mwwAi4H3uhdqo0X2mdfHk2y
-         LBROyPOCN1Cdg==
-X-Nifty-SrcIP: [209.85.222.44]
-Received: by mail-ua1-f44.google.com with SMTP id v24so473570uak.0;
-        Wed, 25 Mar 2020 02:06:36 -0700 (PDT)
-X-Gm-Message-State: ANhLgQ3maYwOtLMk73jjJKqnVVnWwMGI0TAGIuMqZdx5KNWObcQMeylm
-        RgwIl6z8hzbJFCcJJvzd4xwUjUb95CUUC2P7bJw=
-X-Google-Smtp-Source: ADFU+vt/Lpfs/eZV6L7RPsd8+/+xb6x93eEITtXtqxGfFjCg699gz7SVs829mVoswfcp1CZNlUKl42nEbHZjhnywqQA=
-X-Received: by 2002:ab0:3485:: with SMTP id c5mr1479980uar.109.1585127195169;
- Wed, 25 Mar 2020 02:06:35 -0700 (PDT)
+        Wed, 25 Mar 2020 05:07:10 -0400
+Received: from apollo.fritz.box (unknown [IPv6:2a02:810c:c200:2e91:6257:18ff:fec4:ca34])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-384) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by ssl.serverraum.org (Postfix) with ESMTPSA id A613F231D9;
+        Wed, 25 Mar 2020 10:07:07 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=walle.cc; s=mail2016061301;
+        t=1585127228;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=IsTTS0WBXuzG7rVz9eYl2v2OdWYP4Urtsy+pv/WCNv4=;
+        b=mQ83xjso+xWAbE+9xXZuv8P/T65lEKPvtZzkCm5zsi9JSOZM/UN++lrgUFzohClh1gWanB
+        OqdX69Je8TUKqt6DiHGIy4zGr/MIjB9lPK8HlRQW41E+VbCE9Zc80fgbTJR40G18HSpvlg
+        6+7O4zx1TekzQiun3Nmb1cSasY13UgI=
+From:   Michael Walle <michael@walle.cc>
+To:     linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Jiri Slaby <jslaby@suse.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andy Duan <fugang.duan@nxp.com>,
+        Michael Walle <michael@walle.cc>,
+        Leonard Crestez <leonard.crestez@nxp.com>
+Subject: [PATCH v2 1/2] tty: serial: fsl_lpuart: move dma_request_chan()
+Date:   Wed, 25 Mar 2020 10:06:57 +0100
+Message-Id: <20200325090658.25967-1-michael@walle.cc>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-References: <20200324161539.7538-1-masahiroy@kernel.org> <CAMuHMdWPNFRhUVGb0J27MZg2CrWWm06N9OQjQsGLMZkNXJktAg@mail.gmail.com>
- <CAK7LNAQFbcfK=q4eYW_dQUqe-sqbjpxSpQBeCkp0Vr4P3HJc7A@mail.gmail.com> <CAMuHMdXeOUu_zxKHXnNoLwyExy1GTp6N5UP2Neqyc8M3w2B8KQ@mail.gmail.com>
-In-Reply-To: <CAMuHMdXeOUu_zxKHXnNoLwyExy1GTp6N5UP2Neqyc8M3w2B8KQ@mail.gmail.com>
-From:   Masahiro Yamada <masahiroy@kernel.org>
-Date:   Wed, 25 Mar 2020 18:05:58 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAST-ygeLAAneKRhr-uMdSW0V_V1s9AvN6VJSqfWfN4Otg@mail.gmail.com>
-Message-ID: <CAK7LNAST-ygeLAAneKRhr-uMdSW0V_V1s9AvN6VJSqfWfN4Otg@mail.gmail.com>
-Subject: Re: [PATCH 1/3] net: wan: wanxl: use $(CC68K) instead of $(AS68K) for
- rebuilding firmware
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     linux-kbuild <linux-kbuild@vger.kernel.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        netdev <netdev@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Spamd-Bar: ++++
+X-Spam-Level: ****
+X-Rspamd-Server: web
+X-Spam-Status: No, score=4.90
+X-Spam-Score: 4.90
+X-Rspamd-Queue-Id: A613F231D9
+X-Spamd-Result: default: False [4.90 / 15.00];
+         FROM_HAS_DN(0.00)[];
+         TO_DN_SOME(0.00)[];
+         R_MISSING_CHARSET(2.50)[];
+         TO_MATCH_ENVRCPT_ALL(0.00)[];
+         MIME_GOOD(-0.10)[text/plain];
+         NEURAL_SPAM(0.00)[0.154];
+         BROKEN_CONTENT_TYPE(1.50)[];
+         DKIM_SIGNED(0.00)[];
+         RCPT_COUNT_SEVEN(0.00)[7];
+         MID_CONTAINS_FROM(1.00)[];
+         RCVD_COUNT_ZERO(0.00)[0];
+         FROM_EQ_ENVFROM(0.00)[];
+         MIME_TRACE(0.00)[0:+];
+         ASN(0.00)[asn:31334, ipnet:2a02:810c:8000::/33, country:DE]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Geert,
+Move dma_request_chan() out of the atomic context. First this call
+should not be in the atomic context at all and second the
+dev_info_once() may cause a hang because because the console takes this
+spinlock, too.
 
-On Wed, Mar 25, 2020 at 4:53 PM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
->
-> Hi Yamada-san,
->
-> On Wed, Mar 25, 2020 at 4:50 AM Masahiro Yamada <masahiroy@kernel.org> wrote:
-> > On Wed, Mar 25, 2020 at 2:47 AM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
-> > > On Tue, Mar 24, 2020 at 5:17 PM Masahiro Yamada <masahiroy@kernel.org> wrote:
-> > > > As far as I understood from the Kconfig help text, this build rule is
-> > > > used to rebuild the driver firmware, which runs on the QUICC, m68k-based
-> > > > Motorola 68360.
-> > > >
-> > > > The firmware source, wanxlfw.S, is currently compiled by the combo of
-> > > > $(CPP) and $(AS68K). This is not what we usually do for compiling *.S
-> > > > files. In fact, this is the only user of $(AS) in the kernel build.
-> > > >
-> > > > Moreover, $(CPP) is not likely to be a m68k tool because wanxl.c is a
-> > > > PCI driver, but CONFIG_M68K does not select CONFIG_HAVE_PCI.
-> > > > Instead of combining $(CPP) and (AS) from different tool sets, using
-> > > > single $(CC68K) seems simpler, and saner.
-> > > >
-> > > > After this commit, the firmware rebuild will require cc68k instead of
-> > > > as68k. I do not know how many people care about this, though.
-> > > >
-> > > > I do not have cc68k/ld68k in hand, but I was able to build it by using
-> > > > the kernel.org m68k toolchain. [1]
-> > >
-> > > Would this work with a "standard" m68k-linux-gnu-gcc toolchain, like
-> > > provided by Debian/Ubuntu, too?
-> > >
-> >
-> > Yes, I did 'sudo apt install gcc-8-m68k-linux-gnu'
-> > It successfully compiled this firmware.
->
-> Thanks for checking!
->
-> > In my understanding, the difference is that
-> > the kernel.org ones lack libc,
-> > so cannot link userspace programs.
-> >
-> > They do not make much difference for this case.
->
-> Indeed.
->
-> So perhaps it makes sense to replace cc68k and ld68k in the Makefile by
-> m68k-linux-gnu-gcc and m68k-linux-gnu-ld, as these are easier to get hold
-> of on a modern system?
->
-> What do you think?
-> Thanks!
->
+Fixes: 159381df1442f ("tty: serial: fsl_lpuart: fix DMA operation when using IOMMU")
+Reported-by: Leonard Crestez <leonard.crestez@nxp.com>
+Signed-off-by: Michael Walle <michael@walle.cc>
+---
+changes since v1:
+ - instead of just moving the dev_info_once() out of the spinlock protected
+   section, move the whole dma_request_chan(). Thanks Andy!
 
+I've tested this on my board. Andy, Leonard, can you double check it? For
+all which are not aware, this deadlock happens only if you have the kernel
+console output on the lpuart, so if someone wants to test it, make sure you
+have something like console=ttyLP0,115200.
 
-If desired, I can do like this:
+ drivers/tty/serial/fsl_lpuart.c | 36 +++++++++++++++++++++------------
+ 1 file changed, 23 insertions(+), 13 deletions(-)
 
-
-ifeq ($(ARCH),m68k)
-  CC_M68K = $(CC)
-  LD_M68K = $(LD)
-else
-  CC_M68K = $(CROSS_COMPILE_M68K)gcc
-  LD_M68K = $(CROSS_COMPILE_M68K)ld
-endif
-
-
-
+diff --git a/drivers/tty/serial/fsl_lpuart.c b/drivers/tty/serial/fsl_lpuart.c
+index 9c6a018b1390..131018979b77 100644
+--- a/drivers/tty/serial/fsl_lpuart.c
++++ b/drivers/tty/serial/fsl_lpuart.c
+@@ -1510,20 +1510,33 @@ static void rx_dma_timer_init(struct lpuart_port *sport)
+ 	add_timer(&sport->lpuart_timer);
+ }
+ 
+-static void lpuart_tx_dma_startup(struct lpuart_port *sport)
++static void lpuart_request_dma(struct lpuart_port *sport)
+ {
+-	u32 uartbaud;
+-	int ret;
+-
+ 	sport->dma_tx_chan = dma_request_chan(sport->port.dev, "tx");
+ 	if (IS_ERR(sport->dma_tx_chan)) {
+ 		dev_info_once(sport->port.dev,
+ 			      "DMA tx channel request failed, operating without tx DMA (%ld)\n",
+ 			      PTR_ERR(sport->dma_tx_chan));
+ 		sport->dma_tx_chan = NULL;
+-		goto err;
+ 	}
+ 
++	sport->dma_rx_chan = dma_request_chan(sport->port.dev, "rx");
++	if (IS_ERR(sport->dma_rx_chan)) {
++		dev_info_once(sport->port.dev,
++			      "DMA rx channel request failed, operating without rx DMA (%ld)\n",
++			      PTR_ERR(sport->dma_rx_chan));
++		sport->dma_rx_chan = NULL;
++	}
++}
++
++static void lpuart_tx_dma_startup(struct lpuart_port *sport)
++{
++	u32 uartbaud;
++	int ret;
++
++	if (!sport->dma_tx_chan)
++		goto err;
++
+ 	ret = lpuart_dma_tx_request(&sport->port);
+ 	if (!ret)
+ 		goto err;
+@@ -1549,14 +1562,8 @@ static void lpuart_rx_dma_startup(struct lpuart_port *sport)
+ {
+ 	int ret;
+ 
+-	sport->dma_rx_chan = dma_request_chan(sport->port.dev, "rx");
+-	if (IS_ERR(sport->dma_rx_chan)) {
+-		dev_info_once(sport->port.dev,
+-			      "DMA rx channel request failed, operating without rx DMA (%ld)\n",
+-			      PTR_ERR(sport->dma_rx_chan));
+-		sport->dma_rx_chan = NULL;
++	if (!sport->dma_rx_chan)
+ 		goto err;
+-	}
+ 
+ 	ret = lpuart_start_rx_dma(sport);
+ 	if (ret)
+@@ -1592,6 +1599,8 @@ static int lpuart_startup(struct uart_port *port)
+ 	sport->rxfifo_size = UARTFIFO_DEPTH((temp >> UARTPFIFO_RXSIZE_OFF) &
+ 					    UARTPFIFO_FIFOSIZE_MASK);
+ 
++	lpuart_request_dma(sport);
++
+ 	spin_lock_irqsave(&sport->port.lock, flags);
+ 
+ 	lpuart_setup_watermark_enable(sport);
+@@ -1649,11 +1658,12 @@ static int lpuart32_startup(struct uart_port *port)
+ 		sport->port.fifosize = sport->txfifo_size;
+ 	}
+ 
++	lpuart_request_dma(sport);
++
+ 	spin_lock_irqsave(&sport->port.lock, flags);
+ 
+ 	lpuart32_setup_watermark_enable(sport);
+ 
+-
+ 	lpuart_rx_dma_startup(sport);
+ 	lpuart_tx_dma_startup(sport);
+ 
 -- 
-Best Regards
-Masahiro Yamada
+2.20.1
+
