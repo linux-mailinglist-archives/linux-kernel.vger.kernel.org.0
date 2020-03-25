@@ -2,90 +2,285 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 290871928C7
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 13:46:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3D5231928C9
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 13:46:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727430AbgCYMpc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Mar 2020 08:45:32 -0400
-Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:17411 "EHLO
-        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727280AbgCYMpb (ORCPT
+        id S1727505AbgCYMpv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Mar 2020 08:45:51 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:40787 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726969AbgCYMpv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Mar 2020 08:45:31 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5e7b520f0000>; Wed, 25 Mar 2020 05:43:59 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Wed, 25 Mar 2020 05:45:30 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Wed, 25 Mar 2020 05:45:30 -0700
-Received: from [10.26.72.231] (172.20.13.39) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 25 Mar
- 2020 12:45:30 +0000
-Subject: Re: [PATCH] soc/tegra: fuse: Add custom SoC attributes
-To:     Thierry Reding <thierry.reding@gmail.com>
-CC:     <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20200320113716.6105-1-jonathanh@nvidia.com>
- <20200320151035.GB3706404@ulmo>
-From:   Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <d007d8b1-6420-469a-18af-09088b8b8398@nvidia.com>
-Date:   Wed, 25 Mar 2020 12:45:28 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        Wed, 25 Mar 2020 08:45:51 -0400
+Received: by mail-pf1-f193.google.com with SMTP id l184so989813pfl.7
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Mar 2020 05:45:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=Tc8uHbwM3FhGi/4bJYsBrYx/w3VhPJAJEPeUmWgTbds=;
+        b=eyHlKsutB/8/W9DYowbkhVeQeuZt32nO/HJN82NYWiwJlw7tlnbbbALy30o1Vv63rb
+         VmjIrlu4YJ5tJT73+N5w5NmwABl39Pt5YUB7ewSFBkN+2HaJ3aeoGTURYy4zy55Ez74I
+         Nb+DRfIT/EXYQiibCYvLAJjs6FS93ZiGa0OLUqsoYdjp3Sk7hYLzSIwoYRR3GL6kjNcg
+         ZuXLK++yVa+dlx12x0flHe9K+ys8GEx+J6USa4lVz6IL+0e1vKRW/gNaDiyAjN/ueNoB
+         tk/Fk9Bh+6tK4GuavOfUrs1uGUTtOv2PnQKp5lUdFB4gyaAnqUbje0+1FYE3ju9EZNbd
+         uCcA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
+         :in-reply-to:references:mime-version:content-transfer-encoding;
+        bh=Tc8uHbwM3FhGi/4bJYsBrYx/w3VhPJAJEPeUmWgTbds=;
+        b=Djx3QUt0Mts1u9/CVgVte5RaRl7oqwvhQGPnNlsgv57uJ5aqi53WbpoDlzOx0MhX9O
+         /Vd89Lvne8+rURQflE2kgGZ3aLyu5lBroVQoltvpIxLuO3iDkJTYPgs/4qH/EOqVNujy
+         D8XTTaMz7drHltNTkt+yeZt8BI1I1qvCIixNESvbCHmmAbblX4usyvDigsWjxx6LgD3b
+         CAxF1h6sbykTkpgsd0f/7fGiQqnq9LztvhvGfRmtJKWd3SPurMJTH48TqXTNE7hd+H7t
+         6aYogmPIPz/Nak1ZVGXRb+JjYkZeP7NrYmNgD6Er4CnCMrs388jAnbuubEKSe+NmIUoc
+         JZCA==
+X-Gm-Message-State: ANhLgQ33M3z+5J8YXPQeuh0VbrtnUdaaGUm+iLNWenjtp2tY3RRL6QY0
+        UKN5Tiw1Q2wgntiwyHMRmSA=
+X-Google-Smtp-Source: ADFU+vtA6P/A3vzVeM8SkcNI7KgPCQ7mTmvAuoR7vA68uBGqR/bEjR49ydfWZOjQKfDBi37wfy7Rmw==
+X-Received: by 2002:a63:1517:: with SMTP id v23mr2880808pgl.89.1585140349932;
+        Wed, 25 Mar 2020 05:45:49 -0700 (PDT)
+Received: from gaurie.seo.corp.google.com ([2401:fa00:d:1:4eb0:a5ef:3975:7440])
+        by smtp.gmail.com with ESMTPSA id h15sm18244648pfq.10.2020.03.25.05.45.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 25 Mar 2020 05:45:49 -0700 (PDT)
+From:   Namhyung Kim <namhyung@kernel.org>
+To:     Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc:     Jiri Olsa <jolsa@redhat.com>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Ingo Molnar <mingo@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Li Zefan <lizefan@huawei.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        kbuild test robot <lkp@intel.com>, Tejun Heo <tj@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>
+Subject: [PATCH 1/9] perf/core: Add PERF_RECORD_CGROUP event
+Date:   Wed, 25 Mar 2020 21:45:28 +0900
+Message-Id: <20200325124536.2800725-2-namhyung@kernel.org>
+X-Mailer: git-send-email 2.25.1.696.g5e7596f4ac-goog
+In-Reply-To: <20200325124536.2800725-1-namhyung@kernel.org>
+References: <20200325124536.2800725-1-namhyung@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20200320151035.GB3706404@ulmo>
-X-Originating-IP: [172.20.13.39]
-X-ClientProxiedBy: HQMAIL107.nvidia.com (172.20.187.13) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="windows-1252"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1585140239; bh=hSYr50g/KiRq7rbDuhfXVHS/4zZ8KNe6DJGXMUcV/1g=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=E7zSW9mev9e5n/EFUeh7kBmqoJtXeYQsS/N3NULZOHF2s8M5LTJkDc5iN6FAqVQ4d
-         iiKnZ3aJNGECdxjhEMEf7Iaf5qsTVMZtuER+lsNbqx7fk4SlCEHxdZVDrdyQj985/A
-         GeDxvWHfz8jkPmN5C5CbOWcBPfxtFp02/01CtP+qm9HvDdMrhJ2QfQkZyNnL4l2SBS
-         UtG87PN+i+NOIjRnvqs+1JRq3/brN+pFpMOvWYqXqJkhfo4NyNj/GQibH90NYlF3ee
-         85xRhba0LQUzpiH1lE/qM0AhbWyYRurLOUKAklPhGThD702dVQNRMR/8GwA/9oN4Bf
-         rrewTQbQWNKTQ==
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+To support cgroup tracking, add CGROUP event to save a link between
+cgroup path and id number.  This is needed since cgroups can go away
+when userspace tries to read the cgroup info (from the id) later.
+The attr.cgroup bit was also added to enable cgroup tracking from
+userspace.
 
-On 20/03/2020 15:10, Thierry Reding wrote:
-> On Fri, Mar 20, 2020 at 11:37:16AM +0000, Jon Hunter wrote:
->> Add a custom SoC attribute for Tegra to expose the HIDREV register
->> contents to userspace via the sysfs. This register provides additional
->> details about the fabrication and versioning of the device. Exposing
->> this information is useful for identifying the exact device revision and
->> device type.
->>
->> Please note that the fields in this register vary depending on the Tegra
->> generation and so instead of exposing the individual fields, just expose
->> the entire contents of the register. Details of the register fields can
->> be found in the Technical Reference Manual for each Tegra device.
-> 
-> That seems a little suboptimal to me. It's pretty trivial for the kernel
-> to distinguish between different SoC generations in order to know what
-> the fields are. It's a lot more difficult for userspace to do so. Is the
-> register completely different between SoC generations or just slightly?
+This event will be generated when a new cgroup becomes active.
+Userspace might need to synthesize those events for existing cgroups.
 
-It looks like only Tegra194 is different which is a shame.
-Unfortunately, does not appear to be documented in the public TRM at the
-moment. Hopefully we can fix that.
+Cc: Li Zefan <lizefan@huawei.com>
+Cc: Johannes Weiner <hannes@cmpxchg.org>
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+[staticize perf_event_cgroup function]
+Reported-by: kbuild test robot <lkp@intel.com>
+Acked-by: Tejun Heo <tj@kernel.org>
+Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Signed-off-by: Namhyung Kim <namhyung@kernel.org>
+---
+ include/uapi/linux/perf_event.h |  13 +++-
+ kernel/events/core.c            | 111 ++++++++++++++++++++++++++++++++
+ 2 files changed, 123 insertions(+), 1 deletion(-)
 
-> Having individual fields exposed as individual attributes seems like it
-> would make it a lot easier for userspace to get at the needed bits.
-
-Yes that does make sense.
-
-Jon
-
+diff --git a/include/uapi/linux/perf_event.h b/include/uapi/linux/perf_event.h
+index 397cfd65b3fe..de95f6c7b273 100644
+--- a/include/uapi/linux/perf_event.h
++++ b/include/uapi/linux/perf_event.h
+@@ -381,7 +381,8 @@ struct perf_event_attr {
+ 				ksymbol        :  1, /* include ksymbol events */
+ 				bpf_event      :  1, /* include bpf events */
+ 				aux_output     :  1, /* generate AUX records instead of events */
+-				__reserved_1   : 32;
++				cgroup         :  1, /* include cgroup events */
++				__reserved_1   : 31;
+ 
+ 	union {
+ 		__u32		wakeup_events;	  /* wakeup every n events */
+@@ -1012,6 +1013,16 @@ enum perf_event_type {
+ 	 */
+ 	PERF_RECORD_BPF_EVENT			= 18,
+ 
++	/*
++	 * struct {
++	 *	struct perf_event_header	header;
++	 *	u64				id;
++	 *	char				path[];
++	 *	struct sample_id		sample_id;
++	 * };
++	 */
++	PERF_RECORD_CGROUP			= 19,
++
+ 	PERF_RECORD_MAX,			/* non-ABI */
+ };
+ 
+diff --git a/kernel/events/core.c b/kernel/events/core.c
+index d22e4ba59dfa..994932d5e474 100644
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -387,6 +387,7 @@ static atomic_t nr_freq_events __read_mostly;
+ static atomic_t nr_switch_events __read_mostly;
+ static atomic_t nr_ksymbol_events __read_mostly;
+ static atomic_t nr_bpf_events __read_mostly;
++static atomic_t nr_cgroup_events __read_mostly;
+ 
+ static LIST_HEAD(pmus);
+ static DEFINE_MUTEX(pmus_lock);
+@@ -4608,6 +4609,8 @@ static void unaccount_event(struct perf_event *event)
+ 		atomic_dec(&nr_comm_events);
+ 	if (event->attr.namespaces)
+ 		atomic_dec(&nr_namespaces_events);
++	if (event->attr.cgroup)
++		atomic_dec(&nr_cgroup_events);
+ 	if (event->attr.task)
+ 		atomic_dec(&nr_task_events);
+ 	if (event->attr.freq)
+@@ -7735,6 +7738,105 @@ void perf_event_namespaces(struct task_struct *task)
+ 			NULL);
+ }
+ 
++/*
++ * cgroup tracking
++ */
++#ifdef CONFIG_CGROUP_PERF
++
++struct perf_cgroup_event {
++	char				*path;
++	int				path_size;
++	struct {
++		struct perf_event_header	header;
++		u64				id;
++		char				path[];
++	} event_id;
++};
++
++static int perf_event_cgroup_match(struct perf_event *event)
++{
++	return event->attr.cgroup;
++}
++
++static void perf_event_cgroup_output(struct perf_event *event, void *data)
++{
++	struct perf_cgroup_event *cgroup_event = data;
++	struct perf_output_handle handle;
++	struct perf_sample_data sample;
++	u16 header_size = cgroup_event->event_id.header.size;
++	int ret;
++
++	if (!perf_event_cgroup_match(event))
++		return;
++
++	perf_event_header__init_id(&cgroup_event->event_id.header,
++				   &sample, event);
++	ret = perf_output_begin(&handle, event,
++				cgroup_event->event_id.header.size);
++	if (ret)
++		goto out;
++
++	perf_output_put(&handle, cgroup_event->event_id);
++	__output_copy(&handle, cgroup_event->path, cgroup_event->path_size);
++
++	perf_event__output_id_sample(event, &handle, &sample);
++
++	perf_output_end(&handle);
++out:
++	cgroup_event->event_id.header.size = header_size;
++}
++
++static void perf_event_cgroup(struct cgroup *cgrp)
++{
++	struct perf_cgroup_event cgroup_event;
++	char path_enomem[16] = "//enomem";
++	char *pathname;
++	size_t size;
++
++	if (!atomic_read(&nr_cgroup_events))
++		return;
++
++	cgroup_event = (struct perf_cgroup_event){
++		.event_id  = {
++			.header = {
++				.type = PERF_RECORD_CGROUP,
++				.misc = 0,
++				.size = sizeof(cgroup_event.event_id),
++			},
++			.id = cgroup_id(cgrp),
++		},
++	};
++
++	pathname = kmalloc(PATH_MAX, GFP_KERNEL);
++	if (pathname == NULL) {
++		cgroup_event.path = path_enomem;
++	} else {
++		/* just to be sure to have enough space for alignment */
++		cgroup_path(cgrp, pathname, PATH_MAX - sizeof(u64));
++		cgroup_event.path = pathname;
++	}
++
++	/*
++	 * Since our buffer works in 8 byte units we need to align our string
++	 * size to a multiple of 8. However, we must guarantee the tail end is
++	 * zero'd out to avoid leaking random bits to userspace.
++	 */
++	size = strlen(cgroup_event.path) + 1;
++	while (!IS_ALIGNED(size, sizeof(u64)))
++		cgroup_event.path[size++] = '\0';
++
++	cgroup_event.event_id.header.size += size;
++	cgroup_event.path_size = size;
++
++	perf_iterate_sb(perf_event_cgroup_output,
++			&cgroup_event,
++			NULL);
++
++	kfree(pathname);
++}
++
++#endif
++
+ /*
+  * mmap tracking
+  */
+@@ -10781,6 +10883,8 @@ static void account_event(struct perf_event *event)
+ 		atomic_inc(&nr_comm_events);
+ 	if (event->attr.namespaces)
+ 		atomic_inc(&nr_namespaces_events);
++	if (event->attr.cgroup)
++		atomic_inc(&nr_cgroup_events);
+ 	if (event->attr.task)
+ 		atomic_inc(&nr_task_events);
+ 	if (event->attr.freq)
+@@ -12757,6 +12861,12 @@ static void perf_cgroup_css_free(struct cgroup_subsys_state *css)
+ 	kfree(jc);
+ }
+ 
++static int perf_cgroup_css_online(struct cgroup_subsys_state *css)
++{
++	perf_event_cgroup(css->cgroup);
++	return 0;
++}
++
+ static int __perf_cgroup_move(void *info)
+ {
+ 	struct task_struct *task = info;
+@@ -12778,6 +12888,7 @@ static void perf_cgroup_attach(struct cgroup_taskset *tset)
+ struct cgroup_subsys perf_event_cgrp_subsys = {
+ 	.css_alloc	= perf_cgroup_css_alloc,
+ 	.css_free	= perf_cgroup_css_free,
++	.css_online	= perf_cgroup_css_online,
+ 	.attach		= perf_cgroup_attach,
+ 	/*
+ 	 * Implicitly enable on dfl hierarchy so that perf events can
 -- 
-nvpublic
+2.25.1.696.g5e7596f4ac-goog
+
