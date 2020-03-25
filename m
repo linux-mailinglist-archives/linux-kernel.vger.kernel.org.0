@@ -2,44 +2,44 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A83D7193212
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 21:47:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 74DF219321F
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 21:48:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727491AbgCYUr2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Mar 2020 16:47:28 -0400
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:40232 "EHLO
+        id S1727634AbgCYUrk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Mar 2020 16:47:40 -0400
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:40228 "EHLO
         lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727417AbgCYUr2 (ORCPT
+        with ESMTP id S1727399AbgCYUr2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 25 Mar 2020 16:47:28 -0400
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 02PKl7F2077591;
-        Wed, 25 Mar 2020 15:47:07 -0500
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 02PKl95h077596;
+        Wed, 25 Mar 2020 15:47:09 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1585169227;
-        bh=yP+/2QQ21dm+k32bJ2x5S+0UixUTNaUZxRajYNPkMK4=;
+        s=ti-com-17Q1; t=1585169229;
+        bh=su3OnrwWaoP5rlZR/deFktge++Fj5bDZrQZR54Y++tA=;
         h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=C1N2WfsjQWsdRUY1SBiJwvpKohYdH6OJaSGMF/Hihj9R06mH3j7btF8NzbZoqLkNE
-         awqvyreE09dCSLa/wK9g9DuTxC/kZR07tGIe63QwK4JZYR5/wpqxDaEDUVYbqauuNy
-         PRz/n56lGLtg9pc/Ty/ynO2z7vcXe143JmTk936E=
-Received: from DFLE100.ent.ti.com (dfle100.ent.ti.com [10.64.6.21])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 02PKl7HP053266
+        b=ligrhZRBShmDgJ426W+gV5q4sn+soW1IZh5UM05d/JgAZo/LWVOZKwrJxDXAImos5
+         TG+wSHZpzHizdogRMIxPmvRAleCaZDzvGMgO5wDOhxMdmlnM1u/capN6/k7ZAmw2UV
+         s+kzRXCoMgfi/iAfmi+T42+YiWR7pRxHk9apQSto=
+Received: from DFLE113.ent.ti.com (dfle113.ent.ti.com [10.64.6.34])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 02PKl92Y068125
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 25 Mar 2020 15:47:07 -0500
-Received: from DFLE100.ent.ti.com (10.64.6.21) by DFLE100.ent.ti.com
- (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
+        Wed, 25 Mar 2020 15:47:09 -0500
+Received: from DFLE102.ent.ti.com (10.64.6.23) by DFLE113.ent.ti.com
+ (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Wed, 25
- Mar 2020 15:47:07 -0500
-Received: from lelv0326.itg.ti.com (10.180.67.84) by DFLE100.ent.ti.com
- (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
+ Mar 2020 15:47:08 -0500
+Received: from lelv0327.itg.ti.com (10.180.67.183) by DFLE102.ent.ti.com
+ (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Wed, 25 Mar 2020 15:47:07 -0500
+ Frontend Transport; Wed, 25 Mar 2020 15:47:08 -0500
 Received: from lelv0597.itg.ti.com (lelv0597.itg.ti.com [10.181.64.32])
-        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id 02PKl7Oo018669;
-        Wed, 25 Mar 2020 15:47:07 -0500
+        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id 02PKl8Ih080245;
+        Wed, 25 Mar 2020 15:47:08 -0500
 Received: from localhost ([10.250.35.147])
-        by lelv0597.itg.ti.com (8.14.7/8.14.7) with ESMTP id 02PKl7uP063399;
-        Wed, 25 Mar 2020 15:47:07 -0500
+        by lelv0597.itg.ti.com (8.14.7/8.14.7) with ESMTP id 02PKl8qq063403;
+        Wed, 25 Mar 2020 15:47:08 -0500
 From:   Suman Anna <s-anna@ti.com>
 To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
         Rob Herring <robh+dt@kernel.org>,
@@ -51,9 +51,9 @@ CC:     Clement Leger <cleger@kalray.eu>,
         <linux-remoteproc@vger.kernel.org>, <devicetree@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-kernel@vger.kernel.org>, Suman Anna <s-anna@ti.com>
-Subject: [PATCH 3/4] remoteproc: add support for a new 64-bit trace version
-Date:   Wed, 25 Mar 2020 15:47:00 -0500
-Message-ID: <20200325204701.16862-4-s-anna@ti.com>
+Subject: [PATCH 4/4] remoteproc/k3-dsp: Add support for C71x DSPs
+Date:   Wed, 25 Mar 2020 15:47:01 -0500
+Message-ID: <20200325204701.16862-5-s-anna@ti.com>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20200325204701.16862-1-s-anna@ti.com>
 References: <20200325204701.16862-1-s-anna@ti.com>
@@ -66,200 +66,80 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Introduce a new trace entry resource structure that accommodates
-a 64-bit device address to support 64-bit processors. This is to
-be used using an overloaded version value of 1 in the upper 32-bits
-of the previous resource type field. The new resource still uses
-32-bits for the length field (followed by a 32-bit reserved field,
-so can be updated in the future), which is a sufficiently large
-trace buffer size. A 32-bit padding field also had to be added
-to align the device address on a 64-bit boundary, and match the
-usage on the firmware side.
+The Texas Instrument's K3 J721E SoCs have a newer next-generation
+C71x DSP Subsystem in the MAIN voltage domain in addition to the
+previous generation C66x DSP subsystems. The C71x DSP subsystem is
+based on the TMS320C71x DSP CorePac module. The C71x CPU is a true
+64-bit machine including 64-bit memory addressing and single-cycle
+64-bit base arithmetic operations and supports vector signal processing
+providing a significant lift in DSP processing power over C66x DSPs.
+J721E SoCs use a C711 (a one-core 512-bit vector width CPU core) DSP
+that is cache coherent with the A72 Arm cores.
 
-The remoteproc debugfs logic also has been adjusted accordingly.
+Each subsystem has one or more Fixed/Floating-Point DSP CPUs, with 32 KB
+of L1P Cache, 48 KB of L1D SRAM that can be configured and partitioned as
+either RAM and/or Cache, and 512 KB of L2 SRAM configurable as either RAM
+and/or Cache. The CorePac also includes a Matrix Multiplication Accelerator
+(MMA), a Stream Engine (SE) and a C71x Memory Management Unit (CMMU), an
+Interrupt Controller (INTC) and a Powerdown Management Unit (PMU) modules.
+
+Update the existing K3 DSP remoteproc driver to add support for this C71x
+DSP subsystem. The firmware loading support is provided by using the newly
+added 64-bit ELF loader support, and is limited to images using only
+external DDR memory at the moment. The L1D and L2 SRAMs are used as scratch
+memory when using as RAMs, and cannot be used for loadable segments. The
+CMMU is also not supported to begin with, and the driver is designed to
+treat the MMU as if it is in bypass mode.
 
 Signed-off-by: Suman Anna <s-anna@ti.com>
 ---
- drivers/remoteproc/remoteproc_core.c    | 40 ++++++++++++++++++++-----
- drivers/remoteproc/remoteproc_debugfs.c | 37 ++++++++++++++++++-----
- include/linux/remoteproc.h              | 26 ++++++++++++++++
- 3 files changed, 87 insertions(+), 16 deletions(-)
+ drivers/remoteproc/ti_k3_dsp_remoteproc.c | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
 
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index 53bc37c508c6..b9a097990862 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -609,21 +609,45 @@ void rproc_vdev_release(struct kref *ref)
-  *
-  * Returns 0 on success, or an appropriate error code otherwise
-  */
--static int rproc_handle_trace(struct rproc *rproc, struct fw_rsc_trace *rsc,
-+static int rproc_handle_trace(struct rproc *rproc, void *rsc,
- 			      int offset, int avail, u16 ver)
- {
- 	struct rproc_debug_trace *trace;
- 	struct device *dev = &rproc->dev;
-+	struct fw_rsc_trace *rsc1;
-+	struct fw_rsc_trace2 *rsc2;
- 	char name[15];
-+	size_t rsc_size;
-+	u32 reserved;
-+	u64 da;
-+	u32 len;
+diff --git a/drivers/remoteproc/ti_k3_dsp_remoteproc.c b/drivers/remoteproc/ti_k3_dsp_remoteproc.c
+index 7b712ef74611..48d26f7d5f48 100644
+--- a/drivers/remoteproc/ti_k3_dsp_remoteproc.c
++++ b/drivers/remoteproc/ti_k3_dsp_remoteproc.c
+@@ -649,6 +649,9 @@ static int k3_dsp_rproc_probe(struct platform_device *pdev)
+ 
+ 	rproc->has_iommu = false;
+ 	rproc->recovery_disabled = true;
++	/* C71x is a 64-bit processor, so plug in generic .sanity_check ops */
++	rproc->ops->sanity_check = rproc_elf_sanity_check;
 +
-+	if (!ver) {
-+		rsc1 = (struct fw_rsc_trace *)rsc;
-+		rsc_size = sizeof(*rsc1);
-+		reserved = rsc1->reserved;
-+		da = rsc1->da;
-+		len = rsc1->len;
-+	} else if (ver == 1) {
-+		rsc2 = (struct fw_rsc_trace2 *)rsc;
-+		rsc_size = sizeof(*rsc2);
-+		reserved = rsc2->reserved;
-+		da = rsc2->da;
-+		len = rsc2->len;
-+	} else {
-+		dev_err(dev, "unsupported trace rsc version %d\n", ver);
-+		return -EINVAL;
-+	}
+ 	kproc = rproc->priv;
+ 	kproc->rproc = rproc;
+ 	kproc->dev = dev;
+@@ -789,6 +792,12 @@ static const struct k3_dsp_mem_data c66_mems[] = {
+ 	{ .name = "l1dram", .dev_addr = 0xf00000 },
+ };
  
--	if (sizeof(*rsc) > avail) {
-+	if (rsc_size > avail) {
- 		dev_err(dev, "trace rsc is truncated\n");
- 		return -EINVAL;
- 	}
- 
- 	/* make sure reserved bytes are zeroes */
--	if (rsc->reserved) {
--		dev_err(dev, "trace rsc has non zero reserved bytes\n");
-+	if (reserved) {
-+		dev_err(dev, "trace rsc has non zero reserved bytes, value = 0x%x\n",
-+			reserved);
- 		return -EINVAL;
- 	}
- 
-@@ -632,8 +656,8 @@ static int rproc_handle_trace(struct rproc *rproc, struct fw_rsc_trace *rsc,
- 		return -ENOMEM;
- 
- 	/* set the trace buffer dma properties */
--	trace->trace_mem.len = rsc->len;
--	trace->trace_mem.da = rsc->da;
-+	trace->trace_mem.len = len;
-+	trace->trace_mem.da = da;
- 
- 	/* set pointer on rproc device */
- 	trace->rproc = rproc;
-@@ -652,8 +676,8 @@ static int rproc_handle_trace(struct rproc *rproc, struct fw_rsc_trace *rsc,
- 
- 	rproc->num_traces++;
- 
--	dev_dbg(dev, "%s added: da 0x%x, len 0x%x\n",
--		name, rsc->da, rsc->len);
-+	dev_dbg(dev, "%s added: da 0x%llx, len 0x%x\n",
-+		name, da, len);
- 
- 	return 0;
- }
-diff --git a/drivers/remoteproc/remoteproc_debugfs.c b/drivers/remoteproc/remoteproc_debugfs.c
-index 3560eed7a360..ff43736db45a 100644
---- a/drivers/remoteproc/remoteproc_debugfs.c
-+++ b/drivers/remoteproc/remoteproc_debugfs.c
-@@ -192,7 +192,8 @@ static int rproc_rsc_table_show(struct seq_file *seq, void *p)
- 	struct resource_table *table = rproc->table_ptr;
- 	struct fw_rsc_carveout *c;
- 	struct fw_rsc_devmem *d;
--	struct fw_rsc_trace *t;
-+	struct fw_rsc_trace *t1;
-+	struct fw_rsc_trace2 *t2;
- 	struct fw_rsc_vdev *v;
- 	int i, j;
- 
-@@ -205,6 +206,7 @@ static int rproc_rsc_table_show(struct seq_file *seq, void *p)
- 		int offset = table->offset[i];
- 		struct fw_rsc_hdr *hdr = (void *)table + offset;
- 		void *rsc = (void *)hdr + sizeof(*hdr);
-+		u16 ver = hdr->st.v;
- 
- 		switch (hdr->st.t) {
- 		case RSC_CARVEOUT:
-@@ -230,13 +232,32 @@ static int rproc_rsc_table_show(struct seq_file *seq, void *p)
- 			seq_printf(seq, "  Name %s\n\n", d->name);
- 			break;
- 		case RSC_TRACE:
--			t = rsc;
--			seq_printf(seq, "Entry %d is of type %s\n",
--				   i, types[hdr->st.t]);
--			seq_printf(seq, "  Device Address 0x%x\n", t->da);
--			seq_printf(seq, "  Length 0x%x Bytes\n", t->len);
--			seq_printf(seq, "  Reserved (should be zero) [%d]\n", t->reserved);
--			seq_printf(seq, "  Name %s\n\n", t->name);
-+			if (ver == 0) {
-+				t1 = rsc;
-+				seq_printf(seq, "Entry %d is version %d of type %s\n",
-+					   i, ver, types[hdr->st.t]);
-+				seq_printf(seq, "  Device Address 0x%x\n",
-+					   t1->da);
-+				seq_printf(seq, "  Length 0x%x Bytes\n",
-+					   t1->len);
-+				seq_printf(seq, "  Reserved (should be zero) [%d]\n",
-+					   t1->reserved);
-+				seq_printf(seq, "  Name %s\n\n", t1->name);
-+			} else if (ver == 1) {
-+				t2 = rsc;
-+				seq_printf(seq, "Entry %d is version %d of type %s\n",
-+					   i, ver, types[hdr->st.t]);
-+				seq_printf(seq, "  Device Address 0x%llx\n",
-+					   t2->da);
-+				seq_printf(seq, "  Length 0x%x Bytes\n",
-+					   t2->len);
-+				seq_printf(seq, "  Reserved (should be zero) [%d]\n",
-+					   t2->reserved);
-+				seq_printf(seq, "  Name %s\n\n", t2->name);
-+			} else {
-+				seq_printf(seq, "Entry %d is an unsupported version %d of type %s\n",
-+					   i, ver, types[hdr->st.t]);
-+			}
- 			break;
- 		case RSC_VDEV:
- 			v = rsc;
-diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
-index 526d3cb45e37..3b3bea42f8b1 100644
---- a/include/linux/remoteproc.h
-+++ b/include/linux/remoteproc.h
-@@ -243,6 +243,32 @@ struct fw_rsc_trace {
- 	u8 name[32];
- } __packed;
- 
-+/**
-+ * struct fw_rsc_trace2 - trace buffer declaration supporting 64-bits
-+ * @padding: initial padding after type field for aligned 64-bit access
-+ * @da: device address (64-bit)
-+ * @len: length (in bytes)
-+ * @reserved: reserved (must be zero)
-+ * @name: human-readable name of the trace buffer
-+ *
-+ * This resource entry is an enhanced version of the fw_rsc_trace resourec entry
-+ * and the provides equivalent functionality but designed for 64-bit remote
-+ * processors.
-+ *
-+ * @da specifies the device address of the buffer, @len specifies
-+ * its size, and @name may contain a human readable name of the trace buffer.
-+ *
-+ * After booting the remote processor, the trace buffers are exposed to the
-+ * user via debugfs entries (called trace0, trace1, etc..).
-+ */
-+struct fw_rsc_trace2 {
-+	u32 padding;
-+	u64 da;
-+	u32 len;
-+	u32 reserved;
-+	u8 name[32];
-+} __packed;
++/* C71x cores only have a L1P Cache, there are no L1P SRAMs */
++static const struct k3_dsp_mem_data c71_mems[] = {
++	{ .name = "l2sram", .dev_addr = 0x800000 },
++	{ .name = "l1dram", .dev_addr = 0xe00000 },
++};
 +
- /**
-  * struct fw_rsc_vdev_vring - vring descriptor entry
-  * @da: device address
+ static const struct k3_dsp_dev_data c66_data = {
+ 	.mems = c66_mems,
+ 	.num_mems = ARRAY_SIZE(c66_mems),
+@@ -796,8 +805,16 @@ static const struct k3_dsp_dev_data c66_data = {
+ 	.uses_lreset = true,
+ };
+ 
++static const struct k3_dsp_dev_data c71_data = {
++	.mems = c71_mems,
++	.num_mems = ARRAY_SIZE(c71_mems),
++	.boot_align_addr = SZ_2M,
++	.uses_lreset = false,
++};
++
+ static const struct of_device_id k3_dsp_of_match[] = {
+ 	{ .compatible = "ti,j721e-c66-dsp", .data = &c66_data, },
++	{ .compatible = "ti,j721e-c71-dsp", .data = &c71_data, },
+ 	{ /* sentinel */ },
+ };
+ MODULE_DEVICE_TABLE(of, k3_dsp_of_match);
 -- 
 2.23.0
 
