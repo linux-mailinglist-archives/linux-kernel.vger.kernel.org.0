@@ -2,56 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9436B19215C
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 07:54:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0A09A19217C
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 08:01:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726313AbgCYGya (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Mar 2020 02:54:30 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:46004 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725781AbgCYGya (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Mar 2020 02:54:30 -0400
-Received: by mail-pg1-f195.google.com with SMTP id o26so683230pgc.12
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Mar 2020 23:54:29 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=nWpDQmZNg8zKVk12QskQ7NNS05C4fI/JmZBKLdKyu8Q=;
-        b=UaqlU+P1/K074V4vRiZK/tqr7IfvCvV4/U+wYHOzQ75q9gMkO1HbIXkKPVp/2srFgn
-         KHf/4ZKP18E+63LJkKNUBwWWNW5IFZftM+3Atap9Ex+RBpuk+QzpX/+KkLYvVd7SBSHv
-         onaONIhhuDUFD3kGRWMWJY7jq+7uu1tMH2hl3brrrkbsw53SaEmRBnJM3+vWAFMkdYBA
-         6OfrySOIyiQloYWF2ou6++QhqWlkdRsT1TYb6wmuDQ3ZJDmpkOy/HPTxuhIflY66WS5z
-         Ydza0MTGjdMO7IiPXSvq6Lh91CHjuXQbxpJjcjjE9W+cLsLtki27S+owuAo2NPM8Gr/m
-         bFpQ==
-X-Gm-Message-State: ANhLgQ1vrNDV5RBjtsAd05qZos2oRHmhY+4QBPFKRscu2CU7nHJlqifo
-        4nGkodA/IIO8etON+xACyrOzNgQy
-X-Google-Smtp-Source: ADFU+vtqAA+ZcKesRR85r91znskVBcG7r9sIy6O4bu/R57o2CmhXpR57NnKSl/coUPcrm8LEMkJKOQ==
-X-Received: by 2002:a62:1a03:: with SMTP id a3mr1852118pfa.171.1585119268930;
-        Tue, 24 Mar 2020 23:54:28 -0700 (PDT)
-Received: from ?IPv6:2601:647:4802:9070:2c87:e6f8:1c11:1d73? ([2601:647:4802:9070:2c87:e6f8:1c11:1d73])
-        by smtp.gmail.com with ESMTPSA id p22sm6705140pgn.73.2020.03.24.23.54.27
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 24 Mar 2020 23:54:28 -0700 (PDT)
-Subject: Re: [PATCH] nvme: Fix NVME_IOCTL_ADMIN_CMD compat address handling.
-To:     Nick Bowler <nbowler@draconx.ca>, linux-nvme@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-References: <20200325002847.2140-1-nbowler@draconx.ca>
-From:   Sagi Grimberg <sagi@grimberg.me>
-Message-ID: <3eed9434-d1af-b0d9-e972-ddd393d1ab4b@grimberg.me>
-Date:   Tue, 24 Mar 2020 23:54:26 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Firefox/60.0 Thunderbird/60.9.0
+        id S1726105AbgCYHBo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Mar 2020 03:01:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53370 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725815AbgCYHBo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Mar 2020 03:01:44 -0400
+Received: from localhost (unknown [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 27D3920772;
+        Wed, 25 Mar 2020 07:01:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1585119698;
+        bh=L92V+2bJcj7BoRxTRqi9mP4QmyLglmt1aSc0qiIM0vY=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=2U23NQd7Tw/2M0F0Pxmzmhfk/qGjT8r9kRJtt12VhMpGhmrExPN33itfYwls2taKc
+         7Kr+F60rm2qmS5cTvL3NcjNpMQ+nDxDV0MZUi+sQOd7Ywc+K3aWzRiIDXsRGKYvdA0
+         HwXl1Tz8/aO7p+egItzX55amJTKa5zb1zC/NN0EY=
+Date:   Wed, 25 Mar 2020 08:01:27 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Chunyan Zhang <zhang.lyra@gmail.com>
+Cc:     Mark Rutland <mark.rutland@arm.com>, Jiri Slaby <jslaby@suse.com>,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Baolin Wang <baolin.wang7@gmail.com>,
+        Chunyan Zhang <chunyan.zhang@unisoc.com>
+Subject: Re: [PATCH] tty: serial: make SERIAL_SPRD depends on ARM or ARM64
+Message-ID: <20200325070127.GA2960703@kroah.com>
+References: <20200324064949.23697-1-zhang.lyra@gmail.com>
+ <20200324112115.GA10018@lakrids.cambridge.arm.com>
+ <CAAfSe-u7SjWr7VK37OFrFDfm1o-6VwEoUMLctP61us+iQ1emTw@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20200325002847.2140-1-nbowler@draconx.ca>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAAfSe-u7SjWr7VK37OFrFDfm1o-6VwEoUMLctP61us+iQ1emTw@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Reviewed-by: Sagi Grimberg <sagi@grimberg.me>
+On Wed, Mar 25, 2020 at 09:37:00AM +0800, Chunyan Zhang wrote:
+> Hi Mark, Greg,
+> 
+> Pleas see my answer below.
+> 
+> On Tue, 24 Mar 2020 at 19:21, Mark Rutland <mark.rutland@arm.com> wrote:
+> >
+> > On Tue, Mar 24, 2020 at 02:49:49PM +0800, Chunyan Zhang wrote:
+> > > From: Chunyan Zhang <chunyan.zhang@unisoc.com>
+> > >
+> > > kbuild-test reported an error:
+> > >
+> > >   config: mips-randconfig-a001-20200321 ...
+> > >   >> drivers/tty/serial/sprd_serial.c:1175: undefined reference
+> > >   to `clk_set_parent'
+> > >
+> > > Because some mips Kconfig-s select CONFIG_HAVE_CLK but not CONFIG_COMMON_CLK,
+> > > so it's probably that clk_set_parent is missed for those configs.
+> > >
+> > > To fix this error, this patch adds dependence on ARM || ARM64
+> > > for SERIAL_SPRD.
+> >
+> > From the above, isn't the real dependency COMMON_CLOCK?
+> 
+> Some arch can implement its own clock APIs, for example AR7 [1].
+
+That's fine, then they can not select this option.
+
+> The sprd serial driver is used on ARM and ARM64 platforms only for
+> now, which uses clock functions provided by COMMON_CLK, but it has the
+> possibility of being used on other architecture platforms, that was my
+> thought.
+> 
+> I should revise this commit message to:
+> "
+> Because some mips Kconfig-s select CONFIG_HAVE_CLK but not define
+> clk_set_parent which is used by the sprd serial driver.
+> ...
+> "
+> 
+> Does it make sense?
+
+The arch is not the issue here, the clock framework is, so properly
+depend on that, not an arbitrary CPU type.
+
+thanks,
+
+greg k-h
