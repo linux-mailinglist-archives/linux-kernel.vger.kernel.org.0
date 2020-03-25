@@ -2,90 +2,56 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AF5E719302A
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 19:14:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8F9E2193038
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 19:20:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727607AbgCYSN6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Mar 2020 14:13:58 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:60972 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727129AbgCYSN5 (ORCPT
+        id S1727742AbgCYSUM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Mar 2020 14:20:12 -0400
+Received: from shards.monkeyblade.net ([23.128.96.9]:46116 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727547AbgCYSUK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Mar 2020 14:13:57 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=2plezOlRw7hkkh6LziCfkccVGAATkcpghrKnzymW3hs=; b=AXRKABpBtNDx/hoGYGMf6QE6g8
-        I64wQNxK1qd2fOyN33i1Ws85v7xQpI5JKRwdR4eiDlkCahOjxUJPXlBZM+zf2RirH/5vJO36tjzEY
-        IkKIwzcdXQALUKP+hyz86GNLwTLG0oLY0TEwD7R9Xibr569arxZ7HKmfq79OR7rbjis+ZJdJAADaQ
-        IrZpva/sSPcQYPbkmUYkE42gO8XdG+3sivhrKBOkVfHVqlBmYLsuYgN3ONx4JsVD6IM7b7X0fzC68
-        gd1mR7nJJrO96wTgcHMNyuW6plaCcMBAsu4XhgtLZMAN7ki/b3idKDdKpr1qyr0gnsbcH9t1+xyQU
-        JEcb/WdQ==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jHAX8-0004Xw-PB; Wed, 25 Mar 2020 18:13:43 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Wed, 25 Mar 2020 14:20:10 -0400
+Received: from localhost (unknown [IPv6:2601:601:9f00:477::3d5])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
         (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 86EE23010CF;
-        Wed, 25 Mar 2020 19:13:39 +0100 (CET)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 64524201CEE51; Wed, 25 Mar 2020 19:13:39 +0100 (CET)
-Date:   Wed, 25 Mar 2020 19:13:39 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Andy Lutomirski <luto@amacapital.net>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Daniel Bristot de Oliveira <bristot@redhat.com>,
-        Jason Baron <jbaron@akamai.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>, Nadav Amit <namit@vmware.com>,
-        Peter Anvin <hpa@zytor.com>,
-        Andrew Lutomirski <luto@kernel.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>
-Subject: Re: [RESEND][PATCH v3 14/17] static_call: Add static_cond_call()
-Message-ID: <20200325181339.GK20713@hirez.programming.kicks-ass.net>
-References: <CAHk-=wiumU4QxAkT+GqhBt5f-iUsoLNC0sqVfRKp0xypA6aNYg@mail.gmail.com>
- <86D80EA7-9087-4042-8119-12DD5FCEAA87@amacapital.net>
- <CAHk-=wim-2aaFi_GNs5KmX4ykkgQjnRo5D4B9ZK+1Oz=kpp_2A@mail.gmail.com>
- <20200324170306.GU20696@hirez.programming.kicks-ass.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200324170306.GU20696@hirez.programming.kicks-ass.net>
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id B9F0E159FFC28;
+        Wed, 25 Mar 2020 11:20:08 -0700 (PDT)
+Date:   Wed, 25 Mar 2020 11:20:05 -0700 (PDT)
+Message-Id: <20200325.112005.1488571669011858526.davem@davemloft.net>
+To:     yuehaibing@huawei.com
+Cc:     vishal@chelsio.com, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, rahul.lakkireddy@chelsio.com
+Subject: Re: [PATCH v2 net-next] cxgb4: remove set but not used variable
+ 'tab'
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <20200325011750.53008-1-yuehaibing@huawei.com>
+References: <20200324062614.29644-1-yuehaibing@huawei.com>
+        <20200325011750.53008-1-yuehaibing@huawei.com>
+X-Mailer: Mew version 6.8 on Emacs 26.1
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Wed, 25 Mar 2020 11:20:09 -0700 (PDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 24, 2020 at 06:03:06PM +0100, Peter Zijlstra wrote:
-> On Tue, Mar 24, 2020 at 09:33:21AM -0700, Linus Torvalds wrote:
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Wed, 25 Mar 2020 09:17:50 +0800
 
-> > Of course, one alternative is to just say "instead of using NOP, use
-> > 'xorl %eax,%eax'", and then we'd have the rule that a NULL conditional
-> > function returns zero (or NULL).
-> > 
-> > I _think_ a "xorl %eax,%eax ; retq" is just three bytes and would fit
-> > in the tailcall slot too.
+> drivers/net/ethernet/chelsio/cxgb4/cxgb4_filter.c: In function cxgb4_get_free_ftid:
+> drivers/net/ethernet/chelsio/cxgb4/cxgb4_filter.c:547:23:
+>  warning: variable tab set but not used [-Wunused-but-set-variable]
 > 
-> Correct. The only problem is that our text patching machinery can't
-> replace multiple instructions :/
+> commit 8d174351f285 ("cxgb4: rework TC filter rule insertion across regions")
+> involved this, remove it.
+> 
+> Reported-by: Hulk Robot <hulkci@huawei.com>
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+> ---
+> v2: keep christmas tree ordering
 
-To clarify; the problem is a task getting preempted with its RIP at the
-RET. Then when we rewrite the text to be a CALL/JMP.d32 it will read
-garbage (1 byte into the displacement of the instruction) instead of a
-RET when it resumes.
-
-Now, there are ways to fix this, the easiest being calling
-synchronize_rcu_tasks() just like optprobes does (see also commit
-5c02ece81848 ("x86/kprobes: Fix ordering while text-patching")).
-
-It would mean patching a call away from NULL will be 'expensive' but it
-ought to work.
-
-I'll try and do the patch, see what it looks like.
+Applied, thank you.
