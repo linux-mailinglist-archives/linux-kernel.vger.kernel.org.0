@@ -2,99 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A11FF1921CA
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 08:37:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8E5F41921C6
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 08:34:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727280AbgCYHhW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Mar 2020 03:37:22 -0400
-Received: from m176148.mail.qiye.163.com ([59.111.176.148]:5165 "EHLO
-        m176148.mail.qiye.163.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725907AbgCYHhW (ORCPT
+        id S1726206AbgCYHeH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Mar 2020 03:34:07 -0400
+Received: from conssluserg-05.nifty.com ([210.131.2.90]:18719 "EHLO
+        conssluserg-05.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726017AbgCYHeG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Mar 2020 03:37:22 -0400
-X-Greylist: delayed 437 seconds by postgrey-1.27 at vger.kernel.org; Wed, 25 Mar 2020 03:36:45 EDT
-Received: from vivo.com (wm-8.qy.internal [127.0.0.1])
-        by m176148.mail.qiye.163.com (Hmail) with ESMTP id F10EF1A3EE9;
-        Wed, 25 Mar 2020 15:29:22 +0800 (CST)
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: base64
-Message-ID: <ADUAqwAYCASXqCY1D9tlwqpy.3.1585121362951.Hmail.tao.li@vivo.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Felipe Balbi <balbi@kernel.org>,
-        =?UTF-8?Q?Micha=C5=82_Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>,
-        Sergey Organov <sorganov@gmail.com>, linux-usb@vger.kernel.org,
-        linux-kernel@vger.kernel.org, wenhu.wang@vivo.com
-Subject: =?UTF-8?B?UmU6UmU6IFtQQVRDSF0gdXNiOiBnYWRnZXQ6IHNlcmlhbDogRml4ZWQgS0FTQU4gbnVsbC1wdHItZGVyZWYgaW4gdHR5X3dha2V1cA==?=
-X-Priority: 3
-X-Mailer: HMail Webmail Server V2.0 Copyright (c) 2016-163.com
-X-Originating-IP: 58.251.74.226
-In-Reply-To: <20200318101240.GA2067041@kroah.com>
+        Wed, 25 Mar 2020 03:34:06 -0400
+X-Greylist: delayed 53583 seconds by postgrey-1.27 at vger.kernel.org; Wed, 25 Mar 2020 03:34:05 EDT
+Received: from mail-vs1-f48.google.com (mail-vs1-f48.google.com [209.85.217.48]) (authenticated)
+        by conssluserg-05.nifty.com with ESMTP id 02P7Xo5Y011468;
+        Wed, 25 Mar 2020 16:33:51 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-05.nifty.com 02P7Xo5Y011468
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1585121631;
+        bh=kh7EjCwaL2YO03hE6EYB+/Y7QkJFCBvPs4JMoSyx6h8=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=2K6Z/0OmUrzRBRj/QobY6dhMiiEs5Wt0uXhs+A4PS2ipnw8EU6AZ964xRSmcUcBXl
+         WSycTTjbaA617VvDQVPG+byzuFN6f/rTWBr+aWtYcvUZSZHGS6AxGNBMbTNA97srDS
+         GuXanGNfCbgYo+siB3QmiNafpqxWeREnzRXxzYMxRCzc3O8OcmX4DW7wSej0Ezw5QM
+         0NJX/NfS/EgMSGVk+IeP6TW7MhEsjlfZCwcmW5n+F1VsIcfaxWA5FJCCJhCTjve3SN
+         XfpQER8cXCMdnQ3ZiLAWL9kSYdRCGiZ4F7kejrE3TRtlu2JLFuwt6XrhvRfXNj6Fqm
+         Oeu/Tpv3BedJw==
+X-Nifty-SrcIP: [209.85.217.48]
+Received: by mail-vs1-f48.google.com with SMTP id j128so905716vsd.6;
+        Wed, 25 Mar 2020 00:33:51 -0700 (PDT)
+X-Gm-Message-State: ANhLgQ2iaPPQUK+8w2yf8hDHahDAtpFUad2Z0ec/lJQGev6UwPzKQFAP
+        g+ABurcDyPqDzvhose/YWgDrftceojFeeVhKYrI=
+X-Google-Smtp-Source: ADFU+vupY5MKc0N7phoId/Wg3qfoFYs2Xj94X9bAAO5uwR+leqxxVHKV7RSZG+L/Iht2P9KlsTGSu6FiHR8YTYsr23k=
+X-Received: by 2002:a67:3201:: with SMTP id y1mr1636838vsy.54.1585121629966;
+ Wed, 25 Mar 2020 00:33:49 -0700 (PDT)
 MIME-Version: 1.0
-Received: from tao.li@vivo.com( [58.251.74.226) ] by ajax-webmail ( [127.0.0.1] ) ; Wed, 25 Mar 2020 15:29:22 +0800 (GMT+08:00)
-From:   =?UTF-8?B?5p2O5qGD?= <tao.li@vivo.com>
-Date:   Wed, 25 Mar 2020 15:29:22 +0800 (GMT+08:00)
-X-HM-Spam-Status: e1kfGhgUHx5ZQUtXWQgYFAkeWUFZTlVDTkJLS0tJS05CQkhNTllXWShZQU
-        hPN1dZLVlBSVdZCQ4XHghZQVk1NCk2OjckKS43PlkG
-X-HM-Sender-Digest: e1kJHlYWEh9ZQUhNTE5PSE5LTk5MN1dZDB4ZWUEPCQ4eV1kSHx4VD1lB
-        WUc6Py46Cgw6Ijg6KCMKOCJKP0IPFwwKCwJVSFVKTkNOSklKSE1OT05PVTMWGhIXVQ8aFFUXEjsN
-        Eg0UVRgUFkVZV1kSC1lBWU5DVUlOSlVMT1VJSU1ZV1kIAVlBTUlJSDcG
-X-HM-Tid: 0a71109884329394kuwsf10ef1a3ee9
+References: <20200324164005.8259-1-masahiroy@kernel.org> <alpine.LFD.2.21.2003250240110.2689954@eddie.linux-mips.org>
+In-Reply-To: <alpine.LFD.2.21.2003250240110.2689954@eddie.linux-mips.org>
+From:   Masahiro Yamada <masahiroy@kernel.org>
+Date:   Wed, 25 Mar 2020 16:33:14 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAQA1Z3=9QFvvVx8Zqiq3zKTM8W=JurBuua4iEZf=WL9ZA@mail.gmail.com>
+Message-ID: <CAK7LNAQA1Z3=9QFvvVx8Zqiq3zKTM8W=JurBuua4iEZf=WL9ZA@mail.gmail.com>
+Subject: Re: [PATCH] MIPS: mark some functions as weak to avoid conflict with
+ Octeon ones
+To:     "Maciej W. Rozycki" <macro@linux-mips.org>
+Cc:     Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        linux-mips@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Alexander Lobakin <alobakin@dlink.ru>,
+        Paul Burton <paulburton@kernel.org>,
+        clang-built-linux <clang-built-linux@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-RnJvbTogR3JlZyBLcm9haC1IYXJ0bWFuIDxncmVna2hAbGludXhmb3VuZGF0aW9uLm9yZz4KRGF0
-ZTogMjAyMC0wMy0xOCAxODoxMjo0MApUbzogIExpIFRhbyA8dGFvLmxpQHZpdm8uY29tPgpDYzog
-IEZlbGlwZSBCYWxiaSA8YmFsYmlAa2VybmVsLm9yZz4sIk1pY2hhxYIgTWlyb3PFgmF3IiA8bWly
-cS1saW51eEByZXJlLnFtcW0ucGw+LFNlcmdleSBPcmdhbm92IDxzb3JnYW5vdkBnbWFpbC5jb20+
-LGxpbnV4LXVzYkB2Z2VyLmtlcm5lbC5vcmcsbGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZyx3
-ZW5odS53YW5nQHZpdm8uY29tClN1YmplY3Q6IFJlOiBbUEFUQ0hdIHVzYjogZ2FkZ2V0OiBzZXJp
-YWw6IEZpeGVkIEtBU0FOIG51bGwtcHRyLWRlcmVmIGluIHR0eV93YWtldXA+T24gV2VkLCBNYXIg
-MTgsIDIwMjAgYXQgMTA6NTY6MDFBTSArMDgwMCwgTGkgVGFvIHdyb3RlOgo+PiBUaGUgcG9ydC0+
-cG9ydC50dHkgbWF5YmUgcmVzZXQgYXMgTlVMTCwgSWYgZ3NfY2xvc2UoKSB3YXMgaW52b2tlZAo+
-PiB1bmV4cGVjdGVkbHkgZHVyaW5nIHJ1bm5pbmcgZ3NlcmlhbF9jb25uZWN0KCkuCj4+IAo+PiBC
-VUc6IEtBU0FOOiBudWxsLXB0ci1kZXJlZiBpbiB0dHlfd2FrZXVwKzB4MWMvMHg4NAo+PiBDYWxs
-IHRyYWNlOgo+PiBbPDAwMDAwMDAwOTVjM2M4Mzc+XSBkdW1wX2JhY2t0cmFjZSsweDAvMHg2ZDQK
-Pj4gWzwwMDAwMDAwMDQ3NzI2YmI4Pl0gc2hvd19zdGFjaysweDE4LzB4MjAKPj4gWzwwMDAwMDAw
-MGJlZGI0YzFlPl0gLS1kdW1wX3N0YWNrKzB4MjAvMHgyOAo+PiBbPDAwMDAwMDAwNzIyZjJlMmE+
-XSBkdW1wX3N0YWNrKzB4ODQvMHhiMAo+PiBbPDAwMDAwMDAwMzI1NjgzZDQ+XSBrYXNhbl9yZXBv
-cnRfZXJyb3IrMHgxNzgvMHgxZTQKPj4gWzwwMDAwMDAwMDUzMDc5OTk4Pl0ga2FzYW5fcmVwb3J0
-X2Vycm9yKzB4MC8weDFlNAo+PiBbPDAwMDAwMDAwYjZkMzNhZmE+XSAtLWFzYW5fbG9hZDgrMHgx
-NTAvMHgxNWMKPj4gWzwwMDAwMDAwMDE4ODc0NWI4Pl0gdHR5X3dha2V1cCsweDFjLzB4ODQKPj4g
-WzwwMDAwMDAwMDY0ZjZkZDIxPl0gZ3Nfc3RhcnRfaW8rMHhkMC8weDExYwo+PiBbPDAwMDAwMDAw
-NjNkNjdiNmM+XSBnc2VyaWFsX2Nvbm5lY3QrMHgxNWMvMHgxYjAKPj4gWzwwMDAwMDAwMGZhZjdj
-MGY5Pl0gZG1fc2V0X2FsdCsweGE4LzB4MTkwCj4+IFs8MDAwMDAwMDA4ZGViMTkwOT5dIGNvbXBv
-c2l0ZV9zZXR1cCsweGRlNC8weDFlZGMKPj4gWzwwMDAwMDAwMDc5MmVlMTZkPl0gYW5kcm9pZF9z
-ZXR1cCsweDIxMC8weDI5NAo+PiBbPDAwMDAwMDAwYWIzMmVmMzA+XSBkd2MzX2VwMF9kZWxlZ2F0
-ZV9yZXErMHg0OC8weDY4Cj4+IFs8MDAwMDAwMDA1NGUyNmZkMj5dIGR3YzNfZXAwX2ludGVycnVw
-dCsweGYyYy8weDE2ZmMKPj4gWzwwMDAwMDAwMDUwY2IyMjYyPl0gZHdjM19pbnRlcnJ1cHQrMHg0
-NjQvMHgxZjQ0Cj4+IFs8MDAwMDAwMDBmZGNhYTZlOT5dIC0taGFuZGxlX2lycV9ldmVudF9wZXJj
-cHUrMHgxODQvMHgzOTgKPj4gWzwwMDAwMDAwMDNiMjRmZjU2Pl0gaGFuZGxlX2lycV9ldmVudF9w
-ZXJjcHUrMHhhMC8weDEzNAo+PiBbPDAwMDAwMDAwYWVkZGE1ZWU+XSBoYW5kbGVfaXJxX2V2ZW50
-KzB4NjAvMHhhMAo+PiBbPDAwMDAwMDAwNWY1MWE1NzA+XSBoYW5kbGVfZmFzdGVvaV9pcnErMHgy
-M2MvMHgzMWMKPj4gWzwwMDAwMDAwMDhkYjI2MDhkPl0gZ2VuZXJpY19oYW5kbGVfaXJxKzB4NzAv
-MHhhNAo+PiBbPDAwMDAwMDAwMDk4NjgzZmM+XSAtLWhhbmRsZV9kb21haW5faXJxKzB4ODQvMHhl
-MAo+PiBbPDAwMDAwMDAwOGVkMjNiNDY+XSBnaWNfaGFuZGxlX2lycSsweDk4LzB4YjgKPj4gCj4+
-IFNpZ25lZC1vZmYtYnk6IExpIFRhbyA8dGFvLmxpQHZpdm8uY29tPgo+PiAtLS0KPj4gIGRyaXZl
-cnMvdXNiL2dhZGdldC9mdW5jdGlvbi91X3NlcmlhbC5jIHwgMyArKy0KPj4gIDEgZmlsZSBjaGFu
-Z2VkLCAyIGluc2VydGlvbnMoKyksIDEgZGVsZXRpb24oLSkKPj4gCj4+IGRpZmYgLS1naXQgYS9k
-cml2ZXJzL3VzYi9nYWRnZXQvZnVuY3Rpb24vdV9zZXJpYWwuYyBiL2RyaXZlcnMvdXNiL2dhZGdl
-dC9mdW5jdGlvbi91X3NlcmlhbC5jCj4+IGluZGV4IDgxNjdkMzc5ZTExNS4uM2MxMDlhOGY5ZWM0
-IDEwMDY0NAo+PiAtLS0gYS9kcml2ZXJzL3VzYi9nYWRnZXQvZnVuY3Rpb24vdV9zZXJpYWwuYwo+
-PiArKysgYi9kcml2ZXJzL3VzYi9nYWRnZXQvZnVuY3Rpb24vdV9zZXJpYWwuYwo+PiBAQCAtNTY1
-LDcgKzU2NSw4IEBAIHN0YXRpYyBpbnQgZ3Nfc3RhcnRfaW8oc3RydWN0IGdzX3BvcnQgKnBvcnQp
-Cj4+ICAJCWdzX3N0YXJ0X3R4KHBvcnQpOwo+PiAgCQkvKiBVbmJsb2NrIGFueSBwZW5kaW5nIHdy
-aXRlcyBpbnRvIG91ciBjaXJjdWxhciBidWZmZXIsIGluIGNhc2UKPj4gIAkJICogd2UgZGlkbid0
-IGluIGdzX3N0YXJ0X3R4KCkgKi8KPj4gLQkJdHR5X3dha2V1cChwb3J0LT5wb3J0LnR0eSk7Cj4+
-ICsJCWlmIChwb3J0LT5wb3J0LnR0eSkKPj4gKwkJCXR0eV93YWtldXAocG9ydC0+cG9ydC50dHkp
-Owo+Cj5XaGF0IHByZXZlbnRzIHBvcnQudHR5IGZyb20gYmVpbmcgc2V0IHRvIE5VTEwgYmV0d2Vl
-biB0aGUgY2hlY2sgYW5kIHRoZQo+Y2FsbCB0byB0dHlfd2FrZXVwPwo+Cj5TaG91bGRuJ3QgZ3Nf
-Y2xvc2UoKSBhbmQgZ3NlcmlhbF9jb25uZWN0KCkgaGF2ZSBzb21lIHNvcnQgb2YgbG9ja2luZyB0
-bwo+cHJldmVudCB0aGlzPwo+CkkgZW5jb3VudGVyZWQgdGhpcyBpc3N1ZSBvbiBTYW1zdW5nIEVY
-WU5PUzk4MCBwbGF0Zm9ybSwgTWF5YmUgdGhpcyBpcyBwbGF0Zm9ybSBzcGVjaWZpYyBpc3N1ZS4K
-VGhlIFVTQiBpbnRlcnJ1cHQgaGFuZGxlciBnb3QgcG9ydF9sb2NrIG9uIENQVSAwIGluIGdzZXJp
-YWxfY29ubmVjdCB3aGlsZSBnc19jbG9zZSBpcyB3YWl0aW5nIGZvciAKdGhpcyBsb2NrIG9uIENQ
-VSAxLiAgQnV0IHRoaXMgcG9ydF9sb2NrIHdpbGwgdW5sb2NrIGluIGdzX3N0YXJ0X2lvLS0+Z3Nf
-c3RhcnRfcnggdGVtcG9yYXJpbHksIFRoaXMgcmFjZQpjb25kaXRpb24gbWF5IGNhdXNlIHBvcnQu
-dHR5IHNldCBhcyBOVUxMLgoKPnRoYW5rcywKPgo+Z3JlZyBrLWgKDQoNCg==
+Hi Maciej,
+
+On Wed, Mar 25, 2020 at 11:46 AM Maciej W. Rozycki <macro@linux-mips.org> wrote:
+>
+> On Wed, 25 Mar 2020, Masahiro Yamada wrote:
+>
+> > MIPS provides multiple definitions for the following functions:
+> >
+> >   fw_init_cmdline
+> >   __delay
+> >   __udelay
+> >   __ndelay
+> >   memmove
+> >   __rmemcpy
+> >   memcpy
+> >   __copy_user
+> >
+> > The generic ones are defined in lib-y objects, which are overridden by
+> > the Octeon ones when CONFIG_CAVIUM_OCTEON_SOC is enabled.
+> >
+> > The use of EXPORT_SYMBOL in static libraries potentially causes a
+> > problem for the llvm linker [1]. So, I want to forcibly link lib-y
+> > objects to vmlinux when CONFIG_MODULES=y.
+> >
+> > As a groundwork, we must fix multiple definitions that have been
+> > hidden by lib-y.
+>
+>  IIUC that causes known dead code to be included in the kernel image.
+> Wouldn't it be possible to actually omit replaced functions from output by
+> keying the build of the sources providing generic code with appropriate
+> CONFIG_* settings (such as CONFIG_GENERIC_DELAY, CONFIG_GENERIC_MEMCPY,
+> etc. or suchlike)?
+>
+>   Maciej
+
+
+You are right.
+__weak cannot trim the dead code.
+
+
+I can work on the CONFIG_ approach,
+but I'd rather to use inverted
+CONFIG_HAVE_PLAT_* because it is easier
+to make CAVIUM_OCTEON_SOC select them.
+
+
+
+-- 
+Best Regards
+Masahiro Yamada
