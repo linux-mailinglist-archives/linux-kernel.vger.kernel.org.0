@@ -2,89 +2,48 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9E419192576
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 11:24:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5908B19257A
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 11:25:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727627AbgCYKYv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Mar 2020 06:24:51 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:53877 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726109AbgCYKYv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Mar 2020 06:24:51 -0400
-Received: by mail-wm1-f66.google.com with SMTP id b12so1746317wmj.3;
-        Wed, 25 Mar 2020 03:24:49 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=7JudwYayiOIszuwAtyoXWUCq8w6IbQTZxNsPBYDBfHE=;
-        b=Cc2DfsP+1ey+EsfFZQRH+PZDYSWrv/brBADwv4OF7F//loSUo/uaCbyJc2ZCPmkD8y
-         mEG3x20oNuU/2b8q3iMlqli7KR5xOQq38UNHkHMEnz9GloUqci0o0jydpewb7u7ApS2I
-         5DfuasuRuEzyWYDn4bhyX44khCdybA6txtjGNw9q5ZN/o9AATf9IQVn86cJk5nBrSjKs
-         EeVqIGs9p+lOFURp2Cpk0daENWu+XqiU6ULt0zS/4AvLqk7EwMjL9Kcr4mGeRS4C/GIw
-         AB54x/OlM6AveXWHOo6EyNh/hIu9l51Hq7Uo0nF9nR6gbCn0NQQ/ZrBXOO3NZ8Bb9VGQ
-         9ybg==
-X-Gm-Message-State: ANhLgQ3Pk7E2JFQC4aUyscZecs/fzpPjpU7pEqAJlza/JP2+MeenJ7rN
-        d6SCG3k+RvcxrzMqneGLQpqMsCrwp5i14fzTQDLL9Q==
-X-Google-Smtp-Source: ADFU+vuANgBK+LMwpbXf/GsjW0A2D8NyP74khoa1vGG+lCoGfP+Zdr2Avx+oCyzWXXlcnN6lS70etc6A3C14nSUmDwE=
-X-Received: by 2002:a7b:c388:: with SMTP id s8mr2712915wmj.168.1585131889102;
- Wed, 25 Mar 2020 03:24:49 -0700 (PDT)
+        id S1727590AbgCYKZ3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Mar 2020 06:25:29 -0400
+Received: from mx2.suse.de ([195.135.220.15]:59474 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727346AbgCYKZ3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Mar 2020 06:25:29 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 6820CABEA;
+        Wed, 25 Mar 2020 10:25:28 +0000 (UTC)
+Date:   Wed, 25 Mar 2020 11:25:27 +0100 (CET)
+From:   Miroslav Benes <mbenes@suse.cz>
+To:     Peter Zijlstra <peterz@infradead.org>
+cc:     tglx@linutronix.de, jpoimboe@redhat.com,
+        linux-kernel@vger.kernel.org, x86@kernel.org, mhiramat@kernel.org,
+        brgerst@gmail.com
+Subject: Re: [PATCH v3 13/26] objtool: Optimize find_symbol_by_name()
+In-Reply-To: <20200324160924.676865656@infradead.org>
+Message-ID: <alpine.LSU.2.21.2003251125090.12098@pobox.suse.cz>
+References: <20200324153113.098167666@infradead.org> <20200324160924.676865656@infradead.org>
+User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
 MIME-Version: 1.0
-References: <20200224043749.69466-1-namhyung@kernel.org> <CAM9d7chneHzibiQFopmN1rED=mf-nBpy58kauXWSOSYy2zCtzQ@mail.gmail.com>
- <20200324163444.GA162390@mtj.duckdns.org> <20200324201522.GP2452@worktop.programming.kicks-ass.net>
- <D53AD1F8-4B2B-4B30-BC72-59CCA7F0D268@gmail.com>
-In-Reply-To: <D53AD1F8-4B2B-4B30-BC72-59CCA7F0D268@gmail.com>
-From:   Namhyung Kim <namhyung@kernel.org>
-Date:   Wed, 25 Mar 2020 19:24:37 +0900
-Message-ID: <CAM9d7chu0xowWK19fBQdSueVmAacpE6qO4x4NPjOY9Tcm8_AqA@mail.gmail.com>
-Subject: Re: [PATCHSET 00/10] perf: Improve cgroup profiling (v5)
-To:     Arnaldo Melo <arnaldo.melo@gmail.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>, Tejun Heo <tj@kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Stephane Eranian <eranian@google.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-perf-users <linux-perf-users@vger.kernel.org>,
-        Li Zefan <lizefan@huawei.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Adrian Hunter <adrian.hunter@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 25, 2020 at 6:25 AM Arnaldo Melo <arnaldo.melo@gmail.com> wrote:
-> On March 24, 2020 5:15:22 PM GMT-03:00, Peter Zijlstra <peterz@infradead.org> wrote:
-> >On Tue, Mar 24, 2020 at 12:34:44PM -0400, Tejun Heo wrote:
-> >> On Mon, Mar 23, 2020 at 08:58:04AM +0900, Namhyung Kim wrote:
-> >> > Hello Peter, Tejun and folks.
-> >> >
-> >> > Do you have any other comments on the kernel side?
-> >> > If not, can I get your Ack?
-> >>
-> >> Everything looks good from cgroup side. I think I acked all cgroup
-> >parts already
-> >> but if not please feel free to add
-> >>
-> >>  Acked-by: Tejun Heo <tj@kernel.org>
-> >
-> >Yeah, looks good to me too. Since it's mostly userspace patches, will
-> >you route it Arnaldo?
-> >
-> >Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
->
-> Thanks for the acks, I'll process it tomorrow, so tests passing it'll go Ingo's way for 5.7 tomorrow.
+On Tue, 24 Mar 2020, Peter Zijlstra wrote:
 
-Thanks all for the acks,
+> Perf showed that find_symbol_by_name() takes time; add a symbol name
+> hash.
+> 
+> This shaves another second off of objtool on vmlinux.o runtime, down
+> to 15 seconds.
+> 
+> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+> Acked-by: Josh Poimboeuf <jpoimboe@redhat.com>
 
-Arnaldo, as it's floating around on the list about a month already
-I guess it needs a rebase.  Also I need to check TUI as Jiri reported.
-Will post a next version soon.
+Reviewed-by: Miroslav Benes <mbenes@suse.cz>
 
-Thanks
-Namhyung
+M
