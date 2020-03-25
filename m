@@ -2,129 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 649F21924E9
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 11:02:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 339D51924E1
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 11:01:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727556AbgCYKBy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Mar 2020 06:01:54 -0400
-Received: from mx0a-00128a01.pphosted.com ([148.163.135.77]:37752 "EHLO
-        mx0a-00128a01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727494AbgCYKBw (ORCPT
+        id S1727275AbgCYKBo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Mar 2020 06:01:44 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:53937 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726103AbgCYKBn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Mar 2020 06:01:52 -0400
-Received: from pps.filterd (m0167088.ppops.net [127.0.0.1])
-        by mx0a-00128a01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 02P9tOP2028336;
-        Wed, 25 Mar 2020 06:01:42 -0400
-Received: from nwd2mta3.analog.com ([137.71.173.56])
-        by mx0a-00128a01.pphosted.com with ESMTP id 2ywcs6556j-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 25 Mar 2020 06:01:42 -0400
-Received: from ASHBMBX8.ad.analog.com (ashbmbx8.ad.analog.com [10.64.17.5])
-        by nwd2mta3.analog.com (8.14.7/8.14.7) with ESMTP id 02PA1fAg008627
-        (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=FAIL);
-        Wed, 25 Mar 2020 06:01:41 -0400
-Received: from ASHBCASHYB5.ad.analog.com (10.64.17.133) by
- ASHBMBX8.ad.analog.com (10.64.17.5) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1779.2; Wed, 25 Mar 2020 06:01:40 -0400
-Received: from ASHBMBX9.ad.analog.com (10.64.17.10) by
- ASHBCASHYB5.ad.analog.com (10.64.17.133) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1779.2; Wed, 25 Mar 2020 06:01:40 -0400
-Received: from zeus.spd.analog.com (10.64.82.11) by ASHBMBX9.ad.analog.com
- (10.64.17.10) with Microsoft SMTP Server id 15.1.1779.2 via Frontend
- Transport; Wed, 25 Mar 2020 06:01:40 -0400
-Received: from localhost.localdomain ([10.48.65.12])
-        by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 02PA1anO023841;
-        Wed, 25 Mar 2020 06:01:36 -0400
-From:   Alexandru Ardelean <alexandru.ardelean@analog.com>
-To:     <linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC:     <jic23@kernel.org>, <lars@metafoo.de>, <knaack.h@gmx.de>,
-        <pmeerw@pmeerw.ne>,
-        Alexandru Ardelean <alexandru.ardelean@analog.com>
-Subject: [PATCH v2] iio: buffer: Don't allow buffers without any channels enabled to be activated
-Date:   Wed, 25 Mar 2020 12:01:12 +0200
-Message-ID: <20200325100112.85107-1-alexandru.ardelean@analog.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200320104031.31701-1-alexandru.ardelean@analog.com>
-References: <20200320104031.31701-1-alexandru.ardelean@analog.com>
+        Wed, 25 Mar 2020 06:01:43 -0400
+Received: by mail-wm1-f66.google.com with SMTP id b12so1649129wmj.3
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Mar 2020 03:01:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=nBTA3RwxD80D4wayjboyFPP8ij+Z0pvHkdG+FymQql0=;
+        b=GitQOasxH6mJtq7RaZzPN46fEM2OSzFQbTUMZ7cr0z0LNUOeGp5rm1ecV91rpHcqsg
+         7vO2By0dYLzTtazTFG/GaIO8m1G0CkbqKbjDHosrWje4ZvmIQVpQQKUHt0ayYQcL4nFN
+         Z/0thXrorSs180vykAkW3c1WX7xZNLzaiNV6YOyWTR4G2UphPT63+dZheNiWp2PSwWD0
+         Oo+eov5V/xvreDt0FWL044DwQ9iRpngHslAUInyRJuiTGvis/Ty3Rx0eamgjRKEJFNbs
+         G80hC2SX7XzPGEzzrBvUR5aIk0ixO25h5du8Xpi8ELkHvOR05jc3ZtTofx8FW5lgKlCI
+         ijUw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=nBTA3RwxD80D4wayjboyFPP8ij+Z0pvHkdG+FymQql0=;
+        b=jUM2Bgs8DllVstaeZueCyw8lbjXviKoY3/ZGK//Ng7AIk4GQfUNQUhTW01A6I852x+
+         4j8z5O3/Vmfu5zw6TijMX/1MYejo1UJvUhbJWRyDzuffEzHEfyDqAebB8HHLwtQf/cyk
+         38QJzVtMQ8sjqc1vUYbF748/YhyWbGDYa6h45+AjPlH5jkPAp94CCuW/20oiJZAMoVGE
+         T1sxSNCx6EuZVJEkh6DDL/rLgHm90JQUzwtexVrEAAjEKqQI+tW1vtUFTVLP6CQT7Z+x
+         m401oTpN5qLdRMdef3lUm5QbsENh2de5WfFTxLB3uZ8fYEqq2skz3g34PCZ+nFC+aXrv
+         gp8w==
+X-Gm-Message-State: ANhLgQ1aWCr3MKGn6jSOncj5G1HewdQxU5clu+zTFVhXN3zmoYclvE+h
+        OCccdSp3o4VkpxtVq0IrJQRr59vzRxw=
+X-Google-Smtp-Source: ADFU+vvB50YV0n15Uw6f6FCLrfwveDe8phdHcXCDapcTs8/K7Tlg2LjrmyYO4knPgv+FoGgkdWzGyg==
+X-Received: by 2002:a7b:cc07:: with SMTP id f7mr2701138wmh.126.1585130501687;
+        Wed, 25 Mar 2020 03:01:41 -0700 (PDT)
+Received: from srini-hackbox.lan (cpc89974-aztw32-2-0-cust43.18-1.cable.virginm.net. [86.30.250.44])
+        by smtp.gmail.com with ESMTPSA id k9sm34489672wrd.74.2020.03.25.03.01.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 25 Mar 2020 03:01:41 -0700 (PDT)
+From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+To:     gregkh@linuxfoundation.org
+Cc:     linux-kernel@vger.kernel.org,
+        nicholas.johnson-opensource@outlook.com.au,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Subject: [PATCH v2 0/2] nvmem: use is_bin_visible callback
+Date:   Wed, 25 Mar 2020 10:01:36 +0000
+Message-Id: <20200325100138.17854-1-srinivas.kandagatla@linaro.org>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
-X-ADIRoutedOnPrem: True
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.645
- definitions=2020-03-25_04:2020-03-23,2020-03-25 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- bulkscore=0 adultscore=0 phishscore=0 priorityscore=1501 impostorscore=0
- malwarescore=0 clxscore=1011 suspectscore=0 spamscore=0 mlxlogscore=961
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2003020000 definitions=main-2003250085
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Lars-Peter Clausen <lars@metafoo.de>
+Hi Greg,
 
-Before activating a buffer make sure that at least one channel is enabled.
-Activating a buffer with 0 channels enabled doesn't make too much sense and
-disallowing this case makes sure that individual driver don't have to add
-special case code to handle it.
+As suggested I managed to use is_bin_visible for the existing code
+and also added few more checks for callbacks before setting
+permissions on the file. Which also means that Thunderbolt case
+for write-only should be fixed automatically with this patch.
 
-Currently, without this patch enabling a buffer is possible and no error is
-produced. With this patch -EINVAL is returned.
+Changes since v1:
+	- Updated permissions setup logic as suggested by Greg
+	- Added checks for callbacks.
 
-An example of execution with this patch and some instrumented print-code:
-   root@analog:~# cd /sys/bus/iio/devices/iio\:device3/buffer
-   root@analog:/sys/bus/iio/devices/iio:device3/buffer# echo 1 > enable
-   0: iio_verify_update 748 indio_dev->masklength 2 *insert_buffer->scan_mask 00000000
-   1: iio_verify_update 753
-   2:__iio_update_buffers 1115 ret -22
-   3: iio_buffer_store_enable 1241 ret -22
-   -bash: echo: write error: Invalid argument
-1, 2 & 3 are exit-error paths. 0 the first print in iio_verify_update()
-rergardless of error path.
+Thanks,
+srini
 
-Without this patch (and same instrumented print-code):
-   root@analog:~# cd /sys/bus/iio/devices/iio\:device3/buffer
-   root@analog:/sys/bus/iio/devices/iio:device3/buffer# echo 1 > enable
-   0: iio_verify_update 748 indio_dev->masklength 2 *insert_buffer->scan_mask 00000000
-   root@analog:/sys/bus/iio/devices/iio:device3/buffer#
-Buffer is enabled with no error.
+Srinivas Kandagatla (2):
+  nvmem: core: add root_only member to nvmem device struct
+  nvmem: core: use is_bin_visible for permissions
 
-Signed-off-by: Lars-Peter Clausen <lars@metafoo.de>
-Signed-off-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
----
+ drivers/nvmem/core.c        |  1 +
+ drivers/nvmem/nvmem-sysfs.c | 85 +++++++++++++------------------------
+ drivers/nvmem/nvmem.h       |  1 +
+ 3 files changed, 31 insertions(+), 56 deletions(-)
 
-Changelog v1 -> v2:
-* moved check in iio_verify_update()
-* added dev_dbg() message; should help some folks understand the message
-* documented steps to reproduce
-* added Fixes tag; hopefully the tag is the good one; if needed, it can be
-  dropped; this has been around for ~8 years; no idea if it's worth
-  backporting
-
- drivers/iio/industrialio-buffer.c | 7 +++++++
- 1 file changed, 7 insertions(+)
-
-diff --git a/drivers/iio/industrialio-buffer.c b/drivers/iio/industrialio-buffer.c
-index 5ff34ce8b6a2..e6fa1a4e135d 100644
---- a/drivers/iio/industrialio-buffer.c
-+++ b/drivers/iio/industrialio-buffer.c
-@@ -686,6 +686,13 @@ static int iio_verify_update(struct iio_dev *indio_dev,
- 	bool scan_timestamp;
- 	unsigned int modes;
- 
-+	if (insert_buffer &&
-+	    bitmap_empty(insert_buffer->scan_mask, indio_dev->masklength)) {
-+		dev_dbg(&indio_dev->dev,
-+			"At least one scan element must be enabled first\n");
-+		return -EINVAL;
-+	}
-+
- 	memset(config, 0, sizeof(*config));
- 	config->watermark = ~0;
- 
 -- 
-2.17.1
+2.21.0
 
