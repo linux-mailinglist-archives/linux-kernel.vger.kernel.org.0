@@ -2,99 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4B4431923A6
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 10:07:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B2D6F1923B1
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 10:08:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727507AbgCYJHL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Mar 2020 05:07:11 -0400
-Received: from ssl.serverraum.org ([176.9.125.105]:40739 "EHLO
-        ssl.serverraum.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726103AbgCYJHK (ORCPT
+        id S1727351AbgCYJIj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Mar 2020 05:08:39 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:51636 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726043AbgCYJIi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Mar 2020 05:07:10 -0400
-Received: from apollo.fritz.box (unknown [IPv6:2a02:810c:c200:2e91:6257:18ff:fec4:ca34])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-384) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by ssl.serverraum.org (Postfix) with ESMTPSA id ACD9223D18;
-        Wed, 25 Mar 2020 10:07:08 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=walle.cc; s=mail2016061301;
-        t=1585127228;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=zSw5htA3zFKuEj3IkQe1+1H4Y07G8jg2OZJczsY68JI=;
-        b=Eo0/7uATpaLMl2SHqmmcLT0+Vz2JXDMjZrMHUpgx7pVps5CVU4NhV2DZdarbSXa0Zed0Gm
-        7fVU88+Wpd4PhnjdWJsE6qW/TxPiHkMqMORH5CcGf1eeEgzRpyU2a9iipbq8QdUH6pwlA1
-        2JkJbmSDGBu6E6li3HNGLQu7Moi//WI=
-From:   Michael Walle <michael@walle.cc>
-To:     linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Jiri Slaby <jslaby@suse.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andy Duan <fugang.duan@nxp.com>,
-        Michael Walle <michael@walle.cc>,
-        Leonard Crestez <leonard.crestez@nxp.com>
-Subject: [PATCH v2 2/2] tty: serial: fsl_lpuart: fix return value checking
-Date:   Wed, 25 Mar 2020 10:06:58 +0100
-Message-Id: <20200325090658.25967-2-michael@walle.cc>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200325090658.25967-1-michael@walle.cc>
-References: <20200325090658.25967-1-michael@walle.cc>
+        Wed, 25 Mar 2020 05:08:38 -0400
+Received: by mail-wm1-f67.google.com with SMTP id c187so1470153wme.1
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Mar 2020 02:08:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=XIUdQLhj5Pc75TUvcZ0tOKDsdZmwm019gn6D+9JuS6w=;
+        b=mXJTQiFObD2+7P3KfspCMe5UXynkuywXffCR5WsPA8tjfynSlKOm0NBB3QjoP6LDzq
+         Wz0zHDBmyOJbKrtLWVHfevcqnJJEFvjZyMSjaa/Bn8/dwCNTCI8Wmcv7xZqpHp0erP0u
+         vn1QTutDwin4d0cZ+3DAgpaV22CxUd0RoPJrkS1a1U70332X0oYJhY0GBJSNfyXe+hlU
+         rXbU1C31crfr3PwWko2cM42XvdDtdDIquSQ6LO2rE7OKT7danHk5SaA/zJDjBXPB3eHy
+         kM1rAVSFPSgfQth+b0e3N0nHfM/MQ4PUK5DOT+TpsVpjPGDG3S54I3jUhfUeghNys21x
+         Eomw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=XIUdQLhj5Pc75TUvcZ0tOKDsdZmwm019gn6D+9JuS6w=;
+        b=Rm8bJmYAbZdjVNAYYP+Il7OGcAAqItPti+/brX+vPOiHXIjs2K/bsmjhN+r1DglQFT
+         RLtJIOVhnhGlKCswhV1+e3dNjJSw/t50Q4JDop6JPwk3yqApTAEexkWy+EW0Yeibssrv
+         rypQRbFfT4V9rH/m0d9QTUBkIIDzixg1g+s1HmWwN5/pxsMTnkUjsEF+QVZKKSdUxnks
+         Sf+bZWimsktL0jcBzUvwrhnBFNr0VkCGeh9VQtwV3kJ4/TjeFg7F6bOmB0RXIY9edkor
+         9L4c5ptC2Pz9TfxfkMa29KHjOIIw6AgYRdBdlW718l087cZ4e14C8bRtBcf/Y83r2QUu
+         rlEQ==
+X-Gm-Message-State: ANhLgQ3CjqZHy8PAlMOm4s7PiY5abAlm/e0j+QSveuEGoecwRRSfThc4
+        rfPLer93GoekRQeSm5kEGy4=
+X-Google-Smtp-Source: ADFU+vs4zpchGXsW1LwA3DrZsQ+YXxDctXvUmSKUptU1A50v2mdge/WrAGiWh+lvWepXYhaN5jIHDw==
+X-Received: by 2002:a05:600c:286:: with SMTP id 6mr2387027wmk.101.1585127315630;
+        Wed, 25 Mar 2020 02:08:35 -0700 (PDT)
+Received: from wasp.lan (250.128.208.46.dyn.plus.net. [46.208.128.250])
+        by smtp.googlemail.com with ESMTPSA id 127sm8565048wmd.38.2020.03.25.02.08.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 25 Mar 2020 02:08:34 -0700 (PDT)
+From:   Shane Francis <bigbeeshane@gmail.com>
+To:     dri-devel@lists.freedesktop.org
+Cc:     amd-gfx-request@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org, bigbeeshane@gmail.com,
+        alexander.deucher@amd.com, christian.koenig@amd.com,
+        mripard@kernel.org, airlied@linux.ie, David1.Zhou@amd.com
+Subject: [PATCH v4 0/3] AMDGPU / RADEON / DRM Fix mapping of user pages
+Date:   Wed, 25 Mar 2020 09:07:38 +0000
+Message-Id: <20200325090741.21957-1-bigbeeshane@gmail.com>
+X-Mailer: git-send-email 2.26.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Spamd-Bar: ++++
-X-Spam-Level: ****
-X-Rspamd-Server: web
-X-Spam-Status: No, score=4.90
-X-Spam-Score: 4.90
-X-Rspamd-Queue-Id: ACD9223D18
-X-Spamd-Result: default: False [4.90 / 15.00];
-         FROM_HAS_DN(0.00)[];
-         TO_DN_SOME(0.00)[];
-         R_MISSING_CHARSET(2.50)[];
-         TO_MATCH_ENVRCPT_ALL(0.00)[];
-         MIME_GOOD(-0.10)[text/plain];
-         NEURAL_SPAM(0.00)[0.200];
-         BROKEN_CONTENT_TYPE(1.50)[];
-         DKIM_SIGNED(0.00)[];
-         RCPT_COUNT_SEVEN(0.00)[7];
-         MID_CONTAINS_FROM(1.00)[];
-         RCVD_COUNT_ZERO(0.00)[0];
-         FROM_EQ_ENVFROM(0.00)[];
-         MIME_TRACE(0.00)[0:+];
-         ASN(0.00)[asn:31334, ipnet:2a02:810c:8000::/33, country:DE]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The return value of lpuart_dma_tx_request() is an negative errno on
-failure and zero on success.
+This patch set is to fix a bug in amdgpu / radeon drm that results in
+a crash when dma_map_sg combines elemnets within a scatterlist table. 
 
-Fixes: 159381df1442f ("tty: serial: fsl_lpuart: fix DMA operation when using IOMMU")
-Reported-by: Leonard Crestez <leonard.crestez@nxp.com>
-Signed-off-by: Michael Walle <michael@walle.cc>
----
-changes since v1:
- - none
+There are 2 shortfalls in the current kernel.
 
- drivers/tty/serial/fsl_lpuart.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+1) AMDGPU / RADEON assumes that the requested and created scatterlist
+   table lengths using from dma_map_sg are equal. This may not be the
+   case using the newer dma-iommu implementation
 
-diff --git a/drivers/tty/serial/fsl_lpuart.c b/drivers/tty/serial/fsl_lpuart.c
-index 131018979b77..5d41075964f2 100644
---- a/drivers/tty/serial/fsl_lpuart.c
-+++ b/drivers/tty/serial/fsl_lpuart.c
-@@ -1538,7 +1538,7 @@ static void lpuart_tx_dma_startup(struct lpuart_port *sport)
- 		goto err;
- 
- 	ret = lpuart_dma_tx_request(&sport->port);
--	if (!ret)
-+	if (ret)
- 		goto err;
- 
- 	init_waitqueue_head(&sport->dma_wait);
+2) drm_prime does not fetch the length of the scatterlist
+   via the correct dma macro, this can use the incorrect length
+   being used (>0) in places where dma_map_sg has updated the table
+   elements.
+
+   The sg_dma_len macro is representative of the length of the sg item
+   after dma_map_sg
+
+Example Crash :
+> [drm:amdgpu_ttm_backend_bind [amdgpu]] *ERROR* failed to pin userptr
+
+This happens in OpenCL applications, causing them to crash or hang, on
+either amdgpu-pro or ROCm OpenCL implementations
+
+I have verified this fixes the above on kernel 5.5 and 5.5rc using an
+AMD Vega 64 GPU
+
+Shane Francis (3):
+  drm/prime: use dma length macro when mapping sg to arrays
+  drm/amdgpu: fix scatter-gather mapping with user pages
+  drm/radeon: fix scatter-gather mapping with user pages
+
+ drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c | 2 +-
+ drivers/gpu/drm/drm_prime.c             | 2 +-
+ drivers/gpu/drm/radeon/radeon_ttm.c     | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
+
 -- 
-2.20.1
+2.26.0
 
