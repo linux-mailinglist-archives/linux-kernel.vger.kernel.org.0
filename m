@@ -2,142 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 086FC192B0C
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 15:23:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0D5F4192B0F
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 15:23:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727725AbgCYOXO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Mar 2020 10:23:14 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:34876 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727683AbgCYOXN (ORCPT
+        id S1727771AbgCYOX3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Mar 2020 10:23:29 -0400
+Received: from us-smtp-delivery-74.mimecast.com ([216.205.24.74]:28274 "EHLO
+        us-smtp-delivery-74.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727566AbgCYOX3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Mar 2020 10:23:13 -0400
-Received: by mail-wr1-f66.google.com with SMTP id d5so3375990wrn.2
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Mar 2020 07:23:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=NR2RALCfd8rSS/oDIEHAtXd82vJW7Hsk6ulYdw+wc04=;
-        b=fhol/5lM5IvZRvcSRcYglAhotMmsx+h7Mdx0iKzllcDwdCj0ONi8mneAd+IQViE4PP
-         Ez/ELSeS5qVugsR0bopiA1WCjg32V8+5lqXuGfSLDIvvMLqBE02nB7zH+PW3U9VVGF0e
-         A9nkhBGwhElsFWlPPMYvfy2INjM71FPl54tNoXiZ6ct73rcmb/oKJtaFXKlX09dmcw2Z
-         YqknhxJwJtM6WF8DysisY4HcJn5V2aL9h67yq6Do/iYlqsWapzDIyW27+WBjUrnXOrPp
-         ekTS+j9OlYylXYSa+c2b0Nbxwj//rcF3QpIqfrnOADMtui8QXENj/1Zcp3L0bjavMmpr
-         adog==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=NR2RALCfd8rSS/oDIEHAtXd82vJW7Hsk6ulYdw+wc04=;
-        b=K4C9kTlXLgX6X1aQ4K0u/HHw5hfOUew2EWs0XYFZJdvifSJhAIr9IdsupHLHLC0PzZ
-         qm3s+Aq2993neXJs9l6NYjjZwG8e0OKUk+GqlJC2QOatU2gGKJBBXHUW+NFfwLG0GrhJ
-         fwbPSfQmAAMy/NwUDEmsHTlQxYBBH/2HV6hlXSIz1YUY7l5WodzhYFn93lZ6eLSWHYz8
-         bQsbFdEF379zOMKFn04PTrv8eudw7TzJYKr0jCpHUXjP28+6Pi240oOe1/Qcf6ztWpsA
-         rLB3p1K7sFXui4/wAHVX318Gx+P3Vs9nlzMUozzBCvPC4/OUpedYR8KDNT5zx9lv5IRg
-         cNfA==
-X-Gm-Message-State: ANhLgQ1QtGaHrtpf9exLafaBjrXLcq5lsAN3PskoaNgaoneEVwNmPYb6
-        bfGrHoXLCn+H2ia4IuqVrJlQzg==
-X-Google-Smtp-Source: ADFU+vtTF9vR+W3wWj+2sDb6HXmAtIEH5sqlH6cy58JofmUBn2Cpva5yr3B5Ye5ldkU3jc3+WXdOiA==
-X-Received: by 2002:adf:dd86:: with SMTP id x6mr3688680wrl.169.1585146189020;
-        Wed, 25 Mar 2020 07:23:09 -0700 (PDT)
-Received: from Red ([2a01:cb1d:3d5:a100:2e56:dcff:fed2:c6d6])
-        by smtp.googlemail.com with ESMTPSA id k18sm33137543wru.94.2020.03.25.07.23.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Mar 2020 07:23:08 -0700 (PDT)
-Date:   Wed, 25 Mar 2020 15:23:06 +0100
-From:   LABBE Corentin <clabbe@baylibre.com>
-To:     Jon Hunter <jonathanh@nvidia.com>
-Cc:     Nicolas Chauvet <kwizart@gmail.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
-        pdeschrijver@nvidia.com,
-        Michael Turquette <mturquette@baylibre.com>, sboyd@kernel.org,
-        axboe@kernel.dk, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-ide@vger.kernel.org
-Subject: Re: tegra124-jetson-tk1: sata doesnt work since 5.2
-Message-ID: <20200325142306.GB27961@Red>
-References: <20200319074401.GA4116@Red>
- <CABr+WTnBmJsDZPjUxYkG98dTneDD1p8G=uRftVduTGYbY0ruqQ@mail.gmail.com>
- <20200325134003.GA27961@Red>
- <cf63d40c-7b84-60f6-76be-a13255e69c99@nvidia.com>
+        Wed, 25 Mar 2020 10:23:29 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1585146207;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=GSFdRidEnIhtkPZ+oc94MfcptNw43s+nSxOUqCIguho=;
+        b=TF2wKrnB46Sxgc5gAFmuqrqxltOKPkkT0EA0wtCnTFKZYzx4+Tr1kwrhOMJo3wfLrTKFWA
+        mkoYWG72fc09isJwb0Qm905ugOzveTY/Gk93/Nph2xiIo5ZCu8QQaQ8jx2dL/tFE9syrQw
+        z0eY9l/tNvaSQgGUB8S5E5SOIxvIEZA=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-373-TMqCBrEgNSy-dYZve-7NeQ-1; Wed, 25 Mar 2020 10:23:23 -0400
+X-MC-Unique: TMqCBrEgNSy-dYZve-7NeQ-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id B966418A8C88;
+        Wed, 25 Mar 2020 14:23:20 +0000 (UTC)
+Received: from localhost (ovpn-12-88.pek2.redhat.com [10.72.12.88])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 154C291293;
+        Wed, 25 Mar 2020 14:23:18 +0000 (UTC)
+Date:   Wed, 25 Mar 2020 22:23:15 +0800
+From:   Baoquan He <bhe@redhat.com>
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     David Rientjes <rientjes@google.com>, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, akpm@linux-foundation.org,
+        iamjoonsoo.kim@lge.com, hannes@cmpxchg.org, vbabka@suse.cz,
+        mgorman@techsingularity.net
+Subject: Re: [PATCH 4/5] mm/vmstat.c: move the per-node stats to the front of
+ /proc/zoneinfo
+Message-ID: <20200325142315.GC9942@MiWiFi-R3L-srv>
+References: <20200324142229.12028-1-bhe@redhat.com>
+ <20200324142229.12028-5-bhe@redhat.com>
+ <alpine.DEB.2.21.2003241220360.34058@chino.kir.corp.google.com>
+ <20200325055331.GB9942@MiWiFi-R3L-srv>
+ <20200325085537.GZ19542@dhcp22.suse.cz>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <cf63d40c-7b84-60f6-76be-a13255e69c99@nvidia.com>
+In-Reply-To: <20200325085537.GZ19542@dhcp22.suse.cz>
 User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 25, 2020 at 02:00:25PM +0000, Jon Hunter wrote:
-> 
-> On 25/03/2020 13:40, LABBE Corentin wrote:
-> > On Thu, Mar 19, 2020 at 08:55:38AM +0100, Nicolas Chauvet wrote:
-> >> Le jeu. 19 mars 2020 à 08:44, LABBE Corentin <clabbe@baylibre.com> a écrit :
-> >>>
-> >>> Hello
-> >>>
-> >>> sata doesnt work on tegra124-jetson-tk1 on next and master and at least since 5.2 (but 5.1 works).
-> >>> [    0.492810] +5V_SATA: supplied by +5V_SYS
-> >>> [    0.493230] +12V_SATA: supplied by +VDD_MUX
-> >>> [    2.088675] tegra-ahci 70027000.sata: 70027000.sata supply ahci not found, using dummy regulator
-> >>> [    2.097643] tegra-ahci 70027000.sata: 70027000.sata supply phy not found, using dummy regulator
-> >>> [    3.314776] tegra-ahci 70027000.sata: 70027000.sata supply ahci not found, using dummy regulator
-> >>> [    3.323658] tegra-ahci 70027000.sata: 70027000.sata supply phy not found, using dummy regulator
-> >>> [    5.236964] tegra-ahci 70027000.sata: 70027000.sata supply ahci not found, using dummy regulator
-> >>> [    5.245867] tegra-ahci 70027000.sata: 70027000.sata supply phy not found, using dummy regulator
-> >>> [    5.254706] tegra-ahci 70027000.sata: 70027000.sata supply target not found, using dummy regulator
-> >>> [    5.310270] phy phy-sata.6: phy poweron failed --> -110
-> >>> [    5.315604] tegra-ahci 70027000.sata: failed to power on AHCI controller: -110
-> >>> [    5.323022] tegra-ahci: probe of 70027000.sata failed with error -110
-> >>> [   35.694269] +5V_SATA: disabling
-> >>> [   35.697438] +12V_SATA: disabling
-> >>
-> >> It looks strange, because (on same device) , I have sata working as
-> >> appropriate, but ethernet fails with me.
-> >> https://bugzilla.kernel.org/show_bug.cgi?id=206217
-> >>
-> >> It might worth to have another report.
-> >>
+On 03/25/20 at 09:55am, Michal Hocko wrote:
+> On Wed 25-03-20 13:53:31, Baoquan He wrote:
+> > On 03/24/20 at 12:25pm, David Rientjes wrote:
+> > > On Tue, 24 Mar 2020, Baoquan He wrote:
+> > > 
+> > > > This moving makes the layout of /proc/zoneinfo more sensible. And there
+> > > > are 4 zones at most currently, it doesn't need to scroll down much to get
+> > > > to the 1st populated zone, even though the 1st populated zone is MOVABLE
+> > > > zone.
+> > > > 
+> > > 
+> > > Doesn't this introduce risk that it will break existing parsers of 
+> > > /proc/zoneinfo in subtle ways?
+> > > 
+> > > In some cases /proc/zoneinfo is a tricky file to correctly parse because 
+> > > you have to rely on the existing order in which it is printed to determine 
+> > > which zone is being described.  We need to print zones even with unmanaged 
+> > > pages, for instance, otherwise userspace may be unaware of which zones are 
+> > > supported and what order they are in.  That's important to be able to 
+> > > construct the proper string to use when writing vm.lowmem_reserve_ratio.
+> > > 
+> > > I'd prefer not changing the order of /proc/zoneinfo if it can be avoided 
+> > > just because the risk outweighs the reward that we may break some 
+> > > initscript parsers.
 > > 
-> > Hello
-> > 
-> > Mine has ethernet works well. But I hit many problem with it and older kernel.
-> > Perhaps the 5.1.21, were I am stuck, does not have it.
-> > 
-> > Anyway, the tegra of kerneci has the same SATA problem.
-> > https://storage.kernelci.org/next/master/next-20200325/arm/multi_v7_defconfig+CONFIG_SMP=n/gcc-8/lab-baylibre/boot-tegra124-jetson-tk1.txt
-> > 
-> > Maintainers, any idea on this sata issue ?
+> > Oh, I may not describe the change and result clearly. This patch doesn't
+> > change zone order at all.  I only move the per-node stats to the front of
+> > each node, the zone order is completely kept the same, still DMA, DMA32,
+> > NORMAL, MOVABLE.
 > 
-> I have checked our bootlogs for v5.6-rc7 and don't see the issue with
-> either the tegra_defconfig or the multi_v7_defconfig. I am wondering if
-> this could be due a difference in the bootloader version. Currently we
-> are testing with a v2019.07 u-boot bootloader. Looks like the kernelci
-> board is using an older u-boot. Obviously it should still work, but
-> would be good to know if the reason why were are not seeing this is
-> because of the bootloader.
+> Even this can break existing parsers. Fixing that up is likely not hard
+> and existing parsers would be mostly debugging hacks here and there but
+> I do miss any actual justification except for you considering it more
+> sensible. I do not remember this would be a common pain point for people
+> parsing this file. If anything the overal structure of the file makes it
+> hard to parse and your patches do not really address that. We are likely
+> too late to make the output much more sensible TBH.
 > 
-> Another thing to check would be the pll_e clock frequency on a working
-> build and non-working build to see if there is a difference in the pll
-> frequency that is causing this.
-> 
-> Cheers
-> Jon
-> 
+> That being said, I haven't looked more closely on your patches because I
+> do not have spare cycles for that. Your justification for touching the
+> code which seems to be working relatively well is quite weak IMHO, yet
+> it adds a non zero risk for breaking existing parsers.
 
-Hello
+I would take the saying of non zero risk for breaking existing parsers.
+When considering this change, I thought about the possible risk. However,
+found out the per-node stats was added in 2016 which is not so late, and
+assume nobody will rely on the order of per-node stats embeded into a
+zone. But I have to admit any concern or worry of risk is worth being
+considerred carefully since /proc/zoneinfo is a classic interface.
 
-My uboot is 2016.01-rc4-00002-g3861d78, so a bit old.
-I have a mainline uboot build for this tegra, but still didnt find a clear way to update it.
-Did you have a good documentation on how to update it ?
-If possible some clear uboot commands to update it via tftp.
+So, in view of objections from you and David, I would like to drop this
+patch and patch 5. It's a small improvement, not worth taking any risk.
+But if it goes back to this time of 2017, I would like to spend some
+time to defend it :-)
 
-Thanks
-Regards
+commit e2ecc8a79ed49f7838b4fdf352c4c48cec9424ac
+Author: Mel Gorman <mgorman@techsingularity.net>
+Date:   Thu Jul 28 15:47:02 2016 -0700
+
+    mm, vmstat: print node-based stats in zoneinfo file
+
+
