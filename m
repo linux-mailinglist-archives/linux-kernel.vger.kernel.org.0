@@ -2,132 +2,58 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 29E7C1932A9
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 22:30:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 85E4F1932E2
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 22:37:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727485AbgCYVaC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Mar 2020 17:30:02 -0400
-Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:9019 "EHLO
-        hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727384AbgCYVaC (ORCPT
+        id S1727560AbgCYVhz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Mar 2020 17:37:55 -0400
+Received: from fgw20-4.mail.saunalahti.fi ([62.142.5.107]:46144 "EHLO
+        fgw20-4.mail.saunalahti.fi" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726081AbgCYVhy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Mar 2020 17:30:02 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5e7bcd4c0001>; Wed, 25 Mar 2020 14:29:48 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Wed, 25 Mar 2020 14:30:01 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Wed, 25 Mar 2020 14:30:01 -0700
-Received: from [10.26.72.231] (10.124.1.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 25 Mar
- 2020 21:29:59 +0000
-Subject: Re: [tip: timers/core] clocksource/drivers/timer-probe: Avoid
- creating dead devices
-To:     Ionela Voinescu <ionela.voinescu@arm.com>,
-        <linux-kernel@vger.kernel.org>,
-        Saravana Kannan <saravanak@google.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>
-CC:     <linux-tip-commits@vger.kernel.org>, x86 <x86@kernel.org>,
-        <liviu.dudau@arm.com>, <sudeep.holla@arm.com>,
-        <lorenzo.pieralisi@arm.com>,
-        linux-tegra <linux-tegra@vger.kernel.org>
-References: <20200111052125.238212-1-saravanak@google.com>
- <158460766637.28353.11325960928759668587.tip-bot2@tip-bot2>
- <20200324175955.GA16972@arm.com>
-From:   Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <e75ae529-264c-9aa6-f711-2afe28ceec36@nvidia.com>
-Date:   Wed, 25 Mar 2020 21:29:57 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
-MIME-Version: 1.0
-In-Reply-To: <20200324175955.GA16972@arm.com>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1585171788; bh=zwkSmPWYbRZk6Ce7Av1OcrGsQ4eYCwVvf0CQ6wsWw2k=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=JSA1Om7wkt2BSVOehQRgF4VAja1l6ZPtUcoB5fNOP5axn37rdw8iHeqRDUeY9L/iQ
-         nk/M+2oIsXJLRXVgPxVFR5QlE6XIq/kA7lIUAlODiGazqSKNuiz9ciNW2EtMQlIiGP
-         //f2D9hZFi2VB0LS3bQbDe0Cly6aIamiwer9Jw2SinXh+zKjbkq/SUjGczSs/IQPtR
-         SCH0IGkbPh3ZA+STrjUmakR1w8aePJis960Bll5yPBt4b/VzAxArvgvjeXmzEjqzLA
-         ZkAC+GIbN284VCaEVXisMQJ4e1n3z7dkyNyIkeSfPp1V2qIOuEenydPRbYIlYxEXOk
-         X81Uxb7KVKFYw==
+        Wed, 25 Mar 2020 17:37:54 -0400
+X-Greylist: delayed 962 seconds by postgrey-1.27 at vger.kernel.org; Wed, 25 Mar 2020 17:37:54 EDT
+Received: from localhost.localdomain (85-76-97-57-nat.elisa-mobile.fi [85.76.97.57])
+        by fgw20.mail.saunalahti.fi (Halon) with ESMTP
+        id a3e2473a-6ede-11ea-826c-005056bd6ce9;
+        Wed, 25 Mar 2020 23:21:50 +0200 (EET)
+From:   Aaro Koskinen <aaro.koskinen@iki.fi>
+To:     Tony Lindgren <tony@atomide.com>, linux-omap@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] ARM: DTS: OMAP3: disable RNG on N950/N9
+Date:   Wed, 25 Mar 2020 23:21:49 +0200
+Message-Id: <20200325212149.27547-1-aaro.koskinen@iki.fi>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Like on N900, we cannot access RNG directly on N950/N9. Mark it disabled in
+the DTS to allow kernel to boot.
 
-On 24/03/2020 17:59, Ionela Voinescu wrote:
-> Hi guys,
-> 
-> On Thursday 19 Mar 2020 at 08:47:46 (-0000), tip-bot2 for Saravana Kannan wrote:
->> The following commit has been merged into the timers/core branch of tip:
->>
->> Conommit-ID:     4f41fe386a94639cd9a1831298d4f85db5662f1e
->> Gitweb:        https://git.kernel.org/tip/4f41fe386a94639cd9a1831298d4f85db5662f1e
->> Author:        Saravana Kannan <saravanak@google.com>
->> AuthorDate:    Fri, 10 Jan 2020 21:21:25 -08:00
->> Committer:     Daniel Lezcano <daniel.lezcano@linaro.org>
->> CommitterDate: Tue, 17 Mar 2020 13:10:07 +01:00
->>
->> clocksource/drivers/timer-probe: Avoid creating dead devices
->>
->> Timer initialization is done during early boot way before the driver
->> core starts processing devices and drivers. Timers initialized during
->> this early boot period don't really need or use a struct device.
->>
->> However, for timers represented as device tree nodes, the struct devices
->> are still created and sit around unused and wasting memory. This change
->> avoid this by marking the device tree nodes as "populated" if the
->> corresponding timer is successfully initialized.
->>
->> Signed-off-by: Saravana Kannan <saravanak@google.com>
->> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
->> Link: https://lore.kernel.org/r/20200111052125.238212-1-saravanak@google.com
->> ---
->>  drivers/clocksource/timer-probe.c | 2 ++
->>  1 file changed, 2 insertions(+)
->>
->> diff --git a/drivers/clocksource/timer-probe.c b/drivers/clocksource/timer-probe.c
->> index ee9574d..a10f28d 100644
->> --- a/drivers/clocksource/timer-probe.c
->> +++ b/drivers/clocksource/timer-probe.c
->> @@ -27,8 +27,10 @@ void __init timer_probe(void)
->>  
->>  		init_func_ret = match->data;
->>  
->> +		of_node_set_flag(np, OF_POPULATED);
->>  		ret = init_func_ret(np);
->>  		if (ret) {
->> +			of_node_clear_flag(np, OF_POPULATED);
->>  			if (ret != -EPROBE_DEFER)
->>  				pr_err("Failed to initialize '%pOF': %d\n", np,
->>  				       ret);
->>
-> 
-> This patch is creating problems on some vexpress platforms - ones that
-> are using CLKSRC_VERSATILE (drivers/clocksource/timer-versatile.c).
-> I noticed issues on TC2 and FVPs (fixed virtual platforms) starting with
-> next-20200318 and still reproducible with next-20200323.
+Fixes: 308607e5545f ("ARM: dts: Configure omap3 rng")
+Signed-off-by: Aaro Koskinen <aaro.koskinen@iki.fi>
+---
+ arch/arm/boot/dts/omap3-n950-n9.dtsi | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-I am also seeing a regression on tegra30-cardhu-a04 when testing system
-suspend on -next. Bisect is pointing to this commit and reverting on top
-of -next fixes the problem. Unfortunately, there is no crash dump
-observed, but the device hangs somewhere when testing suspend.
-
-I have not looked into this any further but wanted to report the problem.
-
-Cheers
-Jon
-
+diff --git a/arch/arm/boot/dts/omap3-n950-n9.dtsi b/arch/arm/boot/dts/omap3-n950-n9.dtsi
+index a075b63f3087..11d41e86f814 100644
+--- a/arch/arm/boot/dts/omap3-n950-n9.dtsi
++++ b/arch/arm/boot/dts/omap3-n950-n9.dtsi
+@@ -341,6 +341,11 @@
+ 	status = "disabled";
+ };
+ 
++/* RNG not directly accessible on N950/N9. */
++&rng_target {
++	status = "disabled";
++};
++
+ &usb_otg_hs {
+ 	interface-type = <0>;
+ 	usb-phy = <&usb2_phy>;
 -- 
-nvpublic
+2.17.0
+
