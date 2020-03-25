@@ -2,144 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8F3E11921BA
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 08:26:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A11FF1921CA
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 08:37:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726842AbgCYH0i (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Mar 2020 03:26:38 -0400
-Received: from mail-vs1-f67.google.com ([209.85.217.67]:43587 "EHLO
-        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726098AbgCYH0i (ORCPT
+        id S1727280AbgCYHhW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Mar 2020 03:37:22 -0400
+Received: from m176148.mail.qiye.163.com ([59.111.176.148]:5165 "EHLO
+        m176148.mail.qiye.163.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725907AbgCYHhW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Mar 2020 03:26:38 -0400
-Received: by mail-vs1-f67.google.com with SMTP id w185so883773vsw.10;
-        Wed, 25 Mar 2020 00:26:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=fOHuTUxFaXvYqen0oyjg96xjkmcXfO5BevtoiCO4Aoc=;
-        b=Qc4QKYmZbTkn84IZ7OuK+k8tdccAz8+iwmT7AocwrXr/l7TEqXxY6uV7FPT5Q+R4r2
-         DK/74cHx3v88CQFoASC3ioE1dfGpKq85uuuZsWBR1tZ9bZuGc6J6F2tdIY1A6ChjLNML
-         VYrKXjMwhdAD/LkzUUV1sf68E7Gep6Ou2Uxd6e3MoW1W/jsM1CmBnW1YdcNDow7EAg4/
-         yt1eDYt3VkFXNzuRLgwNuR5+Us0XWXAI407zB7eSklbTR/aprSH2KR6jkcoOUHkOdL7K
-         xaS7BVZud92jfHWtpM1C2c6jyN2Qg13R7Gycaj6UsJ6fpynQYSiZBFYkm7bamwJU5W8F
-         Q8Gw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=fOHuTUxFaXvYqen0oyjg96xjkmcXfO5BevtoiCO4Aoc=;
-        b=q60xBk7I1/ir9OH3wWdZy68jgVzRLmZ9829sLBHQl7RfoH24F3SkF3pUnClaS1CyRH
-         YlV8O2nRUXpR8EcIG8z+leIeIHfgens81HKDudqE8a/0rlAYpsBjltqOe8AIWTznIWCz
-         FqvPnyMwh9syBRBEiBUkcb4Jgx/k0PFtxzqo8F+1mfeuP8IVQJCRYDCIiA6kyLGZg/Zq
-         tdHlfGKUIYC8PH5GZfS1ivcumY+7xFOvOqH8NctHwkLBAyScJ0GhiAM+cbnnrQ8x/r6a
-         QDOc/sPd3ApELKNzGanfo3+yFA7axhVH3nm6BMb9HNy1hqu2JPtPzEj9Mpbt+e9cJzrV
-         CsOQ==
-X-Gm-Message-State: ANhLgQ23E2cOUD7S+EmUi/WwHKNLUJznmG3Vu25i9HH6KdnjZ0ZkVDzG
-        xaOcPOldwUnbYFl8v/qXxbSnOOgdetclhkC1Ay0=
-X-Google-Smtp-Source: ADFU+vvflhlHeBMOrrqhKThBTo4W38UGjm2hmZjXmIzzYsJ7VYe+cLR23tCuGjYGLhnT9S6Vl8nmqQ66NJmkvbYOBKU=
-X-Received: by 2002:a67:fe41:: with SMTP id m1mr1611504vsr.174.1585121195688;
- Wed, 25 Mar 2020 00:26:35 -0700 (PDT)
+        Wed, 25 Mar 2020 03:37:22 -0400
+X-Greylist: delayed 437 seconds by postgrey-1.27 at vger.kernel.org; Wed, 25 Mar 2020 03:36:45 EDT
+Received: from vivo.com (wm-8.qy.internal [127.0.0.1])
+        by m176148.mail.qiye.163.com (Hmail) with ESMTP id F10EF1A3EE9;
+        Wed, 25 Mar 2020 15:29:22 +0800 (CST)
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: base64
+Message-ID: <ADUAqwAYCASXqCY1D9tlwqpy.3.1585121362951.Hmail.tao.li@vivo.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Felipe Balbi <balbi@kernel.org>,
+        =?UTF-8?Q?Micha=C5=82_Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>,
+        Sergey Organov <sorganov@gmail.com>, linux-usb@vger.kernel.org,
+        linux-kernel@vger.kernel.org, wenhu.wang@vivo.com
+Subject: =?UTF-8?B?UmU6UmU6IFtQQVRDSF0gdXNiOiBnYWRnZXQ6IHNlcmlhbDogRml4ZWQgS0FTQU4gbnVsbC1wdHItZGVyZWYgaW4gdHR5X3dha2V1cA==?=
+X-Priority: 3
+X-Mailer: HMail Webmail Server V2.0 Copyright (c) 2016-163.com
+X-Originating-IP: 58.251.74.226
+In-Reply-To: <20200318101240.GA2067041@kroah.com>
 MIME-Version: 1.0
-References: <000000000000ce3eed05a184efe9@google.com>
-In-Reply-To: <000000000000ce3eed05a184efe9@google.com>
-From:   Qiujun Huang <anenbupt@gmail.com>
-Date:   Wed, 25 Mar 2020 15:26:25 +0800
-Message-ID: <CADG63jBvx_NarKZT-+QmMAgdHKoYSQwtd9KO0c6rxkgtF_JnyA@mail.gmail.com>
-Subject: Re: KASAN: slab-out-of-bounds Read in edge_interrupt_callback
-To:     syzbot <syzbot+37ba33391ad5f3935bbd@syzkaller.appspotmail.com>
-Cc:     Andrey Konovalov <andreyknvl@google.com>,
-        Greg KH <gregkh@linuxfoundation.org>, johan@kernel.org,
-        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com
-Content-Type: multipart/mixed; boundary="000000000000cc5c3e05a1a8c977"
+Received: from tao.li@vivo.com( [58.251.74.226) ] by ajax-webmail ( [127.0.0.1] ) ; Wed, 25 Mar 2020 15:29:22 +0800 (GMT+08:00)
+From:   =?UTF-8?B?5p2O5qGD?= <tao.li@vivo.com>
+Date:   Wed, 25 Mar 2020 15:29:22 +0800 (GMT+08:00)
+X-HM-Spam-Status: e1kfGhgUHx5ZQUtXWQgYFAkeWUFZTlVDTkJLS0tJS05CQkhNTllXWShZQU
+        hPN1dZLVlBSVdZCQ4XHghZQVk1NCk2OjckKS43PlkG
+X-HM-Sender-Digest: e1kJHlYWEh9ZQUhNTE5PSE5LTk5MN1dZDB4ZWUEPCQ4eV1kSHx4VD1lB
+        WUc6Py46Cgw6Ijg6KCMKOCJKP0IPFwwKCwJVSFVKTkNOSklKSE1OT05PVTMWGhIXVQ8aFFUXEjsN
+        Eg0UVRgUFkVZV1kSC1lBWU5DVUlOSlVMT1VJSU1ZV1kIAVlBTUlJSDcG
+X-HM-Tid: 0a71109884329394kuwsf10ef1a3ee9
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---000000000000cc5c3e05a1a8c977
-Content-Type: text/plain; charset="UTF-8"
-
-#syz test: https://github.com/google/kasan.git e17994d1
-
-On Mon, Mar 23, 2020 at 8:40 PM syzbot
-<syzbot+37ba33391ad5f3935bbd@syzkaller.appspotmail.com> wrote:
->
-> Hello,
->
-> syzbot found the following crash on:
->
-> HEAD commit:    e17994d1 usb: core: kcov: collect coverage from usb comple..
-> git tree:       https://github.com/google/kasan.git usb-fuzzer
-> console output: https://syzkaller.appspot.com/x/log.txt?x=13706939e00000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=5d64370c438bc60
-> dashboard link: https://syzkaller.appspot.com/bug?extid=37ba33391ad5f3935bbd
-> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=150d3841e00000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12842b19e00000
->
-> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+37ba33391ad5f3935bbd@syzkaller.appspotmail.com
->
-> ==================================================================
-> BUG: KASAN: slab-out-of-bounds in edge_interrupt_callback+0x8be/0x9d0 drivers/usb/serial/io_edgeport.c:715
-> Read of size 1 at addr ffff8881d2920c67 by task swapper/0/0
->
-> CPU: 0 PID: 0 Comm: swapper/0 Not tainted 5.6.0-rc5-syzkaller #0
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-> Call Trace:
->  <IRQ>
->  __dump_stack lib/dump_stack.c:77 [inline]
->  dump_stack+0xef/0x16e lib/dump_stack.c:118
->  print_address_description.constprop.0.cold+0xd3/0x314 mm/kasan/report.c:374
->  __kasan_report.cold+0x37/0x77 mm/kasan/report.c:506
->  kasan_report+0xe/0x20 mm/kasan/common.c:641
->  edge_interrupt_callback+0x8be/0x9d0 drivers/usb/serial/io_edgeport.c:715
->  __usb_hcd_giveback_urb+0x29a/0x550 drivers/usb/core/hcd.c:1650
->  usb_hcd_giveback_urb+0x368/0x420 drivers/usb/core/hcd.c:1716
->  dummy_timer+0x1258/0x32ae drivers/usb/gadget/udc/dummy_hcd.c:1966
->  call_timer_fn+0x195/0x6f0 kernel/time/timer.c:1404
->
->
-> ---
-> This bug is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
->
-> syzbot will keep track of this bug report. See:
-> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-> syzbot can test patches for this bug, for details see:
-> https://goo.gl/tpsmEJ#testing-patches
-
---000000000000cc5c3e05a1a8c977
-Content-Type: application/octet-stream; 
-	name="0003-USB-io_edgeport-fix-slab-out-of-bounds-Read-in-edge_.patch"
-Content-Disposition: attachment; 
-	filename="0003-USB-io_edgeport-fix-slab-out-of-bounds-Read-in-edge_.patch"
-Content-Transfer-Encoding: base64
-Content-ID: <f_k87077l10>
-X-Attachment-Id: f_k87077l10
-
-RnJvbSBkZTQzY2QxZTdlMTY4NTZmN2JmYzYzZTFlZTQxZDJmZDA4YTNkNTgwIE1vbiBTZXAgMTcg
-MDA6MDA6MDAgMjAwMQpGcm9tOiBRaXVqdW4gSHVhbmcgPGhxamFnYWluQGdtYWlsLmNvbT4KRGF0
-ZTogV2VkLCAyNSBNYXIgMjAyMCAxNToxNzoxOCArMDgwMApTdWJqZWN0OiBbUEFUQ0ggMy8zXSBV
-U0I6IGlvX2VkZ2Vwb3J0OiBmaXggIHNsYWItb3V0LW9mLWJvdW5kcyBSZWFkIGluCiBlZGdlX2lu
-dGVycnVwdF9jYWxsYmFjawoKVGhlIGJvdW5kYXJ5IGNvbmRpdGlvbiBzaG91bGQgYmUgKGxlbmd0
-aCAtIDEpIGFzIHdlIGFjY2VzcyBkYXRhW3Bvc2l0aW9uKzFdLgoKUmVwb3J0ZWQtYnk6IHN5emJv
-dCszN2JhMzMzOTFhZDVmMzkzNWJiZEBzeXprYWxsZXIuYXBwc3BvdG1haWwuY29tClNpZ25lZC1v
-ZmYtYnk6IFFpdWp1biBIdWFuZyA8aHFqYWdhaW5AZ21haWwuY29tPgotLS0KIGRyaXZlcnMvdXNi
-L3NlcmlhbC9pb19lZGdlcG9ydC5jIHwgMiArLQogMSBmaWxlIGNoYW5nZWQsIDEgaW5zZXJ0aW9u
-KCspLCAxIGRlbGV0aW9uKC0pCgpkaWZmIC0tZ2l0IGEvZHJpdmVycy91c2Ivc2VyaWFsL2lvX2Vk
-Z2Vwb3J0LmMgYi9kcml2ZXJzL3VzYi9zZXJpYWwvaW9fZWRnZXBvcnQuYwppbmRleCA1NzM3YWRk
-Li40Y2NhMGI4IDEwMDY0NAotLS0gYS9kcml2ZXJzL3VzYi9zZXJpYWwvaW9fZWRnZXBvcnQuYwor
-KysgYi9kcml2ZXJzL3VzYi9zZXJpYWwvaW9fZWRnZXBvcnQuYwpAQCAtNzEwLDcgKzcxMCw3IEBA
-IHN0YXRpYyB2b2lkIGVkZ2VfaW50ZXJydXB0X2NhbGxiYWNrKHN0cnVjdCB1cmIgKnVyYikKIAkJ
-LyogZ3JhYiB0aGUgdHhjcmVkaXRzIGZvciB0aGUgcG9ydHMgaWYgYXZhaWxhYmxlICovCiAJCXBv
-c2l0aW9uID0gMjsKIAkJcG9ydE51bWJlciA9IDA7Ci0JCXdoaWxlICgocG9zaXRpb24gPCBsZW5n
-dGgpICYmCisJCXdoaWxlICgocG9zaXRpb24gPCBsZW5ndGggLSAxKSAmJgogCQkJCShwb3J0TnVt
-YmVyIDwgZWRnZV9zZXJpYWwtPnNlcmlhbC0+bnVtX3BvcnRzKSkgewogCQkJdHhDcmVkaXRzID0g
-ZGF0YVtwb3NpdGlvbl0gfCAoZGF0YVtwb3NpdGlvbisxXSA8PCA4KTsKIAkJCWlmICh0eENyZWRp
-dHMpIHsKLS0gCjEuOC4zLjEKCg==
---000000000000cc5c3e05a1a8c977--
+RnJvbTogR3JlZyBLcm9haC1IYXJ0bWFuIDxncmVna2hAbGludXhmb3VuZGF0aW9uLm9yZz4KRGF0
+ZTogMjAyMC0wMy0xOCAxODoxMjo0MApUbzogIExpIFRhbyA8dGFvLmxpQHZpdm8uY29tPgpDYzog
+IEZlbGlwZSBCYWxiaSA8YmFsYmlAa2VybmVsLm9yZz4sIk1pY2hhxYIgTWlyb3PFgmF3IiA8bWly
+cS1saW51eEByZXJlLnFtcW0ucGw+LFNlcmdleSBPcmdhbm92IDxzb3JnYW5vdkBnbWFpbC5jb20+
+LGxpbnV4LXVzYkB2Z2VyLmtlcm5lbC5vcmcsbGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZyx3
+ZW5odS53YW5nQHZpdm8uY29tClN1YmplY3Q6IFJlOiBbUEFUQ0hdIHVzYjogZ2FkZ2V0OiBzZXJp
+YWw6IEZpeGVkIEtBU0FOIG51bGwtcHRyLWRlcmVmIGluIHR0eV93YWtldXA+T24gV2VkLCBNYXIg
+MTgsIDIwMjAgYXQgMTA6NTY6MDFBTSArMDgwMCwgTGkgVGFvIHdyb3RlOgo+PiBUaGUgcG9ydC0+
+cG9ydC50dHkgbWF5YmUgcmVzZXQgYXMgTlVMTCwgSWYgZ3NfY2xvc2UoKSB3YXMgaW52b2tlZAo+
+PiB1bmV4cGVjdGVkbHkgZHVyaW5nIHJ1bm5pbmcgZ3NlcmlhbF9jb25uZWN0KCkuCj4+IAo+PiBC
+VUc6IEtBU0FOOiBudWxsLXB0ci1kZXJlZiBpbiB0dHlfd2FrZXVwKzB4MWMvMHg4NAo+PiBDYWxs
+IHRyYWNlOgo+PiBbPDAwMDAwMDAwOTVjM2M4Mzc+XSBkdW1wX2JhY2t0cmFjZSsweDAvMHg2ZDQK
+Pj4gWzwwMDAwMDAwMDQ3NzI2YmI4Pl0gc2hvd19zdGFjaysweDE4LzB4MjAKPj4gWzwwMDAwMDAw
+MGJlZGI0YzFlPl0gLS1kdW1wX3N0YWNrKzB4MjAvMHgyOAo+PiBbPDAwMDAwMDAwNzIyZjJlMmE+
+XSBkdW1wX3N0YWNrKzB4ODQvMHhiMAo+PiBbPDAwMDAwMDAwMzI1NjgzZDQ+XSBrYXNhbl9yZXBv
+cnRfZXJyb3IrMHgxNzgvMHgxZTQKPj4gWzwwMDAwMDAwMDUzMDc5OTk4Pl0ga2FzYW5fcmVwb3J0
+X2Vycm9yKzB4MC8weDFlNAo+PiBbPDAwMDAwMDAwYjZkMzNhZmE+XSAtLWFzYW5fbG9hZDgrMHgx
+NTAvMHgxNWMKPj4gWzwwMDAwMDAwMDE4ODc0NWI4Pl0gdHR5X3dha2V1cCsweDFjLzB4ODQKPj4g
+WzwwMDAwMDAwMDY0ZjZkZDIxPl0gZ3Nfc3RhcnRfaW8rMHhkMC8weDExYwo+PiBbPDAwMDAwMDAw
+NjNkNjdiNmM+XSBnc2VyaWFsX2Nvbm5lY3QrMHgxNWMvMHgxYjAKPj4gWzwwMDAwMDAwMGZhZjdj
+MGY5Pl0gZG1fc2V0X2FsdCsweGE4LzB4MTkwCj4+IFs8MDAwMDAwMDA4ZGViMTkwOT5dIGNvbXBv
+c2l0ZV9zZXR1cCsweGRlNC8weDFlZGMKPj4gWzwwMDAwMDAwMDc5MmVlMTZkPl0gYW5kcm9pZF9z
+ZXR1cCsweDIxMC8weDI5NAo+PiBbPDAwMDAwMDAwYWIzMmVmMzA+XSBkd2MzX2VwMF9kZWxlZ2F0
+ZV9yZXErMHg0OC8weDY4Cj4+IFs8MDAwMDAwMDA1NGUyNmZkMj5dIGR3YzNfZXAwX2ludGVycnVw
+dCsweGYyYy8weDE2ZmMKPj4gWzwwMDAwMDAwMDUwY2IyMjYyPl0gZHdjM19pbnRlcnJ1cHQrMHg0
+NjQvMHgxZjQ0Cj4+IFs8MDAwMDAwMDBmZGNhYTZlOT5dIC0taGFuZGxlX2lycV9ldmVudF9wZXJj
+cHUrMHgxODQvMHgzOTgKPj4gWzwwMDAwMDAwMDNiMjRmZjU2Pl0gaGFuZGxlX2lycV9ldmVudF9w
+ZXJjcHUrMHhhMC8weDEzNAo+PiBbPDAwMDAwMDAwYWVkZGE1ZWU+XSBoYW5kbGVfaXJxX2V2ZW50
+KzB4NjAvMHhhMAo+PiBbPDAwMDAwMDAwNWY1MWE1NzA+XSBoYW5kbGVfZmFzdGVvaV9pcnErMHgy
+M2MvMHgzMWMKPj4gWzwwMDAwMDAwMDhkYjI2MDhkPl0gZ2VuZXJpY19oYW5kbGVfaXJxKzB4NzAv
+MHhhNAo+PiBbPDAwMDAwMDAwMDk4NjgzZmM+XSAtLWhhbmRsZV9kb21haW5faXJxKzB4ODQvMHhl
+MAo+PiBbPDAwMDAwMDAwOGVkMjNiNDY+XSBnaWNfaGFuZGxlX2lycSsweDk4LzB4YjgKPj4gCj4+
+IFNpZ25lZC1vZmYtYnk6IExpIFRhbyA8dGFvLmxpQHZpdm8uY29tPgo+PiAtLS0KPj4gIGRyaXZl
+cnMvdXNiL2dhZGdldC9mdW5jdGlvbi91X3NlcmlhbC5jIHwgMyArKy0KPj4gIDEgZmlsZSBjaGFu
+Z2VkLCAyIGluc2VydGlvbnMoKyksIDEgZGVsZXRpb24oLSkKPj4gCj4+IGRpZmYgLS1naXQgYS9k
+cml2ZXJzL3VzYi9nYWRnZXQvZnVuY3Rpb24vdV9zZXJpYWwuYyBiL2RyaXZlcnMvdXNiL2dhZGdl
+dC9mdW5jdGlvbi91X3NlcmlhbC5jCj4+IGluZGV4IDgxNjdkMzc5ZTExNS4uM2MxMDlhOGY5ZWM0
+IDEwMDY0NAo+PiAtLS0gYS9kcml2ZXJzL3VzYi9nYWRnZXQvZnVuY3Rpb24vdV9zZXJpYWwuYwo+
+PiArKysgYi9kcml2ZXJzL3VzYi9nYWRnZXQvZnVuY3Rpb24vdV9zZXJpYWwuYwo+PiBAQCAtNTY1
+LDcgKzU2NSw4IEBAIHN0YXRpYyBpbnQgZ3Nfc3RhcnRfaW8oc3RydWN0IGdzX3BvcnQgKnBvcnQp
+Cj4+ICAJCWdzX3N0YXJ0X3R4KHBvcnQpOwo+PiAgCQkvKiBVbmJsb2NrIGFueSBwZW5kaW5nIHdy
+aXRlcyBpbnRvIG91ciBjaXJjdWxhciBidWZmZXIsIGluIGNhc2UKPj4gIAkJICogd2UgZGlkbid0
+IGluIGdzX3N0YXJ0X3R4KCkgKi8KPj4gLQkJdHR5X3dha2V1cChwb3J0LT5wb3J0LnR0eSk7Cj4+
+ICsJCWlmIChwb3J0LT5wb3J0LnR0eSkKPj4gKwkJCXR0eV93YWtldXAocG9ydC0+cG9ydC50dHkp
+Owo+Cj5XaGF0IHByZXZlbnRzIHBvcnQudHR5IGZyb20gYmVpbmcgc2V0IHRvIE5VTEwgYmV0d2Vl
+biB0aGUgY2hlY2sgYW5kIHRoZQo+Y2FsbCB0byB0dHlfd2FrZXVwPwo+Cj5TaG91bGRuJ3QgZ3Nf
+Y2xvc2UoKSBhbmQgZ3NlcmlhbF9jb25uZWN0KCkgaGF2ZSBzb21lIHNvcnQgb2YgbG9ja2luZyB0
+bwo+cHJldmVudCB0aGlzPwo+CkkgZW5jb3VudGVyZWQgdGhpcyBpc3N1ZSBvbiBTYW1zdW5nIEVY
+WU5PUzk4MCBwbGF0Zm9ybSwgTWF5YmUgdGhpcyBpcyBwbGF0Zm9ybSBzcGVjaWZpYyBpc3N1ZS4K
+VGhlIFVTQiBpbnRlcnJ1cHQgaGFuZGxlciBnb3QgcG9ydF9sb2NrIG9uIENQVSAwIGluIGdzZXJp
+YWxfY29ubmVjdCB3aGlsZSBnc19jbG9zZSBpcyB3YWl0aW5nIGZvciAKdGhpcyBsb2NrIG9uIENQ
+VSAxLiAgQnV0IHRoaXMgcG9ydF9sb2NrIHdpbGwgdW5sb2NrIGluIGdzX3N0YXJ0X2lvLS0+Z3Nf
+c3RhcnRfcnggdGVtcG9yYXJpbHksIFRoaXMgcmFjZQpjb25kaXRpb24gbWF5IGNhdXNlIHBvcnQu
+dHR5IHNldCBhcyBOVUxMLgoKPnRoYW5rcywKPgo+Z3JlZyBrLWgKDQoNCg==
