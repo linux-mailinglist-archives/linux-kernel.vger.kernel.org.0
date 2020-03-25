@@ -2,134 +2,127 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DB098192D58
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 16:49:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E6E21192D61
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 16:50:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728119AbgCYPtN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Mar 2020 11:49:13 -0400
-Received: from mx3.molgen.mpg.de ([141.14.17.11]:36069 "EHLO mx1.molgen.mpg.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727840AbgCYPtJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Mar 2020 11:49:09 -0400
-Received: from [192.168.0.2] (ip5f5af719.dynamic.kabel-deutschland.de [95.90.247.25])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: pmenzel)
-        by mx.molgen.mpg.de (Postfix) with ESMTPSA id 16137202254DE;
-        Wed, 25 Mar 2020 16:49:06 +0100 (CET)
-Subject: Re: [Intel-wired-lan] [PATCH] e1000e: bump up timeout to wait when ME
- un-configure ULP mode
-To:     Sasha Neftin <sasha.neftin@intel.com>,
-        Aaron Ma <aaron.ma@canonical.com>,
-        Kai-Heng Feng <kai.heng.feng@canonical.com>
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        intel-wired-lan@lists.osuosl.org,
-        David Miller <davem@davemloft.net>,
-        Rex Tsai <rex.tsai@intel.com>
-References: <20200323191639.48826-1-aaron.ma@canonical.com>
- <EC4F7F0B-90F8-4325-B170-84C65D8BBBB8@canonical.com>
- <2c765c59-556e-266b-4d0d-a4602db94476@intel.com>
- <899895bc-fb88-a97d-a629-b514ceda296d@canonical.com>
- <750ad0ad-816a-5896-de2f-7e034d2a2508@intel.com>
-From:   Paul Menzel <pmenzel@molgen.mpg.de>
-Message-ID: <f9dc1980-fa8b-7df9-6460-b0944c7ebc43@molgen.mpg.de>
-Date:   Wed, 25 Mar 2020 16:49:05 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.6.0
+        id S1727928AbgCYPuV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Mar 2020 11:50:21 -0400
+Received: from mail-ua1-f66.google.com ([209.85.222.66]:41227 "EHLO
+        mail-ua1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727774AbgCYPuU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Mar 2020 11:50:20 -0400
+Received: by mail-ua1-f66.google.com with SMTP id f9so906016uaq.8
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Mar 2020 08:50:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=5R9OlcysTIjSd6LSQUVfdd7d9zM2FdO/Mwd40Pw5oqo=;
+        b=XtpjmpZHorFljb0nMx6/72BT6LEyg6Yu3GZqe2zFozULuw0vZvc0DGxN1dv5nyYcCC
+         hHWAbWGSOUvReB9nY4FED4Ar/y5wjn/ZL8FKAYhFCQofbGaikMQxNWYRkq+MvceY2mpy
+         N4Sp0qbxAYASySnf+wDwpkd2kniFgXVKTcZFs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=5R9OlcysTIjSd6LSQUVfdd7d9zM2FdO/Mwd40Pw5oqo=;
+        b=oH75PR6S9p4FMhmeT1b6FALNxyTzSSgd0F1HYU932tATA+9O1R2Fem0TX7HfXrQT7l
+         1cp0RPhyuHNeOXJLOCrzcjXijmEmYgOe8QADGmUN0Ns9CnG5Ew0GuciulJr5vefShaFZ
+         1z8ZSKlF7N/qe94F5Vdqp6VFhcP7Hlq5fhmSCTF+kIabKjLxHRReHmHWVdXgl2cye3L3
+         vIzwua7lz6oTTFAUJkRhFxC432GaZlPqG2rt+YUSD0MnW/WrtyOkDaULg+SeQUZUFRVo
+         Ri5nHMPhQKt4LeXVdHydUPLMijwtf3ln7/toBbyQTdX01e6JoC6783LfmtOoB+LwwRDq
+         2VHw==
+X-Gm-Message-State: ANhLgQ2GZtT+F3GZu/I5wjQa7ePPimKQCqb/R+i3H64LNKfQnkBmAMMV
+        BqtWgAVKHa01glZNWNFbnpv7U7gc22I=
+X-Google-Smtp-Source: ADFU+vsn/Gq7+jA1ahH0mmC5pyuCE0VmXofvEgWcHkKqfv7ljtVeDLBwPhQxjjKCKMHptBK7EhQEUA==
+X-Received: by 2002:ab0:45f8:: with SMTP id u111mr3003030uau.50.1585151419230;
+        Wed, 25 Mar 2020 08:50:19 -0700 (PDT)
+Received: from mail-vs1-f54.google.com (mail-vs1-f54.google.com. [209.85.217.54])
+        by smtp.gmail.com with ESMTPSA id k14sm3109052vke.16.2020.03.25.08.50.18
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 25 Mar 2020 08:50:18 -0700 (PDT)
+Received: by mail-vs1-f54.google.com with SMTP id e138so1767027vsc.11
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Mar 2020 08:50:18 -0700 (PDT)
+X-Received: by 2002:a67:694f:: with SMTP id e76mr2833828vsc.73.1585151417831;
+ Wed, 25 Mar 2020 08:50:17 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <750ad0ad-816a-5896-de2f-7e034d2a2508@intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <1584944027-1730-1-git-send-email-kalyan_t@codeaurora.org>
+ <CAD=FV=VX+Lj=NeZnYxDv9gLYUiwUO6brwvDSL8dbs1MTF4ieuA@mail.gmail.com> <CAF6AEGs5saoU3FeO++S+YD=Js499HB2CjK8neYCXAZmCjgy2nQ@mail.gmail.com>
+In-Reply-To: <CAF6AEGs5saoU3FeO++S+YD=Js499HB2CjK8neYCXAZmCjgy2nQ@mail.gmail.com>
+From:   Doug Anderson <dianders@chromium.org>
+Date:   Wed, 25 Mar 2020 08:50:05 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=VxeCUEEFi9T0Jand3EWkaQTLnQkT3v5yjyjLi4yDeQ-w@mail.gmail.com>
+Message-ID: <CAD=FV=VxeCUEEFi9T0Jand3EWkaQTLnQkT3v5yjyjLi4yDeQ-w@mail.gmail.com>
+Subject: Re: [PATCH] drm/msm/dpu: ensure device suspend happens during PM sleep
+To:     Rob Clark <robdclark@gmail.com>
+Cc:     Kalyan Thota <kalyan_t@codeaurora.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        freedreno <freedreno@lists.freedesktop.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+        Sean Paul <seanpaul@chromium.org>,
+        "Kristian H. Kristensen" <hoegsberg@chromium.org>,
+        Jeykumar Sankaran <jsanka@codeaurora.org>,
+        mkrishn@codeaurora.org, travitej@codeaurora.org,
+        nganji@codeaurora.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dear Linux folks,
+Hi,
 
-
-Am 25.03.20 um 14:58 schrieb Neftin, Sasha:
-> On 3/25/2020 08:43, Aaron Ma wrote:
-
->> On 3/25/20 2:36 PM, Neftin, Sasha wrote:
->>> On 3/25/2020 06:17, Kai-Heng Feng wrote:
-
->>>>> On Mar 24, 2020, at 03:16, Aaron Ma <aaron.ma@canonical.com> wrote:
->>>>>
->>>>> ME takes 2+ seconds to un-configure ULP mode done after resume
->>>>> from s2idle on some ThinkPad laptops.
->>>>> Without enough wait, reset and re-init will fail with error.
->>>>
->>>> Thanks, this patch solves the issue. We can drop the DMI quirk in
->>>> favor of this patch.
->>>>
->>>>> Fixes: f15bb6dde738cc8fa0 ("e1000e: Add support for S0ix")
->>>>> BugLink: https://bugs.launchpad.net/bugs/1865570
->>>>> Signed-off-by: Aaron Ma <aaron.ma@canonical.com>
->>>>> ---
->>>>> drivers/net/ethernet/intel/e1000e/ich8lan.c | 4 ++--
->>>>> 1 file changed, 2 insertions(+), 2 deletions(-)
->>>>>
->>>>> diff --git a/drivers/net/ethernet/intel/e1000e/ich8lan.c
->>>>> b/drivers/net/ethernet/intel/e1000e/ich8lan.c
->>>>> index b4135c50e905..147b15a2f8b3 100644
->>>>> --- a/drivers/net/ethernet/intel/e1000e/ich8lan.c
->>>>> +++ b/drivers/net/ethernet/intel/e1000e/ich8lan.c
->>>>> @@ -1240,9 +1240,9 @@ static s32 e1000_disable_ulp_lpt_lp(struct
->>>>> e1000_hw *hw, bool force)
->>>>>              ew32(H2ME, mac_reg);
->>>>>          }
->>>>>
->>>>> -        /* Poll up to 300msec for ME to clear ULP_CFG_DONE. */
->>>>> +        /* Poll up to 2.5sec for ME to clear ULP_CFG_DONE. */
->>>>>          while (er32(FWSM) & E1000_FWSM_ULP_CFG_DONE) {
->>>>> -            if (i++ == 30) {
->>>>> +            if (i++ == 250) {
->>>>>                  ret_val = -E1000_ERR_PHY;
->>>>>                  goto out;
->>>>>              }
->>>>
->>>> The return value was not caught by the caller, so the error ends up
->>>> unnoticed.
->>>> Maybe let the caller check the return value of
->>>> e1000_disable_ulp_lpt_lp()?
-
->>> I a bit confused. In our previous conversation you told ME not running.
->>> let me shimming in. Increasing delay won't be solve the problem and just
->>> mask it. We need to understand why ME take too much time. What is
->>> problem with this specific system?
->>> So, basically no ME system should works for you.
->>
->> Some laptops ME work that's why only reproduce issue on some laptops.
->> In this issue i219 is controlled by ME.
+On Wed, Mar 25, 2020 at 8:40 AM Rob Clark <robdclark@gmail.com> wrote:
 >
-> Who can explain - why ME required too much time on this system?
-> Probably need work with ME/BIOS vendor and understand it.
-> Delay will just mask the real problem - we need to find root cause.
->> Quirk is only for 1 model type. But issue is reproduced by more models.
->> So it won't work.
+> On Tue, Mar 24, 2020 at 7:35 AM Doug Anderson <dianders@chromium.org> wrote:
+> >
+> > Hi,
+> >
+> > On Sun, Mar 22, 2020 at 11:14 PM Kalyan Thota <kalyan_t@codeaurora.org> wrote:
+> > >
+> > > "The PM core always increments the runtime usage counter
+> > > before calling the ->suspend() callback and decrements it
+> > > after calling the ->resume() callback"
+> > >
+> > > DPU and DSI are managed as runtime devices. When
+> > > suspend is triggered, PM core adds a refcount on all the
+> > > devices and calls device suspend, since usage count is
+> > > already incremented, runtime suspend was not getting called
+> > > and it kept the clocks on which resulted in target not
+> > > entering into XO shutdown.
+> > >
+> > > Add changes to manage runtime devices during pm sleep.
+> > >
+> > > Changes in v1:
+> > >  - Remove unnecessary checks in the function
+> > >      _dpu_kms_disable_dpu (Rob Clark).
+> >
+> > I'm wondering what happened with my feedback on v1, AKA:
+> >
+> > https://lore.kernel.org/r/CAD=FV=VxzEV40g+ieuEN+7o=34+wM8MHO8o7T5zA1Yosx7SVWg@mail.gmail.com
+> >
+> > Maybe you didn't see it?  ...or if you or Rob think I'm way off base
+> > (always possible) then please tell me so.
+> >
+>
+> At least w/ the current patch, disable_dpu should not be called for
+> screen-off (although I'd hope if all the screens are off the device
+> would suspend).
 
-(Where is Aaron’s reply? It wasn’t delivered to me yet.)
+OK, that's good.
 
-As this is clearly a regression, please revert the commit for now, and 
-then find a way to correctly implement S0ix support. Linux’ regression 
-policy demands that as no fix has been found since v5.5-rc1. Changing 
-Intel ME settings, even if it would work around the issue, is not an 
-acceptable solution. Delaying the resume time is also not a solution.
+> But I won't claim to be a pm expert.. so not really
+> sure if this is the best approach or not.  I don't think our
+> arrangement of sub-devices under a parent is completely abnormal, so
+> it does feel like there should be a simpler solution..
 
-Regarding Intel Management Engine, only Intel knows what it does and 
-what the error is, as the ME firmware is proprietary and closed.
-
-Lastly, there is no way to fully disable the Intel Management Engine. 
-The HAP stuff claims to stop the Intel ME execution, but nobody knows, 
-if it’s successful.
-
-Aaron, Kai-Hang, can you send the revert?
+I think the other arguments about asymmetry are still valid and I've
+fixed bugs around this type of thing in the past.  For instance, see
+commit f7ccbed656f7 ("drm/rockchip: Suspend DP late").
 
 
-Kind regards,
-
-Paul
-
-
+-Doug
