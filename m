@@ -2,71 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 55B30192565
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 11:22:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F296F19255E
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 11:22:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727675AbgCYKWm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Mar 2020 06:22:42 -0400
-Received: from esa1.microchip.iphmx.com ([68.232.147.91]:11756 "EHLO
-        esa1.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726109AbgCYKWm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Mar 2020 06:22:42 -0400
-IronPort-SDR: Oe845Alq/eyfnjnsM2JZU8lRGMbiWmIKyQTHYmgQ9TIsoI1OgeHaPpC4ojMufaXMFTe3N6jonJ
- 4j2NnJC0oktoQ7H9HYedUQ9tMvqcWsgBP5PDIxQL5LL+SoW1oGYesCYjduVq0b8ir1yzpXyJBx
- 00sUp8UmGWGy0cnHdA4UU79PeGPEmkMYX9ev8XGQIQt/RX2DeUbuThi2nFw5iVOdPn+j1cvcOX
- i+NHDXwA+zEkWppT57AA0bm48f4Q33ZcbpyG+dzya8+WcM/QmwvhBEJEvzatVbZdS+Cu1CwRJo
- Qvg=
-X-IronPort-AV: E=Sophos;i="5.72,304,1580799600"; 
-   d="scan'208";a="73430236"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa1.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 25 Mar 2020 03:22:42 -0700
-Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1713.5; Wed, 25 Mar 2020 03:22:48 -0700
-Received: from ROB-ULT-M18282.microchip.com (10.10.115.15) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server id
- 15.1.1713.5 via Frontend Transport; Wed, 25 Mar 2020 03:22:35 -0700
-From:   Eugen Hristev <eugen.hristev@microchip.com>
-To:     <alexandre.belloni@bootlin.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <eugen.hristev@microchip.com>
-Subject: [PATCH 2/2] ARM: configs: at91: sama5: enable MCP16502 regulator
-Date:   Wed, 25 Mar 2020 12:22:23 +0200
-Message-ID: <20200325102223.24827-2-eugen.hristev@microchip.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200325102223.24827-1-eugen.hristev@microchip.com>
-References: <20200325102223.24827-1-eugen.hristev@microchip.com>
+        id S1727569AbgCYKWY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Mar 2020 06:22:24 -0400
+Received: from bilbo.ozlabs.org ([203.11.71.1]:40649 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726109AbgCYKWX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Mar 2020 06:22:23 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 48nPLk01K9z9sR4;
+        Wed, 25 Mar 2020 21:22:21 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ellerman.id.au;
+        s=201909; t=1585131742;
+        bh=h5Vz9jZG3mRLJBK/442MEWiwrL0sm+QQV6Q9zKhPR4c=;
+        h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+        b=r4ccyl6U2aLYtjIHFH6hL8rKstByfOWJlsMhhhgsUTpL/Cb9U5E/2CY6mFUWGS0er
+         An8i62X9qMtAUZcQW4sz4VAB1KarFfTWYsgamqOc7yG0QFrcBhFs55yGLmjv5JK/i2
+         m3H/tdNvBk4mV5VWDZ3jMeGQaf8BfV7HDyjGByiorLe/pRjmdfJrMMX8U2tZ+Jceax
+         GH/gvmrO1Y9O1xFvBEOcIcejfqRm6ojnfk4kS7h+wnz/2kmWzOGR/bKQLbmdzpdLAf
+         5pGP4RKKBg6yFB2iO8v86iLIVWimfyb28KIln0P+XCWqvKwoNElBodQx1l10pRs7ya
+         H8XI5UXiUIAUg==
+From:   Michael Ellerman <mpe@ellerman.id.au>
+To:     afzal mohammed <afzal.mohd.ma@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>
+Cc:     Christophe Leroy <christophe.leroy@c-s.fr>,
+        Scott Wood <oss@buserror.net>,
+        Kumar Gala <galak@kernel.crashing.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Vitaly Bordug <vitb@kernel.crashing.org>,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4] powerpc: Replace setup_irq() by request_irq()
+In-Reply-To: <20200324110637.GA5836@afzalpc>
+References: <20200304004746.4557-1-afzal.mohd.ma@gmail.com> <20200312064256.18735-1-afzal.mohd.ma@gmail.com> <20200324110637.GA5836@afzalpc>
+Date:   Wed, 25 Mar 2020 21:22:29 +1100
+Message-ID: <87wo78wx7e.fsf@mpe.ellerman.id.au>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Razvan Stefanescu <razvan.stefanescu@microchip.com>
+afzal mohammed <afzal.mohd.ma@gmail.com> writes:
+> Hi Michael Ellerman,
+> On Thu, Mar 12, 2020 at 12:12:55PM +0530, afzal mohammed wrote:
+>> request_irq() is preferred over setup_irq(). Invocations of setup_irq()
+>> occur after memory allocators are ready.
+>> 
+>> Per tglx[1], setup_irq() existed in olden days when allocators were not
+>> ready by the time early interrupts were initialized.
+>> 
+>> Hence replace setup_irq() by request_irq().
+>> 
+>> [1] https://lkml.kernel.org/r/alpine.DEB.2.20.1710191609480.1971@nanos
+>> 
+>> Signed-off-by: afzal mohammed <afzal.mohd.ma@gmail.com>
+>
+> This patch is seen in next-test branch for last 4-5 days, i don't know
+> exactly how powerpc workflow happens, so a question - this would be
+> appear in linux-next soon right ? (for last 4-5 days i had been daily
+> checking -next, but not appearing there).
 
-Driver is built as a module.
+Yeah it will appear in next "soon".
 
-Signed-off-by: Razvan Stefanescu <razvan.stefanescu@microchip.com>
----
- arch/arm/configs/sama5_defconfig | 1 +
- 1 file changed, 1 insertion(+)
+It's been stuck behind a big series that has hit some bugs during
+testing, so that has delayed me pushing the whole branch.
 
-diff --git a/arch/arm/configs/sama5_defconfig b/arch/arm/configs/sama5_defconfig
-index 258a18e659a5..8e1f78c19920 100644
---- a/arch/arm/configs/sama5_defconfig
-+++ b/arch/arm/configs/sama5_defconfig
-@@ -143,6 +143,7 @@ CONFIG_REGULATOR=y
- CONFIG_REGULATOR_FIXED_VOLTAGE=y
- CONFIG_REGULATOR_ACT8865=y
- CONFIG_REGULATOR_ACT8945A=y
-+CONFIG_REGULATOR_MCP16502=m
- CONFIG_REGULATOR_PWM=m
- CONFIG_MEDIA_SUPPORT=y
- CONFIG_MEDIA_CAMERA_SUPPORT=y
--- 
-2.20.1
+> Sorry for the query for this trivial patch, i am asking because Thomas
+> had mentioned [1] to get setup_irq() cleanup thr' respective
+> maintainers (earlier it was part of tree-wide series), check -next after
+> -rc6 & resubmit ignored ones to him, this patch is neither in -next,
+> neither ignored, so i am at a loss what to do :(
 
+That's OK. I will take this one, you can stop worrying about it.
+
+It should appear in next tomorrow or Friday.
+
+cheers
