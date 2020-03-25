@@ -2,60 +2,138 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 98FC119304B
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 19:25:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2326919304C
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 19:26:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727641AbgCYSZE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Mar 2020 14:25:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45014 "EHLO mail.kernel.org"
+        id S1727547AbgCYS0J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Mar 2020 14:26:09 -0400
+Received: from mx2.suse.de ([195.135.220.15]:49376 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727006AbgCYSZD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Mar 2020 14:25:03 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5BCD420740;
-        Wed, 25 Mar 2020 18:25:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585160701;
-        bh=jesObpaPKwpp2JzcCfU+MrP28anqjlNmEmTazhQyLrc=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Qukr9QXvSQvjXeVYdDvWrUP1nCXzUHdjbcH4msu3j7372g1XMuIX5Cn5bmXutXOfk
-         ZW7xNvzJdZL2V6qi2/eIzqobkVPjCjFfaERcdHbnL4WfndjkqVbUCSNn/PXnIymj4m
-         jxdnUaaWQ43iQvfTL5z7RPdpYFWfzkLP0G+wm+Uw=
-Date:   Wed, 25 Mar 2020 19:24:59 +0100
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Cc:     linux-kernel@vger.kernel.org,
-        nicholas.johnson-opensource@outlook.com.au
-Subject: Re: [PATCH v4 0/2] nvmem: use is_bin_visible callback
-Message-ID: <20200325182459.GA3801107@kroah.com>
-References: <20200325131951.31887-1-srinivas.kandagatla@linaro.org>
+        id S1727129AbgCYS0J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Mar 2020 14:26:09 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 24058ABD1;
+        Wed, 25 Mar 2020 18:26:07 +0000 (UTC)
+Date:   Wed, 25 Mar 2020 19:26:06 +0100 (CET)
+From:   Miroslav Benes <mbenes@suse.cz>
+To:     Peter Zijlstra <peterz@infradead.org>
+cc:     tglx@linutronix.de, jpoimboe@redhat.com,
+        linux-kernel@vger.kernel.org, x86@kernel.org, mhiramat@kernel.org
+Subject: Re: [PATCH v4 02/13] objtool: Factor out CFI hints
+In-Reply-To: <20200325174605.455086309@infradead.org>
+Message-ID: <alpine.LSU.2.21.2003251924440.3128@pobox.suse.cz>
+References: <20200325174525.772641599@infradead.org> <20200325174605.455086309@infradead.org>
+User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200325131951.31887-1-srinivas.kandagatla@linaro.org>
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 25, 2020 at 01:19:49PM +0000, Srinivas Kandagatla wrote:
-> As suggested I managed to use is_bin_visible for the existing code
-> and also added few more checks for callbacks before setting
-> permissions on the file. Which also means that Thunderbolt case
-> for write-only should be fixed automatically with this patch.
+On Wed, 25 Mar 2020, Peter Zijlstra wrote:
+
+> Move the application of CFI hints into it's own function.
+> No functional changes intended.
 > 
-> As part of this cleanup it does not make any sense to keep
-> nvmem-sysfs.c and nvmem.h anymore, so move all the relevant
-> code to core.c
+> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+> Acked-by: Josh Poimboeuf <jpoimboe@redhat.com>
+> ---
+>  tools/objtool/check.c |   67 ++++++++++++++++++++++++++++----------------------
+>  1 file changed, 38 insertions(+), 29 deletions(-)
 > 
-> Changes since v3:
-> 	- Split patch2 in to two patches for better review.
-> 	- drop first patch to add root_only as its queued
+> --- a/tools/objtool/check.c
+> +++ b/tools/objtool/check.c
+> @@ -2033,6 +2033,41 @@ static int validate_return(struct symbol
+>  	return 0;
+>  }
+>  
+> +static int apply_insn_hint(struct objtool_file *file, struct section *sec,
+> +			   struct symbol *func, struct instruction *insn,
+> +			   struct insn_state *state)
+> +{
+> +	if (insn->restore) {
+> +		struct instruction *save_insn, *i;
+> +
+> +		i = insn;
+> +		save_insn = NULL;
+> +		sym_for_each_insn_continue_reverse(file, func, i) {
+> +			if (i->save) {
+> +				save_insn = i;
+> +				break;
+> +			}
+> +		}
+> +
+> +		if (!save_insn) {
+> +			WARN_FUNC("no corresponding CFI save for CFI restore",
+> +				  sec, insn->offset);
+> +			return 1;
+> +		}
+> +
+> +		if (!save_insn->visited) {
+> +			WARN_FUNC("objtool isn't smart enough to handle this CFI save/restore combo",
+> +				  sec, insn->offset);
+> +			return 1;
+> +		}
+> +
+> +		insn->state = save_insn->state;
+> +	}
+> +
+> +	state = insn->state;
 
-Much nicer, and easier to follow, thanks for doing that.
+It does not matter, because it will change later again, but there should 
+be
 
-All now queued up, if I've missed anything, please let me know.
+*state = insn->state;
 
-greg k-h
+here, right?
+
+> +	return 0;
+> +}
+> +
+>  /*
+>   * Follow the branch starting at the given instruction, and recursively follow
+>   * any other branches (jumps).  Meanwhile, track the frame pointer state at
+> @@ -2081,35 +2116,9 @@ static int validate_branch(struct objtoo
+>  		}
+>  
+>  		if (insn->hint) {
+> -			if (insn->restore) {
+> -				struct instruction *save_insn, *i;
+> -
+> -				i = insn;
+> -				save_insn = NULL;
+> -				sym_for_each_insn_continue_reverse(file, func, i) {
+> -					if (i->save) {
+> -						save_insn = i;
+> -						break;
+> -					}
+> -				}
+> -
+> -				if (!save_insn) {
+> -					WARN_FUNC("no corresponding CFI save for CFI restore",
+> -						  sec, insn->offset);
+> -					return 1;
+> -				}
+> -
+> -				if (!save_insn->visited) {
+> -					WARN_FUNC("objtool isn't smart enough to handle this CFI save/restore combo",
+> -						  sec, insn->offset);
+> -					return 1;
+> -				}
+> -
+> -				insn->state = save_insn->state;
+> -			}
+> -
+> -			state = insn->state;
+> -
+> +			ret = apply_insn_hint(file, sec, func, insn, &state);
+> +			if (ret)
+> +				return ret;
+>  		} else
+>  			insn->state = state;
+>  
+> 
+> 
+
