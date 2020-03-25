@@ -2,148 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E6B07192B27
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 15:31:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DDB54192B30
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 15:33:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727736AbgCYObG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Mar 2020 10:31:06 -0400
-Received: from mx2.suse.de ([195.135.220.15]:34700 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727501AbgCYObF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Mar 2020 10:31:05 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 6FEC1AD0F;
-        Wed, 25 Mar 2020 14:31:03 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 87AE71E10FB; Wed, 25 Mar 2020 15:31:02 +0100 (CET)
-Date:   Wed, 25 Mar 2020 15:31:02 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     Xing Zhengjun <zhengjun.xing@linux.intel.com>
-Cc:     Rong Chen <rong.a.chen@intel.com>, Jan Kara <jack@suse.cz>,
-        "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Matthew Bobrowski <mbobrowski@mbobrowski.org>,
-        Ritesh Harjani <riteshh@linux.ibm.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        lkp@lists.01.org
-Subject: Re: [LKP] Re: [ext4] b1b4705d54: filebench.sum_bytes_mb/s -20.2%
- regression
-Message-ID: <20200325143102.GJ28951@quack2.suse.cz>
-References: <20191224005915.GW2760@shao2-debian>
- <20200107134106.GD25547@quack2.suse.cz>
- <20200107165708.GA3619@mit.edu>
- <20200107172824.GK25547@quack2.suse.cz>
- <fde1ad11-c9b0-4393-a123-3f7625c819fa@intel.com>
- <7ec6b078-7b09-fb87-8ad2-a328e96c5bf9@linux.intel.com>
- <49a59199-53af-206f-d07c-5c8c45f498b3@linux.intel.com>
+        id S1727742AbgCYOdV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Mar 2020 10:33:21 -0400
+Received: from sender3-op-o12.zoho.com.cn ([124.251.121.243]:17809 "EHLO
+        sender3-op-o12.zoho.com.cn" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727566AbgCYOdV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Mar 2020 10:33:21 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1585146687;
+        s=mail; d=flygoat.com; i=jiaxun.yang@flygoat.com;
+        h=Date:In-Reply-To:References:MIME-Version:Content-Type:Content-Transfer-Encoding:Subject:To:CC:From:Message-ID;
+        bh=WUIqMTbG4P3A6zbN3GpLXbJ8Ubb/GOs43bUPmngTtEw=;
+        b=XITeJn9EVhgHJXIRTsYdv6whZhZfE5OBEn9ae/y5pKEFuEv38GYT6wq2lH/M8F9j
+        BIW5j3U3FUJZuLwaJ/CRnHi5YhyjRmIFHYlG2CjMhBMd//H03UmcVLYrTCSZacXF5ha
+        /e+YY0j0pWw1XH5yU8MHk7M26r54N4+xmrsajRUs=
+Received: from [10.233.233.252] (183.157.60.227 [183.157.60.227]) by mx.zoho.com.cn
+        with SMTPS id 1585146685016379.50509572583246; Wed, 25 Mar 2020 22:31:25 +0800 (CST)
+Date:   Wed, 25 Mar 2020 22:31:21 +0800
+User-Agent: K-9 Mail for Android
+In-Reply-To: <c4520c4b0b0eaaba5fdbaebfce7b4460@kernel.org>
+References: <20200325035537.156911-1-jiaxun.yang@flygoat.com> <20200325035537.156911-7-jiaxun.yang@flygoat.com> <20200325123742.GA9911@alpha.franken.de> <a69f727d37daac6e20ac08de022245b1@kernel.org> <C4892878-8463-448D-897B-5F2C56F5A340@flygoat.com> <5eb9ce9ea665ee32da40779f00fc9b37@kernel.org> <4BB367D3-B8AD-47B6-ACC2-30752137BC1B@flygoat.com> <c4520c4b0b0eaaba5fdbaebfce7b4460@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <49a59199-53af-206f-d07c-5c8c45f498b3@linux.intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v8 06/11] irqchip: mips-cpu: Convert to simple domain
+To:     Marc Zyngier <maz@kernel.org>
+CC:     Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        linux-mips@vger.kernel.org, Huacai Chen <chenhc@lemote.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Allison Randal <allison@lohutok.net>,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+From:   Jiaxun Yang <jiaxun.yang@flygoat.com>
+Message-ID: <39CF835E-D1D9-4B52-ABDC-BDB17B650936@flygoat.com>
+X-ZohoCNMailClient: External
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 25-03-20 13:50:09, Xing Zhengjun wrote:
-> ping...
-> The issue still exists in v5.6-rc7.
 
-So I have tried again to reproduce this so that I can look into the
-regression. When observing what is actually happening in the system I have
-to say that this workfile (or actually its implementation in filebench) is
-pretty dubious. The problem is that filebench first creates the files by
-writing them through ordinary write(2). Then it immediately starts reading
-the files with direct IO read. So what happens is that by the time direct
-IO read is running, the system is still writing back the create files and
-depending on how read vs writes get scheduled, you get different results.
-Also direct IO read will first flush the range it is going to read from the
-page cache so to some extent this is actually parallel small ranged
-fsync(2) benchmark. Finally differences in how we achieve integrity of
-direct IO reads with dirty page cache are going to impact this benchmark.
 
-So overall can now see why this commit makes a difference but the workload
-is IMHO largely irrelevant. What would make sense is to run filebench once,
-then unmount & mount the fs to force files to disk and clear page cache and
-then run it again. Filebench will reuse the files in this case and then
-parallel direct IO readers without page cache are a sensible workload. But
-I didn't see any difference in that (even with rotating disk) on my
-machines.
+=E4=BA=8E 2020=E5=B9=B43=E6=9C=8825=E6=97=A5 GMT+08:00 =E4=B8=8B=E5=8D=881=
+0:15:16, Marc Zyngier <maz@kernel=2Eorg> =E5=86=99=E5=88=B0:
+>On 2020-03-25 13:59, Jiaxun Yang wrote:
+>
+>[=2E=2E=2E]
+>
+>>>> So probably we can use legacy domain when  MIPS IRQ BASE is in the
+>>>> range of legacy IRQ
+>>>> and switch to simple domain when it's not in that range?
+>>>=20
+>>> No, see below=2E
+>>>=20
+>>>> Here in Loongson systems IRQ 0-15 is occupied by I8259 so I did
+>this
+>>>> hack=2E
+>>>=20
+>>> Well, if you have to consider which Linux IRQ gets assigned,
+>>> then your platform is definitely not ready for non-legacy
+>>> irqdomains=2E Just stick to legacy for now until you have removed
+>>> all the code that knows the hwirq mapping=2E
+>>=20
+>> Thanks=2E
+>>=20
+>> So I have to allocate irq_desc here in driver manually?
+>
+>No, you are probably better off just dropping this patch, as MIPS
+>doesn't seem to be ready for a wholesale switch to virtual interrupts=2E
 
-								Honza
-> 
-> On 3/4/2020 4:15 PM, Xing Zhengjun wrote:
-> > Hi Matthew,
-> > 
-> >   We test it in v5.6-rc4, the issue still exist, do you have time to
-> > take a look at this? Thanks.
-> > 
-> > On 1/8/2020 10:31 AM, Rong Chen wrote:
-> > > 
-> > > 
-> > > On 1/8/20 1:28 AM, Jan Kara wrote:
-> > > > On Tue 07-01-20 11:57:08, Theodore Y. Ts'o wrote:
-> > > > > On Tue, Jan 07, 2020 at 02:41:06PM +0100, Jan Kara wrote:
-> > > > > > Hello,
-> > > > > > 
-> > > > > > On Tue 24-12-19 08:59:15, kernel test robot wrote:
-> > > > > > > FYI, we noticed a -20.2% regression of
-> > > > > > > filebench.sum_bytes_mb/s due to commit:
-> > > > > > > 
-> > > > > > > 
-> > > > > > > commit: b1b4705d54abedfd69dcdf42779c521aa1e0fbd3
-> > > > > > > ("ext4: introduce direct I/O read using iomap
-> > > > > > > infrastructure")
-> > > > > > > https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git
-> > > > > > > master
-> > > > > > > 
-> > > > > > > in testcase: filebench
-> > > > > > > on test machine: 8 threads Intel(R) Core(TM) i7-4770
-> > > > > > > CPU @ 3.40GHz with 8G memory
-> > > > > > > with following parameters:
-> > > > > > > 
-> > > > > > >     disk: 1HDD
-> > > > > > >     fs: ext4
-> > > > > > >     test: fivestreamreaddirect.f
-> > > > > > >     cpufreq_governor: performance
-> > > > > > >     ucode: 0x27
-> > > > > > I was trying to reproduce this but I failed with my test
-> > > > > > VM. I had SATA SSD
-> > > > > > as a backing store though so maybe that's what makes a
-> > > > > > difference. Maybe
-> > > > > > the new code results in somewhat more seeks because the
-> > > > > > five threads which
-> > > > > > compete in submitting sequential IO end up being more interleaved?
-> > > > > A "-20.2% regression" should be read as a "20.2% performance
-> > > > > improvement" is zero-day kernel speak.
-> > > > Are you sure? I can see:
-> > > > 
-> > > >       58.30 ±  2%     -20.2%      46.53        filebench.sum_bytes_mb/s
-> > > > 
-> > > > which implies to me previously the throughput was 58 MB/s and after the
-> > > > commit it was 46 MB/s?
-> > > > 
-> > > > Anyway, in my testing that commit made no difference in that benchmark
-> > > > whasoever (getting around 97 MB/s for each thread before and after the
-> > > > commit).
-> > > >                                 Honza
-> > > 
-> > > We're sorry for the misunderstanding, "-20.2%" means the change of
-> > > filebench.sum_bytes_mb/s,
-> > > "regression" means the explanation of this change from LKP.
-> > > 
-> > > Best Regards,
-> > > Rong Chen
-> > > _______________________________________________
-> > > LKP mailing list -- lkp@lists.01.org
-> > > To unsubscribe send an email to lkp-leave@lists.01.org
-> > 
-> 
-> -- 
-> Zhengjun Xing
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+It can't work without this patch=2E
+
+Legacy domain require IRQ number within 0-15=20
+however it's already occupied by i8259 or "HTPIC" driver=2E
+
+Previously Loongson even didn't enable IRQ domain so it's not a problem=2E
+
+
+>
+>         M=2E
+
+--=20
+Jiaxun Yang
