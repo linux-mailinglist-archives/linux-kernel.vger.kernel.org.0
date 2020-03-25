@@ -2,26 +2,26 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E2E86192FD2
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 18:50:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BD309192FC4
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 18:49:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728214AbgCYRtx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Mar 2020 13:49:53 -0400
-Received: from mga12.intel.com ([192.55.52.136]:57499 "EHLO mga12.intel.com"
+        id S1728160AbgCYRtv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Mar 2020 13:49:51 -0400
+Received: from mga12.intel.com ([192.55.52.136]:57497 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728069AbgCYRtu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Mar 2020 13:49:50 -0400
-IronPort-SDR: 7Q3VCDn5zsvOCWl1Czg3M1U/2Hh1Ijo4i0tYNy/H4ZYmQxtx40oS8HzjL70zta0lJegz7XkA/c
- a650s5v3VODQ==
+        id S1728070AbgCYRtt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Mar 2020 13:49:49 -0400
+IronPort-SDR: koifJIEvfmVdwOWOoGtwSz64b2SINQqlaN49wX1+GWTxnE+80w+66MjSggL8hFhJe8xrJshyEY
+ e4ocgaMTtv8w==
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga004.jf.intel.com ([10.7.209.38])
   by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Mar 2020 10:49:48 -0700
-IronPort-SDR: BihTnyWnSBPc+OwyYlWCAPoMgLHJvTnwNeKA8KxGMt7J0VxYvhkJLlGZ7bnDac4xgABtMwbQQC
- 2mWvpE41GAkg==
+IronPort-SDR: 1+YANSLLV374xiq6lk/dJ8fY/SL1DEs+8AaEHdzAxY1YSS60j4C2mosuJhvt+JPLqabOk9WPqs
+ 53XQ8/sWchgQ==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.72,305,1580803200"; 
-   d="scan'208";a="393702203"
+   d="scan'208";a="393702207"
 Received: from jacob-builder.jf.intel.com ([10.7.199.155])
   by orsmga004.jf.intel.com with ESMTP; 25 Mar 2020 10:49:48 -0700
 From:   Jacob Pan <jacob.jun.pan@linux.intel.com>
@@ -39,9 +39,9 @@ Cc:     "Yi Liu" <yi.l.liu@intel.com>,
         Jonathan Cameron <jic23@kernel.org>,
         Eric Auger <eric.auger@redhat.com>,
         Jacob Pan <jacob.jun.pan@linux.intel.com>
-Subject: [PATCH 05/10] iommu/ioasid: Create an IOASID set for host SVA use
-Date:   Wed, 25 Mar 2020 10:55:26 -0700
-Message-Id: <1585158931-1825-6-git-send-email-jacob.jun.pan@linux.intel.com>
+Subject: [PATCH 06/10] iommu/ioasid: Convert to set aware allocations
+Date:   Wed, 25 Mar 2020 10:55:27 -0700
+Message-Id: <1585158931-1825-7-git-send-email-jacob.jun.pan@linux.intel.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1585158931-1825-1-git-send-email-jacob.jun.pan@linux.intel.com>
 References: <1585158931-1825-1-git-send-email-jacob.jun.pan@linux.intel.com>
@@ -50,100 +50,322 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Bare metal SVA allocates IOASIDs for native process addresses. This
-should be separated from VM allocated IOASIDs thus under its own set.
+The current ioasid_alloc function takes a token/ioasid_set then record it
+on the IOASID being allocated. There is no alloc/free on the ioasid_set.
 
-This patch creates a system IOASID set with its quota set to PID_MAX.
-This is a reasonable default in that SVM capable devices can only bind
-to limited user processes.
+With the IOASID set APIs, callers must allocate an ioasid_set before
+allocate IOASIDs within the set. Quota and other ioasid_set level
+activities can then be enforced.
 
+This patch converts existing API to the new ioasid_set model.
+
+Signed-off-by: Liu Yi L <yi.l.liu@intel.com>
 Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
 ---
- drivers/iommu/intel-iommu.c | 8 +++++++-
- drivers/iommu/ioasid.c      | 9 +++++++++
- include/linux/ioasid.h      | 9 +++++++++
- 3 files changed, 25 insertions(+), 1 deletion(-)
+ drivers/iommu/intel-iommu.c | 10 +++---
+ drivers/iommu/intel-svm.c   | 10 +++---
+ drivers/iommu/ioasid.c      | 78 +++++++++++++++++++++++++++++++++------------
+ include/linux/ioasid.h      | 11 +++----
+ 4 files changed, 72 insertions(+), 37 deletions(-)
 
 diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
-index ec3fc121744a..af7a1ef7b31e 100644
+index af7a1ef7b31e..c571cc8d9e57 100644
 --- a/drivers/iommu/intel-iommu.c
 +++ b/drivers/iommu/intel-iommu.c
-@@ -3511,8 +3511,14 @@ static int __init init_dmars(void)
- 		goto free_iommu;
- 
- 	/* PASID is needed for scalable mode irrespective to SVM */
--	if (intel_iommu_sm)
-+	if (intel_iommu_sm) {
- 		ioasid_install_capacity(intel_pasid_max_id);
-+		/* We should not run out of IOASIDs at boot */
-+		if (ioasid_alloc_system_set(PID_MAX_DEFAULT)) {
-+			pr_err("Failed to enable host PASID allocator\n");
-+			intel_iommu_sm = 0;
-+		}
-+	}
- 
+@@ -3323,11 +3323,11 @@ static void intel_ioasid_free(ioasid_t ioasid, void *data)
+ 	if (!iommu)
+ 		return;
  	/*
- 	 * for each drhd
+-	 * Sanity check the ioasid owner is done at upper layer, e.g. VFIO
+-	 * We can only free the PASID when all the devices are unbound.
++	 * In the guest, all IOASIDs belong to the system_ioasid set.
++	 * Sanity check against the system set.
+ 	 */
+-	if (ioasid_find(NULL, ioasid, NULL)) {
+-		pr_alert("Cannot free active IOASID %d\n", ioasid);
++	if (IS_ERR(ioasid_find(system_ioasid_sid, ioasid, NULL))) {
++		pr_err("Cannot free IOASID %d, not in system set\n", ioasid);
+ 		return;
+ 	}
+ 	vcmd_free_pasid(iommu, ioasid);
+@@ -5541,7 +5541,7 @@ static int aux_domain_add_dev(struct dmar_domain *domain,
+ 		int pasid;
+ 
+ 		/* No private data needed for the default pasid */
+-		pasid = ioasid_alloc(NULL, PASID_MIN,
++		pasid = ioasid_alloc(system_ioasid_sid, PASID_MIN,
+ 				     pci_max_pasids(to_pci_dev(dev)) - 1,
+ 				     NULL);
+ 		if (pasid == INVALID_IOASID) {
+diff --git a/drivers/iommu/intel-svm.c b/drivers/iommu/intel-svm.c
+index 1991587fd3fd..f511855d187b 100644
+--- a/drivers/iommu/intel-svm.c
++++ b/drivers/iommu/intel-svm.c
+@@ -268,7 +268,7 @@ int intel_svm_bind_gpasid(struct iommu_domain *domain,
+ 	}
+ 
+ 	mutex_lock(&pasid_mutex);
+-	svm = ioasid_find(NULL, data->hpasid, NULL);
++	svm = ioasid_find(INVALID_IOASID_SET, data->hpasid, NULL);
+ 	if (IS_ERR(svm)) {
+ 		ret = PTR_ERR(svm);
+ 		goto out;
+@@ -401,7 +401,7 @@ int intel_svm_unbind_gpasid(struct device *dev, int pasid)
+ 		return -EINVAL;
+ 
+ 	mutex_lock(&pasid_mutex);
+-	svm = ioasid_find(NULL, pasid, NULL);
++	svm = ioasid_find(INVALID_IOASID_SET, pasid, NULL);
+ 	if (!svm) {
+ 		ret = -EINVAL;
+ 		goto out;
+@@ -559,7 +559,7 @@ static int intel_svm_bind_mm(struct device *dev, int flags, struct svm_dev_ops *
+ 			pasid_max = intel_pasid_max_id;
+ 
+ 		/* Do not use PASID 0, reserved for RID to PASID */
+-		svm->pasid = ioasid_alloc(NULL, PASID_MIN,
++		svm->pasid = ioasid_alloc(system_ioasid_sid, PASID_MIN,
+ 					  pasid_max - 1, svm);
+ 		if (svm->pasid == INVALID_IOASID) {
+ 			kfree(svm);
+@@ -642,7 +642,7 @@ int intel_svm_unbind_mm(struct device *dev, int pasid)
+ 	if (!iommu)
+ 		goto out;
+ 
+-	svm = ioasid_find(NULL, pasid, NULL);
++	svm = ioasid_find(system_ioasid_sid, pasid, NULL);
+ 	if (!svm)
+ 		goto out;
+ 
+@@ -778,7 +778,7 @@ static irqreturn_t prq_event_thread(int irq, void *d)
+ 
+ 		if (!svm || svm->pasid != req->pasid) {
+ 			rcu_read_lock();
+-			svm = ioasid_find(NULL, req->pasid, NULL);
++			svm = ioasid_find(INVALID_IOASID_SET, req->pasid, NULL);
+ 			/* It *can't* go away, because the driver is not permitted
+ 			 * to unbind the mm while any page faults are outstanding.
+ 			 * So we only need RCU to protect the internal idr code. */
 diff --git a/drivers/iommu/ioasid.c b/drivers/iommu/ioasid.c
-index 6265d2dbbced..9135af171a7c 100644
+index 9135af171a7c..f89a595f6978 100644
 --- a/drivers/iommu/ioasid.c
 +++ b/drivers/iommu/ioasid.c
-@@ -39,6 +39,9 @@ struct ioasid_data {
- static ioasid_t ioasid_capacity;
- static ioasid_t ioasid_capacity_avail;
+@@ -31,7 +31,7 @@ struct ioasid_set_data {
  
-+int system_ioasid_sid;
-+static DECLARE_IOASID_SET(system_ioasid);
-+
- /* System capacity can only be set once */
- void ioasid_install_capacity(ioasid_t total)
+ struct ioasid_data {
+ 	ioasid_t id;
+-	struct ioasid_set *set;
++	struct ioasid_set_data *sdata;
+ 	void *private;
+ 	struct rcu_head rcu;
+ };
+@@ -334,7 +334,7 @@ EXPORT_SYMBOL_GPL(ioasid_attach_data);
+ 
+ /**
+  * ioasid_alloc - Allocate an IOASID
+- * @set: the IOASID set
++ * @sid: the IOASID set ID
+  * @min: the minimum ID (inclusive)
+  * @max: the maximum ID (inclusive)
+  * @private: data private to the caller
+@@ -344,18 +344,30 @@ EXPORT_SYMBOL_GPL(ioasid_attach_data);
+  *
+  * Return: the allocated ID on success, or %INVALID_IOASID on failure.
+  */
+-ioasid_t ioasid_alloc(struct ioasid_set *set, ioasid_t min, ioasid_t max,
+-		      void *private)
++ioasid_t ioasid_alloc(int sid, ioasid_t min, ioasid_t max, void *private)
  {
-@@ -51,6 +54,12 @@ void ioasid_install_capacity(ioasid_t total)
- }
- EXPORT_SYMBOL_GPL(ioasid_install_capacity);
++	struct ioasid_set_data *sdata;
+ 	struct ioasid_data *data;
+ 	void *adata;
+ 	ioasid_t id;
  
-+int ioasid_alloc_system_set(int quota)
-+{
-+	return ioasid_alloc_set(&system_ioasid, quota, &system_ioasid_sid);
-+}
-+EXPORT_SYMBOL_GPL(ioasid_alloc_system_set);
+-	data = kzalloc(sizeof(*data), GFP_ATOMIC);
++	/* Check if the IOASID set has been allocated and initialized */
++	sdata = xa_load(&ioasid_sets, sid);
++	if (!sdata) {
++		pr_err("Invalid IOASID set %d to allocate from\n", sid);
++		return INVALID_IOASID;
++	}
 +
- /*
-  * struct ioasid_allocator_data - Internal data structure to hold information
-  * about an allocator. There are two types of allocators:
++	if (sdata->size <= sdata->nr_ioasids) {
++		pr_err("IOASID set %d out of quota\n", sid);
++		return INVALID_IOASID;
++	}
++
++	data = kzalloc(sizeof(*data), GFP_KERNEL);
+ 	if (!data)
+ 		return INVALID_IOASID;
+ 
+-	data->set = set;
++	data->sdata = sdata;
+ 	data->private = private;
+ 
+ 	/*
+@@ -379,6 +391,9 @@ ioasid_t ioasid_alloc(struct ioasid_set *set, ioasid_t min, ioasid_t max,
+ 	}
+ 	data->id = id;
+ 
++	/* Store IOASID in the per set data */
++	xa_store(&sdata->xa, id, data, GFP_KERNEL);
++	sdata->nr_ioasids++;
+ 	spin_unlock(&ioasid_allocator_lock);
+ 	return id;
+ exit_free:
+@@ -388,19 +403,15 @@ ioasid_t ioasid_alloc(struct ioasid_set *set, ioasid_t min, ioasid_t max,
+ }
+ EXPORT_SYMBOL_GPL(ioasid_alloc);
+ 
+-/**
+- * ioasid_free - Free an IOASID
+- * @ioasid: the ID to remove
+- */
+-void ioasid_free(ioasid_t ioasid)
++static void ioasid_free_locked(ioasid_t ioasid)
+ {
+ 	struct ioasid_data *ioasid_data;
++	struct ioasid_set_data *sdata;
+ 
+-	spin_lock(&ioasid_allocator_lock);
+ 	ioasid_data = xa_load(&active_allocator->xa, ioasid);
+ 	if (!ioasid_data) {
+ 		pr_err("Trying to free unknown IOASID %u\n", ioasid);
+-		goto exit_unlock;
++		return;
+ 	}
+ 
+ 	active_allocator->ops->free(ioasid, active_allocator->ops->pdata);
+@@ -410,7 +421,27 @@ void ioasid_free(ioasid_t ioasid)
+ 		kfree_rcu(ioasid_data, rcu);
+ 	}
+ 
+-exit_unlock:
++	sdata = xa_load(&ioasid_sets, ioasid_data->sdata->sid);
++	if (!sdata) {
++		pr_err("No set %d for IOASID %d\n", ioasid_data->sdata->sid,
++		       ioasid);
++		return;
++	}
++	xa_erase(&sdata->xa, ioasid);
++	sdata->nr_ioasids--;
++}
++
++/**
++ * ioasid_free - Free an IOASID and notify users who registered a notifier
++ *               on the IOASID set.
++ *               IOASID can be re-allocated upon return
++ *
++ * @ioasid: the ID to remove
++ */
++void ioasid_free(ioasid_t ioasid)
++{
++	spin_lock(&ioasid_allocator_lock);
++	ioasid_free_locked(ioasid);
+ 	spin_unlock(&ioasid_allocator_lock);
+ }
+ EXPORT_SYMBOL_GPL(ioasid_free);
+@@ -499,8 +530,12 @@ void ioasid_free_set(int sid, bool destroy_set)
+ 		goto done_destroy;
+ 	}
+ 
+-	/* Just a place holder for now */
+ 	xa_for_each(&sdata->xa, index, entry) {
++		/*
++		 * Free from system-wide IOASID pool, all subscribers gets
++		 * notified and do cleanup.
++		 */
++		ioasid_free_locked(index);
+ 		/* Free from per sub-set pool */
+ 		xa_erase(&sdata->xa, index);
+ 	}
+@@ -508,7 +543,6 @@ void ioasid_free_set(int sid, bool destroy_set)
+ done_destroy:
+ 	if (destroy_set) {
+ 		xa_erase(&ioasid_sets, sid);
+-
+ 		/* Return the quota back to system pool */
+ 		ioasid_capacity_avail += sdata->size;
+ 		kfree_rcu(sdata, rcu);
+@@ -522,7 +556,7 @@ EXPORT_SYMBOL_GPL(ioasid_free_set);
+ 
+ /**
+  * ioasid_find - Find IOASID data
+- * @set: the IOASID set
++ * @sid: the IOASID set ID
+  * @ioasid: the IOASID to find
+  * @getter: function to call on the found object
+  *
+@@ -532,10 +566,12 @@ EXPORT_SYMBOL_GPL(ioasid_free_set);
+  *
+  * If the IOASID exists, return the private pointer passed to ioasid_alloc.
+  * Private data can be NULL if not set. Return an error if the IOASID is not
+- * found, or if @set is not NULL and the IOASID does not belong to the set.
++ * found.
++ *
++ * If sid is INVALID_IOASID_SET, it will skip set ownership checking. Otherwise,
++ * error is returned even if the IOASID is found but does not belong the set.
+  */
+-void *ioasid_find(struct ioasid_set *set, ioasid_t ioasid,
+-		  bool (*getter)(void *))
++void *ioasid_find(int sid, ioasid_t ioasid, bool (*getter)(void *))
+ {
+ 	void *priv;
+ 	struct ioasid_data *ioasid_data;
+@@ -548,7 +584,7 @@ void *ioasid_find(struct ioasid_set *set, ioasid_t ioasid,
+ 		priv = ERR_PTR(-ENOENT);
+ 		goto unlock;
+ 	}
+-	if (set && ioasid_data->set != set) {
++	if (sid != INVALID_IOASID_SET && ioasid_data->sdata->sid != sid) {
+ 		/* data found but does not belong to the set */
+ 		priv = ERR_PTR(-EACCES);
+ 		goto unlock;
 diff --git a/include/linux/ioasid.h b/include/linux/ioasid.h
-index 8c82d2625671..097b1cc043a3 100644
+index 097b1cc043a3..e19c0ad93bd7 100644
 --- a/include/linux/ioasid.h
 +++ b/include/linux/ioasid.h
-@@ -29,6 +29,9 @@ struct ioasid_allocator_ops {
- 	void *pdata;
- };
+@@ -6,6 +6,7 @@
+ #include <linux/errno.h>
  
-+/* Shared IOASID set for reserved for host system use */
-+extern int system_ioasid_sid;
-+
+ #define INVALID_IOASID ((ioasid_t)-1)
++#define INVALID_IOASID_SET (-1)
+ typedef unsigned int ioasid_t;
+ typedef ioasid_t (*ioasid_alloc_fn_t)(ioasid_t min, ioasid_t max, void *data);
+ typedef void (*ioasid_free_fn_t)(ioasid_t ioasid, void *data);
+@@ -35,11 +36,10 @@ extern int system_ioasid_sid;
  #define DECLARE_IOASID_SET(name) struct ioasid_set name = { 0 }
  
  #if IS_ENABLED(CONFIG_IOASID)
-@@ -41,6 +44,7 @@ int ioasid_register_allocator(struct ioasid_allocator_ops *allocator);
+-ioasid_t ioasid_alloc(struct ioasid_set *set, ioasid_t min, ioasid_t max,
++ioasid_t ioasid_alloc(int sid, ioasid_t min, ioasid_t max,
+ 		      void *private);
+ void ioasid_free(ioasid_t ioasid);
+-void *ioasid_find(struct ioasid_set *set, ioasid_t ioasid,
+-		  bool (*getter)(void *));
++void *ioasid_find(int sid, ioasid_t ioasid, bool (*getter)(void *));
+ int ioasid_register_allocator(struct ioasid_allocator_ops *allocator);
  void ioasid_unregister_allocator(struct ioasid_allocator_ops *allocator);
  int ioasid_attach_data(ioasid_t ioasid, void *data);
- void ioasid_install_capacity(ioasid_t total);
-+int ioasid_alloc_system_set(int quota);
- int ioasid_alloc_set(struct ioasid_set *token, ioasid_t quota, int *sid);
+@@ -49,7 +49,7 @@ int ioasid_alloc_set(struct ioasid_set *token, ioasid_t quota, int *sid);
  void ioasid_free_set(int sid, bool destroy_set);
  int ioasid_find_sid(ioasid_t ioasid);
-@@ -88,5 +92,10 @@ static inline void ioasid_install_capacity(ioasid_t total)
+ #else /* !CONFIG_IOASID */
+-static inline ioasid_t ioasid_alloc(struct ioasid_set *set, ioasid_t min,
++static inline ioasid_t ioasid_alloc(int sid, ioasid_t min,
+ 				    ioasid_t max, void *private)
+ {
+ 	return INVALID_IOASID;
+@@ -68,8 +68,7 @@ static inline void ioasid_free_set(int sid, bool destroy_set)
  {
  }
  
-+static inline int ioasid_alloc_system_set(int quota)
-+{
-+	return -ENOTSUPP;
-+}
-+
- #endif /* CONFIG_IOASID */
- #endif /* __LINUX_IOASID_H */
+-static inline void *ioasid_find(struct ioasid_set *set, ioasid_t ioasid,
+-				bool (*getter)(void *))
++static inline void *ioasid_find(int sid, ioasid_t ioasid, bool (*getter)(void *))
+ {
+ 	return NULL;
+ }
 -- 
 2.7.4
 
