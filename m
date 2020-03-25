@@ -2,169 +2,249 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 988DD192649
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 11:56:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 77F6419264D
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 11:56:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727380AbgCYK4H (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Mar 2020 06:56:07 -0400
-Received: from lhrrgout.huawei.com ([185.176.76.210]:2594 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726139AbgCYK4H (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Mar 2020 06:56:07 -0400
-Received: from lhreml707-cah.china.huawei.com (unknown [172.18.7.108])
-        by Forcepoint Email with ESMTP id F025C1F99A62E89AD8C8;
-        Wed, 25 Mar 2020 10:56:05 +0000 (GMT)
-Received: from roberto-HP-EliteDesk-800-G2-DM-65W.huawei.com (10.204.65.160)
- by smtpsuk.huawei.com (10.201.108.48) with Microsoft SMTP Server (TLS) id
- 14.3.408.0; Wed, 25 Mar 2020 10:55:59 +0000
-From:   Roberto Sassu <roberto.sassu@huawei.com>
-To:     <zohar@linux.ibm.com>, <James.Bottomley@HansenPartnership.com>
-CC:     <linux-integrity@vger.kernel.org>,
-        <linux-security-module@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <silviu.vlasceanu@huawei.com>,
-        Roberto Sassu <roberto.sassu@huawei.com>
-Subject: [PATCH v4 7/7] ima: Use ima_hash_algo for collision detection in the measurement list
-Date:   Wed, 25 Mar 2020 11:54:24 +0100
-Message-ID: <20200325105424.26665-1-roberto.sassu@huawei.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200325104712.25694-1-roberto.sassu@huawei.com>
-References: <20200325104712.25694-1-roberto.sassu@huawei.com>
+        id S1727432AbgCYK4l convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 25 Mar 2020 06:56:41 -0400
+Received: from cloudserver094114.home.pl ([79.96.170.134]:45404 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726154AbgCYK4k (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Mar 2020 06:56:40 -0400
+Received: from 185.80.35.16 (185.80.35.16) (HELO kreacher.localnet)
+ by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.341)
+ id 832396319de3948e; Wed, 25 Mar 2020 11:56:38 +0100
+From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To:     Linux ACPI <linux-acpi@vger.kernel.org>
+Cc:     Linux PM <linux-pm@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Erik Kaneda <erik.kaneda@intel.com>,
+        Bob Moore <robert.moore@intel.com>,
+        =?utf-8?B?T25kxZllag==?= Caletka <ondrej@caletka.cz>
+Subject: [PATCH 1/2] ACPICA: Allow acpi_any_gpe_status_set() to skip one GPE
+Date:   Wed, 25 Mar 2020 11:54:29 +0100
+Message-ID: <2501943.mi8mbN1kY1@kreacher>
+In-Reply-To: <9291082.ZuhHelrm8h@kreacher>
+References: <9291082.ZuhHelrm8h@kreacher>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.204.65.160]
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Before calculating a digest for each PCR bank, collisions were detected
-with a SHA1 digest. This patch includes ima_hash_algo among the algorithms
-used to calculate the template digest and checks collisions on that digest.
+From: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
 
-The position in the measurement entry array of the template digest
-calculated with the IMA default hash algorithm is stored in the
-ima_hash_algo_idx global variable and is determined at IMA initialization
-time.
+The check carried out by acpi_any_gpe_status_set() is not precise enough
+for the suspend-to-idle implementation in Linux and in some cases it is
+necessary make it skip one GPE (specifically, the EC GPE) from the check
+to prevent a race condition leading to a premature system resume from
+occurring.
 
-Changelog
+For this reason, redefine acpi_any_gpe_status_set() to take the number
+of a GPE to skip as an argument.
 
-v2:
-- add __ro_after_init to declaration of ima_hash_algo_idx (suggested by
-  Mimi)
-- replace ima_num_template_digests with
-  NR_BANKS(ima_tpm_chip) + ima_extra_slots(suggested by Mimi)
-- use ima_hash_algo_idx to access ima_algo_array elements in
-  ima_init_crypto()
-
-v1:
-- increment ima_num_template_digests before kcalloc() (suggested by Mimi)
-- check if ima_tpm_chip is NULL
-
-Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+Link: https://bugzilla.kernel.org/show_bug.cgi?id=206629
+Tested-by: Ondřej Caletka <ondrej@caletka.cz>
+Cc: 5.4+ <stable@vger.kernel.org> # 5.4+
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 ---
- security/integrity/ima/ima.h        |  1 +
- security/integrity/ima/ima_crypto.c | 19 ++++++++++++++++++-
- security/integrity/ima/ima_queue.c  |  8 ++++----
- 3 files changed, 23 insertions(+), 5 deletions(-)
+ drivers/acpi/acpica/achware.h |  2 +-
+ drivers/acpi/acpica/evxfgpe.c | 17 +++++++++++-----
+ drivers/acpi/acpica/hwgpe.c   | 47 ++++++++++++++++++++++++++++++++++---------
+ drivers/acpi/sleep.c          |  2 +-
+ include/acpi/acpixf.h         |  2 +-
+ 5 files changed, 53 insertions(+), 17 deletions(-)
 
-diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
-index 2a7ed68e6414..467dfdbea25c 100644
---- a/security/integrity/ima/ima.h
-+++ b/security/integrity/ima/ima.h
-@@ -53,6 +53,7 @@ extern int ima_policy_flag;
- /* set during initialization */
- extern int ima_hash_algo;
- extern int ima_sha1_idx __ro_after_init;
-+extern int ima_hash_algo_idx __ro_after_init;
- extern int ima_extra_slots __ro_after_init;
- extern int ima_appraise;
- extern struct tpm_chip *ima_tpm_chip;
-diff --git a/security/integrity/ima/ima_crypto.c b/security/integrity/ima/ima_crypto.c
-index a94972d3f929..5201f5ec2ce4 100644
---- a/security/integrity/ima/ima_crypto.c
-+++ b/security/integrity/ima/ima_crypto.c
-@@ -63,6 +63,7 @@ struct ima_algo_desc {
- };
+diff --git a/drivers/acpi/acpica/achware.h b/drivers/acpi/acpica/achware.h
+index 6ad0517553d5..ebf6453d0e21 100644
+--- a/drivers/acpi/acpica/achware.h
++++ b/drivers/acpi/acpica/achware.h
+@@ -101,7 +101,7 @@ acpi_status acpi_hw_enable_all_runtime_gpes(void);
  
- int ima_sha1_idx __ro_after_init;
-+int ima_hash_algo_idx __ro_after_init;
- /*
-  * Additional number of slots reserved, as needed, for SHA1
-  * and IMA default algo.
-@@ -122,15 +123,25 @@ int __init ima_init_crypto(void)
- 		return rc;
+ acpi_status acpi_hw_enable_all_wakeup_gpes(void);
  
- 	ima_sha1_idx = -1;
-+	ima_hash_algo_idx = -1;
+-u8 acpi_hw_check_all_gpes(void);
++u8 acpi_hw_check_all_gpes(acpi_handle gpe_skip_device, u32 gpe_skip_number);
  
- 	for (i = 0; i < NR_BANKS(ima_tpm_chip); i++) {
- 		algo = ima_tpm_chip->allocated_banks[i].crypto_id;
- 		if (algo == HASH_ALGO_SHA1)
- 			ima_sha1_idx = i;
-+
-+		if (algo == ima_hash_algo)
-+			ima_hash_algo_idx = i;
- 	}
- 
--	if (ima_sha1_idx < 0)
-+	if (ima_sha1_idx < 0) {
- 		ima_sha1_idx = NR_BANKS(ima_tpm_chip) + ima_extra_slots++;
-+		if (ima_hash_algo == HASH_ALGO_SHA1)
-+			ima_hash_algo_idx = ima_sha1_idx;
-+	}
-+
-+	if (ima_hash_algo_idx < 0)
-+		ima_hash_algo_idx = NR_BANKS(ima_tpm_chip) + ima_extra_slots++;
- 
- 	ima_algo_array = kcalloc(NR_BANKS(ima_tpm_chip) + ima_extra_slots,
- 				 sizeof(*ima_algo_array), GFP_KERNEL);
-@@ -179,6 +190,12 @@ int __init ima_init_crypto(void)
- 		ima_algo_array[ima_sha1_idx].algo = HASH_ALGO_SHA1;
- 	}
- 
-+	if (ima_hash_algo_idx >= NR_BANKS(ima_tpm_chip) &&
-+	    ima_hash_algo_idx != ima_sha1_idx) {
-+		ima_algo_array[ima_hash_algo_idx].tfm = ima_shash_tfm;
-+		ima_algo_array[ima_hash_algo_idx].algo = ima_hash_algo;
-+	}
-+
- 	return 0;
- out_array:
- 	for (i = 0; i < NR_BANKS(ima_tpm_chip) + ima_extra_slots; i++) {
-diff --git a/security/integrity/ima/ima_queue.c b/security/integrity/ima/ima_queue.c
-index 82a9ca43b989..fb4ec270f620 100644
---- a/security/integrity/ima/ima_queue.c
-+++ b/security/integrity/ima/ima_queue.c
-@@ -55,8 +55,8 @@ static struct ima_queue_entry *ima_lookup_digest_entry(u8 *digest_value,
- 	key = ima_hash_key(digest_value);
- 	rcu_read_lock();
- 	hlist_for_each_entry_rcu(qe, &ima_htable.queue[key], hnext) {
--		rc = memcmp(qe->entry->digests[ima_sha1_idx].digest,
--			    digest_value, TPM_DIGEST_SIZE);
-+		rc = memcmp(qe->entry->digests[ima_hash_algo_idx].digest,
-+			    digest_value, hash_digest_size[ima_hash_algo]);
- 		if ((rc == 0) && (qe->entry->pcr == pcr)) {
- 			ret = qe;
- 			break;
-@@ -108,7 +108,7 @@ static int ima_add_digest_entry(struct ima_template_entry *entry,
- 
- 	atomic_long_inc(&ima_htable.len);
- 	if (update_htable) {
--		key = ima_hash_key(entry->digests[ima_sha1_idx].digest);
-+		key = ima_hash_key(entry->digests[ima_hash_algo_idx].digest);
- 		hlist_add_head_rcu(&qe->hnext, &ima_htable.queue[key]);
- 	}
- 
-@@ -160,7 +160,7 @@ int ima_add_template_entry(struct ima_template_entry *entry, int violation,
- 			   const char *op, struct inode *inode,
- 			   const unsigned char *filename)
+ acpi_status
+ acpi_hw_enable_runtime_gpe_block(struct acpi_gpe_xrupt_info *gpe_xrupt_info,
+diff --git a/drivers/acpi/acpica/evxfgpe.c b/drivers/acpi/acpica/evxfgpe.c
+index f2de66bfd8a7..3be60673e461 100644
+--- a/drivers/acpi/acpica/evxfgpe.c
++++ b/drivers/acpi/acpica/evxfgpe.c
+@@ -799,17 +799,19 @@ ACPI_EXPORT_SYMBOL(acpi_enable_all_wakeup_gpes)
+  *
+  * FUNCTION:    acpi_any_gpe_status_set
+  *
+- * PARAMETERS:  None
++ * PARAMETERS:  gpe_skip_number      - Number of the GPE to skip
+  *
+  * RETURN:      Whether or not the status bit is set for any GPE
+  *
+- * DESCRIPTION: Check the status bits of all enabled GPEs and return TRUE if any
+- *              of them is set or FALSE otherwise.
++ * DESCRIPTION: Check the status bits of all enabled GPEs, except for the one
++ *              represented by the "skip" argument, and return TRUE if any of
++ *              them is set or FALSE otherwise.
+  *
+  ******************************************************************************/
+-u32 acpi_any_gpe_status_set(void)
++u32 acpi_any_gpe_status_set(u32 gpe_skip_number)
  {
--	u8 *digest = entry->digests[ima_sha1_idx].digest;
-+	u8 *digest = entry->digests[ima_hash_algo_idx].digest;
- 	struct tpm_digest *digests_arg = entry->digests;
- 	const char *audit_cause = "hash_added";
- 	char tpm_audit_cause[AUDIT_CAUSE_LEN_MAX];
+ 	acpi_status status;
++	acpi_handle gpe_device;
+ 	u8 ret;
+ 
+ 	ACPI_FUNCTION_TRACE(acpi_any_gpe_status_set);
+@@ -819,7 +821,12 @@ u32 acpi_any_gpe_status_set(void)
+ 		return (FALSE);
+ 	}
+ 
+-	ret = acpi_hw_check_all_gpes();
++	status = acpi_get_gpe_device(gpe_skip_number, &gpe_device);
++	if (ACPI_FAILURE(status)) {
++		gpe_device = NULL;
++	}
++
++	ret = acpi_hw_check_all_gpes(gpe_device, gpe_skip_number);
+ 	(void)acpi_ut_release_mutex(ACPI_MTX_EVENTS);
+ 
+ 	return (ret);
+diff --git a/drivers/acpi/acpica/hwgpe.c b/drivers/acpi/acpica/hwgpe.c
+index f4c285c2f595..49c46d4dd070 100644
+--- a/drivers/acpi/acpica/hwgpe.c
++++ b/drivers/acpi/acpica/hwgpe.c
+@@ -444,12 +444,19 @@ acpi_hw_enable_wakeup_gpe_block(struct acpi_gpe_xrupt_info *gpe_xrupt_info,
+ 	return (AE_OK);
+ }
+ 
++struct acpi_gpe_block_status_context {
++	struct acpi_gpe_register_info *gpe_skip_register_info;
++	u8 gpe_skip_mask;
++	u8 retval;
++};
++
+ /******************************************************************************
+  *
+  * FUNCTION:    acpi_hw_get_gpe_block_status
+  *
+  * PARAMETERS:  gpe_xrupt_info      - GPE Interrupt info
+  *              gpe_block           - Gpe Block info
++ *              context             - GPE list walk context data
+  *
+  * RETURN:      Success
+  *
+@@ -460,12 +467,13 @@ acpi_hw_enable_wakeup_gpe_block(struct acpi_gpe_xrupt_info *gpe_xrupt_info,
+ static acpi_status
+ acpi_hw_get_gpe_block_status(struct acpi_gpe_xrupt_info *gpe_xrupt_info,
+ 			     struct acpi_gpe_block_info *gpe_block,
+-			     void *ret_ptr)
++			     void *context)
+ {
++	struct acpi_gpe_block_status_context *c = context;
+ 	struct acpi_gpe_register_info *gpe_register_info;
+ 	u64 in_enable, in_status;
+ 	acpi_status status;
+-	u8 *ret = ret_ptr;
++	u8 ret_mask;
+ 	u32 i;
+ 
+ 	/* Examine each GPE Register within the block */
+@@ -485,7 +493,11 @@ acpi_hw_get_gpe_block_status(struct acpi_gpe_xrupt_info *gpe_xrupt_info,
+ 			continue;
+ 		}
+ 
+-		*ret |= in_enable & in_status;
++		ret_mask = in_enable & in_status;
++		if (ret_mask && c->gpe_skip_register_info == gpe_register_info) {
++			ret_mask &= ~c->gpe_skip_mask;
++		}
++		c->retval |= ret_mask;
+ 	}
+ 
+ 	return (AE_OK);
+@@ -561,24 +573,41 @@ acpi_status acpi_hw_enable_all_wakeup_gpes(void)
+  *
+  * FUNCTION:    acpi_hw_check_all_gpes
+  *
+- * PARAMETERS:  None
++ * PARAMETERS:  gpe_skip_device      - GPE devoce of the GPE to skip
++ *              gpe_skip_number      - Number of the GPE to skip
+  *
+  * RETURN:      Combined status of all GPEs
+  *
+- * DESCRIPTION: Check all enabled GPEs in all GPE blocks and return TRUE if the
++ * DESCRIPTION: Check all enabled GPEs in all GPE blocks, except for the one
++ *              represented by the "skip" arguments, and return TRUE if the
+  *              status bit is set for at least one of them of FALSE otherwise.
+  *
+  ******************************************************************************/
+ 
+-u8 acpi_hw_check_all_gpes(void)
++u8 acpi_hw_check_all_gpes(acpi_handle gpe_skip_device, u32 gpe_skip_number)
+ {
+-	u8 ret = 0;
++	struct acpi_gpe_block_status_context context = {
++		.gpe_skip_register_info = NULL,
++		.retval = 0,
++	};
++	struct acpi_gpe_event_info *gpe_event_info;
++	acpi_cpu_flags flags;
+ 
+ 	ACPI_FUNCTION_TRACE(acpi_hw_check_all_gpes);
+ 
+-	(void)acpi_ev_walk_gpe_list(acpi_hw_get_gpe_block_status, &ret);
++	flags = acpi_os_acquire_lock(acpi_gbl_gpe_lock);
++
++	gpe_event_info = acpi_ev_get_gpe_event_info(gpe_skip_device,
++						    gpe_skip_number);
++	if (gpe_event_info) {
++		context.gpe_skip_register_info = gpe_event_info->register_info;
++		context.gpe_skip_mask = acpi_hw_get_gpe_register_bit(gpe_event_info);
++	}
++
++	acpi_os_release_lock(acpi_gbl_gpe_lock, flags);
+ 
+-	return (ret != 0);
++	(void)acpi_ev_walk_gpe_list(acpi_hw_get_gpe_block_status, &context);
++	return (context.retval != 0);
+ }
+ 
+ #endif				/* !ACPI_REDUCED_HARDWARE */
+diff --git a/drivers/acpi/sleep.c b/drivers/acpi/sleep.c
+index e5f95922bc21..857a6165c534 100644
+--- a/drivers/acpi/sleep.c
++++ b/drivers/acpi/sleep.c
+@@ -1022,7 +1022,7 @@ static bool acpi_s2idle_wake(void)
+ 		 * status bit from unset to set between the checks with the
+ 		 * status bits of all the other GPEs unset.
+ 		 */
+-		if (acpi_any_gpe_status_set() && !acpi_ec_dispatch_gpe())
++		if (acpi_any_gpe_status_set(U32_MAX) && !acpi_ec_dispatch_gpe())
+ 			return true;
+ 
+ 		/*
+diff --git a/include/acpi/acpixf.h b/include/acpi/acpixf.h
+index 8e8be989c2a6..a50d6dea44c3 100644
+--- a/include/acpi/acpixf.h
++++ b/include/acpi/acpixf.h
+@@ -752,7 +752,7 @@ ACPI_HW_DEPENDENT_RETURN_UINT32(u32 acpi_dispatch_gpe(acpi_handle gpe_device, u3
+ ACPI_HW_DEPENDENT_RETURN_STATUS(acpi_status acpi_disable_all_gpes(void))
+ ACPI_HW_DEPENDENT_RETURN_STATUS(acpi_status acpi_enable_all_runtime_gpes(void))
+ ACPI_HW_DEPENDENT_RETURN_STATUS(acpi_status acpi_enable_all_wakeup_gpes(void))
+-ACPI_HW_DEPENDENT_RETURN_UINT32(u32 acpi_any_gpe_status_set(void))
++ACPI_HW_DEPENDENT_RETURN_UINT32(u32 acpi_any_gpe_status_set(u32 gpe_skip_number))
+ ACPI_HW_DEPENDENT_RETURN_UINT32(u32 acpi_any_fixed_event_status_set(void))
+ 
+ ACPI_HW_DEPENDENT_RETURN_STATUS(acpi_status
 -- 
-2.17.1
+2.16.4
+
+
+
 
