@@ -2,54 +2,47 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BBD86191E40
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 01:43:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5D827191E4C
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 01:58:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727234AbgCYAnH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 20:43:07 -0400
-Received: from mga02.intel.com ([134.134.136.20]:50926 "EHLO mga02.intel.com"
+        id S1727301AbgCYA6E (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 20:58:04 -0400
+Received: from mga14.intel.com ([192.55.52.115]:49036 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727110AbgCYAnH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 20:43:07 -0400
-IronPort-SDR: alN7Zp/saue5gOkOyX1Ba3Tg524duSalNTbPCMbr8bPqTl8Twum4p2HOGF0palRj/DLbtLWssV
- yvVnrKVlB3Bg==
+        id S1727211AbgCYA6E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Mar 2020 20:58:04 -0400
+IronPort-SDR: IkT58Ib1yHBEOUxWU7a99sy7VrVYWoq/P/xRhFcXaBX8Tkrh3SWQsZhdeoCsaPsqqn8Sv85xa5
+ QueftadsfboQ==
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Mar 2020 17:43:06 -0700
-IronPort-SDR: 5x9pluvj3vih6iam46DUyNlA84aL25H7zFoleAvJSJQXRW2uzeJq6xIWhww3X5E7Nr8FaVNC95
- PuubS928RoYg==
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Mar 2020 17:48:55 -0700
+IronPort-SDR: dtHPvsrDTJbb71F/Q2NRkZDgf4EaQFXvvH0YunX2hhXNbctEMRMsmQtQcH+Qd/SLuiVEsk7tQk
+ BqFNc4vlY1DQ==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.72,302,1580803200"; 
-   d="scan'208";a="446454348"
-Received: from xiaoyaol-mobl.ccr.corp.intel.com (HELO [10.249.170.28]) ([10.249.170.28])
-  by fmsmga005.fm.intel.com with ESMTP; 24 Mar 2020 17:43:02 -0700
-Subject: Re: [PATCH v5 3/9] x86/split_lock: Re-define the kernel param option
- for split_lock_detect
-To:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        hpa@zytor.com, Paolo Bonzini <pbonzini@redhat.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        kvm@vger.kernel.org, x86@kernel.org, linux-kernel@vger.kernel.org
-Cc:     Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Arvind Sankar <nivedita@alum.mit.edu>,
-        Fenghua Yu <fenghua.yu@intel.com>,
-        Tony Luck <tony.luck@intel.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Jim Mattson <jmattson@google.com>
-References: <20200315050517.127446-1-xiaoyao.li@intel.com>
- <20200315050517.127446-4-xiaoyao.li@intel.com>
- <87r1xjov3a.fsf@nanos.tec.linutronix.de>
- <e708f6d2-8f96-903c-0bce-2eeecc4a237d@intel.com>
- <87r1xidoj1.fsf@nanos.tec.linutronix.de>
-From:   Xiaoyao Li <xiaoyao.li@intel.com>
-Message-ID: <54b2b9b5-2307-b5da-6b63-319e9626bcc1@intel.com>
-Date:   Wed, 25 Mar 2020 08:43:01 +0800
+   d="scan'208";a="357663286"
+Received: from yujietax-mobl1.ccr.corp.intel.com (HELO [10.254.214.161]) ([10.254.214.161])
+  by fmsmga001.fm.intel.com with ESMTP; 24 Mar 2020 17:48:52 -0700
+Cc:     baolu.lu@linux.intel.com, LKML <linux-kernel@vger.kernel.org>,
+        iommu@lists.linux-foundation.org, Joerg Roedel <joro@8bytes.org>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Raj Ashok <ashok.raj@intel.com>, Yi Liu <yi.l.liu@intel.com>
+Subject: Re: [PATCH 1/3] iommu/vt-d: Remove redundant IOTLB flush
+To:     Jacob Pan <jacob.jun.pan@linux.intel.com>
+References: <1584678751-43169-1-git-send-email-jacob.jun.pan@linux.intel.com>
+ <1584678751-43169-2-git-send-email-jacob.jun.pan@linux.intel.com>
+ <26ab1917-f087-aafa-e861-6a2478000a6f@linux.intel.com>
+ <20200320092047.4a4cf551@jacob-builder>
+ <06c9751a-417d-3c32-65af-0788593f811a@linux.intel.com>
+ <20200324083125.27b78594@jacob-builder>
+From:   Lu Baolu <baolu.lu@linux.intel.com>
+Message-ID: <5aff3f99-9f8b-4d61-8c88-8b22a8f7f722@linux.intel.com>
+Date:   Wed, 25 Mar 2020 08:48:51 +0800
 User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
  Thunderbird/68.6.0
 MIME-Version: 1.0
-In-Reply-To: <87r1xidoj1.fsf@nanos.tec.linutronix.de>
+In-Reply-To: <20200324083125.27b78594@jacob-builder>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -58,32 +51,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 3/24/2020 6:40 PM, Thomas Gleixner wrote:
-> Xiaoyao Li <xiaoyao.li@intel.com> writes:
->> On 3/24/2020 1:10 AM, Thomas Gleixner wrote:
->>> Xiaoyao Li <xiaoyao.li@intel.com> writes:
+On 2020/3/24 23:31, Jacob Pan wrote:
+> On Sat, 21 Mar 2020 09:32:45 +0800
+> Lu Baolu<baolu.lu@linux.intel.com>  wrote:
+> 
+>> On 2020/3/21 0:20, Jacob Pan wrote:
+>>> On Fri, 20 Mar 2020 21:45:26 +0800
+>>> Lu Baolu<baolu.lu@linux.intel.com>  wrote:
+>>>    
+>>>> On 2020/3/20 12:32, Jacob Pan wrote:
+>>>>> IOTLB flush already included in the PASID tear down process. There
+>>>>> is no need to flush again.
+>>>> It seems that intel_pasid_tear_down_entry() doesn't flush the pasid
+>>>> based device TLB?
+>>>>   
+>>> I saw this code in intel_pasid_tear_down_entry(). Isn't the last
+>>> line flush the devtlb? Not in guest of course since the passdown
+>>> tlb flush is inclusive.
 >>>
->>>> Change sld_off to sld_disable, which means disabling feature split lock
->>>> detection and it cannot be used in kernel nor can kvm expose it guest.
->>>> Of course, the X86_FEATURE_SPLIT_LOCK_DETECT is not set.
->>>>
->>>> Add a new optioin sld_kvm_only, which means kernel turns split lock
->>>> detection off, but kvm can expose it to guest.
+>>> 	pasid_cache_invalidation_with_pasid(iommu, did, pasid);
+>>> 	iotlb_invalidation_with_pasid(iommu, did, pasid);
 >>>
->>> What's the point of this? If the host is not clean, then you better fix
->>> the host first before trying to expose it to guests.
+>>> 	/* Device IOTLB doesn't need to be flushed in caching mode.
+>>> */ if (!cap_caching_mode(iommu->cap))
+>>> 		devtlb_invalidation_with_pasid(iommu, dev, pasid);
+>>>    
+>> But devtlb_invalidation_with_pasid() doesn't do the right thing, it
+>> flushes the device tlb, instead of pasid-based device tlb.
 >>
->> It's not about whether or not host is clean. It's for the cases that
->> users just don't want it enabled on host, to not break the applications
->> or drivers that do have split lock issue.
-> 
-> It's very much about whether the host is split lock clean.
-> 
-> If your host kernel is not, then this wants to be fixed first. If your
-> host application is broken, then either fix it or use "warn".
+> Hmm, you are right. But the function name is misleading, pasid argument
+> is not used, is there a reason why?
+> This is used for PASID based device IOTLB flush, right?
 > 
 
-My thought is for CSPs that they might not turn on SLD on their product 
-environment. Any split lock in kernel or drivers may break their service 
-for tenants.
+Yes. I will fix and put your patch after it.
 
+Best regards,
+baolu
