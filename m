@@ -2,25 +2,25 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 59A93193168
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 20:46:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1B916193170
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 20:55:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727461AbgCYTq1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Mar 2020 15:46:27 -0400
-Received: from ciao.gmane.io ([159.69.161.202]:49314 "EHLO ciao.gmane.io"
+        id S1727391AbgCYTzF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Mar 2020 15:55:05 -0400
+Received: from ciao.gmane.io ([159.69.161.202]:47904 "EHLO ciao.gmane.io"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727259AbgCYTq0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Mar 2020 15:46:26 -0400
+        id S1727236AbgCYTzF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Mar 2020 15:55:05 -0400
 Received: from list by ciao.gmane.io with local (Exim 4.92)
         (envelope-from <glk-linux-kernel-4@m.gmane-mx.org>)
-        id 1jHByq-000EJ8-Gt
-        for linux-kernel@vger.kernel.org; Wed, 25 Mar 2020 20:46:24 +0100
+        id 1jHC7C-000PHR-CC
+        for linux-kernel@vger.kernel.org; Wed, 25 Mar 2020 20:55:02 +0100
 X-Injected-Via-Gmane: http://gmane.org/
 To:     linux-kernel@vger.kernel.org
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 Subject: Re: [PATCH 2/2] SUNRPC: Optimize 'svc_print_xprts()'
-Date:   Wed, 25 Mar 2020 20:46:17 +0100
-Message-ID: <54664e85-cc8b-9de3-79c6-0664fc5bcd9a@wanadoo.fr>
+Date:   Wed, 25 Mar 2020 20:46:36 +0100
+Message-ID: <42afbf1f-19e1-a05c-e70c-1d46eaba3a71@wanadoo.fr>
 References: <20200325070452.22043-1-christophe.jaillet@wanadoo.fr>
  <EA5BCDB2-DB05-4B26-8635-E6F5C231DDC6@oracle.com>
 Mime-Version: 1.0
