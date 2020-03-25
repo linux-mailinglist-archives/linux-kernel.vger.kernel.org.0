@@ -2,80 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A02EA192192
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 08:06:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0B31019219B
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 08:11:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726102AbgCYHGv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Mar 2020 03:06:51 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:35423 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725815AbgCYHGv (ORCPT
+        id S1727301AbgCYHLa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Mar 2020 03:11:30 -0400
+Received: from smtp-fw-6002.amazon.com ([52.95.49.90]:43309 "EHLO
+        smtp-fw-6002.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725878AbgCYHL3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Mar 2020 03:06:51 -0400
-Received: by mail-pl1-f195.google.com with SMTP id g6so460943plt.2
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Mar 2020 00:06:50 -0700 (PDT)
+        Wed, 25 Mar 2020 03:11:29 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=6r1fskoo/rPmpewNG6WhrwCKIyAjmrIb2vy6uT5S69U=;
-        b=DTQF38v8YnBWHsl+9ixYzJ0xE5YKQXH3zpAzq2Ik1ShxuiVRINdaYH9dBwijCtOroQ
-         3+bJ2xAPc5VaDA11dqtrpJHkvl2g25DEN/HoP72Zvp4zrPitEaZEO3GgxtbGYcoG66Vu
-         EdnSrhIP4ftAurqTKZZJ7W9HTsvahZYe802K9KgJsM8KaKL0QNEOw5oweg0j4TbdtkCy
-         +KwF+vV9UP+JXfVlwd8BoxCaqfb6ZHiRRlx/KXy3BWAmSeMJW+zTJsfMRhLXHLSY4vsT
-         8fDAFj8kcnfZmc2UtH2/2NoiZ7635e7I2ReOPqJ9sptT10N36AKnETXUWvnCGnd1V+HI
-         6vmQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=6r1fskoo/rPmpewNG6WhrwCKIyAjmrIb2vy6uT5S69U=;
-        b=nSj2CrFqJW4no8PRSl59M5BmL0AGWQm939DyP9WqFvgcp6WJiacw6u00I2YlDppEJK
-         ydYqlAOZcZc/d0BMK+cMO7rD9QNyJ4hYKQjUBpei5Hx+3nc/b0Bi/RPDy0Kn/fT7rboY
-         AdUsIGwdikCxMuSpZvl6Bsm8YNw/9QMSrSiwWwqQP2JvgHoK5c0w6boGCkJXf5xeUfee
-         0EgAgfBiQouPrThbMiPcB5+19XbY5/+DTHKRH0TEzDfwpUDQLEGCcLPGcoUjziHIC25V
-         7lYYpKzQPvPmb2aw+rQaIyo6CdVJ6z3XJudQVIRK4bE8ls30z7F5d6QsKfamUj7TTTny
-         KLag==
-X-Gm-Message-State: ANhLgQ2B0QLFuzVVzemIbIVH3BPHI2f3Jrp/43QAO4Vh6wr+0K/C99Ln
-        qYYWjcsKC4j9ojQDzZh00N9Esq8O1FE=
-X-Google-Smtp-Source: ADFU+vs3isqopxoifQh7lOOmzhO/2YTv6RkIdXU2LOyuhtT4JCjGoCUyAY7MU+HCk6mc1DTVt8GYWA==
-X-Received: by 2002:a17:902:59dd:: with SMTP id d29mr1876294plj.246.1585120010514;
-        Wed, 25 Mar 2020 00:06:50 -0700 (PDT)
-Received: from VM_0_35_centos.localdomain ([150.109.62.251])
-        by smtp.gmail.com with ESMTPSA id y207sm18172916pfb.189.2020.03.25.00.06.49
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 25 Mar 2020 00:06:50 -0700 (PDT)
-From:   Qiujun Huang <hqjagain@gmail.com>
-To:     gregkh@linuxfoundation.org, osdevtc@gmail.com
-Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
-        Qiujun Huang <hqjagain@gmail.com>
-Subject: [PATCH] staging: wlan-ng: fix ODEBUG bug in prism2sta_disconnect_usb
-Date:   Wed, 25 Mar 2020 15:06:46 +0800
-Message-Id: <1585120006-30042-1-git-send-email-hqjagain@gmail.com>
-X-Mailer: git-send-email 1.8.3.1
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1585120288; x=1616656288;
+  h=from:to:cc:subject:date:message-id:mime-version;
+  bh=G9rJYQKzg3U2ptZHargVYHRCAVs2Et3zM9ahnClfA+0=;
+  b=GWfoIT0ZwjV2iGPtv7RBsrHeDeQx2pKT5vKJnQ+RjHEvJLYjBCPvMeLk
+   3+3AagWflmNNSnZFzKUAQXg0gk7rJwnA5EjINNiPsdZx8GzBbJYNxUmmX
+   qmUeypHHnfpT0jISUJZixvcTuLTeflhqb6I1YHlSmqA5SQrlMEdum6yVt
+   s=;
+IronPort-SDR: +7Z1O5fiICnGTpwS1n7M/HtgyQ9xGlJ3wMTwUxAx96FfmmJPXM87ogECg2pSLP5duXLajCQkwW
+ +LtaPKnooIFA==
+X-IronPort-AV: E=Sophos;i="5.72,303,1580774400"; 
+   d="scan'208";a="22635708"
+Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO email-inbound-relay-2c-87a10be6.us-west-2.amazon.com) ([10.43.8.6])
+  by smtp-border-fw-out-6002.iad6.amazon.com with ESMTP; 25 Mar 2020 07:11:14 +0000
+Received: from EX13MTAUWA001.ant.amazon.com (pdx4-ws-svc-p6-lb7-vlan2.pdx.amazon.com [10.170.41.162])
+        by email-inbound-relay-2c-87a10be6.us-west-2.amazon.com (Postfix) with ESMTPS id 71366A2396;
+        Wed, 25 Mar 2020 07:11:13 +0000 (UTC)
+Received: from EX13D01UWA001.ant.amazon.com (10.43.160.60) by
+ EX13MTAUWA001.ant.amazon.com (10.43.160.58) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3; Wed, 25 Mar 2020 07:11:13 +0000
+Received: from EX13MTAUEA001.ant.amazon.com (10.43.61.82) by
+ EX13d01UWA001.ant.amazon.com (10.43.160.60) with Microsoft SMTP Server (TLS)
+ id 15.0.1497.2; Wed, 25 Mar 2020 07:11:12 +0000
+Received: from localhost (10.85.0.131) by mail-relay.amazon.com (10.43.61.243)
+ with Microsoft SMTP Server id 15.0.1367.3 via Frontend Transport; Wed, 25 Mar
+ 2020 07:11:11 +0000
+From:   Balbir Singh <sblbir@amazon.com>
+To:     <linux-kernel@vger.kernel.org>, <tglx@linutronix.de>
+CC:     <tony.luck@intel.com>, <keescook@chromium.org>, <x86@kernel.org>,
+        <benh@kernel.crashing.org>, <dave.hansen@intel.com>,
+        Balbir Singh <sblbir@amazon.com>
+Subject: [RFC PATCH v2 0/4] arch/x86: Optionally flush L1D on context switch
+Date:   Wed, 25 Mar 2020 18:10:57 +1100
+Message-ID: <20200325071101.29556-1-sblbir@amazon.com>
+X-Mailer: git-send-email 2.17.1
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We should cancel hw->usb_work before kfree(hw).
+This patch is a continuation of RFC/PoC to start the discussion on optionally
+flushing L1D cache.  The goal is to allow tasks that are paranoid due to the
+recent snoop assisted data sampling vulnerabilites, to flush their L1D on being
+switched out.  This protects their data from being snooped or leaked via
+side channels after the task has context switched out.
 
-Reported-by: syzbot+6d2e7f6fa90e27be9d62@syzkaller.appspotmail.com
-Signed-off-by: Qiujun Huang <hqjagain@gmail.com>
----
- drivers/staging/wlan-ng/prism2usb.c | 1 +
- 1 file changed, 1 insertion(+)
+The points of discussion/review are (with updates):
 
-diff --git a/drivers/staging/wlan-ng/prism2usb.c b/drivers/staging/wlan-ng/prism2usb.c
-index 352556f..4689b21 100644
---- a/drivers/staging/wlan-ng/prism2usb.c
-+++ b/drivers/staging/wlan-ng/prism2usb.c
-@@ -180,6 +180,7 @@ static void prism2sta_disconnect_usb(struct usb_interface *interface)
- 
- 		cancel_work_sync(&hw->link_bh);
- 		cancel_work_sync(&hw->commsqual_bh);
-+		cancel_work_sync(&hw->usb_work);
- 
- 		/* Now we complete any outstanding commands
- 		 * and tell everyone who is waiting for their
+1. Discuss the use case and the right approach to address this
+A. Generally there seems to be consensus that we need this
+
+2. Does an arch prctl allowing for opt-in flushing make sense, would other
+   arches care about something similar?
+A. We definitely build this for x86, have not heard from any other arch
+   maintainers. There was suggestion to make this a prctl and let each
+   arch implement L1D flushing if needed, there is no arch agnostic
+   software L1D flush.
+
+3. There is a fallback software L1D load, similar to what L1TF does, but
+   we don't prefetch the TLB, is that sufficient?
+A. There was no conclusion, I suspect we don't need this
+
+4. Should we consider cleaning up the L1D on arrival of tasks?
+A. For now, we think this case is not the priority for this patchset.
+
+In summary, this is an early PoC to start the discussion on the need for
+conditional L1D flushing based on the security posture of the
+application and the sensitivity of the data it has access to or might
+have access to.
+
+Changelog v2:
+ - Reuse existing code for allocation and flush
+ - Simplify the goto logic in the actual l1d_flush function
+ - Optimize the code path with jump labels/static functions
+
+Cc: keescook@chromium.org
+
+Balbir Singh (4):
+  arch/x86/kvm: Refactor l1d flush lifecycle management
+  arch/x86: Refactor tlbflush and l1d flush
+  arch/x86: Optionally flush L1D on context switch
+  arch/x86: L1D flush, optimize the context switch
+
+ arch/x86/include/asm/cacheflush.h    |  6 ++
+ arch/x86/include/asm/nospec-branch.h |  2 +
+ arch/x86/include/asm/thread_info.h   |  4 ++
+ arch/x86/include/asm/tlbflush.h      |  6 ++
+ arch/x86/include/uapi/asm/prctl.h    |  3 +
+ arch/x86/kernel/Makefile             |  1 +
+ arch/x86/kernel/l1d_flush.c          | 85 ++++++++++++++++++++++++++++
+ arch/x86/kernel/process_64.c         | 10 +++-
+ arch/x86/kvm/vmx/vmx.c               | 56 +++---------------
+ arch/x86/mm/tlb.c                    | 85 ++++++++++++++++++++++++++++
+ 10 files changed, 209 insertions(+), 49 deletions(-)
+ create mode 100644 arch/x86/kernel/l1d_flush.c
+
 -- 
-1.8.3.1
+2.17.1
 
