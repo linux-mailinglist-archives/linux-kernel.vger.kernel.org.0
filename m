@@ -2,83 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D7177192AF4
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 15:19:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 39169192AAD
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 15:02:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727828AbgCYOTX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Mar 2020 10:19:23 -0400
-Received: from mga04.intel.com ([192.55.52.120]:42324 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727798AbgCYOTU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Mar 2020 10:19:20 -0400
-IronPort-SDR: vjyoTQg0jyvM4M5OV46TTG/DxYuafbapKcVl0TSyug8xLRNpOnTdzFsMgxahoZva4EkI2hXyyx
- Sx8PLXRMarkg==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Mar 2020 07:19:19 -0700
-IronPort-SDR: ux9/FqZYumwPtHqSRHQhRwW6ySALvzV344N9CP/GbSZ+/Lp51W8/VhzNb5xos62WI+MLi4fa9O
- c8smGgnGbOxw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.72,304,1580803200"; 
-   d="scan'208";a="270811117"
-Received: from lxy-clx-4s.sh.intel.com ([10.239.43.39])
-  by fmsmga004.fm.intel.com with ESMTP; 25 Mar 2020 07:19:18 -0700
-From:   Xiaoyao Li <xiaoyao.li@intel.com>
-To:     Shuah Khan <shuah@kernel.org>, Paolo Bonzini <pbonzini@redhat.com>
-Cc:     kvm@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Xiaoyao Li <xiaoyao.li@intel.com>
-Subject: [PATCH v2 6/6] selftests: export INSTALL_HDR_PATH if using "O" to specify output dir
-Date:   Wed, 25 Mar 2020 22:01:33 +0800
-Message-Id: <20200325140133.103236-7-xiaoyao.li@intel.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200325140133.103236-1-xiaoyao.li@intel.com>
-References: <20200325140133.103236-1-xiaoyao.li@intel.com>
+        id S1727595AbgCYOCK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Mar 2020 10:02:10 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:48968 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727357AbgCYOCK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Mar 2020 10:02:10 -0400
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jH6bf-002WDe-9O; Wed, 25 Mar 2020 14:02:07 +0000
+Date:   Wed, 25 Mar 2020 14:02:07 +0000
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Qian Cai <cai@lca.pw>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: Null-ptr-deref due to "sanitized pathwalk machinery (v4)"
+Message-ID: <20200325140207.GM23230@ZenIV.linux.org.uk>
+References: <4CBDE0F3-FB73-43F3-8535-6C75BA004233@lca.pw>
+ <20200324214637.GI23230@ZenIV.linux.org.uk>
+ <A32DAE66-ADBA-46C7-BD26-F9BA8F12BC18@lca.pw>
+ <20200325021327.GJ23230@ZenIV.linux.org.uk>
+ <5281297D-B66E-4A4C-9B41-D2242F6B7AE7@lca.pw>
+ <20200325040359.GK23230@ZenIV.linux.org.uk>
+ <20200325055830.GL23230@ZenIV.linux.org.uk>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200325055830.GL23230@ZenIV.linux.org.uk>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When build kvm selftests in tools/testing/selftests directory with
+On Wed, Mar 25, 2020 at 05:58:30AM +0000, Al Viro wrote:
+> On Wed, Mar 25, 2020 at 04:03:59AM +0000, Al Viro wrote:
+> 
+> > Lovely.  So
+> > 	* we really do get NULL nd->path.dentry there; I've not misread the
+> > trace.
+> > 	* on the entry into link_path_walk() nd->path.dentry is non-NULL.
+> > 	* *ALL* components should've been LAST_NORM ones
+> > 	* not a single symlink in sight, unless the setup is rather unusual
+> > 	* possibly not even a single mountpoint along the way (depending
+> > upon the userland used)
+> 
+> OK, I see one place where that could occur, but I really don't see how that
+> could be triggered on this pathname, short of very odd symlink layout in
+> the filesystem on the testbox.
 
-	make O=/path/to/kselftests TARGETS=kvm
+... which, apparently, is what you've got there (/var/run -> ../run), so
+stepping into that braino is not implausible.  Could you check if the
+fix below fixes what you've observed?  I am folding it in anyway (into
+"lift all calls of step_into() out of follow_dotdot/follow_dotdot_rcu") -
+it's an obvious braino introduced in the commit in question, but I'd
+like a confirmation that this _is_ what you've caught.
 
-it fails building some kvm test binaries due to lack of header files.
 
-Export INSTALL_HDR_PATH when "O" is specified, so that sub TARGET can get
-the right kernel headers with INSTALL_HDR_PATH.
-
-Signed-off-by: Xiaoyao Li <xiaoyao.li@intel.com>
----
- tools/testing/selftests/Makefile | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
-
-diff --git a/tools/testing/selftests/Makefile b/tools/testing/selftests/Makefile
-index be22dbe94a4c..f36bc6fd8086 100644
---- a/tools/testing/selftests/Makefile
-+++ b/tools/testing/selftests/Makefile
-@@ -110,6 +110,10 @@ ARCH           ?= $(SUBARCH)
- export KSFT_KHDR_INSTALL_DONE := 1
- export BUILD
- 
-+ifneq (1,$(DEFAULT_INSTALL_HDR_PATH))
-+export	INSTALL_HDR_PATH := $(BUILD)/usr
-+endif
-+
- # build and run gpio when output directory is the src dir.
- # gpio has dependency on tools/gpio and builds tools/gpio
- # objects in the src directory in all cases making the src
-@@ -142,7 +146,7 @@ khdr:
- ifeq (1,$(DEFAULT_INSTALL_HDR_PATH))
- 	$(MAKE) --no-builtin-rules ARCH=$(ARCH) -C $(top_srcdir) headers_install
- else
--	$(MAKE) --no-builtin-rules INSTALL_HDR_PATH=$$BUILD/usr \
-+	$(MAKE) --no-builtin-rules INSTALL_HDR_PATH=$(INSTALL_HDR_PATH) \
- 		ARCH=$(ARCH) -C $(top_srcdir) headers_install
- endif
- 
--- 
-2.20.1
-
+>  Does the following fix your reproducer?
+> 
+> diff --git a/fs/namei.c b/fs/namei.c
+> index 311e33dbac63..4082b70f32ff 100644
+> --- a/fs/namei.c
+> +++ b/fs/namei.c
+> @@ -1805,6 +1805,8 @@ static const char *handle_dots(struct nameidata *nd, int type)
+>  			error = step_into(nd, WALK_NOFOLLOW,
+>  					 parent, inode, seq);
+>  		}
+> +		if (unlikely(error))
+> +			return ERR_PTR(error);
+>  
+>  		if (unlikely(nd->flags & LOOKUP_IS_SCOPED)) {
+>  			/*
