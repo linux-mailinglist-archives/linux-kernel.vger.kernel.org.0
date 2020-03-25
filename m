@@ -2,120 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4915C193158
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 20:45:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E3C0919314A
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 20:43:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727752AbgCYToB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Mar 2020 15:44:01 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:60616 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727574AbgCYTn5 (ORCPT
+        id S1727560AbgCYTn2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Mar 2020 15:43:28 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:37619 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727236AbgCYTn2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Mar 2020 15:43:57 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 02PJdA09063142;
-        Wed, 25 Mar 2020 19:43:40 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references : mime-version :
- content-transfer-encoding; s=corp-2020-01-29;
- bh=XAb6QqtAg9fzT26EuPW/JVjcAAgb8qiqvg83Fm5maEc=;
- b=BXaM3/il9dQ6M3B2o9MVv+KMtJ3pJvGMkKMKfzBdxLJSEnGMa35IrcGx2BNfCJPup7TG
- Qj8FRvzt8TVpWBxI1JPYJca6bUPBo8TCq+SIT1fPi20ZtBTyZBuB7nhg8/H0L1ClpvzH
- Xk9T9HTpbxOsOoXBtP9iQbz9521ez6f1RBLm7Dc1QUSWdXeIaujVDcdM6wYMg3MWsWcZ
- 6nbykbVkFFdtudtWBWfDuuCYMNuEiBMNeGILJYEJd0PI2+KUKnTTLQ7eFKOaF4KO4xTi
- gN0zFSGyQKgN037ZSiikihaN2rjSwDBS/7BsohpwrBTd70VEg25bQ6XFpgDHeOaigS76 NA== 
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by aserp2120.oracle.com with ESMTP id 2ywavmbs8v-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 25 Mar 2020 19:43:40 +0000
-Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 02PJgZ3V072580;
-        Wed, 25 Mar 2020 19:43:40 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by aserp3020.oracle.com with ESMTP id 30073b1uf5-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 25 Mar 2020 19:43:40 +0000
-Received: from abhmp0016.oracle.com (abhmp0016.oracle.com [141.146.116.22])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 02PJhcWQ008282;
-        Wed, 25 Mar 2020 19:43:38 GMT
-Received: from pneuma.us.oracle.com (/10.39.203.246)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 25 Mar 2020 12:43:38 -0700
-From:   Ross Philipson <ross.philipson@oracle.com>
-To:     linux-kernel@vger.kernel.org, x86@kernel.org,
-        linux-doc@vger.kernel.org
-Cc:     ross.philipson@oracle.com, dpsmith@apertussolutions.com,
-        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
-        trenchboot-devel@googlegroups.com
-Subject: [RFC PATCH 12/12] tpm: Allow locality 2 to be set when initializing the TPM for Secure Launch
-Date:   Wed, 25 Mar 2020 15:43:17 -0400
-Message-Id: <20200325194317.526492-13-ross.philipson@oracle.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200325194317.526492-1-ross.philipson@oracle.com>
-References: <20200325194317.526492-1-ross.philipson@oracle.com>
+        Wed, 25 Mar 2020 15:43:28 -0400
+Received: by mail-lj1-f194.google.com with SMTP id r24so3885930ljd.4;
+        Wed, 25 Mar 2020 12:43:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=iOneQkgu81OkUpAJwJMMMqvZuhai2Fs8dCS/2N+5OpE=;
+        b=sE7Ldf+g5xXUlgrOhgxrUtrz3LrZaBVWTDibYdk5kTO6NfTwat88fMUaLVcScOBqkN
+         QUBGdAxU+nRzHoajnAzWCSWNahA1XyJijsxPVgEAuYJZGa+XhR/q7gQIgeS6v++LEDAW
+         25uoPaOvtsppD1Q6hM5gtNIRC3nQZ1ergaTjUty3JpfgfKpLQR6ZTkt148Va7wRIbkwS
+         QwybV7EuqDmQr74jORTcxNJOgpe6EZSAEh1YwGseMhtBjZQxrcKrX3u2di2HChYKcHSH
+         0wd2jWvrhCAUOH+6snkZaF2s/1iJ+zkQkQ1xhGV6Up4HD1/5U1QjjpHd/9FpyFU24umt
+         E7eg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=iOneQkgu81OkUpAJwJMMMqvZuhai2Fs8dCS/2N+5OpE=;
+        b=jYQCOIwV5hYi+jl0dpgc5h8hZZL+BapJqyIFxX9f/JHUjMEajetXRhgPFYuLRCOCkc
+         mUh2K7MZwQ3HgFf01lJNyYjZLIjLPVvVSgdHBp/STS8sVRVeH09xAYg60xUH7kUdqwwx
+         u0wEXQWDiMHBTMYfhZ8UdoYlM3kLuh2jtBvMFRsLYsOjbqN8n/O1hUAwONMJ/yyBdr5D
+         DXj3kKLniTuTj9e9aSquF9vM7xIq7+1Og8vZ7jASszGPcUMuAQ9O6nX/SIxJCMfMV4NK
+         Y7DNfxW6jlRtXD+i/g+dysnJqvzWxHuWl/9ep+cgxp6yvGi8xiiQDFs5TwVAm71Syj2A
+         yr4A==
+X-Gm-Message-State: AGi0PuZeaIM/tFGP7QD/YCBSfonjaKP+SI6MHK24e6XocWVFamOVqs6A
+        O+GZgnFcK4C2pTRseraepeD7l1tcgYU=
+X-Google-Smtp-Source: APiQypJOX/JZ7gyO+5CYBBAesaASBAWWtv+2hbVcKVQZAj1tIg89BvEqhaznZLQjU4PKjLNyuCnS3g==
+X-Received: by 2002:a2e:87c5:: with SMTP id v5mr2964473ljj.166.1585165404437;
+        Wed, 25 Mar 2020 12:43:24 -0700 (PDT)
+Received: from [192.168.2.145] (ppp91-78-208-152.pppoe.mtu-net.ru. [91.78.208.152])
+        by smtp.googlemail.com with ESMTPSA id e1sm97237ljo.16.2020.03.25.12.43.22
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 25 Mar 2020 12:43:23 -0700 (PDT)
+Subject: Re: [RFC PATCH v5 6/9] media: tegra: Add Tegra210 Video input driver
+To:     Sowjanya Komatineni <skomatineni@nvidia.com>,
+        thierry.reding@gmail.com, jonathanh@nvidia.com, frankc@nvidia.com,
+        hverkuil@xs4all.nl, helen.koike@collabora.com
+Cc:     sboyd@kernel.org, linux-media@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1584985955-19101-1-git-send-email-skomatineni@nvidia.com>
+ <1584985955-19101-7-git-send-email-skomatineni@nvidia.com>
+ <8f44e42d-2008-fe53-f4fb-b57502da91a8@gmail.com>
+ <5695fc27-6839-dda3-9d06-77ef36ecfd43@nvidia.com>
+ <f59eb7fa-5b26-60e4-771f-f6f9ecfa0b5f@nvidia.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <265b13e7-633f-5fa4-8df9-e461bf7e386a@gmail.com>
+Date:   Wed, 25 Mar 2020 22:43:22 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
+In-Reply-To: <f59eb7fa-5b26-60e4-771f-f6f9ecfa0b5f@nvidia.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9571 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 adultscore=0
- suspectscore=0 mlxscore=0 phishscore=0 bulkscore=0 spamscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2003020000 definitions=main-2003250157
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9571 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 malwarescore=0
- priorityscore=1501 mlxscore=0 bulkscore=0 clxscore=1015 impostorscore=0
- phishscore=0 suspectscore=0 mlxlogscore=999 spamscore=0 lowpriorityscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2003020000
- definitions=main-2003250156
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The Secure Launch MLE environment uses PCRs that are only accessible from
-the DRTM locality 2. By default the TPM drivers always initialize the
-locality to 0. When a Secure Launch is in progress, initialize the
-locality to 2.
+25.03.2020 04:15, Sowjanya Komatineni пишет:
+> 
+> On 3/24/20 6:08 PM, Sowjanya Komatineni wrote:
+>>
+>> On 3/24/20 5:34 PM, Dmitry Osipenko wrote:
+>>> External email: Use caution opening links or attachments
+>>>
+>>>
+>>> 23.03.2020 20:52, Sowjanya Komatineni пишет:
+>>>> +static void tegra_channel_vi_soft_reset(struct tegra_vi_channel *chan)
+>>>> +{
+>>>> +     /* disable clock gating to enable continuous clock */
+>>>> +     tegra_vi_write(chan, TEGRA_VI_CFG_CG_CTRL, 0);
+>>>> +     /*
+>>>> +      * Soft reset memory client interface, pixel format logic, sensor
+>>>> +      * control logic, and a shadow copy logic to bring VI to clean
+>>>> state.
+>>>> +      */
+>>>> +     vi_csi_write(chan, TEGRA_VI_CSI_SW_RESET, 0xf);
+>>>> +     usleep_range(100, 200);
+>>>> +     vi_csi_write(chan, TEGRA_VI_CSI_SW_RESET, 0x0);
+>>> Is it safe to reset MCCIF without blocking and flushing memory requests
+>>> at first?
+>> Yes to bring VI to clean state on errors its recommended by HW design
+>> team.
+> BTW, just to be clear this is Software reset.
 
-Signed-off-by: Ross Philipson <ross.philipson@oracle.com>
----
- drivers/char/tpm/tpm-chip.c | 13 +++++++++++--
- 1 file changed, 11 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/char/tpm/tpm-chip.c b/drivers/char/tpm/tpm-chip.c
-index 3d6d394a8661..e74860537252 100644
---- a/drivers/char/tpm/tpm-chip.c
-+++ b/drivers/char/tpm/tpm-chip.c
-@@ -23,6 +23,7 @@
- #include <linux/major.h>
- #include <linux/tpm_eventlog.h>
- #include <linux/hw_random.h>
-+#include <linux/slaunch.h>
- #include "tpm.h"
- 
- DEFINE_IDR(dev_nums_idr);
-@@ -34,12 +35,20 @@ dev_t tpm_devt;
- 
- static int tpm_request_locality(struct tpm_chip *chip)
- {
--	int rc;
-+	int rc, locality;
- 
- 	if (!chip->ops->request_locality)
- 		return 0;
- 
--	rc = chip->ops->request_locality(chip, 0);
-+	if (slaunch_get_flags() & (SL_FLAG_ACTIVE|SL_FLAG_ARCH_TXT)) {
-+		dev_dbg(&chip->dev, "setting TPM locality to 2 for MLE\n");
-+		locality = 2;
-+	} else {
-+		dev_dbg(&chip->dev, "setting TPM locality to 0\n");
-+		locality = 0;
-+	}
-+
-+	rc = chip->ops->request_locality(chip, locality);
- 	if (rc < 0)
- 		return rc;
- 
--- 
-2.25.1
-
+Ok
