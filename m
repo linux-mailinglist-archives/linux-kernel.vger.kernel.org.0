@@ -2,167 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3909B192E51
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 17:38:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 916D8192E41
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 17:32:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727406AbgCYQi0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Mar 2020 12:38:26 -0400
-Received: from aer-iport-2.cisco.com ([173.38.203.52]:39205 "EHLO
-        aer-iport-2.cisco.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727275AbgCYQi0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Mar 2020 12:38:26 -0400
-X-Greylist: delayed 429 seconds by postgrey-1.27 at vger.kernel.org; Wed, 25 Mar 2020 12:38:24 EDT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=cisco.com; i=@cisco.com; l=3706; q=dns/txt; s=iport;
-  t=1585154305; x=1586363905;
-  h=subject:to:cc:references:from:message-id:date:
-   mime-version:in-reply-to:content-transfer-encoding;
-  bh=XODqsNkzk78qQBBhDHsB4Un4cvki1BxKm7wKbk22n68=;
-  b=JAbr8OsV6a3zLgK9aBr+d6zHSeHq+Xu40ocCmSIkjRbRKM+UexwD74ob
-   IVWsJHmDEGki1wB7rpRxUzo1D2AGmiw5etbqVi5SflRxXBbnvi7V8q71Z
-   Wq0UoIlCC2e37LI9Rc2l3mCo1InaXP55i9zRSMHx0Azvf3UExUIZP3hyu
-   Q=;
-X-IronPort-Anti-Spam-Filtered: true
-X-IronPort-Anti-Spam-Result: =?us-ascii?q?A0ANAAAgh3te/xbLJq1mGgEBAQEBAQE?=
- =?us-ascii?q?BAQMBAQEBEQEBAQICAQEBAYFpAwEBAQELAYF8gW0gEiqEGYkCh2sIJYlsj2C?=
- =?us-ascii?q?BewoBAQEMAQEvBAEBhEQCgkw2Bw4CAwEBCwEBBQEBAQIBBQRthWKFYwEBAQE?=
- =?us-ascii?q?CASMVQRALFQMCAiYCAiE2BgEMBgIBAYMigkwDDiCtN3WBMoVLgmsNYoE+gQ4?=
- =?us-ascii?q?qAYxIgUE/gREnDIJhPoIbhUGCXgSNWIk3cZgRRIJGkkuENwYdjyeMNy2OZIt?=
- =?us-ascii?q?HkC0CBAsCFYFZAjCBWDMaCBsVgydQGA2OKReBBAEIjRo/AzCPJwEB?=
-X-IronPort-AV: E=Sophos;i="5.72,304,1580774400"; 
-   d="scan'208";a="24752855"
-Received: from aer-iport-nat.cisco.com (HELO aer-core-2.cisco.com) ([173.38.203.22])
-  by aer-iport-2.cisco.com with ESMTP/TLS/DHE-RSA-SEED-SHA; 25 Mar 2020 16:31:14 +0000
-Received: from [10.63.114.242] ([10.63.114.242])
-        (authenticated bits=0)
-        by aer-core-2.cisco.com (8.15.2/8.15.2) with ESMTPSA id 02PGVCim026801
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
-        Wed, 25 Mar 2020 16:31:13 GMT
-Subject: Re: [PATCH v2] PCI: sysfs: Change bus_rescan and dev_rescan to rescan
-To:     Kelsey Skunberg <skunberg.kelsey@gmail.com>,
-        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
-Cc:     ddutile@redhat.com, bodong@mellanox.com,
-        linux-kernel-mentees@lists.linuxfoundation.org,
-        skhan@linuxfoundation.org, ruslan.bilovol@gmail.com,
-        bhelgaas@google.com, Kelsey Skunberg <kelsey.skunberg@gmail.com>,
-        stable <stable@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-References: <20200325151708.32612-1-skunberg.kelsey@gmail.com>
-From:   Ruslan Bilovol <rbilovol@cisco.com>
-Message-ID: <bf3ffd93-5dac-0c38-9029-9e58bfb187a5@cisco.com>
-Date:   Wed, 25 Mar 2020 18:31:12 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        id S1728114AbgCYQc2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Mar 2020 12:32:28 -0400
+Received: from elvis.franken.de ([193.175.24.41]:34474 "EHLO elvis.franken.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727901AbgCYQc2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Mar 2020 12:32:28 -0400
+Received: from uucp (helo=alpha)
+        by elvis.franken.de with local-bsmtp (Exim 3.36 #1)
+        id 1jH8x4-0005Qf-00; Wed, 25 Mar 2020 17:32:22 +0100
+Received: by alpha.franken.de (Postfix, from userid 1000)
+        id 15EC5C0D3B; Wed, 25 Mar 2020 17:31:53 +0100 (CET)
+Date:   Wed, 25 Mar 2020 17:31:53 +0100
+From:   Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+To:     Jiaxun Yang <jiaxun.yang@flygoat.com>
+Cc:     Marc Zyngier <maz@kernel.org>, linux-mips@vger.kernel.org,
+        Huacai Chen <chenhc@lemote.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Allison Randal <allison@lohutok.net>,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v8 06/11] irqchip: mips-cpu: Convert to simple domain
+Message-ID: <20200325163153.GA16381@alpha.franken.de>
+References: <a69f727d37daac6e20ac08de022245b1@kernel.org>
+ <C4892878-8463-448D-897B-5F2C56F5A340@flygoat.com>
+ <5eb9ce9ea665ee32da40779f00fc9b37@kernel.org>
+ <4BB367D3-B8AD-47B6-ACC2-30752137BC1B@flygoat.com>
+ <c4520c4b0b0eaaba5fdbaebfce7b4460@kernel.org>
+ <39CF835E-D1D9-4B52-ABDC-BDB17B650936@flygoat.com>
+ <20200325150437.GA14217@alpha.franken.de>
+ <777D8DAA-F462-4E8D-9012-C114DE6D56DE@flygoat.com>
+ <20200325154600.GA14923@alpha.franken.de>
+ <8F2B64C3-A887-4D4B-ABEA-4BE3D30F4632@flygoat.com>
 MIME-Version: 1.0
-In-Reply-To: <20200325151708.32612-1-skunberg.kelsey@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Authenticated-User: rbilovol
-X-Outbound-SMTP-Client: 10.63.114.242, [10.63.114.242]
-X-Outbound-Node: aer-core-2.cisco.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8F2B64C3-A887-4D4B-ABEA-4BE3D30F4632@flygoat.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 3/25/20 5:17 PM, Kelsey Skunberg wrote:
-> From: Kelsey Skunberg <kelsey.skunberg@gmail.com>
+On Thu, Mar 26, 2020 at 12:02:28AM +0800, Jiaxun Yang wrote:
+> >maybe I'm too fast by judging the irq code, but without
+> >CONFIG_SPARSE_IRQ
+> >the whole irq_desc is pre-allocated.
 > 
-> rename device attribute name arguments 'bus_rescan' and 'dev_rescan' to 'rescan'
-> to avoid breaking userspace applications.
-> 
-> The attribute argument names were changed in the following commits:
-> 8bdfa145f582 ("PCI: sysfs: Define device attributes with DEVICE_ATTR*()")
-> 4e2b79436e4f ("PCI: sysfs: Change DEVICE_ATTR() to DEVICE_ATTR_WO()")
-> 
-> Revert the names used for attributes back to the names used before the above
-> patches were applied. This also requires to change DEVICE_ATTR_WO() to
-> DEVICE_ATTR() and __ATTR().
-> 
-> Note when using DEVICE_ATTR() the attribute is automatically named
-> dev_attr_<name>.attr. To avoid duplicated names between attributes, use
-> __ATTR() instead of DEVICE_ATTR() to a assign a custom attribute name for
-> dev_rescan.
-> 
-> change bus_rescan_store() to dev_bus_rescan_store() to complete matching the
-> names used before the mentioned patches were applied.
-> 
-> Fixes: 8bdfa145f582 ("PCI: sysfs: Define device attributes with DEVICE_ATTR*()")
-> Fixes: 4e2b79436e4f ("PCI: sysfs: Change DEVICE_ATTR() to DEVICE_ATTR_WO()")
+> Sorry. You're right.
+> I found the problem is CONFIG_SPARSE_IRQ is accidentally enabled in my config due to another out-of-tree patch
 
-Thanks Kelsey for the quick fix.
+ok, that explains it.
 
-Tested-by: Ruslan Bilovol <rbilovol@cisco.com>
+> during my initial test and I always consider it as a problem.
+> 
+> So we can drop this patch safely for now.
 
-> 
-> Cc: stable <stable@vger.kernel.org>
-> Signed-off-by: Kelsey Skunberg <kelsey.skunberg@gmail.com>
-> Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> ---
-> 
-> v2 updates:
-> 	commit log updated to include 'Fixes: *' and Cc: stable to aid commit
-> 	being backported properly.
-> 
->   drivers/pci/pci-sysfs.c | 17 ++++++++++-------
->   1 file changed, 10 insertions(+), 7 deletions(-)
-> 
-> diff --git a/drivers/pci/pci-sysfs.c b/drivers/pci/pci-sysfs.c
-> index 13f766db0684..667e13d597ff 100644
-> --- a/drivers/pci/pci-sysfs.c
-> +++ b/drivers/pci/pci-sysfs.c
-> @@ -464,7 +464,10 @@ static ssize_t dev_rescan_store(struct device *dev,
->   	}
->   	return count;
->   }
-> -static DEVICE_ATTR_WO(dev_rescan);
-> +static struct device_attribute dev_rescan_attr = __ATTR(rescan,
-> +							0220, NULL,
-> +							dev_rescan_store);
-> +
->   
->   static ssize_t remove_store(struct device *dev, struct device_attribute *attr,
->   			    const char *buf, size_t count)
-> @@ -481,9 +484,9 @@ static ssize_t remove_store(struct device *dev, struct device_attribute *attr,
->   static DEVICE_ATTR_IGNORE_LOCKDEP(remove, 0220, NULL,
->   				  remove_store);
->   
-> -static ssize_t bus_rescan_store(struct device *dev,
-> -				struct device_attribute *attr,
-> -				const char *buf, size_t count)
-> +static ssize_t dev_bus_rescan_store(struct device *dev,
-> +				    struct device_attribute *attr,
-> +				    const char *buf, size_t count)
->   {
->   	unsigned long val;
->   	struct pci_bus *bus = to_pci_bus(dev);
-> @@ -501,7 +504,7 @@ static ssize_t bus_rescan_store(struct device *dev,
->   	}
->   	return count;
->   }
-> -static DEVICE_ATTR_WO(bus_rescan);
-> +static DEVICE_ATTR(rescan, 0220, NULL, dev_bus_rescan_store);
->   
->   #if defined(CONFIG_PM) && defined(CONFIG_ACPI)
->   static ssize_t d3cold_allowed_store(struct device *dev,
-> @@ -641,7 +644,7 @@ static struct attribute *pcie_dev_attrs[] = {
->   };
->   
->   static struct attribute *pcibus_attrs[] = {
-> -	&dev_attr_bus_rescan.attr,
-> +	&dev_attr_rescan.attr,
->   	&dev_attr_cpuaffinity.attr,
->   	&dev_attr_cpulistaffinity.attr,
->   	NULL,
-> @@ -1487,7 +1490,7 @@ static umode_t pci_dev_attrs_are_visible(struct kobject *kobj,
->   
->   static struct attribute *pci_dev_hp_attrs[] = {
->   	&dev_attr_remove.attr,
-> -	&dev_attr_dev_rescan.attr,
-> +	&dev_rescan_attr.attr,
->   	NULL,
->   };
->   
-> 
+already dropped in my test branch. If nothing shows up, I'll push
+it to mips-next.
+
+> But just need to consider how to deal with it when we want to enable SPARSE_IRQ.
+
+setting NR_IRQS_LEGACY so a sensible value should do the trick then.
+
+Thomas.
+
+-- 
+Crap can work. Given enough thrust pigs will fly, but it's not necessarily a
+good idea.                                                [ RFC1925, 2.3 ]
