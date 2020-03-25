@@ -2,64 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E9615192F61
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 18:35:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 189FB192F54
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 18:34:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727872AbgCYRef (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Mar 2020 13:34:35 -0400
-Received: from elvis.franken.de ([193.175.24.41]:34618 "EHLO elvis.franken.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727826AbgCYRef (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Mar 2020 13:34:35 -0400
-Received: from uucp (helo=alpha)
-        by elvis.franken.de with local-bsmtp (Exim 3.36 #1)
-        id 1jH9v6-0008NM-03; Wed, 25 Mar 2020 18:34:24 +0100
-Received: by alpha.franken.de (Postfix, from userid 1000)
-        id 41FCFC0D49; Wed, 25 Mar 2020 18:33:28 +0100 (CET)
-Date:   Wed, 25 Mar 2020 18:33:28 +0100
-From:   Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-To:     Jiaxun Yang <jiaxun.yang@flygoat.com>
-Cc:     linux-mips@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <maz@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Huacai Chen <chenhc@lemote.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v8 00/11] Modernize Loongson64 Machine v8
-Message-ID: <20200325173328.GD17524@alpha.franken.de>
-References: <20190827085302.5197-1-jiaxun.yang@flygoat.com>
- <20200325035537.156911-1-jiaxun.yang@flygoat.com>
+        id S1727729AbgCYRd7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Mar 2020 13:33:59 -0400
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:45259 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727129AbgCYRd7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Mar 2020 13:33:59 -0400
+Received: by mail-lf1-f68.google.com with SMTP id v4so2488321lfo.12
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Mar 2020 10:33:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=WD9sJ7e0VtDn+ggzAl5BJdUvSH4xHuF+tQFUtVO3ypE=;
+        b=WGZT23GW3l1IUkI7B+xGcDt5rMqhhi90Mt39Ps79pv2c3a8o2pdcaPJk3WEzm7iMag
+         4GyBo7pyJ0/uI2VvnGfWdYXgj4wXPU+3x6UoAr4UZYQKI8253uLtZshqu0KsCeSb0lQU
+         0fQ5OqX98L/OxmrWufaXldfncoyLhcc3w3DhA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=WD9sJ7e0VtDn+ggzAl5BJdUvSH4xHuF+tQFUtVO3ypE=;
+        b=iiivyq54gSTtj/VuRkcNzz04lwcbAySw6KKWJwDFi3HTQFdOOu1zPkPHPAndK/9dYf
+         wZvIkL4CZAV+yvjeRQstJt3tac8BUTonfycTCZNlVrb706UZwCw9dkLEj8uGyDoMAm9/
+         zgfQqYhz/i0vl3PYWuV/RexBy6I+MZ+tVu+UpIq/i6oJUkbt5wGidrArV7hg5QnjGWlH
+         8t5X/FXMRgJeiQUkhLF+0mcB+hTDcnP9dproKN6cKJ1c8dZAustGoNUvdRc8+fy8F4vJ
+         J9PcR9lG4rbgVqb1oBSGqRApncuakSKGJN6KTl+JDorv1UkTzfqfU4aDI3SyM75cgWQK
+         9AmA==
+X-Gm-Message-State: ANhLgQ2QfYfxF7VlV11Jf6TGP+tMZ6LLPI+JpJWhygnhcrr4oRbZcoFG
+        tov+kIbV+uz6ut+LbtemEwbZMElnzwE=
+X-Google-Smtp-Source: ADFU+vsvthX6324bFaZ9ii+Rtyi6YWeLk3UX1dkjCJk3JbZigVGshIOkUj5Ro5M7gO8EZuoDmf1Y/w==
+X-Received: by 2002:a19:2203:: with SMTP id i3mr2968145lfi.120.1585157636544;
+        Wed, 25 Mar 2020 10:33:56 -0700 (PDT)
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com. [209.85.208.175])
+        by smtp.gmail.com with ESMTPSA id g5sm9083023lfd.66.2020.03.25.10.33.55
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 25 Mar 2020 10:33:55 -0700 (PDT)
+Received: by mail-lj1-f175.google.com with SMTP id k21so3424386ljh.2
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Mar 2020 10:33:55 -0700 (PDT)
+X-Received: by 2002:a2e:a58e:: with SMTP id m14mr2579577ljp.204.1585157635185;
+ Wed, 25 Mar 2020 10:33:55 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200325035537.156911-1-jiaxun.yang@flygoat.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+References: <20200325111347.32553-1-will@kernel.org>
+In-Reply-To: <20200325111347.32553-1-will@kernel.org>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Wed, 25 Mar 2020 10:33:39 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wgymj+aXjTwjRkhA0j0u7t1-74fLUmp1pW7Jntf=Q+eOw@mail.gmail.com>
+Message-ID: <CAHk-=wgymj+aXjTwjRkhA0j0u7t1-74fLUmp1pW7Jntf=Q+eOw@mail.gmail.com>
+Subject: Re: [PATCH] mm/mremap: Add comment explaining the untagging behaviour
+ of mremap()
+To:     Will Deacon <will@kernel.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Android Kernel Team <kernel-team@android.com>,
+        Catalin Marinas <catalin.marinas@arm.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 25, 2020 at 11:54:53AM +0800, Jiaxun Yang wrote:
-> Loongson have a long history of contributing their code to mainline kernel.
-> However, it seems like recent years, they are focusing on maintain a kernel by themselves
-> rather than contribute there code to the community.
-> 
-> Kernel is progress rapidly too. Their code slept in mainline for a long peroid without proper
-> maintainance and became outdated.
-> 
-> This patchset brings modern DeviceTree and irqchip support to the Loongson64 machine, and leaves
-> Loongson 2e/f alone since they are too legacy to touch.
-> 
-> PCI and some legacy I/O device will be converted later, together with LS7A PCH support.
+On Wed, Mar 25, 2020 at 4:13 AM Will Deacon <will@kernel.org> wrote:
+>
+> Add a comment justifying the untagging behaviour in mremap().
 
-applied series minus patch 6 to mips-next.
+Ack. This makes that odd "do it on one address, not the other" thing clear.
 
--- 
-Crap can work. Given enough thrust pigs will fly, but it's not necessarily a
-good idea.                                                [ RFC1925, 2.3 ]
+Otherwise I bet somebody would come along in a few years and go "Oh,
+people missed that other case".
+
+             Linus
