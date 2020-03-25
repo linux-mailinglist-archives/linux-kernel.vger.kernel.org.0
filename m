@@ -2,139 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 28ABF192D80
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 16:55:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 92788192D8C
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 16:56:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727946AbgCYPy4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Mar 2020 11:54:56 -0400
-Received: from mail-io1-f65.google.com ([209.85.166.65]:45721 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727911AbgCYPy4 (ORCPT
+        id S1727977AbgCYP4D (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Mar 2020 11:56:03 -0400
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:35760 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727922AbgCYP4D (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Mar 2020 11:54:56 -0400
-Received: by mail-io1-f65.google.com with SMTP id a24so2125414iol.12
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Mar 2020 08:54:55 -0700 (PDT)
+        Wed, 25 Mar 2020 11:56:03 -0400
+Received: by mail-qt1-f196.google.com with SMTP id e14so2587041qts.2
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Mar 2020 08:56:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=WUvTsX9+jdPoLTOSHShSbaoohqGvLnmJWJx3goFYuLM=;
-        b=PotvV1Ev6OzVSaF6m2X5tC6JwxVWHxAGf6FLW8AjKTGJyK/QJ8dyn6xJiqfkSFaAqz
-         OCdtBX9daql7+1gX8+5dT3S5uMqemNZ36FP4ZPoQpwuOHn42a4uh+PVPR7d5d59NuA3a
-         t2/cRclIFAps/zNhsd7jyIV2vHIEY2rkQ4dM0=
+        d=lca.pw; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=5LjboPnDfMYr+D+3numlwyKRNovhORGQjxZDfSq6m9Y=;
+        b=hUPBtEbERszA+YII5Yxm3jnhf4gWvrQeMIUx7nRUKWsaVY/hTEbkcVwZ824Se5rjur
+         x16y9PSdBsh167UfAZB5rT8bdfE8B41JnUCsPalmpfBxfrdDF/j6w9juDr9y/qiY8f1h
+         pNQfeGBclLRBzT/fGnw6z3HBUlqE3UAo1M36/bqz9zfViGSlGkvioTbJiS2pCU7VlNop
+         OQdFs/PIbIFnGIxs+zlMC8scqnUkRuWE0TWt3fVrW/7JpC5dxhnn5niw6m4tH5ntSp8s
+         qpps1r0bF2/oiW3GuFKkRAgQUlhbibiMzAZHDiUoxY2kjLYpzPOqOSgyvIRDqfhyupYy
+         4Vew==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=WUvTsX9+jdPoLTOSHShSbaoohqGvLnmJWJx3goFYuLM=;
-        b=np3EyBzvbpfsTe1GcQlieVYzni5JSYZS1SX3+2VYloiUgbwhNtc6a5ulK6PthNnAbk
-         ffMy01Z9Om+SBoeU5ZnBYGKCIg8/5bJvLdX75FHN1NGKxxiBd/8P4c1Iq1ftAfLpbqfN
-         ZlGXV7YqoKLTERcgmCSqvqvljvXEA/bQL2qmMSDlHVmNOcMEwxdn0RTo7hwv94QkmVVb
-         nrrS30N9UJwC6ZLBs3mlLYmdjDnCl/tC92RyU3gESqFxl+/7WbBmGdnoM0waambXAV3w
-         qROLO5kGD3CU1+BVTaFReDwt9aEyxg2eXhuZmPmou1Pln8L3cxJHGUT426NA9tGRNQ7p
-         9pEA==
-X-Gm-Message-State: ANhLgQ0+Y32IydEl16FwRl2qOSzHpZforKJaXiMIXPZ9AqFYN0zq1sNM
-        eGbh22D1mckfXFoghRdIifQe+0z7+AaYk3bfcaK/3g==
-X-Google-Smtp-Source: ADFU+vtWPrSX9gO9pLLxpavehCkl/CaKr8w3OI8WID1sZHiGcDBmq2nlMdLwxJGUo5kQXivDvVBrGhSFup9s33zQy+o=
-X-Received: by 2002:a5d:9142:: with SMTP id y2mr3418704ioq.185.1585151694868;
- Wed, 25 Mar 2020 08:54:54 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=5LjboPnDfMYr+D+3numlwyKRNovhORGQjxZDfSq6m9Y=;
+        b=SuH0sbLIYT1Zh6V9of6T1LiLf62EUAQKU2q9r8NcRWB+vm/osRDkZLyQ16+t8syjtJ
+         f8INOGwEx6qDJjVnJFun5GSxgOgeHuOd9d64vBl+qU/MSmAOOwVwtTzjTjNGE+a2cdPJ
+         CosjNJoXnA42KRbgZ4bJ5N1SiEHE0xM3cXu7U9/HyE/nXjjzunOOJj+ERlRrD9T+QDdR
+         s/F8z0NpN8KTim8PxoZc5wfrUk0SFY9i770LGhRSPO5t3CqvGMt7nRUFjW9QwgjKlgPK
+         MNxYJLUAC1arGvoDbAfkxpuTczR/bJU1/C6URLUzu9TyBLVj94UYU/19X+hrRhgpAF7o
+         skFA==
+X-Gm-Message-State: ANhLgQ14bnqHn4+meIQZExP6/fcaX9SrnJIarwc25harY6wVLhZIGzS/
+        NZJjT+p0yTiiLcqSapdi8x3ItA==
+X-Google-Smtp-Source: ADFU+vsnGtXHOB3Q1SbOrengVFBDEEpEz+h2e/kMJ6fU6G+kU2YhLUoG6gF8c+vYKIE7feOWLDUscQ==
+X-Received: by 2002:ac8:346f:: with SMTP id v44mr3526427qtb.205.1585151761950;
+        Wed, 25 Mar 2020 08:56:01 -0700 (PDT)
+Received: from ovpn-66-69.rdu2.redhat.com (pool-71-184-117-43.bstnma.fios.verizon.net. [71.184.117.43])
+        by smtp.gmail.com with ESMTPSA id t23sm17931750qtj.63.2020.03.25.08.55.46
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 25 Mar 2020 08:55:47 -0700 (PDT)
+From:   Qian Cai <cai@lca.pw>
+To:     davem@davemloft.net
+Cc:     kuznet@ms2.inr.ac.ru, yoshfuji@linux-ipv6.org, kuba@kernel.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Qian Cai <cai@lca.pw>
+Subject: [PATCH] ipv4: fix a RCU-list lock in fib_triestat_seq_show
+Date:   Wed, 25 Mar 2020 11:55:32 -0400
+Message-Id: <20200325155532.7238-1-cai@lca.pw>
+X-Mailer: git-send-email 2.21.0 (Apple Git-122.2)
 MIME-Version: 1.0
-References: <20200323202259.13363-1-willy@infradead.org> <20200323202259.13363-25-willy@infradead.org>
- <CAJfpegu7EFcWrg3bP+-2BX_kb52RrzBCo_U3QKYzUkZfe4EjDA@mail.gmail.com>
- <20200325120254.GA22483@bombadil.infradead.org> <CAJfpegshssCJiA8PBcq2XvBj3mR8dufHb0zWRFvvKKv82VQYsw@mail.gmail.com>
- <20200325153228.GB22483@bombadil.infradead.org>
-In-Reply-To: <20200325153228.GB22483@bombadil.infradead.org>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Wed, 25 Mar 2020 16:54:43 +0100
-Message-ID: <CAJfpegtrhGamoSqD-3Svfj3-iTdAbfD8TP44H_o+HE+g+CAnCA@mail.gmail.com>
-Subject: Re: [PATCH v10 24/25] fuse: Convert from readpages to readahead
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, linux-btrfs@vger.kernel.org,
-        linux-erofs@lists.ozlabs.org, linux-ext4@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net, cluster-devel@redhat.com,
-        ocfs2-devel@oss.oracle.com, linux-xfs <linux-xfs@vger.kernel.org>,
-        Dave Chinner <dchinner@redhat.com>,
-        William Kucharski <william.kucharski@oracle.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 25, 2020 at 4:32 PM Matthew Wilcox <willy@infradead.org> wrote:
->
-> On Wed, Mar 25, 2020 at 03:43:02PM +0100, Miklos Szeredi wrote:
-> > >
-> > > -       while ((page = readahead_page(rac))) {
-> > > -               if (fuse_readpages_fill(&data, page) != 0)
-> > > +               nr_pages = min(readahead_count(rac), fc->max_pages);
-> >
-> > Missing fc->max_read clamp.
->
-> Yeah, I realised that.  I ended up doing ...
->
-> +       unsigned int i, max_pages, nr_pages = 0;
-> ...
-> +       max_pages = min(fc->max_pages, fc->max_read / PAGE_SIZE);
->
-> > > +               ia = fuse_io_alloc(NULL, nr_pages);
-> > > +               if (!ia)
-> > >                         return;
-> > > +               ap = &ia->ap;
-> > > +               __readahead_batch(rac, ap->pages, nr_pages);
-> >
-> > nr_pages = __readahead_batch(...)?
->
-> That's the other bug ... this was designed for btrfs which has a fixed-size
-> buffer.  But you want to dynamically allocate fuse_io_args(), so we need to
-> figure out the number of pages beforehand, which is a little awkward.  I've
-> settled on this for the moment:
->
->         for (;;) {
->                struct fuse_io_args *ia;
->                 struct fuse_args_pages *ap;
->
->                 nr_pages = readahead_count(rac) - nr_pages;
->                 if (nr_pages > max_pages)
->                         nr_pages = max_pages;
->                 if (nr_pages == 0)
->                         break;
->                 ia = fuse_io_alloc(NULL, nr_pages);
->                 if (!ia)
->                         return;
->                 ap = &ia->ap;
->                 __readahead_batch(rac, ap->pages, nr_pages);
->                 for (i = 0; i < nr_pages; i++) {
->                         fuse_wait_on_page_writeback(inode,
->                                                     readahead_index(rac) + i);
->                         ap->descs[i].length = PAGE_SIZE;
->                 }
->                 ap->num_pages = nr_pages;
->                 fuse_send_readpages(ia, rac->file);
->         }
->
-> but I'm not entirely happy with that either.  Pondering better options.
+fib_triestat_seq_show() calls hlist_for_each_entry_rcu(tb, head,
+tb_hlist) without rcu_read_lock() will trigger a warning,
 
-I think that's fine.   Note how the original code possibly
-over-allocates the the page array, because it doesn't know the batch
-size beforehand.  So this is already better.
+ net/ipv4/fib_trie.c:2579 RCU-list traversed in non-reader section!!
 
->
-> > This will give consecutive pages, right?
->
-> readpages() was already being called with consecutive pages.  Several
-> filesystems had code to cope with the pages being non-consecutive, but
-> that wasn't how the core code worked; if there was a discontiguity it
-> would send off the pages that were consecutive and start a new batch.
->
-> __readahead_batch() can't return fewer than nr_pages, so you don't need
-> to check for that.
+ other info that might help us debug this:
 
-That's far from obvious.
+ rcu_scheduler_active = 2, debug_locks = 1
+ 1 lock held by proc01/115277:
+  #0: c0000014507acf00 (&p->lock){+.+.}-{3:3}, at: seq_read+0x58/0x670
 
-I'd put a WARN_ON at least to make document the fact.
+ Call Trace:
+  dump_stack+0xf4/0x164 (unreliable)
+  lockdep_rcu_suspicious+0x140/0x164
+  fib_triestat_seq_show+0x750/0x880
+  seq_read+0x1a0/0x670
+  proc_reg_read+0x10c/0x1b0
+  __vfs_read+0x3c/0x70
+  vfs_read+0xac/0x170
+  ksys_read+0x7c/0x140
+  system_call+0x5c/0x68
 
-Thanks,
-Miklos
+Signed-off-by: Qian Cai <cai@lca.pw>
+---
+ net/ipv4/fib_trie.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/net/ipv4/fib_trie.c b/net/ipv4/fib_trie.c
+index ff0c24371e33..73fa37476f03 100644
+--- a/net/ipv4/fib_trie.c
++++ b/net/ipv4/fib_trie.c
+@@ -2577,6 +2577,7 @@ static int fib_triestat_seq_show(struct seq_file *seq, void *v)
+ 		   " %zd bytes, size of tnode: %zd bytes.\n",
+ 		   LEAF_SIZE, TNODE_SIZE(0));
+ 
++	rcu_read_lock();
+ 	for (h = 0; h < FIB_TABLE_HASHSZ; h++) {
+ 		struct hlist_head *head = &net->ipv4.fib_table_hash[h];
+ 		struct fib_table *tb;
+@@ -2597,6 +2598,7 @@ static int fib_triestat_seq_show(struct seq_file *seq, void *v)
+ #endif
+ 		}
+ 	}
++	rcu_read_unlock();
+ 
+ 	return 0;
+ }
+-- 
+2.21.0 (Apple Git-122.2)
+
