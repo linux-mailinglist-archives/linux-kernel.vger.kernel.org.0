@@ -2,101 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9802C19281F
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 13:22:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9BAB61927E9
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 13:13:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727563AbgCYMWH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Mar 2020 08:22:07 -0400
-Received: from vm1.sequanux.org ([188.165.36.56]:55009 "EHLO vm1.sequanux.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727046AbgCYMWG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Mar 2020 08:22:06 -0400
-X-Greylist: delayed 598 seconds by postgrey-1.27 at vger.kernel.org; Wed, 25 Mar 2020 08:22:06 EDT
-Received: from localhost (localhost.localdomain [127.0.0.1])
-        by vm1.sequanux.org (Postfix) with ESMTP id 62D7B1081EC;
-        Wed, 25 Mar 2020 13:12:07 +0100 (CET)
-X-Virus-Scanned: Debian amavisd-new at vm1.sequanux.org
-Received: from vm1.sequanux.org ([127.0.0.1])
-        by localhost (vm1.sequanux.org [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id 1hVqBn0fh4OE; Wed, 25 Mar 2020 13:12:05 +0100 (CET)
-Received: from localhost (softwrestling.org [188.165.144.248])
-        by vm1.sequanux.org (Postfix) with ESMTPSA id 5EEA8108133;
-        Wed, 25 Mar 2020 13:12:05 +0100 (CET)
-Date:   Wed, 25 Mar 2020 13:12:05 +0100
-From:   Simon Guinot <simon.guinot@sequanux.org>
-To:     Nick Bowler <nbowler@draconx.ca>
-Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] gpio: Fix gpio-f7188x module name in Kconfig help text.
-Message-ID: <20200325121205.GT21102@kw.sim.vm.gnt>
-References: <20200325005707.5891-1-nbowler@draconx.ca>
+        id S1727434AbgCYMN2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Mar 2020 08:13:28 -0400
+Received: from esa1.mentor.iphmx.com ([68.232.129.153]:55231 "EHLO
+        esa1.mentor.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726969AbgCYMN2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Mar 2020 08:13:28 -0400
+IronPort-SDR: 4NntKNMwAeFnkYAEAgljL50YrhiRHC/zhuOgrCjV2tZkC+lrX3TKdHnlhtJqtm71nfd58YAQAi
+ G7o1pbcefvMSwUwiBPzFWrjUR83wgI2jLuOSJfeUdFqsFQdrIpV+BNEUT/zVRrAfd3mN7vAyK4
+ SkoqnB9fD12VEQFOjxwMG9D757kVXzXwG8oKbdgzsVNWYYtgivN0fPmLlfGE8RYQesL2blgyjU
+ mSpymhsvFRVYsDTaUFLUN27JenaDZs9rrC718eG2Gh9UVXyVMyOuz9P5wU1vFEnQSKxsi5c+EE
+ K4Q=
+X-IronPort-AV: E=Sophos;i="5.72,304,1580803200"; 
+   d="scan'208";a="49056887"
+Received: from orw-gwy-01-in.mentorg.com ([192.94.38.165])
+  by esa1.mentor.iphmx.com with ESMTP; 25 Mar 2020 04:13:27 -0800
+IronPort-SDR: sqayK+8xJmiqpMUYpqK7uCRGuIZVkfrcbZpQzhMac03DRzoGluwB440yfTj6j1I99kH4GP4qZ1
+ vKl52/R5wRnC+ZaEiBVh0eKSgdSFnIRf6LscdNryW0cVuT4CsEj2iVl0GblZbga4dVhsJzLyPB
+ wJ2HCQnAZe3FX2BqdhKXQry3b+k6Deah8AKPYksbF00XB6KYwleg0PqzXrGZxOSfCxtsMFzMXK
+ xXoBycU8W4Z5fFIUj3xtrXUDjO3gW81CgkuakO+wAVOgcY60w7b2EL9YNwj40I1i2eqrXrmECz
+ g1Q=
+Subject: Re: [PATCH v7 00/48] atmel_mxt_ts misc
+To:     Dmitry Osipenko <digetx@gmail.com>, <jikos@kernel.org>,
+        <benjamin.tissoires@redhat.com>, <rydberg@bitmath.org>,
+        <dmitry.torokhov@gmail.com>, <nick@shmanahar.org>,
+        <bsz@semihalf.com>
+CC:     <linux-input@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <erosca@de.adit-jv.com>, <Andrew_Gabbasov@mentor.com>
+References: <20200212084218.32344-1-jiada_wang@mentor.com>
+ <c583d151-9243-cbde-a04b-bc0389d9be5a@gmail.com>
+ <89e4bb0b-b2eb-0b67-4307-fb2af914b1c0@mentor.com>
+ <f9b221e7-f189-3e47-adab-1cbc49490d4b@gmail.com>
+ <bd3c487b-b065-3e4f-6ab1-f344a4113fcd@mentor.com>
+ <5d8fdfc1-cc95-59db-b83e-87bb16ea79e8@gmail.com>
+From:   "Wang, Jiada" <jiada_wang@mentor.com>
+Message-ID: <4d39b644-7fcb-427e-7110-c61fb36122f5@mentor.com>
+Date:   Wed, 25 Mar 2020 21:13:09 +0900
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.6.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="UEYxRAcbr7cS1UOX"
-Content-Disposition: inline
-In-Reply-To: <20200325005707.5891-1-nbowler@draconx.ca>
-User-Agent: Mutt/1.6.0 (2016-04-01)
+In-Reply-To: <5d8fdfc1-cc95-59db-b83e-87bb16ea79e8@gmail.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: svr-orw-mbx-08.mgc.mentorg.com (147.34.90.208) To
+ svr-orw-mbx-01.mgc.mentorg.com (147.34.90.201)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Dmitry
 
---UEYxRAcbr7cS1UOX
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 2020/03/24 23:54, Dmitry Osipenko wrote:
+> 23.03.2020 05:25, Wang, Jiada пишет:
+>> Hello Dmitry
+>>
+>> On 2020/03/21 0:53, Dmitry Osipenko wrote:
+>>> Hello Jiada,
+>>>
+>>> 20.03.2020 06:37, Wang, Jiada пишет:
+>>>> Hello Dmitry
+>>>>
+>>>> I have submitted v8 patch-set to address your comments towards v7
+>>>> patch-set,
+>>>> most of checkpatch warnings and errors have been addressed,
+>>>>
+>>>> But I didn't update for following two types of warnings
+>>>> since I want to keep consistency with legacy code
+>>>>
+>>>> WARNING: DEVICE_ATTR unusual permissions '0600' used
+>>>> #290: FILE: drivers/input/touchscreen/atmel_mxt_ts.c:3761:
+>>>> +static DEVICE_ATTR(debug_v2_enable, 0600, NULL,
+>>>
+>>> What will happen if you'll use 0644? Will an empty line be returned or
+>>> driver will crash?
+>>>
+>> debug_v2_enable doesn't have .show callback implemented, so after change
+>> permission to 644, read of it results in an I/O error,
+>>
+>> for other 0600 permission interfaces (t38_data, t25 and debug_enable)
+>> added in this series,
+>> change to 644 can return expected information when read.
+>>
+>> Do you think it's better to change debug_v2_enable to 0200,
+>> and others to 0644?
+> 
+> Since the debug_enable has mxt_debug_enable_show(), the same should be
+> done for debug_v2_enable, for consistency.
+> 
+> The permissions should be 0644 for everything that is read/write.
+> 
+> The 0200 should be used for everything that is root-only and write-only.
 
-On Tue, Mar 24, 2020 at 08:57:07PM -0400, Nick Bowler wrote:
-> The Kconfig help text for the gpio-f7188x driver says that if you
-> compile the driver as a module, the module will be called f7188x-gpio.
-> This is a lie: the module is called gpio-f7188x.
+Thanks for your comments and suggestion in another email,
+I will submit v9 patch-set to address these warnings
 
-And what about just a mistake ? :)
-
-Acked-by: Simon Guinot <simon.guinot@sequanux.org>
-
->=20
-> Change the help text to be consistent with reality.
->=20
-> Signed-off-by: Nick Bowler <nbowler@draconx.ca>
-> ---
->  drivers/gpio/Kconfig | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-> index b8013cf90064..8cf91a9fbd18 100644
-> --- a/drivers/gpio/Kconfig
-> +++ b/drivers/gpio/Kconfig
-> @@ -755,7 +755,7 @@ config GPIO_F7188X
->  	  chips F71869, F71869A, F71882FG, F71889F and F81866.
-> =20
->  	  To compile this driver as a module, choose M here: the module will
-> -	  be called f7188x-gpio.
-> +	  be called gpio-f7188x.
-> =20
->  config GPIO_GPIO_MM
->  	tristate "Diamond Systems GPIO-MM GPIO support"
-> --=20
-> 2.24.1
-
---UEYxRAcbr7cS1UOX
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEEXW8DgovlR3VS5hA0zyg/RDPmszoFAl57SpQACgkQzyg/RDPm
-szq0dhAA2ihNwvtRWWIsdol4+p0cNGJCknIZv8lw/Jjm0GNbqo9nsRHuG5zFSowu
-G+u8NTUVKMqymYOn7jIDWqQH7Yc+xlGrKwJqRTCg+xvZhS1Pa4k+ocxn2m5hIFbv
-XR37R9Nn6gAQ6vvn1J5aIfaRLa953KkQ4fbmiExP0umTOAqj+AjHK6Tj0b4QtyD7
-3XPjgnKHWRNKkGFq5dLr67dRrLKx71WA1SUxBND/rRrty1rFnJhFXU8MfAiBZUpm
-X6WUtZQYx++OhHKBV9VPv0/psjbdIrUu9u1CMjL0dF1Ge20OQZuRRVzDPDYpFXOk
-IOypuEUSbwfLKA+fAgYYjIpsQMeEyudgXafnxNodbGPZyLi56Lv+jINErqsyS6OL
-b/rUCJQM4KSxdQLlvkVELTPnyO0aRCcDfSKap59YraLHF1yrbreQKi5e3RzTahmA
-eXsZ32mUMjTao7yJs1fzyWXxIrZcH2jczuy84f3eOgVekdWbUoqdRcOzuXp9ym5I
-XaNtr9ZdzpF4nsh1AimrVEKQSsZ7lya8O85a3R0OCkod6C4EpPYq9JGaMFZ2zNRz
-9opISQWXoE9USG1U1y0IaayWzGPD6YT0sM9rlZG/KQYc1AAMBL4xqO9rtUeWQxPY
-ZUfsSaSffU98oUlJVhypXFvQK9yCaiiKIy4jCjB/+gEja64ft58=
-=Qx7s
------END PGP SIGNATURE-----
-
---UEYxRAcbr7cS1UOX--
+Thanks,
+Jiada
+> 
