@@ -2,44 +2,44 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 980E6192FB1
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 18:47:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2EF71192FB7
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 18:48:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727996AbgCYRrv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Mar 2020 13:47:51 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:58360 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727129AbgCYRrt (ORCPT
+        id S1728147AbgCYRsM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Mar 2020 13:48:12 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:47286 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727936AbgCYRru (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Mar 2020 13:47:49 -0400
+        Wed, 25 Mar 2020 13:47:50 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=Content-Type:MIME-Version:References:
+        d=infradead.org; s=bombadil.20170209; h=Content-Type:MIME-Version:References:
         Subject:Cc:To:From:Date:Message-Id:Sender:Reply-To:Content-Transfer-Encoding:
         Content-ID:Content-Description:In-Reply-To;
-        bh=bgFMFAg40dNYVQqI8LTEoS+YHN0f3ekwso2Cq3yrjFw=; b=OsIZ7t/GC/rnm8K12iFjfNfMjN
-        LX5bkqD5cmr5W3wZlFnfTIWHkbOvOXvnKGLRKyNpxfMEeMYHSFG8iI4ftb052Y/AGFesbjNX7qF7P
-        yiVYSudK8MDxjwrDvcPNT2q4fky7lTZ8y4OvwxZeo6msnE/WN8pWnyL/dFUXD5h0Irkol6G83uNfD
-        6+N7d7IdJxymFIPGVk97dH1mtm2p1uhXQ/LRNOJYxKmf1elPRRRTfieVXaTtxR78L0XFtPO7nLyI/
-        WIwlG+C1yRKIIbFYX5jvkCsthaCMxmS40otfdCmi1RivUwPDB2mBJQQP1s0K7b3He0yQXjWwWcK5z
-        zsr95hPg==;
+        bh=S5YBOI/hzl74GxKLOG1SFL3+rFVI5u7H+0CGlPgUL48=; b=NIQlO5rg33Q9X87rxcWwEaYQpu
+        0ZEh5rPn1Fmh5/rl0XNHKyl9WKMo5uDsJhvh7pKObyJmBqQLMi3+QjehsZQJXWtzJZRCJzc33tv0P
+        e3guvbIvf1/BdQmlTnb0Y4v1W8Yl+pLIRFTezeZWAH5hgFQJS+HT5qnYP1HLZxMPg7YWZfWMxfOoY
+        dgwCBn3yx8xblmJj19VbaqG1VnLHdQQaAxA04CyS/Tt9zqHjbRZiNwFQYacVsOVr9Z1JMuzlgoeEq
+        M1mE8uYK9qyXBAC/EGmCLJD2YGDOcfsXcqoiUir6ge+3eU17XgvsRMT7/kqtYgxUmISZGnxqCzF4F
+        b/qBJvAQ==;
 Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jHA81-0003oh-PW; Wed, 25 Mar 2020 17:47:45 +0000
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jHA82-0008RD-51; Wed, 25 Mar 2020 17:47:46 +0000
 Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id D90D9306D86;
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id DD142306DBB;
         Wed, 25 Mar 2020 18:47:42 +0100 (CET)
 Received: by hirez.programming.kicks-ass.net (Postfix, from userid 0)
-        id C94F829BD8A29; Wed, 25 Mar 2020 18:47:42 +0100 (CET)
-Message-Id: <20200325174606.125161388@infradead.org>
+        id CD42029BD8A2B; Wed, 25 Mar 2020 18:47:42 +0100 (CET)
+Message-Id: <20200325174606.207274148@infradead.org>
 User-Agent: quilt/0.65
-Date:   Wed, 25 Mar 2020 18:45:35 +0100
+Date:   Wed, 25 Mar 2020 18:45:36 +0100
 From:   Peter Zijlstra <peterz@infradead.org>
 To:     tglx@linutronix.de, jpoimboe@redhat.com
 Cc:     linux-kernel@vger.kernel.org, x86@kernel.org, peterz@infradead.org,
         mhiramat@kernel.org, mbenes@suse.cz
-Subject: [PATCH v4 10/13] objtool: Avoid iterating !text section symbols
+Subject: [PATCH v4 11/13] objtool: Rearrange validate_section()
 References: <20200325174525.772641599@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -48,31 +48,84 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-validate_functions() iterates all sections their symbols; this is
-pointless to do for !text sections as they won't have instructions
-anyway.
+In preparation of further changes, once again break out the loop body.
+No functional changes intended.
 
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 Acked-by: Josh Poimboeuf <jpoimboe@redhat.com>
 ---
- tools/objtool/check.c |    6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ tools/objtool/check.c |   51 ++++++++++++++++++++++++++++----------------------
+ 1 file changed, 29 insertions(+), 22 deletions(-)
 
 --- a/tools/objtool/check.c
 +++ b/tools/objtool/check.c
-@@ -2621,8 +2621,12 @@ static int validate_functions(struct obj
- 	struct section *sec;
- 	int warnings = 0;
+@@ -2559,12 +2559,37 @@ static void prepare_insn_rela(struct obj
+ 	}
+ }
  
--	for_each_sec(file, sec)
-+	for_each_sec(file, sec) {
-+		if (!(sec->sh.sh_flags & SHF_EXECINSTR))
-+			continue;
+-static int validate_section(struct objtool_file *file, struct section *sec)
++static int validate_symbol(struct objtool_file *file, struct section *sec,
++			   struct symbol *sym, struct insn_state *state)
+ {
+-	struct symbol *func;
+ 	struct instruction *insn;
++	int ret;
 +
- 		warnings += validate_section(file, sec);
++	if (!sym->len) {
++		WARN("%s() is missing an ELF size annotation", sym->name);
++		return 1;
 +	}
++
++	if (sym->pfunc != sym || sym->alias != sym)
++		return 0;
++
++	insn = find_insn(file, sec, sym->offset);
++	if (!insn || insn->ignore || insn->visited)
++		return 0;
++
++	state->uaccess = sym->uaccess_safe;
++
++	ret = validate_branch(file, insn->func, insn, *state);
++	if (ret && backtrace)
++		BT_FUNC("<=== (sym)", insn);
++	return ret;
++}
++
++static int validate_section(struct objtool_file *file, struct section *sec)
++{
+ 	struct insn_state state;
+-	int ret, warnings = 0;
++	struct symbol *func;
++	int warnings = 0;
+ 
+ 	clear_insn_state(&state);
+ 
+@@ -2588,25 +2613,7 @@ static int validate_section(struct objto
+ 		if (func->type != STT_FUNC)
+ 			continue;
+ 
+-		if (!func->len) {
+-			WARN("%s() is missing an ELF size annotation",
+-			     func->name);
+-			warnings++;
+-		}
+-
+-		if (func->pfunc != func || func->alias != func)
+-			continue;
+-
+-		insn = find_insn(file, sec, func->offset);
+-		if (!insn || insn->ignore || insn->visited)
+-			continue;
+-
+-		state.uaccess = func->uaccess_safe;
+-
+-		ret = validate_branch(file, func, insn, state);
+-		if (ret && backtrace)
+-			BT_FUNC("<=== (func)", insn);
+-		warnings += ret;
++		warnings += validate_symbol(file, sec, func, &state);
+ 	}
  
  	return warnings;
- }
 
 
