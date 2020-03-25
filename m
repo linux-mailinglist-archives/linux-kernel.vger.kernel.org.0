@@ -2,105 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 03FE31925B9
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 11:35:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8F6351925A2
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 11:32:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726239AbgCYKfp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Mar 2020 06:35:45 -0400
-Received: from protonic.xs4all.nl ([83.163.252.89]:39992 "EHLO protonic.nl"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727407AbgCYKfo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Mar 2020 06:35:44 -0400
-X-Greylist: delayed 409 seconds by postgrey-1.27 at vger.kernel.org; Wed, 25 Mar 2020 06:35:43 EDT
-Received: from erd988 (erd988.prtnl [192.168.224.30])
-        by sparta.prtnl (Postfix) with ESMTP id A803844A024D;
-        Wed, 25 Mar 2020 11:28:52 +0100 (CET)
-Date:   Wed, 25 Mar 2020 11:28:51 +0100
-From:   David Jander <david@protonic.nl>
-To:     Russell King - ARM Linux admin <linux@armlinux.org.uk>
-Cc:     Oleksij Rempel <o.rempel@pengutronix.de>,
-        David Miller <davem@davemloft.net>, andrew@lunn.ch,
-        f.fainelli@gmail.com, hkallweit1@gmail.com, mark.rutland@arm.com,
-        robh+dt@kernel.org, kernel@pengutronix.de,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        marex@denx.de, devicetree@vger.kernel.org, olteanv@gmail.com
-Subject: Re: user space interface for configuring T1 PHY management mode
- (master/slave)
-Message-ID: <20200325112851.43b3e6bc@erd988>
-In-Reply-To: <20200325101111.GZ25745@shell.armlinux.org.uk>
-References: <20200325083449.GA8404@pengutronix.de>
-        <20200325101111.GZ25745@shell.armlinux.org.uk>
-Organization: Protonic Holland
-X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1727498AbgCYKcz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Mar 2020 06:32:55 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:47439 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726103AbgCYKcy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Mar 2020 06:32:54 -0400
+Received: from p5de0bf0b.dip0.t-ipconnect.de ([93.224.191.11] helo=nanos.tec.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1jH3KR-0007j8-0u; Wed, 25 Mar 2020 11:32:07 +0100
+Received: by nanos.tec.linutronix.de (Postfix, from userid 1000)
+        id 25179100C51; Wed, 25 Mar 2020 11:32:06 +0100 (CET)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Rong Chen <rong.a.chen@intel.com>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        "maintainer\:X86 ARCHITECTURE \(32-BIT AND 64-BIT\)" <x86@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Mark Gross <mgross@linux.intel.com>,
+        Tony Luck <tony.luck@intel.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+        Len Brown <lenb@kernel.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        linux-edac@vger.kernel.org,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        Jean Delvare <jdelvare@suse.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        linux-hwmon@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Amit Kucheria <amit.kucheria@verdurent.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Jacob Pan <jacob.jun.pan@linux.intel.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        linux-mmc <linux-mmc@vger.kernel.org>,
+        Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
+        Takashi Iwai <tiwai@suse.com>,
+        ALSA Development Mailing List <alsa-devel@alsa-project.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        linux-crypto <linux-crypto@vger.kernel.org>, lkp@lists.01.org
+Subject: Re: [cpufreq] 06c4d00466: will-it-scale.per_process_ops -53.4% regression
+In-Reply-To: <43a4189a-7153-18e8-4657-4a4400002c05@intel.com>
+References: <20200320131509.564059710@linutronix.de> <20200324060124.GC11705@shao2-debian> <CAHp75VeeKZLeZ8E3Py7LECN54SPFHaRgkxrMzBYQWXM8x+4JhA@mail.gmail.com> <43a4189a-7153-18e8-4657-4a4400002c05@intel.com>
+Date:   Wed, 25 Mar 2020 11:32:06 +0100
+Message-ID: <87zhc4ybbt.fsf@nanos.tec.linutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 25 Mar 2020 10:11:12 +0000
-Russell King - ARM Linux admin <linux@armlinux.org.uk> wrote:
+Rong Chen <rong.a.chen@intel.com> writes:
+> On 3/24/20 6:24 PM, Andy Shevchenko wrote:
+>> On Tue, Mar 24, 2020 at 8:02 AM kernel test robot <rong.a.chen@intel.com> wrote:
+>>> Greeting,
+>>>
+>>> FYI, we noticed a -53.4% regression of will-it-scale.per_process_ops due to commit:
+>>> commit: 06c4d00466eb374841bc84c39af19b3161ff6917 ("[patch 09/22] cpufreq: Convert to new X86 CPU match macros")
+>>> url: https://github.com/0day-ci/linux/commits/Thomas-Gleixner/x86-devicetable-Move-x86-specific-macro-out-of-generic-code/20200321-031729
+>>> base: https://git.kernel.org/cgit/linux/kernel/git/rafael/linux-pm.git linux-next
+>>>
+>>> in testcase: will-it-scale
+>>> on test machine: 4 threads Intel(R) Core(TM) i3-3220 CPU @ 3.30GHz with 8G memory
+>>> with following parameters:
+>>
+>> drivers/cpufreq/speedstep-centrino.c change missed the terminator,
+>> perhaps it's a culprit, because I don't believe removing dups and
+>> reordering lines may affect this.
+>> Can you restore terminator there and re-test?
+>>
+>
+> I have retested with the change, but it has no effect on the performance.
 
-> On Wed, Mar 25, 2020 at 09:34:49AM +0100, Oleksij Rempel wrote:
-> > Hi all,
-> > 
-> > I'm working on mainlining of NXP1102 PHY (BroadR Reach/802.3bw) support.
-> > 
-> > Basic functionality is working and support with mainline kernel. Now it is
-> > time to extend it. According to the specification, each PHY can be master
-> > or slave.
-> > 
-> > The HW can be pre configured via bootstrap pins or fuses to have a default
-> > configuration. But in some cases we still need to be able to configure the
-> > PHY in a different mode: 
-> > --------------------------------------------------------------------------------
-> > http://www.ieee802.org/3/1TPCESG/public/BroadR_Reach_Automotive_Spec_V3.0.pdf
-> > 
-> > 6.1 MASTER-SLAVE configuration resolution
-> > 
-> > All BroadR-Reach PHYs will default to configure as SLAVE upon power up or
-> > reset until a management system (for example, processor/microcontroller)
-> > configures it to be MASTER. MASTER-SLAVE assignment for each link
-> > configuration is necessary for establishing the timing control of each PHY.
-> > 
-> > 6.2 PHY-Initialization
-> > 
-> > Both PHYs sharing a link segment are capable of being MASTER or SLAVE. In
-> > IEEE 802.3-2012, MASTER-SLAVE resolution is attained during the
-> > Auto-Negotiation process (see IEEE 802.3-2012 Clause 28). However, the
-> > latency for this process is not acceptable for automotive application. A
-> > forced assignment scheme is employed depending on the physical deployment
-> > of the PHY within the car. This process is conducted at the power-up or
-> > reset condition. The station management system manually configures the
-> > BroadR-Reach PHY to be MASTER (before the link acquisition process starts)
-> > while the link partner defaults to SLAVE (un-managed).
-> > --------------------------------------------------------------------------------
-> > 
-> > Should phylink be involved in this configuration? What's the proper user
-> > space interface to use for this kind of configuration?  ethtool or ip
-> > comes into mind. Further having a Device Tree property to configure a
-> > default mode to overwrite the boot strap pins would be nice to have.  
-> 
-> Well, the first question would be whether this is something that
-> userspace needs to alter, or whether static configuration at boot
-> time is what is necessary.
-> 
-> Given what is in the description, it seems that the concern is with
-> the latency it takes for the link to come up. I would suggest that
-> the lowest latency would be achieved when using static configuration
-> rather than waiting for the kernel to fully boot and userspace to
-> start before configuring the PHY.
+Bah. The binary equivalence testing detected this, but I obvioulsy
+missed it. Delta fix below.
 
-Yes, that would be the fastest, and in many cases the preferred way. But the
-lack of auto negotiation is not a choice. It is imposed by the spec. Because
-of this, and since the PHY's are configurable in software, there is some need
-for configuration in user-space. Of course latency would not be an issue in
-such a case, otherwise a fixed strapped configuration was chosen.
+Thanks,
 
-Best regards,
+        tglx
 
--- 
-David Jander
-Protonic Holland.
+8<--------------
+--- a/drivers/cpufreq/intel_pstate.c
++++ b/drivers/cpufreq/intel_pstate.c
+@@ -2727,7 +2727,7 @@ static inline void intel_pstate_request_
+ 
+ #define X86_MATCH_HWP(model, hwp_mode)					\
+ 	X86_MATCH_VENDOR_FAM_MODEL_FEATURE(INTEL, 6, INTEL_FAM6_##model, \
+-					   X86_FEATURE_APERFMPERF, hwp_mode)
++					   X86_FEATURE_HWP, hwp_mode)
+ 
+ static const struct x86_cpu_id hwp_support_ids[] __initconst = {
+ 	X86_MATCH_HWP(BROADWELL_X,	INTEL_PSTATE_HWP_BROADWELL),
