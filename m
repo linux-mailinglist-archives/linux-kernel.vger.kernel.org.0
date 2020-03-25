@@ -2,101 +2,290 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 858C519235C
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 09:55:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8AA92192374
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 09:56:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727562AbgCYIzp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Mar 2020 04:55:45 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:33512 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727301AbgCYIzm (ORCPT
+        id S1727658AbgCYI4u (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Mar 2020 04:56:50 -0400
+Received: from mail27.static.mailgun.info ([104.130.122.27]:55301 "EHLO
+        mail27.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727301AbgCYI4u (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Mar 2020 04:55:42 -0400
-Received: by mail-wm1-f67.google.com with SMTP id w25so1577915wmi.0
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Mar 2020 01:55:40 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=A0OMbVybEpaW+w1C0n6/qu2u7s7M3HMJ+OsMULSR4sI=;
-        b=INatbJ1zpjx/upydrHaGJRlTY0MoG/t1dP7z2pQMcKrRZpC2FoULfdiepFwso432T3
-         pKsYilMPbVAQiksfTNVTwIm1mYyzzjNwDNw5cUARtWf0AcdpdK1bh525ghcxI6MAcwRp
-         /OAEGnvOoyl0U8dV82Sq2K3N9nTYYoXK2KdosKfjqev9FEZRA6BvPiEzSa1O+wC9n5AU
-         Oj7AXgr1SDdlQ71TJLL/obmZOrFzd4+cUm5u1z0VP9r4Ol+4racqqNYU9KlKZ7zDzYEc
-         geXhCCuOgPyI1wJtm79qRy/qtQVbYBdAF/tfN38S70nj4/Dsedr/I623Z6bKOzWtJmu/
-         XHng==
-X-Gm-Message-State: ANhLgQ3E6kRyB7WOd2f1l4RDrfn7twD+bs+UZQpzyF2UQXdBySF5LUJ/
-        j6o30Wz66Smb/rWPQnR8Dqo=
-X-Google-Smtp-Source: ADFU+vuA/5ocaWVVNlpCYn5BnzvuJ6qnAuLXSyHHVlX4ChU1l/XeQ0Gm6/esgK8FoNtoa2aiIXY24w==
-X-Received: by 2002:a1c:2e92:: with SMTP id u140mr2384030wmu.84.1585126540155;
-        Wed, 25 Mar 2020 01:55:40 -0700 (PDT)
-Received: from localhost (ip-37-188-135-150.eurotel.cz. [37.188.135.150])
-        by smtp.gmail.com with ESMTPSA id t193sm8428993wmt.14.2020.03.25.01.55.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Mar 2020 01:55:39 -0700 (PDT)
-Date:   Wed, 25 Mar 2020 09:55:37 +0100
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Baoquan He <bhe@redhat.com>
-Cc:     David Rientjes <rientjes@google.com>, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, akpm@linux-foundation.org,
-        iamjoonsoo.kim@lge.com, hannes@cmpxchg.org, vbabka@suse.cz
-Subject: Re: [PATCH 4/5] mm/vmstat.c: move the per-node stats to the front of
- /proc/zoneinfo
-Message-ID: <20200325085537.GZ19542@dhcp22.suse.cz>
-References: <20200324142229.12028-1-bhe@redhat.com>
- <20200324142229.12028-5-bhe@redhat.com>
- <alpine.DEB.2.21.2003241220360.34058@chino.kir.corp.google.com>
- <20200325055331.GB9942@MiWiFi-R3L-srv>
+        Wed, 25 Mar 2020 04:56:50 -0400
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1585126609; h=Message-ID: References: In-Reply-To: Subject:
+ Cc: To: From: Date: Content-Transfer-Encoding: Content-Type:
+ MIME-Version: Sender; bh=662V76aKosOhR0NwjziZiUV5ztE2ikA4eLXKCXRhr8M=;
+ b=lh5L0X84+JJSK7ilyNXPu1fcD40Age3zvwdz9LdTpanmG5LUW8BsuRtVfGADBIFMpSGFIKr4
+ XqgNbYLifql9VTwWbqUjvTgNrQkkWQ8NgDXInQsz0WPk5p5R2IldKWRG0nJo8X4TsPz79c6s
+ QMH4BBAc18GZ0cDnNgfg1OM3Q/Y=
+X-Mailgun-Sending-Ip: 104.130.122.27
+X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
+ by mxa.mailgun.org with ESMTP id 5e7b1cc7.7f0ca6e57b58-smtp-out-n02;
+ Wed, 25 Mar 2020 08:56:39 -0000 (UTC)
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 76B2DC43636; Wed, 25 Mar 2020 08:56:39 +0000 (UTC)
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        aws-us-west-2-caf-mail-1.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED
+        autolearn=unavailable autolearn_force=no version=3.4.0
+Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
+        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: cang)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id F3DDCC433BA;
+        Wed, 25 Mar 2020 08:56:37 +0000 (UTC)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200325055331.GB9942@MiWiFi-R3L-srv>
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Wed, 25 Mar 2020 16:56:37 +0800
+From:   Can Guo <cang@codeaurora.org>
+To:     Avri Altman <Avri.Altman@wdc.com>
+Cc:     asutoshd@codeaurora.org, nguyenb@codeaurora.org,
+        hongwus@codeaurora.org, rnayak@codeaurora.org,
+        linux-scsi@vger.kernel.org, kernel-team@android.com,
+        saravanak@google.com, salyzyn@google.com,
+        Subhash Jadavani <subhashj@codeaurora.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Stanley Chu <stanley.chu@mediatek.com>,
+        Bean Huo <beanhuo@micron.com>,
+        Bart Van Assche <bvanassche@acm.org>,
+        Venkat Gopalakrishnan <venkatg@codeaurora.org>,
+        Tomas Winkler <tomas.winkler@intel.com>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/2] scsi: ufs: Clean up ufshcd_scale_clks() and clock
+ scaling error out path
+In-Reply-To: <SN6PR04MB4640E8EF26802A44B1F5D38AFCF70@SN6PR04MB4640.namprd04.prod.outlook.com>
+References: <1584342373-10282-1-git-send-email-cang@codeaurora.org>
+ <1584342373-10282-2-git-send-email-cang@codeaurora.org>
+ <SN6PR04MB4640E8EF26802A44B1F5D38AFCF70@SN6PR04MB4640.namprd04.prod.outlook.com>
+Message-ID: <d930bd05f2614092e6d8d3ef62017d89@codeaurora.org>
+X-Sender: cang@codeaurora.org
+User-Agent: Roundcube Webmail/1.3.9
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 25-03-20 13:53:31, Baoquan He wrote:
-> On 03/24/20 at 12:25pm, David Rientjes wrote:
-> > On Tue, 24 Mar 2020, Baoquan He wrote:
-> > 
-> > > This moving makes the layout of /proc/zoneinfo more sensible. And there
-> > > are 4 zones at most currently, it doesn't need to scroll down much to get
-> > > to the 1st populated zone, even though the 1st populated zone is MOVABLE
-> > > zone.
-> > > 
-> > 
-> > Doesn't this introduce risk that it will break existing parsers of 
-> > /proc/zoneinfo in subtle ways?
-> > 
-> > In some cases /proc/zoneinfo is a tricky file to correctly parse because 
-> > you have to rely on the existing order in which it is printed to determine 
-> > which zone is being described.  We need to print zones even with unmanaged 
-> > pages, for instance, otherwise userspace may be unaware of which zones are 
-> > supported and what order they are in.  That's important to be able to 
-> > construct the proper string to use when writing vm.lowmem_reserve_ratio.
-> > 
-> > I'd prefer not changing the order of /proc/zoneinfo if it can be avoided 
-> > just because the risk outweighs the reward that we may break some 
-> > initscript parsers.
+On 2020-03-18 16:19, Avri Altman wrote:
+> Hi,
 > 
-> Oh, I may not describe the change and result clearly. This patch doesn't
-> change zone order at all.  I only move the per-node stats to the front of
-> each node, the zone order is completely kept the same, still DMA, DMA32,
-> NORMAL, MOVABLE.
+>> 
+>> From: Subhash Jadavani <subhashj@codeaurora.org>
+>> 
+>> This change introduces a func ufshcd_set_clk_freq() to explicitly
+>> set clock frequency so that it can be used in reset_and_resotre path 
+>> and
+>> in ufshcd_scale_clks(). Meanwhile, this change cleans up the clock 
+>> scaling
+>> error out path.
+>> 
+>> Signed-off-by: Subhash Jadavani <subhashj@codeaurora.org>
+>> Signed-off-by: Can Guo <cang@codeaurora.org>
+>> 
+>> diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
+>> index 2a2a63b..63aaa88f 100644
+>> --- a/drivers/scsi/ufs/ufshcd.c
+>> +++ b/drivers/scsi/ufs/ufshcd.c
+>> @@ -855,28 +855,29 @@ static bool
+>> ufshcd_is_unipro_pa_params_tuning_req(struct ufs_hba *hba)
+>>                 return false;
+>>  }
+>> 
+>> -static int ufshcd_scale_clks(struct ufs_hba *hba, bool scale_up)
+>> +/**
+>> + * ufshcd_set_clk_freq - set UFS controller clock frequencies
+>> + * @hba: per adapter instance
+>> + * @scale_up: If True, set max possible frequency othewise set low
+>> frequency
+>> + *
+>> + * Returns 0 if successful
+>> + * Returns < 0 for any other errors
+>> + */
+>> +static int ufshcd_set_clk_freq(struct ufs_hba *hba, bool scale_up)
+> Personally I prefer using the convention of "__scale_clks" to describe
+> the privet core of scale_clks,
+> But I know that many people are against it.
+> 
+>>  {
+>>         int ret = 0;
+>>         struct ufs_clk_info *clki;
+>>         struct list_head *head = &hba->clk_list_head;
+>> -       ktime_t start = ktime_get();
+>> -       bool clk_state_changed = false;
+>> 
+>>         if (list_empty(head))
+>>                 goto out;
+>> 
+>> -       ret = ufshcd_vops_clk_scale_notify(hba, scale_up, PRE_CHANGE);
+>> -       if (ret)
+>> -               return ret;
+>> -
+>>         list_for_each_entry(clki, head, list) {
+>>                 if (!IS_ERR_OR_NULL(clki->clk)) {
+>>                         if (scale_up && clki->max_freq) {
+>>                                 if (clki->curr_freq == clki->max_freq)
+>>                                         continue;
+>> 
+>> -                               clk_state_changed = true;
+>>                                 ret = clk_set_rate(clki->clk, 
+>> clki->max_freq);
+>>                                 if (ret) {
+>>                                         dev_err(hba->dev, "%s: %s clk 
+>> set rate(%dHz) failed,
+>> %d\n",
+>> @@ -895,7 +896,6 @@ static int ufshcd_scale_clks(struct ufs_hba *hba,
+>> bool scale_up)
+>>                                 if (clki->curr_freq == clki->min_freq)
+>>                                         continue;
+>> 
+>> -                               clk_state_changed = true;
+>>                                 ret = clk_set_rate(clki->clk, 
+>> clki->min_freq);
+>>                                 if (ret) {
+>>                                         dev_err(hba->dev, "%s: %s clk 
+>> set rate(%dHz) failed,
+>> %d\n",
+>> @@ -914,13 +914,36 @@ static int ufshcd_scale_clks(struct ufs_hba 
+>> *hba,
+>> bool scale_up)
+>>                                 clki->name, clk_get_rate(clki->clk));
+>>         }
+>> 
+>> +out:
+>> +       return ret;
+>> +}
+>> +
+>> +/**
+>> + * ufshcd_scale_clks - scale up or scale down UFS controller clocks
+>> + * @hba: per adapter instance
+>> + * @scale_up: True if scaling up and false if scaling down
+>> + *
+>> + * Returns 0 if successful
+>> + * Returns < 0 for any other errors
+>> + */
+>> +static int ufshcd_scale_clks(struct ufs_hba *hba, bool scale_up)
+>> +{
+>> +       int ret = 0;
+>> +
+>> +       ret = ufshcd_vops_clk_scale_notify(hba, scale_up, PRE_CHANGE);
+>> +       if (ret)
+>> +               return ret;
+>> +
+>> +       ret = ufshcd_set_clk_freq(hba, scale_up);
+>> +       if (ret)
+>> +               return ret;
+>> +
+>>         ret = ufshcd_vops_clk_scale_notify(hba, scale_up, 
+>> POST_CHANGE);
+>> +       if (ret) {
+>> +               ufshcd_set_clk_freq(hba, !scale_up);
+>> +               return ret;
+>> +       }
+>> 
+>> -out:
+>> -       if (clk_state_changed)
+>> -               trace_ufshcd_profile_clk_scaling(dev_name(hba->dev),
+>> -                       (scale_up ? "up" : "down"),
+>> -                       ktime_to_us(ktime_sub(ktime_get(), start)), 
+>> ret);
+> 
+> Why remove the ufshcd_profile_clk_scaling trace?
+> 
+> 
 
-Even this can break existing parsers. Fixing that up is likely not hard
-and existing parsers would be mostly debugging hacks here and there but
-I do miss any actual justification except for you considering it more
-sensible. I do not remember this would be a common pain point for people
-parsing this file. If anything the overal structure of the file makes it
-hard to parse and your patches do not really address that. We are likely
-too late to make the output much more sensible TBH.
+Shall add it back, this is just a collection of Subhash's changes.
 
-That being said, I haven't looked more closely on your patches because I
-do not have spare cycles for that. Your justification for touching the
-code which seems to be working relatively well is quite weak IMHO, yet
-it adds a non zero risk for breaking existing parsers.
--- 
-Michal Hocko
-SUSE Labs
+>>         return ret;
+>>  }
+>> 
+>> @@ -1106,35 +1129,36 @@ static int ufshcd_devfreq_scale(struct ufs_hba
+>> *hba, bool scale_up)
+>> 
+>>         ret = ufshcd_clock_scaling_prepare(hba);
+>>         if (ret)
+>> -               return ret;
+>> +               goto out;
+> Are you fixing here a hold without release?
+> Should make note of that.
+> 
+
+Yes, true
+
+>> 
+>>         /* scale down the gear before scaling down clocks */
+>>         if (!scale_up) {
+>>                 ret = ufshcd_scale_gear(hba, false);
+>>                 if (ret)
+>> -                       goto out;
+>> +                       goto clk_scaling_unprepare;
+>>         }
+>> 
+>>         ret = ufshcd_scale_clks(hba, scale_up);
+>> -       if (ret) {
+>> -               if (!scale_up)
+>> -                       ufshcd_scale_gear(hba, true);
+>> -               goto out;
+>> -       }
+>> +       if (ret)
+>> +               goto scale_up_gear;
+>> 
+>>         /* scale up the gear after scaling up clocks */
+>>         if (scale_up) {
+>>                 ret = ufshcd_scale_gear(hba, true);
+>>                 if (ret) {
+>>                         ufshcd_scale_clks(hba, false);
+>> -                       goto out;
+>> +                       goto clk_scaling_unprepare;
+>>                 }
+>>         }
+>> 
+>> -       ret = ufshcd_vops_clk_scale_notify(hba, scale_up, 
+>> POST_CHANGE);
+>> +       goto clk_scaling_unprepare;
+> I think you should find a way to make this function more readable.
+> Adding all those "spaghetti" gotos making it even harder to read.
+> 
+> Thanks,
+> Avri
+> 
+
+This is just a collection of Subhash's changes. I think the 2
+clk_scaling_unprepare and out gotos make sense, but the
+scale_up_gear goto is a bit vague. I will remove the
+scale_up_gear goto.
+
+Thanks,
+
+Can Guo.
+
+>> 
+>> -out:
+>> +scale_up_gear:
+>> +       if (!scale_up)
+>> +               ufshcd_scale_gear(hba, true);
+>> +clk_scaling_unprepare:
+>>         ufshcd_clock_scaling_unprepare(hba);
+>> +out:
+>>         ufshcd_release(hba);
+>>         return ret;
+>>  }
+>> @@ -6251,7 +6275,7 @@ static int ufshcd_host_reset_and_restore(struct
+>> ufs_hba *hba)
+>>         spin_unlock_irqrestore(hba->host->host_lock, flags);
+>> 
+>>         /* scale up clocks to max frequency before full 
+>> reinitialization */
+>> -       ufshcd_scale_clks(hba, true);
+>> +       ufshcd_set_clk_freq(hba, true);
+>> 
+>>         err = ufshcd_hba_enable(hba);
+>>         if (err)
+>> --
+>> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, a
+>> Linux Foundation Collaborative Project.
