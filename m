@@ -2,23 +2,23 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 85B4F192920
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 14:05:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D1FAA192922
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 14:06:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727383AbgCYNFa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Mar 2020 09:05:30 -0400
-Received: from mail-eopbgr750084.outbound.protection.outlook.com ([40.107.75.84]:18934
+        id S1727422AbgCYNGI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Mar 2020 09:06:08 -0400
+Received: from mail-eopbgr750054.outbound.protection.outlook.com ([40.107.75.54]:38613
         "EHLO NAM02-BL2-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727279AbgCYNFa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Mar 2020 09:05:30 -0400
+        id S1727046AbgCYNGH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Mar 2020 09:06:07 -0400
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=gOFGrUHX7clzoYUsESmEGko+jYX9B4Qa+vGcZ81PcZ6gg6Xxawhi5mB26INGyGyQa9t+x4YQgrlsQCNxnx5GlmXIXtcV6yF5HhtPHoxH+kh9q/ftzwTfNFPN4jfkD3z76Fm42Cy+Iz76mJHO29LZOXsgzT8zTb71U3jXOghT4nNtrS9ffTzEGvRLFd48KkSoB3XiTNyx2PUentf4O0XWJbpwf2yh5r6kgpsK+qvgYipAXYT+ePfiqSdUZk4+Wk/j/spr5/qjXuz9I7J/NgHpHM3ESjiuqc20d7IEATTmdjjz23EjXEtdKG/1FFX45ELy8MU5zgieoPGSxF9cPv0E0g==
+ b=ma6s26joFKJxeQHe4sjATZ89a//jU0fRhen/theLf/HXcVrJ2Lmy+wvbISwoP2tm9al65SFEZLLLMdyqN7wZryUvWV57XfHWiAIObF2RadT+7q7BCPYiV+0oUXd88A3KTdwLvnfj98JZbZL36KeoL8y8tw/YEhWWjU+u+db3EU8npjovCwVO8+mSk12c3iaJcOjYa6HsKfCOxVdLOhrijodeVyYSaoeXDI99AEiF5ZgKxyGbQiwvTgQgBgvr8dPHQoCNaeD6Gx1FEqVBTdTf1tBZfXH4RWdMhCZx58b3v6xSWwTlmnhIhUzO3W0YC72et7IrUtnAmM+rvVYX3mHlnA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=6qv8OyJMg854jD91cIgOd74ILvwTut5vOBkWDm681F8=;
- b=DXfIMq07CrQhEKve2NMFhmr+y1yM21VAIuxGroMUArwoJK4yhNG7QNaZXRL9I5ibo00ffcbfASMMpyg4XR7wvgRpHnibhUSaKNnjmuVq3yseu7vWz9YiYqsPKS5OKVSpH757nxijc7ooyzWAky1hzqCIcq8kQZdWVqNGn34d3X4TNz0XBs8T+E1s3fNh++fgNVVaRXraV2ujiwQoglsSH4wM3Wl8rSMeNB44vFTqQKugqPy8bKwo0VrKQzK4siQYtVgBtvJkf8rrJi0evH+aNLHmGOBE6PWdDm99I/N05I6jV0tfAuM3pMBOiQ6dtJWtpAVVhkzej5Kso1ZigPuNwg==
+ bh=dOxNvilnHznOlLSFz3cUUZVaeWXYT15Uz3u7DtFu4Xs=;
+ b=AH+q8bHmTTOSlcyBHKgbC1C4tOD3htdM8WDSgH+5YlPb1LHwwMW/WQY8tdgV+aQ6y0V6dfCuYpxWN7Nm71UW3+PerXLzfFYMX2AHXwYmRJEGJgT/QD3qBNh2AZaLm3GXkdyBFRBR0fTgNIKa0x5+KWTtRrxXj6DMxrvXAXt4hT0yPhrIZFNNMVtkXnrg+N9xg9bAxBaHzoh+n7UEyDT+HG7a2Sy6Z5I3i+ujUhQkJKYtNvdnbFa6AA8VnwKvIGGx23emG8++mvj3R87Sb1tBKHp5m1cRKtnpdNkBZqAcXUn0IlfRnOI2x0Pcn7ley0BF5L+74rJnv+sj19MjdkZP2A==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=windriver.com; dmarc=pass action=none
  header.from=windriver.com; dkim=pass header.d=windriver.com; arc=none
@@ -26,63 +26,61 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=windriversystems.onmicrosoft.com;
  s=selector2-windriversystems-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=6qv8OyJMg854jD91cIgOd74ILvwTut5vOBkWDm681F8=;
- b=KqgFgdFwTdcQTcdGp14YDW6hRDo5DNktClSDi85+9aRqjp7w0IzG0844A5obwXi7+2Ny7qwt9kCzUtRq28eWTuVmTsS1eZIes7czB77B8rdJFL0CNBkOejpWM+WyiLHNyZ2a9CaIjZnA6jZlfRT2pfJ0HArYMQlZLOQ3gGcpiLw=
+ bh=dOxNvilnHznOlLSFz3cUUZVaeWXYT15Uz3u7DtFu4Xs=;
+ b=fuBCG49btW7xM72zWRk4fahET8xdg9wrRJ5MgUZnABB7b10o2vONdTUXXjGVJUx614i1DKDQlFn6nWYYnS7nSHgqdKAMAZWdfUFSlFvNsaDST9W6NDPfJEPE8s+YM87lWjsJkM2fKL0WiQXXD1oVzXmROSr5+n+0WiRTg3bQgGQ=
 Authentication-Results: spf=none (sender IP is )
  smtp.mailfrom=Zhe.He@windriver.com; 
 Received: from SN6PR11MB3360.namprd11.prod.outlook.com (2603:10b6:805:c8::30)
  by SN6PR11MB2749.namprd11.prod.outlook.com (2603:10b6:805:5f::16) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2835.22; Wed, 25 Mar
- 2020 13:05:27 +0000
+ 2020 13:05:54 +0000
 Received: from SN6PR11MB3360.namprd11.prod.outlook.com
  ([fe80::d852:181d:278b:ba9d]) by SN6PR11MB3360.namprd11.prod.outlook.com
  ([fe80::d852:181d:278b:ba9d%5]) with mapi id 15.20.2835.021; Wed, 25 Mar 2020
- 13:05:27 +0000
-Subject: Re: [PATCH 2/2] perf: Normalize gcc parameter when generating arch
- errno table
-To:     peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
-        mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
-        jolsa@redhat.com, namhyung@kernel.org, linux-kernel@vger.kernel.org
-References: <1581618066-187262-1-git-send-email-zhe.he@windriver.com>
- <1581618066-187262-2-git-send-email-zhe.he@windriver.com>
+ 13:05:54 +0000
+Subject: Re: [PATCH v3] tools lib traceevent: Take care of return value of
+ asprintf
+To:     rostedt@goodmis.org, acme@redhat.com, tstoyanov@vmware.com,
+        hewenliang4@huawei.com, linux-kernel@vger.kernel.org
+References: <1582163930-233692-1-git-send-email-zhe.he@windriver.com>
 From:   He Zhe <zhe.he@windriver.com>
-Message-ID: <2addb3c4-5b0d-0196-5262-d1983a893896@windriver.com>
-Date:   Wed, 25 Mar 2020 21:05:17 +0800
+Message-ID: <5f7589c3-323d-1a5c-685c-9becd87a690b@windriver.com>
+Date:   Wed, 25 Mar 2020 21:05:46 +0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.4.1
-In-Reply-To: <1581618066-187262-2-git-send-email-zhe.he@windriver.com>
+In-Reply-To: <1582163930-233692-1-git-send-email-zhe.he@windriver.com>
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Content-Language: en-US
-X-ClientProxiedBy: HK2PR06CA0013.apcprd06.prod.outlook.com
- (2603:1096:202:2e::25) To SN6PR11MB3360.namprd11.prod.outlook.com
+X-ClientProxiedBy: HK2PR06CA0010.apcprd06.prod.outlook.com
+ (2603:1096:202:2e::22) To SN6PR11MB3360.namprd11.prod.outlook.com
  (2603:10b6:805:c8::30)
 MIME-Version: 1.0
 X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from [128.224.162.175] (60.247.85.82) by HK2PR06CA0013.apcprd06.prod.outlook.com (2603:1096:202:2e::25) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2835.19 via Frontend Transport; Wed, 25 Mar 2020 13:05:24 +0000
+Received: from [128.224.162.175] (60.247.85.82) by HK2PR06CA0010.apcprd06.prod.outlook.com (2603:1096:202:2e::22) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2835.18 via Frontend Transport; Wed, 25 Mar 2020 13:05:52 +0000
 X-Originating-IP: [60.247.85.82]
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 04daf2a9-50df-400b-7a5c-08d7d0bd3058
+X-MS-Office365-Filtering-Correlation-Id: 1642cb58-4ee1-4b9d-98d1-08d7d0bd402a
 X-MS-TrafficTypeDiagnostic: SN6PR11MB2749:
-X-Microsoft-Antispam-PRVS: <SN6PR11MB274917E98FA977A7B68B639F8FCE0@SN6PR11MB2749.namprd11.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:4125;
+X-Microsoft-Antispam-PRVS: <SN6PR11MB274986E85CE30D92299C98348FCE0@SN6PR11MB2749.namprd11.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:644;
 X-Forefront-PRVS: 0353563E2B
 X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(396003)(366004)(39850400004)(136003)(346002)(376002)(6486002)(36756003)(316002)(66556008)(956004)(86362001)(66946007)(31696002)(6666004)(66476007)(6706004)(53546011)(2616005)(8676002)(2906002)(16576012)(31686004)(8936002)(186003)(16526019)(5660300002)(52116002)(478600001)(81156014)(81166006)(26005)(78286006);DIR:OUT;SFP:1101;SCL:1;SRVR:SN6PR11MB2749;H:SN6PR11MB3360.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;
 Received-SPF: None (protection.outlook.com: windriver.com does not designate
  permitted sender hosts)
 X-MS-Exchange-SenderADCheck: 1
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: lbEHB4zUW2WhowN8Iw/1mz+blfcUhqFeHIDa4ZW+tGK9f+QKWajDbU6tjVNyaPQ46dnMIDP6mrUVE9V7ZokC2Dw8qMwukHTjIX8Pw7Qk1fNS+M8ND331f+Ilw02NQcom2uQlzULKsr6Df79DL10UZjbSzbOA2KeOcbP3HSmvfVYbV0MJ1VglkftHW7mt0O71USSFlzGTZ6FVPrD16EosCZ+wgOXXJT01kFi4cWsUphw42F7FzZ5iNuXqJrukhcFIccvsXTNc0X73//Beugg4ouq6r2OtSwSMuWz7I0Wh5V90dhdxRoF+HM8l9sJmGWSHjc8gvGi2CfRb4N4YUCaSGMJHs8la+QEfS7GWW0DIiMiYXwz9KkwgjsqyMeNTUXjM2jqPY8D53UdL7Kkzwy67i6p3lz1pR6YH4uIlH9AOxCYvzYoFp/4UoxzNDcVSAC3whf7a4hgQXjDZOoWtL/3qTzXKLZDNyQ80G5jB7MyqukFeNSopXsOfbiqxueMt4JKvA0/JxWUVfcVrSguaHFnTdo/Jy8fDEi+p2E/ZNQm/R78=
-X-MS-Exchange-AntiSpam-MessageData: m38vwovpoBUcImBbSC2lZ6F1kRkInNcLwSgFpr5igl0yFEZfUtS6tyAJ9y0wcOtfKBCTRIDfBICIl/OrQtYglWPn6cHtoi0vq9sO8E7oCtJV552gqkZA0cFAC+mcqWyG6fMzRrOP47ZNY9MN2WX+/w==
+X-Microsoft-Antispam-Message-Info: rJHUTLUsfegHv5UWAZtr8Vq/hIGT/j1/Nmd5k+wTHjaBrmny3/M949AHgVr/n67AeqpLge7ftb//nYOAVYJmDVy0ANVQfX2KDAo/fBxqMbsGiVXns/kZYZipZgnLprRfN7gMxJCFmN7/u4zbyY5NrA5wEh0Oj5ansWeAUxs6cv9eFa+FMYhoRGpZVabL3iMNUX71EeiIONECwYj/hk/whSR1CleIg7Cktcg9Fd66jY95UPN6eNtR8l6sx1khXYQ6j98ZGRN3TTc2yJ/jQ89NQySavWXqg2u0pfVtNTjEFJwvsFpA7RiuJWs6GkFKNJJZc9xKMfD6ls9fnfxINvxAqWErIrYl4j9sBHXGChWKczNbhMyqpUUL7jfoey6gW2cyC4SgR7yXwiQkGnXoG8e/oRuoiE3/v5jCZ1lbTvDUruEVeQAhdD1unm7FzWzmNgZE4GIq0P11xIRDukSkvhqoRsJQM9PXRwxW4YHIow5NuUhRv01KrLTtAF9lUr3ER8APdh+bH43OfZwooxeOYG7NMujliujvhHOe5yAIUmrBXrc=
+X-MS-Exchange-AntiSpam-MessageData: 6+enaFpHU+sQB+myAAfGQT7bM7fqvvHw84m5s71mi/cgPDXvkeVfujdJ8fOARVHsNUoh6C4xiHN+EavBAZpi7ILsDqM9Uh4pfquRaY/3Oq2CtZ+lD6s17boSbaUgFH3zG9zRsYuD8m7xHmEwP4zZHQ==
 X-OriginatorOrg: windriver.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 04daf2a9-50df-400b-7a5c-08d7d0bd3058
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Mar 2020 13:05:27.6604
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1642cb58-4ee1-4b9d-98d1-08d7d0bd402a
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Mar 2020 13:05:54.1603
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 8ddb2873-a1ad-4a18-ae4e-4644631433be
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 3eHB/+feMAqGuUJnp+iYEvxSD8CLISTs88Mr3Vdj0kjsL/EAoLxLrChqNTh6TFWkQo6WGtZXojeyCIbRbmNhvg==
+X-MS-Exchange-CrossTenant-UserPrincipalName: 2mKBOtiX3ISPSv8/sjOlvfKeCVSHrwZ9VxRz0yKEQhEvvtUkZeOMAZaDBOIOoYfWS+C7+QgIqz5uVHbF72V84g==
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR11MB2749
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -94,35 +92,117 @@ Can this be considered for the moment?
 Thanks,
 Zhe
 
-On 2/14/20 2:21 AM, zhe.he@windriver.com wrote:
+On 2/20/20 9:58 AM, zhe.he@windriver.com wrote:
 > From: He Zhe <zhe.he@windriver.com>
 >
-> The $(CC) passed to arch_errno_names.sh may include a series of parameters
-> along with gcc itself. To avoid overwriting the following parameters of
-> arch_errno_names.sh and break the build like below, we just pick up the
-> first word of the $(CC).
+> According to the API, if memory allocation wasn't possible, or some other
+> error occurs, asprintf will return -1, and the contents of strp below are
+> undefined.
 >
-> find: unknown predicate `-m64/arch'
-> x86_64-wrs-linux-gcc: warning: '-x c' after last input file has no effect
-> x86_64-wrs-linux-gcc: error: unrecognized command line option '-m64/include/uapi/asm-generic/errno.h'
-> x86_64-wrs-linux-gcc: fatal error: no input files
+> int asprintf(char **strp, const char *fmt, ...);
+>
+> This patch takes care of return value of asprintf to make it less error
+> prone and prevent the following build warning.
+>
+> ignoring return value of ‘asprintf’, declared with attribute warn_unused_result [-Wunused-result]
 >
 > Signed-off-by: He Zhe <zhe.he@windriver.com>
 > ---
->  tools/perf/Makefile.perf | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> v2: directly check the return value without saving to a variable
+> v3: as asked, not remove those that already save the return value
 >
-> diff --git a/tools/perf/Makefile.perf b/tools/perf/Makefile.perf
-> index 3eda9d4..7114c11 100644
-> --- a/tools/perf/Makefile.perf
-> +++ b/tools/perf/Makefile.perf
-> @@ -573,7 +573,7 @@ arch_errno_hdr_dir := $(srctree)/tools
->  arch_errno_tbl := $(srctree)/tools/perf/trace/beauty/arch_errno_names.sh
+>  tools/lib/traceevent/parse-filter.c | 29 +++++++++++++++++++----------
+>  1 file changed, 19 insertions(+), 10 deletions(-)
+>
+> diff --git a/tools/lib/traceevent/parse-filter.c b/tools/lib/traceevent/parse-filter.c
+> index 20eed71..c271aee 100644
+> --- a/tools/lib/traceevent/parse-filter.c
+> +++ b/tools/lib/traceevent/parse-filter.c
+> @@ -1958,7 +1958,8 @@ static char *op_to_str(struct tep_event_filter *filter, struct tep_filter_arg *a
+>  				default:
+>  					break;
+>  				}
+> -				asprintf(&str, val ? "TRUE" : "FALSE");
+> +				if (asprintf(&str, val ? "TRUE" : "FALSE") < 0)
+> +					str = NULL;
+>  				break;
+>  			}
+>  		}
+> @@ -1976,7 +1977,8 @@ static char *op_to_str(struct tep_event_filter *filter, struct tep_filter_arg *a
+>  			break;
+>  		}
 >  
->  $(arch_errno_name_array): $(arch_errno_tbl)
-> -	$(Q)$(SHELL) '$(arch_errno_tbl)' $(CC) $(arch_errno_hdr_dir) > $@
-> +	$(Q)$(SHELL) '$(arch_errno_tbl)' $(firstword $(CC)) $(arch_errno_hdr_dir) > $@
+> -		asprintf(&str, "(%s) %s (%s)", left, op, right);
+> +		if (asprintf(&str, "(%s) %s (%s)", left, op, right) < 0)
+> +			str = NULL;
+>  		break;
 >  
->  sync_file_range_arrays := $(beauty_outdir)/sync_file_range_arrays.c
->  sync_file_range_tbls := $(srctree)/tools/perf/trace/beauty/sync_file_range.sh
+>  	case TEP_FILTER_OP_NOT:
+> @@ -1992,10 +1994,12 @@ static char *op_to_str(struct tep_event_filter *filter, struct tep_filter_arg *a
+>  			right_val = 0;
+>  		if (right_val >= 0) {
+>  			/* just return the opposite */
+> -			asprintf(&str, right_val ? "FALSE" : "TRUE");
+> +			if (asprintf(&str, right_val ? "FALSE" : "TRUE") < 0)
+> +				str = NULL;
+>  			break;
+>  		}
+> -		asprintf(&str, "%s(%s)", op, right);
+> +		if (asprintf(&str, "%s(%s)", op, right) < 0)
+> +			str = NULL;
+>  		break;
+>  
+>  	default:
+> @@ -2011,7 +2015,8 @@ static char *val_to_str(struct tep_event_filter *filter, struct tep_filter_arg *
+>  {
+>  	char *str = NULL;
+>  
+> -	asprintf(&str, "%lld", arg->value.val);
+> +	if (asprintf(&str, "%lld", arg->value.val) < 0)
+> +		str = NULL;
+>  
+>  	return str;
+>  }
+> @@ -2069,7 +2074,8 @@ static char *exp_to_str(struct tep_event_filter *filter, struct tep_filter_arg *
+>  		break;
+>  	}
+>  
+> -	asprintf(&str, "%s %s %s", lstr, op, rstr);
+> +	if (asprintf(&str, "%s %s %s", lstr, op, rstr) < 0)
+> +		str = NULL;
+>  out:
+>  	free(lstr);
+>  	free(rstr);
+> @@ -2113,7 +2119,8 @@ static char *num_to_str(struct tep_event_filter *filter, struct tep_filter_arg *
+>  		if (!op)
+>  			op = "<=";
+>  
+> -		asprintf(&str, "%s %s %s", lstr, op, rstr);
+> +		if (asprintf(&str, "%s %s %s", lstr, op, rstr) < 0)
+> +			str = NULL;
+>  		break;
+>  
+>  	default:
+> @@ -2148,8 +2155,9 @@ static char *str_to_str(struct tep_event_filter *filter, struct tep_filter_arg *
+>  		if (!op)
+>  			op = "!~";
+>  
+> -		asprintf(&str, "%s %s \"%s\"",
+> -			 arg->str.field->name, op, arg->str.val);
+> +		if (asprintf(&str, "%s %s \"%s\"",
+> +			 arg->str.field->name, op, arg->str.val) < 0)
+> +			str = NULL;
+>  		break;
+>  
+>  	default:
+> @@ -2165,7 +2173,8 @@ static char *arg_to_str(struct tep_event_filter *filter, struct tep_filter_arg *
+>  
+>  	switch (arg->type) {
+>  	case TEP_FILTER_ARG_BOOLEAN:
+> -		asprintf(&str, arg->boolean.value ? "TRUE" : "FALSE");
+> +		if (asprintf(&str, arg->boolean.value ? "TRUE" : "FALSE") < 0)
+> +			str = NULL;
+>  		return str;
+>  
+>  	case TEP_FILTER_ARG_OP:
 
