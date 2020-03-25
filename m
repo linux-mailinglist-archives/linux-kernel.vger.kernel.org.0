@@ -2,105 +2,134 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 52D15192D68
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 16:51:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DB098192D58
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 16:49:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727935AbgCYPvT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Mar 2020 11:51:19 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:48808 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727592AbgCYPvS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Mar 2020 11:51:18 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
-        :Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=dVvUUl4brKfhB22qok93RMhMjOzy6dfQt+DTKwqJrMw=; b=nAUDnzmQvv3kmqdvZEBq9kL07J
-        DEyyXrjEe/4Y5uFUwS9NjRvRhtTPHO7PS/1Zd1eaxBWKrCF6jHv4BDjs4hEvcaWC48L5YvESUC3lK
-        Nfe57ZwQ0esyrKhkpbj37eg4Ta53z6VnmXNmiZLXSCzbtV4osxyOgjTkJHx/8MX+Gw+6lvzI9UD1/
-        YCO7rnDfvdQw9sOH+9+4L2v4MffkSNqEm2LJS6fIGuUojJbV+7+Q/OlsLI/iUSHTd5G+ftJR8MnI/
-        JoCUIwesO2PBF7F4hX49bf3OvW1wQwWHokhpBTYwMvEJ8VYYoYT7eTNLH5LJXvRUNxWW3tPDs7Mq4
-        Du0XnDLg==;
-Received: from 213-225-10-87.nat.highway.a1.net ([213.225.10.87] helo=localhost)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jH8JK-0006ke-8N; Wed, 25 Mar 2020 15:51:18 +0000
-From:   Christoph Hellwig <hch@lst.de>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 9/9] block: make the init_part_stats return value more logical
-Date:   Wed, 25 Mar 2020 16:48:43 +0100
-Message-Id: <20200325154843.1349040-10-hch@lst.de>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200325154843.1349040-1-hch@lst.de>
-References: <20200325154843.1349040-1-hch@lst.de>
+        id S1728119AbgCYPtN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Mar 2020 11:49:13 -0400
+Received: from mx3.molgen.mpg.de ([141.14.17.11]:36069 "EHLO mx1.molgen.mpg.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727840AbgCYPtJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Mar 2020 11:49:09 -0400
+Received: from [192.168.0.2] (ip5f5af719.dynamic.kabel-deutschland.de [95.90.247.25])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: pmenzel)
+        by mx.molgen.mpg.de (Postfix) with ESMTPSA id 16137202254DE;
+        Wed, 25 Mar 2020 16:49:06 +0100 (CET)
+Subject: Re: [Intel-wired-lan] [PATCH] e1000e: bump up timeout to wait when ME
+ un-configure ULP mode
+To:     Sasha Neftin <sasha.neftin@intel.com>,
+        Aaron Ma <aaron.ma@canonical.com>,
+        Kai-Heng Feng <kai.heng.feng@canonical.com>
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        intel-wired-lan@lists.osuosl.org,
+        David Miller <davem@davemloft.net>,
+        Rex Tsai <rex.tsai@intel.com>
+References: <20200323191639.48826-1-aaron.ma@canonical.com>
+ <EC4F7F0B-90F8-4325-B170-84C65D8BBBB8@canonical.com>
+ <2c765c59-556e-266b-4d0d-a4602db94476@intel.com>
+ <899895bc-fb88-a97d-a629-b514ceda296d@canonical.com>
+ <750ad0ad-816a-5896-de2f-7e034d2a2508@intel.com>
+From:   Paul Menzel <pmenzel@molgen.mpg.de>
+Message-ID: <f9dc1980-fa8b-7df9-6460-b0944c7ebc43@molgen.mpg.de>
+Date:   Wed, 25 Mar 2020 16:49:05 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.6.0
 MIME-Version: 1.0
+In-Reply-To: <750ad0ad-816a-5896-de2f-7e034d2a2508@intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Return 0 / -ENOMEM instead of a boolean dressed up as int.
+Dear Linux folks,
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
----
- block/genhd.c             | 2 +-
- block/partitions/core.c   | 2 +-
- include/linux/part_stat.h | 6 +++---
- 3 files changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/block/genhd.c b/block/genhd.c
-index 6323cc789efa..95aef19ca8ed 100644
---- a/block/genhd.c
-+++ b/block/genhd.c
-@@ -1644,7 +1644,7 @@ struct gendisk *__alloc_disk_node(int minors, int node_id)
- 
- 	disk = kzalloc_node(sizeof(struct gendisk), GFP_KERNEL, node_id);
- 	if (disk) {
--		if (!init_part_stats(&disk->part0)) {
-+		if (init_part_stats(&disk->part0)) {
- 			kfree(disk);
- 			return NULL;
- 		}
-diff --git a/block/partitions/core.c b/block/partitions/core.c
-index b79c4513629b..6509351cb9d3 100644
---- a/block/partitions/core.c
-+++ b/block/partitions/core.c
-@@ -377,7 +377,7 @@ struct hd_struct *add_partition(struct gendisk *disk, int partno,
- 	if (!p)
- 		return ERR_PTR(-EBUSY);
- 
--	if (!init_part_stats(p)) {
-+	if (init_part_stats(p)) {
- 		err = -ENOMEM;
- 		goto out_free;
- 	}
-diff --git a/include/linux/part_stat.h b/include/linux/part_stat.h
-index ece607607a86..521ad787b0ec 100644
---- a/include/linux/part_stat.h
-+++ b/include/linux/part_stat.h
-@@ -48,8 +48,8 @@ static inline int init_part_stats(struct hd_struct *part)
- {
- 	part->dkstats = alloc_percpu(struct disk_stats);
- 	if (!part->dkstats)
--		return 0;
--	return 1;
-+		return -ENOMEM;
-+	return 0;
- }
- 
- static inline void free_part_stats(struct hd_struct *part)
-@@ -72,7 +72,7 @@ static inline void part_stat_set_all(struct hd_struct *part, int value)
- 
- static inline int init_part_stats(struct hd_struct *part)
- {
--	return 1;
-+	return 0;
- }
- 
- static inline void free_part_stats(struct hd_struct *part)
--- 
-2.25.1
+Am 25.03.20 um 14:58 schrieb Neftin, Sasha:
+> On 3/25/2020 08:43, Aaron Ma wrote:
+
+>> On 3/25/20 2:36 PM, Neftin, Sasha wrote:
+>>> On 3/25/2020 06:17, Kai-Heng Feng wrote:
+
+>>>>> On Mar 24, 2020, at 03:16, Aaron Ma <aaron.ma@canonical.com> wrote:
+>>>>>
+>>>>> ME takes 2+ seconds to un-configure ULP mode done after resume
+>>>>> from s2idle on some ThinkPad laptops.
+>>>>> Without enough wait, reset and re-init will fail with error.
+>>>>
+>>>> Thanks, this patch solves the issue. We can drop the DMI quirk in
+>>>> favor of this patch.
+>>>>
+>>>>> Fixes: f15bb6dde738cc8fa0 ("e1000e: Add support for S0ix")
+>>>>> BugLink: https://bugs.launchpad.net/bugs/1865570
+>>>>> Signed-off-by: Aaron Ma <aaron.ma@canonical.com>
+>>>>> ---
+>>>>> drivers/net/ethernet/intel/e1000e/ich8lan.c | 4 ++--
+>>>>> 1 file changed, 2 insertions(+), 2 deletions(-)
+>>>>>
+>>>>> diff --git a/drivers/net/ethernet/intel/e1000e/ich8lan.c
+>>>>> b/drivers/net/ethernet/intel/e1000e/ich8lan.c
+>>>>> index b4135c50e905..147b15a2f8b3 100644
+>>>>> --- a/drivers/net/ethernet/intel/e1000e/ich8lan.c
+>>>>> +++ b/drivers/net/ethernet/intel/e1000e/ich8lan.c
+>>>>> @@ -1240,9 +1240,9 @@ static s32 e1000_disable_ulp_lpt_lp(struct
+>>>>> e1000_hw *hw, bool force)
+>>>>>              ew32(H2ME, mac_reg);
+>>>>>          }
+>>>>>
+>>>>> -        /* Poll up to 300msec for ME to clear ULP_CFG_DONE. */
+>>>>> +        /* Poll up to 2.5sec for ME to clear ULP_CFG_DONE. */
+>>>>>          while (er32(FWSM) & E1000_FWSM_ULP_CFG_DONE) {
+>>>>> -            if (i++ == 30) {
+>>>>> +            if (i++ == 250) {
+>>>>>                  ret_val = -E1000_ERR_PHY;
+>>>>>                  goto out;
+>>>>>              }
+>>>>
+>>>> The return value was not caught by the caller, so the error ends up
+>>>> unnoticed.
+>>>> Maybe let the caller check the return value of
+>>>> e1000_disable_ulp_lpt_lp()?
+
+>>> I a bit confused. In our previous conversation you told ME not running.
+>>> let me shimming in. Increasing delay won't be solve the problem and just
+>>> mask it. We need to understand why ME take too much time. What is
+>>> problem with this specific system?
+>>> So, basically no ME system should works for you.
+>>
+>> Some laptops ME work that's why only reproduce issue on some laptops.
+>> In this issue i219 is controlled by ME.
+>
+> Who can explain - why ME required too much time on this system?
+> Probably need work with ME/BIOS vendor and understand it.
+> Delay will just mask the real problem - we need to find root cause.
+>> Quirk is only for 1 model type. But issue is reproduced by more models.
+>> So it won't work.
+
+(Where is Aaron’s reply? It wasn’t delivered to me yet.)
+
+As this is clearly a regression, please revert the commit for now, and 
+then find a way to correctly implement S0ix support. Linux’ regression 
+policy demands that as no fix has been found since v5.5-rc1. Changing 
+Intel ME settings, even if it would work around the issue, is not an 
+acceptable solution. Delaying the resume time is also not a solution.
+
+Regarding Intel Management Engine, only Intel knows what it does and 
+what the error is, as the ME firmware is proprietary and closed.
+
+Lastly, there is no way to fully disable the Intel Management Engine. 
+The HAP stuff claims to stop the Intel ME execution, but nobody knows, 
+if it’s successful.
+
+Aaron, Kai-Hang, can you send the revert?
+
+
+Kind regards,
+
+Paul
+
 
