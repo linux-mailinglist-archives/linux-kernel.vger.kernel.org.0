@@ -2,77 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 39169192AAD
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 15:02:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E0589192AB2
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 15:02:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727595AbgCYOCK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Mar 2020 10:02:10 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:48968 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727357AbgCYOCK (ORCPT
+        id S1727636AbgCYOCy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Mar 2020 10:02:54 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:45692 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727277AbgCYOCx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Mar 2020 10:02:10 -0400
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jH6bf-002WDe-9O; Wed, 25 Mar 2020 14:02:07 +0000
-Date:   Wed, 25 Mar 2020 14:02:07 +0000
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Qian Cai <cai@lca.pw>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: Null-ptr-deref due to "sanitized pathwalk machinery (v4)"
-Message-ID: <20200325140207.GM23230@ZenIV.linux.org.uk>
-References: <4CBDE0F3-FB73-43F3-8535-6C75BA004233@lca.pw>
- <20200324214637.GI23230@ZenIV.linux.org.uk>
- <A32DAE66-ADBA-46C7-BD26-F9BA8F12BC18@lca.pw>
- <20200325021327.GJ23230@ZenIV.linux.org.uk>
- <5281297D-B66E-4A4C-9B41-D2242F6B7AE7@lca.pw>
- <20200325040359.GK23230@ZenIV.linux.org.uk>
- <20200325055830.GL23230@ZenIV.linux.org.uk>
+        Wed, 25 Mar 2020 10:02:53 -0400
+Received: by mail-pl1-f193.google.com with SMTP id b9so821831pls.12
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Mar 2020 07:02:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=hPei7KKSdldCeCCsKO5OWNthcsFfdP9+OayFNsIx/2U=;
+        b=Gk1sq/UJs8brD9KtcK2Ggj9/1+LHC7Rc7ObOoo4MbaTZB28viRL5bKcXESZK6p3mDF
+         wklCCsF7b2+0pmrix3I0KYDKDP2zp65JzLItfn7UHmfis8J2Yl090nnmqV/QFFs29IlM
+         RIlcRH6Ucgf45velQiOnaAX5/8RqmIUqtxXsG0Lpqvf8nqT1/mL323xUo0Qli5SyvdNp
+         crlJiEMzFhTeGWBlFRccYuUMnOb1Iyt1K9z7a+v+WgQnni/mI+QFl8Sg73Lp4EhlHZs3
+         ZxTgOxJl/EFHRH3TLDPnnGjXfBOPGrI21dG3v8rYXpjSDaipdbHm1jmx7sk0xIS7/0qe
+         29IA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=hPei7KKSdldCeCCsKO5OWNthcsFfdP9+OayFNsIx/2U=;
+        b=rWxAnVf6nVJZVmxZp7FolEvHzpUnsbvGcABO2Z3U7JgjPU91FIhQMLJOMTDHi4AeVQ
+         /A9q7gAxV8JynmxjdSpXzR4wnyGRvtHAeUHAS5HEi/itzaieGbdHpKG2Y0HXlugj8yhu
+         nGLrTm22xSFlfvMjk7Ve2MoDRpnLf7xdKSaJoS3qClKdXJorEN3wUaPG/gODnoZRstx+
+         xkcKLTfTfmtkXJ6bWyr7gvZ/gLBEwf6CXvTFOda7aacmFARpF3cCX3JwVaWpT2x4I3Sy
+         QYeh5aJGm2MM5Qld2jQFsxRht5IXsMhmx33/H24FSXKlxpHIRmwybuBv3jwFufoRIDht
+         Auhg==
+X-Gm-Message-State: ANhLgQ3Q8WvTa3shwoz7ZhYrU51YiOCNxzB3BlZzTQol0NnOApEBjTT9
+        T18Bh9DHQKlSH+wYkWPHJPpWLRZyFm0=
+X-Google-Smtp-Source: ADFU+vuCDtacPWakvILyOWambzGgVeVvCnBOdFdO7oVQqymfM8huy9lkpkaZSI6cr1yw71rm9Tukqg==
+X-Received: by 2002:a17:902:b68b:: with SMTP id c11mr3254418pls.186.1585144972528;
+        Wed, 25 Mar 2020 07:02:52 -0700 (PDT)
+Received: from simran-Inspiron-5558 ([2409:4052:78f:bb47:8124:5e4b:ea06:7595])
+        by smtp.gmail.com with ESMTPSA id r186sm19048448pfc.181.2020.03.25.07.02.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 25 Mar 2020 07:02:51 -0700 (PDT)
+Date:   Wed, 25 Mar 2020 19:32:45 +0530
+From:   Simran Singhal <singhalsimran0@gmail.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
+        outreachy-kernel <outreachy-kernel@googlegroups.com>
+Subject: [PATCH] staging: rtl8723bs: Remove unnecessary braces for single
+ statements
+Message-ID: <20200325140245.GA11949@simran-Inspiron-5558>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200325055830.GL23230@ZenIV.linux.org.uk>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 25, 2020 at 05:58:30AM +0000, Al Viro wrote:
-> On Wed, Mar 25, 2020 at 04:03:59AM +0000, Al Viro wrote:
-> 
-> > Lovely.  So
-> > 	* we really do get NULL nd->path.dentry there; I've not misread the
-> > trace.
-> > 	* on the entry into link_path_walk() nd->path.dentry is non-NULL.
-> > 	* *ALL* components should've been LAST_NORM ones
-> > 	* not a single symlink in sight, unless the setup is rather unusual
-> > 	* possibly not even a single mountpoint along the way (depending
-> > upon the userland used)
-> 
-> OK, I see one place where that could occur, but I really don't see how that
-> could be triggered on this pathname, short of very odd symlink layout in
-> the filesystem on the testbox.
+Clean up unnecessary braces around single statement blocks.
+Issues reported by checkpatch.pl as:
+WARNING: braces {} are not necessary for single statement blocks
 
-... which, apparently, is what you've got there (/var/run -> ../run), so
-stepping into that braino is not implausible.  Could you check if the
-fix below fixes what you've observed?  I am folding it in anyway (into
-"lift all calls of step_into() out of follow_dotdot/follow_dotdot_rcu") -
-it's an obvious braino introduced in the commit in question, but I'd
-like a confirmation that this _is_ what you've caught.
+Signed-off-by: Simran Singhal <singhalsimran0@gmail.com>
+---
+ drivers/staging/rtl8723bs/core/rtw_efuse.c | 9 +++------
+ 1 file changed, 3 insertions(+), 6 deletions(-)
 
+diff --git a/drivers/staging/rtl8723bs/core/rtw_efuse.c b/drivers/staging/rtl8723bs/core/rtw_efuse.c
+index bdb6ff8aab7d..de7d15fdc936 100644
+--- a/drivers/staging/rtl8723bs/core/rtw_efuse.c
++++ b/drivers/staging/rtl8723bs/core/rtw_efuse.c
+@@ -43,9 +43,8 @@ Efuse_Read1ByteFromFakeContent(
+ 	u16 	Offset,
+ 	u8 *Value)
+ {
+-	if (Offset >= EFUSE_MAX_HW_SIZE) {
++	if (Offset >= EFUSE_MAX_HW_SIZE)
+ 		return false;
+-	}
+ 	/* DbgPrint("Read fake content, offset = %d\n", Offset); */
+ 	if (fakeEfuseBank == 0)
+ 		*Value = fakeEfuseContent[Offset];
+@@ -65,14 +64,12 @@ Efuse_Write1ByteToFakeContent(
+ 	u16 	Offset,
+ 	u8 Value)
+ {
+-	if (Offset >= EFUSE_MAX_HW_SIZE) {
++	if (Offset >= EFUSE_MAX_HW_SIZE)
+ 		return false;
+-	}
+ 	if (fakeEfuseBank == 0)
+ 		fakeEfuseContent[Offset] = Value;
+-	else {
++	else
+ 		fakeBTEfuseContent[fakeEfuseBank-1][Offset] = Value;
+-	}
+ 	return true;
+ }
+ 
+-- 
+2.17.1
 
->  Does the following fix your reproducer?
-> 
-> diff --git a/fs/namei.c b/fs/namei.c
-> index 311e33dbac63..4082b70f32ff 100644
-> --- a/fs/namei.c
-> +++ b/fs/namei.c
-> @@ -1805,6 +1805,8 @@ static const char *handle_dots(struct nameidata *nd, int type)
->  			error = step_into(nd, WALK_NOFOLLOW,
->  					 parent, inode, seq);
->  		}
-> +		if (unlikely(error))
-> +			return ERR_PTR(error);
->  
->  		if (unlikely(nd->flags & LOOKUP_IS_SCOPED)) {
->  			/*
