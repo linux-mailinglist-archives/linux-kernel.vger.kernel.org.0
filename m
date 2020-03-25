@@ -2,100 +2,138 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 37669192745
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 12:36:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 85D7B192750
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 12:37:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727388AbgCYLgI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Mar 2020 07:36:08 -0400
-Received: from mail-qk1-f196.google.com ([209.85.222.196]:36254 "EHLO
-        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727046AbgCYLgI (ORCPT
+        id S1727461AbgCYLhO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Mar 2020 07:37:14 -0400
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:16628 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727259AbgCYLhL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Mar 2020 07:36:08 -0400
-Received: by mail-qk1-f196.google.com with SMTP id d11so2128149qko.3
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Mar 2020 04:36:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=bSc9mBMtLwWQfwKgquoZTlMfgszjByzVoNHeKAodWUs=;
-        b=emz1+nz3y4wvNriGJwoIRqoV4ci7HwNm85PTpB/38lXN0Ja9bOf5HMyriN27EMwQkA
-         I6/jfJ2upb3hvkU3Ey40vobcv67jc9Q4BvFoGWrN5Yfc7TKXqja99vetjVG4C0w/ktkD
-         rCQLMtaYIurWO/vFvXB26Ki2WEoGZFX939E2TfMNSuWy2469Ve/OoBSx4xS86OFaJP7w
-         ZfSiWBPzFNPbfu1peFPSPg62RcHnzEDORJMMc6zXOiNQNfNsx0LAHAtW7JhLzrlgeIsb
-         Vc1JD73KKDVJVx8EMJNeBpDJMnPyD5oC4kYNJDMp8Z2aO80yd2xLz9Ft9VW6vMc39IRh
-         TMSw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=bSc9mBMtLwWQfwKgquoZTlMfgszjByzVoNHeKAodWUs=;
-        b=ZVS7210VQM5KzHyoFpmwOwCORjrX+VWwrE2cBSb0X7zauWH/OWRZzu3MVtrljuh2CV
-         +YHWEg8SIzrxuz6V1tDMdSfG4S0WQkwzqMgeNtmBNYiZsxgB4G3eeWIiiCiQ/cFuwKdO
-         Qrn5iwFq1hDIj8m/GUApKXkA2oDl6RZ+dRMlJVmBa4GIi2eM0GpMHHNZidMPkZF3MuAZ
-         0aSDpqIUGl1jQseYzUClPEFmOqJ3w4FPVbyQroOAQID1vTPnqYK5HgLT8pAfa3estLbG
-         fLFt5fu2lbBKOZRwgEMcBJBJkora/LVsoCWd1UavAZu9Dv224FqNo1OAlD6/+8STmqN9
-         XkCA==
-X-Gm-Message-State: ANhLgQ0+0yGHd7u0FSPRHgf2WZRtF2KcTcBDihyuXY86qk9hDg+qam07
-        pFvT9TJOFUjDju8VrX4OCNHVIlQndnecpggTGn3KVQ==
-X-Google-Smtp-Source: ADFU+vulW3rcFWA4Rup1YiyivwdmvSxJzrHPxnTXjr9Wh5EcRjyi8bY3bUNqPEDPbEtw9JdXo/Z4SNjuFFhobVSlFys=
-X-Received: by 2002:a37:3c9:: with SMTP id 192mr2446179qkd.330.1585136165908;
- Wed, 25 Mar 2020 04:36:05 -0700 (PDT)
+        Wed, 25 Mar 2020 07:37:11 -0400
+Received: from pps.filterd (m0046037.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 02PBWwFf022906;
+        Wed, 25 Mar 2020 12:36:54 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=STMicroelectronics;
+ bh=RjGEbFFJr8rNl19hjksDzi2Iu6GfxyBcu1ZvANyO+rI=;
+ b=ieZFcEs2iS3Zh1G4DU6jFqefwRi5v31BvNxybHTgOH2i5mp+FhOu1DX24Mat4rwZmLSQ
+ jGTT+wGAJisDVzfOy8TIjhiRX1K74Q2n4gmEvmLdE2ILODJy2cyPnXu/dZa3wdyEmC8t
+ Bxzu5Elg23QiJMQv9JuM0ex29wgl32BtF+bcjrcgL2A1QD6cGR5jVYcABEEcMyb/tiqJ
+ nQE6tqL1j/T++s97x6yJCoilG5qxT2zs+9X0odO28pXtVeVNOu2A+BX516c9ZXOe3qvj
+ iJMvoFu/WWW4ggSVGNL4pEjBVJKyCB3oCZtUurBbnrT2tTaaDjewVksDGyJH9rD3EWX4 Bg== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 2yw9k05cb5-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 25 Mar 2020 12:36:54 +0100
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 81B01100039;
+        Wed, 25 Mar 2020 12:36:49 +0100 (CET)
+Received: from Webmail-eu.st.com (sfhdag3node1.st.com [10.75.127.7])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 71D202A787D;
+        Wed, 25 Mar 2020 12:36:49 +0100 (CET)
+Received: from lmecxl0889.tpe.st.com (10.75.127.48) by SFHDAG3NODE1.st.com
+ (10.75.127.7) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 25 Mar
+ 2020 12:36:40 +0100
+Subject: Re: [PATCH v7 2/2] tty: add rpmsg driver
+To:     Joe Perches <joe@perches.com>, Ohad Ben-Cohen <ohad@wizery.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>, <linux-kernel@vger.kernel.org>,
+        <linux-remoteproc@vger.kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>
+CC:     Suman Anna <s-anna@ti.com>,
+        Fabien DESSENNE <fabien.dessenne@st.com>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        Alan Cox <gnomes@lxorguk.ukuu.org.uk>,
+        xiang xiao <xiaoxiang781216@gmail.com>
+References: <20200324170407.16470-1-arnaud.pouliquen@st.com>
+ <20200324170407.16470-3-arnaud.pouliquen@st.com>
+ <1dff1b277e5d2c95ce100a2daff4967f98d074ba.camel@perches.com>
+From:   Arnaud POULIQUEN <arnaud.pouliquen@st.com>
+Message-ID: <66fe1087-1a6d-1a96-a043-8013bfb6f2c1@st.com>
+Date:   Wed, 25 Mar 2020 12:36:30 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-References: <20200224094158.28761-1-brgl@bgdev.pl> <20200224094158.28761-3-brgl@bgdev.pl>
- <CAMRc=MdbvwQ3Exa2gmY-J0p8UeB-_dKrgqHEBo=S08yU4Uth=A@mail.gmail.com>
- <CACRpkdbBCihyayQ=hPVLY8z4G=n5cxLnUmaPpHRuKedDQPVUyQ@mail.gmail.com>
- <CAMpxmJX_Jqz97bp-nKtJp7_CgJ=72ZxWkEPN4Y-dpNpqEwa_Mg@mail.gmail.com>
- <CACRpkdYpers8Zzh9A3T0mFSyZYDcrjfn9iaQn92RkVHWE+GinQ@mail.gmail.com>
- <CAMRc=MdLYD3CeFtp4jF+-P+4kSmt1sAezrkPFk5rK4=whNEWuA@mail.gmail.com>
- <CAMRc=MfEo6=im5EPHYtht3xN83k+rcRgQDSOB=Ucs52M8RWirg@mail.gmail.com> <CACRpkdY1u2xEFzJPrat73me11wdY9uGCK=FWWWzLkBY505JrUw@mail.gmail.com>
-In-Reply-To: <CACRpkdY1u2xEFzJPrat73me11wdY9uGCK=FWWWzLkBY505JrUw@mail.gmail.com>
-From:   Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Date:   Wed, 25 Mar 2020 12:35:55 +0100
-Message-ID: <CAMpxmJXXdmW_2MhUSGYZGy8xWy=oQKgng+cphzU-WDqQUKe=Dw@mail.gmail.com>
-Subject: Re: [PATCH 2/3] gpiolib: use kref in gpio_desc
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Bartosz Golaszewski <brgl@bgdev.pl>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Khouloud Touil <ktouil@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <1dff1b277e5d2c95ce100a2daff4967f98d074ba.camel@perches.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.75.127.48]
+X-ClientProxiedBy: SFHDAG3NODE2.st.com (10.75.127.8) To SFHDAG3NODE1.st.com
+ (10.75.127.7)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.645
+ definitions=2020-03-25_05:2020-03-24,2020-03-25 signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-=C5=9Br., 25 mar 2020 o 12:16 Linus Walleij <linus.walleij@linaro.org> napi=
-sa=C5=82(a):
->
-> On Mon, Mar 23, 2020 at 9:44 AM Bartosz Golaszewski <brgl@bgdev.pl> wrote=
-:
->
-> > Hi Linus,
-> >
-> > what is your decision on this? Because if we don't merge this, then we
-> > need to make sure nvmem doesn't call gpiod_put() for descriptors it
-> > didn't obtain itself and we should probably fix it this week.
->
-> I'm simply just overloaded right now, things related to how the world
-> looks etc. Also Torvalds writes in Documentation/process/management-style=
-.rst
-> that if someone ask you to make a decision, you are screwed :/
->
 
-I see, yeah the times are uncertain for sure. :(
 
-> Your decision is as good as mine, I'm not smarter in any
-> way so if it is urgent send me a pull request for the solution that seems=
- best
-> to you, I trust you on this.
->
+On 3/24/20 6:23 PM, Joe Perches wrote:
+> On Tue, 2020-03-24 at 18:04 +0100, Arnaud Pouliquen wrote:
+>> This driver exposes a standard TTY interface on top of the rpmsg
+>> framework through a rpmsg service.
+>>
+>> This driver supports multi-instances, offering a /dev/ttyRPMSGx entry
+>> per rpmsg endpoint.
+> 
+> trivial notes:
+> 
+>> diff --git a/Documentation/serial/tty_rpmsg.rst b/Documentation/serial/tty_rpmsg.rst
+> []
+>> +The rpmsg tty driver implements serial communication on the RPMsg bus to makes possible for user-space programs to send and receive rpmsg messages as a standard tty protocol.
+> 
+> Very long text lines missing newlines?
+> 
+> []
+>> +To be compliant with this driver, the remote firmware must create its data end point associated with the "rpmsg-tty-raw" service.
+> []
+>> +To be compatible with this driver, the remote firmware must create or use its end point associated with "rpmsg-tty-ctrl" service, plus a second endpoint for the data flow.
+>> +On Linux rpmsg_tty probes, the data endpoint address and the CTS (set to disable)
+> 
+> []
+> 
+>> diff --git a/drivers/tty/rpmsg_tty.c b/drivers/tty/rpmsg_tty.c
+> []
+>> +typedef void (*rpmsg_tty_rx_cb_t)(struct rpmsg_device *, void *, int, void *,
+>> +				  u32);
+> 
+> unused typedef?
 
-There are no users right now of the broken interface, so I'll just
-send a patch with an appropriate comment to Srinivas for the time
-being and we can try to fix it in the next release.
+yes i will clean it.
 
-Bartosz
+> 
+> []
+> 
+>> +static int __init rpmsg_tty_init(void)
+>> +{
+> []
+>> +	err = tty_register_driver(rpmsg_tty_driver);
+>> +	if (err < 0) {
+>> +		pr_err("Couldn't install rpmsg tty driver: err %d\n", err);
+>> +		goto error_put;
+>> +	}
+> 
+> Might use vsprintf extension %pe
+> 
+> 		pr_err("Couldn't install rpmsg tty driver: %pe\n", ERR_PTR(err));
+
+Seems not possible here as err is an integer value and not a pointer cast to an integer,
+or I missed something?
+
+
+Thanks for the review,
+Arnaud
+> 
+>> +	err = register_rpmsg_driver(&rpmsg_tty_rpmsg_drv);
+>> +	if (err < 0) {
+>> +		pr_err("Couldn't register rpmsg tty driver: err %d\n", err);
+> 
+> etc.
+> 
+> 
