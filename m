@@ -2,100 +2,137 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A7D18192E4A
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 17:34:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CA977192E58
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 17:39:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727530AbgCYQeF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Mar 2020 12:34:05 -0400
-Received: from mail-pj1-f66.google.com ([209.85.216.66]:37284 "EHLO
-        mail-pj1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727275AbgCYQeF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Mar 2020 12:34:05 -0400
-Received: by mail-pj1-f66.google.com with SMTP id o12so1227416pjs.2
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Mar 2020 09:34:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=d/mwcS2k49Q8FtkpWy9oWS3FImYCLq2+zg7rNJhSOZg=;
-        b=cCxSv0lUkGe2EkApXp9qAszTvolABAR+7z9AuUMmHhvDbeRZpWR6Q0bYuAPqFUF6Zp
-         jAqjCTAjkGIbSmWBIMSVXhJN66nTO6w4p8bJGqbMGN0RHan4V/rN4nSpCoCZW/+IZ6Lb
-         BapU1uUUBkAzcg6RjyW9DQk9sAa9zz9BVA+3jFW4plA85kvU4GJN2702eW4e7McqWvGD
-         vqNc4jpN6Islq1dfjZ+sI3gFRBxhl9R7Wxh+vHtiJsDfeEADMZK5MKd2zrcYY7mHxonR
-         FLL/P9nRwVdwkoJlihPemv1VYENWVfU4m5DOYZYY4ZipQAOx0dPlpJrEcWA7pK8BdsOj
-         UcwA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=d/mwcS2k49Q8FtkpWy9oWS3FImYCLq2+zg7rNJhSOZg=;
-        b=B6dMagGMh2N6kAyYHh0qgOEGhujn337id75oSBxSta7ctJWR2bNw62/WwQiW8oYkz9
-         QUtKbNo4A5Uw2fHXxftZnPxzy/dv6vcu+qccFbEW1b6PUkazAau6+g4XsyEOwTnYhwW3
-         epxMDA7fTmol+EEqyogUgK6O0rem5vOvZmcgMuUst7DPpopWyvLNUu3xinh8W5eH097x
-         /fDEi7FcLFrAmi8UyIeXWsuteeCjaEGOMJet5Mu74wCtrgsuJfAAZtlVTurU77ocMzOn
-         8GvmtFs7zc6to9TGZpu91mJ8pAMpGUyg5tGnO8VbYDjfuu0CvEW8w0Gjr4N+YtF0LMf0
-         DCfQ==
-X-Gm-Message-State: ANhLgQ2rLvnHaWOREfn7iP3c/u7ljAfdVTEkOLzuhj1mLhJgzCHCQfsW
-        8NMzG6St66Rk4Ig88TE+APdceNHXfUje6JS1XxbCtg==
-X-Google-Smtp-Source: ADFU+vtCxCivYqNY8mO/9aWa/cKHkQkKuRGcuG8inKcGrdz+TlM7ovpnPxVq4LLDz6GsobBMJqt1oTu+L8Xs6yWLSDM=
-X-Received: by 2002:a17:90a:32c5:: with SMTP id l63mr4814987pjb.47.1585154043671;
- Wed, 25 Mar 2020 09:34:03 -0700 (PDT)
+        id S1727751AbgCYQjV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Mar 2020 12:39:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39030 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727464AbgCYQjU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Mar 2020 12:39:20 -0400
+Received: from paulmck-ThinkPad-P72.home (50-39-105-78.bvtn.or.frontiernet.net [50.39.105.78])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6311D2073E;
+        Wed, 25 Mar 2020 16:39:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1585154359;
+        bh=A1GPX4wlECfGGG7gTSHHrGt3spoxTdKZ1xy9utwV/BA=;
+        h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+        b=APOdz2w7EH+7D58vqGoNgP8mOHfbNma8Ty1WIG8jpBICPSinl9OycWqb0OdtxkciV
+         gxpkAVRwhIe+WxIGCYwXBH73yF99ZY9v+QEk7Sp75Ev8c6B1ujrOAxGnV4ZUKw4afx
+         Pt8nI6CO51v4M2JmrHTqBAusgH99DwWPqLUsLFTU=
+Received: by paulmck-ThinkPad-P72.home (Postfix, from userid 1000)
+        id 325E9352094D; Wed, 25 Mar 2020 09:39:19 -0700 (PDT)
+Date:   Wed, 25 Mar 2020 09:39:19 -0700
+From:   "Paul E. McKenney" <paulmck@kernel.org>
+To:     Sebastian Siewior <bigeasy@linutronix.de>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Kurt Schwemmer <kurt.schwemmer@microsemi.com>,
+        linux-pci@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Felipe Balbi <balbi@kernel.org>, linux-usb@vger.kernel.org,
+        Kalle Valo <kvalo@codeaurora.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        platform-driver-x86@vger.kernel.org,
+        Zhang Rui <rui.zhang@intel.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        linux-pm@vger.kernel.org, Len Brown <lenb@kernel.org>,
+        linux-acpi@vger.kernel.org, kbuild test robot <lkp@intel.com>,
+        Nick Hu <nickhu@andestech.com>,
+        Greentime Hu <green.hu@gmail.com>,
+        Vincent Chen <deanbo422@gmail.com>,
+        Guo Ren <guoren@kernel.org>, linux-csky@vger.kernel.org,
+        Brian Cain <bcain@codeaurora.org>,
+        linux-hexagon@vger.kernel.org, Tony Luck <tony.luck@intel.com>,
+        Fenghua Yu <fenghua.yu@intel.com>, linux-ia64@vger.kernel.org,
+        Michal Simek <monstr@monstr.eu>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Geoff Levand <geoff@infradead.org>,
+        linuxppc-dev@lists.ozlabs.org, Davidlohr Bueso <dbueso@suse.de>
+Subject: Re: Documentation/locking/locktypes: Further clarifications and
+ wordsmithing
+Message-ID: <20200325163919.GU19865@paulmck-ThinkPad-P72>
+Reply-To: paulmck@kernel.org
+References: <20200323025501.GE3199@paulmck-ThinkPad-P72>
+ <87r1xhz6qp.fsf@nanos.tec.linutronix.de>
+ <20200325002811.GO19865@paulmck-ThinkPad-P72>
+ <87wo78y5yy.fsf@nanos.tec.linutronix.de>
+ <20200325160212.oavrni7gmzudnczv@linutronix.de>
 MIME-Version: 1.0
-References: <20191121235058.21653-1-davidgow@google.com> <CAFd5g46Z_vVb92Y-sfWi68=HFy5+kukZXvT9usEEnhBUvPg3AQ@mail.gmail.com>
- <CABVgOSn1azUN4XujHLsc3NY9fOUPB4Vw6930zc4oR26kxqrwOg@mail.gmail.com>
-In-Reply-To: <CABVgOSn1azUN4XujHLsc3NY9fOUPB4Vw6930zc4oR26kxqrwOg@mail.gmail.com>
-From:   Brendan Higgins <brendanhiggins@google.com>
-Date:   Wed, 25 Mar 2020 09:33:52 -0700
-Message-ID: <CAFd5g44ZNv-BP_t6M1EWQjXbgBYsA0+oBZ_-nTAmZbE4GNWgpQ@mail.gmail.com>
-Subject: Re: [PATCH kselftest/test] kunit: Always print actual pointer values
- in asserts
-To:     shuah <shuah@kernel.org>, David Gow <davidgow@google.com>
-Cc:     Kees Cook <keescook@chromium.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        KUnit Development <kunit-dev@googlegroups.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200325160212.oavrni7gmzudnczv@linutronix.de>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 24, 2020 at 8:33 PM David Gow <davidgow@google.com> wrote:
->
-> On Tue, Dec 3, 2019 at 3:44 PM Brendan Higgins
-> <brendanhiggins@google.com> wrote:
-> >
-> > On Thu, Nov 21, 2019 at 3:51 PM David Gow <davidgow@google.com> wrote:
-> > >
-> > > KUnit assertions and expectations will print the values being tested. If
-> > > these are pointers (e.g., KUNIT_EXPECT_PTR_EQ(test, a, b)), these
-> > > pointers are currently printed with the %pK format specifier, which -- to
-> > > prevent information leaks which may compromise, e.g., ASLR -- are often
-> > > either hashed or replaced with ____ptrval____ or similar, making debugging
-> > > tests difficult.
-> > >
-> > > By replacing %pK with %px as Documentation/core-api/printk-formats.rst
-> > > suggests, we disable this security feature for KUnit assertions and
-> > > expectations, allowing the actual pointer values to be printed. Given
-> > > that KUnit is not intended for use in production kernels, and the
-> > > pointers are only printed on failing tests, this seems like a worthwhile
-> > > tradeoff.
-> >
-> > I agree. However, I also remember that others in the past yelled at me
-> > for assuming that KUnit would not be built into production kernels.
-> >
-> > I feel like +Kees Cook would have a good opinion on this (or will at
-> > least CC the right people).
-> >
->
-> I'm tempted to take the silence as a sign that no-one is upset by
-> this. Otherwise, consider this a gentle reminder to file any
-> objections you may have. :-)
->
-> Otherwise, I've confirmed that this still applies cleanly to the
-> latest linux-kselftest/kunit branch, so -- assuming there are no
-> last-minute objections -- this ought to be ready to go.
+On Wed, Mar 25, 2020 at 05:02:12PM +0100, Sebastian Siewior wrote:
+> On 2020-03-25 13:27:49 [+0100], Thomas Gleixner wrote:
+> > The documentation of rw_semaphores is wrong as it claims that the non-owner
+> > reader release is not supported by RT. That's just history biased memory
+> > distortion.
+> > 
+> > Split the 'Owner semantics' section up and add separate sections for
+> > semaphore and rw_semaphore to reflect reality.
+> > 
+> > Aside of that the following updates are done:
+> > 
+> >  - Add pseudo code to document the spinlock state preserving mechanism on
+> >    PREEMPT_RT
+> > 
+> >  - Wordsmith the bitspinlock and lock nesting sections
+> > 
+> > Co-developed-by: Paul McKenney <paulmck@kernel.org>
+> > Signed-off-by: Paul McKenney <paulmck@kernel.org>
+> > Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+> Acked-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+> 
+> > --- a/Documentation/locking/locktypes.rst
+> > +++ b/Documentation/locking/locktypes.rst
+> …
+> > +rw_semaphore
+> > +============
+> > +
+> > +rw_semaphore is a multiple readers and single writer lock mechanism.
+> > +
+> > +On non-PREEMPT_RT kernels the implementation is fair, thus preventing
+> > +writer starvation.
+> > +
+> > +rw_semaphore complies by default with the strict owner semantics, but there
+> > +exist special-purpose interfaces that allow non-owner release for readers.
+> > +These work independent of the kernel configuration.
+> 
+> This reads funny, could be my English. "This works independent …" maybe?
 
-Shuah, can you pick this up for 5.7?
+The "These" refers to "interfaces", which is plural, so "These" rather
+than "This".  But yes, it is a bit awkward, because you have to skip
+back past "readers", "release", and "non-owner" to find the implied
+subject of that last sentence.
+
+So how about this instead, making the implied subject explicit?
+
+rw_semaphore complies by default with the strict owner semantics, but there
+exist special-purpose interfaces that allow non-owner release for readers.
+These interfaces work independent of the kernel configuration.
+
+							Thanx, Paul
