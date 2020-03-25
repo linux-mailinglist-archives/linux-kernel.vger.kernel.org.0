@@ -2,111 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 17FEF192E6D
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 17:42:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1E779192E75
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 17:42:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727549AbgCYQl5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Mar 2020 12:41:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40772 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727281AbgCYQl5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Mar 2020 12:41:57 -0400
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 335232073E
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Mar 2020 16:41:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585154516;
-        bh=yRf3oNqMwM2iTG7pyGx5Rsiqc2MPxpMsUz50QFD55ic=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=wNQncXlQb/kPiwpu/mNOFphhaZSdu97fZPMktrBI7ULMMXkPdoyM8nhLcnyLdX/rF
-         0K7Ar8NSbvT49k4sqi0+3CcxQyMV26BwaVwShTFQHaevvIOen/kfKLhTT5Dd5x0x8l
-         xzefK26AVtCdsvDcHKGeToClSagQaDx2iO16yAcw=
-Received: by mail-wm1-f51.google.com with SMTP id a81so3494084wmf.5
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Mar 2020 09:41:56 -0700 (PDT)
-X-Gm-Message-State: ANhLgQ0IisdLjohdU4nBp9xW+uk9KHMQ4E1hNrhSszB3rVz3xYaKbVgf
-        Fjz+CM+6rUJURI+fE6r1NVXEF/xKMmL+9/x4hc3DZQ==
-X-Google-Smtp-Source: ADFU+vta9fWvKi78EiQgK6NXqyVsyEPSz4RCJCiGEaOzJ6l59KxD8f76QU5aW9FhDm0K613szx7H2SBu9jYqH3AMzTA=
-X-Received: by 2002:a7b:c050:: with SMTP id u16mr4608096wmc.68.1585154514613;
- Wed, 25 Mar 2020 09:41:54 -0700 (PDT)
+        id S1727906AbgCYQmS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Mar 2020 12:42:18 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:46050 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727799AbgCYQmQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Mar 2020 12:42:16 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=mRHWpcrmchRbU0owKTcqFGIDS9+Dwj9bNBh2URMrFd8=; b=mgZzgtbyEo8KJZgK8cuoRLaS3F
+        80P9siBMVb+J7I87vgTBr0msEZJWoQrRxICZd2DgP/r7wAk9LA6mVCRmcznNentWYNbzUndA/nEvY
+        CidVPrN8hF6oFANViKQraeI8RhulIBtzVr4a9uCYc9hLZW5ak3KEYxRSuW8gaJjtKGe8/9bvE2vjY
+        WS0nCwbe+8zOexAYCy1Z9L4ymiknO5OI5gBa49Q2AiYELwqgzKGsaxGuFe8LCKk4bkz13+LMzbNTe
+        OVo60W2gGGnSx4vqxqt1b7v1bR9JFJYyLV6taQrAAmRwOrw7ItfWOMSv5NuFXSfhekYfHQgMFyes7
+        nmRODt0A==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jH96B-0004TC-6K; Wed, 25 Mar 2020 16:41:47 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 813823010CF;
+        Wed, 25 Mar 2020 17:41:44 +0100 (CET)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 665E829A7FACF; Wed, 25 Mar 2020 17:41:44 +0100 (CET)
+Date:   Wed, 25 Mar 2020 17:41:44 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     James Morse <james.morse@arm.com>
+Cc:     Zhenyu Ye <yezhenyu2@huawei.com>, will@kernel.org,
+        mark.rutland@arm.com, catalin.marinas@arm.com,
+        aneesh.kumar@linux.ibm.com, akpm@linux-foundation.org,
+        npiggin@gmail.com, arnd@arndb.de, rostedt@goodmis.org,
+        maz@kernel.org, suzuki.poulose@arm.com, tglx@linutronix.de,
+        yuzhao@google.com, Dave.Martin@arm.com, steven.price@arm.com,
+        broonie@kernel.org, guohanjun@huawei.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-arch@vger.kernel.org, linux-mm@kvack.org, arm@kernel.org,
+        xiexiangyou@huawei.com, prime.zeng@hisilicon.com,
+        zhangshaokun@hisilicon.com
+Subject: Re: [RFC PATCH v4 0/6] arm64: tlb: add support for TTL feature
+Message-ID: <20200325164144.GB20696@hirez.programming.kicks-ass.net>
+References: <20200324134534.1570-1-yezhenyu2@huawei.com>
+ <aaf017a8-3658-fe4d-c0cf-2f45656020af@arm.com>
 MIME-Version: 1.0
-References: <20200319192855.29876-1-nivedita@alum.mit.edu> <20200320020028.1936003-1-nivedita@alum.mit.edu>
-In-Reply-To: <20200320020028.1936003-1-nivedita@alum.mit.edu>
-From:   Ard Biesheuvel <ardb@kernel.org>
-Date:   Wed, 25 Mar 2020 17:41:43 +0100
-X-Gmail-Original-Message-ID: <CAKv+Gu8-iK-FQrgCY6YGXyg155chMPJQZeQr-i_xQbqoQ57F0g@mail.gmail.com>
-Message-ID: <CAKv+Gu8-iK-FQrgCY6YGXyg155chMPJQZeQr-i_xQbqoQ57F0g@mail.gmail.com>
-Subject: Re: [PATCH v2 00/14] efi/gop: Refactoring + mode-setting feature
-To:     Arvind Sankar <nivedita@alum.mit.edu>
-Cc:     Hans de Goede <hdegoede@redhat.com>,
-        linux-efi <linux-efi@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aaf017a8-3658-fe4d-c0cf-2f45656020af@arm.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 20 Mar 2020 at 03:00, Arvind Sankar <nivedita@alum.mit.edu> wrote:
->
-> This series is against tip:efi/core.
->
-> Patches 1-9 are small cleanups and refactoring of the code in
-> libstub/gop.c.
->
-> The rest of the patches add the ability to use a command-line option to
-> switch the gop's display mode.
->
-> The options supported are:
-> video=efifb:mode=n
->         Choose a specific mode number
-> video=efifb:<xres>x<yres>[-(rgb|bgr|<bpp>)]
->         Specify mode by resolution and optionally color depth
-> video=efifb:auto
->         Let the EFI stub choose the highest resolution mode available.
->
-> The mode-setting additions increase code size of gop.o by about 3k on
-> x86-64 with EFI_MIXED enabled.
->
-> Changes in v2 (HT lkp@intel.com):
-> - Fix __efistub_global attribute to be after the variable.
->   (NB: bunch of other places should ideally be fixed, those I guess
->   don't matter as they are scalars?)
-> - Silence -Wmaybe-uninitialized warning in set_mode function.
->
+On Wed, Mar 25, 2020 at 04:15:58PM +0000, James Morse wrote:
+> Hi Zhenyu,
+> 
+> On 3/24/20 1:45 PM, Zhenyu Ye wrote:
+> > In order to reduce the cost of TLB invalidation, the ARMv8.4 TTL
+> > feature allows TLBs to be issued with a level allowing for quicker
+> > invalidation.  This series provide support for this feature. 
+> > 
+> > Patch 1 and Patch 2 was provided by Marc on his NV series[1] patches,
+> > which detect the TTL feature and add __tlbi_level interface.
+> 
+> How does this interact with THP?
+> (I don't see anything on that in the series.)
+> 
+> With THP, there is no one answer to the size of mapping in a VMA.
+> This is a problem because the arm-arm has in "Translation table level
+> hints" in D5.10.2 of DDI0487E.a:
+> | If an incorrect value for the entry being invalidated by the
+> | instruction is specified in the TTL field, then no entries are
+> | required by the architecture to be invalidated from the TLB.
+> 
+> If we get it wrong, not TLB maintenance occurs!
+> 
+> Unless THP leaves its fingerprints on the vma, I think you can only do
+> this for VMA types that THP can't mess with. (see
+> transparent_hugepage_enabled())
 
-These look good to me. The only question I have is whether it would be
-possible to use the existing next_arg() and parse_option_str()
-functions to replace some of the open code parsing that goes on in
-patches 11 - 14.
+The convention way to deal with that is to issue the TBLI for all
+possible sizes.
 
-
-> Arvind Sankar (14):
->   efi/gop: Remove redundant current_fb_base
->   efi/gop: Move check for framebuffer before con_out
->   efi/gop: Get mode information outside the loop
->   efi/gop: Factor out locating the gop into a function
->   efi/gop: Slightly re-arrange logic of find_gop
->   efi/gop: Move variable declarations into loop block
->   efi/gop: Use helper macros for populating lfb_base
->   efi/gop: Use helper macros for find_bits
->   efi/gop: Remove unreachable code from setup_pixel_info
->   efi/gop: Add prototypes for query_mode and set_mode
->   efi/gop: Allow specifying mode number on command line
->   efi/gop: Allow specifying mode by <xres>x<yres>
->   efi/gop: Allow specifying depth as well as resolution
->   efi/gop: Allow automatically choosing the best mode
->
->  Documentation/fb/efifb.rst                    |  33 +-
->  arch/x86/include/asm/efi.h                    |   4 +
->  .../firmware/efi/libstub/efi-stub-helper.c    |   3 +
->  drivers/firmware/efi/libstub/efistub.h        |   8 +-
->  drivers/firmware/efi/libstub/gop.c            | 489 ++++++++++++++----
->  5 files changed, 428 insertions(+), 109 deletions(-)
->
->
-> base-commit: d5528d5e91041e68e8eab9792ce627705a0ed273
-> --
-> 2.24.1
->
+Power9 has all this, please look there.
