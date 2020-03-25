@@ -2,78 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6CACE1926D2
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 12:10:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4E48D1926DA
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 12:10:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727460AbgCYLJV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Mar 2020 07:09:21 -0400
-Received: from honk.sigxcpu.org ([24.134.29.49]:37726 "EHLO honk.sigxcpu.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727383AbgCYLJQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Mar 2020 07:09:16 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by honk.sigxcpu.org (Postfix) with ESMTP id 1A088FB05;
-        Wed, 25 Mar 2020 12:09:15 +0100 (CET)
-X-Virus-Scanned: Debian amavisd-new at honk.sigxcpu.org
-Received: from honk.sigxcpu.org ([127.0.0.1])
-        by localhost (honk.sigxcpu.org [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id bp-iItKMyRHl; Wed, 25 Mar 2020 12:09:13 +0100 (CET)
-Received: by bogon.sigxcpu.org (Postfix, from userid 1000)
-        id 78BA740208; Wed, 25 Mar 2020 12:09:08 +0100 (CET)
-From:   =?UTF-8?q?Guido=20G=C3=BCnther?= <agx@sigxcpu.org>
-To:     Tomas Novotny <tomas@novotny.cz>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        "Angus Ainslie (Purism)" <angus@akkea.ca>,
-        =?UTF-8?q?Guido=20G=C3=BCnther?= <agx@sigxcpu.org>,
-        Marco Felsch <m.felsch@pengutronix.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Nishant Malpani <nish.malpani25@gmail.com>
-Subject: [PATCH v3 4/4] Documentation: ABI: document IIO in_proximity_near_level file
-Date:   Wed, 25 Mar 2020 12:09:08 +0100
-Message-Id: <bffa50e16f64df2a97913d9a9e87481c6e7e4852.1585134362.git.agx@sigxcpu.org>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <cover.1585134362.git.agx@sigxcpu.org>
-References: <cover.1585134362.git.agx@sigxcpu.org>
+        id S1727556AbgCYLJr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Mar 2020 07:09:47 -0400
+Received: from lb3-smtp-cloud9.xs4all.net ([194.109.24.30]:43879 "EHLO
+        lb3-smtp-cloud9.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726043AbgCYLJr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Mar 2020 07:09:47 -0400
+Received: from [192.168.2.10] ([46.9.234.233])
+        by smtp-cloud9.xs4all.net with ESMTPA
+        id H3umjbcsrfHuvH3upjwsDV; Wed, 25 Mar 2020 12:09:44 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=xs4all.nl; s=s1;
+        t=1585134584; bh=aeOdGZ6OgFt69qgvqx7eLLn3NGTxKw+2xezfTroXWTA=;
+        h=Subject:To:From:Message-ID:Date:MIME-Version:Content-Type:From:
+         Subject;
+        b=tzGy0N9y8M4l52nouIG4+WU6Z4gkn/Mdp1HQBA9tAkgNVOaG8GPhh1aetpvt4kiks
+         /YQCaHbme2Sc6/8N+gXYTd3b0XVe6ZPOP3K7+71sUKaUGWlpAgg+6dL94jRqcBweed
+         Sq9ci3BsuGd3kycMJhAEuo3pxnjBGoXZ1RE/d0z/5Y9V4QFB7ywXSHKd+34alM31a2
+         dw7rWlK1pBcy8D2hsO+j+Gabu1ZZS60UJ+DPRCqLzIHk20AG9GlRbS+KJvUxMxyt82
+         mmfrNDYqpG3Jasx3wFv1sOJctAaKM5vitwzRNo8Uk41bieJCCmlmRf/E86bJlF+nDP
+         Ea9T3arrgpYsA==
+Subject: Re: [RFC PATCH v5 6/9] media: tegra: Add Tegra210 Video input driver
+To:     Sakari Ailus <sakari.ailus@iki.fi>,
+        Sowjanya Komatineni <skomatineni@nvidia.com>
+Cc:     thierry.reding@gmail.com, jonathanh@nvidia.com, frankc@nvidia.com,
+        helen.koike@collabora.com, digetx@gmail.com, sboyd@kernel.org,
+        linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <1584985955-19101-1-git-send-email-skomatineni@nvidia.com>
+ <1584985955-19101-7-git-send-email-skomatineni@nvidia.com>
+ <20200325110358.GB853@valkosipuli.retiisi.org.uk>
+From:   Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <af710b95-55a5-8f20-6617-c1e6f9a3fe79@xs4all.nl>
+Date:   Wed, 25 Mar 2020 12:09:40 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200325110358.GB853@valkosipuli.retiisi.org.uk>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4wfASr57v1HrYBEDdTrXofqBhy5OyWTJt9e1V2D9AsPGRLMdFLfrHk4JYIO/wJ8mCWc1kRrmVkRa3VMq/uRJjL99iLl7N3BQCHPjDmyAQvJl8GwbmviRpJ
+ 2kUGLaETo3kWiJv6ySSmQWBpkKYrmuwcB2EMoZ1mW0Qm292OoTclC422cdpsXmO/WqAkjyyS0k4XkBHIHL0HAip25nzPrTG0jiH+FxVB68S0kpJOKPet4AX4
+ cKqSYUcpP8ilU8Y6A+FI0PYh2Kfa2Rntk2bTiDE6vyD164N4lGNuSCoxAMD3m3aI2c0Y8yVM1DzRtpfaJZRdKVJpXnzGUWe8hxruHe3nC1G78tAB4xuyXFCs
+ LZEvgsPZFojuOcunPRJllbqYEwItiTzawgSVgy7f5W4JzIeI9hwNjCexX/E3bRrMAia56iDlLuWNvv3GdagGtJvjLr3cCaWJGyT7YK64pilWc8V8d9L8GTx0
+ XMEjizaV/E3frWDaNwoQVml+qXb9HziBMu4vg6K7qXG1i7HwcEFNO+MrZ4b+IBRCHv2lQWTR6xAoUmdTTWDWTZwki51tM9JQdsORcSH7huS5XfzcBKp5ZDnD
+ XGk=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The vcnl4000 IIO driver introduced a new attribute
-"in_proximity_near_level".  This adds it to the list of documented ABI
-for sysfs-bus-iio.
+On 3/25/20 12:03 PM, Sakari Ailus wrote:
+> Hi Sowjanya,
+> 
+> Thanks for the patchset.
+> 
+> On Mon, Mar 23, 2020 at 10:52:32AM -0700, Sowjanya Komatineni wrote:
+>> Tegra210 contains a powerful Video Input (VI) hardware controller
+>> which can support up to 6 MIPI CSI camera sensors.
+>>
+>> Each Tegra CSI port can be one-to-one mapped to VI channel and can
+>> capture from an external camera sensor connected to CSI or from
+>> built-in test pattern generator.
+>>
+>> Tegra210 supports built-in test pattern generator from CSI to VI.
+>>
+>> This patch adds a V4L2 media controller and capture driver support
+>> for Tegra210 built-in CSI to VI test pattern generator.
+>>
+>> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+>> ---
+>>  drivers/staging/media/Kconfig              |    2 +
+>>  drivers/staging/media/Makefile             |    1 +
+>>  drivers/staging/media/tegra/Kconfig        |   10 +
+>>  drivers/staging/media/tegra/Makefile       |    8 +
+>>  drivers/staging/media/tegra/TODO           |   10 +
+>>  drivers/staging/media/tegra/tegra-common.h |  263 +++++++
+>>  drivers/staging/media/tegra/tegra-csi.c    |  522 ++++++++++++++
+>>  drivers/staging/media/tegra/tegra-csi.h    |  118 ++++
+>>  drivers/staging/media/tegra/tegra-vi.c     | 1058 ++++++++++++++++++++++++++++
+>>  drivers/staging/media/tegra/tegra-vi.h     |   83 +++
+>>  drivers/staging/media/tegra/tegra-video.c  |  129 ++++
+>>  drivers/staging/media/tegra/tegra-video.h  |   32 +
+>>  drivers/staging/media/tegra/tegra210.c     |  754 ++++++++++++++++++++
+>>  drivers/staging/media/tegra/tegra210.h     |  192 +++++
+> 
+> Why staging? Are there reasons not to aim this to the kernel proper right
+> away? If you only support TPG, the driver may not have too many (if any)
+> real users anyway.
 
-Signed-off-by: Guido Günther <agx@sigxcpu.org>
----
- Documentation/ABI/testing/sysfs-bus-iio-proximity | 10 ++++++++++
- 1 file changed, 10 insertions(+)
- create mode 100644 Documentation/ABI/testing/sysfs-bus-iio-proximity
+A TPG-only driver is not very useful, and I do not believe that belongs in
+the kernel proper. The next phase will add sensor support, and that's a good
+time to move it in the kernel itself.
 
-diff --git a/Documentation/ABI/testing/sysfs-bus-iio-proximity b/Documentation/ABI/testing/sysfs-bus-iio-proximity
-new file mode 100644
-index 000000000000..2172f3bb9c64
---- /dev/null
-+++ b/Documentation/ABI/testing/sysfs-bus-iio-proximity
-@@ -0,0 +1,10 @@
-+What:		/sys/bus/iio/devices/iio:deviceX/in_proximity_nearlevel
-+Date:		March 2020
-+KernelVersion:	5.7
-+Contact:	linux-iio@vger.kernel.org
-+Description:
-+		Near level for proximity sensors. This is a single integer
-+		value that tells user space when an object should be
-+		considered close to the device. If the value read from the
-+		sensor is above or equal to the value in this file an object
-+		should typically be considered near.
--- 
-2.23.0
+Regards,
 
+	Hans
