@@ -2,179 +2,241 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A96BF1923AF
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 10:08:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3E3131923C2
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 10:11:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726658AbgCYJI0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Mar 2020 05:08:26 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:39185 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726043AbgCYJIZ (ORCPT
+        id S1726313AbgCYJLL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Mar 2020 05:11:11 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:39062 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725873AbgCYJLL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Mar 2020 05:08:25 -0400
-Received: by mail-wm1-f65.google.com with SMTP id a9so1561119wmj.4
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Mar 2020 02:08:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:autocrypt:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=MQmDKc2OOuhg0S7JTZ9RlpmduADvX5XBc9//ZGFgkjM=;
-        b=TIgoNJ9FGuPxG/N0Uy41SZEGQwAeUDBR8OmesazOg1w6n/YAjYCaPjR11150qJ/l2C
-         7zsIkppflblREsB/tjLsFmAhoCuFx+MVpf3RroQL5A0uZLz6RFxS3lMERhvdQVVWmQhF
-         P3xMbBrmj4BcUXNsVmSiFkYUX0xdWI/Xf3RVew8hXLXl4e0z4YAedK8gf3fmyPF3ZVXh
-         dUGW91LJEaor3NMQ7UkHC075s/qC3khdGJ/VKIBZrw6+hSVIG7/LedWu/7FxBTmRBaiJ
-         P/XcZD5+tvh6b/4aZqklsXiztNzlPdr9nQnpWpqRM/hpxBE3fHkcKZmno0Hw0bTZwm/9
-         CQ8w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=MQmDKc2OOuhg0S7JTZ9RlpmduADvX5XBc9//ZGFgkjM=;
-        b=KaniXcpNeT/xRBpO/R+vV2/oyztiXAWtOiLe1pPC2AMTnGzTXyJ1hexs16vulgRDIJ
-         VSPgoXK/LDuHVeWxiFWEpnAypdvyQjRvu1V75cy29TrAENpAgyUkH6IQkLEokZPWSr6t
-         SiSsuOyPcl/kBf2nu37k/ccbqfkJLA0C0WWMpK/Ea+hXY7Ed2OWuYe02igd1d7GdTZmN
-         aBwT5WOdUI3id7fLAmpPA5TIEwZ6pdwIaCJxDjHdkownRiGphi7N/t/6+7RFCI1fuyzS
-         ONzY6JNABEpZ+V4TIN5ejN+3w/puMYferSvYZ1GMP8bLBUxp54GXpYm2TKXE+uIubAGc
-         Goug==
-X-Gm-Message-State: ANhLgQ3FgcweeF6MZ1jcMmP8tuKTYTEaZcO7aWFPSJ5RIBGuXke9iNvR
-        E+n+QbF9SIzlYQ6hbQTJdDd05pT+Jnk=
-X-Google-Smtp-Source: ADFU+vvVkUi2a069a1v80veVzBMVXnrmAlSnfi68i5da7I+cEwgfzSjVKnjls9ZF1K6qDeRHur6YZQ==
-X-Received: by 2002:a1c:4805:: with SMTP id v5mr2361057wma.98.1585127301904;
-        Wed, 25 Mar 2020 02:08:21 -0700 (PDT)
-Received: from [192.168.0.43] (lns-bzn-59-82-252-135-148.adsl.proxad.net. [82.252.135.148])
-        by smtp.googlemail.com with ESMTPSA id t5sm27015429wrr.93.2020.03.25.02.08.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 25 Mar 2020 02:08:21 -0700 (PDT)
-Subject: Re: [PATCH] dt-bindings: thermal: make cooling-maps property optional
-To:     Amit Kucheria <amit.kucheria@linaro.org>
-Cc:     Yuantian Tang <andy.tang@nxp.com>, Zhang Rui <rui.zhang@intel.com>,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
-References: <20200309045411.21859-1-andy.tang@nxp.com>
- <18c58e1b-583c-2308-ee60-a8923c2027ee@linaro.org>
- <CAHLCerPBxe=Az=EexxYQkgvhRO40JT0qEhnAwqnGbeesiU-bnQ@mail.gmail.com>
- <CAHLCerN6ccJ7zbj9uYKGp-b05q1o7HsaUyW_oTZmEJX1EWXWQQ@mail.gmail.com>
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-Autocrypt: addr=daniel.lezcano@linaro.org; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <a5d398ac-1ec7-487d-cfe6-82698b683237@linaro.org>
-Date:   Wed, 25 Mar 2020 10:08:20 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        Wed, 25 Mar 2020 05:11:11 -0400
+Received: from pendragon.ideasonboard.com (81-175-216-236.bb.dnainternet.fi [81.175.216.236])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id CFFD580C;
+        Wed, 25 Mar 2020 10:11:08 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1585127469;
+        bh=h0S77ZM+eorU0Bj5tWHi+EgzvOZ1BT+YGd02enoTmdk=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Aq8uYCH+3nd88qxPAUWcGyHandJr27L+DHMSaB2DpJeVoITAH5c1uafzoKIv0oJ6+
+         cKnqaT1IS/A77GYy87L73q2OEWSjaptG5+vBMPXSGK1PuEaRlLCeFCktKlJKUjbBmE
+         D09qm3urkl0FsKoEHv5u6Hfk0k2O4VPOQeaVKQJo=
+Date:   Wed, 25 Mar 2020 11:11:07 +0200
+From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To:     Dafna Hirschfeld <dafna3@gmail.com>
+Cc:     Hans Verkuil <hverkuil@xs4all.nl>,
+        Helen Koike <helen.koike@collabora.com>,
+        hans.verkuil@cisco.com, linux-rockchip@lists.infradead.org,
+        devicetree@vger.kernel.org, eddie.cai.linux@gmail.com,
+        mchehab@kernel.org, heiko@sntech.de, jacob2.chen@rock-chips.com,
+        jeffy.chen@rock-chips.com, zyc@rock-chips.com,
+        linux-kernel@vger.kernel.org, Tomasz Figa <tfiga@chromium.org>,
+        sakari.ailus@linux.intel.com, kernel@collabora.com,
+        Ezequiel Garcia <ezequiel@collabora.com>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        linux-arm-kernel@lists.infradead.org, zhengsq@rock-chips.com,
+        Jacob Chen <cc@rock-chips.com>,
+        Allon Huang <allon.huang@rock-chips.com>
+Subject: Re: [PATCH v8 05/14] media: rkisp1: add Rockchip ISP1 subdev driver
+Message-ID: <20200325091107.GB4760@pendragon.ideasonboard.com>
+References: <20190730184256.30338-1-helen.koike@collabora.com>
+ <20190730184256.30338-6-helen.koike@collabora.com>
+ <86e17716-193f-ca49-1104-9c599a667eeb@collabora.com>
+ <f229a840-bcf3-50c8-27c6-363c72de1d01@xs4all.nl>
+ <20190815193511.GB5011@pendragon.ideasonboard.com>
+ <CAJ1myNREvdbfw5t7RCX1RtBZnarXy7O6_+Cg89w7njWutijNqQ@mail.gmail.com>
+ <20200325071157.GA4760@pendragon.ideasonboard.com>
+ <CAJ1myNT5AdWRsJHn34xwWsO9XssnHdhsJRdwRgi+TfGguL+h=Q@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <CAHLCerN6ccJ7zbj9uYKGp-b05q1o7HsaUyW_oTZmEJX1EWXWQQ@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Disposition: inline
+In-Reply-To: <CAJ1myNT5AdWRsJHn34xwWsO9XssnHdhsJRdwRgi+TfGguL+h=Q@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 25/03/2020 07:37, Amit Kucheria wrote:
-> On Mon, Mar 16, 2020 at 9:43 PM Amit Kucheria <amit.kucheria@linaro.org> wrote:
->>
->> On Mon, Mar 16, 2020 at 8:22 PM Daniel Lezcano
->> <daniel.lezcano@linaro.org> wrote:
->>>
->>> On 09/03/2020 05:54, andy.tang@nxp.com wrote:
->>>> From: Yuantian Tang <andy.tang@nxp.com>
->>>>
->>>> Cooling-maps doesn't have to be a required property because there may
->>>> be no cooling device on system, or there are no enough cooling devices for
->>>> each thermal zone in multiple thermal zone cases since cooling devices
->>>> can't be shared.
->>>> So make this property optional to remove such limitations.
->>>>
->>>> For thermal zones with no cooling-maps, there could be critic trips
->>>> that can trigger CPU reset or shutdown. So they still can take actions.
->>>>
->>>> Signed-off-by: Yuantian Tang <andy.tang@nxp.com>
->>
->> Reviewed-by: Amit Kucheria <amit.kucheria@linaro.org>
->>
->>>
->>> Amit, I'm about to pick this patch, it will collide with the yaml
->>> conversion changes.
->>
->> Thanks for the headsup. I can fixup v3 when I respin.
->>
->> However, I've always interpreted this binding as follows:
->> - cooling-maps should be mandatory for active and passive trip types
->> otherwise there will be no cooling
->> - cooling-maps make no sense for critical trip type since we're
->> invoking system shutdown
->> - cooling-maps are optional for hot trip types.
->>
->> Is this your understanding too?
->>
->> We should be able to enforce this in YAML.
-> 
-> Rui, Daniel,
-> 
-> What do you think about the above interpretation of the cooling-maps bindings?
+Hi Dafna,
 
-Yes, I agree with the interpretation.
+On Wed, Mar 25, 2020 at 09:51:51AM +0100, Dafna Hirschfeld wrote:
+> On Wed, Mar 25, 2020 at 8:12 AM Laurent Pinchart wrote:
+> > On Wed, Mar 25, 2020 at 07:34:37AM +0100, Dafna Hirschfeld wrote:
+> > > On Thu, Aug 15, 2019 at 10:17 PM Laurent Pinchart wrote:
+> > > > On Wed, Aug 07, 2019 at 12:39:17PM +0200, Hans Verkuil wrote:
+> > > > > On 8/6/19 8:51 PM, Helen Koike wrote:
+> > > > > > On 7/30/19 3:42 PM, Helen Koike wrote:
+> > > > > >> From: Jacob Chen <jacob2.chen@rock-chips.com>
+> > > > > >>
+> > > > > >> Add the subdev driver for rockchip isp1.
+> > > > > >>
+> > > > > >> Signed-off-by: Jacob Chen <jacob2.chen@rock-chips.com>
+> > > > > >> Signed-off-by: Shunqian Zheng <zhengsq@rock-chips.com>
+> > > > > >> Signed-off-by: Yichong Zhong <zyc@rock-chips.com>
+> > > > > >> Signed-off-by: Jacob Chen <cc@rock-chips.com>
+> > > > > >> Signed-off-by: Eddie Cai <eddie.cai.linux@gmail.com>
+> > > > > >> Signed-off-by: Jeffy Chen <jeffy.chen@rock-chips.com>
+> > > > > >> Signed-off-by: Allon Huang <allon.huang@rock-chips.com>
+> > > > > >> Signed-off-by: Tomasz Figa <tfiga@chromium.org>
+> > > > > >> [fixed unknown entity type / switched to PIXEL_RATE]
+> > > > > >> Signed-off-by: Ezequiel Garcia <ezequiel@collabora.com>
+> > > > > >> [update for upstream]
+> > > > > >> Signed-off-by: Helen Koike <helen.koike@collabora.com>
+> > > > > >>
+> > > > > >> ---
+> > > > > >>
+> > > > > >> Changes in v8: None
+> > > > > >> Changes in v7:
+> > > > > >> - fixed warning because of unknown entity type
+> > > > > >> - fixed v4l2-compliance errors regarding rkisp1 formats, try formats
+> > > > > >> and default values
+> > > > > >> - fix typo riksp1/rkisp1
+> > > > > >> - redesign: remove mipi/csi subdevice, sensors connect directly to the
+> > > > > >> isp subdevice in the media topology now. As a consequence, remove the
+> > > > > >> hack in mipidphy_g_mbus_config() where information from the sensor was
+> > > > > >> being propagated through the topology.
+> > > > > >> - From the old dphy:
+> > > > > >>         * cache get_remote_sensor() in s_stream
+> > > > > >>         * use V4L2_CID_PIXEL_RATE instead of V4L2_CID_LINK_FREQ
+> > > > > >> - Replace stream state with a boolean
+> > > > > >> - code styling and checkpatch fixes
+> > > > > >> - fix stop_stream (return after calling stop, do not reenable the stream)
+> > > > > >> - fix rkisp1_isp_sd_get_selection when V4L2_SUBDEV_FORMAT_TRY is set
+> > > > > >> - fix get format in output (isp_sd->out_fmt.mbus_code was being ignored)
+> > > > > >> - s/intput/input
+> > > > > >> - remove #define sd_to_isp_sd(_sd), add a static inline as it will be
+> > > > > >> reused by the capture
+> > > > > >>
+> > > > > >>  drivers/media/platform/rockchip/isp1/rkisp1.c | 1286 +++++++++++++++++
+> > > > > >>  drivers/media/platform/rockchip/isp1/rkisp1.h |  111 ++
+> > > > > >>  2 files changed, 1397 insertions(+)
+> > > > > >>  create mode 100644 drivers/media/platform/rockchip/isp1/rkisp1.c
+> > > > > >>  create mode 100644 drivers/media/platform/rockchip/isp1/rkisp1.h
+> > > > > >>
+> > > > > >> diff --git a/drivers/media/platform/rockchip/isp1/rkisp1.c b/drivers/media/platform/rockchip/isp1/rkisp1.c
+> > > > > >> new file mode 100644
+> > > > > >> index 000000000000..6d0c0ffb5e03
+> > > > > >> --- /dev/null
+> > > > > >> +++ b/drivers/media/platform/rockchip/isp1/rkisp1.c
+> > > > > >> @@ -0,0 +1,1286 @@
+> > > > >
+> > > > > <snip>
+> > > > >
+> > > > > >> +static int rkisp1_isp_sd_get_fmt(struct v4l2_subdev *sd,
+> > > > > >> +                           struct v4l2_subdev_pad_config *cfg,
+> > > > > >> +                           struct v4l2_subdev_format *fmt)
+> > > > > >> +{
+> > > > > >> +  struct rkisp1_isp_subdev *isp_sd = sd_to_isp_sd(sd);
+> > > > > >> +  struct v4l2_mbus_framefmt *mf = &fmt->format;
+> > > > > >> +
+> > > > > >> +  if ((fmt->pad != RKISP1_ISP_PAD_SINK) &&
+> > > > > >> +      (fmt->pad != RKISP1_ISP_PAD_SOURCE_PATH)) {
+> > > > > >> +          fmt->format.code = MEDIA_BUS_FMT_FIXED;
+> > > > > >> +          /*
+> > > > > >> +           * NOTE: setting a format here doesn't make much sense
+> > > > > >> +           * but v4l2-compliance complains
+> > > > > >> +           */
+> > > > > >> +          fmt->format.width = RKISP1_DEFAULT_WIDTH;
+> > > > > >> +          fmt->format.height = RKISP1_DEFAULT_HEIGHT;
+> > > > > >
+> > > > > > As I had mentioned to you, this is called for the isp pads connected to the
+> > > > > > DMA engines for statistics and parameters (meta data).
+> > > > > >
+> > > > > > If I remove those, I get the following errors:
+> > > > > >
+> > > > > > Sub-Device ioctls (Sink Pad 1):
+> > > > > >         test Try VIDIOC_SUBDEV_ENUM_MBUS_CODE/FRAME_SIZE/FRAME_INTERVAL: OK
+> > > > > >                 fail: v4l2-test-subdevs.cpp(311): fmt.width == 0 || fmt.width > 65536
+> > > > > >                 fail: v4l2-test-subdevs.cpp(356): checkMBusFrameFmt(node, fmt.format)
+> > > > > >         test Try VIDIOC_SUBDEV_G/S_FMT: FAIL
+> > > > > >         test Try VIDIOC_SUBDEV_G/S_SELECTION/CROP: OK
+> > > > > >         test Active VIDIOC_SUBDEV_ENUM_MBUS_CODE/FRAME_SIZE/FRAME_INTERVAL: OK
+> > > > > >                 fail: v4l2-test-subdevs.cpp(311): fmt.width == 0 || fmt.width > 65536
+> > > > > >                 fail: v4l2-test-subdevs.cpp(356): checkMBusFrameFmt(node, fmt.format)
+> > > > > >         test Active VIDIOC_SUBDEV_G/S_FMT: FAIL
+> > > > > >         test Active VIDIOC_SUBDEV_G/S_SELECTION/CROP: OK
+> > > > > >         test VIDIOC_SUBDEV_G/S_FRAME_INTERVAL: OK (Not Supported)
+> > > > > >
+> > > > > > Here is the full log: http://ix.io/1QNt
+> > > > > >
+> > > > > > Is this a bug in v4l2-compliance?
+> > > > >
+> > > > > Yes and no :-)
+> > > > >
+> > > > > Currently v4l2-compliance assumes that only video is transferred over a media bus.
+> > > > > But that's not the case here, and testing the code field doesn't help v4l2-compliance
+> > > > > since MEDIA_BUS_FMT_FIXED is also still used by some older subdev drivers for video.
+> > > > >
+> > > > > I think we need a new bus format: MEDIA_BUS_FMT_FIXED_METADATA. Then v4l2-compliance
+> > > > > can tell it apart from the regular fixed video bus format.
+> > > >
+> > > > Wouldn't a pad flag that identifies the type of data transmitted by a
+> > > > pad be a better, backward-compatible option ? This could be useful for
+> > > > audio as well.
+> > >
+> > > Hi,
+> > > Can you explain what pad flag do you mean?
+> > > Do you mean adding a flag in the 'MEDIA_LNK_FL_*' list ?
+> >
+> > I meant MEDIA_PAD_FL_*. We could reserve a few bits in
+> > media_pad_desc.flags to tell what type of data is being transported.
+> >
+> So the idea is that when the MBUS format is MEDIA_BUS_FMT_FIXED,
+> then userspace should look at the flags of the pad to see what format is it?
+> So if I add a flag  'MEDIA_PAD_FL_METADATA' it knows it is a metadata ?
 
+Not just when it's MEDIA_BUS_FMT_FIXED. Userspace can look at the pad
+flags to determine the type of data carried by the pad. This can, for
+instance, allow userspace to walk graphs to find video data paths
+without going down metadata or audio links.
+
+> What makes is more backward-comaptible ?
+
+We won't need to change the current format used on those pads
+(MEDIA_BUS_FMT_FIXED), which would break userspace that relies on that
+format. Of course, if it's just for the rkisp1 driver, we don't care
+much about breakages as the driver is in staging :-)
+
+> > > Also, some valid value should be set to  'fmt->format.code' so with
+> > > the flags solution
+> > > that you suggest it should stay  MEDIA_BUS_FMT_FIXED ?
+> >
+> > Correct.
+> >
+> > > > > If I do a 'git grep MEDIA_BUS_FMT_FIXED' then I see that it is also in use by vsp1
+> > > > > for histogram information, so that should also be converted to use the new FIXED_METADATA
+> > > > > format, although that might be too late (there might be userspace complications).
+> > > >
+> > > > Yes, probably not a good idea.
+> > > >
+> > > > > >> +          fmt->format.field = V4L2_FIELD_NONE;
+> > > > > >> +          return 0;
+> > > > > >> +  }
+> > > > > >> +
+> > > > > >> +  if (fmt->which == V4L2_SUBDEV_FORMAT_TRY) {
+> > > > > >> +          mf = v4l2_subdev_get_try_format(sd, cfg, fmt->pad);
+> > > > > >> +          fmt->format = *mf;
+> > > > > >> +          return 0;
+> > > > > >> +  }
+> > > > > >> +
+> > > > > >> +  if (fmt->pad == RKISP1_ISP_PAD_SINK) {
+> > > > > >> +          *mf = isp_sd->in_frm;
+> > > > > >> +  } else if (fmt->pad == RKISP1_ISP_PAD_SOURCE_PATH) {
+> > > > > >> +          /* format of source pad */
+> > > > > >> +          *mf = isp_sd->in_frm;
+> > > > > >> +          mf->code = isp_sd->out_fmt.mbus_code;
+> > > > > >> +          /* window size of source pad */
+> > > > > >> +          mf->width = isp_sd->out_crop.width;
+> > > > > >> +          mf->height = isp_sd->out_crop.height;
+> > > > > >> +          mf->quantization = isp_sd->quantization;
+> > > > > >> +  }
+> > > > > >> +  mf->field = V4L2_FIELD_NONE;
+> > > > > >> +
+> > > > > >> +  return 0;
+> > > > > >> +}
 
 -- 
- <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+Regards,
 
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
-
+Laurent Pinchart
