@@ -2,70 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DB453191E52
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 02:00:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E5836191E58
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 02:02:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727239AbgCYBAd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 21:00:33 -0400
-Received: from mga07.intel.com ([134.134.136.100]:56575 "EHLO mga07.intel.com"
+        id S1727268AbgCYBCB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 21:02:01 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60658 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727113AbgCYBAd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 21:00:33 -0400
-IronPort-SDR: 5F/LUuo5f3F1jXFLv4wfFvSdd2SNYFYic2tvbw088/72N7L/iWE3shXKdg3KnkiKWGo35ZxD3S
- UBOvwE5lpJLA==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Mar 2020 18:00:32 -0700
-IronPort-SDR: 10z++ObboiGRreXHC3jhskZ2nFNMkJi0JuPSu4Wk9RZgjCXbi3RKT+yPmMM9Bm6rF9cprQVSXW
- V54SZkuD9vww==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.72,302,1580803200"; 
-   d="scan'208";a="265368200"
-Received: from hmendezc-mobl1.amr.corp.intel.com (HELO [10.254.108.97]) ([10.254.108.97])
-  by orsmga002.jf.intel.com with ESMTP; 24 Mar 2020 18:00:31 -0700
-Subject: Re: [PATCH v18 10/11] PCI/DPC: Add Error Disconnect Recover (EDR)
- support
-To:     Bjorn Helgaas <helgaas@kernel.org>
-Cc:     linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ashok.raj@intel.com, Len Brown <lenb@kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>
-References: <20200324213710.GA48671@google.com>
-From:   "Kuppuswamy, Sathyanarayanan" 
-        <sathyanarayanan.kuppuswamy@linux.intel.com>
-Message-ID: <f71c989b-b8f8-3437-b086-a97c2aa1e2c5@linux.intel.com>
-Date:   Tue, 24 Mar 2020 18:00:31 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
-MIME-Version: 1.0
-In-Reply-To: <20200324213710.GA48671@google.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S1727113AbgCYBCA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Mar 2020 21:02:00 -0400
+Received: from localhost (unknown [137.135.114.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id A25632076A;
+        Wed, 25 Mar 2020 01:01:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1585098119;
+        bh=THm7hnZmohNLxGwf0nad1iO7T9b9hejDN5HpxC6xU74=;
+        h=Date:From:To:To:To:Cc:Cc:Cc:Subject:In-Reply-To:References:From;
+        b=S6YigvvI3kSoDyHQ49XpmluaBE1KPAhhr2/Cy2aWFvJO2e2Smy7M7MRtZbD15fIU3
+         pEq97gIBaf9lJK88tvz1jp2lSqzzuU9Np/sfgdO6nByVyPNWrmdEJrf2uea4f2S5oV
+         ukQG7wuMTe+TZJpS98GyW/x6IOC637N4KNi4kCN4=
+Date:   Wed, 25 Mar 2020 01:01:58 +0000
+From:   Sasha Levin <sashal@kernel.org>
+To:     Sasha Levin <sashal@kernel.org>
+To:     Hans de Goede <hdegoede@redhat.com>
+To:     MyungJoo Ham <myungjoo.ham@samsung.com>
+Cc:     Hans de Goede <hdegoede@redhat.com>, linux-kernel@vger.kernel.org
+Cc:     stable@vger.kernel.org
+Cc:     stable@vger.kernel.org
+Subject: Re: [PATCH resend] extcon: axp288: Add wakeup support
+In-Reply-To: <20200323215939.79008-1-hdegoede@redhat.com>
+References: <20200323215939.79008-1-hdegoede@redhat.com>
+Message-Id: <20200325010159.A25632076A@mail.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Bjorn,
+Hi
 
-On 3/24/20 2:37 PM, Bjorn Helgaas wrote:
-> This is really ugly.  What's the story on this firmware?  It sounds
-> defective to me.
-I think there is no defined standard for this. I have checked few
-_DSM implementations. Some of them return default value and some
-don't. But atleast in the test hardware I use, we need this check.
+[This is an automated email]
 
-> 
-> Or is everybody that uses _DSM supposed to check before evaluating it?
-I think its safer to do this check.
-> E.g.,
-> 
->    if (!acpi_check_dsm(...))
->      return -EINVAL;
-> 
->    obj = acpi_evaluate_dsm(...);
-> 
-> If everybody is supposed to do this, it seems like the check part
-> should be moved into acpi_evaluate_dsm().
+This commit has been processed because it contains a -stable tag.
+The stable tag indicates that it's relevant for the following trees: all
 
+The bot has tested the following trees: v5.5.11, v5.4.27, v4.19.112, v4.14.174, v4.9.217, v4.4.217.
+
+v5.5.11: Build OK!
+v5.4.27: Build OK!
+v4.19.112: Build OK!
+v4.14.174: Build failed! Errors:
+    drivers/extcon/extcon-axp288.c:326:21: error: ‘dev’ undeclared (first use in this function); did you mean ‘pdev’?
+
+v4.9.217: Failed to apply! Possible dependencies:
+    dd3a55fc688b ("extcon: axp288: Fix the module not auto-loading")
+
+v4.4.217: Failed to apply! Possible dependencies:
+    dd3a55fc688b ("extcon: axp288: Fix the module not auto-loading")
+
+
+NOTE: The patch will not be queued to stable trees until it is upstream.
+
+How should we proceed with this patch?
+
+-- 
+Thanks
+Sasha
