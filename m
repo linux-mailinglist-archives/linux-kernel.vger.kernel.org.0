@@ -2,142 +2,215 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 60CBD19276B
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 12:43:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8ADA119277A
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 12:48:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727358AbgCYLni (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Mar 2020 07:43:38 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:35060 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727174AbgCYLni (ORCPT
+        id S1727280AbgCYLsG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Mar 2020 07:48:06 -0400
+Received: from us-smtp-delivery-74.mimecast.com ([63.128.21.74]:24648 "EHLO
+        us-smtp-delivery-74.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726276AbgCYLsG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Mar 2020 07:43:38 -0400
-Received: by mail-pl1-f194.google.com with SMTP id g6so719556plt.2
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Mar 2020 04:43:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=8iyeGw5w2tbRML8NAgJCo0IAIFK3QN8wW86R3syQN4I=;
-        b=lzoubfPixbOKlHDqdSdOUeHr1qBYe2Uf6DriewATUvR/TLiH5XybPU9NWfbxxJ5mTk
-         AAiw5T+zXp2R0vKl5X1oLe2LwTeDnTo43kw9SmsS5t0O5jcFjCNxF6or8fuIdKlia5Mj
-         CyeLy8wRnTHwkDDZMuWRQbW5N8IfuqZfynPPnfbqKZlkp9kqxu1TftNWpajpCzzUS8Xw
-         VmJNWzCf49CJ2SKdmITGMcL26Ze2bL8iIlDQmGAk3VQ955o7X78ycVnGD9Xeohuq9Scu
-         NW2LzjlPu0ttRBdKjx0nsfK3wgyyB7eDS/gfeNzi0D5Fa0z9owSYbs9e0GyHxC8P3qbR
-         RqnQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=8iyeGw5w2tbRML8NAgJCo0IAIFK3QN8wW86R3syQN4I=;
-        b=DpZ/vjF2ZFj1J8hP0C9aj1K9Sd2ewuo0PVpPji2s5ykKmo3FfvdoxoNIvT8VkyM/B0
-         7VGW09KUObwG2exyKrUrMtPGouFgAs4l/g81omkbmJhjzc5rSV9UR2E60zpvenq9pv4T
-         962JM+8nx6yu94uSb11m2VwMI1TqbBaQLl7zA7xTvoCmrTYwMhLF8CLYbYnbPiStF5k9
-         m8CgBVODin6qCuedqdcoqsb59Y2PXL00XEC+9sEzyWxOVwYmbuFZU2Q/Z1vGnmP+8+Pm
-         6uCMcG0paqI/mFsjimywrVB1ycXeuMjqLaaoUvIBBHqnOecXh32LFLIeXlbMdWqL6tgt
-         4SFQ==
-X-Gm-Message-State: ANhLgQ1wGxh+/yoWIfbMRjHRof1mIr4XzB7iLWXODP8viNmRWO5MoTBK
-        1XSfuYPWv/U2WTBGA85Ai0Y=
-X-Google-Smtp-Source: ADFU+vurlWVPRUWCZZfGTSANeiGP94Kbo5bzEsvfddLhBKgcIM5lu2yHILRBxfH2Y40aRzoOkvWA/g==
-X-Received: by 2002:a17:90b:8d2:: with SMTP id ds18mr3022707pjb.186.1585136615154;
-        Wed, 25 Mar 2020 04:43:35 -0700 (PDT)
-Received: from localhost ([49.207.53.56])
-        by smtp.gmail.com with ESMTPSA id d13sm4283141pjs.44.2020.03.25.04.43.34
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 25 Mar 2020 04:43:34 -0700 (PDT)
-Date:   Wed, 25 Mar 2020 17:13:32 +0530
-From:   afzal mohammed <afzal.mohd.ma@gmail.com>
-To:     Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
-        soc@kernel.org, arm@kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>
-Cc:     Tony Lindgren <tony@atomide.com>,
-        Alexander Sverdlin <alexander.sverdlin@gmail.com>,
-        Krzysztof =?utf-8?Q?Ha=C5=82asa?= <khalasa@piap.pl>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Lubomir Rintel <lkundrak@v3.sk>,
-        Gregory CLEMENT <gregory.clement@bootlin.com>,
-        Hartley Sweeten <hsweeten@visionengravers.com>,
-        Viresh Kumar <vireshk@kernel.org>,
-        Shiraz Hashim <shiraz.linux.kernel@gmail.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] ARM: replace setup_irq() by request_irq()
-Message-ID: <20200325114332.GA6337@afzalpc>
-References: <87mu8ppknv.fsf@FE-laptop>
- <20200302031736.5or4ww5a4l7zomfo@vireshk-i7>
- <20200308161903.GA156645@furthur.local>
- <20200301122226.4068-1-afzal.mohd.ma@gmail.com>
- <m3ftepbtxm.fsf@t19.piap.pl>
- <51cebbbb-3ba4-b336-82a9-abcc22f9a69c@gmail.com>
- <20200304163412.GX37466@atomide.com>
- <20200313154520.GA5375@afzalpc>
- <20200317043702.GA5852@afzalpc>
+        Wed, 25 Mar 2020 07:48:06 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1585136884;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=yVztRHM0wPS4jPDaBQT2Oc6LcCZfd2nVYB+shZ5fKfA=;
+        b=PAmB01LeDIcjNIOsvcPFYUFigczpFiZUAe5kKJFvjpThD1GLs4vBVZDalYnDDQsHa62R0m
+        St1vT0hYSEj3TTuR2F6xVH2baBk15Ko753F25IWKOrk5x3iM/EWeBoF55ZHFkNR5Dbpm9a
+        CUUWS7SEyYL0kSul8jC3/G5x86Kgssk=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-348-gSUD7jFQPMSXnFIah7RC5A-1; Wed, 25 Mar 2020 07:48:00 -0400
+X-MC-Unique: gSUD7jFQPMSXnFIah7RC5A-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id C2CC6800D5C;
+        Wed, 25 Mar 2020 11:47:58 +0000 (UTC)
+Received: from fuller.cnet (ovpn-116-46.gru2.redhat.com [10.97.116.46])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 510F7BBBC2;
+        Wed, 25 Mar 2020 11:47:58 +0000 (UTC)
+Received: by fuller.cnet (Postfix, from userid 1000)
+        id 6CCC24198B04; Wed, 25 Mar 2020 08:47:36 -0300 (-03)
+Date:   Wed, 25 Mar 2020 08:47:36 -0300
+From:   Marcelo Tosatti <mtosatti@redhat.com>
+To:     Frederic Weisbecker <frederic@kernel.org>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Chris Friesen <chris.friesen@windriver.com>,
+        linux-kernel@vger.kernel.org, Christoph Lameter <cl@linux.com>,
+        Jim Somerville <Jim.Somerville@windriver.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Frederic Weisbecker <fweisbec@gmail.com>,
+        Peter Zijlstra <peterz@infradead.org>
+Subject: Re: [PATCH v2] isolcpus: affine kernel threads to specified cpumask
+Message-ID: <20200325114736.GA17165@fuller.cnet>
+References: <20200323135414.GA28634@fuller.cnet>
+ <87k13boxcn.fsf@nanos.tec.linutronix.de>
+ <af285c22-2a3f-5aa6-3fdb-27fba73389bd@windriver.com>
+ <87imiuq0cg.fsf@nanos.tec.linutronix.de>
+ <20200324152016.GA25422@fuller.cnet>
+ <20200325002956.GC20223@lenoir>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200317043702.GA5852@afzalpc>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+In-Reply-To: <20200325002956.GC20223@lenoir>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi arm-soc maintainers,
 
-On Tue, Mar 17, 2020 at 10:07:02AM +0530, afzal mohammed wrote:
+Hi Frederic,
 
-> + soc@kernel.org, arm@kernel.org,
-> in case it helps to reduce the chances of below mail getting slipped
-> thr' the cracks.
-
-> On Fri, Mar 13, 2020 at 09:15:20PM +0530, afzal mohammed wrote:
-
-> > Hi Olof, Arnd,
+On Wed, Mar 25, 2020 at 01:30:00AM +0100, Frederic Weisbecker wrote:
+> On Tue, Mar 24, 2020 at 12:20:16PM -0300, Marcelo Tosatti wrote:
 > > 
-> > This is regarding cleanup of setup_irq() usages & replacing it w/
-> > request_irq(). Earlier it was sent as single series spanning all
-> > architectures & drivers, later Thomas Gleixner suggested [1] to take it
-> > thr' relevant maintainers. As for ARM, there is an additional layer of
-> > sub-architecture maintainers, for ARM, patches were sent to relevant
-> > subsystem maintainers & mailing list, all copied to LAKML as well.
-:
-:
-> > Of this,
-> > (1) OMAP, (2) ebsa110 & (3) rpc are already in linux-next.
-> > (4) footbridge (Russell) - there was a build warning, so he dropped
-> > after applying to his tree, i have submitted the newer fixed version in
-> > his patch system.
-> > (5) orion - Andrew has given Reviewed-by & Gregory mentioned that he will
-> > take care of it.
-> > So if things goes as expected 1 & 5 will be coming to you thr' sub-arch
-> > maintainers, while 2-4 directly via Russell
-
-footbridge & orion went into -next around a week back
-
-> > Now we are left with five (6-10),
-> > (6) ep93xx - Alexander has given Acked-by & mentioned to take thr' Arnd
-> > (7) spear - Viresh has given Acked-by & mentioned to take it thr' Arnd
-> > (8) cns3xxx - Krzysztof has given Acked-by (though not copied to lists,
-> > he has been cc'ed here)
-> > (9) mmp - Lubomir has given Acked-by & Tested-by & mentioned to get it
-> > thr' Olof
-> > (10) iop32xx - per get_mantainer, an orphan
+> > This is a kernel enhancement to configure the cpu affinity of kernel
+> > threads via kernel boot option isolcpus=no_kthreads,<isolcpus_params>,<cpulist>
 > > 
-> > Can you please include the patches 6-10 directly into the armsoc tree ?,
-> > Let me know if anything needs to be done from my side.
+> > When this option is specified, the cpumask is immediately applied upon
+> > thread launch. This does not affect kernel threads that specify cpu
+> > and node.
+> > 
+> > This allows CPU isolation (that is not allowing certain threads
+> > to execute on certain CPUs) without using the isolcpus=domain parameter,
+> > making it possible to enable load balancing on such CPUs
+> > during runtime (see
+> > 
+> > Note-1: this is based off on Wind River's patch at
+> > https://github.com/starlingx-staging/stx-integ/blob/master/kernel/kernel-std/centos/patches/affine-compute-kernel-threads.patch
+> > 
+> > Difference being that this patch is limited to modifying
+> > kernel thread cpumask: Behaviour of other threads can
+> > be controlled via cgroups or sched_setaffinity.
+> > 
+> > Note-2: MontaVista's patch was based off Christoph Lameter's patch at
+> > https://lwn.net/Articles/565932/ with the only difference being
+> > the kernel parameter changed from kthread to kthread_cpus.
+> > 
+> > Signed-off-by: Marcelo Tosatti <mtosatti@redhat.com>
+> 
+> I'm wondering, why do you need such a boot shift at all when you
+> can actually affine kthreads on runtime?
 
-Can you please consider for inclusion the above 5 patches.
+New, unbound kernel threads inherit the cpumask of kthreadd.
 
-Sorry for pestering, i understand that none of the ARM SoC pull requests
-has been picked up as opposed to what happens normally by this time of
-development cycle. Still asking as this is part of tree wide series &
-it is safe to send core removal patch of setup_irq() to Thomas only
-after all it's usages have been removed.
+Therefore there is a race between kernel thread creation 
+and affine.
 
-REgards
-afzal
+If you know of a solution to that problem, that can be used instead.
 
-> > [1] https://lkml.kernel.org/r/87y2somido.fsf@nanos.tec.linutronix.de
+> > 
+> > ---
+> > 
+> > v2: use isolcpus= subcommand (Thomas Gleixner)
+> > 
+> >  Documentation/admin-guide/kernel-parameters.txt |    8 ++++++++
+> >  include/linux/cpumask.h                         |    5 +++++
+> >  include/linux/sched/isolation.h                 |    1 +
+> >  init/main.c                                     |    1 +
+> >  kernel/cpu.c                                    |   13 +++++++++++++
+> >  kernel/kthread.c                                |    4 ++--
+> >  kernel/sched/isolation.c                        |    6 ++++++
+> >  7 files changed, 36 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+> > index c07815d230bc..7318e3057383 100644
+> > --- a/Documentation/admin-guide/kernel-parameters.txt
+> > +++ b/Documentation/admin-guide/kernel-parameters.txt
+> > @@ -1959,6 +1959,14 @@
+> >  			  the CPU affinity syscalls or cpuset.
+> >  			  <cpu number> begins at 0 and the maximum value is
+> >  			  "number of CPUs in system - 1".
+> > +			  When using cpusets, use the isolcpus option no_kthreads
+> > +			  to avoid creation of kernel threads on isolated CPUs.
+> > +
+> > +			no_kthreads
+> > +			  Adjust the CPU affinity mask of unbound kernel threads to
+> > +			  not contain CPUs on the isolated list. This complements
+> > +			  the isolation provided by the cpusets mechanism described
+> > +			  above.
+> 
+> Actually that should be "kthread" instead of no_kthreads. A flag of isolcpus
+> describes what we want a set of CPUs to be isolated from. Well, at least that's
+> how we started with "domain" and "managed_irq".
+
+Sure.
+
+> 
+> >  
+> >  			managed_irq
+> >  
+> > diff --git a/include/linux/sched/isolation.h b/include/linux/sched/isolation.h
+> > index 0fbcbacd1b29..d002332d00eb 100644
+> > --- a/include/linux/sched/isolation.h
+> > +++ b/include/linux/sched/isolation.h
+> > @@ -14,6 +14,7 @@ enum hk_flags {
+> >  	HK_FLAG_DOMAIN		= (1 << 5),
+> >  	HK_FLAG_WQ		= (1 << 6),
+> >  	HK_FLAG_MANAGED_IRQ	= (1 << 7),
+> > +	HK_FLAG_NO_KTHREADS	= (1 << 8),
+> 
+> Similarly that should be HK_FLAG_KTHREAD.
+
+Sure.
+
+> 
+> >  };
+> >  
+> >  #ifdef CONFIG_CPU_ISOLATION
+> > diff --git a/kernel/kthread.c b/kernel/kthread.c
+> > index b262f47046ca..be9c8d53a986 100644
+> > --- a/kernel/kthread.c
+> > +++ b/kernel/kthread.c
+> > @@ -347,7 +347,7 @@ struct task_struct *__kthread_create_on_node(int (*threadfn)(void *data),
+> >  		 * The kernel thread should not inherit these properties.
+> >  		 */
+> >  		sched_setscheduler_nocheck(task, SCHED_NORMAL, &param);
+> > -		set_cpus_allowed_ptr(task, cpu_all_mask);
+> > +		set_cpus_allowed_ptr(task, cpu_kthread_mask);
+> 
+> I'm wondering, why are we using cpu_all_mask and not cpu_possible_mask here?
+> If we used the latter, you wouldn't need to create cpu_kthread_mask and
+> you could directly rely on housekeeping_cpumask(HK_FLAG_KTHREAD).
+
+I suppose that either work: CPUs can only be online from
+cpu_possible_mask (and is contained in cpu_possible_mask).
+
+Nice cleanup, thanks.
+
+> 
+> > diff --git a/kernel/sched/isolation.c b/kernel/sched/isolation.c
+> > index 008d6ac2342b..e9d48729efd4 100644
+> > --- a/kernel/sched/isolation.c
+> > +++ b/kernel/sched/isolation.c
+> > @@ -169,6 +169,12 @@ static int __init housekeeping_isolcpus_setup(char *str)
+> >  			continue;
+> >  		}
+> >  
+> > +		if (!strncmp(str, "no_kthreads,", 12)) {
+> > +			str += 12;
+> > +			flags |= HK_FLAG_NO_KTHREADS;
+> 
+> You will certainly want HK_FLAG_WQ as well since workqueue has its own
+> way to deal with unbound affinity.
+
+Yep. HK_FLAG_WQ is simply a convenience so that the user does not have
+to configure this separately: OK.
+
+> 
+> > +			continue;
+> > +		}
+> > +
+> >  		pr_warn("isolcpus: Error, unknown flag\n");
+> >  		return 0;
+> >  	}
+> > 
+> 
+> Thanks.
+
