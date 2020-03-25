@@ -2,65 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4302A191F48
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 03:37:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 09F83191F51
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 03:38:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727299AbgCYChA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 22:37:00 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43156 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727262AbgCYChA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 22:37:00 -0400
-Received: from kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C6A6620714;
-        Wed, 25 Mar 2020 02:36:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585103819;
-        bh=InTvH1FD+myof5xLImIsEz4YlekXxKWk3kYrJWkbr0Y=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=1e3i8/DIhGo0HLqrkskon5km384KJf9SoZP1feyeC+ZJmg1QQcczK8/AqfuJsP2tk
-         EBYKSQk298Cdgnw0WujZwTJNmtd/ibRkzqKFcdewrIjgTCDu512l/adogDsTsumzBU
-         kX8saiVwdrg/QT/7rPNSFCpDDf1uue1ZDcdu182A=
+        id S1727374AbgCYCh4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 22:37:56 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:37345 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727262AbgCYCh4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Mar 2020 22:37:56 -0400
+Received: by mail-pg1-f196.google.com with SMTP id a32so428535pga.4
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Mar 2020 19:37:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:content-transfer-encoding:in-reply-to:references
+         :subject:from:cc:to:date:message-id:user-agent;
+        bh=VRnQilnt07d1oqQ4KQil6Mz63llajYTl97NmNGSglPo=;
+        b=YKxyAk3ZQU7yENdjEqMIxZP3xJ5UXORg5Wf994rlklKQNuw65fwL2GtrHKEuOOgQXY
+         SByDSi7BXw5nEX22nOtxCwYolWNrZ5/RKwfx7pDywcRUfqxqKfQvMdw+iCUaW+DqXrtU
+         WBff/Ecpq8xlXKaDdC+WJaNl9cT7o1158Rv7c=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:content-transfer-encoding
+         :in-reply-to:references:subject:from:cc:to:date:message-id
+         :user-agent;
+        bh=VRnQilnt07d1oqQ4KQil6Mz63llajYTl97NmNGSglPo=;
+        b=I3nDN8BJnddbhA5l41ZDgIztBG1LqcVJB/87hPpA29jcJ9rM2gmEQY5f8ss1KEQrEs
+         7QfDcUh4uulDt/Olt/byy2HfkuCuRHWsQxRxQj+X9DYQZLnoiv1RHdVHVhdnEh5Fp9GO
+         9+VEXt3yASwveWF3CI3ucjIy2qRU7AIE5saDWp2dF68HBTOlQ0GSm7RX4zHK1/2WDeLC
+         mmKTzLyaFu2LTdy+GhZxdu8oVjwO4AJmNCf/Fa/w8V/Z5iEbOWA3NwULBGq5Ibjkq62r
+         Afd7pbNKNcWZUlbLdye276gCaFgx0lD8jrnHfnFv17+Am0RFkHYn2zDeZMmvUOmXnw5m
+         Qtqw==
+X-Gm-Message-State: ANhLgQ3E3tHPcQqa2SJ2Tkopt4t9uaTJfneFgCe/ODYvigLoFZnh7QYE
+        qebuJ2AgQTOHpEyAscL8VSYH4A==
+X-Google-Smtp-Source: ADFU+vseJ+fw2H4J2gLn7jXALCAM+os616BkOMYNzL7Tq2/7qkx6ZJNgGF+lIAIFjgr8xWMqoG2MaA==
+X-Received: by 2002:a63:1d7:: with SMTP id 206mr727458pgb.99.1585103873356;
+        Tue, 24 Mar 2020 19:37:53 -0700 (PDT)
+Received: from chromium.org ([2620:15c:202:1:fa53:7765:582b:82b9])
+        by smtp.gmail.com with ESMTPSA id e14sm16965737pfn.196.2020.03.24.19.37.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 24 Mar 2020 19:37:52 -0700 (PDT)
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20200323184501.5756-1-lukas.bulwahn@gmail.com>
-References: <20200323184501.5756-1-lukas.bulwahn@gmail.com>
-Subject: Re: [PATCH] MAINTAINERS: adjust entry to ICST clocks YAML schema creation
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Rob Herring <robh@kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        Joe Perches <joe@perches.com>, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Date:   Tue, 24 Mar 2020 19:36:58 -0700
-Message-ID: <158510381898.125146.5862992017032580482@swboyd.mtv.corp.google.com>
+In-Reply-To: <66b8da28bbf0af6d8bd23953936e7feb6a7ed0c2.1584966325.git.mchehab+huawei@kernel.org>
+References: <66b8da28bbf0af6d8bd23953936e7feb6a7ed0c2.1584966325.git.mchehab+huawei@kernel.org>
+Subject: Re: [PATCH 1/2] docs: dt: qcom,dwc3.txt: fix cross-reference for a converted file
+From:   Stephen Boyd <swboyd@chromium.org>
+Cc:     Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Sandeep Maheswaram <sanm@codeaurora.org>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        linux-arm-msm@vger.kernel.org, linux-usb@vger.kernel.org,
+        devicetree@vger.kernel.org
+To:     Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Date:   Tue, 24 Mar 2020 19:37:51 -0700
+Message-ID: <158510387182.125146.16270632251829962912@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Lukas Bulwahn (2020-03-23 11:45:01)
-> Commit 78c7d8f96b6f ("dt-bindings: clock: Create YAML schema for ICST
-> clocks") transformed arm-integrator.txt into arm,syscon-icst.yaml, but did
-> not adjust the reference to that file in the ARM INTEGRATOR, VERSATILE AND
-> REALVIEW SUPPORT entry in MAINTAINERS.
+Quoting Mauro Carvalho Chehab (2020-03-23 05:25:27)
+> The qcom-qusb2-phy.txt file was converted and renamed to yaml.
+> Update cross-reference accordingly.
 >=20
-> Hence, since then, ./scripts/get_maintainer.pl --self-test complains:
->=20
->   warning: no file matches \
->   F: Documentation/devicetree/bindings/clock/arm-integrator.txt
->=20
-> Update the file entry in MAINTAINERS to the new transformed yaml file.
->=20
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+> Fixes: 8ce65d8d38df ("dt-bindings: phy: qcom,qusb2: Convert QUSB2 phy bin=
+dings to yaml")
+> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+> ---
 
-Mauro got here already
-
- https://lkml.kernel.org/r/491d2928a47f59da3636bc63103a5f63fec72b1a.1584966=
-325.git.mchehab+huawei@kernel.org
+Reviewed-by: Stephen Boyd <swboyd@chromium.org>
