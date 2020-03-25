@@ -2,105 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 615B71928AC
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 13:42:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DC42519289B
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 13:41:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727598AbgCYMmg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Mar 2020 08:42:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59316 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727667AbgCYMma (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Mar 2020 08:42:30 -0400
-Received: from quaco.ghostprotocols.net (unknown [179.97.37.151])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 535F12078A;
-        Wed, 25 Mar 2020 12:42:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585140149;
-        bh=XcSAFmz7j9h/ld+mxI8Ru5nGyAyH8L4LiHQo9b4qTV4=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=PzuC1BA2hirqc39BNQhc5Yxm3HK7Xh0/P/HXxaqdnqg3VE5MbzEI4ZFnJXPFT9Ec5
-         FLB72aWfLWHaE9n25vXq8xdiAEgo8TRmv9MjzY/eX8z/kVL05qS2vLerPA4e2jDdgJ
-         AXnz/Q7dQmXp3Fw0IFHeZFt8fccL++d5qd0iRaII=
-From:   Arnaldo Carvalho de Melo <acme@kernel.org>
-To:     Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Cc:     Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
-        Clark Williams <williams@redhat.com>,
-        linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Paolo Lungaroni <paolo.lungaroni@cnit.it>,
-        Adrian Hunter <adrian.hunter@intel.com>
-Subject: [PATCH 14/24] tools headers uapi: Update linux/in.h copy
-Date:   Wed, 25 Mar 2020 09:41:14 -0300
-Message-Id: <20200325124124.32648-15-acme@kernel.org>
-X-Mailer: git-send-email 2.21.1
-In-Reply-To: <20200325124124.32648-1-acme@kernel.org>
-References: <20200325124124.32648-1-acme@kernel.org>
+        id S1727374AbgCYMlg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Mar 2020 08:41:36 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:47905 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727279AbgCYMlf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Mar 2020 08:41:35 -0400
+Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tip-bot2@linutronix.de>)
+        id 1jH5Lc-0001Xv-9h; Wed, 25 Mar 2020 13:41:29 +0100
+Received: from [127.0.1.1] (localhost [IPv6:::1])
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id CE2911C0450;
+        Wed, 25 Mar 2020 13:41:15 +0100 (CET)
+Date:   Wed, 25 Mar 2020 12:41:15 -0000
+From:   "tip-bot2 for Thomas Gleixner" <tip-bot2@linutronix.de>
+Reply-to: linux-kernel@vger.kernel.org
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/cpu] cpufreq/intel_pstate: Fix wrong macro conversion
+Cc:     kernel test robot <rong.a.chen@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@suse.de>, x86 <x86@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+In-Reply-To: <20200324060124.GC11705@shao2-debian>
+References: <20200324060124.GC11705@shao2-debian>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Message-ID: <158514007544.28353.4934308733566744386.tip-bot2@tip-bot2>
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot2.linutronix.de>
+Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Arnaldo Carvalho de Melo <acme@redhat.com>
+The following commit has been merged into the x86/cpu branch of tip:
 
-To get the changes in:
+Commit-ID:     d97828072d0bcecb6655f0966efc38a2647d3dfb
+Gitweb:        https://git.kernel.org/tip/d97828072d0bcecb6655f0966efc38a2647d3dfb
+Author:        Thomas Gleixner <tglx@linutronix.de>
+AuthorDate:    Wed, 25 Mar 2020 13:21:55 +01:00
+Committer:     Borislav Petkov <bp@suse.de>
+CommitterDate: Wed, 25 Mar 2020 13:21:55 +01:00
 
-  267762538705 ("seg6: fix SRv6 L2 tunnels to use IANA-assigned protocol number")
+cpufreq/intel_pstate: Fix wrong macro conversion
 
-That ends up automatically adding the new IPPROTO_ETHERNET to the socket
-args beautifiers:
+The feature flag hwp_support_ids are supposed to match on is
+X86_FEATURE_HWP, not X86_FEATURE_APERFMPERF. Fix it.
 
-  $ tools/perf/trace/beauty/socket_ipproto.sh > before
+ [ bp: Write commit message. ]
 
-Apply this patch:
-
-  $ tools/perf/trace/beauty/socket_ipproto.sh > after
-  $ diff -u before after
-  --- before	2020-03-19 11:48:36.876673819 -0300
-  +++ after	2020-03-19 11:49:00.148541377 -0300
-  @@ -6,6 +6,7 @@
-   	[132] = "SCTP",
-   	[136] = "UDPLITE",
-   	[137] = "MPLS",
-  +	[143] = "ETHERNET",
-   	[17] = "UDP",
-   	[1] = "ICMP",
-   	[22] = "IDP",
-  $
-
-Addresses this tools/perf build warning:
-
-  Warning: Kernel ABI header at 'tools/include/uapi/linux/in.h' differs from latest version at 'include/uapi/linux/in.h'
-  diff -u tools/include/uapi/linux/in.h include/uapi/linux/in.h
-
-Cc: David S. Miller <davem@davemloft.net>
-Cc: Paolo Lungaroni <paolo.lungaroni@cnit.it>
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Fixes: b11d77fa300d ("cpufreq: Convert to new X86 CPU match macros")
+Reported-by: kernel test robot <rong.a.chen@intel.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Link: https://lkml.kernel.org/r/20200324060124.GC11705@shao2-debian
 ---
- tools/include/uapi/linux/in.h | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/cpufreq/intel_pstate.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/tools/include/uapi/linux/in.h b/tools/include/uapi/linux/in.h
-index 1521073b6348..8533bf07450f 100644
---- a/tools/include/uapi/linux/in.h
-+++ b/tools/include/uapi/linux/in.h
-@@ -74,6 +74,8 @@ enum {
- #define IPPROTO_UDPLITE		IPPROTO_UDPLITE
-   IPPROTO_MPLS = 137,		/* MPLS in IP (RFC 4023)		*/
- #define IPPROTO_MPLS		IPPROTO_MPLS
-+  IPPROTO_ETHERNET = 143,	/* Ethernet-within-IPv6 Encapsulation	*/
-+#define IPPROTO_ETHERNET	IPPROTO_ETHERNET
-   IPPROTO_RAW = 255,		/* Raw IP packets			*/
- #define IPPROTO_RAW		IPPROTO_RAW
-   IPPROTO_MPTCP = 262,		/* Multipath TCP connection		*/
--- 
-2.21.1
-
+diff --git a/drivers/cpufreq/intel_pstate.c b/drivers/cpufreq/intel_pstate.c
+index 780c387..46bce09 100644
+--- a/drivers/cpufreq/intel_pstate.c
++++ b/drivers/cpufreq/intel_pstate.c
+@@ -2727,7 +2727,7 @@ static inline void intel_pstate_request_control_from_smm(void) {}
+ 
+ #define X86_MATCH_HWP(model, hwp_mode)					\
+ 	X86_MATCH_VENDOR_FAM_MODEL_FEATURE(INTEL, 6, INTEL_FAM6_##model, \
+-					   X86_FEATURE_APERFMPERF, hwp_mode)
++					   X86_FEATURE_HWP, hwp_mode)
+ 
+ static const struct x86_cpu_id hwp_support_ids[] __initconst = {
+ 	X86_MATCH_HWP(BROADWELL_X,	INTEL_PSTATE_HWP_BROADWELL),
