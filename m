@@ -2,65 +2,64 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 489A019315C
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 20:45:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B9A5E193159
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 20:45:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727798AbgCYToK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Mar 2020 15:44:10 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:50986 "EHLO
+        id S1727775AbgCYToC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Mar 2020 15:44:02 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:50973 "EHLO
         userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727525AbgCYTn7 (ORCPT
+        with ESMTP id S1727466AbgCYTn5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Mar 2020 15:43:59 -0400
+        Wed, 25 Mar 2020 15:43:57 -0400
 Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 02PJeMF0126853;
-        Wed, 25 Mar 2020 19:43:32 GMT
+        by userp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 02PJeMkk126847;
+        Wed, 25 Mar 2020 19:43:31 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
  subject : date : message-id : in-reply-to : references : mime-version :
- content-type : content-transfer-encoding; s=corp-2020-01-29;
- bh=x93GzvC3CMf7UyKP0EauWpyueSzlKKQhUBj1fTAf/W0=;
- b=WJOV0JMwxWRfAgQlqj+GfX5Gmz87rx01mLuQe5wmNFZtGDaeaWJB3KxkYi1ycgOeO0Sh
- cXC/64KiYFOmtrmheGQ9QOWGU9+yBD6gdRmc3PAH41NfaV1aNhEVMA0HfEu3GCkgzEZe
- J6fB4QEcOsqhayBw/sJal4i3tN5IFHj51vfG2VN5WA1Guv0lv9CWuFzusupNuSBrYbvk
- xp1ZI9dlYcdFU3xN2+wWBaOskmHYz4V+XjwvFwfzOg+TuOWJQJQbivoHC5sx7HPRNbri
- q0VU/Px+E6lXVxiG72owH9+HSXiqp3fXDggftVKaJHKUdIB6FpAZ0sUqKIuoqBnhZAwz Lw== 
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by userp2120.oracle.com with ESMTP id 3005kvasye-1
+ content-transfer-encoding; s=corp-2020-01-29;
+ bh=FP7qaU675AipOERS/iECqnM/xR6f/XmrKk8YBQwUyIM=;
+ b=EJ2g/5sWpPXrIVwehdxWfI/9h83TDQbW8jlC3NFj0dgvcanbV5YuxOetc5RTGwQXPMkK
+ i9SpAya5rHWvCAKi0Ncaw/HGhtuDbuFkfHJOu/VS3VOlq6lzeuj59laAuHCEdHBjGXoN
+ xCflDDQo1ouHWD71psyRDc5xhJJLJw1MCmUEwHhKCSrtbto4s2+phDi6CI7d/iwcjEaa
+ 0FPDvCAdaZ3JGki1XxIKRNRJZqj8upZDPmVDbKbFoqMQLsvgujKQPvZ5Hlviw+j6QoH3
+ N9cOP/2xmVn7drnktyexCT6GQiaekWDztTN4GrewFpDkP6Vpvn54wXgVz52aSyv5dQ2O mQ== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by userp2120.oracle.com with ESMTP id 3005kvasyc-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
         Wed, 25 Mar 2020 19:43:31 +0000
-Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 02PJgkYO073009;
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 02PJfoHS142034;
         Wed, 25 Mar 2020 19:43:31 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by aserp3020.oracle.com with ESMTP id 30073b1u0w-1
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by aserp3030.oracle.com with ESMTP id 3006r74pkb-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
         Wed, 25 Mar 2020 19:43:30 +0000
 Received: from abhmp0016.oracle.com (abhmp0016.oracle.com [141.146.116.22])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 02PJhTVB008213;
-        Wed, 25 Mar 2020 19:43:29 GMT
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 02PJhUpc025319;
+        Wed, 25 Mar 2020 19:43:30 GMT
 Received: from pneuma.us.oracle.com (/10.39.203.246)
         by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 25 Mar 2020 12:43:28 -0700
+        with ESMTP ; Wed, 25 Mar 2020 12:43:30 -0700
 From:   Ross Philipson <ross.philipson@oracle.com>
 To:     linux-kernel@vger.kernel.org, x86@kernel.org,
         linux-doc@vger.kernel.org
 Cc:     ross.philipson@oracle.com, dpsmith@apertussolutions.com,
         tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
         trenchboot-devel@googlegroups.com
-Subject: [RFC PATCH 04/12] x86: Add early TPM TIS/CRB interface support for Secure Launch
-Date:   Wed, 25 Mar 2020 15:43:09 -0400
-Message-Id: <20200325194317.526492-5-ross.philipson@oracle.com>
+Subject: [RFC PATCH 05/12] x86: Add early TPM1.2/TPM2.0 interface support for Secure Launch
+Date:   Wed, 25 Mar 2020 15:43:10 -0400
+Message-Id: <20200325194317.526492-6-ross.philipson@oracle.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200325194317.526492-1-ross.philipson@oracle.com>
 References: <20200325194317.526492-1-ross.philipson@oracle.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=y
 Content-Transfer-Encoding: 8bit
 X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9571 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 adultscore=0
- suspectscore=2 mlxscore=0 phishscore=0 bulkscore=0 spamscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2003020000 definitions=main-2003250157
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 adultscore=0 suspectscore=2
+ phishscore=0 spamscore=0 mlxscore=0 mlxlogscore=999 malwarescore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2003020000
+ definitions=main-2003250157
 X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9571 signatures=668685
 X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 bulkscore=0 phishscore=0
  suspectscore=2 impostorscore=0 spamscore=0 adultscore=0 priorityscore=1501
@@ -74,361 +73,48 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: "Daniel P. Smith" <dpsmith@apertussolutions.com>
 
-The Secure Launch capability that is part of the compressed kernel
-requires the ability to send measurements it takes to the TPM. This
-commit introduces the necessary code to communicate with the hardware
-interface of TPM devices.
+This commit introduces an abstraction for TPM1.2 and TPM2.0 devices
+above the TPM hardware interface.
 
 Signed-off-by: Daniel P. Smith <dpsmith@apertussolutions.com>
 ---
- arch/x86/boot/compressed/Makefile         |   2 +
- arch/x86/boot/compressed/tpm/crb.c        | 302 ++++++++++++++++++++++
- arch/x86/boot/compressed/tpm/crb.h        |  25 ++
- arch/x86/boot/compressed/tpm/tis.c        | 212 +++++++++++++++
- arch/x86/boot/compressed/tpm/tis.h        |  51 ++++
- arch/x86/boot/compressed/tpm/tpm.h        |  42 +++
- arch/x86/boot/compressed/tpm/tpm_buff.c   | 135 ++++++++++
- arch/x86/boot/compressed/tpm/tpm_common.h | 127 +++++++++
- arch/x86/boot/compressed/tpm/tpmbuff.h    |  34 +++
- arch/x86/boot/compressed/tpm/tpmio.c      |  51 ++++
- 10 files changed, 981 insertions(+)
- create mode 100644 arch/x86/boot/compressed/tpm/crb.c
- create mode 100644 arch/x86/boot/compressed/tpm/crb.h
- create mode 100644 arch/x86/boot/compressed/tpm/tis.c
- create mode 100644 arch/x86/boot/compressed/tpm/tis.h
- create mode 100644 arch/x86/boot/compressed/tpm/tpm.h
- create mode 100644 arch/x86/boot/compressed/tpm/tpm_buff.c
- create mode 100644 arch/x86/boot/compressed/tpm/tpm_common.h
- create mode 100644 arch/x86/boot/compressed/tpm/tpmbuff.h
- create mode 100644 arch/x86/boot/compressed/tpm/tpmio.c
+ arch/x86/boot/compressed/Makefile             |   3 +-
+ arch/x86/boot/compressed/tpm/tpm1.h           | 112 +++++++++++++
+ arch/x86/boot/compressed/tpm/tpm1_cmds.c      | 133 ++++++++++++++++
+ arch/x86/boot/compressed/tpm/tpm2.h           |  89 +++++++++++
+ arch/x86/boot/compressed/tpm/tpm2_auth.c      |  31 ++++
+ arch/x86/boot/compressed/tpm/tpm2_auth.h      |  21 +++
+ arch/x86/boot/compressed/tpm/tpm2_cmds.c      | 150 ++++++++++++++++++
+ arch/x86/boot/compressed/tpm/tpm2_constants.h |  66 ++++++++
+ 8 files changed, 604 insertions(+), 1 deletion(-)
+ create mode 100644 arch/x86/boot/compressed/tpm/tpm1.h
+ create mode 100644 arch/x86/boot/compressed/tpm/tpm1_cmds.c
+ create mode 100644 arch/x86/boot/compressed/tpm/tpm2.h
+ create mode 100644 arch/x86/boot/compressed/tpm/tpm2_auth.c
+ create mode 100644 arch/x86/boot/compressed/tpm/tpm2_auth.h
+ create mode 100644 arch/x86/boot/compressed/tpm/tpm2_cmds.c
+ create mode 100644 arch/x86/boot/compressed/tpm/tpm2_constants.h
 
 diff --git a/arch/x86/boot/compressed/Makefile b/arch/x86/boot/compressed/Makefile
-index 1f25bbdd72fb..b9682eaf8f59 100644
+index b9682eaf8f59..6c2beb306631 100644
 --- a/arch/x86/boot/compressed/Makefile
 +++ b/arch/x86/boot/compressed/Makefile
-@@ -96,6 +96,8 @@ vmlinux-objs-$(CONFIG_EFI_MIXED) += $(obj)/efi_thunk_$(BITS).o
- vmlinux-objs-$(CONFIG_SECURE_LAUNCH) += $(obj)/early_sha1.o
+@@ -97,7 +97,8 @@ vmlinux-objs-$(CONFIG_SECURE_LAUNCH) += $(obj)/early_sha1.o
  vmlinux-objs-$(CONFIG_SECURE_LAUNCH_SHA256) += $(obj)/early_sha256.o
  vmlinux-objs-$(CONFIG_SECURE_LAUNCH_SHA512) += $(obj)/early_sha512.o
-+vmlinux-objs-$(CONFIG_SECURE_LAUNCH) += $(obj)/tpm/tpmio.o $(obj)/tpm/tpm_buff.o \
-+	$(obj)/tpm/tis.o $(obj)/tpm/crb.o
+ vmlinux-objs-$(CONFIG_SECURE_LAUNCH) += $(obj)/tpm/tpmio.o $(obj)/tpm/tpm_buff.o \
+-	$(obj)/tpm/tis.o $(obj)/tpm/crb.o
++	$(obj)/tpm/tis.o $(obj)/tpm/crb.o $(obj)/tpm/tpm1_cmds.o \
++	$(obj)/tpm/tpm2_cmds.o $(obj)/tpm/tpm2_auth.o
  
  # The compressed kernel is built with -fPIC/-fPIE so that a boot loader
  # can place it anywhere in memory and it will still run. However, since
-diff --git a/arch/x86/boot/compressed/tpm/crb.c b/arch/x86/boot/compressed/tpm/crb.c
+diff --git a/arch/x86/boot/compressed/tpm/tpm1.h b/arch/x86/boot/compressed/tpm/tpm1.h
 new file mode 100644
-index 000000000000..7df29cb3688d
+index 000000000000..41798e9f58e3
 --- /dev/null
-+++ b/arch/x86/boot/compressed/tpm/crb.c
-@@ -0,0 +1,302 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (c) 2019 Apertus Solutions, LLC
-+ *
-+ * Author(s):
-+ *      Daniel P. Smith <dpsmith@apertussolutions.com>
-+ */
-+
-+#include <linux/types.h>
-+#include "tpm.h"
-+#include "tpmbuff.h"
-+#include "crb.h"
-+#include "tpm_common.h"
-+
-+#define TPM_LOC_STATE		0x0000
-+#define TPM_LOC_CTRL		0x0008
-+#define TPM_LOC_STS		0x000C
-+#define TPM_CRB_INTF_ID		0x0030
-+#define TPM_CRB_CTRL_EXT	0x0038
-+#define TPM_CRB_CTRL_REQ	0x0040
-+#define TPM_CRB_CTRL_STS	0x0044
-+#define TPM_CRB_CTRL_CANCEL	0x0048
-+#define TPM_CRB_CTRL_START	0x004C
-+#define TPM_CRB_INT_ENABLE	0x0050
-+#define TPM_CRB_INT_STS		0x0054
-+#define TPM_CRB_CTRL_CMD_SIZE	0x0058
-+#define TPM_CRB_CTRL_CMD_LADDR	0x005C
-+#define TPM_CRB_CTRL_CMD_HADDR	0x0060
-+#define TPM_CRB_CTRL_RSP_SIZE	0x0064
-+#define TPM_CRB_CTRL_RSP_ADDR	0x0068
-+#define TPM_CRB_DATA_BUFFER	0x0080
-+
-+#define REGISTER(l, r)		(((l) << 12) | r)
-+
-+static u8 locality = TPM_NO_LOCALITY;
-+
-+struct tpm_loc_state {
-+	union {
-+		u8 val;
-+		struct {
-+			u8 tpm_established:1;
-+			u8 loc_assigned:1;
-+			u8 active_locality:3;
-+			u8 _reserved:2;
-+			u8 tpm_reg_valid_sts:1;
-+		};
-+	};
-+} __packed;
-+
-+struct tpm_loc_ctrl {
-+	union {
-+		u32 val;
-+		struct {
-+			u32 request_access:1;
-+			u32 relinquish:1;
-+			u32 seize:1;
-+			u32 reset_establishment_bit:1;
-+			u32 _reserved:28;
-+		};
-+	};
-+} __packed;
-+
-+struct tpm_loc_sts {
-+	union {
-+		u32 val;
-+		struct {
-+			u32 granted:1;
-+			u32 beenSeized:1;
-+			u32 _reserved:30;
-+		};
-+	};
-+} __packed;
-+
-+struct tpm_crb_ctrl_req {
-+	union {
-+		u32 val;
-+		struct {
-+			u32 cmd_ready:1;
-+			u32 go_idle:1;
-+			u32 _reserved:30;
-+		};
-+	};
-+} __packed;
-+
-+struct tpm_crb_ctrl_sts {
-+	union {
-+		u32 val;
-+		struct {
-+			u32 tpm_sts:1;
-+			u32 tpm_idle:1;
-+			u32 _reserved:30;
-+		};
-+	};
-+} __packed;
-+
-+struct tpm_crb_intf_id_ext {
-+	union {
-+		u32 val;
-+		struct {
-+			u32 vid:16;
-+			u32 did:16;
-+		};
-+	};
-+} __packed;
-+
-+/*
-+ * Durations derived from Table 15 of the PTP but is purely an artifact of this
-+ * implementation
-+ */
-+
-+/* TPM Duration A: 20ms */
-+static void duration_a(void)
-+{
-+	tpm_mdelay(20);
-+}
-+
-+/* TPM Duration B: 750ms */
-+static void duration_b(void)
-+{
-+	tpm_mdelay(750);
-+}
-+
-+/* TPM Duration C: 1000ms */
-+static void duration_c(void)
-+{
-+	tpm_mdelay(1000);
-+}
-+
-+static u8 is_idle(void)
-+{
-+	struct tpm_crb_ctrl_sts ctl_sts;
-+
-+	ctl_sts.val = tpm_read32(REGISTER(locality, TPM_CRB_CTRL_STS));
-+	if (ctl_sts.tpm_idle == 1)
-+		return 1;
-+
-+	return 0;
-+}
-+
-+static u8 is_ready(void)
-+{
-+	struct tpm_crb_ctrl_sts ctl_sts;
-+
-+	ctl_sts.val = tpm_read32(REGISTER(locality, TPM_CRB_CTRL_STS));
-+	return ctl_sts.val == 0;
-+}
-+
-+static u8 is_cmd_exec(void)
-+{
-+	u32 ctrl_start;
-+
-+	ctrl_start = tpm_read32(REGISTER(locality, TPM_CRB_CTRL_START));
-+	if (ctrl_start == 1)
-+		return 1;
-+
-+	return 0;
-+}
-+
-+static u8 cmd_ready(void)
-+{
-+	struct tpm_crb_ctrl_req ctl_req;
-+
-+	if (is_idle()) {
-+		ctl_req.cmd_ready = 1;
-+		tpm_write32(ctl_req.val, REGISTER(locality, TPM_CRB_CTRL_REQ));
-+		tpm2_timeout_c();
-+
-+		if (is_idle())
-+			return -1;
-+	}
-+
-+	return 0;
-+}
-+
-+static void go_idle(void)
-+{
-+	struct tpm_crb_ctrl_req ctl_req;
-+
-+	if (is_idle())
-+		return;
-+
-+	ctl_req.go_idle = 1;
-+	tpm_write32(ctl_req.val, REGISTER(locality, TPM_CRB_CTRL_REQ));
-+
-+	/* pause to give tpm time to complete the request */
-+	tpm2_timeout_c();
-+}
-+
-+static void crb_relinquish_locality_internal(u16 l)
-+{
-+	struct tpm_loc_ctrl loc_ctrl;
-+
-+	loc_ctrl.relinquish = 1;
-+
-+	tpm_write32(loc_ctrl.val, REGISTER(l, TPM_LOC_CTRL));
-+}
-+
-+u8 crb_request_locality(u8 l)
-+{
-+	struct tpm_loc_state loc_state;
-+	struct tpm_loc_ctrl loc_ctrl;
-+	struct tpm_loc_sts loc_sts;
-+
-+	/* TPM_LOC_STATE is aliased across all localities */
-+	loc_state.val = tpm_read8(REGISTER(0, TPM_LOC_STATE));
-+
-+	if (loc_state.loc_assigned == 1) {
-+		if (loc_state.active_locality == l) {
-+			locality = l;
-+			return locality;
-+		}
-+
-+		crb_relinquish_locality_internal(loc_state.loc_assigned);
-+	}
-+
-+	loc_ctrl.request_access = 1;
-+	tpm_write32(loc_ctrl.val, REGISTER(l, TPM_LOC_CTRL));
-+
-+	loc_sts.val = tpm_read32(REGISTER(l, TPM_LOC_STS));
-+	if (loc_sts.granted != 1) {
-+		locality = TPM_NO_LOCALITY;
-+		return locality;
-+	}
-+
-+	locality = l;
-+	return locality;
-+}
-+
-+void crb_relinquish_locality(void)
-+{
-+	crb_relinquish_locality_internal(locality);
-+}
-+
-+u8 crb_init(struct tpm *t)
-+{
-+	u8 i;
-+	struct tpm_crb_intf_id_ext id;
-+
-+	for (i = 0; i <= TPM_MAX_LOCALITY; i++)
-+		crb_relinquish_locality_internal(i);
-+
-+	if (crb_request_locality(0) == TPM_NO_LOCALITY)
-+		return 0;
-+
-+	id.val = tpm_read32(REGISTER(0, TPM_CRB_INTF_ID + 4));
-+	t->vendor = ((id.vid & 0x00FF) << 8) | ((id.vid & 0xFF00) >> 8);
-+	if ((t->vendor & 0xFFFF) == 0xFFFF)
-+		return 0;
-+
-+	/* have the tpm invalidate the buffer if left in completion state */
-+	go_idle();
-+	/* now move to ready state */
-+	cmd_ready();
-+
-+	return 1;
-+}
-+
-+/* assumes cancel will succeed */
-+static void cancel_send(void)
-+{
-+	if (is_cmd_exec()) {
-+		tpm_write32(1, REGISTER(locality, TPM_CRB_CTRL_CANCEL));
-+		timeout_b();
-+
-+		tpm_write32(0, REGISTER(locality, TPM_CRB_CTRL_CANCEL));
-+	}
-+}
-+
-+size_t crb_send(struct tpmbuff *buf)
-+{
-+	u32 ctrl_start = 1;
-+	u8 count = 0;
-+
-+	if (is_idle())
-+		return 0;
-+
-+	tpm_write32(ctrl_start, REGISTER(locality, TPM_CRB_CTRL_START));
-+
-+	/*
-+	 * Most command sequences this code is interested with operates with
-+	 * 20/750 duration/timeout schedule
-+	 */
-+	duration_a();
-+	ctrl_start = tpm_read32(REGISTER(locality, TPM_CRB_CTRL_START));
-+	if (ctrl_start != 0) {
-+		timeout_a();
-+		ctrl_start = tpm_read32(REGISTER(locality, TPM_CRB_CTRL_START));
-+		if (ctrl_start != 0) {
-+			cancel_send();
-+			/* minimum response is header with cancel ord */
-+			return sizeof(struct tpm_header);
-+		}
-+	}
-+
-+	return buf->len;
-+}
-+
-+size_t crb_recv(struct tpmbuff *buf)
-+{
-+	/* noop, currently send waits until execution is complete*/
-+	return 0;
-+}
-diff --git a/arch/x86/boot/compressed/tpm/crb.h b/arch/x86/boot/compressed/tpm/crb.h
-new file mode 100644
-index 000000000000..7b39a9dcd7de
---- /dev/null
-+++ b/arch/x86/boot/compressed/tpm/crb.h
-@@ -0,0 +1,25 @@
++++ b/arch/x86/boot/compressed/tpm/tpm1.h
+@@ -0,0 +1,112 @@
 +// SPDX-License-Identifier: GPL-2.0
 +/*
 + * Copyright (c) 2019 Apertus Solutions, LLC
@@ -441,25 +127,112 @@ index 000000000000..7b39a9dcd7de
 + *
 + */
 +
-+#ifndef _CRB_H
-+#define _CRB_H
++#ifndef _TPM1_H
++#define _TPM1_H
 +
 +#include "tpm.h"
 +
-+/* TPM Interface Specification functions */
-+u8 crb_request_locality(u8 l);
-+void crb_relinquish_locality(void);
-+u8 crb_init(struct tpm *t);
-+size_t crb_send(struct tpmbuff *buf);
-+size_t crb_recv(struct tpmbuff *buf);
++/* Section 2.2.3 */
++#define TPM_AUTH_DATA_USAGE u8
++#define TPM_PAYLOAD_TYPE u8
++#define TPM_VERSION_BYTE u8
++#define TPM_TAG u16
++#define TPM_PROTOCOL_ID u16
++#define TPM_STARTUP_TYPE u16
++#define TPM_ENC_SCHEME u16
++#define TPM_SIG_SCHEME u16
++#define TPM_MIGRATE_SCHEME u16
++#define TPM_PHYSICAL_PRESENCE u16
++#define TPM_ENTITY_TYPE u16
++#define TPM_KEY_USAGE u16
++#define TPM_EK_TYPE u16
++#define TPM_STRUCTURE_TAG u16
++#define TPM_PLATFORM_SPECIFIC u16
++#define TPM_COMMAND_CODE u32
++#define TPM_CAPABILITY_AREA u32
++#define TPM_KEY_FLAGS u32
++#define TPM_ALGORITHM_ID u32
++#define TPM_MODIFIER_INDICATOR u32
++#define TPM_ACTUAL_COUNT u32
++#define TPM_TRANSPORT_ATTRIBUTES u32
++#define TPM_AUTHHANDLE u32
++#define TPM_DIRINDEX u32
++#define TPM_KEY_HANDLE u32
++#define TPM_PCRINDEX u32
++#define TPM_RESULT u32
++#define TPM_RESOURCE_TYPE u32
++#define TPM_KEY_CONTROL u32
++#define TPM_NV_INDEX u32 The
++#define TPM_FAMILY_ID u32
++#define TPM_FAMILY_VERIFICATION u32
++#define TPM_STARTUP_EFFECTS u32
++#define TPM_SYM_MODE u32
++#define TPM_FAMILY_FLAGS u32
++#define TPM_DELEGATE_INDEX u32
++#define TPM_CMK_DELEGATE u32
++#define TPM_COUNT_ID u32
++#define TPM_REDIT_COMMAND u32
++#define TPM_TRANSHANDLE u32
++#define TPM_HANDLE u32
++#define TPM_FAMILY_OPERATION u32
++
++/* Section 6 */
++#define TPM_TAG_RQU_COMMAND		0x00C1
++#define TPM_TAG_RQU_AUTH1_COMMAND	0x00C2
++#define TPM_TAG_RQU_AUTH2_COMMAND	0x00C3
++#define TPM_TAG_RSP_COMMAND		0x00C4
++#define TPM_TAG_RSP_AUTH1_COMMAND	0x00C5
++#define TPM_TAG_RSP_AUTH2_COMMAND	0x00C6
++
++/* Section 16 */
++#define TPM_SUCCESS 0x0
++
++/* Section 17 */
++#define TPM_ORD_EXTEND			0x00000014
++
++#define SHA1_DIGEST_SIZE 20
++
++/* Section 5.4 */
++struct tpm_sha1_digest {
++	u8 digest[SHA1_DIGEST_SIZE];
++};
++struct tpm_digest {
++	TPM_PCRINDEX pcr;
++	union {
++		struct tpm_sha1_digest sha1;
++	} digest;
++};
++
++#define TPM_DIGEST		struct tpm_sha1_digest
++#define TPM_CHOSENID_HASH	TPM_DIGEST
++#define TPM_COMPOSITE_HASH	TPM_DIGEST
++#define TPM_DIRVALUE		TPM_DIGEST
++#define TPM_HMAC		TPM_DIGEST
++#define TPM_PCRVALUE		TPM_DIGEST
++#define TPM_AUDITDIGEST		TPM_DIGEST
++#define TPM_DAA_TPM_SEED	TPM_DIGEST
++#define TPM_DAA_CONTEXT_SEED	TPM_DIGEST
++
++struct tpm_extend_cmd {
++	TPM_PCRINDEX pcr_num;
++	TPM_DIGEST digest;
++};
++
++struct tpm_extend_resp {
++	TPM_COMMAND_CODE ordinal;
++	TPM_PCRVALUE digest;
++};
++
++/* TPM Commands */
++int tpm1_pcr_extend(struct tpm *t, struct tpm_digest *d);
 +
 +#endif
-diff --git a/arch/x86/boot/compressed/tpm/tis.c b/arch/x86/boot/compressed/tpm/tis.c
+diff --git a/arch/x86/boot/compressed/tpm/tpm1_cmds.c b/arch/x86/boot/compressed/tpm/tpm1_cmds.c
 new file mode 100644
-index 000000000000..587dc3b53155
+index 000000000000..653228fc8c4a
 --- /dev/null
-+++ b/arch/x86/boot/compressed/tpm/tis.c
-@@ -0,0 +1,212 @@
++++ b/arch/x86/boot/compressed/tpm/tpm1_cmds.c
+@@ -0,0 +1,133 @@
 +// SPDX-License-Identifier: GPL-2.0
 +/*
 + * Copyright (c) 2019 Apertus Solutions, LLC
@@ -472,458 +245,448 @@ index 000000000000..587dc3b53155
 + *
 + */
 +
++#include <linux/string.h>
 +#include <linux/types.h>
++#include <linux/errno.h>
++#include <asm/byteorder.h>
++#include "tpm.h"
++#include "tpmbuff.h"
++#include "tis.h"
++#include "tpm_common.h"
++#include "tpm1.h"
++
++int tpm1_pcr_extend(struct tpm *t, struct tpm_digest *d)
++{
++	int ret = 0;
++	struct tpmbuff *b = t->buff;
++	struct tpm_header *hdr;
++	struct tpm_extend_cmd *cmd;
++	struct tpm_extend_resp *resp;
++	size_t bytes, size;
++
++	if (!tpmb_reserve(b)) {
++		ret = -ENOMEM;
++		goto out;
++	}
++
++	hdr = (struct tpm_header *)b->head;
++
++	hdr->tag = cpu_to_be16(TPM_TAG_RQU_COMMAND);
++	hdr->code = cpu_to_be32(TPM_ORD_EXTEND);
++
++	cmd = (struct tpm_extend_cmd *)
++		tpmb_put(b, sizeof(struct tpm_extend_cmd));
++	if (cmd == NULL) {
++		ret = -ENOMEM;
++		goto free;
++	}
++
++	cmd->pcr_num = cpu_to_be32(d->pcr);
++	memcpy(&(cmd->digest), &(d->digest), sizeof(TPM_DIGEST));
++
++	hdr->size = cpu_to_be32(tpmb_size(b));
++
++	switch (t->intf) {
++	case TPM_DEVNODE:
++		/* Not implemented yet */
++		ret = -EBADRQC;
++		break;
++	case TPM_TIS:
++		if (be32_to_cpu(hdr->size) != tis_send(b))
++			ret = -EAGAIN;
++		break;
++	case TPM_CRB:
++		/* Not valid for TPM 1.2 */
++		ret = -ENODEV;
++		break;
++	case TPM_UEFI:
++		/* Not implemented yet */
++		ret = -EBADRQC;
++		break;
++	}
++
++	if (ret)
++		goto free;
++
++	tpmb_free(b);
++
++	/* Reset buffer for receive */
++	if (!tpmb_reserve(b)) {
++		ret = -ENOMEM;
++		goto out;
++	}
++
++	hdr = (struct tpm_header *)b->head;
++
++	/*
++	 * The extend receive operation returns a struct tpm_extend_resp
++	 * but the current implementation ignores the returned PCR value.
++	 */
++
++	switch (t->intf) {
++	case TPM_DEVNODE:
++		/* Not implemented yet */
++		ret = -EBADRQC;
++		break;
++	case TPM_TIS:
++		/* tis_recv() will increase the buffer size */
++		size = tis_recv(t->family, b);
++		if (tpmb_size(b) != size)
++			ret = -EAGAIN;
++		break;
++	case TPM_CRB:
++		/* Not valid for TPM 1.2 */
++		ret = -ENODEV;
++		break;
++	case TPM_UEFI:
++		/* Not implemented yet */
++		ret = -EBADRQC;
++		break;
++	}
++
++	tpmb_free(b);
++
++	if (ret)
++		goto out;
++
++	/*
++	 * On return, the code field is used for the return code out. Though
++	 * the commands specifications section 16.1 implies there is an
++	 * ordinal field, the return size and values point to this being
++	 * incorrect.
++	 *
++	 * Also tis_recv() converts the header back to CPU endianness.
++	 */
++	if (hdr->code != TPM_SUCCESS)
++		ret = -EAGAIN;
++
++	return ret;
++free:
++	tpmb_free(b);
++out:
++	return ret;
++}
+diff --git a/arch/x86/boot/compressed/tpm/tpm2.h b/arch/x86/boot/compressed/tpm/tpm2.h
+new file mode 100644
+index 000000000000..b3a8bf5acaf0
+--- /dev/null
++++ b/arch/x86/boot/compressed/tpm/tpm2.h
+@@ -0,0 +1,89 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (c) 2019 Apertus Solutions, LLC
++ *
++ * Author(s):
++ *      Daniel P. Smith <dpsmith@apertussolutions.com>
++ *
++ * The definitions in this header are extracted and/or dervied from the
++ * Trusted Computing Group's TPM 2.0 Library Specification Parts 1&2.
++ *
++ */
++
++#ifndef _TPM2_H
++#define _TPM2_H
++
++#include "tpm_common.h"
++#include "tpm2_constants.h"
++
++
++/* Table 192  Definition of TPM2B_TEMPLATE Structure:
++ *   Using this as the base structure similar to the spec
++ */
++struct tpm2b {
++	u16 size;
++	u8 buffer[0];
++};
++
++// Table 32  Definition of TPMA_SESSION Bits <  IN/OUT>
++struct tpma_session {
++	u8 continue_session  : 1;
++	u8 audit_exclusive   : 1;
++	u8 audit_reset       : 1;
++	u8 reserved3_4       : 2;
++	u8 decrypt           : 1;
++	u8 encrypt           : 1;
++	u8 audit             : 1;
++};
++
++
++// Table 72  Definition of TPMT_HA Structure <  IN/OUT>
++struct tpmt_ha {
++	u16 alg;	/* TPMI_ALG_HASH	*/
++	u8 digest[0];	/* TPMU_HA		*/
++};
++
++// Table 100  Definition of TPML_DIGEST_VALUES Structure
++struct tpml_digest_values {
++	u32 count;
++	struct tpmt_ha digests[0];
++};
++
++
++// Table 124  Definition of TPMS_AUTH_COMMAND Structure <  IN>
++struct tpms_auth_cmd {
++	u32 *handle;
++	struct tpm2b *nonce;
++	struct tpma_session *attributes;
++	struct tpm2b *hmac;
++};
++
++// Table 125  Definition of TPMS_AUTH_RESPONSE Structure <  OUT>
++struct tpms_auth_resp {
++	struct tpm2b *nonce;
++	struct tpma_session *attributes;
++	struct tpm2b *hmac;
++};
++
++struct tpm2_cmd {
++	struct tpm_header *header;
++	u32 *handles;			/* TPM Handles array	*/
++	u32 *auth_size;			/* Size of Auth Area	*/
++	struct tpms_auth_cmd *auth;	/* Authorization Area	*/
++	u8 *params;			/* Parameters		*/
++	u8 *raw;			/* internal raw buffer	*/
++};
++
++struct tpm2_resp {
++	struct tpm_header *header;
++	u32 *handles;		/* TPM Handles array	*/
++	u32 *param_size;	/* Size of Parameters	*/
++	struct tpm2b *params;	/* Parameters		*/
++	u8 *auth;		/* Authorization Area	*/
++	u8 *raw;		/* internal raw buffer	*/
++};
++
++int tpm2_extend_pcr(struct tpm *t, u32 pcr,
++		struct tpml_digest_values *digests);
++
++#endif
+diff --git a/arch/x86/boot/compressed/tpm/tpm2_auth.c b/arch/x86/boot/compressed/tpm/tpm2_auth.c
+new file mode 100644
+index 000000000000..cb80b644b719
+--- /dev/null
++++ b/arch/x86/boot/compressed/tpm/tpm2_auth.c
+@@ -0,0 +1,31 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (c) 2019 Apertus Solutions, LLC
++ *
++ * Author(s):
++ *      Daniel P. Smith <dpsmith@apertussolutions.com>
++ *
++ */
++
++#include <linux/types.h>
++#include <linux/string.h>
++#include <asm/byteorder.h>
++#include "tpm.h"
++#include "tpm2.h"
++#include "tpm2_constants.h"
++
++#define NULL_AUTH_SIZE 9
++
++u16 tpm2_null_auth_size(void)
++{
++	return NULL_AUTH_SIZE;
++}
++
++u16 tpm2_null_auth(struct tpms_auth_cmd *a)
++{
++	memset(a, 0, NULL_AUTH_SIZE);
++
++	*a->handle = cpu_to_be32(TPM_RS_PW);
++
++	return NULL_AUTH_SIZE;
++}
+diff --git a/arch/x86/boot/compressed/tpm/tpm2_auth.h b/arch/x86/boot/compressed/tpm/tpm2_auth.h
+new file mode 100644
+index 000000000000..bc9d0f7dfeee
+--- /dev/null
++++ b/arch/x86/boot/compressed/tpm/tpm2_auth.h
+@@ -0,0 +1,21 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (c) 2019 Apertus Solutions, LLC
++ *
++ * Author(s):
++ *      Daniel P. Smith <dpsmith@apertussolutions.com>
++ *
++ * The definitions in this header are extracted and/or dervied from the
++ * Trusted Computing Group's TPM 2.0 Library Specification Parts 1&2.
++ *
++ */
++
++#ifndef _TPM2_AUTH_H
++#define _TPM2_AUTH_H
++
++#include "tpm2.h"
++
++u16 tpm2_null_auth_size(void);
++u16 tpm2_null_auth(struct tpms_auth_cmd *a);
++
++#endif
+diff --git a/arch/x86/boot/compressed/tpm/tpm2_cmds.c b/arch/x86/boot/compressed/tpm/tpm2_cmds.c
+new file mode 100644
+index 000000000000..66a40905365b
+--- /dev/null
++++ b/arch/x86/boot/compressed/tpm/tpm2_cmds.c
+@@ -0,0 +1,150 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (c) 2019 Apertus Solutions, LLC
++ *
++ * Author(s):
++ *      Daniel P. Smith <dpsmith@apertussolutions.com>
++ *
++ */
++
++#include <linux/types.h>
++#include <linux/string.h>
++#include <linux/errno.h>
 +#include <asm/byteorder.h>
 +#include "tpm.h"
 +#include "tpmbuff.h"
 +#include "tpm_common.h"
++#include "tpm2.h"
++#include "tpm2_auth.h"
 +#include "tis.h"
++#include "crb.h"
 +
-+#define TPM_BURST_MIN_DELAY 100 /* 100us */
-+
-+static u8 locality = TPM_NO_LOCALITY;
-+
-+static u32 burst_wait(void)
++static int tpm2_alloc_cmd(struct tpmbuff *b, struct tpm2_cmd *c, u16 tag,
++		u32 code)
 +{
-+	u32 count = 0;
++	c->header = (struct tpm_header *)tpmb_reserve(b);
++	if (!c->header)
++		return -ENOMEM;
 +
-+	while (count == 0) {
-+		count = tpm_read8(STS(locality) + 1);
-+		count += tpm_read8(STS(locality) + 2) << 8;
++	c->header->tag = cpu_to_be16(tag);
++	c->header->code = cpu_to_be32(code);
 +
-+		/* Wait for FIFO to drain */
-+		if (count == 0)
-+			tpm_udelay(TPM_BURST_MIN_DELAY);
-+	}
-+
-+	return count;
-+}
-+
-+void tis_relinquish_locality(void)
-+{
-+	if (locality < TPM_MAX_LOCALITY)
-+		tpm_write8(ACCESS_RELINQUISH_LOCALITY, ACCESS(locality));
-+
-+	locality = TPM_NO_LOCALITY;
-+}
-+
-+u8 tis_request_locality(u8 l)
-+{
-+	if (l > TPM_MAX_LOCALITY)
-+		return TPM_NO_LOCALITY;
-+
-+	if (l == locality)
-+		return locality;
-+
-+	tis_relinquish_locality();
-+
-+	tpm_write8(ACCESS_REQUEST_USE, ACCESS(l));
-+
-+	/* wait for locality to be granted */
-+	if (tpm_read8(ACCESS(l)) & ACCESS_ACTIVE_LOCALITY)
-+		locality = l;
-+
-+	return locality;
-+}
-+
-+u8 tis_init(struct tpm *t)
-+{
-+	locality = TPM_NO_LOCALITY;
-+
-+	if (tis_request_locality(0) != 0)
-+		return 0;
-+
-+	t->vendor = tpm_read32(DID_VID(0));
-+	if ((t->vendor & 0xFFFF) == 0xFFFF)
-+		return 0;
-+
-+	return 1;
-+}
-+
-+size_t tis_send(struct tpmbuff *buf)
-+{
-+	u8 status, *buf_ptr;
-+	u32 burstcnt = 0;
-+	u32 count = 0;
-+
-+	if (locality > TPM_MAX_LOCALITY)
-+		return 0;
-+
-+	for (status = 0; (status & STS_COMMAND_READY) == 0; ) {
-+		tpm_write8(STS_COMMAND_READY, STS(locality));
-+		status = tpm_read8(STS(locality));
-+	}
-+
-+	buf_ptr = buf->head;
-+
-+	/* send all but the last byte */
-+	while (count < (buf->len - 1)) {
-+		burstcnt = burst_wait();
-+		for (; burstcnt > 0 && count < (buf->len - 1); burstcnt--) {
-+			tpm_write8(buf_ptr[count], DATA_FIFO(locality));
-+			count++;
-+		}
-+
-+		/* check for overflow */
-+		for (status = 0; (status & STS_VALID) == 0; )
-+			status = tpm_read8(STS(locality));
-+
-+		if ((status & STS_DATA_EXPECT) == 0)
-+			return 0;
-+	}
-+
-+	/* write last byte */
-+	tpm_write8(buf_ptr[buf->len - 1], DATA_FIFO(locality));
-+	count++;
-+
-+	/* make sure it stuck */
-+	for (status = 0; (status & STS_VALID) == 0; )
-+		status = tpm_read8(STS(locality));
-+
-+	if ((status & STS_DATA_EXPECT) != 0)
-+		return 0;
-+
-+	/* go and do it */
-+	tpm_write8(STS_GO, STS(locality));
-+
-+	return (size_t)count;
-+}
-+
-+static size_t recv_data(unsigned char *buf, size_t len)
-+{
-+	size_t size = 0;
-+	u8 status, *bufptr;
-+	u32 burstcnt = 0;
-+
-+	bufptr = (u8 *)buf;
-+
-+	while (tis_data_available(locality) && size < len) {
-+		burstcnt = burst_wait();
-+		for (; burstcnt > 0 && size < len; burstcnt--) {
-+			*bufptr = tpm_read8(DATA_FIFO(locality));
-+			bufptr++;
-+			size++;
-+		}
-+	}
-+
-+	return size;
-+}
-+
-+size_t tis_recv(enum tpm_family f, struct tpmbuff *buf)
-+{
-+	u32 expected;
-+	u8 status, *buf_ptr;
-+	struct tpm_header *hdr;
-+
-+	if (locality > TPM_MAX_LOCALITY)
-+		goto err;
-+
-+	/* ensure that there is data available */
-+	if (!tis_data_available(locality)) {
-+		if (f == TPM12)
-+			tpm1_timeout_d();
-+		else
-+			tpm2_timeout_d();
-+
-+		if (!tis_data_available(locality))
-+			goto err;
-+	}
-+
-+	/* read header */
-+	hdr = (struct tpm_header *)buf->head;
-+	expected = sizeof(struct tpm_header);
-+	if (recv_data(buf->head, expected) < expected)
-+		goto err;
-+
-+	/* convert header */
-+	hdr->tag = be16_to_cpu(hdr->tag);
-+	hdr->size = be32_to_cpu(hdr->size);
-+	hdr->code = be32_to_cpu(hdr->code);
-+
-+	/* protect against integer underflow */
-+	if (hdr->size <= expected)
-+		goto err;
-+
-+	/* hdr->size = header + data */
-+	expected = hdr->size - expected;
-+	buf_ptr = tpmb_put(buf, expected);
-+	if (!buf_ptr)
-+		goto err;
-+
-+	/* read all data, except last byte */
-+	if (recv_data(buf_ptr, expected - 1) < (expected - 1))
-+		goto err;
-+
-+	/* check for receive underflow */
-+	if (!tis_data_available(locality))
-+		goto err;
-+
-+	/* read last byte */
-+	if (recv_data(buf_ptr, 1) != 1)
-+		goto err;
-+
-+	/* make sure we read everything */
-+	if (tis_data_available(locality))
-+		goto err;
-+
-+	tpm_write8(STS_COMMAND_READY, STS(locality));
-+
-+	return hdr->size;
-+err:
 +	return 0;
 +}
-diff --git a/arch/x86/boot/compressed/tpm/tis.h b/arch/x86/boot/compressed/tpm/tis.h
-new file mode 100644
-index 000000000000..cb0b252eeec4
---- /dev/null
-+++ b/arch/x86/boot/compressed/tpm/tis.h
-@@ -0,0 +1,51 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (c) 2019 Apertus Solutions, LLC
-+ *
-+ * Author(s):
-+ *      Daniel P. Smith <dpsmith@apertussolutions.com>
-+ *
-+ * The definitions in this header are extracted from the Trusted Computing
-+ * Group's "TPM Main Specification", Parts 1-3.
-+ *
-+ */
 +
-+#ifndef _TIS_H
-+#define _TIS_H
-+
-+#include "tpm.h"
-+#include "tpm_common.h"
-+
-+/* macros to access registers at locality ’’l’’ */
-+#define ACCESS(l)			(0x0000 | ((l) << 12))
-+#define STS(l)				(0x0018 | ((l) << 12))
-+#define DATA_FIFO(l)			(0x0024 | ((l) << 12))
-+#define DID_VID(l)			(0x0F00 | ((l) << 12))
-+/* access bits */
-+#define ACCESS_ACTIVE_LOCALITY		0x20 /* (R)*/
-+#define ACCESS_RELINQUISH_LOCALITY	0x20 /* (W) */
-+#define ACCESS_REQUEST_USE		0x02 /* (W) */
-+/* status bits */
-+#define STS_VALID			0x80 /* (R) */
-+#define STS_COMMAND_READY		0x40 /* (R) */
-+#define STS_DATA_AVAIL			0x10 /* (R) */
-+#define STS_DATA_EXPECT			0x08 /* (R) */
-+#define STS_GO				0x20 /* (W) */
-+
-+static inline bool tis_data_available(int locality)
++static u16 convert_digest_list(struct tpml_digest_values *digests)
 +{
-+	int status;
++	int i;
++	u16 size = sizeof(digests->count);
++	struct tpmt_ha *h = digests->digests;
 +
-+	status = tpm_read8(STS(locality));
-+	return ((status & (STS_DATA_AVAIL | STS_VALID)) ==
-+		(STS_DATA_AVAIL | STS_VALID));
-+}
++	for (i = 0; i < digests->count; i++) {
++		switch (h->alg) {
++		case TPM_ALG_SHA1:
++			h->alg = cpu_to_be16(h->alg);
++			h = (struct tpmt_ha *)((u8 *)h + SHA1_SIZE);
++			size += sizeof(u16) + SHA1_SIZE;
++			break;
++		case TPM_ALG_SHA256:
++			h->alg = cpu_to_be16(h->alg);
++			h = (struct tpmt_ha *)((u8 *)h + SHA256_SIZE);
++			size += sizeof(u16) + SHA256_SIZE;
++			break;
++		case TPM_ALG_SHA384:
++			h->alg = cpu_to_be16(h->alg);
++			h = (struct tpmt_ha *)((u8 *)h + SHA384_SIZE);
++			size += sizeof(u16) + SHA384_SIZE;
++			break;
++		case TPM_ALG_SHA512:
++			h->alg = cpu_to_be16(h->alg);
++			h = (struct tpmt_ha *)((u8 *)h + SHA512_SIZE);
++			size += sizeof(u16) + SHA512_SIZE;
++			break;
++		case TPM_ALG_SM3_256:
++			h->alg = cpu_to_be16(h->alg);
++			h = (struct tpmt_ha *)((u8 *)h + SM3256_SIZE);
++			size += sizeof(u16) + SHA1_SIZE;
++			break;
++		default:
++			return 0;
++		}
++	}
 +
-+/* TPM Interface Specification functions */
-+u8 tis_request_locality(u8 l);
-+void tis_relinquish_locality(void);
-+u8 tis_init(struct tpm *t);
-+size_t tis_send(struct tpmbuff *buf);
-+size_t tis_recv(enum tpm_family f, struct tpmbuff *buf);
-+
-+#endif
-diff --git a/arch/x86/boot/compressed/tpm/tpm.h b/arch/x86/boot/compressed/tpm/tpm.h
-new file mode 100644
-index 000000000000..45d12e424809
---- /dev/null
-+++ b/arch/x86/boot/compressed/tpm/tpm.h
-@@ -0,0 +1,42 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (c) 2019 Apertus Solutions, LLC
-+ *
-+ * Author(s):
-+ *      Daniel P. Smith <dpsmith@apertussolutions.com>
-+ *
-+ */
-+
-+#ifndef _TPM_H
-+#define _TPM_H
-+
-+#define TPM_NO_LOCALITY		0xFF
-+
-+enum tpm_hw_intf {
-+	TPM_DEVNODE,
-+	TPM_TIS,
-+	TPM_CRB,
-+	TPM_UEFI
-+};
-+
-+enum tpm_family {
-+	TPM12,
-+	TPM20
-+};
-+
-+struct tpmbuff;
-+
-+struct tpm {
-+	u32 vendor;
-+	enum tpm_family family;
-+	enum tpm_hw_intf intf;
-+	struct tpmbuff *buff;
-+};
-+
-+extern struct tpm *enable_tpm(void);
-+extern u8 tpm_request_locality(struct tpm *t, u8 l);
-+extern void tpm_relinquish_locality(struct tpm *t);
-+extern int tpm_extend_pcr(struct tpm *t, u32 pcr, u16 algo,
-+		u8 *digest);
-+extern void free_tpm(struct tpm *t);
-+#endif
-diff --git a/arch/x86/boot/compressed/tpm/tpm_buff.c b/arch/x86/boot/compressed/tpm/tpm_buff.c
-new file mode 100644
-index 000000000000..7bb684c127be
---- /dev/null
-+++ b/arch/x86/boot/compressed/tpm/tpm_buff.c
-@@ -0,0 +1,135 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (c) 2019 Apertus Solutions, LLC
-+ *
-+ * Author(s):
-+ *      Daniel P. Smith <dpsmith@apertussolutions.com>
-+ *
-+ */
-+
-+#include <linux/types.h>
-+#include "tpm.h"
-+#include "tpmbuff.h"
-+#include "tpm_common.h"
-+
-+#define STATIC_TIS_BUFFER_SIZE		1024
-+
-+#define TPM_CRB_DATA_BUFFER_OFFSET	0x80
-+#define TPM_CRB_DATA_BUFFER_SIZE	3966
-+
-+u8 *tpmb_reserve(struct tpmbuff *b)
-+{
-+	if (b->locked)
-+		return NULL;
-+
-+	b->len = sizeof(struct tpm_header);
-+	b->locked = 1;
-+	b->data = b->head + b->len;
-+	b->tail = b->data;
-+
-+	return b->head;
-+}
-+
-+void tpmb_free(struct tpmbuff *b)
-+{
-+	memset(b->head, 0, b->len);
-+
-+	b->len = 0;
-+	b->locked = 0;
-+	b->data = NULL;
-+	b->tail = NULL;
-+}
-+
-+u8 *tpmb_put(struct tpmbuff *b, size_t size)
-+{
-+	u8 *tail = b->tail;
-+
-+	if ((b->len + size) > b->truesize)
-+		return NULL; /* TODO: add overflow buffer support */
-+
-+	b->tail += size;
-+	b->len += size;
-+
-+	return tail;
-+}
-+
-+size_t tpmb_trim(struct tpmbuff *b, size_t size)
-+{
-+	if (b->len < size)
-+		size = b->len;
-+
-+	/* TODO: add overflow buffer support */
-+
-+	b->tail -= size;
-+	b->len -= size;
++	digests->count = cpu_to_be32(digests->count);
 +
 +	return size;
 +}
 +
-+size_t tpmb_size(struct tpmbuff *b)
++int tpm2_extend_pcr(struct tpm *t, u32 pcr,
++		struct tpml_digest_values *digests)
 +{
-+	return b->len;
-+}
++	struct tpmbuff *b = t->buff;
++	struct tpm2_cmd cmd;
++	u8 *ptr;
++	u16 size;
++	int ret = 0;
 +
-+static u8 tis_buff[STATIC_TIS_BUFFER_SIZE];
-+static struct tpmbuff tpm_buff;
++	ret = tpm2_alloc_cmd(b, &cmd, TPM_ST_SESSIONS, TPM_CC_PCR_EXTEND);
++	if (ret < 0)
++		goto out;
 +
-+struct tpmbuff *alloc_tpmbuff(enum tpm_hw_intf intf, u8 locality)
-+{
-+	struct tpmbuff *b = &tpm_buff;
++	cmd.handles = (u32 *)tpmb_put(b, sizeof(u32));
++	if (cmd.handles == NULL) {
++		ret = -ENOMEM;
++		goto free;
++	}
 +
-+	switch (intf) {
++	cmd.handles[0] = cpu_to_be32(pcr);
++
++	cmd.auth_size = (u32 *)tpmb_put(b, sizeof(u32));
++	if (cmd.auth_size == NULL) {
++		ret = -ENOMEM;
++		goto free;
++	}
++
++	cmd.auth = (struct tpms_auth_cmd *)tpmb_put(b, tpm2_null_auth_size());
++	if (cmd.auth == NULL) {
++		ret = -ENOMEM;
++		goto free;
++	}
++
++	*cmd.auth_size = cpu_to_be32(tpm2_null_auth(cmd.auth));
++
++	size = convert_digest_list(digests);
++	if (size == 0) {
++		ret = -ENOMEM;
++		goto free;
++	}
++
++	cmd.params = (u8 *)tpmb_put(b, size);
++	if (cmd.params == NULL) {
++		ret = -ENOMEM;
++		goto free;
++	}
++
++	memcpy(cmd.params, digests, size);
++
++	cmd.header->size = cpu_to_be16(tpmb_size(b));
++
++	switch (t->intf) {
 +	case TPM_DEVNODE:
-+		/* TODO: need implementation */
-+		goto err;
++		/* Not implemented yet */
++		ret = -EBADRQC;
++		break;
 +	case TPM_TIS:
-+		if (b->head)
-+			goto reset;
-+
-+		b->head = (u8 *)&tis_buff;
-+		b->truesize = STATIC_TIS_BUFFER_SIZE;
++		ret = tis_send(b);
 +		break;
 +	case TPM_CRB:
-+		b->head = (u8 *)(u64)(TPM_MMIO_BASE + (locality << 12)
-+			       + TPM_CRB_DATA_BUFFER_OFFSET);
-+		b->truesize = TPM_CRB_DATA_BUFFER_SIZE;
++		ret = crb_send(b);
 +		break;
 +	case TPM_UEFI:
 +		/* Not implemented yet */
-+		goto err;
-+	default:
-+		goto err;
-+	}
-+
-+reset:
-+	b->len = 0;
-+	b->locked = 0;
-+	b->data = NULL;
-+	b->tail = NULL;
-+	b->end = b->head + (b->truesize - 1);
-+
-+	return b;
-+
-+err:
-+	return NULL;
-+}
-+
-+void free_tpmbuff(struct tpmbuff *b, enum tpm_hw_intf intf)
-+{
-+	switch (intf) {
-+	case TPM_DEVNODE:
-+		/* Not implemented yet */
-+		break;
-+	case TPM_TIS:
-+		b->head = NULL;
-+		break;
-+	case TPM_CRB:
-+		b->head = NULL;
-+		break;
-+	case TPM_UEFI:
-+		/* Not implemented yet */
-+		break;
-+	default:
++		ret = -EBADRQC;
 +		break;
 +	}
++
++free:
++	tpmb_free(b);
++out:
++	return ret;
 +}
-diff --git a/arch/x86/boot/compressed/tpm/tpm_common.h b/arch/x86/boot/compressed/tpm/tpm_common.h
+diff --git a/arch/x86/boot/compressed/tpm/tpm2_constants.h b/arch/x86/boot/compressed/tpm/tpm2_constants.h
 new file mode 100644
-index 000000000000..0ed86edda9b4
+index 000000000000..a1275e744ccd
 --- /dev/null
-+++ b/arch/x86/boot/compressed/tpm/tpm_common.h
-@@ -0,0 +1,127 @@
++++ b/arch/x86/boot/compressed/tpm/tpm2_constants.h
+@@ -0,0 +1,66 @@
 +// SPDX-License-Identifier: GPL-2.0
 +/*
 + * Copyright (c) 2019 Apertus Solutions, LLC
@@ -931,223 +694,65 @@ index 000000000000..0ed86edda9b4
 + * Author(s):
 + *      Daniel P. Smith <dpsmith@apertussolutions.com>
 + *
++ * The definitions in this header are extracted and/or dervied from the
++ * Trusted Computing Group's TPM 2.0 Library Specification Parts 1&2.
++ *
 + */
 +
-+#ifndef _TPM_COMMON_H
-+#define _TPM_COMMON_H
++#ifndef _TPM2_CONSTANTS_H
++#define _TPM2_CONSTANTS_H
 +
-+#define TPM_MMIO_BASE		0xFED40000
-+#define TPM_MAX_LOCALITY	4
++/* Table 9  Definition of (UINT16) TPM_ALG_ID Constants <IN/OUT, S> */
++#define TPM_ALG_ERROR                (u16)(0x0000)
++#define TPM_ALG_RSA                  (u16)(0x0001)
++#define TPM_ALG_SHA                  (u16)(0x0004)
++#define TPM_ALG_SHA1                 (u16)(0x0004)
++#define TPM_ALG_HMAC                 (u16)(0x0005)
++#define TPM_ALG_AES                  (u16)(0x0006)
++#define TPM_ALG_MGF1                 (u16)(0x0007)
++#define TPM_ALG_KEYEDHASH            (u16)(0x0008)
++#define TPM_ALG_XOR                  (u16)(0x000A)
++#define TPM_ALG_SHA256               (u16)(0x000B)
++#define TPM_ALG_SHA384               (u16)(0x000C)
++#define TPM_ALG_SHA512               (u16)(0x000D)
++#define TPM_ALG_NULL                 (u16)(0x0010)
++#define TPM_ALG_SM3_256              (u16)(0x0012)
++#define TPM_ALG_SM4                  (u16)(0x0013)
++#define TPM_ALG_RSASSA               (u16)(0x0014)
++#define TPM_ALG_RSAES                (u16)(0x0015)
++#define TPM_ALG_RSAPSS               (u16)(0x0016)
++#define TPM_ALG_OAEP                 (u16)(0x0017)
++#define TPM_ALG_ECDSA                (u16)(0x0018)
++#define TPM_ALG_ECDH                 (u16)(0x0019)
++#define TPM_ALG_ECDAA                (u16)(0x001A)
++#define TPM_ALG_SM2                  (u16)(0x001B)
++#define TPM_ALG_ECSCHNORR            (u16)(0x001C)
++#define TPM_ALG_ECMQV                (u16)(0x001D)
++#define TPM_ALG_KDF1_SP800_56A       (u16)(0x0020)
++#define TPM_ALG_KDF2                 (u16)(0x0021)
++#define TPM_ALG_KDF1_SP800_108       (u16)(0x0022)
++#define TPM_ALG_ECC                  (u16)(0x0023)
++#define TPM_ALG_SYMCIPHER            (u16)(0x0025)
++#define TPM_ALG_CAMELLIA             (u16)(0x0026)
++#define TPM_ALG_CTR                  (u16)(0x0040)
++#define TPM_ALG_OFB                  (u16)(0x0041)
++#define TPM_ALG_CBC                  (u16)(0x0042)
++#define TPM_ALG_CFB                  (u16)(0x0043)
++#define TPM_ALG_ECB                  (u16)(0x0044)
++#define TPM_ALG_FIRST                (u16)(0x0001)
++#define TPM_ALG_LAST                 (u16)(0x0044)
 +
-+#define SHA1_SIZE	20
-+#define SHA256_SIZE	32
-+#define SHA384_SIZE	48
-+#define SHA512_SIZE	64
-+#define SM3256_SIZE	32
++/* Table 12  Definition of (UINT32) TPM_CC Constants (Numeric Order) <IN/OUT, S> */
++#define TPM_CC_PCR_EXTEND (u32)(0x00000182)
 +
-+struct tpm_header {
-+	u16 tag;
-+	u32 size;
-+	u32 code;
-+} __packed;
++/* Table 19  Definition of (UINT16) TPM_ST Constants <IN/OUT, S> */
++#define TPM_ST_NO_SESSIONS (u16)(0x8001)
++#define TPM_ST_SESSIONS (u16)(0x8002)
 +
-+#define TPM_INTERFACE_ID_0	0x30
-+#define TPM_TIS_INTF_ACTIVE	0x00
-+#define TPM_CRB_INTF_ACTIVE	0x01
-+
-+struct tpm_interface_id {
-+	union {
-+		u32 val;
-+		struct {
-+			u32 interface_type:4;
-+			u32 interface_version:4;
-+			u32 cap_locality:1;
-+			u32 reserved1:4;
-+			u32 cap_tis:1;
-+			u32 cap_crb:1;
-+			u32 cap_if_res:2;
-+			u32 interface_selector:2;
-+			u32 intf_sel_lock:1;
-+			u32 reserved2:4;
-+			u32 reserved3:8;
-+		};
-+	};
-+} __packed;
-+
-+#define TPM_INTF_CAPABILITY_0	0x14
-+#define TPM12_TIS_INTF_12	0x00
-+#define TPM12_TIS_INTF_13	0x02
-+#define TPM20_TIS_INTF_13	0x03
-+
-+struct tpm_intf_capability {
-+	union {
-+		u32 val;
-+		struct {
-+			u32 data_avail_int_support:1;
-+			u32 sts_valid_int_support:1;
-+			u32 locality_change_int_support:1;
-+			u32 interrupt_level_high:1;
-+			u32 interrupt_level_low:1;
-+			u32 interrupt_edge_rising:1;
-+			u32 interrupt_edge_falling:1;
-+			u32 command_ready_int_support:1;
-+			u32 burst_count_static:1;
-+			u32 data_transfer_size_support:2;
-+			u32 reserved1:17;
-+			u32 interface_version:3;
-+			u32 reserved2:1;
-+		};
-+	};
-+} __packed;
-+
-+void tpm_udelay(int loops);
-+void tpm_mdelay(int ms);
-+
-+/*
-+ * Timeouts defined in Table 16 from the TPM2 PTP and
-+ * Table 15 from the PC Client TIS
-+ */
-+
-+/* TPM Timeout A: 750ms */
-+static inline void timeout_a(void)
-+{
-+	tpm_mdelay(750);
-+}
-+
-+/* TPM Timeout B: 2000ms */
-+static inline void timeout_b(void)
-+{
-+	tpm_mdelay(2000);
-+}
-+
-+/* Timeouts C & D are different between 1.2 & 2.0 */
-+/* TPM1.2 Timeout C: 750ms */
-+static inline void tpm1_timeout_c(void)
-+{
-+	tpm_mdelay(750);
-+}
-+
-+/* TPM1.2 Timeout D: 750ms */
-+static inline void tpm1_timeout_d(void)
-+{
-+	tpm_mdelay(750);
-+}
-+
-+/* TPM2 Timeout C: 200ms */
-+static inline void tpm2_timeout_c(void)
-+{
-+	tpm_mdelay(200);
-+}
-+
-+/* TPM2 Timeout D: 30ms */
-+static inline void tpm2_timeout_d(void)
-+{
-+	tpm_mdelay(30);
-+}
-+
-+u8 tpm_read8(u32 field);
-+void tpm_write8(unsigned char val, u32 field);
-+u32 tpm_read32(u32 field);
-+void tpm_write32(unsigned int val, u32 field);
++/* Table 28  Definition of (TPM_HANDLE) TPM_RH Constants <S> */
++#define TPM_RS_PW (u32)(0x40000009)
 +
 +#endif
-diff --git a/arch/x86/boot/compressed/tpm/tpmbuff.h b/arch/x86/boot/compressed/tpm/tpmbuff.h
-new file mode 100644
-index 000000000000..8f51fd2ea16e
---- /dev/null
-+++ b/arch/x86/boot/compressed/tpm/tpmbuff.h
-@@ -0,0 +1,34 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (c) 2019 Apertus Solutions, LLC
-+ *
-+ * Author(s):
-+ *      Daniel P. Smith <dpsmith@apertussolutions.com>
-+ *
-+ */
-+
-+#ifndef _TPMBUFF_H
-+#define _TPMBUFF_H
-+
-+/* mirroring Linux SKB */
-+struct tpmbuff {
-+	size_t truesize;
-+	size_t len;
-+
-+	u8 locked;
-+
-+	u8 *head;
-+	u8 *data;
-+	u8 *tail;
-+	u8 *end;
-+};
-+
-+u8 *tpmb_reserve(struct tpmbuff *b);
-+void tpmb_free(struct tpmbuff *b);
-+u8 *tpmb_put(struct tpmbuff *b, size_t size);
-+size_t tpmb_trim(struct tpmbuff *b, size_t size);
-+size_t tpmb_size(struct tpmbuff *b);
-+struct tpmbuff *alloc_tpmbuff(enum tpm_hw_intf i, u8 locality);
-+void free_tpmbuff(struct tpmbuff *b, enum tpm_hw_intf i);
-+
-+#endif
-diff --git a/arch/x86/boot/compressed/tpm/tpmio.c b/arch/x86/boot/compressed/tpm/tpmio.c
-new file mode 100644
-index 000000000000..9481faed3521
---- /dev/null
-+++ b/arch/x86/boot/compressed/tpm/tpmio.c
-@@ -0,0 +1,51 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (c) 2019 Apertus Solutions, LLC
-+ *
-+ * Author(s):
-+ *      Daniel P. Smith <dpsmith@apertussolutions.com>
-+ */
-+
-+#include <linux/types.h>
-+#include <asm/io.h>
-+#include "tpm_common.h"
-+
-+static noinline void tpm_io_delay(void)
-+{
-+	/* This is the default delay type in native_io_delay */
-+	asm volatile ("outb %al, $0x80");
-+}
-+
-+void tpm_udelay(int loops)
-+{
-+	while (loops--)
-+		tpm_io_delay();	/* Approximately 1 us */
-+}
-+
-+void tpm_mdelay(int ms)
-+{
-+	int i;
-+
-+	for (i = 0; i < ms; i++)
-+		tpm_udelay(1000);
-+}
-+
-+u8 tpm_read8(u32 field)
-+{
-+	return readb((void *)(u64)(TPM_MMIO_BASE | field));
-+}
-+
-+void tpm_write8(unsigned char val, u32 field)
-+{
-+	writeb(val, (void *)(u64)(TPM_MMIO_BASE | field));
-+}
-+
-+u32 tpm_read32(u32 field)
-+{
-+	return readl((void *)(u64)(TPM_MMIO_BASE | field));
-+}
-+
-+void tpm_write32(u32 val, u32 field)
-+{
-+	writel(val, (void *)(u64)(TPM_MMIO_BASE | field));
-+}
 -- 
 2.25.1
 
