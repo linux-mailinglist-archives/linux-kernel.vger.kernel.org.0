@@ -2,218 +2,190 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C811B191FB3
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 04:24:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6015F191FC0
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 04:29:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727346AbgCYDYF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 23:24:05 -0400
-Received: from mail-qk1-f195.google.com ([209.85.222.195]:34383 "EHLO
-        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727253AbgCYDYE (ORCPT
+        id S1727299AbgCYD3J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 23:29:09 -0400
+Received: from mail-qt1-f202.google.com ([209.85.160.202]:34749 "EHLO
+        mail-qt1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727253AbgCYD3J (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 23:24:04 -0400
-Received: by mail-qk1-f195.google.com with SMTP id i6so1175383qke.1
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Mar 2020 20:24:03 -0700 (PDT)
+        Tue, 24 Mar 2020 23:29:09 -0400
+Received: by mail-qt1-f202.google.com with SMTP id v16so831950qtj.1
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Mar 2020 20:29:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lca.pw; s=google;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=lxxZGvRGJjfqPblxToXiOBcEL7NivaeSifGXK+WfYKI=;
-        b=R2q/t0cPO8AvxdiJ5rMsHn5g+CRJvintIn2Sxpxo7FcBjadbCuQN9HNm++LD2upjyX
-         hHLmhXpGq3JLJ1e3JSSaYLqAmrR5aoyCz35GmAclS1/pzzycXOy/dZZjFsffCV2tvwrL
-         fnw1fr71wnxtpguvVVczxXv8m/22mA60/NEsrGQoC8sAseglUaWXxRiAYpwlZXMhydG9
-         OicVMDO+jA5xACnQdrKuLyzmgxQlR5z0u4TxSgmCMwVBjwbn5InTdGkbvPuWmD8RSnQ9
-         lJY8lgPvxYDPndInSeQoEuQ5IaTunHWOZYT/kqUDErQ49uEZqGSobzc8D5tug19Gqkvq
-         dt4g==
+        d=google.com; s=20161025;
+        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
+         :cc;
+        bh=3sG/aYSJEaUzKJMRBRAlTTV0CAiJQVdbv2pY6xIkFCE=;
+        b=moskcLMdmb9Qa/7ck29Ui1zfgaCFu7+KdQFfLwZYDr7XIt65Qg5w0l00KET3ZKZrzL
+         88SdQL8ZJ7DldVOGvvy/h7cqKbMJVpWzmZ4d8d7iOTPDOamziVbRFXTOZFmkn0vz7+3M
+         6GgqRPbTfSjicW0d27iOuGolNFfXZhnk5DUDjRuwpQfUDDSgGbPhhB3BuTsJ6TRfOnX/
+         gpZxH7epiSA4xXzM3i3hMOmoaxbtxBNvdQkdxBcfaw3pdCXZV+tk34FNrAhKiMPh2aJK
+         2/8jHU/rrhszgNwkRLGxdHYb9uz4VcJUvjDTYVhgkJzX+Xdh+N/p7Uy93cGE4kHGi3F9
+         oBdQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=lxxZGvRGJjfqPblxToXiOBcEL7NivaeSifGXK+WfYKI=;
-        b=Fm+c44fekCc7epXpSmHdwF5H2eqUIKIXoLQ/V7+rXxWuu/VH0o2QlT6vQHfqbc037P
-         RnyB7N5L2gDKnByni1QbaYijPY9JXFGSQnoMwvkoU7dEiS/qQempLEXtqB+y+t3k31N3
-         OryCE5/koThbHeXDzepG3hQqMGXCMwGR5xxMF5DuAsMsEVpTNNHCtMNoRN3FIMXTEWS4
-         PD1jVZZ3X3y8GlXfb3pRbkf2hcZ3G5OhmuxuLfTxpMGc5zTKp/f2EPcupSzSycNutHaj
-         yOf6X4qVnHeSUDK7DNBVGHx+AB8rmPvacCLUh7mJwyv1oOxhwOVnxbOoTjJtRWvOSW6p
-         wQkg==
-X-Gm-Message-State: ANhLgQ10lsOaqzcxHNv9cgJel/qFnLzIebt5w49jXIsMZzCPWalHWkTn
-        DEDx6ebLlGSptmyG3/0Hhi7j2w==
-X-Google-Smtp-Source: ADFU+vsHuAxJiNsoCz+bGbXTwfwJGprmIaLeu3KlQ3SbdBX963gzgHtcbXYptEKP7jPOJtdBM7Y8sA==
-X-Received: by 2002:a37:c0d:: with SMTP id 13mr1013501qkm.417.1585106642744;
-        Tue, 24 Mar 2020 20:24:02 -0700 (PDT)
-Received: from [192.168.1.153] (pool-71-184-117-43.bstnma.fios.verizon.net. [71.184.117.43])
-        by smtp.gmail.com with ESMTPSA id g2sm14695589qkb.27.2020.03.24.20.24.01
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 24 Mar 2020 20:24:02 -0700 (PDT)
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 13.0 \(3608.60.0.2.5\))
-Subject: Re: Null-ptr-deref due to "sanitized pathwalk machinery (v4)"
-From:   Qian Cai <cai@lca.pw>
-In-Reply-To: <20200325021327.GJ23230@ZenIV.linux.org.uk>
-Date:   Tue, 24 Mar 2020 23:24:01 -0400
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <5281297D-B66E-4A4C-9B41-D2242F6B7AE7@lca.pw>
-References: <4CBDE0F3-FB73-43F3-8535-6C75BA004233@lca.pw>
- <20200324214637.GI23230@ZenIV.linux.org.uk>
- <A32DAE66-ADBA-46C7-BD26-F9BA8F12BC18@lca.pw>
- <20200325021327.GJ23230@ZenIV.linux.org.uk>
-To:     Al Viro <viro@zeniv.linux.org.uk>
-X-Mailer: Apple Mail (2.3608.60.0.2.5)
+        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
+         :references:subject:from:to:cc;
+        bh=3sG/aYSJEaUzKJMRBRAlTTV0CAiJQVdbv2pY6xIkFCE=;
+        b=p/gdfekoMqalnvDekv13gCmvBb/mm4GBtz49P07AwRhFjImlBGtbS0Gm4HtlbhFF6W
+         5N6vgkV5rKam0i6fAsxWaLC5oD8cjRvXECJ9iHq566gHMS1r8tzOfC5CJ5B4JghWgcwZ
+         Q4HfEijY0ehuRgphAXUgsYZDxsfeaykHpy55Wync9Bd9QcN/3FpJmSOdskGwlg7FMZNB
+         kwldu18L3TUaKBf8xfhlBFFeU7OE/FcR/7dHso7mjjfKqkJpdYYYZ2YdEQF2RnDc0NRJ
+         NpMYvVstEzkIqAjhGH6IOOuTpCdbqsMieGtD8/01NyrFZh0OctEAROdSMVlrPns+vc9X
+         pgbQ==
+X-Gm-Message-State: ANhLgQ18dzdK8uDYBmzlhtyavFeol9zX7CK/82csolFMxCy7chLar7Cs
+        muQ1Gw+uPNYL4OX2tXC6BJbKneJ6bnD9QA4=
+X-Google-Smtp-Source: ADFU+vs09YtOBVWmInTZBXTuKE9xtcY0cCNQnTouUg1jPB/q+0DY8fAzNliY2DcuM6HVHvC05zT9BCUA2MUUbzI=
+X-Received: by 2002:a05:6214:a87:: with SMTP id ev7mr1341422qvb.52.1585106945949;
+ Tue, 24 Mar 2020 20:29:05 -0700 (PDT)
+Date:   Tue, 24 Mar 2020 20:29:01 -0700
+In-Reply-To: <20200324175719.62496-1-andriy.shevchenko@linux.intel.com>
+Message-Id: <20200325032901.29551-1-saravanak@google.com>
+Mime-Version: 1.0
+References: <20200324175719.62496-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.25.1.696.g5e7596f4ac-goog
+Subject: Re: [PATCH v3] driver core: Break infinite loop when deferred probe
+ can't be satisfied
+From:   Saravana Kannan <saravanak@google.com>
+To:     andriy.shevchenko@linux.intel.com
+Cc:     a.hajda@samsung.com, artem.bityutskiy@linux.intel.com,
+        balbi@kernel.org, broonie@kernel.org, fntoth@gmail.com,
+        grant.likely@arm.com, gregkh@linuxfoundation.org,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        peter.ujfalusi@ti.com, rafael@kernel.org, kernel-team@android.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
+On Tue, Mar 24, 2020 at 5:38 AM Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
+> Consider the following scenario.
+> 
+> The main driver of USB OTG controller (dwc3-pci), which has the following
+> functional dependencies on certain platform:
+> - ULPI (tusb1210)
+> - extcon (tested with extcon-intel-mrfld)
+> 
+> Note, that first driver, tusb1210, is available at the moment of
+> dwc3-pci probing, while extcon-intel-mrfld is built as a module and
+> won't appear till user space does something about it.
+> 
+> This is depicted by kernel configuration excerpt:
+> 
+>	CONFIG_PHY_TUSB1210=y
+>	CONFIG_USB_DWC3=y
+>	CONFIG_USB_DWC3_ULPI=y
+>	CONFIG_USB_DWC3_DUAL_ROLE=y
+>	CONFIG_USB_DWC3_PCI=y
+>	CONFIG_EXTCON_INTEL_MRFLD=m
+> 
+> In the Buildroot environment the modules are probed by alphabetical ordering
+> of their modaliases. The latter comes to the case when USB OTG driver will be
+> probed first followed by extcon one.
+> 
+> So, if the platform anticipates extcon device to be appeared, in the above case
+> we will get deferred probe of USB OTG, because of ordering.
+> 
+> Since current implementation, done by the commit 58b116bce136 ("drivercore:
+> deferral race condition fix") counts the amount of triggered deferred probe,
+> we never advance the situation -- the change makes it to be an infinite loop.
+>
 
-> On Mar 24, 2020, at 10:13 PM, Al Viro <viro@zeniv.linux.org.uk> wrote:
->=20
-> On Tue, Mar 24, 2020 at 09:49:48PM -0400, Qian Cai wrote:
->=20
->> It does not catch anything at all with the patch,
->=20
-> You mean, oops happens, but neither WARN_ON() is triggered?
-> Lovely...  Just to make sure: could you slap the same couple
-> of lines just before
->                if (unlikely(!d_can_lookup(nd->path.dentry))) {
-> in link_path_walk(), just to check if I have misread the trace
-> you've got?
->=20
-> Does that (+ other two inserts) end up with
-> 	1) some of these WARN_ON() triggered when oops happens or
-> 	2) oops is happening, but neither WARN_ON() triggers or
-> 	3) oops not happening / becoming harder to hit?
+Hi Andy,
 
-Only the one just before
- if (unlikely(!d_can_lookup(nd->path.dentry))) {
-In link_path_walk() will trigger.
+I'm trying to understand this sequence of steps. Sorry if the questions
+are stupid -- I'm not very familiar with USB/PCI stuff.
 
-[  245.766216][ T5020] WARNING: CPU: 65 PID: 5020 at fs/namei.c:2182 =
-link_path_walk+0x29c/0x510
-[  245.766242][ T5020] Modules linked in: kvm_hv kvm ip_tables x_tables =
-xfs sd_mod bnx2x ahci libahci mdio libata tg3 libphy firmware_class =
-dm_mirror dm_region_hash dm_log dm_mod
-[  245.766289][ T5020] CPU: 65 PID: 5020 Comm: vdo Not tainted =
-5.6.0-rc7-next-20200324+ #6
-[  245.766314][ T5020] NIP:  c0000000004dbffc LR: c0000000004dc0e0 CTR: =
-0000000000000000
-[  245.766338][ T5020] REGS: c000200ec1fcf6c0 TRAP: 0700   Not tainted  =
-(5.6.0-rc7-next-20200324+)
-[  245.766374][ T5020] MSR:  9000000000029033 <SF,HV,EE,ME,IR,DR,RI,LE>  =
-CR: 28228422  XER: 20040000
-[  245.766415][ T5020] CFAR: c0000000004dc0e4 IRQMASK: 0=20
-[  245.766415][ T5020] GPR00: c0000000004dc0e0 c000200ec1fcf950 =
-c00000000165a500 0000000000000000=20
-[  245.766415][ T5020] GPR04: c000000001511408 0000000000000000 =
-c000200ec1fcf6a4 0000000000000002=20
-[  245.766415][ T5020] GPR08: 0000000000000001 0000000000000000 =
-0000000000000001 0000000000000001=20
-[  245.766415][ T5020] GPR12: 0000000000008000 c000201fff7fa700 =
-00007fffa6f0f360 c000200579ec7ae0=20
-[  245.766415][ T5020] GPR16: 7fffffffffffffff fffffffffffffe00 =
-0000000000000000 0000000000000000=20
-[  245.766415][ T5020] GPR20: c000000c415a2498 c0002011e2cabd83 =
-2f2f2f2f2f2f2f2f 0000000000000003=20
-[  245.766415][ T5020] GPR24: 0000000000000000 c000200ec1fcfab8 =
-fffffffffffff000 0000000000200000=20
-[  245.766415][ T5020] GPR28: ffffffffffffffff 61c8864680b583eb =
-0000000000000001 0000000000002e2e=20
-[  245.766632][ T5020] NIP [c0000000004dbffc] link_path_walk+0x29c/0x510
-[  245.766655][ T5020] LR [c0000000004dc0e0] link_path_walk+0x380/0x510
-[  245.766677][ T5020] Call Trace:
-[  245.766698][ T5020] [c000200ec1fcf950] [c0000000004dc0e0] =
-link_path_walk+0x380/0x510 (unreliable)
-[  245.766725][ T5020] [c000200ec1fcfa50] [c0000000004dc3c4] =
-path_lookupat+0x94/0x1b0
-[  245.766739][ T5020] [c000200ec1fcfa90] [c0000000004de010] =
-filename_lookup.part.55+0xa0/0x170
-[  245.766778][ T5020] [c000200ec1fcfbd0] [c00000000096cbe8] =
-unix_find_other+0x58/0x3c0
-[  245.766803][ T5020] [c000200ec1fcfc60] [c00000000096de54] =
-unix_stream_connect+0x144/0x870
-[  245.766842][ T5020] [c000200ec1fcfd30] [c0000000007cf860] =
-__sys_connect+0x140/0x170
-[  245.766881][ T5020] [c000200ec1fcfe00] [c0000000007cf8b8] =
-sys_connect+0x28/0x40
-[  245.766897][ T5020] [c000200ec1fcfe20] [c00000000000b378] =
-system_call+0x5c/0x68
-[  245.766921][ T5020] Instruction dump:
-[  245.766952][ T5020] 38800000 7f23cb78 7fde07b4 1d5e0030 7d295214 =
-eaa90020 4bfffab5 2fa30000=20
-[  245.767003][ T5020] 409e00fc e9390008 7d2a0074 794ad182 <0b0a0000> =
-2fa90000 419e0184 81290000=20
-[  245.767031][ T5020] irq event stamp: 27044
-[  245.767052][ T5020] hardirqs last  enabled at (27043): =
-[<c0000000004db354>] handle_dots.part.47+0x224/0x960
-[  245.767068][ T5020] hardirqs last disabled at (27044): =
-[<c000000000008fbc>] program_check_common+0x21c/0x230
-[  245.767096][ T5020] softirqs last  enabled at (27018): =
-[<c000000000968620>] unix_create1+0x1e0/0x2a0
-[  245.767144][ T5020] softirqs last disabled at (27016): =
-[<c000000000968620>] unix_create1+0x1e0/0x2a0
-[  245.767180][ T5020] ---[ end trace 7b3382b3d92e587f ]---
-[  245.767202][ T5020] pathname =3D /var/run/nscd/socket
-[  245.767225][ T5020] BUG: Kernel NULL pointer dereference on read at =
-0x00000000
-[  245.767248][ T5020] Faulting instruction address: 0xc0000000004dc008
-[  245.767298][ T5020] Oops: Kernel access of bad area, sig: 11 [#1]
-[  245.767320][ T5020] LE PAGE_SIZE=3D64K MMU=3DRadix SMP NR_CPUS=3D256 =
-DEBUG_PAGEALLOC NUMA PowerNV
-[  245.767354][ T5020] Modules linked in: kvm_hv kvm ip_tables x_tables =
-xfs sd_mod bnx2x ahci libahci mdio libata tg3 libphy firmware_class =
-dm_mirror dm_region_hash dm_log dm_mod
-[  245.767425][ T5020] CPU: 65 PID: 5020 Comm: vdo Tainted: G        W   =
-      5.6.0-rc7-next-20200324+ #6
-[  245.767460][ T5020] NIP:  c0000000004dc008 LR: c0000000004dc19c CTR: =
-0000000000000000
-[  245.767494][ T5020] REGS: c000200ec1fcf6c0 TRAP: 0300   Tainted: G    =
-    W          (5.6.0-rc7-next-20200324+)
-[  245.767541][ T5020] MSR:  9000000000009033 <SF,HV,EE,ME,IR,DR,RI,LE>  =
-CR: 48228222  XER: 20040000
-[  245.767579][ T5020] CFAR: c0000000004dc1a4 DAR: 0000000000000000 =
-DSISR: 40000000 IRQMASK: 0=20
-[  245.767579][ T5020] GPR00: c0000000004dc19c c000200ec1fcf950 =
-c00000000165a500 000000000000001f=20
-[  245.767579][ T5020] GPR04: 0000000000000006 0000000000000000 =
-c000200ec1fcf6b4 0000000000000007=20
-[  245.767579][ T5020] GPR08: 0000000000000003 0000000000000000 =
-c000200ec118aa80 0000000000000000=20
-[  245.767579][ T5020] GPR12: 0000000000008000 c000201fff7fa700 =
-00007fffa6f0f360 c000200579ec7ae0=20
-[  245.767579][ T5020] GPR16: 7fffffffffffffff fffffffffffffe00 =
-0000000000000000 0000000000000000=20
-[  245.767579][ T5020] GPR20: c000000c415a2498 c0002011e2cabd83 =
-2f2f2f2f2f2f2f2f 0000000000000003=20
-[  245.767579][ T5020] GPR24: 0000000000000000 c000200ec1fcfab8 =
-fffffffffffff000 0000000000200000=20
-[  245.767579][ T5020] GPR28: ffffffffffffffff 61c8864680b583eb =
-0000000000000001 0000000000002e2e=20
-[  245.767830][ T5020] NIP [c0000000004dc008] link_path_walk+0x2a8/0x510
-[  245.767852][ T5020] LR [c0000000004dc19c] link_path_walk+0x43c/0x510
-[  245.767884][ T5020] Call Trace:
-[  245.767903][ T5020] [c000200ec1fcf950] [c0000000004dc19c] =
-link_path_walk+0x43c/0x510 (unreliable)
-[  245.767950][ T5020] [c000200ec1fcfa50] [c0000000004dc3c4] =
-path_lookupat+0x94/0x1b0
-[  245.767974][ T5020] [c000200ec1fcfa90] [c0000000004de010] =
-filename_lookup.part.55+0xa0/0x170
-[  245.768070][ T5020] [c000200ec1fcfbd0] [c00000000096cbe8] =
-unix_find_other+0x58/0x3c0
-[  245.768155][ T5020] [c000200ec1fcfc60] [c00000000096de54] =
-unix_stream_connect+0x144/0x870
-[  245.768255][ T5020] [c000200ec1fcfd30] [c0000000007cf860] =
-__sys_connect+0x140/0x170
-[  245.768358][ T5020] [c000200ec1fcfe00] [c0000000007cf8b8] =
-sys_connect+0x28/0x40
-[  245.768468][ T5020] [c000200ec1fcfe20] [c00000000000b378] =
-system_call+0x5c/0x68
-[  245.768545][ T5020] Instruction dump:
-[  245.768609][ T5020] 1d5e0030 7d295214 eaa90020 4bfffab5 2fa30000 =
-409e00fc e9390008 7d2a0074=20
-[  245.768705][ T5020] 794ad182 0b0a0000 2fa90000 419e0184 <81290000> =
-55290256 7f89d800 419efe8c=20
-[  245.768816][ T5020] ---[ end trace 7b3382b3d92e5880 ]---
-[  245.820494][ T5040] sda2: Can't mount, would change RO state=
+> ---8<---8<---
+> 
+> [   22.187127] driver_deferred_probe_trigger <<< 1
+> 
+> ...here is the late initcall triggers deferred probe...
+> 
+> [   22.191725] platform dwc3.0.auto: deferred_probe_work_func in deferred list
+> 
+> ...dwc3.0.auto is the only device in the deferred list...
+
+Ok, dwc3.0.auto is the only unprobed device at this point?
+
+> 
+> [   22.198727] platform dwc3.0.auto: deferred_probe_work_func 1 <<< counter 1
+> 
+> ...the counter before mutex is unlocked is kept the same...
+> 
+> [   22.205663] platform dwc3.0.auto: Retrying from deferred list
+> 
+> ...mutes has been unlocked, we try to re-probe the driver...
+> 
+> [   22.211487] bus: 'platform': driver_probe_device: matched device dwc3.0.auto with driver dwc3
+> [   22.220060] bus: 'platform': really_probe: probing driver dwc3 with device dwc3.0.auto
+> [   22.238735] bus: 'ulpi': driver_probe_device: matched device dwc3.0.auto.ulpi with driver tusb1210
+> [   22.247743] bus: 'ulpi': really_probe: probing driver tusb1210 with device dwc3.0.auto.ulpi
+> [   22.256292] driver: 'tusb1210': driver_bound: bound to device 'dwc3.0.auto.ulpi'
+> [   22.263723] driver_deferred_probe_trigger <<< 2
+> 
+> ...the dwc3.0.auto probes ULPI, we got successful bound and bumped counter...
+> 
+> [   22.268304] bus: 'ulpi': really_probe: bound device dwc3.0.auto.ulpi to driver tusb1210
+
+So where did this dwc3.0.auto.ulpi come from?
+Looks like the device is created by dwc3_probe() through this call flow:
+dwc3_probe() -> dwc3_core_init() -> dwc3_core_ulpi_init() ->
+dwc3_ulpi_init() -> ulpi_register_interface() -> ulpi_register() 
+
+> [   22.276697] platform dwc3.0.auto: Driver dwc3 requests probe deferral
+
+Can you please point me to which code patch actually caused the probe
+deferral?
+
+> ...but extcon driver is still missing...
+> 
+> [   22.283174] platform dwc3.0.auto: Added to deferred list
+> [   22.288513] platform dwc3.0.auto: driver_deferred_probe_add_trigger local counter: 1 new counter 2
+
+I'm not fully aware of all the USB implications, but if extcon is
+needed, why can't that check be done before we add and probe the ulpi
+device? That'll avoid this whole "fake" probing and avoid the counter
+increase. And avoid the need for this patch that's touching the code
+code that's already a bit delicate.
+
+Also, with my limited experience with all the possible drivers in the
+kernel, it's weird that the ulpi device is added and probed before we
+make sure the parent device (dwc3.0.auto) can actually probe
+successfully.
+
+Most of the platform device code I've seen in systems with OF (device
+tree) add the child devices towards the end of the parent's probe
+function.
+
+> ...and since we had a successful probe, we got counter mismatch...
+> 
+> [   22.297490] driver_deferred_probe_trigger <<< 3
+> [   22.302074] platform dwc3.0.auto: deferred_probe_work_func 2 <<< counter 3
+> 
+> ...at the end we have a new counter and loop repeats again, see 22.198727...
+> 
+> ---8<---8<---
+> 
+> Revert of the commit helps, but it is probably not helpful for the initially
+> found regression. Artem Bityutskiy suggested to use counter of the successful
+> probes instead. This fixes above mentioned case and shouldn't prevent driver
+> to reprobe deferred ones.
+> 
+> Under "successful probe" we understand the state when a driver of the certain
+> device is being kept bound after deferred probe trigger cycle. For instance,
+> in the above mentioned case probing of tusb1210 is not successful because dwc3
+> driver unbinds device dwc3.0.auto.ulpi. The atomic_dec() call is used to keep
+> track of this. The amount of bindings is always great than or equal to the
+> amount of unbindings as guaranteed by design of the driver binding mechanism.
+
+The unbindings count can increase for other unrelated drivers unbinding
+too. Wouldn't it? Seems a bit fragile and racy in a fashion similar to
+the issue the original patch was trying to fix.
+
+-Saravana
