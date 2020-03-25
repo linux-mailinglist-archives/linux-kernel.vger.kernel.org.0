@@ -2,66 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2A9F1192245
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 09:14:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C3CF119224D
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 09:14:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727394AbgCYIOH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Mar 2020 04:14:07 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:54841 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726225AbgCYIOF (ORCPT
+        id S1727380AbgCYIOh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Mar 2020 04:14:37 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:45821 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725903AbgCYIOh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Mar 2020 04:14:05 -0400
-Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <pza@pengutronix.de>)
-        id 1jH1Ao-00014f-Na; Wed, 25 Mar 2020 09:14:02 +0100
-Received: from pza by ptx.hi.pengutronix.de with local (Exim 4.92)
-        (envelope-from <pza@pengutronix.de>)
-        id 1jH1An-0001B0-TI; Wed, 25 Mar 2020 09:14:01 +0100
-Date:   Wed, 25 Mar 2020 09:14:01 +0100
-From:   Philipp Zabel <pza@pengutronix.de>
-To:     Adrian Ratiu <adrian.ratiu@collabora.com>
-Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-kernel@vger.kernel.org, kernel@pengutronix.de,
-        kernel@collabora.com, Ezequiel Garcia <ezequiel@collabora.com>,
-        linux-media@vger.kernel.org
-Subject: Re: [PATCH v2] media: coda: jpeg: support optimized huffman tables
-Message-ID: <20200325081401.GA21635@pengutronix.de>
-References: <20200324160429.2626-1-adrian.ratiu@collabora.com>
+        Wed, 25 Mar 2020 04:14:37 -0400
+Received: by mail-pg1-f195.google.com with SMTP id o26so783583pgc.12;
+        Wed, 25 Mar 2020 01:14:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=nHriMRRnBlnzmaQlY1pxbBcl5uot0p0Yl6mHzSeiY0w=;
+        b=PWq3ZSNUpvOaBMwo5MFqymaxHPGaAAVl+lDwGQhstHsVI8xm23z+XLs3izHJplQ6Ig
+         NjqQmiuzvvdp8iei98+wdxzNvu7YB4rTWnDGx12d+IUbbsWIs+YE6K+FCDSS5vUNMsK5
+         yqPKY9f98DvyXxEkWT9zg6ESd7NSGTptCxS2A+gcd2vRcBKav25VLx8uRd4dcAiiaCfh
+         5C2NfRodHPNxubNEcMhEIHxcBshk0Nj8Ivp+zOCmN164nW5tfzUclABzXTvLQvzOp7P+
+         xE8wndofldx/VmkoNDa7QL2Bzk9Rr7PQ0v9MRxAnJUXQD+5mAZMpnBXSu/A/wdt3c9vg
+         T9Ug==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=nHriMRRnBlnzmaQlY1pxbBcl5uot0p0Yl6mHzSeiY0w=;
+        b=UqpyatctPCi5Nzqgoj7LFgYfaDxllO0v3pgJwOeLv24C7L6UJxinPpOFayJ8k8gIC3
+         WhVnsdtt6p73yuHMpJzazWzuZRlKbtjD8VTiwrtbE+/w+TI0NPAeNLtm/K+X2wEP0bii
+         G73CQareVImAfXYGvzr7woFjBQIRwY6z4FyEJGc06xFmnmeYtV0ZqV/gXTBkQpboTqtC
+         DeD+WwC8pSFevhSWKrVYlq2SxxfvPTPlvMPaXZON7GQzPr5v8jI0pf5HxfiFVf7vNkYB
+         +ZU4QDU8UupbnjTo3JtJkNB81C2VteLZJTWiZ8nAPi3tnaAFn1BGTS/QfbzwyglG/0sx
+         /+Lw==
+X-Gm-Message-State: ANhLgQ2T4RFMs1H+dBbCmeY9qY0NZZGBVoDzd+IbiP3VdBLZD/XqKubq
+        uKhZ/e+NrlmjijTjCRYhh2Y=
+X-Google-Smtp-Source: ADFU+vsWjVwmho5mKXPOUHGggde/eZaV7TnENdUUVoDY3fxC/MWXMcRKVAxNhD0gw4fxe4DTGQVDAA==
+X-Received: by 2002:aa7:8685:: with SMTP id d5mr2221555pfo.3.1585124074438;
+        Wed, 25 Mar 2020 01:14:34 -0700 (PDT)
+Received: from ubt.spreadtrum.com ([117.18.48.82])
+        by smtp.gmail.com with ESMTPSA id 5sm17893766pfw.98.2020.03.25.01.14.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 25 Mar 2020 01:14:33 -0700 (PDT)
+From:   Chunyan Zhang <zhang.lyra@gmail.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>
+Cc:     linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Baolin Wang <baolin.wang7@gmail.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        Chunyan Zhang <chunyan.zhang@unisoc.com>
+Subject: [PATCH v2] tty: serial: make SERIAL_SPRD depend on COMMON_CLK
+Date:   Wed, 25 Mar 2020 16:14:27 +0800
+Message-Id: <20200325081427.20312-1-zhang.lyra@gmail.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200324160429.2626-1-adrian.ratiu@collabora.com>
-X-Sent-From: Pengutronix Hildesheim
-X-URL:  http://www.pengutronix.de/
-X-IRC:  #ptxdist @freenode
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-Uptime: 09:09:36 up 34 days, 15:40, 75 users,  load average: 1.00, 0.75,
- 0.45
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
-X-SA-Exim-Mail-From: pza@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 24, 2020 at 06:04:29PM +0200, Adrian Ratiu wrote:
-> Each jpeg can have the huffman tables optimized for its specific content
-> meaning that the table lenghts and values don't match the standard table
-> of substitutions so there's no reason to hardcode and expect the standard
-> lengths, otherwise we just end up rejecting optimized jpegs altogether.
-> 
-> Tested on CODA960.
-> 
-> Signed-off-by: Adrian Ratiu <adrian.ratiu@collabora.com>
+From: Chunyan Zhang <chunyan.zhang@unisoc.com>
 
-Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
+kbuild-test reported an error:
 
-regards
-Philipp
+  config: mips-randconfig-a001-20200321 ...
+  >> drivers/tty/serial/sprd_serial.c:1175: undefined reference
+  to `clk_set_parent'
+
+Because some mips Kconfig selects HAVE_CLK but not COMMON_CLK and no
+clk_set_parent implemented, so the error was exposed. So adding
+dependence on COMMON_CLK can fix this issue.
+
+Fixes: 7ba87cfec71a ("tty: serial: make SERIAL_SPRD not depend on ARCH_SPRD")
+Reported-by: kbuild test robot <lkp@intel.com>
+Signed-off-by: Chunyan Zhang <chunyan.zhang@unisoc.com>
+---
+Changes from v1:
+* Change to depend on COMMON_CLK instead of ARM
+---
+ drivers/tty/serial/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/tty/serial/Kconfig b/drivers/tty/serial/Kconfig
+index b43dce785a58..ff942ca95b66 100644
+--- a/drivers/tty/serial/Kconfig
++++ b/drivers/tty/serial/Kconfig
+@@ -1444,6 +1444,7 @@ config SERIAL_MEN_Z135
+ config SERIAL_SPRD
+ 	tristate "Support for Spreadtrum serial"
+ 	select SERIAL_CORE
++	depends on COMMON_CLK
+ 	help
+ 	  This enables the driver for the Spreadtrum's serial.
+ 
+-- 
+2.20.1
+
