@@ -2,165 +2,254 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 394821930D5
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 20:05:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 345DA1930D8
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 20:05:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727883AbgCYTFC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Mar 2020 15:05:02 -0400
-Received: from mail26.static.mailgun.info ([104.130.122.26]:50997 "EHLO
-        mail26.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727376AbgCYTFB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Mar 2020 15:05:01 -0400
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1585163100; h=Content-Transfer-Encoding: Content-Type:
- In-Reply-To: MIME-Version: Date: Message-ID: References: Cc: To: From:
- Subject: Sender; bh=g8oMtUxDca/zQV2e0hTrO0l41ntZ0xz+0vB0sG4blbQ=; b=FsN3DV2w9lxo5YuW7KgVFS+PDipAQ1F0TTqorsq61rWbi2FyBr647OAsb+Z+jdmS0xGs/lhq
- otIe/3miDJ4+1p8bjclQaSSlxMgX9k8y0ObpZYfOUMoC6EgM67I0cu1s5gakg/rJEozg+tvX
- Oq/KOFrJdXoC27VOnaWHmp23F+g=
-X-Mailgun-Sending-Ip: 104.130.122.26
-X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
- by mxa.mailgun.org with ESMTP id 5e7bab45.7fd7e5c34570-smtp-out-n04;
- Wed, 25 Mar 2020 19:04:37 -0000 (UTC)
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 1FF94C43637; Wed, 25 Mar 2020 19:04:36 +0000 (UTC)
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        aws-us-west-2-caf-mail-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE
-        autolearn=unavailable autolearn_force=no version=3.4.0
-Received: from [10.226.58.28] (i-global254.qualcomm.com [199.106.103.254])
+        id S1727936AbgCYTFt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Mar 2020 15:05:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58046 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727279AbgCYTFs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Mar 2020 15:05:48 -0400
+Received: from mail-qv1-f51.google.com (mail-qv1-f51.google.com [209.85.219.51])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        (Authenticated sender: jhugo)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 67EF5C433D2;
-        Wed, 25 Mar 2020 19:04:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 67EF5C433D2
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=jhugo@codeaurora.org
-Subject: Re: [PATCH v3 2/7] bus: mhi: core: Add support for reading MHI info
- from device
-From:   Jeffrey Hugo <jhugo@codeaurora.org>
-To:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        gregkh@linuxfoundation.org, davem@davemloft.net
-Cc:     smohanad@codeaurora.org, kvalo@codeaurora.org,
-        bjorn.andersson@linaro.org, hemantk@codeaurora.org,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20200324061050.14845-1-manivannan.sadhasivam@linaro.org>
- <20200324061050.14845-3-manivannan.sadhasivam@linaro.org>
- <edc9fb15-67f3-9cd1-275a-d850d80e2b65@codeaurora.org>
-Message-ID: <e253497a-66fa-9179-eb27-5107b217fd1e@codeaurora.org>
-Date:   Wed, 25 Mar 2020 13:04:32 -0600
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        by mail.kernel.org (Postfix) with ESMTPSA id C86522076F;
+        Wed, 25 Mar 2020 19:05:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1585163147;
+        bh=++J1l22iODPsdFUfxz8jQjkKIYHE5X8erMXa2/ilh3o=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=kqV2+isT+3mowQAoVTiPQgQ2DjtFWvGZpTKQwUYikcmB/fWfPgUOzc28y2M7gktVI
+         w9tzmg7fhk5C331Kc/oMpWM1lLNsHzDQFQvRYDdyCdR87r7160m86Jcs369tMsYf4c
+         TwyDfgeNuVOacPiiJrzD7oOc/pPLFvQrdRNJADYU=
+Received: by mail-qv1-f51.google.com with SMTP id v38so1662572qvf.6;
+        Wed, 25 Mar 2020 12:05:47 -0700 (PDT)
+X-Gm-Message-State: ANhLgQ16jCYPmu0lN2Sh5en7ug2ds8Z/wJC70bUK3PzGZpr0DsHAH57x
+        CM6D6q9a28uGAZBm6inuyhm68po2AR16OHyixg==
+X-Google-Smtp-Source: ADFU+vsyukn7zvIPawA++JIpoRR33DaG19B2BoYv9ZrgL4BE0crMXNzCbxcpYD7SVqS9OR2ZR0zCz4JJu7zGUp7IlWY=
+X-Received: by 2002:ad4:4bc3:: with SMTP id l3mr4462107qvw.79.1585163146836;
+ Wed, 25 Mar 2020 12:05:46 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <edc9fb15-67f3-9cd1-275a-d850d80e2b65@codeaurora.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <20200324094506.55938-1-alexandru.tachici@analog.com> <20200324094506.55938-3-alexandru.tachici@analog.com>
+In-Reply-To: <20200324094506.55938-3-alexandru.tachici@analog.com>
+From:   Rob Herring <robh+dt@kernel.org>
+Date:   Wed, 25 Mar 2020 13:05:35 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqKFdcACQtXd5h=4Pxbij+=uoHr2rLTFZMq4fVX8ph398g@mail.gmail.com>
+Message-ID: <CAL_JsqKFdcACQtXd5h=4Pxbij+=uoHr2rLTFZMq4fVX8ph398g@mail.gmail.com>
+Subject: Re: [RESEND PATCH 2/2] dt-bindings: iio: dac: AD5570R fix bindings errors
+To:     Alexandru Tachici <alexandru.tachici@analog.com>
+Cc:     "open list:IIO SUBSYSTEM AND DRIVERS" <linux-iio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        devicetree@vger.kernel.org, Jonathan Cameron <jic23@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 3/24/2020 8:38 AM, Jeffrey Hugo wrote:
-> On 3/24/2020 12:10 AM, Manivannan Sadhasivam wrote:
->> The MHI register base has several registers used for getting the MHI
->> specific information such as version, family, major, and minor numbers
->> from the device. This information can be used by the controller drivers
->> for usecases such as applying quirks for a specific revision etc...
->>
->> While at it, let's also rearrange the local variables
->> in mhi_register_controller().
->>
->> Suggested-by: Hemant Kumar <hemantk@codeaurora.org>
->> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
->> ---
->>   drivers/bus/mhi/core/init.c     | 19 +++++++++++++++++--
->>   drivers/bus/mhi/core/internal.h | 10 ++++++++++
->>   include/linux/mhi.h             | 17 +++++++++++++++++
->>   3 files changed, 44 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/bus/mhi/core/init.c b/drivers/bus/mhi/core/init.c
->> index eb7f556a8531..d136f6c6ca78 100644
->> --- a/drivers/bus/mhi/core/init.c
->> +++ b/drivers/bus/mhi/core/init.c
->> @@ -802,12 +802,12 @@ static int parse_config(struct mhi_controller 
->> *mhi_cntrl,
->>   int mhi_register_controller(struct mhi_controller *mhi_cntrl,
->>                   struct mhi_controller_config *config)
->>   {
->> -    int ret;
->> -    int i;
->>       struct mhi_event *mhi_event;
->>       struct mhi_chan *mhi_chan;
->>       struct mhi_cmd *mhi_cmd;
->>       struct mhi_device *mhi_dev;
->> +    u32 soc_info;
->> +    int ret, i;
->>       if (!mhi_cntrl)
->>           return -EINVAL;
->> @@ -874,6 +874,21 @@ int mhi_register_controller(struct mhi_controller 
->> *mhi_cntrl,
->>           mhi_cntrl->unmap_single = mhi_unmap_single_no_bb;
->>       }
->> +    /* Read the MHI device info */
->> +    ret = mhi_read_reg(mhi_cntrl, mhi_cntrl->regs,
->> +               SOC_HW_VERSION_OFFS, &soc_info);
->> +    if (ret)
->> +        goto error_alloc_dev;
->> +
->> +    mhi_cntrl->family_number = (soc_info & 
->> SOC_HW_VERSION_FAM_NUM_BMSK) >>
->> +                    SOC_HW_VERSION_FAM_NUM_SHFT;
->> +    mhi_cntrl->device_number = (soc_info & 
->> SOC_HW_VERSION_DEV_NUM_BMSK) >>
->> +                    SOC_HW_VERSION_DEV_NUM_SHFT;
->> +    mhi_cntrl->major_version = (soc_info & 
->> SOC_HW_VERSION_MAJOR_VER_BMSK) >>
->> +                    SOC_HW_VERSION_MAJOR_VER_SHFT;
->> +    mhi_cntrl->minor_version = (soc_info & 
->> SOC_HW_VERSION_MINOR_VER_BMSK) >>
->> +                    SOC_HW_VERSION_MINOR_VER_SHFT;
->> +
->>       /* Register controller with MHI bus */
->>       mhi_dev = mhi_alloc_device(mhi_cntrl);
->>       if (IS_ERR(mhi_dev)) {
->> diff --git a/drivers/bus/mhi/core/internal.h 
->> b/drivers/bus/mhi/core/internal.h
->> index 18066302e6e2..5deadfaa053a 100644
->> --- a/drivers/bus/mhi/core/internal.h
->> +++ b/drivers/bus/mhi/core/internal.h
->> @@ -196,6 +196,16 @@ extern struct bus_type mhi_bus_type;
->>   #define BHIE_RXVECSTATUS_STATUS_XFER_COMPL (0x02)
->>   #define BHIE_RXVECSTATUS_STATUS_ERROR (0x03)
->> +#define SOC_HW_VERSION_OFFS (0x224)
->> +#define SOC_HW_VERSION_FAM_NUM_BMSK (0xF0000000)
->> +#define SOC_HW_VERSION_FAM_NUM_SHFT (28)
->> +#define SOC_HW_VERSION_DEV_NUM_BMSK (0x0FFF0000)
->> +#define SOC_HW_VERSION_DEV_NUM_SHFT (16)
->> +#define SOC_HW_VERSION_MAJOR_VER_BMSK (0x0000FF00)
->> +#define SOC_HW_VERSION_MAJOR_VER_SHFT (8)
->> +#define SOC_HW_VERSION_MINOR_VER_BMSK (0x000000FF)
->> +#define SOC_HW_VERSION_MINOR_VER_SHFT (0)
-> 
-> I'm tempted to give reviewed-by, however it occurs to me that I don't 
-> see this in the MHI spec.  I'm looking at Rev E, which as far as I am 
-> aware is the latest.
-> 
-> Hemant, is this in the spec, and if so, what Rev?
-> 
-> I'm concerned that if its not in the spec, we may have an issue with 
-> some device not implementing this as expected.
-> 
+On Tue, Mar 24, 2020 at 3:45 AM <alexandru.tachici@analog.com> wrote:
+>
+> From: Alexandru Tachici <alexandru.tachici@analog.com>
+>
+> Replaced num property with reg property, fixed errors
+> reported by dt-binding-check.
+>
+> Fixes: ea52c21268e6 ("iio: dac: ad5770r: Add AD5770R support")
+> Signed-off-by: Alexandru Tachici <alexandru.tachici@analog.com>
+> ---
+>  .../bindings/iio/dac/adi,ad5770r.yaml         | 77 ++++++++++---------
+>  1 file changed, 40 insertions(+), 37 deletions(-)
+>
+> diff --git a/Documentation/devicetree/bindings/iio/dac/adi,ad5770r.yaml b/Documentation/devicetree/bindings/iio/dac/adi,ad5770r.yaml
+> index d9c25cf4b92f..d1755dbc1a41 100644
+> --- a/Documentation/devicetree/bindings/iio/dac/adi,ad5770r.yaml
+> +++ b/Documentation/devicetree/bindings/iio/dac/adi,ad5770r.yaml
+> @@ -2,7 +2,7 @@
+>  # Copyright 2020 Analog Devices Inc.
+>  %YAML 1.2
+>  ---
+> -$id: http://devicetree.org/schemas/bindings/iio/dac/adi,ad5770r.yaml#
+> +$id: http://devicetree.org/schemas/iio/dac/adi,ad5770r.yaml#
+>  $schema: http://devicetree.org/meta-schemas/core.yaml#
+>
+>  title: Analog Devices AD5770R DAC device driver
+> @@ -49,83 +49,84 @@ properties:
+>        asserted during driver probe.
+>      maxItems: 1
+>
+> -  channel0:
+> +  channel@0:
+>      description: Represents an external channel which are
+>        connected to the DAC. Channel 0 can act both as a current
+>        source and sink.
+>      type: object
+>
+>      properties:
+> -      num:
+> +      reg:
+>          description: This represents the channel number.
+> -        items:
+> -          const: 0
+>
+>        adi,range-microamp:
+>            description: Output range of the channel.
+>            oneOf:
+> -            - $ref: /schemas/types.yaml#/definitions/int32-array
+>              - items:
+> -                - enum: [0 300000]
+> -                - enum: [-60000 0]
+> -                - enum: [-60000 300000]
+> +                - const: 0
+> +                - const: 300000
+> +            - items:
+> +                - const: -60000
+> +                - const: 0
+> +            - items:
+> +                - const: -60000
+> +                - const: 300000
+>
+> -  channel1:
+> +  channel@1:
+>      description: Represents an external channel which are
+>        connected to the DAC.
+>      type: object
+>
+>      properties:
+> -      num:
+> +      reg:
+>          description: This represents the channel number.
+> -        items:
+> -          const: 1
 
-Reviewed-by: Jeffrey Hugo <jhugo@codeaurora.org>
+This should be:
 
-I talked with Hemant offline, and this is queued up for the next spec 
-rev.  I'm satisfied with that.
+reg:
+  const: 1
 
--- 
-Jeffrey Hugo
-Qualcomm Technologies, Inc. is a member of the
-Code Aurora Forum, a Linux Foundation Collaborative Project.
+>
+>        adi,range-microamp:
+>            description: Output range of the channel.
+>            oneOf:
+> -            - $ref: /schemas/types.yaml#/definitions/uint32-array
+>              - items:
+> -                - enum: [0 140000]
+> -                - enum: [0 250000]
+> +                - const: 0
+> +                - const: 140000
+> +            - items:
+> +                - const: 0
+> +                - const: 250000
+>
+> -  channel2:
+> +  channel@2:
+>      description: Represents an external channel which are
+>        connected to the DAC.
+>      type: object
+>
+>      properties:
+> -      num:
+> +      reg:
+>          description: This represents the channel number.
+> -        items:
+> -          const: 2
+>
+>        adi,range-microamp:
+>            description: Output range of the channel.
+>            oneOf:
+> -            - $ref: /schemas/types.yaml#/definitions/uint32-array
+>              - items:
+> -                - enum: [0 140000]
+> -                - enum: [0 250000]
+> +                - const: 0
+> +                - const: 55000
+> +            - items:
+> +                - const: 0
+> +                - const: 150000
+>
+>  patternProperties:
+>    "^channel@([3-5])$":
+>      type: object
+>      description: Represents the external channels which are connected to the DAC.
+>      properties:
+> -      num:
+> +      reg:
+>          description: This represents the channel number.
+> -        items:
+> -          minimum: 3
+> -          maximum: 5
+
+reg:
+  minimum: 3
+  maximum: 5
+
+>
+>        adi,range-microamp:
+>            description: Output range of the channel.
+>            oneOf:
+> -            - $ref: /schemas/types.yaml#/definitions/uint32-array
+>              - items:
+> -                - enum: [0 45000]
+> -                - enum: [0 100000]
+> +                - const: 0
+> +                - const: 45000
+> +            - items:
+> +                - const: 0
+> +                - const: 100000
+
+This can be simplified to:
+
+items:
+  - const: 0
+  - enum: [ 45000, 100000 ]
+
+>
+>  required:
+>  - reg
+> @@ -150,34 +151,36 @@ examples:
+>                          vref-supply = <&vref>;
+>                          adi,external-resistor;
+>                          reset-gpios = <&gpio 22 0>;
+> +                        #address-cells = <1>;
+> +                        #size-cells = <0>;
+>
+>                          channel@0 {
+> -                                num = <0>;
+> -                                adi,range-microamp = <(-60000) 300000>;
+> +                                reg = <0>;
+> +                                adi,range-microamp = <0 300000>;
+>                          };
+>
+>                          channel@1 {
+> -                                num = <1>;
+> +                                reg = <1>;
+>                                  adi,range-microamp = <0 140000>;
+>                          };
+>
+>                          channel@2 {
+> -                                num = <2>;
+> +                                reg = <2>;
+>                                  adi,range-microamp = <0 55000>;
+>                          };
+>
+>                          channel@3 {
+> -                                num = <3>;
+> +                                reg = <3>;
+>                                  adi,range-microamp = <0 45000>;
+>                          };
+>
+>                          channel@4 {
+> -                                num = <4>;
+> +                                reg = <4>;
+>                                  adi,range-microamp = <0 45000>;
+>                          };
+>
+>                          channel@5 {
+> -                                num = <5>;
+> +                                reg = <5>;
+>                                  adi,range-microamp = <0 45000>;
+>                          };
+>                  };
+> --
+> 2.20.1
+>
