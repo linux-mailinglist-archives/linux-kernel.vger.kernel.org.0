@@ -2,125 +2,205 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CDC201932A5
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 22:28:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 283591932AB
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 22:30:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727461AbgCYV2T (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Mar 2020 17:28:19 -0400
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:44175 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727351AbgCYV2T (ORCPT
+        id S1727539AbgCYVaF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Mar 2020 17:30:05 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:39379 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727389AbgCYVaE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Mar 2020 17:28:19 -0400
-Received: by mail-oi1-f196.google.com with SMTP id v134so3548502oie.11;
-        Wed, 25 Mar 2020 14:28:18 -0700 (PDT)
+        Wed, 25 Mar 2020 17:30:04 -0400
+Received: by mail-lj1-f194.google.com with SMTP id i20so4197588ljn.6
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Mar 2020 14:30:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=4pFd7zuO/PHCDkDSk2itdBp2DM3AlcjhRq/1mxLMNh0=;
+        b=FGo1WaXeEU2eA+9BT9a8L0JamNnb1QfqHpxrlavFI4DDnjm6Cz05gHVPcJ+/ai61lm
+         /fbHB0dVDqWxQL9WuA9+Khll00piHAJUjQEB8PRJwZT9mKUHSXgUAq7i7grgL1KdB/6L
+         qw8ciE628a+4RSV7Y8XGtGz7T8IroRWbf5oV0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=kMnQUhHsMUqkwZSy38drjBgyagt4hVHMEAtOg07ZQq8=;
-        b=X3OOwSWwF9exeyEaukuWVnthtnuCWkdj/NhnzgeqrAmzkzlpU2fT/VytfClj4jEFGJ
-         G5o4gBQdeEgLIC78xTNGk+ErRE3NP+lWB3eKoLn+VkXHURccNbfl2IDQooDC0N2FqxpP
-         1rSlrh4Lfm6leOlBEFzcsfCAw1tbbHxp731gtzTNtDy02Owu+V9KHo1qO7+HnfTeIrb+
-         jF8ouIms+DFnG0IazntOwmamZ+brj1YNWbwLkf1X6oRBRU0OMbDQ5r25hjyWp/LbPxQk
-         K1D7JZg1/HWdNehhcl35Poa+DQfvSFhSXkg3mqICk3/nxMCSvt6eki071DUhP8sx2BYE
-         kAfQ==
-X-Gm-Message-State: ANhLgQ1pUVY2M0FtB2Yw1Dhc97q49m1Z29krYAT8gHNAYsSASS5uAPUW
-        Sl3yUdcc7Ae7hb0le3d1rzRpVC7rBVQSt94Tcds=
-X-Google-Smtp-Source: ADFU+vvzKkZOnTfMVU8Sfwv/GSImVsJgGRvYaaTVayXvuwf+AsGAEnB58orlXTBPHO173efwnlO+Y+mX9i6UdjFRaiI=
-X-Received: by 2002:aca:f07:: with SMTP id 7mr2269427oip.68.1585171698442;
- Wed, 25 Mar 2020 14:28:18 -0700 (PDT)
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=4pFd7zuO/PHCDkDSk2itdBp2DM3AlcjhRq/1mxLMNh0=;
+        b=iRBpEaU5x2zFWJXyTEulwGFXeDyNhJ8XR030PLGN4yzSJX8nm0odcXvGsXBu7DiwRj
+         W8V+BFn0I3buZgjs7S11Jw5LD8837MW31XUaka6VHI3TrnsapBX6SKnzJFtqN1ZW+N8f
+         g/xV8lVGW/1hggwuJluYjqOgRWH547uG3uJEThUZy8HHZBW3Y3xHtqNABfjcbcbc9UXI
+         Cqn1kOAWAO9aizlVNjNRu7tZZ4Di+J3LhyUelpTekg0MQtX9NoGTvAcEQUs5vqLRD8UY
+         FkgawyY6MuMiSOoVbh+XrORglxHScp3LMKaIH4LAgBbVYcrVai2dL94uGrO3hnkihPbJ
+         C/lg==
+X-Gm-Message-State: ANhLgQ3mvJ0LoTK+xzH+SHKTF6imMq3iRs+GtSg7mhzDv5JIAXqS8EZM
+        nmDXCFnQQyLUlbF3hY99PmyWfkSp98wqX7WHtUieSw==
+X-Google-Smtp-Source: ADFU+vtpnSYllD1woB28f1jLDrTWqQun54p7cOQcI+14NHiQ2tGn5V3CCPXhrAqQhIURRdGfgKhUNbJZYiREfhh2qWE=
+X-Received: by 2002:a2e:9ad2:: with SMTP id p18mr3109506ljj.15.1585171799825;
+ Wed, 25 Mar 2020 14:29:59 -0700 (PDT)
 MIME-Version: 1.0
-References: <20200325150017.xhabucfo3v6i234o@e107158-lin> <Pine.LNX.4.44L0.2003251631360.1724-100000@netrider.rowland.org>
-In-Reply-To: <Pine.LNX.4.44L0.2003251631360.1724-100000@netrider.rowland.org>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Wed, 25 Mar 2020 22:28:06 +0100
-Message-ID: <CAJZ5v0gqNnoT41=Vm7AtbH8PMW+qPGighK7Up3q2rS+B0jBKFg@mail.gmail.com>
-Subject: Re: lockdep warning in urb.c:363 usb_submit_urb
-To:     Alan Stern <stern@rowland.harvard.edu>
-Cc:     Qais Yousef <qais.yousef@arm.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Oliver Neukum <oneukum@suse.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        USB list <linux-usb@vger.kernel.org>,
-        Linux-pm mailing list <linux-pm@vger.kernel.org>,
-        Kernel development list <linux-kernel@vger.kernel.org>
+References: <20200325070336.1097-1-mcchou@chromium.org> <20200325000332.v2.1.I0e975833a6789e8acc74be7756cd54afde6ba98c@changeid>
+ <72699110-843A-4382-8FF1-20C5D4D557A2@holtmann.org>
+In-Reply-To: <72699110-843A-4382-8FF1-20C5D4D557A2@holtmann.org>
+From:   Miao-chen Chou <mcchou@chromium.org>
+Date:   Wed, 25 Mar 2020 14:29:48 -0700
+Message-ID: <CABmPvSFL_bkrZQJkAzUMck_bAY5aBZkL=5HGV_Syv2QRYfRLfw@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] Bluetooth: btusb: Indicate Microsoft vendor
+ extension for Intel 9460/9560 and 9160/9260
+To:     Marcel Holtmann <marcel@holtmann.org>
+Cc:     Bluetooth Kernel Mailing List <linux-bluetooth@vger.kernel.org>,
+        Luiz Augusto von Dentz <luiz.von.dentz@intel.com>,
+        Alain Michaud <alainm@chromium.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Johan Hedberg <johan.hedberg@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        netdev <netdev@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 25, 2020 at 9:49 PM Alan Stern <stern@rowland.harvard.edu> wrote:
+On Wed, Mar 25, 2020 at 1:10 AM Marcel Holtmann <marcel@holtmann.org> wrote=
+:
 >
-> On Wed, 25 Mar 2020, Qais Yousef wrote:
+> Hi Miao-chen,
 >
-> > Thanks for all the hints Alan.
+> > This adds a bit mask of driver_info for Microsoft vendor extension and
+> > indicates the support for Intel 9460/9560 and 9160/9260. See
+> > https://docs.microsoft.com/en-us/windows-hardware/drivers/bluetooth/
+> > microsoft-defined-bluetooth-hci-commands-and-events for more informatio=
+n
+> > about the extension. This was verified with Intel ThunderPeak BT contro=
+ller
+> > where msft_vnd_ext_opcode is 0xFC1E.
 > >
-> > I think I figured it out, the below patch seems to fix it for me. Looking
-> > at other drivers resume functions it seems we're missing the
-> > pm_runtime_disable()->set_active()->enable() dance. Doing that fixes the
-> > warning and the dev_err() in driver/base/power.
->
-> Ah, yes.  This should have been added years ago; guess I forgot.  :-(
->
-> > I don't see xhci-plat.c doing that, I wonder if it needs it too.
+> > Signed-off-by: Miao-chen Chou <mcchou@chromium.org>
+> > ---
 > >
-> > I'm not well versed about the details and the rules here. So my fix could be
-> > a hack, though it does seem the right thing to do.
+> > Changes in v2:
+> > - Define struct msft_vnd_ext and add a field of this type to struct
+> > hci_dev to facilitate the support of Microsoft vendor extension.
 > >
-> > I wonder why the power core doesn't handle this transparently..
->
-> Initially, we didn't want the PM core to do this automatically because
-> we thought some devices might want to remain runtime-suspended
-> following a system resume, and only the device driver would know what
-> to do.
->
-> Raphael, now that we have the direct_complete mechanism, can we revisit
-> this?  Should the PM core automatically call pm_runtime_set_active() if
-> dev->power.direct_complete isn't set?  Perhaps in device_resume_early()
-> prior to the pm_runtime_enable() call?
->
-> It's possible we discussed this and decided against it at the time when
-> direct_complete was added, but if so I don't remember what was said.
-
-Me neither. :-)
-
-That said complexity has grown since then and there are the
-DPM_FLAG_SMART_SUSPEND and DPM_FLAG_LEAVE_SUSPENDED flags that can be
-used to control that behavior to some extent.
-
-Setting DPM_FLAG_SMART_SUSPEND alone, in particular, causes
-pm_runtime_set_active() to be called at the noirq stage of device
-resume either by the core or by bus types (e.g. PCI) etc.
-
-It looks like ohci-platform might use DPM_FLAG_SMART_SUSPEND, but I
-need to take a closer look at that (possibly later this week).
-
-Cheers!
-
-
->
-> > diff --git a/drivers/usb/host/ohci-platform.c b/drivers/usb/host/ohci-platform.c
-> > index 7addfc2cbadc..eb92c8092fae 100644
-> > --- a/drivers/usb/host/ohci-platform.c
-> > +++ b/drivers/usb/host/ohci-platform.c
-> > @@ -299,6 +299,10 @@ static int ohci_platform_resume(struct device *dev)
-> >         }
+> > drivers/bluetooth/btusb.c        | 14 ++++++++++++--
+> > include/net/bluetooth/hci_core.h |  6 ++++++
+> > 2 files changed, 18 insertions(+), 2 deletions(-)
 > >
-> >         ohci_resume(hcd, false);
+> > diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
+> > index 3bdec42c9612..4c49f394f174 100644
+> > --- a/drivers/bluetooth/btusb.c
+> > +++ b/drivers/bluetooth/btusb.c
+> > @@ -58,6 +58,7 @@ static struct usb_driver btusb_driver;
+> > #define BTUSB_CW6622          0x100000
+> > #define BTUSB_MEDIATEK                0x200000
+> > #define BTUSB_WIDEBAND_SPEECH 0x400000
+> > +#define BTUSB_MSFT_VND_EXT   0x800000
+> >
+> > static const struct usb_device_id btusb_table[] =3D {
+> >       /* Generic Bluetooth USB device */
+> > @@ -335,7 +336,8 @@ static const struct usb_device_id blacklist_table[]=
+ =3D {
+> >
+> >       /* Intel Bluetooth devices */
+> >       { USB_DEVICE(0x8087, 0x0025), .driver_info =3D BTUSB_INTEL_NEW |
+> > -                                                  BTUSB_WIDEBAND_SPEEC=
+H },
+> > +                                                  BTUSB_WIDEBAND_SPEEC=
+H |
+> > +                                                  BTUSB_MSFT_VND_EXT }=
+,
+> >       { USB_DEVICE(0x8087, 0x0026), .driver_info =3D BTUSB_INTEL_NEW |
+> >                                                    BTUSB_WIDEBAND_SPEEC=
+H },
+> >       { USB_DEVICE(0x8087, 0x0029), .driver_info =3D BTUSB_INTEL_NEW |
+> > @@ -348,7 +350,8 @@ static const struct usb_device_id blacklist_table[]=
+ =3D {
+> >       { USB_DEVICE(0x8087, 0x0aa7), .driver_info =3D BTUSB_INTEL |
+> >                                                    BTUSB_WIDEBAND_SPEEC=
+H },
+> >       { USB_DEVICE(0x8087, 0x0aaa), .driver_info =3D BTUSB_INTEL_NEW |
+> > -                                                  BTUSB_WIDEBAND_SPEEC=
+H },
+> > +                                                  BTUSB_WIDEBAND_SPEEC=
+H |
+> > +                                                  BTUSB_MSFT_VND_EXT }=
+,
+> >
+> >       /* Other Intel Bluetooth devices */
+> >       { USB_VENDOR_AND_INTERFACE_INFO(0x8087, 0xe0, 0x01, 0x01),
+> > @@ -3734,6 +3737,8 @@ static int btusb_probe(struct usb_interface *intf=
+,
+> >       hdev->send   =3D btusb_send_frame;
+> >       hdev->notify =3D btusb_notify;
+> >
+> > +     hdev->msft_ext.opcode =3D HCI_OP_NOP;
 > > +
-> > +       pm_runtime_disable(dev);
-> > +       pm_runtime_set_active(dev);
-> > +       pm_runtime_enable(dev);
-> >         return 0;
-> >  }
-> >  #endif /* CONFIG_PM_SLEEP */
-> >
-> >
-> > Thanks
-> >
-> > --
-> > Qais Yousef
 >
+> do this in the hci_alloc_dev procedure for every driver. This doesn=E2=80=
+=99t belong in the driver.
+Thanks for the note, I will address this.
 >
+> > #ifdef CONFIG_PM
+> >       err =3D btusb_config_oob_wake(hdev);
+> >       if (err)
+> > @@ -3800,6 +3805,11 @@ static int btusb_probe(struct usb_interface *int=
+f,
+> >               set_bit(HCI_QUIRK_STRICT_DUPLICATE_FILTER, &hdev->quirks)=
+;
+> >               set_bit(HCI_QUIRK_SIMULTANEOUS_DISCOVERY, &hdev->quirks);
+> >               set_bit(HCI_QUIRK_NON_PERSISTENT_DIAG, &hdev->quirks);
+> > +
+> > +             if (id->driver_info & BTUSB_MSFT_VND_EXT &&
+> > +                     (id->idProduct =3D=3D 0x0025 || id->idProduct =3D=
+=3D 0x0aaa)) {
+>
+> Please scrap this extra check. You already selected out the PID with the =
+blacklist_table. In addition, I do not want to add a PID in two places in t=
+he driver.
+If we scrap the check around idProduct, how do we tell two controllers
+apart if they use different opcode for Microsoft vendor extension?
+>
+> An alternative is to not use BTUSB_MSFT_VND_EXT and let the Intel code se=
+t it based on the hardware / firmware revision it finds. We might need to d=
+iscuss which is the better approach for the Intel hardware since not all PI=
+Ds are unique.
+We are expecting to indicate the vendor extension for non-Intel
+controllers as well, and having BTUSB_MSFT_VND_EXT seems to be more
+generic. What do you think?
+>
+> > +                     hdev->msft_ext.opcode =3D 0xFC1E;
+> > +             }
+> >       }
+> >
+> >       if (id->driver_info & BTUSB_MARVELL)
+> > diff --git a/include/net/bluetooth/hci_core.h b/include/net/bluetooth/h=
+ci_core.h
+> > index d4e28773d378..0ec3d9b41d81 100644
+> > --- a/include/net/bluetooth/hci_core.h
+> > +++ b/include/net/BTUSB_MSFT_VND_EXTBTUSB_MSFT_VND_EXTBTUSB_MSFT_VND_EX=
+Tbluetooth/hci_core.h
+> > @@ -244,6 +244,10 @@ struct amp_assoc {
+> >
+> > #define HCI_MAX_PAGES 3
+> >
+> > +struct msft_vnd_ext {
+> > +     __u16   opcode;
+> > +};
+> > +
+> > struct hci_dev {
+> >       struct list_head list;
+> >       struct mutex    lock;
+> > @@ -343,6 +347,8 @@ struct hci_dev {
+> >
+> >       struct amp_assoc        loc_assoc;
+> >
+> > +     struct msft_vnd_ext     msft_ext;
+> > +
+> >       __u8            flow_ctl_mode;
+> >
+> >       unsigned int    auto_accept_delay;
+>
+Regards,
+Miao
