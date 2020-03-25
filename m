@@ -2,196 +2,133 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8BDD6191E72
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 02:13:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 118B8191E7B
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 02:14:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727268AbgCYBNh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 21:13:37 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:56978 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727119AbgCYBNg (ORCPT
+        id S1727374AbgCYBO2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 21:14:28 -0400
+Received: from conssluserg-06.nifty.com ([210.131.2.91]:34772 "EHLO
+        conssluserg-06.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727188AbgCYBO2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 21:13:36 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 02P1AJ0R048600;
-        Wed, 25 Mar 2020 01:12:18 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2020-01-29;
- bh=YRi4mb9uG3tgUWBrs1ed4oarNhqa/no2+uBKt2mPO0I=;
- b=X1GYU1zrtODyAZmLxxSuIi6wF25xK5Iptr9D4zm4crNgbz7mnhhHzl+m0S+8trQNakHO
- qYEeB+QCozDAk9I/dsNJrju1255Y1S2Fp4C41axP5+nvpqKcq10QS8eNGgq3hFZMnfWw
- qkjlxJ0Mw0p4itm90v7itlW+1C8CmcVStLceaCg57w0mQadA37fDItuy4SoUwi81cP90
- WMOyTFu0C78xuUgH/6uvrDH8uuyx1h8IcTXbzX43RQwyH7S/8mtsD7enuYspGGEguPrH
- hqgSR2/2iiP1OmhBFafNzjB9Qz7TKYJ4XRCen1bNINFwCRx6G4E3r3pz5j7CevMrdmI9 DA== 
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by userp2130.oracle.com with ESMTP id 2ywabr7anf-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 25 Mar 2020 01:12:18 +0000
-Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 02P16oZi062576;
-        Wed, 25 Mar 2020 01:12:17 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by aserp3020.oracle.com with ESMTP id 2yymbuy4n7-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 25 Mar 2020 01:12:17 +0000
-Received: from abhmp0001.oracle.com (abhmp0001.oracle.com [141.146.116.7])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 02P1C6e1026545;
-        Wed, 25 Mar 2020 01:12:06 GMT
-Received: from [192.168.1.206] (/71.63.128.209)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 24 Mar 2020 18:12:06 -0700
-Subject: Re: [PATCH 4/4] hugetlbfs: clean up command line processing
-To:     "Longpeng (Mike, Cloud Infrastructure Service Product Dept.)" 
-        <longpeng2@huawei.com>, Mina Almasry <almasrymina@google.com>
-Cc:     Linux-MM <linux-mm@kvack.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org,
-        linux-s390@vger.kernel.org, sparclinux@vger.kernel.org,
-        linux-doc@vger.kernel.org,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        "David S.Miller" <davem@davemloft.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Andrew Morton <akpm@linux-foundation.org>
-References: <20200318220634.32100-1-mike.kravetz@oracle.com>
- <20200318220634.32100-5-mike.kravetz@oracle.com>
- <CAHS8izOhjvNVDXsx_SqP_oUQhCw-i_xcG9hxbvV86fFDeY_SAw@mail.gmail.com>
- <d067c5d1-89b8-a71b-7b71-a8bbbd613efa@huawei.com>
-From:   Mike Kravetz <mike.kravetz@oracle.com>
-Message-ID: <0cfeecb3-95d6-9fd2-d985-f70f1dd416b9@oracle.com>
-Date:   Tue, 24 Mar 2020 18:12:02 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.6.0
+        Tue, 24 Mar 2020 21:14:28 -0400
+Received: from mail-ua1-f42.google.com (mail-ua1-f42.google.com [209.85.222.42]) (authenticated)
+        by conssluserg-06.nifty.com with ESMTP id 02P1E3aD015611
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Mar 2020 10:14:04 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-06.nifty.com 02P1E3aD015611
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1585098844;
+        bh=Du0zvU/kKAL8IvGiRqHBSbx7z6kjBsdUMl9fi/jYHfU=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=CmBBqcd636qqSj5ss3/pAlUApkkQw3SpDtaGjLBFVNgUjopNWmBHijKJ2t1GIv9sV
+         ABjbr6WG0sDnmRZ9Mu7Q7ndHoShX0IVAagRmAnN07RUwv3Q2nK8KZnuxkn4pZAIO9i
+         EUWCuFL5WUeO5/69pqB+6rLy+r7sXZjRilBNUWvWXyGifkZXknW/7sBGBCYqyyB72P
+         ut72XASzzrV5vxCZQVb9nxcXov5YhyQ56W+EJsmsR2mYgeN9SFYj9igEHSbpD0LZLQ
+         jezIoot7mFSV0RVZ1KSVAaekJDvlhsh6YZrP9pDmdVqTSkEepBu9siGl1VWwdfBVXL
+         zEgAweVZWeU0A==
+X-Nifty-SrcIP: [209.85.222.42]
+Received: by mail-ua1-f42.google.com with SMTP id o15so173948ual.3
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Mar 2020 18:14:04 -0700 (PDT)
+X-Gm-Message-State: ANhLgQ1LbcfLnryQ3H5nCjWeHu5gLRBrOOGXgH38nPCYxT3QCxkM+Omy
+        UFuZLiH0baRBc8h+gcHQQhgFVSekpi4lgC1IPYY=
+X-Google-Smtp-Source: ADFU+vsMC3zRa6ZCPZj56ljmM8HiIe+u3r7TwuTb0+ibRUQbbRZXBTBPHZ2fpKGbyXecBLtrlGGqLwlnGLzcN6iVsgo=
+X-Received: by 2002:ab0:3485:: with SMTP id c5mr688955uar.109.1585098843120;
+ Tue, 24 Mar 2020 18:14:03 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <d067c5d1-89b8-a71b-7b71-a8bbbd613efa@huawei.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9570 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 suspectscore=0
- adultscore=0 malwarescore=0 bulkscore=0 spamscore=0 mlxlogscore=999
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2003020000 definitions=main-2003250008
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9570 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 suspectscore=0
- lowpriorityscore=0 malwarescore=0 phishscore=0 priorityscore=1501
- clxscore=1015 adultscore=0 mlxscore=0 mlxlogscore=999 bulkscore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2003020000 definitions=main-2003250008
+References: <20200213153928.28407-1-masahiroy@kernel.org> <CAK7LNARvxFk=ct9AoRLwjZ9cKRsA_bjiLaq0di12TRe5+fpmGA@mail.gmail.com>
+ <CADnq5_Mieh9G-8hheKRdKe=qMbAQjwTheM2TWWSaZjeGU3635Q@mail.gmail.com>
+In-Reply-To: <CADnq5_Mieh9G-8hheKRdKe=qMbAQjwTheM2TWWSaZjeGU3635Q@mail.gmail.com>
+From:   Masahiro Yamada <masahiroy@kernel.org>
+Date:   Wed, 25 Mar 2020 10:13:27 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAT2r3Octg-Pdjn6xNzGM49_PiGqoJSTzbmL4iBpH6_AaQ@mail.gmail.com>
+Message-ID: <CAK7LNAT2r3Octg-Pdjn6xNzGM49_PiGqoJSTzbmL4iBpH6_AaQ@mail.gmail.com>
+Subject: Re: [PATCH 1/4] drm/radeon: remove unneeded header include path
+To:     Alex Deucher <alexdeucher@gmail.com>
+Cc:     Alex Deucher <alexander.deucher@amd.com>,
+        =?UTF-8?B?Q2hyaXN0aWFuIEvvv73vv73Dk25pZw==?= 
+        <christian.koenig@amd.com>, David Zhou <David1.Zhou@amd.com>,
+        amd-gfx list <amd-gfx@lists.freedesktop.org>,
+        David Airlie <airlied@linux.ie>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 3/23/20 8:47 PM, Longpeng (Mike, Cloud Infrastructure Service Product Dept.) wrote:
-> 
-> 
-> On 2020/3/24 8:43, Mina Almasry wrote:
->> On Wed, Mar 18, 2020 at 3:07 PM Mike Kravetz <mike.kravetz@oracle.com> wrote:
->>> +default_hugepagesz - Specify the default huge page size.  This parameter can
->>> +       only be specified on the command line.  No other hugetlb command line
->>> +       parameter is associated with default_hugepagesz.  Therefore, it can
->>> +       appear anywhere on the command line.  Valid default huge page size is
->>> +       architecture dependent.
->>
->> Maybe specify what happens/should happen in a case like:
->>
->> hugepages=100 default_hugepagesz=1G
->>
->> Does that allocate 100 2MB pages or 100 1G pages? Assuming the default
->> size is 2MB.
+On Wed, Mar 25, 2020 at 4:42 AM Alex Deucher <alexdeucher@gmail.com> wrote:
+>
+> On Tue, Mar 24, 2020 at 12:48 PM Masahiro Yamada <masahiroy@kernel.org> wrote:
+> >
+> > Hi,
+> >
+> > I think this series is a good clean-up.
+> >
+> > Could you take a look at this please?
+>
+> Can you resend?  I don't seem to have gotten it.  Must have ended up
+> getting flagged a spam or something.
 
-That will allocate 100 1G pages as 1G is the default.  However, if the
-command line reads:
 
-hugepages=100 default_hugepagesz=1G hugepages=200
+Can you take it from patchwork ?  (4 patches)
 
-You will get this warning,
+https://lore.kernel.org/patchwork/project/lkml/list/?series=429491
 
-HugeTLB: First hugepages=104857600 kB ignored
 
->>
->> Also, regarding Randy's comment. It may be nice to keep these docs in
->> one place only, so we don't have to maintain 2 docs in sync.
+Thanks.
 
-Let me think about that a bit.  We should probably expand the
-kernel-parameters doc.  Or, we should at least make it more clear.  This
-doc also talks about the command line parameters and in general goes into
-more detail.  However, more people read kernel-parameters doc.
 
->>> +
->>>  When multiple huge page sizes are supported, ``/proc/sys/vm/nr_hugepages``
->>>  indicates the current number of pre-allocated huge pages of the default size.
->>>  Thus, one can use the following command to dynamically allocate/deallocate
->>> diff --git a/mm/hugetlb.c b/mm/hugetlb.c
->>> index cc85b4f156ca..2b9bf01db2b6 100644
->>> --- a/mm/hugetlb.c
->>> +++ b/mm/hugetlb.c
-<snip>
->>> -static int __init hugetlb_nrpages_setup(char *s)
->>> +/*
->>> + * hugepages command line processing
->>> + * hugepages must normally follows a valid hugepagsz specification.  If not,
->>
->> 'hugepages must' or 'hugepages normally follows'
->>> + * ignore the hugepages value.  hugepages can also be the first huge page
->>> + * command line option in which case it specifies the number of huge pages
->>> + * for the default size.
->>> + */
->>> +static int __init hugepages_setup(char *s)
->>>  {
->>>         unsigned long *mhp;
->>>         static unsigned long *last_mhp;
->>>
->>>         if (!parsed_valid_hugepagesz) {
->>> -               pr_warn("hugepages = %s preceded by "
->>> +               pr_warn("HugeTLB: hugepages = %s preceded by "
->>>                         "an unsupported hugepagesz, ignoring\n", s);
->>>                 parsed_valid_hugepagesz = true;
->>>                 return 1;
->>>         }
->>>         /*
->>> -        * !hugetlb_max_hstate means we haven't parsed a hugepagesz= parameter yet,
->>> -        * so this hugepages= parameter goes to the "default hstate".
->>> +        * !hugetlb_max_hstate means we haven't parsed a hugepagesz= parameter
->>> +        * yet, so this hugepages= parameter goes to the "default hstate".
->>>          */
->>>         else if (!hugetlb_max_hstate)
->>>                 mhp = &default_hstate_max_huge_pages;
->>
->> We don't set parsed_valid_hugepagesz to false at the end of this
->> function, shouldn't we? Parsing a hugepages= value should 'consume' a
->> previously defined hugepagesz= value, so that this is invalid IIUC:
->>
->> hugepagesz=x hugepages=z hugepages=y
->>
-> In this case, we'll get:
-> "HugeTLB: hugepages= specified twice without interleaving hugepagesz=, ignoring
-> hugepages=y"
-> 
 
-Thanks Longpeng (Mike),
 
-I believe that is the desired message in this situation.  The code uses saved
-values of mhp (max hstate pointer) to catch this condition.  Setting
-parsed_valid_hugepagesz to false would result in the message:
 
-HugeTLB: hugepages=y preceded by an unsupported hugepagesz, ignoring
 
-Thanks for all your comments I will incorporate in v2 and send later this
-week.
+> Alex
+>
+> >
+> >
+> >
+> > On Fri, Feb 14, 2020 at 12:40 AM Masahiro Yamada <masahiroy@kernel.org> wrote:
+> > >
+> > > A header include path without $(srctree)/ is suspicious because it does
+> > > not work with O= builds.
+> > >
+> > > You can build drivers/gpu/drm/radeon/ without this include path.
+> > >
+> > > Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+> > > ---
+> > >
+> > >  drivers/gpu/drm/radeon/Makefile | 2 --
+> > >  1 file changed, 2 deletions(-)
+> > >
+> > > diff --git a/drivers/gpu/drm/radeon/Makefile b/drivers/gpu/drm/radeon/Makefile
+> > > index c693b2ca0329..9d5d3dc1011f 100644
+> > > --- a/drivers/gpu/drm/radeon/Makefile
+> > > +++ b/drivers/gpu/drm/radeon/Makefile
+> > > @@ -3,8 +3,6 @@
+> > >  # Makefile for the drm device driver.  This driver provides support for the
+> > >  # Direct Rendering Infrastructure (DRI) in XFree86 4.1.0 and higher.
+> > >
+> > > -ccflags-y := -Idrivers/gpu/drm/amd/include
+> > > -
+> > >  hostprogs := mkregtable
+> > >  clean-files := rn50_reg_safe.h r100_reg_safe.h r200_reg_safe.h rv515_reg_safe.h r300_reg_safe.h r420_reg_safe.h rs600_reg_safe.h r600_reg_safe.h evergreen_reg_safe.h cayman_reg_safe.h
+> > >
+> > > --
+> > > 2.17.1
+> > >
+> >
+> >
+> > --
+> > Best Regards
+> > Masahiro Yamada
+> > _______________________________________________
+> > dri-devel mailing list
+> > dri-devel@lists.freedesktop.org
+> > https://lists.freedesktop.org/mailman/listinfo/dri-devel
+
+
+
 -- 
-Mike Kravetz
+Best Regards
+Masahiro Yamada
