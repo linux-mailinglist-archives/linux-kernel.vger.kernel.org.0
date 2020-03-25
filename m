@@ -2,182 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D8833193169
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 20:48:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7D3F719313F
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 20:41:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727384AbgCYTrz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Mar 2020 15:47:55 -0400
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:44327 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727259AbgCYTry (ORCPT
+        id S1727391AbgCYTlJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Mar 2020 15:41:09 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:38588 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727253AbgCYTlJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Mar 2020 15:47:54 -0400
-Received: by mail-ed1-f68.google.com with SMTP id i16so3172604edy.11
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Mar 2020 12:47:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=m+sWsfawp9IPajoIZdacO9dJYYta78Pw+YueeYzFlxY=;
-        b=J8VeokEiP3c6G7lK6+ho/hDzU0xo/hYsK36WzY+oz0mWQJu2vTWmP6XnvsA9cYT9N5
-         nqqsbWG/RFwkjbsq94/N10fjA5usQGnqs9lg09zavJDcntFYWRLBPaoUVe3g4k89jqC8
-         /N0wZsvGA1SxxoqBJ9OF2PAQHcqCZ6GlCZdsg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=m+sWsfawp9IPajoIZdacO9dJYYta78Pw+YueeYzFlxY=;
-        b=mlAZry+Aw5qViiTtFzxNGAQfm614OqKV16WMxKe5nJUmKgkkanqP5eXaRwWJznHt+I
-         Cl/NvZMjGyLVB/MNcWPa34SWD6ittHrjXCwLq2Bf9MUcgPeQgM3MXPO+ognSX/pF4c+n
-         NVAirPDge3YNJLPt3shmybqpcYKUfWlYlla9SbhUyMBqlxE14eAeZtuHdn0j/q4gk7q5
-         4MYxUFm4+YXzIuM/krjmxkjtaVBK1oh4vTNUwnSYdBvUXIjT7arLLHRQoQPOqlC+oOJK
-         Xrjy4t9d2WM9VMYTMQPdqlN5uOLRGV+qfHVCRP3MjsmsZ8qNUNXjNSS4YhFbwgmZb4Xo
-         p0IQ==
-X-Gm-Message-State: ANhLgQ1eIFc1a+Sy6v+UW4z9YP/auIvvjRfaO2Zuw93cQg1oB8TL8qX9
-        5Cr5OEl1asPZH29bgyVG11iPIMKsQPo=
-X-Google-Smtp-Source: ADFU+vsXC2+G4dAEdq3BT0kzbpG7W1L+TlJ6Q9f3rfe8/j2ql4POnBClUnujbpyTjYOq/YSFp3UcGg==
-X-Received: by 2002:adf:b3d4:: with SMTP id x20mr4822089wrd.269.1585165199246;
-        Wed, 25 Mar 2020 12:39:59 -0700 (PDT)
-Received: from chromium.org (77-56-209-237.dclient.hispeed.ch. [77.56.209.237])
-        by smtp.gmail.com with ESMTPSA id o67sm135582wmo.5.2020.03.25.12.39.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Mar 2020 12:39:58 -0700 (PDT)
-From:   KP Singh <kpsingh@chromium.org>
-X-Google-Original-From: KP Singh <kpsingh>
-Date:   Wed, 25 Mar 2020 20:39:56 +0100
-To:     Kees Cook <keescook@chromium.org>
-Cc:     linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Brendan Jackman <jackmanb@google.com>,
-        Florent Revest <revest@google.com>, Yonghong Song <yhs@fb.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        James Morris <jmorris@namei.org>, Paul Turner <pjt@google.com>,
-        Jann Horn <jannh@google.com>,
-        Florent Revest <revest@chromium.org>,
-        Brendan Jackman <jackmanb@chromium.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH bpf-next v6 3/8] bpf: lsm: provide attachment points for
- BPF LSM programs
-Message-ID: <20200325193956.GA22898@chromium.org>
-References: <20200325152629.6904-1-kpsingh@chromium.org>
- <20200325152629.6904-4-kpsingh@chromium.org>
- <202003251225.923FF1DD7@keescook>
+        Wed, 25 Mar 2020 15:41:09 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=A4m0ZPlZ5obZNWQXf/Gh81v44Z2dZ2lWdMjLJARw93o=; b=2j2TeH/fcS3veYk8MlAVFfrNY9
+        NVsmTpfC8Py8Giv9Wp9JA00hC85v5ol0Di/AE4K7sRPP4pItlhuFoz6zHvf7Roj+NaJmp4+Ydf5ow
+        tOt5qFIZjCRQvNR7TIBc3yM7meeDcQrjdOC629I79voE0rhhC6uEKGCrmNM5vFacbMTDtFZFszjsV
+        wfimBFgU5T2Hh2nmbZSsqmI9EdMRAyIg13kgafcMYNAf5CHzk/cc6akYM+zIqKS52ZgrtdKVqgbe8
+        KhhnwSd7e56qhwogXUIJ6lGRhI4HmgsZB3Gqcq/UTq/AVS4/03vlZAS1Xitg3mzcp00m1xBJWxtr8
+        ctZeuymQ==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jHBtf-0006Nk-3P; Wed, 25 Mar 2020 19:41:03 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 288843010C2;
+        Wed, 25 Mar 2020 20:41:00 +0100 (CET)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 16FB720206085; Wed, 25 Mar 2020 20:41:00 +0100 (CET)
+Date:   Wed, 25 Mar 2020 20:41:00 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Miroslav Benes <mbenes@suse.cz>
+Cc:     tglx@linutronix.de, jpoimboe@redhat.com,
+        linux-kernel@vger.kernel.org, x86@kernel.org, mhiramat@kernel.org
+Subject: Re: [PATCH v4 02/13] objtool: Factor out CFI hints
+Message-ID: <20200325194100.GL20713@hirez.programming.kicks-ass.net>
+References: <20200325174525.772641599@infradead.org>
+ <20200325174605.455086309@infradead.org>
+ <alpine.LSU.2.21.2003251924440.3128@pobox.suse.cz>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <202003251225.923FF1DD7@keescook>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <alpine.LSU.2.21.2003251924440.3128@pobox.suse.cz>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 25-Mär 12:28, Kees Cook wrote:
-> On Wed, Mar 25, 2020 at 04:26:24PM +0100, KP Singh wrote:
-> > From: KP Singh <kpsingh@google.com>
+On Wed, Mar 25, 2020 at 07:26:06PM +0100, Miroslav Benes wrote:
+> On Wed, 25 Mar 2020, Peter Zijlstra wrote:
+> 
+> > Move the application of CFI hints into it's own function.
+> > No functional changes intended.
 > > 
-> > When CONFIG_BPF_LSM is enabled, nop functions, bpf_lsm_<hook_name>, are
-> > generated for each LSM hook. These functions are initialized as LSM
-> > hooks in a subsequent patch.
-> > 
-> > Signed-off-by: KP Singh <kpsingh@google.com>
-> > Reviewed-by: Brendan Jackman <jackmanb@google.com>
-> > Reviewed-by: Florent Revest <revest@google.com>
-> > Reviewed-by: Kees Cook <keescook@chromium.org>
-> > Acked-by: Yonghong Song <yhs@fb.com>
+> > Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+> > Acked-by: Josh Poimboeuf <jpoimboe@redhat.com>
 > > ---
-> >  include/linux/bpf_lsm.h | 22 ++++++++++++++++++++++
-> >  kernel/bpf/bpf_lsm.c    | 14 ++++++++++++++
-> >  2 files changed, 36 insertions(+)
-> >  create mode 100644 include/linux/bpf_lsm.h
+> >  tools/objtool/check.c |   67 ++++++++++++++++++++++++++++----------------------
+> >  1 file changed, 38 insertions(+), 29 deletions(-)
 > > 
-> > diff --git a/include/linux/bpf_lsm.h b/include/linux/bpf_lsm.h
-> > new file mode 100644
-> > index 000000000000..83b96895829f
-> > --- /dev/null
-> > +++ b/include/linux/bpf_lsm.h
-> > @@ -0,0 +1,22 @@
-> > +/* SPDX-License-Identifier: GPL-2.0 */
-> > +
-> > +/*
-> > + * Copyright (C) 2020 Google LLC.
-> > + */
-> > +
-> > +#ifndef _LINUX_BPF_LSM_H
-> > +#define _LINUX_BPF_LSM_H
-> > +
-> > +#include <linux/bpf.h>
-> > +#include <linux/lsm_hooks.h>
-> > +
-> > +#ifdef CONFIG_BPF_LSM
-> > +
-> > +#define LSM_HOOK(RET, DEFAULT, NAME, ...) \
-> > +	RET bpf_lsm_##NAME(__VA_ARGS__);
-> > +#include <linux/lsm_hook_defs.h>
-> > +#undef LSM_HOOK
-> > +
-> > +#endif /* CONFIG_BPF_LSM */
-> > +
-> > +#endif /* _LINUX_BPF_LSM_H */
-> > diff --git a/kernel/bpf/bpf_lsm.c b/kernel/bpf/bpf_lsm.c
-> > index 82875039ca90..1210a819ca52 100644
-> > --- a/kernel/bpf/bpf_lsm.c
-> > +++ b/kernel/bpf/bpf_lsm.c
-> > @@ -7,6 +7,20 @@
-> >  #include <linux/filter.h>
-> >  #include <linux/bpf.h>
-> >  #include <linux/btf.h>
-> > +#include <linux/lsm_hooks.h>
-> > +#include <linux/bpf_lsm.h>
-> > +
-> > +/* For every LSM hook that allows attachment of BPF programs, declare a nop
-> > + * function where a BPF program can be attached.
-> > + */
-> > +#define LSM_HOOK(RET, DEFAULT, NAME, ...) 	\
-> > +noinline __weak RET bpf_lsm_##NAME(__VA_ARGS__)	\
-> 
-> I don't think the __weak is needed any more here?
-
-This was suggested in:
-
- https://lore.kernel.org/bpf/20200221022537.wbmhdfkdbfvw2pww@ast-mbp/
-
-"I think I saw cases when gcc ignored 'noinline' when function is
-defined in the same file and still performed inlining while keeping
-the function body.  To be safe I think __weak is necessary. That will
-guarantee noinline."
-
-It happened to work nicely with the previous approach for the special
-hooks but the actual reason for adding the __weak was to guarrantee
-that these functions don't get inlined.
-
-> 
-> > +{						\
-> > +	return DEFAULT;				\
-> 
-> I'm impressed that LSM_RET_VOID actually works. :)
-
-All the credit goes to Andrii :)
-
-- KP
-
-> 
-> -Kees
-> 
-> > +}
-> > +
-> > +#include <linux/lsm_hook_defs.h>
-> > +#undef LSM_HOOK
+> > --- a/tools/objtool/check.c
+> > +++ b/tools/objtool/check.c
+> > @@ -2033,6 +2033,41 @@ static int validate_return(struct symbol
+> >  	return 0;
+> >  }
 > >  
-> >  const struct bpf_prog_ops lsm_prog_ops = {
-> >  };
-> > -- 
-> > 2.20.1
-> > 
+> > +static int apply_insn_hint(struct objtool_file *file, struct section *sec,
+> > +			   struct symbol *func, struct instruction *insn,
+> > +			   struct insn_state *state)
+> > +{
+> > +	if (insn->restore) {
+> > +		struct instruction *save_insn, *i;
+> > +
+> > +		i = insn;
+> > +		save_insn = NULL;
+> > +		sym_for_each_insn_continue_reverse(file, func, i) {
+> > +			if (i->save) {
+> > +				save_insn = i;
+> > +				break;
+> > +			}
+> > +		}
+> > +
+> > +		if (!save_insn) {
+> > +			WARN_FUNC("no corresponding CFI save for CFI restore",
+> > +				  sec, insn->offset);
+> > +			return 1;
+> > +		}
+> > +
+> > +		if (!save_insn->visited) {
+> > +			WARN_FUNC("objtool isn't smart enough to handle this CFI save/restore combo",
+> > +				  sec, insn->offset);
+> > +			return 1;
+> > +		}
+> > +
+> > +		insn->state = save_insn->state;
+> > +	}
+> > +
+> > +	state = insn->state;
 > 
-> -- 
-> Kees Cook
+> It does not matter, because it will change later again, but there should 
+> be
+> 
+> *state = insn->state;
+> 
+> here, right?
+
+Argh, yes.  Let me go edit the patches.
