@@ -2,151 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7294F192D66
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 16:51:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BC016192D6B
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 16:52:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727820AbgCYPvN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Mar 2020 11:51:13 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:42552 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727592AbgCYPvN (ORCPT
+        id S1727932AbgCYPwF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Mar 2020 11:52:05 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:36289 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727501AbgCYPwF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Mar 2020 11:51:13 -0400
-Received: by mail-wr1-f65.google.com with SMTP id h15so3737260wrx.9
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Mar 2020 08:51:11 -0700 (PDT)
+        Wed, 25 Mar 2020 11:52:05 -0400
+Received: by mail-lj1-f194.google.com with SMTP id g12so3026691ljj.3
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Mar 2020 08:52:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=jdzCJSQMgm0oyL98baNgXzwRjxVHoWxbruLDM0oUMk4=;
-        b=BX/mueElGQ2pf5TxuXX1CUbBcr7X3BOPwGSt2wLZHkfy08N/rTANbsO/1zOe1fkxGE
-         4XZAV/FMJvqzZZyr6Wv4pXgV0+Fip/4hAZs5GPTXS2vDmoC8VA76e0QA8XEGwSGvxNrf
-         zYigoBJngcvnWPAFT4E10OhZ7R+76I0d0w7MN7nrfqpV3GKVqxxaUdzS3GjbVLD9TRML
-         rregJC2ikLGw+s59YJ/ActxK4orduHalzGtdQKpIML/MvCQ2lMlI7NZvr44yANbgI+rz
-         hVLc/W9TKopWDTISoc0dn5PgSIu6lX63hlQbFbv3cFWxf4iPByzQsAxns94rQFpz9p1/
-         rE+A==
+        d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:organization:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=FFKgDeHvhTCS00AQN8L5xpmPeeM6E1oKLK7azqnWDiE=;
+        b=uicKA8wIvWFlXoj/N3LEYBm1C4A3V4P9iw9tec/gYSHrhStzUBQCHg9572Xte1kjgR
+         ThMBTvZUPKiWKz7FpDL5FpZdKIk2YCmk4xT9mv8vXzDYbG7BnewAeqmTmjbMblvWal3H
+         mWL8hgD8rxlqA3cc+cD7G6ybnkogU1aJ7AGejI0PI8JR5OHaQ8Yinse9H4h+GK2Hb1A4
+         AO25iODgSANaemv90W5sSFYFQjzOpxBoKLIe96Vf8WjB/zrqJX1NEJY7yq750pQkaqOk
+         1+9OYeGLNZxl0e6F3esYfat8n9CQbuKfwTbzDvu3Chf0eeKLqiEo59Jx1mNdOEbnZcqK
+         7RZw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=jdzCJSQMgm0oyL98baNgXzwRjxVHoWxbruLDM0oUMk4=;
-        b=nY2oa8qtTIt2djhp7uuaHn/xTygfmnvAU44R5vGHuNNo6XDCjaLLJIGbVYBIvOEDlH
-         kSL2csK5Pwf8sx2i7oy36W734nE4a92LOKC7CkFhQZfxbNarfFxuSJ8aZV0JeGNZVkBz
-         x6Dtxcrv0hMhxF9CV0SmTp4RSIPicwfLknFADlmi48UNA5zYEVo1dU286B0qKbBJl9X3
-         Abzv6gAIXPopJLyvFpkmTN9FExeSruLS5ES/akUckILbtB+eX99pk0U4GUO8Ah0pDZxV
-         OaKhfhksQKz1YlTkMMa4kuOArxB26NK1gVG3fQe4Ybf1vDqQKazpSqYrnGx+6uohLoA0
-         E3rg==
-X-Gm-Message-State: ANhLgQ2bK589r0A42/HmL3E3vzvsemucoLZd9lLTpOFMtn8Ceunn6yPV
-        AjWOY3SOMrF2xsypU9MUp0MI0LmACSoJiE9fp+bVyA==
-X-Google-Smtp-Source: ADFU+vv+tNQ8YPWvfibugvCnhwLOYJlgXo6GRSCXcpR6TQyErbNU+Sksiez3chDL5nslTuI6gv9Wi3hMfyEPl8slG1Q=
-X-Received: by 2002:a05:6000:111:: with SMTP id o17mr4069115wrx.111.1585151471221;
- Wed, 25 Mar 2020 08:51:11 -0700 (PDT)
+        h=x-gm-message-state:subject:to:cc:references:from:organization
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=FFKgDeHvhTCS00AQN8L5xpmPeeM6E1oKLK7azqnWDiE=;
+        b=C6sBNnfxyzMepl+HITtSOc0CZnOM10uDzxkz6PcMdOnCBq0g5qMcN5BaUZdxwxw+2A
+         eK1rpN3TnH1gAamgb43XDi8g4awDL/6DQKkSrYFQQtGj1LHoO4qtSBGu+k+OAnGbrzG4
+         OBB2a7QNluQuLa7q5/GOroNw5wZETqnABcTBRPV+fmcrNqkc2OMs/bnP16IYlat9Tb0B
+         bLFjN46WiBMOXZV9yTdjb0/e0qF7nwV/OQSwuEh47Ek5WH3YGSGw2Bfc6T4yFpbbI5yv
+         Gl39gqvcA7kzlp6hEe5jxLse3TKf9QRbqy43OItH1ibx0ThSwE7vEZ8m5FZWGcNQG7eN
+         Hp2Q==
+X-Gm-Message-State: AGi0PuYNElIjruLWX5L5yqzD/AkyuACMTnZdN6nwImHOs1woQFhD9/tE
+        T8RSPVCpaxw5Iha145N82z2bbQ==
+X-Google-Smtp-Source: ADFU+vv75ZUwXg2vEi4sa3vjU/XvBmaxBeQGnk0gRxgFefclx3FSltiYeD1SYorsoysNlfqIA2nFcA==
+X-Received: by 2002:a2e:964e:: with SMTP id z14mr2510095ljh.44.1585151522265;
+        Wed, 25 Mar 2020 08:52:02 -0700 (PDT)
+Received: from wasted.cogentembedded.com ([2a00:1fa0:4678:2dac:733f:487d:7a84:7bac])
+        by smtp.gmail.com with ESMTPSA id l21sm275175lfh.63.2020.03.25.08.52.00
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 25 Mar 2020 08:52:01 -0700 (PDT)
+Subject: Re: [PATCH 1/4] ubifs: remove broken lazytime support
+To:     Christoph Hellwig <hch@lst.de>, Theodore Ts'o <tytso@mit.edu>,
+        Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Richard Weinberger <richard@nod.at>, linux-xfs@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net,
+        Eric Biggers <ebiggers@kernel.org>,
+        linux-mtd@lists.infradead.org, linux-fsdevel@vger.kernel.org,
+        linux-ext4@vger.kernel.org
+References: <20200325122825.1086872-1-hch@lst.de>
+ <20200325122825.1086872-2-hch@lst.de>
+From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Organization: Cogent Embedded
+Message-ID: <3771d2fd-b563-b74d-491b-e2bab9242126@cogentembedded.com>
+Date:   Wed, 25 Mar 2020 18:51:59 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
 MIME-Version: 1.0
-References: <20200213153928.28407-1-masahiroy@kernel.org> <CAK7LNARvxFk=ct9AoRLwjZ9cKRsA_bjiLaq0di12TRe5+fpmGA@mail.gmail.com>
- <CADnq5_Mieh9G-8hheKRdKe=qMbAQjwTheM2TWWSaZjeGU3635Q@mail.gmail.com> <CAK7LNAT2r3Octg-Pdjn6xNzGM49_PiGqoJSTzbmL4iBpH6_AaQ@mail.gmail.com>
-In-Reply-To: <CAK7LNAT2r3Octg-Pdjn6xNzGM49_PiGqoJSTzbmL4iBpH6_AaQ@mail.gmail.com>
-From:   Alex Deucher <alexdeucher@gmail.com>
-Date:   Wed, 25 Mar 2020 11:50:59 -0400
-Message-ID: <CADnq5_PN4orASM4F9VMtrmuL6W7B4MwvgOX00_Tdw2c-UJ6WrA@mail.gmail.com>
-Subject: Re: [PATCH 1/4] drm/radeon: remove unneeded header include path
-To:     Masahiro Yamada <masahiroy@kernel.org>
-Cc:     David Zhou <David1.Zhou@amd.com>, David Airlie <airlied@linux.ie>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        amd-gfx list <amd-gfx@lists.freedesktop.org>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        =?UTF-8?B?Q2hyaXN0aWFuIEvvv73vv73Dk25pZw==?= 
-        <christian.koenig@amd.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20200325122825.1086872-2-hch@lst.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-MW
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 24, 2020 at 9:14 PM Masahiro Yamada <masahiroy@kernel.org> wrote:
->
-> On Wed, Mar 25, 2020 at 4:42 AM Alex Deucher <alexdeucher@gmail.com> wrote:
-> >
-> > On Tue, Mar 24, 2020 at 12:48 PM Masahiro Yamada <masahiroy@kernel.org> wrote:
-> > >
-> > > Hi,
-> > >
-> > > I think this series is a good clean-up.
-> > >
-> > > Could you take a look at this please?
-> >
-> > Can you resend?  I don't seem to have gotten it.  Must have ended up
-> > getting flagged a spam or something.
->
->
-> Can you take it from patchwork ?  (4 patches)
->
-> https://lore.kernel.org/patchwork/project/lkml/list/?series=429491
+Hello!
 
+On 03/25/2020 03:28 PM, Christoph Hellwig wrote:
 
-Applied.  thanks!
+> When "ubifs: introduce UBIFS_ATIME_SUPPORT to ubifs" introduces atime
+> support to ubifs, it also lazytime support, but that support is
+                           ^ includes?
 
-Alex
+> terminally broken, as it causes mark_inode_dirty_sync to be called from
+> __writeback_single_inode, which will then trigger the locking assert
+> in ubifs_dirty_inode.  Just remove this broken support for now, it can
+> be readded later, especially as some infrastructure changes should
+> make that easier soon.
+> 
+> Fixes: 8c1c5f263833 ("ubifs: introduce UBIFS_ATIME_SUPPORT to ubifs")
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+[...]
 
->
->
-> Thanks.
->
->
->
->
->
->
-> > Alex
-> >
-> > >
-> > >
-> > >
-> > > On Fri, Feb 14, 2020 at 12:40 AM Masahiro Yamada <masahiroy@kernel.org> wrote:
-> > > >
-> > > > A header include path without $(srctree)/ is suspicious because it does
-> > > > not work with O= builds.
-> > > >
-> > > > You can build drivers/gpu/drm/radeon/ without this include path.
-> > > >
-> > > > Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
-> > > > ---
-> > > >
-> > > >  drivers/gpu/drm/radeon/Makefile | 2 --
-> > > >  1 file changed, 2 deletions(-)
-> > > >
-> > > > diff --git a/drivers/gpu/drm/radeon/Makefile b/drivers/gpu/drm/radeon/Makefile
-> > > > index c693b2ca0329..9d5d3dc1011f 100644
-> > > > --- a/drivers/gpu/drm/radeon/Makefile
-> > > > +++ b/drivers/gpu/drm/radeon/Makefile
-> > > > @@ -3,8 +3,6 @@
-> > > >  # Makefile for the drm device driver.  This driver provides support for the
-> > > >  # Direct Rendering Infrastructure (DRI) in XFree86 4.1.0 and higher.
-> > > >
-> > > > -ccflags-y := -Idrivers/gpu/drm/amd/include
-> > > > -
-> > > >  hostprogs := mkregtable
-> > > >  clean-files := rn50_reg_safe.h r100_reg_safe.h r200_reg_safe.h rv515_reg_safe.h r300_reg_safe.h r420_reg_safe.h rs600_reg_safe.h r600_reg_safe.h evergreen_reg_safe.h cayman_reg_safe.h
-> > > >
-> > > > --
-> > > > 2.17.1
-> > > >
-> > >
-> > >
-> > > --
-> > > Best Regards
-> > > Masahiro Yamada
-> > > _______________________________________________
-> > > dri-devel mailing list
-> > > dri-devel@lists.freedesktop.org
-> > > https://lists.freedesktop.org/mailman/listinfo/dri-devel
->
->
->
-> --
-> Best Regards
-> Masahiro Yamada
-> _______________________________________________
-> amd-gfx mailing list
-> amd-gfx@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/amd-gfx
+MBR, Sergei
