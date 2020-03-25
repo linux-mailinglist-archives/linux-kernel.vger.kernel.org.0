@@ -2,80 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AC9D51926EC
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 12:13:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 829B11926F3
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 12:16:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727129AbgCYLNw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Mar 2020 07:13:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56952 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726139AbgCYLNw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Mar 2020 07:13:52 -0400
-Received: from localhost.localdomain (236.31.169.217.in-addr.arpa [217.169.31.236])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DEA2B20714;
-        Wed, 25 Mar 2020 11:13:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585134832;
-        bh=BzCuAlwuxAGX3F005NMoJ1SQbjE8q7I0TQauHBZ+31o=;
-        h=From:To:Cc:Subject:Date:From;
-        b=YKnz9Hecl5fxuD2C7GFv4OgVyH5qObz8ssS4YRbT+X2qm4uFTkze2Xy/WOTKAIx4p
-         MbacL9p1KQ5APanJBD1/IcPOu7Ub8XAddFVr6IVWbskaNV8/HkmR6cCGJGgDkaVzFe
-         G5G4M+ftNeePFy0vNPDu5KMBY8SVoDgdZvQcZT4c=
-From:   Will Deacon <will@kernel.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     linux-arm-kernel@lists.infradead.org, kernel-team@android.com,
-        Will Deacon <will@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH] mm/mremap: Add comment explaining the untagging behaviour of mremap()
-Date:   Wed, 25 Mar 2020 11:13:46 +0000
-Message-Id: <20200325111347.32553-1-will@kernel.org>
-X-Mailer: git-send-email 2.20.1
+        id S1727280AbgCYLQg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Mar 2020 07:16:36 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:44811 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726658AbgCYLQf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Mar 2020 07:16:35 -0400
+Received: by mail-lj1-f195.google.com with SMTP id p14so1949775lji.11
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Mar 2020 04:16:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ByYYkQkX4e+La3B895nfCGfrVXv0LtwE0DAHSJeDkl4=;
+        b=mAlKDkJWDSPYgt33/yqh4jr8oQ5FIBpIP9q6VV01ZKgGMGbc9wzj1sjvF6U6ng8FVt
+         iVkQ9955nL0bTQtOFpfBZnu2ir9V5TiBgTOby5FPVIQv2ZVLwF1I66SKKl0c0uZNNiph
+         2xam+zHgSyhCzCdNMZyyJYvup7LRRV5foF7q5Ee0DR5yzA1Ww+znFTpsu9Pt45xLFfr4
+         0qroiqy9+sh2zb/ygsQFjQhA/1hf6wvFqo0LoYoL0OHf0NtIQAkvSz8oxvSn0mJuIUYh
+         p/9gztExAYRiu/+l7fmoRLQ8Cb8dIfVx+a1LkTuKKoF05uStErBD6ppSEmsyap9XRUjG
+         m2lg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ByYYkQkX4e+La3B895nfCGfrVXv0LtwE0DAHSJeDkl4=;
+        b=JCnIX7dxlC8ch16qocpgdu5FMa4JHvBZ7Fdo04jhu8iEIK3zYFaQVmPHclHFa+Cb+e
+         naTdJb3DXXWjgcr+5svnXzgWh/Cp7JQGrxC1AKvB0hS5b/wN98YGXxzFPwDEdkYyMVUb
+         sifg1AwDutPSj8HtsD8ugMyaGpf+GxxDb819293qEy97ffnPvqPw+Gs7r3cUTsVlC1fv
+         PWR50IteLWS3zVlogXzwu6KLNt73iUK5K6yA0W6mNMP/JYLbdMz/ktCwu+C+7X4f2D7a
+         TwMPxBZjTwMDTZhG/ru6+u2J8sc77ftdCEFBUW+kY8leFcjqWEqv8gYombUwAmCc8kKN
+         +QHA==
+X-Gm-Message-State: AGi0Pub1+yLg1lYy9y/pScTg1C2oMC5V3VhvaRzy8hVEBNrr4PhH5JiF
+        JqnqFkbqybBNg6imIxkz02+QuL3uL5vVXcm2FSEf8A==
+X-Google-Smtp-Source: ADFU+vuujs/pw3YyZfWBg23PhzvaUqCrIr0VSH3VGvQvcvwTn/DRb85RcnlKPndnNXs6oF36y2fKPgZVUEIONdXJ5l0=
+X-Received: by 2002:a2e:9605:: with SMTP id v5mr1610818ljh.258.1585134993207;
+ Wed, 25 Mar 2020 04:16:33 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20200224094158.28761-1-brgl@bgdev.pl> <20200224094158.28761-3-brgl@bgdev.pl>
+ <CAMRc=MdbvwQ3Exa2gmY-J0p8UeB-_dKrgqHEBo=S08yU4Uth=A@mail.gmail.com>
+ <CACRpkdbBCihyayQ=hPVLY8z4G=n5cxLnUmaPpHRuKedDQPVUyQ@mail.gmail.com>
+ <CAMpxmJX_Jqz97bp-nKtJp7_CgJ=72ZxWkEPN4Y-dpNpqEwa_Mg@mail.gmail.com>
+ <CACRpkdYpers8Zzh9A3T0mFSyZYDcrjfn9iaQn92RkVHWE+GinQ@mail.gmail.com>
+ <CAMRc=MdLYD3CeFtp4jF+-P+4kSmt1sAezrkPFk5rK4=whNEWuA@mail.gmail.com> <CAMRc=MfEo6=im5EPHYtht3xN83k+rcRgQDSOB=Ucs52M8RWirg@mail.gmail.com>
+In-Reply-To: <CAMRc=MfEo6=im5EPHYtht3xN83k+rcRgQDSOB=Ucs52M8RWirg@mail.gmail.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Wed, 25 Mar 2020 12:16:22 +0100
+Message-ID: <CACRpkdY1u2xEFzJPrat73me11wdY9uGCK=FWWWzLkBY505JrUw@mail.gmail.com>
+Subject: Re: [PATCH 2/3] gpiolib: use kref in gpio_desc
+To:     Bartosz Golaszewski <brgl@bgdev.pl>
+Cc:     Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Khouloud Touil <ktouil@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit dcde237319e6 ("mm: Avoid creating virtual address aliases in
-brk()/mmap()/mremap()") changed mremap() so that only the 'old' address
-is untagged, leaving the 'new' address in the form it was passed from
-userspace. This prevents the unexpected creation of aliasing virtual
-mappings in userspace, but looks a bit odd when you read the code.
+On Mon, Mar 23, 2020 at 9:44 AM Bartosz Golaszewski <brgl@bgdev.pl> wrote:
 
-Add a comment justifying the untagging behaviour in mremap().
+> Hi Linus,
+>
+> what is your decision on this? Because if we don't merge this, then we
+> need to make sure nvmem doesn't call gpiod_put() for descriptors it
+> didn't obtain itself and we should probably fix it this week.
 
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Reported-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Will Deacon <will@kernel.org>
----
- mm/mremap.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+I'm simply just overloaded right now, things related to how the world
+looks etc. Also Torvalds writes in Documentation/process/management-style.rst
+that if someone ask you to make a decision, you are screwed :/
 
-diff --git a/mm/mremap.c b/mm/mremap.c
-index af363063ea23..d28f08a36b96 100644
---- a/mm/mremap.c
-+++ b/mm/mremap.c
-@@ -606,6 +606,16 @@ SYSCALL_DEFINE5(mremap, unsigned long, addr, unsigned long, old_len,
- 	LIST_HEAD(uf_unmap_early);
- 	LIST_HEAD(uf_unmap);
- 
-+	/*
-+	 * There is a deliberate asymmetry here: we strip the pointer tag
-+	 * from the old address but leave the new address alone. This is
-+	 * for consistency with mmap(), where we prevent the creation of
-+	 * aliasing mappings in userspace by leaving the tag bits of the
-+	 * mapping address intact. A non-zero tag will cause the subsequent
-+	 * range checks to reject the address as invalid.
-+	 *
-+	 * See Documentation/arm64/tagged-address-abi.rst for more information.
-+	 */
- 	addr = untagged_addr(addr);
- 
- 	if (flags & ~(MREMAP_FIXED | MREMAP_MAYMOVE))
--- 
-2.25.1.696.g5e7596f4ac-goog
+Your decision is as good as mine, I'm not smarter in any
+way so if it is urgent send me a pull request for the solution that seems best
+to you, I trust you on this.
 
+Yours,
+Linus Walleij
