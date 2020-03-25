@@ -2,72 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BA7C6192DEA
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 17:13:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 00030192DDC
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 17:11:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727999AbgCYQNj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Mar 2020 12:13:39 -0400
-Received: from lhrrgout.huawei.com ([185.176.76.210]:2602 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727600AbgCYQNi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Mar 2020 12:13:38 -0400
-Received: from lhreml702-cah.china.huawei.com (unknown [172.18.7.107])
-        by Forcepoint Email with ESMTP id DA8992CFA7F3ED2B89C1;
-        Wed, 25 Mar 2020 16:13:36 +0000 (GMT)
-Received: from roberto-HP-EliteDesk-800-G2-DM-65W.huawei.com (10.204.65.160)
- by smtpsuk.huawei.com (10.201.108.43) with Microsoft SMTP Server (TLS) id
- 14.3.408.0; Wed, 25 Mar 2020 16:13:27 +0000
-From:   Roberto Sassu <roberto.sassu@huawei.com>
-To:     <zohar@linux.ibm.com>
-CC:     <linux-integrity@vger.kernel.org>,
-        <linux-security-module@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <krzysztof.struczynski@huawei.com>,
-        <silviu.vlasceanu@huawei.com>, <stable@vger.kernel.org>
-Subject: [PATCH 3/5] ima: Fix ima digest hash table key calculation
-Date:   Wed, 25 Mar 2020 17:11:14 +0100
-Message-ID: <20200325161116.7082-3-roberto.sassu@huawei.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200325161116.7082-1-roberto.sassu@huawei.com>
-References: <20200325161116.7082-1-roberto.sassu@huawei.com>
+        id S1727959AbgCYQLw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Mar 2020 12:11:52 -0400
+Received: from us-smtp-delivery-74.mimecast.com ([216.205.24.74]:50340 "EHLO
+        us-smtp-delivery-74.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725812AbgCYQLw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Mar 2020 12:11:52 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1585152710;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=WK74JkL+kdH++Ab+Y2UEWtM7+ELlujDygy01aFZtgRs=;
+        b=A4t81eQEbSyC0YiMyDUgRMjZQr+ofjbltiDHsnbPRR/4VcAQ3MVzCL2NyEs9ZR2sEsKHuV
+        46S98c62GZReJnwZM2vBdFSOxn5oieseMYdZc29mrpIJUgNVqaFxsRj9Fu8blp7+D9Id3E
+        HwCg92gGDzwfLEanuPd7ECVJDKI5mTA=
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
+ [209.85.221.72]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-87-4j4WfSdhNKaDOq_1WYhz6A-1; Wed, 25 Mar 2020 12:11:47 -0400
+X-MC-Unique: 4j4WfSdhNKaDOq_1WYhz6A-1
+Received: by mail-wr1-f72.google.com with SMTP id y1so1365983wrn.10
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Mar 2020 09:11:47 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
+         :message-id:mime-version;
+        bh=WK74JkL+kdH++Ab+Y2UEWtM7+ELlujDygy01aFZtgRs=;
+        b=a/MMyPxz41U0FOjMUuZIlJdEaB6pX41K6CxUoTaVQ0ckYams62yp3muLRUfOSC8Haq
+         xXQGieCursEm+OEvKwxRBORDPWDhuAzG0Io+/KbT+xPToqHpi9QPETLTFa/yQzQXF3Li
+         wymVYHlX9kYetkpiQEkFfORgSmJ66A6q0PZ9hOJAVdByuAWZOycg/g+kG+kHxlY7U40P
+         y1n4fezGJgKr1eE1sIJwkebh3C4FxycCD49L+nGJBw0QnpSn8k8yEeMONXSXKvJNZqaZ
+         h24v7FzjcluNYVyMc8XG+YHY/c9BDtGOJhc3ar1YXr7odc/6SpOLizHDZkJSLxKuZXuz
+         h2zw==
+X-Gm-Message-State: ANhLgQ3CZdUXO/nF62NiBq17enutwy6YyDbOZk/ShxJph8a/dBwlkJAv
+        9mztO9PWlasJB5bLBfDECpljEvjM/lOrDui3AYxoKtfwf8fhelS5moc1Q1FO2CJZWrhhaZzE2BB
+        wWs2L6CYIgsOvjtG8i/I8APRV
+X-Received: by 2002:a1c:9e85:: with SMTP id h127mr3981643wme.145.1585152706092;
+        Wed, 25 Mar 2020 09:11:46 -0700 (PDT)
+X-Google-Smtp-Source: ADFU+vsYBX3PP2TE3uLGVZ5ua0iVAgFrVapbEo+dHcG+zgdrgx5u4qJ+y4Cikt03oJ6SuGqjHr8Abw==
+X-Received: by 2002:a1c:9e85:: with SMTP id h127mr3981619wme.145.1585152705850;
+        Wed, 25 Mar 2020 09:11:45 -0700 (PDT)
+Received: from vitty.brq.redhat.com (g-server-2.ign.cz. [91.219.240.2])
+        by smtp.gmail.com with ESMTPSA id u5sm26527192wrq.85.2020.03.25.09.11.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 25 Mar 2020 09:11:44 -0700 (PDT)
+From:   Vitaly Kuznetsov <vkuznets@redhat.com>
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
+Cc:     Paolo Bonzini <pbonzini@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Ben Gardon <bgardon@google.com>,
+        Junaid Shahid <junaids@google.com>,
+        Liran Alon <liran.alon@oracle.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        John Haxby <john.haxby@oracle.com>,
+        Miaohe Lin <linmiaohe@huawei.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>
+Subject: Re: [PATCH v3 14/37] KVM: x86: Move "flush guest's TLB" logic to separate kvm_x86_ops hook
+In-Reply-To: <20200325154810.GE14294@linux.intel.com>
+References: <20200320212833.3507-1-sean.j.christopherson@intel.com> <20200320212833.3507-15-sean.j.christopherson@intel.com> <87369w7mxe.fsf@vitty.brq.redhat.com> <20200325154810.GE14294@linux.intel.com>
+Date:   Wed, 25 Mar 2020 17:11:42 +0100
+Message-ID: <87d0905s8x.fsf@vitty.brq.redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-X-Originating-IP: [10.204.65.160]
-X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Krzysztof Struczynski <krzysztof.struczynski@huawei.com>
+Sean Christopherson <sean.j.christopherson@intel.com> writes:
 
-Function hash_long() accepts unsigned long, while currently only one byte
-is passed from ima_hash_key(), which calculates a key for ima_htable. Use
-more bytes to avoid frequent collisions.
+> On Wed, Mar 25, 2020 at 11:23:41AM +0100, Vitaly Kuznetsov wrote:
+>> Sean Christopherson <sean.j.christopherson@intel.com> writes:
+>> I *think* I've commented on the previous version that we also have
+>> hyperv-style PV TLB flush and this will likely need to be switched to
+>> tlb_flush_guest().
+>
+> Oh, you most definitely commented about HyperV's PV TLB flush, looking at
+> that code is what led me down this rabbit hole :-)
 
-Length of the buffer is not explicitly passed as a function parameter,
-because this function expects a digest whose length is greater than the
-size of unsigned long.
+Ah, I was just worried it's Groundhog Day all over again :-) And I
+didn't see you touching hyperv.c 
 
-Cc: stable@vger.kernel.org
-Fixes: 3323eec921ef ("integrity: IMA as an integrity service provider")
-Signed-off-by: Krzysztof Struczynski <krzysztof.struczynski@huawei.com>
----
- security/integrity/ima/ima.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
-index 64317d95363e..cf0022c2bc14 100644
---- a/security/integrity/ima/ima.h
-+++ b/security/integrity/ima/ima.h
-@@ -177,7 +177,7 @@ extern struct ima_h_table ima_htable;
- 
- static inline unsigned long ima_hash_key(u8 *digest)
- {
--	return hash_long(*digest, IMA_HASH_BITS);
-+	return hash_long(*((unsigned long *)digest), IMA_HASH_BITS);
- }
- 
- #define __ima_hooks(hook)		\
 -- 
-2.17.1
+Vitaly
 
