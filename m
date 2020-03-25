@@ -2,146 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1F56F192DEE
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 17:14:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 63F0F192DF3
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 17:14:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728108AbgCYQN4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Mar 2020 12:13:56 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:46524 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727174AbgCYQNz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Mar 2020 12:13:55 -0400
-Received: by mail-pg1-f193.google.com with SMTP id k191so1345276pgc.13;
-        Wed, 25 Mar 2020 09:13:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=7UJoycXzncq++KEmoEraf9FwjqsaFOTyD4pmVFX86bs=;
-        b=CbJa9fNUZr5nhJpO6iOqTWnVRkFWnvGFHEoJKM1CQL5adb6SFygnKr3AYrS4cug/qu
-         3bVhlztD1yorcyIk4/aDWzdqRLRoGxGxBpMwAh0FTfNM/hfOCLnnyWVNTH+F+vkrU4ei
-         3NXN0II/QWCC+98WNfrKieGHch8uvuU8bFcaz1vTIuBcLSc/bem0F+5J+whKEN3B7Il7
-         nqc1GeP1zls63i6y6Wp+AwzPsOG4zLaIECnm8egUF8zddd4vsblNE07YMqrjPIDwvEsU
-         XTqlbiqvWYH0eztRqsJHiX4LZxoqVxtq0+JLih/IFt8dHtu2najNJlnzdSPYrKCVxHj6
-         t69Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=7UJoycXzncq++KEmoEraf9FwjqsaFOTyD4pmVFX86bs=;
-        b=ZsG8Q8cFSPbueLPEXP112PJO50GdB4f9wtx5V+U9MjTRkPj867wMp3u5uyI4xsp/C3
-         c6iO2fJWD2hlkBvROOPm/FpENaH4GW6mMmz9vzjWrST6T5L3Rh/J8NFWmDiik2d/Cluv
-         VdrYETx9AZZJZ15SqZ9xUVuX9KYBdZ1mBeVkRoM9qM/LZ7jY0N4zdfwWhYaN0DDJaCd1
-         JAUQH0f9r6q6As+JCz9mtVbIbNqkTASD+s0Jilh+KHV0oa4F36mOtw/Xz/2+vMyiHThr
-         uLIwO7Vb1f+JQURWIKwGaqR99aIaMK6nkOBgKw1nESQb0IUSdT6SFkrfK9vqx9JNtWON
-         7YKw==
-X-Gm-Message-State: ANhLgQ2pgDm/SUqYoKUOwd9WEr4h2ltJneTaMK4HbycIX0RcOICswiWd
-        WQBjvLzt4/WtNL+QTgoqBLGAhfZk
-X-Google-Smtp-Source: ADFU+vtV4A/tWf85O4ChP2sgKJHiwTlMz2cMpRcl1ZKXYQ4S8+OpD6Cg9+XzLe5iZ2xf5uInEc0dRQ==
-X-Received: by 2002:a63:a505:: with SMTP id n5mr3857737pgf.242.1585152833948;
-        Wed, 25 Mar 2020 09:13:53 -0700 (PDT)
-Received: from [192.168.86.235] (c-73-241-150-58.hsd1.ca.comcast.net. [73.241.150.58])
-        by smtp.gmail.com with ESMTPSA id e7sm18924902pfj.97.2020.03.25.09.13.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 25 Mar 2020 09:13:53 -0700 (PDT)
-Subject: Re: [PATCH] ipv4: fix a RCU-list lock in fib_triestat_seq_show
-To:     Qian Cai <cai@lca.pw>, davem@davemloft.net
-Cc:     kuznet@ms2.inr.ac.ru, yoshfuji@linux-ipv6.org, kuba@kernel.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20200325155532.7238-1-cai@lca.pw>
-From:   Eric Dumazet <eric.dumazet@gmail.com>
-Message-ID: <5e2ed86a-23bc-d3e5-05ad-4e7ed147539c@gmail.com>
-Date:   Wed, 25 Mar 2020 09:13:52 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        id S1728151AbgCYQOJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Mar 2020 12:14:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58152 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728132AbgCYQOI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Mar 2020 12:14:08 -0400
+Received: from mail-qk1-f172.google.com (mail-qk1-f172.google.com [209.85.222.172])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4A8A420836;
+        Wed, 25 Mar 2020 16:14:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1585152847;
+        bh=wVeCzzQOe5s2fJsmGoK1DwiiQhm+yokBIBkbN7cjDrM=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=Jt+Nhvu8WR2HB5LMtLsy+AMnWzMEv6EzjEMwZuYpiXU2HNY24cKyilbtS7gsEo0Dl
+         p9IVkN8+X5tLMau7Si6f2OCiMpQEloPAdwIzCLi8GV2dTWmn9EiLWMRPYI6WaHiQMJ
+         UVoXm6rL2REa+wWrMiprolfN7XJt5C+XRUsgMQ0k=
+Received: by mail-qk1-f172.google.com with SMTP id c145so3090196qke.12;
+        Wed, 25 Mar 2020 09:14:07 -0700 (PDT)
+X-Gm-Message-State: ANhLgQ3jHmTjbPypnmDthRX2himDcnnDXq5gl9x9GbZo3fj/ytAyh9yG
+        l38cgXpE0LRIPS2cK8RgwvH6TIGejh0rHJy4JQ==
+X-Google-Smtp-Source: ADFU+vtZfZlg/qTdAzpY920OXOLDt+yCqLosSPRhFxeYgvrlPS+oV459gEy5edJtvAOkVIBuySDN240c6NQffSPyDT8=
+X-Received: by 2002:a37:4a85:: with SMTP id x127mr3744966qka.152.1585152846283;
+ Wed, 25 Mar 2020 09:14:06 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20200325155532.7238-1-cai@lca.pw>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20200304094220.28156-1-benjamin.gaignard@st.com>
+ <20200310211849.GA13562@bogus> <20200325092004.GF442973@dell>
+In-Reply-To: <20200325092004.GF442973@dell>
+From:   Rob Herring <robh@kernel.org>
+Date:   Wed, 25 Mar 2020 10:13:54 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqLW-5=T0p85M9ZurywdNj_nFwj0VJyxHSJGrdzZGkQcJQ@mail.gmail.com>
+Message-ID: <CAL_JsqLW-5=T0p85M9ZurywdNj_nFwj0VJyxHSJGrdzZGkQcJQ@mail.gmail.com>
+Subject: Re: [PATCH v5] dt-bindings: mfd: Convert stpmic1 bindings to json-schema
+To:     Lee Jones <lee.jones@linaro.org>
+Cc:     Benjamin Gaignard <benjamin.gaignard@st.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Pascal PAILLET-LME <p.paillet@st.com>,
+        Linux Input <linux-input@vger.kernel.org>,
+        devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        LINUX-WATCHDOG <linux-watchdog@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, Mar 25, 2020 at 3:19 AM Lee Jones <lee.jones@linaro.org> wrote:
+>
+> On Tue, 10 Mar 2020, Rob Herring wrote:
+>
+> > On Wed, 4 Mar 2020 10:42:20 +0100, Benjamin Gaignard wrote:
+> > > Convert stpmic1 bindings to json-schema.
+> > >
+> > > Signed-off-by: Benjamin Gaignard <benjamin.gaignard@st.com>
+> > > ---
+> > > version 5:
+> > > - move $ref regulator.yaml under a patternProperties
+> > > - move remain fixed strings under properties field
+> > >
+> > > version 4:
+> > > - move on uppder node $ref: ../regulator/regulator.yaml
+> > > - move fixed strings under properties field
+> > > - remove unneeded () in patternProperties
+> > > - keep ldo3 separate from other ldo properties
+> > > Note:
+> > > - 'st,mask-reset' property stay in each subnode, I don't find
+> > >   the syntax to avoid dupliquate it.
+> > > - ldo6-supply and all possible *-supply are describe by this regular
+> > >   expression: ^(buck[1-4]|ldo[1-6]|boost|pwr_sw[1-2])-supply$":
+> > >
+> > > version 3:
+> > > - put $ref under allOf keyword
+> > > - for each regulator node add the list of supported regulator properties
+> > >
+> > >  .../devicetree/bindings/input/st,stpmic1-onkey.txt |  28 --
+> > >  .../devicetree/bindings/mfd/st,stpmic1.txt         |  61 ----
+> > >  .../devicetree/bindings/mfd/st,stpmic1.yaml        | 339 +++++++++++++++++++++
+> > >  .../bindings/regulator/st,stpmic1-regulator.txt    |  64 ----
+> > >  .../bindings/watchdog/st,stpmic1-wdt.txt           |  11 -
+> > >  5 files changed, 339 insertions(+), 164 deletions(-)
+> > >  delete mode 100644 Documentation/devicetree/bindings/input/st,stpmic1-onkey.txt
+> > >  delete mode 100644 Documentation/devicetree/bindings/mfd/st,stpmic1.txt
+> > >  create mode 100644 Documentation/devicetree/bindings/mfd/st,stpmic1.yaml
+> > >  delete mode 100644 Documentation/devicetree/bindings/regulator/st,stpmic1-regulator.txt
+> > >  delete mode 100644 Documentation/devicetree/bindings/watchdog/st,stpmic1-wdt.txt
+> > >
+> >
+> > Reviewed-by: Rob Herring <robh@kernel.org>
+>
+> Can you take this please Rob?
 
+Yes, done.
 
-On 3/25/20 8:55 AM, Qian Cai wrote:
-> fib_triestat_seq_show() calls hlist_for_each_entry_rcu(tb, head,
-> tb_hlist) without rcu_read_lock() will trigger a warning,
-> 
->  net/ipv4/fib_trie.c:2579 RCU-list traversed in non-reader section!!
-> 
->  other info that might help us debug this:
-> 
->  rcu_scheduler_active = 2, debug_locks = 1
->  1 lock held by proc01/115277:
->   #0: c0000014507acf00 (&p->lock){+.+.}-{3:3}, at: seq_read+0x58/0x670
-> 
->  Call Trace:
->   dump_stack+0xf4/0x164 (unreliable)
->   lockdep_rcu_suspicious+0x140/0x164
->   fib_triestat_seq_show+0x750/0x880
->   seq_read+0x1a0/0x670
->   proc_reg_read+0x10c/0x1b0
->   __vfs_read+0x3c/0x70
->   vfs_read+0xac/0x170
->   ksys_read+0x7c/0x140
->   system_call+0x5c/0x68
-> 
-> Signed-off-by: Qian Cai <cai@lca.pw>
-> ---
->  net/ipv4/fib_trie.c | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/net/ipv4/fib_trie.c b/net/ipv4/fib_trie.c
-> index ff0c24371e33..73fa37476f03 100644
-> --- a/net/ipv4/fib_trie.c
-> +++ b/net/ipv4/fib_trie.c
-> @@ -2577,6 +2577,7 @@ static int fib_triestat_seq_show(struct seq_file *seq, void *v)
->  		   " %zd bytes, size of tnode: %zd bytes.\n",
->  		   LEAF_SIZE, TNODE_SIZE(0));
->  
-> +	rcu_read_lock();
->  	for (h = 0; h < FIB_TABLE_HASHSZ; h++) {
->  		struct hlist_head *head = &net->ipv4.fib_table_hash[h];
->  		struct fib_table *tb;
-> @@ -2597,6 +2598,7 @@ static int fib_triestat_seq_show(struct seq_file *seq, void *v)
->  #endif
->  		}
->  	}
-> +	rcu_read_unlock();
->  
->  	return 0;
->  }
-> 
-
-We probably want to be able to reschedule in the loop (adding a cond_resched() in net-next)
-
-I would prefer :
-
-diff --git a/net/ipv4/fib_trie.c b/net/ipv4/fib_trie.c
-index ff0c24371e3309b3068980f46d1ed743337d2a3e..4b98ffb27136d3b43f179d6b1b42fe84586acc06 100644
---- a/net/ipv4/fib_trie.c
-+++ b/net/ipv4/fib_trie.c
-@@ -2581,6 +2581,7 @@ static int fib_triestat_seq_show(struct seq_file *seq, void *v)
-                struct hlist_head *head = &net->ipv4.fib_table_hash[h];
-                struct fib_table *tb;
- 
-+               rcu_read_lock();
-                hlist_for_each_entry_rcu(tb, head, tb_hlist) {
-                        struct trie *t = (struct trie *) tb->tb_data;
-                        struct trie_stat stat;
-@@ -2596,6 +2597,7 @@ static int fib_triestat_seq_show(struct seq_file *seq, void *v)
-                        trie_show_usage(seq, t->stats);
- #endif
-                }
-+               rcu_read_unlock();
-        }
- 
-        return 0;
-
-
-
+Rob
