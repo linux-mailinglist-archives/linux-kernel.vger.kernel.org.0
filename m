@@ -2,146 +2,182 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4EBFA193132
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 20:35:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D8833193169
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 20:48:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727736AbgCYTf2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Mar 2020 15:35:28 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:45798 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727281AbgCYTf1 (ORCPT
+        id S1727384AbgCYTrz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Mar 2020 15:47:55 -0400
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:44327 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727259AbgCYTry (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Mar 2020 15:35:27 -0400
-Received: by mail-lj1-f196.google.com with SMTP id t17so3805405ljc.12;
-        Wed, 25 Mar 2020 12:35:25 -0700 (PDT)
+        Wed, 25 Mar 2020 15:47:54 -0400
+Received: by mail-ed1-f68.google.com with SMTP id i16so3172604edy.11
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Mar 2020 12:47:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=7fZLDf+lfcWl33b+ZMq73HRJnpE12IsxFS0P2yb1f7A=;
-        b=ukSUhl8XWlf3YoH6GMjHzHoXhR5WjZaILKHopaRbz+T/TSY9o9sFcQCPb97iRVxJ6p
-         x6mQwoajicCwY1tLxzLeWHJQSXbVcOIQLym9pJDJW7QgylQQiD1WCQWqvNj9jHcNrJ+Q
-         eeDQPi2hdzhW0AyCXmSlAEnN0KzxVqZ2aAC90bvTCU7As1u1SlMtxVBv3H21pzMi6K/3
-         +P8u6v8rksbpJ8lYouGUDNmf+txKX83W49VQlYsP6y+e40Z1Fq0aW1LbsqqmvdQPgxO3
-         IuTbt41p4kEe4AoUzr1Rvy8ValFuBB8eHEfC80mvWc8kilJWaj1+CuIECivRbnOiWtiZ
-         o/vg==
+        d=chromium.org; s=google;
+        h=from:date:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=m+sWsfawp9IPajoIZdacO9dJYYta78Pw+YueeYzFlxY=;
+        b=J8VeokEiP3c6G7lK6+ho/hDzU0xo/hYsK36WzY+oz0mWQJu2vTWmP6XnvsA9cYT9N5
+         nqqsbWG/RFwkjbsq94/N10fjA5usQGnqs9lg09zavJDcntFYWRLBPaoUVe3g4k89jqC8
+         /N0wZsvGA1SxxoqBJ9OF2PAQHcqCZ6GlCZdsg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=7fZLDf+lfcWl33b+ZMq73HRJnpE12IsxFS0P2yb1f7A=;
-        b=o15tj5MX/m1XpzAbnxX3nfyqg+5U8eKsRwDy5sjit0t0uJB+ULfvmYTfoludNPwSyg
-         LZm6+pcC0V4DyMQ7YTKYhQEuVR8B7w/ve1t3a8Lrn7flPqJ8gcAsSvMcnhGkf8TQtiGD
-         APowQtR3PC8uCqfnaM9nN1loOBoRkXXp38ThKlM4a69uE/9w7URdd9loyB9ByNhzvRyW
-         ZOfe9hPnA46xkjRMgthJw7MXd5fWxRnNWmgjpn7Qdf+mhgbK5Lyu0Ge2n/aLSJwtmrqw
-         GX2oyZPkpbjYpcjwAyc6W7a9FO/caYhxHkgjWUQF+Z/hhIsh4PvxM/RtY8/y/MjCQgp5
-         eXQQ==
-X-Gm-Message-State: ANhLgQ0Y1w+o1CGDStcxcoLGS13rqdC1EIXCw6EupUR0AKRjqDRJ+HoG
-        PaRTGoCnokG5wlSnXFLkvcI=
-X-Google-Smtp-Source: APiQypLFaCdWl3h7RFl0sB3C1+hTDF//3X+lqpx03g+ZZN/UNUdZlWZMuvKqyG2B8pCRsObx+2auIA==
-X-Received: by 2002:a2e:b88b:: with SMTP id r11mr2953059ljp.116.1585164924279;
-        Wed, 25 Mar 2020 12:35:24 -0700 (PDT)
-Received: from [192.168.2.145] (ppp91-78-208-152.pppoe.mtu-net.ru. [91.78.208.152])
-        by smtp.googlemail.com with ESMTPSA id i30sm3302532lfp.36.2020.03.25.12.35.23
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 25 Mar 2020 12:35:23 -0700 (PDT)
-Subject: Re: [PATCH v9 52/55] input: touchscreen: atmel_mxt_ts: Added sysfs
- entry for touchscreen status
-To:     Jiada Wang <jiada_wang@mentor.com>, nick@shmanahar.org,
-        dmitry.torokhov@gmail.com, jikos@kernel.org,
-        benjamin.tissoires@redhat.com, bsz@semihalf.com,
-        rydberg@bitmath.org
-Cc:     linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
-        erosca@de.adit-jv.com, Andrew_Gabbasov@mentor.com
-References: <20200325133334.19346-1-jiada_wang@mentor.com>
- <20200325133334.19346-53-jiada_wang@mentor.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <4aeda6f1-25d8-9437-5cd0-560e43dbe081@gmail.com>
-Date:   Wed, 25 Mar 2020 22:35:22 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=m+sWsfawp9IPajoIZdacO9dJYYta78Pw+YueeYzFlxY=;
+        b=mlAZry+Aw5qViiTtFzxNGAQfm614OqKV16WMxKe5nJUmKgkkanqP5eXaRwWJznHt+I
+         Cl/NvZMjGyLVB/MNcWPa34SWD6ittHrjXCwLq2Bf9MUcgPeQgM3MXPO+ognSX/pF4c+n
+         NVAirPDge3YNJLPt3shmybqpcYKUfWlYlla9SbhUyMBqlxE14eAeZtuHdn0j/q4gk7q5
+         4MYxUFm4+YXzIuM/krjmxkjtaVBK1oh4vTNUwnSYdBvUXIjT7arLLHRQoQPOqlC+oOJK
+         Xrjy4t9d2WM9VMYTMQPdqlN5uOLRGV+qfHVCRP3MjsmsZ8qNUNXjNSS4YhFbwgmZb4Xo
+         p0IQ==
+X-Gm-Message-State: ANhLgQ1eIFc1a+Sy6v+UW4z9YP/auIvvjRfaO2Zuw93cQg1oB8TL8qX9
+        5Cr5OEl1asPZH29bgyVG11iPIMKsQPo=
+X-Google-Smtp-Source: ADFU+vsXC2+G4dAEdq3BT0kzbpG7W1L+TlJ6Q9f3rfe8/j2ql4POnBClUnujbpyTjYOq/YSFp3UcGg==
+X-Received: by 2002:adf:b3d4:: with SMTP id x20mr4822089wrd.269.1585165199246;
+        Wed, 25 Mar 2020 12:39:59 -0700 (PDT)
+Received: from chromium.org (77-56-209-237.dclient.hispeed.ch. [77.56.209.237])
+        by smtp.gmail.com with ESMTPSA id o67sm135582wmo.5.2020.03.25.12.39.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 25 Mar 2020 12:39:58 -0700 (PDT)
+From:   KP Singh <kpsingh@chromium.org>
+X-Google-Original-From: KP Singh <kpsingh>
+Date:   Wed, 25 Mar 2020 20:39:56 +0100
+To:     Kees Cook <keescook@chromium.org>
+Cc:     linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Brendan Jackman <jackmanb@google.com>,
+        Florent Revest <revest@google.com>, Yonghong Song <yhs@fb.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        James Morris <jmorris@namei.org>, Paul Turner <pjt@google.com>,
+        Jann Horn <jannh@google.com>,
+        Florent Revest <revest@chromium.org>,
+        Brendan Jackman <jackmanb@chromium.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH bpf-next v6 3/8] bpf: lsm: provide attachment points for
+ BPF LSM programs
+Message-ID: <20200325193956.GA22898@chromium.org>
+References: <20200325152629.6904-1-kpsingh@chromium.org>
+ <20200325152629.6904-4-kpsingh@chromium.org>
+ <202003251225.923FF1DD7@keescook>
 MIME-Version: 1.0
-In-Reply-To: <20200325133334.19346-53-jiada_wang@mentor.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <202003251225.923FF1DD7@keescook>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-25.03.2020 16:33, Jiada Wang пишет:
-> From: Naveen Chakka <Naveen.Chakka@in.bosch.com>
+On 25-M�r 12:28, Kees Cook wrote:
+> On Wed, Mar 25, 2020 at 04:26:24PM +0100, KP Singh wrote:
+> > From: KP Singh <kpsingh@google.com>
+> > 
+> > When CONFIG_BPF_LSM is enabled, nop functions, bpf_lsm_<hook_name>, are
+> > generated for each LSM hook. These functions are initialized as LSM
+> > hooks in a subsequent patch.
+> > 
+> > Signed-off-by: KP Singh <kpsingh@google.com>
+> > Reviewed-by: Brendan Jackman <jackmanb@google.com>
+> > Reviewed-by: Florent Revest <revest@google.com>
+> > Reviewed-by: Kees Cook <keescook@chromium.org>
+> > Acked-by: Yonghong Song <yhs@fb.com>
+> > ---
+> >  include/linux/bpf_lsm.h | 22 ++++++++++++++++++++++
+> >  kernel/bpf/bpf_lsm.c    | 14 ++++++++++++++
+> >  2 files changed, 36 insertions(+)
+> >  create mode 100644 include/linux/bpf_lsm.h
+> > 
+> > diff --git a/include/linux/bpf_lsm.h b/include/linux/bpf_lsm.h
+> > new file mode 100644
+> > index 000000000000..83b96895829f
+> > --- /dev/null
+> > +++ b/include/linux/bpf_lsm.h
+> > @@ -0,0 +1,22 @@
+> > +/* SPDX-License-Identifier: GPL-2.0 */
+> > +
+> > +/*
+> > + * Copyright (C) 2020 Google LLC.
+> > + */
+> > +
+> > +#ifndef _LINUX_BPF_LSM_H
+> > +#define _LINUX_BPF_LSM_H
+> > +
+> > +#include <linux/bpf.h>
+> > +#include <linux/lsm_hooks.h>
+> > +
+> > +#ifdef CONFIG_BPF_LSM
+> > +
+> > +#define LSM_HOOK(RET, DEFAULT, NAME, ...) \
+> > +	RET bpf_lsm_##NAME(__VA_ARGS__);
+> > +#include <linux/lsm_hook_defs.h>
+> > +#undef LSM_HOOK
+> > +
+> > +#endif /* CONFIG_BPF_LSM */
+> > +
+> > +#endif /* _LINUX_BPF_LSM_H */
+> > diff --git a/kernel/bpf/bpf_lsm.c b/kernel/bpf/bpf_lsm.c
+> > index 82875039ca90..1210a819ca52 100644
+> > --- a/kernel/bpf/bpf_lsm.c
+> > +++ b/kernel/bpf/bpf_lsm.c
+> > @@ -7,6 +7,20 @@
+> >  #include <linux/filter.h>
+> >  #include <linux/bpf.h>
+> >  #include <linux/btf.h>
+> > +#include <linux/lsm_hooks.h>
+> > +#include <linux/bpf_lsm.h>
+> > +
+> > +/* For every LSM hook that allows attachment of BPF programs, declare a nop
+> > + * function where a BPF program can be attached.
+> > + */
+> > +#define LSM_HOOK(RET, DEFAULT, NAME, ...) 	\
+> > +noinline __weak RET bpf_lsm_##NAME(__VA_ARGS__)	\
 > 
-> To know the current communication status of the touch controller during
-> runtime, sysfs interface is added
+> I don't think the __weak is needed any more here?
+
+This was suggested in:
+
+ https://lore.kernel.org/bpf/20200221022537.wbmhdfkdbfvw2pww@ast-mbp/
+
+"I think I saw cases when gcc ignored 'noinline' when function is
+defined in the same file and still performed inlining while keeping
+the function body.  To be safe I think __weak is necessary. That will
+guarantee noinline."
+
+It happened to work nicely with the previous approach for the special
+hooks but the actual reason for adding the __weak was to guarrantee
+that these functions don't get inlined.
+
 > 
-> sysfs interface: /sys/class/i2c-dev/i2c-*/device/*/touch_dev_stat
-> Executing the above sysfs interface provides two output values
+> > +{						\
+> > +	return DEFAULT;				\
 > 
-> 1)Status of the touch device
-> 	value 0 represents device is inactive
-> 	value 1 represents device is active
-> 2)Error counter
-> 	value represents the number of times device in inactive since last read
+> I'm impressed that LSM_RET_VOID actually works. :)
 
-...
->  /* Each client has this additional data */
->  struct mxt_data {
->  	struct i2c_client *client;
-> @@ -372,6 +380,9 @@ struct mxt_data {
->  	const char *pcfg_name;
->  	const char *input_name;
->  	struct mxt_flash *flash;
+All the credit goes to Andrii :)
 
-> +	struct work_struct watchdog_work;
-> +	struct timer_list watchdog_timer;
+- KP
 
-This should be replaced with a delayed_work.
-
-> +	struct mxt_statusinfo mxt_status;
->  
->  	/* Cached parameters from object table */
->  	u16 T5_address;
-
-...
-> +static void mxt_watchdog_work(struct work_struct *work)
-> +{
-> +	struct mxt_data *data =
-> +		container_of(work, struct mxt_data, watchdog_work);
-> +	u16 info_buf;
-> +	int ret = 0;
-> +	u8 size = 2;
-
-> +	if (data->suspended || data->in_bootloader)
-> +		return;
-> +
-> +	ret = __mxt_read_reg(data->client, 0, size, &info_buf);
-
-Looks like this need to be protected with a lock to not race with the
-suspending / bootloader states.
-
-> +	if (ret) {
-> +		data->mxt_status.error_count++;
-> +		data->mxt_status.dev_status = false;
-> +	} else {
-> +		data->mxt_status.dev_status = true;
-> +	}
-> +}
-
-...> @@ -4329,6 +4414,13 @@ static int mxt_probe(struct i2c_client
-*client, const struct i2c_device_id *id)
->  		msleep(MXT_RESET_TIME);
->  	}
->  
-> +	INIT_WORK(&data->watchdog_work, mxt_watchdog_work);
-> +
-> +	/* setup watchdog timer */
-> +	timer_setup(&data->watchdog_timer, mxt_watchdog_timer, 0);
-> +
-> +	mxt_start_wd_timer(data);
-
-I'd expect it to be optional and opt-in by either using #ifdef
-TOUCHSCREEN_ATMEL_MXT_DEBUG or having a new debugfs option to explicitly
-enable the "watchdog".
+> 
+> -Kees
+> 
+> > +}
+> > +
+> > +#include <linux/lsm_hook_defs.h>
+> > +#undef LSM_HOOK
+> >  
+> >  const struct bpf_prog_ops lsm_prog_ops = {
+> >  };
+> > -- 
+> > 2.20.1
+> > 
+> 
+> -- 
+> Kees Cook
