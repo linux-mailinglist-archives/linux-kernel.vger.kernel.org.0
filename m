@@ -2,131 +2,138 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 55911192712
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 12:26:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3A997192719
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 12:26:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727430AbgCYL0G (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Mar 2020 07:26:06 -0400
-Received: from us-smtp-delivery-74.mimecast.com ([63.128.21.74]:27723 "EHLO
-        us-smtp-delivery-74.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727356AbgCYL0G (ORCPT
+        id S1727485AbgCYL0Z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Mar 2020 07:26:25 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:46728 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726700AbgCYL0Z (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Mar 2020 07:26:06 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1585135565;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=ae3Bh1ZlBbd/KBQwXPKN94pXtAOxkLC5jA3b9yhby3k=;
-        b=Cr48qr+/DYb18Y/hicUiyWtZmBzzcpM38TkWhcgIN5DSskkKr1C7vcvD+jtneflDYc+Dcn
-        22gr17q7zgzxyC7ZvaqXmQK3d8haQmQOCEI2ZluIsRh2WE2EgjkNCLvR3eLQ2sp8Fo03n0
-        v2ZcsfJ49xgy1w+42j1LpJWBqfOzBK8=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-464-7roI6z5-NtCwaTarcINDWw-1; Wed, 25 Mar 2020 07:26:04 -0400
-X-MC-Unique: 7roI6z5-NtCwaTarcINDWw-1
-Received: by mail-wm1-f71.google.com with SMTP id g9so2381003wmh.1
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Mar 2020 04:26:03 -0700 (PDT)
+        Wed, 25 Mar 2020 07:26:25 -0400
+Received: by mail-lj1-f194.google.com with SMTP id v16so1961872ljk.13
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Mar 2020 04:26:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=YOfrzNtBD+kaSq3A3o6ofrhotN+4gW4t0TzfIyOGf6g=;
+        b=N1qHxAU8daqgzKVA78lW1z8YiWgnyQflNvanwAbaaSbxe+J6qsWIiYobd8fHoKVJAT
+         3pzs0pJSa3qhLC4wTSVnZIUW+cr+9Kck5ptl0DQbp7+nJKbKrgIifDJKIkVZOTsI4XJk
+         DXEOT8fI2Tj8Xgup8Rp78iA43fQJFXNleB6Tpdt3ASUW2I6QzHbGKAwcYK5Kk2XsqZlO
+         z4o94BI4nhziUaiOGhBtPDMV5+Z0k9NycrxFI2GzvhreAbN4Wg70JVSh9QIyh5d/HM17
+         aeOaPfErX/ejPcovWvvoX6yB69UZ51xHfKeoQYPfGjJq1XS9Sje7GMcNFSxwjfaNDvc/
+         a3hQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
-         :message-id:mime-version;
-        bh=ae3Bh1ZlBbd/KBQwXPKN94pXtAOxkLC5jA3b9yhby3k=;
-        b=T4PGyx3Iq5JeE5D3UpaUEiTynwRjS/iBQ/lIzfX4vkkSf7ROd98qdMv+wcSZwLHSfd
-         3v7HlOdUcQriN+9vpiB49sPO1JHt8yO0gehmSNLwtN6lIjnylvtw4I97kVUqT7n7sN5C
-         lfINinArtVtGDyd76Ujk0TeWx4Cs7tfu5NXRzP/YAPrRXpHjxIr6TjQbODIPqa5fynRs
-         BVuHWeiqTjd8Bc7Upig4S2qk/wXzkSAcphuz34BwEwUrW1f2114wPIpvw6Zu4D/JLlY0
-         08afcLrvnUhe0wbY9u0p8ZSGUQoRHz3YVlKOCk4/kF9kcXeBGOwST5jksDlo6Xo2Pq7q
-         cH5A==
-X-Gm-Message-State: ANhLgQ2ttIy320lNWPlbFnnvKjnu3EGVhZcgriFJLYEz/pQA83WdJdTT
-        QOJyRD6dmF4PIBB+8boN48sMAuMl/Kn1g8dTrCOmvFYQfxPc4+x45MHNJqgsqfVWX5rcjs1xGgV
-        XlNnAZkNFHHCZLujDVSOiB/Jn
-X-Received: by 2002:adf:db49:: with SMTP id f9mr2754405wrj.145.1585135562108;
-        Wed, 25 Mar 2020 04:26:02 -0700 (PDT)
-X-Google-Smtp-Source: ADFU+vspLasieFBMXL6fs0QKpXZ526e9DIUxbZmAHTCJGxNfXakPND5GK++oNxLnkbN0fT32b1RV3w==
-X-Received: by 2002:adf:db49:: with SMTP id f9mr2754380wrj.145.1585135561893;
-        Wed, 25 Mar 2020 04:26:01 -0700 (PDT)
-Received: from vitty.brq.redhat.com (g-server-2.ign.cz. [91.219.240.2])
-        by smtp.gmail.com with ESMTPSA id u16sm33886558wro.23.2020.03.25.04.26.00
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=YOfrzNtBD+kaSq3A3o6ofrhotN+4gW4t0TzfIyOGf6g=;
+        b=c6KkQTPWOF0HBCkXoA/LrA9IwsCqPZjf8TmlbqBJ4LHrvf+IhaDJ2KzWiprV+r8n1C
+         JqCDv0x/NUiN26O5avKuhLWrKGoutRWk+1ZPUWdLBrYI604jUHj2a9D0G9qa2vqjCYuj
+         qdLPRIUEidLwQt3e5jPoucFGBn52u17BjLlggPLhp5i3CCRYNu7ZiUvQn3GLRla5wHfG
+         28jKWtNPcPykMyWkF1PGVxlLJRO9y9RQxrO+BvY+dODmLJtTjGKzYEjyckM7fbtpJueE
+         6a8/9YQNeb6ljjLt4xNhIkdp53ZUNcV7mbSSu9xkGODO76ipnwnisUnwaqJTO5K7DTfC
+         Fgow==
+X-Gm-Message-State: ANhLgQ3a9L0qckgBWNv8dhwswQ7p59VjUCCrkfO15usQzWWGEgBDCycS
+        O5dK+h9uO1Ol/jbZzWS4ivTIRw==
+X-Google-Smtp-Source: ADFU+vtoB2CKJ9MUshcTofbsGK5QAiU+q6+TSbvsyySoYsuH66LVFaZ+n2c2xv0jk4QHgC5PAs/71A==
+X-Received: by 2002:a2e:b4e9:: with SMTP id s9mr1386148ljm.108.1585135583316;
+        Wed, 25 Mar 2020 04:26:23 -0700 (PDT)
+Received: from box.localdomain ([86.57.175.117])
+        by smtp.gmail.com with ESMTPSA id t1sm11416204lji.98.2020.03.25.04.26.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Mar 2020 04:26:01 -0700 (PDT)
-From:   Vitaly Kuznetsov <vkuznets@redhat.com>
-To:     Sean Christopherson <sean.j.christopherson@intel.com>,
-        Paolo Bonzini <pbonzini@redhat.com>
-Cc:     Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Ben Gardon <bgardon@google.com>,
-        Junaid Shahid <junaids@google.com>,
-        Liran Alon <liran.alon@oracle.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        John Haxby <john.haxby@oracle.com>,
-        Miaohe Lin <linmiaohe@huawei.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>
-Subject: Re: [PATCH v3 19/37] KVM: nVMX: Move nested_get_vpid02() to vmx/nested.h
-In-Reply-To: <20200320212833.3507-20-sean.j.christopherson@intel.com>
-References: <20200320212833.3507-1-sean.j.christopherson@intel.com> <20200320212833.3507-20-sean.j.christopherson@intel.com>
-Date:   Wed, 25 Mar 2020 12:25:59 +0100
-Message-ID: <87r1xg65h4.fsf@vitty.brq.redhat.com>
+        Wed, 25 Mar 2020 04:26:22 -0700 (PDT)
+Received: by box.localdomain (Postfix, from userid 1000)
+        id E53A61020AF; Wed, 25 Mar 2020 14:26:23 +0300 (+03)
+Date:   Wed, 25 Mar 2020 14:26:23 +0300
+From:   "Kirill A. Shutemov" <kirill@shutemov.name>
+To:     Yang Shi <yang.shi@linux.alibaba.com>
+Cc:     kirill.shutemov@linux.intel.com, hughd@google.com,
+        aarcange@redhat.com, akpm@linux-foundation.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mm: khugepaged: fix potential page state corruption
+Message-ID: <20200325112623.ur4owwbnow5c5mng@box>
+References: <1584573582-116702-1-git-send-email-yang.shi@linux.alibaba.com>
+ <20200319001258.creziw6ffw4jvwl3@box>
+ <2cdc734c-c222-4b9d-9114-1762b29dafb4@linux.alibaba.com>
+ <db660bef-c927-b793-7a79-a88df197a756@linux.alibaba.com>
+ <20200319104938.vphyajoyz6ob6jtl@box>
+ <99b78cdb-5a4d-e28b-4464-d34ee39e5501@linux.alibaba.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <99b78cdb-5a4d-e28b-4464-d34ee39e5501@linux.alibaba.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Sean Christopherson <sean.j.christopherson@intel.com> writes:
+On Tue, Mar 24, 2020 at 10:17:13AM -0700, Yang Shi wrote:
+> 
+> 
+> On 3/19/20 3:49 AM, Kirill A. Shutemov wrote:
+> > On Wed, Mar 18, 2020 at 10:39:21PM -0700, Yang Shi wrote:
+> > > 
+> > > On 3/18/20 5:55 PM, Yang Shi wrote:
+> > > > 
+> > > > On 3/18/20 5:12 PM, Kirill A. Shutemov wrote:
+> > > > > On Thu, Mar 19, 2020 at 07:19:42AM +0800, Yang Shi wrote:
+> > > > > > When khugepaged collapses anonymous pages, the base pages would
+> > > > > > be freed
+> > > > > > via pagevec or free_page_and_swap_cache().  But, the anonymous page may
+> > > > > > be added back to LRU, then it might result in the below race:
+> > > > > > 
+> > > > > >      CPU A                CPU B
+> > > > > > khugepaged:
+> > > > > >     unlock page
+> > > > > >     putback_lru_page
+> > > > > >       add to lru
+> > > > > >                  page reclaim:
+> > > > > >                    isolate this page
+> > > > > >                    try_to_unmap
+> > > > > >     page_remove_rmap <-- corrupt _mapcount
+> > > > > > 
+> > > > > > It looks nothing would prevent the pages from isolating by reclaimer.
+> > > > > Hm. Why should it?
+> > > > > 
+> > > > > try_to_unmap() doesn't exclude parallel page unmapping. _mapcount is
+> > > > > protected by ptl. And this particular _mapcount pin is reachable for
+> > > > > reclaim as it's not part of usual page table tree. Basically
+> > > > > try_to_unmap() will never succeeds until we give up the _mapcount on
+> > > > > khugepaged side.
+> > > > I don't quite get. What does "not part of usual page table tree" means?
+> > > > 
+> > > > How's about try_to_unmap() acquires ptl before khugepaged?
+> > The page table we are dealing with was detached from the process' page
+> > table tree: see pmdp_collapse_flush(). try_to_unmap() will not see the
+> > pte.
+> 
+> A follow-up question here. pmdp_collapse_flush() clears pmd entry and does
+> TLB shootdown on x86. I'm supposed the main purpose is to serialize fast gup
+> since it doesn't acquire any lock (mmap_sem, ptl ,etc), but disable
+> interrupt so the TLB shootdown IPI would get blocked. This could guarantee
+> synchronization on x86, but it looks not all architectures do TLB shootdown
+> or implement it via IPI, so how they could serialize with fast gup?
 
-> Move nested_get_vpid02() to vmx/nested.h so that a future patch can
-> reference it from vmx.c to implement context-specific TLB flushing.
->
-> No functional change intended.
->
-> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-> ---
->  arch/x86/kvm/vmx/nested.c | 7 -------
->  arch/x86/kvm/vmx/nested.h | 7 +++++++
->  2 files changed, 7 insertions(+), 7 deletions(-)
->
-> diff --git a/arch/x86/kvm/vmx/nested.c b/arch/x86/kvm/vmx/nested.c
-> index 0c71db6fec5a..77819d890088 100644
-> --- a/arch/x86/kvm/vmx/nested.c
-> +++ b/arch/x86/kvm/vmx/nested.c
-> @@ -1154,13 +1154,6 @@ static bool nested_has_guest_tlb_tag(struct kvm_vcpu *vcpu)
->  	       (nested_cpu_has_vpid(vmcs12) && to_vmx(vcpu)->nested.vpid02);
->  }
->  
-> -static u16 nested_get_vpid02(struct kvm_vcpu *vcpu)
-> -{
-> -	struct vcpu_vmx *vmx = to_vmx(vcpu);
-> -
-> -	return vmx->nested.vpid02 ? vmx->nested.vpid02 : vmx->vpid;
-> -}
-> -
->  static bool is_bitwise_subset(u64 superset, u64 subset, u64 mask)
->  {
->  	superset &= mask;
-> diff --git a/arch/x86/kvm/vmx/nested.h b/arch/x86/kvm/vmx/nested.h
-> index 21d36652f213..debc5eeb5757 100644
-> --- a/arch/x86/kvm/vmx/nested.h
-> +++ b/arch/x86/kvm/vmx/nested.h
-> @@ -60,6 +60,13 @@ static inline int vmx_has_valid_vmcs12(struct kvm_vcpu *vcpu)
->  		vmx->nested.hv_evmcs;
->  }
->  
-> +static inline u16 nested_get_vpid02(struct kvm_vcpu *vcpu)
-> +{
-> +	struct vcpu_vmx *vmx = to_vmx(vcpu);
-> +
-> +	return vmx->nested.vpid02 ? vmx->nested.vpid02 : vmx->vpid;
-> +}
-> +
->  static inline unsigned long nested_ept_get_eptp(struct kvm_vcpu *vcpu)
->  {
->  	/* return the page table to be shadowed - in our case, EPT12 */
+The main purpose of pmdp_collapse_flush() is to block access to pages
+under collapse, including access via GUP (and its variants).
 
-Reviewed-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+It's up to architecture to implement it correctly, including TLB flush vs.
+GUP_fast serialization. Genetic way works fine for most architectures.
+Notable exceptions are Power and S390.
+
+> In addition it looks acquiring pmd lock is not necessary. Before both write
+> mmap_sem and write anon_vma lock are acquired which could serialize page
+> fault and rmap walk, so it looks fast gup is the only one which could run
+> concurrently, but fast gup doesn't acquire ptl at all. It seems the
+> pmd_lock/unlock could be removed.
+
+This is likely true. And we have a comment there. But taking uncontended
+lock is check, so why not.
 
 -- 
-Vitaly
-
+ Kirill A. Shutemov
