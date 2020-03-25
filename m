@@ -2,105 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 68129191FFE
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 05:01:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5B5FA19200A
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 05:04:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727313AbgCYEBX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Mar 2020 00:01:23 -0400
-Received: from mail-qk1-f180.google.com ([209.85.222.180]:33963 "EHLO
-        mail-qk1-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726998AbgCYEBV (ORCPT
+        id S1726073AbgCYEEG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Mar 2020 00:04:06 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:41842 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725781AbgCYEEG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Mar 2020 00:01:21 -0400
-Received: by mail-qk1-f180.google.com with SMTP id i6so1248430qke.1
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Mar 2020 21:01:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lca.pw; s=google;
-        h=from:content-transfer-encoding:mime-version:subject:message-id:date
-         :cc:to;
-        bh=DskibvAiGWQU1ARR7W7zFMaIjJJriimC2l9FtZs64I0=;
-        b=pZvmY7ZkAuo+/4NyiQcHwafNLNtwnKmB3PrdQGW6qKrTjt/CMJ+uEYqcrz9xT2Cw4x
-         j13vxwwYZSriP3IBLLplKbBjj/wTLCohU5oINSohFlBoPZ+U+FRZgxX1liqYM2GAfs7Y
-         w3QXDzUn9kf3fOGGmdgbk6W10mH2wEmrsdmC7YpXDTDDpqlIZc6Fz3RwpzCnvmk2L7aA
-         Y+4/KG+JkjZzYZ3N9BFkxA0xztIgklf5Yvx8KIIaBFrUqwN7MEc4tsSDZ8/D84EtBhCQ
-         8DFe13NsU8zwxP27EwxdFzuhpKLSFPg2TDEpKL82wn9P1pOepYnUnkyNFSh3EsUmaf/M
-         dUyQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:content-transfer-encoding:mime-version
-         :subject:message-id:date:cc:to;
-        bh=DskibvAiGWQU1ARR7W7zFMaIjJJriimC2l9FtZs64I0=;
-        b=otOFUacqgsoMI1DP9AgqSCl322qzemcV0FdPcECuthvWPLVKU3khCQ5qCxzp06WuTo
-         9XTCYkqB+DJ6g9JqksSLKO3rdi76UQR7t3rSlTB2iNpeDTVvo6tOiakIKrtMfeoF74RR
-         fw9Yv1gSf0G2E3L0sjd3+pGTlYRbtHD3wHWoXkx3B8t5DVp5wfOekn5Cyt1tyG+OG0rQ
-         6IIOo9EeIjNbrOBpJlgq5AdFxW+5wECZKJy/2x4j+ILvjxchRUE/W2Z4b+X8ZjQX3z4t
-         2alfq8I8Z6dQkFmYQbdQ3rnHpoqi6C1VueJ4HMcBzjWpKCT2SXe9o8cCMMn8wo7gUpkr
-         GCQg==
-X-Gm-Message-State: ANhLgQ1+j+TjWPrel8/YvitWalFvVoTfoM/zrjS/2fnEwSXR1IQSKohR
-        DgWHzmXuEpZJ2lbDXJyKjwIJOA==
-X-Google-Smtp-Source: ADFU+vsdiGhtpKoOEJ+eixikB8yrQocIP7tDnbFeUUKU+nUsAgxyDuV4OYOhCiPsPbyS4lLGKFs/Pw==
-X-Received: by 2002:a37:2f43:: with SMTP id v64mr1115949qkh.480.1585108879825;
-        Tue, 24 Mar 2020 21:01:19 -0700 (PDT)
-Received: from [192.168.1.153] (pool-71-184-117-43.bstnma.fios.verizon.net. [71.184.117.43])
-        by smtp.gmail.com with ESMTPSA id w28sm16608346qtc.27.2020.03.24.21.01.18
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 24 Mar 2020 21:01:18 -0700 (PDT)
-From:   Qian Cai <cai@lca.pw>
-Content-Type: text/plain;
-        charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Mime-Version: 1.0 (Mac OS X Mail 13.0 \(3608.60.0.2.5\))
-Subject: No networking due to "net/mlx5e: Add support for devlink-port in
- non-representors mode"
-Message-Id: <0DF043A6-F507-4CB4-9764-9BD472ABCF01@lca.pw>
-Date:   Wed, 25 Mar 2020 00:01:17 -0400
-Cc:     Moshe Shemesh <moshe@mellanox.com>, Jiri Pirko <jiri@mellanox.com>,
-        Saeed Mahameed <saeedm@mellanox.com>,
-        Parav Pandit <parav@mellanox.com>,
-        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>
-To:     Vladyslav Tarasiuk <vladyslavt@mellanox.com>
-X-Mailer: Apple Mail (2.3608.60.0.2.5)
+        Wed, 25 Mar 2020 00:04:06 -0400
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jGxGp-002Aql-K1; Wed, 25 Mar 2020 04:03:59 +0000
+Date:   Wed, 25 Mar 2020 04:03:59 +0000
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Qian Cai <cai@lca.pw>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: Null-ptr-deref due to "sanitized pathwalk machinery (v4)"
+Message-ID: <20200325040359.GK23230@ZenIV.linux.org.uk>
+References: <4CBDE0F3-FB73-43F3-8535-6C75BA004233@lca.pw>
+ <20200324214637.GI23230@ZenIV.linux.org.uk>
+ <A32DAE66-ADBA-46C7-BD26-F9BA8F12BC18@lca.pw>
+ <20200325021327.GJ23230@ZenIV.linux.org.uk>
+ <5281297D-B66E-4A4C-9B41-D2242F6B7AE7@lca.pw>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5281297D-B66E-4A4C-9B41-D2242F6B7AE7@lca.pw>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Reverted the linux-next commit c6acd629ee (=E2=80=9Cnet/mlx5e: Add =
-support for devlink-port in non-representors mode=E2=80=9D)
-and its dependencies,
+On Tue, Mar 24, 2020 at 11:24:01PM -0400, Qian Cai wrote:
 
-162add8cbae4 (=E2=80=9Cnet/mlx5e: Use devlink virtual flavour for VF =
-devlink port=E2=80=9D)
-31e87b39ba9d (=E2=80=9Cnet/mlx5e: Fix devlink port register sequence=E2=80=
-=9D)
+> > On Mar 24, 2020, at 10:13 PM, Al Viro <viro@zeniv.linux.org.uk> wrote:
+> > 
+> > On Tue, Mar 24, 2020 at 09:49:48PM -0400, Qian Cai wrote:
+> > 
+> >> It does not catch anything at all with the patch,
+> > 
+> > You mean, oops happens, but neither WARN_ON() is triggered?
+> > Lovely...  Just to make sure: could you slap the same couple
+> > of lines just before
+> >                if (unlikely(!d_can_lookup(nd->path.dentry))) {
+> > in link_path_walk(), just to check if I have misread the trace
+> > you've got?
+> > 
+> > Does that (+ other two inserts) end up with
+> > 	1) some of these WARN_ON() triggered when oops happens or
+> > 	2) oops is happening, but neither WARN_ON() triggers or
+> > 	3) oops not happening / becoming harder to hit?
+> 
+> Only the one just before
+>  if (unlikely(!d_can_lookup(nd->path.dentry))) {
+> In link_path_walk() will trigger.
 
-on the top of next-20200324 allowed NICs to obtain an IPv4 address from =
-DHCP again.
+> [  245.767202][ T5020] pathname = /var/run/nscd/socket
 
-0b:00.0 Ethernet controller: Mellanox Technologies MT27710 Family =
-[ConnectX-4 Lx]
-0b:00.1 Ethernet controller: Mellanox Technologies MT27710 Family =
-[ConnectX-4 Lx]
+Lovely.  So
+	* we really do get NULL nd->path.dentry there; I've not misread the
+trace.
+	* on the entry into link_path_walk() nd->path.dentry is non-NULL.
+	* *ALL* components should've been LAST_NORM ones
+	* not a single symlink in sight, unless the setup is rather unusual
+	* possibly not even a single mountpoint along the way (depending
+upon the userland used)
 
-[  223.280777][   T13] mlx5_core 0000:0b:00.0: firmware version: =
-14.21.1000
-[  223.287753][   T13] mlx5_core 0000:0b:00.0: 63.008 Gb/s available =
-PCIe bandwidth (8.0 GT/s PCIe x8 link)
-[  226.292153][    C0] mlx5_core 0000:0b:00.0: Port module event: module =
-0, Cable plugged
-[  226.874100][ T2023] mlx5_core 0000:0b:00.1: Adding to iommu group 2
-[  227.343553][   T13] mlx5_core 0000:0b:00.1: firmware version: =
-14.21.1000
-[  227.350467][   T13] mlx5_core 0000:0b:00.1: 63.008 Gb/s available =
-PCIe bandwidth (8.0 GT/s PCIe x8 link)
-[  230.026346][    C0] mlx5_core 0000:0b:00.1: Port module event: module =
-1, Cable unplugged
-[  230.522660][ T2023] mlx5_core 0000:0b:00.0: MLX5E: StrdRq(0) =
-RqSz(1024) StrdSz(256) RxCqeCmprss(0)
-[  231.448493][ T2023] mlx5_core 0000:0b:00.1: MLX5E: StrdRq(0) =
-RqSz(1024) StrdSz(256) RxCqeCmprss(0)
-[  232.436993][ T2007] mlx5_core 0000:0b:00.1 enp11s0f1np1: renamed from =
-eth1
-[  232.690895][ T2013] mlx5_core 0000:0b:00.0 enp11s0f0np0: renamed from =
-eth0=
+And in the same loop we have
+                if (likely(type == LAST_NORM)) {
+                        struct dentry *parent = nd->path.dentry;
+                        nd->flags &= ~LOOKUP_JUMPED;
+                        if (unlikely(parent->d_flags & DCACHE_OP_HASH)) {
+                                struct qstr this = { { .hash_len = hash_len }, .name = name };
+                                err = parent->d_op->d_hash(parent, &this);
+                                if (err < 0)
+                                        return err;
+                                hash_len = this.hash_len;
+                                name = this.name;
+                        }
+                }
+upstream of that thing.  So NULL nd->path.dentry *there* would've oopsed.
+IOW, what we are hitting is walk_component() with non-NULL nd->path.dentry
+when we enter it, NULL being returned and nd->path.dentry becoming NULL
+by the time we return from walk_component().
+
+Could you post the results of
+	stat / /var /var/run /var/run/nscd /var/run/nscd/socket
+after the boot with working kernel?  Also, is that "hit on every boot" or
+stochastic?  If it's the latter, I'd like to see the output of the same
+thing on a successful boot of the same kernel, if possible...
+
+Also, is the pathname always the same and if not, what other variants have
+been observed?
