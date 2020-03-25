@@ -2,107 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 64A08192E6B
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 17:41:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 17FEF192E6D
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 17:42:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728092AbgCYQlB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Mar 2020 12:41:01 -0400
-Received: from mx2.suse.de ([195.135.220.15]:40292 "EHLO mx2.suse.de"
+        id S1727549AbgCYQl5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Mar 2020 12:41:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40772 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727281AbgCYQk7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Mar 2020 12:40:59 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 1CC27AC79;
-        Wed, 25 Mar 2020 16:40:57 +0000 (UTC)
-From:   Tony Jones <tonyj@suse.de>
-To:     linux-perf-users@vger.kernel.org
-Cc:     Tony Jones <tonyj@suse.de>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] perf tools: update docs regarding kernel/user space unwinding
-Date:   Wed, 25 Mar 2020 09:40:53 -0700
-Message-Id: <20200325164053.10177-1-tonyj@suse.de>
-X-Mailer: git-send-email 2.25.0
+        id S1727281AbgCYQl5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Mar 2020 12:41:57 -0400
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 335232073E
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Mar 2020 16:41:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1585154516;
+        bh=yRf3oNqMwM2iTG7pyGx5Rsiqc2MPxpMsUz50QFD55ic=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=wNQncXlQb/kPiwpu/mNOFphhaZSdu97fZPMktrBI7ULMMXkPdoyM8nhLcnyLdX/rF
+         0K7Ar8NSbvT49k4sqi0+3CcxQyMV26BwaVwShTFQHaevvIOen/kfKLhTT5Dd5x0x8l
+         xzefK26AVtCdsvDcHKGeToClSagQaDx2iO16yAcw=
+Received: by mail-wm1-f51.google.com with SMTP id a81so3494084wmf.5
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Mar 2020 09:41:56 -0700 (PDT)
+X-Gm-Message-State: ANhLgQ0IisdLjohdU4nBp9xW+uk9KHMQ4E1hNrhSszB3rVz3xYaKbVgf
+        Fjz+CM+6rUJURI+fE6r1NVXEF/xKMmL+9/x4hc3DZQ==
+X-Google-Smtp-Source: ADFU+vta9fWvKi78EiQgK6NXqyVsyEPSz4RCJCiGEaOzJ6l59KxD8f76QU5aW9FhDm0K613szx7H2SBu9jYqH3AMzTA=
+X-Received: by 2002:a7b:c050:: with SMTP id u16mr4608096wmc.68.1585154514613;
+ Wed, 25 Mar 2020 09:41:54 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20200319192855.29876-1-nivedita@alum.mit.edu> <20200320020028.1936003-1-nivedita@alum.mit.edu>
+In-Reply-To: <20200320020028.1936003-1-nivedita@alum.mit.edu>
+From:   Ard Biesheuvel <ardb@kernel.org>
+Date:   Wed, 25 Mar 2020 17:41:43 +0100
+X-Gmail-Original-Message-ID: <CAKv+Gu8-iK-FQrgCY6YGXyg155chMPJQZeQr-i_xQbqoQ57F0g@mail.gmail.com>
+Message-ID: <CAKv+Gu8-iK-FQrgCY6YGXyg155chMPJQZeQr-i_xQbqoQ57F0g@mail.gmail.com>
+Subject: Re: [PATCH v2 00/14] efi/gop: Refactoring + mode-setting feature
+To:     Arvind Sankar <nivedita@alum.mit.edu>
+Cc:     Hans de Goede <hdegoede@redhat.com>,
+        linux-efi <linux-efi@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The method of unwinding for kernel space is defined by the kernel config, 
-not by the value of --call-graph.   Improve the documentation to reflect 
-this.
+On Fri, 20 Mar 2020 at 03:00, Arvind Sankar <nivedita@alum.mit.edu> wrote:
+>
+> This series is against tip:efi/core.
+>
+> Patches 1-9 are small cleanups and refactoring of the code in
+> libstub/gop.c.
+>
+> The rest of the patches add the ability to use a command-line option to
+> switch the gop's display mode.
+>
+> The options supported are:
+> video=efifb:mode=n
+>         Choose a specific mode number
+> video=efifb:<xres>x<yres>[-(rgb|bgr|<bpp>)]
+>         Specify mode by resolution and optionally color depth
+> video=efifb:auto
+>         Let the EFI stub choose the highest resolution mode available.
+>
+> The mode-setting additions increase code size of gop.o by about 3k on
+> x86-64 with EFI_MIXED enabled.
+>
+> Changes in v2 (HT lkp@intel.com):
+> - Fix __efistub_global attribute to be after the variable.
+>   (NB: bunch of other places should ideally be fixed, those I guess
+>   don't matter as they are scalars?)
+> - Silence -Wmaybe-uninitialized warning in set_mode function.
+>
 
-Signed-off-by: Tony Jones <tonyj@suse.de>
+These look good to me. The only question I have is whether it would be
+possible to use the existing next_arg() and parse_option_str()
+functions to replace some of the open code parsing that goes on in
+patches 11 - 14.
 
----
- tools/perf/Documentation/perf-config.txt | 14 ++++++++------
- tools/perf/Documentation/perf-record.txt | 18 ++++++++++++------
- 2 files changed, 20 insertions(+), 12 deletions(-)
 
-diff --git a/tools/perf/Documentation/perf-config.txt b/tools/perf/Documentation/perf-config.txt
-index 8ead55593984..88cf35fbedc5 100644
---- a/tools/perf/Documentation/perf-config.txt
-+++ b/tools/perf/Documentation/perf-config.txt
-@@ -405,14 +405,16 @@ ui.*::
- 		This option is only applied to TUI.
- 
- call-graph.*::
--	When sub-commands 'top' and 'report' work with -g/—-children
--	there're options in control of call-graph.
-+	The following controls the handling of call-graphs (obtained via the
-+	-g/--callgraph options).
- 
- 	call-graph.record-mode::
--		The record-mode can be 'fp' (frame pointer), 'dwarf' and 'lbr'.
--		The value of 'dwarf' is effective only if perf detect needed library
--		(libunwind or a recent version of libdw).
--		'lbr' only work for cpus that support it.
-+		The mode for user space can be 'fp' (frame pointer), 'dwarf'
-+		and 'lbr'.  The value 'dwarf' is effective only if libunwind
-+		(or a recent version of libdw) is present on the system;
-+		the value 'lbr' only works for certain cpus. The method for
-+		kernel space is controlled not by this option but by the
-+		kernel config (CONFIG_UNWINDER_*).
- 
- 	call-graph.dump-size::
- 		The size of stack to dump in order to do post-unwinding. Default is 8192 (byte).
-diff --git a/tools/perf/Documentation/perf-record.txt b/tools/perf/Documentation/perf-record.txt
-index 7f4db7592467..b25e028458e2 100644
---- a/tools/perf/Documentation/perf-record.txt
-+++ b/tools/perf/Documentation/perf-record.txt
-@@ -237,16 +237,22 @@ OPTIONS
- 	option and remains only for backward compatibility.  See --event.
- 
- -g::
--	Enables call-graph (stack chain/backtrace) recording.
-+	Enables call-graph (stack chain/backtrace) recording for both
-+	kernel space and user space.
- 
- --call-graph::
- 	Setup and enable call-graph (stack chain/backtrace) recording,
--	implies -g.  Default is "fp".
-+	implies -g.  Default is "fp" (for user space).
- 
--	Allows specifying "fp" (frame pointer) or "dwarf"
--	(DWARF's CFI - Call Frame Information) or "lbr"
--	(Hardware Last Branch Record facility) as the method to collect
--	the information used to show the call graphs.
-+	The unwinding method used for kernel space is dependent on the
-+	unwinder used by the active kernel configuration, i.e
-+	CONFIG_UNWINDER_FRAME_POINTER (fp) or CONFIG_UNWINDER_ORC (orc)
-+
-+	Any option specified here controls the method used for user space.
-+
-+	Valid options are "fp" (frame pointer), "dwarf" (DWARF's CFI -
-+	Call Frame Information) or "lbr" (Hardware Last Branch Record
-+	facility).
- 
- 	In some systems, where binaries are build with gcc
- 	--fomit-frame-pointer, using the "fp" method will produce bogus
--- 
-2.25.0
-
+> Arvind Sankar (14):
+>   efi/gop: Remove redundant current_fb_base
+>   efi/gop: Move check for framebuffer before con_out
+>   efi/gop: Get mode information outside the loop
+>   efi/gop: Factor out locating the gop into a function
+>   efi/gop: Slightly re-arrange logic of find_gop
+>   efi/gop: Move variable declarations into loop block
+>   efi/gop: Use helper macros for populating lfb_base
+>   efi/gop: Use helper macros for find_bits
+>   efi/gop: Remove unreachable code from setup_pixel_info
+>   efi/gop: Add prototypes for query_mode and set_mode
+>   efi/gop: Allow specifying mode number on command line
+>   efi/gop: Allow specifying mode by <xres>x<yres>
+>   efi/gop: Allow specifying depth as well as resolution
+>   efi/gop: Allow automatically choosing the best mode
+>
+>  Documentation/fb/efifb.rst                    |  33 +-
+>  arch/x86/include/asm/efi.h                    |   4 +
+>  .../firmware/efi/libstub/efi-stub-helper.c    |   3 +
+>  drivers/firmware/efi/libstub/efistub.h        |   8 +-
+>  drivers/firmware/efi/libstub/gop.c            | 489 ++++++++++++++----
+>  5 files changed, 428 insertions(+), 109 deletions(-)
+>
+>
+> base-commit: d5528d5e91041e68e8eab9792ce627705a0ed273
+> --
+> 2.24.1
+>
