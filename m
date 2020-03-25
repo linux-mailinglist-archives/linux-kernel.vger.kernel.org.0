@@ -2,128 +2,228 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4777C1927B8
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 13:05:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E56FC1927D9
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 13:07:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727470AbgCYMF4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Mar 2020 08:05:56 -0400
-Received: from mga02.intel.com ([134.134.136.20]:22365 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727316AbgCYMF4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Mar 2020 08:05:56 -0400
-IronPort-SDR: VCHfbvJLGDsretCvkxFYWJVPq/+1iFsA5C0oAt8617vFd/L47HJsrYIMT6sAyrvlDux0Yzyun1
- WSh/j/hIVGKw==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Mar 2020 05:05:37 -0700
-IronPort-SDR: i88nw5H8sqH2VYxcP9e0AcuEUBa22Z1lVAvYDYqEVCil8RQo5FpG8SCoRmeFHdhqdwlLHN8DQI
- nQLA15ze1Vbw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.72,304,1580803200"; 
-   d="scan'208";a="448246117"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
-  by fmsmga006.fm.intel.com with ESMTP; 25 Mar 2020 05:05:30 -0700
-Received: from andy by smile with local (Exim 4.93)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1jH4mp-00CoNt-8E; Wed, 25 Mar 2020 14:05:31 +0200
-Date:   Wed, 25 Mar 2020 14:05:31 +0200
-From:   "andriy.shevchenko@linux.intel.com" 
-        <andriy.shevchenko@linux.intel.com>
-To:     "Vaittinen, Matti" <Matti.Vaittinen@fi.rohmeurope.com>
-Cc:     "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "dan.j.williams@intel.com" <dan.j.williams@intel.com>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "brendanhiggins@google.com" <brendanhiggins@google.com>,
-        "olteanv@gmail.com" <olteanv@gmail.com>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "talgi@mellanox.com" <talgi@mellanox.com>,
-        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "davidgow@google.com" <davidgow@google.com>,
-        "broonie@kernel.org" <broonie@kernel.org>,
-        "herbert@gondor.apana.org.au" <herbert@gondor.apana.org.au>,
-        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
-        "rdunlap@infradead.org" <rdunlap@infradead.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "yamada.masahiro@socionext.com" <yamada.masahiro@socionext.com>,
-        "Mutanen, Mikko" <Mikko.Mutanen@fi.rohmeurope.com>,
-        "bp@suse.de" <bp@suse.de>,
-        "mhiramat@kernel.org" <mhiramat@kernel.org>,
-        "krzk@kernel.org" <krzk@kernel.org>,
-        "mazziesaccount@gmail.com" <mazziesaccount@gmail.com>,
-        "skhan@linuxfoundation.org" <skhan@linuxfoundation.org>,
-        "zaslonko@linux.ibm.com" <zaslonko@linux.ibm.com>,
-        "Laine, Markus" <Markus.Laine@fi.rohmeurope.com>,
-        "vincenzo.frascino@arm.com" <vincenzo.frascino@arm.com>,
-        "sre@kernel.org" <sre@kernel.org>,
-        "ardb@kernel.org" <ardb@kernel.org>,
-        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "uwe@kleine-koenig.org" <uwe@kleine-koenig.org>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>
-Subject: Re: [PATCH v6 09/10] power: supply: Support ROHM bd99954 charger
-Message-ID: <20200325120531.GV1922688@smile.fi.intel.com>
-References: <cover.1584977512.git.matti.vaittinen@fi.rohmeurope.com>
- <1bf2431b80489ae412e774519a92616a9aa2bcca.1584977512.git.matti.vaittinen@fi.rohmeurope.com>
- <20200324095024.GE1922688@smile.fi.intel.com>
- <03f7053576e60632d7ac3bc074afe5d8d63e3714.camel@fi.rohmeurope.com>
- <20200324115653.GI1922688@smile.fi.intel.com>
- <f3490f4e7900e463540330665ecf99737070fedd.camel@fi.rohmeurope.com>
+        id S1727290AbgCYMGJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Mar 2020 08:06:09 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:47713 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727253AbgCYMGG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Mar 2020 08:06:06 -0400
+Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tip-bot2@linutronix.de>)
+        id 1jH4nI-0000ho-Rj; Wed, 25 Mar 2020 13:06:01 +0100
+Received: from [127.0.1.1] (localhost [IPv6:::1])
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 63F641C0450;
+        Wed, 25 Mar 2020 13:06:00 +0100 (CET)
+Date:   Wed, 25 Mar 2020 12:05:59 -0000
+From:   "tip-bot2 for Qais Yousef" <tip-bot2@linutronix.de>
+Reply-to: linux-kernel@vger.kernel.org
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip: smp/core] cpu/hotplug: Hide cpu_up/down()
+Cc:     Qais Yousef <qais.yousef@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>, x86 <x86@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+In-Reply-To: <20200323135110.30522-18-qais.yousef@arm.com>
+References: <20200323135110.30522-18-qais.yousef@arm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f3490f4e7900e463540330665ecf99737070fedd.camel@fi.rohmeurope.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Message-ID: <158513795997.28353.5521691179310825679.tip-bot2@tip-bot2>
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot2.linutronix.de>
+Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 25, 2020 at 10:14:35AM +0000, Vaittinen, Matti wrote:
-> On Tue, 2020-03-24 at 13:56 +0200, andriy.shevchenko@linux.intel.com
-> wrote:
-> > On Tue, Mar 24, 2020 at 10:53:09AM +0000, Vaittinen, Matti wrote:
-> > > On Tue, 2020-03-24 at 11:50 +0200, Andy Shevchenko wrote:
-> > > > On Tue, Mar 24, 2020 at 10:32:19AM +0200, Matti Vaittinen wrote:
+The following commit has been merged into the smp/core branch of tip:
 
-...
+Commit-ID:     33c3736ec88811b9b6f6ce2cc8967f6b97c3db5e
+Gitweb:        https://git.kernel.org/tip/33c3736ec88811b9b6f6ce2cc8967f6b97c3db5e
+Author:        Qais Yousef <qais.yousef@arm.com>
+AuthorDate:    Mon, 23 Mar 2020 13:51:10 
+Committer:     Thomas Gleixner <tglx@linutronix.de>
+CommitterDate: Wed, 25 Mar 2020 12:59:38 +01:00
 
-> > > > > +	if (!dev->platform_data) {
-> > > > 
-> > > > dev_get_platdata()
-> > > > 
-> > > > > +		ret = bd9995x_fw_probe(bd);
-> > > > > +		if (ret < 0) {
-> > > > > +			dev_err(dev, "Cannot read device
-> > > > > properties.\n");
-> > > > > +			return ret;
-> > > > > +		}
-> > > > > +	} else {
-> > > > > +		return -ENODEV;
-> > > > 
-> > > > So, existing platform data leads to an error?!
-> > > 
-> > > Yes. As currently we only use DT. If someone needs platdata they
-> > > need
-> > > to improve the driver
-> > 
-> > I think the idea to avoid platform data in new code as much as
-> > possible.
-> > And it's unusual to have somebody to use this driver with
-> > platform_data set.
-> > Why not simple ignore it?
-> 
-> Because if someone _is_ using platform data here (and we still provide
-> this mechanism) - then we should inform him that he's doing something
-> which is not correct.
+cpu/hotplug: Hide cpu_up/down()
 
-Up to maintainer, but once more time to put an accent that above is quite
-unusual practice in Linux kernel.
+Use separate functions for the device core to bring a CPU up and down.
 
--- 
-With Best Regards,
-Andy Shevchenko
+Users outside the device core must use add/remove_cpu() which will take
+care of extra housekeeping work like keeping sysfs in sync.
 
+Make cpu_up/down() static and replace the extra layer of indirection.
 
+[ tglx: Removed the extra wrapper functions and adjusted function names ]
+
+Signed-off-by: Qais Yousef <qais.yousef@arm.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Link: https://lkml.kernel.org/r/20200323135110.30522-18-qais.yousef@arm.com
+---
+ drivers/base/cpu.c  |  4 ++--
+ include/linux/cpu.h |  4 ++--
+ kernel/cpu.c        | 42 ++++++++++++++++++++++++++++--------------
+ 3 files changed, 32 insertions(+), 18 deletions(-)
+
+diff --git a/drivers/base/cpu.c b/drivers/base/cpu.c
+index 6265871..b93a8f8 100644
+--- a/drivers/base/cpu.c
++++ b/drivers/base/cpu.c
+@@ -55,7 +55,7 @@ static int cpu_subsys_online(struct device *dev)
+ 	if (from_nid == NUMA_NO_NODE)
+ 		return -ENODEV;
+ 
+-	ret = cpu_up(cpuid);
++	ret = cpu_device_up(dev);
+ 	/*
+ 	 * When hot adding memory to memoryless node and enabling a cpu
+ 	 * on the node, node number of the cpu may internally change.
+@@ -69,7 +69,7 @@ static int cpu_subsys_online(struct device *dev)
+ 
+ static int cpu_subsys_offline(struct device *dev)
+ {
+-	return cpu_down(dev->id);
++	return cpu_device_down(dev);
+ }
+ 
+ void unregister_cpu(struct cpu *cpu)
+diff --git a/include/linux/cpu.h b/include/linux/cpu.h
+index 8b295f7..9ead281 100644
+--- a/include/linux/cpu.h
++++ b/include/linux/cpu.h
+@@ -88,8 +88,8 @@ extern ssize_t arch_cpu_release(const char *, size_t);
+ 
+ #ifdef CONFIG_SMP
+ extern bool cpuhp_tasks_frozen;
+-int cpu_up(unsigned int cpu);
+ int add_cpu(unsigned int cpu);
++int cpu_device_up(struct device *dev);
+ void notify_cpu_starting(unsigned int cpu);
+ extern void cpu_maps_update_begin(void);
+ extern void cpu_maps_update_done(void);
+@@ -120,8 +120,8 @@ extern void lockdep_assert_cpus_held(void);
+ extern void cpu_hotplug_disable(void);
+ extern void cpu_hotplug_enable(void);
+ void clear_tasks_mm_cpumask(int cpu);
+-int cpu_down(unsigned int cpu);
+ int remove_cpu(unsigned int cpu);
++int cpu_device_down(struct device *dev);
+ extern void smp_shutdown_nonboot_cpus(unsigned int primary_cpu);
+ 
+ #else /* CONFIG_HOTPLUG_CPU */
+diff --git a/kernel/cpu.c b/kernel/cpu.c
+index 4783d81..3084849 100644
+--- a/kernel/cpu.c
++++ b/kernel/cpu.c
+@@ -1041,7 +1041,7 @@ static int cpu_down_maps_locked(unsigned int cpu, enum cpuhp_state target)
+ 	return _cpu_down(cpu, 0, target);
+ }
+ 
+-static int do_cpu_down(unsigned int cpu, enum cpuhp_state target)
++static int cpu_down(unsigned int cpu, enum cpuhp_state target)
+ {
+ 	int err;
+ 
+@@ -1051,11 +1051,18 @@ static int do_cpu_down(unsigned int cpu, enum cpuhp_state target)
+ 	return err;
+ }
+ 
+-int cpu_down(unsigned int cpu)
++/**
++ * cpu_device_down - Bring down a cpu device
++ * @dev: Pointer to the cpu device to offline
++ *
++ * This function is meant to be used by device core cpu subsystem only.
++ *
++ * Other subsystems should use remove_cpu() instead.
++ */
++int cpu_device_down(struct device *dev)
+ {
+-	return do_cpu_down(cpu, CPUHP_OFFLINE);
++	return cpu_down(dev->id, CPUHP_OFFLINE);
+ }
+-EXPORT_SYMBOL(cpu_down);
+ 
+ int remove_cpu(unsigned int cpu)
+ {
+@@ -1178,8 +1185,8 @@ static int _cpu_up(unsigned int cpu, int tasks_frozen, enum cpuhp_state target)
+ 	}
+ 
+ 	/*
+-	 * The caller of do_cpu_up might have raced with another
+-	 * caller. Ignore it for now.
++	 * The caller of cpu_up() might have raced with another
++	 * caller. Nothing to do.
+ 	 */
+ 	if (st->state >= target)
+ 		goto out;
+@@ -1223,7 +1230,7 @@ out:
+ 	return ret;
+ }
+ 
+-static int do_cpu_up(unsigned int cpu, enum cpuhp_state target)
++static int cpu_up(unsigned int cpu, enum cpuhp_state target)
+ {
+ 	int err = 0;
+ 
+@@ -1257,11 +1264,18 @@ out:
+ 	return err;
+ }
+ 
+-int cpu_up(unsigned int cpu)
++/**
++ * cpu_device_up - Bring up a cpu device
++ * @dev: Pointer to the cpu device to online
++ *
++ * This function is meant to be used by device core cpu subsystem only.
++ *
++ * Other subsystems should use add_cpu() instead.
++ */
++int cpu_device_up(struct device *dev)
+ {
+-	return do_cpu_up(cpu, CPUHP_ONLINE);
++	return cpu_up(dev->id, CPUHP_ONLINE);
+ }
+-EXPORT_SYMBOL_GPL(cpu_up);
+ 
+ int add_cpu(unsigned int cpu)
+ {
+@@ -1289,7 +1303,7 @@ int bringup_hibernate_cpu(unsigned int sleep_cpu)
+ 
+ 	if (!cpu_online(sleep_cpu)) {
+ 		pr_info("Hibernated on a CPU that is offline! Bringing CPU up.\n");
+-		ret = cpu_up(sleep_cpu);
++		ret = cpu_up(sleep_cpu, CPUHP_ONLINE);
+ 		if (ret) {
+ 			pr_err("Failed to bring hibernate-CPU up!\n");
+ 			return ret;
+@@ -1306,7 +1320,7 @@ void bringup_nonboot_cpus(unsigned int setup_max_cpus)
+ 		if (num_online_cpus() >= setup_max_cpus)
+ 			break;
+ 		if (!cpu_online(cpu))
+-			cpu_up(cpu);
++			cpu_up(cpu, CPUHP_ONLINE);
+ 	}
+ }
+ 
+@@ -2129,9 +2143,9 @@ static ssize_t write_cpuhp_target(struct device *dev,
+ 		goto out;
+ 
+ 	if (st->state < target)
+-		ret = do_cpu_up(dev->id, target);
++		ret = cpu_up(dev->id, target);
+ 	else
+-		ret = do_cpu_down(dev->id, target);
++		ret = cpu_down(dev->id, target);
+ out:
+ 	unlock_device_hotplug();
+ 	return ret ? ret : count;
