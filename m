@@ -2,162 +2,191 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 01D73192C75
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 16:28:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0139D192C7E
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 16:29:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727798AbgCYP2b (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Mar 2020 11:28:31 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:40581 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727439AbgCYP2b (ORCPT
+        id S1727832AbgCYP3S (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Mar 2020 11:29:18 -0400
+Received: from lb1-smtp-cloud8.xs4all.net ([194.109.24.21]:51057 "EHLO
+        lb1-smtp-cloud8.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726102AbgCYP3S (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Mar 2020 11:28:31 -0400
-Received: by mail-wr1-f66.google.com with SMTP id u10so3646333wro.7;
-        Wed, 25 Mar 2020 08:28:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=+TuwiFh6ptZG2bbIYvP+HL4r312J6Ae1r0580dUYeiw=;
-        b=SsqRu3VfcjXQUd9sQY1p9+YtlAipWWtLkXyxyN+z5kEmeY6VzKak39ao6cznTfg2NT
-         JGvYzxeRy82Skqt0L0EeJ7KyEtEAJa4GelLcPLwZBSfUIxv8GEsZ8y71GTFSz+6JYZc0
-         mbPMZscQZSFuAK4K9ov0Cg0S3QfQrec8EP2g8u26qflS20jrXCrfd10JfFWdIktqPBow
-         bq8CuQtwRSDDab3bGWNndTVDVDFa41Rzh0N2INsWTeH4TJh/LawHbmORV9q4nKu1eEOk
-         b1JumXhAYajXIY5ZDjfQy/g+N96lmcjadnjE07w4JCA++a0mStooP3PiMSZwDRR9yyLX
-         F4Vw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=+TuwiFh6ptZG2bbIYvP+HL4r312J6Ae1r0580dUYeiw=;
-        b=S8QAMXCC7Yl3HIHqDRuoejOOR5Hqmvq+gBoIpZAa8772X9XvwohY+a7No3UDouL/9p
-         LfdiBehuW/oAQMWTiZyFIMhQeY46PVG350oS2H2/NT88I5gqRwmTV0/V/0RkIAeepkZ9
-         /FHh6c6pT36mqUjRFPqZ49f6PF6L5yzf3n5Yqpw+ony3bgcLCfQ5Q49pOu7vFTiRYzTH
-         VufRC3BsG4Da6vioSDe//UB1dwwG8kGwHrt2mT6y0fXM+KtCX4D0llPvVt3DJOWBvNLi
-         5YcHCSFZBhUocEXnW4W/qxddpNHTc8HOgeikFp106/vrYGkW8XGGdpJrW9Fl8eWLSMiU
-         88ug==
-X-Gm-Message-State: ANhLgQ3BiEHFQwFCCiekpErRGmFCh2Hg5lPO5ktnRAjcnZz8p202clLU
-        7HpG0d1Q/b/aZ1xkJYNY5tY=
-X-Google-Smtp-Source: ADFU+vv2WmXZviwL1prI7g4XxxAMgN1uOZn5i5kh4PmLtj27KlvZBV9mmlfSXaQ1afOTdfZN0W2zpA==
-X-Received: by 2002:adf:fdc6:: with SMTP id i6mr4134003wrs.252.1585150108315;
-        Wed, 25 Mar 2020 08:28:28 -0700 (PDT)
-Received: from ?IPv6:2003:ea:8f29:6000:f4a0:1b38:2faf:56e9? (p200300EA8F296000F4A01B382FAF56E9.dip0.t-ipconnect.de. [2003:ea:8f29:6000:f4a0:1b38:2faf:56e9])
-        by smtp.googlemail.com with ESMTPSA id b6sm18851817wrp.59.2020.03.25.08.28.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 25 Mar 2020 08:28:27 -0700 (PDT)
-Subject: Re: [PATCH 1/2] net: phy: micrel.c: add rgmii interface delay
- possibility to ksz9131
-To:     Philippe Schenker <philippe.schenker@toradex.com>, andrew@lunn.ch,
-        f.fainelli@gmail.com, linux@armlinux.org.uk,
-        netdev@vger.kernel.org, robh+dt@kernel.org,
-        devicetree@vger.kernel.org, shawnguo@kernel.org,
-        mark.rutland@arm.com
-Cc:     o.rempel@pengutronix.de, linux-kernel@vger.kernel.org,
-        silvan.murer@gmail.com, s.hauer@pengutronix.de,
-        a.fatoum@pengutronix.de, "David S. Miller" <davem@davemloft.net>
-References: <20200325150329.228329-1-philippe.schenker@toradex.com>
-From:   Heiner Kallweit <hkallweit1@gmail.com>
-Message-ID: <7948ffaa-e530-f82e-0f58-39fa7e8f082f@gmail.com>
-Date:   Wed, 25 Mar 2020 16:28:24 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.6.0
+        Wed, 25 Mar 2020 11:29:18 -0400
+Received: from [192.168.2.10] ([46.9.234.233])
+        by smtp-cloud8.xs4all.net with ESMTPA
+        id H7xijfeSKBr2bH7xljIHs8; Wed, 25 Mar 2020 16:29:15 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=xs4all.nl; s=s1;
+        t=1585150155; bh=WdXxtpAu7Qy0dGjk7oDPYMFVBNZV4Al73YxfsmMk6Ik=;
+        h=Subject:To:From:Message-ID:Date:MIME-Version:Content-Type:From:
+         Subject;
+        b=wA7Kt/YD9qCqA9K5RJ7UzomtDMEAsGDmVqAZPf4CDNxmSsSJSFYAV9j/NKQU4gDK0
+         C9Qq53pvEHMyxK9/kR5WL34wOv5fHhxb5xXZar0AkOuIR27XXfxj+gm22CSiUqrOTB
+         AV2D7TDAwULbiHQoOtrB9oJHTc+aaM53j1upVAZQnuMlEmXXl4kpStbxJ9ntWjexnt
+         ZelOwky4R24PT80X1w4vtm9+TQ9kxJXFwNhxawMztP0NiGOTJjuJCnFJ22xycCVgFG
+         hVBUHVvhfc+37AKJST/n1uR5RZFRC1p7lLm1uq+IX3votvsG/MkTX2sV5kGXIxTK7r
+         MhuBwvZ7oqbHA==
+Subject: Re: [PATCH v2 3/8] hantro: Use v4l2_m2m_buf_done_and_job_finish
+To:     Nicolas Dufresne <nicolas@ndufresne.ca>,
+        Ezequiel Garcia <ezequiel@collabora.com>,
+        linux-media@vger.kernel.org, linux-rockchip@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Cc:     Tomasz Figa <tfiga@chromium.org>, kernel@collabora.com,
+        Jonas Karlman <jonas@kwiboo.se>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Alexandre Courbot <acourbot@chromium.org>,
+        Jeffrey Kardatzke <jkardatzke@chromium.org>,
+        Rob Herring <robh@kernel.org>
+References: <20200318132108.21873-1-ezequiel@collabora.com>
+ <20200318132108.21873-4-ezequiel@collabora.com>
+ <13b1efe1-8b52-070b-cf11-b230bd405d3e@xs4all.nl>
+ <0a8f6d97e6869ff694aedd67a3176217a885c938.camel@ndufresne.ca>
+From:   Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <50d764ec-1c15-99bd-192b-9aa6ae5bf368@xs4all.nl>
+Date:   Wed, 25 Mar 2020 16:28:58 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-In-Reply-To: <20200325150329.228329-1-philippe.schenker@toradex.com>
+In-Reply-To: <0a8f6d97e6869ff694aedd67a3176217a885c938.camel@ndufresne.ca>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-CMAE-Envelope: MS4wfAwLaPPmqQFPbd5FOJJRJcEy4huCHCeranRD3okAXOel+Y8Rvf2TToDPTWdTWuY/kl/h8TamrSb8wbvFLOu3WmeHZw/8KJu70r9dMKKsVFOMuVioxFzP
+ UBubyswnwHXyeZrkyEdZQRHRaNW4l00P0tfZIyUThJ+vmMKm+sJFi3GRNyxk3bzTzXMK21DQSgmgxXZHQ+nAHAAtVuwGg697X+QQ48yHBHERPEUc8XXoAyrY
+ nhTpLr2l77tLE5OV/AL7qPW9f7FoOuBzmiNP5mTG50lUTbhmUmlFxFZHtwmC6css66acAiIW+5RxcrUI133nub2k6IY2fWlsLNLrfsMwX/N4i23qoPcHX+d3
+ 7x3rlMVtFrk1jNnXsnr4CYySKi83la9H/oiNh3bqjG8Gb6VLVsRkdiCGdWoTIJWRMfxUB+PvnpsmianyOEI8+PHehR6U8iOBIOTe5rBgWG0/LiGdq0eM65y7
+ W2UayCjIML1eiDfvLQOJREsQSggRGH/wZCNIypYinZSm57DUdovJ7bWst9A58AQdunz3bWgQUgXYYs87
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 25.03.2020 16:03, Philippe Schenker wrote:
-> The KSZ9131 provides DLL controlled delays on RXC and TXC lines. This
-> patch makes use of those delays. The information which delays should
-> be enabled or disabled comes from the interface names, documented in
-> ethernet-controller.yaml:
+On 3/25/20 3:02 PM, Nicolas Dufresne wrote:
+> Le mercredi 25 mars 2020 à 09:22 +0100, Hans Verkuil a écrit :
+>> On 3/18/20 2:21 PM, Ezequiel Garcia wrote:
+>>> Let the core sort out the nuances of returning buffers
+>>> to userspace, by using the v4l2_m2m_buf_done_and_job_finish
+>>> helper.
+>>>
+>>> This change also removes usage of buffer sequence fields,
+>>> which shouldn't have any meaning for stateless decoders.
+>>
+>> Uh, why remove this? For one, doesn't this cause fails in v4l2-compliance?
+>> Also, while I agree that it is not terribly useful, it doesn't hurt, does it?
+>>
+>> And the V4L2 spec makes no exception for stateless codecs with respect to the
+>> sequence field.
+>>
+>> Nacked-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
 > 
-> rgmii:      Disable RXC and TXC delays
-> rgmii-id:   Enable RXC and TXC delays
-> rgmii-txid: Enable only TXC delay, disable RXC delay
-> rgmii-rxid: Enable onlx RXC delay, disable TXC delay
-> 
-> Signed-off-by: Philippe Schenker <philippe.schenker@toradex.com>
-> ---
-> 
->  drivers/net/phy/micrel.c | 45 ++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 45 insertions(+)
-> 
-> diff --git a/drivers/net/phy/micrel.c b/drivers/net/phy/micrel.c
-> index 63dedec0433d..d3ad09774847 100644
-> --- a/drivers/net/phy/micrel.c
-> +++ b/drivers/net/phy/micrel.c
-> @@ -704,6 +704,48 @@ static int ksz9131_of_load_skew_values(struct phy_device *phydev,
->  	return phy_write_mmd(phydev, 2, reg, newval);
->  }
->  
-> +/* MMD Address 0x2 */
-> +#define KSZ9131RN_RXC_DLL_CTRL		76
-> +#define KSZ9131RN_TXC_DLL_CTRL		77
-> +#define KSZ9131RN_DLL_CTRL_BYPASS	BIT_MASK(12)
-> +#define KSZ9131RN_DLL_ENABLE_DELAY	0
-> +#define KSZ9131RN_DLL_DISABLE_DELAY	BIT(12)
-> +
-> +static int ksz9131_config_rgmii_delay(struct phy_device *phydev)
-> +{
-> +	int ret;
-> +	u16 rxcdll_val, txcdll_val;
-> +
-> +	switch (phydev->interface) {
-> +	case PHY_INTERFACE_MODE_RGMII:
-> +		rxcdll_val = KSZ9131RN_DLL_DISABLE_DELAY;
-> +		txcdll_val = KSZ9131RN_DLL_DISABLE_DELAY;
-> +		break;
-> +	case PHY_INTERFACE_MODE_RGMII_ID:
-> +		rxcdll_val = KSZ9131RN_DLL_ENABLE_DELAY;
-> +		txcdll_val = KSZ9131RN_DLL_ENABLE_DELAY;
-> +		break;
-> +	case PHY_INTERFACE_MODE_RGMII_RXID:
-> +		rxcdll_val = KSZ9131RN_DLL_ENABLE_DELAY;
-> +		txcdll_val = KSZ9131RN_DLL_DISABLE_DELAY;
-> +		break;
-> +	case PHY_INTERFACE_MODE_RGMII_TXID:
-> +		rxcdll_val = KSZ9131RN_DLL_DISABLE_DELAY;
-> +		txcdll_val = KSZ9131RN_DLL_ENABLE_DELAY;
-> +		break;
-> +	default:
-> +		return 0;
-> +	}
-> +
-> +	ret = phy_modify_mmd_changed(phydev, 2, KSZ9131RN_RXC_DLL_CTRL,
+> The spec also does not say what it means either. As an example, you
+> have spec for ALTERNATE interlacing mode that changes the meaning of
+> the sequence, but not for alternate H264 fields (which cannot be part
+> of the format, since this changes often). We also don't have spec for
+> the the sequence behaviour while using HOLD features.
 
-Using a constant for the device address would be good.
+I hate it that the spec changes the sequence meaning for FIELD_ALTERNATE,
+I always thought that that made drivers unnecessarily complicated. Unfortunately,
+this is something we inherited.
 
-Last but not least your patch misses the net-next annotation
-(except you consider it a fix, then the net annotation and
-a Fixes tag would be needed).
+Currently the spec says for sequence:
 
-> +				     KSZ9131RN_DLL_CTRL_BYPASS, rxcdll_val);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	return phy_modify_mmd_changed(phydev, 2, KSZ9131RN_TXC_DLL_CTRL,
-> +				     KSZ9131RN_DLL_CTRL_BYPASS, txcdll_val);
-> +}
-> +
->  static int ksz9131_config_init(struct phy_device *phydev)
->  {
->  	const struct device *dev = &phydev->mdio.dev;
-> @@ -730,6 +772,9 @@ static int ksz9131_config_init(struct phy_device *phydev)
->  	if (!of_node)
->  		return 0;
->  
-> +	if (phy_interface_is_rgmii(phydev))
-> +		ksz9131_config_rgmii_delay(phydev);
-> +
->  	ret = ksz9131_of_load_skew_values(phydev, of_node,
->  					  MII_KSZ9031RN_CLK_PAD_SKEW, 5,
->  					  clk_skews, 2);
+"Set by the driver, counting the frames (not fields!) in sequence. This field is set
+ for both input and output devices."
+
+The only thing missing here is that it should say that for compressed formats this
+counts the buffers, since one buffer with compressed data may not have a one-to-one
+mapping with frames.
+
+This description for 'sequence' was never updated when compressed data formats were
+added, so it is a bit out of date.
+
+> 
+> I'm worried we are falling into the test driven trap, were people
+> implement features to satisfy a test, while the added complexity don't
+> really make sense. Shouldn't we change our approach and opt-out
+> features for new type of HW, so that we can keep the drivers code
+> saner?
+
+Why wasn't the existing code in this patch sane? Sure, we can change the spec, but
+then 1) all existing drivers need to be updated as well, and 2) v4l2-compliance needs
+to be changed to test specifically for this class of drivers and ensure that for those
+the sequence field is set to 0. Not to mention introducing an exception in the uAPI
+where the sequence field suddenly isn't used anymore.
+
+Frankly, I would prefer that the whole sequence handling is moved to videobuf2-v4l2.c.
+It really doesn't belong in drivers, with the exception of incrementing the sequence
+counter in case of dropped frames.
+
+I think I suggested it when vb2 was being designed, but at the time the preference
+was to keep it in the driver. Long time ago, though.
+
+And another reason why I want to keep it: I find it actually useful to see a running
+counter: it helps keeping track of how many buffers you've processed since you started
+streaming.
+
+Finally, the removal of the sequence counter simply does not belong in this patch.
+
+Regards,
+
+	Hans
+
+> 
+>>
+>> Regards,
+>>
+>> 	Hans
+>>
+>>> Signed-off-by: Ezequiel Garcia <ezequiel@collabora.com>
+>>> ---
+>>>  drivers/staging/media/hantro/hantro_drv.c | 27 ++++++++---------------
+>>>  1 file changed, 9 insertions(+), 18 deletions(-)
+>>>
+>>> diff --git a/drivers/staging/media/hantro/hantro_drv.c b/drivers/staging/media/hantro/hantro_drv.c
+>>> index 0b1200fc0e1a..ec889d755cd6 100644
+>>> --- a/drivers/staging/media/hantro/hantro_drv.c
+>>> +++ b/drivers/staging/media/hantro/hantro_drv.c
+>>> @@ -94,32 +94,23 @@ static void hantro_job_finish(struct hantro_dev *vpu,
+>>>  			      unsigned int bytesused,
+>>>  			      enum vb2_buffer_state result)
+>>>  {
+>>> -	struct vb2_v4l2_buffer *src, *dst;
+>>>  	int ret;
+>>>  
+>>>  	pm_runtime_mark_last_busy(vpu->dev);
+>>>  	pm_runtime_put_autosuspend(vpu->dev);
+>>>  	clk_bulk_disable(vpu->variant->num_clocks, vpu->clocks);
+>>>  
+>>> -	src = v4l2_m2m_src_buf_remove(ctx->fh.m2m_ctx);
+>>> -	dst = v4l2_m2m_dst_buf_remove(ctx->fh.m2m_ctx);
+>>> -
+>>> -	if (WARN_ON(!src))
+>>> -		return;
+>>> -	if (WARN_ON(!dst))
+>>> -		return;
+>>> -
+>>> -	src->sequence = ctx->sequence_out++;
+>>> -	dst->sequence = ctx->sequence_cap++;
+>>> -
+>>> -	ret = ctx->buf_finish(ctx, &dst->vb2_buf, bytesused);
+>>> -	if (ret)
+>>> -		result = VB2_BUF_STATE_ERROR;
+>>> +	if (ctx->buf_finish) {
+>>> +		struct vb2_v4l2_buffer *dst;
+>>>  
+>>> -	v4l2_m2m_buf_done(src, result);
+>>> -	v4l2_m2m_buf_done(dst, result);
+>>> +		dst = v4l2_m2m_next_dst_buf(ctx->fh.m2m_ctx);
+>>> +		ret = ctx->buf_finish(ctx, &dst->vb2_buf, bytesused);
+>>> +		if (ret)
+>>> +			result = VB2_BUF_STATE_ERROR;
+>>> +	}
+>>>  
+>>> -	v4l2_m2m_job_finish(vpu->m2m_dev, ctx->fh.m2m_ctx);
+>>> +	v4l2_m2m_buf_done_and_job_finish(ctx->dev->m2m_dev, ctx->fh.m2m_ctx,
+>>> +					 result);
+>>>  }
+>>>  
+>>>  void hantro_irq_done(struct hantro_dev *vpu, unsigned int bytesused,
+>>>
 > 
 
