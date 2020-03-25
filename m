@@ -2,115 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B0A6C1925D5
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 11:38:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 339C51925DA
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 11:38:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727657AbgCYKij (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Mar 2020 06:38:39 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:36594 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727158AbgCYKij (ORCPT
+        id S1727688AbgCYKit (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Mar 2020 06:38:49 -0400
+Received: from mail-ed1-f49.google.com ([209.85.208.49]:33375 "EHLO
+        mail-ed1-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727137AbgCYKit (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Mar 2020 06:38:39 -0400
-Received: by mail-wr1-f67.google.com with SMTP id 31so2330663wrs.3;
-        Wed, 25 Mar 2020 03:38:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=/wgvz2lVpp5+P73ebkZ5cpJlG6NyplWSlH1ZFZco8LM=;
-        b=eReNsT3/ql4XtBGPugbUGLIbqp4B391Ps/1xoYiR+OGIUAH8+B72MCrP2HlKPfoWaP
-         pqYGsv0O8ZMQL6PQ+IalWVy372tw3azPRtzZgqDbyElePH+Tqh+q33JT2PdJ0HFxNGP5
-         qRaT84ztZV1Oows1zWBxj5nUJUo4aoP26PcBpAec19SxZPm2MMk9Uq/svtyyxKJa3orv
-         yvka7cvw1E52RdM4qI00bCg31CXx3lSjeUvvg7UbfjpHHVojeBhPr/W/FFRckGeye2FJ
-         15R/lKijLyeFma7tkjaxFYbz40cTthdWPkHJoqQNrVmFBJPB1baHaW6/959pOfdz/cVB
-         JpJA==
+        Wed, 25 Mar 2020 06:38:49 -0400
+Received: by mail-ed1-f49.google.com with SMTP id z65so1747529ede.0;
+        Wed, 25 Mar 2020 03:38:47 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=/wgvz2lVpp5+P73ebkZ5cpJlG6NyplWSlH1ZFZco8LM=;
-        b=NyQYEg2N4vhWsYaC8KGYmjPs+SxPCb0DZllR1/yTYEkoZr73ORNp8EfRfUdMzLGycG
-         nMnaFlDN+hOMXAE+dN/ltwaf60dgjfvtgutq1G0IUMeXHHZecfZaTL7zkArsLgeCmI8a
-         Tg9bWzVpSJzjBlwFDrP9cmEfzPUkYqhC2nNGPsl68dBqyQ4Fksq6fvCBvjwj5r60MAIm
-         k6eDJRThw7urS3nYy2m+xglpoI3vuOGf93pK+kceFdhYLFjyBAqcFWKtLT0uHXV36rm6
-         awVmOhJaky7aI6U7g/Q41AOIB7DMwlkzXq/OzClhUx6MvUIh8u9y10GNMJX0jdVPuU1S
-         1sGw==
-X-Gm-Message-State: ANhLgQ1qvsd9SnBFxsJ4ohkbcCS2SQOqf1bw5SYY5fQ33ul1FSkD042i
-        n9b/NP8sm4kWSkJEbPngynkHytOs
-X-Google-Smtp-Source: ADFU+vt2Dw8Gg8y8PXMVIdEPTxwRM9hacRHxiTFN7DEjZdRm/qg5K+XBLFsyyZk6b1ZiLZCI4gwDuw==
-X-Received: by 2002:a5d:53d1:: with SMTP id a17mr2871409wrw.41.1585132716907;
-        Wed, 25 Mar 2020 03:38:36 -0700 (PDT)
-Received: from debian.home (ip51ccf9cd.speed.planet.nl. [81.204.249.205])
-        by smtp.gmail.com with ESMTPSA id i21sm9163108wmb.23.2020.03.25.03.38.35
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 25 Mar 2020 03:38:36 -0700 (PDT)
-From:   Johan Jonker <jbx6244@gmail.com>
-To:     heiko@sntech.de
-Cc:     hjc@rock-chips.com, airlied@linux.ie, daniel@ffwll.ch,
-        robh+dt@kernel.org, dri-devel@lists.freedesktop.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v4 2/2] dt-bindings: display: rockchip-vop: add additional properties
-Date:   Wed, 25 Mar 2020 11:38:28 +0100
-Message-Id: <20200325103828.5422-2-jbx6244@gmail.com>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20200325103828.5422-1-jbx6244@gmail.com>
-References: <20200325103828.5422-1-jbx6244@gmail.com>
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=rChnKt/buGlg4oMgDuHolFkSTfOBDmB/aUQmKVJ+Bu8=;
+        b=HhzmmvPuo5WJNnfepT5Eqp4epSpOdFhdzED5w1oFTf0ml4B6wMvxyaaTFCjlQCKq2Y
+         1O1iXBJvBTMtdrp6WvI3UFDr2Y0k3VJ3EO7tcipi6Uw/MFkM3+gxf0i74927eNksgYZW
+         ljm+esdiul2QmTNABfQhrsijs5kZ95J5n+5RGbq+Dw1wjwPChmZE57ZwpR58xMcaeT9r
+         QQp4F4b4FjR14709P6C4ep0HaWcalAZWpO+qAgBvRAG9sMcJXxzmEi2l/0IODn6IAUrq
+         FSYRpIqVHeJaEmehDzmzz+pzJRK9HWnJYsbCLYE3lr5VTT85EdYnTxzgp2oSzQ93Lwun
+         TzOw==
+X-Gm-Message-State: ANhLgQ01Vk8lmGZR0mROPMGnqBqe+ZSu+zS8VdxOuvYP7bxTPF5AhiH/
+        UfWKO2W89JWZuAt928KdQbs=
+X-Google-Smtp-Source: ADFU+vu6wOHo0Oo5RedHizV/zMZxQCP2qEaIJff3a9ZAD1Wu4ZYA7zr+gdDKh5A2BskBFG1jRYSWGw==
+X-Received: by 2002:aa7:c610:: with SMTP id h16mr2228662edq.348.1585132727057;
+        Wed, 25 Mar 2020 03:38:47 -0700 (PDT)
+Received: from kozik-lap ([194.230.155.125])
+        by smtp.googlemail.com with ESMTPSA id s7sm1458659edr.15.2020.03.25.03.38.45
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 25 Mar 2020 03:38:46 -0700 (PDT)
+Date:   Wed, 25 Mar 2020 11:38:43 +0100
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>,
+        arm@kernel.org, soc@kernel.org
+Cc:     Kukjin Kim <kgene@kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [GIT PULL 0/3] ARM: exynos: Pull for v5.7
+Message-ID: <20200325103843.GA17099@kozik-lap>
+References: <20200316175652.5604-1-krzk@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20200316175652.5604-1-krzk@kernel.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In the old txt situation we add/describe only properties that are used
-by the driver/hardware itself. With yaml it also filters things in a
-node that are used by other drivers like 'assigned-clocks' and
-'assigned-clock-rates' for rk3399 and 'power-domains' for most
-Rockchip Socs in 'vop' nodes, so add them to 'rockchip-vop.yaml'.
+On Mon, Mar 16, 2020 at 06:56:49PM +0100, Krzysztof Kozlowski wrote:
+> Hi,
+> 
+> One patch for drivers at the end of these series. I also sent a fixes patch separately.
+> 
+> As you asked, I updated the Google Docs with Exynos entries.
 
-Signed-off-by: Johan Jonker <jbx6244@gmail.com>
----
- .../devicetree/bindings/display/rockchip/rockchip-vop.yaml    | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+Hi Arnd and Olof,
 
-diff --git a/Documentation/devicetree/bindings/display/rockchip/rockchip-vop.yaml b/Documentation/devicetree/bindings/display/rockchip/rockchip-vop.yaml
-index bc58c5132..497a9fb2d 100644
---- a/Documentation/devicetree/bindings/display/rockchip/rockchip-vop.yaml
-+++ b/Documentation/devicetree/bindings/display/rockchip/rockchip-vop.yaml
-@@ -75,9 +75,18 @@ properties:
-       A port node with endpoint definitions as defined in
-       Documentation/devicetree/bindings/media/video-interfaces.txt.
- 
-+  assigned-clocks:
-+    maxItems: 2
-+
-+  assigned-clock-rates:
-+    maxItems: 2
-+
-   iommus:
-     maxItems: 1
- 
-+  power-domains:
-+    maxItems: 1
-+
- required:
-   - compatible
-   - reg
-@@ -95,6 +104,7 @@ examples:
-     #include <dt-bindings/clock/rk3288-cru.h>
-     #include <dt-bindings/interrupt-controller/arm-gic.h>
-     #include <dt-bindings/interrupt-controller/irq.h>
-+    #include <dt-bindings/power/rk3288-power.h>
-     vopb: vopb@ff930000 {
-       compatible = "rockchip,rk3288-vop";
-       reg = <0x0 0xff930000 0x0 0x19c>,
-@@ -104,6 +114,7 @@ examples:
-                <&cru DCLK_VOP0>,
-                <&cru HCLK_VOP0>;
-       clock-names = "aclk_vop", "dclk_vop", "hclk_vop";
-+      power-domains = <&power RK3288_PD_VIO>;
-       resets = <&cru SRST_LCDC1_AXI>,
-                <&cru SRST_LCDC1_AHB>,
-                <&cru SRST_LCDC1_DCLK>;
--- 
-2.11.0
+Any comments on this pull request?
+
+Best regards,
+Krzysztof
 
